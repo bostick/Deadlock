@@ -25,7 +25,7 @@ public class DeadlockView extends View {
 	@Override
 	public void onDraw(Canvas canvas) {
 		
-		renderer.update();
+		//renderer.update();
 		renderer.paintCanas(canvas);
 		
 	}

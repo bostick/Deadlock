@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.graphics.PointF;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
@@ -27,6 +28,8 @@ public class DeadlockController implements OnTouchListener {
 		float x = event.getX();
 		float y = event.getY();
 		
+		Log.d("touch", "<"+event.getX()+","+event.getY()+">" + " <"+event.getRawX()+","+event.getRawY()+">" + " <"+event.getXPrecision()*event.getX()+","+event.getYPrecision()*event.getY()+">");
+		
 		switch (event.getAction()) {
 		case MotionEvent.ACTION_DOWN:
 			touchStart(x, y);
@@ -47,11 +50,11 @@ public class DeadlockController implements OnTouchListener {
 	private void touchStart(final float x, final float y) {
 		
 		PointF point = new PointF(x, y);
-		model.curRawPoint = point;
+		model.curPoint = point;
 		
-		point = DeadlockModel.roundToGrid(point);
+		//point = DeadlockModel.roundToGrid(point);
 		
-		model.curRoundedPoint = point;
+		//model.curRoundedPoint = point;
 		
 		List<PointF> road = new ArrayList<PointF>();
 		road.add(point);
@@ -62,43 +65,45 @@ public class DeadlockController implements OnTouchListener {
 	
 	private void touchMove(float x, float y) {
 		
-		PointF lastRoundedPoint = model.curRoundedPoint;
+		//PointF lastRoundedPoint = model.curRoundedPoint;
 		//PointF lastRawPoint = model.curRawPoint;
 		
 		PointF point = new PointF(x, y);
-		model.curRawPoint = point;
+		model.curPoint = point;
 		
-		point = DeadlockModel.roundToGrid(point);
+		//point = DeadlockModel.roundToGrid(point);
 		
-		model.curRoundedPoint = point;
+		//model.curRoundedPoint = point;
 		
-		double dx = model.curRawPoint.x - model.curRoundedPoint.x;
-		double dy = model.curRawPoint.y - model.curRoundedPoint.y;
-		double diffDist = Math.sqrt((dx * dx) + (dy * dy));
+//		double dx = model.curRawPoint.x - model.curRoundedPoint.x;
+//		double dy = model.curRawPoint.y - model.curRoundedPoint.y;
+//		double diffDist = Math.sqrt((dx * dx) + (dy * dy));
 		
 		//model.curDist = diffDist;
 		
 		//double radius = (SQRT2 * DeadlockModel.GRID_DELTA / 2);
-		double radius = 10;
+		//double radius = 10;
 		
-		if (diffDist <= radius) {
-			
-			dx = point.x - lastRoundedPoint.y;
-			dy = point.y - lastRoundedPoint.y;
-			diffDist = Math.sqrt((dx * dx) + (dy * dy));
-			
-			model.totalDist += diffDist;
-			
-			model.curRoad.add(point);
-			
-		}
+//		if (diffDist <= radius) {
+//			
+//			dx = point.x - lastRoundedPoint.y;
+//			dy = point.y - lastRoundedPoint.y;
+//			diffDist = Math.sqrt((dx * dx) + (dy * dy));
+//			
+//			model.totalDist += diffDist;
+//			
+//			model.curRoad.add(point);
+//			
+//		}
+		
+		model.curRoad.add(point);
 		
 	}
 
 	private void touchUp() {
 		
-		model.curRawPoint = null;
-		model.curRoundedPoint = null;
+		model.curPoint = null;
+		//model.curRoundedPoint = null;
 		
 		/*
 		 * TODO: when done with touch, just add the rounded point,

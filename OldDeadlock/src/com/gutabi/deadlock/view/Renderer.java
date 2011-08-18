@@ -33,27 +33,27 @@ public class Renderer {
 		textPaint = new TextPaint();
 	}
 	
-	public void update() {
-			
-		dTime = System.currentTimeMillis() - dTime;
-		
-		if (model.curRawPoint != null && model.curRoundedPoint != null) {
-			double dx = model.curRawPoint.x - model.curRoundedPoint.x;
-			double dy = model.curRawPoint.y - model.curRoundedPoint.y;
-			double diffDist = Math.sqrt((dx * dx) + (dy * dy));
-			
-			//String dist = "|" + Double.toString(model.totalDist) + "|";
-			String dist = "|" + Double.toString(diffDist) + "|";
-//			PointF cp = model.curRawPoint;
-//			String rawpos = (cp != null) ? "<" + cp.x + ", " + cp.y + ">" : "<>";
-//			cp = model.curRoundedPoint;
-//			String roundpos = (cp != null) ? "<" + cp.x + ", " + cp.y + ">" : "<>";
-//			String text = dist + " " + rawpos + " " + roundpos;
-			String text = dist;
-			model.setStatusText(text);
-		}
-		
-	}
+//	public void update() {
+//			
+//		dTime = System.currentTimeMillis() - dTime;
+//		
+//		if (model.curPoint != null && model.curRoundedPoint != null) {
+//			double dx = model.curRawPoint.x - model.curRoundedPoint.x;
+//			double dy = model.curRawPoint.y - model.curRoundedPoint.y;
+//			double diffDist = Math.sqrt((dx * dx) + (dy * dy));
+//			
+//			//String dist = "|" + Double.toString(model.totalDist) + "|";
+//			String dist = "|" + Double.toString(diffDist) + "|";
+////			PointF cp = model.curRawPoint;
+////			String rawpos = (cp != null) ? "<" + cp.x + ", " + cp.y + ">" : "<>";
+////			cp = model.curRoundedPoint;
+////			String roundpos = (cp != null) ? "<" + cp.x + ", " + cp.y + ">" : "<>";
+////			String text = dist + " " + rawpos + " " + roundpos;
+//			String text = dist;
+//			//model.setStatusText(text);
+//		}
+//		
+//	}
 	
 	public void paintCanas(Canvas canvas) {
 		// draw grid
@@ -99,10 +99,10 @@ public class Renderer {
 		}
 		
 		// draw current road and point
-		if (model.curRawPoint != null) {
-			canvas.drawLine(cur.x, cur.y, model.curRawPoint.x, model.curRawPoint.y, rPaint1);
-			canvas.drawLine(cur.x, cur.y, model.curRawPoint.x, model.curRawPoint.y, rPaint2);
-			canvas.drawPoint(model.curRawPoint.x, model.curRawPoint.y, curPointPaint);
+		if (model.curPoint != null) {
+			canvas.drawLine(cur.x, cur.y, model.curPoint.x, model.curPoint.y, rPaint1);
+			canvas.drawLine(cur.x, cur.y, model.curPoint.x, model.curPoint.y, rPaint2);
+			canvas.drawPoint(model.curPoint.x, model.curPoint.y, curPointPaint);
 		}
 	}
 	

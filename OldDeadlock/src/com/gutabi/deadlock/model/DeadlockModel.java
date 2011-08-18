@@ -5,8 +5,6 @@ import java.util.List;
 
 import android.graphics.PointF;
 
-import com.gutabi.deadlock.DeadlockActivity;
-
 public class DeadlockModel {
 	
 	public static final int GRID_WIDTH = 320;
@@ -17,41 +15,41 @@ public class DeadlockModel {
 //	public static final float GRID_RADIUSX = GRID_FACTOR * GRID_DELTAX;
 //	public static final float GRID_RADIUSY = GRID_FACTOR * GRID_DELTAY;
 	
-	private DeadlockActivity act;
+	//private DeadlockActivity act;
 	//private TextView status;
 	
 	public List<List<PointF>> roads;
 	
 	public List<PointF> curRoad;
-	public PointF curRawPoint;
-	public PointF curRoundedPoint;
+	public PointF curPoint;
+	//public PointF curRoundedPoint;
 	public double totalDist = 0.0;
 	
 	//public double curDist = 0.0;
 	
-	public DeadlockModel(DeadlockActivity act) {
+	public DeadlockModel() {
 		
-		this.act = act;
+		//this.act = act;
 		//status = act.status;
 		
 		roads = new ArrayList<List<PointF>>();
 		
 	}
 	
-	public void setStatusText(String text) { 
-		act.status.setText(text);
-	}
+//	public void setStatusText(String text) { 
+//		act.status.setText(text);
+//	}
 	
-	public static PointF roundToGrid(PointF point) {
-		
-		float x = point.x;
-		float y = point.y;
-		
-		x = Math.round(x/GRID_DELTA)*GRID_DELTA;
-		y = Math.round(y/GRID_DELTA)*GRID_DELTA;
-		
-		return new PointF(x, y);
-		
-	}
+//	public static PointF roundToGrid(PointF point) {
+//		
+//		float x = point.x;
+//		float y = point.y;
+//		
+//		x = Math.round(x/GRID_DELTA)*GRID_DELTA;
+//		y = Math.round(y/GRID_DELTA)*GRID_DELTA;
+//		
+//		return new PointF(x, y);
+//		
+//	}
 	
 }

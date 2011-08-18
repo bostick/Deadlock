@@ -35,7 +35,7 @@ public class DeadlockActivity extends Activity {
 		view = (DeadlockView) findViewById(R.id.deadlock);
 		status = (TextView) findViewById(R.id.status);
 		
-		model = new DeadlockModel(this);
+		model = new DeadlockModel();
 		controller = new DeadlockController(model, view);
 		
 		view.setController(controller);
