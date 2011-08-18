@@ -1,0 +1,77 @@
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/!svn/ver/8/trunk/ch10-gl-3d/src/com/badlogic/androidgames/framework/gl
+END
+Animation.java
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/svn/!svn/ver/8/trunk/ch10-gl-3d/src/com/badlogic/androidgames/framework/gl/Animation.java
+END
+SpriteBatcher.java
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/svn/!svn/ver/8/trunk/ch10-gl-3d/src/com/badlogic/androidgames/framework/gl/SpriteBatcher.java
+END
+Texture.java
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/svn/!svn/ver/8/trunk/ch10-gl-3d/src/com/badlogic/androidgames/framework/gl/Texture.java
+END
+NormalVertices3.java
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/svn/!svn/ver/8/trunk/ch10-gl-3d/src/com/badlogic/androidgames/framework/gl/NormalVertices3.java
+END
+TextureRegion.java
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/svn/!svn/ver/8/trunk/ch10-gl-3d/src/com/badlogic/androidgames/framework/gl/TextureRegion.java
+END
+Vertices.java
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svn/!svn/ver/8/trunk/ch10-gl-3d/src/com/badlogic/androidgames/framework/gl/Vertices.java
+END
+Font.java
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svn/!svn/ver/8/trunk/ch10-gl-3d/src/com/badlogic/androidgames/framework/gl/Font.java
+END
+Vertices3.java
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/svn/!svn/ver/8/trunk/ch10-gl-3d/src/com/badlogic/androidgames/framework/gl/Vertices3.java
+END
+Light.java
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svn/!svn/ver/8/trunk/ch10-gl-3d/src/com/badlogic/androidgames/framework/gl/Light.java
+END
+SpatialHashGrid.java
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/svn/!svn/ver/8/trunk/ch10-gl-3d/src/com/badlogic/androidgames/framework/gl/SpatialHashGrid.java
+END
+FPSCounter.java
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/svn/!svn/ver/8/trunk/ch10-gl-3d/src/com/badlogic/androidgames/framework/gl/FPSCounter.java
+END
+Camera2D.java
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svn/!svn/ver/8/trunk/ch10-gl-3d/src/com/badlogic/androidgames/framework/gl/Camera2D.java
+END

@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 42
+/svn/!svn/ver/14/trunk/ch04-android-basics
+END
+default.properties
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/!svn/ver/3/trunk/ch04-android-basics/default.properties
+END
+.classpath
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svn/!svn/ver/3/trunk/ch04-android-basics/.classpath
+END
+.project
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/svn/!svn/ver/3/trunk/ch04-android-basics/.project
+END
+AndroidManifest.xml
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/!svn/ver/3/trunk/ch04-android-basics/AndroidManifest.xml
+END

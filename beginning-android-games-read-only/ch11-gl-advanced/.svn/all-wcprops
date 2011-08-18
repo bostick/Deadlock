@@ -1,0 +1,35 @@
+K 25
+svn:wc:ra_dav:version-url
+V 39
+/svn/!svn/ver/26/trunk/ch11-gl-advanced
+END
+default.properties
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svn/!svn/ver/9/trunk/ch11-gl-advanced/default.properties
+END
+.classpath
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/svn/!svn/ver/9/trunk/ch11-gl-advanced/.classpath
+END
+proguard.cfg
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/svn/!svn/ver/9/trunk/ch11-gl-advanced/proguard.cfg
+END
+.project
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/svn/!svn/ver/24/trunk/ch11-gl-advanced/.project
+END
+AndroidManifest.xml
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svn/!svn/ver/9/trunk/ch11-gl-advanced/AndroidManifest.xml
+END

@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 39
+/svn/!svn/ver/23/trunk/ch02-hello-world
+END
+default.properties
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svn/!svn/ver/11/trunk/ch02-hello-world/default.properties
+END
+.classpath
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/svn/!svn/ver/11/trunk/ch02-hello-world/.classpath
+END
+.project
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/svn/!svn/ver/23/trunk/ch02-hello-world/.project
+END
+AndroidManifest.xml
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svn/!svn/ver/11/trunk/ch02-hello-world/AndroidManifest.xml
+END
