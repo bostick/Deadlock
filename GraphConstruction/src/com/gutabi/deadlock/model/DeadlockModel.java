@@ -18,9 +18,10 @@ public class DeadlockModel {
 	//private DeadlockActivity act;
 	//private TextView status;
 	
-	public List<List<PointF>> roads;
+	public List<List<PointF>> roadSegments;
+	public List<PointF> inters;
 	
-	public List<PointF> curRoad;
+	public List<PointF> curSeg;
 	public PointF curPoint;
 	//public PointF curRoundedPoint;
 	public double totalDist = 0.0;
@@ -32,24 +33,9 @@ public class DeadlockModel {
 		//this.act = act;
 		//status = act.status;
 		
-		roads = new ArrayList<List<PointF>>();
+		roadSegments = new ArrayList<List<PointF>>();
+		inters = new ArrayList<PointF>();
 		
 	}
-	
-//	public void setStatusText(String text) { 
-//		act.status.setText(text);
-//	}
-	
-//	public static PointF roundToGrid(PointF point) {
-//		
-//		float x = point.x;
-//		float y = point.y;
-//		
-//		x = Math.round(x/GRID_DELTA)*GRID_DELTA;
-//		y = Math.round(y/GRID_DELTA)*GRID_DELTA;
-//		
-//		return new PointF(x, y);
-//		
-//	}
 	
 }

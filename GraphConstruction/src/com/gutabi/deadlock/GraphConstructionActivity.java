@@ -12,7 +12,7 @@ import com.gutabi.deadlock.controller.DeadlockController;
 import com.gutabi.deadlock.model.DeadlockModel;
 import com.gutabi.deadlock.view.DeadlockView;
 
-public class DeadlockActivity extends Activity {
+public class GraphConstructionActivity extends Activity {
 	
 	//Mode mode = Mode.DRAFTING;
 	
@@ -44,42 +44,42 @@ public class DeadlockActivity extends Activity {
 		
 	}
 	
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-	    MenuInflater inflater = getMenuInflater();
-	    inflater.inflate(R.menu.game_menu, menu);
-	    return true;
-	}
+//	@Override
+//	public boolean onCreateOptionsMenu(Menu menu) {
+//	    MenuInflater inflater = getMenuInflater();
+//	    inflater.inflate(R.menu.game_menu, menu);
+//	    return true;
+//	}
+//	
+//	@Override
+//	public boolean onOptionsItemSelected(MenuItem item) {
+//	    switch (item.getItemId()) {
+//	    case R.id.clear:
+//	    	controller.menuClear();
+//	    	return true;
+//	    case R.id.new_game:
+//	        
+//	        return true;
+//	    case R.id.quit:
+//	        
+//	        return true;
+//	    default:
+//	        return super.onOptionsItemSelected(item);
+//	    }
+//	}
 	
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-	    switch (item.getItemId()) {
-	    case R.id.clear:
-	    	controller.menuClear();
-	    	return true;
-	    case R.id.new_game:
-	        
-	        return true;
-	    case R.id.quit:
-	        
-	        return true;
-	    default:
-	        return super.onOptionsItemSelected(item);
-	    }
-	}
-	
-	@Override
-	public boolean onPrepareOptionsMenu(Menu menu) {
-		
-//		MenuItem contextModeItem = menu.findItem(R.id.toggle_mode);
+//	@Override
+//	public boolean onPrepareOptionsMenu(Menu menu) {
 //		
-//		if (mode == Mode.DRAFTING) {
-//			contextModeItem.setTitle("Start Simulating");
-//		} else if (mode == Mode.SIMULATING) {
-//			contextModeItem.setTitle("Stop (Back to Drafting)");
-//		}
-		
-		return true;
-	}
+////		MenuItem contextModeItem = menu.findItem(R.id.toggle_mode);
+////		
+////		if (mode == Mode.DRAFTING) {
+////			contextModeItem.setTitle("Start Simulating");
+////		} else if (mode == Mode.SIMULATING) {
+////			contextModeItem.setTitle("Stop (Back to Drafting)");
+////		}
+//		
+//		return true;
+//	}
 	
 }
