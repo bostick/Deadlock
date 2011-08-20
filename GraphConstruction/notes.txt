@@ -1,0 +1,40 @@
+
+notes on graph construction:
+
+
+immediately:
+1 starting from middle point of existing segment
+2 starting between existing segment
+3 starting from start of existing segment
+4 starting from end of existing segment
+
+5 ending in middle point of existing segment
+6 ending between existing segment
+7 ending in start of existing segment
+8 ending in end of existing segment
+
+
+
+
+TODO next:
+
+handle automatic splitting of segments when an intersection is added
+handle merging of segments when end points meet
+
+
+
+display trace of currently drawing segment
+when up, calculate everything
+
+handle disallowing of drawing roads on top of other roads
+handle disallowing of drawing roads too close to other roads
+
+
+
+
+
+TODO later:
+
+zooming in and out
+
+deleting segments

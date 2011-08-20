@@ -32,10 +32,18 @@ public class DeadlockModel {
 		
 		//this.act = act;
 		//status = act.status;
-		
 		roadSegments = new ArrayList<List<PointF>>();
 		inters = new ArrayList<PointF>();
 		
+	}
+	
+	public boolean intersContains(float x, float y) {
+		for (PointF p : inters) {
+			if (p.equals(x, y)) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 }
