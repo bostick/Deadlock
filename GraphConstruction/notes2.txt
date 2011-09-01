@@ -1,0 +1,46 @@
+
+down
+move
+move
+move
+up
+
+filter out middle of colinear triples
+
+filter out overlapping with existing edges and previous points in stroke
+
+
+for each pair of points:
+	figure out all events, in correct order (from oldest point to newest point)
+
+
+possibilities for starting (can only be one):
+	from empty
+	from 1-vertex
+	from 1+-vertex
+	
+possibilities for segment (can be multiple):
+	through a middle point
+	through between points
+	through a 1-vertex
+	through a 1+-vertex
+
+possibilities for ending (can only be one):
+	to empty
+	to middle point
+	to between points
+	to 1-vertex
+	to 1+-vertex
+
+
+
+case between points:
+	add point
+case middle point:
+	create vertex on point
+case 1+-vertex
+	add
+	break
+case 1-vertex:
+	merge
+	break

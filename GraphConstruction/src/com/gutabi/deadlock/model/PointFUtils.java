@@ -32,6 +32,34 @@ public final class PointFUtils {
 		}
 	}
 	
+	/**
+	 * return param for point b between <c, d>
+	 */
+	public static float param(PointF b, PointF c, PointF d) {
+		float xbc = (b.x - c.x);
+		float xdc = (d.x - c.x);
+		float ybc = (b.y - c.y);
+		float ydc = (d.y - c.y);
+		
+		if (xdc == 0.0) {
+			assert xbc == 0.0;
+			float uy = ybc / ydc;
+			return uy;
+		} else if (ydc == 0.0) {
+			assert ybc == 0.0;
+			float ux = xbc / xdc;
+			return ux;
+		} else {
+			float ux = xbc / xdc;
+			float uy = ybc / ydc;
+			assert ux == uy;
+			assert 0 <= ux;
+			assert ux <= 1;
+			return ux;
+		}
+		
+	}
+	
 	public static PointF intersection(PointF a, PointF b, PointF c, PointF d) throws OverlappingException {
 		if (a.equals(b.x, b.y)) {
 			throw new IllegalArgumentException("a and b are equal");
@@ -109,6 +137,7 @@ public final class PointFUtils {
 					} else if (cu > 0.0 && cu < 1.0) {
 						throw new OverlappingException();
 					} else if (cu == 1.0) {
+						// single point
 						return b;
 					} else {
 						//colinear

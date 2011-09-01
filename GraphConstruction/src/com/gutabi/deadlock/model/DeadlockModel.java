@@ -1,10 +1,8 @@
 package com.gutabi.deadlock.model;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -39,8 +37,18 @@ public class DeadlockModel {
 		return e;
 	}
 	
-	public Vertex createVertex() {
-		Vertex v = new VertexImpl();
+	public Vertex createVertex(PointF p) {
+		/*
+		 * there should only be 1 vertex with this point
+		 */
+		int count = 0;
+		for (Vertex w : vertices) {
+			if (PointFUtils.equals(p, w.getPointF())) {
+				count++;
+			}
+		}
+		assert count == 0;
+		Vertex v = new VertexImpl(p);
 		vertices.add(v);
 		return v;
 	}
@@ -63,13 +71,69 @@ public class DeadlockModel {
 			}
 		}
 		for (Edge e : edges) {
-			for (PointF d : e.getPoints()) {
-				if (PointFUtils.equals(b, d)) {
+			List<PointF> ePoints = e.getPoints();
+			for (int i = 0; i < ePoints.size()-1; i++) {
+				PointF c = ePoints.get(i);
+				PointF d = ePoints.get(i+1);
+				if (PointFUtils.intersection(b, c, d)) {
 					return e;
 				}
 			}
 		}
 		throw new IllegalArgumentException("point not found");
+	}
+	
+//	public Edge tryFindEdge(PointF b) {
+//		for (Vertex v : vertices) {
+//			PointF d = v.getPointF();
+//			if (PointFUtils.equals(b, d) && v.getEdges().size() > 1) {
+//				throw new IllegalArgumentException("point is on vertex");
+//			}
+//		}
+//		for (Edge e : edges) {
+//			List<PointF> ePoints = e.getPoints();
+//			for (int i = 0; i < ePoints.size()-1; i++) {
+//				PointF c = ePoints.get(i);
+//				PointF d = ePoints.get(i+1);
+//				if (PointFUtils.intersection(b, c, d)) {
+//					return e;
+//				}
+//			}
+//		}
+//		return null;
+//	}
+	
+	public class EdgeInfo {
+		public Edge edge;
+		public int index;
+		public EdgeInfo(Edge e, int index) {
+			this.edge = e;
+			this.index = index;
+		}
+	}
+	
+	public EdgeInfo tryFindEdgeInfo(PointF b) {
+		for (Vertex v : vertices) {
+			PointF d = v.getPointF();
+			if (PointFUtils.equals(b, d) && v.getEdges().size() > 1) {
+				throw new IllegalArgumentException("point is on vertex");
+			}
+		}
+		for (Edge e : edges) {
+			List<PointF> ePoints = e.getPoints();
+			for (int i = 0; i < ePoints.size()-1; i++) {
+				PointF c = ePoints.get(i);
+				PointF d = ePoints.get(i+1);
+				if (PointFUtils.intersection(b, c, d) && !PointFUtils.equals(b, c)) {
+					if (PointFUtils.equals(b, d)) {
+						return new EdgeInfo(e, i+1);
+					} else {
+						assert false;
+					}
+				}
+			}
+		}
+		return null;
 	}
 	
 	public int findIndex(Edge e, PointF b) {
@@ -88,7 +152,10 @@ public class DeadlockModel {
 		int count = 0;
 		for (Vertex v : vertices) {
 			PointF d = v.getPointF();
-			if (PointFUtils.equals(b, d)) {
+			/*
+			 * d may be null if in the midle of processing (and not currently consistent)
+			 */
+			if (d != null && PointFUtils.equals(b, d)) {
 				count++;
 				found = v;
 			}
@@ -122,75 +189,129 @@ public class DeadlockModel {
 	}
 	
 	public boolean checkConsistency() {
+		
 		for (Vertex v : vertices) {
+			
+			assert !((VertexImpl)v).isRemoved();
+			
+			assert v.getPointF() != null;
+			
 			int edgeCount = v.getEdges().size();
+			
+			/*
+			 * edgeCount cannot be 0, why have some free-floating vertex?
+			 */
+			assert edgeCount != 0;
+			
+			/*
+			 * edgeCount cannot be 2, edges should just be merged
+			 */
 			assert edgeCount != 2;
-			PointF p = v.getPointF();
-			int count = 0;
-			for (Vertex w : vertices) {
-				if (PointFUtils.equals(p, w.getPointF())) {
-					count++;
-				}
-			}
-			assert count == 1;
+			
+			/*
+			 * all edges in v should be unique
+			 */
+			int count;
 			for (Edge e : v.getEdges()) {
+				
+				assert !((EdgeImpl)e).isRemoved();
+				
 				count = 0;
 				for (Edge f : v.getEdges()) {
 					if (e == f) {
 						count++;
 					}
 				}
-				assert count == 1;
+				if (e.getStart() == v && e.getEnd() == v) {
+					assert count == 2;
+				} else {
+					assert count == 1;
+				}
 			}
 		}
-		/*
-		 * TODO: handle stand-alone loops that have start and end null and first and last points the same
-		 */
+		
 		for (Edge e : edges) {
-			for (PointF p : e.getPoints()) {
+			
+			assert !((EdgeImpl)e).isRemoved();
+			
+			boolean loop = false;
+			if (e.getStart() == e.getEnd()) {
+				loop = true;
+			} else {
+				assert e.getStart() != null && e.getEnd() != null;
+				assert !((VertexImpl)e.getStart()).isRemoved();
+				assert !((VertexImpl)e.getEnd()).isRemoved();
+			}
+			List<PointF> points = e.getPoints();
+			for (int i = 0; i < points.size(); i++) {
+				PointF p = points.get(i);
 				int count = 0;
 				for (PointF q : e.getPoints()) {
 					if (PointFUtils.equals(p, q)) {
 						count++;
 					}
 				}
-				//assert count == 1;
+				if (loop && (i == 0 || i == points.size()-1)) {
+					assert count == 2;
+				} else {
+					assert count == 1;
+				}
 			}
-//			assert e.getStart() != null;
-//			assert e.getEnd() != null;
 		}
 		return true;
 	}
 	
 	final class VertexImpl implements Vertex {
 		
-		private PointF p;
+		private final PointF p;
 		
-		private Set<Edge> eds = new HashSet<Edge>();
+		private List<Edge> eds = new ArrayList<Edge>();
+		
+		private Edge lastEdgeAdded;
 		
 		private boolean removed = false;
+		
+		VertexImpl(PointF p) {
+			this.p = p;
+		}
 		
 		public void add(Edge ed) {
 			if (removed) {
 				throw new IllegalStateException();
 			}
-			assert !eds.contains(ed);
+			if (!(ed.getStart() == this && ed.getEnd() == this)) {
+				assert !eds.contains(ed);
+			}
 			eds.add(ed);
+			lastEdgeAdded = ed;
 		}
 		
-		public Set<Edge> getEdges() {
+		public void remove(Edge ed) {
+			if (removed) {
+				throw new IllegalStateException();
+			}
+			assert eds.contains(ed);
+			eds.remove(ed);
+		}
+		
+		public List<Edge> getEdges() {
 			if (removed) {
 				throw new IllegalStateException();
 			}
 			return eds;
 		}
 		
-		public void setPointF(PointF p) {
-			if (removed) {
-				throw new IllegalStateException();
-			}
-			this.p = p;
+		public Edge getOnlyEdge() {
+			assert eds.size() == 1;
+			return lastEdgeAdded;
 		}
+		
+//		public void setPointF(PointF p) {
+//			if (removed) {
+//				throw new IllegalStateException();
+//			}
+//			this.p = p;
+//		}
 		
 		public PointF getPointF() {
 			if (removed) {
@@ -207,7 +328,14 @@ public class DeadlockModel {
 		}
 		
 		private void remove() {
+			if (removed) {
+				throw new IllegalStateException();
+			}
 			removed = true;
+		}
+		
+		private boolean isRemoved() {
+			return removed;
 		}
 	}
 	
@@ -259,16 +387,26 @@ public class DeadlockModel {
 			if (removed) {
 				throw new IllegalStateException();
 			}
-			for (int j = 1; j < points.size(); j++) {
-				PointF prev = points.get(j-1);
-				PointF cur = points.get(j);
+			for (int i = 0; i < points.size()-1; i++) {
+				PointF prev = points.get(i);
+				PointF cur = points.get(i+1);
 				canvas.drawLine(prev.x, prev.y, cur.x, cur.y, paint1);
 			}
-			for (int j = 1; j < points.size(); j++) {
-				PointF prev = points.get(j-1);
-				PointF cur = points.get(j);
+//			if (start == null && end == null) {
+//				PointF prev = points.get(points.size()-1);
+//				PointF cur = points.get(0);
+//				canvas.drawLine(prev.x, prev.y, cur.x, cur.y, paint1);
+//			}
+			for (int i = 0; i < points.size()-1; i++) {
+				PointF prev = points.get(i);
+				PointF cur = points.get(i+1);
 				canvas.drawLine(prev.x, prev.y, cur.x, cur.y, paint2);
 			}
+//			if (start == null && end == null) {
+//				PointF prev = points.get(points.size()-1);
+//				PointF cur = points.get(0);
+//				canvas.drawLine(prev.x, prev.y, cur.x, cur.y, paint2);
+//			}
 		}
 		
 		public void paint(Canvas canvas, Paint paint1) {
@@ -283,7 +421,14 @@ public class DeadlockModel {
 		}
 		
 		private void remove() {
+			if (removed) {
+				throw new IllegalStateException();
+			}
 			removed = true;
+		}
+		
+		private boolean isRemoved() {
+			return removed;
 		}
 	}
 	
