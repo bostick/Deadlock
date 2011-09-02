@@ -27,9 +27,7 @@ public class DeadlockController implements OnTouchListener {
 	
 	private PointF curPoint;
 	
-	//TreeMap<Float, Runnable> ops = new TreeMap<Float, Runnable>();
-	
-	//List<List<PointF>> strokes = new ArrayList<List<PointF>>();
+	private List<List<PointF>> strokes = new ArrayList<List<PointF>>();
 	
 	public DeadlockController(DeadlockModel model, DeadlockView view) {
 		this.model = model;
@@ -79,6 +77,7 @@ public class DeadlockController implements OnTouchListener {
 	private void touchStart(float x, float y) {
 		curPoint = new PointF(x, y);
 		List<PointF> pointsToBeProcessed = model.getPointsToBeProcessed();
+		strokes.add(new ArrayList<PointF>());
 		pointsToBeProcessed.add(curPoint);
 	}
 	
@@ -110,8 +109,10 @@ public class DeadlockController implements OnTouchListener {
 		 * any overlapping causes a new stroke to be started
 		 */
 		
-		//boolean overlaps = false;
-			
+		/*
+		 * handle intersecting and overlapping with itself first
+		 */
+		
 		List<PointToBeAdded> betweenABPoints = new ArrayList<PointToBeAdded>();
 		
 		for (int j = 0; j < pointsToBeProcessed.size()-2; j++) {
@@ -121,15 +122,60 @@ public class DeadlockController implements OnTouchListener {
 				PointF inter = PointFUtils.intersection(a, b, c, d);
 				if (inter != null) {
 					if (!(PointFUtils.equals(inter, c) || PointFUtils.equals(inter, d))) {
-						betweenABPoints.add(new PointToBeAdded(inter, j, PointFUtils.param(inter, c, d)));
+						betweenABPoints.add(new PointToBeAdded(inter, j, PointFUtils.param(inter, c, d), Event.MIDDLE));
 					}
 					if (!(PointFUtils.equals(inter, a) || PointFUtils.equals(inter, b))) {
-						betweenABPoints.add(new PointToBeAdded(inter, pointsToBeProcessed.size()-1, PointFUtils.param(inter, a, b)));
+						betweenABPoints.add(new PointToBeAdded(inter, pointsToBeProcessed.size()-2, PointFUtils.param(inter, a, b), Event.MIDDLE));
 					}
 				}
 			} catch (OverlappingException ex) {
 				assert false;
-				//overlaps = true;
+				float cParam = PointFUtils.param(c, a, b);
+				float dParam = PointFUtils.param(d, a, b);
+				if ((cParam == 0 && dParam == 1) || (dParam == 0 && cParam == 1)) {
+					// identical
+					// a is end of stroke
+					// b is start of stroke
+				} else if ((0 < cParam && cParam < 1) && (0 < dParam && dParam < 1)) {
+					// <a, b> completely overlaps <c, d>
+					if (cParam < dParam) {
+						//insert c between a and b
+						// insert d between a and b
+						// c is end
+						// d is start
+					} else {
+						// insert d between a and b
+						//insert c between a and b
+						// d is end
+						// c is start
+					}
+				} else if ((0 > cParam || cParam > 1) && (0 > dParam || dParam > 1)) {
+					// <c, d> completely overlaps <a, b>
+					if (cParam < dParam) {
+						// insert a between c and d
+						// insert b between c and d
+						// a is end
+						// b is start
+					} else {
+						// insert b between c and d
+						// insert a between c and d
+						// a is end
+						// b is start
+						
+					}
+				} else if ((0 < cParam && cParam < 1) && (0 > dParam || dParam > 1)) {
+					// <a, b> overlaps c
+					// insert c between a and b
+					// c is end
+					// b is start
+				} else if ((0 > cParam || cParam > 1) && (0 < dParam && dParam < 1)) {
+					// <a, b> overlaps d
+					// insert d between a and b
+					// c is end
+					// b is start
+				} else {
+					assert false;
+				}
 			}
 		}
 		
@@ -138,15 +184,24 @@ public class DeadlockController implements OnTouchListener {
 			PointF p = ptba.p;
 			int index = ptba.index;
 			float param = ptba.param;
-			PointF aa = pointsToBeProcessed.get(index);
-			PointF bb = pointsToBeProcessed.get(index+1);
-			assert !PointFUtils.equals(p, aa);
-			assert !PointFUtils.equals(p, bb);
-			assert PointFUtils.intersection(p, aa, bb);
-			assert PointFUtils.param(p, aa, bb) == param;
-			pointsToBeProcessed.add(index+1, p);
+			Event event = ptba.e;
+			switch (event) {
+			case MIDDLE:
+				PointF aa = pointsToBeProcessed.get(index);
+				PointF bb = pointsToBeProcessed.get(index+1);
+				assert !PointFUtils.equals(p, aa);
+				assert !PointFUtils.equals(p, bb);
+				assert PointFUtils.intersection(p, aa, bb);
+				assert PointFUtils.param(p, aa, bb) == param;
+				pointsToBeProcessed.add(index+1, p);
+				break;
+			}
 		}
 		betweenABPoints.clear();
+		
+		/*
+		 * now handle intersecting and overlapping with existing edges
+		 */
 		
 		/*
 		 * collect between-events for edge e (<a, b> could be going between middle points <c, d>)
@@ -163,42 +218,93 @@ public class DeadlockController implements OnTouchListener {
 				PointF d = edgePoints.get(j+1);
 				try {
 					PointF inter = PointFUtils.intersection(a, b, c, d);
-					if (inter != null) {
-						if (!(PointFUtils.equals(inter, c) || PointFUtils.equals(inter, d))) {
-							betweenCDPoints.add(new PointToBeAdded(inter, j, PointFUtils.param(inter, c, d)));
+					if (inter != null && !(PointFUtils.equals(inter, c) || PointFUtils.equals(inter, a))) {
+						if (!PointFUtils.equals(inter, d)) {
+							betweenCDPoints.add(new PointToBeAdded(inter, j, PointFUtils.param(inter, c, d), Event.MIDDLE));
 						}
-						if (!(PointFUtils.equals(inter, a) || PointFUtils.equals(inter, b))) {
-							betweenABPoints.add(new PointToBeAdded(inter, pointsToBeProcessed.size()-1, PointFUtils.param(inter, a, b)));
+						if (!PointFUtils.equals(inter, b)) {
+							betweenABPoints.add(new PointToBeAdded(inter, pointsToBeProcessed.size()-2, PointFUtils.param(inter, a, b), Event.MIDDLE));
 						}
 					}
 				} catch (OverlappingException ex) {
 					assert false;
-					//overlaps = true;
+					float cParam = PointFUtils.param(c, a, b);
+					float dParam = PointFUtils.param(d, a, b);
+					if ((cParam == 0 && dParam == 1) || (dParam == 0 && cParam == 1)) {
+						// identical
+						// a is end of stroke
+						// b is start of stroke
+					} else if ((0 < cParam && cParam < 1) && (0 < dParam && dParam < 1)) {
+						// <a, b> completely overlaps <c, d>
+						if (cParam < dParam) {
+							//insert c between a and b
+							// insert d between a and b
+							// c is end
+							// d is start
+						} else {
+							// insert d between a and b
+							//insert c between a and b
+							// d is end
+							// c is start
+						}
+					} else if ((0 > cParam || cParam > 1) && (0 > dParam || dParam > 1)) {
+						// <c, d> completely overlaps <a, b>
+						if (cParam < dParam) {
+							// insert a between c and d
+							// insert b between c and d
+							// a is end
+							// b is start
+						} else {
+							// insert b between c and d
+							// insert a between c and d
+							// a is end
+							// b is start
+							
+						}
+					} else if ((0 < cParam && cParam < 1) && (0 > dParam || dParam > 1)) {
+						// <a, b> overlaps c
+						// insert c between a and b
+						// c is end
+						// b is start
+					} else if ((0 > cParam || cParam > 1) && (0 < dParam && dParam < 1)) {
+						// <a, b> overlaps d
+						// insert d between a and b
+						// c is end
+						// b is start
+					} else {
+						assert false;
+					}
 				}
-			}
+			} // for edgePoint j
 			
 			Collections.sort(betweenCDPoints, ptbaComparatorDescending);
 			for (PointToBeAdded ptba : betweenCDPoints) {
 				PointF p = ptba.p;
 				int index = ptba.index;
 				float param = ptba.param;
-				PointF cc = pointsToBeProcessed.get(index);
-				PointF dd = pointsToBeProcessed.get(index+1);
-				assert !PointFUtils.equals(p, cc);
-				assert !PointFUtils.equals(p, dd);
-				assert PointFUtils.intersection(p, cc, dd);
-				assert PointFUtils.param(p, cc, dd) == param;
-				edgePoints.add(index+1, p);
+				Event event = ptba.e;
+				switch (event) {
+				case MIDDLE:
+					PointF cc = edgePoints.get(index);
+					PointF dd = edgePoints.get(index+1);
+					assert !PointFUtils.equals(p, cc);
+					assert !PointFUtils.equals(p, dd);
+					assert PointFUtils.intersection(p, cc, dd);
+					assert PointFUtils.param(p, cc, dd) == param;
+					edgePoints.add(index+1, p);
+					break;
+				}
 			}
 			betweenCDPoints.clear();
 			
-		}
+		} // for Edge e
 		
 		Collections.sort(betweenABPoints, ptbaComparatorDescending);
 		for (PointToBeAdded ptba : betweenABPoints) {
 			PointF p = ptba.p;
 			int index = ptba.index;
 			float param = ptba.param;
+			Event event = ptba.e;
 			PointF aa = pointsToBeProcessed.get(index);
 			PointF bb = pointsToBeProcessed.get(index+1);
 			assert !PointFUtils.equals(p, aa);
@@ -209,31 +315,14 @@ public class DeadlockController implements OnTouchListener {
 		}
 		betweenABPoints.clear();
 		
-//		if (strokes.isEmpty()) {
-//			strokes.add(new ArrayList<PointF>());
-//		}
-//		
-//		List<PointF> curStroke = strokes.get(strokes.size()-1);
-//		if (curStroke.isEmpty()) {
-//			if (!overlaps) {
-//				// first to be added
-//				curStroke.add(a);
-//				curStroke.add(b);
-//			}
-//		} else {
-//			if (!overlaps) {
-//				// continue
-//				curStroke.add(b);
-//			} else {
-//				// finish and start new
-//				strokes.add(new ArrayList<PointF>());
-//			}
-//		}
-		
-//		curPoint = b;
 	}
 	
-	class PointToBeAdded {
+	enum Event {
+		MIDDLE, STARTSTROKE, STOPSTROKE;
+	}
+	
+	static class PointToBeAdded {
+		
 		PointF p;
 		
 		/*
@@ -245,10 +334,16 @@ public class DeadlockController implements OnTouchListener {
 		 * value ranging from 0..1 measuring distance between points at index and index+1, used for sorting
 		 */
 		float param;
-		PointToBeAdded(PointF p, int index, float param) {
+		
+		Event e;
+		
+		PointToBeAdded(PointF p, int index, float param, Event e) {
+			assert param > 0;
+			assert param < 1;
 			this.p = p;
 			this.index = index;
 			this.param = param;
+			this.e = e;
 		}
 	}
 	
@@ -277,31 +372,30 @@ public class DeadlockController implements OnTouchListener {
 	
 	private void touchUp() {
 		
+		List<PointF> pointsToBeProcessed = model.getPointsToBeProcessed();
+		
+		List<PointF> curStroke = strokes.get(strokes.size()-1);
+		for (int i = 0; i < pointsToBeProcessed.size(); i++) {
+			curStroke.add(pointsToBeProcessed.get(i));
+		}
+		pointsToBeProcessed.clear();
+		
 		/*
 		 * each stroke consists of pairs <a, b>
 		 * there are no events between <a, b>
 		 * all events occur at point a or point b
 		 */
 		
-//		for (List<PointF> stroke : strokes) {
-//			for (int i = 0; i < stroke.size()-1; i++) {
-//				PointF a = stroke.get(i);
-//				PointF b = stroke.get(i+1);
-//				process(a, b);
-//			}
-//		}
-		
-		List<PointF> pointsToBeProcessed = model.getPointsToBeProcessed();
-		
-		for (int i = 0; i < pointsToBeProcessed.size()-1; i++) {
-			PointF a = pointsToBeProcessed.get(i);
-			PointF b = pointsToBeProcessed.get(i+1);
-			process(a, b);
-			model.checkConsistency();
+		for (List<PointF> stroke : strokes) {
+			for (int i = 0; i < stroke.size()-1; i++) {
+				PointF a = stroke.get(i);
+				PointF b = stroke.get(i+1);
+				process(a, b);
+				model.checkConsistency();
+			}
 		}
 		
-		//strokes.clear();
-		pointsToBeProcessed.clear();
+		strokes.clear();
 		
 		curPoint = null;
 	}

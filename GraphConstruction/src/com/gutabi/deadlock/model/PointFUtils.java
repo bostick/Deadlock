@@ -33,7 +33,7 @@ public final class PointFUtils {
 	}
 	
 	/**
-	 * return param for point b between <c, d>
+	 * return param for point b on line defined by <c, d>
 	 */
 	public static float param(PointF b, PointF c, PointF d) {
 		float xbc = (b.x - c.x);
@@ -53,8 +53,8 @@ public final class PointFUtils {
 			float ux = xbc / xdc;
 			float uy = ybc / ydc;
 			assert ux == uy;
-			assert 0 <= ux;
-			assert ux <= 1;
+//			assert 0 <= ux;
+//			assert ux <= 1;
 			return ux;
 		}
 		

@@ -81,7 +81,6 @@ public final class EdgeUtils {
 	}
 	
 	public static Edge merge(Edge e1, Edge e2, DeadlockModel model) {
-		assert e1 != e2;
 		
 		List<PointF> e1Points = e1.getPoints();
 		Vertex e1Start = e1.getStart();
@@ -90,6 +89,34 @@ public final class EdgeUtils {
 		List<PointF> e2Points = e2.getPoints();
 		Vertex e2Start = e2.getStart();
 		Vertex e2End = e2.getEnd();
+		
+		if (e1 == e2) {
+			assert e1Start == e1End;
+			// in the middle of merging a loop
+			
+			int e1StartEdgeCount = e1Start.getEdges().size();
+			
+			if (e1StartEdgeCount == 2) {
+				// stand-alone loop
+				
+				e1.setStart(null);
+				e1.setEnd(null);
+				
+//				e1End.remove(e1);
+//				e1End.add(newEdge);
+//				
+//				e2Start.remove(e2);
+//				e2Start.add(newEdge);
+				
+				model.removeVertex(e1Start);
+				
+			} else {
+				// start/end vertex has other edges
+				// nothing to do
+			}
+			
+			return e1;
+		}
 		
 		Edge newEdge = model.createEdge();
 		List<PointF> newEdgePoints = newEdge.getPoints();
@@ -134,19 +161,40 @@ public final class EdgeUtils {
 					newEdgePoints.add(e2Points.get(i));
 				}
 				
-				newEdge.setStart(null);
-				newEdge.setEnd(null);
+				int e1StartEdgeCount = e1Start.getEdges().size();
 				
-//				e1End.remove(e1);
-//				e1End.add(newEdge);
-//				
-//				e2Start.remove(e2);
-//				e2Start.add(newEdge);
-				
-				model.removeVertex(e1Start);
-				model.removeVertex(e1End);
-				model.removeEdge(e1);
-				model.removeEdge(e2);
+				if (e1StartEdgeCount == 1) {
+					// stand-alone loop
+					
+					newEdge.setStart(null);
+					newEdge.setEnd(null);
+					
+//					e1End.remove(e1);
+//					e1End.add(newEdge);
+//					
+//					e2Start.remove(e2);
+//					e2Start.add(newEdge);
+					
+					model.removeVertex(e1Start);
+					model.removeVertex(e1End);
+					model.removeEdge(e1);
+					model.removeEdge(e2);
+				} else {
+					// start/end vertex has other edges
+					
+					newEdge.setStart(e1Start);
+					newEdge.setEnd(e1Start);
+					
+					e1Start.remove(e1);
+					e1Start.remove(e2);
+					e1Start.add(newEdge);
+					e1Start.add(newEdge);
+					
+					model.removeVertex(e1End);
+					model.removeEdge(e1);
+					model.removeEdge(e2);
+					
+				}
 				
 			} else {
 				for (int i = e1Points.size()-1; i >= 0; i--) {
