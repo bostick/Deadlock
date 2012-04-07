@@ -1,32 +1,30 @@
-package com.gutabi.deadlock.model;
+package com.gutabi.deadlock.swing.utils;
 
-import android.graphics.PointF;
-
-public final class PointFUtils {
+public final class PointUtils {
 	
-	private PointFUtils() {
+	private PointUtils() {
 		
 	}
 	
-	public static boolean equals(PointF a, PointF b) {
-		return ((a.x == b.x) && (a.y == b.y));
+	public static boolean equals(Point a, Point b) {
+		return DoubleUtils.doubleEqual(a.x, b.x) && DoubleUtils.doubleEqual(a.y, b.y);
 	}
 	
-	public static boolean intersection(PointF b, PointF d) {
-		return ((b.x == d.x) && (b.y == d.y));
-	}
+//	public static boolean intersection(Point b, Point d) {
+//		return ((b.x == d.x) && (b.y == d.y));
+//	}
 	
-	public static boolean intersection(PointF b, PointF c, PointF d) {
-		float xbc = (b.x - c.x);
-		float xdc = (d.x - c.x);
-		float ybc = (b.y - c.y);
-		float ydc = (d.y - c.y);
-		float denom = (xdc * xdc + ydc * ydc);
-		float u = ((xbc * xdc) + (ybc * ydc)) / denom;
+	public static boolean intersection(Point b, Point c, Point d) {
+		double xbc = (b.x - c.x);
+		double xdc = (d.x - c.x);
+		double ybc = (b.y - c.y);
+		double ydc = (d.y - c.y);
+		double denom = (xdc * xdc + ydc * ydc);
+		double u = ((xbc * xdc) + (ybc * ydc)) / denom;
 		if (0 <= u && u <= 1) {
-			float x = c.x + u * xdc;
-			float y = c.y + u * ydc;
-			return ((b.x == x) && (b.y == y));
+			double x = c.x + u * xdc;
+			double y = c.y + u * ydc;
+			return DoubleUtils.doubleEqual(b.x, x) && DoubleUtils.doubleEqual(b.y, y);
 		} else {
 			return false;
 		}
@@ -35,24 +33,24 @@ public final class PointFUtils {
 	/**
 	 * return param for point b on line defined by <c, d>
 	 */
-	public static float param(PointF b, PointF c, PointF d) {
-		float xbc = (b.x - c.x);
-		float xdc = (d.x - c.x);
-		float ybc = (b.y - c.y);
-		float ydc = (d.y - c.y);
+	public static double param(Point b, Point c, Point d) {
+		double xbc = (b.x - c.x);
+		double xdc = (d.x - c.x);
+		double ybc = (b.y - c.y);
+		double ydc = (d.y - c.y);
 		
 		if (xdc == 0.0) {
 			assert xbc == 0.0;
-			float uy = ybc / ydc;
+			double uy = ybc / ydc;
 			return uy;
 		} else if (ydc == 0.0) {
 			assert ybc == 0.0;
-			float ux = xbc / xdc;
+			double ux = xbc / xdc;
 			return ux;
 		} else {
-			float ux = xbc / xdc;
-			float uy = ybc / ydc;
-			assert ux == uy;
+			double ux = xbc / xdc;
+			double uy = ybc / ydc;
+			assert DoubleUtils.doubleEqual(ux, uy) : Math.abs(ux - uy);
 //			assert 0 <= ux;
 //			assert ux <= 1;
 			return ux;
@@ -60,27 +58,27 @@ public final class PointFUtils {
 		
 	}
 	
-	public static PointF intersection(PointF a, PointF b, PointF c, PointF d) throws OverlappingException {
-		if (PointFUtils.equals(a, b)) {
+	public static Point intersection(Point a, Point b, Point c, Point d) throws OverlappingException {
+		if (PointUtils.equals(a, b)) {
 			throw new IllegalArgumentException("a and b are equal");
 		}
-		if (PointFUtils.equals(c, d)) {
+		if (PointUtils.equals(c, d)) {
 			throw new IllegalArgumentException("c and d are equal");
 		}
-		float ydc = (d.y - c.y);
-		float xba = (b.x - a.x);
-		float xdc = (d.x - c.x);
-		float yba = (b.y - a.y);
-		float yac = (a.y - c.y);
-		float xac = (a.x - c.x);
-		float denom = (xba * ydc) - (xdc * yba);
-		float uabn = ((xdc * yac) - (xac * ydc));
-		float ucdn = ((xba * yac) - (xac * yba));
+		double ydc = (d.y - c.y);
+		double xba = (b.x - a.x);
+		double xdc = (d.x - c.x);
+		double yba = (b.y - a.y);
+		double yac = (a.y - c.y);
+		double xac = (a.x - c.x);
+		double denom = (xba * ydc) - (xdc * yba);
+		double uabn = ((xdc * yac) - (xac * ydc));
+		double ucdn = ((xba * yac) - (xac * yba));
 		if (denom == 0.0) {
 			if (uabn == 0.0 && ucdn == 0.0) {
 				//overlapping, or identical
 				
-				float cu;
+				double cu;
 				if (xba != 0.0) {
 					cu = (c.x - a.x)/xba;
 					if (yba != 0.0) {
@@ -90,7 +88,7 @@ public final class PointFUtils {
 					cu = (c.y - a.y)/yba;
 				}
 				
-				float du;
+				double du;
 				if (xba != 0.0) {
 					du = (d.x - a.x)/xba;
 					if (yba != 0.0) {
@@ -101,7 +99,7 @@ public final class PointFUtils {
 				}
 				
 				if (du < cu) {
-					float tmp = cu;
+					double tmp = cu;
 					cu = du;
 					du = tmp;
 				}
@@ -151,13 +149,13 @@ public final class PointFUtils {
 			}
 		} else {
 			// skew
-			float uab = uabn / denom;
-			float ucd = ucdn / denom;
+			double uab = uabn / denom;
+			double ucd = ucdn / denom;
 			if ((0 <= uab && uab <= 1) && (0 <= ucd && ucd <= 1)) {
 				// intersecting
-				float x = a.x + uab * xba;
-				float y = a.y + uab * yba;
-				return new PointF(x, y);
+				double x = a.x + uab * xba;
+				double y = a.y + uab * yba;
+				return new Point(x, y);
 			} else {
 				// not intersecting
 				return null;

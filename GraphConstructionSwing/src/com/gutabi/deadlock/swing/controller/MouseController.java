@@ -1,99 +1,58 @@
-package com.gutabi.deadlock.controller;
+package com.gutabi.deadlock.swing.controller;
 
+import static com.gutabi.deadlock.swing.model.DeadlockModel.MODEL;
+import static com.gutabi.deadlock.swing.view.DeadlockView.VIEW;
+
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import android.graphics.PointF;
-import android.util.Log;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.View.OnTouchListener;
+import com.gutabi.deadlock.swing.model.DeadlockModel.EdgeInfo;
+import com.gutabi.deadlock.swing.model.Edge;
+import com.gutabi.deadlock.swing.model.Vertex;
+import com.gutabi.deadlock.swing.utils.DoubleUtils;
+import com.gutabi.deadlock.swing.utils.EdgeUtils;
+import com.gutabi.deadlock.swing.utils.OverlappingException;
+import com.gutabi.deadlock.swing.utils.Point;
+import com.gutabi.deadlock.swing.utils.PointUtils;
 
-import com.gutabi.deadlock.model.DeadlockModel;
-import com.gutabi.deadlock.model.DeadlockModel.EdgeInfo;
-import com.gutabi.deadlock.model.Edge;
-import com.gutabi.deadlock.model.EdgeUtils;
-import com.gutabi.deadlock.model.OverlappingException;
-import com.gutabi.deadlock.model.PointFUtils;
-import com.gutabi.deadlock.model.Vertex;
-import com.gutabi.deadlock.view.DeadlockView;
-
-public class DeadlockController implements OnTouchListener {
+public class MouseController implements MouseListener, MouseMotionListener {
 	
-	private DeadlockModel model;
-	private DeadlockView view;
+	private Point curPoint;
+	private List<Point> curStroke;
+	private List<List<Point>> strokes = new ArrayList<List<Point>>();
 	
-	private PointF curPoint;
-	private List<PointF> curStroke;
-	private List<List<PointF>> strokes = new ArrayList<List<PointF>>();
-	
-	public DeadlockController(DeadlockModel model, DeadlockView view) {
-		this.model = model;
-		this.view = view;
+	public void init() {
+		VIEW.panel.addMouseListener(this);
+		VIEW.panel.addMouseMotionListener(this);
 	}
 	
-	
-	/*
-	 * round a to nearest multiple of b
-	 */
-	static float round(float a, int b) {
-		return Math.round(a / b) * b;
-	}
-	
-	/*
-	 * round coords from event to nearest multiple of:
-	 */
-	int roundingFactor = 5;
-	
-	public boolean onTouch(View ignored, MotionEvent event) {
-		float x = event.getX();
-		float y = event.getY();
-		
-		x = round(x, roundingFactor);
-		y = round(y, roundingFactor);
-		
-		switch (event.getAction()) {
-		case MotionEvent.ACTION_DOWN:
-			Log.d("touch", "DOWN <"+x+","+y+">");
-			touchStart(x, y);
-			view.invalidate();
-			break;
-		case MotionEvent.ACTION_MOVE:
-			Log.d("touch", "MOVE <"+x+","+y+">");
-			touchMove(x, y);
-			view.invalidate();
-			break;
-		case MotionEvent.ACTION_UP:
-			Log.d("touch", "UP   <"+x+","+y+">");
-			touchUp();
-			view.invalidate();
-			break;
-		}
-		return true;
-	}
-	
-	private void touchStart(float x, float y) {
-		curPoint = new PointF(x, y);
-		List<PointF> pointsToBeProcessed = model.getPointsToBeProcessed();
-		curStroke = new ArrayList<PointF>();
+	public void pressed(Point ev) {
+		curPoint = ev;
+		List<Point> pointsToBeProcessed = MODEL.getPointsToBeProcessed();
+		curStroke = new ArrayList<Point>();
 		curStroke.add(curPoint);
 		strokes.add(curStroke);
 		pointsToBeProcessed.add(curPoint);
+		
+		VIEW.repaint();
 	}
 	
-	private void touchMove(float x, float y) {
+	public void dragged(Point ev) {
 		
-		PointF a = curPoint;
+		Point a = curPoint;
 		
-		PointF b = new PointF(x, y);
+		Point b = ev;
 		
 		/*
 		 * ignore repeated points
 		 */
 		
-		if (PointFUtils.equals(a, b)) {
+		if (PointUtils.equals(a, b)) {
 			return;
 		}
 		
@@ -101,7 +60,7 @@ public class DeadlockController implements OnTouchListener {
 		curStroke.add(b);
 		
 		{
-		List<PointF> pointsToBeProcessed = model.getPointsToBeProcessed();
+		List<Point> pointsToBeProcessed = MODEL.getPointsToBeProcessed();
 		pointsToBeProcessed.add(curPoint);
 		}
 		
@@ -122,21 +81,21 @@ public class DeadlockController implements OnTouchListener {
 		List<PointToBeAdded> betweenABPoints = new ArrayList<PointToBeAdded>();
 		
 		for (int j = 0; j < curStroke.size()-2; j++) {
-			PointF c = curStroke.get(j);
-			PointF d = curStroke.get(j+1);
+			Point c = curStroke.get(j);
+			Point d = curStroke.get(j+1);
 			try {
-				PointF inter = PointFUtils.intersection(a, b, c, d);
-				if (inter != null && !(PointFUtils.equals(inter, c) || PointFUtils.equals(inter, a))) {
-					if (!PointFUtils.equals(inter, d)) {
-						betweenABPoints.add(new PointToBeAdded(inter, j, PointFUtils.param(inter, c, d), Event.POINT));
+				Point inter = PointUtils.intersection(a, b, c, d);
+				if (inter != null && !(PointUtils.equals(inter, c) || PointUtils.equals(inter, a))) {
+					if (!PointUtils.equals(inter, d)) {
+						betweenABPoints.add(new PointToBeAdded(inter, j, PointUtils.param(inter, c, d), Event.POINT, c, d));
 					}
-					if (!PointFUtils.equals(inter, b)) {
-						betweenABPoints.add(new PointToBeAdded(inter, curStroke.size()-2, PointFUtils.param(inter, a, b), Event.POINT));
+					if (!PointUtils.equals(inter, b)) {
+						betweenABPoints.add(new PointToBeAdded(inter, curStroke.size()-2, PointUtils.param(inter, a, b), Event.POINT, a, b));
 					}
 				}
 			} catch (OverlappingException ex) {
-				float cParam = PointFUtils.param(c, a, b);
-				float dParam = PointFUtils.param(d, a, b);
+				double cParam = PointUtils.param(c, a, b);
+				double dParam = PointUtils.param(d, a, b);
 				if ((cParam == 0 && dParam == 1) || (dParam == 0 && cParam == 1)) {
 					// identical
 					// a is end of stroke
@@ -192,18 +151,21 @@ public class DeadlockController implements OnTouchListener {
 		
 		Collections.sort(betweenABPoints, ptbaComparatorDescending);
 		for (PointToBeAdded ptba : betweenABPoints) {
-			PointF p = ptba.p;
+			Point p = ptba.p;
 			int index = ptba.index;
-			float param = ptba.param;
+			double param = ptba.param;
 			Event event = ptba.e;
 			switch (event) {
 			case POINT:
-				PointF aa = curStroke.get(index);
-				PointF bb = curStroke.get(index+1);
-				assert !PointFUtils.equals(p, aa);
-				assert !PointFUtils.equals(p, bb);
-				assert PointFUtils.intersection(p, aa, bb);
-				assert PointFUtils.param(p, aa, bb) == param;
+				Point aa = curStroke.get(index);
+				Point bb = curStroke.get(index+1);
+				assert !PointUtils.equals(p, aa);
+				assert !PointUtils.equals(p, bb);
+				assert PointUtils.intersection(p, aa, bb);
+				assert aa == ptba.a;
+				assert bb == ptba.b;
+				double tmp = PointUtils.param(p, aa, bb);
+				assert DoubleUtils.doubleEqual(tmp, param) : Math.abs(tmp - param);
 				curStroke.add(index+1, p);
 				break;
 			}
@@ -219,33 +181,33 @@ public class DeadlockController implements OnTouchListener {
 		 * insert them later
 		 */
 		
-		for (Edge e : model.getEdges()) {
+		for (Edge e : MODEL.getEdges()) {
 			
 			List<PointToBeAdded> betweenCDPoints = new ArrayList<PointToBeAdded>();
 			
-			List<PointF> edgePoints = e.getPoints();
+			List<Point> edgePoints = e.getPoints();
 			for (int j = 0; j < edgePoints.size()-1; j++) {
-				PointF c = edgePoints.get(j);
-				PointF d = edgePoints.get(j+1);
+				Point c = edgePoints.get(j);
+				Point d = edgePoints.get(j+1);
 				try {
-					PointF inter = PointFUtils.intersection(a, b, c, d);
-					if (inter != null && !(PointFUtils.equals(inter, c) || PointFUtils.equals(inter, a))) {
-						if (!PointFUtils.equals(inter, d)) {
-							betweenCDPoints.add(new PointToBeAdded(inter, j, PointFUtils.param(inter, c, d), Event.POINT));
+					Point inter = PointUtils.intersection(a, b, c, d);
+					if (inter != null && !(PointUtils.equals(inter, c) || PointUtils.equals(inter, a))) {
+						if (!PointUtils.equals(inter, d)) {
+							betweenCDPoints.add(new PointToBeAdded(inter, j, PointUtils.param(inter, c, d), Event.POINT, c, d));
 						}
-						if (!PointFUtils.equals(inter, b)) {
-							betweenABPoints.add(new PointToBeAdded(inter, curStroke.size()-2, PointFUtils.param(inter, a, b), Event.POINT));
+						if (!PointUtils.equals(inter, b)) {
+							betweenABPoints.add(new PointToBeAdded(inter, curStroke.size()-2, PointUtils.param(inter, a, b), Event.POINT, a, b));
 						}
 					}
 				} catch (OverlappingException ex) {
-					float cParam = PointFUtils.param(c, a, b);
-					float dParam = PointFUtils.param(d, a, b);
+					double cParam = PointUtils.param(c, a, b);
+					double dParam = PointUtils.param(d, a, b);
 					if ((cParam == 0 && dParam == 1) || (dParam == 0 && cParam == 1)) {
 						// identical
 						// a is end of stroke
 						// b is start of stroke
 						assert false;
-						strokes.get(strokes.size()-1);
+						//strokes.get(strokes.size()-1);
 					} else if ((0 < cParam && cParam < 1) && (0 < dParam && dParam < 1)) {
 						// <a, b> completely overlaps <c, d>
 						if (cParam < dParam) {
@@ -296,18 +258,21 @@ public class DeadlockController implements OnTouchListener {
 			
 			Collections.sort(betweenCDPoints, ptbaComparatorDescending);
 			for (PointToBeAdded ptba : betweenCDPoints) {
-				PointF p = ptba.p;
+				Point p = ptba.p;
 				int index = ptba.index;
-				float param = ptba.param;
+				double param = ptba.param;
 				Event event = ptba.e;
 				switch (event) {
 				case POINT:
-					PointF cc = edgePoints.get(index);
-					PointF dd = edgePoints.get(index+1);
-					assert !PointFUtils.equals(p, cc);
-					assert !PointFUtils.equals(p, dd);
-					assert PointFUtils.intersection(p, cc, dd);
-					assert PointFUtils.param(p, cc, dd) == param;
+					Point cc = edgePoints.get(index);
+					Point dd = edgePoints.get(index+1);
+					assert !PointUtils.equals(p, cc);
+					assert !PointUtils.equals(p, dd);
+					assert PointUtils.intersection(p, cc, dd);
+					assert cc == ptba.a;
+					assert dd == ptba.b;
+					double tmp = PointUtils.param(p, cc, dd);
+					assert DoubleUtils.doubleEqual(tmp, param) : Math.abs(tmp - param);
 					edgePoints.add(index+1, p);
 					break;
 				}
@@ -318,23 +283,28 @@ public class DeadlockController implements OnTouchListener {
 		
 		Collections.sort(betweenABPoints, ptbaComparatorDescending);
 		for (PointToBeAdded ptba : betweenABPoints) {
-			PointF p = ptba.p;
+			Point p = ptba.p;
 			int index = ptba.index;
-			float param = ptba.param;
+			double param = ptba.param;
 			Event event = ptba.e;
 			switch (event) {
 			case POINT:
-				PointF aa = curStroke.get(index);
-				PointF bb = curStroke.get(index+1);
-				assert !PointFUtils.equals(p, aa);
-				assert !PointFUtils.equals(p, bb);
-				assert PointFUtils.intersection(p, aa, bb);
-				assert PointFUtils.param(p, aa, bb) == param;
+				Point aa = curStroke.get(index);
+				Point bb = curStroke.get(index+1);
+				assert !PointUtils.equals(p, aa);
+				assert !PointUtils.equals(p, bb);
+				assert PointUtils.intersection(p, aa, bb);
+				assert aa == ptba.a;
+				assert bb == ptba.b;
+				double tmp = PointUtils.param(p, aa, bb);
+				assert DoubleUtils.doubleEqual(tmp, param) : Math.abs(tmp - param);
 				curStroke.add(index+1, p);
 				break;
 			}
 		}
 		betweenABPoints.clear();
+		
+		VIEW.repaint();
 		
 	}
 	
@@ -344,7 +314,7 @@ public class DeadlockController implements OnTouchListener {
 	
 	static class PointToBeAdded {
 		
-		PointF p;
+		Point p;
 		
 		/*
 		 * index of 0 param point
@@ -354,35 +324,48 @@ public class DeadlockController implements OnTouchListener {
 		/**
 		 * value ranging from 0..1 measuring distance between points at index and index+1, used for sorting
 		 */
-		float param;
+		double param;
 		
 		Event e;
 		
-		PointToBeAdded(PointF p, int index, float param, Event e) {
+		/*
+		 * for debugging
+		 */
+		Point a;
+		Point b;
+		
+		PointToBeAdded(Point p, int index, double param, Event e, Point a, Point b) {
 			assert param > 0;
 			assert param < 1;
 			this.p = p;
 			this.index = index;
 			this.param = param;
 			this.e = e;
+			this.a = a;
+			this.b = b;
 		}
+		
+		public String toString() {
+			return "PTBA: " + p + " " + index + " " + param + " " + e;
+		}
+		
 	}
 	
 	class PTBAComparator implements Comparator<PointToBeAdded> {
 		@Override
-		public int compare(PointToBeAdded x, PointToBeAdded y) {
-			if (x.index < y.index) {
+		public int compare(PointToBeAdded a, PointToBeAdded b) {
+			if (a.index < b.index) {
 				return -1;
-			} else if (x.index > y.index) {
+			} else if (a.index > b.index) {
 				return 1;
 			} else {
-				//assert x == y;
-				if (x.param < y.param) {
+				//assert a == b;
+				if (a.param < b.param) {
 					return -1;
-				} else if (x.param > y.param) {
+				} else if (a.param > b.param) {
 					return 1;
 				} else {
-					assert x == y;
+					assert a == b;
 					return 0;
 				}
 			}
@@ -391,9 +374,9 @@ public class DeadlockController implements OnTouchListener {
 	
 	Comparator<PointToBeAdded> ptbaComparatorDescending = Collections.reverseOrder(new PTBAComparator());
 	
-	private void touchUp() {
+	public void released() {
 		
-		List<PointF> pointsToBeProcessed = model.getPointsToBeProcessed();
+		List<Point> pointsToBeProcessed = MODEL.getPointsToBeProcessed();
 //		
 //		List<PointF> curStroke = strokes.get(strokes.size()-1);
 //		for (int i = 0; i < pointsToBeProcessed.size(); i++) {
@@ -407,32 +390,34 @@ public class DeadlockController implements OnTouchListener {
 		 * all events occur at point a or point b
 		 */
 		
-		for (List<PointF> stroke : strokes) {
+		for (List<Point> stroke : strokes) {
 			for (int i = 0; i < stroke.size()-1; i++) {
-				PointF a = stroke.get(i);
-				PointF b = stroke.get(i+1);
+				Point a = stroke.get(i);
+				Point b = stroke.get(i+1);
 				process(a, b);
-				model.checkConsistency();
+				MODEL.checkConsistency();
 			}
 		}
 		
 		strokes.clear();
 		
 		curPoint = null;
+		
+		VIEW.repaint();
 	}
 	
-	void process(final PointF a, final PointF b) {
+	void process(final Point a, final Point b) {
 		
-		Vertex aV = model.tryFindVertex(a);
+		Vertex aV = MODEL.tryFindVertex(a);
 		
 		if (aV == null) {
-			EdgeInfo info = model.tryFindEdgeInfo(a);
+			EdgeInfo info = MODEL.tryFindEdgeInfo(a);
 			if (info == null) {
-				aV = model.createVertex(a);
+				aV = MODEL.createVertex(a);
 			} else {
 				Edge e = info.edge;
 				int index = info.index;
-				aV = EdgeUtils.split(e, index, model);
+				aV = EdgeUtils.split(e, index);
 			}
 		}
 		
@@ -440,16 +425,16 @@ public class DeadlockController implements OnTouchListener {
 		
 		//int aVEdgeCount = aV.getEdges().size();
 		
-		Vertex bV = model.tryFindVertex(b);
+		Vertex bV = MODEL.tryFindVertex(b);
 		
 		if (bV == null) {
-			EdgeInfo info = model.tryFindEdgeInfo(b);
+			EdgeInfo info = MODEL.tryFindEdgeInfo(b);
 			if (info == null) {
-				bV = model.createVertex(b);
+				bV = MODEL.createVertex(b);
 			} else {
 				Edge e = info.edge;
 				int index = info.index;
-				bV = EdgeUtils.split(e, index, model);
+				bV = EdgeUtils.split(e, index);
 			}
 		}
 		
@@ -457,8 +442,8 @@ public class DeadlockController implements OnTouchListener {
 		
 		//int bVEdgeCount = bV.getEdges().size();
 		
-		Edge e = model.createEdge();
-		List<PointF> ePoints = e.getPoints();
+		Edge e = MODEL.createEdge();
+		List<Point> ePoints = e.getPoints();
 		ePoints.add(a);
 		ePoints.add(b);
 		e.setStart(aV);
@@ -477,7 +462,7 @@ public class DeadlockController implements OnTouchListener {
 			} else {
 				aEdge = aEdges.get(0);
 			}
-			working = EdgeUtils.merge(aEdge, e, model);
+			working = EdgeUtils.merge(aEdge, e);
 		} else {
 			working = e;
 		}
@@ -486,7 +471,7 @@ public class DeadlockController implements OnTouchListener {
 		 * bV could have been removed if the merging of aEdge and e formed a loop (thereby removing bV in the process)
 		 */
 		
-		if (model.tryFindVertex(b) != null) {
+		if (MODEL.tryFindVertex(b) != null) {
 			List<Edge> bEdges = bV.getEdges();
 			if (bEdges.size() == 2) {
 				Edge bEdge;
@@ -495,10 +480,45 @@ public class DeadlockController implements OnTouchListener {
 				} else {
 					bEdge = bEdges.get(0);
 				}
-				EdgeUtils.merge(working, bEdge, model);
+				EdgeUtils.merge(working, bEdge);
 			}
 		}
 		
+	}
+	
+	@Override
+	public void mousePressed(MouseEvent ev) {
+		pressed(new Point(ev.getX(), ev.getY()));
+	}
+	
+	@Override
+	public void mouseDragged(MouseEvent ev) {
+		dragged(new Point(ev.getX(), ev.getY()));
+	}
+	
+	@Override
+	public void mouseReleased(MouseEvent ev) {
+		released();
+	}
+	
+	@Override
+	public void mouseClicked(MouseEvent arg0) {
+		;
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent arg0) {
+		;
+	}
+
+	@Override
+	public void mouseExited(MouseEvent arg0) {
+		;
+	}
+
+	@Override
+	public void mouseMoved(MouseEvent arg0) {
+		;
 	}
 	
 }
