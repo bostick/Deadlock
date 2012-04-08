@@ -10,10 +10,6 @@ public final class PointUtils {
 		return DoubleUtils.doubleEqual(a.x, b.x) && DoubleUtils.doubleEqual(a.y, b.y);
 	}
 	
-//	public static boolean intersection(Point b, Point d) {
-//		return ((b.x == d.x) && (b.y == d.y));
-//	}
-	
 	/**
 	 * Does b intersect &lt;c, d> ?
 	 */

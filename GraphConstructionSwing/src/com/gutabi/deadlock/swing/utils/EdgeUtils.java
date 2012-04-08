@@ -138,19 +138,11 @@ public final class EdgeUtils {
 				
 				int n = e1Points.size();
 				assert PointUtils.equals(e1Points.get(0), e1Points.get(n-1));
-				// remove common
-				e1Points.remove(n-1);
 				
 				// remove colinear
-				if (PointUtils.intersection(e1Points.get(0), e1Points.get(n-2), e1Points.get(1))) {
+				if (PointUtils.intersection(e1Points.get(0), e1Points.get(n-1), e1Points.get(1))) {
 					e1Points.remove(0);
 				}
-				
-//				e1End.remove(e1);
-//				e1End.add(newEdge);
-//				
-//				e2Start.remove(e2);
-//				e2Start.add(newEdge);
 				
 				MODEL.removeVertex(e1Start);
 				
@@ -178,7 +170,7 @@ public final class EdgeUtils {
 			if (!PointUtils.intersection(e1Points.get(e1Points.size()-1), e1Points.get(e1Points.size()-2), e2Points.get(1))) {
 				newEdgePoints.add(e1Points.get(e1Points.size()-1));
 			}
-			for (int i = 1; i < e2Points.size()-1; i++) {
+			for (int i = 1; i < e2Points.size(); i++) {
 				newEdgePoints.add(e2Points.get(i));
 			}
 			assert PointUtils.equals(e2Points.get(e2Points.size()-1), e1Points.get(0));
@@ -190,12 +182,6 @@ public final class EdgeUtils {
 				
 				newEdge.setStart(null);
 				newEdge.setEnd(null);
-				
-//				e1End.remove(e1);
-//				e1End.add(newEdge);
-//				
-//				e2Start.remove(e2);
-//				e2Start.add(newEdge);
 				
 				MODEL.removeVertex(e1Start);
 				MODEL.removeVertex(e1End);
@@ -242,7 +228,6 @@ public final class EdgeUtils {
 			e2End.add(newEdge);
 			
 			MODEL.removeVertex(e1Start);
-			//model.removeVertex(e2Start);
 			MODEL.removeEdge(e1);
 			MODEL.removeEdge(e2);
 			
@@ -270,7 +255,6 @@ public final class EdgeUtils {
 			e2Start.add(newEdge);
 			
 			MODEL.removeVertex(e1Start);
-			//model.removeVertex(e2End);
 			MODEL.removeEdge(e1);
 			MODEL.removeEdge(e2);
 			
@@ -298,7 +282,6 @@ public final class EdgeUtils {
 			e2End.add(newEdge);
 			
 			MODEL.removeVertex(e1End);
-			//model.removeVertex(e2Start);
 			MODEL.removeEdge(e1);
 			MODEL.removeEdge(e2);
 			
@@ -326,7 +309,6 @@ public final class EdgeUtils {
 			e2Start.add(newEdge);
 			
 			MODEL.removeVertex(e1End);
-			//model.removeVertex(e2End);
 			MODEL.removeEdge(e1);
 			MODEL.removeEdge(e2);
 			
@@ -334,7 +316,6 @@ public final class EdgeUtils {
 			assert false;
 		}
 		
-		//logger.debug("return " + newEdge);
 		return newEdge;
 	}
 	

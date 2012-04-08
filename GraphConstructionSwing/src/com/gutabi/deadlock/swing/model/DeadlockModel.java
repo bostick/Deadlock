@@ -20,15 +20,9 @@ public class DeadlockModel {
 	private List<Edge> edges = new ArrayList<Edge>();
 	private List<Vertex> vertices = new ArrayList<Vertex>();
 	
-	//private List<Point> pointsToBeProcessed = new ArrayList<Point>();
-	
 	public void init() {
 		
 	}
-	
-//	public List<Point> getPointsToBeProcessed() {
-//		return pointsToBeProcessed;
-//	}
 	
 	public List<Edge> getEdges() {
 		return edges;
@@ -41,7 +35,6 @@ public class DeadlockModel {
 	public void clear() {
 		edges.clear();
 		vertices.clear();
-		//pointsToBeProcessed.clear();
 	}
 	
 	public Edge createEdge() {
@@ -95,26 +88,6 @@ public class DeadlockModel {
 		}
 		throw new IllegalArgumentException("point not found");
 	}
-	
-//	public Edge tryFindEdge(PointF b) {
-//		for (Vertex v : vertices) {
-//			PointF d = v.getPointF();
-//			if (PointFUtils.equals(b, d) && v.getEdges().size() > 1) {
-//				throw new IllegalArgumentException("point is on vertex");
-//			}
-//		}
-//		for (Edge e : edges) {
-//			List<PointF> ePoints = e.getPoints();
-//			for (int i = 0; i < ePoints.size()-1; i++) {
-//				PointF c = ePoints.get(i);
-//				PointF d = ePoints.get(i+1);
-//				if (PointFUtils.intersection(b, c, d)) {
-//					return e;
-//				}
-//			}
-//		}
-//		return null;
-//	}
 	
 	public class EdgeInfo {
 		public Edge edge;
@@ -266,12 +239,11 @@ public class DeadlockModel {
 						count++;
 					}
 				}
-//				if (loop && (i == 0 || i == points.size()-1)) {
-//					assert count == 2;
-//				} else {
-//					assert count == 1;
-//				}
-				assert count == 1;
+				if (loop && (i == 0 || i == points.size()-1)) {
+					assert count == 2;
+				} else {
+					assert count == 1;
+				}
 				
 				/*
 				 * test point p for colinearity
@@ -282,7 +254,7 @@ public class DeadlockModel {
 							assert e.getStart().getPoint() == p;
 							assert e.getEnd().getPoint() == p;
 						}
-						if (PointUtils.intersection(p, points.get(n-1), points.get(1))) {
+						if (PointUtils.intersection(p, points.get(n-2), points.get(1))) {
 							assert false : "Point " + p + " (index " + i + ") is colinear";
 						}
 					} else {
@@ -291,14 +263,9 @@ public class DeadlockModel {
 				} else if (i == n-1) {
 					if (loop) {
 						if (e.getEnd() != null) {
-							// make sure that the last point in e is not the same as e.getEnd()
-							assert e.getEnd().getPoint() != p;
-						}
-						if (PointUtils.intersection(p, points.get(n-2), points.get(0))) {
-							assert false : "Point " + p + " (index " + i + ") is colinear";
+							assert PointUtils.equals(e.getEnd().getPoint(), p);
 						}
 					} else {
-						//assert e.getEnd().getPoint() == p;
 						assert PointUtils.equals(e.getEnd().getPoint(), p);
 					}
 				} else {
@@ -360,13 +327,6 @@ public class DeadlockModel {
 			return lastEdgeAdded;
 		}
 		
-//		public void setPointF(PointF p) {
-//			if (removed) {
-//				throw new IllegalStateException();
-//			}
-//			this.p = p;
-//		}
-		
 		public Point getPoint() {
 			if (removed) {
 				throw new IllegalStateException();
@@ -378,7 +338,6 @@ public class DeadlockModel {
 			if (removed) {
 				throw new IllegalStateException();
 			}
-			//canvas.drawPoint(p.x, p.y, paint);
 			g.setColor(Color.BLUE);
 			g.fillOval(((int)p.x)-3, ((int)p.y)-3, 6, 6);
 		}
@@ -454,38 +413,7 @@ public class DeadlockModel {
 				//canvas.drawLine(prev.x, prev.y, cur.x, cur.y, paint1);
 				g.drawLine((int)prev.x, (int)prev.y, (int)cur.x, (int)cur.y);
 			}
-			if (start == end) {
-				Point last = points.get(points.size()-1);
-				Point first = points.get(0);
-				g.drawLine((int)last.x, (int)last.y, (int)first.x, (int)first.y);
-			}
-//			if (start == null && end == null) {
-//				PointF prev = points.get(points.size()-1);
-//				PointF cur = points.get(0);
-//				canvas.drawLine(prev.x, prev.y, cur.x, cur.y, paint1);
-//			}
-//			for (int i = 0; i < points.size()-1; i++) {
-//				Point prev = points.get(i);
-//				Point cur = points.get(i+1);
-//				canvas.drawLine(prev.x, prev.y, cur.x, cur.y, paint2);
-//			}
-//			if (start == null && end == null) {
-//				PointF prev = points.get(points.size()-1);
-//				PointF cur = points.get(0);
-//				canvas.drawLine(prev.x, prev.y, cur.x, cur.y, paint2);
-//			}
 		}
-		
-//		public void paint(Canvas canvas, Paint paint1) {
-//			if (removed) {
-//				throw new IllegalStateException();
-//			}
-//			for (int j = 1; j < points.size(); j++) {
-//				Point prev = points.get(j-1);
-//				Point cur = points.get(j);
-//				canvas.drawLine(prev.x, prev.y, cur.x, cur.y, paint1);
-//			}
-//		}
 		
 		private void remove() {
 			if (removed) {

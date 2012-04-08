@@ -15,8 +15,6 @@ public interface Vertex {
 	
 	public Edge getOnlyEdge();
 	
-	//public void setPointF(PointF p);
-	
 	public Point getPoint();
 	
 	public void paint(Graphics2D g);

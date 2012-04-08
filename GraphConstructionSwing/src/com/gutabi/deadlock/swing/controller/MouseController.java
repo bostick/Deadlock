@@ -26,8 +26,6 @@ public class MouseController implements MouseListener, MouseMotionListener {
 	static Logger logger = Logger.getLogger("deadlock");
 	
 	private Point curPoint;
-	//private List<Point> curStroke;
-	//private List<List<Point>> strokes = new ArrayList<List<Point>>();
 	
 	public void init() {
 		VIEW.panel.addMouseListener(this);
@@ -37,11 +35,6 @@ public class MouseController implements MouseListener, MouseMotionListener {
 	public void pressed(Point ev) {
 		logger.debug("pressed " + ev);
 		curPoint = ev;
-		//List<Point> pointsToBeProcessed = MODEL.getPointsToBeProcessed();
-		//curStroke = new ArrayList<Point>();
-		//curStroke.add(curPoint);
-		//strokes.add(curStroke);
-		//pointsToBeProcessed.add(curPoint);
 		
 		VIEW.repaint();
 	}
@@ -62,12 +55,6 @@ public class MouseController implements MouseListener, MouseMotionListener {
 		}
 		
 		curPoint = b;
-		//curStroke.add(b);
-		
-//		{
-//		List<Point> pointsToBeProcessed = MODEL.getPointsToBeProcessed();
-//		pointsToBeProcessed.add(curPoint);
-//		}
 		
 		/*
 		 * test all pairs <c, d> against <a, b>, since <a, b> could intersect multiple edges
@@ -84,8 +71,6 @@ public class MouseController implements MouseListener, MouseMotionListener {
 		betweenABPoints.add(new PointToBeAdded(b, 1.0));
 		
 		for (Edge e : MODEL.getEdges()) {
-			
-			//List<PointToBeAdded> betweenCDPoints = new ArrayList<PointToBeAdded>();
 			
 			List<Point> edgePoints = e.getPoints();
 			for (int j = 0; j < edgePoints.size()-1; j++) {
@@ -109,36 +94,8 @@ public class MouseController implements MouseListener, MouseMotionListener {
 							}
 						}
 						
-//						
-//							if (!PointUtils.equals(inter, d)) {
-//								//betweenCDPoints.add(new PointToBeAdded(inter, j, PointUtils.param(inter, c, d), Event.POINT, c, d));
-//								// split <c, d> at inter
-//							} else {
-//								// add vertex at d
-//							}
-//							
-//							if (!PointUtils.equals(inter, b)) {
-//								//betweenABPoints.add(new PointToBeAdded(inter, curStroke.size()-2, PointUtils.param(inter, a, b), Event.POINT, a, b));
-//								// split <a, b> at inter
-//							} else {
-//								// add vertex at b
-//							}
-						
 					}
 				} catch (OverlappingException ex) {
-//					double aParam = PointUtils.param(a, c, d);
-//					double bParam = PointUtils.param(b, c, d);
-					//double dParam = PointUtils.param(d, a, b);
-					
-//					if ((0 <= aParam && aParam <= 1)) {
-//						d;
-//						// remember a for <a, b> and <c, d>
-//					}
-//					
-//					if ((0 <= bParam && bParam <= 1)) {
-//						d;
-//						// remember b for <a, b> and <c, d>
-//					}
 					
 					if (PointUtils.intersection(c, a, b)) {
 						double cParam = PointUtils.param(c, a, b);
@@ -177,37 +134,7 @@ public class MouseController implements MouseListener, MouseMotionListener {
 				}
 			} // for edgePoints c, d
 			
-			// insert all of the points for <c, d>
-			
-//			Collections.sort(betweenCDPoints, ptbaComparatorDescending);
-//			for (PointToBeAdded ptba : betweenCDPoints) {
-//				Point p = ptba.p;
-//				int index = ptba.index;
-//				double param = ptba.param;
-//				Event event = ptba.e;
-//				switch (event) {
-//				case POINT:
-//					Point cc = edgePoints.get(index);
-//					Point dd = edgePoints.get(index+1);
-//					assert !PointUtils.equals(p, cc);
-//					assert !PointUtils.equals(p, dd);
-//					assert PointUtils.intersection(p, cc, dd);
-//					assert cc == ptba.a;
-//					assert dd == ptba.b;
-//					double tmp = PointUtils.param(p, cc, dd);
-//					assert DoubleUtils.doubleEqual(tmp, param) : Math.abs(tmp - param);
-//					edgePoints.add(index+1, p);
-//					break;
-//				}
-//			}
-//			betweenCDPoints.clear();
-			
 		} // for Edge e
-		
-		/*
-		 * have a bunch of edges with points that is not consistent yet
-		 * need to do splits and merges
-		 */
 		
 		Collections.sort(betweenABPoints, ptbaComparator);
 		
@@ -216,28 +143,8 @@ public class MouseController implements MouseListener, MouseMotionListener {
 			PointToBeAdded bb = betweenABPoints.get(i+1);
 			
 			process(aa.p, bb.p);
-			
-//			int index = ptba.index;
-//			double param = ptba.param;
-//			Event event = ptba.e;
-//			switch (event) {
-//			case POINT:
-//				Point aa = curStroke.get(index);
-//				Point bb = curStroke.get(index+1);
-//				assert !PointUtils.equals(p, aa);
-//				assert !PointUtils.equals(p, bb);
-//				assert PointUtils.intersection(p, aa, bb);
-//				assert aa == ptba.a;
-//				assert bb == ptba.b;
-//				double tmp = PointUtils.param(p, aa, bb);
-//				assert DoubleUtils.doubleEqual(tmp, param) : Math.abs(tmp - param);
-//				curStroke.add(index+1, p);
-//				break;
-//			}
 		}
 		betweenABPoints.clear();
-		
-		//process(a, b);
 		
 		MODEL.checkConsistency();
 		
@@ -245,41 +152,20 @@ public class MouseController implements MouseListener, MouseMotionListener {
 		
 	}
 	
-//	enum Event {
-//		POINT, STOP;
-//	}
-//	
 	static class PointToBeAdded {
 		
 		Point p;
-		
-//		/*
-//		 * index of 0 param point
-//		 */
-//		int index;
 		
 		/**
 		 * value ranging from 0..1 measuring distance between points at index and index+1, used for sorting
 		 */
 		double param;
 		
-//		Event e;
-//		
-//		/*
-//		 * for debugging
-//		 */
-//		Point a;
-//		Point b;
-		
 		PointToBeAdded(Point p, double param) {
 			assert param >= 0.0;
 			assert param <= 1.0;
 			this.p = p;
-			//this.index = index;
 			this.param = param;
-//			this.e = e;
-//			this.a = a;
-//			this.b = b;
 		}
 		
 		public String toString() {
@@ -307,32 +193,17 @@ public class MouseController implements MouseListener, MouseMotionListener {
 	
 	public void released() {
 		logger.debug("released");
-		
-//		List<Point> pointsToBeProcessed = MODEL.getPointsToBeProcessed();
-//		
-//		List<PointF> curStroke = strokes.get(strokes.size()-1);
-//		for (int i = 0; i < pointsToBeProcessed.size(); i++) {
-//			curStroke.add(pointsToBeProcessed.get(i));
-//		}
-//		pointsToBeProcessed.clear();
-		
-		//strokes.clear();
-		//curStroke.clear();
 		curPoint = null;
-		
-		//VIEW.repaint();
 	}
 	
 	void process(final Point a, final Point b) {
 		
 		Vertex aV = MODEL.tryFindVertex(a);
-		boolean createdA = false;
 		
 		if (aV == null) {
 			EdgeInfo info = MODEL.tryFindEdgeInfo(a);
 			if (info == null) {
 				aV = MODEL.createVertex(a);
-				createdA = true;
 			} else {
 				Edge e = info.edge;
 				int index = info.index;
@@ -343,16 +214,12 @@ public class MouseController implements MouseListener, MouseMotionListener {
 		
 		assert aV != null;
 		
-		//int aVEdgeCount = aV.getEdges().size();
-		
 		Vertex bV = MODEL.tryFindVertex(b);
-		boolean createdB = false;
 		
 		if (bV == null) {
 			EdgeInfo info = MODEL.tryFindEdgeInfo(b);
 			if (info == null) {
 				bV = MODEL.createVertex(b);
-				createdB = true;
 			} else {
 				Edge e = info.edge;
 				int index = info.index;
@@ -363,28 +230,26 @@ public class MouseController implements MouseListener, MouseMotionListener {
 		
 		assert bV != null;
 		
-		if (!createdA && !createdB) {
-			for (Edge e : aV.getEdges()) {
-				if (((e.getStart() == aV && e.getEnd() == bV) || (e.getStart() == bV && e.getEnd() == aV)) && e.getPoints().size() == 2) {
-					/*
-					 * both a and b are already both vertices and connected, so nothing to do here
-					 */
-					return;
-				}
+		Edge e = null;
+		for (Edge ee : aV.getEdges()) {
+			if (((ee.getStart() == aV && ee.getEnd() == bV) || (ee.getStart() == bV && ee.getEnd() == aV)) && ee.getPoints().size() == 2) {
+				/*
+				 * both a and b are already both vertices and connected, so just use this
+				 */
+				e = ee;
 			}
 		}
-		
-		//int bVEdgeCount = bV.getEdges().size();
-		
-		Edge e = MODEL.createEdge();
-		List<Point> ePoints = e.getPoints();
-		ePoints.add(a);
-		ePoints.add(b);
-		e.setStart(aV);
-		e.setEnd(bV);
-		
-		aV.add(e);
-		bV.add(e);
+		if (e == null) {
+			e = MODEL.createEdge();
+			List<Point> ePoints = e.getPoints();
+			ePoints.add(a);
+			ePoints.add(b);
+			e.setStart(aV);
+			e.setEnd(bV);
+			
+			aV.add(e);
+			bV.add(e);
+		}
 		
 		Edge working;
 		
