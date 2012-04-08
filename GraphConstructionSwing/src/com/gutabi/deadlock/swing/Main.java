@@ -13,7 +13,7 @@ import org.apache.log4j.Logger;
 
 public class Main  {
 	
-	static Logger logger = Logger.getLogger("");
+	static Logger logger = Logger.getLogger("deadlock");
 	
 	static void createAndShowGUI(String[] args) throws Exception {
 		

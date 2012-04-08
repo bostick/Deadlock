@@ -20,15 +20,15 @@ public class DeadlockModel {
 	private List<Edge> edges = new ArrayList<Edge>();
 	private List<Vertex> vertices = new ArrayList<Vertex>();
 	
-	private List<Point> pointsToBeProcessed = new ArrayList<Point>();
+	//private List<Point> pointsToBeProcessed = new ArrayList<Point>();
 	
 	public void init() {
 		
 	}
 	
-	public List<Point> getPointsToBeProcessed() {
-		return pointsToBeProcessed;
-	}
+//	public List<Point> getPointsToBeProcessed() {
+//		return pointsToBeProcessed;
+//	}
 	
 	public List<Edge> getEdges() {
 		return edges;
@@ -36,6 +36,12 @@ public class DeadlockModel {
 	
 	public List<Vertex> getVertices() {
 		return vertices;
+	}
+	
+	public void clear() {
+		edges.clear();
+		vertices.clear();
+		//pointsToBeProcessed.clear();
 	}
 	
 	public Edge createEdge() {
@@ -113,9 +119,11 @@ public class DeadlockModel {
 	public class EdgeInfo {
 		public Edge edge;
 		public int index;
-		public EdgeInfo(Edge e, int index) {
+		public double param;
+		public EdgeInfo(Edge e, int index, double param) {
 			this.edge = e;
 			this.index = index;
+			this.param = param;
 		}
 	}
 	
@@ -131,12 +139,8 @@ public class DeadlockModel {
 			for (int i = 0; i < ePoints.size()-1; i++) {
 				Point c = ePoints.get(i);
 				Point d = ePoints.get(i+1);
-				if (PointUtils.intersection(b, c, d) && !PointUtils.equals(b, c)) {
-					if (PointUtils.equals(b, d)) {
-						return new EdgeInfo(e, i+1);
-					} else {
-						assert false;
-					}
+				if (PointUtils.intersection(b, c, d)) {
+					return new EdgeInfo(e, i, PointUtils.param(b, c, d));
 				}
 			}
 		}
@@ -243,6 +247,9 @@ public class DeadlockModel {
 			
 			boolean loop = false;
 			if (e.getStart() == e.getEnd()) {
+				/*
+				 * both vs could be null (stand-alone loop) or both could be a vertex (shared with other edges)
+				 */
 				loop = true;
 			} else {
 				assert e.getStart() != null && e.getEnd() != null;
@@ -250,7 +257,8 @@ public class DeadlockModel {
 				assert !((VertexImpl)e.getEnd()).isRemoved();
 			}
 			List<Point> points = e.getPoints();
-			for (int i = 0; i < points.size(); i++) {
+			int n = points.size();
+			for (int i = 0; i < n; i++) {
 				Point p = points.get(i);
 				int count = 0;
 				for (Point q : e.getPoints()) {
@@ -258,10 +266,45 @@ public class DeadlockModel {
 						count++;
 					}
 				}
-				if (loop && (i == 0 || i == points.size()-1)) {
-					assert count == 2;
+//				if (loop && (i == 0 || i == points.size()-1)) {
+//					assert count == 2;
+//				} else {
+//					assert count == 1;
+//				}
+				assert count == 1;
+				
+				/*
+				 * test point p for colinearity
+				 */
+				if (i == 0) {
+					if (loop) {
+						if (e.getStart() != null) {
+							assert e.getStart().getPoint() == p;
+							assert e.getEnd().getPoint() == p;
+						}
+						if (PointUtils.intersection(p, points.get(n-1), points.get(1))) {
+							assert false : "Point " + p + " (index " + i + ") is colinear";
+						}
+					} else {
+						assert PointUtils.equals(e.getStart().getPoint(), p);
+					}
+				} else if (i == n-1) {
+					if (loop) {
+						if (e.getEnd() != null) {
+							// make sure that the last point in e is not the same as e.getEnd()
+							assert e.getEnd().getPoint() != p;
+						}
+						if (PointUtils.intersection(p, points.get(n-2), points.get(0))) {
+							assert false : "Point " + p + " (index " + i + ") is colinear";
+						}
+					} else {
+						//assert e.getEnd().getPoint() == p;
+						assert PointUtils.equals(e.getEnd().getPoint(), p);
+					}
 				} else {
-					assert count == 1;
+					if (PointUtils.intersection(p, points.get(i-1), points.get(i+1))) {
+						assert false : "Point " + p + " (index " + i + ") is colinear";
+					}
 				}
 			}
 		}
@@ -280,6 +323,10 @@ public class DeadlockModel {
 		
 		VertexImpl(Point p) {
 			this.p = p;
+		}
+		
+		public String toString() {
+			return "V " + p;
 		}
 		
 		public void add(Edge ed) {
@@ -333,7 +380,7 @@ public class DeadlockModel {
 			}
 			//canvas.drawPoint(p.x, p.y, paint);
 			g.setColor(Color.BLUE);
-			g.fillOval(((int)p.x)-5, ((int)p.y)-5, 10, 10);
+			g.fillOval(((int)p.x)-3, ((int)p.y)-3, 6, 6);
 		}
 		
 		private void remove() {
@@ -356,6 +403,10 @@ public class DeadlockModel {
 		private Vertex end;
 		
 		private boolean removed = false;
+		
+		public String toString() {
+			return "E n=" + points.size() + " " + start + " " + end;
+		}
 		
 		public void setStart(Vertex v) {
 			if (removed) {
@@ -402,6 +453,11 @@ public class DeadlockModel {
 				Point cur = points.get(i+1);
 				//canvas.drawLine(prev.x, prev.y, cur.x, cur.y, paint1);
 				g.drawLine((int)prev.x, (int)prev.y, (int)cur.x, (int)cur.y);
+			}
+			if (start == end) {
+				Point last = points.get(points.size()-1);
+				Point first = points.get(0);
+				g.drawLine((int)last.x, (int)last.y, (int)first.x, (int)first.y);
 			}
 //			if (start == null && end == null) {
 //				PointF prev = points.get(points.size()-1);

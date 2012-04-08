@@ -6,7 +6,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.util.List;
 
 import javax.swing.JPanel;
 
@@ -14,7 +13,6 @@ import org.apache.log4j.Logger;
 
 import com.gutabi.deadlock.swing.model.Edge;
 import com.gutabi.deadlock.swing.model.Vertex;
-import com.gutabi.deadlock.swing.utils.Point;
 
 @SuppressWarnings("serial")
 public class DeadlockPanel extends JPanel {
@@ -55,15 +53,15 @@ public class DeadlockPanel extends JPanel {
 			v.paint(g2);
 		}
 		
-		List<Point> points = MODEL.getPointsToBeProcessed();
-		if (points != null) {
-			for (int j = 1; j < points.size(); j++) {
-				Point prev = points.get(j-1);
-				Point cur = points.get(j);
-				g2.setColor(Color.BLUE);
-				g2.drawLine((int)prev.x, (int)prev.y, (int)cur.x, (int)cur.y);
-			}
-		}
+//		List<Point> points = MODEL.getPointsToBeProcessed();
+//		if (points != null) {
+//			for (int j = 1; j < points.size(); j++) {
+//				Point prev = points.get(j-1);
+//				Point cur = points.get(j);
+//				g2.setColor(Color.BLUE);
+//				g2.drawLine((int)prev.x, (int)prev.y, (int)cur.x, (int)cur.y);
+//			}
+//		}
 			
 		//}
 		
