@@ -1,13 +1,10 @@
 package com.gutabi.deadlock.swing.model;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 import com.gutabi.deadlock.swing.utils.Point;
-import com.gutabi.deadlock.swing.utils.PointUtils;
+import com.gutabi.deadlock.swing.utils.Rat;
 
 public class DeadlockModel {
 	
@@ -38,50 +35,54 @@ public class DeadlockModel {
 	}
 	
 	public Edge createEdge() {
-		Edge e = new EdgeImpl();
+		Edge e = new Edge();
 		edges.add(e);
 		return e;
 	}
 	
 	public Vertex createVertex(Point p) {
+		assert p.x.getD() == 1;
+		assert p.y.getD() == 1;
+		
 		/*
 		 * there should only be 1 vertex with this point
 		 */
 		int count = 0;
 		for (Vertex w : vertices) {
-			if (PointUtils.equals(p, w.getPoint())) {
+			if (p.equals(w.getPoint())) {
+				assert p == w.getPoint();
 				count++;
 			}
 		}
 		assert count == 0;
-		Vertex v = new VertexImpl(p);
+		Vertex v = new Vertex(p);
 		vertices.add(v);
 		return v;
 	}
 	
 	public void removeVertex(Vertex v) {
-		((VertexImpl)v).remove();
+		v.remove();
 		vertices.remove(v);
 	}
 	
 	public void removeEdge(Edge e) {
-		((EdgeImpl)e).remove();
+		e.remove();
 		edges.remove(e);
 	}
 	
 	public Edge findEdge(Point b) {
 		for (Vertex v : vertices) {
 			Point d = v.getPoint();
-			if (PointUtils.equals(b, d) && v.getEdges().size() > 1) {
+			if (b.equals(d) && v.getEdges().size() > 1) {
 				throw new IllegalArgumentException("point is on vertex");
 			}
 		}
 		for (Edge e : edges) {
-			List<Point> ePoints = e.getPoints();
-			for (int i = 0; i < ePoints.size()-1; i++) {
-				Point c = ePoints.get(i);
-				Point d = ePoints.get(i+1);
-				if (PointUtils.intersection(b, c, d)) {
+			//List<Point> ePoints = e.getPoints();
+			for (int i = 0; i < e.getPointsSize()-1; i++) {
+				Point c = e.getPoint(i);
+				Point d = e.getPoint(i+1);
+				if (Point.intersect(b, c, d)) {
 					return e;
 				}
 			}
@@ -92,8 +93,8 @@ public class DeadlockModel {
 	public class EdgeInfo {
 		public Edge edge;
 		public int index;
-		public double param;
-		public EdgeInfo(Edge e, int index, double param) {
+		public Rat param;
+		public EdgeInfo(Edge e, int index, Rat param) {
 			this.edge = e;
 			this.index = index;
 			this.param = param;
@@ -103,17 +104,17 @@ public class DeadlockModel {
 	public EdgeInfo tryFindEdgeInfo(Point b) {
 		for (Vertex v : vertices) {
 			Point d = v.getPoint();
-			if (PointUtils.equals(b, d) && v.getEdges().size() > 1) {
+			if (b.equals(d) && v.getEdges().size() > 1) {
 				throw new IllegalArgumentException("point is on vertex");
 			}
 		}
 		for (Edge e : edges) {
-			List<Point> ePoints = e.getPoints();
-			for (int i = 0; i < ePoints.size()-1; i++) {
-				Point c = ePoints.get(i);
-				Point d = ePoints.get(i+1);
-				if (PointUtils.intersection(b, c, d)) {
-					return new EdgeInfo(e, i, PointUtils.param(b, c, d));
+			//List<Point> ePoints = e.getPoints();
+			for (int i = 0; i < e.getPointsSize()-1; i++) {
+				Point c = e.getPoint(i);
+				Point d = e.getPoint(i+1);
+				if (Point.intersect(b, c, d)) {
+					return new EdgeInfo(e, i, Point.param(b, c, d));
 				}
 			}
 		}
@@ -121,10 +122,10 @@ public class DeadlockModel {
 	}
 	
 	public int findIndex(Edge e, Point b) {
-		List<Point> points = e.getPoints();
-		for (int i = 0; i < points.size(); i++) {
-			Point d = points.get(i);
-			if (PointUtils.equals(b, d)) {
+		//List<Point> points = e.getPoints();
+		for (int i = 0; i < e.getPointsSize(); i++) {
+			Point d = e.getPoint(i);
+			if (b.equals(d)) {
 				return i;
 			}
 		}
@@ -139,7 +140,7 @@ public class DeadlockModel {
 			/*
 			 * d may be null if in the midle of processing (and not currently consistent)
 			 */
-			if (d != null && PointUtils.equals(b, d)) {
+			if (d != null && b.equals(d)) {
 				count++;
 				found = v;
 			}
@@ -158,7 +159,7 @@ public class DeadlockModel {
 		int count = 0;
 		for (Vertex v : vertices) {
 			Point d = v.getPoint();
-			if (PointUtils.equals(b, d)) {
+			if (b.equals(d)) {
 				count++;
 				found = v;
 			}
@@ -176,7 +177,7 @@ public class DeadlockModel {
 		
 		for (Vertex v : vertices) {
 			
-			assert !((VertexImpl)v).isRemoved();
+			assert !v.isRemoved();
 			
 			assert v.getPoint() != null;
 			
@@ -198,7 +199,7 @@ public class DeadlockModel {
 			int count;
 			for (Edge e : v.getEdges()) {
 				
-				assert !((EdgeImpl)e).isRemoved();
+				assert !e.isRemoved();
 				
 				count = 0;
 				for (Edge f : v.getEdges()) {
@@ -215,216 +216,9 @@ public class DeadlockModel {
 		}
 		
 		for (Edge e : edges) {
-			
-			assert !((EdgeImpl)e).isRemoved();
-			
-			boolean loop = false;
-			if (e.getStart() == e.getEnd()) {
-				/*
-				 * both vs could be null (stand-alone loop) or both could be a vertex (shared with other edges)
-				 */
-				loop = true;
-			} else {
-				assert e.getStart() != null && e.getEnd() != null;
-				assert !((VertexImpl)e.getStart()).isRemoved();
-				assert !((VertexImpl)e.getEnd()).isRemoved();
-			}
-			List<Point> points = e.getPoints();
-			int n = points.size();
-			for (int i = 0; i < n; i++) {
-				Point p = points.get(i);
-				int count = 0;
-				for (Point q : e.getPoints()) {
-					if (PointUtils.equals(p, q)) {
-						count++;
-					}
-				}
-				if (loop && (i == 0 || i == points.size()-1)) {
-					assert count == 2;
-				} else {
-					assert count == 1;
-				}
-				
-				/*
-				 * test point p for colinearity
-				 */
-				if (i == 0) {
-					if (loop) {
-						if (e.getStart() != null) {
-							assert e.getStart().getPoint() == p;
-							assert e.getEnd().getPoint() == p;
-						}
-						if (PointUtils.intersection(p, points.get(n-2), points.get(1))) {
-							assert false : "Point " + p + " (index " + i + ") is colinear";
-						}
-					} else {
-						assert PointUtils.equals(e.getStart().getPoint(), p);
-					}
-				} else if (i == n-1) {
-					if (loop) {
-						if (e.getEnd() != null) {
-							assert PointUtils.equals(e.getEnd().getPoint(), p);
-						}
-					} else {
-						assert PointUtils.equals(e.getEnd().getPoint(), p);
-					}
-				} else {
-					if (PointUtils.intersection(p, points.get(i-1), points.get(i+1))) {
-						assert false : "Point " + p + " (index " + i + ") is colinear";
-					}
-				}
-			}
+			e.check();
 		}
 		return true;
-	}
-	
-	final class VertexImpl implements Vertex {
-		
-		private final Point p;
-		
-		private List<Edge> eds = new ArrayList<Edge>();
-		
-		private Edge lastEdgeAdded;
-		
-		private boolean removed = false;
-		
-		VertexImpl(Point p) {
-			this.p = p;
-		}
-		
-		public String toString() {
-			return "V " + p;
-		}
-		
-		public void add(Edge ed) {
-			if (removed) {
-				throw new IllegalStateException();
-			}
-			if (!(ed.getStart() == this && ed.getEnd() == this)) {
-				assert !eds.contains(ed);
-			}
-			eds.add(ed);
-			lastEdgeAdded = ed;
-		}
-		
-		public void remove(Edge ed) {
-			if (removed) {
-				throw new IllegalStateException();
-			}
-			assert eds.contains(ed);
-			eds.remove(ed);
-		}
-		
-		public List<Edge> getEdges() {
-			if (removed) {
-				throw new IllegalStateException();
-			}
-			return eds;
-		}
-		
-		public Edge getOnlyEdge() {
-			assert eds.size() == 1;
-			return lastEdgeAdded;
-		}
-		
-		public Point getPoint() {
-			if (removed) {
-				throw new IllegalStateException();
-			}
-			return p;
-		}
-		
-		public void paint(Graphics2D g) {
-			if (removed) {
-				throw new IllegalStateException();
-			}
-			g.setColor(Color.BLUE);
-			g.fillOval(((int)p.x)-3, ((int)p.y)-3, 6, 6);
-		}
-		
-		private void remove() {
-			if (removed) {
-				throw new IllegalStateException();
-			}
-			removed = true;
-		}
-		
-		private boolean isRemoved() {
-			return removed;
-		}
-	}
-	
-	final class EdgeImpl implements Edge {
-		
-		private List<Point> points = new LinkedList<Point>();
-		
-		private Vertex start;
-		private Vertex end;
-		
-		private boolean removed = false;
-		
-		public String toString() {
-			return "E n=" + points.size() + " " + start + " " + end;
-		}
-		
-		public void setStart(Vertex v) {
-			if (removed) {
-				throw new IllegalStateException();
-			}
-			start = v;
-		}
-		
-		public Vertex getStart() {
-			if (removed) {
-				throw new IllegalStateException();
-			}
-			return start;
-		}
-		
-		public void setEnd(Vertex v) {
-			if (removed) {
-				throw new IllegalStateException();
-			}
-			end = v;
-		}
-		
-		public Vertex getEnd() {
-			if (removed) {
-				throw new IllegalStateException();
-			}
-			return end;
-		}
-		
-		public List<Point> getPoints() {
-			if (removed) {
-				throw new IllegalStateException();
-			}
-			return points;
-		}
-		
-		public void paint(Graphics2D g) {
-			if (removed) {
-				throw new IllegalStateException();
-			}
-			g.setColor(Color.BLUE);
-			for (int i = 0; i < points.size()-1; i++) {
-				Point prev = points.get(i);
-				Point cur = points.get(i+1);
-				//canvas.drawLine(prev.x, prev.y, cur.x, cur.y, paint1);
-				g.drawLine((int)prev.x, (int)prev.y, (int)cur.x, (int)cur.y);
-			}
-		}
-		
-		private void remove() {
-			if (removed) {
-				throw new IllegalStateException();
-			}
-			removed = true;
-		}
-		
-		private boolean isRemoved() {
-			return removed;
-		}
 	}
 	
 	

@@ -2,8 +2,6 @@ package com.gutabi.deadlock.swing.utils;
 
 import static com.gutabi.deadlock.swing.model.DeadlockModel.MODEL;
 
-import java.util.List;
-
 import org.apache.log4j.Logger;
 
 import com.gutabi.deadlock.swing.model.Edge;
@@ -19,22 +17,21 @@ public final class EdgeUtils {
 	
 	/**
 	 * split an edge at point with index i and param p between indices i and i+1
+	 * takes care of adjusting to integer coordinates
 	 * Edge e will have been removed
 	 * return Vertex at split point
 	 */
-	public static Vertex split(Edge e, int index, double param) {
-		//logger.debug("split " + e + " " + index + " " + param);
-		assert param >= 0.0;
-		assert param < 1.0;
+	public static Vertex split(Edge e, int index, Rat param) {
+		assert param.isGreaterThanOrEquals(Rat.ZERO);
+		assert param.isLessThanOrEquals(Rat.ONE);
 		
-		List<Point> ePoints = e.getPoints();
+		Point c = e.getPoint(index);
+		Point d = e.getPoint(index+1);
 		
-		Point c = ePoints.get(index);
-		Point d = ePoints.get(index+1);
+		Point ppp = Point.point(c, d, param);
+		Point pInt = new Point((int)Math.round(ppp.x.getVal()), (int)Math.round(ppp.y.getVal()));
 		
-		Point p = PointUtils.point(c, d, param);
-		
-		Vertex v = MODEL.createVertex(p);
+		Vertex v = MODEL.createVertex(pInt);
 		
 		Vertex eStart = e.getStart();
 		Vertex eEnd = e.getEnd();
@@ -44,18 +41,19 @@ public final class EdgeUtils {
 			
 			Edge f = MODEL.createEdge();
 			
-			List<Point> fPoints = f.getPoints();
-			fPoints.add(p);
-			for (int i = index+1; i < ePoints.size(); i++) {
-				fPoints.add(ePoints.get(i));
+			f.addPoint(pInt);
+			for (int i = index+1; i < e.getPointsSize(); i++) {
+				f.addPoint(e.getPoint(i));
 			}
 			for (int i = 0; i <= index; i++) {
 				if (i < index) {
-					fPoints.add(ePoints.get(i));
-				} else if (param != 0.0) {
-					fPoints.add(ePoints.get(i));
+					f.addPoint(e.getPoint(i));
+				} else if (!pInt.equals(c)) {
+					f.addPoint(e.getPoint(i));
 				}
 			}
+			
+			f.checkColinearity();
 			
 			f.setStart(v);
 			f.setEnd(v);
@@ -70,19 +68,24 @@ public final class EdgeUtils {
 			Edge f1 = MODEL.createEdge();
 			Edge f2 = MODEL.createEdge();
 			
-			List<Point> f1Points = f1.getPoints();
-			List<Point> f2Points = f2.getPoints();
+			for (int i = 0; i < index; i++) {
+				f1.addPoint(e.getPoint(i));
+			}
+			if (!(index > 0) || !Point.colinear(e.getPoint(index-1), c, pInt)) {
+				f1.addPoint(c);
+			}
+			f1.addPoint(pInt);
 			
-			for (int i = 0; i <= index; i++) {
-				f1Points.add(ePoints.get(i));
+			f2.addPoint(pInt);
+			if (!(index+1 < e.getPointsSize()-1) || !Point.colinear(pInt, d, e.getPoint(index+2))) {
+				f2.addPoint(d);
 			}
-			if (param != 0.0) {
-				f1Points.add(p);
+			for (int i = index+2; i < e.getPointsSize(); i++) {
+				f2.addPoint(e.getPoint(i));
 			}
-			f2Points.add(p);
-			for (int i = index+1; i < ePoints.size(); i++) {
-				f2Points.add(ePoints.get(i));
-			}
+			
+			f1.checkColinearity();
+			f2.checkColinearity();
 			
 			f1.setStart(eStart);
 			f1.setEnd(v);
@@ -103,7 +106,6 @@ public final class EdgeUtils {
 			
 		}
 		
-		//logger.debug("return " + v);
 		return v;
 	}
 	
@@ -114,11 +116,11 @@ public final class EdgeUtils {
 	public static Edge merge(Edge e1, Edge e2) {
 		//logger.debug("merge " + e1 + " " + e2);
 		
-		List<Point> e1Points = e1.getPoints();
+		//List<Point> e1Points = e1.getPoints();
 		Vertex e1Start = e1.getStart();
 		Vertex e1End = e1.getEnd();
 		
-		List<Point> e2Points = e2.getPoints();
+		//List<Point> e2Points = e2.getPoints();
 		Vertex e2Start = e2.getStart();
 		Vertex e2End = e2.getEnd();
 		
@@ -136,12 +138,14 @@ public final class EdgeUtils {
 				e1.setStart(null);
 				e1.setEnd(null);
 				
-				int n = e1Points.size();
-				assert PointUtils.equals(e1Points.get(0), e1Points.get(n-1));
+				int n = e1.getPointsSize();
+				assert e1.getPoint(0) == e1.getPoint(n-1);
 				
 				// remove colinear
-				if (PointUtils.intersection(e1Points.get(0), e1Points.get(n-1), e1Points.get(1))) {
-					e1Points.remove(0);
+				if (Point.colinear(e1.getPoint(n-1), e1.getPoint(0), e1.getPoint(1))) {
+					e1.removePoint(0);
+				} else {
+					assert false;
 				}
 				
 				MODEL.removeVertex(e1Start);
@@ -157,23 +161,23 @@ public final class EdgeUtils {
 		}
 		
 		Edge newEdge = MODEL.createEdge();
-		List<Point> newEdgePoints = newEdge.getPoints();
+		//List<Point> newEdgePoints = newEdge.getPoints();
 		
 		if (e1Start == e2End && e1End == e2Start) {
 			// forming a loop
 			
-			for (int i = 0; i < e1Points.size()-1; i++) {
-				newEdgePoints.add(e1Points.get(i));
+			for (int i = 0; i < e1.getPointsSize()-1; i++) {
+				newEdge.addPoint(e1.getPoint(i));
 			}
-			assert PointUtils.equals(e1Points.get(e1Points.size()-1), e2Points.get(0));
+			assert e1.getPoint(e1.getPointsSize()-1).equals(e2.getPoint(0));
 			// only add if not colinear
-			if (!PointUtils.intersection(e1Points.get(e1Points.size()-1), e1Points.get(e1Points.size()-2), e2Points.get(1))) {
-				newEdgePoints.add(e1Points.get(e1Points.size()-1));
+			if (!Point.colinear(e1.getPoint(e1.getPointsSize()-2), e1.getPoint(e1.getPointsSize()-1), e2.getPoint(1))) {
+				newEdge.addPoint(e1.getPoint(e1.getPointsSize()-1));
 			}
-			for (int i = 1; i < e2Points.size(); i++) {
-				newEdgePoints.add(e2Points.get(i));
+			for (int i = 1; i < e2.getPointsSize(); i++) {
+				newEdge.addPoint(e2.getPoint(i));
 			}
-			assert PointUtils.equals(e2Points.get(e2Points.size()-1), e1Points.get(0));
+			assert e2.getPoint(e2.getPointsSize()-1).equals(e1.getPoint(0));
 			
 			int e1StartEdgeCount = e1Start.getEdges().size();
 			
@@ -182,6 +186,8 @@ public final class EdgeUtils {
 				
 				newEdge.setStart(null);
 				newEdge.setEnd(null);
+				
+				newEdge.check();
 				
 				MODEL.removeVertex(e1Start);
 				MODEL.removeVertex(e1End);
@@ -192,6 +198,8 @@ public final class EdgeUtils {
 				
 				newEdge.setStart(e1Start);
 				newEdge.setEnd(e1Start);
+				
+				newEdge.check();
 				
 				e1Start.remove(e1);
 				e1Start.remove(e2);
@@ -206,20 +214,22 @@ public final class EdgeUtils {
 			
 		} else if (e1Start == e2Start) {
 			
-			for (int i = e1Points.size()-1; i > 0; i--) {
-				newEdgePoints.add(e1Points.get(i));
+			for (int i = e1.getPointsSize()-1; i > 0; i--) {
+				newEdge.addPoint(e1.getPoint(i));
 			}
-			assert PointUtils.equals(e1Points.get(0), e2Points.get(0));
+			assert e1.getPoint(0) == e2.getPoint(0);
 			// only add if not colinear
-			if (!PointUtils.intersection(e1Points.get(0), e1Points.get(1), e2Points.get(1))) {
-				newEdgePoints.add(e1Points.get(0));
+			if (!Point.colinear(e1.getPoint(1), e1.getPoint(0), e2.getPoint(1))) {
+				newEdge.addPoint(e1.getPoint(0));
 			}
-			for (int i = 1; i < e2Points.size(); i++) {
-				newEdgePoints.add(e2Points.get(i));
+			for (int i = 1; i < e2.getPointsSize(); i++) {
+				newEdge.addPoint(e2.getPoint(i));
 			}
 			
 			newEdge.setStart(e1End);
 			newEdge.setEnd(e2End);
+			
+			newEdge.check();
 			
 			e1End.remove(e1);
 			e1End.add(newEdge);
@@ -233,20 +243,22 @@ public final class EdgeUtils {
 			
 		} else if (e1Start == e2End) {
 				
-			for (int i = e1Points.size()-1; i > 0; i--) {
-				newEdgePoints.add(e1Points.get(i));
+			for (int i = e1.getPointsSize()-1; i > 0; i--) {
+				newEdge.addPoint(e1.getPoint(i));
 			}
-			assert PointUtils.equals(e1Points.get(0), e2Points.get(e2Points.size()-1));
+			assert e1.getPoint(0).equals(e2.getPoint(e2.getPointsSize()-1));
 			// only add if not colinear
-			if (!PointUtils.intersection(e1Points.get(0), e1Points.get(1), e2Points.get(e2Points.size()-2))) {
-				newEdgePoints.add(e1Points.get(0));
+			if (!Point.colinear(e1.getPoint(1), e1.getPoint(0), e2.getPoint(e2.getPointsSize()-2))) {
+				newEdge.addPoint(e1.getPoint(0));
 			}
-			for (int i = e2Points.size()-2; i >= 0; i--) {
-				newEdgePoints.add(e2Points.get(i));
+			for (int i = e2.getPointsSize()-2; i >= 0; i--) {
+				newEdge.addPoint(e2.getPoint(i));
 			}
 			
 			newEdge.setStart(e1End);
 			newEdge.setEnd(e2Start);
+			
+			newEdge.check();
 			
 			e1End.remove(e1);
 			e1End.add(newEdge);
@@ -260,20 +272,22 @@ public final class EdgeUtils {
 			
 		} else if (e1End == e2Start) {
 			
-			for (int i = 0; i < e1Points.size()-1; i++) {
-				newEdgePoints.add(e1Points.get(i));
+			for (int i = 0; i < e1.getPointsSize()-1; i++) {
+				newEdge.addPoint(e1.getPoint(i));
 			}
-			assert PointUtils.equals(e1Points.get(e1Points.size()-1), e2Points.get(0));
+			assert e1.getPoint(e1.getPointsSize()-1).equals(e2.getPoint(0));
 			// only add if not colinear
-			if (!PointUtils.intersection(e1Points.get(e1Points.size()-1), e1Points.get(e1Points.size()-2), e2Points.get(1))) {
-				newEdgePoints.add(e1Points.get(e1Points.size()-1));
+			if (!Point.colinear(e1.getPoint(e1.getPointsSize()-2), e1.getPoint(e1.getPointsSize()-1), e2.getPoint(1))) {
+				newEdge.addPoint(e1.getPoint(e1.getPointsSize()-1));
 			}
-			for (int i = 1; i < e2Points.size(); i++) {
-				newEdgePoints.add(e2Points.get(i));
+			for (int i = 1; i < e2.getPointsSize(); i++) {
+				newEdge.addPoint(e2.getPoint(i));
 			}
 			
 			newEdge.setStart(e1Start);
 			newEdge.setEnd(e2End);
+			
+			newEdge.check();
 			
 			e1Start.remove(e1);
 			e1Start.add(newEdge);
@@ -287,20 +301,22 @@ public final class EdgeUtils {
 			
 		} else if (e1End == e2End) {
 			
-			for (int i = 0; i < e1Points.size()-1; i++) {
-				newEdgePoints.add(e1Points.get(i));
+			for (int i = 0; i < e1.getPointsSize()-1; i++) {
+				newEdge.addPoint(e1.getPoint(i));
 			}
-			assert PointUtils.equals(e1Points.get(e1Points.size()-1), e2Points.get(e2Points.size()-1));
+			assert e1.getPoint(e1.getPointsSize()-1) == e2.getPoint(e2.getPointsSize()-1);
 			// only add if not colinear
-			if (!PointUtils.intersection(e1Points.get(e1Points.size()-1), e1Points.get(e1Points.size()-2), e2Points.get(e2Points.size()-2))) {
-				newEdgePoints.add(e1Points.get(e1Points.size()-1));
+			if (!Point.colinear(e1.getPoint(e1.getPointsSize()-2), e1.getPoint(e1.getPointsSize()-1), e2.getPoint(e2.getPointsSize()-2))) {
+				newEdge.addPoint(e1.getPoint(e1.getPointsSize()-1));
 			}
-			for (int i = e2Points.size()-2; i >= 0; i--) {
-				newEdgePoints.add(e2Points.get(i));
+			for (int i = e2.getPointsSize()-2; i >= 0; i--) {
+				newEdge.addPoint(e2.getPoint(i));
 			}
 			
 			newEdge.setStart(e1Start);
 			newEdge.setEnd(e2Start);
+			
+			newEdge.check();
 			
 			e1Start.remove(e1);
 			e1Start.add(newEdge);

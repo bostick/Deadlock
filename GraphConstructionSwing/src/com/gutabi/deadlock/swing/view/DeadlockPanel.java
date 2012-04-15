@@ -1,5 +1,6 @@
 package com.gutabi.deadlock.swing.view;
 
+import static com.gutabi.deadlock.swing.controller.DeadlockController.CONTROLLER;
 import static com.gutabi.deadlock.swing.model.DeadlockModel.MODEL;
 
 import java.awt.Color;
@@ -13,6 +14,7 @@ import org.apache.log4j.Logger;
 
 import com.gutabi.deadlock.swing.model.Edge;
 import com.gutabi.deadlock.swing.model.Vertex;
+import com.gutabi.deadlock.swing.utils.Point;
 
 @SuppressWarnings("serial")
 public class DeadlockPanel extends JPanel {
@@ -43,6 +45,12 @@ public class DeadlockPanel extends JPanel {
 			v.paint(g2);
 		}
 		
+		g2.setColor(Color.RED);
+		for (int i = 0; i < CONTROLLER.mouseController.curStroke.size()-1; i++) {
+			Point a = CONTROLLER.mouseController.curStroke.get(i);
+			Point b = CONTROLLER.mouseController.curStroke.get(i+1);
+			g2.drawLine((int)a.getX().getVal(), (int)a.getY().getVal(), (int)b.getX().getVal(), (int)b.getY().getVal());
+		}
 	}
 	
 }
