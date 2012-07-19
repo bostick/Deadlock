@@ -69,7 +69,7 @@ public class Vertex {
 			throw new IllegalStateException();
 		}
 		g.setColor(Color.BLUE);
-		g.fillOval(((int)p.getX().getVal())-3, ((int)p.getY().getVal())-3, 6, 6);
+		g.fillOval(p.x-3, p.y-3, 6, 6);
 	}
 	
 	public void remove() {
@@ -81,6 +81,47 @@ public class Vertex {
 	
 	boolean isRemoved() {
 		return removed;
+	}
+	
+	public void check() {
+		
+		assert !isRemoved();
+		
+		assert getPoint() != null;
+		
+		int edgeCount = getEdges().size();
+		
+		/*
+		 * edgeCount cannot be 0, why have some free-floating vertex?
+		 */
+		assert edgeCount != 0;
+		
+		/*
+		 * edgeCount cannot be 2, edges should just be merged
+		 */
+		assert edgeCount != 2;
+		
+		/*
+		 * all edges in v should be unique
+		 */
+		int count;
+		for (Edge e : getEdges()) {
+			
+			assert !e.isRemoved();
+			
+			count = 0;
+			for (Edge f : getEdges()) {
+				if (e == f) {
+					count++;
+				}
+			}
+			if (e.getStart() == this && e.getEnd() == this) {
+				assert count == 2;
+			} else {
+				assert count == 1;
+			}
+		}
+		
 	}
 	
 }

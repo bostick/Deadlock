@@ -3,31 +3,51 @@ package com.gutabi.deadlock.swing.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
+import com.gutabi.deadlock.swing.utils.DPoint;
 import com.gutabi.deadlock.swing.utils.Point;
-import com.gutabi.deadlock.swing.utils.Rat;
 
 public class DeadlockModel {
 	
 	public static final DeadlockModel MODEL = new DeadlockModel();
 	
-	public static final int GRID_WIDTH = 480;
-	public static final int GRID_HEIGHT = 820;
-	public static final int GRID_DELTA = 30;
+	private ArrayList<Edge> edges = new ArrayList<Edge>();
+	private ArrayList<Vertex> vertices = new ArrayList<Vertex>();
 	
-	private List<Edge> edges = new ArrayList<Edge>();
-	private List<Vertex> vertices = new ArrayList<Vertex>();
+	public Point lastPointRaw;
+	public List<Point> curStrokeRaw = new ArrayList<Point>();
+	
+	public List<Point> curStroke1 = new ArrayList<Point>();
+	
+	static Logger logger = Logger.getLogger("deadlock");
 	
 	public void init() {
 		
 	}
 	
 	public List<Edge> getEdges() {
+		assert Thread.currentThread().getName().startsWith("AWT-EventQueue-");
 		return edges;
 	}
-	
+		
 	public List<Vertex> getVertices() {
+		assert Thread.currentThread().getName().startsWith("AWT-EventQueue-");
 		return vertices;
 	}
+	
+//	//@SuppressWarnings("unchecked")
+//	public List<Edge> cloneEdges() {
+//		//return (List<Edge>)edges.clone();
+//		return new ArrayList<Edge>(getEdges());
+//	}
+//	
+//	public List<Vertex> cloneVertices() {
+////		synchronized (this) {
+////			
+////		}
+//		return new ArrayList<Vertex>(getVertices());
+//	}
 	
 	public void clear() {
 		edges.clear();
@@ -41,8 +61,9 @@ public class DeadlockModel {
 	}
 	
 	public Vertex createVertex(Point p) {
-		assert p.x.getD() == 1;
-		assert p.y.getD() == 1;
+		logger.debug("createVertex: " + p);
+//		assert p.x.getD() == 1;
+//		assert p.y.getD() == 1;
 		
 		/*
 		 * there should only be 1 vertex with this point
@@ -50,7 +71,7 @@ public class DeadlockModel {
 		int count = 0;
 		for (Vertex w : vertices) {
 			if (p.equals(w.getPoint())) {
-				assert p == w.getPoint();
+				//assert p == w.getPoint();
 				count++;
 			}
 		}
@@ -93,8 +114,8 @@ public class DeadlockModel {
 	public class EdgeInfo {
 		public Edge edge;
 		public int index;
-		public Rat param;
-		public EdgeInfo(Edge e, int index, Rat param) {
+		public double param;
+		public EdgeInfo(Edge e, int index, double param) {
 			this.edge = e;
 			this.index = index;
 			this.param = param;
@@ -105,6 +126,28 @@ public class DeadlockModel {
 		for (Vertex v : vertices) {
 			Point d = v.getPoint();
 			if (b.equals(d) && v.getEdges().size() > 1) {
+				throw new IllegalArgumentException("point is on vertex");
+			}
+		}
+		for (Edge e : edges) {
+			//List<Point> ePoints = e.getPoints();
+			for (int i = 0; i < e.getPointsSize()-1; i++) {
+				Point c = e.getPoint(i);
+				Point d = e.getPoint(i+1);
+				if (Point.intersect(b, c, d)) {
+					return new EdgeInfo(e, i, Point.param(b, c, d));
+				}
+			}
+		}
+		return null;
+	}
+	
+	public EdgeInfo tryFindEdgeInfo(DPoint b) {
+		logger.debug("tryFindEdgeInfo: " + b);
+		
+		for (Vertex v : vertices) {
+			Point d = v.getPoint();
+			if (Point.doubleEquals(b.x, d.x) && Point.doubleEquals(b.y, d.y) && v.getEdges().size() > 1) {
 				throw new IllegalArgumentException("point is on vertex");
 			}
 		}
@@ -155,6 +198,8 @@ public class DeadlockModel {
 	}
 	
 	public Vertex tryFindVertex(Point b) {
+		logger.debug("tryFindVertex: " + b);
+		
 		Vertex found = null;
 		int count = 0;
 		for (Vertex v : vertices) {
@@ -176,43 +221,7 @@ public class DeadlockModel {
 	public boolean checkConsistency() {
 		
 		for (Vertex v : vertices) {
-			
-			assert !v.isRemoved();
-			
-			assert v.getPoint() != null;
-			
-			int edgeCount = v.getEdges().size();
-			
-			/*
-			 * edgeCount cannot be 0, why have some free-floating vertex?
-			 */
-			assert edgeCount != 0;
-			
-			/*
-			 * edgeCount cannot be 2, edges should just be merged
-			 */
-			assert edgeCount != 2;
-			
-			/*
-			 * all edges in v should be unique
-			 */
-			int count;
-			for (Edge e : v.getEdges()) {
-				
-				assert !e.isRemoved();
-				
-				count = 0;
-				for (Edge f : v.getEdges()) {
-					if (e == f) {
-						count++;
-					}
-				}
-				if (e.getStart() == v && e.getEnd() == v) {
-					assert count == 2;
-				} else {
-					assert count == 1;
-				}
-			}
+			v.check();
 		}
 		
 		for (Edge e : edges) {

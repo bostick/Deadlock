@@ -84,10 +84,13 @@ public final class Edge {
 		if (removed) {
 			throw new IllegalStateException();
 		}
-		if (p.x.getD() != 1) {
-			throw new IllegalStateException();
-		}
-		if (p.y.getD() != 1) {
+//		if (p.x.getD() != 1) {
+//			throw new IllegalStateException();
+//		}
+//		if (p.y.getD() != 1) {
+//			throw new IllegalStateException();
+//		}
+		if (points.contains(p) && points.indexOf(p) != 0) {
 			throw new IllegalStateException();
 		}
 		points.add(p);
@@ -111,7 +114,7 @@ public final class Edge {
 			Point prev = points.get(i);
 			Point cur = points.get(i+1);
 			//canvas.drawLine(prev.x, prev.y, cur.x, cur.y, paint1);
-			g.drawLine((int)prev.getX().getVal(), (int)prev.getY().getVal(), (int)cur.getX().getVal(), (int)cur.getY().getVal());
+			g.drawLine(prev.x, prev.y, cur.x, cur.y);
 		}
 	}
 	
@@ -182,7 +185,7 @@ public final class Edge {
 				if (loop) {
 					assert p.equals(points.get(points.size()-1));
 					if (Point.colinear(points.get(points.size()-2), p, points.get(1))) {
-						assert false : "Point " + p + " (index " + i + ") is colinear";
+						assert false : "Point " + p + " (index 0) is colinear";
 					}
 				}
 			} else if (i == points.size()-1) {

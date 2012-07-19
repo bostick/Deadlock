@@ -4,22 +4,24 @@ import static com.gutabi.deadlock.swing.controller.DeadlockController.CONTROLLER
 import static com.gutabi.deadlock.swing.model.DeadlockModel.MODEL;
 import static com.gutabi.deadlock.swing.view.DeadlockView.VIEW;
 
-import java.io.IOException;
 import java.util.List;
 
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.SwingUtilities;
 
-import org.apache.log4j.Logger;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 import com.gutabi.deadlock.swing.model.Edge;
 import com.gutabi.deadlock.swing.utils.Point;
+import static org.junit.Assert.*;
 
-public class Test1 {
-	
-	static Logger logger = Logger.getLogger("test");
-	
-	static void createAndShowGUI(String[] args) throws Exception {
+public class TestDragging {
+
+	@BeforeClass
+	public static void setUpBeforeClass() throws Exception {
 		
 		MODEL.init();
 		
@@ -29,40 +31,67 @@ public class Test1 {
 		
 		VIEW.frame.setVisible(true);
 		
+	}
+
+	@AfterClass
+	public static void tearDownAfterClass() throws Exception {
+	}
+
+	@Before
+	public void setUp() throws Exception {
+	}
+
+	@After
+	public void tearDown() throws Exception {
+		MODEL.clear();
+	}
+	
+	@Test
+	public void test1() {
+		
 		CONTROLLER.mouseController.pressed(new Point(5, 5));
 		CONTROLLER.mouseController.dragged(new Point(6, 6));
 		CONTROLLER.mouseController.dragged(new Point(7, 7));
 		CONTROLLER.mouseController.released();
 		
 		List<Edge> edges = MODEL.getEdges();
-		assert edges.size() == 1;
+		assertEquals(edges.size(), 1);
 		Edge e = edges.get(0);
 		//List<Point> pts = e.getPoints();
-		assert e.getPointsSize() == 2;
-		assert e.getPoint(0).equals(new Point(5, 5));
-		assert e.getPoint(1).equals(new Point(7, 7));
+		assertEquals(e.getPointsSize(), 2);
+		assertEquals(new Point(5, 5), e.getPoint(0));
+		assertEquals(new Point(7, 7), e.getPoint(1));
 		
-		MODEL.clear();
+	}
+	
+	@Test
+	public void test2() {
 		
 		CONTROLLER.mouseController.pressed(new Point(5, 5));
 		CONTROLLER.mouseController.dragged(new Point(6, 6));
 		CONTROLLER.mouseController.dragged(new Point(4, 4));
 		CONTROLLER.mouseController.released();
 		
-		edges = MODEL.getEdges();
-		assert edges.size() == 1;
-		e = edges.get(0);
-		assert e.getStart().getPoint().equals(new Point(6, 6));
-		assert e.getEnd().getPoint().equals(new Point(4, 4));
+		List<Edge> edges = MODEL.getEdges();
+		assertEquals(edges.size(),  1);
+		Edge e = edges.get(0);
+		assertEquals(new Point(6, 6), e.getStart().getPoint());
+		assertEquals(new Point(4, 4), e.getEnd().getPoint());
 		
-		MODEL.clear();
+	}
+	
+	@Test
+	public void test3() {
 		
 		CONTROLLER.mouseController.pressed(new Point(267, 581));
 		CONTROLLER.mouseController.dragged(new Point(267, 580));
 		CONTROLLER.mouseController.dragged(new Point(267, 582));
 		CONTROLLER.mouseController.released();
 		
-		MODEL.clear();
+	}
+	
+	@Test
+	public void test4() {
 		
 //		CONTROLLER.mouseController.pressed(new Point(631., 681.));
 //		CONTROLLER.mouseController.dragged(new Point(629., 681.));
@@ -111,7 +140,10 @@ public class Test1 {
 		CONTROLLER.mouseController.dragged(new Point(1, 3));
 		CONTROLLER.mouseController.released();
 		
-		MODEL.clear();
+	}
+	
+	@Test
+	public void test5() {
 		
 		CONTROLLER.mouseController.pressed(new Point(532, 627));
 		CONTROLLER.mouseController.dragged(new Point(515, 620));
@@ -162,7 +194,10 @@ public class Test1 {
 		CONTROLLER.mouseController.dragged(new Point(521, 635));
 		CONTROLLER.mouseController.released();
 		
-		MODEL.clear();
+	}
+	
+	@Test
+	public void test6() {
 		
 		CONTROLLER.mouseController.pressed(new Point(5, 5));
 		//CONTROLLER.mouseController.dragged(new Point(6.0, 6.0));
@@ -299,7 +334,10 @@ public class Test1 {
 //		CONTROLLER.mouseController.dragged(new Point(642, 292));
 //		CONTROLLER.mouseController.dragged(new Point(643, 292));
 		
-		MODEL.clear();
+	}
+	
+	@Test
+	public void test7() {
 		
 		CONTROLLER.mouseController.pressed(new Point(5, 5));
 		CONTROLLER.mouseController.dragged(new Point(6, 6));
@@ -309,6 +347,7 @@ public class Test1 {
 		CONTROLLER.mouseController.pressed(new Point(6, 6));
 		CONTROLLER.mouseController.dragged(new Point(4, 4));
 		CONTROLLER.mouseController.released();
+		
 		CONTROLLER.mouseController.pressed(new Point(267, 581));
 		CONTROLLER.mouseController.dragged(new Point(267, 580));
 		CONTROLLER.mouseController.dragged(new Point(267, 582));
@@ -437,7 +476,10 @@ public class Test1 {
 		CONTROLLER.mouseController.dragged(new Point(643, 292));
 		CONTROLLER.mouseController.released();
 		
-		MODEL.clear();
+	}
+	
+	@Test
+	public void test8() {
 		
 		CONTROLLER.mouseController.pressed(new Point(532, 627));
 		CONTROLLER.mouseController.dragged(new Point(515, 620));
@@ -493,7 +535,10 @@ public class Test1 {
 		CONTROLLER.mouseController.dragged(new Point(580, 423));
 		CONTROLLER.mouseController.released();
 		
-		MODEL.clear();
+	}
+	
+	@Test
+	public void test9() {
 		
 		CONTROLLER.mouseController.pressed(new Point(0, 0));
 		CONTROLLER.mouseController.dragged(new Point(150, 450));
@@ -505,30 +550,28 @@ public class Test1 {
 		
 	}
 	
-	static Thread.UncaughtExceptionHandler handler = new Thread.UncaughtExceptionHandler() {
-		@Override
-		public void uncaughtException(Thread thread, Throwable t) {
-			logger.error("Error in thread " + thread.getName() + ": " + t.getMessage(), t);
-		}
-	};
 	
-	public static void main(final String[] args) throws ClassNotFoundException, InstantiationException, IllegalAccessException, UnsupportedLookAndFeelException, IOException {
+	@Test
+	public void testLoop() throws Exception {
 		
-		Thread.setDefaultUncaughtExceptionHandler(handler);
+		CONTROLLER.mouseController.pressed_M(new Point(653, 434));
+		CONTROLLER.mouseController.dragged_M(new Point(603, 434));
+		CONTROLLER.mouseController.dragged_M(new Point(569, 435));
+		CONTROLLER.mouseController.dragged_M(new Point(657, 434));
+		CONTROLLER.mouseController.dragged_M(new Point(653, 434));
+		CONTROLLER.mouseController.released_M();
 		
-		UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
-		
-		javax.swing.SwingUtilities.invokeLater(new Runnable() {
+		SwingUtilities.invokeAndWait(new Runnable() {
 			@Override
 			public void run() {
-				try {
-					createAndShowGUI(args);
-				} catch (Exception e) {
-					e.printStackTrace();
-					System.exit(1);
-				}
+				;
 			}
 		});
+		
 	}
+	
+	
+	
+	
 	
 }

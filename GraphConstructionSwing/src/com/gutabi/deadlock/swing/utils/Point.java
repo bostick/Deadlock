@@ -2,70 +2,22 @@ package com.gutabi.deadlock.swing.utils;
 
 public class Point {
 	
-	/*
-	 * the given points
-	 */
-//	private final Rat ax;
-//	private final Rat ay;
-//	private final Rat bx;
-//	private final Rat by;
-//	private final Rat cx;
-//	private final Rat cy;
-//	private final Rat dx;
-//	private final Rat dy;
-	
-	public final Rat x;
-	public final Rat y;
-	
-	/*
-	 * computed value of intersection, only used for printing/debugging
-	 */
-//	private final double xVal;
-//	private final double yVal;
-	
-	/*
-	 * whether single point or intersection
-	 */
-	//public final boolean single;
+	public final int x;
+	public final int y;
 	
 	public final int hash;
 	public final String s;
 	
-	public Point(Rat x, Rat y) {
-//		ax = x;
-//		ay = y;
-//		bx = null;
-//		by = null;
-//		cx = null;
-//		cy = null;
-//		dx = null;
-//		dy = null;
-		
+	public Point(int x, int y) {
 		this.x = x;
 		this.y = y;
 		
-//		xVal = x.getVal();
-//		yVal = y.getVal();
-//		single = true;
-		
 		int h = 17;
-		h = 37 * h + x.hashCode();
-		h = 37 * h + y.hashCode();
+		h = 37 * h + x;
+		h = 37 * h + y;
 		hash = h;
 		
 		s = "<" + x + ", " + y + ">";
-	}
-	
-	public Point(int x, int y) {
-		this(new Rat(x, 1), new Rat(y, 1));
-	}
-	
-	public Rat getX() {
-		return x;
-	}
-	
-	public Rat getY() {
-		return y;
 	}
 	
 	@Override
@@ -73,9 +25,9 @@ public class Point {
 		if (this == p) {
 			return true;
 		} else if (!(p instanceof Point)) {
-			return false;
+			throw new IllegalArgumentException();
 		} else {
-			return (x.equals(((Point)p).x)) && (y.equals(((Point)p).y));
+			return (x == ((Point)p).x) && (y == ((Point)p).y);
 		}
 	}
 	
@@ -99,85 +51,85 @@ public class Point {
 	 * @throws IllegalArgumentException
 	 * @throws OverlappingException
 	 */
-	public static Point intersection(Point a, Point b, Point c, Point d) {
+	public static DPoint intersection(Point a, Point b, Point c, Point d) {
 		if (a.equals(b)) {
 			throw new IllegalArgumentException("a and b are equal");
 		}
 		if (c.equals(d)) {
 			throw new IllegalArgumentException("c and d are equal");
 		}
-		Rat ydc = d.y.minus(c.y);
-		Rat xba = b.x.minus(a.x);
-		Rat xdc = d.x.minus(c.x);
-		Rat yba = b.y.minus(a.y);
-		Rat yac = a.y.minus(c.y);
-		Rat xac = a.x.minus(c.x);
-		Rat denom = (xba.times(ydc)).minus(xdc.times(yba));
-		Rat uabn = (xdc.times(yac)).minus(xac.times(ydc));
-		Rat ucdn = (xba.times(yac)).minus(xac.times(yba));
-		if (denom.isZero()) {
-			if (uabn.isZero() && ucdn.isZero()) {
+		int ydc = d.y - (c.y);
+		int xba = b.x - (a.x);
+		int xdc = d.x - (c.x);
+		int yba = b.y - (a.y);
+		int yac = a.y - (c.y);
+		int xac = a.x - (c.x);
+		int denom = (xba * (ydc)) - (xdc * (yba));
+		int uabn = (xdc * (yac)) - (xac * (ydc));
+		int ucdn = (xba * (yac)) - (xac * (yba));
+		if (denom == 0) {
+			if (uabn == 0 && ucdn == 0) {
 				//colinear but not overlapping, single point, overlapping, or identical
 				
-				Rat cu;
-				if (!xba.isZero()) {
-					cu = (c.x.minus(a.x)).over(xba);
-					if (!yba.isZero()) {
-						assert cu.equals((c.y.minus(a.y)).over(yba));
+				double cu;
+				if (xba != 0) {
+					cu = ((double)(c.x - (a.x))) / ((double)(xba));
+					if (yba != 0) {
+						assert cu == ((double)((c.y - (a.y))) / ((double)(yba)));
 					}
 				} else {
-					cu = (c.y.minus(a.y)).over(yba);
+					cu = ((double)(c.y - (a.y))) / ((double)(yba));
 				}
 				
-				Rat du;
-				if (!xba.isZero()) {
-					du = (d.x.minus(a.x)).over(xba);
-					if (!yba.isZero()) {
-						assert du.equals((d.y.minus(a.y)).over(yba));
+				double du;
+				if (xba != 0) {
+					du = ((double)(d.x - (a.x))) / ((double)(xba));
+					if (yba != 0) {
+						assert du == ((double)((d.y - (a.y))) / ((double)(yba)));
 					}
 				} else {
-					du = (d.y.minus(a.y)).over(yba);
+					du = ((double)(d.y - (a.y))) / ((double)(yba));
 				}
 				
-				if (du.isLessThan(cu)) {
-					Rat tmp = cu;
+				if (du < (cu)) {
+					double tmp = cu;
 					cu = du;
 					du = tmp;
 				}
 				
-				if (du.isLessThan(Rat.ZERO)) {
+				if (du < 0.0) {
 					//colinear but not intersecting
 					return null;
-				} else if (du.isZero()) {
+				} else if (Point.doubleEquals(du, 0.0)) {
 					//single point
-					return a;
-				} else if (du.isGreaterThan(Rat.ZERO) && du.isLessThan(Rat.ONE)) {
-					if (cu.isLessThan(Rat.ZERO)) {
+					return new DPoint(a.x, a.y);
+				} else if (du > 0.0 && du < 1.0) {
+					if (cu < 0.0) {
 						throw new OverlappingException();
-					} else if (cu.isZero()) {
+					} else if (Point.doubleEquals(cu, 0.0)) {
 						throw new OverlappingException();
 					} else {
 						throw new OverlappingException();
 					}
-				} else if (du.isOne()) {
-					if (cu.isLessThan(Rat.ZERO)) {
+				} else if (Point.doubleEquals(du, 1.0)) {
+					if (cu < 0.0) {
 						throw new OverlappingException();
-					} else if (cu.isZero()) {
+					} else if (Point.doubleEquals(cu, 0.0)) {
 						//identical
 						throw new OverlappingException();
 					} else {
 						throw new OverlappingException();
 					}
 				} else {
-					if (cu.isLessThan(Rat.ZERO)) {
+					if (cu < 0.0) {
 						throw new OverlappingException();
-					} else if (cu.isZero()) {
+					} else if (Point.doubleEquals(cu, 0.0)) {
 						throw new OverlappingException();
-					} else if (cu.isGreaterThan(Rat.ZERO) && cu.isLessThan(Rat.ONE)) {
+					} else if (cu > 0.0 && cu < 1.0) {
 						throw new OverlappingException();
-					} else if (cu.isOne()) {
+					} else if (Point.doubleEquals(cu, 1.0)) {
 						// single point
-						return b;
+						return new DPoint(b.x, b.y);
 					} else {
 						//colinear but not intersecting
 						return null;
@@ -190,18 +142,13 @@ public class Point {
 			}
 		} else {
 			// skew
-			Rat uab = uabn.over(denom);
-			Rat ucd = ucdn.over(denom);
-//			Rat uabtxba = uabn.times(xba).over(denom);
-//			Rat ucdtyba = ucdn.times(yba).over(denom);
-			if ((uab.isGreaterThanOrEquals(Rat.ZERO) && uab.isLessThanOrEquals(Rat.ONE)) &&
-					(ucd.isGreaterThanOrEquals(Rat.ZERO) && ucd.isLessThanOrEquals(Rat.ONE))) {
-//			if ((uabtxba.isGreaterThanOrEquals(Rat.ZERO) && uabtxba.isLessThanOrEquals(xba)) &&
-//					(ucdtyba.isGreaterThanOrEquals(Rat.ZERO) && ucdtyba.isLessThanOrEquals(yba))) {
+			double uab = ((double)uabn) / ((double)(denom));
+			double ucd = ((double)ucdn) / ((double)(denom));
+			if ((uab >= 0.0 && uab <= 1.0 && (ucd >= 0.0 && ucd <= 1.0))) {
 				// intersecting
-				Rat x = a.x.plus(uab.times(xba));
-				Rat y = a.y.plus(uab.times(yba));
-				return new Point(x, y);
+				double x = a.x + (uab * (xba));
+				double y = a.y + (uab * (yba));
+				return new DPoint(x, y);
 			} else {
 				// not intersecting
 				return null;
@@ -212,10 +159,46 @@ public class Point {
 	/**
 	 * return Point defined by param on line &lt;a, b>
 	 */
-	public static Point point(Point a, Point b, Rat param) {
-		assert param.isGreaterThanOrEquals(Rat.ZERO);
-		assert param.isLessThan(Rat.ONE);
-		return new Point(a.x.plus(param.times(b.x.minus(a.x))), a.y.plus(param.times(b.y.minus(a.y))));
+	public static DPoint point(Point a, Point b, double param) {
+		assert param >= 0.0;
+		assert param < 1.0;
+		return new DPoint(a.x + (param * (b.x - (a.x))), a.y + (param * (b.y - (a.y))));
+	}
+	
+	/**
+	 * Where is b perpendicular to &lt;c, d> ?
+	 * could be > 1 or < 0
+	 */
+	public static double perp(Point b, Point c, Point d) {
+		if (c.equals(d)) {
+			throw new IllegalArgumentException("c equals d");
+		}
+		int xbc = b.x - (c.x);
+		int xdc = d.x - (c.x);
+		int ybc = b.y - (c.y);
+		int ydc = d.y - (c.y);
+		int denom = (xdc * (xdc) + (ydc * (ydc)));
+		// u is where b is perpendicular to <c, d>
+		double u = ((double)((xbc * (xdc)) + ((ybc * (ydc))))) / ((double)(denom));
+		return u;
+	}
+	
+	/**
+	 * Where is b perpendicular to &lt;c, d> ?
+	 * could be > 1 or < 0
+	 */
+	public static double perp(DPoint b, Point c, Point d) {
+		if (c.equals(d)) {
+			throw new IllegalArgumentException("c equals d");
+		}
+		double xbc = b.x - (c.x);
+		int xdc = d.x - (c.x);
+		double ybc = b.y - (c.y);
+		int ydc = d.y - (c.y);
+		int denom = (xdc * (xdc) + (ydc * (ydc)));
+		// u is where b is perpendicular to <c, d>
+		double u = ((double)((xbc * (xdc)) + ((ybc * (ydc))))) / ((double)(denom));
+		return u;
 	}
 	
 	/**
@@ -225,21 +208,39 @@ public class Point {
 		if (c.equals(d)) {
 			throw new IllegalArgumentException("c equals d");
 		}
-		Rat xbc = b.x.minus(c.x);
-		Rat xdc = d.x.minus(c.x);
-		Rat ybc = b.y.minus(c.y);
-		Rat ydc = d.y.minus(c.y);
-		Rat denom = (xdc.times(xdc).plus(ydc.times(ydc)));
-		// u is where b is perpendicular to <c, d>
-		Rat u = ((xbc.times(xdc)).plus((ybc.times(ydc)))).over(denom);
+		int xbc = b.x - (c.x);
+		int xdc = d.x - (c.x);
+		int ybc = b.y - (c.y);
+		int ydc = d.y - (c.y);
+		double u = perp(b, c, d);
 		if (b.equals(d)) {
 			return false;
-		} else if (u.isGreaterThanOrEquals(Rat.ZERO) && u.isLessThanOrEquals(Rat.ONE)) {
-//			Rat x = c.x.plus(u.times(xdc));
-//			Rat y = c.y.plus(u.times(ydc));
-//			return b.x.equals(x) && b.y.equals(y);
+		} else if (u >= 0.0 && u < 1.0) {
 			
-			return xbc.equals(u.times(xdc)) && ybc.equals(u.times(ydc));
+			return Point.doubleEquals(xbc, (u * (xdc))) && Point.doubleEquals(ybc, (u * (ydc)));
+			
+		} else {
+			return false;
+		}
+	}
+	
+	/**
+	 * Does b intersect &lt;c, d> ?
+	 */
+	public static boolean intersect(DPoint b, Point c, Point d) {
+		if (c.equals(d)) {
+			throw new IllegalArgumentException("c equals d");
+		}
+		double xbc = b.x - (c.x);
+		int xdc = d.x - (c.x);
+		double ybc = b.y - (c.y);
+		int ydc = d.y - (c.y);
+		double u = perp(b, c, d);
+		if (b.x == d.x && b.y == d.y) {
+			return false;
+		} else if (u >= 0.0 && u < 1.0) {
+			
+			return Point.doubleEquals(xbc, (u * (xdc))) && Point.doubleEquals(ybc, (u * (ydc)));
 			
 		} else {
 			return false;
@@ -259,19 +260,16 @@ public class Point {
 		if (x.equals(z)) {
 			throw new IllegalArgumentException("x equals z");
 		}
-		Rat xbc = y.x.minus(x.x);
-		Rat xdc = z.x.minus(x.x);
-		Rat ybc = y.y.minus(x.y);
-		Rat ydc = z.y.minus(x.y);
-		Rat denom = (xdc.times(xdc).plus(ydc.times(ydc)));
+		int xbc = y.x - (x.x);
+		int xdc = z.x - (x.x);
+		int ybc = y.y - (x.y);
+		int ydc = z.y - (x.y);
+		int denom = (xdc * (xdc) + (ydc * (ydc)));
 		// u is where b is perpendicular to <c, d>
-		Rat u = ((xbc.times(xdc)).plus((ybc.times(ydc)))).over(denom);
-		if (u.isGreaterThanOrEquals(Rat.ZERO) && u.isLessThanOrEquals(Rat.ONE)) {
-//			Rat x = c.x.plus(u.times(xdc));
-//			Rat y = c.y.plus(u.times(ydc));
-//			return b.x.equals(x) && b.y.equals(y);
+		double u = ((double)((xbc * (xdc)) + ((ybc * (ydc))))) / ((double)(denom));
+		if (u >= 0.0 && u <= 1.0) {
 			
-			return xbc.equals(u.times(xdc)) && ybc.equals(u.times(ydc));
+			return Point.doubleEquals(xbc, (u * (xdc))) && Point.doubleEquals(ybc, (u * (ydc)));
 			
 		} else {
 			return false;
@@ -281,31 +279,75 @@ public class Point {
 	/**
 	 * assuming it is, return param for point b on line defined by &lt;c, d>
 	 */
-	public static Rat param(Point b, Point c, Point d) {
-		Rat xbc = b.x.minus(c.x);
-		Rat xdc = d.x.minus(c.x);
-		Rat ybc = b.y.minus(c.y);
-		Rat ydc = d.y.minus(c.y);
-		if (xdc.equals(Rat.ZERO)) {
-			assert xbc.isZero();
-			Rat uy = ybc.over(ydc);
-			assert uy.isLessThan(Rat.ONE);
+	public static double param(Point b, Point c, Point d) {
+		int xbc = b.x - (c.x);
+		int xdc = d.x - (c.x);
+		int ybc = b.y - (c.y);
+		int ydc = d.y - (c.y);
+		if (xdc == 0) {
+			assert xbc == 0;
+			double uy = ((double)ybc) / ((double)ydc);
+			assert uy >= 0.0;
+			assert uy < 1.0;
 			return uy;
-		} else if (ydc.equals(Rat.ZERO)) {
-			assert ybc.isZero();
-			Rat ux = xbc.over(xdc);
-			assert ux.isLessThan(Rat.ONE);
+		} else if (ydc == 0) {
+			assert ybc == 0;
+			double ux = ((double)xbc) / ((double)xdc);
+			assert ux >= 0.0;
+			assert ux < 1.0;
 			return ux;
 		} else {
-			Rat ux = xbc.over(xdc);
-			Rat uy = ybc.over(ydc);
-			assert ux.equals(uy);
-			//assert 0 <= ux;
-			assert ux.isGreaterThanOrEquals(Rat.ZERO);
-//			assert ux <= 1;
-			assert ux.isLessThan(Rat.ONE);
+			double ux = ((double)xbc) / ((double)xdc);
+			double uy = ((double)ybc) / ((double)ydc);
+			assert ux == (uy);
+			assert ux >= 0.0;
+			assert ux < 1.0;
 			return ux;
 		}
 		
+	}
+	
+	/**
+	 * assuming it is, return param for point b on line defined by &lt;c, d>
+	 */
+	public static double param(DPoint b, Point c, Point d) {
+		double xbc = b.x - (c.x);
+		int xdc = d.x - (c.x);
+		double ybc = b.y - (c.y);
+		int ydc = d.y - (c.y);
+		if (xdc == 0) {
+			assert xbc == 0;
+			double uy = ((double)ybc) / ((double)ydc);
+			assert uy < 1.0;
+			return uy;
+		} else if (ydc == 0) {
+			assert ybc == 0;
+			double ux = ((double)xbc) / ((double)xdc);
+			assert ux < 1.0;
+			return ux;
+		} else {
+			double ux = ((double)xbc) / ((double)xdc);
+			double uy = ((double)ybc) / ((double)ydc);
+			assert doubleEquals(ux, uy);
+			assert ux >= 0.0;
+			assert ux < 1.0;
+			return ux;
+		}
+		
+	}
+	
+	public static double dist(Point a, Point b) {
+		return Math.hypot(a.x - b.x, a.y - b.y);
+	}
+	
+	/*
+	 * distance from b to where perpendicular to <c, d>
+	 */
+//	public static double dist(Point b, Point c, Point d) {
+//		return Math.hypot(a.x - b.x, a.y - b.y);
+//	}
+	
+	public static boolean doubleEquals(double a, double b) {
+		return Math.abs(a - b) < 0.0001;
 	}
 }

@@ -16,45 +16,90 @@ import org.apache.log4j.Logger;
 import com.gutabi.deadlock.swing.model.DeadlockModel.EdgeInfo;
 import com.gutabi.deadlock.swing.model.Edge;
 import com.gutabi.deadlock.swing.model.Vertex;
+import com.gutabi.deadlock.swing.utils.DPoint;
 import com.gutabi.deadlock.swing.utils.EdgeUtils;
 import com.gutabi.deadlock.swing.utils.OverlappingException;
 import com.gutabi.deadlock.swing.utils.Point;
 import com.gutabi.deadlock.swing.utils.PointToBeAdded;
-import com.gutabi.deadlock.swing.utils.Rat;
 
 public class MouseController implements MouseListener, MouseMotionListener {
 	
 	static Logger logger = Logger.getLogger("deadlock");
-	
-	//private Point curPoint;
-	public List<Point> curStroke = new ArrayList<Point>();
 	
 	public void init() {
 		VIEW.panel.addMouseListener(this);
 		VIEW.panel.addMouseMotionListener(this);
 	}
 	
-	@Override
-	public void mousePressed(MouseEvent ev) {
-		pressed(new Point(new Rat(ev.getX(), 1), new Rat(ev.getY(), 1)));
+	public void pressed(Point p) {
+		assert Thread.currentThread().getName().startsWith("AWT-EventQueue-");
+		MODEL.lastPointRaw = p;
+		MODEL.curStrokeRaw.add(p);
+		VIEW.repaint();
 	}
 	
-	public void pressed(Point p) {
-		curStroke.add(p);
+	public void dragged(Point p) {
+		assert Thread.currentThread().getName().startsWith("AWT-EventQueue-");
+		if (!p.equals(MODEL.lastPointRaw)) {
+			MODEL.curStrokeRaw.add(p);
+			MODEL.lastPointRaw = p;
+			VIEW.repaint();
+		}
+	}
+	
+	public void released() {
+		assert Thread.currentThread().getName().startsWith("AWT-EventQueue-");
+		
+		List<Point> curStroke1 = massage(MODEL.curStrokeRaw);
+		//List<Point> curStroke1 = MODEL.curStrokeRaw;
+		
+		for (int i = 0; i < curStroke1.size()-1; i++) {
+			addUserSegment(curStroke1.get(i), curStroke1.get(i+1));
+		}
+		
+		MODEL.lastPointRaw = null;
+		MODEL.curStrokeRaw.clear();
 		
 		VIEW.repaint();
+	}
+	
+	public void pressed_M(final Point p) {
+		assert Thread.currentThread().getName().startsWith("main");
+		javax.swing.SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				pressed(p);
+			}
+		});
+	}
+	
+	public void dragged_M(final Point p) {
+		assert Thread.currentThread().getName().startsWith("main");
+		javax.swing.SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				dragged(p);
+			}
+		});
+	}
+	
+	public void released_M() {
+		assert Thread.currentThread().getName().startsWith("main");
+		javax.swing.SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				released();
+			}
+		});
+	}
+	
+	@Override
+	public void mousePressed(MouseEvent ev) {
+		pressed(new Point(ev.getX(), ev.getY()));
 	}
 	
 	@Override
 	public void mouseDragged(MouseEvent ev) {
 		//dragged(new Point(ev.getX(), ev.getY()));
-		dragged(new Point(new Rat(ev.getX(), 1), new Rat(ev.getY(), 1)));
-	}
-	
-	public void dragged(Point p) {
-		curStroke.add(p);
-		
-		VIEW.repaint();
+		Point p = new Point(ev.getX(), ev.getY());
+		dragged(p);
 	}
 	
 	@Override
@@ -62,40 +107,58 @@ public class MouseController implements MouseListener, MouseMotionListener {
 		released();
 	}
 	
-	public void released() {
-		for (int i = 0; i < curStroke.size()-1; i++) {
-			dragged(curStroke.get(i), curStroke.get(i+1));
+	private List<Point> massage(List<Point> raw) {
+		
+		/*
+		 * maybe 1. cut-off rest of points if angle is too sharp
+		 * maybe 2. cut-off rest of points if too close to 
+		 * 
+		 * 1. adjust for first point to be on a vertex, if close enough
+		 * 2. adjust for second point, etc.
+		 * 
+		 * 3. if first point is not on vertex, adjust for first vertex to be on edge, if close enough
+		 * 4. if second point is not on vertex, adjust for second vertex to be on edge, if close enough
+		 * 
+		 * 
+		 * scan endpoints of raw first
+		 * scan over vertices first since the user will probably be trying to hit vertices more than just edges
+		 * 
+		 */
+		
+		//List<Point> diff = new ArrayList<Point>(raw.size());
+		List<Point> adj = new ArrayList<Point>(raw);
+		
+		int s = raw.size();
+		Point first = raw.get(0);
+		Point last = raw.get(s-1);
+		
+		if ((!last.equals(first)) && Point.dist(last, first) <= 10.0) {
+			adj.set(s-1, first);
 		}
 		
-		curStroke.clear();
+		for (Vertex v : MODEL.getVertices()) {
+			
+			Point vp = v.getPoint();
+			
+			if ((!first.equals(vp)) && Point.dist(first, vp) <= 10.0) {
+				adj.set(0, vp);
+			}
+			
+			if ((!last.equals(vp)) && Point.dist(last, vp) <= 10.0) {
+				adj.set(s-1, vp);
+			}
+			
+		}
 		
-		VIEW.repaint();
+		return adj;
 	}
 	
-	private void dragged(Point a, Point b) {
-		logger.debug("dragged ");
-		
-		/*
-		 * ignore repeated points
-		 */
-		
-//		if (a.equals(b)) {
-//			return;
-//		}
-		
-		/*
-		 * test all pairs <c, d> against <a, b>, since <a, b> could intersect multiple edges
-		 * 
-		 * find all events inside <a, b> and all events inside <c, d>
-		 * 
-		 * don't modify the model while we are finding events, so:
-		 * 1. remember all events
-		 * 2. process them later
-		 */
+	private void addUserSegment(Point a, Point b) {
+		logger.debug("dragged");
 		
 		SortedSet<PointToBeAdded> betweenABPoints = new TreeSet<PointToBeAdded>(PointToBeAdded.ptbaComparator);
-		betweenABPoints.add(new PointToBeAdded(a, Rat.ZERO));
-		betweenABPoints.add(new PointToBeAdded(b, Rat.ONE));
+		betweenABPoints.add(new PointToBeAdded(new DPoint(a.x, a.y), 0.0));
+		betweenABPoints.add(new PointToBeAdded(new DPoint(b.x, b.y), 1.0));
 		
 		for (Edge e : MODEL.getEdges()) {
 			
@@ -103,25 +166,25 @@ public class MouseController implements MouseListener, MouseMotionListener {
 				Point c = e.getPoint(j);
 				Point d = e.getPoint(j+1);
 				try {
-					Point inter = Point.intersection(a, b, c, d);
-					if (inter != null && !inter.equals(b)) {
+					DPoint inter = Point.intersection(a, b, c, d);
+					if (inter != null && !(Point.doubleEquals(inter.x, b.x) && Point.doubleEquals(inter.y, b.y))) {
 						PointToBeAdded nptba = new PointToBeAdded(inter, Point.param(inter, a, b));
 						betweenABPoints.add(nptba);
 					}
 				} catch (OverlappingException ex) {
 					
 					if (Point.intersect(c, a, b)) {
-						Rat cParam = Point.param(c, a, b);
-						if ((cParam.isGreaterThan(Rat.ZERO) && cParam.isLessThan(Rat.ONE))) {
-							PointToBeAdded nptba = new PointToBeAdded(c, cParam);
+						double cParam = Point.param(c, a, b);
+						if ((cParam > 0.0 && cParam < 1.0)) {
+							PointToBeAdded nptba = new PointToBeAdded(new DPoint(c.x, c.y), cParam);
 							betweenABPoints.add(nptba);
 						}
 					}
 					
 					if (Point.intersect(d, a, b)) {
-						Rat dParam = Point.param(d, a, b);
-						if ((dParam.isGreaterThan(Rat.ZERO) && dParam.isLessThan(Rat.ONE))) {
-							PointToBeAdded nptba = new PointToBeAdded(d, dParam);
+						double dParam = Point.param(d, a, b);
+						if ((dParam > 0.0 && dParam < 1.0)) {
+							PointToBeAdded nptba = new PointToBeAdded(new DPoint(d.x, d.y), dParam);
 							betweenABPoints.add(nptba);
 						}
 					}
@@ -138,33 +201,32 @@ public class MouseController implements MouseListener, MouseMotionListener {
 				first = false;
 			} else {
 				assert last != null;
-				process(last.p, p.p);
+				process(last, p);
 			}
 			last = p;
 		}
 		betweenABPoints.clear();
 		
-		MODEL.checkConsistency();
-		
 		VIEW.repaint();
 		
 	}
 	
-	void process(final Point aaa, final Point bbb) {
+	void process(final PointToBeAdded aaa, final PointToBeAdded bbb) {
+		logger.debug("process: a: " + aaa + " b: " + bbb);
+		
 		/*
 		 * a is either the first in the betweenAB list, so an integer,
 		 * or is later in betweenAB and has already been treated as integer when it was b
 		 */
-		Point aInt = new Point((int)Math.round(aaa.x.getVal()), (int)Math.round(aaa.y.getVal()));
+		assert Math.floor(aaa.p.x) == aaa.p.x;
+		assert Math.floor(aaa.p.y) == aaa.p.y;
+		Point aInt = new Point((int)aaa.p.x, (int)aaa.p.y);
 		
 		// b is not yet an integer
 		
-		Point bInt = new Point((int)Math.round(bbb.x.getVal()), (int)Math.round(bbb.y.getVal()));
+		Point bInt = new Point((int)Math.round(bbb.p.x), (int)Math.round(bbb.p.y));
 		
-		if (aInt.equals(bInt)) {
-			return;
-		}
-		
+		logger.debug("finding a");
 		Vertex aV = MODEL.tryFindVertex(aInt);
 		if (aV == null) {
 			EdgeInfo info = MODEL.tryFindEdgeInfo(aInt);
@@ -173,58 +235,69 @@ public class MouseController implements MouseListener, MouseMotionListener {
 			} else {
 				Edge e = info.edge;
 				int index = info.index;
-				Rat param = info.param;
+				double param = info.param;
 				aV = EdgeUtils.split(e, index, param);
 			}
 		}
 		
 		assert aV != null;
 		
-		Vertex bV = MODEL.tryFindVertex(bbb);
+		logger.debug("finding b");
+		Vertex bV = MODEL.tryFindVertex(bInt);
 		if (bV == null) {
-			EdgeInfo info = MODEL.tryFindEdgeInfo(bbb);
+			EdgeInfo info = MODEL.tryFindEdgeInfo(bbb.p);
 			if (info == null) {
 				/*
 				 * completely new, so use bInt
 				 */
-				bV = MODEL.tryFindVertex(bInt);
-				if (bV == null) {
-					info = MODEL.tryFindEdgeInfo(bInt);
-					if (info == null) {
-						/*
-						 * completely new, so use bInt
-						 */
-						bV = MODEL.createVertex(bInt);
-					} else {
-						Edge e = info.edge;
-						int index = info.index;
-						Rat param = info.param;
-						/*
-						 * split takes care of adjusting b to integer coords
-						 */
-						bV = EdgeUtils.split(e, index, param);
-					}
+				info = MODEL.tryFindEdgeInfo(bInt);
+				if (info == null) {
+					/*
+					 * completely new, so use bInt
+					 */
+					bV = MODEL.createVertex(bInt);
+					assert bV.getPoint().equals(bInt);
 				} else {
-					// if b is a vertex, then it is an integer
-					assert bInt.x.getD() == 1;
-					assert bInt.y.getD() == 1;
+					Edge e = info.edge;
+					int index = info.index;
+					double param = info.param;
+					/*
+					 * split takes care of adjusting b to integer coords
+					 */
+					bV = EdgeUtils.split(e, index, param);
+					assert bV.getPoint().equals(bInt);
 				}
 			} else {
 				Edge e = info.edge;
 				int index = info.index;
-				Rat param = info.param;
+				double param = info.param;
 				/*
 				 * split takes care of adjusting b to integer coords
 				 */
 				bV = EdgeUtils.split(e, index, param);
+				// bV is not based on bbb nor bInt, so nothing to test
+				/*
+				 * bV is not based on bbb nor bInt, so nothing to test
+				 * and it is also wrong to use bInt later on, must use bV.getPoint()
+				 */
+				//assert bV.getPoint().equals(bInt);
 			}
-		} else {
-			// if b is a vertex, then it is an integer
-			assert bbb.x.getD() == 1;
-			assert bbb.y.getD() == 1;
 		}
 		
+		/*
+		 * reset point for the next iteration where it is a
+		 */
+		logger.debug("resetting " + bbb + " to " + bV.getPoint());
+		bbb.p = new DPoint(bV.getPoint().x, bV.getPoint().y);
+		
 		assert bV != null;
+		
+		if (aV == bV) {
+			/*
+			 * could happen if bV is adjusted
+			 */
+			return;
+		}
 		
 		Edge e = null;
 		for (Edge ee : aV.getEdges()) {
@@ -240,7 +313,7 @@ public class MouseController implements MouseListener, MouseMotionListener {
 			e = MODEL.createEdge();
 			//List<Point> ePoints = e.getPoints();
 			e.addPoint(aInt);
-			e.addPoint(bInt);
+			e.addPoint(bV.getPoint());
 			e.setStart(aV);
 			e.setEnd(bV);
 			
@@ -272,7 +345,7 @@ public class MouseController implements MouseListener, MouseMotionListener {
 		 * bV could have been removed if the merging of aEdge and e formed a loop (thereby removing bV in the process),
 		 * so check that b is still a vertex first
 		 */
-		if (MODEL.tryFindVertex(bInt) != null) {
+		if (MODEL.tryFindVertex(bV.getPoint()) != null) {
 			List<Edge> bEdges = bV.getEdges();
 			if (bEdges.size() == 2) {
 				Edge bEdge;
@@ -284,6 +357,8 @@ public class MouseController implements MouseListener, MouseMotionListener {
 				EdgeUtils.merge(working, bEdge);
 			}
 		}
+		
+		MODEL.checkConsistency();
 		
 	}
 	

@@ -1,0 +1,83 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 9.0' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       157,          7]
+NotebookDataLength[      2081,         74]
+NotebookOptionsPosition[      1702,         56]
+NotebookOutlinePosition[      2041,         71]
+CellTagsIndexPosition[      1998,         68]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+
+Cell[CellGroupData[{
+Cell["\<\
+converting raw mouse data into road data\
+\>", "Section",
+ CellChangeTimes->{{3.5445582882706456`*^9, 3.5445583363187294`*^9}}],
+
+Cell["\<\
+first step:
+make it easier to:
+continue from vertex
+merge into vertex
+intersect a vertex\
+\>", "Text",
+ CellChangeTimes->{{3.544558305087475*^9, 3.5445583724015923`*^9}, {
+   3.544558464273153*^9, 3.5445584753959723`*^9}, 3.544558539496484*^9, {
+   3.5445586716131144`*^9, 3.5445587495976505`*^9}, {3.5445588080041523`*^9, 
+   3.544558821981776*^9}, 3.544558861637046*^9, {3.5445590835952325`*^9, 
+   3.5445590864968376`*^9}}],
+
+Cell["\<\
+a principle should be that it does not matter how fast you are drawing
+you should get the result as if you drew pixel by pixel\
+\>", "Text",
+ CellChangeTimes->{{3.54455849715801*^9, 3.5445585363296785`*^9}}],
+
+Cell["\<\
+if a is close to a vertex, change a
+for each segment <a, b>
+\tif b is close to a vertex, change b
+\tif <a,b> is close to a vertex, change <a, b> and split at vertex\
+\>", "Text",
+ CellChangeTimes->{{3.5445588494378242`*^9, 3.5445588646946507`*^9}, {
+  3.54455909933566*^9, 3.5445592079898496`*^9}}]
+}, Open  ]]
+},
+WindowSize->{707, 637},
+WindowMargins->{{0, Automatic}, {Automatic, 0}},
+FrontEndVersion->"9.0 for Microsoft Windows (64-bit) (June 26, 2011)",
+StyleDefinitions->"Default.nb"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[CellGroupData[{
+Cell[579, 22, 137, 3, 71, "Section"],
+Cell[719, 27, 436, 11, 101, "Text"],
+Cell[1158, 40, 217, 4, 47, "Text"],
+Cell[1378, 46, 308, 7, 83, "Text"]
+}, Open  ]]
+}
+]
+*)
+
+(* End of internal cache information *)
