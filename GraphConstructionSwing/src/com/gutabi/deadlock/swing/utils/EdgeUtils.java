@@ -66,7 +66,7 @@ public final class EdgeUtils {
 			for (int i = index+2; i < e.getPointsSize(); i++) {
 				f.addPoint(e.getPoint(i));
 			}
-			for (int i = 0; i < index; i++) {
+			for (int i = 1; i < index; i++) {
 				f.addPoint(e.getPoint(i)); 
 			}
 			if (!(index > 0) || !Point.colinear(e.getPoint(index-1), c, pInt)) {
@@ -84,7 +84,11 @@ public final class EdgeUtils {
 			
 			MODEL.removeEdge(e);
 			
-			v.check();
+			/*
+			 * a loop has just been split, so it is in an inconsistent state, do not check here
+			 * hopefully, another edge will be added soon
+			 */
+			//v.check();
 			return v;
 			
 		} else {
@@ -192,23 +196,43 @@ public final class EdgeUtils {
 		if (e1Start == e2End && e1End == e2Start) {
 			// forming a loop
 			
-			for (int i = 0; i < e1.getPointsSize()-1; i++) {
+			assert e1.getPoint(e1.getPointsSize()-1).equals(e2.getPoint(0));
+			assert e2.getPoint(e2.getPointsSize()-1).equals(e1.getPoint(0));
+			
+			// only add if not colinear
+			boolean firstAdded = false;
+			if (!Point.colinear(e2.getPoint(e2.getPointsSize()-2), e1.getPoint(0), e1.getPoint(1))) {
+				newEdge.addPoint(e1.getPoint(0));
+				firstAdded = true;
+			}
+			for (int i = 1; i < e1.getPointsSize()-1; i++) {
 				newEdge.addPoint(e1.getPoint(i));
 			}
-			assert e1.getPoint(e1.getPointsSize()-1).equals(e2.getPoint(0));
 			// only add if not colinear
 			if (!Point.colinear(e1.getPoint(e1.getPointsSize()-2), e1.getPoint(e1.getPointsSize()-1), e2.getPoint(1))) {
 				newEdge.addPoint(e1.getPoint(e1.getPointsSize()-1));
 			}
-			for (int i = 1; i < e2.getPointsSize(); i++) {
+			for (int i = 1; i < e2.getPointsSize()-1; i++) {
 				newEdge.addPoint(e2.getPoint(i));
 			}
-			assert e2.getPoint(e2.getPointsSize()-1).equals(e1.getPoint(0));
-			
+			// only add if not colinear
+			if (firstAdded) {
+				newEdge.addPoint(e2.getPoint(e2.getPointsSize()-1));
+			} else {
+				// first point of e1 was skipped, but it is still a loop, so first and last points of newEdge need to be the same 
+				newEdge.addPoint(newEdge.getPoint(0));
+			}
+						
 			int e1StartEdgeCount = e1Start.getEdges().size();
 			
 			if (e1StartEdgeCount == 1) {
+				// stand-alone loop	
+				throw new AssertionError();
+			}
+			
+			if (e1StartEdgeCount == 2) {
 				// stand-alone loop
+				assert e1End.getEdges().size() == 2;
 				
 				newEdge.setStart(null);
 				newEdge.setEnd(null);

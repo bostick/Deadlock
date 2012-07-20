@@ -50,8 +50,8 @@ public class MouseController implements MouseListener, MouseMotionListener {
 	public void released() {
 		assert Thread.currentThread().getName().startsWith("AWT-EventQueue-");
 		
-		List<Point> curStroke1 = massage(MODEL.curStrokeRaw);
-		//List<Point> curStroke1 = MODEL.curStrokeRaw;
+		//List<Point> curStroke1 = massage(MODEL.curStrokeRaw);
+		List<Point> curStroke1 = MODEL.curStrokeRaw;
 		
 		for (int i = 0; i < curStroke1.size()-1; i++) {
 			addUserSegment(curStroke1.get(i), curStroke1.get(i+1));
@@ -104,10 +104,17 @@ public class MouseController implements MouseListener, MouseMotionListener {
 	
 	@Override
 	public void mouseReleased(MouseEvent ev) {
+		
+		MODEL.curStrokeRaw = massage(MODEL.curStrokeRaw);
+		
 		released();
 	}
 	
 	private List<Point> massage(List<Point> raw) {
+		
+		if (raw.size() == 1) {
+			return raw;
+		}
 		
 		/*
 		 * maybe 1. cut-off rest of points if angle is too sharp
@@ -133,7 +140,16 @@ public class MouseController implements MouseListener, MouseMotionListener {
 		Point last = raw.get(s-1);
 		
 		if ((!last.equals(first)) && Point.dist(last, first) <= 10.0) {
-			adj.set(s-1, first);
+			/*
+			 * maintain invariant that there are no contiguous, equal points
+			 */
+			if (!raw.get(s-2).equals(first)) {
+				adj.set(s-1, first);
+			} else {
+				adj.remove(s-1);
+				s = s-1;
+				last = raw.get(s-1);
+			}
 		}
 		
 		for (Vertex v : MODEL.getVertices()) {
@@ -141,11 +157,23 @@ public class MouseController implements MouseListener, MouseMotionListener {
 			Point vp = v.getPoint();
 			
 			if ((!first.equals(vp)) && Point.dist(first, vp) <= 10.0) {
-				adj.set(0, vp);
+				if (!raw.get(1).equals(vp)) {
+					adj.set(0, vp);
+				} else {
+					adj.remove(0);
+					s = s-1;
+					first = raw.get(0);
+				}
 			}
 			
 			if ((!last.equals(vp)) && Point.dist(last, vp) <= 10.0) {
-				adj.set(s-1, vp);
+				if (!raw.get(s-2).equals(vp)) {
+					adj.set(s-1, vp);
+				} else {
+					adj.remove(s-1);
+					s = s-1;
+					last = raw.get(s-1);
+				}
 			}
 			
 		}
@@ -345,7 +373,7 @@ public class MouseController implements MouseListener, MouseMotionListener {
 		 * bV could have been removed if the merging of aEdge and e formed a loop (thereby removing bV in the process),
 		 * so check that b is still a vertex first
 		 */
-		if (MODEL.tryFindVertex(bV.getPoint()) != null) {
+		if (!bV.isRemoved()) {
 			List<Edge> bEdges = bV.getEdges();
 			if (bEdges.size() == 2) {
 				Edge bEdge;

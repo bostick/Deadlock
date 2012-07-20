@@ -182,7 +182,11 @@ public final class Edge {
 			 * test point p for colinearity
 			 */
 			if (i == 0) {
-				if (loop) {
+				if (loop && (start == null && end == null)) {
+					/*
+					 * if loop, only check if stand-alone
+					 * if not stand-alone, then it is possible to have first point be colinear
+					 */
 					assert p.equals(points.get(points.size()-1));
 					if (Point.colinear(points.get(points.size()-2), p, points.get(1))) {
 						assert false : "Point " + p + " (index 0) is colinear";

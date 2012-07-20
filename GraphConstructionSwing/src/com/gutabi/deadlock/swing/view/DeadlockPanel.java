@@ -56,12 +56,12 @@ public class DeadlockPanel extends JPanel {
 			g2.fillOval(MODEL.lastPointRaw.x-5, MODEL.lastPointRaw.y-5, 10, 10);
 		}
 		
-		g2.setColor(Color.GREEN);
-		for (int i = 0; i < MODEL.curStroke1.size()-1; i++) {
-			Point a = MODEL.curStroke1.get(i);
-			Point b = MODEL.curStroke1.get(i+1);
-			g2.drawLine(a.x, a.y, b.x, b.y);
-		}
+//		g2.setColor(Color.GREEN);
+//		for (int i = 0; i < MODEL.curStroke1.size()-1; i++) {
+//			Point a = MODEL.curStroke1.get(i);
+//			Point b = MODEL.curStroke1.get(i+1);
+//			g2.drawLine(a.x, a.y, b.x, b.y);
+//		}
 		
 	}
 	

@@ -18,7 +18,7 @@ public class DeadlockModel {
 	public Point lastPointRaw;
 	public List<Point> curStrokeRaw = new ArrayList<Point>();
 	
-	public List<Point> curStroke1 = new ArrayList<Point>();
+	//public List<Point> curStroke1 = new ArrayList<Point>();
 	
 	static Logger logger = Logger.getLogger("deadlock");
 	
@@ -50,8 +50,18 @@ public class DeadlockModel {
 //	}
 	
 	public void clear() {
+		assert Thread.currentThread().getName().startsWith("AWT-EventQueue-");
 		edges.clear();
 		vertices.clear();
+	}
+	
+	public void clear_M() {
+		assert Thread.currentThread().getName().startsWith("main");
+		javax.swing.SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				clear();
+			}
+		});
 	}
 	
 	public Edge createEdge() {

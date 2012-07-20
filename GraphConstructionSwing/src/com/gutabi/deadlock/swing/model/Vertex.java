@@ -79,7 +79,7 @@ public class Vertex {
 		removed = true;
 	}
 	
-	boolean isRemoved() {
+	public boolean isRemoved() {
 		return removed;
 	}
 	
