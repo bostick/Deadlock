@@ -33,8 +33,14 @@ public class MouseController implements MouseListener, MouseMotionListener {
 	
 	public void pressed(Point p) {
 		assert Thread.currentThread().getName().startsWith("AWT-EventQueue-");
+		
 		MODEL.lastPointRaw = p;
 		MODEL.curStrokeRaw.add(p);
+		
+		MODEL.allStrokes.add(new ArrayList<Point>());
+		
+		MODEL.allStrokes.get(MODEL.allStrokes.size()-1).add(p);
+		
 		VIEW.repaint();
 	}
 	
@@ -42,6 +48,7 @@ public class MouseController implements MouseListener, MouseMotionListener {
 		assert Thread.currentThread().getName().startsWith("AWT-EventQueue-");
 		if (!p.equals(MODEL.lastPointRaw)) {
 			MODEL.curStrokeRaw.add(p);
+			MODEL.allStrokes.get(MODEL.allStrokes.size()-1).add(p);
 			MODEL.lastPointRaw = p;
 			VIEW.repaint();
 		}
@@ -242,12 +249,12 @@ public class MouseController implements MouseListener, MouseMotionListener {
 	void process(final PointToBeAdded aaa, final PointToBeAdded bbb) {
 		logger.debug("process: a: " + aaa + " b: " + bbb);
 		
-		/*
-		 * a is either the first in the betweenAB list, so an integer,
-		 * or is later in betweenAB and has already been treated as integer when it was b
-		 */
-		assert Math.floor(aaa.p.x) == aaa.p.x;
-		assert Math.floor(aaa.p.y) == aaa.p.y;
+//		/*
+//		 * a is either the first in the betweenAB list, so an integer,
+//		 * or is later in betweenAB and has already been treated as integer when it was b
+//		 */
+//		assert Math.floor(aaa.p.x) == aaa.p.x;
+//		assert Math.floor(aaa.p.y) == aaa.p.y;
 		Point aInt = new Point((int)aaa.p.x, (int)aaa.p.y);
 		
 		// b is not yet an integer
@@ -315,8 +322,8 @@ public class MouseController implements MouseListener, MouseMotionListener {
 		/*
 		 * reset point for the next iteration where it is a
 		 */
-		logger.debug("resetting " + bbb + " to " + bV.getPoint());
-		bbb.p = new DPoint(bV.getPoint().x, bV.getPoint().y);
+		//logger.debug("resetting " + bbb + " to " + bV.getPoint());
+		//bbb.p = new DPoint(bV.getPoint().x, bV.getPoint().y);
 		
 		assert bV != null;
 		

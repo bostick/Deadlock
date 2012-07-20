@@ -658,6 +658,25 @@ public class TestDragging {
 		
 	}
 	
-	
+	@Test
+	public void testIntersection() throws Exception {
+		
+		CONTROLLER.mouseController.pressed_M(new Point(4, 0));
+		CONTROLLER.mouseController.dragged_M(new Point(10, 12));
+		CONTROLLER.mouseController.released_M();
+
+		CONTROLLER.mouseController.pressed_M(new Point(0, 12));
+		CONTROLLER.mouseController.dragged_M(new Point(7, 7));
+		CONTROLLER.mouseController.dragged_M(new Point(16, 1));
+		CONTROLLER.mouseController.released_M();
+		
+		SwingUtilities.invokeAndWait(new Runnable() {
+			@Override
+			public void run() {
+				;
+			}
+		});
+		
+	}
 	
 }

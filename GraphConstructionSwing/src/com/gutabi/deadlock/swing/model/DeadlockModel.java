@@ -18,6 +18,8 @@ public class DeadlockModel {
 	public Point lastPointRaw;
 	public List<Point> curStrokeRaw = new ArrayList<Point>();
 	
+	public List<List<Point>> allStrokes = new ArrayList<List<Point>>();
+	
 	//public List<Point> curStroke1 = new ArrayList<Point>();
 	
 	static Logger logger = Logger.getLogger("deadlock");
