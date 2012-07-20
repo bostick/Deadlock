@@ -679,4 +679,231 @@ public class TestDragging {
 		
 	}
 	
+	@Test
+	public void testXEqualsZBug() throws Exception {
+		
+		CONTROLLER.mouseController.pressed_M(new Point(532, 419));
+		CONTROLLER.mouseController.dragged_M(new Point(529, 419));
+		CONTROLLER.mouseController.dragged_M(new Point(525, 419));
+		CONTROLLER.mouseController.dragged_M(new Point(520, 421));
+		CONTROLLER.mouseController.dragged_M(new Point(517, 422));
+		CONTROLLER.mouseController.dragged_M(new Point(515, 422));
+		CONTROLLER.mouseController.dragged_M(new Point(512, 422));
+		CONTROLLER.mouseController.dragged_M(new Point(511, 422));
+		CONTROLLER.mouseController.dragged_M(new Point(508, 421));
+		CONTROLLER.mouseController.dragged_M(new Point(507, 420));
+		CONTROLLER.mouseController.dragged_M(new Point(505, 417));
+		CONTROLLER.mouseController.dragged_M(new Point(503, 414));
+		CONTROLLER.mouseController.dragged_M(new Point(502, 411));
+		CONTROLLER.mouseController.dragged_M(new Point(501, 410));
+		CONTROLLER.mouseController.dragged_M(new Point(501, 409));
+		CONTROLLER.mouseController.dragged_M(new Point(501, 408));
+		CONTROLLER.mouseController.dragged_M(new Point(499, 405));
+		CONTROLLER.mouseController.dragged_M(new Point(498, 402));
+		CONTROLLER.mouseController.dragged_M(new Point(498, 400));
+		CONTROLLER.mouseController.dragged_M(new Point(498, 395));
+		CONTROLLER.mouseController.dragged_M(new Point(498, 391));
+		CONTROLLER.mouseController.dragged_M(new Point(498, 385));
+		CONTROLLER.mouseController.dragged_M(new Point(498, 381));
+		CONTROLLER.mouseController.dragged_M(new Point(498, 376));
+		CONTROLLER.mouseController.dragged_M(new Point(498, 374));
+		CONTROLLER.mouseController.dragged_M(new Point(498, 372));
+		CONTROLLER.mouseController.dragged_M(new Point(499, 371));
+		CONTROLLER.mouseController.dragged_M(new Point(500, 371));
+		CONTROLLER.mouseController.dragged_M(new Point(504, 370));
+		CONTROLLER.mouseController.dragged_M(new Point(507, 370));
+		CONTROLLER.mouseController.dragged_M(new Point(513, 370));
+		CONTROLLER.mouseController.dragged_M(new Point(519, 370));
+		CONTROLLER.mouseController.dragged_M(new Point(528, 371));
+		CONTROLLER.mouseController.dragged_M(new Point(537, 376));
+		CONTROLLER.mouseController.dragged_M(new Point(547, 386));
+		CONTROLLER.mouseController.dragged_M(new Point(555, 396));
+		CONTROLLER.mouseController.dragged_M(new Point(561, 411));
+		CONTROLLER.mouseController.dragged_M(new Point(567, 420));
+		CONTROLLER.mouseController.dragged_M(new Point(573, 428));
+		CONTROLLER.mouseController.dragged_M(new Point(576, 432));
+		CONTROLLER.mouseController.dragged_M(new Point(579, 435));
+		CONTROLLER.mouseController.dragged_M(new Point(582, 440));
+		CONTROLLER.mouseController.dragged_M(new Point(583, 442));
+		CONTROLLER.mouseController.dragged_M(new Point(583, 447));
+		CONTROLLER.mouseController.dragged_M(new Point(584, 448));
+		CONTROLLER.mouseController.dragged_M(new Point(584, 449));
+		CONTROLLER.mouseController.dragged_M(new Point(584, 450));
+		CONTROLLER.mouseController.dragged_M(new Point(585, 450));
+		CONTROLLER.mouseController.released_M(true);
+
+		CONTROLLER.mouseController.pressed_M(new Point(555, 448));
+		CONTROLLER.mouseController.dragged_M(new Point(556, 448));
+		CONTROLLER.mouseController.dragged_M(new Point(561, 447));
+		CONTROLLER.mouseController.dragged_M(new Point(565, 445));
+		CONTROLLER.mouseController.dragged_M(new Point(568, 444));
+		CONTROLLER.mouseController.dragged_M(new Point(572, 444));
+		CONTROLLER.mouseController.dragged_M(new Point(575, 444));
+		CONTROLLER.mouseController.dragged_M(new Point(578, 444));
+		CONTROLLER.mouseController.dragged_M(new Point(579, 444));
+		CONTROLLER.mouseController.dragged_M(new Point(580, 444));
+		CONTROLLER.mouseController.released_M(true);
+
+		CONTROLLER.mouseController.pressed_M(new Point(580, 444));
+		CONTROLLER.mouseController.dragged_M(new Point(581, 444));
+		CONTROLLER.mouseController.dragged_M(new Point(584, 444));
+		CONTROLLER.mouseController.dragged_M(new Point(588, 446));
+		CONTROLLER.mouseController.dragged_M(new Point(591, 447));
+		CONTROLLER.mouseController.dragged_M(new Point(592, 448));
+		CONTROLLER.mouseController.dragged_M(new Point(593, 448));
+		CONTROLLER.mouseController.dragged_M(new Point(594, 448));
+		CONTROLLER.mouseController.released_M(true);
+
+		CONTROLLER.mouseController.pressed_M(new Point(594, 448));
+		CONTROLLER.mouseController.dragged_M(new Point(597, 451));
+		CONTROLLER.mouseController.dragged_M(new Point(598, 454));
+		CONTROLLER.mouseController.dragged_M(new Point(603, 455));
+		CONTROLLER.mouseController.dragged_M(new Point(604, 456));
+		CONTROLLER.mouseController.dragged_M(new Point(607, 458));
+		CONTROLLER.mouseController.dragged_M(new Point(608, 458));
+		CONTROLLER.mouseController.released_M(true);
+
+		CONTROLLER.mouseController.pressed_M(new Point(608, 458));
+		CONTROLLER.mouseController.dragged_M(new Point(608, 459));
+		CONTROLLER.mouseController.dragged_M(new Point(607, 459));
+		CONTROLLER.mouseController.dragged_M(new Point(603, 460));
+		CONTROLLER.mouseController.dragged_M(new Point(596, 462));
+		CONTROLLER.mouseController.dragged_M(new Point(592, 463));
+		CONTROLLER.mouseController.dragged_M(new Point(587, 463));
+		CONTROLLER.mouseController.dragged_M(new Point(583, 463));
+		CONTROLLER.mouseController.released_M(true);
+		
+		SwingUtilities.invokeAndWait(new Runnable() {
+			@Override
+			public void run() {
+				;
+			}
+		});
+		
+	}
+	
+	
+	@Test
+	public void testEdgeCountNotEqual2Bug() throws Exception {
+		
+		CONTROLLER.mouseController.pressed_M(new Point(611, 452));
+		CONTROLLER.mouseController.dragged_M(new Point(610, 452));
+		CONTROLLER.mouseController.dragged_M(new Point(605, 452));
+		CONTROLLER.mouseController.dragged_M(new Point(599, 450));
+		CONTROLLER.mouseController.dragged_M(new Point(595, 449));
+		CONTROLLER.mouseController.dragged_M(new Point(592, 446));
+		CONTROLLER.mouseController.dragged_M(new Point(591, 445));
+		CONTROLLER.mouseController.dragged_M(new Point(591, 444));
+		CONTROLLER.mouseController.dragged_M(new Point(591, 440));
+		CONTROLLER.mouseController.dragged_M(new Point(591, 432));
+		CONTROLLER.mouseController.dragged_M(new Point(593, 425));
+		CONTROLLER.mouseController.dragged_M(new Point(596, 420));
+		CONTROLLER.mouseController.dragged_M(new Point(601, 416));
+		CONTROLLER.mouseController.dragged_M(new Point(607, 412));
+		CONTROLLER.mouseController.dragged_M(new Point(612, 409));
+		CONTROLLER.mouseController.dragged_M(new Point(618, 408));
+		CONTROLLER.mouseController.dragged_M(new Point(621, 408));
+		CONTROLLER.mouseController.dragged_M(new Point(624, 406));
+		CONTROLLER.mouseController.dragged_M(new Point(626, 406));
+		CONTROLLER.mouseController.dragged_M(new Point(628, 406));
+		CONTROLLER.mouseController.released_M(true);
+
+		CONTROLLER.mouseController.pressed_M(new Point(628, 406));
+		CONTROLLER.mouseController.dragged_M(new Point(628, 408));
+		CONTROLLER.mouseController.dragged_M(new Point(628, 410));
+		CONTROLLER.mouseController.dragged_M(new Point(627, 411));
+		CONTROLLER.mouseController.dragged_M(new Point(625, 414));
+		CONTROLLER.mouseController.dragged_M(new Point(624, 414));
+		CONTROLLER.mouseController.dragged_M(new Point(621, 414));
+		CONTROLLER.mouseController.dragged_M(new Point(620, 414));
+		CONTROLLER.mouseController.released_M(true);
+
+		CONTROLLER.mouseController.pressed_M(new Point(620, 414));
+		CONTROLLER.mouseController.dragged_M(new Point(623, 414));
+		CONTROLLER.mouseController.dragged_M(new Point(627, 414));
+		CONTROLLER.mouseController.dragged_M(new Point(628, 414));
+		CONTROLLER.mouseController.dragged_M(new Point(631, 415));
+		CONTROLLER.mouseController.dragged_M(new Point(633, 415));
+		CONTROLLER.mouseController.dragged_M(new Point(634, 416));
+		CONTROLLER.mouseController.dragged_M(new Point(636, 416));
+		CONTROLLER.mouseController.released_M(true);
+
+		CONTROLLER.mouseController.pressed_M(new Point(636, 416));
+		CONTROLLER.mouseController.dragged_M(new Point(637, 417));
+		CONTROLLER.mouseController.dragged_M(new Point(638, 417));
+		CONTROLLER.mouseController.dragged_M(new Point(639, 419));
+		CONTROLLER.mouseController.dragged_M(new Point(639, 420));
+		CONTROLLER.mouseController.released_M(true);
+
+		CONTROLLER.mouseController.pressed_M(new Point(639, 420));
+		CONTROLLER.mouseController.released_M(true);
+
+		CONTROLLER.mouseController.pressed_M(new Point(639, 420));
+		CONTROLLER.mouseController.dragged_M(new Point(637, 420));
+		CONTROLLER.mouseController.dragged_M(new Point(636, 420));
+		CONTROLLER.mouseController.dragged_M(new Point(635, 420));
+		CONTROLLER.mouseController.dragged_M(new Point(634, 420));
+		CONTROLLER.mouseController.dragged_M(new Point(633, 420));
+		CONTROLLER.mouseController.dragged_M(new Point(632, 420));
+		CONTROLLER.mouseController.dragged_M(new Point(630, 420));
+		CONTROLLER.mouseController.dragged_M(new Point(631, 420));
+		CONTROLLER.mouseController.released_M(true);
+
+		CONTROLLER.mouseController.pressed_M(new Point(631, 420));
+		CONTROLLER.mouseController.released_M(true);
+
+		CONTROLLER.mouseController.pressed_M(new Point(631, 420));
+		CONTROLLER.mouseController.dragged_M(new Point(630, 422));
+		CONTROLLER.mouseController.dragged_M(new Point(629, 424));
+		CONTROLLER.mouseController.dragged_M(new Point(627, 424));
+		CONTROLLER.mouseController.dragged_M(new Point(625, 425));
+		CONTROLLER.mouseController.dragged_M(new Point(624, 425));
+		CONTROLLER.mouseController.dragged_M(new Point(623, 424));
+		CONTROLLER.mouseController.released_M(true);
+
+		CONTROLLER.mouseController.pressed_M(new Point(623, 424));
+		CONTROLLER.mouseController.dragged_M(new Point(622, 423));
+		CONTROLLER.mouseController.dragged_M(new Point(621, 421));
+		CONTROLLER.mouseController.dragged_M(new Point(619, 420));
+		CONTROLLER.mouseController.dragged_M(new Point(618, 420));
+		CONTROLLER.mouseController.dragged_M(new Point(618, 419));
+		CONTROLLER.mouseController.released_M(true);
+
+		CONTROLLER.mouseController.pressed_M(new Point(618, 419));
+		CONTROLLER.mouseController.dragged_M(new Point(620, 419));
+		CONTROLLER.mouseController.dragged_M(new Point(621, 419));
+		CONTROLLER.mouseController.dragged_M(new Point(622, 419));
+		CONTROLLER.mouseController.dragged_M(new Point(623, 419));
+		CONTROLLER.mouseController.dragged_M(new Point(626, 419));
+		CONTROLLER.mouseController.dragged_M(new Point(627, 418));
+		CONTROLLER.mouseController.dragged_M(new Point(629, 417));
+		CONTROLLER.mouseController.released_M(true);
+
+		CONTROLLER.mouseController.pressed_M(new Point(629, 417));
+		CONTROLLER.mouseController.dragged_M(new Point(632, 417));
+		CONTROLLER.mouseController.dragged_M(new Point(633, 417));
+		CONTROLLER.mouseController.dragged_M(new Point(636, 417));
+		CONTROLLER.mouseController.dragged_M(new Point(638, 417));
+		CONTROLLER.mouseController.dragged_M(new Point(640, 415));
+		CONTROLLER.mouseController.released_M(true);
+
+		CONTROLLER.mouseController.pressed_M(new Point(640, 415));
+		CONTROLLER.mouseController.dragged_M(new Point(640, 414));
+		CONTROLLER.mouseController.dragged_M(new Point(640, 412));
+		CONTROLLER.mouseController.dragged_M(new Point(640, 411));
+		CONTROLLER.mouseController.dragged_M(new Point(640, 409));
+		CONTROLLER.mouseController.dragged_M(new Point(640, 408));
+		CONTROLLER.mouseController.dragged_M(new Point(640, 407));
+		CONTROLLER.mouseController.dragged_M(new Point(640, 406));
+		CONTROLLER.mouseController.dragged_M(new Point(640, 405));
+		CONTROLLER.mouseController.released_M(true);
+		
+		SwingUtilities.invokeAndWait(new Runnable() {
+			@Override
+			public void run() {
+				;
+			}
+		});
+		
+	}
 }

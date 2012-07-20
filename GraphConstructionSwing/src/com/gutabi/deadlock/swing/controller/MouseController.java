@@ -89,9 +89,16 @@ public class MouseController implements MouseListener, MouseMotionListener {
 	}
 	
 	public void released_M() {
+		released_M(false);
+	}
+	
+	public void released_M(final boolean massage) {
 		assert Thread.currentThread().getName().startsWith("main");
 		javax.swing.SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
+				if (massage) {
+					MODEL.curStrokeRaw = massage(MODEL.curStrokeRaw);
+				}
 				released();
 			}
 		});
@@ -146,7 +153,10 @@ public class MouseController implements MouseListener, MouseMotionListener {
 		Point first = raw.get(0);
 		Point last = raw.get(s-1);
 		
-		if ((!last.equals(first)) && Point.dist(last, first) <= 10.0) {
+		/*
+		 * first and last have to be very close
+		 */
+		if ((!last.equals(first)) && Point.dist(last, first) <= 20.0) {
 			/*
 			 * maintain invariant that there are no contiguous, equal points
 			 */
@@ -163,7 +173,7 @@ public class MouseController implements MouseListener, MouseMotionListener {
 			
 			Point vp = v.getPoint();
 			
-			if ((!first.equals(vp)) && Point.dist(first, vp) <= 10.0) {
+			if ((!first.equals(vp)) && Point.dist(first, vp) <= 40.0) {
 				if (!raw.get(1).equals(vp)) {
 					adj.set(0, vp);
 				} else {
@@ -173,7 +183,7 @@ public class MouseController implements MouseListener, MouseMotionListener {
 				}
 			}
 			
-			if ((!last.equals(vp)) && Point.dist(last, vp) <= 10.0) {
+			if ((!last.equals(vp)) && Point.dist(last, vp) <= 40.0) {
 				if (!raw.get(s-2).equals(vp)) {
 					adj.set(s-1, vp);
 				} else {
