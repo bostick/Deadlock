@@ -1,7 +1,9 @@
 package com.gutabi.deadlock.swing.model;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 
@@ -238,7 +240,36 @@ public class DeadlockModel {
 		
 		for (Edge e : edges) {
 			e.check();
+			if (e.getStart() == null && e.getEnd() == null) {
+				continue;
+			}
+			for (Edge f : edges) {
+				if (e == f) {
+					continue;
+				}
+				if ((e.getStart() == f.getStart() && e.getEnd() == f.getEnd()) || (e.getStart() == f.getEnd() && e.getEnd() == f.getStart())) {
+					/*
+					 * e and f share endpoints
+					 */
+					List<Point> ePoints = e.getPoints();
+					List<Point> fPoints = f.getPoints();
+					Set<Point> shared = new HashSet<Point>();
+					for (Point eP : ePoints) {
+						for (Point fP : fPoints) {
+							if (eP.equals(fP)) {
+								shared.add(eP);
+							}
+						}
+					}
+					if (e.getStart() == e.getEnd()) {
+						assert shared.size() == 1;
+					} else {
+						assert shared.size() == 2;
+					}
+				}
+			}
 		}
+		
 		return true;
 	}
 	

@@ -99,14 +99,48 @@ public final class EdgeUtils {
 			for (int i = 0; i < index; i++) {
 				f1.addPoint(e.getPoint(i));
 			}
-			if (!(index > 0) || !Point.colinear(e.getPoint(index-1), c, pInt)) {
-				f1.addPoint(c);
+			try {
+				if (!(index > 0) || !Point.colinear(e.getPoint(index-1), c, pInt)) {
+					f1.addPoint(c);
+				}
+			} catch (ColinearException ex) {
+				
+				assert MODEL.tryFindVertex(c) == null;
+				
+				Vertex cV = MODEL.createVertex(c);
+				Edge f3 = MODEL.createEdge();
+				f3.addPoint(c);
+				f3.addPoint(pInt);
+				f3.setStart(cV);
+				f3.setEnd(v);
+				f3.check();
+				
+				cV.add(f3);
+				v.add(f3);
+				
 			}
 			f1.addPoint(pInt);
 			
 			f2.addPoint(pInt);
-			if (!(index+1 < e.getPointsSize()-1) || !Point.colinear(pInt, d, e.getPoint(index+2))) {
-				f2.addPoint(d);
+			try {
+				if (!(index+1 < e.getPointsSize()-1) || !Point.colinear(pInt, d, e.getPoint(index+2))) {
+					f2.addPoint(d);
+				}
+			} catch (ColinearException ex) {
+				
+				assert MODEL.tryFindVertex(d) == null;
+				
+				Vertex dV = MODEL.createVertex(d);
+				Edge f3 = MODEL.createEdge();
+				f3.addPoint(d);
+				f3.addPoint(pInt);
+				f3.setStart(dV);
+				f3.setEnd(v);
+				f3.check();
+				
+				dV.add(f3);
+				v.add(f3);
+				
 			}
 			for (int i = index+2; i < e.getPointsSize(); i++) {
 				f2.addPoint(e.getPoint(i));
@@ -218,6 +252,78 @@ public final class EdgeUtils {
 			// only add if not colinear
 			if (firstAdded) {
 				newEdge.addPoint(e2.getPoint(e2.getPointsSize()-1));
+			} else {
+				// first point of e1 was skipped, but it is still a loop, so first and last points of newEdge need to be the same 
+				newEdge.addPoint(newEdge.getPoint(0));
+			}
+						
+			int e1StartEdgeCount = e1Start.getEdges().size();
+			
+			if (e1StartEdgeCount == 1) {
+				// stand-alone loop	
+				throw new AssertionError();
+			}
+			
+			if (e1StartEdgeCount == 2) {
+				// stand-alone loop
+				assert e1End.getEdges().size() == 2;
+				
+				newEdge.setStart(null);
+				newEdge.setEnd(null);
+				
+				newEdge.check();
+				
+				MODEL.removeVertex(e1Start);
+				MODEL.removeVertex(e1End);
+				MODEL.removeEdge(e1);
+				MODEL.removeEdge(e2);
+				
+				newEdge.check();
+				return newEdge;
+			} else {
+				// start/end vertex has other edges
+				
+				newEdge.setStart(e1Start);
+				newEdge.setEnd(e1Start);
+				
+				e1Start.remove(e1);
+				e1Start.remove(e2);
+				e1Start.add(newEdge);
+				e1Start.add(newEdge);
+				
+				MODEL.removeVertex(e1End);
+				MODEL.removeEdge(e1);
+				MODEL.removeEdge(e2);
+				
+				newEdge.check();
+				return newEdge;
+			}
+			
+		} else if (e1Start == e2Start && e1End == e2End) {
+			// forming a loop
+			
+			assert e1.getPoint(e1.getPointsSize()-1).equals(e2.getPoint(e2.getPointsSize()-1));
+			assert e2.getPoint(0).equals(e1.getPoint(0));
+			
+			// only add if not colinear
+			boolean firstAdded = false;
+			if (!Point.colinear(e2.getPoint(1), e1.getPoint(0), e1.getPoint(1))) {
+				newEdge.addPoint(e1.getPoint(0));
+				firstAdded = true;
+			}
+			for (int i = 1; i < e1.getPointsSize()-1; i++) {
+				newEdge.addPoint(e1.getPoint(i));
+			}
+			// only add if not colinear
+			if (!Point.colinear(e1.getPoint(e1.getPointsSize()-2), e1.getPoint(e1.getPointsSize()-1), e2.getPoint(e2.getPointsSize()-2))) {
+				newEdge.addPoint(e1.getPoint(e1.getPointsSize()-1));
+			}
+			for (int i = e2.getPointsSize()-2; i >= 1; i--) {
+				newEdge.addPoint(e2.getPoint(i));
+			}
+			// only add if not colinear
+			if (firstAdded) {
+				newEdge.addPoint(e2.getPoint(0));
 			} else {
 				// first point of e1 was skipped, but it is still a loop, so first and last points of newEdge need to be the same 
 				newEdge.addPoint(newEdge.getPoint(0));

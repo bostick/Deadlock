@@ -126,10 +126,6 @@ public class MouseController implements MouseListener, MouseMotionListener {
 	
 	private List<Point> massage(List<Point> raw) {
 		
-		if (raw.size() == 1) {
-			return raw;
-		}
-		
 		/*
 		 * maybe 1. cut-off rest of points if angle is too sharp
 		 * maybe 2. cut-off rest of points if too close to 
@@ -149,6 +145,10 @@ public class MouseController implements MouseListener, MouseMotionListener {
 		//List<Point> diff = new ArrayList<Point>(raw.size());
 		List<Point> adj = new ArrayList<Point>(raw);
 		
+		if (adj.size() == 1) {
+			return adj;
+		}
+		
 		int s = raw.size();
 		Point first = raw.get(0);
 		Point last = raw.get(s-1);
@@ -162,6 +162,7 @@ public class MouseController implements MouseListener, MouseMotionListener {
 			 */
 			if (!raw.get(s-2).equals(first)) {
 				adj.set(s-1, first);
+				last = first;
 			} else {
 				adj.remove(s-1);
 				s = s-1;
@@ -169,27 +170,66 @@ public class MouseController implements MouseListener, MouseMotionListener {
 			}
 		}
 		
+		Vertex best = null;
+		
 		for (Vertex v : MODEL.getVertices()) {
 			
 			Point vp = v.getPoint();
 			
 			if ((!first.equals(vp)) && Point.dist(first, vp) <= 40.0) {
-				if (!raw.get(1).equals(vp)) {
-					adj.set(0, vp);
-				} else {
-					adj.remove(0);
-					s = s-1;
-					first = raw.get(0);
+				if (best == null) {
+					best = v;
+				} else if (Point.dist(first, vp) < Point.dist(first, best.getPoint())) {
+					best = v;
 				}
 			}
 			
+		}
+		
+		if (best != null) {
+			
+			if (adj.size() == 1) {
+				adj.set(0, best.getPoint());
+			} else {
+				if (!adj.get(1).equals(best.getPoint())) {
+					adj.set(0, best.getPoint());
+					first = adj.get(0);
+				} else {
+					adj.remove(0);
+					s = s-1;
+					first = adj.get(0);
+				}
+			}
+			
+		}
+		
+		best = null;
+		
+		for (Vertex v : MODEL.getVertices()) {
+			
+			Point vp = v.getPoint();
+			
 			if ((!last.equals(vp)) && Point.dist(last, vp) <= 40.0) {
-				if (!raw.get(s-2).equals(vp)) {
-					adj.set(s-1, vp);
+				if (best == null) {
+					best = v;
+				} else if (Point.dist(last, vp) < Point.dist(last, best.getPoint())) {
+					best = v;
+				}
+			}
+		}
+		
+		if (best != null) {
+			
+			if (adj.size() == 1) {
+				adj.set(s-1, best.getPoint());
+			} else {
+				if (!adj.get(s-2).equals(best.getPoint())) {
+					adj.set(s-1, best.getPoint());
+					last = adj.get(s-1);
 				} else {
 					adj.remove(s-1);
 					s = s-1;
-					last = raw.get(s-1);
+					last = adj.get(s-1);
 				}
 			}
 			
@@ -259,13 +299,13 @@ public class MouseController implements MouseListener, MouseMotionListener {
 	void process(final PointToBeAdded aaa, final PointToBeAdded bbb) {
 		logger.debug("process: a: " + aaa + " b: " + bbb);
 		
-//		/*
-//		 * a is either the first in the betweenAB list, so an integer,
-//		 * or is later in betweenAB and has already been treated as integer when it was b
-//		 */
-//		assert Math.floor(aaa.p.x) == aaa.p.x;
-//		assert Math.floor(aaa.p.y) == aaa.p.y;
-		Point aInt = new Point((int)aaa.p.x, (int)aaa.p.y);
+		/*
+		 * a will only ever be treated as an integer
+		 * that is, only aInt will be used
+		 * either aaa is the first point coming in (so it is int) or it was b in the previous iteration
+		 * and all of the proper vertex and edge handling was done for the integer value of a
+		 */
+		Point aInt = new Point((int)Math.round(aaa.p.x), (int)Math.round(aaa.p.y));
 		
 		// b is not yet an integer
 		

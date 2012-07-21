@@ -19,6 +19,9 @@ public class Vertex {
 	private boolean removed = false;
 	
 	public Vertex(Point p) {
+//		if (p.x == 43 && p.y == 94) {
+//			this.getClass();
+//		}
 		this.p = p;
 	}
 	
@@ -101,9 +104,6 @@ public class Vertex {
 		 */
 		assert edgeCount != 2;
 		
-		/*
-		 * all edges in v should be unique
-		 */
 		int count;
 		for (Edge e : getEdges()) {
 			
@@ -116,8 +116,14 @@ public class Vertex {
 				}
 			}
 			if (e.getStart() == this && e.getEnd() == this) {
+				/*
+				 * loop with one vertex, so count of edges is 2 for this edge
+				 */
 				assert count == 2;
 			} else {
+				/*
+				 * otherwise, all edges in v should be unique
+				 */
 				assert count == 1;
 			}
 		}

@@ -20,5 +20,20 @@ public class TestPoints {
 		assertEquals(new DPoint(1, 1), i);
 		assertTrue(Point.intersect(new Point(1, 1), a, b));
 	}
+	
+	@Test
+	public void testCo1() {
+		assertTrue(Point.colinear(new Point(0, 0), new Point(0, 1), new Point(0, 2)));	
+	}
+	
+	@Test
+	public void testCo2() {
+		try {
+			Point.colinear(new Point(0, 0), new Point(0, 2), new Point(0, 1));
+			fail();
+		} catch (IllegalArgumentException e) {
+			
+		}
+	}
 
 }

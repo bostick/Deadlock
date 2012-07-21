@@ -73,6 +73,10 @@ public final class Edge {
 		return points.get(i);
 	}
 	
+	public List<Point> getPoints() {
+		return points;
+	}
+	
 	public void removePoint(int i) {
 		if (removed) {
 			throw new IllegalStateException();

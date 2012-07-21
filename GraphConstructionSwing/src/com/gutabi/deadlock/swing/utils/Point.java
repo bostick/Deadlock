@@ -248,31 +248,34 @@ public class Point {
 	}
 	
 	/**
-	 * are x, y, z colinear?
+	 * are c, b, d colinear?
+	 * and is b between c and d?
 	 */
-	public static boolean colinear(Point x, Point y, Point z) {
-		if (x.equals(y)) {
+	public static boolean colinear(Point c, Point b, Point d) {
+		if (c.equals(b)) {
 			return true;
 		}
-		if (y.equals(z)) {
+		if (b.equals(d)) {
 			return true;
 		}
-		if (x.equals(z)) {
-			throw new IllegalArgumentException("x equals z");
+		if (c.equals(d)) {
+			throw new IllegalArgumentException("c equals d");
 		}
-		int xbc = y.x - (x.x);
-		int xdc = z.x - (x.x);
-		int ybc = y.y - (x.y);
-		int ydc = z.y - (x.y);
+		int xbc = b.x - (c.x);
+		int xdc = d.x - (c.x);
+		int ybc = b.y - (c.y);
+		int ydc = d.y - (c.y);
 		int denom = (xdc * (xdc) + (ydc * (ydc)));
 		// u is where b is perpendicular to <c, d>
 		double u = ((double)((xbc * (xdc)) + ((ybc * (ydc))))) / ((double)(denom));
 		if (u >= 0.0 && u <= 1.0) {
-			
 			return Point.doubleEquals(xbc, (u * (xdc))) && Point.doubleEquals(ybc, (u * (ydc)));
-			
 		} else {
-			return false;
+			 if (Point.doubleEquals(xbc, (u * (xdc))) && Point.doubleEquals(ybc, (u * (ydc)))) {
+				 throw new ColinearException();
+			 } else {
+				 return false;
+			 }
 		}
 	}
 	
@@ -316,7 +319,7 @@ public class Point {
 		double ybc = b.y - (c.y);
 		int ydc = d.y - (c.y);
 		if (xdc == 0) {
-			assert xbc == 0;
+			assert doubleEquals(xbc, 0);
 			double uy = ((double)ybc) / ((double)ydc);
 			assert uy < 1.0;
 			return uy;
