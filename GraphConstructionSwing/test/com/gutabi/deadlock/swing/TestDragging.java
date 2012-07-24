@@ -776,7 +776,7 @@ public class TestDragging {
 	}
 	
 	@Test
-	public void testEdgeCountNotEqual22Bug() throws Exception {
+	public void testEdgeCountNotEqual2Bug2() throws Exception {
 
 		CONTROLLER.mouseController.pressed_M(new Point(49, 100));
 		CONTROLLER.mouseController.dragged_M(new Point(44, 25));
@@ -949,4 +949,260 @@ public class TestDragging {
 		});
 		
 	}
+	
+	@Test
+	public void testYBCEqual0Bug() throws Exception {
+
+		CONTROLLER.mouseController.pressed_M(new Point(13, 47));
+		CONTROLLER.mouseController.dragged_M(new Point(53, 43));
+		CONTROLLER.mouseController.released_M(false);
+
+		CONTROLLER.mouseController.pressed_M(new Point(17, 38));
+		CONTROLLER.mouseController.dragged_M(new Point(36, 59));
+		CONTROLLER.mouseController.dragged_M(new Point(100, 27));
+		CONTROLLER.mouseController.released_M(false);
+
+		CONTROLLER.mouseController.pressed_M(new Point(0, 59));
+		CONTROLLER.mouseController.dragged_M(new Point(37, 36));
+		CONTROLLER.mouseController.released_M(false);
+
+		CONTROLLER.mouseController.pressed_M(new Point(19, 4));
+		CONTROLLER.mouseController.dragged_M(new Point(26, 80));
+		CONTROLLER.mouseController.released_M(false);
+		
+		SwingUtilities.invokeAndWait(new Runnable() {
+			@Override
+			public void run() {
+				;
+			}
+		});
+		
+	}
+	
+	@Test
+	public void testColinearBug4() throws Exception {
+		
+		CONTROLLER.mouseController.pressed_M(new Point(21, 11));
+		CONTROLLER.mouseController.dragged_M(new Point(23, 4));
+		CONTROLLER.mouseController.released_M(false);
+		
+		CONTROLLER.mouseController.pressed_M(new Point(18, 11));
+		CONTROLLER.mouseController.dragged_M(new Point(21, 11));
+		CONTROLLER.mouseController.released_M(false);
+		
+//		CONTROLLER.mouseController.pressed_M(new Point(18, 10));
+//		CONTROLLER.mouseController.dragged_M(new Point(21, 10));
+//		CONTROLLER.mouseController.released_M(false);
+		
+		CONTROLLER.mouseController.pressed_M(new Point(21, 11));
+		CONTROLLER.mouseController.dragged_M(new Point(21, 9));
+		CONTROLLER.mouseController.released_M(false);
+		
+		CONTROLLER.mouseController.pressed_M(new Point(21, 9));
+		CONTROLLER.mouseController.dragged_M(new Point(44, 94));
+		CONTROLLER.mouseController.released_M(false);
+		
+		SwingUtilities.invokeAndWait(new Runnable() {
+			@Override
+			public void run() {
+				;
+			}
+		});
+		
+	}
+	
+	@Test
+	public void testInconsistent1() throws Exception {
+		
+		CONTROLLER.mouseController.pressed_M(new Point(21, 11));
+		CONTROLLER.mouseController.dragged_M(new Point(23, 4));
+		CONTROLLER.mouseController.released_M(false);
+		
+		CONTROLLER.mouseController.pressed_M(new Point(18, 11));
+		CONTROLLER.mouseController.dragged_M(new Point(21, 11));
+		CONTROLLER.mouseController.released_M(false);
+		
+		CONTROLLER.mouseController.pressed_M(new Point(18, 10));
+		CONTROLLER.mouseController.dragged_M(new Point(21, 10));
+		CONTROLLER.mouseController.released_M(false);
+		
+		CONTROLLER.mouseController.pressed_M(new Point(21, 11));
+		CONTROLLER.mouseController.dragged_M(new Point(21, 9));
+		CONTROLLER.mouseController.released_M(false);
+		
+		CONTROLLER.mouseController.pressed_M(new Point(21, 9));
+		CONTROLLER.mouseController.dragged_M(new Point(44, 94));
+		CONTROLLER.mouseController.released_M(false);
+		
+		SwingUtilities.invokeAndWait(new Runnable() {
+			@Override
+			public void run() {
+				String.class.getClass();
+			}
+		});
+		
+	}
+	
+	@Test
+	public void testInconsistent2() throws Exception {
+		
+		CONTROLLER.mouseController.pressed_M(new Point(18, 11));
+		CONTROLLER.mouseController.dragged_M(new Point(21, 11));
+		CONTROLLER.mouseController.released_M(false);
+		
+		CONTROLLER.mouseController.pressed_M(new Point(18, 10));
+		CONTROLLER.mouseController.dragged_M(new Point(21, 10));
+		CONTROLLER.mouseController.released_M(false);
+		
+		CONTROLLER.mouseController.pressed_M(new Point(21, 11));
+		CONTROLLER.mouseController.dragged_M(new Point(21, 9));
+		CONTROLLER.mouseController.released_M(false);
+		
+		SwingUtilities.invokeAndWait(new Runnable() {
+			@Override
+			public void run() {
+				String.class.getClass();
+			}
+		});
+		
+	}
+	
+	
+	@Test
+	public void testRemoved() throws Exception {
+		
+		CONTROLLER.mouseController.pressed_M(new Point(703, 306));
+		CONTROLLER.mouseController.dragged_M(new Point(703, 335));
+		CONTROLLER.mouseController.released_M();
+		
+		CONTROLLER.mouseController.pressed_M(new Point(754, 329));
+		CONTROLLER.mouseController.dragged_M(new Point(699, 311));
+		CONTROLLER.mouseController.released_M();
+		
+		SwingUtilities.invokeAndWait(new Runnable() {
+			@Override
+			public void run() {
+				;
+			}
+		});
+		
+	}
+	
+	@Test
+	public void testAssertFalse() throws Exception {
+		
+		CONTROLLER.mouseController.pressed_M(new Point(703, 306));
+		CONTROLLER.mouseController.dragged_M(new Point(703, 320));
+		CONTROLLER.mouseController.released_M();
+		
+		CONTROLLER.mouseController.pressed_M(new Point(717, 315));
+		CONTROLLER.mouseController.dragged_M(new Point(684, 308));
+		CONTROLLER.mouseController.released_M();
+		
+		SwingUtilities.invokeAndWait(new Runnable() {
+			@Override
+			public void run() {
+				;
+			}
+		});
+		
+	}
+	
+	
+	@Test
+	public void testAssertFalse2() throws Exception {
+		
+		CONTROLLER.mouseController.pressed_M(new Point(583, 442));
+		CONTROLLER.mouseController.dragged_M(new Point(583, 447));
+		CONTROLLER.mouseController.dragged_M(new Point(584, 449));
+		CONTROLLER.mouseController.dragged_M(new Point(584, 450));
+		CONTROLLER.mouseController.dragged_M(new Point(583, 442));
+		CONTROLLER.mouseController.released_M(false);
+		
+		SwingUtilities.invokeAndWait(new Runnable() {
+			@Override
+			public void run() {
+				;
+			}
+		});
+		
+	}
+	
+	
+	@Test
+	public void testEdgeCountNotEqual2Bug3() throws Exception {
+
+		CONTROLLER.mouseController.pressed_M(new Point(84, 86));
+		CONTROLLER.mouseController.dragged_M(new Point(33, 97));
+		CONTROLLER.mouseController.released_M(false);
+		
+		CONTROLLER.mouseController.pressed_M(new Point(52, 8));
+		CONTROLLER.mouseController.dragged_M(new Point(30, 65));
+		CONTROLLER.mouseController.dragged_M(new Point(19, 22));
+		CONTROLLER.mouseController.dragged_M(new Point(77, 95));
+		CONTROLLER.mouseController.dragged_M(new Point(30, 64));
+		CONTROLLER.mouseController.released_M(false);
+
+		CONTROLLER.mouseController.pressed_M(new Point(29, 90));
+		CONTROLLER.mouseController.dragged_M(new Point(66, 99));
+		CONTROLLER.mouseController.dragged_M(new Point(11, 22));
+		CONTROLLER.mouseController.dragged_M(new Point(56, 85));
+		CONTROLLER.mouseController.released_M(false);
+		
+		SwingUtilities.invokeAndWait(new Runnable() {
+			@Override
+			public void run() {
+				;
+			}
+		});
+		
+	}
+	
+	@Test
+	public void testCAndDAreEqualBug() throws Exception {
+
+		CONTROLLER.mouseController.pressed_M(new Point(30, 65));
+		CONTROLLER.mouseController.dragged_M(new Point(19, 22));
+		CONTROLLER.mouseController.released_M(false);
+
+		CONTROLLER.mouseController.pressed_M(new Point(66, 99));
+		CONTROLLER.mouseController.dragged_M(new Point(11, 22));
+		CONTROLLER.mouseController.released_M(false);
+		
+		CONTROLLER.mouseController.pressed_M(new Point(11, 22));
+		CONTROLLER.mouseController.dragged_M(new Point(56, 85));
+		CONTROLLER.mouseController.released_M(false);
+		
+		SwingUtilities.invokeAndWait(new Runnable() {
+			@Override
+			public void run() {
+				;
+			}
+		});
+		
+	}
+	
+	
+	@Test
+	public void testNoEdgesShouldIntersectBug1() throws Exception {
+
+		CONTROLLER.mouseController.pressed_M(new Point(73, 26));
+		CONTROLLER.mouseController.dragged_M(new Point(43, 96));
+		CONTROLLER.mouseController.dragged_M(new Point(46, 49));
+		CONTROLLER.mouseController.released_M(false);
+
+		CONTROLLER.mouseController.pressed_M(new Point(45, 98));
+		CONTROLLER.mouseController.dragged_M(new Point(5, 19));
+		CONTROLLER.mouseController.released_M(false);
+		
+		SwingUtilities.invokeAndWait(new Runnable() {
+			@Override
+			public void run() {
+				;
+			}
+		});
+		
+	}
+	
+	
 }

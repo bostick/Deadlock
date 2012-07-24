@@ -59,22 +59,11 @@ public final class Edge {
 		return end;
 	}
 	
-//	public List<Point> getPoints() {
-//		if (removed) {
-//			throw new IllegalStateException();
-//		}
-//		return points;
-//	}
-	
 	public Point getPoint(int i) {
 		if (removed) {
 			throw new IllegalStateException();
 		}
 		return points.get(i);
-	}
-	
-	public List<Point> getPoints() {
-		return points;
 	}
 	
 	public void removePoint(int i) {
@@ -88,19 +77,11 @@ public final class Edge {
 		if (removed) {
 			throw new IllegalStateException();
 		}
-//		if (p.x.getD() != 1) {
-//			throw new IllegalStateException();
-//		}
-//		if (p.y.getD() != 1) {
-//			throw new IllegalStateException();
-//		}
 		if (points.contains(p) && points.indexOf(p) != 0) {
 			throw new IllegalStateException();
 		}
 		points.add(p);
 	}
-	
-	
 	
 	public int getPointsSize() {
 		if (removed) {
@@ -141,8 +122,6 @@ public final class Edge {
 			assert !getStart().isRemoved();
 			assert !getEnd().isRemoved();
 		}
-		//List<Point> points = getPoints();
-		//int n = points.size();
 		for (int i = 0; i < points.size(); i++) {
 			Point p = points.get(i);
 			int count = 0;

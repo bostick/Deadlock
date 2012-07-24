@@ -161,16 +161,18 @@ public class DeadlockModel {
 		
 		for (Vertex v : vertices) {
 			Point d = v.getPoint();
-			if (Point.doubleEquals(b.x, d.x) && Point.doubleEquals(b.y, d.y) && v.getEdges().size() > 1) {
+			if (Point.doubleEquals(b.x, d.x) && Point.doubleEquals(b.y, d.y)) {
 				throw new IllegalArgumentException("point is on vertex");
 			}
 		}
 		for (Edge e : edges) {
-			//List<Point> ePoints = e.getPoints();
 			for (int i = 0; i < e.getPointsSize()-1; i++) {
 				Point c = e.getPoint(i);
 				Point d = e.getPoint(i+1);
 				if (Point.intersect(b, c, d)) {
+					if ((e.getStart() != null && e.getEnd() != null) && (Point.equals(b, e.getStart().getPoint()) || Point.equals(b, e.getEnd().getPoint()))) {
+						throw new IllegalArgumentException("point is on vertex and for some reason it is not a vertex");
+					}
 					return new EdgeInfo(e, i, Point.param(b, c, d));
 				}
 			}
@@ -247,15 +249,27 @@ public class DeadlockModel {
 				if (e == f) {
 					continue;
 				}
+				for (int i = 0; i < e.getPointsSize()-1; i++) {
+					Point a = e.getPoint(i);
+					Point b = e.getPoint(i+1);
+					for (int j = 0; j < f.getPointsSize()-1; j++) {
+						Point c = f.getPoint(j);
+						Point d = f.getPoint(j+1);
+						DPoint inter = Point.intersection(a, b, c, d);
+						if (inter != null && !(Point.equals(inter, a) || Point.equals(inter, b) || Point.equals(inter, c) || Point.equals(inter, d))) {
+							assert false : "No edges should intersect";
+						}
+					}
+				}
 				if ((e.getStart() == f.getStart() && e.getEnd() == f.getEnd()) || (e.getStart() == f.getEnd() && e.getEnd() == f.getStart())) {
 					/*
 					 * e and f share endpoints
 					 */
-					List<Point> ePoints = e.getPoints();
-					List<Point> fPoints = f.getPoints();
 					Set<Point> shared = new HashSet<Point>();
-					for (Point eP : ePoints) {
-						for (Point fP : fPoints) {
+					for (int i = 0; i < e.getPointsSize(); i++) {
+						Point eP = e.getPoint(i);
+						for (int j = 0; j < f.getPointsSize(); j++) {
+							Point fP = f.getPoint(j);
 							if (eP.equals(fP)) {
 								shared.add(eP);
 							}

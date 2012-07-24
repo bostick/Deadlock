@@ -324,7 +324,7 @@ public class Point {
 			assert uy < 1.0;
 			return uy;
 		} else if (ydc == 0) {
-			assert ybc == 0;
+			assert doubleEquals(ybc, 0);
 			double ux = ((double)xbc) / ((double)xdc);
 			assert ux < 1.0;
 			return ux;
@@ -352,5 +352,9 @@ public class Point {
 	
 	public static boolean doubleEquals(double a, double b) {
 		return Math.abs(a - b) < 0.0001;
+	}
+	
+	public static boolean equals(DPoint a, Point b) {
+		return doubleEquals(a.x, b.x) && doubleEquals(a.y, b.y);
 	}
 }

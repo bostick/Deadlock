@@ -296,32 +296,29 @@ public class MouseController implements MouseListener, MouseMotionListener {
 		
 	}
 	
-	void process(final PointToBeAdded aaa, final PointToBeAdded bbb) {
-		logger.debug("process: a: " + aaa + " b: " + bbb);
+	void process(final PointToBeAdded a, final PointToBeAdded b) {
+		logger.debug("process: a: " + a + " b: " + b);
 		
 		/*
 		 * a will only ever be treated as an integer
 		 * that is, only aInt will be used
-		 * either aaa is the first point coming in (so it is int) or it was b in the previous iteration
+		 * either a is the first point coming in (so it is int) or it was b in the previous iteration
 		 * and all of the proper vertex and edge handling was done for the integer value of a
 		 */
-		Point aInt = new Point((int)Math.round(aaa.p.x), (int)Math.round(aaa.p.y));
+		Point aInt = new Point((int)Math.round(a.p.x), (int)Math.round(a.p.y));
 		
 		// b is not yet an integer
 		
-		Point bInt = new Point((int)Math.round(bbb.p.x), (int)Math.round(bbb.p.y));
+		Point bInt = new Point((int)Math.round(b.p.x), (int)Math.round(b.p.y));
 		
 		logger.debug("finding a");
 		Vertex aV = MODEL.tryFindVertex(aInt);
 		if (aV == null) {
-			EdgeInfo info = MODEL.tryFindEdgeInfo(aInt);
-			if (info == null) {
+			EdgeInfo intInfo = MODEL.tryFindEdgeInfo(aInt);
+			if (intInfo == null) {
 				aV = MODEL.createVertex(aInt);
 			} else {
-				Edge e = info.edge;
-				int index = info.index;
-				double param = info.param;
-				aV = EdgeUtils.split(e, index, param);
+				aV = EdgeUtils.split(intInfo);
 			}
 		}
 		
@@ -330,50 +327,46 @@ public class MouseController implements MouseListener, MouseMotionListener {
 		logger.debug("finding b");
 		Vertex bV = MODEL.tryFindVertex(bInt);
 		if (bV == null) {
-			EdgeInfo info = MODEL.tryFindEdgeInfo(bbb.p);
-			if (info == null) {
-				/*
-				 * completely new, so use bInt
-				 */
-				info = MODEL.tryFindEdgeInfo(bInt);
-				if (info == null) {
+			EdgeInfo doubleInfo = MODEL.tryFindEdgeInfo(b.p);
+			if (doubleInfo == null) {
+				EdgeInfo intInfo = MODEL.tryFindEdgeInfo(bInt);
+				if (intInfo == null) {
 					/*
-					 * completely new, so use bInt
+					 * no edge on b, no edge on bInt
 					 */
 					bV = MODEL.createVertex(bInt);
 					assert bV.getPoint().equals(bInt);
 				} else {
-					Edge e = info.edge;
-					int index = info.index;
-					double param = info.param;
 					/*
-					 * split takes care of adjusting b to integer coords
+					 * no edge on b, edge on bInt
 					 */
-					bV = EdgeUtils.split(e, index, param);
+					bV = EdgeUtils.split(intInfo);
 					assert bV.getPoint().equals(bInt);
 				}
 			} else {
-				Edge e = info.edge;
-				int index = info.index;
-				double param = info.param;
-				/*
-				 * split takes care of adjusting b to integer coords
-				 */
-				bV = EdgeUtils.split(e, index, param);
-				// bV is not based on bbb nor bInt, so nothing to test
-				/*
-				 * bV is not based on bbb nor bInt, so nothing to test
-				 * and it is also wrong to use bInt later on, must use bV.getPoint()
-				 */
-				//assert bV.getPoint().equals(bInt);
+				EdgeInfo intInfo = MODEL.tryFindEdgeInfo(bInt);
+				if (intInfo == null) {
+					/*
+					 * edge on b, no edge on bInt
+					 */
+					bV = EdgeUtils.split(doubleInfo);
+				} else {
+					/*
+					 * edge on b, edge on bInt
+					 */
+					bV = EdgeUtils.split(intInfo);
+					if (intInfo.edge != doubleInfo.edge) {
+						bV = EdgeUtils.split(doubleInfo);
+					}
+					assert bV.getPoint().equals(bInt);
+				}
+			}
+		} else if (!Point.equals(b.p, bInt)) {
+			EdgeInfo doubleInfo = MODEL.tryFindEdgeInfo(b.p);
+			if (doubleInfo != null) {
+				EdgeUtils.split(doubleInfo);
 			}
 		}
-		
-		/*
-		 * reset point for the next iteration where it is a
-		 */
-		//logger.debug("resetting " + bbb + " to " + bV.getPoint());
-		//bbb.p = new DPoint(bV.getPoint().x, bV.getPoint().y);
 		
 		assert bV != null;
 		
@@ -396,7 +389,6 @@ public class MouseController implements MouseListener, MouseMotionListener {
 		}
 		if (e == null) {
 			e = MODEL.createEdge();
-			//List<Point> ePoints = e.getPoints();
 			e.addPoint(aInt);
 			e.addPoint(bV.getPoint());
 			e.setStart(aV);
