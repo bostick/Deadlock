@@ -117,11 +117,14 @@ public final class Edge {
 	public void check() {
 		assert !isRemoved();
 		
-		if (!loop) {
-			assert getStart() != null && getEnd() != null;
-			assert !getStart().isRemoved();
-			assert !getEnd().isRemoved();
+		if (loop) {
+			assert start == end;
+		} else {
+			assert !(start == null || end == null);
+			assert !start.isRemoved();
+			assert !end.isRemoved();
 		}
+		
 		for (int i = 0; i < points.size(); i++) {
 			Point p = points.get(i);
 			int count = 0;
@@ -138,27 +141,30 @@ public final class Edge {
 			
 			if (i == 0) {
 				if (loop) {
-					if (getStart() != null) {
-						assert getStart().getPoint().equals(p);
-						assert getEnd().getPoint().equals(p);
+					if (start != null) {
+						assert start.getPoint().equals(p);
+						assert end.getPoint().equals(p);
 					}
 				} else {
-					assert getStart().getPoint().equals(p);
+					assert start.getPoint().equals(p);
 				}
 			} else if (i == points.size()-1) {
 				if (loop) {
-					if (getEnd() != null) {
-						assert getEnd().getPoint().equals(p);
+					if (end != null) {
+						assert end.getPoint().equals(p);
 					}
 				} else {
-					assert getEnd().getPoint().equals(p);
+					assert end.getPoint().equals(p);
 				}
 			}
 		}
+		
 		checkColinearity();
 	}
 	
 	public void checkColinearity() {
+		assert !isRemoved();
+		
 		for (int i = 0; i < points.size(); i++) {
 			Point p = points.get(i);
 			/*

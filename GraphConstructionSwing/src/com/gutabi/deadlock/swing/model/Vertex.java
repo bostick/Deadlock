@@ -79,6 +79,7 @@ public class Vertex {
 		if (removed) {
 			throw new IllegalStateException();
 		}
+		assert eds.size() == 0;
 		removed = true;
 	}
 	
