@@ -61,8 +61,6 @@ public class MouseController implements MouseListener, MouseMotionListener {
 		
 		MODEL.lastPointRaw = null;
 		MODEL.curStrokeRaw.clear();
-		
-		VIEW.repaint();
 	}
 	
 	public void pressed_M(final Point p) throws InterruptedException, InvocationTargetException {
@@ -79,6 +77,7 @@ public class MouseController implements MouseListener, MouseMotionListener {
 		javax.swing.SwingUtilities.invokeAndWait(new Runnable() {
 			public void run() {
 				dragged(p);
+				VIEW.repaint();
 			}
 		});
 	}
@@ -95,6 +94,7 @@ public class MouseController implements MouseListener, MouseMotionListener {
 					MODEL.curStrokeRaw = massage(MODEL.curStrokeRaw);
 				}
 				released();
+				VIEW.repaint();
 			}
 		});
 	}

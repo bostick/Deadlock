@@ -50,22 +50,22 @@ public class TestDraggingFuzz {
 	List<Edge> edges;
 	
 	int randomInt() {
-		return 0 + (int)(Math.random() * ((10 - 0) + 1));
+		return 0 + (int)(Math.random() * ((20 - 0) + 1));
 	}
 	
 	Point randomPoint() {
-		int x = 0 + (int)(Math.random() * ((100 - 0) + 1));
-		int y = 0 + (int)(Math.random() * ((100 - 0) + 1));
+		int x = 0 + (int)(Math.random() * ((500 - 0) + 1));
+		int y = 0 + (int)(Math.random() * ((500 - 0) + 1));
 		return new Point(x, y);
 	}
 	
 	@Test
 	public void testFuzz() throws Exception {
 		
-		CONTROLLER.mouseController.pressed_M(new Point(5, 5));
-		CONTROLLER.mouseController.dragged_M(new Point(6, 6));
-		CONTROLLER.mouseController.dragged_M(new Point(7, 7));
-		CONTROLLER.mouseController.released_M();
+//		CONTROLLER.mouseController.pressed_M(new Point(5, 5));
+//		CONTROLLER.mouseController.dragged_M(new Point(6, 6));
+//		CONTROLLER.mouseController.dragged_M(new Point(7, 7));
+//		CONTROLLER.mouseController.released_M();
 		
 		while (true) {
 			
@@ -80,6 +80,8 @@ public class TestDraggingFuzz {
 			}
 			
 			CONTROLLER.mouseController.released_M();
+			
+			VIEW.repaint();
 			
 		}
 		

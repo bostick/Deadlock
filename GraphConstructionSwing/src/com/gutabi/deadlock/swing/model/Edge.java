@@ -78,9 +78,20 @@ public final class Edge {
 		if (removed) {
 			throw new IllegalStateException();
 		}
-		if (points.contains(p) && points.indexOf(p) != 0) {
+		
+		/*
+		 * cannot simply test if points.indexOf(p) does not equal 0, since indexOf may return 0 but p may also occur later
+		 */
+		int count = 0;
+		for (Point a : points) {
+			if (p.equals(a)) {
+				count++;
+			}
+		}
+		if (count > 1 || (count == 1 && points.indexOf(p) != 0)) {
 			throw new IllegalStateException();
 		}
+		
 		points.add(p);
 	}
 	

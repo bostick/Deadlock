@@ -1111,4 +1111,60 @@ public class TestDragging {
 		
 	}
 	
+	@Test
+	public void testBug4() throws Exception {
+
+		CONTROLLER.mouseController.pressed_M(new Point(351, 140));
+		CONTROLLER.mouseController.dragged_M(new Point(454, 11));
+		CONTROLLER.mouseController.released_M(false);
+		
+		CONTROLLER.mouseController.pressed_M(new Point(454, 11));
+		CONTROLLER.mouseController.dragged_M(new Point(436, 146));
+		CONTROLLER.mouseController.released_M(false);
+		
+		CONTROLLER.mouseController.pressed_M(new Point(389, 36));
+		CONTROLLER.mouseController.dragged_M(new Point(462, 273));
+		CONTROLLER.mouseController.released_M(false);
+		
+		CONTROLLER.mouseController.pressed_M(new Point(216, 161));
+		CONTROLLER.mouseController.dragged_M(new Point(491, 36));
+		CONTROLLER.mouseController.released_M(false);
+		
+		SwingUtilities.invokeAndWait(new Runnable() {
+			@Override
+			public void run() {
+				String.class.getClass();
+			}
+		});
+		
+	}
+	
+	@Test
+	public void testBug5() throws Exception {
+		
+		SwingUtilities.invokeAndWait(new Runnable() {
+			@Override
+			public void run() {
+				
+				CONTROLLER.mouseController.pressed(new Point(463, 221));
+				CONTROLLER.mouseController.dragged(new Point(25, 28));
+				CONTROLLER.mouseController.released();
+				
+				CONTROLLER.mouseController.pressed(new Point(274, 24));
+				CONTROLLER.mouseController.dragged(new Point(34, 38));
+				CONTROLLER.mouseController.released();
+				
+				CONTROLLER.mouseController.pressed(new Point(34, 38));
+				CONTROLLER.mouseController.dragged(new Point(428, 78));
+				CONTROLLER.mouseController.released();
+				
+				CONTROLLER.mouseController.pressed(new Point(46, 40));
+				CONTROLLER.mouseController.dragged(new Point(364, 52));
+				CONTROLLER.mouseController.released();
+				
+				String.class.getClass();
+			}
+		});
+		
+	}
 }

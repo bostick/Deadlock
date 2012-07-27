@@ -31,7 +31,7 @@ public class Vertex {
 	
 	public void add(Edge ed) {
 		if (removed) {
-			throw new IllegalStateException();
+			throw new IllegalStateException("vertex has been removed");
 		}
 		if (!(ed.getStart() == this && ed.getEnd() == this)) {
 			assert !eds.contains(ed);

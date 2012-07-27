@@ -524,20 +524,26 @@ public class DeadlockModel {
 			
 			f.addPoint(p);
 			try {
-				if (!(index+1 < e.getPointsSize()-1) || !Point.colinear(p, d, e.getPoint(index+2))) {
+//				if (  !(index+1 < e.getPointsSize()-1) || !Point.colinear(p, d, e.getPoint(index+2))) {
+//					d;
+//					f.addPoint(d);
+//				} else {
+//					d;
+//				}
+				if (index+1 < e.getPointsSize()-1 && !Point.colinear(p, d, e.getPoint(index+2))) {
 					f.addPoint(d);
 				}
 			} catch (ColinearException ex) {
 				assert false;
 			}
-			for (int i = index+2; i < e.getPointsSize(); i++) {
+			for (int i = index+2; i < e.getPointsSize()-1; i++) {
 				f.addPoint(e.getPoint(i));
 			}
-			for (int i = 1; i < index; i++) {
+			for (int i = 0; i < index; i++) {
 				f.addPoint(e.getPoint(i)); 
 			}
 			try {
-				if (!(index > 0) || !Point.colinear(e.getPoint(index-1), c, p)) {
+				if (index > 0 && !Point.colinear(e.getPoint(index-1), c, p)) {
 					f.addPoint(c);
 				}
 			} catch (ColinearException ex) {
@@ -677,20 +683,20 @@ public class DeadlockModel {
 			//v.check();
 			
 			eStart.remove(e);
-			List<Edge> eStartEdges = eStart.getEdges();
-			if (eStartEdges.size() == 0) {
-				assert false;
-			} else if (eStartEdges.size() == 2) {
-				merge(eStartEdges.get(0), eStartEdges.get(1));
-			}
+//			List<Edge> eStartEdges = eStart.getEdges();
+//			if (eStartEdges.size() == 0) {
+//				assert false;
+//			} else if (eStartEdges.size() == 2) {
+//				merge(eStartEdges.get(0), eStartEdges.get(1));
+//			}
 			
 			eEnd.remove(e);
-			List<Edge> eEndEdges = eEnd.getEdges();
-			if (eEndEdges.size() == 0) {
-				assert false;
-			} else if (eEndEdges.size() == 2) {
-				merge(eEndEdges.get(0), eEndEdges.get(1));
-			}
+//			List<Edge> eEndEdges = eEnd.getEdges();
+//			if (eEndEdges.size() == 0) {
+//				assert false;
+//			} else if (eEndEdges.size() == 2) {
+//				merge(eEndEdges.get(0), eEndEdges.get(1));
+//			}
 			
 			removeEdge(e);
 			
@@ -816,48 +822,76 @@ public class DeadlockModel {
 			
 			assert e1.getPoint(e1.getPointsSize()-1).equals(e2.getPoint(0));
 			assert e2.getPoint(e2.getPointsSize()-1).equals(e1.getPoint(0));
+			assert e1Start.getEdges().size() == 2 || e1End.getEdges().size() == 2;
 			
 			Edge newEdge = createEdge();
 			
-			try {
-				// only add if not colinear
-				if (!Point.colinear(e2.getPoint(e2.getPointsSize()-2), e1.getPoint(0), e1.getPoint(1))) {
-					newEdge.addPoint(e1.getPoint(0));
+			if (e1Start.getEdges().size() == 2) {
+				/*
+				 * e1Start is the vertex that will be merged (so it will be removed)
+				 * use the other vertex as the starting point
+				 */
+				try {
+					// only add if not colinear
+					if (!Point.colinear(e1.getPoint(e1.getPointsSize()-2), e2.getPoint(0), e2.getPoint(1))) {
+						newEdge.addPoint(e2.getPoint(0));
+					}
+				} catch (ColinearException ex) {
+					assert false;
 				}
-			} catch (ColinearException ex) {
-				assert false;
-			}
-			for (int i = 1; i < e1.getPointsSize()-1; i++) {
-				newEdge.addPoint(e1.getPoint(i));
-			}
-			try {
-				// only add if not colinear
-				if (!Point.colinear(e1.getPoint(e1.getPointsSize()-2), e1.getPoint(e1.getPointsSize()-1), e2.getPoint(1))) {
-					newEdge.addPoint(e1.getPoint(e1.getPointsSize()-1));
+				for (int i = 1; i < e2.getPointsSize()-1; i++) {
+					newEdge.addPoint(e2.getPoint(i));
 				}
-			} catch (ColinearException ex) {
-				assert false;
+				try {
+					// only add if not colinear
+					if (!Point.colinear(e2.getPoint(e2.getPointsSize()-2), e2.getPoint(e2.getPointsSize()-1), e1.getPoint(1))) {
+						newEdge.addPoint(e2.getPoint(e2.getPointsSize()-1));
+					}
+				} catch (ColinearException ex) {
+					assert false;
+				}
+				for (int i = 1; i < e1.getPointsSize()-1; i++) {
+					newEdge.addPoint(e1.getPoint(i));
+				}
+				/*
+				 * add whatever the first point is, it is either e1.getPoint(0) or e1.getPoint(1)
+				 */
+				newEdge.addPoint(newEdge.getPoint(0));
+			} else {
+				try {
+					// only add if not colinear
+					if (!Point.colinear(e2.getPoint(e2.getPointsSize()-2), e1.getPoint(0), e1.getPoint(1))) {
+						newEdge.addPoint(e1.getPoint(0));
+					}
+				} catch (ColinearException ex) {
+					assert false;
+				}
+				for (int i = 1; i < e1.getPointsSize()-1; i++) {
+					newEdge.addPoint(e1.getPoint(i));
+				}
+				try {
+					// only add if not colinear
+					if (!Point.colinear(e1.getPoint(e1.getPointsSize()-2), e1.getPoint(e1.getPointsSize()-1), e2.getPoint(1))) {
+						newEdge.addPoint(e1.getPoint(e1.getPointsSize()-1));
+					}
+				} catch (ColinearException ex) {
+					assert false;
+				}
+				for (int i = 1; i < e2.getPointsSize()-1; i++) {
+					newEdge.addPoint(e2.getPoint(i));
+				}
+				/*
+				 * add whatever the first point is, it is either e1.getPoint(0) or e1.getPoint(1)
+				 */
+				newEdge.addPoint(newEdge.getPoint(0));
 			}
-			for (int i = 1; i < e2.getPointsSize()-1; i++) {
-				newEdge.addPoint(e2.getPoint(i));
-			}
-			/*
-			 * add whatever the first point is, it is either e1.getPoint(0) or e1.getPoint(1)
-			 */
-			newEdge.addPoint(newEdge.getPoint(0));
-						
-			int e1StartEdgeCount = e1Start.getEdges().size();
 			
-			if (e1StartEdgeCount == 1) {
-				throw new AssertionError();
-			} else if (e1StartEdgeCount == 2) {
+			
+			if (e1Start.getEdges().size() == 2 && e1End.getEdges().size() == 2) {
 				// stand-alone loop
-				assert e1End.getEdges().size() == 2;
 				
 				newEdge.setStart(null);
 				newEdge.setEnd(null);
-				
-				newEdge.check();
 				
 				e1Start.remove(e1);
 				
@@ -874,22 +908,45 @@ public class DeadlockModel {
 				
 				newEdge.check();
 				return newEdge;
-			} else {
+			} else if (e1Start.getEdges().size() == 2) {
 				// start/end vertex has other edges
+				
+				newEdge.setStart(e1End);
+				newEdge.setEnd(e1End);
+				
+				e1End.add(newEdge);
+				e1End.remove(e1);
+				
+				e1Start.remove(e1);
+				
+				e2Start.add(newEdge);
+				e2Start.remove(e2);
+				
+				e2End.remove(e2);
+				
+				removeVertex(e1Start/*e2End*/);
+				removeEdge(e1);
+				removeEdge(e2);
+				
+				newEdge.check();
+				return newEdge;
+			} else {
+				assert e1End.getEdges().size() == 2;
 				
 				newEdge.setStart(e1Start);
 				newEdge.setEnd(e1Start);
 				
+				e1Start.add(newEdge);
 				e1Start.remove(e1);
-				e1Start.remove(e2);
-				
-				e1Start.add(newEdge);
-				e1Start.add(newEdge);
 				
 				e1End.remove(e1);
-				e1End.remove(e2);
 				
-				removeVertex(e1End);
+				e2Start.remove(e2);
+				
+				e2End.add(newEdge);
+				e2End.remove(e2);
+				
+				removeVertex(e1End/*e2Start*/);
 				removeEdge(e1);
 				removeEdge(e2);
 				
