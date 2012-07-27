@@ -77,7 +77,7 @@ public class MouseController implements MouseListener, MouseMotionListener {
 		javax.swing.SwingUtilities.invokeAndWait(new Runnable() {
 			public void run() {
 				dragged(p);
-				VIEW.repaint();
+				//VIEW.repaint();
 			}
 		});
 	}
@@ -94,7 +94,7 @@ public class MouseController implements MouseListener, MouseMotionListener {
 					MODEL.curStrokeRaw = massage(MODEL.curStrokeRaw);
 				}
 				released();
-				VIEW.repaint();
+				//VIEW.repaint();
 			}
 		});
 	}

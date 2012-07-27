@@ -69,18 +69,27 @@ public class TestDraggingFuzz {
 		
 		while (true) {
 			
-			int n = randomInt();
+			int m = randomInt();
 			
-			Point p = randomPoint();
-			CONTROLLER.mouseController.pressed_M(p);
-			
-			for (int i = 0; i < n; i++) {
-				p = randomPoint();
-				CONTROLLER.mouseController.dragged_M(p);
+			for (int ii = 0; ii < m; ii++) {
+				
+				int n = randomInt();
+				
+				Point p = randomPoint();
+				CONTROLLER.mouseController.pressed_M(p);
+				
+				for (int i = 0; i < n; i++) {
+					p = randomPoint();
+					CONTROLLER.mouseController.dragged_M(p);
+				}
+				
+				CONTROLLER.mouseController.released_M();
+				
+				VIEW.repaint();
+				
 			}
 			
-			CONTROLLER.mouseController.released_M();
-			
+			MODEL.clear_M();
 			VIEW.repaint();
 			
 		}

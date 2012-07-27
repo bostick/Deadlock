@@ -38,7 +38,7 @@ public final class Edge {
 	
 	public Vertex getStart() {
 		if (removed) {
-			throw new IllegalStateException();
+			throw new IllegalStateException("edge has been removed");
 		}
 		return start;
 	}

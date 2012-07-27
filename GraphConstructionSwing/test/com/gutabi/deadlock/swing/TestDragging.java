@@ -1167,4 +1167,29 @@ public class TestDragging {
 		});
 		
 	}
+	
+	@Test
+	public void testBug6() throws Exception {
+		
+		CONTROLLER.mouseController.pressed_M(new Point(390, 91));
+		CONTROLLER.mouseController.dragged_M(new Point(32, 324));
+		CONTROLLER.mouseController.dragged_M(new Point(19, 246));
+		CONTROLLER.mouseController.dragged_M(new Point(116, 147));
+		CONTROLLER.mouseController.dragged_M(new Point(185, 261));
+		CONTROLLER.mouseController.dragged_M(new Point(211, 398));
+		CONTROLLER.mouseController.dragged_M(new Point(118, 34));
+		CONTROLLER.mouseController.released_M(false);
+
+		CONTROLLER.mouseController.pressed_M(new Point(100, 216));
+		CONTROLLER.mouseController.dragged_M(new Point(262, 444));
+		CONTROLLER.mouseController.released_M(false);
+		
+		SwingUtilities.invokeAndWait(new Runnable() {
+			@Override
+			public void run() {
+				;
+			}
+		});
+		
+	}
 }

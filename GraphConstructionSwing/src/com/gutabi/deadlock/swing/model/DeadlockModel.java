@@ -62,6 +62,7 @@ public class DeadlockModel {
 		assert Thread.currentThread().getName().startsWith("AWT-EventQueue-");
 		edges.clear();
 		vertices.clear();
+		allStrokes.clear();
 	}
 	
 	public void clear_M() {
@@ -798,9 +799,10 @@ public class DeadlockModel {
 					newEdge.addPoint(e1.getPoint(i));
 				}
 				/*
-				 * add whatever the first point is, it is either e1.getPoint(0) or e1.getPoint(1)
+				 * add whatever the first point is
 				 */
 				newEdge.addPoint(newEdge.getPoint(0));
+				
 				
 				newEdge.setStart(null);
 				newEdge.setEnd(null);
@@ -854,7 +856,7 @@ public class DeadlockModel {
 					newEdge.addPoint(e1.getPoint(i));
 				}
 				/*
-				 * add whatever the first point is, it is either e1.getPoint(0) or e1.getPoint(1)
+				 * add whatever the first point is
 				 */
 				newEdge.addPoint(newEdge.getPoint(0));
 			} else {
@@ -881,7 +883,7 @@ public class DeadlockModel {
 					newEdge.addPoint(e2.getPoint(i));
 				}
 				/*
-				 * add whatever the first point is, it is either e1.getPoint(0) or e1.getPoint(1)
+				 * add whatever the first point is
 				 */
 				newEdge.addPoint(newEdge.getPoint(0));
 			}
@@ -959,41 +961,72 @@ public class DeadlockModel {
 			
 			assert e1.getPoint(e1.getPointsSize()-1).equals(e2.getPoint(e2.getPointsSize()-1));
 			assert e2.getPoint(0).equals(e1.getPoint(0));
+			assert e1Start.getEdges().size() == 2 || e1End.getEdges().size() == 2;
 			
 			Edge newEdge = createEdge();
 			
-			try {
-				// only add if not colinear
-				if (!Point.colinear(e2.getPoint(1), e1.getPoint(0), e1.getPoint(1))) {
-					newEdge.addPoint(e1.getPoint(0));
+			if (e1Start.getEdges().size() == 2) {
+				/*
+				 * e1Start is the vertex that will be merged (so it will be removed)
+				 * use the other vertex as the starting point
+				 */
+				try {
+					// only add if not colinear
+					if (!Point.colinear(e1.getPoint(e1.getPointsSize()-2), e2.getPoint(e2.getPointsSize()-1), e2.getPoint(e2.getPointsSize()-2))) {
+						newEdge.addPoint(e2.getPoint(e2.getPointsSize()-1));
+					}
+				} catch (ColinearException ex) {
+					assert false;
 				}
-			} catch (ColinearException ex) {
-				assert false;
-			}
-			for (int i = 1; i < e1.getPointsSize()-1; i++) {
-				newEdge.addPoint(e1.getPoint(i));
-			}
-			try {
-				// only add if not colinear
-				if (!Point.colinear(e1.getPoint(e1.getPointsSize()-2), e1.getPoint(e1.getPointsSize()-1), e2.getPoint(e2.getPointsSize()-2))) {
-					newEdge.addPoint(e1.getPoint(e1.getPointsSize()-1));
+				for (int i = e2.getPointsSize()-2; i >= 1; i--) {
+					newEdge.addPoint(e2.getPoint(i));
 				}
-			} catch (ColinearException ex) {
-				assert false;
+				
+				try {
+					// only add if not colinear
+					if (!Point.colinear(e2.getPoint(1), e1.getPoint(0), e1.getPoint(1))) {
+						newEdge.addPoint(e1.getPoint(0));
+					}
+				} catch (ColinearException ex) {
+					assert false;
+				}
+				for (int i = 1; i < e1.getPointsSize()-1; i++) {
+					newEdge.addPoint(e1.getPoint(i));
+				}
+				/*
+				 * add whatever the first point is
+				 */
+				newEdge.addPoint(newEdge.getPoint(0));
+			} else {
+				try {
+					// only add if not colinear
+					if (!Point.colinear(e2.getPoint(1), e1.getPoint(0), e1.getPoint(1))) {
+						newEdge.addPoint(e1.getPoint(0));
+					}
+				} catch (ColinearException ex) {
+					assert false;
+				}
+				for (int i = 1; i < e1.getPointsSize()-1; i++) {
+					newEdge.addPoint(e1.getPoint(i));
+				}
+				try {
+					// only add if not colinear
+					if (!Point.colinear(e1.getPoint(e1.getPointsSize()-2), e1.getPoint(e1.getPointsSize()-1), e2.getPoint(e2.getPointsSize()-2))) {
+						newEdge.addPoint(e1.getPoint(e1.getPointsSize()-1));
+					}
+				} catch (ColinearException ex) {
+					assert false;
+				}
+				for (int i = e2.getPointsSize()-2; i >= 1; i--) {
+					newEdge.addPoint(e2.getPoint(i));
+				}
+				/*
+				 * add whatever the first point is
+				 */
+				newEdge.addPoint(newEdge.getPoint(0));
 			}
-			for (int i = e2.getPointsSize()-2; i >= 1; i--) {
-				newEdge.addPoint(e2.getPoint(i));
-			}
-			/*
-			 * add whatever the first point is, it is either e1.getPoint(0) or e1.getPoint(1)
-			 */
-			newEdge.addPoint(newEdge.getPoint(0));
-						
-			int e1StartEdgeCount = e1Start.getEdges().size();
 			
-			if (e1StartEdgeCount == 1) {	
-				throw new AssertionError();
-			} else if (e1StartEdgeCount == 2) {
+			if (e1Start.getEdges().size() == 2 && e1End.getEdges().size() == 2) {
 				// stand-alone loop
 				assert e1End.getEdges().size() == 2;
 				
@@ -1008,8 +1041,31 @@ public class DeadlockModel {
 				removeEdge(e2);
 				
 				return newEdge;
-			} else {
+			} else if (e1Start.getEdges().size() == 2) {
 				// start/end vertex has other edges
+				
+				newEdge.setStart(e1End);
+				newEdge.setEnd(e1End);
+				
+				newEdge.check();
+				
+				e1Start.remove(e1);
+				
+				e1End.add(newEdge);
+				e1End.remove(e1);
+				
+				e2Start.remove(e2);
+				
+				e2End.add(newEdge);
+				e2End.remove(e2);
+				
+				removeVertex(e1Start/*e2Start*/);
+				removeEdge(e1);
+				removeEdge(e2);
+				
+				return newEdge;
+			} else {
+				assert e1End.getEdges().size() == 2;
 				
 				newEdge.setStart(e1Start);
 				newEdge.setEnd(e1Start);
@@ -1026,7 +1082,7 @@ public class DeadlockModel {
 				
 				e2End.remove(e2);
 				
-				removeVertex(e1End);
+				removeVertex(e1End/*e2End*/);
 				removeEdge(e1);
 				removeEdge(e2);
 				
@@ -1211,12 +1267,12 @@ public class DeadlockModel {
 			Edge e = info.edge;
 			int index = info.index;
 			
+			Vertex eStart = e.getStart();
+			Vertex eEnd = e.getEnd();
+			
 			if (index == 0) {
 				//create 1 new edge
 				//check connectivity of vertex
-				
-				Vertex eStart = e.getStart();
-				Vertex eEnd = e.getEnd();
 				
 				if (e.getPointsSize() > 2) {
 					
@@ -1234,35 +1290,13 @@ public class DeadlockModel {
 					newEdge.check();
 					
 					newStart.add(newEdge);
-					
 					eEnd.add(newEdge);
 					
 				}
 				
-				eStart.remove(e);
-				List<Edge> eStartEdges = eStart.getEdges();
-				if (eStartEdges.size() == 0) {
-					removeVertex(eStart);
-				} else if (eStartEdges.size() == 2) {
-					merge(eStartEdges.get(0), eStartEdges.get(1));
-				}
-				
-				eEnd.remove(e);
-				List<Edge> eEndEdges = eEnd.getEdges();
-				if (eEndEdges.size() == 0) {
-					removeVertex(eEnd);
-				} else if (eEndEdges.size() == 2) {
-					merge(eEndEdges.get(0), eEndEdges.get(1));
-				}
-				
-				removeEdge(e);
-				
 			} else if (index == e.getPointsSize()-2) {
 				//create 1 new edge
 				//check connectivity of vertex
-				
-				Vertex eStart = e.getStart();
-				Vertex eEnd = e.getEnd();
 				
 				Edge newEdge = createEdge();
 				
@@ -1277,26 +1311,11 @@ public class DeadlockModel {
 				
 				newEdge.check();
 				
-				eStart.remove(e);
 				eStart.add(newEdge);
-				
-				eEnd.remove(e);
-				List<Edge> eEndEdges = eEnd.getEdges();
-				if (eEndEdges.size() == 0) {
-					removeVertex(eEnd);
-				} else if (eEndEdges.size() == 2) {
-					merge(eEndEdges.get(0), eEndEdges.get(1));
-				}
-				
 				newEnd.add(newEdge);
-				
-				removeEdge(e);
 				
 			} else {
 				//create 2 new edges without worrying about vertices
-				
-				Vertex eStart = e.getStart();
-				Vertex eEnd = e.getEnd();
 				
 				Edge f1 = createEdge();
 				
@@ -1330,25 +1349,25 @@ public class DeadlockModel {
 				newF2Start.add(f2);
 				eEnd.add(f2);
 				
-				eStart.remove(e);
-				List<Edge> eStartEdges = eStart.getEdges();
-				if (eStartEdges.size() == 0) {
-					removeVertex(eStart);
-				} else if (eStartEdges.size() == 2) {
-					merge(eStartEdges.get(0), eStartEdges.get(1));
-				}
-				
-				eEnd.remove(e);
-				List<Edge> eEndEdges = eEnd.getEdges();
-				if (eEndEdges.size() == 0) {
-					removeVertex(eEnd);
-				} else if (eEndEdges.size() == 2) {
-					merge(eEndEdges.get(0), eEndEdges.get(1));
-				}
-				
-				removeEdge(e);
-				
 			}
+			
+			eStart.remove(e);
+			List<Edge> eStartEdges = eStart.getEdges();
+			if (eStartEdges.size() == 0) {
+				removeVertex(eStart);
+			} else if (eStartEdges.size() == 2) {
+				merge(eStartEdges.get(0), eStartEdges.get(1));
+			}
+			
+			eEnd.remove(e);
+			List<Edge> eEndEdges = eEnd.getEdges();
+			if (eEndEdges.size() == 0) {
+				removeVertex(eEnd);
+			} else if (eEndEdges.size() == 2) {
+				merge(eEndEdges.get(0), eEndEdges.get(1));
+			}
+			
+			removeEdge(e);
 			
 		} finally {
 			if (segmentLogger.isDebugEnabled()) {
