@@ -9,8 +9,8 @@ import java.util.TreeSet;
 
 import org.apache.log4j.Logger;
 
+import com.gutabi.deadlock.swing.utils.ColinearException;
 import com.gutabi.deadlock.swing.utils.DPoint;
-import com.gutabi.deadlock.swing.utils.EdgeUtils;
 import com.gutabi.deadlock.swing.utils.OverlappingException;
 import com.gutabi.deadlock.swing.utils.Point;
 import com.gutabi.deadlock.swing.utils.PointToBeAdded;
@@ -28,6 +28,8 @@ public class DeadlockModel {
 	public List<List<Point>> allStrokes = new ArrayList<List<Point>>();
 	
 	static Logger logger = Logger.getLogger("deadlock");
+	static Logger segmentLogger = Logger.getLogger("deadlock.segment");
+	
 	
 	public void init() {
 		
@@ -79,8 +81,6 @@ public class DeadlockModel {
 	
 	public Vertex createVertex(Point p) {
 		logger.debug("createVertex: " + p);
-//		assert p.x.getD() == 1;
-//		assert p.y.getD() == 1;
 		
 		/*
 		 * there should only be 1 vertex with this point
@@ -88,7 +88,6 @@ public class DeadlockModel {
 		int count = 0;
 		for (Vertex w : vertices) {
 			if (p.equals(w.getPoint())) {
-				//assert p == w.getPoint();
 				count++;
 			}
 		}
@@ -108,24 +107,17 @@ public class DeadlockModel {
 		edges.remove(e);
 	}
 	
-	public Edge findEdge(Point b) {
-		for (Vertex v : vertices) {
-			Point d = v.getPoint();
-			if (b.equals(d) && v.getEdges().size() > 1) {
-				throw new IllegalArgumentException("point is on vertex");
-			}
-		}
+	public EdgeInfo findSegment(Point a, Point b) {
 		for (Edge e : edges) {
-			//List<Point> ePoints = e.getPoints();
 			for (int i = 0; i < e.getPointsSize()-1; i++) {
 				Point c = e.getPoint(i);
 				Point d = e.getPoint(i+1);
-				if (Point.intersect(b, c, d)) {
-					return e;
+				if (a.equals(c) && b.equals(d)) {
+					return new EdgeInfo(e, i, 0);
 				}
 			}
 		}
-		throw new IllegalArgumentException("point not found");
+		throw new IllegalArgumentException("segment not found");
 	}
 	
 	public class EdgeInfo {
@@ -184,6 +176,8 @@ public class DeadlockModel {
 	}
 	
 	public int findIndex(Edge e, Point b) {
+		assert !e.isRemoved();
+		
 		//List<Point> points = e.getPoints();
 		for (int i = 0; i < e.getPointsSize(); i++) {
 			Point d = e.getPoint(i);
@@ -239,155 +233,186 @@ public class DeadlockModel {
 	
 	
 	
-	public void addUserSegment(Point a, Point b) {
-		logger.debug("dragged");
-		
-		SortedSet<PointToBeAdded> betweenABPoints = new TreeSet<PointToBeAdded>(PointToBeAdded.ptbaComparator);
-		betweenABPoints.add(new PointToBeAdded(new DPoint(a.x, a.y), 0.0));
-		betweenABPoints.add(new PointToBeAdded(new DPoint(b.x, b.y), 1.0));
-		
-		for (Edge e : MODEL.getEdges()) {
+	public void addStroke(Point a, Point b) {
+		assert !a.equals(b);
+		try {
 			
-			for (int j = 0; j < e.getPointsSize()-1; j++) {
-				Point c = e.getPoint(j);
-				Point d = e.getPoint(j+1);
-				try {
-					DPoint inter = Point.intersection(a, b, c, d);
-					if (inter != null && !(Point.doubleEquals(inter.x, b.x) && Point.doubleEquals(inter.y, b.y))) {
-						PointToBeAdded nptba = new PointToBeAdded(inter, Point.param(inter, a, b));
-						betweenABPoints.add(nptba);
-					}
-				} catch (OverlappingException ex) {
-					
-					if (Point.intersect(c, a, b)) {
-						double cParam = Point.param(c, a, b);
-						if ((cParam > 0.0 && cParam < 1.0)) {
-							PointToBeAdded nptba = new PointToBeAdded(new DPoint(c.x, c.y), cParam);
+			SortedSet<PointToBeAdded> betweenABPoints = new TreeSet<PointToBeAdded>(PointToBeAdded.ptbaComparator);
+			betweenABPoints.add(new PointToBeAdded(new DPoint(a.x, a.y), 0.0));
+			betweenABPoints.add(new PointToBeAdded(new DPoint(b.x, b.y), 1.0));
+			
+			for (Edge e : getEdges()) {
+				
+				for (int j = 0; j < e.getPointsSize()-1; j++) {
+					Point c = e.getPoint(j);
+					Point d = e.getPoint(j+1);
+					try {
+						DPoint inter = Point.intersection(a, b, c, d);
+						if (inter != null && !(Point.doubleEquals(inter.x, b.x) && Point.doubleEquals(inter.y, b.y))) {
+							PointToBeAdded nptba = new PointToBeAdded(inter, Point.param(inter, a, b));
 							betweenABPoints.add(nptba);
+						}
+					} catch (OverlappingException ex) {
+						
+						if ((a.equals(d) || Point.intersect(a, c, d)) && (b.equals(d) || Point.intersect(b, c, d))) {
+							/*
+							 * <a, b> is completely within <c, d>, so do nothing
+							 */
+							return;
+						}
+						
+						if (Point.intersect(c, a, b)) {
+							double cParam = Point.param(c, a, b);
+							if ((cParam > 0.0 && cParam < 1.0)) {
+								PointToBeAdded nptba = new PointToBeAdded(new DPoint(c.x, c.y), cParam);
+								betweenABPoints.add(nptba);
+							}
+						}
+						
+						if (Point.intersect(d, a, b)) {
+							double dParam = Point.param(d, a, b);
+							if ((dParam > 0.0 && dParam < 1.0)) {
+								PointToBeAdded nptba = new PointToBeAdded(new DPoint(d.x, d.y), dParam);
+								betweenABPoints.add(nptba);
+							}
+						}
+						
+					}
+				} // for edgePoints c, d
+				
+			} // for Edge e
+			
+			if (betweenABPoints.size() == 2) {
+				/*
+				 * only <a, b>
+				 */
+				addSegment(a, b);
+				
+			} else {
+				
+				Object[] betweenArray = betweenABPoints.toArray();
+				
+				betweenLoop:
+				for (int i = 0; i < betweenArray.length-1; i++) {
+					PointToBeAdded p1 = (PointToBeAdded)betweenArray[i];
+					PointToBeAdded p2 = (PointToBeAdded)betweenArray[i+1];
+					
+					for (Edge e : getEdges()) {
+						for (int j = 0; j < e.getPointsSize()-1; j++) {
+							Point c = e.getPoint(j);
+							Point d = e.getPoint(j+1);
+							if ((Point.equals(p1.p, d) || Point.intersect(p1.p, c, d)) && (Point.equals(p2.p, d) || Point.intersect(p2.p, c, d))) {
+								/*
+								 * <prev, cur> is completely within <c, d>, so do nothing
+								 */
+								continue betweenLoop;
+							}
 						}
 					}
 					
-					if (Point.intersect(d, a, b)) {
-						double dParam = Point.param(d, a, b);
-						if ((dParam > 0.0 && dParam < 1.0)) {
-							PointToBeAdded nptba = new PointToBeAdded(new DPoint(d.x, d.y), dParam);
-							betweenABPoints.add(nptba);
-						}
+					//addDSegment(p1.p, p2.p);
+					
+					/*
+					 * a will only ever be treated as an integer
+					 * that is, only aInt will be used
+					 * either a is the first point coming in (so it is int) or it was b in the previous iteration
+					 * and all of the proper vertex and edge handling was done for the integer value of a
+					 */
+					Point p1Int = new Point((int)Math.round(p1.p.x), (int)Math.round(p1.p.y));
+					
+					// b is not yet an integer
+					Point p2Int = new Point((int)Math.round(p2.p.x), (int)Math.round(p2.p.y));
+					
+					if (!Point.equals(p2.p, p2Int) && tryFindEdgeInfo(p2.p) != null) {
+						adjustToGrid(p2.p);
+					}
+					
+					if (!p1Int.equals(p2Int)) {
+						addStroke(p1Int, p2Int);
 					}
 					
 				}
-			} // for edgePoints c, d
-			
-		} // for Edge e
-		
-		boolean first = true;
-		PointToBeAdded last = null;
-		for (PointToBeAdded p : betweenABPoints) {
-			if (first) {
-				first = false;
-			} else {
-				assert last != null;
-				process(last, p);
+				
 			}
-			last = p;
+			
+			betweenABPoints.clear();
+			
+		} finally {
+			
 		}
-		betweenABPoints.clear();
 	}
 	
-	void process(final PointToBeAdded a, final PointToBeAdded b) {
-		logger.debug("process: a: " + a + " b: " + b);
+//	public void addDSegment(DPoint aa, DPoint b) {
+//		assert !aa.equals(b);
+//		try {
+//			logger.debug("process: a: " + aa + " b: " + b);
+//			
+//			/*
+//			 * a will only ever be treated as an integer
+//			 * that is, only aInt will be used
+//			 * either a is the first point coming in (so it is int) or it was b in the previous iteration
+//			 * and all of the proper vertex and edge handling was done for the integer value of a
+//			 */
+//			Point aInt = new Point((int)Math.round(aa.x), (int)Math.round(aa.y));
+//			
+//			// b is not yet an integer
+//			Point bInt = new Point((int)Math.round(b.x), (int)Math.round(b.y));
+//			
+//			if (!Point.equals(b, bInt) && tryFindEdgeInfo(b) != null) {
+//				adjustToGrid(b);
+//				
+//				/*
+//				 * after splitting, may now intersect with a different edge, so start over
+//				 */
+//				addStroke(aInt, bInt);
+//				
+//			} else if () {
+//				
+//				
+//				
+//			} else {
+//				/*
+//				 * did not split at b, so no problem with adding segment
+//				 */
+//				if (!aInt.equals(bInt) && !segmentExists(aInt, bInt)) {
+//					addSegment(aInt, bInt);
+//				}
+//			}
+//			
+//		} finally {
+//			
+//		}
+//		
+//	}
+	
+	public void addSegment(Point a, Point b) {
+		assert !a.equals(b);
+		assert !segmentExists(a, b);
 		
-		/*
-		 * a will only ever be treated as an integer
-		 * that is, only aInt will be used
-		 * either a is the first point coming in (so it is int) or it was b in the previous iteration
-		 * and all of the proper vertex and edge handling was done for the integer value of a
-		 */
-		Point aInt = new Point((int)Math.round(a.p.x), (int)Math.round(a.p.y));
-		
-		// b is not yet an integer
-		
-		Point bInt = new Point((int)Math.round(b.p.x), (int)Math.round(b.p.y));
-		
-		logger.debug("finding a");
-		Vertex aV = MODEL.tryFindVertex(aInt);
-		if (aV == null) {
-			EdgeInfo intInfo = MODEL.tryFindEdgeInfo(aInt);
-			if (intInfo == null) {
-				aV = MODEL.createVertex(aInt);
-			} else {
-				aV = EdgeUtils.split(aInt);
-			}
-		}
-		
-		assert aV != null;
-		
-		logger.debug("finding b");
-		Vertex bV = MODEL.tryFindVertex(bInt);
-		if (bV == null) {
-			EdgeInfo doubleInfo = MODEL.tryFindEdgeInfo(b.p);
-			if (doubleInfo == null) {
-				EdgeInfo intInfo = MODEL.tryFindEdgeInfo(bInt);
+		try {
+			
+			Vertex aV = tryFindVertex(a);
+			if (aV == null) {
+				EdgeInfo intInfo = tryFindEdgeInfo(a);
 				if (intInfo == null) {
-					/*
-					 * no edge on b, no edge on bInt
-					 */
-					bV = MODEL.createVertex(bInt);
-					assert bV.getPoint().equals(bInt);
+					aV = createVertex(a);
 				} else {
-					/*
-					 * no edge on b, edge on bInt
-					 */
-					bV = EdgeUtils.split(bInt);
-					assert bV.getPoint().equals(bInt);
-				}
-			} else {
-				EdgeInfo intInfo = MODEL.tryFindEdgeInfo(bInt);
-				if (intInfo == null) {
-					/*
-					 * edge on b, no edge on bInt
-					 */
-					bV = EdgeUtils.split(b.p);
-				} else {
-					/*
-					 * edge on b, edge on bInt
-					 */
-					bV = EdgeUtils.split(bInt);
-					if (intInfo.edge != doubleInfo.edge) {
-						bV = EdgeUtils.split(b.p);
-					}
-					assert bV.getPoint().equals(bInt);
+					aV = split(a);
 				}
 			}
-		} else if (!Point.equals(b.p, bInt)) {
-			EdgeInfo doubleInfo = MODEL.tryFindEdgeInfo(b.p);
-			if (doubleInfo != null) {
-				EdgeUtils.split(b.p);
+			
+			Vertex bV = tryFindVertex(b);
+			if (bV == null) {
+				EdgeInfo intInfo = tryFindEdgeInfo(b);
+				if (intInfo == null) {
+					bV = createVertex(b);
+				} else {
+					bV = split(b);
+				}
 			}
-		}
-		
-		assert bV != null;
-		
-		if (aV == bV) {
-			/*
-			 * could happen if bV is adjusted
-			 */
-			return;
-		}
-		
-		Edge e = null;
-		for (Edge ee : aV.getEdges()) {
-			if (((ee.getStart() == aV && ee.getEnd() == bV) || (ee.getStart() == bV && ee.getEnd() == aV)) && ee.getPointsSize() == 2) {
-				/*
-				 * both a and b are already both vertices and connected, so just use this
-				 */
-				e = ee;
-				break;
-			}
-		}
-		if (e == null) {
-			e = MODEL.createEdge();
-			e.addPoint(aInt);
+			
+			Edge e = createEdge();
+			e.addPoint(a);
 			e.addPoint(bV.getPoint());
 			e.setStart(aV);
 			e.setEnd(bV);
@@ -396,46 +421,885 @@ public class DeadlockModel {
 			
 			aV.add(e);
 			bV.add(e);
-		}
-		
-		Edge working;
-		
-		List<Edge> aEdges = aV.getEdges();
-		if (aEdges.size() == 2) {
-			/*
-			 * a has 2 edges now, counting e, so the 2 should be merged
-			 */
-			Edge aEdge;
-			if (aEdges.get(0) == e) {
-				aEdge = aEdges.get(1);
+			
+			Edge working;
+			
+			List<Edge> aEdges = aV.getEdges();
+			if (aEdges.size() == 2) {
+				/*
+				 * a has 2 edges now, counting e, so the 2 should be merged
+				 */
+				Edge aEdge;
+				if (aEdges.get(0) == e) {
+					aEdge = aEdges.get(1);
+				} else {
+					aEdge = aEdges.get(0);
+				}
+				working = merge(aEdge, e);
 			} else {
-				aEdge = aEdges.get(0);
+				working = e;
 			}
-			working = EdgeUtils.merge(aEdge, e);
-		} else {
-			working = e;
+			
+			/*
+			 * bV could have been removed if the merging of aEdge and e formed a loop (thereby removing bV in the process),
+			 * so check that b is still a vertex first
+			 */
+			if (!bV.isRemoved()) {
+				List<Edge> bEdges = bV.getEdges();
+				if (bEdges.size() == 2) {
+					Edge bEdge;
+					if (bEdges.get(0) == e) {
+						bEdge = bEdges.get(1);
+					} else {
+						bEdge = bEdges.get(0);
+					}
+					merge(working, bEdge);
+				}
+			}
+			
+		} finally {
+			if (segmentLogger.isDebugEnabled()) {
+				segmentLogger.debug("addSegment: <" + a + ", " + b + ">");
+			}
 		}
+	}
+	
+	public boolean segmentExists(Point a, Point b) {
+		for (Edge e : getEdges()) {
+			for (int j = 0; j < e.getPointsSize()-1; j++) {
+				Point c = e.getPoint(j);
+				Point d = e.getPoint(j+1);
+				if ((a.equals(d) || Point.intersect(a, c, d)) && (b.equals(d) || Point.intersect(b, c, d))) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * split an edge at point with index i and param p between indices i and i+1
+	 * takes care of adjusting to integer coordinates
+	 * Edge e will have been removed
+	 * return Vertex at split point
+	 */
+	public Vertex split(Point p) {
+		
+		EdgeInfo info = tryFindEdgeInfo(p);
+		assert info != null;
+		
+		Edge e = info.edge;
+		int index = info.index;
+		double param = info.param;
+		logger.debug("split e: " + e + " index: " + index + " param: " + param);
+		assert param >= 0.0;
+		assert param < 1.0;
 		
 		/*
-		 * bV could have been removed if the merging of aEdge and e formed a loop (thereby removing bV in the process),
-		 * so check that b is still a vertex first
+		 * we assert thar param < 1.0, but after adjusting, we may be at d
 		 */
-		if (!bV.isRemoved()) {
-			List<Edge> bEdges = bV.getEdges();
-			if (bEdges.size() == 2) {
-				Edge bEdge;
-				if (bEdges.get(0) == e) {
-					bEdge = bEdges.get(1);
-				} else {
-					bEdge = bEdges.get(0);
+		
+		Point c = e.getPoint(index);
+		Point d = e.getPoint(index+1);
+		
+//		DPoint p = Point.point(c, d, param);
+//		Point pInt = new Point((int)Math.round(p.x), (int)Math.round(p.y));
+		
+		/*
+		 * v may already exist if we are splitting at p and p is different than pInt and v already exists at pInt
+		 */
+		Vertex v = tryFindVertex(p);
+		if (v == null) {
+			v = createVertex(p);
+		}
+		assert v.getPoint().equals(p);
+		
+		Vertex eStart = e.getStart();
+		Vertex eEnd = e.getEnd();
+		
+		if (eStart == null && eEnd == null) {
+			// stand-alone loop
+			
+			Edge f = createEdge();
+			
+			f.addPoint(p);
+			try {
+				if (!(index+1 < e.getPointsSize()-1) || !Point.colinear(p, d, e.getPoint(index+2))) {
+					f.addPoint(d);
 				}
-				EdgeUtils.merge(working, bEdge);
+			} catch (ColinearException ex) {
+				assert false;
+			}
+			for (int i = index+2; i < e.getPointsSize(); i++) {
+				f.addPoint(e.getPoint(i));
+			}
+			for (int i = 1; i < index; i++) {
+				f.addPoint(e.getPoint(i)); 
+			}
+			try {
+				if (!(index > 0) || !Point.colinear(e.getPoint(index-1), c, p)) {
+					f.addPoint(c);
+				}
+			} catch (ColinearException ex) {
+				assert false;
+			}
+			f.addPoint(p);
+			
+			f.setStart(v);
+			f.setEnd(v);
+			
+			f.check();
+			
+			v.add(f);
+			v.add(f);
+			/*
+			 * a loop has just been split, so it is in an inconsistent state, do not check here
+			 * hopefully, another edge will be added soon
+			 */
+			//v.check();
+			
+			removeEdge(e);
+			
+			return v;
+			
+		} else {
+			
+			/*
+			 * f1
+			 */
+			
+			Edge f1 = null;
+			for (Edge ee : eStart.getEdges()) {
+				if (((ee.getStart() == eStart && ee.getEnd() == v) || (ee.getStart() == v && ee.getEnd() == eStart)) && ee.getPointsSize() == 2) {
+					/*
+					 * both a and b are already both vertices and connected, so just use this
+					 */
+					f1 = ee;
+					break;
+				}
+			}
+			if (f1 == null) {
+				f1 = createEdge();
+				for (int i = 0; i < index; i++) {
+					f1.addPoint(e.getPoint(i));
+				}
+				try {
+					if (!(index > 0) || !Point.colinear(e.getPoint(index-1), c, p)) {
+						f1.addPoint(c);
+					}
+				} catch (ColinearException ex) {
+					
+					assert tryFindVertex(c) == null;
+					
+					Vertex cV = createVertex(c);
+					Edge f3 = createEdge();
+					f3.addPoint(c);
+					f3.addPoint(p);
+					f3.setStart(cV);
+					f3.setEnd(v);
+					f3.check();
+					
+					cV.add(f3);
+					v.add(f3);
+					
+				}
+				f1.addPoint(p);
+				
+				f1.setStart(eStart);
+				f1.setEnd(v);
+				
+				f1.check();
+				
+				eStart.add(f1);
+				v.add(f1);
+			}
+			
+			/*
+			 * f2
+			 */
+			
+			Edge f2 = null;
+			for (Edge ee : eStart.getEdges()) {
+				if (ee == f1) {
+					/*
+					 * ignore if ee is the newly-created edge f1
+					 */
+					continue;
+				}
+				if (((ee.getStart() == v && ee.getEnd() == eEnd) || (ee.getStart() == eEnd && ee.getEnd() == v)) && ee.getPointsSize() == 2) {
+					/*
+					 * both a and b are already both vertices and connected, so just use this
+					 */
+					f2 = ee;
+					break;
+				}
+			}
+			if (f2 == null) {
+				f2 = createEdge();
+				f2.addPoint(p);
+				try {
+					if (!(index+1 < e.getPointsSize()-1) || !Point.colinear(p, d, e.getPoint(index+2))) {
+						f2.addPoint(d);
+					}
+				} catch (ColinearException ex) {
+					
+					assert tryFindVertex(d) == null;
+					
+					Vertex dV = createVertex(d);
+					Edge f3 = createEdge();
+					f3.addPoint(d);
+					f3.addPoint(p);
+					f3.setStart(dV);
+					f3.setEnd(v);
+					f3.check();
+					
+					dV.add(f3);
+					v.add(f3);
+					
+				}
+				for (int i = index+2; i < e.getPointsSize(); i++) {
+					f2.addPoint(e.getPoint(i));
+				}
+				
+				f2.setStart(v);
+				f2.setEnd(eEnd);
+				
+				f2.check();
+				
+				v.add(f2);
+				eEnd.add(f2);
+			}
+			
+			/*
+			 * splitting into 2 edges, so in an inconsistent state
+			 * don't check here
+			 */
+			//v.check();
+			
+			eStart.remove(e);
+			List<Edge> eStartEdges = eStart.getEdges();
+			if (eStartEdges.size() == 0) {
+				assert false;
+			} else if (eStartEdges.size() == 2) {
+				merge(eStartEdges.get(0), eStartEdges.get(1));
+			}
+			
+			eEnd.remove(e);
+			List<Edge> eEndEdges = eEnd.getEdges();
+			if (eEndEdges.size() == 0) {
+				assert false;
+			} else if (eEndEdges.size() == 2) {
+				merge(eEndEdges.get(0), eEndEdges.get(1));
+			}
+			
+			removeEdge(e);
+			
+			return v;
+		}
+	}
+	
+	/**
+	 * split an edge at point with index i and param p between indices i and i+1
+	 * takes care of adjusting to integer coordinates
+	 * Edge e will have been removed
+	 * return Vertex at split point
+	 */
+	public void adjustToGrid(DPoint p) {
+		
+		EdgeInfo info = tryFindEdgeInfo(p);
+		assert info != null;
+		
+		Edge e = info.edge;
+		int index = info.index;
+		double param = info.param;
+		logger.debug("split e: " + e + " index: " + index + " param: " + param);
+		assert param >= 0.0;
+		assert param < 1.0;
+		
+		/*
+		 * we assert thar param < 1.0, but after adjusting, we may be at d
+		 */
+		
+		Point c = e.getPoint(index);
+		Point d = e.getPoint(index+1);
+		
+//		DPoint p = Point.point(c, d, param);
+		Point pInt = new Point((int)Math.round(p.x), (int)Math.round(p.y));
+		
+		/*
+		 * adjust segment to integer coords first
+		 */
+		removeSegment(c, d);
+		if (!c.equals(pInt)) {
+			/*
+			 * the segment <c, pInt> may intersect with other segments, so we have to start fresh and
+			 * not assume anything
+			 */
+			addStroke(c, pInt);
+		}
+		if (!pInt.equals(d)) {
+			addStroke(pInt, d);
+		}
+		
+//		Vertex v = tryFindVertex(pInt);
+//		if (v == null) {
+//			return split(pInt);
+//		} else {
+//			return v;
+//		}
+	}
+	
+	/**
+	 * merge two edges with common vertex (possibly the same edge)
+	 * no colinear points in returned edge
+	 */
+	public Edge merge(Edge e1, Edge e2) {
+		logger.debug("merge " + e1 + " " + e2);
+		assert !e1.isRemoved();
+		assert !e2.isRemoved();
+		
+		Vertex e1Start = e1.getStart();
+		Vertex e1End = e1.getEnd();
+		
+		Vertex e2Start = e2.getStart();
+		Vertex e2End = e2.getEnd();
+		
+		if (e1 == e2) {
+			assert e1Start == e1End;
+			// in the middle of merging a loop
+			
+			int e1StartEdgeCount = e1Start.getEdges().size();
+			
+			if (e1StartEdgeCount == 1) {
+				throw new AssertionError();
+			} else if (e1StartEdgeCount == 2) {
+				// stand-alone loop
+				
+				Edge newEdge = createEdge();
+				
+				int n = e1.getPointsSize();
+				assert e1.getPoint(0) == e1.getPoint(n-1);
+				
+				// only add if not colinear
+				try {
+					if (!Point.colinear(e1.getPoint(e1.getPointsSize()-2), e1.getPoint(0), e1.getPoint(1))) {
+						newEdge.addPoint(e1.getPoint(0));
+					}
+				} catch (ColinearException ex) {
+					assert false;
+				}
+				for (int i = 1; i < e1.getPointsSize()-1; i++) {
+					newEdge.addPoint(e1.getPoint(i));
+				}
+				/*
+				 * add whatever the first point is, it is either e1.getPoint(0) or e1.getPoint(1)
+				 */
+				newEdge.addPoint(newEdge.getPoint(0));
+				
+				newEdge.setStart(null);
+				newEdge.setEnd(null);
+				
+				newEdge.check();
+				
+				removeVertex(e1Start);
+				
+				return newEdge;
+				
+			} else {
+				// start/end vertex has other edges
+				// nothing to do
+				throw new AssertionError();
+			}
+			
+		} else if (e1Start == e2End && e1End == e2Start) {
+			// forming a loop
+			
+			assert e1.getPoint(e1.getPointsSize()-1).equals(e2.getPoint(0));
+			assert e2.getPoint(e2.getPointsSize()-1).equals(e1.getPoint(0));
+			
+			Edge newEdge = createEdge();
+			
+			try {
+				// only add if not colinear
+				if (!Point.colinear(e2.getPoint(e2.getPointsSize()-2), e1.getPoint(0), e1.getPoint(1))) {
+					newEdge.addPoint(e1.getPoint(0));
+				}
+			} catch (ColinearException ex) {
+				assert false;
+			}
+			for (int i = 1; i < e1.getPointsSize()-1; i++) {
+				newEdge.addPoint(e1.getPoint(i));
+			}
+			try {
+				// only add if not colinear
+				if (!Point.colinear(e1.getPoint(e1.getPointsSize()-2), e1.getPoint(e1.getPointsSize()-1), e2.getPoint(1))) {
+					newEdge.addPoint(e1.getPoint(e1.getPointsSize()-1));
+				}
+			} catch (ColinearException ex) {
+				assert false;
+			}
+			for (int i = 1; i < e2.getPointsSize()-1; i++) {
+				newEdge.addPoint(e2.getPoint(i));
+			}
+			/*
+			 * add whatever the first point is, it is either e1.getPoint(0) or e1.getPoint(1)
+			 */
+			newEdge.addPoint(newEdge.getPoint(0));
+						
+			int e1StartEdgeCount = e1Start.getEdges().size();
+			
+			if (e1StartEdgeCount == 1) {
+				throw new AssertionError();
+			} else if (e1StartEdgeCount == 2) {
+				// stand-alone loop
+				assert e1End.getEdges().size() == 2;
+				
+				newEdge.setStart(null);
+				newEdge.setEnd(null);
+				
+				newEdge.check();
+				
+				e1Start.remove(e1);
+				
+				e1End.remove(e1);
+				
+				e2Start.remove(e2);
+				
+				e2End.remove(e2);
+				
+				removeVertex(e1Start);
+				removeVertex(e1End);
+				removeEdge(e1);
+				removeEdge(e2);
+				
+				newEdge.check();
+				return newEdge;
+			} else {
+				// start/end vertex has other edges
+				
+				newEdge.setStart(e1Start);
+				newEdge.setEnd(e1Start);
+				
+				e1Start.remove(e1);
+				e1Start.remove(e2);
+				
+				e1Start.add(newEdge);
+				e1Start.add(newEdge);
+				
+				e1End.remove(e1);
+				e1End.remove(e2);
+				
+				removeVertex(e1End);
+				removeEdge(e1);
+				removeEdge(e2);
+				
+				newEdge.check();
+				return newEdge;
+			}
+			
+		} else if (e1Start == e2Start && e1End == e2End) {
+			// forming a loop
+			
+			assert e1.getPoint(e1.getPointsSize()-1).equals(e2.getPoint(e2.getPointsSize()-1));
+			assert e2.getPoint(0).equals(e1.getPoint(0));
+			
+			Edge newEdge = createEdge();
+			
+			try {
+				// only add if not colinear
+				if (!Point.colinear(e2.getPoint(1), e1.getPoint(0), e1.getPoint(1))) {
+					newEdge.addPoint(e1.getPoint(0));
+				}
+			} catch (ColinearException ex) {
+				assert false;
+			}
+			for (int i = 1; i < e1.getPointsSize()-1; i++) {
+				newEdge.addPoint(e1.getPoint(i));
+			}
+			try {
+				// only add if not colinear
+				if (!Point.colinear(e1.getPoint(e1.getPointsSize()-2), e1.getPoint(e1.getPointsSize()-1), e2.getPoint(e2.getPointsSize()-2))) {
+					newEdge.addPoint(e1.getPoint(e1.getPointsSize()-1));
+				}
+			} catch (ColinearException ex) {
+				assert false;
+			}
+			for (int i = e2.getPointsSize()-2; i >= 1; i--) {
+				newEdge.addPoint(e2.getPoint(i));
+			}
+			/*
+			 * add whatever the first point is, it is either e1.getPoint(0) or e1.getPoint(1)
+			 */
+			newEdge.addPoint(newEdge.getPoint(0));
+						
+			int e1StartEdgeCount = e1Start.getEdges().size();
+			
+			if (e1StartEdgeCount == 1) {	
+				throw new AssertionError();
+			} else if (e1StartEdgeCount == 2) {
+				// stand-alone loop
+				assert e1End.getEdges().size() == 2;
+				
+				newEdge.setStart(null);
+				newEdge.setEnd(null);
+				
+				newEdge.check();
+				
+				removeVertex(e1Start);
+				removeVertex(e1End);
+				removeEdge(e1);
+				removeEdge(e2);
+				
+				return newEdge;
+			} else {
+				// start/end vertex has other edges
+				
+				newEdge.setStart(e1Start);
+				newEdge.setEnd(e1Start);
+				
+				newEdge.check();
+				
+				e1Start.remove(e1);
+				e1Start.add(newEdge);
+				
+				e1End.remove(e1);
+				
+				e2Start.remove(e2);
+				e2Start.add(newEdge);
+				
+				e2End.remove(e2);
+				
+				removeVertex(e1End);
+				removeEdge(e1);
+				removeEdge(e2);
+				
+				return newEdge;
+			}
+			
+		} else if (e1Start == e2Start) {
+			
+			Edge newEdge = createEdge();
+			
+			for (int i = e1.getPointsSize()-1; i > 0; i--) {
+				newEdge.addPoint(e1.getPoint(i));
+			}
+			assert e1.getPoint(0).equals(e2.getPoint(0));
+			try {
+				// only add if not colinear
+				if (!Point.colinear(e1.getPoint(1), e1.getPoint(0), e2.getPoint(1))) {
+					newEdge.addPoint(e1.getPoint(0));
+				}
+			} catch (ColinearException ex) {
+				assert false;
+			}
+			for (int i = 1; i < e2.getPointsSize(); i++) {
+				newEdge.addPoint(e2.getPoint(i));
+			}
+			
+			newEdge.setStart(e1End);
+			newEdge.setEnd(e2End);
+			
+			newEdge.check();
+			
+			e1Start.remove(e1);
+			
+			e1End.remove(e1);
+			e1End.add(newEdge);
+			
+			e2Start.remove(e2);
+			
+			e2End.remove(e2);
+			e2End.add(newEdge);
+			
+			removeVertex(e1Start/*e2Start*/);
+			removeEdge(e1);
+			removeEdge(e2);
+			
+			return newEdge;
+		} else if (e1Start == e2End) {
+			
+			Edge newEdge = createEdge();
+			
+			for (int i = e1.getPointsSize()-1; i > 0; i--) {
+				newEdge.addPoint(e1.getPoint(i));
+			}
+			assert e1.getPoint(0).equals(e2.getPoint(e2.getPointsSize()-1));
+			try {
+				// only add if not colinear
+				if (!Point.colinear(e1.getPoint(1), e1.getPoint(0), e2.getPoint(e2.getPointsSize()-2))) {
+					newEdge.addPoint(e1.getPoint(0));
+				}
+			} catch (ColinearException ex) {
+				assert false;
+			}
+			for (int i = e2.getPointsSize()-2; i >= 0; i--) {
+				newEdge.addPoint(e2.getPoint(i));
+			}
+			
+			newEdge.setStart(e1End);
+			newEdge.setEnd(e2Start);
+			
+			newEdge.check();
+			
+			e1Start.remove(e1);
+			
+			e1End.remove(e1);
+			e1End.add(newEdge);
+			
+			e2Start.remove(e2);
+			e2Start.add(newEdge);
+			
+			e2End.remove(e2);
+			
+			removeVertex(e1Start/*e2End*/);
+			removeEdge(e1);
+			removeEdge(e2);
+			
+			return newEdge;
+		} else if (e1End == e2Start) {
+			
+			Edge newEdge = createEdge();
+			
+			for (int i = 0; i < e1.getPointsSize()-1; i++) {
+				newEdge.addPoint(e1.getPoint(i));
+			}
+			assert e1.getPoint(e1.getPointsSize()-1).equals(e2.getPoint(0));
+			try {
+				// only add if not colinear
+				if (!Point.colinear(e1.getPoint(e1.getPointsSize()-2), e1.getPoint(e1.getPointsSize()-1), e2.getPoint(1))) {
+					newEdge.addPoint(e1.getPoint(e1.getPointsSize()-1));
+				}
+			} catch (ColinearException ex) {
+				assert false;
+			}
+			for (int i = 1; i < e2.getPointsSize(); i++) {
+				newEdge.addPoint(e2.getPoint(i));
+			}
+			
+			newEdge.setStart(e1Start);
+			newEdge.setEnd(e2End);
+			
+			newEdge.check();
+			
+			e1Start.remove(e1);
+			e1Start.add(newEdge);
+			
+			e1End.remove(e1);
+			
+			e2Start.remove(e2);
+			
+			e2End.remove(e2);
+			e2End.add(newEdge);
+			
+			removeVertex(e1End/*e2Start*/);
+			removeEdge(e1);
+			removeEdge(e2);
+			
+			return newEdge;
+		} else if (e1End == e2End) {
+			
+			Edge newEdge = createEdge();
+			
+			for (int i = 0; i < e1.getPointsSize()-1; i++) {
+				newEdge.addPoint(e1.getPoint(i));
+			}
+			assert e1.getPoint(e1.getPointsSize()-1).equals(e2.getPoint(e2.getPointsSize()-1));
+			try {
+				// only add if not colinear
+				if (!Point.colinear(e1.getPoint(e1.getPointsSize()-2), e1.getPoint(e1.getPointsSize()-1), e2.getPoint(e2.getPointsSize()-2))) {
+					newEdge.addPoint(e1.getPoint(e1.getPointsSize()-1));
+				}
+			} catch (ColinearException ex) {
+				assert false;
+			}
+			for (int i = e2.getPointsSize()-2; i >= 0; i--) {
+				newEdge.addPoint(e2.getPoint(i));
+			}
+			
+			newEdge.setStart(e1Start);
+			newEdge.setEnd(e2Start);
+			
+			newEdge.check();
+			
+			e1Start.remove(e1);
+			e1Start.add(newEdge);
+			
+			e1End.remove(e1);
+			
+			e2Start.remove(e2);
+			e2Start.add(newEdge);
+			
+			e2End.remove(e2);
+			
+			removeVertex(e1End);
+			removeEdge(e1);
+			removeEdge(e2);
+			
+			return newEdge;
+		} else {
+			throw new AssertionError();
+		}
+	}
+	
+	
+	/**
+	 * remove segment <i, i+1> from edge e
+	 * 
+	 * post: e has been removed
+	 */
+	public void removeSegment(Point a, Point b) {
+		try {
+			
+			EdgeInfo info = findSegment(a, b);
+			Edge e = info.edge;
+			int index = info.index;
+			
+			if (index == 0) {
+				//create 1 new edge
+				//check connectivity of vertex
+				
+				Vertex eStart = e.getStart();
+				Vertex eEnd = e.getEnd();
+				
+				if (e.getPointsSize() > 2) {
+					
+					Edge newEdge = createEdge();
+					
+					for (int i = 1; i < e.getPointsSize(); i++) {
+						newEdge.addPoint(e.getPoint(i));
+					}
+					
+					Vertex newStart = createVertex(e.getPoint(1));
+					
+					newEdge.setStart(newStart);
+					newEdge.setEnd(eEnd);
+					
+					newEdge.check();
+					
+					newStart.add(newEdge);
+					
+					eEnd.add(newEdge);
+					
+				}
+				
+				eStart.remove(e);
+				List<Edge> eStartEdges = eStart.getEdges();
+				if (eStartEdges.size() == 0) {
+					removeVertex(eStart);
+				} else if (eStartEdges.size() == 2) {
+					merge(eStartEdges.get(0), eStartEdges.get(1));
+				}
+				
+				eEnd.remove(e);
+				List<Edge> eEndEdges = eEnd.getEdges();
+				if (eEndEdges.size() == 0) {
+					removeVertex(eEnd);
+				} else if (eEndEdges.size() == 2) {
+					merge(eEndEdges.get(0), eEndEdges.get(1));
+				}
+				
+				removeEdge(e);
+				
+			} else if (index == e.getPointsSize()-2) {
+				//create 1 new edge
+				//check connectivity of vertex
+				
+				Vertex eStart = e.getStart();
+				Vertex eEnd = e.getEnd();
+				
+				Edge newEdge = createEdge();
+				
+				for (int i = 0; i < e.getPointsSize()-1; i++) {
+					newEdge.addPoint(e.getPoint(i));
+				}
+				
+				Vertex newEnd = createVertex(e.getPoint(e.getPointsSize()-2));
+				
+				newEdge.setStart(eStart);
+				newEdge.setEnd(newEnd);
+				
+				newEdge.check();
+				
+				eStart.remove(e);
+				eStart.add(newEdge);
+				
+				eEnd.remove(e);
+				List<Edge> eEndEdges = eEnd.getEdges();
+				if (eEndEdges.size() == 0) {
+					removeVertex(eEnd);
+				} else if (eEndEdges.size() == 2) {
+					merge(eEndEdges.get(0), eEndEdges.get(1));
+				}
+				
+				newEnd.add(newEdge);
+				
+				removeEdge(e);
+				
+			} else {
+				//create 2 new edges without worrying about vertices
+				
+				Vertex eStart = e.getStart();
+				Vertex eEnd = e.getEnd();
+				
+				Edge f1 = createEdge();
+				
+				for (int i = 0; i <= index; i++) {
+					f1.addPoint(e.getPoint(i));
+				}
+				
+				Vertex newF1End = createVertex(e.getPoint(index));
+				
+				f1.setStart(eStart);
+				f1.setEnd(newF1End);
+				
+				f1.check();
+				
+				eStart.add(f1);
+				newF1End.add(f1);
+				
+				Edge f2 = createEdge();
+				
+				for (int i = index+1; i < e.getPointsSize(); i++) {
+					f2.addPoint(e.getPoint(i));
+				}
+				
+				Vertex newF2Start = createVertex(e.getPoint(index+1));
+				
+				f2.setStart(newF2Start);
+				f2.setEnd(eEnd);
+				
+				f2.check();
+				
+				newF2Start.add(f2);
+				eEnd.add(f2);
+				
+				eStart.remove(e);
+				List<Edge> eStartEdges = eStart.getEdges();
+				if (eStartEdges.size() == 0) {
+					removeVertex(eStart);
+				} else if (eStartEdges.size() == 2) {
+					merge(eStartEdges.get(0), eStartEdges.get(1));
+				}
+				
+				eEnd.remove(e);
+				List<Edge> eEndEdges = eEnd.getEdges();
+				if (eEndEdges.size() == 0) {
+					removeVertex(eEnd);
+				} else if (eEndEdges.size() == 2) {
+					merge(eEndEdges.get(0), eEndEdges.get(1));
+				}
+				
+				removeEdge(e);
+				
+			}
+			
+		} finally {
+			if (segmentLogger.isDebugEnabled()) {
+				segmentLogger.debug("removeSegment: <" + a + ", " + b + ">");
 			}
 		}
 		
 	}
-	
-	
 	
 	
 	public boolean checkConsistency() {
@@ -459,9 +1323,14 @@ public class DeadlockModel {
 					for (int j = 0; j < f.getPointsSize()-1; j++) {
 						Point c = f.getPoint(j);
 						Point d = f.getPoint(j+1);
-						DPoint inter = Point.intersection(a, b, c, d);
-						if (inter != null && !(Point.equals(inter, a) || Point.equals(inter, b) || Point.equals(inter, c) || Point.equals(inter, d))) {
-							assert false : "No edges should intersect";
+						try {
+							DPoint inter = Point.intersection(a, b, c, d);
+							if (inter != null && !(Point.equals(inter, a) || Point.equals(inter, b) || Point.equals(inter, c) || Point.equals(inter, d))) {
+								//assert false : "No edges should intersect";
+								throw new IllegalStateException("No edges should intersect");
+							}
+						} catch (OverlappingException ex) {
+							assert false;
 						}
 					}
 				}

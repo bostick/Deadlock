@@ -6,6 +6,7 @@ import static com.gutabi.deadlock.swing.view.DeadlockView.VIEW;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,7 +54,7 @@ public class MouseController implements MouseListener, MouseMotionListener {
 		List<Point> curStroke1 = MODEL.curStrokeRaw;
 		
 		for (int i = 0; i < curStroke1.size()-1; i++) {
-			MODEL.addUserSegment(curStroke1.get(i), curStroke1.get(i+1));
+			MODEL.addStroke(curStroke1.get(i), curStroke1.get(i+1));
 		}
 		
 		MODEL.checkConsistency();
@@ -64,31 +65,31 @@ public class MouseController implements MouseListener, MouseMotionListener {
 		VIEW.repaint();
 	}
 	
-	public void pressed_M(final Point p) {
+	public void pressed_M(final Point p) throws InterruptedException, InvocationTargetException {
 		assert Thread.currentThread().getName().startsWith("main");
-		javax.swing.SwingUtilities.invokeLater(new Runnable() {
+		javax.swing.SwingUtilities.invokeAndWait(new Runnable() {
 			public void run() {
 				pressed(p);
 			}
 		});
 	}
 	
-	public void dragged_M(final Point p) {
+	public void dragged_M(final Point p) throws InterruptedException, InvocationTargetException {
 		assert Thread.currentThread().getName().startsWith("main");
-		javax.swing.SwingUtilities.invokeLater(new Runnable() {
+		javax.swing.SwingUtilities.invokeAndWait(new Runnable() {
 			public void run() {
 				dragged(p);
 			}
 		});
 	}
 	
-	public void released_M() {
+	public void released_M() throws InterruptedException, InvocationTargetException {
 		released_M(false);
 	}
 	
-	public void released_M(final boolean massage) {
+	public void released_M(final boolean massage) throws InterruptedException, InvocationTargetException {
 		assert Thread.currentThread().getName().startsWith("main");
-		javax.swing.SwingUtilities.invokeLater(new Runnable() {
+		javax.swing.SwingUtilities.invokeAndWait(new Runnable() {
 			public void run() {
 				if (massage) {
 					MODEL.curStrokeRaw = massage(MODEL.curStrokeRaw);

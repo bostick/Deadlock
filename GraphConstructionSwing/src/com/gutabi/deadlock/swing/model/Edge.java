@@ -5,6 +5,7 @@ import java.awt.Graphics2D;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.gutabi.deadlock.swing.utils.ColinearException;
 import com.gutabi.deadlock.swing.utils.Point;
 
 public final class Edge {
@@ -177,15 +178,23 @@ public final class Edge {
 					 * if not stand-alone, then it is possible to have first point be colinear
 					 */
 					assert p.equals(points.get(points.size()-1));
-					if (Point.colinear(points.get(points.size()-2), p, points.get(1))) {
-						assert false : "Point " + p + " (index 0) is colinear";
+					try {
+						if (Point.colinear(points.get(points.size()-2), p, points.get(1))) {
+							assert false : "Point " + p + " (index 0) is colinear";
+						}
+					} catch (ColinearException ex) {
+						assert false;
 					}
 				}
 			} else if (i == points.size()-1) {
 				;
 			} else {
-				if (Point.colinear(points.get(i-1), p, points.get(i+1))) {
-					assert false : "Point " + p + " (index " + i + ") is colinear";
+				try {
+					if (Point.colinear(points.get(i-1), p, points.get(i+1))) {
+						assert false : "Point " + p + " (index " + i + ") is colinear";
+					}
+				} catch (ColinearException ex) {
+					assert false;
 				}
 			}
 		}

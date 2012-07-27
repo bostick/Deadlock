@@ -51,7 +51,7 @@ public class Point {
 	 * @throws IllegalArgumentException
 	 * @throws OverlappingException
 	 */
-	public static DPoint intersection(Point a, Point b, Point c, Point d) {
+	public static DPoint intersection(Point a, Point b, Point c, Point d) throws OverlappingException {
 		if (a.equals(b)) {
 			throw new IllegalArgumentException("a and b are equal");
 		}
@@ -178,6 +178,7 @@ public class Point {
 		int ybc = b.y - (c.y);
 		int ydc = d.y - (c.y);
 		int denom = (xdc * (xdc) + (ydc * (ydc)));
+		assert denom != 0;
 		// u is where b is perpendicular to <c, d>
 		double u = ((double)((xbc * (xdc)) + ((ybc * (ydc))))) / ((double)(denom));
 		return u;
@@ -196,6 +197,7 @@ public class Point {
 		double ybc = b.y - (c.y);
 		int ydc = d.y - (c.y);
 		int denom = (xdc * (xdc) + (ydc * (ydc)));
+		assert denom != 0;
 		// u is where b is perpendicular to <c, d>
 		double u = ((double)((xbc * (xdc)) + ((ybc * (ydc))))) / ((double)(denom));
 		return u;
@@ -205,6 +207,12 @@ public class Point {
 	 * Does b intersect &lt;c, d> ?
 	 */
 	public static boolean intersect(Point b, Point c, Point d) {
+		if (b.equals(c)) {
+			return true;
+		}
+		if (b.equals(d)) {
+			return false;
+		}
 		if (c.equals(d)) {
 			throw new IllegalArgumentException("c equals d");
 		}
@@ -213,12 +221,8 @@ public class Point {
 		int ybc = b.y - (c.y);
 		int ydc = d.y - (c.y);
 		double u = perp(b, c, d);
-		if (b.equals(d)) {
-			return false;
-		} else if (u >= 0.0 && u < 1.0) {
-			
+		if (u >= 0.0 && u < 1.0) {
 			return Point.doubleEquals(xbc, (u * (xdc))) && Point.doubleEquals(ybc, (u * (ydc)));
-			
 		} else {
 			return false;
 		}
@@ -228,6 +232,12 @@ public class Point {
 	 * Does b intersect &lt;c, d> ?
 	 */
 	public static boolean intersect(DPoint b, Point c, Point d) {
+		if (Point.equals(b, c)) {
+			return true;
+		}
+		if (Point.equals(b, d)) {
+			return false;
+		}	
 		if (c.equals(d)) {
 			throw new IllegalArgumentException("c equals d");
 		}
@@ -236,22 +246,19 @@ public class Point {
 		double ybc = b.y - (c.y);
 		int ydc = d.y - (c.y);
 		double u = perp(b, c, d);
-		if (b.x == d.x && b.y == d.y) {
-			return false;
-		} else if (u >= 0.0 && u < 1.0) {
-			
+		if (u >= 0.0 && u < 1.0) {	
 			return Point.doubleEquals(xbc, (u * (xdc))) && Point.doubleEquals(ybc, (u * (ydc)));
-			
 		} else {
 			return false;
 		}
 	}
 	
 	/**
-	 * are c, b, d colinear?
-	 * and is b between c and d?
+	 * is b inside the segment <c, d>?
+	 * ok if b equals c or d
+	 * throws exception if b is on the line, but outside of the segment <c, d>
 	 */
-	public static boolean colinear(Point c, Point b, Point d) {
+	public static boolean colinear(Point c, Point b, Point d) throws ColinearException {
 		if (c.equals(b)) {
 			return true;
 		}
@@ -266,6 +273,41 @@ public class Point {
 		int ybc = b.y - (c.y);
 		int ydc = d.y - (c.y);
 		int denom = (xdc * (xdc) + (ydc * (ydc)));
+		assert denom != 0;
+		// u is where b is perpendicular to <c, d>
+		double u = ((double)((xbc * (xdc)) + ((ybc * (ydc))))) / ((double)(denom));
+		if (u >= 0.0 && u <= 1.0) {
+			return Point.doubleEquals(xbc, (u * (xdc))) && Point.doubleEquals(ybc, (u * (ydc)));
+		} else {
+			 if (Point.doubleEquals(xbc, (u * (xdc))) && Point.doubleEquals(ybc, (u * (ydc)))) {
+				 throw new ColinearException();
+			 } else {
+				 return false;
+			 }
+		}
+	}
+	
+	/**
+	 * is b inside the segment <c, d>?
+	 * ok if b equals c or d
+	 * throws exception if b is on the line, but outside of the segment <c, d>
+	 */
+	public static boolean colinear(Point c, DPoint b, Point d) throws ColinearException {
+		if (Point.equals(b, c)) {
+			return true;
+		}
+		if (Point.equals(b, d)) {
+			return true;
+		}
+		if (c.equals(d)) {
+			throw new IllegalArgumentException("c equals d");
+		}
+		double xbc = b.x - (c.x);
+		int xdc = d.x - (c.x);
+		double ybc = b.y - (c.y);
+		int ydc = d.y - (c.y);
+		int denom = (xdc * (xdc) + (ydc * (ydc)));
+		assert denom != 0;
 		// u is where b is perpendicular to <c, d>
 		double u = ((double)((xbc * (xdc)) + ((ybc * (ydc))))) / ((double)(denom));
 		if (u >= 0.0 && u <= 1.0) {
@@ -283,6 +325,13 @@ public class Point {
 	 * assuming it is, return param for point b on line defined by &lt;c, d>
 	 */
 	public static double param(Point b, Point c, Point d) {
+		
+		if (b.equals(c)) {
+			return 0.0;
+		} else if (b.equals(d)) {
+			assert false;
+		}
+		
 		int xbc = b.x - (c.x);
 		int xdc = d.x - (c.x);
 		int ybc = b.y - (c.y);
@@ -314,6 +363,13 @@ public class Point {
 	 * assuming it is, return param for point b on line defined by &lt;c, d>
 	 */
 	public static double param(DPoint b, Point c, Point d) {
+		
+		if (Point.equals(b, c)) {
+			return 0.0;
+		} else if (Point.equals(b, d)) {
+			return 1.0;
+		}
+		
 		double xbc = b.x - (c.x);
 		int xdc = d.x - (c.x);
 		double ybc = b.y - (c.y);

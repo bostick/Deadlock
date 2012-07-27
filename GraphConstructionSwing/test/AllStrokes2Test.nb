@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       157,          7]
-NotebookDataLength[     17839,        452]
-NotebookOptionsPosition[     17146,        423]
-NotebookOutlinePosition[     17487,        438]
-CellTagsIndexPosition[     17444,        435]
+NotebookDataLength[      9069,        237]
+NotebookOptionsPosition[      8386,        208]
+NotebookOutlinePosition[      8726,        223]
+CellTagsIndexPosition[      8683,        220]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -24,17 +24,9 @@ Cell[BoxData[
  RowBox[{
   RowBox[{"StringReplace", "[", 
    RowBox[{
-   "\"\<[[<5, 5>, <6, 6>, <7, 7>], [<83, 27>, <6, 76>, <25, 31>], [<31, 61>, \
-<55, 10>, <76, 84>, <44, 12>, <12, 82>, <66, 42>], [<77, 40>, <55, 34>, <9, \
-27>, <85, 77>, <48, 20>, <38, 27>, <83, 13>, <51, 91>], [<95, 26>, <49, 41>, \
-<37, 53>, <13, 20>], [<48, 77>, <69, 93>, <66, 0>, <41, 77>, <54, 53>, <22, \
-68>, <52, 24>], [<40, 61>, <98, 42>, <16, 49>, <40, 50>, <59, 91>], [<65, \
-95>, <55, 17>, <77, 32>, <56, 74>, <77, 3>], [<14, 90>, <86, 37>, <79, 82>, \
-<88, 3>, <29, 81>], [<53, 27>, <83, 86>, <94, 52>, <48, 40>, <25, 42>, <80, \
-31>, <33, 96>], [<66, 94>, <38, 46>, <45, 94>, <96, 1>, <55, 20>, <30, 44>], \
-[<51, 83>, <44, 9>, <90, 41>, <71, 26>, <6, 91>, <76, 24>, <13, 61>, <64, \
-77>, <6, 37>, <100, 89>], [<41, 100>, <91, 98>, <3, 84>, <56, 57>, <22, 56>, \
-<12, 11>, <93, 5>, <35, 12>], [<44, 41>, <54, 36>]]\>\"", ",", 
+   "\"\<[[<5, 5>, <6, 6>, <7, 7>], [<32, 77>, <5, 29>, <40, 19>, <43, 61>, \
+<99, 95>, <38, 31>, <48, 80>, <89, 54>], [<72, 10>, <97, 1>], [<83, 56>, <99, \
+11>, <40, 35>, <82, 8>]]\>\"", ",", 
     RowBox[{"{", 
      RowBox[{
       RowBox[{
@@ -50,7 +42,10 @@ Cell[BoxData[
   3.5518111950120044`*^9, 3.551811196370207*^9}, {3.551884193854656*^9, 
   3.5518841953210583`*^9}, {3.5518903035426846`*^9, 3.551890305192687*^9}, {
   3.5518933869634886`*^9, 3.5518933878935423`*^9}, {3.5518947445988717`*^9, 
-  3.5518947459560738`*^9}}],
+  3.5518947459560738`*^9}, {3.551896514672368*^9, 3.5518965160295706`*^9}, {
+  3.5518975074679146`*^9, 3.551897509121517*^9}, {3.552308104731595*^9, 
+  3.552308105562643*^9}, {3.552330580345152*^9, 3.552330581240203*^9}, {
+  3.5523384342454805`*^9, 3.5523384352285366`*^9}}],
 
 Cell[BoxData[
  RowBox[{"{", 
@@ -66,186 +61,44 @@ Cell[BoxData[
    RowBox[{"{", 
     RowBox[{
      RowBox[{"{", 
-      RowBox[{"83", ",", "27"}], "}"}], ",", 
+      RowBox[{"32", ",", "77"}], "}"}], ",", 
      RowBox[{"{", 
-      RowBox[{"6", ",", "76"}], "}"}], ",", 
+      RowBox[{"5", ",", "29"}], "}"}], ",", 
      RowBox[{"{", 
-      RowBox[{"25", ",", "31"}], "}"}]}], "}"}], ",", 
+      RowBox[{"40", ",", "19"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"43", ",", "61"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"99", ",", "95"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"38", ",", "31"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"48", ",", "80"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"89", ",", "54"}], "}"}]}], "}"}], ",", 
    RowBox[{"{", 
     RowBox[{
      RowBox[{"{", 
-      RowBox[{"31", ",", "61"}], "}"}], ",", 
+      RowBox[{"72", ",", "10"}], "}"}], ",", 
      RowBox[{"{", 
-      RowBox[{"55", ",", "10"}], "}"}], ",", 
-     RowBox[{"{", 
-      RowBox[{"76", ",", "84"}], "}"}], ",", 
-     RowBox[{"{", 
-      RowBox[{"44", ",", "12"}], "}"}], ",", 
-     RowBox[{"{", 
-      RowBox[{"12", ",", "82"}], "}"}], ",", 
-     RowBox[{"{", 
-      RowBox[{"66", ",", "42"}], "}"}]}], "}"}], ",", 
+      RowBox[{"97", ",", "1"}], "}"}]}], "}"}], ",", 
    RowBox[{"{", 
     RowBox[{
      RowBox[{"{", 
-      RowBox[{"77", ",", "40"}], "}"}], ",", 
+      RowBox[{"83", ",", "56"}], "}"}], ",", 
      RowBox[{"{", 
-      RowBox[{"55", ",", "34"}], "}"}], ",", 
+      RowBox[{"99", ",", "11"}], "}"}], ",", 
      RowBox[{"{", 
-      RowBox[{"9", ",", "27"}], "}"}], ",", 
+      RowBox[{"40", ",", "35"}], "}"}], ",", 
      RowBox[{"{", 
-      RowBox[{"85", ",", "77"}], "}"}], ",", 
-     RowBox[{"{", 
-      RowBox[{"48", ",", "20"}], "}"}], ",", 
-     RowBox[{"{", 
-      RowBox[{"38", ",", "27"}], "}"}], ",", 
-     RowBox[{"{", 
-      RowBox[{"83", ",", "13"}], "}"}], ",", 
-     RowBox[{"{", 
-      RowBox[{"51", ",", "91"}], "}"}]}], "}"}], ",", 
-   RowBox[{"{", 
-    RowBox[{
-     RowBox[{"{", 
-      RowBox[{"95", ",", "26"}], "}"}], ",", 
-     RowBox[{"{", 
-      RowBox[{"49", ",", "41"}], "}"}], ",", 
-     RowBox[{"{", 
-      RowBox[{"37", ",", "53"}], "}"}], ",", 
-     RowBox[{"{", 
-      RowBox[{"13", ",", "20"}], "}"}]}], "}"}], ",", 
-   RowBox[{"{", 
-    RowBox[{
-     RowBox[{"{", 
-      RowBox[{"48", ",", "77"}], "}"}], ",", 
-     RowBox[{"{", 
-      RowBox[{"69", ",", "93"}], "}"}], ",", 
-     RowBox[{"{", 
-      RowBox[{"66", ",", "0"}], "}"}], ",", 
-     RowBox[{"{", 
-      RowBox[{"41", ",", "77"}], "}"}], ",", 
-     RowBox[{"{", 
-      RowBox[{"54", ",", "53"}], "}"}], ",", 
-     RowBox[{"{", 
-      RowBox[{"22", ",", "68"}], "}"}], ",", 
-     RowBox[{"{", 
-      RowBox[{"52", ",", "24"}], "}"}]}], "}"}], ",", 
-   RowBox[{"{", 
-    RowBox[{
-     RowBox[{"{", 
-      RowBox[{"40", ",", "61"}], "}"}], ",", 
-     RowBox[{"{", 
-      RowBox[{"98", ",", "42"}], "}"}], ",", 
-     RowBox[{"{", 
-      RowBox[{"16", ",", "49"}], "}"}], ",", 
-     RowBox[{"{", 
-      RowBox[{"40", ",", "50"}], "}"}], ",", 
-     RowBox[{"{", 
-      RowBox[{"59", ",", "91"}], "}"}]}], "}"}], ",", 
-   RowBox[{"{", 
-    RowBox[{
-     RowBox[{"{", 
-      RowBox[{"65", ",", "95"}], "}"}], ",", 
-     RowBox[{"{", 
-      RowBox[{"55", ",", "17"}], "}"}], ",", 
-     RowBox[{"{", 
-      RowBox[{"77", ",", "32"}], "}"}], ",", 
-     RowBox[{"{", 
-      RowBox[{"56", ",", "74"}], "}"}], ",", 
-     RowBox[{"{", 
-      RowBox[{"77", ",", "3"}], "}"}]}], "}"}], ",", 
-   RowBox[{"{", 
-    RowBox[{
-     RowBox[{"{", 
-      RowBox[{"14", ",", "90"}], "}"}], ",", 
-     RowBox[{"{", 
-      RowBox[{"86", ",", "37"}], "}"}], ",", 
-     RowBox[{"{", 
-      RowBox[{"79", ",", "82"}], "}"}], ",", 
-     RowBox[{"{", 
-      RowBox[{"88", ",", "3"}], "}"}], ",", 
-     RowBox[{"{", 
-      RowBox[{"29", ",", "81"}], "}"}]}], "}"}], ",", 
-   RowBox[{"{", 
-    RowBox[{
-     RowBox[{"{", 
-      RowBox[{"53", ",", "27"}], "}"}], ",", 
-     RowBox[{"{", 
-      RowBox[{"83", ",", "86"}], "}"}], ",", 
-     RowBox[{"{", 
-      RowBox[{"94", ",", "52"}], "}"}], ",", 
-     RowBox[{"{", 
-      RowBox[{"48", ",", "40"}], "}"}], ",", 
-     RowBox[{"{", 
-      RowBox[{"25", ",", "42"}], "}"}], ",", 
-     RowBox[{"{", 
-      RowBox[{"80", ",", "31"}], "}"}], ",", 
-     RowBox[{"{", 
-      RowBox[{"33", ",", "96"}], "}"}]}], "}"}], ",", 
-   RowBox[{"{", 
-    RowBox[{
-     RowBox[{"{", 
-      RowBox[{"66", ",", "94"}], "}"}], ",", 
-     RowBox[{"{", 
-      RowBox[{"38", ",", "46"}], "}"}], ",", 
-     RowBox[{"{", 
-      RowBox[{"45", ",", "94"}], "}"}], ",", 
-     RowBox[{"{", 
-      RowBox[{"96", ",", "1"}], "}"}], ",", 
-     RowBox[{"{", 
-      RowBox[{"55", ",", "20"}], "}"}], ",", 
-     RowBox[{"{", 
-      RowBox[{"30", ",", "44"}], "}"}]}], "}"}], ",", 
-   RowBox[{"{", 
-    RowBox[{
-     RowBox[{"{", 
-      RowBox[{"51", ",", "83"}], "}"}], ",", 
-     RowBox[{"{", 
-      RowBox[{"44", ",", "9"}], "}"}], ",", 
-     RowBox[{"{", 
-      RowBox[{"90", ",", "41"}], "}"}], ",", 
-     RowBox[{"{", 
-      RowBox[{"71", ",", "26"}], "}"}], ",", 
-     RowBox[{"{", 
-      RowBox[{"6", ",", "91"}], "}"}], ",", 
-     RowBox[{"{", 
-      RowBox[{"76", ",", "24"}], "}"}], ",", 
-     RowBox[{"{", 
-      RowBox[{"13", ",", "61"}], "}"}], ",", 
-     RowBox[{"{", 
-      RowBox[{"64", ",", "77"}], "}"}], ",", 
-     RowBox[{"{", 
-      RowBox[{"6", ",", "37"}], "}"}], ",", 
-     RowBox[{"{", 
-      RowBox[{"100", ",", "89"}], "}"}]}], "}"}], ",", 
-   RowBox[{"{", 
-    RowBox[{
-     RowBox[{"{", 
-      RowBox[{"41", ",", "100"}], "}"}], ",", 
-     RowBox[{"{", 
-      RowBox[{"91", ",", "98"}], "}"}], ",", 
-     RowBox[{"{", 
-      RowBox[{"3", ",", "84"}], "}"}], ",", 
-     RowBox[{"{", 
-      RowBox[{"56", ",", "57"}], "}"}], ",", 
-     RowBox[{"{", 
-      RowBox[{"22", ",", "56"}], "}"}], ",", 
-     RowBox[{"{", 
-      RowBox[{"12", ",", "11"}], "}"}], ",", 
-     RowBox[{"{", 
-      RowBox[{"93", ",", "5"}], "}"}], ",", 
-     RowBox[{"{", 
-      RowBox[{"35", ",", "12"}], "}"}]}], "}"}], ",", 
-   RowBox[{"{", 
-    RowBox[{
-     RowBox[{"{", 
-      RowBox[{"44", ",", "41"}], "}"}], ",", 
-     RowBox[{"{", 
-      RowBox[{"54", ",", "36"}], "}"}]}], "}"}]}], "}"}]], "Output",
+      RowBox[{"82", ",", "8"}], "}"}]}], "}"}]}], "}"}]], "Output",
  CellChangeTimes->{{3.5517081076159363`*^9, 3.5517081346398153`*^9}, 
    3.551747779819179*^9, {3.551790267991316*^9, 3.551790302926684*^9}, 
    3.551790698655851*^9, 3.5517910626631985`*^9, 3.551791565493889*^9, 
    3.55181120505342*^9, 3.551884280242999*^9, 3.551890306275713*^9, 
-   3.5518933886355844`*^9, 3.551894747219676*^9}]
+   3.5518933886355844`*^9, 3.551894747219676*^9, 3.551896571315468*^9, 
+   3.5518975097299185`*^9, 3.55230810638369*^9, 3.5523305820182476`*^9, 
+   3.552338436050584*^9}]
 }, Open  ]],
 
 Cell[BoxData[
@@ -260,11 +113,13 @@ Cell[BoxData[
  RowBox[{"Length", "[", "m", "]"}]], "Input",
  CellChangeTimes->{{3.5517903125868106`*^9, 3.5517903141286955`*^9}}],
 
-Cell[BoxData["14"], "Output",
+Cell[BoxData["4"], "Output",
  CellChangeTimes->{3.5517903144897156`*^9, 3.551790706932104*^9, 
   3.5517910648431168`*^9, 3.551791570098141*^9, 3.551811211685829*^9, 
   3.551884282665203*^9, 3.5518903155577574`*^9, 3.5518933904556885`*^9, 
-  3.5518947502772818`*^9, 3.551894794690559*^9}]
+  3.5518947502772818`*^9, 3.551894794690559*^9, 3.5518965735306716`*^9, 
+  3.551897512179123*^9, 3.5523081084058056`*^9, 3.5523305855487814`*^9, 
+  3.552338437838686*^9}]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -309,95 +164,23 @@ Cell[BoxData["\<\"CONTROLLER.mouseController.pressed_M(new Point(5, \
 5));\\nCONTROLLER.mouseController.dragged_M(new Point(6, \
 6));\\nCONTROLLER.mouseController.dragged_M(new Point(7, \
 7));\\nCONTROLLER.mouseController.released_M(false);\\n\\nCONTROLLER.\
+mouseController.pressed_M(new Point(32, \
+77));\\nCONTROLLER.mouseController.dragged_M(new Point(5, \
+29));\\nCONTROLLER.mouseController.dragged_M(new Point(40, \
+19));\\nCONTROLLER.mouseController.dragged_M(new Point(43, \
+61));\\nCONTROLLER.mouseController.dragged_M(new Point(99, \
+95));\\nCONTROLLER.mouseController.dragged_M(new Point(38, \
+31));\\nCONTROLLER.mouseController.dragged_M(new Point(48, \
+80));\\nCONTROLLER.mouseController.dragged_M(new Point(89, \
+54));\\nCONTROLLER.mouseController.released_M(false);\\n\\nCONTROLLER.\
+mouseController.pressed_M(new Point(72, \
+10));\\nCONTROLLER.mouseController.dragged_M(new Point(97, \
+1));\\nCONTROLLER.mouseController.released_M(false);\\n\\nCONTROLLER.\
 mouseController.pressed_M(new Point(83, \
-27));\\nCONTROLLER.mouseController.dragged_M(new Point(6, \
-76));\\nCONTROLLER.mouseController.dragged_M(new Point(25, \
-31));\\nCONTROLLER.mouseController.released_M(false);\\n\\nCONTROLLER.\
-mouseController.pressed_M(new Point(31, \
-61));\\nCONTROLLER.mouseController.dragged_M(new Point(55, \
-10));\\nCONTROLLER.mouseController.dragged_M(new Point(76, \
-84));\\nCONTROLLER.mouseController.dragged_M(new Point(44, \
-12));\\nCONTROLLER.mouseController.dragged_M(new Point(12, \
-82));\\nCONTROLLER.mouseController.dragged_M(new Point(66, \
-42));\\nCONTROLLER.mouseController.released_M(false);\\n\\nCONTROLLER.\
-mouseController.pressed_M(new Point(77, \
-40));\\nCONTROLLER.mouseController.dragged_M(new Point(55, \
-34));\\nCONTROLLER.mouseController.dragged_M(new Point(9, \
-27));\\nCONTROLLER.mouseController.dragged_M(new Point(85, \
-77));\\nCONTROLLER.mouseController.dragged_M(new Point(48, \
-20));\\nCONTROLLER.mouseController.dragged_M(new Point(38, \
-27));\\nCONTROLLER.mouseController.dragged_M(new Point(83, \
-13));\\nCONTROLLER.mouseController.dragged_M(new Point(51, \
-91));\\nCONTROLLER.mouseController.released_M(false);\\n\\nCONTROLLER.\
-mouseController.pressed_M(new Point(95, \
-26));\\nCONTROLLER.mouseController.dragged_M(new Point(49, \
-41));\\nCONTROLLER.mouseController.dragged_M(new Point(37, \
-53));\\nCONTROLLER.mouseController.dragged_M(new Point(13, \
-20));\\nCONTROLLER.mouseController.released_M(false);\\n\\nCONTROLLER.\
-mouseController.pressed_M(new Point(48, \
-77));\\nCONTROLLER.mouseController.dragged_M(new Point(69, \
-93));\\nCONTROLLER.mouseController.dragged_M(new Point(66, \
-0));\\nCONTROLLER.mouseController.dragged_M(new Point(41, \
-77));\\nCONTROLLER.mouseController.dragged_M(new Point(54, \
-53));\\nCONTROLLER.mouseController.dragged_M(new Point(22, \
-68));\\nCONTROLLER.mouseController.dragged_M(new Point(52, \
-24));\\nCONTROLLER.mouseController.released_M(false);\\n\\nCONTROLLER.\
-mouseController.pressed_M(new Point(40, \
-61));\\nCONTROLLER.mouseController.dragged_M(new Point(98, \
-42));\\nCONTROLLER.mouseController.dragged_M(new Point(16, \
-49));\\nCONTROLLER.mouseController.dragged_M(new Point(40, \
-50));\\nCONTROLLER.mouseController.dragged_M(new Point(59, \
-91));\\nCONTROLLER.mouseController.released_M(false);\\n\\nCONTROLLER.\
-mouseController.pressed_M(new Point(65, \
-95));\\nCONTROLLER.mouseController.dragged_M(new Point(55, \
-17));\\nCONTROLLER.mouseController.dragged_M(new Point(77, \
-32));\\nCONTROLLER.mouseController.dragged_M(new Point(56, \
-74));\\nCONTROLLER.mouseController.dragged_M(new Point(77, \
-3));\\nCONTROLLER.mouseController.released_M(false);\\n\\nCONTROLLER.\
-mouseController.pressed_M(new Point(14, \
-90));\\nCONTROLLER.mouseController.dragged_M(new Point(86, \
-37));\\nCONTROLLER.mouseController.dragged_M(new Point(79, \
-82));\\nCONTROLLER.mouseController.dragged_M(new Point(88, \
-3));\\nCONTROLLER.mouseController.dragged_M(new Point(29, \
-81));\\nCONTROLLER.mouseController.released_M(false);\\n\\nCONTROLLER.\
-mouseController.pressed_M(new Point(53, \
-27));\\nCONTROLLER.mouseController.dragged_M(new Point(83, \
-86));\\nCONTROLLER.mouseController.dragged_M(new Point(94, \
-52));\\nCONTROLLER.mouseController.dragged_M(new Point(48, \
-40));\\nCONTROLLER.mouseController.dragged_M(new Point(25, \
-42));\\nCONTROLLER.mouseController.dragged_M(new Point(80, \
-31));\\nCONTROLLER.mouseController.dragged_M(new Point(33, \
-96));\\nCONTROLLER.mouseController.released_M(false);\\n\\nCONTROLLER.\
-mouseController.pressed_M(new Point(66, \
-94));\\nCONTROLLER.mouseController.dragged_M(new Point(38, \
-46));\\nCONTROLLER.mouseController.dragged_M(new Point(45, \
-94));\\nCONTROLLER.mouseController.dragged_M(new Point(96, \
-1));\\nCONTROLLER.mouseController.dragged_M(new Point(55, \
-20));\\nCONTROLLER.mouseController.dragged_M(new Point(30, \
-44));\\nCONTROLLER.mouseController.released_M(false);\\n\\nCONTROLLER.\
-mouseController.pressed_M(new Point(51, \
-83));\\nCONTROLLER.mouseController.dragged_M(new Point(44, \
-9));\\nCONTROLLER.mouseController.dragged_M(new Point(90, \
-41));\\nCONTROLLER.mouseController.dragged_M(new Point(71, \
-26));\\nCONTROLLER.mouseController.dragged_M(new Point(6, \
-91));\\nCONTROLLER.mouseController.dragged_M(new Point(76, \
-24));\\nCONTROLLER.mouseController.dragged_M(new Point(13, \
-61));\\nCONTROLLER.mouseController.dragged_M(new Point(64, \
-77));\\nCONTROLLER.mouseController.dragged_M(new Point(6, \
-37));\\nCONTROLLER.mouseController.dragged_M(new Point(100, \
-89));\\nCONTROLLER.mouseController.released_M(false);\\n\\nCONTROLLER.\
-mouseController.pressed_M(new Point(41, \
-100));\\nCONTROLLER.mouseController.dragged_M(new Point(91, \
-98));\\nCONTROLLER.mouseController.dragged_M(new Point(3, \
-84));\\nCONTROLLER.mouseController.dragged_M(new Point(56, \
-57));\\nCONTROLLER.mouseController.dragged_M(new Point(22, \
-56));\\nCONTROLLER.mouseController.dragged_M(new Point(12, \
-11));\\nCONTROLLER.mouseController.dragged_M(new Point(93, \
-5));\\nCONTROLLER.mouseController.dragged_M(new Point(35, \
-12));\\nCONTROLLER.mouseController.released_M(false);\\n\\nCONTROLLER.\
-mouseController.pressed_M(new Point(44, \
-41));\\nCONTROLLER.mouseController.dragged_M(new Point(54, \
-36));\\nCONTROLLER.mouseController.released_M(false);\\n\\n\"\>"], "Output",
+56));\\nCONTROLLER.mouseController.dragged_M(new Point(99, \
+11));\\nCONTROLLER.mouseController.dragged_M(new Point(40, \
+35));\\nCONTROLLER.mouseController.dragged_M(new Point(82, \
+8));\\nCONTROLLER.mouseController.released_M(false);\\n\\n\"\>"], "Output",
  CellChangeTimes->{
   3.55170819882413*^9, {3.551708231889944*^9, 3.5517082499101295`*^9}, 
    3.551747811441112*^9, 3.551747850930477*^9, 3.551747903487956*^9, 
@@ -405,7 +188,9 @@ mouseController.pressed_M(new Point(44, \
    3.5517908635552807`*^9}, 3.5517910666948185`*^9, {3.5517915725022745`*^9, 
    3.5517915762910795`*^9}, 3.5518112138698606`*^9, 3.551811249933897*^9, 
    3.551884284876206*^9, 3.5518903164777584`*^9, 3.5518903480279217`*^9, 
-   3.5518933913697405`*^9, 3.551894752352085*^9, 3.5518947955017605`*^9}]
+   3.5518933913697405`*^9, 3.551894752352085*^9, 3.5518947955017605`*^9, 
+   3.5518965743574734`*^9, 3.5518975130215244`*^9, 3.552308109118846*^9, 
+   3.552330586453583*^9, 3.55233843913876*^9}]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -421,8 +206,8 @@ Cell[BoxData["3.0008999999999997`"], "Output",
  CellChangeTimes->{3.551737778047736*^9}]
 }, Open  ]]
 },
-WindowSize->{707, 637},
-WindowMargins->{{46, Automatic}, {Automatic, 22}},
+WindowSize->{1584, 765},
+WindowMargins->{{0, Automatic}, {Automatic, 0}},
 FrontEndVersion->"9.0 for Microsoft Windows (64-bit) (June 26, 2011)",
 StyleDefinitions->"Default.nb"
 ]
@@ -438,25 +223,24 @@ CellTagsIndex->{}
 (*NotebookFileOutline
 Notebook[{
 Cell[CellGroupData[{
-Cell[579, 22, 1822, 30, 292, "Input"],
-Cell[2404, 54, 6052, 193, 259, "Output"]
+Cell[579, 22, 1419, 25, 52, "Input"],
+Cell[2001, 49, 1759, 51, 30, "Output"]
 }, Open  ]],
-Cell[8471, 250, 159, 4, 31, "Input"],
+Cell[3775, 103, 159, 4, 31, "Input"],
 Cell[CellGroupData[{
-Cell[8655, 258, 129, 2, 31, "Input"],
-Cell[8787, 262, 288, 4, 30, "Output"]
-}, Open  ]],
-Cell[CellGroupData[{
-Cell[9112, 271, 1580, 34, 132, "Input"],
-Cell[10695, 307, 6117, 100, 2064, "Output"]
+Cell[3959, 111, 129, 2, 31, "Input"],
+Cell[4091, 115, 409, 6, 30, "Output"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[16849, 412, 190, 5, 31, "Input"],
-Cell[17042, 419, 88, 1, 30, "Output"]
+Cell[4537, 126, 1580, 34, 72, "Input"],
+Cell[6120, 162, 1932, 30, 506, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[8089, 197, 190, 5, 31, "Input"],
+Cell[8282, 204, 88, 1, 30, "Output"]
 }, Open  ]]
 }
 ]
 *)
 
 (* End of internal cache information *)
-

@@ -10,7 +10,7 @@ import com.gutabi.deadlock.swing.utils.Point;
 public class TestPoints {
 
 	@Test
-	public void test() {
+	public void test() throws Exception {
 		Point a = new Point(0, 0);
 		Point b = new Point(2, 2);
 		Point c = new Point(2, 0);
@@ -22,12 +22,12 @@ public class TestPoints {
 	}
 	
 	@Test
-	public void testCo1() {
+	public void testCo1() throws Exception {
 		assertTrue(Point.colinear(new Point(0, 0), new Point(0, 1), new Point(0, 2)));	
 	}
 	
 	@Test
-	public void testCo2() {
+	public void testCo2() throws Exception {
 		try {
 			Point.colinear(new Point(0, 0), new Point(0, 2), new Point(0, 1));
 			fail();
