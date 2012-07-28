@@ -1,7 +1,6 @@
 package com.gutabi.deadlock.swing;
 
-import static com.gutabi.deadlock.swing.controller.DeadlockController.CONTROLLER;
-import static com.gutabi.deadlock.swing.model.DeadlockModel.MODEL;
+import static com.gutabi.deadlock.core.model.DeadlockModel.MODEL;
 import static com.gutabi.deadlock.swing.view.DeadlockView.VIEW;
 
 import java.util.List;
@@ -14,19 +13,21 @@ import org.junit.Test;
 
 import com.gutabi.deadlock.core.Edge;
 import com.gutabi.deadlock.core.Point;
+import com.gutabi.deadlock.swing.controller.MouseController;
 
 public class TestStress {
 
+	static MouseController mc;
+	
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 		
-		MODEL.init();
-		
 		VIEW.init();
 		
-		CONTROLLER.init();
+		mc = new MouseController();
+		mc.init();
 		
-		//VIEW.frame.setVisible(true);
+		VIEW.frame.setVisible(true);
 		
 	}
 
@@ -40,7 +41,7 @@ public class TestStress {
 
 	@After
 	public void tearDown() throws Exception {
-		MODEL.clear_M();
+		MODEL.clear();
 	}
 	
 	
@@ -64,14 +65,14 @@ public class TestStress {
 		for (int ii = 0; ii < m; ii++) {
 			
 			Point p = randomPoint();
-			CONTROLLER.mouseController.pressed(p);
+			mc.pressed(p);
 			
 			for (int i = 0; i < 20; i++) {
 				p = randomPoint();
-				CONTROLLER.mouseController.dragged(p);
+				mc.dragged(p);
 			}
 			
-			CONTROLLER.mouseController.released();
+			mc.released();
 			
 		}
 		

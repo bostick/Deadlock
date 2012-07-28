@@ -1,7 +1,6 @@
 package com.gutabi.deadlock.swing;
 
-import static com.gutabi.deadlock.swing.controller.DeadlockController.CONTROLLER;
-import static com.gutabi.deadlock.swing.model.DeadlockModel.MODEL;
+import static com.gutabi.deadlock.core.model.DeadlockModel.MODEL;
 import static com.gutabi.deadlock.swing.view.DeadlockView.VIEW;
 
 import java.util.List;
@@ -14,19 +13,21 @@ import org.junit.Test;
 
 import com.gutabi.deadlock.core.Edge;
 import com.gutabi.deadlock.core.Point;
+import com.gutabi.deadlock.swing.controller.MouseController;
 
 public class TestDraggingFuzz {
 
+	static MouseController mc;
+	
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 		
-		MODEL.init();
-		
 		VIEW.init();
 		
-		CONTROLLER.init();
+		mc = new MouseController();
+		mc.init();
 		
-		//VIEW.frame.setVisible(true);
+		VIEW.frame.setVisible(true);
 		
 	}
 
@@ -40,7 +41,7 @@ public class TestDraggingFuzz {
 
 	@After
 	public void tearDown() throws Exception {
-		MODEL.clear_M();
+		MODEL.clear();
 	}
 	
 	
@@ -59,10 +60,10 @@ public class TestDraggingFuzz {
 	@Test
 	public void testFuzz() throws Exception {
 		
-//		CONTROLLER.mouseController.pressed_M(new Point(5, 5));
-//		CONTROLLER.mouseController.dragged_M(new Point(6, 6));
-//		CONTROLLER.mouseController.dragged_M(new Point(7, 7));
-//		CONTROLLER.mouseController.released_M();
+//		mc.pressed_M(new Point(5, 5));
+//		mc.dragged_M(new Point(6, 6));
+//		mc.dragged_M(new Point(7, 7));
+//		mc.released_M();
 		
 		int a = 0;
 		while (true) {
@@ -77,14 +78,14 @@ public class TestDraggingFuzz {
 				int n = randomInt();
 				
 				Point p = randomPoint();
-				CONTROLLER.mouseController.pressed(p);
+				mc.pressed(p);
 				
 				for (int i = 0; i < n; i++) {
 					p = randomPoint();
-					CONTROLLER.mouseController.dragged(p);
+					mc.dragged(p);
 				}
 				
-				CONTROLLER.mouseController.released();
+				mc.released();
 				
 				//VIEW.repaint();
 				

@@ -1,7 +1,5 @@
 package com.gutabi.deadlock.android.view;
 
-import static com.gutabi.deadlock.android.model.DeadlockModel.MODEL;
-
 import java.util.HashSet;
 import java.util.Set;
 
@@ -9,6 +7,8 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
+
+import static com.gutabi.deadlock.core.model.DeadlockModel.MODEL;
 
 import com.gutabi.deadlock.core.Edge;
 import com.gutabi.deadlock.core.Point;

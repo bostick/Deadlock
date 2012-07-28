@@ -8,9 +8,12 @@ import org.junit.Test;
 
 import com.gutabi.deadlock.core.DPoint;
 import com.gutabi.deadlock.core.Point;
+import com.gutabi.deadlock.swing.controller.MouseController;
 
 public class TestPoints {
 
+	static MouseController mc;
+	
 	@Test
 	public void test() throws Exception {
 		Point a = new Point(0, 0);

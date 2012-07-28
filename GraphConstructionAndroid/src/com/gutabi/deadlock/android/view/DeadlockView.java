@@ -5,8 +5,6 @@ import android.graphics.Canvas;
 import android.util.AttributeSet;
 import android.view.View;
 
-import com.gutabi.deadlock.android.controller.DeadlockController;
-
 /**
  * 
  * model and controller don't exist when view is created,
@@ -29,9 +27,9 @@ public class DeadlockView extends View {
 		
 	}
 	
-	public void setController(DeadlockController controller) {
-		setOnTouchListener(controller);
-	}
+//	public void setController(DeadlockController controller) {
+//		setOnTouchListener(controller);
+//	}
 	
 }
 

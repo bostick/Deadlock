@@ -1,7 +1,5 @@
 package com.gutabi.deadlock.swing;
 
-import static com.gutabi.deadlock.swing.controller.DeadlockController.CONTROLLER;
-import static com.gutabi.deadlock.swing.model.DeadlockModel.MODEL;
 import static com.gutabi.deadlock.swing.view.DeadlockView.VIEW;
 
 import java.io.IOException;
@@ -11,17 +9,22 @@ import javax.swing.UnsupportedLookAndFeelException;
 
 import org.apache.log4j.Logger;
 
+import com.gutabi.deadlock.swing.controller.MouseController;
+
 public class Main  {
 	
 	static Logger logger = Logger.getLogger("deadlock");
 	
 	static void createAndShowGUI(String[] args) throws Exception {
 		
-		MODEL.init();
+		//MODEL.init();
 		
 		VIEW.init();
 		
-		CONTROLLER.init();
+		MouseController mc = new MouseController();
+		mc.init();
+		
+		//CONTROLLER.init();
 		
 		VIEW.frame.setVisible(true);
 		

@@ -1,6 +1,6 @@
 package com.gutabi.deadlock.swing.view;
 
-import static com.gutabi.deadlock.swing.model.DeadlockModel.MODEL;
+import static com.gutabi.deadlock.core.model.DeadlockModel.MODEL;
 
 import java.awt.Color;
 import java.awt.Dimension;

@@ -1,7 +1,6 @@
 package com.gutabi.deadlock.swing;
 
-import static com.gutabi.deadlock.swing.controller.DeadlockController.CONTROLLER;
-import static com.gutabi.deadlock.swing.model.DeadlockModel.MODEL;
+import static com.gutabi.deadlock.core.model.DeadlockModel.MODEL;
 import static com.gutabi.deadlock.swing.view.DeadlockView.VIEW;
 import static org.junit.Assert.assertEquals;
 
@@ -21,17 +20,19 @@ import org.junit.Test;
 import com.gutabi.deadlock.core.Edge;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.Vertex;
+import com.gutabi.deadlock.swing.controller.MouseController;
 
 public class TestSimpleGraphs {
+	
+	static MouseController mc;
 	
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 		
-		MODEL.init();
-		
 		VIEW.init();
 		
-		CONTROLLER.init();
+		mc = new MouseController();
+		mc.init();
 		
 		VIEW.frame.setVisible(true);
 		
@@ -47,7 +48,7 @@ public class TestSimpleGraphs {
 
 	@After
 	public void tearDown() throws Exception {
-		MODEL.clear_M();
+		MODEL.clear();
 	}
 	
 //	Comparator<Edge> edgeComparator = new Comparator<Edge>() {
@@ -90,14 +91,14 @@ public class TestSimpleGraphs {
 	@Test
 	public void test1() throws Exception {
 
-		CONTROLLER.mouseController.pressed_M(new Point(0, 0));
-		CONTROLLER.mouseController.dragged_M(new Point(2, 3));
-		CONTROLLER.mouseController.dragged_M(new Point(1, 0));
-		CONTROLLER.mouseController.released_M(false);
+		mc.pressed_M(new Point(0, 0));
+		mc.dragged_M(new Point(2, 3));
+		mc.dragged_M(new Point(1, 0));
+		mc.released_M(false);
 
-		CONTROLLER.mouseController.pressed_M(new Point(3, 0));
-		CONTROLLER.mouseController.dragged_M(new Point(0, 2));
-		CONTROLLER.mouseController.released_M(false);
+		mc.pressed_M(new Point(3, 0));
+		mc.dragged_M(new Point(0, 2));
+		mc.released_M(false);
 		
 		SwingUtilities.invokeAndWait(new Runnable() {
 			@Override

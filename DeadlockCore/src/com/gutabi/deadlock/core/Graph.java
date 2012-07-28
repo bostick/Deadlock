@@ -9,18 +9,8 @@ import java.util.TreeSet;
 
 public class Graph {
 	
-	//public static final Graph MODEL = new Graph();
-	
 	private ArrayList<Edge> edges = new ArrayList<Edge>();
 	private ArrayList<Vertex> vertices = new ArrayList<Vertex>();
-	
-//	public Point lastPointRaw;
-//	public List<Point> curStrokeRaw = new ArrayList<Point>();
-//	
-//	public List<List<Point>> allStrokes = new ArrayList<List<Point>>();
-	
-	//static Logger logger = Logger.getLogger("deadlock.graph");
-	//static Logger segmentLogger = Logger.getLogger("deadlock.graph.segment");
 	
 	public List<Edge> getEdges() {
 		return edges;
@@ -33,17 +23,7 @@ public class Graph {
 	public void clear() {
 		edges.clear();
 		vertices.clear();
-		//allStrokes.clear();
 	}
-	
-//	public void clear_M() {
-//		assert Thread.currentThread().getName().startsWith("main");
-//		javax.swing.SwingUtilities.invokeLater(new Runnable() {
-//			public void run() {
-//				clear();
-//			}
-//		});
-//	}
 	
 	public Edge createEdge(Vertex start, Vertex end, Point... points) {
 		Edge e = new Edge(start, end, points);
@@ -58,7 +38,6 @@ public class Graph {
 	}
 	
 	public Vertex createVertex(Point p) {
-		//logger.debug("createVertex: " + p);
 		
 		/*
 		 * there should only be 1 vertex with this point
@@ -174,7 +153,6 @@ public class Graph {
 	}
 	
 	public Vertex tryFindVertex(Point b) {
-		//logger.debug("tryFindVertex: " + b);
 		
 		Vertex found = null;
 		int count = 0;
@@ -344,12 +322,6 @@ public class Graph {
 			}
 			
 			Edge e = createEdge(aV, bV, aV.getPoint(), bV.getPoint());
-//			e.addPoint(a);
-//			e.addPoint(bV.getPoint());
-//			e.setStart(aV);
-//			e.setEnd(bV);
-			
-			//e.check();
 			
 			aV.add(e);
 			bV.add(e);
@@ -390,9 +362,7 @@ public class Graph {
 			}
 			
 		} finally {
-//			if (segmentLogger.isDebugEnabled()) {
-//				segmentLogger.debug("addSegment: <" + a + ", " + b + ">");
-//			}
+
 		}
 	}
 	
@@ -423,7 +393,7 @@ public class Graph {
 		Edge e = info.edge;
 		int index = info.index;
 		double param = info.param;
-		//logger.debug("split e: " + e + " index: " + index + " param: " + param);
+		
 		assert param >= 0.0;
 		assert param < 1.0;
 		
@@ -451,41 +421,28 @@ public class Graph {
 			
 			List<Point> pts = new ArrayList<Point>();
 			
-			//Edge f = createEdge();
-			
-			//f.addPoint(p);
 			pts.add(p);
 			try {
 				if (index+1 < e.size()-1 && !Point.colinear(p, d, e.getPoint(index+2))) {
-					//f.addPoint(d);
 					pts.add(d);
 				}
 			} catch (ColinearException ex) {
 				assert false;
 			}
 			for (int i = index+2; i < e.size()-1; i++) {
-				//f.addPoint(e.getPoint(i));
 				pts.add(e.getPoint(i));
 			}
 			for (int i = 0; i < index; i++) {
-				//f.addPoint(e.getPoint(i)); 
 				pts.add(e.getPoint(i));
 			}
 			try {
 				if (index > 0 && !Point.colinear(e.getPoint(index-1), c, p)) {
-					//f.addPoint(c);
 					pts.add(c);
 				}
 			} catch (ColinearException ex) {
 				assert false;
 			}
-			//f.addPoint(p);
 			pts.add(p);
-			
-			//f.setStart(v);
-			//f.setEnd(v);
-			
-			//f.check();
 			
 			Edge f = createEdge(v, v, pts);
 			
@@ -519,16 +476,13 @@ public class Graph {
 			}
 			if (f1 == null) {
 				
-				//f1 = createEdge();
 				List<Point> pts = new ArrayList<Point>();
 				
 				for (int i = 0; i < index; i++) {
-					//f1.addPoint(e.getPoint(i));
 					pts.add(e.getPoint(i));
 				}
 				try {
 					if (!(index > 0) || !Point.colinear(e.getPoint(index-1), c, p)) {
-						//f1.addPoint(c);
 						pts.add(c);
 					}
 				} catch (ColinearException ex) {
@@ -537,23 +491,13 @@ public class Graph {
 					
 					Vertex cV = createVertex(c);
 					Edge f3 = createEdge(cV, v, c, p);
-					//f3.addPoint(c);
-					////f3.addPoint(p);
-					//f3.setStart(cV);
-					//f3.setEnd(v);
-					//f3.check();
 					
 					cV.add(f3);
 					v.add(f3);
 					
 				}
-				//f1.addPoint(p);
 				pts.add(p);
 				
-				//f1.setStart(eStart);
-				//f1.setEnd(v);
-				
-				//f1.check();
 				f1 = createEdge(eStart, v, pts);
 				
 				eStart.add(f1);
@@ -582,7 +526,6 @@ public class Graph {
 			}
 			if (f2 == null) {
 				
-				//f2 = createEdge();
 				List<Point> pts = new ArrayList<Point>();
 				
 				pts.add(p);
@@ -595,12 +538,6 @@ public class Graph {
 					assert tryFindVertex(d) == null;
 					
 					Vertex dV = createVertex(d);
-//					Edge f3 = createEdge();
-//					f3.addPoint(d);
-//					f3.addPoint(p);
-//					f3.setStart(dV);
-//					f3.setEnd(v);
-//					f3.check();
 					Edge f3 = createEdge(dV, v, d, p);
 					
 					dV.add(f3);
@@ -610,11 +547,6 @@ public class Graph {
 				for (int i = index+2; i < e.size(); i++) {
 					pts.add(e.getPoint(i));
 				}
-				
-//				f2.setStart(v);
-//				f2.setEnd(eEnd);
-//				
-//				f2.check();
 				
 				f2 = createEdge(v, eEnd, pts);
 				
@@ -652,7 +584,7 @@ public class Graph {
 		Edge e = info.edge;
 		int index = info.index;
 		double param = info.param;
-		//logger.debug("split e: " + e + " index: " + index + " param: " + param);
+		
 		assert param >= 0.0;
 		assert param < 1.0;
 		
@@ -687,7 +619,6 @@ public class Graph {
 	 * no colinear points in returned edge
 	 */
 	public Edge merge(Edge e1, Edge e2) {
-		//logger.debug("merge " + e1 + " " + e2);
 		assert !e1.isRemoved();
 		assert !e2.isRemoved();
 		
@@ -708,7 +639,6 @@ public class Graph {
 			} else if (e1StartEdgeCount == 2) {
 				// stand-alone loop
 				
-				//Edge newEdge = createEdge();
 				List<Point> pts = new ArrayList<Point>();
 				
 				int n = e1.size();
@@ -730,12 +660,6 @@ public class Graph {
 				 */
 				pts.add(pts.get(0));
 				
-				
-//				newEdge.setStart(null);
-//				newEdge.setEnd(null);
-//				
-//				newEdge.check();
-				
 				Edge newEdge = createEdge(null, null, pts);
 				
 				removeVertex(e1Start);
@@ -755,7 +679,6 @@ public class Graph {
 			assert e2.getPoint(e2.size()-1).equals(e1.getPoint(0));
 			assert e1Start.getEdges().size() == 2 || e1End.getEdges().size() == 2;
 			
-			//Edge newEdge = createEdge();
 			List<Point> pts = new ArrayList<Point>();
 			
 			if (e1Start.getEdges().size() == 2) {
@@ -822,9 +745,6 @@ public class Graph {
 			if (e1Start.getEdges().size() == 2 && e1End.getEdges().size() == 2) {
 				// stand-alone loop
 				
-//				newEdge.setStart(null);
-//				newEdge.setEnd(null);
-				
 				e1Start.remove(e1);
 				
 				e1End.remove(e1);
@@ -844,9 +764,6 @@ public class Graph {
 				
 				Edge newEdge = createEdge(e1End, e1End, pts);
 				
-//				newEdge.setStart(e1End);
-//				newEdge.setEnd(e1End);
-				
 				e1End.add(newEdge);
 				e1End.remove(e1);
 				
@@ -861,15 +778,11 @@ public class Graph {
 				removeEdge(e1);
 				removeEdge(e2);
 				
-				//newEdge.check();
 				return newEdge;
 			} else {
 				assert e1End.getEdges().size() == 2;
 				
 				Edge newEdge = createEdge(e1Start, e1Start, pts);
-				
-//				newEdge.setStart(e1Start);
-//				newEdge.setEnd(e1Start);
 				
 				e1Start.add(newEdge);
 				e1Start.remove(e1);
@@ -885,7 +798,6 @@ public class Graph {
 				removeEdge(e1);
 				removeEdge(e2);
 				
-				//newEdge.check();
 				return newEdge;
 			}
 			
@@ -896,7 +808,6 @@ public class Graph {
 			assert e2.getPoint(0).equals(e1.getPoint(0));
 			assert e1Start.getEdges().size() == 2 || e1End.getEdges().size() == 2;
 			
-			//Edge newEdge = createEdge();
 			List<Point> pts = new ArrayList<Point>();
 			
 			if (e1Start.getEdges().size() == 2) {
@@ -966,11 +877,6 @@ public class Graph {
 				
 				Edge newEdge = createEdge(null, null, pts);
 				
-//				newEdge.setStart(null);
-//				newEdge.setEnd(null);
-//				
-//				newEdge.check();
-				
 				removeVertex(e1Start);
 				removeVertex(e1End);
 				removeEdge(e1);
@@ -981,11 +887,6 @@ public class Graph {
 				// start/end vertex has other edges
 				
 				Edge newEdge = createEdge(e1End, e1End, pts);
-				
-//				newEdge.setStart(e1End);
-//				newEdge.setEnd(e1End);
-//				
-//				newEdge.check();
 				
 				e1Start.remove(e1);
 				
@@ -1007,11 +908,6 @@ public class Graph {
 				
 				Edge newEdge = createEdge(e1Start, e1Start, pts);
 				
-//				newEdge.setStart(e1Start);
-//				newEdge.setEnd(e1Start);
-//				
-//				newEdge.check();
-				
 				e1Start.remove(e1);
 				e1Start.add(newEdge);
 				
@@ -1031,7 +927,6 @@ public class Graph {
 			
 		} else if (e1Start == e2Start) {
 			
-			//Edge newEdge = createEdge();
 			List<Point> pts = new ArrayList<Point>();
 			
 			for (int i = e1.size()-1; i > 0; i--) {
@@ -1052,11 +947,6 @@ public class Graph {
 			
 			Edge newEdge = createEdge(e1End, e2End, pts);
 			
-//			newEdge.setStart(e1End);
-//			newEdge.setEnd(e2End);
-//			
-//			newEdge.check();
-			
 			e1Start.remove(e1);
 			
 			e1End.remove(e1);
@@ -1074,7 +964,6 @@ public class Graph {
 			return newEdge;
 		} else if (e1Start == e2End) {
 			
-			//Edge newEdge = createEdge();
 			List<Point> pts = new ArrayList<Point>();
 			
 			for (int i = e1.size()-1; i > 0; i--) {
@@ -1095,11 +984,6 @@ public class Graph {
 			
 			Edge newEdge = createEdge(e1End, e2Start, pts);
 			
-//			newEdge.setStart(e1End);
-//			newEdge.setEnd(e2Start);
-//			
-//			newEdge.check();
-			
 			e1Start.remove(e1);
 			
 			e1End.remove(e1);
@@ -1117,7 +1001,6 @@ public class Graph {
 			return newEdge;
 		} else if (e1End == e2Start) {
 			
-			//Edge newEdge = createEdge();
 			List<Point> pts = new ArrayList<Point>();
 			
 			for (int i = 0; i < e1.size()-1; i++) {
@@ -1138,11 +1021,6 @@ public class Graph {
 			
 			Edge newEdge = createEdge(e1Start, e2End, pts);
 			
-//			newEdge.setStart(e1Start);
-//			newEdge.setEnd(e2End);
-//			
-//			newEdge.check();
-			
 			e1Start.remove(e1);
 			e1Start.add(newEdge);
 			
@@ -1160,7 +1038,6 @@ public class Graph {
 			return newEdge;
 		} else if (e1End == e2End) {
 			
-			//Edge newEdge = createEdge();
 			List<Point> pts = new ArrayList<Point>();
 			
 			for (int i = 0; i < e1.size()-1; i++) {
@@ -1180,11 +1057,6 @@ public class Graph {
 			}
 			
 			Edge newEdge = createEdge(e1Start, e2Start, pts);
-			
-//			newEdge.setStart(e1Start);
-//			newEdge.setEnd(e2Start);
-//			
-//			newEdge.check();
 			
 			e1Start.remove(e1);
 			e1Start.add(newEdge);
@@ -1223,12 +1095,9 @@ public class Graph {
 			Vertex eEnd = e.getEnd();
 			
 			if (index == 0) {
-				//create 1 new edge
-				//check connectivity of vertex
 				
 				if (e.size() > 2) {
 					
-					//Edge newEdge = createEdge();
 					List<Point> pts = new ArrayList<Point>();
 					
 					for (int i = 1; i < e.size(); i++) {
@@ -1239,21 +1108,13 @@ public class Graph {
 					
 					Edge newEdge = createEdge(newStart, eEnd, pts);
 					
-//					newEdge.setStart(newStart);
-//					newEdge.setEnd(eEnd);
-//					
-//					newEdge.check();
-					
 					newStart.add(newEdge);
 					eEnd.add(newEdge);
 					
 				}
 				
 			} else if (index == e.size()-2) {
-				//create 1 new edge
-				//check connectivity of vertex
 				
-				//Edge newEdge = createEdge();
 				List<Point> pts = new ArrayList<Point>();
 				
 				for (int i = 0; i < e.size()-1; i++) {
@@ -1264,18 +1125,12 @@ public class Graph {
 				
 				Edge newEdge = createEdge(eStart, newEnd, pts);
 				
-//				newEdge.setStart(eStart);
-//				newEdge.setEnd(newEnd);
-//				
-//				//newEdge.check();
-				
 				eStart.add(newEdge);
 				newEnd.add(newEdge);
 				
 			} else {
 				//create 2 new edges without worrying about vertices
 				
-				//Edge f1 = createEdge();
 				List<Point> f1Pts = new ArrayList<Point>();
 				
 				for (int i = 0; i <= index; i++) {
@@ -1286,15 +1141,9 @@ public class Graph {
 				
 				Edge f1 = createEdge(eStart, newF1End, f1Pts);
 				
-//				f1.setStart(eStart);
-//				f1.setEnd(newF1End);
-				
-				//f1.check();
-				
 				eStart.add(f1);
 				newF1End.add(f1);
 				
-				//Edge f2 = createEdge();
 				List<Point> f2Pts = new ArrayList<Point>();
 				
 				for (int i = index+1; i < e.size(); i++) {
@@ -1304,11 +1153,6 @@ public class Graph {
 				Vertex newF2Start = createVertex(e.getPoint(index+1));
 				
 				Edge f2 = createEdge(newF2Start, eEnd, f2Pts);
-				
-//				f2.setStart(newF2Start);
-//				f2.setEnd(eEnd);
-//				
-//				f2.check();
 				
 				newF2Start.add(f2);
 				eEnd.add(f2);
@@ -1334,9 +1178,7 @@ public class Graph {
 			removeEdge(e);
 			
 		} finally {
-//			if (segmentLogger.isDebugEnabled()) {
-//				segmentLogger.debug("removeSegment: <" + a + ", " + b + ">");
-//			}
+
 		}
 		
 	}
