@@ -1094,88 +1094,114 @@ public class Graph {
 			Vertex eStart = e.getStart();
 			Vertex eEnd = e.getEnd();
 			
-			if (index == 0) {
-				
-				if (e.size() > 2) {
-					
-					List<Point> pts = new ArrayList<Point>();
-					
-					for (int i = 1; i < e.size(); i++) {
-						pts.add(e.getPoint(i));
-					}
-					
-					Vertex newStart = createVertex(e.getPoint(1));
-					
-					Edge newEdge = createEdge(newStart, eEnd, pts);
-					
-					newStart.add(newEdge);
-					eEnd.add(newEdge);
-					
-				}
-				
-			} else if (index == e.size()-2) {
+			if (eStart == null && eEnd == null) {
+				// stand-alone loop
 				
 				List<Point> pts = new ArrayList<Point>();
 				
-				for (int i = 0; i < e.size()-1; i++) {
+				for (int i = index+1; i < e.size(); i++) {
+					pts.add(e.getPoint(i));
+				}
+				for (int i = 1; i <= index; i++) {
 					pts.add(e.getPoint(i));
 				}
 				
-				Vertex newEnd = createVertex(e.getPoint(e.size()-2));
+				Vertex newStart = createVertex(e.getPoint(index+1));
+				Vertex newEnd = createVertex(e.getPoint(index));
 				
-				Edge newEdge = createEdge(eStart, newEnd, pts);
+				Edge newEdge = createEdge(newStart, newEnd, pts);
 				
-				eStart.add(newEdge);
+				newStart.add(newEdge);
 				newEnd.add(newEdge);
 				
+				removeEdge(e);
+				
 			} else {
-				//create 2 new edges without worrying about vertices
 				
-				List<Point> f1Pts = new ArrayList<Point>();
-				
-				for (int i = 0; i <= index; i++) {
-					f1Pts.add(e.getPoint(i));
+				if (index == 0) {
+					
+					if (e.size() > 2) {
+						
+						List<Point> pts = new ArrayList<Point>();
+						
+						for (int i = 1; i < e.size(); i++) {
+							pts.add(e.getPoint(i));
+						}
+						
+						Vertex newStart = createVertex(e.getPoint(1));
+						
+						Edge newEdge = createEdge(newStart, eEnd, pts);
+						
+						newStart.add(newEdge);
+						eEnd.add(newEdge);
+						
+					}
+					
+				} else if (index == e.size()-2) {
+					
+					List<Point> pts = new ArrayList<Point>();
+					
+					for (int i = 0; i < e.size()-1; i++) {
+						pts.add(e.getPoint(i));
+					}
+					
+					Vertex newEnd = createVertex(e.getPoint(e.size()-2));
+					
+					Edge newEdge = createEdge(eStart, newEnd, pts);
+					
+					eStart.add(newEdge);
+					newEnd.add(newEdge);
+					
+				} else {
+					//create 2 new edges without worrying about vertices
+					
+					List<Point> f1Pts = new ArrayList<Point>();
+					
+					for (int i = 0; i <= index; i++) {
+						f1Pts.add(e.getPoint(i));
+					}
+					
+					Vertex newF1End = createVertex(e.getPoint(index));
+					
+					Edge f1 = createEdge(eStart, newF1End, f1Pts);
+					
+					eStart.add(f1);
+					newF1End.add(f1);
+					
+					List<Point> f2Pts = new ArrayList<Point>();
+					
+					for (int i = index+1; i < e.size(); i++) {
+						f2Pts.add(e.getPoint(i));
+					}
+					
+					Vertex newF2Start = createVertex(e.getPoint(index+1));
+					
+					Edge f2 = createEdge(newF2Start, eEnd, f2Pts);
+					
+					newF2Start.add(f2);
+					eEnd.add(f2);
+					
 				}
 				
-				Vertex newF1End = createVertex(e.getPoint(index));
-				
-				Edge f1 = createEdge(eStart, newF1End, f1Pts);
-				
-				eStart.add(f1);
-				newF1End.add(f1);
-				
-				List<Point> f2Pts = new ArrayList<Point>();
-				
-				for (int i = index+1; i < e.size(); i++) {
-					f2Pts.add(e.getPoint(i));
+				eStart.remove(e);
+				List<Edge> eStartEdges = eStart.getEdges();
+				if (eStartEdges.size() == 0) {
+					removeVertex(eStart);
+				} else if (eStartEdges.size() == 2) {
+					merge(eStartEdges.get(0), eStartEdges.get(1));
 				}
 				
-				Vertex newF2Start = createVertex(e.getPoint(index+1));
+				eEnd.remove(e);
+				List<Edge> eEndEdges = eEnd.getEdges();
+				if (eEndEdges.size() == 0) {
+					removeVertex(eEnd);
+				} else if (eEndEdges.size() == 2) {
+					merge(eEndEdges.get(0), eEndEdges.get(1));
+				}
 				
-				Edge f2 = createEdge(newF2Start, eEnd, f2Pts);
-				
-				newF2Start.add(f2);
-				eEnd.add(f2);
+				removeEdge(e);
 				
 			}
-			
-			eStart.remove(e);
-			List<Edge> eStartEdges = eStart.getEdges();
-			if (eStartEdges.size() == 0) {
-				removeVertex(eStart);
-			} else if (eStartEdges.size() == 2) {
-				merge(eStartEdges.get(0), eStartEdges.get(1));
-			}
-			
-			eEnd.remove(e);
-			List<Edge> eEndEdges = eEnd.getEdges();
-			if (eEndEdges.size() == 0) {
-				removeVertex(eEnd);
-			} else if (eEndEdges.size() == 2) {
-				merge(eEndEdges.get(0), eEndEdges.get(1));
-			}
-			
-			removeEdge(e);
 			
 		} finally {
 

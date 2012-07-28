@@ -27,47 +27,6 @@ public final class Edge {
 		return "E n=" + pts.length + " " + start + " " + end;
 	}
 	
-//	public void setStart(Vertex v) {
-//		if (removed) {
-//			throw new IllegalStateException();
-//		}
-//		start = v;
-//		if (start == end) {
-//			loop = true;
-//		}
-//	}
-//	
-//	public void setEnd(Vertex v) {
-//		if (removed) {
-//			throw new IllegalStateException();
-//		}
-//		end = v;
-//		if (start == end) {
-//			loop = true;
-//		}
-//	}
-//	
-//	public void addPoint(Point p) {
-//		if (removed) {
-//			throw new IllegalStateException();
-//		}
-//		
-//		/*
-//		 * cannot simply test if points.indexOf(p) does not equal 0, since indexOf may return 0 but p may also occur later
-//		 */
-//		int count = 0;
-//		for (Point a : points) {
-//			if (p.equals(a)) {
-//				count++;
-//			}
-//		}
-//		if (count > 1 || (count == 1 && points.indexOf(p) != 0)) {
-//			throw new IllegalStateException();
-//		}
-//		
-//		points.add(p);
-//	}
-	
 	public int size() {
 		if (removed) {
 			throw new IllegalStateException();
@@ -108,7 +67,8 @@ public final class Edge {
 	}
 	
 	private void check() {
-		assert !isRemoved();
+		
+		assert pts.length >= 2;
 		
 		if (loop) {
 			assert start == end;
