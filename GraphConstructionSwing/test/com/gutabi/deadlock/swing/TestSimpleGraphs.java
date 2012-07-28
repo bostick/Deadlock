@@ -3,6 +3,7 @@ package com.gutabi.deadlock.swing;
 import static com.gutabi.deadlock.swing.controller.DeadlockController.CONTROLLER;
 import static com.gutabi.deadlock.swing.model.DeadlockModel.MODEL;
 import static com.gutabi.deadlock.swing.view.DeadlockView.VIEW;
+import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -17,10 +18,9 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.gutabi.deadlock.swing.model.Edge;
-import com.gutabi.deadlock.swing.model.Vertex;
-import com.gutabi.deadlock.swing.utils.Point;
-import static org.junit.Assert.*;
+import com.gutabi.deadlock.core.Edge;
+import com.gutabi.deadlock.core.Point;
+import com.gutabi.deadlock.core.Vertex;
 
 public class TestSimpleGraphs {
 	
@@ -102,8 +102,8 @@ public class TestSimpleGraphs {
 		SwingUtilities.invokeAndWait(new Runnable() {
 			@Override
 			public void run() {
-				edges = new ArrayList<Edge>(MODEL.getEdges());
-				vertices = new ArrayList<Vertex>(MODEL.getVertices());
+				edges = new ArrayList<Edge>(MODEL.graph.getEdges());
+				vertices = new ArrayList<Vertex>(MODEL.graph.getVertices());
 			}
 		});
 		

@@ -1,0 +1,20 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+    
+    <view android:id="@+id/deadlock"
+    	class="com.gutabi.deadlock.android.view.DeadlockView"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_weight="1"/> 
+        
+<!--     <TextView android:id="@+id/status" -->
+<!--     	android:text="@string/dummy"       -->
+<!--         android:textSize="15pt" -->
+<!--         android:layout_width="fill_parent" -->
+<!--         android:layout_height="wrap_content" -->
+<!--         android:background="#0000aa" -->
+<!--         android:layout_weight="0"/> -->
+
+</LinearLayout>

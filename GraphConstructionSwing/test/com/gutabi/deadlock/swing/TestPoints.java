@@ -1,11 +1,13 @@
 package com.gutabi.deadlock.swing;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import org.junit.Test;
 
-import com.gutabi.deadlock.swing.utils.DPoint;
-import com.gutabi.deadlock.swing.utils.Point;
+import com.gutabi.deadlock.core.DPoint;
+import com.gutabi.deadlock.core.Point;
 
 public class TestPoints {
 

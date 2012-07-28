@@ -1,11 +1,7 @@
-package com.gutabi.deadlock.swing.model;
+package com.gutabi.deadlock.core;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.List;
-
-import com.gutabi.deadlock.swing.utils.Point;
 
 
 public class Vertex {
@@ -19,9 +15,6 @@ public class Vertex {
 	private boolean removed = false;
 	
 	public Vertex(Point p) {
-//		if (p.x == 43 && p.y == 94) {
-//			this.getClass();
-//		}
 		this.p = p;
 	}
 	
@@ -30,6 +23,7 @@ public class Vertex {
 	}
 	
 	public void add(Edge ed) {
+		assert ed != null;
 		if (removed) {
 			throw new IllegalStateException("vertex has been removed");
 		}
@@ -67,14 +61,6 @@ public class Vertex {
 		return p;
 	}
 	
-	public void paint(Graphics2D g) {
-		if (removed) {
-			throw new IllegalStateException();
-		}
-		g.setColor(Color.BLUE);
-		g.fillOval(p.x-3, p.y-3, 6, 6);
-	}
-	
 	public void remove() {
 		if (removed) {
 			throw new IllegalStateException();
@@ -88,9 +74,7 @@ public class Vertex {
 	}
 	
 	public void check() {
-		
 		assert !isRemoved();
-		
 		assert getPoint() != null;
 		
 		int edgeCount = getEdges().size();

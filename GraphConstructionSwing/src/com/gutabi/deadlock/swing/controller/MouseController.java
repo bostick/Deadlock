@@ -12,8 +12,8 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import com.gutabi.deadlock.swing.model.Vertex;
-import com.gutabi.deadlock.swing.utils.Point;
+import com.gutabi.deadlock.core.Point;
+import com.gutabi.deadlock.core.Vertex;
 
 public class MouseController implements MouseListener, MouseMotionListener {
 	
@@ -25,7 +25,7 @@ public class MouseController implements MouseListener, MouseMotionListener {
 	}
 	
 	public void pressed(Point p) {
-		assert Thread.currentThread().getName().startsWith("AWT-EventQueue-");
+		//assert Thread.currentThread().getName().startsWith("AWT-EventQueue-");
 		
 		MODEL.lastPointRaw = p;
 		MODEL.curStrokeRaw.add(p);
@@ -38,7 +38,7 @@ public class MouseController implements MouseListener, MouseMotionListener {
 	}
 	
 	public void dragged(Point p) {
-		assert Thread.currentThread().getName().startsWith("AWT-EventQueue-");
+		//assert Thread.currentThread().getName().startsWith("AWT-EventQueue-");
 		if (!p.equals(MODEL.lastPointRaw)) {
 			MODEL.curStrokeRaw.add(p);
 			MODEL.allStrokes.get(MODEL.allStrokes.size()-1).add(p);
@@ -48,16 +48,16 @@ public class MouseController implements MouseListener, MouseMotionListener {
 	}
 	
 	public void released() {
-		assert Thread.currentThread().getName().startsWith("AWT-EventQueue-");
+		//assert Thread.currentThread().getName().startsWith("AWT-EventQueue-");
 		
 		//List<Point> curStroke1 = massage(MODEL.curStrokeRaw);
 		List<Point> curStroke1 = MODEL.curStrokeRaw;
 		
 		for (int i = 0; i < curStroke1.size()-1; i++) {
-			MODEL.addStroke(curStroke1.get(i), curStroke1.get(i+1));
+			MODEL.graph.addStroke(curStroke1.get(i), curStroke1.get(i+1));
 		}
 		
-		MODEL.checkConsistency();
+		assert MODEL.graph.checkConsistency();
 		
 		MODEL.lastPointRaw = null;
 		MODEL.curStrokeRaw.clear();
@@ -167,7 +167,7 @@ public class MouseController implements MouseListener, MouseMotionListener {
 		
 		Vertex best = null;
 		
-		for (Vertex v : MODEL.getVertices()) {
+		for (Vertex v : MODEL.graph.getVertices()) {
 			
 			Point vp = v.getPoint();
 			
@@ -200,7 +200,7 @@ public class MouseController implements MouseListener, MouseMotionListener {
 		
 		best = null;
 		
-		for (Vertex v : MODEL.getVertices()) {
+		for (Vertex v : MODEL.graph.getVertices()) {
 			
 			Point vp = v.getPoint();
 			

@@ -1,4 +1,4 @@
-package com.gutabi.deadlock.swing.utils;
+package com.gutabi.deadlock.core;
 
 @SuppressWarnings("serial")
 public class OverlappingException extends Exception {

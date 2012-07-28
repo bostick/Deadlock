@@ -1,16 +1,16 @@
-package com.gutabi.deadlock.swing.utils;
+package com.gutabi.deadlock.core;
 
 import java.util.Comparator;
 
 
 public class PointToBeAdded {
 	
-	public DPoint p;
+	public final DPoint p;
 	
 	/**
 	 * value ranging from 0..1 measuring distance between points at index and index+1, used for sorting
 	 */
-	double param;
+	private final double param;
 	
 	private final int hash;
 	

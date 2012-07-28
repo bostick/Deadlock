@@ -1,4 +1,4 @@
-package com.gutabi.deadlock.swing.utils;
+package com.gutabi.deadlock.core;
 
 public class Point {
 	
@@ -169,39 +169,39 @@ public class Point {
 	 * Where is b perpendicular to &lt;c, d> ?
 	 * could be > 1 or < 0
 	 */
-	public static double perp(Point b, Point c, Point d) {
-		if (c.equals(d)) {
-			throw new IllegalArgumentException("c equals d");
-		}
-		int xbc = b.x - (c.x);
-		int xdc = d.x - (c.x);
-		int ybc = b.y - (c.y);
-		int ydc = d.y - (c.y);
-		int denom = (xdc * (xdc) + (ydc * (ydc)));
-		assert denom != 0;
-		// u is where b is perpendicular to <c, d>
-		double u = ((double)((xbc * (xdc)) + ((ybc * (ydc))))) / ((double)(denom));
-		return u;
-	}
+//	public static double perp(Point b, Point c, Point d) {
+//		if (c.equals(d)) {
+//			throw new IllegalArgumentException("c equals d");
+//		}
+//		int xbc = b.x - (c.x);
+//		int xdc = d.x - (c.x);
+//		int ybc = b.y - (c.y);
+//		int ydc = d.y - (c.y);
+//		int denom = (xdc * (xdc) + (ydc * (ydc)));
+//		assert denom != 0;
+//		// u is where b is perpendicular to <c, d>
+//		double u = ((double)((xbc * (xdc)) + ((ybc * (ydc))))) / ((double)(denom));
+//		return u;
+//	}
 	
 	/**
 	 * Where is b perpendicular to &lt;c, d> ?
 	 * could be > 1 or < 0
 	 */
-	public static double perp(DPoint b, Point c, Point d) {
-		if (c.equals(d)) {
-			throw new IllegalArgumentException("c equals d");
-		}
-		double xbc = b.x - (c.x);
-		int xdc = d.x - (c.x);
-		double ybc = b.y - (c.y);
-		int ydc = d.y - (c.y);
-		int denom = (xdc * (xdc) + (ydc * (ydc)));
-		assert denom != 0;
-		// u is where b is perpendicular to <c, d>
-		double u = ((double)((xbc * (xdc)) + ((ybc * (ydc))))) / ((double)(denom));
-		return u;
-	}
+//	public static double perp(DPoint b, Point c, Point d) {
+//		if (c.equals(d)) {
+//			throw new IllegalArgumentException("c equals d");
+//		}
+//		double xbc = b.x - (c.x);
+//		int xdc = d.x - (c.x);
+//		double ybc = b.y - (c.y);
+//		int ydc = d.y - (c.y);
+//		int denom = (xdc * (xdc) + (ydc * (ydc)));
+//		assert denom != 0;
+//		// u is where b is perpendicular to <c, d>
+//		double u = ((double)((xbc * (xdc)) + ((ybc * (ydc))))) / ((double)(denom));
+//		return u;
+//	}
 	
 	/**
 	 * Does b intersect &lt;c, d> ?
@@ -216,13 +216,15 @@ public class Point {
 		if (c.equals(d)) {
 			throw new IllegalArgumentException("c equals d");
 		}
-		int xbc = b.x - (c.x);
-		int xdc = d.x - (c.x);
-		int ybc = b.y - (c.y);
-		int ydc = d.y - (c.y);
-		double u = perp(b, c, d);
+		int xbc = b.x - c.x;
+		int xdc = d.x - c.x;
+		int ybc = b.y - c.y;
+		int ydc = d.y - c.y;
+		int denom = xdc * xdc + ydc * ydc;
+		assert denom != 0;
+		double u = ((double)(xbc * xdc + ybc * ydc)) / ((double)denom);
 		if (u >= 0.0 && u < 1.0) {
-			return Point.doubleEquals(xbc, (u * (xdc))) && Point.doubleEquals(ybc, (u * (ydc)));
+			return Point.doubleEquals(xbc, u * xdc) && Point.doubleEquals(ybc, u * ydc);
 		} else {
 			return false;
 		}
@@ -241,13 +243,15 @@ public class Point {
 		if (c.equals(d)) {
 			throw new IllegalArgumentException("c equals d");
 		}
-		double xbc = b.x - (c.x);
-		int xdc = d.x - (c.x);
-		double ybc = b.y - (c.y);
-		int ydc = d.y - (c.y);
-		double u = perp(b, c, d);
+		double xbc = b.x - c.x;
+		int xdc = d.x - c.x;
+		double ybc = b.y - c.y;
+		int ydc = d.y - c.y;
+		int denom = xdc * xdc + ydc * ydc;
+		assert denom != 0;
+		double u = ((double)(xbc * xdc + ybc * ydc)) / ((double)denom);
 		if (u >= 0.0 && u < 1.0) {	
-			return Point.doubleEquals(xbc, (u * (xdc))) && Point.doubleEquals(ybc, (u * (ydc)));
+			return Point.doubleEquals(xbc, u * xdc) && Point.doubleEquals(ybc, u * ydc);
 		} else {
 			return false;
 		}
@@ -398,13 +402,6 @@ public class Point {
 	public static double dist(Point a, Point b) {
 		return Math.hypot(a.x - b.x, a.y - b.y);
 	}
-	
-	/*
-	 * distance from b to where perpendicular to <c, d>
-	 */
-//	public static double dist(Point b, Point c, Point d) {
-//		return Math.hypot(a.x - b.x, a.y - b.y);
-//	}
 	
 	public static boolean doubleEquals(double a, double b) {
 		return Math.abs(a - b) < 0.0001;

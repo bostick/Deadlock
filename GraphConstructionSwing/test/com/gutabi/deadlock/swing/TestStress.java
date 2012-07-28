@@ -15,7 +15,7 @@ import org.junit.Test;
 import com.gutabi.deadlock.core.Edge;
 import com.gutabi.deadlock.core.Point;
 
-public class TestDraggingFuzz {
+public class TestStress {
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
@@ -57,54 +57,24 @@ public class TestDraggingFuzz {
 	}
 	
 	@Test
-	public void testFuzz() throws Exception {
+	public void testMemory() throws Exception {
 		
-//		CONTROLLER.mouseController.pressed_M(new Point(5, 5));
-//		CONTROLLER.mouseController.dragged_M(new Point(6, 6));
-//		CONTROLLER.mouseController.dragged_M(new Point(7, 7));
-//		CONTROLLER.mouseController.released_M();
+		int m = 20;
 		
-		int a = 0;
-		while (true) {
-			System.out.println("iteration: " + a);
+		for (int ii = 0; ii < m; ii++) {
 			
-			long c = System.currentTimeMillis();
+			Point p = randomPoint();
+			CONTROLLER.mouseController.pressed(p);
 			
-			int m = randomInt();
-			
-			for (int ii = 0; ii < m; ii++) {
-				
-				int n = randomInt();
-				
-				Point p = randomPoint();
-				CONTROLLER.mouseController.pressed(p);
-				
-				for (int i = 0; i < n; i++) {
-					p = randomPoint();
-					CONTROLLER.mouseController.dragged(p);
-				}
-				
-				CONTROLLER.mouseController.released();
-				
-				//VIEW.repaint();
-				
+			for (int i = 0; i < 20; i++) {
+				p = randomPoint();
+				CONTROLLER.mouseController.dragged(p);
 			}
 			
-			MODEL.clear();
-			//VIEW.repaint();
+			CONTROLLER.mouseController.released();
 			
-			System.out.println("iteration " + a + " took " + (System.currentTimeMillis() - c) + " milliseconds");
-			
-			a++;
 		}
 		
-//		SwingUtilities.invokeAndWait(new Runnable() {
-//			@Override
-//			public void run() {
-//				edges = MODEL.getEdges();
-//			}
-//		});
-		
 	}
-	
+
 }

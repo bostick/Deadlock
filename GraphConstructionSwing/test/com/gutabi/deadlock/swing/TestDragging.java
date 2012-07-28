@@ -3,6 +3,7 @@ package com.gutabi.deadlock.swing;
 import static com.gutabi.deadlock.swing.controller.DeadlockController.CONTROLLER;
 import static com.gutabi.deadlock.swing.model.DeadlockModel.MODEL;
 import static com.gutabi.deadlock.swing.view.DeadlockView.VIEW;
+import static org.junit.Assert.assertEquals;
 
 import java.util.List;
 
@@ -14,9 +15,8 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.gutabi.deadlock.swing.model.Edge;
-import com.gutabi.deadlock.swing.utils.Point;
-import static org.junit.Assert.*;
+import com.gutabi.deadlock.core.Edge;
+import com.gutabi.deadlock.core.Point;
 
 public class TestDragging {
 
@@ -60,13 +60,13 @@ public class TestDragging {
 		SwingUtilities.invokeAndWait(new Runnable() {
 			@Override
 			public void run() {
-				edges = MODEL.getEdges();
+				edges = MODEL.graph.getEdges();
 			}
 		});
 		
 		assertEquals(edges.size(), 1);
 		Edge e = edges.get(0);
-		assertEquals(e.getPointsSize(), 2);
+		assertEquals(e.size(), 2);
 		assertEquals(new Point(5, 5), e.getPoint(0));
 		assertEquals(new Point(7, 7), e.getPoint(1));
 		
@@ -83,7 +83,7 @@ public class TestDragging {
 		SwingUtilities.invokeAndWait(new Runnable() {
 			@Override
 			public void run() {
-				edges = MODEL.getEdges();
+				edges = MODEL.graph.getEdges();
 			}
 		});
 		 

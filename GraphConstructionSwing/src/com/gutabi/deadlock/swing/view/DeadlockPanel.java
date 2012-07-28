@@ -11,9 +11,9 @@ import javax.swing.JPanel;
 
 import org.apache.log4j.Logger;
 
-import com.gutabi.deadlock.swing.model.Edge;
-import com.gutabi.deadlock.swing.model.Vertex;
-import com.gutabi.deadlock.swing.utils.Point;
+import com.gutabi.deadlock.core.Edge;
+import com.gutabi.deadlock.core.Point;
+import com.gutabi.deadlock.core.Vertex;
 
 @SuppressWarnings("serial")
 public class DeadlockPanel extends JPanel {
@@ -37,11 +37,11 @@ public class DeadlockPanel extends JPanel {
 		g2.setColor(background);
 		g2.fillRect(0, 0, dim.width, dim.height);
 		
-		for (Edge e : MODEL.getEdges()) {
-			e.paint(g2);
+		for (Edge e : MODEL.graph.getEdges()) {
+			paintEdge(e, g2);
 		}
-		for (Vertex v : MODEL.getVertices()) {
-			v.paint(g2);
+		for (Vertex v : MODEL.graph.getVertices()) {
+			paintVertex(v, g2);
 		}
 		
 		g2.setColor(Color.RED);
@@ -63,6 +63,22 @@ public class DeadlockPanel extends JPanel {
 //			g2.drawLine(a.x, a.y, b.x, b.y);
 //		}
 		
+	}
+	
+	private static void paintEdge(Edge e, Graphics2D g) {
+		g.setColor(Color.BLUE);
+		for (int i = 0; i < e.size()-1; i++) {
+			Point prev = e.getPoint(i);
+			Point cur = e.getPoint(i+1);
+			//canvas.drawLine(prev.x, prev.y, cur.x, cur.y, paint1);
+			g.drawLine(prev.x, prev.y, cur.x, cur.y);
+		}
+	}
+	
+	public static void paintVertex(Vertex v, Graphics2D g) {
+		g.setColor(Color.BLUE);
+		Point p = v.getPoint();
+		g.fillOval(p.x-3, p.y-3, 6, 6);
 	}
 	
 }
