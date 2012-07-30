@@ -9,6 +9,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 
 import org.apache.log4j.Logger;
 
+import com.gutabi.deadlock.swing.controller.KeyboardController;
 import com.gutabi.deadlock.swing.controller.MouseController;
 
 public class Main  {
@@ -17,16 +18,16 @@ public class Main  {
 	
 	static void createAndShowGUI(String[] args) throws Exception {
 		
-		//MODEL.init();
-		
 		VIEW.init();
 		
 		MouseController mc = new MouseController();
 		mc.init();
 		
-		//CONTROLLER.init();
+		KeyboardController kc = new KeyboardController();
+		kc.init();
 		
 		VIEW.frame.setVisible(true);
+		VIEW.panel.requestFocusInWindow();
 		
 	}
 	

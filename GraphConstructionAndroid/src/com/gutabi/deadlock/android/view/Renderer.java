@@ -1,14 +1,11 @@
 package com.gutabi.deadlock.android.view;
 
-import java.util.HashSet;
-import java.util.Set;
-
+import static com.gutabi.deadlock.core.controller.DeadlockController.CONTROLLER;
+import static com.gutabi.deadlock.core.model.DeadlockModel.MODEL;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
-
-import static com.gutabi.deadlock.core.model.DeadlockModel.MODEL;
 
 import com.gutabi.deadlock.core.Edge;
 import com.gutabi.deadlock.core.Point;
@@ -32,38 +29,23 @@ public class Renderer {
 			
 		canvas.drawColor(0xFFdddddd);
 		
-		Set<Vertex> vs = new HashSet<Vertex>();
+		canvas.translate((float)-CONTROLLER.cameraUpperLeft.x, (float)-CONTROLLER.cameraUpperLeft.y);
 		
 		for (Edge e : MODEL.graph.getEdges()) {
-			vs.add(e.getStart());
-			vs.add(e.getEnd());
 			paintEdge(e, canvas, rPaint1, rPaint2);
 		}
 		for (Vertex v : MODEL.graph.getVertices()) {
 			paintVertex(v, canvas, interPaint);
 		}
 		
-//		List<PointF> points = MODEL.getPointsToBeProcessed();
-//		if (points != null) {
-//			for (int j = 1; j < points.size(); j++) {
-//				PointF prev = points.get(j-1);
-//				PointF cur = points.get(j);
-//				canvas.drawLine(prev.x, prev.y, cur.x, cur.y, tracePaint);
-//			}
-//		}
-		
-		//g2.setColor(Color.RED);
-		for (int i = 0; i < MODEL.curStrokeRaw.size()-1; i++) {
-			Point a = MODEL.curStrokeRaw.get(i);
-			Point b = MODEL.curStrokeRaw.get(i+1);
-			//g2.drawLine(a.x, a.y, b.x, b.y);
+		for (int i = 0; i < CONTROLLER.curStrokeRaw.size()-1; i++) {
+			Point a = CONTROLLER.curStrokeRaw.get(i);
+			Point b = CONTROLLER.curStrokeRaw.get(i+1);
 			canvas.drawLine(a.x, a.y, b.x, b.y, tracePaint);
 		}
 		
-		//g2.setColor(Color.RED);
-		if (MODEL.lastPointRaw != null) {
-			//g2.fillOval(MODEL.lastPointRaw.x-5, MODEL.lastPointRaw.y-5, 10, 10);
-			canvas.drawOval(new RectF(MODEL.lastPointRaw.x-5, MODEL.lastPointRaw.y-5, MODEL.lastPointRaw.x+5, MODEL.lastPointRaw.y+5), touchPaint);
+		if (CONTROLLER.lastPointRaw != null) {
+			canvas.drawOval(new RectF(CONTROLLER.lastPointRaw.x-5, CONTROLLER.lastPointRaw.y-5, CONTROLLER.lastPointRaw.x+5, CONTROLLER.lastPointRaw.y+5), touchPaint);
 		}
 		
 	}
@@ -75,21 +57,12 @@ public class Renderer {
 			Point cur = e.getPoint(i+1);
 			canvas.drawLine(prev.x, prev.y, cur.x, cur.y, p1);
 		}
-//		if (start == null && end == null) {
-//			PointF prev = points.get(points.size()-1);
-//			PointF cur = points.get(0);
-//			canvas.drawLine(prev.x, prev.y, cur.x, cur.y, paint1);
-//		}
+
 		for (int i = 0; i < e.size()-1; i++) {
 			Point prev = e.getPoint(i);
 			Point cur = e.getPoint(i+1);
 			canvas.drawLine(prev.x, prev.y, cur.x, cur.y, p2);
 		}
-//		if (start == null && end == null) {
-//			PointF prev = points.get(points.size()-1);
-//			PointF cur = points.get(0);
-//			canvas.drawLine(prev.x, prev.y, cur.x, cur.y, paint2);
-//		}
 		
 	}
 	
@@ -97,30 +70,6 @@ public class Renderer {
 		Point p = v.getPoint();
 		canvas.drawPoint(p.x, p.y, paint);
 	}
-	
-//	void walkAndPaint(Vertex v, Canvas canvas) {
-//		Set<Edge> edges = v.getEdges();
-//		for (Edge e : edges) {
-//			Vertex start = e.getStart();
-//			Vertex end = e.getEnd();
-//			if (e.getMark() != paintMark) {
-//				e.paint(canvas, rPaint1);
-//				e.paint(canvas, rPaint2);
-//				e.setMark(paintMark);
-//			}
-//			if (start.getMark() != paintMark) {
-//				start.paint(canvas, interPaint);
-//				start.setMark(paintMark);
-//				walkAndPaint(start, canvas);
-//			}
-//			if (end.getMark() != paintMark) {
-//				end.paint(canvas, interPaint);
-//				end.setMark(paintMark);
-//				walkAndPaint(end, canvas);
-//			}
-//			
-//		}
-//	}
 	
 	public static class Road1Paint extends Paint {
 		

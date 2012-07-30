@@ -1579,4 +1579,25 @@ public class TestDragging {
 		
 	}
 	
+	@Test
+	public void testBug7() throws Exception {
+
+		mc.pressed_M(new Point(661, 568));
+		mc.dragged_M(new Point(664, 568));
+		mc.dragged_M(new Point(664, 567));
+		mc.dragged_M(new Point(665, 567));
+		mc.released(false);
+		
+		mc.pressed_M(new Point(665, 567));
+		mc.dragged_M(new Point(661, 570));
+		mc.released_M(false);
+		
+		SwingUtilities.invokeAndWait(new Runnable() {
+			@Override
+			public void run() {
+				;
+			}
+		});
+		
+	}
 }

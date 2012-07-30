@@ -166,44 +166,6 @@ public class Point {
 	}
 	
 	/**
-	 * Where is b perpendicular to &lt;c, d> ?
-	 * could be > 1 or < 0
-	 */
-//	public static double perp(Point b, Point c, Point d) {
-//		if (c.equals(d)) {
-//			throw new IllegalArgumentException("c equals d");
-//		}
-//		int xbc = b.x - (c.x);
-//		int xdc = d.x - (c.x);
-//		int ybc = b.y - (c.y);
-//		int ydc = d.y - (c.y);
-//		int denom = (xdc * (xdc) + (ydc * (ydc)));
-//		assert denom != 0;
-//		// u is where b is perpendicular to <c, d>
-//		double u = ((double)((xbc * (xdc)) + ((ybc * (ydc))))) / ((double)(denom));
-//		return u;
-//	}
-	
-	/**
-	 * Where is b perpendicular to &lt;c, d> ?
-	 * could be > 1 or < 0
-	 */
-//	public static double perp(DPoint b, Point c, Point d) {
-//		if (c.equals(d)) {
-//			throw new IllegalArgumentException("c equals d");
-//		}
-//		double xbc = b.x - (c.x);
-//		int xdc = d.x - (c.x);
-//		double ybc = b.y - (c.y);
-//		int ydc = d.y - (c.y);
-//		int denom = (xdc * (xdc) + (ydc * (ydc)));
-//		assert denom != 0;
-//		// u is where b is perpendicular to <c, d>
-//		double u = ((double)((xbc * (xdc)) + ((ybc * (ydc))))) / ((double)(denom));
-//		return u;
-//	}
-	
-	/**
 	 * Does b intersect &lt;c, d> ?
 	 */
 	public static boolean intersect(Point b, Point c, Point d) {
@@ -409,5 +371,9 @@ public class Point {
 	
 	public static boolean equals(DPoint a, Point b) {
 		return doubleEquals(a.x, b.x) && doubleEquals(a.y, b.y);
+	}
+	
+	public static Point add(Point a, Point b) {
+		return new Point(a.x + b.x, a.y + b.y);
 	}
 }

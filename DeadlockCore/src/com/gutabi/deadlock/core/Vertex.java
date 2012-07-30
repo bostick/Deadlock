@@ -8,7 +8,7 @@ public class Vertex {
 	
 	private final Point p;
 	
-	private List<Edge> eds = new ArrayList<Edge>();
+	private final List<Edge> eds = new ArrayList<Edge>();
 	
 	private Edge lastEdgeAdded;
 	

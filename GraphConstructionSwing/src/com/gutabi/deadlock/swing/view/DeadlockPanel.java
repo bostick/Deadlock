@@ -1,6 +1,7 @@
 package com.gutabi.deadlock.swing.view;
 
 import static com.gutabi.deadlock.core.model.DeadlockModel.MODEL;
+import static com.gutabi.deadlock.core.controller.DeadlockController.CONTROLLER;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -37,6 +38,8 @@ public class DeadlockPanel extends JPanel {
 		g2.setColor(background);
 		g2.fillRect(0, 0, dim.width, dim.height);
 		
+		g2.translate((double)-CONTROLLER.cameraUpperLeft.x, (double)-CONTROLLER.cameraUpperLeft.y);
+		
 		for (Edge e : MODEL.graph.getEdges()) {
 			paintEdge(e, g2);
 		}
@@ -45,23 +48,16 @@ public class DeadlockPanel extends JPanel {
 		}
 		
 		g2.setColor(Color.RED);
-		for (int i = 0; i < MODEL.curStrokeRaw.size()-1; i++) {
-			Point a = MODEL.curStrokeRaw.get(i);
-			Point b = MODEL.curStrokeRaw.get(i+1);
+		for (int i = 0; i < CONTROLLER.curStrokeRaw.size()-1; i++) {
+			Point a = CONTROLLER.curStrokeRaw.get(i);
+			Point b = CONTROLLER.curStrokeRaw.get(i+1);
 			g2.drawLine(a.x, a.y, b.x, b.y);
 		}
 		
 		g2.setColor(Color.RED);
-		if (MODEL.lastPointRaw != null) {
-			g2.fillOval(MODEL.lastPointRaw.x-5, MODEL.lastPointRaw.y-5, 10, 10);
+		if (CONTROLLER.lastPointRaw != null) {
+			g2.fillOval(CONTROLLER.lastPointRaw.x-5, CONTROLLER.lastPointRaw.y-5, 10, 10);
 		}
-		
-//		g2.setColor(Color.GREEN);
-//		for (int i = 0; i < MODEL.curStroke1.size()-1; i++) {
-//			Point a = MODEL.curStroke1.get(i);
-//			Point b = MODEL.curStroke1.get(i+1);
-//			g2.drawLine(a.x, a.y, b.x, b.y);
-//		}
 		
 	}
 	

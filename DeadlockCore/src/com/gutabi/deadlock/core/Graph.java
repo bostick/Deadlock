@@ -628,6 +628,11 @@ public class Graph {
 		Vertex e2Start = e2.getStart();
 		Vertex e2End = e2.getEnd();
 		
+		assert e1Start != null;
+		assert e1End != null;
+		assert e2Start != null;
+		assert e2End != null;
+		
 		if (e1 == e2) {
 			assert e1Start == e1End;
 			// in the middle of merging a loop

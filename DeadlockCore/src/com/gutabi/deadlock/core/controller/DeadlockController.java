@@ -10,17 +10,26 @@ public class DeadlockController {
 	
 	public static DeadlockController CONTROLLER = new DeadlockController();
 	
+	public Point lastPointRaw;
+	public List<Point> curStrokeRaw = new ArrayList<Point>();
+	public List<List<Point>> allStrokes = new ArrayList<List<Point>>();
+	
+	public Point cameraUpperLeft = new Point(0, 0);
+	
 	public void inputStart(InputEvent e) {
-		Point p = e.getPoint();
-		MODEL.lastPointRaw = p;
-		MODEL.curStrokeRaw.add(p);
+		Point p = Point.add(e.getPoint(), cameraUpperLeft);
+		lastPointRaw = p;
+		curStrokeRaw.add(p);
+		allStrokes.add(new ArrayList<Point>());
+		allStrokes.get(allStrokes.size()-1).add(p);
 	}
 	
 	public void inputMove(InputEvent e) {
-		Point p = e.getPoint();
-		if (!p.equals(MODEL.lastPointRaw)) {
-			MODEL.curStrokeRaw.add(p);
-			MODEL.lastPointRaw = p;
+		Point p = Point.add(e.getPoint(), cameraUpperLeft);
+		if (!p.equals(lastPointRaw)) {
+			curStrokeRaw.add(p);
+			lastPointRaw = p;
+			allStrokes.get(allStrokes.size()-1).add(p);
 		}
 	}
 	
@@ -31,16 +40,16 @@ public class DeadlockController {
 	public void inputEnd(boolean massage) {
 		List<Point> curStroke;
 		if (massage) {
-			curStroke = massage(MODEL.curStrokeRaw);
+			curStroke = massage(curStrokeRaw);
 		} else {
-			curStroke = MODEL.curStrokeRaw;
+			curStroke = curStrokeRaw;
 		}
 		for (int i = 0; i < curStroke.size()-1; i++) {
 			MODEL.graph.addStroke(curStroke.get(i), curStroke.get(i+1));
 		}
 		assert MODEL.graph.checkConsistency();
-		MODEL.lastPointRaw = null;
-		MODEL.curStrokeRaw.clear();
+		lastPointRaw = null;
+		curStrokeRaw.clear();
 	}
 	
 	private List<Point> massage(List<Point> raw) {

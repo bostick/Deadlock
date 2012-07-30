@@ -11,23 +11,9 @@ import com.gutabi.deadlock.core.controller.InputEvent;
 
 public class TouchController implements View.OnTouchListener {
 	
-	/*
-	 * round a to nearest multiple of b
-	 */
-	static float round(float a, int b) {
-		return Math.round(a / b) * b;
-	}
-	
-	/*
-	 * round coords from event to nearest multiple of:
-	 */
-	int roundingFactor = 5;
-	
 	public boolean onTouch(View ignored, MotionEvent event) {
 		float x = event.getX();
 		float y = event.getY();
-		x = round(x, roundingFactor);
-		y = round(y, roundingFactor);
 		
 		switch (event.getAction()) {
 		case MotionEvent.ACTION_DOWN:

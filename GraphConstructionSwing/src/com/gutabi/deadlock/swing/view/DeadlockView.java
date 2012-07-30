@@ -15,8 +15,6 @@ public class DeadlockView {
 	
 	public void init() {
 		
-		panel = new DeadlockPanel();
-		
 		frame = createFrame(false);
 		
 		inited = true;
@@ -30,6 +28,9 @@ public class DeadlockView {
 		newFrame = new JFrame("Deadlock Viewer");
 		
 		newFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		panel = new DeadlockPanel();
+		panel.setFocusable(true);
 		
 		newFrame.getContentPane().add(panel);
 		
