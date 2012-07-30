@@ -1595,7 +1595,7 @@ public class TestDragging {
 		SwingUtilities.invokeAndWait(new Runnable() {
 			@Override
 			public void run() {
-				;
+				mc.hashCode();
 			}
 		});
 		

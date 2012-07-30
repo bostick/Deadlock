@@ -597,6 +597,13 @@ public class Graph {
 		
 		Point pInt = new Point((int)Math.round(p.x), (int)Math.round(p.y));
 		
+		if (c.equals(pInt) || d.equals(pInt)) {
+			/*
+			 * nothing being adjusted
+			 */
+			return;
+		}
+		
 		/*
 		 * adjust segment to integer coords first
 		 */
@@ -668,6 +675,7 @@ public class Graph {
 				Edge newEdge = createEdge(null, null, pts);
 				
 				removeVertex(e1Start);
+				removeEdge(e1);
 				
 				return newEdge;
 				
