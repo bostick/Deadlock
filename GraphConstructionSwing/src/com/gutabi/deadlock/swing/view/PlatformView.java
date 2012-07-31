@@ -1,12 +1,12 @@
 package com.gutabi.deadlock.swing.view;
 
+import static com.gutabi.deadlock.core.view.DeadlockView.VIEW;
+
 import javax.swing.JFrame;
 
-import com.gutabi.deadlock.swing.utils.WindowUtils;
-
-public class DeadlockView {
+public class PlatformView {
 	
-	public static final DeadlockView VIEW = new DeadlockView();
+	//public static final DeadlockView VIEW = new DeadlockView();
 	
 	public boolean inited = false;
 	
@@ -14,6 +14,8 @@ public class DeadlockView {
 	public DeadlockPanel panel;
 	
 	public void init() {
+		
+		VIEW.window = new SwingWindow();
 		
 		frame = createFrame(false);
 		
@@ -34,8 +36,8 @@ public class DeadlockView {
 		
 		newFrame.getContentPane().add(panel);
 		
-		newFrame.setSize(WindowUtils.windowWidth(), WindowUtils.windowHeight());
-		newFrame.setLocation(WindowUtils.windowX(), WindowUtils.windowY());
+		newFrame.setSize(VIEW.window.windowWidth(), VIEW.window.windowHeight());
+		newFrame.setLocation(VIEW.window.windowX(), VIEW.window.windowY());
 		
 		return newFrame;
 	}

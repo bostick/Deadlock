@@ -8,12 +8,12 @@ import android.view.Menu;
 import android.view.Window;
 
 import com.gutabi.deadlock.android.controller.TouchController;
-import com.gutabi.deadlock.android.view.DeadlockView;
+import com.gutabi.deadlock.android.view.PlatformView;
 
 public class MainActivity extends Activity {
 
 	//public DeadlockModel model;
-	public static DeadlockView VIEW;
+	public static PlatformView PLATFORMVIEW;
 	//public DeadlockController controller;
 	
 	@Override
@@ -25,7 +25,7 @@ public class MainActivity extends Activity {
 		
 		setContentView(R.layout.main);
 		
-		VIEW = (DeadlockView) findViewById(R.id.deadlock);
+		PLATFORMVIEW = (PlatformView) findViewById(R.id.deadlock);
 		//status = (TextView) findViewById(R.id.status);
 		
 		//model = new DeadlockModel();
@@ -34,7 +34,7 @@ public class MainActivity extends Activity {
 //		VIEW.setController(CONTROLLER);
 //		VIEW.setModel(MODEL);
 		
-		VIEW.setOnTouchListener(new TouchController());
+		PLATFORMVIEW.setOnTouchListener(new TouchController());
 		
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 		

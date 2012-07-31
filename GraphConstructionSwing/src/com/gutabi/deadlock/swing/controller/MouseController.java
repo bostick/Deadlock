@@ -1,7 +1,6 @@
 package com.gutabi.deadlock.swing.controller;
 
 import static com.gutabi.deadlock.core.controller.DeadlockController.CONTROLLER;
-import static com.gutabi.deadlock.swing.view.DeadlockView.VIEW;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -12,16 +11,12 @@ import org.apache.log4j.Logger;
 
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.controller.InputEvent;
+import static com.gutabi.deadlock.swing.Main.PLATFORMVIEW;
 
 public class MouseController implements MouseListener, MouseMotionListener {
 	
 	static Logger logger = Logger.getLogger("deadlock");
-	
-	public void init() {
-		VIEW.panel.addMouseListener(this);
-		VIEW.panel.addMouseMotionListener(this);
-	}
-	
+		
 	public void pressed(Point p) {
 		CONTROLLER.inputStart(new InputEvent(p));
 	}
@@ -44,7 +39,7 @@ public class MouseController implements MouseListener, MouseMotionListener {
 				pressed(p);
 			}
 		});
-		VIEW.repaint();
+		PLATFORMVIEW.repaint();
 	}
 	
 	public void dragged_M(final Point p) throws InterruptedException, InvocationTargetException {
@@ -53,7 +48,7 @@ public class MouseController implements MouseListener, MouseMotionListener {
 				dragged(p);
 			}
 		});
-		VIEW.repaint();
+		PLATFORMVIEW.repaint();
 	}
 	
 	public void released_M() throws InterruptedException, InvocationTargetException {
@@ -66,25 +61,25 @@ public class MouseController implements MouseListener, MouseMotionListener {
 				released(massage);
 			}
 		});
-		VIEW.repaint();
+		PLATFORMVIEW.repaint();
 	}
 	
 	@Override
 	public void mousePressed(MouseEvent ev) {
 		pressed(new Point(ev.getX(), ev.getY()));
-		VIEW.repaint();
+		PLATFORMVIEW.repaint();
 	}
 	
 	@Override
 	public void mouseDragged(MouseEvent ev) {
 		dragged(new Point(ev.getX(), ev.getY()));
-		VIEW.repaint();
+		PLATFORMVIEW.repaint();
 	}
 	
 	@Override
 	public void mouseReleased(MouseEvent ev) {
 		released();
-		VIEW.repaint();
+		PLATFORMVIEW.repaint();
 	}
 	
 	@Override

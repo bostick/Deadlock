@@ -1,7 +1,5 @@
 package com.gutabi.deadlock.swing;
 
-import static com.gutabi.deadlock.swing.view.DeadlockView.VIEW;
-
 import java.io.IOException;
 
 import javax.swing.UIManager;
@@ -9,25 +7,24 @@ import javax.swing.UnsupportedLookAndFeelException;
 
 import org.apache.log4j.Logger;
 
-import com.gutabi.deadlock.swing.controller.KeyboardController;
-import com.gutabi.deadlock.swing.controller.MouseController;
+import com.gutabi.deadlock.swing.controller.PlatformController;
+import com.gutabi.deadlock.swing.view.PlatformView;
 
 public class Main  {
+	
+	public static PlatformView PLATFORMVIEW = new PlatformView();
+	public static PlatformController PLATFORMCONTROLLER = new PlatformController();
 	
 	static Logger logger = Logger.getLogger("deadlock");
 	
 	static void createAndShowGUI(String[] args) throws Exception {
 		
-		VIEW.init();
+		PLATFORMVIEW.init();
 		
-		MouseController mc = new MouseController();
-		mc.init();
+		PLATFORMCONTROLLER.init();
 		
-		KeyboardController kc = new KeyboardController();
-		kc.init();
-		
-		VIEW.frame.setVisible(true);
-		VIEW.panel.requestFocusInWindow();
+		PLATFORMVIEW.frame.setVisible(true);
+		PLATFORMVIEW.panel.requestFocusInWindow();
 		
 	}
 	

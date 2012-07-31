@@ -1,4 +1,4 @@
-package com.gutabi.deadlock.swing.utils;
+package com.gutabi.deadlock.swing.view;
 
 import java.awt.Dimension;
 import java.awt.GraphicsConfiguration;
@@ -6,47 +6,51 @@ import java.awt.GraphicsEnvironment;
 import java.awt.Insets;
 import java.awt.Toolkit;
 
-public class WindowUtils {
+import com.gutabi.deadlock.core.Dim;
+import com.gutabi.deadlock.core.view.DeadlockWindow;
+
+public class SwingWindow implements DeadlockWindow {
 	
-	private static Insets screenInsets;
-	private static Dimension screenDim;
+	private Insets screenInsets;
+	private Dimension screenDim;
 	
-	static {
+	{
 		GraphicsConfiguration gc = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getConfigurations()[0];
 		Insets si = Toolkit.getDefaultToolkit().getScreenInsets(gc);
 		screenInsets = si;
 		screenDim = Toolkit.getDefaultToolkit().getScreenSize();
 	}
 	
-	public static int windowWidth() {
+	public int windowWidth() {
 		return screenDim.width - screenInsets.left - screenInsets.right;
 	}
 	
-	public static int windowHeight() {
+	public int windowHeight() {
 		return screenDim.height - screenInsets.top - screenInsets.bottom;
 	}
 	
-	public static Dimension windowDim() {
-		return new Dimension(screenDim.width - screenInsets.left - screenInsets.right, screenDim.height - screenInsets.top - screenInsets.bottom);
+	public Dim windowDim() {
+		return new Dim(screenDim.width - screenInsets.left - screenInsets.right, screenDim.height - screenInsets.top - screenInsets.bottom);
 	}
 	
-	public static int windowX() {
+	public int windowX() {
 		return screenInsets.left;
 	}
 	
-	public static int windowY() {
+	public int windowY() {
 		return screenInsets.top;
 	}
 	
-	public static int screenWidth() {
+	public int screenWidth() {
 		return screenDim.width;
 	}
 	
-	public static int screenHeight() {
+	public int screenHeight() {
 		return screenDim.height;
 	}
 	
-	public static Dimension screenDim() {
-		return screenDim;
+	public Dim screenDim() {
+		return new Dim(screenDim.width, screenDim.height);
 	}
+	
 }

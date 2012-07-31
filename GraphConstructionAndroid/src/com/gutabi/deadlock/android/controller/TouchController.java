@@ -1,6 +1,6 @@
 package com.gutabi.deadlock.android.controller;
 
-import static com.gutabi.deadlock.android.MainActivity.VIEW;
+import static com.gutabi.deadlock.android.MainActivity.PLATFORMVIEW;
 import static com.gutabi.deadlock.core.controller.DeadlockController.CONTROLLER;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -19,17 +19,17 @@ public class TouchController implements View.OnTouchListener {
 		case MotionEvent.ACTION_DOWN:
 			Log.d("touch", "DOWN <"+x+","+y+">");
 			CONTROLLER.inputStart(new InputEvent(new Point(Math.round(x), Math.round(y))));
-			VIEW.invalidate();
+			PLATFORMVIEW.invalidate();
 			break;
 		case MotionEvent.ACTION_MOVE:
 			Log.d("touch", "MOVE <"+x+","+y+">");
 			CONTROLLER.inputMove(new InputEvent(new Point(Math.round(x), Math.round(y))));
-			VIEW.invalidate();
+			PLATFORMVIEW.invalidate();
 			break;
 		case MotionEvent.ACTION_UP:
 			Log.d("touch", "UP   <"+x+","+y+">");
 			CONTROLLER.inputEnd();
-			VIEW.invalidate();
+			PLATFORMVIEW.invalidate();
 			break;
 		}
 		return true;

@@ -5,6 +5,7 @@ import java.util.List;
 import static com.gutabi.deadlock.core.model.DeadlockModel.MODEL;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.Vertex;
+import static com.gutabi.deadlock.core.view.DeadlockView.VIEW;
 
 public class DeadlockController {
 	
@@ -14,10 +15,13 @@ public class DeadlockController {
 	public List<Point> curStrokeRaw = new ArrayList<Point>();
 	public List<List<Point>> allStrokes = new ArrayList<List<Point>>();
 	
-	public Point cameraUpperLeft = new Point(0, 0);
-	
 	public void inputStart(InputEvent e) {
-		Point p = Point.add(e.getPoint(), cameraUpperLeft);
+		Point p;
+		p = e.getPoint();
+		//p = Point.add(p, VIEW.cameraUpperLeft);
+		p = new Point((int)(p.x * 1/VIEW.zoom), (int)(p.y * 1/VIEW.zoom));
+		p = Point.add(p, VIEW.cameraUpperLeft);
+		
 		lastPointRaw = p;
 		curStrokeRaw.add(p);
 		allStrokes.add(new ArrayList<Point>());
@@ -25,7 +29,12 @@ public class DeadlockController {
 	}
 	
 	public void inputMove(InputEvent e) {
-		Point p = Point.add(e.getPoint(), cameraUpperLeft);
+		Point p;
+		p = e.getPoint();
+		//p = Point.add(p, VIEW.cameraUpperLeft);
+		p = new Point((int)(p.x * 1/VIEW.zoom), (int)(p.y * 1/VIEW.zoom));
+		p = Point.add(p, VIEW.cameraUpperLeft);
+		
 		if (!p.equals(lastPointRaw)) {
 			curStrokeRaw.add(p);
 			lastPointRaw = p;
@@ -84,7 +93,7 @@ public class DeadlockController {
 		/*
 		 * first and last have to be very close
 		 */
-		if ((!last.equals(first)) && Point.dist(last, first) <= 20.0) {
+		if ((!last.equals(first)) && Point.dist(last, first) * VIEW.zoom <= 20.0) {
 			/*
 			 * maintain invariant that there are no contiguous, equal points
 			 */
@@ -98,29 +107,29 @@ public class DeadlockController {
 			}
 		}
 		
-		Vertex best = null;
+		Vertex firstBest = null;
 		
 		for (Vertex v : MODEL.graph.getVertices()) {
 			
 			Point vp = v.getPoint();
 			
-			if ((!first.equals(vp)) && Point.dist(first, vp) <= 40.0) {
-				if (best == null) {
-					best = v;
-				} else if (Point.dist(first, vp) < Point.dist(first, best.getPoint())) {
-					best = v;
+			if ((!first.equals(vp)) && Point.dist(first, vp) * VIEW.zoom <= 40.0) {
+				if (firstBest == null) {
+					firstBest = v;
+				} else if (Point.dist(first, vp) < Point.dist(first, firstBest.getPoint())) {
+					firstBest = v;
 				}
 			}
 			
 		}
 		
-		if (best != null) {
+		if (firstBest != null) {
 			
 			if (adj.size() == 1) {
-				adj.set(0, best.getPoint());
+				adj.set(0, firstBest.getPoint());
 			} else {
-				if (!adj.get(1).equals(best.getPoint())) {
-					adj.set(0, best.getPoint());
+				if (!adj.get(1).equals(firstBest.getPoint())) {
+					adj.set(0, firstBest.getPoint());
 					first = adj.get(0);
 				} else {
 					adj.remove(0);
@@ -131,28 +140,31 @@ public class DeadlockController {
 			
 		}
 		
-		best = null;
+		Vertex lastBest = null;
 		
 		for (Vertex v : MODEL.graph.getVertices()) {
 			
 			Point vp = v.getPoint();
 			
-			if ((!last.equals(vp)) && Point.dist(last, vp) <= 40.0) {
-				if (best == null) {
-					best = v;
-				} else if (Point.dist(last, vp) < Point.dist(last, best.getPoint())) {
-					best = v;
+			if ((!last.equals(vp)) && Point.dist(last, vp) * VIEW.zoom <= 40.0) {
+				if (lastBest == null) {
+					lastBest = v;
+				} else if (Point.dist(last, vp) < Point.dist(last, lastBest.getPoint())) {
+					lastBest = v;
 				}
 			}
 		}
 		
-		if (best != null) {
+		/*
+		 * if firstBest and lastBest are both non-null and equal, then don't also connect the last to the same vertex, it looks weird
+		 */
+		if (lastBest != null && lastBest != firstBest) {
 			
 			if (adj.size() == 1) {
-				adj.set(s-1, best.getPoint());
+				adj.set(s-1, lastBest.getPoint());
 			} else {
-				if (!adj.get(s-2).equals(best.getPoint())) {
-					adj.set(s-1, best.getPoint());
+				if (!adj.get(s-2).equals(lastBest.getPoint())) {
+					adj.set(s-1, lastBest.getPoint());
 					last = adj.get(s-1);
 				} else {
 					adj.remove(s-1);

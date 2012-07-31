@@ -102,9 +102,9 @@ public class Graph {
 				Point c = e.getPoint(i);
 				Point d = e.getPoint(i+1);
 				if (Point.intersect(b, c, d)) {
-					if ((e.getStart() != null && e.getEnd() != null) && (Point.equals(b, e.getStart().getPoint()) || Point.equals(b, e.getEnd().getPoint()))) {
-						throw new IllegalArgumentException("point is on vertex and for some reason it is not a vertex");
-					}
+//					if ((e.getStart() != null && e.getEnd() != null) && (Point.equals(b, e.getStart().getPoint()) || Point.equals(b, e.getEnd().getPoint()))) {
+//						throw new IllegalArgumentException("point is on vertex and for some reason it is not a vertex");
+//					}
 					return new EdgeInfo(e, i, Point.param(b, c, d));
 				}
 			}

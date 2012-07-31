@@ -2,16 +2,19 @@ package com.gutabi.deadlock.android.view;
 
 import static com.gutabi.deadlock.core.controller.DeadlockController.CONTROLLER;
 import static com.gutabi.deadlock.core.model.DeadlockModel.MODEL;
+import static com.gutabi.deadlock.core.view.DeadlockView.VIEW;
+import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
+import android.util.AttributeSet;
 
 import com.gutabi.deadlock.core.Edge;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.Vertex;
 
-public class Renderer {
+public class PlatformView extends android.view.View {
 	
 	static Paint rPaint1 = new Road1Paint();
 	static Paint rPaint2 = new Road2Paint();
@@ -21,15 +24,16 @@ public class Renderer {
 	
 	int paintMark;
 	
-	public Renderer() {
-		
+	public PlatformView(Context c, AttributeSet s) {
+		super(c, s);
 	}
 	
-	public void paintCanas(Canvas canvas) {
-			
+	@Override
+	public void onDraw(Canvas canvas) {
+		
 		canvas.drawColor(0xFFdddddd);
 		
-		canvas.translate((float)-CONTROLLER.cameraUpperLeft.x, (float)-CONTROLLER.cameraUpperLeft.y);
+		canvas.translate((float)-VIEW.cameraUpperLeft.x, (float)-VIEW.cameraUpperLeft.y);
 		
 		for (Edge e : MODEL.graph.getEdges()) {
 			paintEdge(e, canvas, rPaint1, rPaint2);
