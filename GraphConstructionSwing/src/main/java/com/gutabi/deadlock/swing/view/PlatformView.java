@@ -13,6 +13,10 @@ public class PlatformView {
 	public JFrame frame;
 	public DeadlockPanel panel;
 	
+	public PlatformView() {
+		//System.out.println("new PlatformView");
+	}
+	
 	public void init() {
 		
 		VIEW.window = new SwingWindow();

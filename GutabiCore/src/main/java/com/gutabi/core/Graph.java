@@ -646,9 +646,7 @@ public class Graph {
 			
 			int e1StartEdgeCount = e1Start.getEdges().size();
 			
-			if (e1StartEdgeCount == 1) {
-				throw new AssertionError();
-			} else if (e1StartEdgeCount == 2) {
+			if (e1StartEdgeCount == 2) {
 				// stand-alone loop
 				
 				List<Point> pts = new ArrayList<Point>();
@@ -697,16 +695,13 @@ public class Graph {
 			if (e1Start.getEdges().size() == 2) {
 				/*
 				 * e1Start is the vertex that will be merged (so it will be removed)
-				 * use the other vertex as the starting point
+				 * use e1End as the starting point
 				 */
-				try {
-					// only add if not colinear
-					if (!Point.colinear(e1.getPoint(e1.size()-2), e2.getPoint(0), e2.getPoint(1))) {
-						pts.add(e2.getPoint(0));
-					}
-				} catch (ColinearException ex) {
-					assert false;
-				}
+				/*
+				 * don't test colinearity here,
+				 * e2.getPoint(0) is a vertex
+				 */
+				pts.add(e2.getPoint(0));
 				for (int i = 1; i < e2.size()-1; i++) {
 					pts.add(e2.getPoint(i));
 				}
@@ -726,14 +721,15 @@ public class Graph {
 				 */
 				pts.add(pts.get(0));
 			} else {
-				try {
-					// only add if not colinear
-					if (!Point.colinear(e2.getPoint(e2.size()-2), e1.getPoint(0), e1.getPoint(1))) {
-						pts.add(e1.getPoint(0));
-					}
-				} catch (ColinearException ex) {
-					assert false;
-				}
+				/*
+				 * e1End is the vertex that will be merged (so it will be removed)
+				 * use e1Start as the starting point
+				 */
+				/*
+				 * don't test colinearity here,
+				 * e1.getPoint(0) is a vertex
+				 */
+				pts.add(e1.getPoint(0));
 				for (int i = 1; i < e1.size()-1; i++) {
 					pts.add(e1.getPoint(i));
 				}
@@ -826,16 +822,13 @@ public class Graph {
 			if (e1Start.getEdges().size() == 2) {
 				/*
 				 * e1Start is the vertex that will be merged (so it will be removed)
-				 * use the other vertex as the starting point
+				 * use e1End as the starting point
 				 */
-				try {
-					// only add if not colinear
-					if (!Point.colinear(e1.getPoint(e1.size()-2), e2.getPoint(e2.size()-1), e2.getPoint(e2.size()-2))) {
-						pts.add(e2.getPoint(e2.size()-1));
-					}
-				} catch (ColinearException ex) {
-					assert false;
-				}
+				/*
+				 * don't test colinearity here,
+				 * e2.getPoint(e2.size()-1) is a vertex
+				 */
+				pts.add(e2.getPoint(e2.size()-1));
 				for (int i = e2.size()-2; i >= 1; i--) {
 					pts.add(e2.getPoint(i));
 				}
@@ -856,14 +849,15 @@ public class Graph {
 				 */
 				pts.add(pts.get(0));
 			} else {
-				try {
-					// only add if not colinear
-					if (!Point.colinear(e2.getPoint(1), e1.getPoint(0), e1.getPoint(1))) {
-						pts.add(e1.getPoint(0));
-					}
-				} catch (ColinearException ex) {
-					assert false;
-				}
+				/*
+				 * e1End is the vertex that will be merged (so it will be removed)
+				 * use e1Start as the starting point
+				 */
+				/*
+				 * don't test colinearity here,
+				 * e1.getPoint(0) is a vertex
+				 */
+				pts.add(e1.getPoint(0));
 				for (int i = 1; i < e1.size()-1; i++) {
 					pts.add(e1.getPoint(i));
 				}
@@ -939,6 +933,7 @@ public class Graph {
 			}
 			
 		} else if (e1Start == e2Start) {
+			// not a loop
 			
 			List<Point> pts = new ArrayList<Point>();
 			
@@ -976,6 +971,7 @@ public class Graph {
 			
 			return newEdge;
 		} else if (e1Start == e2End) {
+			// not a loop
 			
 			List<Point> pts = new ArrayList<Point>();
 			
@@ -1013,6 +1009,7 @@ public class Graph {
 			
 			return newEdge;
 		} else if (e1End == e2Start) {
+			// not a loop
 			
 			List<Point> pts = new ArrayList<Point>();
 			
@@ -1050,6 +1047,7 @@ public class Graph {
 			
 			return newEdge;
 		} else if (e1End == e2End) {
+			// not a loop
 			
 			List<Point> pts = new ArrayList<Point>();
 			

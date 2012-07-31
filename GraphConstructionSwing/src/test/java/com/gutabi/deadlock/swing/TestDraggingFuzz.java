@@ -1,8 +1,12 @@
 package com.gutabi.deadlock.swing;
 
 import static com.gutabi.deadlock.core.model.DeadlockModel.MODEL;
+import static com.gutabi.deadlock.swing.Main.PLATFORMCONTROLLER;
+import static com.gutabi.deadlock.swing.Main.PLATFORMVIEW;
 
 import java.util.List;
+
+import javax.swing.SwingUtilities;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -12,13 +16,8 @@ import org.junit.Test;
 
 import com.gutabi.core.Edge;
 import com.gutabi.core.Point;
-import com.gutabi.deadlock.swing.controller.PlatformController;
-import com.gutabi.deadlock.swing.view.PlatformView;
 
 public class TestDraggingFuzz {
-	
-	public static PlatformView PLATFORMVIEW;
-	public static PlatformController PLATFORMCONTROLLER;
 	
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
@@ -79,21 +78,29 @@ public class TestDraggingFuzz {
 				int n = randomInt();
 				
 				Point p = randomPoint();
-				PLATFORMCONTROLLER.mc.pressed(p);
+				PLATFORMCONTROLLER.mc.pressed_M(p);
+				PLATFORMVIEW.repaint();
 				
 				for (int i = 0; i < n; i++) {
 					p = randomPoint();
-					PLATFORMCONTROLLER.mc.dragged(p);
+					PLATFORMCONTROLLER.mc.dragged_M(p);
+					PLATFORMVIEW.repaint();
 				}
 				
-				PLATFORMCONTROLLER.mc.released();
+				PLATFORMCONTROLLER.mc.released_M();
 				
-				//VIEW.repaint();
+				PLATFORMVIEW.repaint();
 				
 			}
 			
-			MODEL.clear();
-			//VIEW.repaint();
+			SwingUtilities.invokeAndWait(new Runnable(){
+
+				@Override
+				public void run() {
+					MODEL.clear();
+				}});
+			
+			PLATFORMVIEW.repaint();
 			
 			System.out.println("iteration " + a + " took " + (System.currentTimeMillis() - c) + " milliseconds");
 			

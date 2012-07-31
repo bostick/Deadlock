@@ -1,6 +1,8 @@
 package com.gutabi.deadlock.swing;
 
 import static com.gutabi.deadlock.core.model.DeadlockModel.MODEL;
+import static com.gutabi.deadlock.swing.Main.PLATFORMCONTROLLER;
+import static com.gutabi.deadlock.swing.Main.PLATFORMVIEW;
 import static org.junit.Assert.assertEquals;
 
 import java.util.List;
@@ -15,13 +17,8 @@ import org.junit.Test;
 
 import com.gutabi.core.Edge;
 import com.gutabi.core.Point;
-import com.gutabi.deadlock.swing.controller.PlatformController;
-import com.gutabi.deadlock.swing.view.PlatformView;
 
 public class TestDragging {
-	
-	public static PlatformView PLATFORMVIEW;
-	public static PlatformController PLATFORMCONTROLLER;
 	
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
@@ -1601,4 +1598,28 @@ public class TestDragging {
 		});
 		
 	}
+	
+	@Test
+	public void testBug8() throws Exception {
+
+		PLATFORMCONTROLLER.mc.pressed_M(new Point(56, 10));
+		PLATFORMCONTROLLER.mc.dragged_M(new Point(57, 11));
+		PLATFORMCONTROLLER.mc.dragged_M(new Point(58, 11));
+		PLATFORMCONTROLLER.mc.dragged_M(new Point(54, 11));
+		PLATFORMCONTROLLER.mc.dragged_M(new Point(54, 12));
+		PLATFORMCONTROLLER.mc.released_M(false);
+		
+		PLATFORMCONTROLLER.mc.pressed_M(new Point(54, 12));
+		PLATFORMCONTROLLER.mc.dragged_M(new Point(58, 11));
+		PLATFORMCONTROLLER.mc.released_M(false);
+		
+		SwingUtilities.invokeAndWait(new Runnable() {
+			@Override
+			public void run() {
+				PLATFORMCONTROLLER.mc.hashCode();
+			}
+		});
+		
+	}
+	
 }
