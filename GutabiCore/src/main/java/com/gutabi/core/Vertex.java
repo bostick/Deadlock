@@ -34,7 +34,7 @@ public class Vertex {
 		lastEdgeAdded = ed;
 	}
 	
-	public void remove(Edge ed) {
+	public void removeEdge(Edge ed) {
 		if (removed) {
 			throw new IllegalStateException();
 		}

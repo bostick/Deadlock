@@ -560,9 +560,9 @@ public class Graph {
 			 */
 			//v.check();
 			
-			eStart.remove(e);
+			eStart.removeEdge(e);
 			
-			eEnd.remove(e);
+			eEnd.removeEdge(e);
 			
 			removeEdge(e);
 			
@@ -616,6 +616,10 @@ public class Graph {
 			addStroke(c, pInt);
 		}
 		if (!pInt.equals(d)) {
+			/*
+			 * the segment <pInt, d> may intersect with other segments, so we have to start fresh and
+			 * not assume anything
+			 */
 			addStroke(pInt, d);
 		}
 		
@@ -639,14 +643,12 @@ public class Graph {
 		assert e1End != null;
 		assert e2Start != null;
 		assert e2End != null;
+		assert e1Start == e2Start || e1Start == e2End || e1End == e2Start || e1End == e2End;
 		
 		if (e1 == e2) {
-			assert e1Start == e1End;
 			// in the middle of merging a loop
 			
-			int e1StartEdgeCount = e1Start.getEdges().size();
-			
-			if (e1StartEdgeCount == 2) {
+			if (e1Start.getEdges().size() == 2 && e1End.getEdges().size() == 2) {
 				// stand-alone loop
 				
 				List<Point> pts = new ArrayList<Point>();
@@ -672,15 +674,16 @@ public class Graph {
 				
 				Edge newEdge = createEdge(null, null, pts);
 				
+				e1Start.removeEdge(e1);
+				e1Start.removeEdge(e1);
+				
 				removeVertex(e1Start);
 				removeEdge(e1);
 				
 				return newEdge;
 				
 			} else {
-				// start/end vertex has other edges
-				// nothing to do
-				throw new AssertionError();
+				throw new AssertionError("vertices of stand-alone loop have more than 2 edges");
 			}
 			
 		} else if (e1Start == e2End && e1End == e2Start) {
@@ -692,7 +695,58 @@ public class Graph {
 			
 			List<Point> pts = new ArrayList<Point>();
 			
-			if (e1Start.getEdges().size() == 2) {
+			if (e1Start.getEdges().size() == 2 && e1End.getEdges().size() == 2) {
+				// creating stand-alone loop
+				
+				/*
+				 * both e1Start and e1End will be merged (so they will be removed)
+				 * use e1Start as the starting point
+				 */
+				// only add if not colinear
+				try {
+					if (!Point.colinear(e2.getPoint(e2.size()-2), e1.getPoint(0), e1.getPoint(1))) {
+						pts.add(e1.getPoint(0));
+					}
+				} catch (ColinearException e) {
+					assert false;
+				}
+				for (int i = 1; i < e1.size()-1; i++) {
+					pts.add(e1.getPoint(i));
+				}
+				try {
+					// only add if not colinear
+					if (!Point.colinear(e1.getPoint(e1.size()-2), e1.getPoint(e1.size()-1), e2.getPoint(1))) {
+						pts.add(e1.getPoint(e1.size()-1));
+					}
+				} catch (ColinearException ex) {
+					assert false;
+				}
+				for (int i = 1; i < e2.size()-1; i++) {
+					pts.add(e2.getPoint(i));
+				}
+				/*
+				 * add whatever the first point is
+				 */
+				pts.add(pts.get(0));
+				
+				e1Start.removeEdge(e1);
+				
+				e1End.removeEdge(e1);
+				
+				e2Start.removeEdge(e2);
+				
+				e2End.removeEdge(e2);
+				
+				removeVertex(e1Start);
+				removeVertex(e1End);
+				removeEdge(e1);
+				removeEdge(e2);
+				
+				return createEdge(null, null, pts);
+				
+			} else if (e1Start.getEdges().size() == 2) {
+				// creating loop with 1 vertex
+				
 				/*
 				 * e1Start is the vertex that will be merged (so it will be removed)
 				 * use e1End as the starting point
@@ -720,7 +774,29 @@ public class Graph {
 				 * add whatever the first point is
 				 */
 				pts.add(pts.get(0));
+				
+				Edge newEdge = createEdge(e1End, e1End, pts);
+				
+				e1End.add(newEdge);
+				e1End.removeEdge(e1);
+				
+				e1Start.removeEdge(e1);
+				
+				e2Start.add(newEdge);
+				e2Start.removeEdge(e2);
+				
+				e2End.removeEdge(e2);
+				
+				removeVertex(e1Start/*e2End*/);
+				removeEdge(e1);
+				removeEdge(e2);
+				
+				return newEdge;
+				
 			} else {
+				// creating loop with 1 vertex
+				assert e1End.getEdges().size() == 2;
+				
 				/*
 				 * e1End is the vertex that will be merged (so it will be removed)
 				 * use e1Start as the starting point
@@ -748,60 +824,18 @@ public class Graph {
 				 * add whatever the first point is
 				 */
 				pts.add(pts.get(0));
-			}
-			
-			
-			if (e1Start.getEdges().size() == 2 && e1End.getEdges().size() == 2) {
-				// stand-alone loop
-				
-				e1Start.remove(e1);
-				
-				e1End.remove(e1);
-				
-				e2Start.remove(e2);
-				
-				e2End.remove(e2);
-				
-				removeVertex(e1Start);
-				removeVertex(e1End);
-				removeEdge(e1);
-				removeEdge(e2);
-				
-				return createEdge(null, null, pts);
-			} else if (e1Start.getEdges().size() == 2) {
-				// start/end vertex has other edges
-				
-				Edge newEdge = createEdge(e1End, e1End, pts);
-				
-				e1End.add(newEdge);
-				e1End.remove(e1);
-				
-				e1Start.remove(e1);
-				
-				e2Start.add(newEdge);
-				e2Start.remove(e2);
-				
-				e2End.remove(e2);
-				
-				removeVertex(e1Start/*e2End*/);
-				removeEdge(e1);
-				removeEdge(e2);
-				
-				return newEdge;
-			} else {
-				assert e1End.getEdges().size() == 2;
 				
 				Edge newEdge = createEdge(e1Start, e1Start, pts);
 				
 				e1Start.add(newEdge);
-				e1Start.remove(e1);
+				e1Start.removeEdge(e1);
 				
-				e1End.remove(e1);
+				e1End.removeEdge(e1);
 				
-				e2Start.remove(e2);
+				e2Start.removeEdge(e2);
 				
 				e2End.add(newEdge);
-				e2End.remove(e2);
+				e2End.removeEdge(e2);
 				
 				removeVertex(e1End/*e2Start*/);
 				removeEdge(e1);
@@ -819,7 +853,52 @@ public class Graph {
 			
 			List<Point> pts = new ArrayList<Point>();
 			
-			if (e1Start.getEdges().size() == 2) {
+			if (e1Start.getEdges().size() == 2 && e1End.getEdges().size() == 2) {
+				// creating stand-alone loop
+				
+				/*
+				 * both e1Start and e1End will be merged (so they will be removed)
+				 * use e1Start as the starting point
+				 */
+				// only add if not colinear
+				try {
+					if (!Point.colinear(e2.getPoint(1), e1.getPoint(0), e1.getPoint(1))) {
+						pts.add(e1.getPoint(0));
+					}
+				} catch (ColinearException e) {
+					assert false;
+				}
+				for (int i = 1; i < e1.size()-1; i++) {
+					pts.add(e1.getPoint(i));
+				}
+				try {
+					// only add if not colinear
+					if (!Point.colinear(e1.getPoint(e1.size()-2), e1.getPoint(e1.size()-1), e2.getPoint(e2.size()-2))) {
+						pts.add(e1.getPoint(e1.size()-1));
+					}
+				} catch (ColinearException ex) {
+					assert false;
+				}
+				for (int i = e2.size()-2; i >= 1; i--) {
+					pts.add(e2.getPoint(i));
+				}
+				/*
+				 * add whatever the first point is
+				 */
+				pts.add(pts.get(0));
+				
+				Edge newEdge = createEdge(null, null, pts);
+				
+				removeVertex(e1Start);
+				removeVertex(e1End);
+				removeEdge(e1);
+				removeEdge(e2);
+				
+				return newEdge;
+				
+			} else if (e1Start.getEdges().size() == 2) {
+				// creating loop with 1 vertex
+				
 				/*
 				 * e1Start is the vertex that will be merged (so it will be removed)
 				 * use e1End as the starting point
@@ -848,7 +927,29 @@ public class Graph {
 				 * add whatever the first point is
 				 */
 				pts.add(pts.get(0));
+				
+				Edge newEdge = createEdge(e1End, e1End, pts);
+				
+				e1Start.removeEdge(e1);
+				
+				e1End.add(newEdge);
+				e1End.removeEdge(e1);
+				
+				e2Start.removeEdge(e2);
+				
+				e2End.add(newEdge);
+				e2End.removeEdge(e2);
+				
+				removeVertex(e1Start/*e2Start*/);
+				removeEdge(e1);
+				removeEdge(e2);
+				
+				return newEdge;
+				
 			} else {
+				// creating loop with 1 vertex
+				assert e1End.getEdges().size() == 2;
+				
 				/*
 				 * e1End is the vertex that will be merged (so it will be removed)
 				 * use e1Start as the starting point
@@ -876,60 +977,25 @@ public class Graph {
 				 * add whatever the first point is
 				 */
 				pts.add(pts.get(0));
-			}
-			
-			if (e1Start.getEdges().size() == 2 && e1End.getEdges().size() == 2) {
-				// stand-alone loop
-				assert e1End.getEdges().size() == 2;
-				
-				Edge newEdge = createEdge(null, null, pts);
-				
-				removeVertex(e1Start);
-				removeVertex(e1End);
-				removeEdge(e1);
-				removeEdge(e2);
-				
-				return newEdge;
-			} else if (e1Start.getEdges().size() == 2) {
-				// start/end vertex has other edges
-				
-				Edge newEdge = createEdge(e1End, e1End, pts);
-				
-				e1Start.remove(e1);
-				
-				e1End.add(newEdge);
-				e1End.remove(e1);
-				
-				e2Start.remove(e2);
-				
-				e2End.add(newEdge);
-				e2End.remove(e2);
-				
-				removeVertex(e1Start/*e2Start*/);
-				removeEdge(e1);
-				removeEdge(e2);
-				
-				return newEdge;
-			} else {
-				assert e1End.getEdges().size() == 2;
 				
 				Edge newEdge = createEdge(e1Start, e1Start, pts);
 				
-				e1Start.remove(e1);
+				e1Start.removeEdge(e1);
 				e1Start.add(newEdge);
 				
-				e1End.remove(e1);
+				e1End.removeEdge(e1);
 				
-				e2Start.remove(e2);
+				e2Start.removeEdge(e2);
 				e2Start.add(newEdge);
 				
-				e2End.remove(e2);
+				e2End.removeEdge(e2);
 				
 				removeVertex(e1End/*e2End*/);
 				removeEdge(e1);
 				removeEdge(e2);
 				
 				return newEdge;
+				
 			}
 			
 		} else if (e1Start == e2Start) {
@@ -955,14 +1021,14 @@ public class Graph {
 			
 			Edge newEdge = createEdge(e1End, e2End, pts);
 			
-			e1Start.remove(e1);
+			e1Start.removeEdge(e1);
 			
-			e1End.remove(e1);
+			e1End.removeEdge(e1);
 			e1End.add(newEdge);
 			
-			e2Start.remove(e2);
+			e2Start.removeEdge(e2);
 			
-			e2End.remove(e2);
+			e2End.removeEdge(e2);
 			e2End.add(newEdge);
 			
 			removeVertex(e1Start/*e2Start*/);
@@ -970,6 +1036,7 @@ public class Graph {
 			removeEdge(e2);
 			
 			return newEdge;
+			
 		} else if (e1Start == e2End) {
 			// not a loop
 			
@@ -993,21 +1060,22 @@ public class Graph {
 			
 			Edge newEdge = createEdge(e1End, e2Start, pts);
 			
-			e1Start.remove(e1);
+			e1Start.removeEdge(e1);
 			
-			e1End.remove(e1);
+			e1End.removeEdge(e1);
 			e1End.add(newEdge);
 			
-			e2Start.remove(e2);
+			e2Start.removeEdge(e2);
 			e2Start.add(newEdge);
 			
-			e2End.remove(e2);
+			e2End.removeEdge(e2);
 			
 			removeVertex(e1Start/*e2End*/);
 			removeEdge(e1);
 			removeEdge(e2);
 			
 			return newEdge;
+			
 		} else if (e1End == e2Start) {
 			// not a loop
 			
@@ -1031,14 +1099,14 @@ public class Graph {
 			
 			Edge newEdge = createEdge(e1Start, e2End, pts);
 			
-			e1Start.remove(e1);
+			e1Start.removeEdge(e1);
 			e1Start.add(newEdge);
 			
-			e1End.remove(e1);
+			e1End.removeEdge(e1);
 			
-			e2Start.remove(e2);
+			e2Start.removeEdge(e2);
 			
-			e2End.remove(e2);
+			e2End.removeEdge(e2);
 			e2End.add(newEdge);
 			
 			removeVertex(e1End/*e2Start*/);
@@ -1046,6 +1114,7 @@ public class Graph {
 			removeEdge(e2);
 			
 			return newEdge;
+			
 		} else if (e1End == e2End) {
 			// not a loop
 			
@@ -1069,23 +1138,24 @@ public class Graph {
 			
 			Edge newEdge = createEdge(e1Start, e2Start, pts);
 			
-			e1Start.remove(e1);
+			e1Start.removeEdge(e1);
 			e1Start.add(newEdge);
 			
-			e1End.remove(e1);
+			e1End.removeEdge(e1);
 			
-			e2Start.remove(e2);
+			e2Start.removeEdge(e2);
 			e2Start.add(newEdge);
 			
-			e2End.remove(e2);
+			e2End.removeEdge(e2);
 			
 			removeVertex(e1End);
 			removeEdge(e1);
 			removeEdge(e2);
 			
 			return newEdge;
+			
 		} else {
-			throw new AssertionError();
+			throw new AssertionError("should never be seen");
 		}
 	}
 	
@@ -1194,7 +1264,7 @@ public class Graph {
 					
 				}
 				
-				eStart.remove(e);
+				eStart.removeEdge(e);
 				List<Edge> eStartEdges = eStart.getEdges();
 				if (eStartEdges.size() == 0) {
 					removeVertex(eStart);
@@ -1202,7 +1272,7 @@ public class Graph {
 					merge(eStartEdges.get(0), eStartEdges.get(1));
 				}
 				
-				eEnd.remove(e);
+				eEnd.removeEdge(e);
 				List<Edge> eEndEdges = eEnd.getEdges();
 				if (eEndEdges.size() == 0) {
 					removeVertex(eEnd);

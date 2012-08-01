@@ -1622,4 +1622,50 @@ public class TestDragging {
 		
 	}
 	
+	@Test
+	public void testBug9() throws Exception {
+
+		PLATFORMCONTROLLER.mc.pressed_M(new Point(775, 457));
+		PLATFORMCONTROLLER.mc.dragged_M(new Point(772, 467));
+		PLATFORMCONTROLLER.mc.dragged_M(new Point(772, 469));
+		PLATFORMCONTROLLER.mc.dragged_M(new Point(773, 465));
+		PLATFORMCONTROLLER.mc.released_M(false);
+		
+		PLATFORMCONTROLLER.mc.pressed_M(new Point(773, 465));
+		PLATFORMCONTROLLER.mc.dragged_M(new Point(775, 457));
+		PLATFORMCONTROLLER.mc.released_M(false);
+		
+		SwingUtilities.invokeAndWait(new Runnable() {
+			@Override
+			public void run() {
+				PLATFORMCONTROLLER.mc.hashCode();
+			}
+		});
+		
+	}
+	
+	@Test
+	public void testBug10() throws Exception {
+		
+		PLATFORMCONTROLLER.mc.pressed_M(new Point(775, 457));
+		PLATFORMCONTROLLER.mc.dragged_M(new Point(772, 467));
+		PLATFORMCONTROLLER.mc.dragged_M(new Point(772, 469));
+		PLATFORMCONTROLLER.mc.dragged_M(new Point(775, 457));
+		PLATFORMCONTROLLER.mc.dragged_M(new Point(778, 449));
+		PLATFORMCONTROLLER.mc.dragged_M(new Point(798, 448));
+		PLATFORMCONTROLLER.mc.released_M(false);
+		
+		PLATFORMCONTROLLER.mc.pressed_M(new Point(798, 448));
+		PLATFORMCONTROLLER.mc.dragged_M(new Point(760, 460));
+		PLATFORMCONTROLLER.mc.released_M(false);
+		
+		SwingUtilities.invokeAndWait(new Runnable() {
+			@Override
+			public void run() {
+				PLATFORMCONTROLLER.mc.hashCode();
+			}
+		});
+		
+	}
+	
 }
