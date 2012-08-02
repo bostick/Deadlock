@@ -19,8 +19,6 @@ public class PlatformView {
 	
 	public void init() {
 		
-		VIEW.window = new SwingWindow();
-		
 		frame = createFrame(false);
 		
 		inited = true;

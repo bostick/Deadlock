@@ -82,7 +82,7 @@ public final class Edge {
 			Point p = pts[i];
 			int count = 0;
 			for (Point q : pts) {
-				if (p.equals(q)) {
+				if (Point.equals(p, q)) {
 					count++;
 				}
 			}
@@ -95,19 +95,19 @@ public final class Edge {
 			if (i == 0) {
 				if (loop) {
 					if (start != null) {
-						assert start.getPoint().equals(p);
-						assert end.getPoint().equals(p);
+						assert Point.equals(start.getPoint(), p);
+						assert Point.equals(end.getPoint(), p);
 					}
 				} else {
-					assert start.getPoint().equals(p);
+					assert Point.equals(start.getPoint(), p);
 				}
 			} else if (i == pts.length-1) {
 				if (loop) {
 					if (end != null) {
-						assert end.getPoint().equals(p);
+						assert Point.equals(end.getPoint(), p);
 					}
 				} else {
-					assert end.getPoint().equals(p);
+					assert Point.equals(end.getPoint(), p);
 				}
 			}
 		}
@@ -129,7 +129,7 @@ public final class Edge {
 					 * if loop, only check if stand-alone
 					 * if not stand-alone, then it is possible to have first point be colinear
 					 */
-					assert p.equals(pts[pts.length-1]);
+					assert Point.equals(p, pts[pts.length-1]);
 					try {
 						if (Point.colinear(pts[pts.length-2], p, pts[1])) {
 							assert false : "Point " + p + " (index 0) is colinear";

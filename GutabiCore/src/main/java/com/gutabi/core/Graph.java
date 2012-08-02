@@ -38,17 +38,6 @@ public class Graph {
 	}
 	
 	public Vertex createVertex(Point p) {
-		
-		/*
-		 * there should only be 1 vertex with this point
-		 */
-		int count = 0;
-		for (Vertex w : vertices) {
-			if (p.equals(w.getPoint())) {
-				count++;
-			}
-		}
-		assert count == 0;
 		Vertex v = new Vertex(p);
 		vertices.add(v);
 		return v;
@@ -64,32 +53,66 @@ public class Graph {
 		edges.remove(e);
 	}
 	
-	public EdgeInfo findSegment(Point a, Point b) {
-		for (Edge e : edges) {
+	public List<EdgeInfo> findAllSegments(DPoint a, DPoint b) {
+		Point ul = new Point((int)Math.floor(Math.min(a.x, b.x)), (int)Math.floor(Math.min(a.y, b.y)));
+		Point br = new Point((int)Math.ceil(Math.max(a.x, b.x)), (int)Math.ceil(Math.max(a.y, b.y)));
+		return findAllSegments(ul, br);
+	}
+	
+	public List<EdgeInfo> findAllSegments(Point a, Point b) {
+//		Point ul = new Point(Math.min(a.x, b.x), Math.min(a.y, b.y));
+//		Point ur = new Point(Math.max(a.x, b.x), Math.min(a.y, b.y));
+//		Point bl = new Point(Math.min(a.x, b.x), Math.max(a.y, b.y));
+//		Point br = new Point(Math.max(a.x, b.x), Math.max(a.y, b.y));
+		List<EdgeInfo> l = new ArrayList<EdgeInfo>();
+		for (Edge e : getEdges()) {
 			for (int i = 0; i < e.size()-1; i++) {
-				Point c = e.getPoint(i);
-				Point d = e.getPoint(i+1);
-				if (a.equals(c) && b.equals(d)) {
-					return new EdgeInfo(e, i, 0);
-				}
+//				Point c = e.getPoint(i);
+//				Point d = e.getPoint(i+1);
+//				try {
+//					if ((ul.x <= c.x && c.x <= br.x && ul.y <= c.y && c.y <= br.y) || (ul.x <= d.x && d.x <= br.x && ul.y <= d.y && d.y <= br.y) ||
+//							!Point.equals(ul, ur) && Point.intersection(ul, ur, c, d) != null ||
+//							!Point.equals(ul, bl) && Point.intersection(ul, bl, c, d) != null ||
+//							!Point.equals(ur, br) && Point.intersection(ur, br, c, d) != null ||
+//							!Point.equals(bl, br) && Point.intersection(bl, br, c, d) != null) {
+						l.add(new EdgeInfo(e, i, 0.0));
+					//}
+//				} catch (OverlappingException e1) {
+//					l.add(new EdgeInfo(e, i, 0.0));
+//				}
 			}
 		}
+		return l;
+	}
+	
+	public EdgeInfo findSegment(Point a, Point b) {
+		//for (Edge e : getEdges()) {
+		for (EdgeInfo in : findAllSegments(a, b)) {
+			Edge e = in.edge;
+			Point c = e.getPoint(in.index);
+			Point d = e.getPoint(in.index+1);
+			if (Point.equals(a, c) && Point.equals(b, d)) {
+				return in;
+			}
+		}
+		//}
 		throw new IllegalArgumentException("segment not found");
 	}
 	
 	public EdgeInfo tryFindEdgeInfo(Point b) {
-		for (Edge e : edges) {
-			for (int i = 0; i < e.size()-1; i++) {
-				Point c = e.getPoint(i);
-				Point d = e.getPoint(i+1);
-				if (Point.intersect(b, c, d)) {
-					return new EdgeInfo(e, i, Point.param(b, c, d));
-				}
+		//for (Edge e : getEdges()) {
+		for (EdgeInfo in : findAllSegments(b, b)) {
+			Edge e = in.edge;
+			Point c = e.getPoint(in.index);
+			Point d = e.getPoint(in.index+1);
+			if (Point.intersect(b, c, d)) {
+				return new EdgeInfo(e, in.index, Point.param(b, c, d));
 			}
 		}
-		for (Vertex v : vertices) {
+		//}
+		for (Vertex v : getVertices()) {
 			Point d = v.getPoint();
-			if (b.equals(d) && v.getEdges().size() > 1) {
+			if (Point.equals(b, d) && v.getEdges().size() > 1) {
 				throw new IllegalArgumentException("point is on vertex");
 			}
 		}
@@ -97,19 +120,21 @@ public class Graph {
 	}
 	
 	public EdgeInfo tryFindEdgeInfoD(DPoint b) {
-		for (Edge e : edges) {
-			for (int i = 0; i < e.size()-1; i++) {
-				Point c = e.getPoint(i);
-				Point d = e.getPoint(i+1);
-				if (Point.intersect(b, c, d)) {
+		//for (Edge e : getEdges()) {
+		for (EdgeInfo in : findAllSegments(b, b)) {
+			Edge e = in.edge;
+			int i = in.index;
+			Point c = e.getPoint(i);
+			Point d = e.getPoint(i+1);
+			if (Point.intersect(b, c, d)) {
 //					if ((e.getStart() != null && e.getEnd() != null) && (Point.equals(b, e.getStart().getPoint()) || Point.equals(b, e.getEnd().getPoint()))) {
 //						throw new IllegalArgumentException("point is on vertex and for some reason it is not a vertex");
 //					}
-					return new EdgeInfo(e, i, Point.param(b, c, d));
-				}
+				return new EdgeInfo(e, i, Point.param(b, c, d));
 			}
 		}
-		for (Vertex v : vertices) {
+		//}
+		for (Vertex v : getVertices()) {
 			Point d = v.getPoint();
 			if (Point.doubleEquals(b.x, d.x) && Point.doubleEquals(b.y, d.y)) {
 				throw new IllegalArgumentException("point is on vertex");
@@ -133,7 +158,7 @@ public class Graph {
 	public Vertex findVertex(Point b) {
 		Vertex found = null;
 		int count = 0;
-		for (Vertex v : vertices) {
+		for (Vertex v : getVertices()) {
 			Point d = v.getPoint();
 			/*
 			 * d may be null if in the midle of processing (and not currently consistent)
@@ -156,9 +181,9 @@ public class Graph {
 		
 		Vertex found = null;
 		int count = 0;
-		for (Vertex v : vertices) {
+		for (Vertex v : getVertices()) {
 			Point d = v.getPoint();
-			if (b.equals(d)) {
+			if (Point.equals(b, d)) {
 				count++;
 				found = v;
 			}
@@ -172,10 +197,8 @@ public class Graph {
 		return found;
 	}
 	
-	
-	
 	public void addStroke(Point a, Point b) {
-		assert !a.equals(b);
+		assert !Point.equals(a, b);
 		try {
 			
 			SortedSet<PointToBeAdded> betweenABPoints = new TreeSet<PointToBeAdded>(PointToBeAdded.ptbaComparator);
@@ -207,46 +230,48 @@ public class Graph {
 	
 	private void addBetweenPoints(Point a, Point b, SortedSet<PointToBeAdded> betweenABPoints) throws OverlappingException {
 		
-		for (Edge e : getEdges()) {
-			
-			for (int j = 0; j < e.size()-1; j++) {
-				Point c = e.getPoint(j);
-				Point d = e.getPoint(j+1);
-				try {
-					DPoint inter = Point.intersection(a, b, c, d);
-					if (inter != null && !(Point.doubleEquals(inter.x, b.x) && Point.doubleEquals(inter.y, b.y))) {
-						PointToBeAdded nptba = new PointToBeAdded(inter, Point.param(inter, a, b));
+		//for (Edge e : getEdges()) {
+		
+		for (EdgeInfo in : findAllSegments(a, b)) {
+			Edge e = in.edge;
+			int i = in.index;
+			Point c = e.getPoint(i);
+			Point d = e.getPoint(i+1);
+			try {
+				DPoint inter = Point.intersection(a, b, c, d);
+				if (inter != null && !(Point.doubleEquals(inter.x, b.x) && Point.doubleEquals(inter.y, b.y))) {
+					PointToBeAdded nptba = new PointToBeAdded(inter, Point.param(inter, a, b));
+					betweenABPoints.add(nptba);
+				}
+			} catch (OverlappingException ex) {
+				
+				if ((Point.equals(a, d) || Point.intersect(a, c, d)) && (Point.equals(b, d) || Point.intersect(b, c, d))) {
+					/*
+					 * <a, b> is completely within <c, d>, so do nothing
+					 */
+					throw ex;
+				}
+				
+				if (Point.intersect(c, a, b)) {
+					double cParam = Point.param(c, a, b);
+					if ((cParam > 0.0 && cParam < 1.0)) {
+						PointToBeAdded nptba = new PointToBeAdded(new DPoint(c.x, c.y), cParam);
 						betweenABPoints.add(nptba);
 					}
-				} catch (OverlappingException ex) {
-					
-					if ((a.equals(d) || Point.intersect(a, c, d)) && (b.equals(d) || Point.intersect(b, c, d))) {
-						/*
-						 * <a, b> is completely within <c, d>, so do nothing
-						 */
-						throw ex;
-					}
-					
-					if (Point.intersect(c, a, b)) {
-						double cParam = Point.param(c, a, b);
-						if ((cParam > 0.0 && cParam < 1.0)) {
-							PointToBeAdded nptba = new PointToBeAdded(new DPoint(c.x, c.y), cParam);
-							betweenABPoints.add(nptba);
-						}
-					}
-					
-					if (Point.intersect(d, a, b)) {
-						double dParam = Point.param(d, a, b);
-						if ((dParam > 0.0 && dParam < 1.0)) {
-							PointToBeAdded nptba = new PointToBeAdded(new DPoint(d.x, d.y), dParam);
-							betweenABPoints.add(nptba);
-						}
-					}
-					
 				}
-			} // for edgePoints c, d
+				
+				if (Point.intersect(d, a, b)) {
+					double dParam = Point.param(d, a, b);
+					if ((dParam > 0.0 && dParam < 1.0)) {
+						PointToBeAdded nptba = new PointToBeAdded(new DPoint(d.x, d.y), dParam);
+						betweenABPoints.add(nptba);
+					}
+				}
+				
+			}
+		} // for edgePoints c, d
 			
-		} // for Edge e
+		//} // for Edge e
 		
 	}
 	
@@ -259,18 +284,20 @@ public class Graph {
 			PointToBeAdded p1 = (PointToBeAdded)betweenArray[i];
 			PointToBeAdded p2 = (PointToBeAdded)betweenArray[i+1];
 			
-			for (Edge e : getEdges()) {
-				for (int j = 0; j < e.size()-1; j++) {
-					Point c = e.getPoint(j);
-					Point d = e.getPoint(j+1);
-					if ((Point.equals(p1.p, d) || Point.intersect(p1.p, c, d)) && (Point.equals(p2.p, d) || Point.intersect(p2.p, c, d))) {
-						/*
-						 * <prev, cur> is completely within <c, d>, so do nothing
-						 */
-						continue betweenLoop;
-					}
+			//for (Edge e : getEdges()) {
+			for (EdgeInfo in : findAllSegments(p1.p, p2.p)) {
+				Edge e = in.edge;
+				int j = in.index;
+				Point c = e.getPoint(j);
+				Point d = e.getPoint(j+1);
+				if ((Point.equalsD(p1.p, d) || Point.intersect(p1.p, c, d)) && (Point.equalsD(p2.p, d) || Point.intersect(p2.p, c, d))) {
+					/*
+					 * <prev, cur> is completely within <c, d>, so do nothing
+					 */
+					continue betweenLoop;
 				}
 			}
+			//}
 			
 			/*
 			 * a will only ever be treated as an integer
@@ -283,11 +310,11 @@ public class Graph {
 			// b is not yet an integer
 			Point p2Int = new Point((int)Math.round(p2.p.x), (int)Math.round(p2.p.y));
 			
-			if (!Point.equals(p2.p, p2Int) && tryFindEdgeInfoD(p2.p) != null) {
+			if (!Point.equalsD(p2.p, p2Int) && tryFindEdgeInfoD(p2.p) != null) {
 				adjustToGrid(p2.p);
 			}
 			
-			if (!p1Int.equals(p2Int)) {
+			if (!Point.equals(p1Int, p2Int)) {
 				addStroke(p1Int, p2Int);
 			}
 			
@@ -296,7 +323,7 @@ public class Graph {
 	}
 	
 	public void addSegment(Point a, Point b) {
-		assert !a.equals(b);
+		assert !Point.equals(a, b);
 		assert !segmentExists(a, b);
 		
 		try {
@@ -367,13 +394,13 @@ public class Graph {
 	}
 	
 	public boolean segmentExists(Point a, Point b) {
-		for (Edge e : getEdges()) {
-			for (int j = 0; j < e.size()-1; j++) {
-				Point c = e.getPoint(j);
-				Point d = e.getPoint(j+1);
-				if ((a.equals(d) || Point.intersect(a, c, d)) && (b.equals(d) || Point.intersect(b, c, d))) {
-					return true;
-				}
+		for (EdgeInfo in : findAllSegments(a, b)) {
+			Edge e = in.edge;
+			int i = in.index;
+			Point c = e.getPoint(i);
+			Point d = e.getPoint(i+1);
+			if ((Point.equals(a, d) || Point.intersect(a, c, d)) && (Point.equals(b, d) || Point.intersect(b, c, d))) {
+				return true;
 			}
 		}
 		return false;
@@ -411,7 +438,7 @@ public class Graph {
 		if (v == null) {
 			v = createVertex(p);
 		}
-		assert v.getPoint().equals(p);
+		assert Point.equals(v.getPoint(), p);
 		
 		Vertex eStart = e.getStart();
 		Vertex eEnd = e.getEnd();
@@ -597,7 +624,7 @@ public class Graph {
 		
 		Point pInt = new Point((int)Math.round(p.x), (int)Math.round(p.y));
 		
-		if (c.equals(pInt) || d.equals(pInt)) {
+		if (Point.equals(c, pInt) || Point.equals(d, pInt)) {
 			/*
 			 * nothing being adjusted
 			 */
@@ -608,14 +635,14 @@ public class Graph {
 		 * adjust segment to integer coords first
 		 */
 		removeSegment(c, d);
-		if (!c.equals(pInt)) {
+		if (!Point.equals(c, pInt)) {
 			/*
 			 * the segment <c, pInt> may intersect with other segments, so we have to start fresh and
 			 * not assume anything
 			 */
 			addStroke(c, pInt);
 		}
-		if (!pInt.equals(d)) {
+		if (!Point.equals(pInt, d)) {
 			/*
 			 * the segment <pInt, d> may intersect with other segments, so we have to start fresh and
 			 * not assume anything
@@ -689,8 +716,8 @@ public class Graph {
 		} else if (e1Start == e2End && e1End == e2Start) {
 			// forming a loop
 			
-			assert e1.getPoint(e1.size()-1).equals(e2.getPoint(0));
-			assert e2.getPoint(e2.size()-1).equals(e1.getPoint(0));
+			assert Point.equals(e1.getPoint(e1.size()-1), e2.getPoint(0));
+			assert Point.equals(e2.getPoint(e2.size()-1), e1.getPoint(0));
 			assert e1Start.getEdges().size() == 2 || e1End.getEdges().size() == 2;
 			
 			List<Point> pts = new ArrayList<Point>();
@@ -847,8 +874,8 @@ public class Graph {
 		} else if (e1Start == e2Start && e1End == e2End) {
 			// forming a loop
 			
-			assert e1.getPoint(e1.size()-1).equals(e2.getPoint(e2.size()-1));
-			assert e2.getPoint(0).equals(e1.getPoint(0));
+			assert Point.equals(e1.getPoint(e1.size()-1), e2.getPoint(e2.size()-1));
+			assert Point.equals(e2.getPoint(0), e1.getPoint(0));
 			assert e1Start.getEdges().size() == 2 || e1End.getEdges().size() == 2;
 			
 			List<Point> pts = new ArrayList<Point>();
@@ -1006,7 +1033,7 @@ public class Graph {
 			for (int i = e1.size()-1; i > 0; i--) {
 				pts.add(e1.getPoint(i));
 			}
-			assert e1.getPoint(0).equals(e2.getPoint(0));
+			assert Point.equals(e1.getPoint(0), e2.getPoint(0));
 			try {
 				// only add if not colinear
 				if (!Point.colinear(e1.getPoint(1), e1.getPoint(0), e2.getPoint(1))) {
@@ -1045,7 +1072,7 @@ public class Graph {
 			for (int i = e1.size()-1; i > 0; i--) {
 				pts.add(e1.getPoint(i));
 			}
-			assert e1.getPoint(0).equals(e2.getPoint(e2.size()-1));
+			assert Point.equals(e1.getPoint(0), e2.getPoint(e2.size()-1));
 			try {
 				// only add if not colinear
 				if (!Point.colinear(e1.getPoint(1), e1.getPoint(0), e2.getPoint(e2.size()-2))) {
@@ -1084,7 +1111,7 @@ public class Graph {
 			for (int i = 0; i < e1.size()-1; i++) {
 				pts.add(e1.getPoint(i));
 			}
-			assert e1.getPoint(e1.size()-1).equals(e2.getPoint(0));
+			assert Point.equals(e1.getPoint(e1.size()-1), e2.getPoint(0));
 			try {
 				// only add if not colinear
 				if (!Point.colinear(e1.getPoint(e1.size()-2), e1.getPoint(e1.size()-1), e2.getPoint(1))) {
@@ -1123,7 +1150,7 @@ public class Graph {
 			for (int i = 0; i < e1.size()-1; i++) {
 				pts.add(e1.getPoint(i));
 			}
-			assert e1.getPoint(e1.size()-1).equals(e2.getPoint(e2.size()-1));
+			assert Point.equals(e1.getPoint(e1.size()-1), e2.getPoint(e2.size()-1));
 			try {
 				// only add if not colinear
 				if (!Point.colinear(e1.getPoint(e1.size()-2), e1.getPoint(e1.size()-1), e2.getPoint(e2.size()-2))) {
@@ -1295,6 +1322,17 @@ public class Graph {
 		
 		for (Vertex v : vertices) {
 			v.check();
+			
+			/*
+			 * there should only be 1 vertex with this point
+			 */
+			int count = 0;
+			for (Vertex w : vertices) {
+				if (Point.equals(v.getPoint(), w.getPoint())) {
+					count++;
+				}
+			}
+			assert count == 1;
 		}
 		
 		for (Edge e : edges) {
@@ -1313,7 +1351,7 @@ public class Graph {
 						Point d = f.getPoint(j+1);
 						try {
 							DPoint inter = Point.intersection(a, b, c, d);
-							if (inter != null && !(Point.equals(inter, a) || Point.equals(inter, b) || Point.equals(inter, c) || Point.equals(inter, d))) {
+							if (inter != null && !(Point.equalsD(inter, a) || Point.equalsD(inter, b) || Point.equalsD(inter, c) || Point.equalsD(inter, d))) {
 								//assert false : "No edges should intersect";
 								throw new IllegalStateException("No edges should intersect");
 							}
@@ -1331,7 +1369,7 @@ public class Graph {
 						Point eP = e.getPoint(i);
 						for (int j = 0; j < f.size(); j++) {
 							Point fP = f.getPoint(j);
-							if (eP.equals(fP)) {
+							if (Point.equals(eP, fP)) {
 								shared.add(eP);
 							}
 						}

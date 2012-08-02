@@ -9,7 +9,7 @@ import java.awt.Toolkit;
 import com.gutabi.core.Dim;
 import com.gutabi.deadlock.core.view.DeadlockWindow;
 
-public class SwingWindow implements DeadlockWindow {
+public class PlatformWindow implements DeadlockWindow {
 	
 	private Insets screenInsets;
 	private Dimension screenDim;

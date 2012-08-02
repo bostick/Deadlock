@@ -16,6 +16,7 @@ import org.junit.Test;
 
 import com.gutabi.core.Edge;
 import com.gutabi.core.Point;
+import static com.gutabi.deadlock.core.controller.DeadlockController.CONTROLLER;
 
 public class TestDraggingFuzz {
 	
@@ -51,19 +52,22 @@ public class TestDraggingFuzz {
 		return 0 + (int)(Math.random() * ((20 - 0) + 1));
 	}
 	
+	double randomRadian() {
+		return Math.random() * Math.PI * 2;
+	}
+	
+	double randomDist() {
+		return 1.0 + (int)(Math.random() * (100.0 - 1.0));
+	}
+	
 	Point randomPoint() {
-		int x = 0 + (int)(Math.random() * ((500 - 0) + 1));
-		int y = 0 + (int)(Math.random() * ((500 - 0) + 1));
+		int x = 0 + (int)(Math.random() * ((100 - 0) + 1));
+		int y = 0 + (int)(Math.random() * ((100 - 0) + 1));
 		return new Point(x, y);
 	}
 	
 	@Test
 	public void testFuzz() throws Exception {
-		
-//		mc.pressed_M(new Point(5, 5));
-//		mc.dragged_M(new Point(6, 6));
-//		mc.dragged_M(new Point(7, 7));
-//		mc.released_M();
 		
 		int a = 0;
 		while (true) {
@@ -82,7 +86,9 @@ public class TestDraggingFuzz {
 				PLATFORMVIEW.repaint();
 				
 				for (int i = 0; i < n; i++) {
-					p = randomPoint();
+					double rad = randomRadian();
+					double d = randomDist();
+					p = new Point((int)(Math.cos(rad) * d) + p.x, (int)(Math.sin(rad) * d) + p.y);
 					PLATFORMCONTROLLER.mc.dragged_M(p);
 					PLATFORMVIEW.repaint();
 				}
@@ -98,6 +104,7 @@ public class TestDraggingFuzz {
 				@Override
 				public void run() {
 					MODEL.clear();
+					CONTROLLER.allStrokes.clear();
 				}});
 			
 			PLATFORMVIEW.repaint();

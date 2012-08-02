@@ -56,7 +56,7 @@ public class PointToBeAdded {
 			} else if (a.param > (b.param)) {
 				return 1;
 			} else {
-				assert a.p.equals(b.p) && Point.doubleEquals(a.param, b.param);
+				assert DPoint.equals(a.p, b.p) && Point.doubleEquals(a.param, b.param);
 				return 0;
 			}
 		}

@@ -44,6 +44,10 @@ public class KeyboardController implements KeyListener {
 			VIEW.zoomOut();
 			PLATFORMVIEW.repaint();
 			break;
+		case KeyEvent.VK_0:
+			VIEW.zoomReset();
+			PLATFORMVIEW.repaint();
+			break;
 		default:
 			break;
 		}

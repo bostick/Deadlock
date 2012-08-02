@@ -21,15 +21,13 @@ public class DPoint {
 		s = "<" + x + ", " + y + ">";
 	}
 	
+	public static boolean equals(DPoint a, DPoint b) {
+		return Point.doubleEquals(a.x, b.x) && Point.doubleEquals(a.y, b.y);
+	}
+	
 	@Override
 	public boolean equals(Object p) {
-		if (this == p) {
-			return true;
-		} else if (!(p instanceof DPoint)) {
-			throw new IllegalArgumentException();
-		} else {
-			return Point.doubleEquals(x, ((DPoint)p).x) && Point.doubleEquals(y, ((DPoint)p).y);
-		}
+		throw new AssertionError();
 	}
 	
 	@Override

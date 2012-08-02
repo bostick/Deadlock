@@ -13,6 +13,7 @@ import android.util.AttributeSet;
 import com.gutabi.core.Edge;
 import com.gutabi.core.Point;
 import com.gutabi.core.Vertex;
+import com.gutabi.deadlock.android.controller.TouchController;
 
 public class PlatformView extends android.view.View {
 	
@@ -28,12 +29,17 @@ public class PlatformView extends android.view.View {
 		super(c, s);
 	}
 	
+	public void init() {
+		//this.
+	}
+	
 	@Override
 	public void onDraw(Canvas canvas) {
 		
 		canvas.drawColor(0xFFdddddd);
 		
-		canvas.translate((float)-VIEW.cameraUpperLeft.x, (float)-VIEW.cameraUpperLeft.y);
+		canvas.scale((float)VIEW.getZoom(), (float)VIEW.getZoom());
+		canvas.translate((float)-VIEW.viewLoc.x, (float)-VIEW.viewLoc.y);
 		
 		for (Edge e : MODEL.graph.getEdges()) {
 			paintEdge(e, canvas, rPaint1, rPaint2);

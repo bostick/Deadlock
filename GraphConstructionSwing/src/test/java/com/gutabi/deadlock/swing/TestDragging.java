@@ -3,7 +3,7 @@ package com.gutabi.deadlock.swing;
 import static com.gutabi.deadlock.core.model.DeadlockModel.MODEL;
 import static com.gutabi.deadlock.swing.Main.PLATFORMCONTROLLER;
 import static com.gutabi.deadlock.swing.Main.PLATFORMVIEW;
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import java.util.List;
 
@@ -66,8 +66,8 @@ public class TestDragging {
 		assertEquals(edges.size(), 1);
 		Edge e = edges.get(0);
 		assertEquals(e.size(), 2);
-		assertEquals(new Point(5, 5), e.getPoint(0));
-		assertEquals(new Point(7, 7), e.getPoint(1));
+		assertTrue(Point.equals(new Point(5, 5), e.getPoint(0)));
+		assertTrue(Point.equals(new Point(7, 7), e.getPoint(1)));
 		
 	}
 	
@@ -88,8 +88,8 @@ public class TestDragging {
 		 
 		assertEquals(edges.size(),  1);
 		Edge e = edges.get(0);
-		assertEquals(new Point(6, 6), e.getStart().getPoint());
-		assertEquals(new Point(4, 4), e.getEnd().getPoint());
+		assertTrue(Point.equals(new Point(6, 6), e.getStart().getPoint()));
+		assertTrue(Point.equals(new Point(4, 4), e.getEnd().getPoint()));
 		
 	}
 	
@@ -523,20 +523,20 @@ public class TestDragging {
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(584, 449));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(584, 450));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(585, 450));
-		PLATFORMCONTROLLER.mc.released_M(true);
+		PLATFORMCONTROLLER.mc.released_M();
 
 		PLATFORMCONTROLLER.mc.pressed_M(new Point(555, 448));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(556, 448));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(579, 444));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(580, 444));
-		PLATFORMCONTROLLER.mc.released_M(true);
+		PLATFORMCONTROLLER.mc.released_M();
 
 		PLATFORMCONTROLLER.mc.pressed_M(new Point(580, 444));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(581, 444));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(592, 448));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(593, 448));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(594, 448));
-		PLATFORMCONTROLLER.mc.released_M(true);
+		PLATFORMCONTROLLER.mc.released_M();
 
 		PLATFORMCONTROLLER.mc.pressed_M(new Point(594, 448));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(597, 451));
@@ -545,7 +545,7 @@ public class TestDragging {
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(604, 456));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(607, 458));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(608, 458));
-		PLATFORMCONTROLLER.mc.released_M(true);
+		PLATFORMCONTROLLER.mc.released_M();
 
 		PLATFORMCONTROLLER.mc.pressed_M(new Point(608, 458));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(608, 459));
@@ -553,7 +553,7 @@ public class TestDragging {
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(592, 463));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(587, 463));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(583, 463));
-		PLATFORMCONTROLLER.mc.released_M(true);
+		PLATFORMCONTROLLER.mc.released_M();
 		
 		SwingUtilities.invokeAndWait(new Runnable() {
 			@Override
@@ -571,34 +571,34 @@ public class TestDragging {
 		PLATFORMCONTROLLER.mc.pressed_M(new Point(639, 420));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(637, 420));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(631, 420));
-		PLATFORMCONTROLLER.mc.released_M(false);
+		PLATFORMCONTROLLER.mc.released_M();
 
 		PLATFORMCONTROLLER.mc.pressed_M(new Point(631, 420));
-		PLATFORMCONTROLLER.mc.released_M(false);
+		PLATFORMCONTROLLER.mc.released_M();
 
 		PLATFORMCONTROLLER.mc.pressed_M(new Point(631, 420));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(630, 422));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(629, 424));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(623, 424));
-		PLATFORMCONTROLLER.mc.released_M(true);
+		PLATFORMCONTROLLER.mc.released_M();
 
 		PLATFORMCONTROLLER.mc.pressed_M(new Point(623, 424));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(621, 421));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(619, 420));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(618, 420));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(618, 419));
-		PLATFORMCONTROLLER.mc.released_M(false);
+		PLATFORMCONTROLLER.mc.released_M();
 
 		PLATFORMCONTROLLER.mc.pressed_M(new Point(618, 419));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(626, 419));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(627, 418));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(629, 417));
-		PLATFORMCONTROLLER.mc.released_M(false);
+		PLATFORMCONTROLLER.mc.released_M();
 
 		PLATFORMCONTROLLER.mc.pressed_M(new Point(629, 417));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(632, 417));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(640, 415));
-		PLATFORMCONTROLLER.mc.released_M(false);
+		PLATFORMCONTROLLER.mc.released_M();
 		
 		SwingUtilities.invokeAndWait(new Runnable() {
 			@Override
@@ -614,15 +614,15 @@ public class TestDragging {
 
 		PLATFORMCONTROLLER.mc.pressed_M(new Point(49, 100));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(44, 25));
-		PLATFORMCONTROLLER.mc.released_M(false);
+		PLATFORMCONTROLLER.mc.released_M();
 
 		PLATFORMCONTROLLER.mc.pressed_M(new Point(0, 13));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(54, 42));
-		PLATFORMCONTROLLER.mc.released_M(false);
+		PLATFORMCONTROLLER.mc.released_M();
 		
 		PLATFORMCONTROLLER.mc.pressed_M(new Point(54, 42));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(44, 25));
-		PLATFORMCONTROLLER.mc.released_M(false);
+		PLATFORMCONTROLLER.mc.released_M();
 		
 		SwingUtilities.invokeAndWait(new Runnable() {
 			@Override
@@ -638,14 +638,14 @@ public class TestDragging {
 
 		PLATFORMCONTROLLER.mc.pressed_M(new Point(84, 86));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(33, 97));
-		PLATFORMCONTROLLER.mc.released_M(false);
+		PLATFORMCONTROLLER.mc.released_M();
 		
 		PLATFORMCONTROLLER.mc.pressed_M(new Point(52, 8));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(30, 65));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(19, 22));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(77, 95));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(30, 64));
-		PLATFORMCONTROLLER.mc.released_M(false);
+		PLATFORMCONTROLLER.mc.released_M();
 
 		PLATFORMCONTROLLER.mc.pressed_M(new Point(51, 35));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(34, 74));
@@ -653,7 +653,7 @@ public class TestDragging {
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(66, 99));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(11, 22));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(56, 85));
-		PLATFORMCONTROLLER.mc.released_M(false);
+		PLATFORMCONTROLLER.mc.released_M();
 
 		PLATFORMCONTROLLER.mc.pressed_M(new Point(58, 29));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(31, 45));
@@ -661,7 +661,7 @@ public class TestDragging {
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(50, 35));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(40, 39));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(50, 29));
-		PLATFORMCONTROLLER.mc.released_M(false);
+		PLATFORMCONTROLLER.mc.released_M();
 
 		PLATFORMCONTROLLER.mc.pressed_M(new Point(73, 26));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(43, 96));
@@ -674,12 +674,12 @@ public class TestDragging {
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(44, 89));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(82, 80));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(95, 89));
-		PLATFORMCONTROLLER.mc.released_M(false);
+		PLATFORMCONTROLLER.mc.released_M();
 
 		PLATFORMCONTROLLER.mc.pressed_M(new Point(31, 77));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(45, 98));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(5, 19));
-		PLATFORMCONTROLLER.mc.released_M(false);
+		PLATFORMCONTROLLER.mc.released_M();
 		
 		SwingUtilities.invokeAndWait(new Runnable() {
 			@Override
@@ -695,15 +695,15 @@ public class TestDragging {
 
 		PLATFORMCONTROLLER.mc.pressed_M(new Point(84, 86));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(33, 97));
-		PLATFORMCONTROLLER.mc.released_M(false);
+		PLATFORMCONTROLLER.mc.released_M();
 
 		PLATFORMCONTROLLER.mc.pressed_M(new Point(73, 26));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(43, 96));
-		PLATFORMCONTROLLER.mc.released_M(false);
+		PLATFORMCONTROLLER.mc.released_M();
 		
 		PLATFORMCONTROLLER.mc.pressed_M(new Point(43, 96));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(46, 49));
-		PLATFORMCONTROLLER.mc.released_M(false);
+		PLATFORMCONTROLLER.mc.released_M();
 		
 		SwingUtilities.invokeAndWait(new Runnable() {
 			@Override
@@ -720,11 +720,11 @@ public class TestDragging {
 		PLATFORMCONTROLLER.mc.pressed_M(new Point(60, 78));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(1, 72));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(47, 60));
-		PLATFORMCONTROLLER.mc.released_M(false);
+		PLATFORMCONTROLLER.mc.released_M();
 
 		PLATFORMCONTROLLER.mc.pressed_M(new Point(7, 17));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(2, 78));
-		PLATFORMCONTROLLER.mc.released_M(false);
+		PLATFORMCONTROLLER.mc.released_M();
 		
 		SwingUtilities.invokeAndWait(new Runnable() {
 			@Override
@@ -740,19 +740,19 @@ public class TestDragging {
 
 		PLATFORMCONTROLLER.mc.pressed_M(new Point(45, 47));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(7, 41));
-		PLATFORMCONTROLLER.mc.released_M(false);
+		PLATFORMCONTROLLER.mc.released_M();
 		
 		PLATFORMCONTROLLER.mc.pressed_M(new Point(7, 41));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(45, 81));
-		PLATFORMCONTROLLER.mc.released_M(false);
+		PLATFORMCONTROLLER.mc.released_M();
 
 		PLATFORMCONTROLLER.mc.pressed_M(new Point(13, 56));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(4, 17));
-		PLATFORMCONTROLLER.mc.released_M(false);
+		PLATFORMCONTROLLER.mc.released_M();
 
 		PLATFORMCONTROLLER.mc.pressed_M(new Point(25, 62));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(3, 34));
-		PLATFORMCONTROLLER.mc.released_M(false);
+		PLATFORMCONTROLLER.mc.released_M();
 		
 		SwingUtilities.invokeAndWait(new Runnable() {
 			@Override
@@ -769,11 +769,11 @@ public class TestDragging {
 		PLATFORMCONTROLLER.mc.pressed_M(new Point(71, 26));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(6, 91));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(76, 24));
-		PLATFORMCONTROLLER.mc.released_M(false);
+		PLATFORMCONTROLLER.mc.released_M();
 
 		PLATFORMCONTROLLER.mc.pressed_M(new Point(91, 98));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(3, 84));
-		PLATFORMCONTROLLER.mc.released_M(false);
+		PLATFORMCONTROLLER.mc.released_M();
 		
 		SwingUtilities.invokeAndWait(new Runnable() {
 			@Override
@@ -789,20 +789,20 @@ public class TestDragging {
 
 		PLATFORMCONTROLLER.mc.pressed_M(new Point(13, 47));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(53, 43));
-		PLATFORMCONTROLLER.mc.released_M(false);
+		PLATFORMCONTROLLER.mc.released_M();
 
 		PLATFORMCONTROLLER.mc.pressed_M(new Point(17, 38));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(36, 59));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(100, 27));
-		PLATFORMCONTROLLER.mc.released_M(false);
+		PLATFORMCONTROLLER.mc.released_M();
 
 		PLATFORMCONTROLLER.mc.pressed_M(new Point(0, 59));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(37, 36));
-		PLATFORMCONTROLLER.mc.released_M(false);
+		PLATFORMCONTROLLER.mc.released_M();
 
 		PLATFORMCONTROLLER.mc.pressed_M(new Point(19, 4));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(26, 80));
-		PLATFORMCONTROLLER.mc.released_M(false);
+		PLATFORMCONTROLLER.mc.released_M();
 		
 		SwingUtilities.invokeAndWait(new Runnable() {
 			@Override
@@ -818,19 +818,19 @@ public class TestDragging {
 		
 		PLATFORMCONTROLLER.mc.pressed_M(new Point(21, 11));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(23, 4));
-		PLATFORMCONTROLLER.mc.released_M(false);
+		PLATFORMCONTROLLER.mc.released_M();
 		
 		PLATFORMCONTROLLER.mc.pressed_M(new Point(18, 11));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(21, 11));
-		PLATFORMCONTROLLER.mc.released_M(false);
+		PLATFORMCONTROLLER.mc.released_M();
 		
 		PLATFORMCONTROLLER.mc.pressed_M(new Point(21, 11));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(21, 9));
-		PLATFORMCONTROLLER.mc.released_M(false);
+		PLATFORMCONTROLLER.mc.released_M();
 		
 		PLATFORMCONTROLLER.mc.pressed_M(new Point(21, 9));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(44, 94));
-		PLATFORMCONTROLLER.mc.released_M(false);
+		PLATFORMCONTROLLER.mc.released_M();
 		
 		SwingUtilities.invokeAndWait(new Runnable() {
 			@Override
@@ -846,23 +846,23 @@ public class TestDragging {
 		
 		PLATFORMCONTROLLER.mc.pressed_M(new Point(21, 11));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(23, 4));
-		PLATFORMCONTROLLER.mc.released_M(false);
+		PLATFORMCONTROLLER.mc.released_M();
 		
 		PLATFORMCONTROLLER.mc.pressed_M(new Point(18, 11));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(21, 11));
-		PLATFORMCONTROLLER.mc.released_M(false);
+		PLATFORMCONTROLLER.mc.released_M();
 		
 		PLATFORMCONTROLLER.mc.pressed_M(new Point(18, 10));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(21, 10));
-		PLATFORMCONTROLLER.mc.released_M(false);
+		PLATFORMCONTROLLER.mc.released_M();
 		
 		PLATFORMCONTROLLER.mc.pressed_M(new Point(21, 11));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(21, 9));
-		PLATFORMCONTROLLER.mc.released_M(false);
+		PLATFORMCONTROLLER.mc.released_M();
 		
 		PLATFORMCONTROLLER.mc.pressed_M(new Point(21, 9));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(44, 94));
-		PLATFORMCONTROLLER.mc.released_M(false);
+		PLATFORMCONTROLLER.mc.released_M();
 		
 		SwingUtilities.invokeAndWait(new Runnable() {
 			@Override
@@ -878,15 +878,15 @@ public class TestDragging {
 		
 		PLATFORMCONTROLLER.mc.pressed_M(new Point(18, 11));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(21, 11));
-		PLATFORMCONTROLLER.mc.released_M(false);
+		PLATFORMCONTROLLER.mc.released_M();
 		
 		PLATFORMCONTROLLER.mc.pressed_M(new Point(18, 10));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(21, 10));
-		PLATFORMCONTROLLER.mc.released_M(false);
+		PLATFORMCONTROLLER.mc.released_M();
 		
 		PLATFORMCONTROLLER.mc.pressed_M(new Point(21, 11));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(21, 9));
-		PLATFORMCONTROLLER.mc.released_M(false);
+		PLATFORMCONTROLLER.mc.released_M();
 		
 		SwingUtilities.invokeAndWait(new Runnable() {
 			@Override
@@ -947,7 +947,7 @@ public class TestDragging {
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(584, 449));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(584, 450));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(583, 442));
-		PLATFORMCONTROLLER.mc.released_M(false);
+		PLATFORMCONTROLLER.mc.released_M();
 		
 		SwingUtilities.invokeAndWait(new Runnable() {
 			@Override
@@ -964,20 +964,20 @@ public class TestDragging {
 
 		PLATFORMCONTROLLER.mc.pressed_M(new Point(84, 86));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(33, 97));
-		PLATFORMCONTROLLER.mc.released_M(false);
+		PLATFORMCONTROLLER.mc.released_M();
 		
 		PLATFORMCONTROLLER.mc.pressed_M(new Point(52, 8));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(30, 65));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(19, 22));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(77, 95));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(30, 64));
-		PLATFORMCONTROLLER.mc.released_M(false);
+		PLATFORMCONTROLLER.mc.released_M();
 
 		PLATFORMCONTROLLER.mc.pressed_M(new Point(29, 90));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(66, 99));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(11, 22));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(56, 85));
-		PLATFORMCONTROLLER.mc.released_M(false);
+		PLATFORMCONTROLLER.mc.released_M();
 		
 		SwingUtilities.invokeAndWait(new Runnable() {
 			@Override
@@ -993,15 +993,15 @@ public class TestDragging {
 
 		PLATFORMCONTROLLER.mc.pressed_M(new Point(30, 65));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(19, 22));
-		PLATFORMCONTROLLER.mc.released_M(false);
+		PLATFORMCONTROLLER.mc.released_M();
 
 		PLATFORMCONTROLLER.mc.pressed_M(new Point(66, 99));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(11, 22));
-		PLATFORMCONTROLLER.mc.released_M(false);
+		PLATFORMCONTROLLER.mc.released_M();
 		
 		PLATFORMCONTROLLER.mc.pressed_M(new Point(11, 22));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(56, 85));
-		PLATFORMCONTROLLER.mc.released_M(false);
+		PLATFORMCONTROLLER.mc.released_M();
 		
 		SwingUtilities.invokeAndWait(new Runnable() {
 			@Override
@@ -1019,11 +1019,11 @@ public class TestDragging {
 		PLATFORMCONTROLLER.mc.pressed_M(new Point(73, 26));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(43, 96));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(46, 49));
-		PLATFORMCONTROLLER.mc.released_M(false);
+		PLATFORMCONTROLLER.mc.released_M();
 
 		PLATFORMCONTROLLER.mc.pressed_M(new Point(45, 98));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(5, 19));
-		PLATFORMCONTROLLER.mc.released_M(false);
+		PLATFORMCONTROLLER.mc.released_M();
 		
 		SwingUtilities.invokeAndWait(new Runnable() {
 			@Override
@@ -1039,18 +1039,18 @@ public class TestDragging {
 		
 		PLATFORMCONTROLLER.mc.pressed_M(new Point(52, 8));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(30, 65));
-		PLATFORMCONTROLLER.mc.released_M(false);
+		PLATFORMCONTROLLER.mc.released_M();
 
 		PLATFORMCONTROLLER.mc.pressed_M(new Point(51, 35));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(34, 74));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(66, 99));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(11, 22));
-		PLATFORMCONTROLLER.mc.released_M(false);
+		PLATFORMCONTROLLER.mc.released_M();
 		
 		
 		PLATFORMCONTROLLER.mc.pressed_M(new Point(11, 22));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(56, 85));
-		PLATFORMCONTROLLER.mc.released_M(false);
+		PLATFORMCONTROLLER.mc.released_M();
 		
 		SwingUtilities.invokeAndWait(new Runnable() {
 			@Override
@@ -1091,15 +1091,15 @@ public class TestDragging {
 
 		PLATFORMCONTROLLER.mc.pressed_M(new Point(40, 19));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(43, 61));
-		PLATFORMCONTROLLER.mc.released_M(false);
+		PLATFORMCONTROLLER.mc.released_M();
 		
 		PLATFORMCONTROLLER.mc.pressed_M(new Point(99, 95));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(38, 31));
-		PLATFORMCONTROLLER.mc.released_M(false);
+		PLATFORMCONTROLLER.mc.released_M();
 
 		PLATFORMCONTROLLER.mc.pressed_M(new Point(40, 35));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(82, 8));
-		PLATFORMCONTROLLER.mc.released_M(false);
+		PLATFORMCONTROLLER.mc.released_M();
 		
 		SwingUtilities.invokeAndWait(new Runnable() {
 			@Override
@@ -1115,19 +1115,19 @@ public class TestDragging {
 
 		PLATFORMCONTROLLER.mc.pressed_M(new Point(351, 140));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(454, 11));
-		PLATFORMCONTROLLER.mc.released_M(false);
+		PLATFORMCONTROLLER.mc.released_M();
 		
 		PLATFORMCONTROLLER.mc.pressed_M(new Point(454, 11));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(436, 146));
-		PLATFORMCONTROLLER.mc.released_M(false);
+		PLATFORMCONTROLLER.mc.released_M();
 		
 		PLATFORMCONTROLLER.mc.pressed_M(new Point(389, 36));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(462, 273));
-		PLATFORMCONTROLLER.mc.released_M(false);
+		PLATFORMCONTROLLER.mc.released_M();
 		
 		PLATFORMCONTROLLER.mc.pressed_M(new Point(216, 161));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(491, 36));
-		PLATFORMCONTROLLER.mc.released_M(false);
+		PLATFORMCONTROLLER.mc.released_M();
 		
 		SwingUtilities.invokeAndWait(new Runnable() {
 			@Override
@@ -1177,11 +1177,11 @@ public class TestDragging {
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(185, 261));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(211, 398));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(118, 34));
-		PLATFORMCONTROLLER.mc.released_M(false);
+		PLATFORMCONTROLLER.mc.released_M();
 
 		PLATFORMCONTROLLER.mc.pressed_M(new Point(100, 216));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(262, 444));
-		PLATFORMCONTROLLER.mc.released_M(false);
+		PLATFORMCONTROLLER.mc.released_M();
 		
 		SwingUtilities.invokeAndWait(new Runnable() {
 			@Override
@@ -1239,7 +1239,7 @@ public class TestDragging {
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(225,210));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(225,210));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(230,205));
-		PLATFORMCONTROLLER.mc.released_M(true);
+		PLATFORMCONTROLLER.mc.released_M();
 		PLATFORMCONTROLLER.mc.pressed_M(new Point(95,655));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(95,655));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(95,655));
@@ -1262,7 +1262,7 @@ public class TestDragging {
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(240,635));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(240,635));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(240,635));
-		PLATFORMCONTROLLER.mc.released_M(true);
+		PLATFORMCONTROLLER.mc.released_M();
 		PLATFORMCONTROLLER.mc.pressed_M(new Point(245,640));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(245,640));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(245,640));
@@ -1283,7 +1283,7 @@ public class TestDragging {
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(330,615));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(330,615));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(335,615));
-		PLATFORMCONTROLLER.mc.released_M(true);
+		PLATFORMCONTROLLER.mc.released_M();
 		PLATFORMCONTROLLER.mc.pressed_M(new Point(230,555));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(235,545));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(235,530));
@@ -1300,7 +1300,7 @@ public class TestDragging {
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(300,410));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(305,410));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(305,410));
-		PLATFORMCONTROLLER.mc.released_M(true);
+		PLATFORMCONTROLLER.mc.released_M();
 		PLATFORMCONTROLLER.mc.pressed_M(new Point(320,420));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(320,420));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(320,420));
@@ -1320,7 +1320,7 @@ public class TestDragging {
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(360,240));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(365,235));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(365,235));
-		PLATFORMCONTROLLER.mc.released_M(true);
+		PLATFORMCONTROLLER.mc.released_M();
 		PLATFORMCONTROLLER.mc.pressed_M(new Point(240,195));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(240,195));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(240,195));
@@ -1341,7 +1341,7 @@ public class TestDragging {
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(310,85));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(315,85));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(315,85));
-		PLATFORMCONTROLLER.mc.released_M(true);
+		PLATFORMCONTROLLER.mc.released_M();
 		PLATFORMCONTROLLER.mc.pressed_M(new Point(190,80));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(190,80));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(205,80));
@@ -1362,7 +1362,7 @@ public class TestDragging {
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(315,85));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(320,85));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(320,85));
-		PLATFORMCONTROLLER.mc.released_M(true);
+		PLATFORMCONTROLLER.mc.released_M();
 		PLATFORMCONTROLLER.mc.pressed_M(new Point(385,220));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(385,220));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(385,220));
@@ -1396,7 +1396,7 @@ public class TestDragging {
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(240,280));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(240,280));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(240,285));
-		PLATFORMCONTROLLER.mc.released_M(true);
+		PLATFORMCONTROLLER.mc.released_M();
 		PLATFORMCONTROLLER.mc.pressed_M(new Point(140,460));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(140,460));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(150,450));
@@ -1429,7 +1429,7 @@ public class TestDragging {
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(250,310));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(250,305));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(250,305));
-		PLATFORMCONTROLLER.mc.released_M(true);
+		PLATFORMCONTROLLER.mc.released_M();
 		PLATFORMCONTROLLER.mc.pressed_M(new Point(195,80));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(195,80));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(195,80));
@@ -1487,7 +1487,7 @@ public class TestDragging {
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(85,550));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(90,550));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(90,550));
-		PLATFORMCONTROLLER.mc.released_M(true);
+		PLATFORMCONTROLLER.mc.released_M();
 		PLATFORMCONTROLLER.mc.pressed_M(new Point(100,655));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(100,655));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(100,645));
@@ -1511,7 +1511,7 @@ public class TestDragging {
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(90,570));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(90,570));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(90,570));
-		PLATFORMCONTROLLER.mc.released_M(true);
+		PLATFORMCONTROLLER.mc.released_M();
 		PLATFORMCONTROLLER.mc.pressed_M(new Point(245,565));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(245,565));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(250,570));
@@ -1532,7 +1532,7 @@ public class TestDragging {
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(325,600));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(330,600));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(330,605));
-		PLATFORMCONTROLLER.mc.released_M(true);
+		PLATFORMCONTROLLER.mc.released_M();
 		PLATFORMCONTROLLER.mc.pressed_M(new Point(390,510));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(385,500));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(380,495));
@@ -1564,7 +1564,7 @@ public class TestDragging {
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(60,290));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(60,290));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(60,290));
-		PLATFORMCONTROLLER.mc.released_M(true);
+		PLATFORMCONTROLLER.mc.released_M();
 
 
 		
@@ -1584,11 +1584,11 @@ public class TestDragging {
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(664, 568));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(664, 567));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(665, 567));
-		PLATFORMCONTROLLER.mc.released(false);
+		PLATFORMCONTROLLER.mc.released_M();
 		
 		PLATFORMCONTROLLER.mc.pressed_M(new Point(665, 567));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(661, 570));
-		PLATFORMCONTROLLER.mc.released_M(false);
+		PLATFORMCONTROLLER.mc.released_M();
 		
 		SwingUtilities.invokeAndWait(new Runnable() {
 			@Override
@@ -1607,11 +1607,11 @@ public class TestDragging {
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(58, 11));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(54, 11));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(54, 12));
-		PLATFORMCONTROLLER.mc.released_M(false);
+		PLATFORMCONTROLLER.mc.released_M();
 		
 		PLATFORMCONTROLLER.mc.pressed_M(new Point(54, 12));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(58, 11));
-		PLATFORMCONTROLLER.mc.released_M(false);
+		PLATFORMCONTROLLER.mc.released_M();
 		
 		SwingUtilities.invokeAndWait(new Runnable() {
 			@Override
@@ -1629,11 +1629,11 @@ public class TestDragging {
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(772, 467));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(772, 469));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(773, 465));
-		PLATFORMCONTROLLER.mc.released_M(false);
+		PLATFORMCONTROLLER.mc.released_M();
 		
 		PLATFORMCONTROLLER.mc.pressed_M(new Point(773, 465));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(775, 457));
-		PLATFORMCONTROLLER.mc.released_M(false);
+		PLATFORMCONTROLLER.mc.released_M();
 		
 		SwingUtilities.invokeAndWait(new Runnable() {
 			@Override
@@ -1653,11 +1653,11 @@ public class TestDragging {
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(775, 457));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(778, 449));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(798, 448));
-		PLATFORMCONTROLLER.mc.released_M(false);
+		PLATFORMCONTROLLER.mc.released_M();
 		
 		PLATFORMCONTROLLER.mc.pressed_M(new Point(798, 448));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(760, 460));
-		PLATFORMCONTROLLER.mc.released_M(false);
+		PLATFORMCONTROLLER.mc.released_M();
 		
 		SwingUtilities.invokeAndWait(new Runnable() {
 			@Override

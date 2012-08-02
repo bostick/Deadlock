@@ -12,6 +12,7 @@ import org.apache.log4j.Logger;
 
 import com.gutabi.core.Point;
 import com.gutabi.deadlock.core.controller.InputEvent;
+import static com.gutabi.deadlock.swing.Main.PLATFORMCONTROLLER;
 
 public class MouseController implements MouseListener, MouseMotionListener {
 	
@@ -26,15 +27,11 @@ public class MouseController implements MouseListener, MouseMotionListener {
 	}
 	
 	public void released() {
-		released(true);
-	}
-	
-	public void released(boolean massage) {
-		CONTROLLER.inputEnd(massage);
+		CONTROLLER.inputEnd();
 	}
 	
 	public void pressed_M(final Point p) throws InterruptedException, InvocationTargetException {
-		javax.swing.SwingUtilities.invokeAndWait(new Runnable() {
+		javax.swing.SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				pressed(p);
 			}
@@ -43,7 +40,7 @@ public class MouseController implements MouseListener, MouseMotionListener {
 	}
 	
 	public void dragged_M(final Point p) throws InterruptedException, InvocationTargetException {
-		javax.swing.SwingUtilities.invokeAndWait(new Runnable() {
+		javax.swing.SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				dragged(p);
 			}
@@ -52,13 +49,9 @@ public class MouseController implements MouseListener, MouseMotionListener {
 	}
 	
 	public void released_M() throws InterruptedException, InvocationTargetException {
-		released_M(false);
-	}
-	
-	public void released_M(final boolean massage) throws InterruptedException, InvocationTargetException {
-		javax.swing.SwingUtilities.invokeAndWait(new Runnable() {
+		javax.swing.SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
-				released(massage);
+				released();
 			}
 		});
 		PLATFORMVIEW.repaint();
@@ -66,8 +59,23 @@ public class MouseController implements MouseListener, MouseMotionListener {
 	
 	@Override
 	public void mousePressed(MouseEvent ev) {
-		pressed(new Point(ev.getX(), ev.getY()));
-		PLATFORMVIEW.repaint();
+		switch (PLATFORMCONTROLLER.mode) {
+		case IDLE:
+//			if () {
+//				PLATFORMCONTROLLER.mode = ControlMode.ZOOMING;
+//			} else {
+				//PLATFORMCONTROLLER.mode = ControlMode.DRAWING;
+				pressed(new Point(ev.getX(), ev.getY()));
+				PLATFORMVIEW.repaint();
+			//}
+			break;
+		case DRAWING:
+			assert false;
+			break;
+		case ZOOMING:
+			assert false;
+			break;
+		}
 	}
 	
 	@Override

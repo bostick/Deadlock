@@ -7,6 +7,8 @@ public class PlatformController {
 	public MouseController mc;
 	public KeyboardController kc;
 	
+	public ControlMode mode;
+	
 	public void init() {
 		
 		mc = new MouseController();
@@ -16,6 +18,8 @@ public class PlatformController {
 		PLATFORMVIEW.panel.addMouseListener(mc);
 		PLATFORMVIEW.panel.addMouseMotionListener(mc);
 		PLATFORMVIEW.panel.addKeyListener(kc);
+		
+		mode = ControlMode.IDLE;
 		
 	}
 	

@@ -22,13 +22,18 @@ public class Point {
 	
 	@Override
 	public boolean equals(Object p) {
-		if (this == p) {
-			return true;
-		} else if (!(p instanceof Point)) {
-			throw new IllegalArgumentException();
-		} else {
-			return (x == ((Point)p).x) && (y == ((Point)p).y);
-		}
+		throw new AssertionError();
+//		if (this == p) {
+//			return true;
+//		} else if (!(p instanceof Point)) {
+//			throw new IllegalArgumentException();
+//		} else {
+//			return (x == ((Point)p).x) && (y == ((Point)p).y);
+//		}
+	}
+	
+	public static boolean equals(Point a, Point b) {
+		return (a.x == b.x) && (a.y == b.y);
 	}
 	
 	@Override
@@ -42,20 +47,18 @@ public class Point {
 	}
 	
 	/**
+	 * does <a, b> intersect <c, d??
+	 * where?
 	 * 
-	 * @param a
-	 * @param b
-	 * @param c
-	 * @param d
 	 * @return intersection or null
 	 * @throws IllegalArgumentException
 	 * @throws OverlappingException
 	 */
 	public static DPoint intersection(Point a, Point b, Point c, Point d) throws OverlappingException {
-		if (a.equals(b)) {
+		if (Point.equals(a, b)) {
 			throw new IllegalArgumentException("a and b are equal");
 		}
-		if (c.equals(d)) {
+		if (Point.equals(c, d)) {
 			throw new IllegalArgumentException("c and d are equal");
 		}
 		int ydc = d.y - (c.y);
@@ -169,13 +172,13 @@ public class Point {
 	 * Does b intersect &lt;c, d> ?
 	 */
 	public static boolean intersect(Point b, Point c, Point d) {
-		if (b.equals(c)) {
+		if (Point.equals(b, c)) {
 			return true;
 		}
-		if (b.equals(d)) {
+		if (Point.equals(b, d)) {
 			return false;
 		}
-		if (c.equals(d)) {
+		if (Point.equals(c, d)) {
 			throw new IllegalArgumentException("c equals d");
 		}
 		int xbc = b.x - c.x;
@@ -196,13 +199,13 @@ public class Point {
 	 * Does b intersect &lt;c, d> ?
 	 */
 	public static boolean intersect(DPoint b, Point c, Point d) {
-		if (Point.equals(b, c)) {
+		if (Point.equalsD(b, c)) {
 			return true;
 		}
-		if (Point.equals(b, d)) {
+		if (Point.equalsD(b, d)) {
 			return false;
 		}	
-		if (c.equals(d)) {
+		if (Point.equals(c, d)) {
 			throw new IllegalArgumentException("c equals d");
 		}
 		double xbc = b.x - c.x;
@@ -225,13 +228,13 @@ public class Point {
 	 * throws exception if b is on the line, but outside of the segment <c, d>
 	 */
 	public static boolean colinear(Point c, Point b, Point d) throws ColinearException {
-		if (c.equals(b)) {
+		if (Point.equals(c, b)) {
 			return true;
 		}
-		if (b.equals(d)) {
+		if (Point.equals(b, d)) {
 			return true;
 		}
-		if (c.equals(d)) {
+		if (Point.equals(c, d)) {
 			throw new IllegalArgumentException("c equals d");
 		}
 		int xbc = b.x - (c.x);
@@ -259,10 +262,10 @@ public class Point {
 	 * throws exception if b is on the line, but outside of the segment <c, d>
 	 */
 	public static boolean colinear(Point c, DPoint b, Point d) throws ColinearException {
-		if (Point.equals(b, c)) {
+		if (Point.equalsD(b, c)) {
 			return true;
 		}
-		if (Point.equals(b, d)) {
+		if (Point.equalsD(b, d)) {
 			return true;
 		}
 		if (c.equals(d)) {
@@ -292,9 +295,9 @@ public class Point {
 	 */
 	public static double param(Point b, Point c, Point d) {
 		
-		if (b.equals(c)) {
+		if (Point.equals(b, c)) {
 			return 0.0;
-		} else if (b.equals(d)) {
+		} else if (Point.equals(b, d)) {
 			assert false;
 		}
 		
@@ -330,9 +333,9 @@ public class Point {
 	 */
 	public static double param(DPoint b, Point c, Point d) {
 		
-		if (Point.equals(b, c)) {
+		if (Point.equalsD(b, c)) {
 			return 0.0;
-		} else if (Point.equals(b, d)) {
+		} else if (Point.equalsD(b, d)) {
 			return 1.0;
 		}
 		
@@ -353,7 +356,7 @@ public class Point {
 		} else {
 			double ux = ((double)xbc) / ((double)xdc);
 			double uy = ((double)ybc) / ((double)ydc);
-			assert doubleEquals(ux, uy);
+			assert doubleEquals(ux, uy) : "being treated as uneqal: " + ux + " " + uy;
 			assert ux >= 0.0;
 			assert ux < 1.0;
 			return ux;
@@ -366,14 +369,30 @@ public class Point {
 	}
 	
 	public static boolean doubleEquals(double a, double b) {
-		return Math.abs(a - b) < 0.0001;
+		/*
+		 * 1.0E-12 seems to be fine for the math we do here
+		 * 1.0E-13 gives StackOverflowErrors when it is expecting some points to be equal
+		 */
+		return Math.abs(a - b) < 1.0E-12;
 	}
 	
-	public static boolean equals(DPoint a, Point b) {
+	public static boolean equalsD(DPoint a, Point b) {
 		return doubleEquals(a.x, b.x) && doubleEquals(a.y, b.y);
 	}
 	
 	public static Point add(Point a, Point b) {
 		return new Point(a.x + b.x, a.y + b.y);
+	}
+	
+	public static Point minus(Point a, Point b) {
+		return new Point(a.x - b.x, a.y - b.y);
+	}
+	
+	public Point add(Point b) {
+		return add(this, b);
+	}
+	
+	public Point minus(Point b) {
+		return minus(this, b);
 	}
 }

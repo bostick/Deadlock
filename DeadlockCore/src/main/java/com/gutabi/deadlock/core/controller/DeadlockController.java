@@ -17,12 +17,14 @@ public class DeadlockController {
 	public List<Point> curStrokeRaw = new ArrayList<Point>();
 	public List<List<Point>> allStrokes = new ArrayList<List<Point>>();
 	
+	public MassageStrategy strat;
+	
 	public void inputStart(InputEvent e) {
 		Point p;
 		p = e.getPoint();
 		//p = Point.add(p, VIEW.cameraUpperLeft);
-		p = new Point((int)(p.x * 1/VIEW.zoom), (int)(p.y * 1/VIEW.zoom));
-		p = Point.add(p, VIEW.cameraUpperLeft);
+		p = new Point((int)(p.x * 1/VIEW.getZoom()), (int)(p.y * 1/VIEW.getZoom()));
+		p = Point.add(p, VIEW.viewLoc);
 		
 		lastPointRaw = p;
 		curStrokeRaw.add(p);
@@ -34,10 +36,10 @@ public class DeadlockController {
 		Point p;
 		p = e.getPoint();
 		//p = Point.add(p, VIEW.cameraUpperLeft);
-		p = new Point((int)(p.x * 1/VIEW.zoom), (int)(p.y * 1/VIEW.zoom));
-		p = Point.add(p, VIEW.cameraUpperLeft);
+		p = new Point((int)(p.x * 1/VIEW.getZoom()), (int)(p.y * 1/VIEW.getZoom()));
+		p = Point.add(p, VIEW.viewLoc);
 		
-		if (!p.equals(lastPointRaw)) {
+		if (!Point.equals(p, lastPointRaw)) {
 			curStrokeRaw.add(p);
 			lastPointRaw = p;
 			allStrokes.get(allStrokes.size()-1).add(p);
@@ -45,13 +47,13 @@ public class DeadlockController {
 	}
 	
 	public void inputEnd() {
-		inputEnd(true);
-	}
-	
-	public void inputEnd(boolean massage) {
-		List<Point> curStroke;
-		if (massage) {
-			curStroke = massage(curStrokeRaw);
+		List<Point> curStroke = null;
+		if (strat != null) {
+			switch (strat) {
+			case STRATEGY1:
+				curStroke = massageStrategy1(curStrokeRaw);
+				break;
+			}
 		} else {
 			curStroke = curStrokeRaw;
 		}
@@ -63,25 +65,11 @@ public class DeadlockController {
 		curStrokeRaw.clear();
 	}
 	
-	private List<Point> massage(List<Point> raw) {
+	/*
+	 * only adjust to closest vertices
+	 */
+	private List<Point> massageStrategy1(List<Point> raw) {
 		
-		/*
-		 * maybe 1. cut-off rest of points if angle is too sharp
-		 * maybe 2. cut-off rest of points if too close to 
-		 * 
-		 * 1. adjust for first point to be on a vertex, if close enough
-		 * 2. adjust for second point, etc.
-		 * 
-		 * 3. if first point is not on vertex, adjust for first vertex to be on edge, if close enough
-		 * 4. if second point is not on vertex, adjust for second vertex to be on edge, if close enough
-		 * 
-		 * 
-		 * scan endpoints of raw first
-		 * scan over vertices first since the user will probably be trying to hit vertices more than just edges
-		 * 
-		 */
-		
-		//List<Point> diff = new ArrayList<Point>(raw.size());
 		List<Point> adj = new ArrayList<Point>(raw);
 		
 		if (adj.size() == 1) {
@@ -95,11 +83,11 @@ public class DeadlockController {
 		/*
 		 * first and last have to be very close
 		 */
-		if ((!last.equals(first)) && Point.dist(last, first) * VIEW.zoom <= 20.0) {
+		if ((!Point.equals(last, first)) && Point.dist(last, first) * VIEW.getZoom() <= 20.0) {
 			/*
 			 * maintain invariant that there are no contiguous, equal points
 			 */
-			if (!raw.get(s-2).equals(first)) {
+			if (!Point.equals(raw.get(s-2), first)) {
 				adj.set(s-1, first);
 				last = first;
 			} else {
@@ -115,7 +103,7 @@ public class DeadlockController {
 			
 			Point vp = v.getPoint();
 			
-			if ((!first.equals(vp)) && Point.dist(first, vp) * VIEW.zoom <= 40.0) {
+			if ((!Point.equals(first, vp)) && Point.dist(first, vp) * VIEW.getZoom() <= 40.0) {
 				if (firstBest == null) {
 					firstBest = v;
 				} else if (Point.dist(first, vp) < Point.dist(first, firstBest.getPoint())) {
@@ -130,7 +118,7 @@ public class DeadlockController {
 			if (adj.size() == 1) {
 				adj.set(0, firstBest.getPoint());
 			} else {
-				if (!adj.get(1).equals(firstBest.getPoint())) {
+				if (!Point.equals(adj.get(1), firstBest.getPoint())) {
 					adj.set(0, firstBest.getPoint());
 					first = adj.get(0);
 				} else {
@@ -148,7 +136,7 @@ public class DeadlockController {
 			
 			Point vp = v.getPoint();
 			
-			if ((!last.equals(vp)) && Point.dist(last, vp) * VIEW.zoom <= 40.0) {
+			if ((!Point.equals(last, vp)) && Point.dist(last, vp) * VIEW.getZoom() <= 40.0) {
 				if (lastBest == null) {
 					lastBest = v;
 				} else if (Point.dist(last, vp) < Point.dist(last, lastBest.getPoint())) {
@@ -165,7 +153,7 @@ public class DeadlockController {
 			if (adj.size() == 1) {
 				adj.set(s-1, lastBest.getPoint());
 			} else {
-				if (!adj.get(s-2).equals(lastBest.getPoint())) {
+				if (!Point.equals(adj.get(s-2), lastBest.getPoint())) {
 					adj.set(s-1, lastBest.getPoint());
 					last = adj.get(s-1);
 				} else {

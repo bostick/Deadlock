@@ -95,11 +95,11 @@ public class TestSimpleGraphs {
 		PLATFORMCONTROLLER.mc.pressed_M(new Point(0, 0));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(2, 3));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(1, 0));
-		PLATFORMCONTROLLER.mc.released_M(false);
+		PLATFORMCONTROLLER.mc.released_M();
 
 		PLATFORMCONTROLLER.mc.pressed_M(new Point(3, 0));
 		PLATFORMCONTROLLER.mc.dragged_M(new Point(0, 2));
-		PLATFORMCONTROLLER.mc.released_M(false);
+		PLATFORMCONTROLLER.mc.released_M();
 		
 		SwingUtilities.invokeAndWait(new Runnable() {
 			@Override
