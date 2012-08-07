@@ -10,10 +10,10 @@ import android.graphics.Paint;
 import android.graphics.RectF;
 import android.util.AttributeSet;
 
+import com.gutabi.core.DPoint;
 import com.gutabi.core.Edge;
 import com.gutabi.core.Point;
 import com.gutabi.core.Vertex;
-import com.gutabi.deadlock.android.controller.TouchController;
 
 public class PlatformView extends android.view.View {
 	
@@ -49,13 +49,13 @@ public class PlatformView extends android.view.View {
 		}
 		
 		for (int i = 0; i < CONTROLLER.curStrokeRaw.size()-1; i++) {
-			Point a = CONTROLLER.curStrokeRaw.get(i);
-			Point b = CONTROLLER.curStrokeRaw.get(i+1);
-			canvas.drawLine(a.x, a.y, b.x, b.y, tracePaint);
+			DPoint a = CONTROLLER.curStrokeRaw.get(i);
+			DPoint b = CONTROLLER.curStrokeRaw.get(i+1);
+			canvas.drawLine((int)a.x, (int)a.y, (int)b.x, (int)b.y, tracePaint);
 		}
 		
 		if (CONTROLLER.lastPointRaw != null) {
-			canvas.drawOval(new RectF(CONTROLLER.lastPointRaw.x-5, CONTROLLER.lastPointRaw.y-5, CONTROLLER.lastPointRaw.x+5, CONTROLLER.lastPointRaw.y+5), touchPaint);
+			canvas.drawOval(new RectF((float)CONTROLLER.lastPointRaw.x-5, (float)CONTROLLER.lastPointRaw.y-5, (float)CONTROLLER.lastPointRaw.x+5, (float)CONTROLLER.lastPointRaw.y+5), touchPaint);
 		}
 		
 	}

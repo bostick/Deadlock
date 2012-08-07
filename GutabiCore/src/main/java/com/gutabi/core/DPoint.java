@@ -21,6 +21,10 @@ public class DPoint {
 		s = "<" + x + ", " + y + ">";
 	}
 	
+	public DPoint(Point a) {
+		this(a.x, a.y);
+	}
+	
 	public static boolean equals(DPoint a, DPoint b) {
 		return Point.doubleEquals(a.x, b.x) && Point.doubleEquals(a.y, b.y);
 	}
@@ -40,4 +44,13 @@ public class DPoint {
 		return s;
 	}
 	
+	public Point toPoint() {
+		if (x != Math.round(x)) {
+			throw new IllegalArgumentException();
+		}
+		if (y != Math.round(y)) {
+			throw new IllegalArgumentException();
+		}
+		return new Point((int)Math.round(x), (int)Math.round(y));
+	}
 }

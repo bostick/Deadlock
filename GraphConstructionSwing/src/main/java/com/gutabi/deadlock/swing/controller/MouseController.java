@@ -1,6 +1,7 @@
 package com.gutabi.deadlock.swing.controller;
 
 import static com.gutabi.deadlock.core.controller.DeadlockController.CONTROLLER;
+import static com.gutabi.deadlock.swing.Main.PLATFORMCONTROLLER;
 import static com.gutabi.deadlock.swing.Main.PLATFORMVIEW;
 
 import java.awt.event.MouseEvent;
@@ -10,19 +11,18 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.apache.log4j.Logger;
 
-import com.gutabi.core.Point;
+import com.gutabi.core.DPoint;
 import com.gutabi.deadlock.core.controller.InputEvent;
-import static com.gutabi.deadlock.swing.Main.PLATFORMCONTROLLER;
 
 public class MouseController implements MouseListener, MouseMotionListener {
 	
 	static Logger logger = Logger.getLogger("deadlock");
 		
-	public void pressed(Point p) {
+	public void pressed(DPoint p) {
 		CONTROLLER.inputStart(new InputEvent(p));
 	}
 	
-	public void dragged(Point p) {
+	public void dragged(DPoint p) {
 		CONTROLLER.inputMove(new InputEvent(p));
 	}
 	
@@ -30,7 +30,7 @@ public class MouseController implements MouseListener, MouseMotionListener {
 		CONTROLLER.inputEnd();
 	}
 	
-	public void pressed_M(final Point p) throws InterruptedException, InvocationTargetException {
+	public void pressed_M(final DPoint p) throws InterruptedException, InvocationTargetException {
 		javax.swing.SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				pressed(p);
@@ -39,7 +39,7 @@ public class MouseController implements MouseListener, MouseMotionListener {
 		PLATFORMVIEW.repaint();
 	}
 	
-	public void dragged_M(final Point p) throws InterruptedException, InvocationTargetException {
+	public void dragged_M(final DPoint p) throws InterruptedException, InvocationTargetException {
 		javax.swing.SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				dragged(p);
@@ -65,7 +65,7 @@ public class MouseController implements MouseListener, MouseMotionListener {
 //				PLATFORMCONTROLLER.mode = ControlMode.ZOOMING;
 //			} else {
 				//PLATFORMCONTROLLER.mode = ControlMode.DRAWING;
-				pressed(new Point(ev.getX(), ev.getY()));
+				pressed(new DPoint(ev.getX(), ev.getY()));
 				PLATFORMVIEW.repaint();
 			//}
 			break;
@@ -80,7 +80,7 @@ public class MouseController implements MouseListener, MouseMotionListener {
 	
 	@Override
 	public void mouseDragged(MouseEvent ev) {
-		dragged(new Point(ev.getX(), ev.getY()));
+		dragged(new DPoint(ev.getX(), ev.getY()));
 		PLATFORMVIEW.repaint();
 	}
 	

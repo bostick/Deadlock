@@ -16,6 +16,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.gutabi.core.DPoint;
 import com.gutabi.core.Edge;
 import com.gutabi.core.Point;
 import com.gutabi.core.Vertex;
@@ -92,13 +93,13 @@ public class TestSimpleGraphs {
 	@Test
 	public void test1() throws Exception {
 
-		PLATFORMCONTROLLER.mc.pressed_M(new Point(0, 0));
-		PLATFORMCONTROLLER.mc.dragged_M(new Point(2, 3));
-		PLATFORMCONTROLLER.mc.dragged_M(new Point(1, 0));
+		PLATFORMCONTROLLER.mc.pressed_M(new DPoint(0, 0));
+		PLATFORMCONTROLLER.mc.dragged_M(new DPoint(2, 3));
+		PLATFORMCONTROLLER.mc.dragged_M(new DPoint(1, 0));
 		PLATFORMCONTROLLER.mc.released_M();
 
-		PLATFORMCONTROLLER.mc.pressed_M(new Point(3, 0));
-		PLATFORMCONTROLLER.mc.dragged_M(new Point(0, 2));
+		PLATFORMCONTROLLER.mc.pressed_M(new DPoint(3, 0));
+		PLATFORMCONTROLLER.mc.dragged_M(new DPoint(0, 2));
 		PLATFORMCONTROLLER.mc.released_M();
 		
 		SwingUtilities.invokeAndWait(new Runnable() {

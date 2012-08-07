@@ -4,6 +4,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.Test;
 
 import com.gutabi.core.DPoint;
@@ -40,5 +43,20 @@ public class TestPoints {
 			
 		}
 	}
-
+	
+	int called = 0;
+	List<Integer> listOfInts() {
+		called++;
+		return new ArrayList<Integer>(){{add(1);add(2);}};
+	}
+	
+	@Test
+	public void testForLoop() {
+		
+		for (Integer i : listOfInts()) {
+			
+		}
+		
+		assertEquals(1, called);
+	}
 }

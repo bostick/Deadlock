@@ -9,10 +9,12 @@ import javax.swing.UnsupportedLookAndFeelException;
 
 import org.apache.log4j.Logger;
 
+import com.gutabi.deadlock.core.controller.DeadlockController;
 import com.gutabi.deadlock.core.view.DeadlockView;
 import com.gutabi.deadlock.swing.controller.PlatformController;
 import com.gutabi.deadlock.swing.view.PlatformView;
 import com.gutabi.deadlock.swing.view.PlatformWindow;
+import static com.gutabi.deadlock.core.controller.DeadlockController.CONTROLLER;
 
 public class Main  {
 	
@@ -26,6 +28,7 @@ public class Main  {
 		PLATFORMVIEW = new PlatformView();
 		PLATFORMCONTROLLER = new PlatformController();
 		VIEW = new DeadlockView(new PlatformWindow(), new PlatformLogger(DeadlockView.class));
+		CONTROLLER = new DeadlockController(new PlatformLogger(DeadlockController.class));
 		
 		PLATFORMVIEW.init();
 		PLATFORMCONTROLLER.init();

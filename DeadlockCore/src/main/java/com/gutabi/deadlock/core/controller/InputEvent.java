@@ -1,16 +1,16 @@
 package com.gutabi.deadlock.core.controller;
 
-import com.gutabi.core.Point;
+import com.gutabi.core.DPoint;
 
 public class InputEvent {
 	
-	private Point p;
+	private DPoint p;
 	
-	public InputEvent(Point p) {
+	public InputEvent(DPoint p) {
 		this.p = p;
 	}
 	
-	public Point getPoint() {
+	public DPoint getDPoint() {
 		return p;
 	}
 	

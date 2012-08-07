@@ -1,5 +1,6 @@
 package com.gutabi.deadlock.swing;
 
+import static com.gutabi.deadlock.core.controller.DeadlockController.CONTROLLER;
 import static com.gutabi.deadlock.core.model.DeadlockModel.MODEL;
 import static com.gutabi.deadlock.swing.Main.PLATFORMCONTROLLER;
 import static com.gutabi.deadlock.swing.Main.PLATFORMVIEW;
@@ -14,9 +15,8 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.gutabi.core.DPoint;
 import com.gutabi.core.Edge;
-import com.gutabi.core.Point;
-import static com.gutabi.deadlock.core.controller.DeadlockController.CONTROLLER;
 
 public class TestDraggingFuzz {
 	
@@ -60,10 +60,10 @@ public class TestDraggingFuzz {
 		return 1.0 + (int)(Math.random() * (100.0 - 1.0));
 	}
 	
-	Point randomPoint() {
+	DPoint randomPoint() {
 		int x = 0 + (int)(Math.random() * ((100 - 0) + 1));
 		int y = 0 + (int)(Math.random() * ((100 - 0) + 1));
-		return new Point(x, y);
+		return new DPoint(x, y);
 	}
 	
 	@Test
@@ -81,14 +81,14 @@ public class TestDraggingFuzz {
 				
 				int n = randomInt();
 				
-				Point p = randomPoint();
+				DPoint p = randomPoint();
 				PLATFORMCONTROLLER.mc.pressed_M(p);
 				PLATFORMVIEW.repaint();
 				
 				for (int i = 0; i < n; i++) {
 					double rad = randomRadian();
 					double d = randomDist();
-					p = new Point((int)(Math.cos(rad) * d) + p.x, (int)(Math.sin(rad) * d) + p.y);
+					p = new DPoint((int)(Math.cos(rad) * d) + p.x, (int)(Math.sin(rad) * d) + p.y);
 					PLATFORMCONTROLLER.mc.dragged_M(p);
 					PLATFORMVIEW.repaint();
 				}

@@ -14,6 +14,7 @@ import javax.swing.JPanel;
 
 import org.apache.log4j.Logger;
 
+import com.gutabi.core.DPoint;
 import com.gutabi.core.Edge;
 import com.gutabi.core.Point;
 import com.gutabi.core.Vertex;
@@ -45,12 +46,14 @@ public class DeadlockPanel extends JPanel {
 		//g2.scale(VIEW.zoom, VIEW.zoom);
 		
 		for (Edge e : MODEL.graph.getEdges()) {
-			paintEdge(e, g2);
+			paintEdge1(e, g2);
 		}
 		for (Vertex v : MODEL.graph.getVertices()) {
 			paintVertex(v, g2);
 		}
-		
+		for (Edge e : MODEL.graph.getEdges()) {
+			paintEdge2(e, g2);
+		}
 		g2.setColor(Color.RED);
 //		for (int i = 0; i < CONTROLLER.curStrokeRaw.size()-1; i++) {
 //			Point a = CONTROLLER.curStrokeRaw.get(i);
@@ -61,15 +64,17 @@ public class DeadlockPanel extends JPanel {
 		int[] xPoints = new int[size];
 		int[] yPoints = new int[size];
 		for (int i = 0; i < size; i++) {
-			Point p = CONTROLLER.curStrokeRaw.get(i);
-			xPoints[i] = p.x;
-			yPoints[i] = p.y;
+			DPoint p = CONTROLLER.curStrokeRaw.get(i);
+			xPoints[i] = (int)p.x;
+			yPoints[i] = (int)p.y;
 		}
-		g.drawPolyline(xPoints, yPoints, size);
+		//g.setColor(new Color(0x88, 0x88, 0x88, 0xff));
+		g2.setStroke(new Road1Stroke());
+		g2.drawPolyline(xPoints, yPoints, size);
 		
 		g2.setColor(Color.RED);
 		if (CONTROLLER.lastPointRaw != null) {
-			g2.fillOval(CONTROLLER.lastPointRaw.x-1, CONTROLLER.lastPointRaw.y-1, 2, 2);
+			g2.fillOval((int)(CONTROLLER.lastPointRaw.x-5), (int)(CONTROLLER.lastPointRaw.y-5), 10, 10);
 			//g2.fillRect(CONTROLLER.lastPointRaw.x, CONTROLLER.lastPointRaw.y, 1, 1);
 		}
 		
@@ -105,7 +110,7 @@ public class DeadlockPanel extends JPanel {
 
 	}
 	
-	private static void paintEdge(Edge e, Graphics2D g) {
+	private static void paintEdge1(Edge e, Graphics2D g) {
 //		for (int i = 0; i < e.size()-1; i++) {
 //			Point prev = e.getPoint(i);
 //			Point cur = e.getPoint(i+1);
@@ -124,17 +129,49 @@ public class DeadlockPanel extends JPanel {
 		g.setStroke(new Road1Stroke());
 		g.drawPolyline(xPoints, yPoints, size);
 		
+//		g.setColor(Color.YELLOW);
+//		g.setStroke(new Road2Stroke());
+//		g.drawPolyline(xPoints, yPoints, size);
+	}
+	
+	private static void paintEdge2(Edge e, Graphics2D g) {
+//		for (int i = 0; i < e.size()-1; i++) {
+//			Point prev = e.getPoint(i);
+//			Point cur = e.getPoint(i+1);
+//			//canvas.drawLine(prev.x, prev.y, cur.x, cur.y, paint1);
+//			g.drawLine(prev.x, prev.y, cur.x, cur.y);
+//		}
+		int size = e.size();
+		int[] xPoints = new int[size];
+		int[] yPoints = new int[size];
+		for (int i = 0; i < size; i++) {
+			Point p = e.getPoint(i);
+			xPoints[i] = p.x;
+			yPoints[i] = p.y;
+		}
+//		g.setColor(new Color(0x88, 0x88, 0x88, 0xff));
+//		g.setStroke(new Road1Stroke());
+//		g.drawPolyline(xPoints, yPoints, size);
+		
 		g.setColor(Color.YELLOW);
 		g.setStroke(new Road2Stroke());
 		g.drawPolyline(xPoints, yPoints, size);
 	}
 	
 	public static void paintVertex(Vertex v, Graphics2D g) {
-		g.setColor(Color.GREEN);
 		Point p = v.getPoint();
-		//g.fillOval(p.x-3, p.y-3, 6, 6);
-		g.fillOval(p.x-1, p.y-1, 2, 2);
-		//g.fillRect(p.x, p.y, 1, 1);
+		g.setColor(new Color(0x44, 0x4, 0x4, 0xff));
+		g.fillOval(p.x-5, p.y-5, 10, 10);
+		
+//		for (Edge e : v.getEdges()) {
+//			if (e.getStart() == v) {
+//				
+//				
+//			} else {
+//				assert e.getEnd() == v;
+//				
+//			}
+//		}
 	}
 	
 }

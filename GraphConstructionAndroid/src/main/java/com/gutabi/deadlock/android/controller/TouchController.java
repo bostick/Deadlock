@@ -6,7 +6,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
-import com.gutabi.core.Point;
+import com.gutabi.core.DPoint;
 import com.gutabi.deadlock.core.controller.InputEvent;
 
 public class TouchController implements View.OnTouchListener {
@@ -18,12 +18,12 @@ public class TouchController implements View.OnTouchListener {
 		switch (event.getAction()) {
 		case MotionEvent.ACTION_DOWN:
 			Log.d("touch", "DOWN <"+x+","+y+">");
-			CONTROLLER.inputStart(new InputEvent(new Point(Math.round(x), Math.round(y))));
+			CONTROLLER.inputStart(new InputEvent(new DPoint(Math.round(x), Math.round(y))));
 			PLATFORMVIEW.invalidate();
 			break;
 		case MotionEvent.ACTION_MOVE:
 			Log.d("touch", "MOVE <"+x+","+y+">");
-			CONTROLLER.inputMove(new InputEvent(new Point(Math.round(x), Math.round(y))));
+			CONTROLLER.inputMove(new InputEvent(new DPoint(Math.round(x), Math.round(y))));
 			PLATFORMVIEW.invalidate();
 			break;
 		case MotionEvent.ACTION_UP:

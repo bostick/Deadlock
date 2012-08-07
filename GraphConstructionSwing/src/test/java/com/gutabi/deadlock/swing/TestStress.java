@@ -10,8 +10,8 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.gutabi.core.DPoint;
 import com.gutabi.core.Edge;
-import com.gutabi.core.Point;
 import com.gutabi.deadlock.swing.controller.PlatformController;
 import com.gutabi.deadlock.swing.view.PlatformView;
 
@@ -52,10 +52,10 @@ public class TestStress {
 		return 0 + (int)(Math.random() * ((20 - 0) + 1));
 	}
 	
-	Point randomPoint() {
+	DPoint randomPoint() {
 		int x = 0 + (int)(Math.random() * ((500 - 0) + 1));
 		int y = 0 + (int)(Math.random() * ((500 - 0) + 1));
-		return new Point(x, y);
+		return new DPoint(x, y);
 	}
 	
 	@Test
@@ -65,7 +65,7 @@ public class TestStress {
 		
 		for (int ii = 0; ii < m; ii++) {
 			
-			Point p = randomPoint();
+			DPoint p = randomPoint();
 			PLATFORMCONTROLLER.mc.pressed(p);
 			
 			for (int i = 0; i < 20; i++) {

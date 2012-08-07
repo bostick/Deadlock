@@ -20,6 +20,21 @@ public class Point {
 		s = "<" + x + ", " + y + ">";
 	}
 	
+//	public Point(DPoint a) {
+//		
+//		int x = (int)Math.round(a.x);
+//		int y = (int)Math.round(a.y);
+//		
+//		if (x != a.x) {
+//			
+//		}
+//		if (y != a.y) {
+//			
+//		}
+//		
+//		this(x, y);
+//	}
+	
 	@Override
 	public boolean equals(Object p) {
 		throw new AssertionError();
@@ -46,55 +61,59 @@ public class Point {
 		return s;
 	}
 	
+	public static DPoint intersection(Point a, Point b, Point c, Point d) throws OverlappingException {
+		return intersection(new DPoint(a), new DPoint(b), new DPoint(c), new DPoint(d));
+	}
+	
 	/**
-	 * does <a, b> intersect <c, d??
+	 * does <a, b> intersect <c, d>?
 	 * where?
 	 * 
 	 * @return intersection or null
 	 * @throws IllegalArgumentException
 	 * @throws OverlappingException
 	 */
-	public static DPoint intersection(Point a, Point b, Point c, Point d) throws OverlappingException {
-		if (Point.equals(a, b)) {
+	public static DPoint intersection(DPoint a, DPoint b, DPoint c, DPoint d) throws OverlappingException {
+		if (DPoint.equals(a, b)) {
 			throw new IllegalArgumentException("a and b are equal");
 		}
-		if (Point.equals(c, d)) {
+		if (DPoint.equals(c, d)) {
 			throw new IllegalArgumentException("c and d are equal");
 		}
-		int ydc = d.y - (c.y);
-		int xba = b.x - (a.x);
-		int xdc = d.x - (c.x);
-		int yba = b.y - (a.y);
-		int yac = a.y - (c.y);
-		int xac = a.x - (c.x);
-		int denom = (xba * (ydc)) - (xdc * (yba));
-		int uabn = (xdc * (yac)) - (xac * (ydc));
-		int ucdn = (xba * (yac)) - (xac * (yba));
-		if (denom == 0) {
-			if (uabn == 0 && ucdn == 0) {
+		double ydc = d.y - c.y;
+		double xba = b.x - a.x;
+		double xdc = d.x - c.x;
+		double yba = b.y - a.y;
+		double yac = a.y - c.y;
+		double xac = a.x - c.x;
+		double denom = xba * ydc - xdc * yba;
+		double uabn = xdc * yac - xac * ydc;
+		double ucdn = xba * yac - xac * yba;
+		if (Point.doubleEquals(denom, 0.0)) {
+			if (Point.doubleEquals(uabn, 0.0) && Point.doubleEquals(ucdn, 0.0)) {
 				//colinear but not overlapping, single point, overlapping, or identical
 				
 				double cu;
-				if (xba != 0) {
-					cu = ((double)(c.x - (a.x))) / ((double)(xba));
-					if (yba != 0) {
-						assert cu == ((double)((c.y - (a.y))) / ((double)(yba)));
+				if (!Point.doubleEquals(xba, 0.0)) {
+					cu = (c.x - a.x) / xba;
+					if (!Point.doubleEquals(yba, 0.0)) {
+						assert cu == (c.y - a.y) / yba;
 					}
 				} else {
-					cu = ((double)(c.y - (a.y))) / ((double)(yba));
+					cu = (c.y - a.y) / yba;
 				}
 				
 				double du;
-				if (xba != 0) {
-					du = ((double)(d.x - (a.x))) / ((double)(xba));
-					if (yba != 0) {
-						assert du == ((double)((d.y - (a.y))) / ((double)(yba)));
+				if (!Point.doubleEquals(xba, 0.0)) {
+					du = (d.x - a.x) / xba;
+					if (!Point.doubleEquals(yba, 0.0)) {
+						assert du == (d.y - a.y) / yba;
 					}
 				} else {
-					du = ((double)(d.y - (a.y))) / ((double)(yba));
+					du = (d.y - a.y) / yba;
 				}
 				
-				if (du < (cu)) {
+				if (du < cu) {
 					double tmp = cu;
 					cu = du;
 					du = tmp;
@@ -105,7 +124,7 @@ public class Point {
 					return null;
 				} else if (Point.doubleEquals(du, 0.0)) {
 					//single point
-					return new DPoint(a.x, a.y);
+					return a;
 				} else if (du > 0.0 && du < 1.0) {
 					if (cu < 0.0) {
 						throw new OverlappingException();
@@ -132,7 +151,7 @@ public class Point {
 						throw new OverlappingException();
 					} else if (Point.doubleEquals(cu, 1.0)) {
 						// single point
-						return new DPoint(b.x, b.y);
+						return b;
 					} else {
 						//colinear but not intersecting
 						return null;
@@ -145,13 +164,24 @@ public class Point {
 			}
 		} else {
 			// skew
-			double uab = ((double)uabn) / ((double)(denom));
-			double ucd = ((double)ucdn) / ((double)(denom));
-			if ((uab >= 0.0 && uab <= 1.0 && (ucd >= 0.0 && ucd <= 1.0))) {
-				// intersecting
-				double x = a.x + (uab * (xba));
-				double y = a.y + (uab * (yba));
-				return new DPoint(x, y);
+			double uab = uabn / denom;
+			double ucd = ucdn / denom;
+			if (0.0 <= uab && uab <= 1.0) {
+				if (Point.doubleEquals(ucd,  0.0)) {
+					// intersecting
+					return c;
+				} else if (Point.doubleEquals(ucd,  1.0)) {
+					// intersecting
+					return d;
+				} else if (0.0 < ucd && ucd < 1.0) {
+					// intersecting
+					double x = a.x + (uab * (xba));
+					double y = a.y + (uab * (yba));
+					return new DPoint(x, y);
+				} else {
+					// not intersecting
+					return null;
+				}
 			} else {
 				// not intersecting
 				return null;
@@ -164,57 +194,71 @@ public class Point {
 	 */
 	public static DPoint point(Point a, Point b, double param) {
 		assert param >= 0.0;
-		assert param < 1.0;
-		return new DPoint(a.x + (param * (b.x - (a.x))), a.y + (param * (b.y - (a.y))));
+		assert param <= 1.0;
+		return new DPoint(a.x + param * (b.x - a.x), a.y + param * (b.y - a.y));
 	}
 	
 	/**
 	 * Does b intersect &lt;c, d> ?
 	 */
 	public static boolean intersect(Point b, Point c, Point d) {
-		if (Point.equals(b, c)) {
-			return true;
-		}
-		if (Point.equals(b, d)) {
-			return false;
-		}
-		if (Point.equals(c, d)) {
-			throw new IllegalArgumentException("c equals d");
-		}
-		int xbc = b.x - c.x;
-		int xdc = d.x - c.x;
-		int ybc = b.y - c.y;
-		int ydc = d.y - c.y;
-		int denom = xdc * xdc + ydc * ydc;
-		assert denom != 0;
-		double u = ((double)(xbc * xdc + ybc * ydc)) / ((double)denom);
-		if (u >= 0.0 && u < 1.0) {
-			return Point.doubleEquals(xbc, u * xdc) && Point.doubleEquals(ybc, u * ydc);
-		} else {
-			return false;
-		}
+		return intersect(new DPoint(b), new DPoint(c), new DPoint(d));
 	}
 	
 	/**
 	 * Does b intersect &lt;c, d> ?
 	 */
 	public static boolean intersect(DPoint b, Point c, Point d) {
-		if (Point.equalsD(b, c)) {
+		return intersect(b, new DPoint(c), new DPoint(d));
+	}
+	
+	/**
+	 * Does b intersect &lt;c, d> ?
+	 */
+//	public static boolean intersect(Point b, DPoint c, DPoint d) {
+//		if (Point.equalsD(c, b)) {
+//			return true;
+//		}
+//		if (Point.equalsD(d, b)) {
+//			return false;
+//		}
+//		if (DPoint.equals(c, d)) {
+//			throw new IllegalArgumentException("c equals d");
+//		}
+//		double xbc = b.x - c.x;
+//		double xdc = d.x - c.x;
+//		double ybc = b.y - c.y;
+//		double ydc = d.y - c.y;
+//		double denom = xdc * xdc + ydc * ydc;
+//		assert !Point.doubleEquals(denom, 0.0);
+//		double u = ((double)(xbc * xdc + ybc * ydc)) / ((double)denom);
+//		if (u >= 0.0 && u < 1.0) {
+//			return Point.doubleEquals(xbc, u * xdc) && Point.doubleEquals(ybc, u * ydc);
+//		} else {
+//			return false;
+//		}
+//	}
+	
+	/**
+	 * Does b intersect &lt;c, d> ?
+	 */
+	public static boolean intersect(DPoint b, DPoint c, DPoint d) {
+		if (DPoint.equals(b, c)) {
 			return true;
 		}
-		if (Point.equalsD(b, d)) {
+		if (DPoint.equals(b, d)) {
 			return false;
 		}	
-		if (Point.equals(c, d)) {
+		if (DPoint.equals(c, d)) {
 			throw new IllegalArgumentException("c equals d");
 		}
 		double xbc = b.x - c.x;
-		int xdc = d.x - c.x;
+		double xdc = d.x - c.x;
 		double ybc = b.y - c.y;
-		int ydc = d.y - c.y;
-		int denom = xdc * xdc + ydc * ydc;
-		assert denom != 0;
-		double u = ((double)(xbc * xdc + ybc * ydc)) / ((double)denom);
+		double ydc = d.y - c.y;
+		double denom = xdc * xdc + ydc * ydc;
+		assert !doubleEquals(denom, 0.0);
+		double u = (xbc * xdc + ybc * ydc) / denom;
 		if (u >= 0.0 && u < 1.0) {	
 			return Point.doubleEquals(xbc, u * xdc) && Point.doubleEquals(ybc, u * ydc);
 		} else {
@@ -290,65 +334,86 @@ public class Point {
 		}
 	}
 	
+//	/**
+//	 * assuming it is, return param for point b on line defined by &lt;c, d>
+//	 */
+//	public static double param(DPoint b, Point c, Point d) {
+//		
+//		if (Point.equals(b, c)) {
+//			return 0.0;
+//		} else if (Point.equals(b, d)) {
+//			assert false;
+//		}
+//		
+//		int xbc = b.x - (c.x);
+//		int xdc = d.x - (c.x);
+//		int ybc = b.y - (c.y);
+//		int ydc = d.y - (c.y);
+//		if (xdc == 0) {
+//			assert xbc == 0;
+//			double uy = ((double)ybc) / ((double)ydc);
+//			assert uy >= 0.0;
+//			assert uy < 1.0;
+//			return uy;
+//		} else if (ydc == 0) {
+//			assert ybc == 0;
+//			double ux = ((double)xbc) / ((double)xdc);
+//			assert ux >= 0.0;
+//			assert ux < 1.0;
+//			return ux;
+//		} else {
+//			double ux = ((double)xbc) / ((double)xdc);
+//			double uy = ((double)ybc) / ((double)ydc);
+//			assert ux == (uy);
+//			assert ux >= 0.0;
+//			assert ux < 1.0;
+//			return ux;
+//		}
+//		
+//	}
+	
 	/**
 	 * assuming it is, return param for point b on line defined by &lt;c, d>
 	 */
 	public static double param(Point b, Point c, Point d) {
-		
-		if (Point.equals(b, c)) {
-			return 0.0;
-		} else if (Point.equals(b, d)) {
-			assert false;
-		}
-		
-		int xbc = b.x - (c.x);
-		int xdc = d.x - (c.x);
-		int ybc = b.y - (c.y);
-		int ydc = d.y - (c.y);
-		if (xdc == 0) {
-			assert xbc == 0;
-			double uy = ((double)ybc) / ((double)ydc);
-			assert uy >= 0.0;
-			assert uy < 1.0;
-			return uy;
-		} else if (ydc == 0) {
-			assert ybc == 0;
-			double ux = ((double)xbc) / ((double)xdc);
-			assert ux >= 0.0;
-			assert ux < 1.0;
-			return ux;
-		} else {
-			double ux = ((double)xbc) / ((double)xdc);
-			double uy = ((double)ybc) / ((double)ydc);
-			assert ux == (uy);
-			assert ux >= 0.0;
-			assert ux < 1.0;
-			return ux;
-		}
-		
+		return param(new DPoint(b), new DPoint(c), new DPoint(d));
 	}
 	
 	/**
 	 * assuming it is, return param for point b on line defined by &lt;c, d>
 	 */
 	public static double param(DPoint b, Point c, Point d) {
+		return param(b, new DPoint(c), new DPoint(d));
+	}
+	
+	/**
+	 * assuming it is, return param for point b on line defined by &lt;c, d>
+	 */
+	public static double param(Point b, DPoint c, DPoint d) {
+		return param(new DPoint(b), c, d);
+	}
+	
+	/**
+	 * assuming it is, return param for point b on line defined by &lt;c, d>
+	 */
+	public static double param(DPoint b, DPoint c, DPoint d) {
 		
-		if (Point.equalsD(b, c)) {
+		if (DPoint.equals(b, c)) {
 			return 0.0;
-		} else if (Point.equalsD(b, d)) {
+		} else if (DPoint.equals(b, d)) {
 			return 1.0;
 		}
 		
 		double xbc = b.x - (c.x);
-		int xdc = d.x - (c.x);
+		double xdc = d.x - (c.x);
 		double ybc = b.y - (c.y);
-		int ydc = d.y - (c.y);
-		if (xdc == 0) {
+		double ydc = d.y - (c.y);
+		if (Point.doubleEquals(xdc, 0.0)) {
 			assert doubleEquals(xbc, 0);
 			double uy = ((double)ybc) / ((double)ydc);
 			assert uy < 1.0;
 			return uy;
-		} else if (ydc == 0) {
+		} else if (Point.doubleEquals(ydc, 0.0)) {
 			assert doubleEquals(ybc, 0);
 			double ux = ((double)xbc) / ((double)xdc);
 			assert ux < 1.0;
@@ -368,6 +433,14 @@ public class Point {
 		return Math.hypot(a.x - b.x, a.y - b.y);
 	}
 	
+	public static double dist(Point a, DPoint b) {
+		return Math.hypot(a.x - b.x, a.y - b.y);
+	}
+	
+	public static double dist(DPoint a, DPoint b) {
+		return Math.hypot(a.x - b.x, a.y - b.y);
+	}
+	
 	public static boolean doubleEquals(double a, double b) {
 		/*
 		 * 1.0E-12 seems to be fine for the math we do here
@@ -384,6 +457,10 @@ public class Point {
 		return new Point(a.x + b.x, a.y + b.y);
 	}
 	
+	public static DPoint add(DPoint a, Point b) {
+		return new DPoint(a.x + b.x, a.y + b.y);
+	}
+	
 	public static Point minus(Point a, Point b) {
 		return new Point(a.x - b.x, a.y - b.y);
 	}
@@ -395,4 +472,5 @@ public class Point {
 	public Point minus(Point b) {
 		return minus(this, b);
 	}
+	
 }
