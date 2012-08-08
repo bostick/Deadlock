@@ -61,6 +61,10 @@ public class Point {
 		return s;
 	}
 	
+	public DPoint toDPoint() {
+		return new DPoint(x, y);
+	}
+	
 	public static DPoint intersection(Point a, Point b, Point c, Point d) throws OverlappingException {
 		return intersection(new DPoint(a), new DPoint(b), new DPoint(c), new DPoint(d));
 	}
@@ -440,6 +444,11 @@ public class Point {
 	public static double dist(DPoint a, DPoint b) {
 		return Math.hypot(a.x - b.x, a.y - b.y);
 	}
+	
+	public static double dist(DPoint a, Point b) {
+		return Math.hypot(a.x - b.x, a.y - b.y);
+	}
+	
 	
 	public static boolean doubleEquals(double a, double b) {
 		/*

@@ -9,7 +9,7 @@ import android.view.Window;
 
 import com.gutabi.deadlock.android.controller.PlatformController;
 import com.gutabi.deadlock.android.view.PlatformView;
-import com.gutabi.deadlock.android.view.PlatformWindow;
+import com.gutabi.deadlock.android.view.PlatformWindowInfo;
 import com.gutabi.deadlock.core.view.DeadlockView;
 
 public class MainActivity extends Activity {
@@ -27,7 +27,7 @@ public class MainActivity extends Activity {
 		
 		PLATFORMVIEW = (PlatformView) findViewById(R.id.deadlock);
 		PLATFORMCONTROLLER = new PlatformController();
-		VIEW = new DeadlockView(new PlatformWindow(), new PlatformLogger());
+		VIEW = new DeadlockView(new PlatformWindowInfo());
 		
 		PLATFORMVIEW.init();
 		PLATFORMCONTROLLER.init();

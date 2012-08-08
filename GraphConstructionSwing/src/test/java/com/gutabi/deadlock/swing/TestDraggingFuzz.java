@@ -2,6 +2,7 @@ package com.gutabi.deadlock.swing;
 
 import static com.gutabi.deadlock.core.controller.DeadlockController.CONTROLLER;
 import static com.gutabi.deadlock.core.model.DeadlockModel.MODEL;
+import static com.gutabi.deadlock.core.view.DeadlockView.VIEW;
 import static com.gutabi.deadlock.swing.Main.PLATFORMCONTROLLER;
 import static com.gutabi.deadlock.swing.Main.PLATFORMVIEW;
 
@@ -17,15 +18,29 @@ import org.junit.Test;
 
 import com.gutabi.core.DPoint;
 import com.gutabi.core.Edge;
+import com.gutabi.deadlock.core.controller.DeadlockController;
+import com.gutabi.deadlock.core.controller.MassageStrategy;
+import com.gutabi.deadlock.core.view.DeadlockView;
+import com.gutabi.deadlock.swing.controller.PlatformController;
+import com.gutabi.deadlock.swing.view.PlatformView;
+import com.gutabi.deadlock.swing.view.SwingWindowInfo;
 
 public class TestDraggingFuzz {
 	
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 		
-		PLATFORMVIEW.init();
+		PLATFORMVIEW = new PlatformView();
+		PLATFORMCONTROLLER = new PlatformController();
+		VIEW = new DeadlockView(new SwingWindowInfo());
+		CONTROLLER = new DeadlockController();
 		
+		PLATFORMVIEW.init();
 		PLATFORMCONTROLLER.init();
+		
+//		VIEW.window = new PlatformWindow();
+//		VIEW.logger = new PlatformLogger(VIEW.getClass());
+		VIEW.init();
 		
 		PLATFORMVIEW.frame.setVisible(true);
 		PLATFORMVIEW.panel.requestFocusInWindow();
@@ -38,6 +53,9 @@ public class TestDraggingFuzz {
 
 	@Before
 	public void setUp() throws Exception {
+		
+		CONTROLLER.strat = MassageStrategy.NONE;
+		
 	}
 
 	@After

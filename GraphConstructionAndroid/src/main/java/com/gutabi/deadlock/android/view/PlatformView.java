@@ -41,10 +41,10 @@ public class PlatformView extends android.view.View {
 		canvas.scale((float)VIEW.getZoom(), (float)VIEW.getZoom());
 		canvas.translate((float)-VIEW.viewLoc.x, (float)-VIEW.viewLoc.y);
 		
-		for (Edge e : MODEL.graph.getEdges()) {
+		for (Edge e : MODEL.getEdges()) {
 			paintEdge(e, canvas, rPaint1, rPaint2);
 		}
-		for (Vertex v : MODEL.graph.getVertices()) {
+		for (Vertex v : MODEL.getVertices()) {
 			paintVertex(v, canvas, interPaint);
 		}
 		

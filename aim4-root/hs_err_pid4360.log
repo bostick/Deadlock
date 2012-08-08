@@ -1,0 +1,103 @@
+#
+# There is insufficient memory for the Java Runtime Environment to continue.
+# Native memory allocation (malloc) failed to allocate 262160 bytes for Chunk::new
+# Possible reasons:
+#   The system is out of physical RAM or swap space
+#   In 32 bit mode, the process size limit was hit
+# Possible solutions:
+#   Reduce memory load on the system
+#   Increase physical memory or swap space
+#   Check if swap backing store is full
+#   Use 64 bit Java on a 64 bit OS
+#   Decrease Java heap size (-Xmx/-Xms)
+#   Decrease number of Java threads
+#   Decrease Java thread stack sizes (-Xss)
+#   Set larger code cache with -XX:ReservedCodeCacheSize=
+# This output file may be truncated or incomplete.
+#
+#  Out of Memory Error (allocation.cpp:317), pid=4360, tid=388
+#
+# JRE version: 6.0_30-b12
+# Java VM: Java HotSpot(TM) 64-Bit Server VM (20.5-b03 mixed mode windows-amd64 compressed oops)
+
+---------------  T H R E A D  ---------------
+
+Current thread (0x0000000000628800):  JavaThread "C2 CompilerThread0" daemon [_thread_in_native, id=388, stack(0x0000000006650000,0x0000000006750000)]
+
+Stack: [0x0000000006650000,0x0000000006750000]
+
+Current CompileTask:
+C2:  21539   1%     aim4.im.RoadBasedTrackModel.calculateLaneConflicts()V @ 252 (408 bytes)
+
+
+---------------  P R O C E S S  ---------------
+
+Java Threads: ( => current thread )
+  0x000000000a590800 JavaThread "D3D Screen Updater" daemon [_thread_blocked, id=1568, stack(0x000000000b660000,0x000000000b760000)]
+  0x00000000006db800 JavaThread "DestroyJavaVM" [_thread_blocked, id=3532, stack(0x0000000002510000,0x0000000002610000)]
+  0x00000000063d8000 JavaThread "AWT-EventQueue-0" [_thread_in_native, id=6016, stack(0x000000000a1c0000,0x000000000a2c0000)]
+  0x00000000063b1000 JavaThread "AWT-Windows" daemon [_thread_in_native, id=5616, stack(0x0000000006e90000,0x0000000006f90000)]
+  0x00000000063b0000 JavaThread "AWT-Shutdown" [_thread_blocked, id=2096, stack(0x0000000006d90000,0x0000000006e90000)]
+  0x000000000631c800 JavaThread "Java2D Disposer" daemon [_thread_blocked, id=1724, stack(0x0000000006c90000,0x0000000006d90000)]
+  0x000000000629a000 JavaThread "Low Memory Detector" daemon [_thread_blocked, id=5908, stack(0x0000000006850000,0x0000000006950000)]
+  0x000000000062f800 JavaThread "C2 CompilerThread1" daemon [_thread_in_native, id=5664, stack(0x0000000006750000,0x0000000006850000)]
+=>0x0000000000628800 JavaThread "C2 CompilerThread0" daemon [_thread_in_native, id=388, stack(0x0000000006650000,0x0000000006750000)]
+  0x0000000000625800 JavaThread "Attach Listener" daemon [_thread_blocked, id=968, stack(0x0000000006550000,0x0000000006650000)]
+  0x0000000006290800 JavaThread "Signal Dispatcher" daemon [_thread_blocked, id=4248, stack(0x0000000006450000,0x0000000006550000)]
+  0x000000000060b000 JavaThread "Finalizer" daemon [_thread_blocked, id=2736, stack(0x0000000006150000,0x0000000006250000)]
+  0x0000000000607800 JavaThread "Reference Handler" daemon [_thread_blocked, id=2528, stack(0x0000000006050000,0x0000000006150000)]
+
+Other Threads:
+  0x0000000000601000 VMThread [stack: 0x0000000005f50000,0x0000000006050000] [id=5004]
+  0x000000000629b000 WatcherThread [stack: 0x0000000006950000,0x0000000006a50000] [id=3528]
+
+VM state:not at safepoint (normal execution)
+
+VM Mutex/Monitor currently owned by a thread: None
+
+Heap
+ PSYoungGen      total 17920K, used 9763K [0x00000000ec000000, 0x00000000ed3f0000, 0x0000000100000000)
+  eden space 15424K, 63% used [0x00000000ec000000,0x00000000ec988ee8,0x00000000ecf10000)
+  from space 2496K, 0% used [0x00000000ecf10000,0x00000000ecf10000,0x00000000ed180000)
+  to   space 2496K, 0% used [0x00000000ed180000,0x00000000ed180000,0x00000000ed3f0000)
+ PSOldGen        total 40960K, used 2400K [0x00000000c4000000, 0x00000000c6800000, 0x00000000ec000000)
+  object space 40960K, 5% used [0x00000000c4000000,0x00000000c4258100,0x00000000c6800000)
+ PSPermGen       total 28032K, used 14350K [0x00000000bee00000, 0x00000000c0960000, 0x00000000c4000000)
+  object space 28032K, 51% used [0x00000000bee00000,0x00000000bfc03a88,0x00000000c0960000)
+
+Code Cache  [0x0000000002610000, 0x0000000002880000, 0x0000000005610000)
+ total_blobs=577 nmethods=128 adapters=402 free_code_cache=49483520 largest_free_block=39232
+
+Dynamic libraries:
+0x0000000000400000 - 0x000000000042f000 	C:\Program Files\Java\jre6\bin\javaw.exe
+0x0000000077270000 - 0x0000000077419000 	C:\Windows\SYSTEM32\ntdll.dll
+0x0000000076e40000 - 0x0000000076f5f000 	C:\Windows\system32\kernel32.dll
+0x000007fefd780000 - 0x000007fefd7ec000 	C:\Windows\system32\KERNELBASE.dll
+0x000007fefe0a0000 - 0x000007fefe17b000 	C:\Windows\system32\ADVAPI32.dll
+0x000007fefdce0000 - 0x000007fefdd7f000 	C:\Windows\system32\msvcrt.dll
+0x000007feff560000 - 0x000007feff57f000 	C:\Windows\SYSTEM32\sechost.dll
+0x000007fefe180000 - 0x000007fefe2ad000 	C:\Windows\system32\RPCRT4.dll
+0x0000000077170000 - 0x000000007726a000 	C:\Windows\system32\USER32.dll
+0x000007fefe030000 - 0x000007fefe097000 	C:\Windows\system32\GDI32.dll
+0x000007fefe640000 - 0x000007fefe64e000 	C:\Windows\system32\LPK.dll
+0x000007feff490000 - 0x000007feff559000 	C:\Windows\system32\USP10.dll
+0x000007fefd5a0000 - 0x000007fefd5f7000 	C:\Windows\system32\apphelp.dll
+0x000007fefb390000 - 0x000007fefb3e1000 	C:\Windows\AppPatch\AppPatch64\AcGenral.DLL
+0x000007fefd560000 - 0x000007fefd585000 	C:\Windows\system32\SspiCli.dll
+0x000007fefe5c0000 - 0x000007fefe631000 	C:\Windows\system32\SHLWAPI.dll
+0x000007fefdd80000 - 0x000007fefdf83000 	C:\Windows\system32\ole32.dll
+0x000007fefe700000 - 0x000007feff488000 	C:\Windows\system32\SHELL32.dll
+0x00000000725c0000 - 0x00000000725c3000 	C:\Windows\system32\sfc.dll
+0x000007fef87e0000 - 0x000007fef87f0000 	C:\Windows\system32\sfc_os.DLL
+0x000007fefc9d0000 - 0x000007fefc9ee000 	C:\Windows\system32\USERENV.dll
+0x000007fefd6d0000 - 0x000007fefd6df000 	C:\Windows\system32\profapi.dll
+0x000007fefb9c0000 - 0x000007fefb9d8000 	C:\Windows\system32\dwmapi.dll
+0x000007fef9870000 - 0x000007fef9888000 	C:\Windows\system32\MPR.dll
+0x000007fefe590000 - 0x000007fefe5be000 	C:\Windows\system32\IMM32.DLL
+0x000007fefdb80000 - 0x000007fefdc89000 	C:\Windows\system32\MSCTF.dll
+0x000000006d800000 - 0x000000006dfb8000 	C:\Program Files\Java\jre6\bin\server\jvm.dll
+0x000007fefa870000 - 0x000007fefa8ab000 	C:\Windows\system32\WINMM.dll
+0x000000006d770000 - 0x000000006d77e000 	C:\Program Files\Java\jre6\bin\verify.dll
+0x000000006d3b0000 - 0x000000006d3d7000 	C:\Program Files\Java\jre6\bin\java.dll
+0x000000006d7c0000 - 0x000000006d7d2000 	C:\Program Files\Java\jre6\bin\zip.dll
+0x000000006d000000 - 0x000000006d1c4000 	C:\Program Files\Java\jre6\bin\awt.dll

@@ -1,5 +1,7 @@
 package com.gutabi.deadlock.swing;
 
+import static com.gutabi.deadlock.core.LoggerFactory.LOGGERFACTORY;
+import static com.gutabi.deadlock.core.controller.DeadlockController.CONTROLLER;
 import static com.gutabi.deadlock.core.view.DeadlockView.VIEW;
 
 import java.io.IOException;
@@ -13,8 +15,7 @@ import com.gutabi.deadlock.core.controller.DeadlockController;
 import com.gutabi.deadlock.core.view.DeadlockView;
 import com.gutabi.deadlock.swing.controller.PlatformController;
 import com.gutabi.deadlock.swing.view.PlatformView;
-import com.gutabi.deadlock.swing.view.PlatformWindow;
-import static com.gutabi.deadlock.core.controller.DeadlockController.CONTROLLER;
+import com.gutabi.deadlock.swing.view.SwingWindowInfo;
 
 public class Main  {
 	
@@ -25,10 +26,12 @@ public class Main  {
 	
 	static void createAndShowGUI(String[] args) throws Exception {
 		
+		LOGGERFACTORY = new PlatformLoggerFactory();
+		
 		PLATFORMVIEW = new PlatformView();
 		PLATFORMCONTROLLER = new PlatformController();
-		VIEW = new DeadlockView(new PlatformWindow(), new PlatformLogger(DeadlockView.class));
-		CONTROLLER = new DeadlockController(new PlatformLogger(DeadlockController.class));
+		VIEW = new DeadlockView(new SwingWindowInfo());
+		CONTROLLER = new DeadlockController();
 		
 		PLATFORMVIEW.init();
 		PLATFORMCONTROLLER.init();

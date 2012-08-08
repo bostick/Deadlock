@@ -27,7 +27,7 @@ import com.gutabi.deadlock.core.controller.MassageStrategy;
 import com.gutabi.deadlock.core.view.DeadlockView;
 import com.gutabi.deadlock.swing.controller.PlatformController;
 import com.gutabi.deadlock.swing.view.PlatformView;
-import com.gutabi.deadlock.swing.view.PlatformWindow;
+import com.gutabi.deadlock.swing.view.SwingWindowInfo;
 
 public class TestDragging {
 	
@@ -36,8 +36,8 @@ public class TestDragging {
 		
 		PLATFORMVIEW = new PlatformView();
 		PLATFORMCONTROLLER = new PlatformController();
-		VIEW = new DeadlockView(new PlatformWindow(), new PlatformLogger(DeadlockView.class));
-		CONTROLLER = new DeadlockController(new PlatformLogger(DeadlockController.class));
+		VIEW = new DeadlockView(new SwingWindowInfo());
+		CONTROLLER = new DeadlockController();
 		
 		PLATFORMVIEW.init();
 		PLATFORMCONTROLLER.init();
@@ -65,7 +65,7 @@ public class TestDragging {
 	@After
 	public void tearDown() throws Exception {
 		
-		assertTrue(MODEL.graph.checkConsistency());
+		assertTrue(MODEL.checkConsistency());
 		
 		MODEL.clear();
 	}
@@ -85,7 +85,7 @@ public class TestDragging {
 		SwingUtilities.invokeAndWait(new Runnable() {
 			@Override
 			public void run() {
-				edges = MODEL.graph.getEdges();
+				edges = MODEL.getEdges();
 			}
 		});
 		
@@ -108,7 +108,7 @@ public class TestDragging {
 		SwingUtilities.invokeAndWait(new Runnable() {
 			@Override
 			public void run() {
-				edges = MODEL.graph.getEdges();
+				edges = MODEL.getEdges();
 			}
 		});
 		 
@@ -1709,11 +1709,11 @@ public class TestDragging {
 		});
 		
 		Point a = new Point(3, 5);
-		List<SegmentIndex> in = MODEL.graph.getSegmentTree().findAllSegments(a);
+		List<SegmentIndex> in = MODEL.findAllSegments(a);
 		
 		assertEquals(1, in.size());
 		
-		assertTrue(MODEL.graph.checkConsistency());
+		assertTrue(MODEL.checkConsistency());
 	}
 	
 	@Test

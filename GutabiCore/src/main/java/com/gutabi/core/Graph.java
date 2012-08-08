@@ -9,11 +9,18 @@ import java.util.TreeSet;
 
 import com.gutabi.core.QuadTree.SegmentIndex;
 
+
 public class Graph {
 	
-	private ArrayList<Edge> edges = new ArrayList<Edge>();
-	private ArrayList<Vertex> vertices = new ArrayList<Vertex>();
-	private QuadTree segTree = new QuadTree();
+	private final ArrayList<Edge> edges = new ArrayList<Edge>();
+	private final ArrayList<Vertex> vertices = new ArrayList<Vertex>();
+	private final QuadTree segTree = new QuadTree();
+	
+	private final VertexHandler h;
+	
+	public Graph(VertexHandler h) {
+		this.h = h;
+	}
 	
 	public List<Edge> getEdges() {
 		return edges;
@@ -30,6 +37,7 @@ public class Graph {
 	public void clear() {
 		edges.clear();
 		vertices.clear();
+		segTree.clear();
 	}
 	
 	public Edge createEdge(Vertex start, Vertex end, Point... points) {
@@ -46,10 +54,12 @@ public class Graph {
 	public Vertex createVertex(Point p) {
 		Vertex v = new Vertex(p);
 		vertices.add(v);
+		h.vertexCreated(v);
 		return v;
 	}
 	
 	public void removeVertex(Vertex v) {
+		h.vertexRemoved(v);
 		v.remove();
 		vertices.remove(v);
 	}
@@ -70,7 +80,6 @@ public class Graph {
 				return new IntersectionInfo(e, in.index, Point.param(b, c, d));
 			}
 		}
-		//}
 		for (Vertex v : getVertices()) {
 			Point d = v.getPoint();
 			if (Point.equals(b, d) && v.getEdges().size() > 1) {
@@ -81,20 +90,15 @@ public class Graph {
 	}
 	
 	public IntersectionInfo tryFindEdgeInfoD(DPoint b) {
-		//for (Edge e : getEdges()) {
 		for (SegmentIndex in : segTree.findAllSegments(b, b)) {
 			Edge e = in.edge;
 			int i = in.index;
 			Point c = e.getPoint(i);
 			Point d = e.getPoint(i+1);
 			if (Point.intersect(b, c, d)) {
-//					if ((e.getStart() != null && e.getEnd() != null) && (Point.equals(b, e.getStart().getPoint()) || Point.equals(b, e.getEnd().getPoint()))) {
-//						throw new IllegalArgumentException("point is on vertex and for some reason it is not a vertex");
-//					}
 				return new IntersectionInfo(e, i, Point.param(b, c, d));
 			}
 		}
-		//}
 		for (Vertex v : getVertices()) {
 			Point d = v.getPoint();
 			if (Point.doubleEquals(b.x, d.x) && Point.doubleEquals(b.y, d.y)) {
@@ -159,7 +163,6 @@ public class Graph {
 	}
 	
 	public void processStroke(DPoint a, DPoint b) {
-		System.out.println("start adding stroke " + a + " " + b);
 		try {
 			
 			assert !DPoint.equals(a, b);
@@ -178,15 +181,13 @@ public class Graph {
 			Point bInt = new Point((int)b.x, (int)b.y);
 			
 			if (betweenABPoints.size() == 2 && Point.equalsD(a, aInt) && Point.equalsD(b, bInt)) {
-				System.out.println("proces stroke " + a + " " + b + " addSegment");
 				addSegment(aInt, bInt);
 			} else {
-				System.out.println("process stroke " + a + " " + b + " iterate");
 				iterateBetweenPoints(betweenABPoints);
 			}
 			
 		} finally {
-			System.out.println("done adding stroke " + a + " " + b);
+			
 		}
 	}
 	
@@ -199,7 +200,7 @@ public class Graph {
 			DPoint d = new DPoint(e.getPoint(i+1));
 			try {
 				DPoint inter = Point.intersection(a, b, c, d);
-				if (inter != null) { // && !DPoint.equals(inter, b)) {
+				if (inter != null) {
 					PointToBeAdded nptba = new PointToBeAdded(inter, Point.param(inter, a, b));
 					betweenABPoints.add(nptba);
 				}
@@ -254,8 +255,6 @@ public class Graph {
 	}
 	
 	private void iterateBetweenPoints(SortedSet<PointToBeAdded> betweenABPoints) {
-		
-		System.out.println("start iterating between points: " + betweenABPoints);
 		
 		Object[] betweenArray = betweenABPoints.toArray();
 		
@@ -319,13 +318,10 @@ public class Graph {
 			
 		}
 		
-		
-		System.out.println("done iterating between points: " + betweenABPoints);
-		
 	}
 	
 	public void addSegment(Point a, Point b) {
-		System.out.println("start add: " + a + " " + b);
+		
 		try {
 			
 			assert !Point.equals(a, b);
@@ -392,7 +388,7 @@ public class Graph {
 			}
 			
 		} finally {
-			System.out.println("done add: " + a + " " + b);
+			
 		}
 	}
 	
@@ -607,7 +603,7 @@ public class Graph {
 	 * return Vertex at split point
 	 */
 	public void adjustToGrid(DPoint p) {
-		System.out.println("start adjusting " + p);
+		
 		try {
 			
 			IntersectionInfo info = tryFindEdgeInfoD(p);
@@ -656,7 +652,7 @@ public class Graph {
 			}
 			
 		} finally {
-			System.out.println("done adjusting " + p);
+			
 		}
 		
 	}
@@ -1203,7 +1199,6 @@ public class Graph {
 	 */
 	public void removeSegment(Point a, Point b) {
 		
-		System.out.println("start remove: " + a + " " + b);
 		try {
 			
 			SegmentIndex info = segTree.findSegment(a, b);
@@ -1323,7 +1318,7 @@ public class Graph {
 			}
 			
 		} finally {
-			System.out.println("done remove: " + a + " " + b);
+			
 		}
 		
 	}

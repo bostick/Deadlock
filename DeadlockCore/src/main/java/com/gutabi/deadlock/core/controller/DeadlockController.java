@@ -1,5 +1,6 @@
 package com.gutabi.deadlock.core.controller;
 
+import static com.gutabi.deadlock.core.LoggerFactory.LOGGERFACTORY;
 import static com.gutabi.deadlock.core.model.DeadlockModel.MODEL;
 import static com.gutabi.deadlock.core.view.DeadlockView.VIEW;
 
@@ -22,16 +23,15 @@ public class DeadlockController {
 	
 	public MassageStrategy strat = MassageStrategy.CURRENT;
 	
-	Logger logger;
+	Logger logger = LOGGERFACTORY.getLogger(DeadlockController.class);
 	
-	public DeadlockController(Logger l) {
-		this.logger = l;
+	public DeadlockController() {
+		
 	}
 	
 	public void inputStart(InputEvent e) {
 		DPoint p;
 		p = e.getDPoint();
-		//p = Point.add(p, VIEW.cameraUpperLeft);
 		p = new DPoint((int)(p.x * 1/VIEW.getZoom()), (int)(p.y * 1/VIEW.getZoom()));
 		p = Point.add(p, VIEW.viewLoc);
 		
@@ -44,7 +44,6 @@ public class DeadlockController {
 	public void inputMove(InputEvent e) {
 		DPoint p;
 		p = e.getDPoint();
-		//p = Point.add(p, VIEW.cameraUpperLeft);
 		p = new DPoint((int)(p.x * 1/VIEW.getZoom()), (int)(p.y * 1/VIEW.getZoom()));
 		p = Point.add(p, VIEW.viewLoc);
 		
@@ -73,9 +72,9 @@ public class DeadlockController {
 			curStroke = curStrokeRaw;
 		}
 		for (int i = 0; i < curStroke.size()-1; i++) {
-			MODEL.graph.processStroke(curStroke.get(i), curStroke.get(i+1));
+			MODEL.processStroke(curStroke.get(i), curStroke.get(i+1));
 		}
-		assert MODEL.graph.checkConsistency();
+		assert MODEL.checkConsistency();
 		lastPointRaw = null;
 		curStrokeRaw.clear();
 	}
@@ -114,18 +113,9 @@ public class DeadlockController {
 		
 		DPoint firstBest = null;
 		
-		for (Vertex v : MODEL.graph.getVertices()) {
-			
-			DPoint vp = new DPoint(v.getPoint());
-			
-			if ((!DPoint.equals(first, vp)) && Point.dist(first, vp) * VIEW.getZoom() <= 40.0) {
-				if (firstBest == null) {
-					firstBest = vp;
-				} else if (Point.dist(first, vp) < Point.dist(first, firstBest)) {
-					firstBest = vp;
-				}
-			}
-			
+		Vertex firstClosest = MODEL.findClosestVertex(first);
+		if (firstClosest != null && Point.dist(first, firstClosest.getPoint()) * VIEW.getZoom() <= 40.0) {
+			firstBest = firstClosest.getPoint().toDPoint();
 		}
 		
 		if (firstBest != null) {
@@ -147,17 +137,9 @@ public class DeadlockController {
 		
 		DPoint lastBest = null;
 		
-		for (Vertex v : MODEL.graph.getVertices()) {
-			
-			DPoint vp = new DPoint(v.getPoint());
-			
-			if ((!DPoint.equals(last, vp)) && Point.dist(last, vp) * VIEW.getZoom() <= 40.0) {
-				if (lastBest == null) {
-					lastBest = vp;
-				} else if (Point.dist(last, vp) < Point.dist(last, lastBest)) {
-					lastBest = vp;
-				}
-			}
+		Vertex lastClosest = MODEL.findClosestVertex(last);
+		if (lastClosest != null && Point.dist(last, lastClosest.getPoint()) * VIEW.getZoom() <= 40.0) {
+			lastBest = lastClosest.getPoint().toDPoint();
 		}
 		
 		/*
@@ -184,6 +166,20 @@ public class DeadlockController {
 	}
 	
 	private List<DPoint> massageCurrent(List<DPoint> raw) {
+		
+		List<DPoint> m = raw;
+		m = connectEndsToVerticesOrEdges(m);
+		//m = mergeIntersectingOrCloseSegments(m);
+//		if (approximate shape like line, circle, etc) {
+//			m = massage into shape
+//		} else {
+//			m = smooth points
+//		}
+		return m;
+		
+	}
+	
+	private List<DPoint> connectEndsToVerticesOrEdges(List<DPoint> raw) {
 		
 		List<DPoint> adj = new ArrayList<DPoint>(raw);
 		
@@ -216,25 +212,16 @@ public class DeadlockController {
 		
 		DPoint firstBest = null;
 		
-		for (Vertex v : MODEL.graph.getVertices()) {
-			
-			DPoint vp = new DPoint(v.getPoint());
-			
-			if ((!DPoint.equals(first, vp)) && Point.dist(first, vp) <= 10.0) {
-				if (firstBest == null) {
-					firstBest = vp;
-				} else if (Point.dist(first, vp) < Point.dist(first, firstBest)) {
-					firstBest = vp;
-				}
-			}
-			
+		Vertex firstClosest = MODEL.findClosestVertex(first);
+		if (firstClosest != null && Point.dist(first, firstClosest.getPoint()) <= 10.0) {
+			firstBest = firstClosest.getPoint().toDPoint();
 		}
 		
 		if (firstBest == null) {
 			/*
 			 * the point doesn't necessarily have to exist yet, it could be between 2 other points
 			 */
-			IntersectionInfo closest = MODEL.graph.getSegmentTree().findClosestSegment(first);
+			IntersectionInfo closest = MODEL.findClosestSegment(first);
 			if (closest != null && Point.dist(first, closest.point) <= 10.0) {
 				firstBest = closest.point;
 			}
@@ -259,24 +246,16 @@ public class DeadlockController {
 		
 		DPoint lastBest = null;
 		
-		for (Vertex v : MODEL.graph.getVertices()) {
-			
-			DPoint vp = new DPoint(v.getPoint());
-			
-			if ((!DPoint.equals(last, vp)) && Point.dist(last, vp) <= 10.0) {
-				if (lastBest == null) {
-					lastBest = vp;
-				} else if (Point.dist(last, vp) < Point.dist(last, lastBest)) {
-					lastBest = vp;
-				}
-			}
+		Vertex lastClosest = MODEL.findClosestVertex(last);
+		if (lastClosest != null && Point.dist(last, lastClosest.getPoint()) <= 10.0) {
+			lastBest = lastClosest.getPoint().toDPoint();
 		}
 		
 		if (lastBest == null) {
 			/*
 			 * the point doesn't necessarily have to exist yet, it could be between 2 other points
 			 */
-			IntersectionInfo closest = MODEL.graph.getSegmentTree().findClosestSegment(last);
+			IntersectionInfo closest = MODEL.findClosestSegment(last);
 			if (closest != null && Point.dist(last, closest.point) <= 10.0) {
 				lastBest = closest.point;
 			}
@@ -285,7 +264,7 @@ public class DeadlockController {
 		/*
 		 * if firstBest and lastBest are both non-null and equal, then don't also connect the last to the same vertex, it looks weird
 		 */
-		if (lastBest != null && firstBest != null && !DPoint.equals(lastBest, firstBest)) {
+		if (lastBest != null && (firstBest == null || !DPoint.equals(lastBest, firstBest))) {
 			
 			if (adj.size() == 1) {
 				adj.set(s-1, lastBest);
@@ -302,10 +281,8 @@ public class DeadlockController {
 			
 		}
 		
-		
-		
-		
 		return adj;
+		
 	}
 	
 }

@@ -1,7 +1,9 @@
 package com.gutabi.core;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public class Vertex {
@@ -10,7 +12,7 @@ public class Vertex {
 	
 	private final List<Edge> eds = new ArrayList<Edge>();
 	
-	private Edge lastEdgeAdded;
+	private final Map<Object, Object> metaData = new HashMap<Object, Object>();
 	
 	private boolean removed = false;
 	
@@ -31,7 +33,6 @@ public class Vertex {
 			assert !eds.contains(ed);
 		}
 		eds.add(ed);
-		lastEdgeAdded = ed;
 	}
 	
 	public void removeEdge(Edge ed) {
@@ -49,16 +50,18 @@ public class Vertex {
 		return eds;
 	}
 	
-	public Edge getOnlyEdge() {
-		assert eds.size() == 1;
-		return lastEdgeAdded;
-	}
-	
 	public Point getPoint() {
 		if (removed) {
 			throw new IllegalStateException();
 		}
 		return p;
+	}
+	
+	public Map<Object, Object> getMetaData() {
+		if (removed) {
+			throw new IllegalStateException();
+		}
+		return metaData;
 	}
 	
 	public void remove() {

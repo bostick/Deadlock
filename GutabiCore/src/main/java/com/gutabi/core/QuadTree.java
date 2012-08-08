@@ -41,6 +41,9 @@ public class QuadTree {
 		}
 	}
 	
+	public void clear() {
+		segIndices.clear();
+	}
 	
 	
 	public class SegmentIndex {

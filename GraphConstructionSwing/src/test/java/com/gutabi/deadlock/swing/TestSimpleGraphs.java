@@ -105,8 +105,8 @@ public class TestSimpleGraphs {
 		SwingUtilities.invokeAndWait(new Runnable() {
 			@Override
 			public void run() {
-				edges = new ArrayList<Edge>(MODEL.graph.getEdges());
-				vertices = new ArrayList<Vertex>(MODEL.graph.getVertices());
+				edges = new ArrayList<Edge>(MODEL.getEdges());
+				vertices = new ArrayList<Vertex>(MODEL.getVertices());
 			}
 		});
 		

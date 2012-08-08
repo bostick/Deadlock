@@ -6,7 +6,7 @@ import com.gutabi.deadlock.core.Logger;
 
 public class PlatformLogger implements Logger {
 	
-	public PlatformLogger() {
+	private PlatformLogger() {
 		;
 	}
 	

@@ -3,6 +3,7 @@ package com.gutabi.deadlock.core.view;
 import com.gutabi.core.Dim;
 import com.gutabi.core.Point;
 import com.gutabi.deadlock.core.Logger;
+import static com.gutabi.deadlock.core.LoggerFactory.LOGGERFACTORY;
 
 public class DeadlockView {
 	
@@ -11,14 +12,13 @@ public class DeadlockView {
 //	public Point cameraUpperLeft = new Point(0, 0);
 //	public double zoom = 1.0;
 	
-	public final DeadlockWindow window;	
-	public final Logger logger;
+	public final DeadlockWindowInfo window;	
+	public final Logger logger = LOGGERFACTORY.getLogger(DeadlockView.class);
 	
 	public static DeadlockView VIEW;
 	
-	public DeadlockView(DeadlockWindow w, Logger l) {
+	public DeadlockView(DeadlockWindowInfo w) {
 		this.window = w;
-		this.logger = l;
 	}
 	
 	public void init() {
