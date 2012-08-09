@@ -1,7 +1,7 @@
 package com.gutabi.deadlock.core.model;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import com.gutabi.core.DPoint;
 import com.gutabi.core.Edge;
@@ -14,12 +14,15 @@ import com.gutabi.core.VertexHandler;
 
 public class DeadlockModel implements VertexHandler {
 	
-	public static final int WORLD_WIDTH = 1517;
+	public static final int WORLD_WIDTH = 1400;
 	public static final int WORLD_HEIGHT = 822;
 	
 	public static final DeadlockModel MODEL = new DeadlockModel();
 	
 	private final Graph graph;
+	
+	private List<Vertex> sources = new ArrayList<Vertex>();
+	private List<Vertex> sinks = new ArrayList<Vertex>();
 	
 	public DeadlockModel() {
 		graph = new Graph(this);
@@ -72,25 +75,39 @@ public class DeadlockModel implements VertexHandler {
 		return graph.getEdges();
 	}
 	
+	public List<Vertex> getSources() {
+		return sources;
+	}
+	
+	public List<Vertex> getSinks() {
+		return sinks;
+	}
+	
 	@Override
 	public void vertexCreated(Vertex v) {
 		
 		Point p = v.getPoint();
-		Map<Object, Object> m = v.getMetaData();
+		//Map<Object, Object> m = v.getMetaData();
 		
 		if (p.y <= 10 || p.x <= 10) {
-			m.put("type", VertexType.SOURCE);
+			//m.put("type", VertexType.SOURCE);
+			sources.add(v);
 		} else if (p.x >= WORLD_WIDTH-10 || p.y >= WORLD_HEIGHT-10) {
-			m.put("type", VertexType.SINK);
+			//m.put("type", VertexType.SINK);
+			sinks.add(v);
 		} else {
-			m.put("type", VertexType.COMMON);
+			//m.put("type", VertexType.COMMON);
 		}
 		
 	}
 	
 	@Override
 	public void vertexRemoved(Vertex v) {
-		
+		if (sources.contains(v)) {
+			sources.remove(v);
+		} else if (sinks.contains(v)) {
+			sinks.remove(v);
+		}
 	}
 	
 }

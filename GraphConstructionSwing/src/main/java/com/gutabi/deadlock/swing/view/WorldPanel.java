@@ -18,7 +18,7 @@ import com.gutabi.core.DPoint;
 import com.gutabi.core.Edge;
 import com.gutabi.core.Point;
 import com.gutabi.core.Vertex;
-import com.gutabi.deadlock.core.model.VertexType;
+import com.gutabi.deadlock.core.controller.ControlMode;
 
 @SuppressWarnings("serial")
 public class WorldPanel extends JPanel {
@@ -29,7 +29,8 @@ public class WorldPanel extends JPanel {
 	
 	public WorldPanel() {
 		
-		setPreferredSize(new Dimension(1600, 900));
+		//setPreferredSize(new Dimension(1600, 900));
+		setPreferredSize(new Dimension(1400, 822));
 		
 	}
 	
@@ -62,23 +63,29 @@ public class WorldPanel extends JPanel {
 		for (Edge e : MODEL.getEdges()) {
 			paintEdge2(e, g2);
 		}
-		g2.setColor(Color.RED);
-
-		int size = CONTROLLER.curStrokeRaw.size();
-		int[] xPoints = new int[size];
-		int[] yPoints = new int[size];
-		for (int i = 0; i < size; i++) {
-			DPoint p = CONTROLLER.curStrokeRaw.get(i);
-			xPoints[i] = (int)p.x;
-			yPoints[i] = (int)p.y;
-		}
 		
-		g2.setStroke(new Road1Stroke());
-		g2.drawPolyline(xPoints, yPoints, size);
-		
-		g2.setColor(Color.RED);
-		if (CONTROLLER.lastPointRaw != null) {
-			g2.fillOval((int)(CONTROLLER.lastPointRaw.x-5), (int)(CONTROLLER.lastPointRaw.y-5), 10, 10);
+		if (CONTROLLER.mode == ControlMode.DRAWING) {
+			g2.setColor(Color.RED);
+			int size = CONTROLLER.curStrokeRaw.size();
+			int[] xPoints = new int[size];
+			int[] yPoints = new int[size];
+			for (int i = 0; i < size; i++) {
+				DPoint p = CONTROLLER.curStrokeRaw.get(i);
+				xPoints[i] = (int)p.x;
+				yPoints[i] = (int)p.y;
+			}
+			
+			g2.setStroke(new Road1Stroke());
+			g2.drawPolyline(xPoints, yPoints, size);
+			
+			g2.setColor(Color.RED);
+			if (CONTROLLER.lastPointRaw != null) {
+				g2.fillOval((int)(CONTROLLER.lastPointRaw.x-5), (int)(CONTROLLER.lastPointRaw.y-5), 10, 10);
+			}
+		} else if (CONTROLLER.mode == ControlMode.RUNNING) {
+			
+			
+			
 		}
 		
 	}
@@ -131,18 +138,14 @@ public class WorldPanel extends JPanel {
 	
 	public static void paintVertex(Vertex v, Graphics2D g) {
 		
-		VertexType type = (VertexType)v.getMetaData().get("type");
+		//VertexType type = (VertexType)v.getMetaData().get("type");
 		
-		switch (type) {
-		case COMMON:
-			g.setColor(new Color(0x44, 0x44, 0x44, 0xff));
-			break;
-		case SOURCE:
+		if (MODEL.getSources().contains(v)) {
 			g.setColor(Color.GREEN);
-			break;
-		case SINK:
+		} else if (MODEL.getSinks().contains(v)) {
 			g.setColor(Color.RED);
-			break;
+		} else {
+			g.setColor(new Color(0x44, 0x44, 0x44, 0xff));
 		}
 		
 		Point p = v.getPoint();

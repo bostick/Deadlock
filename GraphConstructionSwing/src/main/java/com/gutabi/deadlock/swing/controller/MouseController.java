@@ -1,72 +1,88 @@
 package com.gutabi.deadlock.swing.controller;
 
 import static com.gutabi.deadlock.core.controller.DeadlockController.CONTROLLER;
-import static com.gutabi.deadlock.swing.Main.PLATFORMCONTROLLER;
 import static com.gutabi.deadlock.swing.Main.PLATFORMVIEW;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.lang.reflect.InvocationTargetException;
 
 import org.apache.log4j.Logger;
 
 import com.gutabi.core.DPoint;
+import com.gutabi.deadlock.core.controller.ControlMode;
 import com.gutabi.deadlock.core.controller.InputEvent;
 
 public class MouseController implements MouseListener, MouseMotionListener {
 	
 	static Logger logger = Logger.getLogger("deadlock");
 		
-	public void pressed(DPoint p) {
-		CONTROLLER.inputStart(new InputEvent(p));
+	public void pressed(final DPoint p) {
+		CONTROLLER.queue(new Runnable(){
+			@Override
+			public void run() {
+				CONTROLLER.inputStart(new InputEvent(p));
+				PLATFORMVIEW.repaint();
+			}}
+		);
 	}
 	
-	public void dragged(DPoint p) {
-		CONTROLLER.inputMove(new InputEvent(p));
+	public void dragged(final DPoint p) {
+		CONTROLLER.queue(new Runnable(){
+			@Override
+			public void run() {
+				CONTROLLER.inputMove(new InputEvent(p));
+				PLATFORMVIEW.repaint();
+			}}
+		);
 	}
 	
 	public void released() {
-		CONTROLLER.inputEnd();
+		CONTROLLER.queue(new Runnable(){
+			@Override
+			public void run() {
+				CONTROLLER.inputEnd();
+				PLATFORMVIEW.repaint();
+			}}
+		);
 	}
 	
-	public void pressed_M(final DPoint p) throws InterruptedException, InvocationTargetException {
-		javax.swing.SwingUtilities.invokeLater(new Runnable() {
+	public void pressed_M(final DPoint p) throws Exception {
+		CONTROLLER.queueAndWait(new Runnable() {
 			public void run() {
 				pressed(p);
+				PLATFORMVIEW.repaint();
 			}
 		});
-		PLATFORMVIEW.repaint();
 	}
 	
-	public void dragged_M(final DPoint p) throws InterruptedException, InvocationTargetException {
-		javax.swing.SwingUtilities.invokeLater(new Runnable() {
+	public void dragged_M(final DPoint p) throws Exception {
+		CONTROLLER.queueAndWait(new Runnable() {
 			public void run() {
 				dragged(p);
+				PLATFORMVIEW.repaint();
 			}
 		});
-		PLATFORMVIEW.repaint();
 	}
 	
-	public void released_M() throws InterruptedException, InvocationTargetException {
-		javax.swing.SwingUtilities.invokeLater(new Runnable() {
+	public void released_M() throws Exception {
+		CONTROLLER.queueAndWait(new Runnable() {
 			public void run() {
 				released();
+				PLATFORMVIEW.repaint();
 			}
 		});
-		PLATFORMVIEW.repaint();
 	}
 	
 	@Override
 	public void mousePressed(MouseEvent ev) {
-		switch (PLATFORMCONTROLLER.mode) {
+		switch (CONTROLLER.mode) {
 		case IDLE:
 //			if () {
 //				PLATFORMCONTROLLER.mode = ControlMode.ZOOMING;
 //			} else {
-				//PLATFORMCONTROLLER.mode = ControlMode.DRAWING;
+				CONTROLLER.mode = ControlMode.DRAWING;
 				pressed(new DPoint(ev.getX(), ev.getY()));
-				PLATFORMVIEW.repaint();
 			//}
 			break;
 		case DRAWING:
@@ -75,19 +91,46 @@ public class MouseController implements MouseListener, MouseMotionListener {
 		case ZOOMING:
 			assert false;
 			break;
+		case RUNNING:
+			;
+			break;
 		}
 	}
 	
 	@Override
 	public void mouseDragged(MouseEvent ev) {
-		dragged(new DPoint(ev.getX(), ev.getY()));
-		PLATFORMVIEW.repaint();
+		switch (CONTROLLER.mode) {
+		case IDLE:
+			break;
+		case DRAWING:
+			dragged(new DPoint(ev.getX(), ev.getY()));
+			break;
+		case ZOOMING:
+			assert false;
+			break;
+		case RUNNING:
+			;
+			break;
+		}
 	}
 	
 	@Override
 	public void mouseReleased(MouseEvent ev) {
-		released();
-		PLATFORMVIEW.repaint();
+		switch (CONTROLLER.mode) {
+		case IDLE:
+			break;
+		case DRAWING:
+			released();
+			CONTROLLER.mode = ControlMode.IDLE;
+			break;
+		case ZOOMING:
+			assert false;
+			break;
+		case RUNNING:
+			;
+			break;
+		}
+		
 	}
 	
 	@Override

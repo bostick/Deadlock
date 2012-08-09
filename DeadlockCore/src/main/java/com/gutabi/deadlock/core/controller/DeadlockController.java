@@ -6,6 +6,10 @@ import static com.gutabi.deadlock.core.view.DeadlockView.VIEW;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import com.gutabi.core.DPoint;
 import com.gutabi.core.IntersectionInfo;
@@ -23,13 +27,49 @@ public class DeadlockController {
 	
 	public MassageStrategy strat = MassageStrategy.CURRENT;
 	
+	ExecutorService e;
+	
+	public ControlMode mode = ControlMode.IDLE;
+	
 	Logger logger = LOGGERFACTORY.getLogger(DeadlockController.class);
 	
 	public DeadlockController() {
 		
 	}
 	
+	public void init() {
+//		Thread t = new Thread(new ControllerRunnable(DeadlockController.this), "controller");
+//		t.setDaemon(true);
+//		t.start();
+		e = Executors.newSingleThreadExecutor();
+		
+		try {
+			queueAndWait(new Runnable(){
+
+				@Override
+				public void run() {
+					Thread.currentThread().setName("controller");
+				}});
+			
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+	}
+
+	public void queue(Runnable task) {
+		//Future f = e.submit(task);
+		e.execute(task);
+	}
+	
+	public void queueAndWait(Runnable task) throws InterruptedException, ExecutionException {
+		Future<?> f = e.submit(task);
+		f.get();
+	}
+	
 	public void inputStart(InputEvent e) {
+		assert Thread.currentThread().getName().equals("controller");
+		
 		DPoint p;
 		p = e.getDPoint();
 		p = new DPoint((int)(p.x * 1/VIEW.getZoom()), (int)(p.y * 1/VIEW.getZoom()));
@@ -42,6 +82,8 @@ public class DeadlockController {
 	}
 	
 	public void inputMove(InputEvent e) {
+		assert Thread.currentThread().getName().equals("controller");
+		
 		DPoint p;
 		p = e.getDPoint();
 		p = new DPoint((int)(p.x * 1/VIEW.getZoom()), (int)(p.y * 1/VIEW.getZoom()));
@@ -55,6 +97,8 @@ public class DeadlockController {
 	}
 	
 	public void inputEnd() {
+		assert Thread.currentThread().getName().equals("controller");
+		
 		List<DPoint> curStroke = null;
 		if (strat != null) {
 			switch (strat) {

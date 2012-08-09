@@ -40,6 +40,8 @@ public class Main  {
 //		VIEW.logger = new PlatformLogger(VIEW.getClass());
 		VIEW.init();
 		
+		CONTROLLER.init();
+		
 		PLATFORMVIEW.frame.setVisible(true);
 		PLATFORMVIEW.panel.requestFocusInWindow();
 		

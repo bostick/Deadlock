@@ -10,8 +10,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
-import javax.swing.SwingUtilities;
-
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -82,7 +80,7 @@ public class TestDragging {
 		PLATFORMCONTROLLER.mc.dragged_M(new DPoint(7, 7));
 		PLATFORMCONTROLLER.mc.released_M();
 		
-		SwingUtilities.invokeAndWait(new Runnable() {
+		CONTROLLER.queueAndWait(new Runnable() {
 			@Override
 			public void run() {
 				edges = MODEL.getEdges();
@@ -105,7 +103,7 @@ public class TestDragging {
 		PLATFORMCONTROLLER.mc.dragged_M(new DPoint(4, 4));
 		PLATFORMCONTROLLER.mc.released_M();
 		
-		SwingUtilities.invokeAndWait(new Runnable() {
+		CONTROLLER.queueAndWait(new Runnable() {
 			@Override
 			public void run() {
 				edges = MODEL.getEdges();
@@ -127,7 +125,7 @@ public class TestDragging {
 		PLATFORMCONTROLLER.mc.dragged_M(new DPoint(267, 582));
 		PLATFORMCONTROLLER.mc.released_M();
 		
-		SwingUtilities.invokeAndWait(new Runnable() {
+		CONTROLLER.queueAndWait(new Runnable() {
 			@Override
 			public void run() {
 				;
@@ -145,7 +143,7 @@ public class TestDragging {
 		PLATFORMCONTROLLER.mc.dragged_M(new DPoint(1, 3));
 		PLATFORMCONTROLLER.mc.released_M();
 		
-		SwingUtilities.invokeAndWait(new Runnable() {
+		CONTROLLER.queueAndWait(new Runnable() {
 			@Override
 			public void run() {
 				;
@@ -206,7 +204,7 @@ public class TestDragging {
 		PLATFORMCONTROLLER.mc.dragged_M(new DPoint(521, 635));
 		PLATFORMCONTROLLER.mc.released_M();
 		
-		SwingUtilities.invokeAndWait(new Runnable() {
+		CONTROLLER.queueAndWait(new Runnable() {
 			@Override
 			public void run() {
 				;
@@ -226,7 +224,7 @@ public class TestDragging {
 		PLATFORMCONTROLLER.mc.dragged_M(new DPoint(4, 4));
 		PLATFORMCONTROLLER.mc.released_M();
 		
-		SwingUtilities.invokeAndWait(new Runnable() {
+		CONTROLLER.queueAndWait(new Runnable() {
 			@Override
 			public void run() {
 				;
@@ -380,7 +378,7 @@ public class TestDragging {
 		PLATFORMCONTROLLER.mc.dragged_M(new DPoint(643, 292));
 		PLATFORMCONTROLLER.mc.released_M();
 		
-		SwingUtilities.invokeAndWait(new Runnable() {
+		CONTROLLER.queueAndWait(new Runnable() {
 			@Override
 			public void run() {
 				;
@@ -446,7 +444,7 @@ public class TestDragging {
 		PLATFORMCONTROLLER.mc.dragged_M(new DPoint(580, 423));
 		PLATFORMCONTROLLER.mc.released_M();
 		
-		SwingUtilities.invokeAndWait(new Runnable() {
+		CONTROLLER.queueAndWait(new Runnable() {
 			@Override
 			public void run() {
 				;
@@ -466,7 +464,7 @@ public class TestDragging {
 		PLATFORMCONTROLLER.mc.dragged_M(new DPoint(0, 50));
 		PLATFORMCONTROLLER.mc.released_M();
 		
-		SwingUtilities.invokeAndWait(new Runnable() {
+		CONTROLLER.queueAndWait(new Runnable() {
 			@Override
 			public void run() {
 				;
@@ -486,7 +484,7 @@ public class TestDragging {
 		PLATFORMCONTROLLER.mc.dragged_M(new DPoint(2, 0));
 		PLATFORMCONTROLLER.mc.released_M();
 		
-		SwingUtilities.invokeAndWait(new Runnable() {
+		CONTROLLER.queueAndWait(new Runnable() {
 			@Override
 			public void run() {
 				;
@@ -509,7 +507,7 @@ public class TestDragging {
 		PLATFORMCONTROLLER.mc.dragged_M(new DPoint(3, 6));
 		PLATFORMCONTROLLER.mc.released_M();
 		
-		SwingUtilities.invokeAndWait(new Runnable() {
+		CONTROLLER.queueAndWait(new Runnable() {
 			@Override
 			public void run() {
 				;
@@ -530,7 +528,7 @@ public class TestDragging {
 		PLATFORMCONTROLLER.mc.dragged_M(new DPoint(16, 1));
 		PLATFORMCONTROLLER.mc.released_M();
 		
-		SwingUtilities.invokeAndWait(new Runnable() {
+		CONTROLLER.queueAndWait(new Runnable() {
 			@Override
 			public void run() {
 				;
@@ -581,7 +579,7 @@ public class TestDragging {
 		PLATFORMCONTROLLER.mc.dragged_M(new DPoint(583, 463));
 		PLATFORMCONTROLLER.mc.released_M();
 		
-		SwingUtilities.invokeAndWait(new Runnable() {
+		CONTROLLER.queueAndWait(new Runnable() {
 			@Override
 			public void run() {
 				;
@@ -626,7 +624,7 @@ public class TestDragging {
 		PLATFORMCONTROLLER.mc.dragged_M(new DPoint(640, 415));
 		PLATFORMCONTROLLER.mc.released_M();
 		
-		SwingUtilities.invokeAndWait(new Runnable() {
+		CONTROLLER.queueAndWait(new Runnable() {
 			@Override
 			public void run() {
 				;
@@ -650,7 +648,7 @@ public class TestDragging {
 		PLATFORMCONTROLLER.mc.dragged_M(new DPoint(44, 25));
 		PLATFORMCONTROLLER.mc.released_M();
 		
-		SwingUtilities.invokeAndWait(new Runnable() {
+		CONTROLLER.queueAndWait(new Runnable() {
 			@Override
 			public void run() {
 				;
@@ -707,7 +705,7 @@ public class TestDragging {
 		PLATFORMCONTROLLER.mc.dragged_M(new DPoint(5, 19));
 		PLATFORMCONTROLLER.mc.released_M();
 		
-		SwingUtilities.invokeAndWait(new Runnable() {
+		CONTROLLER.queueAndWait(new Runnable() {
 			@Override
 			public void run() {
 				;
@@ -731,7 +729,7 @@ public class TestDragging {
 		PLATFORMCONTROLLER.mc.dragged_M(new DPoint(46, 49));
 		PLATFORMCONTROLLER.mc.released_M();
 		
-		SwingUtilities.invokeAndWait(new Runnable() {
+		CONTROLLER.queueAndWait(new Runnable() {
 			@Override
 			public void run() {
 				String.class.getClass();
@@ -752,7 +750,7 @@ public class TestDragging {
 		PLATFORMCONTROLLER.mc.dragged_M(new DPoint(2, 78));
 		PLATFORMCONTROLLER.mc.released_M();
 		
-		SwingUtilities.invokeAndWait(new Runnable() {
+		CONTROLLER.queueAndWait(new Runnable() {
 			@Override
 			public void run() {
 				String.class.getClass();
@@ -780,7 +778,7 @@ public class TestDragging {
 		PLATFORMCONTROLLER.mc.dragged_M(new DPoint(3, 34));
 		PLATFORMCONTROLLER.mc.released_M();
 		
-		SwingUtilities.invokeAndWait(new Runnable() {
+		CONTROLLER.queueAndWait(new Runnable() {
 			@Override
 			public void run() {
 				String.class.getClass();
@@ -801,7 +799,7 @@ public class TestDragging {
 		PLATFORMCONTROLLER.mc.dragged_M(new DPoint(3, 84));
 		PLATFORMCONTROLLER.mc.released_M();
 		
-		SwingUtilities.invokeAndWait(new Runnable() {
+		CONTROLLER.queueAndWait(new Runnable() {
 			@Override
 			public void run() {
 				;
@@ -830,7 +828,7 @@ public class TestDragging {
 		PLATFORMCONTROLLER.mc.dragged_M(new DPoint(26, 80));
 		PLATFORMCONTROLLER.mc.released_M();
 		
-		SwingUtilities.invokeAndWait(new Runnable() {
+		CONTROLLER.queueAndWait(new Runnable() {
 			@Override
 			public void run() {
 				;
@@ -858,7 +856,7 @@ public class TestDragging {
 		PLATFORMCONTROLLER.mc.dragged_M(new DPoint(44, 94));
 		PLATFORMCONTROLLER.mc.released_M();
 		
-		SwingUtilities.invokeAndWait(new Runnable() {
+		CONTROLLER.queueAndWait(new Runnable() {
 			@Override
 			public void run() {
 				;
@@ -890,7 +888,7 @@ public class TestDragging {
 		PLATFORMCONTROLLER.mc.dragged_M(new DPoint(44, 94));
 		PLATFORMCONTROLLER.mc.released_M();
 		
-		SwingUtilities.invokeAndWait(new Runnable() {
+		CONTROLLER.queueAndWait(new Runnable() {
 			@Override
 			public void run() {
 				String.class.getClass();
@@ -914,7 +912,7 @@ public class TestDragging {
 		PLATFORMCONTROLLER.mc.dragged_M(new DPoint(21, 9));
 		PLATFORMCONTROLLER.mc.released_M();
 		
-		SwingUtilities.invokeAndWait(new Runnable() {
+		CONTROLLER.queueAndWait(new Runnable() {
 			@Override
 			public void run() {
 				String.class.getClass();
@@ -935,7 +933,7 @@ public class TestDragging {
 		PLATFORMCONTROLLER.mc.dragged_M(new DPoint(699, 311));
 		PLATFORMCONTROLLER.mc.released_M();
 		
-		SwingUtilities.invokeAndWait(new Runnable() {
+		CONTROLLER.queueAndWait(new Runnable() {
 			@Override
 			public void run() {
 				;
@@ -955,7 +953,7 @@ public class TestDragging {
 		PLATFORMCONTROLLER.mc.dragged_M(new DPoint(684, 308));
 		PLATFORMCONTROLLER.mc.released_M();
 		
-		SwingUtilities.invokeAndWait(new Runnable() {
+		CONTROLLER.queueAndWait(new Runnable() {
 			@Override
 			public void run() {
 				;
@@ -975,7 +973,7 @@ public class TestDragging {
 		PLATFORMCONTROLLER.mc.dragged_M(new DPoint(583, 442));
 		PLATFORMCONTROLLER.mc.released_M();
 		
-		SwingUtilities.invokeAndWait(new Runnable() {
+		CONTROLLER.queueAndWait(new Runnable() {
 			@Override
 			public void run() {
 				;
@@ -1005,7 +1003,7 @@ public class TestDragging {
 		PLATFORMCONTROLLER.mc.dragged_M(new DPoint(56, 85));
 		PLATFORMCONTROLLER.mc.released_M();
 		
-		SwingUtilities.invokeAndWait(new Runnable() {
+		CONTROLLER.queueAndWait(new Runnable() {
 			@Override
 			public void run() {
 				;
@@ -1029,7 +1027,7 @@ public class TestDragging {
 		PLATFORMCONTROLLER.mc.dragged_M(new DPoint(56, 85));
 		PLATFORMCONTROLLER.mc.released_M();
 		
-		SwingUtilities.invokeAndWait(new Runnable() {
+		CONTROLLER.queueAndWait(new Runnable() {
 			@Override
 			public void run() {
 				;
@@ -1051,7 +1049,7 @@ public class TestDragging {
 		PLATFORMCONTROLLER.mc.dragged_M(new DPoint(5, 19));
 		PLATFORMCONTROLLER.mc.released_M();
 		
-		SwingUtilities.invokeAndWait(new Runnable() {
+		CONTROLLER.queueAndWait(new Runnable() {
 			@Override
 			public void run() {
 				;
@@ -1078,7 +1076,7 @@ public class TestDragging {
 		PLATFORMCONTROLLER.mc.dragged_M(new DPoint(56, 85));
 		PLATFORMCONTROLLER.mc.released_M();
 		
-		SwingUtilities.invokeAndWait(new Runnable() {
+		CONTROLLER.queueAndWait(new Runnable() {
 			@Override
 			public void run() {
 				;
@@ -1090,7 +1088,7 @@ public class TestDragging {
 	@Test
 	public void testBug2() throws Exception {
 		
-		SwingUtilities.invokeAndWait(new Runnable() {
+		CONTROLLER.queueAndWait(new Runnable() {
 			@Override
 			public void run() {
 
@@ -1127,7 +1125,7 @@ public class TestDragging {
 		PLATFORMCONTROLLER.mc.dragged_M(new DPoint(82, 8));
 		PLATFORMCONTROLLER.mc.released_M();
 		
-		SwingUtilities.invokeAndWait(new Runnable() {
+		CONTROLLER.queueAndWait(new Runnable() {
 			@Override
 			public void run() {
 				String.class.getClass();
@@ -1155,7 +1153,7 @@ public class TestDragging {
 		PLATFORMCONTROLLER.mc.dragged_M(new DPoint(491, 36));
 		PLATFORMCONTROLLER.mc.released_M();
 		
-		SwingUtilities.invokeAndWait(new Runnable() {
+		CONTROLLER.queueAndWait(new Runnable() {
 			@Override
 			public void run() {
 				String.class.getClass();
@@ -1167,7 +1165,7 @@ public class TestDragging {
 	@Test
 	public void testBug5() throws Exception {
 		
-		SwingUtilities.invokeAndWait(new Runnable() {
+		CONTROLLER.queueAndWait(new Runnable() {
 			@Override
 			public void run() {
 				
@@ -1209,7 +1207,7 @@ public class TestDragging {
 		PLATFORMCONTROLLER.mc.dragged_M(new DPoint(262, 444));
 		PLATFORMCONTROLLER.mc.released_M();
 		
-		SwingUtilities.invokeAndWait(new Runnable() {
+		CONTROLLER.queueAndWait(new Runnable() {
 			@Override
 			public void run() {
 				;
@@ -1594,7 +1592,7 @@ public class TestDragging {
 
 
 		
-		SwingUtilities.invokeAndWait(new Runnable() {
+		CONTROLLER.queueAndWait(new Runnable() {
 			@Override
 			public void run() {
 				;
@@ -1616,7 +1614,7 @@ public class TestDragging {
 		PLATFORMCONTROLLER.mc.dragged_M(new DPoint(661, 570));
 		PLATFORMCONTROLLER.mc.released_M();
 		
-		SwingUtilities.invokeAndWait(new Runnable() {
+		CONTROLLER.queueAndWait(new Runnable() {
 			@Override
 			public void run() {
 				PLATFORMCONTROLLER.mc.hashCode();
@@ -1639,7 +1637,7 @@ public class TestDragging {
 		PLATFORMCONTROLLER.mc.dragged_M(new DPoint(58, 11));
 		PLATFORMCONTROLLER.mc.released_M();
 		
-		SwingUtilities.invokeAndWait(new Runnable() {
+		CONTROLLER.queueAndWait(new Runnable() {
 			@Override
 			public void run() {
 				PLATFORMCONTROLLER.mc.hashCode();
@@ -1661,7 +1659,7 @@ public class TestDragging {
 		PLATFORMCONTROLLER.mc.dragged_M(new DPoint(775, 457));
 		PLATFORMCONTROLLER.mc.released_M();
 		
-		SwingUtilities.invokeAndWait(new Runnable() {
+		CONTROLLER.queueAndWait(new Runnable() {
 			@Override
 			public void run() {
 				PLATFORMCONTROLLER.mc.hashCode();
@@ -1685,7 +1683,7 @@ public class TestDragging {
 		PLATFORMCONTROLLER.mc.dragged_M(new DPoint(760, 460));
 		PLATFORMCONTROLLER.mc.released_M();
 		
-		SwingUtilities.invokeAndWait(new Runnable() {
+		CONTROLLER.queueAndWait(new Runnable() {
 			@Override
 			public void run() {
 				PLATFORMCONTROLLER.mc.hashCode();
@@ -1701,7 +1699,7 @@ public class TestDragging {
 		PLATFORMCONTROLLER.mc.dragged_M(new DPoint(12, 5));
 		PLATFORMCONTROLLER.mc.released_M();
 		
-		SwingUtilities.invokeAndWait(new Runnable() {
+		CONTROLLER.queueAndWait(new Runnable() {
 			@Override
 			public void run() {
 				;
@@ -1728,7 +1726,7 @@ public class TestDragging {
 		PLATFORMCONTROLLER.mc.dragged_M(new DPoint(707., 553.));
 		PLATFORMCONTROLLER.mc.released_M();
 		
-		SwingUtilities.invokeAndWait(new Runnable() {
+		CONTROLLER.queueAndWait(new Runnable() {
 			@Override
 			public void run() {
 				String.class.getClass();
