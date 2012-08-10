@@ -1,6 +1,6 @@
 package com.gutabi.deadlock.android.view;
 
-import com.gutabi.core.Dim;
+import com.gutabi.deadlock.core.Dim;
 import com.gutabi.deadlock.core.view.DeadlockWindowInfo;
 
 public class PlatformWindowInfo implements DeadlockWindowInfo {

@@ -1,6 +1,5 @@
 package com.gutabi.deadlock.swing.view;
 
-import static com.gutabi.deadlock.core.controller.DeadlockController.CONTROLLER;
 import static com.gutabi.deadlock.core.model.DeadlockModel.MODEL;
 import static com.gutabi.deadlock.core.view.DeadlockView.VIEW;
 
@@ -9,16 +8,19 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JPanel;
 
 import org.apache.log4j.Logger;
 
-import com.gutabi.core.DPoint;
-import com.gutabi.core.Edge;
-import com.gutabi.core.Point;
-import com.gutabi.core.Vertex;
+import com.gutabi.deadlock.core.DPoint;
+import com.gutabi.deadlock.core.Edge;
+import com.gutabi.deadlock.core.Point;
+import com.gutabi.deadlock.core.Vertex;
 import com.gutabi.deadlock.core.controller.ControlMode;
+import com.gutabi.deadlock.core.model.Car;
 
 @SuppressWarnings("serial")
 public class WorldPanel extends JPanel {
@@ -54,23 +56,49 @@ public class WorldPanel extends JPanel {
 		g2.scale(VIEW.getZoom(), VIEW.getZoom());
 		g2.translate((double)-VIEW.viewLoc.x, (double)-VIEW.viewLoc.y);
 		
-		for (Edge e : MODEL.getEdges()) {
+		
+		
+		List<Edge> edgesCopy;
+		List<Vertex> verticesCopy;
+		ControlMode modeCopy;
+		List<DPoint> curStrokeCopy;
+		DPoint lastPointCopy;
+		Car carCopy = null;
+		
+		synchronized (MODEL) {
+			edgesCopy = new ArrayList<Edge>();
+			for (Edge e : MODEL.getEdges()) {
+				edgesCopy.add(e.copy());
+			}
+			verticesCopy = new ArrayList<Vertex>();
+			for (Vertex v : MODEL.getVertices()) {
+				verticesCopy.add(v.copy());
+			}
+			modeCopy = MODEL.getMode();
+			curStrokeCopy = new ArrayList<DPoint>(MODEL.curStrokeRaw);
+			lastPointCopy = MODEL.lastPointRaw;
+			if (MODEL.car != null) {
+				carCopy = MODEL.car.copy();
+			}
+		}
+		
+		for (Edge e : edgesCopy) {
 			paintEdge1(e, g2);
 		}
-		for (Vertex v : MODEL.getVertices()) {
+		for (Vertex v : verticesCopy) {
 			paintVertex(v, g2);
 		}
-		for (Edge e : MODEL.getEdges()) {
+		for (Edge e : edgesCopy) {
 			paintEdge2(e, g2);
 		}
 		
-		if (CONTROLLER.mode == ControlMode.DRAWING) {
+		if (modeCopy == ControlMode.DRAFTING) {
 			g2.setColor(Color.RED);
-			int size = CONTROLLER.curStrokeRaw.size();
+			int size = curStrokeCopy.size();
 			int[] xPoints = new int[size];
 			int[] yPoints = new int[size];
 			for (int i = 0; i < size; i++) {
-				DPoint p = CONTROLLER.curStrokeRaw.get(i);
+				DPoint p = curStrokeCopy.get(i);
 				xPoints[i] = (int)p.x;
 				yPoints[i] = (int)p.y;
 			}
@@ -79,12 +107,14 @@ public class WorldPanel extends JPanel {
 			g2.drawPolyline(xPoints, yPoints, size);
 			
 			g2.setColor(Color.RED);
-			if (CONTROLLER.lastPointRaw != null) {
-				g2.fillOval((int)(CONTROLLER.lastPointRaw.x-5), (int)(CONTROLLER.lastPointRaw.y-5), 10, 10);
+			if (lastPointCopy != null) {
+				g2.fillOval((int)(lastPointCopy.x-5), (int)(lastPointCopy.y-5), 10, 10);
 			}
-		} else if (CONTROLLER.mode == ControlMode.RUNNING) {
+		} else if (modeCopy == ControlMode.RUNNING) {
 			
-			
+			g2.setColor(Color.BLUE);
+			DPoint pos = carCopy.getPosition();
+			g2.fillOval((int)(pos.x-5), (int)(pos.y-5), 10, 10);
 			
 		}
 		
@@ -140,12 +170,16 @@ public class WorldPanel extends JPanel {
 		
 		//VertexType type = (VertexType)v.getMetaData().get("type");
 		
-		if (MODEL.getSources().contains(v)) {
-			g.setColor(Color.GREEN);
-		} else if (MODEL.getSinks().contains(v)) {
+		switch (v.getType()) {
+		case SINK:
 			g.setColor(Color.RED);
-		} else {
+			break;
+		case SOURCE:
+			g.setColor(Color.GREEN);
+			break;
+		case COMMON:
 			g.setColor(new Color(0x44, 0x44, 0x44, 0xff));
+			break;
 		}
 		
 		Point p = v.getPoint();

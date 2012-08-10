@@ -9,19 +9,32 @@ import java.awt.event.MouseMotionListener;
 
 import org.apache.log4j.Logger;
 
-import com.gutabi.core.DPoint;
-import com.gutabi.deadlock.core.controller.ControlMode;
-import com.gutabi.deadlock.core.controller.InputEvent;
+import com.gutabi.deadlock.core.DPoint;
 
 public class MouseController implements MouseListener, MouseMotionListener {
 	
 	static Logger logger = Logger.getLogger("deadlock");
-		
+	
+	@Override
+	public void mousePressed(MouseEvent ev) {
+		pressed(new DPoint(ev.getX(), ev.getY()));
+	}
+	
+	@Override
+	public void mouseDragged(MouseEvent ev) {
+		dragged(new DPoint(ev.getX(), ev.getY()));
+	}
+	
+	@Override
+	public void mouseReleased(MouseEvent ev) {
+		released();
+	}
+	
 	public void pressed(final DPoint p) {
 		CONTROLLER.queue(new Runnable(){
 			@Override
 			public void run() {
-				CONTROLLER.inputStart(new InputEvent(p));
+				CONTROLLER.pressed(p);
 				PLATFORMVIEW.repaint();
 			}}
 		);
@@ -31,7 +44,7 @@ public class MouseController implements MouseListener, MouseMotionListener {
 		CONTROLLER.queue(new Runnable(){
 			@Override
 			public void run() {
-				CONTROLLER.inputMove(new InputEvent(p));
+				CONTROLLER.dragged(p);
 				PLATFORMVIEW.repaint();
 			}}
 		);
@@ -41,96 +54,10 @@ public class MouseController implements MouseListener, MouseMotionListener {
 		CONTROLLER.queue(new Runnable(){
 			@Override
 			public void run() {
-				CONTROLLER.inputEnd();
+				CONTROLLER.released();
 				PLATFORMVIEW.repaint();
 			}}
 		);
-	}
-	
-	public void pressed_M(final DPoint p) throws Exception {
-		CONTROLLER.queueAndWait(new Runnable() {
-			public void run() {
-				pressed(p);
-				PLATFORMVIEW.repaint();
-			}
-		});
-	}
-	
-	public void dragged_M(final DPoint p) throws Exception {
-		CONTROLLER.queueAndWait(new Runnable() {
-			public void run() {
-				dragged(p);
-				PLATFORMVIEW.repaint();
-			}
-		});
-	}
-	
-	public void released_M() throws Exception {
-		CONTROLLER.queueAndWait(new Runnable() {
-			public void run() {
-				released();
-				PLATFORMVIEW.repaint();
-			}
-		});
-	}
-	
-	@Override
-	public void mousePressed(MouseEvent ev) {
-		switch (CONTROLLER.mode) {
-		case IDLE:
-//			if () {
-//				PLATFORMCONTROLLER.mode = ControlMode.ZOOMING;
-//			} else {
-				CONTROLLER.mode = ControlMode.DRAWING;
-				pressed(new DPoint(ev.getX(), ev.getY()));
-			//}
-			break;
-		case DRAWING:
-			assert false;
-			break;
-		case ZOOMING:
-			assert false;
-			break;
-		case RUNNING:
-			;
-			break;
-		}
-	}
-	
-	@Override
-	public void mouseDragged(MouseEvent ev) {
-		switch (CONTROLLER.mode) {
-		case IDLE:
-			break;
-		case DRAWING:
-			dragged(new DPoint(ev.getX(), ev.getY()));
-			break;
-		case ZOOMING:
-			assert false;
-			break;
-		case RUNNING:
-			;
-			break;
-		}
-	}
-	
-	@Override
-	public void mouseReleased(MouseEvent ev) {
-		switch (CONTROLLER.mode) {
-		case IDLE:
-			break;
-		case DRAWING:
-			released();
-			CONTROLLER.mode = ControlMode.IDLE;
-			break;
-		case ZOOMING:
-			assert false;
-			break;
-		case RUNNING:
-			;
-			break;
-		}
-		
 	}
 	
 	@Override

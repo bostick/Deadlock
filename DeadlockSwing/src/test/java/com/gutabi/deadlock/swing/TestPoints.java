@@ -9,8 +9,8 @@ import java.util.List;
 
 import org.junit.Test;
 
-import com.gutabi.core.DPoint;
-import com.gutabi.core.Point;
+import com.gutabi.deadlock.core.DPoint;
+import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.swing.controller.MouseController;
 
 public class TestPoints {

@@ -6,30 +6,41 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
-import com.gutabi.core.DPoint;
-import com.gutabi.deadlock.core.controller.InputEvent;
+import com.gutabi.deadlock.core.DPoint;
 
 public class TouchController implements View.OnTouchListener {
 	
 	public boolean onTouch(View ignored, MotionEvent event) {
-		float x = event.getX();
-		float y = event.getY();
+		final float x = event.getX();
+		final float y = event.getY();
 		
 		switch (event.getAction()) {
 		case MotionEvent.ACTION_DOWN:
 			Log.d("touch", "DOWN <"+x+","+y+">");
-			CONTROLLER.inputStart(new InputEvent(new DPoint(Math.round(x), Math.round(y))));
-			PLATFORMVIEW.invalidate();
+			CONTROLLER.queue(new Runnable(){
+				@Override
+				public void run() {
+					CONTROLLER.pressed(new DPoint(x, y));
+					PLATFORMVIEW.postInvalidate();
+				}});
 			break;
 		case MotionEvent.ACTION_MOVE:
-			Log.d("touch", "MOVE <"+x+","+y+">");
-			CONTROLLER.inputMove(new InputEvent(new DPoint(Math.round(x), Math.round(y))));
-			PLATFORMVIEW.invalidate();
+			Log.d("touch", "DOWN <"+x+","+y+">");
+			CONTROLLER.queue(new Runnable(){
+				@Override
+				public void run() {
+					CONTROLLER.dragged(new DPoint(x, y));
+					PLATFORMVIEW.postInvalidate();
+				}});
 			break;
 		case MotionEvent.ACTION_UP:
-			Log.d("touch", "UP   <"+x+","+y+">");
-			CONTROLLER.inputEnd();
-			PLATFORMVIEW.invalidate();
+			Log.d("touch", "DOWN <"+x+","+y+">");
+			CONTROLLER.queue(new Runnable(){
+				@Override
+				public void run() {
+					CONTROLLER.released();
+					PLATFORMVIEW.postInvalidate();
+				}});
 			break;
 		}
 		return true;

@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="app_name">Deadlock</string>
-    <string name="clear">Clear</string>
-    <string name="new_game">New Game</string>
-    <string name="quit">Quit</string>
-    <string name="dummy">XXXX</string>
-    <string name="start">Start!</string>
-</resources>

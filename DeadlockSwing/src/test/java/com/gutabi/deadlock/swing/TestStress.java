@@ -10,8 +10,8 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.gutabi.core.DPoint;
-import com.gutabi.core.Edge;
+import com.gutabi.deadlock.core.DPoint;
+import com.gutabi.deadlock.core.Edge;
 import com.gutabi.deadlock.swing.controller.PlatformController;
 import com.gutabi.deadlock.swing.view.PlatformView;
 

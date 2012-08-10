@@ -10,10 +10,10 @@ import android.graphics.Paint;
 import android.graphics.RectF;
 import android.util.AttributeSet;
 
-import com.gutabi.core.DPoint;
-import com.gutabi.core.Edge;
-import com.gutabi.core.Point;
-import com.gutabi.core.Vertex;
+import com.gutabi.deadlock.core.DPoint;
+import com.gutabi.deadlock.core.Edge;
+import com.gutabi.deadlock.core.Point;
+import com.gutabi.deadlock.core.Vertex;
 
 public class PlatformView extends android.view.View {
 	

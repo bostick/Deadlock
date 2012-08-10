@@ -16,10 +16,10 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.gutabi.core.DPoint;
-import com.gutabi.core.Edge;
-import com.gutabi.core.Point;
-import com.gutabi.core.Vertex;
+import com.gutabi.deadlock.core.DPoint;
+import com.gutabi.deadlock.core.Edge;
+import com.gutabi.deadlock.core.Point;
+import com.gutabi.deadlock.core.Vertex;
 import com.gutabi.deadlock.swing.controller.PlatformController;
 import com.gutabi.deadlock.swing.view.PlatformView;
 
@@ -93,14 +93,14 @@ public class TestSimpleGraphs {
 	@Test
 	public void test1() throws Exception {
 
-		PLATFORMCONTROLLER.mc.pressed_M(new DPoint(0, 0));
-		PLATFORMCONTROLLER.mc.dragged_M(new DPoint(2, 3));
-		PLATFORMCONTROLLER.mc.dragged_M(new DPoint(1, 0));
-		PLATFORMCONTROLLER.mc.released_M();
+		PLATFORMCONTROLLER.mc.pressed(new DPoint(0, 0));
+		PLATFORMCONTROLLER.mc.dragged(new DPoint(2, 3));
+		PLATFORMCONTROLLER.mc.dragged(new DPoint(1, 0));
+		PLATFORMCONTROLLER.mc.released();
 
-		PLATFORMCONTROLLER.mc.pressed_M(new DPoint(3, 0));
-		PLATFORMCONTROLLER.mc.dragged_M(new DPoint(0, 2));
-		PLATFORMCONTROLLER.mc.released_M();
+		PLATFORMCONTROLLER.mc.pressed(new DPoint(3, 0));
+		PLATFORMCONTROLLER.mc.dragged(new DPoint(0, 2));
+		PLATFORMCONTROLLER.mc.released();
 		
 		SwingUtilities.invokeAndWait(new Runnable() {
 			@Override

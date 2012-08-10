@@ -16,8 +16,8 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.gutabi.core.DPoint;
-import com.gutabi.core.Edge;
+import com.gutabi.deadlock.core.DPoint;
+import com.gutabi.deadlock.core.Edge;
 import com.gutabi.deadlock.core.controller.DeadlockController;
 import com.gutabi.deadlock.core.controller.MassageStrategy;
 import com.gutabi.deadlock.core.view.DeadlockView;
@@ -100,18 +100,18 @@ public class TestDraggingFuzz {
 				int n = randomInt();
 				
 				DPoint p = randomPoint();
-				PLATFORMCONTROLLER.mc.pressed_M(p);
+				PLATFORMCONTROLLER.mc.pressed(p);
 				PLATFORMVIEW.repaint();
 				
 				for (int i = 0; i < n; i++) {
 					double rad = randomRadian();
 					double d = randomDist();
 					p = new DPoint((int)(Math.cos(rad) * d) + p.x, (int)(Math.sin(rad) * d) + p.y);
-					PLATFORMCONTROLLER.mc.dragged_M(p);
+					PLATFORMCONTROLLER.mc.dragged(p);
 					PLATFORMVIEW.repaint();
 				}
 				
-				PLATFORMCONTROLLER.mc.released_M();
+				PLATFORMCONTROLLER.mc.released();
 				
 				PLATFORMVIEW.repaint();
 				
@@ -122,7 +122,7 @@ public class TestDraggingFuzz {
 				@Override
 				public void run() {
 					MODEL.clear();
-					CONTROLLER.allStrokes.clear();
+					//CONTROLLER.allStrokes.clear();
 				}});
 			
 			PLATFORMVIEW.repaint();

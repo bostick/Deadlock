@@ -8,8 +8,6 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 
-import com.gutabi.deadlock.core.controller.ControlMode;
-
 public class PlatformController implements ActionListener {
 	
 	public MouseController mc;
@@ -34,18 +32,24 @@ public class PlatformController implements ActionListener {
 			b.setText("Stop");
 			b.setActionCommand("stop");
 			
-			CONTROLLER.mode = ControlMode.RUNNING;
-			
-			//CONTROLLER.queue(task);
+			CONTROLLER.queue(new Runnable(){
+				@Override
+				public void run() {
+					CONTROLLER.startRunning();
+				}}
+			);
 			
 		} else if (e.getActionCommand().equals("stop")) {
 			JButton b = (JButton)e.getSource();
 			b.setText("Start");
 			b.setActionCommand("start");
 			
-			CONTROLLER.mode = ControlMode.IDLE;
-			
-			//CONTROLLER.queue(task);
+			CONTROLLER.queue(new Runnable(){
+				@Override
+				public void run() {
+					CONTROLLER.stopRunning();
+				}}
+			);
 		}
 	}
 	

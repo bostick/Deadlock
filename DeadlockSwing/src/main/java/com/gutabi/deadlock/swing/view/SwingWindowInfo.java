@@ -6,7 +6,7 @@ import java.awt.GraphicsEnvironment;
 import java.awt.Insets;
 import java.awt.Toolkit;
 
-import com.gutabi.core.Dim;
+import com.gutabi.deadlock.core.Dim;
 import com.gutabi.deadlock.core.view.DeadlockWindowInfo;
 
 public class SwingWindowInfo implements DeadlockWindowInfo {
