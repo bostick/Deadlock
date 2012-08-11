@@ -16,8 +16,8 @@ import com.gutabi.deadlock.core.controller.ControlMode;
 
 public class DeadlockModel implements VertexHandler {
 	
-	public static final int WORLD_WIDTH = 1400;
-	public static final int WORLD_HEIGHT = 822;
+	public final int WORLD_WIDTH = 1400;
+	public final int WORLD_HEIGHT = 822;
 	
 	public static final DeadlockModel MODEL = new DeadlockModel();
 	
@@ -29,10 +29,7 @@ public class DeadlockModel implements VertexHandler {
 	
 	private final Graph graph;
 	
-//	private List<Vertex> sources = new ArrayList<Vertex>();
-//	private List<Vertex> sinks = new ArrayList<Vertex>();
-	
-	public Car car;
+	public List<Car> cars = new ArrayList<Car>();
 	
 	public DeadlockModel() {
 		graph = new Graph(this);
@@ -43,8 +40,7 @@ public class DeadlockModel implements VertexHandler {
 		curStrokeRaw.clear();
 		allStrokes.clear();
 		graph.clear();
-//		sources.clear();
-//		sinks.clear();
+		cars.clear();
 	}
 	
 	public void processStroke(DPoint a, DPoint b) {

@@ -199,19 +199,30 @@ public class Point {
 	public static DPoint point(DPoint a, DPoint b, double param) {
 		assert param >= 0.0;
 		assert param <= 1.0;
+		
+		if (param == 0.0) {
+			return a;
+		}
+		if (param == 1.0) {
+			return b;
+		}
+		
 		return new DPoint(a.x + param * (b.x - a.x), a.y + param * (b.y - a.y));
 	}
 	
 	/**
 	 * return param that is dist away from a along the segment <a, b>
 	 */
-	public static double travel(DPoint a, DPoint b, double param, double dist) throws TravelException {
+	public static double travel(DPoint a, DPoint b, double param, double dist, int dir) throws TravelException {
 		
 		if (doubleEquals(dist, 0.0)) {
 			return param;
 		}
+		if (dist < 0.0) {
+			throw new IllegalArgumentException();
+		}
 		
-		if (dist > 0.0) {
+		if (dir == 1) {
 			
 			DPoint c = point(a, b, param);
 			
@@ -235,8 +246,30 @@ public class Point {
 			return param(m, a, b);
 			
 		} else {
+			assert dir == -1;
 			
-			return travel(b, a, 1-param, -dist);
+			//return travel(b, a, 1-param, dist, 1);
+			
+			DPoint c = point(a, b, param);
+			
+			if (dist > dist(c, a)) {
+				throw new TravelException();
+			}
+			
+			double rad = Math.atan2(a.y - c.y, a.x - c.x);
+			double x = Math.cos(rad) * dist + c.x;
+			double y = Math.sin(rad) * dist + c.y;
+			
+			DPoint m = new DPoint(x, y);
+			
+			try {
+				assert colinear(a, m, b);
+			} catch (ColinearException e) {
+				assert false;
+			}
+			assert doubleEquals(dist(c, m), dist);
+			
+			return param(m, a, b);
 			
 		}
 		
@@ -452,23 +485,23 @@ public class Point {
 			return 1.0;
 		}
 		
-		double xbc = b.x - (c.x);
-		double xdc = d.x - (c.x);
-		double ybc = b.y - (c.y);
-		double ydc = d.y - (c.y);
+		double xbc = b.x - c.x;
+		double xdc = d.x - c.x;
+		double ybc = b.y - c.y;
+		double ydc = d.y - c.y;
 		if (Point.doubleEquals(xdc, 0.0)) {
 			assert doubleEquals(xbc, 0);
-			double uy = ((double)ybc) / ((double)ydc);
+			double uy = ybc / ydc;
 			assert uy < 1.0;
 			return uy;
 		} else if (Point.doubleEquals(ydc, 0.0)) {
 			assert doubleEquals(ybc, 0);
-			double ux = ((double)xbc) / ((double)xdc);
+			double ux = xbc / xdc;
 			assert ux < 1.0;
 			return ux;
 		} else {
-			double ux = ((double)xbc) / ((double)xdc);
-			double uy = ((double)ybc) / ((double)ydc);
+			double ux = xbc / xdc;
+			double uy = ybc / ydc;
 			assert doubleEquals(ux, uy) : "being treated as uneqal: " + ux + " " + uy;
 			assert ux >= 0.0;
 			assert ux < 1.0;

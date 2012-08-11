@@ -32,7 +32,7 @@ public class WorldPanel extends JPanel {
 	public WorldPanel() {
 		
 		//setPreferredSize(new Dimension(1600, 900));
-		setPreferredSize(new Dimension(1400, 822));
+		setPreferredSize(new Dimension(MODEL.WORLD_WIDTH, MODEL.WORLD_HEIGHT));
 		
 	}
 	
@@ -42,16 +42,18 @@ public class WorldPanel extends JPanel {
 		
 		Graphics2D g2 = (Graphics2D)g;
 		
-		Dimension dim = this.getSize();
+		//g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		
+		//Dimension dim = this.getSize();
 		
 		g2.setColor(Color.DARK_GRAY);
-		g2.fillRect(0, 0, dim.width, 10);
-		g2.fillRect(0, 10, 10, dim.height-10);
-		g2.fillRect(dim.width-10, 10, 10, dim.height-10);
-		g2.fillRect(10, dim.height-10, dim.width-20, 10);
+		g2.fillRect(0, 0, MODEL.WORLD_WIDTH, 10);
+		g2.fillRect(0, 10, 10, MODEL.WORLD_HEIGHT-10);
+		g2.fillRect(MODEL.WORLD_WIDTH-10, 10, 10, MODEL.WORLD_HEIGHT-10);
+		g2.fillRect(10, MODEL.WORLD_HEIGHT-10, MODEL.WORLD_WIDTH-20, 10);
 		
 		g2.setColor(background);
-		g2.fillRect(10, 10, dim.width-20, dim.height-20);
+		g2.fillRect(10, 10, MODEL.WORLD_WIDTH-20, MODEL.WORLD_HEIGHT-20);
 		
 		g2.scale(VIEW.getZoom(), VIEW.getZoom());
 		g2.translate((double)-VIEW.viewLoc.x, (double)-VIEW.viewLoc.y);
@@ -63,7 +65,7 @@ public class WorldPanel extends JPanel {
 		ControlMode modeCopy;
 		List<DPoint> curStrokeCopy;
 		DPoint lastPointCopy;
-		Car carCopy = null;
+		List<Car> carsCopy;
 		
 		synchronized (MODEL) {
 			edgesCopy = new ArrayList<Edge>();
@@ -77,8 +79,9 @@ public class WorldPanel extends JPanel {
 			modeCopy = MODEL.getMode();
 			curStrokeCopy = new ArrayList<DPoint>(MODEL.curStrokeRaw);
 			lastPointCopy = MODEL.lastPointRaw;
-			if (MODEL.car != null) {
-				carCopy = MODEL.car.copy();
+			carsCopy = new ArrayList<Car>();
+			for (Car c : MODEL.cars) {
+				carsCopy.add(c);
 			}
 		}
 		
@@ -113,8 +116,10 @@ public class WorldPanel extends JPanel {
 		} else if (modeCopy == ControlMode.RUNNING) {
 			
 			g2.setColor(Color.BLUE);
-			DPoint pos = carCopy.getPosition();
-			g2.fillOval((int)(pos.x-5), (int)(pos.y-5), 10, 10);
+			for (Car c : carsCopy) {
+				DPoint pos = c.getPosition();
+				g2.fillOval((int)(pos.x-5), (int)(pos.y-5), 10, 10);
+			}
 			
 		}
 		
