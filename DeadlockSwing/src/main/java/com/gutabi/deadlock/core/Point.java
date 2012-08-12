@@ -1,54 +1,43 @@
 package com.gutabi.deadlock.core;
 
+import static com.gutabi.deadlock.core.DMath.doubleEquals;
+
 public class Point {
 	
-	public final int x;
-	public final int y;
+	private final double x;
+	private final double y;
 	
-	public final int hash;
-	public final String s;
+	private final int hash;
+	private String s;
 	
-	public Point(int x, int y) {
+	public Point(double x, double y) {
+		
 		this.x = x;
 		this.y = y;
 		
 		int h = 17;
-		h = 37 * h + x;
-		h = 37 * h + y;
+		long l = (Double.doubleToLongBits(x));
+		int c = (int)(l ^ (l >>> 32));
+		h = 37 * h + c;
+		l = (Double.doubleToLongBits(y));
+		c = (int)(l ^ (l >>> 32));
+		h = 37 * h + c;
 		hash = h;
 		
-		s = "<" + x + ", " + y + ">";
+		//s = "<" + x + ", " + y + ">";
 	}
 	
-//	public Point(DPoint a) {
-//		
-//		int x = (int)Math.round(a.x);
-//		int y = (int)Math.round(a.y);
-//		
-//		if (x != a.x) {
-//			
-//		}
-//		if (y != a.y) {
-//			
-//		}
-//		
-//		this(x, y);
+//	public Point(IPoint a) {
+//		this(a.getX(), a.getY());
 //	}
+	
+	public static boolean equals(Point a, Point b) {
+		return doubleEquals(a.x, b.x) && doubleEquals(a.y, b.y);
+	}
 	
 	@Override
 	public boolean equals(Object p) {
 		throw new AssertionError();
-//		if (this == p) {
-//			return true;
-//		} else if (!(p instanceof Point)) {
-//			throw new IllegalArgumentException();
-//		} else {
-//			return (x == ((Point)p).x) && (y == ((Point)p).y);
-//		}
-	}
-	
-	public static boolean equals(Point a, Point b) {
-		return (a.x == b.x) && (a.y == b.y);
 	}
 	
 	@Override
@@ -58,16 +47,20 @@ public class Point {
 	
 	@Override
 	public String toString() {
+		if (s == null) {
+			s = "<" + x + ", " + y + ">";
+		}
 		return s;
 	}
 	
-	public DPoint toDPoint() {
-		return new DPoint(x, y);
+	public double getX() {
+		return x;
 	}
 	
-	public static DPoint intersection(Point a, Point b, Point c, Point d) throws OverlappingException {
-		return intersection(new DPoint(a), new DPoint(b), new DPoint(c), new DPoint(d));
+	public double getY() {
+		return y;
 	}
+	
 	
 	/**
 	 * does <a, b> intersect <c, d>?
@@ -77,11 +70,11 @@ public class Point {
 	 * @throws IllegalArgumentException
 	 * @throws OverlappingException
 	 */
-	public static DPoint intersection(DPoint a, DPoint b, DPoint c, DPoint d) throws OverlappingException {
-		if (DPoint.equals(a, b)) {
+	public static Point intersection(Point a, Point b, Point c, Point d) throws OverlappingException {
+		if (Point.equals(a, b)) {
 			throw new IllegalArgumentException("a and b are equal");
 		}
-		if (DPoint.equals(c, d)) {
+		if (Point.equals(c, d)) {
 			throw new IllegalArgumentException("c and d are equal");
 		}
 		double ydc = d.y - c.y;
@@ -93,14 +86,14 @@ public class Point {
 		double denom = xba * ydc - xdc * yba;
 		double uabn = xdc * yac - xac * ydc;
 		double ucdn = xba * yac - xac * yba;
-		if (Point.doubleEquals(denom, 0.0)) {
-			if (Point.doubleEquals(uabn, 0.0) && Point.doubleEquals(ucdn, 0.0)) {
+		if (doubleEquals(denom, 0.0)) {
+			if (doubleEquals(uabn, 0.0) && doubleEquals(ucdn, 0.0)) {
 				//colinear but not overlapping, single point, overlapping, or identical
 				
 				double cu;
-				if (!Point.doubleEquals(xba, 0.0)) {
+				if (!doubleEquals(xba, 0.0)) {
 					cu = (c.x - a.x) / xba;
-					if (!Point.doubleEquals(yba, 0.0)) {
+					if (!doubleEquals(yba, 0.0)) {
 						assert cu == (c.y - a.y) / yba;
 					}
 				} else {
@@ -108,9 +101,9 @@ public class Point {
 				}
 				
 				double du;
-				if (!Point.doubleEquals(xba, 0.0)) {
+				if (!doubleEquals(xba, 0.0)) {
 					du = (d.x - a.x) / xba;
-					if (!Point.doubleEquals(yba, 0.0)) {
+					if (!doubleEquals(yba, 0.0)) {
 						assert du == (d.y - a.y) / yba;
 					}
 				} else {
@@ -126,21 +119,21 @@ public class Point {
 				if (du < 0.0) {
 					//colinear but not intersecting
 					return null;
-				} else if (Point.doubleEquals(du, 0.0)) {
+				} else if (doubleEquals(du, 0.0)) {
 					//single point
 					return a;
 				} else if (du > 0.0 && du < 1.0) {
 					if (cu < 0.0) {
 						throw new OverlappingException();
-					} else if (Point.doubleEquals(cu, 0.0)) {
+					} else if (doubleEquals(cu, 0.0)) {
 						throw new OverlappingException();
 					} else {
 						throw new OverlappingException();
 					}
-				} else if (Point.doubleEquals(du, 1.0)) {
+				} else if (doubleEquals(du, 1.0)) {
 					if (cu < 0.0) {
 						throw new OverlappingException();
-					} else if (Point.doubleEquals(cu, 0.0)) {
+					} else if (doubleEquals(cu, 0.0)) {
 						//identical
 						throw new OverlappingException();
 					} else {
@@ -149,11 +142,11 @@ public class Point {
 				} else {
 					if (cu < 0.0) {
 						throw new OverlappingException();
-					} else if (Point.doubleEquals(cu, 0.0)) {
+					} else if (doubleEquals(cu, 0.0)) {
 						throw new OverlappingException();
 					} else if (cu > 0.0 && cu < 1.0) {
 						throw new OverlappingException();
-					} else if (Point.doubleEquals(cu, 1.0)) {
+					} else if (doubleEquals(cu, 1.0)) {
 						// single point
 						return b;
 					} else {
@@ -171,17 +164,17 @@ public class Point {
 			double uab = uabn / denom;
 			double ucd = ucdn / denom;
 			if (0.0 <= uab && uab <= 1.0) {
-				if (Point.doubleEquals(ucd,  0.0)) {
+				if (doubleEquals(ucd,  0.0)) {
 					// intersecting
 					return c;
-				} else if (Point.doubleEquals(ucd,  1.0)) {
+				} else if (doubleEquals(ucd,  1.0)) {
 					// intersecting
 					return d;
 				} else if (0.0 < ucd && ucd < 1.0) {
 					// intersecting
 					double x = a.x + (uab * (xba));
 					double y = a.y + (uab * (yba));
-					return new DPoint(x, y);
+					return new Point(x, y);
 				} else {
 					// not intersecting
 					return null;
@@ -196,7 +189,7 @@ public class Point {
 	/**
 	 * return Point defined by param on line &lt;a, b>
 	 */
-	public static DPoint point(DPoint a, DPoint b, double param) {
+	public static Point point(Point a, Point b, double param) {
 		assert param >= 0.0;
 		assert param <= 1.0;
 		
@@ -207,71 +200,76 @@ public class Point {
 			return b;
 		}
 		
-		return new DPoint(a.x + param * (b.x - a.x), a.y + param * (b.y - a.y));
+		return new Point(a.x + param * (b.x - a.x), a.y + param * (b.y - a.y));
 	}
 	
 	/**
 	 * return param that is dist away from a along the segment <a, b>
 	 */
-	public static double travel(DPoint a, DPoint b, double param, double dist, int dir) throws TravelException {
+	public static double travelForward(Point start, Point end, double param, double dist) throws TravelException {
 		
-		if (doubleEquals(dist, 0.0)) {
+		if (dist == 0.0) {
 			return param;
 		}
 		if (dist < 0.0) {
 			throw new IllegalArgumentException();
 		}
 		
-		if (dir == 1) {
-			
-			DPoint c = point(a, b, param);
-			
-			if (dist > dist(c, b)) {
-				throw new TravelException();
-			}
-			
-			double rad = Math.atan2(b.y - c.y, b.x - c.x);
-			double x = Math.cos(rad) * dist + c.x;
-			double y = Math.sin(rad) * dist + c.y;
-			
-			DPoint m = new DPoint(x, y);
-			
-			try {
-				assert colinear(a, m, b);
-			} catch (ColinearException e) {
-				assert false;
-			}
-			assert doubleEquals(dist(c, m), dist);
-			
-			return param(m, a, b);
-			
-		} else {
-			assert dir == -1;
-			
-			//return travel(b, a, 1-param, dist, 1);
-			
-			DPoint c = point(a, b, param);
-			
-			if (dist > dist(c, a)) {
-				throw new TravelException();
-			}
-			
-			double rad = Math.atan2(a.y - c.y, a.x - c.x);
-			double x = Math.cos(rad) * dist + c.x;
-			double y = Math.sin(rad) * dist + c.y;
-			
-			DPoint m = new DPoint(x, y);
-			
-			try {
-				assert colinear(a, m, b);
-			} catch (ColinearException e) {
-				assert false;
-			}
-			assert doubleEquals(dist(c, m), dist);
-			
-			return param(m, a, b);
-			
+		Point c = point(start, end, param);
+		
+		if (dist > dist(c, end)) {
+			throw new TravelException();
 		}
+		
+		double rad = Math.atan2(end.y - c.y, end.x - c.x);
+		double x = Math.cos(rad) * dist + c.x;
+		double y = Math.sin(rad) * dist + c.y;
+		
+		Point m = new Point(x, y);
+		
+		try {
+			assert colinear(start, m, end);
+		} catch (ColinearException e) {
+			assert false;
+		}
+		assert doubleEquals(dist(c, m), dist);
+		
+		return param(m, start, end);
+		
+	}
+	
+	/**
+	 * return param that is dist away from a along the segment <a, b>
+	 */
+	public static double travelBackward(Point start, Point end, double param, double dist) throws TravelException {
+		
+		if (dist == 0.0) {
+			return param;
+		}
+		if (dist < 0.0) {
+			throw new IllegalArgumentException();
+		}
+		
+		Point c = point(start, end, param);
+		
+		if (dist > dist(c, start)) {
+			throw new TravelException();
+		}
+		
+		double rad = Math.atan2(start.y - c.y, start.x - c.x);
+		double x = Math.cos(rad) * dist + c.x;
+		double y = Math.sin(rad) * dist + c.y;
+		
+		Point m = new Point(x, y);
+		
+		try {
+			assert colinear(start, m, end);
+		} catch (ColinearException e) {
+			assert false;
+		}
+		assert doubleEquals(dist(c, m), dist);
+		
+		return param(m, start, end);
 		
 	}
 	
@@ -279,54 +277,13 @@ public class Point {
 	 * Does b intersect &lt;c, d> ?
 	 */
 	public static boolean intersect(Point b, Point c, Point d) {
-		return intersect(new DPoint(b), new DPoint(c), new DPoint(d));
-	}
-	
-	/**
-	 * Does b intersect &lt;c, d> ?
-	 */
-	public static boolean intersect(DPoint b, Point c, Point d) {
-		return intersect(b, new DPoint(c), new DPoint(d));
-	}
-	
-	/**
-	 * Does b intersect &lt;c, d> ?
-	 */
-//	public static boolean intersect(Point b, DPoint c, DPoint d) {
-//		if (Point.equalsD(c, b)) {
-//			return true;
-//		}
-//		if (Point.equalsD(d, b)) {
-//			return false;
-//		}
-//		if (DPoint.equals(c, d)) {
-//			throw new IllegalArgumentException("c equals d");
-//		}
-//		double xbc = b.x - c.x;
-//		double xdc = d.x - c.x;
-//		double ybc = b.y - c.y;
-//		double ydc = d.y - c.y;
-//		double denom = xdc * xdc + ydc * ydc;
-//		assert !Point.doubleEquals(denom, 0.0);
-//		double u = ((double)(xbc * xdc + ybc * ydc)) / ((double)denom);
-//		if (u >= 0.0 && u < 1.0) {
-//			return Point.doubleEquals(xbc, u * xdc) && Point.doubleEquals(ybc, u * ydc);
-//		} else {
-//			return false;
-//		}
-//	}
-	
-	/**
-	 * Does b intersect &lt;c, d> ?
-	 */
-	public static boolean intersect(DPoint b, DPoint c, DPoint d) {
-		if (DPoint.equals(b, c)) {
+		if (Point.equals(b, c)) {
 			return true;
 		}
-		if (DPoint.equals(b, d)) {
+		if (Point.equals(b, d)) {
 			return false;
 		}	
-		if (DPoint.equals(c, d)) {
+		if (Point.equals(c, d)) {
 			throw new IllegalArgumentException("c equals d");
 		}
 		double xbc = b.x - c.x;
@@ -337,63 +294,27 @@ public class Point {
 		assert !doubleEquals(denom, 0.0);
 		double u = (xbc * xdc + ybc * ydc) / denom;
 		if (u >= 0.0 && u < 1.0) {	
-			return Point.doubleEquals(xbc, u * xdc) && Point.doubleEquals(ybc, u * ydc);
+			return doubleEquals(xbc, u * xdc) && doubleEquals(ybc, u * ydc);
 		} else {
 			return false;
 		}
 	}
 	
+	
+	
 	/**
 	 * is b inside the segment <c, d>?
 	 * ok if b equals c or d
 	 * throws exception if b is on the line, but outside of the segment <c, d>
 	 */
-//	public static boolean colinear(Point c, Point b, Point d) throws ColinearException {
-//		if (Point.equals(c, b)) {
-//			return true;
-//		}
-//		if (Point.equals(b, d)) {
-//			return true;
-//		}
-//		if (Point.equals(c, d)) {
-//			throw new IllegalArgumentException("c equals d");
-//		}
-//		int xbc = b.x - (c.x);
-//		int xdc = d.x - (c.x);
-//		int ybc = b.y - (c.y);
-//		int ydc = d.y - (c.y);
-//		int denom = (xdc * xdc + (ydc * ydc));
-//		assert denom != 0;
-//		// u is where b is perpendicular to <c, d>
-//		double u = ((double)((xbc * (xdc)) + ((ybc * (ydc))))) / ((double)(denom));
-//		if (u >= 0.0 && u <= 1.0) {
-//			return Point.doubleEquals(xbc, (u * (xdc))) && Point.doubleEquals(ybc, (u * (ydc)));
-//		} else {
-//			 if (Point.doubleEquals(xbc, (u * (xdc))) && Point.doubleEquals(ybc, (u * (ydc)))) {
-//				 throw new ColinearException();
-//			 } else {
-//				 return false;
-//			 }
-//		}
-//	}
-	
 	public static boolean colinear(Point c, Point b, Point d) throws ColinearException {
-		return colinear(c.toDPoint(), b.toDPoint(), d.toDPoint());
-	}
-	
-	/**
-	 * is b inside the segment <c, d>?
-	 * ok if b equals c or d
-	 * throws exception if b is on the line, but outside of the segment <c, d>
-	 */
-	public static boolean colinear(DPoint c, DPoint b, DPoint d) throws ColinearException {
-		if (DPoint.equals(b, c)) {
+		if (Point.equals(b, c)) {
 			return true;
 		}
-		if (DPoint.equals(b, d)) {
+		if (Point.equals(b, d)) {
 			return true;
 		}
-		if (DPoint.equals(c, d)) {
+		if (Point.equals(c, d)) {
 			throw new IllegalArgumentException("c equals d");
 		}
 		double xbc = b.x - c.x;
@@ -401,13 +322,13 @@ public class Point {
 		double ybc = b.y - c.y;
 		double ydc = d.y - c.y;
 		double denom = xdc * xdc + ydc * ydc;
-		assert !Point.doubleEquals(denom, 0.0);
+		assert !doubleEquals(denom, 0.0);
 		// u is where b is perpendicular to <c, d>
 		double u = (xbc * xdc + ybc * ydc) / denom;
 		if (u >= 0.0 && u <= 1.0) {
-			return Point.doubleEquals(xbc, u * xdc) && Point.doubleEquals(ybc, u * ydc);
+			return doubleEquals(xbc, u * xdc) && doubleEquals(ybc, u * ydc);
 		} else {
-			 if (Point.doubleEquals(xbc, u * xdc) && Point.doubleEquals(ybc, u * ydc)) {
+			 if (doubleEquals(xbc, u * xdc) && doubleEquals(ybc, u * ydc)) {
 				 throw new ColinearException();
 			 } else {
 				 return false;
@@ -415,73 +336,15 @@ public class Point {
 		}
 	}
 	
-//	/**
-//	 * assuming it is, return param for point b on line defined by &lt;c, d>
-//	 */
-//	public static double param(DPoint b, Point c, Point d) {
-//		
-//		if (Point.equals(b, c)) {
-//			return 0.0;
-//		} else if (Point.equals(b, d)) {
-//			assert false;
-//		}
-//		
-//		int xbc = b.x - (c.x);
-//		int xdc = d.x - (c.x);
-//		int ybc = b.y - (c.y);
-//		int ydc = d.y - (c.y);
-//		if (xdc == 0) {
-//			assert xbc == 0;
-//			double uy = ((double)ybc) / ((double)ydc);
-//			assert uy >= 0.0;
-//			assert uy < 1.0;
-//			return uy;
-//		} else if (ydc == 0) {
-//			assert ybc == 0;
-//			double ux = ((double)xbc) / ((double)xdc);
-//			assert ux >= 0.0;
-//			assert ux < 1.0;
-//			return ux;
-//		} else {
-//			double ux = ((double)xbc) / ((double)xdc);
-//			double uy = ((double)ybc) / ((double)ydc);
-//			assert ux == (uy);
-//			assert ux >= 0.0;
-//			assert ux < 1.0;
-//			return ux;
-//		}
-//		
-//	}
 	
 	/**
 	 * assuming it is, return param for point b on line defined by &lt;c, d>
 	 */
 	public static double param(Point b, Point c, Point d) {
-		return param(new DPoint(b), new DPoint(c), new DPoint(d));
-	}
-	
-	/**
-	 * assuming it is, return param for point b on line defined by &lt;c, d>
-	 */
-	public static double param(DPoint b, Point c, Point d) {
-		return param(b, new DPoint(c), new DPoint(d));
-	}
-	
-	/**
-	 * assuming it is, return param for point b on line defined by &lt;c, d>
-	 */
-	public static double param(Point b, DPoint c, DPoint d) {
-		return param(new DPoint(b), c, d);
-	}
-	
-	/**
-	 * assuming it is, return param for point b on line defined by &lt;c, d>
-	 */
-	public static double param(DPoint b, DPoint c, DPoint d) {
 		
-		if (DPoint.equals(b, c)) {
+		if (Point.equals(b, c)) {
 			return 0.0;
-		} else if (DPoint.equals(b, d)) {
+		} else if (Point.equals(b, d)) {
 			return 1.0;
 		}
 		
@@ -489,12 +352,12 @@ public class Point {
 		double xdc = d.x - c.x;
 		double ybc = b.y - c.y;
 		double ydc = d.y - c.y;
-		if (Point.doubleEquals(xdc, 0.0)) {
+		if (doubleEquals(xdc, 0.0)) {
 			assert doubleEquals(xbc, 0);
 			double uy = ybc / ydc;
 			assert uy < 1.0;
 			return uy;
-		} else if (Point.doubleEquals(ydc, 0.0)) {
+		} else if (doubleEquals(ydc, 0.0)) {
 			assert doubleEquals(ybc, 0);
 			double ux = xbc / xdc;
 			assert ux < 1.0;
@@ -514,37 +377,8 @@ public class Point {
 		return Math.hypot(a.x - b.x, a.y - b.y);
 	}
 	
-	public static double dist(Point a, DPoint b) {
-		return Math.hypot(a.x - b.x, a.y - b.y);
-	}
-	
-	public static double dist(DPoint a, DPoint b) {
-		return Math.hypot(a.x - b.x, a.y - b.y);
-	}
-	
-	public static double dist(DPoint a, Point b) {
-		return Math.hypot(a.x - b.x, a.y - b.y);
-	}
-	
-	
-	public static boolean doubleEquals(double a, double b) {
-		/*
-		 * 1.0E-12 seems to be fine for the math we do here
-		 * 1.0E-13 gives StackOverflowErrors when it is expecting some points to be equal
-		 */
-		return Math.abs(a - b) < 1.0E-12;
-	}
-	
-	public static boolean equalsD(DPoint a, Point b) {
-		return doubleEquals(a.x, b.x) && doubleEquals(a.y, b.y);
-	}
-	
 	public static Point add(Point a, Point b) {
 		return new Point(a.x + b.x, a.y + b.y);
-	}
-	
-	public static DPoint add(DPoint a, Point b) {
-		return new DPoint(a.x + b.x, a.y + b.y);
 	}
 	
 	public static Point minus(Point a, Point b) {
@@ -558,5 +392,7 @@ public class Point {
 	public Point minus(Point b) {
 		return minus(this, b);
 	}
+	
+	
 	
 }

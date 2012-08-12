@@ -3,9 +3,11 @@ package com.gutabi.deadlock.core;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.gutabi.deadlock.core.DMath.doubleEquals;
+
 public class QuadTree {
 	
-	ArrayList<SegmentIndex> segIndices = new ArrayList<SegmentIndex>();
+	ArrayList<Segment> segIndices = new ArrayList<Segment>();
 	
 	public void addEdge(Edge e) {
 		for (int i = 0; i < e.size()-1; i++) {
@@ -24,12 +26,12 @@ public class QuadTree {
 	}
 	
 	private void addSegment(Edge e, int i) {
-		segIndices.add(new SegmentIndex(e, i));
+		segIndices.add(new Segment(e, i));
 	}
 
 	private void removeSegment(Edge e, int i) {
-		SegmentIndex toRemove = null;
-		for (SegmentIndex si : segIndices) {
+		Segment toRemove = null;
+		for (Segment si : segIndices) {
 			if (si.edge == e && si.index == i) {
 				toRemove = si;
 			}
@@ -45,71 +47,57 @@ public class QuadTree {
 		segIndices.clear();
 	}
 	
+//	public List<SegmentIndex> findAllSegments(Point a, Point b) {
+//		Point ul = new Point((int)Math.floor(Math.min(a.getX(), b.getX())), (int)Math.floor(Math.min(a.getY(), b.getY())));
+//		Point br = new Point((int)Math.ceil(Math.max(a.getX(), b.getX())), (int)Math.ceil(Math.max(a.getY(), b.getY())));
+//		return findAllSegments(ul, br);
+//	}
 	
-	public class SegmentIndex {
-		public final Edge edge;
-		public final int index;
-		public final Point c;
-		public final Point d;
-		private SegmentIndex(Edge e, int index) {
-			this.edge = e;
-			this.index = index;
-			this.c = e.getPoint(index);
-			this.d = e.getPoint(index+1);
-		}
-	}
-	
-	public List<SegmentIndex> findAllSegments(DPoint a, DPoint b) {
-		Point ul = new Point((int)Math.floor(Math.min(a.x, b.x)), (int)Math.floor(Math.min(a.y, b.y)));
-		Point br = new Point((int)Math.ceil(Math.max(a.x, b.x)), (int)Math.ceil(Math.max(a.y, b.y)));
-		return findAllSegments(ul, br);
-	}
-	
-	public List<SegmentIndex> findAllSegments(Point a, Point b) {
+	public List<Segment> findAllSegments(Point a, Point b) {
 		assert !Point.equals(a, b);
-		DPoint ul = new DPoint(Math.min(a.x, b.x), Math.min(a.y, b.y));
-		DPoint ur = new DPoint(Math.max(a.x, b.x), Math.min(a.y, b.y));
-		DPoint bl = new DPoint(Math.min(a.x, b.x), Math.max(a.y, b.y));
-		DPoint br = new DPoint(Math.max(a.x, b.x), Math.max(a.y, b.y));
-		List<SegmentIndex> l = new ArrayList<SegmentIndex>();
-		for (SegmentIndex si : segIndices) {
+		Point ul = new Point(Math.min(a.getX(), b.getX()), Math.min(a.getY(), b.getY()));
+		Point ur = new Point(Math.max(a.getX(), b.getX()), Math.min(a.getY(), b.getY()));
+		Point bl = new Point(Math.min(a.getX(), b.getX()), Math.max(a.getY(), b.getY()));
+		Point br = new Point(Math.max(a.getX(), b.getX()), Math.max(a.getY(), b.getY()));
+		List<Segment> l = new ArrayList<Segment>();
+		for (Segment si : segIndices) {
 			Edge e = si.edge;
 			int i = si.index;
-			DPoint c = new DPoint(e.getPoint(i));
-			DPoint d = new DPoint(e.getPoint(i+1));
+			Point c = e.getPoint(i);
+			Point d = e.getPoint(i+1);
 			try {
-				if ((ul.x <= c.x && c.x <= br.x && ul.y <= c.y && c.y <= br.y) || (ul.x <= d.x && d.x <= br.x && ul.y <= d.y && d.y <= br.y) ||
-						!DPoint.equals(ul, ur) && Point.intersection(ul, ur, c, d) != null ||
-						!DPoint.equals(ul, bl) && Point.intersection(ul, bl, c, d) != null ||
-						!DPoint.equals(ur, br) && Point.intersection(ur, br, c, d) != null ||
-						!DPoint.equals(bl, br) && Point.intersection(bl, br, c, d) != null) {
-					l.add(new SegmentIndex(e, i));
+				if ((ul.getX() <= c.getX() && c.getX() <= br.getX() && ul.getY() <= c.getY() && c.getY() <= br.getY()) || (ul.getX() <= d.getX() && d.getX() <= br.getX() && ul.getY() <= d.getY() && d.getY() <= br.getY()) ||
+						!Point.equals(ul, ur) && Point.intersection(ul, ur, c, d) != null ||
+						!Point.equals(ul, bl) && Point.intersection(ul, bl, c, d) != null ||
+						!Point.equals(ur, br) && Point.intersection(ur, br, c, d) != null ||
+						!Point.equals(bl, br) && Point.intersection(bl, br, c, d) != null) {
+					l.add(new Segment(e, i));
 				}
 			} catch (OverlappingException e1) {
-				l.add(new SegmentIndex(e, i));
+				l.add(new Segment(e, i));
 			}
 		}
 		return l;
 	}
 	
-	public List<SegmentIndex> findAllSegments(Point a) {
-		List<SegmentIndex> l = new ArrayList<SegmentIndex>();
-		for (SegmentIndex si : segIndices) {
+	public List<Segment> findAllSegments(Point a) {
+		List<Segment> l = new ArrayList<Segment>();
+		for (Segment si : segIndices) {
 			Edge e = si.edge;
 			int i = si.index;
 		//for (int i = 0; i < e.size()-1; i++) {
 			Point c = e.getPoint(i);
 			Point d = e.getPoint(i+1);
 			if (Point.intersect(a, c, d)) {
-				l.add(new SegmentIndex(e, i));
+				l.add(new Segment(e, i));
 			}
 		//}
 		}
 		return l;
 	}
 	
-	public SegmentIndex findSegment(Point a, Point b) {
-		for (SegmentIndex in : findAllSegments(a, b)) {
+	public Segment findSegment(Point a, Point b) {
+		for (Segment in : findAllSegments(a, b)) {
 			Edge e = in.edge;
 			Point c = e.getPoint(in.index);
 			Point d = e.getPoint(in.index+1);
@@ -121,40 +109,43 @@ public class QuadTree {
 	}
 	
 	/**
-	 * <c, d>
+	 * find closest position on <c, d> to the point b
 	 */
-	public static IntersectionInfo closestDPoint(DPoint b, SegmentIndex si) {
-		Point c = si.c;
-		Point d = si.d;
-		if (Point.equalsD(b, c)) {
-			return new IntersectionInfo(si, 0.0);
+	public static Position closestPosition(Point b, Segment si) {
+		Point c = si.start;
+		Point d = si.end;
+		if (Point.equals(b, c)) {
+			return new Position(si, 0.0);
 		}
-		if (Point.equalsD(b, d)) {
-			return new IntersectionInfo(si, 1.0);
+		if (Point.equals(b, d)) {
+			return new Position(si, 1.0);
 		}
 		if (Point.equals(c, d)) {
 			throw new IllegalArgumentException("c equals d");
 		}
-		double xbc = b.x - c.x;
-		int xdc = d.x - c.x;
-		double ybc = b.y - c.y;
-		int ydc = d.y - c.y;
-		int denom = xdc * xdc + ydc * ydc;
-		assert denom != 0;
-		double u = ((double)(xbc * xdc + ybc * ydc)) / ((double)denom);
+		double xbc = b.getX() - c.getX();
+		double xdc = d.getX() - c.getX();
+		double ybc = b.getY() - c.getY();
+		double ydc = d.getY() - c.getY();
+		double denom = xdc * xdc + ydc * ydc;
+		assert !doubleEquals(denom, 0.0);
+		double u = (xbc * xdc + ybc * ydc) / denom;
 		if (u <= 0.0) {
-			return new IntersectionInfo(si, 0.0);
+			return new Position(si, 0.0);
 		} else if (u >= 1.0) {
-			return new IntersectionInfo(si, 1.0);
+			return new Position(si, 1.0);
 		} else {
-			return new IntersectionInfo(si, u);
+			return new Position(si, u);
 		}
 	}
 	
-	public IntersectionInfo findClosestSegment(DPoint a) {
-		IntersectionInfo best = null;
-		for (SegmentIndex si : segIndices) {
-			IntersectionInfo closest = closestDPoint(a, si);
+	/**
+	 * find closest existing position to point a
+	 */
+	public Position findClosestPosition(Point a) {
+		Position best = null;
+		for (Segment si : segIndices) {
+			Position closest = closestPosition(a, si);
 			if (best == null) {
 				best = closest;
 			} else if (Point.dist(a, closest.point) < Point.dist(a, best.point)) {

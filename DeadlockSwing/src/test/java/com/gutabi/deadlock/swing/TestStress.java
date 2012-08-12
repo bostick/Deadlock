@@ -1,6 +1,8 @@
 package com.gutabi.deadlock.swing;
 
-import static com.gutabi.deadlock.core.model.DeadlockModel.MODEL;
+import static com.gutabi.deadlock.controller.DeadlockController.CONTROLLER;
+import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
+import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
 import java.util.List;
 
@@ -10,25 +12,20 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.gutabi.deadlock.core.DPoint;
+import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.Edge;
-import com.gutabi.deadlock.swing.controller.PlatformController;
-import com.gutabi.deadlock.swing.view.PlatformView;
 
 public class TestStress {
-
-	public static PlatformView PLATFORMVIEW;
-	public static PlatformController PLATFORMCONTROLLER;
 	
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 		
-		PLATFORMVIEW.init();
+		VIEW.init();
 		
-		PLATFORMCONTROLLER.init();
+		CONTROLLER.init();
 		
-		PLATFORMVIEW.frame.setVisible(true);
-		PLATFORMVIEW.panel.requestFocusInWindow();
+		VIEW.frame.setVisible(true);
+		VIEW.panel.requestFocusInWindow();
 		
 	}
 
@@ -52,10 +49,10 @@ public class TestStress {
 		return 0 + (int)(Math.random() * ((20 - 0) + 1));
 	}
 	
-	DPoint randomPoint() {
+	Point randomPoint() {
 		int x = 0 + (int)(Math.random() * ((500 - 0) + 1));
 		int y = 0 + (int)(Math.random() * ((500 - 0) + 1));
-		return new DPoint(x, y);
+		return new Point(x, y);
 	}
 	
 	@Test
@@ -65,15 +62,15 @@ public class TestStress {
 		
 		for (int ii = 0; ii < m; ii++) {
 			
-			DPoint p = randomPoint();
-			PLATFORMCONTROLLER.mc.pressed(p);
+			Point p = randomPoint();
+			CONTROLLER.mc.pressed(p);
 			
 			for (int i = 0; i < 20; i++) {
 				p = randomPoint();
-				PLATFORMCONTROLLER.mc.dragged(p);
+				CONTROLLER.mc.dragged(p);
 			}
 			
-			PLATFORMCONTROLLER.mc.released();
+			CONTROLLER.mc.released();
 			
 		}
 		

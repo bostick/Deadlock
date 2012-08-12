@@ -1,6 +1,6 @@
-package com.gutabi.deadlock.swing.view;
+package com.gutabi.deadlock.view;
 
-import static com.gutabi.deadlock.swing.Main.PLATFORMCONTROLLER;
+import static com.gutabi.deadlock.controller.DeadlockController.CONTROLLER;
 
 import java.awt.Dimension;
 
@@ -16,7 +16,7 @@ public class ControlPanel extends JPanel {
 		
 		b.setPreferredSize(new Dimension(100, 20));
 		b.setActionCommand("start");
-		b.addActionListener(PLATFORMCONTROLLER);
+		b.addActionListener(CONTROLLER);
 		
 		add(b);
 		

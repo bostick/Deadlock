@@ -2,10 +2,11 @@ package com.gutabi.deadlock.core;
 
 import java.util.Comparator;
 
+import static com.gutabi.deadlock.core.DMath.doubleEquals;
 
 public class PointToBeAdded {
 	
-	public final DPoint p;
+	public final Point p;
 	
 	/**
 	 * value ranging from 0..1 measuring distance between points at index and index+1, used for sorting
@@ -14,7 +15,7 @@ public class PointToBeAdded {
 	
 	private final int hash;
 	
-	public PointToBeAdded(DPoint p, double param) {
+	public PointToBeAdded(Point p, double param) {
 		assert param >= 0.0;
 		assert param <= 1.0;
 		this.p = p;
@@ -44,7 +45,7 @@ public class PointToBeAdded {
 		} else if (!(o instanceof PointToBeAdded)) {
 			return false;
 		} else {
-			return (this.p.equals(((PointToBeAdded)o).p)) && Point.doubleEquals(this.param, (((PointToBeAdded)o).param));
+			return (this.p.equals(((PointToBeAdded)o).p)) && doubleEquals(this.param, (((PointToBeAdded)o).param));
 		}
 	}
 	
@@ -56,7 +57,7 @@ public class PointToBeAdded {
 			} else if (a.param > (b.param)) {
 				return 1;
 			} else {
-				assert DPoint.equals(a.p, b.p) && Point.doubleEquals(a.param, b.param);
+				assert Point.equals(a.p, b.p) && doubleEquals(a.param, b.param);
 				return 0;
 			}
 		}

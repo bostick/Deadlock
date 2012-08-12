@@ -1,4 +1,4 @@
-package com.gutabi.deadlock.swing.view;
+package com.gutabi.deadlock.view;
 
 import java.awt.Dimension;
 import java.awt.GraphicsConfiguration;
@@ -7,49 +7,48 @@ import java.awt.Insets;
 import java.awt.Toolkit;
 
 import com.gutabi.deadlock.core.Dim;
-import com.gutabi.deadlock.core.view.DeadlockWindowInfo;
 
-public class SwingWindowInfo implements DeadlockWindowInfo {
+public class WindowInfo {
 	
-	private Insets screenInsets;
-	private Dimension screenDim;
+	private static Insets screenInsets;
+	private static Dimension screenDim;
 	
-	{
+	static {
 		GraphicsConfiguration gc = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getConfigurations()[0];
 		Insets si = Toolkit.getDefaultToolkit().getScreenInsets(gc);
 		screenInsets = si;
 		screenDim = Toolkit.getDefaultToolkit().getScreenSize();
 	}
 	
-	public int windowWidth() {
+	public static int windowWidth() {
 		return screenDim.width - screenInsets.left - screenInsets.right;
 	}
 	
-	public int windowHeight() {
+	public static int windowHeight() {
 		return screenDim.height - screenInsets.top - screenInsets.bottom;
 	}
 	
-	public Dim windowDim() {
+	public static Dim windowDim() {
 		return new Dim(screenDim.width - screenInsets.left - screenInsets.right, screenDim.height - screenInsets.top - screenInsets.bottom);
 	}
 	
-	public int windowX() {
+	public static int windowX() {
 		return screenInsets.left;
 	}
 	
-	public int windowY() {
+	public static int windowY() {
 		return screenInsets.top;
 	}
 	
-	public int screenWidth() {
+	public static int screenWidth() {
 		return screenDim.width;
 	}
 	
-	public int screenHeight() {
+	public static int screenHeight() {
 		return screenDim.height;
 	}
 	
-	public Dim screenDim() {
+	public static Dim screenDim() {
 		return new Dim(screenDim.width, screenDim.height);
 	}
 	

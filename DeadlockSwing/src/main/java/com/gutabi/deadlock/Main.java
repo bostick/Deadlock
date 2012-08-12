@@ -1,8 +1,8 @@
-package com.gutabi.deadlock.swing;
+package com.gutabi.deadlock;
 
-import static com.gutabi.deadlock.core.LoggerFactory.LOGGERFACTORY;
-import static com.gutabi.deadlock.core.controller.DeadlockController.CONTROLLER;
-import static com.gutabi.deadlock.core.view.DeadlockView.VIEW;
+import static com.gutabi.deadlock.controller.DeadlockController.CONTROLLER;
+import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
+import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
 import java.io.IOException;
 
@@ -11,30 +11,14 @@ import javax.swing.UnsupportedLookAndFeelException;
 
 import org.apache.log4j.Logger;
 
-import com.gutabi.deadlock.core.controller.DeadlockController;
-import com.gutabi.deadlock.core.view.DeadlockView;
-import com.gutabi.deadlock.swing.controller.PlatformController;
-import com.gutabi.deadlock.swing.view.PlatformView;
-import com.gutabi.deadlock.swing.view.SwingWindowInfo;
-
 public class Main  {
-	
-	public static PlatformView PLATFORMVIEW;
-	public static PlatformController PLATFORMCONTROLLER;
 	
 	static Logger logger = Logger.getLogger("deadlock");
 	
 	static void createAndShowGUI(String[] args) throws Exception {
 		
-		LOGGERFACTORY = new PlatformLoggerFactory();
-		
-		PLATFORMVIEW = new PlatformView();
-		PLATFORMCONTROLLER = new PlatformController();
-		VIEW = new DeadlockView(new SwingWindowInfo());
-		CONTROLLER = new DeadlockController();
-		
-		PLATFORMVIEW.init();
-		PLATFORMCONTROLLER.init();
+//		VIEW = new DeadlockView();
+//		CONTROLLER = new DeadlockController();
 		
 //		VIEW.window = new PlatformWindow();
 //		VIEW.logger = new PlatformLogger(VIEW.getClass());
@@ -42,8 +26,10 @@ public class Main  {
 		
 		CONTROLLER.init();
 		
-		PLATFORMVIEW.frame.setVisible(true);
-		PLATFORMVIEW.panel.requestFocusInWindow();
+		MODEL.init();
+		
+		VIEW.frame.setVisible(true);
+		VIEW.panel.requestFocusInWindow();
 		
 	}
 	

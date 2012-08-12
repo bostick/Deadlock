@@ -1,7 +1,6 @@
-package com.gutabi.deadlock.swing.view;
+package com.gutabi.deadlock.view;
 
-import static com.gutabi.deadlock.core.model.DeadlockModel.MODEL;
-import static com.gutabi.deadlock.core.view.DeadlockView.VIEW;
+import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -15,12 +14,11 @@ import javax.swing.JPanel;
 
 import org.apache.log4j.Logger;
 
-import com.gutabi.deadlock.core.DPoint;
+import com.gutabi.deadlock.controller.ControlMode;
 import com.gutabi.deadlock.core.Edge;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.Vertex;
-import com.gutabi.deadlock.core.controller.ControlMode;
-import com.gutabi.deadlock.core.model.Car;
+import com.gutabi.deadlock.model.Car;
 
 @SuppressWarnings("serial")
 public class WorldPanel extends JPanel {
@@ -55,16 +53,15 @@ public class WorldPanel extends JPanel {
 		g2.setColor(background);
 		g2.fillRect(10, 10, MODEL.WORLD_WIDTH-20, MODEL.WORLD_HEIGHT-20);
 		
-		g2.scale(VIEW.getZoom(), VIEW.getZoom());
-		g2.translate((double)-VIEW.viewLoc.x, (double)-VIEW.viewLoc.y);
-		
+		g2.scale(MODEL.getZoom(), MODEL.getZoom());
+		g2.translate((double)-MODEL.viewLoc.getX(), (double)-MODEL.viewLoc.getY());
 		
 		
 		List<Edge> edgesCopy;
 		List<Vertex> verticesCopy;
 		ControlMode modeCopy;
-		List<DPoint> curStrokeCopy;
-		DPoint lastPointCopy;
+		List<Point> curStrokeCopy;
+		Point lastPointCopy;
 		List<Car> carsCopy;
 		
 		synchronized (MODEL) {
@@ -77,7 +74,7 @@ public class WorldPanel extends JPanel {
 				verticesCopy.add(v.copy());
 			}
 			modeCopy = MODEL.getMode();
-			curStrokeCopy = new ArrayList<DPoint>(MODEL.curStrokeRaw);
+			curStrokeCopy = new ArrayList<Point>(MODEL.curStrokeRaw);
 			lastPointCopy = MODEL.lastPointRaw;
 			carsCopy = new ArrayList<Car>();
 			for (Car c : MODEL.cars) {
@@ -101,9 +98,9 @@ public class WorldPanel extends JPanel {
 			int[] xPoints = new int[size];
 			int[] yPoints = new int[size];
 			for (int i = 0; i < size; i++) {
-				DPoint p = curStrokeCopy.get(i);
-				xPoints[i] = (int)p.x;
-				yPoints[i] = (int)p.y;
+				Point p = curStrokeCopy.get(i);
+				xPoints[i] = (int)p.getX();
+				yPoints[i] = (int)p.getY();
 			}
 			
 			g2.setStroke(new Road1Stroke());
@@ -111,14 +108,14 @@ public class WorldPanel extends JPanel {
 			
 			g2.setColor(Color.RED);
 			if (lastPointCopy != null) {
-				g2.fillOval((int)(lastPointCopy.x-5), (int)(lastPointCopy.y-5), 10, 10);
+				g2.fillOval((int)(lastPointCopy.getX()-5), (int)(lastPointCopy.getY()-5), 10, 10);
 			}
 		} else if (modeCopy == ControlMode.RUNNING) {
 			
 			g2.setColor(Color.BLUE);
 			for (Car c : carsCopy) {
-				DPoint pos = c.getPosition();
-				g2.fillOval((int)(pos.x-5), (int)(pos.y-5), 10, 10);
+				Point pos = c.getPosition().point;
+				g2.fillOval((int)(pos.getX()-5), (int)(pos.getY()-5), 10, 10);
 			}
 			
 		}
@@ -147,8 +144,8 @@ public class WorldPanel extends JPanel {
 		int[] yPoints = new int[size];
 		for (int i = 0; i < size; i++) {
 			Point p = e.getPoint(i);
-			xPoints[i] = p.x;
-			yPoints[i] = p.y;
+			xPoints[i] = (int)p.getX();
+			yPoints[i] = (int)p.getY();
 		}
 		g.setColor(new Color(0x88, 0x88, 0x88, 0xff));
 		g.setStroke(new Road1Stroke());
@@ -162,8 +159,8 @@ public class WorldPanel extends JPanel {
 		int[] yPoints = new int[size];
 		for (int i = 0; i < size; i++) {
 			Point p = e.getPoint(i);
-			xPoints[i] = p.x;
-			yPoints[i] = p.y;
+			xPoints[i] = (int)p.getX();
+			yPoints[i] = (int)p.getY();
 		}
 		
 		g.setColor(Color.YELLOW);
@@ -188,7 +185,7 @@ public class WorldPanel extends JPanel {
 		}
 		
 		Point p = v.getPoint();
-		g.fillOval(p.x-5, p.y-5, 10, 10);
+		g.fillOval((int)p.getX()-5, (int)p.getY()-5, 10, 10);
 		
 	}
 	

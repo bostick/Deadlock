@@ -1,30 +1,39 @@
-package com.gutabi.deadlock.swing.view;
-
-import static com.gutabi.deadlock.core.view.DeadlockView.VIEW;
+package com.gutabi.deadlock.view;
 
 import java.awt.Container;
 
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 
-public class PlatformView {
+import org.apache.log4j.Logger;
+
+public class DeadlockView {
 	
-	public boolean inited = false;
+//	public Point cameraUpperLeft = new Point(0, 0);
+//	public double zoom = 1.0;
+	
+	//public boolean inited = false;
 	
 	public JFrame frame;
 	public WorldPanel panel;
 	public ControlPanel controlPanel;
 	
-	public PlatformView() {
+	//public final DeadlockWindowInfo window;	
+	public final Logger logger = Logger.getLogger(DeadlockView.class);
+	
+	public static DeadlockView VIEW = new DeadlockView();
+	
+	public DeadlockView() {
 		;
 	}
 	
 	public void init() {
+		//assert window != null;
+		
 		
 		frame = createFrame(false);
 		
-		inited = true;
-		
+		//inited = true;
 	}
 	
 	public JFrame createFrame(boolean fullScreen) {
@@ -49,8 +58,8 @@ public class PlatformView {
 		
 		newFrame.pack();
 		
-		newFrame.setSize(VIEW.window.windowWidth(), VIEW.window.windowHeight());
-		newFrame.setLocation(VIEW.window.windowX(), VIEW.window.windowY());
+		newFrame.setSize(WindowInfo.windowWidth(), WindowInfo.windowHeight());
+		newFrame.setLocation(WindowInfo.windowX(), WindowInfo.windowY());
 		
 		return newFrame;
 	}
@@ -58,5 +67,5 @@ public class PlatformView {
 	public void repaint() {
 		frame.repaint();
 	}
-
+	
 }

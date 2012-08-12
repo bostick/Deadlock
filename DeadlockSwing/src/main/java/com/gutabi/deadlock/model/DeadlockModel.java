@@ -1,31 +1,35 @@
-package com.gutabi.deadlock.core.model;
+package com.gutabi.deadlock.model;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import com.gutabi.deadlock.core.DPoint;
+import com.gutabi.deadlock.controller.ControlMode;
+import com.gutabi.deadlock.core.Dim;
 import com.gutabi.deadlock.core.Edge;
 import com.gutabi.deadlock.core.Graph;
-import com.gutabi.deadlock.core.IntersectionInfo;
 import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.core.QuadTree.SegmentIndex;
+import com.gutabi.deadlock.core.Position;
+import com.gutabi.deadlock.core.Segment;
 import com.gutabi.deadlock.core.Vertex;
 import com.gutabi.deadlock.core.VertexHandler;
 import com.gutabi.deadlock.core.VertexType;
-import com.gutabi.deadlock.core.controller.ControlMode;
+import com.gutabi.deadlock.view.WindowInfo;
 
 public class DeadlockModel implements VertexHandler {
 	
 	public final int WORLD_WIDTH = 1400;
 	public final int WORLD_HEIGHT = 822;
 	
+	public Point viewLoc;
+	public Dim viewDim;
+	
 	public static final DeadlockModel MODEL = new DeadlockModel();
 	
 	private ControlMode mode = ControlMode.IDLE;
 	
-	public DPoint lastPointRaw;
-	public List<DPoint> curStrokeRaw = new ArrayList<DPoint>();
-	public List<List<DPoint>> allStrokes = new ArrayList<List<DPoint>>();
+	public Point lastPointRaw;
+	public List<Point> curStrokeRaw = new ArrayList<Point>();
+	public List<List<Point>> allStrokes = new ArrayList<List<Point>>();
 	
 	private final Graph graph;
 	
@@ -33,6 +37,11 @@ public class DeadlockModel implements VertexHandler {
 	
 	public DeadlockModel() {
 		graph = new Graph(this);
+	}
+	
+	public void init() {
+		viewLoc = new Point(0, 0);
+		viewDim = WindowInfo.windowDim();
 	}
 	
 	public void clear() {
@@ -43,21 +52,25 @@ public class DeadlockModel implements VertexHandler {
 		cars.clear();
 	}
 	
-	public void processStroke(DPoint a, DPoint b) {
+	public void processStroke(Point a, Point b) {
 		graph.processStroke(a, b);
+	}
+	
+	public double getZoom() {
+		return ((double)WindowInfo.windowWidth()) / ((double)viewDim.width);
 	}
 	
 	public boolean checkConsistency() {
 		return graph.checkConsistency();
 	}
 	
-	public Vertex findClosestVertex(DPoint a) {
+	public Vertex findClosestVertex(Point a) {
 		
 		Vertex closest = null;
 		
 		for (Vertex v : MODEL.graph.getVertices()) {
 			
-			DPoint vp = new DPoint(v.getPoint());
+			Point vp = v.getPoint();
 			
 			if (closest == null) {
 				closest = v;
@@ -70,11 +83,11 @@ public class DeadlockModel implements VertexHandler {
 		return closest;
 	}
 	
-	public IntersectionInfo findClosestSegment(DPoint a) {
-		return graph.getSegmentTree().findClosestSegment(a);
+	public Position findClosestPosition(Point a) {
+		return graph.getSegmentTree().findClosestPosition(a);
 	}
 	
-	public List<SegmentIndex> findAllSegments(Point a) {
+	public List<Segment> findAllSegments(Point a) {
 		return graph.getSegmentTree().findAllSegments(a);
 	}
 	
@@ -110,11 +123,11 @@ public class DeadlockModel implements VertexHandler {
 		Point p = v.getPoint();
 		//Map<Object, Object> m = v.getMetaData();
 		
-		if (p.y <= 10 || p.x <= 10) {
+		if (p.getY() <= 10 || p.getX() <= 10) {
 			//m.put("type", VertexType.SOURCE);
 			//sources.add(v);
 			v.setType(VertexType.SOURCE);
-		} else if (p.x >= WORLD_WIDTH-10 || p.y >= WORLD_HEIGHT-10) {
+		} else if (p.getX() >= WORLD_WIDTH-10 || p.getY() >= WORLD_HEIGHT-10) {
 			//m.put("type", VertexType.SINK);
 			v.setType(VertexType.SINK);
 		} else {

@@ -1,6 +1,8 @@
 package com.gutabi.deadlock.swing;
 
-import static com.gutabi.deadlock.core.model.DeadlockModel.MODEL;
+import static com.gutabi.deadlock.controller.DeadlockController.CONTROLLER;
+import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
+import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
@@ -16,27 +18,21 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.gutabi.deadlock.core.DPoint;
 import com.gutabi.deadlock.core.Edge;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.Vertex;
-import com.gutabi.deadlock.swing.controller.PlatformController;
-import com.gutabi.deadlock.swing.view.PlatformView;
 
 public class TestSimpleGraphs {
-	
-	public static PlatformView PLATFORMVIEW;
-	public static PlatformController PLATFORMCONTROLLER;
 	
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 		
-		PLATFORMVIEW.init();
+		VIEW.init();
 		
-		PLATFORMCONTROLLER.init();
+		CONTROLLER.init();
 		
-		PLATFORMVIEW.frame.setVisible(true);
-		PLATFORMVIEW.panel.requestFocusInWindow();
+		VIEW.frame.setVisible(true);
+		VIEW.panel.requestFocusInWindow();
 		
 	}
 
@@ -71,14 +67,14 @@ public class TestSimpleGraphs {
 			}
 			Point aP = a.getPoint();
 			Point bP = b.getPoint();
-			if (aP.x < bP.x) {
+			if (aP.getX() < bP.getX()) {
 				return -1;
-			} else if (aP.x > bP.x) {
+			} else if (aP.getX() > bP.getX()) {
 				return 1;
 			} else {
-				if (aP.y < bP.y) {
+				if (aP.getY() < bP.getY()) {
 					return -1;
-				} else if (aP.y > bP.y) {
+				} else if (aP.getY() > bP.getY()) {
 					return 1;
 				} else {
 					throw new AssertionError("Vertices are not equal but have the same point");
@@ -93,14 +89,14 @@ public class TestSimpleGraphs {
 	@Test
 	public void test1() throws Exception {
 
-		PLATFORMCONTROLLER.mc.pressed(new DPoint(0, 0));
-		PLATFORMCONTROLLER.mc.dragged(new DPoint(2, 3));
-		PLATFORMCONTROLLER.mc.dragged(new DPoint(1, 0));
-		PLATFORMCONTROLLER.mc.released();
+		CONTROLLER.mc.pressed(new Point(0, 0));
+		CONTROLLER.mc.dragged(new Point(2, 3));
+		CONTROLLER.mc.dragged(new Point(1, 0));
+		CONTROLLER.mc.released();
 
-		PLATFORMCONTROLLER.mc.pressed(new DPoint(3, 0));
-		PLATFORMCONTROLLER.mc.dragged(new DPoint(0, 2));
-		PLATFORMCONTROLLER.mc.released();
+		CONTROLLER.mc.pressed(new Point(3, 0));
+		CONTROLLER.mc.dragged(new Point(0, 2));
+		CONTROLLER.mc.released();
 		
 		SwingUtilities.invokeAndWait(new Runnable() {
 			@Override

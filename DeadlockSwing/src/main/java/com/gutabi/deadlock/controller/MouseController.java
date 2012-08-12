@@ -1,7 +1,7 @@
-package com.gutabi.deadlock.swing.controller;
+package com.gutabi.deadlock.controller;
 
-import static com.gutabi.deadlock.core.controller.DeadlockController.CONTROLLER;
-import static com.gutabi.deadlock.swing.Main.PLATFORMVIEW;
+import static com.gutabi.deadlock.controller.DeadlockController.CONTROLLER;
+import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -9,7 +9,7 @@ import java.awt.event.MouseMotionListener;
 
 import org.apache.log4j.Logger;
 
-import com.gutabi.deadlock.core.DPoint;
+import com.gutabi.deadlock.core.Point;
 
 public class MouseController implements MouseListener, MouseMotionListener {
 	
@@ -17,12 +17,12 @@ public class MouseController implements MouseListener, MouseMotionListener {
 	
 	@Override
 	public void mousePressed(MouseEvent ev) {
-		pressed(new DPoint(ev.getX(), ev.getY()));
+		pressed(new Point(ev.getX(), ev.getY()));
 	}
 	
 	@Override
 	public void mouseDragged(MouseEvent ev) {
-		dragged(new DPoint(ev.getX(), ev.getY()));
+		dragged(new Point(ev.getX(), ev.getY()));
 	}
 	
 	@Override
@@ -30,22 +30,22 @@ public class MouseController implements MouseListener, MouseMotionListener {
 		released();
 	}
 	
-	public void pressed(final DPoint p) {
+	public void pressed(final Point p) {
 		CONTROLLER.queue(new Runnable(){
 			@Override
 			public void run() {
 				CONTROLLER.pressed(p);
-				PLATFORMVIEW.repaint();
+				VIEW.repaint();
 			}}
 		);
 	}
 	
-	public void dragged(final DPoint p) {
+	public void dragged(final Point p) {
 		CONTROLLER.queue(new Runnable(){
 			@Override
 			public void run() {
 				CONTROLLER.dragged(p);
-				PLATFORMVIEW.repaint();
+				VIEW.repaint();
 			}}
 		);
 	}
@@ -55,7 +55,7 @@ public class MouseController implements MouseListener, MouseMotionListener {
 			@Override
 			public void run() {
 				CONTROLLER.released();
-				PLATFORMVIEW.repaint();
+				VIEW.repaint();
 			}}
 		);
 	}

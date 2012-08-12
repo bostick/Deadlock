@@ -12,8 +12,6 @@ public final class Edge {
 	 */
 	private final boolean loop;
 	
-	//private final double length;
-	
 	private boolean removed = false;
 	
 	public Edge(Vertex start, Vertex end, Point... pts) {
@@ -43,41 +41,6 @@ public final class Edge {
 		return pts.length;
 	}
 	
-	public double dist(int index, double param, int dir) {
-		if (removed) {
-			throw new IllegalStateException();
-		}
-		
-		if (dir == 1) {
-			
-			double l = 0.0;
-			DPoint a = pts[index].toDPoint();
-			DPoint b = pts[index+1].toDPoint();
-			l += Point.dist(Point.point(a, b, param), b);
-			for (int i = index+1; i < pts.length-1; i++) {
-				a = pts[i].toDPoint();
-				b = pts[i+1].toDPoint();
-				l += Point.dist(a, b);
-			}
-			return l;
-			
-		} else {
-			
-			double l = 0.0;
-			DPoint a = pts[index].toDPoint();
-			DPoint b = pts[index+1].toDPoint();
-			l += Point.dist(Point.point(a, b, param), a);
-			for (int i = index-1; i >= 0; i--) {
-				a = pts[i].toDPoint();
-				b = pts[i+1].toDPoint();
-				l += Point.dist(a, b);
-			}
-			return l;
-			
-		}
-		
-	}
-	
 	public Vertex getStart() {
 		if (removed) {
 			throw new IllegalStateException("edge has been removed");
@@ -99,84 +62,6 @@ public final class Edge {
 		return pts[i];
 	}
 	
-	public IntersectionInfo travel(int index, double param, double dist, int dir) throws TravelException {
-		
-		if (Point.doubleEquals(dist, 0.0)) {
-			return new IntersectionInfo(this, index, param);
-		}
-		if (dist < 0.0) {
-			throw new IllegalArgumentException();
-		}
-		
-		double distanceToTravel = dist;
-		
-		if (dir == 1) {
-			
-			DPoint a = pts[index].toDPoint();
-			DPoint b = pts[index+1].toDPoint();
-			
-			DPoint c = Point.point(a, b, param);
-			double distanceToEndOfSegment = Point.dist(c, b);
-			if (Point.doubleEquals(distanceToTravel, distanceToEndOfSegment)) {
-				
-				if (index == size()-2) {
-					throw new TravelException();
-				} else {
-					return new IntersectionInfo(this, index+1, 0.0);
-				}
-				
-			} else if (distanceToTravel < distanceToEndOfSegment) {
-				
-				double newParam = Point.travel(a, b, param, distanceToTravel, 1);
-				
-				return new IntersectionInfo(this, index, newParam);
-				
-			} else {
-				
-				if (index == size()-2) {
-					throw new TravelException();
-				} else {
-					return travel(index+1, 0.0, distanceToTravel-distanceToEndOfSegment, 1);
-				}
-				
-			}
-			
-			
-		} else {
-			assert dir == -1;
-			
-			DPoint a = pts[index].toDPoint();
-			DPoint b = pts[index+1].toDPoint();
-			
-			DPoint c = Point.point(a, b, param);
-			double distanceToBeginningOfSegment = Point.dist(c, a);
-			if (Point.doubleEquals(distanceToTravel, distanceToBeginningOfSegment)) {
-				
-				return new IntersectionInfo(this, index, 0.0);
-				
-			} else if (distanceToTravel < distanceToBeginningOfSegment) {
-				
-				double newParam = Point.travel(a, b, param, distanceToTravel, -1);
-				
-				return new IntersectionInfo(this, index, newParam);
-				
-			} else {
-				
-				if (index == 0) {
-					throw new TravelException();
-				} else {
-					return travel(index-1, 1.0, distanceToTravel-distanceToBeginningOfSegment, -1);
-				}
-				
-			}
-			
-		}
-		
-	}
-	
-	
-	
-	
 	public void remove() {
 		if (removed) {
 			throw new IllegalStateException();
@@ -191,6 +76,13 @@ public final class Edge {
 	private void check() {
 		
 		assert pts.length >= 2;
+		
+		for (Point p : pts) {
+			double x = p.getX();
+			double y = p.getY();
+			assert x == Math.rint(x);
+			assert y == Math.rint(y);
+		}
 		
 		if (loop) {
 			assert start == end;

@@ -1,34 +1,23 @@
-package com.gutabi.deadlock.core.controller;
+package com.gutabi.deadlock.controller;
 
-import static com.gutabi.deadlock.core.model.DeadlockModel.MODEL;
-import static com.gutabi.deadlock.swing.Main.PLATFORMVIEW;
+import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
+import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 import com.gutabi.deadlock.core.Edge;
-import com.gutabi.deadlock.core.IntersectionInfo;
+import com.gutabi.deadlock.core.Position;
 import com.gutabi.deadlock.core.TravelException;
 import com.gutabi.deadlock.core.Vertex;
 import com.gutabi.deadlock.core.VertexType;
-import com.gutabi.deadlock.core.model.Car;
+import com.gutabi.deadlock.model.Car;
 
 public class SimulationRunnable implements Runnable {
 	
 	@Override
 	public void run() {
-		
-		int n = 20;
-		
-		for (int i = 0; i < n; i++) {
-			MODEL.cars.add(new Car());
-		}
-		
-		Random r = new Random();
-		
-//		Vertex curVertex = null;
-//		boolean travelingForward;
 		
 		List<Vertex> sources = new ArrayList<Vertex>();
 		for (Vertex v : MODEL.getVertices()) {
@@ -37,23 +26,41 @@ public class SimulationRunnable implements Runnable {
 			}
 		}
 		
-		for (Car c : MODEL.cars) {
-			int i = r.nextInt(sources.size());
-			c.curVertex = sources.get(i);
-			List<Edge> eds = c.curVertex.getEdges();
-			i = r.nextInt(eds.size());
-			c.curEdge = eds.get(i);
-			c.travelingForward = (c.curVertex == c.curEdge.getStart());
-			if (c.travelingForward) {
-				c.curIndex = 0;
-				c.curParam = 0.0;
-			} else {
-				c.curIndex = c.curEdge.size()-2;
-				c.curParam = 1.0;
-			}
+		int n = sources.size();
+		
+		for (int i = 0; i < n; i++) {
+			MODEL.cars.add(new Car());
 		}
 		
-		PLATFORMVIEW.repaint();
+		Random r = new Random();
+		
+		for (Car c : MODEL.cars) {
+			if (sources.size() == 0) {
+				continue;
+			}
+			int i = r.nextInt(sources.size());
+			c.curVertex = sources.get(i);
+			
+			sources.remove(c.curVertex);
+			
+			List<Edge> eds = c.curVertex.getEdges();
+			i = r.nextInt(eds.size());
+			Edge e = eds.get(i);
+			int index;
+			double param;
+			c.travelingForward = (c.curVertex == e.getStart());
+			if (c.travelingForward) {
+				index = 0;
+				param = 0.0;
+			} else {
+				index = e.size()-2;
+				param = 1.0;
+			}
+			
+			c.setPosition(new Position(e, index, param));
+		}
+		
+		VIEW.repaint();
 		try {
 			Thread.sleep(100);
 		} catch (InterruptedException ex) {
@@ -77,66 +84,74 @@ public class SimulationRunnable implements Runnable {
 				inner:
 				while (true) {
 					
-//					Edge e = MODEL.car.curEdge;
-//					int index = MODEL.car.curIndex;
-//					double param = MODEL.car.curParam;
-					
 					try {
 						if (c.travelingForward) {
 							
-							double distanceToEndOfEdge = c.curEdge.dist(c.curIndex, c.curParam, 1);
+							double distanceToEndOfEdge = c.getPosition().distToEndOfEdge();
 							
 							if (distanceToMove < distanceToEndOfEdge) {
 								
-								IntersectionInfo info = c.curEdge.travel(c.curIndex, c.curParam, distanceToMove, 1);
+								Position newPos = Position.travelForward(c.getPosition(), distanceToMove);
 								
-								c.curIndex = info.index;
-								c.curParam = info.param;
+//								c.curIndex = info.index;
+//								c.curParam = info.param;
+								
+								c.setPosition(newPos);
 								
 								break inner;
 								
 							} else {
 								
-								c.curVertex = c.curEdge.getEnd();
+								c.curVertex = c.getPosition().edge.getEnd();
 								distanceToMove -= distanceToEndOfEdge;
 								
 							}
 							
 						} else {
 							
-							double distanceToStartOfEdge = c.curEdge.dist(c.curIndex, c.curParam, -1);
+							double distanceToStartOfEdge = c.getPosition().distToStartOfEdge();
 							
 							if (distanceToMove < distanceToStartOfEdge) {
 								
-								IntersectionInfo info = c.curEdge.travel(c.curIndex, c.curParam, distanceToMove, -1);
+								Position newPos = Position.travelBackward(c.getPosition(), distanceToMove);
 								
-								c.curIndex = info.index;
-								c.curParam = info.param;
+//								c.curIndex = info.index;
+//								c.curParam = info.param;
+								
+								c.setPosition(newPos);
 								
 								break inner;
 								
 							} else {
 								
-								c.curVertex = c.curEdge.getStart();
+								c.curVertex = c.getPosition().edge.getStart();
 								distanceToMove -= distanceToStartOfEdge;
 								
 							}
 							
 						}
 						
+						/*
+						 * pick new edge
+						 */
+						
 						List<Edge> eds = c.curVertex.getEdges();
 						int i = r.nextInt(eds.size());
-						c.curEdge = eds.get(i);
+						Edge e = eds.get(i);
 						
-						c.travelingForward = (c.curVertex == c.curEdge.getStart());
+						c.travelingForward = (c.curVertex == e.getStart());
 						
+						int index;
+						double param;
 						if (c.travelingForward) {
-							c.curIndex = 0;
-							c.curParam = 0.0;
+							index = 0;
+							param = 0.0;
 						} else {
-							c.curIndex = c.curEdge.size()-2;
-							c.curParam = 1.0;
+							index = e.size()-2;
+							param = 1.0;
 						}
+						
+						c.setPosition(new Position(e, index, param));
 						
 					} catch (TravelException e1) {
 						// TODO Auto-generated catch block
@@ -147,7 +162,7 @@ public class SimulationRunnable implements Runnable {
 				
 			}
 			
-			PLATFORMVIEW.repaint();
+			VIEW.repaint();
 			
 			try {
 				Thread.sleep(100);

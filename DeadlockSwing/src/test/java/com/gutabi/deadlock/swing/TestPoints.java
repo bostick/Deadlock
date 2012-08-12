@@ -9,13 +9,9 @@ import java.util.List;
 
 import org.junit.Test;
 
-import com.gutabi.deadlock.core.DPoint;
 import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.swing.controller.MouseController;
 
 public class TestPoints {
-
-	static MouseController mc;
 	
 	@Test
 	public void test() throws Exception {
@@ -24,8 +20,8 @@ public class TestPoints {
 		Point c = new Point(2, 0);
 		Point d = new Point(0, 2);
 		
-		DPoint i = Point.intersection(a, b, c, d);
-		assertEquals(new DPoint(1, 1), i);
+		Point i = Point.intersection(a, b, c, d);
+		assertEquals(new Point(1, 1), i);
 		assertTrue(Point.intersect(new Point(1, 1), a, b));
 	}
 	
@@ -45,18 +41,19 @@ public class TestPoints {
 	}
 	
 	int called = 0;
+	@SuppressWarnings("serial")
 	List<Integer> listOfInts() {
 		called++;
 		return new ArrayList<Integer>(){{add(1);add(2);}};
 	}
 	
-	@Test
-	public void testForLoop() {
-		
-		for (Integer i : listOfInts()) {
-			
-		}
-		
-		assertEquals(1, called);
-	}
+//	@Test
+//	public void testForLoop() {
+//		
+//		for (Integer i : listOfInts()) {
+//			
+//		}
+//		
+//		assertEquals(1, called);
+//	}
 }

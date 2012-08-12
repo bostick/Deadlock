@@ -1,4 +1,4 @@
-package com.gutabi.deadlock.core.controller;
+package com.gutabi.deadlock.controller;
 
 public enum MassageStrategy {
 	
