@@ -1,5 +1,8 @@
 package com.gutabi.deadlock.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.gutabi.deadlock.core.Position;
 import com.gutabi.deadlock.core.Vertex;
 
@@ -14,6 +17,8 @@ public class Car {
 	
 	//public Point curPos;
 	private Position pos;
+	
+	public List<Position> futurePath = new ArrayList<Position>();
 	
 	public Position getPosition() {
 		
@@ -31,6 +36,10 @@ public class Car {
 	
 	public void setPosition(Position pos) {
 		this.pos = pos;
+	}
+	
+	public Position getLastFuturePosition() {
+		return futurePath.get(futurePath.size()-1);
 	}
 	
 	//@Override

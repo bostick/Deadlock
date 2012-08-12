@@ -2,6 +2,8 @@ package com.gutabi.deadlock.core;
 
 import static com.gutabi.deadlock.core.DMath.doubleEquals;
 
+import java.util.Comparator;
+
 public class Position {
 	
 	public final Edge edge;
@@ -26,6 +28,37 @@ public class Position {
 	public Position(Segment si, double param) {
 		this(si.edge, si.index, param);
 	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		} else if (!(o instanceof Position)) {
+			return false;
+		} else {
+			Position b = (Position)o;
+			return (edge == b.edge) && (index == b.index) && (param == b.param);
+		}
+	}
+	
+	static class PositionComparator implements Comparator<Position> {
+		@Override
+		public int compare(Position a, Position b) {
+			if (a.index < b.index) {
+				return -1;
+			} else if (a.index > b.index) {
+				return 1;
+			} else if (a.param < b.param) {
+				return -1;
+			} else if (a.param > b.param) {
+				return 1;
+			} else {
+				return 0;
+			}
+		}
+	}
+	
+	public static Comparator<Position> posComparator = new PositionComparator();
 	
 	public double distToEndOfEdge() {
 		double l = 0.0;

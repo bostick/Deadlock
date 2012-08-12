@@ -57,7 +57,16 @@ public class SimulationRunnable implements Runnable {
 				param = 1.0;
 			}
 			
-			c.setPosition(new Position(e, index, param));
+			Position newPos = new Position(e, index, param);
+			//c.setPosition(new Position(e, index, param));
+			c.futurePath.add(newPos);
+		}
+		
+		for (Car c : MODEL.cars) {
+			Position p = c.getLastFuturePosition();
+			c.setPosition(p);
+			c.futurePath.clear();
+			c.futurePath.add(p);
 		}
 		
 		VIEW.repaint();
@@ -87,44 +96,50 @@ public class SimulationRunnable implements Runnable {
 					try {
 						if (c.travelingForward) {
 							
-							double distanceToEndOfEdge = c.getPosition().distToEndOfEdge();
+							double distanceToEndOfEdge = c.getLastFuturePosition().distToEndOfEdge();
 							
 							if (distanceToMove < distanceToEndOfEdge) {
 								
-								Position newPos = Position.travelForward(c.getPosition(), distanceToMove);
+								Position newPos = Position.travelForward(c.getLastFuturePosition(), distanceToMove);
 								
 //								c.curIndex = info.index;
 //								c.curParam = info.param;
 								
-								c.setPosition(newPos);
+								//c.setPosition(newPos);
+								c.futurePath.add(newPos);
 								
 								break inner;
 								
 							} else {
 								
-								c.curVertex = c.getPosition().edge.getEnd();
+								c.futurePath.add(new Position(c.getLastFuturePosition().edge, c.getLastFuturePosition().edge.size()-2, 1.0));
+								
+								c.curVertex = c.getLastFuturePosition().edge.getEnd();
 								distanceToMove -= distanceToEndOfEdge;
 								
 							}
 							
 						} else {
 							
-							double distanceToStartOfEdge = c.getPosition().distToStartOfEdge();
+							double distanceToStartOfEdge = c.getLastFuturePosition().distToStartOfEdge();
 							
 							if (distanceToMove < distanceToStartOfEdge) {
 								
-								Position newPos = Position.travelBackward(c.getPosition(), distanceToMove);
+								Position newPos = Position.travelBackward(c.getLastFuturePosition(), distanceToMove);
 								
 //								c.curIndex = info.index;
 //								c.curParam = info.param;
 								
-								c.setPosition(newPos);
+								//c.setPosition(newPos);
+								c.futurePath.add(newPos);
 								
 								break inner;
 								
 							} else {
 								
-								c.curVertex = c.getPosition().edge.getStart();
+								c.futurePath.add(new Position(c.getLastFuturePosition().edge, 0, 0.0));
+								
+								c.curVertex = c.getLastFuturePosition().edge.getStart();
 								distanceToMove -= distanceToStartOfEdge;
 								
 							}
@@ -151,7 +166,8 @@ public class SimulationRunnable implements Runnable {
 							param = 1.0;
 						}
 						
-						c.setPosition(new Position(e, index, param));
+						//c.setPosition(new Position(e, index, param));
+						c.futurePath.add(new Position(e, index, param));
 						
 					} catch (TravelException e1) {
 						// TODO Auto-generated catch block
@@ -160,6 +176,57 @@ public class SimulationRunnable implements Runnable {
 					
 				} // end inner loop
 				
+			}
+			
+			Car[] cs = MODEL.cars.toArray(new Car[0]);
+			for (int i = 0; i < cs.length; i++) {
+				Car ci = cs[i];
+				for (int j = i+1; j < cs.length; j++) {
+					Car cj = cs[j];
+					kloop: for (int k = 0; k < ci.futurePath.size()-1; k++) {
+						Position cia = ci.futurePath.get(k);
+						Position cib = ci.futurePath.get(k+1);
+						int iDir = (Position.posComparator.compare(cia, cib) == -1) ? 1 : -1;
+						if (cia.edge != cib.edge) {
+							continue kloop;
+						}
+						lloop: for (int l = 0; l < cj.futurePath.size()-1; l++) {
+							Position cja = cj.futurePath.get(l);
+							Position cjb = cj.futurePath.get(l+1);
+							int jDir = (Position.posComparator.compare(cja, cjb) == -1) ? 1 : -1;
+							if (cja.edge != cjb.edge) {
+								continue lloop;
+							}
+							if (cia.edge != cja.edge) {
+								continue lloop;
+							}
+							if (iDir == 1) {
+								if (jDir == 1) {
+									continue lloop;
+								} else {
+									if (Position.posComparator.compare(cjb, cib) == -1) {
+										String.class.getName();
+									}
+								}
+							} else {
+								if (jDir == 1) {
+									if (Position.posComparator.compare(cib, cjb) == -1) {
+										String.class.getName();
+									}
+								} else {
+									continue lloop;
+								}
+							}
+						}
+					}
+				}
+			}
+			
+			for (Car c : MODEL.cars) {
+				Position p = c.getLastFuturePosition();
+				c.setPosition(p);
+				c.futurePath.clear();
+				c.futurePath.add(p);
 			}
 			
 			VIEW.repaint();
