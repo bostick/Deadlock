@@ -112,9 +112,17 @@ public class WorldPanel extends JPanel {
 			}
 		} else if (modeCopy == ControlMode.RUNNING) {
 			
-			g2.setColor(Color.BLUE);
 			for (Car c : carsCopy) {
 				Point pos = c.getPosition().point;
+				switch (c.getState()) {
+				case FORWARD:
+				case BACKWARD:
+					g2.setColor(Color.BLUE);
+					break;
+				case CRASHED:
+					g2.setColor(Color.ORANGE);
+					break;
+				}
 				g2.fillOval((int)(pos.getX()-5), (int)(pos.getY()-5), 10, 10);
 			}
 			

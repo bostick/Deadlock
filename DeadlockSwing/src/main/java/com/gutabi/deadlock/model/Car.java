@@ -13,12 +13,14 @@ public class Car {
 //	public double curParam;
 	
 	public Vertex curVertex;
-	public boolean travelingForward;
+	private CarState state;
 	
 	//public Point curPos;
 	private Position pos;
 	
 	public List<Position> futurePath = new ArrayList<Position>();
+	
+	//public boolean crashed = false;
 	
 	public Position getPosition() {
 		
@@ -35,11 +37,26 @@ public class Car {
 	}
 	
 	public void setPosition(Position pos) {
+		if (state == CarState.CRASHED) {
+			throw new IllegalStateException();
+		}
 		this.pos = pos;
 	}
 	
+//	public List<Position> getFuturePath() {
+//		return futurePath;
+//	}
+	
 	public Position getLastFuturePosition() {
 		return futurePath.get(futurePath.size()-1);
+	}
+	
+	public CarState getState() {
+		return state;
+	}
+	
+	public void setState(CarState state) {
+		this.state = state;
 	}
 	
 	//@Override

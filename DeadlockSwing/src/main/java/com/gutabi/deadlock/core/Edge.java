@@ -1,5 +1,9 @@
 package com.gutabi.deadlock.core;
 
+import static com.gutabi.deadlock.core.DMath.doubleEquals;
+
+import java.util.Comparator;
+
 
 public final class Edge {
 		
@@ -61,6 +65,202 @@ public final class Edge {
 		}
 		return pts[i];
 	}
+	
+	public double distToEndOfEdge(Position pos) {
+		assert pos.edge == this;
+		
+		//Point point = pos.point;
+		double l = 0.0;
+//		Point a = pts[index];
+//		Point b = pts[index+1];
+		l += Point.dist(pos.point, pos.segEnd);
+		for (int i = pos.index+1; i < size()-1; i++) {
+			Point a = getPoint(i);
+			Point b = getPoint(i+1);
+			l += Point.dist(a, b);
+		}
+		return l;
+	}
+	
+	public double distToStartOfEdge(Position pos) {
+		assert pos.edge == this;
+		
+		double l = 0.0;
+//		Point a = pts[index];
+//		Point b = pts[index+1];
+		l += Point.dist(pos.point, pos.segStart);
+		for (int i = pos.index-1; i >= 0; i--) {
+			Point a = getPoint(i);
+			Point b = getPoint(i+1);
+			l += Point.dist(a, b);
+		}
+		return l;
+	}
+	
+	public double distToPosition(Position a, Position b) {
+		assert a.edge == this;
+		assert b.edge == this;
+		
+		if (a.index == b.index) {
+			return Point.dist(a.point, b.point);
+		}
+		
+		if (posComparator.compare(a, b) == -1) {
+			
+			double l = 0.0;
+			l += Point.dist(a.point, a.segEnd);
+			for (int i = a.index+1; i < b.index; i++) {
+				Point aa = getPoint(i);
+				Point bb = getPoint(i+1);
+				l += Point.dist(aa, bb);
+			}
+			l += Point.dist(b.segStart, b.point);
+			return l;
+			
+		} else {
+			
+			double l = 0.0;
+			l += Point.dist(a.point, a.segStart);
+			for (int i = a.index-1; i > b.index; i--) {
+				Point aa = getPoint(i);
+				Point bb = getPoint(i+1);
+				l += Point.dist(aa, bb);
+			}
+			l += Point.dist(b.segEnd, b.point);
+			return l;
+			
+		}
+		
+	}
+	
+	public Position travelForward(Position pos, double dist) throws TravelException {
+		assert pos.edge == this;
+		
+		if (dist == 0.0) {
+			return pos;
+		}
+		if (dist < 0.0) {
+			throw new IllegalArgumentException();
+		}
+		
+		int index = pos.index;
+		double param = pos.param;
+		
+		double distanceToTravel = dist;
+		
+		Point a = getPoint(index);
+		Point b = getPoint(index+1);
+		
+		Point c = Point.point(a, b, param);
+		double distanceToEndOfSegment = Point.dist(c, b);
+		if (doubleEquals(distanceToTravel, distanceToEndOfSegment)) {
+			
+			if (index == size()-2) {
+				throw new TravelException();
+			} else {
+				return new Position(this, index+1, 0.0);
+			}
+			
+		} else if (distanceToTravel < distanceToEndOfSegment) {
+			
+			double newParam = Point.travelForward(a, b, param, distanceToTravel);
+			
+			return new Position(this, index, newParam);
+			
+		} else {
+			
+			if (index == size()-2) {
+				throw new TravelException();
+			} else {
+				return travelForward(new Position(this, index+1, 0.0), distanceToTravel-distanceToEndOfSegment);
+			}
+			
+		}
+		
+	}
+	
+	public Position travelBackward(Position pos, double dist) throws TravelException {
+		assert pos.edge == this;
+		
+		if (dist == 0.0) {
+			return pos;
+		}
+		if (dist < 0.0) {
+			throw new IllegalArgumentException();
+		}
+		
+		int index = pos.index;
+		double param = pos.param;
+		
+		double distanceToTravel = dist;
+		
+		Point a = getPoint(index);
+		Point b = getPoint(index+1);
+		
+		Point c = Point.point(a, b, param);
+		double distanceToBeginningOfSegment = Point.dist(c, a);
+		if (doubleEquals(distanceToTravel, distanceToBeginningOfSegment)) {
+			
+			return new Position(this, index, 0.0);
+			
+		} else if (distanceToTravel < distanceToBeginningOfSegment) {
+			
+			double newParam = Point.travelBackward(a, b, param, distanceToTravel);
+			
+			return new Position(this, index, newParam);
+			
+		} else {
+			
+			if (index == 0) {
+				throw new TravelException();
+			} else {
+				return travelBackward(new Position(this, index-1, 1.0), distanceToTravel-distanceToBeginningOfSegment);
+			}
+			
+		}
+		
+	}
+	
+	public Position middle(Position a, Position b) {
+		assert a.edge == this;
+		assert b.edge == this;
+		
+		double d = distToPosition(a, b);
+		d = d/2;
+		
+		try {
+			if (posComparator.compare(a, b) == -1) {
+				return a.travelForward(d);
+			} else {
+				return a.travelBackward(d);
+			}
+		} catch (TravelException e) {
+			throw new AssertionError();
+		}
+		
+	}
+	
+	class PositionComparator implements Comparator<Position> {
+		@Override
+		public int compare(Position a, Position b) {
+			if (a.edge != Edge.this || b.edge != Edge.this) {
+				throw new IllegalArgumentException();
+			}
+			if (a.index < b.index) {
+				return -1;
+			} else if (a.index > b.index) {
+				return 1;
+			} else if (a.param < b.param) {
+				return -1;
+			} else if (a.param > b.param) {
+				return 1;
+			} else {
+				return 0;
+			}
+		}
+	}
+	
+	public Comparator<Position> posComparator = new PositionComparator();
 	
 	public void remove() {
 		if (removed) {
