@@ -1,9 +1,9 @@
 package com.gutabi.deadlock.core;
 
+import static com.gutabi.deadlock.core.DMath.doubleEquals;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.gutabi.deadlock.core.DMath.doubleEquals;
 
 public class QuadTree {
 	
@@ -11,16 +11,12 @@ public class QuadTree {
 	
 	public void addEdge(Edge e) {
 		for (int i = 0; i < e.size()-1; i++) {
-//			Point a = e.getPoint(i);
-//			Point b = e.getPoint(i+1);
 			addSegment(e, i);
 		}
 	}
 	
 	public void removeEdge(Edge e) {
 		for (int i = 0; i < e.size()-1; i++) {
-//			Point a = e.getPoint(i);
-//			Point b = e.getPoint(i+1);
 			removeSegment(e, i);
 		}
 	}
@@ -46,12 +42,6 @@ public class QuadTree {
 	public void clear() {
 		segIndices.clear();
 	}
-	
-//	public List<SegmentIndex> findAllSegments(Point a, Point b) {
-//		Point ul = new Point((int)Math.floor(Math.min(a.getX(), b.getX())), (int)Math.floor(Math.min(a.getY(), b.getY())));
-//		Point br = new Point((int)Math.ceil(Math.max(a.getX(), b.getX())), (int)Math.ceil(Math.max(a.getY(), b.getY())));
-//		return findAllSegments(ul, br);
-//	}
 	
 	public List<Segment> findAllSegments(Point a, Point b) {
 		assert !Point.equals(a, b);
@@ -85,13 +75,11 @@ public class QuadTree {
 		for (Segment si : segIndices) {
 			Edge e = si.edge;
 			int i = si.index;
-		//for (int i = 0; i < e.size()-1; i++) {
 			Point c = e.getPoint(i);
 			Point d = e.getPoint(i+1);
 			if (Point.intersect(a, c, d)) {
 				l.add(new Segment(e, i));
 			}
-		//}
 		}
 		return l;
 	}
@@ -111,14 +99,18 @@ public class QuadTree {
 	/**
 	 * find closest position on <c, d> to the point b
 	 */
-	public static Position closestPosition(Point b, Segment si) {
+	public static EdgePosition closestPosition(Point b, Segment si) {
 		Point c = si.start;
 		Point d = si.end;
 		if (Point.equals(b, c)) {
-			return new Position(si, 0.0);
+			if (si.index > 0) {
+				return new EdgePosition(si, 0.0);
+			} else {
+				throw new PositionException(c);
+			}
 		}
 		if (Point.equals(b, d)) {
-			return new Position(si, 1.0);
+			throw new PositionException(d);
 		}
 		if (Point.equals(c, d)) {
 			throw new IllegalArgumentException("c equals d");
@@ -131,26 +123,47 @@ public class QuadTree {
 		assert !doubleEquals(denom, 0.0);
 		double u = (xbc * xdc + ybc * ydc) / denom;
 		if (u <= 0.0) {
-			return new Position(si, 0.0);
+			if (si.index > 0) {
+				return new EdgePosition(si, 0.0);
+			} else {
+				throw new PositionException(c);
+			}
 		} else if (u >= 1.0) {
-			return new Position(si, 1.0);
+			throw new PositionException(d);
 		} else {
-			return new Position(si, u);
+			return new EdgePosition(si, u);
 		}
 	}
 	
 	/**
 	 * find closest existing position to point a
 	 */
-	public Position findClosestPosition(Point a) {
-		Position best = null;
+	public EdgePosition findClosestEdgePosition(Point a) {
+		EdgePosition best = null;
+		PositionException e = null;
 		for (Segment si : segIndices) {
-			Position closest = closestPosition(a, si);
-			if (best == null) {
-				best = closest;
-			} else if (Point.dist(a, closest.point) < Point.dist(a, best.point)) {
-				best = closest;
+			try {
+				EdgePosition closest = closestPosition(a, si);
+				if (best == null) {
+					best = closest;
+				} else if (Point.dist(a, closest.getPoint()) < Point.dist(a, best.getPoint())) {
+					best = closest;
+				}
+				if (e != null) {
+					if (Point.dist(a, best.getPoint()) < Point.dist(a, e.getPoint())) {
+						e = null;
+					}
+				}
+			} catch (PositionException ex) {
+				if (e == null) {
+					e = ex;
+				} else if (Point.dist(a, ex.getPoint()) < Point.dist(a, e.getPoint())) {
+					e = ex;
+				}
 			}
+		}
+		if (e != null && best != null && Point.dist(a, e.getPoint()) < Point.dist(a, best.getPoint())) {
+			throw e;
 		}
 		return best;
 	}

@@ -17,11 +17,6 @@ public class Main  {
 	
 	static void createAndShowGUI(String[] args) throws Exception {
 		
-//		VIEW = new DeadlockView();
-//		CONTROLLER = new DeadlockController();
-		
-//		VIEW.window = new PlatformWindow();
-//		VIEW.logger = new PlatformLogger(VIEW.getClass());
 		VIEW.init();
 		
 		CONTROLLER.init();

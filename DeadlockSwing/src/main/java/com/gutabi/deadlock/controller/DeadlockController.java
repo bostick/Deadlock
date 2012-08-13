@@ -18,8 +18,9 @@ import javax.swing.KeyStroke;
 
 import org.apache.log4j.Logger;
 
+import com.gutabi.deadlock.core.EdgePosition;
 import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.core.Position;
+import com.gutabi.deadlock.core.PositionException;
 import com.gutabi.deadlock.core.Vertex;
 import com.gutabi.deadlock.view.WindowInfo;
 
@@ -176,20 +177,6 @@ public class DeadlockController implements ActionListener {
 		MODEL.setMode(ControlMode.IDLE);
 	}
 	
-//	public void startDrawing(InputEvent e) {
-//		mode = ControlMode.DRAWING;
-//		inputStart(e);
-//	}
-//	
-//	public void keepDrawing(InputEvent e) {
-//		inputMove(e);
-//	}
-//	
-//	public void stopDrawing() {
-//		inputEnd();
-//		mode = ControlMode.IDLE;
-//	}
-	
 	private void draftStart(Point pp) {
 		assert Thread.currentThread().getName().equals("controller");
 		
@@ -284,37 +271,31 @@ public class DeadlockController implements ActionListener {
 	
 	
 	public void moveCameraRight() {
-		//cameraUpperLeft = new Point(cameraUpperLeft.x+1, cameraUpperLeft.y);
 		MODEL.viewLoc = MODEL.viewLoc.add(new Point(5, 0));
 		Point center = MODEL.viewDim.divide(2).add(MODEL.viewLoc);
 		logger.debug("right: center=" + center);
 	}
 	
 	public void moveCameraLeft() {
-		//cameraUpperLeft = new Point(cameraUpperLeft.x-1, cameraUpperLeft.y);
 		MODEL.viewLoc = MODEL.viewLoc.add(new Point(-5, 0));
 		Point center = MODEL.viewDim.divide(2).add(MODEL.viewLoc);
 		logger.debug("left: center=" + center);
 	}
 	
 	public void moveCameraUp() {
-		//cameraUpperLeft = new Point(cameraUpperLeft.x, cameraUpperLeft.y-1);
 		MODEL.viewLoc = MODEL.viewLoc.add(new Point(0, -5));
 		Point center = MODEL.viewDim.divide(2).add(MODEL.viewLoc);
 		logger.debug("up: center=" + center);
 	}
 	
 	public void moveCameraDown() {
-		//cameraUpperLeft = new Point(cameraUpperLeft.x, cameraUpperLeft.y+1);
 		MODEL.viewLoc = MODEL.viewLoc.add(new Point(0, 5));
 		Point center = MODEL.viewDim.divide(2).add(MODEL.viewLoc);
 		logger.debug("down: center=" + center);
 	}
 	
 	public void zoomIn() {
-		//Dim oldCameraDim = new Dim((int)(window.windowWidth() / zoom), (int)(window.windowHeight() / zoom));
 		Point center = MODEL.viewDim.divide(2).add(MODEL.viewLoc);
-		//zoom += 0.1;
 		MODEL.viewDim = MODEL.viewDim.times(0.9);
 		MODEL.viewLoc = center.minus(MODEL.viewDim.divide(2));
 		center = MODEL.viewDim.divide(2).add(MODEL.viewLoc);
@@ -322,9 +303,7 @@ public class DeadlockController implements ActionListener {
 	}
 	
 	public void zoomOut() {
-		//Dim oldCameraDim = new Dim((int)(window.windowWidth() / zoom), (int)(window.windowHeight() / zoom));
 		Point center = MODEL.viewDim.divide(2).add(MODEL.viewLoc);
-		//zoom += 0.1;
 		MODEL.viewDim = MODEL.viewDim.times(1.1);
 		MODEL.viewLoc = center.minus(MODEL.viewDim.divide(2));
 		center = MODEL.viewDim.divide(2).add(MODEL.viewLoc);
@@ -332,9 +311,7 @@ public class DeadlockController implements ActionListener {
 	}
 	
 	public void zoomReset() {
-		//Dim oldCameraDim = new Dim((int)(window.windowWidth() / zoom), (int)(window.windowHeight() / zoom));
 		Point center = MODEL.viewDim.divide(2).add(MODEL.viewLoc);
-		//zoom += 0.1;
 		MODEL.viewDim = WindowInfo.windowDim();
 		MODEL.viewLoc = new Point(0, 0);
 		center = MODEL.viewDim.divide(2).add(MODEL.viewLoc);
@@ -502,9 +479,15 @@ public class DeadlockController implements ActionListener {
 			/*
 			 * the point doesn't necessarily have to exist yet, it could be between 2 other points
 			 */
-			Position closest = MODEL.findClosestPosition(first);
-			if (closest != null && Point.dist(first, closest.point) <= 10.0) {
-				firstBest = closest.point;
+			try {
+				EdgePosition closest = MODEL.findClosestEdgePosition(first);
+				if (closest != null && Point.dist(first, closest.getPoint()) <= 10.0) {
+					firstBest = closest.getPoint();
+				}
+			} catch (PositionException e) {
+				/*
+				 * this means there is a vertex closer to first than any segment
+				 */
 			}
 		}
 		
@@ -536,9 +519,15 @@ public class DeadlockController implements ActionListener {
 			/*
 			 * the point doesn't necessarily have to exist yet, it could be between 2 other points
 			 */
-			Position closest = MODEL.findClosestPosition(last);
-			if (closest != null && Point.dist(last, closest.point) <= 10.0) {
-				lastBest = closest.point;
+			try {
+				EdgePosition closest = MODEL.findClosestEdgePosition(last);
+				if (closest != null && Point.dist(last, closest.getPoint()) <= 10.0) {
+					lastBest = closest.getPoint();
+				}
+			} catch (PositionException e) {
+				/*
+				 * this means there is a vertex closer to first than any segment
+				 */
 			}
 		}
 		

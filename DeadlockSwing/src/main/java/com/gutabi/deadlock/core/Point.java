@@ -16,20 +16,14 @@ public class Point {
 		this.y = y;
 		
 		int h = 17;
-		long l = (Double.doubleToLongBits(x));
+		long l = Double.doubleToLongBits(x);
 		int c = (int)(l ^ (l >>> 32));
 		h = 37 * h + c;
-		l = (Double.doubleToLongBits(y));
+		l = Double.doubleToLongBits(y);
 		c = (int)(l ^ (l >>> 32));
 		h = 37 * h + c;
 		hash = h;
-		
-		//s = "<" + x + ", " + y + ">";
 	}
-	
-//	public Point(IPoint a) {
-//		this(a.getX(), a.getY());
-//	}
 	
 	public static boolean equals(Point a, Point b) {
 		return doubleEquals(a.x, b.x) && doubleEquals(a.y, b.y);
@@ -391,8 +385,6 @@ public class Point {
 	
 	public Point minus(Point b) {
 		return minus(this, b);
-	}
-	
-	
+	}	
 	
 }

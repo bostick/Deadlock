@@ -66,4 +66,3 @@ public class PointToBeAdded {
 	public static Comparator<PointToBeAdded> ptbaComparator = new PTBAComparator();
 	
 }
-

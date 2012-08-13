@@ -68,14 +68,14 @@ public class Graph {
 		e.remove();
 	}
 	
-	public Position tryFindPosition(Point b) {
+	public EdgePosition tryFindEdgePosition(Point b) {
 		for (Segment in : segTree.findAllSegments(b)) {
 			Edge e = in.edge;
 			int i = in.index;
 			Point c = e.getPoint(i);
 			Point d = e.getPoint(i+1);
 			if (Point.intersect(b, c, d)) {
-				return new Position(e, i, Point.param(b, c, d));
+				return new EdgePosition(e, i, Point.param(b, c, d));
 			}
 		}
 		for (Vertex v : getVertices()) {
@@ -264,12 +264,12 @@ public class Graph {
 				
 				boolean adjusted = false;
 				
-				if (!Point.equals(p1.p, p1Int) && tryFindPosition(p1.p) != null) {
+				if (!Point.equals(p1.p, p1Int) && tryFindEdgePosition(p1.p) != null) {
 					adjustToGrid(p1.p);
 					adjusted = true;
 				}
 				
-				if (!Point.equals(p2.p, p2Int) && tryFindPosition(p2.p) != null) {
+				if (!Point.equals(p2.p, p2Int) && tryFindEdgePosition(p2.p) != null) {
 					adjustToGrid(p2.p);
 					adjusted = true;
 				}
@@ -308,7 +308,7 @@ public class Graph {
 			
 			Vertex aV = tryFindVertex(a);
 			if (aV == null) {
-				Position intInfo = tryFindPosition(a);
+				EdgePosition intInfo = tryFindEdgePosition(a);
 				if (intInfo == null) {
 					aV = createVertex(a);
 				} else {
@@ -318,7 +318,7 @@ public class Graph {
 			
 			Vertex bV = tryFindVertex(b);
 			if (bV == null) {
-				Position intInfo = tryFindPosition(b);
+				EdgePosition intInfo = tryFindEdgePosition(b);
 				if (intInfo == null) {
 					bV = createVertex(b);
 				} else {
@@ -392,10 +392,10 @@ public class Graph {
 	 */
 	public Vertex split(Point p) {
 		
-		Position info = tryFindPosition(p);
+		EdgePosition info = tryFindEdgePosition(p);
 		assert info != null;
 		
-		Edge e = info.edge;
+		Edge e = info.getEdge();
 		int index = info.index;
 		double param = info.param;
 		
@@ -585,10 +585,10 @@ public class Graph {
 		
 		try {
 			
-			Position info = tryFindPosition(p);
+			EdgePosition info = tryFindEdgePosition(p);
 			assert info != null;
 			
-			Edge e = info.edge;
+			Edge e = info.getEdge();
 			int index = info.index;
 			double param = info.param;
 			

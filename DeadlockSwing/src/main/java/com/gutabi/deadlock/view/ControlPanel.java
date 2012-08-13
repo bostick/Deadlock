@@ -19,10 +19,6 @@ public class ControlPanel extends JPanel {
 		b.addActionListener(CONTROLLER);
 		
 		add(b);
-		
-		//this.setPreferredSize(b.getSize());
-		//this.setSize(new Dimension(1, 1));
-		
 	}
 	
 }

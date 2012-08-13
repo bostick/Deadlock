@@ -10,8 +10,6 @@ public class Vertex {
 	
 	private final List<Edge> eds = new ArrayList<Edge>();
 	
-	//private final Map<Object, Object> metaData = new HashMap<Object, Object>();
-	
 	private VertexType type;
 	
 	private boolean removed = false;
@@ -72,13 +70,6 @@ public class Vertex {
 		}
 		return p;
 	}
-	
-//	public Map<Object, Object> getMetaData() {
-//		if (removed) {
-//			throw new IllegalStateException();
-//		}
-//		return metaData;
-//	}
 	
 	public VertexType getType() {
 		return type;

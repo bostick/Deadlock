@@ -29,7 +29,6 @@ public class WorldPanel extends JPanel {
 	
 	public WorldPanel() {
 		
-		//setPreferredSize(new Dimension(1600, 900));
 		setPreferredSize(new Dimension(MODEL.WORLD_WIDTH, MODEL.WORLD_HEIGHT));
 		
 	}
@@ -42,8 +41,6 @@ public class WorldPanel extends JPanel {
 		
 		//g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		
-		//Dimension dim = this.getSize();
-		
 		g2.setColor(Color.DARK_GRAY);
 		g2.fillRect(0, 0, MODEL.WORLD_WIDTH, 10);
 		g2.fillRect(0, 10, 10, MODEL.WORLD_HEIGHT-10);
@@ -55,7 +52,6 @@ public class WorldPanel extends JPanel {
 		
 		g2.scale(MODEL.getZoom(), MODEL.getZoom());
 		g2.translate((double)-MODEL.viewLoc.getX(), (double)-MODEL.viewLoc.getY());
-		
 		
 		List<Edge> edgesCopy;
 		List<Vertex> verticesCopy;
@@ -113,7 +109,7 @@ public class WorldPanel extends JPanel {
 		} else if (modeCopy == ControlMode.RUNNING) {
 			
 			for (Car c : carsCopy) {
-				Point pos = c.getPosition().point;
+				Point pos = c.getPosition().getPoint();
 				switch (c.getState()) {
 				case FORWARD:
 				case BACKWARD:
@@ -177,8 +173,6 @@ public class WorldPanel extends JPanel {
 	}
 	
 	public static void paintVertex(Vertex v, Graphics2D g) {
-		
-		//VertexType type = (VertexType)v.getMetaData().get("type");
 		
 		switch (v.getType()) {
 		case SINK:

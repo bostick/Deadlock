@@ -6,9 +6,9 @@ import java.util.List;
 import com.gutabi.deadlock.controller.ControlMode;
 import com.gutabi.deadlock.core.Dim;
 import com.gutabi.deadlock.core.Edge;
+import com.gutabi.deadlock.core.EdgePosition;
 import com.gutabi.deadlock.core.Graph;
 import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.core.Position;
 import com.gutabi.deadlock.core.Segment;
 import com.gutabi.deadlock.core.Vertex;
 import com.gutabi.deadlock.core.VertexHandler;
@@ -83,8 +83,8 @@ public class DeadlockModel implements VertexHandler {
 		return closest;
 	}
 	
-	public Position findClosestPosition(Point a) {
-		return graph.getSegmentTree().findClosestPosition(a);
+	public EdgePosition findClosestEdgePosition(Point a) {
+		return graph.getSegmentTree().findClosestEdgePosition(a);
 	}
 	
 	public List<Segment> findAllSegments(Point a) {
@@ -98,14 +98,6 @@ public class DeadlockModel implements VertexHandler {
 	public List<Edge> getEdges() {
 		return graph.getEdges();
 	}
-	
-//	public List<Vertex> getSources() {
-//		return sources;
-//	}
-//	
-//	public List<Vertex> getSinks() {
-//		return sinks;
-//	}
 	
 	public ControlMode getMode() {
 		assert Thread.holdsLock(MODEL);
@@ -121,17 +113,12 @@ public class DeadlockModel implements VertexHandler {
 	public void vertexCreated(Vertex v) {
 		
 		Point p = v.getPoint();
-		//Map<Object, Object> m = v.getMetaData();
 		
 		if (p.getY() <= 10 || p.getX() <= 10) {
-			//m.put("type", VertexType.SOURCE);
-			//sources.add(v);
 			v.setType(VertexType.SOURCE);
 		} else if (p.getX() >= WORLD_WIDTH-10 || p.getY() >= WORLD_HEIGHT-10) {
-			//m.put("type", VertexType.SINK);
 			v.setType(VertexType.SINK);
 		} else {
-			//m.put("type", VertexType.COMMON);
 			v.setType(VertexType.COMMON);
 		}
 		
