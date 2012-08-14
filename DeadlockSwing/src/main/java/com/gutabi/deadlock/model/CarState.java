@@ -15,6 +15,8 @@ public enum CarState {
 	/**
 	 * crashed
 	 */
-	CRASHED;
+	CRASHED,
+	
+	SINKED;
 	
 }

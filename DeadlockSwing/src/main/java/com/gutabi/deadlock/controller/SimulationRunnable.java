@@ -9,7 +9,6 @@ import java.util.Random;
 
 import com.gutabi.deadlock.core.Edge;
 import com.gutabi.deadlock.core.Position;
-import com.gutabi.deadlock.core.TravelException;
 import com.gutabi.deadlock.core.Vertex;
 import com.gutabi.deadlock.core.VertexPosition;
 import com.gutabi.deadlock.core.VertexType;
@@ -21,42 +20,7 @@ public class SimulationRunnable implements Runnable {
 	@Override
 	public void run() {
 		
-		List<Vertex> sources = new ArrayList<Vertex>();
-		for (Vertex v : MODEL.getVertices()) {
-			if (v.getType() == VertexType.SOURCE) {
-				sources.add(v);
-			}
-		}
-		
-		int n = sources.size();
-		
-		for (int i = 0; i < n; i++) {
-			MODEL.cars.add(new Car());
-		}
-		
 		Random r = new Random();
-		
-		for (Car c : MODEL.cars) {
-			if (sources.size() == 0) {
-				continue;
-			}
-			int i = r.nextInt(sources.size());
-			
-			Vertex v = sources.get(i);
-			List<Edge> eds = v.getEdges();
-			i = r.nextInt(eds.size());
-			Edge newE = eds.get(i);
-			
-			Position pos = new VertexPosition(v, newE);
-			
-			CarState s = ((v == newE.getStart()) ? CarState.FORWARD : CarState.BACKWARD);
-			c.futurePath.add(pos);
-			c.futureState = s;
-			
-			sources.remove(v);
-		}
-		
-		collapseFutures();
 		
 		outer:
 		while (true) {
@@ -67,65 +31,98 @@ public class SimulationRunnable implements Runnable {
 				}
 			}
 			
+			List<Car> newCars = new ArrayList<Car>();
+			
+			List<Vertex> sources = new ArrayList<Vertex>();
+			for (Vertex v : MODEL.getVertices()) {
+				if (v.getType() == VertexType.SOURCE) {
+					sources.add(v);
+				}
+			}
+			
+			int n = sources.size();
+			
+			for (int i = 0; i < n; i++) {
+				newCars.add(new Car());
+			}
+			
+			for (Car c : newCars) {
+				if (sources.size() == 0) {
+					continue;
+				}
+				int i = r.nextInt(sources.size());
+				
+				Vertex v = sources.get(i);
+				List<Edge> eds = v.getEdges();
+				i = r.nextInt(eds.size());
+				Edge newE = eds.get(i);
+				
+				Position pos = new VertexPosition(v, newE);
+				
+				CarState s = ((v == newE.getStart()) ? CarState.FORWARD : CarState.BACKWARD);
+				c.futurePath.add(pos);
+				c.futureState = s;
+				
+				sources.remove(v);
+			}
+			
+			collapseFutures(newCars);
+			
+			MODEL.cars.addAll(newCars);
+			
 			for (Car c : MODEL.cars) {
 				
-				double distanceToMove = 10.0;
+				double distanceToMove = 15.0;
 				
 				inner:
 				while (true) {
 					
 					Vertex v = null;
-					
-					try {
+					Position pos;
+					Edge e = null;
 						
-						Position pos;
-						Edge e;
-						switch (c.futureState) {
-						case FORWARD:
-							pos = c.getLastFuturePosition();
-							e = pos.getEdge();
-							double distanceToEndOfEdge = pos.distanceToEndOfEdge();
+					switch (c.futureState) {
+					case FORWARD:
+						pos = c.getLastFuturePosition();
+						e = pos.getEdge();
+						double distanceToEndOfEdge = pos.distanceToEndOfEdge();
+						
+						if (distanceToMove < distanceToEndOfEdge) {
 							
-							if (distanceToMove < distanceToEndOfEdge) {
-								
-								c.futurePath.add(pos.travelForward(distanceToMove));
-								
-								break inner;
-								
-							} else {
-								
-								v = e.getEnd();
-								
-								distanceToMove -= distanceToEndOfEdge;
-								
-							}
-							break;
-						case BACKWARD:
-							pos = c.getLastFuturePosition();
-							e = pos.getEdge();
-							double distanceToStartOfEdge = pos.distanceToStartOfEdge();
+							c.futurePath.add(pos.travelForward(distanceToMove));
 							
-							if (distanceToMove < distanceToStartOfEdge) {
-								
-								c.futurePath.add(pos.travelBackward(distanceToMove));
-								
-								break inner;
-								
-							} else {
-								
-								v = e.getStart();
-								
-								distanceToMove -= distanceToStartOfEdge;
-								
-							}
-							break;
-						case CRASHED:
 							break inner;
+							
+						} else {
+							
+							v = e.getEnd();
+							
+							distanceToMove -= distanceToEndOfEdge;
+							
 						}
+						break;
+					case BACKWARD:
+						pos = c.getLastFuturePosition();
+						e = pos.getEdge();
+						double distanceToStartOfEdge = pos.distanceToStartOfEdge();
 						
-					} catch (TravelException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
+						if (distanceToMove < distanceToStartOfEdge) {
+							
+							c.futurePath.add(pos.travelBackward(distanceToMove));
+							
+							break inner;
+							
+						} else {
+							
+							v = e.getStart();
+							
+							distanceToMove -= distanceToStartOfEdge;
+							
+						}
+						break;
+					case CRASHED:
+					case SINKED:
+						break inner;
 					}
 					
 					/*
@@ -133,26 +130,36 @@ public class SimulationRunnable implements Runnable {
 					 */
 					assert v != null;
 					
-					List<Edge> eds = v.getEdges();
+					List<Edge> eds = new ArrayList<Edge>(v.getEdges());
+					
+					if (eds.size() > 1) {
+						/*
+						 * don't go back the same way
+						 */
+						eds.remove(e);
+					}
+					
 					int i = r.nextInt(eds.size());
 					Edge newE = eds.get(i);
-					Position pos = new VertexPosition(v, newE);
+					Position newPos = new VertexPosition(v, newE);
 					
-					c.futureState = ((v == newE.getStart()) ? CarState.FORWARD : CarState.BACKWARD);
-					c.futurePath.add(pos);
+					c.futureState = (v.getType() == VertexType.SINK ? CarState.SINKED : ((v == newE.getStart()) ? CarState.FORWARD : CarState.BACKWARD));
+					c.futurePath.add(newPos);
 					
 				} // end inner loop
 				
 			}  // for 
 			
-			doCrashes();
+			doCrashes(MODEL.cars);
 			
-			collapseFutures();
+			collapseFutures(MODEL.cars);
+			
+			removeSinked(MODEL.cars);
 			
 			VIEW.repaint();
 			
 			try {
-				Thread.sleep(100);
+				Thread.sleep(40);
 			} catch (InterruptedException ex) {
 				// TODO Auto-generated catch block
 				ex.printStackTrace();
@@ -165,9 +172,9 @@ public class SimulationRunnable implements Runnable {
 		
 	}
 	
-	private void doCrashes() {
+	private void doCrashes(List<Car> cars) {
 		
-		Car[] cs = MODEL.cars.toArray(new Car[0]);
+		Car[] cs = cars.toArray(new Car[0]);
 		iloop: for (int i = 0; i < cs.length; i++) {
 			final Car ci = cs[i];
 			jloop: for (int j = i+1; j < cs.length; j++) {
@@ -202,8 +209,8 @@ public class SimulationRunnable implements Runnable {
 									} else {
 										if (Position.COMPARATOR.compare(cjb, cib) == -1) {
 											Position crashPos = Position.middle(cjb, cib);
-											ci.futurePath.add(crashPos);
-											cj.futurePath.add(crashPos);
+											ci.futurePath.add(crashPos.travelBackward(5));
+											cj.futurePath.add(crashPos.travelForward(5));
 											ci.futureState = CarState.CRASHED;
 											cj.futureState = CarState.CRASHED;
 											continue iloop;
@@ -213,8 +220,8 @@ public class SimulationRunnable implements Runnable {
 									if (jDir == 1) {
 										if (Position.COMPARATOR.compare(cib, cjb) == -1) {
 											Position crashPos = Position.middle(cib, cjb);
-											ci.futurePath.add(crashPos);
-											cj.futurePath.add(crashPos);
+											ci.futurePath.add(crashPos.travelForward(5));
+											cj.futurePath.add(crashPos.travelBackward(5));
 											ci.futureState = CarState.CRASHED;
 											cj.futureState = CarState.CRASHED;
 											continue iloop;
@@ -232,13 +239,13 @@ public class SimulationRunnable implements Runnable {
 							}
 							if (iDir == 1) {
 								if (Position.COMPARATOR.compare(cjp, cib) == -1) {
-									ci.futurePath.add(cjp);
+									ci.futurePath.add(cjp.travelBackward(10));
 									ci.futureState = CarState.CRASHED;
 									continue iloop;
 								}
 							} else {
 								if (Position.COMPARATOR.compare(cib, cjp) == -1) {
-									ci.futurePath.add(cjp);
+									ci.futurePath.add(cjp.travelForward(10));
 									ci.futureState = CarState.CRASHED;
 									continue iloop;
 								}
@@ -265,13 +272,13 @@ public class SimulationRunnable implements Runnable {
 							int jDir = (Position.COMPARATOR.compare(cja, cjb) == -1) ? 1 : -1;
 							if (jDir == 1) {
 								if (Position.COMPARATOR.compare(cip, cjb) == -1) {
-									cj.futurePath.add(cip);
+									cj.futurePath.add(cip.travelBackward(10));
 									cj.futureState = CarState.CRASHED;
 									continue jloop;
 								}
 							} else {
 								if (Position.COMPARATOR.compare(cjb, cip) == -1) {
-									cj.futurePath.add(cip);
+									cj.futurePath.add(cip.travelForward(10));
 									cj.futureState = CarState.CRASHED;
 									continue jloop;
 								}
@@ -288,13 +295,14 @@ public class SimulationRunnable implements Runnable {
 		
 	}
 	
-	private void collapseFutures() {
+	private void collapseFutures(List<Car> cars) {
 		
-		for (Car c : MODEL.cars) {
+		for (Car c : cars) {
 			switch (c.futureState) {
 			case FORWARD:
 			case BACKWARD:
 			case CRASHED:
+			case SINKED:
 				Position p = c.getLastFuturePosition();
 				c.setPosition(p);
 				c.futurePath.clear();
@@ -307,4 +315,17 @@ public class SimulationRunnable implements Runnable {
 		}
 		
 	}
+	
+	private void removeSinked(List<Car> cars) {
+		List<Car> toRemove = new ArrayList<Car>();
+		for (Car c : cars) {
+			if (c.getState() == CarState.SINKED) {
+				toRemove.add(c);
+			}
+		}
+		for (Car c : toRemove) {
+			MODEL.cars.remove(c);
+		}
+	}
+	
 }

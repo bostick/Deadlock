@@ -118,6 +118,9 @@ public class WorldPanel extends JPanel {
 				case CRASHED:
 					g2.setColor(Color.ORANGE);
 					break;
+				case SINKED:
+					g2.setColor(Color.RED);
+					break;
 				}
 				g2.fillOval((int)(pos.getX()-5), (int)(pos.getY()-5), 10, 10);
 			}

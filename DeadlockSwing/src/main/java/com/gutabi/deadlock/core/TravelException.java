@@ -1,6 +1,6 @@
 package com.gutabi.deadlock.core;
 
 @SuppressWarnings("serial")
-public class TravelException extends Exception {
+public class TravelException extends RuntimeException {
 
 }
