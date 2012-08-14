@@ -12,6 +12,8 @@ public class Vertex {
 	
 	private VertexType type;
 	
+	public boolean hasCrash;
+	
 	private boolean removed = false;
 	
 	public Vertex(Point p) {
@@ -24,7 +26,7 @@ public class Vertex {
 		}
 		Vertex c = new Vertex(p);
 		c.type = type;
-		
+		c.hasCrash = hasCrash;
 		/*
 		 * not copying edge right now
 		 * not needed for painting

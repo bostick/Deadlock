@@ -46,7 +46,7 @@ public abstract class Position {
 	
 	public Position travelForward(double dist) throws TravelException {
 		
-		if (dist == 0.0) {
+		if (doubleEquals(dist, 0.0)) {
 			return this;
 		}
 		if (dist < 0.0) {
@@ -84,9 +84,19 @@ public abstract class Position {
 		}
 	}
 	
+	public Position travelForwardClamped(double dist) {
+		
+		try {
+			return travelForward(dist);
+		} catch (TravelException ex) {
+			return new VertexPosition(e.getEnd(), e);
+		}
+		
+	}
+	
 	public Position travelBackward(double dist) throws TravelException {
 		
-		if (dist == 0.0) {
+		if (doubleEquals(dist, 0.0)) {
 			return this;
 		}
 		if (dist < 0.0) {
@@ -125,6 +135,16 @@ public abstract class Position {
 		
 	}
 	
+	public Position travelBackwardClamped(double dist) {
+		
+		try {
+			return travelBackward(dist);
+		} catch (TravelException ex) {
+			return new VertexPosition(e.getStart(), e);
+		}
+		
+	}
+	
 	public static Position middle(Position a, Position b) {
 		assert a.getEdge() == b.getEdge();
 		
@@ -149,14 +169,15 @@ public abstract class Position {
 	static class PositionComparator implements Comparator<Position> {
 		@Override
 		public int compare(Position a, Position b) {
-			if (a.getEdge() != b.getEdge()) {
-				throw new IllegalArgumentException();
-			}
 			
 			Edge e = a.getEdge();
 			
 			if (a instanceof EdgePosition) {
 				if (b instanceof EdgePosition) {
+					if (a.getEdge() != b.getEdge()) {
+						throw new IllegalArgumentException();
+					}
+					
 					EdgePosition aa = (EdgePosition)a;
 					EdgePosition bb = (EdgePosition)b;
 					if (aa.index < bb.index) {
@@ -179,9 +200,10 @@ public abstract class Position {
 					
 					if (bV == e.getStart()) {
 						return 1;
-					} else {
-						assert bV == e.getEnd();
+					} else if (bV == e.getEnd()) {
 						return -1;
+					} else {
+						throw new IllegalArgumentException();
 					}
 					
 				}
@@ -195,9 +217,10 @@ public abstract class Position {
 					
 					if (aV == e.getStart()) {
 						return -1;
-					} else {
-						assert aV == e.getEnd();
+					} else if (aV == e.getEnd()) {
 						return 1;
+					} else {
+						throw new IllegalArgumentException();
 					}
 					
 				} else {
@@ -213,9 +236,10 @@ public abstract class Position {
 						return 0;
 					} else if (aV == e.getStart() && bV == e.getEnd()) {
 						return -1;
-					} else {
-						assert aV == e.getEnd() && bV == e.getStart();
+					} else if (aV == e.getEnd() && bV == e.getStart()) {
 						return 1;
+					} else {
+						throw new IllegalArgumentException();
 					}
 				}
 			}

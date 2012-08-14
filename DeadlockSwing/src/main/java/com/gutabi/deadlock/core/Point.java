@@ -88,7 +88,7 @@ public class Point {
 				if (!doubleEquals(xba, 0.0)) {
 					cu = (c.x - a.x) / xba;
 					if (!doubleEquals(yba, 0.0)) {
-						assert cu == (c.y - a.y) / yba;
+						assert doubleEquals(cu, (c.y - a.y) / yba);
 					}
 				} else {
 					cu = (c.y - a.y) / yba;
@@ -98,7 +98,7 @@ public class Point {
 				if (!doubleEquals(xba, 0.0)) {
 					du = (d.x - a.x) / xba;
 					if (!doubleEquals(yba, 0.0)) {
-						assert du == (d.y - a.y) / yba;
+						assert doubleEquals(du, (d.y - a.y) / yba);
 					}
 				} else {
 					du = (d.y - a.y) / yba;
