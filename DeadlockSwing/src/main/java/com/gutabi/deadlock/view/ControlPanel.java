@@ -10,15 +10,17 @@ import javax.swing.JPanel;
 @SuppressWarnings("serial")
 public class ControlPanel extends JPanel {
 	
+	public JButton simulationButton;
+	
 	public ControlPanel() {
 		
-		JButton b = new JButton("Start");
+		simulationButton = new JButton("Start");
 		
-		b.setPreferredSize(new Dimension(100, 20));
-		b.setActionCommand("start");
-		b.addActionListener(CONTROLLER);
+		simulationButton.setPreferredSize(new Dimension(100, 20));
+		simulationButton.setActionCommand("start");
+		simulationButton.addActionListener(CONTROLLER);
 		
-		add(b);
+		add(simulationButton);
 	}
 	
 }

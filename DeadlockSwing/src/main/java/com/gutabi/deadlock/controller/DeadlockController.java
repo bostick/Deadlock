@@ -237,7 +237,6 @@ public class DeadlockController implements ActionListener {
 		MODEL.setMode(ControlMode.IDLE);
 	}
 	
-	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("start")) {
@@ -265,10 +264,6 @@ public class DeadlockController implements ActionListener {
 			);
 		}
 	}
-	
-	
-	
-	
 	
 	public void moveCameraRight() {
 		MODEL.viewLoc = MODEL.viewLoc.add(new Point(5, 0));

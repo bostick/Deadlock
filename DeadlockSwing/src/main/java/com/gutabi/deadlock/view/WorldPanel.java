@@ -18,6 +18,7 @@ import com.gutabi.deadlock.controller.ControlMode;
 import com.gutabi.deadlock.core.Edge;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.Vertex;
+import com.gutabi.deadlock.core.VertexPosition;
 import com.gutabi.deadlock.model.Car;
 
 @SuppressWarnings("serial")
@@ -116,7 +117,11 @@ public class WorldPanel extends JPanel {
 					g2.setColor(Color.BLUE);
 					break;
 				case CRASHED:
-					g2.setColor(Color.ORANGE);
+					if (c.getPosition() instanceof VertexPosition) {
+						g2.setColor(Color.WHITE);
+					} else {
+						g2.setColor(Color.ORANGE);
+					}
 					break;
 				case SINKED:
 					g2.setColor(Color.RED);

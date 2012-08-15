@@ -9,19 +9,23 @@ public class EdgePosition extends Position {
 	public final Point segStart;
 	public final Point segEnd;
 	
+	//private final double distanceFromStartOfEdge;
+	
 	public EdgePosition(Edge e, int index, double param) {
 		super(Point.point(e.getPoint(index), e.getPoint(index+1), param), e);
 		assert index < e.size()-1;
 		assert DMath.doubleEquals(param, 0.0) || param > 0.0;
+		assert !DMath.doubleEquals(param, 1.0);
 		assert param < 1.0;
-		assert !(index == 0 && param == 0.0);
-		assert !(index == e.size()-2 && param == 1.0);
+		assert !(index == 0 && DMath.doubleEquals(param, 0.0));
 		
 		this.index = index;
 		this.param = param;
 		
 		this.segStart = e.getPoint(index);
 		this.segEnd = e.getPoint(index+1);
+		
+		//distanceFromStartOfEdge = distanceToStartOfEdge();
 	}
 	
 	public EdgePosition(Segment si, double param) {

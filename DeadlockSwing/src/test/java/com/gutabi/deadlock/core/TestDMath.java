@@ -27,4 +27,21 @@ public class TestDMath {
 		
 	}
 	
+	@Test
+	public void test2() throws Exception {
+		
+		/*
+		 * the line (distanceToMove < distanceToEndOfEdge) in SimulationRunnable
+		 * 
+		 */
+		
+		double distanceToMove = 2.0;
+		double distanceToEndOfEdge = 2.000000000000341;
+		
+		assertTrue(distanceToMove < distanceToEndOfEdge);
+		
+		assertTrue(DMath.doubleEquals(distanceToMove, distanceToEndOfEdge));
+		
+	}
+	
 }

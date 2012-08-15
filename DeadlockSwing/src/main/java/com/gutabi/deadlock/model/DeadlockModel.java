@@ -2,6 +2,7 @@ package com.gutabi.deadlock.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import com.gutabi.deadlock.controller.ControlMode;
 import com.gutabi.deadlock.core.Dim;
@@ -22,6 +23,8 @@ public class DeadlockModel implements VertexHandler {
 	
 	public Point viewLoc;
 	public Dim viewDim;
+	
+	public Random RANDOM = new Random();
 	
 	public static final DeadlockModel MODEL = new DeadlockModel();
 	
