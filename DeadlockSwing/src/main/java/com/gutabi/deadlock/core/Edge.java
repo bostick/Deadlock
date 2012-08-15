@@ -43,6 +43,10 @@ public final class Edge {
 		return "E n=" + pts.length + " " + start + " " + end;
 	}
 	
+	public boolean isLoop() {
+		return loop;
+	}
+	
 	public int size() {
 		if (removed) {
 			throw new IllegalStateException();

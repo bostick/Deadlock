@@ -44,4 +44,20 @@ public class TestDMath {
 		
 	}
 	
+	@Test
+	public void test3() throws Exception {
+		
+		double cu = -3.999999999998863;
+		Point c = new Point(1344.0, 295.0);
+		Point a = new Point(1345.6, 295.8);
+		double yba = 0.19999999999998863;
+		
+		double tmp = (c.getY() - a.getY()) / yba;
+		
+		assertTrue(cu != tmp);
+		
+		assertTrue(DMath.doubleEquals(cu, tmp));
+		
+	}
+	
 }

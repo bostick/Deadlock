@@ -26,11 +26,11 @@ public abstract class Position {
 	public abstract double getParam();
 	
 	public double distanceToEndOfEdge() {
-		return distanceTo(new VertexPosition(getEdge().getEnd(), getEdge()));
+		return distanceTo(new VertexPosition(getEdge().getEnd(), getEdge(), VertexPositionType.END));
 	}
 	
 	public double distanceToStartOfEdge() {
-		return distanceTo(new VertexPosition(getEdge().getStart(), getEdge()));
+		return distanceTo(new VertexPosition(getEdge().getStart(), getEdge(), VertexPositionType.START));
 	}
 	
 	public double distanceTo(Position a) {
@@ -55,7 +55,7 @@ public abstract class Position {
 		
 		double distToEndOfEdge = distanceToEndOfEdge();
 		if (DMath.doubleEquals(dist, distToEndOfEdge)) {
-			return new VertexPosition(e.getEnd(), e);
+			return new VertexPosition(e.getEnd(), e, VertexPositionType.END);
 		} else if (dist > distToEndOfEdge) {
 			throw new TravelException();
 		}
@@ -89,7 +89,7 @@ public abstract class Position {
 		try {
 			return travelForward(dist);
 		} catch (TravelException ex) {
-			return new VertexPosition(e.getEnd(), e);
+			return new VertexPosition(e.getEnd(), e, VertexPositionType.END);
 		}
 		
 	}
@@ -105,7 +105,7 @@ public abstract class Position {
 		
 		double distToStartOfEdge = distanceToStartOfEdge();
 		if (DMath.doubleEquals(dist, distToStartOfEdge)) {
-			return new VertexPosition(e.getStart(), e);
+			return new VertexPosition(e.getStart(), e, VertexPositionType.START);
 		} else if (dist > distToStartOfEdge) {
 			throw new TravelException();
 		}
@@ -140,7 +140,7 @@ public abstract class Position {
 		try {
 			return travelBackward(dist);
 		} catch (TravelException ex) {
-			return new VertexPosition(e.getStart(), e);
+			return new VertexPosition(e.getStart(), e, VertexPositionType.START);
 		}
 		
 	}
@@ -170,13 +170,12 @@ public abstract class Position {
 		@Override
 		public int compare(Position a, Position b) {
 			
-			Edge e = a.getEdge();
+			if (a.getEdge() != b.getEdge()) {
+				throw new IllegalArgumentException();
+			}
 			
 			if (a instanceof EdgePosition) {
 				if (b instanceof EdgePosition) {
-					if (a.getEdge() != b.getEdge()) {
-						throw new IllegalArgumentException();
-					}
 					
 					EdgePosition aa = (EdgePosition)a;
 					EdgePosition bb = (EdgePosition)b;
@@ -194,16 +193,21 @@ public abstract class Position {
 				} else {
 					assert b instanceof VertexPosition;
 					
+					Edge e = a.getEdge();
+					
 					VertexPosition bb = (VertexPosition)b;
 					
 					Vertex bV = bb.getVertex();
 					
-					if (bV == e.getStart()) {
+					switch (bb.getType()) {
+					case START:
+						assert bV == e.getStart();
 						return 1;
-					} else if (bV == e.getEnd()) {
+					case END:
+						assert bV == e.getEnd();
 						return -1;
-					} else {
-						throw new IllegalArgumentException();
+					default:
+						throw new AssertionError();
 					}
 					
 				}
@@ -211,16 +215,21 @@ public abstract class Position {
 				assert a instanceof VertexPosition;
 				if (b instanceof EdgePosition) {
 					
+					Edge e = a.getEdge();
+					
 					VertexPosition aa = (VertexPosition)a;
 					
 					Vertex aV = aa.getVertex();
 					
-					if (aV == e.getStart()) {
+					switch (aa.getType()) {
+					case START:
+						assert aV == e.getStart();
 						return -1;
-					} else if (aV == e.getEnd()) {
+					case END:
+						assert aV == e.getEnd();
 						return 1;
-					} else {
-						throw new IllegalArgumentException();
+					default:
+						throw new AssertionError();
 					}
 					
 				} else {
@@ -232,15 +241,31 @@ public abstract class Position {
 					Vertex aV = aa.getVertex();
 					Vertex bV = bb.getVertex();
 					
-					if (aV == bV) {
-						return 0;
-					} else if (aV == e.getStart() && bV == e.getEnd()) {
-						return -1;
-					} else if (aV == e.getEnd() && bV == e.getStart()) {
-						return 1;
-					} else {
-						throw new IllegalArgumentException();
+					switch (aa.getType()) {
+					case START:
+						switch (bb.getType()) {
+						case START:
+							assert aV == bV;
+							return 0;
+						case END:
+							return -1;
+						default:
+							throw new AssertionError();
+						}
+					case END:
+						switch (bb.getType()) {
+						case START:
+							return 1;
+						case END:
+							assert aV == bV;
+							return 0;
+						default:
+							throw new AssertionError();
+						}
+					default:
+						throw new AssertionError();
 					}
+					
 				}
 			}
 		}

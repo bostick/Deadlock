@@ -12,13 +12,14 @@ import com.gutabi.deadlock.core.EdgePosition;
 import com.gutabi.deadlock.core.Position;
 import com.gutabi.deadlock.core.Vertex;
 import com.gutabi.deadlock.core.VertexPosition;
+import com.gutabi.deadlock.core.VertexPositionType;
 import com.gutabi.deadlock.core.VertexType;
 import com.gutabi.deadlock.model.Car;
 import com.gutabi.deadlock.model.CarState;
 
 public class SimulationRunnable implements Runnable {
 	
-	static double DISTANCE_PER_TIMESTEP = 2.0;
+	static double DISTANCE_PER_TIMESTEP = 5.0;
 	
 	@Override
 	public void run() {
@@ -89,10 +90,17 @@ public class SimulationRunnable implements Runnable {
 					Edge newE = eds.get(i);
 					
 					c.futurePathNewEdge();
-					Position pos = new VertexPosition(v, newE);
-					c.futurePathAdd(pos);
+					VertexPosition newPos;
+					if (newE.isLoop()) {
+						newPos = new VertexPosition(v, newE, (MODEL.RANDOM.nextInt(2) == 0 ? VertexPositionType.START : VertexPositionType.END));
+					} else if (v == newE.getStart()) {
+						newPos = new VertexPosition(v, newE, VertexPositionType.START);
+					} else {
+						newPos = new VertexPosition(v, newE, VertexPositionType.END);
+					}
+					c.futurePathAdd(newPos);
 					
-					CarState s = ((v == newE.getStart()) ? CarState.FORWARD : CarState.BACKWARD);
+					CarState s = ((newPos.getType() == VertexPositionType.START) ? CarState.FORWARD : CarState.BACKWARD);
 					c.futureState = s;
 					
 					sources.remove(v);
@@ -123,7 +131,7 @@ public class SimulationRunnable implements Runnable {
 						if (DMath.doubleEquals(c.distanceToMove, distanceToEndOfEdge)) {
 							
 							v = e.getEnd();
-							c.futurePathAdd(new VertexPosition(v, e));
+							c.futurePathAdd(new VertexPosition(v, e, VertexPositionType.END));
 							
 							c.distanceToMove = 0.0;
 							
@@ -132,7 +140,7 @@ public class SimulationRunnable implements Runnable {
 						} else if (c.distanceToMove > distanceToEndOfEdge) {
 							
 							v = e.getEnd();
-							c.futurePathAdd(new VertexPosition(v, e));
+							c.futurePathAdd(new VertexPosition(v, e, VertexPositionType.END));
 							
 							c.distanceToMove -= distanceToEndOfEdge;
 							
@@ -152,7 +160,7 @@ public class SimulationRunnable implements Runnable {
 						if (DMath.doubleEquals(c.distanceToMove, distanceToStartOfEdge)) {
 							
 							v = e.getStart();
-							c.futurePathAdd(new VertexPosition(v, e));
+							c.futurePathAdd(new VertexPosition(v, e, VertexPositionType.START));
 							
 							c.distanceToMove = 0.0;
 							
@@ -161,7 +169,7 @@ public class SimulationRunnable implements Runnable {
 						} else if (c.distanceToMove > distanceToStartOfEdge) {
 							
 							v = e.getStart();
-							c.futurePathAdd(new VertexPosition(v, e));
+							c.futurePathAdd(new VertexPosition(v, e, VertexPositionType.START));
 							
 							c.distanceToMove -= distanceToStartOfEdge;
 							
@@ -244,9 +252,16 @@ public class SimulationRunnable implements Runnable {
 		int i = MODEL.RANDOM.nextInt(eds.size());
 		Edge newE = eds.get(i);
 		
-		Position newPos = new VertexPosition(v, newE);
+		VertexPosition newPos;
+		if (newE.isLoop()) {
+			newPos = new VertexPosition(v, newE, (MODEL.RANDOM.nextInt(2) == 0 ? VertexPositionType.START : VertexPositionType.END));
+		} else if (v == newE.getStart()) {
+			newPos = new VertexPosition(v, newE, VertexPositionType.START);
+		} else {
+			newPos = new VertexPosition(v, newE, VertexPositionType.END);
+		}
 		
-		c.futureState = ((v == newE.getStart()) ? CarState.FORWARD : CarState.BACKWARD);
+		c.futureState = ((newPos.getType() == VertexPositionType.START) ? CarState.FORWARD : CarState.BACKWARD);
 		c.futurePathNewEdge();
 		c.futurePathAdd(newPos);
 		
@@ -368,7 +383,7 @@ public class SimulationRunnable implements Runnable {
 								
 								if (cib.distanceTo(cjp) <= 10) {
 									if (iDir == 1) {
-										assert Position.COMPARATOR.compare(cjp, cib.travelForward(10)) != 1;
+										assert Position.COMPARATOR.compare(cjp, cib.travelForwardClamped(10)) != 1;
 										ci.futurePathCrash(cjp.travelBackwardClamped(10), cie, k+1);
 										ci.futureState = CarState.CRASHED;
 										continue iloop;
@@ -390,7 +405,15 @@ public class SimulationRunnable implements Runnable {
 									continue kloop;
 								}
 								
-								VertexPosition newCjp = new VertexPosition(v, e);
+								/*
+								 * with correct edge
+								 */
+								VertexPosition newCjp;
+								if (iDir == 1) {
+									newCjp = new VertexPosition(v, e, VertexPositionType.END);
+								} else {
+									newCjp = new VertexPosition(v, e, VertexPositionType.START);
+								}
 								
 								if (cib.distanceTo(newCjp) <= 10) {
 									if (iDir == 1) {
@@ -471,9 +494,20 @@ public class SimulationRunnable implements Runnable {
 									continue lloop;
 								}
 								
-								VertexPosition newCip = new VertexPosition(v, cja.getEdge());
+								Edge e = cja.getEdge();
+								int jDir = (Position.COMPARATOR.compare(cja, cjb) == -1) ? 1 : -1;
+								
+								/*
+								 * with correct edge
+								 */
+								VertexPosition newCip;
+								if (jDir == 1) {
+									newCip = new VertexPosition(v, e, VertexPositionType.END);
+								} else {
+									newCip = new VertexPosition(v, e, VertexPositionType.START);
+								}
+								
 								if (newCip.distanceTo(cjb) <= 10) {
-									int jDir = (Position.COMPARATOR.compare(cja, cjb) == -1) ? 1 : -1;
 									if (jDir == 1) {
 										assert Position.COMPARATOR.compare(newCip, cjb.travelForwardClamped(10)) == 0;
 										cj.futurePathCrash(newCip.travelBackwardClamped(10), cje, l+1);

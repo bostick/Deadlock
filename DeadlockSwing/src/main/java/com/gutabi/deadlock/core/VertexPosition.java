@@ -7,11 +7,15 @@ public class VertexPosition extends Position {
 	private final int index;
 	private final double param;
 	
-	public VertexPosition(Vertex v, Edge e) {
+	private final VertexPositionType type;
+	
+	public VertexPosition(Vertex v, Edge e, VertexPositionType type) {
 		super(v.getPoint(), e);
 		this.v = v;
 		
-		if (v == e.getStart()) {
+		this.type = type;
+		
+		if (type == VertexPositionType.START) {
 			index = 0;
 			param = 0.0;
 		} else {
@@ -31,6 +35,10 @@ public class VertexPosition extends Position {
 	
 	public double getParam() {
 		return param;
+	}
+	
+	public VertexPositionType getType() {
+		return type;
 	}
 	
 	public double distanceToV(VertexPosition a) {
@@ -83,7 +91,7 @@ public class VertexPosition extends Position {
 			return false;
 		} else {
 			VertexPosition b = (VertexPosition)o;
-			return (v == b.v);
+			return (v == b.v && e == b.e && type == b.type);
 		}
 	}
 	
