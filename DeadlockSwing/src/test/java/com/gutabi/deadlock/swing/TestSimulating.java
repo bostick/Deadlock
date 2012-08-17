@@ -2497,7 +2497,7 @@ public class TestSimulating {
 		synchronized (MODEL) {
 			MODEL.SPAWN_FREQUENCY = -1;
 			MODEL.DISTANCE_PER_TIMESTEP = 1;
-			MODEL.WAIT = 500;
+			MODEL.WAIT = 300;
 			
 			MODEL.viewDim = new Dim(200, 500);
 			//MODEL.viewLoc = new Point(575, 375);
@@ -2539,4 +2539,111 @@ public class TestSimulating {
 		
 	}
 	
+	@Test
+	public void test4() throws Exception {
+		
+		synchronized (MODEL) {
+			MODEL.SPAWN_FREQUENCY = -1;
+			MODEL.DISTANCE_PER_TIMESTEP = 1;
+			MODEL.WAIT = 300;
+			
+			MODEL.viewDim = new Dim(200, 500);
+			//MODEL.viewLoc = new Point(575, 375);
+			MODEL.viewLoc = new Point(560, 400);
+			
+			MODEL.processStroke(new Point(595, 450), new Point(695, 450));
+			MODEL.processStroke(new Point(650, 400), new Point(650, 500));
+			Vertex aV = MODEL.findVertex(new Point(595, 450));
+			Vertex bV = MODEL.findVertex(new Point(650, 500));
+//			MODEL.processStroke(new Point(596, 450), new Point(696, 450));
+//			MODEL.processStroke(new Point(650, 400), new Point(650, 500));
+//			Vertex aV = MODEL.findVertex(new Point(596, 450));
+//			Vertex bV = MODEL.findVertex(new Point(650, 500));
+			
+			Car a = new Car();
+			Car b = new Car();
+			
+			a.setPosition(new VertexPosition(aV));
+			a.futurePathNewEdge();
+			a.futurePathAdd(a.getPosition());
+			a.setState(CarState.FORWARD);
+			a.futureState = a.getState();
+			
+			b.setPosition(new VertexPosition(bV));
+			b.futurePathNewEdge();
+			b.futurePathAdd(b.getPosition());
+			b.setState(CarState.BACKWARD);
+			b.futureState = b.getState();
+			
+			MODEL.cars.add(a);
+			MODEL.cars.add(b);
+		}
+		
+		CONTROLLER.queue(new Runnable(){
+			@Override
+			public void run() {
+				CONTROLLER.startRunning();
+			}}
+		);
+		
+		Thread.sleep(Long.MAX_VALUE);
+		
+	}
+	
+	@Test
+	public void test5() throws Exception {
+		
+		synchronized (MODEL) {
+			MODEL.SPAWN_FREQUENCY = -1;
+			MODEL.DISTANCE_PER_TIMESTEP = 1;
+			MODEL.WAIT = 300;
+			
+			MODEL.viewDim = new Dim(200, 500);
+			//MODEL.viewLoc = new Point(575, 375);
+			MODEL.viewLoc = new Point(560, 400);
+			
+			MODEL.processStroke(new Point(600, 450), new Point(700, 450));
+			MODEL.processStroke(new Point(650, 400), new Point(650, 500));
+			
+			Vertex aV = MODEL.findVertex(new Point(600, 450));
+			Vertex bV = MODEL.findVertex(new Point(650, 500));
+			Vertex cV = MODEL.findVertex(new Point(650, 400));
+			
+			Car a = new Car();
+			Car b = new Car();
+			Car c = new Car();
+			
+			a.setPosition(new VertexPosition(aV));
+			a.futurePathNewEdge();
+			a.futurePathAdd(a.getPosition());
+			a.setState(CarState.FORWARD);
+			a.futureState = a.getState();
+			
+			b.setPosition(new VertexPosition(bV));
+			b.futurePathNewEdge();
+			b.futurePathAdd(b.getPosition());
+			b.setState(CarState.BACKWARD);
+			b.futureState = b.getState();
+			
+			c.setPosition(new VertexPosition(cV));
+			c.futurePathNewEdge();
+			c.futurePathAdd(c.getPosition());
+			c.setState(CarState.FORWARD);
+			c.futureState = c.getState();
+			
+			MODEL.cars.add(a);
+			MODEL.cars.add(b);
+			MODEL.cars.add(c);
+		}
+		
+		CONTROLLER.queue(new Runnable(){
+			@Override
+			public void run() {
+				CONTROLLER.startRunning();
+			}}
+		);
+		
+		Thread.sleep(Long.MAX_VALUE);
+		
+	}
 }

@@ -96,6 +96,42 @@ public final class Edge {
 		return removed;
 	}
 	
+	/**
+	 * returns the single shared vertex between edges a and b
+	 */
+	public static Vertex sharedVertex(Edge a, Edge b) {
+		assert a != b;
+		Vertex as = a.getStart();
+		Vertex ae = a.getEnd();
+		Vertex bs = b.getStart();
+		Vertex be = b.getEnd();
+		if (as == bs) {
+			assert ae != be;
+			return as;
+		} else if (as == be) {
+			assert ae != bs;
+			return as;
+		} else if (ae == bs) {
+			assert as != be;
+			return ae;
+		} else if (ae == be) {
+			assert as != bs;
+			return be;
+		} else {
+			throw new IllegalArgumentException();
+		}
+	}
+	
+	public Vertex otherVertex(Vertex a) {
+		if (a == start) {
+			return end;
+		} else if (a == end) {
+			return start;
+		} else {
+			throw new IllegalArgumentException();
+		}
+	}
+	
 	private void check() {
 		
 		assert pts.length >= 2;

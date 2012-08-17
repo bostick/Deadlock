@@ -9,9 +9,23 @@ public abstract class Position {
 	protected final Point p;
 	protected final Edge e;
 	
+	private final int hash;
+	
 	public Position(Point p, Edge e) {
 		this.p = p;
 		this.e = e;
+		
+		int h = 17;
+		h = 37 * h + p.hashCode();
+		if (e != null) {
+			h = 37 * h + e.hashCode();
+		}
+		hash = h;
+	}
+	
+	@Override
+	public int hashCode() {
+		return hash;
 	}
 	
 	public Point getPoint() {
@@ -43,6 +57,17 @@ public abstract class Position {
 	
 	protected abstract double distanceToV(VertexPosition a);
 	protected abstract double distanceToE(EdgePosition e);
+	
+	public Position travelTo(Position a, double dist) {
+		if (a instanceof VertexPosition) {
+			return travelToV((VertexPosition)a, dist);
+		} else {
+			return travelToE((EdgePosition)a, dist);
+		}
+	}
+	
+	protected abstract Position travelToV(VertexPosition a, double dist);
+	protected abstract Position travelToE(EdgePosition e, double dist);
 	
 	public Position travel(int dir, double dist) throws TravelException {
 		 if (dir == 1) {
@@ -82,10 +107,10 @@ public abstract class Position {
 			double distanceToEndOfSegment = Point.dist(c, b);
 			
 			if (doubleEquals(distanceToTravel, distanceToEndOfSegment)) {
-				return new EdgePosition(e, index+1, 0.0);
+				return new EdgePosition(e, index+1, 0.0, 1);
 			} else if (distanceToTravel < distanceToEndOfSegment) {
 				double newParam = Point.travelForward(a, b, param, distanceToTravel);
-				return new EdgePosition(e, index, newParam);
+				return new EdgePosition(e, index, newParam, 1);
 			} else {
 				index++;
 				param = 0.0;
@@ -152,10 +177,10 @@ public abstract class Position {
 			double distanceToStartOfSegment = Point.dist(c, a);
 			
 			if (doubleEquals(distanceToTravel, distanceToStartOfSegment)) {
-				return new EdgePosition(e, index, 0.0);
+				return new EdgePosition(e, index, 0.0, 1);
 			} else if (distanceToTravel < distanceToStartOfSegment) {
 				double newParam = Point.travelBackward(a, b, param, distanceToTravel);
-				return new EdgePosition(e, index, newParam);
+				return new EdgePosition(e, index, newParam, 1);
 			} else {
 				index--;
 				param = 1.0;
@@ -166,25 +191,54 @@ public abstract class Position {
 	}
 	
 	public static Position middle(Position a, Position b) {
-		assert a.getEdge() == b.getEdge();
+		assert a.getEdge() == b.getEdge() || Edge.sharedVertex(a.getEdge(), b.getEdge()) != null;
 		
-		double d = a.distanceTo(b);
-		d = d/2;
-		
-		try {
-			switch (Position.COMPARATOR.compare(a, b)) {
-			case -1:
-				return a.travelForward(d);
-			case 1:
-				return a.travelBackward(d);
-			default:
-				return a;
+		if (a.getEdge() == b.getEdge()) {
+			
+			double d = a.distanceTo(b);
+			d = d/2;
+			
+			try {
+				switch (Position.COMPARATOR.compare(a, b)) {
+				case -1:
+					return a.travelForward(d);
+				case 1:
+					return a.travelBackward(d);
+				default:
+					return a;
+				}
+			} catch (TravelException e) {
+				throw new AssertionError();
 			}
-		} catch (TravelException e) {
-			throw new AssertionError();
+			
+		} else {
+			
+			Vertex v = Edge.sharedVertex(a.getEdge(), b.getEdge());
+			
+			double d = a.distanceTo(b);
+			d = d/2;
+			
+			VertexPosition avp = new VertexPosition(v, a.getEdge());
+			VertexPosition bvp = new VertexPosition(v, b.getEdge());
+			
+			if (DMath.doubleEquals(a.distanceTo(avp), d)) {
+				/*
+				 * in between two different edges, so no real orientation
+				 */
+				return new VertexPosition(v, null, null);
+			} else if (a.distanceTo(avp) > d) {
+				return a.travelTo(avp, d);
+			} else {
+				return bvp.travelTo(b, d-a.distanceTo(avp));
+			}
+			
 		}
 		
 	}
+	
+//	public static boolean areComparable(Position a, Position b) {
+//		return a.getEdge() != null && a.getEdge() == b.getEdge();
+//	}
 	
 	static class PositionComparator implements Comparator<Position> {
 		@Override
@@ -235,7 +289,7 @@ public abstract class Position {
 				assert a instanceof VertexPosition;
 				if (b instanceof EdgePosition) {
 					
-					Edge e = a.getEdge();
+					Edge e = b.getEdge();
 					
 					VertexPosition aa = (VertexPosition)a;
 					
@@ -260,6 +314,8 @@ public abstract class Position {
 					
 					Vertex aV = aa.getVertex();
 					Vertex bV = bb.getVertex();
+					
+					//Edge e = bb.getEdge();
 					
 					switch (aa.getType()) {
 					case START:

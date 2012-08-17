@@ -4,6 +4,7 @@ import com.gutabi.deadlock.core.Position;
 
 public class CrashInfo {
 	
+	public final CrashSite crashSite;
 	public final Car i;
 	public final Car j;
 	public final Position ipa;
@@ -22,7 +23,8 @@ public class CrashInfo {
 	 * 
 	 * For iDir and jDir, 0 means that this car has already crashed
 	 */
-	public CrashInfo(Car i, Car j, Position ipa, Position jpa, Position ip, Position jp, int iDir, int jDir, double dist, int ie, int ik, int je, int jl) {
+	public CrashInfo(CrashSite crashSite, Car i, Car j, Position ipa, Position jpa, Position ip, Position jp, int iDir, int jDir, double dist, int ie, int ik, int je, int jl) {
+		this.crashSite = crashSite;
 		this.i = i;
 		this.j = j;
 		this.ipa = ipa;
