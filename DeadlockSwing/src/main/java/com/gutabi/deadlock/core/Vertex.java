@@ -3,6 +3,7 @@ package com.gutabi.deadlock.core;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 
 public class Vertex {
 	
@@ -10,7 +11,7 @@ public class Vertex {
 	
 	private final List<Edge> eds = new ArrayList<Edge>();
 	
-	private VertexType type;
+	private VertexType type = VertexType.COMMON;
 	
 	public boolean hasCrash;
 	
@@ -40,7 +41,7 @@ public class Vertex {
 		return "V " + p;
 	}
 	
-	public void add(Edge ed) {
+	public void addEdge(Edge ed) {
 		assert ed != null;
 		if (removed) {
 			throw new IllegalStateException("vertex has been removed");
@@ -48,6 +49,25 @@ public class Vertex {
 		if (!(ed.getStart() == this && ed.getEnd() == this)) {
 			assert !eds.contains(ed);
 		}
+		
+		switch (type) {
+		case SOURCE:
+			type = VertexType.COMMON;
+			break;
+		case SINK:
+			type = VertexType.COMMON;
+			break;
+		case COMMON:
+			if (eds.size() == 0) {
+				if (p.getY() <= 10 || p.getX() <= 10) {
+					type = VertexType.SOURCE;
+				} else if (p.getX() >= MODEL.WORLD_WIDTH-10 || p.getY() >= MODEL.WORLD_HEIGHT-10) {
+					type = VertexType.SINK;
+				}
+			}
+			break;
+		}
+		
 		eds.add(ed);
 	}
 	
@@ -56,6 +76,25 @@ public class Vertex {
 			throw new IllegalStateException();
 		}
 		assert eds.contains(ed);
+		
+		switch (type) {
+		case SOURCE:
+			type = VertexType.COMMON;
+			break;
+		case SINK:
+			type = VertexType.COMMON;
+			break;
+		case COMMON:
+			if (eds.size() == 2) {
+				if (p.getY() <= 10 || p.getX() <= 10) {
+					type = VertexType.SOURCE;
+				} else if (p.getX() >= MODEL.WORLD_WIDTH-10 || p.getY() >= MODEL.WORLD_HEIGHT-10) {
+					type = VertexType.SINK;
+				}
+			}
+			break;
+		}
+		
 		eds.remove(ed);
 	}
 	

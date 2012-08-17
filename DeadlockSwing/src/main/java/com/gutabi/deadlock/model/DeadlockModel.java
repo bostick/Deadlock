@@ -12,14 +12,22 @@ import com.gutabi.deadlock.core.Graph;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.Segment;
 import com.gutabi.deadlock.core.Vertex;
-import com.gutabi.deadlock.core.VertexHandler;
-import com.gutabi.deadlock.core.VertexType;
 import com.gutabi.deadlock.view.WindowInfo;
 
-public class DeadlockModel implements VertexHandler {
+public class DeadlockModel {
 	
 	public final int WORLD_WIDTH = 1400;
 	public final int WORLD_HEIGHT = 822;
+	
+	public double DISTANCE_PER_TIMESTEP = 5.0;
+	
+	/*
+	 * spawn cars every SPAWN_FREQUENCY time steps
+	 * -1 means no spawning
+	 */
+	public int SPAWN_FREQUENCY = 5;
+	
+	public long WAIT = 40;
 	
 	public Point viewLoc;
 	public Dim viewDim;
@@ -39,7 +47,7 @@ public class DeadlockModel implements VertexHandler {
 	public List<Car> cars = new ArrayList<Car>();
 	
 	public DeadlockModel() {
-		graph = new Graph(this);
+		graph = new Graph();
 	}
 	
 	public void init() {
@@ -102,6 +110,10 @@ public class DeadlockModel implements VertexHandler {
 		return graph.getEdges();
 	}
 	
+	public Vertex findVertex(Point a) {
+		return graph.findVertex(a);
+	}
+	
 	public ControlMode getMode() {
 		assert Thread.holdsLock(MODEL);
 		
@@ -110,26 +122,6 @@ public class DeadlockModel implements VertexHandler {
 	
 	public void setMode(ControlMode mode) {
 		this.mode = mode;
-	}
-	
-	@Override
-	public void vertexCreated(Vertex v) {
-		
-		Point p = v.getPoint();
-		
-		if (p.getY() <= 10 || p.getX() <= 10) {
-			v.setType(VertexType.SOURCE);
-		} else if (p.getX() >= WORLD_WIDTH-10 || p.getY() >= WORLD_HEIGHT-10) {
-			v.setType(VertexType.SINK);
-		} else {
-			v.setType(VertexType.COMMON);
-		}
-		
-	}
-	
-	@Override
-	public void vertexRemoved(Vertex v) {
-		;
 	}
 	
 }

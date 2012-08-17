@@ -5,11 +5,12 @@ public class EdgePosition extends Position {
 	
 	public final int index;
 	public final double param;
+	//public final int dir;
 	
 	public final Point segStart;
 	public final Point segEnd;
 	
-	//private final double distanceFromStartOfEdge;
+	public final double distanceFromStartOfEdge;
 	
 	public EdgePosition(Edge e, int index, double param) {
 		super(Point.point(e.getPoint(index), e.getPoint(index+1), param), e);
@@ -21,11 +22,12 @@ public class EdgePosition extends Position {
 		
 		this.index = index;
 		this.param = param;
+		//this.dir = dir;
 		
 		this.segStart = e.getPoint(index);
 		this.segEnd = e.getPoint(index+1);
 		
-		//distanceFromStartOfEdge = distanceToStartOfEdge();
+		distanceFromStartOfEdge = distanceToStartOfEdge();
 	}
 	
 	public EdgePosition(Segment si, double param) {

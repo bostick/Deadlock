@@ -2,6 +2,8 @@ package com.gutabi.deadlock.model;
 
 public enum CarState {
 	
+	NEW,
+	
 	/**
 	 * moving from start of edge to end
 	 */

@@ -29,6 +29,8 @@ public final class Edge {
 		}
 		totalLength = l;
 		
+		//assert totalLength > 10;
+		
 		check();
 	}
 	

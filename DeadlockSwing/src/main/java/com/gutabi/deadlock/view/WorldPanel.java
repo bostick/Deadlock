@@ -112,12 +112,15 @@ public class WorldPanel extends JPanel {
 			for (Car c : carsCopy) {
 				Point pos = c.getPosition().getPoint();
 				switch (c.getState()) {
+				case NEW:
 				case FORWARD:
 				case BACKWARD:
 					g2.setColor(Color.BLUE);
 					break;
 				case CRASHED:
-					if (c.getPosition() instanceof VertexPosition) {
+					if (c.special) {
+						g2.setColor(Color.GREEN);
+					} else if (c.getPosition() instanceof VertexPosition) {
 						g2.setColor(Color.WHITE);
 					} else {
 						g2.setColor(Color.ORANGE);

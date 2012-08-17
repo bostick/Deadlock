@@ -14,10 +14,10 @@ public class Graph {
 	private final ArrayList<Vertex> vertices = new ArrayList<Vertex>();
 	private final QuadTree segTree = new QuadTree();
 	
-	private final VertexHandler h;
+	//private final VertexHandler h;
 	
-	public Graph(VertexHandler h) {
-		this.h = h;
+	public Graph() {
+		//this.h = h;
 	}
 	
 	public List<Edge> getEdges() {
@@ -52,12 +52,12 @@ public class Graph {
 	public Vertex createVertex(Point p) {
 		Vertex v = new Vertex(p);
 		vertices.add(v);
-		h.vertexCreated(v);
+		//h.vertexCreated(v);
 		return v;
 	}
 	
 	public void removeVertex(Vertex v) {
-		h.vertexRemoved(v);
+		//h.vertexRemoved(v);
 		v.remove();
 		vertices.remove(v);
 	}
@@ -107,7 +107,7 @@ public class Graph {
 			/*
 			 * d may be null if in the midle of processing (and not currently consistent)
 			 */
-			if (d != null && b.equals(d)) {
+			if (d != null && Point.equals(b, d)) {
 				count++;
 				found = v;
 			}
@@ -328,8 +328,8 @@ public class Graph {
 			
 			Edge e = createEdge(aV, bV, aV.getPoint(), bV.getPoint());
 			
-			aV.add(e);
-			bV.add(e);
+			aV.addEdge(e);
+			bV.addEdge(e);
 			
 			Edge working;
 			
@@ -451,8 +451,8 @@ public class Graph {
 			
 			Edge f = createEdge(v, v, pts);
 			
-			v.add(f);
-			v.add(f);
+			v.addEdge(f);
+			v.addEdge(f);
 			/*
 			 * a loop has just been split, so it is in an inconsistent state, do not check here
 			 * hopefully, another edge will be added soon
@@ -497,16 +497,16 @@ public class Graph {
 					Vertex cV = createVertex(c);
 					Edge f3 = createEdge(cV, v, c, p);
 					
-					cV.add(f3);
-					v.add(f3);
+					cV.addEdge(f3);
+					v.addEdge(f3);
 					
 				}
 				pts.add(p);
 				
 				f1 = createEdge(eStart, v, pts);
 				
-				eStart.add(f1);
-				v.add(f1);
+				eStart.addEdge(f1);
+				v.addEdge(f1);
 			}
 			
 			/*
@@ -545,8 +545,8 @@ public class Graph {
 					Vertex dV = createVertex(d);
 					Edge f3 = createEdge(dV, v, d, p);
 					
-					dV.add(f3);
-					v.add(f3);
+					dV.addEdge(f3);
+					v.addEdge(f3);
 					
 				}
 				for (int i = index+2; i < e.size(); i++) {
@@ -555,8 +555,8 @@ public class Graph {
 				
 				f2 = createEdge(v, eEnd, pts);
 				
-				v.add(f2);
-				eEnd.add(f2);
+				v.addEdge(f2);
+				eEnd.addEdge(f2);
 			}
 			
 			/*
@@ -788,12 +788,12 @@ public class Graph {
 				
 				Edge newEdge = createEdge(e1End, e1End, pts);
 				
-				e1End.add(newEdge);
+				e1End.addEdge(newEdge);
 				e1End.removeEdge(e1);
 				
 				e1Start.removeEdge(e1);
 				
-				e2Start.add(newEdge);
+				e2Start.addEdge(newEdge);
 				e2Start.removeEdge(e2);
 				
 				e2End.removeEdge(e2);
@@ -838,14 +838,14 @@ public class Graph {
 				
 				Edge newEdge = createEdge(e1Start, e1Start, pts);
 				
-				e1Start.add(newEdge);
+				e1Start.addEdge(newEdge);
 				e1Start.removeEdge(e1);
 				
 				e1End.removeEdge(e1);
 				
 				e2Start.removeEdge(e2);
 				
-				e2End.add(newEdge);
+				e2End.addEdge(newEdge);
 				e2End.removeEdge(e2);
 				
 				removeVertex(e1End/*e2Start*/);
@@ -943,12 +943,12 @@ public class Graph {
 				
 				e1Start.removeEdge(e1);
 				
-				e1End.add(newEdge);
+				e1End.addEdge(newEdge);
 				e1End.removeEdge(e1);
 				
 				e2Start.removeEdge(e2);
 				
-				e2End.add(newEdge);
+				e2End.addEdge(newEdge);
 				e2End.removeEdge(e2);
 				
 				removeVertex(e1Start/*e2Start*/);
@@ -992,12 +992,12 @@ public class Graph {
 				Edge newEdge = createEdge(e1Start, e1Start, pts);
 				
 				e1Start.removeEdge(e1);
-				e1Start.add(newEdge);
+				e1Start.addEdge(newEdge);
 				
 				e1End.removeEdge(e1);
 				
 				e2Start.removeEdge(e2);
-				e2Start.add(newEdge);
+				e2Start.addEdge(newEdge);
 				
 				e2End.removeEdge(e2);
 				
@@ -1035,12 +1035,12 @@ public class Graph {
 			e1Start.removeEdge(e1);
 			
 			e1End.removeEdge(e1);
-			e1End.add(newEdge);
+			e1End.addEdge(newEdge);
 			
 			e2Start.removeEdge(e2);
 			
 			e2End.removeEdge(e2);
-			e2End.add(newEdge);
+			e2End.addEdge(newEdge);
 			
 			removeVertex(e1Start/*e2Start*/);
 			removeEdge(e1);
@@ -1074,10 +1074,10 @@ public class Graph {
 			e1Start.removeEdge(e1);
 			
 			e1End.removeEdge(e1);
-			e1End.add(newEdge);
+			e1End.addEdge(newEdge);
 			
 			e2Start.removeEdge(e2);
-			e2Start.add(newEdge);
+			e2Start.addEdge(newEdge);
 			
 			e2End.removeEdge(e2);
 			
@@ -1111,14 +1111,14 @@ public class Graph {
 			Edge newEdge = createEdge(e1Start, e2End, pts);
 			
 			e1Start.removeEdge(e1);
-			e1Start.add(newEdge);
+			e1Start.addEdge(newEdge);
 			
 			e1End.removeEdge(e1);
 			
 			e2Start.removeEdge(e2);
 			
 			e2End.removeEdge(e2);
-			e2End.add(newEdge);
+			e2End.addEdge(newEdge);
 			
 			removeVertex(e1End/*e2Start*/);
 			removeEdge(e1);
@@ -1150,12 +1150,12 @@ public class Graph {
 			Edge newEdge = createEdge(e1Start, e2Start, pts);
 			
 			e1Start.removeEdge(e1);
-			e1Start.add(newEdge);
+			e1Start.addEdge(newEdge);
 			
 			e1End.removeEdge(e1);
 			
 			e2Start.removeEdge(e2);
-			e2Start.add(newEdge);
+			e2Start.addEdge(newEdge);
 			
 			e2End.removeEdge(e2);
 			
@@ -1204,8 +1204,8 @@ public class Graph {
 				
 				Edge newEdge = createEdge(newStart, newEnd, pts);
 				
-				newStart.add(newEdge);
-				newEnd.add(newEdge);
+				newStart.addEdge(newEdge);
+				newEnd.addEdge(newEdge);
 				
 				removeEdge(e);
 				
@@ -1225,8 +1225,8 @@ public class Graph {
 						
 						Edge newEdge = createEdge(newStart, eEnd, pts);
 						
-						newStart.add(newEdge);
-						eEnd.add(newEdge);
+						newStart.addEdge(newEdge);
+						eEnd.addEdge(newEdge);
 						
 					}
 					
@@ -1242,8 +1242,8 @@ public class Graph {
 					
 					Edge newEdge = createEdge(eStart, newEnd, pts);
 					
-					eStart.add(newEdge);
-					newEnd.add(newEdge);
+					eStart.addEdge(newEdge);
+					newEnd.addEdge(newEdge);
 					
 				} else {
 					//create 2 new edges without worrying about vertices
@@ -1258,8 +1258,8 @@ public class Graph {
 					
 					Edge f1 = createEdge(eStart, newF1End, f1Pts);
 					
-					eStart.add(f1);
-					newF1End.add(f1);
+					eStart.addEdge(f1);
+					newF1End.addEdge(f1);
 					
 					List<Point> f2Pts = new ArrayList<Point>();
 					
@@ -1271,8 +1271,8 @@ public class Graph {
 					
 					Edge f2 = createEdge(newF2Start, eEnd, f2Pts);
 					
-					newF2Start.add(f2);
-					eEnd.add(f2);
+					newF2Start.addEdge(f2);
+					eEnd.addEdge(f2);
 					
 				}
 				
@@ -1321,6 +1321,9 @@ public class Graph {
 		}
 		
 		for (Edge e : edges) {
+			if (e.getTotalLength() <= 10.0) {
+				throw new IllegalStateException("too small");
+			}
 			if (e.getStart() == null && e.getEnd() == null) {
 				continue;
 			}

@@ -9,6 +9,22 @@ public class VertexPosition extends Position {
 	
 	private final VertexPositionType type;
 	
+	public VertexPosition(Vertex v) {
+		this(v, (v.getEdges().size() == 1) ? v.getEdges().get(0) : badEdge());
+	}
+	
+	public VertexPosition(Vertex v, Edge e) {
+		this(v, e, (e.isLoop()) ? badVertexPositionType() : (v == e.getStart()) ? VertexPositionType.START : VertexPositionType.END);
+	}
+	
+	private static VertexPositionType badVertexPositionType() {
+		throw new IllegalArgumentException();
+	}
+	
+	private static Edge badEdge() {
+		throw new IllegalArgumentException();
+	}
+	
 	public VertexPosition(Vertex v, Edge e, VertexPositionType type) {
 		super(v.getPoint(), e);
 		this.v = v;
@@ -16,9 +32,11 @@ public class VertexPosition extends Position {
 		this.type = type;
 		
 		if (type == VertexPositionType.START) {
+			assert v == e.getStart();
 			index = 0;
 			param = 0.0;
 		} else {
+			assert v == e.getEnd();
 			index = e.size()-2;
 			param = 1.0;
 		}

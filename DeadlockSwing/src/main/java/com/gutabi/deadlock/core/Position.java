@@ -44,7 +44,17 @@ public abstract class Position {
 	protected abstract double distanceToV(VertexPosition a);
 	protected abstract double distanceToE(EdgePosition e);
 	
-	public Position travelForward(double dist) throws TravelException {
+	public Position travel(int dir, double dist) throws TravelException {
+		 if (dir == 1) {
+			 return travelForward(dist);
+		 } else if (dir == -1) {
+			 return travelBackward(dist);
+		 } else {
+			 throw new IllegalArgumentException();
+		 }
+	}
+	
+	private Position travelForward(double dist) throws TravelException {
 		
 		if (doubleEquals(dist, 0.0)) {
 			return this;
@@ -84,7 +94,17 @@ public abstract class Position {
 		}
 	}
 	
-	public Position travelForwardClamped(double dist) {
+	public Position travelClamped(int dir, double dist) {
+		if (dir == 1) {
+			 return travelForwardClamped(dist);
+		 } else if (dir == -1) {
+			 return travelBackwardClamped(dist);
+		 } else {
+			 throw new IllegalArgumentException();
+		 }
+	}
+	
+	private Position travelForwardClamped(double dist) {
 		
 		try {
 			return travelForward(dist);
@@ -94,7 +114,17 @@ public abstract class Position {
 		
 	}
 	
-	public Position travelBackward(double dist) throws TravelException {
+	private Position travelBackwardClamped(double dist) {
+		
+		try {
+			return travelBackward(dist);
+		} catch (TravelException ex) {
+			return new VertexPosition(e.getStart(), e, VertexPositionType.START);
+		}
+		
+	}
+	
+	private Position travelBackward(double dist) throws TravelException {
 		
 		if (doubleEquals(dist, 0.0)) {
 			return this;
@@ -131,16 +161,6 @@ public abstract class Position {
 				param = 1.0;
 				distanceToTravel -= distanceToStartOfSegment;
 			}
-		}
-		
-	}
-	
-	public Position travelBackwardClamped(double dist) {
-		
-		try {
-			return travelBackward(dist);
-		} catch (TravelException ex) {
-			return new VertexPosition(e.getStart(), e, VertexPositionType.START);
 		}
 		
 	}
