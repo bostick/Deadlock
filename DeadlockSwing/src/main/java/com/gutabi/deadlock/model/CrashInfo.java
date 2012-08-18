@@ -14,16 +14,16 @@ public class CrashInfo {
 	public final int iDir;
 	public final int jDir;
 	public final double dist;
-	public final int ie;
+	//public final int ie;
 	public final int ik;
-	public final int je;
+	//public final int je;
 	public final int jl;
 	
 	/**
 	 * 
 	 * For iDir and jDir, 0 means that this car has already crashed
 	 */
-	public CrashInfo(CrashSite crashSite, Car i, Car j, Position ipa, Position jpa, Position ip, Position jp, int iDir, int jDir, double dist, int ie, int ik, int je, int jl) {
+	public CrashInfo(CrashSite crashSite, Car i, Car j, Position ipa, Position jpa, Position ip, Position jp, int iDir, int jDir, double dist, int ik, int jl) {
 		this.crashSite = crashSite;
 		this.i = i;
 		this.j = j;
@@ -34,9 +34,9 @@ public class CrashInfo {
 		this.iDir = iDir;
 		this.jDir = jDir;
 		this.dist = dist;
-		this.ie = ie;
+		//this.ie = ie;
 		this.ik = ik;
-		this.je = je;
+		//this.je = je;
 		this.jl = jl;
 	}
 	

@@ -15,6 +15,7 @@ import org.junit.Test;
 
 import com.gutabi.deadlock.core.Dim;
 import com.gutabi.deadlock.core.Edge;
+import com.gutabi.deadlock.core.EdgePosition;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.Vertex;
 import com.gutabi.deadlock.core.VertexPosition;
@@ -204,7 +205,7 @@ public class TestSimulating {
 //		);
 		VIEW.controlPanel.simulationButton.doClick();
 		
-		String.class.getName();
+		Thread.sleep(Long.MAX_VALUE);
 		
 	}
 	
@@ -2513,16 +2514,18 @@ public class TestSimulating {
 			Car b = new Car();
 			
 			a.setPosition(new VertexPosition(aV));
-			a.futurePathNewEdge();
+			//a.futurePathNewEdge();
 			a.futurePathAdd(a.getPosition());
 			a.setState(CarState.FORWARD);
 			a.futureState = a.getState();
+			a.futureEdge = aV.getEdges().get(0);
 			
 			b.setPosition(new VertexPosition(bV));
-			b.futurePathNewEdge();
+			//b.futurePathNewEdge();
 			b.futurePathAdd(b.getPosition());
 			b.setState(CarState.BACKWARD);
 			b.futureState = b.getState();
+			b.futureEdge = bV.getEdges().get(0);
 			
 			MODEL.cars.add(a);
 			MODEL.cars.add(b);
@@ -2564,16 +2567,18 @@ public class TestSimulating {
 			Car b = new Car();
 			
 			a.setPosition(new VertexPosition(aV));
-			a.futurePathNewEdge();
+			//a.futurePathNewEdge();
 			a.futurePathAdd(a.getPosition());
 			a.setState(CarState.FORWARD);
 			a.futureState = a.getState();
+			a.futureEdge = aV.getEdges().get(0);
 			
 			b.setPosition(new VertexPosition(bV));
-			b.futurePathNewEdge();
+			//b.futurePathNewEdge();
 			b.futurePathAdd(b.getPosition());
 			b.setState(CarState.BACKWARD);
 			b.futureState = b.getState();
+			b.futureEdge = bV.getEdges().get(0);
 			
 			MODEL.cars.add(a);
 			MODEL.cars.add(b);
@@ -2614,26 +2619,79 @@ public class TestSimulating {
 			Car c = new Car();
 			
 			a.setPosition(new VertexPosition(aV));
-			a.futurePathNewEdge();
+			//a.futurePathNewEdge();
 			a.futurePathAdd(a.getPosition());
 			a.setState(CarState.FORWARD);
 			a.futureState = a.getState();
+			a.futureEdge = aV.getEdges().get(0);
 			
 			b.setPosition(new VertexPosition(bV));
-			b.futurePathNewEdge();
+			//b.futurePathNewEdge();
 			b.futurePathAdd(b.getPosition());
 			b.setState(CarState.BACKWARD);
 			b.futureState = b.getState();
+			b.futureEdge = bV.getEdges().get(0);
 			
 			c.setPosition(new VertexPosition(cV));
-			c.futurePathNewEdge();
+			//c.futurePathNewEdge();
 			c.futurePathAdd(c.getPosition());
 			c.setState(CarState.FORWARD);
 			c.futureState = c.getState();
+			c.futureEdge = cV.getEdges().get(0);
 			
 			MODEL.cars.add(a);
 			MODEL.cars.add(b);
 			MODEL.cars.add(c);
+		}
+		
+		CONTROLLER.queue(new Runnable(){
+			@Override
+			public void run() {
+				CONTROLLER.startRunning();
+			}}
+		);
+		
+		Thread.sleep(Long.MAX_VALUE);
+		
+	}
+	
+	@Test
+	public void test6() throws Exception {
+		
+		synchronized (MODEL) {
+			MODEL.SPAWN_FREQUENCY = -1;
+			MODEL.DISTANCE_PER_TIMESTEP = 5.0;
+			MODEL.WAIT = 300;
+			
+			MODEL.viewDim = new Dim(200, 500);
+			//MODEL.viewLoc = new Point(575, 375);
+			MODEL.viewLoc = new Point(560, 400);
+			
+			MODEL.processStroke(new Point(600, 450), new Point(700, 450));
+			MODEL.processStroke(new Point(650, 450), new Point(650, 470));
+			
+			EdgePosition ap = MODEL.tryFindEdgePosition(new Point(4.47 + 650, 0 + 450));
+			EdgePosition bp = MODEL.tryFindEdgePosition(new Point(-7.89 + 650, 0 + 450));
+			
+			Car a = new Car();
+			Car b = new Car();
+			
+			a.setPosition(ap);
+			//a.futurePathNewEdge();
+			a.futurePathAdd(a.getPosition());
+			a.setState(CarState.BACKWARD);
+			a.futureState = a.getState();
+			a.futureEdge = ap.getEdge();
+			
+			b.setPosition(bp);
+			//b.futurePathNewEdge();
+			b.futurePathAdd(b.getPosition());
+			b.setState(CarState.FORWARD);
+			b.futureState = b.getState();
+			b.futureEdge = bp.getEdge();
+			
+			MODEL.cars.add(a);
+			MODEL.cars.add(b);
 		}
 		
 		CONTROLLER.queue(new Runnable(){

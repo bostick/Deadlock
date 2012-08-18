@@ -1,5 +1,7 @@
 package com.gutabi.deadlock.core;
 
+import java.util.List;
+
 
 
 public final class Edge {
@@ -64,11 +66,17 @@ public final class Edge {
 		if (removed) {
 			throw new IllegalStateException("edge has been removed");
 		}
+		if (loop) {
+			throw new IllegalStateException();
+		}
 		return start;
 	}
 	
 	public Vertex getEnd() {
 		if (removed) {
+			throw new IllegalStateException();
+		}
+		if (loop) {
 			throw new IllegalStateException();
 		}
 		return end;
@@ -118,7 +126,7 @@ public final class Edge {
 			assert as != bs;
 			return be;
 		} else {
-			throw new IllegalArgumentException();
+			return null;
 		}
 	}
 	
@@ -130,6 +138,20 @@ public final class Edge {
 		} else {
 			throw new IllegalArgumentException();
 		}
+	}
+	
+	public static Edge commonEdge(Vertex a, Vertex b) {
+		
+		List<Edge> eds = a.getEdges();
+		
+		for (Edge e : eds) {
+			if (e.getStart() == b || e.getEnd() == b) {
+				return e;
+			}
+		}
+		
+		throw new IllegalArgumentException();
+		
 	}
 	
 	private void check() {

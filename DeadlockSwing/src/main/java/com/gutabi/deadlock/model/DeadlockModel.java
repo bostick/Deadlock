@@ -114,6 +114,10 @@ public class DeadlockModel {
 		return graph.findVertex(a);
 	}
 	
+	public EdgePosition tryFindEdgePosition(Point a) {
+		return graph.tryFindEdgePosition(a);
+	}
+	
 	public ControlMode getMode() {
 		assert Thread.holdsLock(MODEL);
 		

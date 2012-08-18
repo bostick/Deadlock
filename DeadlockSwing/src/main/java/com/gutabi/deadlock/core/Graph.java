@@ -75,7 +75,7 @@ public class Graph {
 			Point c = e.getPoint(i);
 			Point d = e.getPoint(i+1);
 			if (Point.intersect(b, c, d)) {
-				return new EdgePosition(e, i, Point.param(b, c, d), 0);
+				return new EdgePosition(e, i, Point.param(b, c, d));
 			}
 		}
 		for (Vertex v : getVertices()) {
@@ -1322,7 +1322,7 @@ public class Graph {
 		
 		for (Edge e : edges) {
 			if (e.getTotalLength() <= 10.0) {
-				throw new IllegalStateException("too small");
+				//throw new IllegalStateException("too small");
 			}
 			if (e.getStart() == null && e.getEnd() == null) {
 				continue;

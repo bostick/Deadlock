@@ -2,6 +2,7 @@ package com.gutabi.deadlock.model;
 
 import java.util.List;
 
+import com.gutabi.deadlock.core.Edge;
 import com.gutabi.deadlock.core.Position;
 import com.gutabi.deadlock.core.Vertex;
 
@@ -19,6 +20,8 @@ public class Car {
 	public Path futurePath;
 	
 	public CarState futureState;
+	
+	public Edge futureEdge;
 	
 	public double distanceToMove;
 	
@@ -53,13 +56,13 @@ public class Car {
 		this.pos = pos;
 	}
 	
-	public void futurePathNewEdge() {
-		if (state == CarState.CRASHED || state == CarState.SINKED) {
-			throw new IllegalArgumentException();
-		}
-		//futurePath.add(new ArrayList<Position>());
-		futurePath.newEdge();
-	}
+//	public void futurePathNewEdge() {
+//		if (state == CarState.CRASHED || state == CarState.SINKED) {
+//			throw new IllegalArgumentException();
+//		}
+//		//futurePath.add(new ArrayList<Position>());
+//		futurePath.newEdge();
+//	}
 	
 	public void futurePathAdd(Position pos) {
 		if (state == CarState.CRASHED || state == CarState.SINKED) {
@@ -73,12 +76,12 @@ public class Car {
 	 * with pos (if they are not already equal)
 	 * 
 	 */
-	public void futurePathCrash(Position pos, int eIndex, int pIndex) {
+	public void futurePathCrash(Position pos, int pIndex) {
 		if (state == CarState.CRASHED || state == CarState.SINKED) {
 			throw new IllegalArgumentException();
 		}
 		
-		futurePath.crash(pos, eIndex, pIndex);
+		futurePath.crash(pos, pIndex);
 	}
 	
 	public void futurePathClear() {
@@ -90,7 +93,7 @@ public class Car {
 		//futurePath.add(new ArrayList<Position>());
 	}
 	
-	public List<List<Position>> getFuturePath() {
+	public List<Position> getFuturePath() {
 		if (state == CarState.CRASHED || state == CarState.SINKED) {
 			throw new IllegalArgumentException();
 		}

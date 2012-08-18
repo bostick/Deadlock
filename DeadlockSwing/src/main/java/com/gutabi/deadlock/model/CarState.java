@@ -14,6 +14,8 @@ public enum CarState {
 	 */
 	BACKWARD,
 	
+	VERTEX,
+	
 	/**
 	 * crashed
 	 */
