@@ -1322,7 +1322,7 @@ public class Graph {
 		
 		for (Edge e : edges) {
 			if (e.getTotalLength() <= 10.0) {
-				//throw new IllegalStateException("too small");
+				throw new IllegalStateException("too small");
 			}
 			if (e.getStart() == null && e.getEnd() == null) {
 				continue;

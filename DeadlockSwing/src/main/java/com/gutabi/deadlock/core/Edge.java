@@ -150,7 +150,7 @@ public final class Edge {
 			}
 		}
 		
-		throw new IllegalArgumentException();
+		return null;
 		
 	}
 	

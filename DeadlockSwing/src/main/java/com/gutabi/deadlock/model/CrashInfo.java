@@ -13,7 +13,7 @@ public class CrashInfo {
 	public final Position jp;
 	public final int iDir;
 	public final int jDir;
-	public final double dist;
+	//public final double dist;
 	//public final int ie;
 	public final int ik;
 	//public final int je;
@@ -33,7 +33,7 @@ public class CrashInfo {
 		this.jp = jp;
 		this.iDir = iDir;
 		this.jDir = jDir;
-		this.dist = dist;
+		//this.dist = dist;
 		//this.ie = ie;
 		this.ik = ik;
 		//this.je = je;

@@ -80,6 +80,10 @@ public class VertexPosition extends Position {
 		
 		Vertex v = a.getVertex();
 		
+		if (!(v == this.v || Edge.commonEdge(v, this.v) != null)) {
+			return Double.POSITIVE_INFINITY;
+		}
+		
 		if (v == this.v) {
 			for (Edge e : v.getEdges()) {
 				if (e.isLoop()) {

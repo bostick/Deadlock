@@ -4,9 +4,7 @@ import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Edge;
@@ -300,12 +298,14 @@ public class SimulationRunnable implements Runnable {
 			}  // for 
 			
 			doCrashes(carsCopy);
-			while (!crashSites.isEmpty()) {
+			while (firstCrashSite != null) {
 				processCrashInfo(carsCopy);
 				collapseFutures(crashedCars);
 				crashedCars.clear();
 				doCrashes(carsCopy);
 			}
+			
+			checkDistances(carsCopy);
 			
 			collapseFutures(carsCopy);
 			
@@ -329,6 +329,9 @@ public class SimulationRunnable implements Runnable {
 		} // outer
 		
 		MODEL.cars.clear();
+		firstCrashSite = null;
+		crashes.clear();
+		crashedCars.clear();
 		
 	}
 	
@@ -377,27 +380,23 @@ public class SimulationRunnable implements Runnable {
 		Car[] cs = cars.toArray(new Car[0]);
 		for (int i = 0; i < cs.length; i++) {
 			final Car ci = cs[i];
-			for (int j = i+1; j < cs.length; j++) {
+			jloop: for (int j = i+1; j < cs.length; j++) {
 				Car cj = cs[j];
 				
 				if (ci.getState() != CarState.CRASHED) {
 					
 					double ciTraveled = 0;
-//					for (int cie = 0; cie < ci.getFuturePath().size(); cie++) {
-//						List<Position> ciEPath = ci.getFuturePath().get(cie);
 					List<Position> ciFuturePath = ci.getFuturePath();
 					for (int k = 0; k < ciFuturePath.size()-1; k++) {
 						Position cia = ciFuturePath.get(k);
 						Position cib = ciFuturePath.get(k+1);
-						ciTraveled += cia.distanceTo(cib);
+						ciTraveled += cia.distanceTo(cib); 
 						
 						int iDir = (Position.COMPARATOR.compare(cia, cib) == -1) ? 1 : -1;
 						
 						if (cj.getState() != CarState.CRASHED) {
 							
 							double cjTraveled = 0;
-//							for (int cje = 0; cje < cj.getFuturePath().size(); cje++) {
-//								List<Position> cjEPath = cj.getFuturePath().get(cje);
 							List<Position> cjFuturePath = cj.getFuturePath();
 							for (int l = 0; l < cjFuturePath.size()-1; l++) {
 								Position cja = cjFuturePath.get(l);
@@ -410,15 +409,59 @@ public class SimulationRunnable implements Runnable {
 								if (DMath.doubleEquals(dist, 10.0)) {
 									assert DMath.doubleEquals(ciTraveled, cjTraveled);
 									saveCrashInfo(new CrashInfo(new CrashSite(Position.middle(cib, cjb), ciTraveled), ci, cj, cia, cja, cib, cjb, iDir, jDir, dist, k+1, l+1));
+									
+									break jloop;
 								} else if (dist < 10) {
-									double diff = 10 - dist;
-									double inc = diff / 2;
-									ciTraveled -= inc;
-									cjTraveled -= inc;
-									assert DMath.doubleEquals(ciTraveled, cjTraveled);
-									Position adjustedCib = cib.travel(cia, inc);
-									Position adjustedCjb = cjb.travel(cja, inc);
-									saveCrashInfo(new CrashInfo(new CrashSite(Position.middle(adjustedCib, adjustedCjb), ciTraveled), ci, cj, cia, cja, adjustedCib, adjustedCjb, iDir, jDir, dist, k+1, l+1));
+									Position adjustedCib = cib;
+									Position adjustedCjb = cjb;
+									/*
+									 * figure out who has traveled more and back up
+									 */
+									if (DMath.doubleEquals(ciTraveled, cjTraveled)) {
+										
+									} else if (ciTraveled > cjTraveled) {
+										/*
+										 * ci backs up
+										 */
+										double travelDiff = ciTraveled - cjTraveled;
+										adjustedCib = cib.travel(cia, travelDiff);
+										ciTraveled -= travelDiff;
+										
+									} else {
+										/*
+										 * cj backs up
+										 */
+										double travelDiff = cjTraveled - ciTraveled;
+										adjustedCjb = cjb.travel(cja, travelDiff);
+										cjTraveled -= travelDiff;
+									}
+									
+									/*
+									 * ci and cj have now traveled the same amount, the crash site may still be wrong
+									 */
+									
+									double newDist = adjustedCib.distanceTo(adjustedCjb);
+									if (DMath.doubleEquals(newDist, 10.0)) {
+										assert DMath.doubleEquals(ciTraveled, cjTraveled);
+										saveCrashInfo(new CrashInfo(new CrashSite(Position.middle(adjustedCib, adjustedCjb), ciTraveled), ci, cj, cia, cja, adjustedCib, adjustedCjb, iDir, jDir, newDist, k+1, l+1));
+										
+										break jloop;
+									} else if (newDist < 10) {
+										double diff = 10 - newDist;
+										double inc = diff / 2;
+										assert DMath.doubleEquals(ciTraveled, cjTraveled);
+										//double newDist = adjustedCib.distanceTo(adjustedCjb);
+										adjustedCib = adjustedCib.travel(cia, inc);
+										ciTraveled -= inc;
+										adjustedCjb = adjustedCjb.travel(cja, inc);
+										cjTraveled -= inc;
+										newDist = adjustedCib.distanceTo(adjustedCjb);
+										assert DMath.doubleEquals(newDist, 10);
+										saveCrashInfo(new CrashInfo(new CrashSite(Position.middle(adjustedCib, adjustedCjb), ciTraveled), ci, cj, cia, cja, adjustedCib, adjustedCjb, iDir, jDir, newDist, k+1, l+1));
+										
+										break jloop;
+									}
+									
 								}
 							} // l loop
 						
@@ -432,8 +475,10 @@ public class SimulationRunnable implements Runnable {
 							} else if (dist < 10) {
 								double diff = 10 - dist;
 								double inc = diff;
-								ciTraveled -= inc;
 								Position adjustedCib = cib.travel(cia, inc);
+								ciTraveled -= inc;
+								double newDist = adjustedCib.distanceTo(cjp);
+								assert DMath.doubleEquals(newDist, 10);
 								saveCrashInfo(new CrashInfo(new CrashSite(Position.middle(adjustedCib, cjp), ciTraveled), ci, cj, cia, null, adjustedCib, cjp, iDir, 0, dist, k+1, -1));
 							}
 						}
@@ -447,8 +492,6 @@ public class SimulationRunnable implements Runnable {
 						Position cip = ci.getPosition();
 						
 						double cjTraveled = 0;
-//						for (int cje = 0; cje < cj.getFuturePath().size(); cje++) {
-//							List<Position> cjEPath = cj.getFuturePath().get(cje);
 						List<Position> cjFuturePath = cj.getFuturePath();
 						for (int l = 0; l < cjFuturePath.size()-1; l++) {
 							Position cja = cjFuturePath.get(l);
@@ -460,18 +503,23 @@ public class SimulationRunnable implements Runnable {
 							double dist = cip.distanceTo(cjb);
 							if (DMath.doubleEquals(dist, 10.0)) {
 								saveCrashInfo(new CrashInfo(new CrashSite(Position.middle(cip, cjb), cjTraveled), ci, cj, null, cja, cip, cjb, 0, jDir, dist, -1, l+1));
+								
+								break jloop;
 							} else if (dist < 10) {
 								double diff = 10 - dist;
 								double inc = diff;
 								cjTraveled -= inc;
 								Position adjustedCjb = cjb.travel(cja, inc);
+								double newDist = cip.distanceTo(adjustedCjb);
+								assert DMath.doubleEquals(newDist, 10);
 								saveCrashInfo(new CrashInfo(new CrashSite(Position.middle(cip, adjustedCjb), cjTraveled), ci, cj, null, cja, cip, adjustedCjb, 0, jDir, dist, -1, l+1));
+								
+								break jloop;
 							}
 						} // l loop
 						
 					} else {
 						// both ci and cj are crashed
-						;
 					}
 					
 				}
@@ -481,40 +529,52 @@ public class SimulationRunnable implements Runnable {
 	}
 	
 	
-	List<CrashSite> crashSites = new ArrayList<CrashSite>();
-	Map<Position, List<CrashInfo>> crashMap = new HashMap<Position, List<CrashInfo>>();
+	CrashSite firstCrashSite;
+	List<CrashInfo> crashes = new ArrayList<CrashInfo>();
 	List<Car> crashedCars = new ArrayList<Car>();
 	
 	private void saveCrashInfo(CrashInfo ci) {
+		
 		CrashSite site = ci.crashSite;
 		
-		CrashSite samePosition = null;
-		for (CrashSite a : crashSites) {
-			if (a.p.equals(site.p)) {
-				samePosition = a;
-			}
-		}
+//		CrashSite samePosition = null;
+//		for (CrashSite a : crashSites) {
+//			if (a.p.equals(site.p)) {
+//				samePosition = a;
+//			}
+//		}
 		
-		if (samePosition == null) {
+		if (firstCrashSite == null) {
 			// add new
-			crashSites.add(site);
-			List<CrashInfo> val = crashMap.get(site.p);
-			assert val == null;
-			val = new ArrayList<CrashInfo>();
-			val.add(ci);
-			crashMap.put(site.p, val);
-		} else if (DMath.doubleEquals(samePosition.time, site.time)) {
+			firstCrashSite = site;
+			assert crashes.isEmpty();
+//			List<CrashInfo> val = crashMap.get(site.p);
+//			assert val == null;
+//			val = new ArrayList<CrashInfo>();
+//			val.add(ci);
+//			crashMap.put(site.p, val);
+			crashes.add(ci);
+		} else if (DMath.doubleEquals(firstCrashSite.time, site.time)) {
 			// add existing
-			List<CrashInfo> val = crashMap.get(site.p);
-			val.add(ci);
-		} else if (site.time < samePosition.time) {
-			// replace
-			crashSites.remove(samePosition);
-			List<CrashInfo> val = crashMap.get(samePosition.p);
-			val.clear();
+//			List<CrashInfo> val = crashMap.get(site.p);
+//			val.add(ci);
 			
-			crashSites.add(site);
-			val.add(ci);
+			
+			
+			crashes.add(ci);
+		} else if (site.time < firstCrashSite.time) {
+			// replace
+			
+			firstCrashSite = site;
+			
+//			crashSites.remove(samePosition);
+//			List<CrashInfo> val = crashMap.get(samePosition.p);
+//			val.clear();
+			crashes.clear();
+			
+//			crashSites.add(site);
+//			val.add(ci);
+			crashes.add(ci);
 			
 		} else {
 			// ignore
@@ -525,39 +585,47 @@ public class SimulationRunnable implements Runnable {
 	
 	private void processCrashInfo(List<Car> cars) {
 		
-		for (CrashSite site : crashSites) {
-			for (CrashInfo info : crashMap.get(site.p)) {
-				//Position crashSite = info.crashSite;
-				Car i = info.i;
-				Car j = info.j;
-				Position ip = info.ip;
-				Position jp = info.jp;
-				int iDir = info.iDir;
-				int jDir = info.jDir;
-				//double dist = info.dist;
-				//int ie = info.ie;
-				int ik = info.ik;
-				//int je = info.je;
-				int jl = info.jl;
-				
-				if (iDir != 0) {
-					i.futurePathCrash(ip, ik);
-					i.futureState = CarState.CRASHED;
-					crashedCars.add(i);
-				}
-				
-				if (jDir != 0) {
-					j.futurePathCrash(jp, jl);
-					j.futureState = CarState.CRASHED;
-					crashedCars.add(j);
-				}
-				
+		//for (CrashSite site : crashSites) {
+		for (CrashInfo info : crashes) {
+			//Position crashSite = info.crashSite;
+			Car i = info.i;
+			Car j = info.j;
+			Position ip = info.ip;
+			Position jp = info.jp;
+			int iDir = info.iDir;
+			int jDir = info.jDir;
+			//double dist = info.dist;
+			//int ie = info.ie;
+			int ik = info.ik;
+			//int je = info.je;
+			int jl = info.jl;
+			
+			double dist = ip.distanceTo(jp);
+			assert DMath.doubleEquals(dist, 10.0);
+			
+			if (iDir != 0) {
+				i.futurePathCrash(ip, ik);
+				i.futureState = CarState.CRASHED;
+				crashedCars.add(i);
 			}
+			
+			if (jDir != 0) {
+				j.futurePathCrash(jp, jl);
+				j.futureState = CarState.CRASHED;
+				crashedCars.add(j);
+			}
+			
 		}
+		//}
 		
-		crashSites.clear();
-		crashMap.clear();
+		firstCrashSite = null;
+		crashes.clear();
 		
+//		crashSites.clear();
+//		crashMap.clear();
+	}
+	
+	private void checkDistances(List<Car> cars) {
 		for (int i = 0; i < cars.size(); i++) {
 			Car c = cars.get(i);
 			Position cPos = c.getLastFuturePosition();
