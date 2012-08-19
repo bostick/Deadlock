@@ -56,7 +56,9 @@ public class TestSimulating {
 		
 		Thread.sleep(200);
 		
-		MODEL.clear();
+		synchronized (MODEL) {
+			MODEL.clear();
+		}
 	}
 	
 	Runnable empty = new Runnable(){
@@ -2711,6 +2713,12 @@ public class TestSimulating {
 		
 		//CONTROLLER.strat = MassageStrategy.NONE;
 		
+		synchronized (MODEL) {
+			MODEL.DISTANCE_PER_TIMESTEP = 3;
+			MODEL.WAIT = 1;
+			MODEL.SPAWN_FREQUENCY = 3;
+		}
+		
 		//MODEL.RANDOM.setSeed(1);
 		
 		testPressed(new Point(5., 26.));
@@ -4073,8 +4081,9 @@ public class TestSimulating {
 		
 		while (true) {
 			VIEW.controlPanel.simulationButton.doClick();
-			Thread.sleep(300000);
+			Thread.sleep(600000);
 			VIEW.controlPanel.simulationButton.doClick();
+			Thread.sleep(10000);
 		}
 		
 	}

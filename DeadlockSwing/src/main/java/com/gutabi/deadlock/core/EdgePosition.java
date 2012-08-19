@@ -71,18 +71,46 @@ public class EdgePosition extends Position {
 	}
 	
 	public double distanceToEndOfEdge() {
-		return distanceToV(new VertexPosition(getEdge().getEnd()));
+		
+		/*
+		 * may be stand-alone loop, so start and end are null
+		 */
+		
+		double l;
+		l = 0.0;
+		l += Point.dist(p, segEnd);
+		for (int i = index+1; i < e.size()-1; i++) {
+			Point aa = e.getPoint(i);
+			Point bb = e.getPoint(i+1);
+			l += Point.dist(aa, bb);
+		}
+		return l;
+		
 	}
 	
 	public double distanceToStartOfEdge() {
-		return distanceToV(new VertexPosition(getEdge().getStart()));
+		
+		/*
+		 * may be stand-alone loop, so start and end are null
+		 */
+		
+		double l;
+		l = 0.0;
+		l += Point.dist(p, segStart);
+		for (int i = index-1; i >= 0; i--) {
+			Point aa = e.getPoint(i);
+			Point bb = e.getPoint(i+1);
+			l += Point.dist(aa, bb);
+		}
+		return l;
+		
 	}
 	
 	public double distanceToV(VertexPosition a) {
 		
-		if (e.isLoop()) {
-			throw new IllegalArgumentException();
-		}
+//		if (e.isLoop()) {
+//			throw new IllegalArgumentException();
+//		}
 		
 		Vertex v = a.getVertex();
 		
@@ -92,27 +120,11 @@ public class EdgePosition extends Position {
 		
 		if (v == e.getEnd()) {
 			
-			double l;
-			l = 0.0;
-			l += Point.dist(p, segEnd);
-			for (int i = index+1; i < e.size()-1; i++) {
-				Point aa = e.getPoint(i);
-				Point bb = e.getPoint(i+1);
-				l += Point.dist(aa, bb);
-			}
-			return l;
+			return distanceToEndOfEdge();
 			
 		} else {
 			
-			double l;
-			l = 0.0;
-			l += Point.dist(p, segStart);
-			for (int i = index-1; i >= 0; i--) {
-				Point aa = e.getPoint(i);
-				Point bb = e.getPoint(i+1);
-				l += Point.dist(aa, bb);
-			}
-			return l;
+			return distanceToStartOfEdge();
 			
 		}
 		
@@ -124,51 +136,65 @@ public class EdgePosition extends Position {
 			throw new IllegalArgumentException();
 		}
 		
-		if (!(a.getEdge() == e || Edge.sharedVertex(a.getEdge(), e) != null)) {
-			return Double.POSITIVE_INFINITY;
-		}
-		
-		if (a.getEdge() == e) {
-			
-			switch (Position.COMPARATOR.compare(this, a)) {
-			case -1 : {
-				if (a.index == index) {
-					return Point.dist(p, a.p);
-				}
-				double l = 0.0;
-				l += Point.dist(p, segEnd);
-				for (int i = index+1; i < a.index; i++) {
-					Point aa = e.getPoint(i);
-					Point bb = e.getPoint(i+1);
-					l += Point.dist(aa, bb);
-				}
-				l += Point.dist(a.segStart, a.p);
-				return l;
-			}
-			case 1: {
-				if (a.index == index) {
-					return Point.dist(a.p, p);
-				}
-				double l = 0.0;
-				l += Point.dist(p, segStart);
-				for (int i = index-1; i > a.index; i--) {
-					Point aa = e.getPoint(i);
-					Point bb = e.getPoint(i+1);
-					l += Point.dist(aa, bb);
-				}
-				l += Point.dist(a.segEnd, a.p);
-				return l;
-			}
-			default: {
-				return 0;
-			}
+		try {
+			if (!(a.getEdge() == e || Edge.sharedVertex(a.getEdge(), e) != null)) {
+				return Double.POSITIVE_INFINITY;
 			}
 			
-		} else {
+			if (a.getEdge() == e) {
+				
+				switch (Position.COMPARATOR.compare(this, a)) {
+				case -1 : {
+					if (a.index == index) {
+						return Point.dist(p, a.p);
+					}
+					double l = 0.0;
+					l += Point.dist(p, segEnd);
+					for (int i = index+1; i < a.index; i++) {
+						Point aa = e.getPoint(i);
+						Point bb = e.getPoint(i+1);
+						l += Point.dist(aa, bb);
+					}
+					l += Point.dist(a.segStart, a.p);
+					return l;
+				}
+				case 1: {
+					if (a.index == index) {
+						return Point.dist(a.p, p);
+					}
+					double l = 0.0;
+					l += Point.dist(p, segStart);
+					for (int i = index-1; i > a.index; i--) {
+						Point aa = e.getPoint(i);
+						Point bb = e.getPoint(i+1);
+						l += Point.dist(aa, bb);
+					}
+					l += Point.dist(a.segEnd, a.p);
+					return l;
+				}
+				default: {
+					return 0;
+				}
+				}
+				
+			} else {
+				
+				Vertex v = Edge.sharedVertex(a.getEdge(), e);
+				VertexPosition vp = new VertexPosition(v);
+				
+				return distanceTo(vp) + vp.distanceTo(a);
+			}
+		} catch (SharedVerticesException ex) {
 			
-			Vertex v = Edge.sharedVertex(a.getEdge(), e);
+			Vertex v1 = ex.v1;
+			VertexPosition vp1 = new VertexPosition(v1);
+			Vertex v2 = ex.v2;
+			VertexPosition vp2 = new VertexPosition(v2);
 			
-			return distanceTo(new VertexPosition(v)) + new VertexPosition(v).distanceTo(a);
+			double d1 = distanceTo(vp1) + vp1.distanceTo(a);
+			double d2 = distanceTo(vp2) + vp2.distanceTo(a);
+			
+			return Math.min(d1, d2);
 		}
 		
 	}
@@ -269,44 +295,80 @@ public class EdgePosition extends Position {
 	}
 	
 	protected Position travelE(EdgePosition a, double dist) {
-		assert a.getEdge() == e || Edge.sharedVertex(a.getEdge(), e) != null;
 		
 		if (e.isLoop()) {
 			throw new IllegalArgumentException();
 		}
 		
-		double actual = distanceToE(a);
-		
-		assert DMath.doubleEquals(dist, actual) || dist < actual;
-		
-		if (a.getEdge() == e) {
+		try {
+			assert a.getEdge() == e || Edge.sharedVertex(a.getEdge(), e) != null;
 			
-			switch (Position.COMPARATOR.compare(this, a)) {
-			case -1:
-				return travelForward(dist);
-			case 1:
-				return travelBackward(dist);
-			default:
-				return this;
-			}
+			double actual = distanceToE(a);
 			
-		} else {
+			assert DMath.doubleEquals(dist, actual) || dist < actual;
 			
-			Vertex v = Edge.sharedVertex(a.getEdge(), e);
-			VertexPosition vp = new VertexPosition(v);
-			
-			double actualVDist = distanceTo(vp);
-			
-			//assert DMath.doubleEquals(dist, actualVDist) || dist > actualVDist;
-			
-			if (DMath.doubleEquals(dist, actualVDist)) {
-				return vp;
-			} else if (dist < actualVDist) {
-				return travelV(vp, dist);
+			if (a.getEdge() == e) {
+				
+				switch (Position.COMPARATOR.compare(this, a)) {
+				case -1:
+					return travelForward(dist);
+				case 1:
+					return travelBackward(dist);
+				default:
+					return this;
+				}
+				
 			} else {
-				return vp.travelE(a, dist-actualVDist);
+				
+				Vertex v = Edge.sharedVertex(a.getEdge(), e);
+				VertexPosition vp = new VertexPosition(v);
+				
+				double actualVDist = distanceTo(vp);
+				
+				if (DMath.doubleEquals(dist, actualVDist)) {
+					return vp;
+				} else if (dist < actualVDist) {
+					return travelV(vp, dist);
+				} else {
+					return vp.travelE(a, dist-actualVDist);
+				}
+				
 			}
+		} catch (SharedVerticesException ex) {
 			
+			Vertex v1 = ex.v1;
+			VertexPosition vp1 = new VertexPosition(v1);
+			Vertex v2 = ex.v2;
+			VertexPosition vp2 = new VertexPosition(v2);
+			
+			double d1 = distanceTo(vp1) + vp1.distanceTo(a);
+			double d2 = distanceTo(vp2) + vp2.distanceTo(a);
+			
+			if (d1 < d2) {
+				
+				double actualVDist = distanceTo(vp1);
+				
+				if (DMath.doubleEquals(dist, actualVDist)) {
+					return vp1;
+				} else if (dist < actualVDist) {
+					return travelV(vp1, dist);
+				} else {
+					return vp1.travelE(a, dist-actualVDist);
+				}
+				
+			} else {
+				
+				double actualVDist = distanceTo(vp2);
+				
+				if (DMath.doubleEquals(dist, actualVDist)) {
+					return vp2;
+				} else if (dist < actualVDist) {
+					return travelV(vp2, dist);
+				} else {
+					return vp2.travelE(a, dist-actualVDist);
+				}
+				
+			}
 		}
 		
 	}

@@ -66,9 +66,9 @@ public final class Edge {
 		if (removed) {
 			throw new IllegalStateException("edge has been removed");
 		}
-		if (loop) {
-			throw new IllegalStateException();
-		}
+//		if (loop) {
+//			throw new IllegalStateException();
+//		}
 		return start;
 	}
 	
@@ -76,9 +76,9 @@ public final class Edge {
 		if (removed) {
 			throw new IllegalStateException();
 		}
-		if (loop) {
-			throw new IllegalStateException();
-		}
+//		if (loop) {
+//			throw new IllegalStateException();
+//		}
 		return end;
 	}
 	
@@ -107,23 +107,31 @@ public final class Edge {
 	/**
 	 * returns the single shared vertex between edges a and b
 	 */
-	public static Vertex sharedVertex(Edge a, Edge b) {
+	public static Vertex sharedVertex(Edge a, Edge b) throws SharedVerticesException {
 		assert a != b;
 		Vertex as = a.getStart();
 		Vertex ae = a.getEnd();
 		Vertex bs = b.getStart();
 		Vertex be = b.getEnd();
 		if (as == bs) {
-			assert ae != be;
+			if (ae == be) {
+				throw new SharedVerticesException(as, ae);
+			}
 			return as;
 		} else if (as == be) {
-			assert ae != bs;
+			if (ae == bs) {
+				throw new SharedVerticesException(as, ae);
+			}
 			return as;
 		} else if (ae == bs) {
-			assert as != be;
+			if (as == be) {
+				throw new SharedVerticesException(as, ae);
+			}
 			return ae;
 		} else if (ae == be) {
-			assert as != bs;
+			if (as == bs) {
+				throw new SharedVerticesException(as, ae);
+			}
 			return be;
 		} else {
 			return null;

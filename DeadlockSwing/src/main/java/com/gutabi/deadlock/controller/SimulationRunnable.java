@@ -48,10 +48,7 @@ public class SimulationRunnable implements Runnable {
 				verticesCopy.add(v);
 			}
 			modeCopy = MODEL.getMode();
-			carsCopy = new ArrayList<Car>();
-			for (Car c : MODEL.cars) {
-				carsCopy.add(c);
-			}
+			carsCopy = new ArrayList<Car>(MODEL.cars);
 		}
 		
 		outer:
@@ -312,7 +309,7 @@ public class SimulationRunnable implements Runnable {
 			removeSinked(carsCopy);
 			
 			synchronized (MODEL) {
-				MODEL.cars = carsCopy;
+				MODEL.cars = new ArrayList<Car>(carsCopy);
 			}
 			
 			VIEW.repaint();
@@ -328,7 +325,9 @@ public class SimulationRunnable implements Runnable {
 			
 		} // outer
 		
-		MODEL.cars.clear();
+		synchronized (MODEL) {
+			MODEL.cars.clear();
+		}
 		firstCrashSite = null;
 		crashes.clear();
 		crashedCars.clear();
@@ -414,26 +413,28 @@ public class SimulationRunnable implements Runnable {
 								} else if (dist < 10) {
 									Position adjustedCib = cib;
 									Position adjustedCjb = cjb;
+									double adjustedCiTraveled = ciTraveled;
+									double adjustedCjTraveled = cjTraveled;
 									/*
 									 * figure out who has traveled more and back up
 									 */
-									if (DMath.doubleEquals(ciTraveled, cjTraveled)) {
+									if (DMath.doubleEquals(adjustedCiTraveled, adjustedCjTraveled)) {
 										
-									} else if (ciTraveled > cjTraveled) {
+									} else if (adjustedCiTraveled > adjustedCjTraveled) {
 										/*
 										 * ci backs up
 										 */
-										double travelDiff = ciTraveled - cjTraveled;
+										double travelDiff = adjustedCiTraveled - adjustedCjTraveled;
 										adjustedCib = cib.travel(cia, travelDiff);
-										ciTraveled -= travelDiff;
+										adjustedCiTraveled -= travelDiff;
 										
 									} else {
 										/*
 										 * cj backs up
 										 */
-										double travelDiff = cjTraveled - ciTraveled;
+										double travelDiff = adjustedCjTraveled - adjustedCiTraveled;
 										adjustedCjb = cjb.travel(cja, travelDiff);
-										cjTraveled -= travelDiff;
+										adjustedCjTraveled -= travelDiff;
 									}
 									
 									/*
@@ -442,22 +443,22 @@ public class SimulationRunnable implements Runnable {
 									
 									double newDist = adjustedCib.distanceTo(adjustedCjb);
 									if (DMath.doubleEquals(newDist, 10.0)) {
-										assert DMath.doubleEquals(ciTraveled, cjTraveled);
-										saveCrashInfo(new CrashInfo(new CrashSite(Position.middle(adjustedCib, adjustedCjb), ciTraveled), ci, cj, cia, cja, adjustedCib, adjustedCjb, iDir, jDir, newDist, k+1, l+1));
+										assert DMath.doubleEquals(adjustedCiTraveled, adjustedCjTraveled);
+										saveCrashInfo(new CrashInfo(new CrashSite(Position.middle(adjustedCib, adjustedCjb), adjustedCiTraveled), ci, cj, cia, cja, adjustedCib, adjustedCjb, iDir, jDir, newDist, k+1, l+1));
 										
 										break jloop;
 									} else if (newDist < 10) {
 										double diff = 10 - newDist;
 										double inc = diff / 2;
-										assert DMath.doubleEquals(ciTraveled, cjTraveled);
+										assert DMath.doubleEquals(adjustedCiTraveled, adjustedCjTraveled);
 										//double newDist = adjustedCib.distanceTo(adjustedCjb);
-										adjustedCib = adjustedCib.travel(cia, inc);
-										ciTraveled -= inc;
-										adjustedCjb = adjustedCjb.travel(cja, inc);
-										cjTraveled -= inc;
-										newDist = adjustedCib.distanceTo(adjustedCjb);
-										assert DMath.doubleEquals(newDist, 10);
-										saveCrashInfo(new CrashInfo(new CrashSite(Position.middle(adjustedCib, adjustedCjb), ciTraveled), ci, cj, cia, cja, adjustedCib, adjustedCjb, iDir, jDir, newDist, k+1, l+1));
+										Position newAdjustedCib = adjustedCib.travel(cia, inc);
+										double newAdjustedCiTraveled = adjustedCiTraveled-inc;
+										Position newAdjustedCjb = adjustedCjb.travel(cja, inc);
+										double newAdjustedCjTraveled = adjustedCjTraveled-inc;
+										double newNewDist = newAdjustedCib.distanceTo(newAdjustedCjb);
+										assert DMath.doubleEquals(newNewDist, 10);
+										saveCrashInfo(new CrashInfo(new CrashSite(Position.middle(newAdjustedCib, newAdjustedCjb), newAdjustedCiTraveled), ci, cj, cia, cja, newAdjustedCib, newAdjustedCjb, iDir, jDir, newDist, k+1, l+1));
 										
 										break jloop;
 									}
@@ -476,10 +477,11 @@ public class SimulationRunnable implements Runnable {
 								double diff = 10 - dist;
 								double inc = diff;
 								Position adjustedCib = cib.travel(cia, inc);
-								ciTraveled -= inc;
+								double adjustedCiTraveled = ciTraveled;
+								adjustedCiTraveled -= inc;
 								double newDist = adjustedCib.distanceTo(cjp);
 								assert DMath.doubleEquals(newDist, 10);
-								saveCrashInfo(new CrashInfo(new CrashSite(Position.middle(adjustedCib, cjp), ciTraveled), ci, cj, cia, null, adjustedCib, cjp, iDir, 0, dist, k+1, -1));
+								saveCrashInfo(new CrashInfo(new CrashSite(Position.middle(adjustedCib, cjp), adjustedCiTraveled), ci, cj, cia, null, adjustedCib, cjp, iDir, 0, dist, k+1, -1));
 							}
 						}
 					} // k loop
@@ -508,11 +510,12 @@ public class SimulationRunnable implements Runnable {
 							} else if (dist < 10) {
 								double diff = 10 - dist;
 								double inc = diff;
-								cjTraveled -= inc;
 								Position adjustedCjb = cjb.travel(cja, inc);
+								double adjustedCjTraveled = cjTraveled;
+								adjustedCjTraveled -= inc;
 								double newDist = cip.distanceTo(adjustedCjb);
 								assert DMath.doubleEquals(newDist, 10);
-								saveCrashInfo(new CrashInfo(new CrashSite(Position.middle(cip, adjustedCjb), cjTraveled), ci, cj, null, cja, cip, adjustedCjb, 0, jDir, dist, -1, l+1));
+								saveCrashInfo(new CrashInfo(new CrashSite(Position.middle(cip, adjustedCjb), adjustedCjTraveled), ci, cj, null, cja, cip, adjustedCjb, 0, jDir, dist, -1, l+1));
 								
 								break jloop;
 							}

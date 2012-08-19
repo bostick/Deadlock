@@ -115,6 +115,7 @@ public class WorldPanel extends JPanel {
 				case NEW:
 				case FORWARD:
 				case BACKWARD:
+				case VERTEX:
 					g2.setColor(Color.BLUE);
 					break;
 				case CRASHED:
