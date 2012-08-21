@@ -1,20 +1,21 @@
 package com.gutabi.deadlock.model;
 
-import com.gutabi.deadlock.core.Position;
+import com.gutabi.deadlock.core.DMath;
+
 
 public class CrashSite {
 	
-	public final Position p;
+	//public final Position p;
 	public final double time;
 	
 	private final int hash; 
 	
-	public CrashSite(Position p, double time) {
-		this.p = p;
+	public CrashSite(double time) {
+		//this.p = p;
 		this.time = time;
 		
 		int h = 17;
-		h = 37 * h + p.hashCode();
+		//h = 37 * h + p.hashCode();
 		long l = Double.doubleToLongBits(time);
 		int c = (int)(l ^ (l >>> 32));
 		h = 37 * h + c;
@@ -33,20 +34,20 @@ public class CrashSite {
 			return false;
 		} else {
 			CrashSite b = (CrashSite)o;
-			return (p.equals(b.p)) && (time == b.time);
+			//return (p.equals(b.p)) && (time == b.time);
+			return DMath.doubleEquals(time, b.time);
 		}
 	}
 	
 //	static class CrashSiteComparator implements Comparator<CrashSite> {
 //		@Override
 //		public int compare(CrashSite a, CrashSite b) {
-//			if (a.time < b.time) {
-//				return -1;
-//			} else if (a.time > b.time) {
-//				return 1;
-//			} else {
-//				assert Point.equals(a.p, b.p) && doubleEquals(a.param, b.param);
+//			if (DMath.doubleEquals(a.time, b.time)) {
 //				return 0;
+//			} else if (a.time < b.time) {
+//				return -1;
+//			} else {
+//				return 1;
 //			}
 //		}
 //	}

@@ -3,6 +3,7 @@ package com.gutabi.deadlock.model;
 import java.util.List;
 
 import com.gutabi.deadlock.core.Edge;
+import com.gutabi.deadlock.core.Path;
 import com.gutabi.deadlock.core.Position;
 import com.gutabi.deadlock.core.Vertex;
 
@@ -22,6 +23,7 @@ public class Car {
 	public CarState futureState;
 	
 	public Edge futureEdge;
+	public int futureDir;
 	
 	public double distanceToMove;
 	

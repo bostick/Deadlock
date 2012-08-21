@@ -41,6 +41,23 @@ public class Vertex {
 		return "V " + p;
 	}
 	
+	public static List<Edge> commonEdges(Vertex a, Vertex b) {
+		
+		List<Edge> eds1 = a.eds;
+		List<Edge> eds2 = b.eds;
+		
+		List<Edge> common = new ArrayList<Edge>();
+		for (Edge e1 : eds1) {
+			for (Edge e2 : eds2) {
+				if (e1 == e2) {
+					common.add(e1);
+				}
+			}
+		}
+		
+		return common;
+	}
+	
 	public void addEdge(Edge ed) {
 		assert ed != null;
 		if (removed) {

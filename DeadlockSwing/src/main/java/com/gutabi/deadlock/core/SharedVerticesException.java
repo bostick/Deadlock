@@ -1,7 +1,7 @@
 package com.gutabi.deadlock.core;
 
 @SuppressWarnings("serial")
-public class SharedVerticesException extends Exception {
+public class SharedVerticesException extends RuntimeException {
 	
 	public Vertex v1;
 	public Vertex v2;

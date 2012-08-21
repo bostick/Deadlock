@@ -12,9 +12,7 @@ public final class Edge {
 	
 	private final double totalLength;
 	
-	/*
-	 * both vs could be null (stand-alone loop) or both could be a vertex (shared with other edges)
-	 */
+	private final boolean standalone;
 	private final boolean loop;
 	
 	private boolean removed = false;
@@ -23,6 +21,7 @@ public final class Edge {
 		this.start = start;
 		this.end = end;
 		loop = (start == end);
+		standalone = (loop) ? start == null : false;
 		this.pts = pts;
 		
 		double l = 0.0;
@@ -45,6 +44,10 @@ public final class Edge {
 	
 	public String toString() {
 		return "E n=" + pts.length + " " + start + " " + end;
+	}
+	
+	public boolean isStandAlone() {
+		return standalone;
 	}
 	
 	public boolean isLoop() {
@@ -102,6 +105,42 @@ public final class Edge {
 	
 	public boolean isRemoved() {
 		return removed;
+	}
+	
+	public static boolean haveExactlyOneSharedVertex(Edge a, Edge b) {
+		Vertex as = a.getStart();
+		Vertex ae = a.getEnd();
+		Vertex bs = b.getStart();
+		Vertex be = b.getEnd();
+		if (as == bs) {
+			return (ae != be);
+		} else if (as == be) {
+			return (ae != bs);
+		} else if (ae == bs) {
+			return (as != be);
+		} else if (ae == be) {
+			return (as != bs);
+		} else {
+			return false;
+		}
+	}
+	
+	public static boolean haveTwoSharedVertices(Edge a, Edge b) {
+		Vertex as = a.getStart();
+		Vertex ae = a.getEnd();
+		Vertex bs = b.getStart();
+		Vertex be = b.getEnd();
+		if (as == bs) {
+			return (ae == be);
+		} else if (as == be) {
+			return (ae == bs);
+		} else if (ae == bs) {
+			return (as == be);
+		} else if (ae == be) {
+			return (as == bs);
+		} else {
+			return false;
+		}
 	}
 	
 	/**

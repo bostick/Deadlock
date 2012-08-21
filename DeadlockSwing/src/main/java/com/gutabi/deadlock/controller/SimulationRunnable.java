@@ -76,7 +76,7 @@ public class SimulationRunnable implements Runnable {
 				for (Car c : carsCopy) {
 					Position carPos = c.getPosition();
 					for (Vertex v : sources) {
-						if (carPos.distanceTo(new VertexPosition(v)) <= 10) {
+						if (carPos.distanceTo(new VertexPosition(v, null, null, 0)) <= 10) {
 							toRemove.add(v);
 						}
 					}
@@ -98,10 +98,10 @@ public class SimulationRunnable implements Runnable {
 					int i = MODEL.RANDOM.nextInt(sources.size());
 					
 					Vertex v = sources.get(i);
-					List<Edge> eds = v.getEdges();
-					i = MODEL.RANDOM.nextInt(eds.size());
-					Edge newE = eds.get(i);
-					
+//					List<Edge> eds = v.getEdges();
+//					i = MODEL.RANDOM.nextInt(eds.size());
+//					Edge newE = eds.get(i);
+//					
 					
 					c.startingVertex = v;
 					c.startingStep = step;
@@ -115,11 +115,11 @@ public class SimulationRunnable implements Runnable {
 //					} else {
 //						newPos = new VertexPosition(v, newE, VertexPositionType.END);
 //					}
-					c.futurePathAdd(new VertexPosition(v));
+					c.futurePathAdd(new VertexPosition(v, null, null, 0));
 					
-					CarState s = ((newE.getStart() == v) ? CarState.FORWARD : CarState.BACKWARD);
-					c.futureState = s;
-					c.futureEdge = newE;
+					//CarState s = ((newE.getStart() == v) ? CarState.FORWARD : CarState.BACKWARD);
+					c.futureState = CarState.VERTEX;
+					//c.futureEdge = newE;
 					
 					sources.remove(v);
 				}
@@ -142,20 +142,28 @@ public class SimulationRunnable implements Runnable {
 					case FORWARD: {
 						Position pos = c.getLastFuturePosition();
 						Edge e;
+						int dir = 0;
 						double distanceToEndOfEdge;
 						if (pos instanceof EdgePosition) {
 							e = ((EdgePosition)pos).getEdge();
+							dir = 1;
 							distanceToEndOfEdge = ((EdgePosition)pos).distanceToEndOfEdge();	
 						} else {
 							e = c.futureEdge;
+							dir = c.futureDir;
 							c.futureEdge = null;
 							distanceToEndOfEdge = e.getTotalLength();
+						}
+						
+						if (pos instanceof EdgePosition) {
+							c.futurePathAdd(((EdgePosition)pos).travel(dir, Math.min(c.distanceToMove, distanceToEndOfEdge)));
+						} else {
+							c.futurePathAdd(((VertexPosition)pos).travel(e, dir, Math.min(c.distanceToMove, distanceToEndOfEdge)));
 						}
 						
 						if (DMath.doubleEquals(c.distanceToMove, distanceToEndOfEdge)) {
 							
 							Vertex v = e.getEnd();
-							c.futurePathAdd(new VertexPosition(v));
 							c.futureState = CarState.VERTEX;
 							
 							c.distanceToMove = 0.0;
@@ -167,7 +175,6 @@ public class SimulationRunnable implements Runnable {
 						} else if (c.distanceToMove > distanceToEndOfEdge) {
 							
 							Vertex v = e.getEnd();
-							c.futurePathAdd(new VertexPosition(v));
 							c.futureState = CarState.VERTEX;
 							
 							c.distanceToMove -= distanceToEndOfEdge;
@@ -178,13 +185,6 @@ public class SimulationRunnable implements Runnable {
 							}
 							
 						} else {
-							
-							if (pos instanceof EdgePosition) {
-								c.futurePathAdd(((EdgePosition)pos).travel(e.getEnd(), c.distanceToMove));
-							} else {
-								c.futurePathAdd(((VertexPosition)pos).travel(e, c.distanceToMove));
-							}
-							
 							c.distanceToMove = 0.0;
 						}
 						
@@ -193,20 +193,28 @@ public class SimulationRunnable implements Runnable {
 					case BACKWARD: {
 						Position pos = c.getLastFuturePosition();
 						Edge e;
+						int dir = 0;
 						double distanceToStartOfEdge;
 						if (pos instanceof EdgePosition) {
 							e = ((EdgePosition)pos).getEdge();
+							dir = -1;
 							distanceToStartOfEdge = ((EdgePosition)pos).distanceToStartOfEdge();	
 						} else {
 							e = c.futureEdge;
-							c.futureEdge = null;
+							dir = c.futureDir;
+							//c.futureEdge = null;
 							distanceToStartOfEdge = e.getTotalLength();
+						}
+						
+						if (pos instanceof EdgePosition) {
+							c.futurePathAdd(((EdgePosition)pos).travel(dir, Math.min(c.distanceToMove, distanceToStartOfEdge)));
+						} else {
+							c.futurePathAdd(((VertexPosition)pos).travel(e, dir, Math.min(c.distanceToMove, distanceToStartOfEdge)));
 						}
 						
 						if (DMath.doubleEquals(c.distanceToMove, distanceToStartOfEdge)) {
 							
 							Vertex v = e.getStart();
-							c.futurePathAdd(new VertexPosition(v));
 							c.futureState = CarState.VERTEX;
 							
 							c.distanceToMove = 0.0;
@@ -218,7 +226,6 @@ public class SimulationRunnable implements Runnable {
 						} else if (c.distanceToMove > distanceToStartOfEdge) {
 							
 							Vertex v = e.getStart();
-							c.futurePathAdd(new VertexPosition(v));
 							c.futureState = CarState.VERTEX;
 							
 							c.distanceToMove -= distanceToStartOfEdge;
@@ -229,13 +236,6 @@ public class SimulationRunnable implements Runnable {
 							}
 							
 						} else {
-							
-							if (pos instanceof EdgePosition) {
-								c.futurePathAdd(((EdgePosition)pos).travel(e.getStart(), c.distanceToMove));
-							} else {
-								c.futurePathAdd(((VertexPosition)pos).travel(e, c.distanceToMove));
-							}
-							
 							c.distanceToMove = 0.0;
 						}
 						
@@ -262,7 +262,12 @@ public class SimulationRunnable implements Runnable {
 						
 						int i = MODEL.RANDOM.nextInt(eds.size());
 						c.futureEdge = eds.get(i);
-						c.futureState = ((c.futureEdge.getStart() == v) ? CarState.FORWARD : CarState.BACKWARD);
+						if (c.futureEdge.isLoop()) {
+							c.futureDir = 2*MODEL.RANDOM.nextInt(2)-1;
+						} else {
+							c.futureDir = (c.futureEdge.getStart() == v) ? 1 : -1;
+						}
+						c.futureState = (c.futureDir == 1) ? CarState.FORWARD : CarState.BACKWARD;
 						break;
 					}
 					case CRASHED:
@@ -407,7 +412,7 @@ public class SimulationRunnable implements Runnable {
 								double dist = cib.distanceTo(cjb);
 								if (DMath.doubleEquals(dist, 10.0)) {
 									assert DMath.doubleEquals(ciTraveled, cjTraveled);
-									saveCrashInfo(new CrashInfo(new CrashSite(Position.middle(cib, cjb), ciTraveled), ci, cj, cia, cja, cib, cjb, iDir, jDir, dist, k+1, l+1));
+									saveCrashInfo(new CrashInfo(new CrashSite(ciTraveled), ci, cj, cib, cjb, iDir, jDir, dist, k+1, l+1));
 									
 									break jloop;
 								} else if (dist < 10) {
@@ -425,7 +430,12 @@ public class SimulationRunnable implements Runnable {
 										 * ci backs up
 										 */
 										double travelDiff = adjustedCiTraveled - adjustedCjTraveled;
-										adjustedCib = cib.travel(cia, travelDiff);
+										//adjustedCib = cib.travel(cia, travelDiff);
+										if (cia instanceof EdgePosition) {
+											adjustedCib = ((EdgePosition)cia).travel(cib.prevDir, cia.distanceTo(cib)-travelDiff);
+										} else {
+											adjustedCib = ((VertexPosition)cia).travel(cib.prevDirEdge, cib.prevDir, cia.distanceTo(cib)-travelDiff);
+										}
 										adjustedCiTraveled -= travelDiff;
 										
 									} else {
@@ -433,7 +443,12 @@ public class SimulationRunnable implements Runnable {
 										 * cj backs up
 										 */
 										double travelDiff = adjustedCjTraveled - adjustedCiTraveled;
-										adjustedCjb = cjb.travel(cja, travelDiff);
+										//adjustedCjb = cjb.travel(cja, travelDiff);
+										if (cja instanceof EdgePosition) {
+											adjustedCjb = ((EdgePosition)cja).travel(cjb.prevDir, cja.distanceTo(cjb)-travelDiff);
+										} else {
+											adjustedCjb = ((VertexPosition)cja).travel(cjb.prevDirEdge, cjb.prevDir, cja.distanceTo(cjb)-travelDiff);
+										}
 										adjustedCjTraveled -= travelDiff;
 									}
 									
@@ -444,7 +459,7 @@ public class SimulationRunnable implements Runnable {
 									double newDist = adjustedCib.distanceTo(adjustedCjb);
 									if (DMath.doubleEquals(newDist, 10.0)) {
 										assert DMath.doubleEquals(adjustedCiTraveled, adjustedCjTraveled);
-										saveCrashInfo(new CrashInfo(new CrashSite(Position.middle(adjustedCib, adjustedCjb), adjustedCiTraveled), ci, cj, cia, cja, adjustedCib, adjustedCjb, iDir, jDir, newDist, k+1, l+1));
+										saveCrashInfo(new CrashInfo(new CrashSite(adjustedCiTraveled), ci, cj, adjustedCib, adjustedCjb, iDir, jDir, newDist, k+1, l+1));
 										
 										break jloop;
 									} else if (newDist < 10) {
@@ -452,13 +467,25 @@ public class SimulationRunnable implements Runnable {
 										double inc = diff / 2;
 										assert DMath.doubleEquals(adjustedCiTraveled, adjustedCjTraveled);
 										//double newDist = adjustedCib.distanceTo(adjustedCjb);
-										Position newAdjustedCib = adjustedCib.travel(cia, inc);
+										//Position newAdjustedCib = adjustedCib.travel(cia, inc);
+										Position newAdjustedCib;
+										if (cia instanceof EdgePosition) {
+											newAdjustedCib = ((EdgePosition)cia).travel(adjustedCib.prevDir, cia.distanceTo(adjustedCib)-inc);
+										} else {
+											newAdjustedCib = ((VertexPosition)cia).travel(adjustedCib.prevDirEdge, adjustedCib.prevDir, cia.distanceTo(adjustedCib)-inc);
+										}
 										double newAdjustedCiTraveled = adjustedCiTraveled-inc;
-										Position newAdjustedCjb = adjustedCjb.travel(cja, inc);
+										//Position newAdjustedCjb = adjustedCjb.travel(cja, inc);
+										Position newAdjustedCjb;
+										if (cja instanceof EdgePosition) {
+											newAdjustedCjb = ((EdgePosition)cja).travel(adjustedCjb.prevDir, cja.distanceTo(adjustedCjb)-inc);
+										} else {
+											newAdjustedCjb = ((VertexPosition)cja).travel(adjustedCjb.prevDirEdge, adjustedCjb.prevDir, cja.distanceTo(adjustedCjb)-inc);
+										}
 										double newAdjustedCjTraveled = adjustedCjTraveled-inc;
 										double newNewDist = newAdjustedCib.distanceTo(newAdjustedCjb);
 										assert DMath.doubleEquals(newNewDist, 10);
-										saveCrashInfo(new CrashInfo(new CrashSite(Position.middle(newAdjustedCib, newAdjustedCjb), newAdjustedCiTraveled), ci, cj, cia, cja, newAdjustedCib, newAdjustedCjb, iDir, jDir, newDist, k+1, l+1));
+										saveCrashInfo(new CrashInfo(new CrashSite(newAdjustedCiTraveled), ci, cj, newAdjustedCib, newAdjustedCjb, iDir, jDir, newDist, k+1, l+1));
 										
 										break jloop;
 									}
@@ -472,16 +499,22 @@ public class SimulationRunnable implements Runnable {
 							
 							double dist = cib.distanceTo(cjp);
 							if (DMath.doubleEquals(dist, 10.0)) {
-								saveCrashInfo(new CrashInfo(new CrashSite(Position.middle(cib, cjp), ciTraveled), ci, cj, cia, null, cib, cjp, iDir, 0, dist, k+1, -1));
+								saveCrashInfo(new CrashInfo(new CrashSite(ciTraveled), ci, cj, cib, cjp, iDir, 0, dist, k+1, -1));
 							} else if (dist < 10) {
 								double diff = 10 - dist;
 								double inc = diff;
-								Position adjustedCib = cib.travel(cia, inc);
+								//Position adjustedCib = cib.travel(cia, inc);
+								Position adjustedCib;
+								if (cia instanceof EdgePosition) {
+									adjustedCib = ((EdgePosition)cia).travel(cib.prevDir, cia.distanceTo(cib)-inc);
+								} else {
+									adjustedCib = ((VertexPosition)cia).travel(cib.prevDirEdge, cib.prevDir, cia.distanceTo(cib)-inc);
+								}
 								double adjustedCiTraveled = ciTraveled;
 								adjustedCiTraveled -= inc;
 								double newDist = adjustedCib.distanceTo(cjp);
 								assert DMath.doubleEquals(newDist, 10);
-								saveCrashInfo(new CrashInfo(new CrashSite(Position.middle(adjustedCib, cjp), adjustedCiTraveled), ci, cj, cia, null, adjustedCib, cjp, iDir, 0, dist, k+1, -1));
+								saveCrashInfo(new CrashInfo(new CrashSite(adjustedCiTraveled), ci, cj, adjustedCib, cjp, iDir, 0, dist, k+1, -1));
 							}
 						}
 					} // k loop
@@ -504,18 +537,24 @@ public class SimulationRunnable implements Runnable {
 							
 							double dist = cip.distanceTo(cjb);
 							if (DMath.doubleEquals(dist, 10.0)) {
-								saveCrashInfo(new CrashInfo(new CrashSite(Position.middle(cip, cjb), cjTraveled), ci, cj, null, cja, cip, cjb, 0, jDir, dist, -1, l+1));
+								saveCrashInfo(new CrashInfo(new CrashSite(cjTraveled), ci, cj, cip, cjb, 0, jDir, dist, -1, l+1));
 								
 								break jloop;
 							} else if (dist < 10) {
 								double diff = 10 - dist;
 								double inc = diff;
-								Position adjustedCjb = cjb.travel(cja, inc);
+								//Position adjustedCjb = cjb.travel(cja, inc);
+								Position adjustedCjb;
+								if (cja instanceof EdgePosition) {
+									adjustedCjb = ((EdgePosition)cja).travel(cjb.prevDir, cja.distanceTo(cjb)-inc);
+								} else {
+									adjustedCjb = ((VertexPosition)cja).travel(cjb.prevDirEdge, cjb.prevDir, cja.distanceTo(cjb)-inc);
+								}
 								double adjustedCjTraveled = cjTraveled;
 								adjustedCjTraveled -= inc;
 								double newDist = cip.distanceTo(adjustedCjb);
 								assert DMath.doubleEquals(newDist, 10);
-								saveCrashInfo(new CrashInfo(new CrashSite(Position.middle(cip, adjustedCjb), adjustedCjTraveled), ci, cj, null, cja, cip, adjustedCjb, 0, jDir, dist, -1, l+1));
+								saveCrashInfo(new CrashInfo(new CrashSite(adjustedCjTraveled), ci, cj, cip, adjustedCjb, 0, jDir, dist, -1, l+1));
 								
 								break jloop;
 							}
@@ -540,47 +579,17 @@ public class SimulationRunnable implements Runnable {
 		
 		CrashSite site = ci.crashSite;
 		
-//		CrashSite samePosition = null;
-//		for (CrashSite a : crashSites) {
-//			if (a.p.equals(site.p)) {
-//				samePosition = a;
-//			}
-//		}
-		
 		if (firstCrashSite == null) {
-			// add new
 			firstCrashSite = site;
 			assert crashes.isEmpty();
-//			List<CrashInfo> val = crashMap.get(site.p);
-//			assert val == null;
-//			val = new ArrayList<CrashInfo>();
-//			val.add(ci);
-//			crashMap.put(site.p, val);
 			crashes.add(ci);
-		} else if (DMath.doubleEquals(firstCrashSite.time, site.time)) {
-			// add existing
-//			List<CrashInfo> val = crashMap.get(site.p);
-//			val.add(ci);
-			
-			
-			
+		} else if (firstCrashSite.equals(site)) {
 			crashes.add(ci);
 		} else if (site.time < firstCrashSite.time) {
-			// replace
-			
 			firstCrashSite = site;
-			
-//			crashSites.remove(samePosition);
-//			List<CrashInfo> val = crashMap.get(samePosition.p);
-//			val.clear();
 			crashes.clear();
-			
-//			crashSites.add(site);
-//			val.add(ci);
 			crashes.add(ci);
-			
 		} else {
-			// ignore
 			;
 		}
 		
