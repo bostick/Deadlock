@@ -8,29 +8,29 @@ public class PointToBeAdded {
 	
 	public final Point p;
 	
+	public final int index;
 	/**
 	 * value ranging from 0..1 measuring distance between points at index and index+1, used for sorting
 	 */
-	private final double param;
+	public final double param;
 	
 	private final int hash;
 	
-	public PointToBeAdded(Point p, double param) {
+	public PointToBeAdded(Point p, int index, double param) {
 		assert param >= 0.0;
 		assert param <= 1.0;
 		this.p = p;
+		this.index = index;
 		this.param = param;
 		
 		int h = 17;
 		h = 37 * h + p.hashCode();
-		h = 37 * h + (int)param;
+		h = 37 * h + (int)index;
+		long l = Double.doubleToLongBits(param);
+		int c = (int)(l ^ (l >>> 32));
+		h = 37 * h + c;
 		hash = h;
 		
-	}
-	
-	@Override
-	public String toString() {
-		return "PTBA: " + p + " " + param;
 	}
 	
 	@Override
@@ -45,24 +45,34 @@ public class PointToBeAdded {
 		} else if (!(o instanceof PointToBeAdded)) {
 			return false;
 		} else {
-			return (this.p.equals(((PointToBeAdded)o).p)) && doubleEquals(this.param, (((PointToBeAdded)o).param));
+			PointToBeAdded b = (PointToBeAdded)o;
+			boolean res = (index == b.index && doubleEquals(param, b.param));
+			if (res) {
+				assert Point.equals(p, b.p);
+			}
+			return res;
 		}
 	}
 	
 	static class PTBAComparator implements Comparator<PointToBeAdded> {
 		@Override
 		public int compare(PointToBeAdded a, PointToBeAdded b) {
-			if (a.param < (b.param)) {
+			if (a.index < b.index) {
 				return -1;
-			} else if (a.param > (b.param)) {
+			} else if (a.index > b.index) {
 				return 1;
 			} else {
-				assert Point.equals(a.p, b.p) && doubleEquals(a.param, b.param);
-				return 0;
+				if (doubleEquals(a.param, b.param)) {
+					return 0;
+				} else if (a.param < b.param) {
+					return -1;
+				} else {
+					return 1;
+				}
 			}
 		}
 	}
 	
-	public static Comparator<PointToBeAdded> ptbaComparator = new PTBAComparator();
+	public static Comparator<PointToBeAdded> COMPARATOR = new PTBAComparator();
 	
 }

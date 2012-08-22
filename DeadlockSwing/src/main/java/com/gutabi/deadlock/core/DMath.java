@@ -9,8 +9,11 @@ public class DMath {
 		 * 
 		 * TestDMath.test3 is a case that came up that shows 1.0E-12 is insufficient
 		 * 
+		 * TestDragging.testBug16 shows that 1.0E-11 is insufficient
 		 */
-		return Math.abs(a - b) < 1.0E-11;
+		//return Math.abs(a - b) < 1.0E-10;
+		
+		return ((float)a) == ((float)b);
 	}
 	
 }

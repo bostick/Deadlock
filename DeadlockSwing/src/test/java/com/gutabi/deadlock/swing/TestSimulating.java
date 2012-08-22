@@ -5,6 +5,7 @@ import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.After;
@@ -2506,8 +2507,8 @@ public class TestSimulating {
 			//MODEL.viewLoc = new Point(575, 375);
 			MODEL.viewLoc = new Point(560, 400);
 			
-			MODEL.processStroke(new Point(600, 450), new Point(700, 450));
-			MODEL.processStroke(new Point(650, 400), new Point(650, 500));
+			MODEL.processStroke(new ArrayList<Point>(){{add(new Point(600, 450));add(new Point(700, 450));}});
+			MODEL.processStroke(new ArrayList<Point>(){{add(new Point(650, 400));add(new Point(650, 500));}});
 			
 			Vertex aV = MODEL.findVertex(new Point(600, 450));
 			Vertex bV = MODEL.findVertex(new Point(650, 500));
@@ -2515,14 +2516,14 @@ public class TestSimulating {
 			Car a = new Car();
 			Car b = new Car();
 			
-			a.setPosition(new VertexPosition(aV));
+			a.setPosition(new VertexPosition(aV, null, null, 0));
 			//a.futurePathNewEdge();
 			a.futurePathAdd(a.getPosition());
 			a.setState(CarState.FORWARD);
 			a.futureState = a.getState();
 			a.futureEdge = aV.getEdges().get(0);
 			
-			b.setPosition(new VertexPosition(bV));
+			b.setPosition(new VertexPosition(bV, null, null, 0));
 			//b.futurePathNewEdge();
 			b.futurePathAdd(b.getPosition());
 			b.setState(CarState.BACKWARD);
@@ -2556,8 +2557,11 @@ public class TestSimulating {
 			//MODEL.viewLoc = new Point(575, 375);
 			MODEL.viewLoc = new Point(560, 400);
 			
-			MODEL.processStroke(new Point(595, 450), new Point(695, 450));
-			MODEL.processStroke(new Point(650, 400), new Point(650, 500));
+			MODEL.processStroke(new ArrayList<Point>(){{add(new Point(595, 450));add(new Point(695, 450));}});
+			MODEL.processStroke(new ArrayList<Point>(){{add(new Point(650, 400));add(new Point(650, 500));}});
+			
+//			MODEL.processStroke(new Point(595, 450), new Point(695, 450));
+//			MODEL.processStroke(new Point(650, 400), new Point(650, 500));
 			Vertex aV = MODEL.findVertex(new Point(595, 450));
 			Vertex bV = MODEL.findVertex(new Point(650, 500));
 //			MODEL.processStroke(new Point(596, 450), new Point(696, 450));
@@ -2568,14 +2572,14 @@ public class TestSimulating {
 			Car a = new Car();
 			Car b = new Car();
 			
-			a.setPosition(new VertexPosition(aV));
+			a.setPosition(new VertexPosition(aV, null, null, 0));
 			//a.futurePathNewEdge();
 			a.futurePathAdd(a.getPosition());
 			a.setState(CarState.FORWARD);
 			a.futureState = a.getState();
 			a.futureEdge = aV.getEdges().get(0);
 			
-			b.setPosition(new VertexPosition(bV));
+			b.setPosition(new VertexPosition(bV, null, null, 0));
 			//b.futurePathNewEdge();
 			b.futurePathAdd(b.getPosition());
 			b.setState(CarState.BACKWARD);
@@ -2609,8 +2613,10 @@ public class TestSimulating {
 			//MODEL.viewLoc = new Point(575, 375);
 			MODEL.viewLoc = new Point(560, 400);
 			
-			MODEL.processStroke(new Point(600, 450), new Point(700, 450));
-			MODEL.processStroke(new Point(650, 400), new Point(650, 500));
+			MODEL.processStroke(new ArrayList<Point>(){{add(new Point(600, 450));add(new Point(700, 450));}});
+			MODEL.processStroke(new ArrayList<Point>(){{add(new Point(650, 400));add(new Point(650, 500));}});
+//			MODEL.processStroke(new Point(600, 450), new Point(700, 450));
+//			MODEL.processStroke(new Point(650, 400), new Point(650, 500));
 			
 			Vertex aV = MODEL.findVertex(new Point(600, 450));
 			Vertex bV = MODEL.findVertex(new Point(650, 500));
@@ -2620,21 +2626,21 @@ public class TestSimulating {
 			Car b = new Car();
 			Car c = new Car();
 			
-			a.setPosition(new VertexPosition(aV));
+			a.setPosition(new VertexPosition(aV, null, null, 0));
 			//a.futurePathNewEdge();
 			a.futurePathAdd(a.getPosition());
 			a.setState(CarState.FORWARD);
 			a.futureState = a.getState();
 			a.futureEdge = aV.getEdges().get(0);
 			
-			b.setPosition(new VertexPosition(bV));
+			b.setPosition(new VertexPosition(bV, null, null, 0));
 			//b.futurePathNewEdge();
 			b.futurePathAdd(b.getPosition());
 			b.setState(CarState.BACKWARD);
 			b.futureState = b.getState();
 			b.futureEdge = bV.getEdges().get(0);
 			
-			c.setPosition(new VertexPosition(cV));
+			c.setPosition(new VertexPosition(cV, null, null, 0));
 			//c.futurePathNewEdge();
 			c.futurePathAdd(c.getPosition());
 			c.setState(CarState.FORWARD);
@@ -2669,8 +2675,10 @@ public class TestSimulating {
 			//MODEL.viewLoc = new Point(575, 375);
 			MODEL.viewLoc = new Point(560, 400);
 			
-			MODEL.processStroke(new Point(600, 450), new Point(700, 450));
-			MODEL.processStroke(new Point(650, 450), new Point(650, 470));
+			MODEL.processStroke(new ArrayList<Point>(){{add(new Point(600, 450));add(new Point(700, 450));}});
+			MODEL.processStroke(new ArrayList<Point>(){{add(new Point(650, 450));add(new Point(650, 470));}});
+//			MODEL.processStroke(new Point(600, 450), new Point(700, 450));
+//			MODEL.processStroke(new Point(650, 450), new Point(650, 470));
 			
 			EdgePosition ap = MODEL.tryFindEdgePosition(new Point(4.47 + 650, 0 + 450));
 			EdgePosition bp = MODEL.tryFindEdgePosition(new Point(-7.89 + 650, 0 + 450));

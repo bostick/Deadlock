@@ -63,8 +63,8 @@ public class DeadlockModel {
 		cars.clear();
 	}
 	
-	public void processStroke(Point a, Point b) {
-		graph.processStroke(a, b);
+	public void processStroke(List<Point> stroke) {
+		graph.processStroke(stroke);
 	}
 	
 	public double getZoom() {

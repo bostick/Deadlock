@@ -14,12 +14,6 @@ public class Graph {
 	private final ArrayList<Vertex> vertices = new ArrayList<Vertex>();
 	private final QuadTree segTree = new QuadTree();
 	
-	//private final VertexHandler h;
-	
-	public Graph() {
-		//this.h = h;
-	}
-	
 	public List<Edge> getEdges() {
 		return edges;
 	}
@@ -52,12 +46,10 @@ public class Graph {
 	public Vertex createVertex(Point p) {
 		Vertex v = new Vertex(p);
 		vertices.add(v);
-		//h.vertexCreated(v);
 		return v;
 	}
 	
 	public void removeVertex(Vertex v) {
-		//h.vertexRemoved(v);
 		v.remove();
 		vertices.remove(v);
 	}
@@ -141,36 +133,112 @@ public class Graph {
 		return found;
 	}
 	
-	public void processStroke(Point a, Point b) {
-		try {
+	public void processStroke(List<Point> stroke) {
+		
+		for (int i = 0; i < stroke.size()-1; i++) {
+			Point a = stroke.get(i);
+			Point b = stroke.get(i+1);
 			
 			assert !Point.equals(a, b);
 			
-			SortedSet<PointToBeAdded> betweenABPoints = new TreeSet<PointToBeAdded>(PointToBeAdded.ptbaComparator);
-			betweenABPoints.add(new PointToBeAdded(a, 0.0));
-			betweenABPoints.add(new PointToBeAdded(b, 1.0));
-			
+			SortedSet<PointToBeAdded> betweenABPoints = new TreeSet<PointToBeAdded>(PointToBeAdded.COMPARATOR);
 			try {
-				addBetweenPoints(a, b, betweenABPoints);
+				addBetweenPoints(a, b, i, betweenABPoints);
 			} catch (OverlappingException ex) {
-				return;
+				continue;
 			}
 			
-			Point aInt = new Point((int)a.getX(), (int)a.getY());
-			Point bInt = new Point((int)b.getX(), (int)b.getY());
+			Point aInt = new Point(Math.rint(a.getX()), Math.rint(a.getY()));
+			Point bInt = new Point(Math.rint(b.getX()), Math.rint(b.getY()));
 			
 			if (betweenABPoints.size() == 2 && Point.equals(a, aInt) && Point.equals(b, bInt)) {
 				addSegment(aInt, bInt);
 			} else {
 				iterateBetweenPoints(betweenABPoints);
 			}
-			
-		} finally {
-			
 		}
+		
+		List<Edge> toRemove = new ArrayList<Edge>();
+		boolean changed;
+		while (true) {
+			toRemove.clear();
+			changed = false;
+			for (Edge e : edges) {
+				if (e.getTotalLength() <= 10) {
+					toRemove.add(e);
+					changed = true;
+				}
+			}
+			for (Edge e : toRemove) {
+				
+				if (e.isRemoved()) {
+					/*
+					 * may be removed from having been merged in a previous iteration
+					 */
+					continue;
+				}
+				
+				if (!e.isLoop()) {
+					
+					Vertex eStart = e.getStart();
+					Vertex eEnd = e.getEnd();
+					
+					eStart.removeEdge(e);
+					List<Edge> eStartEdges = eStart.getEdges();
+					if (eStartEdges.size() == 0) {
+						removeVertex(eStart);
+					} else if (eStartEdges.size() == 2) {
+						merge(eStartEdges.get(0), eStartEdges.get(1));
+					}
+					
+					eEnd.removeEdge(e);
+					List<Edge> eEndEdges = eEnd.getEdges();
+					if (eEndEdges.size() == 0) {
+						removeVertex(eEnd);
+					} else if (eEndEdges.size() == 2) {
+						merge(eEndEdges.get(0), eEndEdges.get(1));
+					}
+					
+					removeEdge(e);
+					
+				} else {
+					
+					if (!e.isStandAlone()) {
+						
+						Vertex v = e.getStart();
+						
+						v.removeEdge(e);
+						v.removeEdge(e);
+						
+						List<Edge> eds = v.getEdges();
+						if (eds.size() == 0) {
+							assert false;
+						} else if (eds.size() == 2) {
+							merge(eds.get(0), eds.get(1));
+						}
+						
+						removeEdge(e);
+						
+					} else {
+						
+						removeEdge(e);
+						
+					}
+					
+				}
+				
+			}
+			if (!changed) {
+				break;
+			}
+		}
+		
 	}
 	
-	private void addBetweenPoints(Point a, Point b, SortedSet<PointToBeAdded> betweenABPoints) throws OverlappingException {
+	private void addBetweenPoints(Point a, Point b, int index, SortedSet<PointToBeAdded> betweenABPoints) throws OverlappingException {
+		
+		betweenABPoints.add(new PointToBeAdded(a, index, 0.0));
+		betweenABPoints.add(new PointToBeAdded(b, index, 1.0));
 		
 		for (Segment in : segTree.findAllSegments(a, b)) {
 			Edge e = in.edge;
@@ -180,7 +248,7 @@ public class Graph {
 			try {
 				Point inter = Point.intersection(a, b, c, d);
 				if (inter != null) {
-					PointToBeAdded nptba = new PointToBeAdded(inter, Point.param(inter, a, b));
+					PointToBeAdded nptba = new PointToBeAdded(inter, index, Point.param(inter, a, b));
 					betweenABPoints.add(nptba);
 				}
 			} catch (OverlappingException ex) {
@@ -192,20 +260,14 @@ public class Graph {
 					throw ex;
 				}
 				
-				if (Point.intersect(c, a, b)) {
-					double cParam = Point.param(c, a, b);
-					if ((cParam > 0.0 && cParam < 1.0)) {
-						PointToBeAdded nptba = new PointToBeAdded(new Point(c.getX(), c.getY()), cParam);
-						betweenABPoints.add(nptba);
-					}
+				if (Point.intersect(c, a, b) && !Point.equals(c, a)) {
+					PointToBeAdded nptba = new PointToBeAdded(c, index, Point.param(c, a, b));
+					betweenABPoints.add(nptba);
 				}
 				
-				if (Point.intersect(d, a, b)) {
-					double dParam = Point.param(d, a, b);
-					if ((dParam > 0.0 && dParam < 1.0)) {
-						PointToBeAdded nptba = new PointToBeAdded(new Point(d.getX(), d.getY()), dParam);
-						betweenABPoints.add(nptba);
-					}
+				if (Point.intersect(d, a, b) && !Point.equals(d, a)) {
+					PointToBeAdded nptba = new PointToBeAdded(d, index, Point.param(d, a, b));
+					betweenABPoints.add(nptba);
 				}
 				
 			}
@@ -233,6 +295,7 @@ public class Graph {
 		return false;
 	}
 	
+	@SuppressWarnings("serial")
 	private void iterateBetweenPoints(SortedSet<PointToBeAdded> betweenABPoints) {
 		
 		Object[] betweenArray = betweenABPoints.toArray();
@@ -255,43 +318,40 @@ public class Graph {
 				}
 			}
 			
-			Point p1Int = new Point(Math.round(p1.p.getX()), Math.round(p1.p.getY()));
+			final Point p1Int = new Point(Math.rint(p1.p.getX()), Math.rint(p1.p.getY()));
 			
 			// b is not yet an integer
-			Point p2Int = new Point(Math.round(p2.p.getX()), Math.round(p2.p.getY()));
+			final Point p2Int = new Point(Math.rint(p2.p.getX()), Math.rint(p2.p.getY()));
 			
 			if (!Point.equals(p1Int, p2Int)) {
 				
 				boolean adjusted = false;
 				
 				if (!Point.equals(p1.p, p1Int) && tryFindEdgePosition(p1.p) != null) {
-					adjustToGrid(p1.p);
+					adjustEdgePointToGrid(p1.p);
 					adjusted = true;
 				}
 				
 				if (!Point.equals(p2.p, p2Int) && tryFindEdgePosition(p2.p) != null) {
-					adjustToGrid(p2.p);
+					adjustEdgePointToGrid(p2.p);
 					adjusted = true;
 				}
 				
 				/*
-				 * segment could have been added while adjusting
+				 * segment could have been added while adjusting previous points
 				 */
 				if (!adjusted) {
 					
 					if (!segmentOverlapsOrIntersects(p1Int, p2Int)) {
 						
-						Point a = new Point((int)p1Int.getX(), (int)p1Int.getY());
-						Point b = new Point((int)p2Int.getX(), (int)p2Int.getY());
-						
-						addSegment(a, b);
+						addSegment(p1Int, p2Int);
 						
 					} else {
-						processStroke(p1Int, p2Int);
+						processStroke(new ArrayList<Point>(){{add(p1Int);add(p2Int);}});
 					}
 					
 				} else {
-					processStroke(p1Int, p2Int);
+					processStroke(new ArrayList<Point>(){{add(p1Int);add(p2Int);}});
 				}
 			}
 			
@@ -579,9 +639,9 @@ public class Graph {
 	 * split an edge at point with index i and param p between indices i and i+1
 	 * takes care of adjusting to integer coordinates
 	 * Edge e will have been removed
-	 * return Vertex at split point
 	 */
-	public void adjustToGrid(Point p) {
+	@SuppressWarnings("serial")
+	private boolean adjustEdgePointToGrid(Point p) {
 		
 		try {
 			
@@ -599,16 +659,21 @@ public class Graph {
 			 * we assert thar param < 1.0, but after adjusting, we may be at d
 			 */
 			
-			Point c = e.getPoint(index);
-			Point d = e.getPoint(index+1);
+			final Point c = e.getPoint(index);
+			final Point d = e.getPoint(index+1);
 			
-			Point pInt = new Point((int)Math.round(p.getX()), (int)Math.round(p.getY()));
+			final Point pInt = new Point(Math.rint(p.getX()), Math.rint(p.getY()));
 			
-			if (Point.equals(c, pInt) || Point.equals(d, pInt)) {
+			/*
+			 * if pInt is c or d, then do not duplicate
+			 * and if the intersection is already an integer point, then there is nothing to do
+			 */
+			if (Point.equals(c, pInt) || Point.equals(d, pInt) ||
+					Point.equals(p, pInt)) {
 				/*
 				 * nothing being adjusted
 				 */
-				return;
+				return false;
 			}
 			
 			/*
@@ -620,15 +685,17 @@ public class Graph {
 				 * the segment <c, pInt> may intersect with other segments, so we have to start fresh and
 				 * not assume anything
 				 */
-				processStroke(c, pInt);
+				processStroke(new ArrayList<Point>(){{add(c);add(pInt);}});
 			}
 			if (!Point.equals(pInt, d)) {
 				/*
 				 * the segment <pInt, d> may intersect with other segments, so we have to start fresh and
 				 * not assume anything
 				 */
-				processStroke(pInt, d);
+				processStroke(new ArrayList<Point>(){{add(pInt);add(d);}});
 			}
+			
+			return true;
 			
 		} finally {
 			
@@ -898,14 +965,20 @@ public class Graph {
 				 */
 				pts.add(pts.get(0));
 				
-				Edge newEdge = createEdge(null, null, pts);
+				e1Start.removeEdge(e1);
+				
+				e1End.removeEdge(e1);
+				
+				e2Start.removeEdge(e2);
+				
+				e2End.removeEdge(e2);
 				
 				removeVertex(e1Start);
 				removeVertex(e1End);
 				removeEdge(e1);
 				removeEdge(e2);
 				
-				return newEdge;
+				return createEdge(null, null, pts);
 				
 			} else if (e1Start.getEdges().size() == 2) {
 				// creating loop with 1 vertex

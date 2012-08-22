@@ -198,14 +198,12 @@ public class DeadlockController implements ActionListener {
 		
 		Point p;
 		p = pp;
-		p = new Point((int)(p.getX() * 1/MODEL.getZoom()), (int)(p.getY() * 1/MODEL.getZoom()));
+		p = new Point(p.getX() * 1/MODEL.getZoom(), p.getY() * 1/MODEL.getZoom());
 		p = Point.add(p, MODEL.viewLoc);
 		
-		if (!Point.equals(p, MODEL.lastPointRaw)) {
-			MODEL.curStrokeRaw.add(p);
-			MODEL.lastPointRaw = p;
-			MODEL.allStrokes.get(MODEL.allStrokes.size()-1).add(p);
-		}
+		MODEL.curStrokeRaw.add(p);
+		MODEL.lastPointRaw = p;
+		MODEL.allStrokes.get(MODEL.allStrokes.size()-1).add(p);
 	}
 	
 	private void draftEnd() {
@@ -227,9 +225,7 @@ public class DeadlockController implements ActionListener {
 		} else {
 			curStroke = MODEL.curStrokeRaw;
 		}
-		for (int i = 0; i < curStroke.size()-1; i++) {
-			MODEL.processStroke(curStroke.get(i), curStroke.get(i+1));
-		}
+		MODEL.processStroke(curStroke);
 		assert MODEL.checkConsistency();
 		MODEL.lastPointRaw = null;
 		MODEL.curStrokeRaw.clear();
@@ -421,6 +417,7 @@ public class DeadlockController implements ActionListener {
 	private List<Point> massageCurrent(List<Point> raw) {
 		
 		List<Point> m = raw;
+		m = removeDuplicates(m);
 		m = connectEndsToVerticesOrEdges(m);
 		//m = mergeIntersectingOrCloseSegments(m);
 //		if (approximate shape like line, circle, etc) {
@@ -430,6 +427,18 @@ public class DeadlockController implements ActionListener {
 //		}
 		return m;
 		
+	}
+	
+	private List<Point> removeDuplicates(List<Point> raw) {
+		List<Point> adj = new ArrayList<Point>();
+		Point last = null;
+		for (Point p : raw) {
+			if (last == null || !Point.equals(p, last)) {
+				adj.add(p);
+			}
+			last = p;
+		}
+		return adj;
 	}
 	
 	private List<Point> connectEndsToVerticesOrEdges(List<Point> raw) {

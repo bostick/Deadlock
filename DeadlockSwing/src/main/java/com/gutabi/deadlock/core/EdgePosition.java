@@ -15,11 +15,22 @@ public class EdgePosition extends Position {
 	
 	public EdgePosition(Edge e, int index, double param, Position prevPos, Edge prevDirEdge, int prevDir) {
 		super(Point.point(e.getPoint(index), e.getPoint(index+1), param), prevPos, prevDirEdge, prevDir);
-		assert index < e.size()-1;
-		assert DMath.doubleEquals(param, 0.0) || param > 0.0;
-		assert !DMath.doubleEquals(param, 1.0);
-		assert param < 1.0;
-		assert !(index == 0 && DMath.doubleEquals(param, 0.0));
+		
+		if (index < 0 || index >= e.size()-1) {
+			throw new IllegalArgumentException();
+		}
+		if (param < 0.0 || param >= 1.0) {
+			throw new IllegalArgumentException();
+		}
+		if (index == 0 && DMath.doubleEquals(param, 0.0) && !e.isStandAlone()) {
+			throw new IllegalArgumentException();
+		}
+		
+//		assert index < e.size()-1;
+//		assert DMath.doubleEquals(param, 0.0) || param > 0.0;
+//		assert !DMath.doubleEquals(param, 1.0);
+//		assert param < 1.0;
+//		assert !(index == 0 && DMath.doubleEquals(param, 0.0));
 		
 		this.e = e;
 		this.index = index;

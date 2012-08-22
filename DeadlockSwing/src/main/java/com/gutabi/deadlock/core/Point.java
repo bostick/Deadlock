@@ -10,10 +10,10 @@ public class Point {
 	private final int hash;
 	private String s;
 	
-	public Point(double x, double y) {
+	public Point(double xx, double yy) {
 		
-		this.x = x;
-		this.y = y;
+		this.x = (double)Math.round(xx * 1.0E11) / 1.0E11;
+		this.y = (double)Math.round(yy * 1.0E11) / 1.0E11;
 		
 		int h = 17;
 		long l = Double.doubleToLongBits(x);
