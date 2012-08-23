@@ -33,6 +33,10 @@ public class PointToBeAdded {
 		
 	}
 	
+	public String toString() {
+		return "PTBA: " + p;
+	}
+	
 	@Override
 	public int hashCode() {
 		return hash;
@@ -63,6 +67,7 @@ public class PointToBeAdded {
 				return 1;
 			} else {
 				if (doubleEquals(a.param, b.param)) {
+					assert Point.equals(a.p, b.p);
 					return 0;
 				} else if (a.param < b.param) {
 					return -1;

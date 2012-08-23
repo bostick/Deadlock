@@ -206,10 +206,7 @@ public final class Edge {
 		assert pts.length >= 2;
 		
 		for (Point p : pts) {
-			double x = p.getX();
-			double y = p.getY();
-			assert x == Math.rint(x);
-			assert y == Math.rint(y);
+			assert p.isInteger();
 		}
 		
 		if (loop) {

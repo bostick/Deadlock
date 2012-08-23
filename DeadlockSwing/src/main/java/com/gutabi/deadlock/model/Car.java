@@ -13,7 +13,7 @@ public class Car {
 	
 	private Position pos;
 	
-	public boolean special;
+	//public boolean special;
 	
 	public long startingStep;
 	public Vertex startingVertex;

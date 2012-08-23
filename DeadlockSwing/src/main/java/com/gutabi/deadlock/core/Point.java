@@ -7,6 +7,8 @@ public class Point {
 	private final double x;
 	private final double y;
 	
+	private final boolean integer;
+	
 	private final int hash;
 	private String s;
 	
@@ -14,6 +16,8 @@ public class Point {
 		
 		this.x = (double)Math.round(xx * 1.0E11) / 1.0E11;
 		this.y = (double)Math.round(yy * 1.0E11) / 1.0E11;
+		
+		this.integer = (x == Math.rint(x)) && (y == Math.rint(y));
 		
 		int h = 17;
 		long l = Double.doubleToLongBits(x);
@@ -23,6 +27,20 @@ public class Point {
 		c = (int)(l ^ (l >>> 32));
 		h = 37 * h + c;
 		hash = h;
+		
+		s = "<" + x + ", " + y + ">";
+	}
+	
+	public boolean isInteger() {
+		return integer;
+	}
+	
+	public Point toInteger() {
+		if (integer) {
+			return this;
+		} else {
+			return new Point(Math.rint(x), Math.rint(y));
+		}
 	}
 	
 	public static boolean equals(Point a, Point b) {
@@ -41,9 +59,6 @@ public class Point {
 	
 	@Override
 	public String toString() {
-		if (s == null) {
-			s = "<" + x + ", " + y + ">";
-		}
 		return s;
 	}
 	

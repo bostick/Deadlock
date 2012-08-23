@@ -309,25 +309,6 @@ public class DeadlockController implements ActionListener {
 		logger.debug("zoom reset: center=" + center);
 	}
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	/*
 	 * only adjust to closest vertices
 	 */

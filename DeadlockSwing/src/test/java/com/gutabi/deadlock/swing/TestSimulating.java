@@ -2530,8 +2530,8 @@ public class TestSimulating {
 			b.futureState = b.getState();
 			b.futureEdge = bV.getEdges().get(0);
 			
-			MODEL.cars.add(a);
-			MODEL.cars.add(b);
+			MODEL.movingCars.add(a);
+			MODEL.movingCars.add(b);
 		}
 		
 		CONTROLLER.queue(new Runnable(){
@@ -2586,8 +2586,8 @@ public class TestSimulating {
 			b.futureState = b.getState();
 			b.futureEdge = bV.getEdges().get(0);
 			
-			MODEL.cars.add(a);
-			MODEL.cars.add(b);
+			MODEL.movingCars.add(a);
+			MODEL.movingCars.add(b);
 		}
 		
 		CONTROLLER.queue(new Runnable(){
@@ -2647,9 +2647,9 @@ public class TestSimulating {
 			c.futureState = c.getState();
 			c.futureEdge = cV.getEdges().get(0);
 			
-			MODEL.cars.add(a);
-			MODEL.cars.add(b);
-			MODEL.cars.add(c);
+			MODEL.movingCars.add(a);
+			MODEL.movingCars.add(b);
+			MODEL.movingCars.add(c);
 		}
 		
 		CONTROLLER.queue(new Runnable(){
@@ -2700,8 +2700,8 @@ public class TestSimulating {
 			b.futureState = b.getState();
 			b.futureEdge = bp.getEdge();
 			
-			MODEL.cars.add(a);
-			MODEL.cars.add(b);
+			MODEL.movingCars.add(a);
+			MODEL.movingCars.add(b);
 		}
 		
 		CONTROLLER.queue(new Runnable(){

@@ -60,4 +60,32 @@ public class TestDMath {
 		
 	}
 	
+	@Test
+	public void test4() throws Exception {
+		
+		double ux = 0.009001841302863665;
+		double uy = 0.00900184130320779;
+		
+		assertTrue(ux != uy);
+		
+//		float uxf = (float)ux;
+//		float uyf = (float)uy;
+		
+		assertTrue(DMath.doubleEquals(ux, uy));
+		
+	}
+	
+	@Test
+	public void test5() {
+		
+		double time = 5.00000000012918;
+		
+		assertTrue(time != 5);
+		
+//		float uxf = (float)ux;
+//		float uyf = (float)uy;
+		
+		assertTrue(DMath.doubleEquals(time, 5));
+		
+	}
 }

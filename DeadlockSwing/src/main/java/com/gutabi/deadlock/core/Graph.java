@@ -1,11 +1,10 @@
 package com.gutabi.deadlock.core;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 
 public class Graph {
@@ -138,25 +137,70 @@ public class Graph {
 		for (int i = 0; i < stroke.size()-1; i++) {
 			Point a = stroke.get(i);
 			Point b = stroke.get(i+1);
-			
 			assert !Point.equals(a, b);
 			
-			SortedSet<PointToBeAdded> betweenABPoints = new TreeSet<PointToBeAdded>(PointToBeAdded.COMPARATOR);
-			try {
-				addBetweenPoints(a, b, i, betweenABPoints);
-			} catch (OverlappingException ex) {
-				continue;
-			}
+			List<PointToBeAdded> betweenABPoints = fillinIntersections(a, b, i);
 			
-			Point aInt = new Point(Math.rint(a.getX()), Math.rint(a.getY()));
-			Point bInt = new Point(Math.rint(b.getX()), Math.rint(b.getY()));
-			
-			if (betweenABPoints.size() == 2 && Point.equals(a, aInt) && Point.equals(b, bInt)) {
-				addSegment(aInt, bInt);
-			} else {
-				iterateBetweenPoints(betweenABPoints);
-			}
+			iterateBetweenPoints(betweenABPoints);
 		}
+		
+		cleanupEdges();
+		
+	}
+	
+	@SuppressWarnings("serial")
+	private void iterateBetweenPoints(List<PointToBeAdded> betweenABPoints) {
+		
+		//Object[] betweenArray = betweenABPoints.toArray();
+		
+		betweenLoop:
+		for (int i = 0; i < betweenABPoints.size()-1; i++) {
+			PointToBeAdded p1 = betweenABPoints.get(i);
+			PointToBeAdded p2 = betweenABPoints.get(i+1);
+			
+			for (Segment in : segTree.findAllSegments(p1.p, p2.p)) {
+				Edge e = in.edge;
+				int j = in.index;
+				Point c = e.getPoint(j);
+				Point d = e.getPoint(j+1);
+				if ((Point.equals(p1.p, d) || Point.intersect(p1.p, c, d)) && (Point.equals(p2.p, d) || Point.intersect(p2.p, c, d))) {
+					/*
+					 * <p1, p2> is completely within <c, d>, so do nothing
+					 */
+					continue betweenLoop;
+				}
+			}
+			
+			final Point p1Int = p1.p.toInteger();
+			
+			final Point p2Int = p2.p.toInteger();
+			
+			if (!Point.equals(p1Int, p2Int)) {
+				
+				if (!Point.equals(p1.p, p1Int) && tryFindEdgePosition(p1.p) != null) {
+					adjustEdgePointToGrid(p1.p);
+				}
+				
+				if (!Point.equals(p2.p, p2Int) && tryFindEdgePosition(p2.p) != null) {
+					adjustEdgePointToGrid(p2.p);
+				}
+				
+				if (!segmentOverlapsOrIntersects(p1Int, p2Int)) {
+					/*
+					 * the vast majority of cases will be going here
+					 */
+					addSegment(p1Int, p2Int);
+				} else {
+					processStroke(new ArrayList<Point>(){{add(p1Int);add(p2Int);}});
+				}
+				
+			}
+			
+		}
+		
+	}
+	
+	private void cleanupEdges() {
 		
 		List<Edge> toRemove = new ArrayList<Edge>();
 		boolean changed;
@@ -235,10 +279,12 @@ public class Graph {
 		
 	}
 	
-	private void addBetweenPoints(Point a, Point b, int index, SortedSet<PointToBeAdded> betweenABPoints) throws OverlappingException {
+	private List<PointToBeAdded> fillinIntersections(Point a, Point b, int index) {
 		
-		betweenABPoints.add(new PointToBeAdded(a, index, 0.0));
-		betweenABPoints.add(new PointToBeAdded(b, index, 1.0));
+		List<PointToBeAdded> betweenABPoints = new ArrayList<PointToBeAdded>();
+		
+		betweenABPointsAdd(betweenABPoints, new PointToBeAdded(a, index, 0.0));
+		betweenABPointsAdd(betweenABPoints, new PointToBeAdded(b, index, 1.0));
 		
 		for (Segment in : segTree.findAllSegments(a, b)) {
 			Edge e = in.edge;
@@ -249,30 +295,35 @@ public class Graph {
 				Point inter = Point.intersection(a, b, c, d);
 				if (inter != null) {
 					PointToBeAdded nptba = new PointToBeAdded(inter, index, Point.param(inter, a, b));
-					betweenABPoints.add(nptba);
+					betweenABPointsAdd(betweenABPoints, nptba);
 				}
 			} catch (OverlappingException ex) {
 				
-				if ((Point.equals(a, d) || Point.intersect(a, c, d)) && (Point.equals(b, d) || Point.intersect(b, c, d))) {
-					/*
-					 * <a, b> is completely within <c, d>, so do nothing
-					 */
-					throw ex;
-				}
-				
-				if (Point.intersect(c, a, b) && !Point.equals(c, a)) {
+				if (Point.intersect(c, a, b)) {
 					PointToBeAdded nptba = new PointToBeAdded(c, index, Point.param(c, a, b));
-					betweenABPoints.add(nptba);
+					betweenABPointsAdd(betweenABPoints, nptba);
 				}
 				
-				if (Point.intersect(d, a, b) && !Point.equals(d, a)) {
+				if (Point.intersect(d, a, b)) {
 					PointToBeAdded nptba = new PointToBeAdded(d, index, Point.param(d, a, b));
-					betweenABPoints.add(nptba);
+					betweenABPointsAdd(betweenABPoints, nptba);
 				}
 				
 			}
 		}
 		
+		return betweenABPoints;
+	}
+	
+	private static void betweenABPointsAdd(List<PointToBeAdded> ls, PointToBeAdded ptba) {
+		int i = Collections.binarySearch(ls, ptba, PointToBeAdded.COMPARATOR);
+		if (i < 0) {
+			/*
+			 * not found
+			 */
+			int insertionPoint = -(i+1);
+			ls.add(insertionPoint, ptba);
+		}
 	}
 	
 	private boolean segmentOverlapsOrIntersects(Point a, Point b) {
@@ -284,7 +335,10 @@ public class Graph {
 			Point d = e.getPoint(i+1);
 			try {
 				Point inter = Point.intersection(a, b, c, d);
-				if (inter != null && !(Point.equals(inter, c) || Point.equals(inter, d))) {
+				if (inter != null && !inter.isInteger()) {
+					/*
+					 * ok to intersect, as long as it is an integer position
+					 */
 					return true;
 				}
 			} catch (OverlappingException ex) {	
@@ -293,70 +347,6 @@ public class Graph {
 		}
 		
 		return false;
-	}
-	
-	@SuppressWarnings("serial")
-	private void iterateBetweenPoints(SortedSet<PointToBeAdded> betweenABPoints) {
-		
-		Object[] betweenArray = betweenABPoints.toArray();
-		
-		betweenLoop:
-		for (int i = 0; i < betweenArray.length-1; i++) {
-			PointToBeAdded p1 = (PointToBeAdded)betweenArray[i];
-			PointToBeAdded p2 = (PointToBeAdded)betweenArray[i+1];
-			
-			for (Segment in : segTree.findAllSegments(p1.p, p2.p)) {
-				Edge e = in.edge;
-				int j = in.index;
-				Point c = e.getPoint(j);
-				Point d = e.getPoint(j+1);
-				if ((Point.equals(p1.p, d) || Point.intersect(p1.p, c, d)) && (Point.equals(p2.p, d) || Point.intersect(p2.p, c, d))) {
-					/*
-					 * <p1, p2> is completely within <c, d>, so do nothing
-					 */
-					continue betweenLoop;
-				}
-			}
-			
-			final Point p1Int = new Point(Math.rint(p1.p.getX()), Math.rint(p1.p.getY()));
-			
-			// b is not yet an integer
-			final Point p2Int = new Point(Math.rint(p2.p.getX()), Math.rint(p2.p.getY()));
-			
-			if (!Point.equals(p1Int, p2Int)) {
-				
-				boolean adjusted = false;
-				
-				if (!Point.equals(p1.p, p1Int) && tryFindEdgePosition(p1.p) != null) {
-					adjustEdgePointToGrid(p1.p);
-					adjusted = true;
-				}
-				
-				if (!Point.equals(p2.p, p2Int) && tryFindEdgePosition(p2.p) != null) {
-					adjustEdgePointToGrid(p2.p);
-					adjusted = true;
-				}
-				
-				/*
-				 * segment could have been added while adjusting previous points
-				 */
-				if (!adjusted) {
-					
-					if (!segmentOverlapsOrIntersects(p1Int, p2Int)) {
-						
-						addSegment(p1Int, p2Int);
-						
-					} else {
-						processStroke(new ArrayList<Point>(){{add(p1Int);add(p2Int);}});
-					}
-					
-				} else {
-					processStroke(new ArrayList<Point>(){{add(p1Int);add(p2Int);}});
-				}
-			}
-			
-		}
-		
 	}
 	
 	public void addSegment(Point a, Point b) {
@@ -662,7 +652,7 @@ public class Graph {
 			final Point c = e.getPoint(index);
 			final Point d = e.getPoint(index+1);
 			
-			final Point pInt = new Point(Math.rint(p.getX()), Math.rint(p.getY()));
+			final Point pInt = p.toInteger();
 			
 			/*
 			 * if pInt is c or d, then do not duplicate

@@ -18,7 +18,6 @@ import com.gutabi.deadlock.controller.ControlMode;
 import com.gutabi.deadlock.core.Edge;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.Vertex;
-import com.gutabi.deadlock.core.VertexPosition;
 import com.gutabi.deadlock.model.Car;
 
 @SuppressWarnings("serial")
@@ -59,7 +58,8 @@ public class WorldPanel extends JPanel {
 		ControlMode modeCopy;
 		List<Point> curStrokeCopy;
 		Point lastPointCopy;
-		List<Car> carsCopy;
+		List<Car> movingCarsCopy;
+		List<Car> crashedCarsCopy;
 		
 		synchronized (MODEL) {
 			edgesCopy = new ArrayList<Edge>();
@@ -73,10 +73,8 @@ public class WorldPanel extends JPanel {
 			modeCopy = MODEL.getMode();
 			curStrokeCopy = new ArrayList<Point>(MODEL.curStrokeRaw);
 			lastPointCopy = MODEL.lastPointRaw;
-			carsCopy = new ArrayList<Car>();
-			for (Car c : MODEL.cars) {
-				carsCopy.add(c);
-			}
+			movingCarsCopy = new ArrayList<Car>(MODEL.movingCars);
+			crashedCarsCopy = new ArrayList<Car>(MODEL.crashedCars);
 		}
 		
 		for (Edge e : edgesCopy) {
@@ -109,7 +107,7 @@ public class WorldPanel extends JPanel {
 			}
 		} else if (modeCopy == ControlMode.RUNNING) {
 			
-			for (Car c : carsCopy) {
+			for (Car c : movingCarsCopy) {
 				Point pos = c.getPosition().getPoint();
 				switch (c.getState()) {
 				case NEW:
@@ -118,22 +116,23 @@ public class WorldPanel extends JPanel {
 				case VERTEX:
 					g2.setColor(Color.BLUE);
 					break;
-				case CRASHED:
-					if (c.special) {
-						g2.setColor(Color.GREEN);
-					} else if (c.getPosition() instanceof VertexPosition) {
-						g2.setColor(Color.WHITE);
-					} else {
-						g2.setColor(Color.ORANGE);
-					}
-					break;
-				case SINKED:
-					g2.setColor(Color.RED);
-					break;
+				default:
+					assert false;
 				}
 				g2.fillOval((int)(pos.getX()-5), (int)(pos.getY()-5), 10, 10);
 			}
 			
+			for (Car c : crashedCarsCopy) {
+				Point pos = c.getPosition().getPoint();
+				switch (c.getState()) {
+				case CRASHED:
+					g2.setColor(Color.ORANGE);
+					break;
+				default:
+					assert false;
+				}
+				g2.fillOval((int)(pos.getX()-5), (int)(pos.getY()-5), 10, 10);
+			}
 		}
 		
 	}

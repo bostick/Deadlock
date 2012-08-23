@@ -44,7 +44,8 @@ public class DeadlockModel {
 	
 	private final Graph graph;
 	
-	public List<Car> cars = new ArrayList<Car>();
+	public List<Car> movingCars = new ArrayList<Car>();
+	public List<Car> crashedCars = new ArrayList<Car>();
 	
 	public DeadlockModel() {
 		graph = new Graph();
@@ -60,7 +61,8 @@ public class DeadlockModel {
 		curStrokeRaw.clear();
 		allStrokes.clear();
 		graph.clear();
-		cars.clear();
+		movingCars.clear();
+		crashedCars.clear();
 	}
 	
 	public void processStroke(List<Point> stroke) {
