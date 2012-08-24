@@ -80,12 +80,9 @@ public class Point {
 	 * @throws OverlappingException
 	 */
 	public static Point intersection(Point a, Point b, Point c, Point d) throws OverlappingException {
-		if (Point.equals(a, b)) {
-			throw new IllegalArgumentException("a and b are equal");
-		}
-		if (Point.equals(c, d)) {
-			throw new IllegalArgumentException("c and d are equal");
-		}
+		assert !Point.equals(a, b);
+		assert !Point.equals(c, d);
+		
 		double ydc = d.y - c.y;
 		double xba = b.x - a.x;
 		double xdc = d.x - c.x;
@@ -199,8 +196,6 @@ public class Point {
 	 * return Point defined by param on line &lt;a, b>
 	 */
 	public static Point point(Point a, Point b, double param) {
-		assert param >= 0.0;
-		assert param <= 1.0;
 		
 		if (param == 0.0) {
 			return a;
@@ -226,7 +221,7 @@ public class Point {
 		
 		Point c = point(start, end, param);
 		
-		if (dist > dist(c, end)) {
+		if (dist > distance(c, end)) {
 			throw new TravelException();
 		}
 		
@@ -241,7 +236,7 @@ public class Point {
 		} catch (ColinearException e) {
 			assert false;
 		}
-		assert doubleEquals(dist(c, m), dist);
+		assert doubleEquals(distance(c, m), dist);
 		
 		return param(m, start, end);
 		
@@ -261,7 +256,7 @@ public class Point {
 		
 		Point c = point(start, end, param);
 		
-		if (dist > dist(c, start)) {
+		if (dist > distance(c, start)) {
 			throw new TravelException();
 		}
 		
@@ -276,7 +271,7 @@ public class Point {
 		} catch (ColinearException e) {
 			assert false;
 		}
-		assert doubleEquals(dist(c, m), dist);
+		assert doubleEquals(distance(c, m), dist);
 		
 		return param(m, start, end);
 		
@@ -345,6 +340,42 @@ public class Point {
 		}
 	}
 	
+	public static double u(Point c, Point b, Point d) {
+		if (Point.equals(b, c)) {
+			return 0.0;
+		}
+		if (Point.equals(b, d)) {
+			return 1.0;
+		}
+		if (Point.equals(c, d)) {
+			throw new IllegalArgumentException("c equals d");
+		}
+		double xbc = b.x - c.x;
+		double xdc = d.x - c.x;
+		double ybc = b.y - c.y;
+		double ydc = d.y - c.y;
+		double denom = xdc * xdc + ydc * ydc;
+		assert !doubleEquals(denom, 0.0);
+		// u is where b is perpendicular to <c, d>
+		double u = (xbc * xdc + ybc * ydc) / denom;
+		return u;
+	}
+	
+	/**
+	 * distance of b from the segment <c, d>
+	 */
+	public static double distance(Point b, Point c, Point d) {
+		double u = u(c, b, d);
+		if (u < 0.0) {
+			return distance(b,c);
+		} else if (u > 1.0) {
+			return distance(b, d);
+		} else {
+			Point p = Point.point(c, d, u);
+			return distance(b, p);
+		}
+	}
+	
 	
 	/**
 	 * assuming it is, return param for point b on line defined by &lt;c, d>
@@ -382,7 +413,7 @@ public class Point {
 		
 	}
 	
-	public static double dist(Point a, Point b) {
+	public static double distance(Point a, Point b) {
 		return Math.hypot(a.x - b.x, a.y - b.y);
 	}
 	

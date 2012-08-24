@@ -11,7 +11,6 @@ public class Path {
 	
 	public void add(Position pos) {
 		path.add(pos);
-		//assert isConsistent();
 	}
 	
 	public void crash(Position pos, int pIndex) {
@@ -28,8 +27,6 @@ public class Path {
 		}
 		
 		path = newPath;
-		
-		//assert isConsistent();
 	}
 	
 	public void clear() {
@@ -39,32 +36,5 @@ public class Path {
 	public Position getLastPosition() {
 		return path.get(path.size()-1);
 	}
-	
-//	private boolean isConsistent() {
-//		for (int i = 0; i < path.size()-1; i++) {
-//			Position a = path.get(i);
-//			Position b = path.get(i+1);
-//			
-//			/*
-//			 * exactly 1 way to get from a to b?
-//			 */
-//			
-//			if (a instanceof EdgePosition) {
-//				if (b instanceof EdgePosition) {
-//					d;
-//				} else {
-//					d;
-//				}
-//			} else {
-//				if (b instanceof EdgePosition) {
-//					d;
-//				} else {
-//					d;
-//				}
-//			}
-//			
-//		}
-//		return true;
-//	}
 	
 }

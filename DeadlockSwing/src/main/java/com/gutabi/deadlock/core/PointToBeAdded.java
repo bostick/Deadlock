@@ -8,7 +8,6 @@ public class PointToBeAdded {
 	
 	public final Point p;
 	
-	public final int index;
 	/**
 	 * value ranging from 0..1 measuring distance between points at index and index+1, used for sorting
 	 */
@@ -16,16 +15,14 @@ public class PointToBeAdded {
 	
 	private final int hash;
 	
-	public PointToBeAdded(Point p, int index, double param) {
+	public PointToBeAdded(Point p, double param) {
 		assert param >= 0.0;
 		assert param <= 1.0;
 		this.p = p;
-		this.index = index;
 		this.param = param;
 		
 		int h = 17;
 		h = 37 * h + p.hashCode();
-		h = 37 * h + (int)index;
 		long l = Double.doubleToLongBits(param);
 		int c = (int)(l ^ (l >>> 32));
 		h = 37 * h + c;
@@ -50,7 +47,7 @@ public class PointToBeAdded {
 			return false;
 		} else {
 			PointToBeAdded b = (PointToBeAdded)o;
-			boolean res = (index == b.index && doubleEquals(param, b.param));
+			boolean res = doubleEquals(param, b.param);
 			if (res) {
 				assert Point.equals(p, b.p);
 			}
@@ -61,19 +58,13 @@ public class PointToBeAdded {
 	static class PTBAComparator implements Comparator<PointToBeAdded> {
 		@Override
 		public int compare(PointToBeAdded a, PointToBeAdded b) {
-			if (a.index < b.index) {
+			if (doubleEquals(a.param, b.param)) {
+				assert Point.equals(a.p, b.p);
+				return 0;
+			} else if (a.param < b.param) {
 				return -1;
-			} else if (a.index > b.index) {
-				return 1;
 			} else {
-				if (doubleEquals(a.param, b.param)) {
-					assert Point.equals(a.p, b.p);
-					return 0;
-				} else if (a.param < b.param) {
-					return -1;
-				} else {
-					return 1;
-				}
+				return 1;
 			}
 		}
 	}

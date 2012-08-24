@@ -98,7 +98,7 @@ public class WorldPanel extends JPanel {
 				yPoints[i] = (int)p.getY();
 			}
 			
-			g2.setStroke(new Road1Stroke());
+			g2.setStroke(new DraftingStroke());
 			g2.drawPolyline(xPoints, yPoints, size);
 			
 			g2.setColor(Color.RED);
@@ -151,6 +151,14 @@ public class WorldPanel extends JPanel {
 			super(1, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
 		}
 
+	}
+	
+	public static class DraftingStroke extends BasicStroke {
+		
+		public DraftingStroke() {
+			super(5, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
+		}
+		
 	}
 	
 	private static void paintEdge1(Edge e, Graphics2D g) {

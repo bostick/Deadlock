@@ -26,11 +26,9 @@ public final class Edge {
 		
 		double l = 0.0;
 		for (int i = 0; i < pts.length-1; i++) {
-			l += Point.dist(pts[i], pts[i+1]);
+			l += Point.distance(pts[i], pts[i+1]);
 		}
 		totalLength = l;
-		
-		//assert totalLength > 10;
 		
 		check();
 	}
@@ -69,9 +67,6 @@ public final class Edge {
 		if (removed) {
 			throw new IllegalStateException("edge has been removed");
 		}
-//		if (loop) {
-//			throw new IllegalStateException();
-//		}
 		return start;
 	}
 	
@@ -79,9 +74,6 @@ public final class Edge {
 		if (removed) {
 			throw new IllegalStateException();
 		}
-//		if (loop) {
-//			throw new IllegalStateException();
-//		}
 		return end;
 	}
 	

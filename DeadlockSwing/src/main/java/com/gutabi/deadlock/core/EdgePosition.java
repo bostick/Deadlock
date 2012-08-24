@@ -26,12 +26,6 @@ public class EdgePosition extends Position {
 			throw new IllegalArgumentException();
 		}
 		
-//		assert index < e.size()-1;
-//		assert DMath.doubleEquals(param, 0.0) || param > 0.0;
-//		assert !DMath.doubleEquals(param, 1.0);
-//		assert param < 1.0;
-//		assert !(index == 0 && DMath.doubleEquals(param, 0.0));
-		
 		this.e = e;
 		this.index = index;
 		this.param = param;
@@ -41,10 +35,6 @@ public class EdgePosition extends Position {
 		
 		distanceFromStartOfEdge = distanceToStartOfEdge();
 	}
-	
-//	public EdgePosition(Segment si, double param) {
-//		this(si.edge, si.index, param);
-//	}
 	
 	public Edge getEdge() {
 		return e;
@@ -78,11 +68,11 @@ public class EdgePosition extends Position {
 		
 		double l;
 		l = 0.0;
-		l += Point.dist(p, segEnd);
+		l += Point.distance(p, segEnd);
 		for (int i = index+1; i < e.size()-1; i++) {
 			Point aa = e.getPoint(i);
 			Point bb = e.getPoint(i+1);
-			l += Point.dist(aa, bb);
+			l += Point.distance(aa, bb);
 		}
 		return l;
 		
@@ -96,11 +86,11 @@ public class EdgePosition extends Position {
 		
 		double l;
 		l = 0.0;
-		l += Point.dist(p, segStart);
+		l += Point.distance(p, segStart);
 		for (int i = index-1; i >= 0; i--) {
 			Point aa = e.getPoint(i);
 			Point bb = e.getPoint(i+1);
-			l += Point.dist(aa, bb);
+			l += Point.distance(aa, bb);
 		}
 		return l;
 		
@@ -108,31 +98,31 @@ public class EdgePosition extends Position {
 	
 	protected double distanceForward(EdgePosition a) {
 		if (a.index == index) {
-			return Point.dist(p, a.p);
+			return Point.distance(p, a.p);
 		}
 		double l = 0.0;
-		l += Point.dist(p, segEnd);
+		l += Point.distance(p, segEnd);
 		for (int i = index+1; i < a.index; i++) {
 			Point aa = e.getPoint(i);
 			Point bb = e.getPoint(i+1);
-			l += Point.dist(aa, bb);
+			l += Point.distance(aa, bb);
 		}
-		l += Point.dist(a.segStart, a.p);
+		l += Point.distance(a.segStart, a.p);
 		return l;
 	}
 	
 	protected double distanceBackward(EdgePosition a) {
 		if (a.index == index) {
-			return Point.dist(a.p, p);
+			return Point.distance(a.p, p);
 		}
 		double l = 0.0;
-		l += Point.dist(p, segStart);
+		l += Point.distance(p, segStart);
 		for (int i = index-1; i > a.index; i--) {
 			Point aa = e.getPoint(i);
 			Point bb = e.getPoint(i+1);
-			l += Point.dist(aa, bb);
+			l += Point.distance(aa, bb);
 		}
-		l += Point.dist(a.segEnd, a.p);
+		l += Point.distance(a.segEnd, a.p);
 		return l;
 	}
 	
@@ -265,16 +255,6 @@ public class EdgePosition extends Position {
 		
 	}
 	
-//	public Position travel(int dir, double dist) throws TravelException {
-//		 if (dir == 1) {
-//			 return travelForward(dist);
-//		 } else if (dir == -1) {
-//			 return travelBackward(dist);
-//		 } else {
-//			 throw new IllegalArgumentException();
-//		 }
-//	}
-	
 	private Position travelForward(double dist) throws TravelException {
 		
 		int index = getIndex();
@@ -286,7 +266,7 @@ public class EdgePosition extends Position {
 			Point b = e.getPoint(index+1);
 			
 			Point c = Point.point(a, b, param);
-			double distanceToEndOfSegment = Point.dist(c, b);
+			double distanceToEndOfSegment = Point.distance(c, b);
 			
 			if (DMath.doubleEquals(distanceToTravel, distanceToEndOfSegment)) {
 				return new EdgePosition(e, index+1, 0.0, this, e, 1);
@@ -312,7 +292,7 @@ public class EdgePosition extends Position {
 			Point b = e.getPoint(index+1);
 			
 			Point c = Point.point(a, b, param);
-			double distanceToStartOfSegment = Point.dist(c, a);
+			double distanceToStartOfSegment = Point.distance(c, a);
 			
 			if (DMath.doubleEquals(distanceToTravel, distanceToStartOfSegment)) {
 				return new EdgePosition(e, index, 0.0, this, e, -1);
@@ -327,108 +307,5 @@ public class EdgePosition extends Position {
 		}
 		
 	}
-	
-//	public Position travel(Vertex v, double dist) {
-//		return travel(new VertexPosition(v), dist);
-//	}
-//	
-//	protected Position travelE(EdgePosition a, double dist) {
-//		
-//		if (e.isLoop()) {
-//			throw new IllegalArgumentException();
-//		}
-//		
-//		try {
-//			assert a.getEdge() == e || Edge.sharedVertex(a.getEdge(), e) != null;
-//			
-//			double actual = distanceToE(a);
-//			
-//			assert DMath.doubleEquals(dist, actual) || dist < actual;
-//			
-//			if (a.getEdge() == e) {
-//				
-//				switch (Position.COMPARATOR.compare(this, a)) {
-//				case -1:
-//					return travelForward(dist);
-//				case 1:
-//					return travelBackward(dist);
-//				default:
-//					return this;
-//				}
-//				
-//			} else {
-//				
-//				Vertex v = Edge.sharedVertex(a.getEdge(), e);
-//				VertexPosition vp = new VertexPosition(v);
-//				
-//				double actualVDist = distanceTo(vp);
-//				
-//				if (DMath.doubleEquals(dist, actualVDist)) {
-//					return vp;
-//				} else if (dist < actualVDist) {
-//					return travelV(vp, dist);
-//				} else {
-//					return vp.travelE(a, dist-actualVDist);
-//				}
-//				
-//			}
-//		} catch (SharedVerticesException ex) {
-//			
-//			Vertex v1 = ex.v1;
-//			VertexPosition vp1 = new VertexPosition(v1);
-//			Vertex v2 = ex.v2;
-//			VertexPosition vp2 = new VertexPosition(v2);
-//			
-//			double d1 = distanceTo(vp1) + vp1.distanceTo(a);
-//			double d2 = distanceTo(vp2) + vp2.distanceTo(a);
-//			
-//			if (d1 < d2) {
-//				
-//				double actualVDist = distanceTo(vp1);
-//				
-//				if (DMath.doubleEquals(dist, actualVDist)) {
-//					return vp1;
-//				} else if (dist < actualVDist) {
-//					return travelV(vp1, dist);
-//				} else {
-//					return vp1.travelE(a, dist-actualVDist);
-//				}
-//				
-//			} else {
-//				
-//				double actualVDist = distanceTo(vp2);
-//				
-//				if (DMath.doubleEquals(dist, actualVDist)) {
-//					return vp2;
-//				} else if (dist < actualVDist) {
-//					return travelV(vp2, dist);
-//				} else {
-//					return vp2.travelE(a, dist-actualVDist);
-//				}
-//				
-//			}
-//		}
-//		
-//	}
-//	
-//	protected Position travelV(VertexPosition a, double dist) {
-//		
-//		if (e.isLoop()) {
-//			throw new IllegalArgumentException();
-//		}
-//		
-//		//assert a.getVertex().getEdges().contains(e);
-//		
-//		Vertex v = a.getVertex();
-//		
-//		assert v == e.getStart() || v == e.getEnd();
-//		
-//		if (v == e.getEnd()) {
-//			return travelForward(dist);
-//		} else {
-//			return travelBackward(dist);
-//		}
-//		
-//	}
 	
 }

@@ -44,28 +44,33 @@ public class QuadTree {
 	}
 	
 	public List<Segment> findAllSegments(Point a, Point b) {
+		return findAllSegments(a, b, 0);
+	}
+	
+	public List<Segment> findAllSegments(Point a, Point b, double radius) {
 		assert !Point.equals(a, b);
-		Point ul = new Point(Math.min(a.getX(), b.getX()), Math.min(a.getY(), b.getY()));
-		Point ur = new Point(Math.max(a.getX(), b.getX()), Math.min(a.getY(), b.getY()));
-		Point bl = new Point(Math.min(a.getX(), b.getX()), Math.max(a.getY(), b.getY()));
-		Point br = new Point(Math.max(a.getX(), b.getX()), Math.max(a.getY(), b.getY()));
+//		Point ul = new Point(Math.min(a.getX(), b.getX())-radius, Math.min(a.getY(), b.getY())-radius);
+//		Point ur = new Point(Math.max(a.getX(), b.getX())+radius, Math.min(a.getY(), b.getY())-radius);
+//		Point bl = new Point(Math.min(a.getX(), b.getX())-radius, Math.max(a.getY(), b.getY())+radius);
+//		Point br = new Point(Math.max(a.getX(), b.getX())+radius, Math.max(a.getY(), b.getY())+radius);
 		List<Segment> l = new ArrayList<Segment>();
 		for (Segment si : segIndices) {
 			Edge e = si.edge;
 			int i = si.index;
-			Point c = e.getPoint(i);
-			Point d = e.getPoint(i+1);
-			try {
-				if ((ul.getX() <= c.getX() && c.getX() <= br.getX() && ul.getY() <= c.getY() && c.getY() <= br.getY()) || (ul.getX() <= d.getX() && d.getX() <= br.getX() && ul.getY() <= d.getY() && d.getY() <= br.getY()) ||
-						!Point.equals(ul, ur) && Point.intersection(ul, ur, c, d) != null ||
-						!Point.equals(ul, bl) && Point.intersection(ul, bl, c, d) != null ||
-						!Point.equals(ur, br) && Point.intersection(ur, br, c, d) != null ||
-						!Point.equals(bl, br) && Point.intersection(bl, br, c, d) != null) {
-					l.add(new Segment(e, i));
-				}
-			} catch (OverlappingException e1) {
-				l.add(new Segment(e, i));
-			}
+			l.add(new Segment(e, i));
+//			Point c = e.getPoint(i);
+//			Point d = e.getPoint(i+1);
+//			try {
+//				if ((ul.getX() <= c.getX() && c.getX() <= br.getX() && ul.getY() <= c.getY() && c.getY() <= br.getY()) || (ul.getX() <= d.getX() && d.getX() <= br.getX() && ul.getY() <= d.getY() && d.getY() <= br.getY()) ||
+//						!Point.equals(ul, ur) && Point.intersection(ul, ur, c, d) != null ||
+//						!Point.equals(ul, bl) && Point.intersection(ul, bl, c, d) != null ||
+//						!Point.equals(ur, br) && Point.intersection(ur, br, c, d) != null ||
+//						!Point.equals(bl, br) && Point.intersection(bl, br, c, d) != null) {
+//					l.add(new Segment(e, i));
+//				}
+//			} catch (OverlappingException e1) {
+//				l.add(new Segment(e, i));
+//			}
 		}
 		return l;
 	}
@@ -147,23 +152,23 @@ public class QuadTree {
 				EdgePosition closest = closestPosition(a, si);
 				if (best == null) {
 					best = closest;
-				} else if (Point.dist(a, closest.getPoint()) < Point.dist(a, best.getPoint())) {
+				} else if (Point.distance(a, closest.getPoint()) < Point.distance(a, best.getPoint())) {
 					best = closest;
 				}
 				if (e != null) {
-					if (Point.dist(a, best.getPoint()) < Point.dist(a, e.getPoint())) {
+					if (Point.distance(a, best.getPoint()) < Point.distance(a, e.getPoint())) {
 						e = null;
 					}
 				}
 			} catch (PositionException ex) {
 				if (e == null) {
 					e = ex;
-				} else if (Point.dist(a, ex.getPoint()) < Point.dist(a, e.getPoint())) {
+				} else if (Point.distance(a, ex.getPoint()) < Point.distance(a, e.getPoint())) {
 					e = ex;
 				}
 			}
 		}
-		if (e != null && best != null && Point.dist(a, e.getPoint()) < Point.dist(a, best.getPoint())) {
+		if (e != null && best != null && Point.distance(a, e.getPoint()) < Point.distance(a, best.getPoint())) {
 			throw e;
 		}
 		return best;

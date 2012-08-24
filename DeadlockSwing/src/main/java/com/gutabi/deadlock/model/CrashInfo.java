@@ -7,16 +7,11 @@ public class CrashInfo {
 	public final CrashSite crashSite;
 	public final Car i;
 	public final Car j;
-//	public final Position ipa;
-//	public final Position jpa;
 	public final Position ip;
 	public final Position jp;
 	public final int iDir;
 	public final int jDir;
-	//public final double dist;
-	//public final int ie;
 	public final int ik;
-	//public final int je;
 	public final int jl;
 	
 	/**
@@ -27,21 +22,12 @@ public class CrashInfo {
 		this.crashSite = crashSite;
 		this.i = i;
 		this.j = j;
-//		this.ipa = ipa;
-//		this.jpa = jpa;
 		this.ip = ip;
 		this.jp = jp;
 		this.iDir = iDir;
 		this.jDir = jDir;
-		//this.dist = dist;
-		//this.ie = ie;
 		this.ik = ik;
-		//this.je = je;
 		this.jl = jl;
 	}
-	
-//	public String toString() {
-//		return i + " " + j;
-//	}
 	
 }

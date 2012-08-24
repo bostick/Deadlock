@@ -13,8 +13,6 @@ public class Car {
 	
 	private Position pos;
 	
-	//public boolean special;
-	
 	public long startingStep;
 	public Vertex startingVertex;
 	
@@ -58,14 +56,6 @@ public class Car {
 		this.pos = pos;
 	}
 	
-//	public void futurePathNewEdge() {
-//		if (state == CarState.CRASHED || state == CarState.SINKED) {
-//			throw new IllegalArgumentException();
-//		}
-//		//futurePath.add(new ArrayList<Position>());
-//		futurePath.newEdge();
-//	}
-	
 	public void futurePathAdd(Position pos) {
 		if (state == CarState.CRASHED || state == CarState.SINKED) {
 			throw new IllegalArgumentException();
@@ -92,7 +82,6 @@ public class Car {
 		}
 		
 		futurePath.clear();
-		//futurePath.add(new ArrayList<Position>());
 	}
 	
 	public List<Position> getFuturePath() {
@@ -124,9 +113,5 @@ public class Car {
 		c.pos = getPosition();
 		return c;
 	}
-	
-//	public String toString() {
-//		return "car " + pos.getPoint();
-//	}
 	
 }

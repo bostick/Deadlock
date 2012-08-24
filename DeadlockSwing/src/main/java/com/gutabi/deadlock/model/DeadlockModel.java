@@ -87,7 +87,7 @@ public class DeadlockModel {
 			
 			if (closest == null) {
 				closest = v;
-			} else if (Point.dist(a, vp) < Point.dist(a, closest.getPoint())) {
+			} else if (Point.distance(a, vp) < Point.distance(a, closest.getPoint())) {
 				closest = v;
 			}
 			

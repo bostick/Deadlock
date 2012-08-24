@@ -57,11 +57,6 @@ public class VertexPosition extends Position {
 	}
 	
 	protected double distanceToE(EdgePosition a) {
-		
-//		if (a.getEdge().isLoop()) {
-//			throw new IllegalArgumentException();
-//		}
-		
 		return a.distanceToV(this);
 	}
 	
@@ -108,7 +103,7 @@ public class VertexPosition extends Position {
 			Point b = e.getPoint(index+1);
 			
 			Point c = Point.point(a, b, param);
-			double distanceToEndOfSegment = Point.dist(c, b);
+			double distanceToEndOfSegment = Point.distance(c, b);
 			
 			if (DMath.doubleEquals(distanceToTravel, distanceToEndOfSegment)) {
 				return new EdgePosition(e, index+1, 0.0, this, e, 1);
@@ -134,7 +129,7 @@ public class VertexPosition extends Position {
 			Point b = e.getPoint(index+1);
 			
 			Point c = Point.point(a, b, param);
-			double distanceToStartOfSegment = Point.dist(c, a);
+			double distanceToStartOfSegment = Point.distance(c, a);
 			
 			if (DMath.doubleEquals(distanceToTravel, distanceToStartOfSegment)) {
 				return new EdgePosition(e, index, 0.0, this, e, -1);
@@ -149,38 +144,5 @@ public class VertexPosition extends Position {
 		}
 		
 	}
-	
-	
-//	
-//	protected Position travelE(EdgePosition a, double dist, int dir) {
-//		
-//		double actual = distanceToE(a);
-//		
-//		assert DMath.doubleEquals(dist, actual) || dist < actual;
-//		
-//		Edge e = a.getEdge();
-//		
-//		return travel(e, dist, dir);
-//		
-//	}
-//	
-//	protected Position travelV(VertexPosition a, double dist, int dir) {
-//		
-//		Vertex v = a.getVertex();
-//		
-//		double actual = distanceTo(a);
-//		
-//		if (DMath.doubleEquals(dist, actual)) {
-//			return a;
-//		} else {
-//			assert dist < actual;
-//			
-//			Edge e = Edge.commonEdge(v, this.v);
-//			
-//			return travel(e, dist, dir);
-//			
-//		}
-//		
-//	}
 	
 }

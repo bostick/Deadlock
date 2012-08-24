@@ -6,7 +6,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-
 public class Graph {
 	
 	private final ArrayList<Edge> edges = new ArrayList<Edge>();
@@ -133,70 +132,77 @@ public class Graph {
 	}
 	
 	public void processStroke(List<Point> stroke) {
+		processStroke(stroke, true);
+	}
+	
+	@SuppressWarnings("serial")
+	public void processStroke(List<Point> stroke, boolean addingNewStroke) {
 		
 		for (int i = 0; i < stroke.size()-1; i++) {
 			Point a = stroke.get(i);
 			Point b = stroke.get(i+1);
 			assert !Point.equals(a, b);
 			
-			List<PointToBeAdded> betweenABPoints = fillinIntersections(a, b, i);
+			List<PointToBeAdded> betweenABPoints = fillinIntersections(a, b);
 			
-			iterateBetweenPoints(betweenABPoints);
+			betweenLoop:
+			for (int j = 0; j < betweenABPoints.size()-1; j++) {
+				PointToBeAdded p1 = betweenABPoints.get(j);
+				PointToBeAdded p2 = betweenABPoints.get(j+1);
+				
+				for (Segment in : segTree.findAllSegments(p1.p, p2.p)) {
+					Edge e = in.edge;
+					int index = in.index;
+					Point c = e.getPoint(index);
+					Point d = e.getPoint(index+1);
+					if ((Point.equals(p1.p, d) || Point.intersect(p1.p, c, d)) && (Point.equals(p2.p, d) || Point.intersect(p2.p, c, d))) {
+						/*
+						 * <p1, p2> is completely within <c, d>, so do nothing
+						 */
+						continue betweenLoop;
+					}
+				}
+				
+				final Point p1Int = p1.p.toInteger();
+				
+				final Point p2Int = p2.p.toInteger();
+				
+				if (!Point.equals(p1Int, p2Int)) {
+					
+					if (addingNewStroke) {
+						if (segmentTooClose(p1Int, p2Int)) {
+							continue betweenLoop;
+						}
+					}
+					
+					if (!Point.equals(p1.p, p1Int) && tryFindEdgePosition(p1.p) != null) {
+						adjustEdgePointToGrid(p1.p);
+					}
+					
+					if (!Point.equals(p2.p, p2Int) && tryFindEdgePosition(p2.p) != null) {
+						adjustEdgePointToGrid(p2.p);
+					}
+					
+					if (!segmentOverlapsOrIntersects(p1Int, p2Int)) {
+						/*
+						 * the vast majority of cases will be going here
+						 */
+						addSegment(p1Int, p2Int);
+					} else {
+						processStroke(new ArrayList<Point>(){{add(p1Int);add(p2Int);}});
+					}
+					
+				}
+				
+			}
+		}
+		
+		if (addingNewStroke) {
+			currentlyTooClose = false;
+			currentlyOK = false;
 		}
 		
 		cleanupEdges();
-		
-	}
-	
-	@SuppressWarnings("serial")
-	private void iterateBetweenPoints(List<PointToBeAdded> betweenABPoints) {
-		
-		//Object[] betweenArray = betweenABPoints.toArray();
-		
-		betweenLoop:
-		for (int i = 0; i < betweenABPoints.size()-1; i++) {
-			PointToBeAdded p1 = betweenABPoints.get(i);
-			PointToBeAdded p2 = betweenABPoints.get(i+1);
-			
-			for (Segment in : segTree.findAllSegments(p1.p, p2.p)) {
-				Edge e = in.edge;
-				int j = in.index;
-				Point c = e.getPoint(j);
-				Point d = e.getPoint(j+1);
-				if ((Point.equals(p1.p, d) || Point.intersect(p1.p, c, d)) && (Point.equals(p2.p, d) || Point.intersect(p2.p, c, d))) {
-					/*
-					 * <p1, p2> is completely within <c, d>, so do nothing
-					 */
-					continue betweenLoop;
-				}
-			}
-			
-			final Point p1Int = p1.p.toInteger();
-			
-			final Point p2Int = p2.p.toInteger();
-			
-			if (!Point.equals(p1Int, p2Int)) {
-				
-				if (!Point.equals(p1.p, p1Int) && tryFindEdgePosition(p1.p) != null) {
-					adjustEdgePointToGrid(p1.p);
-				}
-				
-				if (!Point.equals(p2.p, p2Int) && tryFindEdgePosition(p2.p) != null) {
-					adjustEdgePointToGrid(p2.p);
-				}
-				
-				if (!segmentOverlapsOrIntersects(p1Int, p2Int)) {
-					/*
-					 * the vast majority of cases will be going here
-					 */
-					addSegment(p1Int, p2Int);
-				} else {
-					processStroke(new ArrayList<Point>(){{add(p1Int);add(p2Int);}});
-				}
-				
-			}
-			
-		}
 		
 	}
 	
@@ -279,36 +285,79 @@ public class Graph {
 		
 	}
 	
-	private List<PointToBeAdded> fillinIntersections(Point a, Point b, int index) {
+	private List<PointToBeAdded> fillinIntersections(Point a, Point b) {
 		
 		List<PointToBeAdded> betweenABPoints = new ArrayList<PointToBeAdded>();
 		
-		betweenABPointsAdd(betweenABPoints, new PointToBeAdded(a, index, 0.0));
-		betweenABPointsAdd(betweenABPoints, new PointToBeAdded(b, index, 1.0));
+		betweenABPointsAdd(betweenABPoints, new PointToBeAdded(a, 0.0));
+		betweenABPointsAdd(betweenABPoints, new PointToBeAdded(b, 1.0));
+		
+		boolean stopCheckingForTooClose = false;
 		
 		for (Segment in : segTree.findAllSegments(a, b)) {
 			Edge e = in.edge;
 			int i = in.index;
 			Point c = e.getPoint(i);
 			Point d = e.getPoint(i+1);
+			
 			try {
 				Point inter = Point.intersection(a, b, c, d);
 				if (inter != null) {
-					PointToBeAdded nptba = new PointToBeAdded(inter, index, Point.param(inter, a, b));
+					PointToBeAdded nptba = new PointToBeAdded(inter, Point.param(inter, a, b));
 					betweenABPointsAdd(betweenABPoints, nptba);
 				}
 			} catch (OverlappingException ex) {
 				
 				if (Point.intersect(c, a, b)) {
-					PointToBeAdded nptba = new PointToBeAdded(c, index, Point.param(c, a, b));
+					PointToBeAdded nptba = new PointToBeAdded(c, Point.param(c, a, b));
 					betweenABPointsAdd(betweenABPoints, nptba);
 				}
 				
 				if (Point.intersect(d, a, b)) {
-					PointToBeAdded nptba = new PointToBeAdded(d, index, Point.param(d, a, b));
+					PointToBeAdded nptba = new PointToBeAdded(d, Point.param(d, a, b));
 					betweenABPointsAdd(betweenABPoints, nptba);
 				}
 				
+			}
+			
+			if (!stopCheckingForTooClose) {
+				double aDist = Point.distance(a, c, d);
+				double bDist = Point.distance(b, c, d);
+				
+				if (currentlyTooClose) {
+					if (aDist < 20) {
+						stopCheckingForTooClose = true;
+					}
+				} else if (currentlyOK) {
+					
+					if (bDist < aDist) {
+						if (bDist < 20) {
+							//assert aDist > 20;
+							
+							// save c d
+							//figure out border point
+							
+							currentlyTooClose = true;
+							currentlyOK = false;
+							stopCheckingForTooClose = true;
+						}
+					}
+					
+				} else {
+					// neither currentlyTooClose nor currentlyOK, so just starting
+					if (aDist < 20) {
+						currentlyTooClose = true;
+						stopCheckingForTooClose = true;
+					}
+				}
+			}	
+			
+		}
+		
+		if (!stopCheckingForTooClose) {
+			if (!currentlyOK) {
+				currentlyOK = true;
+				currentlyTooClose = false;
 			}
 		}
 		
@@ -328,7 +377,7 @@ public class Graph {
 	
 	private boolean segmentOverlapsOrIntersects(Point a, Point b) {
 		
-		for (Segment in : segTree.findAllSegments(a, b)) {
+		for (Segment in : segTree.findAllSegments(a, b, 10)) {
 			Edge e = in.edge;
 			int i = in.index;
 			Point c = e.getPoint(i);
@@ -336,14 +385,66 @@ public class Graph {
 			try {
 				Point inter = Point.intersection(a, b, c, d);
 				if (inter != null && !inter.isInteger()) {
-					/*
-					 * ok to intersect, as long as it is an integer position
-					 */
 					return true;
 				}
 			} catch (OverlappingException ex) {	
 				return true;
 			}
+		}
+		
+		return false;
+	}
+	
+	
+	
+	boolean currentlyTooClose = false;
+	boolean currentlyOK = false;
+	
+	private boolean segmentTooClose(Point a, Point b) {
+
+		for (Segment in : segTree.findAllSegments(a, b, 20)) {
+			Edge e = in.edge;
+			int i = in.index;
+
+			Point c = e.getPoint(i);
+			Point d = e.getPoint(i+1);
+			
+			/*
+			 * TODO: the points a and b could be really far away from <c, d>, but for instance <a, b> could intersect with <c, d>
+			 * this should be considered too close, but right now we are only testing the points a and b
+			 * we should test the actual segment
+			 */
+			
+			double aDist = Point.distance(a, c, d);
+			double bDist = Point.distance(b, c, d);
+			
+			if (currentlyTooClose) {
+				if (aDist < 20) {
+					return true;
+				}
+			} else if (currentlyOK) {
+				
+				if (bDist < aDist) {
+					if (bDist < 20) {
+						currentlyTooClose = true;
+						currentlyOK = false;
+						return true;
+					}
+				}
+				
+			} else {
+				// neither currentlyTooClose nor currentlyOK, so just starting
+				if (aDist < 20) {
+					currentlyTooClose = true;
+					return true;
+				}
+			}
+			
+		}
+		
+		if (!currentlyOK) {
+			currentlyOK = true;
+			currentlyTooClose = false;
 		}
 		
 		return false;
@@ -355,6 +456,9 @@ public class Graph {
 			
 			assert !Point.equals(a, b);
 			assert !segmentExists(a, b) : "segment " + a + " " + b + " already exists";
+			
+			assert a.isInteger();
+			assert b.isInteger();
 			
 			Vertex aV = tryFindVertex(a);
 			if (aV == null) {
@@ -381,7 +485,7 @@ public class Graph {
 			aV.addEdge(e);
 			bV.addEdge(e);
 			
-			Edge working;
+			Edge working = e;
 			
 			List<Edge> aEdges = aV.getEdges();
 			if (aEdges.size() == 2) {
@@ -395,8 +499,6 @@ public class Graph {
 					aEdge = aEdges.get(0);
 				}
 				working = merge(aEdge, e);
-			} else {
-				working = e;
 			}
 			
 			/*
@@ -412,7 +514,7 @@ public class Graph {
 					} else {
 						bEdge = bEdges.get(0);
 					}
-					merge(working, bEdge);
+					working = merge(working, bEdge);
 				}
 			}
 			
@@ -421,6 +523,10 @@ public class Graph {
 		}
 	}
 	
+	/**
+	 * not exactly like tryFindSegment
+	 * returns true even if <a, b> is between <c, d>
+	 */
 	public boolean segmentExists(Point a, Point b) {
 		for (Segment in : segTree.findAllSegments(a, b)) {
 			Edge e = in.edge;
@@ -675,14 +781,14 @@ public class Graph {
 				 * the segment <c, pInt> may intersect with other segments, so we have to start fresh and
 				 * not assume anything
 				 */
-				processStroke(new ArrayList<Point>(){{add(c);add(pInt);}});
+				processStroke(new ArrayList<Point>(){{add(c);add(pInt);}}, false);
 			}
 			if (!Point.equals(pInt, d)) {
 				/*
 				 * the segment <pInt, d> may intersect with other segments, so we have to start fresh and
 				 * not assume anything
 				 */
-				processStroke(new ArrayList<Point>(){{add(pInt);add(d);}});
+				processStroke(new ArrayList<Point>(){{add(pInt);add(d);}}, false);
 			}
 			
 			return true;

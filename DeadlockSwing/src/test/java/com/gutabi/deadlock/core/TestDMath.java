@@ -68,9 +68,6 @@ public class TestDMath {
 		
 		assertTrue(ux != uy);
 		
-//		float uxf = (float)ux;
-//		float uyf = (float)uy;
-		
 		assertTrue(DMath.doubleEquals(ux, uy));
 		
 	}
