@@ -13,13 +13,13 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.KeyStroke;
 
 import org.apache.log4j.Logger;
 
+import com.gutabi.deadlock.core.Edge;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.Position;
+import com.gutabi.deadlock.core.Vertex;
 import com.gutabi.deadlock.view.WindowInfo;
 
 public class DeadlockController implements ActionListener {
@@ -47,26 +47,7 @@ public class DeadlockController implements ActionListener {
 		VIEW.panel.addMouseListener(mc);
 		VIEW.panel.addMouseMotionListener(mc);
 		
-		VIEW.panel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("RIGHT"), "rightKeyAction");
-		VIEW.panel.getActionMap().put("rightKeyAction", kc.rightKeyAction);
-		
-		VIEW.panel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("LEFT"), "leftKeyAction");
-		VIEW.panel.getActionMap().put("leftKeyAction", kc.leftKeyAction);
-		
-		VIEW.panel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("UP"), "upKeyAction");
-		VIEW.panel.getActionMap().put("upKeyAction", kc.upKeyAction);
-		
-		VIEW.panel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("DOWN"), "downKeyAction");
-		VIEW.panel.getActionMap().put("downKeyAction", kc.downKeyAction);
-		
-		VIEW.panel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("EQUALS"), "equalsKeyAction");
-		VIEW.panel.getActionMap().put("equalsKeyAction", kc.equalsKeyAction);
-		
-		VIEW.panel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("MINUS"), "minusKeyAction");
-		VIEW.panel.getActionMap().put("minusKeyAction", kc.minusKeyAction);
-		
-		VIEW.panel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("0"), "zeroKeyAction");
-		VIEW.panel.getActionMap().put("zeroKeyAction", kc.zeroKeyAction);
+		kc.init();
 		
 		e = Executors.newSingleThreadExecutor();
 		
@@ -190,9 +171,89 @@ public class DeadlockController implements ActionListener {
 		}
 		
 	}
-
-
 	
+	public void deleteKey() {
+		
+		synchronized (MODEL) {
+			switch (MODEL.getMode()) {
+			case IDLE:
+				
+				if (MODEL.hilited != null) {
+					
+					if (MODEL.hilited instanceof Vertex) {
+						Vertex v = (Vertex)MODEL.hilited;
+						
+						MODEL.removeVertex(v);
+						
+					} else {
+						Edge e = (Edge)MODEL.hilited;
+						
+						MODEL.removeEdge(e);
+						
+					}
+					
+					MODEL.hilited = null;
+					
+					VIEW.renderBackground();
+					VIEW.repaint();
+				}
+				
+				break;
+			case DRAFTING:
+				;
+				break;
+			case ZOOMING:
+				assert false;
+				break;
+			case RUNNING:
+				;
+				break;
+			}
+		}
+		
+	}
+	
+	public void undoKey() {
+		
+		synchronized (MODEL) {
+			switch (MODEL.getMode()) {
+			case IDLE:
+				
+				break;
+			case DRAFTING:
+				;
+				break;
+			case ZOOMING:
+				assert false;
+				break;
+			case RUNNING:
+				;
+				break;
+			}
+		}
+		
+	}
+	
+	public void redoKey() {
+		
+		synchronized (MODEL) {
+			switch (MODEL.getMode()) {
+			case IDLE:
+				
+				break;
+			case DRAFTING:
+				;
+				break;
+			case ZOOMING:
+				assert false;
+				break;
+			case RUNNING:
+				;
+				break;
+			}
+		}
+		
+	}
 	
 	public void startRunning() {
 		assert Thread.currentThread().getName().equals("controller");

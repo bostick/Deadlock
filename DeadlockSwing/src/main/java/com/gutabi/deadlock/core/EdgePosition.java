@@ -11,7 +11,8 @@ public class EdgePosition extends Position {
 	public final Point segStart;
 	public final Point segEnd;
 	
-	public final double distanceFromStartOfEdge;
+	private double distanceToStartOfEdge = -1;
+	private double distanceToEndOfEdge = -1;
 	
 	public EdgePosition(Edge e, int index, double param, Position prevPos, Edge prevDirEdge, int prevDir) {
 		super(Point.point(e.getPoint(index), e.getPoint(index+1), param), e, prevPos, prevDirEdge, prevDir);
@@ -33,7 +34,7 @@ public class EdgePosition extends Position {
 		this.segStart = e.getPoint(index);
 		this.segEnd = e.getPoint(index+1);
 		
-		distanceFromStartOfEdge = distanceToStartOfEdge();
+		//distanceFromStartOfEdge = distanceToStartOfEdge();
 	}
 	
 	public Edge getEdge() {
@@ -62,6 +63,10 @@ public class EdgePosition extends Position {
 	
 	public double distanceToEndOfEdge() {
 		
+		if (distanceToEndOfEdge != -1) {
+			return distanceToEndOfEdge;
+		}
+		
 		/*
 		 * may be stand-alone loop, so start and end are null
 		 */
@@ -70,15 +75,19 @@ public class EdgePosition extends Position {
 		l = 0.0;
 		l += Point.distance(p, segEnd);
 		for (int i = index+1; i < e.size()-1; i++) {
-			Point aa = e.getPoint(i);
-			Point bb = e.getPoint(i+1);
-			l += Point.distance(aa, bb);
+			l += e.getSegmentLength(i);
 		}
-		return l;
 		
+		distanceToEndOfEdge = l;
+		
+		return distanceToEndOfEdge;
 	}
 	
 	public double distanceToStartOfEdge() {
+		
+		if (distanceToStartOfEdge != -1) {
+			return distanceToStartOfEdge;
+		}
 		
 		/*
 		 * may be stand-alone loop, so start and end are null
@@ -88,12 +97,12 @@ public class EdgePosition extends Position {
 		l = 0.0;
 		l += Point.distance(p, segStart);
 		for (int i = index-1; i >= 0; i--) {
-			Point aa = e.getPoint(i);
-			Point bb = e.getPoint(i+1);
-			l += Point.distance(aa, bb);
+			l += e.getSegmentLength(i);
 		}
-		return l;
 		
+		distanceToStartOfEdge = l;
+		
+		return distanceToStartOfEdge;
 	}
 	
 	protected double distanceForward(EdgePosition a) {
@@ -103,9 +112,7 @@ public class EdgePosition extends Position {
 		double l = 0.0;
 		l += Point.distance(p, segEnd);
 		for (int i = index+1; i < a.index; i++) {
-			Point aa = e.getPoint(i);
-			Point bb = e.getPoint(i+1);
-			l += Point.distance(aa, bb);
+			l += e.getSegmentLength(i);
 		}
 		l += Point.distance(a.segStart, a.p);
 		return l;
@@ -118,9 +125,7 @@ public class EdgePosition extends Position {
 		double l = 0.0;
 		l += Point.distance(p, segStart);
 		for (int i = index-1; i > a.index; i--) {
-			Point aa = e.getPoint(i);
-			Point bb = e.getPoint(i+1);
-			l += Point.distance(aa, bb);
+			l += e.getSegmentLength(i);
 		}
 		l += Point.distance(a.segEnd, a.p);
 		return l;

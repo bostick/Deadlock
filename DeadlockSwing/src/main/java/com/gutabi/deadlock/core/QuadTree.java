@@ -7,7 +7,7 @@ import java.util.List;
 
 public class QuadTree {
 	
-	ArrayList<Segment> segIndices = new ArrayList<Segment>();
+	private ArrayList<Segment> segIndices = new ArrayList<Segment>();
 	
 	public void addEdge(Edge e) {
 		for (int i = 0; i < e.size()-1; i++) {

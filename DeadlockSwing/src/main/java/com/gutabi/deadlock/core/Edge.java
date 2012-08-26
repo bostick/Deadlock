@@ -5,6 +5,7 @@ import java.util.List;
 public final class Edge extends Driveable {
 		
 	private final Point[] pts;
+	private final double[] segmentLengths;
 	private final Vertex start;
 	private final Vertex end;
 	
@@ -22,9 +23,14 @@ public final class Edge extends Driveable {
 		standalone = (loop) ? start == null : false;
 		this.pts = pts;
 		
+		segmentLengths = new double[pts.length-1];
+		
+		double length;
 		double l = 0.0;
-		for (int i = 0; i < pts.length-1; i++) {
-			l += Point.distance(pts[i], pts[i+1]);
+		for (int i = 0; i < segmentLengths.length; i++) {
+			length = Point.distance(pts[i], pts[i+1]);
+			segmentLengths[i] = length;
+			l += length;
 		}
 		totalLength = l;
 		
@@ -76,14 +82,21 @@ public final class Edge extends Driveable {
 	}
 	
 	public Point getPoint(int i) {
-		if (removed) {
-			throw new IllegalStateException();
-		}
+//		if (removed) {
+//			throw new IllegalStateException();
+//		}
 		if (i >= 0) {
 			return pts[i];
 		} else {
 			return pts[i + pts.length];
 		}
+	}
+	
+	public double getSegmentLength(int i) {
+		if (removed) {
+			throw new IllegalStateException();
+		}
+		return segmentLengths[i];
 	}
 	
 	public void remove() {

@@ -5212,4 +5212,29 @@ public class TestDragging {
 		
 		Thread.sleep(Long.MAX_VALUE);
 	}
+	
+	
+	/*
+	 * drawing too close to another road
+	 */
+	@Test
+	public void testBug18() throws Exception {
+		
+		CONTROLLER.strat = MassageStrategy.CURRENT;
+
+		testPressed(new Point(459., 258.));
+		testDragged(new Point(476., 258.));
+		testDragged(new Point(492., 258.));
+		testDragged(new Point(541., 258.));
+		testReleased();
+		
+		testPressed(new Point(464., 212.));
+		testDragged(new Point(484., 253.));
+		testDragged(new Point(493., 267.));
+		testDragged(new Point(509., 318.));
+		testReleased();
+		
+		Thread.sleep(Long.MAX_VALUE);
+	}
+	
 }

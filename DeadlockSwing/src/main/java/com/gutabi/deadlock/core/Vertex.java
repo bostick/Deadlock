@@ -9,6 +9,8 @@ public class Vertex extends Driveable {
 	
 	private final Point p;
 	
+	private final int hash;
+	
 	private final List<Edge> eds = new ArrayList<Edge>();
 	
 	private VertexType type = VertexType.COMMON;
@@ -19,6 +21,15 @@ public class Vertex extends Driveable {
 	
 	public Vertex(Point p) {
 		this.p = p;
+		
+		int h = 17;
+		h = 37 * h + p.hashCode();
+		hash = h;
+		
+	}
+	
+	public int hashCode() {
+		return hash;
 	}
 	
 	public Vertex copy() {
@@ -138,9 +149,7 @@ public class Vertex extends Driveable {
 	}
 	
 	public void remove() {
-		if (removed) {
-			throw new IllegalStateException();
-		}
+		assert !removed;
 		assert eds.size() == 0;
 		removed = true;
 	}

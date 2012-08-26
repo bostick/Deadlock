@@ -70,7 +70,19 @@ public class DeadlockModel {
 	}
 	
 	public void processNewStroke(List<Point> stroke) {
+		
 		graph.addStroke(stroke, true);
+		
+		
+		
+	}
+	
+	public void removeEdge(Edge e) {
+		graph.removeEdgeTop(e);
+	}
+	
+	public void removeVertex(Vertex v) {
+		graph.removeVertexTop(v);
 	}
 	
 	public double getZoom() {
