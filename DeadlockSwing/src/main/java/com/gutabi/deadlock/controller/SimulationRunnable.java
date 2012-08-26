@@ -25,18 +25,19 @@ public class SimulationRunnable implements Runnable {
 	List<Car> specials = new ArrayList<Car>();
 	
 	long step = 0;
+	long lastSpawnStep = 0;
+	
+	List<Edge> edgesCopy;
+	List<Vertex> verticesCopy;
+	ControlMode modeCopy;
+	List<Car> movingCarsCopy;
+	List<Car> crashedCarsCopy;
+	
+	List<Vertex> sources;
 	
 	//@SuppressWarnings("serial")
 	@Override
 	public void run() {
-		
-		long lastSpawnStep = 0;
-		
-		List<Edge> edgesCopy;
-		List<Vertex> verticesCopy;
-		ControlMode modeCopy;
-		final List<Car> movingCarsCopy;
-		final List<Car> crashedCarsCopy;
 		
 		firstCrashSite = null;
 		crashes.clear();
@@ -70,253 +71,129 @@ public class SimulationRunnable implements Runnable {
 				}
 			}
 			
-			List<Vertex> sources = new ArrayList<Vertex>();
-			for (Vertex v : verticesCopy) {
-				if (v.getType() == VertexType.SOURCE && !v.hasCrash) {
-					sources.add(v);
-				}
-			}
-			List<Vertex> toRemove = new ArrayList<Vertex>();
-			for (Car c : movingCarsCopy) {
-				Position carPos = c.getPosition();
-				for (Vertex v : sources) {
-					if (carPos.distanceTo(new VertexPosition(v, null, null, 0)) <= 10) {
-						toRemove.add(v);
-					}
-				}
-			}
-			for (Vertex v : toRemove) {
-				sources.remove(v);
-			}
+			sources = activeSources();
 			
 			if (sources.isEmpty() && movingCarsCopy.isEmpty()) {
-//				CONTROLLER.q
-//				CONTROLLER.stopRunning();
-				//break outer;
 				break outer;
 			}
 			
 			if (MODEL.SPAWN_FREQUENCY > 0 && (step == 0 || (step - lastSpawnStep) >= MODEL.SPAWN_FREQUENCY)) {
-				
-				List<Car> newCars = new ArrayList<Car>();
-				
-				int n = sources.size();
-				
-				for (int i = 0; i < n; i++) {
-					newCars.add(new Car());
-				}
-				
-				for (Car c : newCars) {
-					if (sources.size() == 0) {
-						continue;
-					}
-					int i = MODEL.RANDOM.nextInt(sources.size());
-					
-					Vertex v = sources.get(i);
-					
-					c.startingVertex = v;
-					c.startingStep = step;
-					
-					c.futurePathAdd(new VertexPosition(v, null, null, 0));
-					
-					c.futureState = CarState.VERTEX;
-					
-					sources.remove(v);
-				}
-				
-				collapseFutures(newCars);
-				
-				movingCarsCopy.addAll(newCars);
-				
-				lastSpawnStep = step;
+				spawnNewCars();
 			}
 			
 			for (Car c : movingCarsCopy) {
 				
-				c.distanceToMove = MODEL.DISTANCE_PER_TIMESTEP;
+				c.calculateFuturePath();
 				
-				inner:
-				while (true) {
-					
-					switch (c.futureState) {
-					case FORWARD: {
-						Position pos = c.getLastFuturePosition();
-						Edge e;
-						int dir = 0;
-						double distanceToEndOfEdge;
-						if (pos instanceof EdgePosition) {
-							e = ((EdgePosition)pos).getEdge();
-							dir = 1;
-							distanceToEndOfEdge = ((EdgePosition)pos).distanceToEndOfEdge();	
-						} else {
-							e = c.futureEdge;
-							dir = c.futureDir;
-							c.futureEdge = null;
-							distanceToEndOfEdge = e.getTotalLength();
-						}
-						
-						if (pos instanceof EdgePosition) {
-							c.futurePathAdd(((EdgePosition)pos).travel(dir, Math.min(c.distanceToMove, distanceToEndOfEdge)));
-						} else {
-							c.futurePathAdd(((VertexPosition)pos).travel(e, dir, Math.min(c.distanceToMove, distanceToEndOfEdge)));
-						}
-						
-						if (DMath.doubleEquals(c.distanceToMove, distanceToEndOfEdge)) {
-							
-							Vertex v = e.getEnd();
-							c.futureState = CarState.VERTEX;
-							
-							c.distanceToMove = 0.0;
-							
-							if (v.getType() == VertexType.SINK) {
-								c.futureState = CarState.SINKED;
-							}
-							
-						} else if (c.distanceToMove > distanceToEndOfEdge) {
-							
-							Vertex v = e.getEnd();
-							c.futureState = CarState.VERTEX;
-							
-							c.distanceToMove -= distanceToEndOfEdge;
-							
-							if (v.getType() == VertexType.SINK) {
-								c.futureState = CarState.SINKED;
-								c.distanceToMove = 0.0;
-							}
-							
-						} else {
-							c.distanceToMove = 0.0;
-						}
-						
-						break;
-					}
-					case BACKWARD: {
-						Position pos = c.getLastFuturePosition();
-						Edge e;
-						int dir = 0;
-						double distanceToStartOfEdge;
-						if (pos instanceof EdgePosition) {
-							e = ((EdgePosition)pos).getEdge();
-							dir = -1;
-							distanceToStartOfEdge = ((EdgePosition)pos).distanceToStartOfEdge();	
-						} else {
-							e = c.futureEdge;
-							dir = c.futureDir;
-							distanceToStartOfEdge = e.getTotalLength();
-						}
-						
-						if (pos instanceof EdgePosition) {
-							c.futurePathAdd(((EdgePosition)pos).travel(dir, Math.min(c.distanceToMove, distanceToStartOfEdge)));
-						} else {
-							c.futurePathAdd(((VertexPosition)pos).travel(e, dir, Math.min(c.distanceToMove, distanceToStartOfEdge)));
-						}
-						
-						if (DMath.doubleEquals(c.distanceToMove, distanceToStartOfEdge)) {
-							
-							Vertex v = e.getStart();
-							c.futureState = CarState.VERTEX;
-							
-							c.distanceToMove = 0.0;
-							
-							if (v.getType() == VertexType.SINK) {
-								c.futureState = CarState.SINKED;
-							}
-							
-						} else if (c.distanceToMove > distanceToStartOfEdge) {
-							
-							Vertex v = e.getStart();
-							c.futureState = CarState.VERTEX;
-							
-							c.distanceToMove -= distanceToStartOfEdge;
-							
-							if (v.getType() == VertexType.SINK) {
-								c.futureState = CarState.SINKED;
-								c.distanceToMove = 0.0;
-							}
-							
-						} else {
-							c.distanceToMove = 0.0;
-						}
-						
-						break;
-					}
-					case VERTEX: {
-						VertexPosition pos = (VertexPosition)c.getLastFuturePosition();
-						Vertex v = pos.getVertex();
-						List<Edge> eds = new ArrayList<Edge>(v.getEdges());
-						
-						Edge previousEdge = null;
-						List<Position> path = c.getFuturePath();
-						if (path.size() > 1) {
-							EdgePosition ep = (EdgePosition)path.get(path.size()-2);
-							previousEdge = ep.getEdge();
-						}
-						
-						if (eds.size() > 1 && previousEdge != null) {
-							/*
-							 * don't go back the same way
-							 */
-							eds.remove(previousEdge);
-						}
-						
-						int i = MODEL.RANDOM.nextInt(eds.size());
-						c.futureEdge = eds.get(i);
-						if (c.futureEdge.isLoop()) {
-							c.futureDir = 2*MODEL.RANDOM.nextInt(2)-1;
-						} else {
-							c.futureDir = (c.futureEdge.getStart() == v) ? 1 : -1;
-						}
-						c.futureState = (c.futureDir == 1) ? CarState.FORWARD : CarState.BACKWARD;
-						break;
-					}
-					case CRASHED:
-						c.distanceToMove = 0.0;
-						break;
-					case SINKED:
-						c.distanceToMove = 0.0;
-						break;
-					case NEW:
-						assert false;
-					}
-					
-					if (c.distanceToMove == 0.0) {
-						break inner;
-					}
-					
-				} // end inner loop
-				
-				if (c.futureState != CarState.CRASHED && c.futureState != CarState.SINKED) {
-					List<Position> path = c.futurePath.path;
-					double total = 0;
-					for (int i = 0; i < path.size()-1; i++) {
-						Position a = path.get(i);
-						Position b = path.get(i+1);
-						total += a.distanceTo(b);
-					}
-					assert DMath.doubleEquals(total, MODEL.DISTANCE_PER_TIMESTEP);
-				}
+//				c.distanceToMove = MODEL.DISTANCE_PER_TIMESTEP;
+//				
+//				inner:
+//				while (true) {
+//					
+//					switch (c.futureState) {
+//					case EDGE: {
+//						Position pos = c.getLastFuturePosition();
+//						Edge e = c.futureEdge;
+//						int dir = c.futureDir;
+//						double distanceLeftOnEdge;
+//						if (pos instanceof EdgePosition) {
+//							distanceLeftOnEdge = (dir == 1) ? ((EdgePosition)pos).distanceToEndOfEdge() : ((EdgePosition)pos).distanceToStartOfEdge();
+//						} else {
+//							distanceLeftOnEdge = e.getTotalLength();
+//						}
+//						
+//						Position nextPos;
+//						if (pos instanceof EdgePosition) {
+//							nextPos = ((EdgePosition)pos).travel(dir, Math.min(c.distanceToMove, distanceLeftOnEdge));
+//						} else {
+//							nextPos = ((VertexPosition)pos).travel(e, dir, Math.min(c.distanceToMove, distanceLeftOnEdge));
+//						}
+//						c.futurePathAdd(nextPos);
+//						
+//						if (DMath.doubleEquals(c.distanceToMove, distanceLeftOnEdge)) {
+//							
+//							Vertex v = e.getEnd();
+//							c.futureState = CarState.VERTEX;
+//							
+//							assert c.getLastFuturePosition() instanceof VertexPosition;
+//							
+//							c.distanceToMove = 0.0;
+//							
+//							if (v.getType() == VertexType.SINK) {
+//								c.futureState = CarState.SINKED;
+//							}
+//							
+//						} else if (c.distanceToMove > distanceLeftOnEdge) {
+//							
+//							Vertex v = e.getEnd();
+//							c.futureState = CarState.VERTEX;
+//							
+//							assert c.getLastFuturePosition() instanceof VertexPosition;
+//							
+//							c.distanceToMove -= distanceLeftOnEdge;
+//							
+//							if (v.getType() == VertexType.SINK) {
+//								c.futureState = CarState.SINKED;
+//								c.distanceToMove = 0.0;
+//							}
+//							
+//						} else {
+//							c.distanceToMove = 0.0;
+//						}
+//						
+//						break;
+//					}
+//					case VERTEX: {
+//						VertexPosition pos = (VertexPosition)c.getLastFuturePosition();
+//						Vertex v = pos.getVertex();
+//						List<Edge> eds = new ArrayList<Edge>(v.getEdges());
+//						
+//						Edge previousEdge = null;
+//						List<Position> path = c.getFuturePath();
+//						if (path.size() > 1) {
+//							EdgePosition ep = (EdgePosition)path.get(path.size()-2);
+//							previousEdge = ep.getEdge();
+//						}
+//						
+//						if (eds.size() > 1 && previousEdge != null) {
+//							/*
+//							 * don't go back the same way
+//							 */
+//							eds.remove(previousEdge);
+//						}
+//						
+//						int i = MODEL.RANDOM.nextInt(eds.size());
+//						c.futureEdge = eds.get(i);
+//						if (c.futureEdge.isLoop()) {
+//							c.futureDir = 2*MODEL.RANDOM.nextInt(2)-1;
+//						} else {
+//							c.futureDir = (c.futureEdge.getStart() == v) ? 1 : -1;
+//						}
+//						c.futureState = CarState.EDGE;
+//						break;
+//					}
+//					case CRASHED:
+//						c.distanceToMove = 0.0;
+//						break;
+//					case SINKED:
+//						c.distanceToMove = 0.0;
+//						break;
+//					case NEW:
+//						assert false;
+//					}
+//					
+//					if (c.distanceToMove == 0.0) {
+//						break inner;
+//					}
+//					
+//				} // end inner loop
+//				
+//				//assert c.futureState == CarState.CRASHED || c.futureState == CarState.SINKED || DMath.doubleEquals(c.futurePath.totalLength(), MODEL.DISTANCE_PER_TIMESTEP);
+//				assert DMath.doubleEquals(c.futurePath.totalLength(), MODEL.DISTANCE_PER_TIMESTEP);
 				
 			}  // for 
 			
-			findCrashesMoving(movingCarsCopy);
-			findCrashesMovingCrashed(movingCarsCopy, crashedCarsCopy);
-			while (firstCrashSite != null) {
-				List<Car> newlyCrashedCars = processCrashInfo(movingCarsCopy);
-				
-				collapseFutures(newlyCrashedCars);
-				removeSinked(movingCarsCopy);
-				
-				movingCarsCopy.removeAll(newlyCrashedCars);
-				crashedCarsCopy.addAll(newlyCrashedCars);
-				
-				findCrashesMoving(movingCarsCopy);
-				findCrashesMovingCrashed(movingCarsCopy, crashedCarsCopy);
-			}
-			
-			collapseFutures(movingCarsCopy);
-			removeSinked(movingCarsCopy);
-			
-			//assert checkDistances(new ArrayList<Car>(){{addAll(movingCarsCopy);addAll(crashedCarsCopy);}});
+			movingFixPoint();
 			
 			synchronized (MODEL) {
 				MODEL.movingCars = new ArrayList<Car>(movingCarsCopy);
@@ -335,6 +212,89 @@ public class SimulationRunnable implements Runnable {
 			step++;
 			
 		} // outer
+		
+	}
+	
+	private List<Vertex> activeSources() {
+		
+		List<Vertex> sources = new ArrayList<Vertex>();
+		for (Vertex v : verticesCopy) {
+			if (v.getType() == VertexType.SOURCE && !v.hasCrash) {
+				sources.add(v);
+			}
+		}
+		List<Vertex> toRemove = new ArrayList<Vertex>();
+		for (Car c : movingCarsCopy) {
+			Position carPos = c.getPosition();
+			for (Vertex v : sources) {
+				if (carPos.distanceTo(new VertexPosition(v, null, null, 0)) <= 10) {
+					toRemove.add(v);
+				}
+			}
+		}
+		for (Vertex v : toRemove) {
+			sources.remove(v);
+		}
+		
+		return sources;
+		
+	}
+	
+	private void spawnNewCars() {
+		
+		List<Car> newCars = new ArrayList<Car>();
+		
+		int n = sources.size();
+		
+		for (int i = 0; i < n; i++) {
+			newCars.add(new Car());
+		}
+		
+		for (Car c : newCars) {
+			if (sources.size() == 0) {
+				continue;
+			}
+			int i = MODEL.RANDOM.nextInt(sources.size());
+			
+			Vertex v = sources.get(i);
+			
+			c.startingVertex = v;
+			c.startingStep = step;
+			
+			c.futurePathAdd(new VertexPosition(v, null, null, 0));
+			
+			c.futureState = CarState.VERTEX;
+			
+			sources.remove(v);
+		}
+		
+		collapseFutures(newCars);
+		
+		movingCarsCopy.addAll(newCars);
+		
+		lastSpawnStep = step;
+		
+	}
+	
+	private void movingFixPoint() {
+		
+		findCrashesMoving(movingCarsCopy);
+		findCrashesMovingCrashed(movingCarsCopy, crashedCarsCopy);
+		while (firstCrashSite != null) {
+			List<Car> newlyCrashedCars = processCrashInfo(movingCarsCopy);
+			
+			collapseFutures(newlyCrashedCars);
+			removeSinked(movingCarsCopy);
+			
+			movingCarsCopy.removeAll(newlyCrashedCars);
+			crashedCarsCopy.addAll(newlyCrashedCars);
+			
+			findCrashesMoving(movingCarsCopy);
+			findCrashesMovingCrashed(movingCarsCopy, crashedCarsCopy);
+		}
+		
+		collapseFutures(movingCarsCopy);
+		removeSinked(movingCarsCopy);
 		
 	}
 	

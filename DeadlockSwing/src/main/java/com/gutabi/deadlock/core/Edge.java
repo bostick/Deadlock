@@ -51,9 +51,9 @@ public final class Edge extends Driveable {
 	}
 	
 	public int size() {
-		if (removed) {
-			throw new IllegalStateException();
-		}
+//		if (removed) {
+//			throw new IllegalStateException();
+//		}
 		return pts.length;
 	}
 	

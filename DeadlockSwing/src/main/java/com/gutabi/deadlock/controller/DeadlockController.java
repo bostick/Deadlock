@@ -217,6 +217,8 @@ public class DeadlockController implements ActionListener {
 		
 		MODEL.setMode(ControlMode.DRAFTING);
 		
+		MODEL.hilited = null;
+		
 		Point p;
 		p = pp;
 		p = new Point(p.getX() * 1/MODEL.getZoom(), p.getY() * 1/MODEL.getZoom());

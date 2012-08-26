@@ -922,6 +922,8 @@ public class Graph {
 				 */
 				pts.add(pts.get(0));
 				
+				Edge newEdge = createEdge(null, null, pts);
+				
 				e1Start.removeEdge(e1);
 				
 				e1End.removeEdge(e1);
@@ -935,7 +937,7 @@ public class Graph {
 				removeEdge(e1);
 				removeEdge(e2);
 				
-				return createEdge(null, null, pts);
+				return newEdge;
 				
 			} else if (e1Start.getEdges().size() == 2) {
 				// creating loop with 1 vertex
@@ -1080,6 +1082,8 @@ public class Graph {
 				 */
 				pts.add(pts.get(0));
 				
+				Edge newEdge = createEdge(null, null, pts);
+				
 				e1Start.removeEdge(e1);
 				
 				e1End.removeEdge(e1);
@@ -1093,7 +1097,7 @@ public class Graph {
 				removeEdge(e1);
 				removeEdge(e2);
 				
-				return createEdge(null, null, pts);
+				return newEdge;
 				
 			} else if (e1Start.getEdges().size() == 2) {
 				// creating loop with 1 vertex
@@ -1314,8 +1318,9 @@ public class Graph {
 			
 			return newEdge;
 			
-		} else if (e1End == e2End) {
+		} else {
 			// not a loop
+			assert e1End == e2End;
 			
 			List<Point> pts = new ArrayList<Point>();
 			
@@ -1353,8 +1358,6 @@ public class Graph {
 			
 			return newEdge;
 			
-		} else {
-			throw new AssertionError("should never be seen");
 		}
 	}
 	

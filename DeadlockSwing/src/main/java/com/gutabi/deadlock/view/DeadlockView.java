@@ -133,8 +133,7 @@ public class DeadlockView {
 				Point pos = c.getPosition().getPoint();
 				switch (c.getState()) {
 				case NEW:
-				case FORWARD:
-				case BACKWARD:
+				case EDGE:
 				case VERTEX:
 					g2.setColor(Color.BLUE);
 					break;

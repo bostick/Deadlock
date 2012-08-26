@@ -37,4 +37,13 @@ public class Path {
 		return path.get(path.size()-1);
 	}
 	
+	public double totalLength() {
+		double total = 0;
+		for (int i = 0; i < path.size()-1; i++) {
+			Position a = path.get(i);
+			Position b = path.get(i+1);
+			total += a.distanceTo(b);
+		}
+		return total;
+	}
 }

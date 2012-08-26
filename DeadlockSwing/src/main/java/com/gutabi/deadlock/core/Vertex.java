@@ -123,9 +123,9 @@ public class Vertex extends Driveable {
 	}
 	
 	public Point getPoint() {
-		if (removed) {
-			throw new IllegalStateException();
-		}
+//		if (removed) {
+//			throw new IllegalStateException();
+//		}
 		return p;
 	}
 	
