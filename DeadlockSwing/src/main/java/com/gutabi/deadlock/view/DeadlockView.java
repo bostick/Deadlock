@@ -16,9 +16,12 @@ import javax.swing.JFrame;
 
 import org.apache.log4j.Logger;
 
+import com.gutabi.deadlock.controller.ControlMode;
+import com.gutabi.deadlock.core.Driveable;
 import com.gutabi.deadlock.core.Edge;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.Vertex;
+import com.gutabi.deadlock.model.Car;
 
 public class DeadlockView {
 	
@@ -65,6 +68,95 @@ public class DeadlockView {
 		newFrame.setLocation(WindowInfo.windowX(), WindowInfo.windowY());
 		
 		return newFrame;
+	}
+	
+	public void drawScene(Graphics2D g2) {
+		
+
+		//g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		
+		ControlMode modeCopy;
+		Driveable hilitedCopy;
+		List<Point> curStrokeCopy;
+		Point lastPointCopy;
+		List<Car> movingCarsCopy;
+		List<Car> crashedCarsCopy;
+		
+		synchronized (MODEL) {
+			modeCopy = MODEL.getMode();
+			hilitedCopy = MODEL.hilited;
+			curStrokeCopy = new ArrayList<Point>(MODEL.curStrokeRaw);
+			lastPointCopy = MODEL.lastPointRaw;
+			movingCarsCopy = new ArrayList<Car>(MODEL.movingCars);
+			crashedCarsCopy = new ArrayList<Car>(MODEL.crashedCars);
+		}
+		
+		if (modeCopy == ControlMode.IDLE) {
+			
+			if (hilitedCopy != null) {
+				
+				if (hilitedCopy instanceof Edge) {
+					
+					Edge e = (Edge)hilitedCopy;
+					paintEdgeHilite(e, g2);
+					
+				} else {
+					
+					Vertex v = (Vertex)hilitedCopy;
+					paintVertexHilite(v, g2);
+					
+				}
+				
+			}
+			
+		} else if (modeCopy == ControlMode.DRAFTING) {
+			g2.setColor(Color.RED);
+			int size = curStrokeCopy.size();
+			int[] xPoints = new int[size];
+			int[] yPoints = new int[size];
+			for (int i = 0; i < size; i++) {
+				Point p = curStrokeCopy.get(i);
+				xPoints[i] = (int)p.getX();
+				yPoints[i] = (int)p.getY();
+			}
+			
+			g2.setStroke(new DraftingStroke());
+			g2.drawPolyline(xPoints, yPoints, size);
+			
+			g2.setColor(Color.RED);
+			if (lastPointCopy != null) {
+				g2.fillOval((int)(lastPointCopy.getX()-5), (int)(lastPointCopy.getY()-5), 10, 10);
+			}
+		} else if (modeCopy == ControlMode.RUNNING) {
+			
+			for (Car c : movingCarsCopy) {
+				Point pos = c.getPosition().getPoint();
+				switch (c.getState()) {
+				case NEW:
+				case FORWARD:
+				case BACKWARD:
+				case VERTEX:
+					g2.setColor(Color.BLUE);
+					break;
+				default:
+					assert false;
+				}
+				g2.fillOval((int)(pos.getX()-5), (int)(pos.getY()-5), 10, 10);
+			}
+			
+			for (Car c : crashedCarsCopy) {
+				Point pos = c.getPosition().getPoint();
+				switch (c.getState()) {
+				case CRASHED:
+					g2.setColor(Color.ORANGE);
+					break;
+				default:
+					assert false;
+				}
+				g2.fillOval((int)(pos.getX()-5), (int)(pos.getY()-5), 10, 10);
+			}
+		}
+		
 	}
 	
 	public void renderBackground() {
@@ -136,9 +228,22 @@ public class DeadlockView {
 			xPoints[i] = (int)p.getX();
 			yPoints[i] = (int)p.getY();
 		}
-		
 		g.setColor(Color.YELLOW);
 		g.setStroke(new Road2Stroke());
+		g.drawPolyline(xPoints, yPoints, size);
+	}
+	
+	private static void paintEdgeHilite(Edge e, Graphics2D g) {
+		int size = e.size();
+		int[] xPoints = new int[size];
+		int[] yPoints = new int[size];
+		for (int i = 0; i < size; i++) {
+			Point p = e.getPoint(i);
+			xPoints[i] = (int)p.getX();
+			yPoints[i] = (int)p.getY();
+		}
+		g.setColor(Color.RED);
+		g.setStroke(new Road1Stroke());
 		g.drawPolyline(xPoints, yPoints, size);
 	}
 	
@@ -161,6 +266,14 @@ public class DeadlockView {
 		
 	}
 	
+	public static void paintVertexHilite(Vertex v, Graphics2D g) {
+		
+		g.setColor(Color.RED);
+		Point p = v.getPoint();
+		g.fillOval((int)p.getX()-5, (int)p.getY()-5, 10, 10);
+		
+	}
+	
 	public static class Road1Stroke extends BasicStroke {
 		
 		public Road1Stroke() {
@@ -175,6 +288,14 @@ public class DeadlockView {
 			super(1, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
 		}
 
+	}
+	
+	public static class DraftingStroke extends BasicStroke {
+		
+		public DraftingStroke() {
+			super(5, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
+		}
+		
 	}
 	
 	public void repaint() {

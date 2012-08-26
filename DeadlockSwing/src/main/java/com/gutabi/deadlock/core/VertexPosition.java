@@ -6,7 +6,7 @@ public class VertexPosition extends Position {
 	public final Vertex v;
 	
 	public VertexPosition(Vertex v, Position prevPos, Edge prevDirEdge, int prevDir) {
-		super(v.getPoint(), prevPos, prevDirEdge, prevDir);
+		super(v.getPoint(), v, prevPos, prevDirEdge, prevDir);
 		this.v = v;
 	}
 	

@@ -5,7 +5,7 @@ import java.util.List;
 
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 
-public class Vertex {
+public class Vertex extends Driveable {
 	
 	private final Point p;
 	

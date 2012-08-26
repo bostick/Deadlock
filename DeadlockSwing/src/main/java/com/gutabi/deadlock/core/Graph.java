@@ -131,10 +131,6 @@ public class Graph {
 		return found;
 	}
 	
-//	public VertexPosition findClosestVertexPosition(Point a, double radius) {
-//		return findClosestVertexPosition(a, null, radius);
-//	}
-	
 	/**
 	 * returns the closest vertex within radius that is not the excluded point
 	 * 
@@ -165,12 +161,6 @@ public class Graph {
 	public EdgePosition findClosestEdgePosition(Point a, Point exclude, double radius) {
 		return getSegmentTree().findClosestEdgePosition(a, exclude, radius);
 	}
-	
-//	enum Proximity {
-//		
-//		
-//		
-//	}
 	
 	/**
 	 * this is down at the grid point level
@@ -320,11 +310,11 @@ public class Graph {
 		
 	}
 	
-	private Position closestPosition(Point a, double radius) {
+	public Position closestPosition(Point a, double radius) {
 		return closestPosition(a, null, radius);
 	}
 	
-	private Position closestPosition(Point a, Point exclude, double radius) {
+	public Position closestPosition(Point a, Point exclude, double radius) {
 		VertexPosition closestVertex = findClosestVertexPosition(a, exclude, radius);
 		if (closestVertex != null) {
 			return closestVertex;
@@ -404,103 +394,6 @@ public class Graph {
 		
 		return false;
 	}
-	
-//	Point closestC;
-//	Point closestD;
-//	double closestADist;
-//	double closestBDist;
-	
-//	private boolean segmentTooClose(Point a, Point b) {
-//		
-//		VertexPosition aClosest = findClosestVertexPosition(a);
-//		if (aClosest != null && Point.distance(a, aClosest.getPoint()) <= 10.0) {
-//			lastBest = lastClosest.getPoint();
-//		}
-//		
-//		if (lastBest == null) {
-//			/*
-//			 * the point doesn't necessarily have to exist yet, it could be between 2 other points
-//			 */
-//			try {
-//				EdgePosition closest = MODEL.findClosestEdgePosition(last);
-//				if (closest != null && Point.distance(last, closest.getPoint()) <= 10.0) {
-//					lastBest = closest.getPoint();
-//				}
-//			} catch (PositionException e) {
-//				/*
-//				 * this means there is a vertex closer to first than any segment
-//				 */
-//			}
-//		}
-//		
-//		
-//		
-//		
-//		
-//		
-//		
-//		
-//		
-//		
-//		
-//		
-//		
-//		
-//		for (Segment in : segTree.findAllSegments(a, b, 20)) {
-//			Edge e = in.edge;
-//			int i = in.index;
-//
-//			Point c = e.getPoint(i);
-//			Point d = e.getPoint(i+1);
-//			
-//			/*
-//			 * TODO: the points a and b could be really far away from <c, d>, but for instance <a, b> could intersect with <c, d>
-//			 * this should be considered too close, but right now we are only testing the points a and b
-//			 * we should test the actual segment
-//			 */
-//			
-//			double aDist = Point.distance(a, c, d);
-//			double bDist = Point.distance(b, c, d);
-//			
-//			if (currentlyTooClose) {
-//				if (aDist < 20) {
-//					// still too close
-//					return true;
-//				}
-//			} else if (currentlyOK) {
-//				if (bDist < aDist) {
-//					if (bDist < 20) {
-//						// switching from ok to too close
-//						currentlyTooClose = true;
-//						currentlyOK = false;
-//						return true;
-//					}
-//				}		
-//			} else {
-//				// neither currentlyTooClose nor currentlyOK, so just starting
-//				if (aDist < 20) {
-//					// starting as too close
-//					currentlyTooClose = true;
-//					return true;
-//				}
-//			}
-//			
-//		}
-//		
-//		if (!currentlyOK) {
-//			if (currentlyTooClose) {
-//				// switching from too close to ok
-//				currentlyTooClose = false;
-//			} else {
-//				// starting as ok
-//			}
-//			currentlyOK = true;
-//		} else {
-//			// still ok
-//		}
-//		
-//		return false;
-//	}
 	
 	private void cleanupEdges() {
 		
@@ -952,45 +845,39 @@ public class Graph {
 		assert e1Start == e2Start || e1Start == e2End || e1End == e2Start || e1End == e2End;
 		
 		if (e1 == e2) {
-			// in the middle of merging a loop
+			// in the middle of merging a stand-alone loop
+			assert e1Start.getEdges().size() == 2 && e1End.getEdges().size() == 2;
+				
+			List<Point> pts = new ArrayList<Point>();
 			
-			if (e1Start.getEdges().size() == 2 && e1End.getEdges().size() == 2) {
-				// stand-alone loop
-				
-				List<Point> pts = new ArrayList<Point>();
-				
-				int n = e1.size();
-				assert e1.getPoint(0) == e1.getPoint(n-1);
-				
-				// only add if not colinear
-				try {
-					if (!Point.colinear(e1.getPoint(e1.size()-2), e1.getPoint(0), e1.getPoint(1))) {
-						pts.add(e1.getPoint(0));
-					}
-				} catch (ColinearException ex) {
-					assert false;
+			int n = e1.size();
+			assert e1.getPoint(0) == e1.getPoint(n-1);
+			
+			// only add if not colinear
+			try {
+				if (!Point.colinear(e1.getPoint(e1.size()-2), e1.getPoint(0), e1.getPoint(1))) {
+					pts.add(e1.getPoint(0));
 				}
-				for (int i = 1; i < e1.size()-1; i++) {
-					pts.add(e1.getPoint(i));
-				}
-				/*
-				 * add whatever the first point is
-				 */
-				pts.add(pts.get(0));
-				
-				Edge newEdge = createEdge(null, null, pts);
-				
-				e1Start.removeEdge(e1);
-				e1Start.removeEdge(e1);
-				
-				removeVertex(e1Start);
-				removeEdge(e1);
-				
-				return newEdge;
-				
-			} else {
-				throw new AssertionError("vertices of stand-alone loop have more than 2 edges");
+			} catch (ColinearException ex) {
+				assert false;
 			}
+			for (int i = 1; i < e1.size()-1; i++) {
+				pts.add(e1.getPoint(i));
+			}
+			/*
+			 * add whatever the first point is
+			 */
+			pts.add(pts.get(0));
+			
+			Edge newEdge = createEdge(null, null, pts);
+			
+			e1Start.removeEdge(e1);
+			e1Start.removeEdge(e1);
+			
+			removeVertex(e1Start);
+			removeEdge(e1);
+			
+			return newEdge;
 			
 		} else if (e1Start == e2End && e1End == e2Start) {
 			// forming a loop

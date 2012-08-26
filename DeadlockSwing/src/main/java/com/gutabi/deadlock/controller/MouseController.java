@@ -29,6 +29,11 @@ public class MouseController implements MouseListener, MouseMotionListener {
 		released();
 	}
 	
+	@Override
+	public void mouseMoved(MouseEvent ev) {
+		moved(new Point(ev.getX(), ev.getY()));
+	}
+	
 	public void pressed(final Point p) {
 		CONTROLLER.queue(new Runnable(){
 			@Override
@@ -56,6 +61,15 @@ public class MouseController implements MouseListener, MouseMotionListener {
 		);
 	}
 	
+	public void moved(final Point p) {
+		CONTROLLER.queue(new Runnable(){
+			@Override
+			public void run() {
+				CONTROLLER.moved(p);
+			}}
+		);
+	}
+	
 	@Override
 	public void mouseClicked(MouseEvent arg0) {
 		;
@@ -68,11 +82,6 @@ public class MouseController implements MouseListener, MouseMotionListener {
 
 	@Override
 	public void mouseExited(MouseEvent arg0) {
-		;
-	}
-
-	@Override
-	public void mouseMoved(MouseEvent arg0) {
 		;
 	}
 	

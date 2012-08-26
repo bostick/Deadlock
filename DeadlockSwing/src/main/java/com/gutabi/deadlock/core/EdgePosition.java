@@ -14,7 +14,7 @@ public class EdgePosition extends Position {
 	public final double distanceFromStartOfEdge;
 	
 	public EdgePosition(Edge e, int index, double param, Position prevPos, Edge prevDirEdge, int prevDir) {
-		super(Point.point(e.getPoint(index), e.getPoint(index+1), param), prevPos, prevDirEdge, prevDir);
+		super(Point.point(e.getPoint(index), e.getPoint(index+1), param), e, prevPos, prevDirEdge, prevDir);
 		
 		if (index < 0 || index >= e.size()-1) {
 			throw new IllegalArgumentException();

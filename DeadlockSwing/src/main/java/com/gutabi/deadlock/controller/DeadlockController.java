@@ -19,6 +19,7 @@ import javax.swing.KeyStroke;
 import org.apache.log4j.Logger;
 
 import com.gutabi.deadlock.core.Point;
+import com.gutabi.deadlock.core.Position;
 import com.gutabi.deadlock.view.WindowInfo;
 
 public class DeadlockController implements ActionListener {
@@ -161,7 +162,36 @@ public class DeadlockController implements ActionListener {
 		
 	}
 	
-	
+	public void moved(final Point p) {
+		
+		synchronized (MODEL) {
+			switch (MODEL.getMode()) {
+			case IDLE:
+				
+				Position closest = MODEL.closestPosition(p, 10);
+				if (closest != null) {
+					MODEL.hilited = closest.getDriveable();
+				} else {
+					MODEL.hilited = null;
+				}
+				
+				VIEW.repaint();
+				break;
+			case DRAFTING:
+				;
+				break;
+			case ZOOMING:
+				assert false;
+				break;
+			case RUNNING:
+				;
+				break;
+			}
+		}
+		
+	}
+
+
 	
 	
 	public void startRunning() {

@@ -6,10 +6,12 @@ import java.util.Random;
 
 import com.gutabi.deadlock.controller.ControlMode;
 import com.gutabi.deadlock.core.Dim;
+import com.gutabi.deadlock.core.Driveable;
 import com.gutabi.deadlock.core.Edge;
 import com.gutabi.deadlock.core.EdgePosition;
 import com.gutabi.deadlock.core.Graph;
 import com.gutabi.deadlock.core.Point;
+import com.gutabi.deadlock.core.Position;
 import com.gutabi.deadlock.core.Segment;
 import com.gutabi.deadlock.core.Vertex;
 import com.gutabi.deadlock.view.WindowInfo;
@@ -37,6 +39,8 @@ public class DeadlockModel {
 	public static final DeadlockModel MODEL = new DeadlockModel();
 	
 	private ControlMode mode = ControlMode.IDLE;
+	
+	public Driveable hilited;
 	
 	public Point lastPointRaw;
 	public List<Point> curStrokeRaw = new ArrayList<Point>();
@@ -84,6 +88,10 @@ public class DeadlockModel {
 //	public EdgePosition findClosestEdgePosition(Point a) {
 //		return graph.findClosestEdgePosition(a);
 //	}
+	
+	public Position closestPosition(Point a, double radius) {
+		return graph.closestPosition(a, radius);
+	}
 	
 	public List<Segment> findAllSegments(Point a) {
 		return graph.getSegmentTree().findAllSegments(a);

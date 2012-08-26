@@ -6,14 +6,17 @@ public abstract class Position {
 	
 	protected final Point p;
 	
+	protected final Driveable d;
+	
 	public final Position prevPos;
 	public final Edge prevDirEdge;
 	public final int prevDir;
 	
 	private final int hash;
 	
-	public Position(Point p, Position prevPos, Edge prevDirEdge, int prevDir) {
+	public Position(Point p, Driveable d, Position prevPos, Edge prevDirEdge, int prevDir) {
 		this.p = p;
+		this.d = d;
 		
 		this.prevPos = prevPos;
 		this.prevDirEdge = prevDirEdge;
@@ -31,6 +34,10 @@ public abstract class Position {
 	
 	public Point getPoint() {
 		return p;
+	}
+	
+	public Driveable getDriveable() {
+		return d;
 	}
 	
 	public double distanceTo(Position a) {

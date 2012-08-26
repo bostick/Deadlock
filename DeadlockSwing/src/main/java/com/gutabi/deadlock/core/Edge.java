@@ -2,9 +2,7 @@ package com.gutabi.deadlock.core;
 
 import java.util.List;
 
-
-
-public final class Edge {
+public final class Edge extends Driveable {
 		
 	private final Point[] pts;
 	private final Vertex start;
