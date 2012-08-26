@@ -18,6 +18,7 @@ public class KeyboardController {
 		@Override
 		public void actionPerformed(ActionEvent blah) {
 			CONTROLLER.moveCameraRight();
+			VIEW.renderBackground();
 			VIEW.repaint();
 		}
 	};
@@ -27,6 +28,7 @@ public class KeyboardController {
 		@Override
 		public void actionPerformed(ActionEvent blah) {
 			CONTROLLER.moveCameraLeft();
+			VIEW.renderBackground();
 			VIEW.repaint();
 		}
 	};
@@ -36,6 +38,7 @@ public class KeyboardController {
 		@Override
 		public void actionPerformed(ActionEvent blah) {
 			CONTROLLER.moveCameraUp();
+			VIEW.renderBackground();
 			VIEW.repaint();
 		}
 	};
@@ -45,6 +48,7 @@ public class KeyboardController {
 		@Override
 		public void actionPerformed(ActionEvent blah) {
 			CONTROLLER.moveCameraDown();
+			VIEW.renderBackground();
 			VIEW.repaint();
 		}
 	};
@@ -54,6 +58,7 @@ public class KeyboardController {
 		@Override
 		public void actionPerformed(ActionEvent blah) {
 			CONTROLLER.zoomIn();
+			VIEW.renderBackground();
 			VIEW.repaint();
 		}
 	};
@@ -63,6 +68,7 @@ public class KeyboardController {
 		@Override
 		public void actionPerformed(ActionEvent blah) {
 			CONTROLLER.zoomOut();
+			VIEW.renderBackground();
 			VIEW.repaint();
 		}
 	};
@@ -72,6 +78,7 @@ public class KeyboardController {
 		@Override
 		public void actionPerformed(ActionEvent blah) {
 			CONTROLLER.zoomReset();
+			VIEW.renderBackground();
 			VIEW.repaint();
 		}
 	};

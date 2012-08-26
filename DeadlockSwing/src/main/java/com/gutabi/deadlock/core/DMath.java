@@ -13,7 +13,7 @@ public class DMath {
 		 * 
 		 * A time of 5.00000000012918 should be equal to 5, so 1.0E-11 is insufficient
 		 */
-		return Math.abs(a - b) < 1.0E-9;
+		return Math.abs(a - b) < 1.0E-8;
 		
 		/*
 		 * TestDMath.test4 has 2 doubles that are not equal when cast to floats, but that

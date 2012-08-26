@@ -136,13 +136,15 @@ public class Graph {
 //	}
 	
 	/**
-	 * returns the closest vertex within radius that is not in the excluded radius
+	 * returns the closest vertex within radius that is not the excluded point
+	 * 
 	 */
-	public VertexPosition findClosestVertexPosition(Point a, double radius) {
+	public VertexPosition findClosestVertexPosition(Point a, Point exclude, double radius) {
 		Vertex closest = null;
 		for (Vertex v : getVertices()) {
 			Point vp = v.getPoint();
-			if (Point.distance(a, vp) < radius) {
+			double dist = Point.distance(a, vp);
+			if (dist < radius && (exclude == null || dist < Point.distance(vp, exclude))) {
 				if (closest == null) {
 					closest = v;
 				} else if (Point.distance(a, vp) < Point.distance(a, closest.getPoint())) {
@@ -260,60 +262,57 @@ public class Graph {
 		Position closestA;
 		Position closestB;
 		
-		if (firstSegmentOfStroke) {
-			
-			closestA = closestPosition(a, 10);
-			closestB = closestPosition(b, 10);
-			
-			if (closestA != null) {
-				if (closestB != null) {
-					tooClose = true;
-					ret[0] = null;
-					ret[1] = null;
+		closestA = closestPosition(a, 10);
+		closestB = closestPosition(b, a, 10);
+		
+		if (closestA != null) {
+			if (closestB != null) {
+				
+				if (closestA instanceof VertexPosition && closestB instanceof VertexPosition) {
+					Vertex v1 = ((VertexPosition)closestA).getVertex();
+					Vertex v2 = ((VertexPosition)closestB).getVertex();
+					if (v1 != v2) {
+						
+						// connect 2 vertices that are close together, and stay tooclose
+						tooClose = true;
+						ret[0] = closestA.getPoint();
+						ret[1] = closestB.getPoint();
+						
+					} else {
+						
+						tooClose = true;
+						ret[0] = null;
+						ret[1] = null;
+						
+					}
 				} else {
-					tooClose = false;
-					ret[0] = closestA.getPoint();
-					ret[1] = b;
+					
+					if (tooClose) {
+						ret[0] = null;
+						ret[1] = null;
+					} else {
+						tooClose = true;
+						ret[0] = closestA.getPoint();
+						ret[1] = closestB.getPoint();
+					}
+					
 				}
+				
 			} else {
-				if (closestB != null) {
-					tooClose = true;
-					ret[0] = a;
-					ret[1] = closestB.getPoint();
-				} else {
-					tooClose = false;
-					ret[0] = a;
-					ret[1] = b;
-				}
+				tooClose = false;
+				ret[0] = closestA.getPoint();
+				ret[1] = b;
 			}
-			
 		} else {
-			
-			closestA = closestPosition(a, 10);
-			closestB = closestPosition(b, a, 10);
-			
-			if (closestA != null) {
-				if (closestB != null) {
-					tooClose = true;
-					ret[0] = null;
-					ret[1] = null;
-				} else {
-					tooClose = false;
-					ret[0] = closestA.getPoint();
-					ret[1] = b;
-				}
+			if (closestB != null) {
+				tooClose = true;
+				ret[0] = a;
+				ret[1] = closestB.getPoint();
 			} else {
-				if (closestB != null) {
-					tooClose = true;
-					ret[0] = a;
-					ret[1] = closestB.getPoint();
-				} else {
-					tooClose = false;
-					ret[0] = a;
-					ret[1] = b;
-				}
+				tooClose = false;
+				ret[0] = a;
+				ret[1] = b;
 			}
-			
 		}
 		
 		assert ret[0] == null && ret[1] == null || !Point.equals(ret[0], ret[1]);
@@ -326,7 +325,7 @@ public class Graph {
 	}
 	
 	private Position closestPosition(Point a, Point exclude, double radius) {
-		VertexPosition closestVertex = findClosestVertexPosition(a, radius);
+		VertexPosition closestVertex = findClosestVertexPosition(a, exclude, radius);
 		if (closestVertex != null) {
 			return closestVertex;
 		}
