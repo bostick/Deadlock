@@ -1,5 +1,6 @@
 package com.gutabi.deadlock.controller;
 
+
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
@@ -18,13 +19,14 @@ import com.gutabi.deadlock.model.CarState;
 import com.gutabi.deadlock.model.CrashInfo;
 import com.gutabi.deadlock.model.CrashSite;
 
+
 public class SimulationRunnable implements Runnable {
 	
 	List<Car> specials = new ArrayList<Car>();
 	
 	long step = 0;
 	
-	@SuppressWarnings("serial")
+	//@SuppressWarnings("serial")
 	@Override
 	public void run() {
 		
@@ -36,7 +38,13 @@ public class SimulationRunnable implements Runnable {
 		final List<Car> movingCarsCopy;
 		final List<Car> crashedCarsCopy;
 		
+		firstCrashSite = null;
+		crashes.clear();
+		
 		synchronized (MODEL) {
+			
+			MODEL.movingCars.clear();
+			MODEL.crashedCars.clear();
 			
 			edgesCopy = new ArrayList<Edge>();
 			for (Edge e : MODEL.getEdges()) {
@@ -62,37 +70,35 @@ public class SimulationRunnable implements Runnable {
 				}
 			}
 			
+			List<Vertex> sources = new ArrayList<Vertex>();
+			for (Vertex v : verticesCopy) {
+				if (v.getType() == VertexType.SOURCE && !v.hasCrash) {
+					sources.add(v);
+				}
+			}
+			List<Vertex> toRemove = new ArrayList<Vertex>();
+			for (Car c : movingCarsCopy) {
+				Position carPos = c.getPosition();
+				for (Vertex v : sources) {
+					if (carPos.distanceTo(new VertexPosition(v, null, null, 0)) <= 10) {
+						toRemove.add(v);
+					}
+				}
+			}
+			for (Vertex v : toRemove) {
+				sources.remove(v);
+			}
+			
+			if (sources.isEmpty() && movingCarsCopy.isEmpty()) {
+//				CONTROLLER.q
+//				CONTROLLER.stopRunning();
+				//break outer;
+				break outer;
+			}
+			
 			if (MODEL.SPAWN_FREQUENCY > 0 && (step == 0 || (step - lastSpawnStep) >= MODEL.SPAWN_FREQUENCY)) {
 				
 				List<Car> newCars = new ArrayList<Car>();
-				
-				List<Vertex> sources = new ArrayList<Vertex>();
-				
-				for (Vertex v : verticesCopy) {
-					if (v.getType() == VertexType.SOURCE && !v.hasCrash) {
-						sources.add(v);
-					}
-				}
-				List<Vertex> toRemove = new ArrayList<Vertex>();
-				for (Car c : movingCarsCopy) {
-					Position carPos = c.getPosition();
-					for (Vertex v : sources) {
-						if (carPos.distanceTo(new VertexPosition(v, null, null, 0)) <= 10) {
-							toRemove.add(v);
-						}
-					}
-				}
-				for (Car c : crashedCarsCopy) {
-					Position carPos = c.getPosition();
-					for (Vertex v : sources) {
-						if (carPos.distanceTo(new VertexPosition(v, null, null, 0)) <= 10) {
-							toRemove.add(v);
-						}
-					}
-				}
-				for (Vertex v : toRemove) {
-					sources.remove(v);
-				}
 				
 				int n = sources.size();
 				
@@ -310,7 +316,7 @@ public class SimulationRunnable implements Runnable {
 			collapseFutures(movingCarsCopy);
 			removeSinked(movingCarsCopy);
 			
-			assert checkDistances(new ArrayList<Car>(){{addAll(movingCarsCopy);addAll(crashedCarsCopy);}});
+			//assert checkDistances(new ArrayList<Car>(){{addAll(movingCarsCopy);addAll(crashedCarsCopy);}});
 			
 			synchronized (MODEL) {
 				MODEL.movingCars = new ArrayList<Car>(movingCarsCopy);
@@ -329,13 +335,6 @@ public class SimulationRunnable implements Runnable {
 			step++;
 			
 		} // outer
-		
-		synchronized (MODEL) {
-			MODEL.movingCars.clear();
-			MODEL.crashedCars.clear();
-		}
-		firstCrashSite = null;
-		crashes.clear();
 		
 	}
 	
@@ -568,19 +567,19 @@ public class SimulationRunnable implements Runnable {
 		return newlyCrashedCars;
 	}
 	
-	private boolean checkDistances(List<Car> cars) {
-		for (int i = 0; i < cars.size(); i++) {
-			Car c = cars.get(i);
-			Position cPos = c.getLastFuturePosition();
-			for (int j = i + 1; j < cars.size(); j++) {
-				Car d = cars.get(j);
-				Position dPos = d.getLastFuturePosition();
-				double dist = cPos.distanceTo(dPos);
-				assert DMath.doubleEquals(dist, 10.0) || dist > 10.0;
-			}
-		}
-		return true;
-	}
+//	private boolean checkDistances(List<Car> cars) {
+//		for (int i = 0; i < cars.size(); i++) {
+//			Car c = cars.get(i);
+//			Position cPos = c.getLastFuturePosition();
+//			for (int j = i + 1; j < cars.size(); j++) {
+//				Car d = cars.get(j);
+//				Position dPos = d.getLastFuturePosition();
+//				double dist = cPos.distanceTo(dPos);
+//				assert DMath.doubleEquals(dist, 10.0) || dist > 10.0;
+//			}
+//		}
+//		return true;
+//	}
 	
 	private void collapseFutures(List<Car> cars) {
 		

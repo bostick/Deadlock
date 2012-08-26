@@ -1,7 +1,6 @@
 package com.gutabi.deadlock.controller;
 
 import static com.gutabi.deadlock.controller.DeadlockController.CONTROLLER;
-import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -35,7 +34,6 @@ public class MouseController implements MouseListener, MouseMotionListener {
 			@Override
 			public void run() {
 				CONTROLLER.pressed(p);
-				VIEW.repaint();
 			}}
 		);
 	}
@@ -45,7 +43,6 @@ public class MouseController implements MouseListener, MouseMotionListener {
 			@Override
 			public void run() {
 				CONTROLLER.dragged(p);
-				VIEW.repaint();
 			}}
 		);
 	}
@@ -55,7 +52,6 @@ public class MouseController implements MouseListener, MouseMotionListener {
 			@Override
 			public void run() {
 				CONTROLLER.released();
-				VIEW.repaint();
 			}}
 		);
 	}

@@ -19,7 +19,6 @@ import javax.swing.KeyStroke;
 import org.apache.log4j.Logger;
 
 import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.core.Vertex;
 import com.gutabi.deadlock.view.WindowInfo;
 
 public class DeadlockController implements ActionListener {
@@ -100,6 +99,8 @@ public class DeadlockController implements ActionListener {
 			switch (MODEL.getMode()) {
 			case IDLE:
 				CONTROLLER.draftStart(p);
+				//VIEW.renderBackground();
+				VIEW.repaint();
 				break;
 			case DRAFTING:
 				assert false;
@@ -124,6 +125,8 @@ public class DeadlockController implements ActionListener {
 				break;
 			case DRAFTING:
 				CONTROLLER.draftMove(p);
+				//VIEW.renderBackground();
+				VIEW.repaint();
 				break;
 			case ZOOMING:
 				assert false;
@@ -144,6 +147,8 @@ public class DeadlockController implements ActionListener {
 				break;
 			case DRAFTING:
 				CONTROLLER.draftEnd();
+				VIEW.renderBackground();
+				VIEW.repaint();
 				break;
 			case ZOOMING:
 				assert false;
@@ -163,6 +168,8 @@ public class DeadlockController implements ActionListener {
 		assert Thread.currentThread().getName().equals("controller");
 		
 		MODEL.setMode(ControlMode.RUNNING);
+		
+		VIEW.renderBackground();
 		
 		Thread t = new Thread(new SimulationRunnable());
 		t.start();
@@ -196,7 +203,7 @@ public class DeadlockController implements ActionListener {
 		
 		Point p;
 		p = pp;
-		p = new Point(p.getX() * 1/MODEL.getZoom(), p.getY() * 1/MODEL.getZoom());
+		p = new Point(Math.rint(p.getX() * 1/MODEL.getZoom()), Math.rint(p.getY() * 1/MODEL.getZoom()));
 		p = Point.add(p, MODEL.viewLoc);
 		
 		MODEL.curStrokeRaw.add(p);
@@ -214,7 +221,8 @@ public class DeadlockController implements ActionListener {
 				curStroke = MODEL.curStrokeRaw;
 				break;
 			case STRATEGY1:
-				curStroke = massageStrategy1(MODEL.curStrokeRaw);
+				//curStroke = massageStrategy1(MODEL.curStrokeRaw);
+				curStroke = MODEL.curStrokeRaw;
 				break;
 			case CURRENT:
 				curStroke = massageCurrent(MODEL.curStrokeRaw);
@@ -223,7 +231,7 @@ public class DeadlockController implements ActionListener {
 		} else {
 			curStroke = MODEL.curStrokeRaw;
 		}
-		MODEL.processStroke(curStroke);
+		MODEL.processNewStroke(curStroke);
 		assert MODEL.checkConsistency();
 		MODEL.lastPointRaw = null;
 		MODEL.curStrokeRaw.clear();
@@ -310,94 +318,99 @@ public class DeadlockController implements ActionListener {
 	/*
 	 * only adjust to closest vertices
 	 */
-	private List<Point> massageStrategy1(List<Point> raw) {
-		
-		List<Point> adj = new ArrayList<Point>(raw);
-		
-		if (adj.size() == 1) {
-			return adj;
-		}
-		
-		int s = raw.size();
-		Point first = raw.get(0);
-		Point last = raw.get(s-1);
-		
-		/*
-		 * first and last have to be very close
-		 */
-		if ((!Point.equals(last, first)) && Point.distance(last, first) * MODEL.getZoom() <= 20.0) {
-			/*
-			 * maintain invariant that there are no contiguous, equal points
-			 */
-			if (!Point.equals(raw.get(s-2), first)) {
-				adj.set(s-1, first);
-				last = first;
-			} else {
-				adj.remove(s-1);
-				s = s-1;
-				last = raw.get(s-1);
-			}
-		}
-		
-		Point firstBest = null;
-		
-		Vertex firstClosest = MODEL.findClosestVertex(first);
-		if (firstClosest != null && Point.distance(first, firstClosest.getPoint()) * MODEL.getZoom() <= 40.0) {
-			firstBest = firstClosest.getPoint();
-		}
-		
-		if (firstBest != null) {
-			
-			if (adj.size() == 1) {
-				adj.set(0, firstBest);
-			} else {
-				if (!Point.equals(adj.get(1), firstBest)) {
-					adj.set(0, firstBest);
-					first = adj.get(0);
-				} else {
-					adj.remove(0);
-					s = s-1;
-					first = adj.get(0);
-				}
-			}
-			
-		}
-		
-		Point lastBest = null;
-		
-		Vertex lastClosest = MODEL.findClosestVertex(last);
-		if (lastClosest != null && Point.distance(last, lastClosest.getPoint()) * MODEL.getZoom() <= 40.0) {
-			lastBest = lastClosest.getPoint();
-		}
-		
-		/*
-		 * if firstBest and lastBest are both non-null and equal, then don't also connect the last to the same vertex, it looks weird
-		 */
-		if (lastBest != null && lastBest != firstBest) {
-			
-			if (adj.size() == 1) {
-				adj.set(s-1, lastBest);
-			} else {
-				if (!Point.equals(adj.get(s-2), lastBest)) {
-					adj.set(s-1, lastBest);
-					last = adj.get(s-1);
-				} else {
-					adj.remove(s-1);
-					s = s-1;
-					last = adj.get(s-1);
-				}
-			}
-			
-		}
-		
-		return adj;
-	}
+//	private List<Point> massageStrategy1(List<Point> raw) {
+//		
+//		List<Point> adj = new ArrayList<Point>(raw);
+//		
+//		if (adj.size() == 1) {
+//			return adj;
+//		}
+//		
+//		int s = raw.size();
+//		Point first = raw.get(0);
+//		Point last = raw.get(s-1);
+//		
+//		/*
+//		 * first and last have to be very close
+//		 */
+//		if ((!Point.equals(last, first)) && Point.distance(last, first) * MODEL.getZoom() <= 20.0) {
+//			/*
+//			 * maintain invariant that there are no contiguous, equal points
+//			 */
+//			if (!Point.equals(raw.get(s-2), first)) {
+//				adj.set(s-1, first);
+//				last = first;
+//			} else {
+//				adj.remove(s-1);
+//				s = s-1;
+//				last = raw.get(s-1);
+//			}
+//		}
+//		
+//		Point firstBest = null;
+//		
+//		VertexPosition firstClosest = MODEL.findClosestVertex(first);
+//		if (firstClosest != null && Point.distance(first, firstClosest.getPoint()) * MODEL.getZoom() <= 40.0) {
+//			firstBest = firstClosest.getPoint();
+//		}
+//		
+//		if (firstBest != null) {
+//			
+//			if (adj.size() == 1) {
+//				adj.set(0, firstBest);
+//			} else {
+//				if (!Point.equals(adj.get(1), firstBest)) {
+//					adj.set(0, firstBest);
+//					first = adj.get(0);
+//				} else {
+//					adj.remove(0);
+//					s = s-1;
+//					first = adj.get(0);
+//				}
+//			}
+//			
+//		}
+//		
+//		Point lastBest = null;
+//		
+//		VertexPosition lastClosest = MODEL.findClosestVertex(last);
+//		if (lastClosest != null && Point.distance(last, lastClosest.getPoint()) * MODEL.getZoom() <= 40.0) {
+//			lastBest = lastClosest.getPoint();
+//		}
+//		
+//		/*
+//		 * if firstBest and lastBest are both non-null and equal, then don't also connect the last to the same vertex, it looks weird
+//		 */
+//		if (lastBest != null && lastBest != firstBest) {
+//			
+//			if (adj.size() == 1) {
+//				adj.set(s-1, lastBest);
+//			} else {
+//				if (!Point.equals(adj.get(s-2), lastBest)) {
+//					adj.set(s-1, lastBest);
+//					last = adj.get(s-1);
+//				} else {
+//					adj.remove(s-1);
+//					s = s-1;
+//					last = adj.get(s-1);
+//				}
+//			}
+//			
+//		}
+//		
+//		return adj;
+//	}
 	
+	/*
+	 * deal with general shape here
+	 * 
+	 * do not worry about intersections with other edges here
+	 */
 	private List<Point> massageCurrent(List<Point> raw) {
 		
 		List<Point> m = raw;
 		m = removeDuplicates(m);
-		m = connectEndsToVerticesOrEdges(m);
+		//m = connectEndsToVerticesOrEdges(m);
 		//m = mergeIntersectingOrCloseSegments(m);
 //		if (approximate shape like line, circle, etc) {
 //			m = massage into shape
@@ -420,122 +433,122 @@ public class DeadlockController implements ActionListener {
 		return adj;
 	}
 	
-	private List<Point> connectEndsToVerticesOrEdges(List<Point> raw) {
-		
-		List<Point> adj = new ArrayList<Point>(raw);
-		
-		if (adj.size() == 1) {
-			return adj;
-		}
-		
-		int s = raw.size();
-		Point first = raw.get(0);
-		Point last = raw.get(s-1);
-		
-		/*
-		 * first and last have to be very close
-		 */
-		if ((!Point.equals(last, first)) && Point.distance(last, first) <= 10.0) {
-			/*
-			 * maintain invariant that there are no contiguous, equal points
-			 */
-			if (!Point.equals(raw.get(s-2), first)) {
-				adj.set(s-1, first);
-				last = first;
-			} else {
-				adj.remove(s-1);
-				s = s-1;
-				last = raw.get(s-1);
-			}
-		} else {
-			logger.debug(Point.distance(last, first) + " " + MODEL.getZoom());
-		}
-		
-		Point firstBest = null;
-		
-		Vertex firstClosest = MODEL.findClosestVertex(first);
-		if (firstClosest != null && Point.distance(first, firstClosest.getPoint()) <= 10.0) {
-			firstBest = firstClosest.getPoint();
-		}
-		
-//		if (firstBest == null) {
-//			/*
-//			 * the point doesn't necessarily have to exist yet, it could be between 2 other points
-//			 */
-//			try {
-//				EdgePosition closest = MODEL.findClosestEdgePosition(first);
-//				if (closest != null && Point.distance(first, closest.getPoint()) <= 10.0) {
-//					firstBest = closest.getPoint();
-//				}
-//			} catch (PositionException e) {
-//				/*
-//				 * this means there is a vertex closer to first than any segment
-//				 */
-//			}
+//	private List<Point> connectEndsToVerticesOrEdges(List<Point> raw) {
+//		
+//		List<Point> adj = new ArrayList<Point>(raw);
+//		
+//		if (adj.size() == 1) {
+//			return adj;
 //		}
-		
-		if (firstBest != null) {
-			
-			if (adj.size() == 1) {
-				adj.set(0, firstBest);
-			} else {
-				if (!Point.equals(adj.get(1), firstBest)) {
-					adj.set(0, firstBest);
-					first = adj.get(0);
-				} else {
-					adj.remove(0);
-					s = s-1;
-					first = adj.get(0);
-				}
-			}
-			
-		}
-		
-		Point lastBest = null;
-		
-		Vertex lastClosest = MODEL.findClosestVertex(last);
-		if (lastClosest != null && Point.distance(last, lastClosest.getPoint()) <= 10.0) {
-			lastBest = lastClosest.getPoint();
-		}
-		
-//		if (lastBest == null) {
+//		
+//		int s = raw.size();
+//		Point first = raw.get(0);
+//		Point last = raw.get(s-1);
+//		
+//		/*
+//		 * first and last have to be very close
+//		 */
+//		if ((!Point.equals(last, first)) && Point.distance(last, first) <= 10.0) {
 //			/*
-//			 * the point doesn't necessarily have to exist yet, it could be between 2 other points
+//			 * maintain invariant that there are no contiguous, equal points
 //			 */
-//			try {
-//				EdgePosition closest = MODEL.findClosestEdgePosition(last);
-//				if (closest != null && Point.distance(last, closest.getPoint()) <= 10.0) {
-//					lastBest = closest.getPoint();
-//				}
-//			} catch (PositionException e) {
-//				/*
-//				 * this means there is a vertex closer to first than any segment
-//				 */
+//			if (!Point.equals(raw.get(s-2), first)) {
+//				adj.set(s-1, first);
+//				last = first;
+//			} else {
+//				adj.remove(s-1);
+//				s = s-1;
+//				last = raw.get(s-1);
 //			}
+//		} else {
+//			logger.debug(Point.distance(last, first) + " " + MODEL.getZoom());
 //		}
-		
-		/*
-		 * if firstBest and lastBest are both non-null and equal, then don't also connect the last to the same vertex, it looks weird
-		 */
-		if (lastBest != null && (firstBest == null || !Point.equals(lastBest, firstBest))) {
-			
-			if (adj.size() == 1) {
-				adj.set(s-1, lastBest);
-			} else {
-				if (!Point.equals(adj.get(s-2), lastBest)) {
-					adj.set(s-1, lastBest);
-					last = adj.get(s-1);
-				} else {
-					adj.remove(s-1);
-					s = s-1;
-					last = adj.get(s-1);
-				}
-			}
-			
-		}
-		
-		return adj;
-		
-	}
+//		
+//		Point firstBest = null;
+//		
+//		VertexPosition firstClosest = MODEL.findClosestVertex(first);
+//		if (firstClosest != null && Point.distance(first, firstClosest.getPoint()) <= 10.0) {
+//			firstBest = firstClosest.getPoint();
+//		}
+//		
+////		if (firstBest == null) {
+////			/*
+////			 * the point doesn't necessarily have to exist yet, it could be between 2 other points
+////			 */
+////			try {
+////				EdgePosition closest = MODEL.findClosestEdgePosition(first);
+////				if (closest != null && Point.distance(first, closest.getPoint()) <= 10.0) {
+////					firstBest = closest.getPoint();
+////				}
+////			} catch (PositionException e) {
+////				/*
+////				 * this means there is a vertex closer to first than any segment
+////				 */
+////			}
+////		}
+//		
+//		if (firstBest != null) {
+//			
+//			if (adj.size() == 1) {
+//				adj.set(0, firstBest);
+//			} else {
+//				if (!Point.equals(adj.get(1), firstBest)) {
+//					adj.set(0, firstBest);
+//					first = adj.get(0);
+//				} else {
+//					adj.remove(0);
+//					s = s-1;
+//					first = adj.get(0);
+//				}
+//			}
+//			
+//		}
+//		
+//		Point lastBest = null;
+//		
+//		VertexPosition lastClosest = MODEL.findClosestVertex(last);
+//		if (lastClosest != null && Point.distance(last, lastClosest.getPoint()) <= 10.0) {
+//			lastBest = lastClosest.getPoint();
+//		}
+//		
+////		if (lastBest == null) {
+////			/*
+////			 * the point doesn't necessarily have to exist yet, it could be between 2 other points
+////			 */
+////			try {
+////				EdgePosition closest = MODEL.findClosestEdgePosition(last);
+////				if (closest != null && Point.distance(last, closest.getPoint()) <= 10.0) {
+////					lastBest = closest.getPoint();
+////				}
+////			} catch (PositionException e) {
+////				/*
+////				 * this means there is a vertex closer to first than any segment
+////				 */
+////			}
+////		}
+//		
+//		/*
+//		 * if firstBest and lastBest are both non-null and equal, then don't also connect the last to the same vertex, it looks weird
+//		 */
+//		if (lastBest != null && (firstBest == null || !Point.equals(lastBest, firstBest))) {
+//			
+//			if (adj.size() == 1) {
+//				adj.set(s-1, lastBest);
+//			} else {
+//				if (!Point.equals(adj.get(s-2), lastBest)) {
+//					adj.set(s-1, lastBest);
+//					last = adj.get(s-1);
+//				} else {
+//					adj.remove(s-1);
+//					s = s-1;
+//					last = adj.get(s-1);
+//				}
+//			}
+//			
+//		}
+//		
+//		return adj;
+//		
+//	}
 	
 }

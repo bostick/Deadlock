@@ -131,17 +131,68 @@ public class Graph {
 		return found;
 	}
 	
-	public void processStroke(List<Point> stroke) {
-		processStroke(stroke, true);
+//	public VertexPosition findClosestVertexPosition(Point a, double radius) {
+//		return findClosestVertexPosition(a, null, radius);
+//	}
+	
+	/**
+	 * returns the closest vertex within radius that is not in the excluded radius
+	 */
+	public VertexPosition findClosestVertexPosition(Point a, double radius) {
+		Vertex closest = null;
+		for (Vertex v : getVertices()) {
+			Point vp = v.getPoint();
+			if (Point.distance(a, vp) < radius) {
+				if (closest == null) {
+					closest = v;
+				} else if (Point.distance(a, vp) < Point.distance(a, closest.getPoint())) {
+					closest = v;
+				}
+			}	
+		}
+		if (closest != null) {
+			return new VertexPosition(closest, null, null, 0);
+		} else {
+			return null;
+		}
 	}
 	
+	/**
+	 * returns the closest edge within radius that is not in the excluded radius
+	 */
+	public EdgePosition findClosestEdgePosition(Point a, Point exclude, double radius) {
+		return getSegmentTree().findClosestEdgePosition(a, exclude, radius);
+	}
+	
+//	enum Proximity {
+//		
+//		
+//		
+//	}
+	
+	/**
+	 * this is down at the grid point level
+	 * only adjusts intersections to grid points and adds segments 
+	 */
 	@SuppressWarnings("serial")
-	public void processStroke(List<Point> stroke, boolean addingNewStroke) {
+	public void addStroke(List<Point> stroke, boolean newStroke) {
 		
 		for (int i = 0; i < stroke.size()-1; i++) {
 			Point a = stroke.get(i);
 			Point b = stroke.get(i+1);
 			assert !Point.equals(a, b);
+			
+			if (newStroke) {
+				Point[] newSegment = handleIntersections(a, b, (i == 0));
+				if (newSegment[0] == null && newSegment[1] == null) {
+					/*
+					 * <a, b> is too close to another edge, so it is being skipped
+					 */
+					continue;
+				}
+				a = newSegment[0];
+				b = newSegment[1];
+			}
 			
 			List<PointToBeAdded> betweenABPoints = fillinIntersections(a, b);
 			
@@ -157,7 +208,7 @@ public class Graph {
 					Point d = e.getPoint(index+1);
 					if ((Point.equals(p1.p, d) || Point.intersect(p1.p, c, d)) && (Point.equals(p2.p, d) || Point.intersect(p2.p, c, d))) {
 						/*
-						 * <p1, p2> is completely within <c, d>, so do nothing
+						 * <p1, p2> is completely within <c, d>, so do not add
 						 */
 						continue betweenLoop;
 					}
@@ -168,12 +219,6 @@ public class Graph {
 				final Point p2Int = p2.p.toInteger();
 				
 				if (!Point.equals(p1Int, p2Int)) {
-					
-					if (addingNewStroke) {
-						if (segmentTooClose(p1Int, p2Int)) {
-							continue betweenLoop;
-						}
-					}
 					
 					if (!Point.equals(p1.p, p1Int) && tryFindEdgePosition(p1.p) != null) {
 						adjustEdgePointToGrid(p1.p);
@@ -189,7 +234,7 @@ public class Graph {
 						 */
 						addSegment(p1Int, p2Int);
 					} else {
-						processStroke(new ArrayList<Point>(){{add(p1Int);add(p2Int);}});
+						addStroke(new ArrayList<Point>(){{add(p1Int);add(p2Int);}}, true);
 					}
 					
 				}
@@ -197,92 +242,99 @@ public class Graph {
 			}
 		}
 		
-		if (addingNewStroke) {
-			currentlyTooClose = false;
-			currentlyOK = false;
+		if (newStroke) {
+			cleanupEdges();
 		}
-		
-		cleanupEdges();
 		
 	}
 	
-	private void cleanupEdges() {
+	
+	boolean tooClose = false;
+	
+	/*
+	 * deal with curvature and intersections here
+	 */
+	public Point[] handleIntersections(Point a, Point b, boolean firstSegmentOfStroke) {
 		
-		List<Edge> toRemove = new ArrayList<Edge>();
-		boolean changed;
-		while (true) {
-			toRemove.clear();
-			changed = false;
-			for (Edge e : edges) {
-				if (e.getTotalLength() <= 10) {
-					toRemove.add(e);
-					changed = true;
-				}
-			}
-			for (Edge e : toRemove) {
-				
-				if (e.isRemoved()) {
-					/*
-					 * may be removed from having been merged in a previous iteration
-					 */
-					continue;
-				}
-				
-				if (!e.isLoop()) {
-					
-					Vertex eStart = e.getStart();
-					Vertex eEnd = e.getEnd();
-					
-					eStart.removeEdge(e);
-					List<Edge> eStartEdges = eStart.getEdges();
-					if (eStartEdges.size() == 0) {
-						removeVertex(eStart);
-					} else if (eStartEdges.size() == 2) {
-						merge(eStartEdges.get(0), eStartEdges.get(1));
-					}
-					
-					eEnd.removeEdge(e);
-					List<Edge> eEndEdges = eEnd.getEdges();
-					if (eEndEdges.size() == 0) {
-						removeVertex(eEnd);
-					} else if (eEndEdges.size() == 2) {
-						merge(eEndEdges.get(0), eEndEdges.get(1));
-					}
-					
-					removeEdge(e);
-					
+		Point[] ret = new Point[2];
+		Position closestA;
+		Position closestB;
+		
+		if (firstSegmentOfStroke) {
+			
+			closestA = closestPosition(a, 10);
+			closestB = closestPosition(b, 10);
+			
+			if (closestA != null) {
+				if (closestB != null) {
+					tooClose = true;
+					ret[0] = null;
+					ret[1] = null;
 				} else {
-					
-					if (!e.isStandAlone()) {
-						
-						Vertex v = e.getStart();
-						
-						v.removeEdge(e);
-						v.removeEdge(e);
-						
-						List<Edge> eds = v.getEdges();
-						if (eds.size() == 0) {
-							assert false;
-						} else if (eds.size() == 2) {
-							merge(eds.get(0), eds.get(1));
-						}
-						
-						removeEdge(e);
-						
-					} else {
-						
-						removeEdge(e);
-						
-					}
-					
+					tooClose = false;
+					ret[0] = closestA.getPoint();
+					ret[1] = b;
 				}
-				
+			} else {
+				if (closestB != null) {
+					tooClose = true;
+					ret[0] = a;
+					ret[1] = closestB.getPoint();
+				} else {
+					tooClose = false;
+					ret[0] = a;
+					ret[1] = b;
+				}
 			}
-			if (!changed) {
-				break;
+			
+		} else {
+			
+			closestA = closestPosition(a, 10);
+			closestB = closestPosition(b, a, 10);
+			
+			if (closestA != null) {
+				if (closestB != null) {
+					tooClose = true;
+					ret[0] = null;
+					ret[1] = null;
+				} else {
+					tooClose = false;
+					ret[0] = closestA.getPoint();
+					ret[1] = b;
+				}
+			} else {
+				if (closestB != null) {
+					tooClose = true;
+					ret[0] = a;
+					ret[1] = closestB.getPoint();
+				} else {
+					tooClose = false;
+					ret[0] = a;
+					ret[1] = b;
+				}
 			}
+			
 		}
 		
+		assert ret[0] == null && ret[1] == null || !Point.equals(ret[0], ret[1]);
+		return ret;
+		
+	}
+	
+	private Position closestPosition(Point a, double radius) {
+		return closestPosition(a, null, radius);
+	}
+	
+	private Position closestPosition(Point a, Point exclude, double radius) {
+		VertexPosition closestVertex = findClosestVertexPosition(a, radius);
+		if (closestVertex != null) {
+			return closestVertex;
+		}
+		EdgePosition closestEdge = findClosestEdgePosition(a, exclude, radius);
+		if (closestEdge != null) {
+			return closestEdge;
+		}
+		return null;
 	}
 	
 	private List<PointToBeAdded> fillinIntersections(Point a, Point b) {
@@ -291,8 +343,6 @@ public class Graph {
 		
 		betweenABPointsAdd(betweenABPoints, new PointToBeAdded(a, 0.0));
 		betweenABPointsAdd(betweenABPoints, new PointToBeAdded(b, 1.0));
-		
-		boolean stopCheckingForTooClose = false;
 		
 		for (Segment in : segTree.findAllSegments(a, b)) {
 			Edge e = in.edge;
@@ -320,45 +370,6 @@ public class Graph {
 				
 			}
 			
-			if (!stopCheckingForTooClose) {
-				double aDist = Point.distance(a, c, d);
-				double bDist = Point.distance(b, c, d);
-				
-				if (currentlyTooClose) {
-					if (aDist < 20) {
-						stopCheckingForTooClose = true;
-					}
-				} else if (currentlyOK) {
-					
-					if (bDist < aDist) {
-						if (bDist < 20) {
-							//assert aDist > 20;
-							
-							// save c d
-							//figure out border point
-							
-							currentlyTooClose = true;
-							currentlyOK = false;
-							stopCheckingForTooClose = true;
-						}
-					}
-					
-				} else {
-					// neither currentlyTooClose nor currentlyOK, so just starting
-					if (aDist < 20) {
-						currentlyTooClose = true;
-						stopCheckingForTooClose = true;
-					}
-				}
-			}	
-			
-		}
-		
-		if (!stopCheckingForTooClose) {
-			if (!currentlyOK) {
-				currentlyOK = true;
-				currentlyTooClose = false;
-			}
 		}
 		
 		return betweenABPoints;
@@ -395,59 +406,181 @@ public class Graph {
 		return false;
 	}
 	
+//	Point closestC;
+//	Point closestD;
+//	double closestADist;
+//	double closestBDist;
 	
+//	private boolean segmentTooClose(Point a, Point b) {
+//		
+//		VertexPosition aClosest = findClosestVertexPosition(a);
+//		if (aClosest != null && Point.distance(a, aClosest.getPoint()) <= 10.0) {
+//			lastBest = lastClosest.getPoint();
+//		}
+//		
+//		if (lastBest == null) {
+//			/*
+//			 * the point doesn't necessarily have to exist yet, it could be between 2 other points
+//			 */
+//			try {
+//				EdgePosition closest = MODEL.findClosestEdgePosition(last);
+//				if (closest != null && Point.distance(last, closest.getPoint()) <= 10.0) {
+//					lastBest = closest.getPoint();
+//				}
+//			} catch (PositionException e) {
+//				/*
+//				 * this means there is a vertex closer to first than any segment
+//				 */
+//			}
+//		}
+//		
+//		
+//		
+//		
+//		
+//		
+//		
+//		
+//		
+//		
+//		
+//		
+//		
+//		
+//		for (Segment in : segTree.findAllSegments(a, b, 20)) {
+//			Edge e = in.edge;
+//			int i = in.index;
+//
+//			Point c = e.getPoint(i);
+//			Point d = e.getPoint(i+1);
+//			
+//			/*
+//			 * TODO: the points a and b could be really far away from <c, d>, but for instance <a, b> could intersect with <c, d>
+//			 * this should be considered too close, but right now we are only testing the points a and b
+//			 * we should test the actual segment
+//			 */
+//			
+//			double aDist = Point.distance(a, c, d);
+//			double bDist = Point.distance(b, c, d);
+//			
+//			if (currentlyTooClose) {
+//				if (aDist < 20) {
+//					// still too close
+//					return true;
+//				}
+//			} else if (currentlyOK) {
+//				if (bDist < aDist) {
+//					if (bDist < 20) {
+//						// switching from ok to too close
+//						currentlyTooClose = true;
+//						currentlyOK = false;
+//						return true;
+//					}
+//				}		
+//			} else {
+//				// neither currentlyTooClose nor currentlyOK, so just starting
+//				if (aDist < 20) {
+//					// starting as too close
+//					currentlyTooClose = true;
+//					return true;
+//				}
+//			}
+//			
+//		}
+//		
+//		if (!currentlyOK) {
+//			if (currentlyTooClose) {
+//				// switching from too close to ok
+//				currentlyTooClose = false;
+//			} else {
+//				// starting as ok
+//			}
+//			currentlyOK = true;
+//		} else {
+//			// still ok
+//		}
+//		
+//		return false;
+//	}
 	
-	boolean currentlyTooClose = false;
-	boolean currentlyOK = false;
-	
-	private boolean segmentTooClose(Point a, Point b) {
-
-		for (Segment in : segTree.findAllSegments(a, b, 20)) {
-			Edge e = in.edge;
-			int i = in.index;
-
-			Point c = e.getPoint(i);
-			Point d = e.getPoint(i+1);
+	private void cleanupEdges() {
+		
+		List<Edge> toRemove = new ArrayList<Edge>();
+		boolean changed;
+		
+		while (true) {
+			toRemove.clear();
+			changed = false;
 			
-			/*
-			 * TODO: the points a and b could be really far away from <c, d>, but for instance <a, b> could intersect with <c, d>
-			 * this should be considered too close, but right now we are only testing the points a and b
-			 * we should test the actual segment
-			 */
-			
-			double aDist = Point.distance(a, c, d);
-			double bDist = Point.distance(b, c, d);
-			
-			if (currentlyTooClose) {
-				if (aDist < 20) {
-					return true;
-				}
-			} else if (currentlyOK) {
-				
-				if (bDist < aDist) {
-					if (bDist < 20) {
-						currentlyTooClose = true;
-						currentlyOK = false;
-						return true;
-					}
-				}
-				
-			} else {
-				// neither currentlyTooClose nor currentlyOK, so just starting
-				if (aDist < 20) {
-					currentlyTooClose = true;
-					return true;
+			for (Edge e : edges) {
+				if (e.getTotalLength() <= 10) {
+					toRemove.add(e);
+					changed = true;
 				}
 			}
 			
+			for (Edge e : toRemove) {
+				
+				if (e.isRemoved()) {
+					/*
+					 * may be removed from having been merged in a previous iteration
+					 */
+					continue;
+				}
+				
+				/*
+				 * have to properly cleanup start and end vertices before removing edges
+				 */
+				if (!e.isLoop()) {
+					
+					Vertex eStart = e.getStart();
+					Vertex eEnd = e.getEnd();
+					
+					eStart.removeEdge(e);
+					List<Edge> eStartEdges = eStart.getEdges();
+					if (eStartEdges.size() == 0) {
+						removeVertex(eStart);
+					} else if (eStartEdges.size() == 2) {
+						merge(eStartEdges.get(0), eStartEdges.get(1));
+					}
+					
+					eEnd.removeEdge(e);
+					List<Edge> eEndEdges = eEnd.getEdges();
+					if (eEndEdges.size() == 0) {
+						removeVertex(eEnd);
+					} else if (eEndEdges.size() == 2) {
+						merge(eEndEdges.get(0), eEndEdges.get(1));
+					}
+					
+					removeEdge(e);
+					
+				} else if (!e.isStandAlone()) {
+					
+					Vertex v = e.getStart();
+					
+					v.removeEdge(e);
+					v.removeEdge(e);
+					
+					List<Edge> eds = v.getEdges();
+					if (eds.size() == 0) {
+						assert false;
+					} else if (eds.size() == 2) {
+						merge(eds.get(0), eds.get(1));
+					}
+					
+					removeEdge(e);
+					
+				} else {
+					removeEdge(e);
+				}
+				
+			}
+			
+			if (!changed) {
+				break;
+			}
 		}
 		
-		if (!currentlyOK) {
-			currentlyOK = true;
-			currentlyTooClose = false;
-		}
-		
-		return false;
 	}
 	
 	public void addSegment(Point a, Point b) {
@@ -781,14 +914,14 @@ public class Graph {
 				 * the segment <c, pInt> may intersect with other segments, so we have to start fresh and
 				 * not assume anything
 				 */
-				processStroke(new ArrayList<Point>(){{add(c);add(pInt);}}, false);
+				addStroke(new ArrayList<Point>(){{add(c);add(pInt);}}, false);
 			}
 			if (!Point.equals(pInt, d)) {
 				/*
 				 * the segment <pInt, d> may intersect with other segments, so we have to start fresh and
 				 * not assume anything
 				 */
-				processStroke(new ArrayList<Point>(){{add(pInt);add(d);}}, false);
+				addStroke(new ArrayList<Point>(){{add(pInt);add(d);}}, false);
 			}
 			
 			return true;

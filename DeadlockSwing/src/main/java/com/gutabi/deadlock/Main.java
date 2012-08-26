@@ -26,6 +26,9 @@ public class Main  {
 		VIEW.frame.setVisible(true);
 		VIEW.panel.requestFocusInWindow();
 		
+		VIEW.renderBackground();
+		VIEW.repaint();
+		
 	}
 	
 	static Thread.UncaughtExceptionHandler handler = new Thread.UncaughtExceptionHandler() {

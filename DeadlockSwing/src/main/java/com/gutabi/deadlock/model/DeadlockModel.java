@@ -65,8 +65,8 @@ public class DeadlockModel {
 		crashedCars.clear();
 	}
 	
-	public void processStroke(List<Point> stroke) {
-		graph.processStroke(stroke);
+	public void processNewStroke(List<Point> stroke) {
+		graph.addStroke(stroke, true);
 	}
 	
 	public double getZoom() {
@@ -77,28 +77,13 @@ public class DeadlockModel {
 		return graph.checkConsistency();
 	}
 	
-	public Vertex findClosestVertex(Point a) {
-		
-		Vertex closest = null;
-		
-		for (Vertex v : MODEL.graph.getVertices()) {
-			
-			Point vp = v.getPoint();
-			
-			if (closest == null) {
-				closest = v;
-			} else if (Point.distance(a, vp) < Point.distance(a, closest.getPoint())) {
-				closest = v;
-			}
-			
-		}
-		
-		return closest;
-	}
+//	public VertexPosition findClosestVertex(Point a) {
+//		return graph.findClosestVertexPosition(a);
+//	}
 	
-	public EdgePosition findClosestEdgePosition(Point a) {
-		return graph.getSegmentTree().findClosestEdgePosition(a);
-	}
+//	public EdgePosition findClosestEdgePosition(Point a) {
+//		return graph.findClosestEdgePosition(a);
+//	}
 	
 	public List<Segment> findAllSegments(Point a) {
 		return graph.getSegmentTree().findAllSegments(a);

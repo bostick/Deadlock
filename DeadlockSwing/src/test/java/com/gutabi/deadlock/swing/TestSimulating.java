@@ -2507,8 +2507,8 @@ public class TestSimulating {
 			//MODEL.viewLoc = new Point(575, 375);
 			MODEL.viewLoc = new Point(560, 400);
 			
-			MODEL.processStroke(new ArrayList<Point>(){{add(new Point(600, 450));add(new Point(700, 450));}});
-			MODEL.processStroke(new ArrayList<Point>(){{add(new Point(650, 400));add(new Point(650, 500));}});
+			MODEL.processNewStroke(new ArrayList<Point>(){{add(new Point(600, 450));add(new Point(700, 450));}});
+			MODEL.processNewStroke(new ArrayList<Point>(){{add(new Point(650, 400));add(new Point(650, 500));}});
 			
 			Vertex aV = MODEL.findVertex(new Point(600, 450));
 			Vertex bV = MODEL.findVertex(new Point(650, 500));
@@ -2557,8 +2557,8 @@ public class TestSimulating {
 			//MODEL.viewLoc = new Point(575, 375);
 			MODEL.viewLoc = new Point(560, 400);
 			
-			MODEL.processStroke(new ArrayList<Point>(){{add(new Point(595, 450));add(new Point(695, 450));}});
-			MODEL.processStroke(new ArrayList<Point>(){{add(new Point(650, 400));add(new Point(650, 500));}});
+			MODEL.processNewStroke(new ArrayList<Point>(){{add(new Point(595, 450));add(new Point(695, 450));}});
+			MODEL.processNewStroke(new ArrayList<Point>(){{add(new Point(650, 400));add(new Point(650, 500));}});
 			
 //			MODEL.processStroke(new Point(595, 450), new Point(695, 450));
 //			MODEL.processStroke(new Point(650, 400), new Point(650, 500));
@@ -2613,8 +2613,8 @@ public class TestSimulating {
 			//MODEL.viewLoc = new Point(575, 375);
 			MODEL.viewLoc = new Point(560, 400);
 			
-			MODEL.processStroke(new ArrayList<Point>(){{add(new Point(600, 450));add(new Point(700, 450));}});
-			MODEL.processStroke(new ArrayList<Point>(){{add(new Point(650, 400));add(new Point(650, 500));}});
+			MODEL.processNewStroke(new ArrayList<Point>(){{add(new Point(600, 450));add(new Point(700, 450));}});
+			MODEL.processNewStroke(new ArrayList<Point>(){{add(new Point(650, 400));add(new Point(650, 500));}});
 //			MODEL.processStroke(new Point(600, 450), new Point(700, 450));
 //			MODEL.processStroke(new Point(650, 400), new Point(650, 500));
 			
@@ -2675,8 +2675,8 @@ public class TestSimulating {
 			//MODEL.viewLoc = new Point(575, 375);
 			MODEL.viewLoc = new Point(560, 400);
 			
-			MODEL.processStroke(new ArrayList<Point>(){{add(new Point(600, 450));add(new Point(700, 450));}});
-			MODEL.processStroke(new ArrayList<Point>(){{add(new Point(650, 450));add(new Point(650, 470));}});
+			MODEL.processNewStroke(new ArrayList<Point>(){{add(new Point(600, 450));add(new Point(700, 450));}});
+			MODEL.processNewStroke(new ArrayList<Point>(){{add(new Point(650, 450));add(new Point(650, 470));}});
 //			MODEL.processStroke(new Point(600, 450), new Point(700, 450));
 //			MODEL.processStroke(new Point(650, 450), new Point(650, 470));
 			

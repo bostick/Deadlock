@@ -104,7 +104,7 @@ public class QuadTree {
 	/**
 	 * find closest position on <c, d> to the point b
 	 */
-	public static EdgePosition closestPosition(Point b, Segment si) {
+	public static EdgePosition closestEdgePosition(Point b, Segment si) {
 		Point c = si.start;
 		Point d = si.end;
 		if (Point.equals(b, c)) {
@@ -142,29 +142,34 @@ public class QuadTree {
 	}
 	
 	/**
-	 * find closest existing position to point a
+	 * find closest edge position to point a
 	 */
-	public EdgePosition findClosestEdgePosition(Point a) {
+	public EdgePosition findClosestEdgePosition(Point a, Point exclude, double radius) {
 		EdgePosition best = null;
 		PositionException e = null;
 		for (Segment si : segIndices) {
 			try {
-				EdgePosition closest = closestPosition(a, si);
-				if (best == null) {
-					best = closest;
-				} else if (Point.distance(a, closest.getPoint()) < Point.distance(a, best.getPoint())) {
-					best = closest;
-				}
-				if (e != null) {
-					if (Point.distance(a, best.getPoint()) < Point.distance(a, e.getPoint())) {
-						e = null;
+				EdgePosition closest = closestEdgePosition(a, si);
+				double dist = Point.distance(a, closest.getPoint());
+				if (dist < radius && (exclude == null || dist < Point.distance(exclude, closest.getPoint()))) {
+					if (best == null) {
+						best = closest;
+					} else if (Point.distance(a, closest.getPoint()) < Point.distance(a, best.getPoint())) {
+						best = closest;
+					}
+					if (e != null) {
+						if (Point.distance(a, best.getPoint()) < Point.distance(a, e.getPoint())) {
+							e = null;
+						}
 					}
 				}
 			} catch (PositionException ex) {
-				if (e == null) {
-					e = ex;
-				} else if (Point.distance(a, ex.getPoint()) < Point.distance(a, e.getPoint())) {
-					e = ex;
+				if (Point.distance(a, ex.getPoint()) < radius && (exclude == null || Point.distance(exclude, ex.getPoint()) > radius)) {
+					if (e == null) {
+						e = ex;
+					} else if (Point.distance(a, ex.getPoint()) < Point.distance(a, e.getPoint())) {
+						e = ex;
+					}
 				}
 			}
 		}
@@ -173,4 +178,5 @@ public class QuadTree {
 		}
 		return best;
 	}
+
 }
