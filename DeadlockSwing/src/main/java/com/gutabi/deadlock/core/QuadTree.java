@@ -112,11 +112,11 @@ public class QuadTree {
 				//return new EdgePosition(si, 0.0);
 				return new EdgePosition(si.edge, si.index, 0.0, null, null, 0);
 			} else {
-				throw new PositionException(c);
+				throw new PositionException(b, si);
 			}
 		}
 		if (Point.equals(b, d)) {
-			throw new PositionException(d);
+			throw new PositionException(b, si);
 		}
 		if (Point.equals(c, d)) {
 			throw new IllegalArgumentException("c equals d");
@@ -132,10 +132,10 @@ public class QuadTree {
 			if (si.index > 0) {
 				return new EdgePosition(si.edge, si.index, 0.0, null, null, 0);
 			} else {
-				throw new PositionException(c);
+				throw new PositionException(b, si);
 			}
 		} else if (u >= 1.0) {
-			throw new PositionException(d);
+			throw new PositionException(b, si);
 		} else {
 			return new EdgePosition(si.edge, si.index, u, null, null, 0);
 		}
@@ -146,35 +146,39 @@ public class QuadTree {
 	 */
 	public EdgePosition findClosestEdgePosition(Point a, Point exclude, double radius) {
 		EdgePosition best = null;
-		PositionException e = null;
+		PositionException ex = null;
 		for (Segment si : segIndices) {
 			try {
 				EdgePosition closest = closestEdgePosition(a, si);
-				double dist = Point.distance(a, closest.getPoint());
-				if (dist < radius && (exclude == null || dist < Point.distance(exclude, closest.getPoint()))) {
+				Point ep = closest.getPoint();
+				if (exclude != null && Point.equals(a, exclude) && Point.equals(ep, exclude)) {
+					continue;
+				}
+				double dist = Point.distance(a, ep);
+				if (dist < radius && (exclude == null || Point.equals(a, exclude) || dist < Point.distance(exclude, ep))) {
 					if (best == null) {
 						best = closest;
-					} else if (Point.distance(a, closest.getPoint()) < Point.distance(a, best.getPoint())) {
+					} else if (Point.distance(a, ep) < Point.distance(a, best.getPoint())) {
 						best = closest;
 					}
-					if (e != null) {
-						if (Point.distance(a, best.getPoint()) < Point.distance(a, e.getPoint())) {
-							e = null;
+					if (ex != null) {
+						if (Point.distance(a, best.getPoint()) < Point.distance(a, ex.getPoint())) {
+							ex = null;
 						}
 					}
 				}
-			} catch (PositionException ex) {
-				if (Point.distance(a, ex.getPoint()) < radius && (exclude == null || Point.distance(exclude, ex.getPoint()) > radius)) {
-					if (e == null) {
-						e = ex;
-					} else if (Point.distance(a, ex.getPoint()) < Point.distance(a, e.getPoint())) {
-						e = ex;
+			} catch (PositionException newEx) {
+				if (!Point.equals(a, newEx.getPoint()) && Point.distance(a, newEx.getPoint()) < radius && (exclude == null || Point.distance(exclude, newEx.getPoint()) > radius)) {
+					if (ex == null) {
+						ex = newEx;
+					} else if (Point.distance(a, newEx.getPoint()) < Point.distance(a, ex.getPoint())) {
+						ex = newEx;
 					}
 				}
 			}
 		}
-		if (e != null && best != null && Point.distance(a, e.getPoint()) < Point.distance(a, best.getPoint())) {
-			throw e;
+		if (ex != null && best != null && Point.distance(a, ex.getPoint()) < Point.distance(a, best.getPoint())) {
+			throw ex;
 		}
 		return best;
 	}

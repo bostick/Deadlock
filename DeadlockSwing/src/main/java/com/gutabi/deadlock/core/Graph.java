@@ -128,11 +128,33 @@ public class Graph {
 	 * 
 	 */
 	public VertexPosition findClosestVertexPosition(Point a, Point exclude, double radius) {
+		Vertex excludedVertex = null;
+		if (exclude != null) {
+			excludedVertex = tryFindVertex(exclude);
+			
+//			if (excludedVertex != null && Point.equals(a, exclude)) {
+//				
+//			}
+		}
+		
 		Vertex closest = null;
 		for (Vertex v : getVertices()) {
 			Point vp = v.getPoint();
+//			if (exclude != null && Point.equals(a, exclude) && Point.equals(vp, exclude)) {
+//				continue;
+//			}
+			if (excludedVertex != null && !Point.equals(a, exclude) && v == excludedVertex && Point.distance(a, exclude) < radius) {
+				//return new VertexPosition(v, null, null, 0);
+				//return null;
+				/*
+				 * ignore the excluded vertex
+				 */
+				continue;
+			}
 			double dist = Point.distance(a, vp);
-			if (dist < radius && (exclude == null || dist < Point.distance(vp, exclude))) {
+			//if (dist < radius && (exclude == null || Point.equals(a, exclude) || dist < Point.distance(vp, exclude))) {
+			if (dist < radius && (excludedVertex == null || dist < Point.distance(vp, exclude))) {
+			//if (dist < radius) {
 				if (closest == null) {
 					closest = v;
 				} else if (Point.distance(a, vp) < Point.distance(a, closest.getPoint())) {
@@ -165,8 +187,9 @@ public class Graph {
 			Point b = stroke.get(i+1);
 			assert !Point.equals(a, b);
 			
+			Point[] newSegment;
 			if (newStroke) {
-				Point[] newSegment = handleIntersections(a, b, (i == 0));
+				newSegment = handleIntersections(a, b, (i == 0));
 				if (newSegment[0] == null && newSegment[1] == null) {
 					/*
 					 * <a, b> is too close to another edge, so it is being skipped
@@ -238,7 +261,7 @@ public class Graph {
 		Position closestA;
 		Position closestB;
 		
-		closestA = closestPosition(a, 10);
+		closestA = closestPosition(a, a, 10);
 		closestB = closestPosition(b, a, 10);
 		
 		if (closestA != null) {
@@ -254,22 +277,31 @@ public class Graph {
 						ret[0] = closestA.getPoint();
 						ret[1] = closestB.getPoint();
 						
+						assert ret[0] == null && ret[1] == null || !Point.equals(ret[0], ret[1]);
+						return ret;
+						
 					} else {
 						
 						tooClose = true;
 						ret[0] = null;
 						ret[1] = null;
 						
+						assert ret[0] == null && ret[1] == null || !Point.equals(ret[0], ret[1]);
+						return ret;
 					}
 				} else {
 					
-					if (closestA.equals(closestB)) {
-						ret[0] = null;
-						ret[1] = null;
-					} else {
-						ret[0] = closestA.getPoint();
-						ret[1] = closestB.getPoint();
-					}
+					ret[0] = null;
+					ret[1] = null;
+//					if (closestA.equals(closestB)) {
+//						ret[0] = null;
+//						ret[1] = null;
+//					} else {
+//						ret[0] = closestA.getPoint();
+//						ret[1] = closestB.getPoint();
+//					}
+					assert ret[0] == null && ret[1] == null || !Point.equals(ret[0], ret[1]);
+					return ret;
 					
 				}
 				
@@ -277,21 +309,28 @@ public class Graph {
 				tooClose = false;
 				ret[0] = closestA.getPoint();
 				ret[1] = b;
+				
+				assert ret[0] == null && ret[1] == null || !Point.equals(ret[0], ret[1]);
+				return ret;
 			}
 		} else {
 			if (closestB != null) {
 				tooClose = true;
 				ret[0] = a;
 				ret[1] = closestB.getPoint();
+				
+				assert ret[0] == null && ret[1] == null || !Point.equals(ret[0], ret[1]);
+				return ret;
+				
 			} else {
 				tooClose = false;
 				ret[0] = a;
 				ret[1] = b;
+				
+				assert ret[0] == null && ret[1] == null || !Point.equals(ret[0], ret[1]);
+				return ret;
 			}
 		}
-		
-		assert ret[0] == null && ret[1] == null || !Point.equals(ret[0], ret[1]);
-		return ret;
 		
 	}
 	
@@ -306,10 +345,10 @@ public class Graph {
 		}
 		EdgePosition closestEdge = findClosestEdgePosition(a, exclude, radius);
 		if (closestEdge != null) {
-			closestVertex = findClosestVertexPosition(closestEdge.getPoint(), exclude, radius);
-			if (closestVertex != null) {
-				return closestVertex;
-			}
+//			closestVertex = findClosestVertexPosition(closestEdge.getPoint(), exclude, radius);
+//			if (closestVertex != null) {
+//				return closestVertex;
+//			}
 			return closestEdge;
 		}
 		return null;
