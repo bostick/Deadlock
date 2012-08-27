@@ -93,14 +93,6 @@ public class DeadlockModel {
 		return graph.checkConsistency();
 	}
 	
-//	public VertexPosition findClosestVertex(Point a) {
-//		return graph.findClosestVertexPosition(a);
-//	}
-	
-//	public EdgePosition findClosestEdgePosition(Point a) {
-//		return graph.findClosestEdgePosition(a);
-//	}
-	
 	public Position closestPosition(Point a, double radius) {
 		return graph.closestPosition(a, radius);
 	}

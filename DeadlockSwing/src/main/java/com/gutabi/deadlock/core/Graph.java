@@ -66,7 +66,7 @@ public class Graph {
 			int i = in.index;
 			Point c = e.getPoint(i);
 			Point d = e.getPoint(i+1);
-			if (Point.intersect(b, c, d)) {
+			if (Point.intersect(b, c, d) && !Point.equals(b, d)) {
 				return new EdgePosition(e, i, Point.param(b, c, d), null, null, 0);
 			}
 		}
@@ -158,7 +158,6 @@ public class Graph {
 	 * this is down at the grid point level
 	 * only adjusts intersections to grid points and adds segments 
 	 */
-	@SuppressWarnings("serial")
 	public void addStroke(List<Point> stroke, boolean newStroke) {
 		
 		for (int i = 0; i < stroke.size()-1; i++) {
@@ -179,24 +178,10 @@ public class Graph {
 			}
 			
 			List<PointToBeAdded> betweenABPoints = fillinIntersections(a, b);
-			
-			betweenLoop:
+
 			for (int j = 0; j < betweenABPoints.size()-1; j++) {
 				PointToBeAdded p1 = betweenABPoints.get(j);
 				PointToBeAdded p2 = betweenABPoints.get(j+1);
-				
-				for (Segment in : segTree.findAllSegments(p1.p, p2.p)) {
-					Edge e = in.edge;
-					int index = in.index;
-					Point c = e.getPoint(index);
-					Point d = e.getPoint(index+1);
-					if ((Point.equals(p1.p, d) || Point.intersect(p1.p, c, d)) && (Point.equals(p2.p, d) || Point.intersect(p2.p, c, d))) {
-						/*
-						 * <p1, p2> is completely within <c, d>, so do not add
-						 */
-						continue betweenLoop;
-					}
-				}
 				
 				final Point p1Int = p1.p.toInteger();
 				
@@ -204,21 +189,30 @@ public class Graph {
 				
 				if (!Point.equals(p1Int, p2Int)) {
 					
+					boolean p1AdjustResult = false;
+					boolean p2AdjustResult = false;
+					
 					if (!Point.equals(p1.p, p1Int) && tryFindEdgePosition(p1.p) != null) {
-						adjustEdgePointToGrid(p1.p);
+						p1AdjustResult = adjustEdgePointToGrid(p1.p);
 					}
 					
 					if (!Point.equals(p2.p, p2Int) && tryFindEdgePosition(p2.p) != null) {
-						adjustEdgePointToGrid(p2.p);
+						p2AdjustResult = adjustEdgePointToGrid(p2.p);
 					}
 					
-					if (!segmentOverlapsOrIntersects(p1Int, p2Int)) {
-						/*
-						 * the vast majority of cases will be going here
-						 */
-						addSegment(p1Int, p2Int);
+					if (!p1AdjustResult && !p2AdjustResult) {
+						
+						if (!segmentOverlaps(p1Int, p2Int)) {
+							addSegment(p1Int, p2Int);
+						}
+						
 					} else {
-						addStroke(new ArrayList<Point>(){{add(p1Int);add(p2Int);}}, true);
+						
+						List<Point> recurStroke = new ArrayList<Point>();
+						recurStroke.add(p1Int);
+						recurStroke.add(p2Int);
+						addStroke(recurStroke, true);
+						
 					}
 					
 				}
@@ -269,11 +263,10 @@ public class Graph {
 					}
 				} else {
 					
-					if (tooClose) {
+					if (closestA.equals(closestB)) {
 						ret[0] = null;
 						ret[1] = null;
 					} else {
-						tooClose = true;
 						ret[0] = closestA.getPoint();
 						ret[1] = closestB.getPoint();
 					}
@@ -343,12 +336,12 @@ public class Graph {
 				}
 			} catch (OverlappingException ex) {
 				
-				if (Point.intersect(c, a, b)) {
+				if (Point.intersect(c, a, b) && !Point.equals(c, b)) {
 					PointToBeAdded nptba = new PointToBeAdded(c, Point.param(c, a, b));
 					betweenABPointsAdd(betweenABPoints, nptba);
 				}
 				
-				if (Point.intersect(d, a, b)) {
+				if (Point.intersect(d, a, b) && !Point.equals(d, b)) {
 					PointToBeAdded nptba = new PointToBeAdded(d, Point.param(d, a, b));
 					betweenABPointsAdd(betweenABPoints, nptba);
 				}
@@ -371,7 +364,7 @@ public class Graph {
 		}
 	}
 	
-	private boolean segmentOverlapsOrIntersects(Point a, Point b) {
+	private boolean segmentOverlaps(Point a, Point b) {
 		
 		for (Segment in : segTree.findAllSegments(a, b, 10)) {
 			Edge e = in.edge;
@@ -379,16 +372,14 @@ public class Graph {
 			Point c = e.getPoint(i);
 			Point d = e.getPoint(i+1);
 			try {
-				Point inter = Point.intersection(a, b, c, d);
-				if (inter != null && !inter.isInteger()) {
-					return true;
-				}
-			} catch (OverlappingException ex) {	
+				Point.intersection(a, b, c, d);
+			} catch (OverlappingException e1) {
 				return true;
 			}
 		}
 		
 		return false;
+		
 	}
 	
 	private void cleanupEdges() {
@@ -482,7 +473,7 @@ public class Graph {
 			int i = in.index;
 			Point c = e.getPoint(i);
 			Point d = e.getPoint(i+1);
-			if ((Point.equals(a, d) || Point.intersect(a, c, d)) && (Point.equals(b, d) || Point.intersect(b, c, d))) {
+			if (Point.intersect(a, c, d) && Point.intersect(b, c, d)) {
 				return true;
 			}
 		}
@@ -695,12 +686,9 @@ public class Graph {
 			
 			final Point pInt = p.toInteger();
 			
-			/*
-			 * if pInt is c or d, then do not duplicate
-			 * and if the intersection is already an integer point, then there is nothing to do
-			 */
-			if (Point.equals(c, pInt) || Point.equals(d, pInt) ||
-					Point.equals(p, pInt)) {
+			assert !Point.equals(p, pInt);
+			
+			if (Point.equals(c, pInt) || Point.equals(d, pInt)) {
 				/*
 				 * nothing being adjusted
 				 */
@@ -708,9 +696,20 @@ public class Graph {
 			}
 			
 			/*
+			 * p and pInt, while not equal, could both be on <c, d>, so adjusting ultimately would have no effect
+			 */
+			if (Point.intersect(pInt, c, d)) {
+				return false;
+			}
+			
+			/*
 			 * adjust segment to integer coords first
 			 */
 			removeSegment(c, d);
+			
+			info = tryFindEdgePosition(p);
+			assert info == null;
+			
 			if (!Point.equals(c, pInt)) {
 				/*
 				 * the segment <c, pInt> may intersect with other segments, so we have to start fresh and
@@ -725,6 +724,9 @@ public class Graph {
 				 */
 				addStroke(new ArrayList<Point>(){{add(pInt);add(d);}}, false);
 			}
+			
+			info = tryFindEdgePosition(p);
+			assert info == null;
 			
 			return true;
 			

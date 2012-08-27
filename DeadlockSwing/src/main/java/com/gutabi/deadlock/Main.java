@@ -31,7 +31,7 @@ public class Main  {
 		
 	}
 	
-	static Thread.UncaughtExceptionHandler handler = new Thread.UncaughtExceptionHandler() {
+	public static Thread.UncaughtExceptionHandler handler = new Thread.UncaughtExceptionHandler() {
 		@Override
 		public void uncaughtException(Thread thread, Throwable t) {
 			logger.error("Error in thread " + thread.getName() + ": " + t.getMessage(), t);

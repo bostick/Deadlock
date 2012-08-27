@@ -130,28 +130,28 @@ public class Point {
 					return a;
 				} else if (du > 0.0 && du < 1.0) {
 					if (cu < 0.0) {
-						throw new OverlappingException();
+						throw new OverlappingException(a, b, c, d);
 					} else if (doubleEquals(cu, 0.0)) {
-						throw new OverlappingException();
+						throw new OverlappingException(a, b, c, d);
 					} else {
-						throw new OverlappingException();
+						throw new OverlappingException(a, b, c, d);
 					}
 				} else if (doubleEquals(du, 1.0)) {
 					if (cu < 0.0) {
-						throw new OverlappingException();
+						throw new OverlappingException(a, b, c, d);
 					} else if (doubleEquals(cu, 0.0)) {
 						//identical
-						throw new OverlappingException();
+						throw new OverlappingException(a, b, c, d);
 					} else {
-						throw new OverlappingException();
+						throw new OverlappingException(a, b, c, d);
 					}
 				} else {
 					if (cu < 0.0) {
-						throw new OverlappingException();
+						throw new OverlappingException(a, b, c, d);
 					} else if (doubleEquals(cu, 0.0)) {
-						throw new OverlappingException();
+						throw new OverlappingException(a, b, c, d);
 					} else if (cu > 0.0 && cu < 1.0) {
-						throw new OverlappingException();
+						throw new OverlappingException(a, b, c, d);
 					} else if (doubleEquals(cu, 1.0)) {
 						// single point
 						return b;
@@ -285,7 +285,7 @@ public class Point {
 			return true;
 		}
 		if (Point.equals(b, d)) {
-			return false;
+			return true;
 		}	
 		if (Point.equals(c, d)) {
 			throw new IllegalArgumentException("c equals d");
@@ -297,7 +297,7 @@ public class Point {
 		double denom = xdc * xdc + ydc * ydc;
 		assert !doubleEquals(denom, 0.0);
 		double u = (xbc * xdc + ybc * ydc) / denom;
-		if (u >= 0.0 && u < 1.0) {	
+		if (u >= 0.0 && u <= 1.0) {	
 			return doubleEquals(xbc, u * xdc) && doubleEquals(ybc, u * ydc);
 		} else {
 			return false;

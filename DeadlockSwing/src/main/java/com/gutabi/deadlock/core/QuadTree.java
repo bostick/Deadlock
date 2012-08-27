@@ -82,7 +82,7 @@ public class QuadTree {
 			int i = si.index;
 			Point c = e.getPoint(i);
 			Point d = e.getPoint(i+1);
-			if (Point.intersect(a, c, d)) {
+			if (Point.intersect(a, c, d) && !Point.equals(a, d)) {
 				l.add(new Segment(e, i));
 			}
 		}
