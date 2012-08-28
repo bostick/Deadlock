@@ -6352,4 +6352,77 @@ public class TestDragging {
 		Thread.sleep(Long.MAX_VALUE);
 	}
 	
+	@Test
+	public void testBug23() throws Exception {
+		
+		CONTROLLER.strat = MassageStrategy.CURRENT;
+
+		testPressed(new Point(666., 317.));
+		testDragged(new Point(670., 348.));
+		testDragged(new Point(673., 389.));
+		testDragged(new Point(680., 519.));
+		testDragged(new Point(683., 581.));
+		testDragged(new Point(690., 667.));
+		testDragged(new Point(703., 716.));
+		testDragged(new Point(710., 741.));
+		testDragged(new Point(718., 755.));
+		testDragged(new Point(721., 753.));
+		testDragged(new Point(729., 737.));
+		testDragged(new Point(737., 686.));
+		testDragged(new Point(761., 561.));
+		testDragged(new Point(771., 497.));
+		testDragged(new Point(785., 431.));
+		testDragged(new Point(799., 361.));
+		testDragged(new Point(817., 297.));
+		testReleased();
+
+		testPressed(new Point(874., 445.));
+		testDragged(new Point(780., 468.));
+		testDragged(new Point(677., 484.));
+		testDragged(new Point(522., 509.));
+		testReleased();
+		
+		// assert 6 edges
+		
+		Thread.sleep(Long.MAX_VALUE);
+	}
+	
+	@Test
+	public void testBug24() throws Exception {
+		
+		CONTROLLER.strat = MassageStrategy.CURRENT;
+
+		testPressed(new Point(373., 700.));
+		testDragged(new Point(360., 734.));
+		testDragged(new Point(359., 739.));
+		testDragged(new Point(359., 740.));
+		testDragged(new Point(359., 741.));
+		testDragged(new Point(365., 718.));
+		testDragged(new Point(381., 672.));
+		testReleased();
+		
+		//assert 1 edge
+		
+		Thread.sleep(Long.MAX_VALUE);
+	}
+	
+	@Test
+	public void testBug25() throws Exception {
+		
+		CONTROLLER.strat = MassageStrategy.CURRENT;
+
+		testPressed(new Point(393., 643.));
+		testDragged(new Point(465., 695.));
+		testReleased();
+
+		testPressed(new Point(428., 667.));
+		testDragged(new Point(430., 698.));
+		testReleased();
+		
+		testPressed(new Point(415., 680.));
+		testDragged(new Point(454., 652.));
+		testReleased();
+		
+		Thread.sleep(Long.MAX_VALUE);
+	}
 }

@@ -4,19 +4,25 @@ package com.gutabi.deadlock.core;
 public class PositionException extends RuntimeException {
 	
 	private Point p;
-	private Segment s;
+	private Point c;
+	private Point d;
 	
-	public PositionException(Point p, Segment s) {
+	public PositionException(Point p, Point c, Point d) {
 		this.p = p;
-		this.s = s;
+		this.c = c;
+		this.d = d;
 	}
 	
 	public Point getPoint() {
 		return p;
 	}
 	
-	public Segment getSegment() {
-		return s;
+	public Point getSegmentStart() {
+		return c;
+	}
+	
+	public Point getSegmentEnd() {
+		return d;
 	}
 	
 }

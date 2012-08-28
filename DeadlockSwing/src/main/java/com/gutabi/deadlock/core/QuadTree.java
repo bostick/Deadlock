@@ -1,7 +1,5 @@
 package com.gutabi.deadlock.core;
 
-import static com.gutabi.deadlock.core.DMath.doubleEquals;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -109,33 +107,27 @@ public class QuadTree {
 		Point d = si.end;
 		if (Point.equals(b, c)) {
 			if (si.index > 0) {
-				//return new EdgePosition(si, 0.0);
 				return new EdgePosition(si.edge, si.index, 0.0, null, null, 0);
 			} else {
-				throw new PositionException(b, si);
+				throw new PositionException(b, c, d);
 			}
 		}
 		if (Point.equals(b, d)) {
-			throw new PositionException(b, si);
+			throw new PositionException(b, c, d);
 		}
 		if (Point.equals(c, d)) {
 			throw new IllegalArgumentException("c equals d");
 		}
-		double xbc = b.getX() - c.getX();
-		double xdc = d.getX() - c.getX();
-		double ybc = b.getY() - c.getY();
-		double ydc = d.getY() - c.getY();
-		double denom = xdc * xdc + ydc * ydc;
-		assert !doubleEquals(denom, 0.0);
-		double u = (xbc * xdc + ybc * ydc) / denom;
+		
+		double u = Point.u(c, b, d);
 		if (u <= 0.0) {
 			if (si.index > 0) {
 				return new EdgePosition(si.edge, si.index, 0.0, null, null, 0);
 			} else {
-				throw new PositionException(b, si);
+				throw new PositionException(b, c, d);
 			}
 		} else if (u >= 1.0) {
-			throw new PositionException(b, si);
+			throw new PositionException(b, c, d);
 		} else {
 			return new EdgePosition(si.edge, si.index, u, null, null, 0);
 		}
@@ -147,6 +139,10 @@ public class QuadTree {
 	public EdgePosition findClosestEdgePosition(Point a, Point exclude, double radius) {
 		EdgePosition best = null;
 		PositionException ex = null;
+		
+		/*
+		 * test the point a against all segments <c, d>
+		 */
 		for (Segment si : segIndices) {
 			try {
 				EdgePosition closest = closestEdgePosition(a, si);
@@ -180,6 +176,19 @@ public class QuadTree {
 		if (ex != null && best != null && Point.distance(a, ex.getPoint()) < Point.distance(a, best.getPoint())) {
 			throw ex;
 		}
+		
+//		/*
+//		 * now test the segment <exclude, a> against all edge points
+//		 */
+//		for (Segment si : segIndices) {
+//			
+//			if (si.index == 0) {
+//				distance from si.start to <exclude, a>
+//			}
+//			
+//			distance from si.end to <exclude, a>
+//		}
+		
 		return best;
 	}
 

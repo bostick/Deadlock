@@ -182,9 +182,51 @@ public class Graph {
 	 */
 	public void addStroke(List<Point> stroke, boolean newStroke) {
 		
-		for (int i = 0; i < stroke.size()-1; i++) {
-			Point a = stroke.get(i);
-			Point b = stroke.get(i+1);
+		List<Point> stroke2 = new ArrayList<Point>();
+		//double[] segmentAngs = new double[stroke.size()-1];
+		
+		/*
+		 * initialize
+		 */
+		Point a = stroke.get(0);
+		Point b = stroke.get(1);
+		//segmentAngs[0] = Math.atan2(b.getY()-a.getY(), b.getX()-a.getX());
+		stroke2.add(a);
+		stroke2.add(b);
+		
+		for (int i = 2; i < stroke.size(); i++) {
+			
+			Point aa = stroke2.get(stroke2.size()-2);
+			
+			// last good point added
+			a = stroke2.get(stroke2.size()-1);
+			
+			double rad1 = Math.atan2(a.getY()-aa.getY(), a.getX()-aa.getX());
+			
+			b = stroke.get(i);
+			double rad2 = Math.atan2(b.getY()-a.getY(), b.getX()-a.getX());
+			
+			double rad = rad2 - rad1;
+			while (rad > Math.PI) {
+				rad -= 2 * Math.PI;
+			}
+			while (rad < -Math.PI) {
+				rad += 2 * Math.PI;
+			}
+			double sharpRight = -2.35;
+			double sharpLeft = 2.35;
+			
+			if (rad > sharpRight && rad < sharpLeft) {
+				stroke2.add(b);
+			} else {
+				//String.class.getName();
+			}
+			
+		}
+		
+		for (int i = 0; i < stroke2.size()-1; i++) {
+			a = stroke.get(i);
+			b = stroke.get(i+1);
 			assert !Point.equals(a, b);
 			
 			Point[] newSegment;
@@ -249,9 +291,6 @@ public class Graph {
 		
 	}
 	
-	
-	boolean tooClose = false;
-	
 	/*
 	 * deal with curvature and intersections here
 	 */
@@ -267,46 +306,38 @@ public class Graph {
 		if (closestA != null) {
 			if (closestB != null) {
 				
-				if (closestA instanceof VertexPosition && closestB instanceof VertexPosition) {
-					Vertex v1 = ((VertexPosition)closestA).getVertex();
-					Vertex v2 = ((VertexPosition)closestB).getVertex();
-					if (v1 != v2) {
-						
-						// connect 2 vertices that are close together, and stay tooclose
-						tooClose = true;
-						ret[0] = closestA.getPoint();
-						ret[1] = closestB.getPoint();
-						
-						assert ret[0] == null && ret[1] == null || !Point.equals(ret[0], ret[1]);
-						return ret;
-						
-					} else {
-						
-						tooClose = true;
-						ret[0] = null;
-						ret[1] = null;
-						
-						assert ret[0] == null && ret[1] == null || !Point.equals(ret[0], ret[1]);
-						return ret;
-					}
+//				if (closestA instanceof VertexPosition && closestB instanceof VertexPosition) {
+//					Vertex v1 = ((VertexPosition)closestA).getVertex();
+//					Vertex v2 = ((VertexPosition)closestB).getVertex();
+//					if (v1 != v2) {
+//						
+//						// connect 2 vertices that are close together, and stay tooclose
+//						ret[0] = closestA.getPoint();
+//						ret[1] = closestB.getPoint();
+//						
+//						assert ret[0] == null && ret[1] == null || !Point.equals(ret[0], ret[1]);
+//						return ret;
+//						
+//					}
+//				}
+				
+				if (Point.distance(closestA.getPoint(), closestB.getPoint()) > 10) {
+					
+					ret[0] = closestA.getPoint();
+					ret[1] = closestB.getPoint();
+					assert ret[0] == null && ret[1] == null || !Point.equals(ret[0], ret[1]);
+					return ret;
+					
 				} else {
 					
 					ret[0] = null;
 					ret[1] = null;
-//					if (closestA.equals(closestB)) {
-//						ret[0] = null;
-//						ret[1] = null;
-//					} else {
-//						ret[0] = closestA.getPoint();
-//						ret[1] = closestB.getPoint();
-//					}
 					assert ret[0] == null && ret[1] == null || !Point.equals(ret[0], ret[1]);
 					return ret;
 					
 				}
 				
 			} else {
-				tooClose = false;
 				ret[0] = closestA.getPoint();
 				ret[1] = b;
 				
@@ -315,7 +346,6 @@ public class Graph {
 			}
 		} else {
 			if (closestB != null) {
-				tooClose = true;
 				ret[0] = a;
 				ret[1] = closestB.getPoint();
 				
@@ -323,7 +353,6 @@ public class Graph {
 				return ret;
 				
 			} else {
-				tooClose = false;
 				ret[0] = a;
 				ret[1] = b;
 				

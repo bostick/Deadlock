@@ -367,7 +367,7 @@ public class Point {
 	public static double distance(Point b, Point c, Point d) {
 		double u = u(c, b, d);
 		if (u < 0.0) {
-			return distance(b,c);
+			return distance(b, c);
 		} else if (u > 1.0) {
 			return distance(b, d);
 		} else {
