@@ -127,34 +127,30 @@ public class Graph {
 	 * returns the closest vertex within radius that is not the excluded point
 	 * 
 	 */
-	public VertexPosition findClosestVertexPosition(Point a, Point exclude, double radius) {
-		Vertex excludedVertex = null;
-		if (exclude != null) {
-			excludedVertex = tryFindVertex(exclude);
-			
-//			if (excludedVertex != null && Point.equals(a, exclude)) {
-//				
-//			}
+	public VertexPosition findClosestVertexPosition(Point a, Point anchor, double radius) {
+		Vertex anchorVertex = null;
+		if (anchor != null) {
+			anchorVertex = tryFindVertex(anchor);
 		}
 		
 		Vertex closest = null;
 		for (Vertex v : getVertices()) {
 			Point vp = v.getPoint();
-//			if (exclude != null && Point.equals(a, exclude) && Point.equals(vp, exclude)) {
-//				continue;
-//			}
-			if (excludedVertex != null && !Point.equals(a, exclude) && v == excludedVertex && Point.distance(a, exclude) < radius) {
-				//return new VertexPosition(v, null, null, 0);
-				//return null;
+			if (anchorVertex != null && Point.equals(a, anchor) && v == anchorVertex) {
+				/*
+				 * use the excluded vertex
+				 */
+				closest = v;
+				break;
+			}
+			if (anchorVertex != null && !Point.equals(a, anchor) && v == anchorVertex && Point.distance(a, anchor) < radius) {
 				/*
 				 * ignore the excluded vertex
 				 */
 				continue;
 			}
 			double dist = Point.distance(a, vp);
-			//if (dist < radius && (exclude == null || Point.equals(a, exclude) || dist < Point.distance(vp, exclude))) {
-			if (dist < radius && (excludedVertex == null || dist < Point.distance(vp, exclude))) {
-			//if (dist < radius) {
+			if (dist < radius && (anchorVertex == null || dist < Point.distance(vp, anchor))) {
 				if (closest == null) {
 					closest = v;
 				} else if (Point.distance(a, vp) < Point.distance(a, closest.getPoint())) {
@@ -176,21 +172,19 @@ public class Graph {
 		return getSegmentTree().findClosestEdgePosition(a, exclude, radius);
 	}
 	
-	/**
-	 * this is down at the grid point level
-	 * only adjusts intersections to grid points and adds segments 
-	 */
-	public void addStroke(List<Point> stroke, boolean newStroke) {
+	public void processNewStroke(List<Point> stroke) {
+		addStroke(stroke, true);
+	}
+	
+	private List<Point> cullAngles(List<Point> stroke) {
 		
 		List<Point> stroke2 = new ArrayList<Point>();
-		//double[] segmentAngs = new double[stroke.size()-1];
 		
 		/*
 		 * initialize
 		 */
 		Point a = stroke.get(0);
 		Point b = stroke.get(1);
-		//segmentAngs[0] = Math.atan2(b.getY()-a.getY(), b.getX()-a.getX());
 		stroke2.add(a);
 		stroke2.add(b);
 		
@@ -224,45 +218,63 @@ public class Graph {
 			
 		}
 		
-		for (int i = 0; i < stroke2.size()-1; i++) {
+		return stroke2;
+	}
+	
+	/**
+	 * this is down at the grid point level
+	 * only adjusts intersections to grid points and adds segments 
+	 */
+	public void addStroke(List<Point> stroke, boolean newStroke) {
+		
+		Point a;
+		Point b;
+		
+		for (int i = 0; i < stroke.size()-1; i++) {
 			a = stroke.get(i);
 			b = stroke.get(i+1);
 			assert !Point.equals(a, b);
 			
-			Point[] newSegment;
-			if (newStroke) {
-				newSegment = handleIntersections(a, b, (i == 0));
-				if (newSegment[0] == null && newSegment[1] == null) {
-					/*
-					 * <a, b> is too close to another edge, so it is being skipped
-					 */
-					continue;
-				}
-				a = newSegment[0];
-				b = newSegment[1];
-			}
-			
 			List<PointToBeAdded> betweenABPoints = fillinIntersections(a, b);
 
 			for (int j = 0; j < betweenABPoints.size()-1; j++) {
-				PointToBeAdded p1 = betweenABPoints.get(j);
-				PointToBeAdded p2 = betweenABPoints.get(j+1);
+				PointToBeAdded ptba1 = betweenABPoints.get(j);
+				PointToBeAdded ptba2 = betweenABPoints.get(j+1);
 				
-				final Point p1Int = p1.p.toInteger();
+				Point p1 = ptba1.p;
+				Point p2 = ptba2.p;
 				
-				final Point p2Int = p2.p.toInteger();
+				Point[] newSegment;
+				if (newStroke) {
+					newSegment = handleIntersections(p1, p2);
+					if (newSegment[0] == null && newSegment[1] == null) {
+						/*
+						 * <a, b> is too close to another edge, so it is being skipped
+						 */
+						continue;
+					}
+					p1 = newSegment[0];
+					p2 = newSegment[1];
+				}
+				
+				List<PointToBeAdded> betweenP1P2Points = fillinIntersections(p1, p2);
+				assert betweenP1P2Points.size() == 2;
+				
+				final Point p1Int = p1.toInteger();
+				
+				final Point p2Int = p2.toInteger();
 				
 				if (!Point.equals(p1Int, p2Int)) {
 					
 					boolean p1AdjustResult = false;
 					boolean p2AdjustResult = false;
 					
-					if (!Point.equals(p1.p, p1Int) && tryFindEdgePosition(p1.p) != null) {
-						p1AdjustResult = adjustEdgePointToGrid(p1.p);
+					if (!Point.equals(p1, p1Int) && tryFindEdgePosition(p1) != null) {
+						p1AdjustResult = adjustEdgePointToGrid(p1);
 					}
 					
-					if (!Point.equals(p2.p, p2Int) && tryFindEdgePosition(p2.p) != null) {
-						p2AdjustResult = adjustEdgePointToGrid(p2.p);
+					if (!Point.equals(p2, p2Int) && tryFindEdgePosition(p2) != null) {
+						p2AdjustResult = adjustEdgePointToGrid(p2);
 					}
 					
 					if (!p1AdjustResult && !p2AdjustResult) {
@@ -294,7 +306,7 @@ public class Graph {
 	/*
 	 * deal with curvature and intersections here
 	 */
-	private Point[] handleIntersections(Point a, Point b, boolean firstSegmentOfStroke) {
+	private Point[] handleIntersections(Point a, Point b) {
 		
 		Point[] ret = new Point[2];
 		Position closestA;
@@ -305,21 +317,6 @@ public class Graph {
 		
 		if (closestA != null) {
 			if (closestB != null) {
-				
-//				if (closestA instanceof VertexPosition && closestB instanceof VertexPosition) {
-//					Vertex v1 = ((VertexPosition)closestA).getVertex();
-//					Vertex v2 = ((VertexPosition)closestB).getVertex();
-//					if (v1 != v2) {
-//						
-//						// connect 2 vertices that are close together, and stay tooclose
-//						ret[0] = closestA.getPoint();
-//						ret[1] = closestB.getPoint();
-//						
-//						assert ret[0] == null && ret[1] == null || !Point.equals(ret[0], ret[1]);
-//						return ret;
-//						
-//					}
-//				}
 				
 				if (Point.distance(closestA.getPoint(), closestB.getPoint()) > 10) {
 					
@@ -374,10 +371,6 @@ public class Graph {
 		}
 		EdgePosition closestEdge = findClosestEdgePosition(a, exclude, radius);
 		if (closestEdge != null) {
-//			closestVertex = findClosestVertexPosition(closestEdge.getPoint(), exclude, radius);
-//			if (closestVertex != null) {
-//				return closestVertex;
-//			}
 			return closestEdge;
 		}
 		return null;

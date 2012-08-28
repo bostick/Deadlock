@@ -6406,6 +6406,15 @@ public class TestDragging {
 		Thread.sleep(Long.MAX_VALUE);
 	}
 	
+	/*
+	 * good demo of why snapping a new segment to edges or vertices that are close-by should be done after calculation of
+	 * intersections.
+	 * 
+	 * the start and end of the last stroke are both too far away from anything, so they are not snapped.
+	 * But it intersects very close to the existing vertex.
+	 * 
+	 * It is wrong to do intersection calculation here without then snapping to existing edges or vertices afterward.
+	 */
 	@Test
 	public void testBug25() throws Exception {
 		
@@ -6422,6 +6431,52 @@ public class TestDragging {
 		testPressed(new Point(415., 680.));
 		testDragged(new Point(454., 652.));
 		testReleased();
+		
+		Thread.sleep(Long.MAX_VALUE);
+	}
+	
+	@Test
+	public void testBug26() throws Exception {
+		
+		CONTROLLER.strat = MassageStrategy.CURRENT;
+
+		testPressed(new Point(700., 613.));
+		testDragged(new Point(691., 607.));
+		testDragged(new Point(691., 606.));
+		testDragged(new Point(682., 611.));
+		testDragged(new Point(671., 623.));
+		testReleased();
+		
+		// assert 1 edge
+		
+		Thread.sleep(Long.MAX_VALUE);
+	}
+	
+	@Test
+	public void testBug27() throws Exception {
+		
+		CONTROLLER.strat = MassageStrategy.CURRENT;
+
+		testPressed(new Point(530., 639.));
+		testDragged(new Point(806., 639.));
+		testReleased();
+
+		testPressed(new Point(700., 613.));
+		testDragged(new Point(694., 607.));
+		testDragged(new Point(691., 607.));
+		testDragged(new Point(691., 606.));
+		testDragged(new Point(690., 606.));
+		testDragged(new Point(690., 604.));
+		testDragged(new Point(689., 604.));
+		testDragged(new Point(686., 606.));
+		testDragged(new Point(682., 611.));
+		testDragged(new Point(671., 623.));
+		testDragged(new Point(650., 644.));
+		testDragged(new Point(630., 665.));
+		testDragged(new Point(609., 685.));
+		testReleased();
+		
+		// assert 4 edges, 5 vertices
 		
 		Thread.sleep(Long.MAX_VALUE);
 	}

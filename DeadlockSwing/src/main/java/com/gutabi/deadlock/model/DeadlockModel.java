@@ -71,7 +71,7 @@ public class DeadlockModel {
 	
 	public void processNewStroke(List<Point> stroke) {
 		
-		graph.addStroke(stroke, true);
+		graph.processNewStroke(stroke);
 		
 		
 		
