@@ -20,7 +20,7 @@ import com.gutabi.deadlock.Main;
 import com.gutabi.deadlock.core.Edge;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.Position;
-import com.gutabi.deadlock.core.Intersection;
+import com.gutabi.deadlock.core.Vertex;
 import com.gutabi.deadlock.view.WindowInfo;
 
 public class DeadlockController implements ActionListener {
@@ -86,31 +86,31 @@ public class DeadlockController implements ActionListener {
 		lastPressPoint = p;
 		lastPressTime = System.currentTimeMillis();
 		
-		synchronized (MODEL) {
-			switch (MODEL.getMode()) {
-			case IDLE: {
-				
-				if (p.getY() <= 10 || p.getX() <= 10) {
-					// source
-				} else if (p.getX() >= MODEL.WORLD_WIDTH-10 || p.getY() >= MODEL.WORLD_HEIGHT-10) {
-					// sink
-				} else {
-					draftStart(p);
-					VIEW.repaint();
-				}
-				break;
-			}
-			case DRAFTING:
-				assert false;
-				break;
-			case ZOOMING:
-				assert false;
-				break;
-			case RUNNING:
-				;
-				break;
-			}
-		}
+//		synchronized (MODEL) {
+//			switch (MODEL.getMode()) {
+//			case IDLE: {
+//				
+//				if (p.getY() <= 10 || p.getX() <= 10) {
+//					// source
+//				} else if (p.getX() >= MODEL.WORLD_WIDTH-10 || p.getY() >= MODEL.WORLD_HEIGHT-10) {
+//					// sink
+//				} else {
+//					draftStart(p);
+//					VIEW.repaint();
+//				}
+//				break;
+//			}
+//			case DRAFTING:
+//				assert false;
+//				break;
+//			case ZOOMING:
+//				assert false;
+//				break;
+//			case RUNNING:
+//				;
+//				break;
+//			}
+//		}
 		
 		lastDragPoint = null;
 		lastDragTime = -1;
@@ -122,13 +122,25 @@ public class DeadlockController implements ActionListener {
 	
 	public void dragged(final Point p) {
 		
+		boolean lastDragPointWasNull = (lastDragPoint == null);
+		
 		lastDragPoint = p;
 		lastDragTime = System.currentTimeMillis();
 		
 		synchronized (MODEL) {
 			switch (MODEL.getMode()) {
-			case IDLE:
+			case IDLE: {
+				
+				if (lastDragPointWasNull) {
+					// first drag
+					draftStart(p);
+					VIEW.repaint();
+				} else {
+					assert false;
+				}
+				
 				break;
+			}
 			case DRAFTING:
 				draftMove(p);
 				//VIEW.renderBackground();
@@ -234,10 +246,10 @@ public class DeadlockController implements ActionListener {
 				
 				if (MODEL.hilited != null) {
 					
-					if (MODEL.hilited instanceof Intersection) {
-						Intersection v = (Intersection)MODEL.hilited;
+					if (MODEL.hilited instanceof Vertex) {
+						Vertex v = (Vertex)MODEL.hilited;
 						
-						MODEL.removeIntersection(v);
+						MODEL.removeVertex(v);
 						
 					} else {
 						Edge e = (Edge)MODEL.hilited;

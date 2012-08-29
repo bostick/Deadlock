@@ -10,12 +10,13 @@ import com.gutabi.deadlock.core.Driveable;
 import com.gutabi.deadlock.core.Edge;
 import com.gutabi.deadlock.core.EdgePosition;
 import com.gutabi.deadlock.core.Graph;
+import com.gutabi.deadlock.core.Intersection;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.Position;
 import com.gutabi.deadlock.core.Segment;
 import com.gutabi.deadlock.core.Sink;
 import com.gutabi.deadlock.core.Source;
-import com.gutabi.deadlock.core.Intersection;
+import com.gutabi.deadlock.core.Vertex;
 import com.gutabi.deadlock.view.WindowInfo;
 
 public class DeadlockModel {
@@ -79,8 +80,8 @@ public class DeadlockModel {
 		graph.removeEdgeTop(e);
 	}
 	
-	public void removeIntersection(Intersection i) {
-		graph.removeIntersectionTop(i);
+	public void removeVertex(Vertex i) {
+		graph.removeVertexTop(i);
 	}
 	
 	public void addSource(Point p) {
@@ -124,8 +125,8 @@ public class DeadlockModel {
 		return graph.getSinks();
 	}
 	
-	public Intersection tryFindIntersection(Point a) {
-		return graph.tryFindIntersection(a);
+	public Vertex tryFindVertex(Point a) {
+		return graph.tryFindVertex(a);
 	}
 	
 	public EdgePosition tryFindEdgePosition(Point a) {

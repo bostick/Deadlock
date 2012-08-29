@@ -1,6 +1,5 @@
 package com.gutabi.deadlock.controller;
 
-
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
@@ -10,15 +9,16 @@ import java.util.List;
 import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Edge;
 import com.gutabi.deadlock.core.EdgePosition;
-import com.gutabi.deadlock.core.Position;
 import com.gutabi.deadlock.core.Intersection;
-import com.gutabi.deadlock.core.IntersectionPosition;
-import com.gutabi.deadlock.core.IntersectionType;
+import com.gutabi.deadlock.core.Position;
+import com.gutabi.deadlock.core.Sink;
+import com.gutabi.deadlock.core.Source;
+import com.gutabi.deadlock.core.Vertex;
+import com.gutabi.deadlock.core.VertexPosition;
 import com.gutabi.deadlock.model.Car;
 import com.gutabi.deadlock.model.CarState;
 import com.gutabi.deadlock.model.CrashInfo;
 import com.gutabi.deadlock.model.CrashSite;
-
 
 public class SimulationRunnable implements Runnable {
 	
@@ -29,11 +29,13 @@ public class SimulationRunnable implements Runnable {
 	
 	List<Edge> edgesCopy;
 	List<Intersection> intersectionsCopy;
+	List<Source> sourcesCopy;
+	List<Sink> sinksCopy;
 	ControlMode modeCopy;
 	List<Car> movingCarsCopy;
 	List<Car> crashedCarsCopy;
 	
-	List<Intersection> sources;
+	List<Source> sources;
 	
 	//@SuppressWarnings("serial")
 	@Override
@@ -51,11 +53,9 @@ public class SimulationRunnable implements Runnable {
 			for (Edge e : MODEL.getEdges()) {
 				edgesCopy.add(e);
 			}
-			intersectionsCopy = new ArrayList<Intersection>();
-			for (Intersection v : MODEL.getIntersections()) {
-				v.hasCrash = false;
-				intersectionsCopy.add(v);
-			}
+			intersectionsCopy = new ArrayList<Intersection>(MODEL.getIntersections());
+			sourcesCopy = new ArrayList<Source>(MODEL.getSources());
+			sinksCopy = new ArrayList<Sink>(MODEL.getSinks());
 			modeCopy = MODEL.getMode();
 			movingCarsCopy = new ArrayList<Car>(MODEL.movingCars);
 			crashedCarsCopy = new ArrayList<Car>(MODEL.crashedCars);
@@ -109,24 +109,34 @@ public class SimulationRunnable implements Runnable {
 		
 	}
 	
-	private List<Intersection> activeSources() {
+	private List<Source> activeSources() {
 		
-		List<Intersection> sources = new ArrayList<Intersection>();
-		for (Intersection v : intersectionsCopy) {
-			if (v.getType() == IntersectionType.SOURCE && !v.hasCrash) {
-				sources.add(v);
+		List<Source> sources = new ArrayList<Source>();
+		for (Source s : sourcesCopy) {
+			if (s.getEdges().size() >= 1) {
+				sources.add(s);
 			}
 		}
-		List<Intersection> toRemove = new ArrayList<Intersection>();
+		
+		List<Source> toRemove = new ArrayList<Source>();
+		
 		for (Car c : movingCarsCopy) {
 			Position carPos = c.getPosition();
-			for (Intersection v : sources) {
-				if (carPos.distanceTo(new IntersectionPosition(v, null, null, 0)) <= 10) {
-					toRemove.add(v);
+			for (Source s : sources) {
+				if (carPos.distanceTo(new VertexPosition(s, null, null, 0)) <= 10) {
+					toRemove.add(s);
 				}
 			}
 		}
-		for (Intersection v : toRemove) {
+		for (Car c : crashedCarsCopy) {
+			Position carPos = c.getPosition();
+			for (Source s : sources) {
+				if (carPos.distanceTo(new VertexPosition(s, null, null, 0)) <= 10) {
+					toRemove.add(s);
+				}
+			}
+		}
+		for (Vertex v : toRemove) {
 			sources.remove(v);
 		}
 		
@@ -150,12 +160,12 @@ public class SimulationRunnable implements Runnable {
 			}
 			int i = MODEL.RANDOM.nextInt(sources.size());
 			
-			Intersection v = sources.get(i);
+			Vertex v = sources.get(i);
 			
-			c.startingIntersection = v;
+			c.startingVertex = v;
 			c.startingStep = step;
 			
-			c.futurePathAdd(new IntersectionPosition(v, null, null, 0));
+			c.futurePathAdd(new VertexPosition(v, null, null, 0));
 			
 			c.futureState = CarState.INTERSECTION;
 			
@@ -241,7 +251,7 @@ public class SimulationRunnable implements Runnable {
 								if (cia instanceof EdgePosition) {
 									adjustedCib = ((EdgePosition)cia).travel(cib.prevDir, cia.distanceTo(cib)-travelDiff);
 								} else {
-									adjustedCib = ((IntersectionPosition)cia).travel(cib.prevDirEdge, cib.prevDir, cia.distanceTo(cib)-travelDiff);
+									adjustedCib = ((VertexPosition)cia).travel(cib.prevDirEdge, cib.prevDir, cia.distanceTo(cib)-travelDiff);
 								}
 								adjustedCiTraveled -= travelDiff;
 								
@@ -253,7 +263,7 @@ public class SimulationRunnable implements Runnable {
 								if (cja instanceof EdgePosition) {
 									adjustedCjb = ((EdgePosition)cja).travel(cjb.prevDir, cja.distanceTo(cjb)-travelDiff);
 								} else {
-									adjustedCjb = ((IntersectionPosition)cja).travel(cjb.prevDirEdge, cjb.prevDir, cja.distanceTo(cjb)-travelDiff);
+									adjustedCjb = ((VertexPosition)cja).travel(cjb.prevDirEdge, cjb.prevDir, cja.distanceTo(cjb)-travelDiff);
 								}
 								adjustedCjTraveled -= travelDiff;
 							}
@@ -276,14 +286,14 @@ public class SimulationRunnable implements Runnable {
 								if (cia instanceof EdgePosition) {
 									newAdjustedCib = ((EdgePosition)cia).travel(adjustedCib.prevDir, cia.distanceTo(adjustedCib)-inc);
 								} else {
-									newAdjustedCib = ((IntersectionPosition)cia).travel(adjustedCib.prevDirEdge, adjustedCib.prevDir, cia.distanceTo(adjustedCib)-inc);
+									newAdjustedCib = ((VertexPosition)cia).travel(adjustedCib.prevDirEdge, adjustedCib.prevDir, cia.distanceTo(adjustedCib)-inc);
 								}
 								double newAdjustedCiTraveled = adjustedCiTraveled-inc;
 								Position newAdjustedCjb;
 								if (cja instanceof EdgePosition) {
 									newAdjustedCjb = ((EdgePosition)cja).travel(adjustedCjb.prevDir, cja.distanceTo(adjustedCjb)-inc);
 								} else {
-									newAdjustedCjb = ((IntersectionPosition)cja).travel(adjustedCjb.prevDirEdge, adjustedCjb.prevDir, cja.distanceTo(adjustedCjb)-inc);
+									newAdjustedCjb = ((VertexPosition)cja).travel(adjustedCjb.prevDirEdge, adjustedCjb.prevDir, cja.distanceTo(adjustedCjb)-inc);
 								}
 								double newNewDist = newAdjustedCib.distanceTo(newAdjustedCjb);
 								assert DMath.doubleEquals(newNewDist, 10);
@@ -330,7 +340,7 @@ public class SimulationRunnable implements Runnable {
 						if (cia instanceof EdgePosition) {
 							adjustedCib = ((EdgePosition)cia).travel(cib.prevDir, cia.distanceTo(cib)-inc);
 						} else {
-							adjustedCib = ((IntersectionPosition)cia).travel(cib.prevDirEdge, cib.prevDir, cia.distanceTo(cib)-inc);
+							adjustedCib = ((VertexPosition)cia).travel(cib.prevDirEdge, cib.prevDir, cia.distanceTo(cib)-inc);
 						}
 						double adjustedCiTraveled = ciTraveled;
 						adjustedCiTraveled -= inc;
@@ -394,11 +404,11 @@ public class SimulationRunnable implements Runnable {
 				i.futureState = CarState.CRASHED;
 				newlyCrashedCars.add(i);
 				
-				for (Intersection v : MODEL.getIntersections()) {
-					if (ip.distanceTo(new IntersectionPosition(v, null, null, 0)) <= 10) {
-						v.hasCrash = true;
-					}
-				}
+//				for (Intersection v : MODEL.getIntersections()) {
+//					if (ip.distanceTo(new VertexPosition(v, null, null, 0)) <= 10) {
+//						v.hasCrash = true;
+//					}
+//				}
 			}
 			
 			if (jDir != 0) {
@@ -406,11 +416,11 @@ public class SimulationRunnable implements Runnable {
 				j.futureState = CarState.CRASHED;
 				newlyCrashedCars.add(j);
 				
-				for (Intersection v : MODEL.getIntersections()) {
-					if (jp.distanceTo(new IntersectionPosition(v, null, null, 0)) <= 10) {
-						v.hasCrash = true;
-					}
-				}
+//				for (Intersection v : MODEL.getIntersections()) {
+//					if (jp.distanceTo(new VertexPosition(v, null, null, 0)) <= 10) {
+//						v.hasCrash = true;
+//					}
+//				}
 			}
 			
 		}

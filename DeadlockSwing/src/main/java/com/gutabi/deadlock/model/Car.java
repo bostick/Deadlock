@@ -10,9 +10,9 @@ import com.gutabi.deadlock.core.Edge;
 import com.gutabi.deadlock.core.EdgePosition;
 import com.gutabi.deadlock.core.Path;
 import com.gutabi.deadlock.core.Position;
-import com.gutabi.deadlock.core.Intersection;
-import com.gutabi.deadlock.core.IntersectionPosition;
-import com.gutabi.deadlock.core.IntersectionType;
+import com.gutabi.deadlock.core.Sink;
+import com.gutabi.deadlock.core.Vertex;
+import com.gutabi.deadlock.core.VertexPosition;
 
 public class Car {
 	
@@ -21,7 +21,7 @@ public class Car {
 	private Position pos;
 	
 	public long startingStep;
-	public Intersection startingIntersection;
+	public Vertex startingVertex;
 	
 	public Path futurePath;
 	
@@ -139,35 +139,35 @@ public class Car {
 				if (pos instanceof EdgePosition) {
 					nextPos = ((EdgePosition)pos).travel(dir, Math.min(distanceToMove, distanceLeftOnEdge));
 				} else {
-					nextPos = ((IntersectionPosition)pos).travel(e, dir, Math.min(distanceToMove, distanceLeftOnEdge));
+					nextPos = ((VertexPosition)pos).travel(e, dir, Math.min(distanceToMove, distanceLeftOnEdge));
 				}
 				futurePathAdd(nextPos);
 				
 				if (DMath.doubleEquals(distanceToMove, distanceLeftOnEdge)) {
 					
 					previousEdge = e;
-					Intersection v = e.getEnd();
+					Vertex v = (dir == 1) ? e.getEnd() : e.getStart();
 					futureState = CarState.INTERSECTION;
 					
-					assert getLastFuturePosition() instanceof IntersectionPosition;
+					assert getLastFuturePosition() instanceof VertexPosition;
 					
 					distanceToMove = 0.0;
 					
-					if (v.getType() == IntersectionType.SINK) {
+					if (v instanceof Sink) {
 						futureState = CarState.SINKED;
 					}
 					
 				} else if (distanceToMove > distanceLeftOnEdge) {
 					
 					previousEdge = e;
-					Intersection v = e.getEnd();
+					Vertex v = (dir == 1) ? e.getEnd() : e.getStart();
 					futureState = CarState.INTERSECTION;
 					
-					assert getLastFuturePosition() instanceof IntersectionPosition;
+					assert getLastFuturePosition() instanceof VertexPosition;
 					
 					distanceToMove -= distanceLeftOnEdge;
 					
-					if (v.getType() == IntersectionType.SINK) {
+					if (v instanceof Sink) {
 						futureState = CarState.SINKED;
 						distanceToMove = 0.0;
 					}
@@ -179,8 +179,8 @@ public class Car {
 				break;
 			}
 			case INTERSECTION: {
-				IntersectionPosition pos = (IntersectionPosition)getLastFuturePosition();
-				Intersection v = pos.getIntersection();
+				VertexPosition pos = (VertexPosition)getLastFuturePosition();
+				Vertex v = pos.getVertex();
 				List<Edge> eds = new ArrayList<Edge>(v.getEdges());
 				
 //				Edge previousEdge = null;

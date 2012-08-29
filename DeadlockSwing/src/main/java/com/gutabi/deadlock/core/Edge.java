@@ -6,8 +6,8 @@ public final class Edge extends Driveable {
 		
 	private final Point[] pts;
 	private final double[] segmentLengths;
-	private final Intersection start;
-	private final Intersection end;
+	private final Vertex start;
+	private final Vertex end;
 	
 	private final double totalLength;
 	
@@ -16,7 +16,7 @@ public final class Edge extends Driveable {
 	
 	private boolean removed = false;
 	
-	public Edge(Intersection start, Intersection end, Point... pts) {
+	public Edge(Vertex start, Vertex end, Point... pts) {
 		this.start = start;
 		this.end = end;
 		loop = (start == end);
@@ -67,14 +67,14 @@ public final class Edge extends Driveable {
 		return totalLength;
 	}
 	
-	public Intersection getStart() {
+	public Vertex getStart() {
 		if (removed) {
 			throw new IllegalStateException("edge has been removed");
 		}
 		return start;
 	}
 	
-	public Intersection getEnd() {
+	public Vertex getEnd() {
 		if (removed) {
 			throw new IllegalStateException();
 		}
@@ -111,10 +111,10 @@ public final class Edge extends Driveable {
 	}
 	
 	public static boolean haveExactlyOneSharedIntersection(Edge a, Edge b) {
-		Intersection as = a.getStart();
-		Intersection ae = a.getEnd();
-		Intersection bs = b.getStart();
-		Intersection be = b.getEnd();
+		Vertex as = a.getStart();
+		Vertex ae = a.getEnd();
+		Vertex bs = b.getStart();
+		Vertex be = b.getEnd();
 		if (as == bs) {
 			return (ae != be);
 		} else if (as == be) {
@@ -129,10 +129,10 @@ public final class Edge extends Driveable {
 	}
 	
 	public static boolean haveTwoSharedIntersections(Edge a, Edge b) {
-		Intersection as = a.getStart();
-		Intersection ae = a.getEnd();
-		Intersection bs = b.getStart();
-		Intersection be = b.getEnd();
+		Vertex as = a.getStart();
+		Vertex ae = a.getEnd();
+		Vertex bs = b.getStart();
+		Vertex be = b.getEnd();
 		if (as == bs) {
 			return (ae == be);
 		} else if (as == be) {
@@ -149,30 +149,30 @@ public final class Edge extends Driveable {
 	/**
 	 * returns the single shared intersection between edges a and b
 	 */
-	public static Intersection sharedIntersection(Edge a, Edge b) throws SharedIntersectionsException {
+	public static Vertex sharedIntersection(Edge a, Edge b) throws SharedVerticesException {
 		assert a != b;
-		Intersection as = a.getStart();
-		Intersection ae = a.getEnd();
-		Intersection bs = b.getStart();
-		Intersection be = b.getEnd();
+		Vertex as = a.getStart();
+		Vertex ae = a.getEnd();
+		Vertex bs = b.getStart();
+		Vertex be = b.getEnd();
 		if (as == bs) {
 			if (ae == be) {
-				throw new SharedIntersectionsException(as, ae);
+				throw new SharedVerticesException(as, ae);
 			}
 			return as;
 		} else if (as == be) {
 			if (ae == bs) {
-				throw new SharedIntersectionsException(as, ae);
+				throw new SharedVerticesException(as, ae);
 			}
 			return as;
 		} else if (ae == bs) {
 			if (as == be) {
-				throw new SharedIntersectionsException(as, ae);
+				throw new SharedVerticesException(as, ae);
 			}
 			return ae;
 		} else if (ae == be) {
 			if (as == bs) {
-				throw new SharedIntersectionsException(as, ae);
+				throw new SharedVerticesException(as, ae);
 			}
 			return be;
 		} else {
@@ -180,7 +180,7 @@ public final class Edge extends Driveable {
 		}
 	}
 	
-	public static Edge commonEdge(Intersection a, Intersection b) {
+	public static Edge commonEdge(Vertex a, Vertex b) {
 		
 		List<Edge> eds = a.getEdges();
 		

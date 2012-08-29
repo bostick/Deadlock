@@ -42,14 +42,14 @@ public class Graph {
 		segTree.clear();
 	}
 	
-	private Edge createEdge(Intersection start, Intersection end, Point... points) {
+	private Edge createEdge(Vertex start, Vertex end, Point... points) {
 		Edge e = new Edge(start, end, points);
 		edges.add(e);
 		segTree.addEdge(e);
 		return e;
 	}
 	
-	private Edge createEdge(Intersection start, Intersection end, List<Point> pts) {
+	private Edge createEdge(Vertex start, Vertex end, List<Point> pts) {
 		return createEdge(start, end, pts.toArray(new Point[0]));
 	}
 	
@@ -59,10 +59,19 @@ public class Graph {
 		return i;
 	}
 	
-	private void destroyIntersection(Intersection i) {
-		assert intersections.contains(i);
-		intersections.remove(i);
-		i.remove();
+	private void destroyVertex(Vertex v) {
+		
+		if (intersections.contains(v)) {
+			intersections.remove(v);
+		} else if (sources.contains(v)) {
+			sources.remove(v);
+		} else if (sinks.contains(v)) {
+			sinks.remove(v);
+		} else {
+			assert false;
+		}
+		
+		v.remove();
 	}
 	
 	private void destroyEdge(Edge e) {
@@ -134,11 +143,23 @@ public class Graph {
 //		return found;
 //	}
 	
-	public Intersection tryFindIntersection(Point b) {
-		for (Intersection v : getIntersections()) {
-			Point d = v.getPoint();
-			if (Point.equals(b, d)) {
+	public Vertex tryFindVertex(Point b) {
+		for (Intersection v : intersections) {
+			Point p = v.getPoint();
+			if (Point.equals(b, p)) {
 				return v;
+			}
+		}
+		for (Source s : sources) {
+			Point p = s.getPoint();
+			if (Point.equals(b, p)) {
+				return s;
+			}
+		}
+		for (Sink s : sinks) {
+			Point p = s.getPoint();
+			if (Point.equals(b, p)) {
+				return s;
 			}
 		}
 		return null;
@@ -148,39 +169,79 @@ public class Graph {
 	 * returns the closest intersection within radius that is not the excluded point
 	 * 
 	 */
-	public IntersectionPosition findClosestIntersectionPosition(Point a, Point anchor, double radius) {
-		Intersection anchorI = null;
+	public VertexPosition findClosestVertexPosition(Point a, Point anchor, double radius) {
+		Vertex anchorV = null;
 		if (anchor != null) {
-			anchorI = tryFindIntersection(anchor);
+			anchorV = tryFindVertex(anchor);
 		}
 		
-		Intersection closest = null;
-		for (Intersection v : getIntersections()) {
-			Point vp = v.getPoint();
-			if (anchorI != null && Point.equals(a, anchor) && v == anchorI) {
+		Vertex closest = null;
+		
+		for (Intersection i : intersections) {
+			Point ip = i.getPoint();
+			if (anchorV != null && Point.equals(a, anchor) && i == anchorV) {
 				/*
 				 * use the excluded intersection
 				 */
-				closest = v;
+				closest = i;
 				break;
 			}
-			if (anchorI != null && !Point.equals(a, anchor) && v == anchorI && Point.distance(a, anchor) < radius) {
+			if (anchorV != null && !Point.equals(a, anchor) && i == anchorV && Point.distance(a, anchor) < radius) {
 				/*
 				 * ignore the excluded intersection
 				 */
 				continue;
 			}
-			double dist = Point.distance(a, vp);
-			if (dist < radius && (anchorI == null || dist < Point.distance(vp, anchor))) {
+			double dist = Point.distance(a, ip);
+			if (dist < radius && (anchorV == null || dist < Point.distance(ip, anchor))) {
 				if (closest == null) {
-					closest = v;
-				} else if (Point.distance(a, vp) < Point.distance(a, closest.getPoint())) {
-					closest = v;
+					closest = i;
+				} else if (Point.distance(a, ip) < Point.distance(a, closest.getPoint())) {
+					closest = i;
 				}
 			}	
 		}
+		
+		for (Source s : sources) {
+			Point sp = s.getPoint();
+			if (anchorV != null && Point.equals(a, anchor) && s == anchorV) {
+				closest = s;
+				break;
+			}
+			if (anchorV != null && !Point.equals(a, anchor) && s == anchorV && Point.distance(a, anchor) < radius) {
+				continue;
+			}
+			double dist = Point.distance(a, sp);
+			if (dist < radius && (anchorV == null || dist < Point.distance(sp, anchor))) {
+				if (closest == null) {
+					closest = s;
+				} else if (Point.distance(a, sp) < Point.distance(a, closest.getPoint())) {
+					closest = s;
+				}
+			}	
+		}
+		
+		for (Sink s : sinks) {
+			Point sp = s.getPoint();
+			if (anchorV != null && Point.equals(a, anchor) && s == anchorV) {
+				closest = s;
+				break;
+			}
+			if (anchorV != null && !Point.equals(a, anchor) && s == anchorV && Point.distance(a, anchor) < radius) {
+				continue;
+			}
+			double dist = Point.distance(a, sp);
+			if (dist < radius && (anchorV == null || dist < Point.distance(sp, anchor))) {
+				if (closest == null) {
+					closest = s;
+				} else if (Point.distance(a, sp) < Point.distance(a, closest.getPoint())) {
+					closest = s;
+				}
+			}	
+		}
+		
 		if (closest != null) {
-			return new IntersectionPosition(closest, null, null, 0);
+			return new VertexPosition(closest, null, null, 0);
 		} else {
 			return null;
 		}
@@ -381,9 +442,9 @@ public class Graph {
 	}
 	
 	public Position closestPosition(Point a, Point exclude, double radius) {
-		IntersectionPosition closestI = findClosestIntersectionPosition(a, exclude, radius);
-		if (closestI != null) {
-			return closestI;
+		VertexPosition closestV = findClosestVertexPosition(a, exclude, radius);
+		if (closestV != null) {
+			return closestV;
 		}
 		EdgePosition closestEdge = findClosestEdgePosition(a, exclude, radius);
 		if (closestEdge != null) {
@@ -518,7 +579,7 @@ public class Graph {
 		assert a.isInteger();
 		assert b.isInteger();
 		
-		Intersection aV = tryFindIntersection(a);
+		Vertex aV = tryFindVertex(a);
 		if (aV == null) {
 			EdgePosition intInfo = tryFindEdgePosition(a);
 			if (intInfo == null) {
@@ -528,7 +589,7 @@ public class Graph {
 			}
 		}
 		
-		Intersection bV = tryFindIntersection(b);
+		Vertex bV = tryFindVertex(b);
 		if (bV == null) {
 			EdgePosition intInfo = tryFindEdgePosition(b);
 			if (intInfo == null) {
@@ -543,15 +604,9 @@ public class Graph {
 		aV.addEdge(e);
 		bV.addEdge(e);
 		
-		List<Edge> aEdges = aV.getEdges();
-		if (aEdges.size() == 2) {
-			merge(aEdges.get(0), aEdges.get(1), aV);
-		}
+		edgesChanged(aV);
 		
-		List<Edge> bEdges = bV.getEdges();
-		if (bEdges.size() == 2) {
-			merge(bEdges.get(0), bEdges.get(1), bV);
-		}
+		edgesChanged(bV);
 		
 	}
 	
@@ -577,7 +632,7 @@ public class Graph {
 	 * Edge e will have been removed
 	 * return Intersection at split point
 	 */
-	private Intersection split(Point p) {
+	private Vertex split(Point p) {
 		
 		EdgePosition info = tryFindEdgePosition(p);
 		assert info != null;
@@ -599,12 +654,12 @@ public class Graph {
 		/*
 		 * v may already exist if we are splitting at p and p is different than pInt and v already exists at pInt
 		 */
-		Intersection v = tryFindIntersection(p);
+		Vertex v = tryFindVertex(p);
 		assert v == null;
 		v = createIntersection(p);
 		
-		Intersection eStart = e.getStart();
-		Intersection eEnd = e.getEnd();
+		Vertex eStart = e.getStart();
+		Vertex eEnd = e.getEnd();
 		
 		if (eStart == null && eEnd == null) {
 			// stand-alone loop
@@ -672,7 +727,7 @@ public class Graph {
 					}
 				} catch (ColinearException ex) {
 					
-					assert tryFindIntersection(c) == null;
+					assert tryFindVertex(c) == null;
 					
 					Intersection cV = createIntersection(c);
 					Edge f3 = createEdge(cV, v, c, p);
@@ -720,7 +775,7 @@ public class Graph {
 					}
 				} catch (ColinearException ex) {
 					
-					assert tryFindIntersection(d) == null;
+					assert tryFindVertex(d) == null;
 					
 					Intersection dV = createIntersection(d);
 					Edge f3 = createEdge(dV, v, d, p);
@@ -833,16 +888,16 @@ public class Graph {
 	 * 
 	 * no colinear points in returned edge
 	 */
-	private void merge(Edge e1, Edge e2, Intersection v) {
+	private void merge(Edge e1, Edge e2, Vertex v) {
 		assert !e1.isRemoved();
 		assert !e2.isRemoved();
 		assert !v.isRemoved();
 		
-		Intersection e1Start = e1.getStart();
-		Intersection e1End = e1.getEnd();
+		Vertex e1Start = e1.getStart();
+		Vertex e1End = e1.getEnd();
 		
-		Intersection e2Start = e2.getStart();
-		Intersection e2End = e2.getEnd();
+		Vertex e2Start = e2.getStart();
+		Vertex e2End = e2.getEnd();
 		
 		assert e1Start != null;
 		assert e1End != null;
@@ -884,7 +939,7 @@ public class Graph {
 			v.removeEdge(e1);
 			v.removeEdge(e2);
 			
-			destroyIntersection(v);
+			destroyVertex(v);
 			destroyEdge(e1);
 			
 		} else if (v == e1Start && v == e2Start) {
@@ -918,7 +973,7 @@ public class Graph {
 			v.removeEdge(e1);
 			v.removeEdge(e2);
 			
-			destroyIntersection(v);
+			destroyVertex(v);
 			destroyEdge(e1);
 			destroyEdge(e2);
 			
@@ -953,7 +1008,7 @@ public class Graph {
 			v.removeEdge(e1);
 			v.removeEdge(e2);
 			
-			destroyIntersection(v);
+			destroyVertex(v);
 			destroyEdge(e1);
 			destroyEdge(e2);
 			
@@ -988,7 +1043,7 @@ public class Graph {
 			v.removeEdge(e1);
 			v.removeEdge(e2);
 			
-			destroyIntersection(v);
+			destroyVertex(v);
 			destroyEdge(e1);
 			destroyEdge(e2);
 			
@@ -1024,7 +1079,7 @@ public class Graph {
 			v.removeEdge(e1);
 			v.removeEdge(e2);
 			
-			destroyIntersection(v);
+			destroyVertex(v);
 			destroyEdge(e1);
 			destroyEdge(e2);
 			
@@ -1045,8 +1100,8 @@ public class Graph {
 			Edge e = info.edge;
 			int index = info.index;
 			
-			Intersection eStart = e.getStart();
-			Intersection eEnd = e.getEnd();
+			Vertex eStart = e.getStart();
+			Vertex eEnd = e.getEnd();
 			
 			if (eStart == null && eEnd == null) {
 				// stand-alone loop
@@ -1138,20 +1193,12 @@ public class Graph {
 				}
 				
 				eStart.removeEdge(e);
-				List<Edge> eStartEdges = eStart.getEdges();
-				if (eStartEdges.size() == 0) {
-					destroyIntersection(eStart);
-				} else if (eStartEdges.size() == 2) {
-					merge(eStartEdges.get(0), eStartEdges.get(1), eStart);
-				}
+				
+				edgesChanged(eStart);
 				
 				eEnd.removeEdge(e);
-				List<Edge> eEndEdges = eEnd.getEdges();
-				if (eEndEdges.size() == 0) {
-					destroyIntersection(eEnd);
-				} else if (eEndEdges.size() == 2) {
-					merge(eEndEdges.get(0), eEndEdges.get(1), eEnd);
-				}
+				
+				edgesChanged(eEnd);
 				
 				destroyEdge(e);
 				
@@ -1170,40 +1217,27 @@ public class Graph {
 		 */
 		if (!e.isLoop()) {
 			
-			Intersection eStart = e.getStart();
-			Intersection eEnd = e.getEnd();
+			Vertex eStart = e.getStart();
+			Vertex eEnd = e.getEnd();
 			
 			eStart.removeEdge(e);
-			List<Edge> eStartEdges = eStart.getEdges();
-			if (eStartEdges.size() == 0) {
-				destroyIntersection(eStart);
-			} else if (eStartEdges.size() == 2) {
-				merge(eStartEdges.get(0), eStartEdges.get(1), eStart);
-			}
+			
+			edgesChanged(eStart);
 			
 			eEnd.removeEdge(e);
-			List<Edge> eEndEdges = eEnd.getEdges();
-			if (eEndEdges.size() == 0) {
-				destroyIntersection(eEnd);
-			} else if (eEndEdges.size() == 2) {
-				merge(eEndEdges.get(0), eEndEdges.get(1), eEnd);
-			}
+			
+			edgesChanged(eEnd);
 			
 			destroyEdge(e);
 			
 		} else if (!e.isStandAlone()) {
 			
-			Intersection v = e.getStart();
+			Vertex v = e.getStart();
 			
 			v.removeEdge(e);
 			v.removeEdge(e);
 			
-			List<Edge> eds = v.getEdges();
-			if (eds.size() == 0) {
-				assert false;
-			} else if (eds.size() == 2) {
-				merge(eds.get(0), eds.get(1), v);
-			}
+			edgesChanged(v);
 			
 			destroyEdge(e);
 			
@@ -1213,9 +1247,9 @@ public class Graph {
 		
 	}
 	
-	public void removeIntersectionTop(Intersection v) {
+	public void removeVertexTop(Vertex v) {
 		
-		Set<Intersection> affectedIntersections = new HashSet<Intersection>();
+		Set<Vertex> affectedVertices = new HashSet<Vertex>();
 		
 		/*
 		 * copy, since removing edges modifies v.getEdges()
@@ -1226,42 +1260,66 @@ public class Graph {
 			
 			if (!e.isLoop()) {
 				
-				Intersection eStart = e.getStart();
-				Intersection eEnd = e.getEnd();
+				Vertex eStart = e.getStart();
+				Vertex eEnd = e.getEnd();
 				
 				eStart.removeEdge(e);
 				eEnd.removeEdge(e);
 				
-				affectedIntersections.add(eStart);
-				affectedIntersections.add(eEnd);
+				affectedVertices.add(eStart);
+				affectedVertices.add(eEnd);
 				
 				destroyEdge(e);
 				
 			} else {
 				
-				Intersection eV = e.getStart();
+				Vertex eV = e.getStart();
 				
 				eV.removeEdge(e);
 				eV.removeEdge(e);
 				
-				affectedIntersections.add(eV);
+				affectedVertices.add(eV);
 				
 				destroyEdge(e);
 				
 			}
 		}
 		
-		destroyIntersection(v);
-		affectedIntersections.remove(v);
+		destroyVertex(v);
+		affectedVertices.remove(v);
 		
-		for (Intersection a : affectedIntersections) {
-			List<Edge> aeds = a.getEdges();
-			if (aeds.size() == 0) {
-				destroyIntersection(a);
-			} else if (aeds.size() == 2) {
-				merge(aeds.get(0), aeds.get(1), a);
-			}
+		for (Vertex a : affectedVertices) {
+			edgesChanged(a);
 		}
+	}
+	
+	private void edgesChanged(Vertex v) {
+		
+		if (v instanceof Intersection) {
+			
+			List<Edge> eds = v.getEdges();
+			if (eds.size() == 0) {
+				destroyVertex(v);
+			} else if (eds.size() == 2) {
+				merge(eds.get(0), eds.get(1), v);
+			}
+			
+		} else if (v instanceof Source) {
+			
+			/*
+			 * sources stay around
+			 */
+			
+		} else if (v instanceof Sink) {
+			
+			/*
+			 * sinks stay around
+			 */
+			
+		} else {
+			assert false;
+		}
+		
 	}
 	
 	public boolean checkConsistency() {

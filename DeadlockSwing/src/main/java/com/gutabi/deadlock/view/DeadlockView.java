@@ -102,11 +102,23 @@ public class DeadlockView {
 					Edge e = (Edge)hilitedCopy;
 					paintEdgeHilite(e, g2);
 					
-				} else {
+				} else if (hilitedCopy instanceof Intersection) {
 					
 					Intersection v = (Intersection)hilitedCopy;
 					paintIntersectionHilite(v, g2);
 					
+				} else if (hilitedCopy instanceof Source) {
+					
+					Source s = (Source)hilitedCopy;
+					paintSourceHilite(s, g2);
+					
+				} else if (hilitedCopy instanceof Sink) {
+					
+					Sink s = (Sink)hilitedCopy;
+					paintSinkHilite(s, g2);
+					
+				} else {
+					assert false;
 				}
 				
 			}
@@ -254,17 +266,7 @@ public class DeadlockView {
 	
 	public static void paintIntersection(Intersection v, Graphics2D g) {
 		
-		switch (v.getType()) {
-		case SINK:
-			g.setColor(Color.RED);
-			break;
-		case SOURCE:
-			g.setColor(Color.GREEN);
-			break;
-		case COMMON:
-			g.setColor(new Color(0x44, 0x44, 0x44, 0xff));
-			break;
-		}
+		g.setColor(new Color(0x44, 0x44, 0x44, 0xff));
 		
 		Point p = v.getPoint();
 		g.fillOval((int)p.getX()-5, (int)p.getY()-5, 10, 10);
@@ -297,6 +299,22 @@ public class DeadlockView {
 		
 	}
 	
+	public static void paintSourceHilite(Source s, Graphics2D g) {
+			
+			g.setColor(Color.RED);
+			Point p = s.getPoint();
+			g.fillOval((int)p.getX()-5, (int)p.getY()-5, 10, 10);
+			
+		}
+	
+	public static void paintSinkHilite(Sink s, Graphics2D g) {
+		
+		g.setColor(Color.RED);
+		Point p = s.getPoint();
+		g.fillOval((int)p.getX()-5, (int)p.getY()-5, 10, 10);
+		
+	}
+
 	public static class Road1Stroke extends BasicStroke {
 		
 		public Road1Stroke() {
