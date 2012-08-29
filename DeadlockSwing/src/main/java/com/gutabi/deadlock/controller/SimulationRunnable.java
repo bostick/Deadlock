@@ -28,7 +28,7 @@ public class SimulationRunnable implements Runnable {
 	long lastSpawnStep = 0;
 	
 	List<Edge> edgesCopy;
-	List<Intersection> verticesCopy;
+	List<Intersection> intersectionsCopy;
 	ControlMode modeCopy;
 	List<Car> movingCarsCopy;
 	List<Car> crashedCarsCopy;
@@ -51,10 +51,10 @@ public class SimulationRunnable implements Runnable {
 			for (Edge e : MODEL.getEdges()) {
 				edgesCopy.add(e);
 			}
-			verticesCopy = new ArrayList<Intersection>();
-			for (Intersection v : MODEL.getVertices()) {
+			intersectionsCopy = new ArrayList<Intersection>();
+			for (Intersection v : MODEL.getIntersections()) {
 				v.hasCrash = false;
-				verticesCopy.add(v);
+				intersectionsCopy.add(v);
 			}
 			modeCopy = MODEL.getMode();
 			movingCarsCopy = new ArrayList<Car>(MODEL.movingCars);
@@ -112,7 +112,7 @@ public class SimulationRunnable implements Runnable {
 	private List<Intersection> activeSources() {
 		
 		List<Intersection> sources = new ArrayList<Intersection>();
-		for (Intersection v : verticesCopy) {
+		for (Intersection v : intersectionsCopy) {
 			if (v.getType() == IntersectionType.SOURCE && !v.hasCrash) {
 				sources.add(v);
 			}
@@ -152,12 +152,12 @@ public class SimulationRunnable implements Runnable {
 			
 			Intersection v = sources.get(i);
 			
-			c.startingVertex = v;
+			c.startingIntersection = v;
 			c.startingStep = step;
 			
 			c.futurePathAdd(new IntersectionPosition(v, null, null, 0));
 			
-			c.futureState = CarState.VERTEX;
+			c.futureState = CarState.INTERSECTION;
 			
 			sources.remove(v);
 		}
@@ -394,7 +394,7 @@ public class SimulationRunnable implements Runnable {
 				i.futureState = CarState.CRASHED;
 				newlyCrashedCars.add(i);
 				
-				for (Intersection v : MODEL.getVertices()) {
+				for (Intersection v : MODEL.getIntersections()) {
 					if (ip.distanceTo(new IntersectionPosition(v, null, null, 0)) <= 10) {
 						v.hasCrash = true;
 					}
@@ -406,7 +406,7 @@ public class SimulationRunnable implements Runnable {
 				j.futureState = CarState.CRASHED;
 				newlyCrashedCars.add(j);
 				
-				for (Intersection v : MODEL.getVertices()) {
+				for (Intersection v : MODEL.getIntersections()) {
 					if (jp.distanceTo(new IntersectionPosition(v, null, null, 0)) <= 10) {
 						v.hasCrash = true;
 					}

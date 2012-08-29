@@ -2510,8 +2510,8 @@ public class TestSimulating {
 			MODEL.processNewStroke(new ArrayList<Point>(){{add(new Point(600, 450));add(new Point(700, 450));}});
 			MODEL.processNewStroke(new ArrayList<Point>(){{add(new Point(650, 400));add(new Point(650, 500));}});
 			
-			Intersection aV = MODEL.findVertex(new Point(600, 450));
-			Intersection bV = MODEL.findVertex(new Point(650, 500));
+			Intersection aV = MODEL.tryFindIntersection(new Point(600, 450));
+			Intersection bV = MODEL.tryFindIntersection(new Point(650, 500));
 			
 			Car a = new Car();
 			Car b = new Car();
@@ -2562,8 +2562,8 @@ public class TestSimulating {
 			
 //			MODEL.processStroke(new Point(595, 450), new Point(695, 450));
 //			MODEL.processStroke(new Point(650, 400), new Point(650, 500));
-			Intersection aV = MODEL.findVertex(new Point(595, 450));
-			Intersection bV = MODEL.findVertex(new Point(650, 500));
+			Intersection aV = MODEL.tryFindIntersection(new Point(595, 450));
+			Intersection bV = MODEL.tryFindIntersection(new Point(650, 500));
 //			MODEL.processStroke(new Point(596, 450), new Point(696, 450));
 //			MODEL.processStroke(new Point(650, 400), new Point(650, 500));
 //			Vertex aV = MODEL.findVertex(new Point(596, 450));
@@ -2618,9 +2618,9 @@ public class TestSimulating {
 //			MODEL.processStroke(new Point(600, 450), new Point(700, 450));
 //			MODEL.processStroke(new Point(650, 400), new Point(650, 500));
 			
-			Intersection aV = MODEL.findVertex(new Point(600, 450));
-			Intersection bV = MODEL.findVertex(new Point(650, 500));
-			Intersection cV = MODEL.findVertex(new Point(650, 400));
+			Intersection aV = MODEL.tryFindIntersection(new Point(600, 450));
+			Intersection bV = MODEL.tryFindIntersection(new Point(650, 500));
+			Intersection cV = MODEL.tryFindIntersection(new Point(650, 400));
 			
 			Car a = new Car();
 			Car b = new Car();

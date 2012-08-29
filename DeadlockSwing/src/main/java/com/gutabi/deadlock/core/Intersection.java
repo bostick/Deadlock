@@ -72,7 +72,7 @@ public class Intersection extends Driveable {
 	public void addEdge(Edge ed) {
 		assert ed != null;
 		if (removed) {
-			throw new IllegalStateException("vertex has been removed");
+			throw new IllegalStateException("intersection has been removed");
 		}
 		if (!(ed.getStart() == this && ed.getEnd() == this)) {
 			assert !eds.contains(ed);
@@ -164,9 +164,6 @@ public class Intersection extends Driveable {
 		
 		int edgeCount = getEdges().size();
 		
-		/*
-		 * edgeCount cannot be 0, why have some free-floating vertex?
-		 */
 		assert edgeCount != 0;
 		
 		/*
@@ -187,7 +184,7 @@ public class Intersection extends Driveable {
 			}
 			if (e.getStart() == this && e.getEnd() == this) {
 				/*
-				 * loop with one vertex, so count of edges is 2 for this edge
+				 * loop with one intersection, so count of edges is 2 for this edge
 				 */
 				assert count == 2;
 			} else {

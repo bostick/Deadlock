@@ -237,7 +237,7 @@ public class DeadlockController implements ActionListener {
 					if (MODEL.hilited instanceof Intersection) {
 						Intersection v = (Intersection)MODEL.hilited;
 						
-						MODEL.removeVertex(v);
+						MODEL.removeIntersection(v);
 						
 					} else {
 						Edge e = (Edge)MODEL.hilited;

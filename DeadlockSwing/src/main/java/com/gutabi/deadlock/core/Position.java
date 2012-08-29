@@ -83,7 +83,7 @@ public abstract class Position {
 					IntersectionPosition bb = (IntersectionPosition)b;
 					
 					Edge e = aa.getEdge();
-					Intersection bV = bb.getVertex();
+					Intersection bV = bb.getIntersection();
 					
 					if (bV == e.getStart()) {
 						return 1;
@@ -101,7 +101,7 @@ public abstract class Position {
 					IntersectionPosition aa = (IntersectionPosition)a;
 					EdgePosition bb = (EdgePosition)b;
 					
-					Intersection aV = aa.getVertex();
+					Intersection aV = aa.getIntersection();
 					Edge e = bb.getEdge();
 					
 					if (aV == e.getStart()) {
@@ -118,8 +118,8 @@ public abstract class Position {
 					IntersectionPosition aa = (IntersectionPosition)a;
 					IntersectionPosition bb = (IntersectionPosition)b;
 					
-					Intersection aV = aa.getVertex();
-					Intersection bV = bb.getVertex();
+					Intersection aV = aa.getIntersection();
+					Intersection bV = bb.getIntersection();
 					
 					if (aV == bV) {
 						return 0;

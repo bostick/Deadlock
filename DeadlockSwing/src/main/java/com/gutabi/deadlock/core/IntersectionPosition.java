@@ -10,7 +10,7 @@ public class IntersectionPosition extends Position {
 		this.v = v;
 	}
 	
-	public Intersection getVertex() {
+	public Intersection getIntersection() {
 		return v;
 	}
 	
@@ -28,7 +28,7 @@ public class IntersectionPosition extends Position {
 	
 	protected double distanceToV(IntersectionPosition a) {
 		
-		Intersection v = a.getVertex();
+		Intersection v = a.getIntersection();
 		
 		if (!(v == this.v || Edge.commonEdge(v, this.v) != null)) {
 			return Double.POSITIVE_INFINITY;

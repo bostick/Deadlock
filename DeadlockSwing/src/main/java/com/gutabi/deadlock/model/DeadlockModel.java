@@ -79,8 +79,8 @@ public class DeadlockModel {
 		graph.removeEdgeTop(e);
 	}
 	
-	public void removeVertex(Intersection v) {
-		graph.removeVertexTop(v);
+	public void removeIntersection(Intersection i) {
+		graph.removeIntersectionTop(i);
 	}
 	
 	public void addSource(Point p) {
@@ -108,8 +108,8 @@ public class DeadlockModel {
 		return graph.getSegmentTree().findAllSegments(a);
 	}
 	
-	public List<Intersection> getVertices() {
-		return graph.getVertices();
+	public List<Intersection> getIntersections() {
+		return graph.getIntersections();
 	}
 	
 	public List<Edge> getEdges() {
@@ -124,8 +124,8 @@ public class DeadlockModel {
 		return graph.getSinks();
 	}
 	
-	public Intersection findVertex(Point a) {
-		return graph.findVertex(a);
+	public Intersection tryFindIntersection(Point a) {
+		return graph.tryFindIntersection(a);
 	}
 	
 	public EdgePosition tryFindEdgePosition(Point a) {

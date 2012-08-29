@@ -110,7 +110,7 @@ public final class Edge extends Driveable {
 		return removed;
 	}
 	
-	public static boolean haveExactlyOneSharedVertex(Edge a, Edge b) {
+	public static boolean haveExactlyOneSharedIntersection(Edge a, Edge b) {
 		Intersection as = a.getStart();
 		Intersection ae = a.getEnd();
 		Intersection bs = b.getStart();
@@ -128,7 +128,7 @@ public final class Edge extends Driveable {
 		}
 	}
 	
-	public static boolean haveTwoSharedVertices(Edge a, Edge b) {
+	public static boolean haveTwoSharedIntersections(Edge a, Edge b) {
 		Intersection as = a.getStart();
 		Intersection ae = a.getEnd();
 		Intersection bs = b.getStart();
@@ -147,9 +147,9 @@ public final class Edge extends Driveable {
 	}
 	
 	/**
-	 * returns the single shared vertex between edges a and b
+	 * returns the single shared intersection between edges a and b
 	 */
-	public static Intersection sharedVertex(Edge a, Edge b) throws SharedIntersectionsException {
+	public static Intersection sharedIntersection(Edge a, Edge b) throws SharedIntersectionsException {
 		assert a != b;
 		Intersection as = a.getStart();
 		Intersection ae = a.getEnd();
@@ -177,16 +177,6 @@ public final class Edge extends Driveable {
 			return be;
 		} else {
 			return null;
-		}
-	}
-	
-	public Intersection otherVertex(Intersection a) {
-		if (a == start) {
-			return end;
-		} else if (a == end) {
-			return start;
-		} else {
-			throw new IllegalArgumentException();
 		}
 	}
 	

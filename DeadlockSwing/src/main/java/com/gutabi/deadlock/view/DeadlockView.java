@@ -105,7 +105,7 @@ public class DeadlockView {
 				} else {
 					
 					Intersection v = (Intersection)hilitedCopy;
-					paintVertexHilite(v, g2);
+					paintIntersectionHilite(v, g2);
 					
 				}
 				
@@ -136,7 +136,7 @@ public class DeadlockView {
 				switch (c.getState()) {
 				case NEW:
 				case EDGE:
-				case VERTEX:
+				case INTERSECTION:
 					g2.setColor(Color.BLUE);
 					break;
 				default:
@@ -180,13 +180,13 @@ public class DeadlockView {
 		g2.translate((double)-MODEL.viewLoc.getX(), (double)-MODEL.viewLoc.getY());
 		
 		List<Edge> edgesCopy;
-		List<Intersection> verticesCopy;
+		List<Intersection> intersectionsCopy;
 		List<Source> sourcesCopy;
 		List<Sink> sinksCopy;
 		
 		synchronized (MODEL) {
 			edgesCopy = new ArrayList<Edge>(MODEL.getEdges());
-			verticesCopy = new ArrayList<Intersection>(MODEL.getVertices());
+			intersectionsCopy = new ArrayList<Intersection>(MODEL.getIntersections());
 			sourcesCopy = new ArrayList<Source>(MODEL.getSources());
 			sinksCopy = new ArrayList<Sink>(MODEL.getSinks());
 		}
@@ -200,8 +200,8 @@ public class DeadlockView {
 		for (Sink s : sinksCopy) {
 			paintSink(s, g2);
 		}
-		for (Intersection v : verticesCopy) {
-			paintVertex(v, g2);
+		for (Intersection v : intersectionsCopy) {
+			paintIntersection(v, g2);
 		}
 		for (Edge e : edgesCopy) {
 			paintEdge2(e, g2);
@@ -252,7 +252,7 @@ public class DeadlockView {
 		g.drawPolyline(xPoints, yPoints, size);
 	}
 	
-	public static void paintVertex(Intersection v, Graphics2D g) {
+	public static void paintIntersection(Intersection v, Graphics2D g) {
 		
 		switch (v.getType()) {
 		case SINK:
@@ -289,7 +289,7 @@ public class DeadlockView {
 		
 	}
 	
-	public static void paintVertexHilite(Intersection v, Graphics2D g) {
+	public static void paintIntersectionHilite(Intersection v, Graphics2D g) {
 		
 		g.setColor(Color.RED);
 		Point p = v.getPoint();

@@ -6,7 +6,7 @@ public enum CarState {
 	
 	EDGE,
 	
-	VERTEX,
+	INTERSECTION,
 	
 	/**
 	 * crashed

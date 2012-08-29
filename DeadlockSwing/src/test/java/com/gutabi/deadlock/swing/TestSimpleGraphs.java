@@ -102,7 +102,7 @@ public class TestSimpleGraphs {
 			@Override
 			public void run() {
 				edges = new ArrayList<Edge>(MODEL.getEdges());
-				vertices = new ArrayList<Intersection>(MODEL.getVertices());
+				vertices = new ArrayList<Intersection>(MODEL.getIntersections());
 			}
 		});
 		

@@ -1,7 +1,5 @@
 package com.gutabi.deadlock.core;
 
-
-
 public class EdgePosition extends Position {
 	
 	public final Edge e;
@@ -133,7 +131,7 @@ public class EdgePosition extends Position {
 	
 	public double distanceToV(IntersectionPosition a) {
 		
-		Intersection v = a.getVertex();
+		Intersection v = a.getIntersection();
 		
 		if (v == e.getStart() || v == e.getEnd()) {
 			
@@ -188,9 +186,9 @@ public class EdgePosition extends Position {
 				}
 				
 			}
-		} else if (Edge.haveExactlyOneSharedVertex(e, a.e)) {
+		} else if (Edge.haveExactlyOneSharedIntersection(e, a.e)) {
 			
-			Intersection v = Edge.sharedVertex(e, a.e);
+			Intersection v = Edge.sharedIntersection(e, a.e);
 			
 			if (e.isLoop()) {
 				double fDist = distanceToEndOfEdge();
@@ -207,7 +205,7 @@ public class EdgePosition extends Position {
 					return distanceToStartOfEdge() + new IntersectionPosition(v, this, e, -1).distanceTo(a);
 				}
 			}
-		} else if (Edge.haveTwoSharedVertices(e, a.e)) {
+		} else if (Edge.haveTwoSharedIntersections(e, a.e)) {
 			
 			Intersection v1 = e.getEnd();
 			Intersection v2 = e.getStart();

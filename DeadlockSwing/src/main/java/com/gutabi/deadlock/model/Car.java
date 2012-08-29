@@ -21,7 +21,7 @@ public class Car {
 	private Position pos;
 	
 	public long startingStep;
-	public Intersection startingVertex;
+	public Intersection startingIntersection;
 	
 	public Path futurePath;
 	
@@ -147,7 +147,7 @@ public class Car {
 					
 					previousEdge = e;
 					Intersection v = e.getEnd();
-					futureState = CarState.VERTEX;
+					futureState = CarState.INTERSECTION;
 					
 					assert getLastFuturePosition() instanceof IntersectionPosition;
 					
@@ -161,7 +161,7 @@ public class Car {
 					
 					previousEdge = e;
 					Intersection v = e.getEnd();
-					futureState = CarState.VERTEX;
+					futureState = CarState.INTERSECTION;
 					
 					assert getLastFuturePosition() instanceof IntersectionPosition;
 					
@@ -178,9 +178,9 @@ public class Car {
 				
 				break;
 			}
-			case VERTEX: {
+			case INTERSECTION: {
 				IntersectionPosition pos = (IntersectionPosition)getLastFuturePosition();
-				Intersection v = pos.getVertex();
+				Intersection v = pos.getIntersection();
 				List<Edge> eds = new ArrayList<Edge>(v.getEdges());
 				
 //				Edge previousEdge = null;
