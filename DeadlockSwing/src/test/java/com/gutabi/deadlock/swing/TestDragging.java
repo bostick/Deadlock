@@ -6498,4 +6498,106 @@ public class TestDragging {
 		Thread.sleep(Long.MAX_VALUE);
 	}
 	
+	@Test
+	public void testBug29() throws Exception {
+		
+		CONTROLLER.strat = MassageStrategy.CURRENT;
+
+		testPressed(new Point(1244., 2.));
+		testDragged(new Point(1244., 3.));
+		testDragged(new Point(1244., 5.));
+		testDragged(new Point(1244., 13.));
+		testDragged(new Point(1244., 27.));
+		testDragged(new Point(1244., 41.));
+		testDragged(new Point(1244., 63.));
+		testDragged(new Point(1244., 100.));
+		testDragged(new Point(1244., 139.));
+		testDragged(new Point(1244., 206.));
+		testDragged(new Point(1244., 256.));
+		testDragged(new Point(1244., 301.));
+		testDragged(new Point(1242., 363.));
+		testDragged(new Point(1239., 444.));
+		testDragged(new Point(1239., 494.));
+		testDragged(new Point(1237., 524.));
+		testDragged(new Point(1237., 565.));
+		testDragged(new Point(1237., 586.));
+		testDragged(new Point(1237., 606.));
+		testDragged(new Point(1238., 636.));
+		testDragged(new Point(1238., 642.));
+		testDragged(new Point(1238., 647.));
+		testDragged(new Point(1238., 649.));
+		testDragged(new Point(1238., 653.));
+		testDragged(new Point(1239., 654.));
+		testReleased();
+
+		testPressed(new Point(1239., 654.));
+		testDragged(new Point(1239., 657.));
+		testDragged(new Point(1239., 659.));
+		testDragged(new Point(1239., 667.));
+		testDragged(new Point(1239., 679.));
+		testDragged(new Point(1239., 690.));
+		testDragged(new Point(1239., 698.));
+		testDragged(new Point(1239., 709.));
+		testDragged(new Point(1239., 728.));
+		testDragged(new Point(1238., 748.));
+		testDragged(new Point(1238., 761.));
+		testDragged(new Point(1236., 773.));
+		testDragged(new Point(1236., 787.));
+		testDragged(new Point(1234., 803.));
+		testDragged(new Point(1234., 823.));
+		testDragged(new Point(1232., 837.));
+		testDragged(new Point(1232., 843.));
+		testDragged(new Point(1230., 850.));
+		testDragged(new Point(1230., 853.));
+		testDragged(new Point(1229., 855.));
+		testDragged(new Point(1229., 858.));
+		testDragged(new Point(1229., 859.));
+		testDragged(new Point(1228., 860.));
+		testDragged(new Point(1228., 861.));
+		testDragged(new Point(1228., 862.));
+		testReleased();
+
+		testPressed(new Point(1246., 32.));
+		testDragged(new Point(1249., 32.));
+		testDragged(new Point(1251., 32.));
+		testDragged(new Point(1257., 32.));
+		testDragged(new Point(1262., 32.));
+		testDragged(new Point(1266., 32.));
+		testDragged(new Point(1270., 32.));
+		testDragged(new Point(1275., 32.));
+		testDragged(new Point(1279., 32.));
+		testDragged(new Point(1285., 32.));
+		testDragged(new Point(1300., 32.));
+		testDragged(new Point(1317., 32.));
+		testDragged(new Point(1330., 32.));
+		testDragged(new Point(1334., 33.));
+		testDragged(new Point(1338., 33.));
+		testDragged(new Point(1347., 33.));
+		testDragged(new Point(1352., 34.));
+		testDragged(new Point(1358., 34.));
+		testDragged(new Point(1362., 34.));
+		testDragged(new Point(1367., 34.));
+		testDragged(new Point(1369., 34.));
+		testDragged(new Point(1376., 36.));
+		testDragged(new Point(1385., 36.));
+		testDragged(new Point(1387., 36.));
+		testDragged(new Point(1388., 36.));
+		testDragged(new Point(1389., 36.));
+		testDragged(new Point(1390., 36.));
+		testDragged(new Point(1390., 37.));
+		testDragged(new Point(1392., 37.));
+		testDragged(new Point(1393., 37.));
+		testDragged(new Point(1394., 37.));
+		testDragged(new Point(1396., 37.));
+		testDragged(new Point(1398., 37.));
+		testDragged(new Point(1399., 37.));
+		testDragged(new Point(1400., 37.));
+		testDragged(new Point(1401., 37.));
+		testDragged(new Point(1402., 38.));
+		testReleased();
+		
+		Thread.sleep(Long.MAX_VALUE);
+	}
+	
+	
 }

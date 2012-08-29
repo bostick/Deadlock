@@ -29,6 +29,7 @@ public class Car {
 	
 	public Edge futureEdge;
 	public int futureDir;
+	public Edge previousEdge;
 	
 	public double distanceToMove;
 	
@@ -144,6 +145,7 @@ public class Car {
 				
 				if (DMath.doubleEquals(distanceToMove, distanceLeftOnEdge)) {
 					
+					previousEdge = e;
 					Vertex v = e.getEnd();
 					futureState = CarState.VERTEX;
 					
@@ -157,6 +159,7 @@ public class Car {
 					
 				} else if (distanceToMove > distanceLeftOnEdge) {
 					
+					previousEdge = e;
 					Vertex v = e.getEnd();
 					futureState = CarState.VERTEX;
 					
@@ -180,12 +183,12 @@ public class Car {
 				Vertex v = pos.getVertex();
 				List<Edge> eds = new ArrayList<Edge>(v.getEdges());
 				
-				Edge previousEdge = null;
-				List<Position> path = getFuturePath();
-				if (path.size() > 1) {
-					EdgePosition ep = (EdgePosition)path.get(path.size()-2);
-					previousEdge = ep.getEdge();
-				}
+//				Edge previousEdge = null;
+//				List<Position> path = getFuturePath();
+//				if (path.size() > 1) {
+//					EdgePosition ep = (EdgePosition)path.get(path.size()-2);
+//					previousEdge = ep.getEdge();
+//				}
 				
 				if (eds.size() > 1 && previousEdge != null) {
 					/*
