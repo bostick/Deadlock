@@ -1,6 +1,6 @@
 package com.gutabi.deadlock.core;
 
-public enum VertexType {
+public enum IntersectionType {
 	
 	COMMON, SOURCE, SINK;
 	

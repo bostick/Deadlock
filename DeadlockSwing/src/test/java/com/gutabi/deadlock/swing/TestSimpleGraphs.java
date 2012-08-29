@@ -20,7 +20,7 @@ import org.junit.Test;
 
 import com.gutabi.deadlock.core.Edge;
 import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.core.Vertex;
+import com.gutabi.deadlock.core.Intersection;
 
 public class TestSimpleGraphs {
 	
@@ -59,9 +59,9 @@ public class TestSimpleGraphs {
 //		}
 //	};
 	
-	Comparator<Vertex> vertexComparator = new Comparator<Vertex>() {
+	Comparator<Intersection> vertexComparator = new Comparator<Intersection>() {
 		@Override
-		public int compare(Vertex a, Vertex b) {
+		public int compare(Intersection a, Intersection b) {
 			if (a == b) {
 				return 0;
 			}
@@ -84,7 +84,7 @@ public class TestSimpleGraphs {
 	};
 	
 	List<Edge> edges;
-	List<Vertex> vertices;
+	List<Intersection> vertices;
 	
 	@Test
 	public void test1() throws Exception {
@@ -102,7 +102,7 @@ public class TestSimpleGraphs {
 			@Override
 			public void run() {
 				edges = new ArrayList<Edge>(MODEL.getEdges());
-				vertices = new ArrayList<Vertex>(MODEL.getVertices());
+				vertices = new ArrayList<Intersection>(MODEL.getVertices());
 			}
 		});
 		

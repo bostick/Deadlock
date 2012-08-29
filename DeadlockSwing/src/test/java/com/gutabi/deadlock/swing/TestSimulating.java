@@ -18,8 +18,8 @@ import com.gutabi.deadlock.core.Dim;
 import com.gutabi.deadlock.core.Edge;
 import com.gutabi.deadlock.core.EdgePosition;
 import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.core.Vertex;
-import com.gutabi.deadlock.core.VertexPosition;
+import com.gutabi.deadlock.core.Intersection;
+import com.gutabi.deadlock.core.IntersectionPosition;
 import com.gutabi.deadlock.model.Car;
 import com.gutabi.deadlock.model.CarState;
 
@@ -2510,20 +2510,20 @@ public class TestSimulating {
 			MODEL.processNewStroke(new ArrayList<Point>(){{add(new Point(600, 450));add(new Point(700, 450));}});
 			MODEL.processNewStroke(new ArrayList<Point>(){{add(new Point(650, 400));add(new Point(650, 500));}});
 			
-			Vertex aV = MODEL.findVertex(new Point(600, 450));
-			Vertex bV = MODEL.findVertex(new Point(650, 500));
+			Intersection aV = MODEL.findVertex(new Point(600, 450));
+			Intersection bV = MODEL.findVertex(new Point(650, 500));
 			
 			Car a = new Car();
 			Car b = new Car();
 			
-			a.setPosition(new VertexPosition(aV, null, null, 0));
+			a.setPosition(new IntersectionPosition(aV, null, null, 0));
 			//a.futurePathNewEdge();
 			a.futurePathAdd(a.getPosition());
 			a.setState(CarState.EDGE);
 			a.futureState = a.getState();
 			a.futureEdge = aV.getEdges().get(0);
 			
-			b.setPosition(new VertexPosition(bV, null, null, 0));
+			b.setPosition(new IntersectionPosition(bV, null, null, 0));
 			//b.futurePathNewEdge();
 			b.futurePathAdd(b.getPosition());
 			b.setState(CarState.EDGE);
@@ -2562,8 +2562,8 @@ public class TestSimulating {
 			
 //			MODEL.processStroke(new Point(595, 450), new Point(695, 450));
 //			MODEL.processStroke(new Point(650, 400), new Point(650, 500));
-			Vertex aV = MODEL.findVertex(new Point(595, 450));
-			Vertex bV = MODEL.findVertex(new Point(650, 500));
+			Intersection aV = MODEL.findVertex(new Point(595, 450));
+			Intersection bV = MODEL.findVertex(new Point(650, 500));
 //			MODEL.processStroke(new Point(596, 450), new Point(696, 450));
 //			MODEL.processStroke(new Point(650, 400), new Point(650, 500));
 //			Vertex aV = MODEL.findVertex(new Point(596, 450));
@@ -2572,14 +2572,14 @@ public class TestSimulating {
 			Car a = new Car();
 			Car b = new Car();
 			
-			a.setPosition(new VertexPosition(aV, null, null, 0));
+			a.setPosition(new IntersectionPosition(aV, null, null, 0));
 			//a.futurePathNewEdge();
 			a.futurePathAdd(a.getPosition());
 			a.setState(CarState.EDGE);
 			a.futureState = a.getState();
 			a.futureEdge = aV.getEdges().get(0);
 			
-			b.setPosition(new VertexPosition(bV, null, null, 0));
+			b.setPosition(new IntersectionPosition(bV, null, null, 0));
 			//b.futurePathNewEdge();
 			b.futurePathAdd(b.getPosition());
 			b.setState(CarState.EDGE);
@@ -2618,29 +2618,29 @@ public class TestSimulating {
 //			MODEL.processStroke(new Point(600, 450), new Point(700, 450));
 //			MODEL.processStroke(new Point(650, 400), new Point(650, 500));
 			
-			Vertex aV = MODEL.findVertex(new Point(600, 450));
-			Vertex bV = MODEL.findVertex(new Point(650, 500));
-			Vertex cV = MODEL.findVertex(new Point(650, 400));
+			Intersection aV = MODEL.findVertex(new Point(600, 450));
+			Intersection bV = MODEL.findVertex(new Point(650, 500));
+			Intersection cV = MODEL.findVertex(new Point(650, 400));
 			
 			Car a = new Car();
 			Car b = new Car();
 			Car c = new Car();
 			
-			a.setPosition(new VertexPosition(aV, null, null, 0));
+			a.setPosition(new IntersectionPosition(aV, null, null, 0));
 			//a.futurePathNewEdge();
 			a.futurePathAdd(a.getPosition());
 			a.setState(CarState.EDGE);
 			a.futureState = a.getState();
 			a.futureEdge = aV.getEdges().get(0);
 			
-			b.setPosition(new VertexPosition(bV, null, null, 0));
+			b.setPosition(new IntersectionPosition(bV, null, null, 0));
 			//b.futurePathNewEdge();
 			b.futurePathAdd(b.getPosition());
 			b.setState(CarState.EDGE);
 			b.futureState = b.getState();
 			b.futureEdge = bV.getEdges().get(0);
 			
-			c.setPosition(new VertexPosition(cV, null, null, 0));
+			c.setPosition(new IntersectionPosition(cV, null, null, 0));
 			//c.futurePathNewEdge();
 			c.futurePathAdd(c.getPosition());
 			c.setState(CarState.EDGE);

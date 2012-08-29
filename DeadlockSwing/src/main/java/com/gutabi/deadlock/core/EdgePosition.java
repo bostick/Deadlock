@@ -131,9 +131,9 @@ public class EdgePosition extends Position {
 		return l;
 	}
 	
-	public double distanceToV(VertexPosition a) {
+	public double distanceToV(IntersectionPosition a) {
 		
-		Vertex v = a.getVertex();
+		Intersection v = a.getVertex();
 		
 		if (v == e.getStart() || v == e.getEnd()) {
 			
@@ -190,30 +190,30 @@ public class EdgePosition extends Position {
 			}
 		} else if (Edge.haveExactlyOneSharedVertex(e, a.e)) {
 			
-			Vertex v = Edge.sharedVertex(e, a.e);
+			Intersection v = Edge.sharedVertex(e, a.e);
 			
 			if (e.isLoop()) {
 				double fDist = distanceToEndOfEdge();
 				double bDist = distanceToStartOfEdge();
 				if (fDist < bDist) {
-					return fDist + new VertexPosition(v, this, e, 1).distanceTo(a);
+					return fDist + new IntersectionPosition(v, this, e, 1).distanceTo(a);
 				} else {
-					return bDist + new VertexPosition(v, this, e, -1).distanceTo(a);
+					return bDist + new IntersectionPosition(v, this, e, -1).distanceTo(a);
 				}
 			} else {
 				if (v == e.getEnd()) {
-					return distanceToEndOfEdge() + new VertexPosition(v, this, e, 1).distanceTo(a);
+					return distanceToEndOfEdge() + new IntersectionPosition(v, this, e, 1).distanceTo(a);
 				} else {
-					return distanceToStartOfEdge() + new VertexPosition(v, this, e, -1).distanceTo(a);
+					return distanceToStartOfEdge() + new IntersectionPosition(v, this, e, -1).distanceTo(a);
 				}
 			}
 		} else if (Edge.haveTwoSharedVertices(e, a.e)) {
 			
-			Vertex v1 = e.getEnd();
-			Vertex v2 = e.getStart();
+			Intersection v1 = e.getEnd();
+			Intersection v2 = e.getStart();
 			
-			double fDist = distanceToEndOfEdge() + new VertexPosition(v1, this, e, 1).distanceTo(a);
-			double bDist = distanceToStartOfEdge() + new VertexPosition(v2, this, e, -1).distanceTo(a);
+			double fDist = distanceToEndOfEdge() + new IntersectionPosition(v1, this, e, 1).distanceTo(a);
+			double bDist = distanceToStartOfEdge() + new IntersectionPosition(v2, this, e, -1).distanceTo(a);
 			return Math.min(fDist, bDist);
 		} else {
 			return Double.POSITIVE_INFINITY;
@@ -236,7 +236,7 @@ public class EdgePosition extends Position {
 			
 			double distToEndOfEdge = distanceToEndOfEdge();
 			if (DMath.doubleEquals(dist, distToEndOfEdge)) {
-				return new VertexPosition(e.getEnd(), this, e, 1);
+				return new IntersectionPosition(e.getEnd(), this, e, 1);
 			} else if (dist > distToEndOfEdge) {
 				throw new TravelException();
 			}
@@ -247,7 +247,7 @@ public class EdgePosition extends Position {
 			
 			double distToStartOfEdge = distanceToStartOfEdge();
 			if (DMath.doubleEquals(dist, distToStartOfEdge)) {
-				return new VertexPosition(e.getStart(), this, e, -1);
+				return new IntersectionPosition(e.getStart(), this, e, -1);
 			} else if (dist > distToStartOfEdge) {
 				throw new TravelException();
 			}

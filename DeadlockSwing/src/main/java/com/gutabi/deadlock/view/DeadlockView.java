@@ -22,7 +22,7 @@ import com.gutabi.deadlock.core.Edge;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.Sink;
 import com.gutabi.deadlock.core.Source;
-import com.gutabi.deadlock.core.Vertex;
+import com.gutabi.deadlock.core.Intersection;
 import com.gutabi.deadlock.model.Car;
 
 public class DeadlockView {
@@ -104,7 +104,7 @@ public class DeadlockView {
 					
 				} else {
 					
-					Vertex v = (Vertex)hilitedCopy;
+					Intersection v = (Intersection)hilitedCopy;
 					paintVertexHilite(v, g2);
 					
 				}
@@ -180,13 +180,13 @@ public class DeadlockView {
 		g2.translate((double)-MODEL.viewLoc.getX(), (double)-MODEL.viewLoc.getY());
 		
 		List<Edge> edgesCopy;
-		List<Vertex> verticesCopy;
+		List<Intersection> verticesCopy;
 		List<Source> sourcesCopy;
 		List<Sink> sinksCopy;
 		
 		synchronized (MODEL) {
 			edgesCopy = new ArrayList<Edge>(MODEL.getEdges());
-			verticesCopy = new ArrayList<Vertex>(MODEL.getVertices());
+			verticesCopy = new ArrayList<Intersection>(MODEL.getVertices());
 			sourcesCopy = new ArrayList<Source>(MODEL.getSources());
 			sinksCopy = new ArrayList<Sink>(MODEL.getSinks());
 		}
@@ -200,7 +200,7 @@ public class DeadlockView {
 		for (Sink s : sinksCopy) {
 			paintSink(s, g2);
 		}
-		for (Vertex v : verticesCopy) {
+		for (Intersection v : verticesCopy) {
 			paintVertex(v, g2);
 		}
 		for (Edge e : edgesCopy) {
@@ -252,7 +252,7 @@ public class DeadlockView {
 		g.drawPolyline(xPoints, yPoints, size);
 	}
 	
-	public static void paintVertex(Vertex v, Graphics2D g) {
+	public static void paintVertex(Intersection v, Graphics2D g) {
 		
 		switch (v.getType()) {
 		case SINK:
@@ -289,7 +289,7 @@ public class DeadlockView {
 		
 	}
 	
-	public static void paintVertexHilite(Vertex v, Graphics2D g) {
+	public static void paintVertexHilite(Intersection v, Graphics2D g) {
 		
 		g.setColor(Color.RED);
 		Point p = v.getPoint();

@@ -1,16 +1,16 @@
 package com.gutabi.deadlock.core;
 
 
-public class VertexPosition extends Position {
+public class IntersectionPosition extends Position {
 	
-	public final Vertex v;
+	public final Intersection v;
 	
-	public VertexPosition(Vertex v, Position prevPos, Edge prevDirEdge, int prevDir) {
+	public IntersectionPosition(Intersection v, Position prevPos, Edge prevDirEdge, int prevDir) {
 		super(v.getPoint(), v, prevPos, prevDirEdge, prevDir);
 		this.v = v;
 	}
 	
-	public Vertex getVertex() {
+	public Intersection getVertex() {
 		return v;
 	}
 	
@@ -18,17 +18,17 @@ public class VertexPosition extends Position {
 	public boolean equals(Object o) {
 		if (this == o) {
 			return true;
-		} else if (!(o instanceof VertexPosition)) {
+		} else if (!(o instanceof IntersectionPosition)) {
 			return false;
 		} else {
-			VertexPosition b = (VertexPosition)o;
+			IntersectionPosition b = (IntersectionPosition)o;
 			return (v == b.v);
 		}
 	}
 	
-	protected double distanceToV(VertexPosition a) {
+	protected double distanceToV(IntersectionPosition a) {
 		
-		Vertex v = a.getVertex();
+		Intersection v = a.getVertex();
 		
 		if (!(v == this.v || Edge.commonEdge(v, this.v) != null)) {
 			return Double.POSITIVE_INFINITY;

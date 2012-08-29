@@ -5,7 +5,7 @@ import java.util.List;
 
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 
-public class Vertex extends Driveable {
+public class Intersection extends Driveable {
 	
 	private final Point p;
 	
@@ -13,13 +13,13 @@ public class Vertex extends Driveable {
 	
 	private final List<Edge> eds = new ArrayList<Edge>();
 	
-	private VertexType type = VertexType.COMMON;
+	private IntersectionType type = IntersectionType.COMMON;
 	
 	public boolean hasCrash;
 	
 	private boolean removed = false;
 	
-	public Vertex(Point p) {
+	public Intersection(Point p) {
 		this.p = p;
 		
 		int h = 17;
@@ -32,11 +32,11 @@ public class Vertex extends Driveable {
 		return hash;
 	}
 	
-	public Vertex copy() {
+	public Intersection copy() {
 		if (removed) {
 			throw new IllegalStateException();
 		}
-		Vertex c = new Vertex(p);
+		Intersection c = new Intersection(p);
 		c.type = type;
 		c.hasCrash = hasCrash;
 		/*
@@ -52,7 +52,7 @@ public class Vertex extends Driveable {
 		return "V " + p;
 	}
 	
-	public static List<Edge> commonEdges(Vertex a, Vertex b) {
+	public static List<Edge> commonEdges(Intersection a, Intersection b) {
 		
 		List<Edge> eds1 = a.eds;
 		List<Edge> eds2 = b.eds;
@@ -80,17 +80,17 @@ public class Vertex extends Driveable {
 		
 		switch (type) {
 		case SOURCE:
-			type = VertexType.COMMON;
+			type = IntersectionType.COMMON;
 			break;
 		case SINK:
-			type = VertexType.COMMON;
+			type = IntersectionType.COMMON;
 			break;
 		case COMMON:
 			if (eds.size() == 0) {
 				if (p.getY() <= 10 || p.getX() <= 10) {
-					type = VertexType.SOURCE;
+					type = IntersectionType.SOURCE;
 				} else if (p.getX() >= MODEL.WORLD_WIDTH-10 || p.getY() >= MODEL.WORLD_HEIGHT-10) {
-					type = VertexType.SINK;
+					type = IntersectionType.SINK;
 				}
 			}
 			break;
@@ -107,17 +107,17 @@ public class Vertex extends Driveable {
 		
 		switch (type) {
 		case SOURCE:
-			type = VertexType.COMMON;
+			type = IntersectionType.COMMON;
 			break;
 		case SINK:
-			type = VertexType.COMMON;
+			type = IntersectionType.COMMON;
 			break;
 		case COMMON:
 			if (eds.size() == 2) {
 				if (p.getY() <= 10 || p.getX() <= 10) {
-					type = VertexType.SOURCE;
+					type = IntersectionType.SOURCE;
 				} else if (p.getX() >= MODEL.WORLD_WIDTH-10 || p.getY() >= MODEL.WORLD_HEIGHT-10) {
-					type = VertexType.SINK;
+					type = IntersectionType.SINK;
 				}
 			}
 			break;
@@ -140,11 +140,11 @@ public class Vertex extends Driveable {
 		return p;
 	}
 	
-	public VertexType getType() {
+	public IntersectionType getType() {
 		return type;
 	}
 	
-	public void setType(VertexType type) {
+	public void setType(IntersectionType type) {
 		this.type = type;
 	}
 	

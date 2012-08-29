@@ -20,7 +20,7 @@ import com.gutabi.deadlock.Main;
 import com.gutabi.deadlock.core.Edge;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.Position;
-import com.gutabi.deadlock.core.Vertex;
+import com.gutabi.deadlock.core.Intersection;
 import com.gutabi.deadlock.view.WindowInfo;
 
 public class DeadlockController implements ActionListener {
@@ -234,8 +234,8 @@ public class DeadlockController implements ActionListener {
 				
 				if (MODEL.hilited != null) {
 					
-					if (MODEL.hilited instanceof Vertex) {
-						Vertex v = (Vertex)MODEL.hilited;
+					if (MODEL.hilited instanceof Intersection) {
+						Intersection v = (Intersection)MODEL.hilited;
 						
 						MODEL.removeVertex(v);
 						

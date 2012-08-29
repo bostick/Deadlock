@@ -41,14 +41,14 @@ public abstract class Position {
 	}
 	
 	public double distanceTo(Position a) {
-		if (a instanceof VertexPosition) {
-			return distanceToV((VertexPosition)a);
+		if (a instanceof IntersectionPosition) {
+			return distanceToV((IntersectionPosition)a);
 		} else {
 			return distanceToE((EdgePosition)a);
 		}
 	}
 	
-	protected abstract double distanceToV(VertexPosition a);
+	protected abstract double distanceToV(IntersectionPosition a);
 	protected abstract double distanceToE(EdgePosition e);
 	
 	static class PositionComparator implements Comparator<Position> {
@@ -77,13 +77,13 @@ public abstract class Position {
 						return 0;
 					}
 				} else {
-					assert b instanceof VertexPosition;
+					assert b instanceof IntersectionPosition;
 					
 					EdgePosition aa = (EdgePosition)a;
-					VertexPosition bb = (VertexPosition)b;
+					IntersectionPosition bb = (IntersectionPosition)b;
 					
 					Edge e = aa.getEdge();
-					Vertex bV = bb.getVertex();
+					Intersection bV = bb.getVertex();
 					
 					if (bV == e.getStart()) {
 						return 1;
@@ -95,13 +95,13 @@ public abstract class Position {
 					
 				}
 			} else {
-				assert a instanceof VertexPosition;
+				assert a instanceof IntersectionPosition;
 				if (b instanceof EdgePosition) {
 					
-					VertexPosition aa = (VertexPosition)a;
+					IntersectionPosition aa = (IntersectionPosition)a;
 					EdgePosition bb = (EdgePosition)b;
 					
-					Vertex aV = aa.getVertex();
+					Intersection aV = aa.getVertex();
 					Edge e = bb.getEdge();
 					
 					if (aV == e.getStart()) {
@@ -113,13 +113,13 @@ public abstract class Position {
 					}
 					
 				} else {
-					assert b instanceof VertexPosition;
+					assert b instanceof IntersectionPosition;
 					
-					VertexPosition aa = (VertexPosition)a;
-					VertexPosition bb = (VertexPosition)b;
+					IntersectionPosition aa = (IntersectionPosition)a;
+					IntersectionPosition bb = (IntersectionPosition)b;
 					
-					Vertex aV = aa.getVertex();
-					Vertex bV = bb.getVertex();
+					Intersection aV = aa.getVertex();
+					Intersection bV = bb.getVertex();
 					
 					if (aV == bV) {
 						return 0;

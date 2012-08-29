@@ -15,7 +15,7 @@ import com.gutabi.deadlock.core.Position;
 import com.gutabi.deadlock.core.Segment;
 import com.gutabi.deadlock.core.Sink;
 import com.gutabi.deadlock.core.Source;
-import com.gutabi.deadlock.core.Vertex;
+import com.gutabi.deadlock.core.Intersection;
 import com.gutabi.deadlock.view.WindowInfo;
 
 public class DeadlockModel {
@@ -79,7 +79,7 @@ public class DeadlockModel {
 		graph.removeEdgeTop(e);
 	}
 	
-	public void removeVertex(Vertex v) {
+	public void removeVertex(Intersection v) {
 		graph.removeVertexTop(v);
 	}
 	
@@ -108,7 +108,7 @@ public class DeadlockModel {
 		return graph.getSegmentTree().findAllSegments(a);
 	}
 	
-	public List<Vertex> getVertices() {
+	public List<Intersection> getVertices() {
 		return graph.getVertices();
 	}
 	
@@ -124,7 +124,7 @@ public class DeadlockModel {
 		return graph.getSinks();
 	}
 	
-	public Vertex findVertex(Point a) {
+	public Intersection findVertex(Point a) {
 		return graph.findVertex(a);
 	}
 	
