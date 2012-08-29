@@ -12,6 +12,9 @@ public class Graph {
 	private final ArrayList<Vertex> vertices = new ArrayList<Vertex>();
 	private final QuadTree segTree = new QuadTree();
 	
+	private final ArrayList<Source> sources = new ArrayList<Source>();
+	private final ArrayList<Sink> sinks = new ArrayList<Sink>();
+	
 	public List<Edge> getEdges() {
 		return edges;
 	}
@@ -23,6 +26,15 @@ public class Graph {
 	public QuadTree getSegmentTree() {
 		return segTree;
 	}
+	
+	public List<Source> getSources() {
+		return sources;
+	}
+	
+	public List<Sink> getSinks() {
+		return sinks;
+	}
+	
 	
 	public void clear() {
 		edges.clear();
@@ -59,6 +71,15 @@ public class Graph {
 		segTree.removeEdge(e);
 		e.remove();
 	}
+	
+	public void addSource(Point p) {
+		sources.add(new Source(p));
+	}
+	
+	public void addSink(Point p) {
+		sinks.add(new Sink(p));
+	}
+	
 	
 	public EdgePosition tryFindEdgePosition(Point b) {
 		for (Segment in : segTree.findAllSegments(b)) {

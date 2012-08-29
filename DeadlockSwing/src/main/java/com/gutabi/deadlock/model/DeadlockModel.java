@@ -13,6 +13,8 @@ import com.gutabi.deadlock.core.Graph;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.Position;
 import com.gutabi.deadlock.core.Segment;
+import com.gutabi.deadlock.core.Sink;
+import com.gutabi.deadlock.core.Source;
 import com.gutabi.deadlock.core.Vertex;
 import com.gutabi.deadlock.view.WindowInfo;
 
@@ -70,11 +72,7 @@ public class DeadlockModel {
 	}
 	
 	public void processNewStroke(List<Point> stroke) {
-		
-		graph.processNewStroke(stroke);
-		
-		
-		
+		graph.processNewStroke(stroke);	
 	}
 	
 	public void removeEdge(Edge e) {
@@ -84,6 +82,15 @@ public class DeadlockModel {
 	public void removeVertex(Vertex v) {
 		graph.removeVertexTop(v);
 	}
+	
+	public void addSource(Point p) {
+		graph.addSource(p);
+	}
+	
+	public void addSink(Point p) {
+		graph.addSink(p);
+	}
+	
 	
 	public double getZoom() {
 		return ((double)WindowInfo.windowWidth()) / ((double)viewDim.width);
@@ -107,6 +114,14 @@ public class DeadlockModel {
 	
 	public List<Edge> getEdges() {
 		return graph.getEdges();
+	}
+	
+	public List<Source> getSources() {
+		return graph.getSources();
+	}
+	
+	public List<Sink> getSinks() {
+		return graph.getSinks();
 	}
 	
 	public Vertex findVertex(Point a) {

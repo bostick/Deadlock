@@ -77,15 +77,29 @@ public class DeadlockController implements ActionListener {
 		f.get();
 	}
 	
+	
+	Point lastPressPoint;
+	long lastPressTime;
+	
 	public void pressed(Point p) {
+		
+		lastPressPoint = p;
+		lastPressTime = System.currentTimeMillis();
 		
 		synchronized (MODEL) {
 			switch (MODEL.getMode()) {
-			case IDLE:
-				CONTROLLER.draftStart(p);
-				//VIEW.renderBackground();
-				VIEW.repaint();
+			case IDLE: {
+				
+				if (p.getY() <= 10 || p.getX() <= 10) {
+					// source
+				} else if (p.getX() >= MODEL.WORLD_WIDTH-10 || p.getY() >= MODEL.WORLD_HEIGHT-10) {
+					// sink
+				} else {
+					draftStart(p);
+					VIEW.repaint();
+				}
 				break;
+			}
 			case DRAFTING:
 				assert false;
 				break;
@@ -98,17 +112,25 @@ public class DeadlockController implements ActionListener {
 			}
 		}
 		
+		lastDragPoint = null;
+		lastDragTime = -1;
 	}
 	
+	
+	Point lastDragPoint;
+	long lastDragTime;
 	
 	public void dragged(final Point p) {
 		
+		lastDragPoint = p;
+		lastDragTime = System.currentTimeMillis();
+		
 		synchronized (MODEL) {
 			switch (MODEL.getMode()) {
 			case IDLE:
 				break;
 			case DRAFTING:
-				CONTROLLER.draftMove(p);
+				draftMove(p);
 				//VIEW.renderBackground();
 				VIEW.repaint();
 				break;
@@ -123,14 +145,44 @@ public class DeadlockController implements ActionListener {
 		
 	}
 	
+	
+	long lastReleaseTime;
+	
 	public void released() {
+		
+		lastReleaseTime = System.currentTimeMillis();
 		
 		synchronized (MODEL) {
 			switch (MODEL.getMode()) {
-			case IDLE:
+			case IDLE: {
+				
+				if (lastReleaseTime - lastPressTime < 500 && lastDragPoint == null) {
+					// click
+					if (lastPressPoint.getY() <= 10 || lastPressPoint.getX() <= 10) {
+						// source
+						
+						MODEL.addSource(lastPressPoint);
+						
+						VIEW.renderBackground();
+						VIEW.repaint();
+						
+					} else if (lastPressPoint.getX() >= MODEL.WORLD_WIDTH-10 || lastPressPoint.getY() >= MODEL.WORLD_HEIGHT-10) {
+						// sink
+						
+						MODEL.addSink(lastPressPoint);
+						
+						VIEW.renderBackground();
+						VIEW.repaint();
+						
+					} else {
+						
+					}
+				}
+				
 				break;
+			}
 			case DRAFTING:
-				CONTROLLER.draftEnd();
+				draftEnd();
 				VIEW.renderBackground();
 				VIEW.repaint();
 				break;

@@ -20,6 +20,8 @@ import com.gutabi.deadlock.controller.ControlMode;
 import com.gutabi.deadlock.core.Driveable;
 import com.gutabi.deadlock.core.Edge;
 import com.gutabi.deadlock.core.Point;
+import com.gutabi.deadlock.core.Sink;
+import com.gutabi.deadlock.core.Source;
 import com.gutabi.deadlock.core.Vertex;
 import com.gutabi.deadlock.model.Car;
 
@@ -179,20 +181,24 @@ public class DeadlockView {
 		
 		List<Edge> edgesCopy;
 		List<Vertex> verticesCopy;
+		List<Source> sourcesCopy;
+		List<Sink> sinksCopy;
 		
 		synchronized (MODEL) {
-			edgesCopy = new ArrayList<Edge>();
-			for (Edge e : MODEL.getEdges()) {
-				edgesCopy.add(e.copy());
-			}
-			verticesCopy = new ArrayList<Vertex>();
-			for (Vertex v : MODEL.getVertices()) {
-				verticesCopy.add(v.copy());
-			}
+			edgesCopy = new ArrayList<Edge>(MODEL.getEdges());
+			verticesCopy = new ArrayList<Vertex>(MODEL.getVertices());
+			sourcesCopy = new ArrayList<Source>(MODEL.getSources());
+			sinksCopy = new ArrayList<Sink>(MODEL.getSinks());
 		}
 		
 		for (Edge e : edgesCopy) {
 			paintEdge1(e, g2);
+		}
+		for (Source s : sourcesCopy) {
+			paintSource(s, g2);
+		}
+		for (Sink s : sinksCopy) {
+			paintSink(s, g2);
 		}
 		for (Vertex v : verticesCopy) {
 			paintVertex(v, g2);
@@ -261,6 +267,24 @@ public class DeadlockView {
 		}
 		
 		Point p = v.getPoint();
+		g.fillOval((int)p.getX()-5, (int)p.getY()-5, 10, 10);
+		
+	}
+	
+	public static void paintSource(Source s, Graphics2D g) {
+		
+		g.setColor(Color.GREEN);
+		
+		Point p = s.getPoint();
+		g.fillOval((int)p.getX()-5, (int)p.getY()-5, 10, 10);
+		
+	}
+
+	public static void paintSink(Sink s, Graphics2D g) {
+		
+		g.setColor(Color.RED);
+		
+		Point p = s.getPoint();
 		g.fillOval((int)p.getX()-5, (int)p.getY()-5, 10, 10);
 		
 	}
