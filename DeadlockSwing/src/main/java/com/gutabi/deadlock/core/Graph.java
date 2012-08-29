@@ -174,58 +174,58 @@ public class Graph {
 	
 	public void processNewStroke(List<Point> stroke) {
 		addStroke(stroke, true);
+		cleanupEdges();
 	}
 	
-	private List<Point> cullAngles(List<Point> stroke) {
-		
-		List<Point> stroke2 = new ArrayList<Point>();
-		
-		/*
-		 * initialize
-		 */
-		Point a = stroke.get(0);
-		Point b = stroke.get(1);
-		stroke2.add(a);
-		stroke2.add(b);
-		
-		for (int i = 2; i < stroke.size(); i++) {
-			
-			Point aa = stroke2.get(stroke2.size()-2);
-			
-			// last good point added
-			a = stroke2.get(stroke2.size()-1);
-			
-			double rad1 = Math.atan2(a.getY()-aa.getY(), a.getX()-aa.getX());
-			
-			b = stroke.get(i);
-			double rad2 = Math.atan2(b.getY()-a.getY(), b.getX()-a.getX());
-			
-			double rad = rad2 - rad1;
-			while (rad > Math.PI) {
-				rad -= 2 * Math.PI;
-			}
-			while (rad < -Math.PI) {
-				rad += 2 * Math.PI;
-			}
-			double sharpRight = -2.35;
-			double sharpLeft = 2.35;
-			
-			if (rad > sharpRight && rad < sharpLeft) {
-				stroke2.add(b);
-			} else {
-				//String.class.getName();
-			}
-			
-		}
-		
-		return stroke2;
-	}
+//	private List<Point> cullAngles(List<Point> stroke) {
+//		
+//		List<Point> stroke2 = new ArrayList<Point>();
+//		
+//		/*
+//		 * initialize
+//		 */
+//		Point a = stroke.get(0);
+//		Point b = stroke.get(1);
+//		stroke2.add(a);
+//		stroke2.add(b);
+//		
+//		for (int i = 2; i < stroke.size(); i++) {
+//			
+//			Point aa = stroke2.get(stroke2.size()-2);
+//			
+//			// last good point added
+//			a = stroke2.get(stroke2.size()-1);
+//			
+//			double rad1 = Math.atan2(a.getY()-aa.getY(), a.getX()-aa.getX());
+//			
+//			b = stroke.get(i);
+//			double rad2 = Math.atan2(b.getY()-a.getY(), b.getX()-a.getX());
+//			
+//			double rad = rad2 - rad1;
+//			while (rad > Math.PI) {
+//				rad -= 2 * Math.PI;
+//			}
+//			while (rad < -Math.PI) {
+//				rad += 2 * Math.PI;
+//			}
+//			double sharpRight = -2.35;
+//			double sharpLeft = 2.35;
+//			
+//			if (rad > sharpRight && rad < sharpLeft) {
+//				stroke2.add(b);
+//			} else {
+//				//String.class.getName();
+//			}
+//			
+//		}
+//		
+//		return stroke2;
+//	}
 	
 	/**
-	 * this is down at the grid point level
-	 * only adjusts intersections to grid points and adds segments 
+	 * handleClose is needed since when adjusting edges to the grid, we want to stay exact, and ignore worrying about "closeness" 
 	 */
-	public void addStroke(List<Point> stroke, boolean newStroke) {
+	public void addStroke(List<Point> stroke, boolean handleClose) {
 		
 		Point a;
 		Point b;
@@ -235,7 +235,7 @@ public class Graph {
 			b = stroke.get(i+1);
 			assert !Point.equals(a, b);
 			
-			List<PointToBeAdded> betweenABPoints = fillinIntersections(a, b);
+			List<PointToBeAdded> betweenABPoints = splitOnEvents(a, b);
 
 			for (int j = 0; j < betweenABPoints.size()-1; j++) {
 				PointToBeAdded ptba1 = betweenABPoints.get(j);
@@ -244,8 +244,8 @@ public class Graph {
 				Point p1 = ptba1.p;
 				Point p2 = ptba2.p;
 				
-				Point[] newSegment;
-				if (newStroke) {
+				if (handleClose) {
+					Point[] newSegment;
 					newSegment = handleIntersections(p1, p2);
 					if (newSegment[0] == null && newSegment[1] == null) {
 						/*
@@ -257,8 +257,8 @@ public class Graph {
 					p2 = newSegment[1];
 				}
 				
-				List<PointToBeAdded> betweenP1P2Points = fillinIntersections(p1, p2);
-				assert betweenP1P2Points.size() == 2;
+//				List<PointToBeAdded> betweenP1P2Points = splitOnEvents(p1, p2);
+//				assert betweenP1P2Points.size() == 2;
 				
 				final Point p1Int = p1.toInteger();
 				
@@ -296,11 +296,6 @@ public class Graph {
 				
 			}
 		}
-		
-		if (newStroke) {
-			cleanupEdges();
-		}
-		
 	}
 	
 	/*
@@ -376,7 +371,7 @@ public class Graph {
 		return null;
 	}
 	
-	private List<PointToBeAdded> fillinIntersections(Point a, Point b) {
+	private List<PointToBeAdded> splitOnEvents(Point a, Point b) {
 		
 		List<PointToBeAdded> betweenABPoints = new ArrayList<PointToBeAdded>();
 		
@@ -392,22 +387,37 @@ public class Graph {
 			try {
 				Point inter = Point.intersection(a, b, c, d);
 				if (inter != null) {
+					/*
+					 * an intersection event
+					 */
 					PointToBeAdded nptba = new PointToBeAdded(inter, Point.param(inter, a, b));
 					betweenABPointsAdd(betweenABPoints, nptba);
 				}
 			} catch (OverlappingException ex) {
 				
 				if (Point.intersect(c, a, b) && !Point.equals(c, b)) {
+					/*
+					 * an overlapping event
+					 */
 					PointToBeAdded nptba = new PointToBeAdded(c, Point.param(c, a, b));
 					betweenABPointsAdd(betweenABPoints, nptba);
 				}
 				
 				if (Point.intersect(d, a, b) && !Point.equals(d, b)) {
+					/*
+					 * an overlapping event
+					 */
 					PointToBeAdded nptba = new PointToBeAdded(d, Point.param(d, a, b));
 					betweenABPointsAdd(betweenABPoints, nptba);
 				}
 				
 			}
+			
+			/*
+			 * find too-close to other segments events
+			 * start and end of being too close
+			 */
+			//d;
 			
 		}
 		

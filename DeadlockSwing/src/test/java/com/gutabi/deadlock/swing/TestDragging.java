@@ -6480,4 +6480,22 @@ public class TestDragging {
 		
 		Thread.sleep(Long.MAX_VALUE);
 	}
+	
+	@Test
+	public void testBug28() throws Exception {
+		
+		CONTROLLER.strat = MassageStrategy.CURRENT;
+
+		testPressed(new Point(1077., 404.));
+		testDragged(new Point(1059., 444.));
+		testDragged(new Point(1053., 461.));
+		testReleased();
+		
+		testPressed(new Point(1010., 437.));
+		testDragged(new Point(1074., 441.));
+		testReleased();
+		
+		Thread.sleep(Long.MAX_VALUE);
+	}
+	
 }
