@@ -145,15 +145,7 @@ public class DeadlockView {
 			
 			for (Car c : movingCarsCopy) {
 				Point pos = c.getPosition().getPoint();
-				switch (c.getState()) {
-				case NEW:
-				case EDGE:
-				case INTERSECTION:
-					g2.setColor(Color.BLUE);
-					break;
-				default:
-					assert false;
-				}
+				g2.setColor(Color.BLUE);
 				g2.fillOval((int)(pos.getX()-5), (int)(pos.getY()-5), 10, 10);
 			}
 			

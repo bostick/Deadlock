@@ -6,11 +6,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.gutabi.deadlock.core.DMath;
+import com.gutabi.deadlock.core.Direction;
 import com.gutabi.deadlock.core.Edge;
 import com.gutabi.deadlock.core.EdgePosition;
 import com.gutabi.deadlock.core.Path;
 import com.gutabi.deadlock.core.Position;
 import com.gutabi.deadlock.core.Sink;
+import com.gutabi.deadlock.core.Source;
 import com.gutabi.deadlock.core.Vertex;
 import com.gutabi.deadlock.core.VertexPosition;
 
@@ -21,17 +23,15 @@ public class Car {
 	private Position pos;
 	
 	public long startingStep;
-	public Vertex startingVertex;
+	public Source source;
 	
-	public Path futurePath;
-	
-	public CarState futureState;
-	
-	public Edge futureEdge;
-	public int futureDir;
+	public Path nextPath;
+	public CarState nextState;
+	public Edge nextEdge;
+	public int nextDir;
 	public Edge previousEdge;
 	
-	public double distanceToMove;
+	public double nextDistanceToMove;
 	
 	public final int id;
 	
@@ -44,9 +44,189 @@ public class Car {
 		id = carCounter;
 		carCounter++;
 		
-		futurePath = new Path();
+		nextPath = new Path();
 		
 		s = "car " + id;
+	}
+	
+	public void updateNext() {
+		
+		nextDistanceToMove = MODEL.DISTANCE_PER_TIMESTEP;
+		
+		inner:
+		while (true) {
+			
+			switch (nextState) {
+			case EDGE: {
+				Position pos = getLastNextPosition();
+				Edge e = nextEdge;
+				int dir = nextDir;
+				double distanceLeftOnEdge;
+				if (pos instanceof EdgePosition) {
+					distanceLeftOnEdge = (dir == 1) ? ((EdgePosition)pos).distanceToEndOfEdge() : ((EdgePosition)pos).distanceToStartOfEdge();
+				} else {
+					distanceLeftOnEdge = e.getTotalLength();
+				}
+				
+				Position nextPos;
+				if (pos instanceof EdgePosition) {
+					nextPos = ((EdgePosition)pos).travel(dir, Math.min(nextDistanceToMove, distanceLeftOnEdge));
+				} else {
+					nextPos = ((VertexPosition)pos).travel(e, dir, Math.min(nextDistanceToMove, distanceLeftOnEdge));
+				}
+				nextPathAdd(nextPos);
+				
+				if (DMath.doubleEquals(nextDistanceToMove, distanceLeftOnEdge)) {
+					
+					previousEdge = e;
+					Vertex v = (dir == 1) ? e.getEnd() : e.getStart();
+					nextState = CarState.VERTEX;
+					
+					assert getLastNextPosition() instanceof VertexPosition;
+					
+					nextDistanceToMove = 0.0;
+					
+					if (v instanceof Sink) {
+						nextState = CarState.SINKED;
+					}
+					
+				} else if (nextDistanceToMove > distanceLeftOnEdge) {
+					
+					previousEdge = e;
+					Vertex v = (dir == 1) ? e.getEnd() : e.getStart();
+					nextState = CarState.VERTEX;
+					
+					assert getLastNextPosition() instanceof VertexPosition;
+					
+					nextDistanceToMove -= distanceLeftOnEdge;
+					
+					if (v instanceof Sink) {
+						nextState = CarState.SINKED;
+						nextDistanceToMove = 0.0;
+					}
+					
+				} else {
+					nextDistanceToMove = 0.0;
+				}
+				
+				break;
+			}
+			case VERTEX: {
+				VertexPosition pos = (VertexPosition)getLastNextPosition();
+				nextChoice(pos);
+				break;
+			}
+			case CRASHED:
+				nextDistanceToMove = 0.0;
+				break;
+			case SINKED:
+				nextDistanceToMove = 0.0;
+				break;
+			case NEW:
+				assert false;
+			}
+			
+			if (nextDistanceToMove == 0.0) {
+				break inner;
+			}
+			
+		} // end inner loop
+		
+		assert nextState == CarState.SINKED || DMath.doubleEquals(nextPath.totalLength(), MODEL.DISTANCE_PER_TIMESTEP);
+		
+	}
+	
+	private void nextChoice(Position pos) {
+		nextChoiceRandom(pos);
+	}
+	
+	private void nextChoiceRandom(Position pos) {
+		if (pos instanceof VertexPosition) {
+			
+			VertexPosition vp = (VertexPosition)pos;
+			
+			Vertex v = vp.getVertex();
+			List<Edge> eds = new ArrayList<Edge>(v.getEdges());
+			
+			if (eds.size() > 1 && previousEdge != null) {
+				/*
+				 * don't go back the same way
+				 */
+				eds.remove(previousEdge);
+			}
+			
+			int i = MODEL.RANDOM.nextInt(eds.size());
+			nextEdge = eds.get(i);
+			if (nextEdge.isLoop()) {
+				/*
+				 * even though a loop is still registered as 2 edges in eds, tehre is no direction information encoded
+				 * The edge e is simply in eds twice.
+				 * Si if e is a loop, take this extra step to pick a direction
+				 */
+				nextDir = 2*MODEL.RANDOM.nextInt(2)-1;
+			} else {
+				nextDir = (nextEdge.getStart() == v) ? 1 : -1;
+			}
+			nextState = CarState.EDGE;
+			
+		} else {
+			assert false;
+		}
+	}
+	
+	private void nextChoiceToSink(Position pos) {
+		if (pos instanceof VertexPosition) {
+			
+			Direction goal = source.getDirection().opposite();
+			List<Sink> sinks = new ArrayList<Sink>();
+			for (Sink s : MODEL.getSinks()) {
+				if (s.getDirection() == goal) {
+					sinks.add(s);
+				}
+			}
+			
+			VertexPosition vp = (VertexPosition)pos;
+			
+			Vertex v = vp.getVertex();
+			
+			Edge best = null;
+			double bestDistance = Double.POSITIVE_INFINITY;
+			for (Edge e : v.getEdges()) {
+				for (Sink s : MODEL.getSinks()) {
+					//distance
+				}
+			}
+			
+			List<Edge> eds = new ArrayList<Edge>(v.getEdges());
+			
+			int i = MODEL.RANDOM.nextInt(eds.size());
+			nextEdge = eds.get(i);
+			if (nextEdge.isLoop()) {
+				nextDir = 2*MODEL.RANDOM.nextInt(2)-1;
+			} else {
+				nextDir = (nextEdge.getStart() == v) ? 1 : -1;
+			}
+			nextState = CarState.EDGE;
+			
+		} else {
+			assert false;
+		}
+	}
+	
+	
+	public void updateCurrentFromNext() {
+		Position p = getLastNextPosition();
+		setPosition(p);
+		nextPathClear();
+		nextPathAdd(p);
+		CarState s = nextState;
+		setState(s);
+	}
+	
+	public Car copy() {
+		Car c = new Car();
+		c.pos = getPosition();
+		return c;
 	}
 	
 	public String toString() {
@@ -64,11 +244,11 @@ public class Car {
 		this.pos = pos;
 	}
 	
-	public void futurePathAdd(Position pos) {
+	public void nextPathAdd(Position pos) {
 		if (state == CarState.CRASHED || state == CarState.SINKED) {
 			throw new IllegalArgumentException();
 		}
-		futurePath.add(pos);
+		nextPath.add(pos);
 	}
 	
 	/**
@@ -76,32 +256,32 @@ public class Car {
 	 * with pos (if they are not already equal)
 	 * 
 	 */
-	public void futurePathCrash(Position pos, int pIndex) {
+	public void nextPathCrash(Position pos, int pIndex) {
 		if (state == CarState.CRASHED || state == CarState.SINKED) {
 			throw new IllegalArgumentException();
 		}
 		
-		futurePath.crash(pos, pIndex);
+		nextPath.crash(pos, pIndex);
 	}
 	
-	public void futurePathClear() {
+	public void nextPathClear() {
 		if (state == CarState.CRASHED || state == CarState.SINKED) {
 			throw new IllegalArgumentException();
 		}
 		
-		futurePath.clear();
+		nextPath.clear();
 	}
 	
-	public List<Position> getFuturePath() {
+	public List<Position> getNextPath() {
 		if (state == CarState.CRASHED || state == CarState.SINKED) {
 			throw new IllegalArgumentException();
 		}
 		
-		return futurePath.path;
+		return nextPath.path;
 	}
 	
-	public Position getLastFuturePosition() {
-		return futurePath.getLastPosition();
+	public Position getLastNextPosition() {
+		return nextPath.getLastPosition();
 	}
 	
 	public CarState getState() {
@@ -114,123 +294,6 @@ public class Car {
 		}
 		
 		this.state = s;
-	}
-	
-	public void calculateFuturePath() {
-		
-		distanceToMove = MODEL.DISTANCE_PER_TIMESTEP;
-		
-		inner:
-		while (true) {
-			
-			switch (futureState) {
-			case EDGE: {
-				Position pos = getLastFuturePosition();
-				Edge e = futureEdge;
-				int dir = futureDir;
-				double distanceLeftOnEdge;
-				if (pos instanceof EdgePosition) {
-					distanceLeftOnEdge = (dir == 1) ? ((EdgePosition)pos).distanceToEndOfEdge() : ((EdgePosition)pos).distanceToStartOfEdge();
-				} else {
-					distanceLeftOnEdge = e.getTotalLength();
-				}
-				
-				Position nextPos;
-				if (pos instanceof EdgePosition) {
-					nextPos = ((EdgePosition)pos).travel(dir, Math.min(distanceToMove, distanceLeftOnEdge));
-				} else {
-					nextPos = ((VertexPosition)pos).travel(e, dir, Math.min(distanceToMove, distanceLeftOnEdge));
-				}
-				futurePathAdd(nextPos);
-				
-				if (DMath.doubleEquals(distanceToMove, distanceLeftOnEdge)) {
-					
-					previousEdge = e;
-					Vertex v = (dir == 1) ? e.getEnd() : e.getStart();
-					futureState = CarState.INTERSECTION;
-					
-					assert getLastFuturePosition() instanceof VertexPosition;
-					
-					distanceToMove = 0.0;
-					
-					if (v instanceof Sink) {
-						futureState = CarState.SINKED;
-					}
-					
-				} else if (distanceToMove > distanceLeftOnEdge) {
-					
-					previousEdge = e;
-					Vertex v = (dir == 1) ? e.getEnd() : e.getStart();
-					futureState = CarState.INTERSECTION;
-					
-					assert getLastFuturePosition() instanceof VertexPosition;
-					
-					distanceToMove -= distanceLeftOnEdge;
-					
-					if (v instanceof Sink) {
-						futureState = CarState.SINKED;
-						distanceToMove = 0.0;
-					}
-					
-				} else {
-					distanceToMove = 0.0;
-				}
-				
-				break;
-			}
-			case INTERSECTION: {
-				VertexPosition pos = (VertexPosition)getLastFuturePosition();
-				Vertex v = pos.getVertex();
-				List<Edge> eds = new ArrayList<Edge>(v.getEdges());
-				
-//				Edge previousEdge = null;
-//				List<Position> path = getFuturePath();
-//				if (path.size() > 1) {
-//					EdgePosition ep = (EdgePosition)path.get(path.size()-2);
-//					previousEdge = ep.getEdge();
-//				}
-				
-				if (eds.size() > 1 && previousEdge != null) {
-					/*
-					 * don't go back the same way
-					 */
-					eds.remove(previousEdge);
-				}
-				
-				int i = MODEL.RANDOM.nextInt(eds.size());
-				futureEdge = eds.get(i);
-				if (futureEdge.isLoop()) {
-					futureDir = 2*MODEL.RANDOM.nextInt(2)-1;
-				} else {
-					futureDir = (futureEdge.getStart() == v) ? 1 : -1;
-				}
-				futureState = CarState.EDGE;
-				break;
-			}
-			case CRASHED:
-				distanceToMove = 0.0;
-				break;
-			case SINKED:
-				distanceToMove = 0.0;
-				break;
-			case NEW:
-				assert false;
-			}
-			
-			if (distanceToMove == 0.0) {
-				break inner;
-			}
-			
-		} // end inner loop
-		
-		assert futureState == CarState.SINKED || DMath.doubleEquals(futurePath.totalLength(), MODEL.DISTANCE_PER_TIMESTEP);
-		
-	}
-	
-	public Car copy() {
-		Car c = new Car();
-		c.pos = getPosition();
-		return c;
 	}
 	
 }

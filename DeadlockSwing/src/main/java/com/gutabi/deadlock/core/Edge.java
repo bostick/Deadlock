@@ -1,5 +1,6 @@
 package com.gutabi.deadlock.core;
 
+import java.util.Arrays;
 import java.util.List;
 
 public final class Edge extends Driveable {
@@ -16,19 +17,19 @@ public final class Edge extends Driveable {
 	
 	private boolean removed = false;
 	
-	public Edge(Vertex start, Vertex end, Point... pts) {
+	public Edge(Vertex start, Vertex end, List<Point> pts) {
 		this.start = start;
 		this.end = end;
 		loop = (start == end);
 		standalone = (loop) ? start == null : false;
-		this.pts = pts;
+		this.pts = pts.toArray(new Point[0]);
 		
-		segmentLengths = new double[pts.length-1];
+		segmentLengths = new double[this.pts.length-1];
 		
 		double length;
 		double l = 0.0;
 		for (int i = 0; i < segmentLengths.length; i++) {
-			length = Point.distance(pts[i], pts[i+1]);
+			length = Point.distance(this.pts[i], this.pts[i+1]);
 			segmentLengths[i] = length;
 			l += length;
 		}
@@ -41,7 +42,7 @@ public final class Edge extends Driveable {
 		if (removed) {
 			throw new IllegalStateException();
 		}
-		return new Edge(start, end, pts);
+		return new Edge(start, end, Arrays.asList(pts));
 	}
 	
 	public String toString() {

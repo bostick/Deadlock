@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+@SuppressWarnings("serial")
 public class Graph {
 	
 	private final ArrayList<Edge> edges = new ArrayList<Edge>();
@@ -42,15 +43,46 @@ public class Graph {
 		segTree.clear();
 	}
 	
-	private Edge createEdge(Vertex start, Vertex end, Point... points) {
-		Edge e = new Edge(start, end, points);
+	private Edge createEdge(Vertex start, Vertex end, List<Point> pts) {
+		Edge e = new Edge(start, end, pts);
 		edges.add(e);
 		segTree.addEdge(e);
+		
+		if (!e.isStandAlone()) {
+			start.addEdge(e);
+			end.addEdge(e);
+		}
+		
 		return e;
 	}
 	
-	private Edge createEdge(Vertex start, Vertex end, List<Point> pts) {
-		return createEdge(start, end, pts.toArray(new Point[0]));
+	private void edgesChanged(Vertex v) {
+		
+		if (v instanceof Intersection) {
+			
+			List<Edge> eds = v.getEdges();
+			if (eds.size() == 0) {
+				destroyVertex(v);
+			} else if (eds.size() == 2) {
+				merge(eds.get(0), eds.get(1), v);
+			}
+			
+		} else if (v instanceof Source) {
+			
+			/*
+			 * sources stay around
+			 */
+			
+		} else if (v instanceof Sink) {
+			
+			/*
+			 * sinks stay around
+			 */
+			
+		} else {
+			assert false;
+		}
+		
 	}
 	
 	private Intersection createIntersection(Point p) {
@@ -76,6 +108,12 @@ public class Graph {
 	
 	private void destroyEdge(Edge e) {
 		assert edges.contains(e);
+		
+		if (!e.isStandAlone()) {
+			e.getStart().removeEdge(e);
+			e.getEnd().removeEdge(e);
+		}
+		
 		edges.remove(e);
 		segTree.removeEdge(e);
 		e.remove();
@@ -579,35 +617,36 @@ public class Graph {
 		assert a.isInteger();
 		assert b.isInteger();
 		
-		Vertex aV = tryFindVertex(a);
-		if (aV == null) {
+		Vertex tmp = tryFindVertex(a);
+		final Vertex aV;
+		if (tmp == null) {
 			EdgePosition intInfo = tryFindEdgePosition(a);
 			if (intInfo == null) {
 				aV = createIntersection(a);
 			} else {
 				aV = split(a);
 			}
+		} else {
+			aV = tmp;
 		}
 		
-		Vertex bV = tryFindVertex(b);
-		if (bV == null) {
+		tmp = tryFindVertex(b);
+		final Vertex bV;
+		if (tmp == null) {
 			EdgePosition intInfo = tryFindEdgePosition(b);
 			if (intInfo == null) {
 				bV = createIntersection(b);
 			} else {
 				bV = split(b);
 			}
+		} else {
+			bV = tmp;
 		}
 		
-		Edge e = createEdge(aV, bV, aV.getPoint(), bV.getPoint());
-		
-		aV.addEdge(e);
-		bV.addEdge(e);
+		createEdge(aV, bV, new ArrayList<Point>(){{add(aV.getPoint());add(bV.getPoint());}});
 		
 		edgesChanged(aV);
-		
 		edgesChanged(bV);
-		
 	}
 	
 	/**
@@ -632,7 +671,7 @@ public class Graph {
 	 * Edge e will have been removed
 	 * return Intersection at split point
 	 */
-	private Vertex split(Point p) {
+	private Vertex split(final Point p) {
 		
 		EdgePosition info = tryFindEdgePosition(p);
 		assert info != null;
@@ -648,8 +687,8 @@ public class Graph {
 		 * we assert that param < 1.0, but after adjusting, we may be at d
 		 */
 		
-		Point c = e.getPoint(index);
-		Point d = e.getPoint(index+1);
+		final Point c = e.getPoint(index);
+		final Point d = e.getPoint(index+1);
 		
 		/*
 		 * v may already exist if we are splitting at p and p is different than pInt and v already exists at pInt
@@ -689,119 +728,99 @@ public class Graph {
 			}
 			pts.add(p);
 			
-			Edge f = createEdge(v, v, pts);
-			
-			v.addEdge(f);
-			v.addEdge(f);
+			createEdge(v, v, pts);
 			
 			destroyEdge(e);
 			
 			return v;
 			
-		} else {
-			
-			/*
-			 * f1
-			 */
-			
-			Edge f1 = null;
-			for (Edge ee : eStart.getEdges()) {
-				if (((ee.getStart() == eStart && ee.getEnd() == v) || (ee.getStart() == v && ee.getEnd() == eStart)) && ee.size() == 2) {
-					/*
-					 * both a and b are already both intersections and connected, so just use this
-					 */
-					f1 = ee;
-					break;
-				}
-			}
-			if (f1 == null) {
-				
-				List<Point> pts = new ArrayList<Point>();
-				
-				for (int i = 0; i < index; i++) {
-					pts.add(e.getPoint(i));
-				}
-				try {
-					if (!(index > 0) || !Point.colinear(e.getPoint(index-1), c, p)) {
-						pts.add(c);
-					}
-				} catch (ColinearException ex) {
-					
-					assert tryFindVertex(c) == null;
-					
-					Intersection cV = createIntersection(c);
-					Edge f3 = createEdge(cV, v, c, p);
-					
-					cV.addEdge(f3);
-					v.addEdge(f3);
-					
-				}
-				pts.add(p);
-				
-				f1 = createEdge(eStart, v, pts);
-				
-				eStart.addEdge(f1);
-				v.addEdge(f1);
-			}
-			
-			/*
-			 * f2
-			 */
-			
-			Edge f2 = null;
-			for (Edge ee : eStart.getEdges()) {
-				if (ee == f1) {
-					/*
-					 * ignore if ee is the newly-created edge f1
-					 */
-					continue;
-				}
-				if (((ee.getStart() == v && ee.getEnd() == eEnd) || (ee.getStart() == eEnd && ee.getEnd() == v)) && ee.size() == 2) {
-					/*
-					 * both a and b are already both intersections and connected, so just use this
-					 */
-					f2 = ee;
-					break;
-				}
-			}
-			if (f2 == null) {
-				
-				List<Point> pts = new ArrayList<Point>();
-				
-				pts.add(p);
-				try {
-					if (!(index+1 < e.size()-1) || !Point.colinear(p, d, e.getPoint(index+2))) {
-						pts.add(d);
-					}
-				} catch (ColinearException ex) {
-					
-					assert tryFindVertex(d) == null;
-					
-					Intersection dV = createIntersection(d);
-					Edge f3 = createEdge(dV, v, d, p);
-					
-					dV.addEdge(f3);
-					v.addEdge(f3);
-					
-				}
-				for (int i = index+2; i < e.size(); i++) {
-					pts.add(e.getPoint(i));
-				}
-				
-				f2 = createEdge(v, eEnd, pts);
-				
-				v.addEdge(f2);
-				eEnd.addEdge(f2);
-			}
-			
-			eStart.removeEdge(e);
-			
-			eEnd.removeEdge(e);
-			
-			destroyEdge(e);
-			
-			return v;
 		}
+			
+		/*
+		 * f1
+		 */
+		
+		Edge f1 = null;
+		for (Edge ee : eStart.getEdges()) {
+			if (((ee.getStart() == eStart && ee.getEnd() == v) || (ee.getStart() == v && ee.getEnd() == eStart)) && ee.size() == 2) {
+				/*
+				 * both a and b are already both intersections and connected, so just use this
+				 */
+				f1 = ee;
+				break;
+			}
+		}
+		if (f1 == null) {
+			
+			List<Point> pts = new ArrayList<Point>();
+			
+			for (int i = 0; i < index; i++) {
+				pts.add(e.getPoint(i));
+			}
+			try {
+				if (!(index > 0) || !Point.colinear(e.getPoint(index-1), c, p)) {
+					pts.add(c);
+				}
+			} catch (ColinearException ex) {
+				
+				assert tryFindVertex(c) == null;
+				
+				Intersection cV = createIntersection(c);
+				createEdge(cV, v,  new ArrayList<Point>(){{add(c);add(p);}});
+				
+			}
+			pts.add(p);
+			
+			createEdge(eStart, v, pts);
+		}
+		
+		/*
+		 * f2
+		 */
+		
+		Edge f2 = null;
+		for (Edge ee : eStart.getEdges()) {
+			if (ee == f1) {
+				/*
+				 * ignore if ee is the newly-created edge f1
+				 */
+				continue;
+			}
+			if (((ee.getStart() == v && ee.getEnd() == eEnd) || (ee.getStart() == eEnd && ee.getEnd() == v)) && ee.size() == 2) {
+				/*
+				 * both a and b are already both intersections and connected, so just use this
+				 */
+				f2 = ee;
+				break;
+			}
+		}
+		if (f2 == null) {
+			
+			List<Point> pts = new ArrayList<Point>();
+			
+			pts.add(p);
+			try {
+				if (!(index+1 < e.size()-1) || !Point.colinear(p, d, e.getPoint(index+2))) {
+					pts.add(d);
+				}
+			} catch (ColinearException ex) {
+				
+				assert tryFindVertex(d) == null;
+				
+				Intersection dV = createIntersection(d);
+				createEdge(dV, v,  new ArrayList<Point>(){{add(d);add(p);}});
+				
+			}
+			for (int i = index+2; i < e.size(); i++) {
+				pts.add(e.getPoint(i));
+			}
+			
+			createEdge(v, eEnd, pts);
+		}
+		
+		destroyEdge(e);
+		
+		return v;
 	}
 	
 	/**
@@ -809,7 +828,6 @@ public class Graph {
 	 * takes care of adjusting to integer coordinates
 	 * Edge e will have been removed
 	 */
-	@SuppressWarnings("serial")
 	private boolean adjustEdgePointToGrid(Point p) {
 		
 		try {
@@ -936,11 +954,9 @@ public class Graph {
 			
 			createEdge(null, null, pts);
 			
-			v.removeEdge(e1);
-			v.removeEdge(e2);
+			destroyEdge(e1);
 			
 			destroyVertex(v);
-			destroyEdge(e1);
 			
 		} else if (v == e1Start && v == e2Start) {
 			
@@ -962,20 +978,12 @@ public class Graph {
 				pts.add(e2.getPoint(i));
 			}
 			
-			Edge newEdge = createEdge(e1End, e2End, pts);
+			createEdge(e1End, e2End, pts);
 			
-			e1End.removeEdge(e1);
-			e1End.addEdge(newEdge);
-			
-			e2End.removeEdge(e2);
-			e2End.addEdge(newEdge);
-			
-			v.removeEdge(e1);
-			v.removeEdge(e2);
-			
-			destroyVertex(v);
 			destroyEdge(e1);
 			destroyEdge(e2);
+			
+			destroyVertex(v);
 			
 		} else if (v == e1Start && v == e2End) {
 			
@@ -997,20 +1005,12 @@ public class Graph {
 				pts.add(e2.getPoint(i));
 			}
 			
-			Edge newEdge = createEdge(e1End, e2Start, pts);
+			createEdge(e1End, e2Start, pts);
 			
-			e1End.removeEdge(e1);
-			e1End.addEdge(newEdge);
-			
-			e2Start.removeEdge(e2);
-			e2Start.addEdge(newEdge);
-			
-			v.removeEdge(e1);
-			v.removeEdge(e2);
-			
-			destroyVertex(v);
 			destroyEdge(e1);
 			destroyEdge(e2);
+			
+			destroyVertex(v);
 			
 		} else if (v == e1End && v == e2Start) {
 			
@@ -1032,20 +1032,12 @@ public class Graph {
 				pts.add(e2.getPoint(i));
 			}
 			
-			Edge newEdge = createEdge(e1Start, e2End, pts);
+			createEdge(e1Start, e2End, pts);
 			
-			e1Start.removeEdge(e1);
-			e1Start.addEdge(newEdge);
-			
-			e2End.removeEdge(e2);
-			e2End.addEdge(newEdge);
-			
-			v.removeEdge(e1);
-			v.removeEdge(e2);
-			
-			destroyVertex(v);
 			destroyEdge(e1);
 			destroyEdge(e2);
+			
+			destroyVertex(v);
 			
 		} else {
 			assert v == e1End && v == e2End;
@@ -1068,20 +1060,12 @@ public class Graph {
 				pts.add(e2.getPoint(i));
 			}
 			
-			Edge newEdge = createEdge(e1Start, e2Start, pts);
+			createEdge(e1Start, e2Start, pts);
 			
-			e1Start.removeEdge(e1);
-			e1Start.addEdge(newEdge);
-			
-			e2Start.removeEdge(e2);
-			e2Start.addEdge(newEdge);
-			
-			v.removeEdge(e1);
-			v.removeEdge(e2);
-			
-			destroyVertex(v);
 			destroyEdge(e1);
 			destroyEdge(e2);
+			
+			destroyVertex(v);
 			
 		}
 	}
@@ -1118,10 +1102,7 @@ public class Graph {
 				Intersection newStart = createIntersection(e.getPoint(index+1));
 				Intersection newEnd = createIntersection(e.getPoint(index));
 				
-				Edge newEdge = createEdge(newStart, newEnd, pts);
-				
-				newStart.addEdge(newEdge);
-				newEnd.addEdge(newEdge);
+				createEdge(newStart, newEnd, pts);
 				
 				destroyEdge(e);
 				
@@ -1139,11 +1120,7 @@ public class Graph {
 						
 						Intersection newStart = createIntersection(e.getPoint(1));
 						
-						Edge newEdge = createEdge(newStart, eEnd, pts);
-						
-						newStart.addEdge(newEdge);
-						eEnd.addEdge(newEdge);
-						
+						createEdge(newStart, eEnd, pts);
 					}
 					
 				} else if (index == e.size()-2) {
@@ -1156,10 +1133,7 @@ public class Graph {
 					
 					Intersection newEnd = createIntersection(e.getPoint(e.size()-2));
 					
-					Edge newEdge = createEdge(eStart, newEnd, pts);
-					
-					eStart.addEdge(newEdge);
-					newEnd.addEdge(newEdge);
+					createEdge(eStart, newEnd, pts);
 					
 				} else {
 					//create 2 new edges without worrying about intersection
@@ -1172,10 +1146,7 @@ public class Graph {
 					
 					Intersection newF1End = createIntersection(e.getPoint(index));
 					
-					Edge f1 = createEdge(eStart, newF1End, f1Pts);
-					
-					eStart.addEdge(f1);
-					newF1End.addEdge(f1);
+					createEdge(eStart, newF1End, f1Pts);
 					
 					List<Point> f2Pts = new ArrayList<Point>();
 					
@@ -1185,22 +1156,14 @@ public class Graph {
 					
 					Intersection newF2Start = createIntersection(e.getPoint(index+1));
 					
-					Edge f2 = createEdge(newF2Start, eEnd, f2Pts);
-					
-					newF2Start.addEdge(f2);
-					eEnd.addEdge(f2);
+					createEdge(newF2Start, eEnd, f2Pts);
 					
 				}
 				
-				eStart.removeEdge(e);
+				destroyEdge(e);
 				
 				edgesChanged(eStart);
-				
-				eEnd.removeEdge(e);
-				
 				edgesChanged(eEnd);
-				
-				destroyEdge(e);
 				
 			}
 			
@@ -1220,26 +1183,18 @@ public class Graph {
 			Vertex eStart = e.getStart();
 			Vertex eEnd = e.getEnd();
 			
-			eStart.removeEdge(e);
+			destroyEdge(e);
 			
 			edgesChanged(eStart);
-			
-			eEnd.removeEdge(e);
-			
 			edgesChanged(eEnd);
-			
-			destroyEdge(e);
 			
 		} else if (!e.isStandAlone()) {
 			
 			Vertex v = e.getStart();
 			
-			v.removeEdge(e);
-			v.removeEdge(e);
+			destroyEdge(e);
 			
 			edgesChanged(v);
-			
-			destroyEdge(e);
 			
 		} else {
 			destroyEdge(e);
@@ -1263,9 +1218,6 @@ public class Graph {
 				Vertex eStart = e.getStart();
 				Vertex eEnd = e.getEnd();
 				
-				eStart.removeEdge(e);
-				eEnd.removeEdge(e);
-				
 				affectedVertices.add(eStart);
 				affectedVertices.add(eEnd);
 				
@@ -1274,9 +1226,6 @@ public class Graph {
 			} else {
 				
 				Vertex eV = e.getStart();
-				
-				eV.removeEdge(e);
-				eV.removeEdge(e);
 				
 				affectedVertices.add(eV);
 				
@@ -1291,35 +1240,6 @@ public class Graph {
 		for (Vertex a : affectedVertices) {
 			edgesChanged(a);
 		}
-	}
-	
-	private void edgesChanged(Vertex v) {
-		
-		if (v instanceof Intersection) {
-			
-			List<Edge> eds = v.getEdges();
-			if (eds.size() == 0) {
-				destroyVertex(v);
-			} else if (eds.size() == 2) {
-				merge(eds.get(0), eds.get(1), v);
-			}
-			
-		} else if (v instanceof Source) {
-			
-			/*
-			 * sources stay around
-			 */
-			
-		} else if (v instanceof Sink) {
-			
-			/*
-			 * sinks stay around
-			 */
-			
-		} else {
-			assert false;
-		}
-		
 	}
 	
 	public boolean checkConsistency() {

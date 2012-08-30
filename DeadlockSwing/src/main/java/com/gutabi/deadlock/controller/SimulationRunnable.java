@@ -82,10 +82,8 @@ public class SimulationRunnable implements Runnable {
 			}
 			
 			for (Car c : movingCarsCopy) {
-				
-				c.calculateFuturePath();
-				
-			}  // for 
+				c.updateNext();
+			}
 			
 			movingFixPoint();
 			
@@ -160,19 +158,18 @@ public class SimulationRunnable implements Runnable {
 			}
 			int i = MODEL.RANDOM.nextInt(sources.size());
 			
-			Vertex v = sources.get(i);
+			Source s = sources.get(i);
 			
-			c.startingVertex = v;
+			c.source = s;
 			c.startingStep = step;
 			
-			c.futurePathAdd(new VertexPosition(v, null, null, 0));
+			c.nextPathAdd(new VertexPosition(s, null, null, 0));
+			c.nextState = CarState.VERTEX;
 			
-			c.futureState = CarState.INTERSECTION;
-			
-			sources.remove(v);
+			sources.remove(s);
 		}
 		
-		collapseFutures(newCars);
+		updateCurrentFromNext(newCars);
 		
 		movingCarsCopy.addAll(newCars);
 		
@@ -187,7 +184,7 @@ public class SimulationRunnable implements Runnable {
 		while (firstCrashSite != null) {
 			List<Car> newlyCrashedCars = processCrashInfo(movingCarsCopy);
 			
-			collapseFutures(newlyCrashedCars);
+			updateCurrentFromNext(newlyCrashedCars);
 			removeSinked(movingCarsCopy);
 			
 			movingCarsCopy.removeAll(newlyCrashedCars);
@@ -197,7 +194,7 @@ public class SimulationRunnable implements Runnable {
 			findCrashesMovingCrashed(movingCarsCopy, crashedCarsCopy);
 		}
 		
-		collapseFutures(movingCarsCopy);
+		updateCurrentFromNext(movingCarsCopy);
 		removeSinked(movingCarsCopy);
 		
 	}
@@ -210,7 +207,7 @@ public class SimulationRunnable implements Runnable {
 				Car cj = cars.get(j);
 				
 				double ciTraveled = 0;
-				List<Position> ciFuturePath = ci.getFuturePath();
+				List<Position> ciFuturePath = ci.getNextPath();
 				for (int k = 0; k < ciFuturePath.size()-1; k++) {
 					Position cia = ciFuturePath.get(k);
 					Position cib = ciFuturePath.get(k+1);
@@ -219,7 +216,7 @@ public class SimulationRunnable implements Runnable {
 					int iDir = (Position.COMPARATOR.compare(cia, cib) == -1) ? 1 : -1;
 					
 					double cjTraveled = 0;
-					List<Position> cjFuturePath = cj.getFuturePath();
+					List<Position> cjFuturePath = cj.getNextPath();
 					for (int l = 0; l < cjFuturePath.size()-1; l++) {
 						Position cja = cjFuturePath.get(l);
 						Position cjb = cjFuturePath.get(l+1);
@@ -321,7 +318,7 @@ public class SimulationRunnable implements Runnable {
 				Position cjp = cj.getPosition();
 				
 				double ciTraveled = 0;
-				List<Position> ciFuturePath = ci.getFuturePath();
+				List<Position> ciFuturePath = ci.getNextPath();
 				for (int k = 0; k < ciFuturePath.size()-1; k++) {
 					Position cia = ciFuturePath.get(k);
 					Position cib = ciFuturePath.get(k+1);
@@ -400,8 +397,8 @@ public class SimulationRunnable implements Runnable {
 			assert DMath.doubleEquals(dist, 10.0);
 			
 			if (iDir != 0) {
-				i.futurePathCrash(ip, ik);
-				i.futureState = CarState.CRASHED;
+				i.nextPathCrash(ip, ik);
+				i.nextState = CarState.CRASHED;
 				newlyCrashedCars.add(i);
 				
 //				for (Intersection v : MODEL.getIntersections()) {
@@ -412,8 +409,8 @@ public class SimulationRunnable implements Runnable {
 			}
 			
 			if (jDir != 0) {
-				j.futurePathCrash(jp, jl);
-				j.futureState = CarState.CRASHED;
+				j.nextPathCrash(jp, jl);
+				j.nextState = CarState.CRASHED;
 				newlyCrashedCars.add(j);
 				
 //				for (Intersection v : MODEL.getIntersections()) {
@@ -445,18 +442,10 @@ public class SimulationRunnable implements Runnable {
 //		return true;
 //	}
 	
-	private void collapseFutures(List<Car> cars) {
-		
+	private void updateCurrentFromNext(List<Car> cars) {
 		for (Car c : cars) {
-			Position p = c.getLastFuturePosition();
-			c.setPosition(p);
-			c.futurePathClear();
-			c.futurePathAdd(p);
-			
-			CarState s = c.futureState;
-			c.setState(s);
+			c.updateCurrentFromNext();
 		}
-		
 	}
 	
 	private void removeSinked(List<Car> cars) {
