@@ -18,9 +18,11 @@ import org.apache.log4j.Logger;
 
 import com.gutabi.deadlock.Main;
 import com.gutabi.deadlock.core.Edge;
+import com.gutabi.deadlock.core.EdgePosition;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.Position;
 import com.gutabi.deadlock.core.Vertex;
+import com.gutabi.deadlock.core.VertexPosition;
 import com.gutabi.deadlock.view.WindowInfo;
 
 public class DeadlockController implements ActionListener {
@@ -133,7 +135,8 @@ public class DeadlockController implements ActionListener {
 				
 				if (lastDragPointWasNull) {
 					// first drag
-					draftStart(p);
+					draftStart(lastPressPoint);
+					draftMove(p);
 					VIEW.repaint();
 				} else {
 					assert false;
@@ -246,19 +249,41 @@ public class DeadlockController implements ActionListener {
 				
 				if (MODEL.hilited != null) {
 					
+					Point p;
+					
 					if (MODEL.hilited instanceof Vertex) {
 						Vertex v = (Vertex)MODEL.hilited;
+						
+						p = v.getPoint();
 						
 						MODEL.removeVertex(v);
 						
 					} else {
 						Edge e = (Edge)MODEL.hilited;
 						
+						if (!e.isStandAlone()) {
+							Position middle = new VertexPosition(e.getStart(), null, null, 0).travel(e, 1, e.getTotalLength()/2);
+							p = middle.getPoint();
+						} else {
+							p = e.getPoint(0);
+						}
+						
 						MODEL.removeEdge(e);
 						
 					}
 					
-					MODEL.hilited = null;
+					Position closest = MODEL.closestPosition(p);
+					if (closest != null) {
+						
+						if (closest instanceof VertexPosition) {
+							MODEL.hilited = ((VertexPosition)closest).getVertex();
+						} else {
+							MODEL.hilited = ((EdgePosition)closest).getEdge();
+						}
+						
+					} else {
+						MODEL.hilited = null;
+					}
 					
 					VIEW.renderBackground();
 					VIEW.repaint();

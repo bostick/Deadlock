@@ -197,7 +197,22 @@ public class SimulationRunnable implements Runnable {
 		updateCurrentFromNext(movingCarsCopy);
 		removeSinked(movingCarsCopy);
 		
+		//checkDistances();
 	}
+	
+//	private boolean checkDistances(List<Car> cars) {
+//	for (int i = 0; i < cars.size(); i++) {
+//		Car c = cars.get(i);
+//		Position cPos = c.getLastFuturePosition();
+//		for (int j = i + 1; j < cars.size(); j++) {
+//			Car d = cars.get(j);
+//			Position dPos = d.getLastFuturePosition();
+//			double dist = cPos.distanceTo(dPos);
+//			assert DMath.doubleEquals(dist, 10.0) || dist > 10.0;
+//		}
+//	}
+//	return true;
+//}
 	
 	private void findCrashesMoving(List<Car> cars) {
 		
@@ -398,26 +413,12 @@ public class SimulationRunnable implements Runnable {
 			
 			if (iDir != 0) {
 				i.nextPathCrash(ip, ik);
-				i.nextState = CarState.CRASHED;
 				newlyCrashedCars.add(i);
-				
-//				for (Intersection v : MODEL.getIntersections()) {
-//					if (ip.distanceTo(new VertexPosition(v, null, null, 0)) <= 10) {
-//						v.hasCrash = true;
-//					}
-//				}
 			}
 			
 			if (jDir != 0) {
 				j.nextPathCrash(jp, jl);
-				j.nextState = CarState.CRASHED;
 				newlyCrashedCars.add(j);
-				
-//				for (Intersection v : MODEL.getIntersections()) {
-//					if (jp.distanceTo(new VertexPosition(v, null, null, 0)) <= 10) {
-//						v.hasCrash = true;
-//					}
-//				}
 			}
 			
 		}
@@ -427,20 +428,6 @@ public class SimulationRunnable implements Runnable {
 		
 		return newlyCrashedCars;
 	}
-	
-//	private boolean checkDistances(List<Car> cars) {
-//		for (int i = 0; i < cars.size(); i++) {
-//			Car c = cars.get(i);
-//			Position cPos = c.getLastFuturePosition();
-//			for (int j = i + 1; j < cars.size(); j++) {
-//				Car d = cars.get(j);
-//				Position dPos = d.getLastFuturePosition();
-//				double dist = cPos.distanceTo(dPos);
-//				assert DMath.doubleEquals(dist, 10.0) || dist > 10.0;
-//			}
-//		}
-//		return true;
-//	}
 	
 	private void updateCurrentFromNext(List<Car> cars) {
 		for (Car c : cars) {

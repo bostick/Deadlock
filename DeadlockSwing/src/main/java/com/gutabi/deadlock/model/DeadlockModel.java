@@ -109,6 +109,10 @@ public class DeadlockModel {
 		return graph.getSegmentTree().findAllSegments(a);
 	}
 	
+	public Position closestPosition(Point p) {
+		return graph.closestPosition(p);
+	}
+	
 	public List<Intersection> getIntersections() {
 		return graph.getIntersections();
 	}

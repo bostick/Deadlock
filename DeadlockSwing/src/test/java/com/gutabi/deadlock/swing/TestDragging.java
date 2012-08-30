@@ -6600,4 +6600,112 @@ public class TestDragging {
 	}
 	
 	
+	@Test
+	public void testBug30() throws Exception {
+		
+		CONTROLLER.strat = MassageStrategy.CURRENT;
+
+		testPressed(new Point(884., 531.));
+		testDragged(new Point(880., 533.));
+		testDragged(new Point(877., 537.));
+		testDragged(new Point(871., 544.));
+		testDragged(new Point(865., 556.));
+		testDragged(new Point(859., 568.));
+		testDragged(new Point(852., 578.));
+		testDragged(new Point(845., 593.));
+		testDragged(new Point(836., 615.));
+		testDragged(new Point(830., 638.));
+		testDragged(new Point(823., 652.));
+		testDragged(new Point(819., 664.));
+		testDragged(new Point(818., 673.));
+		testDragged(new Point(816., 677.));
+		testDragged(new Point(816., 683.));
+		testDragged(new Point(818., 696.));
+		testDragged(new Point(822., 705.));
+		testDragged(new Point(827., 712.));
+		testDragged(new Point(837., 724.));
+		testDragged(new Point(844., 728.));
+		testDragged(new Point(851., 731.));
+		testDragged(new Point(858., 734.));
+		testDragged(new Point(869., 736.));
+		testDragged(new Point(881., 738.));
+		testDragged(new Point(895., 740.));
+		testDragged(new Point(909., 740.));
+		testDragged(new Point(920., 740.));
+		testDragged(new Point(929., 742.));
+		testDragged(new Point(937., 742.));
+		testDragged(new Point(951., 742.));
+		testDragged(new Point(965., 741.));
+		testDragged(new Point(987., 734.));
+		testDragged(new Point(1007., 725.));
+		testDragged(new Point(1028., 710.));
+		testDragged(new Point(1041., 694.));
+		testDragged(new Point(1051., 679.));
+		testDragged(new Point(1057., 670.));
+		testDragged(new Point(1063., 660.));
+		testDragged(new Point(1065., 646.));
+		testDragged(new Point(1069., 626.));
+		testDragged(new Point(1069., 586.));
+		testDragged(new Point(1069., 575.));
+		testDragged(new Point(1069., 566.));
+		testDragged(new Point(1069., 560.));
+		testDragged(new Point(1069., 555.));
+		testDragged(new Point(1066., 551.));
+		testDragged(new Point(1062., 544.));
+		testDragged(new Point(1055., 537.));
+		testDragged(new Point(1037., 522.));
+		testDragged(new Point(1016., 508.));
+		testDragged(new Point(1006., 502.));
+		testDragged(new Point(1000., 500.));
+		testDragged(new Point(993., 499.));
+		testDragged(new Point(987., 499.));
+		testDragged(new Point(983., 497.));
+		testDragged(new Point(977., 497.));
+		testDragged(new Point(972., 497.));
+		testDragged(new Point(968., 497.));
+		testDragged(new Point(959., 497.));
+		testDragged(new Point(955., 497.));
+		testDragged(new Point(946., 498.));
+		testDragged(new Point(940., 499.));
+		testDragged(new Point(924., 507.));
+		testDragged(new Point(919., 510.));
+		testDragged(new Point(917., 511.));
+		testDragged(new Point(914., 514.));
+		testDragged(new Point(911., 515.));
+		testDragged(new Point(910., 515.));
+		testDragged(new Point(909., 515.));
+		testDragged(new Point(907., 516.));
+		testDragged(new Point(906., 518.));
+		testDragged(new Point(905., 519.));
+		testDragged(new Point(904., 520.));
+		testDragged(new Point(903., 520.));
+		testDragged(new Point(903., 521.));
+		testDragged(new Point(902., 521.));
+		testDragged(new Point(900., 521.));
+		testDragged(new Point(899., 521.));
+		testDragged(new Point(898., 521.));
+		testDragged(new Point(898., 522.));
+		testDragged(new Point(897., 522.));
+		testDragged(new Point(897., 523.));
+		testDragged(new Point(896., 523.));
+		testDragged(new Point(895., 523.));
+		testDragged(new Point(893., 523.));
+		testDragged(new Point(893., 525.));
+		testDragged(new Point(892., 525.));
+		testDragged(new Point(891., 525.));
+		testDragged(new Point(890., 525.));
+		testDragged(new Point(890., 526.));
+		testReleased();
+
+		//testPressed(new Point(892., 523.));
+		testPressed(new Point(892., 525.));
+		//testDragged(new Point(883., 533.));
+		testDragged(new Point(884., 531.));
+		testReleased();
+		
+		// assert stand-alone loop
+		
+		Thread.sleep(Long.MAX_VALUE);
+	}
+	
 }

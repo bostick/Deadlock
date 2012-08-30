@@ -41,12 +41,30 @@ public abstract class Position {
 	}
 	
 	public double distanceTo(Position a) {
+		
+		//return shortestPathTo(a).totalLength();
+		
 		if (a instanceof VertexPosition) {
 			return distanceToV((VertexPosition)a);
 		} else {
 			return distanceToE((EdgePosition)a);
 		}
 	}
+	
+	/**
+	 * returns a Path, starting with this position, and most of the rest of the positions being VertexPositions
+	 * describing a path to the position a, with the last position being a.
+	 * 
+	 * returns null if this position is not connected to a.
+	 * 
+	 * the previousDir and previousEdge properties of the VertexPositions are set, so that any ambiguity about which
+	 * edge was chosen can be resolved.
+	 */
+	public Path shortestPathTo(Position a) {
+		return null;
+	}
+	
+	
 	
 	protected abstract double distanceToV(VertexPosition a);
 	protected abstract double distanceToE(EdgePosition e);

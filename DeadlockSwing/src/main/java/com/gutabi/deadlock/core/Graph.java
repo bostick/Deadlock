@@ -88,7 +88,16 @@ public class Graph {
 	private Intersection createIntersection(Point p) {
 		Intersection i = new Intersection(p);
 		intersections.add(i);
+		
 		return i;
+	}
+	
+	public void addSource(Point p) {
+		sources.add(new Source(p));
+	}
+	
+	public void addSink(Point p) {
+		sinks.add(new Sink(p));
 	}
 	
 	private void destroyVertex(Vertex v) {
@@ -119,13 +128,7 @@ public class Graph {
 		e.remove();
 	}
 	
-	public void addSource(Point p) {
-		sources.add(new Source(p));
-	}
 	
-	public void addSink(Point p) {
-		sinks.add(new Sink(p));
-	}
 	
 	
 	public EdgePosition tryFindEdgePosition(Point b) {
@@ -437,14 +440,22 @@ public class Graph {
 					
 					ret[0] = closestA.getPoint();
 					ret[1] = closestB.getPoint();
-					assert ret[0] == null && ret[1] == null || !Point.equals(ret[0], ret[1]);
+					return ret;
+					
+				} else if (closestA instanceof VertexPosition && closestB instanceof VertexPosition && !Point.equals(closestA.getPoint(), closestB.getPoint())) {
+					
+					/*
+					 * even if they are close together, connect vertices
+					 */
+					
+					ret[0] = closestA.getPoint();
+					ret[1] = closestB.getPoint();
 					return ret;
 					
 				} else {
 					
 					ret[0] = null;
 					ret[1] = null;
-					assert ret[0] == null && ret[1] == null || !Point.equals(ret[0], ret[1]);
 					return ret;
 					
 				}
@@ -453,7 +464,7 @@ public class Graph {
 				ret[0] = closestA.getPoint();
 				ret[1] = b;
 				
-				assert ret[0] == null && ret[1] == null || !Point.equals(ret[0], ret[1]);
+				assert !Point.equals(ret[0], ret[1]);
 				return ret;
 			}
 		} else {
@@ -461,18 +472,22 @@ public class Graph {
 				ret[0] = a;
 				ret[1] = closestB.getPoint();
 				
-				assert ret[0] == null && ret[1] == null || !Point.equals(ret[0], ret[1]);
+				assert !Point.equals(ret[0], ret[1]);
 				return ret;
 				
 			} else {
 				ret[0] = a;
 				ret[1] = b;
 				
-				assert ret[0] == null && ret[1] == null || !Point.equals(ret[0], ret[1]);
+				assert !Point.equals(ret[0], ret[1]);
 				return ret;
 			}
 		}
 		
+	}
+	
+	public Position closestPosition(Point a) {
+		return closestPosition(a, null, Double.POSITIVE_INFINITY);
 	}
 	
 	public Position closestPosition(Point a, double radius) {
@@ -1077,97 +1092,91 @@ public class Graph {
 	 * post: e has been removed
 	 */
 	private void removeSegment(Point a, Point b) {
+			
+		Segment info = segTree.findSegment(a, b);
+		Edge e = info.edge;
+		int index = info.index;
 		
-		try {
+		Vertex eStart = e.getStart();
+		Vertex eEnd = e.getEnd();
+		
+		if (eStart == null && eEnd == null) {
+			// stand-alone loop
 			
-			Segment info = segTree.findSegment(a, b);
-			Edge e = info.edge;
-			int index = info.index;
+			List<Point> pts = new ArrayList<Point>();
 			
-			Vertex eStart = e.getStart();
-			Vertex eEnd = e.getEnd();
+			for (int i = index+1; i < e.size(); i++) {
+				pts.add(e.getPoint(i));
+			}
+			for (int i = 1; i <= index; i++) {
+				pts.add(e.getPoint(i));
+			}
 			
-			if (eStart == null && eEnd == null) {
-				// stand-alone loop
+			Intersection newStart = createIntersection(e.getPoint(index+1));
+			Intersection newEnd = createIntersection(e.getPoint(index));
+			
+			createEdge(newStart, newEnd, pts);
+			
+			destroyEdge(e);
+			
+		} else {
+			
+			if (index == 0) {
 				
-				List<Point> pts = new ArrayList<Point>();
-				
-				for (int i = index+1; i < e.size(); i++) {
-					pts.add(e.getPoint(i));
-				}
-				for (int i = 1; i <= index; i++) {
-					pts.add(e.getPoint(i));
-				}
-				
-				Intersection newStart = createIntersection(e.getPoint(index+1));
-				Intersection newEnd = createIntersection(e.getPoint(index));
-				
-				createEdge(newStart, newEnd, pts);
-				
-				destroyEdge(e);
-				
-			} else {
-				
-				if (index == 0) {
-					
-					if (e.size() > 2) {
-						
-						List<Point> pts = new ArrayList<Point>();
-						
-						for (int i = 1; i < e.size(); i++) {
-							pts.add(e.getPoint(i));
-						}
-						
-						Intersection newStart = createIntersection(e.getPoint(1));
-						
-						createEdge(newStart, eEnd, pts);
-					}
-					
-				} else if (index == e.size()-2) {
+				if (e.size() > 2) {
 					
 					List<Point> pts = new ArrayList<Point>();
 					
-					for (int i = 0; i < e.size()-1; i++) {
+					for (int i = 1; i < e.size(); i++) {
 						pts.add(e.getPoint(i));
 					}
 					
-					Intersection newEnd = createIntersection(e.getPoint(e.size()-2));
+					Intersection newStart = createIntersection(e.getPoint(1));
 					
-					createEdge(eStart, newEnd, pts);
-					
-				} else {
-					//create 2 new edges without worrying about intersection
-					
-					List<Point> f1Pts = new ArrayList<Point>();
-					
-					for (int i = 0; i <= index; i++) {
-						f1Pts.add(e.getPoint(i));
-					}
-					
-					Intersection newF1End = createIntersection(e.getPoint(index));
-					
-					createEdge(eStart, newF1End, f1Pts);
-					
-					List<Point> f2Pts = new ArrayList<Point>();
-					
-					for (int i = index+1; i < e.size(); i++) {
-						f2Pts.add(e.getPoint(i));
-					}
-					
-					Intersection newF2Start = createIntersection(e.getPoint(index+1));
-					
-					createEdge(newF2Start, eEnd, f2Pts);
-					
+					createEdge(newStart, eEnd, pts);
 				}
 				
-				destroyEdge(e);
+			} else if (index == e.size()-2) {
 				
-				edgesChanged(eStart);
-				edgesChanged(eEnd);
+				List<Point> pts = new ArrayList<Point>();
+				
+				for (int i = 0; i < e.size()-1; i++) {
+					pts.add(e.getPoint(i));
+				}
+				
+				Intersection newEnd = createIntersection(e.getPoint(e.size()-2));
+				
+				createEdge(eStart, newEnd, pts);
+				
+			} else {
+				//create 2 new edges without worrying about intersection
+				
+				List<Point> f1Pts = new ArrayList<Point>();
+				
+				for (int i = 0; i <= index; i++) {
+					f1Pts.add(e.getPoint(i));
+				}
+				
+				Intersection newF1End = createIntersection(e.getPoint(index));
+				
+				createEdge(eStart, newF1End, f1Pts);
+				
+				List<Point> f2Pts = new ArrayList<Point>();
+				
+				for (int i = index+1; i < e.size(); i++) {
+					f2Pts.add(e.getPoint(i));
+				}
+				
+				Intersection newF2Start = createIntersection(e.getPoint(index+1));
+				
+				createEdge(newF2Start, eEnd, f2Pts);
 				
 			}
 			
-		} finally {
+			destroyEdge(e);
+			
+			edgesChanged(eStart);
+			edgesChanged(eEnd);
 			
 		}
 		

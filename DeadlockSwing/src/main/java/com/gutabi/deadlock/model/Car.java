@@ -174,6 +174,9 @@ public class Car {
 		}
 	}
 	
+	/*
+	 * choose best edge to get to the correct sink
+	 */
 	private void nextChoiceToSink(Position pos) {
 		if (pos instanceof VertexPosition) {
 			
@@ -189,13 +192,32 @@ public class Car {
 			
 			Vertex v = vp.getVertex();
 			
-			Edge best = null;
+			Path bestPath = null;
 			double bestDistance = Double.POSITIVE_INFINITY;
-			for (Edge e : v.getEdges()) {
-				for (Sink s : MODEL.getSinks()) {
-					//distance
+			for (Sink s : MODEL.getSinks()) {
+				VertexPosition sp = new VertexPosition(s, null, null, 0);
+				Path path = vp.shortestPathTo(sp);
+				if (path != null) {
+					if (path.totalLength() < bestDistance) {
+						bestPath = path; 
+					}
 				}
 			}
+			
+			if (bestPath != null) {
+				
+				assert bestPath.path.get(0) == vp;
+				VertexPosition nextVP = (VertexPosition)bestPath.path.get(1);
+				
+				nextEdge = nextVP.prevDirEdge;
+				nextDir = nextVP.prevDir;
+				nextState = CarState.EDGE;
+				
+			} else {
+				// no way to get to any sink, crash self now
+				nextState = CarState.CRASHED;
+			}
+			
 			
 			List<Edge> eds = new ArrayList<Edge>(v.getEdges());
 			
@@ -262,6 +284,7 @@ public class Car {
 		}
 		
 		nextPath.crash(pos, pIndex);
+		nextState = CarState.CRASHED;
 	}
 	
 	public void nextPathClear() {
