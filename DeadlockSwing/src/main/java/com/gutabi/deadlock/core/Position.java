@@ -2,6 +2,8 @@ package com.gutabi.deadlock.core;
 
 import java.util.Comparator;
 
+import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
+
 public abstract class Position {
 	
 	protected final Point p;
@@ -40,19 +42,54 @@ public abstract class Position {
 		return d;
 	}
 	
-	public double distanceTo(Position a) {
+	public double distanceTo(Position b) {
 		
-		//return shortestPathTo(a).totalLength();
-		
-		if (a instanceof VertexPosition) {
-			return distanceToV((VertexPosition)a);
+		if (this instanceof VertexPosition) {
+			if (b instanceof VertexPosition) {
+				VertexPosition aa = (VertexPosition)this;
+				VertexPosition bb = (VertexPosition)b;
+				
+				return MODEL.distanceTo(aa.getVertex(), bb.getVertex());
+			} else {
+				VertexPosition aa = (VertexPosition)this;
+				EdgePosition bb = (EdgePosition)b;
+				
+				double bbStartPath = MODEL.distanceTo(aa.getVertex(), bb.getEdge().getStart());
+				double bbEndPath = MODEL.distanceTo(aa.getVertex(), bb.getEdge().getEnd());
+				
+				return Math.min(bbStartPath + bb.distanceToStartOfEdge(), bbEndPath + bb.distanceToEndOfEdge());
+			}
 		} else {
-			return distanceToE((EdgePosition)a);
+			if (b instanceof VertexPosition) {
+				EdgePosition aa = (EdgePosition)this;
+				VertexPosition bb = (VertexPosition)b;
+				
+				double aaStartPath = MODEL.distanceTo(aa.getEdge().getStart(), bb.getVertex());
+				double aaEndPath = MODEL.distanceTo(aa.getEdge().getEnd(), bb.getVertex());
+				
+				return Math.min(aaStartPath + aa.distanceToStartOfEdge(), aaEndPath + aa.distanceToEndOfEdge());
+			} else {
+				EdgePosition aa = (EdgePosition)this;
+				EdgePosition bb = (EdgePosition)b;
+				
+				if (aa.getEdge() == bb.getEdge()) {
+					return Math.abs(aa.distanceToStartOfEdge() - bb.distanceToStartOfEdge());
+				}
+				
+				double startStartPath = MODEL.distanceTo(aa.getEdge().getStart(), bb.getEdge().getStart());
+				double startEndPath = MODEL.distanceTo(aa.getEdge().getStart(), bb.getEdge().getEnd());
+				double endStartPath = MODEL.distanceTo(aa.getEdge().getEnd(), bb.getEdge().getStart());
+				double endEndPath = MODEL.distanceTo(aa.getEdge().getEnd(), bb.getEdge().getEnd());
+				
+				double startStartDistance = startStartPath + aa.distanceToStartOfEdge() + bb.distanceToStartOfEdge();
+				double startEndDistance = startEndPath + aa.distanceToStartOfEdge() + bb.distanceToEndOfEdge();
+				double endStartDistance = endStartPath + aa.distanceToEndOfEdge() + bb.distanceToStartOfEdge();
+				double endEndDistance = endEndPath + aa.distanceToEndOfEdge() + bb.distanceToEndOfEdge();
+				
+				return Math.min(Math.min(startStartDistance, startEndDistance), Math.min(endStartDistance, endEndDistance));
+			}
 		}
 	}
-	
-	protected abstract double distanceToV(VertexPosition a);
-	protected abstract double distanceToE(EdgePosition e);
 	
 	static class PositionComparator implements Comparator<Position> {
 		@Override

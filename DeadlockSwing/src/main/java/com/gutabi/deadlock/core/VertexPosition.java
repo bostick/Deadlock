@@ -25,40 +25,6 @@ public class VertexPosition extends Position {
 		}
 	}
 	
-	protected double distanceToV(VertexPosition a) {
-		
-		Vertex v = a.getVertex();
-		
-		if (!(v == this.v || Edge.commonEdge(v, this.v) != null)) {
-			return Double.POSITIVE_INFINITY;
-		}
-		
-		if (v == this.v) {
-			for (Edge e : v.getEdges()) {
-				if (e.isLoop()) {
-					throw new IllegalArgumentException();
-				}
-			}
-			
-			return 0;
-			
-		} else {
-			
-			Edge e = Edge.commonEdge(v, this.v);
-			
-			if (e.isLoop()) {
-				throw new IllegalArgumentException();
-			}
-			
-			return e.getTotalLength();
-		}
-		
-	}
-	
-	protected double distanceToE(EdgePosition a) {
-		return a.distanceToV(this);
-	}
-	
 	/**
 	 * the specific way to travel
 	 */

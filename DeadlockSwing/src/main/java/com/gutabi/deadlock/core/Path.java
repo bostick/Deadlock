@@ -19,7 +19,56 @@ public class Path {
 		for (int i = 0; i < poss.size()-1; i++) {
 			Position a = poss.get(i);
 			Position b = poss.get(i+1);
-			t += a.distanceTo(b);
+			
+			double dist;
+			if (a instanceof VertexPosition) {
+				if (b instanceof VertexPosition) {
+					VertexPosition aa = (VertexPosition)a;
+					VertexPosition bb = (VertexPosition)b;
+					
+					Edge e = bb.prevDirEdge;
+					assert (aa.getVertex() == e.getStart() && bb.getVertex() == e.getEnd()) || (aa.getVertex() == e.getEnd() && bb.getVertex() == e.getStart());
+					
+					dist = e.getTotalLength();
+					
+				} else {
+					VertexPosition aa = (VertexPosition)a;
+					EdgePosition bb = (EdgePosition)b;
+					
+					Edge e = bb.getEdge();
+					if (aa.getVertex() == e.getStart()) {
+						dist = bb.distanceToStartOfEdge();
+					} else {
+						assert aa.getVertex() == e.getEnd();
+						dist = bb.distanceToEndOfEdge();
+					}
+				}
+			} else {
+				if (b instanceof VertexPosition) {
+					EdgePosition aa = (EdgePosition)a;
+					VertexPosition bb = (VertexPosition)b;
+					
+					Edge e = aa.getEdge();
+					if (bb.getVertex() == e.getStart()) {
+						dist = aa.distanceToStartOfEdge();
+					} else {
+						assert bb.getVertex() == e.getEnd();
+						dist = aa.distanceToEndOfEdge();
+					}
+					
+				} else {
+					EdgePosition aa = (EdgePosition)a;
+					EdgePosition bb = (EdgePosition)b;
+					
+					Edge ae = aa.getEdge();
+					Edge be = bb.getEdge();
+					assert ae == be;
+					
+					dist = Math.abs(aa.distanceToStartOfEdge() - bb.distanceToStartOfEdge());
+				}
+			}
+			
+			t += dist;
 		}
 		total = t;
 		

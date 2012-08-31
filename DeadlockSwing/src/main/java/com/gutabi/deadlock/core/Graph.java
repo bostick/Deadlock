@@ -225,9 +225,9 @@ public class Graph {
 					break;
 				}
 			}
-			assert ee != null;
+			//assert ee != null;
 			
-			poss.add(new VertexPosition(b, poss.get(i-1), ee, (a == ee.getStart() ? 1 : -1)));
+			poss.add(new VertexPosition(b, poss.get(i-1), ee, (ee == null) ? 0 : (a == ee.getStart() ? 1 : -1)));
 		}
 		
 		return new Path(poss);
@@ -250,6 +250,10 @@ public class Graph {
 		vs.addAll(intermediateVertices(n, end));
 		
 		return vs;
+	}
+	
+	public double distanceTo(Vertex a, Vertex b) {
+		return distances[a.graphID][b.graphID];
 	}
 	
 	

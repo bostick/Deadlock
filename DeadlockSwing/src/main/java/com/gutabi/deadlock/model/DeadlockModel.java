@@ -152,4 +152,7 @@ public class DeadlockModel {
 		return graph.shortestPath(start, end);
 	}
 	
+	public double distanceTo(Vertex start, Vertex end) {
+		return graph.distanceTo(start, end);
+	}
 }
