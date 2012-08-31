@@ -16,6 +16,7 @@ import com.gutabi.deadlock.core.Source;
 import com.gutabi.deadlock.core.Vertex;
 import com.gutabi.deadlock.core.VertexPosition;
 
+@SuppressWarnings("serial")
 public class Car {
 	
 	private CarState state;
@@ -43,13 +44,10 @@ public class Car {
 		state = CarState.NEW;
 		id = carCounter;
 		carCounter++;
-		
-		nextPath = new Path();
-		
 		s = "car " + id;
 	}
 	
-	public void updateNext() {
+	public boolean updateNext() {
 		
 		nextDistanceToMove = MODEL.DISTANCE_PER_TIMESTEP;
 		
@@ -113,7 +111,10 @@ public class Car {
 			}
 			case VERTEX: {
 				VertexPosition pos = (VertexPosition)getLastNextPosition();
-				nextChoice(pos);
+				boolean moving = nextChoice(pos);
+				if (!moving) {
+					nextDistanceToMove = 0.0;
+				}
 				break;
 			}
 			case CRASHED:
@@ -132,15 +133,15 @@ public class Car {
 			
 		} // end inner loop
 		
-		assert nextState == CarState.SINKED || DMath.doubleEquals(nextPath.totalLength(), MODEL.DISTANCE_PER_TIMESTEP);
-		
+		return !(nextState == CarState.CRASHED || nextState == CarState.SINKED);
 	}
 	
-	private void nextChoice(Position pos) {
-		nextChoiceRandom(pos);
+	private boolean nextChoice(Position pos) {
+		//nextChoiceRandom(pos);
+		return nextChoiceToSink(pos);
 	}
 	
-	private void nextChoiceRandom(Position pos) {
+	private boolean nextChoiceRandom(Position pos) {
 		if (pos instanceof VertexPosition) {
 			
 			VertexPosition vp = (VertexPosition)pos;
@@ -167,17 +168,20 @@ public class Car {
 			} else {
 				nextDir = (nextEdge.getStart() == v) ? 1 : -1;
 			}
+			
 			nextState = CarState.EDGE;
 			
 		} else {
 			assert false;
 		}
+		
+		return true;
 	}
 	
 	/*
 	 * choose best edge to get to the correct sink
 	 */
-	private void nextChoiceToSink(Position pos) {
+	private boolean nextChoiceToSink(Position pos) {
 		if (pos instanceof VertexPosition) {
 			
 			Direction goal = source.getDirection().opposite();
@@ -195,10 +199,11 @@ public class Car {
 			Path bestPath = null;
 			double bestDistance = Double.POSITIVE_INFINITY;
 			for (Sink s : MODEL.getSinks()) {
-				VertexPosition sp = new VertexPosition(s, null, null, 0);
-				Path path = vp.shortestPathTo(sp);
+				//VertexPosition sp = new VertexPosition(s, null, null, 0);
+				Path path = MODEL.shortestPath(v, s);
 				if (path != null) {
 					if (path.totalLength() < bestDistance) {
+						bestDistance = path.totalLength();
 						bestPath = path; 
 					}
 				}
@@ -206,11 +211,12 @@ public class Car {
 			
 			if (bestPath != null) {
 				
-				assert bestPath.path.get(0) == vp;
-				VertexPosition nextVP = (VertexPosition)bestPath.path.get(1);
+				assert bestPath.get(0).equals(vp);
+				VertexPosition nextVP = (VertexPosition)bestPath.get(1);
 				
 				nextEdge = nextVP.prevDirEdge;
 				nextDir = nextVP.prevDir;
+				
 				nextState = CarState.EDGE;
 				
 			} else {
@@ -218,29 +224,18 @@ public class Car {
 				nextState = CarState.CRASHED;
 			}
 			
-			
-			List<Edge> eds = new ArrayList<Edge>(v.getEdges());
-			
-			int i = MODEL.RANDOM.nextInt(eds.size());
-			nextEdge = eds.get(i);
-			if (nextEdge.isLoop()) {
-				nextDir = 2*MODEL.RANDOM.nextInt(2)-1;
-			} else {
-				nextDir = (nextEdge.getStart() == v) ? 1 : -1;
-			}
-			nextState = CarState.EDGE;
-			
 		} else {
 			assert false;
 		}
+		
+		return nextState != CarState.CRASHED;
 	}
 	
 	
 	public void updateCurrentFromNext() {
-		Position p = getLastNextPosition();
+		final Position p = getLastNextPosition();
 		setPosition(p);
-		nextPathClear();
-		nextPathAdd(p);
+		nextPath = new Path(new ArrayList<Position>(){{add(p);}});
 		CarState s = nextState;
 		setState(s);
 	}
@@ -270,7 +265,7 @@ public class Car {
 		if (state == CarState.CRASHED || state == CarState.SINKED) {
 			throw new IllegalArgumentException();
 		}
-		nextPath.add(pos);
+		nextPath = nextPath.append(pos);
 	}
 	
 	/**
@@ -283,24 +278,16 @@ public class Car {
 			throw new IllegalArgumentException();
 		}
 		
-		nextPath.crash(pos, pIndex);
+		nextPath = nextPath.crash(pos, pIndex);
 		nextState = CarState.CRASHED;
 	}
 	
-	public void nextPathClear() {
+	public Path getNextPath() {
 		if (state == CarState.CRASHED || state == CarState.SINKED) {
 			throw new IllegalArgumentException();
 		}
 		
-		nextPath.clear();
-	}
-	
-	public List<Position> getNextPath() {
-		if (state == CarState.CRASHED || state == CarState.SINKED) {
-			throw new IllegalArgumentException();
-		}
-		
-		return nextPath.path;
+		return nextPath;
 	}
 	
 	public Position getLastNextPosition() {

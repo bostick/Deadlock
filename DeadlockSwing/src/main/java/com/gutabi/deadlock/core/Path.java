@@ -7,18 +7,39 @@ import com.gutabi.deadlock.core.Position;
 
 public class Path {
 	
-	public List<Position> path = new ArrayList<Position>();
+	private final List<Position> poss;
 	
-	public void add(Position pos) {
-		path.add(pos);
+	private final double total;
+	
+	public Path(List<Position> poss) {
+		
+		this.poss = poss;
+		
+		double t = 0;
+		for (int i = 0; i < poss.size()-1; i++) {
+			Position a = poss.get(i);
+			Position b = poss.get(i+1);
+			t += a.distanceTo(b);
+		}
+		total = t;
+		
+		assert check();
 	}
 	
-	public void crash(Position pos, int pIndex) {
+	public Position get(int i) {
+		return poss.get(i);
+	}
+	
+	public int size() {
+		return poss.size();
+	}
+	
+	public Path crash(Position pos, int pIndex) {
 		
 		List<Position> newPath = new ArrayList<Position>();
 		Position last = null;
 		for (int i = 0; i < pIndex; i++) {
-			last = path.get(i);
+			last = poss.get(i);
 			newPath.add(last);
 		}
 		
@@ -26,24 +47,30 @@ public class Path {
 			newPath.add(pos);
 		}
 		
-		path = newPath;
+		return new Path(newPath);
 	}
 	
-	public void clear() {
-		path.clear();
+	public Path append(Position q) {
+		List<Position> newPoss = new ArrayList<Position>(poss);
+		newPoss.add(q);
+		return new Path(newPoss);
 	}
 	
 	public Position getLastPosition() {
-		return path.get(path.size()-1);
+		return poss.get(poss.size()-1);
 	}
 	
 	public double totalLength() {
-		double total = 0;
-		for (int i = 0; i < path.size()-1; i++) {
-			Position a = path.get(i);
-			Position b = path.get(i+1);
-			total += a.distanceTo(b);
-		}
 		return total;
+	}
+	
+	
+	private boolean check() {
+		for (int i = 1; i < poss.size(); i++) {
+			Position cur = poss.get(i);
+			Position prev = poss.get(i-1);
+			assert cur.prevPos == prev;
+		}
+		return true;
 	}
 }

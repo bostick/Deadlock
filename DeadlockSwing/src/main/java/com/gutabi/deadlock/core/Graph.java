@@ -1,6 +1,7 @@
 package com.gutabi.deadlock.core;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -129,6 +130,131 @@ public class Graph {
 	}
 	
 	
+	double[][] distances;
+	Vertex[][] next;
+	
+	public void calculateChoices() {
+		
+		/*
+		 * Floyd-Warshall
+		 */
+		
+		int vertexCount = intersections.size() + sources.size() + sinks.size();
+		Vertex[] vertices = new Vertex[vertexCount];
+		
+		int id = 0;
+		for (Intersection i : intersections) {
+			i.graphID = id;
+			vertices[id] = i;
+			id++;
+		}
+		for (Source s : sources) {
+			s.graphID = id;
+			vertices[id] = s;
+			id++;
+		}
+		for (Sink s : sinks) {
+			s.graphID = id;
+			vertices[id] = s;
+			id++;
+		}
+		
+		distances = new double[vertexCount][vertexCount];
+		next = new Vertex[vertexCount][vertexCount];
+		
+		for (int i = 0; i < distances.length; i++) {
+			Arrays.fill(distances[i], Double.POSITIVE_INFINITY);
+		}
+		for (int i = 0; i < distances.length; i++) {
+			distances[i][i] = 0.0;
+		}
+		for(Edge e : edges) {
+			double l = e.getTotalLength();
+			double cur = distances[e.getStart().graphID][e.getEnd().graphID];
+			/*
+			 * there may be multiple edges between start and end, so don't just blindly set it to l
+			 */
+			if (l < cur) {
+				distances[e.getStart().graphID][e.getEnd().graphID] = l;
+		    	distances[e.getEnd().graphID][e.getStart().graphID] = l;
+			}
+		}
+		
+		for (int k = 0; k < vertexCount; k++){
+			for (int i = 0; i < vertexCount; i++){
+				for (int j = 0; j < vertexCount; j++){
+					if (distances[i][k] + distances[k][j] < distances[i][j]) {
+						distances[i][j] = distances[i][k] + distances[k][j];
+						next[i][j] = vertices[k];
+					}
+				}
+			}
+		}
+		
+	}
+	
+	public Path shortestPath(final Vertex start, Vertex end) {
+		if (start == end) {
+			throw new IllegalArgumentException();
+		}
+		
+		int sid = start.graphID;
+		int eid = end.graphID;
+		
+		if (distances[sid][eid] == Double.POSITIVE_INFINITY) {
+			return null;
+		}
+		
+		List<Vertex> vs = new ArrayList<Vertex>();
+		vs.add(start);
+		vs.addAll(intermediateVertices(start, end));
+		vs.add(end);
+		
+		List<Position> poss = new ArrayList<Position>();
+		poss.add(new VertexPosition(start, null, null, 0));
+		for (int i = 1; i < vs.size(); i++) {
+			Vertex a = vs.get(i-1);
+			Vertex b = vs.get(i);
+			
+			double d = distances[a.graphID][b.graphID];
+			
+			Edge ee = null;
+			for (Edge e : Vertex.commonEdges(a, b)) {
+				if (DMath.doubleEquals(e.getTotalLength(), d)) {
+					ee = e;
+					break;
+				}
+			}
+			assert ee != null;
+			
+			poss.add(new VertexPosition(b, poss.get(i-1), ee, (a == ee.getStart() ? 1 : -1)));
+		}
+		
+		return new Path(poss);
+	}
+	
+	private List<Vertex> intermediateVertices(Vertex start, Vertex end) {
+		
+		int sid = start.graphID;
+		int eid = end.graphID;
+		
+		Vertex n = next[sid][eid];
+		
+		if (n == null) {
+			return new ArrayList<Vertex>();
+		}
+		
+		List<Vertex> vs = new ArrayList<Vertex>();
+		vs.addAll(intermediateVertices(start, n));
+		vs.add(n);
+		vs.addAll(intermediateVertices(n, end));
+		
+		return vs;
+	}
+	
+	
+	
+	
 	
 	
 	public EdgePosition tryFindEdgePosition(Point b) {
@@ -161,28 +287,6 @@ public class Graph {
 		}
 		return -1;
 	}
-	
-//	public Intersection findIntersection(Point b) {
-//		Intersection found = null;
-//		int count = 0;
-//		for (Intersection i : getIntersections()) {
-//			Point d = i.getPoint();
-//			/*
-//			 * d may be null if in the midle of processing (and not currently consistent)
-//			 */
-//			if (d != null && Point.equals(b, d)) {
-//				count++;
-//				found = i;
-//			}
-//		}
-//		if (count == 0) {
-//			throw new IllegalArgumentException("intersection not found at point");
-//		}
-//		if (count > 1) {
-//			throw new IllegalArgumentException("multiple intersections found at point");
-//		}
-//		return found;
-//	}
 	
 	public Vertex tryFindVertex(Point b) {
 		for (Intersection v : intersections) {

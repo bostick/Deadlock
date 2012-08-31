@@ -11,6 +11,7 @@ import com.gutabi.deadlock.core.Edge;
 import com.gutabi.deadlock.core.EdgePosition;
 import com.gutabi.deadlock.core.Graph;
 import com.gutabi.deadlock.core.Intersection;
+import com.gutabi.deadlock.core.Path;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.Position;
 import com.gutabi.deadlock.core.Segment;
@@ -49,7 +50,7 @@ public class DeadlockModel {
 	public List<Point> curStrokeRaw = new ArrayList<Point>();
 	public List<List<Point>> allStrokes = new ArrayList<List<Point>>();
 	
-	private final Graph graph;
+	public final Graph graph;
 	
 	public List<Car> movingCars = new ArrayList<Car>();
 	public List<Car> crashedCars = new ArrayList<Car>();
@@ -145,6 +146,10 @@ public class DeadlockModel {
 	
 	public void setMode(ControlMode mode) {
 		this.mode = mode;
+	}
+	
+	public Path shortestPath(Vertex start, Vertex end) {
+		return graph.shortestPath(start, end);
 	}
 	
 }

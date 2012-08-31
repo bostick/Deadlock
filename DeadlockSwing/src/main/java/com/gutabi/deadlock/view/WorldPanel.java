@@ -18,9 +18,7 @@ public class WorldPanel extends JPanel {
 	Logger logger = Logger.getLogger("deadlock");
 	
 	public WorldPanel() {
-		
 		setPreferredSize(new Dimension(MODEL.WORLD_WIDTH, MODEL.WORLD_HEIGHT));
-		
 	}
 	
 	@Override

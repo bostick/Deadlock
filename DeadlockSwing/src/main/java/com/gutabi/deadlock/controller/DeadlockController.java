@@ -88,32 +88,6 @@ public class DeadlockController implements ActionListener {
 		lastPressPoint = p;
 		lastPressTime = System.currentTimeMillis();
 		
-//		synchronized (MODEL) {
-//			switch (MODEL.getMode()) {
-//			case IDLE: {
-//				
-//				if (p.getY() <= 10 || p.getX() <= 10) {
-//					// source
-//				} else if (p.getX() >= MODEL.WORLD_WIDTH-10 || p.getY() >= MODEL.WORLD_HEIGHT-10) {
-//					// sink
-//				} else {
-//					draftStart(p);
-//					VIEW.repaint();
-//				}
-//				break;
-//			}
-//			case DRAFTING:
-//				assert false;
-//				break;
-//			case ZOOMING:
-//				assert false;
-//				break;
-//			case RUNNING:
-//				;
-//				break;
-//			}
-//		}
-		
 		lastDragPoint = null;
 		lastDragTime = -1;
 	}
@@ -301,6 +275,10 @@ public class DeadlockController implements ActionListener {
 				break;
 			}
 		}
+		
+	}
+	
+	public void tabKey() {
 		
 	}
 	

@@ -10,6 +10,7 @@ import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Edge;
 import com.gutabi.deadlock.core.EdgePosition;
 import com.gutabi.deadlock.core.Intersection;
+import com.gutabi.deadlock.core.Path;
 import com.gutabi.deadlock.core.Position;
 import com.gutabi.deadlock.core.Sink;
 import com.gutabi.deadlock.core.Source;
@@ -20,6 +21,7 @@ import com.gutabi.deadlock.model.CarState;
 import com.gutabi.deadlock.model.CrashInfo;
 import com.gutabi.deadlock.model.CrashSite;
 
+@SuppressWarnings("serial")
 public class SimulationRunnable implements Runnable {
 	
 	List<Car> specials = new ArrayList<Car>();
@@ -37,7 +39,6 @@ public class SimulationRunnable implements Runnable {
 	
 	List<Source> sources;
 	
-	//@SuppressWarnings("serial")
 	@Override
 	public void run() {
 		
@@ -45,6 +46,8 @@ public class SimulationRunnable implements Runnable {
 		crashes.clear();
 		
 		synchronized (MODEL) {
+			
+			MODEL.graph.calculateChoices();
 			
 			MODEL.movingCars.clear();
 			MODEL.crashedCars.clear();
@@ -158,12 +161,12 @@ public class SimulationRunnable implements Runnable {
 			}
 			int i = MODEL.RANDOM.nextInt(sources.size());
 			
-			Source s = sources.get(i);
+			final Source s = sources.get(i);
 			
 			c.source = s;
 			c.startingStep = step;
 			
-			c.nextPathAdd(new VertexPosition(s, null, null, 0));
+			c.nextPath = new Path(new ArrayList<Position>(){{add(new VertexPosition(s, null, null, 0));}});
 			c.nextState = CarState.VERTEX;
 			
 			sources.remove(s);
@@ -171,7 +174,17 @@ public class SimulationRunnable implements Runnable {
 		
 		updateCurrentFromNext(newCars);
 		
-		movingCarsCopy.addAll(newCars);
+		List<Car> cantMoveCars = new ArrayList<Car>();
+		for (Car c : newCars) {
+			boolean moving = c.updateNext();
+			if (!moving) {
+				cantMoveCars.add(c);
+			} else {
+				movingCarsCopy.add(c);
+			}
+		}
+		
+		updateCurrentFromNext(cantMoveCars);
 		
 		lastSpawnStep = step;
 		
@@ -185,17 +198,12 @@ public class SimulationRunnable implements Runnable {
 			List<Car> newlyCrashedCars = processCrashInfo(movingCarsCopy);
 			
 			updateCurrentFromNext(newlyCrashedCars);
-			removeSinked(movingCarsCopy);
-			
-			movingCarsCopy.removeAll(newlyCrashedCars);
-			crashedCarsCopy.addAll(newlyCrashedCars);
 			
 			findCrashesMoving(movingCarsCopy);
 			findCrashesMovingCrashed(movingCarsCopy, crashedCarsCopy);
 		}
 		
-		updateCurrentFromNext(movingCarsCopy);
-		removeSinked(movingCarsCopy);
+		updateCurrentFromNext(new ArrayList<Car>(){{addAll(movingCarsCopy);}});
 		
 		//checkDistances();
 	}
@@ -222,7 +230,7 @@ public class SimulationRunnable implements Runnable {
 				Car cj = cars.get(j);
 				
 				double ciTraveled = 0;
-				List<Position> ciFuturePath = ci.getNextPath();
+				Path ciFuturePath = ci.getNextPath();
 				for (int k = 0; k < ciFuturePath.size()-1; k++) {
 					Position cia = ciFuturePath.get(k);
 					Position cib = ciFuturePath.get(k+1);
@@ -231,7 +239,7 @@ public class SimulationRunnable implements Runnable {
 					int iDir = (Position.COMPARATOR.compare(cia, cib) == -1) ? 1 : -1;
 					
 					double cjTraveled = 0;
-					List<Position> cjFuturePath = cj.getNextPath();
+					Path cjFuturePath = cj.getNextPath();
 					for (int l = 0; l < cjFuturePath.size()-1; l++) {
 						Position cja = cjFuturePath.get(l);
 						Position cjb = cjFuturePath.get(l+1);
@@ -333,7 +341,7 @@ public class SimulationRunnable implements Runnable {
 				Position cjp = cj.getPosition();
 				
 				double ciTraveled = 0;
-				List<Position> ciFuturePath = ci.getNextPath();
+				Path ciFuturePath = ci.getNextPath();
 				for (int k = 0; k < ciFuturePath.size()-1; k++) {
 					Position cia = ciFuturePath.get(k);
 					Position cib = ciFuturePath.get(k+1);
@@ -431,19 +439,25 @@ public class SimulationRunnable implements Runnable {
 	
 	private void updateCurrentFromNext(List<Car> cars) {
 		for (Car c : cars) {
-			c.updateCurrentFromNext();
-		}
-	}
-	
-	private void removeSinked(List<Car> cars) {
-		List<Car> toRemove = new ArrayList<Car>();
-		for (Car c : cars) {
-			if (c.getState() == CarState.SINKED) {
-				toRemove.add(c);
+			switch (c.nextState) {
+			case NEW:
+				assert false;
+				break;
+			case EDGE:
+			case VERTEX:
+				break;
+			case CRASHED: {
+				movingCarsCopy.remove(c);
+				crashedCarsCopy.add(c);
+				break;
 			}
-		}
-		for (Car c : toRemove) {
-			cars.remove(c);
+			case SINKED: {
+				boolean res = movingCarsCopy.remove(c);
+				assert res;
+				break;
+			}
+			}
+			c.updateCurrentFromNext();
 		}
 	}
 	

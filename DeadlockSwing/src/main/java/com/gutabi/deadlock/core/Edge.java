@@ -58,9 +58,6 @@ public final class Edge extends Driveable {
 	}
 	
 	public int size() {
-//		if (removed) {
-//			throw new IllegalStateException();
-//		}
 		return pts.length;
 	}
 	
@@ -83,9 +80,6 @@ public final class Edge extends Driveable {
 	}
 	
 	public Point getPoint(int i) {
-//		if (removed) {
-//			throw new IllegalStateException();
-//		}
 		if (i >= 0) {
 			return pts[i];
 		} else {

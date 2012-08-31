@@ -38,6 +38,9 @@ public class KeyboardController {
 		VIEW.panel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("DELETE"), "deleteKeyAction");
 		VIEW.panel.getActionMap().put("deleteKeyAction", deleteKeyAction);
 		
+		VIEW.panel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("TAB"), "tabKeyAction");
+		VIEW.panel.getActionMap().put("tabKeyAction", tabKeyAction);
+		
 		VIEW.panel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("control Z"), "undoKeyAction");
 		VIEW.panel.getActionMap().put("undoKeyAction", undoKeyAction);
 		
@@ -166,6 +169,22 @@ public class KeyboardController {
 			CONTROLLER.queue(new Runnable() {
 				public void run() {
 					CONTROLLER.deleteKey();
+					VIEW.renderBackground();
+					VIEW.repaint();
+				}
+			});
+			
+		}
+	};
+	
+	@SuppressWarnings("serial")
+	public Action tabKeyAction = new AbstractAction() {
+		@Override
+		public void actionPerformed(ActionEvent blah) {
+			
+			CONTROLLER.queue(new Runnable() {
+				public void run() {
+					CONTROLLER.tabKey();
 					VIEW.renderBackground();
 					VIEW.repaint();
 				}

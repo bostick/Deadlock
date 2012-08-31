@@ -13,6 +13,8 @@ public class Vertex extends Driveable {
 	
 	private boolean removed = false;
 	
+	int graphID;
+	
 	public Vertex(Point p) {
 		this.p = p;
 		
