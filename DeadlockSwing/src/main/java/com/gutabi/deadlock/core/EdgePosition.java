@@ -2,9 +2,11 @@ package com.gutabi.deadlock.core;
 
 public class EdgePosition extends Position {
 	
-	public final Edge e;
-	public final int index;
-	public final double param;
+	private final Edge e;
+	private final int index;
+	private final double param;
+	
+	private final int dir;
 	
 	public final Point segStart;
 	public final Point segEnd;
@@ -12,8 +14,12 @@ public class EdgePosition extends Position {
 	private double distanceToStartOfEdge = -1;
 	private double distanceToEndOfEdge = -1;
 	
-	public EdgePosition(Edge e, int index, double param, Position prevPos, Edge prevDirEdge, int prevDir) {
-		super(Point.point(e.getPoint(index), e.getPoint(index+1), param), e, prevPos, prevDirEdge, prevDir);
+	public EdgePosition(Edge e, int index, double param) {
+		this(e, index, param, 0);
+	}
+	
+	public EdgePosition(Edge e, int index, double param, int dir) {
+		super(Point.point(e.getPoint(index), e.getPoint(index+1), param), e);
 		
 		if (index < 0 || index >= e.size()-1) {
 			throw new IllegalArgumentException();
@@ -28,6 +34,8 @@ public class EdgePosition extends Position {
 		this.e = e;
 		this.index = index;
 		this.param = param;
+		
+		this.dir = dir;
 		
 		this.segStart = e.getPoint(index);
 		this.segEnd = e.getPoint(index+1);
@@ -53,6 +61,10 @@ public class EdgePosition extends Position {
 	
 	public double getParam() {
 		return param;
+	}
+	
+	public int getDir() {
+		return dir;
 	}
 	
 	@Override
@@ -117,7 +129,7 @@ public class EdgePosition extends Position {
 			
 			double distToEndOfEdge = distanceToEndOfEdge();
 			if (DMath.doubleEquals(dist, distToEndOfEdge)) {
-				return new VertexPosition(e.getEnd(), this, e, 1);
+				return new VertexPosition(e.getEnd());
 			} else if (dist > distToEndOfEdge) {
 				throw new TravelException();
 			}
@@ -128,7 +140,7 @@ public class EdgePosition extends Position {
 			
 			double distToStartOfEdge = distanceToStartOfEdge();
 			if (DMath.doubleEquals(dist, distToStartOfEdge)) {
-				return new VertexPosition(e.getStart(), this, e, -1);
+				return new VertexPosition(e.getStart());
 			} else if (dist > distToStartOfEdge) {
 				throw new TravelException();
 			}
@@ -155,10 +167,10 @@ public class EdgePosition extends Position {
 			double distanceToEndOfSegment = Point.distance(c, b);
 			
 			if (DMath.doubleEquals(distanceToTravel, distanceToEndOfSegment)) {
-				return new EdgePosition(e, index+1, 0.0, this, e, 1);
+				return new EdgePosition(e, index+1, 0.0, 1);
 			} else if (distanceToTravel < distanceToEndOfSegment) {
 				double newParam = Point.travelForward(a, b, param, distanceToTravel);
-				return new EdgePosition(e, index, newParam, this, e, 1);
+				return new EdgePosition(e, index, newParam, 1);
 			} else {
 				index++;
 				param = 0.0;
@@ -181,10 +193,10 @@ public class EdgePosition extends Position {
 			double distanceToStartOfSegment = Point.distance(c, a);
 			
 			if (DMath.doubleEquals(distanceToTravel, distanceToStartOfSegment)) {
-				return new EdgePosition(e, index, 0.0, this, e, -1);
+				return new EdgePosition(e, index, 0.0, -1);
 			} else if (distanceToTravel < distanceToStartOfSegment) {
 				double newParam = Point.travelBackward(a, b, param, distanceToTravel);
-				return new EdgePosition(e, index, newParam, this, e, -1);
+				return new EdgePosition(e, index, newParam, -1);
 			} else {
 				index--;
 				param = 1.0;

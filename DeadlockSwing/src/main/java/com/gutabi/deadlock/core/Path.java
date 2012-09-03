@@ -23,13 +23,14 @@ public class Path {
 			double dist;
 			if (a instanceof VertexPosition) {
 				if (b instanceof VertexPosition) {
-					VertexPosition aa = (VertexPosition)a;
-					VertexPosition bb = (VertexPosition)b;
-					
-					Edge e = bb.prevDirEdge;
-					assert (aa.getVertex() == e.getStart() && bb.getVertex() == e.getEnd()) || (aa.getVertex() == e.getEnd() && bb.getVertex() == e.getStart());
-					
-					dist = e.getTotalLength();
+					throw new IllegalStateException();
+//					VertexPosition aa = (VertexPosition)a;
+//					VertexPosition bb = (VertexPosition)b;
+//					
+//					Edge e = bb.prevDirEdge;
+//					assert (aa.getVertex() == e.getStart() && bb.getVertex() == e.getEnd()) || (aa.getVertex() == e.getEnd() && bb.getVertex() == e.getStart());
+//					
+//					dist = e.getTotalLength();
 					
 				} else {
 					VertexPosition aa = (VertexPosition)a;
@@ -72,7 +73,7 @@ public class Path {
 		}
 		total = t;
 		
-		assert check();
+		//assert check();
 	}
 	
 	public Position get(int i) {
@@ -114,12 +115,12 @@ public class Path {
 	}
 	
 	
-	private boolean check() {
-		for (int i = 1; i < poss.size(); i++) {
-			Position cur = poss.get(i);
-			Position prev = poss.get(i-1);
-			assert cur.prevPos == prev;
-		}
-		return true;
-	}
+//	private boolean check() {
+//		for (int i = 1; i < poss.size(); i++) {
+//			Position cur = poss.get(i);
+//			Position prev = poss.get(i-1);
+//			assert cur.prevPos == prev;
+//		}
+//		return true;
+//	}
 }

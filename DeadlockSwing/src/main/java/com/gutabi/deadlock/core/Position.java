@@ -11,19 +11,19 @@ public abstract class Position {
 	
 	protected final Driveable d;
 	
-	public final Position prevPos;
-	public final Edge prevDirEdge;
-	public final int prevDir;
+//	private final Position prevPos;
+//	private final Edge prevDirEdge;
+//	private final int prevDir;
 	
 	private final int hash;
 	
-	public Position(Point p, Driveable d, Position prevPos, Edge prevDirEdge, int prevDir) {
+	public Position(Point p, Driveable d) {
 		this.p = p;
 		this.d = d;
 		
-		this.prevPos = prevPos;
-		this.prevDirEdge = prevDirEdge;
-		this.prevDir = prevDir;
+//		this.prevPos = prevPos;
+//		this.prevDirEdge = prevDirEdge;
+//		this.prevDir = prevDir;
 		
 		int h = 17;
 		h = 37 * h + p.hashCode();
@@ -106,13 +106,13 @@ public abstract class Position {
 						throw new IllegalArgumentException();
 					}
 					
-					if (aa.index < bb.index) {
+					if (aa.getIndex() < bb.getIndex()) {
 						return -1;
-					} else if (aa.index > bb.index) {
+					} else if (aa.getIndex() > bb.getIndex()) {
 						return 1;
-					} else if (aa.param < bb.param) {
+					} else if (aa.getParam() < bb.getParam()) {
 						return -1;
-					} else if (aa.param > bb.param) {
+					} else if (aa.getParam() > bb.getParam()) {
 						return 1;
 					} else {
 						return 0;

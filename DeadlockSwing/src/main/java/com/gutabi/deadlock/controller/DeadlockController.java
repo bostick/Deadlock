@@ -236,7 +236,7 @@ public class DeadlockController implements ActionListener {
 						Edge e = (Edge)MODEL.hilited;
 						
 						if (!e.isStandAlone()) {
-							Position middle = new VertexPosition(e.getStart(), null, null, 0).travel(e, 1, e.getTotalLength()/2);
+							Position middle = new VertexPosition(e.getStart()).travel(e, 1, e.getTotalLength()/2);
 							p = middle.getPoint();
 						} else {
 							p = e.getPoint(0);

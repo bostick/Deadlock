@@ -230,7 +230,7 @@ public class Graph {
 		vs.add(end);
 		
 		List<Position> poss = new ArrayList<Position>();
-		poss.add(new VertexPosition(start, null, null, 0));
+		poss.add(new VertexPosition(start));
 		for (int i = 1; i < vs.size(); i++) {
 			Vertex a = vs.get(i-1);
 			Vertex b = vs.get(i);
@@ -244,9 +244,11 @@ public class Graph {
 					break;
 				}
 			}
-			//assert ee != null;
+			assert ee != null;
 			
-			poss.add(new VertexPosition(b, poss.get(i-1), ee, (ee == null) ? 0 : (a == ee.getStart() ? 1 : -1)));
+			//poss.add(new VertexPosition(a));
+			poss.add(((VertexPosition)poss.get(poss.size()-1)).travel(ee, (a == ee.getStart()) ? 1 : -1, ee.getTotalLength()/2));
+			poss.add(new VertexPosition(b));
 		}
 		
 		return new Path(poss);
@@ -287,7 +289,7 @@ public class Graph {
 			Point c = e.getPoint(i);
 			Point d = e.getPoint(i+1);
 			if (Point.intersect(b, c, d) && !Point.equals(b, d)) {
-				return new EdgePosition(e, i, Point.param(b, c, d), null, null, 0);
+				return new EdgePosition(e, i, Point.param(b, c, d));
 			}
 		}
 		for (Intersection v : getIntersections()) {
@@ -372,7 +374,7 @@ public class Graph {
 		}
 		
 		if (closest != null) {
-			return new VertexPosition(closest, null, null, 0);
+			return new VertexPosition(closest);
 		} else {
 			return null;
 		}
@@ -805,8 +807,8 @@ public class Graph {
 		assert info != null;
 		
 		Edge e = info.getEdge();
-		int index = info.index;
-		double param = info.param;
+		int index = info.getIndex();
+		double param = info.getParam();
 		
 		assert param >= 0.0;
 		assert param < 1.0;

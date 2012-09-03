@@ -4,8 +4,8 @@ public class VertexPosition extends Position {
 
 	public final Vertex v;
 	
-	public VertexPosition(Vertex v, Position prevPos, Edge prevDirEdge, int prevDir) {
-		super(v.getPoint(), v, prevPos, prevDirEdge, prevDir);
+	public VertexPosition(Vertex v) {
+		super(v.getPoint(), v);
 		this.v = v;
 	}
 	
@@ -71,10 +71,10 @@ public class VertexPosition extends Position {
 			double distanceToEndOfSegment = Point.distance(c, b);
 			
 			if (DMath.doubleEquals(distanceToTravel, distanceToEndOfSegment)) {
-				return new EdgePosition(e, index+1, 0.0, this, e, 1);
+				return new EdgePosition(e, index+1, 0.0, 1);
 			} else if (distanceToTravel < distanceToEndOfSegment) {
 				double newParam = Point.travelForward(a, b, param, distanceToTravel);
-				return new EdgePosition(e, index, newParam, this, e, 1);
+				return new EdgePosition(e, index, newParam, 1);
 			} else {
 				index++;
 				param = 0.0;
@@ -97,10 +97,10 @@ public class VertexPosition extends Position {
 			double distanceToStartOfSegment = Point.distance(c, a);
 			
 			if (DMath.doubleEquals(distanceToTravel, distanceToStartOfSegment)) {
-				return new EdgePosition(e, index, 0.0, this, e, -1);
+				return new EdgePosition(e, index, 0.0, -1);
 			} else if (distanceToTravel < distanceToStartOfSegment) {
 				double newParam = Point.travelBackward(a, b, param, distanceToTravel);
-				return new EdgePosition(e, index, newParam, this, e, -1);
+				return new EdgePosition(e, index, newParam, -1);
 			} else {
 				index--;
 				param = 1.0;

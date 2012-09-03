@@ -2516,14 +2516,14 @@ public class TestSimulating {
 			Car a = new Car();
 			Car b = new Car();
 			
-			a.setPosition(new VertexPosition(aV, null, null, 0));
+			a.setPosition(new VertexPosition(aV));
 			//a.futurePathNewEdge();
 			a.nextPathAdd(a.getPosition());
 			a.setState(CarState.EDGE);
 			a.nextState = a.getState();
 			a.nextEdge = aV.getEdges().get(0);
 			
-			b.setPosition(new VertexPosition(bV, null, null, 0));
+			b.setPosition(new VertexPosition(bV));
 			//b.futurePathNewEdge();
 			b.nextPathAdd(b.getPosition());
 			b.setState(CarState.EDGE);
@@ -2572,14 +2572,14 @@ public class TestSimulating {
 			Car a = new Car();
 			Car b = new Car();
 			
-			a.setPosition(new VertexPosition(aV, null, null, 0));
+			a.setPosition(new VertexPosition(aV));
 			//a.futurePathNewEdge();
 			a.nextPathAdd(a.getPosition());
 			a.setState(CarState.EDGE);
 			a.nextState = a.getState();
 			a.nextEdge = aV.getEdges().get(0);
 			
-			b.setPosition(new VertexPosition(bV, null, null, 0));
+			b.setPosition(new VertexPosition(bV));
 			//b.futurePathNewEdge();
 			b.nextPathAdd(b.getPosition());
 			b.setState(CarState.EDGE);
@@ -2626,21 +2626,21 @@ public class TestSimulating {
 			Car b = new Car();
 			Car c = new Car();
 			
-			a.setPosition(new VertexPosition(aV, null, null, 0));
+			a.setPosition(new VertexPosition(aV));
 			//a.futurePathNewEdge();
 			a.nextPathAdd(a.getPosition());
 			a.setState(CarState.EDGE);
 			a.nextState = a.getState();
 			a.nextEdge = aV.getEdges().get(0);
 			
-			b.setPosition(new VertexPosition(bV, null, null, 0));
+			b.setPosition(new VertexPosition(bV));
 			//b.futurePathNewEdge();
 			b.nextPathAdd(b.getPosition());
 			b.setState(CarState.EDGE);
 			b.nextState = b.getState();
 			b.nextEdge = bV.getEdges().get(0);
 			
-			c.setPosition(new VertexPosition(cV, null, null, 0));
+			c.setPosition(new VertexPosition(cV));
 			//c.futurePathNewEdge();
 			c.nextPathAdd(c.getPosition());
 			c.setState(CarState.EDGE);

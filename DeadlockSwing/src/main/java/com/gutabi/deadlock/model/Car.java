@@ -212,10 +212,10 @@ public class Car {
 			if (bestPath != null) {
 				
 				assert bestPath.get(0).equals(vp);
-				VertexPosition nextVP = (VertexPosition)bestPath.get(1);
+				EdgePosition nextEP = (EdgePosition)bestPath.get(1);
 				
-				nextEdge = nextVP.prevDirEdge;
-				nextDir = nextVP.prevDir;
+				nextEdge = nextEP.getEdge();
+				nextDir = (v == nextEdge.getStart()) ? 1 : -1;
 				
 				nextState = CarState.EDGE;
 				
