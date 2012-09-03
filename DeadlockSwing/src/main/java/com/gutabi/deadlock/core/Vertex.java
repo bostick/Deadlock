@@ -3,15 +3,16 @@ package com.gutabi.deadlock.core;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Vertex extends Driveable {
+public class Vertex implements Driveable {
 	
 	private final Point p;
 	
 	private final int hash;
 	
-	private final List<Edge> eds = new ArrayList<Edge>();
+	protected final List<Edge> eds = new ArrayList<Edge>();
+	protected final List<Hub> hubs = new ArrayList<Hub>();
 	
-	private boolean removed = false;
+	protected boolean removed = false;
 	
 	int graphID;
 	
@@ -48,12 +49,12 @@ public class Vertex extends Driveable {
 	
 	public static List<Edge> commonEdges(Vertex a, Vertex b) {
 		
-		List<Edge> eds1 = a.eds;
-		List<Edge> eds2 = b.eds;
+//		List<Connector> eds1 = a.cons;
+//		List<Connector> eds2 = b.cons;
 		
 		List<Edge> common = new ArrayList<Edge>();
-		for (Edge e1 : eds1) {
-			for (Edge e2 : eds2) {
+		for (Edge e1 : a.eds) {
+			for (Edge e2 : b.eds) {
 				if (e1 == e2) {
 					common.add(e1);
 				}
@@ -63,23 +64,23 @@ public class Vertex extends Driveable {
 		return common;
 	}
 	
-	public void addEdge(Edge ed) {
-		assert ed != null;
+	public void addEdge(Edge e) {
+		assert e != null;
 		if (removed) {
 			throw new IllegalStateException("vertex has been removed");
 		}
-		if (!(ed.getStart() == this && ed.getEnd() == this)) {
-			assert !eds.contains(ed);
-		}
-		eds.add(ed);
+//		if (!(con.getStart() == this && con.getEnd() == this)) {
+//			assert !cons.contains(con);
+//		}
+		eds.add(e);
 	}
 	
-	public void removeEdge(Edge ed) {
+	public void removeEdge(Edge e) {
 		if (removed) {
 			throw new IllegalStateException();
 		}
-		assert eds.contains(ed);
-		eds.remove(ed);
+		assert eds.contains(e);
+		eds.remove(e);
 	}
 	
 	public List<Edge> getEdges() {
@@ -96,6 +97,7 @@ public class Vertex extends Driveable {
 	public void remove() {
 		assert !removed;
 		assert eds.size() == 0;
+		assert hubs.size() == 0;
 		removed = true;
 	}
 	
@@ -107,7 +109,7 @@ public class Vertex extends Driveable {
 		assert !isRemoved();
 		assert getPoint() != null;
 		
-		int edgeCount = getEdges().size();
+		int edgeCount = eds.size();
 		
 		assert edgeCount != 0;
 		
@@ -117,7 +119,7 @@ public class Vertex extends Driveable {
 		assert edgeCount != 2;
 		
 		int count;
-		for (Edge e : getEdges()) {
+		for (Edge e : eds) {
 			
 			assert !e.isRemoved();
 			

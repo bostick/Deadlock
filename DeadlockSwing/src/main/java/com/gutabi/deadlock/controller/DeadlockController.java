@@ -324,6 +324,35 @@ public class DeadlockController implements ActionListener {
 		
 	}
 	
+	public void insertKey() {
+		
+		synchronized (MODEL) {
+			switch (MODEL.getMode()) {
+			case IDLE:
+				
+				MODEL.addHub(lastPressPoint);
+				
+				VIEW.renderBackground();
+				VIEW.repaint();
+				
+				break;
+			case DRAFTING:
+				;
+				break;
+			case ZOOMING:
+				assert false;
+				break;
+			case RUNNING:
+				;
+				break;
+			}
+		}
+		
+	}
+
+	
+	
+	
 	public void startRunning() {
 		assert Thread.currentThread().getName().equals("controller");
 		
@@ -396,7 +425,7 @@ public class DeadlockController implements ActionListener {
 		if (curStroke.size() >= 2) {
 			MODEL.processNewStroke(curStroke);
 		}
-		assert MODEL.checkConsistency();
+		//assert MODEL.checkConsistency();
 		MODEL.lastPointRaw = null;
 		MODEL.curStrokeRaw.clear();
 		

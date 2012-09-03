@@ -1,0 +1,377 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 9.0' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       157,          7]
+NotebookDataLength[     12844,        368]
+NotebookOptionsPosition[     11670,        324]
+NotebookOutlinePosition[     12013,        339]
+CellTagsIndexPosition[     11970,        336]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+Cell[BoxData[
+ RowBox[{"<<", "JLink`"}]], "Input",
+ CellChangeTimes->{{3.5556174947174826`*^9, 3.5556174958545475`*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"LoadJavaClass", "[", "\"\<java.awt.geom.Ellipse2D\>\"", "]"}], 
+  ";"}]], "Input",
+ CellChangeTimes->{{3.555617488405122*^9, 3.5556175686237097`*^9}, 
+   3.55561897045189*^9}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"LoadJavaClass", "[", "\"\<java.awt.geom.PathIterator\>\"", "]"}], 
+  ";"}]], "Input",
+ CellChangeTimes->{{3.5556181747743797`*^9, 3.555618178575597*^9}, 
+   3.555618972581012*^9}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"circle", "=", 
+  RowBox[{"JavaNew", "[", 
+   RowBox[{
+   "\"\<java.awt.geom.Ellipse2D$Double\>\"", ",", "100.0", ",", "100.0", ",", 
+    "100.0", ",", "100.0"}], "]"}]}]], "Input",
+ CellChangeTimes->{{3.555617481664736*^9, 3.555617481665736*^9}, {
+  3.5556176226127977`*^9, 3.555617665209234*^9}, {3.5556177061235743`*^9, 
+  3.5556177120399127`*^9}}],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\[LeftGuillemet]", 
+   RowBox[{"JavaObject", "[", 
+    RowBox[{"java", ".", "awt", ".", "geom", ".", "Ellipse2D$Double"}], "]"}],
+    "\[RightGuillemet]"}],
+  JLink`Objects`vm1`JavaObject12525636463624194]], "Output",
+ CellChangeTimes->{{3.555617645532109*^9, 3.5556176657442646`*^9}, {
+  3.555617707340644*^9, 3.5556177125249405`*^9}}]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"renderJavaShape", "[", "shape_", "]"}], ":=", 
+  RowBox[{"(", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"lastPoint", "=", "Null"}], ";", "\[IndentingNewLine]", 
+    RowBox[{"graphics", "=", 
+     RowBox[{"{", "}"}]}], ";", "\[IndentingNewLine]", 
+    RowBox[{"coordsObj", "=", 
+     RowBox[{"JavaNew", "[", 
+      RowBox[{"\"\<[D\>\"", ",", "6"}], "]"}]}], ";", "\[IndentingNewLine]", 
+    RowBox[{"pi", "=", 
+     RowBox[{"shape", "@", 
+      RowBox[{"getPathIterator", "[", "Null", "]"}]}]}], ";", 
+    "\[IndentingNewLine]", 
+    RowBox[{"While", "[", 
+     RowBox[{
+      RowBox[{"!", 
+       RowBox[{"pi", "@", 
+        RowBox[{"isDone", "[", "]"}]}]}], ",", "\[IndentingNewLine]", 
+      RowBox[{
+       RowBox[{"res", "=", 
+        RowBox[{"pi", "@", 
+         RowBox[{"currentSegment", "[", "coordsObj", "]"}]}]}], ";", 
+       "\[IndentingNewLine]", 
+       RowBox[{"coords", "=", 
+        RowBox[{"JavaObjectToExpression", "[", "coordsObj", "]"}]}], ";", 
+       "\[IndentingNewLine]", 
+       RowBox[{"Switch", "[", 
+        RowBox[{
+        "res", ",", "\[IndentingNewLine]", "PathIterator`SEGUMOVETO", ",", 
+         "\[IndentingNewLine]", 
+         RowBox[{
+          RowBox[{"lastPoint", "=", 
+           RowBox[{"coords", "[", 
+            RowBox[{"[", 
+             RowBox[{"1", ";;", "2"}], "]"}], "]"}]}], ";"}], 
+         "\[IndentingNewLine]", ",", "\[IndentingNewLine]", 
+         "PathIterator`SEGUCLOSE", ",", ",", "\[IndentingNewLine]", 
+         "PathIterator`SEGULINETO", ",", ",", "\[IndentingNewLine]", 
+         "PathIterator`SEGUQUADTO", ",", ",", "\[IndentingNewLine]", 
+         "PathIterator`SEGUCUBICTO", ",", "\[IndentingNewLine]", 
+         RowBox[{
+          RowBox[{"graphics", "=", 
+           RowBox[{"graphics", "~", "Append", "~", 
+            RowBox[{"BezierCurve", "[", 
+             RowBox[{
+              RowBox[{"{", "lastPoint", "}"}], "~", "Join", "~", 
+              RowBox[{"Partition", "[", 
+               RowBox[{"coords", ",", "2"}], "]"}]}], "]"}]}]}], ";", 
+          "\[IndentingNewLine]", 
+          RowBox[{"lastPoint", "=", 
+           RowBox[{"coords", "[", 
+            RowBox[{"[", 
+             RowBox[{"5", ";;", "6"}], "]"}], "]"}]}]}]}], 
+        "\[IndentingNewLine]", "]"}], ";", "\[IndentingNewLine]", 
+       RowBox[{"pi", "@", 
+        RowBox[{"next", "[", "]"}]}]}]}], "\[IndentingNewLine]", "]"}], ";", 
+    "\[IndentingNewLine]", "graphics"}], "\[IndentingNewLine]", 
+   ")"}]}]], "Input",
+ CellChangeTimes->{{3.555618890804334*^9, 3.5556189506547575`*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"renderJavaShape", "[", "circle", "]"}]], "Input",
+ CellChangeTimes->{{3.5556180043696327`*^9, 3.5556181022782335`*^9}, {
+  3.555618192811411*^9, 3.5556182712298965`*^9}, {3.5556184757985973`*^9, 
+  3.5556187334103317`*^9}, {3.5556188017862425`*^9, 3.5556188760224886`*^9}, {
+  3.5556189070912657`*^9, 3.5556189304216003`*^9}}],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"BezierCurve", "[", 
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{"200.`", ",", "150.`"}], "}"}], ",", 
+      RowBox[{"{", 
+       RowBox[{"200.`", ",", "177.61423749153965`"}], "}"}], ",", 
+      RowBox[{"{", 
+       RowBox[{"177.61423749153965`", ",", "200.`"}], "}"}], ",", 
+      RowBox[{"{", 
+       RowBox[{"150.`", ",", "200.`"}], "}"}]}], "}"}], "]"}], ",", 
+   RowBox[{"BezierCurve", "[", 
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{"150.`", ",", "200.`"}], "}"}], ",", 
+      RowBox[{"{", 
+       RowBox[{"122.38576250846033`", ",", "200.`"}], "}"}], ",", 
+      RowBox[{"{", 
+       RowBox[{"100.`", ",", "177.61423749153965`"}], "}"}], ",", 
+      RowBox[{"{", 
+       RowBox[{"100.`", ",", "150.`"}], "}"}]}], "}"}], "]"}], ",", 
+   RowBox[{"BezierCurve", "[", 
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{"100.`", ",", "150.`"}], "}"}], ",", 
+      RowBox[{"{", 
+       RowBox[{"100.`", ",", "122.38576250846033`"}], "}"}], ",", 
+      RowBox[{"{", 
+       RowBox[{"122.38576250846033`", ",", "100.`"}], "}"}], ",", 
+      RowBox[{"{", 
+       RowBox[{"150.`", ",", "100.`"}], "}"}]}], "}"}], "]"}], ",", 
+   RowBox[{"BezierCurve", "[", 
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{"150.`", ",", "100.`"}], "}"}], ",", 
+      RowBox[{"{", 
+       RowBox[{"177.61423749153965`", ",", "100.`"}], "}"}], ",", 
+      RowBox[{"{", 
+       RowBox[{"200.`", ",", "122.38576250846033`"}], "}"}], ",", 
+      RowBox[{"{", 
+       RowBox[{"200.`", ",", "150.`"}], "}"}]}], "}"}], "]"}]}], 
+  "}"}]], "Output",
+ CellChangeTimes->{{3.5556180587457433`*^9, 3.5556181053124065`*^9}, {
+   3.5556186760730524`*^9, 3.5556186867956657`*^9}, 3.5556187339773645`*^9, 
+   3.5556188079355946`*^9, {3.555618855888337*^9, 3.555618876587521*^9}, {
+   3.5556189308186226`*^9, 3.5556189550300074`*^9}}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Graphics", "[", "%", "]"}]], "Input",
+ CellChangeTimes->{{3.555618858138466*^9, 3.555618868834078*^9}, {
+  3.5556189576351566`*^9, 3.555618960053295*^9}}],
+
+Cell[BoxData[
+ GraphicsBox[{
+   BezierCurveBox[{{200., 150.}, {200., 177.61423749153965`}, {
+    177.61423749153965`, 200.}, {150., 200.}}], 
+   BezierCurveBox[{{150., 200.}, {122.38576250846033`, 200.}, {100., 
+    177.61423749153965`}, {100., 150.}}], 
+   BezierCurveBox[{{100., 150.}, {100., 122.38576250846033`}, {
+    122.38576250846033`, 100.}, {150., 100.}}], 
+   BezierCurveBox[{{150., 100.}, {177.61423749153965`, 100.}, {200., 
+    122.38576250846033`}, {200., 150.}}]}]], "Output",
+ CellChangeTimes->{{3.555618864696841*^9, 3.555618877565577*^9}, 
+   3.5556189604933205`*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"custom", "=", 
+  RowBox[{
+  "JavaNew", "[", "\"\<java.awt.geom.GeneralPath\>\"", "]"}]}]], "Input",
+ CellChangeTimes->{{3.5556194075018873`*^9, 3.555619440464773*^9}, 
+   3.555619588693251*^9}],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\[LeftGuillemet]", 
+   RowBox[{"JavaObject", "[", 
+    RowBox[{"java", ".", "awt", ".", "geom", ".", "GeneralPath"}], "]"}], 
+   "\[RightGuillemet]"}],
+  JLink`Objects`vm1`JavaObject21833093660803073]], "Output",
+ CellChangeTimes->{3.555619589351289*^9, 3.5556197028307796`*^9}]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{"custom", "@", 
+  RowBox[{"moveTo", "[", 
+   RowBox[{"200", ",", "150"}], "]"}]}]], "Input",
+ CellChangeTimes->{{3.555619441765847*^9, 3.5556194585338063`*^9}, 
+   3.555619592329459*^9}],
+
+Cell[BoxData[{
+ RowBox[{"custom", "@", 
+  RowBox[{"curveTo", "[", 
+   RowBox[{
+   "200.`", ",", "177.61423749153965`", ",", "177.61423749153965`", ",", 
+    "200.`", ",", "150.`", ",", "200.`"}], "]"}]}], "\[IndentingNewLine]", 
+ RowBox[{"custom", "@", 
+  RowBox[{"curveTo", "[", 
+   RowBox[{
+   "122.38576250846033`", ",", "200.`", ",", "100.`", ",", 
+    "177.61423749153965`", ",", "100.`", ",", "150.`"}], 
+   "]"}]}], "\[IndentingNewLine]", 
+ RowBox[{"custom", "@", 
+  RowBox[{"curveTo", "[", 
+   RowBox[{
+   "100.`", ",", "122.38576250846033`", ",", "122.38576250846033`", ",", 
+    "100.`", ",", "150.`", ",", "100.`"}], "]"}]}], "\[IndentingNewLine]", 
+ RowBox[{"custom", "@", 
+  RowBox[{"curveTo", "[", 
+   RowBox[{
+   "177.61423749153965`", ",", "100.`", ",", "200.`", ",", 
+    "122.38576250846033`", ",", "200.`", ",", "150.`"}], "]"}]}]}], "Input",
+ CellChangeTimes->{{3.5556194618049936`*^9, 3.5556195660649567`*^9}, {
+  3.5556196661416807`*^9, 3.5556196693648653`*^9}}],
+
+Cell[BoxData[
+ RowBox[{"custom", "@", 
+  RowBox[{"closePath", "[", "]"}]}]], "Input",
+ CellChangeTimes->{{3.555619569603159*^9, 3.555619579698737*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Graphics", "[", 
+  RowBox[{"renderJavaShape", "[", "custom", "]"}], "]"}]], "Input",
+ CellChangeTimes->{{3.555619673422097*^9, 3.555619687507903*^9}}],
+
+Cell[BoxData[
+ GraphicsBox[{
+   BezierCurveBox[{{200., 150.}, {200., 177.61424255371094`}, {
+    177.61424255371094`, 200.}, {150., 200.}}], 
+   BezierCurveBox[{{150., 200.}, {122.3857650756836, 200.}, {100., 
+    177.61424255371094`}, {100., 150.}}], 
+   BezierCurveBox[{{100., 150.}, {100., 122.3857650756836}, {
+    122.3857650756836, 100.}, {150., 100.}}], 
+   BezierCurveBox[{{150., 100.}, {177.61424255371094`, 100.}, {200., 
+    122.3857650756836}, {200., 150.}}]}]], "Output",
+ CellChangeTimes->{{3.555619680888524*^9, 3.5556197059989605`*^9}}]
+}, Open  ]],
+
+Cell[BoxData[""], "Input",
+ CellChangeTimes->{{3.555619733214517*^9, 3.5556197391058545`*^9}, 
+   3.5556198450099115`*^9}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"pts", "=", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"200", ",", "150"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"200.`", ",", "177.61423749153965`"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"177.61423749153965`", ",", "200.`"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"150.`", ",", "200.`"}], "}"}]}], "}"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{"Graphics", "[", 
+  RowBox[{"{", 
+   RowBox[{
+    RowBox[{"BezierCurve", "[", "pts", "]"}], ",", "Green", ",", 
+    RowBox[{"Line", "[", "pts", "]"}], ",", "Red", ",", 
+    RowBox[{"Point", "[", "pts", "]"}]}], "}"}], "]"}]}], "Input",
+ CellChangeTimes->{{3.555619838390533*^9, 3.555619898011943*^9}}],
+
+Cell[BoxData[
+ GraphicsBox[{
+   BezierCurveBox[{{200, 150}, {200., 177.61423749153965`}, {
+     177.61423749153965`, 200.}, {150., 200.}}], 
+   {RGBColor[0, 1, 0], 
+    LineBox[{{200, 150}, {200., 177.61423749153965`}, {177.61423749153965`, 
+      200.}, {150., 200.}}]}, 
+   {RGBColor[1, 0, 0], 
+    PointBox[{{200, 150}, {200., 177.61423749153965`}, {177.61423749153965`, 
+      200.}, {150., 200.}}]}}]], "Output",
+ CellChangeTimes->{3.5556198990870047`*^9}]
+}, Open  ]]
+},
+WindowSize->{1268, 637},
+WindowMargins->{{Automatic, 152}, {Automatic, 41}},
+FrontEndVersion->"9.0 for Microsoft Windows (64-bit) (June 26, 2011)",
+StyleDefinitions->"Default.nb"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[557, 20, 120, 2, 31, "Input"],
+Cell[680, 24, 210, 5, 31, "Input"],
+Cell[893, 31, 214, 5, 31, "Input"],
+Cell[CellGroupData[{
+Cell[1132, 40, 374, 8, 31, "Input"],
+Cell[1509, 50, 381, 8, 30, "Output"]
+}, Open  ]],
+Cell[1905, 61, 2575, 60, 472, "Input"],
+Cell[CellGroupData[{
+Cell[4505, 125, 350, 5, 31, "Input"],
+Cell[4858, 132, 1932, 51, 50, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[6827, 188, 178, 3, 31, "Input"],
+Cell[7008, 193, 586, 11, 374, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[7631, 209, 217, 5, 31, "Input"],
+Cell[7851, 216, 323, 7, 30, "Output"]
+}, Open  ]],
+Cell[8189, 226, 209, 5, 31, "Input"],
+Cell[8401, 233, 984, 23, 92, "Input"],
+Cell[9388, 258, 151, 3, 31, "Input"],
+Cell[CellGroupData[{
+Cell[9564, 265, 174, 3, 31, "Input"],
+Cell[9741, 270, 552, 10, 374, "Output"]
+}, Open  ]],
+Cell[10308, 283, 122, 2, 31, "Input"],
+Cell[CellGroupData[{
+Cell[10455, 289, 735, 20, 52, "Input"],
+Cell[11193, 311, 461, 10, 374, "Output"]
+}, Open  ]]
+}
+]
+*)
+
+(* End of internal cache information *)

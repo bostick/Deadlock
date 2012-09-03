@@ -19,10 +19,11 @@ import org.apache.log4j.Logger;
 import com.gutabi.deadlock.controller.ControlMode;
 import com.gutabi.deadlock.core.Driveable;
 import com.gutabi.deadlock.core.Edge;
+import com.gutabi.deadlock.core.Hub;
+import com.gutabi.deadlock.core.Intersection;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.Sink;
 import com.gutabi.deadlock.core.Source;
-import com.gutabi.deadlock.core.Intersection;
 import com.gutabi.deadlock.model.Car;
 
 public class DeadlockView {
@@ -187,12 +188,14 @@ public class DeadlockView {
 		List<Intersection> intersectionsCopy;
 		List<Source> sourcesCopy;
 		List<Sink> sinksCopy;
+		List<Hub> hubsCopy;
 		
 		synchronized (MODEL) {
 			edgesCopy = new ArrayList<Edge>(MODEL.getEdges());
 			intersectionsCopy = new ArrayList<Intersection>(MODEL.getIntersections());
 			sourcesCopy = new ArrayList<Source>(MODEL.getSources());
 			sinksCopy = new ArrayList<Sink>(MODEL.getSinks());
+			hubsCopy = new ArrayList<Hub>(MODEL.getHubs());
 		}
 		
 		for (Edge e : edgesCopy) {
@@ -210,7 +213,9 @@ public class DeadlockView {
 		for (Edge e : edgesCopy) {
 			paintEdge2(e, g2);
 		}
-		
+		for (Hub h : hubsCopy) {
+			paintHub(h, g2);
+		}
 	}
 	
 	private static void paintEdge1(Edge e, Graphics2D g) {
@@ -262,6 +267,15 @@ public class DeadlockView {
 		
 		Point p = v.getPoint();
 		g.fillOval((int)p.getX()-5, (int)p.getY()-5, 10, 10);
+		
+	}
+	
+	public static void paintHub(Hub h, Graphics2D g) {
+		
+		g.setColor(new Color(0x44, 0x44, 0x44, 0xff));
+		
+		Point p = h.getPoint();
+		g.fillOval((int)p.getX()-20, (int)p.getY()-20, 40, 40);
 		
 	}
 	

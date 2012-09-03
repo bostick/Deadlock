@@ -3,7 +3,7 @@ package com.gutabi.deadlock.core;
 import java.util.Arrays;
 import java.util.List;
 
-public final class Edge extends Driveable {
+public final class Edge implements Connector {
 		
 	private final Point[] pts;
 	private final double[] segmentLengths;
@@ -175,27 +175,27 @@ public final class Edge extends Driveable {
 		}
 	}
 	
-	public static Edge commonEdge(Vertex a, Vertex b) {
-		
-		List<Edge> eds = a.getEdges();
-		
-		for (Edge e : eds) {
-			if (e.getStart() == b || e.getEnd() == b) {
-				return e;
-			}
-		}
-		
-		return null;
-		
-	}
+//	public static Edge commonEdge(Vertex a, Vertex b) {
+//		
+//		List<Edge> eds = a.getEdges();
+//		
+//		for (Edge e : eds) {
+//			if (e.getStart() == b || e.getEnd() == b) {
+//				return e;
+//			}
+//		}
+//		
+//		return null;
+//		
+//	}
 	
 	private void check() {
 		
 		assert pts.length >= 2;
 		
-		for (Point p : pts) {
-			assert p.isInteger();
-		}
+//		for (Point p : pts) {
+//			assert p.isInteger();
+//		}
 		
 		if (loop) {
 			assert start == end;

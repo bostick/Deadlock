@@ -47,6 +47,8 @@ public class KeyboardController {
 		VIEW.panel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("control Y"), "redoKeyAction");
 		VIEW.panel.getActionMap().put("redoKeyAction", redoKeyAction);
 		
+		VIEW.panel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("INSERT"), "insertKeyAction");
+		VIEW.panel.getActionMap().put("insertKeyAction", insertKeyAction);
 	}
 	
 	@SuppressWarnings("serial")
@@ -217,6 +219,22 @@ public class KeyboardController {
 			CONTROLLER.queue(new Runnable() {
 				public void run() {
 					CONTROLLER.redoKey();
+					VIEW.renderBackground();
+					VIEW.repaint();
+				}
+			});
+			
+		}
+	};
+	
+	@SuppressWarnings("serial")
+	public Action insertKeyAction = new AbstractAction() {
+		@Override
+		public void actionPerformed(ActionEvent blah) {
+			
+			CONTROLLER.queue(new Runnable() {
+				public void run() {
+					CONTROLLER.insertKey();
 					VIEW.renderBackground();
 					VIEW.repaint();
 				}

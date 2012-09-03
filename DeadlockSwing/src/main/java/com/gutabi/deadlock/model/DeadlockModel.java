@@ -10,6 +10,7 @@ import com.gutabi.deadlock.core.Driveable;
 import com.gutabi.deadlock.core.Edge;
 import com.gutabi.deadlock.core.EdgePosition;
 import com.gutabi.deadlock.core.Graph;
+import com.gutabi.deadlock.core.Hub;
 import com.gutabi.deadlock.core.Intersection;
 import com.gutabi.deadlock.core.Path;
 import com.gutabi.deadlock.core.Point;
@@ -93,6 +94,12 @@ public class DeadlockModel {
 		graph.addSink(p);
 	}
 	
+	public void addHub(Point p) {
+		graph.addHub(p);
+	}
+	
+	
+	
 	
 	public double getZoom() {
 		return ((double)WindowInfo.windowWidth()) / ((double)viewDim.width);
@@ -128,6 +135,10 @@ public class DeadlockModel {
 	
 	public List<Sink> getSinks() {
 		return graph.getSinks();
+	}
+	
+	public List<Hub> getHubs() {
+		return graph.getHubs();
 	}
 	
 	public Vertex tryFindVertex(Point a) {
