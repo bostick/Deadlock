@@ -23,7 +23,7 @@ import com.gutabi.deadlock.core.VertexPosition;
 import com.gutabi.deadlock.model.Car;
 import com.gutabi.deadlock.model.CarState;
 
-
+@SuppressWarnings("serial")
 public class TestSimulating {
 	
 	@BeforeClass
@@ -2510,8 +2510,9 @@ public class TestSimulating {
 			MODEL.processNewStroke(new ArrayList<Point>(){{add(new Point(600, 450));add(new Point(700, 450));}});
 			MODEL.processNewStroke(new ArrayList<Point>(){{add(new Point(650, 400));add(new Point(650, 500));}});
 			
-			Vertex aV = MODEL.tryFindVertex(new Point(600, 450));
-			Vertex bV = MODEL.tryFindVertex(new Point(650, 500));
+			Vertex aV = ((VertexPosition)MODEL.hitTest(new Point(600, 450))).getVertex();
+			
+			Vertex bV = ((VertexPosition)MODEL.hitTest(new Point(650, 500))).getVertex();
 			
 			Car a = new Car();
 			Car b = new Car();
@@ -2562,8 +2563,8 @@ public class TestSimulating {
 			
 //			MODEL.processStroke(new Point(595, 450), new Point(695, 450));
 //			MODEL.processStroke(new Point(650, 400), new Point(650, 500));
-			Vertex aV = MODEL.tryFindVertex(new Point(595, 450));
-			Vertex bV = MODEL.tryFindVertex(new Point(650, 500));
+			Vertex aV = ((VertexPosition)MODEL.hitTest(new Point(595, 450))).getVertex();
+			Vertex bV = ((VertexPosition)MODEL.hitTest(new Point(650, 500))).getVertex();
 //			MODEL.processStroke(new Point(596, 450), new Point(696, 450));
 //			MODEL.processStroke(new Point(650, 400), new Point(650, 500));
 //			Vertex aV = MODEL.findVertex(new Point(596, 450));
@@ -2618,9 +2619,9 @@ public class TestSimulating {
 //			MODEL.processStroke(new Point(600, 450), new Point(700, 450));
 //			MODEL.processStroke(new Point(650, 400), new Point(650, 500));
 			
-			Vertex aV = MODEL.tryFindVertex(new Point(600, 450));
-			Vertex bV = MODEL.tryFindVertex(new Point(650, 500));
-			Vertex cV = MODEL.tryFindVertex(new Point(650, 400));
+			Vertex aV = ((VertexPosition)MODEL.hitTest(new Point(600, 450))).getVertex();
+			Vertex bV = ((VertexPosition)MODEL.hitTest(new Point(650, 500))).getVertex();
+			Vertex cV = ((VertexPosition)MODEL.hitTest(new Point(650, 400))).getVertex();
 			
 			Car a = new Car();
 			Car b = new Car();
@@ -2680,8 +2681,8 @@ public class TestSimulating {
 //			MODEL.processStroke(new Point(600, 450), new Point(700, 450));
 //			MODEL.processStroke(new Point(650, 450), new Point(650, 470));
 			
-			EdgePosition ap = MODEL.tryFindEdgePosition(new Point(4.47 + 650, 0 + 450));
-			EdgePosition bp = MODEL.tryFindEdgePosition(new Point(-7.89 + 650, 0 + 450));
+			EdgePosition ap = (EdgePosition)MODEL.hitTest(new Point(4.47 + 650, 0 + 450));
+			EdgePosition bp = (EdgePosition)MODEL.hitTest(new Point(-7.89 + 650, 0 + 450));
 			
 			Car a = new Car();
 			Car b = new Car();

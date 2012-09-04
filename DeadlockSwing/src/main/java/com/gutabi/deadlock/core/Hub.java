@@ -5,6 +5,8 @@ import java.util.List;
 
 public class Hub implements Connector {
 	
+	public static final double RADIUS = 20.0;
+	
 	private final Point p;
 	
 	private final List<Vertex> vertices = new ArrayList<Vertex>();
@@ -19,6 +21,10 @@ public class Hub implements Connector {
 	
 	public List<Vertex> getVertices() {
 		return vertices;
+	}
+	
+	public void addVertex(Vertex v) {
+		vertices.add(v);
 	}
 	
 }

@@ -3,7 +3,6 @@ package com.gutabi.deadlock.core;
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 
 import java.util.Comparator;
-import java.util.List;
 
 public abstract class Position {
 	
@@ -166,21 +165,22 @@ public abstract class Position {
 						return 0;
 					}
 					
-					List<Edge> eds = Vertex.commonEdges(aV, bV);
-					if (eds.size() != 1) {
-						throw new IllegalArgumentException();
-					}
-					Edge e = eds.get(0);
-					
-					if (e.isLoop()) {
-						throw new IllegalArgumentException();
-					}
-					
-					if (aV == e.getStart()) {
-						return -1;
-					} else {
-						return 1;
-					}
+					throw new IllegalArgumentException();
+//					List<Edge> eds = Vertex.commonEdges(aV, bV);
+//					if (eds.size() != 1) {
+//						throw new IllegalArgumentException();
+//					}
+//					Edge e = eds.get(0);
+//					
+//					if (e.isLoop()) {
+//						throw new IllegalArgumentException();
+//					}
+//					
+//					if (aV == e.getStart()) {
+//						return -1;
+//					} else {
+//						return 1;
+//					}
 					
 				}
 			}

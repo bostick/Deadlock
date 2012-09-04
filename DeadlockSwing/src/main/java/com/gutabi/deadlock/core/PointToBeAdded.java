@@ -7,19 +7,21 @@ import static com.gutabi.deadlock.core.DMath.doubleEquals;
 public class PointToBeAdded {
 	
 	public final Point p;
-	
-	/**
-	 * value ranging from 0..1 measuring distance between points at index and index+1, used for sorting
-	 */
 	public final double param;
+	public final Event event;
 	
 	private final int hash;
 	
-	public PointToBeAdded(Point p, double param) {
+	public enum Event {
+		INTERSECTION, OVERLAP, ENDPOINT
+	}
+	
+	public PointToBeAdded(Point p, double param, Event event) {
 		assert param >= 0.0;
 		assert param <= 1.0;
 		this.p = p;
 		this.param = param;
+		this.event = event;
 		
 		int h = 17;
 		h = 37 * h + p.hashCode();
@@ -49,7 +51,7 @@ public class PointToBeAdded {
 			PointToBeAdded b = (PointToBeAdded)o;
 			boolean res = doubleEquals(param, b.param);
 			if (res) {
-				assert Point.equals(p, b.p);
+				assert p.equals(b.p);
 			}
 			return res;
 		}
@@ -59,7 +61,7 @@ public class PointToBeAdded {
 		@Override
 		public int compare(PointToBeAdded a, PointToBeAdded b) {
 			if (doubleEquals(a.param, b.param)) {
-				assert Point.equals(a.p, b.p);
+				assert a.p.equals(b.p);
 				return 0;
 			} else if (a.param < b.param) {
 				return -1;

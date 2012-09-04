@@ -29,7 +29,7 @@ public class Car {
 	public Path nextPath;
 	public CarState nextState;
 	public Edge nextEdge;
-	public int nextDir;
+	public Vertex nextDest;
 	public Edge previousEdge;
 	
 	public double nextDistanceToMove;
@@ -58,47 +58,47 @@ public class Car {
 			case EDGE: {
 				Position pos = getLastNextPosition();
 				Edge e = nextEdge;
-				int dir = nextDir;
+				Vertex dest = nextDest;
 				double distanceLeftOnEdge;
 				if (pos instanceof EdgePosition) {
-					distanceLeftOnEdge = (dir == 1) ? ((EdgePosition)pos).distanceToEndOfEdge() : ((EdgePosition)pos).distanceToStartOfEdge();
+					distanceLeftOnEdge = (dest == e.getEnd()) ? ((EdgePosition)pos).distanceToEndOfEdge() : ((EdgePosition)pos).distanceToStartOfEdge();
 				} else {
 					distanceLeftOnEdge = e.getTotalLength();
 				}
 				
 				Position nextPos;
 				if (pos instanceof EdgePosition) {
-					nextPos = ((EdgePosition)pos).travel(dir, Math.min(nextDistanceToMove, distanceLeftOnEdge));
+					nextPos = ((EdgePosition)pos).travel(nextDest, Math.min(nextDistanceToMove, distanceLeftOnEdge));
 				} else {
-					nextPos = ((VertexPosition)pos).travel(e, dir, Math.min(nextDistanceToMove, distanceLeftOnEdge));
+					nextPos = ((VertexPosition)pos).travel(e, nextDest, Math.min(nextDistanceToMove, distanceLeftOnEdge));
 				}
 				nextPathAdd(nextPos);
 				
 				if (DMath.doubleEquals(nextDistanceToMove, distanceLeftOnEdge)) {
 					
 					previousEdge = e;
-					Vertex v = (dir == 1) ? e.getEnd() : e.getStart();
+					//Vertex v = (dir == 1) ? e.getEnd() : e.getStart();
 					nextState = CarState.VERTEX;
 					
 					assert getLastNextPosition() instanceof VertexPosition;
 					
 					nextDistanceToMove = 0.0;
 					
-					if (v instanceof Sink) {
+					if (nextDest instanceof Sink) {
 						nextState = CarState.SINKED;
 					}
 					
 				} else if (nextDistanceToMove > distanceLeftOnEdge) {
 					
 					previousEdge = e;
-					Vertex v = (dir == 1) ? e.getEnd() : e.getStart();
+					//Vertex v = (dir == 1) ? e.getEnd() : e.getStart();
 					nextState = CarState.VERTEX;
 					
 					assert getLastNextPosition() instanceof VertexPosition;
 					
 					nextDistanceToMove -= distanceLeftOnEdge;
 					
-					if (v instanceof Sink) {
+					if (nextDest instanceof Sink) {
 						nextState = CarState.SINKED;
 						nextDistanceToMove = 0.0;
 					}
@@ -141,42 +141,42 @@ public class Car {
 		return nextChoiceToSink(pos);
 	}
 	
-	private boolean nextChoiceRandom(Position pos) {
-		if (pos instanceof VertexPosition) {
-			
-			VertexPosition vp = (VertexPosition)pos;
-			
-			Vertex v = vp.getVertex();
-			List<Edge> eds = new ArrayList<Edge>(v.getEdges());
-			
-			if (eds.size() > 1 && previousEdge != null) {
-				/*
-				 * don't go back the same way
-				 */
-				eds.remove(previousEdge);
-			}
-			
-			int i = MODEL.RANDOM.nextInt(eds.size());
-			nextEdge = eds.get(i);
-			if (nextEdge.isLoop()) {
-				/*
-				 * even though a loop is still registered as 2 edges in eds, tehre is no direction information encoded
-				 * The edge e is simply in eds twice.
-				 * Si if e is a loop, take this extra step to pick a direction
-				 */
-				nextDir = 2*MODEL.RANDOM.nextInt(2)-1;
-			} else {
-				nextDir = (nextEdge.getStart() == v) ? 1 : -1;
-			}
-			
-			nextState = CarState.EDGE;
-			
-		} else {
-			assert false;
-		}
-		
-		return true;
-	}
+//	private boolean nextChoiceRandom(Position pos) {
+//		if (pos instanceof VertexPosition) {
+//			
+//			VertexPosition vp = (VertexPosition)pos;
+//			
+//			Vertex v = vp.getVertex();
+//			List<Edge> eds = new ArrayList<Edge>(v.getEdges());
+//			
+//			if (eds.size() > 1 && previousEdge != null) {
+//				/*
+//				 * don't go back the same way
+//				 */
+//				eds.remove(previousEdge);
+//			}
+//			
+//			int i = MODEL.RANDOM.nextInt(eds.size());
+//			nextEdge = eds.get(i);
+//			if (nextEdge.isLoop()) {
+//				/*
+//				 * even though a loop is still registered as 2 edges in eds, tehre is no direction information encoded
+//				 * The edge e is simply in eds twice.
+//				 * Si if e is a loop, take this extra step to pick a direction
+//				 */
+//				nextDir = 2*MODEL.RANDOM.nextInt(2)-1;
+//			} else {
+//				nextDir = (nextEdge.getStart() == v) ? 1 : -1;
+//			}
+//			
+//			nextState = CarState.EDGE;
+//			
+//		} else {
+//			assert false;
+//		}
+//		
+//		return true;
+//	}
 	
 	/*
 	 * choose best edge to get to the correct sink
@@ -215,7 +215,7 @@ public class Car {
 				EdgePosition nextEP = (EdgePosition)bestPath.get(1);
 				
 				nextEdge = nextEP.getEdge();
-				nextDir = (v == nextEdge.getStart()) ? 1 : -1;
+				nextDest = (v == nextEdge.getStart()) ? nextEdge.getEnd() : nextEdge.getStart();
 				
 				nextState = CarState.EDGE;
 				

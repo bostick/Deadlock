@@ -43,13 +43,20 @@ public class Point {
 		}
 	}
 	
-	public static boolean equals(Point a, Point b) {
-		return doubleEquals(a.x, b.x) && doubleEquals(a.y, b.y);
-	}
+//	public static boolean equals(Point a, Point b) {
+//		return doubleEquals(a.x, b.x) && doubleEquals(a.y, b.y);
+//	}
 	
 	@Override
-	public boolean equals(Object p) {
-		throw new AssertionError();
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		} else if (!(o instanceof Point)) {
+			return false;
+		} else {
+			Point b = (Point)o;
+			return doubleEquals(x, b.x) && doubleEquals(y, b.y);
+		}
 	}
 	
 	@Override
@@ -80,8 +87,8 @@ public class Point {
 	 * @throws OverlappingException
 	 */
 	public static Point intersection(Point a, Point b, Point c, Point d) throws OverlappingException {
-		assert !Point.equals(a, b);
-		assert !Point.equals(c, d);
+		assert !a.equals(b);
+		assert !c.equals(d);
 		
 		double ydc = d.y - c.y;
 		double xba = b.x - a.x;
@@ -281,13 +288,13 @@ public class Point {
 	 * Does b intersect &lt;c, d> ?
 	 */
 	public static boolean intersect(Point b, Point c, Point d) {
-		if (Point.equals(b, c)) {
+		if (b.equals(c)) {
 			return true;
 		}
-		if (Point.equals(b, d)) {
+		if (b.equals(d)) {
 			return true;
 		}	
-		if (Point.equals(c, d)) {
+		if (c.equals(d)) {
 			throw new IllegalArgumentException("c equals d");
 		}
 		double xbc = b.x - c.x;
@@ -312,13 +319,13 @@ public class Point {
 	 * throws exception if b is on the line, but outside of the segment <c, d>
 	 */
 	public static boolean colinear(Point c, Point b, Point d) throws ColinearException {
-		if (Point.equals(b, c)) {
+		if (b.equals(c)) {
 			return true;
 		}
-		if (Point.equals(b, d)) {
+		if (b.equals(d)) {
 			return true;
 		}
-		if (Point.equals(c, d)) {
+		if (c.equals(d)) {
 			throw new IllegalArgumentException("c equals d");
 		}
 		double xbc = b.x - c.x;
@@ -341,13 +348,13 @@ public class Point {
 	}
 	
 	public static double u(Point c, Point b, Point d) {
-		if (Point.equals(b, c)) {
+		if (b.equals(c)) {
 			return 0.0;
 		}
-		if (Point.equals(b, d)) {
+		if (b.equals(d)) {
 			return 1.0;
 		}
-		if (Point.equals(c, d)) {
+		if (c.equals(d)) {
 			throw new IllegalArgumentException("c equals d");
 		}
 		double xbc = b.x - c.x;
@@ -382,9 +389,10 @@ public class Point {
 	 */
 	public static double param(Point b, Point c, Point d) {
 		
-		if (Point.equals(b, c)) {
+		if (b.equals(c)) {
 			return 0.0;
-		} else if (Point.equals(b, d)) {
+		}
+		if (b.equals(d)) {
 			return 1.0;
 		}
 		

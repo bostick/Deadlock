@@ -6,7 +6,7 @@ public class EdgePosition extends Position {
 	private final int index;
 	private final double param;
 	
-	private final int dir;
+	private final Vertex dest;
 	
 	public final Point segStart;
 	public final Point segEnd;
@@ -14,11 +14,11 @@ public class EdgePosition extends Position {
 	private double distanceToStartOfEdge = -1;
 	private double distanceToEndOfEdge = -1;
 	
-	public EdgePosition(Edge e, int index, double param) {
-		this(e, index, param, 0);
-	}
+//	public EdgePosition(Edge e, int index, double param) {
+//		this(e, index, param, 0);
+//	}
 	
-	public EdgePosition(Edge e, int index, double param, int dir) {
+	public EdgePosition(Edge e, int index, double param, Vertex dest) {
 		super(Point.point(e.getPoint(index), e.getPoint(index+1), param), e);
 		
 		if (index < 0 || index >= e.size()-1) {
@@ -35,7 +35,7 @@ public class EdgePosition extends Position {
 		this.index = index;
 		this.param = param;
 		
-		this.dir = dir;
+		this.dest = dest;
 		
 		this.segStart = e.getPoint(index);
 		this.segEnd = e.getPoint(index+1);
@@ -63,8 +63,8 @@ public class EdgePosition extends Position {
 		return param;
 	}
 	
-	public int getDir() {
-		return dir;
+	public Vertex getDest() {
+		return dest;
 	}
 	
 	@Override
@@ -116,8 +116,13 @@ public class EdgePosition extends Position {
 	/**
 	 * the specific way to travel
 	 */
-	public Position travel(int dir, double dist) {
-		
+	public Position travel(Vertex dest, double dist) {
+		if (e.isLoop()) {
+			throw new IllegalArgumentException();
+		}
+		if (!(dest == e.getStart() || dest == e.getEnd())) {
+			throw new IllegalArgumentException();
+		}
 		if (DMath.doubleEquals(dist, 0.0)) {
 			return this;
 		}
@@ -125,7 +130,7 @@ public class EdgePosition extends Position {
 			throw new IllegalArgumentException();
 		}
 		
-		if (dir == 1) {
+		if (dest == e.getEnd()) {
 			
 			double distToEndOfEdge = distanceToEndOfEdge();
 			if (DMath.doubleEquals(dist, distToEndOfEdge)) {
@@ -134,9 +139,9 @@ public class EdgePosition extends Position {
 				throw new TravelException();
 			}
 			
-			return travelForward(dist);
+			return travelForward(e, index, param, dist);
 			
-		} else if (dir == -1) {
+		} else {
 			
 			double distToStartOfEdge = distanceToStartOfEdge();
 			if (DMath.doubleEquals(dist, distToStartOfEdge)) {
@@ -145,18 +150,24 @@ public class EdgePosition extends Position {
 				throw new TravelException();
 			}
 			
-			return travelBackward(dist);
+			return travelBackward(e, index, param, dist);
 			
-		} else {
-			throw new IllegalArgumentException();
 		}
 		
 	}
 	
-	private Position travelForward(double dist) throws TravelException {
+	public static Position travelFromStart(Edge e, double dist) {
+		return travelForward(e, 0, 0.0, dist);
+	}
+	
+	public static Position travelFromEnd(Edge e, double dist) {
+		return travelBackward(e, e.size()-2, 1.0, dist);
+	}
+	
+	private static Position travelForward(Edge e, int index, double param, double dist) throws TravelException {
 		
-		int index = getIndex();
-		double param = getParam();
+//		int index = getIndex();
+//		double param = getParam();
 		double distanceToTravel = dist;
 		
 		while (true) {
@@ -167,10 +178,10 @@ public class EdgePosition extends Position {
 			double distanceToEndOfSegment = Point.distance(c, b);
 			
 			if (DMath.doubleEquals(distanceToTravel, distanceToEndOfSegment)) {
-				return new EdgePosition(e, index+1, 0.0, 1);
+				return new EdgePosition(e, index+1, 0.0, e.getEnd());
 			} else if (distanceToTravel < distanceToEndOfSegment) {
 				double newParam = Point.travelForward(a, b, param, distanceToTravel);
-				return new EdgePosition(e, index, newParam, 1);
+				return new EdgePosition(e, index, newParam, e.getEnd());
 			} else {
 				index++;
 				param = 0.0;
@@ -179,10 +190,10 @@ public class EdgePosition extends Position {
 		}
 	}
 	
-	private Position travelBackward(double dist) throws TravelException {
+	private static Position travelBackward(Edge e, int index, double param, double dist) throws TravelException {
 		
-		int index = getIndex();
-		double param = getParam();
+//		int index = getIndex();
+//		double param = getParam();
 		double distanceToTravel = dist;
 		
 		while (true) {
@@ -193,10 +204,10 @@ public class EdgePosition extends Position {
 			double distanceToStartOfSegment = Point.distance(c, a);
 			
 			if (DMath.doubleEquals(distanceToTravel, distanceToStartOfSegment)) {
-				return new EdgePosition(e, index, 0.0, -1);
+				return new EdgePosition(e, index, 0.0, e.getStart());
 			} else if (distanceToTravel < distanceToStartOfSegment) {
 				double newParam = Point.travelBackward(a, b, param, distanceToTravel);
-				return new EdgePosition(e, index, newParam, -1);
+				return new EdgePosition(e, index, newParam, e.getStart());
 			} else {
 				index--;
 				param = 1.0;

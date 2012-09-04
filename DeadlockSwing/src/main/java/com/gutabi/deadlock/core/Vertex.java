@@ -47,12 +47,12 @@ public class Vertex implements Driveable {
 		return "V " + p;
 	}
 	
-	public static List<Edge> commonEdges(Vertex a, Vertex b) {
+	public static List<Connector> commonConnectors(Vertex a, Vertex b) {
 		
 //		List<Connector> eds1 = a.cons;
 //		List<Connector> eds2 = b.cons;
 		
-		List<Edge> common = new ArrayList<Edge>();
+		List<Connector> common = new ArrayList<Connector>();
 		for (Edge e1 : a.eds) {
 			for (Edge e2 : b.eds) {
 				if (e1 == e2) {
@@ -60,7 +60,13 @@ public class Vertex implements Driveable {
 				}
 			}
 		}
-		
+		for (Hub h1 : a.hubs) {
+			for (Hub h2 : b.hubs) {
+				if (h1 == h2) {
+					common.add(h1);
+				}
+			}
+		}
 		return common;
 	}
 	
@@ -88,6 +94,20 @@ public class Vertex implements Driveable {
 			throw new IllegalStateException();
 		}
 		return eds;
+	}
+	
+	public void addHub(Hub h) {
+		if (removed) {
+			throw new IllegalStateException("vertex has been removed");
+		}
+		hubs.add(h);
+	}
+	
+	public List<Hub> getHubs() {
+		if (removed) {
+			throw new IllegalStateException();
+		}
+		return hubs;
 	}
 	
 	public Point getPoint() {

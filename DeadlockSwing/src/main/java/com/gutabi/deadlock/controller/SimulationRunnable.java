@@ -284,14 +284,14 @@ public class SimulationRunnable implements Runnable {
 //										e = ciaa.getEdge();
 //										dir = (Position.COMPARATOR.compare(ciaa, cibb) == -1) ? 1 : -1;
 //									}
-									adjustedCib = ciaa.travel(ciaa.getDir(), cia.distanceTo(cib)-travelDiff);
+									adjustedCib = ciaa.travel(ciaa.getDest(), cia.distanceTo(cib)-travelDiff);
 								} else {
 									VertexPosition ciaa = (VertexPosition)cia;
 									EdgePosition cibb = (EdgePosition)cib;
 									
 //									Edge e = ;
 //									int dir = ;
-									adjustedCib = ciaa.travel(cibb.getEdge(), cibb.getDir(), cia.distanceTo(cib)-travelDiff);
+									adjustedCib = ciaa.travel(cibb.getEdge(), cibb.getDest(), cia.distanceTo(cib)-travelDiff);
 								}
 								adjustedCiTraveled -= travelDiff;
 								
@@ -311,13 +311,13 @@ public class SimulationRunnable implements Runnable {
 //										VertexPosition cjbb = (VertexPosition)cjb;
 //										
 //									}
-									adjustedCjb = cjaa.travel(cjaa.getDir(), cja.distanceTo(cjb)-travelDiff);
+									adjustedCjb = cjaa.travel(cjaa.getDest(), cja.distanceTo(cjb)-travelDiff);
 								} else {
 									VertexPosition cjaa = (VertexPosition)cja;
 									EdgePosition cjbb = (EdgePosition)cjb;
 //									Edge e = ;
 //									int dir = ;
-									adjustedCjb = cjaa.travel(cjbb.getEdge(), cjbb.getDir(), cja.distanceTo(cjb)-travelDiff);
+									adjustedCjb = cjaa.travel(cjbb.getEdge(), cjbb.getDest(), cja.distanceTo(cjb)-travelDiff);
 								}
 								adjustedCjTraveled -= travelDiff;
 							}
@@ -350,13 +350,13 @@ public class SimulationRunnable implements Runnable {
 //										VertexPosition cibb = (VertexPosition)cib;
 //										
 //									}
-									newAdjustedCib = ciaa.travel(ciaa.getDir(), cia.distanceTo(adjustedCib)-inc);
+									newAdjustedCib = ciaa.travel(ciaa.getDest(), cia.distanceTo(adjustedCib)-inc);
 								} else {
 									VertexPosition ciaa = (VertexPosition)cia;
 									EdgePosition cibb = (EdgePosition)cib;
 //									Edge e = ;
 //									int dir = ;
-									newAdjustedCib = ciaa.travel(cibb.getEdge(), cibb.getDir(), cia.distanceTo(adjustedCib)-inc);
+									newAdjustedCib = ciaa.travel(cibb.getEdge(), cibb.getDest(), cia.distanceTo(adjustedCib)-inc);
 								}
 								double newAdjustedCiTraveled = adjustedCiTraveled-inc;
 								
@@ -373,13 +373,13 @@ public class SimulationRunnable implements Runnable {
 //										VertexPosition cjbb = (VertexPosition)cjb;
 //										
 //									}
-									newAdjustedCjb = cjaa.travel(cjaa.getDir(), cja.distanceTo(adjustedCjb)-inc);
+									newAdjustedCjb = cjaa.travel(cjaa.getDest(), cja.distanceTo(adjustedCjb)-inc);
 								} else {
 									VertexPosition cjaa = (VertexPosition)cja;
 									EdgePosition cjbb = (EdgePosition)cjb;
 //									Edge e = ;
 //									int dir = ;
-									newAdjustedCjb = cjaa.travel(cjbb.getEdge(), cjbb.getDir(), cja.distanceTo(adjustedCjb)-inc);
+									newAdjustedCjb = cjaa.travel(cjbb.getEdge(), cjbb.getDest(), cja.distanceTo(adjustedCjb)-inc);
 								}
 								
 								
@@ -437,13 +437,13 @@ public class SimulationRunnable implements Runnable {
 //								VertexPosition cibb = (VertexPosition)cib;
 //								
 //							}
-							adjustedCib = ciaa.travel(ciaa.getDir(), cia.distanceTo(cib)-inc);
+							adjustedCib = ciaa.travel(ciaa.getDest(), cia.distanceTo(cib)-inc);
 						} else {
 							VertexPosition ciaa = (VertexPosition)cia;
 							EdgePosition cibb = (EdgePosition)cib;
 //							Edge e = ;
 //							int dir = ;
-							adjustedCib = ciaa.travel(cibb.getEdge(), cibb.getDir(), cia.distanceTo(cib)-inc);
+							adjustedCib = ciaa.travel(cibb.getEdge(), cibb.getDest(), cia.distanceTo(cib)-inc);
 						}
 						double adjustedCiTraveled = ciTraveled;
 						adjustedCiTraveled -= inc;

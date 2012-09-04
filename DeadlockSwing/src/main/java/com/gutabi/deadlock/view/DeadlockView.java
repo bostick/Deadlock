@@ -275,7 +275,7 @@ public class DeadlockView {
 		g.setColor(new Color(0x44, 0x44, 0x44, 0xff));
 		
 		Point p = h.getPoint();
-		g.fillOval((int)p.getX()-20, (int)p.getY()-20, 40, 40);
+		g.fillOval((int)(p.getX()-Hub.RADIUS), (int)(p.getY()-Hub.RADIUS), (int)(2*Hub.RADIUS), (int)(2*Hub.RADIUS));
 		
 	}
 	

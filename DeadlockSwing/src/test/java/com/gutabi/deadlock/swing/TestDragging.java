@@ -110,8 +110,8 @@ public class TestDragging {
 		assertEquals(edges.size(), 1);
 		Edge e = edges.get(0);
 		assertEquals(e.size(), 2);
-		assertTrue(Point.equals(new Point(5, 5), e.getPoint(0)));
-		assertTrue(Point.equals(new Point(7, 7), e.getPoint(1)));
+		assertTrue(new Point(5, 5).equals(e.getPoint(0)));
+		assertTrue(new Point(7, 7).equals(e.getPoint(1)));
 		
 	}
 	
@@ -134,8 +134,8 @@ public class TestDragging {
 		 
 		assertEquals(edges.size(),  1);
 		Edge e = edges.get(0);
-		assertTrue(Point.equals(new Point(6, 6), e.getStart().getPoint()));
-		assertTrue(Point.equals(new Point(4, 4), e.getEnd().getPoint()));
+		assertTrue(new Point(6, 6).equals(e.getStart().getPoint()));
+		assertTrue(new Point(4, 4).equals(e.getEnd().getPoint()));
 		
 	}
 	
@@ -6704,6 +6704,60 @@ public class TestDragging {
 		testReleased();
 		
 		// assert stand-alone loop
+		
+		Thread.sleep(Long.MAX_VALUE);
+	}
+	
+	@Test
+	public void testBug31() throws Exception {
+		
+		CONTROLLER.strat = MassageStrategy.CURRENT;
+
+		testPressed(new Point(352., 520.));
+		testDragged(new Point(352., 517.));
+		testDragged(new Point(356., 506.));
+		testDragged(new Point(379., 479.));
+		testDragged(new Point(426., 438.));
+		testDragged(new Point(473., 376.));
+		testDragged(new Point(515., 325.));
+		testDragged(new Point(557., 286.));
+		testDragged(new Point(607., 252.));
+		testDragged(new Point(642., 223.));
+		testDragged(new Point(667., 193.));
+		testDragged(new Point(698., 160.));
+		testDragged(new Point(722., 143.));
+		testDragged(new Point(729., 138.));
+		testDragged(new Point(738., 135.));
+		testReleased();
+
+		testPressed(new Point(470., 135.));
+		testDragged(new Point(472., 135.));
+		testDragged(new Point(476., 137.));
+		testDragged(new Point(482., 146.));
+		testDragged(new Point(490., 158.));
+		testDragged(new Point(501., 173.));
+		testDragged(new Point(521., 187.));
+		testDragged(new Point(548., 204.));
+		testDragged(new Point(573., 226.));
+		testDragged(new Point(601., 257.));
+		testDragged(new Point(621., 276.));
+		testDragged(new Point(639., 291.));
+		testDragged(new Point(702., 325.));
+		testDragged(new Point(720., 336.));
+		testDragged(new Point(733., 354.));
+		testDragged(new Point(747., 372.));
+		testDragged(new Point(760., 387.));
+		testDragged(new Point(770., 397.));
+		testDragged(new Point(780., 405.));
+		testDragged(new Point(794., 414.));
+		testDragged(new Point(796., 415.));
+		testDragged(new Point(799., 416.));
+		testDragged(new Point(800., 417.));
+		testDragged(new Point(802., 417.));
+		testDragged(new Point(803., 417.));
+		testReleased();
+		
+		// assert 4 edges
 		
 		Thread.sleep(Long.MAX_VALUE);
 	}

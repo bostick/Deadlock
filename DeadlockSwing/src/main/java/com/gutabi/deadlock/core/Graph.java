@@ -7,6 +7,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.gutabi.deadlock.core.PointToBeAdded.Event;
+
 @SuppressWarnings("serial")
 public class Graph {
 	
@@ -230,25 +232,37 @@ public class Graph {
 		vs.add(end);
 		
 		List<Position> poss = new ArrayList<Position>();
-		poss.add(new VertexPosition(start));
+		VertexPosition last = new VertexPosition(start);
+		poss.add(last);
 		for (int i = 1; i < vs.size(); i++) {
 			Vertex a = vs.get(i-1);
 			Vertex b = vs.get(i);
 			
 			double d = distances[a.graphID][b.graphID];
 			
-			Edge ee = null;
-			for (Edge e : Vertex.commonEdges(a, b)) {
-				if (DMath.doubleEquals(e.getTotalLength(), d)) {
-					ee = e;
-					break;
+			Connector cc = null;
+			for (Connector c : Vertex.commonConnectors(a, b)) {
+				
+				if (c instanceof Edge) {
+					Edge e = (Edge)c;
+					if (DMath.doubleEquals(e.getTotalLength(), d)) {
+						cc = e;
+						break;
+					}
+				} else {
+					Hub h = (Hub)c;
+					if (DMath.doubleEquals(Point.distance(a.getPoint(), b.getPoint()), d)) {
+						cc = h;
+						break;
+					}
 				}
+				
 			}
-			assert ee != null;
+			assert cc != null;
 			
 			//poss.add(new VertexPosition(a));
-			poss.add(((VertexPosition)poss.get(poss.size()-1)).travel(ee, (a == ee.getStart()) ? 1 : -1, ee.getTotalLength()/2));
-			poss.add(new VertexPosition(b));
+			last = new VertexPosition(b);
+			poss.add(last);
 		}
 		
 		return new Path(poss);
@@ -281,94 +295,79 @@ public class Graph {
 	
 	
 	
-	
-	public EdgePosition tryFindEdgePosition(Point b) {
-		for (Segment in : segTree.findAllSegments(b)) {
+	public Position hitTest(Point p) {
+		for (Intersection v : intersections) {
+			if (p.equals(v.getPoint())) {
+				return new VertexPosition(v);
+			}
+		}
+		for (Source s : sources) {
+			if (p.equals(s.getPoint())) {
+				return new VertexPosition(s);
+			}
+		}
+		for (Sink s : sinks) {
+			if (p.equals(s.getPoint())) {
+				return new VertexPosition(s);
+			}
+		}
+		for (Segment in : segTree.findAllSegments(p)) {
 			Edge e = in.edge;
 			int i = in.index;
 			Point c = e.getPoint(i);
 			Point d = e.getPoint(i+1);
-			if (Point.intersect(b, c, d) && !Point.equals(b, d)) {
-				return new EdgePosition(e, i, Point.param(b, c, d));
+			if (Point.intersect(p, c, d) && !p.equals(d)) {
+				return new EdgePosition(e, i, Point.param(p, c, d), null);
 			}
 		}
-		for (Intersection v : getIntersections()) {
-			Point d = v.getPoint();
-			if (Point.equals(b, d)) {
-				throw new IllegalArgumentException("point is on intersection");
-			}
-		}
-		return null;
-	}
-	
-	public int findIndex(Edge e, Point b) {
-		assert !e.isRemoved();
-		
-		for (int i = 0; i < e.size(); i++) {
-			Point d = e.getPoint(i);
-			if (b.equals(d)) {
-				return i;
-			}
-		}
-		return -1;
-	}
-	
-	public Vertex tryFindVertex(Point b) {
-		for (Intersection v : intersections) {
-			Point p = v.getPoint();
-			if (Point.equals(b, p)) {
-				return v;
-			}
-		}
-		for (Source s : sources) {
-			Point p = s.getPoint();
-			if (Point.equals(b, p)) {
-				return s;
-			}
-		}
-		for (Sink s : sinks) {
-			Point p = s.getPoint();
-			if (Point.equals(b, p)) {
-				return s;
+		for (Hub h : hubs) {
+			double dist = Point.distance(p,  h.getPoint());
+			if (DMath.doubleEquals(dist, Hub.RADIUS) || dist < Hub.RADIUS) {
+				return new HubPosition(h, p);
 			}
 		}
 		return null;
 	}
 	
 	/**
-	 * returns the closest intersection within radius that is not the excluded point
+	 * returns the closest vertex within radius that is not the excluded point
 	 * 
 	 */
 	public VertexPosition findClosestVertexPosition(Point a, Point anchor, double radius) {
 		Vertex anchorV = null;
 		if (anchor != null) {
-			anchorV = tryFindVertex(anchor);
+			Position pos = hitTest(anchor);
+			if (pos instanceof VertexPosition) {
+				anchorV = ((VertexPosition) pos).getVertex();
+				if (a.equals(anchor)) {
+					/*
+					 * a equals anchor, so starting this segment
+					 * if exactly on a vertex, then use that one
+					 */
+					return new VertexPosition(anchorV);
+				}
+			}
 		}
 		
 		Vertex closest = null;
 		
 		for (Vertex i : new ArrayList<Vertex>(){{addAll(intersections);addAll(sources);addAll(sinks);}}) {
-			if (anchorV != null && i == anchorV) {
-				if (Point.equals(a, anchor)) {
+			Point ip = i.getPoint();
+			double dist = Point.distance(a, ip);
+			if (dist < radius) {
+				if (i == anchorV) {
 					/*
-					 * use the excluded
-					 */
-					closest = i;
-					break;
-				} else if (Point.distance(a, anchor) < radius) {
-					/*
-					 * ignore the excluded
+					 * since a is not equal to anchor, we want to be able to add segments to the existing edge.
+					 * so we have to ignore the anchorV when it comes up
 					 */
 					continue;
 				}
-			}
-			Point ip = i.getPoint();
-			double dist = Point.distance(a, ip);
-			if (dist < radius && (anchorV == null || dist < Point.distance(ip, anchor))) {
-				if (closest == null) {
-					closest = i;
-				} else if (Point.distance(a, ip) < Point.distance(a, closest.getPoint())) {
-					closest = i;
+				if (anchorV == null || dist < Point.distance(ip, anchor)) {
+					if (closest == null) {
+						closest = i;
+					} else if (Point.distance(a, ip) < Point.distance(a, closest.getPoint())) {
+						closest = i;
+					}
 				}
 			}	
 		}
@@ -384,26 +383,22 @@ public class Graph {
 //		
 //		HubPosition best = null;
 //		
-//		/*
-//		 * test the point a against all segments <c, d>
-//		 */
 //		for (Hub h : hubs) {
+//			if (Point.distance(a, h.getPoint()) < Hub.RADIUS && (anchor == null || Point.distance(anchor, h.getPoint()) < Hub.RADIUS)) {
+//				/*
+//				 * inside hub, so ignore until it crosses the threshold
+//				 */
+//				best = null;
+//				break;
+//			}
 //			HubPosition closest = closestHubPosition(a, h);
 //			Point ep = closest.getPoint();
-//			if (anchor != null && Point.equals(a, anchor) && Point.equals(ep, anchor)) {
-//				continue;
-//			}
 //			double dist = Point.distance(a, ep);
-//			if (dist < radius && (exclude == null || Point.equals(a, exclude) || dist < Point.distance(exclude, ep))) {
+//			if (dist < radius && (anchor == null || Point.equals(a, anchor) || dist < Point.distance(anchor, ep))) {
 //				if (best == null) {
 //					best = closest;
 //				} else if (Point.distance(a, ep) < Point.distance(a, best.getPoint())) {
 //					best = closest;
-//				}
-//				if (ex != null) {
-//					if (Point.distance(a, best.getPoint()) < Point.distance(a, ex.getPoint())) {
-//						ex = null;
-//					}
 //				}
 //			}
 //		}
@@ -469,191 +464,108 @@ public class Graph {
 //		return stroke2;
 //	}
 	
-	/**
-	 * handleClose is needed since when adjusting edges to the grid, we want to stay exact, and ignore worrying about "closeness" 
-	 */
 	public void addStroke(List<Point> stroke) {
 		
-		Point a;
-		Point b;
-		
 		for (int i = 0; i < stroke.size()-1; i++) {
-			a = stroke.get(i);
-			b = stroke.get(i+1);
-			assert !Point.equals(a, b);
+			Point a = stroke.get(i);
+			Point b = stroke.get(i+1);
 			
-			List<PointToBeAdded> betweenABPoints = splitOnEvents(a, b);
-
-			for (int j = 0; j < betweenABPoints.size()-1; j++) {
-				PointToBeAdded ptba1 = betweenABPoints.get(j);
-				PointToBeAdded ptba2 = betweenABPoints.get(j+1);
-				
-				Point p1 = ptba1.p;
-				Point p2 = ptba2.p;
-				
-				Point[] newSegment;
-				newSegment = handleIntersections(p1, p2);
-				if (newSegment[0] == null && newSegment[1] == null) {
-					/*
-					 * <a, b> is too close to another edge, so it is being skipped
-					 */
-					continue;
-				}
-				p1 = newSegment[0];
-				p2 = newSegment[1];
-
-				if (!segmentOverlaps(p1, p2)) {
-					addSegment(p1, p2);
-				}
-				
+			List<Point> segmentStroke = new ArrayList<Point>();
+			segmentStroke.add(a);
+			segmentStroke.add(b);
+			List<List<Point>> strokes = new ArrayList<List<Point>>();
+			strokes.add(segmentStroke);
+			
+			List<List<Point>> splitStrokes = splitOnEvents(strokes);
+			List<List<Point>> handledStrokes = handleEvents(splitStrokes);
+			while (!strokes.equals(handledStrokes)) {
+				strokes = handledStrokes;
+				splitStrokes = splitOnEvents(strokes);
+				handledStrokes = handleEvents(splitStrokes);
 			}
-		}
-	}
-	
-	/*
-	 * deal with curvature and intersections here
-	 */
-	private Point[] handleIntersections(Point a, Point b) {
-		
-		Point[] ret = new Point[2];
-		Position closestA;
-		Position closestB;
-		
-		closestA = closestPosition(a, a, 10);
-		closestB = closestPosition(b, a, 10);
-		
-		if (closestA != null) {
-			if (closestB != null) {
-				
-				if (Point.distance(closestA.getPoint(), closestB.getPoint()) > 10) {
-					
-					ret[0] = closestA.getPoint();
-					ret[1] = closestB.getPoint();
-					return ret;
-					
-				} else if (closestA instanceof VertexPosition && closestB instanceof VertexPosition && !Point.equals(closestA.getPoint(), closestB.getPoint())) {
-					
-					/*
-					 * even if they are close together, connect vertices
-					 */
-					
-					ret[0] = closestA.getPoint();
-					ret[1] = closestB.getPoint();
-					return ret;
-					
-				} else {
-					
-					ret[0] = null;
-					ret[1] = null;
-					return ret;
-					
+			strokes = handledStrokes;
+			
+			for (List<Point> finished : strokes) {
+				for (int j = 0; j < finished.size()-1; j++) {
+					Point aa = finished.get(j);
+					Point bb = finished.get(j+1);
+					addSegment(aa, bb);
 				}
-				
-			} else {
-				ret[0] = closestA.getPoint();
-				ret[1] = b;
-				
-				assert !Point.equals(ret[0], ret[1]);
-				return ret;
-			}
-		} else {
-			if (closestB != null) {
-				ret[0] = a;
-				ret[1] = closestB.getPoint();
-				
-				assert !Point.equals(ret[0], ret[1]);
-				return ret;
-				
-			} else {
-				ret[0] = a;
-				ret[1] = b;
-				
-				assert !Point.equals(ret[0], ret[1]);
-				return ret;
 			}
 		}
 		
 	}
 	
-	public Position closestPosition(Point a) {
-		return closestPosition(a, null, Double.POSITIVE_INFINITY);
-	}
-	
-	public Position closestPosition(Point a, double radius) {
-		return closestPosition(a, null, radius);
-	}
-	
-	public Position closestPosition(Point a, Point exclude, double radius) {
-		VertexPosition closestV = findClosestVertexPosition(a, exclude, radius);
-		if (closestV != null) {
-			return closestV;
-		}
-//		HubPosition closestH = findClosestHubPosition(a, exclude, radius);
-//		if (closestH != null) {
-//			return closestH;
-//		}
-		EdgePosition closestEdge = findClosestEdgePosition(a, exclude, radius);
-		if (closestEdge != null) {
-			return closestEdge;
-		}
-		return null;
-	}
-	
-	private List<PointToBeAdded> splitOnEvents(Point a, Point b) {
+	private List<List<Point>> splitOnEvents(List<List<Point>> strokes) {
 		
-		List<PointToBeAdded> betweenABPoints = new ArrayList<PointToBeAdded>();
+		List<List<Point>> newStrokes = new ArrayList<List<Point>>();
 		
-		betweenABPointsAdd(betweenABPoints, new PointToBeAdded(a, 0.0));
-		betweenABPointsAdd(betweenABPoints, new PointToBeAdded(b, 1.0));
-		
-//		for (Hub h : hubs) {
-//			
-//		}
-		
-		for (Segment in : segTree.findAllSegments(a, b)) {
-			Edge e = in.edge;
-			int i = in.index;
-			Point c = e.getPoint(i);
-			Point d = e.getPoint(i+1);
+		for (List<Point> stroke : strokes) {
 			
-			try {
-				Point inter = Point.intersection(a, b, c, d);
-				if (inter != null) {
-					/*
-					 * an intersection event
-					 */
-					PointToBeAdded nptba = new PointToBeAdded(inter, Point.param(inter, a, b));
-					betweenABPointsAdd(betweenABPoints, nptba);
-				}
-			} catch (OverlappingException ex) {
+			List<Point> newStroke = new ArrayList<Point>();
+			
+			for (int i = 0; i < stroke.size()-1; i++) {
+				Point a = stroke.get(i);
+				Point b = stroke.get(i+1);
 				
-				if (Point.intersect(c, a, b) && !Point.equals(c, b)) {
-					/*
-					 * an overlapping event
-					 */
-					PointToBeAdded nptba = new PointToBeAdded(c, Point.param(c, a, b));
-					betweenABPointsAdd(betweenABPoints, nptba);
-				}
+				List<PointToBeAdded> betweenABPoints = new ArrayList<PointToBeAdded>();
 				
-				if (Point.intersect(d, a, b) && !Point.equals(d, b)) {
+				betweenABPointsAdd(betweenABPoints, new PointToBeAdded(a, 0.0, Event.ENDPOINT));
+				betweenABPointsAdd(betweenABPoints, new PointToBeAdded(b, 1.0, Event.ENDPOINT));
+				
+				for (Segment in : segTree.findAllSegments(a, b)) {
+					Edge e = in.edge;
+					int index = in.index;
+					Point c = e.getPoint(index);
+					Point d = e.getPoint(index+1);
+					
+					try {
+						Point inter = Point.intersection(a, b, c, d);
+						if (inter != null) {
+							/*
+							 * an intersection event
+							 */
+							PointToBeAdded nptba = new PointToBeAdded(inter, Point.param(inter, a, b), Event.INTERSECTION);
+							betweenABPointsAdd(betweenABPoints, nptba);
+						}
+					} catch (OverlappingException ex) {
+						
+						if (Point.intersect(c, a, b) && !c.equals(b)) {
+							/*
+							 * an overlapping event
+							 */
+							PointToBeAdded nptba = new PointToBeAdded(c, Point.param(c, a, b), Event.OVERLAP);
+							betweenABPointsAdd(betweenABPoints, nptba);
+						}
+						
+						if (Point.intersect(d, a, b) && !d.equals(b)) {
+							/*
+							 * an overlapping event
+							 */
+							PointToBeAdded nptba = new PointToBeAdded(d, Point.param(d, a, b), Event.OVERLAP);
+							betweenABPointsAdd(betweenABPoints, nptba);
+						}
+						
+					}
+					
 					/*
-					 * an overlapping event
+					 * find too-close to other segments events
+					 * start and end of being too close
 					 */
-					PointToBeAdded nptba = new PointToBeAdded(d, Point.param(d, a, b));
-					betweenABPointsAdd(betweenABPoints, nptba);
+					//d;
+					
 				}
 				
-			}
+				for (PointToBeAdded ptba : betweenABPoints) {
+					newStroke.add(ptba.p);
+				}
+				
+			} // for <a b>
 			
-			/*
-			 * find too-close to other segments events
-			 * start and end of being too close
-			 */
-			//d;
-			
-		}
+			newStrokes.add(newStroke);
+		} // for stroke
 		
-		return betweenABPoints;
+		return newStrokes;
 	}
 	
 	private static void betweenABPointsAdd(List<PointToBeAdded> ls, PointToBeAdded ptba) {
@@ -665,6 +577,100 @@ public class Graph {
 			int insertionPoint = -(i+1);
 			ls.add(insertionPoint, ptba);
 		}
+	}
+	
+	private List<List<Point>> handleEvents(List<List<Point>> strokes) {
+		
+		List<List<Point>> newStrokes = new ArrayList<List<Point>>();
+		
+		for (List<Point> stroke : strokes) {
+			
+			String.class.getName();
+			
+			List<Point> flattened = new ArrayList<Point>();
+			
+			for (int i = 0; i < stroke.size()-1; i++) {
+				Point a = stroke.get(i);
+				Point b = stroke.get(i+1);
+				
+				Position closestA = closestPosition(a, a, 10);
+				Position closestB = closestPosition(b, a, 10);
+				
+				if (closestA != null) {
+					if (closestB != null) {
+						if (Point.distance(closestA.getPoint(), closestB.getPoint()) > 10) {
+							flattened.add(closestA.getPoint());
+							flattened.add(closestB.getPoint());
+						} else if (closestA instanceof VertexPosition && closestB instanceof VertexPosition &&
+								!closestA.getPoint().equals(closestB.getPoint())) {
+							/*
+							 * even if they are close together, connect vertices
+							 */
+							flattened.add(closestA.getPoint());
+							flattened.add(closestB.getPoint());
+						} else {
+							flattened.add(null);
+							flattened.add(null);
+						}
+					} else {
+						flattened.add(closestA.getPoint());
+						flattened.add(b);
+					}
+				} else {
+					if (closestB != null) {
+						flattened.add(a);
+						flattened.add(closestB.getPoint());
+					} else {
+						flattened.add(a);
+						flattened.add(b);
+					}
+				}
+			}
+			
+			Point last = null;
+			List<Point> lastStroke = null;
+			for (Point p : flattened) {
+				if (p != null) {
+					if (last == null) {
+						lastStroke = new ArrayList<Point>();
+						newStrokes.add(lastStroke);
+					}
+					if (last == null || !p.equals(last)) {
+						lastStroke.add(p);
+					}
+				}
+				last = p;
+			}
+			
+			String.class.getName();
+			
+		}
+		
+		return newStrokes;	
+	}
+	
+	public Position closestPosition(Point a) {
+		return closestPosition(a, null, Double.POSITIVE_INFINITY);
+	}
+	
+	public Position closestPosition(Point a, double radius) {
+		return closestPosition(a, null, radius);
+	}
+	
+	public Position closestPosition(Point a, Point anchor, double radius) {
+		VertexPosition closestV = findClosestVertexPosition(a, anchor, radius);
+		if (closestV != null) {
+			return closestV;
+		}
+//		HubPosition closestH = findClosestHubPosition(a, anchor, radius);
+//		if (closestH != null) {
+//			return closestH;
+//		}
+		EdgePosition closestEdge = findClosestEdgePosition(a, anchor, radius);
+		if (closestEdge != null) {
+			return closestEdge;
+		}
+		return null;
 	}
 	
 	private boolean segmentOverlaps(Point a, Point b) {
@@ -732,45 +738,38 @@ public class Graph {
 	
 	private void addSegment(Point a, Point b) {
 			
-		assert !Point.equals(a, b);
+		assert !a.equals(b);
 		assert !segmentExists(a, b) : "segment " + a + " " + b + " already exists";
+		assert !segmentOverlaps(a, b);
 		
-		Vertex tmp = tryFindVertex(a);
+		Position pos = hitTest(a);
 		final Vertex aV;
-		if (tmp == null) {
-			EdgePosition intInfo = tryFindEdgePosition(a);
-			if (intInfo == null) {
-//				HubPosition hubInfo = tryFindHubInfo();
-//				if (hubInfo == null) {
-//					aV = createIntersection(a);
-//				} else {
-//					aV = addVertexToHub();
-//				}
-				aV = createIntersection(a);
+		if (pos != null) {
+			if (pos instanceof VertexPosition) {
+				aV = ((VertexPosition)pos).getVertex();
+			} else if (pos instanceof EdgePosition) {
+				aV = split((EdgePosition)pos);
 			} else {
-				aV = split(a);
+				assert pos instanceof HubPosition;
+				aV = addVertexToHub((HubPosition)pos);
 			}
 		} else {
-			aV = tmp;
+			aV = createIntersection(a);
 		}
 		
-		tmp = tryFindVertex(b);
+		pos = hitTest(b);
 		final Vertex bV;
-		if (tmp == null) {
-			EdgePosition intInfo = tryFindEdgePosition(b);
-			if (intInfo == null) {
-//				HubPosition hubInfo = tryFindHubInfo();
-//				if (hubInfo == null) {
-//					bV = createIntersection(b);
-//				} else {
-//					bV = addVertexToHub();
-//				}
-				bV = createIntersection(b);
+		if (pos != null) {
+			if (pos instanceof VertexPosition) {
+				bV = ((VertexPosition)pos).getVertex();
+			} else if (pos instanceof EdgePosition) {
+				bV = split((EdgePosition)pos);
 			} else {
-				bV = split(b);
+				assert pos instanceof HubPosition;
+				bV = addVertexToHub((HubPosition)pos);
 			}
 		} else {
-			bV = tmp;
+			bV = createIntersection(b);
 		}
 		
 		createEdge(aV, bV, new ArrayList<Point>(){{add(aV.getPoint());add(bV.getPoint());}});
@@ -801,14 +800,12 @@ public class Graph {
 	 * Edge e will have been removed
 	 * return Intersection at split point
 	 */
-	private Vertex split(final Point p) {
+	private Vertex split(final EdgePosition pos) {
 		
-		EdgePosition info = tryFindEdgePosition(p);
-		assert info != null;
-		
-		Edge e = info.getEdge();
-		int index = info.getIndex();
-		double param = info.getParam();
+		Edge e = pos.getEdge();
+		int index = pos.getIndex();
+		double param = pos.getParam();
+		final Point p = pos.getPoint();
 		
 		assert param >= 0.0;
 		assert param < 1.0;
@@ -820,12 +817,7 @@ public class Graph {
 		final Point c = e.getPoint(index);
 		final Point d = e.getPoint(index+1);
 		
-		/*
-		 * v may already exist if we are splitting at p and p is different than pInt and v already exists at pInt
-		 */
-		Vertex v = tryFindVertex(p);
-		assert v == null;
-		v = createIntersection(p);
+		Vertex v = createIntersection(p);
 		
 		Vertex eStart = e.getStart();
 		Vertex eEnd = e.getEnd();
@@ -893,7 +885,7 @@ public class Graph {
 				}
 			} catch (ColinearException ex) {
 				
-				assert tryFindVertex(c) == null;
+				//assert tryFindVertex(c) == null;
 				
 				Intersection cV = createIntersection(c);
 				createEdge(cV, v,  new ArrayList<Point>(){{add(c);add(p);}});
@@ -935,7 +927,7 @@ public class Graph {
 				}
 			} catch (ColinearException ex) {
 				
-				assert tryFindVertex(d) == null;
+				//assert tryFindVertex(d) == null;
 				
 				Intersection dV = createIntersection(d);
 				createEdge(dV, v,  new ArrayList<Point>(){{add(d);add(p);}});
@@ -949,6 +941,20 @@ public class Graph {
 		}
 		
 		destroyEdge(e);
+		
+		return v;
+	}
+	
+	private Vertex addVertexToHub(HubPosition pos) {
+		Hub h = pos.getHub();
+		Point p = pos.getPoint();
+		assert DMath.doubleEquals(Point.distance(h.getPoint(), p), Hub.RADIUS);
+		
+		Vertex v = createIntersection(p);
+		
+		h.addVertex(v);
+		
+		v.addHub(h);
 		
 		return v;
 	}
@@ -1017,7 +1023,7 @@ public class Graph {
 			for (int i = e1.size()-1; i > 0; i--) {
 				pts.add(e1.getPoint(i));
 			}
-			assert Point.equals(e1.getPoint(0), e2.getPoint(0));
+			assert e1.getPoint(0).equals(e2.getPoint(0));
 			try {
 				// only add if not colinear
 				if (!Point.colinear(e1.getPoint(1), e1.getPoint(0), e2.getPoint(1))) {
@@ -1044,7 +1050,7 @@ public class Graph {
 			for (int i = e1.size()-1; i > 0; i--) {
 				pts.add(e1.getPoint(i));
 			}
-			assert Point.equals(e1.getPoint(0), e2.getPoint(e2.size()-1));
+			assert e1.getPoint(0).equals(e2.getPoint(e2.size()-1));
 			try {
 				// only add if not colinear
 				if (!Point.colinear(e1.getPoint(1), e1.getPoint(0), e2.getPoint(e2.size()-2))) {
@@ -1071,7 +1077,7 @@ public class Graph {
 			for (int i = 0; i < e1.size()-1; i++) {
 				pts.add(e1.getPoint(i));
 			}
-			assert Point.equals(e1.getPoint(e1.size()-1), e2.getPoint(0));
+			assert e1.getPoint(e1.size()-1).equals(e2.getPoint(0));
 			try {
 				// only add if not colinear
 				if (!Point.colinear(e1.getPoint(e1.size()-2), e1.getPoint(e1.size()-1), e2.getPoint(1))) {
@@ -1099,7 +1105,7 @@ public class Graph {
 			for (int i = 0; i < e1.size()-1; i++) {
 				pts.add(e1.getPoint(i));
 			}
-			assert Point.equals(e1.getPoint(e1.size()-1), e2.getPoint(e2.size()-1));
+			assert e1.getPoint(e1.size()-1).equals(e2.getPoint(e2.size()-1));
 			try {
 				// only add if not colinear
 				if (!Point.colinear(e1.getPoint(e1.size()-2), e1.getPoint(e1.size()-1), e2.getPoint(e2.size()-2))) {
@@ -1201,7 +1207,7 @@ public class Graph {
 			 */
 			int count = 0;
 			for (Intersection w : intersections) {
-				if (Point.equals(v.getPoint(), w.getPoint())) {
+				if (v.getPoint().equals(w.getPoint())) {
 					count++;
 				}
 			}
@@ -1227,7 +1233,7 @@ public class Graph {
 						Point d = f.getPoint(j+1);
 						try {
 							Point inter = Point.intersection(a, b, c, d);
-							if (inter != null && !(Point.equals(inter, a) || Point.equals(inter, b) || Point.equals(inter, c) || Point.equals(inter, d))) {
+							if (inter != null && !(inter.equals(a) || inter.equals(b) || inter.equals(c) || inter.equals(d))) {
 								//assert false : "No edges should intersect";
 								throw new IllegalStateException("No edges should intersect");
 							}
@@ -1245,7 +1251,7 @@ public class Graph {
 						Point eP = e.getPoint(i);
 						for (int j = 0; j < f.size(); j++) {
 							Point fP = f.getPoint(j);
-							if (Point.equals(eP, fP)) {
+							if (eP.equals(fP)) {
 								shared.add(eP);
 							}
 						}

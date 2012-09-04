@@ -12,7 +12,7 @@ public class TestPoint {
 		Point a = new Point(1.12345678901234, 2.3456789012345);
 		Point b = new Point(1.12345678901235, 2.3456789012346);
 		
-		assertTrue(Point.equals(a, b));
+		assertTrue(a.equals(b));
 		
 		assertEquals(a.hashCode(), b.hashCode());
 		
@@ -31,7 +31,7 @@ public class TestPoint {
 		Point a = new Point(823.1724137931, 675.93103448275);
 		Point b = new Point(823.1724137931, 675.93103448276);
 		
-		assertTrue(Point.equals(a, b));
+		assertTrue(a.equals(b));
 	}
 	
 	@Test

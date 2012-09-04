@@ -8,7 +8,6 @@ import com.gutabi.deadlock.controller.ControlMode;
 import com.gutabi.deadlock.core.Dim;
 import com.gutabi.deadlock.core.Driveable;
 import com.gutabi.deadlock.core.Edge;
-import com.gutabi.deadlock.core.EdgePosition;
 import com.gutabi.deadlock.core.Graph;
 import com.gutabi.deadlock.core.Hub;
 import com.gutabi.deadlock.core.Intersection;
@@ -141,14 +140,6 @@ public class DeadlockModel {
 		return graph.getHubs();
 	}
 	
-	public Vertex tryFindVertex(Point a) {
-		return graph.tryFindVertex(a);
-	}
-	
-	public EdgePosition tryFindEdgePosition(Point a) {
-		return graph.tryFindEdgePosition(a);
-	}
-	
 	public ControlMode getMode() {
 		assert Thread.holdsLock(MODEL);
 		
@@ -166,4 +157,9 @@ public class DeadlockModel {
 	public double distanceTo(Vertex start, Vertex end) {
 		return graph.distanceTo(start, end);
 	}
+	
+	public Position hitTest(Point p) {
+		return graph.hitTest(p);
+	}
+	
 }
