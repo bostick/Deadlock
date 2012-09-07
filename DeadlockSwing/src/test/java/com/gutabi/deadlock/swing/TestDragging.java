@@ -22,6 +22,8 @@ import com.gutabi.deadlock.core.Segment;
 
 public class TestDragging {
 	
+	static Point OFFSET = new Point(0, 0);
+	
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 		
@@ -67,14 +69,14 @@ public class TestDragging {
 		}};
 	
 	public void testPressed(Point p) throws Exception {
-		CONTROLLER.mc.pressed(p);
+		CONTROLLER.mc.pressed(p.add(OFFSET));
 		CONTROLLER.queueAndWait(empty);
 		Thread.sleep(10);
 		VIEW.repaint();
 	}
 	
 	public void testDragged(Point p) throws Exception {
-		CONTROLLER.mc.dragged(p);
+		CONTROLLER.mc.dragged(p.add(OFFSET));
 		CONTROLLER.queueAndWait(empty);
 		Thread.sleep(10);
 		VIEW.repaint();
@@ -6761,5 +6763,6 @@ public class TestDragging {
 		
 		Thread.sleep(Long.MAX_VALUE);
 	}
+	
 	
 }

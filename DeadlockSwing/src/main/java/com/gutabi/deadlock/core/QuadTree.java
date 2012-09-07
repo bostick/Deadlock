@@ -78,11 +78,7 @@ public class QuadTree {
 		for (Segment si : segIndices) {
 			Edge e = si.edge;
 			int i = si.index;
-			Point c = e.getPoint(i);
-			Point d = e.getPoint(i+1);
-			if (Point.intersect(a, c, d) && !a.equals(d)) {
-				l.add(new Segment(e, i));
-			}
+			l.add(new Segment(e, i));
 		}
 		return l;
 	}
@@ -154,7 +150,7 @@ public class QuadTree {
 					continue;
 				}
 				double dist = Point.distance(a, ep);
-				if (dist < radius && (anchor == null || a.equals(anchor) || dist < Point.distance(anchor, ep))) {
+				if (DMath.doubleEquals(dist, radius) || dist < radius && (anchor == null || a.equals(anchor) || dist < Point.distance(anchor, ep))) {
 					if (best == null) {
 						best = closest;
 					} else if (Point.distance(a, ep) < Point.distance(a, best.getPoint())) {

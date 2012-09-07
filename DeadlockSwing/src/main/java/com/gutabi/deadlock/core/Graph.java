@@ -7,7 +7,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.gutabi.deadlock.core.PointToBeAdded.Event;
+import org.apache.log4j.Logger;
+
+import com.gutabi.deadlock.core.PointToBeHandled.Event;
 
 @SuppressWarnings("serial")
 public class Graph {
@@ -20,6 +22,8 @@ public class Graph {
 	private final ArrayList<Sink> sinks = new ArrayList<Sink>();
 	
 	private final ArrayList<Hub> hubs = new ArrayList<Hub>();
+	
+	private static final Logger logger = Logger.getLogger(Graph.class);
 	
 	public List<Edge> getEdges() {
 		return edges;
@@ -354,7 +358,7 @@ public class Graph {
 		for (Vertex i : new ArrayList<Vertex>(){{addAll(intersections);addAll(sources);addAll(sinks);}}) {
 			Point ip = i.getPoint();
 			double dist = Point.distance(a, ip);
-			if (dist < radius) {
+			if (DMath.doubleEquals(dist, radius) || dist < radius) {
 				if (i == anchorV) {
 					/*
 					 * since a is not equal to anchor, we want to be able to add segments to the existing edge.
@@ -414,11 +418,6 @@ public class Graph {
 		return getSegmentTree().findClosestEdgePosition(a, exclude, radius);
 	}
 	
-	public void processNewStroke(List<Point> stroke) {
-		addStroke(stroke);
-		cleanupEdges();
-	}
-	
 //	private List<Point> cullAngles(List<Point> stroke) {
 //		
 //		List<Point> stroke2 = new ArrayList<Point>();
@@ -464,189 +463,583 @@ public class Graph {
 //		return stroke2;
 //	}
 	
-	public void addStroke(List<Point> stroke) {
+	public void processNewStroke(List<Point> stroke) {
 		
 		for (int i = 0; i < stroke.size()-1; i++) {
 			Point a = stroke.get(i);
 			Point b = stroke.get(i+1);
+			processNewSegment(a, b);
+		}
+		cleanupEdges();
+	}
+	
+	private void processNewSegment(Point a, Point b) {
+		
+		List<Point> seg = new ArrayList<Point>();
+		seg.add(a);
+		seg.add(b);
+		
+		List<PointToBeHandled> splitSegs = splitOnEvents(a, b);
+		
+		String.class.getName();
+		
+		if (
+				splitSegs.toString().equals("[., .]") ||
+				
+				splitSegs.toString().equals("[(3) . +, +> >> >>, .]") ||
+				
+				splitSegs.toString().equals("[(4) . +, .]") ||
+				splitSegs.toString().equals("[(4) . +, >>, +> >> >>, .]") ||
+				splitSegs.toString().equals("[(4) . +, +> >> >> >> .]") ||
+				
+				splitSegs.toString().equals("[(5) . +, .]") ||
+				splitSegs.toString().equals("[(5) . +, >>, .]") ||
+				splitSegs.toString().equals("[(5) . +, >> .]") ||
+				splitSegs.toString().equals("[(5) . +, >> V .]") ||
+				splitSegs.toString().equals("[(5) . +, >>, >>, +> >> >>, .]") ||
+				splitSegs.toString().equals("[(5) . +, >> >>, +> >> >>, .]") ||
+				
+				splitSegs.toString().equals("[(6) . +, .]") ||
+				splitSegs.toString().equals("[(6) . +, >>, >>, .]") ||
+				splitSegs.toString().equals("[(6) . +, >>, >> V .]") ||
+				splitSegs.toString().equals("[(6) . +, >> >> >>, +> >> >>, .]") ||
+				splitSegs.toString().equals("[(6) . +, >> >>, .]") ||
+				splitSegs.toString().equals("[(6) . +, >>, >> >>, +> >> >>, .]") ||
+				splitSegs.toString().equals("[(6) . +, >> >>, +> >> >> >> .]") ||
+				
+				splitSegs.toString().equals("[(7) . +, >>, .]") ||
+				splitSegs.toString().equals("[(7) . +, >> >> >>, .]") ||
+				splitSegs.toString().equals("[(7) . +, >>, >> >> >>, +> >> >>, .]") ||
+				splitSegs.toString().equals("[(7) . +, >> >> >>, +> >> >> >> .]") ||
+				splitSegs.toString().equals("[(7) . +, .]") ||
+				splitSegs.toString().equals("[(7) . +, >>, >> >>, .]") ||
+				splitSegs.toString().equals("[(7) . +, >> >> >> .]") ||
+				splitSegs.toString().equals("[(7) . +, >> >> >> .]") ||
+				
+				splitSegs.toString().equals("[(8) . +, .]") ||
+				splitSegs.toString().equals("[(8) . +, >>, >>, .]") ||
+				splitSegs.toString().equals("[(8) . +, >> >> >> >> .]") ||
+				splitSegs.toString().equals("[(8) . +, >>, >> >> >>, .]") ||
+				splitSegs.toString().equals("[(8) . +, >>, .]") ||
+				splitSegs.toString().equals("[(8) . +, >> >>, >> >>, .]") ||
+				
+				splitSegs.toString().equals("[(9) . +, .]") ||
+				splitSegs.toString().equals("[(9) . +, >>, .]") ||
+				splitSegs.toString().equals("[(9) . +, >>, >>, >>, .]") ||
+				splitSegs.toString().equals("[(9) . +, >> >> >>, >> >> >>, +> >> >>, .]") ||
+				splitSegs.toString().equals("[(9) . +, >>, >> >> >> >> .]") ||
+				splitSegs.toString().equals("[(9) . +, >> >>, .]") ||
+				splitSegs.toString().equals("[(9) . +, >> >>, >> >> >> .]") ||
+				splitSegs.toString().equals("[(9) . +, >> >>, >> >> >> .]") ||
+				
+				splitSegs.toString().equals("[(10) . +, .]") ||
+				splitSegs.toString().equals("[(10) . +, >> >> >>, >> >> >>, .]") ||
+				splitSegs.toString().equals("[(10) . +, >> >> >> .]") ||
+				splitSegs.toString().equals("[(10) . +, >>, >> >>, .]") ||
+				
+				splitSegs.toString().equals("[(11) . +, >> >> >>, .]") ||
+				splitSegs.toString().equals("[(11) . +, >> >> >>, >> >> >> >> .]") ||
+				splitSegs.toString().equals("[(11) . +, >>, >> >> >>, >> >> >>, .]") ||
+				splitSegs.toString().equals("[(11) . +, >> .]") ||
+				splitSegs.toString().equals("[(11) . +, >> >>, >> >>, .]") ||
+				splitSegs.toString().equals("[(11) . +, .]") ||
+				splitSegs.toString().equals("[(11) . +, >>, .]") ||
+				
+				splitSegs.toString().equals("[(12) . +, .]") ||
+				splitSegs.toString().equals("[(12) . +, >>, >> >> >>, .]") ||
+				splitSegs.toString().equals("[(12) . +, >> >> >> >> .]") ||
+				splitSegs.toString().equals("[(12) . +, >>, >> >> >>, >> >> >> >> .]") ||
+				splitSegs.toString().equals("[(12) . +, >> >> >>, >> >> >>, >> >> >>, +> >> >>, .]") ||
+				splitSegs.toString().equals("[(12) . +, >> >>, .]") ||
+				
+				splitSegs.toString().equals("[(13) . +, .]") ||
+				splitSegs.toString().equals("[(13) . +, >>, .]") ||
+				splitSegs.toString().equals("[(13) . +, >>, >> >> >> >> .]") ||
+				splitSegs.toString().equals("[(13) . +, >> >> >>, >> >> >>, >> >> >>, .]") ||
+				splitSegs.toString().equals("[(13) . +, >> >>, >> >>, >> >>, .]") ||
+				splitSegs.toString().equals("[(13) . +, >> >> >> .]") ||
+				
+				splitSegs.toString().equals("[(14) . +, >> >> >>, >> >> >>, .]") ||
+				splitSegs.toString().equals("[(14) . +, >> >>, >> >>, .]") ||
+				splitSegs.toString().equals("[(14) . +, .]") ||
+				splitSegs.toString().equals("[(14) . +, >> >>, >> >>, >> >> >> .]") ||
+				
+				splitSegs.toString().equals("[(15) . +, >> >> >>, .]") ||
+				splitSegs.toString().equals("[(15) . +, >> >> >>, >> >> >> >> .]") ||
+				splitSegs.toString().equals("[(15) . +, >>, >> >> >>, >> >> >>, .]") ||
+				splitSegs.toString().equals("[(15) . +, >> >>, .]") ||
+				splitSegs.toString().equals("[(15) . +, >> >>, .]") ||
+				
+				splitSegs.toString().equals("[(16) . +, .]") ||
+				splitSegs.toString().equals("[(16) . +, >> >> >> >> .]") ||
+				splitSegs.toString().equals("[(16) . +, >>, >> >> >>, .]") ||
+				splitSegs.toString().equals("[(16) . +, >> >> >>, >> >> >>, >> >> >>, >> >> >>, .]") ||
+				splitSegs.toString().equals("[(16) . +, >> >> >> .]") ||
+				splitSegs.toString().equals("[(16) . +, >> >>, >> >>, >> >>, .]") ||
+				splitSegs.toString().equals("[(16) . +, >> >> >> .]") ||
+				
+				splitSegs.toString().equals("[(17) . +, .]") ||
+				splitSegs.toString().equals("[(17) . +, >>, .]") ||
+				splitSegs.toString().equals("[(17) . +, >> >> >>, >> >> >>, >> >> >>, .]") ||
+				splitSegs.toString().equals("[(17) . +, >> >>, >> >>, .]") ||
+				splitSegs.toString().equals("[(17) . +, >> >>, >> >>, >> >> >> .]") ||
+				
+				splitSegs.toString().equals("[(18) . +, >> >> >>, >> >> >>, >> >> >> >> .]") ||
+				splitSegs.toString().equals("[(18) . +, >> >> >>, >> >> >>, .]") ||
+				splitSegs.toString().equals("[(18) . +, >>, >> >> >>, >> >> >>, >> >> >>, .]") |
+				splitSegs.toString().equals("[(18) . +, >> >>, .]") ||
+				splitSegs.toString().equals("[(18) . +, >> >>, >> >> >> .]") ||
+				
+				splitSegs.toString().equals("[(19) . +, >> >> >>, .]") ||
+				splitSegs.toString().equals("[(19) . +, >> >> >>, >> >> >> >> .]") ||
+				splitSegs.toString().equals("[(19) . +, >>, >> >> >>, >> >> >>, .]") ||
+				splitSegs.toString().equals("[(19) . +, >> >>, >> >>, >> >>, >> >> >> .]") ||
+				splitSegs.toString().equals("[(19) . +, .]") ||
+				splitSegs.toString().equals("[(19) . +, >> >> >> .]") ||
+				
+				splitSegs.toString().equals("[(20) . +, .]") ||
+				splitSegs.toString().equals("[(20) . +, >>, >> >> >>, .]") ||
+				splitSegs.toString().equals("[(20) . +, >> >>, >> >>, .]") ||
+				splitSegs.toString().equals("[(20) . +, >>, .]") ||
+				splitSegs.toString().equals("[(20) . +, >>, .]") ||
+				
+				splitSegs.toString().equals("[(21) . +, >>, >> >> >> >> .]") ||
+				splitSegs.toString().equals("[(21) . +, .]") ||
+				splitSegs.toString().equals("[(21) . +, >> >>, .]") ||
+				
+				splitSegs.toString().equals("[(22) . +, .]") ||
+				
+				splitSegs.toString().equals("[(23) . +, >> >> >>, .]") ||
+				splitSegs.toString().equals("[(23) . +, >> >>, >> >>, .]") ||
+				splitSegs.toString().equals("[(23) . +, >> .]") ||
+				splitSegs.toString().equals("[(23) . +, .]") ||
+				
+				splitSegs.toString().equals("[(24) . +, .]") ||
+				splitSegs.toString().equals("[(24) . +, >> >>, .]") ||
+				
+				splitSegs.toString().equals("[(25) . +, .]") ||
+				splitSegs.toString().equals("[(25) . +, >> .]") ||
+				
+				
+				splitSegs.toString().equals("[(26) . +, .]") ||
+				splitSegs.toString().equals("[(26) . +, >> .]") ||
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+
+				
+				
+				
+				false
+			) {
 			
-			List<Point> segmentStroke = new ArrayList<Point>();
-			segmentStroke.add(a);
-			segmentStroke.add(b);
-			List<List<Point>> strokes = new ArrayList<List<Point>>();
-			strokes.add(segmentStroke);
+			addSegment(a, b);
 			
-			List<List<Point>> splitStrokes = splitOnEvents(strokes);
-			List<List<Point>> handledStrokes = handleEvents(splitStrokes);
-			while (!strokes.equals(handledStrokes)) {
-				strokes = handledStrokes;
-				splitStrokes = splitOnEvents(strokes);
-				handledStrokes = handleEvents(splitStrokes);
-			}
-			strokes = handledStrokes;
-			
-			for (List<Point> finished : strokes) {
-				for (int j = 0; j < finished.size()-1; j++) {
-					Point aa = finished.get(j);
-					Point bb = finished.get(j+1);
-					addSegment(aa, bb);
-				}
-			}
 		}
 		
-	}
-	
-	private List<List<Point>> splitOnEvents(List<List<Point>> strokes) {
+//		else if (splitSegs.toString().equals("[., <<, .]")) {
+//			
+//			PointToBeHandled p1 = splitSegs.get(1);
+//			
+//			addSegment(a, p1.getPoint());
+//			addSegment(p1.getPoint(), p1.getEventSource());
+//			
+//		} else if (splitSegs.toString().equals("[., <+, +, +>, .]")) {
+//			
+//			PointToBeHandled p1 = splitSegs.get(2);
+//			
+//			addSegment(a, p1.getPoint());
+//			addSegment(p1.getPoint(), b);
+//			
+//		}
 		
-		List<List<Point>> newStrokes = new ArrayList<List<Point>>();
-		
-		for (List<Point> stroke : strokes) {
-			
-			List<Point> newStroke = new ArrayList<Point>();
-			
-			for (int i = 0; i < stroke.size()-1; i++) {
-				Point a = stroke.get(i);
-				Point b = stroke.get(i+1);
-				
-				List<PointToBeAdded> betweenABPoints = new ArrayList<PointToBeAdded>();
-				
-				betweenABPointsAdd(betweenABPoints, new PointToBeAdded(a, 0.0, Event.ENDPOINT));
-				betweenABPointsAdd(betweenABPoints, new PointToBeAdded(b, 1.0, Event.ENDPOINT));
-				
-				for (Segment in : segTree.findAllSegments(a, b)) {
-					Edge e = in.edge;
-					int index = in.index;
-					Point c = e.getPoint(index);
-					Point d = e.getPoint(index+1);
-					
-					try {
-						Point inter = Point.intersection(a, b, c, d);
-						if (inter != null) {
-							/*
-							 * an intersection event
-							 */
-							PointToBeAdded nptba = new PointToBeAdded(inter, Point.param(inter, a, b), Event.INTERSECTION);
-							betweenABPointsAdd(betweenABPoints, nptba);
-						}
-					} catch (OverlappingException ex) {
-						
-						if (Point.intersect(c, a, b) && !c.equals(b)) {
-							/*
-							 * an overlapping event
-							 */
-							PointToBeAdded nptba = new PointToBeAdded(c, Point.param(c, a, b), Event.OVERLAP);
-							betweenABPointsAdd(betweenABPoints, nptba);
-						}
-						
-						if (Point.intersect(d, a, b) && !d.equals(b)) {
-							/*
-							 * an overlapping event
-							 */
-							PointToBeAdded nptba = new PointToBeAdded(d, Point.param(d, a, b), Event.OVERLAP);
-							betweenABPointsAdd(betweenABPoints, nptba);
-						}
-						
-					}
-					
-					/*
-					 * find too-close to other segments events
-					 * start and end of being too close
-					 */
-					//d;
-					
-				}
-				
-				for (PointToBeAdded ptba : betweenABPoints) {
-					newStroke.add(ptba.p);
-				}
-				
-			} // for <a b>
-			
-			newStrokes.add(newStroke);
-		} // for stroke
-		
-		return newStrokes;
-	}
-	
-	private static void betweenABPointsAdd(List<PointToBeAdded> ls, PointToBeAdded ptba) {
-		int i = Collections.binarySearch(ls, ptba, PointToBeAdded.COMPARATOR);
-		if (i < 0) {
-			/*
-			 * not found
-			 */
-			int insertionPoint = -(i+1);
-			ls.add(insertionPoint, ptba);
+		else {
+//			throw new AssertionError();
+			logger.debug("splitSegs.toString().equals(\"" + splitSegs + "\") ||");
+			addSegment(a, b);
 		}
+			
+//		}
+		
 	}
 	
-	private List<List<Point>> handleEvents(List<List<Point>> strokes) {
+	private List<PointToBeHandled> splitOnEvents(Point a, Point b) {
+			
+		//List<Point> newStroke = new ArrayList<Point>();
 		
-		List<List<Point>> newStrokes = new ArrayList<List<Point>>();
+		List<PointToBeHandled> betweenABPoints = new ArrayList<PointToBeHandled>();
 		
-		for (List<Point> stroke : strokes) {
+		betweenABPointsAdd(betweenABPoints, new PointToBeHandled(a, 0.0, Event.A, null));
+		betweenABPointsAdd(betweenABPoints, new PointToBeHandled(b, 1.0, Event.B, null));
+		
+//		boolean intersectionAtA = false;
+//		boolean intersectionAtB = false;
+		
+//		for (Segment in : segTree.findAllSegments(a, b)) {
+//			//Edge e = in.edge;
+//			int index = in.index;
+//			Point c = in.edge.getPoint(index);
+//			Point d = in.edge.getPoint(index+1);
+//			
+//			if (Point.intersect(a, c, d)) {
+//				intersectionAtA = true;
+//			}
+//			
+//			if (Point.intersect(b, c, d)) {
+//				intersectionAtB = true;
+//			}
+//		}
+		
+		List<Point> alreadyChecked = new ArrayList<Point>();
+		
+		for (Segment in : segTree.findAllSegments(a, b)) {
+			//Edge e = in.edge;
+			int index = in.index;
+			Point c = in.edge.getPoint(index);
+			Point d = in.edge.getPoint(index+1);
 			
-			String.class.getName();
-			
-			List<Point> flattened = new ArrayList<Point>();
-			
-			for (int i = 0; i < stroke.size()-1; i++) {
-				Point a = stroke.get(i);
-				Point b = stroke.get(i+1);
+			try {
+				Point inter = Point.intersection(a, b, c, d);
+				if (inter != null) {
+					
+					double interParam = Point.param(inter, a, b);
+					
+					betweenABPointsAdd(betweenABPoints, new PointToBeHandled(inter, interParam, Event.INTERSECTION, null));
+					
+					double interStartParam = Point.travelBackward(a, b, interParam, 10.0);
+					double interEndParam = Point.travelForward(a, b, interParam, 10.0);
+					
+					betweenABPointsAdd(betweenABPoints, new PointToBeHandled(Point.point(a, b, interStartParam), interStartParam, Event.INTERSECTION_START, null));
+					betweenABPointsAdd(betweenABPoints, new PointToBeHandled(Point.point(a, b, interEndParam), interEndParam, Event.INTERSECTION_END, null));
+					
+				}
+			} catch (OverlappingException ex) {
 				
-				Position closestA = closestPosition(a, a, 10);
-				Position closestB = closestPosition(b, a, 10);
+				double cParam = Point.param(c, a, b);
+				double dParam = Point.param(d, a, b);
 				
-				if (closestA != null) {
-					if (closestB != null) {
-						if (Point.distance(closestA.getPoint(), closestB.getPoint()) > 10) {
-							flattened.add(closestA.getPoint());
-							flattened.add(closestB.getPoint());
-						} else if (closestA instanceof VertexPosition && closestB instanceof VertexPosition &&
-								!closestA.getPoint().equals(closestB.getPoint())) {
-							/*
-							 * even if they are close together, connect vertices
-							 */
-							flattened.add(closestA.getPoint());
-							flattened.add(closestB.getPoint());
-						} else {
-							flattened.add(null);
-							flattened.add(null);
-						}
-					} else {
-						flattened.add(closestA.getPoint());
-						flattened.add(b);
-					}
+				if (cParam < dParam) {
+					betweenABPointsAdd(betweenABPoints, new PointToBeHandled(c, cParam, Event.OVERLAP_START, null));
+					betweenABPointsAdd(betweenABPoints, new PointToBeHandled(d, dParam, Event.OVERLAP_END, null));
 				} else {
-					if (closestB != null) {
-						flattened.add(a);
-						flattened.add(closestB.getPoint());
+					betweenABPointsAdd(betweenABPoints, new PointToBeHandled(d, dParam, Event.OVERLAP_START, null));
+					betweenABPointsAdd(betweenABPoints, new PointToBeHandled(c, cParam, Event.OVERLAP_END, null));
+				}
+				
+			}
+			
+			if (!alreadyChecked.contains(c)) {
+				//how close is c to <a, b>?
+	//			if (!(intersectionAtA && (DMath.doubleEquals(Point.distance(a, c), 10.0) || Point.distance(a, c) < 10.0)) &&
+	//					!(intersectionAtB && (DMath.doubleEquals(Point.distance(b, c), 10.0) || Point.distance(b, c) < 10.0))) {
+				double u = Point.u(a, c, b);
+				if (u < 0.0) {
+					u = 0.0;
+				} else if (u > 1.0) {
+					u = 1.0;
+				}
+	//			if (DMath.doubleEquals(u, 0.0) || u > 0.0) {
+				Point cProjected = Point.point(a, b, u);
+				double dist = Point.distance(cProjected, c);
+	//			if () {
+	//				betweenABPointsAdd(betweenABPoints, new PointToBeHandled(cProjected, u, Event.CLOSE_POINT, c));
+	//			} else
+				if (DMath.doubleEquals(dist, 10.0) || dist < 10.0) {
+	//				double distToTravel = Math.sqrt(Math.pow(10.0, 2) - Math.pow(dist, 2));
+	//				double start = Point.travelBackward(a, b, u, distToTravel); 
+	//				double end = Point.travelForward(a, b, u, distToTravel);
+	//				betweenABPointsAdd(betweenABPoints, new PointToBeHandled(Point.point(a, b, start), start, Event.CLOSE_START, c));
+	//				betweenABPointsAdd(betweenABPoints, new PointToBeHandled(Point.point(a, b, end), end, Event.CLOSE_END, c));
+					Point[] ints = new Point[2];
+					int num = Point.circleSegmentIntersections(c, 10.0, a, b, ints);
+					switch (num) {
+					case 1:
+						throw new AssertionError();
+					case 2: {
+						Point p1 = ints[0];
+						Point p2 = ints[1];
+						double param1 = Point.param(p1, a, b);
+						double param2 = Point.param(p2, a, b);
+						if (param1 < param2) {
+							betweenABPointsAdd(betweenABPoints, new PointToBeHandled(p1, param1, Event.CLOSE_START, c));
+							betweenABPointsAdd(betweenABPoints, new PointToBeHandled(p2, param2, Event.CLOSE_END, c));
+						} else {
+							betweenABPointsAdd(betweenABPoints, new PointToBeHandled(p2, param2, Event.CLOSE_START, c));
+							betweenABPointsAdd(betweenABPoints, new PointToBeHandled(p1, param1, Event.CLOSE_END, c));
+						}
+						break;
+					}
+					}
+				}
+//			}
+//			}
+				alreadyChecked.add(c);
+			}
+			
+			
+			if (!alreadyChecked.contains(d)) {
+				//how close is d to <a, b>?
+	//			if (!(intersectionAtA && (DMath.doubleEquals(Point.distance(a, d), 10.0) || Point.distance(a, d) < 10.0)) &&
+	//					!(intersectionAtB && (DMath.doubleEquals(Point.distance(b, d), 10.0) || Point.distance(b, d) < 10.0))) {
+				double u = Point.u(a, d, b);
+				if (u < 0.0) {
+					u = 0.0;
+				} else if (u > 1.0) {
+					u = 1.0;
+				}
+	//			if (DMath.doubleEquals(u, 0.0) || u > 0.0) {
+				Point dProjected = Point.point(a, b, u);
+				double dist = Point.distance(dProjected, d);
+	//			if (DMath.doubleEquals(dist, 10.0)) {
+	//				betweenABPointsAdd(betweenABPoints, new PointToBeHandled(dProjected, u, Event.CLOSE_POINT, d));
+	//			} else
+				if (DMath.doubleEquals(dist, 10.0) || dist < 10.0) {
+					Point[] ints = new Point[2];
+					int num = Point.circleSegmentIntersections(d, 10.0, a, b, ints);
+					switch (num) {
+					case 1:
+						throw new AssertionError();
+					case 2: {
+						Point p1 = ints[0];
+						Point p2 = ints[1];
+						double param1 = Point.param(p1, a, b);
+						double param2 = Point.param(p2, a, b);
+						if (param1 < param2) {
+							betweenABPointsAdd(betweenABPoints, new PointToBeHandled(p1, param1, Event.CLOSE_START, d));
+							betweenABPointsAdd(betweenABPoints, new PointToBeHandled(p2, param2, Event.CLOSE_END, d));
+						} else {
+							betweenABPointsAdd(betweenABPoints, new PointToBeHandled(p2, param2, Event.CLOSE_START, d));
+							betweenABPointsAdd(betweenABPoints, new PointToBeHandled(p1, param1, Event.CLOSE_END, d));
+						}
+						break;
+					}
+					}
+				}
+	//			}
+	//			}
+				alreadyChecked.add(d);
+			}
+			
+			
+			double u = Point.u(c, a, d);
+			if (u < 0.0) {
+				u = 0.0;
+			} else if (u > 1.0) {
+				u = 1.0;
+			}
+			Point aProjected = Point.point(c, d, u);
+			u = Point.u(c, b, d);
+			if (u < 0.0) {
+				u = 0.0;
+			} else if (u > 1.0) {
+				u = 1.0;
+			}
+			Point bProjected = Point.point(c, d, u);
+			
+			{
+			//how close is a to <c, d>?
+//			if (!(intersectionAtA && (DMath.doubleEquals(Point.distance(a, aProjected), 10.0) || Point.distance(a, aProjected) < 10.0)) &&
+//					!(intersectionAtB && (DMath.doubleEquals(Point.distance(b, bProjected), 10.0) || Point.distance(b, bProjected) < 10.0))) {
+			double dist = Point.distance(aProjected, a);
+//			if (DMath.doubleEquals(dist, 10.0)) {
+//				betweenABPointsAdd(betweenABPoints, new PointToBeHandled(a, 0.0, Event.CLOSE_POINT, aProjected));
+//			} else
+			if (DMath.doubleEquals(dist, 10.0) || dist < 10.0) {
+				Point[] ints = new Point[2];
+				int num = Point.circleSegmentIntersections(aProjected, 10.0, a, b, ints);
+				switch (num) {
+				case 1:
+					throw new AssertionError();
+				case 2: {
+					Point p1 = ints[0];
+					Point p2 = ints[1];
+					double param1 = Point.param(p1, a, b);
+					double param2 = Point.param(p2, a, b);
+					if (param1 < param2) {
+						betweenABPointsAdd(betweenABPoints, new PointToBeHandled(p1, param1, Event.CLOSE_START, aProjected));
+						betweenABPointsAdd(betweenABPoints, new PointToBeHandled(p2, param2, Event.CLOSE_END, aProjected));
 					} else {
-						flattened.add(a);
-						flattened.add(b);
+						betweenABPointsAdd(betweenABPoints, new PointToBeHandled(p2, param2, Event.CLOSE_START, aProjected));
+						betweenABPointsAdd(betweenABPoints, new PointToBeHandled(p1, param1, Event.CLOSE_END, aProjected));
 					}
+					break;
+				}
 				}
 			}
-			
-			Point last = null;
-			List<Point> lastStroke = null;
-			for (Point p : flattened) {
-				if (p != null) {
-					if (last == null) {
-						lastStroke = new ArrayList<Point>();
-						newStrokes.add(lastStroke);
-					}
-					if (last == null || !p.equals(last)) {
-						lastStroke.add(p);
-					}
-				}
-				last = p;
+//			}
 			}
 			
-			String.class.getName();
+			
+			if (!bProjected.equals(aProjected)) {
+//			if (!(intersectionAtA && (DMath.doubleEquals(Point.distance(a, aProjected), 10.0) || Point.distance(a, aProjected) < 10.0)) &&
+//					!(intersectionAtB && (DMath.doubleEquals(Point.distance(b, bProjected), 10.0) || Point.distance(b, bProjected) < 10.0))) {
+			//how close is b to <c, d>?
+			double dist = Point.distance(bProjected, b);
+//			if (DMath.doubleEquals(dist, 10.0)) {
+//				betweenABPointsAdd(betweenABPoints, new PointToBeHandled(b, 1.0, Event.CLOSE_POINT, bProjected));
+//			} else
+			if (DMath.doubleEquals(dist, 10.0) || dist < 10.0) {
+				Point[] ints = new Point[2];
+				int num = Point.circleSegmentIntersections(bProjected, 10.0, a, b, ints);
+				switch (num) {
+				case 1:
+					throw new AssertionError();
+				case 2: {
+					Point p1 = ints[0];
+					Point p2 = ints[1];
+					double param1 = Point.param(p1, a, b);
+					double param2 = Point.param(p2, a, b);
+					if (param1 < param2) {
+						betweenABPointsAdd(betweenABPoints, new PointToBeHandled(p1, param1, Event.CLOSE_START, bProjected));
+						betweenABPointsAdd(betweenABPoints, new PointToBeHandled(p2, param2, Event.CLOSE_END, bProjected));
+					} else {
+						betweenABPointsAdd(betweenABPoints, new PointToBeHandled(p2, param2, Event.CLOSE_START, bProjected));
+						betweenABPointsAdd(betweenABPoints, new PointToBeHandled(p1, param1, Event.CLOSE_END, bProjected));
+					}
+				}
+				}
+			}
+//			}
+			}
 			
 		}
 		
-		return newStrokes;	
+		return betweenABPoints;
+	}
+	
+	private static void betweenABPointsAdd(List<PointToBeHandled> ls, PointToBeHandled ptbh) {
+		if (!DMath.doubleEquals(ptbh.getParam(), 0.0) && ptbh.getParam() < 0.0) {
+			
+			switch (ptbh.getEvent()) {
+			case INTERSECTION_START: {
+				PointToBeHandled a = ls.get(0);
+				ls.set(0, new PointToBeHandled(a.getPoint(), a.getParam(), Event.increment(a.getEvent()), null));
+				break;
+			}
+			case CLOSE_START: {
+				PointToBeHandled a = ls.get(0);
+				ls.set(0, new PointToBeHandled(a.getPoint(), a.getParam(), Event.increment(a.getEvent()), null));
+				break;
+			}
+			default:
+				throw new AssertionError();
+			}
+			
+		}
+		else if (!DMath.doubleEquals(ptbh.getParam(), 1.0) && ptbh.getParam() > 1.0) {
+			
+			return;
+			
+//			switch (ptbh.getEvent()) {
+//			case INTERSECTION_END: {
+//				int n = ls.size()-1;
+//				PointToBeHandled b = ls.get(n);
+//				ls.set(n, new PointToBeHandled(b.getPoint(), b.getParam(), Event.decrement(b.getEvent()), null));
+//				break;
+//			}
+//			case CLOSE_END: {
+//				int n = ls.size()-1;
+//				PointToBeHandled b = ls.get(n);
+//				ls.set(n, new PointToBeHandled(b.getPoint(), b.getParam(), Event.decrement(b.getEvent()), null));
+//				break;
+//			}
+//			default:
+//				throw new AssertionError();
+//			}
+			
+		}
+		else {
+			
+			int i = Collections.binarySearch(ls, ptbh, PointToBeHandled.COMPARATOR);
+			if (i < 0) {
+				/*
+				 * not found
+				 */
+				int insertionPoint = -(i+1);
+				ls.add(insertionPoint, ptbh);
+			} else {
+				/*
+				 * found
+				 */
+				PointToBeHandled old = ls.get(i);
+				assert old.getPoint().equals(ptbh.getPoint());
+				ls.set(i, new PointToBeHandled(old.getPoint(), old.getParam(), Event.merge(old.getEvent(), ptbh.getEvent()), null));
+			}
+			
+		}
+	}
+	
+	private List<Point> handleEvents(PointToBeHandled a, PointToBeHandled b) {
+		
+		Point ap = a.getPoint();
+		Point bp = b.getPoint();
+		
+		List<Point> handled = new ArrayList<Point>();
+		
+		Position closestA = closestPosition(ap, ap, 10);
+		Position closestB = closestPosition(bp, ap, 10);
+		
+		if (closestA != null) {
+			if (closestB != null) {
+				if (Point.distance(closestA.getPoint(), closestB.getPoint()) > 10) {
+					handled.add(closestA.getPoint());
+					handled.add(closestB.getPoint());
+				} else if (closestA instanceof VertexPosition && closestB instanceof VertexPosition &&
+						!closestA.getPoint().equals(closestB.getPoint())) {
+					/*
+					 * even if they are close together, connect vertices
+					 */
+					handled.add(closestA.getPoint());
+					handled.add(closestB.getPoint());
+				} else {
+					/*
+					 * both too close, do nothing
+					 */
+					;
+				}
+			} else {
+				handled.add(closestA.getPoint());
+				handled.add(bp);
+			}
+		} else {
+			if (closestB != null) {
+				handled.add(ap);
+				handled.add(closestB.getPoint());
+			} else {
+				handled.add(ap);
+				handled.add(bp);
+			}
+		}
+		
+		return handled;	
 	}
 	
 	public Position closestPosition(Point a) {

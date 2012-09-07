@@ -35,18 +35,6 @@ public class Point {
 		return integer;
 	}
 	
-	public Point toInteger() {
-		if (integer) {
-			return this;
-		} else {
-			return new Point(Math.rint(x), Math.rint(y));
-		}
-	}
-	
-//	public static boolean equals(Point a, Point b) {
-//		return doubleEquals(a.x, b.x) && doubleEquals(a.y, b.y);
-//	}
-	
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) {
@@ -228,21 +216,21 @@ public class Point {
 		
 		Point c = point(start, end, param);
 		
-		if (dist > distance(c, end)) {
-			throw new TravelException();
-		}
+//		if (dist > distance(c, end)) {
+//			throw new TravelException();
+//		}
 		
-		double rad = Math.atan2(end.y - c.y, end.x - c.x);
+		double rad = Math.atan2(end.y - start.y, end.x - start.x);
 		double x = Math.cos(rad) * dist + c.x;
 		double y = Math.sin(rad) * dist + c.y;
 		
 		Point m = new Point(x, y);
 		
-		try {
-			assert colinear(start, m, end);
-		} catch (ColinearException e) {
-			assert false;
-		}
+//		try {
+//			assert colinear(start, m, end);
+//		} catch (ColinearException e) {
+//			assert false;
+//		}
 		assert doubleEquals(distance(c, m), dist);
 		
 		return param(m, start, end);
@@ -263,21 +251,21 @@ public class Point {
 		
 		Point c = point(start, end, param);
 		
-		if (dist > distance(c, start)) {
-			throw new TravelException();
-		}
+//		if (dist > distance(c, start)) {
+//			throw new TravelException();
+//		}
 		
-		double rad = Math.atan2(start.y - c.y, start.x - c.x);
+		double rad = Math.atan2(start.y - end.y, start.x - end.x);
 		double x = Math.cos(rad) * dist + c.x;
 		double y = Math.sin(rad) * dist + c.y;
 		
 		Point m = new Point(x, y);
 		
-		try {
-			assert colinear(start, m, end);
-		} catch (ColinearException e) {
-			assert false;
-		}
+//		try {
+//			assert colinear(start, m, end);
+//		} catch (ColinearException e) {
+//			assert false;
+//		}
 		assert doubleEquals(distance(c, m), dist);
 		
 		return param(m, start, end);
@@ -347,6 +335,9 @@ public class Point {
 		}
 	}
 	
+	/**
+	 * returns u for point b in segment <c, d>
+	 */
 	public static double u(Point c, Point b, Point d) {
 		if (b.equals(c)) {
 			return 0.0;
@@ -403,19 +394,19 @@ public class Point {
 		if (doubleEquals(xdc, 0.0)) {
 			assert doubleEquals(xbc, 0);
 			double uy = ybc / ydc;
-			assert uy < 1.0;
+//			assert uy < 1.0;
 			return uy;
 		} else if (doubleEquals(ydc, 0.0)) {
 			assert doubleEquals(ybc, 0);
 			double ux = xbc / xdc;
-			assert ux < 1.0;
+//			assert ux < 1.0;
 			return ux;
 		} else {
 			double ux = xbc / xdc;
 			double uy = ybc / ydc;
 			assert doubleEquals(ux, uy) : "being treated as uneqal: " + ux + " " + uy;
-			assert ux >= 0.0;
-			assert ux < 1.0;
+//			assert ux >= 0.0;
+//			assert ux < 1.0;
 			return ux;
 		}
 		
@@ -441,4 +432,82 @@ public class Point {
 		return minus(this, b);
 	}	
 	
+	
+	
+	/*
+	 * returns the number of intersections with the circle and the line segment
+	 * those intersections are placed inside the array
+	 */
+	public static int circleSegmentIntersections(Point center, double radius, Point a, Point b, Point[] ints) {
+		
+		Point aa = a.minus(center);
+		Point bb = b.minus(center);
+		
+		double dx = bb.x - aa.x;
+		double dy = bb.y - aa.y;
+		double dr = Math.hypot(dx, dy);
+		double dd = aa.x * bb.y - bb.x * aa.y;
+		double disc = radius * radius * dr * dr - dd * dd;
+		
+		if (DMath.doubleEquals(disc, 0.0)) {
+			
+			Point int1 = new Point((dd * dy)/(dr * dr), (-dd * dx)/(dr * dr)).add(center);
+			
+//			double u = Point.u(a, int1, b);
+			
+//			if (DMath.doubleEquals(u, 0.0) || DMath.doubleEquals(u, 1.0) || 0.0 < u && u < 1.0) {
+			ints[0] = int1;
+			return 1;
+//			} else {
+//				return 0;
+//			}
+			
+		} else if (disc > 0.0) {
+			
+			Point int1 = new Point((dd * dy + sgn(dy) * dx * Math.sqrt(disc))/(dr * dr), (-dd * dx + Math.abs(dy) * Math.sqrt(disc))/(dr * dr)).add(center);
+			Point int2 = new Point((dd * dy - sgn(dy) * dx * Math.sqrt(disc))/(dr * dr), (-dd * dx - Math.abs(dy) * Math.sqrt(disc))/(dr * dr)).add(center);
+			
+//			double u = Point.u(a, int1, b);
+//			if (DMath.doubleEquals(u, 0.0) || DMath.doubleEquals(u, 1.0) || 0.0 < u && u < 1.0) {
+			ints[0] = int1;
+			
+//				u = Point.u(a, int2, b);
+//				if (DMath.doubleEquals(u, 0.0) || DMath.doubleEquals(u, 1.0) || 0.0 < u && u < 1.0) {
+				
+			ints[1] = int2;
+			return 2;
+				
+//			} else {
+//				return 1;
+//			}
+				
+//			} else {
+//				
+//				u = Point.u(a, int2, b);
+//				if (DMath.doubleEquals(u, 0.0) || DMath.doubleEquals(u, 1.0) || 0.0 < u && u < 1.0) {
+//					
+//					ints[0] = int2;
+//					return 1;
+//					
+//				} else {
+//					return 0;
+//				}
+//				
+//			}
+			
+		} else {
+			return 0;
+		}
+		
+	}
+	
+	private static double sgn(double x) {
+		if (DMath.doubleEquals(x, 0.0)) {
+			return 1;
+		} else if (x < 0.0) {
+			return -1;
+		} else {
+			return 1;
+		}
+	}
 }

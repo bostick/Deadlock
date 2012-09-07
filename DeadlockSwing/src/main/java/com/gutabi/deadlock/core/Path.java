@@ -23,14 +23,17 @@ public class Path {
 			double dist;
 			if (a instanceof VertexPosition) {
 				if (b instanceof VertexPosition) {
-					throw new IllegalStateException();
-//					VertexPosition aa = (VertexPosition)a;
-//					VertexPosition bb = (VertexPosition)b;
-//					
-//					Edge e = bb.prevDirEdge;
-//					assert (aa.getVertex() == e.getStart() && bb.getVertex() == e.getEnd()) || (aa.getVertex() == e.getEnd() && bb.getVertex() == e.getStart());
-//					
-//					dist = e.getTotalLength();
+					
+					VertexPosition aa = (VertexPosition)a;
+					VertexPosition bb = (VertexPosition)b;
+					
+					List<Connector> cons = Vertex.commonConnectors(aa.getVertex(), bb.getVertex());
+					assert cons.size() == 1;
+					
+					Edge e = (Edge)cons.get(0);
+					assert !e.isLoop();
+					
+					dist = e.getTotalLength();
 					
 				} else {
 					VertexPosition aa = (VertexPosition)a;

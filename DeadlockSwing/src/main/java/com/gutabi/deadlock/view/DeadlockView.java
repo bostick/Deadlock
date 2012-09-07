@@ -75,7 +75,9 @@ public class DeadlockView {
 	
 	public void drawScene(Graphics2D g2) {
 		
-
+		g2.scale(MODEL.getZoom(), MODEL.getZoom());
+		g2.translate((double)-MODEL.viewLoc.getX(), (double)-MODEL.viewLoc.getY());
+		
 		//g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		
 		ControlMode modeCopy;
@@ -172,6 +174,9 @@ public class DeadlockView {
 		backgroundImage = new BufferedImage(d.width, d.height, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g2 = backgroundImage.createGraphics();
 		
+		g2.scale(MODEL.getZoom(), MODEL.getZoom());
+		g2.translate((double)-MODEL.viewLoc.getX(), (double)-MODEL.viewLoc.getY());
+		
 		g2.setColor(Color.DARK_GRAY);
 		g2.fillRect(0, 0, MODEL.WORLD_WIDTH, 10);
 		g2.fillRect(0, 10, 10, MODEL.WORLD_HEIGHT-10);
@@ -180,9 +185,6 @@ public class DeadlockView {
 		
 		g2.setColor(background);
 		g2.fillRect(10, 10, MODEL.WORLD_WIDTH-20, MODEL.WORLD_HEIGHT-20);
-		
-		g2.scale(MODEL.getZoom(), MODEL.getZoom());
-		g2.translate((double)-MODEL.viewLoc.getX(), (double)-MODEL.viewLoc.getY());
 		
 		List<Edge> edgesCopy;
 		List<Intersection> intersectionsCopy;

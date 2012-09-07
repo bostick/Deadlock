@@ -1,6 +1,5 @@
 package com.gutabi.deadlock.view;
 
-import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
 import java.awt.Dimension;
@@ -18,7 +17,7 @@ public class WorldPanel extends JPanel {
 	Logger logger = Logger.getLogger("deadlock");
 	
 	public WorldPanel() {
-		setPreferredSize(new Dimension(MODEL.WORLD_WIDTH, MODEL.WORLD_HEIGHT));
+		setPreferredSize(new Dimension(1400, 822));
 	}
 	
 	@Override

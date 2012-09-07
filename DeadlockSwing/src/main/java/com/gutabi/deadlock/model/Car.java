@@ -5,6 +5,7 @@ import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.gutabi.deadlock.core.Connector;
 import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Direction;
 import com.gutabi.deadlock.core.Edge;
@@ -212,12 +213,32 @@ public class Car {
 			if (bestPath != null) {
 				
 				assert bestPath.get(0).equals(vp);
-				EdgePosition nextEP = (EdgePosition)bestPath.get(1);
 				
-				nextEdge = nextEP.getEdge();
-				nextDest = (v == nextEdge.getStart()) ? nextEdge.getEnd() : nextEdge.getStart();
-				
-				nextState = CarState.EDGE;
+				if (bestPath.get(1) instanceof VertexPosition) {
+					
+					VertexPosition vp1 = (VertexPosition)bestPath.get(1);
+					
+					List<Connector> cons = Vertex.commonConnectors(vp.getVertex(), vp1.getVertex());
+					assert cons.size() == 1;
+					
+					Edge e = (Edge)cons.get(0);
+					assert !e.isLoop();
+					
+					nextEdge = e;
+					nextDest = (v == nextEdge.getStart()) ? nextEdge.getEnd() : nextEdge.getStart();
+					
+					nextState = CarState.EDGE;
+					
+				} else {
+					
+					EdgePosition nextEP = (EdgePosition)bestPath.get(1);
+					
+					nextEdge = nextEP.getEdge();
+					nextDest = (v == nextEdge.getStart()) ? nextEdge.getEnd() : nextEdge.getStart();
+					
+					nextState = CarState.EDGE;
+					
+				}
 				
 			} else {
 				// no way to get to any sink, crash self now

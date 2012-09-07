@@ -22,8 +22,12 @@ import com.gutabi.deadlock.view.WindowInfo;
 
 public class DeadlockModel {
 	
-	public final int WORLD_WIDTH = 1400;
-	public final int WORLD_HEIGHT = 822;
+	//public final int WORLD_WIDTH = 1400;
+	//public final int WORLD_HEIGHT = 822;
+	//public final int WORLD_WIDTH = 65536;
+	//public final int WORLD_HEIGHT = 65536;
+	public final int WORLD_WIDTH = 2048;
+	public final int WORLD_HEIGHT = 2048;
 	
 	public double DISTANCE_PER_TIMESTEP = 5.0;
 	
