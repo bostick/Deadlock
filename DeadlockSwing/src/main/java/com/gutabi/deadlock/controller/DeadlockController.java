@@ -425,7 +425,7 @@ public class DeadlockController implements ActionListener {
 		if (curStroke.size() >= 2) {
 			MODEL.processNewStroke(curStroke);
 		}
-		//assert MODEL.checkConsistency();
+		assert MODEL.checkConsistency();
 		MODEL.lastPointRaw = null;
 		MODEL.curStrokeRaw.clear();
 		

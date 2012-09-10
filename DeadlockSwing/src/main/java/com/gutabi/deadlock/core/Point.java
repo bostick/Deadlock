@@ -434,11 +434,11 @@ public class Point {
 	
 	
 	
-	/*
-	 * returns the number of intersections with the circle and the line segment
-	 * those intersections are placed inside the array
+	/**
+	 * returns the number of intersections with the circle and the line
+	 * 
 	 */
-	public static int circleSegmentIntersections(Point center, double radius, Point a, Point b, Point[] ints) {
+	public static int circleLineIntersections(Point center, double radius, Point a, Point b, Point[] ints) {
 		
 		Point aa = a.minus(center);
 		Point bb = b.minus(center);
@@ -454,13 +454,15 @@ public class Point {
 			Point int1 = new Point((dd * dy)/(dr * dr), (-dd * dx)/(dr * dr)).add(center);
 			
 //			double u = Point.u(a, int1, b);
-			
-//			if (DMath.doubleEquals(u, 0.0) || DMath.doubleEquals(u, 1.0) || 0.0 < u && u < 1.0) {
-			ints[0] = int1;
-			return 1;
+//			if (DMath.doubleEquals(u, 0.0) || DMath.doubleEquals(u, 1.0) || 0 < u && u < 1.0) {
+//				ints[0] = int1;
 //			} else {
-//				return 0;
+//				ints[0] = null;
 //			}
+			
+			ints[0] = int1;
+			
+			return 1;
 			
 		} else if (disc > 0.0) {
 			
@@ -468,32 +470,35 @@ public class Point {
 			Point int2 = new Point((dd * dy - sgn(dy) * dx * Math.sqrt(disc))/(dr * dr), (-dd * dx - Math.abs(dy) * Math.sqrt(disc))/(dr * dr)).add(center);
 			
 //			double u = Point.u(a, int1, b);
-//			if (DMath.doubleEquals(u, 0.0) || DMath.doubleEquals(u, 1.0) || 0.0 < u && u < 1.0) {
-			ints[0] = int1;
-			
+//			if (DMath.doubleEquals(u, 0.0) || DMath.doubleEquals(u, 1.0) || 0 < u && u < 1.0) {
+//				ints[0] = int1;
+//			
 //				u = Point.u(a, int2, b);
-//				if (DMath.doubleEquals(u, 0.0) || DMath.doubleEquals(u, 1.0) || 0.0 < u && u < 1.0) {
-				
-			ints[1] = int2;
-			return 2;
-				
-//			} else {
-//				return 1;
-//			}
-				
+//				if (DMath.doubleEquals(u, 0.0) || DMath.doubleEquals(u, 1.0) || 0 < u && u < 1.0) {
+//					
+//					ints[1] = int2;
+//					
+//				} else {
+//					ints[1] = null;
+//				}
+//				
 //			} else {
 //				
 //				u = Point.u(a, int2, b);
-//				if (DMath.doubleEquals(u, 0.0) || DMath.doubleEquals(u, 1.0) || 0.0 < u && u < 1.0) {
+//				if (DMath.doubleEquals(u, 0.0) || DMath.doubleEquals(u, 1.0) || 0 < u && u < 1.0) {
 //					
 //					ints[0] = int2;
-//					return 1;
 //					
 //				} else {
-//					return 0;
+//					ints[0] = null;
 //				}
 //				
 //			}
+			
+			ints[0] = int1;
+			ints[1] = int2;
+			
+			return 2;
 			
 		} else {
 			return 0;

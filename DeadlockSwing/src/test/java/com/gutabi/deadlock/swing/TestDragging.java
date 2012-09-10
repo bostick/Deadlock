@@ -93,31 +93,6 @@ public class TestDragging {
 	List<Edge> edges;
 	
 	@Test
-	public void test1() throws Exception {
-		
-		CONTROLLER.strat = MassageStrategy.NONE;
-		
-		testPressed(new Point(5, 5));
-		testDragged(new Point(6, 6));
-		testDragged(new Point(7, 7));
-		testReleased();
-		
-		CONTROLLER.queueAndWait(new Runnable() {
-			@Override
-			public void run() {
-				edges = MODEL.getEdges();
-			}
-		});
-		
-		assertEquals(edges.size(), 1);
-		Edge e = edges.get(0);
-		assertEquals(e.size(), 2);
-		assertTrue(new Point(5, 5).equals(e.getPoint(0)));
-		assertTrue(new Point(7, 7).equals(e.getPoint(1)));
-		
-	}
-	
-	@Test
 	public void test2() throws Exception {
 		
 		CONTROLLER.strat = MassageStrategy.NONE;
