@@ -3,6 +3,10 @@ package com.gutabi.deadlock.core;
 public class DMath {
 	
 	public static boolean doubleEquals(double a, double b) {
+		return doubleEquals(a, b, 1.0E-6);
+	}
+	
+	public static boolean doubleEquals(double a, double b, double delta) {
 		/*
 		 * 1.0E-12 seems to be fine for the math we do here
 		 * 1.0E-13 gives StackOverflowErrors when it is expecting some points to be equal
@@ -13,7 +17,7 @@ public class DMath {
 		 * 
 		 * A time of 5.00000000012918 should be equal to 5, so 1.0E-11 is insufficient
 		 */
-		return Math.abs(a - b) < 1.0E-6;
+		return Math.abs(a - b) < delta;
 		
 		/*
 		 * TestDMath.test4 has 2 doubles that are not equal when cast to floats, but that
@@ -31,6 +35,33 @@ public class DMath {
 		} else {
 			return x;
 		}
+	}
+	
+	public static boolean rangesOverlap(double a, double b, double c, double d) {
+		
+		double aa;
+		double bb;
+		double cc;
+		double dd;
+		
+		if (a < b) {
+			aa = a;
+			bb = b;
+		} else {
+			aa = b;
+			bb = a;
+		}
+		
+		if (c < d) {
+			cc = c;
+			dd = d;
+		} else {
+			cc = d;
+			dd = c;
+		}
+		
+		return (DMath.doubleEquals(aa, dd) || aa < dd) && (DMath.doubleEquals(cc , bb) || cc < bb);
+		
 	}
 	
 }

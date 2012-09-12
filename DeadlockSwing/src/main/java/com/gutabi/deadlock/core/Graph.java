@@ -2,6 +2,8 @@ package com.gutabi.deadlock.core;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -476,13 +478,74 @@ public class Graph {
 		
 		logger.debug("process segment: " + a + " " + b);
 		
-		if (a.equals(new Point(694.0, 322.0))) {
-			String.class.getName();
+		/*
+		 * first, split the segment up into ranges that do not overlap any existing segments
+		 */
+		
+		List<Double> ranges = new ArrayList<Double>();
+		ranges.add(0.0);
+		ranges.add(1.0);
+		
+		for (Segment in : segTree.findAllSegments(a, b)) {
+			int index = in.index;
+			Point c = in.edge.getPoint(index);
+			Point d = in.edge.getPoint(index+1);
+			
+			try {
+				Point.intersection(a, b, c, d);
+			} catch (OverlappingException ex) {
+				
+				double cParam = Point.param(c, a, b);
+				double dParam = Point.param(d, a, b);
+				
+				if (dParam < cParam) {
+					double tmp = dParam;
+					dParam = cParam;
+					cParam = tmp;
+				}
+				
+				double overlapStart = Math.max(0.0, cParam);
+				double overlapEnd = Math.min(dParam, 1.0);
+				
+				// find range that overlap breaks
+				int r = -1;
+				for (int i = 0; i < ranges.size(); i+=2) {
+					double aa = ranges.get(i);
+					double bb = ranges.get(i+1);
+					if ((DMath.doubleEquals(aa, overlapStart) || aa < overlapStart) && (DMath.doubleEquals(bb, overlapEnd) || overlapEnd < bb)) {
+						r = i;
+					}
+				}
+				assert r != -1;
+				
+				double aa = ranges.get(r);
+				double bb = ranges.get(r+1);
+				
+				ranges.remove(r);
+				ranges.remove(r);
+				
+				if (!DMath.doubleEquals(bb, overlapEnd) && overlapEnd < bb) {
+					ranges.add(r, bb);
+					ranges.add(r, overlapEnd);
+				}
+				if (!DMath.doubleEquals(aa, overlapStart) && aa < overlapStart) {
+					ranges.add(r, overlapStart);
+					ranges.add(r, aa);
+				}
+				
+			}
+			
+			
 		}
 		
-		if (a.equals(new Point(684, 324))) {
-			String.class.getName();
+		for (int i = 0; i < ranges.size(); i+=2) {
+			Point aa = Point.point(a, b, ranges.get(i));
+			Point bb = Point.point(a, b, ranges.get(i+1));
+			processNewRange(aa, bb);
 		}
+	}
+		
+	private void processNewRange(Point a, Point b) {
 		
 		Timeline timeline = new Timeline(a, b);
 		
@@ -500,7 +563,7 @@ public class Graph {
 					double interStartParam = Point.travelBackward(a, b, interParam, 10.0);
 					double interEndParam = Point.travelForward(a, b, interParam, 10.0);
 					
-					timeline.addEvent(new Event(EventType.INTERSECTION, inter, inter, interStartParam, interEndParam));
+					timeline.addEvent(new IntersectionEvent(inter, interParam, interStartParam, interEndParam));
 				} else {
 					
 					Point aProjected = Point.point(c, d, DMath.clip(Point.u(c, a, d)));
@@ -515,25 +578,27 @@ public class Graph {
 				
 			} catch (OverlappingException ex) {
 				
-				double cParam = Point.param(c, a, b);
-				double dParam = Point.param(d, a, b);
+				assert false;
 				
-				double startParam = cParam;
-				double endParam = dParam;
-				Point sourceStart = c;
-				Point sourceEnd = d;
-				if (endParam < startParam) {
-					double tmp = startParam;
-					startParam = endParam;
-					endParam = tmp;
-					sourceStart = d;
-					sourceEnd = c;
-				}
-				
-				startParam = Point.travelBackward(a, b, startParam, 10.0);
-				endParam = Point.travelForward(a, b, endParam, 10.0);
-				
-				timeline.addEvent(new Event(EventType.OVERLAP, sourceStart, sourceEnd, startParam, endParam));
+//				double cParam = Point.param(c, a, b);
+//				double dParam = Point.param(d, a, b);
+//				
+//				double startParam = cParam;
+//				double endParam = dParam;
+//				Point sourceStart = c;
+//				Point sourceEnd = d;
+//				if (endParam < startParam) {
+//					double tmp = startParam;
+//					startParam = endParam;
+//					endParam = tmp;
+//					sourceStart = d;
+//					sourceEnd = c;
+//				}
+//				
+//				startParam = Point.travelBackward(a, b, startParam, 10.0);
+//				endParam = Point.travelForward(a, b, endParam, 10.0);
+//				
+//				timeline.addEvent(new OverlapEvent(sourceStart, sourceEnd, startParam, endParam));
 				
 			}
 			
@@ -552,16 +617,32 @@ public class Graph {
 			
 			assert clusters.size() == 1;
 			
-			if (timeline.closestASource == null) {
+			Cluster c = clusters.get(0);
+			
+			if (c.intersectionEvents.isEmpty()) {
+				
 				;
-			} else if (timeline.closestBSource == null || timeline.closestBSource.equals(timeline.closestASource)) {
-				if (!segmentOverlaps(timeline.closestASource, b)) {
-					addSegment(timeline.closestASource, b);
-				}
+				
 			} else {
-				if (!segmentOverlaps(timeline.closestASource, timeline.closestBSource)) {
-					addSegment(timeline.closestASource, timeline.closestBSource);
+				
+				Point aa = a;
+				Point bb;
+				
+				for (IntersectionEvent e : c.intersectionEvents) {
+					
+					bb = e.sourceStart;
+					if (!aa.equals(bb)) {
+						addSegment(aa, bb);
+					}
+					
+					aa = bb;
 				}
+				
+				bb = b;
+				if (!aa.equals(bb)) {
+					addSegment(aa, bb);
+				}
+				
 			}
 			
 		} else {
@@ -578,18 +659,36 @@ public class Graph {
 				
 				Cluster c = clusters.get(timeline.aClusterIndex);
 				
-				aa = timeline.closestASource;
-//				bb = c.endSource;
-//				if (!aa.equals(bb) && !segmentOverlaps(aa, bb)) {
-//					addSegment(aa, bb);
-//				}
-//				
-//				aa = bb;
+				if (c.intersectionEvents.isEmpty()) {
+					
+					aa = timeline.closestASource;
+					
+					bb = Point.point(a, b, c.borderEndParam);
+					addSegment(aa, bb);
+					
+					aa = bb;
+					
+				} else {
+					
+					aa = a;
+					
+					for (IntersectionEvent e : c.intersectionEvents) {
+						bb = e.sourceStart;
+						
+						if (!aa.equals(bb)) {
+							addSegment(aa, bb);
+						}
+						
+						aa = bb;
+					}
+					
+					bb = Point.point(a, b, c.borderEndParam);
+					addSegment(aa, bb);
+					
+					aa = bb;
+					
+				}
 				
-				bb = Point.point(a, b, c.endParam);
-				addSegment(aa, bb);
-				
-				aa = bb;
 			} else {
 				// there is no A cluster
 				aa = a;
@@ -603,27 +702,38 @@ public class Graph {
 			for (int middleIndex = middleFirst; middleIndex <= middleLast; middleIndex++) {
 				Cluster c = clusters.get(middleIndex);
 				
-				bb = Point.point(a, b, c.startParam);
-				addSegment(aa, bb);
-				
-				aa = bb;
-				
-				bb = c.startSource;
-				addSegment(aa, bb);
-				
-				aa = bb;
-				
-				bb = c.endSource;
-				if(!aa.equals(bb)) {
+				if (c.intersectionEvents.isEmpty()) {
+					
+					bb = Point.point(a, b, c.borderStartParam); 
 					addSegment(aa, bb);
+					
+					aa = Point.point(a, b, c.borderEndParam);
+					
+				} else {
+					
+					bb = Point.point(a, b, c.borderStartParam); 
+					addSegment(aa, bb);
+					
+					aa = bb;
+					
+					for (IntersectionEvent e : c.intersectionEvents) {
+						
+						bb = e.sourceStart;
+						if (!aa.equals(bb)) {
+							addSegment(aa, bb);
+						}
+						
+						aa = bb;
+						
+					}
+					
+					bb = Point.point(a, b, c.borderEndParam);
+					addSegment(aa, bb);
+					
+					aa = bb;
+					
 				}
 				
-				aa = bb;
-				
-				bb = Point.point(a, b, c.endParam);
-				addSegment(aa, bb);
-				
-				aa = bb;
 			}
 			
 			/*
@@ -635,19 +745,38 @@ public class Graph {
 				
 				Cluster c = clusters.get(timeline.bClusterIndex);
 				
-				bb = Point.point(a, b, c.startParam);
-				addSegment(aa, bb);
-				
-				aa = bb;
-				
-//				bb = c.startSource;
-//				addSegment(aa, bb);
-//				
-//				aa = bb;
-				
-				bb = timeline.closestBSource;
-				if (!aa.equals(bb)) {
+				if (c.intersectionEvents.isEmpty()) {
+					
+					bb = Point.point(a, b, c.borderStartParam);
 					addSegment(aa, bb);
+					
+					aa = bb;
+					
+					bb = b;
+					if (!aa.equals(bb)) {
+						addSegment(aa, bb);
+					}
+					
+				} else {
+					
+					bb = Point.point(a, b, c.borderStartParam);
+					addSegment(aa, bb);
+					
+					aa = bb;
+					
+					for (IntersectionEvent e : c.intersectionEvents) {
+						
+						bb = e.sourceStart;
+						addSegment(aa, bb);
+						
+						aa = bb;
+					}
+					
+					bb = b;
+					if (!aa.equals(bb)) {
+						addSegment(aa, bb);
+					}
+					
 				}
 				
 			} else {
@@ -671,8 +800,8 @@ public class Graph {
 			double param1 = Point.param(p1, a, b);
 			double param2 = Point.param(p2, a, b);
 			t.addEvent((param1 < param2) ?
-					new Event(EventType.CLOSE, p, p, param1, param2) :
-						new Event(EventType.CLOSE, p, p, param2, param1));
+					new CloseEvent(p, p, param1, param2) :
+						new CloseEvent(p, p, param2, param1));
 		}
 		}
 	}
@@ -687,7 +816,7 @@ public class Graph {
 		int bClusterIndex = -1;
 		
 		Point closestASource;
-		Point closestBSource;
+		//Point closestBSource;
 		
 		Timeline(Point a, Point b) {
 			this.a = a;
@@ -696,10 +825,10 @@ public class Graph {
 		
 		void addEvent(Event e) {
 			
-			if (!DMath.doubleEquals(e.startParam, 1.0) && e.startParam > 1.0) {
+			if (!DMath.doubleEquals(e.borderStartParam, 1.0) && e.borderStartParam > 1.0) {
 				return;
 			}
-			if (!DMath.doubleEquals(e.endParam, 0.0) && e.endParam < 0.0) {
+			if (!DMath.doubleEquals(e.borderEndParam, 0.0) && e.borderEndParam < 0.0) {
 				return;
 			}
 			
@@ -709,23 +838,24 @@ public class Graph {
 						return;
 					}
 				}
-				if (c.startParam < e.startParam && c.endParam > e.endParam) {
+				if (c.borderStartParam < e.borderStartParam && c.borderEndParam > e.borderEndParam) {
 					// cluster already "contains" this event
-					return;
+					
+					//test this
+					String.class.getName();
 				}
 			}
 			
-			logger.debug(e.type + " " + e.sourceStart + " " + e.sourceEnd);
+			logger.debug(e + " " + e.sourceStart + " " + e.sourceEnd);
 			
 			final List<Cluster> overlapping = new ArrayList<Cluster>();
 			for (Cluster c : clusters) {
-				if ((DMath.doubleEquals(e.endParam, c.startParam) || e.endParam > c.startParam) && (DMath.doubleEquals(e.startParam, c.startParam) || e.startParam < c.startParam) ||
-						(DMath.doubleEquals(e.startParam, c.endParam) || e.startParam < c.endParam) && (DMath.doubleEquals(e.endParam, c.endParam) || e.endParam > c.endParam)) {
+				if (DMath.rangesOverlap(e.borderStartParam, e.borderEndParam, c.borderStartParam, c.borderEndParam)) {
 					overlapping.add(c);
 				}
 			}
 			
-			Cluster acc = new Cluster(e);
+			Cluster acc = new Cluster(a, b, e);
 			
 			for (Cluster c : overlapping) {
 				acc = acc.merge(c);
@@ -736,7 +866,7 @@ public class Graph {
 			int insertionPoint = -1;
 			for (int i = 0; i < clusters.size(); i++) {
 				Cluster c = clusters.get(i);
-				if (acc.endParam < c.startParam) {
+				if (acc.borderEndParam < c.borderStartParam) {
 					insertionPoint = i;
 					break;
 				}
@@ -745,98 +875,158 @@ public class Graph {
 				insertionPoint = clusters.size();
 			}
 			
-			if (DMath.doubleEquals(acc.startParam, 0.0) || acc.startParam < 0.0) {
-				aClusterIndex = insertionPoint;
+			if (DMath.doubleEquals(acc.borderStartParam, 0.0) || acc.borderStartParam < 0.0) {
 				for (Event ee : acc.events) {
-					switch (ee.type) {
-					case OVERLAP:
-						if (ee.startParam < 0.0 && Point.param(ee.sourceStart, a, b) > 0.0) {
-							if (closestASource == null || Point.distance(ee.sourceStart, a) < Point.distance(closestASource, a)) {
-								closestASource = ee.sourceStart;
-							}
+//					if (ee instanceof OverlapEvent) {
+//						if (ee.borderStartParam < 0.0 && Point.param(ee.sourceStart, a, b) > 0.0) {
+//							if (closestASource == null || Point.distance(ee.sourceStart, a) < Point.distance(closestASource, a)) {
+//								closestASource = ee.sourceStart;
+//							}
+//						}
+//					} else {
+					assert ee.sourceStart == ee.sourceEnd;
+					if (ee.borderStartParam < 0.0) {
+						if (closestASource == null || Point.distance(ee.sourceStart, a) < Point.distance(closestASource, a)) {
+							closestASource = ee.sourceStart;
 						}
-						break;
-					default:
-						assert ee.sourceStart == ee.sourceEnd;
-						if (ee.startParam < 0.0) {
-							if (closestASource == null || Point.distance(ee.sourceStart, a) < Point.distance(closestASource, a)) {
-								closestASource = ee.sourceStart;
-							}
-						}
-						break;
 					}
+//					}
 				}
 			}
-			if (DMath.doubleEquals(acc.endParam, 1.0) || acc.endParam > 1.0) {
-				bClusterIndex = insertionPoint;
-				for (Event ee : acc.events) {
-					switch (ee.type) {
-					case OVERLAP:
-						if (ee.endParam > 1.0 && Point.param(ee.sourceEnd, a, b) < 1.0) {
-							if ((closestBSource == null || Point.distance(ee.sourceStart, b) < Point.distance(closestBSource, b)) &&
-									(closestASource == null || Point.distance(ee.sourceStart, b) < Point.distance(ee.sourceStart, closestASource))) {
-								closestBSource = ee.sourceStart;
-							}
-						}
-						break;
-					default:
-						assert ee.sourceStart == ee.sourceEnd;
-						if (ee.endParam > 1.0) {
-							if ((closestBSource == null || Point.distance(ee.sourceStart, b) < Point.distance(closestBSource, b)) &&
-									(closestASource == null || Point.distance(ee.sourceStart, b) < Point.distance(ee.sourceStart, closestASource))) {
-								closestBSource = ee.sourceStart;
-							}
-						}
-						break;
-					}
-				}
-			}
+//			if (DMath.doubleEquals(acc.borderEndParam, 1.0) || acc.borderEndParam > 1.0) {
+//				for (Event ee : acc.events) {
+//					if (ee instanceof OverlapEvent) {
+//						if (ee.borderEndParam > 1.0 && Point.param(ee.sourceEnd, a, b) < 1.0) {
+//							if ((closestBSource == null || Point.distance(ee.sourceStart, b) < Point.distance(closestBSource, b)) &&
+//									(closestASource == null || Point.distance(ee.sourceStart, b) < Point.distance(ee.sourceStart, closestASource))) {
+//								closestBSource = ee.sourceStart;
+//							}
+//						}
+//					} else
+//					if (ee instanceof CloseEvent) {
+//						assert ee.sourceStart == ee.sourceEnd;
+//						if (ee.borderEndParam > 1.0) {
+//							if ((closestBSource == null || Point.distance(ee.sourceStart, b) < Point.distance(closestBSource, b)) &&
+//									(closestASource == null || Point.distance(ee.sourceStart, b) < Point.distance(ee.sourceStart, closestASource))) {
+//								closestBSource = ee.sourceStart;
+//							}
+//						}
+//					} else if (ee instanceof IntersectionEvent) {
+//						/*
+//						 * necessarily keep b after an intersection
+//						 */
+//					} else {
+//						assert false;
+//					}
+//				}
+//			}
 			
 			clusters.add(insertionPoint, acc);
 			
+			aClusterIndex = -1;
+			bClusterIndex = -1;
+			for (int i = 0; i < clusters.size(); i++) {
+				Cluster c = clusters.get(i);
+				if (DMath.doubleEquals(c.borderStartParam, 0.0) || c.borderStartParam < 0.0) {
+					assert aClusterIndex == -1;
+					aClusterIndex = i;
+				}
+				if (DMath.doubleEquals(c.borderEndParam, 1.0) || c.borderEndParam > 1.0) {
+					assert bClusterIndex == -1;
+					bClusterIndex = i;
+				}
+			}
 		}
 		
 	}
 	
 	private static class Cluster {
 		
-		double startParam;
-		double endParam;
+		Point a;
+		Point b;
+		
+		double borderStartParam;
+		double borderEndParam;
 		
 		Point startSource;
 		Point endSource;
 		
 		List<Event> events = new ArrayList<Event>();
 		
-		private Cluster() {
-			
+		List<IntersectionEvent> intersectionEvents = new ArrayList<IntersectionEvent>();
+		List<CloseEvent> closeEvents = new ArrayList<CloseEvent>();
+//		List<OverlapEvent> overlapEvents = new ArrayList<OverlapEvent>();
+		
+		private Cluster(Point a, Point b) {
+			this.a = a;
+			this.b = b;
 		}
 		
-		Cluster(Event e) {
+		Cluster(Point a, Point b, Event e) {
+			
+			this.a = a;
+			this.b = b;
+			
 			events.add(e);
-			startParam = e.startParam;
-			endParam = e.endParam;
+			if (e instanceof IntersectionEvent) {
+				// sort based on param of source
+				int index = Collections.binarySearch(intersectionEvents, (IntersectionEvent)e, IntersectionEvent.COMPARATOR);
+				if (index < 0) {
+					// not found
+					int insertionPoint = -(index + 1);
+					intersectionEvents.add(insertionPoint, (IntersectionEvent)e);
+				} else {
+					// found
+					assert false;
+				}
+			} else if (e instanceof CloseEvent) {
+				closeEvents.add((CloseEvent)e);
+			} else {
+				assert false;
+			}
+			borderStartParam = e.borderStartParam;
+			borderEndParam = e.borderEndParam;
 			startSource = e.sourceStart;
 			endSource = e.sourceEnd;
 		}
 		
-		Cluster merge(Cluster c) {
+		Cluster merge(final Cluster c) {
 			
-			Cluster acc = new Cluster();
+			Cluster acc = new Cluster(a, b);
+			
 			acc.events.addAll(events);
 			acc.events.addAll(c.events);
 			
-			acc.startParam = startParam;
-			acc.endParam = endParam;
+			// sort based on param of source
+			for (IntersectionEvent e : new ArrayList<IntersectionEvent>(){{addAll(intersectionEvents);addAll(c.intersectionEvents);}}) {
+				int index = Collections.binarySearch(acc.intersectionEvents, e, IntersectionEvent.COMPARATOR);
+				if (index < 0) {
+					// not found
+					int insertionPoint = -(index + 1);
+					acc.intersectionEvents.add(insertionPoint, e);
+				} else {
+					// found
+					assert false;
+				}
+			}
+			
+			acc.closeEvents.addAll(closeEvents);
+			acc.closeEvents.addAll(c.closeEvents);
+			
+//			acc.overlapEvents.addAll(overlapEvents);
+//			acc.overlapEvents.addAll(c.overlapEvents);
+			
+			acc.borderStartParam = borderStartParam;
+			acc.borderEndParam = borderEndParam;
 			acc.startSource = startSource;
 			acc.endSource = endSource;
 			
-			if (c.startParam < startParam) {
-				acc.startParam = c.startParam;
+			if (c.borderStartParam < borderStartParam) {
+				acc.borderStartParam = c.borderStartParam;
 				acc.startSource = c.startSource;
 			}
-			if (c.endParam > endParam) {
-				acc.endParam = c.endParam;
+			if (c.borderEndParam > borderEndParam) {
+				acc.borderEndParam = c.borderEndParam;
 				acc.endSource = c.endSource;
 			}
 			
@@ -847,42 +1037,64 @@ public class Graph {
 	
 	private static class Event {
 		
-		EventType type;
 		Point sourceStart;
 		Point sourceEnd;
-		double startParam;
-		double endParam;
 		
-		Event(EventType type, Point sourceStart, Point sourceEnd, double startParam, double endParam) {
-			this.type = type;
+		double borderStartParam;
+		double borderEndParam;
+		
+		Event(Point sourceStart, Point sourceEnd, double borderStartParam, double borderEndParam) {
 			this.sourceStart = sourceStart;
 			this.sourceEnd = sourceEnd;
-			this.startParam = startParam;
-			this.endParam = endParam;
+			this.borderStartParam = borderStartParam;
+			this.borderEndParam = borderEndParam;
+		}
+		
+	}
+	
+	static class IntersectionEvent extends Event {
+		
+		double sourceParam;
+		
+		IntersectionEvent(Point source, double sourceParam, double borderStartParam, double borderEndParam) {
+			super(source, source, borderStartParam, borderEndParam);
+			this.sourceParam = sourceParam;
 		}
 		
 		public String toString() {
-			return type.toString();
+			return "INTERSECTION";
+		}
+		
+		public static Comparator<IntersectionEvent> COMPARATOR = new IntersectionEventComparator();
+	}
+	
+	static class IntersectionEventComparator implements Comparator<IntersectionEvent> {
+		@Override
+		public int compare(IntersectionEvent a, IntersectionEvent b) {
+			
+			if (DMath.doubleEquals(a.sourceParam, b.sourceParam)) {
+				return 0;
+			} else if (a.sourceParam < b.sourceParam) {
+				return -1;
+			} else {
+				return 1;
+			}
+			
 		}
 		
 	}
 	
-	public enum EventType {
+	static class CloseEvent extends Event {
 		
-		INTERSECTION,
-		CLOSE,
-		OVERLAP,
-		;
+		CloseEvent(Point sourceStart, Point sourceEnd, double borderStartParam, double borderEndParam) {
+			super(sourceStart, sourceEnd, borderStartParam, borderEndParam);
+		}
+		
+		public String toString() {
+			return "CLOSE";
+		}
+		
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	
 	
 	
@@ -1442,44 +1654,66 @@ public class Graph {
 			}
 			for (Edge f : edges) {
 				if (e == f) {
-					continue;
-				}
-				for (int i = 0; i < e.size()-1; i++) {
-					Point a = e.getPoint(i);
-					Point b = e.getPoint(i+1);
-					for (int j = 0; j < f.size()-1; j++) {
-						Point c = f.getPoint(j);
-						Point d = f.getPoint(j+1);
-						try {
-							Point inter = Point.intersection(a, b, c, d);
-							if (inter != null && !(inter.equals(a) || inter.equals(b) || inter.equals(c) || inter.equals(d))) {
-								//assert false : "No edges should intersect";
-								throw new IllegalStateException("No edges should intersect");
-							}
-						} catch (OverlappingException ex) {
-							throw new IllegalStateException("Segments overlapping: " + "<" + a + " " + b + "> and <" + c + " " + d + ">");
-						}
-					}
-				}
-				if ((e.getStart() == f.getStart() && e.getEnd() == f.getEnd()) || (e.getStart() == f.getEnd() && e.getEnd() == f.getStart())) {
-					/*
-					 * e and f share endpoints
-					 */
-					Set<Point> shared = new HashSet<Point>();
-					for (int i = 0; i < e.size(); i++) {
-						Point eP = e.getPoint(i);
-						for (int j = 0; j < f.size(); j++) {
-							Point fP = f.getPoint(j);
-							if (eP.equals(fP)) {
-								shared.add(eP);
+					
+					for (int i = 0; i < e.size()-2; i++) {
+						Point a = e.getPoint(i);
+						Point b = e.getPoint(i+1);
+						for (int j = i+1; j < f.size()-1; j++) {
+							Point c = f.getPoint(j);
+							Point d = f.getPoint(j+1);
+							try {
+								Point inter = Point.intersection(a, b, c, d);
+								if (inter != null && !(inter.equals(a) || inter.equals(b) || inter.equals(c) || inter.equals(d))) {
+									//assert false : "No edges should intersect";
+									throw new IllegalStateException("No edges should intersect");
+								}
+							} catch (OverlappingException ex) {
+								throw new IllegalStateException("Segments overlapping: " + "<" + a + " " + b + "> and <" + c + " " + d + ">");
 							}
 						}
 					}
-					if (e.getStart() == e.getEnd()) {
-						assert shared.size() == 1;
-					} else {
-						assert shared.size() == 2;
+					
+				} else {
+					
+					for (int i = 0; i < e.size()-1; i++) {
+						Point a = e.getPoint(i);
+						Point b = e.getPoint(i+1);
+						for (int j = 0; j < f.size()-1; j++) {
+							Point c = f.getPoint(j);
+							Point d = f.getPoint(j+1);
+							try {
+								Point inter = Point.intersection(a, b, c, d);
+								if (inter != null && !(inter.equals(a) || inter.equals(b) || inter.equals(c) || inter.equals(d))) {
+									//assert false : "No edges should intersect";
+									throw new IllegalStateException("No edges should intersect");
+								}
+							} catch (OverlappingException ex) {
+								throw new IllegalStateException("Segments overlapping: " + "<" + a + " " + b + "> and <" + c + " " + d + ">");
+							}
+						}
 					}
+					
+					if ((e.getStart() == f.getStart() && e.getEnd() == f.getEnd()) || (e.getStart() == f.getEnd() && e.getEnd() == f.getStart())) {
+						/*
+						 * e and f share endpoints
+						 */
+						Set<Point> shared = new HashSet<Point>();
+						for (int i = 0; i < e.size(); i++) {
+							Point eP = e.getPoint(i);
+							for (int j = 0; j < f.size(); j++) {
+								Point fP = f.getPoint(j);
+								if (eP.equals(fP)) {
+									shared.add(eP);
+								}
+							}
+						}
+						if (e.getStart() == e.getEnd()) {
+							assert shared.size() == 1;
+						} else {
+							assert shared.size() == 2;
+						}
+					}
+					
 				}
 			}
 		}

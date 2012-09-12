@@ -55,7 +55,7 @@ public class TestDragging2 {
 		
 		assertTrue(MODEL.checkConsistency());
 		
-		Thread.sleep(200);
+		Thread.sleep(2000);
 		
 		MODEL.clear();
 	}
@@ -501,4 +501,128 @@ public class TestDragging2 {
 	}
 	
 	
+	@Test
+	public void testBug11() throws Exception {
+		
+		CONTROLLER.strat = MassageStrategy.CURRENT;
+
+		testPressed(new Point(642., 457.));
+		testDragged(new Point(700., 432.));
+		testReleased();
+
+		testPressed(new Point(648., 431.));
+		testDragged(new Point(657., 453.));
+		testDragged(new Point(668., 471.));
+		testReleased();
+		
+		//Thread.sleep(Long.MAX_VALUE);
+	}
+	
+	@Test
+	public void testBug12() throws Exception {
+		
+		CONTROLLER.strat = MassageStrategy.CURRENT;
+
+		testPressed(new Point(828., 511.));
+		testDragged(new Point(869., 546.));
+		testDragged(new Point(906., 566.));
+		testReleased();
+
+		testPressed(new Point(853., 559.));
+		testDragged(new Point(894., 528.));
+		testReleased();
+		
+		//Thread.sleep(Long.MAX_VALUE);
+	}
+	
+	
+	
+	@Test
+	public void testBug13() throws Exception {
+		
+		CONTROLLER.strat = MassageStrategy.CURRENT;
+		
+		testPressed(new Point(643, 293));
+		testDragged(new Point(643, 292));
+		testDragged(new Point(642, 292));
+		testDragged(new Point(643, 292));
+		testReleased();
+		
+	}
+	
+	
+	
+	@Test
+	public void testBug14() throws Exception {
+		
+		CONTROLLER.strat = MassageStrategy.CURRENT;
+		
+		testPressed(new Point(532, 627));
+		testDragged(new Point(515, 620));
+		testReleased();
+		
+		testPressed(new Point(565, 599));
+		testDragged(new Point(542, 615));
+		testDragged(new Point(521, 635));
+		testReleased();
+		
+//		Thread.sleep(Long.MAX_VALUE);
+		
+	}
+	
+	
+	
+	@Test
+	public void testBug15() throws Exception {
+		
+		CONTROLLER.strat = MassageStrategy.CURRENT;
+
+		testPressed(new Point(43, 96));
+		testDragged(new Point(46, 49));
+		testDragged(new Point(36, 4));
+		testDragged(new Point(52, 66));
+		testReleased();
+		
+	}
+	
+	
+	
+	
+	@Test
+	public void testBug16() throws Exception {
+		
+		CONTROLLER.strat = MassageStrategy.CURRENT;
+		
+		testPressed(new Point(43, 96));
+		testDragged(new Point(36, 4));
+		testDragged(new Point(52, 66));		
+		testDragged(new Point(97, 69));
+		testDragged(new Point(5, 66));
+		testReleased();
+		
+	}
+	
+	
+	
+	
+	
+	@Test
+	public void testBug17() throws Exception {
+		
+		CONTROLLER.strat = MassageStrategy.CURRENT;
+		
+		testPressed(new Point(438., 429.));
+		testDragged(new Point(428., 461.));
+		testDragged(new Point(421., 494.));
+		testReleased();
+		
+		testPressed(new Point(483., 463.));
+		testDragged(new Point(436., 457.));
+		testDragged(new Point(304., 446.));
+		testReleased();
+		
+	}
+	
+	
+
 }
