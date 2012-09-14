@@ -14,7 +14,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.gutabi.deadlock.core.Dim;
 import com.gutabi.deadlock.core.Edge;
 import com.gutabi.deadlock.core.EdgePosition;
 import com.gutabi.deadlock.core.Point;
@@ -2503,9 +2502,9 @@ public class TestSimulating {
 			MODEL.DISTANCE_PER_TIMESTEP = 1;
 			MODEL.WAIT = 300;
 			
-			MODEL.viewDim = new Dim(200, 500);
+			//MODEL.viewDim = new Dim(200, 500);
 			//MODEL.viewLoc = new Point(575, 375);
-			MODEL.viewLoc = new Point(560, 400);
+			//MODEL.viewLoc = new Point(560, 400);
 			
 			MODEL.processNewStroke(new ArrayList<Point>(){{add(new Point(600, 450));add(new Point(700, 450));}});
 			MODEL.processNewStroke(new ArrayList<Point>(){{add(new Point(650, 400));add(new Point(650, 500));}});
@@ -2554,9 +2553,9 @@ public class TestSimulating {
 			MODEL.DISTANCE_PER_TIMESTEP = 1;
 			MODEL.WAIT = 300;
 			
-			MODEL.viewDim = new Dim(200, 500);
+			//MODEL.viewDim = new Dim(200, 500);
 			//MODEL.viewLoc = new Point(575, 375);
-			MODEL.viewLoc = new Point(560, 400);
+			//MODEL.viewLoc = new Point(560, 400);
 			
 			MODEL.processNewStroke(new ArrayList<Point>(){{add(new Point(595, 450));add(new Point(695, 450));}});
 			MODEL.processNewStroke(new ArrayList<Point>(){{add(new Point(650, 400));add(new Point(650, 500));}});
@@ -2610,9 +2609,9 @@ public class TestSimulating {
 			MODEL.DISTANCE_PER_TIMESTEP = 1;
 			MODEL.WAIT = 300;
 			
-			MODEL.viewDim = new Dim(200, 500);
+			//MODEL.viewDim = new Dim(200, 500);
 			//MODEL.viewLoc = new Point(575, 375);
-			MODEL.viewLoc = new Point(560, 400);
+			//MODEL.viewLoc = new Point(560, 400);
 			
 			MODEL.processNewStroke(new ArrayList<Point>(){{add(new Point(600, 450));add(new Point(700, 450));}});
 			MODEL.processNewStroke(new ArrayList<Point>(){{add(new Point(650, 400));add(new Point(650, 500));}});
@@ -2672,9 +2671,9 @@ public class TestSimulating {
 			MODEL.DISTANCE_PER_TIMESTEP = 5.0;
 			MODEL.WAIT = 300;
 			
-			MODEL.viewDim = new Dim(200, 500);
+			//MODEL.viewDim = new Dim(200, 500);
 			//MODEL.viewLoc = new Point(575, 375);
-			MODEL.viewLoc = new Point(560, 400);
+			//MODEL.viewLoc = new Point(560, 400);
 			
 			MODEL.processNewStroke(new ArrayList<Point>(){{add(new Point(600, 450));add(new Point(700, 450));}});
 			MODEL.processNewStroke(new ArrayList<Point>(){{add(new Point(650, 450));add(new Point(650, 470));}});

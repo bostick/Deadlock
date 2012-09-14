@@ -49,6 +49,12 @@ public class KeyboardController {
 		
 		VIEW.panel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("INSERT"), "insertKeyAction");
 		VIEW.panel.getActionMap().put("insertKeyAction", insertKeyAction);
+		
+		VIEW.panel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("PAGE_UP"), "pageUpKeyAction");
+		VIEW.panel.getActionMap().put("pageUpKeyAction", pageUpKeyAction);
+		
+		VIEW.panel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("PAGE_DOWN"), "pageDownKeyAction");
+		VIEW.panel.getActionMap().put("pageDownKeyAction", pageDownKeyAction);
 	}
 	
 	@SuppressWarnings("serial")
@@ -58,9 +64,7 @@ public class KeyboardController {
 			
 			CONTROLLER.queue(new Runnable() {
 				public void run() {
-					CONTROLLER.moveCameraRight();
-					VIEW.renderBackground();
-					VIEW.repaint();
+					VIEW.moveCameraRight();
 				}
 			});
 			
@@ -74,9 +78,7 @@ public class KeyboardController {
 			
 			CONTROLLER.queue(new Runnable() {
 				public void run() {
-					CONTROLLER.moveCameraLeft();
-					VIEW.renderBackground();
-					VIEW.repaint();
+					VIEW.moveCameraLeft();
 				}
 			});
 			
@@ -90,9 +92,7 @@ public class KeyboardController {
 			
 			CONTROLLER.queue(new Runnable() {
 				public void run() {
-					CONTROLLER.moveCameraUp();
-					VIEW.renderBackground();
-					VIEW.repaint();
+					VIEW.moveCameraUp();
 				}
 			});
 			
@@ -106,9 +106,7 @@ public class KeyboardController {
 			
 			CONTROLLER.queue(new Runnable() {
 				public void run() {
-					CONTROLLER.moveCameraDown();
-					VIEW.renderBackground();
-					VIEW.repaint();
+					VIEW.moveCameraDown();
 				}
 			});
 			
@@ -122,9 +120,7 @@ public class KeyboardController {
 			
 			CONTROLLER.queue(new Runnable() {
 				public void run() {
-					CONTROLLER.zoomIn();
-					VIEW.renderBackground();
-					VIEW.repaint();
+					VIEW.zoomIn();
 				}
 			});
 			
@@ -138,9 +134,7 @@ public class KeyboardController {
 			
 			CONTROLLER.queue(new Runnable() {
 				public void run() {
-					CONTROLLER.zoomOut();
-					VIEW.renderBackground();
-					VIEW.repaint();
+					VIEW.zoomOut();
 				}
 			});
 			
@@ -154,9 +148,7 @@ public class KeyboardController {
 			
 			CONTROLLER.queue(new Runnable() {
 				public void run() {
-					CONTROLLER.zoomReset();
-					VIEW.renderBackground();
-					VIEW.repaint();
+					VIEW.zoomReset();
 				}
 			});
 			
@@ -242,6 +234,35 @@ public class KeyboardController {
 			
 		}
 	};
+	
+	@SuppressWarnings("serial")
+	public Action pageUpKeyAction = new AbstractAction() {
+		@Override
+		public void actionPerformed(ActionEvent blah) {
+			
+			CONTROLLER.queue(new Runnable() {
+				public void run() {
+					VIEW.pageUp();
+				}
+			});
+			
+		}
+	};
+	
+	@SuppressWarnings("serial")
+	public Action pageDownKeyAction = new AbstractAction() {
+		@Override
+		public void actionPerformed(ActionEvent blah) {
+			
+			CONTROLLER.queue(new Runnable() {
+				public void run() {
+					VIEW.pageDown();
+				}
+			});
+			
+		}
+	};
+	
 	
 	
 }

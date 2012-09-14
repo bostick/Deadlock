@@ -3,8 +3,10 @@ package com.gutabi.deadlock.controller;
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -23,7 +25,6 @@ import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.Position;
 import com.gutabi.deadlock.core.Vertex;
 import com.gutabi.deadlock.core.VertexPosition;
-import com.gutabi.deadlock.view.WindowInfo;
 
 public class DeadlockController implements ActionListener {
 	
@@ -49,6 +50,9 @@ public class DeadlockController implements ActionListener {
 		
 		VIEW.panel.addMouseListener(mc);
 		VIEW.panel.addMouseMotionListener(mc);
+		
+		VIEW.previewPanel.addMouseListener(mc);
+		VIEW.previewPanel.addMouseMotionListener(mc);
 		
 		kc.init();
 		
@@ -80,56 +84,102 @@ public class DeadlockController implements ActionListener {
 	}
 	
 	
-	Point lastPressPoint;
+	Point lastPressWorldPoint;
+	Point lastPressPreviewPoint;
 	long lastPressTime;
 	
-	public void pressed(Point p) {
+	Point origWorldViewLoc;
+	
+	public void pressed(MouseEvent ev) {
 		
-		lastPressPoint = p;
-		lastPressTime = System.currentTimeMillis();
+		Component c = ev.getComponent();
 		
-		lastDragPoint = null;
-		lastDragTime = -1;
+		final Point p = new Point(ev.getX(), ev.getY());
+		
+		if (c == VIEW.panel) {
+			
+			lastPressWorldPoint = VIEW.panelToWorld(p);
+			lastPressTime = System.currentTimeMillis();
+			
+			lastDragWorldPoint = null;
+			lastDragTime = -1;
+			
+		} else if (c == VIEW.previewPanel) {
+			
+			lastPressPreviewPoint = p;
+			lastPressTime = System.currentTimeMillis();
+			
+			lastDragPreviewPoint = null;
+			lastDragTime = -1;
+			
+			origWorldViewLoc = VIEW.worldViewLoc;
+		}
+		
 	}
 	
 	
-	Point lastDragPoint;
+	Point lastDragWorldPoint;
+	Point lastDragPreviewPoint;
 	long lastDragTime;
 	
-	public void dragged(final Point p) {
+	public void dragged(MouseEvent ev) {
 		
-		boolean lastDragPointWasNull = (lastDragPoint == null);
+		Component c = ev.getComponent();
 		
-		lastDragPoint = p;
-		lastDragTime = System.currentTimeMillis();
+		final Point p = new Point(ev.getX(), ev.getY());
 		
-		synchronized (MODEL) {
-			switch (MODEL.getMode()) {
-			case IDLE: {
-				
-				if (lastDragPointWasNull) {
-					// first drag
-					draftStart(lastPressPoint);
-					draftMove(p);
-					VIEW.repaint();
-				} else {
-					assert false;
+		if (c == VIEW.panel) {
+			
+			boolean lastDragWorldPointWasNull = (lastDragWorldPoint == null);
+			
+			lastDragWorldPoint = VIEW.panelToWorld(p);
+			lastDragTime = System.currentTimeMillis();
+			
+			synchronized (MODEL) {
+				switch (MODEL.getMode()) {
+				case IDLE: {
+					
+					if (lastDragWorldPointWasNull) {
+						// first drag
+						draftStart(lastPressWorldPoint);
+						draftMove(lastDragWorldPoint);
+						VIEW.repaint();
+					} else {
+						assert false;
+					}
+					
+					break;
 				}
-				
-				break;
+				case DRAFTING:
+					draftMove(lastDragWorldPoint);
+					//VIEW.renderBackground();
+					VIEW.repaint();
+					break;
+				case ZOOMING:
+					assert false;
+					break;
+				case RUNNING:
+					;
+					break;
+				}
 			}
-			case DRAFTING:
-				draftMove(p);
-				//VIEW.renderBackground();
-				VIEW.repaint();
-				break;
-			case ZOOMING:
-				assert false;
-				break;
-			case RUNNING:
-				;
-				break;
-			}
+			
+		} else if (c == VIEW.previewPanel) {
+			
+			lastDragPreviewPoint = p;
+			lastDragTime = System.currentTimeMillis();
+			
+			double x = p.getX() - lastPressPreviewPoint.getX();
+			double y = p.getY() - lastPressPreviewPoint.getY();
+			
+			x = x * 2048 / 100;
+			y = y * 2048 / 100;
+			
+			VIEW.worldViewLoc = new Point(origWorldViewLoc.getX() + x, origWorldViewLoc.getY() + y);
+			
+			VIEW.renderBackground();
+			VIEW.repaint();
+			
 		}
 		
 	}
@@ -137,80 +187,98 @@ public class DeadlockController implements ActionListener {
 	
 	long lastReleaseTime;
 	
-	public void released() {
+	public void released(MouseEvent ev) {
 		
-		lastReleaseTime = System.currentTimeMillis();
+		Component c = ev.getComponent();
 		
-		synchronized (MODEL) {
-			switch (MODEL.getMode()) {
-			case IDLE: {
-				
-				if (lastReleaseTime - lastPressTime < 500 && lastDragPoint == null) {
-					// click
-					if (lastPressPoint.getY() <= 10 || lastPressPoint.getX() <= 10) {
-						// source
-						
-						MODEL.addSource(lastPressPoint);
-						
-						VIEW.renderBackground();
-						VIEW.repaint();
-						
-					} else if (lastPressPoint.getX() >= MODEL.WORLD_WIDTH-10 || lastPressPoint.getY() >= MODEL.WORLD_HEIGHT-10) {
-						// sink
-						
-						MODEL.addSink(lastPressPoint);
-						
-						VIEW.renderBackground();
-						VIEW.repaint();
-						
-					} else {
-						
+		if (c == VIEW.panel) {
+			
+			lastReleaseTime = System.currentTimeMillis();
+			
+			synchronized (MODEL) {
+				switch (MODEL.getMode()) {
+				case IDLE: {
+					
+					if (lastReleaseTime - lastPressTime < 500 && lastDragWorldPoint == null) {
+						// click
+						if (lastPressWorldPoint.getY() <= 10 || lastPressWorldPoint.getX() <= 10) {
+							// source
+							
+							MODEL.addSource(lastPressWorldPoint);
+							
+							VIEW.renderBackground();
+							VIEW.repaint();
+							
+						} else if (lastPressWorldPoint.getX() >= MODEL.WORLD_WIDTH-10 || lastPressWorldPoint.getY() >= MODEL.WORLD_HEIGHT-10) {
+							// sink
+							
+							MODEL.addSink(lastPressWorldPoint);
+							
+							VIEW.renderBackground();
+							VIEW.repaint();
+							
+						} else {
+							
+						}
 					}
+					
+					break;
 				}
-				
-				break;
+				case DRAFTING:
+					draftEnd();
+					VIEW.renderBackground();
+					VIEW.repaint();
+					break;
+				case ZOOMING:
+					assert false;
+					break;
+				case RUNNING:
+					;
+					break;
+				}
 			}
-			case DRAFTING:
-				draftEnd();
-				VIEW.renderBackground();
-				VIEW.repaint();
-				break;
-			case ZOOMING:
-				assert false;
-				break;
-			case RUNNING:
-				;
-				break;
-			}
+			
+		} else if (c == VIEW.previewPanel) {
+			
 		}
 		
 	}
 	
-	public void moved(final Point p) {
+	public void moved(MouseEvent ev) {
 		
-		synchronized (MODEL) {
-			switch (MODEL.getMode()) {
-			case IDLE:
-				
-				Position closest = MODEL.closestPosition(p, 10);
-				if (closest != null) {
-					MODEL.hilited = closest.getDriveable();
-				} else {
-					MODEL.hilited = null;
+		Component c = ev.getComponent();
+		
+		if (c == VIEW.panel) {
+			
+			final Point p = new Point(ev.getX(), ev.getY());
+			
+			synchronized (MODEL) {
+				switch (MODEL.getMode()) {
+				case IDLE:
+					
+					Position closest = MODEL.closestPosition(VIEW.panelToWorld(p), 10);
+					if (closest != null) {
+						MODEL.hilited = closest.getDriveable();
+					} else {
+						MODEL.hilited = null;
+					}
+					
+					VIEW.repaint();
+					break;
+				case DRAFTING:
+					;
+					break;
+				case ZOOMING:
+					assert false;
+					break;
+				case RUNNING:
+					;
+					break;
 				}
-				
-				VIEW.repaint();
-				break;
-			case DRAFTING:
-				;
-				break;
-			case ZOOMING:
-				assert false;
-				break;
-			case RUNNING:
-				;
-				break;
 			}
+			
+		} else if (c == VIEW.previewPanel) {
+			
 		}
 		
 	}
@@ -330,7 +398,7 @@ public class DeadlockController implements ActionListener {
 			switch (MODEL.getMode()) {
 			case IDLE:
 				
-				MODEL.addHub(lastPressPoint);
+				MODEL.addHub(lastPressWorldPoint);
 				
 				VIEW.renderBackground();
 				VIEW.repaint();
@@ -371,17 +439,12 @@ public class DeadlockController implements ActionListener {
 		MODEL.setMode(ControlMode.IDLE);
 	}
 	
-	private void draftStart(Point pp) {
+	private void draftStart(Point p) {
 		assert Thread.currentThread().getName().equals("controller");
 		
 		MODEL.setMode(ControlMode.DRAFTING);
 		
 		MODEL.hilited = null;
-		
-		Point p;
-		p = pp;
-		p = new Point(p.getX() * 1/MODEL.getZoom(), p.getY() * 1/MODEL.getZoom());
-		p = Point.add(p, MODEL.viewLoc);
 		
 		MODEL.lastPointRaw = p;
 		MODEL.curStrokeRaw.add(p);
@@ -389,13 +452,8 @@ public class DeadlockController implements ActionListener {
 		MODEL.allStrokes.get(MODEL.allStrokes.size()-1).add(p);
 	}
 	
-	private void draftMove(Point pp) {
+	private void draftMove(Point p) {
 		assert Thread.currentThread().getName().equals("controller");
-		
-		Point p;
-		p = pp;
-		p = new Point(Math.rint(p.getX() * 1/MODEL.getZoom()), Math.rint(p.getY() * 1/MODEL.getZoom()));
-		p = Point.add(p, MODEL.viewLoc);
 		
 		MODEL.curStrokeRaw.add(p);
 		MODEL.lastPointRaw = p;
@@ -458,54 +516,6 @@ public class DeadlockController implements ActionListener {
 				}}
 			);
 		}
-	}
-	
-	public void moveCameraRight() {
-		MODEL.viewLoc = MODEL.viewLoc.add(new Point(5, 0));
-		Point center = MODEL.viewDim.divide(2).add(MODEL.viewLoc);
-		logger.debug("right: center=" + center);
-	}
-	
-	public void moveCameraLeft() {
-		MODEL.viewLoc = MODEL.viewLoc.add(new Point(-5, 0));
-		Point center = MODEL.viewDim.divide(2).add(MODEL.viewLoc);
-		logger.debug("left: center=" + center);
-	}
-	
-	public void moveCameraUp() {
-		MODEL.viewLoc = MODEL.viewLoc.add(new Point(0, -5));
-		Point center = MODEL.viewDim.divide(2).add(MODEL.viewLoc);
-		logger.debug("up: center=" + center);
-	}
-	
-	public void moveCameraDown() {
-		MODEL.viewLoc = MODEL.viewLoc.add(new Point(0, 5));
-		Point center = MODEL.viewDim.divide(2).add(MODEL.viewLoc);
-		logger.debug("down: center=" + center);
-	}
-	
-	public void zoomIn() {
-		Point center = MODEL.viewDim.divide(2).add(MODEL.viewLoc);
-		MODEL.viewDim = MODEL.viewDim.times(0.9);
-		MODEL.viewLoc = center.minus(MODEL.viewDim.divide(2));
-		center = MODEL.viewDim.divide(2).add(MODEL.viewLoc);
-		logger.debug("zoom in : center=" + center);
-	}
-	
-	public void zoomOut() {
-		Point center = MODEL.viewDim.divide(2).add(MODEL.viewLoc);
-		MODEL.viewDim = MODEL.viewDim.times(1.1);
-		MODEL.viewLoc = center.minus(MODEL.viewDim.divide(2));
-		center = MODEL.viewDim.divide(2).add(MODEL.viewLoc);
-		logger.debug("zoom out : center=" + center);
-	}
-	
-	public void zoomReset() {
-		Point center = MODEL.viewDim.divide(2).add(MODEL.viewLoc);
-		MODEL.viewDim = WindowInfo.windowDim();
-		MODEL.viewLoc = new Point(0, 0);
-		center = MODEL.viewDim.divide(2).add(MODEL.viewLoc);
-		logger.debug("zoom reset: center=" + center);
 	}
 	
 	/*

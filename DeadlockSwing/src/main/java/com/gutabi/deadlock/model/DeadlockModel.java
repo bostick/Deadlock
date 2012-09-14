@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Random;
 
 import com.gutabi.deadlock.controller.ControlMode;
-import com.gutabi.deadlock.core.Dim;
 import com.gutabi.deadlock.core.Driveable;
 import com.gutabi.deadlock.core.Edge;
 import com.gutabi.deadlock.core.Graph;
@@ -18,14 +17,9 @@ import com.gutabi.deadlock.core.Segment;
 import com.gutabi.deadlock.core.Sink;
 import com.gutabi.deadlock.core.Source;
 import com.gutabi.deadlock.core.Vertex;
-import com.gutabi.deadlock.view.WindowInfo;
 
 public class DeadlockModel {
 	
-	//public final int WORLD_WIDTH = 1400;
-	//public final int WORLD_HEIGHT = 822;
-	//public final int WORLD_WIDTH = 65536;
-	//public final int WORLD_HEIGHT = 65536;
 	public final int WORLD_WIDTH = 2048;
 	public final int WORLD_HEIGHT = 2048;
 	
@@ -38,9 +32,6 @@ public class DeadlockModel {
 	public int SPAWN_FREQUENCY = 5;
 	
 	public long WAIT = 40;
-	
-	public Point viewLoc;
-	public Dim viewDim;
 	
 	public Random RANDOM = new Random();
 	
@@ -64,8 +55,7 @@ public class DeadlockModel {
 	}
 	
 	public void init() {
-		viewLoc = new Point(0, 0);
-		viewDim = WindowInfo.windowDim();
+		
 	}
 	
 	public void clear() {
@@ -104,9 +94,9 @@ public class DeadlockModel {
 	
 	
 	
-	public double getZoom() {
-		return ((double)WindowInfo.windowWidth()) / ((double)viewDim.width);
-	}
+	
+	
+	
 	
 	public boolean checkConsistency() {
 		return graph.checkConsistency();

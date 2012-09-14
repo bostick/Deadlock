@@ -8,64 +8,62 @@ import java.awt.event.MouseMotionListener;
 
 import org.apache.log4j.Logger;
 
-import com.gutabi.deadlock.core.Point;
-
 public class MouseController implements MouseListener, MouseMotionListener {
 	
 	static Logger logger = Logger.getLogger("deadlock");
 	
 	@Override
 	public void mousePressed(MouseEvent ev) {
-		pressed(new Point(ev.getX(), ev.getY()));
+		pressed(ev);
 	}
 	
 	@Override
 	public void mouseDragged(MouseEvent ev) {
-		dragged(new Point(ev.getX(), ev.getY()));
+		dragged(ev);
 	}
 	
 	@Override
 	public void mouseReleased(MouseEvent ev) {
-		released();
+		released(ev);
 	}
 	
 	@Override
 	public void mouseMoved(MouseEvent ev) {
-		moved(new Point(ev.getX(), ev.getY()));
+		moved(ev);
 	}
 	
-	public void pressed(final Point p) {
+	public void pressed(final MouseEvent ev) {
 		CONTROLLER.queue(new Runnable(){
 			@Override
 			public void run() {
-				CONTROLLER.pressed(p);
+				CONTROLLER.pressed(ev);
 			}}
 		);
 	}
 	
-	public void dragged(final Point p) {
+	public void dragged(final MouseEvent ev) {
 		CONTROLLER.queue(new Runnable(){
 			@Override
 			public void run() {
-				CONTROLLER.dragged(p);
+				CONTROLLER.dragged(ev);
 			}}
 		);
 	}
 	
-	public void released() {
+	public void released(final MouseEvent ev) {
 		CONTROLLER.queue(new Runnable(){
 			@Override
 			public void run() {
-				CONTROLLER.released();
+				CONTROLLER.released(ev);
 			}}
 		);
 	}
 	
-	public void moved(final Point p) {
+	public void moved(final MouseEvent ev) {
 		CONTROLLER.queue(new Runnable(){
 			@Override
 			public void run() {
-				CONTROLLER.moved(p);
+				CONTROLLER.moved(ev);
 			}}
 		);
 	}

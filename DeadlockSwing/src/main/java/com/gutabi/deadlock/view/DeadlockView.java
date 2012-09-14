@@ -17,6 +17,7 @@ import javax.swing.JFrame;
 import org.apache.log4j.Logger;
 
 import com.gutabi.deadlock.controller.ControlMode;
+import com.gutabi.deadlock.core.Dim;
 import com.gutabi.deadlock.core.Driveable;
 import com.gutabi.deadlock.core.Edge;
 import com.gutabi.deadlock.core.Hub;
@@ -32,8 +33,20 @@ public class DeadlockView {
 	public WorldPanel panel;
 	public ControlPanel controlPanel;
 	
+	public PreviewPanel previewPanel;
+	
 	public BufferedImage backgroundImage;
 	public Color background = new Color(0, 127, 0);
+	
+	
+	/*
+	 * the location and dimension of the main world world view
+	 * 
+	 * at start, (0, 0) and the dimension of the containing panel
+	 */
+	public Point worldViewLoc;
+	public Dim worldViewDim;
+	
 	
 	public final Logger logger = Logger.getLogger(DeadlockView.class);
 	
@@ -45,6 +58,10 @@ public class DeadlockView {
 	
 	public void init() {
 		frame = createFrame(false);
+		
+		worldViewLoc = new Point(0, 0);
+		worldViewDim = new Dim(panel.getWidth(), panel.getHeight());
+		
 	}
 	
 	public JFrame createFrame(boolean fullScreen) {
@@ -58,7 +75,10 @@ public class DeadlockView {
 		panel = new WorldPanel();
 		panel.setFocusable(true);
 		
+		previewPanel = new PreviewPanel();
+		
 		controlPanel = new ControlPanel();
+		controlPanel.init();
 		
 		Container cp = newFrame.getContentPane();
 		cp.setLayout(new BoxLayout(cp, BoxLayout.X_AXIS));
@@ -75,8 +95,8 @@ public class DeadlockView {
 	
 	public void drawScene(Graphics2D g2) {
 		
-		g2.scale(MODEL.getZoom(), MODEL.getZoom());
-		g2.translate((double)-MODEL.viewLoc.getX(), (double)-MODEL.viewLoc.getY());
+		g2.scale(getZoom(), getZoom());
+		g2.translate((double)-worldViewLoc.getX(), (double)-worldViewLoc.getY());
 		
 		//g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		
@@ -174,8 +194,8 @@ public class DeadlockView {
 		backgroundImage = new BufferedImage(d.width, d.height, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g2 = backgroundImage.createGraphics();
 		
-		g2.scale(MODEL.getZoom(), MODEL.getZoom());
-		g2.translate((double)-MODEL.viewLoc.getX(), (double)-MODEL.viewLoc.getY());
+		g2.scale(getZoom(), getZoom());
+		g2.translate((double)-worldViewLoc.getX(), (double)-worldViewLoc.getY());
 		
 		g2.setColor(Color.DARK_GRAY);
 		g2.fillRect(0, 0, MODEL.WORLD_WIDTH, 10);
@@ -350,5 +370,108 @@ public class DeadlockView {
 	public void repaint() {
 		frame.repaint();
 	}
+	
+	
+	
+	
+	public double getZoom() {
+		return ((double)panel.getWidth()) / ((double)worldViewDim.width);
+	}
+	
+	public Point panelToWorld(Point pp) {
+		Point p = pp;
+		p = new Point(p.getX() * 1/getZoom(), p.getY() * 1/getZoom());
+		p = Point.add(p, worldViewLoc);
+		return p; 
+	}
+	
+	public void moveCameraRight() {
+		worldViewLoc = worldViewLoc.add(new Point(5, 0));
+		//Point center = MODEL.viewDim.divide(2).add(MODEL.viewLoc);
+		logger.debug("right: viewLoc=" + worldViewLoc);
+		
+		renderBackground();
+		repaint();
+	}
+	
+	public void moveCameraLeft() {
+		worldViewLoc = worldViewLoc.add(new Point(-5, 0));
+		//Point center = MODEL.viewDim.divide(2).add(MODEL.viewLoc);
+		logger.debug("left: viewLoc=" + worldViewLoc);
+		
+		renderBackground();
+		repaint();
+	}
+	
+	public void moveCameraUp() {
+		worldViewLoc = worldViewLoc.add(new Point(0, -5));
+		//Point center = MODEL.viewDim.divide(2).add(MODEL.viewLoc);
+		logger.debug("up: viewLoc=" + worldViewLoc);
+		
+		renderBackground();
+		repaint();
+	}
+	
+	public void moveCameraDown() {
+		worldViewLoc = worldViewLoc.add(new Point(0, 5));
+		//Point center = MODEL.viewDim.divide(2).add(MODEL.viewLoc);
+		logger.debug("down: viewLoc=" + worldViewLoc);
+		
+		renderBackground();
+		repaint();
+	}
+	
+	public void pageUp() {
+		worldViewLoc = worldViewLoc.add(new Point(0, -50));
+		//Point center = MODEL.viewDim.divide(2).add(MODEL.viewLoc);
+		logger.debug("up: viewLoc=" + worldViewLoc);
+		
+		renderBackground();
+		repaint();
+	}
+	
+	public void pageDown() {
+		worldViewLoc = worldViewLoc.add(new Point(0, 50));
+		//Point center = MODEL.viewDim.divide(2).add(MODEL.viewLoc);
+		logger.debug("down: viewLoc=" + worldViewLoc);
+		
+		renderBackground();
+		repaint();
+	}
+	
+	public void zoomIn() {
+		Point center = worldViewDim.divide(2).add(worldViewLoc);
+		worldViewDim = worldViewDim.times(1/1.1);
+		worldViewLoc = center.minus(worldViewDim.divide(2));
+		//center = MODEL.viewDim.divide(2).add(MODEL.viewLoc);
+		//center = worldViewDim.divide(2).add(worldViewLoc);
+		logger.debug("zoom in: viewLoc=" + worldViewLoc);
+		
+		renderBackground();
+		repaint();
+	}
+	
+	public void zoomOut() {
+		Point center = worldViewDim.divide(2).add(worldViewLoc);
+		worldViewDim = worldViewDim.times(1.1);
+		worldViewLoc = center.minus(worldViewDim.divide(2));
+		//center = MODEL.viewDim.divide(2).add(MODEL.viewLoc);
+		//center = worldViewDim.divide(2).add(worldViewLoc);
+		logger.debug("zoom out: viewLoc=" + worldViewLoc);
+		
+		renderBackground();
+		repaint();
+	}
+	
+	public void zoomReset() {
+		worldViewDim = new Dim(panel.getWidth(), panel.getHeight());
+		worldViewLoc = new Point(0, 0);
+		Point center = worldViewDim.divide(2).add(worldViewLoc);
+		logger.debug("zoom reset: viewLoc=" + worldViewLoc + " center: " + center);
+		
+		renderBackground();
+		repaint();
+	}
+	
 	
 }
