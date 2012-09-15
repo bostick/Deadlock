@@ -17,7 +17,6 @@ import org.junit.Test;
 import com.gutabi.deadlock.controller.MassageStrategy;
 import com.gutabi.deadlock.core.Edge;
 import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.core.Segment;
 
 
 public class TestDragging {
@@ -1771,8 +1770,8 @@ public class TestDragging {
 			}
 		});
 		
-		Point a = new Point(3, 5);
-		List<Segment> in = MODEL.findAllSegments(a);
+//		Point a = new Point(3, 5);
+//		List<Segment> in = MODEL.findAllSegments(a);
 		
 //		assertEquals(1, in.size());
 //		

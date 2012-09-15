@@ -17,6 +17,8 @@ public final class Edge implements Connector {
 	
 	private boolean removed = false;
 	
+	private final int hash;
+	
 	public Edge(Vertex start, Vertex end, List<Point> pts) {
 		this.start = start;
 		this.end = end;
@@ -35,7 +37,21 @@ public final class Edge implements Connector {
 		}
 		totalLength = l;
 		
+		int h = 17;
+		h = 37 * h + start.hashCode();
+		h = 37 * h + end.hashCode();
+		h = 37 * h + pts.hashCode();
+		hash = h;
+		
 		check();
+	}
+	
+	public String toString() {
+		return "E " + hash + " " + start + " " + end;
+	}
+	
+	public int hashCode() {
+		return hash;
 	}
 	
 	public Edge copy() {
@@ -43,10 +59,6 @@ public final class Edge implements Connector {
 			throw new IllegalStateException();
 		}
 		return new Edge(start, end, Arrays.asList(pts));
-	}
-	
-	public String toString() {
-		return "E n=" + pts.length + " " + start + " " + end;
 	}
 	
 	public boolean isStandAlone() {

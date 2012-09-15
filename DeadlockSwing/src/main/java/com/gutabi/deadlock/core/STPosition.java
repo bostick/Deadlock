@@ -22,4 +22,7 @@ public class STPosition {
 		return t;
 	}
 	
+	public String toString() {
+		return s + " @ " + t;
+	}
 }

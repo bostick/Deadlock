@@ -18,6 +18,7 @@ import org.junit.Test;
 import com.gutabi.deadlock.core.Edge;
 import com.gutabi.deadlock.core.EdgePosition;
 import com.gutabi.deadlock.core.Point;
+import com.gutabi.deadlock.core.STPosition;
 import com.gutabi.deadlock.core.Vertex;
 import com.gutabi.deadlock.core.VertexPosition;
 import com.gutabi.deadlock.model.Car;
@@ -2522,14 +2523,14 @@ public class TestSimulating {
 			
 			a.setPosition(new VertexPosition(aV));
 			//a.futurePathNewEdge();
-			a.nextPathAdd(a.getPosition());
+			a.nextPathAdd(new STPosition(a.getPosition(), 0));
 			a.setState(CarState.EDGE);
 			a.nextState = a.getState();
 			a.nextEdge = aV.getEdges().get(0);
 			
 			b.setPosition(new VertexPosition(bV));
 			//b.futurePathNewEdge();
-			b.nextPathAdd(b.getPosition());
+			b.nextPathAdd(new STPosition(b.getPosition(), 0));
 			b.setState(CarState.EDGE);
 			b.nextState = b.getState();
 			b.nextEdge = bV.getEdges().get(0);
@@ -2578,14 +2579,14 @@ public class TestSimulating {
 			
 			a.setPosition(new VertexPosition(aV));
 			//a.futurePathNewEdge();
-			a.nextPathAdd(a.getPosition());
+			a.nextPathAdd(new STPosition(a.getPosition(), 0));
 			a.setState(CarState.EDGE);
 			a.nextState = a.getState();
 			a.nextEdge = aV.getEdges().get(0);
 			
 			b.setPosition(new VertexPosition(bV));
 			//b.futurePathNewEdge();
-			b.nextPathAdd(b.getPosition());
+			b.nextPathAdd(new STPosition(b.getPosition(), 0));
 			b.setState(CarState.EDGE);
 			b.nextState = b.getState();
 			b.nextEdge = bV.getEdges().get(0);
@@ -2632,21 +2633,21 @@ public class TestSimulating {
 			
 			a.setPosition(new VertexPosition(aV));
 			//a.futurePathNewEdge();
-			a.nextPathAdd(a.getPosition());
+			a.nextPathAdd(new STPosition(a.getPosition(), 0));
 			a.setState(CarState.EDGE);
 			a.nextState = a.getState();
 			a.nextEdge = aV.getEdges().get(0);
 			
 			b.setPosition(new VertexPosition(bV));
 			//b.futurePathNewEdge();
-			b.nextPathAdd(b.getPosition());
+			b.nextPathAdd(new STPosition(b.getPosition(), 0));
 			b.setState(CarState.EDGE);
 			b.nextState = b.getState();
 			b.nextEdge = bV.getEdges().get(0);
 			
 			c.setPosition(new VertexPosition(cV));
 			//c.futurePathNewEdge();
-			c.nextPathAdd(c.getPosition());
+			c.nextPathAdd(new STPosition(c.getPosition(), 0));
 			c.setState(CarState.EDGE);
 			c.nextState = c.getState();
 			c.nextEdge = cV.getEdges().get(0);
@@ -2692,14 +2693,14 @@ public class TestSimulating {
 			
 			a.setPosition(ap);
 			//a.futurePathNewEdge();
-			a.nextPathAdd(a.getPosition());
+			a.nextPathAdd(new STPosition(a.getPosition(), 0));
 			a.setState(CarState.EDGE);
 			a.nextState = a.getState();
 			a.nextEdge = ap.getEdge();
 			
 			b.setPosition(bp);
 			//b.futurePathNewEdge();
-			b.nextPathAdd(b.getPosition());
+			b.nextPathAdd(new STPosition(b.getPosition(), 0));
 			b.setState(CarState.EDGE);
 			b.nextState = b.getState();
 			b.nextEdge = bp.getEdge();

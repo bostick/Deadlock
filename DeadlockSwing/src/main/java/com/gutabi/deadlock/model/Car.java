@@ -81,7 +81,6 @@ public class Car {
 				if (DMath.doubleEquals(nextDistanceToMove, distanceLeftOnEdge)) {
 					
 					previousEdge = e;
-					//Vertex v = (dir == 1) ? e.getEnd() : e.getStart();
 					nextState = CarState.VERTEX;
 					
 					assert getLastNextPosition().getSpace() instanceof VertexPosition;
@@ -96,7 +95,6 @@ public class Car {
 				} else if (nextDistanceToMove > distanceLeftOnEdge) {
 					
 					previousEdge = e;
-					//Vertex v = (dir == 1) ? e.getEnd() : e.getStart();
 					nextState = CarState.VERTEX;
 					
 					assert getLastNextPosition().getSpace() instanceof VertexPosition;
@@ -203,48 +201,54 @@ public class Car {
 			
 			Vertex v = vp.getVertex();
 			
-			Path bestPath = null;
+			VertexPosition bestChoice = null;
+			
+			//Path bestPath = null;
 			double bestDistance = Double.POSITIVE_INFINITY;
 			for (Sink s : MODEL.getSinks()) {
-				//VertexPosition sp = new VertexPosition(s, null, null, 0);
-				Path path = MODEL.shortestPath(v, s);
-				if (path != null) {
-					if (path.totalDistance() < bestDistance) {
-						bestDistance = path.totalDistance();
-						bestPath = path; 
+				VertexPosition sinkPos = new VertexPosition(s);
+				//Path path = MODEL.shortestPath(v, s);
+				Vertex choice = MODEL.shortestPathChoice(v, s);
+				if (choice != null) {
+					VertexPosition choicePos = new VertexPosition(choice);
+					double dist = vp.distanceTo(choicePos) + choicePos.distanceTo(sinkPos);
+					if (dist < bestDistance) {
+						bestDistance = dist;
+						//bestPath = path;
+						bestChoice = choicePos;
 					}
 				}
 			}
 			
-			if (bestPath != null) {
+			if (bestChoice != null) {
 				
-				assert bestPath.get(0).getSpace().equals(vp);
+				//assert bestPath.get(0).getSpace().equals(vp);
 				
-				if (bestPath.get(1).getSpace() instanceof VertexPosition) {
+//				if (bestPath.get(1).getSpace() instanceof VertexPosition) {
 					
-					VertexPosition vp1 = (VertexPosition)(bestPath.get(1).getSpace());
+				//VertexPosition vp1 = (VertexPosition)(bestPath.get(1).getSpace());
+				
+				List<Connector> cons = Vertex.commonConnectors(vp.getVertex(), bestChoice.getVertex());
+				assert cons.size() == 1;
+				
+				Edge e = (Edge)cons.get(0);
+				assert !e.isLoop();
+				
+				nextEdge = e;
+				nextDest = (v == nextEdge.getStart()) ? nextEdge.getEnd() : nextEdge.getStart();
+				
+				nextState = CarState.EDGE;
 					
-					List<Connector> cons = Vertex.commonConnectors(vp.getVertex(), vp1.getVertex());
-					assert cons.size() == 1;
-					
-					Edge e = (Edge)cons.get(0);
-					assert !e.isLoop();
-					
-					nextEdge = e;
-					nextDest = (v == nextEdge.getStart()) ? nextEdge.getEnd() : nextEdge.getStart();
-					
-					nextState = CarState.EDGE;
-					
-				} else {
-					
-					EdgePosition nextEP = (EdgePosition)bestPath.get(1).getSpace();
-					
-					nextEdge = nextEP.getEdge();
-					nextDest = (v == nextEdge.getStart()) ? nextEdge.getEnd() : nextEdge.getStart();
-					
-					nextState = CarState.EDGE;
-					
-				}
+//				} else {
+//					
+//					EdgePosition nextEP = (EdgePosition)bestPath.get(1).getSpace();
+//					
+//					nextEdge = nextEP.getEdge();
+//					nextDest = (v == nextEdge.getStart()) ? nextEdge.getEnd() : nextEdge.getStart();
+//					
+//					nextState = CarState.EDGE;
+//					
+//				}
 				
 			} else {
 				// no way to get to any sink, crash self now
@@ -310,10 +314,6 @@ public class Car {
 	}
 	
 	public Path getNextPath() {
-//		if (state == CarState.CRASHED || state == CarState.SINKED) {
-//			throw new IllegalArgumentException();
-//		}
-		
 		return nextPath;
 	}
 	

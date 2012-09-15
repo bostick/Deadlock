@@ -9,8 +9,8 @@ public class VertexPosition extends Position {
 		this.v = v;
 	}
 	
-	public Vertex getVertex() {
-		return v;
+	public String toString() {
+		return v.toString();
 	}
 	
 	@Override
@@ -23,6 +23,10 @@ public class VertexPosition extends Position {
 			VertexPosition b = (VertexPosition)o;
 			return (v == b.v);
 		}
+	}
+	
+	public Vertex getVertex() {
+		return v;
 	}
 	
 	/**
@@ -43,7 +47,9 @@ public class VertexPosition extends Position {
 			Edge e = (Edge)c;
 			
 			double totalEdgeLength = e.getTotalLength();
-			if (DMath.doubleEquals(dist, totalEdgeLength) || dist > totalEdgeLength) {
+			if (DMath.doubleEquals(dist, totalEdgeLength)) {
+				return new VertexPosition(dest);
+			} else if (dist > totalEdgeLength) {
 				throw new TravelException();
 			}
 			
@@ -70,60 +76,5 @@ public class VertexPosition extends Position {
 		}
 		
 	}
-	
-
-//	private Position travelForward(Edge e, double dist) throws TravelException {
-//		
-//		int index = 0;
-//		double param = 0.0;
-//		double distanceToTravel = dist;
-//		
-//		while (true) {
-//			Point a = e.getPoint(index);
-//			Point b = e.getPoint(index+1);
-//			
-//			Point c = Point.point(a, b, param);
-//			double distanceToEndOfSegment = Point.distance(c, b);
-//			
-//			if (DMath.doubleEquals(distanceToTravel, distanceToEndOfSegment)) {
-//				return new EdgePosition(e, index+1, 0.0, e.getEnd());
-//			} else if (distanceToTravel < distanceToEndOfSegment) {
-//				double newParam = Point.travelForward(a, b, param, distanceToTravel);
-//				return new EdgePosition(e, index, newParam, e.getEnd());
-//			} else {
-//				index++;
-//				param = 0.0;
-//				distanceToTravel -= distanceToEndOfSegment;
-//			}
-//		}
-//	}
-//	
-//	private Position travelBackward(Edge e, double dist) throws TravelException {
-//		
-//		int index = e.size()-2;
-//		double param = 1.0;
-//		double distanceToTravel = dist;
-//		
-//		while (true) {
-//			Point a = e.getPoint(index);
-//			Point b = e.getPoint(index+1);
-//			
-//			Point c = Point.point(a, b, param);
-//			double distanceToStartOfSegment = Point.distance(c, a);
-//			
-//			if (DMath.doubleEquals(distanceToTravel, distanceToStartOfSegment)) {
-//				return new EdgePosition(e, index, 0.0, e.getStart());
-//			} else if (distanceToTravel < distanceToStartOfSegment) {
-//				double newParam = Point.travelBackward(a, b, param, distanceToTravel);
-//				return new EdgePosition(e, index, newParam, e.getStart());
-//			} else {
-//				index--;
-//				param = 1.0;
-//				distanceToTravel -= distanceToStartOfSegment;
-//			}
-//		}
-//		
-//	}
-	
 
 }

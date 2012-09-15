@@ -14,10 +14,6 @@ public class EdgePosition extends Position {
 	private double distanceToStartOfEdge = -1;
 	private double distanceToEndOfEdge = -1;
 	
-//	public EdgePosition(Edge e, int index, double param) {
-//		this(e, index, param, 0);
-//	}
-	
 	public EdgePosition(Edge e, int index, double param, Vertex dest) {
 		super(Point.point(e.getPoint(index), e.getPoint(index+1), param), e);
 		
@@ -65,6 +61,10 @@ public class EdgePosition extends Position {
 	
 	public Vertex getDest() {
 		return dest;
+	}
+	
+	public String toString() {
+		return e + ": " + distanceToStartOfEdge;
 	}
 	
 	@Override
@@ -166,8 +166,6 @@ public class EdgePosition extends Position {
 	
 	private static Position travelForward(Edge e, int index, double param, double dist) throws TravelException {
 		
-//		int index = getIndex();
-//		double param = getParam();
 		double distanceToTravel = dist;
 		
 		while (true) {
@@ -192,8 +190,6 @@ public class EdgePosition extends Position {
 	
 	private static Position travelBackward(Edge e, int index, double param, double dist) throws TravelException {
 		
-//		int index = getIndex();
-//		double param = getParam();
 		double distanceToTravel = dist;
 		
 		while (true) {

@@ -70,6 +70,18 @@ public class Vertex implements Driveable {
 		return common;
 	}
 	
+	public static Connector commonConnector(Vertex a, Vertex b) {
+		
+		List<Connector> common = commonConnectors(a, b);
+		
+		if (common.size() != 1) {
+			throw new IllegalArgumentException();
+		} else {
+			return common.get(0);
+		}
+		
+	}
+	
 	public void addEdge(Edge e) {
 		assert e != null;
 		if (removed) {

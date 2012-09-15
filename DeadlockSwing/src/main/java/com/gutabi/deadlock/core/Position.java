@@ -10,19 +10,11 @@ public abstract class Position {
 	
 	protected final Driveable d;
 	
-//	private final Position prevPos;
-//	private final Edge prevDirEdge;
-//	private final int prevDir;
-	
 	private final int hash;
 	
 	public Position(Point p, Driveable d) {
 		this.p = p;
 		this.d = d;
-		
-//		this.prevPos = prevPos;
-//		this.prevDirEdge = prevDirEdge;
-//		this.prevDir = prevDir;
 		
 		int h = 17;
 		h = 37 * h + p.hashCode();
@@ -166,21 +158,6 @@ public abstract class Position {
 					}
 					
 					throw new IllegalArgumentException();
-//					List<Edge> eds = Vertex.commonEdges(aV, bV);
-//					if (eds.size() != 1) {
-//						throw new IllegalArgumentException();
-//					}
-//					Edge e = eds.get(0);
-//					
-//					if (e.isLoop()) {
-//						throw new IllegalArgumentException();
-//					}
-//					
-//					if (aV == e.getStart()) {
-//						return -1;
-//					} else {
-//						return 1;
-//					}
 					
 				}
 			}

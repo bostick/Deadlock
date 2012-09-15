@@ -16,7 +16,11 @@ public class Path {
 		
 		calculateTotalDistanceAndTime(poss);
 		
-		//assert check();
+		assert check();
+	}
+	
+	public String toString() {
+		return poss.toString();
 	}
 	
 	private void calculateTotalDistanceAndTime(List<STPosition> poss) {
@@ -132,12 +136,12 @@ public class Path {
 		return totalTime;
 	}
 	
-//	private boolean check() {
-//		for (int i = 1; i < poss.size(); i++) {
-//			Position cur = poss.get(i);
-//			Position prev = poss.get(i-1);
-//			assert cur.prevPos == prev;
-//		}
-//		return true;
-//	}
+	private boolean check() {
+		for (int i = 1; i < poss.size(); i++) {
+			STPosition cur = poss.get(i);
+			STPosition prev = poss.get(i-1);
+			assert cur.getTime() > prev.getTime();
+		}
+		return true;
+	}
 }

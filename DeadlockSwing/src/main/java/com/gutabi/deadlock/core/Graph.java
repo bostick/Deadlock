@@ -146,7 +146,7 @@ public class Graph {
 	
 	
 	double[][] distances;
-	Vertex[][] next;
+	Vertex[][] nextHighest;
 	
 	public void calculateChoices() {
 		
@@ -167,7 +167,7 @@ public class Graph {
 		}
 		
 		distances = new double[vertexCount][vertexCount];
-		next = new Vertex[vertexCount][vertexCount];
+		nextHighest = new Vertex[vertexCount][vertexCount];
 		
 		/*
 		 * initialize
@@ -211,7 +211,7 @@ public class Graph {
 				for (int j = 0; j < vertexCount; j++){
 					if (distances[i][k] + distances[k][j] < distances[i][j]) {
 						distances[i][j] = distances[i][k] + distances[k][j];
-						next[i][j] = vertexIDs[k];
+						nextHighest[i][j] = vertexIDs[k];
 					}
 				}
 			}
@@ -219,7 +219,7 @@ public class Graph {
 		
 	}
 	
-	public Path shortestPath(final Vertex start, Vertex end) {
+	public List<Vertex> shortestPath(final Vertex start, Vertex end) {
 		if (start == end) {
 			throw new IllegalArgumentException();
 		}
@@ -236,41 +236,28 @@ public class Graph {
 		vs.addAll(intermediateVertices(start, end));
 		vs.add(end);
 		
-		List<STPosition> poss = new ArrayList<STPosition>();
-		VertexPosition last = new VertexPosition(start);
-		poss.add(new STPosition(last, 0));
-		for (int i = 1; i < vs.size(); i++) {
-			Vertex a = vs.get(i-1);
-			Vertex b = vs.get(i);
-			
-			double d = distances[a.graphID][b.graphID];
-			
-			Connector cc = null;
-			for (Connector c : Vertex.commonConnectors(a, b)) {
-				
-				if (c instanceof Edge) {
-					Edge e = (Edge)c;
-					if (DMath.doubleEquals(e.getTotalLength(), d)) {
-						cc = e;
-						break;
-					}
-				} else {
-					Hub h = (Hub)c;
-					if (DMath.doubleEquals(Point.distance(a.getPoint(), b.getPoint()), d)) {
-						cc = h;
-						break;
-					}
-				}
-				
-			}
-			assert cc != null;
-			
-			//poss.add(new VertexPosition(a));
-			last = new VertexPosition(b);
-			poss.add(new STPosition(last, 0));
+		return vs;
+	}
+	
+	/**
+	 * returns the next choice to make for the shortest path from start to end
+	 */
+	public Vertex shortestPathChoice(final Vertex start, Vertex end) {
+		
+		int sid = start.graphID;
+		int eid = end.graphID;
+		
+		if (distances[sid][eid] == Double.POSITIVE_INFINITY) {
+			return null;
 		}
 		
-		return new Path(poss);
+		Vertex n = nextHighest[sid][eid];
+		
+		if (n == null) {
+			return end;
+		}
+		
+		return shortestPathChoice(start, n);
 	}
 	
 	private List<Vertex> intermediateVertices(Vertex start, Vertex end) {
@@ -278,7 +265,7 @@ public class Graph {
 		int sid = start.graphID;
 		int eid = end.graphID;
 		
-		Vertex n = next[sid][eid];
+		Vertex n = nextHighest[sid][eid];
 		
 		if (n == null) {
 			return new ArrayList<Vertex>();

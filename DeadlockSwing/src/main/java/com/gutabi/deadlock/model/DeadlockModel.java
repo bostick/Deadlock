@@ -10,7 +10,6 @@ import com.gutabi.deadlock.core.Edge;
 import com.gutabi.deadlock.core.Graph;
 import com.gutabi.deadlock.core.Hub;
 import com.gutabi.deadlock.core.Intersection;
-import com.gutabi.deadlock.core.Path;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.Position;
 import com.gutabi.deadlock.core.Segment;
@@ -23,13 +22,13 @@ public class DeadlockModel {
 	public final int WORLD_WIDTH = 2048;
 	public final int WORLD_HEIGHT = 2048;
 	
-	public double DISTANCE_PER_TIMESTEP = 5.0;
+	public double DISTANCE_PER_TIMESTEP = 3.0;
 	
 	/*
 	 * spawn cars every SPAWN_FREQUENCY time steps
 	 * -1 means no spawning
 	 */
-	public int SPAWN_FREQUENCY = 5;
+	public int SPAWN_FREQUENCY = 10;
 	
 	public long WAIT = 40;
 	
@@ -144,8 +143,12 @@ public class DeadlockModel {
 		this.mode = mode;
 	}
 	
-	public Path shortestPath(Vertex start, Vertex end) {
-		return graph.shortestPath(start, end);
+//	public Path shortestPath(Vertex start, Vertex end) {
+//		return graph.shortestPath(start, end);
+//	}
+	
+	public Vertex shortestPathChoice(Vertex start, Vertex end) {
+		return graph.shortestPathChoice(start, end);
 	}
 	
 	public double distanceTo(Vertex start, Vertex end) {
