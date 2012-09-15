@@ -5,6 +5,7 @@ import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 import static org.junit.Assert.assertEquals;
 
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -24,6 +25,14 @@ import com.gutabi.deadlock.core.Intersection;
 
 public class TestSimpleGraphs {
 	
+	static Point OFFSET = new Point(0, 0);
+	
+	Runnable empty = new Runnable(){
+		@Override
+		public void run() {
+			;
+		}};
+	
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 		
@@ -36,6 +45,28 @@ public class TestSimpleGraphs {
 		
 	}
 
+	public void testPressed(Point p) throws Exception {
+		Point pp = p.add(OFFSET);
+		CONTROLLER.mc.pressed(new MouseEvent(null, 0, 0, 0, (int)pp.getX(), (int)pp.getY(), 0, false));
+		CONTROLLER.queueAndWait(empty);
+		Thread.sleep(10);
+		VIEW.repaint();
+	}
+	
+	public void testDragged(Point p) throws Exception {
+		Point pp = p.add(OFFSET);
+		CONTROLLER.mc.dragged(new MouseEvent(null, 0, 0, 0, (int)pp.getX(), (int)pp.getY(), 0, false));
+		CONTROLLER.queueAndWait(empty);
+		Thread.sleep(10);
+		VIEW.repaint();
+	}
+	
+	public void testReleased() throws Exception {
+		CONTROLLER.mc.released(new MouseEvent(null, 0, 0, 0, 0, 0, 0, false));
+		CONTROLLER.queueAndWait(empty);
+		Thread.sleep(10);
+	}
+	
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
 	}
@@ -89,14 +120,14 @@ public class TestSimpleGraphs {
 	@Test
 	public void test1() throws Exception {
 
-		CONTROLLER.mc.pressed(new Point(0, 0));
-		CONTROLLER.mc.dragged(new Point(2, 3));
-		CONTROLLER.mc.dragged(new Point(1, 0));
-		CONTROLLER.mc.released();
+		testPressed(new Point(0, 0));
+		testDragged(new Point(2, 3));
+		testDragged(new Point(1, 0));
+		testReleased();
 
-		CONTROLLER.mc.pressed(new Point(3, 0));
-		CONTROLLER.mc.dragged(new Point(0, 2));
-		CONTROLLER.mc.released();
+		testPressed(new Point(3, 0));
+		testDragged(new Point(0, 2));
+		testReleased();
 		
 		SwingUtilities.invokeAndWait(new Runnable() {
 			@Override

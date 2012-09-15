@@ -4,6 +4,7 @@ import static com.gutabi.deadlock.controller.DeadlockController.CONTROLLER;
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
+import java.awt.event.MouseEvent;
 import java.util.List;
 
 import javax.swing.SwingUtilities;
@@ -22,6 +23,14 @@ import com.gutabi.deadlock.view.DeadlockView;
 
 public class TestDraggingFuzz {
 	
+	static Point OFFSET = new Point(0, 0);
+	
+	Runnable empty = new Runnable(){
+		@Override
+		public void run() {
+			;
+		}};
+	
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 		
@@ -36,7 +45,30 @@ public class TestDraggingFuzz {
 		VIEW.panel.requestFocusInWindow();
 		
 	}
-
+	
+	public void testPressed(Point p) throws Exception {
+		Point pp = p.add(OFFSET);
+		CONTROLLER.mc.pressed(new MouseEvent(null, 0, 0, 0, (int)pp.getX(), (int)pp.getY(), 0, false));
+		CONTROLLER.queueAndWait(empty);
+		Thread.sleep(10);
+		VIEW.repaint();
+	}
+	
+	public void testDragged(Point p) throws Exception {
+		Point pp = p.add(OFFSET);
+		CONTROLLER.mc.dragged(new MouseEvent(null, 0, 0, 0, (int)pp.getX(), (int)pp.getY(), 0, false));
+		CONTROLLER.queueAndWait(empty);
+		Thread.sleep(10);
+		VIEW.repaint();
+	}
+	
+	public void testReleased() throws Exception {
+		CONTROLLER.mc.released(new MouseEvent(null, 0, 0, 0, 0, 0, 0, false));
+		CONTROLLER.queueAndWait(empty);
+		Thread.sleep(10);
+		VIEW.repaint();
+	}
+	
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
 	}
@@ -90,18 +122,18 @@ public class TestDraggingFuzz {
 				int n = randomInt();
 				
 				Point p = randomPoint();
-				CONTROLLER.mc.pressed(p);
+				testPressed(p);
 				VIEW.repaint();
 				
 				for (int i = 0; i < n; i++) {
 					double rad = randomRadian();
 					double d = randomDist();
 					p = new Point((int)(Math.cos(rad) * d) + p.getX(), (int)(Math.sin(rad) * d) + p.getY());
-					CONTROLLER.mc.dragged(p);
+					testDragged(p);
 					VIEW.repaint();
 				}
 				
-				CONTROLLER.mc.released();
+				testReleased();
 				
 				VIEW.repaint();
 				

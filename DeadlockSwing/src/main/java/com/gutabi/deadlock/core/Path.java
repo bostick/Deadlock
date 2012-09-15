@@ -3,29 +3,39 @@ package com.gutabi.deadlock.core;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.gutabi.deadlock.core.Position;
-
 public class Path {
 	
-	private final List<Position> poss;
+	private final List<STPosition> poss;
 	
-	private final double total;
+	private double totalDistance;
+	private double totalTime;
 	
-	public Path(List<Position> poss) {
+	public Path(List<STPosition> poss) {
 		
 		this.poss = poss;
 		
-		double t = 0;
+		calculateTotalDistanceAndTime(poss);
+		
+		//assert check();
+	}
+	
+	private void calculateTotalDistanceAndTime(List<STPosition> poss) {
+		
+		double accDist = 0.0;
+		double accTime = 0.0;
+		
 		for (int i = 0; i < poss.size()-1; i++) {
-			Position a = poss.get(i);
-			Position b = poss.get(i+1);
+			STPosition a = poss.get(i);
+			STPosition b = poss.get(i+1);
 			
 			double dist;
-			if (a instanceof VertexPosition) {
-				if (b instanceof VertexPosition) {
+			double time = b.t - a.t;
+			
+			if (a.s instanceof VertexPosition) {
+				if (b.s instanceof VertexPosition) {
 					
-					VertexPosition aa = (VertexPosition)a;
-					VertexPosition bb = (VertexPosition)b;
+					VertexPosition aa = (VertexPosition)a.s;
+					VertexPosition bb = (VertexPosition)b.s;
 					
 					List<Connector> cons = Vertex.commonConnectors(aa.getVertex(), bb.getVertex());
 					assert cons.size() == 1;
@@ -36,8 +46,8 @@ public class Path {
 					dist = e.getTotalLength();
 					
 				} else {
-					VertexPosition aa = (VertexPosition)a;
-					EdgePosition bb = (EdgePosition)b;
+					VertexPosition aa = (VertexPosition)a.s;
+					EdgePosition bb = (EdgePosition)b.s;
 					
 					Edge e = bb.getEdge();
 					if (aa.getVertex() == e.getStart()) {
@@ -48,9 +58,9 @@ public class Path {
 					}
 				}
 			} else {
-				if (b instanceof VertexPosition) {
-					EdgePosition aa = (EdgePosition)a;
-					VertexPosition bb = (VertexPosition)b;
+				if (b.s instanceof VertexPosition) {
+					EdgePosition aa = (EdgePosition)a.s;
+					VertexPosition bb = (VertexPosition)b.s;
 					
 					Edge e = aa.getEdge();
 					if (bb.getVertex() == e.getStart()) {
@@ -61,8 +71,8 @@ public class Path {
 					}
 					
 				} else {
-					EdgePosition aa = (EdgePosition)a;
-					EdgePosition bb = (EdgePosition)b;
+					EdgePosition aa = (EdgePosition)a.s;
+					EdgePosition bb = (EdgePosition)b.s;
 					
 					Edge ae = aa.getEdge();
 					Edge be = bb.getEdge();
@@ -72,14 +82,15 @@ public class Path {
 				}
 			}
 			
-			t += dist;
+			accDist += dist;
+			accTime += time;
 		}
-		total = t;
 		
-		//assert check();
+		totalDistance = accDist;
+		totalTime = accTime;
 	}
 	
-	public Position get(int i) {
+	public STPosition get(int i) {
 		return poss.get(i);
 	}
 	
@@ -87,10 +98,10 @@ public class Path {
 		return poss.size();
 	}
 	
-	public Path crash(Position pos, int pIndex) {
+	public Path crash(STPosition pos, int pIndex) {
 		
-		List<Position> newPath = new ArrayList<Position>();
-		Position last = null;
+		List<STPosition> newPath = new ArrayList<STPosition>();
+		STPosition last = null;
 		for (int i = 0; i < pIndex; i++) {
 			last = poss.get(i);
 			newPath.add(last);
@@ -103,20 +114,23 @@ public class Path {
 		return new Path(newPath);
 	}
 	
-	public Path append(Position q) {
-		List<Position> newPoss = new ArrayList<Position>(poss);
+	public Path append(STPosition q) {
+		List<STPosition> newPoss = new ArrayList<STPosition>(poss);
 		newPoss.add(q);
 		return new Path(newPoss);
 	}
 	
-	public Position getLastPosition() {
+	public STPosition getLastPosition() {
 		return poss.get(poss.size()-1);
 	}
 	
-	public double totalLength() {
-		return total;
+	public double totalDistance() {
+		return totalDistance;
 	}
 	
+	public double totalTime() {
+		return totalTime;
+	}
 	
 //	private boolean check() {
 //		for (int i = 1; i < poss.size(); i++) {

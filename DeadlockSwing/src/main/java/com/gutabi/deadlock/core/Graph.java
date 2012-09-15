@@ -236,9 +236,9 @@ public class Graph {
 		vs.addAll(intermediateVertices(start, end));
 		vs.add(end);
 		
-		List<Position> poss = new ArrayList<Position>();
+		List<STPosition> poss = new ArrayList<STPosition>();
 		VertexPosition last = new VertexPosition(start);
-		poss.add(last);
+		poss.add(new STPosition(last, 0));
 		for (int i = 1; i < vs.size(); i++) {
 			Vertex a = vs.get(i-1);
 			Vertex b = vs.get(i);
@@ -267,7 +267,7 @@ public class Graph {
 			
 			//poss.add(new VertexPosition(a));
 			last = new VertexPosition(b);
-			poss.add(last);
+			poss.add(new STPosition(last, 0));
 		}
 		
 		return new Path(poss);

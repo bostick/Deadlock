@@ -5,6 +5,7 @@ import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 import static org.junit.Assert.assertTrue;
 
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,6 +25,8 @@ import com.gutabi.deadlock.model.CarState;
 
 @SuppressWarnings("serial")
 public class TestSimulating {
+	
+	static Point OFFSET = new Point(0, 0);
 	
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
@@ -67,26 +70,27 @@ public class TestSimulating {
 			;
 		}};
 	
-	public void testPressed(Point p) throws Exception {
-		CONTROLLER.mc.pressed(p);
-		CONTROLLER.queueAndWait(empty);
-		Thread.sleep(10);
-		VIEW.repaint();
-	}
-	
-	public void testDragged(Point p) throws Exception {
-		CONTROLLER.mc.dragged(p);
-		CONTROLLER.queueAndWait(empty);
-		Thread.sleep(10);
-		VIEW.repaint();
-	}
-	
-	public void testReleased() throws Exception {
-		CONTROLLER.mc.released();
-		CONTROLLER.queueAndWait(empty);
-		Thread.sleep(10);
-		VIEW.repaint();
-	}
+		public void testPressed(Point p) throws Exception {
+			Point pp = p.add(OFFSET);
+			CONTROLLER.mc.pressed(new MouseEvent(null, 0, 0, 0, (int)pp.getX(), (int)pp.getY(), 0, false));
+			CONTROLLER.queueAndWait(empty);
+			Thread.sleep(10);
+			VIEW.repaint();
+		}
+		
+		public void testDragged(Point p) throws Exception {
+			Point pp = p.add(OFFSET);
+			CONTROLLER.mc.dragged(new MouseEvent(null, 0, 0, 0, (int)pp.getX(), (int)pp.getY(), 0, false));
+			CONTROLLER.queueAndWait(empty);
+			Thread.sleep(10);
+			VIEW.repaint();
+		}
+		
+		public void testReleased() throws Exception {
+			CONTROLLER.mc.released(new MouseEvent(null, 0, 0, 0, 0, 0, 0, false));
+			CONTROLLER.queueAndWait(empty);
+			Thread.sleep(10);
+		}
 	
 	
 	List<Edge> edges;

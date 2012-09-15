@@ -12,6 +12,7 @@ import com.gutabi.deadlock.core.Edge;
 import com.gutabi.deadlock.core.EdgePosition;
 import com.gutabi.deadlock.core.Path;
 import com.gutabi.deadlock.core.Position;
+import com.gutabi.deadlock.core.STPosition;
 import com.gutabi.deadlock.core.Sink;
 import com.gutabi.deadlock.core.Source;
 import com.gutabi.deadlock.core.Vertex;
@@ -51,13 +52,14 @@ public class Car {
 	public boolean updateNext() {
 		
 		nextDistanceToMove = MODEL.DISTANCE_PER_TIMESTEP;
+		double time = 0.0;
 		
 		inner:
 		while (true) {
 			
 			switch (nextState) {
 			case EDGE: {
-				Position pos = getLastNextPosition();
+				Position pos = getLastNextPosition().getSpace();
 				Edge e = nextEdge;
 				Vertex dest = nextDest;
 				double distanceLeftOnEdge;
@@ -68,12 +70,13 @@ public class Car {
 				}
 				
 				Position nextPos;
+				double nextDist = Math.min(nextDistanceToMove, distanceLeftOnEdge);
 				if (pos instanceof EdgePosition) {
-					nextPos = ((EdgePosition)pos).travel(nextDest, Math.min(nextDistanceToMove, distanceLeftOnEdge));
+					nextPos = ((EdgePosition)pos).travel(nextDest, nextDist);
 				} else {
-					nextPos = ((VertexPosition)pos).travel(e, nextDest, Math.min(nextDistanceToMove, distanceLeftOnEdge));
+					nextPos = ((VertexPosition)pos).travel(e, nextDest, nextDist);
 				}
-				nextPathAdd(nextPos);
+				nextPathAdd(new STPosition(nextPos, time + (nextDist / MODEL.DISTANCE_PER_TIMESTEP)));
 				
 				if (DMath.doubleEquals(nextDistanceToMove, distanceLeftOnEdge)) {
 					
@@ -81,9 +84,10 @@ public class Car {
 					//Vertex v = (dir == 1) ? e.getEnd() : e.getStart();
 					nextState = CarState.VERTEX;
 					
-					assert getLastNextPosition() instanceof VertexPosition;
+					assert getLastNextPosition().getSpace() instanceof VertexPosition;
 					
 					nextDistanceToMove = 0.0;
+					time = 1.0;
 					
 					if (nextDest instanceof Sink) {
 						nextState = CarState.SINKED;
@@ -95,9 +99,10 @@ public class Car {
 					//Vertex v = (dir == 1) ? e.getEnd() : e.getStart();
 					nextState = CarState.VERTEX;
 					
-					assert getLastNextPosition() instanceof VertexPosition;
+					assert getLastNextPosition().getSpace() instanceof VertexPosition;
 					
 					nextDistanceToMove -= distanceLeftOnEdge;
+					time += (nextDist / MODEL.DISTANCE_PER_TIMESTEP);
 					
 					if (nextDest instanceof Sink) {
 						nextState = CarState.SINKED;
@@ -106,12 +111,13 @@ public class Car {
 					
 				} else {
 					nextDistanceToMove = 0.0;
+					time = 1.0;
 				}
 				
 				break;
 			}
 			case VERTEX: {
-				VertexPosition pos = (VertexPosition)getLastNextPosition();
+				VertexPosition pos = (VertexPosition)getLastNextPosition().getSpace();
 				boolean moving = nextChoice(pos);
 				if (!moving) {
 					nextDistanceToMove = 0.0;
@@ -203,8 +209,8 @@ public class Car {
 				//VertexPosition sp = new VertexPosition(s, null, null, 0);
 				Path path = MODEL.shortestPath(v, s);
 				if (path != null) {
-					if (path.totalLength() < bestDistance) {
-						bestDistance = path.totalLength();
+					if (path.totalDistance() < bestDistance) {
+						bestDistance = path.totalDistance();
 						bestPath = path; 
 					}
 				}
@@ -212,11 +218,11 @@ public class Car {
 			
 			if (bestPath != null) {
 				
-				assert bestPath.get(0).equals(vp);
+				assert bestPath.get(0).getSpace().equals(vp);
 				
-				if (bestPath.get(1) instanceof VertexPosition) {
+				if (bestPath.get(1).getSpace() instanceof VertexPosition) {
 					
-					VertexPosition vp1 = (VertexPosition)bestPath.get(1);
+					VertexPosition vp1 = (VertexPosition)(bestPath.get(1).getSpace());
 					
 					List<Connector> cons = Vertex.commonConnectors(vp.getVertex(), vp1.getVertex());
 					assert cons.size() == 1;
@@ -231,7 +237,7 @@ public class Car {
 					
 				} else {
 					
-					EdgePosition nextEP = (EdgePosition)bestPath.get(1);
+					EdgePosition nextEP = (EdgePosition)bestPath.get(1).getSpace();
 					
 					nextEdge = nextEP.getEdge();
 					nextDest = (v == nextEdge.getStart()) ? nextEdge.getEnd() : nextEdge.getStart();
@@ -254,9 +260,9 @@ public class Car {
 	
 	
 	public void updateCurrentFromNext() {
-		final Position p = getLastNextPosition();
+		final Position p = getLastNextPosition().getSpace();
 		setPosition(p);
-		nextPath = new Path(new ArrayList<Position>(){{add(p);}});
+		nextPath = new Path(new ArrayList<STPosition>(){{add(new STPosition(p, 0.0));}});
 		CarState s = nextState;
 		setState(s);
 	}
@@ -282,7 +288,7 @@ public class Car {
 		this.pos = pos;
 	}
 	
-	public void nextPathAdd(Position pos) {
+	public void nextPathAdd(STPosition pos) {
 		if (state == CarState.CRASHED || state == CarState.SINKED) {
 			throw new IllegalArgumentException();
 		}
@@ -294,7 +300,7 @@ public class Car {
 	 * with pos (if they are not already equal)
 	 * 
 	 */
-	public void nextPathCrash(Position pos, int pIndex) {
+	public void nextPathCrash(STPosition pos, int pIndex) {
 		if (state == CarState.CRASHED || state == CarState.SINKED) {
 			throw new IllegalArgumentException();
 		}
@@ -304,14 +310,14 @@ public class Car {
 	}
 	
 	public Path getNextPath() {
-		if (state == CarState.CRASHED || state == CarState.SINKED) {
-			throw new IllegalArgumentException();
-		}
+//		if (state == CarState.CRASHED || state == CarState.SINKED) {
+//			throw new IllegalArgumentException();
+//		}
 		
 		return nextPath;
 	}
 	
-	public Position getLastNextPosition() {
+	public STPosition getLastNextPosition() {
 		return nextPath.getLastPosition();
 	}
 	
