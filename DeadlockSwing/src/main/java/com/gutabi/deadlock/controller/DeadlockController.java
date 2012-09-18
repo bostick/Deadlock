@@ -24,7 +24,6 @@ import com.gutabi.deadlock.core.EdgePosition;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.Position;
 import com.gutabi.deadlock.core.Vertex;
-import com.gutabi.deadlock.core.VertexPosition;
 
 public class DeadlockController implements ActionListener {
 	
@@ -201,25 +200,12 @@ public class DeadlockController implements ActionListener {
 					
 					if (lastReleaseTime - lastPressTime < 500 && lastDragWorldPoint == null) {
 						// click
-						if (lastPressWorldPoint.getY() <= 10 || lastPressWorldPoint.getX() <= 10) {
-							// source
-							
-							MODEL.addSource(lastPressWorldPoint);
-							
-							VIEW.renderBackground();
-							VIEW.repaint();
-							
-						} else if (lastPressWorldPoint.getX() >= MODEL.WORLD_WIDTH-10 || lastPressWorldPoint.getY() >= MODEL.WORLD_HEIGHT-10) {
-							// sink
-							
-							MODEL.addSink(lastPressWorldPoint);
-							
-							VIEW.renderBackground();
-							VIEW.repaint();
-							
-						} else {
-							
-						}
+						
+						MODEL.addVertexTop(lastPressWorldPoint);
+						
+						VIEW.renderBackground();
+						VIEW.repaint();
+						
 					}
 					
 					break;
@@ -304,7 +290,7 @@ public class DeadlockController implements ActionListener {
 						Edge e = (Edge)MODEL.hilited;
 						
 						if (!e.isStandAlone()) {
-							Position middle = new VertexPosition(e.getStart()).travel(e, e.getEnd(), e.getTotalLength()/2);
+							Position middle = e.getStart().travel(e, e.getEnd(), e.getTotalLength()/2);
 							p = middle.getPoint();
 						} else {
 							p = e.getPoint(0);
@@ -317,8 +303,8 @@ public class DeadlockController implements ActionListener {
 					Position closest = MODEL.closestPosition(p);
 					if (closest != null) {
 						
-						if (closest instanceof VertexPosition) {
-							MODEL.hilited = ((VertexPosition)closest).getVertex();
+						if (closest instanceof Vertex) {
+							MODEL.hilited = ((Vertex)closest);
 						} else {
 							MODEL.hilited = ((EdgePosition)closest).getEdge();
 						}
@@ -398,7 +384,7 @@ public class DeadlockController implements ActionListener {
 			switch (MODEL.getMode()) {
 			case IDLE:
 				
-				MODEL.addHub(lastPressWorldPoint);
+//				MODEL.addHub(lastPressWorldPoint);
 				
 				VIEW.renderBackground();
 				VIEW.repaint();

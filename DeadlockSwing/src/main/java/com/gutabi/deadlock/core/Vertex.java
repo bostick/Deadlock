@@ -1,9 +1,11 @@
 package com.gutabi.deadlock.core;
 
+import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class Vertex implements Driveable {
+public class Vertex extends Position implements Driveable {
 	
 	private final Point p;
 	
@@ -17,12 +19,17 @@ public class Vertex implements Driveable {
 	int graphID;
 	
 	public Vertex(Point p) {
+		
 		this.p = p;
 		
 		int h = 17;
 		h = 37 * h + p.hashCode();
 		hash = h;
 		
+	}
+	
+	public Driveable getDriveable() {
+		return this;
 	}
 	
 	public int hashCode() {
@@ -46,6 +53,80 @@ public class Vertex implements Driveable {
 	public String toString() {
 		return "V " + p;
 	}
+	
+	
+	
+	/**
+	 * the specific way to travel
+	 */
+	public Position travel(Connector c, Vertex dest, double dist) {
+		if (!(eds.contains(c) || hubs.contains(c))) {
+			throw new IllegalArgumentException();
+		}
+		if (DMath.doubleEquals(dist, 0.0)) {
+			return this;
+		}
+		if (dist < 0.0) {
+			throw new IllegalArgumentException();
+		}
+		
+		if (c instanceof Edge) {
+			Edge e = (Edge)c;
+			
+			double totalEdgeLength = e.getTotalLength();
+			if (DMath.doubleEquals(dist, totalEdgeLength)) {
+				return dest;
+			} else if (dist > totalEdgeLength) {
+				throw new TravelException();
+			}
+			
+			if (this == e.getStart()) {
+				assert dest == e.getEnd();
+				return EdgePosition.travelFromStart(e, dist);
+			} else {
+				assert this == e.getEnd();
+				assert dest == e.getStart();
+				return EdgePosition.travelFromEnd(e, dist);
+			}
+			
+		} else {
+			assert false;
+			return null;
+//			Hub h = (Hub)c;
+//			
+//			double totalHubLength = Point.distance(p, dest.getPoint());
+//			if (DMath.doubleEquals(dist, totalHubLength) || dist > totalHubLength) {
+//				throw new TravelException();
+//			}
+//			
+//			travel;
+		}
+		
+	}
+	
+	public double distanceTo(Position b) {
+		if (b instanceof Vertex) {
+			Vertex bb = (Vertex)b;
+			return MODEL.distanceBetweenVertices(this, bb);
+		} else {
+			EdgePosition bb = (EdgePosition)b;
+			
+			double bbStartPath = MODEL.distanceBetweenVertices(this, bb.getEdge().getStart());
+			double bbEndPath = MODEL.distanceBetweenVertices(this, bb.getEdge().getEnd());
+			
+			return Math.min(bbStartPath + bb.distanceToStartOfEdge(), bbEndPath + bb.distanceToEndOfEdge());
+		}
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	public static List<Connector> commonConnectors(Vertex a, Vertex b) {
 		

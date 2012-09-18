@@ -1,6 +1,10 @@
 package com.gutabi.deadlock.core;
 
+import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
+
 public class EdgePosition extends Position {
+	
+	private Point p;
 	
 	private final Edge e;
 	private final int index;
@@ -15,7 +19,6 @@ public class EdgePosition extends Position {
 	private double distanceToEndOfEdge = -1;
 	
 	public EdgePosition(Edge e, int index, double param, Vertex dest) {
-		super(Point.point(e.getPoint(index), e.getPoint(index+1), param), e);
 		
 		if (index < 0 || index >= e.size()-1) {
 			throw new IllegalArgumentException();
@@ -27,6 +30,7 @@ public class EdgePosition extends Position {
 			throw new IllegalArgumentException();
 		}
 		
+		this.p = Point.point(e.getPoint(index), e.getPoint(index+1), param);
 		this.e = e;
 		this.index = index;
 		this.param = param;
@@ -47,7 +51,15 @@ public class EdgePosition extends Position {
 		distanceToEndOfEdge = e.getTotalLength() - distanceToStartOfEdge;
 	}
 	
+	public Point getPoint() {
+		return p;
+	}
+	
 	public Edge getEdge() {
+		return e;
+	}
+	
+	public Driveable getDriveable() {
 		return e;
 	}
 	
@@ -78,6 +90,57 @@ public class EdgePosition extends Position {
 			return (e == b.e) && (index == b.index) && (param == b.param);
 		}
 	}
+	
+	
+	public double distanceTo(Position b) {
+		if (b instanceof Vertex) {
+			Vertex bb = (Vertex)b;
+			
+			double aaStartPath = MODEL.distanceBetweenVertices(e.getStart(), bb);
+			double aaEndPath = MODEL.distanceBetweenVertices(e.getEnd(), bb);
+			
+			return Math.min(aaStartPath + distanceToStartOfEdge(), aaEndPath + distanceToEndOfEdge());
+		} else {
+			EdgePosition aa = (EdgePosition)this;
+			EdgePosition bb = (EdgePosition)b;
+			
+			if (aa.getEdge() == bb.getEdge()) {
+				return Math.abs(aa.distanceToStartOfEdge() - bb.distanceToStartOfEdge());
+			}
+			
+			double startStartPath = MODEL.distanceBetweenVertices(aa.getEdge().getStart(), bb.getEdge().getStart());
+			double startEndPath = MODEL.distanceBetweenVertices(aa.getEdge().getStart(), bb.getEdge().getEnd());
+			double endStartPath = MODEL.distanceBetweenVertices(aa.getEdge().getEnd(), bb.getEdge().getStart());
+			double endEndPath = MODEL.distanceBetweenVertices(aa.getEdge().getEnd(), bb.getEdge().getEnd());
+			
+			double startStartDistance = startStartPath + aa.distanceToStartOfEdge() + bb.distanceToStartOfEdge();
+			double startEndDistance = startEndPath + aa.distanceToStartOfEdge() + bb.distanceToEndOfEdge();
+			double endStartDistance = endStartPath + aa.distanceToEndOfEdge() + bb.distanceToStartOfEdge();
+			double endEndDistance = endEndPath + aa.distanceToEndOfEdge() + bb.distanceToEndOfEdge();
+			
+			return Math.min(Math.min(startStartDistance, startEndDistance), Math.min(endStartDistance, endEndDistance));
+		}
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	public double distanceToEndOfEdge() {
 		return distanceToEndOfEdge;
@@ -134,7 +197,7 @@ public class EdgePosition extends Position {
 			
 			double distToEndOfEdge = distanceToEndOfEdge();
 			if (DMath.doubleEquals(dist, distToEndOfEdge)) {
-				return new VertexPosition(e.getEnd());
+				return e.getEnd();
 			} else if (dist > distToEndOfEdge) {
 				throw new TravelException();
 			}
@@ -145,7 +208,7 @@ public class EdgePosition extends Position {
 			
 			double distToStartOfEdge = distanceToStartOfEdge();
 			if (DMath.doubleEquals(dist, distToStartOfEdge)) {
-				return new VertexPosition(e.getStart());
+				return e.getStart();
 			} else if (dist > distToStartOfEdge) {
 				throw new TravelException();
 			}

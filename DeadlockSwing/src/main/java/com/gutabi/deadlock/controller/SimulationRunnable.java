@@ -8,7 +8,6 @@ import java.util.List;
 
 import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Edge;
-import com.gutabi.deadlock.core.EdgePosition;
 import com.gutabi.deadlock.core.Intersection;
 import com.gutabi.deadlock.core.Path;
 import com.gutabi.deadlock.core.Position;
@@ -16,11 +15,9 @@ import com.gutabi.deadlock.core.STPosition;
 import com.gutabi.deadlock.core.Sink;
 import com.gutabi.deadlock.core.Source;
 import com.gutabi.deadlock.core.Vertex;
-import com.gutabi.deadlock.core.VertexPosition;
 import com.gutabi.deadlock.model.Car;
 import com.gutabi.deadlock.model.CarState;
 import com.gutabi.deadlock.model.CrashInfo;
-import com.gutabi.deadlock.model.CrashSite;
 
 @SuppressWarnings("serial")
 public class SimulationRunnable implements Runnable {
@@ -43,7 +40,7 @@ public class SimulationRunnable implements Runnable {
 	@Override
 	public void run() {
 		
-		firstCrashSite = null;
+		firstCrashTime = -1;
 		crashes.clear();
 		
 		synchronized (MODEL) {
@@ -122,10 +119,15 @@ public class SimulationRunnable implements Runnable {
 		
 		List<Source> toRemove = new ArrayList<Source>();
 		
+		/*
+		 * if only moving cars are blocking a source, then a car will be spawned on the next spawn step that there are no blocking cars 
+		 */
+		
 		for (Car c : movingCarsCopy) {
 			Position carPos = c.getPosition();
 			for (Source s : sources) {
-				if (carPos.distanceTo(new VertexPosition(s)) <= 10) {
+				double dist = carPos.distanceTo(s);
+				if (DMath.doubleEquals(dist, 10.0) || dist < 10) {
 					toRemove.add(s);
 				}
 			}
@@ -133,7 +135,8 @@ public class SimulationRunnable implements Runnable {
 		for (Car c : crashedCarsCopy) {
 			Position carPos = c.getPosition();
 			for (Source s : sources) {
-				if (carPos.distanceTo(new VertexPosition(s)) <= 10) {
+				double dist = carPos.distanceTo(s);
+				if (DMath.doubleEquals(dist, 10.0) || dist < 10) {
 					toRemove.add(s);
 				}
 			}
@@ -167,7 +170,7 @@ public class SimulationRunnable implements Runnable {
 			c.source = s;
 			c.startingStep = step;
 			
-			c.nextPath = new Path(new ArrayList<STPosition>(){{add(new STPosition(new VertexPosition(s), 0.0));}});
+			c.nextPath = new Path(new ArrayList<STPosition>(){{add(new STPosition(s, 0.0));}});
 			c.nextState = CarState.VERTEX;
 			
 			sources.remove(s);
@@ -200,10 +203,12 @@ public class SimulationRunnable implements Runnable {
 		
 		findCrashesMoving(movingCarsCopy);
 		findCrashesMovingCrashed(movingCarsCopy, crashedCarsCopy);
-		while (firstCrashSite != null) {
+		while (firstCrashTime != -1) {
 			List<Car> newlyCrashedCars = processCrashInfo(movingCarsCopy);
 			
 			updateCurrentFromNext(newlyCrashedCars);
+			
+//			assert checkDistances(new ArrayList<Car>(){{addAll(movingCarsCopy);addAll(crashedCarsCopy);}});
 			
 			findCrashesMoving(movingCarsCopy);
 			findCrashesMovingCrashed(movingCarsCopy, crashedCarsCopy);
@@ -211,196 +216,68 @@ public class SimulationRunnable implements Runnable {
 		
 		updateCurrentFromNext(new ArrayList<Car>(){{addAll(movingCarsCopy);}});
 		
-		//checkDistances();
+//		assert checkDistances(new ArrayList<Car>(){{addAll(movingCarsCopy);addAll(crashedCarsCopy);}});
 	}
 	
-//	private boolean checkDistances(List<Car> cars) {
-//	for (int i = 0; i < cars.size(); i++) {
-//		Car c = cars.get(i);
-//		Position cPos = c.getLastFuturePosition();
-//		for (int j = i + 1; j < cars.size(); j++) {
-//			Car d = cars.get(j);
-//			Position dPos = d.getLastFuturePosition();
-//			double dist = cPos.distanceTo(dPos);
-//			assert DMath.doubleEquals(dist, 10.0) || dist > 10.0;
+//	private boolean checkFutureDistances(Car c, Car d) {
+//		Position cPos = c.getLastNextPosition().getSpace();
+//		if (c == d) {
+//			return true;
 //		}
+//		Position dPos = d.getLastNextPosition().getSpace();
+//		double dist = cPos.distanceTo(dPos);
+//		assert DMath.doubleEquals(dist, 10.0) || dist > 10.0;
+//		return true;
 //	}
-//	return true;
-//}
+//	
+//	private boolean checkDistances(Car c, Car d) {
+//		Position cPos = c.getPosition();
+//		if (c == d) {
+//			return true;
+//		}
+//		Position dPos = d.getPosition();
+//		double dist = cPos.distanceTo(dPos);
+//		assert DMath.doubleEquals(dist, 10.0) || dist > 10.0;
+//		return true;
+//	}
+//	
+//	private boolean checkDistances(Car c, List<Car> cars) {
+//		for (int i = 0; i < cars.size(); i++) {
+//			Car d = cars.get(i);
+//			checkDistances(c, d);
+//		}
+//		return true;
+//	}
+//	
+//	private boolean checkDistances(List<Car> cars) {
+//		for (int i = 0; i < cars.size(); i++) {
+//			Car c = cars.get(i);
+//			checkDistances(c, cars);
+//		}
+//		return true;
+//	}
 	
 	private void findCrashesMoving(List<Car> cars) {
 		
 		for (int i = 0; i < cars.size(); i++) {
 			final Car ci = cars.get(i);
-			Path ciFuturePath = ci.getNextPath();
 			
-			jloop: for (int j = i+1; j < cars.size(); j++) {
+			jloop:
+			for (int j = i+1; j < cars.size(); j++) {
 				Car cj = cars.get(j);
-				Path cjFuturePath = cj.getNextPath();
 				
+				//assert checkFutureDistances(ci, cj);
 				
+				boolean res = carCar(ci, cj);
 				
-				//double ciTraveled = 0;
-				for (int k = 0; k < ciFuturePath.size()-1; k++) {
-					STPosition cia = ciFuturePath.get(k);
-					STPosition cib = ciFuturePath.get(k+1);
-					//ciTraveled += cia.getSpace().distanceTo(cib.getSpace());
-					double ciOrigDistance = cia.getSpace().distanceTo(cib.getSpace());
-					double ciOrigTime = cib.getTime() - cia.getTime();
-					double ciSpeed = ciOrigDistance / ciOrigTime;
-					
-					
-					//double cjTraveled = 0;
-					for (int l = 0; l < cjFuturePath.size()-1; l++) {
-						STPosition cja = cjFuturePath.get(l);
-						STPosition cjb = cjFuturePath.get(l+1);
-						//cjTraveled += cja.getSpace().distanceTo(cjb.getSpace());
-						double cjOrigDistance = cja.getSpace().distanceTo(cjb.getSpace());
-						double cjOrigTime = cjb.getTime() - cja.getTime();
-						double cjSpeed = cjOrigDistance / cjOrigTime;
-						
-						
-						
-						double dist = cib.getSpace().distanceTo(cjb.getSpace());
-						if (DMath.doubleEquals(dist, 10.0)) {
-							//assert DMath.doubleEquals(ciTraveled, cjTraveled);
-							assert DMath.doubleEquals(cib.getTime(), cjb.getTime());
-							
-							saveCrashInfo(new CrashInfo(new CrashSite(cib.getTime()), ci, cj, cib, cjb, true, true, dist, k+1, l+1));
-							
-							continue jloop;
-						} else if (dist < 10) {
-							STPosition adjustedCib = cib;
-							STPosition adjustedCjb = cjb;
-							//double adjustedCiTraveled = ciTraveled;
-							//double adjustedCjTraveled = cjTraveled;
-							double adjustedCiTime = cib.getTime();
-							double adjustedCjTime = cjb.getTime();
-							double ciAdjustedDistance = ciOrigDistance;
-							double cjAdjustedDistance = cjOrigDistance;
-							
-							
-							/*
-							 * figure out who has traveled more and back up
-							 */
-							if (DMath.doubleEquals(adjustedCiTime, adjustedCjTime)) {
-								
-							} else if (adjustedCiTime > adjustedCjTime) {
-								/*
-								 * ci backs up
-								 */
-								//double travelDiff = adjustedCiTraveled - adjustedCjTraveled;
-								double timeDiff = adjustedCiTime - adjustedCjTime;
-								if (cia.getSpace() instanceof EdgePosition) {
-									EdgePosition ciaa = (EdgePosition)cia.getSpace();
-									//adjustedCib = new STPosition(ciaa.travel(ciaa.getDest(), origDistance-travelDiff), cib.getTime() - origTime * travelDiff/origDistance);
-									adjustedCib = new STPosition(ciaa.travel(ciaa.getDest(), ciOrigDistance-(ciSpeed * timeDiff)), cib.getTime() - timeDiff);
-								} else {
-									VertexPosition ciaa = (VertexPosition)cia.getSpace();
-									if (cib.getSpace() instanceof EdgePosition) {
-										EdgePosition cibb = (EdgePosition)cib.getSpace();
-										adjustedCib = new STPosition(ciaa.travel(cibb.getEdge(), cibb.getDest(), ciOrigDistance-(ciSpeed * timeDiff)), cib.getTime() - timeDiff);
-									} else {
-										VertexPosition cibb = (VertexPosition)cib.getSpace();
-										adjustedCib = new STPosition(ciaa.travel(Vertex.commonConnector(ciaa.getVertex(), cibb.getVertex()), cibb.getVertex(), ciOrigDistance-(ciSpeed * timeDiff)), cib.getTime() - timeDiff);
-									}
-								}
-								//adjustedCiTraveled -= travelDiff;
-								adjustedCiTime -= timeDiff;
-								ciAdjustedDistance = cia.getSpace().distanceTo(adjustedCib.getSpace());
-								
-							} else {
-								/*
-								 * cj backs up
-								 */
-								//double travelDiff = adjustedCjTraveled - adjustedCiTraveled;
-								double timeDiff = adjustedCjTime - adjustedCiTime;
-								if (cja.getSpace() instanceof EdgePosition) {
-									EdgePosition cjaa = (EdgePosition)cja.getSpace();
-									adjustedCjb = new STPosition(cjaa.travel(cjaa.getDest(), cjOrigDistance-(cjSpeed * timeDiff)), cjb.getTime() - timeDiff);
-								} else {
-									VertexPosition cjaa = (VertexPosition)cja.getSpace();
-									if (cjb.getSpace() instanceof EdgePosition) {
-										EdgePosition cjbb = (EdgePosition)cjb.getSpace();
-										adjustedCjb = new STPosition(cjaa.travel(cjbb.getEdge(), cjbb.getDest(), cjOrigDistance-(cjSpeed * timeDiff)), cjb.getTime() - timeDiff);
-									} else {
-										VertexPosition cjbb = (VertexPosition)cjb.getSpace();
-										adjustedCjb = new STPosition(cjaa.travel(Vertex.commonConnector(cjaa.getVertex(), cjbb.getVertex()), cjbb.getVertex(), cjOrigDistance-(cjSpeed * timeDiff)), cib.getTime() - timeDiff);
-									}
-								}
-								//adjustedCjTraveled -= travelDiff;
-								adjustedCjTime -= timeDiff;
-								cjAdjustedDistance = cja.getSpace().distanceTo(adjustedCjb.getSpace());
-								
-							}
-							
-							/*
-							 * ci and cj have now traveled the same amount, the crash site may still be wrong
-							 */
-							
-							assert DMath.doubleEquals(adjustedCiTime, adjustedCjTime);
-							
-							double newDist = adjustedCib.getSpace().distanceTo(adjustedCjb.getSpace());
-							if (DMath.doubleEquals(newDist, 10.0)) {
-								
-								saveCrashInfo(new CrashInfo(new CrashSite(adjustedCiTime), ci, cj, adjustedCib, adjustedCjb, true, true, newDist, k+1, l+1));
-								
-								continue jloop;
-							} else if (newDist < 10) {
-								//double diff = 10 - newDist;
-								//double inc = diff / 2;
-								
-								// solve for the time that ci and cj hit
-								double crashTime = adjustedCiTime + (10 - newDist) / (-ciSpeed - cjSpeed);
-								
-								STPosition newAdjustedCib;
-								if (cia.getSpace() instanceof EdgePosition) {
-									EdgePosition ciaa = (EdgePosition)cia.getSpace();
-									newAdjustedCib = new STPosition(ciaa.travel(ciaa.getDest(), ciAdjustedDistance-(ciSpeed * (adjustedCiTime - crashTime))), crashTime);
-								} else {
-									VertexPosition ciaa = (VertexPosition)cia.getSpace();
-									if (cib.getSpace() instanceof EdgePosition) {
-										EdgePosition cibb = (EdgePosition)cib.getSpace();
-										newAdjustedCib = new STPosition(ciaa.travel(cibb.getEdge(), cibb.getDest(), ciAdjustedDistance-(ciSpeed * (adjustedCiTime - crashTime))), crashTime);
-									} else {
-										VertexPosition cibb = (VertexPosition)cib.getSpace();
-										newAdjustedCib = new STPosition(ciaa.travel(Vertex.commonConnector(ciaa.getVertex(), cibb.getVertex()), cibb.getVertex(), ciAdjustedDistance-(ciSpeed * (adjustedCiTime - crashTime))), crashTime);
-									}
-								}
-								//double newAdjustedCiTraveled = adjustedCiTraveled-inc;
-								
-								
-								STPosition newAdjustedCjb;
-								if (cja.getSpace() instanceof EdgePosition) {
-									EdgePosition cjaa = (EdgePosition)cja.getSpace();
-									newAdjustedCjb = new STPosition(cjaa.travel(cjaa.getDest(), cjAdjustedDistance-(cjSpeed * (adjustedCjTime - crashTime))), crashTime);
-								} else {
-									VertexPosition cjaa = (VertexPosition)cja.getSpace();
-									if (cjb.getSpace() instanceof EdgePosition) {
-										EdgePosition cjbb = (EdgePosition)cjb.getSpace();										
-										newAdjustedCjb = new STPosition(cjaa.travel(cjbb.getEdge(), cjbb.getDest(), cjAdjustedDistance-(cjSpeed * (adjustedCjTime - crashTime))), crashTime);
-									} else {
-										VertexPosition cjbb = (VertexPosition)cjb.getSpace();										
-										newAdjustedCjb = new STPosition(cjaa.travel(Vertex.commonConnector(cjaa.getVertex(), cjbb.getVertex()), cjbb.getVertex(), cjAdjustedDistance-(cjSpeed * (adjustedCjTime - crashTime))), crashTime);
-									}									
-								}
-								
-								
-								double newNewDist = newAdjustedCib.getSpace().distanceTo(newAdjustedCjb.getSpace());
-								assert DMath.doubleEquals(newNewDist, 10);
-								
-								saveCrashInfo(new CrashInfo(new CrashSite(crashTime), ci, cj, newAdjustedCib, newAdjustedCjb, true, true, newDist, k+1, l+1));
-								
-								continue jloop;
-							}
-							
-						}
-					} // l loop
-					
-				} // k loop
+				//assert checkFutureDistances(ci, cj);
 				
-			} // j loop
-		} // i loop
+				if (res) {
+					continue jloop;
+				}
+				
+			}
+		}
 		
 	}
 	
@@ -408,84 +285,207 @@ public class SimulationRunnable implements Runnable {
 		
 		for (int i = 0; i < moving.size(); i++) {
 			final Car ci = moving.get(i);
-			//double ciTraveled = 0;
-			Path ciFuturePath = ci.getNextPath();
 			
-			
-			jloop: for (int j = 0; j < crashed.size(); j++) {
+			jloop:
+			for (int j = 0; j < crashed.size(); j++) {
 				Car cj = crashed.get(j);
-				//Path cjFuturePath = cj.getNextPath();
-				Position cjp = cj.getPosition();
 				
-				//
+				//assert checkFutureDistances(ci, cj);
 				
-				for (int k = 0; k < ciFuturePath.size()-1; k++) {
-					STPosition cia = ciFuturePath.get(k);
-					STPosition cib = ciFuturePath.get(k+1);
-					double ciOrigDistance = cia.getSpace().distanceTo(cib.getSpace());
-					double ciOrigTime = cib.getTime() - cia.getTime();
-					double ciSpeed = ciOrigDistance / ciOrigTime;
-					//ciTraveled += cia.getSpace().distanceTo(cib.getSpace()); 
-					
-					//int iDir = (Position.COMPARATOR.compare(cia.getSpace(), cib.getSpace()) == -1) ? 1 : -1;
-					
-					double dist = cib.getSpace().distanceTo(cjp);
-					if (DMath.doubleEquals(dist, 10.0)) {
-						saveCrashInfo(new CrashInfo(new CrashSite(cib.getTime()), ci, cj, cib, new STPosition(cjp, cib.getTime()), true, false, dist, k+1, -1));
-						continue jloop;
-					} else if (dist < 10) {
-						//double diff = 10 - dist;
-						//double timeDiff = ;
-						
-						double crashTime = cib.getTime() + (10 - dist) / (-ciSpeed - 0);
-						
-						STPosition adjustedCib;
-						if (cia.getSpace() instanceof EdgePosition) {
-							EdgePosition ciaa = (EdgePosition)cia.getSpace();
-							adjustedCib = new STPosition(ciaa.travel(ciaa.getDest(), ciOrigDistance-(ciSpeed * (ciOrigTime - crashTime))), crashTime);
-						} else {
-							VertexPosition ciaa = (VertexPosition)cia.getSpace();
-							EdgePosition cibb = (EdgePosition)cib.getSpace();
-							adjustedCib = new STPosition(ciaa.travel(cibb.getEdge(), cibb.getDest(), ciOrigDistance-(ciSpeed * (ciOrigTime - crashTime))), crashTime);
-						}
-						//double adjustedCiTraveled = ciTraveled;
-						//adjustedCiTraveled -= travelDiff;
-						double newDist = adjustedCib.getSpace().distanceTo(cjp);
-						assert DMath.doubleEquals(newDist, 10);
-						saveCrashInfo(new CrashInfo(new CrashSite(crashTime), ci, cj, adjustedCib, new STPosition(cjp, adjustedCib.getTime()), true, false, dist, k+1, -1));
-						continue jloop;
-					}
-					
-				} // k loop
+				boolean res = carCar(ci, cj);
 				
-			} // j loop
-		} // i loop
+				//assert checkFutureDistances(ci, cj);
+				
+				if (res) {
+					continue jloop;
+				}
+				
+			}
+		}
 		
 	}
 	
+	private boolean carCar(Car ci, Car cj) {
+		
+		Path ciFuturePath = ci.getNextPath();
+		Path cjFuturePath = cj.getNextPath();
+		
+		double intersectionTime = Path.intersection(ciFuturePath, cjFuturePath, 10);
+		if (intersectionTime != -1) {
+			saveCrashInfo(new CrashInfo(intersectionTime, ci, cj));
+			return true;
+		}
+		
+//		for (int k = 0; k < ciFuturePath.size()-1; k++) {
+//			STPosition cia = ciFuturePath.get(k);
+//			STPosition cib = ciFuturePath.get(k+1);
+//			double ciOrigDistance = cia.getSpace().distanceTo(cib.getSpace());
+//			double ciOrigTime = cib.getTime() - cia.getTime();
+//			double ciSpeed = ciOrigDistance / ciOrigTime;
+//			
+//			for (int l = 0; l < cjFuturePath.size()-1; l++) {
+//				STPosition cja = cjFuturePath.get(l);
+//				STPosition cjb = cjFuturePath.get(l+1);
+//				double cjOrigDistance = cja.getSpace().distanceTo(cjb.getSpace());
+//				double cjOrigTime = cjb.getTime() - cja.getTime();
+//				double cjSpeed = cjOrigDistance / cjOrigTime;
+//				
+//				double dist = cib.getSpace().distanceTo(cjb.getSpace());
+//				if (DMath.doubleEquals(dist, 10.0)) {
+//					assert DMath.doubleEquals(cib.getTime(), cjb.getTime());
+//					saveCrashInfo(new CrashInfo(new CrashSite(cib.getTime()), ci, cj, cib, cjb, dist, k+1, l+1));
+//					return true;
+//				} else if (dist < 10) {
+//					STPosition adjustedCib = cib;
+//					STPosition adjustedCjb = cjb;
+//					double adjustedCiTime = cib.getTime();
+//					double adjustedCjTime = cjb.getTime();
+//					double ciAdjustedDistance = ciOrigDistance;
+//					double cjAdjustedDistance = cjOrigDistance;
+//					
+//					/*
+//					 * figure out who has traveled more and back up
+//					 */
+//					if (DMath.doubleEquals(adjustedCiTime, adjustedCjTime)) {
+//						;
+//					} else if (adjustedCiTime > adjustedCjTime) {
+//						/*
+//						 * ci backs up
+//						 */
+//						adjustedCiTime = adjustedCjTime;
+//						ciAdjustedDistance = ciSpeed * (adjustedCiTime - cia.getTime());
+//						
+//						if (cia.getSpace() instanceof EdgePosition) {
+//							EdgePosition ciaa = (EdgePosition)cia.getSpace();
+//							adjustedCib = new STPosition(ciaa.travel(ciaa.getDest(), ciAdjustedDistance), adjustedCiTime);
+//						} else {
+//							Vertex ciaa = (Vertex)cia.getSpace();
+//							if (cib.getSpace() instanceof EdgePosition) {
+//								EdgePosition cibb = (EdgePosition)cib.getSpace();
+//								adjustedCib = new STPosition(ciaa.travel(cibb.getEdge(), cibb.getDest(), ciAdjustedDistance), adjustedCiTime);
+//							} else {
+//								Vertex cibb = (Vertex)cib.getSpace();
+//								adjustedCib = new STPosition(ciaa.travel(Vertex.commonConnector(ciaa, cibb), cibb, ciAdjustedDistance), adjustedCiTime);
+//							}
+//						}
+//						
+//					} else {
+//						/*
+//						 * cj backs up
+//						 */
+//						adjustedCjTime = adjustedCiTime;
+//						cjAdjustedDistance = cjSpeed * (adjustedCjTime - cja.getTime());
+//						
+//						if (cja.getSpace() instanceof EdgePosition) {
+//							EdgePosition cjaa = (EdgePosition)cja.getSpace();
+//							adjustedCjb = new STPosition(cjaa.travel(cjaa.getDest(), cjAdjustedDistance), adjustedCjTime);
+//						} else {
+//							Vertex cjaa = (Vertex)cja.getSpace();
+//							if (cjb.getSpace() instanceof EdgePosition) {
+//								EdgePosition cjbb = (EdgePosition)cjb.getSpace();
+//								adjustedCjb = new STPosition(cjaa.travel(cjbb.getEdge(), cjbb.getDest(), cjAdjustedDistance), adjustedCjTime);
+//							} else {
+//								Vertex cjbb = (Vertex)cjb.getSpace();
+//								adjustedCjb = new STPosition(cjaa.travel(Vertex.commonConnector(cjaa, cjbb), cjbb, cjAdjustedDistance), adjustedCjTime);
+//							}
+//						}
+//						
+//					}
+//					
+//					/*
+//					 * ci and cj have now traveled the same amount, the crash site may still be wrong
+//					 */
+//					
+//					double newDist = adjustedCib.getSpace().distanceTo(adjustedCjb.getSpace());
+//					if (DMath.doubleEquals(newDist, 10.0)) {
+//						
+//						saveCrashInfo(new CrashInfo(new CrashSite(adjustedCiTime), ci, cj, adjustedCib, adjustedCjb, newDist, k+1, l+1));
+//						
+//						return true;
+//					} else if (newDist < 10) {
+//						
+//						// solve for the time that ci and cj hit
+//						double crashTime = adjustedCiTime + (10 - newDist) / (-ciSpeed - cjSpeed);
+//						
+//						double newAdjustedCiDistance = ciSpeed * (crashTime - cia.getTime());
+//						double newAdjustedCjDistance = cjSpeed * (crashTime - cja.getTime());
+//						
+//						STPosition newAdjustedCib;
+//						if (cia.getSpace() instanceof EdgePosition) {
+//							EdgePosition ciaa = (EdgePosition)cia.getSpace();
+//							newAdjustedCib = new STPosition(ciaa.travel(ciaa.getDest(), newAdjustedCiDistance), crashTime);
+//						} else {
+//							Vertex ciaa = (Vertex)cia.getSpace();
+//							if (cib.getSpace() instanceof EdgePosition) {
+//								EdgePosition cibb = (EdgePosition)cib.getSpace();
+//								newAdjustedCib = new STPosition(ciaa.travel(cibb.getEdge(), cibb.getDest(), newAdjustedCiDistance), crashTime);
+//							} else {
+//								Vertex cibb = (Vertex)cib.getSpace();
+//								newAdjustedCib = new STPosition(ciaa.travel(Vertex.commonConnector(ciaa, cibb), cibb, newAdjustedCiDistance), crashTime);
+//							}
+//						}
+//						
+//						STPosition newAdjustedCjb;
+//						if (cja.getSpace() instanceof EdgePosition) {
+//							EdgePosition cjaa = (EdgePosition)cja.getSpace();
+//							newAdjustedCjb = new STPosition(cjaa.travel(cjaa.getDest(), newAdjustedCjDistance), crashTime);
+//						} else {
+//							Vertex cjaa = (Vertex)cja.getSpace();
+//							if (cjb.getSpace() instanceof EdgePosition) {
+//								EdgePosition cjbb = (EdgePosition)cjb.getSpace();										
+//								newAdjustedCjb = new STPosition(cjaa.travel(cjbb.getEdge(), cjbb.getDest(), newAdjustedCjDistance), crashTime);
+//							} else {
+//								Vertex cjbb = (Vertex)cjb.getSpace();										
+//								newAdjustedCjb = new STPosition(cjaa.travel(Vertex.commonConnector(cjaa, cjbb), cjbb, newAdjustedCjDistance), crashTime);
+//							}									
+//						}
+//						
+//						
+//						double newNewDist = newAdjustedCib.getSpace().distanceTo(newAdjustedCjb.getSpace());
+//						assert DMath.doubleEquals(newNewDist, 10);
+//						
+//						saveCrashInfo(new CrashInfo(new CrashSite(crashTime), ci, cj, newAdjustedCib, newAdjustedCjb, newDist, k+1, l+1));
+//						
+//						return true;
+//					}
+//					
+//				}
+//			} // l loop
+//			
+//		} // k loop
+		
+		return false;
+	}
 	
 	
-	CrashSite firstCrashSite;
+	double firstCrashTime = -1;
 	List<CrashInfo> crashes = new ArrayList<CrashInfo>();
 	
 	private void saveCrashInfo(CrashInfo ci) {
 		
-		CrashSite site = ci.crashSite;
+		double t = ci.crashTime;
 		
-		if (firstCrashSite == null) {
-			firstCrashSite = site;
+		if (firstCrashTime == -1) {
+			firstCrashTime = t;
 			assert crashes.isEmpty();
 			crashes.add(ci);
-		} else if (firstCrashSite.equals(site)) {
+		} else if (firstCrashTime == t) {
 			crashes.add(ci);
-		} else if (site.time < firstCrashSite.time) {
-			firstCrashSite = site;
+		} else if (t < firstCrashTime) {
+			firstCrashTime = t;
 			crashes.clear();
 			crashes.add(ci);
 		} else {
 			;
 		}
 		
+//		Car i = ci.i;
+//		Car j = ci.j;
+//		Position ip = i.nextPath.getPosition(t);
+//		Position jp = j.nextPath.getPosition(t);
+//		
+//		double distance = ip.distanceTo(jp);
+//		assert DMath.doubleEquals(distance, 10);
 	}
 	
 	private List<Car> processCrashInfo(List<Car> cars) {
@@ -493,31 +493,33 @@ public class SimulationRunnable implements Runnable {
 		List<Car> newlyCrashedCars = new ArrayList<Car>();
 		
 		for (CrashInfo info : crashes) {
+			double crashTime = info.crashTime;
 			Car i = info.i;
 			Car j = info.j;
-			STPosition ip = info.ip;
-			STPosition jp = info.jp;
-			boolean iCrashed = info.iCrashed;
-			boolean jCrashed = info.jCrashed;
-			int ik = info.ik;
-			int jl = info.jl;
 			
-			double dist = ip.getSpace().distanceTo(jp.getSpace());
+			Position cip = i.nextPath.getPosition(crashTime);
+			Position cjp = j.nextPath.getPosition(crashTime);
+			
+			double dist = cip.distanceTo(cjp);
 			assert DMath.doubleEquals(dist, 10.0);
 			
-			if (iCrashed) {
-				i.nextPathCrash(ip, ik);
+			if (i.getState() != CarState.CRASHED) {
+				i.nextPathCrash(crashTime);
+				i.crashingStep = step;
 				newlyCrashedCars.add(i);
 			}
 			
-			if (jCrashed) {
-				j.nextPathCrash(jp, jl);
+			if (j.getState() != CarState.CRASHED) {
+				j.nextPathCrash(crashTime);
+				j.crashingStep = step;
 				newlyCrashedCars.add(j);
 			}
 			
+//			assert checkFutureDistances(i, j);
+			
 		}
 		
-		firstCrashSite = null;
+		firstCrashTime = -1;
 		crashes.clear();
 		
 		return newlyCrashedCars;
@@ -549,7 +551,7 @@ public class SimulationRunnable implements Runnable {
 	
 	private void resetToNew(List<Car> cars) {
 		for (final Car c : cars) {
-			c.nextPath = new Path(new ArrayList<STPosition>(){{add(new STPosition(new VertexPosition(c.source), 0.0));}});
+			c.nextPath = new Path(new ArrayList<STPosition>(){{add(new STPosition(c.source, 0.0));}});
 			c.nextState = CarState.VERTEX;
 		}
 	}

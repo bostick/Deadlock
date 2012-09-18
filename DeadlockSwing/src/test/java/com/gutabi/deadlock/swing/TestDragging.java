@@ -21,6 +21,38 @@ import com.gutabi.deadlock.core.Point;
 
 public class TestDragging {
 	
+	public static void testPressed(Point p) throws Exception {
+		Point pp = p.add(OFFSET);
+		CONTROLLER.mc.pressed(new MouseEvent(VIEW.panel, 0, 0, 0, (int)pp.getX(), (int)pp.getY(), 0, false));
+		CONTROLLER.queueAndWait(empty);
+		Thread.sleep(10);
+		VIEW.repaint();
+	}
+	
+	public static void testDragged(Point p) throws Exception {
+		Point pp = p.add(OFFSET);
+		CONTROLLER.mc.dragged(new MouseEvent(VIEW.panel, 0, 0, 0, (int)pp.getX(), (int)pp.getY(), 0, false));
+		CONTROLLER.queueAndWait(empty);
+		Thread.sleep(10);
+		VIEW.repaint();
+	}
+	
+	public static void testReleased() throws Exception {
+		CONTROLLER.mc.released(new MouseEvent(VIEW.panel, 0, 0, 0, 0, 0, 0, false));
+		CONTROLLER.queueAndWait(empty);
+		Thread.sleep(10);
+		VIEW.repaint();
+	}
+	
+	static Runnable empty = new Runnable(){
+		@Override
+		public void run() {
+			;
+		}};
+	
+	
+	
+	
 	static Point OFFSET = new Point(0, 0);
 	
 	@BeforeClass
@@ -59,35 +91,6 @@ public class TestDragging {
 		Thread.sleep(2000);
 		
 		MODEL.clear();
-	}
-	
-	Runnable empty = new Runnable(){
-		@Override
-		public void run() {
-			;
-		}};
-	
-	public void testPressed(Point p) throws Exception {
-		Point pp = p.add(OFFSET);
-		CONTROLLER.mc.pressed(new MouseEvent(null, 0, 0, 0, (int)pp.getX(), (int)pp.getY(), 0, false));
-		CONTROLLER.queueAndWait(empty);
-		Thread.sleep(10);
-		VIEW.repaint();
-	}
-	
-	public void testDragged(Point p) throws Exception {
-		Point pp = p.add(OFFSET);
-		CONTROLLER.mc.dragged(new MouseEvent(null, 0, 0, 0, (int)pp.getX(), (int)pp.getY(), 0, false));
-		CONTROLLER.queueAndWait(empty);
-		Thread.sleep(10);
-		VIEW.repaint();
-	}
-	
-	public void testReleased() throws Exception {
-		CONTROLLER.mc.released(new MouseEvent(null, 0, 0, 0, 0, 0, 0, false));
-		CONTROLLER.queueAndWait(empty);
-		Thread.sleep(10);
-		VIEW.repaint();
 	}
 	
 	

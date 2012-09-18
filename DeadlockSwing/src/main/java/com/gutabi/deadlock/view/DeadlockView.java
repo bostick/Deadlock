@@ -20,7 +20,6 @@ import com.gutabi.deadlock.controller.ControlMode;
 import com.gutabi.deadlock.core.Dim;
 import com.gutabi.deadlock.core.Driveable;
 import com.gutabi.deadlock.core.Edge;
-import com.gutabi.deadlock.core.Hub;
 import com.gutabi.deadlock.core.Intersection;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.Sink;
@@ -210,14 +209,14 @@ public class DeadlockView {
 		List<Intersection> intersectionsCopy;
 		List<Source> sourcesCopy;
 		List<Sink> sinksCopy;
-		List<Hub> hubsCopy;
+//		List<Hub> hubsCopy;
 		
 		synchronized (MODEL) {
 			edgesCopy = new ArrayList<Edge>(MODEL.getEdges());
 			intersectionsCopy = new ArrayList<Intersection>(MODEL.getIntersections());
 			sourcesCopy = new ArrayList<Source>(MODEL.getSources());
 			sinksCopy = new ArrayList<Sink>(MODEL.getSinks());
-			hubsCopy = new ArrayList<Hub>(MODEL.getHubs());
+//			hubsCopy = new ArrayList<Hub>(MODEL.getHubs());
 		}
 		
 		for (Edge e : edgesCopy) {
@@ -235,9 +234,9 @@ public class DeadlockView {
 		for (Edge e : edgesCopy) {
 			paintEdge2(e, g2);
 		}
-		for (Hub h : hubsCopy) {
-			paintHub(h, g2);
-		}
+//		for (Hub h : hubsCopy) {
+//			paintHub(h, g2);
+//		}
 	}
 	
 	private static void paintEdge1(Edge e, Graphics2D g) {
@@ -288,25 +287,26 @@ public class DeadlockView {
 		g.setColor(new Color(0x44, 0x44, 0x44, 0xff));
 		
 		Point p = v.getPoint();
-		g.fillOval((int)p.getX()-5, (int)p.getY()-5, 10, 10);
-		
+		//g.fillOval((int)p.getX()-5, (int)p.getY()-5, 10, 10);
+		g.fillOval((int)(p.getX()-7.07), (int)(p.getY()-7.07), (int)(2 * 7.07), (int)(2 * 7.07));
 	}
 	
-	public static void paintHub(Hub h, Graphics2D g) {
-		
-		g.setColor(new Color(0x44, 0x44, 0x44, 0xff));
-		
-		Point p = h.getPoint();
-		g.fillOval((int)(p.getX()-Hub.RADIUS), (int)(p.getY()-Hub.RADIUS), (int)(2*Hub.RADIUS), (int)(2*Hub.RADIUS));
-		
-	}
+//	public static void paintHub(Hub h, Graphics2D g) {
+//		
+//		g.setColor(new Color(0x44, 0x44, 0x44, 0xff));
+//		
+//		Point p = h.getPoint();
+//		g.fillOval((int)(p.getX()-Hub.RADIUS), (int)(p.getY()-Hub.RADIUS), (int)(2*Hub.RADIUS), (int)(2*Hub.RADIUS));
+//		
+//	}
 	
 	public static void paintSource(Source s, Graphics2D g) {
 		
 		g.setColor(Color.GREEN);
 		
 		Point p = s.getPoint();
-		g.fillOval((int)p.getX()-5, (int)p.getY()-5, 10, 10);
+		//g.fillOval((int)p.getX()-5, (int)p.getY()-5, 10, 10);
+		g.fillOval((int)(p.getX()-7.07), (int)(p.getY()-7.07), (int)(2 * 7.07), (int)(2 * 7.07));
 		
 	}
 
@@ -315,7 +315,8 @@ public class DeadlockView {
 		g.setColor(Color.RED);
 		
 		Point p = s.getPoint();
-		g.fillOval((int)p.getX()-5, (int)p.getY()-5, 10, 10);
+		//g.fillOval((int)p.getX()-5, (int)p.getY()-5, 10, 10);
+		g.fillOval((int)(p.getX()-7.07), (int)(p.getY()-7.07), (int)(2 * 7.07), (int)(2 * 7.07));
 		
 	}
 	

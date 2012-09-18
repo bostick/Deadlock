@@ -1,9 +1,11 @@
 package com.gutabi.deadlock.core;
 
+import java.util.Comparator;
+
 public class DMath {
 	
 	public static boolean doubleEquals(double a, double b) {
-		return doubleEquals(a, b, 1.0E-6);
+		return doubleEquals(a, b, 1.0E-7);
 	}
 	
 	public static boolean doubleEquals(double a, double b, double delta) {
@@ -25,6 +27,23 @@ public class DMath {
 		 * casts them to 2 different numbers, even though they are closer than floating point precision
 		 */
 		//return ((float)a) == ((float)b);
+	}
+	
+	static Comparator<Double> COMPARATOR = new DoubleComparator();
+	
+	static class DoubleComparator implements Comparator<Double> {
+
+		public int compare(Double a, Double b) {
+			if (doubleEquals(a, b)) {
+				return 0;
+			}
+			if (a < b) {
+				return -1;
+			} else {
+				return 1;
+			}
+		}
+		
 	}
 	
 	public static double clip(double x) {

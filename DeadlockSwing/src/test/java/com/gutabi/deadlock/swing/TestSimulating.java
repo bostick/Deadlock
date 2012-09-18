@@ -20,7 +20,6 @@ import com.gutabi.deadlock.core.EdgePosition;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.STPosition;
 import com.gutabi.deadlock.core.Vertex;
-import com.gutabi.deadlock.core.VertexPosition;
 import com.gutabi.deadlock.model.Car;
 import com.gutabi.deadlock.model.CarState;
 
@@ -2514,21 +2513,21 @@ public class TestSimulating {
 			MODEL.processNewStroke(new ArrayList<Point>(){{add(new Point(600, 450));add(new Point(700, 450));}});
 			MODEL.processNewStroke(new ArrayList<Point>(){{add(new Point(650, 400));add(new Point(650, 500));}});
 			
-			Vertex aV = ((VertexPosition)MODEL.hitTest(new Point(600, 450))).getVertex();
+			Vertex aV = ((Vertex)MODEL.hitTest(new Point(600, 450)));
 			
-			Vertex bV = ((VertexPosition)MODEL.hitTest(new Point(650, 500))).getVertex();
+			Vertex bV = ((Vertex)MODEL.hitTest(new Point(650, 500)));
 			
 			Car a = new Car();
 			Car b = new Car();
 			
-			a.setPosition(new VertexPosition(aV));
+			a.setPosition(aV);
 			//a.futurePathNewEdge();
 			a.nextPathAdd(new STPosition(a.getPosition(), 0));
 			a.setState(CarState.EDGE);
 			a.nextState = a.getState();
 			a.nextEdge = aV.getEdges().get(0);
 			
-			b.setPosition(new VertexPosition(bV));
+			b.setPosition(bV);
 			//b.futurePathNewEdge();
 			b.nextPathAdd(new STPosition(b.getPosition(), 0));
 			b.setState(CarState.EDGE);
@@ -2567,8 +2566,8 @@ public class TestSimulating {
 			
 //			MODEL.processStroke(new Point(595, 450), new Point(695, 450));
 //			MODEL.processStroke(new Point(650, 400), new Point(650, 500));
-			Vertex aV = ((VertexPosition)MODEL.hitTest(new Point(595, 450))).getVertex();
-			Vertex bV = ((VertexPosition)MODEL.hitTest(new Point(650, 500))).getVertex();
+			Vertex aV = ((Vertex)MODEL.hitTest(new Point(595, 450)));
+			Vertex bV = ((Vertex)MODEL.hitTest(new Point(650, 500)));
 //			MODEL.processStroke(new Point(596, 450), new Point(696, 450));
 //			MODEL.processStroke(new Point(650, 400), new Point(650, 500));
 //			Vertex aV = MODEL.findVertex(new Point(596, 450));
@@ -2577,14 +2576,14 @@ public class TestSimulating {
 			Car a = new Car();
 			Car b = new Car();
 			
-			a.setPosition(new VertexPosition(aV));
+			a.setPosition(aV);
 			//a.futurePathNewEdge();
 			a.nextPathAdd(new STPosition(a.getPosition(), 0));
 			a.setState(CarState.EDGE);
 			a.nextState = a.getState();
 			a.nextEdge = aV.getEdges().get(0);
 			
-			b.setPosition(new VertexPosition(bV));
+			b.setPosition(bV);
 			//b.futurePathNewEdge();
 			b.nextPathAdd(new STPosition(b.getPosition(), 0));
 			b.setState(CarState.EDGE);
@@ -2623,29 +2622,29 @@ public class TestSimulating {
 //			MODEL.processStroke(new Point(600, 450), new Point(700, 450));
 //			MODEL.processStroke(new Point(650, 400), new Point(650, 500));
 			
-			Vertex aV = ((VertexPosition)MODEL.hitTest(new Point(600, 450))).getVertex();
-			Vertex bV = ((VertexPosition)MODEL.hitTest(new Point(650, 500))).getVertex();
-			Vertex cV = ((VertexPosition)MODEL.hitTest(new Point(650, 400))).getVertex();
+			Vertex aV = ((Vertex)MODEL.hitTest(new Point(600, 450)));
+			Vertex bV = ((Vertex)MODEL.hitTest(new Point(650, 500)));
+			Vertex cV = ((Vertex)MODEL.hitTest(new Point(650, 400)));
 			
 			Car a = new Car();
 			Car b = new Car();
 			Car c = new Car();
 			
-			a.setPosition(new VertexPosition(aV));
+			a.setPosition(aV);
 			//a.futurePathNewEdge();
 			a.nextPathAdd(new STPosition(a.getPosition(), 0));
 			a.setState(CarState.EDGE);
 			a.nextState = a.getState();
 			a.nextEdge = aV.getEdges().get(0);
 			
-			b.setPosition(new VertexPosition(bV));
+			b.setPosition(bV);
 			//b.futurePathNewEdge();
 			b.nextPathAdd(new STPosition(b.getPosition(), 0));
 			b.setState(CarState.EDGE);
 			b.nextState = b.getState();
 			b.nextEdge = bV.getEdges().get(0);
 			
-			c.setPosition(new VertexPosition(cV));
+			c.setPosition(cV);
 			//c.futurePathNewEdge();
 			c.nextPathAdd(new STPosition(c.getPosition(), 0));
 			c.setState(CarState.EDGE);

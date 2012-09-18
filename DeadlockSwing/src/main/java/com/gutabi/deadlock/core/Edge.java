@@ -19,6 +19,8 @@ public final class Edge implements Connector {
 	
 	private final int hash;
 	
+	int graphID;
+	
 	public Edge(Vertex start, Vertex end, List<Point> pts) {
 		this.start = start;
 		this.end = end;
@@ -38,8 +40,12 @@ public final class Edge implements Connector {
 		totalLength = l;
 		
 		int h = 17;
-		h = 37 * h + start.hashCode();
-		h = 37 * h + end.hashCode();
+		if (start != null) {
+			h = 37 * h + start.hashCode();
+		}
+		if (end != null) {
+			h = 37 * h + end.hashCode();
+		}
 		h = 37 * h + pts.hashCode();
 		hash = h;
 		
@@ -47,7 +53,7 @@ public final class Edge implements Connector {
 	}
 	
 	public String toString() {
-		return "E " + hash + " " + start + " " + end;
+		return "E " + hash + " " + start + " " + end + " n=" + pts.length;
 	}
 	
 	public int hashCode() {

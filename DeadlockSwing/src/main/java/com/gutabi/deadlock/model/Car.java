@@ -16,7 +16,6 @@ import com.gutabi.deadlock.core.STPosition;
 import com.gutabi.deadlock.core.Sink;
 import com.gutabi.deadlock.core.Source;
 import com.gutabi.deadlock.core.Vertex;
-import com.gutabi.deadlock.core.VertexPosition;
 
 @SuppressWarnings("serial")
 public class Car {
@@ -26,6 +25,7 @@ public class Car {
 	private Position pos;
 	
 	public long startingStep;
+	public long crashingStep;
 	public Source source;
 	
 	public Path nextPath;
@@ -49,6 +49,9 @@ public class Car {
 		s = "car " + id;
 	}
 	
+	/**
+	 * Returns true if car moved in this update
+	 */
 	public boolean updateNext() {
 		
 		nextDistanceToMove = MODEL.DISTANCE_PER_TIMESTEP;
@@ -73,17 +76,25 @@ public class Car {
 				double nextDist = Math.min(nextDistanceToMove, distanceLeftOnEdge);
 				if (pos instanceof EdgePosition) {
 					nextPos = ((EdgePosition)pos).travel(nextDest, nextDist);
+					nextPathAdd(new STPosition(nextPos, time + (nextDist / MODEL.DISTANCE_PER_TIMESTEP)));
 				} else {
-					nextPos = ((VertexPosition)pos).travel(e, nextDest, nextDist);
+					nextPos = ((Vertex)pos).travel(e, nextDest, nextDist);
+					if (nextPos instanceof Vertex) {
+						/*
+						 * only strictly needed to add middle EdgePosition when there is not a unique path from Vertex to Vertex,
+						 * but adding a middle point doesn't hurt
+						 */
+						nextPathAdd(new STPosition(((Vertex)pos).travel(e, nextDest, nextDist / 2), time + (nextDist / MODEL.DISTANCE_PER_TIMESTEP) / 2));
+					}
+					nextPathAdd(new STPosition(nextPos, time + (nextDist / MODEL.DISTANCE_PER_TIMESTEP)));
 				}
-				nextPathAdd(new STPosition(nextPos, time + (nextDist / MODEL.DISTANCE_PER_TIMESTEP)));
 				
 				if (DMath.doubleEquals(nextDistanceToMove, distanceLeftOnEdge)) {
 					
 					previousEdge = e;
 					nextState = CarState.VERTEX;
 					
-					assert getLastNextPosition().getSpace() instanceof VertexPosition;
+					assert getLastNextPosition().getSpace() instanceof Vertex;
 					
 					nextDistanceToMove = 0.0;
 					time = 1.0;
@@ -97,7 +108,7 @@ public class Car {
 					previousEdge = e;
 					nextState = CarState.VERTEX;
 					
-					assert getLastNextPosition().getSpace() instanceof VertexPosition;
+					assert getLastNextPosition().getSpace() instanceof Vertex;
 					
 					nextDistanceToMove -= distanceLeftOnEdge;
 					time += (nextDist / MODEL.DISTANCE_PER_TIMESTEP);
@@ -115,7 +126,7 @@ public class Car {
 				break;
 			}
 			case VERTEX: {
-				VertexPosition pos = (VertexPosition)getLastNextPosition().getSpace();
+				Vertex pos = (Vertex)getLastNextPosition().getSpace();
 				boolean moving = nextChoice(pos);
 				if (!moving) {
 					nextDistanceToMove = 0.0;
@@ -123,6 +134,7 @@ public class Car {
 				break;
 			}
 			case CRASHED:
+				//give a path to crashed cars
 				nextDistanceToMove = 0.0;
 				break;
 			case SINKED:
@@ -138,7 +150,7 @@ public class Car {
 			
 		} // end inner loop
 		
-		return !(nextState == CarState.CRASHED || nextState == CarState.SINKED);
+		return !(nextState == CarState.CRASHED);
 	}
 	
 	private boolean nextChoice(Position pos) {
@@ -187,7 +199,7 @@ public class Car {
 	 * choose best edge to get to the correct sink
 	 */
 	private boolean nextChoiceToSink(Position pos) {
-		if (pos instanceof VertexPosition) {
+		if (pos instanceof Vertex) {
 			
 			Direction goal = source.getDirection().opposite();
 			List<Sink> sinks = new ArrayList<Sink>();
@@ -197,58 +209,38 @@ public class Car {
 				}
 			}
 			
-			VertexPosition vp = (VertexPosition)pos;
+			Vertex v = (Vertex)pos;
 			
-			Vertex v = vp.getVertex();
+			Vertex bestChoice = null;
 			
-			VertexPosition bestChoice = null;
-			
-			//Path bestPath = null;
 			double bestDistance = Double.POSITIVE_INFINITY;
 			for (Sink s : MODEL.getSinks()) {
-				VertexPosition sinkPos = new VertexPosition(s);
-				//Path path = MODEL.shortestPath(v, s);
 				Vertex choice = MODEL.shortestPathChoice(v, s);
 				if (choice != null) {
-					VertexPosition choicePos = new VertexPosition(choice);
-					double dist = vp.distanceTo(choicePos) + choicePos.distanceTo(sinkPos);
+					double dist = v.distanceTo(choice) + choice.distanceTo(s);
 					if (dist < bestDistance) {
 						bestDistance = dist;
-						//bestPath = path;
-						bestChoice = choicePos;
+						bestChoice = choice;
 					}
 				}
 			}
 			
 			if (bestChoice != null) {
 				
-				//assert bestPath.get(0).getSpace().equals(vp);
+				Edge bestEdge = null;
+				List<Connector> cons = Vertex.commonConnectors(v, bestChoice);
+				for (Connector c : cons) {
+					Edge e = (Edge)c;
+					if (bestEdge == null || e.getTotalLength() < bestEdge.getTotalLength()) {
+						bestEdge = e;
+					}
+				}
 				
-//				if (bestPath.get(1).getSpace() instanceof VertexPosition) {
-					
-				//VertexPosition vp1 = (VertexPosition)(bestPath.get(1).getSpace());
+				nextEdge = bestEdge;
 				
-				List<Connector> cons = Vertex.commonConnectors(vp.getVertex(), bestChoice.getVertex());
-				assert cons.size() == 1;
-				
-				Edge e = (Edge)cons.get(0);
-				assert !e.isLoop();
-				
-				nextEdge = e;
 				nextDest = (v == nextEdge.getStart()) ? nextEdge.getEnd() : nextEdge.getStart();
 				
 				nextState = CarState.EDGE;
-					
-//				} else {
-//					
-//					EdgePosition nextEP = (EdgePosition)bestPath.get(1).getSpace();
-//					
-//					nextEdge = nextEP.getEdge();
-//					nextDest = (v == nextEdge.getStart()) ? nextEdge.getEnd() : nextEdge.getStart();
-//					
-//					nextState = CarState.EDGE;
-//					
-//				}
 				
 			} else {
 				// no way to get to any sink, crash self now
@@ -266,9 +258,15 @@ public class Car {
 	public void updateCurrentFromNext() {
 		final Position p = getLastNextPosition().getSpace();
 		setPosition(p);
-		nextPath = new Path(new ArrayList<STPosition>(){{add(new STPosition(p, 0.0));}});
 		CarState s = nextState;
-		setState(s);
+		if (s == CarState.CRASHED) {
+			nextPath = new Path(new ArrayList<STPosition>(){{add(new STPosition(p, 0.0));add(new STPosition(p, 1.0));}});
+			setState(s);
+		} else {
+			nextPath = new Path(new ArrayList<STPosition>(){{add(new STPosition(p, 0.0));}});
+			setState(s);
+		}
+		
 	}
 	
 	public Car copy() {
@@ -304,12 +302,12 @@ public class Car {
 	 * with pos (if they are not already equal)
 	 * 
 	 */
-	public void nextPathCrash(STPosition pos, int pIndex) {
+	public void nextPathCrash(double time) {
 		if (state == CarState.CRASHED || state == CarState.SINKED) {
 			throw new IllegalArgumentException();
 		}
 		
-		nextPath = nextPath.crash(pos, pIndex);
+		nextPath = nextPath.crash(time);
 		nextState = CarState.CRASHED;
 	}
 	

@@ -2,10 +2,12 @@ package com.gutabi.deadlock.swing;
 
 import static com.gutabi.deadlock.controller.DeadlockController.CONTROLLER;
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
+import static com.gutabi.deadlock.swing.TestDragging.testDragged;
+import static com.gutabi.deadlock.swing.TestDragging.testPressed;
+import static com.gutabi.deadlock.swing.TestDragging.testReleased;
 import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 import static org.junit.Assert.assertTrue;
 
-import java.awt.event.MouseEvent;
 import java.util.List;
 
 import org.junit.After;
@@ -17,7 +19,6 @@ import org.junit.Test;
 import com.gutabi.deadlock.controller.MassageStrategy;
 import com.gutabi.deadlock.core.Edge;
 import com.gutabi.deadlock.core.Point;
-
 
 public class TestDragging2 {
 	
@@ -60,35 +61,6 @@ public class TestDragging2 {
 		
 		MODEL.clear();
 	}
-	
-	Runnable empty = new Runnable(){
-		@Override
-		public void run() {
-			;
-		}};
-	
-		public void testPressed(Point p) throws Exception {
-			Point pp = p.add(OFFSET);
-			CONTROLLER.mc.pressed(new MouseEvent(null, 0, 0, 0, (int)pp.getX(), (int)pp.getY(), 0, false));
-			CONTROLLER.queueAndWait(empty);
-			Thread.sleep(10);
-			VIEW.repaint();
-		}
-		
-		public void testDragged(Point p) throws Exception {
-			Point pp = p.add(OFFSET);
-			CONTROLLER.mc.dragged(new MouseEvent(null, 0, 0, 0, (int)pp.getX(), (int)pp.getY(), 0, false));
-			CONTROLLER.queueAndWait(empty);
-			Thread.sleep(10);
-			VIEW.repaint();
-		}
-		
-		public void testReleased() throws Exception {
-			CONTROLLER.mc.released(new MouseEvent(null, 0, 0, 0, 0, 0, 0, false));
-			CONTROLLER.queueAndWait(empty);
-			Thread.sleep(10);
-			VIEW.repaint();
-		}
 	
 	
 	List<Edge> edges;
@@ -627,5 +599,67 @@ public class TestDragging2 {
 	}
 	
 	
+	@Test
+	public void testBug18() throws Exception {
+		
+		CONTROLLER.strat = MassageStrategy.CURRENT;
+		
+		testPressed(new Point(760., 624.));
+		testDragged(new Point(758., 628.));
+		testDragged(new Point(753., 635.));
+		testDragged(new Point(746., 643.));
+		testDragged(new Point(741., 650.));
+		testDragged(new Point(737., 656.));
+		testDragged(new Point(733., 668.));
+		testDragged(new Point(729., 683.));
+		testDragged(new Point(729., 694.));
+		testDragged(new Point(729., 700.));
+		testDragged(new Point(733., 705.));
+		testDragged(new Point(742., 708.));
+		testDragged(new Point(756., 710.));
+		testDragged(new Point(782., 712.));
+		testDragged(new Point(812., 709.));
+		testDragged(new Point(841., 700.));
+		testDragged(new Point(884., 672.));
+		testDragged(new Point(896., 662.));
+		testDragged(new Point(909., 650.));
+		testDragged(new Point(912., 645.));
+		testDragged(new Point(913., 638.));
+		testDragged(new Point(913., 635.));
+		testDragged(new Point(913., 630.));
+		testDragged(new Point(908., 625.));
+		testDragged(new Point(901., 622.));
+		testDragged(new Point(894., 617.));
+		testDragged(new Point(870., 607.));
+		testDragged(new Point(861., 605.));
+		testDragged(new Point(855., 603.));
+		testDragged(new Point(844., 602.));
+		testDragged(new Point(840., 602.));
+		testDragged(new Point(833., 600.));
+		testDragged(new Point(829., 600.));
+		testDragged(new Point(822., 600.));
+		testDragged(new Point(819., 600.));
+		testDragged(new Point(814., 600.));
+		testDragged(new Point(807., 601.));
+		testDragged(new Point(801., 601.));
+		testDragged(new Point(788., 602.));
+		testDragged(new Point(782., 604.));
+		testDragged(new Point(780., 605.));
+		testDragged(new Point(779., 606.));
+		testDragged(new Point(777., 606.));
+		testDragged(new Point(777., 608.));
+		testDragged(new Point(776., 609.));
+		testDragged(new Point(775., 610.));
+		
+		/*
+		 * after adding <<774, 612>, <763, 620>> there are now 3 edges
+		 */
+		testDragged(new Point(774., 612.));
+		testDragged(new Point(763., 620.));
+		testDragged(new Point(763., 622.));
+		testReleased();
+		
+		// assert stand-alone loop
+	}
 
 }

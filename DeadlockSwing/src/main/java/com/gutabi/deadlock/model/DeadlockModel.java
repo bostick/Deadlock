@@ -8,7 +8,6 @@ import com.gutabi.deadlock.controller.ControlMode;
 import com.gutabi.deadlock.core.Driveable;
 import com.gutabi.deadlock.core.Edge;
 import com.gutabi.deadlock.core.Graph;
-import com.gutabi.deadlock.core.Hub;
 import com.gutabi.deadlock.core.Intersection;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.Position;
@@ -22,15 +21,15 @@ public class DeadlockModel {
 	public final int WORLD_WIDTH = 2048;
 	public final int WORLD_HEIGHT = 2048;
 	
-	public double DISTANCE_PER_TIMESTEP = 3.0;
+	public double DISTANCE_PER_TIMESTEP = 1000.0;
 	
 	/*
 	 * spawn cars every SPAWN_FREQUENCY time steps
 	 * -1 means no spawning
 	 */
-	public int SPAWN_FREQUENCY = 10;
+	public int SPAWN_FREQUENCY = 1;
 	
-	public long WAIT = 40;
+	public long WAIT = 30;
 	
 	public Random RANDOM = new Random();
 	
@@ -78,17 +77,21 @@ public class DeadlockModel {
 		graph.removeVertexTop(i);
 	}
 	
-	public void addSource(Point p) {
-		graph.addSource(p);
+//	public void addSource(Point p) {
+//		graph.addSource(p);
+//	}
+//	
+//	public void addSink(Point p) {
+//		graph.addSink(p);
+//	}
+	
+	public void addVertexTop(Point p) {
+		graph.addVertexTop(p);
 	}
 	
-	public void addSink(Point p) {
-		graph.addSink(p);
-	}
-	
-	public void addHub(Point p) {
-		graph.addHub(p);
-	}
+//	public void addHub(Point p) {
+//		graph.addHub(p);
+//	}
 	
 	
 	
@@ -129,9 +132,9 @@ public class DeadlockModel {
 		return graph.getSinks();
 	}
 	
-	public List<Hub> getHubs() {
-		return graph.getHubs();
-	}
+//	public List<Hub> getHubs() {
+//		return graph.getHubs();
+//	}
 	
 	public ControlMode getMode() {
 		assert Thread.holdsLock(MODEL);
@@ -143,16 +146,16 @@ public class DeadlockModel {
 		this.mode = mode;
 	}
 	
-//	public Path shortestPath(Vertex start, Vertex end) {
-//		return graph.shortestPath(start, end);
-//	}
-	
 	public Vertex shortestPathChoice(Vertex start, Vertex end) {
 		return graph.shortestPathChoice(start, end);
 	}
 	
-	public double distanceTo(Vertex start, Vertex end) {
-		return graph.distanceTo(start, end);
+	public double distanceBetweenVertices(Vertex start, Vertex end) {
+		return graph.distanceBetweenVertices(start, end);
+	}
+	
+	public boolean areNeighbors(Edge a, Edge b) {
+		return graph.areNeighbors(a, b);
 	}
 	
 	public Position hitTest(Point p) {

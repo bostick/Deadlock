@@ -95,7 +95,8 @@ public class Point {
 				if (!doubleEquals(xba, 0.0)) {
 					cu = (c.x - a.x) / xba;
 					if (!doubleEquals(yba, 0.0)) {
-						assert doubleEquals(cu, (c.y - a.y) / yba, 1.0E-4);
+						//assert doubleEquals(cu, (c.y - a.y) / yba, 1.0E-4);
+						assert doubleEquals(cu * yba, (c.y - a.y), 1.0E-6);
 					}
 				} else {
 					cu = (c.y - a.y) / yba;
@@ -403,8 +404,12 @@ public class Point {
 			return ux;
 		} else {
 			double ux = xbc / xdc;
-			double uy = ybc / ydc;
-			assert doubleEquals(ux, uy) : "being treated as uneqal: " + ux + " " + uy;
+			//double uy = ybc / ydc;
+			//assert doubleEquals(ux, uy) : "being treated as uneqal: " + ux + " " + uy;
+			/*
+			 * numerically stable
+			 */
+			assert doubleEquals(xbc * ydc, ybc * xdc);
 //			assert ux >= 0.0;
 //			assert ux < 1.0;
 			return ux;
