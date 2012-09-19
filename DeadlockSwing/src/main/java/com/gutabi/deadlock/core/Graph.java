@@ -54,6 +54,8 @@ public class Graph {
 		edges.clear();
 		intersections.clear();
 		segTree.clear();
+		sources.clear();
+		sinks.clear();
 	}
 	
 	private Edge createEdge(Vertex start, Vertex end, List<Point> pts) {
@@ -74,10 +76,16 @@ public class Graph {
 	private void edgesChanged(Vertex v) {
 		
 		List<Edge> cons = v.getEdges();
+		
+		for (Edge e : cons) {
+			assert edges.contains(e);
+		}
+		
 		if (cons.size() == 0) {
 			destroyVertex(v);
 		} else if (cons.size() == 2) {
-			merge(cons.get(0), cons.get(1), v);
+			//merge(cons.get(0), cons.get(1), v);
+			merge(v);
 		}
 		
 		if (v instanceof Intersection) {
@@ -947,15 +955,16 @@ public class Graph {
 			events.add(e);
 			if (e instanceof IntersectionEvent) {
 				// sort based on param of source
-				int index = Collections.binarySearch(intersectionEvents, (IntersectionEvent)e, IntersectionEvent.COMPARATOR);
-				if (index < 0) {
-					// not found
-					int insertionPoint = -(index + 1);
-					intersectionEvents.add(insertionPoint, (IntersectionEvent)e);
-				} else {
-					// found
-					assert false;
-				}
+//				int index = Collections.binarySearch(intersectionEvents, (IntersectionEvent)e, IntersectionEvent.COMPARATOR);
+//				if (index < 0) {
+//					// not found
+//					int insertionPoint = -(index + 1);
+//					intersectionEvents.add(insertionPoint, (IntersectionEvent)e);
+//				} else {
+//					// found
+//					assert false;
+//				}
+				intersectionEvents.add((IntersectionEvent)e);
 			} else if (e instanceof CloseEvent) {
 				closeEvents.add((CloseEvent)e);
 			} else {
@@ -980,6 +989,16 @@ public class Graph {
 				if (index < 0) {
 					// not found
 					int insertionPoint = -(index + 1);
+					
+					for (IntersectionEvent f : acc.intersectionEvents) {
+						double dist = Point.distance(f.sourceStart, e.sourceStart);
+						if (dist < 1.0) {
+							String.class.getName();
+						} else {
+							
+						}
+					}
+					
 					acc.intersectionEvents.add(insertionPoint, e);
 				} else {
 					// found
@@ -1175,7 +1194,9 @@ public class Graph {
 			bV = createVertex(b);
 		}
 		
-		createEdge(aV, bV, new ArrayList<Point>(){{add(aV.getPoint());add(bV.getPoint());}});
+		Edge newEdge = createEdge(aV, bV, new ArrayList<Point>(){{add(aV.getPoint());add(bV.getPoint());}});
+		
+		assert edges.contains(newEdge);
 		
 		edgesChanged(aV);
 		edgesChanged(bV);
@@ -1238,32 +1259,61 @@ public class Graph {
 			
 			List<Point> pts = new ArrayList<Point>();
 			
+			int colinearCount = 0;
+			
 			pts.add(p);
 			try {
-				if (index+1 < e.size()-1 && !Point.colinear(p, d, e.getPoint(index+2))) {
-					pts.add(d);
+				if (index+1 < e.size()-1) {
+					if (!Point.colinear(p, d, e.getPoint(index+2))) {
+						pts.add(d);
+					} else {
+						colinearCount++;
+					}
+				} else if (index+1 == e.size()-1) {
+					if (!Point.colinear(p, d, e.getPoint(1))) {
+						pts.add(d);
+					} else {
+						colinearCount++;
+					}
 				}
 			} catch (ColinearException ex) {
 				assert false;
 			}
-			for (int i = index+2; i < e.size()-1; i++) {
+			// just changed i < e.size()-1; to i < e.size();
+			for (int i = index+2; i < e.size(); i++) {
 				pts.add(e.getPoint(i));
 			}
-			for (int i = 0; i < index; i++) {
+			// just changed i = 0 to i = 1
+			for (int i = 1; i < index; i++) {
 				pts.add(e.getPoint(i));
 			}
 			try {
-				if (index > 0 && !Point.colinear(e.getPoint(index-1), c, p)) {
-					pts.add(c);
+				if (betweenPoints) {
+					if (index > 0) {
+						if (!Point.colinear(e.getPoint(index-1), c, p)) {
+							pts.add(c);
+						} else {
+							colinearCount++;
+						}
+					} else if (index == 0) {
+						/*
+						 * c has already been added
+						 */
+					}
 				}
 			} catch (ColinearException ex) {
 				assert false;
 			}
-			pts.add(p);
+			/*
+			 * if p is exactly the beginning of e (and so also the end), then it has already been added
+			 */
+			if (!(index == 0 && !betweenPoints)) {
+				pts.add(p);
+			}
 			
 			Edge newEdge = createEdge(v, v, pts);
 			
-			assert newEdge.size() == e.size() + 1;
+			assert newEdge.size() == e.size() - colinearCount + (betweenPoints ? 1 : 0);
 			
 			destroyEdge(e);
 			
@@ -1379,10 +1429,17 @@ public class Graph {
 	 * 
 	 * no colinear points in returned edge
 	 */
-	private void merge(Edge e1, Edge e2, Vertex v) {
+	private void merge(Vertex v) {
+		
+		assert v.getEdges().size() == 2;
+		Edge e1 = v.getEdges().get(0);
+		Edge e2 = v.getEdges().get(1);
+		
 		assert !e1.isRemoved();
 		assert !e2.isRemoved();
 		assert !v.isRemoved();
+		assert edges.contains(e1);
+		assert edges.contains(e2);
 		
 		Vertex e1Start = e1.getStart();
 		Vertex e1End = e1.getEnd();

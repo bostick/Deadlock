@@ -5,7 +5,7 @@ import java.util.Comparator;
 public class DMath {
 	
 	public static boolean doubleEquals(double a, double b) {
-		return doubleEquals(a, b, 1.0E-7);
+		return doubleEquals(a, b, 1.0E-8);
 	}
 	
 	public static boolean doubleEquals(double a, double b, double delta) {

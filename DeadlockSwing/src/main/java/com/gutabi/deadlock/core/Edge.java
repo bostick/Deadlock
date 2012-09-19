@@ -207,6 +207,7 @@ public final class Edge implements Connector {
 		
 		for (int i = 0; i < pts.length; i++) {
 			Point p = pts[i];
+			
 			int count = 0;
 			for (Point q : pts) {
 				if (p.equals(q)) {
@@ -217,6 +218,16 @@ public final class Edge implements Connector {
 				assert count == 2;
 			} else {
 				assert count == 1;
+			}
+			
+			if (i < pts.length-1) {
+				Point q = pts[i+1];
+				if (Math.abs(p.getX() - q.getX()) < 1.0E-3) {
+					assert DMath.doubleEquals(p.getX(), q.getX());
+				}
+				if (Math.abs(p.getY() - q.getY()) < 1.0E-3) {
+					assert DMath.doubleEquals(p.getY(), q.getY());
+				}
 			}
 			
 			if (i == 0) {
