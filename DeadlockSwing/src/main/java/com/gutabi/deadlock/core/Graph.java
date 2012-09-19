@@ -190,7 +190,6 @@ public class Graph {
 		id = 0;
 		for (Edge e : edges) {
 			e.graphID = id;
-			//vertexIDs[id] = v;
 			id++;
 		}
 		
@@ -401,13 +400,6 @@ public class Graph {
 			Point ip = i.getPoint();
 			double dist = Point.distance(a, ip);
 			if (DMath.doubleEquals(dist, radius) || dist < radius) {
-				//if (i == anchorV) {
-					/*
-					 * since a is not equal to anchor, we want to be able to add segments to the existing edge.
-					 * so we have to ignore the anchorV when it comes up
-					 */
-				//	continue;
-				//}
 				if (anchorV == null || dist < Point.distance(ip, anchor)) {
 					if (closest == null || (Point.distance(a, ip) < Point.distance(a, closest.getPoint()))) {
 						closest = i;
@@ -632,26 +624,6 @@ public class Graph {
 				
 				assert false;
 				
-//				double cParam = Point.param(c, a, b);
-//				double dParam = Point.param(d, a, b);
-//				
-//				double startParam = cParam;
-//				double endParam = dParam;
-//				Point sourceStart = c;
-//				Point sourceEnd = d;
-//				if (endParam < startParam) {
-//					double tmp = startParam;
-//					startParam = endParam;
-//					endParam = tmp;
-//					sourceStart = d;
-//					sourceEnd = c;
-//				}
-//				
-//				startParam = Point.travelBackward(a, b, startParam, 10.0);
-//				endParam = Point.travelForward(a, b, endParam, 10.0);
-//				
-//				timeline.addEvent(new OverlapEvent(sourceStart, sourceEnd, startParam, endParam));
-				
 			}
 			
 		}
@@ -870,9 +842,6 @@ public class Graph {
 		int aClusterIndex = -1;
 		int bClusterIndex = -1;
 		
-		//Point closestASource;
-		//Point closestBSource;
-		
 		Timeline(Point a, Point b) {
 			this.a = a;
 			this.b = b;
@@ -964,7 +933,6 @@ public class Graph {
 		
 		List<IntersectionEvent> intersectionEvents = new ArrayList<IntersectionEvent>();
 		List<CloseEvent> closeEvents = new ArrayList<CloseEvent>();
-//		List<OverlapEvent> overlapEvents = new ArrayList<OverlapEvent>();
 		
 		private Cluster(Point a, Point b) {
 			this.a = a;
@@ -1021,9 +989,6 @@ public class Graph {
 			
 			acc.closeEvents.addAll(closeEvents);
 			acc.closeEvents.addAll(c.closeEvents);
-			
-//			acc.overlapEvents.addAll(overlapEvents);
-//			acc.overlapEvents.addAll(c.overlapEvents);
 			
 			acc.borderStartParam = borderStartParam;
 			acc.borderEndParam = borderEndParam;

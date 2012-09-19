@@ -77,14 +77,6 @@ public class DeadlockModel {
 		graph.removeVertexTop(i);
 	}
 	
-//	public void addSource(Point p) {
-//		graph.addSource(p);
-//	}
-//	
-//	public void addSink(Point p) {
-//		graph.addSink(p);
-//	}
-	
 	public void addVertexTop(Point p) {
 		graph.addVertexTop(p);
 	}
@@ -92,12 +84,6 @@ public class DeadlockModel {
 //	public void addHub(Point p) {
 //		graph.addHub(p);
 //	}
-	
-	
-	
-	
-	
-	
 	
 	
 	public boolean checkConsistency() {

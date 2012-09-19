@@ -4,8 +4,6 @@ import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 
 public class EdgePosition extends Position {
 	
-//	private Point p;
-	
 	private final Edge e;
 	private final int index;
 	private final double param;
@@ -31,7 +29,6 @@ public class EdgePosition extends Position {
 			throw new IllegalArgumentException();
 		}
 		
-//		this.p = Point.point(e.getPoint(index), e.getPoint(index+1), param);
 		this.e = e;
 		this.index = index;
 		this.param = param;
@@ -129,23 +126,6 @@ public class EdgePosition extends Position {
 			return Math.min(aaStartPath + distanceToStartOfEdge(), aaEndPath + distanceToEndOfEdge());
 		}
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	
 	
 	

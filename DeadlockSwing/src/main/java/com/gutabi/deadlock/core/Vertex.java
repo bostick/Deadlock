@@ -7,8 +7,6 @@ import java.util.List;
 
 public class Vertex extends Position implements Driveable {
 	
-//	private final Point p;
-	
 	private final int hash;
 	
 	protected final List<Edge> eds = new ArrayList<Edge>();
@@ -20,8 +18,6 @@ public class Vertex extends Position implements Driveable {
 	
 	public Vertex(Point p) {
 		super(p);
-		
-//		this.p = p;
 		
 		int h = 17;
 		h = 37 * h + p.hashCode();
@@ -136,18 +132,7 @@ public class Vertex extends Position implements Driveable {
 	
 	
 	
-	
-	
-	
-	
-	
-	
-	
-	
 	public static List<Connector> commonConnectors(Vertex a, Vertex b) {
-		
-//		List<Connector> eds1 = a.cons;
-//		List<Connector> eds2 = b.cons;
 		
 		List<Connector> common = new ArrayList<Connector>();
 		for (Edge e1 : a.eds) {
@@ -184,9 +169,6 @@ public class Vertex extends Position implements Driveable {
 		if (removed) {
 			throw new IllegalStateException("vertex has been removed");
 		}
-//		if (!(con.getStart() == this && con.getEnd() == this)) {
-//			assert !cons.contains(con);
-//		}
 		eds.add(e);
 	}
 	

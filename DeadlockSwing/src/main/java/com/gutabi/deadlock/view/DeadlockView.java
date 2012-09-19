@@ -388,7 +388,6 @@ public class DeadlockView {
 	
 	public void moveCameraRight() {
 		worldViewLoc = worldViewLoc.add(new Point(5, 0));
-		//Point center = MODEL.viewDim.divide(2).add(MODEL.viewLoc);
 		logger.debug("right: viewLoc=" + worldViewLoc);
 		
 		renderBackground();
@@ -397,7 +396,6 @@ public class DeadlockView {
 	
 	public void moveCameraLeft() {
 		worldViewLoc = worldViewLoc.add(new Point(-5, 0));
-		//Point center = MODEL.viewDim.divide(2).add(MODEL.viewLoc);
 		logger.debug("left: viewLoc=" + worldViewLoc);
 		
 		renderBackground();
@@ -406,7 +404,6 @@ public class DeadlockView {
 	
 	public void moveCameraUp() {
 		worldViewLoc = worldViewLoc.add(new Point(0, -5));
-		//Point center = MODEL.viewDim.divide(2).add(MODEL.viewLoc);
 		logger.debug("up: viewLoc=" + worldViewLoc);
 		
 		renderBackground();
@@ -415,7 +412,6 @@ public class DeadlockView {
 	
 	public void moveCameraDown() {
 		worldViewLoc = worldViewLoc.add(new Point(0, 5));
-		//Point center = MODEL.viewDim.divide(2).add(MODEL.viewLoc);
 		logger.debug("down: viewLoc=" + worldViewLoc);
 		
 		renderBackground();
@@ -424,7 +420,6 @@ public class DeadlockView {
 	
 	public void pageUp() {
 		worldViewLoc = worldViewLoc.add(new Point(0, -50));
-		//Point center = MODEL.viewDim.divide(2).add(MODEL.viewLoc);
 		logger.debug("up: viewLoc=" + worldViewLoc);
 		
 		renderBackground();
@@ -433,7 +428,6 @@ public class DeadlockView {
 	
 	public void pageDown() {
 		worldViewLoc = worldViewLoc.add(new Point(0, 50));
-		//Point center = MODEL.viewDim.divide(2).add(MODEL.viewLoc);
 		logger.debug("down: viewLoc=" + worldViewLoc);
 		
 		renderBackground();
@@ -444,8 +438,6 @@ public class DeadlockView {
 		Point center = worldViewDim.divide(2).add(worldViewLoc);
 		worldViewDim = worldViewDim.times(1/1.1);
 		worldViewLoc = center.minus(worldViewDim.divide(2));
-		//center = MODEL.viewDim.divide(2).add(MODEL.viewLoc);
-		//center = worldViewDim.divide(2).add(worldViewLoc);
 		logger.debug("zoom in: viewLoc=" + worldViewLoc);
 		
 		renderBackground();
@@ -456,8 +448,6 @@ public class DeadlockView {
 		Point center = worldViewDim.divide(2).add(worldViewLoc);
 		worldViewDim = worldViewDim.times(1.1);
 		worldViewLoc = center.minus(worldViewDim.divide(2));
-		//center = MODEL.viewDim.divide(2).add(MODEL.viewLoc);
-		//center = worldViewDim.divide(2).add(worldViewLoc);
 		logger.debug("zoom out: viewLoc=" + worldViewLoc);
 		
 		renderBackground();

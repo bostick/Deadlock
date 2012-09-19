@@ -2,12 +2,10 @@ package com.gutabi.deadlock.core;
 
 public class HubPosition extends Position {
 	
-//	private final Point p;
 	private final Hub h;
 	
 	public HubPosition(Hub h, Point p) {
 		super(p);
-//		this.p = p;
 		this.h = h;
 	}
 	

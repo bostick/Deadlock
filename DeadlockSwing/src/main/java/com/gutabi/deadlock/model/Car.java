@@ -18,7 +18,6 @@ import com.gutabi.deadlock.core.SinkedPosition;
 import com.gutabi.deadlock.core.Source;
 import com.gutabi.deadlock.core.Vertex;
 
-//@SuppressWarnings("serial")
 public class Car {
 	
 	private CarState state;
@@ -111,8 +110,6 @@ public class Car {
 					previousEdge = e;
 					nextState = CarState.VERTEX;
 					
-//					assert getLastNextPosition().getSpace() instanceof Vertex;
-					
 					nextDistanceToMove = 0.0;
 					time = 1.0;
 					
@@ -125,14 +122,11 @@ public class Car {
 					previousEdge = e;
 					nextState = CarState.VERTEX;
 					
-//					assert getLastNextPosition().getSpace() instanceof Vertex;
-					
 					nextDistanceToMove -= distanceLeftOnEdge;
 					time += (nextDist / MODEL.DISTANCE_PER_TIMESTEP);
 					
 					if (nextDest instanceof Sink) {
 						nextState = CarState.SINKED;
-						//nextDistanceToMove = 0.0;
 					}
 					
 				} else {
@@ -152,14 +146,12 @@ public class Car {
 			}
 			case CRASHED: {
 				Position pos = getLastNextPosition();
-				//nextDistanceToMove = 0.0;
 				nextPathAdd(new STPosition(pos, 1.0));
 				time = 1.0;
 				break;
 			}
 			case SINKED: {
 				SinkedPosition pos = (SinkedPosition)getLastNextPosition();
-				//nextDistanceToMove = 0.0;
 				nextPathAdd(new STPosition(pos, 1.0));
 				time = 1.0;
 				break;
@@ -173,8 +165,6 @@ public class Car {
 			}
 			
 		} // end inner loop
-		
-		//assert DMath.doubleEquals(time, 1.0);
 		
 		return !(nextState == CarState.CRASHED);
 	}
@@ -285,14 +275,6 @@ public class Car {
 		final Position p = getLastNextPosition();
 		setPosition(p);
 		CarState s = nextState;
-//		if (s == CarState.CRASHED) {
-//			nextPath = new Path(new ArrayList<STPosition>(){{add(new STPosition(p, 0.0));add(new STPosition(p, 1.0));}});
-//			setState(s);
-//		} else {
-//			nextPath = new Path(new ArrayList<STPosition>(){{add(new STPosition(p, 0.0));}});
-//			setState(s);
-//		}
-		//nextPath = new Path(new ArrayList<STPosition>(){{add(new STPosition(p, 0.0));}});
 		nextPath = null;
 		setState(s);
 		return (s != CarState.SINKED);
@@ -313,16 +295,10 @@ public class Car {
 	}
 	
 	public void setPosition(Position pos) {
-//		if (state == CarState.CRASHED || state == CarState.SINKED) {
-//			throw new IllegalArgumentException();
-//		}
 		this.pos = pos;
 	}
 	
 	public void nextPathAdd(STPosition pos) {
-//		if (state == CarState.CRASHED || state == CarState.SINKED) {
-//			throw new IllegalArgumentException();
-//		}
 		if (nextPath == null) {
 			List<STPosition> poss = new ArrayList<STPosition>();
 			poss.add(new STPosition(this.pos, 0.0));
@@ -347,10 +323,6 @@ public class Car {
 	}
 	
 	public void nextPathSynchronize(double time) {
-//		if (state == CarState.CRASHED || state == CarState.SINKED) {
-//			throw new IllegalArgumentException();
-//		}
-		
 		nextPath = nextPath.synchronize(time);
 	}
 	
@@ -371,10 +343,6 @@ public class Car {
 	}
 	
 	public void setState(CarState s) {
-//		if (state == CarState.CRASHED || state == CarState.SINKED) {
-//			throw new IllegalArgumentException();
-//		}
-		
 		this.state = s;
 	}
 	

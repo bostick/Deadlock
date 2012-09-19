@@ -193,27 +193,9 @@ public final class Edge implements Connector {
 		}
 	}
 	
-//	public static Edge commonEdge(Vertex a, Vertex b) {
-//		
-//		List<Edge> eds = a.getEdges();
-//		
-//		for (Edge e : eds) {
-//			if (e.getStart() == b || e.getEnd() == b) {
-//				return e;
-//			}
-//		}
-//		
-//		return null;
-//		
-//	}
-	
 	private void check() {
 		
 		assert pts.length >= 2;
-		
-//		for (Point p : pts) {
-//			assert p.isInteger();
-//		}
 		
 		if (loop) {
 			assert start == end;

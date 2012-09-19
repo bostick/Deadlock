@@ -214,24 +214,6 @@ public class Path {
 		assert (DMath.doubleEquals(startTime, time) || startTime < time) && (DMath.doubleEquals(time, endTime) || time < endTime);
 		
 		List<STPosition> newPath = new ArrayList<STPosition>();
-//		STPosition last = null;
-//		for (int i = 0; i < poss.size(); i++) {
-//			STPosition pos = poss.get(i);
-//			if (DMath.doubleEquals(pos.getTime(), time)) {
-//				newPath.add(pos);
-//				newPath.add(new STPosition(pos.getSpace(), endTime));
-//				break;
-//			} else if (pos.getTime() < time) {
-//				newPath.add(pos);
-//			} else {
-//				assert last.getTime() < time && time < pos.getTime();
-//				Position crashPos = this.getPosition(time);
-//				newPath.add(new STPosition(crashPos, time));
-//				newPath.add(new STPosition(crashPos, endTime));
-//				break;
-//			}
-//			last = pos;
-//		}
 		
 		Position crashPos = this.getPosition(time);
 		newPath.add(new STPosition(crashPos, time));
@@ -254,7 +236,7 @@ public class Path {
 			if (DMath.doubleEquals(pos.getTime(), time)) {
 				newPath.add(pos);
 			} else if (pos.getTime() < time) {
-//				newPath.add(pos);
+				;
 			} else if (last.getTime() < time && time < pos.getTime()) {
 				Position synchPos = this.getPosition(time);
 				newPath.add(new STPosition(synchPos, time));
@@ -316,13 +298,6 @@ public class Path {
 		for (int i = 0; i < da.length-1; i++) {
 			double ta = da[i];
 			double tb = da[i+1];
-			
-			/*
-			 * make sure that tb is in both paths (sinking a car shortens it's path, so path a and b don't always have the same time span) 
-			 */
-//			if (tb > a.endTime || tb > b.endTime) {
-//				break;
-//			}
 			
 			SubPath ap = a.subPath(ta, tb);
 			SubPath bp = b.subPath(ta, tb);

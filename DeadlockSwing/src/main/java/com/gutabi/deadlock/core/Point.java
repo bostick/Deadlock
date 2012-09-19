@@ -217,21 +217,12 @@ public class Point {
 		
 		Point c = point(start, end, param);
 		
-//		if (dist > distance(c, end)) {
-//			throw new TravelException();
-//		}
-		
 		double rad = Math.atan2(end.y - start.y, end.x - start.x);
 		double x = Math.cos(rad) * dist + c.x;
 		double y = Math.sin(rad) * dist + c.y;
 		
 		Point m = new Point(x, y);
 		
-//		try {
-//			assert colinear(start, m, end);
-//		} catch (ColinearException e) {
-//			assert false;
-//		}
 		assert doubleEquals(distance(c, m), dist);
 		
 		return param(m, start, end);
@@ -252,21 +243,12 @@ public class Point {
 		
 		Point c = point(start, end, param);
 		
-//		if (dist > distance(c, start)) {
-//			throw new TravelException();
-//		}
-		
 		double rad = Math.atan2(start.y - end.y, start.x - end.x);
 		double x = Math.cos(rad) * dist + c.x;
 		double y = Math.sin(rad) * dist + c.y;
 		
 		Point m = new Point(x, y);
 		
-//		try {
-//			assert colinear(start, m, end);
-//		} catch (ColinearException e) {
-//			assert false;
-//		}
 		assert doubleEquals(distance(c, m), dist);
 		
 		return param(m, start, end);
@@ -395,23 +377,18 @@ public class Point {
 		if (doubleEquals(xdc, 0.0)) {
 			assert doubleEquals(xbc, 0);
 			double uy = ybc / ydc;
-//			assert uy < 1.0;
 			return uy;
 		} else if (doubleEquals(ydc, 0.0)) {
 			assert doubleEquals(ybc, 0);
 			double ux = xbc / xdc;
-//			assert ux < 1.0;
 			return ux;
 		} else {
 			double ux = xbc / xdc;
-			//double uy = ybc / ydc;
 			//assert doubleEquals(ux, uy) : "being treated as uneqal: " + ux + " " + uy;
 			/*
 			 * numerically stable
 			 */
 			assert doubleEquals(xbc * ydc, ybc * xdc);
-//			assert ux >= 0.0;
-//			assert ux < 1.0;
 			return ux;
 		}
 		
@@ -458,13 +435,6 @@ public class Point {
 			
 			Point int1 = new Point((dd * dy)/(dr * dr), (-dd * dx)/(dr * dr)).add(center);
 			
-//			double u = Point.u(a, int1, b);
-//			if (DMath.doubleEquals(u, 0.0) || DMath.doubleEquals(u, 1.0) || 0 < u && u < 1.0) {
-//				ints[0] = int1;
-//			} else {
-//				ints[0] = null;
-//			}
-			
 			ints[0] = int1;
 			
 			return 1;
@@ -473,32 +443,6 @@ public class Point {
 			
 			Point int1 = new Point((dd * dy + sgn(dy) * dx * Math.sqrt(disc))/(dr * dr), (-dd * dx + Math.abs(dy) * Math.sqrt(disc))/(dr * dr)).add(center);
 			Point int2 = new Point((dd * dy - sgn(dy) * dx * Math.sqrt(disc))/(dr * dr), (-dd * dx - Math.abs(dy) * Math.sqrt(disc))/(dr * dr)).add(center);
-			
-//			double u = Point.u(a, int1, b);
-//			if (DMath.doubleEquals(u, 0.0) || DMath.doubleEquals(u, 1.0) || 0 < u && u < 1.0) {
-//				ints[0] = int1;
-//			
-//				u = Point.u(a, int2, b);
-//				if (DMath.doubleEquals(u, 0.0) || DMath.doubleEquals(u, 1.0) || 0 < u && u < 1.0) {
-//					
-//					ints[1] = int2;
-//					
-//				} else {
-//					ints[1] = null;
-//				}
-//				
-//			} else {
-//				
-//				u = Point.u(a, int2, b);
-//				if (DMath.doubleEquals(u, 0.0) || DMath.doubleEquals(u, 1.0) || 0 < u && u < 1.0) {
-//					
-//					ints[0] = int2;
-//					
-//				} else {
-//					ints[0] = null;
-//				}
-//				
-//			}
 			
 			ints[0] = int1;
 			ints[1] = int2;
