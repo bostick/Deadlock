@@ -11,7 +11,6 @@ import com.gutabi.deadlock.core.Edge;
 import com.gutabi.deadlock.core.Intersection;
 import com.gutabi.deadlock.core.Path;
 import com.gutabi.deadlock.core.Position;
-import com.gutabi.deadlock.core.STPosition;
 import com.gutabi.deadlock.core.Sink;
 import com.gutabi.deadlock.core.Source;
 import com.gutabi.deadlock.core.Vertex;
@@ -40,8 +39,8 @@ public class SimulationRunnable implements Runnable {
 	@Override
 	public void run() {
 		
-		firstCrashTime = -1;
-		crashes.clear();
+		firstUnprocessedCrashTime = -1;
+		unprocessedCrashes.clear();
 		
 		synchronized (MODEL) {
 			
@@ -80,10 +79,6 @@ public class SimulationRunnable implements Runnable {
 			
 			if (MODEL.SPAWN_FREQUENCY > 0 && (step == 0 || (step - lastSpawnStep) >= MODEL.SPAWN_FREQUENCY)) {
 				spawnNewCars();
-			}
-			
-			for (Car c : movingCarsCopy) {
-				c.updateNext();
 			}
 			
 			movingFixPoint();
@@ -170,53 +165,112 @@ public class SimulationRunnable implements Runnable {
 			c.source = s;
 			c.startingStep = step;
 			
-			c.nextPath = new Path(new ArrayList<STPosition>(){{add(new STPosition(s, 0.0));}});
+			//c.nextPath = new Path(new ArrayList<STPosition>(){{add(new STPosition(s, 0.0));}});
 			c.nextState = CarState.VERTEX;
 			
 			sources.remove(s);
+			
+			//Position p = c.getLastNextPosition().getSpace();
+			c.setPosition(s);
+			//CarState s = c.nextState;
+			//c.nextPath = new Path(new ArrayList<STPosition>(){{add(new STPosition(p, 0.0));}});
+			c.setState(CarState.VERTEX);
 		}
 		
-		updateCurrentFromNext(newCars);
+//		List<Car> cantMoveCars = new ArrayList<Car>();
+//		List<Car> canMoveCars = new ArrayList<Car>();
+//		for (Car c : newCars) {
+//			boolean moving = c.updateNext();
+//			if (!moving) {
+//				cantMoveCars.add(c);
+//			} else {
+//				canMoveCars.add(c);
+//			}
+//		}
+//		
+//		updateCurrentFromNext(cantMoveCars);
+//		crashedCarsCopy.addAll(cantMoveCars);
+//		
+//		resetToNew(canMoveCars);
 		
-		List<Car> cantMoveCars = new ArrayList<Car>();
-		List<Car> canMoveCars = new ArrayList<Car>();
-		for (Car c : newCars) {
-			boolean moving = c.updateNext();
-			if (!moving) {
-				cantMoveCars.add(c);
-			} else {
-				canMoveCars.add(c);
-			}
-		}
-		
-		updateCurrentFromNext(cantMoveCars);
-		
-		resetToNew(canMoveCars);
-		
-		movingCarsCopy.addAll(canMoveCars);
+//		movingCarsCopy.addAll(canMoveCars);
+		movingCarsCopy.addAll(newCars);
 		
 		lastSpawnStep = step;
 		
 	}
 	
+	
+	double lastSyncTime;
+	
 	private void movingFixPoint() {
+		
+		lastSyncTime = 0.0;
+		
+		for (Car c : movingCarsCopy) {
+			c.updateNext();
+		}
+		for (Car c : crashedCarsCopy) {
+			c.updateNext();
+		}
 		
 		findCrashesMoving(movingCarsCopy);
 		findCrashesMovingCrashed(movingCarsCopy, crashedCarsCopy);
-		while (firstCrashTime != -1) {
-			List<Car> newlyCrashedCars = processCrashInfo(movingCarsCopy);
+		int iter = 0;
+		while (firstUnprocessedCrashTime != -1) {
 			
-			updateCurrentFromNext(newlyCrashedCars);
+			List<Car> newlyCrashedCars = processCrashInfo(new ArrayList<Car>(){{addAll(movingCarsCopy);addAll(crashedCarsCopy);}});
+			
+			assert checkTimes(new ArrayList<Car>(){{addAll(movingCarsCopy);addAll(crashedCarsCopy);}});
+			
+			movingCarsCopy.removeAll(newlyCrashedCars);
+			crashedCarsCopy.addAll(newlyCrashedCars);
+			
+//			updateCurrentFromNext(newlyCrashedCars);
+//			for (Car c : movingCarsCopy) {
+//				c.updateCurrentFromNext();
+//			}
+//			for (Car c : crashedCarsCopy) {
+//				c.updateCurrentFromNext();
+//			}
+			
+//			List<Car> newlySinkedCars = updateCurrentFromNext(new ArrayList<Car>(){{addAll(movingCarsCopy);addAll(crashedCarsCopy);}});
+			
+//			movingCarsCopy.removeAll(newlySinkedCars);
 			
 //			assert checkDistances(new ArrayList<Car>(){{addAll(movingCarsCopy);addAll(crashedCarsCopy);}});
 			
 			findCrashesMoving(movingCarsCopy);
 			findCrashesMovingCrashed(movingCarsCopy, crashedCarsCopy);
+			
+			iter = iter + 1;
 		}
 		
-		updateCurrentFromNext(new ArrayList<Car>(){{addAll(movingCarsCopy);}});
+//		updateCurrentFromNext(new ArrayList<Car>(){{addAll(movingCarsCopy);}});
+//		for (Car c : movingCarsCopy) {
+//			c.updateCurrentFromNext();
+//		}
+//		for (Car c : crashedCarsCopy) {
+//			c.updateCurrentFromNext();
+//		}
+		List<Car> newlySinkedCars = updateCurrentFromNext(new ArrayList<Car>(){{addAll(movingCarsCopy);addAll(crashedCarsCopy);}});
+		
+		movingCarsCopy.removeAll(newlySinkedCars);
 		
 //		assert checkDistances(new ArrayList<Car>(){{addAll(movingCarsCopy);addAll(crashedCarsCopy);}});
+		
+		
+	}
+	
+	private boolean checkTimes(List<Car> cars) {
+		for (Car c : cars) {
+			Path p = c.nextPath;
+			assert DMath.doubleEquals(p.getStartTime(), lastSyncTime);
+			assert DMath.doubleEquals(p.getEndTime(), 1.0);
+			
+			//d;
+		}
+		return true;
 	}
 	
 //	private boolean checkFutureDistances(Car c, Car d) {
@@ -458,23 +512,23 @@ public class SimulationRunnable implements Runnable {
 	}
 	
 	
-	double firstCrashTime = -1;
-	List<CrashInfo> crashes = new ArrayList<CrashInfo>();
+	double firstUnprocessedCrashTime = -1;
+	List<CrashInfo> unprocessedCrashes = new ArrayList<CrashInfo>();
 	
 	private void saveCrashInfo(CrashInfo ci) {
 		
 		double t = ci.crashTime;
 		
-		if (firstCrashTime == -1) {
-			firstCrashTime = t;
-			assert crashes.isEmpty();
-			crashes.add(ci);
-		} else if (firstCrashTime == t) {
-			crashes.add(ci);
-		} else if (t < firstCrashTime) {
-			firstCrashTime = t;
-			crashes.clear();
-			crashes.add(ci);
+		if (firstUnprocessedCrashTime == -1) {
+			firstUnprocessedCrashTime = t;
+			assert unprocessedCrashes.isEmpty();
+			unprocessedCrashes.add(ci);
+		} else if (firstUnprocessedCrashTime == t) {
+			unprocessedCrashes.add(ci);
+		} else if (t < firstUnprocessedCrashTime) {
+			firstUnprocessedCrashTime = t;
+			unprocessedCrashes.clear();
+			unprocessedCrashes.add(ci);
 		} else {
 			;
 		}
@@ -488,30 +542,34 @@ public class SimulationRunnable implements Runnable {
 //		assert DMath.doubleEquals(distance, 10);
 	}
 	
-	private List<Car> processCrashInfo(List<Car> cars) {
+	private List<Car> processCrashInfo(List<Car> allCars) {
 		
 		List<Car> newlyCrashedCars = new ArrayList<Car>();
 		
-		for (CrashInfo info : crashes) {
+		for (CrashInfo info : unprocessedCrashes) {
 			double crashTime = info.crashTime;
+			assert DMath.doubleEquals(crashTime, firstUnprocessedCrashTime);
+			
 			Car i = info.i;
 			Car j = info.j;
 			
-			Position cip = i.nextPath.getPosition(crashTime);
-			Position cjp = j.nextPath.getPosition(crashTime);
+//			Position cip = i.nextPath.getPosition(crashTime);
+//			Position cjp = j.nextPath.getPosition(crashTime);
 			
-			double dist = cip.distanceTo(cjp);
-			assert DMath.doubleEquals(dist, 10.0);
+//			double dist = cip.distanceTo(cjp);
+//			assert DMath.doubleEquals(dist, 10.0);
 			
-			if (i.getState() != CarState.CRASHED) {
-				i.nextPathCrash(crashTime);
+			if (i.nextState != CarState.CRASHED) {
+				i.nextPathCrash(firstUnprocessedCrashTime);
 				i.crashingStep = step;
+				i.nextState = CarState.CRASHED;
 				newlyCrashedCars.add(i);
 			}
 			
-			if (j.getState() != CarState.CRASHED) {
-				j.nextPathCrash(crashTime);
+			if (j.nextState != CarState.CRASHED) {
+				j.nextPathCrash(firstUnprocessedCrashTime);
 				j.crashingStep = step;
+				j.nextState = CarState.CRASHED;
 				newlyCrashedCars.add(j);
 			}
 			
@@ -519,41 +577,64 @@ public class SimulationRunnable implements Runnable {
 			
 		}
 		
-		firstCrashTime = -1;
-		crashes.clear();
+		/*
+		 * synchronize other cars to crashTime
+		 */
+		for (Car c : allCars) {
+			if (newlyCrashedCars.contains(c)) {
+				// already synchronized
+				continue;
+			}
+			
+			c.nextPathSynchronize(firstUnprocessedCrashTime);
+		}
+		
+		lastSyncTime = firstUnprocessedCrashTime;
+		
+		firstUnprocessedCrashTime = -1;
+		unprocessedCrashes.clear();
 		
 		return newlyCrashedCars;
 	}
 	
-	private void updateCurrentFromNext(List<Car> cars) {
+	private List<Car> updateCurrentFromNext(List<Car> cars) {
+		
+		List<Car> newlySinkedCars = new ArrayList<Car>();
+		
 		for (Car c : cars) {
-			switch (c.nextState) {
-			case NEW:
-				assert false;
-				break;
-			case EDGE:
-			case VERTEX:
-				break;
-			case CRASHED: {
-				movingCarsCopy.remove(c);
-				crashedCarsCopy.add(c);
-				break;
+//			switch (c.nextState) {
+//			case NEW:
+//				assert false;
+//				break;
+//			case EDGE:
+//			case VERTEX:
+//				break;
+//			case CRASHED: {
+//				movingCarsCopy.remove(c);
+//				crashedCarsCopy.add(c);
+//				break;
+//			}
+//			case SINKED: {
+//				boolean res = movingCarsCopy.remove(c);
+//				assert res;
+//				break;
+//			}
+//			}
+			boolean moving = c.updateCurrentFromNext();
+			if (!moving) {
+				newlySinkedCars.add(c);
 			}
-			case SINKED: {
-				boolean res = movingCarsCopy.remove(c);
-				assert res;
-				break;
-			}
-			}
-			c.updateCurrentFromNext();
 		}
+		
+		return newlySinkedCars;
 	}
 	
-	private void resetToNew(List<Car> cars) {
-		for (final Car c : cars) {
-			c.nextPath = new Path(new ArrayList<STPosition>(){{add(new STPosition(c.source, 0.0));}});
-			c.nextState = CarState.VERTEX;
-		}
-	}
+//	private void resetToNew(List<Car> cars) {
+//		for (final Car c : cars) {
+//			//c.nextPath = new Path(new ArrayList<STPosition>(){{add(new STPosition(c.source, 0.0));}});
+//			c.nextPath = null;
+//			c.nextState = CarState.VERTEX;
+//		}
+//	}
 	
 }

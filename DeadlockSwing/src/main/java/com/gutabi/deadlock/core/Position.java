@@ -2,17 +2,44 @@ package com.gutabi.deadlock.core;
 
 public abstract class Position {
 	
-	public abstract Point getPoint();
+	Point p;
+	
+	Position(Point p) {
+		this.p = p;
+	}
+	
+	public Point getPoint() {
+		return p;
+	}
 	
 	public abstract Driveable getDriveable();
 	
 	public abstract double distanceTo(Position b);
 	
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		} else if (!(o instanceof Position)) {
+			return false;
+		} else {
+			if (this instanceof Vertex) {
+				return ((Vertex)this).equals(o);
+			} else if (this instanceof EdgePosition) {
+				return ((EdgePosition)this).equals(o);
+			} else {
+				return ((SinkedPosition)this).equals(o);
+			}
+		}
+	}
+	
 	public Position travel(Position p, double distance) {
 		if (p instanceof Vertex) {
 			return travelToV((Vertex)p, distance);
-		} else {
+		} else if (p instanceof EdgePosition) {
 			return travelToE((EdgePosition)p, distance);
+		} else {
+			return travelToV(((SinkedPosition)p).getSink(), distance);
 		}
 	}
 	
@@ -26,7 +53,7 @@ public abstract class Position {
 			
 			return v.travel(c, p, distance);
 			
-		} else {
+		} else if (this instanceof EdgePosition) {
 			
 			EdgePosition ep = (EdgePosition)this;
 			
@@ -35,6 +62,10 @@ public abstract class Position {
 			assert ep.getDest() == p;
 			
 			return ep.travel(p, distance);
+		} else {
+			
+			assert this instanceof SinkedPosition;
+			throw new IllegalStateException();
 		}
 		
 	}

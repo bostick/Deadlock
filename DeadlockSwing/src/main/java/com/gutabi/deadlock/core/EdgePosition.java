@@ -4,7 +4,7 @@ import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 
 public class EdgePosition extends Position {
 	
-	private Point p;
+//	private Point p;
 	
 	private final Edge e;
 	private final int index;
@@ -19,6 +19,7 @@ public class EdgePosition extends Position {
 	private double distanceToEndOfEdge = -1;
 	
 	public EdgePosition(Edge e, int index, double param, Vertex dest) {
+		super(Point.point(e.getPoint(index), e.getPoint(index+1), param));
 		
 		if (index < 0 || index >= e.size()-1) {
 			throw new IllegalArgumentException();
@@ -30,7 +31,7 @@ public class EdgePosition extends Position {
 			throw new IllegalArgumentException();
 		}
 		
-		this.p = Point.point(e.getPoint(index), e.getPoint(index+1), param);
+//		this.p = Point.point(e.getPoint(index), e.getPoint(index+1), param);
 		this.e = e;
 		this.index = index;
 		this.param = param;
@@ -100,7 +101,7 @@ public class EdgePosition extends Position {
 			double aaEndPath = MODEL.distanceBetweenVertices(e.getEnd(), bb);
 			
 			return Math.min(aaStartPath + distanceToStartOfEdge(), aaEndPath + distanceToEndOfEdge());
-		} else {
+		} else if (b instanceof EdgePosition) {
 			EdgePosition aa = (EdgePosition)this;
 			EdgePosition bb = (EdgePosition)b;
 			
@@ -119,6 +120,13 @@ public class EdgePosition extends Position {
 			double endEndDistance = endEndPath + aa.distanceToEndOfEdge() + bb.distanceToEndOfEdge();
 			
 			return Math.min(Math.min(startStartDistance, startEndDistance), Math.min(endStartDistance, endEndDistance));
+		} else {
+			SinkedPosition bb = (SinkedPosition)b;
+			
+			double aaStartPath = MODEL.distanceBetweenVertices(e.getStart(), bb.getSink());
+			double aaEndPath = MODEL.distanceBetweenVertices(e.getEnd(), bb.getSink());
+			
+			return Math.min(aaStartPath + distanceToStartOfEdge(), aaEndPath + distanceToEndOfEdge());
 		}
 	}
 	

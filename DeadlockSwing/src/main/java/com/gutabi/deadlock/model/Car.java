@@ -14,10 +14,11 @@ import com.gutabi.deadlock.core.Path;
 import com.gutabi.deadlock.core.Position;
 import com.gutabi.deadlock.core.STPosition;
 import com.gutabi.deadlock.core.Sink;
+import com.gutabi.deadlock.core.SinkedPosition;
 import com.gutabi.deadlock.core.Source;
 import com.gutabi.deadlock.core.Vertex;
 
-@SuppressWarnings("serial")
+//@SuppressWarnings("serial")
 public class Car {
 	
 	private CarState state;
@@ -54,6 +55,8 @@ public class Car {
 	 */
 	public boolean updateNext() {
 		
+		assert nextPath == null;
+		
 		nextDistanceToMove = MODEL.DISTANCE_PER_TIMESTEP;
 		double time = 0.0;
 		
@@ -62,7 +65,7 @@ public class Car {
 			
 			switch (nextState) {
 			case EDGE: {
-				Position pos = getLastNextPosition().getSpace();
+				Position pos = getLastNextPosition();
 				Edge e = nextEdge;
 				Vertex dest = nextDest;
 				double distanceLeftOnEdge;
@@ -76,7 +79,13 @@ public class Car {
 				double nextDist = Math.min(nextDistanceToMove, distanceLeftOnEdge);
 				if (pos instanceof EdgePosition) {
 					nextPos = ((EdgePosition)pos).travel(nextDest, nextDist);
-					nextPathAdd(new STPosition(nextPos, time + (nextDist / MODEL.DISTANCE_PER_TIMESTEP)));
+					
+					if (nextPos instanceof Sink) {
+						nextPathAdd(new STPosition(new SinkedPosition((Sink)nextPos), time + (nextDist / MODEL.DISTANCE_PER_TIMESTEP)));
+					} else {
+						nextPathAdd(new STPosition(nextPos, time + (nextDist / MODEL.DISTANCE_PER_TIMESTEP)));
+					}
+					
 				} else {
 					nextPos = ((Vertex)pos).travel(e, nextDest, nextDist);
 					if (nextPos instanceof Vertex) {
@@ -85,8 +94,16 @@ public class Car {
 						 * but adding a middle point doesn't hurt
 						 */
 						nextPathAdd(new STPosition(((Vertex)pos).travel(e, nextDest, nextDist / 2), time + (nextDist / MODEL.DISTANCE_PER_TIMESTEP) / 2));
+						
+						if (nextPos instanceof Sink) {
+							nextPathAdd(new STPosition(new SinkedPosition((Sink)nextPos), time + (nextDist / MODEL.DISTANCE_PER_TIMESTEP)));
+						} else {
+							nextPathAdd(new STPosition(nextPos, time + (nextDist / MODEL.DISTANCE_PER_TIMESTEP)));
+						}
+						
+					} else {
+						nextPathAdd(new STPosition(nextPos, time + (nextDist / MODEL.DISTANCE_PER_TIMESTEP)));
 					}
-					nextPathAdd(new STPosition(nextPos, time + (nextDist / MODEL.DISTANCE_PER_TIMESTEP)));
 				}
 				
 				if (DMath.doubleEquals(nextDistanceToMove, distanceLeftOnEdge)) {
@@ -94,7 +111,7 @@ public class Car {
 					previousEdge = e;
 					nextState = CarState.VERTEX;
 					
-					assert getLastNextPosition().getSpace() instanceof Vertex;
+//					assert getLastNextPosition().getSpace() instanceof Vertex;
 					
 					nextDistanceToMove = 0.0;
 					time = 1.0;
@@ -108,14 +125,14 @@ public class Car {
 					previousEdge = e;
 					nextState = CarState.VERTEX;
 					
-					assert getLastNextPosition().getSpace() instanceof Vertex;
+//					assert getLastNextPosition().getSpace() instanceof Vertex;
 					
 					nextDistanceToMove -= distanceLeftOnEdge;
 					time += (nextDist / MODEL.DISTANCE_PER_TIMESTEP);
 					
 					if (nextDest instanceof Sink) {
 						nextState = CarState.SINKED;
-						nextDistanceToMove = 0.0;
+						//nextDistanceToMove = 0.0;
 					}
 					
 				} else {
@@ -126,29 +143,38 @@ public class Car {
 				break;
 			}
 			case VERTEX: {
-				Vertex pos = (Vertex)getLastNextPosition().getSpace();
+				Vertex pos = (Vertex)getLastNextPosition();
 				boolean moving = nextChoice(pos);
 				if (!moving) {
 					nextDistanceToMove = 0.0;
 				}
 				break;
 			}
-			case CRASHED:
-				//give a path to crashed cars
-				nextDistanceToMove = 0.0;
+			case CRASHED: {
+				Position pos = getLastNextPosition();
+				//nextDistanceToMove = 0.0;
+				nextPathAdd(new STPosition(pos, 1.0));
+				time = 1.0;
 				break;
-			case SINKED:
-				nextDistanceToMove = 0.0;
+			}
+			case SINKED: {
+				SinkedPosition pos = (SinkedPosition)getLastNextPosition();
+				//nextDistanceToMove = 0.0;
+				nextPathAdd(new STPosition(pos, 1.0));
+				time = 1.0;
 				break;
+			}
 			case NEW:
 				assert false;
 			}
 			
-			if (nextDistanceToMove == 0.0) {
+			if (DMath.doubleEquals(time, 1.0)) {
 				break inner;
 			}
 			
 		} // end inner loop
+		
+		//assert DMath.doubleEquals(time, 1.0);
 		
 		return !(nextState == CarState.CRASHED);
 	}
@@ -255,18 +281,21 @@ public class Car {
 	}
 	
 	
-	public void updateCurrentFromNext() {
-		final Position p = getLastNextPosition().getSpace();
+	public boolean updateCurrentFromNext() {
+		final Position p = getLastNextPosition();
 		setPosition(p);
 		CarState s = nextState;
-		if (s == CarState.CRASHED) {
-			nextPath = new Path(new ArrayList<STPosition>(){{add(new STPosition(p, 0.0));add(new STPosition(p, 1.0));}});
-			setState(s);
-		} else {
-			nextPath = new Path(new ArrayList<STPosition>(){{add(new STPosition(p, 0.0));}});
-			setState(s);
-		}
-		
+//		if (s == CarState.CRASHED) {
+//			nextPath = new Path(new ArrayList<STPosition>(){{add(new STPosition(p, 0.0));add(new STPosition(p, 1.0));}});
+//			setState(s);
+//		} else {
+//			nextPath = new Path(new ArrayList<STPosition>(){{add(new STPosition(p, 0.0));}});
+//			setState(s);
+//		}
+		//nextPath = new Path(new ArrayList<STPosition>(){{add(new STPosition(p, 0.0));}});
+		nextPath = null;
+		setState(s);
+		return (s != CarState.SINKED);
 	}
 	
 	public Car copy() {
@@ -284,17 +313,24 @@ public class Car {
 	}
 	
 	public void setPosition(Position pos) {
-		if (state == CarState.CRASHED || state == CarState.SINKED) {
-			throw new IllegalArgumentException();
-		}
+//		if (state == CarState.CRASHED || state == CarState.SINKED) {
+//			throw new IllegalArgumentException();
+//		}
 		this.pos = pos;
 	}
 	
 	public void nextPathAdd(STPosition pos) {
-		if (state == CarState.CRASHED || state == CarState.SINKED) {
-			throw new IllegalArgumentException();
+//		if (state == CarState.CRASHED || state == CarState.SINKED) {
+//			throw new IllegalArgumentException();
+//		}
+		if (nextPath == null) {
+			List<STPosition> poss = new ArrayList<STPosition>();
+			poss.add(new STPosition(this.pos, 0.0));
+			poss.add(pos);
+			nextPath = new Path(poss);
+		} else {
+			nextPath = nextPath.append(pos);
 		}
-		nextPath = nextPath.append(pos);
 	}
 	
 	/**
@@ -308,15 +344,26 @@ public class Car {
 		}
 		
 		nextPath = nextPath.crash(time);
-		nextState = CarState.CRASHED;
+	}
+	
+	public void nextPathSynchronize(double time) {
+//		if (state == CarState.CRASHED || state == CarState.SINKED) {
+//			throw new IllegalArgumentException();
+//		}
+		
+		nextPath = nextPath.synchronize(time);
 	}
 	
 	public Path getNextPath() {
 		return nextPath;
 	}
 	
-	public STPosition getLastNextPosition() {
-		return nextPath.getLastPosition();
+	private Position getLastNextPosition() {
+		if (nextPath == null) {
+			return pos;
+		} else {
+			return nextPath.getLastPosition().getSpace();
+		}
 	}
 	
 	public CarState getState() {
@@ -324,9 +371,9 @@ public class Car {
 	}
 	
 	public void setState(CarState s) {
-		if (state == CarState.CRASHED || state == CarState.SINKED) {
-			throw new IllegalArgumentException();
-		}
+//		if (state == CarState.CRASHED || state == CarState.SINKED) {
+//			throw new IllegalArgumentException();
+//		}
 		
 		this.state = s;
 	}

@@ -11,7 +11,11 @@ public class STPosition {
 	
 	public STPosition(Position s, double t) {
 		this.s = s;
-		this.t= t;
+		this.t = t;
+		
+		if (DMath.doubleEquals(t, 1.0) && t != 1.0) {
+			String.class.getName();
+		}
 	}
 	
 	public Position getSpace() {

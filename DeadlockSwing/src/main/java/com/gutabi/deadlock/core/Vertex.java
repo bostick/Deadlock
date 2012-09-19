@@ -7,7 +7,7 @@ import java.util.List;
 
 public class Vertex extends Position implements Driveable {
 	
-	private final Point p;
+//	private final Point p;
 	
 	private final int hash;
 	
@@ -19,8 +19,9 @@ public class Vertex extends Position implements Driveable {
 	int graphID;
 	
 	public Vertex(Point p) {
+		super(p);
 		
-		this.p = p;
+//		this.p = p;
 		
 		int h = 17;
 		h = 37 * h + p.hashCode();
@@ -34,6 +35,18 @@ public class Vertex extends Position implements Driveable {
 	
 	public int hashCode() {
 		return hash;
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		} else if (!(o instanceof Vertex)) {
+			return false;
+		} else {
+			Vertex b = (Vertex)o;
+			return (p.equals(b.p));
+		}
 	}
 	
 	public Vertex copy() {
@@ -108,13 +121,16 @@ public class Vertex extends Position implements Driveable {
 		if (b instanceof Vertex) {
 			Vertex bb = (Vertex)b;
 			return MODEL.distanceBetweenVertices(this, bb);
-		} else {
+		} else if (b instanceof EdgePosition) {
 			EdgePosition bb = (EdgePosition)b;
 			
 			double bbStartPath = MODEL.distanceBetweenVertices(this, bb.getEdge().getStart());
 			double bbEndPath = MODEL.distanceBetweenVertices(this, bb.getEdge().getEnd());
 			
 			return Math.min(bbStartPath + bb.distanceToStartOfEdge(), bbEndPath + bb.distanceToEndOfEdge());
+		} else {
+			SinkedPosition bb = (SinkedPosition)b;
+			return MODEL.distanceBetweenVertices(this, bb.getSink());
 		}
 	}
 	
