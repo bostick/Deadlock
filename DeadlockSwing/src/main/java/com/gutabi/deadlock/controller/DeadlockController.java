@@ -242,7 +242,7 @@ public class DeadlockController implements ActionListener {
 				switch (MODEL.getMode()) {
 				case IDLE:
 					
-					Position closest = MODEL.closestPosition(VIEW.panelToWorld(p), 10);
+					Position closest = MODEL.findClosestPosition(VIEW.panelToWorld(p), 10);
 					if (closest != null) {
 						MODEL.hilited = closest.getDriveable();
 					} else {
@@ -300,7 +300,7 @@ public class DeadlockController implements ActionListener {
 						
 					}
 					
-					Position closest = MODEL.closestPosition(p);
+					Position closest = MODEL.findClosestPosition(p);
 					if (closest != null) {
 						
 						if (closest instanceof Vertex) {

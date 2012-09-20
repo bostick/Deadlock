@@ -90,16 +90,16 @@ public class DeadlockModel {
 		return graph.checkConsistency();
 	}
 	
-	public Position closestPosition(Point a, double radius) {
-		return graph.closestPosition(a, radius);
+	public Position findClosestPosition(Point a, double radius) {
+		return graph.findClosestPosition(a, radius);
 	}
 	
 	public List<Segment> findAllSegments(Point a) {
 		return graph.getSegmentTree().findAllSegments(a);
 	}
 	
-	public Position closestPosition(Point p) {
-		return graph.closestPosition(p);
+	public Position findClosestPosition(Point p) {
+		return graph.findClosestPosition(p);
 	}
 	
 	public List<Intersection> getIntersections() {
