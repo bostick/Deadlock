@@ -161,26 +161,20 @@ public class DeadlockView {
 			
 			g2.setColor(Color.RED);
 			if (lastPointCopy != null) {
-				g2.fillOval((int)(lastPointCopy.getX()-5), (int)(lastPointCopy.getY()-5), 10, 10);
+				g2.fillOval((int)(lastPointCopy.getX()-MODEL.ROAD_WIDTH/2), (int)(lastPointCopy.getY()-MODEL.ROAD_WIDTH/2), (int)MODEL.ROAD_WIDTH, (int)MODEL.ROAD_WIDTH);
 			}
 		} else if (modeCopy == ControlMode.RUNNING) {
 			
 			for (Car c : movingCarsCopy) {
 				Point pos = c.getPosition().getPoint();
 				g2.setColor(Color.BLUE);
-				g2.fillOval((int)(pos.getX()-5), (int)(pos.getY()-5), 10, 10);
+				g2.fillOval((int)(pos.getX()-MODEL.CAR_WIDTH/2), (int)(pos.getY()-MODEL.CAR_WIDTH/2), (int)MODEL.CAR_WIDTH, (int)MODEL.CAR_WIDTH);
 			}
 			
 			for (Car c : crashedCarsCopy) {
 				Point pos = c.getPosition().getPoint();
-				switch (c.getState()) {
-				case CRASHED:
-					g2.setColor(Color.ORANGE);
-					break;
-				default:
-					assert false;
-				}
-				g2.fillOval((int)(pos.getX()-5), (int)(pos.getY()-5), 10, 10);
+				g2.setColor(Color.ORANGE);
+				g2.fillOval((int)(pos.getX()-MODEL.CAR_WIDTH/2), (int)(pos.getY()-MODEL.CAR_WIDTH/2), (int)MODEL.CAR_WIDTH, (int)MODEL.CAR_WIDTH);
 			}
 		}
 		
@@ -288,7 +282,7 @@ public class DeadlockView {
 		
 		Point p = v.getPoint();
 		//g.fillOval((int)p.getX()-5, (int)p.getY()-5, 10, 10);
-		g.fillOval((int)(p.getX()-7.07), (int)(p.getY()-7.07), (int)(2 * 7.07), (int)(2 * 7.07));
+		g.fillOval((int)(p.getX()-MODEL.VERTEX_WIDTH/2), (int)(p.getY()-MODEL.VERTEX_WIDTH/2), (int)MODEL.VERTEX_WIDTH, (int)MODEL.VERTEX_WIDTH);
 	}
 	
 //	public static void paintHub(Hub h, Graphics2D g) {
@@ -306,7 +300,7 @@ public class DeadlockView {
 		
 		Point p = s.getPoint();
 		//g.fillOval((int)p.getX()-5, (int)p.getY()-5, 10, 10);
-		g.fillOval((int)(p.getX()-7.07), (int)(p.getY()-7.07), (int)(2 * 7.07), (int)(2 * 7.07));
+		g.fillOval((int)(p.getX()-MODEL.VERTEX_WIDTH/2), (int)(p.getY()-MODEL.VERTEX_WIDTH/2), (int)MODEL.VERTEX_WIDTH, (int)MODEL.VERTEX_WIDTH);
 		
 	}
 
@@ -316,7 +310,7 @@ public class DeadlockView {
 		
 		Point p = s.getPoint();
 		//g.fillOval((int)p.getX()-5, (int)p.getY()-5, 10, 10);
-		g.fillOval((int)(p.getX()-7.07), (int)(p.getY()-7.07), (int)(2 * 7.07), (int)(2 * 7.07));
+		g.fillOval((int)(p.getX()-MODEL.VERTEX_WIDTH/2), (int)(p.getY()-MODEL.VERTEX_WIDTH/2), (int)MODEL.VERTEX_WIDTH, (int)MODEL.VERTEX_WIDTH);
 		
 	}
 	
@@ -324,7 +318,7 @@ public class DeadlockView {
 		
 		g.setColor(Color.RED);
 		Point p = v.getPoint();
-		g.fillOval((int)p.getX()-5, (int)p.getY()-5, 10, 10);
+		g.fillOval((int)(p.getX()-MODEL.VERTEX_WIDTH/2), (int)(p.getY()-MODEL.VERTEX_WIDTH/2), (int)MODEL.VERTEX_WIDTH, (int)MODEL.VERTEX_WIDTH);
 		
 	}
 	
@@ -332,7 +326,7 @@ public class DeadlockView {
 			
 			g.setColor(Color.RED);
 			Point p = s.getPoint();
-			g.fillOval((int)p.getX()-5, (int)p.getY()-5, 10, 10);
+			g.fillOval((int)(p.getX()-MODEL.VERTEX_WIDTH/2), (int)(p.getY()-MODEL.VERTEX_WIDTH/2), (int)MODEL.VERTEX_WIDTH, (int)MODEL.VERTEX_WIDTH);
 			
 		}
 	
@@ -340,14 +334,14 @@ public class DeadlockView {
 		
 		g.setColor(Color.RED);
 		Point p = s.getPoint();
-		g.fillOval((int)p.getX()-5, (int)p.getY()-5, 10, 10);
+		g.fillOval((int)(p.getX()-MODEL.VERTEX_WIDTH/2), (int)(p.getY()-MODEL.VERTEX_WIDTH/2), (int)MODEL.VERTEX_WIDTH, (int)MODEL.VERTEX_WIDTH);
 		
 	}
 
 	public static class Road1Stroke extends BasicStroke {
 		
 		public Road1Stroke() {
-			super(10, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
+			super((int)MODEL.ROAD_WIDTH, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
 		}
 		
 	}

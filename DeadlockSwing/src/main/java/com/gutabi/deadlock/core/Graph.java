@@ -509,10 +509,10 @@ public class Graph {
 			Point preA = stroke.get(i);
 			Point preB = stroke.get(i+1);
 			
-			Position aP = findClosestPosition(preA, null, 20);
+			Position aP = findClosestPosition(preA, null, MODEL.ROAD_WIDTH);
 			Point a = (aP != null) ? aP.getPoint() : preA;
 			
-			Position bP = findClosestPosition(preB, null, 20);
+			Position bP = findClosestPosition(preB, null, MODEL.ROAD_WIDTH);
 			Point b = (bP != null) ? bP.getPoint() : preB;
 			
 			scratch.set(i, a);
@@ -633,8 +633,8 @@ public class Graph {
 				if (inter != null) {
 					
 					double interParam = Point.param(inter, a, b);
-					double interStartParam = Point.travelBackward(a, b, interParam, 10.0);
-					double interEndParam = Point.travelForward(a, b, interParam, 10.0);
+					double interStartParam = Point.travelBackward(a, b, interParam, MODEL.ROAD_WIDTH);
+					double interEndParam = Point.travelForward(a, b, interParam, MODEL.ROAD_WIDTH);
 					
 					timeline.addEvent(new IntersectionEvent(inter, interParam, interStartParam, interEndParam));
 				}
@@ -709,7 +709,7 @@ public class Graph {
 			
 			Cluster c = clusters.get(0);
 			
-			if (c.intersectionEvents.isEmpty() || c.intersectionEvents.size() == 1 && c.intersectionEvents.get(0).getSourceStart().equals(a)) {
+			if (c.intersectionEvents.isEmpty()) {
 				
 				;
 				
@@ -882,7 +882,7 @@ public class Graph {
 	private CloseEvent detectClose(Timeline t, Point p, Point a, Point b) {
 		//how close is p to <a, b>?
 		Point[] ints = new Point[2];
-		int num = Point.circleLineIntersections(p, 10.0, a, b, ints);
+		int num = Point.circleLineIntersections(p, MODEL.ROAD_WIDTH, a, b, ints);
 		switch (num) {
 		case 2: {
 			Point p1 = ints[0];
@@ -1126,7 +1126,7 @@ public class Graph {
 			changed = false;
 			
 			for (Edge e : edges) {
-				if (e.getTotalLength() <= 10) {
+				if (e.getTotalLength() <= MODEL.CAR_WIDTH) {
 					toRemove.add(e);
 					changed = true;
 				}
@@ -1201,7 +1201,7 @@ public class Graph {
 	
 	private boolean segmentOverlaps(Point a, Point b) {
 		
-		for (Segment in : segTree.findAllSegments(a, b, 10)) {
+		for (Segment in : segTree.findAllSegments(a, b)) {
 			Edge e = in.edge;
 			int i = in.index;
 			Point c = e.getPoint(i);
@@ -1732,7 +1732,7 @@ public class Graph {
 		}
 		
 		for (Edge e : edges) {
-			if (e.getTotalLength() <= 10.0) {
+			if (e.getTotalLength() <= MODEL.CAR_WIDTH) {
 				throw new IllegalStateException("too small");
 			}
 			if (e.getStart() == null && e.getEnd() == null) {

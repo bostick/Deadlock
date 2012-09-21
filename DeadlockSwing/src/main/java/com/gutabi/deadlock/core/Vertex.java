@@ -33,6 +33,24 @@ public class Vertex extends Position implements Driveable {
 		return hash;
 	}
 	
+	public Position nextToward(Position goal) {
+		
+		if (goal instanceof EdgePosition) {
+			EdgePosition ge = (EdgePosition)goal;
+			
+			
+			
+		} else if (goal instanceof Vertex) {
+			Vertex gv = (Vertex)goal;
+			
+			
+		} else {
+			SinkedPosition gs = (SinkedPosition)goal;
+			
+		}
+		
+	}
+	
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) {

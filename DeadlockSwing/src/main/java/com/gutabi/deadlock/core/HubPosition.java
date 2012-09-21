@@ -27,5 +27,11 @@ public class HubPosition extends Position {
 		// TODO Auto-generated method stub
 		return 0;
 	}
+
+	@Override
+	public Position nextToward(Position goal) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
 }

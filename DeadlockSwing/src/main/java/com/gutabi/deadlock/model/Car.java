@@ -101,7 +101,11 @@ public class Car {
 						}
 						
 					} else {
-						nextPathAdd(new STPosition(nextPos, time + (nextDist / MODEL.DISTANCE_PER_TIMESTEP)));
+						double newTime = time + (nextDist / MODEL.DISTANCE_PER_TIMESTEP);
+						if (DMath.doubleEquals(newTime, 1.0)) {
+							newTime = 1.0;
+						}
+						nextPathAdd(new STPosition(nextPos, newTime));
 					}
 				}
 				
@@ -140,7 +144,8 @@ public class Car {
 				Vertex pos = (Vertex)getLastNextPosition();
 				boolean moving = nextChoice(pos);
 				if (!moving) {
-					nextDistanceToMove = 0.0;
+					nextPathAdd(new STPosition(pos, 1.0));
+					time = 1.0;
 				}
 				break;
 			}

@@ -38,13 +38,7 @@ public class EdgePosition extends Position {
 		this.segStart = e.getPoint(index);
 		this.segEnd = e.getPoint(index+1);
 		
-		double l;
-		l = 0.0;
-		l += Point.distance(p, segStart);
-		for (int i = index-1; i >= 0; i--) {
-			l += e.getSegmentLength(i);
-		}
-		distanceToStartOfEdge = l;
+		distanceToStartOfEdge = e.getDistanceFromStart(index) + Point.distance(p, segStart);
 		
 		distanceToEndOfEdge = e.getTotalLength() - distanceToStartOfEdge;
 	}
@@ -89,6 +83,28 @@ public class EdgePosition extends Position {
 		}
 	}
 	
+	public Position nextToward(Position goal) {
+		
+		if (goal instanceof EdgePosition) {
+			EdgePosition ge = (EdgePosition)goal;
+			assert ge.getEdge() == e;
+			
+			if (distanceToStartOfEdge < ge.distanceToStartOfEdge) {
+				
+			} else {
+				
+			}
+			
+		} else if (goal instanceof Vertex) {
+			Vertex gv = (Vertex)goal;
+			
+			
+		} else {
+			SinkedPosition gs = (SinkedPosition)goal;
+			
+		}
+		
+	}
 	
 	public double distanceTo(Position b) {
 		if (b instanceof Vertex) {
@@ -139,29 +155,11 @@ public class EdgePosition extends Position {
 	}
 	
 	protected double distanceForward(EdgePosition a) {
-		if (a.index == index) {
-			return Point.distance(p, a.p);
-		}
-		double l = 0.0;
-		l += Point.distance(p, segEnd);
-		for (int i = index+1; i < a.index; i++) {
-			l += e.getSegmentLength(i);
-		}
-		l += Point.distance(a.segStart, a.p);
-		return l;
+		return a.distanceToStartOfEdge - distanceToStartOfEdge;
 	}
 	
 	protected double distanceBackward(EdgePosition a) {
-		if (a.index == index) {
-			return Point.distance(a.p, p);
-		}
-		double l = 0.0;
-		l += Point.distance(p, segStart);
-		for (int i = index-1; i > a.index; i--) {
-			l += e.getSegmentLength(i);
-		}
-		l += Point.distance(a.segEnd, a.p);
-		return l;
+		return distanceToStartOfEdge - a.distanceToStartOfEdge;
 	}
 	
 	/**

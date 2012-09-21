@@ -1,12 +1,13 @@
 package com.gutabi.deadlock.core;
 
+
 import java.util.Arrays;
 import java.util.List;
 
 public final class Edge implements Connector {
 		
 	private final Point[] pts;
-	private final double[] segmentLengths;
+	private final double[] cumulativeDistancesFromStart;
 	private final Vertex start;
 	private final Vertex end;
 	
@@ -14,6 +15,11 @@ public final class Edge implements Connector {
 	
 	private final boolean standalone;
 	private final boolean loop;
+	
+	// the index for the last segment that is within the radius of the start vertex
+//	private int startIndex;
+	// the index for the first segment that is within the radius of the last vertex
+//	private int endIndex;
 	
 	private boolean removed = false;
 	
@@ -28,15 +34,38 @@ public final class Edge implements Connector {
 		standalone = (loop) ? start == null : false;
 		this.pts = pts.toArray(new Point[0]);
 		
-		segmentLengths = new double[this.pts.length-1];
+		cumulativeDistancesFromStart = new double[this.pts.length-1];
 		
 		double length;
 		double l = 0.0;
-		for (int i = 0; i < segmentLengths.length; i++) {
-			length = Point.distance(this.pts[i], this.pts[i+1]);
-			segmentLengths[i] = length;
+//		startIndex = -1;
+//		endIndex = -1;
+		for (int i = 0; i < this.pts.length-1; i++) {
+			Point a  = this.pts[i];
+			Point b = this.pts[i+1];
+			
+//			if (Point.distance(a, start.getPoint()) < MODEL.VERTEX_WIDTH &&
+//					(DMath.doubleEquals(Point.distance(b, start.getPoint()), MODEL.VERTEX_WIDTH) || Point.distance(b, start.getPoint()) > MODEL.VERTEX_WIDTH)) {
+//				startIndex = i;
+//			}
+//			
+//			if ((DMath.doubleEquals(Point.distance(a, end.getPoint()), MODEL.VERTEX_WIDTH) || Point.distance(a, end.getPoint()) > MODEL.VERTEX_WIDTH) &&
+//					Point.distance(b, end.getPoint()) < MODEL.VERTEX_WIDTH) {
+//				endIndex = i;
+//			}
+			
+			length = Point.distance(a, b);
+			if (i == 0) {
+				cumulativeDistancesFromStart[i] = 0;
+			} else {
+				cumulativeDistancesFromStart[i] = cumulativeDistancesFromStart[i-1] + length;
+			}
 			l += length;
 		}
+		
+//		assert startIndex != -1;
+//		assert endIndex != -1;
+		
 		totalLength = l;
 		
 		int h = 17;
@@ -105,11 +134,28 @@ public final class Edge implements Connector {
 		}
 	}
 	
-	public double getSegmentLength(int i) {
+//	public double getSegmentLengthX(int i) {
+//		if (removed) {
+//			throw new IllegalStateException();
+//		}
+//		return segmentLengths[i];
+//	}
+	
+	/**
+	 * segment index i
+	 */
+	public double getDistanceFromStart(int i) {
 		if (removed) {
 			throw new IllegalStateException();
 		}
-		return segmentLengths[i];
+		return cumulativeDistancesFromStart[i];
+	}
+	
+	public double getDistanceFromEnd(int i) {
+		if (removed) {
+			throw new IllegalStateException();
+		}
+		return totalLength - cumulativeDistancesFromStart[i];
 	}
 	
 	public void remove() {

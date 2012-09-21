@@ -16,6 +16,8 @@ public abstract class Position {
 	
 	public abstract double distanceTo(Position b);
 	
+	public abstract Position nextToward(Position goal);
+	
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) {

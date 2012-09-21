@@ -14,7 +14,8 @@ import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
  */
 public class Path {
 	
-	private final List<STPosition> poss;
+	private List<STPosition> origPoss;
+	private List<STPosition> poss;
 	
 	private double totalDistance;
 	
@@ -25,13 +26,14 @@ public class Path {
 	
 	
 	
-	public Path(List<STPosition> poss) {
+	public Path(List<STPosition> origPoss) {
 		
-		this.poss = poss;
+		this.origPoss = origPoss;
+//		this.poss = poss;
 		
-		assert poss.size() >= 2;
+		assert origPoss.size() >= 2;
 		
-		calculateTotalDistanceAndTime(poss);
+		calculate();
 		
 		startTime = times.get(0);
 		endTime = times.get(times.size()-1);
@@ -79,7 +81,7 @@ public class Path {
 	/**
 	 * return the subpath from start time s to end time e, inclusive
 	 */
-	public SubPath subPath(double s, double e) {
+	private SubPath subPath(double s, double e) {
 		if (s < startTime) {
 			throw new IllegalArgumentException();
 		}
@@ -161,7 +163,10 @@ public class Path {
 	 * 
 	 * or sinked position
 	 */
-	public class SubPath {
+	public static class SubPath {
+		
+		double startTime;
+		double endTime;
 		
 		STPosition start;
 		STPosition end;
@@ -171,6 +176,9 @@ public class Path {
 		SubPath(STPosition start, STPosition end) {
 			this.start = start;
 			this.end = end;
+			
+			startTime = start.getTime();
+			endTime = end.getTime();
 			
 			if (start.getSpace() instanceof Vertex) {
 				if (end.getSpace() instanceof Vertex) {
@@ -193,6 +201,30 @@ public class Path {
 			} else {
 				assert ((SinkedPosition)start.getSpace()).getSink() == ((SinkedPosition)end.getSpace()).getSink();
 				e = null;
+			}
+			
+		}
+		
+		public Position getPosition(double time) {
+			if (time < startTime) {
+				throw new IllegalArgumentException();
+			}
+			if (time > endTime) {
+				throw new IllegalArgumentException();
+			}
+			
+			if (DMath.doubleEquals(time, startTime)) {
+				return start.getSpace();
+			} else if (DMath.doubleEquals(time, endTime)) {
+				return end.getSpace();
+			} else {
+				if (start.getSpace().equals(end.getSpace())) {
+					return start.getSpace();
+				} else {
+					double p = (time - start.getTime()) / (end.getTime() - start.getTime());
+					double d = start.getSpace().distanceTo(end.getSpace());
+					return start.getSpace().travel(end.getSpace(), p * d);
+				}
 			}
 		}
 		
@@ -287,8 +319,8 @@ public class Path {
 	 */
 	public static double intersection(Path a, Path b, double radius) {
 		
-		DMath.doubleEquals(a.startTime, b.startTime);
-		DMath.doubleEquals(a.endTime, b.endTime);
+		assert DMath.doubleEquals(a.startTime, b.startTime);
+		assert DMath.doubleEquals(a.endTime, b.endTime);
 		
 		SortedSet<Double> times = new TreeSet<Double>();
 		times.addAll(a.getTimes());
@@ -311,52 +343,10 @@ public class Path {
 				continue;
 			}
 			
-			double d1;
-			double d2;
-			if (ap.e == bp.e) {
-				// both on same edge
-				
-				/*
-				 * could be moving in opposite directions, one may not be moving, maybe in same direction but different speeds
-				 * all of these are non-linear, because one car could pass the other
-				 */
-				
-				// use distance on edge as an oriented distance
-				d1 = bp.start.getSpace().distanceTo(ap.e.getStart()) - ap.start.getSpace().distanceTo(ap.e.getStart());
-				d2 = bp.end.getSpace().distanceTo(ap.e.getStart()) - ap.end.getSpace().distanceTo(ap.e.getStart());
-				
-				assert DMath.doubleEquals(Math.abs(d1), radius) || Math.abs(d1) > radius;
-				
-				if (d1 < 0) {
-					//flip
-					d1 = -d1;
-					d2 = -d2;
-				}
-				
-			} else {
-				// neighbors
-				
-				// construct linear function of distance between ap and bp through time
-				// if reaches radius, return time
-				// else return -1
-				
-				d1 = ap.start.getSpace().distanceTo(bp.start.getSpace());
-				d2 = ap.end.getSpace().distanceTo(bp.end.getSpace());
-				
-				assert DMath.doubleEquals(Math.abs(d1), radius) || Math.abs(d1) > radius;
+			double crashTime = intersection(ap, bp, radius);
+			if (crashTime != -1) {
+				return crashTime;
 			}
-			
-			double crashTime = solve(ta, tb, d1, d2, radius);
-			if (crashTime == -1) {
-				continue;
-			}
-			Position crash1 = a.getPosition(crashTime);
-			Position crash2 = b.getPosition(crashTime);
-			double crashDistance = crash1.distanceTo(crash2);
-			assert DMath.doubleEquals(crashDistance, radius);
-			
-			return crashTime;
-			
 		}
 		
 		return -1;
@@ -365,16 +355,76 @@ public class Path {
 	/**
 	 * given 2 distances at two times, solve when the distances are exactly radius apart, or -1 if never
 	 */
-	private static double solve(double t1, double t2, double d1, double d2, double radius) {
+	private static double intersection(SubPath ap, SubPath bp, double radius) {
+		
+		assert DMath.doubleEquals(ap.startTime, bp.startTime);
+		assert DMath.doubleEquals(ap.endTime, bp.endTime);
+		
+		double crashTime = solve(ap, bp, radius);
+		if (crashTime == -1) {
+			Point ae = ap.end.getSpace().getPoint();
+			Point be = bp.end.getSpace().getPoint();
+			double realDistance = Point.distance(ae, be);
+			assert !DMath.doubleEquals(realDistance, radius);
+			assert realDistance > radius;
+		} else {
+			Position crash1 = ap.getPosition(crashTime);
+			Position crash2 = bp.getPosition(crashTime);
+			double crashDistance = crash1.distanceTo(crash2);
+			double realDistance = Point.distance(crash1.getPoint(), crash2.getPoint());
+			assert DMath.doubleEquals(crashDistance, radius);
+			assert DMath.doubleEquals(realDistance, radius);
+		}
+		
+		return crashTime;
+	}
+	
+	/**
+	 * given 2 distances at two times, solve when the distances are exactly radius apart, or -1 if never
+	 */
+	private static double solve(SubPath ap, SubPath bp, double radius) {
+		
+		double d1;
+		double d2;
+		
+		double t1 = ap.startTime;
+		double t2 = ap.endTime;
+		
+		if (ap.e == bp.e) {
+			// both on same edge
+			
+			// use distance on edge as an oriented distance
+			d1 = bp.start.getSpace().distanceTo(ap.e.getStart()) - ap.start.getSpace().distanceTo(ap.e.getStart());
+			d2 = bp.end.getSpace().distanceTo(ap.e.getStart()) - ap.end.getSpace().distanceTo(ap.e.getStart());
+
+			assert DMath.doubleEquals(Math.abs(d1), radius) || Math.abs(d1) > radius;
+
+			if (d1 < 0) {
+				//flip
+				d1 = -d1;
+				d2 = -d2;
+			}
+			
+		} else {
+			// neighbors
+			
+			d1 = ap.start.getSpace().distanceTo(bp.start.getSpace());
+			d2 = ap.end.getSpace().distanceTo(bp.end.getSpace());
+
+			assert DMath.doubleEquals(Math.abs(d1), radius) || Math.abs(d1) > radius;
+			
+		}
+		
+		double crashTime;
 		
 		if (DMath.doubleEquals(d1, radius)) {
-			return t1;
+			crashTime = t1;
 		} else {
 			assert !(d1 < radius);
 			if (DMath.doubleEquals(d2, radius)) {
-				return t2;
+				crashTime = t2;
 			} else if (d2 > radius) {
-				return -1;
+				crashTime = -1;
 			} else {
 				double bb = (d2 * t1 - d1 * t2)/(t1 - t2);
 				double mm;
@@ -383,127 +433,54 @@ public class Path {
 				} else {
 					mm = (d2 - bb) / t2;
 				}
-				double crashTime = (radius - bb) / mm;
+				crashTime = (radius - bb) / mm;
 				assert t1 < crashTime && crashTime < t2;
-				return crashTime;
 			}
 		}
-		
+
+		return crashTime;
 	}
 	
 	
 	
-	private void calculateTotalDistanceAndTime(List<STPosition> poss) {
+	
+	/*
+	 * calculate each segment of the path
+	 */
+	private void interpolate() {
+		
+		times = new ArrayList<Double>();
+		poss = new ArrayList<STPosition>();
+		
+		times.add(origPoss.get(0).getTime());
+		poss.add(origPoss.get(0));
 		
 		double accDist = 0.0;
 		
-		times = new ArrayList<Double>();
-		
-		times.add(poss.get(0).getTime());
-		
-		for (int i = 0; i < poss.size()-1; i++) {
-			STPosition a = poss.get(i);
-			STPosition b = poss.get(i+1);
+		for (int i = 0; i < origPoss.size()-1; i++) {
+			STPosition a = origPoss.get(i);
+			STPosition b = origPoss.get(i+1);
 			
-			times.add(b.getTime());
+			double dist = a.s.distanceTo(b.s);
+			double time = b.t - a.t;
+			double speed = dist / time;
 			
-			double dist;
-			
-			if (a.s instanceof Vertex) {
-				if (b.s instanceof Vertex) {
-					
-					Vertex aa = (Vertex)a.s;
-					Vertex bb = (Vertex)b.s;
-					
-					List<Connector> cons = Vertex.commonConnectors(aa, bb);
-					assert cons.size() == 1;
-					
-					Edge e = (Edge)cons.get(0);
-					assert !e.isLoop();
-					
-					dist = e.getTotalLength();
-					
-				} else {
-					Vertex aa = (Vertex)a.s;
-					EdgePosition bb = (EdgePosition)b.s;
-					
-					Edge e = bb.getEdge();
-					if (aa == e.getStart()) {
-						dist = bb.distanceToStartOfEdge();
-					} else {
-						assert aa == e.getEnd();
-						dist = bb.distanceToEndOfEdge();
-					}
-				}
-			} else if (a.s instanceof EdgePosition) {
-				if (b.s instanceof Vertex) {
-					EdgePosition aa = (EdgePosition)a.s;
-					Vertex bb = (Vertex)b.s;
-					
-					Edge e = aa.getEdge();
-					if (bb == e.getStart()) {
-						dist = aa.distanceToStartOfEdge();
-					} else {
-						assert bb == e.getEnd();
-						dist = aa.distanceToEndOfEdge();
-					}
-					
-				} else if (b.s instanceof EdgePosition) {
-					EdgePosition aa = (EdgePosition)a.s;
-					EdgePosition bb = (EdgePosition)b.s;
-					
-					Edge ae = aa.getEdge();
-					Edge be = bb.getEdge();
-					assert ae == be;
-					
-					dist = Math.abs(aa.distanceToStartOfEdge() - bb.distanceToStartOfEdge());
-				} else {
-					EdgePosition aa = (EdgePosition)a.s;
-					SinkedPosition bb = (SinkedPosition)b.s;
-					
-					Edge e = aa.getEdge();
-					if (bb.getSink() == e.getStart()) {
-						dist = aa.distanceToStartOfEdge();
-					} else {
-						assert bb.getSink() == e.getEnd();
-						dist = aa.distanceToEndOfEdge();
-					}
-				}
-			} else {
-				if (b.s instanceof Vertex) {
-					
-					SinkedPosition aa = (SinkedPosition)a.s;
-					Vertex bb = (Vertex)b.s;
-					
-					List<Connector> cons = Vertex.commonConnectors(aa.getSink(), bb);
-					assert cons.size() == 1;
-					
-					Edge e = (Edge)cons.get(0);
-					assert !e.isLoop();
-					
-					dist = e.getTotalLength();
-					
-				} else if (b.s instanceof EdgePosition) {
-					SinkedPosition aa = (SinkedPosition)a.s;
-					EdgePosition bb = (EdgePosition)b.s;
-					
-					Edge e = bb.getEdge();
-					if (aa.getSink() == e.getStart()) {
-						dist = bb.distanceToStartOfEdge();
-					} else {
-						assert aa.getSink() == e.getEnd();
-						dist = bb.distanceToEndOfEdge();
-					}
-				} else {
-					SinkedPosition aa = (SinkedPosition)a.s;
-					SinkedPosition bb = (SinkedPosition)b.s;
-					
-					assert aa.getSink() == bb.getSink();
-					dist = 0;
-				}
+			Position cur = a.s;
+			Position prev;
+			double accSegDistance = 0.0;
+			double accSegTime = a.t;
+			while (!cur.equals(b)) {
+				prev = cur;
+				cur = cur.nextToward(b);
+				double d = Point.distance(prev.getPoint(), cur.getPoint());
+				double t = d / speed;
+				accSegDistance += d;
+				accSegTime += t;
+				times.add(accSegTime);
+				poss.add(new STPosition(cur, accSegTime));
 			}
 			
-			accDist += dist;
+			accDist += accSegDistance;
 		}
 		
 		totalDistance = accDist;

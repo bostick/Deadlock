@@ -17,6 +17,24 @@ public class SinkedPosition extends Position {
 		return s;
 	}
 	
+	public Position nextToward(Position goal) {
+		
+		if (goal instanceof EdgePosition) {
+			EdgePosition ge = (EdgePosition)goal;
+			
+			
+			
+		} else if (goal instanceof Vertex) {
+			Vertex gv = (Vertex)goal;
+			
+			
+		} else {
+			SinkedPosition gs = (SinkedPosition)goal;
+			
+		}
+		
+	}
+	
 	public double distanceTo(Position b) {
 		return s.distanceTo(b);
 	}

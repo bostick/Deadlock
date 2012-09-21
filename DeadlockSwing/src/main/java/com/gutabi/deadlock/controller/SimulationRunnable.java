@@ -122,7 +122,7 @@ public class SimulationRunnable implements Runnable {
 			Position carPos = c.getPosition();
 			for (Source s : sources) {
 				double dist = carPos.distanceTo(s);
-				if (DMath.doubleEquals(dist, 10.0) || dist < 10) {
+				if (DMath.doubleEquals(dist, MODEL.CAR_WIDTH) || dist < MODEL.CAR_WIDTH) {
 					toRemove.add(s);
 				}
 			}
@@ -131,7 +131,7 @@ public class SimulationRunnable implements Runnable {
 			Position carPos = c.getPosition();
 			for (Source s : sources) {
 				double dist = carPos.distanceTo(s);
-				if (DMath.doubleEquals(dist, 10.0) || dist < 10) {
+				if (DMath.doubleEquals(dist, MODEL.CAR_WIDTH) || dist < MODEL.CAR_WIDTH) {
 					toRemove.add(s);
 				}
 			}
@@ -309,7 +309,7 @@ public class SimulationRunnable implements Runnable {
 		Path ciFuturePath = ci.getNextPath();
 		Path cjFuturePath = cj.getNextPath();
 		
-		double intersectionTime = Path.intersection(ciFuturePath, cjFuturePath, 10);
+		double intersectionTime = Path.intersection(ciFuturePath, cjFuturePath, MODEL.CAR_WIDTH);
 		if (intersectionTime != -1) {
 			saveCrashInfo(new CrashInfo(intersectionTime, ci, cj));
 			return true;

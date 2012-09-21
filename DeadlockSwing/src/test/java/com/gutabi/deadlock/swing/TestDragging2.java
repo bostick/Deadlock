@@ -705,18 +705,16 @@ public class TestDragging2 {
 		
 		CONTROLLER.strat = MassageStrategy.CURRENT;
 
-		testPressed(new Point(542., 216.));
-		testDragged(new Point(542., 217.));
-		testDragged(new Point(532., 280.));
-		testReleased();
-
-		testPressed(new Point(544., 212.));
-		testDragged(new Point(543., 236.));
-//		testPressed(new Point(542.0, 216.0));
-//		testDragged(new Point(539.08282133202, 235.37822560826));
+		testPressed(new Point(1187., 459.));
+		testDragged(new Point(1210., 529.));
+		testDragged(new Point(1218., 503.));
+		testDragged(new Point(1225., 478.));
+		testDragged(new Point(1241., 425.));
 		testReleased();
 	
 		//Thread.sleep(Long.MAX_VALUE);
+		
+		// assert 1 edge
 	}
 	
 	
@@ -771,4 +769,21 @@ public class TestDragging2 {
 		
 		// assert 6 vertices
 	}
+	
+	
+	@Test
+	public void testBug23() throws Exception {
+		
+		CONTROLLER.strat = MassageStrategy.CURRENT;
+		
+		testPressed(new Point(330., 385.));
+		testDragged(new Point(406., 373.));
+		testDragged(new Point(425., 366.));
+		testDragged(new Point(483., 354.));
+		testReleased();
+		
+		// assert 1 edge
+	}
+	
+	
 }
