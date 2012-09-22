@@ -18,26 +18,27 @@ import com.gutabi.deadlock.core.Vertex;
 
 public class DeadlockModel {
 	
-	public final double MOUSE_RADIUS = 16.0;
-	
-	public final double ROAD_WIDTH = 32.0;
+	public final double ROAD_WIDTH = 64.0;
 	public final double VERTEX_WIDTH = Math.sqrt(2 * ROAD_WIDTH * ROAD_WIDTH);
 	
-	public final double CAR_WIDTH = 32.0;
+	//public final double MOUSE_RADIUS = 16.0;
+	public final double MOUSE_RADIUS = VERTEX_WIDTH;
+	
+	public final double CAR_WIDTH = 64.0;
 	
 	
 	public final int WORLD_WIDTH = 2048;
 	public final int WORLD_HEIGHT = 2048;
 	
-	public double DISTANCE_PER_TIMESTEP = 9.0;
+	public double DISTANCE_PER_TIMESTEP = CAR_WIDTH + 1;
 	
 	/*
 	 * spawn cars every SPAWN_FREQUENCY time steps
 	 * -1 means no spawning
 	 */
-	public int SPAWN_FREQUENCY = 17;
+	public int SPAWN_FREQUENCY = 1;
 	
-	public long WAIT = 5 * 16;
+	public long WAIT = 16;
 	
 	public Random RANDOM = new Random();
 	

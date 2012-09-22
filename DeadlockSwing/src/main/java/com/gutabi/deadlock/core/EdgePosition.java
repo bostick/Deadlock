@@ -8,6 +8,8 @@ public class EdgePosition extends Position {
 	private final int index;
 	private final double param;
 	
+	private final boolean bound;
+	
 	private final Vertex dest;
 	
 	public final Point segStart;
@@ -34,6 +36,8 @@ public class EdgePosition extends Position {
 		this.param = param;
 		
 		this.dest = dest;
+		
+		this.bound = DMath.doubleEquals(param, 0.0);
 		
 		this.segStart = e.getPoint(index);
 		this.segEnd = e.getPoint(index+1);
@@ -71,37 +75,44 @@ public class EdgePosition extends Position {
 		return e + ": " + distanceToStartOfEdge;
 	}
 	
-	@Override
-	public boolean equals(Object o) {
+	public boolean equalsP(Position o) {
 		if (this == o) {
 			return true;
 		} else if (!(o instanceof EdgePosition)) {
 			return false;
 		} else {
 			EdgePosition b = (EdgePosition)o;
-			return (e == b.e) && (index == b.index) && (param == b.param);
+			return (e == b.e) && (index == b.index) && (param == b.param);//use DMath.doubleEquals
 		}
 	}
 	
-	public Position nextToward(Position goal) {
+	public boolean isBound() {
+		return bound;
+	}
+	
+	public Position nextBoundToward(Position goal) {
 		
 		if (goal instanceof EdgePosition) {
 			EdgePosition ge = (EdgePosition)goal;
 			assert ge.getEdge() == e;
 			
 			if (distanceToStartOfEdge < ge.distanceToStartOfEdge) {
-				
+				return nextBoundForward(e, index, param);
 			} else {
-				
+				return nextBoundBackward(e, index, param);
 			}
 			
 		} else if (goal instanceof Vertex) {
 			Vertex gv = (Vertex)goal;
 			
+			if (gv == e.getEnd()) {
+				return nextBoundForward(e, index, param);
+			} else {
+				return nextBoundBackward(e, index, param);
+			}
 			
 		} else {
-			SinkedPosition gs = (SinkedPosition)goal;
-			
+			throw new AssertionError();
 		}
 		
 	}
@@ -113,7 +124,11 @@ public class EdgePosition extends Position {
 			double aaStartPath = MODEL.distanceBetweenVertices(e.getStart(), bb);
 			double aaEndPath = MODEL.distanceBetweenVertices(e.getEnd(), bb);
 			
-			return Math.min(aaStartPath + distanceToStartOfEdge(), aaEndPath + distanceToEndOfEdge());
+			double dist = Math.min(aaStartPath + distanceToStartOfEdge(), aaEndPath + distanceToEndOfEdge());
+			
+			assert DMath.doubleEquals(dist, 0.0) || dist > 0.0;
+			
+			return dist;
 		} else if (b instanceof EdgePosition) {
 			EdgePosition aa = (EdgePosition)this;
 			EdgePosition bb = (EdgePosition)b;
@@ -132,14 +147,23 @@ public class EdgePosition extends Position {
 			double endStartDistance = endStartPath + aa.distanceToEndOfEdge() + bb.distanceToStartOfEdge();
 			double endEndDistance = endEndPath + aa.distanceToEndOfEdge() + bb.distanceToEndOfEdge();
 			
-			return Math.min(Math.min(startStartDistance, startEndDistance), Math.min(endStartDistance, endEndDistance));
+			double dist = Math.min(Math.min(startStartDistance, startEndDistance), Math.min(endStartDistance, endEndDistance));
+			
+			assert DMath.doubleEquals(dist, 0.0) || dist > 0.0;
+			
+			return dist;
 		} else {
-			SinkedPosition bb = (SinkedPosition)b;
-			
-			double aaStartPath = MODEL.distanceBetweenVertices(e.getStart(), bb.getSink());
-			double aaEndPath = MODEL.distanceBetweenVertices(e.getEnd(), bb.getSink());
-			
-			return Math.min(aaStartPath + distanceToStartOfEdge(), aaEndPath + distanceToEndOfEdge());
+//			SinkedPosition bb = (SinkedPosition)b;
+//			
+//			double aaStartPath = MODEL.distanceBetweenVertices(e.getStart(), bb.getSink());
+//			double aaEndPath = MODEL.distanceBetweenVertices(e.getEnd(), bb.getSink());
+//			
+//			double dist = Math.min(aaStartPath + distanceToStartOfEdge(), aaEndPath + distanceToEndOfEdge());
+//			
+//			assert DMath.doubleEquals(dist, 0.0) || dist > 0.0;
+//			
+//			return dist;
+			throw new AssertionError();
 		}
 	}
 	
@@ -260,6 +284,38 @@ public class EdgePosition extends Position {
 			}
 		}
 		
+	}
+	
+	public static Position nextBoundfromStart(Edge e) {
+		return nextBoundForward(e, 0, 0.0);
+	}
+	
+	public static Position nextBoundfromEnd(Edge e) {
+		return nextBoundBackward(e, e.size()-2, 1.0);
+	}
+	
+	private static Position nextBoundForward(Edge e, int index, double param) {
+		if (index == e.size()-2) {
+			return e.getEnd();
+		} else {
+			return new EdgePosition(e, index+1, 0.0, e.getEnd());
+		}
+	}
+	
+	private static Position nextBoundBackward(Edge e, int index, double param) {
+		if (DMath.doubleEquals(param, 0.0)) {
+			if (index == 0 || (index == 1 && DMath.doubleEquals(param, 0.0))) {
+				return e.getStart();
+			} else {
+				return new EdgePosition(e, index-1, 0.0, e.getStart());
+			}
+		} else {
+			if (index == 0) {
+				return e.getStart();
+			} else {
+				return new EdgePosition(e, index, 0.0, e.getStart());
+			}
+		}
 	}
 	
 }

@@ -29,9 +29,15 @@ public class HubPosition extends Position {
 	}
 
 	@Override
-	public Position nextToward(Position goal) {
+	public Position nextBoundToward(Position goal) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public boolean isBound() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 	
 }

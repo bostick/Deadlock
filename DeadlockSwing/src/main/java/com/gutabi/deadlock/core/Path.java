@@ -1,12 +1,15 @@
 package com.gutabi.deadlock.core;
 
+import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
+import org.apache.log4j.Logger;
+
 
 /**
  * a path is a unique sequence of steps through space and time
@@ -24,6 +27,7 @@ public class Path {
 	private double startTime;
 	private double endTime;
 	
+	static Logger logger = Logger.getLogger(Path.class);
 	
 	
 	public Path(List<STPosition> origPoss) {
@@ -33,10 +37,13 @@ public class Path {
 		
 		assert origPoss.size() >= 2;
 		
-		calculate();
+		interpolate();
 		
 		startTime = times.get(0);
 		endTime = times.get(times.size()-1);
+		
+		assert DMath.doubleEquals(startTime, 0.0) || startTime > 0.0;
+		assert DMath.doubleEquals(endTime, 1.0) || endTime < 1.0;
 		
 		assert check();
 	}
@@ -182,7 +189,11 @@ public class Path {
 			
 			if (start.getSpace() instanceof Vertex) {
 				if (end.getSpace() instanceof Vertex) {
-					e = (Edge)Vertex.commonConnector((Vertex)start.getSpace(), (Vertex)end.getSpace()); 
+					if (start.getSpace().equals(end.getSpace())) {
+						e = null;
+					} else {
+						e = (Edge)Vertex.commonConnector((Vertex)start.getSpace(), (Vertex)end.getSpace());
+					} 
 				} else {
 					e = ((EdgePosition)end.getSpace()).getEdge();
 					assert ((Vertex)start.getSpace()).getEdges().contains(e);
@@ -195,12 +206,14 @@ public class Path {
 					e = ((EdgePosition)start.getSpace()).getEdge();
 					assert ((EdgePosition)end.getSpace()).getEdge() == e;
 				} else {
-					e = ((EdgePosition)start.getSpace()).getEdge();
-					assert ((SinkedPosition)end.getSpace()).getSink().getEdges().contains(e);
+//						e = ((EdgePosition)start.getSpace()).getEdge();
+//						assert ((SinkedPosition)end.getSpace()).getSink().getEdges().contains(e);
+					throw new AssertionError();
 				}
 			} else {
-				assert ((SinkedPosition)start.getSpace()).getSink() == ((SinkedPosition)end.getSpace()).getSink();
-				e = null;
+//					assert ((SinkedPosition)start.getSpace()).getSink() == ((SinkedPosition)end.getSpace()).getSink();
+//					e = null;
+				throw new AssertionError();
 			}
 			
 		}
@@ -322,7 +335,7 @@ public class Path {
 		assert DMath.doubleEquals(a.startTime, b.startTime);
 		assert DMath.doubleEquals(a.endTime, b.endTime);
 		
-		SortedSet<Double> times = new TreeSet<Double>();
+		SortedSet<Double> times = new TreeSet<Double>(DMath.COMPARATOR);
 		times.addAll(a.getTimes());
 		times.addAll(b.getTimes());
 		
@@ -334,13 +347,40 @@ public class Path {
 			SubPath ap = a.subPath(ta, tb);
 			SubPath bp = b.subPath(ta, tb);
 			
-			if ((ap.start.getSpace() instanceof SinkedPosition && ap.end.getSpace() instanceof SinkedPosition) ||
-					(bp.start.getSpace() instanceof SinkedPosition && bp.end.getSpace() instanceof SinkedPosition)) {
+//			if ((ap.start.getSpace() instanceof SinkedPosition && ap.end.getSpace() instanceof SinkedPosition) ||
+//					(bp.start.getSpace() instanceof SinkedPosition && bp.end.getSpace() instanceof SinkedPosition)) {
+//				continue;
+//			}
+			
+			if (ap.start.getSpace() instanceof Sink || bp.start.getSpace() instanceof Sink) {
 				continue;
 			}
 			
-			if (!MODEL.areNeighbors(ap.e, bp.e)) {
-				continue;
+			/*
+			 * e is only null if the path is on a vertex and not moving
+			 */
+			
+			if (ap.e != null) {
+				if (bp.e != null) {
+					if (!MODEL.areNeighbors(ap.e, bp.e)) {
+						continue;
+					}
+				} else {
+					if (!((Vertex)bp.start.getSpace()).getEdges().contains(ap.e)) {
+						continue;
+					}
+				}
+			} else {
+				if (bp.e != null) {
+					if (!((Vertex)ap.start.getSpace()).getEdges().contains(bp.e)) {
+						continue;
+					}
+				} else {
+					/*
+					 * both are on vertices and not moving
+					 */
+					continue;
+				}
 			}
 			
 			double crashTime = intersection(ap, bp, radius);
@@ -360,21 +400,10 @@ public class Path {
 		assert DMath.doubleEquals(ap.startTime, bp.startTime);
 		assert DMath.doubleEquals(ap.endTime, bp.endTime);
 		
+		double realDistanceStart = Point.distance(ap.start.getSpace().getPoint(), bp.start.getSpace().getPoint());
+		assert !DMath.doubleEquals(realDistanceStart, radius) && realDistanceStart > radius;
+		
 		double crashTime = solve(ap, bp, radius);
-		if (crashTime == -1) {
-			Point ae = ap.end.getSpace().getPoint();
-			Point be = bp.end.getSpace().getPoint();
-			double realDistance = Point.distance(ae, be);
-			assert !DMath.doubleEquals(realDistance, radius);
-			assert realDistance > radius;
-		} else {
-			Position crash1 = ap.getPosition(crashTime);
-			Position crash2 = bp.getPosition(crashTime);
-			double crashDistance = crash1.distanceTo(crash2);
-			double realDistance = Point.distance(crash1.getPoint(), crash2.getPoint());
-			assert DMath.doubleEquals(crashDistance, radius);
-			assert DMath.doubleEquals(realDistance, radius);
-		}
 		
 		return crashTime;
 	}
@@ -390,54 +419,206 @@ public class Path {
 		double t1 = ap.startTime;
 		double t2 = ap.endTime;
 		
-		if (ap.e == bp.e) {
+		boolean sameEdge = ap.e == bp.e;
+		
+		double crashTime;
+		
+		if (sameEdge) {
 			// both on same edge
 			
-			// use distance on edge as an oriented distance
-			d1 = bp.start.getSpace().distanceTo(ap.e.getStart()) - ap.start.getSpace().distanceTo(ap.e.getStart());
-			d2 = bp.end.getSpace().distanceTo(ap.e.getStart()) - ap.end.getSpace().distanceTo(ap.e.getStart());
-
-			assert DMath.doubleEquals(Math.abs(d1), radius) || Math.abs(d1) > radius;
-
-			if (d1 < 0) {
-				//flip
-				d1 = -d1;
-				d2 = -d2;
+			d1 = Point.distance(ap.start.getSpace().getPoint(), bp.start.getSpace().getPoint());
+			d2 = Point.distance(ap.end.getSpace().getPoint(), bp.end.getSpace().getPoint());
+			
+			/*
+			 * remember original orientation
+			 */
+			boolean ABstart = ap.start.getSpace().distanceTo(ap.e.getStart()) < bp.start.getSpace().distanceTo(ap.e.getStart());
+			boolean ABend = ap.end.getSpace().distanceTo(ap.e.getStart()) < bp.end.getSpace().distanceTo(ap.e.getStart());
+			
+			if (DMath.doubleEquals(d1, radius)) {
+				crashTime = t1;
+			} else {
+				assert !(d1 < radius);
+				/*
+				 * only use d2 if a and b did not cross
+				 */
+				if ((ABend == ABstart) && DMath.doubleEquals(d2, radius)) {
+					crashTime = t2;
+				} else if ((ABend == ABstart) && d2 > radius) {
+					crashTime = -1;
+				} else {
+					
+					double goodT2;
+					
+					if (ABend != ABstart) {
+						/*
+						 * first find crossing time
+						 */
+						
+						double goodT2Low = t1;
+						double goodT2High = t2;
+						
+						while (true) {
+							goodT2 = (goodT2Low + goodT2High) / 2;
+							
+							Position goodT21 = ap.getPosition(goodT2);
+							Position goodT22 = bp.getPosition(goodT2);
+							
+							double goodT21ToStart = goodT21.distanceTo(ap.e.getStart());
+							double goodT22ToStart = goodT22.distanceTo(ap.e.getStart());
+							boolean newAB = goodT21ToStart < goodT22ToStart;
+							
+							if (DMath.doubleEquals(goodT21ToStart, goodT22ToStart)) {
+								break;
+							} else if (newAB != ABstart) {
+								/*
+								 * still crossed
+								 */
+								goodT2High = goodT2;
+							} else {
+								goodT2Low = goodT2;
+							}
+							
+//							if (DMath.doubleEquals(goodT21ToStart, goodT22ToStart) || newAB != ABstart) {
+//								/*
+//								 * a and b are still crossed
+//								 */
+//								goodT2High = goodT2;
+//							} else {
+//								
+//								//double crashDistance = crash1.distanceTo(crash2);
+//								double realDistance = Point.distance(goodT21.getPoint(), goodT22.getPoint());
+//								//assert DMath.doubleEquals(crashDistance, radius);
+//								
+////								logger.debug("crashTime: " + crashTime + " realDistance: " + realDistance);
+//								
+//								if (DMath.doubleEquals(realDistance, 0.0)) {
+//									break;
+//								} else if (realDistance > radius) {
+//									crashTimeLow = crashTime;
+//								} else {
+//									crashTimeHigh = crashTime;
+//								}
+//							}
+							
+						}
+						
+					} else {
+						goodT2 = t2;
+					}
+					
+					double crashTimeLow = t1;
+					double crashTimeHigh = goodT2;
+					
+					while (true) {
+						crashTime = (crashTimeLow + crashTimeHigh) / 2;
+						
+						Position crash1 = ap.getPosition(crashTime);
+						Position crash2 = bp.getPosition(crashTime);
+						
+						double crash1ToStart = crash1.distanceTo(ap.e.getStart());
+						double crash2ToStart = crash2.distanceTo(ap.e.getStart());
+						boolean newAB = crash1ToStart < crash2ToStart;
+						
+						if (DMath.doubleEquals(crash1ToStart, crash2ToStart) || newAB != ABstart) {
+							/*
+							 * a and b have crossed
+							 */
+							throw new AssertionError();
+						} else {
+							
+							//double crashDistance = crash1.distanceTo(crash2);
+							double realDistance = Point.distance(crash1.getPoint(), crash2.getPoint());
+							//assert DMath.doubleEquals(crashDistance, radius);
+							
+//							logger.debug("crashTime: " + crashTime + " realDistance: " + realDistance);
+							
+							if (DMath.doubleEquals(realDistance, radius)) {
+								break;
+							} else if (realDistance > radius) {
+								crashTimeLow = crashTime;
+							} else {
+								crashTimeHigh = crashTime;
+							}
+						}
+						
+					}
+					
+				}
+			}
+			
+			if (crashTime == -1) {
+				Point ae = ap.end.getSpace().getPoint();
+				Point be = bp.end.getSpace().getPoint();
+				double realDistanceEnd = Point.distance(ae, be);
+				assert !DMath.doubleEquals(realDistanceEnd, radius) && realDistanceEnd > radius;
+			} else {
+				Position crash1 = ap.getPosition(crashTime);
+				Position crash2 = bp.getPosition(crashTime);
+				//double crashDistance = crash1.distanceTo(crash2);
+				double realDistance = Point.distance(crash1.getPoint(), crash2.getPoint());
+				//assert DMath.doubleEquals(crashDistance, radius);
+				assert DMath.doubleEquals(realDistance, radius);
 			}
 			
 		} else {
 			// neighbors
 			
-			d1 = ap.start.getSpace().distanceTo(bp.start.getSpace());
-			d2 = ap.end.getSpace().distanceTo(bp.end.getSpace());
+			d1 = Point.distance(ap.start.getSpace().getPoint(), bp.start.getSpace().getPoint());
+			d2 = Point.distance(ap.end.getSpace().getPoint(), bp.end.getSpace().getPoint());
 
 			assert DMath.doubleEquals(Math.abs(d1), radius) || Math.abs(d1) > radius;
 			
-		}
-		
-		double crashTime;
-		
-		if (DMath.doubleEquals(d1, radius)) {
-			crashTime = t1;
-		} else {
-			assert !(d1 < radius);
-			if (DMath.doubleEquals(d2, radius)) {
-				crashTime = t2;
-			} else if (d2 > radius) {
-				crashTime = -1;
+			if (DMath.doubleEquals(d1, radius)) {
+				crashTime = t1;
 			} else {
-				double bb = (d2 * t1 - d1 * t2)/(t1 - t2);
-				double mm;
-				if (!DMath.doubleEquals(t1, 0.0)) {
-					mm = (d1 - bb) / t1;
+				assert !(d1 < radius);
+				if (DMath.doubleEquals(d2, radius)) {
+					crashTime = t2;
+				} else if (d2 > radius) {
+					crashTime = -1;
 				} else {
-					mm = (d2 - bb) / t2;
+					
+					double crashTimeLow = t1;
+					double crashTimeHigh = t2;
+					
+					while (true) {
+						crashTime = (crashTimeLow + crashTimeHigh) / 2;
+						
+						Position crash1 = ap.getPosition(crashTime);
+						Position crash2 = bp.getPosition(crashTime);
+						//double crashDistance = crash1.distanceTo(crash2);
+						double realDistance = Point.distance(crash1.getPoint(), crash2.getPoint());
+						//assert DMath.doubleEquals(crashDistance, radius);
+						
+						if (DMath.doubleEquals(realDistance, radius)) {
+							break;
+						} else if (realDistance > radius) {
+							crashTimeLow = crashTime;
+						} else {
+							crashTimeHigh = crashTime;
+						}
+					}
+					
 				}
-				crashTime = (radius - bb) / mm;
-				assert t1 < crashTime && crashTime < t2;
 			}
+			
+			if (crashTime == -1) {
+				Point ae = ap.end.getSpace().getPoint();
+				Point be = bp.end.getSpace().getPoint();
+				double realDistanceEnd = Point.distance(ae, be);
+				assert !DMath.doubleEquals(realDistanceEnd, radius) && realDistanceEnd > radius;
+			} else {
+				Position crash1 = ap.getPosition(crashTime);
+				Position crash2 = bp.getPosition(crashTime);
+				//double crashDistance = crash1.distanceTo(crash2);
+				double realDistance = Point.distance(crash1.getPoint(), crash2.getPoint());
+				//assert DMath.doubleEquals(crashDistance, radius);
+				assert DMath.doubleEquals(realDistance, radius);
+			}
+			
 		}
-
+		
 		return crashTime;
 	}
 	
@@ -465,22 +646,70 @@ public class Path {
 			double time = b.t - a.t;
 			double speed = dist / time;
 			
-			Position cur = a.s;
-			Position prev;
-			double accSegDistance = 0.0;
-			double accSegTime = a.t;
-			while (!cur.equals(b)) {
-				prev = cur;
-				cur = cur.nextToward(b);
-				double d = Point.distance(prev.getPoint(), cur.getPoint());
-				double t = d / speed;
-				accSegDistance += d;
-				accSegTime += t;
-				times.add(accSegTime);
-				poss.add(new STPosition(cur, accSegTime));
+			if ((a.s.equals(b.s)) ||
+					((a.s instanceof EdgePosition && b.s instanceof EdgePosition &&
+							((EdgePosition)a.s).getEdge() == ((EdgePosition)b.s).getEdge() && ((EdgePosition)a.s).getIndex() == ((EdgePosition)b.s).getIndex())) ||
+					(a.s.nextBoundToward(b.s).equals(b.s) ||
+							b.s.nextBoundToward(a.s).equals(a.s))) {
+				
+				/*
+				 * there are no bounds between a and b
+				 * either:
+				 * 1. a and b are equal
+				 * 1. both a and b are not bounds and are between the same bounds
+				 * 2. b is a's next bound
+				 * 3. a is b's next bound
+				 */
+				
+				times.add(b.t);
+				poss.add(b);
+				
+				accDist = dist;
+				
+			} else {
+				
+				Position bEnd;
+				if (!b.s.isBound()) {
+					bEnd = b.s.nextBoundToward(a.s);
+				} else {
+					bEnd = b.s;
+				}
+				
+				Position cur = a.s;
+				Position prev;
+				double accSegDistance = 0.0;
+				double accSegTime = a.t;
+				while (!cur.equals(bEnd)) {
+					prev = cur;
+					cur = cur.nextBoundToward(bEnd);
+					double d = Point.distance(prev.getPoint(), cur.getPoint());
+					double t = d / speed;
+					accSegDistance += d;
+					accSegTime += t;
+					if (DMath.doubleEquals(accSegTime, 1.0)) {
+						accSegTime = 1.0;
+					}
+					times.add(accSegTime);
+					assert DMath.doubleEquals(accSegTime, 1.0) || accSegTime < 1.0;
+					poss.add(new STPosition(cur, accSegTime));
+				}
+				if (!bEnd.equals(b.s)) {
+					double d = Point.distance(bEnd.getPoint(), b.s.getPoint());
+					double t = d / speed;
+					accSegDistance += d;
+					accSegTime += t;
+					if (DMath.doubleEquals(accSegTime, 1.0)) {
+						accSegTime = 1.0;
+					}
+					times.add(accSegTime);
+					assert DMath.doubleEquals(accSegTime, 1.0) || accSegTime < 1.0;
+					poss.add(new STPosition(b.s, accSegTime));
+				}
+				
+				accDist += accSegDistance;
+				
 			}
 			
-			accDist += accSegDistance;
 		}
 		
 		totalDistance = accDist;
@@ -493,9 +722,9 @@ public class Path {
 			assert cur.getTime() > prev.getTime();
 			
 			/*
-			 * if between 2 vertices, assert 1 unique path from one to the other
+			 * if between 2 different vertices, assert 1 unique path from one to the other
 			 */
-			if (cur.getSpace() instanceof Vertex && prev.getSpace() instanceof Vertex) {
+			if (cur.getSpace() instanceof Vertex && prev.getSpace() instanceof Vertex && cur.getSpace() != prev.getSpace()) {
 				Vertex p1 = (Vertex)cur.getSpace();
 				Vertex p2 = (Vertex)prev.getSpace();
 				assert Vertex.commonConnectors(p1, p2).size() == 1;

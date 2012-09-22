@@ -16,21 +16,27 @@ public abstract class Position {
 	
 	public abstract double distanceTo(Position b);
 	
-	public abstract Position nextToward(Position goal);
+	public abstract Position nextBoundToward(Position goal);
+	
+	/**
+	 * A position is a bound if it is not interpolated, i.e., it is on a well-defined point on the graph
+	 */
+	public abstract boolean isBound();
 	
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) {
 			return true;
 		} else if (!(o instanceof Position)) {
-			return false;
+			throw new IllegalArgumentException();
 		} else {
 			if (this instanceof Vertex) {
-				return ((Vertex)this).equals(o);
+				return ((Vertex)this).equalsP((Position)o);
 			} else if (this instanceof EdgePosition) {
-				return ((EdgePosition)this).equals(o);
+				return ((EdgePosition)this).equalsP((Position)o);
 			} else {
-				return ((SinkedPosition)this).equals(o);
+//				return ((SinkedPosition)this).equalsP((Position)o);
+				throw new AssertionError();
 			}
 		}
 	}
@@ -41,7 +47,8 @@ public abstract class Position {
 		} else if (p instanceof EdgePosition) {
 			return travelToE((EdgePosition)p, distance);
 		} else {
-			return travelToV(((SinkedPosition)p).getSink(), distance);
+//			return travelToV(((SinkedPosition)p).getSink(), distance);
+			throw new AssertionError();
 		}
 	}
 	
@@ -65,9 +72,9 @@ public abstract class Position {
 			
 			return ep.travel(p, distance);
 		} else {
-			
-			assert this instanceof SinkedPosition;
-			throw new IllegalStateException();
+//			assert this instanceof SinkedPosition;
+//			throw new IllegalStateException();
+			throw new AssertionError();
 		}
 		
 	}

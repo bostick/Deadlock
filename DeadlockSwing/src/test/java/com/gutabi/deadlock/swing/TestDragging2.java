@@ -786,4 +786,93 @@ public class TestDragging2 {
 	}
 	
 	
+	
+	
+	@Test
+	public void testBug24() throws Exception {
+		
+		CONTROLLER.strat = MassageStrategy.CURRENT;
+		
+		testPressed(new Point(-352.139, 389.955));
+		testDragged(new Point(-346.433, 389.955));
+		testDragged(new Point(-337.874, 389.955));
+		testDragged(new Point(-320.755, 389.955));
+		testDragged(new Point(-297.93, 389.955));
+		testDragged(new Point(-266.546, 389.955));
+		testDragged(new Point(-240.868, 389.955));
+		testDragged(new Point(-200.924, 395.661));
+		testDragged(new Point(-123.89, 395.661));
+		testDragged(new Point(-38.2963, 404.22));
+		testDragged(new Point(55.8566, 404.22));
+		testDragged(new Point(204.219, 412.78));
+		testDragged(new Point(398.231, 421.339));
+		testDragged(new Point(546.593, 438.458));
+		testDragged(new Point(897.526, 486.961));
+		testDragged(new Point(1051.59, 515.492));
+		testDragged(new Point(1160.01, 538.317));
+		testDragged(new Point(1268.43, 561.142));
+		testDragged(new Point(1391.12, 583.967));
+		testDragged(new Point(1625.07, 632.47));
+		testDragged(new Point(1696.4, 652.441));
+		testDragged(new Point(1776.29, 663.854));
+		testDragged(new Point(1853.32, 683.826));
+		testDragged(new Point(1916.09, 698.091));
+		testDragged(new Point(2027.36, 715.21));
+		testDragged(new Point(2075.86, 729.476));
+		testDragged(new Point(2132.93, 740.888));
+		testDragged(new Point(2181.43, 746.594));
+		testDragged(new Point(2212.81, 746.594));
+		testDragged(new Point(2249.9, 746.594));
+		testDragged(new Point(2255.61, 746.594));
+		testDragged(new Point(2255.61, 738.035));
+		testReleased();
+
+		testPressed(new Point(-252.28, 934.9));
+		testDragged(new Point(-249.427, 934.9));
+		testDragged(new Point(-235.161, 934.9));
+		testDragged(new Point(-203.777, 923.488));
+		testDragged(new Point(-155.274, 912.075));
+		testDragged(new Point(-106.771, 894.956));
+		testDragged(new Point(-66.8274, 880.691));
+		testDragged(new Point(-26.8838, 874.985));
+		testDragged(new Point(15.913, 863.572));
+		testDragged(new Point(64.4159, 846.453));
+		testDragged(new Point(127.185, 826.482));
+		testDragged(new Point(178.541, 800.804));
+		testDragged(new Point(227.044, 758.007));
+		testDragged(new Point(295.518, 683.826));
+		testDragged(new Point(315.49, 669.56));
+		testDragged(new Point(335.462, 655.295));
+		testDragged(new Point(346.875, 646.735));
+		testDragged(new Point(392.524, 629.617));
+		testDragged(new Point(418.202, 621.057));
+		testDragged(new Point(443.88, 615.351));
+		testDragged(new Point(495.237, 598.232));
+		testDragged(new Point(523.768, 589.673));
+		testDragged(new Point(540.886, 578.26));
+		testDragged(new Point(560.858, 575.407));
+		testDragged(new Point(592.243, 555.436));
+		testDragged(new Point(609.361, 552.582));
+		testDragged(new Point(623.627, 544.023));
+		testDragged(new Point(646.452, 532.611));
+		testDragged(new Point(700.661, 506.933));
+		testDragged(new Point(729.192, 495.52));
+		testDragged(new Point(740.605, 486.961));
+		testDragged(new Point(757.723, 481.254));
+		testDragged(new Point(771.989, 478.401));
+		testDragged(new Point(791.961, 469.842));
+		testDragged(new Point(794.814, 466.989));
+		testDragged(new Point(806.226, 464.136));
+		testDragged(new Point(809.079, 458.43));
+		testDragged(new Point(811.933, 458.43));
+		testDragged(new Point(817.639, 458.43));
+		testDragged(new Point(817.639, 455.576));
+		testDragged(new Point(820.492, 455.576));
+		testDragged(new Point(823.345, 452.723));
+		testReleased();
+		
+		Thread.sleep(Long.MAX_VALUE);
+	}
+	
+	
 }

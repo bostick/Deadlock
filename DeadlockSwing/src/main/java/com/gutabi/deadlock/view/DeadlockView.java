@@ -168,13 +168,25 @@ public class DeadlockView {
 			for (Car c : movingCarsCopy) {
 				Point pos = c.getPosition().getPoint();
 				g2.setColor(Color.BLUE);
-				g2.fillOval((int)(pos.getX()-MODEL.CAR_WIDTH/2), (int)(pos.getY()-MODEL.CAR_WIDTH/2), (int)MODEL.CAR_WIDTH, (int)MODEL.CAR_WIDTH);
+				int x = (int)(pos.getX()-MODEL.CAR_WIDTH/2);
+				int y = (int)(pos.getY()-MODEL.CAR_WIDTH/2);
+				int width = (int)MODEL.CAR_WIDTH;
+				int height = (int)MODEL.CAR_WIDTH;
+				g2.fillOval(x, y, width, height);
+				g2.setColor(Color.WHITE);
+				g2.drawString(Integer.toString(c.getId()), x, y + height/2);
 			}
 			
 			for (Car c : crashedCarsCopy) {
 				Point pos = c.getPosition().getPoint();
 				g2.setColor(Color.ORANGE);
-				g2.fillOval((int)(pos.getX()-MODEL.CAR_WIDTH/2), (int)(pos.getY()-MODEL.CAR_WIDTH/2), (int)MODEL.CAR_WIDTH, (int)MODEL.CAR_WIDTH);
+				int x = (int)(pos.getX()-MODEL.CAR_WIDTH/2);
+				int y = (int)(pos.getY()-MODEL.CAR_WIDTH/2);
+				int width = (int)MODEL.CAR_WIDTH;
+				int height = (int)MODEL.CAR_WIDTH;
+				g2.fillOval(x, y, width, height);
+				g2.setColor(Color.BLACK);
+				g2.drawString(Integer.toString(c.getId()), x, y + height/2);
 			}
 		}
 		

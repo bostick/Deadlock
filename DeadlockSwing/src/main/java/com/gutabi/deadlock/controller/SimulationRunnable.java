@@ -6,10 +6,13 @@ import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Edge;
 import com.gutabi.deadlock.core.Intersection;
 import com.gutabi.deadlock.core.Path;
+import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.Position;
 import com.gutabi.deadlock.core.Sink;
 import com.gutabi.deadlock.core.Source;
@@ -35,6 +38,8 @@ public class SimulationRunnable implements Runnable {
 	List<Car> crashedCarsCopy;
 	
 	List<Source> sources;
+	
+	static Logger logger = Logger.getLogger(SimulationRunnable.class);
 	
 	@Override
 	public void run() {
@@ -158,7 +163,8 @@ public class SimulationRunnable implements Runnable {
 			if (sources.size() == 0) {
 				continue;
 			}
-			int i = MODEL.RANDOM.nextInt(sources.size());
+			//int i = MODEL.RANDOM.nextInt(sources.size());
+			int i = 0;
 			
 			final Source s = sources.get(i);
 			
@@ -215,6 +221,8 @@ public class SimulationRunnable implements Runnable {
 		
 		movingCarsCopy.removeAll(newlySinkedCars);
 		
+		checkDistances(new ArrayList<Car>(){{addAll(movingCarsCopy);addAll(crashedCarsCopy);}});
+		
 	}
 	
 	private boolean checkTimes(List<Car> cars) {
@@ -236,33 +244,33 @@ public class SimulationRunnable implements Runnable {
 //		assert DMath.doubleEquals(dist, 10.0) || dist > 10.0;
 //		return true;
 //	}
-//	
-//	private boolean checkDistances(Car c, Car d) {
-//		Position cPos = c.getPosition();
-//		if (c == d) {
-//			return true;
-//		}
-//		Position dPos = d.getPosition();
-//		double dist = cPos.distanceTo(dPos);
-//		assert DMath.doubleEquals(dist, 10.0) || dist > 10.0;
-//		return true;
-//	}
-//	
-//	private boolean checkDistances(Car c, List<Car> cars) {
-//		for (int i = 0; i < cars.size(); i++) {
-//			Car d = cars.get(i);
-//			checkDistances(c, d);
-//		}
-//		return true;
-//	}
-//	
-//	private boolean checkDistances(List<Car> cars) {
-//		for (int i = 0; i < cars.size(); i++) {
-//			Car c = cars.get(i);
-//			checkDistances(c, cars);
-//		}
-//		return true;
-//	}
+	
+	private boolean checkDistances(Car c, Car d) {
+		Position cPos = c.getPosition();
+		if (c == d) {
+			return true;
+		}
+		Position dPos = d.getPosition();
+		double dist = Point.distance(cPos.getPoint(), dPos.getPoint());
+		assert DMath.doubleEquals(dist, MODEL.CAR_WIDTH) || dist > MODEL.CAR_WIDTH;
+		return true;
+	}
+	
+	private boolean checkDistances(Car c, List<Car> cars) {
+		for (int i = 0; i < cars.size(); i++) {
+			Car d = cars.get(i);
+			checkDistances(c, d);
+		}
+		return true;
+	}
+	
+	private boolean checkDistances(List<Car> cars) {
+		for (int i = 0; i < cars.size(); i++) {
+			Car c = cars.get(i);
+			checkDistances(c, cars);
+		}
+		return true;
+	}
 	
 	private void findCrashesMoving(List<Car> cars) {
 		
@@ -313,9 +321,9 @@ public class SimulationRunnable implements Runnable {
 		if (intersectionTime != -1) {
 			saveCrashInfo(new CrashInfo(intersectionTime, ci, cj));
 			return true;
+		} else {
+			return false;
 		}
-		
-		return false;
 	}
 	
 	

@@ -33,33 +33,69 @@ public class Vertex extends Position implements Driveable {
 		return hash;
 	}
 	
-	public Position nextToward(Position goal) {
+	public boolean isBound() {
+		return true;
+	}
+	
+	public Position nextBoundToward(Position goal) {
 		
 		if (goal instanceof EdgePosition) {
 			EdgePosition ge = (EdgePosition)goal;
 			
-			
+			if (this == ge.getEdge().getEnd()) {
+				return EdgePosition.nextBoundfromEnd(ge.getEdge());
+			} else {
+				return EdgePosition.nextBoundfromStart(ge.getEdge());
+			}
 			
 		} else if (goal instanceof Vertex) {
 			Vertex gv = (Vertex)goal;
 			
+			if (gv == this) {
+				throw new IllegalArgumentException();
+			}
+			
+			Edge e = (Edge)Vertex.commonConnector(this, gv);
+			
+			if (this == e.getEnd()) {
+				return EdgePosition.nextBoundfromEnd(e);
+			} else {
+				return EdgePosition.nextBoundfromStart(e);
+			}
 			
 		} else {
-			SinkedPosition gs = (SinkedPosition)goal;
-			
+			throw new AssertionError();
+//			SinkedPosition gs = (SinkedPosition)goal;
+//			
+//			if (gs.getSink() == this) {
+//				throw new IllegalArgumentException();
+//			}
+//			
+//			Edge e = (Edge)Vertex.commonConnector(this, gs.getSink());
+//			
+//			if (this == e.getEnd()) {
+//				return EdgePosition.nextBoundfromEnd(e);
+//			} else {
+//				return EdgePosition.nextBoundfromStart(e);
+//			}
 		}
 		
 	}
 	
-	@Override
-	public boolean equals(Object o) {
+	public boolean equalsP(Position o) {
 		if (this == o) {
 			return true;
 		} else if (!(o instanceof Vertex)) {
 			return false;
 		} else {
-			Vertex b = (Vertex)o;
-			return (p.equals(b.p));
+			if (o instanceof Vertex) {
+				Vertex b = (Vertex)o;
+				return (p.equals(b.p));
+			} else {
+//				SinkedPosition b = (SinkedPosition)o;
+//				return (this == b.s);
+				throw new AssertionError();
+			}
 		}
 	}
 	
@@ -134,23 +170,41 @@ public class Vertex extends Position implements Driveable {
 	public double distanceTo(Position b) {
 		if (b instanceof Vertex) {
 			Vertex bb = (Vertex)b;
-			return MODEL.distanceBetweenVertices(this, bb);
+			
+			double dist = MODEL.distanceBetweenVertices(this, bb);
+			
+			assert DMath.doubleEquals(dist, 0.0) || dist > 0.0;
+			
+			return dist;
 		} else if (b instanceof EdgePosition) {
 			EdgePosition bb = (EdgePosition)b;
 			
 			double bbStartPath = MODEL.distanceBetweenVertices(this, bb.getEdge().getStart());
 			double bbEndPath = MODEL.distanceBetweenVertices(this, bb.getEdge().getEnd());
 			
-			return Math.min(bbStartPath + bb.distanceToStartOfEdge(), bbEndPath + bb.distanceToEndOfEdge());
+			double dist = Math.min(bbStartPath + bb.distanceToStartOfEdge(), bbEndPath + bb.distanceToEndOfEdge());
+			
+			assert DMath.doubleEquals(dist, 0.0) || dist > 0.0;
+			
+			return dist;
 		} else {
-			SinkedPosition bb = (SinkedPosition)b;
-			return MODEL.distanceBetweenVertices(this, bb.getSink());
+			throw new AssertionError();
+//			SinkedPosition bb = (SinkedPosition)b;
+//			double dist = MODEL.distanceBetweenVertices(this, bb.getSink());
+//			
+//			assert DMath.doubleEquals(dist, 0.0) || dist > 0.0;
+//			
+//			return dist;
 		}
 	}
 	
 	
 	
 	public static List<Connector> commonConnectors(Vertex a, Vertex b) {
+		
+		if (a == b) {
+			throw new IllegalArgumentException();
+		}
 		
 		List<Connector> common = new ArrayList<Connector>();
 		for (Edge e1 : a.eds) {
@@ -160,13 +214,14 @@ public class Vertex extends Position implements Driveable {
 				}
 			}
 		}
-		for (Hub h1 : a.hubs) {
-			for (Hub h2 : b.hubs) {
-				if (h1 == h2) {
-					common.add(h1);
-				}
-			}
-		}
+//		for (Hub h1 : a.hubs) {
+//			for (Hub h2 : b.hubs) {
+//				if (h1 == h2) {
+//					common.add(h1);
+//				}
+//			}
+//		}
+		
 		return common;
 	}
 	

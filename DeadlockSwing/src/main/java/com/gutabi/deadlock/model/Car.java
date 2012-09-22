@@ -14,7 +14,6 @@ import com.gutabi.deadlock.core.Path;
 import com.gutabi.deadlock.core.Position;
 import com.gutabi.deadlock.core.STPosition;
 import com.gutabi.deadlock.core.Sink;
-import com.gutabi.deadlock.core.SinkedPosition;
 import com.gutabi.deadlock.core.Source;
 import com.gutabi.deadlock.core.Vertex;
 
@@ -47,6 +46,11 @@ public class Car {
 		id = carCounter;
 		carCounter++;
 		s = "car " + id;
+		
+		if (id == 8) {
+			String.class.getName();
+		}
+		
 	}
 	
 	/**
@@ -80,7 +84,8 @@ public class Car {
 					nextPos = ((EdgePosition)pos).travel(nextDest, nextDist);
 					
 					if (nextPos instanceof Sink) {
-						nextPathAdd(new STPosition(new SinkedPosition((Sink)nextPos), time + (nextDist / MODEL.DISTANCE_PER_TIMESTEP)));
+						//nextPathAdd(new STPosition(new SinkedPosition((Sink)nextPos), time + (nextDist / MODEL.DISTANCE_PER_TIMESTEP)));
+						nextPathAdd(new STPosition(nextPos, time + (nextDist / MODEL.DISTANCE_PER_TIMESTEP)));
 					} else {
 						nextPathAdd(new STPosition(nextPos, time + (nextDist / MODEL.DISTANCE_PER_TIMESTEP)));
 					}
@@ -95,7 +100,8 @@ public class Car {
 						nextPathAdd(new STPosition(((Vertex)pos).travel(e, nextDest, nextDist / 2), time + (nextDist / MODEL.DISTANCE_PER_TIMESTEP) / 2));
 						
 						if (nextPos instanceof Sink) {
-							nextPathAdd(new STPosition(new SinkedPosition((Sink)nextPos), time + (nextDist / MODEL.DISTANCE_PER_TIMESTEP)));
+							//nextPathAdd(new STPosition(new SinkedPosition((Sink)nextPos), time + (nextDist / MODEL.DISTANCE_PER_TIMESTEP)));
+							nextPathAdd(new STPosition(nextPos, time + (nextDist / MODEL.DISTANCE_PER_TIMESTEP)));
 						} else {
 							nextPathAdd(new STPosition(nextPos, time + (nextDist / MODEL.DISTANCE_PER_TIMESTEP)));
 						}
@@ -156,7 +162,8 @@ public class Car {
 				break;
 			}
 			case SINKED: {
-				SinkedPosition pos = (SinkedPosition)getLastNextPosition();
+//				SinkedPosition pos = (SinkedPosition)getLastNextPosition();
+				Vertex pos = (Vertex)getLastNextPosition();
 				nextPathAdd(new STPosition(pos, 1.0));
 				time = 1.0;
 				break;
@@ -170,6 +177,9 @@ public class Car {
 			}
 			
 		} // end inner loop
+		
+		assert nextPath.getStartTime() == 0.0;
+		assert nextPath.getEndTime() == 1.0;
 		
 		return !(nextState == CarState.CRASHED);
 	}
@@ -293,6 +303,10 @@ public class Car {
 	
 	public String toString() {
 		return s;
+	}
+	
+	public int getId() {
+		return id;
 	}
 	
 	public Position getPosition() {
