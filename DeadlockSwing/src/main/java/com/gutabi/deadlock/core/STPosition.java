@@ -9,6 +9,8 @@ public class STPosition {
 	Position s;
 	double t;
 	
+	int hash;
+	
 	public STPosition(Position s, double t) {
 		this.s = s;
 		this.t = t;
@@ -16,6 +18,8 @@ public class STPosition {
 		if (DMath.equals(t, 1.0) && t != 1.0) {
 			String.class.getName();
 		}
+		
+		hash = s.hashCode();
 	}
 	
 	public Position getSpace() {
@@ -29,4 +33,21 @@ public class STPosition {
 	public String toString() {
 		return s + " @ " + t;
 	}
+	
+	public int hashCode() {
+		return hash;
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		} else if (!(o instanceof STPosition)) {
+			throw new IllegalArgumentException();
+		} else {
+			STPosition b = (STPosition)o;
+			return s.equals(b.s) && DMath.equals(t, b.t);
+		}
+	}
+	
 }

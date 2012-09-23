@@ -29,15 +29,15 @@ public class DeadlockModel {
 	public final int WORLD_WIDTH = 2048;
 	public final int WORLD_HEIGHT = 2048;
 	
-	public double DISTANCE_PER_TIMESTEP = 1;
+	public double DISTANCE_PER_TIMESTEP = 10;
 	
 	/*
 	 * spawn cars every SPAWN_FREQUENCY time steps
 	 * -1 means no spawning
 	 */
-	public int SPAWN_FREQUENCY = 400;
+	public int SPAWN_FREQUENCY = 100;
 	
-	public long WAIT = 16;
+	public long WAIT = 10;
 	
 	//public Random RANDOM = new Random();
 	
@@ -140,6 +140,9 @@ public class DeadlockModel {
 		this.mode = mode;
 	}
 	
+	/**
+	 * the next choice to make
+	 */
 	public Vertex shortestPathChoice(Vertex start, Vertex end) {
 		return graph.shortestPathChoice(start, end);
 	}

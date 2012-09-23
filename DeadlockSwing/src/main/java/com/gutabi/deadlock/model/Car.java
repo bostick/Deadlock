@@ -10,7 +10,7 @@ import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Direction;
 import com.gutabi.deadlock.core.Edge;
 import com.gutabi.deadlock.core.EdgePosition;
-import com.gutabi.deadlock.core.Path;
+import com.gutabi.deadlock.core.STPath;
 import com.gutabi.deadlock.core.Position;
 import com.gutabi.deadlock.core.STPosition;
 import com.gutabi.deadlock.core.Sink;
@@ -28,7 +28,7 @@ public class Car {
 	public long crashingStep;
 	public Source source;
 	
-	public Path nextPath;
+	public STPath nextPath;
 	public CarState nextState;
 	public Edge nextEdge;
 	public Vertex nextDest;
@@ -328,7 +328,7 @@ public class Car {
 			List<STPosition> poss = new ArrayList<STPosition>();
 			poss.add(new STPosition(this.pos, 0.0));
 			poss.add(pos);
-			nextPath = new Path(poss);
+			nextPath = new STPath(poss);
 		} else {
 			nextPath = nextPath.append(pos);
 		}
@@ -351,7 +351,7 @@ public class Car {
 		nextPath = nextPath.synchronize(time);
 	}
 	
-	public Path getNextPath() {
+	public STPath getNextPath() {
 		return nextPath;
 	}
 	

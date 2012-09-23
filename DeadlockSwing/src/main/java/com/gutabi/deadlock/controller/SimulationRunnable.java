@@ -11,7 +11,7 @@ import org.apache.log4j.Logger;
 import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Edge;
 import com.gutabi.deadlock.core.Intersection;
-import com.gutabi.deadlock.core.Path;
+import com.gutabi.deadlock.core.STPath;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.Position;
 import com.gutabi.deadlock.core.Sink;
@@ -227,7 +227,7 @@ public class SimulationRunnable implements Runnable {
 	
 	private boolean checkTimes(List<Car> cars) {
 		for (Car c : cars) {
-			Path p = c.nextPath;
+			STPath p = c.nextPath;
 			assert DMath.equals(p.getStartTime(), lastSyncTime);
 			assert DMath.equals(p.getEndTime(), 1.0);
 		}
@@ -314,10 +314,10 @@ public class SimulationRunnable implements Runnable {
 	
 	private boolean carCar(Car ci, Car cj) {
 		
-		Path ciFuturePath = ci.getNextPath();
-		Path cjFuturePath = cj.getNextPath();
+		STPath ciFuturePath = ci.getNextPath();
+		STPath cjFuturePath = cj.getNextPath();
 		
-		double intersectionTime = Path.intersection(ciFuturePath, cjFuturePath, MODEL.CAR_WIDTH);
+		double intersectionTime = STPath.intersection(ciFuturePath, cjFuturePath, MODEL.CAR_WIDTH);
 		if (intersectionTime != -1) {
 			saveCrashInfo(new CrashInfo(intersectionTime, ci, cj));
 			return true;

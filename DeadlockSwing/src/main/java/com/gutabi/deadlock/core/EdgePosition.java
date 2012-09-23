@@ -18,6 +18,8 @@ public class EdgePosition extends Position {
 	private double distanceToStartOfEdge = -1;
 	private double distanceToEndOfEdge = -1;
 	
+	int hash;
+	
 	public EdgePosition(Edge e, int index, double param, Vertex dest) {
 		super(Point.point(e.getPoint(index), e.getPoint(index+1), param));
 		
@@ -45,6 +47,22 @@ public class EdgePosition extends Position {
 		distanceToStartOfEdge = e.getDistanceFromStart(index) + Point.distance(p, segStart);
 		
 		distanceToEndOfEdge = e.getTotalLength() - distanceToStartOfEdge;
+		
+		int h = 17;
+		h = 37 * h + e.hashCode();
+		h = 37 * h + index;
+		long l = Double.doubleToLongBits(param);
+		int c = (int)(l ^ (l >>> 32));
+		h = 37 * h + c;
+		if (dest != null) {
+			h = 37 * h + dest.hashCode();
+		}
+		
+		hash = h;
+	}
+	
+	public int hashCode() {
+		return hash;
 	}
 	
 	public Point getPoint() {
