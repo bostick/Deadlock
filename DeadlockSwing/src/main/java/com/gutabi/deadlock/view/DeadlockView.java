@@ -7,10 +7,13 @@ import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.imageio.ImageIO;
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 
@@ -46,6 +49,8 @@ public class DeadlockView {
 	public Point worldViewLoc;
 	public Dim worldViewDim;
 	
+	BufferedImage car;
+	BufferedImage wreck;
 	
 	public final Logger logger = Logger.getLogger(DeadlockView.class);
 	
@@ -55,12 +60,14 @@ public class DeadlockView {
 		;
 	}
 	
-	public void init() {
+	public void init() throws Exception {
 		frame = createFrame(false);
 		
 		worldViewLoc = new Point(0, 0);
 		worldViewDim = new Dim(panel.getWidth(), panel.getHeight());
 		
+		car = ImageIO.read(new File("media\\car.png"));	
+		wreck = ImageIO.read(new File("media\\wreck.png"));
 	}
 	
 	public JFrame createFrame(boolean fullScreen) {
@@ -167,26 +174,53 @@ public class DeadlockView {
 			
 			for (Car c : movingCarsCopy) {
 				Point pos = c.getPosition().getPoint();
-				g2.setColor(Color.BLUE);
-				int x = (int)(pos.getX()-MODEL.CAR_WIDTH/2);
-				int y = (int)(pos.getY()-MODEL.CAR_WIDTH/2);
-				int width = (int)MODEL.CAR_WIDTH;
-				int height = (int)MODEL.CAR_WIDTH;
-				g2.fillOval(x, y, width, height);
-				g2.setColor(Color.WHITE);
-				g2.drawString(Integer.toString(c.getId()), x, y + height/2);
+				
+//				g2.setColor(Color.BLUE);
+//				int x = (int)(pos.getX()-MODEL.CAR_WIDTH/2);
+//				int y = (int)(pos.getY()-MODEL.CAR_WIDTH/2);
+//				int width = (int)MODEL.CAR_WIDTH;
+//				int height = (int)MODEL.CAR_WIDTH;
+//				
+//				g2.fillOval(x, y, width, height);
+//				g2.setColor(Color.WHITE);
+//				g2.drawString(Integer.toString(c.getId()), x, y + height/2);
+				
+				AffineTransform origTransform = g2.getTransform();
+				
+				AffineTransform carTrans = (AffineTransform)origTransform.clone();
+				carTrans.translate(pos.getX(), pos.getY());
+				
+				Point prevPos = c.getPreviousPosition().getPoint();
+				
+				double rad = Math.atan2(pos.getY()-prevPos.getY(), pos.getX()-prevPos.getX());
+				
+				carTrans.rotate(rad);
+				
+				g2.setTransform(carTrans);
+				
+				int x = (int)(-car.getWidth()/2);
+				int y = (int)(-car.getHeight()/2);
+				g2.drawImage(car, x, y, null);
+				
+				g2.setTransform(origTransform);
 			}
 			
 			for (Car c : crashedCarsCopy) {
 				Point pos = c.getPosition().getPoint();
-				g2.setColor(Color.ORANGE);
+//				g2.setColor(Color.ORANGE);
+//				int x = (int)(pos.getX()-MODEL.CAR_WIDTH/2);
+//				int y = (int)(pos.getY()-MODEL.CAR_WIDTH/2);
+//				int width = (int)MODEL.CAR_WIDTH;
+//				int height = (int)MODEL.CAR_WIDTH;
+				
+//				g2.fillOval(x, y, width, height);
+//				g2.setColor(Color.BLACK);
+//				g2.drawString(Integer.toString(c.getId()), x, y + height/2);
+				
 				int x = (int)(pos.getX()-MODEL.CAR_WIDTH/2);
 				int y = (int)(pos.getY()-MODEL.CAR_WIDTH/2);
-				int width = (int)MODEL.CAR_WIDTH;
-				int height = (int)MODEL.CAR_WIDTH;
-				g2.fillOval(x, y, width, height);
-				g2.setColor(Color.BLACK);
-				g2.drawString(Integer.toString(c.getId()), x, y + height/2);
+				g2.drawImage(wreck, x, y, null);
+				
 			}
 		}
 		

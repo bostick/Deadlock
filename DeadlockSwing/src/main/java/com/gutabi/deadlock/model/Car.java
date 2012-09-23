@@ -22,6 +22,7 @@ public class Car {
 	private CarState state;
 	
 	private Position pos;
+	private Position prevPos;
 	
 	public long startingStep;
 	public long crashingStep;
@@ -313,7 +314,12 @@ public class Car {
 		return pos;
 	}
 	
+	public Position getPreviousPosition() {
+		return prevPos;
+	}
+	
 	public void setPosition(Position pos) {
+		this.prevPos = this.pos;
 		this.pos = pos;
 	}
 	
