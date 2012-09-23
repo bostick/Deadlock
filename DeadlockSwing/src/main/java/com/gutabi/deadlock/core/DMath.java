@@ -4,11 +4,11 @@ import java.util.Comparator;
 
 public class DMath {
 	
-	public static boolean doubleEquals(double a, double b) {
-		return doubleEquals(a, b, 1.0E-8);
+	public static boolean equals(double a, double b) {
+		return equals(a, b, 1.0E-8);
 	}
 	
-	public static boolean doubleEquals(double a, double b, double delta) {
+	public static boolean equals(double a, double b, double delta) {
 		/*
 		 * 1.0E-12 seems to be fine for the math we do here
 		 * 1.0E-13 gives StackOverflowErrors when it is expecting some points to be equal
@@ -29,12 +29,28 @@ public class DMath {
 		//return ((float)a) == ((float)b);
 	}
 	
+	public static boolean lessThanEquals(double a, double b) {
+		return equals(a, b) || a < b;
+	}
+	
+	public static boolean greaterThanEquals(double a, double b) {
+		return equals(a, b) || a > b;
+	}
+	
+	public static boolean lessThan(double a, double b) {
+		return !equals(a, b) && a < b;
+	}
+	
+	public static boolean greaterThan(double a, double b) {
+		return !equals(a, b) && a > b;
+	}
+	
 	static Comparator<Double> COMPARATOR = new DoubleComparator();
 	
 	static class DoubleComparator implements Comparator<Double> {
 
 		public int compare(Double a, Double b) {
-			if (doubleEquals(a, b)) {
+			if (DMath.equals(a, b)) {
 				return 0;
 			}
 			if (a < b) {
@@ -79,8 +95,7 @@ public class DMath {
 			dd = c;
 		}
 		
-		return (DMath.doubleEquals(aa, dd) || aa < dd) && (DMath.doubleEquals(cc , bb) || cc < bb);
-		
+		return lessThanEquals(aa, dd) && lessThanEquals(cc , bb);
 	}
 	
 }

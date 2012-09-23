@@ -2,9 +2,11 @@ package com.gutabi.deadlock.swing;
 
 import static com.gutabi.deadlock.controller.DeadlockController.CONTROLLER;
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
+import static com.gutabi.deadlock.swing.TestDragging.testDragged;
+import static com.gutabi.deadlock.swing.TestDragging.testPressed;
+import static com.gutabi.deadlock.swing.TestDragging.testReleased;
 import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
-import java.awt.event.MouseEvent;
 import java.util.List;
 
 import org.junit.After;
@@ -13,18 +15,10 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.Edge;
+import com.gutabi.deadlock.core.Point;
 
 public class TestStress {
-	
-	static Point OFFSET = new Point(0, 0);
-	
-	Runnable empty = new Runnable(){
-		@Override
-		public void run() {
-			;
-		}};
 	
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
@@ -36,28 +30,6 @@ public class TestStress {
 		VIEW.frame.setVisible(true);
 		VIEW.panel.requestFocusInWindow();
 		
-	}
-
-	public void testPressed(Point p) throws Exception {
-		Point pp = p.add(OFFSET);
-		CONTROLLER.mc.pressed(new MouseEvent(null, 0, 0, 0, (int)pp.getX(), (int)pp.getY(), 0, false));
-		CONTROLLER.queueAndWait(empty);
-		Thread.sleep(10);
-		VIEW.repaint();
-	}
-	
-	public void testDragged(Point p) throws Exception {
-		Point pp = p.add(OFFSET);
-		CONTROLLER.mc.dragged(new MouseEvent(null, 0, 0, 0, (int)pp.getX(), (int)pp.getY(), 0, false));
-		CONTROLLER.queueAndWait(empty);
-		Thread.sleep(10);
-		VIEW.repaint();
-	}
-	
-	public void testReleased() throws Exception {
-		CONTROLLER.mc.released(new MouseEvent(null, 0, 0, 0, 0, 0, 0, false));
-		CONTROLLER.queueAndWait(empty);
-		Thread.sleep(10);
 	}
 	
 	@AfterClass

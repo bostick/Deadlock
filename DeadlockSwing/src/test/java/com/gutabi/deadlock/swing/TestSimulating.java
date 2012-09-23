@@ -2,10 +2,12 @@ package com.gutabi.deadlock.swing;
 
 import static com.gutabi.deadlock.controller.DeadlockController.CONTROLLER;
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
+import static com.gutabi.deadlock.swing.TestDragging.testDragged;
+import static com.gutabi.deadlock.swing.TestDragging.testPressed;
+import static com.gutabi.deadlock.swing.TestDragging.testReleased;
 import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 import static org.junit.Assert.assertTrue;
 
-import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,8 +27,6 @@ import com.gutabi.deadlock.model.CarState;
 
 @SuppressWarnings("serial")
 public class TestSimulating {
-	
-	static Point OFFSET = new Point(0, 0);
 	
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
@@ -64,35 +64,6 @@ public class TestSimulating {
 		}
 	}
 	
-	Runnable empty = new Runnable(){
-		@Override
-		public void run() {
-			;
-		}};
-	
-		public void testPressed(Point p) throws Exception {
-			Point pp = p.add(OFFSET);
-			CONTROLLER.mc.pressed(new MouseEvent(null, 0, 0, 0, (int)pp.getX(), (int)pp.getY(), 0, false));
-			CONTROLLER.queueAndWait(empty);
-			Thread.sleep(10);
-			VIEW.repaint();
-		}
-		
-		public void testDragged(Point p) throws Exception {
-			Point pp = p.add(OFFSET);
-			CONTROLLER.mc.dragged(new MouseEvent(null, 0, 0, 0, (int)pp.getX(), (int)pp.getY(), 0, false));
-			CONTROLLER.queueAndWait(empty);
-			Thread.sleep(10);
-			VIEW.repaint();
-		}
-		
-		public void testReleased() throws Exception {
-			CONTROLLER.mc.released(new MouseEvent(null, 0, 0, 0, 0, 0, 0, false));
-			CONTROLLER.queueAndWait(empty);
-			Thread.sleep(10);
-		}
-	
-	
 	List<Edge> edges;
 	
 	/**
@@ -103,7 +74,7 @@ public class TestSimulating {
 		
 		//CONTROLLER.strat = MassageStrategy.NONE;
 		
-		MODEL.RANDOM.setSeed(1);
+//		MODEL.RANDOM.setSeed(1);
 		
 		testPressed(new Point(9., 251.));
 		testReleased();
@@ -218,9 +189,9 @@ public class TestSimulating {
 	@Test
 	public void test2() throws Exception {
 		
-		long seed = 12;
+//		long seed = 12;
 		
-		MODEL.RANDOM.setSeed(seed);
+//		MODEL.RANDOM.setSeed(seed);
 		
 		testPressed(new Point(39., 1.));
 		testDragged(new Point(39., 2.));

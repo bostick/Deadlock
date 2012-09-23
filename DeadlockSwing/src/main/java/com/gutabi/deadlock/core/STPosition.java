@@ -13,7 +13,7 @@ public class STPosition {
 		this.s = s;
 		this.t = t;
 		
-		if (DMath.doubleEquals(t, 1.0) && t != 1.0) {
+		if (DMath.equals(t, 1.0) && t != 1.0) {
 			String.class.getName();
 		}
 	}

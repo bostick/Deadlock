@@ -108,14 +108,14 @@ public class Car {
 						
 					} else {
 						double newTime = time + (nextDist / MODEL.DISTANCE_PER_TIMESTEP);
-						if (DMath.doubleEquals(newTime, 1.0)) {
+						if (DMath.equals(newTime, 1.0)) {
 							newTime = 1.0;
 						}
 						nextPathAdd(new STPosition(nextPos, newTime));
 					}
 				}
 				
-				if (DMath.doubleEquals(nextDistanceToMove, distanceLeftOnEdge)) {
+				if (DMath.equals(nextDistanceToMove, distanceLeftOnEdge)) {
 					
 					previousEdge = e;
 					nextState = CarState.VERTEX;
@@ -172,7 +172,7 @@ public class Car {
 				assert false;
 			}
 			
-			if (DMath.doubleEquals(time, 1.0)) {
+			if (DMath.equals(time, 1.0)) {
 				break inner;
 			}
 			

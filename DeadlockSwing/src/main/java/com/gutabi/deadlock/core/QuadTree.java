@@ -116,13 +116,13 @@ public class QuadTree {
 		}
 		
 		double u = Point.u(c, b, d);
-		if (DMath.doubleEquals(u, 0.0) || u < 0.0) {
+		if (DMath.lessThanEquals(u, 0.0)) {
 			if (si.index > 0) {
 				return new EdgePosition(si.edge, si.index, 0.0, null);
 			} else {
 				throw new PositionException(b, c, d);
 			}
-		} else if (DMath.doubleEquals(u, 1.0) || u > 1.0) {
+		} else if (DMath.greaterThanEquals(u, 1.0)) {
 			throw new PositionException(b, c, d);
 		} else {
 			return new EdgePosition(si.edge, si.index, u, null);
@@ -150,7 +150,7 @@ public class QuadTree {
 					continue;
 				}
 				double dist = Point.distance(a, ep);
-				if (DMath.doubleEquals(dist, radius) || dist < radius && (anchor == null || a.equals(anchor) || dist < Point.distance(anchor, ep))) {
+				if (DMath.lessThanEquals(dist, radius) && (anchor == null || a.equals(anchor) || dist < Point.distance(anchor, ep))) {
 					if (best == null) {
 						best = closest;
 					} else if (Point.distance(a, ep) < Point.distance(a, best.getPoint())) {

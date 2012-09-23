@@ -127,7 +127,7 @@ public class SimulationRunnable implements Runnable {
 			Position carPos = c.getPosition();
 			for (Source s : sources) {
 				double dist = carPos.distanceTo(s);
-				if (DMath.doubleEquals(dist, MODEL.CAR_WIDTH) || dist < MODEL.CAR_WIDTH) {
+				if (DMath.lessThanEquals(dist, MODEL.CAR_WIDTH)) {
 					toRemove.add(s);
 				}
 			}
@@ -136,7 +136,7 @@ public class SimulationRunnable implements Runnable {
 			Position carPos = c.getPosition();
 			for (Source s : sources) {
 				double dist = carPos.distanceTo(s);
-				if (DMath.doubleEquals(dist, MODEL.CAR_WIDTH) || dist < MODEL.CAR_WIDTH) {
+				if (DMath.lessThanEquals(dist, MODEL.CAR_WIDTH)) {
 					toRemove.add(s);
 				}
 			}
@@ -228,8 +228,8 @@ public class SimulationRunnable implements Runnable {
 	private boolean checkTimes(List<Car> cars) {
 		for (Car c : cars) {
 			Path p = c.nextPath;
-			assert DMath.doubleEquals(p.getStartTime(), lastSyncTime);
-			assert DMath.doubleEquals(p.getEndTime(), 1.0);
+			assert DMath.equals(p.getStartTime(), lastSyncTime);
+			assert DMath.equals(p.getEndTime(), 1.0);
 		}
 		return true;
 	}
@@ -241,7 +241,7 @@ public class SimulationRunnable implements Runnable {
 //		}
 //		Position dPos = d.getLastNextPosition().getSpace();
 //		double dist = cPos.distanceTo(dPos);
-//		assert DMath.doubleEquals(dist, 10.0) || dist > 10.0;
+//		assert DMath.equals(dist, 10.0) || dist > 10.0;
 //		return true;
 //	}
 	
@@ -252,7 +252,7 @@ public class SimulationRunnable implements Runnable {
 		}
 		Position dPos = d.getPosition();
 		double dist = Point.distance(cPos.getPoint(), dPos.getPoint());
-		assert DMath.doubleEquals(dist, MODEL.CAR_WIDTH) || dist > MODEL.CAR_WIDTH;
+		assert DMath.greaterThanEquals(dist, MODEL.CAR_WIDTH);
 		return true;
 	}
 	
@@ -356,7 +356,7 @@ public class SimulationRunnable implements Runnable {
 		
 		for (CrashInfo info : unprocessedCrashes) {
 			double crashTime = info.crashTime;
-			assert DMath.doubleEquals(crashTime, firstUnprocessedCrashTime);
+			assert DMath.equals(crashTime, firstUnprocessedCrashTime);
 			
 			Car i = info.i;
 			Car j = info.j;

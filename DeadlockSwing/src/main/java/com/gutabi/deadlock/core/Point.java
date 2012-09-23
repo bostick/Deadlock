@@ -1,6 +1,5 @@
 package com.gutabi.deadlock.core;
 
-import static com.gutabi.deadlock.core.DMath.doubleEquals;
 
 public class Point {
 	
@@ -43,7 +42,7 @@ public class Point {
 			return false;
 		} else {
 			Point b = (Point)o;
-			return doubleEquals(x, b.x) && doubleEquals(y, b.y);
+			return DMath.equals(x, b.x) && DMath.equals(y, b.y);
 		}
 	}
 	
@@ -87,28 +86,28 @@ public class Point {
 		double denom = xba * ydc - xdc * yba;
 		double uabn = xdc * yac - xac * ydc;
 		double ucdn = xba * yac - xac * yba;
-		if (doubleEquals(denom, 0.0)) {
-			if (doubleEquals(uabn, 0.0) && doubleEquals(ucdn, 0.0)) {
+		if (DMath.equals(denom, 0.0)) {
+			if (DMath.equals(uabn, 0.0) && DMath.equals(ucdn, 0.0)) {
 				//colinear but not overlapping, single point, overlapping, or identical
 				
 				double cu;
-				if (!doubleEquals(xba, 0.0)) {
+				if (!DMath.equals(xba, 0.0)) {
 					cu = (c.x - a.x) / xba;
-					if (!doubleEquals(yba, 0.0)) {
-						//assert doubleEquals(cu, (c.y - a.y) / yba, 1.0E-4);
-						//assert doubleEquals(cu * yba, (c.y - a.y), 1.0E-6);
-						assert doubleEquals((c.x - a.x) * yba, (c.y - a.y) * xba, 1.0E-7);
+					if (!DMath.equals(yba, 0.0)) {
+						//assert DMath.equals(cu, (c.y - a.y) / yba, 1.0E-4);
+						//assert DMath.equals(cu * yba, (c.y - a.y), 1.0E-6);
+						assert DMath.equals((c.x - a.x) * yba, (c.y - a.y) * xba, 1.0E-7);
 					}
 				} else {
 					cu = (c.y - a.y) / yba;
 				}
 				
 				double du;
-				if (!doubleEquals(xba, 0.0)) {
+				if (!DMath.equals(xba, 0.0)) {
 					du = (d.x - a.x) / xba;
-					if (!doubleEquals(yba, 0.0)) {
-						//assert doubleEquals(du, (d.y - a.y) / yba, 1.0E-4);
-						assert doubleEquals((d.x - a.x) * yba, (d.y - a.y) * xba, 1.0E-7);
+					if (!DMath.equals(yba, 0.0)) {
+						//assert DMath.equals(du, (d.y - a.y) / yba, 1.0E-4);
+						assert DMath.equals((d.x - a.x) * yba, (d.y - a.y) * xba, 1.0E-7);
 					}
 				} else {
 					du = (d.y - a.y) / yba;
@@ -120,39 +119,39 @@ public class Point {
 					du = tmp;
 				}
 				
-				if (du < 0.0) {
-					//colinear but not intersecting
-					return null;
-				} else if (doubleEquals(du, 0.0)) {
+				if (DMath.equals(du, 0.0)) {
 					//single point
 					return a;
-				} else if (du > 0.0 && du < 1.0) {
-					if (cu < 0.0) {
+				} else if (DMath.equals(du, 1.0)) {
+					if (DMath.equals(cu, 0.0)) {
+						//identical
 						throw new OverlappingException(a, b, c, d);
-					} else if (doubleEquals(cu, 0.0)) {
+					} else if (cu < 0.0) {
 						throw new OverlappingException(a, b, c, d);
 					} else {
 						throw new OverlappingException(a, b, c, d);
 					}
-				} else if (doubleEquals(du, 1.0)) {
-					if (cu < 0.0) {
+				} else if (du < 0.0) {
+					//colinear but not intersecting
+					return null;
+				} else if (du > 0.0 && du < 1.0) {
+					if (DMath.equals(cu, 0.0)) {
 						throw new OverlappingException(a, b, c, d);
-					} else if (doubleEquals(cu, 0.0)) {
-						//identical
+					} else if (cu < 0.0) {
 						throw new OverlappingException(a, b, c, d);
 					} else {
 						throw new OverlappingException(a, b, c, d);
 					}
 				} else {
-					if (cu < 0.0) {
+					if (DMath.equals(cu, 0.0)) {
 						throw new OverlappingException(a, b, c, d);
-					} else if (doubleEquals(cu, 0.0)) {
+					} else if (DMath.equals(cu, 1.0)) {
+						// single point
+						return b;
+					} else if (cu < 0.0) {
 						throw new OverlappingException(a, b, c, d);
 					} else if (cu > 0.0 && cu < 1.0) {
 						throw new OverlappingException(a, b, c, d);
-					} else if (doubleEquals(cu, 1.0)) {
-						// single point
-						return b;
 					} else {
 						//colinear but not intersecting
 						return null;
@@ -167,17 +166,17 @@ public class Point {
 			// skew
 			double uab = uabn / denom;
 			double ucd = ucdn / denom;
-			if (0.0 <= uab && uab <= 1.0) {
-				if (doubleEquals(ucd,  0.0)) {
+			if (DMath.lessThanEquals(0.0, uab) && DMath.lessThanEquals(uab, 1.0)) {
+				if (DMath.equals(ucd,  0.0)) {
 					// intersecting
 					return c;
-				} else if (doubleEquals(ucd,  1.0)) {
+				} else if (DMath.equals(ucd,  1.0)) {
 					// intersecting
 					return d;
 				} else if (0.0 < ucd && ucd < 1.0) {
 					// intersecting
-					double x = a.x + (uab * (xba));
-					double y = a.y + (uab * (yba));
+					double x = a.x + (uab * xba);
+					double y = a.y + (uab * yba);
 					return new Point(x, y);
 				} else {
 					// not intersecting
@@ -225,7 +224,7 @@ public class Point {
 		
 		Point m = new Point(x, y);
 		
-		assert doubleEquals(distance(c, m), dist);
+		assert DMath.equals(distance(c, m), dist);
 		
 		return param(m, start, end);
 		
@@ -251,7 +250,7 @@ public class Point {
 		
 		Point m = new Point(x, y);
 		
-		assert doubleEquals(distance(c, m), dist);
+		assert DMath.equals(distance(c, m), dist);
 		
 		return param(m, start, end);
 		
@@ -275,10 +274,10 @@ public class Point {
 		double ybc = b.y - c.y;
 		double ydc = d.y - c.y;
 		double denom = xdc * xdc + ydc * ydc;
-		assert !doubleEquals(denom, 0.0);
+		assert !DMath.equals(denom, 0.0);
 		double u = (xbc * xdc + ybc * ydc) / denom;
 		if (u >= 0.0 && u <= 1.0) {	
-			return doubleEquals(xbc, u * xdc) && doubleEquals(ybc, u * ydc);
+			return DMath.equals(xbc, u * xdc) && DMath.equals(ybc, u * ydc);
 		} else {
 			return false;
 		}
@@ -306,13 +305,13 @@ public class Point {
 		double ybc = b.y - c.y;
 		double ydc = d.y - c.y;
 		double denom = xdc * xdc + ydc * ydc;
-		assert !doubleEquals(denom, 0.0);
+		assert !DMath.equals(denom, 0.0);
 		// u is where b is perpendicular to <c, d>
 		double u = (xbc * xdc + ybc * ydc) / denom;
 		if (u >= 0.0 && u <= 1.0) {
-			return doubleEquals(xbc, u * xdc) && doubleEquals(ybc, u * ydc);
+			return DMath.equals(xbc, u * xdc) && DMath.equals(ybc, u * ydc);
 		} else {
-			 if (doubleEquals(xbc, u * xdc) && doubleEquals(ybc, u * ydc)) {
+			 if (DMath.equals(xbc, u * xdc) && DMath.equals(ybc, u * ydc)) {
 				 throw new ColinearException();
 			 } else {
 				 return false;
@@ -338,7 +337,7 @@ public class Point {
 		double ybc = b.y - c.y;
 		double ydc = d.y - c.y;
 		double denom = xdc * xdc + ydc * ydc;
-		assert !doubleEquals(denom, 0.0);
+		assert !DMath.equals(denom, 0.0);
 		// u is where b is perpendicular to <c, d>
 		double u = (xbc * xdc + ybc * ydc) / denom;
 		return u;
@@ -376,21 +375,21 @@ public class Point {
 		double xdc = d.x - c.x;
 		double ybc = b.y - c.y;
 		double ydc = d.y - c.y;
-		if (doubleEquals(xdc, 0.0)) {
-			assert doubleEquals(xbc, 0);
+		if (DMath.equals(xdc, 0.0)) {
+			assert DMath.equals(xbc, 0);
 			double uy = ybc / ydc;
 			return uy;
-		} else if (doubleEquals(ydc, 0.0)) {
-			assert doubleEquals(ybc, 0);
+		} else if (DMath.equals(ydc, 0.0)) {
+			assert DMath.equals(ybc, 0);
 			double ux = xbc / xdc;
 			return ux;
 		} else {
 			double ux = xbc / xdc;
-			//assert doubleEquals(ux, uy) : "being treated as uneqal: " + ux + " " + uy;
+			//assert DMath.equals(ux, uy) : "being treated as uneqal: " + ux + " " + uy;
 			/*
 			 * numerically stable
 			 */
-			assert doubleEquals(xbc * ydc, ybc * xdc);
+			assert DMath.equals(xbc * ydc, ybc * xdc);
 			return ux;
 		}
 		
@@ -433,7 +432,7 @@ public class Point {
 		double dd = aa.x * bb.y - bb.x * aa.y;
 		double disc = radius * radius * dr * dr - dd * dd;
 		
-		if (DMath.doubleEquals(disc, 0.0)) {
+		if (DMath.equals(disc, 0.0)) {
 			
 			Point int1 = new Point((dd * dy)/(dr * dr), (-dd * dx)/(dr * dr)).add(center);
 			
@@ -458,7 +457,7 @@ public class Point {
 	}
 	
 	private static double sgn(double x) {
-		if (DMath.doubleEquals(x, 0.0)) {
+		if (DMath.equals(x, 0.0)) {
 			return 1;
 		} else if (x < 0.0) {
 			return -1;

@@ -2,7 +2,6 @@ package com.gutabi.deadlock.model;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import com.gutabi.deadlock.controller.ControlMode;
 import com.gutabi.deadlock.core.Driveable;
@@ -30,17 +29,17 @@ public class DeadlockModel {
 	public final int WORLD_WIDTH = 2048;
 	public final int WORLD_HEIGHT = 2048;
 	
-	public double DISTANCE_PER_TIMESTEP = CAR_WIDTH + 1;
+	public double DISTANCE_PER_TIMESTEP = 200;
 	
 	/*
 	 * spawn cars every SPAWN_FREQUENCY time steps
 	 * -1 means no spawning
 	 */
-	public int SPAWN_FREQUENCY = 1;
+	public int SPAWN_FREQUENCY = 7;
 	
 	public long WAIT = 16;
 	
-	public Random RANDOM = new Random();
+	//public Random RANDOM = new Random();
 	
 	public static final DeadlockModel MODEL = new DeadlockModel();
 	

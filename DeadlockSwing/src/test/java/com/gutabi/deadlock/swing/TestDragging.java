@@ -5,7 +5,6 @@ import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 import static org.junit.Assert.assertTrue;
 
-import java.awt.event.MouseEvent;
 import java.util.List;
 
 import org.junit.After;
@@ -14,6 +13,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.gutabi.deadlock.controller.InputEvent;
 import com.gutabi.deadlock.controller.MassageStrategy;
 import com.gutabi.deadlock.core.Edge;
 import com.gutabi.deadlock.core.Point;
@@ -23,7 +23,7 @@ public class TestDragging {
 	
 	public static void testPressed(Point p) throws Exception {
 		Point pp = p.add(OFFSET);
-		CONTROLLER.mc.pressed(new MouseEvent(VIEW.panel, 0, 0, 0, (int)pp.getX(), (int)pp.getY(), 0, false));
+		CONTROLLER.mc.pressed(new InputEvent(VIEW.panel, pp));
 		CONTROLLER.queueAndWait(empty);
 		Thread.sleep(10);
 		VIEW.repaint();
@@ -31,14 +31,14 @@ public class TestDragging {
 	
 	public static void testDragged(Point p) throws Exception {
 		Point pp = p.add(OFFSET);
-		CONTROLLER.mc.dragged(new MouseEvent(VIEW.panel, 0, 0, 0, (int)pp.getX(), (int)pp.getY(), 0, false));
+		CONTROLLER.mc.dragged(new InputEvent(VIEW.panel, pp));
 		CONTROLLER.queueAndWait(empty);
 		Thread.sleep(10);
 		VIEW.repaint();
 	}
 	
 	public static void testReleased() throws Exception {
-		CONTROLLER.mc.released(new MouseEvent(VIEW.panel, 0, 0, 0, 0, 0, 0, false));
+		CONTROLLER.mc.released(new InputEvent(VIEW.panel, null));
 		CONTROLLER.queueAndWait(empty);
 		Thread.sleep(10);
 		VIEW.repaint();

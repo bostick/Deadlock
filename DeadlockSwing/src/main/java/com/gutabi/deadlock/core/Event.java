@@ -29,12 +29,15 @@ public abstract class Event {
 		private double borderEndParam;
 		double sourceParam;
 		
-		public IntersectionEvent(Point source, double sourceParam, double borderStartParam, double borderEndParam) {
+		Segment seg;
+		
+		public IntersectionEvent(Point source, double sourceParam, double borderStartParam, double borderEndParam, Segment seg) {
 			this.sourceStart = source;
 			this.sourceEnd = source;
 			this.borderStartParam = borderStartParam;
 			this.borderEndParam = borderEndParam;
 			this.sourceParam = sourceParam;
+			this.seg = seg;
 		}
 		
 		public String toString() {
@@ -64,7 +67,7 @@ public abstract class Event {
 		@Override
 		public int compare(IntersectionEvent a, IntersectionEvent b) {
 			
-			if (DMath.doubleEquals(a.sourceParam, b.sourceParam)) {
+			if (DMath.equals(a.sourceParam, b.sourceParam)) {
 				return 0;
 			} else if (a.sourceParam < b.sourceParam) {
 				return -1;

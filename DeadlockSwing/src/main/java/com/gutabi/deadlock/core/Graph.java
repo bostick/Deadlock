@@ -377,7 +377,7 @@ public class Graph {
 		}
 //		for (Hub h : hubs) {
 //			double dist = Point.distance(p,  h.getPoint());
-//			if (DMath.doubleEquals(dist, Hub.RADIUS) || dist < Hub.RADIUS) {
+//			if (DMath.equals(dist, Hub.RADIUS) || dist < Hub.RADIUS) {
 //				return new HubPosition(h, p);
 //			}
 //		}
@@ -409,7 +409,7 @@ public class Graph {
 		for (Vertex i : new ArrayList<Vertex>(){{addAll(intersections);addAll(sources);addAll(sinks);}}) {
 			Point ip = i.getPoint();
 			double dist = Point.distance(a, ip);
-			if (DMath.doubleEquals(dist, radius) || dist < radius) {
+			if (DMath.lessThanEquals(dist, radius)) {
 				if (anchorV == null || dist < Point.distance(ip, anchor)) {
 					if (closest == null || (Point.distance(a, ip) < Point.distance(a, closest.getPoint()))) {
 						closest = i;
@@ -503,34 +503,125 @@ public class Graph {
 	
 	public void processNewStroke(List<Point> stroke) {
 		
-		List<Point> scratch = new ArrayList<Point>(stroke);
+//		List<Point> scratch = new ArrayList<Point>(stroke);
 		
-		for (int i = 0; i < scratch.size()-1; i++) {
+		boolean tooClose = false;
+		Point tooClosePoint = null;
+		
+		for (int i = 0; i < stroke.size()-1; i++) {
 			Point preA = stroke.get(i);
 			Point preB = stroke.get(i+1);
 			
-			Position aP = findClosestPosition(preA, null, MODEL.ROAD_WIDTH);
-			Point a = (aP != null) ? aP.getPoint() : preA;
+			logger.debug("process segment: " + preA + " " + preB);
 			
-			Position bP = findClosestPosition(preB, null, MODEL.ROAD_WIDTH);
-			Point b = (bP != null) ? bP.getPoint() : preB;
-			
-			scratch.set(i, a);
-			scratch.set(i+1, b);
-			
-			if (a.equals(b)) {
-				continue;
+			if (preA.equals(new Point(770.462, 254.874))) {
+				String.class.getName();
 			}
 			
-			processNewSegment(a, b);
+			Point a;
+			Point b;
+			
+			if (!tooClose) {
+				
+				Position aP = findClosestPosition(preA, null, MODEL.ROAD_WIDTH);
+				
+				if (aP != null) {
+					
+					if (!aP.getPoint().equals(preA)) {
+						
+						tooClose = true;
+						tooClosePoint = aP.getPoint();
+						a = tooClosePoint;
+						
+					} else {
+						
+						a = preA;
+						
+					}
+					
+				} else {
+					a = preA;
+				}
+				
+			} else {
+				/*
+				 * a has already been changed by previous iteration
+				 */
+				a = tooClosePoint;
+			}
+			
+			if (!tooClose) {
+				
+				/*
+				 * just changed from findClosestPosition(preB, null, MODEL.ROAD_WIDTH); because
+				 * this was changing B for regular extending
+				 */
+				Position bP = findClosestPosition(preB, a, MODEL.ROAD_WIDTH);
+				
+				if (bP != null) {
+					tooClose = true;
+					tooClosePoint = bP.getPoint();
+					b = tooClosePoint;
+				} else {
+					b = preB;
+				}
+				
+				processNewSegment(a, b);
+				
+			} else {
+				
+				Position bP = findClosestPosition(preB, a, MODEL.ROAD_WIDTH);
+				
+				if (bP != null) {
+					
+					if (DMath.greaterThan(Point.distance(bP.getPoint(), tooClosePoint), MODEL.ROAD_WIDTH)) {
+						
+						//still too close, but now to a different point
+						tooClosePoint = bP.getPoint();
+						b = tooClosePoint;
+						
+//						processNewSegment(a, b);
+						
+					} else {
+						
+						b = tooClosePoint;
+						
+						processNewSegment(a, b);
+					}
+					
+				} else {
+					
+					if (DMath.greaterThan(Point.distance(preB, tooClosePoint), MODEL.ROAD_WIDTH)) {
+						
+						tooClose = false;
+						tooClosePoint = null;
+						
+						b = preB;
+						
+					} else {
+						
+						b = tooClosePoint;
+						
+					}
+					
+					processNewSegment(a, b);
+					
+				}
+				
+			}
+			
 		}
 		
-		cleanupEdges();
+//		cleanupEdges();
 	}
 	
 	private void processNewSegment(Point a, Point b) {
 		
-		logger.debug("process segment: " + a + " " + b);
+		if (a.equals(b)) {
+			return;
+		}
+		
+//		logger.debug("process segment: " + a + " " + b);
 		
 //		Vertex aV = findClosestVertexPosition(preA, null, 20);
 //		Point a = (aV != null) ? aV.getPoint() : preA;
@@ -589,7 +680,7 @@ public class Graph {
 				for (int i = 0; i < ranges.size(); i+=2) {
 					double aa = ranges.get(i);
 					double bb = ranges.get(i+1);
-					if ((DMath.doubleEquals(aa, overlapStart) || aa < overlapStart) && (DMath.doubleEquals(bb, overlapEnd) || overlapEnd < bb)) {
+					if ((DMath.lessThanEquals(aa, overlapStart)) && (DMath.greaterThanEquals(bb, overlapEnd))) {
 						r = i;
 					}
 				}
@@ -601,11 +692,11 @@ public class Graph {
 				ranges.remove(r);
 				ranges.remove(r);
 				
-				if (!DMath.doubleEquals(bb, overlapEnd) && overlapEnd < bb) {
+				if (DMath.lessThan(overlapEnd, bb)) {
 					ranges.add(r, bb);
 					ranges.add(r, overlapEnd);
 				}
-				if (!DMath.doubleEquals(aa, overlapStart) && aa < overlapStart) {
+				if (DMath.lessThan(aa, overlapStart)) {
 					ranges.add(r, overlapStart);
 					ranges.add(r, aa);
 				}
@@ -624,8 +715,9 @@ public class Graph {
 		
 		for (Segment in : segTree.findAllSegments(a, b)) {
 			int index = in.index;
-			Point c = in.edge.getPoint(index);
-			Point d = in.edge.getPoint(index+1);
+			Edge ed = in.edge;
+			Point c = ed.getPoint(index);
+			Point d = ed.getPoint(index+1);
 			
 			try {
 				
@@ -636,52 +728,51 @@ public class Graph {
 					double interStartParam = Point.travelBackward(a, b, interParam, MODEL.ROAD_WIDTH);
 					double interEndParam = Point.travelForward(a, b, interParam, MODEL.ROAD_WIDTH);
 					
-					timeline.addEvent(new IntersectionEvent(inter, interParam, interStartParam, interEndParam));
-				}
-//				else {
+					timeline.addEvent(new IntersectionEvent(inter, interParam, interStartParam, interEndParam, in));
+				} else {
 					
-				Point aProjected = Point.point(c, d, DMath.clip(Point.u(c, a, d)));
-				Point bProjected = Point.point(c, d, DMath.clip(Point.u(c, b, d)));
-				
-				CloseEvent cEvent = detectClose(timeline, c, a, b);
-				CloseEvent dEvent = detectClose(timeline, d, a, b);
-				CloseEvent aEvent = detectClose(timeline, aProjected, a, b);
-				CloseEvent bEvent = detectClose(timeline, bProjected, a, b);
-				
-				CloseEvent e = null;
-				
-				if (cEvent != null) {
-					e = new CloseEvent(cEvent.getBorderStartParam(), cEvent.getBorderEndParam());
-				}
-				
-				if (dEvent != null) {
-					if (e == null) {
-						e = new CloseEvent(dEvent.getBorderStartParam(), dEvent.getBorderEndParam());
-					} else {
-						e = new CloseEvent(Math.min(e.getBorderStartParam(), dEvent.getBorderStartParam()), Math.max(e.getBorderEndParam(), dEvent.getBorderEndParam()));
+					Point aProjected = Point.point(c, d, DMath.clip(Point.u(c, a, d)));
+					Point bProjected = Point.point(c, d, DMath.clip(Point.u(c, b, d)));
+					
+					CloseEvent cEvent = detectClose(timeline, c, a, b);
+					CloseEvent dEvent = detectClose(timeline, d, a, b);
+					CloseEvent aEvent = detectClose(timeline, aProjected, a, b);
+					CloseEvent bEvent = detectClose(timeline, bProjected, a, b);
+					
+					CloseEvent e = null;
+					
+					if (cEvent != null) {
+						e = new CloseEvent(cEvent.getBorderStartParam(), cEvent.getBorderEndParam());
+					}
+					
+					if (dEvent != null) {
+						if (e == null) {
+							e = new CloseEvent(dEvent.getBorderStartParam(), dEvent.getBorderEndParam());
+						} else {
+							e = new CloseEvent(Math.min(e.getBorderStartParam(), dEvent.getBorderStartParam()), Math.max(e.getBorderEndParam(), dEvent.getBorderEndParam()));
+						}
+					}
+					
+					if (aEvent != null) {
+						if (e == null) {
+							e = new CloseEvent(aEvent.getBorderStartParam(), aEvent.getBorderEndParam());
+						} else {
+							e = new CloseEvent(Math.min(e.getBorderStartParam(), aEvent.getBorderStartParam()), Math.max(e.getBorderEndParam(), aEvent.getBorderEndParam()));
+						}
+					}
+					
+					if (bEvent != null) {
+						if (e == null) {
+							e = new CloseEvent(bEvent.getBorderStartParam(), bEvent.getBorderEndParam());
+						} else {
+							e = new CloseEvent(Math.min(e.getBorderStartParam(), bEvent.getBorderStartParam()), Math.max(e.getBorderEndParam(), bEvent.getBorderEndParam()));
+						}
+					}
+					
+					if (e != null) {
+						timeline.addEvent(e);
 					}
 				}
-				
-				if (aEvent != null) {
-					if (e == null) {
-						e = new CloseEvent(aEvent.getBorderStartParam(), aEvent.getBorderEndParam());
-					} else {
-						e = new CloseEvent(Math.min(e.getBorderStartParam(), aEvent.getBorderStartParam()), Math.max(e.getBorderEndParam(), aEvent.getBorderEndParam()));
-					}
-				}
-				
-				if (bEvent != null) {
-					if (e == null) {
-						e = new CloseEvent(bEvent.getBorderStartParam(), bEvent.getBorderEndParam());
-					} else {
-						e = new CloseEvent(Math.min(e.getBorderStartParam(), bEvent.getBorderStartParam()), Math.max(e.getBorderEndParam(), bEvent.getBorderEndParam()));
-					}
-				}
-				
-				if (e != null) {
-					timeline.addEvent(e);
-				}
-//			}
 				
 			} catch (OverlappingException ex) {
 				
@@ -690,6 +781,29 @@ public class Graph {
 			}
 			
 		}
+		
+		/*
+		 * so a either intersects or not
+		 * and b either intersects or not
+		 * and no intersections in between
+		 * 
+		 * if a does not intersect and b does not intersect, (will only be at start of segmentf) only add if not close to anything
+		 * if a does not intersect and b does intersect,  only add if not close to anything
+		 * if a does intersect and b does not intersect,  only add if not close to anything
+		 * if a does intersect and b does intersect,   only add if not close to anything
+		 */
+		
+//		for (each intersection or end point) {
+//			Point aa = Point.point(a, b, blah.get(i));
+//			Point bb = Point.point(a, b, blah.get(i+1));
+//			processNewBetweenIntersection(aa, bb, );
+//		}
+		
+		
+		
+		
+		
+		
 		
 		List<Cluster> clusters = timeline.clusters;
 		
@@ -713,26 +827,70 @@ public class Graph {
 				
 				;
 				
+//			} else if (c.intersectionEvents.size() == 1) {
 			} else {
 				
 				Point aa = a;
 				Point bb;
 				
-				for (IntersectionEvent e : c.intersectionEvents) {
-					
-					bb = e.getSourceStart();
-					if (!aa.equals(bb)) {
-						addSegment(aa, bb);
-					}
-					
-					aa = bb;
+				IntersectionEvent e = c.intersectionEvents.get(0);
+				
+				bb = e.getSourceStart();
+				if (!aa.equals(bb)) {
+					addSegment(aa, bb);
 				}
+				
+				aa = bb;
 				
 				bb = b;
 				if (!aa.equals(bb)) {
 					addSegment(aa, bb);
 				}
+			
 				
+//			} else {
+//				
+//				boolean intersectionAtStart = false;
+//				boolean intersectionAtEnd = false;
+//				
+//				for (IntersectionEvent e : c.intersectionEvents) {
+//					if (DMath.equals(e.sourceParam, 0.0)) {
+//						intersectionAtStart = true;
+//					} else if (DMath.equals(e.sourceParam, 1.0)) {
+//						intersectionAtEnd = true;
+//					}
+//				}
+//				
+//				if (intersectionAtStart && intersectionAtEnd &&
+//						((DMath.lessThanEquals(c.closeBorderStartParam, 0.0)) &&
+//								(DMath.greaterThanEquals(c.closeBorderEndParam, 1.0)))) {
+//						
+//						/*
+//						 * ligament problem
+//						 */
+//					
+//				} else {
+//					
+//					Point aa = a;
+//					Point bb;
+//					
+//					for (IntersectionEvent e : c.intersectionEvents) {
+//						
+//						bb = e.getSourceStart();
+//						if (!aa.equals(bb)) {
+//							addSegment(aa, bb);
+//						}
+//						
+//						aa = bb;
+//					}
+//					
+//					bb = b;
+//					if (!aa.equals(bb)) {
+//						addSegment(aa, bb);
+//					}
+//					
+//				}
+//				
 			}
 			
 		} else {
@@ -914,10 +1072,10 @@ public class Graph {
 		
 		void addEvent(Event e) {
 			
-			if (!DMath.doubleEquals(e.getBorderStartParam(), 1.0) && e.getBorderStartParam() > 1.0) {
+			if (DMath.greaterThan(e.getBorderStartParam(), 1.0)) {
 				return;
 			}
-			if (!DMath.doubleEquals(e.getBorderEndParam(), 0.0) && e.getBorderEndParam() < 0.0) {
+			if (DMath.lessThan(e.getBorderEndParam(), 0.0)) {
 				return;
 			}
 			
@@ -970,11 +1128,11 @@ public class Graph {
 			bClusterIndex = -1;
 			for (int i = 0; i < clusters.size(); i++) {
 				Cluster c = clusters.get(i);
-				if (DMath.doubleEquals(c.borderStartParam, 0.0) || c.borderStartParam < 0.0) {
+				if (DMath.lessThanEquals(c.borderStartParam, 0.0)) {
 					assert aClusterIndex == -1;
 					aClusterIndex = i;
 				}
-				if (DMath.doubleEquals(c.borderEndParam, 1.0) || c.borderEndParam > 1.0) {
+				if (DMath.greaterThanEquals(c.borderEndParam, 1.0)) {
 					assert bClusterIndex == -1;
 					bClusterIndex = i;
 				}
@@ -991,10 +1149,13 @@ public class Graph {
 		double borderStartParam;
 		double borderEndParam;
 		
+		double closeBorderStartParam = Double.POSITIVE_INFINITY;
+		double closeBorderEndParam = Double.NEGATIVE_INFINITY;
+		
 //		Point startSource;
 //		Point endSource;
 		
-		List<Event> events = new ArrayList<Event>();
+//		List<Event> events = new ArrayList<Event>();
 		
 		List<IntersectionEvent> intersectionEvents = new ArrayList<IntersectionEvent>();
 		List<CloseEvent> closeEvents = new ArrayList<CloseEvent>();
@@ -1009,7 +1170,7 @@ public class Graph {
 			this.a = a;
 			this.b = b;
 			
-			events.add(e);
+//			events.add(e);
 			if (e instanceof IntersectionEvent) {
 				// sort based on param of source
 //				int index = Collections.binarySearch(intersectionEvents, (IntersectionEvent)e, IntersectionEvent.COMPARATOR);
@@ -1024,6 +1185,8 @@ public class Graph {
 				intersectionEvents.add((IntersectionEvent)e);
 			} else if (e instanceof CloseEvent) {
 				closeEvents.add((CloseEvent)e);
+				closeBorderStartParam = ((CloseEvent)e).getBorderStartParam();
+				closeBorderEndParam = ((CloseEvent)e).getBorderEndParam();
 			} else {
 				assert false;
 			}
@@ -1037,8 +1200,8 @@ public class Graph {
 			
 			Cluster acc = new Cluster(c1.a, c1.b);
 			
-			acc.events.addAll(c1.events);
-			acc.events.addAll(c2.events);
+//			acc.events.addAll(c1.events);
+//			acc.events.addAll(c2.events);
 			
 			// sort based on param of source
 			List<IntersectionEvent> allIntersectionEvents = new ArrayList<IntersectionEvent>(){{addAll(c1.intersectionEvents);addAll(c2.intersectionEvents);}};
@@ -1069,6 +1232,10 @@ public class Graph {
 			
 			acc.borderStartParam = c1.borderStartParam;
 			acc.borderEndParam = c1.borderEndParam;
+			
+			acc.closeBorderStartParam = c1.closeBorderStartParam;
+			acc.closeBorderEndParam = c1.closeBorderEndParam;
+			
 //			acc.startSource = startSource;
 //			acc.endSource = endSource;
 			
@@ -1078,6 +1245,15 @@ public class Graph {
 			}
 			if (c2.borderEndParam > c1.borderEndParam) {
 				acc.borderEndParam = c2.borderEndParam;
+//				acc.endSource = c.endSource;
+			}
+			
+			if (c2.closeBorderStartParam < c1.closeBorderStartParam) {
+				acc.closeBorderStartParam = c2.closeBorderStartParam;
+//				acc.startSource = c.startSource;
+			}
+			if (c2.closeBorderEndParam > c1.closeBorderEndParam) {
+				acc.closeBorderEndParam = c2.closeBorderEndParam;
 //				acc.endSource = c.endSource;
 			}
 			
@@ -1238,7 +1414,7 @@ public class Graph {
 		double param = pos.getParam();
 		final Point p = pos.getPoint();
 		
-		boolean betweenPoints = (!DMath.doubleEquals(param, 0.0));
+		boolean betweenPoints = (!DMath.equals(param, 0.0));
 		
 		assert param >= 0.0;
 		assert param < 1.0;
@@ -1410,7 +1586,7 @@ public class Graph {
 //	private Vertex addVertexToHub(HubPosition pos) {
 //		Hub h = pos.getHub();
 //		Point p = pos.getPoint();
-//		assert DMath.doubleEquals(Point.distance(h.getPoint(), p), Hub.RADIUS);
+//		assert DMath.equals(Point.distance(h.getPoint(), p), Hub.RADIUS);
 //		
 //		Vertex v = createIntersection(p);
 //		
@@ -1732,9 +1908,9 @@ public class Graph {
 		}
 		
 		for (Edge e : edges) {
-			if (e.getTotalLength() <= MODEL.CAR_WIDTH) {
-				throw new IllegalStateException("too small");
-			}
+//			if (e.getTotalLength() <= MODEL.CAR_WIDTH) {
+//				throw new IllegalStateException("too small");
+//			}
 			if (e.getStart() == null && e.getEnd() == null) {
 				continue;
 			}

@@ -6,7 +6,6 @@ import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -89,11 +88,13 @@ public class DeadlockController implements ActionListener {
 	
 	Point origWorldViewLoc;
 	
-	public void pressed(MouseEvent ev) {
+	public void pressed(InputEvent ev) {
 		
 		Component c = ev.getComponent();
 		
-		final Point p = new Point(ev.getX(), ev.getY());
+		//final Point p = new Point(ev.getX(), ev.getY());
+		
+		Point p = ev.getPoint();
 		
 		if (c == VIEW.panel) {
 			
@@ -121,11 +122,12 @@ public class DeadlockController implements ActionListener {
 	Point lastDragPreviewPoint;
 	long lastDragTime;
 	
-	public void dragged(MouseEvent ev) {
+	public void dragged(InputEvent ev) {
 		
 		Component c = ev.getComponent();
 		
-		final Point p = new Point(ev.getX(), ev.getY());
+		//final Point p = new Point(ev.getX(), ev.getY());
+		Point p = ev.getPoint();
 		
 		if (c == VIEW.panel) {
 			
@@ -186,7 +188,7 @@ public class DeadlockController implements ActionListener {
 	
 	long lastReleaseTime;
 	
-	public void released(MouseEvent ev) {
+	public void released(InputEvent ev) {
 		
 		Component c = ev.getComponent();
 		
@@ -230,13 +232,14 @@ public class DeadlockController implements ActionListener {
 		
 	}
 	
-	public void moved(MouseEvent ev) {
+	public void moved(InputEvent ev) {
 		
 		Component c = ev.getComponent();
 		
 		if (c == VIEW.panel) {
 			
-			final Point p = new Point(ev.getX(), ev.getY());
+			//final Point p = new Point(ev.getX(), ev.getY());
+			Point p = ev.getPoint();
 			
 			synchronized (MODEL) {
 				switch (MODEL.getMode()) {

@@ -126,7 +126,7 @@ public class Vertex extends Position implements Driveable {
 		if (!(eds.contains(c) || hubs.contains(c))) {
 			throw new IllegalArgumentException();
 		}
-		if (DMath.doubleEquals(dist, 0.0)) {
+		if (DMath.equals(dist, 0.0)) {
 			return this;
 		}
 		if (dist < 0.0) {
@@ -137,7 +137,7 @@ public class Vertex extends Position implements Driveable {
 			Edge e = (Edge)c;
 			
 			double totalEdgeLength = e.getTotalLength();
-			if (DMath.doubleEquals(dist, totalEdgeLength)) {
+			if (DMath.equals(dist, totalEdgeLength)) {
 				return dest;
 			} else if (dist > totalEdgeLength) {
 				throw new TravelException();
@@ -158,7 +158,7 @@ public class Vertex extends Position implements Driveable {
 //			Hub h = (Hub)c;
 //			
 //			double totalHubLength = Point.distance(p, dest.getPoint());
-//			if (DMath.doubleEquals(dist, totalHubLength) || dist > totalHubLength) {
+//			if (DMath.equals(dist, totalHubLength) || dist > totalHubLength) {
 //				throw new TravelException();
 //			}
 //			
@@ -173,7 +173,7 @@ public class Vertex extends Position implements Driveable {
 			
 			double dist = MODEL.distanceBetweenVertices(this, bb);
 			
-			assert DMath.doubleEquals(dist, 0.0) || dist > 0.0;
+			assert DMath.greaterThanEquals(dist, 0.0);
 			
 			return dist;
 		} else if (b instanceof EdgePosition) {
@@ -184,7 +184,7 @@ public class Vertex extends Position implements Driveable {
 			
 			double dist = Math.min(bbStartPath + bb.distanceToStartOfEdge(), bbEndPath + bb.distanceToEndOfEdge());
 			
-			assert DMath.doubleEquals(dist, 0.0) || dist > 0.0;
+			assert DMath.greaterThanEquals(dist, 0.0);
 			
 			return dist;
 		} else {
@@ -192,7 +192,7 @@ public class Vertex extends Position implements Driveable {
 //			SinkedPosition bb = (SinkedPosition)b;
 //			double dist = MODEL.distanceBetweenVertices(this, bb.getSink());
 //			
-//			assert DMath.doubleEquals(dist, 0.0) || dist > 0.0;
+//			assert DMath.equals(dist, 0.0) || dist > 0.0;
 //			
 //			return dist;
 		}

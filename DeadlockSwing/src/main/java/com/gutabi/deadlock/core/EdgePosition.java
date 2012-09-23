@@ -24,10 +24,10 @@ public class EdgePosition extends Position {
 		if (index < 0 || index >= e.size()-1) {
 			throw new IllegalArgumentException();
 		}
-		if (param < 0.0 || param >= 1.0) {
+		if (DMath.lessThan(param, 0.0) || DMath.greaterThanEquals(param, 1.0)) {
 			throw new IllegalArgumentException();
 		}
-		if (index == 0 && DMath.doubleEquals(param, 0.0) && !e.isStandAlone()) {
+		if (index == 0 && DMath.equals(param, 0.0) && !e.isStandAlone()) {
 			throw new IllegalArgumentException();
 		}
 		
@@ -37,7 +37,7 @@ public class EdgePosition extends Position {
 		
 		this.dest = dest;
 		
-		this.bound = DMath.doubleEquals(param, 0.0);
+		this.bound = DMath.equals(param, 0.0);
 		
 		this.segStart = e.getPoint(index);
 		this.segEnd = e.getPoint(index+1);
@@ -82,7 +82,7 @@ public class EdgePosition extends Position {
 			return false;
 		} else {
 			EdgePosition b = (EdgePosition)o;
-			return (e == b.e) && (index == b.index) && (param == b.param);//use DMath.doubleEquals
+			return (e == b.e) && (index == b.index) && (param == b.param);//use DMath.equals
 		}
 	}
 	
@@ -126,7 +126,7 @@ public class EdgePosition extends Position {
 			
 			double dist = Math.min(aaStartPath + distanceToStartOfEdge(), aaEndPath + distanceToEndOfEdge());
 			
-			assert DMath.doubleEquals(dist, 0.0) || dist > 0.0;
+			assert DMath.greaterThanEquals(dist, 0.0);
 			
 			return dist;
 		} else if (b instanceof EdgePosition) {
@@ -149,7 +149,7 @@ public class EdgePosition extends Position {
 			
 			double dist = Math.min(Math.min(startStartDistance, startEndDistance), Math.min(endStartDistance, endEndDistance));
 			
-			assert DMath.doubleEquals(dist, 0.0) || dist > 0.0;
+			assert DMath.greaterThanEquals(dist, 0.0);
 			
 			return dist;
 		} else {
@@ -160,7 +160,7 @@ public class EdgePosition extends Position {
 //			
 //			double dist = Math.min(aaStartPath + distanceToStartOfEdge(), aaEndPath + distanceToEndOfEdge());
 //			
-//			assert DMath.doubleEquals(dist, 0.0) || dist > 0.0;
+//			assert DMath.equals(dist, 0.0) || dist > 0.0;
 //			
 //			return dist;
 			throw new AssertionError();
@@ -196,7 +196,7 @@ public class EdgePosition extends Position {
 		if (!(dest == e.getStart() || dest == e.getEnd())) {
 			throw new IllegalArgumentException();
 		}
-		if (DMath.doubleEquals(dist, 0.0)) {
+		if (DMath.equals(dist, 0.0)) {
 			return this;
 		}
 		if (dist < 0.0) {
@@ -206,7 +206,7 @@ public class EdgePosition extends Position {
 		if (dest == e.getEnd()) {
 			
 			double distToEndOfEdge = distanceToEndOfEdge();
-			if (DMath.doubleEquals(dist, distToEndOfEdge)) {
+			if (DMath.equals(dist, distToEndOfEdge)) {
 				return e.getEnd();
 			} else if (dist > distToEndOfEdge) {
 				throw new TravelException();
@@ -217,7 +217,7 @@ public class EdgePosition extends Position {
 		} else {
 			
 			double distToStartOfEdge = distanceToStartOfEdge();
-			if (DMath.doubleEquals(dist, distToStartOfEdge)) {
+			if (DMath.equals(dist, distToStartOfEdge)) {
 				return e.getStart();
 			} else if (dist > distToStartOfEdge) {
 				throw new TravelException();
@@ -248,7 +248,7 @@ public class EdgePosition extends Position {
 			Point c = Point.point(a, b, param);
 			double distanceToEndOfSegment = Point.distance(c, b);
 			
-			if (DMath.doubleEquals(distanceToTravel, distanceToEndOfSegment)) {
+			if (DMath.equals(distanceToTravel, distanceToEndOfSegment)) {
 				return new EdgePosition(e, index+1, 0.0, e.getEnd());
 			} else if (distanceToTravel < distanceToEndOfSegment) {
 				double newParam = Point.travelForward(a, b, param, distanceToTravel);
@@ -272,7 +272,7 @@ public class EdgePosition extends Position {
 			Point c = Point.point(a, b, param);
 			double distanceToStartOfSegment = Point.distance(c, a);
 			
-			if (DMath.doubleEquals(distanceToTravel, distanceToStartOfSegment)) {
+			if (DMath.equals(distanceToTravel, distanceToStartOfSegment)) {
 				return new EdgePosition(e, index, 0.0, e.getStart());
 			} else if (distanceToTravel < distanceToStartOfSegment) {
 				double newParam = Point.travelBackward(a, b, param, distanceToTravel);
@@ -303,8 +303,8 @@ public class EdgePosition extends Position {
 	}
 	
 	private static Position nextBoundBackward(Edge e, int index, double param) {
-		if (DMath.doubleEquals(param, 0.0)) {
-			if (index == 0 || (index == 1 && DMath.doubleEquals(param, 0.0))) {
+		if (DMath.equals(param, 0.0)) {
+			if (index == 0 || (index == 1 && DMath.equals(param, 0.0))) {
 				return e.getStart();
 			} else {
 				return new EdgePosition(e, index-1, 0.0, e.getStart());

@@ -23,7 +23,7 @@ public class TestDMath {
 		
 		assertTrue(du != (d.getY() - a.getY()) / yba);
 		
-		assertTrue(DMath.doubleEquals(du, (d.getY() - a.getY()) / yba));
+		assertTrue(DMath.equals(du, (d.getY() - a.getY()) / yba));
 		
 	}
 	
@@ -40,7 +40,7 @@ public class TestDMath {
 		
 		assertTrue(distanceToMove < distanceToEndOfEdge);
 		
-		assertTrue(DMath.doubleEquals(distanceToMove, distanceToEndOfEdge));
+		assertTrue(DMath.equals(distanceToMove, distanceToEndOfEdge));
 		
 	}
 	
@@ -56,7 +56,7 @@ public class TestDMath {
 		
 		assertTrue(cu != tmp);
 		
-		assertTrue(DMath.doubleEquals(cu, tmp));
+		assertTrue(DMath.equals(cu, tmp));
 		
 	}
 	
@@ -68,7 +68,7 @@ public class TestDMath {
 		
 		assertTrue(ux != uy);
 		
-		assertTrue(DMath.doubleEquals(ux, uy));
+		assertTrue(DMath.equals(ux, uy));
 		
 	}
 	
@@ -82,7 +82,7 @@ public class TestDMath {
 //		float uxf = (float)ux;
 //		float uyf = (float)uy;
 		
-		assertTrue(DMath.doubleEquals(time, 5));
+		assertTrue(DMath.equals(time, 5));
 		
 	}
 }

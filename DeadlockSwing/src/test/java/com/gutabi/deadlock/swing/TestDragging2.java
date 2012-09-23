@@ -22,8 +22,6 @@ import com.gutabi.deadlock.core.Point;
 
 public class TestDragging2 {
 	
-	static Point OFFSET = new Point(0, 0);
-	
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 		
@@ -871,8 +869,152 @@ public class TestDragging2 {
 		testDragged(new Point(823.345, 452.723));
 		testReleased();
 		
-		Thread.sleep(Long.MAX_VALUE);
+		//Thread.sleep(Long.MAX_VALUE);
 	}
 	
+	
+	@Test
+	public void testBug25() throws Exception {
+		
+		CONTROLLER.strat = MassageStrategy.CURRENT;
+		
+		testPressed(new Point(-441.285, 762.358));
+		testDragged(new Point(-420.571, 762.358));
+		testDragged(new Point(-386.048, 762.358));
+		testDragged(new Point(-348.073, 758.906));
+		testDragged(new Point(-296.289, 752.001));
+		testDragged(new Point(-247.958, 738.192));
+		testDragged(new Point(-182.364, 731.287));
+		testDragged(new Point(-96.0576, 720.931));
+		testDragged(new Point(-9.75082, 707.121));
+		testDragged(new Point(124.888, 676.051));
+		testDragged(new Point(176.672, 655.337));
+		testDragged(new Point(235.36, 624.267));
+		testDragged(new Point(311.31, 593.197));
+		testDragged(new Point(390.713, 555.222));
+		testDragged(new Point(452.854, 510.342));
+		testDragged(new Point(549.517, 434.392));
+		testDragged(new Point(632.372, 379.156));
+		testDragged(new Point(735.94, 303.206));
+		testDragged(new Point(791.176, 251.422));
+		testDragged(new Point(842.96, 189.281));
+		testDragged(new Point(880.935, 137.497));
+		testDragged(new Point(908.553, 96.0695));
+		testDragged(new Point(946.528, 37.3808));
+		testDragged(new Point(970.694, -7.49868));
+		testDragged(new Point(991.408, -59.2827));
+		testDragged(new Point(1008.67, -107.615));
+		testDragged(new Point(1029.38, -207.73));
+		testDragged(new Point(1039.74, -238.801));
+		testDragged(new Point(1039.74, -269.871));
+		testDragged(new Point(1046.64, -283.68));
+		testDragged(new Point(1050.1, -300.942));
+		testDragged(new Point(1050.1, -325.108));
+		testDragged(new Point(1050.1, -338.917));
+		testDragged(new Point(1050.1, -363.083));
+		testDragged(new Point(1050.1, -373.439));
+		testDragged(new Point(1050.1, -380.344));
+		testDragged(new Point(1050.1, -383.796));
+		testDragged(new Point(1050.1, -390.701));
+		testReleased();
+
+		
+		
+		
+		testPressed(new Point(1364.25, 499.985));
+		testDragged(new Point(1364.25, 496.533));
+		testDragged(new Point(1364.25, 493.081));
+		testDragged(new Point(1353.9, 486.176));
+		testDragged(new Point(1343.54, 475.819));
+		testDragged(new Point(1329.73, 465.462));
+		testDragged(new Point(1305.56, 448.201));
+		testDragged(new Point(1260.68, 420.583));
+		testDragged(new Point(1208.9, 382.608));
+		testDragged(new Point(1167.47, 354.99));
+		testDragged(new Point(1136.4, 334.276));
+		testPressed(new Point(1112.24, 323.919));
+		testDragged(new Point(1088.07, 313.563));
+		testDragged(new Point(1074.26, 306.658));
+		testDragged(new Point(1057., 303.206));
+		testDragged(new Point(1036.29, 292.849));
+		testDragged(new Point(1022.48, 285.944));
+		testDragged(new Point(1012.12, 285.944));
+		testDragged(new Point(998.312, 282.492));
+		testDragged(new Point(987.956, 275.588));
+		testDragged(new Point(936.171, 272.135));
+		testDragged(new Point(915.458, 272.135));
+		testDragged(new Point(898.197, 265.231));
+		testDragged(new Point(863.674, 265.231));
+		testDragged(new Point(842.96, 261.778));
+		testDragged(new Point(825.699, 261.778));
+		testDragged(new Point(811.89, 261.778));
+		testDragged(new Point(801.533, 261.778));
+		testDragged(new Point(770.462, 254.874));
+		testDragged(new Point(749.749, 254.874));
+		
+		
+		
+		testDragged(new Point(729.035, 251.422));
+		testDragged(new Point(708.322, 251.422));
+		testDragged(new Point(659.99, 251.422));
+		testDragged(new Point(635.824, 251.422));
+		testDragged(new Point(604.753, 258.326));
+		testDragged(new Point(590.944, 261.778));
+		testDragged(new Point(573.683, 272.135));
+		testDragged(new Point(542.613, 282.492));
+		testDragged(new Point(521.899, 299.753));
+		testDragged(new Point(497.733, 313.563));
+		testDragged(new Point(480.472, 337.728));
+		testDragged(new Point(449.401, 379.156));
+		testDragged(new Point(421.783, 413.678));
+		testDragged(new Point(390.713, 468.915));
+		testDragged(new Point(380.356, 493.081));
+		testDragged(new Point(376.904, 506.89));
+		testDragged(new Point(369.999, 531.056));
+		testDragged(new Point(366.547, 569.031));
+		testDragged(new Point(366.547, 596.649));
+		testDragged(new Point(366.547, 627.719));
+		testDragged(new Point(366.547, 655.337));
+		testDragged(new Point(366.547, 676.051));
+		testDragged(new Point(380.356, 700.217));
+		testDragged(new Point(404.522, 727.835));
+		testDragged(new Point(480.472, 796.881));
+		testDragged(new Point(535.708, 852.117));
+		testDragged(new Point(577.135, 886.64));
+		testDragged(new Point(622.015, 921.162));
+		testDragged(new Point(656.538, 941.876));
+		testDragged(new Point(697.965, 969.494));
+		testDragged(new Point(739.392, 983.303));
+		testDragged(new Point(815.342, 1000.56));
+		testDragged(new Point(987.956, 1031.63));
+		testDragged(new Point(1070.81, 1045.44));
+		testDragged(new Point(1139.86, 1052.35));
+		testDragged(new Point(1336.63, 1062.71));
+		testDragged(new Point(1419.49, 1062.71));
+		testDragged(new Point(1495.44, 1062.71));
+		testDragged(new Point(1561.03, 1062.71));
+		testDragged(new Point(1647.34, 1055.8));
+		testDragged(new Point(1740.55, 1055.8));
+		testDragged(new Point(1823.41, 1055.8));
+		testDragged(new Point(1899.36, 1055.8));
+		testDragged(new Point(1975.31, 1055.8));
+		testDragged(new Point(2030.54, 1062.71));
+		testDragged(new Point(2089.23, 1062.71));
+		testDragged(new Point(2165.18, 1069.61));
+		testDragged(new Point(2241.13, 1083.42));
+		testDragged(new Point(2306.72, 1090.32));
+		testDragged(new Point(2365.41, 1097.23));
+		testDragged(new Point(2455.17, 1128.3));
+		testDragged(new Point(2486.24, 1131.75));
+		testDragged(new Point(2506.95, 1131.75));
+		testDragged(new Point(2527.67, 1131.75));
+		testDragged(new Point(2538.03, 1131.75));
+		testDragged(new Point(2548.38, 1131.75));
+		testReleased();
+		
+		Thread.sleep(Long.MAX_VALUE);
+		
+		// assert 6 vertices and 6 edges
+	}
 	
 }
