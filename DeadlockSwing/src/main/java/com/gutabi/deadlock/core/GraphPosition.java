@@ -37,7 +37,7 @@ public abstract class GraphPosition extends Position {
 			
 			assert ep.getEdge().getStart() == p || ep.getEdge().getEnd() == p;
 			assert !ep.getEdge().isLoop();
-			assert ep.getDest() == p;
+//			assert ep.getDest() == p;
 			
 			return ep.travel(p, distance);
 		} else {
@@ -63,9 +63,16 @@ public abstract class GraphPosition extends Position {
 			
 			EdgePosition ep = (EdgePosition)this;
 			
-			assert ep.getDest() == p.getDest();
+			assert p.getEdge() == ep.getEdge();
 			
-			return ep.travel(ep.getDest(), distance);
+//			assert ep.getDest() == p.getDest();
+			
+			if (ep.getIndex() < p.getIndex() || (ep.getIndex() == p.getIndex() && DMath.lessThan(ep.getParam(), p.getParam()))) {
+				// ep -> p is same direction as edge
+				return ep.travel(ep.getEdge().getEnd(), distance);
+			} else {
+				return ep.travel(ep.getEdge().getStart(), distance);
+			}
 		}
 		
 	}

@@ -11,7 +11,7 @@ public class EdgePosition extends GraphPosition {
 	
 	private final boolean bound;
 	
-	private final Vertex dest;
+//	private final Vertex dest;
 	
 	public final Point segStart;
 	public final Point segEnd;
@@ -21,7 +21,7 @@ public class EdgePosition extends GraphPosition {
 	
 	int hash;
 	
-	public EdgePosition(Edge e, int index, double param, Vertex dest) {
+	public EdgePosition(Edge e, int index, double param) {
 		super(Point.point(e.getPoint(index), e.getPoint(index+1), param));
 		
 		if (index < 0 || index >= e.size()-1) {
@@ -38,7 +38,7 @@ public class EdgePosition extends GraphPosition {
 		this.index = index;
 		this.param = param;
 		
-		this.dest = dest;
+//		this.dest = dest;
 		
 		this.bound = DMath.equals(param, 0.0);
 		
@@ -55,9 +55,9 @@ public class EdgePosition extends GraphPosition {
 		long l = Double.doubleToLongBits(param);
 		int c = (int)(l ^ (l >>> 32));
 		h = 37 * h + c;
-		if (dest != null) {
-			h = 37 * h + dest.hashCode();
-		}
+//		if (dest != null) {
+//			h = 37 * h + dest.hashCode();
+//		}
 		
 		hash = h;
 	}
@@ -65,6 +65,24 @@ public class EdgePosition extends GraphPosition {
 	public int hashCode() {
 		return hash;
 	}
+	
+	public String toString() {
+		return e + " " + index + " " + param + "(" + distanceToStartOfEdge + "/" + e.getTotalLength() + ")";
+	}
+	
+	public boolean equalsP(GraphPosition o) {
+		if (this == o) {
+			return true;
+		} else if (!(o instanceof EdgePosition)) {
+			return false;
+		} else {
+			EdgePosition b = (EdgePosition)o;
+			return (e == b.e) && (index == b.index) && DMath.equals(param, b.param);
+		}
+	}
+	
+	
+	
 	
 	public Point getPoint() {
 		return p;
@@ -86,24 +104,9 @@ public class EdgePosition extends GraphPosition {
 		return param;
 	}
 	
-	public Vertex getDest() {
-		return dest;
-	}
-	
-	public String toString() {
-		return e + " " + index + " " + param + "(" + distanceToStartOfEdge + "/" + e.getTotalLength() + ")";
-	}
-	
-	public boolean equalsP(GraphPosition o) {
-		if (this == o) {
-			return true;
-		} else if (!(o instanceof EdgePosition)) {
-			return false;
-		} else {
-			EdgePosition b = (EdgePosition)o;
-			return (e == b.e) && (index == b.index) && DMath.equals(param, b.param);
-		}
-	}
+//	public Vertex getDest() {
+//		return dest;
+//	}
 	
 	public boolean isBound() {
 		return bound;
@@ -268,10 +271,10 @@ public class EdgePosition extends GraphPosition {
 			double distanceToEndOfSegment = Point.distance(c, b);
 			
 			if (DMath.equals(distanceToTravel, distanceToEndOfSegment)) {
-				return new EdgePosition(e, index+1, 0.0, e.getEnd());
+				return new EdgePosition(e, index+1, 0.0);
 			} else if (distanceToTravel < distanceToEndOfSegment) {
 				double newParam = Point.travelForward(a, b, param, distanceToTravel);
-				return new EdgePosition(e, index, newParam, e.getEnd());
+				return new EdgePosition(e, index, newParam);
 			} else {
 				index++;
 				param = 0.0;
@@ -292,10 +295,10 @@ public class EdgePosition extends GraphPosition {
 			double distanceToStartOfSegment = Point.distance(c, a);
 			
 			if (DMath.equals(distanceToTravel, distanceToStartOfSegment)) {
-				return new EdgePosition(e, index, 0.0, e.getStart());
+				return new EdgePosition(e, index, 0.0);
 			} else if (distanceToTravel < distanceToStartOfSegment) {
 				double newParam = Point.travelBackward(a, b, param, distanceToTravel);
-				return new EdgePosition(e, index, newParam, e.getStart());
+				return new EdgePosition(e, index, newParam);
 			} else {
 				index--;
 				param = 1.0;
@@ -317,7 +320,7 @@ public class EdgePosition extends GraphPosition {
 		if (index == e.size()-2) {
 			return e.getEnd();
 		} else {
-			return new EdgePosition(e, index+1, 0.0, e.getEnd());
+			return new EdgePosition(e, index+1, 0.0);
 		}
 	}
 	
@@ -326,13 +329,13 @@ public class EdgePosition extends GraphPosition {
 			if (index == 0 || (index == 1 && DMath.equals(param, 0.0))) {
 				return e.getStart();
 			} else {
-				return new EdgePosition(e, index-1, 0.0, e.getStart());
+				return new EdgePosition(e, index-1, 0.0);
 			}
 		} else {
 			if (index == 0) {
 				return e.getStart();
 			} else {
-				return new EdgePosition(e, index, 0.0, e.getStart());
+				return new EdgePosition(e, index, 0.0);
 			}
 		}
 	}

@@ -42,30 +42,9 @@ public class PathPosition extends Position {
 		hash = h;
 	}
 	
-	public boolean isBound() {
-		return bound;
+	public int hashCode() {
+		return hash;
 	}
-	
-	public boolean isEndOfPath() {
-		return (index == path.size()-1) && DMath.equals(param, 0.0);
-	}
-	
-	public String toString() {
-		return "Path " + path + " " + index + " " + param + "(" + distanceFromStartOfPath + "/" + path.getTotalLength() + ")" + gpos;
-	}
-	
-	public GraphPosition getGraphPosition() {
-		return gpos;
-	}
-	
-	public Driveable getDriveable() {
-		return gpos.getDriveable();
-	}
-
-//	@Override
-//	public double distanceTo(Position b) {
-//		return gpos.distanceTo(b);
-//	}
 	
 	public boolean equals(Object o) {
 		if (this == o) {
@@ -78,8 +57,27 @@ public class PathPosition extends Position {
 		}
 	}
 	
-	public int hashCode() {
-		return hash;
+	public String toString() {
+		return "Path " + path + " " + index + " " + param + "(" + distanceFromStartOfPath + "/" + path.getTotalLength() + ")" + gpos;
+	}
+	
+	
+	
+	
+	public boolean isBound() {
+		return bound;
+	}
+	
+	public boolean isEndOfPath() {
+		return (index == path.size()-1) && DMath.equals(param, 0.0);
+	}
+	
+	public GraphPosition getGraphPosition() {
+		return gpos;
+	}
+	
+	public Driveable getDriveable() {
+		return gpos.getDriveable();
 	}
 	
 	public double distanceTo(PathPosition p) {

@@ -69,6 +69,16 @@ public class Path {
 		return hash;
 	}
 	
+	
+	
+	public GraphPosition getStart() {
+		return start;
+	}
+	
+	public GraphPosition getEnd() {
+		return end;
+	}
+	
 	public int size() {
 		return poss.size();
 	}
@@ -145,7 +155,7 @@ public class Path {
 				
 			}
 			
-			EdgePosition newE = new EdgePosition(((EdgePosition)p1).getEdge(), graphIndex, graphParam, ((EdgePosition)p1).getDest());
+			EdgePosition newE = new EdgePosition(((EdgePosition)p1).getEdge(), graphIndex, graphParam);
 			
 //			assert DMath.equals(((EdgePosition)newE).getParam(), pathParam);
 			
@@ -161,7 +171,6 @@ public class Path {
 				
 //				assert DMath.equals(graphParam, pathParam);
 				
-				Vertex p1v = (Vertex)p1;
 				EdgePosition p2e = (EdgePosition)p2;
 				
 				if (pp1 == pp2.getEdge().getStart()) {
@@ -177,7 +186,7 @@ public class Path {
 					
 				}
 				
-				EdgePosition newE = new EdgePosition(p2e.getEdge(), graphIndex, graphParam, p2e.getDest());
+				EdgePosition newE = new EdgePosition(p2e.getEdge(), graphIndex, graphParam);
 				
 //				assert DMath.equals(((EdgePosition)newE).getParam(), pathParam);
 				
@@ -203,7 +212,6 @@ public class Path {
 				graphParam = (pp1 == e.getStart()) ? pathParam : 1-pathParam;
 				
 				Vertex p1v = (Vertex)p1;
-				Vertex p2v = (Vertex)p2;
 				
 				if (p1v == e.getStart()) {
 					// same direction as edge
@@ -218,7 +226,7 @@ public class Path {
 					
 				}
 				
-				EdgePosition newE = new EdgePosition(e, graphIndex, graphParam, p2v);
+				EdgePosition newE = new EdgePosition(e, graphIndex, graphParam);
 				
 				return newE;
 			}
@@ -471,57 +479,33 @@ public class Path {
 						if (aa == shortest.getStart()) {
 							
 							GraphPosition cur = EdgePosition.nextBoundfromStart(shortest);
+								
+							poss.add(cur);
 							
-							if (cur.equals(bb) && false) {
-								
-								/*
-								 * edge with only 1 segment,
-								 */
-								
-								assert false;
-								
-							} else {
-								
-								poss.add(cur);
-								
-								while (true) {
-									if (cur.equals(bb)) {
-										break;
-									}
-									cur = cur.nextBoundToward(bb);
-									assert cur.isBound();
-									poss.add(cur);
+							while (true) {
+								if (cur.equals(bb)) {
+									break;
 								}
-								
+								cur = cur.nextBoundToward(bb);
+								assert cur.isBound();
+								poss.add(cur);
 							}
 							
 						} else {
 							
 							GraphPosition cur = EdgePosition.nextBoundfromEnd(shortest);
 							
-							if (cur.equals(bb) && false) {
+							poss.add(cur);
+							
+							while (true) {
 								
-								/*
-								 * edge with only 1 segment
-								 */
-								
-								assert false;
-								
-							} else {
-								
-								poss.add(cur);
-								
-								while (true) {
-									
-									if (cur.equals(bb)) {
-										break;
-									}
-									
-									cur = cur.nextBoundToward(bb);
-									assert cur.isBound();
-									poss.add(cur);
+								if (cur.equals(bb)) {
+									break;
 								}
 								
+								cur = cur.nextBoundToward(bb);
+								assert cur.isBound();
+								poss.add(cur);
 							}
 							
 						}

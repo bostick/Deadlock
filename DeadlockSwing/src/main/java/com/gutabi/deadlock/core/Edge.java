@@ -1,7 +1,6 @@
 package com.gutabi.deadlock.core;
 
 
-import java.util.Arrays;
 import java.util.List;
 
 public final class Edge implements Connector {
@@ -65,20 +64,11 @@ public final class Edge implements Connector {
 		check();
 	}
 	
-//	public String toString() {
-//		return "E " + hash + " " + start + " " + end + " n=" + pts.length;
-//	}
-	
 	public int hashCode() {
 		return hash;
 	}
 	
-	public Edge copy() {
-		if (removed) {
-			throw new IllegalStateException();
-		}
-		return new Edge(start, end, Arrays.asList(pts));
-	}
+	
 	
 	public boolean isStandAlone() {
 		return standalone;
@@ -117,13 +107,6 @@ public final class Edge implements Connector {
 			return pts[i + pts.length];
 		}
 	}
-	
-//	public double getSegmentLengthX(int i) {
-//		if (removed) {
-//			throw new IllegalStateException();
-//		}
-//		return segmentLengths[i];
-//	}
 	
 	/**
 	 * segment index i

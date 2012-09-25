@@ -212,7 +212,7 @@ public class STPath {
 	/**
 	 * return the subpath from start time s to end time e, inclusive
 	 */
-	private SubPath subPath(double s, double e) {
+	private STSubPath subPath(double s, double e) {
 		if (s < startTime) {
 			throw new IllegalArgumentException();
 		}
@@ -276,7 +276,7 @@ public class STPath {
 		assert DMath.equals(subStart.getTime(), s);
 		assert DMath.equals(subEnd.getTime(), e);
 		
-		return new SubPath(subStart, subEnd);
+		return new STSubPath(subStart, subEnd);
 	}
 	
 	public int size() {
@@ -376,8 +376,8 @@ public class STPath {
 			double ta = da[i];
 			double tb = da[i+1];
 			
-			SubPath ap = a.subPath(ta, tb);
-			SubPath bp = b.subPath(ta, tb);
+			STSubPath ap = a.subPath(ta, tb);
+			STSubPath bp = b.subPath(ta, tb);
 			
 //			if ((ap.start.getSpace() instanceof SinkedPosition && ap.end.getSpace() instanceof SinkedPosition) ||
 //					(bp.start.getSpace() instanceof SinkedPosition && bp.end.getSpace() instanceof SinkedPosition)) {
@@ -427,7 +427,7 @@ public class STPath {
 	/**
 	 * given 2 distances at two times, solve when the distances are exactly radius apart, or -1 if never
 	 */
-	private static double intersection(SubPath ap, SubPath bp, double radius) {
+	private static double intersection(STSubPath ap, STSubPath bp, double radius) {
 		
 		assert DMath.equals(ap.getStartTime(), bp.getStartTime());
 		assert DMath.equals(ap.getEndTime(), bp.getEndTime());
@@ -443,7 +443,7 @@ public class STPath {
 	/**
 	 * given 2 distances at two times, solve when the distances are exactly radius apart, or -1 if never
 	 */
-	private static double solve(SubPath ap, SubPath bp, double radius) {
+	private static double solve(STSubPath ap, STSubPath bp, double radius) {
 		
 		double d1;
 		double d2;

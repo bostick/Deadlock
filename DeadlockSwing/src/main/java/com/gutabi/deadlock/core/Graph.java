@@ -372,7 +372,7 @@ public class Graph {
 			Point c = e.getPoint(i);
 			Point d = e.getPoint(i+1);
 			if (Point.intersect(p, c, d) && !p.equals(d)) {
-				return new EdgePosition(e, i, Point.param(p, c, d), null);
+				return new EdgePosition(e, i, Point.param(p, c, d));
 			}
 		}
 //		for (Hub h : hubs) {
@@ -612,7 +612,7 @@ public class Graph {
 			
 		}
 		
-//		cleanupEdges();
+		cleanupEdges();
 	}
 	
 	private void processNewSegment(Point a, Point b) {

@@ -6,7 +6,7 @@ package com.gutabi.deadlock.core;
  * 
  * or sinked position
  */
-public class SubPath {
+public class STSubPath {
 	
 	private double startTime;
 	private double endTime;
@@ -16,7 +16,7 @@ public class SubPath {
 	
 	private Edge e;
 	
-	public SubPath(STPosition start, STPosition end) {
+	public STSubPath(STPosition start, STPosition end) {
 		this.start = start;
 		this.end = end;
 		

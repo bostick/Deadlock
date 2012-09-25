@@ -103,7 +103,7 @@ public class QuadTree {
 		Point d = si.end;
 		if (b.equals(c)) {
 			if (si.index > 0) {
-				return new EdgePosition(si.edge, si.index, 0.0, null);
+				return new EdgePosition(si.edge, si.index, 0.0);
 			} else {
 				throw new PositionException(b, c, d);
 			}
@@ -118,14 +118,14 @@ public class QuadTree {
 		double u = Point.u(c, b, d);
 		if (DMath.lessThanEquals(u, 0.0)) {
 			if (si.index > 0) {
-				return new EdgePosition(si.edge, si.index, 0.0, null);
+				return new EdgePosition(si.edge, si.index, 0.0);
 			} else {
 				throw new PositionException(b, c, d);
 			}
 		} else if (DMath.greaterThanEquals(u, 1.0)) {
 			throw new PositionException(b, c, d);
 		} else {
-			return new EdgePosition(si.edge, si.index, u, null);
+			return new EdgePosition(si.edge, si.index, u);
 		}
 	}
 	
