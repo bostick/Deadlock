@@ -22,6 +22,7 @@ import com.gutabi.deadlock.core.Edge;
 import com.gutabi.deadlock.core.EdgePosition;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.Position;
+import com.gutabi.deadlock.core.Source;
 import com.gutabi.deadlock.core.Vertex;
 
 public class DeadlockController implements ActionListener {
@@ -160,6 +161,7 @@ public class DeadlockController implements ActionListener {
 					assert false;
 					break;
 				case RUNNING:
+				case PAUSED:
 					;
 					break;
 				}
@@ -221,6 +223,7 @@ public class DeadlockController implements ActionListener {
 					assert false;
 					break;
 				case RUNNING:
+				case PAUSED:
 					;
 					break;
 				}
@@ -261,6 +264,7 @@ public class DeadlockController implements ActionListener {
 					assert false;
 					break;
 				case RUNNING:
+				case PAUSED:
 					;
 					break;
 				}
@@ -328,6 +332,7 @@ public class DeadlockController implements ActionListener {
 				assert false;
 				break;
 			case RUNNING:
+			case PAUSED:
 				;
 				break;
 			}
@@ -353,6 +358,7 @@ public class DeadlockController implements ActionListener {
 				assert false;
 				break;
 			case RUNNING:
+			case PAUSED:
 				;
 				break;
 			}
@@ -374,6 +380,7 @@ public class DeadlockController implements ActionListener {
 				assert false;
 				break;
 			case RUNNING:
+			case PAUSED:
 				;
 				break;
 			}
@@ -400,6 +407,7 @@ public class DeadlockController implements ActionListener {
 				assert false;
 				break;
 			case RUNNING:
+			case PAUSED:
 				;
 				break;
 			}
@@ -417,6 +425,15 @@ public class DeadlockController implements ActionListener {
 		
 		VIEW.renderBackground();
 		
+		MODEL.graph.calculateChoices();
+		
+		for (Source s : MODEL.getSources()) {
+			s.preprocess();
+		}
+		
+		MODEL.movingCars.clear();
+		MODEL.crashedCars.clear();
+		
 		Thread t = new Thread(new SimulationRunnable());
 		t.start();
 		
@@ -426,6 +443,21 @@ public class DeadlockController implements ActionListener {
 		assert Thread.currentThread().getName().equals("controller");
 		
 		MODEL.setMode(ControlMode.IDLE);
+	}
+	
+	public void pauseRunning() {
+		assert Thread.currentThread().getName().equals("controller");
+		
+		MODEL.setMode(ControlMode.PAUSED);
+	}
+	
+	public void unpauseRunning() {
+		assert Thread.currentThread().getName().equals("controller");
+		
+		MODEL.setMode(ControlMode.RUNNING);
+		synchronized (MODEL) {
+			MODEL.notifyAll();
+		}
 	}
 	
 	private void draftStart(Point p) {
@@ -502,6 +534,28 @@ public class DeadlockController implements ActionListener {
 				@Override
 				public void run() {
 					CONTROLLER.stopRunning();
+				}}
+			);
+		} else if (e.getActionCommand().equals("pause")) {
+			JButton b = (JButton)e.getSource();
+			b.setText("Unpause");
+			b.setActionCommand("unpause");
+			
+			CONTROLLER.queue(new Runnable(){
+				@Override
+				public void run() {
+					CONTROLLER.pauseRunning();
+				}}
+			);
+		} else if (e.getActionCommand().equals("unpause")) {
+			JButton b = (JButton)e.getSource();
+			b.setText("Pause");
+			b.setActionCommand("pause");
+			
+			CONTROLLER.queue(new Runnable(){
+				@Override
+				public void run() {
+					CONTROLLER.unpauseRunning();
 				}}
 			);
 		}

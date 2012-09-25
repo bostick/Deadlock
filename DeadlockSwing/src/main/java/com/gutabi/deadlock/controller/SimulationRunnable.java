@@ -10,10 +10,11 @@ import org.apache.log4j.Logger;
 
 import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Edge;
+import com.gutabi.deadlock.core.GraphPosition;
 import com.gutabi.deadlock.core.Intersection;
-import com.gutabi.deadlock.core.STPath;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.Position;
+import com.gutabi.deadlock.core.STPath;
 import com.gutabi.deadlock.core.Sink;
 import com.gutabi.deadlock.core.Source;
 import com.gutabi.deadlock.core.Vertex;
@@ -49,11 +50,6 @@ public class SimulationRunnable implements Runnable {
 		
 		synchronized (MODEL) {
 			
-			MODEL.graph.calculateChoices();
-			
-			MODEL.movingCars.clear();
-			MODEL.crashedCars.clear();
-			
 			edgesCopy = new ArrayList<Edge>();
 			for (Edge e : MODEL.getEdges()) {
 				edgesCopy.add(e);
@@ -73,6 +69,13 @@ public class SimulationRunnable implements Runnable {
 				modeCopy = MODEL.getMode();
 				if (modeCopy == ControlMode.IDLE) {
 					break outer;
+				} else if (modeCopy == ControlMode.PAUSED) {
+					try {
+						MODEL.wait();
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
 			}
 			
@@ -124,7 +127,7 @@ public class SimulationRunnable implements Runnable {
 		 */
 		
 		for (Car c : movingCarsCopy) {
-			Position carPos = c.getPosition();
+			GraphPosition carPos = c.getPosition();
 			for (Source s : sources) {
 				double dist = carPos.distanceTo(s);
 				if (DMath.lessThanEquals(dist, MODEL.CAR_WIDTH)) {
@@ -133,7 +136,7 @@ public class SimulationRunnable implements Runnable {
 			}
 		}
 		for (Car c : crashedCarsCopy) {
-			Position carPos = c.getPosition();
+			GraphPosition carPos = c.getPosition();
 			for (Source s : sources) {
 				double dist = carPos.distanceTo(s);
 				if (DMath.lessThanEquals(dist, MODEL.CAR_WIDTH)) {
@@ -156,28 +159,30 @@ public class SimulationRunnable implements Runnable {
 		int n = sources.size();
 		
 		for (int i = 0; i < n; i++) {
-			newCars.add(new Car());
-		}
-		
-		for (Car c : newCars) {
-			if (sources.size() == 0) {
-				continue;
-			}
-			//int i = MODEL.RANDOM.nextInt(sources.size());
-			int i = 0;
 			
-			final Source s = sources.get(i);
+			Car c = new Car(sources.get(i));
 			
-			c.source = s;
 			c.startingStep = step;
 			
-			c.nextState = CarState.VERTEX;
-			
-			sources.remove(s);
-			
-			c.setPosition(s);
-			c.setState(CarState.VERTEX);
+			newCars.add(c);
 		}
+		
+//		for (Car c : newCars) {
+//			if (sources.size() == 0) {
+//				continue;
+//			}
+//			//int i = MODEL.RANDOM.nextInt(sources.size());
+//			int i = 0;
+//			
+//			final Source s = sources.get(i);
+//			
+//			c.source = s;
+//			
+//			
+//			sources.remove(s);
+//			
+//			
+//		}
 		
 		movingCarsCopy.addAll(newCars);
 		
@@ -206,7 +211,7 @@ public class SimulationRunnable implements Runnable {
 			
 			List<Car> newlyCrashedCars = processCrashInfo(new ArrayList<Car>(){{addAll(movingCarsCopy);addAll(crashedCarsCopy);}});
 			
-			assert checkTimes(new ArrayList<Car>(){{addAll(movingCarsCopy);addAll(crashedCarsCopy);}});
+//			assert checkTimes(new ArrayList<Car>(){{addAll(movingCarsCopy);addAll(crashedCarsCopy);}});
 			
 			movingCarsCopy.removeAll(newlyCrashedCars);
 			crashedCarsCopy.addAll(newlyCrashedCars);
@@ -225,14 +230,14 @@ public class SimulationRunnable implements Runnable {
 		
 	}
 	
-	private boolean checkTimes(List<Car> cars) {
-		for (Car c : cars) {
-			STPath p = c.nextPath;
-			assert DMath.equals(p.getStartTime(), lastSyncTime);
-			assert DMath.equals(p.getEndTime(), 1.0);
-		}
-		return true;
-	}
+//	private boolean checkTimes(List<Car> cars) {
+//		for (Car c : cars) {
+//			STPath p = c.nextPath;
+//			assert DMath.equals(p.getStartTime(), lastSyncTime);
+//			assert DMath.equals(p.getEndTime(), 1.0);
+//		}
+//		return true;
+//	}
 	
 //	private boolean checkFutureDistances(Car c, Car d) {
 //		Position cPos = c.getLastNextPosition().getSpace();

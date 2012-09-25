@@ -17,7 +17,6 @@ import org.apache.log4j.Logger;
  */
 public class STPath {
 	
-	private List<STPosition> origPoss;
 	private List<STPosition> poss;
 	
 	private double totalDistance;
@@ -32,35 +31,43 @@ public class STPath {
 	static Logger logger = Logger.getLogger(STPath.class);
 	
 	
-	public STPath(List<STPosition> origPoss) {
+	private STPath(List<STPosition> poss) {
 		
-		this.origPoss = origPoss;
+//		this.origPoss = origPoss;
 //		this.poss = poss;
 		
-		assert origPoss.size() >= 2;
+		assert poss.size() >= 2;
 		
-		interpolate();
+		this.poss = poss;
+		
+		times = new ArrayList<Double>();
+		
+		for (STPosition pos : poss) {
+			times.add(pos.getTime());
+		}
+		
+//		interpolate();
 		
 		int h = 17;
-		h = 37 * h + origPoss.hashCode();
+		h = 37 * h + poss.hashCode();
 		hash = h;
 		
-		List<Position> regularPoss = new ArrayList<Position>();
-		for (STPosition stpos : origPoss) {
-			regularPoss.add(stpos.getSpace());
-		}
-		Path regularPath = new Path(regularPoss);
-		
-		assert poss.size() == regularPath.poss.size();
-		for (int i = 0; i < poss.size(); i++) {
-			assert poss.get(i).s.equals(regularPath.poss.get(i));
-		}
+//		List<Position> regularPoss = new ArrayList<Position>();
+//		for (STPosition stpos : origPoss) {
+//			regularPoss.add(stpos.getSpace());
+//		}
+//		Path regularPath = new Path(regularPoss);
+//		
+//		assert poss.size() == regularPath.poss.size();
+//		for (int i = 0; i < poss.size(); i++) {
+//			assert poss.get(i).s.equals(regularPath.poss.get(i));
+//		}
 		
 		startTime = times.get(0);
 		endTime = times.get(times.size()-1);
 		
-		assert DMath.greaterThanEquals(startTime, 0.0);
-		assert DMath.lessThanEquals(endTime, 1.0);
+//		assert DMath.greaterThanEquals(startTime, 0.0);
+//		assert DMath.lessThanEquals(endTime, 1.0);
 		
 		assert check();
 	}
@@ -73,11 +80,107 @@ public class STPath {
 		return poss.toString();
 	}
 	
+	public static STPath advanceOneTimeStep(PathPosition pos, double dist) {
+		// find pos on overallPath
+				// travel MODEL.DISTANCE_PER_TIMESTEP forward
+				// set nextPath to that new chunk, with time running from 0 to 1
+				// handle being SINKED
+		
+		List<STPosition> poss = new ArrayList<STPosition>();
+		
+		PathPosition curPos = pos;
+		double traveledDist = 0.0;
+		
+		double speed = dist / 1.0;
+		
+		poss.add(new STPosition(curPos, 0.0));
+		
+		while (true) {
+			
+			if (curPos.isEndOfPath()) {
+				
+				break;
+				
+			} else {
+				
+				PathPosition nextPos = curPos.nextBound();
+				double distanceToNextPos = curPos.distanceTo(nextPos);
+				
+				if (DMath.equals(traveledDist + distanceToNextPos, dist)) {
+					
+					traveledDist = traveledDist + distanceToNextPos;
+					curPos = nextPos;
+					
+					assert DMath.greaterThan(traveledDist / speed, poss.get(poss.size()-1).getTime());
+					double time = traveledDist / speed;
+					if (DMath.equals(time, 1.0)) {
+						time = 1.0;
+					}
+					poss.add(new STPosition(curPos, time));
+					break;
+					
+				} else if (traveledDist + distanceToNextPos < dist) {
+					
+					double inc = distanceToNextPos;
+					traveledDist = traveledDist + inc;
+					
+					assert DMath.greaterThan(traveledDist / speed, poss.get(poss.size()-1).getTime());
+					poss.add(new STPosition(nextPos, traveledDist / speed));
+					
+					curPos = nextPos;
+					
+				} else {
+					
+					double toTravel = dist - traveledDist;
+					
+					traveledDist = traveledDist + toTravel;
+					curPos = curPos.travel(toTravel);
+					
+					assert DMath.greaterThan(traveledDist / speed, poss.get(poss.size()-1).getTime());
+					poss.add(new STPosition(curPos, traveledDist / speed));
+					break;
+					
+				}
+				
+			}
+			
+		}
+		
+		STPosition last = poss.get(poss.size()-1);
+		if (DMath.lessThan(poss.get(poss.size()-1).getTime(), 1.0)) {
+			
+//			assert DMath.greaterThan(traveledDist / speed, poss.get(poss.size()-1).getTime());
+			poss.add(new STPosition(last.getSpace(), 1.0));
+			
+		} else {
+			assert DMath.equals(poss.get(poss.size()-1).getTime(), 1.0);
+		}
+		
+		return new STPath(poss);
+		
+	}
+	
+	public static STPath crashOneTimeStep(PathPosition pos) {
+		
+		List<STPosition> poss = new ArrayList<STPosition>();
+		
+		poss.add(new STPosition(pos, 0.0));
+		poss.add(new STPosition(pos, 1.0));
+		
+		return new STPath(poss);
+	}
+	
+	
+	
+	
+	
+	
+	
 	public STPosition get(int i) {
 		return poss.get(i);
 	}
 	
-	public Position getPosition(double time) {
+	public PathPosition getPosition(double time) {
 		if (time < startTime) {
 			throw new IllegalArgumentException();
 		}
@@ -101,7 +204,7 @@ public class STPath {
 			} else {
 				double p = (time - a.getTime()) / (b.getTime() - a.getTime());
 				double d = a.getSpace().distanceTo(b.getSpace());
-				return a.getSpace().travel(b.getSpace(), p * d);
+				return a.getSpace().travel(p * d);
 			}
 		}
 	}
@@ -141,7 +244,7 @@ public class STPath {
 			} else {
 				double p = (s - a.getTime()) / (b.getTime() - a.getTime());
 				double d = a.getSpace().distanceTo(b.getSpace());
-				subStart = new STPosition(a.getSpace().travel(b.getSpace(), p * d), s);
+				subStart = new STPosition(a.getSpace().travel(p * d), s);
 			}
 		}
 		
@@ -166,7 +269,7 @@ public class STPath {
 			} else {
 				double p = (e - a.getTime()) / (b.getTime() - a.getTime());
 				double d = a.getSpace().distanceTo(b.getSpace());
-				subEnd = new STPosition(a.getSpace().travel(b.getSpace(), p * d), e);
+				subEnd = new STPosition(a.getSpace().travel(p * d), e);
 			}
 		}
 		
@@ -193,7 +296,7 @@ public class STPath {
 		
 		List<STPosition> newPath = new ArrayList<STPosition>();
 		
-		Position crashPos = this.getPosition(time);
+		PathPosition crashPos = this.getPosition(time);
 		newPath.add(new STPosition(crashPos, time));
 		newPath.add(new STPosition(crashPos, endTime));
 		
@@ -216,7 +319,7 @@ public class STPath {
 			} else if (pos.getTime() < time) {
 				;
 			} else if (last.getTime() < time && time < pos.getTime()) {
-				Position synchPos = this.getPosition(time);
+				PathPosition synchPos = this.getPosition(time);
 				newPath.add(new STPosition(synchPos, time));
 				newPath.add(pos);
 			} else {
@@ -281,7 +384,7 @@ public class STPath {
 //				continue;
 //			}
 			
-			if (ap.getStartPosition() instanceof Sink || bp.getStartPosition() instanceof Sink) {
+			if (ap.getStartPosition().getGraphPosition() instanceof Sink || bp.getStartPosition().getGraphPosition() instanceof Sink) {
 				continue;
 			}
 			
@@ -295,13 +398,13 @@ public class STPath {
 						continue;
 					}
 				} else {
-					if (!((Vertex)bp.getStartPosition()).getEdges().contains(ap.getEdge())) {
+					if (!((Vertex)bp.getStartPosition().getGraphPosition()).getEdges().contains(ap.getEdge())) {
 						continue;
 					}
 				}
 			} else {
 				if (bp.getEdge() != null) {
-					if (!((Vertex)ap.getStartPosition()).getEdges().contains(bp.getEdge())) {
+					if (!((Vertex)ap.getStartPosition().getGraphPosition()).getEdges().contains(bp.getEdge())) {
 						continue;
 					}
 				} else {
@@ -361,8 +464,8 @@ public class STPath {
 			/*
 			 * remember original orientation
 			 */
-			boolean ABstart = ap.getStartPosition().distanceTo(ap.getEdge().getStart()) < bp.getStartPosition().distanceTo(ap.getEdge().getStart());
-			boolean ABend = ap.getEndPosition().distanceTo(ap.getEdge().getStart()) < bp.getEndPosition().distanceTo(ap.getEdge().getStart());
+			boolean ABstart = ap.getStartPosition().getGraphPosition().distanceTo(ap.getEdge().getStart()) < bp.getStartPosition().getGraphPosition().distanceTo(ap.getEdge().getStart());
+			boolean ABend = ap.getEndPosition().getGraphPosition().distanceTo(ap.getEdge().getStart()) < bp.getEndPosition().getGraphPosition().distanceTo(ap.getEdge().getStart());
 			
 			if (DMath.equals(d1, radius)) {
 				crashTime = t1;
@@ -390,11 +493,11 @@ public class STPath {
 						while (true) {
 							goodT2 = (goodT2Low + goodT2High) / 2;
 							
-							Position goodT21 = ap.getPosition(goodT2);
-							Position goodT22 = bp.getPosition(goodT2);
+							PathPosition goodT21 = ap.getPosition(goodT2);
+							PathPosition goodT22 = bp.getPosition(goodT2);
 							
-							double goodT21ToStart = goodT21.distanceTo(ap.getEdge().getStart());
-							double goodT22ToStart = goodT22.distanceTo(ap.getEdge().getStart());
+							double goodT21ToStart = goodT21.getGraphPosition().distanceTo(ap.getEdge().getStart());
+							double goodT22ToStart = goodT22.getGraphPosition().distanceTo(ap.getEdge().getStart());
 							boolean newAB = goodT21ToStart < goodT22ToStart;
 							
 							if (DMath.equals(goodT21ToStart, goodT22ToStart)) {
@@ -442,11 +545,11 @@ public class STPath {
 					while (true) {
 						crashTime = (crashTimeLow + crashTimeHigh) / 2;
 						
-						Position crash1 = ap.getPosition(crashTime);
-						Position crash2 = bp.getPosition(crashTime);
+						PathPosition crash1 = ap.getPosition(crashTime);
+						PathPosition crash2 = bp.getPosition(crashTime);
 						
-						double crash1ToStart = crash1.distanceTo(ap.getEdge().getStart());
-						double crash2ToStart = crash2.distanceTo(ap.getEdge().getStart());
+						double crash1ToStart = crash1.getGraphPosition().distanceTo(ap.getEdge().getStart());
+						double crash2ToStart = crash2.getGraphPosition().distanceTo(ap.getEdge().getStart());
 						boolean newAB = crash1ToStart < crash2ToStart;
 						
 						if (DMath.equals(crash1ToStart, crash2ToStart) || newAB != ABstart) {
@@ -557,107 +660,96 @@ public class STPath {
 	/*
 	 * calculate each segment of the path
 	 */
-	private void interpolate() {
-		
-		times = new ArrayList<Double>();
-		poss = new ArrayList<STPosition>();
-		
-		times.add(origPoss.get(0).getTime());
-		poss.add(origPoss.get(0));
-		
-		double accDist = 0.0;
-		
-		for (int i = 0; i < origPoss.size()-1; i++) {
-			STPosition a = origPoss.get(i);
-			STPosition b = origPoss.get(i+1);
-			
-			double dist = a.s.distanceTo(b.s);
-			double time = b.t - a.t;
-			double speed = dist / time;
-			
-			if ((a.s.equals(b.s)) ||
-					((a.s instanceof EdgePosition && b.s instanceof EdgePosition &&
-							((EdgePosition)a.s).getEdge() == ((EdgePosition)b.s).getEdge() && ((EdgePosition)a.s).getIndex() == ((EdgePosition)b.s).getIndex())) ||
-					(a.s.nextBoundToward(b.s).equals(b.s) ||
-							b.s.nextBoundToward(a.s).equals(a.s))) {
-				
-				/*
-				 * there are no bounds between a and b
-				 * either:
-				 * 1. a and b are equal
-				 * 1. both a and b are not bounds and are between the same bounds
-				 * 2. b is a's next bound
-				 * 3. a is b's next bound
-				 */
-				
-				times.add(b.t);
-				poss.add(b);
-				
-				accDist = dist;
-				
-			} else {
-				
-				Position bEnd;
-				if (!b.s.isBound()) {
-					bEnd = b.s.nextBoundToward(a.s);
-				} else {
-					bEnd = b.s;
-				}
-				
-				Position cur = a.s;
-				Position prev;
-				double accSegDistance = 0.0;
-				double accSegTime = a.t;
-				while (!cur.equals(bEnd)) {
-					prev = cur;
-					cur = cur.nextBoundToward(bEnd);
-					double d = Point.distance(prev.getPoint(), cur.getPoint());
-					double t = d / speed;
-					accSegDistance += d;
-					accSegTime += t;
-					if (DMath.equals(accSegTime, 1.0)) {
-						accSegTime = 1.0;
-					}
-					times.add(accSegTime);
-					assert DMath.lessThanEquals(accSegTime, 1.0);
-					poss.add(new STPosition(cur, accSegTime));
-				}
-				if (!bEnd.equals(b.s)) {
-					double d = Point.distance(bEnd.getPoint(), b.s.getPoint());
-					double t = d / speed;
-					accSegDistance += d;
-					accSegTime += t;
-					if (DMath.equals(accSegTime, 1.0)) {
-						accSegTime = 1.0;
-					}
-					times.add(accSegTime);
-					assert DMath.lessThanEquals(accSegTime, 1.0);
-					poss.add(new STPosition(b.s, accSegTime));
-				}
-				
-				accDist += accSegDistance;
-				
-			}
-			
-		}
-		
-		totalDistance = accDist;
-	}
+//	private void interpolate() {
+//		
+//		times = new ArrayList<Double>();
+//		
+//		times.add(poss.get(0).getTime());
+//		
+//		double accDist = 0.0;
+//		
+//		for (int i = 0; i < origPoss.size()-1; i++) {
+//			STPosition a = origPoss.get(i);
+//			STPosition b = origPoss.get(i+1);
+//			
+//			double dist = a.s.distanceTo(b.s);
+//			double time = b.t - a.t;
+//			double speed = dist / time;
+//			
+//			if ((a.s.equals(b.s)) ||
+//					((a.s instanceof EdgePosition && b.s instanceof EdgePosition &&
+//							((EdgePosition)a.s).getEdge() == ((EdgePosition)b.s).getEdge() && ((EdgePosition)a.s).getIndex() == ((EdgePosition)b.s).getIndex())) ||
+//					(a.s.nextBoundToward(b.s).equals(b.s) ||
+//							b.s.nextBoundToward(a.s).equals(a.s))) {
+//				
+//				/*
+//				 * there are no bounds between a and b
+//				 * either:
+//				 * 1. a and b are equal
+//				 * 1. both a and b are not bounds and are between the same bounds
+//				 * 2. b is a's next bound
+//				 * 3. a is b's next bound
+//				 */
+//				
+//				times.add(b.t);
+//				poss.add(b);
+//				
+//				accDist = dist;
+//				
+//			} else {
+//				
+//				Position bEnd;
+//				if (!b.s.isBound()) {
+//					bEnd = b.s.nextBoundToward(a.s);
+//				} else {
+//					bEnd = b.s;
+//				}
+//				
+//				Position cur = a.s;
+//				Position prev;
+//				double accSegDistance = 0.0;
+//				double accSegTime = a.t;
+//				while (!cur.equals(bEnd)) {
+//					prev = cur;
+//					cur = cur.nextBoundToward(bEnd);
+//					double d = Point.distance(prev.getPoint(), cur.getPoint());
+//					double t = d / speed;
+//					accSegDistance += d;
+//					accSegTime += t;
+//					if (DMath.equals(accSegTime, 1.0)) {
+//						accSegTime = 1.0;
+//					}
+//					times.add(accSegTime);
+//					assert DMath.lessThanEquals(accSegTime, 1.0);
+//					poss.add(new STPosition(cur, accSegTime));
+//				}
+//				if (!bEnd.equals(b.s)) {
+//					double d = Point.distance(bEnd.getPoint(), b.s.getPoint());
+//					double t = d / speed;
+//					accSegDistance += d;
+//					accSegTime += t;
+//					if (DMath.equals(accSegTime, 1.0)) {
+//						accSegTime = 1.0;
+//					}
+//					times.add(accSegTime);
+//					assert DMath.lessThanEquals(accSegTime, 1.0);
+//					poss.add(new STPosition(b.s, accSegTime));
+//				}
+//				
+//				accDist += accSegDistance;
+//				
+//			}
+//			
+//		}
+//		
+//		totalDistance = accDist;
+//	}
 	
 	private boolean check() {
 		for (int i = 1; i < poss.size(); i++) {
 			STPosition cur = poss.get(i);
 			STPosition prev = poss.get(i-1);
 			assert cur.getTime() > prev.getTime();
-			
-			/*
-			 * if between 2 different vertices, assert 1 unique path from one to the other
-			 */
-			if (cur.getSpace() instanceof Vertex && prev.getSpace() instanceof Vertex && cur.getSpace() != prev.getSpace()) {
-				Vertex p1 = (Vertex)cur.getSpace();
-				Vertex p2 = (Vertex)prev.getSpace();
-				assert Vertex.commonConnectors(p1, p2).size() == 1;
-			}
 		}
 		return true;
 	}

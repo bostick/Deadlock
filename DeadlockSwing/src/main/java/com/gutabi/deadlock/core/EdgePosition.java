@@ -2,10 +2,11 @@ package com.gutabi.deadlock.core;
 
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 
-public class EdgePosition extends Position {
+public class EdgePosition extends GraphPosition {
 	
 	private final Edge e;
 	private final int index;
+	
 	private final double param;
 	
 	private final boolean bound;
@@ -90,17 +91,17 @@ public class EdgePosition extends Position {
 	}
 	
 	public String toString() {
-		return e + ": " + distanceToStartOfEdge;
+		return e + " " + index + " " + param + "(" + distanceToStartOfEdge + "/" + e.getTotalLength() + ")";
 	}
 	
-	public boolean equalsP(Position o) {
+	public boolean equalsP(GraphPosition o) {
 		if (this == o) {
 			return true;
 		} else if (!(o instanceof EdgePosition)) {
 			return false;
 		} else {
 			EdgePosition b = (EdgePosition)o;
-			return (e == b.e) && (index == b.index) && (param == b.param);//use DMath.equals
+			return (e == b.e) && (index == b.index) && DMath.equals(param, b.param);
 		}
 	}
 	
@@ -108,7 +109,7 @@ public class EdgePosition extends Position {
 		return bound;
 	}
 	
-	public Position nextBoundToward(Position goal) {
+	public GraphPosition nextBoundToward(GraphPosition goal) {
 		
 		if (goal instanceof EdgePosition) {
 			EdgePosition ge = (EdgePosition)goal;
@@ -135,7 +136,7 @@ public class EdgePosition extends Position {
 		
 	}
 	
-	public double distanceTo(Position b) {
+	public double distanceTo(GraphPosition b) {
 		if (b instanceof Vertex) {
 			Vertex bb = (Vertex)b;
 			
@@ -207,7 +208,7 @@ public class EdgePosition extends Position {
 	/**
 	 * the specific way to travel
 	 */
-	public Position travel(Vertex dest, double dist) {
+	public GraphPosition travel(Vertex dest, double dist) {
 		if (e.isLoop()) {
 			throw new IllegalArgumentException();
 		}
@@ -247,15 +248,15 @@ public class EdgePosition extends Position {
 		
 	}
 	
-	public static Position travelFromStart(Edge e, double dist) {
+	public static GraphPosition travelFromStart(Edge e, double dist) {
 		return travelForward(e, 0, 0.0, dist);
 	}
 	
-	public static Position travelFromEnd(Edge e, double dist) {
+	public static GraphPosition travelFromEnd(Edge e, double dist) {
 		return travelBackward(e, e.size()-2, 1.0, dist);
 	}
 	
-	private static Position travelForward(Edge e, int index, double param, double dist) throws TravelException {
+	private static GraphPosition travelForward(Edge e, int index, double param, double dist) throws TravelException {
 		
 		double distanceToTravel = dist;
 		
@@ -279,7 +280,7 @@ public class EdgePosition extends Position {
 		}
 	}
 	
-	private static Position travelBackward(Edge e, int index, double param, double dist) throws TravelException {
+	private static GraphPosition travelBackward(Edge e, int index, double param, double dist) throws TravelException {
 		
 		double distanceToTravel = dist;
 		
@@ -304,15 +305,15 @@ public class EdgePosition extends Position {
 		
 	}
 	
-	public static Position nextBoundfromStart(Edge e) {
+	public static GraphPosition nextBoundfromStart(Edge e) {
 		return nextBoundForward(e, 0, 0.0);
 	}
 	
-	public static Position nextBoundfromEnd(Edge e) {
+	public static GraphPosition nextBoundfromEnd(Edge e) {
 		return nextBoundBackward(e, e.size()-2, 1.0);
 	}
 	
-	private static Position nextBoundForward(Edge e, int index, double param) {
+	private static GraphPosition nextBoundForward(Edge e, int index, double param) {
 		if (index == e.size()-2) {
 			return e.getEnd();
 		} else {
@@ -320,7 +321,7 @@ public class EdgePosition extends Position {
 		}
 	}
 	
-	private static Position nextBoundBackward(Edge e, int index, double param) {
+	private static GraphPosition nextBoundBackward(Edge e, int index, double param) {
 		if (DMath.equals(param, 0.0)) {
 			if (index == 0 || (index == 1 && DMath.equals(param, 0.0))) {
 				return e.getStart();

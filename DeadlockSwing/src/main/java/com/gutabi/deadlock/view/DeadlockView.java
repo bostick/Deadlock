@@ -38,7 +38,7 @@ public class DeadlockView {
 	public PreviewPanel previewPanel;
 	
 	public BufferedImage backgroundImage;
-	public Color background = new Color(0, 127, 0);
+	//public Color background = new Color(0, 127, 0);
 	
 	
 	/*
@@ -51,6 +51,8 @@ public class DeadlockView {
 	
 	BufferedImage car;
 	BufferedImage wreck;
+//	BufferedImage grass;
+	BufferedImage tiledGrass;
 	
 	public final Logger logger = Logger.getLogger(DeadlockView.class);
 	
@@ -68,6 +70,17 @@ public class DeadlockView {
 		
 		car = ImageIO.read(new File("media\\car.png"));	
 		wreck = ImageIO.read(new File("media\\wreck.png"));
+		BufferedImage grass = ImageIO.read(new File("media\\grass.png"));
+		
+		tiledGrass = new BufferedImage(2048, 2048, BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g2 = tiledGrass.createGraphics();
+		
+		for (int i = 0; i < 64; i++) {
+			for (int j = 0; j < 64; j++) {
+				g2.drawImage(grass, 32 * i, 32 * j, null);
+			}
+		}
+		
 	}
 	
 	public JFrame createFrame(boolean fullScreen) {
@@ -170,7 +183,7 @@ public class DeadlockView {
 			if (lastPointCopy != null) {
 				g2.fillOval((int)(lastPointCopy.getX()-MODEL.ROAD_WIDTH/2), (int)(lastPointCopy.getY()-MODEL.ROAD_WIDTH/2), (int)MODEL.ROAD_WIDTH, (int)MODEL.ROAD_WIDTH);
 			}
-		} else if (modeCopy == ControlMode.RUNNING) {
+		} else if (modeCopy == ControlMode.RUNNING || modeCopy == ControlMode.PAUSED) {
 			
 			for (Car c : movingCarsCopy) {
 				Point pos = c.getPosition().getPoint();
@@ -236,14 +249,26 @@ public class DeadlockView {
 		g2.scale(getZoom(), getZoom());
 		g2.translate((double)-worldViewLoc.getX(), (double)-worldViewLoc.getY());
 		
+		g2.drawImage(tiledGrass, 0, 0, null);
+		
 		g2.setColor(Color.DARK_GRAY);
 		g2.fillRect(0, 0, MODEL.WORLD_WIDTH, 10);
 		g2.fillRect(0, 10, 10, MODEL.WORLD_HEIGHT-10);
 		g2.fillRect(MODEL.WORLD_WIDTH-10, 10, 10, MODEL.WORLD_HEIGHT-10);
 		g2.fillRect(10, MODEL.WORLD_HEIGHT-10, MODEL.WORLD_WIDTH-20, 10);
 		
-		g2.setColor(background);
-		g2.fillRect(10, 10, MODEL.WORLD_WIDTH-20, MODEL.WORLD_HEIGHT-20);
+		//g2.setColor(background);
+		//g2.fillRect(10, 10, MODEL.WORLD_WIDTH-20, MODEL.WORLD_HEIGHT-20);
+//		for (int i = 0; 10 + 32 * i < MODEL.WORLD_WIDTH-10; i++) {
+//			for (int j = 0; 10 + 32 * j < MODEL.WORLD_HEIGHT-10; j++) {
+////				int width = 32;
+////				int height = 32;
+////				if (10 + 32 * i + 32 >= MODEL.WORLD_WIDTH-10) {
+////					width = 
+////				}
+//				g2.drawImage(grass, 10 + 32 * i, 10 + 32 * j, null);
+//			}
+//		}
 		
 		List<Edge> edgesCopy;
 		List<Intersection> intersectionsCopy;

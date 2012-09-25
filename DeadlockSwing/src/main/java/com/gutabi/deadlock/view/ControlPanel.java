@@ -16,6 +16,7 @@ import javax.swing.JPanel;
 public class ControlPanel extends JPanel {
 	
 	public JButton simulationButton;
+	public JButton pauseButton;
 	
 	public ControlPanel() {
 		setSize(new Dimension(156, 822));
@@ -32,9 +33,14 @@ public class ControlPanel extends JPanel {
 		simulationButton.setActionCommand("start");
 		simulationButton.addActionListener(CONTROLLER);
 		
+		pauseButton = new JButton("Pause");
+		pauseButton.setActionCommand("pause");
+		pauseButton.addActionListener(CONTROLLER);
+		
 		Box buttonBox = Box.createHorizontalBox();
 		buttonBox.add(Box.createHorizontalGlue());
 		buttonBox.add(simulationButton);
+		buttonBox.add(pauseButton);
 		buttonBox.add(Box.createHorizontalGlue());
 		
 		Box previewBox = Box.createHorizontalBox();

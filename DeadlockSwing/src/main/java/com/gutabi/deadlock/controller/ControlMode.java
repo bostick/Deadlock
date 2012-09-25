@@ -8,5 +8,7 @@ public enum ControlMode {
 	
 	ZOOMING,
 	
-	RUNNING
+	RUNNING,
+	
+	PAUSED
 }

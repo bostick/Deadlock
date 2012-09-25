@@ -35,9 +35,9 @@ public class DeadlockModel {
 	 * spawn cars every SPAWN_FREQUENCY time steps
 	 * -1 means no spawning
 	 */
-	public int SPAWN_FREQUENCY = 100;
+	public int SPAWN_FREQUENCY = Integer.MAX_VALUE;
 	
-	public long WAIT = 10;
+	public long WAIT = 100;
 	
 	//public Random RANDOM = new Random();
 	

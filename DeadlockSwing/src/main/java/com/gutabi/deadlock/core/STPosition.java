@@ -6,12 +6,12 @@ package com.gutabi.deadlock.core;
  */
 public class STPosition {
 	
-	Position s;
-	double t;
+	private PathPosition s;
+	private double t;
 	
 	int hash;
 	
-	public STPosition(Position s, double t) {
+	public STPosition(PathPosition s, double t) {
 		this.s = s;
 		this.t = t;
 		
@@ -22,7 +22,7 @@ public class STPosition {
 		hash = s.hashCode();
 	}
 	
-	public Position getSpace() {
+	public PathPosition getSpace() {
 		return s;
 	}
 	

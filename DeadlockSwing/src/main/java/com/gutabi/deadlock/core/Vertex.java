@@ -5,12 +5,12 @@ import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Vertex extends Position implements Driveable {
+public class Vertex extends GraphPosition implements Driveable {
 	
 	private final int hash;
 	
 	protected final List<Edge> eds = new ArrayList<Edge>();
-	protected final List<Hub> hubs = new ArrayList<Hub>();
+//	protected final List<Hub> hubs = new ArrayList<Hub>();
 	
 	protected boolean removed = false;
 	
@@ -37,7 +37,7 @@ public class Vertex extends Position implements Driveable {
 		return true;
 	}
 	
-	public Position nextBoundToward(Position goal) {
+	public GraphPosition nextBoundToward(GraphPosition goal) {
 		
 		if (goal instanceof EdgePosition) {
 			EdgePosition ge = (EdgePosition)goal;
@@ -82,7 +82,7 @@ public class Vertex extends Position implements Driveable {
 		
 	}
 	
-	public boolean equalsP(Position o) {
+	public boolean equalsP(GraphPosition o) {
 		if (this == o) {
 			return true;
 		} else if (!(o instanceof Vertex)) {
@@ -122,8 +122,8 @@ public class Vertex extends Position implements Driveable {
 	/**
 	 * the specific way to travel
 	 */
-	public Position travel(Connector c, Vertex dest, double dist) {
-		if (!(eds.contains(c) || hubs.contains(c))) {
+	public GraphPosition travel(Connector c, Vertex dest, double dist) {
+		if (!(eds.contains(c))) {
 			throw new IllegalArgumentException();
 		}
 		if (DMath.equals(dist, 0.0)) {
@@ -167,7 +167,7 @@ public class Vertex extends Position implements Driveable {
 		
 	}
 	
-	public double distanceTo(Position b) {
+	public double distanceTo(GraphPosition b) {
 		if (b instanceof Vertex) {
 			Vertex bb = (Vertex)b;
 			
@@ -260,19 +260,19 @@ public class Vertex extends Position implements Driveable {
 		return eds;
 	}
 	
-	public void addHub(Hub h) {
-		if (removed) {
-			throw new IllegalStateException("vertex has been removed");
-		}
-		hubs.add(h);
-	}
-	
-	public List<Hub> getHubs() {
-		if (removed) {
-			throw new IllegalStateException();
-		}
-		return hubs;
-	}
+//	public void addHub(Hub h) {
+//		if (removed) {
+//			throw new IllegalStateException("vertex has been removed");
+//		}
+//		hubs.add(h);
+//	}
+//	
+//	public List<Hub> getHubs() {
+//		if (removed) {
+//			throw new IllegalStateException();
+//		}
+//		return hubs;
+//	}
 	
 	public Point getPoint() {
 		return p;
@@ -281,7 +281,7 @@ public class Vertex extends Position implements Driveable {
 	public void remove() {
 		assert !removed;
 		assert eds.size() == 0;
-		assert hubs.size() == 0;
+//		assert hubs.size() == 0;
 		removed = true;
 	}
 	

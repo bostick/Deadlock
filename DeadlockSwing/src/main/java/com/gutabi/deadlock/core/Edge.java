@@ -65,9 +65,9 @@ public final class Edge implements Connector {
 		check();
 	}
 	
-	public String toString() {
-		return "E " + hash + " " + start + " " + end + " n=" + pts.length;
-	}
+//	public String toString() {
+//		return "E " + hash + " " + start + " " + end + " n=" + pts.length;
+//	}
 	
 	public int hashCode() {
 		return hash;

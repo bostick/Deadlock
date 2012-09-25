@@ -2,11 +2,13 @@ package com.gutabi.deadlock.model;
 
 public enum CarState {
 	
-	NEW,
+//	NEW,
 	
-	EDGE,
+//	EDGE,
 	
-	VERTEX,
+//	VERTEX,
+	
+	RUNNING,
 	
 	/**
 	 * crashed

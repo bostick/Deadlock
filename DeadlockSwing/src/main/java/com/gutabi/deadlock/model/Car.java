@@ -2,55 +2,64 @@ package com.gutabi.deadlock.model;
 
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.apache.log4j.Logger;
 
-import com.gutabi.deadlock.core.Connector;
-import com.gutabi.deadlock.core.DMath;
-import com.gutabi.deadlock.core.Direction;
-import com.gutabi.deadlock.core.Edge;
-import com.gutabi.deadlock.core.EdgePosition;
+import com.gutabi.deadlock.core.GraphPosition;
+import com.gutabi.deadlock.core.Path;
+import com.gutabi.deadlock.core.PathPosition;
 import com.gutabi.deadlock.core.STPath;
-import com.gutabi.deadlock.core.Position;
-import com.gutabi.deadlock.core.STPosition;
 import com.gutabi.deadlock.core.Sink;
 import com.gutabi.deadlock.core.Source;
-import com.gutabi.deadlock.core.Vertex;
 
 public class Car {
 	
 	private CarState state;
 	
-	private Position pos;
-	private Position prevPos;
+	//private Position pos;
+	PathPosition pos;
+	
+	private GraphPosition prevPos;
 	
 	public long startingStep;
 	public long crashingStep;
 	public Source source;
 	
 	public STPath nextPath;
+	//public PathPosition nextPos;
 	public CarState nextState;
-	public Edge nextEdge;
-	public Vertex nextDest;
-	public Edge previousEdge;
+//	public Edge nextEdge;
+//	public Vertex nextDest;
+//	public Edge previousEdge;
 	
-	public double nextDistanceToMove;
+	Path overallPath;
+	
+//	public double nextDistanceToMove;
 	
 	public final int id;
 	
-	String s;
-	
 	public static int carCounter;
 	
-	public Car() {
-		state = CarState.NEW;
+	static Logger logger = Logger.getLogger(Car.class);
+	
+	public Car(Source s) {
+		
 		id = carCounter;
 		carCounter++;
-		s = "car " + id;
 		
-		if (id == 8) {
-			String.class.getName();
-		}
+		state = CarState.RUNNING;
+		nextState = null;
+		
+//		state = CarState.VERTEX;
+//		nextState = CarState.VERTEX;
+		
+		source = s;
+//		pos = s;
+//		pathIndex = 0;
+//		pathParam = 0.0;
+		
+		overallPath = s.getPathToClosestSink();
+		
+		pos = new PathPosition(overallPath, 0, 0.0);
 		
 	}
 	
@@ -60,135 +69,44 @@ public class Car {
 	public boolean updateNext() {
 		
 		assert nextPath == null;
+//		assert nextPos == null;
+		assert nextState == null;
 		
-		nextDistanceToMove = MODEL.DISTANCE_PER_TIMESTEP;
-		double time = 0.0;
+//		nextDistanceToMove = MODEL.DISTANCE_PER_TIMESTEP;
 		
-		inner:
-		while (true) {
+		// find pos on overallPath
+		// travel MODEL.DISTANCE_PER_TIMESTEP forward
+		// set nextPath to that new chunk, with time running from 0 to 1
+		// handle being SINKED
+		
+		switch (state) {
+		case RUNNING:
+			nextPath = STPath.advanceOneTimeStep(pos, MODEL.DISTANCE_PER_TIMESTEP);
 			
-			switch (nextState) {
-			case EDGE: {
-				Position pos = getLastNextPosition();
-				Edge e = nextEdge;
-				Vertex dest = nextDest;
-				double distanceLeftOnEdge;
-				if (pos instanceof EdgePosition) {
-					distanceLeftOnEdge = (dest == e.getEnd()) ? ((EdgePosition)pos).distanceToEndOfEdge() : ((EdgePosition)pos).distanceToStartOfEdge();
-				} else {
-					distanceLeftOnEdge = e.getTotalLength();
-				}
-				
-				Position nextPos;
-				double nextDist = Math.min(nextDistanceToMove, distanceLeftOnEdge);
-				if (pos instanceof EdgePosition) {
-					nextPos = ((EdgePosition)pos).travel(nextDest, nextDist);
-					
-					if (nextPos instanceof Sink) {
-						//nextPathAdd(new STPosition(new SinkedPosition((Sink)nextPos), time + (nextDist / MODEL.DISTANCE_PER_TIMESTEP)));
-						nextPathAdd(new STPosition(nextPos, time + (nextDist / MODEL.DISTANCE_PER_TIMESTEP)));
-					} else {
-						nextPathAdd(new STPosition(nextPos, time + (nextDist / MODEL.DISTANCE_PER_TIMESTEP)));
-					}
-					
-				} else {
-					nextPos = ((Vertex)pos).travel(e, nextDest, nextDist);
-					if (nextPos instanceof Vertex) {
-						/*
-						 * only strictly needed to add middle EdgePosition when there is not a unique path from Vertex to Vertex,
-						 * but adding a middle point doesn't hurt
-						 */
-						nextPathAdd(new STPosition(((Vertex)pos).travel(e, nextDest, nextDist / 2), time + (nextDist / MODEL.DISTANCE_PER_TIMESTEP) / 2));
-						
-						if (nextPos instanceof Sink) {
-							//nextPathAdd(new STPosition(new SinkedPosition((Sink)nextPos), time + (nextDist / MODEL.DISTANCE_PER_TIMESTEP)));
-							nextPathAdd(new STPosition(nextPos, time + (nextDist / MODEL.DISTANCE_PER_TIMESTEP)));
-						} else {
-							nextPathAdd(new STPosition(nextPos, time + (nextDist / MODEL.DISTANCE_PER_TIMESTEP)));
-						}
-						
-					} else {
-						double newTime = time + (nextDist / MODEL.DISTANCE_PER_TIMESTEP);
-						if (DMath.equals(newTime, 1.0)) {
-							newTime = 1.0;
-						}
-						nextPathAdd(new STPosition(nextPos, newTime));
-					}
-				}
-				
-				if (DMath.equals(nextDistanceToMove, distanceLeftOnEdge)) {
-					
-					previousEdge = e;
-					nextState = CarState.VERTEX;
-					
-					nextDistanceToMove = 0.0;
-					time = 1.0;
-					
-					if (nextDest instanceof Sink) {
-						nextState = CarState.SINKED;
-					}
-					
-				} else if (nextDistanceToMove > distanceLeftOnEdge) {
-					
-					previousEdge = e;
-					nextState = CarState.VERTEX;
-					
-					nextDistanceToMove -= distanceLeftOnEdge;
-					time += (nextDist / MODEL.DISTANCE_PER_TIMESTEP);
-					
-					if (nextDest instanceof Sink) {
-						nextState = CarState.SINKED;
-					}
-					
-				} else {
-					nextDistanceToMove = 0.0;
-					time = 1.0;
-				}
-				
-				break;
-			}
-			case VERTEX: {
-				Vertex pos = (Vertex)getLastNextPosition();
-				boolean moving = nextChoice(pos);
-				if (!moving) {
-					nextPathAdd(new STPosition(pos, 1.0));
-					time = 1.0;
-				}
-				break;
-			}
-			case CRASHED: {
-				Position pos = getLastNextPosition();
-				nextPathAdd(new STPosition(pos, 1.0));
-				time = 1.0;
-				break;
-			}
-			case SINKED: {
-//				SinkedPosition pos = (SinkedPosition)getLastNextPosition();
-				Vertex pos = (Vertex)getLastNextPosition();
-				nextPathAdd(new STPosition(pos, 1.0));
-				time = 1.0;
-				break;
-			}
-			case NEW:
-				assert false;
-			}
+			logger.debug("last nextPath: " + nextPath.getLastPosition());
 			
-			if (DMath.equals(time, 1.0)) {
-				break inner;
+			if (nextPath.getLastPosition().getSpace().getGraphPosition() instanceof Sink) {
+				nextState = CarState.SINKED;
+			} else {
+				nextState = CarState.RUNNING;
 			}
-			
-		} // end inner loop
+			break;
+		case CRASHED:
+			nextPath = STPath.crashOneTimeStep(pos);
+			nextState = CarState.CRASHED;
+			break;
+		default:
+			assert false;
+		}
 		
-		assert nextPath.getStartTime() == 0.0;
-		assert nextPath.getEndTime() == 1.0;
 		
-		return !(nextState == CarState.CRASHED);
+		return nextState == CarState.RUNNING || nextState == CarState.SINKED;
 	}
 	
-	private boolean nextChoice(Position pos) {
-		//nextChoiceRandom(pos);
-		return nextChoiceToSink(pos);
-	}
+//	private boolean nextChoice(Position pos) {
+//		//nextChoiceRandom(pos);
+//		return nextChoiceToSink(pos);
+//	}
 	
 //	private boolean nextChoiceRandom(Position pos) {
 //		if (pos instanceof VertexPosition) {
@@ -230,109 +148,116 @@ public class Car {
 	/*
 	 * choose best edge to get to the correct sink
 	 */
-	private boolean nextChoiceToSink(Position pos) {
-		if (pos instanceof Vertex) {
-			
-			Direction goal = source.getDirection().opposite();
-			List<Sink> sinks = new ArrayList<Sink>();
-			for (Sink s : MODEL.getSinks()) {
-				if (s.getDirection() == goal) {
-					sinks.add(s);
-				}
-			}
-			
-			Vertex v = (Vertex)pos;
-			
-			Vertex bestChoice = null;
-			
-			double bestDistance = Double.POSITIVE_INFINITY;
-			for (Sink s : MODEL.getSinks()) {
-				Vertex choice = MODEL.shortestPathChoice(v, s);
-				if (choice != null) {
-					double dist = v.distanceTo(choice) + choice.distanceTo(s);
-					if (dist < bestDistance) {
-						bestDistance = dist;
-						bestChoice = choice;
-					}
-				}
-			}
-			
-			if (bestChoice != null) {
-				
-				Edge bestEdge = null;
-				List<Connector> cons = Vertex.commonConnectors(v, bestChoice);
-				for (Connector c : cons) {
-					Edge e = (Edge)c;
-					if (bestEdge == null || e.getTotalLength() < bestEdge.getTotalLength()) {
-						bestEdge = e;
-					}
-				}
-				
-				nextEdge = bestEdge;
-				
-				nextDest = (v == nextEdge.getStart()) ? nextEdge.getEnd() : nextEdge.getStart();
-				
-				nextState = CarState.EDGE;
-				
-			} else {
-				// no way to get to any sink, crash self now
-				nextState = CarState.CRASHED;
-			}
-			
-		} else {
-			assert false;
-		}
-		
-		return nextState != CarState.CRASHED;
-	}
+//	private boolean nextChoiceToSink(Position pos) {
+//		if (pos instanceof Vertex) {
+//			
+//			Direction goal = source.getDirection().opposite();
+//			List<Sink> sinks = new ArrayList<Sink>();
+//			for (Sink s : MODEL.getSinks()) {
+//				if (s.getDirection() == goal) {
+//					sinks.add(s);
+//				}
+//			}
+//			
+//			Vertex v = (Vertex)pos;
+//			
+//			Vertex bestChoice = null;
+//			
+//			double bestDistance = Double.POSITIVE_INFINITY;
+//			for (Sink s : MODEL.getSinks()) {
+//				Vertex choice = MODEL.shortestPathChoice(v, s);
+//				if (choice != null) {
+//					double dist = v.distanceTo(choice) + choice.distanceTo(s);
+//					if (dist < bestDistance) {
+//						bestDistance = dist;
+//						bestChoice = choice;
+//					}
+//				}
+//			}
+//			
+//			if (bestChoice != null) {
+//				
+//				Edge bestEdge = null;
+//				List<Connector> cons = Vertex.commonConnectors(v, bestChoice);
+//				for (Connector c : cons) {
+//					Edge e = (Edge)c;
+//					if (bestEdge == null || e.getTotalLength() < bestEdge.getTotalLength()) {
+//						bestEdge = e;
+//					}
+//				}
+//				
+//				nextEdge = bestEdge;
+//				
+//				nextDest = (v == nextEdge.getStart()) ? nextEdge.getEnd() : nextEdge.getStart();
+//				
+//				nextState = CarState.EDGE;
+//				
+//			} else {
+//				// no way to get to any sink, crash self now
+//				nextState = CarState.CRASHED;
+//			}
+//			
+//		} else {
+//			assert false;
+//		}
+//		
+//		return nextState != CarState.CRASHED;
+//	}
 	
 	
 	public boolean updateCurrentFromNext() {
-		final Position p = getLastNextPosition();
-		setPosition(p);
+		
+//		Position p = overallPath.getPosition(pathIndex, pathParam);
+
+		prevPos = pos.getGraphPosition();
+//		pos = p;
+		
+//		pathIndex =;
+//		pathParam =;
+		pos = nextPath.get(nextPath.size()-1).getSpace();
+		
 		CarState s = nextState;
+		
 		nextPath = null;
-		setState(s);
-		return (s != CarState.SINKED);
+		nextState = null;
+		
+		state = s;
+		return s == CarState.RUNNING || s == CarState.CRASHED;
 	}
 	
-	public Car copy() {
-		Car c = new Car();
-		c.pos = getPosition();
-		return c;
-	}
-	
-	public String toString() {
-		return s;
-	}
+//	public Car copy() {
+//		Car c = new Car();
+//		c.pos = getPosition();
+//		return c;
+//	}
 	
 	public int getId() {
 		return id;
 	}
 	
-	public Position getPosition() {
-		return pos;
+	public GraphPosition getPosition() {
+		return pos.getGraphPosition();
 	}
 	
-	public Position getPreviousPosition() {
+	public GraphPosition getPreviousPosition() {
 		return prevPos;
 	}
 	
-	public void setPosition(Position pos) {
-		this.prevPos = this.pos;
-		this.pos = pos;
-	}
+//	public void setPosition(Position pos) {
+//		this.prevPos = this.pos;
+//		this.pos = pos;
+//	}
 	
-	public void nextPathAdd(STPosition pos) {
-		if (nextPath == null) {
-			List<STPosition> poss = new ArrayList<STPosition>();
-			poss.add(new STPosition(this.pos, 0.0));
-			poss.add(pos);
-			nextPath = new STPath(poss);
-		} else {
-			nextPath = nextPath.append(pos);
-		}
-	}
+//	public void nextPathAdd(STPosition pos) {
+//		if (nextPath == null) {
+//			List<STPosition> poss = new ArrayList<STPosition>();
+//			poss.add(new STPosition(this.pos, 0.0));
+//			poss.add(pos);
+//			nextPath = new STPath(poss);
+//		} else {
+//			nextPath = nextPath.append(pos);
+//		}
+//	}
 	
 	/**
 	 * Remove the rest of the edge after pIndex (and all other edges after eIndex) and replace the last position
@@ -340,9 +265,9 @@ public class Car {
 	 * 
 	 */
 	public void nextPathCrash(double time) {
-		if (state == CarState.CRASHED || state == CarState.SINKED) {
-			throw new IllegalArgumentException();
-		}
+//		if (state == CarState.CRASHED || state == CarState.SINKED) {
+//			throw new IllegalArgumentException();
+//		}
 		
 		nextPath = nextPath.crash(time);
 	}
@@ -355,20 +280,16 @@ public class Car {
 		return nextPath;
 	}
 	
-	private Position getLastNextPosition() {
-		if (nextPath == null) {
-			return pos;
-		} else {
-			return nextPath.getLastPosition().getSpace();
-		}
-	}
+//	private Position getLastNextPosition() {
+//		return nextPath.getLastPosition().getSpace();
+//	}
 	
-	public CarState getState() {
-		return state;
-	}
-	
-	public void setState(CarState s) {
-		this.state = s;
-	}
+//	public CarState getState() {
+//		return state;
+//	}
+//	
+//	public void setState(CarState s) {
+//		this.state = s;
+//	}
 	
 }

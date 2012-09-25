@@ -23,24 +23,24 @@ public class SubPath {
 		startTime = start.getTime();
 		endTime = end.getTime();
 		
-		if (start.getSpace() instanceof Vertex) {
-			if (end.getSpace() instanceof Vertex) {
+		if (start.getSpace().getGraphPosition() instanceof Vertex) {
+			if (end.getSpace().getGraphPosition() instanceof Vertex) {
 				if (start.getSpace().equals(end.getSpace())) {
 					e = null;
 				} else {
-					e = (Edge)Vertex.commonConnector((Vertex)start.getSpace(), (Vertex)end.getSpace());
+					e = (Edge)Vertex.commonConnector((Vertex)start.getSpace().getGraphPosition(), (Vertex)end.getSpace().getGraphPosition());
 				} 
 			} else {
-				e = ((EdgePosition)end.getSpace()).getEdge();
-				assert ((Vertex)start.getSpace()).getEdges().contains(e);
+				e = ((EdgePosition)end.getSpace().getGraphPosition()).getEdge();
+				assert ((Vertex)start.getSpace().getGraphPosition()).getEdges().contains(e);
 			}
-		} else if (start.getSpace() instanceof EdgePosition) {
-			if (end.getSpace() instanceof Vertex) {
-				e = ((EdgePosition)start.getSpace()).getEdge();
-				assert ((Vertex)end.getSpace()).getEdges().contains(e);
-			} else if (end.getSpace() instanceof EdgePosition) {
-				e = ((EdgePosition)start.getSpace()).getEdge();
-				assert ((EdgePosition)end.getSpace()).getEdge() == e;
+		} else if (start.getSpace().getGraphPosition() instanceof EdgePosition) {
+			if (end.getSpace().getGraphPosition() instanceof Vertex) {
+				e = ((EdgePosition)start.getSpace().getGraphPosition()).getEdge();
+				assert ((Vertex)end.getSpace().getGraphPosition()).getEdges().contains(e);
+			} else if (end.getSpace().getGraphPosition() instanceof EdgePosition) {
+				e = ((EdgePosition)start.getSpace().getGraphPosition()).getEdge();
+				assert ((EdgePosition)end.getSpace().getGraphPosition()).getEdge() == e;
 			} else {
 //					e = ((EdgePosition)start.getSpace()).getEdge();
 //					assert ((SinkedPosition)end.getSpace()).getSink().getEdges().contains(e);
@@ -66,15 +66,15 @@ public class SubPath {
 		return endTime;
 	}
 	
-	public Position getStartPosition() {
+	public PathPosition getStartPosition() {
 		return start.getSpace();
 	}
 	
-	public Position getEndPosition() {
+	public PathPosition getEndPosition() {
 		return end.getSpace();
 	}
 	
-	public Position getPosition(double time) {
+	public PathPosition getPosition(double time) {
 		if (time < startTime) {
 			throw new IllegalArgumentException();
 		}
@@ -92,7 +92,7 @@ public class SubPath {
 			} else {
 				double p = (time - start.getTime()) / (end.getTime() - start.getTime());
 				double d = start.getSpace().distanceTo(end.getSpace());
-				return start.getSpace().travel(end.getSpace(), p * d);
+				return start.getSpace().travel(p * d);
 			}
 		}
 	}
