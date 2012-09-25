@@ -133,8 +133,6 @@ public class Path {
 					
 				}
 				
-//				assert DMath.equals(graphParam, pathParam);
-				
 			} else {
 				Vertex pp2 = (Vertex)p2;
 				
@@ -151,13 +149,9 @@ public class Path {
 					
 				}
 				
-//				assert DMath.equals(graphParam, pathParam);
-				
 			}
 			
 			EdgePosition newE = new EdgePosition(((EdgePosition)p1).getEdge(), graphIndex, graphParam);
-			
-//			assert DMath.equals(((EdgePosition)newE).getParam(), pathParam);
 			
 			return newE;
 			
@@ -166,10 +160,6 @@ public class Path {
 			
 			if (p2 instanceof EdgePosition) {
 				EdgePosition pp2 = (EdgePosition)p2;
-				
-//				graphParam = (pp1 == pp2.getEdge().getStart()) ? pathParam : 1-pathParam;
-				
-//				assert DMath.equals(graphParam, pathParam);
 				
 				EdgePosition p2e = (EdgePosition)p2;
 				
@@ -187,8 +177,6 @@ public class Path {
 				}
 				
 				EdgePosition newE = new EdgePosition(p2e.getEdge(), graphIndex, graphParam);
-				
-//				assert DMath.equals(((EdgePosition)newE).getParam(), pathParam);
 				
 				return newE;
 				
@@ -526,12 +514,6 @@ public class Path {
 			
 			assert prev.nextBoundToward(cur).equals(cur);
 			
-			/*
-			 * if between 2 different vertices, assert 1 unique path from one to the other
-			 */
-//			if (cur instanceof Vertex && prev instanceof Vertex && cur != prev) {
-//				assert false;
-//			}
 		}
 		return true;
 	}

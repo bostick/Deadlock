@@ -11,8 +11,6 @@ public class EdgePosition extends GraphPosition {
 	
 	private final boolean bound;
 	
-//	private final Vertex dest;
-	
 	public final Point segStart;
 	public final Point segEnd;
 	
@@ -38,8 +36,6 @@ public class EdgePosition extends GraphPosition {
 		this.index = index;
 		this.param = param;
 		
-//		this.dest = dest;
-		
 		this.bound = DMath.equals(param, 0.0);
 		
 		this.segStart = e.getPoint(index);
@@ -55,10 +51,6 @@ public class EdgePosition extends GraphPosition {
 		long l = Double.doubleToLongBits(param);
 		int c = (int)(l ^ (l >>> 32));
 		h = 37 * h + c;
-//		if (dest != null) {
-//			h = 37 * h + dest.hashCode();
-//		}
-		
 		hash = h;
 	}
 	
@@ -104,10 +96,6 @@ public class EdgePosition extends GraphPosition {
 		return param;
 	}
 	
-//	public Vertex getDest() {
-//		return dest;
-//	}
-	
 	public boolean isBound() {
 		return bound;
 	}
@@ -151,7 +139,7 @@ public class EdgePosition extends GraphPosition {
 			assert DMath.greaterThanEquals(dist, 0.0);
 			
 			return dist;
-		} else if (b instanceof EdgePosition) {
+		} else {
 			EdgePosition aa = (EdgePosition)this;
 			EdgePosition bb = (EdgePosition)b;
 			
@@ -174,18 +162,6 @@ public class EdgePosition extends GraphPosition {
 			assert DMath.greaterThanEquals(dist, 0.0);
 			
 			return dist;
-		} else {
-//			SinkedPosition bb = (SinkedPosition)b;
-//			
-//			double aaStartPath = MODEL.distanceBetweenVertices(e.getStart(), bb.getSink());
-//			double aaEndPath = MODEL.distanceBetweenVertices(e.getEnd(), bb.getSink());
-//			
-//			double dist = Math.min(aaStartPath + distanceToStartOfEdge(), aaEndPath + distanceToEndOfEdge());
-//			
-//			assert DMath.equals(dist, 0.0) || dist > 0.0;
-//			
-//			return dist;
-			throw new AssertionError();
 		}
 	}
 	

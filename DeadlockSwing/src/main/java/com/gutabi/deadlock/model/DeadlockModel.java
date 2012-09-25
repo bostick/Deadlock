@@ -17,17 +17,17 @@ import com.gutabi.deadlock.core.Vertex;
 
 public class DeadlockModel {
 	
-	public final double ROAD_WIDTH = 64.0;
+	public final double ROAD_WIDTH = 32.0;
 	public final double VERTEX_WIDTH = Math.sqrt(2 * ROAD_WIDTH * ROAD_WIDTH);
 	
 	//public final double MOUSE_RADIUS = 16.0;
 	public final double MOUSE_RADIUS = VERTEX_WIDTH;
 	
-	public final double CAR_WIDTH = 64.0;
+	public final double CAR_WIDTH = ROAD_WIDTH;
 	
 	
-	public final int WORLD_WIDTH = 2048;
-	public final int WORLD_HEIGHT = 2048;
+	public final int WORLD_WIDTH = 512;
+	public final int WORLD_HEIGHT = WORLD_WIDTH;
 	
 	public double DISTANCE_PER_TIMESTEP = 10;
 	
@@ -39,8 +39,6 @@ public class DeadlockModel {
 	
 	public long WAIT = 100;
 	
-	//public Random RANDOM = new Random();
-	
 	public static final DeadlockModel MODEL = new DeadlockModel();
 	
 	private ControlMode mode = ControlMode.IDLE;
@@ -51,17 +49,17 @@ public class DeadlockModel {
 	public List<Point> curStrokeRaw = new ArrayList<Point>();
 	public List<List<Point>> allStrokes = new ArrayList<List<Point>>();
 	
-	public final Graph graph;
+	public Graph graph;
 	
 	public List<Car> movingCars = new ArrayList<Car>();
 	public List<Car> crashedCars = new ArrayList<Car>();
 	
 	public DeadlockModel() {
-		graph = new Graph();
+		
 	}
 	
 	public void init() {
-		
+		graph = new Graph();
 	}
 	
 	public void clear() {
@@ -88,10 +86,6 @@ public class DeadlockModel {
 	public void addVertexTop(Point p) {
 		graph.addVertexTop(p);
 	}
-	
-//	public void addHub(Point p) {
-//		graph.addHub(p);
-//	}
 	
 	
 	public boolean checkConsistency() {
@@ -125,10 +119,6 @@ public class DeadlockModel {
 	public List<Sink> getSinks() {
 		return graph.getSinks();
 	}
-	
-//	public List<Hub> getHubs() {
-//		return graph.getHubs();
-//	}
 	
 	public ControlMode getMode() {
 		assert Thread.holdsLock(MODEL);

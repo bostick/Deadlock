@@ -16,7 +16,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.gutabi.deadlock.controller.MassageStrategy;
 import com.gutabi.deadlock.core.Edge;
 import com.gutabi.deadlock.core.Point;
 
@@ -46,7 +45,7 @@ public class TestDragging2 {
 	@Before
 	public void setUp() throws Exception {
 		
-		CONTROLLER.strat = MassageStrategy.NONE;
+		
 		
 	}
 
@@ -66,7 +65,7 @@ public class TestDragging2 {
 	@Test
 	public void testBug1() throws Exception {
 		
-		CONTROLLER.strat = MassageStrategy.CURRENT;
+		
 		
 		testPressed(new Point(49., 3.));
 		testDragged(new Point(793., 406));
@@ -83,7 +82,7 @@ public class TestDragging2 {
 	@Test
 	public void testBug2() throws Exception {
 		
-		CONTROLLER.strat = MassageStrategy.CURRENT;
+		
 		
 		testPressed(new Point(400., 400.));
 		testDragged(new Point(500., 400.));
@@ -99,7 +98,7 @@ public class TestDragging2 {
 	@Test
 	public void testBug3() throws Exception {
 		
-		CONTROLLER.strat = MassageStrategy.CURRENT;
+		
 		
 		testPressed(new Point(400., 400.));
 		testDragged(new Point(500., 400.));
@@ -116,7 +115,7 @@ public class TestDragging2 {
 	@Test
 	public void testBug4() throws Exception {
 		
-		CONTROLLER.strat = MassageStrategy.CURRENT;
+		
 		
 		testPressed(new Point(382., 668.));
 		testDragged(new Point(384., 668.));
@@ -191,7 +190,7 @@ public class TestDragging2 {
 	@Test
 	public void testBug5() throws Exception {
 		
-		CONTROLLER.strat = MassageStrategy.CURRENT;
+		
 
 		testPressed(new Point(748., 690.));
 		testDragged(new Point(748., 689.));
@@ -287,7 +286,7 @@ public class TestDragging2 {
 	@Test
 	public void testBug6() throws Exception {
 		
-		CONTROLLER.strat = MassageStrategy.CURRENT;
+		
 
 		testPressed(new Point(323., 334.));
 		testDragged(new Point(323., 333.));
@@ -342,7 +341,7 @@ public class TestDragging2 {
 	@Test
 	public void testBug7() throws Exception {
 		
-		CONTROLLER.strat = MassageStrategy.CURRENT;
+		
 
 		testPressed(new Point(277., 531.));
 		testDragged(new Point(846., 319.));
@@ -359,7 +358,7 @@ public class TestDragging2 {
 	@Test
 	public void testBug8() throws Exception {
 		
-		CONTROLLER.strat = MassageStrategy.CURRENT;
+		
 
 		testPressed(new Point(277., 531.));
 		testDragged(new Point(377., 531.));
@@ -376,7 +375,7 @@ public class TestDragging2 {
 	@Test
 	public void testBug9() throws Exception {
 		
-		CONTROLLER.strat = MassageStrategy.CURRENT;
+		
 
 		testPressed(new Point(280., 553.));
 		testDragged(new Point(282., 553.));
@@ -458,7 +457,7 @@ public class TestDragging2 {
 	@Test
 	public void testBug10() throws Exception {
 		
-		CONTROLLER.strat = MassageStrategy.CURRENT;
+		
 
 		testPressed(new Point(602., 596.));
 		testDragged(new Point(640., 620.));
@@ -477,7 +476,7 @@ public class TestDragging2 {
 	@Test
 	public void testBug11() throws Exception {
 		
-		CONTROLLER.strat = MassageStrategy.CURRENT;
+		
 
 		testPressed(new Point(642., 457.));
 		testDragged(new Point(700., 432.));
@@ -494,7 +493,7 @@ public class TestDragging2 {
 	@Test
 	public void testBug12() throws Exception {
 		
-		CONTROLLER.strat = MassageStrategy.CURRENT;
+		
 
 		testPressed(new Point(828., 511.));
 		testDragged(new Point(869., 546.));
@@ -513,7 +512,7 @@ public class TestDragging2 {
 	@Test
 	public void testBug13() throws Exception {
 		
-		CONTROLLER.strat = MassageStrategy.CURRENT;
+		
 		
 		testPressed(new Point(643, 293));
 		testDragged(new Point(643, 292));
@@ -528,7 +527,7 @@ public class TestDragging2 {
 	@Test
 	public void testBug14() throws Exception {
 		
-		CONTROLLER.strat = MassageStrategy.CURRENT;
+		
 		
 		testPressed(new Point(532, 627));
 		testDragged(new Point(515, 620));
@@ -548,7 +547,7 @@ public class TestDragging2 {
 	@Test
 	public void testBug15() throws Exception {
 		
-		CONTROLLER.strat = MassageStrategy.CURRENT;
+		
 
 		testPressed(new Point(43, 96));
 		testDragged(new Point(46, 49));
@@ -564,7 +563,7 @@ public class TestDragging2 {
 	@Test
 	public void testBug16() throws Exception {
 		
-		CONTROLLER.strat = MassageStrategy.CURRENT;
+		
 		
 		testPressed(new Point(43, 96));
 		testDragged(new Point(36, 4));
@@ -582,7 +581,7 @@ public class TestDragging2 {
 	@Test
 	public void testBug17() throws Exception {
 		
-		CONTROLLER.strat = MassageStrategy.CURRENT;
+		
 		
 		testPressed(new Point(438., 429.));
 		testDragged(new Point(428., 461.));
@@ -600,7 +599,7 @@ public class TestDragging2 {
 	@Test
 	public void testBug18() throws Exception {
 		
-		CONTROLLER.strat = MassageStrategy.CURRENT;
+		
 		
 		testPressed(new Point(760., 624.));
 		testDragged(new Point(758., 628.));
@@ -666,7 +665,7 @@ public class TestDragging2 {
 	@Test
 	public void testBug19() throws Exception {
 		
-		CONTROLLER.strat = MassageStrategy.CURRENT;
+		
 		
 		testPressed(new Point(495., 556.));
 		testDragged(new Point(489., 503.));
@@ -683,7 +682,7 @@ public class TestDragging2 {
 	@Test
 	public void testBug20() throws Exception {
 		
-		CONTROLLER.strat = MassageStrategy.CURRENT;
+		
 		
 		testPressed(new Point(880., 316.));
 		testDragged(new Point(891., 298.));
@@ -701,7 +700,7 @@ public class TestDragging2 {
 	@Test
 	public void testBug21() throws Exception {
 		
-		CONTROLLER.strat = MassageStrategy.CURRENT;
+		
 
 		testPressed(new Point(1187., 459.));
 		testDragged(new Point(1210., 529.));
@@ -720,7 +719,7 @@ public class TestDragging2 {
 	@Test
 	public void testBug22() throws Exception {
 		
-		CONTROLLER.strat = MassageStrategy.CURRENT;
+		
 		
 		testPressed(new Point(323., 617.));
 		testDragged(new Point(327., 611.));
@@ -772,7 +771,7 @@ public class TestDragging2 {
 	@Test
 	public void testBug23() throws Exception {
 		
-		CONTROLLER.strat = MassageStrategy.CURRENT;
+		
 		
 		testPressed(new Point(330., 385.));
 		testDragged(new Point(406., 373.));
@@ -789,7 +788,7 @@ public class TestDragging2 {
 	@Test
 	public void testBug24() throws Exception {
 		
-		CONTROLLER.strat = MassageStrategy.CURRENT;
+		
 		
 		testPressed(new Point(-352.139, 389.955));
 		testDragged(new Point(-346.433, 389.955));
@@ -876,7 +875,7 @@ public class TestDragging2 {
 	@Test
 	public void testBug25() throws Exception {
 		
-		CONTROLLER.strat = MassageStrategy.CURRENT;
+		
 		
 		testPressed(new Point(-441.285, 762.358));
 		testDragged(new Point(-420.571, 762.358));

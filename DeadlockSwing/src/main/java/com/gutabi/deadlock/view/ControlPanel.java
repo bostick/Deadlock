@@ -15,8 +15,8 @@ import javax.swing.JPanel;
 @SuppressWarnings("serial")
 public class ControlPanel extends JPanel {
 	
-	public JButton simulationButton;
-	public JButton pauseButton;
+	public JButton startButton;
+	public JButton stopButton;
 	
 	public ControlPanel() {
 		setSize(new Dimension(156, 822));
@@ -29,18 +29,19 @@ public class ControlPanel extends JPanel {
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
 		
-		simulationButton = new JButton("Start");
-		simulationButton.setActionCommand("start");
-		simulationButton.addActionListener(CONTROLLER);
+		startButton = new JButton("Start");
+		startButton.setActionCommand("start");
+		startButton.addActionListener(CONTROLLER);
 		
-		pauseButton = new JButton("Pause");
-		pauseButton.setActionCommand("pause");
-		pauseButton.addActionListener(CONTROLLER);
+		stopButton = new JButton("Stop");
+		stopButton.setActionCommand("stop");
+		stopButton.addActionListener(CONTROLLER);
+		stopButton.setEnabled(false);
 		
 		Box buttonBox = Box.createHorizontalBox();
 		buttonBox.add(Box.createHorizontalGlue());
-		buttonBox.add(simulationButton);
-		buttonBox.add(pauseButton);
+		buttonBox.add(startButton);
+		buttonBox.add(stopButton);
 		buttonBox.add(Box.createHorizontalGlue());
 		
 		Box previewBox = Box.createHorizontalBox();

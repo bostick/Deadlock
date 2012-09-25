@@ -33,9 +33,6 @@ public class STPath {
 	
 	private STPath(List<STPosition> poss) {
 		
-//		this.origPoss = origPoss;
-//		this.poss = poss;
-		
 		assert poss.size() >= 2;
 		
 		this.poss = poss;
@@ -46,28 +43,12 @@ public class STPath {
 			times.add(pos.getTime());
 		}
 		
-//		interpolate();
-		
 		int h = 17;
 		h = 37 * h + poss.hashCode();
 		hash = h;
 		
-//		List<Position> regularPoss = new ArrayList<Position>();
-//		for (STPosition stpos : origPoss) {
-//			regularPoss.add(stpos.getSpace());
-//		}
-//		Path regularPath = new Path(regularPoss);
-//		
-//		assert poss.size() == regularPath.poss.size();
-//		for (int i = 0; i < poss.size(); i++) {
-//			assert poss.get(i).s.equals(regularPath.poss.get(i));
-//		}
-		
 		startTime = times.get(0);
 		endTime = times.get(times.size()-1);
-		
-//		assert DMath.greaterThanEquals(startTime, 0.0);
-//		assert DMath.lessThanEquals(endTime, 1.0);
 		
 		assert check();
 	}
@@ -81,10 +62,6 @@ public class STPath {
 	}
 	
 	public static STPath advanceOneTimeStep(PathPosition pos, double dist) {
-		// find pos on overallPath
-				// travel MODEL.DISTANCE_PER_TIMESTEP forward
-				// set nextPath to that new chunk, with time running from 0 to 1
-				// handle being SINKED
 		
 		List<STPosition> poss = new ArrayList<STPosition>();
 		
@@ -149,7 +126,6 @@ public class STPath {
 		STPosition last = poss.get(poss.size()-1);
 		if (DMath.lessThan(poss.get(poss.size()-1).getTime(), 1.0)) {
 			
-//			assert DMath.greaterThan(traveledDist / speed, poss.get(poss.size()-1).getTime());
 			poss.add(new STPosition(last.getSpace(), 1.0));
 			
 		} else {
@@ -379,11 +355,6 @@ public class STPath {
 			STSubPath ap = a.subPath(ta, tb);
 			STSubPath bp = b.subPath(ta, tb);
 			
-//			if ((ap.start.getSpace() instanceof SinkedPosition && ap.end.getSpace() instanceof SinkedPosition) ||
-//					(bp.start.getSpace() instanceof SinkedPosition && bp.end.getSpace() instanceof SinkedPosition)) {
-//				continue;
-//			}
-			
 			if (ap.getStartPosition().getGraphPosition() instanceof Sink || bp.getStartPosition().getGraphPosition() instanceof Sink) {
 				continue;
 			}
@@ -511,28 +482,6 @@ public class STPath {
 								goodT2Low = goodT2;
 							}
 							
-//							if (DMath.equals(goodT21ToStart, goodT22ToStart) || newAB != ABstart) {
-//								/*
-//								 * a and b are still crossed
-//								 */
-//								goodT2High = goodT2;
-//							} else {
-//								
-//								//double crashDistance = crash1.distanceTo(crash2);
-//								double realDistance = Point.distance(goodT21.getPoint(), goodT22.getPoint());
-//								//assert DMath.equals(crashDistance, radius);
-//								
-////								logger.debug("crashTime: " + crashTime + " realDistance: " + realDistance);
-//								
-//								if (DMath.equals(realDistance, 0.0)) {
-//									break;
-//								} else if (realDistance > radius) {
-//									crashTimeLow = crashTime;
-//								} else {
-//									crashTimeHigh = crashTime;
-//								}
-//							}
-							
 						}
 						
 					} else {
@@ -559,9 +508,7 @@ public class STPath {
 							throw new AssertionError();
 						} else {
 							
-							//double crashDistance = crash1.distanceTo(crash2);
 							double realDistance = Point.distance(crash1.getPoint(), crash2.getPoint());
-							//assert DMath.equals(crashDistance, radius);
 							
 //							logger.debug("crashTime: " + crashTime + " realDistance: " + realDistance);
 							
@@ -587,9 +534,7 @@ public class STPath {
 			} else {
 				Position crash1 = ap.getPosition(crashTime);
 				Position crash2 = bp.getPosition(crashTime);
-				//double crashDistance = crash1.distanceTo(crash2);
 				double realDistance = Point.distance(crash1.getPoint(), crash2.getPoint());
-				//assert DMath.equals(crashDistance, radius);
 				assert DMath.equals(realDistance, radius);
 			}
 			
@@ -619,9 +564,7 @@ public class STPath {
 						
 						Position crash1 = ap.getPosition(crashTime);
 						Position crash2 = bp.getPosition(crashTime);
-						//double crashDistance = crash1.distanceTo(crash2);
 						double realDistance = Point.distance(crash1.getPoint(), crash2.getPoint());
-						//assert DMath.equals(crashDistance, radius);
 						
 						if (DMath.equals(realDistance, radius)) {
 							break;
@@ -643,9 +586,7 @@ public class STPath {
 			} else {
 				Position crash1 = ap.getPosition(crashTime);
 				Position crash2 = bp.getPosition(crashTime);
-				//double crashDistance = crash1.distanceTo(crash2);
 				double realDistance = Point.distance(crash1.getPoint(), crash2.getPoint());
-				//assert DMath.equals(crashDistance, radius);
 				assert DMath.equals(realDistance, radius);
 			}
 			
@@ -653,97 +594,6 @@ public class STPath {
 		
 		return crashTime;
 	}
-	
-	
-	
-	
-	/*
-	 * calculate each segment of the path
-	 */
-//	private void interpolate() {
-//		
-//		times = new ArrayList<Double>();
-//		
-//		times.add(poss.get(0).getTime());
-//		
-//		double accDist = 0.0;
-//		
-//		for (int i = 0; i < origPoss.size()-1; i++) {
-//			STPosition a = origPoss.get(i);
-//			STPosition b = origPoss.get(i+1);
-//			
-//			double dist = a.s.distanceTo(b.s);
-//			double time = b.t - a.t;
-//			double speed = dist / time;
-//			
-//			if ((a.s.equals(b.s)) ||
-//					((a.s instanceof EdgePosition && b.s instanceof EdgePosition &&
-//							((EdgePosition)a.s).getEdge() == ((EdgePosition)b.s).getEdge() && ((EdgePosition)a.s).getIndex() == ((EdgePosition)b.s).getIndex())) ||
-//					(a.s.nextBoundToward(b.s).equals(b.s) ||
-//							b.s.nextBoundToward(a.s).equals(a.s))) {
-//				
-//				/*
-//				 * there are no bounds between a and b
-//				 * either:
-//				 * 1. a and b are equal
-//				 * 1. both a and b are not bounds and are between the same bounds
-//				 * 2. b is a's next bound
-//				 * 3. a is b's next bound
-//				 */
-//				
-//				times.add(b.t);
-//				poss.add(b);
-//				
-//				accDist = dist;
-//				
-//			} else {
-//				
-//				Position bEnd;
-//				if (!b.s.isBound()) {
-//					bEnd = b.s.nextBoundToward(a.s);
-//				} else {
-//					bEnd = b.s;
-//				}
-//				
-//				Position cur = a.s;
-//				Position prev;
-//				double accSegDistance = 0.0;
-//				double accSegTime = a.t;
-//				while (!cur.equals(bEnd)) {
-//					prev = cur;
-//					cur = cur.nextBoundToward(bEnd);
-//					double d = Point.distance(prev.getPoint(), cur.getPoint());
-//					double t = d / speed;
-//					accSegDistance += d;
-//					accSegTime += t;
-//					if (DMath.equals(accSegTime, 1.0)) {
-//						accSegTime = 1.0;
-//					}
-//					times.add(accSegTime);
-//					assert DMath.lessThanEquals(accSegTime, 1.0);
-//					poss.add(new STPosition(cur, accSegTime));
-//				}
-//				if (!bEnd.equals(b.s)) {
-//					double d = Point.distance(bEnd.getPoint(), b.s.getPoint());
-//					double t = d / speed;
-//					accSegDistance += d;
-//					accSegTime += t;
-//					if (DMath.equals(accSegTime, 1.0)) {
-//						accSegTime = 1.0;
-//					}
-//					times.add(accSegTime);
-//					assert DMath.lessThanEquals(accSegTime, 1.0);
-//					poss.add(new STPosition(b.s, accSegTime));
-//				}
-//				
-//				accDist += accSegDistance;
-//				
-//			}
-//			
-//		}
-//		
-//		totalDistance = accDist;
-//	}
 	
 	private boolean check() {
 		for (int i = 1; i < poss.size(); i++) {

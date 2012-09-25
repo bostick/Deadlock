@@ -42,13 +42,9 @@ public class STSubPath {
 				e = ((EdgePosition)start.getSpace().getGraphPosition()).getEdge();
 				assert ((EdgePosition)end.getSpace().getGraphPosition()).getEdge() == e;
 			} else {
-//					e = ((EdgePosition)start.getSpace()).getEdge();
-//					assert ((SinkedPosition)end.getSpace()).getSink().getEdges().contains(e);
 				throw new AssertionError();
 			}
 		} else {
-//				assert ((SinkedPosition)start.getSpace()).getSink() == ((SinkedPosition)end.getSpace()).getSink();
-//				e = null;
 			throw new AssertionError();
 		}
 		

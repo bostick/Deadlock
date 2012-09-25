@@ -167,23 +167,6 @@ public class SimulationRunnable implements Runnable {
 			newCars.add(c);
 		}
 		
-//		for (Car c : newCars) {
-//			if (sources.size() == 0) {
-//				continue;
-//			}
-//			//int i = MODEL.RANDOM.nextInt(sources.size());
-//			int i = 0;
-//			
-//			final Source s = sources.get(i);
-//			
-//			c.source = s;
-//			
-//			
-//			sources.remove(s);
-//			
-//			
-//		}
-		
 		movingCarsCopy.addAll(newCars);
 		
 		lastSpawnStep = step;
@@ -211,8 +194,6 @@ public class SimulationRunnable implements Runnable {
 			
 			List<Car> newlyCrashedCars = processCrashInfo(new ArrayList<Car>(){{addAll(movingCarsCopy);addAll(crashedCarsCopy);}});
 			
-//			assert checkTimes(new ArrayList<Car>(){{addAll(movingCarsCopy);addAll(crashedCarsCopy);}});
-			
 			movingCarsCopy.removeAll(newlyCrashedCars);
 			crashedCarsCopy.addAll(newlyCrashedCars);
 			
@@ -229,26 +210,6 @@ public class SimulationRunnable implements Runnable {
 		checkDistances(new ArrayList<Car>(){{addAll(movingCarsCopy);addAll(crashedCarsCopy);}});
 		
 	}
-	
-//	private boolean checkTimes(List<Car> cars) {
-//		for (Car c : cars) {
-//			STPath p = c.nextPath;
-//			assert DMath.equals(p.getStartTime(), lastSyncTime);
-//			assert DMath.equals(p.getEndTime(), 1.0);
-//		}
-//		return true;
-//	}
-	
-//	private boolean checkFutureDistances(Car c, Car d) {
-//		Position cPos = c.getLastNextPosition().getSpace();
-//		if (c == d) {
-//			return true;
-//		}
-//		Position dPos = d.getLastNextPosition().getSpace();
-//		double dist = cPos.distanceTo(dPos);
-//		assert DMath.equals(dist, 10.0) || dist > 10.0;
-//		return true;
-//	}
 	
 	private boolean checkDistances(Car c, Car d) {
 		Position cPos = c.getPosition();

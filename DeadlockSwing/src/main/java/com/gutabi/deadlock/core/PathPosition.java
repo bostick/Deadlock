@@ -23,12 +23,6 @@ public class PathPosition extends Position {
 		
 		gpos = path.getGraphPosition(index, param);
 		
-//		if (gpos instanceof EdgePosition) {
-//			assert DMath.equals(((EdgePosition)gpos).getParam(), param);
-//		} else {
-//			assert DMath.equals(param, 0.0);
-//		}
-		
 		double acc = path.cumulativeDistancesFromStart[index];
 		acc += path.getGraphPosition(0, 0.0).distanceTo(gpos);
 		distanceFromStartOfPath = acc;

@@ -13,11 +13,8 @@ public abstract class GraphPosition extends Position {
 	public GraphPosition travel(GraphPosition p, double distance) {
 		if (p instanceof Vertex) {
 			return travelToV((Vertex)p, distance);
-		} else if (p instanceof EdgePosition) {
-			return travelToE((EdgePosition)p, distance);
 		} else {
-//			return travelToV(((SinkedPosition)p).getSink(), distance);
-			throw new AssertionError();
+			return travelToE((EdgePosition)p, distance);
 		}
 	}
 	
@@ -31,19 +28,14 @@ public abstract class GraphPosition extends Position {
 			
 			return v.travel(c, p, distance);
 			
-		} else if (this instanceof EdgePosition) {
+		} else {
 			
 			EdgePosition ep = (EdgePosition)this;
 			
 			assert ep.getEdge().getStart() == p || ep.getEdge().getEnd() == p;
 			assert !ep.getEdge().isLoop();
-//			assert ep.getDest() == p;
 			
 			return ep.travel(p, distance);
-		} else {
-//			assert this instanceof SinkedPosition;
-//			throw new IllegalStateException();
-			throw new AssertionError();
 		}
 		
 	}
@@ -65,8 +57,6 @@ public abstract class GraphPosition extends Position {
 			
 			assert p.getEdge() == ep.getEdge();
 			
-//			assert ep.getDest() == p.getDest();
-			
 			if (ep.getIndex() < p.getIndex() || (ep.getIndex() == p.getIndex() && DMath.lessThan(ep.getParam(), p.getParam()))) {
 				// ep -> p is same direction as edge
 				return ep.travel(ep.getEdge().getEnd(), distance);
@@ -86,11 +76,8 @@ public abstract class GraphPosition extends Position {
 		} else {
 			if (this instanceof Vertex) {
 				return ((Vertex)this).equalsP((GraphPosition)o);
-			} else if (this instanceof EdgePosition) {
-				return ((EdgePosition)this).equalsP((GraphPosition)o);
 			} else {
-//				return ((SinkedPosition)this).equalsP((Position)o);
-				throw new AssertionError();
+				return ((EdgePosition)this).equalsP((GraphPosition)o);
 			}
 		}
 	}

@@ -4,10 +4,6 @@ import java.util.Comparator;
 
 public abstract class Event {
 	
-//	Event(Point sourceStart, Point sourceEnd, double borderStartParam, double borderEndParam) {
-//		
-//	}
-	
 	public abstract Point getSourceStart();
 	
 	public abstract Point getSourceEnd();
@@ -15,8 +11,6 @@ public abstract class Event {
 	public abstract double getBorderStartParam();
 	
 	public abstract double getBorderEndParam();
-	
-	
 	
 	
 	
@@ -81,15 +75,10 @@ public abstract class Event {
 	
 	public static class CloseEvent extends Event {
 		
-//		private Point sourceStart;
-//		private Point sourceEnd;
-		
 		private double borderStartParam;
 		private double borderEndParam;
 		
 		public CloseEvent(double borderStartParam, double borderEndParam) {
-//			this.sourceStart = sourceStart;
-//			this.sourceEnd = sourceEnd;
 			this.borderStartParam = borderStartParam;
 			this.borderEndParam = borderEndParam;
 		}
@@ -99,12 +88,10 @@ public abstract class Event {
 		}
 		
 		public Point getSourceStart() {
-			//return sourceStart;
 			throw new IllegalStateException();
 		}
 		
 		public Point getSourceEnd() {
-			//return sourceEnd;
 			throw new IllegalStateException();
 		}
 		

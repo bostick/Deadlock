@@ -11,8 +11,6 @@ public class Point {
 	
 	public Point(double x, double y) {
 		
-//		this.x = (double)Math.round(xx * 1.0E11) / 1.0E11;
-//		this.y = (double)Math.round(yy * 1.0E11) / 1.0E11;
 		this.x = x;
 		this.y = y;
 		

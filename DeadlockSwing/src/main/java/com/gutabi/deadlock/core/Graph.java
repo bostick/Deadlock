@@ -24,9 +24,21 @@ public class Graph {
 	private final ArrayList<Source> sources = new ArrayList<Source>();
 	private final ArrayList<Sink> sinks = new ArrayList<Sink>();
 	
-//	private final ArrayList<Hub> hubs = new ArrayList<Hub>();
-	
 	private static final Logger logger = Logger.getLogger(Graph.class);
+	
+	public Graph() {
+		
+		sources.add(new Source(new Point(MODEL.WORLD_WIDTH/3, 0)));
+		sources.add(new Source(new Point(2*MODEL.WORLD_WIDTH/3, 0)));
+		sources.add(new Source(new Point(0, MODEL.WORLD_HEIGHT/3)));
+		sources.add(new Source(new Point(0, 2*MODEL.WORLD_HEIGHT/3)));
+		
+		sinks.add(new Sink(new Point(MODEL.WORLD_WIDTH/3, MODEL.WORLD_HEIGHT)));
+		sinks.add(new Sink(new Point(2*MODEL.WORLD_WIDTH/3, MODEL.WORLD_HEIGHT)));
+		sinks.add(new Sink(new Point(MODEL.WORLD_WIDTH, MODEL.WORLD_HEIGHT/3)));
+		sinks.add(new Sink(new Point(MODEL.WORLD_WIDTH, 2*MODEL.WORLD_HEIGHT/3)));
+		
+	}
 	
 	public List<Edge> getEdges() {
 		return edges;
@@ -47,10 +59,6 @@ public class Graph {
 	public List<Sink> getSinks() {
 		return sinks;
 	}
-	
-//	public List<Hub> getHubs() {
-//		return hubs;
-//	}
 	
 	public void clear() {
 		edges.clear();
@@ -86,7 +94,6 @@ public class Graph {
 		if (cons.size() == 0) {
 			destroyVertex(v);
 		} else if (cons.size() == 2) {
-			//merge(cons.get(0), cons.get(1), v);
 			merge(v);
 		}
 		
@@ -114,36 +121,34 @@ public class Graph {
 	
 	private Vertex createVertex(Point p) {
 		
-		if (p.getY() <= 10 || p.getX() <= 10) {
-			// source
-			
-			Source s = new Source(p);
-			assert !sources.contains(s);
-			sources.add(s);
-			return s;
-			
-		} else if (p.getX() >= MODEL.WORLD_WIDTH-10 || p.getY() >= MODEL.WORLD_HEIGHT-10) {
-			// sink
-			
-			Sink s = new Sink(p);
-			assert !sinks.contains(s);
-			sinks.add(s);
-			return s;
-			
-		} else {
-			
-			Intersection i = new Intersection(p);
-			assert !intersections.contains(i);
-			intersections.add(i);
-			return i;
-			
-		}
+		Intersection i = new Intersection(p);
+		assert !intersections.contains(i);
+		intersections.add(i);
+		return i;
+		
+//		if (p.getY() <= 10 || p.getX() <= 10) {
+//			// source
+//			
+//			Source s = new Source(p);
+//			assert !sources.contains(s);
+//			sources.add(s);
+//			return s;
+//			
+//		} else if (p.getX() >= MODEL.WORLD_WIDTH-10 || p.getY() >= MODEL.WORLD_HEIGHT-10) {
+//			// sink
+//			
+//			Sink s = new Sink(p);
+//			assert !sinks.contains(s);
+//			sinks.add(s);
+//			return s;
+//			
+//		} else {
+//			
+//			
+//			
+//		}
 		
 	}
-	
-//	public void addHub(Point p) {
-//		hubs.add(new Hub(p));
-//	}
 	
 	private void destroyVertex(Vertex v) {
 		
@@ -216,18 +221,6 @@ public class Graph {
 		for (int i = 0; i < distances.length; i++) {
 			distances[i][i] = 0.0;
 		}
-//		for(Hub h : hubs) {
-//			List<Vertex> hvs = h.getVertices();
-//			for (int i = 0; i < hvs.size()-1; i++) {
-//				Vertex vi = hvs.get(i);
-//				for (int j = i+1; j < hvs.size(); j++) {
-//					Vertex vj = hvs.get(j);
-//					double dist = Point.distance(vi.getPoint(), vj.getPoint());
-//					distances[vi.graphID][vj.graphID] = dist;
-//					distances[vj.graphID][vi.graphID] = dist;
-//				}
-//			}
-//		}
 		for (int i = 0; i < neighbors.length; i++) {
 			Arrays.fill(neighbors[i], false);
 		}
@@ -375,12 +368,6 @@ public class Graph {
 				return new EdgePosition(e, i, Point.param(p, c, d));
 			}
 		}
-//		for (Hub h : hubs) {
-//			double dist = Point.distance(p,  h.getPoint());
-//			if (DMath.equals(dist, Hub.RADIUS) || dist < Hub.RADIUS) {
-//				return new HubPosition(h, p);
-//			}
-//		}
 		return null;
 	}
 	
@@ -420,34 +407,6 @@ public class Graph {
 		
 		return closest;
 	}
-	
-//	public HubPosition findClosestHubPosition(Point a, Point anchor, double radius) {
-//		
-//		HubPosition best = null;
-//		
-//		for (Hub h : hubs) {
-//			if (Point.distance(a, h.getPoint()) < Hub.RADIUS && (anchor == null || Point.distance(anchor, h.getPoint()) < Hub.RADIUS)) {
-//				/*
-//				 * inside hub, so ignore until it crosses the threshold
-//				 */
-//				best = null;
-//				break;
-//			}
-//			HubPosition closest = closestHubPosition(a, h);
-//			Point ep = closest.getPoint();
-//			double dist = Point.distance(a, ep);
-//			if (dist < radius && (anchor == null || Point.equals(a, anchor) || dist < Point.distance(anchor, ep))) {
-//				if (best == null) {
-//					best = closest;
-//				} else if (Point.distance(a, ep) < Point.distance(a, best.getPoint())) {
-//					best = closest;
-//				}
-//			}
-//		}
-//		
-//		return best;
-//		
-//	}
 	
 	/**
 	 * returns the closest edge within radius that is not in the excluded radius
@@ -502,8 +461,6 @@ public class Graph {
 //	}
 	
 	public void processNewStroke(List<Point> stroke) {
-		
-//		List<Point> scratch = new ArrayList<Point>(stroke);
 		
 		boolean tooClose = false;
 		Point tooClosePoint = null;
@@ -620,20 +577,6 @@ public class Graph {
 		if (a.equals(b)) {
 			return;
 		}
-		
-//		logger.debug("process segment: " + a + " " + b);
-		
-//		Vertex aV = findClosestVertexPosition(preA, null, 20);
-//		Point a = (aV != null) ? aV.getPoint() : preA;
-//		if (aV == null) {
-//			findClosestEdgePosition()
-//		}
-//		
-//		Vertex bV = findClosestVertexPosition(preB, a, 20);
-//		Point b = (bV != null) ? bV.getPoint() : preB;
-//		if (bV == null) {
-//			findClosestEdgePosition()
-//		}
 		
 		/*
 		 * first, split the segment up into ranges that do not overlap any existing segments
@@ -827,7 +770,6 @@ public class Graph {
 				
 				;
 				
-//			} else if (c.intersectionEvents.size() == 1) {
 			} else {
 				
 				Point aa = a;
@@ -847,50 +789,7 @@ public class Graph {
 					addSegment(aa, bb);
 				}
 			
-				
-//			} else {
-//				
-//				boolean intersectionAtStart = false;
-//				boolean intersectionAtEnd = false;
-//				
-//				for (IntersectionEvent e : c.intersectionEvents) {
-//					if (DMath.equals(e.sourceParam, 0.0)) {
-//						intersectionAtStart = true;
-//					} else if (DMath.equals(e.sourceParam, 1.0)) {
-//						intersectionAtEnd = true;
-//					}
-//				}
-//				
-//				if (intersectionAtStart && intersectionAtEnd &&
-//						((DMath.lessThanEquals(c.closeBorderStartParam, 0.0)) &&
-//								(DMath.greaterThanEquals(c.closeBorderEndParam, 1.0)))) {
-//						
-//						/*
-//						 * ligament problem
-//						 */
-//					
-//				} else {
-//					
-//					Point aa = a;
-//					Point bb;
-//					
-//					for (IntersectionEvent e : c.intersectionEvents) {
-//						
-//						bb = e.getSourceStart();
-//						if (!aa.equals(bb)) {
-//							addSegment(aa, bb);
-//						}
-//						
-//						aa = bb;
-//					}
-//					
-//					bb = b;
-//					if (!aa.equals(bb)) {
-//						addSegment(aa, bb);
-//					}
-//					
-//				}
-//				
+			
 			}
 			
 		} else {
@@ -1079,20 +978,6 @@ public class Graph {
 				return;
 			}
 			
-//			for (Cluster c : clusters) {
-//				for (Event ee : c.events) {
-////					if (e.getSourceStart().equals(ee.getSourceStart()) && e.getSourceEnd().equals(ee.getSourceEnd())) {
-////						return;
-////					}
-//				}
-//				if (c.borderStartParam < e.getBorderStartParam() && c.borderEndParam > e.getBorderEndParam()) {
-//					// cluster already "contains" this event
-//					
-//					//test this
-//					String.class.getName();
-//				}
-//			}
-			
 //			logger.debug(e + " " + e.getSourceStart() + " " + e.getSourceEnd());
 			
 			final List<Cluster> overlapping = new ArrayList<Cluster>();
@@ -1152,11 +1037,6 @@ public class Graph {
 		double closeBorderStartParam = Double.POSITIVE_INFINITY;
 		double closeBorderEndParam = Double.NEGATIVE_INFINITY;
 		
-//		Point startSource;
-//		Point endSource;
-		
-//		List<Event> events = new ArrayList<Event>();
-		
 		List<IntersectionEvent> intersectionEvents = new ArrayList<IntersectionEvent>();
 		List<CloseEvent> closeEvents = new ArrayList<CloseEvent>();
 		
@@ -1170,18 +1050,7 @@ public class Graph {
 			this.a = a;
 			this.b = b;
 			
-//			events.add(e);
 			if (e instanceof IntersectionEvent) {
-				// sort based on param of source
-//				int index = Collections.binarySearch(intersectionEvents, (IntersectionEvent)e, IntersectionEvent.COMPARATOR);
-//				if (index < 0) {
-//					// not found
-//					int insertionPoint = -(index + 1);
-//					intersectionEvents.add(insertionPoint, (IntersectionEvent)e);
-//				} else {
-//					// found
-//					assert false;
-//				}
 				intersectionEvents.add((IntersectionEvent)e);
 			} else if (e instanceof CloseEvent) {
 				closeEvents.add((CloseEvent)e);
@@ -1192,16 +1061,11 @@ public class Graph {
 			}
 			borderStartParam = e.getBorderStartParam();
 			borderEndParam = e.getBorderEndParam();
-//			startSource = e.getSourceStart();
-//			endSource = e.getSourceEnd();
 		}
 		
 		static Cluster merge(final Cluster c1, final Cluster c2) {
 			
 			Cluster acc = new Cluster(c1.a, c1.b);
-			
-//			acc.events.addAll(c1.events);
-//			acc.events.addAll(c2.events);
 			
 			// sort based on param of source
 			List<IntersectionEvent> allIntersectionEvents = new ArrayList<IntersectionEvent>(){{addAll(c1.intersectionEvents);addAll(c2.intersectionEvents);}};
@@ -1236,25 +1100,18 @@ public class Graph {
 			acc.closeBorderStartParam = c1.closeBorderStartParam;
 			acc.closeBorderEndParam = c1.closeBorderEndParam;
 			
-//			acc.startSource = startSource;
-//			acc.endSource = endSource;
-			
 			if (c2.borderStartParam < c1.borderStartParam) {
 				acc.borderStartParam = c2.borderStartParam;
-//				acc.startSource = c.startSource;
 			}
 			if (c2.borderEndParam > c1.borderEndParam) {
 				acc.borderEndParam = c2.borderEndParam;
-//				acc.endSource = c.endSource;
 			}
 			
 			if (c2.closeBorderStartParam < c1.closeBorderStartParam) {
 				acc.closeBorderStartParam = c2.closeBorderStartParam;
-//				acc.startSource = c.startSource;
 			}
 			if (c2.closeBorderEndParam > c1.closeBorderEndParam) {
 				acc.closeBorderEndParam = c2.closeBorderEndParam;
-//				acc.endSource = c.endSource;
 			}
 			
 			return acc;
@@ -1281,10 +1138,6 @@ public class Graph {
 		if (closestV != null) {
 			return closestV;
 		}
-//		HubPosition closestH = findClosestHubPosition(a, anchor, radius);
-//		if (closestH != null) {
-//			return closestH;
-//		}
 		EdgePosition closestEdge = findClosestEdgePosition(a, anchor, radius);
 		if (closestEdge != null) {
 			return closestEdge;
@@ -1340,13 +1193,9 @@ public class Graph {
 		if (pos != null) {
 			if (pos instanceof Vertex) {
 				aV = (Vertex)pos;
-			} else {//if (pos instanceof EdgePosition) {
+			} else {
 				aV = split((EdgePosition)pos);
 			}
-//			else {
-//				assert pos instanceof HubPosition;
-//				aV = addVertexToHub((HubPosition)pos);
-//			}
 		} else {
 			aV = createVertex(a);
 		}
@@ -1356,13 +1205,9 @@ public class Graph {
 		if (pos != null) {
 			if (pos instanceof Vertex) {
 				bV = (Vertex)pos;
-			} else {//if (pos instanceof EdgePosition) {
+			} else {
 				bV = split((EdgePosition)pos);
 			}
-//			else {
-//				assert pos instanceof HubPosition;
-//				bV = addVertexToHub((HubPosition)pos);
-//			}
 		} else {
 			bV = createVertex(b);
 		}
@@ -1388,15 +1233,6 @@ public class Graph {
 				return true;
 			}
 		}
-		
-//		for (Hub h : hubs) {
-//			if (Point.distance(a, h.getPoint()) < 40) {
-//				return true;
-//			}
-//			if (Point.distance(b, h.getPoint()) < 40) {
-//				return true;
-//			}
-//		}
 		
 		return false;
 		
@@ -1582,20 +1418,6 @@ public class Graph {
 		
 		return v;
 	}
-	
-//	private Vertex addVertexToHub(HubPosition pos) {
-//		Hub h = pos.getHub();
-//		Point p = pos.getPoint();
-//		assert DMath.equals(Point.distance(h.getPoint(), p), Hub.RADIUS);
-//		
-//		Vertex v = createIntersection(p);
-//		
-//		h.addVertex(v);
-//		
-//		v.addHub(h);
-//		
-//		return v;
-//	}
 	
 	/**
 	 * merge two edges (possibly the same edge) at the given intersection
@@ -1908,9 +1730,9 @@ public class Graph {
 		}
 		
 		for (Edge e : edges) {
-//			if (e.getTotalLength() <= MODEL.CAR_WIDTH) {
-//				throw new IllegalStateException("too small");
-//			}
+			if (e.getTotalLength() <= MODEL.CAR_WIDTH) {
+				throw new IllegalStateException("too small");
+			}
 			if (e.getStart() == null && e.getEnd() == null) {
 				continue;
 			}

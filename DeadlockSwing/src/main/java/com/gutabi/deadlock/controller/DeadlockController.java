@@ -13,8 +13,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import javax.swing.JButton;
-
 import org.apache.log4j.Logger;
 
 import com.gutabi.deadlock.Main;
@@ -28,8 +26,6 @@ import com.gutabi.deadlock.core.Vertex;
 public class DeadlockController implements ActionListener {
 	
 	public static DeadlockController CONTROLLER = new DeadlockController();
-	
-	public MassageStrategy strat = MassageStrategy.CURRENT;
 	
 	public MouseController mc;
 	public KeyboardController kc;
@@ -175,8 +171,8 @@ public class DeadlockController implements ActionListener {
 			double x = p.getX() - lastPressPreviewPoint.getX();
 			double y = p.getY() - lastPressPreviewPoint.getY();
 			
-			x = x * 2048 / 100;
-			y = y * 2048 / 100;
+			x = x * MODEL.WORLD_WIDTH / 100;
+			y = y * MODEL.WORLD_HEIGHT / 100;
 			
 			VIEW.worldViewLoc = new Point(origWorldViewLoc.getX() + x, origWorldViewLoc.getY() + y);
 			
@@ -394,8 +390,6 @@ public class DeadlockController implements ActionListener {
 			switch (MODEL.getMode()) {
 			case IDLE:
 				
-//				MODEL.addHub(lastPressWorldPoint);
-				
 				VIEW.renderBackground();
 				VIEW.repaint();
 				
@@ -460,6 +454,8 @@ public class DeadlockController implements ActionListener {
 		}
 	}
 	
+	
+	
 	private void draftStart(Point p) {
 		assert Thread.currentThread().getName().equals("controller");
 		
@@ -485,22 +481,7 @@ public class DeadlockController implements ActionListener {
 		assert Thread.currentThread().getName().equals("controller");
 		
 		List<Point> curStroke = null;
-		if (strat != null) {
-			switch (strat) {
-			case NONE:
-				curStroke = MODEL.curStrokeRaw;
-				break;
-			case STRATEGY1:
-				//curStroke = massageStrategy1(MODEL.curStrokeRaw);
-				curStroke = MODEL.curStrokeRaw;
-				break;
-			case CURRENT:
-				curStroke = massageCurrent(MODEL.curStrokeRaw);
-				break;
-			}
-		} else {
-			curStroke = MODEL.curStrokeRaw;
-		}
+		curStroke = massageCurrent(MODEL.curStrokeRaw);
 		if (curStroke.size() >= 2) {
 			MODEL.processNewStroke(curStroke);
 		}
@@ -514,9 +495,11 @@ public class DeadlockController implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("start")) {
-			JButton b = (JButton)e.getSource();
-			b.setText("Stop");
-			b.setActionCommand("stop");
+			
+			VIEW.controlPanel.startButton.setText("Pause");
+			VIEW.controlPanel.startButton.setActionCommand("pause");
+			
+			VIEW.controlPanel.stopButton.setEnabled(true);
 			
 			CONTROLLER.queue(new Runnable(){
 				@Override
@@ -526,9 +509,11 @@ public class DeadlockController implements ActionListener {
 			);
 			
 		} else if (e.getActionCommand().equals("stop")) {
-			JButton b = (JButton)e.getSource();
-			b.setText("Start");
-			b.setActionCommand("start");
+			
+			VIEW.controlPanel.startButton.setText("Start");
+			VIEW.controlPanel.startButton.setActionCommand("start");
+			
+			VIEW.controlPanel.stopButton.setEnabled(false);
 			
 			CONTROLLER.queue(new Runnable(){
 				@Override
@@ -537,9 +522,9 @@ public class DeadlockController implements ActionListener {
 				}}
 			);
 		} else if (e.getActionCommand().equals("pause")) {
-			JButton b = (JButton)e.getSource();
-			b.setText("Unpause");
-			b.setActionCommand("unpause");
+			
+			VIEW.controlPanel.startButton.setText("Unpause");
+			VIEW.controlPanel.startButton.setActionCommand("unpause");
 			
 			CONTROLLER.queue(new Runnable(){
 				@Override
@@ -548,9 +533,9 @@ public class DeadlockController implements ActionListener {
 				}}
 			);
 		} else if (e.getActionCommand().equals("unpause")) {
-			JButton b = (JButton)e.getSource();
-			b.setText("Pause");
-			b.setActionCommand("pause");
+			
+			VIEW.controlPanel.startButton.setText("Pause");
+			VIEW.controlPanel.startButton.setActionCommand("pause");
 			
 			CONTROLLER.queue(new Runnable(){
 				@Override

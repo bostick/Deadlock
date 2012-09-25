@@ -18,7 +18,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.gutabi.deadlock.controller.DeadlockController;
-import com.gutabi.deadlock.controller.MassageStrategy;
 import com.gutabi.deadlock.core.Edge;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.view.DeadlockView;
@@ -48,7 +47,7 @@ public class TestDraggingFuzz {
 	@Before
 	public void setUp() throws Exception {
 		
-		CONTROLLER.strat = MassageStrategy.NONE;
+		
 		
 	}
 

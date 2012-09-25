@@ -8,6 +8,8 @@ import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
 import javax.swing.JPanel;
 
+import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
+
 @SuppressWarnings("serial")
 public class PreviewPanel extends JPanel {
 	
@@ -29,7 +31,9 @@ public class PreviewPanel extends JPanel {
 		g.fillRect(0, 0, 100, 100);
 		
 		g.setColor(Color.BLUE);
-		g.fillRect((int)(VIEW.worldViewLoc.getX() * 100)/2048, (int)(VIEW.worldViewLoc.getY() * 100)/2048, (int)(VIEW.worldViewDim.width * 100)/2048, (int)(VIEW.worldViewDim.height * 100)/2048);
+		g.fillRect((int)(VIEW.worldViewLoc.getX() * 100)/MODEL.WORLD_WIDTH, (int)(VIEW.worldViewLoc.getY() * 100)/MODEL.WORLD_HEIGHT,
+				(int)(VIEW.worldViewDim.width * 100)/MODEL.WORLD_WIDTH,
+				(int)(VIEW.worldViewDim.height * 100)/MODEL.WORLD_HEIGHT);
 	}
 	
 	

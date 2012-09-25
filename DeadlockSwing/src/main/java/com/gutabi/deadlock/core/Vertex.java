@@ -10,7 +10,6 @@ public class Vertex extends GraphPosition implements Driveable {
 	private final int hash;
 	
 	protected final List<Edge> eds = new ArrayList<Edge>();
-//	protected final List<Hub> hubs = new ArrayList<Hub>();
 	
 	protected boolean removed = false;
 	
@@ -48,7 +47,7 @@ public class Vertex extends GraphPosition implements Driveable {
 				return EdgePosition.nextBoundfromStart(ge.getEdge());
 			}
 			
-		} else if (goal instanceof Vertex) {
+		} else {
 			Vertex gv = (Vertex)goal;
 			
 			if (gv == this) {
@@ -63,21 +62,6 @@ public class Vertex extends GraphPosition implements Driveable {
 				return EdgePosition.nextBoundfromStart(e);
 			}
 			
-		} else {
-			throw new AssertionError();
-//			SinkedPosition gs = (SinkedPosition)goal;
-//			
-//			if (gs.getSink() == this) {
-//				throw new IllegalArgumentException();
-//			}
-//			
-//			Edge e = (Edge)Vertex.commonConnector(this, gs.getSink());
-//			
-//			if (this == e.getEnd()) {
-//				return EdgePosition.nextBoundfromEnd(e);
-//			} else {
-//				return EdgePosition.nextBoundfromStart(e);
-//			}
 		}
 		
 	}
@@ -88,29 +72,9 @@ public class Vertex extends GraphPosition implements Driveable {
 		} else if (!(o instanceof Vertex)) {
 			return false;
 		} else {
-			if (o instanceof Vertex) {
-				Vertex b = (Vertex)o;
-				return (p.equals(b.p));
-			} else {
-//				SinkedPosition b = (SinkedPosition)o;
-//				return (this == b.s);
-				throw new AssertionError();
-			}
+			Vertex b = (Vertex)o;
+			return (p.equals(b.p));
 		}
-	}
-	
-	public Vertex copy() {
-		if (removed) {
-			throw new IllegalStateException();
-		}
-		Vertex c = new Vertex(p);
-		/*
-		 * not copying edge right now
-		 * not needed for painting
-		 * besides, this would get into a nasty mutually-recursive problem of copies not referring to the correct objects
-		 */
-		
-		return c;
 	}
 	
 	public String toString() {
@@ -133,36 +97,22 @@ public class Vertex extends GraphPosition implements Driveable {
 			throw new IllegalArgumentException();
 		}
 		
-		if (c instanceof Edge) {
-			Edge e = (Edge)c;
-			
-			double totalEdgeLength = e.getTotalLength();
-			if (DMath.equals(dist, totalEdgeLength)) {
-				return dest;
-			} else if (dist > totalEdgeLength) {
-				throw new TravelException();
-			}
-			
-			if (this == e.getStart()) {
-				assert dest == e.getEnd();
-				return EdgePosition.travelFromStart(e, dist);
-			} else {
-				assert this == e.getEnd();
-				assert dest == e.getStart();
-				return EdgePosition.travelFromEnd(e, dist);
-			}
-			
+		Edge e = (Edge)c;
+		
+		double totalEdgeLength = e.getTotalLength();
+		if (DMath.equals(dist, totalEdgeLength)) {
+			return dest;
+		} else if (dist > totalEdgeLength) {
+			throw new TravelException();
+		}
+		
+		if (this == e.getStart()) {
+			assert dest == e.getEnd();
+			return EdgePosition.travelFromStart(e, dist);
 		} else {
-			assert false;
-			return null;
-//			Hub h = (Hub)c;
-//			
-//			double totalHubLength = Point.distance(p, dest.getPoint());
-//			if (DMath.equals(dist, totalHubLength) || dist > totalHubLength) {
-//				throw new TravelException();
-//			}
-//			
-//			travel;
+			assert this == e.getEnd();
+			assert dest == e.getStart();
+			return EdgePosition.travelFromEnd(e, dist);
 		}
 		
 	}
@@ -176,7 +126,7 @@ public class Vertex extends GraphPosition implements Driveable {
 			assert DMath.greaterThanEquals(dist, 0.0);
 			
 			return dist;
-		} else if (b instanceof EdgePosition) {
+		} else {
 			EdgePosition bb = (EdgePosition)b;
 			
 			double bbStartPath = MODEL.distanceBetweenVertices(this, bb.getEdge().getStart());
@@ -187,14 +137,6 @@ public class Vertex extends GraphPosition implements Driveable {
 			assert DMath.greaterThanEquals(dist, 0.0);
 			
 			return dist;
-		} else {
-			throw new AssertionError();
-//			SinkedPosition bb = (SinkedPosition)b;
-//			double dist = MODEL.distanceBetweenVertices(this, bb.getSink());
-//			
-//			assert DMath.equals(dist, 0.0) || dist > 0.0;
-//			
-//			return dist;
 		}
 	}
 	
@@ -214,13 +156,6 @@ public class Vertex extends GraphPosition implements Driveable {
 				}
 			}
 		}
-//		for (Hub h1 : a.hubs) {
-//			for (Hub h2 : b.hubs) {
-//				if (h1 == h2) {
-//					common.add(h1);
-//				}
-//			}
-//		}
 		
 		return common;
 	}
@@ -260,20 +195,6 @@ public class Vertex extends GraphPosition implements Driveable {
 		return eds;
 	}
 	
-//	public void addHub(Hub h) {
-//		if (removed) {
-//			throw new IllegalStateException("vertex has been removed");
-//		}
-//		hubs.add(h);
-//	}
-//	
-//	public List<Hub> getHubs() {
-//		if (removed) {
-//			throw new IllegalStateException();
-//		}
-//		return hubs;
-//	}
-	
 	public Point getPoint() {
 		return p;
 	}
@@ -281,7 +202,6 @@ public class Vertex extends GraphPosition implements Driveable {
 	public void remove() {
 		assert !removed;
 		assert eds.size() == 0;
-//		assert hubs.size() == 0;
 		removed = true;
 	}
 	

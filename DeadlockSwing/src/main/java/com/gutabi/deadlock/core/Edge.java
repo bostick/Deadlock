@@ -15,11 +15,6 @@ public final class Edge implements Connector {
 	private final boolean standalone;
 	private final boolean loop;
 	
-	// the index for the last segment that is within the radius of the start vertex
-//	private int startIndex;
-	// the index for the first segment that is within the radius of the last vertex
-//	private int endIndex;
-	
 	private boolean removed = false;
 	
 	private final int hash;

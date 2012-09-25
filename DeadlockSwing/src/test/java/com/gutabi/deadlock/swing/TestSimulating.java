@@ -178,7 +178,7 @@ public class TestSimulating {
 //				CONTROLLER.startRunning();
 //			}}
 //		);
-		VIEW.controlPanel.simulationButton.doClick();
+		VIEW.controlPanel.startButton.doClick();
 		
 		Thread.sleep(Long.MAX_VALUE);
 		
@@ -3960,9 +3960,9 @@ public class TestSimulating {
 //		);
 		
 		while (true) {
-			VIEW.controlPanel.simulationButton.doClick();
+			VIEW.controlPanel.startButton.doClick();
 			Thread.sleep(600000);
-			VIEW.controlPanel.simulationButton.doClick();
+			VIEW.controlPanel.startButton.doClick();
 			Thread.sleep(10000);
 		}
 		
