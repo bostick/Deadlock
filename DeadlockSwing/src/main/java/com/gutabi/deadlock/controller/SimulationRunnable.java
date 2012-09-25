@@ -115,7 +115,7 @@ public class SimulationRunnable implements Runnable {
 		
 		List<Source> sources = new ArrayList<Source>();
 		for (Source s : sourcesCopy) {
-			if (s.getEdges().size() >= 1) {
+			if (s.getPathToMatchingSink() != null) {
 				sources.add(s);
 			}
 		}

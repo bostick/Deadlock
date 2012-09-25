@@ -20,6 +20,7 @@ import com.gutabi.deadlock.core.Edge;
 import com.gutabi.deadlock.core.EdgePosition;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.Position;
+import com.gutabi.deadlock.core.Sink;
 import com.gutabi.deadlock.core.Source;
 import com.gutabi.deadlock.core.Vertex;
 
@@ -285,6 +286,12 @@ public class DeadlockController implements ActionListener {
 					if (MODEL.hilited instanceof Vertex) {
 						Vertex v = (Vertex)MODEL.hilited;
 						
+						if (v instanceof Sink) {
+							return;
+						} else if (v instanceof Source) {
+							return;
+						}
+						
 						p = v.getPoint();
 						
 						MODEL.removeVertex(v);
@@ -303,7 +310,7 @@ public class DeadlockController implements ActionListener {
 						
 					}
 					
-					Position closest = MODEL.findClosestPosition(p);
+					Position closest = MODEL.findClosestDeleteablePosition(p);
 					if (closest != null) {
 						
 						if (closest instanceof Vertex) {

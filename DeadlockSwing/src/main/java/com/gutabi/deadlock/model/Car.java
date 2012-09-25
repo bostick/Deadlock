@@ -4,6 +4,8 @@ import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 
 import org.apache.log4j.Logger;
 
+import com.gutabi.deadlock.core.Edge;
+import com.gutabi.deadlock.core.EdgePosition;
 import com.gutabi.deadlock.core.GraphPosition;
 import com.gutabi.deadlock.core.Path;
 import com.gutabi.deadlock.core.PathPosition;
@@ -44,7 +46,7 @@ public class Car {
 		
 		source = s;
 		
-		overallPath = s.getPathToClosestSink();
+		overallPath = s.getPathToMatchingSink();
 		
 		pos = new PathPosition(overallPath, 0, 0.0);
 		
@@ -87,6 +89,11 @@ public class Car {
 		prevPos = pos.getGraphPosition();
 		
 		pos = nextPath.get(nextPath.size()-1).getSpace();
+		
+		if (pos.getGraphPosition() instanceof EdgePosition) {
+			Edge e = ((EdgePosition)pos.getGraphPosition()).getEdge();
+			assert !e.isRemoved();
+		}
 		
 		CarState s = nextState;
 		

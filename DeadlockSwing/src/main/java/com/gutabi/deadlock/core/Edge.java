@@ -228,15 +228,15 @@ public final class Edge implements Connector {
 				assert count == 1;
 			}
 			
-			if (i < pts.length-1) {
-				Point q = pts[i+1];
-				if (Math.abs(p.getX() - q.getX()) < 1.0E-3) {
-					assert DMath.equals(p.getX(), q.getX());
-				}
-				if (Math.abs(p.getY() - q.getY()) < 1.0E-3) {
-					assert DMath.equals(p.getY(), q.getY());
-				}
-			}
+//			if (i < pts.length-1) {
+//				Point q = pts[i+1];
+//				if (Math.abs(p.getX() - q.getX()) < 1.0E-3) {
+//					assert DMath.equals(p.getX(), q.getX());
+//				}
+//				if (Math.abs(p.getY() - q.getY()) < 1.0E-3) {
+//					assert DMath.equals(p.getY(), q.getY());
+//				}
+//			}
 			
 			if (i == 0) {
 				if (loop) {

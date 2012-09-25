@@ -13,7 +13,7 @@ public class Path {
 	private GraphPosition start;
 	private GraphPosition end;
 	
-	List<GraphPosition> origPoss;
+	List<? extends GraphPosition> origPoss;
 	List<GraphPosition> poss = new ArrayList<GraphPosition>();
 	
 	final double[] cumulativeDistancesFromStart;
@@ -21,7 +21,7 @@ public class Path {
 	
 	int hash;
 	
-	private Path(List<GraphPosition> origPoss) {
+	private Path(List<? extends GraphPosition> origPoss) {
 		
 		this.origPoss = origPoss;
 		
@@ -61,7 +61,16 @@ public class Path {
 		assert check();
 	}
 	
-	public static Path createPathFromSkeleton(List<GraphPosition> origPoss) {
+	public static Path createPathFromSkeleton(List<Vertex> origPoss) {
+		
+		for (int i = 0; i < origPoss.size()-1; i++) {
+			Vertex a = origPoss.get(i);
+			Vertex b = origPoss.get(i+1);
+			if (MODEL.distanceBetweenVertices(a, b) == Double.POSITIVE_INFINITY) {
+				return null;
+			}
+		}
+		
 		return new Path(origPoss);
 	}
 	

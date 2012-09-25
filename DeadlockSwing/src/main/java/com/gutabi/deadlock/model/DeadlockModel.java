@@ -29,15 +29,15 @@ public class DeadlockModel {
 	public final int WORLD_WIDTH = 512;
 	public final int WORLD_HEIGHT = WORLD_WIDTH;
 	
-	public double DISTANCE_PER_TIMESTEP = 10;
+	public double DISTANCE_PER_TIMESTEP = 3;
 	
 	/*
 	 * spawn cars every SPAWN_FREQUENCY time steps
 	 * -1 means no spawning
 	 */
-	public int SPAWN_FREQUENCY = Integer.MAX_VALUE;
+	public int SPAWN_FREQUENCY = 50;
 	
-	public long WAIT = 100;
+	public long WAIT = 16;
 	
 	public static final DeadlockModel MODEL = new DeadlockModel();
 	
@@ -102,6 +102,10 @@ public class DeadlockModel {
 	
 	public Position findClosestPosition(Point p) {
 		return graph.findClosestPosition(p);
+	}
+	
+	public Position findClosestDeleteablePosition(Point p) {
+		return graph.findClosestDeleteablePosition(p);
 	}
 	
 	public List<Intersection> getIntersections() {

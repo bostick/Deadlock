@@ -28,15 +28,37 @@ public class Graph {
 	
 	public Graph() {
 		
-		sources.add(new Source(new Point(MODEL.WORLD_WIDTH/3, 0)));
-		sources.add(new Source(new Point(2*MODEL.WORLD_WIDTH/3, 0)));
-		sources.add(new Source(new Point(0, MODEL.WORLD_HEIGHT/3)));
-		sources.add(new Source(new Point(0, 2*MODEL.WORLD_HEIGHT/3)));
+		Source a = new Source(new Point(MODEL.WORLD_WIDTH/3, 0));
+		Source b = new Source(new Point(2*MODEL.WORLD_WIDTH/3, 0));
+		Source c = new Source(new Point(0, MODEL.WORLD_HEIGHT/3));
+		Source d = new Source(new Point(0, 2*MODEL.WORLD_HEIGHT/3));
 		
-		sinks.add(new Sink(new Point(MODEL.WORLD_WIDTH/3, MODEL.WORLD_HEIGHT)));
-		sinks.add(new Sink(new Point(2*MODEL.WORLD_WIDTH/3, MODEL.WORLD_HEIGHT)));
-		sinks.add(new Sink(new Point(MODEL.WORLD_WIDTH, MODEL.WORLD_HEIGHT/3)));
-		sinks.add(new Sink(new Point(MODEL.WORLD_WIDTH, 2*MODEL.WORLD_HEIGHT/3)));
+		Sink e = new Sink(new Point(MODEL.WORLD_WIDTH/3, MODEL.WORLD_HEIGHT));
+		Sink f = new Sink(new Point(2*MODEL.WORLD_WIDTH/3, MODEL.WORLD_HEIGHT));
+		Sink g = new Sink(new Point(MODEL.WORLD_WIDTH, MODEL.WORLD_HEIGHT/3));
+		Sink h = new Sink(new Point(MODEL.WORLD_WIDTH, 2*MODEL.WORLD_HEIGHT/3));
+		
+		a.matchingSink = e;
+		e.matchingSource = a;
+		
+		b.matchingSink = f;
+		f.matchingSource = b;
+		
+		c.matchingSink = g;
+		g.matchingSource = c;
+		
+		d.matchingSink = h;
+		h.matchingSource = d;
+		
+		sources.add(a);
+		sources.add(b);
+		sources.add(c);
+		sources.add(d);
+		
+		sinks.add(e);
+		sinks.add(f);
+		sinks.add(g);
+		sinks.add(h);
 		
 	}
 	
@@ -85,21 +107,19 @@ public class Graph {
 	
 	private void edgesChanged(Vertex v) {
 		
-		List<Edge> cons = v.getEdges();
-		
-		for (Edge e : cons) {
-			assert edges.contains(e);
-		}
-		
-		if (cons.size() == 0) {
-			destroyVertex(v);
-		} else if (cons.size() == 2) {
-			merge(v);
-		}
-		
 		if (v instanceof Intersection) {
 			
+			List<Edge> cons = v.getEdges();
 			
+			for (Edge e : cons) {
+				assert edges.contains(e);
+			}
+			
+			if (cons.size() == 0) {
+				destroyVertex(v);
+			} else if (cons.size() == 2) {
+				merge(v);
+			}
 			
 		} else if (v instanceof Source) {
 			
@@ -375,13 +395,13 @@ public class Graph {
 	 * returns the closest vertex within radius that is not the excluded point
 	 * 
 	 */
-	public Vertex findClosestVertexPosition(Point a, Point anchor, double radius) {
+	public Vertex findClosestVertexPosition(Point a, Point anchor, double radius, boolean onlyDeleteables) {
 		Vertex anchorV = null;
 		if (anchor != null) {
 			Position pos = hitTest(anchor);
 			if (pos instanceof Vertex) {
 				anchorV = (Vertex) pos;
-				if (a.equals(anchor)) {
+				if (a.equals(anchor) && (!onlyDeleteables || anchorV instanceof Intersection)) {
 					/*
 					 * a equals anchor, so starting this segment
 					 * if exactly on a vertex, then use that one
@@ -399,7 +419,9 @@ public class Graph {
 			if (DMath.lessThanEquals(dist, radius)) {
 				if (anchorV == null || dist < Point.distance(ip, anchor)) {
 					if (closest == null || (Point.distance(a, ip) < Point.distance(a, closest.getPoint()))) {
-						closest = i;
+						if (!onlyDeleteables || i instanceof Intersection) {
+							closest = i;
+						}
 					}
 				}
 			}	
@@ -480,7 +502,7 @@ public class Graph {
 			
 			if (!tooClose) {
 				
-				Position aP = findClosestPosition(preA, null, MODEL.ROAD_WIDTH);
+				Position aP = findClosestPosition(preA, null, MODEL.ROAD_WIDTH, false);
 				
 				if (aP != null) {
 					
@@ -513,7 +535,7 @@ public class Graph {
 				 * just changed from findClosestPosition(preB, null, MODEL.ROAD_WIDTH); because
 				 * this was changing B for regular extending
 				 */
-				Position bP = findClosestPosition(preB, a, MODEL.ROAD_WIDTH);
+				Position bP = findClosestPosition(preB, a, MODEL.ROAD_WIDTH, false);
 				
 				if (bP != null) {
 					tooClose = true;
@@ -527,7 +549,7 @@ public class Graph {
 				
 			} else {
 				
-				Position bP = findClosestPosition(preB, a, MODEL.ROAD_WIDTH);
+				Position bP = findClosestPosition(preB, a, MODEL.ROAD_WIDTH, false);
 				
 				if (bP != null) {
 					
@@ -1126,15 +1148,19 @@ public class Graph {
 	
 	
 	public Position findClosestPosition(Point a) {
-		return findClosestPosition(a, null, Double.POSITIVE_INFINITY);
+		return findClosestPosition(a, null, Double.POSITIVE_INFINITY, false);
+	}
+	
+	public Position findClosestDeleteablePosition(Point a) {
+		return findClosestPosition(a, null, Double.POSITIVE_INFINITY, true);
 	}
 	
 	public Position findClosestPosition(Point a, double radius) {
-		return findClosestPosition(a, null, radius);
+		return findClosestPosition(a, null, radius, false);
 	}
 	
-	public Position findClosestPosition(Point a, Point anchor, double radius) {
-		Vertex closestV = findClosestVertexPosition(a, anchor, radius);
+	public Position findClosestPosition(Point a, Point anchor, double radius, boolean onlyDeleteables) {
+		Vertex closestV = findClosestVertexPosition(a, anchor, radius, onlyDeleteables);
 		if (closestV != null) {
 			return closestV;
 		}

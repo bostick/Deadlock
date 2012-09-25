@@ -131,6 +131,12 @@ public class EdgePosition extends GraphPosition {
 		if (b instanceof Vertex) {
 			Vertex bb = (Vertex)b;
 			
+			if (b == e.getStart()) {
+				return distanceToStartOfEdge();
+			} else if (b == e.getEnd()) {
+				return distanceToEndOfEdge();
+			}
+			
 			double aaStartPath = MODEL.distanceBetweenVertices(e.getStart(), bb);
 			double aaEndPath = MODEL.distanceBetweenVertices(e.getEnd(), bb);
 			

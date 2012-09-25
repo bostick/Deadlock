@@ -404,7 +404,7 @@ public class STPath {
 		assert DMath.equals(ap.getEndTime(), bp.getEndTime());
 		
 		double realDistanceStart = Point.distance(ap.getStartPosition().getPoint(), bp.getStartPosition().getPoint());
-		assert DMath.greaterThan(realDistanceStart, radius);
+		assert DMath.greaterThanEquals(realDistanceStart, radius);
 		
 		double crashTime = solve(ap, bp, radius);
 		
