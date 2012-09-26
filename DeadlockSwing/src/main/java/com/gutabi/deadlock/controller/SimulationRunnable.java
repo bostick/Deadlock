@@ -21,6 +21,8 @@ import com.gutabi.deadlock.core.Vertex;
 import com.gutabi.deadlock.model.Car;
 import com.gutabi.deadlock.model.CarState;
 import com.gutabi.deadlock.model.CrashInfo;
+import com.gutabi.deadlock.model.FastCar;
+import com.gutabi.deadlock.model.NormalCar;
 
 @SuppressWarnings("serial")
 public class SimulationRunnable implements Runnable {
@@ -160,7 +162,13 @@ public class SimulationRunnable implements Runnable {
 		
 		for (int i = 0; i < n; i++) {
 			
-			Car c = new Car(sources.get(i));
+			Car c;
+			int choice = MODEL.RANDOM.nextInt(2);
+			if (choice == 0) {
+				c = new NormalCar(sources.get(i));
+			} else {
+				c = new FastCar(sources.get(i));
+			}
 			
 			c.startingStep = step;
 			
@@ -174,11 +182,11 @@ public class SimulationRunnable implements Runnable {
 	}
 	
 	
-	double lastSyncTime;
+//	double lastSyncTime;
 	
 	private void movingFixPoint() {
 		
-		lastSyncTime = 0.0;
+//		lastSyncTime = 0.0;
 		
 		for (Car c : movingCarsCopy) {
 			c.updateNext();
@@ -346,16 +354,16 @@ public class SimulationRunnable implements Runnable {
 		/*
 		 * synchronize other cars to crashTime
 		 */
-		for (Car c : allCars) {
-			if (newlyCrashedCars.contains(c)) {
-				// already synchronized
-				continue;
-			}
-			
-			c.nextPathSynchronize(firstUnprocessedCrashTime);
-		}
-		
-		lastSyncTime = firstUnprocessedCrashTime;
+//		for (Car c : allCars) {
+//			if (newlyCrashedCars.contains(c)) {
+//				// already synchronized
+//				continue;
+//			}
+//			
+//			c.nextPathSynchronize(firstUnprocessedCrashTime);
+//		}
+//		
+//		lastSyncTime = firstUnprocessedCrashTime;
 		
 		firstUnprocessedCrashTime = -1;
 		unprocessedCrashes.clear();

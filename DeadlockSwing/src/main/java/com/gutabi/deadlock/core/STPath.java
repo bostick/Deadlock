@@ -263,61 +263,75 @@ public class STPath {
 		return times;
 	}
 	
-	/**
-	 * Adds pos to path and removed all positions after it
-	 */
 	public STPath crash(double time) {
 		
 		assert (DMath.lessThanEquals(startTime, time) && DMath.lessThanEquals(time, endTime));
 		
-		List<STPosition> newPath = new ArrayList<STPosition>();
-		
 		PathPosition crashPos = this.getPosition(time);
-		newPath.add(new STPosition(crashPos, time));
-		newPath.add(new STPosition(crashPos, endTime));
-		
-		return new STPath(newPath);
-	}
-	
-	/**
-	 * Adds pos to path and removed all positions after it
-	 */
-	public STPath synchronize(double time) {
-		
-		assert (DMath.lessThanEquals(startTime, time) && DMath.lessThanEquals(time, endTime));
 		
 		List<STPosition> newPath = new ArrayList<STPosition>();
 		STPosition last = null;
 		for (int i = 0; i < poss.size(); i++) {
 			STPosition pos = poss.get(i);
 			if (DMath.equals(pos.getTime(), time)) {
-				newPath.add(pos);
+				assert pos.getSpace().equals(crashPos);
+				if (!DMath.equals(time, endTime)) {
+					newPath.add(new STPosition(crashPos, time));
+				}
+				newPath.add(new STPosition(crashPos, endTime));
+				break;
 			} else if (pos.getTime() < time) {
-				;
-			} else if (last.getTime() < time && time < pos.getTime()) {
-				PathPosition synchPos = this.getPosition(time);
-				newPath.add(new STPosition(synchPos, time));
 				newPath.add(pos);
+			} else if (last.getTime() < time && time < pos.getTime()) {
+				newPath.add(new STPosition(crashPos, time));
+				newPath.add(new STPosition(crashPos, endTime));
+				break;
 			} else {
 				assert time < pos.getTime();
-				newPath.add(pos);
+				assert false;
 			}
 			last = pos;
 		}
 		
-		assert newPath.size() >= 2;
-		assert newPath.get(0).getTime() == time;
-		assert newPath.get(newPath.size()-1).getTime() == poss.get(poss.size()-1).getTime();
-		
 		return new STPath(newPath);
 	}
 	
-	public STPath append(STPosition q) {
-		List<STPosition> newPoss = new ArrayList<STPosition>(poss);
-		newPoss.add(q);
-		return new STPath(newPoss);
-	}
+//	public STPath synchronizeX(double time) {
+//		
+//		assert (DMath.lessThanEquals(startTime, time) && DMath.lessThanEquals(time, endTime));
+//		
+//		List<STPosition> newPath = new ArrayList<STPosition>();
+//		STPosition last = null;
+//		for (int i = 0; i < poss.size(); i++) {
+//			STPosition pos = poss.get(i);
+//			if (DMath.equals(pos.getTime(), time)) {
+//				newPath.add(pos);
+//			} else if (pos.getTime() < time) {
+//				;
+//			} else if (last.getTime() < time && time < pos.getTime()) {
+//				PathPosition synchPos = this.getPosition(time);
+//				newPath.add(new STPosition(synchPos, time));
+//				newPath.add(pos);
+//			} else {
+//				assert time < pos.getTime();
+//				newPath.add(pos);
+//			}
+//			last = pos;
+//		}
+//		
+//		assert newPath.size() >= 2;
+//		assert newPath.get(0).getTime() == time;
+//		assert newPath.get(newPath.size()-1).getTime() == poss.get(poss.size()-1).getTime();
+//		
+//		return new STPath(newPath);
+//	}
 	
+//	public STPath append(STPosition q) {
+//		List<STPosition> newPoss = new ArrayList<STPosition>(poss);
+//		newPoss.add(q);
+//		return new STPath(newPoss);
+//	}
+//	
 	public STPosition getLastPosition() {
 		return poss.get(poss.size()-1);
 	}

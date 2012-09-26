@@ -2,6 +2,7 @@ package com.gutabi.deadlock.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import com.gutabi.deadlock.controller.ControlMode;
 import com.gutabi.deadlock.core.Driveable;
@@ -33,7 +34,9 @@ public class DeadlockModel {
 	 * spawn cars every SPAWN_FREQUENCY time steps
 	 * -1 means no spawning
 	 */
-	public int SPAWN_FREQUENCY = 100;
+	public int SPAWN_FREQUENCY = 300;
+	
+	public Random RANDOM = new Random(1);
 	
 	public long WAIT = 17;
 	

@@ -22,6 +22,7 @@ import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.Source;
 import com.gutabi.deadlock.core.Vertex;
 import com.gutabi.deadlock.model.Car;
+import com.gutabi.deadlock.model.NormalCar;
 
 @SuppressWarnings("serial")
 public class TestSimulating {
@@ -2485,8 +2486,8 @@ public class TestSimulating {
 			
 			Vertex bV = ((Vertex)MODEL.hitTest(new Point(650, 500)));
 			
-			Car a = new Car((Source)aV);
-			Car b = new Car((Source)bV);
+			Car a = new NormalCar((Source)aV);
+			Car b = new NormalCar((Source)bV);
 			
 			MODEL.movingCars.add(a);
 			MODEL.movingCars.add(b);
@@ -2526,8 +2527,8 @@ public class TestSimulating {
 //			Vertex aV = MODEL.findVertex(new Point(596, 450));
 //			Vertex bV = MODEL.findVertex(new Point(650, 500));
 			
-			Car a = new Car((Source)aV);
-			Car b = new Car((Source)bV);
+			Car a = new NormalCar((Source)aV);
+			Car b = new NormalCar((Source)bV);
 			
 			MODEL.movingCars.add(a);
 			MODEL.movingCars.add(b);
@@ -2564,9 +2565,9 @@ public class TestSimulating {
 			Vertex bV = ((Vertex)MODEL.hitTest(new Point(650, 500)));
 			Vertex cV = ((Vertex)MODEL.hitTest(new Point(650, 400)));
 			
-			Car a = new Car((Source)aV);
-			Car b = new Car((Source)bV);
-			Car c = new Car((Source)cV);
+			Car a = new NormalCar((Source)aV);
+			Car b = new NormalCar((Source)bV);
+			Car c = new NormalCar((Source)cV);
 			
 			MODEL.movingCars.add(a);
 			MODEL.movingCars.add(b);

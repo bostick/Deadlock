@@ -8,7 +8,6 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
-import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
@@ -49,9 +48,10 @@ public class DeadlockView {
 	private double worldViewLocInitX;
 	private double worldViewLocInitY;
 	
-	BufferedImage car;
-	BufferedImage wreck;
-	BufferedImage tiledGrass;
+	public BufferedImage normalCar;
+	public BufferedImage fastCar;
+	public BufferedImage wreck;
+	public BufferedImage tiledGrass;
 	
 	public final Logger logger = Logger.getLogger(DeadlockView.class);
 	
@@ -70,8 +70,11 @@ public class DeadlockView {
 		worldViewLoc = new Point(worldViewLocInitX, worldViewLocInitY);
 //		worldViewDim = new Dim(panel.getWidth(), panel.getHeight());
 		
-		car = ImageIO.read(new File("media\\car.png"));
-		car = ImageUtils.createResizedCopy(car, (int)MODEL.CAR_WIDTH, (int)MODEL.CAR_WIDTH, true);
+		normalCar = ImageIO.read(new File("media\\car.png"));
+		normalCar = ImageUtils.createResizedCopy(normalCar, (int)MODEL.CAR_WIDTH, (int)MODEL.CAR_WIDTH, true);
+		
+		fastCar = ImageIO.read(new File("media\\car2.png"));
+		fastCar = ImageUtils.createResizedCopy(fastCar, (int)MODEL.CAR_WIDTH, (int)MODEL.CAR_WIDTH, true);
 		
 		wreck = ImageIO.read(new File("media\\wreck.png"));
 		wreck = ImageUtils.createResizedCopy(wreck, (int)MODEL.CAR_WIDTH, (int)MODEL.CAR_WIDTH, true);
@@ -205,40 +208,11 @@ public class DeadlockView {
 				g2.fillOval((int)(lastPointCopy.getX()-MODEL.ROAD_WIDTH/2), (int)(lastPointCopy.getY()-MODEL.ROAD_WIDTH/2), (int)MODEL.ROAD_WIDTH, (int)MODEL.ROAD_WIDTH);
 			}
 		} else if (modeCopy == ControlMode.RUNNING || modeCopy == ControlMode.PAUSED) {
-			
 			for (Car c : movingCarsCopy) {
-				Point pos = c.getPosition().getPoint();
-				
-				AffineTransform origTransform = g2.getTransform();
-				
-				AffineTransform carTrans = (AffineTransform)origTransform.clone();
-				carTrans.translate(pos.getX(), pos.getY());
-				
-				Point prevPoint = c.getPreviousPoint();
-				
-				double rad = 0;
-				if (prevPoint != null) {
-					rad = Math.atan2(pos.getY()-prevPoint.getY(), pos.getX()-prevPoint.getX());
-				}
-				
-				carTrans.rotate(rad);
-				
-				g2.setTransform(carTrans);
-				
-				int x = (int)(-car.getWidth()/2);
-				int y = (int)(-car.getHeight()/2);
-				g2.drawImage(car, x, y, null);
-				
-				g2.setTransform(origTransform);
+				c.paint(g2);
 			}
-			
 			for (Car c : crashedCarsCopy) {
-				Point pos = c.getPosition().getPoint();
-				
-				int x = (int)(pos.getX()-MODEL.CAR_WIDTH/2);
-				int y = (int)(pos.getY()-MODEL.CAR_WIDTH/2);
-				g2.drawImage(wreck, x, y, null);
-				
+				c.paint(g2);
 			}
 		}
 		
