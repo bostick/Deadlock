@@ -1,7 +1,5 @@
 package com.gutabi.deadlock.model;
 
-import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
-
 import org.apache.log4j.Logger;
 
 import com.gutabi.deadlock.core.Edge;
@@ -9,17 +7,20 @@ import com.gutabi.deadlock.core.EdgePosition;
 import com.gutabi.deadlock.core.GraphPosition;
 import com.gutabi.deadlock.core.Path;
 import com.gutabi.deadlock.core.PathPosition;
+import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.STPath;
 import com.gutabi.deadlock.core.Sink;
 import com.gutabi.deadlock.core.Source;
 
 public class Car {
 	
+	public double DISTANCE_PER_TIMESTEP = 10;
+	
 	private CarState state;
 	
 	PathPosition pos;
 	
-	private GraphPosition prevPos;
+	private Point prevPoint;
 	
 	public long startingStep;
 	public long crashingStep;
@@ -62,7 +63,10 @@ public class Car {
 		
 		switch (state) {
 		case RUNNING:
-			nextPath = STPath.advanceOneTimeStep(pos, MODEL.DISTANCE_PER_TIMESTEP);
+			
+			
+			
+			nextPath = STPath.advanceOneTimeStep(pos, DISTANCE_PER_TIMESTEP);
 			
 			logger.debug("last nextPath: " + nextPath.getLastPosition());
 			
@@ -86,7 +90,7 @@ public class Car {
 	
 	public boolean updateCurrentFromNext() {
 
-		prevPos = pos.getGraphPosition();
+		prevPoint = pos.getGraphPosition().getPoint();
 		
 		pos = nextPath.get(nextPath.size()-1).getSpace();
 		
@@ -112,8 +116,8 @@ public class Car {
 		return pos.getGraphPosition();
 	}
 	
-	public GraphPosition getPreviousPosition() {
-		return prevPos;
+	public Point getPreviousPoint() {
+		return prevPoint;
 	}
 	
 	/**

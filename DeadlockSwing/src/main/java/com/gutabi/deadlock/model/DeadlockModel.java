@@ -29,15 +29,13 @@ public class DeadlockModel {
 	public final int WORLD_WIDTH = 512;
 	public final int WORLD_HEIGHT = WORLD_WIDTH;
 	
-	public double DISTANCE_PER_TIMESTEP = 3;
-	
 	/*
 	 * spawn cars every SPAWN_FREQUENCY time steps
 	 * -1 means no spawning
 	 */
-	public int SPAWN_FREQUENCY = 50;
+	public int SPAWN_FREQUENCY = 100;
 	
-	public long WAIT = 16;
+	public long WAIT = 17;
 	
 	public static final DeadlockModel MODEL = new DeadlockModel();
 	

@@ -118,11 +118,11 @@ public class KeyboardController {
 		@Override
 		public void actionPerformed(ActionEvent blah) {
 			
-			CONTROLLER.queue(new Runnable() {
-				public void run() {
-					VIEW.zoomIn();
-				}
-			});
+//			CONTROLLER.queue(new Runnable() {
+//				public void run() {
+//					VIEW.zoomIn();
+//				}
+//			});
 			
 		}
 	};
@@ -132,11 +132,11 @@ public class KeyboardController {
 		@Override
 		public void actionPerformed(ActionEvent blah) {
 			
-			CONTROLLER.queue(new Runnable() {
-				public void run() {
-					VIEW.zoomOut();
-				}
-			});
+//			CONTROLLER.queue(new Runnable() {
+//				public void run() {
+//					VIEW.zoomOut();
+//				}
+//			});
 			
 		}
 	};
@@ -146,11 +146,11 @@ public class KeyboardController {
 		@Override
 		public void actionPerformed(ActionEvent blah) {
 			
-			CONTROLLER.queue(new Runnable() {
-				public void run() {
-					VIEW.zoomReset();
-				}
-			});
+//			CONTROLLER.queue(new Runnable() {
+//				public void run() {
+//					VIEW.zoomReset();
+//				}
+//			});
 			
 		}
 	};

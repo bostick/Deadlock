@@ -46,7 +46,7 @@ public class ControlPanel extends JPanel {
 		
 		Box previewBox = Box.createHorizontalBox();
 		previewBox.add(Box.createHorizontalGlue());
-		previewBox.add(VIEW.previewPanel);
+//		previewBox.add(VIEW.previewPanel);
 		previewBox.add(Box.createHorizontalGlue());
 		
 		Box verticalBox = Box.createVerticalBox();

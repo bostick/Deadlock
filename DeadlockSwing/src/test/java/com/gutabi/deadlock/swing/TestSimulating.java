@@ -2472,7 +2472,6 @@ public class TestSimulating {
 		
 		synchronized (MODEL) {
 			MODEL.SPAWN_FREQUENCY = -1;
-			MODEL.DISTANCE_PER_TIMESTEP = 1;
 			MODEL.WAIT = 300;
 			
 			//MODEL.viewDim = new Dim(200, 500);
@@ -2509,7 +2508,6 @@ public class TestSimulating {
 		
 		synchronized (MODEL) {
 			MODEL.SPAWN_FREQUENCY = -1;
-			MODEL.DISTANCE_PER_TIMESTEP = 1;
 			MODEL.WAIT = 300;
 			
 			//MODEL.viewDim = new Dim(200, 500);
@@ -2551,7 +2549,6 @@ public class TestSimulating {
 		
 		synchronized (MODEL) {
 			MODEL.SPAWN_FREQUENCY = -1;
-			MODEL.DISTANCE_PER_TIMESTEP = 1;
 			MODEL.WAIT = 300;
 			
 			//MODEL.viewDim = new Dim(200, 500);
@@ -2594,7 +2591,6 @@ public class TestSimulating {
 		//CONTROLLER.strat = MassageStrategy.NONE;
 		
 		synchronized (MODEL) {
-			MODEL.DISTANCE_PER_TIMESTEP = 3;
 			MODEL.WAIT = 1;
 			MODEL.SPAWN_FREQUENCY = 3;
 		}

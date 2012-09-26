@@ -7,6 +7,7 @@ import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -20,7 +21,6 @@ import javax.swing.JFrame;
 import org.apache.log4j.Logger;
 
 import com.gutabi.deadlock.controller.ControlMode;
-import com.gutabi.deadlock.core.Dim;
 import com.gutabi.deadlock.core.Driveable;
 import com.gutabi.deadlock.core.Edge;
 import com.gutabi.deadlock.core.Intersection;
@@ -36,7 +36,7 @@ public class DeadlockView {
 	public WorldPanel panel;
 	public ControlPanel controlPanel;
 	
-	public PreviewPanel previewPanel;
+//	public PreviewPanel previewPanel;
 	
 	public BufferedImage backgroundImage;
 	
@@ -44,10 +44,10 @@ public class DeadlockView {
 	 * the location and dimension of the main world world view
 	 * 
 	 */
-	public Point worldViewLoc;
-	public Dim worldViewDim;
-	double worldViewLocInitX;
-	double worldViewLocInitY;
+	private Point worldViewLoc;
+//	private Dim worldViewDim;
+	private double worldViewLocInitX;
+	private double worldViewLocInitY;
 	
 	BufferedImage car;
 	BufferedImage wreck;
@@ -64,11 +64,11 @@ public class DeadlockView {
 	public void init() throws Exception {
 		frame = createFrame(false);
 		
-		worldViewLocInitX = -(panel.getWidth()/2 - MODEL.WORLD_WIDTH/2);
-		worldViewLocInitY = -(panel.getHeight()/2 - MODEL.WORLD_HEIGHT/2);
+		worldViewLocInitX = (panel.getWidth()/2 - MODEL.WORLD_WIDTH/2);
+		worldViewLocInitY = (panel.getHeight()/2 - MODEL.WORLD_HEIGHT/2);
 		
 		worldViewLoc = new Point(worldViewLocInitX, worldViewLocInitY);
-		worldViewDim = new Dim(panel.getWidth(), panel.getHeight());
+//		worldViewDim = new Dim(panel.getWidth(), panel.getHeight());
 		
 		car = ImageIO.read(new File("media\\car.png"));
 		car = ImageUtils.createResizedCopy(car, (int)MODEL.CAR_WIDTH, (int)MODEL.CAR_WIDTH, true);
@@ -100,7 +100,7 @@ public class DeadlockView {
 		panel = new WorldPanel();
 		panel.setFocusable(true);
 		
-		previewPanel = new PreviewPanel();
+//		previewPanel = new PreviewPanel();
 		
 		controlPanel = new ControlPanel();
 		controlPanel.init();
@@ -118,12 +118,27 @@ public class DeadlockView {
 		return newFrame;
 	}
 	
+	long lastTime;
+	long curTime;
+	int frameCount;
+	int fps;
+	
 	public void drawScene(Graphics2D g2) {
 		
-		g2.scale(getZoom(), getZoom());
-		g2.translate((double)-worldViewLoc.getX(), (double)-worldViewLoc.getY());
+		frameCount++;
 		
-		//g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		curTime = System.currentTimeMillis();
+		if (curTime > lastTime + 1000) {
+			fps = frameCount;
+			frameCount = 0;
+			lastTime = curTime;
+		}
+		
+//		g2.scale(getZoom(), getZoom());
+		g2.translate((double)worldViewLoc.getX(), (double)worldViewLoc.getY());
+		
+		g2.setColor(Color.WHITE);
+		g2.drawString("FPS: " + fps, 10, 10);
 		
 		ControlMode modeCopy;
 		Driveable hilitedCopy;
@@ -199,9 +214,12 @@ public class DeadlockView {
 				AffineTransform carTrans = (AffineTransform)origTransform.clone();
 				carTrans.translate(pos.getX(), pos.getY());
 				
-				Point prevPos = c.getPreviousPosition().getPoint();
+				Point prevPoint = c.getPreviousPoint();
 				
-				double rad = Math.atan2(pos.getY()-prevPos.getY(), pos.getX()-prevPos.getX());
+				double rad = 0;
+				if (prevPoint != null) {
+					rad = Math.atan2(pos.getY()-prevPoint.getY(), pos.getX()-prevPoint.getX());
+				}
 				
 				carTrans.rotate(rad);
 				
@@ -233,12 +251,14 @@ public class DeadlockView {
 		backgroundImage = new BufferedImage(d.width, d.height, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g2 = backgroundImage.createGraphics();
 		
-		g2.scale(getZoom(), getZoom());
-		g2.translate((double)-worldViewLoc.getX(), (double)-worldViewLoc.getY());
+//		g2.scale(getZoom(), getZoom());
+		g2.translate((double)worldViewLoc.getX(), (double)worldViewLoc.getY());
 		
 		g2.drawImage(tiledGrass, 0, 0, null);
 		
-		g2.setColor(Color.DARK_GRAY);
+		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		
+//		g2.setColor(Color.DARK_GRAY);
 //		g2.fillRect(0, 0, MODEL.WORLD_WIDTH, 10);
 //		g2.fillRect(0, 10, 10, MODEL.WORLD_HEIGHT-10);
 //		g2.fillRect(MODEL.WORLD_WIDTH-10, 10, 10, MODEL.WORLD_HEIGHT-10);
@@ -391,20 +411,23 @@ public class DeadlockView {
 	}
 	
 	public void repaint() {
-		frame.repaint();
+		//frame.repaint();
+		//panel.repaint(cornerOfWorldin panel, );
+		//panel.repaint();
+		panel.repaint((int)(worldViewLoc.getX()-MODEL.CAR_WIDTH), (int)(worldViewLoc.getY()-MODEL.CAR_WIDTH), (int)(MODEL.WORLD_WIDTH+2*MODEL.CAR_WIDTH), (int)(MODEL.WORLD_HEIGHT+2*MODEL.CAR_WIDTH));
 	}
 	
 	
 	
 	
-	public double getZoom() {
-		return ((double)panel.getWidth()) / ((double)worldViewDim.width);
-	}
+//	public double getZoom() {
+//		return ((double)panel.getWidth()) / ((double)worldViewDim.width);
+//	}
 	
 	public Point panelToWorld(Point pp) {
 		Point p = pp;
-		p = new Point(p.getX() * 1/getZoom(), p.getY() * 1/getZoom());
-		p = Point.add(p, worldViewLoc);
+//		p = new Point(p.getX() * 1/getZoom(), p.getY() * 1/getZoom());
+		p = Point.minus(p, worldViewLoc);
 		return p; 
 	}
 	
@@ -456,35 +479,35 @@ public class DeadlockView {
 		repaint();
 	}
 	
-	public void zoomIn() {
-		Point center = worldViewDim.divide(2).add(worldViewLoc);
-		worldViewDim = worldViewDim.times(1/1.1);
-		worldViewLoc = center.minus(worldViewDim.divide(2));
-		logger.debug("zoom in: viewLoc=" + worldViewLoc);
-		
-		renderBackground();
-		repaint();
-	}
-	
-	public void zoomOut() {
-		Point center = worldViewDim.divide(2).add(worldViewLoc);
-		worldViewDim = worldViewDim.times(1.1);
-		worldViewLoc = center.minus(worldViewDim.divide(2));
-		logger.debug("zoom out: viewLoc=" + worldViewLoc);
-		
-		renderBackground();
-		repaint();
-	}
-	
-	public void zoomReset() {
-		worldViewDim = new Dim(panel.getWidth(), panel.getHeight());
-		worldViewLoc = new Point(worldViewLocInitX, worldViewLocInitY);
-		Point center = worldViewDim.divide(2).add(worldViewLoc);
-		logger.debug("zoom reset: viewLoc=" + worldViewLoc + " center: " + center);
-		
-		renderBackground();
-		repaint();
-	}
+//	public void zoomIn() {
+//		Point center = worldViewDim.divide(2).add(worldViewLoc);
+//		worldViewDim = worldViewDim.times(1/1.1);
+//		worldViewLoc = center.minus(worldViewDim.divide(2));
+//		logger.debug("zoom in: viewLoc=" + worldViewLoc);
+//		
+//		renderBackground();
+//		repaint();
+//	}
+//	
+//	public void zoomOut() {
+//		Point center = worldViewDim.divide(2).add(worldViewLoc);
+//		worldViewDim = worldViewDim.times(1.1);
+//		worldViewLoc = center.minus(worldViewDim.divide(2));
+//		logger.debug("zoom out: viewLoc=" + worldViewLoc);
+//		
+//		renderBackground();
+//		repaint();
+//	}
+//	
+//	public void zoomReset() {
+//		worldViewDim = new Dim(panel.getWidth(), panel.getHeight());
+//		worldViewLoc = new Point(worldViewLocInitX, worldViewLocInitY);
+//		Point center = worldViewDim.divide(2).add(worldViewLoc);
+//		logger.debug("zoom reset: viewLoc=" + worldViewLoc + " center: " + center);
+//		
+//		renderBackground();
+//		repaint();
+//	}
 	
 	
 }

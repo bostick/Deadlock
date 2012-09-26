@@ -47,8 +47,8 @@ public class DeadlockController implements ActionListener {
 		VIEW.panel.addMouseListener(mc);
 		VIEW.panel.addMouseMotionListener(mc);
 		
-		VIEW.previewPanel.addMouseListener(mc);
-		VIEW.previewPanel.addMouseMotionListener(mc);
+//		VIEW.previewPanel.addMouseListener(mc);
+//		VIEW.previewPanel.addMouseMotionListener(mc);
 		
 		kc.init();
 		
@@ -102,16 +102,17 @@ public class DeadlockController implements ActionListener {
 			lastDragWorldPoint = null;
 			lastDragTime = -1;
 			
-		} else if (c == VIEW.previewPanel) {
-			
-			lastPressPreviewPoint = p;
-			lastPressTime = System.currentTimeMillis();
-			
-			lastDragPreviewPoint = null;
-			lastDragTime = -1;
-			
-			origWorldViewLoc = VIEW.worldViewLoc;
 		}
+//		else if (c == VIEW.previewPanel) {
+//			
+//			lastPressPreviewPoint = p;
+//			lastPressTime = System.currentTimeMillis();
+//			
+//			lastDragPreviewPoint = null;
+//			lastDragTime = -1;
+//			
+//			origWorldViewLoc = VIEW.worldViewLoc;
+//		}
 		
 	}
 	
@@ -164,23 +165,24 @@ public class DeadlockController implements ActionListener {
 				}
 			}
 			
-		} else if (c == VIEW.previewPanel) {
-			
-			lastDragPreviewPoint = p;
-			lastDragTime = System.currentTimeMillis();
-			
-			double x = p.getX() - lastPressPreviewPoint.getX();
-			double y = p.getY() - lastPressPreviewPoint.getY();
-			
-			x = x * MODEL.WORLD_WIDTH / 100;
-			y = y * MODEL.WORLD_HEIGHT / 100;
-			
-			VIEW.worldViewLoc = new Point(origWorldViewLoc.getX() + x, origWorldViewLoc.getY() + y);
-			
-			VIEW.renderBackground();
-			VIEW.repaint();
-			
 		}
+//		else if (c == VIEW.previewPanel) {
+//			
+//			lastDragPreviewPoint = p;
+//			lastDragTime = System.currentTimeMillis();
+//			
+//			double x = p.getX() - lastPressPreviewPoint.getX();
+//			double y = p.getY() - lastPressPreviewPoint.getY();
+//			
+//			x = x * MODEL.WORLD_WIDTH / 100;
+//			y = y * MODEL.WORLD_HEIGHT / 100;
+//			
+//			VIEW.worldViewLoc = new Point(origWorldViewLoc.getX() + x, origWorldViewLoc.getY() + y);
+//			
+//			VIEW.renderBackground();
+//			VIEW.repaint();
+//			
+//		}
 		
 	}
 	
@@ -226,9 +228,10 @@ public class DeadlockController implements ActionListener {
 				}
 			}
 			
-		} else if (c == VIEW.previewPanel) {
-			
 		}
+//		else if (c == VIEW.previewPanel) {
+//			
+//		}
 		
 	}
 	
@@ -267,9 +270,10 @@ public class DeadlockController implements ActionListener {
 				}
 			}
 			
-		} else if (c == VIEW.previewPanel) {
-			
 		}
+//		else if (c == VIEW.previewPanel) {
+//			
+//		}
 		
 	}
 	
