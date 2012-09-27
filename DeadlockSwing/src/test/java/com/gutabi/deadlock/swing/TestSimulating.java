@@ -2472,8 +2472,8 @@ public class TestSimulating {
 	public void test3() throws Exception {
 		
 		synchronized (MODEL) {
-			MODEL.SPAWN_FREQUENCY = -1;
-			MODEL.WAIT = 300;
+			MODEL.world.SPAWN_FREQUENCY = -1;
+			MODEL.world.WAIT = 300;
 			
 			//MODEL.viewDim = new Dim(200, 500);
 			//MODEL.viewLoc = new Point(575, 375);
@@ -2482,15 +2482,15 @@ public class TestSimulating {
 			MODEL.processNewStroke(new ArrayList<Point>(){{add(new Point(600, 450));add(new Point(700, 450));}});
 			MODEL.processNewStroke(new ArrayList<Point>(){{add(new Point(650, 400));add(new Point(650, 500));}});
 			
-			Vertex aV = ((Vertex)MODEL.hitTest(new Point(600, 450)));
+			Vertex aV = ((Vertex)MODEL.world.hitTest(new Point(600, 450)));
 			
-			Vertex bV = ((Vertex)MODEL.hitTest(new Point(650, 500)));
+			Vertex bV = ((Vertex)MODEL.world.hitTest(new Point(650, 500)));
 			
 			Car a = new NormalCar((Source)aV);
 			Car b = new NormalCar((Source)bV);
 			
-			MODEL.movingCars.add(a);
-			MODEL.movingCars.add(b);
+			MODEL.world.movingCars.add(a);
+			MODEL.world.movingCars.add(b);
 		}
 		
 		CONTROLLER.queue(new Runnable(){
@@ -2508,8 +2508,8 @@ public class TestSimulating {
 	public void test4() throws Exception {
 		
 		synchronized (MODEL) {
-			MODEL.SPAWN_FREQUENCY = -1;
-			MODEL.WAIT = 300;
+			MODEL.world.SPAWN_FREQUENCY = -1;
+			MODEL.world.WAIT = 300;
 			
 			//MODEL.viewDim = new Dim(200, 500);
 			//MODEL.viewLoc = new Point(575, 375);
@@ -2520,8 +2520,8 @@ public class TestSimulating {
 			
 //			MODEL.processStroke(new Point(595, 450), new Point(695, 450));
 //			MODEL.processStroke(new Point(650, 400), new Point(650, 500));
-			Vertex aV = ((Vertex)MODEL.hitTest(new Point(595, 450)));
-			Vertex bV = ((Vertex)MODEL.hitTest(new Point(650, 500)));
+			Vertex aV = ((Vertex)MODEL.world.hitTest(new Point(595, 450)));
+			Vertex bV = ((Vertex)MODEL.world.hitTest(new Point(650, 500)));
 //			MODEL.processStroke(new Point(596, 450), new Point(696, 450));
 //			MODEL.processStroke(new Point(650, 400), new Point(650, 500));
 //			Vertex aV = MODEL.findVertex(new Point(596, 450));
@@ -2530,8 +2530,8 @@ public class TestSimulating {
 			Car a = new NormalCar((Source)aV);
 			Car b = new NormalCar((Source)bV);
 			
-			MODEL.movingCars.add(a);
-			MODEL.movingCars.add(b);
+			MODEL.world.movingCars.add(a);
+			MODEL.world.movingCars.add(b);
 		}
 		
 		CONTROLLER.queue(new Runnable(){
@@ -2549,29 +2549,29 @@ public class TestSimulating {
 	public void test5() throws Exception {
 		
 		synchronized (MODEL) {
-			MODEL.SPAWN_FREQUENCY = -1;
-			MODEL.WAIT = 300;
+			MODEL.world.SPAWN_FREQUENCY = -1;
+			MODEL.world.WAIT = 300;
 			
 			//MODEL.viewDim = new Dim(200, 500);
 			//MODEL.viewLoc = new Point(575, 375);
 			//MODEL.viewLoc = new Point(560, 400);
 			
-			MODEL.processNewStroke(new ArrayList<Point>(){{add(new Point(600, 450));add(new Point(700, 450));}});
-			MODEL.processNewStroke(new ArrayList<Point>(){{add(new Point(650, 400));add(new Point(650, 500));}});
+			MODEL.world.processNewStroke(new ArrayList<Point>(){{add(new Point(600, 450));add(new Point(700, 450));}});
+			MODEL.world.processNewStroke(new ArrayList<Point>(){{add(new Point(650, 400));add(new Point(650, 500));}});
 //			MODEL.processStroke(new Point(600, 450), new Point(700, 450));
 //			MODEL.processStroke(new Point(650, 400), new Point(650, 500));
 			
-			Vertex aV = ((Vertex)MODEL.hitTest(new Point(600, 450)));
-			Vertex bV = ((Vertex)MODEL.hitTest(new Point(650, 500)));
-			Vertex cV = ((Vertex)MODEL.hitTest(new Point(650, 400)));
+			Vertex aV = ((Vertex)MODEL.world.hitTest(new Point(600, 450)));
+			Vertex bV = ((Vertex)MODEL.world.hitTest(new Point(650, 500)));
+			Vertex cV = ((Vertex)MODEL.world.hitTest(new Point(650, 400)));
 			
 			Car a = new NormalCar((Source)aV);
 			Car b = new NormalCar((Source)bV);
 			Car c = new NormalCar((Source)cV);
 			
-			MODEL.movingCars.add(a);
-			MODEL.movingCars.add(b);
-			MODEL.movingCars.add(c);
+			MODEL.world.movingCars.add(a);
+			MODEL.world.movingCars.add(b);
+			MODEL.world.movingCars.add(c);
 		}
 		
 		CONTROLLER.queue(new Runnable(){
@@ -2592,8 +2592,8 @@ public class TestSimulating {
 		//CONTROLLER.strat = MassageStrategy.NONE;
 		
 		synchronized (MODEL) {
-			MODEL.WAIT = 1;
-			MODEL.SPAWN_FREQUENCY = 3;
+			MODEL.world.WAIT = 1;
+			MODEL.world.SPAWN_FREQUENCY = 3;
 		}
 		
 		//MODEL.RANDOM.setSeed(1);

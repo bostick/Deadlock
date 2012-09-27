@@ -17,11 +17,11 @@ public class Main  {
 	
 	static void createAndShowGUI(String[] args) throws Exception {
 		
+		MODEL.init();
+		
 		VIEW.init();
 		
 		CONTROLLER.init();
-		
-		MODEL.init();
 		
 		VIEW.frame.setVisible(true);
 		VIEW.panel.requestFocusInWindow();

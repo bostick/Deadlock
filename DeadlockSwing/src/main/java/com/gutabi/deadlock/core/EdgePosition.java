@@ -137,8 +137,8 @@ public class EdgePosition extends GraphPosition {
 				return distanceToEndOfEdge();
 			}
 			
-			double aaStartPath = MODEL.distanceBetweenVertices(e.getStart(), bb);
-			double aaEndPath = MODEL.distanceBetweenVertices(e.getEnd(), bb);
+			double aaStartPath = MODEL.world.distanceBetweenVertices(e.getStart(), bb);
+			double aaEndPath = MODEL.world.distanceBetweenVertices(e.getEnd(), bb);
 			
 			double dist = Math.min(aaStartPath + distanceToStartOfEdge(), aaEndPath + distanceToEndOfEdge());
 			
@@ -153,10 +153,10 @@ public class EdgePosition extends GraphPosition {
 				return Math.abs(aa.distanceToStartOfEdge() - bb.distanceToStartOfEdge());
 			}
 			
-			double startStartPath = MODEL.distanceBetweenVertices(aa.getEdge().getStart(), bb.getEdge().getStart());
-			double startEndPath = MODEL.distanceBetweenVertices(aa.getEdge().getStart(), bb.getEdge().getEnd());
-			double endStartPath = MODEL.distanceBetweenVertices(aa.getEdge().getEnd(), bb.getEdge().getStart());
-			double endEndPath = MODEL.distanceBetweenVertices(aa.getEdge().getEnd(), bb.getEdge().getEnd());
+			double startStartPath = MODEL.world.distanceBetweenVertices(aa.getEdge().getStart(), bb.getEdge().getStart());
+			double startEndPath = MODEL.world.distanceBetweenVertices(aa.getEdge().getStart(), bb.getEdge().getEnd());
+			double endStartPath = MODEL.world.distanceBetweenVertices(aa.getEdge().getEnd(), bb.getEdge().getStart());
+			double endEndPath = MODEL.world.distanceBetweenVertices(aa.getEdge().getEnd(), bb.getEdge().getEnd());
 			
 			double startStartDistance = startStartPath + aa.distanceToStartOfEdge() + bb.distanceToStartOfEdge();
 			double startEndDistance = startEndPath + aa.distanceToStartOfEdge() + bb.distanceToEndOfEdge();

@@ -66,7 +66,7 @@ public class Path {
 		for (int i = 0; i < origPoss.size()-1; i++) {
 			Vertex a = origPoss.get(i);
 			Vertex b = origPoss.get(i+1);
-			if (MODEL.distanceBetweenVertices(a, b) == Double.POSITIVE_INFINITY) {
+			if (MODEL.world.distanceBetweenVertices(a, b) == Double.POSITIVE_INFINITY) {
 				return null;
 			}
 		}
@@ -450,7 +450,7 @@ public class Path {
 					
 					if (coms.isEmpty()) {
 						
-						Vertex choice = MODEL.shortestPathChoice(aa, bb);
+						Vertex choice = MODEL.world.shortestPathChoice(aa, bb);
 						
 						if (choice == null) {
 							

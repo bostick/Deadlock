@@ -248,7 +248,7 @@ public class DeadlockController implements ActionListener {
 				switch (MODEL.getMode()) {
 				case IDLE:
 					
-					Position closest = MODEL.findClosestPosition(VIEW.panelToWorld(p), MODEL.MOUSE_RADIUS);
+					Position closest = MODEL.world.findClosestPosition(VIEW.panelToWorld(p), MODEL.world.MOUSE_RADIUS);
 					if (closest != null) {
 						MODEL.hilited = closest.getDriveable();
 					} else {
@@ -298,7 +298,7 @@ public class DeadlockController implements ActionListener {
 						
 						p = v.getPoint();
 						
-						MODEL.removeVertex(v);
+						MODEL.removeVertexTop(v);
 						
 					} else {
 						Edge e = (Edge)MODEL.hilited;
@@ -310,11 +310,11 @@ public class DeadlockController implements ActionListener {
 							p = e.getPoint(0);
 						}
 						
-						MODEL.removeEdge(e);
+						MODEL.removeEdgeTop(e);
 						
 					}
 					
-					Position closest = MODEL.findClosestDeleteablePosition(p);
+					Position closest = MODEL.world.findClosestDeleteablePosition(p);
 					if (closest != null) {
 						
 						if (closest instanceof Vertex) {
@@ -430,14 +430,7 @@ public class DeadlockController implements ActionListener {
 		
 		VIEW.renderBackground();
 		
-		MODEL.graph.calculateChoices();
-		
-		for (Source s : MODEL.getSources()) {
-			s.preprocess();
-		}
-		
-		MODEL.movingCars.clear();
-		MODEL.crashedCars.clear();
+		MODEL.world.preStart();
 		
 		Thread t = new Thread(new SimulationRunnable());
 		t.start();

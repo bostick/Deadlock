@@ -5,14 +5,14 @@ import java.util.List;
 
 public class Source extends Fixture {
 	
-	Sink matchingSink;
-	Path pathToMatchingSink;
+	public Sink matchingSink;
+	public Path pathToMatchingSink;
 	
 	public Source(Point p) {
 		super(p);
 	}
 	
-	public void preprocess() {
+	public void preStart() {
 		
 		List<Vertex> poss = new ArrayList<Vertex>();
 		poss.add(this);

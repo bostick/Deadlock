@@ -108,7 +108,7 @@ public class TestDragging {
 		CONTROLLER.queueAndWait(new Runnable() {
 			@Override
 			public void run() {
-				edges = MODEL.getEdges();
+				edges = MODEL.world.getEdges();
 			}
 		});
 		 

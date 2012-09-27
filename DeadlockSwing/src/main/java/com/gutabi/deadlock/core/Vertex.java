@@ -121,7 +121,7 @@ public class Vertex extends GraphPosition implements Driveable {
 		if (b instanceof Vertex) {
 			Vertex bb = (Vertex)b;
 			
-			double dist = MODEL.distanceBetweenVertices(this, bb);
+			double dist = MODEL.world.distanceBetweenVertices(this, bb);
 			
 			assert DMath.greaterThanEquals(dist, 0.0);
 			
@@ -129,8 +129,8 @@ public class Vertex extends GraphPosition implements Driveable {
 		} else {
 			EdgePosition bb = (EdgePosition)b;
 			
-			double bbStartPath = MODEL.distanceBetweenVertices(this, bb.getEdge().getStart());
-			double bbEndPath = MODEL.distanceBetweenVertices(this, bb.getEdge().getEnd());
+			double bbStartPath = MODEL.world.distanceBetweenVertices(this, bb.getEdge().getStart());
+			double bbEndPath = MODEL.world.distanceBetweenVertices(this, bb.getEdge().getEnd());
 			
 			double dist = Math.min(bbStartPath + bb.distanceToStartOfEdge(), bbEndPath + bb.distanceToEndOfEdge());
 			

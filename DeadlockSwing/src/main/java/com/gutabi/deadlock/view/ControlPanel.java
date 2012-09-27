@@ -2,7 +2,6 @@ package com.gutabi.deadlock.view;
 
 
 import static com.gutabi.deadlock.controller.DeadlockController.CONTROLLER;
-import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
 import java.awt.Dimension;
 

@@ -150,8 +150,8 @@ public abstract class Car {
 			
 			Point p = pos.getPoint();
 			
-			int x = (int)(p.getX()-MODEL.CAR_WIDTH/2);
-			int y = (int)(p.getY()-MODEL.CAR_WIDTH/2);
+			int x = (int)(p.getX()-MODEL.world.CAR_WIDTH/2);
+			int y = (int)(p.getY()-MODEL.world.CAR_WIDTH/2);
 			g2.drawImage(VIEW.wreck, x, y, null);
 			
 		} else {

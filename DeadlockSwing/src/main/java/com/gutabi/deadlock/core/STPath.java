@@ -379,7 +379,7 @@ public class STPath {
 			
 			if (ap.getEdge() != null) {
 				if (bp.getEdge() != null) {
-					if (!MODEL.areNeighbors(ap.getEdge(), bp.getEdge())) {
+					if (!MODEL.world.areNeighbors(ap.getEdge(), bp.getEdge())) {
 						continue;
 					}
 				} else {
