@@ -1,8 +1,16 @@
-package com.gutabi.deadlock.core;
+package com.gutabi.deadlock.core.path;
 
-public class PathPosition extends Position {
+import com.gutabi.deadlock.core.DMath;
+import com.gutabi.deadlock.core.Driveable;
+import com.gutabi.deadlock.core.EdgePosition;
+import com.gutabi.deadlock.core.GraphPosition;
+import com.gutabi.deadlock.core.Point;
+import com.gutabi.deadlock.core.Position;
+import com.gutabi.deadlock.core.Vertex;
+
+public class GraphPositionPathPosition extends Position {
 	
-	private final Path path;
+	private final GraphPositionPath path;
 	private final int index;
 	private final double param;
 	private final boolean bound;
@@ -13,7 +21,7 @@ public class PathPosition extends Position {
 	
 	private final int hash;
 	
-	public PathPosition(Path path, int index, double param) {
+	public GraphPositionPathPosition(GraphPositionPath path, int index, double param) {
 		super(DMath.equals(param, 0.0) ? path.getPoint(index) : Point.point(path.getPoint(index), path.getPoint(index+1), param));
 		
 		this.path = path;
@@ -43,10 +51,10 @@ public class PathPosition extends Position {
 	public boolean equals(Object o) {
 		if (this == o) {
 			return true;
-		} else if (!(o instanceof PathPosition)) {
+		} else if (!(o instanceof GraphPositionPathPosition)) {
 			return false;
 		} else {
-			PathPosition b = (PathPosition)o;
+			GraphPositionPathPosition b = (GraphPositionPathPosition)o;
 			return path == b.path && index == b.index && DMath.equals(param, b.param);
 		}
 	}
@@ -74,7 +82,7 @@ public class PathPosition extends Position {
 		return gpos.getDriveable();
 	}
 	
-	public double distanceTo(PathPosition p) {
+	public double distanceTo(GraphPositionPathPosition p) {
 		
 		int goalIndex = p.index;
 		double goalParam = p.param;
@@ -90,8 +98,8 @@ public class PathPosition extends Position {
 		} else {
 			
 			double acc = 0.0;
-			PathPosition curPos = this;
-			PathPosition nextPos = curPos.nextBound();
+			GraphPositionPathPosition curPos = this;
+			GraphPositionPathPosition nextPos = curPos.nextBound();
 			
 			acc += curPos.distanceTo(nextPos);
 			
@@ -120,12 +128,12 @@ public class PathPosition extends Position {
 		
 	}
 	
-	public PathPosition travel(double dist) {
+	public GraphPositionPathPosition travel(double dist) {
 		
 		double traveled = 0.0;
 		
-		PathPosition curPos = this;
-		PathPosition nextPos;
+		GraphPositionPathPosition curPos = this;
+		GraphPositionPathPosition nextPos;
 		
 		while (true) {
 			
@@ -147,25 +155,25 @@ public class PathPosition extends Position {
 				
 				EdgePosition g = (EdgePosition)curPos.gpos.travel(nextPos.gpos, toTravel);
 				
-				if (curPos.getGraphPosition() instanceof EdgePosition) {
-					EdgePosition curPosE = (EdgePosition)curPos.getGraphPosition();
+				if (curPos.gpos instanceof EdgePosition) {
+					EdgePosition curPosE = (EdgePosition)curPos.gpos;
 					
 					if (curPosE.getIndex() < g.getIndex() || (curPosE.getIndex() == g.getIndex() && DMath.lessThan(curPosE.getParam(), g.getParam()))) {
 						// same direction as edge
 						//assert curPosE.getIndex() == g.getIndex();
-						return new PathPosition(path, curPos.index, g.getParam());
+						return new GraphPositionPathPosition(path, curPos.index, g.getParam());
 					} else {
-						return new PathPosition(path, curPos.index, 1-g.getParam());
+						return new GraphPositionPathPosition(path, curPos.index, 1-g.getParam());
 					}
 					
 				} else {
-					Vertex curPosE = (Vertex)curPos.getGraphPosition();
+					Vertex curPosE = (Vertex)curPos.gpos;
 					
 					if (g.getEdge().getStart() == curPosE) {
 						// same direction as edge
-						return new PathPosition(path, curPos.index, g.getParam());
+						return new GraphPositionPathPosition(path, curPos.index, g.getParam());
 					} else {
-						return new PathPosition(path, curPos.index, 1-g.getParam());
+						return new GraphPositionPathPosition(path, curPos.index, 1-g.getParam());
 					}
 					
 				}
@@ -176,7 +184,7 @@ public class PathPosition extends Position {
 		
 	}
 	
-	public PathPosition nextBound() {
-		return new PathPosition(path, index+1, 0.0);
+	public GraphPositionPathPosition nextBound() {
+		return new GraphPositionPathPosition(path, index+1, 0.0);
 	}
 }

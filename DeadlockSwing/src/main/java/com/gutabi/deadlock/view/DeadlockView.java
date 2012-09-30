@@ -64,28 +64,28 @@ public class DeadlockView {
 	public void init() throws Exception {
 		frame = createFrame(false);
 		
-		worldViewLocInitX = (panel.getWidth()/2 - MODEL.WORLD_WIDTH/2);
-		worldViewLocInitY = (panel.getHeight()/2 - MODEL.WORLD_HEIGHT/2);
+		worldViewLocInitX = (panel.getWidth()/2 - MODEL.world.WORLD_WIDTH/2);
+		worldViewLocInitY = (panel.getHeight()/2 - MODEL.world.WORLD_HEIGHT/2);
 		
 		worldViewLoc = new Point(worldViewLocInitX, worldViewLocInitY);
 //		worldViewDim = new Dim(panel.getWidth(), panel.getHeight());
 		
 		normalCar = ImageIO.read(new File("media\\car.png"));
-		normalCar = ImageUtils.createResizedCopy(normalCar, (int)MODEL.CAR_WIDTH, (int)MODEL.CAR_WIDTH, true);
+		normalCar = ImageUtils.createResizedCopy(normalCar, (int)MODEL.world.CAR_WIDTH, (int)MODEL.world.CAR_WIDTH, true);
 		
 		fastCar = ImageIO.read(new File("media\\car2.png"));
-		fastCar = ImageUtils.createResizedCopy(fastCar, (int)MODEL.CAR_WIDTH, (int)MODEL.CAR_WIDTH, true);
+		fastCar = ImageUtils.createResizedCopy(fastCar, (int)MODEL.world.CAR_WIDTH, (int)MODEL.world.CAR_WIDTH, true);
 		
 		wreck = ImageIO.read(new File("media\\wreck.png"));
-		wreck = ImageUtils.createResizedCopy(wreck, (int)MODEL.CAR_WIDTH, (int)MODEL.CAR_WIDTH, true);
+		wreck = ImageUtils.createResizedCopy(wreck, (int)MODEL.world.CAR_WIDTH, (int)MODEL.world.CAR_WIDTH, true);
 		
 		BufferedImage grass = ImageIO.read(new File("media\\grass.png"));
 		
-		tiledGrass = new BufferedImage(MODEL.WORLD_WIDTH, MODEL.WORLD_HEIGHT, BufferedImage.TYPE_INT_ARGB);
+		tiledGrass = new BufferedImage(MODEL.world.WORLD_WIDTH, MODEL.world.WORLD_HEIGHT, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g2 = tiledGrass.createGraphics();
 		
-		for (int i = 0; i < MODEL.WORLD_WIDTH/32; i++) {
-			for (int j = 0; j < MODEL.WORLD_HEIGHT/32; j++) {
+		for (int i = 0; i < MODEL.world.WORLD_WIDTH/32; i++) {
+			for (int j = 0; j < MODEL.world.WORLD_HEIGHT/32; j++) {
 				g2.drawImage(grass, 32 * i, 32 * j, null);
 			}
 		}
@@ -142,6 +142,7 @@ public class DeadlockView {
 		
 		g2.setColor(Color.WHITE);
 		g2.drawString("FPS: " + fps, 10, 10);
+		g2.drawString("step: " + MODEL.world.step, 10, 20);
 		
 		ControlMode modeCopy;
 		Driveable hilitedCopy;
@@ -155,8 +156,8 @@ public class DeadlockView {
 			hilitedCopy = MODEL.hilited;
 			curStrokeCopy = new ArrayList<Point>(MODEL.curStrokeRaw);
 			lastPointCopy = MODEL.lastPointRaw;
-			movingCarsCopy = new ArrayList<Car>(MODEL.movingCars);
-			crashedCarsCopy = new ArrayList<Car>(MODEL.crashedCars);
+			movingCarsCopy = new ArrayList<Car>(MODEL.world.movingCars);
+			crashedCarsCopy = new ArrayList<Car>(MODEL.world.crashedCars);
 		}
 		
 		if (modeCopy == ControlMode.IDLE) {
@@ -205,7 +206,7 @@ public class DeadlockView {
 			
 			g2.setColor(Color.RED);
 			if (lastPointCopy != null) {
-				g2.fillOval((int)(lastPointCopy.getX()-MODEL.ROAD_WIDTH/2), (int)(lastPointCopy.getY()-MODEL.ROAD_WIDTH/2), (int)MODEL.ROAD_WIDTH, (int)MODEL.ROAD_WIDTH);
+				g2.fillOval((int)(lastPointCopy.getX()-MODEL.world.ROAD_WIDTH/2), (int)(lastPointCopy.getY()-MODEL.world.ROAD_WIDTH/2), (int)MODEL.world.ROAD_WIDTH, (int)MODEL.world.ROAD_WIDTH);
 			}
 		} else if (modeCopy == ControlMode.RUNNING || modeCopy == ControlMode.PAUSED) {
 			for (Car c : movingCarsCopy) {
@@ -244,10 +245,10 @@ public class DeadlockView {
 		List<Sink> sinksCopy;
 		
 		synchronized (MODEL) {
-			edgesCopy = new ArrayList<Edge>(MODEL.getEdges());
-			intersectionsCopy = new ArrayList<Intersection>(MODEL.getIntersections());
-			sourcesCopy = new ArrayList<Source>(MODEL.getSources());
-			sinksCopy = new ArrayList<Sink>(MODEL.getSinks());
+			edgesCopy = new ArrayList<Edge>(MODEL.world.graph.getEdges());
+			intersectionsCopy = new ArrayList<Intersection>(MODEL.world.graph.getIntersections());
+			sourcesCopy = new ArrayList<Source>(MODEL.world.graph.getSources());
+			sinksCopy = new ArrayList<Sink>(MODEL.world.graph.getSinks());
 		}
 		
 		for (Edge e : edgesCopy) {
@@ -315,7 +316,7 @@ public class DeadlockView {
 		g.setColor(new Color(0x44, 0x44, 0x44, 0xff));
 		
 		Point p = v.getPoint();
-		g.fillOval((int)(p.getX()-MODEL.VERTEX_WIDTH/2), (int)(p.getY()-MODEL.VERTEX_WIDTH/2), (int)MODEL.VERTEX_WIDTH, (int)MODEL.VERTEX_WIDTH);
+		g.fillOval((int)(p.getX()-MODEL.world.VERTEX_WIDTH/2), (int)(p.getY()-MODEL.world.VERTEX_WIDTH/2), (int)MODEL.world.VERTEX_WIDTH, (int)MODEL.world.VERTEX_WIDTH);
 	}
 	
 	public static void paintSource(Source s, Graphics2D g) {
@@ -323,7 +324,7 @@ public class DeadlockView {
 		g.setColor(Color.GREEN);
 		
 		Point p = s.getPoint();
-		g.fillOval((int)(p.getX()-MODEL.VERTEX_WIDTH/2), (int)(p.getY()-MODEL.VERTEX_WIDTH/2), (int)MODEL.VERTEX_WIDTH, (int)MODEL.VERTEX_WIDTH);
+		g.fillOval((int)(p.getX()-MODEL.world.VERTEX_WIDTH/2), (int)(p.getY()-MODEL.world.VERTEX_WIDTH/2), (int)MODEL.world.VERTEX_WIDTH, (int)MODEL.world.VERTEX_WIDTH);
 		
 	}
 
@@ -332,7 +333,7 @@ public class DeadlockView {
 		g.setColor(Color.RED);
 		
 		Point p = s.getPoint();
-		g.fillOval((int)(p.getX()-MODEL.VERTEX_WIDTH/2), (int)(p.getY()-MODEL.VERTEX_WIDTH/2), (int)MODEL.VERTEX_WIDTH, (int)MODEL.VERTEX_WIDTH);
+		g.fillOval((int)(p.getX()-MODEL.world.VERTEX_WIDTH/2), (int)(p.getY()-MODEL.world.VERTEX_WIDTH/2), (int)MODEL.world.VERTEX_WIDTH, (int)MODEL.world.VERTEX_WIDTH);
 		
 	}
 	
@@ -340,7 +341,7 @@ public class DeadlockView {
 		
 		g.setColor(Color.RED);
 		Point p = v.getPoint();
-		g.fillOval((int)(p.getX()-MODEL.VERTEX_WIDTH/2), (int)(p.getY()-MODEL.VERTEX_WIDTH/2), (int)MODEL.VERTEX_WIDTH, (int)MODEL.VERTEX_WIDTH);
+		g.fillOval((int)(p.getX()-MODEL.world.VERTEX_WIDTH/2), (int)(p.getY()-MODEL.world.VERTEX_WIDTH/2), (int)MODEL.world.VERTEX_WIDTH, (int)MODEL.world.VERTEX_WIDTH);
 		
 	}
 	
@@ -348,7 +349,7 @@ public class DeadlockView {
 			
 			g.setColor(Color.RED);
 			Point p = s.getPoint();
-			g.fillOval((int)(p.getX()-MODEL.VERTEX_WIDTH/2), (int)(p.getY()-MODEL.VERTEX_WIDTH/2), (int)MODEL.VERTEX_WIDTH, (int)MODEL.VERTEX_WIDTH);
+			g.fillOval((int)(p.getX()-MODEL.world.VERTEX_WIDTH/2), (int)(p.getY()-MODEL.world.VERTEX_WIDTH/2), (int)MODEL.world.VERTEX_WIDTH, (int)MODEL.world.VERTEX_WIDTH);
 			
 		}
 	
@@ -356,14 +357,14 @@ public class DeadlockView {
 		
 		g.setColor(Color.RED);
 		Point p = s.getPoint();
-		g.fillOval((int)(p.getX()-MODEL.VERTEX_WIDTH/2), (int)(p.getY()-MODEL.VERTEX_WIDTH/2), (int)MODEL.VERTEX_WIDTH, (int)MODEL.VERTEX_WIDTH);
+		g.fillOval((int)(p.getX()-MODEL.world.VERTEX_WIDTH/2), (int)(p.getY()-MODEL.world.VERTEX_WIDTH/2), (int)MODEL.world.VERTEX_WIDTH, (int)MODEL.world.VERTEX_WIDTH);
 		
 	}
 
 	public static class Road1Stroke extends BasicStroke {
 		
 		public Road1Stroke() {
-			super((int)MODEL.ROAD_WIDTH, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
+			super((int)MODEL.world.ROAD_WIDTH, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
 		}
 		
 	}
@@ -388,7 +389,7 @@ public class DeadlockView {
 		//frame.repaint();
 		//panel.repaint(cornerOfWorldin panel, );
 		//panel.repaint();
-		panel.repaint((int)(worldViewLoc.getX()-MODEL.CAR_WIDTH), (int)(worldViewLoc.getY()-MODEL.CAR_WIDTH), (int)(MODEL.WORLD_WIDTH+2*MODEL.CAR_WIDTH), (int)(MODEL.WORLD_HEIGHT+2*MODEL.CAR_WIDTH));
+		panel.repaint((int)(worldViewLoc.getX()-MODEL.world.CAR_WIDTH), (int)(worldViewLoc.getY()-MODEL.world.CAR_WIDTH), (int)(MODEL.world.WORLD_WIDTH+2*MODEL.world.CAR_WIDTH), (int)(MODEL.world.WORLD_HEIGHT+2*MODEL.world.CAR_WIDTH));
 	}
 	
 	

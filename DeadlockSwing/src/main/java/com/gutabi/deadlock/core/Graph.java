@@ -21,44 +21,12 @@ public class Graph {
 	private final ArrayList<Intersection> intersections = new ArrayList<Intersection>();
 	private final QuadTree segTree = new QuadTree();
 	
-	private final ArrayList<Source> sources = new ArrayList<Source>();
-	private final ArrayList<Sink> sinks = new ArrayList<Sink>();
+	public final ArrayList<Source> sources = new ArrayList<Source>();
+	public final ArrayList<Sink> sinks = new ArrayList<Sink>();
 	
 	private static final Logger logger = Logger.getLogger(Graph.class);
 	
 	public Graph() {
-		
-		Source a = new Source(new Point(MODEL.WORLD_WIDTH/3, 0));
-		Source b = new Source(new Point(2*MODEL.WORLD_WIDTH/3, 0));
-		Source c = new Source(new Point(0, MODEL.WORLD_HEIGHT/3));
-		Source d = new Source(new Point(0, 2*MODEL.WORLD_HEIGHT/3));
-		
-		Sink e = new Sink(new Point(MODEL.WORLD_WIDTH/3, MODEL.WORLD_HEIGHT));
-		Sink f = new Sink(new Point(2*MODEL.WORLD_WIDTH/3, MODEL.WORLD_HEIGHT));
-		Sink g = new Sink(new Point(MODEL.WORLD_WIDTH, MODEL.WORLD_HEIGHT/3));
-		Sink h = new Sink(new Point(MODEL.WORLD_WIDTH, 2*MODEL.WORLD_HEIGHT/3));
-		
-		a.matchingSink = e;
-		e.matchingSource = a;
-		
-		b.matchingSink = f;
-		f.matchingSource = b;
-		
-		c.matchingSink = g;
-		g.matchingSource = c;
-		
-		d.matchingSink = h;
-		h.matchingSource = d;
-		
-		sources.add(a);
-		sources.add(b);
-		sources.add(c);
-		sources.add(d);
-		
-		sinks.add(e);
-		sinks.add(f);
-		sinks.add(g);
-		sinks.add(h);
 		
 	}
 	
@@ -154,7 +122,7 @@ public class Graph {
 //			sources.add(s);
 //			return s;
 //			
-//		} else if (p.getX() >= MODEL.WORLD_WIDTH-10 || p.getY() >= MODEL.WORLD_HEIGHT-10) {
+//		} else if (p.getX() >= MODEL.world.WORLD_WIDTH-10 || p.getY() >= MODEL.world.WORLD_HEIGHT-10) {
 //			// sink
 //			
 //			Sink s = new Sink(p);
@@ -205,7 +173,7 @@ public class Graph {
 	Vertex[][] nextHighest;
 	boolean[][] neighbors;
 	
-	public void calculateChoices() {
+	public void preprocess() {
 		
 		/*
 		 * Floyd-Warshall
@@ -502,7 +470,7 @@ public class Graph {
 			
 			if (!tooClose) {
 				
-				Position aP = findClosestPosition(preA, null, MODEL.ROAD_WIDTH, false);
+				Position aP = findClosestPosition(preA, null, MODEL.world.ROAD_WIDTH, false);
 				
 				if (aP != null) {
 					
@@ -532,10 +500,10 @@ public class Graph {
 			if (!tooClose) {
 				
 				/*
-				 * just changed from findClosestPosition(preB, null, MODEL.ROAD_WIDTH); because
+				 * just changed from findClosestPosition(preB, null, MODEL.world.ROAD_WIDTH); because
 				 * this was changing B for regular extending
 				 */
-				Position bP = findClosestPosition(preB, a, MODEL.ROAD_WIDTH, false);
+				Position bP = findClosestPosition(preB, a, MODEL.world.ROAD_WIDTH, false);
 				
 				if (bP != null) {
 					tooClose = true;
@@ -549,11 +517,11 @@ public class Graph {
 				
 			} else {
 				
-				Position bP = findClosestPosition(preB, a, MODEL.ROAD_WIDTH, false);
+				Position bP = findClosestPosition(preB, a, MODEL.world.ROAD_WIDTH, false);
 				
 				if (bP != null) {
 					
-					if (DMath.greaterThan(Point.distance(bP.getPoint(), tooClosePoint), MODEL.ROAD_WIDTH)) {
+					if (DMath.greaterThan(Point.distance(bP.getPoint(), tooClosePoint), MODEL.world.ROAD_WIDTH)) {
 						
 						//still too close, but now to a different point
 						tooClosePoint = bP.getPoint();
@@ -570,7 +538,7 @@ public class Graph {
 					
 				} else {
 					
-					if (DMath.greaterThan(Point.distance(preB, tooClosePoint), MODEL.ROAD_WIDTH)) {
+					if (DMath.greaterThan(Point.distance(preB, tooClosePoint), MODEL.world.ROAD_WIDTH)) {
 						
 						tooClose = false;
 						tooClosePoint = null;
@@ -690,8 +658,8 @@ public class Graph {
 				if (inter != null) {
 					
 					double interParam = Point.param(inter, a, b);
-					double interStartParam = Point.travelBackward(a, b, interParam, MODEL.ROAD_WIDTH);
-					double interEndParam = Point.travelForward(a, b, interParam, MODEL.ROAD_WIDTH);
+					double interStartParam = Point.travelBackward(a, b, interParam, MODEL.world.ROAD_WIDTH);
+					double interEndParam = Point.travelForward(a, b, interParam, MODEL.world.ROAD_WIDTH);
 					
 					timeline.addEvent(new IntersectionEvent(inter, interParam, interStartParam, interEndParam, in));
 				} else {
@@ -961,7 +929,7 @@ public class Graph {
 	private CloseEvent detectClose(Timeline t, Point p, Point a, Point b) {
 		//how close is p to <a, b>?
 		Point[] ints = new Point[2];
-		int num = Point.circleLineIntersections(p, MODEL.ROAD_WIDTH, a, b, ints);
+		int num = Point.circleLineIntersections(p, MODEL.world.ROAD_WIDTH, a, b, ints);
 		switch (num) {
 		case 2: {
 			Point p1 = ints[0];
@@ -1181,7 +1149,7 @@ public class Graph {
 			changed = false;
 			
 			for (Edge e : edges) {
-				if (e.getTotalLength() <= MODEL.CAR_WIDTH) {
+				if (e.getTotalLength() <= MODEL.world.CAR_WIDTH) {
 					toRemove.add(e);
 					changed = true;
 				}
@@ -1727,7 +1695,7 @@ public class Graph {
 			
 			createVertex(p);
 			
-		} else if (p.getX() >= MODEL.WORLD_WIDTH-10 || p.getY() >= MODEL.WORLD_HEIGHT-10) {
+		} else if (p.getX() >= MODEL.world.WORLD_WIDTH-10 || p.getY() >= MODEL.world.WORLD_HEIGHT-10) {
 			// sink
 			
 			createVertex(p);
@@ -1756,7 +1724,7 @@ public class Graph {
 		}
 		
 		for (Edge e : edges) {
-			if (e.getTotalLength() <= MODEL.CAR_WIDTH) {
+			if (e.getTotalLength() <= MODEL.world.CAR_WIDTH) {
 				throw new IllegalStateException("too small");
 			}
 			if (e.getStart() == null && e.getEnd() == null) {

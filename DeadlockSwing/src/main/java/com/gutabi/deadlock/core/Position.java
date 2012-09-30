@@ -4,7 +4,7 @@ public abstract class Position {
 	
 	Point p;
 	
-	Position(Point p) {
+	public Position(Point p) {
 		this.p = p;
 	}
 	

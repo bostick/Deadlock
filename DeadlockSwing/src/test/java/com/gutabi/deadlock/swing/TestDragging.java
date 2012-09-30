@@ -85,7 +85,7 @@ public class TestDragging {
 	@After
 	public void tearDown() throws Exception {
 		
-		assertTrue(MODEL.checkConsistency());
+		assertTrue(MODEL.world.graph.checkConsistency());
 		
 		Thread.sleep(2000);
 		
@@ -108,7 +108,7 @@ public class TestDragging {
 		CONTROLLER.queueAndWait(new Runnable() {
 			@Override
 			public void run() {
-				edges = MODEL.getEdges();
+				edges = MODEL.world.graph.getEdges();
 			}
 		});
 		 

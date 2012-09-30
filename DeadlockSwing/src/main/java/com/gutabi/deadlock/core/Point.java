@@ -59,6 +59,9 @@ public class Point {
 		return y;
 	}
 	
+	public double distanceTo(Point p) {
+		return Point.distance(this, p);
+	}
 	
 	/**
 	 * does <a, b> intersect <c, d>?
@@ -315,7 +318,7 @@ public class Point {
 	}
 	
 	/**
-	 * returns u for point b in segment <c, d>
+	 * returns u for point b in segment &lt;c, d>
 	 */
 	public static double u(Point c, Point b, Point d) {
 		if (b.equals(c)) {

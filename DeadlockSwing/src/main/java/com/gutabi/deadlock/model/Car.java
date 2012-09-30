@@ -13,18 +13,19 @@ import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Edge;
 import com.gutabi.deadlock.core.EdgePosition;
 import com.gutabi.deadlock.core.GraphPosition;
-import com.gutabi.deadlock.core.Path;
-import com.gutabi.deadlock.core.PathPosition;
 import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.core.STPath;
-import com.gutabi.deadlock.core.STPosition;
+import com.gutabi.deadlock.core.Sink;
 import com.gutabi.deadlock.core.Source;
+import com.gutabi.deadlock.core.path.GraphPositionPath;
+import com.gutabi.deadlock.core.path.GraphPositionPathPosition;
+import com.gutabi.deadlock.core.path.STGraphPositionPathPosition;
+import com.gutabi.deadlock.core.path.STGraphPositionPathPositionPath;
 
 public abstract class Car {
 	
 	protected CarState state;
 	
-	PathPosition pos;
+	GraphPositionPathPosition pos;
 	
 	private Point prevPoint;
 	
@@ -32,10 +33,10 @@ public abstract class Car {
 	public long crashingStep;
 	public Source source;
 	
-	public STPath nextPath;
+	public STGraphPositionPathPositionPath nextPath;
 	public CarState nextState;
 	
-	Path overallPath;
+	GraphPositionPath overallPath;
 	
 	public final int id;
 	
@@ -55,18 +56,53 @@ public abstract class Car {
 		
 		overallPath = s.getPathToMatchingSink();
 		
-		pos = new PathPosition(overallPath, 0, 0.0);
+		pos = new GraphPositionPathPosition(overallPath, 0, 0.0);
 		
 	}
 	
-	public abstract boolean updateNext();
+	public abstract double getSpeed();
+	
+	/**
+	 * Returns true if car moved in this update
+	 */
+	public boolean updateNext() {
+		
+		assert nextPath == null;
+		assert nextState == null;
+		
+		switch (state) {
+		case RUNNING:
+			
+			nextPath = STGraphPositionPathPositionPath.advanceOneTimeStep(pos, getSpeed());
+			
+			STGraphPositionPathPosition last = nextPath.get(nextPath.size()-1);
+			
+			logger.debug("last nextPath: " + last);
+			
+			if (last.getSpace().getGraphPosition() instanceof Sink) {
+				nextState = CarState.SINKED;
+			} else {
+				nextState = CarState.RUNNING;
+			}
+			break;
+		case CRASHED:
+			nextPath = STGraphPositionPathPositionPath.crashOneTimeStep(pos);
+			nextState = CarState.CRASHED;
+			break;
+		default:
+			assert false;
+		}
+		
+		
+		return nextState == CarState.RUNNING || nextState == CarState.SINKED;
+	}
 	
 	public boolean updateCurrentFromNext() {
 
-		prevPoint = pos.getGraphPosition().getPoint();
+		prevPoint = pos.getPoint();
 		
-		STPosition first = nextPath.get(0);
-		STPosition last = nextPath.get(nextPath.size()-1);
+		STGraphPositionPathPosition first = nextPath.get(0);
+		STGraphPositionPathPosition last = nextPath.get(nextPath.size()-1);
 		
 		assert DMath.equals(first.getTime(), 0.0);
 		assert DMath.equals(last.getTime(), 1.0);
@@ -112,7 +148,7 @@ public abstract class Car {
 //		nextPath = nextPath.synchronize(time);
 //	}
 	
-	public STPath getNextPath() {
+	public STGraphPositionPathPositionPath getNextPath() {
 		return nextPath;
 	}
 	
@@ -150,8 +186,8 @@ public abstract class Car {
 			
 			Point p = pos.getPoint();
 			
-			int x = (int)(p.getX()-MODEL.CAR_WIDTH/2);
-			int y = (int)(p.getY()-MODEL.CAR_WIDTH/2);
+			int x = (int)(p.getX()-MODEL.world.CAR_WIDTH/2);
+			int y = (int)(p.getY()-MODEL.world.CAR_WIDTH/2);
 			g2.drawImage(VIEW.wreck, x, y, null);
 			
 		} else {

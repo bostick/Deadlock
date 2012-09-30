@@ -45,7 +45,7 @@ public class DMath {
 		return !equals(a, b) && a > b;
 	}
 	
-	static Comparator<Double> COMPARATOR = new DoubleComparator();
+	public static Comparator<Double> COMPARATOR = new DoubleComparator();
 	
 	static class DoubleComparator implements Comparator<Double> {
 

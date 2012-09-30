@@ -9,33 +9,23 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 import com.gutabi.deadlock.core.DMath;
-import com.gutabi.deadlock.core.Edge;
 import com.gutabi.deadlock.core.GraphPosition;
-import com.gutabi.deadlock.core.Intersection;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.Position;
-import com.gutabi.deadlock.core.STPath;
-import com.gutabi.deadlock.core.Sink;
 import com.gutabi.deadlock.core.Source;
 import com.gutabi.deadlock.core.Vertex;
+import com.gutabi.deadlock.core.path.STGraphPositionPathPositionPath;
 import com.gutabi.deadlock.model.Car;
 import com.gutabi.deadlock.model.CarState;
 import com.gutabi.deadlock.model.CrashInfo;
-import com.gutabi.deadlock.model.FastCar;
-import com.gutabi.deadlock.model.NormalCar;
 
 @SuppressWarnings("serial")
 public class SimulationRunnable implements Runnable {
 	
-	List<Car> specials = new ArrayList<Car>();
+	long stepCopy;
+	long lastSpawnStepCopy;
 	
-	long step = 0;
-	long lastSpawnStep = 0;
-	
-	List<Edge> edgesCopy;
-	List<Intersection> intersectionsCopy;
 	List<Source> sourcesCopy;
-	List<Sink> sinksCopy;
 	ControlMode modeCopy;
 	List<Car> movingCarsCopy;
 	List<Car> crashedCarsCopy;
@@ -47,21 +37,14 @@ public class SimulationRunnable implements Runnable {
 	@Override
 	public void run() {
 		
+		movingCarsCopy = new ArrayList<Car>();
+		crashedCarsCopy = new ArrayList<Car>();
 		firstUnprocessedCrashTime = -1;
 		unprocessedCrashes.clear();
 		
 		synchronized (MODEL) {
-			
-			edgesCopy = new ArrayList<Edge>();
-			for (Edge e : MODEL.getEdges()) {
-				edgesCopy.add(e);
-			}
-			intersectionsCopy = new ArrayList<Intersection>(MODEL.getIntersections());
-			sourcesCopy = new ArrayList<Source>(MODEL.getSources());
-			sinksCopy = new ArrayList<Sink>(MODEL.getSinks());
+			sourcesCopy = new ArrayList<Source>(MODEL.world.graph.getSources());
 			modeCopy = MODEL.getMode();
-			movingCarsCopy = new ArrayList<Car>(MODEL.movingCars);
-			crashedCarsCopy = new ArrayList<Car>(MODEL.crashedCars);
 		}
 		
 		outer:
@@ -87,15 +70,20 @@ public class SimulationRunnable implements Runnable {
 				break outer;
 			}
 			
-			if (MODEL.SPAWN_FREQUENCY > 0 && (step == 0 || (step - lastSpawnStep) >= MODEL.SPAWN_FREQUENCY)) {
+			if (MODEL.world.SPAWN_FREQUENCY > 0 && (stepCopy - lastSpawnStepCopy) >= MODEL.world.SPAWN_FREQUENCY) {
 				spawnNewCars();
 			}
 			
 			movingFixPoint();
 			
 			synchronized (MODEL) {
-				MODEL.movingCars = new ArrayList<Car>(movingCarsCopy);
-				MODEL.crashedCars = new ArrayList<Car>(crashedCarsCopy);
+				/*
+				 * push update out to model
+				 */
+				MODEL.world.step = stepCopy;
+				MODEL.world.lastSpawnStep = lastSpawnStepCopy;
+				MODEL.world.movingCars = new ArrayList<Car>(movingCarsCopy);
+				MODEL.world.crashedCars = new ArrayList<Car>(crashedCarsCopy);
 			}
 			
 			VIEW.repaint();
@@ -107,7 +95,7 @@ public class SimulationRunnable implements Runnable {
 				ex.printStackTrace();
 			}
 			
-			step++;
+			stepCopy++;
 			
 		} // outer
 		
@@ -132,7 +120,7 @@ public class SimulationRunnable implements Runnable {
 			GraphPosition carPos = c.getPosition();
 			for (Source s : sources) {
 				double dist = carPos.distanceTo(s);
-				if (DMath.lessThanEquals(dist, MODEL.CAR_WIDTH)) {
+				if (DMath.lessThanEquals(dist, MODEL.world.CAR_WIDTH)) {
 					toRemove.add(s);
 				}
 			}
@@ -141,7 +129,7 @@ public class SimulationRunnable implements Runnable {
 			GraphPosition carPos = c.getPosition();
 			for (Source s : sources) {
 				double dist = carPos.distanceTo(s);
-				if (DMath.lessThanEquals(dist, MODEL.CAR_WIDTH)) {
+				if (DMath.lessThanEquals(dist, MODEL.world.CAR_WIDTH)) {
 					toRemove.add(s);
 				}
 			}
@@ -162,22 +150,21 @@ public class SimulationRunnable implements Runnable {
 		
 		for (int i = 0; i < n; i++) {
 			
-			Car c;
-			int choice = MODEL.RANDOM.nextInt(2);
-			if (choice == 0) {
-				c = new NormalCar(sources.get(i));
-			} else {
-				c = new FastCar(sources.get(i));
+			Car c = MODEL.world.createNewCar(sources.get(i));
+			
+			if (c != null) {
+				
+				c.startingStep = stepCopy;
+				
+				newCars.add(c);
+				
 			}
 			
-			c.startingStep = step;
-			
-			newCars.add(c);
 		}
 		
 		movingCarsCopy.addAll(newCars);
 		
-		lastSpawnStep = step;
+		lastSpawnStepCopy = stepCopy;
 		
 	}
 	
@@ -226,7 +213,7 @@ public class SimulationRunnable implements Runnable {
 		}
 		Position dPos = d.getPosition();
 		double dist = Point.distance(cPos.getPoint(), dPos.getPoint());
-		assert DMath.greaterThanEquals(dist, MODEL.CAR_WIDTH);
+		assert DMath.greaterThanEquals(dist, MODEL.world.CAR_WIDTH);
 		return true;
 	}
 	
@@ -288,10 +275,10 @@ public class SimulationRunnable implements Runnable {
 	
 	private boolean carCar(Car ci, Car cj) {
 		
-		STPath ciFuturePath = ci.getNextPath();
-		STPath cjFuturePath = cj.getNextPath();
+		STGraphPositionPathPositionPath ciFuturePath = ci.getNextPath();
+		STGraphPositionPathPositionPath cjFuturePath = cj.getNextPath();
 		
-		double intersectionTime = STPath.intersection(ciFuturePath, cjFuturePath, MODEL.CAR_WIDTH);
+		double intersectionTime = STGraphPositionPathPositionPath.intersection(ciFuturePath, cjFuturePath, MODEL.world.CAR_WIDTH);
 		if (intersectionTime != -1) {
 			saveCrashInfo(new CrashInfo(intersectionTime, ci, cj));
 			return true;
@@ -337,14 +324,14 @@ public class SimulationRunnable implements Runnable {
 			
 			if (i.nextState != CarState.CRASHED) {
 				i.nextPathCrash(firstUnprocessedCrashTime);
-				i.crashingStep = step;
+				i.crashingStep = stepCopy;
 				i.nextState = CarState.CRASHED;
 				newlyCrashedCars.add(i);
 			}
 			
 			if (j.nextState != CarState.CRASHED) {
 				j.nextPathCrash(firstUnprocessedCrashTime);
-				j.crashingStep = step;
+				j.crashingStep = stepCopy;
 				j.nextState = CarState.CRASHED;
 				newlyCrashedCars.add(j);
 			}

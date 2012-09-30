@@ -52,7 +52,7 @@ public class TestDragging2 {
 	@After
 	public void tearDown() throws Exception {
 		
-		assertTrue(MODEL.checkConsistency());
+		assertTrue(MODEL.world.graph.checkConsistency());
 		
 		Thread.sleep(2000);
 		

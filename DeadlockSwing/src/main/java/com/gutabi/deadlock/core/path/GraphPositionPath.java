@@ -1,14 +1,23 @@
-package com.gutabi.deadlock.core;
+package com.gutabi.deadlock.core.path;
 
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import com.gutabi.deadlock.core.Connector;
+import com.gutabi.deadlock.core.DMath;
+import com.gutabi.deadlock.core.Driveable;
+import com.gutabi.deadlock.core.Edge;
+import com.gutabi.deadlock.core.EdgePosition;
+import com.gutabi.deadlock.core.GraphPosition;
+import com.gutabi.deadlock.core.Point;
+import com.gutabi.deadlock.core.Vertex;
+
 /**
  * Purely spatial 
  */
-public class Path {
+public class GraphPositionPath {
 	
 	private GraphPosition start;
 	private GraphPosition end;
@@ -16,12 +25,12 @@ public class Path {
 	List<? extends GraphPosition> origPoss;
 	List<GraphPosition> poss = new ArrayList<GraphPosition>();
 	
-	final double[] cumulativeDistancesFromStart;
+	public final double[] cumulativeDistancesFromStart;
 	private final double totalLength;
 	
 	int hash;
 	
-	private Path(List<? extends GraphPosition> origPoss) {
+	private GraphPositionPath(List<? extends GraphPosition> origPoss) {
 		
 		this.origPoss = origPoss;
 		
@@ -61,17 +70,17 @@ public class Path {
 		assert check();
 	}
 	
-	public static Path createPathFromSkeleton(List<Vertex> origPoss) {
+	public static GraphPositionPath createPathFromSkeleton(List<Vertex> origPoss) {
 		
 		for (int i = 0; i < origPoss.size()-1; i++) {
 			Vertex a = origPoss.get(i);
 			Vertex b = origPoss.get(i+1);
-			if (MODEL.distanceBetweenVertices(a, b) == Double.POSITIVE_INFINITY) {
+			if (MODEL.world.graph.distanceBetweenVertices(a, b) == Double.POSITIVE_INFINITY) {
 				return null;
 			}
 		}
 		
-		return new Path(origPoss);
+		return new GraphPositionPath(origPoss);
 	}
 	
 	public int hashCode() {
@@ -450,7 +459,7 @@ public class Path {
 					
 					if (coms.isEmpty()) {
 						
-						Vertex choice = MODEL.shortestPathChoice(aa, bb);
+						Vertex choice = MODEL.world.graph.shortestPathChoice(aa, bb);
 						
 						if (choice == null) {
 							

@@ -1,17 +1,19 @@
-package com.gutabi.deadlock.core;
+package com.gutabi.deadlock.core.path;
+
+import com.gutabi.deadlock.core.DMath;
 
 /**
  * space-time position
  *
  */
-public class STPosition {
+public class STGraphPositionPathPosition {
 	
-	private PathPosition s;
+	private GraphPositionPathPosition s;
 	private double t;
 	
 	int hash;
 	
-	public STPosition(PathPosition s, double t) {
+	public STGraphPositionPathPosition(GraphPositionPathPosition s, double t) {
 		this.s = s;
 		this.t = t;
 		
@@ -22,7 +24,7 @@ public class STPosition {
 		hash = s.hashCode();
 	}
 	
-	public PathPosition getSpace() {
+	public GraphPositionPathPosition getSpace() {
 		return s;
 	}
 	
@@ -42,10 +44,10 @@ public class STPosition {
 	public boolean equals(Object o) {
 		if (this == o) {
 			return true;
-		} else if (!(o instanceof STPosition)) {
+		} else if (!(o instanceof STGraphPositionPathPosition)) {
 			throw new IllegalArgumentException();
 		} else {
-			STPosition b = (STPosition)o;
+			STGraphPositionPathPosition b = (STGraphPositionPathPosition)o;
 			return s.equals(b.s) && DMath.equals(t, b.t);
 		}
 	}

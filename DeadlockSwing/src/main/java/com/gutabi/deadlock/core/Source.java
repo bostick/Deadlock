@@ -3,10 +3,12 @@ package com.gutabi.deadlock.core;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Source extends Fixture {
+import com.gutabi.deadlock.core.path.GraphPositionPath;
+
+public class Source extends Vertex {
 	
-	Sink matchingSink;
-	Path pathToMatchingSink;
+	public Sink matchingSink;
+	GraphPositionPath pathToMatchingSink;
 	
 	public Source(Point p) {
 		super(p);
@@ -17,11 +19,11 @@ public class Source extends Fixture {
 		List<Vertex> poss = new ArrayList<Vertex>();
 		poss.add(this);
 		poss.add(matchingSink);
-		pathToMatchingSink = Path.createPathFromSkeleton(poss);
+		pathToMatchingSink = GraphPositionPath.createPathFromSkeleton(poss);
 		
 	}
 	
-	public Path getPathToMatchingSink() {
+	public GraphPositionPath getPathToMatchingSink() {
 		return pathToMatchingSink;
 	}
 	
