@@ -47,7 +47,7 @@ public class DeadlockView {
 	
 	public BufferedImage normalCar;
 	public BufferedImage fastCar;
-	public BufferedImage wreck;
+	public BufferedImage crash;
 	public BufferedImage tiledGrass;
 	
 	public final Logger logger = Logger.getLogger(DeadlockView.class);
@@ -66,14 +66,14 @@ public class DeadlockView {
 		
 		worldViewLoc = new Point(worldViewLocInitX, worldViewLocInitY);
 		
-		normalCar = ImageIO.read(new File("media\\car.png"));
+		normalCar = ImageIO.read(new File("media\\normalCar.png"));
 		normalCar = ImageUtils.createResizedCopy(normalCar, (int)MODEL.world.CAR_WIDTH, (int)MODEL.world.CAR_WIDTH, true);
 		
-		fastCar = ImageIO.read(new File("media\\car2.png"));
+		fastCar = ImageIO.read(new File("media\\fastCar.png"));
 		fastCar = ImageUtils.createResizedCopy(fastCar, (int)MODEL.world.CAR_WIDTH, (int)MODEL.world.CAR_WIDTH, true);
 		
-		wreck = ImageIO.read(new File("media\\wreck.png"));
-		wreck = ImageUtils.createResizedCopy(wreck, (int)MODEL.world.CAR_WIDTH, (int)MODEL.world.CAR_WIDTH, true);
+		crash = ImageIO.read(new File("media\\crash.png"));
+		crash = ImageUtils.createResizedCopy(crash, (int)MODEL.world.CAR_WIDTH, (int)MODEL.world.CAR_WIDTH, true);
 		
 		BufferedImage grass = ImageIO.read(new File("media\\grass.png"));
 		

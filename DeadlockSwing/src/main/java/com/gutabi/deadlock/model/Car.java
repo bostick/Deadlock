@@ -195,7 +195,7 @@ public abstract class Car {
 			
 			int x = (int)(p.getX()-MODEL.world.CAR_WIDTH/2);
 			int y = (int)(p.getY()-MODEL.world.CAR_WIDTH/2);
-			g2.drawImage(VIEW.wreck, x, y, null);
+			g2.drawImage(VIEW.crash, x, y, null);
 			
 		} else {
 			assert false;
