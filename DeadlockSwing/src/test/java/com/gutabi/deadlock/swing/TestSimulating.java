@@ -2472,8 +2472,6 @@ public class TestSimulating {
 	public void test3() throws Exception {
 		
 		synchronized (MODEL) {
-			MODEL.world.SPAWN_FREQUENCY = -1;
-			MODEL.WAIT = 300;
 			
 			//MODEL.viewDim = new Dim(200, 500);
 			//MODEL.viewLoc = new Point(575, 375);
@@ -2508,8 +2506,6 @@ public class TestSimulating {
 	public void test4() throws Exception {
 		
 		synchronized (MODEL) {
-			MODEL.world.SPAWN_FREQUENCY = -1;
-			MODEL.WAIT = 300;
 			
 			//MODEL.viewDim = new Dim(200, 500);
 			//MODEL.viewLoc = new Point(575, 375);
@@ -2549,8 +2545,6 @@ public class TestSimulating {
 	public void test5() throws Exception {
 		
 		synchronized (MODEL) {
-			MODEL.world.SPAWN_FREQUENCY = -1;
-			MODEL.WAIT = 300;
 			
 			//MODEL.viewDim = new Dim(200, 500);
 			//MODEL.viewLoc = new Point(575, 375);
@@ -2590,11 +2584,6 @@ public class TestSimulating {
 	public void test7() throws Exception {
 		
 		//CONTROLLER.strat = MassageStrategy.NONE;
-		
-		synchronized (MODEL) {
-			MODEL.WAIT = 1;
-			MODEL.world.SPAWN_FREQUENCY = 3;
-		}
 		
 		//MODEL.RANDOM.setSeed(1);
 		
