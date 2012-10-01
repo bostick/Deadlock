@@ -35,8 +35,6 @@ public class DeadlockView {
 	public WorldPanel panel;
 	public ControlPanel controlPanel;
 	
-//	public PreviewPanel previewPanel;
-	
 	public BufferedImage backgroundImage;
 	
 	/*
@@ -44,7 +42,6 @@ public class DeadlockView {
 	 * 
 	 */
 	private Point worldViewLoc;
-//	private Dim worldViewDim;
 	private double worldViewLocInitX;
 	private double worldViewLocInitY;
 	
@@ -68,7 +65,6 @@ public class DeadlockView {
 		worldViewLocInitY = (panel.getHeight()/2 - MODEL.world.WORLD_HEIGHT/2);
 		
 		worldViewLoc = new Point(worldViewLocInitX, worldViewLocInitY);
-//		worldViewDim = new Dim(panel.getWidth(), panel.getHeight());
 		
 		normalCar = ImageIO.read(new File("media\\car.png"));
 		normalCar = ImageUtils.createResizedCopy(normalCar, (int)MODEL.world.CAR_WIDTH, (int)MODEL.world.CAR_WIDTH, true);
@@ -103,8 +99,6 @@ public class DeadlockView {
 		panel = new WorldPanel();
 		panel.setFocusable(true);
 		
-//		previewPanel = new PreviewPanel();
-		
 		controlPanel = new ControlPanel();
 		controlPanel.init();
 		
@@ -137,12 +131,11 @@ public class DeadlockView {
 			lastTime = curTime;
 		}
 		
-//		g2.scale(getZoom(), getZoom());
 		g2.translate((double)worldViewLoc.getX(), (double)worldViewLoc.getY());
 		
 		g2.setColor(Color.WHITE);
 		g2.drawString("FPS: " + fps, 10, 10);
-		g2.drawString("step: " + MODEL.world.step, 10, 20);
+		g2.drawString("time: " + MODEL.world.t, 10, 20);
 		
 		ControlMode modeCopy;
 		Driveable hilitedCopy;
@@ -226,18 +219,11 @@ public class DeadlockView {
 		backgroundImage = new BufferedImage(d.width, d.height, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g2 = backgroundImage.createGraphics();
 		
-//		g2.scale(getZoom(), getZoom());
 		g2.translate((double)worldViewLoc.getX(), (double)worldViewLoc.getY());
 		
 		g2.drawImage(tiledGrass, 0, 0, null);
 		
 		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		
-//		g2.setColor(Color.DARK_GRAY);
-//		g2.fillRect(0, 0, MODEL.WORLD_WIDTH, 10);
-//		g2.fillRect(0, 10, 10, MODEL.WORLD_HEIGHT-10);
-//		g2.fillRect(MODEL.WORLD_WIDTH-10, 10, 10, MODEL.WORLD_HEIGHT-10);
-//		g2.fillRect(10, MODEL.WORLD_HEIGHT-10, MODEL.WORLD_WIDTH-20, 10);
 		
 		List<Edge> edgesCopy;
 		List<Intersection> intersectionsCopy;
@@ -386,103 +372,13 @@ public class DeadlockView {
 	}
 	
 	public void repaint() {
-		//frame.repaint();
-		//panel.repaint(cornerOfWorldin panel, );
-		//panel.repaint();
 		panel.repaint((int)(worldViewLoc.getX()-MODEL.world.CAR_WIDTH), (int)(worldViewLoc.getY()-MODEL.world.CAR_WIDTH), (int)(MODEL.world.WORLD_WIDTH+2*MODEL.world.CAR_WIDTH), (int)(MODEL.world.WORLD_HEIGHT+2*MODEL.world.CAR_WIDTH));
 	}
 	
-	
-	
-	
-//	public double getZoom() {
-//		return ((double)panel.getWidth()) / ((double)worldViewDim.width);
-//	}
-	
 	public Point panelToWorld(Point pp) {
 		Point p = pp;
-//		p = new Point(p.getX() * 1/getZoom(), p.getY() * 1/getZoom());
 		p = Point.minus(p, worldViewLoc);
 		return p; 
 	}
-	
-	public void moveCameraRight() {
-		worldViewLoc = worldViewLoc.add(new Point(5, 0));
-		logger.debug("right: viewLoc=" + worldViewLoc);
-		
-		renderBackground();
-		repaint();
-	}
-	
-	public void moveCameraLeft() {
-		worldViewLoc = worldViewLoc.add(new Point(-5, 0));
-		logger.debug("left: viewLoc=" + worldViewLoc);
-		
-		renderBackground();
-		repaint();
-	}
-	
-	public void moveCameraUp() {
-		worldViewLoc = worldViewLoc.add(new Point(0, -5));
-		logger.debug("up: viewLoc=" + worldViewLoc);
-		
-		renderBackground();
-		repaint();
-	}
-	
-	public void moveCameraDown() {
-		worldViewLoc = worldViewLoc.add(new Point(0, 5));
-		logger.debug("down: viewLoc=" + worldViewLoc);
-		
-		renderBackground();
-		repaint();
-	}
-	
-	public void pageUp() {
-		worldViewLoc = worldViewLoc.add(new Point(0, -50));
-		logger.debug("up: viewLoc=" + worldViewLoc);
-		
-		renderBackground();
-		repaint();
-	}
-	
-	public void pageDown() {
-		worldViewLoc = worldViewLoc.add(new Point(0, 50));
-		logger.debug("down: viewLoc=" + worldViewLoc);
-		
-		renderBackground();
-		repaint();
-	}
-	
-//	public void zoomIn() {
-//		Point center = worldViewDim.divide(2).add(worldViewLoc);
-//		worldViewDim = worldViewDim.times(1/1.1);
-//		worldViewLoc = center.minus(worldViewDim.divide(2));
-//		logger.debug("zoom in: viewLoc=" + worldViewLoc);
-//		
-//		renderBackground();
-//		repaint();
-//	}
-//	
-//	public void zoomOut() {
-//		Point center = worldViewDim.divide(2).add(worldViewLoc);
-//		worldViewDim = worldViewDim.times(1.1);
-//		worldViewLoc = center.minus(worldViewDim.divide(2));
-//		logger.debug("zoom out: viewLoc=" + worldViewLoc);
-//		
-//		renderBackground();
-//		repaint();
-//	}
-//	
-//	public void zoomReset() {
-//		worldViewDim = new Dim(panel.getWidth(), panel.getHeight());
-//		worldViewLoc = new Point(worldViewLocInitX, worldViewLocInitY);
-//		Point center = worldViewDim.divide(2).add(worldViewLoc);
-//		logger.debug("zoom reset: viewLoc=" + worldViewLoc + " center: " + center);
-//		
-//		renderBackground();
-//		repaint();
-//	}
-	
 	
 }

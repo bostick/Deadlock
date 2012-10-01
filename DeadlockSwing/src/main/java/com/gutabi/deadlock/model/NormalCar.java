@@ -1,14 +1,17 @@
 package com.gutabi.deadlock.model;
 
+
 import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
 import java.awt.image.BufferedImage;
 
 import com.gutabi.deadlock.core.Source;
 
+
+
 public class NormalCar extends Car {
 	
-	public double DISTANCE_PER_TIMESTEP = 1;
+	public double speed = 0.1;
 	
 	public NormalCar(Source s) {
 		super(s);
@@ -20,7 +23,7 @@ public class NormalCar extends Car {
 	}
 	
 	public double getSpeed() {
-		return 1;
+		return speed;
 	}
 
 }

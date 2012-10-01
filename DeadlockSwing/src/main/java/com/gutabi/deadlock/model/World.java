@@ -1,26 +1,29 @@
 package com.gutabi.deadlock.model;
 
+import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Edge;
 import com.gutabi.deadlock.core.Graph;
+import com.gutabi.deadlock.core.GraphPosition;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.Position;
 import com.gutabi.deadlock.core.Segment;
 import com.gutabi.deadlock.core.Sink;
 import com.gutabi.deadlock.core.Source;
 import com.gutabi.deadlock.core.Vertex;
+import com.gutabi.deadlock.core.path.STGraphPositionPathPositionPath;
 
 public class World {
 	
 	public final double ROAD_WIDTH = 32.0;
 	public final double VERTEX_WIDTH = Math.sqrt(2 * ROAD_WIDTH * ROAD_WIDTH);
 	
-	//public final double MOUSE_RADIUS = 16.0;
 	public final double MOUSE_RADIUS = VERTEX_WIDTH;
 	
 	public final double CAR_WIDTH = ROAD_WIDTH;
@@ -30,10 +33,15 @@ public class World {
 	public final int WORLD_HEIGHT = WORLD_WIDTH;
 	
 	/*
-	 * spawn cars every SPAWN_FREQUENCY time steps
+	 * spawn cars every SPAWN_FREQUENCY milliseconds
 	 * -1 means no spawning
 	 */
-	public int SPAWN_FREQUENCY = 300;
+	public int SPAWN_FREQUENCY = 3000;
+	
+	/*
+	 * move physics forward by dt milliseconds
+	 */
+	public final long dt = 700;
 	
 	public Random RANDOM = new Random(1);
 	
@@ -41,8 +49,8 @@ public class World {
 	/*
 	 * simulation state
 	 */
-	public long step;
-	public long lastSpawnStep;
+	public long t;
+	public long lastSpawnTime;
 	
 	
 	public Graph graph = new Graph();
@@ -86,17 +94,112 @@ public class World {
 		
 	}
 	
-	public void preprocess() {
+	/*
+	 * run before game loop start
+	 */
+	public void preStart() {
 		
-		graph.preprocess();
+		graph.preStart();
 		
 		for (Source s : graph.getSources()) {
-			s.preprocess();
+			s.preStart();
 		}
+		
+		t = 0;
+		lastSpawnTime = -1;
 		
 	}
 	
-	public Car createNewCar(Source s) {
+	/*
+	 * run after game loop stops
+	 */
+	public void postStop() {
+		movingCars.clear();
+		crashedCars.clear();
+	}
+	
+	public void integrate(long t) {
+		
+		this.t = t;
+		
+		if (SPAWN_FREQUENCY > 0 && (t - lastSpawnTime) >= SPAWN_FREQUENCY) {
+			spawnNewCars();
+		}
+		
+		movingFixPoint();
+		
+	}
+	
+	private void spawnNewCars() {
+		
+		List<Source> sources = activeSources();
+		
+		List<Car> newCars = new ArrayList<Car>();
+		
+		int n = sources.size();
+		
+		for (int i = 0; i < n; i++) {
+			
+			Car c = MODEL.world.createNewCar(sources.get(i));
+			
+			if (c != null) {
+				
+				c.startingTime = t;
+				
+				newCars.add(c);
+				
+			}
+			
+		}
+		
+		movingCars.addAll(newCars);
+		
+		lastSpawnTime = t;
+		
+	}
+	
+	private List<Source> activeSources() {
+		
+		List<Source> sources = new ArrayList<Source>();
+		for (Source s : graph.sources) {
+			if (s.getPathToMatchingSink() != null) {
+				sources.add(s);
+			}
+		}
+		
+		List<Source> toRemove = new ArrayList<Source>();
+		
+		/*
+		 * if only moving cars are blocking a source, then a car will be spawned on the next spawn step that there are no blocking cars 
+		 */
+		
+		for (Car c : movingCars) {
+			GraphPosition carPos = c.getPosition();
+			for (Source s : sources) {
+				double dist = carPos.distanceTo(s);
+				if (DMath.lessThanEquals(dist, MODEL.world.CAR_WIDTH)) {
+					toRemove.add(s);
+				}
+			}
+		}
+		for (Car c : crashedCars) {
+			GraphPosition carPos = c.getPosition();
+			for (Source s : sources) {
+				double dist = carPos.distanceTo(s);
+				if (DMath.lessThanEquals(dist, MODEL.world.CAR_WIDTH)) {
+					toRemove.add(s);
+				}
+			}
+		}
+		for (Vertex v : toRemove) {
+			sources.remove(v);
+		}
+		
+		return sources;
+		
+	}
+	
+	private Car createNewCar(Source s) {
 		
 		boolean normal = VIEW.controlPanel.normalCarButton.isSelected();
 		boolean fast = VIEW.controlPanel.fastCarButton.isSelected();
@@ -119,6 +222,206 @@ public class World {
 		}
 		
 	}
+	
+	private void movingFixPoint() {
+		
+		for (Car c : movingCars) {
+			c.updateNext();
+		}
+		for (Car c : crashedCars) {
+			c.updateNext();
+		}
+		
+		findCrashesMoving(movingCars);
+		findCrashesMovingCrashed(movingCars, crashedCars);
+		int iter = 0;
+		while (firstUnprocessedCrashTime != -1) {
+			
+			List<Car> newlyCrashedCars = processCrashInfo(t);
+			
+			movingCars.removeAll(newlyCrashedCars);
+			crashedCars.addAll(newlyCrashedCars);
+			
+			findCrashesMoving(movingCars);
+			findCrashesMovingCrashed(movingCars, crashedCars);
+			
+			iter = iter + 1;
+		}
+		
+		List<Car> toBeRemoved = updateCurrentFromNext();
+		
+		movingCars.removeAll(toBeRemoved);
+		
+//		checkDistances(new ArrayList<Car>(){{addAll(movingCars);addAll(crashedCars);}});
+		
+	}
+	
+//	private boolean checkDistances(Car c, Car d) {
+//		Position cPos = c.getPosition();
+//		if (c == d) {
+//			return true;
+//		}
+//		Position dPos = d.getPosition();
+//		double dist = Point.distance(cPos.getPoint(), dPos.getPoint());
+//		assert DMath.greaterThanEquals(dist, MODEL.world.CAR_WIDTH);
+//		return true;
+//	}
+//	
+//	private boolean checkDistances(Car c, List<Car> cars) {
+//		for (int i = 0; i < cars.size(); i++) {
+//			Car d = cars.get(i);
+//			checkDistances(c, d);
+//		}
+//		return true;
+//	}
+//	
+//	private boolean checkDistances(List<Car> cars) {
+//		for (int i = 0; i < cars.size(); i++) {
+//			Car c = cars.get(i);
+//			checkDistances(c, cars);
+//		}
+//		return true;
+//	}
+	
+	private void findCrashesMoving(List<Car> cars) {
+		
+		for (int i = 0; i < cars.size(); i++) {
+			final Car ci = cars.get(i);
+			
+			jloop:
+			for (int j = i+1; j < cars.size(); j++) {
+				Car cj = cars.get(j);
+				
+				boolean res = carCar(ci, cj);
+				
+				if (res) {
+					continue jloop;
+				}
+				
+			}
+		}
+		
+	}
+	
+	private void findCrashesMovingCrashed(List<Car> moving, List<Car> crashed) {
+		
+		for (int i = 0; i < moving.size(); i++) {
+			final Car ci = moving.get(i);
+			
+			jloop:
+			for (int j = 0; j < crashed.size(); j++) {
+				Car cj = crashed.get(j);
+				
+				boolean res = carCar(ci, cj);
+				
+				if (res) {
+					continue jloop;
+				}
+				
+			}
+		}
+		
+	}
+	
+	private boolean carCar(Car ci, Car cj) {
+		
+		STGraphPositionPathPositionPath ciFuturePath = ci.getNextPath();
+		STGraphPositionPathPositionPath cjFuturePath = cj.getNextPath();
+		
+		double intersectionTime = STGraphPositionPathPositionPath.intersection(ciFuturePath, cjFuturePath, MODEL.world.CAR_WIDTH);
+		if (intersectionTime != -1) {
+			saveCrashInfo(new CrashInfo(intersectionTime, ci, cj));
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	
+	double firstUnprocessedCrashTime = -1;
+	List<CrashInfo> unprocessedCrashes = new ArrayList<CrashInfo>();
+	
+	private void saveCrashInfo(CrashInfo ci) {
+		
+		double t = ci.crashTime;
+		
+		if (firstUnprocessedCrashTime == -1) {
+			firstUnprocessedCrashTime = t;
+			assert unprocessedCrashes.isEmpty();
+			unprocessedCrashes.add(ci);
+		} else if (firstUnprocessedCrashTime == t) {
+			unprocessedCrashes.add(ci);
+		} else if (t < firstUnprocessedCrashTime) {
+			firstUnprocessedCrashTime = t;
+			unprocessedCrashes.clear();
+			unprocessedCrashes.add(ci);
+		} else {
+			;
+		}
+		
+	}
+	
+	private List<Car> processCrashInfo(long t) {
+		
+		List<Car> newlyCrashedCars = new ArrayList<Car>();
+		
+		for (CrashInfo info : unprocessedCrashes) {
+			double crashTime = info.crashTime;
+			assert DMath.equals(crashTime, firstUnprocessedCrashTime);
+			
+			Car i = info.i;
+			Car j = info.j;
+			
+			if (i.nextState != CarStateEnum.CRASHED) {
+				i.nextPathCrash(firstUnprocessedCrashTime);
+				i.crashingTime = t;
+				i.nextState = CarStateEnum.CRASHED;
+				newlyCrashedCars.add(i);
+			}
+			
+			if (j.nextState != CarStateEnum.CRASHED) {
+				j.nextPathCrash(firstUnprocessedCrashTime);
+				j.crashingTime = t;
+				j.nextState = CarStateEnum.CRASHED;
+				newlyCrashedCars.add(j);
+			}
+			
+		}
+		
+		firstUnprocessedCrashTime = -1;
+		unprocessedCrashes.clear();
+		
+		return newlyCrashedCars;
+	}
+	
+	/**
+	 * return cars to be removed
+	 */
+	private List<Car> updateCurrentFromNext() {
+		
+		List<Car> toBeRemoved = new ArrayList<Car>();
+		
+		for (Car c : movingCars) {
+			boolean shouldPersist = c.updateCurrentFromNext();
+			if (!shouldPersist) {
+				toBeRemoved.add(c);
+			}
+		}
+		for (Car c : crashedCars) {
+			boolean shouldPersist = c.updateCurrentFromNext();
+			assert shouldPersist;
+		}
+		
+		return toBeRemoved;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	/**
 	 * the next choice to make

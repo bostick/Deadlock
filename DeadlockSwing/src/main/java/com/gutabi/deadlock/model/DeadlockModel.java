@@ -9,8 +9,6 @@ import com.gutabi.deadlock.core.Point;
 
 public class DeadlockModel {
 	
-	public long WAIT = 17;
-	
 	public static final DeadlockModel MODEL = new DeadlockModel();
 	
 	public World world;

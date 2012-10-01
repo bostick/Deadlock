@@ -15,23 +15,21 @@ public class STPointSubPath {
 	}
 	
 	public Point getPoint(double time) {
-		if (time < start.getTime()) {
-			throw new IllegalArgumentException();
-		}
-		if (time > end.getTime()) {
-			throw new IllegalArgumentException();
-		}
-		
 		if (DMath.equals(time, start.getTime())) {
 			return start.getSpace();
 		} else if (DMath.equals(time, end.getTime())) {
 			return end.getSpace();
 		} else {
+			if (time < start.getTime()) {
+				throw new IllegalArgumentException();
+			}
+			if (time > end.getTime()) {
+				throw new IllegalArgumentException();
+			}
 			if (start.getSpace().equals(end.getSpace())) {
 				return start.getSpace();
 			} else {
 				double p = (time - start.getTime()) / (end.getTime() - start.getTime());
-//				double d = start.getSpace().distanceTo(end.getSpace());
 				return Point.point(start.getSpace(), end.getSpace(), p);
 			}
 		}

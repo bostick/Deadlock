@@ -14,7 +14,7 @@ public class Source extends Vertex {
 		super(p);
 	}
 	
-	public void preprocess() {
+	public void preStart() {
 		
 		List<Vertex> poss = new ArrayList<Vertex>();
 		poss.add(this);

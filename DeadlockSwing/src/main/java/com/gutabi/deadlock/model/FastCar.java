@@ -8,6 +8,8 @@ import com.gutabi.deadlock.core.Source;
 
 public class FastCar extends Car {
 	
+	public final double speed = 0.2;
+	
 	public FastCar(Source s) {
 		super(s);
 	}
@@ -18,6 +20,6 @@ public class FastCar extends Car {
 	}
 	
 	public double getSpeed() {
-		return 2;
+		return speed;
 	}
 }

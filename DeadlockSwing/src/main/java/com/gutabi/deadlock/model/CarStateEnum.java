@@ -1,6 +1,6 @@
 package com.gutabi.deadlock.model;
 
-public enum CarState {
+public enum CarStateEnum {
 	
 	RUNNING,
 	

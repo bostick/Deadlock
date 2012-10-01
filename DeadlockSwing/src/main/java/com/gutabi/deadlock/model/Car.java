@@ -23,18 +23,18 @@ import com.gutabi.deadlock.core.path.STGraphPositionPathPositionPath;
 
 public abstract class Car {
 	
-	protected CarState state;
+	protected CarStateEnum state;
 	
 	GraphPositionPathPosition pos;
 	
 	private Point prevPoint;
 	
-	public long startingStep;
-	public long crashingStep;
+	public long startingTime;
+	public long crashingTime;
 	public Source source;
 	
 	public STGraphPositionPathPositionPath nextPath;
-	public CarState nextState;
+	public CarStateEnum nextState;
 	
 	GraphPositionPath overallPath;
 	
@@ -49,7 +49,7 @@ public abstract class Car {
 		id = carCounter;
 		carCounter++;
 		
-		state = CarState.RUNNING;
+		state = CarStateEnum.RUNNING;
 		nextState = null;
 		
 		source = s;
@@ -60,6 +60,10 @@ public abstract class Car {
 		
 	}
 	
+	/**
+	 * pixels per millisecond
+	 * @return
+	 */
 	public abstract double getSpeed();
 	
 	/**
@@ -73,30 +77,33 @@ public abstract class Car {
 		switch (state) {
 		case RUNNING:
 			
-			nextPath = STGraphPositionPathPositionPath.advanceOneTimeStep(pos, getSpeed());
+			nextPath = STGraphPositionPathPositionPath.advanceOneTimeStep(pos, getSpeed() * MODEL.world.dt);
 			
 			STGraphPositionPathPosition last = nextPath.get(nextPath.size()-1);
 			
 			logger.debug("last nextPath: " + last);
 			
 			if (last.getSpace().getGraphPosition() instanceof Sink) {
-				nextState = CarState.SINKED;
+				nextState = CarStateEnum.SINKED;
 			} else {
-				nextState = CarState.RUNNING;
+				nextState = CarStateEnum.RUNNING;
 			}
 			break;
 		case CRASHED:
 			nextPath = STGraphPositionPathPositionPath.crashOneTimeStep(pos);
-			nextState = CarState.CRASHED;
+			nextState = CarStateEnum.CRASHED;
 			break;
 		default:
 			assert false;
 		}
 		
 		
-		return nextState == CarState.RUNNING || nextState == CarState.SINKED;
+		return nextState == CarStateEnum.RUNNING || nextState == CarStateEnum.SINKED;
 	}
 	
+	/**
+	 * return true if car should persist after time step
+	 */
 	public boolean updateCurrentFromNext() {
 
 		prevPoint = pos.getPoint();
@@ -114,13 +121,13 @@ public abstract class Car {
 			assert !e.isRemoved();
 		}
 		
-		CarState s = nextState;
+		CarStateEnum s = nextState;
 		
 		nextPath = null;
 		nextState = null;
 		
 		state = s;
-		return s == CarState.RUNNING || s == CarState.CRASHED;
+		return s == CarStateEnum.RUNNING || s == CarStateEnum.CRASHED;
 	}
 	
 	public int getId() {
@@ -156,7 +163,7 @@ public abstract class Car {
 	
 	public void paint(Graphics2D g2) {
 		
-		if (state == CarState.RUNNING) {
+		if (state == CarStateEnum.RUNNING) {
 			
 			AffineTransform origTransform = g2.getTransform();
 			
@@ -182,7 +189,7 @@ public abstract class Car {
 			
 			g2.setTransform(origTransform);
 			
-		} else if (state == CarState.CRASHED) {
+		} else if (state == CarStateEnum.CRASHED) {
 			
 			Point p = pos.getPoint();
 			

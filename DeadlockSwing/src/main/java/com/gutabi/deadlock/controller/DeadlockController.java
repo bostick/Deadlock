@@ -47,9 +47,6 @@ public class DeadlockController implements ActionListener {
 		VIEW.panel.addMouseListener(mc);
 		VIEW.panel.addMouseMotionListener(mc);
 		
-//		VIEW.previewPanel.addMouseListener(mc);
-//		VIEW.previewPanel.addMouseMotionListener(mc);
-		
 		kc.init();
 		
 		e = Executors.newSingleThreadExecutor();
@@ -103,16 +100,6 @@ public class DeadlockController implements ActionListener {
 			lastDragTime = -1;
 			
 		}
-//		else if (c == VIEW.previewPanel) {
-//			
-//			lastPressPreviewPoint = p;
-//			lastPressTime = System.currentTimeMillis();
-//			
-//			lastDragPreviewPoint = null;
-//			lastDragTime = -1;
-//			
-//			origWorldViewLoc = VIEW.worldViewLoc;
-//		}
 		
 	}
 	
@@ -166,23 +153,6 @@ public class DeadlockController implements ActionListener {
 			}
 			
 		}
-//		else if (c == VIEW.previewPanel) {
-//			
-//			lastDragPreviewPoint = p;
-//			lastDragTime = System.currentTimeMillis();
-//			
-//			double x = p.getX() - lastPressPreviewPoint.getX();
-//			double y = p.getY() - lastPressPreviewPoint.getY();
-//			
-//			x = x * MODEL.WORLD_WIDTH / 100;
-//			y = y * MODEL.WORLD_HEIGHT / 100;
-//			
-//			VIEW.worldViewLoc = new Point(origWorldViewLoc.getX() + x, origWorldViewLoc.getY() + y);
-//			
-//			VIEW.renderBackground();
-//			VIEW.repaint();
-//			
-//		}
 		
 	}
 	
@@ -229,9 +199,6 @@ public class DeadlockController implements ActionListener {
 			}
 			
 		}
-//		else if (c == VIEW.previewPanel) {
-//			
-//		}
 		
 	}
 	
@@ -241,7 +208,6 @@ public class DeadlockController implements ActionListener {
 		
 		if (c == VIEW.panel) {
 			
-			//final Point p = new Point(ev.getX(), ev.getY());
 			Point p = ev.getPoint();
 			
 			synchronized (MODEL) {
@@ -271,9 +237,6 @@ public class DeadlockController implements ActionListener {
 			}
 			
 		}
-//		else if (c == VIEW.previewPanel) {
-//			
-//		}
 		
 	}
 	
@@ -430,7 +393,7 @@ public class DeadlockController implements ActionListener {
 		
 		VIEW.renderBackground();
 		
-		MODEL.world.preprocess();
+		MODEL.world.preStart();
 		
 		Thread t = new Thread(new SimulationRunnable());
 		t.start();

@@ -173,7 +173,7 @@ public class Graph {
 	Vertex[][] nextHighest;
 	boolean[][] neighbors;
 	
-	public void preprocess() {
+	public void preStart() {
 		
 		/*
 		 * Floyd-Warshall
