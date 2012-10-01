@@ -41,6 +41,35 @@ public class STPointPath {
 		return hash;
 	}
 	
+	public Point getPoint(double time) {
+		if (time < start.getTime()) {
+			throw new IllegalArgumentException();
+		}
+		if (time > end.getTime()) {
+			throw new IllegalArgumentException();
+		}
+		
+		int key = Collections.binarySearch(times, time, DMath.COMPARATOR);
+		if (key >= 0) {
+			// found
+			return poss.get(key).getSpace();
+		} else {
+			int insertionPoint = -(key+1);
+			//start is between insertionPoint-1 and insertionPoint
+			STPoint a = poss.get(insertionPoint-1);
+			STPoint b = poss.get(insertionPoint);
+			assert DMath.lessThan(a.getTime(), time) && DMath.lessThan(time, b.getTime());
+			
+			if (a.getSpace().equals(b.getSpace())) {
+				return a.getSpace();
+			} else {
+				double p = (time - a.getTime()) / (b.getTime() - a.getTime());
+//				double d = a.getSpace().distanceTo(b.getSpace());
+				return Point.point(a.getSpace(), b.getSpace(), p);
+			}
+		}
+	}
+	
 	public STPointSubPath subPath(double s, double e) {
 		if (s < start.getTime()) {
 			throw new IllegalArgumentException();
@@ -112,14 +141,19 @@ public class STPointPath {
 	 * 
 	 * returns the first time that the paths intersect, or -1 if they never intersect
 	 */
-	public static double intersection(STPointPath a, STPointPath b, double radius) {
-		
-		assert DMath.equals(a.start.getTime(), b.start.getTime());
-		assert DMath.equals(a.end.getTime(), b.end.getTime());
+	public static double intersection(STPointPath a, STPointPath b, double radius, double cutoffTime) {
 		
 		SortedSet<Double> times = new TreeSet<Double>(DMath.COMPARATOR);
-		times.addAll(a.times);
-		times.addAll(b.times);
+		for (double t : a.times) {
+			if (DMath.lessThanEquals(t, cutoffTime)) {
+				times.add(t);
+			}
+		}
+		for (double t : b.times) {
+			if (DMath.lessThanEquals(t, cutoffTime)) {
+				times.add(t);
+			}
+		}
 		
 		Double[] da = times.toArray(new Double[0]);
 		for (int i = 0; i < da.length-1; i++) {
@@ -176,7 +210,11 @@ public class STPointPath {
 			Point ape = ap.end.getSpace();
 			Point bps = bp.start.getSpace();
 			Point bpe = bp.end.getSpace();
-			if (aps.equals(ape)) {
+			if (aps.equals(ape) && bps.equals(bpe)) {
+				
+				return -1;
+				
+			} else if (aps.equals(ape)) {
 				//a is not moving
 				if (Point.intersect(aps, bps, bpe)) {
 					
@@ -333,4 +371,37 @@ public class STPointPath {
 		return crashTime;
 	}
 	
+	public STPointPath crash(double time) {
+		
+		assert (DMath.lessThanEquals(start.getTime(), time) && DMath.lessThanEquals(time, end.getTime()));
+		
+		Point crash = this.getPoint(time);
+		
+		List<STPoint> newPath = new ArrayList<STPoint>();
+		STPoint last = null;
+		for (int i = 0; i < poss.size(); i++) {
+			STPoint pos = poss.get(i);
+			if (DMath.equals(pos.getTime(), time)) {
+				assert pos.getSpace().equals(crash);
+				if (!DMath.equals(time, end.getTime())) {
+					newPath.add(new STPoint(crash, time));
+				}
+				newPath.add(new STPoint(crash, end.getTime()));
+				break;
+			} else if (pos.getTime() < time) {
+				newPath.add(pos);
+			} else if (last.getTime() < time && time < pos.getTime()) {
+				newPath.add(new STPoint(crash, time));
+				newPath.add(new STPoint(crash, end.getTime()));
+				break;
+			} else {
+				assert time < pos.getTime();
+				assert false;
+			}
+			last = pos;
+		}
+		
+		return new STPointPath(newPath);
+	}
+
 }

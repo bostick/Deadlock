@@ -17,7 +17,7 @@ import com.gutabi.deadlock.core.Segment;
 import com.gutabi.deadlock.core.Sink;
 import com.gutabi.deadlock.core.Source;
 import com.gutabi.deadlock.core.Vertex;
-import com.gutabi.deadlock.core.path.STGraphPositionPathPositionPath;
+import com.gutabi.deadlock.core.path.STPointPath;
 
 public class World {
 	
@@ -41,7 +41,7 @@ public class World {
 	/*
 	 * move physics forward by dt milliseconds
 	 */
-	public final long dt = 700;
+	public final long dt = 70;
 	
 	public Random RANDOM = new Random(1);
 	
@@ -174,19 +174,19 @@ public class World {
 		 */
 		
 		for (Car c : movingCars) {
-			GraphPosition carPos = c.getPosition();
+			GraphPosition carPos = graph.hitTest(c.realPos);
 			for (Source s : sources) {
 				double dist = carPos.distanceTo(s);
-				if (DMath.lessThanEquals(dist, MODEL.world.CAR_WIDTH)) {
+				if (DMath.lessThanEquals(dist, CAR_WIDTH)) {
 					toRemove.add(s);
 				}
 			}
 		}
 		for (Car c : crashedCars) {
-			GraphPosition carPos = c.getPosition();
+			GraphPosition carPos = graph.hitTest(c.realPos);
 			for (Source s : sources) {
 				double dist = carPos.distanceTo(s);
-				if (DMath.lessThanEquals(dist, MODEL.world.CAR_WIDTH)) {
+				if (DMath.lessThanEquals(dist, CAR_WIDTH)) {
 					toRemove.add(s);
 				}
 			}
@@ -325,10 +325,12 @@ public class World {
 	
 	private boolean carCar(Car ci, Car cj) {
 		
-		STGraphPositionPathPositionPath ciFuturePath = ci.getNextPath();
-		STGraphPositionPathPositionPath cjFuturePath = cj.getNextPath();
+		double intersectionTime = STPointPath.intersection(
+				ci.nextRealPath,
+				cj.nextRealPath,
+				MODEL.world.CAR_WIDTH,
+				Math.min(ci.nextRealPath.end.getTime(), cj.nextRealPath.end.getTime()));
 		
-		double intersectionTime = STGraphPositionPathPositionPath.intersection(ciFuturePath, cjFuturePath, MODEL.world.CAR_WIDTH);
 		if (intersectionTime != -1) {
 			saveCrashInfo(new CrashInfo(intersectionTime, ci, cj));
 			return true;
@@ -373,14 +375,14 @@ public class World {
 			Car j = info.j;
 			
 			if (i.nextState != CarStateEnum.CRASHED) {
-				i.nextPathCrash(firstUnprocessedCrashTime);
+				i.nextRealPathCrash(firstUnprocessedCrashTime);
 				i.crashingTime = t;
 				i.nextState = CarStateEnum.CRASHED;
 				newlyCrashedCars.add(i);
 			}
 			
 			if (j.nextState != CarStateEnum.CRASHED) {
-				j.nextPathCrash(firstUnprocessedCrashTime);
+				j.nextRealPathCrash(firstUnprocessedCrashTime);
 				j.crashingTime = t;
 				j.nextState = CarStateEnum.CRASHED;
 				newlyCrashedCars.add(j);

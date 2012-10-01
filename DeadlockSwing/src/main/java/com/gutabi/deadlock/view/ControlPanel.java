@@ -41,6 +41,7 @@ public class ControlPanel extends JPanel {
 		verticalBox.add(hBox);
 		
 		normalCarButton = new JCheckBox("Normal Cars");
+		normalCarButton.setSelected(true);
 		hBox = Box.createHorizontalBox();
 		hBox.add(normalCarButton);
 		hBox.add(Box.createHorizontalGlue());
@@ -48,6 +49,7 @@ public class ControlPanel extends JPanel {
 		
 		hBox = Box.createHorizontalBox();
 		fastCarButton = new JCheckBox("Fast Cars");
+		fastCarButton.setSelected(true);
 		hBox.add(fastCarButton);
 		hBox.add(Box.createHorizontalGlue());
 		verticalBox.add(hBox);

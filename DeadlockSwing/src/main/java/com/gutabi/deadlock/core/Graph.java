@@ -331,7 +331,7 @@ public class Graph {
 	
 	
 	
-	public Position hitTest(Point p) {
+	public GraphPosition hitTest(Point p) {
 		for (Intersection v : intersections) {
 			if (p.equals(v.getPoint())) {
 				return v;

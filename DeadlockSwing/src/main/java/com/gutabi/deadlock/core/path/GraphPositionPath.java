@@ -22,28 +22,20 @@ public class GraphPositionPath {
 	private GraphPosition start;
 	private GraphPosition end;
 	
-	List<? extends GraphPosition> origPoss;
-	List<GraphPosition> poss = new ArrayList<GraphPosition>();
+//	List<? extends GraphPosition> origPoss;
+	List<GraphPosition> poss;
 	
 	public final double[] cumulativeDistancesFromStart;
 	private final double totalLength;
 	
 	int hash;
 	
-	private GraphPositionPath(List<? extends GraphPosition> origPoss) {
+	private GraphPositionPath(List<GraphPosition> poss) {
 		
-		this.origPoss = origPoss;
-		
-		assert origPoss.get(0).isBound();
-		poss.add(origPoss.get(0));
-		for (int i = 0; i < origPoss.size()-1; i++) {
-			GraphPosition a = origPoss.get(i);
-			GraphPosition b = origPoss.get(i+1);
-			calculatePath(a, b);
-		}
+		this.poss = poss;
 		
 		int h = 17;
-		h = 37 * h + origPoss.hashCode();
+		h = 37 * h + poss.hashCode();
 		hash = h;
 		
 		this.start = poss.get(0);
@@ -80,7 +72,17 @@ public class GraphPositionPath {
 			}
 		}
 		
-		return new GraphPositionPath(origPoss);
+		List<GraphPosition> poss = new ArrayList<GraphPosition>();
+		
+		assert origPoss.get(0).isBound();
+		poss.add(origPoss.get(0));
+		for (int i = 0; i < origPoss.size()-1; i++) {
+			GraphPosition a = origPoss.get(i);
+			GraphPosition b = origPoss.get(i+1);
+			calculatePath(poss, a, b);
+		}
+		
+		return new GraphPositionPath(poss);
 	}
 	
 	public int hashCode() {
@@ -105,8 +107,40 @@ public class GraphPositionPath {
 		return totalLength;
 	}
 	
-	public Point getPoint(int index) {
-		return poss.get(index).getPoint();
+//	public Point getPoint(int index) {
+//		return poss.get(index).getPoint();
+//	}
+	
+	public GraphPosition getGraphPosition(int index) {
+		return poss.get(index);
+	}
+	
+	public GraphPositionPathPosition hitTest(GraphPosition pos) {
+		
+		if (pos.isBound()) {
+			for (int i = 0; i < poss.size(); i++) {
+				GraphPosition test = poss.get(i);
+				if (pos.equals(test)) {
+					return new GraphPositionPathPosition(this, i, 0.0);
+				}
+			}
+			return null;
+		} else {
+			EdgePosition ep = (EdgePosition)pos;
+			GraphPosition ep1 = ep.nextBoundBackward();
+			GraphPosition ep2 = ep.nextBoundForward();
+			for (int i = 0; i < poss.size()-1; i++) {
+				GraphPosition test1 = poss.get(i);
+				GraphPosition test2 = poss.get(i+1);
+				if (ep1.equals(test1) && ep2.equals(test2)) {
+					return new GraphPositionPathPosition(this, i, ep.getParam());
+				} else if (ep1.equals(test2) && ep2.equals(test1)) {
+					return new GraphPositionPathPosition(this, i, 1-ep.getParam());
+				}
+			}
+			return null;
+		}
+		
 	}
 	
 	/**
@@ -248,7 +282,7 @@ public class GraphPositionPath {
 	 * 
 	 * add all Positions up to b, inclusive
 	 */
-	private void calculatePath(GraphPosition a, GraphPosition b) {
+	private static void calculatePath(List<GraphPosition> acc, GraphPosition a, GraphPosition b) {
 		
 		if (a instanceof EdgePosition) {
 			EdgePosition aa = (EdgePosition)a;
@@ -265,17 +299,17 @@ public class GraphPositionPath {
 					} else if (aa.getIndex() == bb.getIndex()) {
 						
 						assert bb.isBound();
-						poss.add(bb);
+						acc.add(bb);
 						
 					} else if (aa.nextBoundToward(bb).equals(bb)) {
 						
 						assert bb.isBound();
-						poss.add(bb);
+						acc.add(bb);
 						
 					} else if (bb.nextBoundToward(aa).equals(aa)) {
 						
 						assert bb.isBound();
-						poss.add(bb);
+						acc.add(bb);
 						
 					} else {
 						
@@ -290,14 +324,14 @@ public class GraphPositionPath {
 						while (true) {
 							cur = cur.nextBoundToward(bEnd);
 							assert cur.isBound();
-							poss.add(cur);
+							acc.add(cur);
 							if (cur.equals(bEnd)) {
 								break;
 							}
 						}
 						if (!bEnd.equals(bb)) {
 							assert bb.isBound();
-							poss.add(bb);
+							acc.add(bb);
 						}
 					
 					}
@@ -317,13 +351,13 @@ public class GraphPositionPath {
 						
 					} else if (DMath.lessThanEquals(aStartDist, aEndDist)) {
 						
-						calculatePath(aa, aStart);
-						calculatePath(aStart, bb);
+						calculatePath(acc, aa, aStart);
+						calculatePath(acc, aStart, bb);
 						
 					} else {
 						
-						calculatePath(aa, aEnd);
-						calculatePath(aEnd, bb);
+						calculatePath(acc, aa, aEnd);
+						calculatePath(acc, aEnd, bb);
 						
 					}
 					
@@ -337,7 +371,7 @@ public class GraphPositionPath {
 					if (aa.nextBoundToward(bb).equals(bb)) {
 						
 						assert bb.isBound();
-						poss.add(bb);
+						acc.add(bb);
 						
 					} else {
 						
@@ -345,7 +379,7 @@ public class GraphPositionPath {
 						while (true) {
 							cur = cur.nextBoundToward(bb);
 							assert cur.isBound();
-							poss.add(cur);
+							acc.add(cur);
 							if (cur.equals(bb)) {
 								break;
 							}
@@ -368,13 +402,13 @@ public class GraphPositionPath {
 						
 					} else if (DMath.lessThanEquals(aStartDist, aEndDist)) {
 						
-						calculatePath(aa, aStart);
-						calculatePath(aStart, bb);
+						calculatePath(acc, aa, aStart);
+						calculatePath(acc, aStart, bb);
 						
 					} else {
 						
-						calculatePath(aa, aEnd);
-						calculatePath(aEnd, bb);
+						calculatePath(acc, aa, aEnd);
+						calculatePath(acc, aEnd, bb);
 						
 					}
 					
@@ -393,7 +427,7 @@ public class GraphPositionPath {
 					if (bb.nextBoundToward(aa).equals(aa)) {
 						
 						assert bb.isBound();
-						poss.add(bb);
+						acc.add(bb);
 						
 					} else {
 						
@@ -408,14 +442,14 @@ public class GraphPositionPath {
 						while (true) {
 							cur = cur.nextBoundToward(bEnd);
 							assert cur.isBound();
-							poss.add(cur);
+							acc.add(cur);
 							if (cur.equals(bEnd)) {
 								break;
 							}
 						}
 						if (!bEnd.equals(bb)) {
 							assert bb.isBound();
-							poss.add(bb);
+							acc.add(bb);
 						}
 						
 					}
@@ -435,13 +469,13 @@ public class GraphPositionPath {
 						
 					} else if (DMath.lessThanEquals(bStartDist, bEndDist)) {
 						
-						calculatePath(aa, bStart);
-						calculatePath(bStart, bb);
+						calculatePath(acc, aa, bStart);
+						calculatePath(acc, bStart, bb);
 						
 					} else {
 						
-						calculatePath(aa, bEnd);
-						calculatePath(bEnd, bb);
+						calculatePath(acc, aa, bEnd);
+						calculatePath(acc, bEnd, bb);
 						
 					}
 					
@@ -467,8 +501,8 @@ public class GraphPositionPath {
 							
 						} else {
 							
-							calculatePath(aa, choice);
-							calculatePath(choice, bb);
+							calculatePath(acc, aa, choice);
+							calculatePath(acc, choice, bb);
 							
 						}
 						
@@ -486,7 +520,7 @@ public class GraphPositionPath {
 							
 							GraphPosition cur = EdgePosition.nextBoundfromStart(shortest);
 								
-							poss.add(cur);
+							acc.add(cur);
 							
 							while (true) {
 								if (cur.equals(bb)) {
@@ -494,14 +528,14 @@ public class GraphPositionPath {
 								}
 								cur = cur.nextBoundToward(bb);
 								assert cur.isBound();
-								poss.add(cur);
+								acc.add(cur);
 							}
 							
 						} else {
 							
 							GraphPosition cur = EdgePosition.nextBoundfromEnd(shortest);
 							
-							poss.add(cur);
+							acc.add(cur);
 							
 							while (true) {
 								
@@ -511,7 +545,7 @@ public class GraphPositionPath {
 								
 								cur = cur.nextBoundToward(bb);
 								assert cur.isBound();
-								poss.add(cur);
+								acc.add(cur);
 							}
 							
 						}

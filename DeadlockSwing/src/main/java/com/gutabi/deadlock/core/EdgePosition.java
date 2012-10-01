@@ -123,6 +123,14 @@ public class EdgePosition extends GraphPosition {
 		
 	}
 	
+	public GraphPosition nextBoundBackward() {
+		return nextBoundBackward(e, index, param);
+	}
+	
+	public GraphPosition nextBoundForward() {
+		return nextBoundForward(e, index, param);
+	}
+	
 	public double distanceTo(GraphPosition b) {
 		if (b instanceof Vertex) {
 			Vertex bb = (Vertex)b;

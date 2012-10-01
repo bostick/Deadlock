@@ -22,7 +22,9 @@ public class GraphPositionPathPosition extends Position {
 	private final int hash;
 	
 	public GraphPositionPathPosition(GraphPositionPath path, int index, double param) {
-		super(DMath.equals(param, 0.0) ? path.getPoint(index) : Point.point(path.getPoint(index), path.getPoint(index+1), param));
+		super(DMath.equals(param, 0.0) ?
+				path.getGraphPosition(index).getPoint() :
+					Point.point(path.getGraphPosition(index).getPoint(), path.getGraphPosition(index+1).getPoint(), param));
 		
 		this.path = path;
 		this.index = index;
