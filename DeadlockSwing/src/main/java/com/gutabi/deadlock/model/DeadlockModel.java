@@ -17,9 +17,9 @@ public class DeadlockModel {
 	
 	public Driveable hilited;
 	
-	public Point lastPointRaw;
-	public List<Point> curStrokeRaw = new ArrayList<Point>();
-	public List<List<Point>> allStrokes = new ArrayList<List<Point>>();
+	public Point lastPanelPoint;
+	public List<Point> curPanelStroke = new ArrayList<Point>();
+	public List<List<Point>> allPanelStrokes = new ArrayList<List<Point>>();
 	
 	public DeadlockModel() {
 		
@@ -32,9 +32,9 @@ public class DeadlockModel {
 	}
 	
 	public void clear() {
-		lastPointRaw = null;
-		curStrokeRaw.clear();
-		allStrokes.clear();
+		lastPanelPoint = null;
+		curPanelStroke.clear();
+		allPanelStrokes.clear();
 		
 		world = new World();
 	}

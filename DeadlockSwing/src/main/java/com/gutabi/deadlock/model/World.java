@@ -10,7 +10,6 @@ import java.util.Random;
 import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Edge;
 import com.gutabi.deadlock.core.Graph;
-import com.gutabi.deadlock.core.GraphPosition;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.Position;
 import com.gutabi.deadlock.core.Segment;
@@ -21,16 +20,17 @@ import com.gutabi.deadlock.core.path.STPointPath;
 
 public class World {
 	
-	public final double ROAD_WIDTH = 32.0;
+	public final double CAR_WIDTH = 1.0;
+	public final double ROAD_WIDTH = CAR_WIDTH;
 	public final double VERTEX_WIDTH = Math.sqrt(2 * ROAD_WIDTH * ROAD_WIDTH);
 	
-	public final double MOUSE_RADIUS = VERTEX_WIDTH;
 	
-	public final double CAR_WIDTH = ROAD_WIDTH;
+	public final double WORLD_WIDTH = 16.0;
+	public final double WORLD_HEIGHT = WORLD_WIDTH;
 	
+	public final int PIXELS_PER_METER = 32;
 	
-	public final int WORLD_WIDTH = 512;
-	public final int WORLD_HEIGHT = WORLD_WIDTH;
+	public final double MOUSE_RADIUS = VERTEX_WIDTH * PIXELS_PER_METER;
 	
 	/*
 	 * spawn cars every SPAWN_FREQUENCY milliseconds
@@ -174,18 +174,18 @@ public class World {
 		 */
 		
 		for (Car c : movingCars) {
-			GraphPosition carPos = graph.hitTest(c.realPos);
+//			GraphPosition carPos = graph.hitTest(c.realPos);
 			for (Source s : sources) {
-				double dist = carPos.distanceTo(s);
+				double dist = c.realPos.distanceTo(s.getPoint());
 				if (DMath.lessThanEquals(dist, CAR_WIDTH)) {
 					toRemove.add(s);
 				}
 			}
 		}
 		for (Car c : crashedCars) {
-			GraphPosition carPos = graph.hitTest(c.realPos);
+//			GraphPosition carPos = graph.hitTest(c.realPos);
 			for (Source s : sources) {
-				double dist = carPos.distanceTo(s);
+				double dist = c.realPos.distanceTo(s.getPoint());
 				if (DMath.lessThanEquals(dist, CAR_WIDTH)) {
 					toRemove.add(s);
 				}
@@ -237,7 +237,7 @@ public class World {
 		int iter = 0;
 		while (firstUnprocessedCrashTime != -1) {
 			
-			List<Car> newlyCrashedCars = processCrashInfo(t);
+			List<Car> newlyCrashedCars = processCrashInfo();
 			
 			movingCars.removeAll(newlyCrashedCars);
 			crashedCars.addAll(newlyCrashedCars);
@@ -363,7 +363,7 @@ public class World {
 		
 	}
 	
-	private List<Car> processCrashInfo(long t) {
+	private List<Car> processCrashInfo() {
 		
 		List<Car> newlyCrashedCars = new ArrayList<Car>();
 		
@@ -374,17 +374,17 @@ public class World {
 			Car i = info.i;
 			Car j = info.j;
 			
-			if (i.nextState != CarStateEnum.CRASHED) {
-				i.nextRealPathCrash(firstUnprocessedCrashTime);
+			if (!i.nextCrashed) {
+				i.nextRealPath = i.nextRealPath.crash(firstUnprocessedCrashTime);
 				i.crashingTime = t;
-				i.nextState = CarStateEnum.CRASHED;
+				i.nextCrashed = true;
 				newlyCrashedCars.add(i);
 			}
 			
-			if (j.nextState != CarStateEnum.CRASHED) {
-				j.nextRealPathCrash(firstUnprocessedCrashTime);
+			if (!j.nextCrashed) {
+				j.nextRealPath = j.nextRealPath.crash(firstUnprocessedCrashTime);
 				j.crashingTime = t;
-				j.nextState = CarStateEnum.CRASHED;
+				j.nextCrashed = true;
 				newlyCrashedCars.add(j);
 			}
 			
@@ -444,7 +444,7 @@ public class World {
 		return graph.hitTest(p);
 	}
 	
-	public void processNewStroke(List<Point> stroke) {
+	public void processNewWorldStroke(List<Point> stroke) {
 		graph.processNewStroke(stroke);	
 	}
 	

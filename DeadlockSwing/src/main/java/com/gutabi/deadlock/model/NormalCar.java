@@ -11,7 +11,7 @@ import com.gutabi.deadlock.core.Source;
 
 public class NormalCar extends Car {
 	
-	public double speed = 0.1;
+	public double speed = 0.003;
 	
 	public NormalCar(Source s) {
 		super(s);

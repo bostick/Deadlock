@@ -70,6 +70,15 @@ public class STPointPath {
 		}
 	}
 	
+	public static STPointPath advanceOneTimeStep(Point pos, double heading, double distance) {
+		List<STPoint> newPath = new ArrayList<STPoint>();
+		
+		newPath.add(new STPoint(pos, 0.0));
+		newPath.add(new STPoint(new Point(pos.getX() + Math.cos(heading) * distance, pos.getY() + Math.sin(heading) * distance), 1.0));
+		
+		return new STPointPath(newPath);
+	}
+	
 	public STPointSubPath subPath(double s, double e) {
 		if (s < start.getTime()) {
 			throw new IllegalArgumentException();

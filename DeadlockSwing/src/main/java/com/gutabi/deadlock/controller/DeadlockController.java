@@ -15,7 +15,7 @@ import java.util.concurrent.Future;
 
 import org.apache.log4j.Logger;
 
-import com.gutabi.deadlock.Main;
+import com.gutabi.deadlock.DeadlockMain;
 import com.gutabi.deadlock.core.Edge;
 import com.gutabi.deadlock.core.EdgePosition;
 import com.gutabi.deadlock.core.Point;
@@ -57,7 +57,7 @@ public class DeadlockController implements ActionListener {
 				@Override
 				public void run() {
 					Thread.currentThread().setName("controller");
-					Thread.currentThread().setUncaughtExceptionHandler(Main.handler);
+					Thread.currentThread().setUncaughtExceptionHandler(DeadlockMain.handler);
 				}});
 			
 		} catch (Exception e1) {
@@ -77,8 +77,8 @@ public class DeadlockController implements ActionListener {
 	}
 	
 	
-	Point lastPressWorldPoint;
-	Point lastPressPreviewPoint;
+	Point lastPressPanelPoint;
+//	Point lastPressPreviewPoint;
 	long lastPressTime;
 	
 	Point origWorldViewLoc;
@@ -93,10 +93,10 @@ public class DeadlockController implements ActionListener {
 		
 		if (c == VIEW.panel) {
 			
-			lastPressWorldPoint = VIEW.panelToWorld(p);
+			lastPressPanelPoint = p;
 			lastPressTime = System.currentTimeMillis();
 			
-			lastDragWorldPoint = null;
+			lastDragPanelPoint = null;
 			lastDragTime = -1;
 			
 		}
@@ -104,7 +104,7 @@ public class DeadlockController implements ActionListener {
 	}
 	
 	
-	Point lastDragWorldPoint;
+	Point lastDragPanelPoint;
 	Point lastDragPreviewPoint;
 	long lastDragTime;
 	
@@ -117,19 +117,19 @@ public class DeadlockController implements ActionListener {
 		
 		if (c == VIEW.panel) {
 			
-			boolean lastDragWorldPointWasNull = (lastDragWorldPoint == null);
+			boolean lastDragPanelPointWasNull = (lastDragPanelPoint == null);
 			
-			lastDragWorldPoint = VIEW.panelToWorld(p);
+			lastDragPanelPoint = p;
 			lastDragTime = System.currentTimeMillis();
 			
 			synchronized (MODEL) {
 				switch (MODEL.getMode()) {
 				case IDLE: {
 					
-					if (lastDragWorldPointWasNull) {
+					if (lastDragPanelPointWasNull) {
 						// first drag
-						draftStart(lastPressWorldPoint);
-						draftMove(lastDragWorldPoint);
+						draftStart(lastPressPanelPoint);
+						draftMove(lastDragPanelPoint);
 						VIEW.repaint();
 					} else {
 						assert false;
@@ -138,7 +138,7 @@ public class DeadlockController implements ActionListener {
 					break;
 				}
 				case DRAFTING:
-					draftMove(lastDragWorldPoint);
+					draftMove(lastDragPanelPoint);
 					//VIEW.renderBackground();
 					VIEW.repaint();
 					break;
@@ -171,13 +171,13 @@ public class DeadlockController implements ActionListener {
 				switch (MODEL.getMode()) {
 				case IDLE: {
 					
-					if (lastReleaseTime - lastPressTime < 500 && lastDragWorldPoint == null) {
+					if (lastReleaseTime - lastPressTime < 500 && lastDragPanelPoint == null) {
 						// click
 						
-						MODEL.world.addVertexTop(lastPressWorldPoint);
-						
-						VIEW.renderBackground();
-						VIEW.repaint();
+//						MODEL.world.addVertexTop(lastPressPanelPoint);
+//						
+//						VIEW.renderBackground();
+//						VIEW.repaint();
 						
 					}
 					
@@ -214,12 +214,14 @@ public class DeadlockController implements ActionListener {
 				switch (MODEL.getMode()) {
 				case IDLE:
 					
-					Position closest = MODEL.world.findClosestPosition(VIEW.panelToWorld(p), MODEL.world.MOUSE_RADIUS);
+					Position closest = MODEL.world.findClosestPosition(VIEW.panelToWorld(p), MODEL.world.MOUSE_RADIUS / MODEL.world.PIXELS_PER_METER);
 					if (closest != null) {
 						MODEL.hilited = closest.getDriveable();
 					} else {
 						MODEL.hilited = null;
 					}
+					
+//					logger.debug("hilited: " + MODEL.hilited);
 					
 					VIEW.repaint();
 					break;
@@ -430,31 +432,31 @@ public class DeadlockController implements ActionListener {
 		
 		MODEL.hilited = null;
 		
-		MODEL.lastPointRaw = p;
-		MODEL.curStrokeRaw.add(p);
-		MODEL.allStrokes.add(new ArrayList<Point>());
-		MODEL.allStrokes.get(MODEL.allStrokes.size()-1).add(p);
+		MODEL.lastPanelPoint = p;
+		MODEL.curPanelStroke.add(p);
+		MODEL.allPanelStrokes.add(new ArrayList<Point>());
+		MODEL.allPanelStrokes.get(MODEL.allPanelStrokes.size()-1).add(p);
 	}
 	
 	private void draftMove(Point p) {
 		assert Thread.currentThread().getName().equals("controller");
 		
-		MODEL.curStrokeRaw.add(p);
-		MODEL.lastPointRaw = p;
-		MODEL.allStrokes.get(MODEL.allStrokes.size()-1).add(p);
+		MODEL.curPanelStroke.add(p);
+		MODEL.lastPanelPoint = p;
+		MODEL.allPanelStrokes.get(MODEL.allPanelStrokes.size()-1).add(p);
 	}
 	
 	private void draftEnd() {
 		assert Thread.currentThread().getName().equals("controller");
 		
 		List<Point> curStroke = null;
-		curStroke = massageCurrent(MODEL.curStrokeRaw);
+		curStroke = massageCurrent(MODEL.curPanelStroke);
 		if (curStroke.size() >= 2) {
-			MODEL.world.processNewStroke(curStroke);
+			MODEL.world.processNewWorldStroke(curStroke);
 		}
 		assert MODEL.world.checkConsistency();
-		MODEL.lastPointRaw = null;
-		MODEL.curStrokeRaw.clear();
+		MODEL.lastPanelPoint = null;
+		MODEL.curPanelStroke.clear();
 		
 		MODEL.setMode(ControlMode.IDLE);
 	}
@@ -521,9 +523,18 @@ public class DeadlockController implements ActionListener {
 	private List<Point> massageCurrent(List<Point> raw) {
 		
 		List<Point> m = raw;
+		m = panelToWorld(m);
 		m = removeDuplicates(m);
 		return m;
 		
+	}
+	
+	private List<Point> panelToWorld(List<Point> raw) {
+		List<Point> adj = new ArrayList<Point>();
+		for (Point p : raw) {
+			adj.add(VIEW.panelToWorld(p));
+		}
+		return adj;
 	}
 	
 	private List<Point> removeDuplicates(List<Point> raw) {
