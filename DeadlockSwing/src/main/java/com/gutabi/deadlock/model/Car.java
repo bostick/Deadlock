@@ -30,7 +30,6 @@ public abstract class Car {
 	public Source source;
 	
 	public STPointPath nextRealPath;
-//	public CarStateEnum nextState;
 	public boolean nextCrashed;
 	
 	GraphPositionPath overallPath;
@@ -59,7 +58,7 @@ public abstract class Car {
 	}
 	
 	/**
-	 * pixels per millisecond
+	 * meters per millisecond
 	 * @return
 	 */
 	public abstract double getSpeed();

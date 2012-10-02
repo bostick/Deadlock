@@ -39,11 +39,6 @@ public class DeadlockView {
 	
 	public BufferedImage backgroundImage;
 	
-	/*
-	 * the location and dimension of the main world world view
-	 * 
-	 */
-//	private Point worldViewLoc;
 	public double worldViewLocInitX;
 	public double worldViewLocInitY;
 	
@@ -65,8 +60,6 @@ public class DeadlockView {
 		
 		worldViewLocInitX = (panel.getWidth()/2 - (MODEL.world.WORLD_WIDTH * MODEL.world.PIXELS_PER_METER)/2);
 		worldViewLocInitY = (panel.getHeight()/2 - (MODEL.world.WORLD_HEIGHT * MODEL.world.PIXELS_PER_METER)/2);
-		
-//		worldViewLoc = new Point(worldViewLocInitX, worldViewLocInitY);
 		
 		worldToPanelTransform.translate(VIEW.worldViewLocInitX, VIEW.worldViewLocInitY);
 		worldToPanelTransform.scale(MODEL.world.PIXELS_PER_METER, MODEL.world.PIXELS_PER_METER);
@@ -176,8 +169,6 @@ public class DeadlockView {
 			lastTime = curTime;
 		}
 		
-//		g2.translate((double)worldViewLoc.getX(), (double)worldViewLoc.getY());
-		
 		paintFPS(g2);
 		
 		ControlMode modeCopy;
@@ -248,9 +239,6 @@ public class DeadlockView {
 		backgroundImage = new BufferedImage(d.width, d.height, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g2 = backgroundImage.createGraphics();
 		
-//		g2.translate((double)worldViewLoc.getX(), (double)worldViewLoc.getY());
-//		g2.scale((double)MODEL.world.PIXELS_PER_METER, (double)MODEL.world.PIXELS_PER_METER);
-		
 		Point loc = VIEW.worldToPanel(new Point(0, 0));
 		
 		g2.drawImage(tiledGrass, (int)loc.getX(), (int)loc.getY(), (int)(MODEL.world.WORLD_WIDTH * MODEL.world.PIXELS_PER_METER), (int)(MODEL.world.WORLD_HEIGHT * MODEL.world.PIXELS_PER_METER), null);
@@ -319,10 +307,6 @@ public class DeadlockView {
 		
 		g2.setColor(Color.RED);
 		if (lastPanelPoint != null) {
-			
-//			Point loc = VIEW.worldToPanel(lastPanelPoint.add(new Point(-MODEL.world.VERTEX_WIDTH/2, -MODEL.world.VERTEX_WIDTH/2)));
-			
-//			g2.fillOval((int)loc.getX(), (int)loc.getY(), (int)(MODEL.world.VERTEX_WIDTH * MODEL.world.PIXELS_PER_METER), (int)(MODEL.world.VERTEX_WIDTH * MODEL.world.PIXELS_PER_METER));
 			
 			g2.fillOval(
 					(int)(lastPanelPoint.getX() - MODEL.world.VERTEX_WIDTH * MODEL.world.PIXELS_PER_METER / 2),
@@ -465,7 +449,7 @@ public class DeadlockView {
 	public void repaint() {
 		
 //		Point loc = VIEW.worldToPanel(new Point(-MODEL.world.VERTEX_WIDTH, -MODEL.world.VERTEX_WIDTH));
-		
+//		
 //		panel.repaint(
 //				(int)loc.getX(),
 //				(int)loc.getY(),
