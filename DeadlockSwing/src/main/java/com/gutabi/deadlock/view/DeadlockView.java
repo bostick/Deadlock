@@ -448,15 +448,15 @@ public class DeadlockView {
 	
 	public void repaint() {
 		
-//		Point loc = VIEW.worldToPanel(new Point(-MODEL.world.VERTEX_WIDTH, -MODEL.world.VERTEX_WIDTH));
-//		
-//		panel.repaint(
-//				(int)loc.getX(),
-//				(int)loc.getY(),
-//				(int)(MODEL.world.WORLD_WIDTH + MODEL.world.VERTEX_WIDTH) * MODEL.world.PIXELS_PER_METER,
-//				(int)(MODEL.world.WORLD_HEIGHT + MODEL.world.VERTEX_WIDTH) * MODEL.world.PIXELS_PER_METER);
+		Point loc = VIEW.worldToPanel(new Point(-MODEL.world.VERTEX_WIDTH, -MODEL.world.VERTEX_WIDTH));
 		
-		panel.repaint();
+		panel.repaint(
+				(int)loc.getX(),
+				(int)loc.getY(),
+				(int)(MODEL.world.WORLD_WIDTH + MODEL.world.VERTEX_WIDTH) * MODEL.world.PIXELS_PER_METER,
+				(int)(MODEL.world.WORLD_HEIGHT + MODEL.world.VERTEX_WIDTH) * MODEL.world.PIXELS_PER_METER);
+		
+//		panel.repaint();
 	}
 	
 }

@@ -176,6 +176,7 @@ public abstract class Car {
 			carTrans.rotate(heading);
 			carTrans.translate(-MODEL.world.CAR_WIDTH / 2, -MODEL.world.CAR_WIDTH / 2);
 			carTrans.scale(1/((double)MODEL.world.PIXELS_PER_METER), 1/((double)MODEL.world.PIXELS_PER_METER));
+			carTrans.translate(origTransform.getTranslateX(), origTransform.getTranslateY());
 			
 			g2.setTransform(carTrans);
 			
@@ -200,6 +201,7 @@ public abstract class Car {
 			carTrans.rotate(heading);
 			carTrans.translate(-MODEL.world.CAR_WIDTH / 2, -MODEL.world.CAR_WIDTH / 2);
 			carTrans.scale(1/((double)MODEL.world.PIXELS_PER_METER), 1/((double)MODEL.world.PIXELS_PER_METER));
+			carTrans.translate(origTransform.getTranslateX(), origTransform.getTranslateY());
 			
 			g2.setTransform(carTrans);
 			
