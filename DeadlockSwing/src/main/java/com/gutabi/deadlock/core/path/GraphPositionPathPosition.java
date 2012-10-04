@@ -132,6 +132,10 @@ public class GraphPositionPathPosition extends Position {
 	
 	public GraphPositionPathPosition travel(double dist) {
 		
+		if (DMath.equals(dist, 0)) {
+			return this;
+		}
+		
 		double traveled = 0.0;
 		
 		GraphPositionPathPosition curPos = this;
@@ -155,7 +159,7 @@ public class GraphPositionPathPosition extends Position {
 				
 				double toTravel = dist - traveled;
 				
-				EdgePosition g = (EdgePosition)curPos.gpos.travel(nextPos.gpos, toTravel);
+				EdgePosition g = (EdgePosition)(curPos.gpos.travel(nextPos.gpos, toTravel));
 				
 				if (curPos.gpos instanceof EdgePosition) {
 					EdgePosition curPosE = (EdgePosition)curPos.gpos;

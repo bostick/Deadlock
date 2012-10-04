@@ -76,50 +76,54 @@ public class STGraphPositionPathPositionPath {
 		
 		poss.add(new STGraphPositionPathPosition(curPos, 0.0));
 		
-		while (true) {
+		if (!DMath.equals(dist, 0.0)) {
 			
-			if (curPos.isEndOfPath()) {
+			while (true) {
 				
-				break;
-				
-			} else {
-				
-				GraphPositionPathPosition nextPos = curPos.nextBound();
-				double distanceToNextPos = curPos.distanceTo(nextPos);
-				
-				if (DMath.equals(traveledDist + distanceToNextPos, dist)) {
+				if (curPos.isEndOfPath()) {
 					
-					traveledDist = traveledDist + distanceToNextPos;
-					curPos = nextPos;
-					
-					assert DMath.greaterThan(traveledDist / speed, poss.get(poss.size()-1).getTime());
-					double time = traveledDist / speed;
-					if (DMath.equals(time, 1.0)) {
-						time = 1.0;
-					}
-					poss.add(new STGraphPositionPathPosition(curPos, time));
 					break;
-					
-				} else if (traveledDist + distanceToNextPos < dist) {
-					
-					double inc = distanceToNextPos;
-					traveledDist = traveledDist + inc;
-					
-					assert DMath.greaterThan(traveledDist / speed, poss.get(poss.size()-1).getTime());
-					poss.add(new STGraphPositionPathPosition(nextPos, traveledDist / speed));
-					
-					curPos = nextPos;
 					
 				} else {
 					
-					double toTravel = dist - traveledDist;
+					GraphPositionPathPosition nextPos = curPos.nextBound();
+					double distanceToNextPos = curPos.distanceTo(nextPos);
 					
-					traveledDist = traveledDist + toTravel;
-					curPos = curPos.travel(toTravel);
-					
-					assert DMath.greaterThan(traveledDist / speed, poss.get(poss.size()-1).getTime());
-					poss.add(new STGraphPositionPathPosition(curPos, traveledDist / speed));
-					break;
+					if (DMath.equals(traveledDist + distanceToNextPos, dist)) {
+						
+						traveledDist = traveledDist + distanceToNextPos;
+						curPos = nextPos;
+						
+						assert DMath.greaterThan(traveledDist / speed, poss.get(poss.size()-1).getTime());
+						double time = traveledDist / speed;
+						if (DMath.equals(time, 1.0)) {
+							time = 1.0;
+						}
+						poss.add(new STGraphPositionPathPosition(curPos, time));
+						break;
+						
+					} else if (traveledDist + distanceToNextPos < dist) {
+						
+						double inc = distanceToNextPos;
+						traveledDist = traveledDist + inc;
+						
+						assert DMath.greaterThan(traveledDist / speed, poss.get(poss.size()-1).getTime());
+						poss.add(new STGraphPositionPathPosition(nextPos, traveledDist / speed));
+						
+						curPos = nextPos;
+						
+					} else {
+						
+						double toTravel = dist - traveledDist;
+						
+						traveledDist = traveledDist + toTravel;
+						curPos = curPos.travel(toTravel);
+						
+						assert DMath.greaterThan(traveledDist / speed, poss.get(poss.size()-1).getTime());
+						poss.add(new STGraphPositionPathPosition(curPos, traveledDist / speed));
+						break;
+						
+					}
 					
 				}
 				

@@ -3,6 +3,7 @@ package com.gutabi.deadlock.model;
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
@@ -78,6 +79,28 @@ public abstract class Car {
 		fixtureDef.friction = 1f; // ... its surface has some friction coefficient
 		b2dFixture = b2dBody.createFixture(fixtureDef); // bind the dense, friction-laden fixture to the body
 		
+		GraphPositionPathPosition overallPos = new GraphPositionPathPosition(overallPath, 0, 0.0);
+		
+		STGraphPositionPathPositionPath nextPlannedPath = STGraphPositionPathPositionPath.advanceOneTimeStep(overallPos, getSpeed() * MODEL.world.dt);
+		
+		nextRealPath = nextPlannedPath.toSTGraphPositionPath().toSTPointPath();
+		
+		Point nextPos = nextRealPath.end.getSpace();
+		double nextHeading = Math.atan2(nextPos.getY()-startPos.getY(), nextPos.getX()-startPos.getX());
+		
+		Vec2 v1 = new Vec2((float)(nextPos.getX()-startPos.getX()), (float)(nextPos.getY()-startPos.getY()));
+		v1.normalize();
+		v1.mulLocal((float)(getSpeed() * 1000));
+		
+		b2dBody.setLinearVelocity(v1);
+		
+		float angV = (float)(nextHeading - startHeading);
+		angV = angV * 1000 / MODEL.world.dt;
+		
+//		logger.debug("angV: " + angV);
+		
+		b2dBody.setAngularVelocity(angV);
+		
 	}
 	
 	/**
@@ -129,6 +152,8 @@ public abstract class Car {
 //			logger.debug("angV: " + angV);
 			
 			b2dBody.setAngularVelocity(angV);
+			
+//			b2dBody.applyForce(new Vec2(10.0f, 0.0f), b2dBody.getWorldCenter());
 			
 		}
 		case CRASHED:
@@ -199,14 +224,21 @@ public abstract class Car {
 		b2dTrans.translate(pos.x, pos.y);
 		b2dTrans.rotate(angle);
 		
-		b2dTrans.translate(-MODEL.world.CAR_LENGTH / 2, -MODEL.world.CAR_LENGTH / 4);
 		b2dTrans.scale(1/((double)MODEL.world.PIXELS_PER_METER), 1/((double)MODEL.world.PIXELS_PER_METER));
 		
 		g2.setTransform(b2dTrans);
 		
+//		g2.setColor(Color.BLUE);
+//		
+//		g2.fillRect(
+//				(int)(-MODEL.world.CAR_LENGTH * MODEL.world.PIXELS_PER_METER / 2),
+//				(int)(-MODEL.world.CAR_LENGTH * MODEL.world.PIXELS_PER_METER / 4),
+//				(int)(MODEL.world.CAR_LENGTH * MODEL.world.PIXELS_PER_METER),
+//				(int)(MODEL.world.CAR_LENGTH * MODEL.world.PIXELS_PER_METER / 2));
+		
 		g2.drawImage(im,
-				0,
-				0,
+				(int)(-MODEL.world.CAR_LENGTH * MODEL.world.PIXELS_PER_METER / 2),
+				(int)(-MODEL.world.CAR_LENGTH * MODEL.world.PIXELS_PER_METER / 2),
 				(int)(MODEL.world.CAR_LENGTH * MODEL.world.PIXELS_PER_METER),
 				(int)(MODEL.world.CAR_LENGTH * MODEL.world.PIXELS_PER_METER), null);
 		
