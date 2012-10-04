@@ -114,28 +114,6 @@ public class Graph {
 		intersections.add(i);
 		return i;
 		
-//		if (p.getY() <= 10 || p.getX() <= 10) {
-//			// source
-//			
-//			Source s = new Source(p);
-//			assert !sources.contains(s);
-//			sources.add(s);
-//			return s;
-//			
-//		} else if (p.getX() >= MODEL.world.WORLD_WIDTH-10 || p.getY() >= MODEL.world.WORLD_HEIGHT-10) {
-//			// sink
-//			
-//			Sink s = new Sink(p);
-//			assert !sinks.contains(s);
-//			sinks.add(s);
-//			return s;
-//			
-//		} else {
-//			
-//			
-//			
-//		}
-		
 	}
 	
 	private void destroyVertex(Vertex v) {

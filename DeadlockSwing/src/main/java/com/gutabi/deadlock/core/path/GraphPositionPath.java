@@ -22,7 +22,6 @@ public class GraphPositionPath {
 	private GraphPosition start;
 	private GraphPosition end;
 	
-//	List<? extends GraphPosition> origPoss;
 	List<GraphPosition> poss;
 	
 	public final double[] cumulativeDistancesFromStart;
@@ -107,10 +106,6 @@ public class GraphPositionPath {
 		return totalLength;
 	}
 	
-//	public Point getPoint(int index) {
-//		return poss.get(index).getPoint();
-//	}
-	
 	public GraphPosition getGraphPosition(int index) {
 		return poss.get(index);
 	}
@@ -143,6 +138,29 @@ public class GraphPositionPath {
 			return null;
 		}
 		
+	}
+	
+	public GraphPositionPathPosition findClosestGraphPositionPathPosition(Point p) {
+		
+		GraphPositionPathPosition closest = null;
+		double closestDistance = -1;
+		
+		for (int i = 0; i < poss.size()-1; i++) {
+			GraphPosition a = poss.get(i);
+			GraphPosition b = poss.get(i+1);
+			double u = DMath.clip(Point.u(a.getPoint(), p, b.getPoint()));
+			if (DMath.equals(u, 1.0)) {
+				continue;
+			}
+			Point pOnPath = Point.point(a.getPoint(), b.getPoint(), u);
+			double dist = Point.distance(p, pOnPath);
+			if (closestDistance == -1 || dist < closestDistance) {
+				closest = new GraphPositionPathPosition(this, i, u);
+				closestDistance = dist;
+			}
+		}
+		
+		return closest;
 	}
 	
 	/**

@@ -78,7 +78,6 @@ public class DeadlockController implements ActionListener {
 	
 	
 	Point lastPressPanelPoint;
-//	Point lastPressPreviewPoint;
 	long lastPressTime;
 	
 	Point origWorldViewLoc;
@@ -86,8 +85,6 @@ public class DeadlockController implements ActionListener {
 	public void pressed(InputEvent ev) {
 		
 		Component c = ev.getComponent();
-		
-		//final Point p = new Point(ev.getX(), ev.getY());
 		
 		Point p = ev.getPoint();
 		
@@ -112,7 +109,6 @@ public class DeadlockController implements ActionListener {
 		
 		Component c = ev.getComponent();
 		
-		//final Point p = new Point(ev.getX(), ev.getY());
 		Point p = ev.getPoint();
 		
 		if (c == VIEW.panel) {

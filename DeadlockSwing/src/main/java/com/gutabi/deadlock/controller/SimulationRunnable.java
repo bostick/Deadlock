@@ -32,6 +32,8 @@ public class SimulationRunnable implements Runnable {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
+					currentTime = System.currentTimeMillis();
+					accumulator = 0;
 				}
 			}
 			
@@ -48,13 +50,6 @@ public class SimulationRunnable implements Runnable {
 	        }
 			
 			VIEW.repaint();
-			
-//			try {
-//				Thread.sleep(MODEL.WAIT);
-//			} catch (InterruptedException ex) {
-//				// TODO Auto-generated catch block
-//				ex.printStackTrace();
-//			}
 			
 		} // outer
 		

@@ -11,8 +11,6 @@ public class STGraphPositionPathPositionPath {
 	
 	private List<STGraphPositionPathPosition> poss;
 	
-//	private double totalDistance;
-	
 	private List<Double> times;
 	
 	private double startTime;
@@ -198,85 +196,4 @@ public class STGraphPositionPathPositionPath {
 		return poss.size();
 	}
 	
-//	public STGraphPositionPathPositionPath crash(double time) {
-//		
-//		assert (DMath.lessThanEquals(startTime, time) && DMath.lessThanEquals(time, endTime));
-//		
-//		GraphPositionPathPosition crashPos = this.getPosition(time);
-//		
-//		List<STGraphPositionPathPosition> newPath = new ArrayList<STGraphPositionPathPosition>();
-//		STGraphPositionPathPosition last = null;
-//		for (int i = 0; i < poss.size(); i++) {
-//			STGraphPositionPathPosition pos = poss.get(i);
-//			if (DMath.equals(pos.getTime(), time)) {
-//				assert pos.getSpace().equals(crashPos);
-//				if (!DMath.equals(time, endTime)) {
-//					newPath.add(new STGraphPositionPathPosition(crashPos, time));
-//				}
-//				newPath.add(new STGraphPositionPathPosition(crashPos, endTime));
-//				break;
-//			} else if (pos.getTime() < time) {
-//				newPath.add(pos);
-//			} else if (last.getTime() < time && time < pos.getTime()) {
-//				newPath.add(new STGraphPositionPathPosition(crashPos, time));
-//				newPath.add(new STGraphPositionPathPosition(crashPos, endTime));
-//				break;
-//			} else {
-//				assert time < pos.getTime();
-//				assert false;
-//			}
-//			last = pos;
-//		}
-//		
-//		return new STGraphPositionPathPositionPath(newPath);
-//	}
-	
-//	public static double intersection(STPointPath a, STPointPath b, double radius) {
-//		
-//		double cutoffTime = a.;
-//		if (a.sinkTime != -1) {
-//			cutoffTime = a.sinkTime;
-//		}
-//		if (b.sinkTime != -1 && DMath.lessThan(b.sinkTime, cutoffTime)) {
-//			cutoffTime = b.sinkTime;
-//		}
-//		
-//		List<STPoint> list = new ArrayList<STPoint>();
-//		STGraphPositionPathPosition last = null;
-//		for (STGraphPositionPathPosition p : a.poss) {
-//			if (DMath.equals(p.getTime(), cutoffTime)) {
-//				list.add(new STPoint(p.getSpace().getPoint(), p.getTime()));
-//				break;
-//			} else if (DMath.lessThan(p.getTime(), cutoffTime)) {
-//				list.add(new STPoint(p.getSpace().getPoint(), p.getTime()));
-//			} else if (DMath.lessThan(last.getTime(), cutoffTime) && DMath.greaterThan(p.getTime(), cutoffTime)) {
-//				list.add(new STPoint(a.getPosition(cutoffTime).getPoint(), cutoffTime));
-//				break;
-//			} else {
-//				assert false;
-//			}
-//			last = p;
-//		}
-//		STPointPath aPath = new STPointPath(list);
-//		
-//		list = new ArrayList<STPoint>();
-//		last = null;
-//		for (STGraphPositionPathPosition p : b.poss) {
-//			if (DMath.equals(p.getTime(), cutoffTime)) {
-//				list.add(new STPoint(p.getSpace().getPoint(), p.getTime()));
-//				break;
-//			} else if (DMath.lessThan(p.getTime(), cutoffTime)) {
-//				list.add(new STPoint(p.getSpace().getPoint(), p.getTime()));
-//			} else if (DMath.lessThan(last.getTime(), cutoffTime) && DMath.greaterThan(p.getTime(), cutoffTime)) {
-//				list.add(new STPoint(b.getPosition(cutoffTime).getPoint(), cutoffTime));
-//				break;
-//			} else {
-//				assert false;
-//			}
-//			last = p;
-//		}
-//		STPointPath bPath = new STPointPath(list);
-//		
-//		return STPointPath.intersection(aPath, bPath, radius);
-//	}
 }

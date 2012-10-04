@@ -31,9 +31,6 @@ public class WorldPanel extends JPanel {
 		
 		Graphics2D g2 = (Graphics2D)g;
 		
-//		g2.scale(VIEW.getZoom(), VIEW.getZoom());
-//		g2.translate((double)-VIEW.worldViewLoc.getX(), (double)-VIEW.worldViewLoc.getY());
-		
 		g2.drawImage(VIEW.backgroundImage, 0, 0, d.width, d.height, null);
 		
 		VIEW.drawScene(g2);

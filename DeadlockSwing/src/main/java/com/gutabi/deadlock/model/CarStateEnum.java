@@ -4,11 +4,6 @@ public enum CarStateEnum {
 	
 	RUNNING,
 	
-	/**
-	 * crashed
-	 */
-	CRASHED,
-	
-//	SINKED;
+	CRASHED
 	
 }

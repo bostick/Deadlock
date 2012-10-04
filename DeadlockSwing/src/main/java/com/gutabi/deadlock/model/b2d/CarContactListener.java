@@ -7,7 +7,6 @@ import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.contacts.Contact;
 
 import com.gutabi.deadlock.model.Car;
-import com.gutabi.deadlock.model.CarStateEnum;
 
 public class CarContactListener implements ContactListener {
 	
@@ -17,23 +16,13 @@ public class CarContactListener implements ContactListener {
 		if (contact.getFixtureA().getBody().getUserData() instanceof Car) {
 			Body body = contact.getFixtureA().getBody();
 			Car carA = (Car)body.getUserData();
-			
-			carA.state = CarStateEnum.CRASHED;
-			
-			body.setLinearDamping(1.0f);
-			body.setAngularDamping(1.0f);
-			
+			carA.crash();
 		}
 		
 		if (contact.getFixtureB().getBody().getUserData() instanceof Car) {
 			Body body = contact.getFixtureB().getBody();
 			Car carB = (Car)body.getUserData();
-			
-			carB.state = CarStateEnum.CRASHED;
-			
-			body.setLinearDamping(1.0f);
-			body.setAngularDamping(1.0f);
-			
+			carB.crash();
 		}
 		
 	}
