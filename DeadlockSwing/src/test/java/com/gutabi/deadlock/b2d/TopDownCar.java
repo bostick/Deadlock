@@ -30,7 +30,7 @@ public class TopDownCar {
 	
 	static BufferedImage im;
 	
-	static Ground ground;
+//	static Ground ground;
 	static Car car1;
 	static Car car2;
 	
@@ -42,11 +42,11 @@ public class TopDownCar {
 		
 		im = ImageIO.read(new File("media\\normalCar.png"));
 		
-		ground = new Ground();
-		ground.x = 0.0f;
-		ground.y = -10.0f;
-		ground.halfWidth = 50;
-		ground.halfHeight = 10;
+//		ground = new Ground();
+//		ground.x = 0.0f;
+//		ground.y = -10.0f;
+//		ground.halfWidth = 50;
+//		ground.halfHeight = 10;
 		
 		car1 = new Car();
 		car1.x = -25.0f;
@@ -85,13 +85,13 @@ public class TopDownCar {
 		
 		// Make a Body for the ground via definition and shape binding that gives it a boundary
 		// 
-		BodyDef groundBodyDef = new BodyDef(); // body definition
-		groundBodyDef.position.set(ground.x, ground.y); // set bodydef position
-		Body groundBody = world.createBody(groundBodyDef); // create body based on definition
-		groundBody.setUserData(ground);
-		PolygonShape groundBox = new PolygonShape(); // make a shape representing ground
-		groundBox.setAsBox(ground.halfWidth, ground.halfHeight); // shape is a rect: 100 wide, 20 high
-		groundBody.createFixture(groundBox, 0.0f); // bind shape to ground body
+//		BodyDef groundBodyDef = new BodyDef(); // body definition
+//		groundBodyDef.position.set(ground.x, ground.y); // set bodydef position
+//		Body groundBody = world.createBody(groundBodyDef); // create body based on definition
+//		groundBody.setUserData(ground);
+//		PolygonShape groundBox = new PolygonShape(); // make a shape representing ground
+//		groundBox.setAsBox(ground.halfWidth, ground.halfHeight); // shape is a rect: 100 wide, 20 high
+//		groundBody.createFixture(groundBox, 0.0f); // bind shape to ground body
 		
 		// Make another Body that is dynamic, and will be subject to forces.
 		//
@@ -186,13 +186,13 @@ public class TopDownCar {
 		
 	}
 	
-	static class Ground {
-		float x;
-		float y;
-		float halfWidth;
-		float halfHeight;
-		Color color = Color.GREEN;
-	}
+//	static class Ground {
+//		float x;
+//		float y;
+//		float halfWidth;
+//		float halfHeight;
+//		Color color = Color.GREEN;
+//	}
 	
 	static class Car {
 		float x;
@@ -261,16 +261,16 @@ public class TopDownCar {
 			
 			AffineTransform orig = g2.getTransform();
 			
-			g2.setColor(ground.color);
-			
-			g2.translate(400.0d, 300d);
-			g2.scale(8.0d, -6.0d);
-			
-			g2.translate(ground.x, ground.y);
-			
-			g2.fillRect((int)(-ground.halfWidth), (int)(-ground.halfHeight), (int)(2*ground.halfWidth), (int)(2*ground.halfHeight));
-			
-			g2.setTransform(orig);
+//			g2.setColor(ground.color);
+//			
+//			g2.translate(400.0d, 300d);
+//			g2.scale(8.0d, -6.0d);
+//			
+//			g2.translate(ground.x, ground.y);
+//			
+//			g2.fillRect((int)(-ground.halfWidth), (int)(-ground.halfHeight), (int)(2*ground.halfWidth), (int)(2*ground.halfHeight));
+//			
+//			g2.setTransform(orig);
 			
 			orig = g2.getTransform();
 			

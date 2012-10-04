@@ -67,6 +67,8 @@ public class STGraphPositionPathPositionPath {
 	
 	public static STGraphPositionPathPositionPath advanceOneTimeStep(GraphPositionPathPosition start, double dist) {
 		
+		assert start != null;
+		
 		List<STGraphPositionPathPosition> poss = new ArrayList<STGraphPositionPathPosition>();
 		
 		GraphPositionPathPosition curPos = start;

@@ -70,20 +70,20 @@ public class DeadlockView {
 		normalCar = ImageIO.read(new File("media\\normalCar.png"));
 		normalCar = ImageUtils.createResizedCopy(
 				normalCar,
-				(int)(MODEL.world.CAR_WIDTH * MODEL.world.PIXELS_PER_METER),
-				(int)(MODEL.world.CAR_WIDTH * MODEL.world.PIXELS_PER_METER), true);
+				(int)(MODEL.world.CAR_LENGTH * MODEL.world.PIXELS_PER_METER),
+				(int)(MODEL.world.CAR_LENGTH * MODEL.world.PIXELS_PER_METER), true);
 		
 		fastCar = ImageIO.read(new File("media\\fastCar.png"));
 		fastCar = ImageUtils.createResizedCopy(
 				fastCar,
-				(int)(MODEL.world.CAR_WIDTH * MODEL.world.PIXELS_PER_METER),
-				(int)(MODEL.world.CAR_WIDTH * MODEL.world.PIXELS_PER_METER), true);
+				(int)(MODEL.world.CAR_LENGTH * MODEL.world.PIXELS_PER_METER),
+				(int)(MODEL.world.CAR_LENGTH * MODEL.world.PIXELS_PER_METER), true);
 		
 		crash = ImageIO.read(new File("media\\crash.png"));
 		crash = ImageUtils.createResizedCopy(
 				crash,
-				(int)(MODEL.world.CAR_WIDTH * MODEL.world.PIXELS_PER_METER),
-				(int)(MODEL.world.CAR_WIDTH * MODEL.world.PIXELS_PER_METER), true);
+				(int)(MODEL.world.CAR_LENGTH * MODEL.world.PIXELS_PER_METER),
+				(int)(MODEL.world.CAR_LENGTH * MODEL.world.PIXELS_PER_METER), true);
 		
 		BufferedImage grass = ImageIO.read(new File("media\\grass.png"));
 		
@@ -288,6 +288,12 @@ public class DeadlockView {
 		
 		g2.drawString("time: " + MODEL.world.t, (int)loc.getX(), (int)loc.getY());
 		
+		
+		o = new Point(1, 3);
+		loc = VIEW.worldToPanel(o.add(new Point(-MODEL.world.VERTEX_WIDTH/2, -MODEL.world.VERTEX_WIDTH/2)));
+		
+		g2.drawString("body count: " + MODEL.world.b2dWorld.getBodyCount(), (int)loc.getX(), (int)loc.getY());
+		
 	}
 	
 	private static void paintCurrentStroke(List<Point> curPanelStroke, Point lastPanelPoint, Graphics2D g2) {
@@ -448,15 +454,15 @@ public class DeadlockView {
 	
 	public void repaint() {
 		
-		Point loc = VIEW.worldToPanel(new Point(-MODEL.world.VERTEX_WIDTH, -MODEL.world.VERTEX_WIDTH));
+//		Point loc = VIEW.worldToPanel(new Point(-MODEL.world.VERTEX_WIDTH, -MODEL.world.VERTEX_WIDTH));
 		
-		panel.repaint(
-				(int)loc.getX(),
-				(int)loc.getY(),
-				(int)(MODEL.world.WORLD_WIDTH + MODEL.world.VERTEX_WIDTH) * MODEL.world.PIXELS_PER_METER,
-				(int)(MODEL.world.WORLD_HEIGHT + MODEL.world.VERTEX_WIDTH) * MODEL.world.PIXELS_PER_METER);
+//		panel.repaint(
+//				(int)loc.getX(),
+//				(int)loc.getY(),
+//				(int)(MODEL.world.WORLD_WIDTH + MODEL.world.VERTEX_WIDTH) * MODEL.world.PIXELS_PER_METER,
+//				(int)(MODEL.world.WORLD_HEIGHT + MODEL.world.VERTEX_WIDTH) * MODEL.world.PIXELS_PER_METER);
 		
-//		panel.repaint();
+		panel.repaint();
 	}
 	
 }

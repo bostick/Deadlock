@@ -8,11 +8,20 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
 import org.apache.log4j.Logger;
+import org.jbox2d.collision.shapes.PolygonShape;
+import org.jbox2d.collision.shapes.Shape;
+import org.jbox2d.common.Vec2;
+import org.jbox2d.dynamics.Body;
+import org.jbox2d.dynamics.BodyDef;
+import org.jbox2d.dynamics.BodyType;
+import org.jbox2d.dynamics.Fixture;
+import org.jbox2d.dynamics.FixtureDef;
 
+import com.gutabi.deadlock.core.EdgePosition;
 import com.gutabi.deadlock.core.GraphPosition;
 import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.core.Sink;
 import com.gutabi.deadlock.core.Source;
+import com.gutabi.deadlock.core.Vertex;
 import com.gutabi.deadlock.core.path.GraphPositionPath;
 import com.gutabi.deadlock.core.path.GraphPositionPathPosition;
 import com.gutabi.deadlock.core.path.STGraphPositionPathPositionPath;
@@ -20,23 +29,28 @@ import com.gutabi.deadlock.core.path.STPointPath;
 
 public abstract class Car {
 	
-	protected CarStateEnum state;
+	public CarStateEnum state;
 	
-	Point realPos;
-	double heading;
+//	Point realPos;
+//	double heading;
 	
 	public long startingTime;
 	public long crashingTime;
 	public Source source;
 	
 	public STPointPath nextRealPath;
-	public boolean nextCrashed;
+//	public boolean nextCrashed;
 	
 	GraphPositionPath overallPath;
 	
 	public final int id;
 	
 	public static int carCounter;
+	
+	Body b2dBody;
+	Shape b2dShape;
+	Fixture b2dFixture;
+//	public boolean b2dCrash;
 	
 	static Logger logger = Logger.getLogger(Car.class);
 	
@@ -52,8 +66,25 @@ public abstract class Car {
 		overallPath = s.getPathToMatchingSink();
 		Point end = overallPath.getEnd().getPoint();
 		
-		realPos = overallPath.getGraphPosition(0).getPoint();
-		heading = Math.atan2(end.getY()-realPos.getY(), end.getX()-realPos.getX());
+		Point startPos = overallPath.getGraphPosition(0).getPoint();
+		double startHeading = Math.atan2(end.getY()-startPos.getY(), end.getX()-startPos.getX());
+		
+		BodyDef bodyDef = new BodyDef();
+		bodyDef.type = BodyType.DYNAMIC; // dynamic means it is subject to forces
+		bodyDef.position.set((float)startPos.getX(), (float)startPos.getY());
+		bodyDef.angle = (float)startHeading;
+		bodyDef.bullet = true;
+		b2dBody = MODEL.world.b2dWorld.createBody(bodyDef);
+		b2dBody.setUserData(this);
+		
+		b2dShape = new PolygonShape();
+		((PolygonShape)b2dShape).setAsBox((float)(MODEL.world.CAR_LENGTH / 2), (float)(MODEL.world.CAR_LENGTH / 4));
+		
+		FixtureDef fixtureDef = new FixtureDef(); // fixture def that we load up with the following info:
+		fixtureDef.shape = b2dShape; // ... its shape is the dynamic box (2x2 rectangle)
+		fixtureDef.density = 1.0f; // ... its density is 1 (default is zero)
+		fixtureDef.friction = 1f; // ... its surface has some friction coefficient
+		b2dFixture = b2dBody.createFixture(fixtureDef); // bind the dense, friction-laden fixture to the body
 		
 	}
 	
@@ -63,101 +94,101 @@ public abstract class Car {
 	 */
 	public abstract double getSpeed();
 	
-	/**
-	 * Returns true if car moved in this update
-	 */
-	public boolean updateNext() {
+	public void preStep() {
 		
-		assert nextRealPath == null;
+//		assert nextRealPath == null;
 		
 		switch (state) {
 		case RUNNING: {
 			
-			if (false) {
-				
-				GraphPosition graphPos = MODEL.world.graph.hitTest(realPos);
-				
-				GraphPositionPathPosition overallPos = overallPath.hitTest(graphPos);
-				
-				STGraphPositionPathPositionPath nextPlannedPath = STGraphPositionPathPositionPath.advanceOneTimeStep(overallPos, getSpeed() * MODEL.world.dt);
-				
-				nextRealPath = nextPlannedPath.toSTGraphPositionPath().toSTPointPath();
-				
-			} else {
-				
-				nextRealPath = STPointPath.advanceOneTimeStep(realPos, heading, getSpeed() * MODEL.world.dt);
-				
+			Vec2 pos = b2dBody.getPosition();
+			
+//			logger.debug("pos: " + pos);
+			
+			float angle = b2dBody.getAngle();
+			
+			Point posP = new Point(pos.x, pos.y);
+			EdgePosition edgePos = MODEL.world.graph.findClosestEdgePosition(posP, null, MODEL.world.CAR_LENGTH);
+			Vertex vertexPos = MODEL.world.graph.findClosestVertexPosition(posP, null, MODEL.world.CAR_LENGTH, false);
+			GraphPosition graphPos = null;
+			if (edgePos != null) {
+				graphPos = edgePos;
+			}
+			if (vertexPos != null && (edgePos == null || Point.distance(posP, vertexPos.getPoint()) < Point.distance(posP, edgePos.getPoint()))) {
+				graphPos = vertexPos;
 			}
 			
-			return true;
+//			logger.debug("graphPos: " + graphPos);
+			
+			GraphPositionPathPosition overallPos = overallPath.hitTest(graphPos);
+			
+			STGraphPositionPathPositionPath nextPlannedPath = STGraphPositionPathPositionPath.advanceOneTimeStep(overallPos, getSpeed() * MODEL.world.dt);
+			
+			nextRealPath = nextPlannedPath.toSTGraphPositionPath().toSTPointPath();
+			
+			Point nextPos = nextRealPath.end.getSpace();
+			double nextHeading = Math.atan2(nextPos.getY()-pos.y, nextPos.getX()-pos.x);
+			
+			Vec2 v1 = new Vec2((float)(nextPos.getX()-pos.x), (float)(nextPos.getY()-pos.y));
+			v1.normalize();
+			v1.mulLocal((float)(getSpeed() * 1000));
+			
+			b2dBody.setLinearVelocity(v1);
+			
+			float angV = (float)(nextHeading - angle);
+			angV = angV * 1000 / MODEL.world.dt;
+			
+//			logger.debug("angV: " + angV);
+			
+			b2dBody.setAngularVelocity(angV);
+			
+//			return true;
 		}
 		case CRASHED: {
-			
-			if (false) {
-				
-				GraphPosition graphPos = MODEL.world.graph.hitTest(realPos);
-				
-				GraphPositionPathPosition overallPos = overallPath.hitTest(graphPos);
-				
-				STGraphPositionPathPositionPath nextPlannedPath = STGraphPositionPathPositionPath.crashOneTimeStep(overallPos);
-				
-				nextRealPath = nextPlannedPath.toSTGraphPositionPath().toSTPointPath();
-				
-			} else {
-				
-				nextRealPath = STPointPath.advanceOneTimeStep(realPos, heading, 0 * MODEL.world.dt);
-				
-			}
-			
-			return false;
+//			return false;
 		}
 		default:
-			assert false;
-			return false;
+//			assert false;
+//			return false;
+			break;
 		}
 	}
 	
 	/**
 	 * return true if car should persist after time step
 	 */
-	public boolean updateCurrentFromNext() {
+	public boolean postStep() {
 		
-		switch (state) {
-		case RUNNING: {
-			Point prevPos = realPos;
-			realPos = nextRealPath.end.getSpace();
-			heading = Math.atan2(realPos.getY()-prevPos.getY(), realPos.getX()-prevPos.getX());
-			
-			if (MODEL.world.graph.hitTest(realPos) instanceof Sink) {
-				state = CarStateEnum.SINKED;
-			} else if (nextCrashed) {
-				state = CarStateEnum.CRASHED;
-			} else {
-				state = CarStateEnum.RUNNING;
-			}
-			
-			nextRealPath = null;
-			
-			return state == CarStateEnum.RUNNING || state == CarStateEnum.CRASHED;
+		Vec2 pos = b2dBody.getPosition();
+		Point end = overallPath.getEnd().getPoint();
+		boolean sinked = false;
+		if (Point.distance(new Point(pos.x,  pos.y), end) < MODEL.world.CAR_LENGTH) {
+			sinked = true;
 		}
-		case CRASHED: {
+		
+		if (sinked) {
 			
-			nextRealPath = null;
+			b2dCleanUp();
 			
-			return true;
-		}
-		default:
-			assert false;
 			return false;
 		}
+		
+		return true;
+		
+	}
+	
+	public void b2dCleanUp() {
+		b2dBody.destroyFixture(b2dFixture);
+		MODEL.world.b2dWorld.destroyBody(b2dBody);
 	}
 	
 	public int getId() {
 		return id;
 	}
 	
-	public Point getPosition() {
-		return realPos;
+	public Point getPoint() {
+		Vec2 pos = b2dBody.getPosition();
+		return new Point(pos.x, pos.y);
 	}
 	
 	abstract BufferedImage image();
@@ -168,55 +199,121 @@ public abstract class Car {
 		case RUNNING: {
 			
 			AffineTransform origTransform = g2.getTransform();
+//			g2.setColor(Color.BLUE);
 			
+			AffineTransform b2dTrans = (AffineTransform)VIEW.worldToPanelTransform.clone();
+			Vec2 pos = b2dBody.getPosition();
+			float angle = b2dBody.getAngle();
+			b2dTrans.translate(pos.x, pos.y);
+			b2dTrans.rotate(angle);
+			
+			b2dTrans.translate(-MODEL.world.CAR_LENGTH / 2, -MODEL.world.CAR_LENGTH / 4);
+			b2dTrans.scale(1/((double)MODEL.world.PIXELS_PER_METER), 1/((double)MODEL.world.PIXELS_PER_METER));
+			
+			g2.setTransform(b2dTrans);
+			
+//			g2.fillRect(
+//					0,
+//					0,
+//					(int)(MODEL.world.CAR_LENGTH * MODEL.world.PIXELS_PER_METER),
+//					(int)(MODEL.world.CAR_LENGTH * MODEL.world.PIXELS_PER_METER / 2));
 			BufferedImage im = image();
-			
-			AffineTransform carTrans = (AffineTransform)VIEW.worldToPanelTransform.clone();
-			carTrans.translate(realPos.getX(), realPos.getY());
-			carTrans.rotate(heading);
-			carTrans.translate(-MODEL.world.CAR_WIDTH / 2, -MODEL.world.CAR_WIDTH / 2);
-			carTrans.scale(1/((double)MODEL.world.PIXELS_PER_METER), 1/((double)MODEL.world.PIXELS_PER_METER));
-			carTrans.translate(origTransform.getTranslateX(), origTransform.getTranslateY());
-			
-			g2.setTransform(carTrans);
-			
 			g2.drawImage(im,
 					0,
 					0,
-					(int)(MODEL.world.CAR_WIDTH * MODEL.world.PIXELS_PER_METER),
-					(int)(MODEL.world.CAR_WIDTH * MODEL.world.PIXELS_PER_METER), null);
+					(int)(MODEL.world.CAR_LENGTH * MODEL.world.PIXELS_PER_METER),
+					(int)(MODEL.world.CAR_LENGTH * MODEL.world.PIXELS_PER_METER), null);
 			
 			g2.setTransform(origTransform);
+			
+			
+			
+			
+//			BufferedImage im = image();
+//			
+//			AffineTransform carTrans = (AffineTransform)VIEW.worldToPanelTransform.clone();
+//			carTrans.translate(realPos.getX(), realPos.getY());
+//			carTrans.rotate(heading);
+//			
+////			Point2D src = new Point2D.Double(0, 0);
+////			Point2D dst = carTrans.transform(src, null);
+////			logger.debug("dst: " + dst);
+//			
+//			carTrans.translate(-MODEL.world.CAR_LENGTH / 2, -MODEL.world.CAR_LENGTH / 2);
+//			carTrans.scale(1/((double)MODEL.world.PIXELS_PER_METER), 1/((double)MODEL.world.PIXELS_PER_METER));
+//			
+//			g2.setTransform(carTrans);
+//			
+//			g2.drawImage(im,
+//					0,
+//					0,
+//					(int)(MODEL.world.CAR_LENGTH * MODEL.world.PIXELS_PER_METER),
+//					(int)(MODEL.world.CAR_LENGTH * MODEL.world.PIXELS_PER_METER), null);
+//			
+//			g2.setTransform(origTransform);
+			
+			
 			
 			break;
 		}
 		case CRASHED: {
 			
 			AffineTransform origTransform = g2.getTransform();
+//			g2.setColor(Color.BLUE);
 			
+			AffineTransform b2dTrans = (AffineTransform)VIEW.worldToPanelTransform.clone();
+			Vec2 pos = b2dBody.getPosition();
+			float angle = b2dBody.getAngle();
+			b2dTrans.translate(pos.x, pos.y);
+			b2dTrans.rotate(angle);
+			
+			b2dTrans.translate(-MODEL.world.CAR_LENGTH / 2, -MODEL.world.CAR_LENGTH / 4);
+			b2dTrans.scale(1/((double)MODEL.world.PIXELS_PER_METER), 1/((double)MODEL.world.PIXELS_PER_METER));
+			
+			g2.setTransform(b2dTrans);
+			
+//			g2.fillRect(
+//					0,
+//					0,
+//					(int)(MODEL.world.CAR_LENGTH * MODEL.world.PIXELS_PER_METER),
+//					(int)(MODEL.world.CAR_LENGTH * MODEL.world.PIXELS_PER_METER / 2));
 			BufferedImage im = VIEW.crash;
-			
-			AffineTransform carTrans = (AffineTransform)VIEW.worldToPanelTransform.clone();
-			carTrans.translate(realPos.getX(), realPos.getY());
-			carTrans.rotate(heading);
-			carTrans.translate(-MODEL.world.CAR_WIDTH / 2, -MODEL.world.CAR_WIDTH / 2);
-			carTrans.scale(1/((double)MODEL.world.PIXELS_PER_METER), 1/((double)MODEL.world.PIXELS_PER_METER));
-			carTrans.translate(origTransform.getTranslateX(), origTransform.getTranslateY());
-			
-			g2.setTransform(carTrans);
-			
 			g2.drawImage(im,
 					0,
 					0,
-					(int)(MODEL.world.CAR_WIDTH * MODEL.world.PIXELS_PER_METER),
-					(int)(MODEL.world.CAR_WIDTH * MODEL.world.PIXELS_PER_METER), null);
+					(int)(MODEL.world.CAR_LENGTH * MODEL.world.PIXELS_PER_METER),
+					(int)(MODEL.world.CAR_LENGTH * MODEL.world.PIXELS_PER_METER), null);
 			
 			g2.setTransform(origTransform);
 			
-			break;
+			
+			
+			
+			
+			
+			
+//			AffineTransform origTransform = g2.getTransform();
+//			
+//			BufferedImage im = VIEW.crash;
+//			
+//			AffineTransform carTrans = (AffineTransform)VIEW.worldToPanelTransform.clone();
+//			carTrans.translate(realPos.getX(), realPos.getY());
+//			carTrans.rotate(heading);
+//			carTrans.translate(-MODEL.world.CAR_LENGTH / 2, -MODEL.world.CAR_LENGTH / 2);
+//			carTrans.scale(1/((double)MODEL.world.PIXELS_PER_METER), 1/((double)MODEL.world.PIXELS_PER_METER));
+//			
+//			g2.setTransform(carTrans);
+//			
+//			g2.drawImage(im,
+//					0,
+//					0,
+//					(int)(MODEL.world.CAR_LENGTH * MODEL.world.PIXELS_PER_METER),
+//					(int)(MODEL.world.CAR_LENGTH * MODEL.world.PIXELS_PER_METER), null);
+//			
+//			g2.setTransform(origTransform);
+//			
+//			break;
 		}
-		case SINKED:
-			break;
 		}
 		
 	}

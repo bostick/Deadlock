@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import org.jbox2d.common.Vec2;
+
 import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Edge;
 import com.gutabi.deadlock.core.Graph;
@@ -16,12 +18,12 @@ import com.gutabi.deadlock.core.Segment;
 import com.gutabi.deadlock.core.Sink;
 import com.gutabi.deadlock.core.Source;
 import com.gutabi.deadlock.core.Vertex;
-import com.gutabi.deadlock.core.path.STPointPath;
+import com.gutabi.deadlock.model.b2d.CarContactListener;
 
 public class World {
 	
-	public final double CAR_WIDTH = 1.0;
-	public final double ROAD_WIDTH = CAR_WIDTH;
+	public final double CAR_LENGTH = 1.0;
+	public final double ROAD_WIDTH = CAR_LENGTH;
 	public final double VERTEX_WIDTH = Math.sqrt(2 * ROAD_WIDTH * ROAD_WIDTH);
 	
 	
@@ -58,6 +60,9 @@ public class World {
 	public List<Car> movingCars = new ArrayList<Car>();
 	public List<Car> crashedCars = new ArrayList<Car>();
 	
+	public org.jbox2d.dynamics.World b2dWorld;
+	CarContactListener listener;
+	
 	public World() {
 		
 		Source a = new Source(new Point(WORLD_WIDTH/3, 0));
@@ -92,6 +97,14 @@ public class World {
 		graph.sinks.add(g);
 		graph.sinks.add(h);
 		
+		Vec2 gravity = new Vec2(0.0f, 0.0f);
+		boolean doSleep = true;
+		b2dWorld = new org.jbox2d.dynamics.World(gravity, doSleep);
+		
+		listener = new CarContactListener();
+		
+		b2dWorld.setContactListener(listener);
+		
 	}
 	
 	/*
@@ -114,19 +127,54 @@ public class World {
 	 * run after game loop stops
 	 */
 	public void postStop() {
+		
+		for (Car c : movingCars) {
+			c.b2dCleanUp();
+		}
+		for (Car c : crashedCars) {
+			c.b2dCleanUp();
+		}
 		movingCars.clear();
 		crashedCars.clear();
+		
 	}
+	
+	
+	
+	float timeStep = ((float)dt) / 1000.0f;
+	int velocityIterations = 6;
+	int positionIterations = 2;
 	
 	public void integrate(long t) {
 		
 		this.t = t;
 		
-		if (SPAWN_FREQUENCY > 0 && (t - lastSpawnTime) >= SPAWN_FREQUENCY) {
+		if (SPAWN_FREQUENCY > 0 && (t == 0 || (t - lastSpawnTime) >= SPAWN_FREQUENCY)) {
 			spawnNewCars();
 		}
 		
-		movingFixPoint();
+		for (Car c : movingCars) {
+			c.preStep();
+		}
+		for (Car c : crashedCars) {
+			c.preStep();
+		}
+		
+		b2dWorld.step(timeStep, velocityIterations, positionIterations);
+		
+		List<Car> toBeRemoved = new ArrayList<Car>();
+		for (Car c : movingCars) {
+			boolean shouldPersist = c.postStep();
+			if (!shouldPersist) {
+				toBeRemoved.add(c);
+			}
+		}
+		for (Car c : crashedCars) {
+			boolean shouldPersist = c.postStep();
+			assert shouldPersist;
+		}
+		
+		movingCars.removeAll(toBeRemoved);
 		
 	}
 	
@@ -176,8 +224,8 @@ public class World {
 		for (Car c : movingCars) {
 //			GraphPosition carPos = graph.hitTest(c.realPos);
 			for (Source s : sources) {
-				double dist = c.realPos.distanceTo(s.getPoint());
-				if (DMath.lessThanEquals(dist, CAR_WIDTH)) {
+				double dist = c.getPoint().distanceTo(s.getPoint());
+				if (DMath.lessThanEquals(dist, CAR_LENGTH)) {
 					toRemove.add(s);
 				}
 			}
@@ -185,8 +233,8 @@ public class World {
 		for (Car c : crashedCars) {
 //			GraphPosition carPos = graph.hitTest(c.realPos);
 			for (Source s : sources) {
-				double dist = c.realPos.distanceTo(s.getPoint());
-				if (DMath.lessThanEquals(dist, CAR_WIDTH)) {
+				double dist = c.getPoint().distanceTo(s.getPoint());
+				if (DMath.lessThanEquals(dist, CAR_LENGTH)) {
 					toRemove.add(s);
 				}
 			}
@@ -223,38 +271,38 @@ public class World {
 		
 	}
 	
-	private void movingFixPoint() {
-		
-		for (Car c : movingCars) {
-			c.updateNext();
-		}
-		for (Car c : crashedCars) {
-			c.updateNext();
-		}
-		
-		findCrashesMoving(movingCars);
-		findCrashesMovingCrashed(movingCars, crashedCars);
-		int iter = 0;
-		while (firstUnprocessedCrashTime != -1) {
-			
-			List<Car> newlyCrashedCars = processCrashInfo();
-			
-			movingCars.removeAll(newlyCrashedCars);
-			crashedCars.addAll(newlyCrashedCars);
-			
-			findCrashesMoving(movingCars);
-			findCrashesMovingCrashed(movingCars, crashedCars);
-			
-			iter = iter + 1;
-		}
-		
-		List<Car> toBeRemoved = updateCurrentFromNext();
-		
-		movingCars.removeAll(toBeRemoved);
-		
-//		checkDistances(new ArrayList<Car>(){{addAll(movingCars);addAll(crashedCars);}});
-		
-	}
+//	private void movingFixPoint() {
+//		
+//		for (Car c : movingCars) {
+//			c.updateNext();
+//		}
+//		for (Car c : crashedCars) {
+//			c.updateNext();
+//		}
+//		
+////		findCrashesMoving(movingCars);
+////		findCrashesMovingCrashed(movingCars, crashedCars);
+////		int iter = 0;
+////		while (firstUnprocessedCrashTime != -1) {
+////			
+////			List<Car> newlyCrashedCars = processCrashInfo();
+////			
+////			movingCars.removeAll(newlyCrashedCars);
+////			crashedCars.addAll(newlyCrashedCars);
+////			
+////			findCrashesMoving(movingCars);
+////			findCrashesMovingCrashed(movingCars, crashedCars);
+////			
+////			iter = iter + 1;
+////		}
+//		
+//		List<Car> toBeRemoved = updateCurrentFromNext();
+//		
+//		movingCars.removeAll(toBeRemoved);
+//		
+////		checkDistances(new ArrayList<Car>(){{addAll(movingCars);addAll(crashedCars);}});
+//		
+//	}
 	
 //	private boolean checkDistances(Car c, Car d) {
 //		Position cPos = c.getPosition();
@@ -283,139 +331,139 @@ public class World {
 //		return true;
 //	}
 	
-	private void findCrashesMoving(List<Car> cars) {
-		
-		for (int i = 0; i < cars.size(); i++) {
-			final Car ci = cars.get(i);
-			
-			jloop:
-			for (int j = i+1; j < cars.size(); j++) {
-				Car cj = cars.get(j);
-				
-				boolean res = carCar(ci, cj);
-				
-				if (res) {
-					continue jloop;
-				}
-				
-			}
-		}
-		
-	}
+//	private void findCrashesMoving(List<Car> cars) {
+//		
+//		for (int i = 0; i < cars.size(); i++) {
+//			final Car ci = cars.get(i);
+//			
+//			jloop:
+//			for (int j = i+1; j < cars.size(); j++) {
+//				Car cj = cars.get(j);
+//				
+//				boolean res = carCar(ci, cj);
+//				
+//				if (res) {
+//					continue jloop;
+//				}
+//				
+//			}
+//		}
+//		
+//	}
 	
-	private void findCrashesMovingCrashed(List<Car> moving, List<Car> crashed) {
-		
-		for (int i = 0; i < moving.size(); i++) {
-			final Car ci = moving.get(i);
-			
-			jloop:
-			for (int j = 0; j < crashed.size(); j++) {
-				Car cj = crashed.get(j);
-				
-				boolean res = carCar(ci, cj);
-				
-				if (res) {
-					continue jloop;
-				}
-				
-			}
-		}
-		
-	}
+//	private void findCrashesMovingCrashed(List<Car> moving, List<Car> crashed) {
+//		
+//		for (int i = 0; i < moving.size(); i++) {
+//			final Car ci = moving.get(i);
+//			
+//			jloop:
+//			for (int j = 0; j < crashed.size(); j++) {
+//				Car cj = crashed.get(j);
+//				
+//				boolean res = carCar(ci, cj);
+//				
+//				if (res) {
+//					continue jloop;
+//				}
+//				
+//			}
+//		}
+//		
+//	}
 	
-	private boolean carCar(Car ci, Car cj) {
-		
-		double intersectionTime = STPointPath.intersection(
-				ci.nextRealPath,
-				cj.nextRealPath,
-				MODEL.world.CAR_WIDTH,
-				Math.min(ci.nextRealPath.end.getTime(), cj.nextRealPath.end.getTime()));
-		
-		if (intersectionTime != -1) {
-			saveCrashInfo(new CrashInfo(intersectionTime, ci, cj));
-			return true;
-		} else {
-			return false;
-		}
-	}
+//	private boolean carCar(Car ci, Car cj) {
+//		
+//		double intersectionTime = STPointPath.intersection(
+//				ci.nextRealPath,
+//				cj.nextRealPath,
+//				MODEL.world.CAR_LENGTH,
+//				Math.min(ci.nextRealPath.end.getTime(), cj.nextRealPath.end.getTime()));
+//		
+//		if (intersectionTime != -1) {
+//			saveCrashInfo(new CrashInfo(intersectionTime, ci, cj));
+//			return true;
+//		} else {
+//			return false;
+//		}
+//	}
 	
 	
-	double firstUnprocessedCrashTime = -1;
-	List<CrashInfo> unprocessedCrashes = new ArrayList<CrashInfo>();
+//	double firstUnprocessedCrashTime = -1;
+//	List<CrashInfo> unprocessedCrashes = new ArrayList<CrashInfo>();
+//	
+//	private void saveCrashInfo(CrashInfo ci) {
+//		
+//		double t = ci.crashTime;
+//		
+//		if (firstUnprocessedCrashTime == -1) {
+//			firstUnprocessedCrashTime = t;
+//			assert unprocessedCrashes.isEmpty();
+//			unprocessedCrashes.add(ci);
+//		} else if (firstUnprocessedCrashTime == t) {
+//			unprocessedCrashes.add(ci);
+//		} else if (t < firstUnprocessedCrashTime) {
+//			firstUnprocessedCrashTime = t;
+//			unprocessedCrashes.clear();
+//			unprocessedCrashes.add(ci);
+//		} else {
+//			;
+//		}
+//		
+//	}
 	
-	private void saveCrashInfo(CrashInfo ci) {
-		
-		double t = ci.crashTime;
-		
-		if (firstUnprocessedCrashTime == -1) {
-			firstUnprocessedCrashTime = t;
-			assert unprocessedCrashes.isEmpty();
-			unprocessedCrashes.add(ci);
-		} else if (firstUnprocessedCrashTime == t) {
-			unprocessedCrashes.add(ci);
-		} else if (t < firstUnprocessedCrashTime) {
-			firstUnprocessedCrashTime = t;
-			unprocessedCrashes.clear();
-			unprocessedCrashes.add(ci);
-		} else {
-			;
-		}
-		
-	}
-	
-	private List<Car> processCrashInfo() {
-		
-		List<Car> newlyCrashedCars = new ArrayList<Car>();
-		
-		for (CrashInfo info : unprocessedCrashes) {
-			double crashTime = info.crashTime;
-			assert DMath.equals(crashTime, firstUnprocessedCrashTime);
-			
-			Car i = info.i;
-			Car j = info.j;
-			
-			if (!i.nextCrashed) {
-				i.nextRealPath = i.nextRealPath.crash(firstUnprocessedCrashTime);
-				i.crashingTime = t;
-				i.nextCrashed = true;
-				newlyCrashedCars.add(i);
-			}
-			
-			if (!j.nextCrashed) {
-				j.nextRealPath = j.nextRealPath.crash(firstUnprocessedCrashTime);
-				j.crashingTime = t;
-				j.nextCrashed = true;
-				newlyCrashedCars.add(j);
-			}
-			
-		}
-		
-		firstUnprocessedCrashTime = -1;
-		unprocessedCrashes.clear();
-		
-		return newlyCrashedCars;
-	}
+//	private List<Car> processCrashInfo() {
+//		
+//		List<Car> newlyCrashedCars = new ArrayList<Car>();
+//		
+//		for (CrashInfo info : unprocessedCrashes) {
+//			double crashTime = info.crashTime;
+//			assert DMath.equals(crashTime, firstUnprocessedCrashTime);
+//			
+//			Car i = info.i;
+//			Car j = info.j;
+//			
+//			if (!i.nextCrashed) {
+//				i.nextRealPath = i.nextRealPath.crash(firstUnprocessedCrashTime);
+//				i.crashingTime = t;
+//				i.nextCrashed = true;
+//				newlyCrashedCars.add(i);
+//			}
+//			
+//			if (!j.nextCrashed) {
+//				j.nextRealPath = j.nextRealPath.crash(firstUnprocessedCrashTime);
+//				j.crashingTime = t;
+//				j.nextCrashed = true;
+//				newlyCrashedCars.add(j);
+//			}
+//			
+//		}
+//		
+//		firstUnprocessedCrashTime = -1;
+//		unprocessedCrashes.clear();
+//		
+//		return newlyCrashedCars;
+//	}
 	
 	/**
 	 * return cars to be removed
 	 */
-	private List<Car> updateCurrentFromNext() {
-		
-		List<Car> toBeRemoved = new ArrayList<Car>();
-		
-		for (Car c : movingCars) {
-			boolean shouldPersist = c.updateCurrentFromNext();
-			if (!shouldPersist) {
-				toBeRemoved.add(c);
-			}
-		}
-		for (Car c : crashedCars) {
-			boolean shouldPersist = c.updateCurrentFromNext();
-			assert shouldPersist;
-		}
-		
-		return toBeRemoved;
-	}
+//	private List<Car> updateCurrentFromNext() {
+//		
+//		List<Car> toBeRemoved = new ArrayList<Car>();
+//		
+//		for (Car c : movingCars) {
+//			boolean shouldPersist = c.updateCurrentFromNext();
+//			if (!shouldPersist) {
+//				toBeRemoved.add(c);
+//			}
+//		}
+//		for (Car c : crashedCars) {
+//			boolean shouldPersist = c.updateCurrentFromNext();
+//			assert shouldPersist;
+//		}
+//		
+//		return toBeRemoved;
+//	}
 	
 	
 	

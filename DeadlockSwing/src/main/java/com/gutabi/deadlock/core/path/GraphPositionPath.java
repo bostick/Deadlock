@@ -117,6 +117,8 @@ public class GraphPositionPath {
 	
 	public GraphPositionPathPosition hitTest(GraphPosition pos) {
 		
+		assert pos != null;
+		
 		if (pos.isBound()) {
 			for (int i = 0; i < poss.size(); i++) {
 				GraphPosition test = poss.get(i);

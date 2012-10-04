@@ -9,6 +9,6 @@ public enum CarStateEnum {
 	 */
 	CRASHED,
 	
-	SINKED;
+//	SINKED;
 	
 }

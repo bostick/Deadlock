@@ -1115,19 +1115,19 @@ public class Graph {
 	
 	
 	
-	public Position findClosestPosition(Point a) {
+	public GraphPosition findClosestPosition(Point a) {
 		return findClosestPosition(a, null, Double.POSITIVE_INFINITY, false);
 	}
 	
-	public Position findClosestDeleteablePosition(Point a) {
+	public GraphPosition findClosestDeleteablePosition(Point a) {
 		return findClosestPosition(a, null, Double.POSITIVE_INFINITY, true);
 	}
 	
-	public Position findClosestPosition(Point a, double radius) {
+	public GraphPosition findClosestPosition(Point a, double radius) {
 		return findClosestPosition(a, null, radius, false);
 	}
 	
-	public Position findClosestPosition(Point a, Point anchor, double radius, boolean onlyDeleteables) {
+	public GraphPosition findClosestPosition(Point a, Point anchor, double radius, boolean onlyDeleteables) {
 		Vertex closestV = findClosestVertexPosition(a, anchor, radius, onlyDeleteables);
 		if (closestV != null) {
 			return closestV;
@@ -1149,7 +1149,7 @@ public class Graph {
 			changed = false;
 			
 			for (Edge e : edges) {
-				if (e.getTotalLength() <= MODEL.world.CAR_WIDTH) {
+				if (e.getTotalLength() <= MODEL.world.CAR_LENGTH) {
 					toRemove.add(e);
 					changed = true;
 				}
@@ -1724,7 +1724,7 @@ public class Graph {
 		}
 		
 		for (Edge e : edges) {
-			if (e.getTotalLength() <= MODEL.world.CAR_WIDTH) {
+			if (e.getTotalLength() <= MODEL.world.CAR_LENGTH) {
 				throw new IllegalStateException("too small");
 			}
 			if (e.getStart() == null && e.getEnd() == null) {
