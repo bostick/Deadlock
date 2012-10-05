@@ -3,7 +3,6 @@ package com.gutabi.deadlock.model;
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
@@ -33,15 +32,13 @@ public abstract class Car {
 	public long crashingTime;
 	public Source source;
 	
-	public STPointPath nextRealPath;
-	
 	GraphPositionPath overallPath;
 	
 	public final int id;
 	
 	public static int carCounter;
 	
-	private Body b2dBody;
+	protected Body b2dBody;
 	private Shape b2dShape;
 	private Fixture b2dFixture;
 	
@@ -57,10 +54,20 @@ public abstract class Car {
 		source = s;
 		
 		overallPath = s.getPathToMatchingSink();
-		Point end = overallPath.getEnd().getPoint();
-		
+//		Point end = overallPath.getEnd().getPoint();
 		Point startPos = overallPath.getGraphPosition(0).getPoint();
-		double startHeading = Math.atan2(end.getY()-startPos.getY(), end.getX()-startPos.getX());
+		GraphPositionPathPosition overallPos = overallPath.findClosestGraphPositionPathPosition(startPos);
+		
+		STGraphPositionPathPositionPath nextPlannedPath = STGraphPositionPathPositionPath.advanceOneTimeStep(overallPos, (getSpeed() * 1000) * (((float)MODEL.world.dt) / ((float)1000)));
+		
+		STPointPath nextRealPath = nextPlannedPath.toSTGraphPositionPath().toSTPointPath();
+		
+		Point nextDTGoalPoint = nextRealPath.end.getSpace();
+//		Point nextDTGoalPoint = overallPath.getEnd().getPoint();
+		
+//		logger.debug("nextDTGoalPoint: " + nextDTGoalPoint);
+		
+		double startHeading = Math.atan2(nextDTGoalPoint.getY()-startPos.getY(), nextDTGoalPoint.getX()-startPos.getX());
 		
 		BodyDef bodyDef = new BodyDef();
 		bodyDef.type = BodyType.DYNAMIC; // dynamic means it is subject to forces
@@ -78,28 +85,6 @@ public abstract class Car {
 		fixtureDef.density = 1.0f; // ... its density is 1 (default is zero)
 		fixtureDef.friction = 1f; // ... its surface has some friction coefficient
 		b2dFixture = b2dBody.createFixture(fixtureDef); // bind the dense, friction-laden fixture to the body
-		
-		GraphPositionPathPosition overallPos = new GraphPositionPathPosition(overallPath, 0, 0.0);
-		
-		STGraphPositionPathPositionPath nextPlannedPath = STGraphPositionPathPositionPath.advanceOneTimeStep(overallPos, getSpeed() * MODEL.world.dt);
-		
-		nextRealPath = nextPlannedPath.toSTGraphPositionPath().toSTPointPath();
-		
-		Point nextPos = nextRealPath.end.getSpace();
-		double nextHeading = Math.atan2(nextPos.getY()-startPos.getY(), nextPos.getX()-startPos.getX());
-		
-		Vec2 v1 = new Vec2((float)(nextPos.getX()-startPos.getX()), (float)(nextPos.getY()-startPos.getY()));
-		v1.normalize();
-		v1.mulLocal((float)(getSpeed() * 1000));
-		
-		b2dBody.setLinearVelocity(v1);
-		
-		float angV = (float)(nextHeading - startHeading);
-		angV = angV * 1000 / MODEL.world.dt;
-		
-//		logger.debug("angV: " + angV);
-		
-		b2dBody.setAngularVelocity(angV);
 		
 	}
 	
@@ -122,43 +107,137 @@ public abstract class Car {
 		
 		switch (state) {
 		case RUNNING: {
-			
-			Vec2 pos = b2dBody.getPosition();
-			
-//			logger.debug("pos: " + pos);
-			
-			float angle = b2dBody.getAngle();
-			
-			Point posP = new Point(pos.x, pos.y);
-			
-			GraphPositionPathPosition overallPos = overallPath.findClosestGraphPositionPathPosition(posP);
-			
-			STGraphPositionPathPositionPath nextPlannedPath = STGraphPositionPathPositionPath.advanceOneTimeStep(overallPos, getSpeed() * MODEL.world.dt);
-			
-			nextRealPath = nextPlannedPath.toSTGraphPositionPath().toSTPointPath();
-			
-			Point nextPos = nextRealPath.end.getSpace();
-			double nextHeading = Math.atan2(nextPos.getY()-pos.y, nextPos.getX()-pos.x);
-			
-			Vec2 v1 = new Vec2((float)(nextPos.getX()-pos.x), (float)(nextPos.getY()-pos.y));
-			v1.normalize();
-			v1.mulLocal((float)(getSpeed() * 1000));
-			
-			b2dBody.setLinearVelocity(v1);
-			
-			float angV = (float)(nextHeading - angle);
-			angV = angV * 1000 / MODEL.world.dt;
-			
-//			logger.debug("angV: " + angV);
-			
-			b2dBody.setAngularVelocity(angV);
-			
-//			b2dBody.applyForce(new Vec2(10.0f, 0.0f), b2dBody.getWorldCenter());
-			
+//			updateFriction();
+			updateDrive();
+			updateTurn();
 		}
 		case CRASHED:
 			break;
 		}
+	}
+	
+	private Vec2 getLateralVelocity() {
+		Vec2 currentRightNormal = b2dBody.getWorldVector(new Vec2(0, 1));
+		return currentRightNormal.mul(Vec2.dot(currentRightNormal, b2dBody.getLinearVelocity()));
+	}
+	
+	private Vec2 getForwardVelocity() {
+		Vec2 currentRightNormal = b2dBody.getWorldVector(new Vec2(1, 0));
+		return currentRightNormal.mul(Vec2.dot(currentRightNormal, b2dBody.getLinearVelocity()));
+	}
+	
+	private void updateFriction() {
+		
+		Vec2 lateralImpulse = getLateralVelocity().mul(-b2dBody.getMass());
+		Vec2 forwardImpulse = getForwardVelocity().mul(-b2dBody.getMass());
+		
+//		float maxLateralImpulse = 3.0f;
+//		if (impulse.length() > maxLateralImpulse) {
+//			impulse = impulse.mul(maxLateralImpulse / impulse.length());
+//		}
+		
+		b2dBody.applyLinearImpulse(lateralImpulse, b2dBody.getWorldCenter());
+		b2dBody.applyLinearImpulse(forwardImpulse, b2dBody.getWorldCenter());
+		
+		b2dBody.applyAngularImpulse(1.0f * b2dBody.getInertia() * -b2dBody.getAngularVelocity());
+		
+//		Vec2 currentForwardNormal = getForwardVelocity();
+//		float currentForwardSpeed = currentForwardNormal.normalize();
+//		float dragForceMagnitude = -2 * currentForwardSpeed;
+//		b2dBody.applyForce(currentForwardNormal.mul(dragForceMagnitude), b2dBody.getWorldCenter());
+	}
+	
+	
+	Vec2 maxIdealLinForce = null;
+	float maxIdealTorque = 0;
+	
+	private void updateDrive() {
+		
+		Vec2 curVec = b2dBody.getPosition();
+		
+		Point curPoint = new Point(curVec.x, curVec.y);
+		
+		GraphPositionPathPosition overallPos = overallPath.findClosestGraphPositionPathPosition(curPoint);
+		
+		STGraphPositionPathPositionPath nextPlannedPath = STGraphPositionPathPositionPath.advanceOneTimeStep(overallPos, (getSpeed() * 1000) * (((float)MODEL.world.dt) / ((float)1000)));
+		
+		STPointPath nextRealPath = nextPlannedPath.toSTGraphPositionPath().toSTPointPath();
+		
+		Point nextDTGoalPoint = nextRealPath.end.getSpace();
+		
+		Vec2 vel = b2dBody.getLinearVelocity();
+		Vec2 forwardVelocity = getForwardVelocity();
+		Vec2 lateralVelocity = getLateralVelocity();
+	    
+		float dx = ((float)nextDTGoalPoint.getX()) - curVec.x;
+		float dy = ((float)nextDTGoalPoint.getY()) - curVec.y;
+		
+		float dvx = (-vel.x + dx / (((float)MODEL.world.dt) / ((float)1000)));
+		float dvy = (-vel.y + dy / (((float)MODEL.world.dt) / ((float)1000)));
+		
+		float dfvx = (-forwardVelocity.x + dx / (((float)MODEL.world.dt) / ((float)1000)));
+		float dfvy = (-forwardVelocity.y + dy / (((float)MODEL.world.dt) / ((float)1000)));
+		
+		float dlvx = (-lateralVelocity.x + dx / (((float)MODEL.world.dt) / ((float)1000)));
+		float dlvy = (-lateralVelocity.y + dy / (((float)MODEL.world.dt) / ((float)1000)));
+		
+		
+		float impulseX = b2dBody.getMass() * dvx;
+		float impulseY = b2dBody.getMass() * dvy;
+	    
+		float forwardImpulseX = b2dBody.getMass() * dfvx;
+		float forwardImpulseY = b2dBody.getMass() * dfvy;		
+		
+		float lateralImpulseX = b2dBody.getMass() * dlvx;
+		float lateralImpulseY = b2dBody.getMass() * dlvy;
+		
+		Vec2 idealForce = new Vec2(impulseX / (((float)MODEL.world.dt) / ((float)1000)), impulseY / (((float)MODEL.world.dt) / ((float)1000)));
+		
+		Vec2 idealForwardForce = new Vec2(forwardImpulseX / (((float)MODEL.world.dt) / ((float)1000)), forwardImpulseY / (((float)MODEL.world.dt) / ((float)1000)));
+		Vec2 idealLateralForce = new Vec2(lateralImpulseX / (((float)MODEL.world.dt) / ((float)1000)), lateralImpulseY / (((float)MODEL.world.dt) / ((float)1000)));
+		
+//		b2dBody.applyForce(idealForwardForce, b2dBody.getWorldCenter());
+//		b2dBody.applyForce(idealLateralForce, b2dBody.getWorldCenter());
+		b2dBody.applyForce(idealForce, b2dBody.getWorldCenter());
+		
+	}
+	
+	private void updateTurn() {
+		Vec2 curVec = b2dBody.getPosition();
+		
+		float curAngle = b2dBody.getAngle();
+		
+		logger.debug("curAngle: " + curAngle);
+		
+		Point curPoint = new Point(curVec.x, curVec.y);
+		
+		GraphPositionPathPosition overallPos = overallPath.findClosestGraphPositionPathPosition(curPoint);
+		
+		STGraphPositionPathPositionPath nextPlannedPath = STGraphPositionPathPositionPath.advanceOneTimeStep(overallPos, (getSpeed() * 1000) * (((float)MODEL.world.dt) / ((float)1000)));
+		
+		STPointPath nextRealPath = nextPlannedPath.toSTGraphPositionPath().toSTPointPath();
+		
+		Point nextDTGoalPoint = nextRealPath.end.getSpace();
+		
+		double nextDTGoalAngle = Math.atan2(nextDTGoalPoint.getY()-curVec.y, nextDTGoalPoint.getX()-curVec.x);
+		
+		/*
+		 * apply single impulses for velocities
+		 */
+		
+		float curAngVel = b2dBody.getAngularVelocity();
+		float dw = ((float)nextDTGoalAngle) - curAngle;
+		
+		float angImpulse = b2dBody.getInertia() * (-curAngVel + dw / (((float)MODEL.world.dt) / ((float)1000)));
+		
+		float idealTorque = angImpulse / (((float)MODEL.world.dt) / ((float)1000));
+		
+		float actualTorque = idealTorque;
+		
+		logger.debug("actualTorque: " + actualTorque);
+		
+		b2dBody.applyTorque(actualTorque);
+		
 	}
 	
 	/**

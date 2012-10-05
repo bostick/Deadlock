@@ -150,7 +150,16 @@ public class GraphPositionPath {
 			GraphPosition b = poss.get(i+1);
 			double u = DMath.clip(Point.u(a.getPoint(), p, b.getPoint()));
 			if (DMath.equals(u, 1.0)) {
-				continue;
+				if (i < poss.size()-2) {
+					continue;
+				} else {
+					Point pOnPath = b.getPoint();
+					double dist = Point.distance(p, pOnPath);
+					if (closestDistance == -1 || dist < closestDistance) {
+						closest = new GraphPositionPathPosition(this, i+1, 0.0);
+						closestDistance = dist;
+					}
+				}
 			}
 			Point pOnPath = Point.point(a.getPoint(), b.getPoint(), u);
 			double dist = Point.distance(p, pOnPath);
