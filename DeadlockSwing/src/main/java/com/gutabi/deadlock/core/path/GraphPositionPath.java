@@ -5,12 +5,11 @@ import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.gutabi.deadlock.core.Connector;
 import com.gutabi.deadlock.core.DMath;
-import com.gutabi.deadlock.core.Driveable;
 import com.gutabi.deadlock.core.Edge;
 import com.gutabi.deadlock.core.EdgePosition;
 import com.gutabi.deadlock.core.GraphPosition;
+import com.gutabi.deadlock.core.Hilitable;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.Vertex;
 
@@ -265,12 +264,11 @@ public class GraphPositionPath {
 				
 				Vertex pp2 = (Vertex)p2;
 				
-				List<Connector> cons = Vertex.commonConnectors(pp1, pp2);
+				List<Edge> eds = Vertex.commonEdges(pp1, pp2);
 				
 				Edge e = null;
 				
-				for (Connector c : cons) {
-					Edge ce = (Edge)c;
+				for (Edge ce : eds) {
 					if (ce.size() == 2) {
 						e = ce;
 						break;
@@ -302,8 +300,8 @@ public class GraphPositionPath {
 		}
 	}
 	
-	public Driveable getDriveable(int index) {
-		return poss.get(index).getDriveable();
+	public Hilitable getHilitable(int index) {
+		return poss.get(index).getHilitable();
 	}
 	
 	/**
@@ -518,9 +516,9 @@ public class GraphPositionPath {
 					assert false;
 					
 				} else {
-					List<Connector> coms = Vertex.commonConnectors(aa, bb);
+					List<Edge> eds = Vertex.commonEdges(aa, bb);
 					
-					if (coms.isEmpty()) {
+					if (eds.isEmpty()) {
 						
 						Vertex choice = MODEL.world.graph.shortestPathChoice(aa, bb);
 						
@@ -538,8 +536,7 @@ public class GraphPositionPath {
 					} else {
 						
 						Edge shortest = null;
-						for (Connector c : coms) {
-							Edge e = (Edge)c;
+						for (Edge e : eds) {
 							if (shortest == null || DMath.lessThan(e.getTotalLength(), shortest.getTotalLength())) {
 								shortest = e;
 							}

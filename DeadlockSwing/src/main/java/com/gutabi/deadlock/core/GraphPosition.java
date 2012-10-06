@@ -24,9 +24,9 @@ public abstract class GraphPosition extends Position {
 			
 			Vertex v = (Vertex)this;
 			
-			Connector c = Vertex.commonConnector(v, p);
+			Edge e = Vertex.commonEdge(v, p);
 			
-			return v.travel(c, p, distance);
+			return v.travel(e, p, distance);
 			
 		} else {
 			

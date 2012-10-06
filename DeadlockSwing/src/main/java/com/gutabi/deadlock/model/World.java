@@ -12,6 +12,7 @@ import org.jbox2d.common.Vec2;
 import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Edge;
 import com.gutabi.deadlock.core.Graph;
+import com.gutabi.deadlock.core.Hilitable;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.Position;
 import com.gutabi.deadlock.core.Segment;
@@ -57,8 +58,9 @@ public class World {
 	
 	public Graph graph = new Graph();
 	
-	public List<Car> movingCars = new ArrayList<Car>();
-	public List<Car> crashedCars = new ArrayList<Car>();
+//	private List<Car> movingCars = new ArrayList<Car>();
+//	private List<Car> crashedCars = new ArrayList<Car>();
+	public List<Car> cars = new ArrayList<Car>();
 	
 	public org.jbox2d.dynamics.World b2dWorld;
 	CarContactListener listener;
@@ -128,14 +130,10 @@ public class World {
 	 */
 	public void postStop() {
 		
-		for (Car c : movingCars) {
+		for (Car c : cars) {
 			c.b2dCleanUp();
 		}
-		for (Car c : crashedCars) {
-			c.b2dCleanUp();
-		}
-		movingCars.clear();
-		crashedCars.clear();
+		cars.clear();
 		
 	}
 	
@@ -149,32 +147,29 @@ public class World {
 		
 		this.t = t;
 		
-		if (SPAWN_FREQUENCY > 0 && (t == 0 || (t - lastSpawnTime) >= SPAWN_FREQUENCY)) {
-			spawnNewCars();
-		}
-		
-		for (Car c : movingCars) {
-			c.preStep();
-		}
-		for (Car c : crashedCars) {
-			c.preStep();
-		}
-		
-		b2dWorld.step(timeStep, velocityIterations, positionIterations);
-		
-		List<Car> toBeRemoved = new ArrayList<Car>();
-		for (Car c : movingCars) {
-			boolean shouldPersist = c.postStep();
-			if (!shouldPersist) {
-				toBeRemoved.add(c);
+		synchronized (MODEL) {
+			
+			if (SPAWN_FREQUENCY > 0 && (t == 0 || (t - lastSpawnTime) >= SPAWN_FREQUENCY)) {
+				spawnNewCars();
 			}
+			
+			for (Car c : cars) {
+				c.preStep();
+			}
+			
+			b2dWorld.step(timeStep, velocityIterations, positionIterations);
+			
+			List<Car> toBeRemoved = new ArrayList<Car>();
+			for (Car c : cars) {
+				boolean shouldPersist = c.postStep();
+				if (!shouldPersist) {
+					toBeRemoved.add(c);
+				}
+			}
+			
+			cars.removeAll(toBeRemoved);
+			
 		}
-		for (Car c : crashedCars) {
-			boolean shouldPersist = c.postStep();
-			assert shouldPersist;
-		}
-		
-		movingCars.removeAll(toBeRemoved);
 		
 	}
 	
@@ -200,7 +195,7 @@ public class World {
 			
 		}
 		
-		movingCars.addAll(newCars);
+		cars.addAll(newCars);
 		
 		lastSpawnTime = t;
 		
@@ -221,15 +216,7 @@ public class World {
 		 * if only moving cars are blocking a source, then a car will be spawned on the next spawn step that there are no blocking cars 
 		 */
 		
-		for (Car c : movingCars) {
-			for (Source s : sources) {
-				double dist = c.getPoint().distanceTo(s.getPoint());
-				if (DMath.lessThanEquals(dist, CAR_LENGTH)) {
-					toRemove.add(s);
-				}
-			}
-		}
-		for (Car c : crashedCars) {
+		for (Car c : cars) {
 			for (Source s : sources) {
 				double dist = c.getPoint().distanceTo(s.getPoint());
 				if (DMath.lessThanEquals(dist, CAR_LENGTH)) {
@@ -269,6 +256,9 @@ public class World {
 		
 	}
 	
+	public List<Car> getCars() {
+		return cars;
+	}
 	
 	/**
 	 * the next choice to make
@@ -309,8 +299,30 @@ public class World {
 		return graph.checkConsistency();
 	}
 	
-	public Position findClosestPosition(Point a, double radius) {
-		return graph.findClosestPosition(a, radius);
+	public Hilitable findClosestHilitable(Point a, double radius, boolean onlyDeleteables) {
+		
+		Hilitable closestCar = null;
+		double closestCarDist = Double.POSITIVE_INFINITY;
+		for (Car c : cars) {
+			double dist = Point.distance(a, c.getPoint());
+			if (dist < radius && dist < closestCarDist) {
+				closestCar = c;
+				closestCarDist = dist;
+			}
+		}
+		
+		if (closestCar != null) {
+			return closestCar;
+		}
+		
+		Position closestPos = graph.findClosestPosition(a, null, radius, onlyDeleteables);
+		
+		if (closestPos != null) {
+			return closestPos.getHilitable();
+		} else {
+			return null;
+		}
+		
 	}
 	
 	public List<Segment> findAllSegments(Point a) {

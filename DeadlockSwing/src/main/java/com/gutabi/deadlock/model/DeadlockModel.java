@@ -1,11 +1,7 @@
 package com.gutabi.deadlock.model;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.gutabi.deadlock.controller.ControlMode;
-import com.gutabi.deadlock.core.Driveable;
-import com.gutabi.deadlock.core.Point;
+import com.gutabi.deadlock.core.Hilitable;
 
 public class DeadlockModel {
 	
@@ -15,11 +11,9 @@ public class DeadlockModel {
 	
 	private ControlMode mode = ControlMode.IDLE;
 	
-	public Driveable hilited;
+	public Stroke stroke;
 	
-	public Point lastPanelPoint;
-	public List<Point> curPanelStroke = new ArrayList<Point>();
-	public List<List<Point>> allPanelStrokes = new ArrayList<List<Point>>();
+	public Hilitable hilited;
 	
 	public DeadlockModel() {
 		
@@ -28,14 +22,12 @@ public class DeadlockModel {
 	public void init() {
 		
 		world = new World();
+		stroke = new Stroke();
 		
 	}
 	
 	public void clear() {
-		lastPanelPoint = null;
-		curPanelStroke.clear();
-		allPanelStrokes.clear();
-		
+		stroke.clearAll();
 		world = new World();
 	}
 	

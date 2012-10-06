@@ -3,6 +3,7 @@ package com.gutabi.deadlock.model;
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
@@ -17,6 +18,7 @@ import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.Fixture;
 import org.jbox2d.dynamics.FixtureDef;
 
+import com.gutabi.deadlock.core.Hilitable;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.Source;
 import com.gutabi.deadlock.core.path.GraphPositionPath;
@@ -24,7 +26,7 @@ import com.gutabi.deadlock.core.path.GraphPositionPathPosition;
 import com.gutabi.deadlock.core.path.STGraphPositionPathPositionPath;
 import com.gutabi.deadlock.core.path.STPointPath;
 
-public abstract class Car {
+public abstract class Car implements Hilitable {
 	
 	public CarStateEnum state;
 	
@@ -165,22 +167,25 @@ public abstract class Car {
 		
 		Point nextDTGoalPoint = nextRealPath.end.getSpace();
 		
+		Vec2 currentRightNormal = b2dBody.getWorldVector(new Vec2(1, 0));
+		Vec2 currentUpNormal = b2dBody.getWorldVector(new Vec2(0, 1));
+		
 		Vec2 vel = b2dBody.getLinearVelocity();
-		Vec2 forwardVelocity = getForwardVelocity();
-		Vec2 lateralVelocity = getLateralVelocity();
+		Vec2 forwardVelocity = currentRightNormal.mul(Vec2.dot(currentRightNormal, b2dBody.getLinearVelocity()));
+		Vec2 lateralVelocity = currentUpNormal.mul(Vec2.dot(currentUpNormal, b2dBody.getLinearVelocity()));
 	    
-		float dx = ((float)nextDTGoalPoint.getX()) - curVec.x;
-		float dy = ((float)nextDTGoalPoint.getY()) - curVec.y;
+		Vec2 dVec = new Vec2((float)(nextDTGoalPoint.getX()), (float)(nextDTGoalPoint.getY())).sub(curVec);
+		Vec2 dForwardVec = currentRightNormal.mul(Vec2.dot(currentRightNormal, dVec));
+		Vec2 dLateralVec = currentUpNormal.mul(Vec2.dot(currentUpNormal, dVec));
 		
-		float dvx = (-vel.x + dx / (((float)MODEL.world.dt) / ((float)1000)));
-		float dvy = (-vel.y + dy / (((float)MODEL.world.dt) / ((float)1000)));
+		float dvx = (-vel.x + dVec.x / (((float)MODEL.world.dt) / ((float)1000)));
+		float dvy = (-vel.y + dVec.y / (((float)MODEL.world.dt) / ((float)1000)));
 		
-		float dfvx = (-forwardVelocity.x + dx / (((float)MODEL.world.dt) / ((float)1000)));
-		float dfvy = (-forwardVelocity.y + dy / (((float)MODEL.world.dt) / ((float)1000)));
+		float dfvx = (-forwardVelocity.x + dForwardVec.x / (((float)MODEL.world.dt) / ((float)1000)));
+		float dfvy = (-forwardVelocity.y + dForwardVec.y / (((float)MODEL.world.dt) / ((float)1000)));
 		
-		float dlvx = (-lateralVelocity.x + dx / (((float)MODEL.world.dt) / ((float)1000)));
-		float dlvy = (-lateralVelocity.y + dy / (((float)MODEL.world.dt) / ((float)1000)));
-		
+		float dlvx = (-lateralVelocity.x + dLateralVec.x / (((float)MODEL.world.dt) / ((float)1000)));
+		float dlvy = (-lateralVelocity.y + dLateralVec.y / (((float)MODEL.world.dt) / ((float)1000)));
 		
 		float impulseX = b2dBody.getMass() * dvx;
 		float impulseY = b2dBody.getMass() * dvy;
@@ -193,12 +198,15 @@ public abstract class Car {
 		
 		Vec2 idealForce = new Vec2(impulseX / (((float)MODEL.world.dt) / ((float)1000)), impulseY / (((float)MODEL.world.dt) / ((float)1000)));
 		
+		/*
+		 * could also just project idealForce onto rightNormal and upNormal
+		 */
 		Vec2 idealForwardForce = new Vec2(forwardImpulseX / (((float)MODEL.world.dt) / ((float)1000)), forwardImpulseY / (((float)MODEL.world.dt) / ((float)1000)));
 		Vec2 idealLateralForce = new Vec2(lateralImpulseX / (((float)MODEL.world.dt) / ((float)1000)), lateralImpulseY / (((float)MODEL.world.dt) / ((float)1000)));
 		
-//		b2dBody.applyForce(idealForwardForce, b2dBody.getWorldCenter());
-//		b2dBody.applyForce(idealLateralForce, b2dBody.getWorldCenter());
-		b2dBody.applyForce(idealForce, b2dBody.getWorldCenter());
+		b2dBody.applyForce(idealForwardForce, b2dBody.getWorldCenter());
+		b2dBody.applyForce(idealLateralForce, b2dBody.getWorldCenter());
+//		b2dBody.applyForce(idealForce, b2dBody.getWorldCenter());
 		
 	}
 	
@@ -207,7 +215,7 @@ public abstract class Car {
 		
 		float curAngle = b2dBody.getAngle();
 		
-		logger.debug("curAngle: " + curAngle);
+//		logger.debug("curAngle: " + curAngle);
 		
 		Point curPoint = new Point(curVec.x, curVec.y);
 		
@@ -234,7 +242,7 @@ public abstract class Car {
 		
 		float actualTorque = idealTorque;
 		
-		logger.debug("actualTorque: " + actualTorque);
+//		logger.debug("actualTorque: " + actualTorque);
 		
 		b2dBody.applyTorque(actualTorque);
 		
@@ -294,6 +302,19 @@ public abstract class Car {
 		
 	}
 	
+	public void paintHilite(Graphics2D g2) {
+		
+		switch (state) {
+		case RUNNING:
+			paintRect(g2);
+			break;
+		case CRASHED:
+			paintRect(g2);
+			break;
+		}
+		
+	}
+	
 	private void paintImage(Graphics2D g2, BufferedImage im) {
 		AffineTransform origTransform = g2.getTransform();
 		
@@ -307,14 +328,6 @@ public abstract class Car {
 		
 		g2.setTransform(b2dTrans);
 		
-//		g2.setColor(Color.BLUE);
-//		
-//		g2.fillRect(
-//				(int)(-MODEL.world.CAR_LENGTH * MODEL.world.PIXELS_PER_METER / 2),
-//				(int)(-MODEL.world.CAR_LENGTH * MODEL.world.PIXELS_PER_METER / 4),
-//				(int)(MODEL.world.CAR_LENGTH * MODEL.world.PIXELS_PER_METER),
-//				(int)(MODEL.world.CAR_LENGTH * MODEL.world.PIXELS_PER_METER / 2));
-		
 		g2.drawImage(im,
 				(int)(-MODEL.world.CAR_LENGTH * MODEL.world.PIXELS_PER_METER / 2),
 				(int)(-MODEL.world.CAR_LENGTH * MODEL.world.PIXELS_PER_METER / 2),
@@ -324,4 +337,27 @@ public abstract class Car {
 		g2.setTransform(origTransform);
 	}
 	
+	private void paintRect(Graphics2D g2) {
+		AffineTransform origTransform = g2.getTransform();
+		
+		AffineTransform b2dTrans = (AffineTransform)VIEW.worldToPanelTransform.clone();
+		Vec2 pos = b2dBody.getPosition();
+		float angle = b2dBody.getAngle();
+		b2dTrans.translate(pos.x, pos.y);
+		b2dTrans.rotate(angle);
+		
+		b2dTrans.scale(1/((double)MODEL.world.PIXELS_PER_METER), 1/((double)MODEL.world.PIXELS_PER_METER));
+		
+		g2.setTransform(b2dTrans);
+		
+		g2.setColor(Color.BLUE);
+		
+		g2.fillRect(
+				(int)(-MODEL.world.CAR_LENGTH * MODEL.world.PIXELS_PER_METER / 2),
+				(int)(-MODEL.world.CAR_LENGTH * MODEL.world.PIXELS_PER_METER / 4),
+				(int)(MODEL.world.CAR_LENGTH * MODEL.world.PIXELS_PER_METER),
+				(int)(MODEL.world.CAR_LENGTH * MODEL.world.PIXELS_PER_METER / 2));
+		
+		g2.setTransform(origTransform);
+	}
 }

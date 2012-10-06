@@ -5,7 +5,7 @@ import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Vertex extends GraphPosition implements Driveable {
+public class Vertex extends GraphPosition implements Hilitable {
 	
 	private final int hash;
 	
@@ -24,7 +24,7 @@ public class Vertex extends GraphPosition implements Driveable {
 		
 	}
 	
-	public Driveable getDriveable() {
+	public Hilitable getHilitable() {
 		return this;
 	}
 	
@@ -54,7 +54,7 @@ public class Vertex extends GraphPosition implements Driveable {
 				throw new IllegalArgumentException();
 			}
 			
-			Edge e = (Edge)Vertex.commonConnector(this, gv);
+			Edge e = Vertex.commonEdge(this, gv);
 			
 			if (this == e.getEnd()) {
 				return EdgePosition.nextBoundfromEnd(e);
@@ -86,8 +86,8 @@ public class Vertex extends GraphPosition implements Driveable {
 	/**
 	 * the specific way to travel
 	 */
-	public GraphPosition travel(Connector c, Vertex dest, double dist) {
-		if (!(eds.contains(c))) {
+	public GraphPosition travel(Edge e, Vertex dest, double dist) {
+		if (!(eds.contains(e))) {
 			throw new IllegalArgumentException();
 		}
 		if (DMath.equals(dist, 0.0)) {
@@ -96,8 +96,6 @@ public class Vertex extends GraphPosition implements Driveable {
 		if (dist < 0.0) {
 			throw new IllegalArgumentException();
 		}
-		
-		Edge e = (Edge)c;
 		
 		double totalEdgeLength = e.getTotalLength();
 		if (DMath.equals(dist, totalEdgeLength)) {
@@ -142,13 +140,13 @@ public class Vertex extends GraphPosition implements Driveable {
 	
 	
 	
-	public static List<Connector> commonConnectors(Vertex a, Vertex b) {
+	public static List<Edge> commonEdges(Vertex a, Vertex b) {
 		
 		if (a == b) {
 			throw new IllegalArgumentException();
 		}
 		
-		List<Connector> common = new ArrayList<Connector>();
+		List<Edge> common = new ArrayList<Edge>();
 		for (Edge e1 : a.eds) {
 			for (Edge e2 : b.eds) {
 				if (e1 == e2) {
@@ -160,9 +158,9 @@ public class Vertex extends GraphPosition implements Driveable {
 		return common;
 	}
 	
-	public static Connector commonConnector(Vertex a, Vertex b) {
+	public static Edge commonEdge(Vertex a, Vertex b) {
 		
-		List<Connector> common = commonConnectors(a, b);
+		List<Edge> common = commonEdges(a, b);
 		
 		if (common.size() != 1) {
 			throw new IllegalArgumentException();

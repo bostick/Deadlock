@@ -1101,9 +1101,9 @@ public class Graph {
 		return findClosestPosition(a, null, Double.POSITIVE_INFINITY, true);
 	}
 	
-	public GraphPosition findClosestPosition(Point a, double radius) {
-		return findClosestPosition(a, null, radius, false);
-	}
+//	public GraphPosition findClosestPosition(Point a, double radius) {
+//		return findClosestPosition(a, null, radius, false);
+//	}
 	
 	public GraphPosition findClosestPosition(Point a, Point anchor, double radius, boolean onlyDeleteables) {
 		Vertex closestV = findClosestVertexPosition(a, anchor, radius, onlyDeleteables);

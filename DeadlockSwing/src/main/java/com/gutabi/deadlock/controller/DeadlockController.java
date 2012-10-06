@@ -18,11 +18,13 @@ import org.apache.log4j.Logger;
 import com.gutabi.deadlock.DeadlockMain;
 import com.gutabi.deadlock.core.Edge;
 import com.gutabi.deadlock.core.EdgePosition;
+import com.gutabi.deadlock.core.Hilitable;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.Position;
 import com.gutabi.deadlock.core.Sink;
 import com.gutabi.deadlock.core.Source;
 import com.gutabi.deadlock.core.Vertex;
+import com.gutabi.deadlock.model.Car;
 
 public class DeadlockController implements ActionListener {
 	
@@ -138,9 +140,6 @@ public class DeadlockController implements ActionListener {
 					//VIEW.renderBackground();
 					VIEW.repaint();
 					break;
-				case ZOOMING:
-					assert false;
-					break;
 				case RUNNING:
 				case PAUSED:
 					;
@@ -184,9 +183,6 @@ public class DeadlockController implements ActionListener {
 					VIEW.renderBackground();
 					VIEW.repaint();
 					break;
-				case ZOOMING:
-					assert false;
-					break;
 				case RUNNING:
 				case PAUSED:
 					;
@@ -208,29 +204,26 @@ public class DeadlockController implements ActionListener {
 			
 			synchronized (MODEL) {
 				switch (MODEL.getMode()) {
-				case IDLE:
+				case IDLE: {
 					
-					Position closest = MODEL.world.findClosestPosition(VIEW.panelToWorld(p), MODEL.world.MOUSE_RADIUS / MODEL.world.PIXELS_PER_METER);
-					if (closest != null) {
-						MODEL.hilited = closest.getDriveable();
-					} else {
-						MODEL.hilited = null;
-					}
-					
-//					logger.debug("hilited: " + MODEL.hilited);
+					Hilitable closest = MODEL.world.findClosestHilitable(VIEW.panelToWorld(p), MODEL.world.MOUSE_RADIUS / MODEL.world.PIXELS_PER_METER, false);
+					MODEL.hilited = closest;
 					
 					VIEW.repaint();
 					break;
+				}
 				case DRAFTING:
 					;
 					break;
-				case ZOOMING:
-					assert false;
-					break;
 				case RUNNING:
-				case PAUSED:
-					;
+				case PAUSED: {
+					
+					Hilitable closest = MODEL.world.findClosestHilitable(VIEW.panelToWorld(p), MODEL.world.MOUSE_RADIUS / MODEL.world.PIXELS_PER_METER, false);
+					MODEL.hilited = closest;
+					
+					VIEW.repaint();
 					break;
+				}
 				}
 			}
 			
@@ -241,69 +234,55 @@ public class DeadlockController implements ActionListener {
 	public void deleteKey() {
 		
 		synchronized (MODEL) {
-			switch (MODEL.getMode()) {
-			case IDLE:
+			
+			if (MODEL.hilited != null) {
 				
-				if (MODEL.hilited != null) {
+				Point p;
+				
+				if (MODEL.hilited instanceof Vertex) {
+					Vertex v = (Vertex)MODEL.hilited;
 					
-					Point p;
-					
-					if (MODEL.hilited instanceof Vertex) {
-						Vertex v = (Vertex)MODEL.hilited;
-						
-						if (v instanceof Sink) {
-							return;
-						} else if (v instanceof Source) {
-							return;
-						}
-						
-						p = v.getPoint();
-						
-						MODEL.world.removeVertex(v);
-						
-					} else {
-						Edge e = (Edge)MODEL.hilited;
-						
-						if (!e.isStandAlone()) {
-							Position middle = e.getStart().travel(e, e.getEnd(), e.getTotalLength()/2);
-							p = middle.getPoint();
-						} else {
-							p = e.getPoint(0);
-						}
-						
-						MODEL.world.removeEdge(e);
-						
+					if (v instanceof Sink) {
+						return;
+					} else if (v instanceof Source) {
+						return;
 					}
 					
-					Position closest = MODEL.world.findClosestDeleteablePosition(p);
-					if (closest != null) {
-						
-						if (closest instanceof Vertex) {
-							MODEL.hilited = ((Vertex)closest);
-						} else {
-							MODEL.hilited = ((EdgePosition)closest).getEdge();
-						}
-						
+					p = v.getPoint();
+					
+					MODEL.world.removeVertex(v);
+					
+				} else if (MODEL.hilited instanceof Edge) {
+					Edge e = (Edge)MODEL.hilited;
+					
+					if (!e.isStandAlone()) {
+						Position middle = e.getStart().travel(e, e.getEnd(), e.getTotalLength()/2);
+						p = middle.getPoint();
 					} else {
-						MODEL.hilited = null;
+						p = e.getPoint(0);
 					}
 					
-					VIEW.renderBackground();
-					VIEW.repaint();
+					MODEL.world.removeEdge(e);
+					
+				} else if (MODEL.hilited instanceof Car) {
+					Car c = (Car)MODEL.hilited;
+					
+					p = c.getPoint();
+					
+					c.b2dCleanUp();
+					MODEL.world.cars.remove(c);
+					
+				} else {
+					throw new AssertionError();
 				}
 				
-				break;
-			case DRAFTING:
-				;
-				break;
-			case ZOOMING:
-				assert false;
-				break;
-			case RUNNING:
-			case PAUSED:
-				;
-				break;
+				Hilitable closest = MODEL.world.findClosestHilitable(p, Double.POSITIVE_INFINITY, true);
+				MODEL.hilited = closest;
+				
+				VIEW.renderBackground();
+				VIEW.repaint();
 			}
+			
 		}
 		
 	}
@@ -321,9 +300,6 @@ public class DeadlockController implements ActionListener {
 				break;
 			case DRAFTING:
 				;
-				break;
-			case ZOOMING:
-				assert false;
 				break;
 			case RUNNING:
 			case PAUSED:
@@ -343,9 +319,6 @@ public class DeadlockController implements ActionListener {
 				break;
 			case DRAFTING:
 				;
-				break;
-			case ZOOMING:
-				assert false;
 				break;
 			case RUNNING:
 			case PAUSED:
@@ -368,9 +341,6 @@ public class DeadlockController implements ActionListener {
 				break;
 			case DRAFTING:
 				;
-				break;
-			case ZOOMING:
-				assert false;
 				break;
 			case RUNNING:
 			case PAUSED:
@@ -428,31 +398,25 @@ public class DeadlockController implements ActionListener {
 		
 		MODEL.hilited = null;
 		
-		MODEL.lastPanelPoint = p;
-		MODEL.curPanelStroke.add(p);
-		MODEL.allPanelStrokes.add(new ArrayList<Point>());
-		MODEL.allPanelStrokes.get(MODEL.allPanelStrokes.size()-1).add(p);
+		MODEL.stroke.start(p);
 	}
 	
 	private void draftMove(Point p) {
 		assert Thread.currentThread().getName().equals("controller");
 		
-		MODEL.curPanelStroke.add(p);
-		MODEL.lastPanelPoint = p;
-		MODEL.allPanelStrokes.get(MODEL.allPanelStrokes.size()-1).add(p);
+		MODEL.stroke.move(p);
 	}
 	
 	private void draftEnd() {
 		assert Thread.currentThread().getName().equals("controller");
 		
-		List<Point> curStroke = null;
-		curStroke = massageCurrent(MODEL.curPanelStroke);
+		List<Point> curStroke = MODEL.stroke.getPoints();
+		curStroke = massageCurrent(curStroke);
 		if (curStroke.size() >= 2) {
 			MODEL.world.processNewWorldStroke(curStroke);
 		}
 		assert MODEL.world.checkConsistency();
-		MODEL.lastPanelPoint = null;
-		MODEL.curPanelStroke.clear();
+		MODEL.stroke.clear();
 		
 		MODEL.setMode(ControlMode.IDLE);
 	}

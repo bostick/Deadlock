@@ -1,9 +1,9 @@
 package com.gutabi.deadlock.core.path;
 
 import com.gutabi.deadlock.core.DMath;
-import com.gutabi.deadlock.core.Driveable;
 import com.gutabi.deadlock.core.EdgePosition;
 import com.gutabi.deadlock.core.GraphPosition;
+import com.gutabi.deadlock.core.Hilitable;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.Position;
 import com.gutabi.deadlock.core.Vertex;
@@ -80,8 +80,8 @@ public class GraphPositionPathPosition extends Position {
 		return gpos;
 	}
 	
-	public Driveable getDriveable() {
-		return gpos.getDriveable();
+	public Hilitable getHilitable() {
+		return gpos.getHilitable();
 	}
 	
 	public double distanceTo(GraphPositionPathPosition p) {

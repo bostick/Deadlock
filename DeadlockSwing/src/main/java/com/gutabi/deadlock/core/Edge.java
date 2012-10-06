@@ -1,9 +1,15 @@
 package com.gutabi.deadlock.core;
 
 
+import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
+import static com.gutabi.deadlock.view.DeadlockView.VIEW;
+
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Graphics2D;
 import java.util.List;
 
-public final class Edge implements Connector {
+public final class Edge implements Hilitable {
 		
 	private final Point[] pts;
 	private final double[] cumulativeDistancesFromStart;
@@ -200,6 +206,80 @@ public final class Edge implements Connector {
 			return null;
 		}
 	}
+	
+	public void paintHilite(Graphics2D g2) {
+		int size = size();
+		int[] xPoints = new int[size];
+		int[] yPoints = new int[size];
+		for (int i = 0; i < size; i++) {
+			Point p = VIEW.worldToPanel(getPoint(i));
+			xPoints[i] = (int)p.getX();
+			yPoints[i] = (int)p.getY();
+		}
+		g2.setColor(Color.RED);
+		g2.setStroke(new Road1Stroke());
+		g2.drawPolyline(xPoints, yPoints, size);
+	}
+	
+	public void paintEdge1(Graphics2D g2) {
+		int size = size();
+		int[] xPoints = new int[size];
+		int[] yPoints = new int[size];
+		
+		g2.setColor(new Color(0x88, 0x88, 0x88, 0xff));
+		g2.setStroke(new Road1Stroke());
+		
+		for (int i = 0; i < size; i++) {
+			Point p = VIEW.worldToPanel(getPoint(i));
+			xPoints[i] = (int)p.getX();
+			yPoints[i] = (int)p.getY();
+		}
+		
+		g2.drawPolyline(xPoints, yPoints, size);
+		
+	}
+	
+	public void paintEdge2(Graphics2D g2) {
+		int size = size();
+		int[] xPoints = new int[size];
+		int[] yPoints = new int[size];
+		for (int i = 0; i < size; i++) {
+			Point p = VIEW.worldToPanel(getPoint(i));
+			xPoints[i] = (int)p.getX();
+			yPoints[i] = (int)p.getY();
+		}
+		g2.setColor(Color.YELLOW);
+		g2.setStroke(new Road2Stroke());
+		g2.drawPolyline(xPoints, yPoints, size);
+	}
+	
+	public static class Road1Stroke extends BasicStroke {
+		
+		public Road1Stroke() {
+			super((int)(MODEL.world.ROAD_WIDTH * MODEL.world.PIXELS_PER_METER), BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
+		}
+		
+	}
+	
+	public static class Road2Stroke extends BasicStroke {
+		
+		public Road2Stroke() {
+			super(1, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
+		}
+
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	private void check() {
 		
