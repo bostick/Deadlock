@@ -7,11 +7,18 @@ import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Area;
+import java.awt.geom.Ellipse2D;
+import java.awt.geom.Path2D;
 import java.util.List;
 
 public final class Edge implements Hilitable {
 		
-	private final Point[] pts;
+	private final List<Point> skeleton;
+	
+	private final Area area;
+	
 	private final double[] cumulativeDistancesFromStart;
 	private final Vertex start;
 	private final Vertex end;
@@ -32,18 +39,20 @@ public final class Edge implements Hilitable {
 		this.end = end;
 		loop = (start == end);
 		standalone = (loop) ? start == null : false;
-		this.pts = pts.toArray(new Point[0]);
+//		this.pts = pts.toArray(new Point[0]);
 		
-		cumulativeDistancesFromStart = new double[this.pts.length];
+		this.skeleton = pts;
+		
+		cumulativeDistancesFromStart = new double[pts.size()];
 		
 		double length;
 		double l = 0.0;
-		for (int i = 0; i < this.pts.length; i++) {
+		for (int i = 0; i < pts.size(); i++) {
 			if (i == 0) {
 				cumulativeDistancesFromStart[i] = 0;
 			} else {
-				Point a  = this.pts[i-1];
-				Point b = this.pts[i];
+				Point a  = pts.get(i-1);
+				Point b = pts.get(i);
 				length = Point.distance(a, b);
 				l += length;
 				cumulativeDistancesFromStart[i] = cumulativeDistancesFromStart[i-1] + length;
@@ -51,6 +60,40 @@ public final class Edge implements Hilitable {
 		}
 		
 		totalLength = l;
+		
+		
+		
+		area = new Area();
+		for (int i = 0; i < skeleton.size()-1; i++) {
+			Point a = skeleton.get(i);
+			Point b = skeleton.get(i+1);
+
+			Point diff = new Point(b.x - a.x, b.y - a.y);
+			Point up = Point.ccw90(diff).multiply((MODEL.world.ROAD_WIDTH / 2) / diff.length);
+			Point down = Point.cw90(diff).multiply((MODEL.world.ROAD_WIDTH / 2) / diff.length);
+			
+			Point p0 = a.add(up);
+			Point p1 = a.add(down);
+			Point p2 = b.add(up);
+			Point p3 = b.add(down);
+			Path2D path = new Path2D.Double();
+			path.moveTo(p0.x, p0.y);
+			path.lineTo(p1.x, p1.y);
+			path.lineTo(p3.x, p3.y);
+			path.lineTo(p2.x, p2.y);
+			path.lineTo(p0.x, p0.y);
+			
+			Area disk1 = new Area(new Ellipse2D.Double(a.getX()-MODEL.world.ROAD_WIDTH/2, a.getY()-MODEL.world.ROAD_WIDTH/2, MODEL.world.ROAD_WIDTH, MODEL.world.ROAD_WIDTH));
+			Area rect = new Area(path);
+			Area disk2 = new Area(new Ellipse2D.Double(b.getX()-MODEL.world.ROAD_WIDTH/2, b.getY()-MODEL.world.ROAD_WIDTH/2, MODEL.world.ROAD_WIDTH, MODEL.world.ROAD_WIDTH));
+			
+			Area capsule = new Area();
+			capsule.add(disk1);
+			capsule.add(rect);
+			capsule.add(disk2);
+			
+			area.add(capsule);
+		}
 		
 		int h = 17;
 		if (start != null) {
@@ -80,7 +123,7 @@ public final class Edge implements Hilitable {
 	}
 	
 	public int size() {
-		return pts.length;
+		return skeleton.size();
 	}
 	
 	public double getTotalLength() {
@@ -103,9 +146,9 @@ public final class Edge implements Hilitable {
 	
 	public Point getPoint(int i) {
 		if (i >= 0) {
-			return pts[i];
+			return skeleton.get(i);
 		} else {
-			return pts[i + pts.length];
+			return skeleton.get(i + skeleton.size());
 		}
 	}
 	
@@ -222,52 +265,96 @@ public final class Edge implements Hilitable {
 	}
 	
 	public void paintEdge1(Graphics2D g2) {
-		int size = size();
-		int[] xPoints = new int[size];
-		int[] yPoints = new int[size];
+//		int size = size();
+//		int[] xPoints = new int[size];
+//		int[] yPoints = new int[size];
+//		
+//		g2.setColor(new Color(0x88, 0x88, 0x88, 0xff));
+//		g2.setStroke(new Road1Stroke());
+//		
+//		for (int i = 0; i < size; i++) {
+//			Point p = VIEW.worldToPanel(getPoint(i));
+//			xPoints[i] = (int)p.getX();
+//			yPoints[i] = (int)p.getY();
+//		}
+//		
+//		g2.drawPolyline(xPoints, yPoints, size);
 		
-		g2.setColor(new Color(0x88, 0x88, 0x88, 0xff));
-		g2.setStroke(new Road1Stroke());
 		
-		for (int i = 0; i < size; i++) {
-			Point p = VIEW.worldToPanel(getPoint(i));
-			xPoints[i] = (int)p.getX();
-			yPoints[i] = (int)p.getY();
-		}
 		
-		g2.drawPolyline(xPoints, yPoints, size);
+//		int size = polygonTop.size() + polygonBottom.size();
+//		int[] xPoints = new int[size];
+//		int[] yPoints = new int[size];
+//		
+//		g2.setColor(Color.WHITE);
+//		g2.setStroke(new PolyStroke());
+//		
+//		int index = 0;
+//		for (int i = 0; i < polygonTop.size(); i++) {
+//			Point p = VIEW.worldToPanel(polygonTop.get(i));
+//			xPoints[index] = (int)p.getX();
+//			yPoints[index] = (int)p.getY();
+//			index++;
+//		}
+//		for (int i = polygonBottom.size()-1; i >= 0; i--) {
+//			Point p = VIEW.worldToPanel(polygonBottom.get(i));
+//			xPoints[index] = (int)p.getX();
+//			yPoints[index] = (int)p.getY();
+//			index++;
+//		}
+//		
+//		g2.drawPolygon(xPoints, yPoints, size);
+		
+		AffineTransform origTransform = g2.getTransform();
+		
+		AffineTransform trans = (AffineTransform)VIEW.worldToPanelTransform.clone();
+		
+		g2.setTransform(trans);
+		
+		g2.setColor(Color.WHITE);
+		g2.fill(area);
+		
+		g2.setTransform(origTransform);
 		
 	}
 	
-	public void paintEdge2(Graphics2D g2) {
-		int size = size();
-		int[] xPoints = new int[size];
-		int[] yPoints = new int[size];
-		for (int i = 0; i < size; i++) {
-			Point p = VIEW.worldToPanel(getPoint(i));
-			xPoints[i] = (int)p.getX();
-			yPoints[i] = (int)p.getY();
-		}
-		g2.setColor(Color.YELLOW);
-		g2.setStroke(new Road2Stroke());
-		g2.drawPolyline(xPoints, yPoints, size);
-	}
+//	public void paintEdge2(Graphics2D g2) {
+//		int size = size();
+//		int[] xPoints = new int[size];
+//		int[] yPoints = new int[size];
+//		for (int i = 0; i < size; i++) {
+//			Point p = VIEW.worldToPanel(getPoint(i));
+//			xPoints[i] = (int)p.getX();
+//			yPoints[i] = (int)p.getY();
+//		}
+//		g2.setColor(Color.YELLOW);
+//		g2.setStroke(new Road2Stroke());
+//		g2.drawPolyline(xPoints, yPoints, size);
+//	}
 	
 	public static class Road1Stroke extends BasicStroke {
 		
 		public Road1Stroke() {
-			super((int)(MODEL.world.ROAD_WIDTH * MODEL.world.PIXELS_PER_METER), BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
+			super((int)(MODEL.world.ROAD_WIDTH * MODEL.world.PIXELS_PER_METER), BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND);
 		}
 		
 	}
 	
-	public static class Road2Stroke extends BasicStroke {
+	public static class PolyStroke extends BasicStroke {
 		
-		public Road2Stroke() {
-			super(1, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
+		public PolyStroke() {
+			super(1, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND);
 		}
-
+		
 	}
+	
+//	public static class Road2Stroke extends BasicStroke {
+//		
+//		public Road2Stroke() {
+//			super(1, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND);
+//		}
+//
+//	}
 	
 	
 	
@@ -283,7 +370,7 @@ public final class Edge implements Hilitable {
 	
 	private void check() {
 		
-		assert pts.length >= 2;
+		assert skeleton.size() >= 2;
 		
 		if (loop) {
 			assert start == end;
@@ -293,16 +380,16 @@ public final class Edge implements Hilitable {
 			assert !end.isRemoved();
 		}
 		
-		for (int i = 0; i < pts.length; i++) {
-			Point p = pts[i];
+		for (int i = 0; i < skeleton.size(); i++) {
+			Point p = skeleton.get(i);
 			
 			int count = 0;
-			for (Point q : pts) {
+			for (Point q : skeleton) {
 				if (p.equals(q)) {
 					count++;
 				}
 			}
-			if (loop && (i == 0 || i == pts.length-1)) {
+			if (loop && (i == 0 || i == skeleton.size()-1)) {
 				assert count == 2;
 			} else {
 				assert count == 1;
@@ -327,7 +414,7 @@ public final class Edge implements Hilitable {
 				} else {
 					assert start.getPoint().equals(p);
 				}
-			} else if (i == pts.length-1) {
+			} else if (i == skeleton.size()-1) {
 				if (loop) {
 					if (end != null) {
 						assert end.getPoint().equals(p);
@@ -344,8 +431,8 @@ public final class Edge implements Hilitable {
 	private void checkColinearity() {
 		assert !isRemoved();
 		
-		for (int i = 0; i < pts.length; i++) {
-			Point p = pts[i];
+		for (int i = 0; i < skeleton.size(); i++) {
+			Point p = skeleton.get(i);
 			/*
 			 * test point p for colinearity
 			 */
@@ -355,20 +442,20 @@ public final class Edge implements Hilitable {
 					 * if loop, only check if stand-alone
 					 * if not stand-alone, then it is possible to have first point be colinear
 					 */
-					assert p.equals(pts[pts.length-1]);
+					assert p.equals(skeleton.get(skeleton.size()-1));
 					try {
-						if (Point.colinear(pts[pts.length-2], p, pts[1])) {
+						if (Point.colinear(skeleton.get(skeleton.size()-2), p, skeleton.get(1))) {
 							assert false : "Point " + p + " (index 0) is colinear";
 						}
 					} catch (ColinearException ex) {
 						assert false;
 					}
 				}
-			} else if (i == pts.length-1) {
+			} else if (i == skeleton.size()-1) {
 				;
 			} else {
 				try {
-					if (Point.colinear(pts[i-1], p, pts[i+1])) {
+					if (Point.colinear(skeleton.get(i-1), p, skeleton.get(i+1))) {
 						assert false : "Point " + p + " (index " + i + ") is colinear";
 					}
 				} catch (ColinearException ex) {

@@ -3,8 +3,10 @@ package com.gutabi.deadlock.core;
 
 public class Point {
 	
-	private final double x;
-	private final double y;
+	public final double x;
+	public final double y;
+	
+	public final double length;
 	
 	private final int hash;
 	private String s;
@@ -13,6 +15,8 @@ public class Point {
 		
 		this.x = x;
 		this.y = y;
+		
+		length = Math.hypot(x, y);
 		
 		int h = 17;
 		long l = Double.doubleToLongBits(x);
@@ -356,6 +360,30 @@ public class Point {
 		}
 	}
 	
+	public Point normalize() {
+		double atan = Math.atan2(y, x);
+		return new Point(Math.cos(atan), Math.sin(atan));
+	}
+	
+	public static Point ccw90(Point p) {
+		return new Point(-p.y, p.x);
+	}
+	
+	public static Point cw90(Point p) {
+		return new Point(p.y, -p.x);
+	}
+	
+	public static double signedArea(Point p0, Point p1, Point p2) {
+		return (p1.x-p0.x)*(p2.y-p0.y) - (p2.x-p0.x)*(p1.y-p0.y);
+	}
+	
+	public Point multiply(double scale) {
+		double targetLength = length * scale;
+		double atan = Math.atan2(y, x);
+		double c = Math.cos(atan);
+		double s = Math.sin(atan);
+		return new Point(targetLength * c, targetLength * s);
+	}
 	
 	/**
 	 * assuming it is, return param for point b on line defined by &lt;c, d>

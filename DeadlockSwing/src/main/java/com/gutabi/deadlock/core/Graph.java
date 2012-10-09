@@ -59,6 +59,7 @@ public class Graph {
 	}
 	
 	private Edge createEdge(Vertex start, Vertex end, List<Point> pts) {
+		
 		Edge e = new Edge(start, end, pts);
 		edges.add(e);
 		segTree.addEdge(e);

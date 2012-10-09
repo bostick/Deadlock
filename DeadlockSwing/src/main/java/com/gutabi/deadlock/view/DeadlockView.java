@@ -261,9 +261,6 @@ public class DeadlockView {
 			sinksCopy = new ArrayList<Sink>(MODEL.world.graph.getSinks());
 		}
 		
-		for (Edge e : edgesCopy) {
-			e.paintEdge1(g2);
-		}
 		for (Source s : sourcesCopy) {
 			s.paint(g2);
 		}
@@ -274,8 +271,11 @@ public class DeadlockView {
 			i.paint(g2);
 		}
 		for (Edge e : edgesCopy) {
-			e.paintEdge2(g2);
+			e.paintEdge1(g2);
 		}
+//		for (Edge e : edgesCopy) {
+//			e.paintEdge2(g2);
+//		}
 		
 		
 		
