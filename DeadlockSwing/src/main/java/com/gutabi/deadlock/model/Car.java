@@ -44,6 +44,8 @@ public abstract class Car implements Hilitable {
 	private Shape b2dShape;
 	private Fixture b2dFixture;
 	
+	public Color color = Color.BLUE;
+	
 	static Logger logger = Logger.getLogger(Car.class);
 	
 	public Car(Source s) {
@@ -51,12 +53,11 @@ public abstract class Car implements Hilitable {
 		id = carCounter;
 		carCounter++;
 		
-		state = CarStateEnum.RUNNING;
+		state = CarStateEnum.NEW;
 		
 		source = s;
 		
 		overallPath = s.getPathToMatchingSink();
-//		Point end = overallPath.getEnd().getPoint();
 		Point startPos = overallPath.getGraphPosition(0).getPoint();
 		GraphPositionPathPosition overallPos = overallPath.findClosestGraphPositionPathPosition(startPos);
 		
@@ -72,7 +73,7 @@ public abstract class Car implements Hilitable {
 		double startHeading = Math.atan2(nextDTGoalPoint.getY()-startPos.getY(), nextDTGoalPoint.getX()-startPos.getX());
 		
 		BodyDef bodyDef = new BodyDef();
-		bodyDef.type = BodyType.DYNAMIC; // dynamic means it is subject to forces
+		bodyDef.type = BodyType.DYNAMIC;
 		bodyDef.position.set((float)startPos.getX(), (float)startPos.getY());
 		bodyDef.angle = (float)startHeading;
 		bodyDef.bullet = true;
@@ -82,11 +83,11 @@ public abstract class Car implements Hilitable {
 		b2dShape = new PolygonShape();
 		((PolygonShape)b2dShape).setAsBox((float)(MODEL.world.CAR_LENGTH / 2), (float)(MODEL.world.CAR_LENGTH / 4));
 		
-		FixtureDef fixtureDef = new FixtureDef(); // fixture def that we load up with the following info:
-		fixtureDef.shape = b2dShape; // ... its shape is the dynamic box (2x2 rectangle)
-		fixtureDef.density = 1.0f; // ... its density is 1 (default is zero)
-		fixtureDef.friction = 1f; // ... its surface has some friction coefficient
-		b2dFixture = b2dBody.createFixture(fixtureDef); // bind the dense, friction-laden fixture to the body
+		FixtureDef fixtureDef = new FixtureDef();
+		fixtureDef.shape = b2dShape;
+		fixtureDef.density = 1.0f;
+		fixtureDef.friction = 1f;
+		b2dFixture = b2dBody.createFixture(fixtureDef);
 		
 	}
 	
@@ -95,6 +96,10 @@ public abstract class Car implements Hilitable {
 	 * @return
 	 */
 	public abstract double getSpeed();
+	
+	public CarStateEnum getState() {
+		return state;
+	}
 	
 	public void crash() {
 		
@@ -108,6 +113,7 @@ public abstract class Car implements Hilitable {
 	public void preStep() {
 		
 		switch (state) {
+		case NEW:
 		case RUNNING: {
 //			updateFriction();
 			updateDrive();
@@ -115,6 +121,8 @@ public abstract class Car implements Hilitable {
 		}
 		case CRASHED:
 			break;
+		case SINKED:
+			assert false;
 		}
 	}
 	
@@ -161,7 +169,7 @@ public abstract class Car implements Hilitable {
 		
 		GraphPositionPathPosition overallPos = overallPath.findClosestGraphPositionPathPosition(curPoint);
 		
-		STGraphPositionPathPositionPath nextPlannedPath = STGraphPositionPathPositionPath.advanceOneTimeStep(overallPos, (getSpeed() * 1000) * (((float)MODEL.world.dt) / ((float)1000)));
+		STGraphPositionPathPositionPath nextPlannedPath = STGraphPositionPathPositionPath.advanceOneTimeStep(overallPos, 3.5f * (getSpeed() * 1000) * (((float)MODEL.world.dt) / ((float)1000)));
 		
 		STPointPath nextRealPath = nextPlannedPath.toSTGraphPositionPath().toSTPointPath();
 		
@@ -171,42 +179,64 @@ public abstract class Car implements Hilitable {
 		Vec2 currentUpNormal = b2dBody.getWorldVector(new Vec2(0, 1));
 		
 		Vec2 vel = b2dBody.getLinearVelocity();
-		Vec2 forwardVelocity = currentRightNormal.mul(Vec2.dot(currentRightNormal, b2dBody.getLinearVelocity()));
-		Vec2 lateralVelocity = currentUpNormal.mul(Vec2.dot(currentUpNormal, b2dBody.getLinearVelocity()));
+		
+		float forwardSpeed = Vec2.dot(currentRightNormal, b2dBody.getLinearVelocity());
+//		logger.debug("forward speed: " + forwardSpeed);
+		
+		Vec2 cancelingImpulse = vel.mul(-1).mul(b2dBody.getMass());
+		
+		float cancelingForwardImpulse = Vec2.dot(currentRightNormal, cancelingImpulse);
+		cancelingForwardImpulse = 0.999f * cancelingForwardImpulse;
+		
+		float cancelingLateralImpulse = Vec2.dot(currentUpNormal, cancelingImpulse);
+		cancelingLateralImpulse = 0.3f * cancelingLateralImpulse;
+		
+		b2dBody.applyLinearImpulse(currentRightNormal.mul(cancelingForwardImpulse), b2dBody.getWorldCenter());
+		b2dBody.applyLinearImpulse(currentUpNormal.mul(cancelingLateralImpulse), b2dBody.getWorldCenter());
 	    
+		
+		
 		Vec2 dVec = new Vec2((float)(nextDTGoalPoint.getX()), (float)(nextDTGoalPoint.getY())).sub(curVec);
-		Vec2 dForwardVec = currentRightNormal.mul(Vec2.dot(currentRightNormal, dVec));
-		Vec2 dLateralVec = currentUpNormal.mul(Vec2.dot(currentUpNormal, dVec));
 		
-		float dvx = (-vel.x + dVec.x / (((float)MODEL.world.dt) / ((float)1000)));
-		float dvy = (-vel.y + dVec.y / (((float)MODEL.world.dt) / ((float)1000)));
+		Vec2 vVec = dVec.mul(1 / (((float)MODEL.world.dt) / ((float)1000)));
 		
-		float dfvx = (-forwardVelocity.x + dForwardVec.x / (((float)MODEL.world.dt) / ((float)1000)));
-		float dfvy = (-forwardVelocity.y + dForwardVec.y / (((float)MODEL.world.dt) / ((float)1000)));
+//		logger.debug("dvVec: " + dvVec.length());
+		vVec = vVec.mul(((float)(getSpeed() * 1000)) / vVec.length());
+				
+//		Vec2 impulse = vVec.mul(b2dBody.getMass());
+		float impulse = ((float)(getSpeed() * 1000)) * b2dBody.getMass();
+		float force = impulse * (1 / (((float)MODEL.world.dt) / ((float)1000)));
 		
-		float dlvx = (-lateralVelocity.x + dLateralVec.x / (((float)MODEL.world.dt) / ((float)1000)));
-		float dlvy = (-lateralVelocity.y + dLateralVec.y / (((float)MODEL.world.dt) / ((float)1000)));
+//		Vec2 idealForce = impulse.mul(1 / (((float)MODEL.world.dt) / ((float)1000)));
 		
-		float impulseX = b2dBody.getMass() * dvx;
-		float impulseY = b2dBody.getMass() * dvy;
-	    
-		float forwardImpulseX = b2dBody.getMass() * dfvx;
-		float forwardImpulseY = b2dBody.getMass() * dfvy;		
+//		float idealForwardForce = Vec2.dot(currentRightNormal, idealForce);
+//		idealForwardForce = 1.0f * idealForwardForce;
 		
-		float lateralImpulseX = b2dBody.getMass() * dlvx;
-		float lateralImpulseY = b2dBody.getMass() * dlvy;
+		b2dBody.applyLinearImpulse(currentRightNormal.mul(impulse), b2dBody.getWorldCenter());
+//		b2dBody.applyForce(currentRightNormal.mul(force), b2dBody.getWorldCenter());
 		
-		Vec2 idealForce = new Vec2(impulseX / (((float)MODEL.world.dt) / ((float)1000)), impulseY / (((float)MODEL.world.dt) / ((float)1000)));
+//		if (idealForwardForce > 30) {
+//			idealForwardForce = 30;
+//		} else if (idealForwardForce < 0) {
+//			idealForwardForce = 0;
+//		}
 		
-		/*
-		 * could also just project idealForce onto rightNormal and upNormal
-		 */
-		Vec2 idealForwardForce = new Vec2(forwardImpulseX / (((float)MODEL.world.dt) / ((float)1000)), forwardImpulseY / (((float)MODEL.world.dt) / ((float)1000)));
-		Vec2 idealLateralForce = new Vec2(lateralImpulseX / (((float)MODEL.world.dt) / ((float)1000)), lateralImpulseY / (((float)MODEL.world.dt) / ((float)1000)));
+//		logger.debug("ff: " + idealForwardForce);
 		
-		b2dBody.applyForce(idealForwardForce, b2dBody.getWorldCenter());
-		b2dBody.applyForce(idealLateralForce, b2dBody.getWorldCenter());
-//		b2dBody.applyForce(idealForce, b2dBody.getWorldCenter());
+//		Vec2 idealForwardForce = currentRightNormal.mul();
+		
+//		float idealLateralForce = Vec2.dot(currentUpNormal, idealForce);
+		
+//		logger.debug("idealLateralForce: " + idealLateralForce);
+		
+//		idealLateralForce = 0.0f * idealLateralForce;
+		
+//		b2dBody.applyForce(currentUpNormal.mul(idealLateralForce), b2dBody.getWorldCenter());
+		
+		
+//		float dragForce = 0.0f * -1 * 5.0f;
+//		
+//		b2dBody.applyForce(currentRightNormal.mul(dragForce), b2dBody.getWorldCenter());
 		
 	}
 	
@@ -221,7 +251,7 @@ public abstract class Car implements Hilitable {
 		
 		GraphPositionPathPosition overallPos = overallPath.findClosestGraphPositionPathPosition(curPoint);
 		
-		STGraphPositionPathPositionPath nextPlannedPath = STGraphPositionPathPositionPath.advanceOneTimeStep(overallPos, (getSpeed() * 1000) * (((float)MODEL.world.dt) / ((float)1000)));
+		STGraphPositionPathPositionPath nextPlannedPath = STGraphPositionPathPositionPath.advanceOneTimeStep(overallPos, 3.5f * (getSpeed() * 1000) * (((float)MODEL.world.dt) / ((float)1000)));
 		
 		STPointPath nextRealPath = nextPlannedPath.toSTGraphPositionPath().toSTPointPath();
 		
@@ -229,22 +259,41 @@ public abstract class Car implements Hilitable {
 		
 		double nextDTGoalAngle = Math.atan2(nextDTGoalPoint.getY()-curVec.y, nextDTGoalPoint.getX()-curVec.x);
 		
-		/*
-		 * apply single impulses for velocities
-		 */
-		
 		float curAngVel = b2dBody.getAngularVelocity();
 		float dw = ((float)nextDTGoalAngle) - curAngle;
+		while (dw > Math.PI) {
+			dw -= 2*Math.PI;
+		}
+		while (dw < -Math.PI) {
+			dw += 2*Math.PI;
+		}
 		
-		float angImpulse = b2dBody.getInertia() * (-curAngVel + dw / (((float)MODEL.world.dt) / ((float)1000)));
+//		dw = 1.0f * dw;
 		
+		float degree = 0.0174533f;
+		float max = 15.0f*degree;
+		if (dw > max) {
+			dw = max;
+		} else if (dw < -max) {
+			dw = -max;
+		}
+		
+//		logger.debug("dw: " + dw);
+		
+		float cancelingAngImpulse = 0.999f * b2dBody.getInertia() * -curAngVel;
+//		float cancelingTorque = cancelingAngimpulse / (((float)MODEL.world.dt) / ((float)1000));
+		b2dBody.applyAngularImpulse(cancelingAngImpulse);
+		
+		float angImpulse = b2dBody.getInertia() * (dw / (((float)MODEL.world.dt) / ((float)1000)));
 		float idealTorque = angImpulse / (((float)MODEL.world.dt) / ((float)1000));
 		
 		float actualTorque = idealTorque;
+		actualTorque = 0.9999f * actualTorque;
 		
 //		logger.debug("actualTorque: " + actualTorque);
 		
-		b2dBody.applyTorque(actualTorque);
+		b2dBody.applyAngularImpulse(angImpulse);
+		//b2dBody.applyTorque(actualTorque);
 		
 	}
 	
@@ -257,14 +306,12 @@ public abstract class Car implements Hilitable {
 			Vec2 pos = b2dBody.getPosition();
 			Point end = overallPath.getEnd().getPoint();
 			boolean sinked = false;
-			if (Point.distance(new Point(pos.x,  pos.y), end) < MODEL.world.CAR_LENGTH) {
+			if (Point.distance(new Point(pos.x,  pos.y), end) < MODEL.world.SINK_EPSILON) {
 				sinked = true;
 			}
 			
 			if (sinked) {
-				
-				b2dCleanUp();
-				
+				state = CarStateEnum.SINKED;
 				return false;
 			}
 		}
@@ -291,27 +338,14 @@ public abstract class Car implements Hilitable {
 	
 	public void paint(Graphics2D g2) {
 		
-		switch (state) {
-		case RUNNING:
-			paintImage(g2, image());
-			break;
-		case CRASHED:
-			paintImage(g2, image());
-			break;
-		}
+		paintRect(g2);
+		paintImage(g2, image());
 		
 	}
 	
 	public void paintHilite(Graphics2D g2) {
 		
-		switch (state) {
-		case RUNNING:
-			paintRect(g2);
-			break;
-		case CRASHED:
-			paintRect(g2);
-			break;
-		}
+		paintRect(g2);
 		
 	}
 	
@@ -350,13 +384,13 @@ public abstract class Car implements Hilitable {
 		
 		g2.setTransform(b2dTrans);
 		
-		g2.setColor(Color.BLUE);
+		g2.setColor(color);
 		
 		g2.fillRect(
-				(int)(-MODEL.world.CAR_LENGTH * MODEL.world.PIXELS_PER_METER / 2),
-				(int)(-MODEL.world.CAR_LENGTH * MODEL.world.PIXELS_PER_METER / 4),
-				(int)(MODEL.world.CAR_LENGTH * MODEL.world.PIXELS_PER_METER),
-				(int)(MODEL.world.CAR_LENGTH * MODEL.world.PIXELS_PER_METER / 2));
+				(int)(-MODEL.world.CAR_LENGTH * MODEL.world.PIXELS_PER_METER / 2 - 1),
+				(int)(-MODEL.world.CAR_LENGTH * MODEL.world.PIXELS_PER_METER / 4 - 1),
+				(int)(MODEL.world.CAR_LENGTH * MODEL.world.PIXELS_PER_METER + 2),
+				(int)(MODEL.world.CAR_LENGTH * MODEL.world.PIXELS_PER_METER / 2 + 2));
 		
 		g2.setTransform(origTransform);
 	}

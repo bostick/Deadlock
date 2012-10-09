@@ -25,7 +25,7 @@ public final class Edge implements Hilitable {
 	
 	private final int hash;
 	
-	int graphID;
+	int id;
 	
 	public Edge(Vertex start, Vertex end, List<Point> pts) {
 		this.start = start;

@@ -22,6 +22,9 @@ public class DeadlockModel {
 	public void init() {
 		
 		world = new World();
+		
+		world.init();
+		
 		stroke = new Stroke();
 		
 	}

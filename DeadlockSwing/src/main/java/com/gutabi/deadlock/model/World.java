@@ -25,21 +25,25 @@ public class World {
 	
 	public final double CAR_LENGTH = 1.0;
 	public final double ROAD_WIDTH = CAR_LENGTH;
-	public final double VERTEX_WIDTH = Math.sqrt(2 * ROAD_WIDTH * ROAD_WIDTH);
+	public final double VERTEX_RADIUS = Math.sqrt(2 * ROAD_WIDTH * ROAD_WIDTH) / 2;
 	
+	/*
+	 * distance that center of a car has to be from center of a sink in order to be sinked
+	 */
+	public final double SINK_EPSILON = 0.5f;
 	
 	public final double WORLD_WIDTH = 16.0;
 	public final double WORLD_HEIGHT = WORLD_WIDTH;
 	
 	public final int PIXELS_PER_METER = 32;
 	
-	public final double MOUSE_RADIUS = VERTEX_WIDTH * PIXELS_PER_METER;
+	public final double MOUSE_RADIUS = VERTEX_RADIUS * PIXELS_PER_METER;
 	
 	/*
 	 * spawn cars every SPAWN_FREQUENCY milliseconds
 	 * -1 means no spawning
 	 */
-	public int SPAWN_FREQUENCY = 3000;
+	public int SPAWN_FREQUENCY = 30000;
 	
 	/*
 	 * move physics forward by dt milliseconds
@@ -58,14 +62,20 @@ public class World {
 	
 	public Graph graph = new Graph();
 	
-//	private List<Car> movingCars = new ArrayList<Car>();
-//	private List<Car> crashedCars = new ArrayList<Car>();
 	public List<Car> cars = new ArrayList<Car>();
 	
 	public org.jbox2d.dynamics.World b2dWorld;
 	CarContactListener listener;
 	
 	public World() {
+		
+	}
+	
+	public void init() {
+		b2dWorld = new org.jbox2d.dynamics.World(new Vec2(0.0f, 0.0f), true);
+		listener = new CarContactListener();
+		b2dWorld.setContactListener(listener);
+		
 		
 		Source a = new Source(new Point(WORLD_WIDTH/3, 0));
 		Source b = new Source(new Point(2*WORLD_WIDTH/3, 0));
@@ -99,14 +109,7 @@ public class World {
 		graph.sinks.add(g);
 		graph.sinks.add(h);
 		
-		Vec2 gravity = new Vec2(0.0f, 0.0f);
-		boolean doSleep = true;
-		b2dWorld = new org.jbox2d.dynamics.World(gravity, doSleep);
-		
-		listener = new CarContactListener();
-		
-		b2dWorld.setContactListener(listener);
-		
+		graph.refreshVertexIDs();
 	}
 	
 	/*
@@ -163,6 +166,11 @@ public class World {
 			for (Car c : cars) {
 				boolean shouldPersist = c.postStep();
 				if (!shouldPersist) {
+					if (MODEL.hilited == c) {
+						Car closest = MODEL.world.findClosestCar(c.getPoint(), c.getPoint(), Double.POSITIVE_INFINITY);
+						MODEL.hilited = closest;
+					}
+					c.b2dCleanUp();
 					toBeRemoved.add(c);
 				}
 			}
@@ -299,17 +307,9 @@ public class World {
 		return graph.checkConsistency();
 	}
 	
-	public Hilitable findClosestHilitable(Point a, double radius, boolean onlyDeleteables) {
+	public Hilitable findClosestHilitable(Point a, Point anchor, double radius, boolean onlyDeleteables) {
 		
-		Hilitable closestCar = null;
-		double closestCarDist = Double.POSITIVE_INFINITY;
-		for (Car c : cars) {
-			double dist = Point.distance(a, c.getPoint());
-			if (dist < radius && dist < closestCarDist) {
-				closestCar = c;
-				closestCarDist = dist;
-			}
-		}
+		Car closestCar = findClosestCar(a, anchor, radius);
 		
 		if (closestCar != null) {
 			return closestCar;
@@ -322,6 +322,25 @@ public class World {
 		} else {
 			return null;
 		}
+		
+	}
+	
+	public Car findClosestCar(Point a, Point anchor, double radius) {
+		
+		Car closestCar = null;
+		double closestCarDist = Double.POSITIVE_INFINITY;
+		for (Car c : cars) {
+			if (anchor != null && c.getPoint().equals(anchor)) {
+				continue;
+			}
+			double dist = Point.distance(a, c.getPoint());
+			if (dist < radius && dist < closestCarDist) {
+				closestCar = c;
+				closestCarDist = dist;
+			}
+		}
+		
+		return closestCar;
 		
 	}
 	

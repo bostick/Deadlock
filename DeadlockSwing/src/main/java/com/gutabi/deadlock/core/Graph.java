@@ -63,6 +63,8 @@ public class Graph {
 		edges.add(e);
 		segTree.addEdge(e);
 		
+		refreshEdgeIDs();
+		
 		//logger.debug("createEdge: " + start + " " + end + " n=" + pts.size() );
 		
 		if (!e.isStandAlone()) {
@@ -112,8 +114,10 @@ public class Graph {
 		Intersection i = new Intersection(p);
 		assert !intersections.contains(i);
 		intersections.add(i);
-		return i;
 		
+		refreshVertexIDs();
+		
+		return i;
 	}
 	
 	private void destroyVertex(Vertex v) {
@@ -127,6 +131,8 @@ public class Graph {
 		} else {
 			assert false;
 		}
+		
+		refreshVertexIDs();
 		
 		v.remove();
 	}
@@ -143,9 +149,43 @@ public class Graph {
 		
 		edges.remove(e);
 		segTree.removeEdge(e);
+		
+		refreshEdgeIDs();
+		
 		e.remove();
 	}
 	
+	
+	Vertex[] vertexIDs;
+	
+	public void refreshVertexIDs() {
+		int vertexCount = intersections.size() + sources.size() + sinks.size();
+		vertexIDs = new Vertex[vertexCount];
+		int id = 0;
+		for (Vertex v : sources) {
+			v.id = id;
+			vertexIDs[id] = v;
+			id++;
+		}
+		for (Vertex v : sinks) {
+			v.id = id;
+			vertexIDs[id] = v;
+			id++;
+		}
+		for (Vertex v : intersections) {
+			v.id = id;
+			vertexIDs[id] = v;
+			id++;
+		}
+	}
+	
+	private void refreshEdgeIDs() {
+		int id = 0;
+		for (Edge e : edges) {
+			e.id = id;
+			id++;
+		}
+	}
 	
 	double[][] distances;
 	Vertex[][] nextHighest;
@@ -157,22 +197,7 @@ public class Graph {
 		 * Floyd-Warshall
 		 */
 		
-		List<Vertex> vertices = new ArrayList<Vertex>(){{addAll(intersections);addAll(sources);addAll(sinks);}};
-		
-		int vertexCount = vertices.size();
-		Vertex[] vertexIDs = new Vertex[vertexCount];
-		
-		int id = 0;
-		for (Vertex v : vertices) {
-			v.graphID = id;
-			vertexIDs[id] = v;
-			id++;
-		}
-		id = 0;
-		for (Edge e : edges) {
-			e.graphID = id;
-			id++;
-		}
+		int vertexCount = intersections.size() + sources.size() + sinks.size();
 		
 		distances = new double[vertexCount][vertexCount];
 		nextHighest = new Vertex[vertexCount][vertexCount];
@@ -197,19 +222,19 @@ public class Graph {
 		 */
 		for(Edge e : edges) {
 			double l = e.getTotalLength();
-			double cur = distances[e.getStart().graphID][e.getEnd().graphID];
+			double cur = distances[e.getStart().id][e.getEnd().id];
 			/*
 			 * there may be multiple edges between start and end, so don't just blindly set it to l
 			 */
 			if (l < cur) {
-				distances[e.getStart().graphID][e.getEnd().graphID] = l;
-		    	distances[e.getEnd().graphID][e.getStart().graphID] = l;
+				distances[e.getStart().id][e.getEnd().id] = l;
+		    	distances[e.getEnd().id][e.getStart().id] = l;
 			}
 			
 			/*
 			 * initialize neighbors
 			 */
-			neighbors[e.graphID][e.graphID] = true;
+			neighbors[e.id][e.id] = true;
 		}
 		
 		for (int k = 0; k < vertexCount; k++){
@@ -223,14 +248,36 @@ public class Graph {
 			}
 		}
 		
-		for (Vertex v : vertices) {
+		for (Vertex v : sources) {
 			List<Edge> eds = v.getEdges();
 			for (int i = 0; i < eds.size()-1; i++) {
 				for (int j = i+1; j < eds.size(); j++) {
 					Edge ei = eds.get(i);
 					Edge ej = eds.get(j);
-					neighbors[ei.graphID][ej.graphID] = true;
-					neighbors[ej.graphID][ei.graphID] = true;
+					neighbors[ei.id][ej.id] = true;
+					neighbors[ej.id][ei.id] = true;
+				}
+			}
+		}
+		for (Vertex v : sinks) {
+			List<Edge> eds = v.getEdges();
+			for (int i = 0; i < eds.size()-1; i++) {
+				for (int j = i+1; j < eds.size(); j++) {
+					Edge ei = eds.get(i);
+					Edge ej = eds.get(j);
+					neighbors[ei.id][ej.id] = true;
+					neighbors[ej.id][ei.id] = true;
+				}
+			}
+		}
+		for (Vertex v : intersections) {
+			List<Edge> eds = v.getEdges();
+			for (int i = 0; i < eds.size()-1; i++) {
+				for (int j = i+1; j < eds.size(); j++) {
+					Edge ei = eds.get(i);
+					Edge ej = eds.get(j);
+					neighbors[ei.id][ej.id] = true;
+					neighbors[ej.id][ei.id] = true;
 				}
 			}
 		}
@@ -242,8 +289,8 @@ public class Graph {
 			throw new IllegalArgumentException();
 		}
 		
-		int sid = start.graphID;
-		int eid = end.graphID;
+		int sid = start.id;
+		int eid = end.id;
 		
 		if (distances[sid][eid] == Double.POSITIVE_INFINITY) {
 			return null;
@@ -262,8 +309,8 @@ public class Graph {
 	 */
 	public Vertex shortestPathChoice(final Vertex start, Vertex end) {
 		
-		int sid = start.graphID;
-		int eid = end.graphID;
+		int sid = start.id;
+		int eid = end.id;
 		
 		if (distances[sid][eid] == Double.POSITIVE_INFINITY) {
 			return null;
@@ -280,8 +327,8 @@ public class Graph {
 	
 	private List<Vertex> intermediateVertices(Vertex start, Vertex end) {
 		
-		int sid = start.graphID;
-		int eid = end.graphID;
+		int sid = start.id;
+		int eid = end.id;
 		
 		Vertex n = nextHighest[sid][eid];
 		
@@ -298,11 +345,11 @@ public class Graph {
 	}
 	
 	public double distanceBetweenVertices(Vertex a, Vertex b) {
-		return distances[a.graphID][b.graphID];
+		return distances[a.id][b.id];
 	}
 	
 	public boolean areNeighbors(Edge a, Edge b) {
-		return neighbors[a.graphID][b.graphID];
+		return neighbors[a.id][b.id];
 	}
 	
 	

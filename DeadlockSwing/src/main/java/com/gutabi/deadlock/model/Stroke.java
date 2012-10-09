@@ -63,10 +63,10 @@ public class Stroke {
 		if (lastPanelPoint != null) {
 			
 			g2.fillOval(
-					(int)(lastPanelPoint.getX() - MODEL.world.VERTEX_WIDTH * MODEL.world.PIXELS_PER_METER / 2),
-					(int)(lastPanelPoint.getY() - MODEL.world.VERTEX_WIDTH * MODEL.world.PIXELS_PER_METER / 2),
-					(int)(MODEL.world.VERTEX_WIDTH * MODEL.world.PIXELS_PER_METER),
-					(int)(MODEL.world.VERTEX_WIDTH * MODEL.world.PIXELS_PER_METER));
+					(int)(lastPanelPoint.getX() - MODEL.world.VERTEX_RADIUS * MODEL.world.PIXELS_PER_METER),
+					(int)(lastPanelPoint.getY() - MODEL.world.VERTEX_RADIUS * MODEL.world.PIXELS_PER_METER),
+					(int)(MODEL.world.VERTEX_RADIUS * 2 * MODEL.world.PIXELS_PER_METER),
+					(int)(MODEL.world.VERTEX_RADIUS * 2 * MODEL.world.PIXELS_PER_METER));
 			
 		}
 		

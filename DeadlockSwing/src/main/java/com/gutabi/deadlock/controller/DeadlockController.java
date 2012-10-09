@@ -17,7 +17,6 @@ import org.apache.log4j.Logger;
 
 import com.gutabi.deadlock.DeadlockMain;
 import com.gutabi.deadlock.core.Edge;
-import com.gutabi.deadlock.core.EdgePosition;
 import com.gutabi.deadlock.core.Hilitable;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.Position;
@@ -206,7 +205,7 @@ public class DeadlockController implements ActionListener {
 				switch (MODEL.getMode()) {
 				case IDLE: {
 					
-					Hilitable closest = MODEL.world.findClosestHilitable(VIEW.panelToWorld(p), MODEL.world.MOUSE_RADIUS / MODEL.world.PIXELS_PER_METER, false);
+					Hilitable closest = MODEL.world.findClosestHilitable(VIEW.panelToWorld(p), null, MODEL.world.MOUSE_RADIUS / MODEL.world.PIXELS_PER_METER, false);
 					MODEL.hilited = closest;
 					
 					VIEW.repaint();
@@ -218,7 +217,7 @@ public class DeadlockController implements ActionListener {
 				case RUNNING:
 				case PAUSED: {
 					
-					Hilitable closest = MODEL.world.findClosestHilitable(VIEW.panelToWorld(p), MODEL.world.MOUSE_RADIUS / MODEL.world.PIXELS_PER_METER, false);
+					Hilitable closest = MODEL.world.findClosestHilitable(VIEW.panelToWorld(p), null, MODEL.world.MOUSE_RADIUS / MODEL.world.PIXELS_PER_METER, false);
 					MODEL.hilited = closest;
 					
 					VIEW.repaint();
@@ -276,7 +275,7 @@ public class DeadlockController implements ActionListener {
 					throw new AssertionError();
 				}
 				
-				Hilitable closest = MODEL.world.findClosestHilitable(p, Double.POSITIVE_INFINITY, true);
+				Hilitable closest = MODEL.world.findClosestHilitable(p, null, Double.POSITIVE_INFINITY, true);
 				MODEL.hilited = closest;
 				
 				VIEW.renderBackground();

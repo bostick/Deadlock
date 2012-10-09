@@ -1,9 +1,19 @@
 package com.gutabi.deadlock.core;
 
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
+import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
+import java.awt.Color;
+import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.jbox2d.collision.shapes.CircleShape;
+import org.jbox2d.common.Vec2;
+import org.jbox2d.dynamics.Body;
+import org.jbox2d.dynamics.BodyDef;
+import org.jbox2d.dynamics.Fixture;
+import org.jbox2d.dynamics.FixtureDef;
 
 public class Vertex extends GraphPosition implements Hilitable {
 	
@@ -13,10 +23,31 @@ public class Vertex extends GraphPosition implements Hilitable {
 	
 	protected boolean removed = false;
 	
-	int graphID;
+	public int id;
+	
+	protected Color color;
+	protected Color hiliteColor;
+	
+	public Body b2dBody;
+	public CircleShape b2dShape;
+	public Fixture b2dFixture;
 	
 	public Vertex(Point p) {
 		super(p);
+		
+		BodyDef bodyDef = new BodyDef();
+		bodyDef.position = new Vec2((float)p.getX(), (float)p.getY());
+        b2dBody = MODEL.world.b2dWorld.createBody(bodyDef);
+		b2dBody.setUserData(this);
+        
+        b2dShape = new CircleShape();
+        b2dShape.m_radius = (float)MODEL.world.VERTEX_RADIUS;
+        
+        FixtureDef fixtureDef = new FixtureDef();
+		fixtureDef.shape = b2dShape;
+        fixtureDef.isSensor = true;
+
+        b2dFixture = b2dBody.createFixture(fixtureDef);
 		
 		int h = 17;
 		h = 37 * h + p.hashCode();
@@ -200,11 +231,38 @@ public class Vertex extends GraphPosition implements Hilitable {
 	public void remove() {
 		assert !removed;
 		assert eds.size() == 0;
+		
+		b2dBody.destroyFixture(b2dFixture);
+		MODEL.world.b2dWorld.destroyBody(b2dBody);
+		
 		removed = true;
 	}
 	
 	public boolean isRemoved() {
 		return removed;
+	}
+	
+	public void paint(Graphics2D g2) {
+		
+		g2.setColor(color);
+		
+		Point loc = VIEW.worldToPanel(getPoint().add(new Point(-MODEL.world.VERTEX_RADIUS, -MODEL.world.VERTEX_RADIUS)));
+		
+		g2.fillOval((int)loc.getX(), (int)loc.getY(), (int)(MODEL.world.VERTEX_RADIUS * 2 * MODEL.world.PIXELS_PER_METER), (int)(MODEL.world.VERTEX_RADIUS * 2 * MODEL.world.PIXELS_PER_METER));
+		
+		g2.setColor(Color.WHITE);
+		
+		g2.drawString(Integer.toString(id), (int)loc.getX(), (int)(loc.getY() + MODEL.world.VERTEX_RADIUS * MODEL.world.PIXELS_PER_METER));
+	}
+	
+	public void paintHilite(Graphics2D g2) {
+		
+		g2.setColor(hiliteColor);
+		
+		Point loc = VIEW.worldToPanel(getPoint().add(new Point(-MODEL.world.VERTEX_RADIUS, -MODEL.world.VERTEX_RADIUS)));
+		
+		g2.fillOval((int)loc.getX(), (int)loc.getY(), (int)(MODEL.world.VERTEX_RADIUS * 2 * MODEL.world.PIXELS_PER_METER), (int)(MODEL.world.VERTEX_RADIUS * 2 * MODEL.world.PIXELS_PER_METER));
+		
 	}
 	
 	public void check() {

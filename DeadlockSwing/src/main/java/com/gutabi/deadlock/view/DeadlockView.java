@@ -276,6 +276,59 @@ public class DeadlockView {
 		for (Edge e : edgesCopy) {
 			e.paintEdge2(g2);
 		}
+		
+		
+		
+		
+		
+//		AffineTransform origTransform = g2.getTransform();
+//		
+//		AffineTransform b2dTrans = (AffineTransform)VIEW.worldToPanelTransform.clone();
+//		Vec2 pos = MODEL.world.b2dGroundBody.getPosition();
+//		float angle = MODEL.world.b2dGroundBody.getAngle();
+//		b2dTrans.translate(pos.x, pos.y);
+//		b2dTrans.rotate(angle);
+//		
+//		b2dTrans.scale(1/((double)MODEL.world.PIXELS_PER_METER), 1/((double)MODEL.world.PIXELS_PER_METER));
+//		
+//		g2.setTransform(b2dTrans);
+//		
+//		g2.setColor(Color.YELLOW);
+//		
+//		g2.fillRect(
+//				(int)(-2 * MODEL.world.PIXELS_PER_METER),
+//				(int)(-3 * MODEL.world.PIXELS_PER_METER),
+//				(int)(2*2 * MODEL.world.PIXELS_PER_METER),
+//				(int)(2*3 * MODEL.world.PIXELS_PER_METER));
+//		
+//		g2.setTransform(origTransform);
+//		
+//		
+//		
+//		
+//		origTransform = g2.getTransform();
+//		
+//		b2dTrans = (AffineTransform)VIEW.worldToPanelTransform.clone();
+//		pos = MODEL.world.b2dGroundBody2.getPosition();
+//		angle = MODEL.world.b2dGroundBody2.getAngle();
+//		b2dTrans.translate(pos.x, pos.y);
+//		b2dTrans.rotate(angle);
+//		
+//		b2dTrans.scale(1/((double)MODEL.world.PIXELS_PER_METER), 1/((double)MODEL.world.PIXELS_PER_METER));
+//		
+//		g2.setTransform(b2dTrans);
+//		
+//		g2.setColor(Color.ORANGE);
+//		
+//		g2.fillRect(
+//				(int)(-1 * MODEL.world.PIXELS_PER_METER),
+//				(int)(-1.5 * MODEL.world.PIXELS_PER_METER),
+//				(int)(2*1 * MODEL.world.PIXELS_PER_METER),
+//				(int)(2*1.5 * MODEL.world.PIXELS_PER_METER));
+//		
+//		g2.setTransform(origTransform);
+		
+		
 	}
 	
 	private static void paintFPS(Graphics2D g2) {
@@ -283,18 +336,18 @@ public class DeadlockView {
 		g2.setColor(Color.WHITE);
 		
 		Point o = new Point(1, 1);
-		Point loc = VIEW.worldToPanel(o.add(new Point(-MODEL.world.VERTEX_WIDTH/2, -MODEL.world.VERTEX_WIDTH/2)));
+		Point loc = VIEW.worldToPanel(o.add(new Point(-MODEL.world.VERTEX_RADIUS, -MODEL.world.VERTEX_RADIUS)));
 		
 		g2.drawString("FPS: " + VIEW.fps, (int)loc.getX(), (int)loc.getY());
 		
 		o = new Point(1, 2);
-		loc = VIEW.worldToPanel(o.add(new Point(-MODEL.world.VERTEX_WIDTH/2, -MODEL.world.VERTEX_WIDTH/2)));
+		loc = VIEW.worldToPanel(o.add(new Point(-MODEL.world.VERTEX_RADIUS, -MODEL.world.VERTEX_RADIUS)));
 		
 		g2.drawString("time: " + MODEL.world.t, (int)loc.getX(), (int)loc.getY());
 		
 		
 		o = new Point(1, 3);
-		loc = VIEW.worldToPanel(o.add(new Point(-MODEL.world.VERTEX_WIDTH/2, -MODEL.world.VERTEX_WIDTH/2)));
+		loc = VIEW.worldToPanel(o.add(new Point(-MODEL.world.VERTEX_RADIUS, -MODEL.world.VERTEX_RADIUS)));
 		
 		g2.drawString("body count: " + MODEL.world.b2dWorld.getBodyCount(), (int)loc.getX(), (int)loc.getY());
 		
