@@ -288,7 +288,7 @@ public class World {
 	}
 	
 	public void processNewWorldStroke(List<Point> stroke) {
-		graph.processNewStroke(stroke);	
+		graph.processNewStrokeTop(stroke);	
 	}
 	
 	public void removeEdge(Edge e) {
@@ -299,9 +299,9 @@ public class World {
 		graph.removeVertexTop(i);
 	}
 	
-	public void addVertexTop(Point p) {
-		graph.addVertexTop(p);
-	}
+//	public void addVertexTop(Point p) {
+//		graph.addVertexTop(p);
+//	}
 	
 	public boolean checkConsistency() {
 		return graph.checkConsistency();

@@ -17,7 +17,7 @@ public final class Edge implements Hilitable {
 		
 	private final List<Point> skeleton;
 	
-	private final Area area;
+	public Area area;
 	
 	private final double[] cumulativeDistancesFromStart;
 	private final Vertex start;
@@ -60,40 +60,6 @@ public final class Edge implements Hilitable {
 		}
 		
 		totalLength = l;
-		
-		
-		
-		area = new Area();
-		for (int i = 0; i < skeleton.size()-1; i++) {
-			Point a = skeleton.get(i);
-			Point b = skeleton.get(i+1);
-
-			Point diff = new Point(b.x - a.x, b.y - a.y);
-			Point up = Point.ccw90(diff).multiply((MODEL.world.ROAD_WIDTH / 2) / diff.length);
-			Point down = Point.cw90(diff).multiply((MODEL.world.ROAD_WIDTH / 2) / diff.length);
-			
-			Point p0 = a.add(up);
-			Point p1 = a.add(down);
-			Point p2 = b.add(up);
-			Point p3 = b.add(down);
-			Path2D path = new Path2D.Double();
-			path.moveTo(p0.x, p0.y);
-			path.lineTo(p1.x, p1.y);
-			path.lineTo(p3.x, p3.y);
-			path.lineTo(p2.x, p2.y);
-			path.lineTo(p0.x, p0.y);
-			
-			Area disk1 = new Area(new Ellipse2D.Double(a.getX()-MODEL.world.ROAD_WIDTH/2, a.getY()-MODEL.world.ROAD_WIDTH/2, MODEL.world.ROAD_WIDTH, MODEL.world.ROAD_WIDTH));
-			Area rect = new Area(path);
-			Area disk2 = new Area(new Ellipse2D.Double(b.getX()-MODEL.world.ROAD_WIDTH/2, b.getY()-MODEL.world.ROAD_WIDTH/2, MODEL.world.ROAD_WIDTH, MODEL.world.ROAD_WIDTH));
-			
-			Area capsule = new Area();
-			capsule.add(disk1);
-			capsule.add(rect);
-			capsule.add(disk2);
-			
-			area.add(capsule);
-		}
 		
 		int h = 17;
 		if (start != null) {
@@ -179,6 +145,50 @@ public final class Edge implements Hilitable {
 	public boolean isRemoved() {
 		return removed;
 	}
+	
+	public void computeArea() {
+		
+		assert area == null;
+		
+		area = new Area();
+		for (int i = 0; i < skeleton.size()-1; i++) {
+			Point a = skeleton.get(i);
+			Point b = skeleton.get(i+1);
+
+			Point diff = new Point(b.x - a.x, b.y - a.y);
+			Point up = Point.ccw90(diff).multiply((MODEL.world.ROAD_WIDTH / 2) / diff.length);
+			Point down = Point.cw90(diff).multiply((MODEL.world.ROAD_WIDTH / 2) / diff.length);
+			
+			Point p0 = a.add(up);
+			Point p1 = a.add(down);
+			Point p2 = b.add(up);
+			Point p3 = b.add(down);
+			Path2D path = new Path2D.Double();
+			path.moveTo(p0.x, p0.y);
+			path.lineTo(p1.x, p1.y);
+			path.lineTo(p3.x, p3.y);
+			path.lineTo(p2.x, p2.y);
+			path.lineTo(p0.x, p0.y);
+			
+			Area disk1 = new Area(new Ellipse2D.Double(a.getX()-MODEL.world.ROAD_WIDTH/2, a.getY()-MODEL.world.ROAD_WIDTH/2, MODEL.world.ROAD_WIDTH, MODEL.world.ROAD_WIDTH));
+			Area rect = new Area(path);
+			Area disk2 = new Area(new Ellipse2D.Double(b.getX()-MODEL.world.ROAD_WIDTH/2, b.getY()-MODEL.world.ROAD_WIDTH/2, MODEL.world.ROAD_WIDTH, MODEL.world.ROAD_WIDTH));
+			
+			Area capsule = new Area();
+			capsule.add(disk1);
+			capsule.add(rect);
+			capsule.add(disk2);
+			
+			area.add(capsule);
+		}
+		
+	}
+	
+	
+	
+	
+	
+	
 	
 	public static boolean haveExactlyOneSharedIntersection(Edge a, Edge b) {
 		Vertex as = a.getStart();

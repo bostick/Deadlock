@@ -110,6 +110,18 @@ public class Graph {
 		
 	}
 	
+	/**
+	 * after all top methods, run this to do work
+	 * that is too expensive to run during editing
+	 */
+	private void postTop() {
+		for (Edge e : edges) {
+			if (e.area == null) {
+				e.computeArea();
+			}
+		}
+	}
+	
 	private Vertex createVertex(Point p) {
 		
 		Intersection i = new Intersection(p);
@@ -476,7 +488,7 @@ public class Graph {
 //		return stroke2;
 //	}
 	
-	public void processNewStroke(List<Point> stroke) {
+	public void processNewStrokeTop(List<Point> stroke) {
 		
 		boolean tooClose = false;
 		Point tooClosePoint = null;
@@ -485,11 +497,7 @@ public class Graph {
 			Point preA = stroke.get(i);
 			Point preB = stroke.get(i+1);
 			
-			logger.debug("process segment: " + preA + " " + preB);
-			
-			if (preA.equals(new Point(770.462, 254.874))) {
-				String.class.getName();
-			}
+//			logger.debug("process segment: " + preA + " " + preB);
 			
 			Point a;
 			Point b;
@@ -586,6 +594,8 @@ public class Graph {
 		}
 		
 		cleanupEdges();
+		
+		postTop();
 	}
 	
 	private void processNewSegment(Point a, Point b) {
@@ -1672,6 +1682,7 @@ public class Graph {
 			destroyEdge(e);
 		}
 		
+		postTop();
 	}
 	
 	public void removeVertexTop(Vertex v) {
@@ -1712,25 +1723,27 @@ public class Graph {
 		for (Vertex a : affectedVertices) {
 			edgesChanged(a);
 		}
+		
+		postTop();
 	}
 	
-	public void addVertexTop(Point p) {
-		
-		if (p.getY() <= 10 || p.getX() <= 10) {
-			// source
-			
-			createVertex(p);
-			
-		} else if (p.getX() >= MODEL.world.WORLD_WIDTH-10 || p.getY() >= MODEL.world.WORLD_HEIGHT-10) {
-			// sink
-			
-			createVertex(p);
-			
-		} else {
-			//addIntersection(p);
-		}
-		
-	}
+//	public void addVertexTop(Point p) {
+//		
+//		if (p.getY() <= 10 || p.getX() <= 10) {
+//			// source
+//			
+//			createVertex(p);
+//			
+//		} else if (p.getX() >= MODEL.world.WORLD_WIDTH-10 || p.getY() >= MODEL.world.WORLD_HEIGHT-10) {
+//			// sink
+//			
+//			createVertex(p);
+//			
+//		} else {
+//			//addIntersection(p);
+//		}
+//		
+//	}
 	
 	public boolean checkConsistency() {
 		
