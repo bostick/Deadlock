@@ -12,6 +12,7 @@ import org.jbox2d.common.Vec2;
 import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Edge;
 import com.gutabi.deadlock.core.Graph;
+import com.gutabi.deadlock.core.GraphController;
 import com.gutabi.deadlock.core.Hilitable;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.Position;
@@ -60,7 +61,8 @@ public class World {
 	public long lastSpawnTime;
 	
 	
-	public Graph graph = new Graph();
+	public Graph graph;
+	public GraphController gc;
 	
 	public List<Car> cars = new ArrayList<Car>();
 	
@@ -72,6 +74,10 @@ public class World {
 	}
 	
 	public void init() {
+		
+		graph = new Graph();
+		gc = new GraphController(graph);
+		
 		b2dWorld = new org.jbox2d.dynamics.World(new Vec2(0.0f, 0.0f), true);
 		listener = new CarContactListener();
 		b2dWorld.setContactListener(listener);
@@ -288,15 +294,15 @@ public class World {
 	}
 	
 	public void processNewWorldStroke(List<Point> stroke) {
-		graph.processNewStrokeTop(stroke);	
+		gc.processNewStrokeTop(stroke);	
 	}
 	
 	public void removeEdge(Edge e) {
-		graph.removeEdgeTop(e);
+		gc.removeEdgeTop(e);
 	}
 	
 	public void removeVertex(Vertex i) {
-		graph.removeVertexTop(i);
+		gc.removeVertexTop(i);
 	}
 	
 //	public void addVertexTop(Point p) {
