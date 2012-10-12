@@ -4,8 +4,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 import com.gutabi.deadlock.core.DMath;
+import com.gutabi.deadlock.core.GraphPosition;
 import com.gutabi.deadlock.core.Sink;
+import com.gutabi.deadlock.core.VertexPosition;
 
 public class STGraphPositionPathPositionPath {
 	
@@ -20,6 +24,8 @@ public class STGraphPositionPathPositionPath {
 	
 	private int hash;
 	
+	static Logger logger = Logger.getLogger(STGraphPositionPathPositionPath.class);
+	
 	private STGraphPositionPathPositionPath(List<STGraphPositionPathPosition> poss) {
 		
 		assert poss.size() >= 2;
@@ -30,7 +36,8 @@ public class STGraphPositionPathPositionPath {
 		
 		for (STGraphPositionPathPosition pos : poss) {
 			times.add(pos.getTime());
-			if (pos.getSpace().getGraphPosition() instanceof Sink && sinkTime == -1) {
+			GraphPosition gpos = pos.getSpace().getGraphPosition();
+			if (gpos instanceof VertexPosition && ((VertexPosition)gpos).getVertex() instanceof Sink && sinkTime == -1) {
 				sinkTime = pos.getTime();
 			}
 		}
@@ -65,6 +72,8 @@ public class STGraphPositionPathPositionPath {
 	
 	public static STGraphPositionPathPositionPath advanceOneTimeStep(GraphPositionPathPosition start, double dist) {
 		
+		logger.debug("advanceOneTimeStep");
+		
 		assert start != null;
 		
 		List<STGraphPositionPathPosition> poss = new ArrayList<STGraphPositionPathPosition>();
@@ -78,7 +87,14 @@ public class STGraphPositionPathPositionPath {
 		
 		if (!DMath.equals(dist, 0.0)) {
 			
+			int iterations = 0;
 			while (true) {
+				
+				logger.debug("iteration: " + iterations);
+				
+				if (iterations == 100) {
+					String.class.getName();
+				}
 				
 				if (curPos.isEndOfPath()) {
 					
@@ -90,6 +106,7 @@ public class STGraphPositionPathPositionPath {
 					double distanceToNextPos = curPos.distanceTo(nextPos);
 					
 					if (DMath.equals(traveledDist + distanceToNextPos, dist)) {
+						logger.debug("1");
 						
 						traveledDist = traveledDist + distanceToNextPos;
 						curPos = nextPos;
@@ -103,6 +120,7 @@ public class STGraphPositionPathPositionPath {
 						break;
 						
 					} else if (traveledDist + distanceToNextPos < dist) {
+						logger.debug("2");
 						
 						double inc = distanceToNextPos;
 						traveledDist = traveledDist + inc;
@@ -113,6 +131,7 @@ public class STGraphPositionPathPositionPath {
 						curPos = nextPos;
 						
 					} else {
+						logger.debug("3");
 						
 						double toTravel = dist - traveledDist;
 						
@@ -127,7 +146,9 @@ public class STGraphPositionPathPositionPath {
 					
 				}
 				
+				iterations++;
 			}
+			logger.debug("done while");
 			
 		}
 		
@@ -139,6 +160,8 @@ public class STGraphPositionPathPositionPath {
 		} else {
 			assert DMath.equals(poss.get(poss.size()-1).getTime(), 1.0);
 		}
+		
+		logger.debug("done advanceOneTimeStep");
 		
 		return new STGraphPositionPathPositionPath(poss);
 		

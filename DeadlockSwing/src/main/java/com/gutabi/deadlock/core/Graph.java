@@ -370,17 +370,17 @@ public class Graph {
 	public GraphPosition graphHitTest(Point p) {
 		for (Intersection v : intersections) {
 			if (p.equals(v.getPoint())) {
-				return v;
+				return new VertexPosition(v);
 			}
 		}
 		for (Source s : sources) {
 			if (p.equals(s.getPoint())) {
-				return s;
+				return new VertexPosition(s);
 			}
 		}
 		for (Sink s : sinks) {
 			if (p.equals(s.getPoint())) {
-				return s;
+				return new VertexPosition(s);
 			}
 		}
 		for (Segment in : segTree.getAllSegments()) {
@@ -403,18 +403,19 @@ public class Graph {
 	/**
 	 * returns the closest vertex within radius that is not the excluded point
 	 */
-	public Vertex findClosestVertex(Point a, Point anchor, double radius, boolean onlyDeleteables) {
+	private VertexPosition findClosestVertexPosition(Point a, Point anchor, double radius, boolean onlyDeleteables) {
 		Vertex anchorV = null;
 		if (anchor != null) {
 			GraphPosition pos = graphHitTest(anchor);
-			if (pos instanceof Vertex) {
-				anchorV = (Vertex) pos;
+			if (pos instanceof VertexPosition) {
+				VertexPosition poss = (VertexPosition)pos;
+				anchorV = poss.getVertex();
 				if (a.equals(anchor) && (!onlyDeleteables || anchorV instanceof Intersection)) {
 					/*
 					 * a equals anchor, so starting this segment
 					 * if exactly on a vertex, then use that one
 					 */
-					return anchorV;
+					return poss;
 				}
 			}
 		}
@@ -435,18 +436,22 @@ public class Graph {
 			}	
 		}
 		
-		return closest;
+		if (closest != null) {
+			return new VertexPosition(closest);
+		} else {
+			return null;
+		}
 	}
 	
 	/**
 	 * returns the closest edge within radius that is not in the excluded radius
 	 */
-	public EdgePosition findClosestEdgePosition(Point a, Point exclude, double radius) {
+	private EdgePosition findClosestEdgePosition(Point a, Point exclude, double radius) {
 		return segTree.findClosestEdgePosition(a, exclude, radius);
 	}
 	
 	public GraphPosition findClosestPosition(Point a, Point anchor, double radius, boolean onlyDeleteables) {
-		Vertex closestV = findClosestVertex(a, anchor, radius, onlyDeleteables);
+		VertexPosition closestV = findClosestVertexPosition(a, anchor, radius, onlyDeleteables);
 		if (closestV != null) {
 			return closestV;
 		}
@@ -467,8 +472,8 @@ public class Graph {
 		GraphPosition pos = graphHitTest(a);
 		final Vertex aV;
 		if (pos != null) {
-			if (pos instanceof Vertex) {
-				aV = (Vertex)pos;
+			if (pos instanceof VertexPosition) {
+				aV = ((VertexPosition)pos).getVertex();
 			} else {
 				aV = split((EdgePosition)pos);
 			}
@@ -479,8 +484,8 @@ public class Graph {
 		pos = graphHitTest(b);
 		final Vertex bV;
 		if (pos != null) {
-			if (pos instanceof Vertex) {
-				bV = (Vertex)pos;
+			if (pos instanceof VertexPosition) {
+				bV = ((VertexPosition)pos).getVertex();
 			} else {
 				bV = split((EdgePosition)pos);
 			}

@@ -15,8 +15,9 @@ import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.Fixture;
 import org.jbox2d.dynamics.FixtureDef;
 
-public class Vertex extends GraphPosition implements Hilitable {
+public class Vertex implements Hilitable {
 	
+	private final Point p;
 	private final int hash;
 	
 	protected final List<Edge> eds = new ArrayList<Edge>();
@@ -33,7 +34,8 @@ public class Vertex extends GraphPosition implements Hilitable {
 	public Fixture b2dFixture;
 	
 	public Vertex(Point p) {
-		super(p);
+		
+		this.p = p;
 		
 		BodyDef bodyDef = new BodyDef();
 		bodyDef.position = new Vec2((float)p.getX(), (float)p.getY());
@@ -55,118 +57,12 @@ public class Vertex extends GraphPosition implements Hilitable {
 		
 	}
 	
-	public Hilitable getHilitable() {
-		return this;
-	}
-	
 	public int hashCode() {
 		return hash;
 	}
 	
-	public boolean isBound() {
-		return true;
-	}
-	
-	public GraphPosition nextBoundToward(GraphPosition goal) {
-		
-		if (goal instanceof EdgePosition) {
-			EdgePosition ge = (EdgePosition)goal;
-			
-			if (this == ge.getEdge().getEnd()) {
-				return EdgePosition.nextBoundfromEnd(ge.getEdge());
-			} else {
-				return EdgePosition.nextBoundfromStart(ge.getEdge());
-			}
-			
-		} else {
-			Vertex gv = (Vertex)goal;
-			
-			if (gv == this) {
-				throw new IllegalArgumentException();
-			}
-			
-			Edge e = Vertex.commonEdge(this, gv);
-			
-			if (this == e.getEnd()) {
-				return EdgePosition.nextBoundfromEnd(e);
-			} else {
-				return EdgePosition.nextBoundfromStart(e);
-			}
-			
-		}
-		
-	}
-	
-	public boolean equalsP(GraphPosition o) {
-		if (this == o) {
-			return true;
-		} else if (!(o instanceof Vertex)) {
-			return false;
-		} else {
-			Vertex b = (Vertex)o;
-			return (p.equals(b.p));
-		}
-	}
-	
 	public String toString() {
 		return "V " + p;
-	}
-	
-	
-	
-	/**
-	 * the specific way to travel
-	 */
-	public GraphPosition travel(Edge e, Vertex dest, double dist) {
-		if (!(eds.contains(e))) {
-			throw new IllegalArgumentException();
-		}
-		if (DMath.equals(dist, 0.0)) {
-			return this;
-		}
-		if (dist < 0.0) {
-			throw new IllegalArgumentException();
-		}
-		
-		double totalEdgeLength = e.getTotalLength();
-		if (DMath.equals(dist, totalEdgeLength)) {
-			return dest;
-		} else if (dist > totalEdgeLength) {
-			throw new TravelException();
-		}
-		
-		if (this == e.getStart()) {
-			assert dest == e.getEnd();
-			return EdgePosition.travelFromStart(e, dist);
-		} else {
-			assert this == e.getEnd();
-			assert dest == e.getStart();
-			return EdgePosition.travelFromEnd(e, dist);
-		}
-		
-	}
-	
-	public double distanceTo(GraphPosition b) {
-		if (b instanceof Vertex) {
-			Vertex bb = (Vertex)b;
-			
-			double dist = MODEL.world.graph.distanceBetweenVertices(this, bb);
-			
-			assert DMath.greaterThanEquals(dist, 0.0);
-			
-			return dist;
-		} else {
-			EdgePosition bb = (EdgePosition)b;
-			
-			double bbStartPath = MODEL.world.graph.distanceBetweenVertices(this, bb.getEdge().getStart());
-			double bbEndPath = MODEL.world.graph.distanceBetweenVertices(this, bb.getEdge().getEnd());
-			
-			double dist = Math.min(bbStartPath + bb.distanceToStartOfEdge(), bbEndPath + bb.distanceToEndOfEdge());
-			
-			assert DMath.greaterThanEquals(dist, 0.0);
-			
-			return dist;
-		}
 	}
 	
 	

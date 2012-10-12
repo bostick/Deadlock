@@ -17,12 +17,13 @@ import org.apache.log4j.Logger;
 
 import com.gutabi.deadlock.DeadlockMain;
 import com.gutabi.deadlock.core.Edge;
+import com.gutabi.deadlock.core.GraphPosition;
 import com.gutabi.deadlock.core.Hilitable;
 import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.core.Position;
 import com.gutabi.deadlock.core.Sink;
 import com.gutabi.deadlock.core.Source;
 import com.gutabi.deadlock.core.Vertex;
+import com.gutabi.deadlock.core.VertexPosition;
 import com.gutabi.deadlock.model.Car;
 
 public class DeadlockController implements ActionListener {
@@ -255,7 +256,7 @@ public class DeadlockController implements ActionListener {
 					Edge e = (Edge)MODEL.hilited;
 					
 					if (!e.isStandAlone()) {
-						Position middle = e.getStart().travel(e, e.getEnd(), e.getTotalLength()/2);
+						GraphPosition middle = new VertexPosition(e.getStart()).travel(e, e.getEnd(), e.getTotalLength()/2);
 						p = middle.getPoint();
 					} else {
 						p = e.getPoint(0);

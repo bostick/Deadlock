@@ -108,10 +108,10 @@ public class EdgePosition extends GraphPosition {
 				return nextBoundBackward(e, index, param);
 			}
 			
-		} else if (goal instanceof Vertex) {
-			Vertex gv = (Vertex)goal;
+		} else if (goal instanceof VertexPosition) {
+			VertexPosition gv = (VertexPosition)goal;
 			
-			if (gv == e.getEnd()) {
+			if (gv.getVertex() == e.getEnd()) {
 				return nextBoundForward(e, index, param);
 			} else {
 				return nextBoundBackward(e, index, param);
@@ -132,17 +132,17 @@ public class EdgePosition extends GraphPosition {
 	}
 	
 	public double distanceTo(GraphPosition b) {
-		if (b instanceof Vertex) {
-			Vertex bb = (Vertex)b;
+		if (b instanceof VertexPosition) {
+			VertexPosition bb = (VertexPosition)b;
 			
-			if (b == e.getStart()) {
+			if (bb.getVertex() == e.getStart()) {
 				return distanceToStartOfEdge();
-			} else if (b == e.getEnd()) {
+			} else if (bb.getVertex() == e.getEnd()) {
 				return distanceToEndOfEdge();
 			}
 			
-			double aaStartPath = MODEL.world.graph.distanceBetweenVertices(e.getStart(), bb);
-			double aaEndPath = MODEL.world.graph.distanceBetweenVertices(e.getEnd(), bb);
+			double aaStartPath = MODEL.world.graph.distanceBetweenVertices(e.getStart(), bb.getVertex());
+			double aaEndPath = MODEL.world.graph.distanceBetweenVertices(e.getEnd(), bb.getVertex());
 			
 			double dist = Math.min(aaStartPath + distanceToStartOfEdge(), aaEndPath + distanceToEndOfEdge());
 			
@@ -197,11 +197,11 @@ public class EdgePosition extends GraphPosition {
 	/**
 	 * the specific way to travel
 	 */
-	public GraphPosition travel(Vertex dest, double dist) {
+	public GraphPosition travel(VertexPosition dest, double dist) {
 		if (e.isLoop()) {
 			throw new IllegalArgumentException();
 		}
-		if (!(dest == e.getStart() || dest == e.getEnd())) {
+		if (!(dest.getVertex() == e.getStart() || dest.getVertex() == e.getEnd())) {
 			throw new IllegalArgumentException();
 		}
 		if (DMath.equals(dist, 0.0)) {
@@ -211,11 +211,11 @@ public class EdgePosition extends GraphPosition {
 			throw new IllegalArgumentException();
 		}
 		
-		if (dest == e.getEnd()) {
+		if (dest.getVertex() == e.getEnd()) {
 			
 			double distToEndOfEdge = distanceToEndOfEdge();
 			if (DMath.equals(dist, distToEndOfEdge)) {
-				return e.getEnd();
+				return new VertexPosition(e.getEnd());
 			} else if (dist > distToEndOfEdge) {
 				throw new TravelException();
 			}
@@ -226,7 +226,7 @@ public class EdgePosition extends GraphPosition {
 			
 			double distToStartOfEdge = distanceToStartOfEdge();
 			if (DMath.equals(dist, distToStartOfEdge)) {
-				return e.getStart();
+				return new VertexPosition(e.getStart());
 			} else if (dist > distToStartOfEdge) {
 				throw new TravelException();
 			}
@@ -304,7 +304,7 @@ public class EdgePosition extends GraphPosition {
 	
 	private static GraphPosition nextBoundForward(Edge e, int index, double param) {
 		if (index == e.size()-2) {
-			return e.getEnd();
+			return new VertexPosition(e.getEnd());
 		} else {
 			return new EdgePosition(e, index+1, 0.0);
 		}
@@ -313,13 +313,13 @@ public class EdgePosition extends GraphPosition {
 	private static GraphPosition nextBoundBackward(Edge e, int index, double param) {
 		if (DMath.equals(param, 0.0)) {
 			if (index == 0 || (index == 1 && DMath.equals(param, 0.0))) {
-				return e.getStart();
+				return new VertexPosition(e.getStart());
 			} else {
 				return new EdgePosition(e, index-1, 0.0);
 			}
 		} else {
 			if (index == 0) {
-				return e.getStart();
+				return new VertexPosition(e.getStart());
 			} else {
 				return new EdgePosition(e, index, 0.0);
 			}

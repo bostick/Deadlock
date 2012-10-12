@@ -1,12 +1,14 @@
 package com.gutabi.deadlock.core.path;
 
+import org.apache.log4j.Logger;
+
 import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.EdgePosition;
 import com.gutabi.deadlock.core.GraphPosition;
 import com.gutabi.deadlock.core.Hilitable;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.Position;
-import com.gutabi.deadlock.core.Vertex;
+import com.gutabi.deadlock.core.VertexPosition;
 
 public class GraphPositionPathPosition extends Position {
 	
@@ -20,6 +22,8 @@ public class GraphPositionPathPosition extends Position {
 	private final double distanceFromStartOfPath;
 	
 	private final int hash;
+	
+	static Logger logger = Logger.getLogger(GraphPositionPathPosition.class);
 	
 	public GraphPositionPathPosition(GraphPositionPath path, int index, double param) {
 		super(DMath.equals(param, 0.0) ?
@@ -86,6 +90,8 @@ public class GraphPositionPathPosition extends Position {
 	
 	public double distanceTo(GraphPositionPathPosition p) {
 		
+		logger.debug("distanceTo");
+		
 		int goalIndex = p.index;
 		double goalParam = p.param;
 		
@@ -94,6 +100,8 @@ public class GraphPositionPathPosition extends Position {
 			if (gpos.equals(p.gpos)) {
 				String.class.getName();
 			}
+			
+			logger.debug("done distanceTo");
 			
 			return gpos.distanceTo(p.gpos);
 			
@@ -118,6 +126,8 @@ public class GraphPositionPathPosition extends Position {
 				
 			}
 			
+			logger.debug("done distanceTo");
+			
 			if (DMath.equals(nextPos.param, goalParam)) {
 				return acc;
 			} else {
@@ -127,10 +137,11 @@ public class GraphPositionPathPosition extends Position {
 			}
 			
 		}
-		
 	}
 	
 	public GraphPositionPathPosition travel(double dist) {
+		
+		logger.debug("travel");
 		
 		if (DMath.equals(dist, 0)) {
 			return this;
@@ -141,21 +152,30 @@ public class GraphPositionPathPosition extends Position {
 		GraphPositionPathPosition curPos = this;
 		GraphPositionPathPosition nextPos;
 		
+		int iterations = 0;
 		while (true) {
+			
+			if (iterations == 100) {
+				String.class.getName();
+			}
 			
 			nextPos = curPos.nextBound();
 			double distanceToNextPos = curPos.distanceTo(nextPos);
 			
 			if (DMath.equals(traveled + distanceToNextPos, dist)) {
+				logger.debug("1");
 				
+				logger.debug("done travel");
 				return nextPos;
 				
 			} else if (traveled + distanceToNextPos < dist) {
+				logger.debug("2");
 				
 				traveled += distanceToNextPos;
 				curPos = nextPos;
 				
 			} else {
+				logger.debug("3");
 				
 				double toTravel = dist - traveled;
 				
@@ -164,6 +184,7 @@ public class GraphPositionPathPosition extends Position {
 				if (curPos.gpos instanceof EdgePosition) {
 					EdgePosition curPosE = (EdgePosition)curPos.gpos;
 					
+					logger.debug("done travel");
 					if (curPosE.getIndex() < g.getIndex() || (curPosE.getIndex() == g.getIndex() && DMath.lessThan(curPosE.getParam(), g.getParam()))) {
 						// same direction as edge
 						//assert curPosE.getIndex() == g.getIndex();
@@ -173,9 +194,10 @@ public class GraphPositionPathPosition extends Position {
 					}
 					
 				} else {
-					Vertex curPosE = (Vertex)curPos.gpos;
+					VertexPosition curPosE = (VertexPosition)curPos.gpos;
 					
-					if (g.getEdge().getStart() == curPosE) {
+					logger.debug("done travel");
+					if (g.getEdge().getStart() == curPosE.getVertex()) {
 						// same direction as edge
 						return new GraphPositionPathPosition(path, curPos.index, g.getParam());
 					} else {
@@ -186,6 +208,7 @@ public class GraphPositionPathPosition extends Position {
 				
 			}
 			
+			iterations++;
 		}
 		
 	}

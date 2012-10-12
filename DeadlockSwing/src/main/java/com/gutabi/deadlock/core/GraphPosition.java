@@ -1,7 +1,11 @@
 package com.gutabi.deadlock.core;
 
-public abstract class GraphPosition extends Position {
+import org.apache.log4j.Logger;
 
+public abstract class GraphPosition extends Position {
+	
+	static Logger logger = Logger.getLogger(GraphPosition.class);
+	
 	GraphPosition(Point p) {
 		super(p);
 	}
@@ -11,45 +15,55 @@ public abstract class GraphPosition extends Position {
 	public abstract GraphPosition nextBoundToward(GraphPosition goal);
 	
 	public GraphPosition travel(GraphPosition p, double distance) {
-		if (p instanceof Vertex) {
-			return travelToV((Vertex)p, distance);
+		if (p instanceof VertexPosition) {
+			return travelToV((VertexPosition)p, distance);
 		} else {
 			return travelToE((EdgePosition)p, distance);
 		}
 	}
 	
-	private GraphPosition travelToV(Vertex p, double distance) {
+	private GraphPosition travelToV(VertexPosition p, double distance) {
 		
-		if (this instanceof Vertex) {
+		logger.debug("travelToV");
+		
+		if (this instanceof VertexPosition) {
 			
-			Vertex v = (Vertex)this;
+			Vertex v = ((VertexPosition)this).getVertex();
 			
-			Edge e = Vertex.commonEdge(v, p);
+			Edge e = Vertex.commonEdge(v, p.getVertex());
 			
-			return v.travel(e, p, distance);
+			GraphPosition traveled = ((VertexPosition)this).travel(e, p.getVertex(), distance);
+			
+			logger.debug("done travelToV");
+			
+			return traveled;
 			
 		} else {
 			
 			EdgePosition ep = (EdgePosition)this;
 			
-			assert ep.getEdge().getStart() == p || ep.getEdge().getEnd() == p;
+			assert ep.getEdge().getStart() == p.getVertex() || ep.getEdge().getEnd() == p.getVertex();
 			assert !ep.getEdge().isLoop();
 			
-			return ep.travel(p, distance);
+			GraphPosition traveled = ep.travel(p, distance);
+			
+			logger.debug("done travelToV");
+			
+			return traveled;
 		}
 		
 	}
 	
 	private GraphPosition travelToE(EdgePosition p, double distance) {
 		
-		if (this instanceof Vertex) {
+		if (this instanceof VertexPosition) {
 			
-			Vertex v = (Vertex)this;
+			VertexPosition vp = (VertexPosition)this;
 			
-			assert p.getEdge().getStart() == v || p.getEdge().getEnd() == v;
+			assert p.getEdge().getStart() == vp.getVertex() || p.getEdge().getEnd() == vp.getVertex();
 			assert !p.getEdge().isLoop();
 			
-			return v.travel(p.getEdge(), (p.getEdge().getStart() == v) ? p.getEdge().getEnd() : p.getEdge().getStart(), distance);
+			return vp.travel(p.getEdge(), (p.getEdge().getStart() == vp.getVertex()) ? p.getEdge().getEnd() : p.getEdge().getStart(), distance);
 			
 		} else {
 			
@@ -59,9 +73,9 @@ public abstract class GraphPosition extends Position {
 			
 			if (ep.getIndex() < p.getIndex() || (ep.getIndex() == p.getIndex() && DMath.lessThan(ep.getParam(), p.getParam()))) {
 				// ep -> p is same direction as edge
-				return ep.travel(ep.getEdge().getEnd(), distance);
+				return ep.travel(new VertexPosition(ep.getEdge().getEnd()), distance);
 			} else {
-				return ep.travel(ep.getEdge().getStart(), distance);
+				return ep.travel(new VertexPosition(ep.getEdge().getStart()), distance);
 			}
 		}
 		
@@ -74,8 +88,8 @@ public abstract class GraphPosition extends Position {
 		} else if (!(o instanceof GraphPosition)) {
 			throw new IllegalArgumentException();
 		} else {
-			if (this instanceof Vertex) {
-				return ((Vertex)this).equalsP((GraphPosition)o);
+			if (this instanceof VertexPosition) {
+				return ((VertexPosition)this).equalsP((GraphPosition)o);
 			} else {
 				return ((EdgePosition)this).equalsP((GraphPosition)o);
 			}
