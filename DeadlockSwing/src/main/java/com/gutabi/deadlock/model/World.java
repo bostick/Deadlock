@@ -26,8 +26,9 @@ import com.gutabi.deadlock.model.b2d.CarContactListener;
 public class World {
 	
 	public final double CAR_LENGTH = 1.0;
-	public final double ROAD_WIDTH = CAR_LENGTH;
-	public final double VERTEX_RADIUS = Math.sqrt(2 * ROAD_WIDTH * ROAD_WIDTH) / 2;
+	//public final double ROAD_WIDTH = CAR_LENGTH;
+	public final double ROAD_RADIUS = CAR_LENGTH / 2;
+	public final double VERTEX_RADIUS = Math.sqrt(2 * ROAD_RADIUS * ROAD_RADIUS);
 	
 	/*
 	 * distance that center of a car has to be from center of a sink in order to be sinked

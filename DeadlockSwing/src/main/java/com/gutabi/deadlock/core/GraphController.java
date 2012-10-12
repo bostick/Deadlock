@@ -128,7 +128,7 @@ public class GraphController {
 			
 			if (!tooClose) {
 				
-				Position aP = graph.findClosestPosition(preA, null, MODEL.world.ROAD_WIDTH, false);
+				Position aP = graph.findClosestPosition(preA, null, 2 * MODEL.world.ROAD_RADIUS, false);
 				
 				if (aP != null) {
 					
@@ -161,7 +161,7 @@ public class GraphController {
 				 * just changed from findClosestPosition(preB, null, MODEL.world.ROAD_WIDTH); because
 				 * this was changing B for regular extending
 				 */
-				Position bP = graph.findClosestPosition(preB, a, MODEL.world.ROAD_WIDTH, false);
+				Position bP = graph.findClosestPosition(preB, a, 2 * MODEL.world.ROAD_RADIUS, false);
 				
 				if (bP != null) {
 					tooClose = true;
@@ -175,11 +175,11 @@ public class GraphController {
 				
 			} else {
 				
-				Position bP = graph.findClosestPosition(preB, a, MODEL.world.ROAD_WIDTH, false);
+				Position bP = graph.findClosestPosition(preB, a, 2 * MODEL.world.ROAD_RADIUS, false);
 				
 				if (bP != null) {
 					
-					if (DMath.greaterThan(Point.distance(bP.getPoint(), tooClosePoint), MODEL.world.ROAD_WIDTH)) {
+					if (DMath.greaterThan(Point.distance(bP.getPoint(), tooClosePoint), 2 * MODEL.world.ROAD_RADIUS)) {
 						
 						//still too close, but now to a different point
 						tooClosePoint = bP.getPoint();
@@ -196,7 +196,7 @@ public class GraphController {
 					
 				} else {
 					
-					if (DMath.greaterThan(Point.distance(preB, tooClosePoint), MODEL.world.ROAD_WIDTH)) {
+					if (DMath.greaterThan(Point.distance(preB, tooClosePoint), 2 * MODEL.world.ROAD_RADIUS)) {
 						
 						tooClose = false;
 						tooClosePoint = null;
@@ -318,8 +318,8 @@ public class GraphController {
 				if (inter != null) {
 					
 					double interParam = Point.param(inter, a, b);
-					double interStartParam = Point.travelBackward(a, b, interParam, MODEL.world.ROAD_WIDTH);
-					double interEndParam = Point.travelForward(a, b, interParam, MODEL.world.ROAD_WIDTH);
+					double interStartParam = Point.travelBackward(a, b, interParam, 2 * MODEL.world.ROAD_RADIUS);
+					double interEndParam = Point.travelForward(a, b, interParam, 2 * MODEL.world.ROAD_RADIUS);
 					
 					timeline.addEvent(new IntersectionEvent(inter, interParam, interStartParam, interEndParam, in));
 				} else {
@@ -589,7 +589,7 @@ public class GraphController {
 	private CloseEvent detectClose(Timeline t, Point p, Point a, Point b) {
 		//how close is p to <a, b>?
 		Point[] ints = new Point[2];
-		int num = Point.circleLineIntersections(p, MODEL.world.ROAD_WIDTH, a, b, ints);
+		int num = Point.circleLineIntersections(p, 2 * MODEL.world.ROAD_RADIUS, a, b, ints);
 		switch (num) {
 		case 2: {
 			Point p1 = ints[0];

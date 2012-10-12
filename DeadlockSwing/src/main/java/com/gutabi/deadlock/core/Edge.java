@@ -156,8 +156,8 @@ public final class Edge implements Hilitable {
 			Point b = skeleton.get(i+1);
 
 			Point diff = new Point(b.x - a.x, b.y - a.y);
-			Point up = Point.ccw90(diff).multiply((MODEL.world.ROAD_WIDTH / 2) / diff.length);
-			Point down = Point.cw90(diff).multiply((MODEL.world.ROAD_WIDTH / 2) / diff.length);
+			Point up = Point.ccw90(diff).multiply(MODEL.world.ROAD_RADIUS / diff.length);
+			Point down = Point.cw90(diff).multiply(MODEL.world.ROAD_RADIUS / diff.length);
 			
 			Point p0 = a.add(up);
 			Point p1 = a.add(down);
@@ -170,9 +170,9 @@ public final class Edge implements Hilitable {
 			path.lineTo(p2.x, p2.y);
 			path.lineTo(p0.x, p0.y);
 			
-			Area disk1 = new Area(new Ellipse2D.Double(a.getX()-MODEL.world.ROAD_WIDTH/2, a.getY()-MODEL.world.ROAD_WIDTH/2, MODEL.world.ROAD_WIDTH, MODEL.world.ROAD_WIDTH));
+			Area disk1 = new Area(new Ellipse2D.Double(a.getX()-MODEL.world.ROAD_RADIUS, a.getY()-MODEL.world.ROAD_RADIUS, 2 * MODEL.world.ROAD_RADIUS, 2 * MODEL.world.ROAD_RADIUS));
 			Area rect = new Area(path);
-			Area disk2 = new Area(new Ellipse2D.Double(b.getX()-MODEL.world.ROAD_WIDTH/2, b.getY()-MODEL.world.ROAD_WIDTH/2, MODEL.world.ROAD_WIDTH, MODEL.world.ROAD_WIDTH));
+			Area disk2 = new Area(new Ellipse2D.Double(b.getX()-MODEL.world.ROAD_RADIUS, b.getY()-MODEL.world.ROAD_RADIUS, 2 * MODEL.world.ROAD_RADIUS, 2 * MODEL.world.ROAD_RADIUS));
 			
 			Area capsule = new Area();
 			capsule.add(disk1);
@@ -345,7 +345,7 @@ public final class Edge implements Hilitable {
 	public static class Road1Stroke extends BasicStroke {
 		
 		public Road1Stroke() {
-			super((int)(MODEL.world.ROAD_WIDTH * MODEL.world.PIXELS_PER_METER), BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND);
+			super((int)(2 * MODEL.world.ROAD_RADIUS * MODEL.world.PIXELS_PER_METER), BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND);
 		}
 		
 	}
