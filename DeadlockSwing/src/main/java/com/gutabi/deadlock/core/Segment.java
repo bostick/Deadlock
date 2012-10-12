@@ -27,4 +27,8 @@ public class Segment {
 		}
 	}
 	
+	public Point getPoint(double param) {
+		return Point.point(start, end, param);
+	}
+	
 }

@@ -13,10 +13,10 @@ import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Edge;
 import com.gutabi.deadlock.core.Graph;
 import com.gutabi.deadlock.core.GraphController;
+import com.gutabi.deadlock.core.GraphPosition;
 import com.gutabi.deadlock.core.Hilitable;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.Position;
-import com.gutabi.deadlock.core.Segment;
 import com.gutabi.deadlock.core.Sink;
 import com.gutabi.deadlock.core.Source;
 import com.gutabi.deadlock.core.Vertex;
@@ -105,17 +105,16 @@ public class World {
 		d.matchingSink = h;
 		h.matchingSource = d;
 		
-		graph.sources.add(a);
-		graph.sources.add(b);
-		graph.sources.add(c);
-		graph.sources.add(d);
+		graph.addSource(a);
+		graph.addSource(b);
+		graph.addSource(c);
+		graph.addSource(d);
 		
-		graph.sinks.add(e);
-		graph.sinks.add(f);
-		graph.sinks.add(g);
-		graph.sinks.add(h);
+		graph.addSink(e);
+		graph.addSink(f);
+		graph.addSink(g);
+		graph.addSink(h);
 		
-		graph.refreshVertexIDs();
 	}
 	
 	/*
@@ -289,8 +288,8 @@ public class World {
 		return graph.areNeighbors(a, b);
 	}
 	
-	public Position hitTest(Point p) {
-		return graph.hitTest(p);
+	public GraphPosition graphHitTest(Point p) {
+		return graph.graphHitTest(p);
 	}
 	
 	public void processNewWorldStroke(List<Point> stroke) {
@@ -350,16 +349,16 @@ public class World {
 		
 	}
 	
-	public List<Segment> findAllSegments(Point a) {
-		return graph.getSegmentTree().findAllSegments(a);
-	}
+//	public List<Segment> findAllSegments(Point a) {
+//		return graph.getSegmentTree().findAllSegments(a);
+//	}
 	
 	public Position findClosestPosition(Point p) {
-		return graph.findClosestPosition(p);
+		return graph.findClosestPosition(p, null, Double.POSITIVE_INFINITY, false);
 	}
 	
 	public Position findClosestDeleteablePosition(Point p) {
-		return graph.findClosestDeleteablePosition(p);
+		return graph.findClosestPosition(p, null, Double.POSITIVE_INFINITY, true);
 	}
 	
 	

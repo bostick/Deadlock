@@ -52,8 +52,8 @@ public class GraphController {
 			
 			graph.destroyEdge(e);
 			
-			graph.edgesChanged(eStart);
-			graph.edgesChanged(eEnd);
+			graph.postEdgeChange(eStart);
+			graph.postEdgeChange(eEnd);
 			
 		} else if (!e.isStandAlone()) {
 			
@@ -61,7 +61,7 @@ public class GraphController {
 			
 			graph.destroyEdge(e);
 			
-			graph.edgesChanged(v);
+			graph.postEdgeChange(v);
 			
 		} else {
 			graph.destroyEdge(e);
@@ -106,7 +106,7 @@ public class GraphController {
 		affectedVertices.remove(v);
 		
 		for (Vertex a : affectedVertices) {
-			graph.edgesChanged(a);
+			graph.postEdgeChange(a);
 		}
 		
 		postTop();
@@ -247,7 +247,7 @@ public class GraphController {
 		ranges.add(0.0);
 		ranges.add(1.0);
 		
-		for (Segment in : graph.segTree.findAllSegments(a, b)) {
+		for (Segment in : graph.segTree.getAllSegments()) {
 			int index = in.index;
 			Point c = in.edge.getPoint(index);
 			Point d = in.edge.getPoint(index+1);
@@ -306,7 +306,7 @@ public class GraphController {
 		
 		Timeline timeline = new Timeline(a, b);
 		
-		for (Segment in : graph.segTree.findAllSegments(a, b)) {
+		for (Segment in : graph.segTree.getAllSegments()) {
 			int index = in.index;
 			Edge ed = in.edge;
 			Point c = ed.getPoint(index);

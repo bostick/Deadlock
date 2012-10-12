@@ -8,8 +8,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
-
 public class Graph {
 	
 	final ArrayList<Edge> edges = new ArrayList<Edge>();
@@ -19,7 +17,7 @@ public class Graph {
 	public final ArrayList<Source> sources = new ArrayList<Source>();
 	public final ArrayList<Sink> sinks = new ArrayList<Sink>();
 	
-	private static final Logger logger = Logger.getLogger(Graph.class);
+//	private static final Logger logger = Logger.getLogger(Graph.class);
 	
 	public Graph() {
 		
@@ -53,14 +51,6 @@ public class Graph {
 		return all;
 	}
 	
-	public void clear() {
-		edges.clear();
-		intersections.clear();
-		segTree.clear();
-		sources.clear();
-		sinks.clear();
-	}
-	
 	private Edge createEdge(Vertex start, Vertex end, List<Point> pts) {
 		
 		Edge e = new Edge(start, end, pts);
@@ -79,7 +69,7 @@ public class Graph {
 		return e;
 	}
 	
-	void edgesChanged(Vertex v) {
+	void postEdgeChange(Vertex v) {
 		
 		if (v instanceof Intersection) {
 			
@@ -113,7 +103,7 @@ public class Graph {
 		
 	}
 	
-	private Vertex createVertex(Point p) {
+	private Vertex createIntersection(Point p) {
 		
 		Intersection i = new Intersection(p);
 		assert !intersections.contains(i);
@@ -122,6 +112,16 @@ public class Graph {
 		refreshVertexIDs();
 		
 		return i;
+	}
+	
+	public void addSource(Source s) {
+		sources.add(s);
+		refreshVertexIDs();
+	}
+	
+	public void addSink(Sink s) {
+		sinks.add(s);
+		refreshVertexIDs();
 	}
 	
 	void destroyVertex(Vertex v) {
@@ -159,10 +159,9 @@ public class Graph {
 		e.remove();
 	}
 	
-	
 	Vertex[] vertexIDs;
 	
-	public void refreshVertexIDs() {
+	private void refreshVertexIDs() {
 		int vertexCount = intersections.size() + sources.size() + sinks.size();
 		vertexIDs = new Vertex[vertexCount];
 		int id = 0;
@@ -190,6 +189,11 @@ public class Graph {
 			id++;
 		}
 	}
+	
+	
+	
+	
+	
 	
 	double[][] distances;
 	Vertex[][] nextHighest;
@@ -360,7 +364,10 @@ public class Graph {
 	
 	
 	
-	public GraphPosition hitTest(Point p) {
+	
+	
+	
+	public GraphPosition graphHitTest(Point p) {
 		for (Intersection v : intersections) {
 			if (p.equals(v.getPoint())) {
 				return v;
@@ -376,13 +383,18 @@ public class Graph {
 				return s;
 			}
 		}
-		for (Segment in : segTree.findAllSegments(p)) {
+		for (Segment in : segTree.getAllSegments()) {
 			Edge e = in.edge;
 			int i = in.index;
 			Point c = e.getPoint(i);
 			Point d = e.getPoint(i+1);
-			if (Point.intersect(p, c, d) && !p.equals(d)) {
-				return new EdgePosition(e, i, Point.param(p, c, d));
+			if (Point.intersect(p, c, d)) {
+				double param = Point.param(p, c, d);
+				if (DMath.equals(param, 1.0)) {
+					return new EdgePosition(e, i+1, 0.0);
+				} else {
+					return new EdgePosition(e, i, param);
+				}
 			}
 		}
 		return null;
@@ -390,12 +402,11 @@ public class Graph {
 	
 	/**
 	 * returns the closest vertex within radius that is not the excluded point
-	 * 
 	 */
-	public Vertex findClosestVertexPosition(Point a, Point anchor, double radius, boolean onlyDeleteables) {
+	public Vertex findClosestVertex(Point a, Point anchor, double radius, boolean onlyDeleteables) {
 		Vertex anchorV = null;
 		if (anchor != null) {
-			Position pos = hitTest(anchor);
+			GraphPosition pos = graphHitTest(anchor);
 			if (pos instanceof Vertex) {
 				anchorV = (Vertex) pos;
 				if (a.equals(anchor) && (!onlyDeleteables || anchorV instanceof Intersection)) {
@@ -431,75 +442,11 @@ public class Graph {
 	 * returns the closest edge within radius that is not in the excluded radius
 	 */
 	public EdgePosition findClosestEdgePosition(Point a, Point exclude, double radius) {
-		return getSegmentTree().findClosestEdgePosition(a, exclude, radius);
+		return segTree.findClosestEdgePosition(a, exclude, radius);
 	}
-	
-//	private List<Point> cullAngles(List<Point> stroke) {
-//		
-//		List<Point> stroke2 = new ArrayList<Point>();
-//		
-//		/*
-//		 * initialize
-//		 */
-//		Point a = stroke.get(0);
-//		Point b = stroke.get(1);
-//		stroke2.add(a);
-//		stroke2.add(b);
-//		
-//		for (int i = 2; i < stroke.size(); i++) {
-//			
-//			Point aa = stroke2.get(stroke2.size()-2);
-//			
-//			// last good point added
-//			a = stroke2.get(stroke2.size()-1);
-//			
-//			double rad1 = Math.atan2(a.getY()-aa.getY(), a.getX()-aa.getX());
-//			
-//			b = stroke.get(i);
-//			double rad2 = Math.atan2(b.getY()-a.getY(), b.getX()-a.getX());
-//			
-//			double rad = rad2 - rad1;
-//			while (rad > Math.PI) {
-//				rad -= 2 * Math.PI;
-//			}
-//			while (rad < -Math.PI) {
-//				rad += 2 * Math.PI;
-//			}
-//			double sharpRight = -2.35;
-//			double sharpLeft = 2.35;
-//			
-//			if (rad > sharpRight && rad < sharpLeft) {
-//				stroke2.add(b);
-//			} else {
-//				//String.class.getName();
-//			}
-//			
-//		}
-//		
-//		return stroke2;
-//	}
-	
-	
-	
-	
-	
-	
-	
-	
-	public GraphPosition findClosestPosition(Point a) {
-		return findClosestPosition(a, null, Double.POSITIVE_INFINITY, false);
-	}
-	
-	public GraphPosition findClosestDeleteablePosition(Point a) {
-		return findClosestPosition(a, null, Double.POSITIVE_INFINITY, true);
-	}
-	
-//	public GraphPosition findClosestPosition(Point a, double radius) {
-//		return findClosestPosition(a, null, radius, false);
-//	}
 	
 	public GraphPosition findClosestPosition(Point a, Point anchor, double radius, boolean onlyDeleteables) {
-		Vertex closestV = findClosestVertexPosition(a, anchor, radius, onlyDeleteables);
+		Vertex closestV = findClosestVertex(a, anchor, radius, onlyDeleteables);
 		if (closestV != null) {
 			return closestV;
 		}
@@ -515,9 +462,9 @@ public class Graph {
 		assert !a.equals(b);
 		assert !segmentOverlaps(a, b);
 		
-		logger.debug("addSegment: " + a + " " + b);
+//		logger.debug("addSegment: " + a + " " + b);
 		
-		Position pos = hitTest(a);
+		GraphPosition pos = graphHitTest(a);
 		final Vertex aV;
 		if (pos != null) {
 			if (pos instanceof Vertex) {
@@ -526,10 +473,10 @@ public class Graph {
 				aV = split((EdgePosition)pos);
 			}
 		} else {
-			aV = createVertex(a);
+			aV = createIntersection(a);
 		}
 		
-		pos = hitTest(b);
+		pos = graphHitTest(b);
 		final Vertex bV;
 		if (pos != null) {
 			if (pos instanceof Vertex) {
@@ -538,7 +485,7 @@ public class Graph {
 				bV = split((EdgePosition)pos);
 			}
 		} else {
-			bV = createVertex(b);
+			bV = createIntersection(b);
 		}
 		
 		List<Point> pts = new ArrayList<Point>();
@@ -548,13 +495,13 @@ public class Graph {
 		
 		assert edges.contains(newEdge);
 		
-		edgesChanged(aV);
-		edgesChanged(bV);
+		postEdgeChange(aV);
+		postEdgeChange(bV);
 	}
 	
 	private boolean segmentOverlaps(Point a, Point b) {
 		
-		for (Segment in : segTree.findAllSegments(a, b)) {
+		for (Segment in : segTree.getAllSegments()) {
 			Edge e = in.edge;
 			int i = in.index;
 			Point c = e.getPoint(i);
@@ -590,7 +537,7 @@ public class Graph {
 		final Point c = e.getPoint(index);
 		final Point d = e.getPoint(index+1);
 		
-		Vertex v = createVertex(p);
+		Vertex v = createIntersection(p);
 		
 		Vertex eStart = e.getStart();
 		Vertex eEnd = e.getEnd();
@@ -691,7 +638,7 @@ public class Graph {
 				
 				//assert tryFindVertex(c) == null;
 				
-				Vertex cV = createVertex(c);
+				Vertex cV = createIntersection(c);
 				List<Point> pts2 = new ArrayList<Point>();
 				pts2.add(c);
 				pts2.add(p);
@@ -736,7 +683,7 @@ public class Graph {
 				
 				//assert tryFindVertex(d) == null;
 				
-				Vertex dV = createVertex(d);
+				Vertex dV = createIntersection(d);
 				List<Point> pts2 = new ArrayList<Point>();
 				pts2.add(d);
 				pts2.add(p);
