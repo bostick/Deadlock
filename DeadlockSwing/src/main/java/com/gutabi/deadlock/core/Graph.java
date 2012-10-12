@@ -439,6 +439,9 @@ public class Graph {
 		if (closest != null) {
 			return new VertexPosition(closest);
 		} else {
+			if (radius == Double.POSITIVE_INFINITY) {
+				String.class.getName();
+			}
 			return null;
 		}
 	}
