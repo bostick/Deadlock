@@ -40,9 +40,9 @@ public abstract class Car implements Hilitable {
 	
 	public static int carCounter;
 	
-	protected Body b2dBody;
-	private Shape b2dShape;
-	private Fixture b2dFixture;
+	Body b2dBody;
+	Shape b2dShape;
+	Fixture b2dFixture;
 	
 	public Color color = Color.BLUE;
 	

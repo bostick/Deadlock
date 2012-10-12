@@ -8,17 +8,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.gutabi.deadlock.core.DMath;
-import com.gutabi.deadlock.core.Edge;
-import com.gutabi.deadlock.core.Event;
 import com.gutabi.deadlock.core.Event.CloseEvent;
 import com.gutabi.deadlock.core.Event.IntersectionEvent;
-import com.gutabi.deadlock.core.Graph;
-import com.gutabi.deadlock.core.OverlappingException;
-import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.core.Position;
-import com.gutabi.deadlock.core.Segment;
-import com.gutabi.deadlock.core.Vertex;
 
 public class GraphController {
 	
@@ -128,7 +119,11 @@ public class GraphController {
 			
 			if (!tooClose) {
 				
-				Position aP = graph.findClosestPosition(preA, null, 2 * MODEL.world.ROAD_RADIUS, false);
+				GraphPosition aP;
+				aP = graph.findClosestVertexPosition(preA, null, MODEL.world.VERTEX_RADIUS + MODEL.world.MOUSE_RADIUS/MODEL.world.PIXELS_PER_METER);
+				if (aP == null) {
+					aP = graph.findClosestEdgePosition(preA, null, MODEL.world.ROAD_RADIUS + MODEL.world.MOUSE_RADIUS/MODEL.world.PIXELS_PER_METER);
+				}
 				
 				if (aP != null) {
 					
@@ -157,11 +152,11 @@ public class GraphController {
 			
 			if (!tooClose) {
 				
-				/*
-				 * just changed from findClosestPosition(preB, null, MODEL.world.ROAD_WIDTH); because
-				 * this was changing B for regular extending
-				 */
-				Position bP = graph.findClosestPosition(preB, a, 2 * MODEL.world.ROAD_RADIUS, false);
+				GraphPosition bP;
+				bP = graph.findClosestVertexPosition(preB, a, MODEL.world.VERTEX_RADIUS + MODEL.world.MOUSE_RADIUS/MODEL.world.PIXELS_PER_METER);
+				if (bP == null) {
+					bP = graph.findClosestEdgePosition(preB, a, MODEL.world.ROAD_RADIUS + MODEL.world.MOUSE_RADIUS/MODEL.world.PIXELS_PER_METER);
+				}
 				
 				if (bP != null) {
 					tooClose = true;
@@ -175,7 +170,11 @@ public class GraphController {
 				
 			} else {
 				
-				Position bP = graph.findClosestPosition(preB, a, 2 * MODEL.world.ROAD_RADIUS, false);
+				GraphPosition bP;
+				bP = graph.findClosestVertexPosition(preB, a, MODEL.world.VERTEX_RADIUS + MODEL.world.MOUSE_RADIUS/MODEL.world.PIXELS_PER_METER);
+				if (bP == null) {
+					bP = graph.findClosestEdgePosition(preB, a, MODEL.world.ROAD_RADIUS + MODEL.world.MOUSE_RADIUS/MODEL.world.PIXELS_PER_METER);
+				}
 				
 				if (bP != null) {
 					

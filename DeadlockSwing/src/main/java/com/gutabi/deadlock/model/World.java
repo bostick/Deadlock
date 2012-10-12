@@ -14,10 +14,8 @@ import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Edge;
 import com.gutabi.deadlock.core.Graph;
 import com.gutabi.deadlock.core.GraphController;
-import com.gutabi.deadlock.core.GraphPosition;
 import com.gutabi.deadlock.core.Hilitable;
 import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.core.Position;
 import com.gutabi.deadlock.core.Sink;
 import com.gutabi.deadlock.core.Source;
 import com.gutabi.deadlock.core.Vertex;
@@ -26,7 +24,6 @@ import com.gutabi.deadlock.model.b2d.CarContactListener;
 public class World {
 	
 	public final double CAR_LENGTH = 1.0;
-	//public final double ROAD_WIDTH = CAR_LENGTH;
 	public final double ROAD_RADIUS = CAR_LENGTH / 2;
 	public final double VERTEX_RADIUS = Math.sqrt(2 * ROAD_RADIUS * ROAD_RADIUS);
 	
@@ -180,8 +177,7 @@ public class World {
 				boolean shouldPersist = c.postStep();
 				if (!shouldPersist) {
 					if (MODEL.hilited == c) {
-						Car closest = MODEL.world.findClosestCar(c.getPoint(), c.getPoint(), Double.POSITIVE_INFINITY);
-						MODEL.hilited = closest;
+						MODEL.hilited = null;
 					}
 					c.b2dCleanUp();
 					toBeRemoved.add(c);
@@ -296,10 +292,6 @@ public class World {
 		return graph.areNeighbors(a, b);
 	}
 	
-	public GraphPosition graphHitTest(Point p) {
-		return graph.graphHitTest(p);
-	}
-	
 	public void processNewWorldStroke(List<Point> stroke) {
 		gc.processNewStrokeTop(stroke);	
 	}
@@ -312,62 +304,33 @@ public class World {
 		gc.removeVertexTop(i);
 	}
 	
-//	public void addVertexTop(Point p) {
-//		graph.addVertexTop(p);
-//	}
+	
+	
+	
+	public Hilitable hitTest(Point p) {
+		Car c = carHitTest(p);
+		if (c != null) {
+			return c;
+		}
+		Hilitable h = graph.hitTest(p);
+		if (h != null) {
+			return h;
+		}
+		return null;
+	}
+	
+	private Car carHitTest(Point p) {
+		for (Car c : cars) {
+			if (c.b2dShape.testPoint(c.b2dBody.getTransform(), new Vec2((float)p.getX(), (float)p.getY()))) {
+				return c;
+			}
+		}
+		return null;
+	}
+	
 	
 	public boolean checkConsistency() {
 		return graph.checkConsistency();
 	}
-	
-	public Hilitable findClosestHilitable(Point a, Point anchor, double radius, boolean onlyDeleteables) {
-		
-		Car closestCar = findClosestCar(a, anchor, radius);
-		
-		if (closestCar != null) {
-			return closestCar;
-		}
-		
-		Position closestPos = graph.findClosestPosition(a, null, radius, onlyDeleteables);
-		
-		if (closestPos != null) {
-			return closestPos.getHilitable();
-		} else {
-			return null;
-		}
-		
-	}
-	
-	public Car findClosestCar(Point a, Point anchor, double radius) {
-		
-		Car closestCar = null;
-		double closestCarDist = Double.POSITIVE_INFINITY;
-		for (Car c : cars) {
-			if (anchor != null && c.getPoint().equals(anchor)) {
-				continue;
-			}
-			double dist = Point.distance(a, c.getPoint());
-			if (dist < radius && dist < closestCarDist) {
-				closestCar = c;
-				closestCarDist = dist;
-			}
-		}
-		
-		return closestCar;
-		
-	}
-	
-//	public List<Segment> findAllSegments(Point a) {
-//		return graph.getSegmentTree().findAllSegments(a);
-//	}
-	
-	public Position findClosestPosition(Point p) {
-		return graph.findClosestPosition(p, null, Double.POSITIVE_INFINITY, false);
-	}
-	
-	public Position findClosestDeleteablePosition(Point p) {
-		return graph.findClosestPosition(p, null, Double.POSITIVE_INFINITY, true);
-	}
-	
 	
 }

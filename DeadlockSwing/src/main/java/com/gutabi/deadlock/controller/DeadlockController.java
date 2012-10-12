@@ -17,13 +17,11 @@ import org.apache.log4j.Logger;
 
 import com.gutabi.deadlock.DeadlockMain;
 import com.gutabi.deadlock.core.Edge;
-import com.gutabi.deadlock.core.GraphPosition;
 import com.gutabi.deadlock.core.Hilitable;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.Sink;
 import com.gutabi.deadlock.core.Source;
 import com.gutabi.deadlock.core.Vertex;
-import com.gutabi.deadlock.core.VertexPosition;
 import com.gutabi.deadlock.model.Car;
 
 public class DeadlockController implements ActionListener {
@@ -168,12 +166,7 @@ public class DeadlockController implements ActionListener {
 					
 					if (lastReleaseTime - lastPressTime < 500 && lastDragPanelPoint == null) {
 						// click
-						
-//						MODEL.world.addVertexTop(lastPressPanelPoint);
-//						
-//						VIEW.renderBackground();
-//						VIEW.repaint();
-						
+						;
 					}
 					
 					break;
@@ -204,9 +197,11 @@ public class DeadlockController implements ActionListener {
 			
 			synchronized (MODEL) {
 				switch (MODEL.getMode()) {
+				case RUNNING:
+				case PAUSED:
 				case IDLE: {
 					
-					Hilitable closest = MODEL.world.findClosestHilitable(VIEW.panelToWorld(p), null, MODEL.world.MOUSE_RADIUS / MODEL.world.PIXELS_PER_METER, false);
+					Hilitable closest = MODEL.world.hitTest(VIEW.panelToWorld(p));
 					MODEL.hilited = closest;
 					
 					VIEW.repaint();
@@ -215,15 +210,6 @@ public class DeadlockController implements ActionListener {
 				case DRAFTING:
 					;
 					break;
-				case RUNNING:
-				case PAUSED: {
-					
-					Hilitable closest = MODEL.world.findClosestHilitable(VIEW.panelToWorld(p), null, MODEL.world.MOUSE_RADIUS / MODEL.world.PIXELS_PER_METER, false);
-					MODEL.hilited = closest;
-					
-					VIEW.repaint();
-					break;
-				}
 				}
 			}
 			
@@ -237,8 +223,6 @@ public class DeadlockController implements ActionListener {
 			
 			if (MODEL.hilited != null) {
 				
-				Point p;
-				
 				if (MODEL.hilited instanceof Vertex) {
 					Vertex v = (Vertex)MODEL.hilited;
 					
@@ -248,26 +232,15 @@ public class DeadlockController implements ActionListener {
 						return;
 					}
 					
-					p = v.getPoint();
-					
 					MODEL.world.removeVertex(v);
 					
 				} else if (MODEL.hilited instanceof Edge) {
 					Edge e = (Edge)MODEL.hilited;
 					
-					if (!e.isStandAlone()) {
-						GraphPosition middle = new VertexPosition(e.getStart()).travel(e, e.getEnd(), e.getTotalLength()/2);
-						p = middle.getPoint();
-					} else {
-						p = e.getPoint(0);
-					}
-					
 					MODEL.world.removeEdge(e);
 					
 				} else if (MODEL.hilited instanceof Car) {
 					Car c = (Car)MODEL.hilited;
-					
-					p = c.getPoint();
 					
 					c.b2dCleanUp();
 					MODEL.world.cars.remove(c);
@@ -275,9 +248,6 @@ public class DeadlockController implements ActionListener {
 				} else {
 					throw new AssertionError();
 				}
-				
-				Hilitable closest = MODEL.world.findClosestHilitable(p, null, Double.POSITIVE_INFINITY, true);
-				MODEL.hilited = closest;
 				
 				VIEW.renderBackground();
 				VIEW.repaint();

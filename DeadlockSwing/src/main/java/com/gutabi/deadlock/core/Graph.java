@@ -366,21 +366,13 @@ public class Graph {
 	
 	
 	
-	
-	public GraphPosition graphHitTest(Point p) {
-		for (Intersection v : intersections) {
+	/**
+	 * tests center of vertex and skeleton of edges 
+	 */
+	private GraphPosition graphHitTest(Point p) {
+		for (Vertex v : getAllVertices()) {
 			if (p.equals(v.getPoint())) {
 				return new VertexPosition(v);
-			}
-		}
-		for (Source s : sources) {
-			if (p.equals(s.getPoint())) {
-				return new VertexPosition(s);
-			}
-		}
-		for (Sink s : sinks) {
-			if (p.equals(s.getPoint())) {
-				return new VertexPosition(s);
 			}
 		}
 		for (Segment in : segTree.getAllSegments()) {
@@ -401,16 +393,37 @@ public class Graph {
 	}
 	
 	/**
+	 * tests any part of vertex and any part of edge
+	 */
+	public Hilitable hitTest(Point p) {
+		for (Vertex v : getAllVertices()) {
+			if (DMath.lessThanEquals(Point.distance(p, v.getPoint()), MODEL.world.VERTEX_RADIUS)) {
+				return v;
+			}
+		}
+		for (Segment in : segTree.getAllSegments()) {
+			Edge e = in.edge;
+			int i = in.index;
+			Point c = e.getPoint(i);
+			Point d = e.getPoint(i+1);
+			if (DMath.lessThanEquals(Point.distance(p, c, d), MODEL.world.ROAD_RADIUS)) {
+				return e;
+			}
+		}
+		return null;
+	}
+	
+	/**
 	 * returns the closest vertex within radius that is not the excluded point
 	 */
-	private VertexPosition findClosestVertexPosition(Point a, Point anchor, double radius, boolean onlyDeleteables) {
+	public VertexPosition findClosestVertexPosition(Point a, Point exclude, double radius) {
 		Vertex anchorV = null;
-		if (anchor != null) {
-			GraphPosition pos = graphHitTest(anchor);
+		if (exclude != null) {
+			GraphPosition pos = graphHitTest(exclude);
 			if (pos instanceof VertexPosition) {
 				VertexPosition poss = (VertexPosition)pos;
 				anchorV = poss.getVertex();
-				if (a.equals(anchor) && (!onlyDeleteables || anchorV instanceof Intersection)) {
+				if (a.equals(exclude)) {
 					/*
 					 * a equals anchor, so starting this segment
 					 * if exactly on a vertex, then use that one
@@ -426,11 +439,9 @@ public class Graph {
 			Point ip = i.getPoint();
 			double dist = Point.distance(a, ip);
 			if (DMath.lessThanEquals(dist, radius)) {
-				if (anchorV == null || dist < Point.distance(ip, anchor)) {
+				if (anchorV == null || dist < Point.distance(ip, exclude)) {
 					if (closest == null || (Point.distance(a, ip) < Point.distance(a, closest.getPoint()))) {
-						if (!onlyDeleteables || i instanceof Intersection) {
-							closest = i;
-						}
+						closest = i;
 					}
 				}
 			}	
@@ -449,20 +460,8 @@ public class Graph {
 	/**
 	 * returns the closest edge within radius that is not in the excluded radius
 	 */
-	private EdgePosition findClosestEdgePosition(Point a, Point exclude, double radius) {
+	public EdgePosition findClosestEdgePosition(Point a, Point exclude, double radius) {
 		return segTree.findClosestEdgePosition(a, exclude, radius);
-	}
-	
-	public GraphPosition findClosestPosition(Point a, Point anchor, double radius, boolean onlyDeleteables) {
-		VertexPosition closestV = findClosestVertexPosition(a, anchor, radius, onlyDeleteables);
-		if (closestV != null) {
-			return closestV;
-		}
-		EdgePosition closestEdge = findClosestEdgePosition(a, anchor, radius);
-		if (closestEdge != null) {
-			return closestEdge;
-		}
-		return null;
 	}
 	
 	public void addSegment(Point a, Point b) {
@@ -472,25 +471,25 @@ public class Graph {
 		
 //		logger.debug("addSegment: " + a + " " + b);
 		
-		GraphPosition pos = graphHitTest(a);
+		GraphPosition aPos = graphHitTest(a);
 		final Vertex aV;
-		if (pos != null) {
-			if (pos instanceof VertexPosition) {
-				aV = ((VertexPosition)pos).getVertex();
+		if (aPos != null) {
+			if (aPos instanceof VertexPosition) {
+				aV = ((VertexPosition)aPos).getVertex();
 			} else {
-				aV = split((EdgePosition)pos);
+				aV = split((EdgePosition)aPos);
 			}
 		} else {
 			aV = createIntersection(a);
 		}
 		
-		pos = graphHitTest(b);
+		GraphPosition bPos = graphHitTest(b);
 		final Vertex bV;
-		if (pos != null) {
-			if (pos instanceof VertexPosition) {
-				bV = ((VertexPosition)pos).getVertex();
+		if (bPos != null) {
+			if (bPos instanceof VertexPosition) {
+				bV = ((VertexPosition)bPos).getVertex();
 			} else {
-				bV = split((EdgePosition)pos);
+				bV = split((EdgePosition)bPos);
 			}
 		} else {
 			bV = createIntersection(b);
