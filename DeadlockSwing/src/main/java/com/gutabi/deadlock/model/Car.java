@@ -112,6 +112,8 @@ public abstract class Car implements Hilitable {
 	
 	public void preStep() {
 		
+		logger.debug("car preStep");
+		
 		switch (state) {
 		case NEW:
 		case RUNNING: {
@@ -162,6 +164,8 @@ public abstract class Car implements Hilitable {
 	float maxIdealTorque = 0;
 	
 	private void updateDrive() {
+		
+		logger.debug("updateDrive");
 		
 		Vec2 curVec = b2dBody.getPosition();
 		
@@ -238,9 +242,14 @@ public abstract class Car implements Hilitable {
 //		
 //		b2dBody.applyForce(currentRightNormal.mul(dragForce), b2dBody.getWorldCenter());
 		
+		logger.debug("done updateDrive");
+		
 	}
 	
 	private void updateTurn() {
+		
+		logger.debug("updateTurn");
+		
 		Vec2 curVec = b2dBody.getPosition();
 		
 		float curAngle = b2dBody.getAngle();
@@ -294,6 +303,8 @@ public abstract class Car implements Hilitable {
 		
 		b2dBody.applyAngularImpulse(angImpulse);
 		//b2dBody.applyTorque(actualTorque);
+		
+		logger.debug("done updateTurn");
 		
 	}
 	

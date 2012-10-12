@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import org.apache.log4j.Logger;
 import org.jbox2d.common.Vec2;
 
 import com.gutabi.deadlock.core.DMath;
@@ -68,6 +69,8 @@ public class World {
 	
 	public org.jbox2d.dynamics.World b2dWorld;
 	CarContactListener listener;
+	
+	private static Logger logger = Logger.getLogger(World.class);
 	
 	public World() {
 		
@@ -153,6 +156,8 @@ public class World {
 	
 	public void integrate(long t) {
 		
+		logger.debug("integrate " + t);
+		
 		this.t = t;
 		
 		synchronized (MODEL) {
@@ -165,7 +170,9 @@ public class World {
 				c.preStep();
 			}
 			
+			logger.debug("before step " + t);
 			b2dWorld.step(timeStep, velocityIterations, positionIterations);
+			logger.debug("after step " + t);
 			
 			List<Car> toBeRemoved = new ArrayList<Car>();
 			for (Car c : cars) {
