@@ -217,7 +217,7 @@ public class EdgePosition extends GraphPosition {
 			if (DMath.equals(dist, distToEndOfEdge)) {
 				return new VertexPosition(e.getEnd());
 			} else if (dist > distToEndOfEdge) {
-				throw new TravelException();
+				throw new IllegalArgumentException();
 			}
 			
 			return travelForward(e, index, param, dist);
@@ -228,7 +228,7 @@ public class EdgePosition extends GraphPosition {
 			if (DMath.equals(dist, distToStartOfEdge)) {
 				return new VertexPosition(e.getStart());
 			} else if (dist > distToStartOfEdge) {
-				throw new TravelException();
+				throw new IllegalArgumentException();
 			}
 			
 			return travelBackward(e, index, param, dist);
@@ -245,7 +245,7 @@ public class EdgePosition extends GraphPosition {
 		return travelBackward(e, e.size()-2, 1.0, dist);
 	}
 	
-	private static GraphPosition travelForward(Edge e, int index, double param, double dist) throws TravelException {
+	private static GraphPosition travelForward(Edge e, int index, double param, double dist) {
 		
 		double distanceToTravel = dist;
 		
@@ -269,7 +269,7 @@ public class EdgePosition extends GraphPosition {
 		}
 	}
 	
-	private static GraphPosition travelBackward(Edge e, int index, double param, double dist) throws TravelException {
+	private static GraphPosition travelBackward(Edge e, int index, double param, double dist) {
 		
 		double distanceToTravel = dist;
 		

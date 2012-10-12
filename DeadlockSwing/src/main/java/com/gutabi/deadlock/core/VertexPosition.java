@@ -55,7 +55,7 @@ public class VertexPosition extends GraphPosition {
 		if (DMath.equals(dist, totalEdgeLength)) {
 			return new VertexPosition(dest);
 		} else if (dist > totalEdgeLength) {
-			throw new TravelException();
+			throw new IllegalArgumentException();
 		}
 		
 		if (v == e.getStart()) {

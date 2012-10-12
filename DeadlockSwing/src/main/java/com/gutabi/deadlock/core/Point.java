@@ -209,7 +209,7 @@ public class Point {
 	/**
 	 * return param that is dist away from a along the segment <a, b>
 	 */
-	public static double travelForward(Point start, Point end, double param, double dist) throws TravelException {
+	public static double travelForward(Point start, Point end, double param, double dist) {
 		
 		if (dist == 0.0) {
 			return param;
@@ -235,7 +235,7 @@ public class Point {
 	/**
 	 * return param that is dist away from a along the segment <a, b>
 	 */
-	public static double travelBackward(Point start, Point end, double param, double dist) throws TravelException {
+	public static double travelBackward(Point start, Point end, double param, double dist) {
 		
 		if (dist == 0.0) {
 			return param;
