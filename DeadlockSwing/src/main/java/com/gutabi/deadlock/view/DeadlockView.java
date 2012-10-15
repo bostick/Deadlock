@@ -27,6 +27,7 @@ import com.gutabi.deadlock.core.Intersection;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.Sink;
 import com.gutabi.deadlock.core.Source;
+import com.gutabi.deadlock.core.Vertex;
 import com.gutabi.deadlock.model.Car;
 import com.gutabi.deadlock.utils.ImageUtils;
 
@@ -250,84 +251,20 @@ public class DeadlockView {
 		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		
 		List<Edge> edgesCopy;
-		List<Intersection> intersectionsCopy;
-		List<Source> sourcesCopy;
-		List<Sink> sinksCopy;
+		List<Vertex> verticesCopy;
 		
 		synchronized (MODEL) {
 			edgesCopy = new ArrayList<Edge>(MODEL.world.graph.getEdges());
-			intersectionsCopy = new ArrayList<Intersection>(MODEL.world.graph.getIntersections());
-			sourcesCopy = new ArrayList<Source>(MODEL.world.graph.getSources());
-			sinksCopy = new ArrayList<Sink>(MODEL.world.graph.getSinks());
+			verticesCopy = new ArrayList<Vertex>(MODEL.world.graph.getAllVertices());
 		}
 		
-		for (Source s : sourcesCopy) {
-			s.paint(g2);
-		}
-		for (Sink s : sinksCopy) {
-			s.paint(g2);
-		}
-		for (Intersection i : intersectionsCopy) {
-			i.paint(g2);
-		}
 		for (Edge e : edgesCopy) {
-			e.paintEdge1(g2);
+			e.paint(g2);
 		}
-//		for (Edge e : edgesCopy) {
-//			e.paintEdge2(g2);
-//		}
 		
-		
-		
-		
-		
-//		AffineTransform origTransform = g2.getTransform();
-//		
-//		AffineTransform b2dTrans = (AffineTransform)VIEW.worldToPanelTransform.clone();
-//		Vec2 pos = MODEL.world.b2dGroundBody.getPosition();
-//		float angle = MODEL.world.b2dGroundBody.getAngle();
-//		b2dTrans.translate(pos.x, pos.y);
-//		b2dTrans.rotate(angle);
-//		
-//		b2dTrans.scale(1/((double)MODEL.world.PIXELS_PER_METER), 1/((double)MODEL.world.PIXELS_PER_METER));
-//		
-//		g2.setTransform(b2dTrans);
-//		
-//		g2.setColor(Color.YELLOW);
-//		
-//		g2.fillRect(
-//				(int)(-2 * MODEL.world.PIXELS_PER_METER),
-//				(int)(-3 * MODEL.world.PIXELS_PER_METER),
-//				(int)(2*2 * MODEL.world.PIXELS_PER_METER),
-//				(int)(2*3 * MODEL.world.PIXELS_PER_METER));
-//		
-//		g2.setTransform(origTransform);
-//		
-//		
-//		
-//		
-//		origTransform = g2.getTransform();
-//		
-//		b2dTrans = (AffineTransform)VIEW.worldToPanelTransform.clone();
-//		pos = MODEL.world.b2dGroundBody2.getPosition();
-//		angle = MODEL.world.b2dGroundBody2.getAngle();
-//		b2dTrans.translate(pos.x, pos.y);
-//		b2dTrans.rotate(angle);
-//		
-//		b2dTrans.scale(1/((double)MODEL.world.PIXELS_PER_METER), 1/((double)MODEL.world.PIXELS_PER_METER));
-//		
-//		g2.setTransform(b2dTrans);
-//		
-//		g2.setColor(Color.ORANGE);
-//		
-//		g2.fillRect(
-//				(int)(-1 * MODEL.world.PIXELS_PER_METER),
-//				(int)(-1.5 * MODEL.world.PIXELS_PER_METER),
-//				(int)(2*1 * MODEL.world.PIXELS_PER_METER),
-//				(int)(2*1.5 * MODEL.world.PIXELS_PER_METER));
-//		
-//		g2.setTransform(origTransform);
-		
+		for (Vertex v : verticesCopy) {
+			v.paint(g2);
+		}
 		
 	}
 	
@@ -336,18 +273,18 @@ public class DeadlockView {
 		g2.setColor(Color.WHITE);
 		
 		Point o = new Point(1, 1);
-		Point loc = VIEW.worldToPanel(o.add(new Point(-MODEL.world.VERTEX_RADIUS, -MODEL.world.VERTEX_RADIUS)));
+		Point loc = VIEW.worldToPanel(o);
 		
 		g2.drawString("FPS: " + VIEW.fps, (int)loc.getX(), (int)loc.getY());
 		
 		o = new Point(1, 2);
-		loc = VIEW.worldToPanel(o.add(new Point(-MODEL.world.VERTEX_RADIUS, -MODEL.world.VERTEX_RADIUS)));
+		loc = VIEW.worldToPanel(o);
 		
 		g2.drawString("time: " + MODEL.world.t, (int)loc.getX(), (int)loc.getY());
 		
 		
 		o = new Point(1, 3);
-		loc = VIEW.worldToPanel(o.add(new Point(-MODEL.world.VERTEX_RADIUS, -MODEL.world.VERTEX_RADIUS)));
+		loc = VIEW.worldToPanel(o);
 		
 		g2.drawString("body count: " + MODEL.world.b2dWorld.getBodyCount(), (int)loc.getX(), (int)loc.getY());
 		

@@ -33,9 +33,13 @@ public class Vertex implements Hilitable {
 	public CircleShape b2dShape;
 	public Fixture b2dFixture;
 	
+	double radius;
+	
 	public Vertex(Point p) {
 		
 		this.p = p;
+		
+		radius = Math.sqrt(2 * MODEL.world.ROAD_RADIUS * MODEL.world.ROAD_RADIUS);
 		
 		BodyDef bodyDef = new BodyDef();
 		bodyDef.position = new Vec2((float)p.getX(), (float)p.getY());
@@ -43,7 +47,7 @@ public class Vertex implements Hilitable {
 		b2dBody.setUserData(this);
         
         b2dShape = new CircleShape();
-        b2dShape.m_radius = (float)MODEL.world.VERTEX_RADIUS;
+        b2dShape.m_radius = (float)radius;
         
         FixtureDef fixtureDef = new FixtureDef();
 		fixtureDef.shape = b2dShape;
@@ -65,6 +69,74 @@ public class Vertex implements Hilitable {
 		return "V " + p;
 	}
 	
+	public double getRadius() {
+		return radius;
+	}
+	
+	
+	public void adjustRadius() {
+		
+//		while (all borders are not at least 0.1 + ROAD_RADIUS away from each other) {
+//			add 0.1 to radius
+//		}
+		
+		List<Point> borderPoints = new ArrayList<Point>();
+		
+		for (Edge e : eds) {
+			if (e.getStart() == this) {
+				borderPoints.add(e.startBorder(p, radius).getPoint());
+			}
+			if (e.getEnd() == this) {
+				borderPoints.add(e.endBorder(p, radius).getPoint());
+			}
+		}
+		
+		double minimumDist = Double.POSITIVE_INFINITY;
+		for (int i = 0; i < borderPoints.size()-1; i++) {
+			Point a = borderPoints.get(i);
+			for (int j = i+1; j < borderPoints.size(); j++) {
+				Point b = borderPoints.get(j);
+				double dist = Point.distance(a, b);
+				if (DMath.lessThan(dist, minimumDist)) {
+					minimumDist = dist;
+				}
+			}
+		}
+		
+		while (true) {
+			
+			if (DMath.greaterThan(minimumDist, 2 * MODEL.world.ROAD_RADIUS + 0.1)) {
+				break;
+			}
+			
+			radius = radius + 0.1;
+			
+			borderPoints.clear();
+			
+			for (Edge e : eds) {
+				if (e.getStart() == this) {
+					borderPoints.add(e.startBorder(p, radius).getPoint());
+				}
+				if (e.getEnd() == this) {
+					borderPoints.add(e.endBorder(p, radius).getPoint());
+				}
+			}
+			
+			minimumDist = Double.POSITIVE_INFINITY;
+			for (int i = 0; i < borderPoints.size()-1; i++) {
+				Point a = borderPoints.get(i);
+				for (int j = i+1; j < borderPoints.size(); j++) {
+					Point b = borderPoints.get(j);
+					double dist = Point.distance(a, b);
+					if (DMath.lessThan(dist, minimumDist)) {
+						minimumDist = dist;
+					}
+				}
+			}
+			
+		}
+		
+	}
 	
 	
 	public static List<Edge> commonEdges(Vertex a, Vertex b) {
@@ -142,22 +214,22 @@ public class Vertex implements Hilitable {
 		
 		g2.setColor(color);
 		
-		Point loc = VIEW.worldToPanel(getPoint().add(new Point(-MODEL.world.VERTEX_RADIUS, -MODEL.world.VERTEX_RADIUS)));
+		Point loc = VIEW.worldToPanel(getPoint().add(new Point(-radius, -radius)));
 		
-		g2.fillOval((int)loc.getX(), (int)loc.getY(), (int)(MODEL.world.VERTEX_RADIUS * 2 * MODEL.world.PIXELS_PER_METER), (int)(MODEL.world.VERTEX_RADIUS * 2 * MODEL.world.PIXELS_PER_METER));
+		g2.fillOval((int)loc.getX(), (int)loc.getY(), (int)(radius * 2 * MODEL.world.PIXELS_PER_METER), (int)(radius * 2 * MODEL.world.PIXELS_PER_METER));
 		
 		g2.setColor(Color.WHITE);
 		
-		g2.drawString(Integer.toString(id), (int)loc.getX(), (int)(loc.getY() + MODEL.world.VERTEX_RADIUS * MODEL.world.PIXELS_PER_METER));
+		g2.drawString(Integer.toString(id), (int)loc.getX(), (int)(loc.getY() + radius * MODEL.world.PIXELS_PER_METER));
 	}
 	
 	public void paintHilite(Graphics2D g2) {
 		
 		g2.setColor(hiliteColor);
 		
-		Point loc = VIEW.worldToPanel(getPoint().add(new Point(-MODEL.world.VERTEX_RADIUS, -MODEL.world.VERTEX_RADIUS)));
+		Point loc = VIEW.worldToPanel(getPoint().add(new Point(-radius, -radius)));
 		
-		g2.fillOval((int)loc.getX(), (int)loc.getY(), (int)(MODEL.world.VERTEX_RADIUS * 2 * MODEL.world.PIXELS_PER_METER), (int)(MODEL.world.VERTEX_RADIUS * 2 * MODEL.world.PIXELS_PER_METER));
+		g2.fillOval((int)loc.getX(), (int)loc.getY(), (int)(radius * 2 * MODEL.world.PIXELS_PER_METER), (int)(radius * 2 * MODEL.world.PIXELS_PER_METER));
 		
 	}
 	

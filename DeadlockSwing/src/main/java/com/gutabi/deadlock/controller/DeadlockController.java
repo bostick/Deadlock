@@ -249,6 +249,8 @@ public class DeadlockController implements ActionListener {
 					throw new AssertionError();
 				}
 				
+				MODEL.hilited = null;
+				
 				VIEW.renderBackground();
 				VIEW.repaint();
 			}

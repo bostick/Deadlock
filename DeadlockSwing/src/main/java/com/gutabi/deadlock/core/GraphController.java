@@ -23,12 +23,18 @@ public class GraphController {
 	 * after all top methods, run this to do work
 	 * that is too expensive to run during editing
 	 */
-	private void postTop() {
+	public void postTop() {
+		
+		for (Vertex v : graph.getAllVertices()) {
+			v.adjustRadius();
+		}
+		
 		for (Edge e : graph.edges) {
-			if (e.area == null) {
-				e.computeArea();
+			if (!e.adjusted) {
+				e.adjust();
 			}
 		}
+		
 	}
 	
 	public void removeEdgeTop(Edge e) {
@@ -58,7 +64,7 @@ public class GraphController {
 			graph.destroyEdge(e);
 		}
 		
-		postTop();
+		//postTop();
 	}
 	
 	public void removeVertexTop(Vertex v) {
@@ -100,7 +106,7 @@ public class GraphController {
 			graph.postEdgeChange(a);
 		}
 		
-		postTop();
+		//postTop();
 	}
 	
 	public void processNewStrokeTop(List<Point> stroke) {
@@ -120,9 +126,9 @@ public class GraphController {
 			if (!tooClose) {
 				
 				GraphPosition aP;
-				aP = graph.findClosestVertexPosition(preA, null, MODEL.world.VERTEX_RADIUS + MODEL.world.MOUSE_RADIUS/MODEL.world.PIXELS_PER_METER);
+				aP = graph.findClosestVertexPosition(preA, null, MODEL.world.MOUSE_RADIUS/MODEL.world.PIXELS_PER_METER);
 				if (aP == null) {
-					aP = graph.findClosestEdgePosition(preA, null, MODEL.world.ROAD_RADIUS + MODEL.world.MOUSE_RADIUS/MODEL.world.PIXELS_PER_METER);
+					aP = graph.findClosestEdgePosition(preA, null, MODEL.world.MOUSE_RADIUS/MODEL.world.PIXELS_PER_METER);
 				}
 				
 				if (aP != null) {
@@ -153,9 +159,9 @@ public class GraphController {
 			if (!tooClose) {
 				
 				GraphPosition bP;
-				bP = graph.findClosestVertexPosition(preB, a, MODEL.world.VERTEX_RADIUS + MODEL.world.MOUSE_RADIUS/MODEL.world.PIXELS_PER_METER);
+				bP = graph.findClosestVertexPosition(preB, a, MODEL.world.MOUSE_RADIUS/MODEL.world.PIXELS_PER_METER);
 				if (bP == null) {
-					bP = graph.findClosestEdgePosition(preB, a, MODEL.world.ROAD_RADIUS + MODEL.world.MOUSE_RADIUS/MODEL.world.PIXELS_PER_METER);
+					bP = graph.findClosestEdgePosition(preB, a, MODEL.world.MOUSE_RADIUS/MODEL.world.PIXELS_PER_METER);
 				}
 				
 				if (bP != null) {
@@ -171,9 +177,9 @@ public class GraphController {
 			} else {
 				
 				GraphPosition bP;
-				bP = graph.findClosestVertexPosition(preB, a, MODEL.world.VERTEX_RADIUS + MODEL.world.MOUSE_RADIUS/MODEL.world.PIXELS_PER_METER);
+				bP = graph.findClosestVertexPosition(preB, a, MODEL.world.MOUSE_RADIUS/MODEL.world.PIXELS_PER_METER);
 				if (bP == null) {
-					bP = graph.findClosestEdgePosition(preB, a, MODEL.world.ROAD_RADIUS + MODEL.world.MOUSE_RADIUS/MODEL.world.PIXELS_PER_METER);
+					bP = graph.findClosestEdgePosition(preB, a, MODEL.world.MOUSE_RADIUS/MODEL.world.PIXELS_PER_METER);
 				}
 				
 				if (bP != null) {
@@ -217,8 +223,6 @@ public class GraphController {
 		}
 		
 		cleanupEdges();
-		
-		postTop();
 	}
 	
 	private void processNewSegment(Point a, Point b) {

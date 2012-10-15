@@ -25,7 +25,7 @@ public class World {
 	
 	public final double CAR_LENGTH = 1.0;
 	public final double ROAD_RADIUS = CAR_LENGTH / 2;
-	public final double VERTEX_RADIUS = Math.sqrt(2 * ROAD_RADIUS * ROAD_RADIUS);
+//	public final double VERTEX_RADIUS = Math.sqrt(2 * ROAD_RADIUS * ROAD_RADIUS);
 	
 	/*
 	 * distance that center of a car has to be from center of a sink in order to be sinked
@@ -37,7 +37,7 @@ public class World {
 	
 	public final int PIXELS_PER_METER = 32;
 	
-	public final double MOUSE_RADIUS = VERTEX_RADIUS * PIXELS_PER_METER;
+	public final double MOUSE_RADIUS = Math.sqrt(2 * ROAD_RADIUS * ROAD_RADIUS) * PIXELS_PER_METER;
 	
 	/*
 	 * spawn cars every SPAWN_FREQUENCY milliseconds
@@ -124,10 +124,6 @@ public class World {
 	public void preStart() {
 		
 		graph.preStart();
-		
-		for (Source s : graph.getSources()) {
-			s.preStart();
-		}
 		
 		t = 0;
 		lastSpawnTime = -1;
@@ -293,15 +289,18 @@ public class World {
 	}
 	
 	public void processNewWorldStroke(List<Point> stroke) {
-		gc.processNewStrokeTop(stroke);	
+		gc.processNewStrokeTop(stroke);
+		gc.postTop();
 	}
 	
 	public void removeEdge(Edge e) {
 		gc.removeEdgeTop(e);
+		gc.postTop();
 	}
 	
 	public void removeVertex(Vertex i) {
 		gc.removeVertexTop(i);
+		gc.postTop();
 	}
 	
 	

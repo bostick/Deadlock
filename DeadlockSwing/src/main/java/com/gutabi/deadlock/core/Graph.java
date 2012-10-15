@@ -23,27 +23,11 @@ public class Graph {
 		
 	}
 	
-	public List<Intersection> getIntersections() {
-		return intersections;
-	}
-	
-	public QuadTree getSegmentTree() {
-		return segTree;
-	}
-	
-	public List<Source> getSources() {
-		return sources;
-	}
-	
-	public List<Sink> getSinks() {
-		return sinks;
-	}
-	
 	public List<Edge> getEdges() {
 		return edges;
 	}
 	
-	private List<Vertex> getAllVertices() {
+	public List<Vertex> getAllVertices() {
 		List<Vertex> all = new ArrayList<Vertex>();
 		all.addAll(sources);
 		all.addAll(sinks);
@@ -290,6 +274,10 @@ public class Graph {
 			}
 		}
 		
+		
+		for (Source s : sources) {
+			s.preStart();
+		}
 	}
 	
 	public List<Vertex> shortestPath(final Vertex start, Vertex end) {
@@ -397,7 +385,7 @@ public class Graph {
 	 */
 	public Hilitable hitTest(Point p) {
 		for (Vertex v : getAllVertices()) {
-			if (DMath.lessThanEquals(Point.distance(p, v.getPoint()), MODEL.world.VERTEX_RADIUS)) {
+			if (DMath.lessThanEquals(Point.distance(p, v.getPoint()), v.getRadius())) {
 				return v;
 			}
 		}
@@ -435,13 +423,13 @@ public class Graph {
 		
 		Vertex closest = null;
 		
-		for (Vertex i : getAllVertices()) {
-			Point ip = i.getPoint();
-			double dist = Point.distance(a, ip);
-			if (DMath.lessThanEquals(dist, radius)) {
-				if (anchorV == null || dist < Point.distance(ip, exclude)) {
-					if (closest == null || (Point.distance(a, ip) < Point.distance(a, closest.getPoint()))) {
-						closest = i;
+		for (Vertex v : getAllVertices()) {
+			Point vp = v.getPoint();
+			double dist = Point.distance(a, vp);
+			if (DMath.lessThanEquals(dist, radius + v.getRadius())) {
+				if (anchorV == null || dist < Point.distance(vp, exclude)) {
+					if (closest == null || (Point.distance(a, vp) < Point.distance(a, closest.getPoint()))) {
+						closest = v;
 					}
 				}
 			}	
@@ -450,9 +438,6 @@ public class Graph {
 		if (closest != null) {
 			return new VertexPosition(closest);
 		} else {
-			if (radius == Double.POSITIVE_INFINITY) {
-				String.class.getName();
-			}
 			return null;
 		}
 	}

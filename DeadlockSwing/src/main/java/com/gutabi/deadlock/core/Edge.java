@@ -17,11 +17,14 @@ public final class Edge implements Hilitable {
 		
 	private final List<Point> skeleton;
 	
-	public Area area;
-	
 	private final double[] cumulativeDistancesFromStart;
 	private final Vertex start;
 	private final Vertex end;
+	
+	boolean adjusted;
+	EdgePosition startBorder;
+	EdgePosition endBorder;
+	Area area;
 	
 	private final double totalLength;
 	
@@ -29,6 +32,9 @@ public final class Edge implements Hilitable {
 	private final boolean loop;
 	
 	private boolean removed = false;
+	
+	Color color;
+	Color hiliteColor;
 	
 	private final int hash;
 	
@@ -60,6 +66,9 @@ public final class Edge implements Hilitable {
 		}
 		
 		totalLength = l;
+		
+		color = new Color(0x88, 0x88, 0x88, 0xff);
+		hiliteColor = Color.RED;
 		
 		int h = 17;
 		if (start != null) {
@@ -146,45 +155,192 @@ public final class Edge implements Hilitable {
 		return removed;
 	}
 	
-	public void computeArea() {
+	public void adjust() {
+		
+		assert !adjusted;
+		
+		assert !standalone;
+		
+		startBorder = startBorder(start.getPoint(), start.getRadius());
+		
+		endBorder = endBorder(end.getPoint(), end.getRadius());
+		
+		computeArea();
+		
+		adjusted = true;
+	}
+	
+	public EdgePosition startBorder(Point center, double radius) {
+		
+		EdgePosition border = null;
+		
+		assert center.equals(skeleton.get(0));
+		
+		for (int i = 0; i < skeleton.size()-1; i++) {
+			Point a = skeleton.get(i);
+			Point b = skeleton.get(i+1);
+			if (DMath.equals(Point.distance(b, center), radius)) {
+				border = new EdgePosition(this, i+1, 0.0);
+				break;
+			} else if (DMath.greaterThan(Point.distance(b, center), radius)) {
+				assert DMath.lessThan(Point.distance(a, center), radius);
+				int n;
+				Point[] ints = new Point[2];
+				n = Point.circleLineIntersections(center, radius, a, b, ints);
+				if (n == 1) {
+					Point p = ints[0];
+					double u = Point.u(a, p, b);
+					assert DMath.greaterThanEquals(u, 0.0) && DMath.lessThanEquals(u, 1.0);
+					border = new EdgePosition(this, i, u);
+					break;
+				} else {
+					assert n == 2;
+					Point p = ints[0];
+					double u = Point.u(a, p, b);
+					if (DMath.greaterThanEquals(u, 0.0) && DMath.lessThanEquals(u, 1.0)) {
+						border = new EdgePosition(this, i, u);
+						break;
+					} else {
+						p = ints[1];
+						u = Point.u(a, p, b);
+						assert DMath.greaterThanEquals(u, 0.0) && DMath.lessThanEquals(u, 1.0);
+						border = new EdgePosition(this, i, u);
+						break;
+					}
+				}
+				
+			}
+		}
+		
+		assert border != null;
+		return border;
+	}
+	
+	public EdgePosition endBorder(Point center, double radius) {
+		
+		EdgePosition border = null;
+		
+		assert center.equals(skeleton.get(skeleton.size()-1));
+		
+		for (int i = skeleton.size()-2; i >= 0; i--) {
+			Point a = skeleton.get(i);
+			Point b = skeleton.get(i+1);
+			if (DMath.equals(Point.distance(a, center), radius)) {
+				border = new EdgePosition(this, i, 0.0);
+				break;
+			} else if (DMath.greaterThan(Point.distance(a, center), radius)) {
+				assert DMath.lessThan(Point.distance(b, center), radius);
+				int n;
+				Point[] ints = new Point[2];
+				n = Point.circleLineIntersections(center, radius, a, b, ints);
+				if (n == 1) {
+					Point p = ints[0];
+					double u = Point.u(a, p, b);
+					assert DMath.greaterThanEquals(u, 0.0) && DMath.lessThanEquals(u, 1.0);
+					border = new EdgePosition(this, i, u);
+					break;
+				} else {
+					assert n == 2;
+					Point p = ints[0];
+					double u = Point.u(a, p, b);
+					if (DMath.greaterThanEquals(u, 0.0) && DMath.lessThanEquals(u, 1.0)) {
+						border = new EdgePosition(this, i, u);
+						break;
+					} else {
+						p = ints[1];
+						u = Point.u(a, p, b);
+						assert DMath.greaterThanEquals(u, 0.0) && DMath.lessThanEquals(u, 1.0);
+						border = new EdgePosition(this, i, u);
+						break;
+					}
+				}
+				
+			}
+		}
+		
+		assert border != null;
+		return border;
+	}
+	
+	private void computeArea() {
 		
 		assert area == null;
 		
 		area = new Area();
-		for (int i = 0; i < skeleton.size()-1; i++) {
-			Point a = skeleton.get(i);
-			Point b = skeleton.get(i+1);
-
-			Point diff = new Point(b.x - a.x, b.y - a.y);
-			Point up = Point.ccw90(diff).multiply(MODEL.world.ROAD_RADIUS / diff.length);
-			Point down = Point.cw90(diff).multiply(MODEL.world.ROAD_RADIUS / diff.length);
+		
+		if (startBorder.getIndex() == endBorder.getIndex()) {
 			
-			Point p0 = a.add(up);
-			Point p1 = a.add(down);
-			Point p2 = b.add(up);
-			Point p3 = b.add(down);
-			Path2D path = new Path2D.Double();
-			path.moveTo(p0.x, p0.y);
-			path.lineTo(p1.x, p1.y);
-			path.lineTo(p3.x, p3.y);
-			path.lineTo(p2.x, p2.y);
-			path.lineTo(p0.x, p0.y);
+			EdgePosition a = startBorder;
+			EdgePosition b = endBorder;
+			addToArea(a, b);
 			
-			Area disk1 = new Area(new Ellipse2D.Double(a.getX()-MODEL.world.ROAD_RADIUS, a.getY()-MODEL.world.ROAD_RADIUS, 2 * MODEL.world.ROAD_RADIUS, 2 * MODEL.world.ROAD_RADIUS));
-			Area rect = new Area(path);
-			Area disk2 = new Area(new Ellipse2D.Double(b.getX()-MODEL.world.ROAD_RADIUS, b.getY()-MODEL.world.ROAD_RADIUS, 2 * MODEL.world.ROAD_RADIUS, 2 * MODEL.world.ROAD_RADIUS));
+		} else {
 			
-			Area capsule = new Area();
-			capsule.add(disk1);
-			capsule.add(rect);
-			capsule.add(disk2);
+			EdgePosition endBorderBound;
+			if (endBorder.isBound()) {
+				endBorderBound = endBorder;
+			} else {
+				endBorderBound = new EdgePosition(this, endBorder.getIndex(), 0.0);
+			}
 			
-			area.add(capsule);
+			EdgePosition a = startBorder;
+			EdgePosition b = (EdgePosition)a.nextBoundForward();
+			
+			while (true) {
+				
+				addToArea(a, b);
+				
+				if (b.equals(endBorderBound)) {
+					break;
+				}
+				
+				a = b;
+				b = (EdgePosition)b.nextBoundForward();
+			}
+			if (!endBorder.isBound()) {
+				assert b.equals(endBorderBound);
+				a = b;
+				b = endBorder;
+				
+				addToArea(a, b);
+			}
+			
 		}
+		
+		assert area.isSingular();
 		
 	}
 	
-	
+	private void addToArea(EdgePosition a, EdgePosition b) {
+		Point aa = a.getPoint();
+		Point bb = b.getPoint();
+
+		Point diff = new Point(bb.x - aa.x, bb.y - aa.y);
+		Point up = Point.ccw90(diff).multiply(MODEL.world.ROAD_RADIUS / diff.length);
+		Point down = Point.cw90(diff).multiply(MODEL.world.ROAD_RADIUS / diff.length);
+		
+		Point p0 = aa.add(up);
+		Point p1 = aa.add(down);
+		Point p2 = bb.add(up);
+		Point p3 = bb.add(down);
+		Path2D path = new Path2D.Double();
+		path.moveTo(p0.x, p0.y);
+		path.lineTo(p1.x, p1.y);
+		path.lineTo(p3.x, p3.y);
+		path.lineTo(p2.x, p2.y);
+		path.lineTo(p0.x, p0.y);
+		
+		Area disk1 = new Area(new Ellipse2D.Double(aa.getX()-MODEL.world.ROAD_RADIUS, aa.getY()-MODEL.world.ROAD_RADIUS, 2 * MODEL.world.ROAD_RADIUS, 2 * MODEL.world.ROAD_RADIUS));
+		Area rect = new Area(path);
+		Area disk2 = new Area(new Ellipse2D.Double(bb.getX()-MODEL.world.ROAD_RADIUS, bb.getY()-MODEL.world.ROAD_RADIUS, 2 * MODEL.world.ROAD_RADIUS, 2 * MODEL.world.ROAD_RADIUS));
+		
+		Area capsule = new Area();
+		capsule.add(disk1);
+		capsule.add(rect);
+		capsule.add(disk2);
+		
+		area.add(capsule);
+	}
 	
 	
 	
@@ -261,71 +417,21 @@ public final class Edge implements Hilitable {
 	}
 	
 	public void paintHilite(Graphics2D g2) {
-		int size = size();
-		int[] xPoints = new int[size];
-		int[] yPoints = new int[size];
-		for (int i = 0; i < size; i++) {
-			Point p = VIEW.worldToPanel(getPoint(i));
-			xPoints[i] = (int)p.getX();
-			yPoints[i] = (int)p.getY();
-		}
-		g2.setColor(Color.RED);
-		g2.setStroke(new Road1Stroke());
-		g2.drawPolyline(xPoints, yPoints, size);
+		AffineTransform origTransform = g2.getTransform();
+		AffineTransform trans = (AffineTransform)VIEW.worldToPanelTransform.clone();
+		g2.setTransform(trans);
+		g2.setColor(hiliteColor);
+		g2.fill(area);
+		g2.setTransform(origTransform);
 	}
 	
-	public void paintEdge1(Graphics2D g2) {
-//		int size = size();
-//		int[] xPoints = new int[size];
-//		int[] yPoints = new int[size];
-//		
-//		g2.setColor(new Color(0x88, 0x88, 0x88, 0xff));
-//		g2.setStroke(new Road1Stroke());
-//		
-//		for (int i = 0; i < size; i++) {
-//			Point p = VIEW.worldToPanel(getPoint(i));
-//			xPoints[i] = (int)p.getX();
-//			yPoints[i] = (int)p.getY();
-//		}
-//		
-//		g2.drawPolyline(xPoints, yPoints, size);
-		
-		
-		
-//		int size = polygonTop.size() + polygonBottom.size();
-//		int[] xPoints = new int[size];
-//		int[] yPoints = new int[size];
-//		
-//		g2.setColor(Color.WHITE);
-//		g2.setStroke(new PolyStroke());
-//		
-//		int index = 0;
-//		for (int i = 0; i < polygonTop.size(); i++) {
-//			Point p = VIEW.worldToPanel(polygonTop.get(i));
-//			xPoints[index] = (int)p.getX();
-//			yPoints[index] = (int)p.getY();
-//			index++;
-//		}
-//		for (int i = polygonBottom.size()-1; i >= 0; i--) {
-//			Point p = VIEW.worldToPanel(polygonBottom.get(i));
-//			xPoints[index] = (int)p.getX();
-//			yPoints[index] = (int)p.getY();
-//			index++;
-//		}
-//		
-//		g2.drawPolygon(xPoints, yPoints, size);
-		
+	public void paint(Graphics2D g2) {
 		AffineTransform origTransform = g2.getTransform();
-		
 		AffineTransform trans = (AffineTransform)VIEW.worldToPanelTransform.clone();
-		
 		g2.setTransform(trans);
-		
-		g2.setColor(Color.WHITE);
+		g2.setColor(color);
 		g2.fill(area);
-		
 		g2.setTransform(origTransform);
-		
 	}
 	
 //	public void paintEdge2(Graphics2D g2) {
