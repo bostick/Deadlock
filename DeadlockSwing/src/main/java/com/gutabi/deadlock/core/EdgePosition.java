@@ -80,7 +80,7 @@ public class EdgePosition extends GraphPosition {
 		return e;
 	}
 	
-	public Hilitable getHilitable() {
+	public Entity getHilitable() {
 		return e;
 	}
 	

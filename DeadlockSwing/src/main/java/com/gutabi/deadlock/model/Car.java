@@ -3,22 +3,18 @@ package com.gutabi.deadlock.model;
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
 import org.apache.log4j.Logger;
 import org.jbox2d.collision.shapes.PolygonShape;
-import org.jbox2d.collision.shapes.Shape;
 import org.jbox2d.common.Vec2;
-import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.BodyType;
-import org.jbox2d.dynamics.Fixture;
 import org.jbox2d.dynamics.FixtureDef;
 
-import com.gutabi.deadlock.core.Hilitable;
+import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.Source;
 import com.gutabi.deadlock.core.path.GraphPositionPath;
@@ -26,7 +22,7 @@ import com.gutabi.deadlock.core.path.GraphPositionPathPosition;
 import com.gutabi.deadlock.core.path.STGraphPositionPathPositionPath;
 import com.gutabi.deadlock.core.path.STPointPath;
 
-public abstract class Car implements Hilitable {
+public abstract class Car extends Entity {
 	
 	public CarStateEnum state;
 	
@@ -40,11 +36,10 @@ public abstract class Car implements Hilitable {
 	
 	public static int carCounter;
 	
-	Body b2dBody;
-	Shape b2dShape;
-	Fixture b2dFixture;
+	Point startPos;
+	double startHeading;
 	
-	public Color color = Color.BLUE;
+	private int b2dEdgeCount = 0;
 	
 	static Logger logger = Logger.getLogger(Car.class);
 	
@@ -58,7 +53,7 @@ public abstract class Car implements Hilitable {
 		source = s;
 		
 		overallPath = s.getPathToMatchingSink();
-		Point startPos = overallPath.getGraphPosition(0).getPoint();
+		startPos = overallPath.getGraphPosition(0).getPoint();
 		GraphPositionPathPosition overallPos = overallPath.findClosestGraphPositionPathPosition(startPos);
 		
 		STGraphPositionPathPositionPath nextPlannedPath = STGraphPositionPathPositionPath.advanceOneTimeStep(overallPos, (getSpeed() * 1000) * (((float)MODEL.world.dt) / ((float)1000)));
@@ -70,8 +65,23 @@ public abstract class Car implements Hilitable {
 		
 //		logger.debug("nextDTGoalPoint: " + nextDTGoalPoint);
 		
-		double startHeading = Math.atan2(nextDTGoalPoint.getY()-startPos.getY(), nextDTGoalPoint.getX()-startPos.getX());
+		startHeading = Math.atan2(nextDTGoalPoint.getY()-startPos.getY(), nextDTGoalPoint.getX()-startPos.getX());
 		
+		b2dInit();
+		
+	}
+	
+	/**
+	 * meters per millisecond
+	 * @return
+	 */
+	public abstract double getSpeed();
+	
+	public CarStateEnum getState() {
+		return state;
+	}
+	
+	public void b2dInit() {
 		BodyDef bodyDef = new BodyDef();
 		bodyDef.type = BodyType.DYNAMIC;
 		bodyDef.position.set((float)startPos.getX(), (float)startPos.getY());
@@ -88,17 +98,27 @@ public abstract class Car implements Hilitable {
 		fixtureDef.density = 1.0f;
 		fixtureDef.friction = 1f;
 		b2dFixture = b2dBody.createFixture(fixtureDef);
-		
 	}
 	
-	/**
-	 * meters per millisecond
-	 * @return
-	 */
-	public abstract double getSpeed();
+	public void b2dCleanup() {
+		b2dBody.destroyFixture(b2dFixture);
+		MODEL.world.b2dWorld.destroyBody(b2dBody);
+	}
 	
-	public CarStateEnum getState() {
-		return state;
+	public boolean hitTest(Point p) {
+		return b2dShape.testPoint(b2dBody.getTransform(), new Vec2((float)p.getX(), (float)p.getY()));
+	}
+	
+	public void incrementB2DEdgeCount() {
+		b2dEdgeCount++;
+	}
+	
+	public void decrementB2DEdgeCount() {
+		b2dEdgeCount--;
+	}
+	
+	public int getB2DEdgeCount() {
+		return b2dEdgeCount;
 	}
 	
 	public void crash() {
@@ -329,11 +349,6 @@ public abstract class Car implements Hilitable {
 		
 		return true;
 		
-	}
-	
-	public void b2dCleanUp() {
-		b2dBody.destroyFixture(b2dFixture);
-		MODEL.world.b2dWorld.destroyBody(b2dBody);
 	}
 	
 	public int getId() {

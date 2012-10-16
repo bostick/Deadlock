@@ -17,7 +17,7 @@ import org.apache.log4j.Logger;
 
 import com.gutabi.deadlock.DeadlockMain;
 import com.gutabi.deadlock.core.Edge;
-import com.gutabi.deadlock.core.Hilitable;
+import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.Sink;
 import com.gutabi.deadlock.core.Source;
@@ -201,7 +201,7 @@ public class DeadlockController implements ActionListener {
 				case PAUSED:
 				case IDLE: {
 					
-					Hilitable closest = MODEL.world.hitTest(VIEW.panelToWorld(p));
+					Entity closest = MODEL.world.hitTest(VIEW.panelToWorld(p));
 					MODEL.hilited = closest;
 					
 					VIEW.repaint();
@@ -242,8 +242,7 @@ public class DeadlockController implements ActionListener {
 				} else if (MODEL.hilited instanceof Car) {
 					Car c = (Car)MODEL.hilited;
 					
-					c.b2dCleanUp();
-					MODEL.world.cars.remove(c);
+					MODEL.world.removeCar(c);
 					
 				} else {
 					throw new AssertionError();

@@ -12,14 +12,13 @@ import org.jbox2d.common.Vec2;
 
 import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Edge;
+import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Graph;
 import com.gutabi.deadlock.core.GraphController;
-import com.gutabi.deadlock.core.Hilitable;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.Sink;
 import com.gutabi.deadlock.core.Source;
 import com.gutabi.deadlock.core.Vertex;
-import com.gutabi.deadlock.model.b2d.CarContactListener;
 
 public class World {
 	
@@ -79,7 +78,7 @@ public class World {
 		graph = new Graph();
 		gc = new GraphController(graph);
 		
-		b2dWorld = new org.jbox2d.dynamics.World(new Vec2(0.0f, 0.0f), true);
+		b2dWorld = new org.jbox2d.dynamics.World(new Vec2(0.0f, 0.0f));
 		listener = new CarContactListener();
 		b2dWorld.setContactListener(listener);
 		
@@ -136,7 +135,7 @@ public class World {
 	public void postStop() {
 		
 		for (Car c : cars) {
-			c.b2dCleanUp();
+			c.b2dCleanup();
 		}
 		cars.clear();
 		
@@ -175,7 +174,7 @@ public class World {
 					if (MODEL.hilited == c) {
 						MODEL.hilited = null;
 					}
-					c.b2dCleanUp();
+					c.b2dCleanup();
 					toBeRemoved.add(c);
 				}
 			}
@@ -303,15 +302,19 @@ public class World {
 		gc.postTop();
 	}
 	
+	public void removeCar(Car c) {
+		c.b2dCleanup();
+		cars.remove(c);
+	}
 	
 	
 	
-	public Hilitable hitTest(Point p) {
+	public Entity hitTest(Point p) {
 		Car c = carHitTest(p);
 		if (c != null) {
 			return c;
 		}
-		Hilitable h = graph.hitTest(p);
+		Entity h = graph.hitTest(p);
 		if (h != null) {
 			return h;
 		}
@@ -320,7 +323,7 @@ public class World {
 	
 	private Car carHitTest(Point p) {
 		for (Car c : cars) {
-			if (c.b2dShape.testPoint(c.b2dBody.getTransform(), new Vec2((float)p.getX(), (float)p.getY()))) {
+			if (c.hitTest(p)) {
 				return c;
 			}
 		}

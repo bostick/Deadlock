@@ -12,7 +12,7 @@ public abstract class Position {
 		return p;
 	}
 	
-	public abstract Hilitable getHilitable();
+//	public abstract Hilitable getHilitable();
 	
 	/**
 	 * A position is a bound if it is not interpolated, i.e., it is on a well-defined point on the graph

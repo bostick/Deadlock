@@ -5,7 +5,6 @@ import org.apache.log4j.Logger;
 import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.EdgePosition;
 import com.gutabi.deadlock.core.GraphPosition;
-import com.gutabi.deadlock.core.Hilitable;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.Position;
 import com.gutabi.deadlock.core.VertexPosition;
@@ -84,9 +83,9 @@ public class GraphPositionPathPosition extends Position {
 		return gpos;
 	}
 	
-	public Hilitable getHilitable() {
-		return gpos.getHilitable();
-	}
+//	public Hilitable getHilitable() {
+//		return gpos.getHilitable();
+//	}
 	
 	public double distanceTo(GraphPositionPathPosition p) {
 		

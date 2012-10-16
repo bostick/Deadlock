@@ -22,7 +22,7 @@ import org.apache.log4j.Logger;
 
 import com.gutabi.deadlock.controller.ControlMode;
 import com.gutabi.deadlock.core.Edge;
-import com.gutabi.deadlock.core.Hilitable;
+import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Intersection;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.Sink;
@@ -172,7 +172,7 @@ public class DeadlockView {
 		paintFPS(g2);
 		
 		ControlMode modeCopy;
-		Hilitable hilitedCopy;
+		Entity hilitedCopy;
 		
 		List<Car> carsCopy;
 		

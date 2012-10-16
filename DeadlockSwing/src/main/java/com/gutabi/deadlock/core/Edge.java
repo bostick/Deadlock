@@ -10,10 +10,22 @@ import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
+import java.awt.geom.GeneralPath;
 import java.awt.geom.Path2D;
+import java.awt.geom.PathIterator;
+import java.awt.geom.Point2D;
+import java.util.ArrayList;
 import java.util.List;
 
-public final class Edge implements Hilitable {
+import org.apache.log4j.Logger;
+import org.jbox2d.collision.shapes.ChainShape;
+import org.jbox2d.common.Vec2;
+import org.jbox2d.dynamics.BodyDef;
+import org.jbox2d.dynamics.FixtureDef;
+
+import com.bric.geom.AreaX;
+
+public final class Edge extends Entity {
 		
 	private final List<Point> skeleton;
 	
@@ -24,7 +36,9 @@ public final class Edge implements Hilitable {
 	boolean adjusted;
 	EdgePosition startBorder;
 	EdgePosition endBorder;
-	Area area;
+	//AreaX area;
+	List<Point> poly;
+	Path2D path;
 	
 	private final double totalLength;
 	
@@ -33,12 +47,11 @@ public final class Edge implements Hilitable {
 	
 	private boolean removed = false;
 	
-	Color color;
-	Color hiliteColor;
-	
 	private final int hash;
 	
-	int id;
+	public int id;
+	
+	static Logger logger = Logger.getLogger(Edge.class);
 	
 	public Edge(Vertex start, Vertex end, List<Point> pts) {
 		this.start = start;
@@ -106,26 +119,54 @@ public final class Edge implements Hilitable {
 	}
 	
 	public Vertex getStart() {
-		if (removed) {
-			throw new IllegalStateException("edge has been removed");
-		}
 		return start;
 	}
 	
 	public Vertex getEnd() {
-		if (removed) {
-			throw new IllegalStateException();
-		}
 		return end;
 	}
 	
 	public Point getPoint(int i) {
-		if (i >= 0) {
-			return skeleton.get(i);
-		} else {
-			return skeleton.get(i + skeleton.size());
+		assert i >= 0;
+		return skeleton.get(i);
+	}
+	
+	
+	public boolean hitTest(Point p) {
+		return path.contains(new Point2D.Double(p.getX(), p.getY()));
+	}
+	
+	public void b2dInit() {
+		BodyDef bodyDef = new BodyDef();
+//		bodyDef.position = new Vec2((float)p.getX(), (float)p.getY());
+		b2dBody = MODEL.world.b2dWorld.createBody(bodyDef);
+		b2dBody.setUserData(this);
+		
+		b2dShape = new ChainShape();
+		Vec2[] vts = new Vec2[poly.size()];
+		for (int i = 0; i < poly.size(); i++) {
+			Point p = poly.get(i);
+			vts[i] = new Vec2((float)p.getX(), (float)p.getY());
+		}
+		((ChainShape)b2dShape).createLoop(vts, vts.length);
+		
+		FixtureDef fixtureDef = new FixtureDef();
+		fixtureDef.shape = b2dShape;
+		fixtureDef.isSensor = true;
+		
+		b2dFixture = b2dBody.createFixture(fixtureDef);
+		
+		b2dInited = true;
+	}
+	
+	public void b2dCleanup() {
+		if (b2dInited) {
+			b2dBody.destroyFixture(b2dFixture);
+			MODEL.world.b2dWorld.destroyBody(b2dBody);
 		}
 	}
+	
+	
 	
 	/**
 	 * segment index i
@@ -145,9 +186,10 @@ public final class Edge implements Hilitable {
 	}
 	
 	public void remove() {
-		if (removed) {
-			throw new IllegalStateException();
-		}
+		assert !removed;
+		
+		b2dCleanup();
+		
 		removed = true;
 	}
 	
@@ -264,15 +306,15 @@ public final class Edge implements Hilitable {
 	
 	private void computeArea() {
 		
-		assert area == null;
+//		assert area == null;
 		
-		area = new Area();
+		AreaX area = new AreaX();
 		
 		if (startBorder.getIndex() == endBorder.getIndex()) {
 			
 			EdgePosition a = startBorder;
 			EdgePosition b = endBorder;
-			addToArea(a, b);
+			addToArea(area, a, b);
 			
 		} else {
 			
@@ -288,7 +330,7 @@ public final class Edge implements Hilitable {
 			
 			while (true) {
 				
-				addToArea(a, b);
+				addToArea(area, a, b);
 				
 				if (b.equals(endBorderBound)) {
 					break;
@@ -302,16 +344,57 @@ public final class Edge implements Hilitable {
 				a = b;
 				b = endBorder;
 				
-				addToArea(a, b);
+				addToArea(area, a, b);
 			}
 			
 		}
 		
 		assert area.isSingular();
 		
+		PathIterator pi = area.getPathIterator(null, 0.1);
+		float[] coords = new float[6];
+		Point lastPoint;
+		poly = null;
+		while (!pi.isDone()) {
+			int res = pi.currentSegment(coords);
+			switch (res) {
+			case PathIterator.SEG_MOVETO:
+//				logger.debug("moveto");
+				assert poly == null;
+				poly = new ArrayList<Point>();
+				lastPoint = new Point(coords[0], coords[1]);
+				poly.add(lastPoint);
+				break;
+			case PathIterator.SEG_LINETO:
+//				logger.debug("lineto");
+				lastPoint = new Point(coords[0], coords[1]);
+				poly.add(lastPoint);
+				break;
+			case PathIterator.SEG_CLOSE:
+//				logger.debug("close");
+				break;
+			default:
+				assert false;
+				break;
+			}
+			pi.next();
+		}
+		
+		path = new GeneralPath();
+		for (int i = 0; i < poly.size(); i++) {
+			Point p = poly.get(i);
+			if (i == 0) {
+				path.moveTo(p.getX(), p.getY());
+			} else {
+				path.lineTo(p.getX(), p.getY());
+			}
+		}
+		path.closePath();
+		
+		b2dInit();
 	}
 	
-	private void addToArea(EdgePosition a, EdgePosition b) {
+	private void addToArea(AreaX area, EdgePosition a, EdgePosition b) {
 		Point aa = a.getPoint();
 		Point bb = b.getPoint();
 
@@ -421,7 +504,7 @@ public final class Edge implements Hilitable {
 		AffineTransform trans = (AffineTransform)VIEW.worldToPanelTransform.clone();
 		g2.setTransform(trans);
 		g2.setColor(hiliteColor);
-		g2.fill(area);
+		g2.fill(path);
 		g2.setTransform(origTransform);
 	}
 	
@@ -430,7 +513,7 @@ public final class Edge implements Hilitable {
 		AffineTransform trans = (AffineTransform)VIEW.worldToPanelTransform.clone();
 		g2.setTransform(trans);
 		g2.setColor(color);
-		g2.fill(area);
+		g2.fill(path);
 		g2.setTransform(origTransform);
 	}
 	

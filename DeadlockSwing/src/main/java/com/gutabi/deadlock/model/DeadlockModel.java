@@ -1,7 +1,7 @@
 package com.gutabi.deadlock.model;
 
 import com.gutabi.deadlock.controller.ControlMode;
-import com.gutabi.deadlock.core.Hilitable;
+import com.gutabi.deadlock.core.Entity;
 
 public class DeadlockModel {
 	
@@ -13,7 +13,7 @@ public class DeadlockModel {
 	
 	public Stroke stroke;
 	
-	public Hilitable hilited;
+	public Entity hilited;
 	
 	public DeadlockModel() {
 		

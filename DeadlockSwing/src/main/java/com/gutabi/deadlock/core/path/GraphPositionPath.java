@@ -11,7 +11,6 @@ import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Edge;
 import com.gutabi.deadlock.core.EdgePosition;
 import com.gutabi.deadlock.core.GraphPosition;
-import com.gutabi.deadlock.core.Hilitable;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.Vertex;
 import com.gutabi.deadlock.core.VertexPosition;
@@ -308,9 +307,9 @@ public class GraphPositionPath {
 		}
 	}
 	
-	public Hilitable getHilitable(int index) {
-		return poss.get(index).getHilitable();
-	}
+//	public Hilitable getHilitable(int index) {
+//		return poss.get(index).getHilitable();
+//	}
 	
 	/**
 	 * Position a has already been added

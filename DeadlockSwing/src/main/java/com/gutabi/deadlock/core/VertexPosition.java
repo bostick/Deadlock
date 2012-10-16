@@ -15,9 +15,9 @@ public class VertexPosition extends GraphPosition {
 		return v;
 	}
 	
-	public Hilitable getHilitable() {
-		return v;
-	}
+//	public Hilitable getHilitable() {
+//		return v;
+//	}
 	
 	public boolean isBound() {
 		return true;

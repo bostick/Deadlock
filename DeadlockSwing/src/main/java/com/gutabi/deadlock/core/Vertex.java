@@ -10,12 +10,10 @@ import java.util.List;
 
 import org.jbox2d.collision.shapes.CircleShape;
 import org.jbox2d.common.Vec2;
-import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.BodyDef;
-import org.jbox2d.dynamics.Fixture;
 import org.jbox2d.dynamics.FixtureDef;
 
-public class Vertex implements Hilitable {
+public class Vertex extends Entity {
 	
 	private final Point p;
 	private final int hash;
@@ -26,13 +24,6 @@ public class Vertex implements Hilitable {
 	
 	public int id;
 	
-	protected Color color;
-	protected Color hiliteColor;
-	
-	public Body b2dBody;
-	public CircleShape b2dShape;
-	public Fixture b2dFixture;
-	
 	double radius;
 	
 	public Vertex(Point p) {
@@ -41,19 +32,7 @@ public class Vertex implements Hilitable {
 		
 		radius = Math.sqrt(2 * MODEL.world.ROAD_RADIUS * MODEL.world.ROAD_RADIUS);
 		
-		BodyDef bodyDef = new BodyDef();
-		bodyDef.position = new Vec2((float)p.getX(), (float)p.getY());
-        b2dBody = MODEL.world.b2dWorld.createBody(bodyDef);
-		b2dBody.setUserData(this);
-        
-        b2dShape = new CircleShape();
-        b2dShape.m_radius = (float)radius;
-        
-        FixtureDef fixtureDef = new FixtureDef();
-		fixtureDef.shape = b2dShape;
-        fixtureDef.isSensor = true;
-
-        b2dFixture = b2dBody.createFixture(fixtureDef);
+		b2dInit();
 		
 		int h = 17;
 		h = 37 * h + p.hashCode();
@@ -72,6 +51,34 @@ public class Vertex implements Hilitable {
 	public double getRadius() {
 		return radius;
 	}
+	
+	
+	public boolean hitTest(Point p) {
+		return DMath.lessThanEquals(Point.distance(p, this.p), radius);
+	}
+	
+	
+	public void b2dInit() {
+		BodyDef bodyDef = new BodyDef();
+		bodyDef.position = new Vec2((float)p.getX(), (float)p.getY());
+		b2dBody = MODEL.world.b2dWorld.createBody(bodyDef);
+		b2dBody.setUserData(this);
+		
+		b2dShape = new CircleShape();
+		b2dShape.m_radius = (float)radius;
+		
+		FixtureDef fixtureDef = new FixtureDef();
+		fixtureDef.shape = b2dShape;
+		fixtureDef.isSensor = true;
+		
+		b2dFixture = b2dBody.createFixture(fixtureDef);
+	}
+	
+	public void b2dCleanup() {
+		b2dBody.destroyFixture(b2dFixture);
+		MODEL.world.b2dWorld.destroyBody(b2dBody);
+	}
+	
 	
 	
 	public void adjustRadius() {
@@ -114,6 +121,7 @@ public class Vertex implements Hilitable {
 			borderPoints.clear();
 			
 			for (Edge e : eds) {
+				e.adjusted = false;
 				if (e.getStart() == this) {
 					borderPoints.add(e.startBorder(p, radius).getPoint());
 				}
@@ -135,6 +143,9 @@ public class Vertex implements Hilitable {
 			}
 			
 		}
+		
+		b2dCleanup();
+		b2dInit();
 		
 	}
 	
@@ -200,8 +211,7 @@ public class Vertex implements Hilitable {
 		assert !removed;
 		assert eds.size() == 0;
 		
-		b2dBody.destroyFixture(b2dFixture);
-		MODEL.world.b2dWorld.destroyBody(b2dBody);
+		b2dCleanup();
 		
 		removed = true;
 	}

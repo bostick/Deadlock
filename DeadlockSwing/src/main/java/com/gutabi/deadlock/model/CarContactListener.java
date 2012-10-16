@@ -1,4 +1,4 @@
-package com.gutabi.deadlock.model.b2d;
+package com.gutabi.deadlock.model;
 
 import org.apache.log4j.Logger;
 import org.jbox2d.callbacks.ContactImpulse;
@@ -7,10 +7,8 @@ import org.jbox2d.collision.Manifold;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.contacts.Contact;
 
-import com.gutabi.deadlock.core.Point;
+import com.gutabi.deadlock.core.Edge;
 import com.gutabi.deadlock.core.Vertex;
-import com.gutabi.deadlock.model.Car;
-import com.gutabi.deadlock.model.CarStateEnum;
 
 public class CarContactListener implements ContactListener {
 	
@@ -51,6 +49,23 @@ public class CarContactListener implements ContactListener {
 			} else {
 				throw new AssertionError();
 			}
+		} else if (bodyA.getUserData() instanceof Edge) {
+			Edge e = (Edge)bodyA.getUserData();
+			
+			if (bodyB.getUserData() instanceof Car) {
+				Car carB = (Car)bodyB.getUserData();
+				
+				carB.incrementB2DEdgeCount();
+				
+				if (carB.getB2DEdgeCount() == 1) {
+					beginContactCarEdge(carB, e);
+				}
+				
+			} else if (bodyB.getUserData() instanceof Vertex) {
+				throw new AssertionError();
+			} else {
+				throw new AssertionError();
+			}
 		} else {
 			throw new AssertionError();
 		}
@@ -65,10 +80,21 @@ public class CarContactListener implements ContactListener {
 	private void beginContactCarVertex(Car c, Vertex v) {
 		
 		if (c.getState() == CarStateEnum.NEW) {
-			logger.debug("vertex spawn " + v.id + " " + Point.distance(c.getPoint(), v.getPoint()));
+			logger.debug("vertex spawn " + v.id);
 			c.state = CarStateEnum.RUNNING;
 		} else {
-			logger.debug("vertex begin " + v.id + " " + Point.distance(c.getPoint(), v.getPoint()));
+			logger.debug("vertex begin " + v.id);
+		}
+		
+	}
+	
+	private void beginContactCarEdge(Car c, Edge e) {
+		
+		if (c.getState() == CarStateEnum.NEW) {
+			logger.debug("edge spawn " + e.id + " " + c.getB2DEdgeCount());
+//			c.state = CarStateEnum.RUNNING;
+		} else {
+			logger.debug("edge begin " + e.id + " " + c.getB2DEdgeCount());
 		}
 		
 	}
@@ -108,6 +134,23 @@ public class CarContactListener implements ContactListener {
 			} else {
 				throw new AssertionError();
 			}
+		} else if (bodyA.getUserData() instanceof Edge) {
+			Edge e = (Edge)bodyA.getUserData();
+			
+			if (bodyB.getUserData() instanceof Car) {
+				Car carB = (Car)bodyB.getUserData(); 
+				
+				carB.decrementB2DEdgeCount();
+				
+				if (carB.getB2DEdgeCount() == 0) {
+					endContactCarEdge(carB, e);
+				}
+				
+			} else if (bodyB.getUserData() instanceof Vertex) {
+				throw new AssertionError();
+			} else {
+				throw new AssertionError();
+			}
 		} else {
 			throw new AssertionError();
 		}
@@ -121,9 +164,19 @@ public class CarContactListener implements ContactListener {
 	private void endContactCarVertex(Car c, Vertex v) {
 		
 		if (c.getState() == CarStateEnum.SINKED) {
-			logger.debug("vertex sinked " + v.id + " " + Point.distance(c.getPoint(), v.getPoint()));
+			logger.debug("vertex sinked " + v.id);
 		} else {
-			logger.debug("vertex end " + v.id + " " + Point.distance(c.getPoint(), v.getPoint()));
+			logger.debug("vertex end " + v.id);
+		}
+		
+	}
+	
+	private void endContactCarEdge(Car c, Edge e) {
+		
+		if (c.getState() == CarStateEnum.SINKED) {
+			logger.debug("edge sinked " + e.id + " " + c.getB2DEdgeCount());
+		} else {
+			logger.debug("edge end " + e.id + " " + c.getB2DEdgeCount());
 		}
 		
 	}
