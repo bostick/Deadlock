@@ -80,8 +80,7 @@ public class TopDownCar {
 		// Make a World
 		//
 		Vec2 gravity = new Vec2(0.0f, 0.0f);
-		boolean doSleep = true;
-		World world = new World(gravity, doSleep);
+		World world = new World(gravity);
 		
 		// Make a Body for the ground via definition and shape binding that gives it a boundary
 		// 
@@ -149,16 +148,16 @@ public class TopDownCar {
 		for (i = 0; i < 5000; ++i) {
 			
 			if (i == 0) {
-				Vec2 v = body.getWorldCenter();
+//				Vec2 v = body.getWorldCenter();
 				//body.applyLinearImpulse(v1, v);
 				body.setLinearVelocity(v1);
 			} else if (i == 100) {
-				Vec2 v = body.getWorldCenter();
+//				Vec2 v = body.getWorldCenter();
 				//body.applyLinearImpulse(v1.negate(), v);
 				//body.applyLinearImpulse(v2, v);
 				body.setLinearVelocity(v2);
 			} else if (i == 200) {
-				Vec2 v = body.getWorldCenter();
+//				Vec2 v = body.getWorldCenter();
 				//body.applyLinearImpulse(v2.negate(), v);
 				//body.applyLinearImpulse(v3, v);
 				body.setLinearVelocity(v3);
@@ -247,6 +246,7 @@ public class TopDownCar {
 		
 	}
 	
+	@SuppressWarnings("serial")
 	static class WorldPanel extends JPanel {
 		
 		@Override

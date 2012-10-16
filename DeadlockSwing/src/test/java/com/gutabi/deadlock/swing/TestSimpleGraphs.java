@@ -22,8 +22,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.gutabi.deadlock.core.Edge;
-import com.gutabi.deadlock.core.Intersection;
 import com.gutabi.deadlock.core.Point;
+import com.gutabi.deadlock.core.Vertex;
 
 public class TestSimpleGraphs {
 	
@@ -62,9 +62,9 @@ public class TestSimpleGraphs {
 //		}
 //	};
 	
-	Comparator<Intersection> vertexComparator = new Comparator<Intersection>() {
+	Comparator<Vertex> vertexComparator = new Comparator<Vertex>() {
 		@Override
-		public int compare(Intersection a, Intersection b) {
+		public int compare(Vertex a, Vertex b) {
 			if (a == b) {
 				return 0;
 			}
@@ -87,7 +87,7 @@ public class TestSimpleGraphs {
 	};
 	
 	List<Edge> edges;
-	List<Intersection> vertices;
+	List<Vertex> vertices;
 	
 	@Test
 	public void test1() throws Exception {
@@ -105,7 +105,7 @@ public class TestSimpleGraphs {
 			@Override
 			public void run() {
 				edges = new ArrayList<Edge>(MODEL.world.graph.getEdges());
-				vertices = new ArrayList<Intersection>(MODEL.world.graph.getIntersections());
+				vertices = new ArrayList<Vertex>(MODEL.world.graph.getAllVertices());
 			}
 		});
 		

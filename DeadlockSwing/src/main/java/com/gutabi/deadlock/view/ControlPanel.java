@@ -1,7 +1,9 @@
 package com.gutabi.deadlock.view;
 
 
+
 import static com.gutabi.deadlock.controller.DeadlockController.CONTROLLER;
+import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 
 import java.awt.Dimension;
 
@@ -12,6 +14,9 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
+
+
 
 @SuppressWarnings("serial")
 public class ControlPanel extends JPanel {
@@ -20,6 +25,8 @@ public class ControlPanel extends JPanel {
 	public JCheckBox fastCarButton = new JCheckBox("Fast Cars");
 	public JButton startButton;
 	public JButton stopButton;
+	
+	public JTextField dtField;
 	
 	public ControlPanel() {
 		setSize(new Dimension(156, 822));
@@ -72,6 +79,17 @@ public class ControlPanel extends JPanel {
 		hBox.add(new JLabel("Simulation State:"));
 		hBox.add(Box.createHorizontalGlue());
 		verticalBox.add(hBox);
+		
+		dtField = new JTextField();
+		dtField.setText(Long.toString(MODEL.world.dt));
+		dtField.setMaximumSize(new Dimension(10000, 100));
+		dtField.setActionCommand("dt");
+		dtField.addActionListener(CONTROLLER);
+		hBox = Box.createHorizontalBox();
+		hBox.add(dtField);
+		hBox.add(Box.createHorizontalGlue());
+		verticalBox.add(hBox);
+		
 		verticalBox.add(Box.createVerticalGlue());
 		
 		verticalBox.add(Box.createRigidArea(new Dimension(0, 30)));

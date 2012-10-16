@@ -30,7 +30,7 @@ public class Vertex extends Entity {
 		
 		this.p = p;
 		
-		radius = Math.sqrt(2 * MODEL.world.ROAD_RADIUS * MODEL.world.ROAD_RADIUS);
+		radius = 3 * Math.sqrt(2 * MODEL.world.ROAD_RADIUS * MODEL.world.ROAD_RADIUS);
 		
 		b2dInit();
 		

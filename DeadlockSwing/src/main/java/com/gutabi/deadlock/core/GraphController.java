@@ -29,7 +29,7 @@ public class GraphController {
 			v.adjustRadius();
 		}
 		
-		for (Edge e : graph.edges) {
+		for (Edge e : graph.getEdges()) {
 			if (!e.adjusted) {
 				e.adjust();
 			}
@@ -125,11 +125,7 @@ public class GraphController {
 			
 			if (!tooClose) {
 				
-				GraphPosition aP;
-				aP = graph.findClosestVertexPosition(preA, null, MODEL.world.MOUSE_RADIUS/MODEL.world.PIXELS_PER_METER);
-				if (aP == null) {
-					aP = graph.findClosestEdgePosition(preA, null, MODEL.world.MOUSE_RADIUS/MODEL.world.PIXELS_PER_METER);
-				}
+				GraphPosition aP = graph.findClosestGraphPosition(preA, null, MODEL.world.MOUSE_RADIUS/MODEL.world.PIXELS_PER_METER);
 				
 				if (aP != null) {
 					
@@ -158,11 +154,7 @@ public class GraphController {
 			
 			if (!tooClose) {
 				
-				GraphPosition bP;
-				bP = graph.findClosestVertexPosition(preB, a, MODEL.world.MOUSE_RADIUS/MODEL.world.PIXELS_PER_METER);
-				if (bP == null) {
-					bP = graph.findClosestEdgePosition(preB, a, MODEL.world.MOUSE_RADIUS/MODEL.world.PIXELS_PER_METER);
-				}
+				GraphPosition bP = graph.findClosestGraphPosition(preB, a, MODEL.world.MOUSE_RADIUS/MODEL.world.PIXELS_PER_METER);
 				
 				if (bP != null) {
 					tooClose = true;
@@ -176,11 +168,7 @@ public class GraphController {
 				
 			} else {
 				
-				GraphPosition bP;
-				bP = graph.findClosestVertexPosition(preB, a, MODEL.world.MOUSE_RADIUS/MODEL.world.PIXELS_PER_METER);
-				if (bP == null) {
-					bP = graph.findClosestEdgePosition(preB, a, MODEL.world.MOUSE_RADIUS/MODEL.world.PIXELS_PER_METER);
-				}
+				GraphPosition bP = graph.findClosestGraphPosition(preB, a, MODEL.world.MOUSE_RADIUS/MODEL.world.PIXELS_PER_METER);
 				
 				if (bP != null) {
 					
@@ -250,7 +238,7 @@ public class GraphController {
 		ranges.add(0.0);
 		ranges.add(1.0);
 		
-		for (Segment in : graph.segTree.getAllSegments()) {
+		for (Segment in : graph.getAllSegments()) {
 			int index = in.index;
 			Point c = in.edge.getPoint(index);
 			Point d = in.edge.getPoint(index+1);
@@ -309,7 +297,7 @@ public class GraphController {
 		
 		Timeline timeline = new Timeline(a, b);
 		
-		for (Segment in : graph.segTree.getAllSegments()) {
+		for (Segment in : graph.getAllSegments()) {
 			int index = in.index;
 			Edge ed = in.edge;
 			Point c = ed.getPoint(index);
@@ -783,7 +771,7 @@ public class GraphController {
 			toRemove.clear();
 			changed = false;
 			
-			for (Edge e : graph.edges) {
+			for (Edge e : graph.getEdges()) {
 				if (e.getTotalLength() <= MODEL.world.CAR_LENGTH) {
 					toRemove.add(e);
 					changed = true;

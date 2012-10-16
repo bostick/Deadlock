@@ -3,26 +3,32 @@ package com.gutabi.deadlock.model;
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
 import org.apache.log4j.Logger;
+import org.jbox2d.callbacks.RayCastCallback;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.BodyType;
+import org.jbox2d.dynamics.Fixture;
 import org.jbox2d.dynamics.FixtureDef;
 
+import com.gutabi.deadlock.core.Edge;
 import com.gutabi.deadlock.core.Entity;
+import com.gutabi.deadlock.core.GraphPosition;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.Source;
+import com.gutabi.deadlock.core.Vertex;
 import com.gutabi.deadlock.core.path.GraphPositionPath;
 import com.gutabi.deadlock.core.path.GraphPositionPathPosition;
 import com.gutabi.deadlock.core.path.STGraphPositionPathPositionPath;
 import com.gutabi.deadlock.core.path.STPointPath;
 
-public abstract class Car extends Entity {
+public abstract class Car extends Entity implements RayCastCallback {
 	
 	public CarStateEnum state;
 	
@@ -31,6 +37,7 @@ public abstract class Car extends Entity {
 	public Source source;
 	
 	GraphPositionPath overallPath;
+	GraphPosition closestGraphPos;
 	
 	public final int id;
 	
@@ -39,7 +46,13 @@ public abstract class Car extends Entity {
 	Point startPos;
 	double startHeading;
 	
+	private int b2dVertexCount = 0;
 	private int b2dEdgeCount = 0;
+	private boolean intersectedWithVertex;
+	private boolean intersectedWithEdge;
+	
+	boolean aboveVertex;
+	boolean aboveEdge;
 	
 	static Logger logger = Logger.getLogger(Car.class);
 	
@@ -119,6 +132,18 @@ public abstract class Car extends Entity {
 	
 	public int getB2DEdgeCount() {
 		return b2dEdgeCount;
+	}
+	
+	public void incrementB2DVertexCount() {
+		b2dVertexCount++;
+	}
+	
+	public void decrementB2DVertexCount() {
+		b2dVertexCount--;
+	}
+	
+	public int getB2DVertexCount() {
+		return b2dVertexCount;
 	}
 	
 	public void crash() {
@@ -205,7 +230,7 @@ public abstract class Car extends Entity {
 		Vec2 vel = b2dBody.getLinearVelocity();
 		
 		float forwardSpeed = Vec2.dot(currentRightNormal, b2dBody.getLinearVelocity());
-//		logger.debug("forward speed: " + forwardSpeed);
+		logger.debug("forward speed: " + forwardSpeed);
 		
 		Vec2 cancelingImpulse = vel.mul(-1).mul(b2dBody.getMass());
 		
@@ -299,12 +324,16 @@ public abstract class Car extends Entity {
 		
 //		dw = 1.0f * dw;
 		
-		float degree = 0.0174533f;
-		float max = 15.0f*degree;
-		if (dw > max) {
-			dw = max;
-		} else if (dw < -max) {
-			dw = -max;
+		// use value of 15 deg / 70 milliseconds to figure time-independent version
+		// 0.214286 deg / millisecond
+		
+		double maxRadsPerMillisecond = 0.00373999;
+		float maxRads = (float)(maxRadsPerMillisecond * MODEL.world.dt);
+		
+		if (dw > maxRads) {
+			dw = maxRads;
+		} else if (dw < -maxRads) {
+			dw = -maxRads;
 		}
 		
 //		logger.debug("dw: " + dw);
@@ -333,6 +362,8 @@ public abstract class Car extends Entity {
 	 */
 	public boolean postStep() {
 		
+		closestGraphPos = MODEL.world.graph.findClosestGraphPosition(getPoint(), null, Double.POSITIVE_INFINITY);
+		
 		if (state == CarStateEnum.RUNNING) {
 			Vec2 pos = b2dBody.getPosition();
 			Point end = overallPath.getEnd().getPoint();
@@ -347,9 +378,41 @@ public abstract class Car extends Entity {
 			}
 		}
 		
-		return true;
-		
+		return true;	
 	}
+	
+	@Override
+	public float reportFixture(Fixture fixture, Vec2 point, Vec2 normal, float fraction) {
+		
+		intersectedWithVertex = false;
+		intersectedWithEdge = false;
+		
+		Object userData = fixture.getBody().getUserData();
+		
+		if (userData instanceof Car) {
+			
+			logger.debug("intersected with car");
+			
+		} else if (userData instanceof Vertex) {
+			
+			logger.debug("intersected with vertex");
+			
+			intersectedWithVertex = true;
+			
+		} else if (userData instanceof Edge) {
+			
+			logger.debug("intersected with edge");
+			
+			intersectedWithEdge = true;
+			
+		} else {
+			throw new AssertionError();
+		}
+		
+		return 1;
+	}
+	
+	
 	
 	public int getId() {
 		return id;
@@ -365,7 +428,8 @@ public abstract class Car extends Entity {
 	public void paint(Graphics2D g2) {
 		
 		paintRect(g2);
-		paintImage(g2, image());
+//		paintImage(g2, image());
+		paintPoint(g2);
 		
 	}
 	
@@ -410,7 +474,14 @@ public abstract class Car extends Entity {
 		
 		g2.setTransform(b2dTrans);
 		
-		g2.setColor(color);
+//		g2.setColor(color);
+		if (b2dVertexCount > 0 || b2dEdgeCount > 0) {
+			g2.setColor(Color.CYAN);
+		} else if (intersectedWithEdge || intersectedWithVertex) {
+			g2.setColor(Color.RED);
+		} else {
+			g2.setColor(Color.BLUE);
+		}
 		
 		g2.fillRect(
 				(int)(-MODEL.world.CAR_LENGTH * MODEL.world.PIXELS_PER_METER / 2 - 1),
@@ -420,4 +491,23 @@ public abstract class Car extends Entity {
 		
 		g2.setTransform(origTransform);
 	}
+	
+	private void paintPoint(Graphics2D g2) {
+		AffineTransform origTransform = g2.getTransform();
+		
+		AffineTransform b2dTrans = (AffineTransform)VIEW.worldToPanelTransform.clone();
+		Vec2 pos = closestGraphPos.getPoint().vec2();
+		b2dTrans.translate(pos.x, pos.y);
+		
+		b2dTrans.scale(1/((double)MODEL.world.PIXELS_PER_METER), 1/((double)MODEL.world.PIXELS_PER_METER));
+		
+		g2.setTransform(b2dTrans);
+		
+		g2.setColor(Color.BLACK);
+		
+		g2.fillOval(-2, -2, 4, 4);
+		
+		g2.setTransform(origTransform);
+	}
+	
 }

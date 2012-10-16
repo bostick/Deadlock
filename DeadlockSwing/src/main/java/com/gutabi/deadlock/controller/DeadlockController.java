@@ -90,6 +90,8 @@ public class DeadlockController implements ActionListener {
 		
 		if (c == VIEW.panel) {
 			
+			VIEW.panel.requestFocusInWindow();
+			
 			lastPressPanelPoint = p;
 			lastPressTime = System.currentTimeMillis();
 			
@@ -112,6 +114,8 @@ public class DeadlockController implements ActionListener {
 		Point p = ev.getPoint();
 		
 		if (c == VIEW.panel) {
+			
+			VIEW.panel.requestFocusInWindow();
 			
 			boolean lastDragPanelPointWasNull = (lastDragPanelPoint == null);
 			
@@ -158,6 +162,8 @@ public class DeadlockController implements ActionListener {
 		
 		if (c == VIEW.panel) {
 			
+			VIEW.panel.requestFocusInWindow();
+			
 			lastReleaseTime = System.currentTimeMillis();
 			
 			synchronized (MODEL) {
@@ -192,6 +198,8 @@ public class DeadlockController implements ActionListener {
 		Component c = ev.getComponent();
 		
 		if (c == VIEW.panel) {
+			
+			VIEW.panel.requestFocusInWindow();
 			
 			Point p = ev.getPoint();
 			
@@ -441,6 +449,22 @@ public class DeadlockController implements ActionListener {
 				@Override
 				public void run() {
 					CONTROLLER.unpauseRunning();
+				}}
+			);
+		} else if (e.getActionCommand().equals("dt")) {
+			
+			String text = VIEW.controlPanel.dtField.getText();
+			try {
+				long dt = Long.parseLong(text);
+				MODEL.world.dt = dt;
+			} catch (NumberFormatException ex) {
+				
+			}
+			
+			CONTROLLER.queue(new Runnable(){
+				@Override
+				public void run() {
+					
 				}}
 			);
 		}

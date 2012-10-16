@@ -207,6 +207,8 @@ public final class Edge extends Entity {
 		
 		endBorder = endBorder(end.getPoint(), end.getRadius());
 		
+		assert startBorder.distanceToStartOfEdge() < endBorder.distanceToStartOfEdge();
+		
 		computeArea();
 		
 		adjusted = true;

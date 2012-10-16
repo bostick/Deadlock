@@ -1,5 +1,7 @@
 package com.gutabi.deadlock.core;
 
+import org.jbox2d.common.Vec2;
+
 
 public class Point {
 	
@@ -62,6 +64,12 @@ public class Point {
 	public double getY() {
 		return y;
 	}
+	
+	
+	public Vec2 vec2() {
+		return new Vec2((float)x, (float)y);
+	}
+	
 	
 	public double distanceTo(Point p) {
 		return Point.distance(this, p);

@@ -42,12 +42,12 @@ public class World {
 	 * spawn cars every SPAWN_FREQUENCY milliseconds
 	 * -1 means no spawning
 	 */
-	public int SPAWN_FREQUENCY = 30000;
+	public int SPAWN_FREQUENCY = 300000;
 	
-	/*
+	/**
 	 * move physics forward by dt milliseconds
 	 */
-	public final long dt = 70;
+	public long dt = 7;
 	
 	public Random RANDOM = new Random(1);
 	
@@ -65,7 +65,7 @@ public class World {
 	public List<Car> cars = new ArrayList<Car>();
 	
 	public org.jbox2d.dynamics.World b2dWorld;
-	CarContactListener listener;
+	CarEventListener listener;
 	
 	private static Logger logger = Logger.getLogger(World.class);
 	
@@ -79,7 +79,7 @@ public class World {
 		gc = new GraphController(graph);
 		
 		b2dWorld = new org.jbox2d.dynamics.World(new Vec2(0.0f, 0.0f));
-		listener = new CarContactListener();
+		listener = new CarEventListener();
 		b2dWorld.setContactListener(listener);
 		
 		
@@ -143,13 +143,13 @@ public class World {
 	
 	
 	
-	float timeStep = ((float)dt) / 1000.0f;
+	//public float timeStep = ((float)dt) / 1000.0f;
 	int velocityIterations = 6;
 	int positionIterations = 2;
 	
 	public void integrate(long t) {
 		
-		logger.debug("integrate " + t);
+//		logger.debug("integrate " + t);
 		
 		this.t = t;
 		
@@ -163,9 +163,9 @@ public class World {
 				c.preStep();
 			}
 			
-			logger.debug("before step " + t);
-			b2dWorld.step(timeStep, velocityIterations, positionIterations);
-			logger.debug("after step " + t);
+//			logger.debug("before step " + t);
+			b2dWorld.step(((float)dt) / 1000.0f, velocityIterations, positionIterations);
+//			logger.debug("after step " + t);
 			
 			List<Car> toBeRemoved = new ArrayList<Car>();
 			for (Car c : cars) {
@@ -216,7 +216,7 @@ public class World {
 	private List<Source> activeSources() {
 		
 		List<Source> sources = new ArrayList<Source>();
-		for (Source s : graph.sources) {
+		for (Source s : graph.getSources()) {
 			if (s.getPathToMatchingSink() != null) {
 				sources.add(s);
 			}

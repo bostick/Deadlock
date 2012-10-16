@@ -1,5 +1,8 @@
 package com.gutabi.deadlock.model;
 
+
+import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
+
 import org.apache.log4j.Logger;
 import org.jbox2d.callbacks.ContactImpulse;
 import org.jbox2d.callbacks.ContactListener;
@@ -8,11 +11,12 @@ import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.contacts.Contact;
 
 import com.gutabi.deadlock.core.Edge;
+import com.gutabi.deadlock.core.GraphPosition;
 import com.gutabi.deadlock.core.Vertex;
 
-public class CarContactListener implements ContactListener {
+public class CarEventListener implements ContactListener {
 	
-	static Logger logger = Logger.getLogger(CarContactListener.class);
+	static Logger logger = Logger.getLogger(CarEventListener.class);
 	
 	@Override
 	public void beginContact(Contact contact) {
@@ -31,7 +35,11 @@ public class CarContactListener implements ContactListener {
 			} else if (bodyB.getUserData() instanceof Vertex) {
 				Vertex v = (Vertex)bodyB.getUserData();
 				
-				beginContactCarVertex(carA, v);
+				carA.incrementB2DVertexCount();
+				
+				if (carA.getB2DVertexCount() == 1) {
+					beginContactCarVertex(carA, v);
+				}
 				
 			} else {
 				throw new AssertionError();
@@ -42,7 +50,11 @@ public class CarContactListener implements ContactListener {
 			if (bodyB.getUserData() instanceof Car) {
 				Car carB = (Car)bodyB.getUserData();
 				
-				beginContactCarVertex(carB, v);
+				carB.incrementB2DVertexCount();
+				
+				if (carB.getB2DVertexCount() == 1) {
+					beginContactCarVertex(carB, v);
+				}
 				
 			} else if (bodyB.getUserData() instanceof Vertex) {
 				throw new AssertionError();
@@ -80,10 +92,10 @@ public class CarContactListener implements ContactListener {
 	private void beginContactCarVertex(Car c, Vertex v) {
 		
 		if (c.getState() == CarStateEnum.NEW) {
-			logger.debug("vertex spawn " + v.id);
+//			logger.debug("vertex spawn " + v.id);
 			c.state = CarStateEnum.RUNNING;
 		} else {
-			logger.debug("vertex begin " + v.id);
+//			logger.debug("vertex begin " + v.id);
 		}
 		
 	}
@@ -91,10 +103,9 @@ public class CarContactListener implements ContactListener {
 	private void beginContactCarEdge(Car c, Edge e) {
 		
 		if (c.getState() == CarStateEnum.NEW) {
-			logger.debug("edge spawn " + e.id + " " + c.getB2DEdgeCount());
-//			c.state = CarStateEnum.RUNNING;
+//			logger.debug("edge spawn " + e.id + " " + c.getB2DEdgeCount());
 		} else {
-			logger.debug("edge begin " + e.id + " " + c.getB2DEdgeCount());
+//			logger.debug("edge begin " + e.id + " " + c.getB2DEdgeCount());
 		}
 		
 	}
@@ -116,7 +127,11 @@ public class CarContactListener implements ContactListener {
 			} else if (bodyB.getUserData() instanceof Vertex) {
 				Vertex v = (Vertex)bodyB.getUserData();
 				
-				endContactCarVertex(carA, v);
+				carA.decrementB2DVertexCount();
+				
+				if (carA.getB2DVertexCount() == 0) {
+					endContactCarVertex(carA, v);
+				}
 				
 			} else {
 				throw new AssertionError();
@@ -127,7 +142,11 @@ public class CarContactListener implements ContactListener {
 			if (bodyB.getUserData() instanceof Car) {
 				Car carB = (Car)bodyB.getUserData();
 				
-				endContactCarVertex(carB, v);
+				carB.decrementB2DVertexCount();
+				
+				if (carB.getB2DVertexCount() == 0) {
+					endContactCarVertex(carB, v);
+				}
 				
 			} else if (bodyB.getUserData() instanceof Vertex) {
 				throw new AssertionError();
@@ -164,20 +183,30 @@ public class CarContactListener implements ContactListener {
 	private void endContactCarVertex(Car c, Vertex v) {
 		
 		if (c.getState() == CarStateEnum.SINKED) {
-			logger.debug("vertex sinked " + v.id);
+//			logger.debug("vertex sinked " + v.id);
 		} else {
-			logger.debug("vertex end " + v.id);
+//			logger.debug("vertex end " + v.id);
 		}
+		
+//		logger.debug("vertex radius: " + v.getRadius() + " " + v.b2dShape.m_radius);
+		
+		GraphPosition closest = MODEL.world.graph.findClosestGraphPosition(c.getPoint(), null, Double.POSITIVE_INFINITY);
+		
+		MODEL.world.b2dWorld.raycast(c, c.getPoint().vec2(), closest.getPoint().vec2());
 		
 	}
 	
 	private void endContactCarEdge(Car c, Edge e) {
 		
 		if (c.getState() == CarStateEnum.SINKED) {
-			logger.debug("edge sinked " + e.id + " " + c.getB2DEdgeCount());
+//			logger.debug("edge sinked " + e.id + " " + c.getB2DEdgeCount());
 		} else {
-			logger.debug("edge end " + e.id + " " + c.getB2DEdgeCount());
+//			logger.debug("edge end " + e.id + " " + c.getB2DEdgeCount());
 		}
+		
+		GraphPosition closest = MODEL.world.graph.findClosestGraphPosition(c.getPoint(), null, Double.POSITIVE_INFINITY);
+		
+		MODEL.world.b2dWorld.raycast(c, c.getPoint().vec2(), closest.getPoint().vec2());
 		
 	}
 	

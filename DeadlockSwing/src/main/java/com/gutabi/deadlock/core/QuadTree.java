@@ -105,6 +105,7 @@ public class QuadTree {
 				} else if (Point.distance(a, ep) < Point.distance(a, bestPoint)) {
 					bestSegment = si;
 					bestParam = closest;
+					bestPoint = ep;
 				}
 			}
 		}
@@ -115,12 +116,15 @@ public class QuadTree {
 					return new EdgePosition(bestSegment.edge, bestSegment.index+1, 0.0);
 				} else {
 					/*
-					 * this will get here when we have already tested vertices, but we want only deleteables, so there was no closest vertex
-					 * this is now the closest edge position, but this is the end and it is really a vertex
-					 * so return null
+					 * this is really the end of the edge, the vertex, so return null
 					 */
 					return null;
 				}
+			} else if (DMath.equals(bestParam, 0.0) && bestSegment.index == 0) {
+				/*
+				 * this is really the start of the edge, the vertex, so return null
+				 */
+				return null;
 			} else {
 				return new EdgePosition(bestSegment.edge, bestSegment.index, bestParam);
 			}

@@ -10,12 +10,12 @@ import java.util.Set;
 
 public class Graph {
 	
-	final ArrayList<Edge> edges = new ArrayList<Edge>();
+	private final ArrayList<Edge> edges = new ArrayList<Edge>();
 	private final ArrayList<Intersection> intersections = new ArrayList<Intersection>();
-	final QuadTree segTree = new QuadTree();
+	private final QuadTree segTree = new QuadTree();
 	
-	public final ArrayList<Source> sources = new ArrayList<Source>();
-	public final ArrayList<Sink> sinks = new ArrayList<Sink>();
+	private final ArrayList<Source> sources = new ArrayList<Source>();
+	private final ArrayList<Sink> sinks = new ArrayList<Sink>();
 	
 //	private static final Logger logger = Logger.getLogger(Graph.class);
 	
@@ -27,12 +27,20 @@ public class Graph {
 		return edges;
 	}
 	
+	public List<Source> getSources() {
+		return sources;
+	}
+	
 	public List<Vertex> getAllVertices() {
 		List<Vertex> all = new ArrayList<Vertex>();
 		all.addAll(sources);
 		all.addAll(sinks);
 		all.addAll(intersections);
 		return all;
+	}
+	
+	public List<Segment> getAllSegments() {
+		return segTree.getAllSegments();
 	}
 	
 	private Edge createEdge(Vertex start, Vertex end, List<Point> pts) {
@@ -401,10 +409,27 @@ public class Graph {
 		return null;
 	}
 	
+	public GraphPosition findClosestGraphPosition(Point p, Point anchor, double radius) {
+		VertexPosition vp = findClosestVertexPosition(p, anchor, radius);
+		EdgePosition ep = findClosestEdgePosition(p, anchor, radius);
+		if (vp == null) {
+			return ep;
+		} else if (ep == null) {
+			return vp;
+		} else if (DMath.equals(Point.distance(p, vp.getPoint()), Point.distance(p, ep.getPoint()))) {
+			assert false;
+		} else if (Point.distance(p, vp.getPoint()) < Point.distance(p, ep.getPoint())) {
+			return vp;
+		} else {
+			return ep;
+		}
+		return null;
+	}
+	
 	/**
 	 * returns the closest vertex within radius that is not the excluded point
 	 */
-	public VertexPosition findClosestVertexPosition(Point a, Point exclude, double radius) {
+	private VertexPosition findClosestVertexPosition(Point a, Point exclude, double radius) {
 		Vertex anchorV = null;
 		if (exclude != null) {
 			GraphPosition pos = graphHitTest(exclude);
@@ -445,7 +470,7 @@ public class Graph {
 	/**
 	 * returns the closest edge within radius that is not in the excluded radius
 	 */
-	public EdgePosition findClosestEdgePosition(Point a, Point exclude, double radius) {
+	private EdgePosition findClosestEdgePosition(Point a, Point exclude, double radius) {
 		return segTree.findClosestEdgePosition(a, exclude, radius);
 	}
 	

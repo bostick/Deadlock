@@ -10,7 +10,7 @@ import com.gutabi.deadlock.core.Source;
 
 public class NormalCar extends Car {
 	
-	private final double speed = 0.003;
+	private final double speed = 0.001;
 	
 	static Logger logger = Logger.getLogger(NormalCar.class);
 	
