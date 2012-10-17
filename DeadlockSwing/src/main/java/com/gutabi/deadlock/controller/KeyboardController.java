@@ -1,6 +1,7 @@
 package com.gutabi.deadlock.controller;
 
 import static com.gutabi.deadlock.controller.DeadlockController.CONTROLLER;
+import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
 import java.awt.event.ActionEvent;
@@ -36,7 +37,7 @@ public class KeyboardController {
 			CONTROLLER.queue(new Runnable() {
 				public void run() {
 					CONTROLLER.deleteKey();
-					VIEW.renderBackground();
+					MODEL.world.renderBackground();
 					VIEW.repaint();
 				}
 			});
@@ -52,7 +53,7 @@ public class KeyboardController {
 			CONTROLLER.queue(new Runnable() {
 				public void run() {
 					CONTROLLER.tabKey();
-					VIEW.renderBackground();
+					MODEL.world.renderBackground();
 					VIEW.repaint();
 				}
 			});
@@ -68,7 +69,7 @@ public class KeyboardController {
 			CONTROLLER.queue(new Runnable() {
 				public void run() {
 					CONTROLLER.undoKey();
-					VIEW.renderBackground();
+					MODEL.world.renderBackground();
 					VIEW.repaint();
 				}
 			});
@@ -84,7 +85,7 @@ public class KeyboardController {
 			CONTROLLER.queue(new Runnable() {
 				public void run() {
 					CONTROLLER.redoKey();
-					VIEW.renderBackground();
+					MODEL.world.renderBackground();
 					VIEW.repaint();
 				}
 			});

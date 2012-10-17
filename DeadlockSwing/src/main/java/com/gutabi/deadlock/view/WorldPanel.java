@@ -1,6 +1,6 @@
 package com.gutabi.deadlock.view;
 
-import static com.gutabi.deadlock.view.DeadlockView.VIEW;
+import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -26,7 +26,12 @@ public class WorldPanel extends JPanel {
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		Graphics2D g2 = (Graphics2D)g;
-		VIEW.paint(g2);
+		
+		int x = getWidth()/2 - (int)((MODEL.world.WORLD_WIDTH * MODEL.world.PIXELS_PER_METER)/2);
+		int y = getHeight()/2 - (int)((MODEL.world.WORLD_HEIGHT * MODEL.world.PIXELS_PER_METER)/2);
+		g2.translate(x, y);
+		
+		MODEL.world.paint(g2);
 	}
 	
 }

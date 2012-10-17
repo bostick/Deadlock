@@ -26,7 +26,7 @@ public class DeadlockMain  {
 		VIEW.frame.setVisible(true);
 		VIEW.panel.requestFocusInWindow();
 		
-		VIEW.renderBackground();
+		MODEL.world.renderBackground();
 		VIEW.repaint();
 		
 	}

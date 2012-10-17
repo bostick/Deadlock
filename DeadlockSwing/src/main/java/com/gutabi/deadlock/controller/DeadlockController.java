@@ -179,7 +179,7 @@ public class DeadlockController implements ActionListener {
 				}
 				case DRAFTING:
 					draftEnd();
-					VIEW.renderBackground();
+					MODEL.world.renderBackground();
 					VIEW.repaint();
 					break;
 				case RUNNING:
@@ -209,7 +209,15 @@ public class DeadlockController implements ActionListener {
 				case PAUSED:
 				case IDLE: {
 					
-					Entity closest = MODEL.world.hitTest(VIEW.panelToWorld(p));
+					Point worldPoint = p;
+					
+					int x = VIEW.panel.getWidth()/2 - (int)((MODEL.world.WORLD_WIDTH * MODEL.world.PIXELS_PER_METER)/2);
+					int y = VIEW.panel.getHeight()/2 - (int)((MODEL.world.WORLD_HEIGHT * MODEL.world.PIXELS_PER_METER)/2);
+					worldPoint = worldPoint.add(new Point(-x, -y));
+					
+					worldPoint = worldPoint.multiply(1/((double)MODEL.world.PIXELS_PER_METER));
+					
+					Entity closest = MODEL.world.hitTest(worldPoint);
 					MODEL.hilited = closest;
 					
 					VIEW.repaint();
@@ -258,7 +266,7 @@ public class DeadlockController implements ActionListener {
 				
 				MODEL.hilited = null;
 				
-				VIEW.renderBackground();
+				MODEL.world.renderBackground();
 				VIEW.repaint();
 			}
 			
@@ -314,7 +322,7 @@ public class DeadlockController implements ActionListener {
 			switch (MODEL.getMode()) {
 			case IDLE:
 				
-				VIEW.renderBackground();
+				MODEL.world.renderBackground();
 				VIEW.repaint();
 				
 				break;
@@ -338,7 +346,7 @@ public class DeadlockController implements ActionListener {
 		
 		MODEL.setMode(ControlMode.RUNNING);
 		
-		VIEW.renderBackground();
+		MODEL.world.renderBackground();
 		
 		MODEL.world.preStart();
 		

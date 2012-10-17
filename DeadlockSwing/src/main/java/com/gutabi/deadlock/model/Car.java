@@ -389,7 +389,7 @@ public abstract class Car extends Entity {
 	 */
 	public void paint(Graphics2D g2) {
 		paintRect(g2);
-//		paintImage(g2, image());
+		paintImage(g2, image());
 		paintPoint(g2);
 	}
 	

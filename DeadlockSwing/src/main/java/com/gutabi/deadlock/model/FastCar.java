@@ -1,6 +1,6 @@
 package com.gutabi.deadlock.model;
 
-import static com.gutabi.deadlock.view.DeadlockView.VIEW;
+import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 
 import java.awt.image.BufferedImage;
 
@@ -21,9 +21,10 @@ public class FastCar extends Car {
 		
 	}
 
+	@SuppressWarnings("static-access")
 	@Override
 	BufferedImage image() {
-		return VIEW.fastCar;
+		return MODEL.world.fastCar;
 	}
 	
 	public double getSpeed() {

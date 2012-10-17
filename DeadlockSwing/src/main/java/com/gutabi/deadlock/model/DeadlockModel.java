@@ -19,7 +19,7 @@ public class DeadlockModel {
 		
 	}
 	
-	public void init() {
+	public void init() throws Exception {
 		
 		world = new World();
 		
