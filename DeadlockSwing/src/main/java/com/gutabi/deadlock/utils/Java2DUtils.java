@@ -11,9 +11,9 @@ import com.gutabi.deadlock.core.Point;
 
 public class Java2DUtils {
 	
-	public static List<Point> shapeToList(Shape s) {
+	public static List<Point> shapeToList(Shape s, double flatness) {
 		
-		PathIterator pi = s.getPathIterator(null, 0.1);
+		PathIterator pi = s.getPathIterator(null, flatness);
 		float[] coords = new float[6];
 		Point lastPoint;
 		List<Point> poly = null;
@@ -50,9 +50,9 @@ public class Java2DUtils {
 		for (int i = 0; i < poly.size(); i++) {
 			Point p = poly.get(i);
 			if (i == 0) {
-				path.moveTo(p.getX(), p.getY());
+				path.moveTo(p.x, p.y);
 			} else {
-				path.lineTo(p.getX(), p.getY());
+				path.lineTo(p.x, p.y);
 			}
 		}
 		path.closePath();

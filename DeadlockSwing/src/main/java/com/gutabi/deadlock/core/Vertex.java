@@ -1,12 +1,10 @@
 package com.gutabi.deadlock.core;
 
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
-import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Shape;
-import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Path2D;
 import java.util.ArrayList;
@@ -29,11 +27,13 @@ public class Vertex extends Entity {
 	Path2D path;
 	double radius;
 	
+	public static final double INIT_VERTEX_RADIUS = Math.sqrt(2 * MODEL.world.ROAD_RADIUS * MODEL.world.ROAD_RADIUS);
+	
 	public Vertex(Point p) {
 		
 		this.p = p;
 		
-		radius = 3 * Math.sqrt(2 * MODEL.world.ROAD_RADIUS * MODEL.world.ROAD_RADIUS);
+		radius = INIT_VERTEX_RADIUS;
 		
 		computeArea();
 		
@@ -64,7 +64,7 @@ public class Vertex extends Entity {
 	private void computeArea() {
 		Shape s = new Ellipse2D.Double(p.x - radius, p.y - radius, 2 * radius, 2 * radius);
 		
-		poly = Java2DUtils.shapeToList(s);
+		poly = Java2DUtils.shapeToList(s, 0.01);
 		
 		path = Java2DUtils.listToPath(poly);
 	}	
@@ -206,49 +206,38 @@ public class Vertex extends Entity {
 		return removed;
 	}
 	
+	/**
+	 * @param g2 in world coords
+	 */
 	public void paint(Graphics2D g2) {
-		
-//		g2.setColor(color);
-//		
-//		Point loc = VIEW.worldToPanel(getPoint().add(new Point(-radius, -radius)));
-//		
-//		g2.fillOval((int)loc.getX(), (int)loc.getY(), (int)(radius * 2 * MODEL.world.PIXELS_PER_METER), (int)(radius * 2 * MODEL.world.PIXELS_PER_METER));
-//		
-//		g2.setColor(Color.WHITE);
-//		
-//		g2.drawString(Integer.toString(id), (int)loc.getX(), (int)(loc.getY() + radius * MODEL.world.PIXELS_PER_METER));
-		
-		AffineTransform origTransform = g2.getTransform();
-		AffineTransform trans = (AffineTransform)VIEW.worldToPanelTransform.clone();
-		g2.setTransform(trans);
+//		AffineTransform origTransform = g2.getTransform();
+//		AffineTransform trans = (AffineTransform)origTransform.clone();
+//		g2.setTransform(trans);
 		g2.setColor(color);
 		g2.fill(path);
-		
-		g2.setTransform(origTransform);
-		
-		Point loc = VIEW.worldToPanel(getPoint().add(new Point(-radius, -radius)));
-		g2.setColor(Color.WHITE);
-		g2.drawString(Integer.toString(id), (int)loc.getX(), (int)(loc.getY() + radius * MODEL.world.PIXELS_PER_METER));
-		
 	}
 	
+	/**
+	 * @param g2 in world coords
+	 */
 	public void paintHilite(Graphics2D g2) {
-		
-//		g2.setColor(hiliteColor);
-//		
-//		Point loc = VIEW.worldToPanel(getPoint().add(new Point(-radius, -radius)));
-//		
-//		g2.fillOval((int)loc.getX(), (int)loc.getY(), (int)(radius * 2 * MODEL.world.PIXELS_PER_METER), (int)(radius * 2 * MODEL.world.PIXELS_PER_METER));
-		
-		
-		
-		AffineTransform origTransform = g2.getTransform();
-		AffineTransform trans = (AffineTransform)VIEW.worldToPanelTransform.clone();
-		g2.setTransform(trans);
+//		AffineTransform origTransform = g2.getTransform();
+//		AffineTransform trans = (AffineTransform)origTransform.clone();
+//		g2.setTransform(trans);
 		g2.setColor(hiliteColor);
 		g2.fill(path);
-		g2.setTransform(origTransform);
-		
+//		g2.setTransform(origTransform);
+	}
+	
+	/**
+	 * 
+	 * @param g2 in pixels, <0, 0> is world origin
+	 */
+	public void paintID(Graphics2D g2) {
+		g2.setColor(Color.WHITE);
+		Point worldPoint = p.minus(new Point(radius, 0));
+		Point panelPoint = worldPoint.multiply(MODEL.world.PIXELS_PER_METER);
+		g2.drawString(Integer.toString(id), (int)(panelPoint.x), (int)(panelPoint.y));
 	}
 	
 	public void check() {

@@ -21,9 +21,9 @@ public class TestDMath {
 		Point a = new Point(760.0, 464.0);
 		double yba = 0.756791720569197;
 		
-		assertTrue(du != (d.getY() - a.getY()) / yba);
+		assertTrue(du != (d.y - a.y) / yba);
 		
-		assertTrue(DMath.equals(du, (d.getY() - a.getY()) / yba));
+		assertTrue(DMath.equals(du, (d.y - a.y) / yba));
 		
 	}
 	
@@ -52,7 +52,7 @@ public class TestDMath {
 		Point a = new Point(1345.6, 295.8);
 		double yba = 0.19999999999998863;
 		
-		double tmp = (c.getY() - a.getY()) / yba;
+		double tmp = (c.y - a.y) / yba;
 		
 		assertTrue(cu != tmp);
 		

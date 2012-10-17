@@ -4,7 +4,6 @@ import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 
 import java.awt.Color;
 import java.awt.Container;
-import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
@@ -23,10 +22,7 @@ import org.apache.log4j.Logger;
 import com.gutabi.deadlock.controller.ControlMode;
 import com.gutabi.deadlock.core.Edge;
 import com.gutabi.deadlock.core.Entity;
-import com.gutabi.deadlock.core.Intersection;
 import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.core.Sink;
-import com.gutabi.deadlock.core.Source;
 import com.gutabi.deadlock.core.Vertex;
 import com.gutabi.deadlock.model.Car;
 import com.gutabi.deadlock.utils.ImageUtils;
@@ -112,13 +108,13 @@ public class DeadlockView {
 	 * <WORLD_WIDTH, WORLD_HEIGHT> goes to worldViewLoc + <MODEL.world.WORLD_WIDTH * MODEL.world.PIXELS_PER_METER, MODEL.world.WORLD_HEIGHT * MODEL.world.PIXELS_PER_METER> 
 	 */
 	public Point worldToPanel(Point worldP) {
-		Point2D src = new Point2D.Double(worldP.getX(), worldP.getY());
+		Point2D src = new Point2D.Double(worldP.x, worldP.y);
 		Point2D dst = worldToPanelTransform.transform(src, null);
 		return new Point(dst.getX(), dst.getY());
 	}
 	
 	public Point panelToWorld(Point panelP) {
-		Point2D src = new Point2D.Double(panelP.getX(), panelP.getY());
+		Point2D src = new Point2D.Double(panelP.x, panelP.y);
 		Point2D dst = panelToWorldTransform.transform(src, null);
 		return new Point(dst.getX(), dst.getY());
 	}
@@ -150,16 +146,27 @@ public class DeadlockView {
 		return newFrame;
 	}
 	
+	public void paint(Graphics2D g2) {
+		
+		int x = panel.getWidth()/2 - (int)((MODEL.world.WORLD_WIDTH * MODEL.world.PIXELS_PER_METER)/2);
+		int y = panel.getHeight()/2 - (int)((MODEL.world.WORLD_HEIGHT * MODEL.world.PIXELS_PER_METER)/2);
+		g2.translate(x, y);
+		
+		paintBackground(g2);
+		paintScene(g2);
+	}
+	
+	
 	long lastTime;
 	long curTime;
 	int frameCount;
 	int fps;
 	
-	public void drawScene(Graphics2D g2) {
+	private void paintScene(Graphics2D g2) {
 		
 		frameCount++;
 		
-//		logger.debug("draw scene " + frameCount);
+		logger.debug("draw scene " + frameCount);
 		
 		curTime = System.currentTimeMillis();
 		
@@ -168,8 +175,6 @@ public class DeadlockView {
 			frameCount = 0;
 			lastTime = curTime;
 		}
-		
-		paintFPS(g2);
 		
 		ControlMode modeCopy;
 		Entity hilitedCopy;
@@ -188,48 +193,30 @@ public class DeadlockView {
 			
 			MODEL.stroke.paint(g2);
 			
+			paintFPS(g2);
+			
 			break;
 		}
 		case IDLE:
 		case RUNNING:
 		case PAUSED: {
 			
-			if (hilitedCopy != null) {
-				
-				if (hilitedCopy instanceof Edge) {
-					
-					Edge e = (Edge)hilitedCopy;
-					e.paintHilite(g2);
-					
-				} else if (hilitedCopy instanceof Intersection) {
-					
-					Intersection i = (Intersection)hilitedCopy;
-					i.paintHilite(g2);
-					
-				} else if (hilitedCopy instanceof Source) {
-					
-					Source s = (Source)hilitedCopy;
-					s.paintHilite(g2);
-					
-				} else if (hilitedCopy instanceof Sink) {
-					
-					Sink s = (Sink)hilitedCopy;
-					s.paintHilite(g2);
-					
-				} else if (hilitedCopy instanceof Car) {
-					
-					Car c = (Car)hilitedCopy;
-					c.paintHilite(g2);
-					
-				} else {
-					assert false;
-				}
-				
-			}
+			AffineTransform origTransform = g2.getTransform();
+			AffineTransform trans = (AffineTransform)origTransform.clone();
+			trans.scale(MODEL.world.PIXELS_PER_METER, MODEL.world.PIXELS_PER_METER);
+			g2.setTransform(trans);
 			
 			for (Car c : carsCopy) {
 				c.paint(g2);
 			}
+			
+			if (hilitedCopy != null) {
+				hilitedCopy.paintHilite(g2);
+			}
+			
+			g2.setTransform(origTransform);
+			
+			paintFPS(g2);
 			
 			break;
 		}
@@ -237,18 +224,29 @@ public class DeadlockView {
 		
 	}
 	
+	private void paintBackground(Graphics2D g2) {
+		
+		int x = -(int)(((Vertex.INIT_VERTEX_RADIUS) * MODEL.world.PIXELS_PER_METER));
+		int y = -(int)(((Vertex.INIT_VERTEX_RADIUS) * MODEL.world.PIXELS_PER_METER));
+		
+		g2.drawImage(backgroundImage, x, y, null);
+	}
+	
 	public void renderBackground() {
 		
-		Dimension d = panel.getSize();
+		backgroundImage = new BufferedImage(
+				(int)((MODEL.world.WORLD_WIDTH + Vertex.INIT_VERTEX_RADIUS + Vertex.INIT_VERTEX_RADIUS) * MODEL.world.PIXELS_PER_METER),
+				(int)((MODEL.world.WORLD_HEIGHT + Vertex.INIT_VERTEX_RADIUS + Vertex.INIT_VERTEX_RADIUS) * MODEL.world.PIXELS_PER_METER),
+				BufferedImage.TYPE_INT_ARGB);
+		Graphics2D backgroundImageG2 = backgroundImage.createGraphics();
 		
-		backgroundImage = new BufferedImage(d.width, d.height, BufferedImage.TYPE_INT_ARGB);
-		Graphics2D g2 = backgroundImage.createGraphics();
+		backgroundImageG2.translate(
+				(int)(Vertex.INIT_VERTEX_RADIUS * MODEL.world.PIXELS_PER_METER),
+				(int)(Vertex.INIT_VERTEX_RADIUS * MODEL.world.PIXELS_PER_METER));
 		
-		Point loc = VIEW.worldToPanel(new Point(0, 0));
+		backgroundImageG2.drawImage(tiledGrass, 0, 0, null);
 		
-		g2.drawImage(tiledGrass, (int)loc.getX(), (int)loc.getY(), (int)(MODEL.world.WORLD_WIDTH * MODEL.world.PIXELS_PER_METER), (int)(MODEL.world.WORLD_HEIGHT * MODEL.world.PIXELS_PER_METER), null);
-		
-		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		backgroundImageG2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		
 		List<Edge> edgesCopy;
 		List<Vertex> verticesCopy;
@@ -258,49 +256,57 @@ public class DeadlockView {
 			verticesCopy = new ArrayList<Vertex>(MODEL.world.graph.getAllVertices());
 		}
 		
+		AffineTransform origTransform = backgroundImageG2.getTransform();
+		AffineTransform trans = (AffineTransform)origTransform.clone();
+		trans.scale(MODEL.world.PIXELS_PER_METER, MODEL.world.PIXELS_PER_METER);
+		backgroundImageG2.setTransform(trans);
+		
 		for (Edge e : edgesCopy) {
-			e.paint(g2);
+			e.paint(backgroundImageG2);
 		}
 		
 		for (Vertex v : verticesCopy) {
-			v.paint(g2);
+			v.paint(backgroundImageG2);
 		}
 		
+		backgroundImageG2.setTransform(origTransform);
+		
+		for (Vertex v : verticesCopy) {
+			v.paintID(backgroundImageG2);
+		}
 	}
 	
-	private static void paintFPS(Graphics2D g2) {
+	/**
+	 * 
+	 * @param g2
+	 */
+	private void paintFPS(Graphics2D g2) {
 		
 		g2.setColor(Color.WHITE);
 		
-		Point o = new Point(1, 1);
-		Point loc = VIEW.worldToPanel(o);
+		Point p = new Point(1, 1).multiply(MODEL.world.PIXELS_PER_METER);
+		g2.drawString("FPS: " + VIEW.fps, (int)p.x, (int)p.y);
 		
-		g2.drawString("FPS: " + VIEW.fps, (int)loc.getX(), (int)loc.getY());
+		p = new Point(1, 2).multiply(MODEL.world.PIXELS_PER_METER);
+		g2.drawString("time: " + MODEL.world.t, (int)p.x, (int)p.y);
 		
-		o = new Point(1, 2);
-		loc = VIEW.worldToPanel(o);
-		
-		g2.drawString("time: " + MODEL.world.t, (int)loc.getX(), (int)loc.getY());
-		
-		
-		o = new Point(1, 3);
-		loc = VIEW.worldToPanel(o);
-		
-		g2.drawString("body count: " + MODEL.world.b2dWorld.getBodyCount(), (int)loc.getX(), (int)loc.getY());
+		p = new Point(1, 3).multiply(MODEL.world.PIXELS_PER_METER);		
+		g2.drawString("body count: " + MODEL.world.b2dWorld.getBodyCount(), (int)p.x, (int)p.y);
 		
 	}
 	
 	public void repaint() {
 		
-//		Point loc = VIEW.worldToPanel(new Point(-MODEL.world.VERTEX_WIDTH, -MODEL.world.VERTEX_WIDTH));
+		int x = panel.getWidth()/2 - (int)(((MODEL.world.WORLD_WIDTH + Vertex.INIT_VERTEX_RADIUS + Vertex.INIT_VERTEX_RADIUS) * MODEL.world.PIXELS_PER_METER)/2);
+		int y = panel.getHeight()/2 - (int)(((MODEL.world.WORLD_HEIGHT + Vertex.INIT_VERTEX_RADIUS + Vertex.INIT_VERTEX_RADIUS) * MODEL.world.PIXELS_PER_METER)/2);
 		
-//		panel.repaint(
-//				(int)loc.getX(),
-//				(int)loc.getY(),
-//				(int)(MODEL.world.WORLD_WIDTH + MODEL.world.VERTEX_WIDTH) * MODEL.world.PIXELS_PER_METER,
-//				(int)(MODEL.world.WORLD_HEIGHT + MODEL.world.VERTEX_WIDTH) * MODEL.world.PIXELS_PER_METER);
+		panel.repaint(
+				x,
+				y,
+				(int)(((MODEL.world.WORLD_WIDTH + Vertex.INIT_VERTEX_RADIUS + Vertex.INIT_VERTEX_RADIUS) * MODEL.world.PIXELS_PER_METER)),
+				(int)(((MODEL.world.WORLD_WIDTH + Vertex.INIT_VERTEX_RADIUS + Vertex.INIT_VERTEX_RADIUS) * MODEL.world.PIXELS_PER_METER)));
 		
-		panel.repaint();
+//		panel.repaint();
 	}
 	
 }

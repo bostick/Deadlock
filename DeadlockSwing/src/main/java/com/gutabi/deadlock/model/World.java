@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import org.apache.log4j.Logger;
 import org.jbox2d.common.Vec2;
 
 import com.gutabi.deadlock.core.DMath;
@@ -67,7 +66,7 @@ public class World {
 	public org.jbox2d.dynamics.World b2dWorld;
 	CarEventListener listener;
 	
-	private static Logger logger = Logger.getLogger(World.class);
+//	private static Logger logger = Logger.getLogger(World.class);
 	
 	public World() {
 		
@@ -78,7 +77,7 @@ public class World {
 		graph = new Graph();
 		gc = new GraphController(graph);
 		
-		b2dWorld = new org.jbox2d.dynamics.World(new Vec2(0.0f, 0.0f));
+		b2dWorld = new org.jbox2d.dynamics.World(new Vec2(0.0f, 0.0f), true);
 		listener = new CarEventListener();
 		b2dWorld.setContactListener(listener);
 		

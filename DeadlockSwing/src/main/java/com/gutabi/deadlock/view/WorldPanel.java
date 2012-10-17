@@ -10,11 +10,10 @@ import javax.swing.JPanel;
 
 import org.apache.log4j.Logger;
 
-
 @SuppressWarnings("serial")
 public class WorldPanel extends JPanel {
 	
-	Logger logger = Logger.getLogger("deadlock");
+	Logger logger = Logger.getLogger(WorldPanel.class);
 	
 	public WorldPanel() {
 		//setPreferredSize(new Dimension(1400, 822));
@@ -26,15 +25,8 @@ public class WorldPanel extends JPanel {
 	@Override
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		
-		Dimension d = getSize();
-		
 		Graphics2D g2 = (Graphics2D)g;
-		
-		g2.drawImage(VIEW.backgroundImage, 0, 0, d.width, d.height, null);
-		
-		VIEW.drawScene(g2);
-		
+		VIEW.paint(g2);
 	}
 	
 }

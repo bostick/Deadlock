@@ -2,7 +2,6 @@ package com.gutabi.deadlock.model;
 
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 
-import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
@@ -52,19 +51,18 @@ public class Stroke {
 		int[] yPoints = new int[size];
 		for (int i = 0; i < size; i++) {
 			Point p = curPanelStroke.get(i);
-			xPoints[i] = (int)p.getX();
-			yPoints[i] = (int)p.getY();
+			xPoints[i] = (int)p.x;
+			yPoints[i] = (int)p.y;
 		}
 		
-		g2.setStroke(new DraftingStroke());
 		g2.drawPolyline(xPoints, yPoints, size);
 		
 		g2.setColor(Color.RED);
 		if (lastPanelPoint != null) {
 			
-			g2.fillOval(
-					(int)(lastPanelPoint.getX() - MODEL.world.MOUSE_RADIUS),
-					(int)(lastPanelPoint.getY() - MODEL.world.MOUSE_RADIUS),
+			g2.drawOval(
+					(int)(lastPanelPoint.x - MODEL.world.MOUSE_RADIUS),
+					(int)(lastPanelPoint.y - MODEL.world.MOUSE_RADIUS),
 					(int)(2 * MODEL.world.MOUSE_RADIUS),
 					(int)(2 * MODEL.world.MOUSE_RADIUS));
 			
@@ -72,12 +70,12 @@ public class Stroke {
 		
 	}
 	
-	public static class DraftingStroke extends BasicStroke {
-		
-		public DraftingStroke() {
-			super(5, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
-		}
-		
-	}
+//	public static class DraftingStroke extends BasicStroke {
+//		
+//		public DraftingStroke() {
+//			super(5, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
+//		}
+//		
+//	}
 	
 }

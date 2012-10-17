@@ -99,7 +99,7 @@ public class TestDraggingFuzz {
 				for (int i = 0; i < n; i++) {
 					double rad = randomRadian();
 					double d = randomDist();
-					p = new Point((int)(Math.cos(rad) * d) + p.getX(), (int)(Math.sin(rad) * d) + p.getY());
+					p = new Point((int)(Math.cos(rad) * d) + p.x, (int)(Math.sin(rad) * d) + p.y);
 					testDragged(p);
 					VIEW.repaint();
 				}

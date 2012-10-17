@@ -2,12 +2,9 @@ package com.gutabi.deadlock.core;
 
 
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
-import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
-import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Path2D;
@@ -125,7 +122,7 @@ public final class Edge extends Entity {
 	
 	
 	public boolean hitTest(Point p) {
-		return path.contains(new Point2D.Double(p.getX(), p.getY()));
+		return path.contains(new Point2D.Double(p.x, p.y));
 	}
 	
 	
@@ -313,7 +310,7 @@ public final class Edge extends Entity {
 		
 		assert area.isSingular();
 		
-		List<Point> poly = Java2DUtils.shapeToList(area);
+		List<Point> poly = Java2DUtils.shapeToList(area, 0.1);
 		
 		path = Java2DUtils.listToPath(poly);
 		
@@ -338,9 +335,9 @@ public final class Edge extends Entity {
 		path.lineTo(p2.x, p2.y);
 		path.lineTo(p0.x, p0.y);
 		
-		Area disk1 = new Area(new Ellipse2D.Double(aa.getX()-MODEL.world.ROAD_RADIUS, aa.getY()-MODEL.world.ROAD_RADIUS, 2 * MODEL.world.ROAD_RADIUS, 2 * MODEL.world.ROAD_RADIUS));
+		Area disk1 = new Area(new Ellipse2D.Double(aa.x-MODEL.world.ROAD_RADIUS, aa.y-MODEL.world.ROAD_RADIUS, 2 * MODEL.world.ROAD_RADIUS, 2 * MODEL.world.ROAD_RADIUS));
 		Area rect = new Area(path);
-		Area disk2 = new Area(new Ellipse2D.Double(bb.getX()-MODEL.world.ROAD_RADIUS, bb.getY()-MODEL.world.ROAD_RADIUS, 2 * MODEL.world.ROAD_RADIUS, 2 * MODEL.world.ROAD_RADIUS));
+		Area disk2 = new Area(new Ellipse2D.Double(bb.x-MODEL.world.ROAD_RADIUS, bb.y-MODEL.world.ROAD_RADIUS, 2 * MODEL.world.ROAD_RADIUS, 2 * MODEL.world.ROAD_RADIUS));
 		
 		Area capsule = new Area();
 		capsule.add(disk1);
@@ -424,61 +421,29 @@ public final class Edge extends Entity {
 		}
 	}
 	
+	/**
+	 * @param g2 in world coords
+	 */
 	public void paintHilite(Graphics2D g2) {
-		AffineTransform origTransform = g2.getTransform();
-		AffineTransform trans = (AffineTransform)VIEW.worldToPanelTransform.clone();
-		g2.setTransform(trans);
+//		AffineTransform origTransform = g2.getTransform();
+//		AffineTransform trans = (AffineTransform)VIEW.worldToPanelTransform.clone();
+//		g2.setTransform(trans);
 		g2.setColor(hiliteColor);
 		g2.fill(path);
-		g2.setTransform(origTransform);
+//		g2.setTransform(origTransform);
 	}
 	
+	/**
+	 * @param g2 in world coords
+	 */
 	public void paint(Graphics2D g2) {
-		AffineTransform origTransform = g2.getTransform();
-		AffineTransform trans = (AffineTransform)VIEW.worldToPanelTransform.clone();
-		g2.setTransform(trans);
+//		AffineTransform origTransform = g2.getTransform();
+//		AffineTransform trans = (AffineTransform)VIEW.worldToPanelTransform.clone();
+//		g2.setTransform(trans);
 		g2.setColor(color);
 		g2.fill(path);
-		g2.setTransform(origTransform);
+//		g2.setTransform(origTransform);
 	}
-	
-//	public void paintEdge2(Graphics2D g2) {
-//		int size = size();
-//		int[] xPoints = new int[size];
-//		int[] yPoints = new int[size];
-//		for (int i = 0; i < size; i++) {
-//			Point p = VIEW.worldToPanel(getPoint(i));
-//			xPoints[i] = (int)p.getX();
-//			yPoints[i] = (int)p.getY();
-//		}
-//		g2.setColor(Color.YELLOW);
-//		g2.setStroke(new Road2Stroke());
-//		g2.drawPolyline(xPoints, yPoints, size);
-//	}
-	
-	public static class Road1Stroke extends BasicStroke {
-		
-		public Road1Stroke() {
-			super((int)(2 * MODEL.world.ROAD_RADIUS * MODEL.world.PIXELS_PER_METER), BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND);
-		}
-		
-	}
-	
-	public static class PolyStroke extends BasicStroke {
-		
-		public PolyStroke() {
-			super(1, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND);
-		}
-		
-	}
-	
-//	public static class Road2Stroke extends BasicStroke {
-//		
-//		public Road2Stroke() {
-//			super(1, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND);
-//		}
-//
-//	}
 	
 	
 	

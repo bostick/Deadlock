@@ -59,14 +59,6 @@ public class Point {
 	
 	
 	
-	public double getX() {
-		return x;
-	}
-	
-	public double getY() {
-		return y;
-	}
-	
 	
 	public Vec2 vec2() {
 		return new Vec2((float)x, (float)y);

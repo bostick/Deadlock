@@ -80,7 +80,7 @@ public class TopDownCar {
 		// Make a World
 		//
 		Vec2 gravity = new Vec2(0.0f, 0.0f);
-		World world = new World(gravity);
+		World world = new World(gravity, true);
 		
 		// Make a Body for the ground via definition and shape binding that gives it a boundary
 		// 

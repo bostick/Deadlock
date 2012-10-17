@@ -70,14 +70,14 @@ public class TestSimpleGraphs {
 			}
 			Point aP = a.getPoint();
 			Point bP = b.getPoint();
-			if (aP.getX() < bP.getX()) {
+			if (aP.x < bP.x) {
 				return -1;
-			} else if (aP.getX() > bP.getX()) {
+			} else if (aP.x > bP.x) {
 				return 1;
 			} else {
-				if (aP.getY() < bP.getY()) {
+				if (aP.y < bP.y) {
 					return -1;
-				} else if (aP.getY() > bP.getY()) {
+				} else if (aP.y > bP.y) {
 					return 1;
 				} else {
 					throw new AssertionError("Vertices are not equal but have the same point");

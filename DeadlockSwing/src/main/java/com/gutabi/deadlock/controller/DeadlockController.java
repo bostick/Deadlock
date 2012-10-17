@@ -377,23 +377,31 @@ public class DeadlockController implements ActionListener {
 		
 		MODEL.hilited = null;
 		
-		MODEL.stroke.start(p);
+		int x = VIEW.panel.getWidth()/2 - (int)((MODEL.world.WORLD_WIDTH * MODEL.world.PIXELS_PER_METER)/2);
+		int y = VIEW.panel.getHeight()/2 - (int)((MODEL.world.WORLD_HEIGHT * MODEL.world.PIXELS_PER_METER)/2);
+		
+		MODEL.stroke.start(p.add(new Point(-x, -y)));
 	}
 	
 	private void draftMove(Point p) {
 		assert Thread.currentThread().getName().equals("controller");
 		
-		MODEL.stroke.move(p);
+		int x = VIEW.panel.getWidth()/2 - (int)((MODEL.world.WORLD_WIDTH * MODEL.world.PIXELS_PER_METER)/2);
+		int y = VIEW.panel.getHeight()/2 - (int)((MODEL.world.WORLD_HEIGHT * MODEL.world.PIXELS_PER_METER)/2);
+		
+		MODEL.stroke.move(p.add(new Point(-x, -y)));
 	}
 	
 	private void draftEnd() {
 		assert Thread.currentThread().getName().equals("controller");
+		
 		
 		List<Point> curStroke = MODEL.stroke.getPoints();
 		curStroke = massageCurrent(curStroke);
 		if (curStroke.size() >= 2) {
 			MODEL.world.processNewWorldStroke(curStroke);
 		}
+		
 		assert MODEL.world.checkConsistency();
 		MODEL.stroke.clear();
 		
@@ -478,7 +486,9 @@ public class DeadlockController implements ActionListener {
 	private List<Point> massageCurrent(List<Point> raw) {
 		
 		List<Point> m = raw;
+		
 		m = panelToWorld(m);
+		
 		m = removeDuplicates(m);
 		return m;
 		
@@ -487,7 +497,7 @@ public class DeadlockController implements ActionListener {
 	private List<Point> panelToWorld(List<Point> raw) {
 		List<Point> adj = new ArrayList<Point>();
 		for (Point p : raw) {
-			adj.add(VIEW.panelToWorld(p));
+			adj.add(p.multiply(1/((double)MODEL.world.PIXELS_PER_METER)));
 		}
 		return adj;
 	}
