@@ -392,6 +392,7 @@ public class Graph {
 	 * tests any part of vertex and any part of edge
 	 */
 	public Entity hitTest(Point p) {
+		assert p != null;
 		for (Vertex v : getAllVertices()) {
 			if (DMath.lessThanEquals(Point.distance(p, v.getPoint()), v.getRadius())) {
 				return v;

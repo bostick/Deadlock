@@ -1,5 +1,7 @@
 package com.gutabi.deadlock.core;
 
+import java.awt.geom.Point2D;
+
 import org.jbox2d.common.Vec2;
 
 
@@ -70,6 +72,13 @@ public class Point {
 		return new Vec2((float)x, (float)y);
 	}
 	
+	public Point2D point2D() {
+		return new Point2D.Double(x, y);
+	}
+	
+	public static Point point(Point2D p) {
+		return new Point(p.getX(), p.getY());
+	}
 	
 	public double distanceTo(Point p) {
 		return Point.distance(this, p);

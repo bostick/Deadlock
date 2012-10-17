@@ -194,10 +194,6 @@ public class DeadlockView {
 		case RUNNING:
 		case PAUSED: {
 			
-			for (Car c : carsCopy) {
-				c.paint(g2);
-			}
-			
 			if (hilitedCopy != null) {
 				
 				if (hilitedCopy instanceof Edge) {
@@ -229,6 +225,10 @@ public class DeadlockView {
 					assert false;
 				}
 				
+			}
+			
+			for (Car c : carsCopy) {
+				c.paint(g2);
 			}
 			
 			break;

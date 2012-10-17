@@ -10,20 +10,14 @@ import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
-import java.awt.geom.GeneralPath;
 import java.awt.geom.Path2D;
-import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.jbox2d.collision.shapes.ChainShape;
-import org.jbox2d.common.Vec2;
-import org.jbox2d.dynamics.BodyDef;
-import org.jbox2d.dynamics.FixtureDef;
 
 import com.bric.geom.AreaX;
+import com.gutabi.deadlock.utils.Java2DUtils;
 
 public final class Edge extends Entity {
 		
@@ -37,8 +31,6 @@ public final class Edge extends Entity {
 	EdgePosition startBorder;
 	EdgePosition endBorder;
 	//AreaX area;
-	List<Point> poly;
-	Path2D path;
 	
 	private final double totalLength;
 	
@@ -81,7 +73,7 @@ public final class Edge extends Entity {
 		totalLength = l;
 		
 		color = new Color(0x88, 0x88, 0x88, 0xff);
-		hiliteColor = Color.RED;
+		hiliteColor = new Color(0xff ^ 0x88, 0xff ^ 0x88, 0xff ^ 0x88, 0xff);
 		
 		int h = 17;
 		if (start != null) {
@@ -136,36 +128,6 @@ public final class Edge extends Entity {
 		return path.contains(new Point2D.Double(p.getX(), p.getY()));
 	}
 	
-	public void b2dInit() {
-		BodyDef bodyDef = new BodyDef();
-//		bodyDef.position = new Vec2((float)p.getX(), (float)p.getY());
-		b2dBody = MODEL.world.b2dWorld.createBody(bodyDef);
-		b2dBody.setUserData(this);
-		
-		b2dShape = new ChainShape();
-		Vec2[] vts = new Vec2[poly.size()];
-		for (int i = 0; i < poly.size(); i++) {
-			Point p = poly.get(i);
-			vts[i] = new Vec2((float)p.getX(), (float)p.getY());
-		}
-		((ChainShape)b2dShape).createLoop(vts, vts.length);
-		
-		FixtureDef fixtureDef = new FixtureDef();
-		fixtureDef.shape = b2dShape;
-		fixtureDef.isSensor = true;
-		
-		b2dFixture = b2dBody.createFixture(fixtureDef);
-		
-		b2dInited = true;
-	}
-	
-	public void b2dCleanup() {
-		if (b2dInited) {
-			b2dBody.destroyFixture(b2dFixture);
-			MODEL.world.b2dWorld.destroyBody(b2dBody);
-		}
-	}
-	
 	
 	
 	/**
@@ -187,8 +149,6 @@ public final class Edge extends Entity {
 	
 	public void remove() {
 		assert !removed;
-		
-		b2dCleanup();
 		
 		removed = true;
 	}
@@ -353,47 +313,10 @@ public final class Edge extends Entity {
 		
 		assert area.isSingular();
 		
-		PathIterator pi = area.getPathIterator(null, 0.1);
-		float[] coords = new float[6];
-		Point lastPoint;
-		poly = null;
-		while (!pi.isDone()) {
-			int res = pi.currentSegment(coords);
-			switch (res) {
-			case PathIterator.SEG_MOVETO:
-//				logger.debug("moveto");
-				assert poly == null;
-				poly = new ArrayList<Point>();
-				lastPoint = new Point(coords[0], coords[1]);
-				poly.add(lastPoint);
-				break;
-			case PathIterator.SEG_LINETO:
-//				logger.debug("lineto");
-				lastPoint = new Point(coords[0], coords[1]);
-				poly.add(lastPoint);
-				break;
-			case PathIterator.SEG_CLOSE:
-//				logger.debug("close");
-				break;
-			default:
-				assert false;
-				break;
-			}
-			pi.next();
-		}
+		List<Point> poly = Java2DUtils.shapeToList(area);
 		
-		path = new GeneralPath();
-		for (int i = 0; i < poly.size(); i++) {
-			Point p = poly.get(i);
-			if (i == 0) {
-				path.moveTo(p.getX(), p.getY());
-			} else {
-				path.lineTo(p.getX(), p.getY());
-			}
-		}
-		path.closePath();
+		path = Java2DUtils.listToPath(poly);
 		
-		b2dInit();
 	}
 	
 	private void addToArea(AreaX area, EdgePosition a, EdgePosition b) {

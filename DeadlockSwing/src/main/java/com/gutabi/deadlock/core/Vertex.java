@@ -5,13 +5,14 @@ import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Shape;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Ellipse2D;
+import java.awt.geom.Path2D;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jbox2d.collision.shapes.CircleShape;
-import org.jbox2d.common.Vec2;
-import org.jbox2d.dynamics.BodyDef;
-import org.jbox2d.dynamics.FixtureDef;
+import com.gutabi.deadlock.utils.Java2DUtils;
 
 public class Vertex extends Entity {
 	
@@ -24,6 +25,8 @@ public class Vertex extends Entity {
 	
 	public int id;
 	
+	List<Point> poly;
+	Path2D path;
 	double radius;
 	
 	public Vertex(Point p) {
@@ -32,7 +35,7 @@ public class Vertex extends Entity {
 		
 		radius = 3 * Math.sqrt(2 * MODEL.world.ROAD_RADIUS * MODEL.world.ROAD_RADIUS);
 		
-		b2dInit();
+		computeArea();
 		
 		int h = 17;
 		h = 37 * h + p.hashCode();
@@ -58,27 +61,13 @@ public class Vertex extends Entity {
 	}
 	
 	
-	public void b2dInit() {
-		BodyDef bodyDef = new BodyDef();
-		bodyDef.position = new Vec2((float)p.getX(), (float)p.getY());
-		b2dBody = MODEL.world.b2dWorld.createBody(bodyDef);
-		b2dBody.setUserData(this);
+	private void computeArea() {
+		Shape s = new Ellipse2D.Double(p.x - radius, p.y - radius, 2 * radius, 2 * radius);
 		
-		b2dShape = new CircleShape();
-		b2dShape.m_radius = (float)radius;
+		poly = Java2DUtils.shapeToList(s);
 		
-		FixtureDef fixtureDef = new FixtureDef();
-		fixtureDef.shape = b2dShape;
-		fixtureDef.isSensor = true;
-		
-		b2dFixture = b2dBody.createFixture(fixtureDef);
-	}
-	
-	public void b2dCleanup() {
-		b2dBody.destroyFixture(b2dFixture);
-		MODEL.world.b2dWorld.destroyBody(b2dBody);
-	}
-	
+		path = Java2DUtils.listToPath(poly);
+	}	
 	
 	
 	public void adjustRadius() {
@@ -144,8 +133,7 @@ public class Vertex extends Entity {
 			
 		}
 		
-		b2dCleanup();
-		b2dInit();
+		computeArea();
 		
 	}
 	
@@ -211,8 +199,6 @@ public class Vertex extends Entity {
 		assert !removed;
 		assert eds.size() == 0;
 		
-		b2dCleanup();
-		
 		removed = true;
 	}
 	
@@ -222,24 +208,46 @@ public class Vertex extends Entity {
 	
 	public void paint(Graphics2D g2) {
 		
+//		g2.setColor(color);
+//		
+//		Point loc = VIEW.worldToPanel(getPoint().add(new Point(-radius, -radius)));
+//		
+//		g2.fillOval((int)loc.getX(), (int)loc.getY(), (int)(radius * 2 * MODEL.world.PIXELS_PER_METER), (int)(radius * 2 * MODEL.world.PIXELS_PER_METER));
+//		
+//		g2.setColor(Color.WHITE);
+//		
+//		g2.drawString(Integer.toString(id), (int)loc.getX(), (int)(loc.getY() + radius * MODEL.world.PIXELS_PER_METER));
+		
+		AffineTransform origTransform = g2.getTransform();
+		AffineTransform trans = (AffineTransform)VIEW.worldToPanelTransform.clone();
+		g2.setTransform(trans);
 		g2.setColor(color);
+		g2.fill(path);
+		
+		g2.setTransform(origTransform);
 		
 		Point loc = VIEW.worldToPanel(getPoint().add(new Point(-radius, -radius)));
-		
-		g2.fillOval((int)loc.getX(), (int)loc.getY(), (int)(radius * 2 * MODEL.world.PIXELS_PER_METER), (int)(radius * 2 * MODEL.world.PIXELS_PER_METER));
-		
 		g2.setColor(Color.WHITE);
-		
 		g2.drawString(Integer.toString(id), (int)loc.getX(), (int)(loc.getY() + radius * MODEL.world.PIXELS_PER_METER));
+		
 	}
 	
 	public void paintHilite(Graphics2D g2) {
 		
+//		g2.setColor(hiliteColor);
+//		
+//		Point loc = VIEW.worldToPanel(getPoint().add(new Point(-radius, -radius)));
+//		
+//		g2.fillOval((int)loc.getX(), (int)loc.getY(), (int)(radius * 2 * MODEL.world.PIXELS_PER_METER), (int)(radius * 2 * MODEL.world.PIXELS_PER_METER));
+		
+		
+		
+		AffineTransform origTransform = g2.getTransform();
+		AffineTransform trans = (AffineTransform)VIEW.worldToPanelTransform.clone();
+		g2.setTransform(trans);
 		g2.setColor(hiliteColor);
-		
-		Point loc = VIEW.worldToPanel(getPoint().add(new Point(-radius, -radius)));
-		
-		g2.fillOval((int)loc.getX(), (int)loc.getY(), (int)(radius * 2 * MODEL.world.PIXELS_PER_METER), (int)(radius * 2 * MODEL.world.PIXELS_PER_METER));
+		g2.fill(path);
+		g2.setTransform(origTransform);
 		
 	}
 	

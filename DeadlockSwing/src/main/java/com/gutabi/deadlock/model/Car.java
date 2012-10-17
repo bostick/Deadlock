@@ -6,29 +6,28 @@ import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.GeneralPath;
 import java.awt.image.BufferedImage;
 
 import org.apache.log4j.Logger;
-import org.jbox2d.callbacks.RayCastCallback;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.common.Vec2;
+import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.Fixture;
 import org.jbox2d.dynamics.FixtureDef;
 
-import com.gutabi.deadlock.core.Edge;
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.GraphPosition;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.Source;
-import com.gutabi.deadlock.core.Vertex;
 import com.gutabi.deadlock.core.path.GraphPositionPath;
 import com.gutabi.deadlock.core.path.GraphPositionPathPosition;
 import com.gutabi.deadlock.core.path.STGraphPositionPathPositionPath;
 import com.gutabi.deadlock.core.path.STPointPath;
 
-public abstract class Car extends Entity implements RayCastCallback {
+public abstract class Car extends Entity {
 	
 	public CarStateEnum state;
 	
@@ -46,13 +45,14 @@ public abstract class Car extends Entity implements RayCastCallback {
 	Point startPos;
 	double startHeading;
 	
-	private int b2dVertexCount = 0;
-	private int b2dEdgeCount = 0;
-	private boolean intersectedWithVertex;
-	private boolean intersectedWithEdge;
-	
-	boolean aboveVertex;
-	boolean aboveEdge;
+	Point p1;
+	Point p2;
+	Point p3;
+	Point p4;
+	protected Body b2dBody;
+	protected PolygonShape b2dShape;
+	protected Fixture b2dFixture;
+	protected boolean b2dInited;
 	
 	static Logger logger = Logger.getLogger(Car.class);
 	
@@ -66,8 +66,14 @@ public abstract class Car extends Entity implements RayCastCallback {
 		source = s;
 		
 		overallPath = s.getPathToMatchingSink();
+//		startPos = overallPath.getGraphPosition(0).getPoint();
 		startPos = overallPath.getGraphPosition(0).getPoint();
 		GraphPositionPathPosition overallPos = overallPath.findClosestGraphPositionPathPosition(startPos);
+		
+		p1 = new Point(MODEL.world.CAR_LENGTH / 2, MODEL.world.CAR_LENGTH / 4);
+		p2 = new Point(MODEL.world.CAR_LENGTH / 2, -MODEL.world.CAR_LENGTH / 4);
+		p3 = new Point(-MODEL.world.CAR_LENGTH / 2, -MODEL.world.CAR_LENGTH / 4);
+		p4 = new Point(-MODEL.world.CAR_LENGTH / 2, MODEL.world.CAR_LENGTH / 4);
 		
 		STGraphPositionPathPositionPath nextPlannedPath = STGraphPositionPathPositionPath.advanceOneTimeStep(overallPos, (getSpeed() * 1000) * (((float)MODEL.world.dt) / ((float)1000)));
 		
@@ -79,6 +85,10 @@ public abstract class Car extends Entity implements RayCastCallback {
 //		logger.debug("nextDTGoalPoint: " + nextDTGoalPoint);
 		
 		startHeading = Math.atan2(nextDTGoalPoint.getY()-startPos.getY(), nextDTGoalPoint.getX()-startPos.getX());
+		
+		color = Color.BLUE;
+		
+		computeArea();
 		
 		b2dInit();
 		
@@ -94,6 +104,17 @@ public abstract class Car extends Entity implements RayCastCallback {
 		return state;
 	}
 	
+	private void computeArea() {
+		
+		path = new GeneralPath();
+		path.moveTo(p1.getX(), p1.getY());
+		path.lineTo(p2.getX(), p2.getY());
+		path.lineTo(p3.getX(), p3.getY());
+		path.lineTo(p4.getX(), p4.getY());
+		path.closePath();
+		
+	}
+	
 	public void b2dInit() {
 		BodyDef bodyDef = new BodyDef();
 		bodyDef.type = BodyType.DYNAMIC;
@@ -104,7 +125,12 @@ public abstract class Car extends Entity implements RayCastCallback {
 		b2dBody.setUserData(this);
 		
 		b2dShape = new PolygonShape();
-		((PolygonShape)b2dShape).setAsBox((float)(MODEL.world.CAR_LENGTH / 2), (float)(MODEL.world.CAR_LENGTH / 4));
+		b2dShape.set(new Vec2[] {
+				new Vec2((float)p1.getX(), (float)p1.getY()),
+				new Vec2((float)p2.getX(), (float)p2.getY()),
+				new Vec2((float)p3.getX(), (float)p3.getY()),
+				new Vec2((float)p4.getX(), (float)p4.getY())}, 4);
+		//((PolygonShape)b2dShape).setAsBox((float)(MODEL.world.CAR_LENGTH / 2), (float)(MODEL.world.CAR_LENGTH / 4));
 		
 		FixtureDef fixtureDef = new FixtureDef();
 		fixtureDef.shape = b2dShape;
@@ -122,30 +148,6 @@ public abstract class Car extends Entity implements RayCastCallback {
 		return b2dShape.testPoint(b2dBody.getTransform(), new Vec2((float)p.getX(), (float)p.getY()));
 	}
 	
-	public void incrementB2DEdgeCount() {
-		b2dEdgeCount++;
-	}
-	
-	public void decrementB2DEdgeCount() {
-		b2dEdgeCount--;
-	}
-	
-	public int getB2DEdgeCount() {
-		return b2dEdgeCount;
-	}
-	
-	public void incrementB2DVertexCount() {
-		b2dVertexCount++;
-	}
-	
-	public void decrementB2DVertexCount() {
-		b2dVertexCount--;
-	}
-	
-	public int getB2DVertexCount() {
-		return b2dVertexCount;
-	}
-	
 	public void crash() {
 		
 		state = CarStateEnum.CRASHED;
@@ -158,6 +160,23 @@ public abstract class Car extends Entity implements RayCastCallback {
 	public void preStep() {
 		
 		logger.debug("car preStep");
+		
+		AffineTransform b2dTrans = new AffineTransform();
+		Vec2 pos = b2dBody.getPosition();
+		float angle = b2dBody.getAngle();
+		b2dTrans.translate(pos.x, pos.y);
+		b2dTrans.rotate(angle);
+		
+		Entity e1 = MODEL.world.graph.hitTest(Point.point(b2dTrans.transform(p1.point2D(), null)));
+		Entity e2 = MODEL.world.graph.hitTest(Point.point(b2dTrans.transform(p2.point2D(), null)));
+		Entity e3 = MODEL.world.graph.hitTest(Point.point(b2dTrans.transform(p3.point2D(), null)));
+		Entity e4 = MODEL.world.graph.hitTest(Point.point(b2dTrans.transform(p4.point2D(), null)));
+		
+		if (e1 == null && e2 == null && e3 == null && e4 == null) {
+			color = Color.RED;
+		} else {
+			color = Color.BLUE;
+		}
 		
 		switch (state) {
 		case NEW:
@@ -381,37 +400,6 @@ public abstract class Car extends Entity implements RayCastCallback {
 		return true;	
 	}
 	
-	@Override
-	public float reportFixture(Fixture fixture, Vec2 point, Vec2 normal, float fraction) {
-		
-		intersectedWithVertex = false;
-		intersectedWithEdge = false;
-		
-		Object userData = fixture.getBody().getUserData();
-		
-		if (userData instanceof Car) {
-			
-			logger.debug("intersected with car");
-			
-		} else if (userData instanceof Vertex) {
-			
-			logger.debug("intersected with vertex");
-			
-			intersectedWithVertex = true;
-			
-		} else if (userData instanceof Edge) {
-			
-			logger.debug("intersected with edge");
-			
-			intersectedWithEdge = true;
-			
-		} else {
-			throw new AssertionError();
-		}
-		
-		return 1;
-	}
-	
 	
 	
 	public int getId() {
@@ -470,24 +458,19 @@ public abstract class Car extends Entity implements RayCastCallback {
 		b2dTrans.translate(pos.x, pos.y);
 		b2dTrans.rotate(angle);
 		
-		b2dTrans.scale(1/((double)MODEL.world.PIXELS_PER_METER), 1/((double)MODEL.world.PIXELS_PER_METER));
+		//b2dTrans.scale(1/((double)MODEL.world.PIXELS_PER_METER), 1/((double)MODEL.world.PIXELS_PER_METER));
 		
 		g2.setTransform(b2dTrans);
 		
-//		g2.setColor(color);
-		if (b2dVertexCount > 0 || b2dEdgeCount > 0) {
-			g2.setColor(Color.CYAN);
-		} else if (intersectedWithEdge || intersectedWithVertex) {
-			g2.setColor(Color.RED);
-		} else {
-			g2.setColor(Color.BLUE);
-		}
+		g2.setColor(color);
 		
-		g2.fillRect(
-				(int)(-MODEL.world.CAR_LENGTH * MODEL.world.PIXELS_PER_METER / 2 - 1),
-				(int)(-MODEL.world.CAR_LENGTH * MODEL.world.PIXELS_PER_METER / 4 - 1),
-				(int)(MODEL.world.CAR_LENGTH * MODEL.world.PIXELS_PER_METER + 2),
-				(int)(MODEL.world.CAR_LENGTH * MODEL.world.PIXELS_PER_METER / 2 + 2));
+//		g2.fillRect(
+//				(int)(-MODEL.world.CAR_LENGTH * MODEL.world.PIXELS_PER_METER / 2 - 1),
+//				(int)(-MODEL.world.CAR_LENGTH * MODEL.world.PIXELS_PER_METER / 4 - 1),
+//				(int)(MODEL.world.CAR_LENGTH * MODEL.world.PIXELS_PER_METER + 2),
+//				(int)(MODEL.world.CAR_LENGTH * MODEL.world.PIXELS_PER_METER / 2 + 2));
+		
+		g2.fill(path);
 		
 		g2.setTransform(origTransform);
 	}

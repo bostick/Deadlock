@@ -16,7 +16,9 @@ public class SimulationRunnable implements Runnable {
 		
 		long t = 0;
 		long currentTime = System.currentTimeMillis();
-	    long accumulator = 0;
+		long accumulator = 0;
+		
+		long newTime = System.currentTimeMillis();
 		
 		outer:
 		while (true) {
@@ -37,19 +39,31 @@ public class SimulationRunnable implements Runnable {
 				}
 			}
 			
-			long newTime = System.currentTimeMillis();
-	        long frameTime = newTime - currentTime;
-	        currentTime = newTime;
+			newTime = System.currentTimeMillis();
+			long frameTime = newTime - currentTime;
+			//long frameTime = newTime - currentTime - 10;
+//			if (frameTime < 1) {
+//				frameTime = 1;
+//			}
 			
-	        accumulator += frameTime;
-	        
-	        while (accumulator >= MODEL.world.dt) {
-	        	MODEL.world.integrate(t);
-	        	accumulator -= MODEL.world.dt;
-	            t += MODEL.world.dt;
-	        }
+			currentTime = newTime;
+			
+			accumulator += frameTime;
+			
+			while (accumulator >= MODEL.world.dt) {
+				MODEL.world.integrate(t);
+				accumulator -= MODEL.world.dt;
+				t += MODEL.world.dt;
+			}
 			
 			VIEW.repaint();
+			
+//			try {
+//				Thread.sleep(10);
+//			} catch (InterruptedException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
 			
 		} // outer
 		

@@ -47,7 +47,7 @@ public class World {
 	/**
 	 * move physics forward by dt milliseconds
 	 */
-	public long dt = 7;
+	public long dt = 10;
 	
 	public Random RANDOM = new Random(1);
 	
