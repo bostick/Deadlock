@@ -58,6 +58,7 @@ public class DeadlockView {
 	}
 	
 	public void repaint() {
+		assert !Thread.holdsLock(MODEL);
 		
 		int x = panel.getWidth()/2 - (int)(((MODEL.world.WORLD_WIDTH + Vertex.INIT_VERTEX_RADIUS + Vertex.INIT_VERTEX_RADIUS) * MODEL.PIXELS_PER_METER)/2);
 		int y = panel.getHeight()/2 - (int)(((MODEL.world.WORLD_HEIGHT + Vertex.INIT_VERTEX_RADIUS + Vertex.INIT_VERTEX_RADIUS) * MODEL.PIXELS_PER_METER)/2);

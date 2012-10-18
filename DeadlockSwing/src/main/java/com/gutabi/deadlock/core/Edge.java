@@ -2,6 +2,7 @@ package com.gutabi.deadlock.core;
 
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Area;
@@ -208,7 +209,8 @@ public final class Edge extends Entity {
 						break;
 					}
 				}
-				
+			} else if (i+1 == skeleton.size()-1) {
+				assert false : "reached end";
 			}
 		}
 		
@@ -254,7 +256,8 @@ public final class Edge extends Entity {
 						break;
 					}
 				}
-				
+			} else if (i+1 == 1) {
+				assert false : "reached start";
 			}
 		}
 		
@@ -424,16 +427,31 @@ public final class Edge extends Entity {
 	 * @param g2 in world coords
 	 */
 	public void paintHilite(Graphics2D g2) {
-		g2.setColor(hiliteColor);
-		g2.fill(path);
+		if (!MODEL.DEBUG_DRAW) {
+			g2.setColor(hiliteColor);
+			g2.fill(path);
+		} else {
+			g2.setColor(Color.BLACK);
+			g2.setStroke(new BasicStroke(0.05f));
+			g2.draw(path);
+		}
 	}
 	
 	/**
 	 * @param g2 in world coords
 	 */
 	public void paint(Graphics2D g2) {
-		g2.setColor(color);
-		g2.fill(path);
+		if (!MODEL.DEBUG_DRAW) {
+			g2.setColor(color);
+			g2.fill(path);
+		} else {
+			g2.setColor(Color.BLACK);
+			g2.setStroke(new BasicStroke(0.05f));
+			g2.draw(path);
+			
+//			paintBorders(g2);
+			
+		}
 	}
 	
 	/**
@@ -442,6 +460,7 @@ public final class Edge extends Entity {
 	public void paintSkeleton(Graphics2D g2) {
 		
 		g2.setColor(Color.BLACK);
+		g2.setStroke(new BasicStroke(1.0f));
 		
 		int[] xs = new int[skeleton.size()];
 		int[] ys = new int[skeleton.size()];
@@ -453,7 +472,18 @@ public final class Edge extends Entity {
 		g2.drawPolyline(xs, ys, skeleton.size());
 	}
 	
-	
+	/**
+	 * @param g2 in world coords
+	 */
+	public void paintBorders(Graphics2D g2) {
+		
+		g2.setColor(Color.GREEN);
+		g2.fillOval((int)(startBorder.p.x * MODEL.PIXELS_PER_METER)-2, (int)(startBorder.p.y * MODEL.PIXELS_PER_METER)-2, 4, 4);
+		
+		g2.setColor(Color.RED);
+		g2.fillOval((int)(endBorder.p.x * MODEL.PIXELS_PER_METER)-2, (int)(endBorder.p.y * MODEL.PIXELS_PER_METER)-2, 4, 4);
+		
+	}
 	
 	
 	

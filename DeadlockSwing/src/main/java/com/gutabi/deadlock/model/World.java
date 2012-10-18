@@ -18,7 +18,6 @@ import javax.imageio.ImageIO;
 import org.apache.log4j.Logger;
 import org.jbox2d.common.Vec2;
 
-import com.gutabi.deadlock.controller.ControlMode;
 import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Edge;
 import com.gutabi.deadlock.core.Entity;
@@ -45,15 +44,10 @@ public class World {
 	public final double WORLD_HEIGHT = WORLD_WIDTH;
 	
 	/*
-	 * spawn cars every SPAWN_FREQUENCY milliseconds
+	 * spawn cars every SPAWN_FREQUENCY seconds
 	 * -1 means no spawning
 	 */
-	public int SPAWN_FREQUENCY = 3000;
-	
-	/**
-	 * move physics forward by dt milliseconds
-	 */
-	public long dt = 10;
+	public double SPAWN_FREQUENCY_SECONDS = 3.0;
 	
 	public Random RANDOM = new Random(1);
 	
@@ -61,8 +55,8 @@ public class World {
 	/*
 	 * simulation state
 	 */
-	public long t;
-	public long lastSpawnTime;
+	public double t;
+	public double lastSpawnTime;
 	
 	
 	public Graph graph;
@@ -172,10 +166,12 @@ public class World {
 	 */
 	public void postStop() {
 		
-		for (Car c : cars) {
-			c.b2dCleanup();
+		synchronized (MODEL) {
+			for (Car c : cars) {
+				c.b2dCleanup();
+			}
+			cars.clear();
 		}
-		cars.clear();
 		
 	}
 	
@@ -185,40 +181,40 @@ public class World {
 	int velocityIterations = 6;
 	int positionIterations = 2;
 	
-	public void integrate(long t) {
+	public void integrate(double t) {
 		
 //		logger.debug("integrate " + t);
 		
 		this.t = t;
 		
 		synchronized (MODEL) {
-			
-			if (SPAWN_FREQUENCY > 0 && (t == 0 || (t - lastSpawnTime) >= SPAWN_FREQUENCY)) {
+			if (SPAWN_FREQUENCY_SECONDS > 0 && (t == 0 || (t - lastSpawnTime) >= SPAWN_FREQUENCY_SECONDS)) {
 				spawnNewCars();
 			}
-			
-			for (Car c : cars) {
-				c.preStep();
-			}
-			
-//			logger.debug("before step " + t);
-			b2dWorld.step(((float)dt) / 1000.0f, velocityIterations, positionIterations);
-//			logger.debug("after step " + t);
-			
-			List<Car> toBeRemoved = new ArrayList<Car>();
-			for (Car c : cars) {
-				boolean shouldPersist = c.postStep();
-				if (!shouldPersist) {
-					if (MODEL.hilited == c) {
-						MODEL.hilited = null;
-					}
-					c.b2dCleanup();
-					toBeRemoved.add(c);
+		}
+		
+		for (Car c : cars) {
+			c.preStep();
+		}
+		
+//		logger.debug("before step " + t);
+		b2dWorld.step((float)MODEL.dtSeconds, velocityIterations, positionIterations);
+//		logger.debug("after step " + t);
+		
+		List<Car> toBeRemoved = new ArrayList<Car>();
+		for (Car c : cars) {
+			boolean shouldPersist = c.postStep();
+			if (!shouldPersist) {
+				if (MODEL.hilited == c) {
+					MODEL.hilited = null;
 				}
+				c.b2dCleanup();
+				toBeRemoved.add(c);
 			}
-			
+		}
+		
+		synchronized (MODEL) {
 			cars.removeAll(toBeRemoved);
-			
 		}
 		
 	}
@@ -306,10 +302,6 @@ public class World {
 		
 	}
 	
-	public List<Car> getCars() {
-		return cars;
-	}
-	
 	/**
 	 * the next choice to make
 	 */
@@ -342,7 +334,10 @@ public class World {
 	
 	public void removeCar(Car c) {
 		c.b2dCleanup();
-		cars.remove(c);
+		
+		synchronized (MODEL) {
+			cars.remove(c);
+		}
 	}
 	
 	
@@ -393,19 +388,13 @@ public class World {
 			lastTime = curTime;
 		}
 		
-		ControlMode modeCopy;
-		Entity hilitedCopy;
-		
 		List<Car> carsCopy;
 		
 		synchronized (MODEL) {
-			modeCopy = MODEL.getMode();
-			hilitedCopy = MODEL.hilited;
-			
-			carsCopy = new ArrayList<Car>(MODEL.world.getCars());
+			carsCopy = new ArrayList<Car>(cars);
 		}
 		
-		switch (modeCopy) {
+		switch (MODEL.getMode()) {
 		case DRAFTING: {
 			
 			MODEL.stroke.paint(g2);
@@ -425,8 +414,8 @@ public class World {
 				c.paint(g2);
 			}
 			
-			if (hilitedCopy != null) {
-				hilitedCopy.paintHilite(g2);
+			if (MODEL.hilited != null) {
+				MODEL.hilited.paintHilite(g2);
 			}
 			
 			g2.setTransform(origTransform);
@@ -450,6 +439,7 @@ public class World {
 	}
 	
 	public void renderBackground() {
+		assert !Thread.holdsLock(MODEL);
 		
 		backgroundImage = new BufferedImage(
 				(int)((MODEL.world.WORLD_WIDTH + Vertex.INIT_VERTEX_RADIUS + Vertex.INIT_VERTEX_RADIUS) * MODEL.PIXELS_PER_METER),
@@ -496,6 +486,7 @@ public class World {
 			
 			for (Edge e : edgesCopy) {
 				e.paintSkeleton(backgroundImageG2);
+				e.paintBorders(backgroundImageG2);
 			}
 		}
 		

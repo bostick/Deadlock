@@ -4,9 +4,7 @@ import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import com.gutabi.deadlock.core.Event.CloseEvent;
 import com.gutabi.deadlock.core.Event.IntersectionEvent;
@@ -39,75 +37,11 @@ public class GraphController {
 	}
 	
 	public void removeEdgeTop(Edge e) {
-		
-		/*
-		 * have to properly cleanup start and end intersections before removing edges
-		 */
-		if (!e.isLoop()) {
-			
-			Vertex eStart = e.getStart();
-			Vertex eEnd = e.getEnd();
-			
-			graph.destroyEdge(e);
-			
-			graph.postEdgeChange(eStart);
-			graph.postEdgeChange(eEnd);
-			
-		} else if (!e.isStandAlone()) {
-			
-			Vertex v = e.getStart();
-			
-			graph.destroyEdge(e);
-			
-			graph.postEdgeChange(v);
-			
-		} else {
-			graph.destroyEdge(e);
-		}
-		
-		//postTop();
+		graph.removeEdgeTop(e);
 	}
 	
 	public void removeVertexTop(Vertex v) {
-		
-		Set<Vertex> affectedVertices = new HashSet<Vertex>();
-		
-		/*
-		 * copy, since removing edges modifies v.getEdges()
-		 * and use a set since loops will be in the list twice
-		 */
-		Set<Edge> eds = new HashSet<Edge>(v.getEdges());
-		for (Edge e : eds) {
-			
-			if (!e.isLoop()) {
-				
-				Vertex eStart = e.getStart();
-				Vertex eEnd = e.getEnd();
-				
-				affectedVertices.add(eStart);
-				affectedVertices.add(eEnd);
-				
-				graph.destroyEdge(e);
-				
-			} else {
-				
-				Vertex eV = e.getStart();
-				
-				affectedVertices.add(eV);
-				
-				graph.destroyEdge(e);
-				
-			}
-		}
-		
-		graph.destroyVertex(v);
-		affectedVertices.remove(v);
-		
-		for (Vertex a : affectedVertices) {
-			graph.postEdgeChange(a);
-		}
-		
-		//postTop();
+		graph.removeVertexTop(v);
 	}
 	
 	public void processNewStrokeTop(List<Point> stroke) {
@@ -211,7 +145,7 @@ public class GraphController {
 			
 		}
 		
-		cleanupEdges();
+//		cleanupEdges();
 	}
 	
 	private void processNewSegment(Point a, Point b) {
@@ -763,39 +697,39 @@ public class GraphController {
 		
 	}
 	
-	private void cleanupEdges() {
-		
-		List<Edge> toRemove = new ArrayList<Edge>();
-		boolean changed;
-		
-		while (true) {
-			toRemove.clear();
-			changed = false;
-			
-			for (Edge e : graph.getEdges()) {
-				if (e.getTotalLength() <= MODEL.world.CAR_LENGTH) {
-					toRemove.add(e);
-					changed = true;
-				}
-			}
-			
-			for (Edge e : toRemove) {
-				
-				if (e.isRemoved()) {
-					/*
-					 * may be removed from having been merged in a previous iteration
-					 */
-					continue;
-				}
-				
-				removeEdgeTop(e);
-				
-			}
-			
-			if (!changed) {
-				break;
-			}
-		}
-		
-	}
+//	private void cleanupEdges() {
+//		
+//		List<Edge> toRemove = new ArrayList<Edge>();
+//		boolean changed;
+//		
+//		while (true) {
+//			toRemove.clear();
+//			changed = false;
+//			
+//			for (Edge e : graph.getEdges()) {
+//				if (e.getTotalLength() <= MODEL.world.CAR_LENGTH) {
+//					toRemove.add(e);
+//					changed = true;
+//				}
+//			}
+//			
+//			for (Edge e : toRemove) {
+//				
+//				if (e.isRemoved()) {
+//					/*
+//					 * may be removed from having been merged in a previous iteration
+//					 */
+//					continue;
+//				}
+//				
+//				removeEdgeTop(e);
+//				
+//			}
+//			
+//			if (!changed) {
+//				break;
+//			}
+//		}
+//		
+//	}
 }

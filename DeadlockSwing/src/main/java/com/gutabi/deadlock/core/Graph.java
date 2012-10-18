@@ -43,6 +43,185 @@ public class Graph {
 		return segTree.getAllSegments();
 	}
 	
+	public List<Vertex> shortestPath(final Vertex start, Vertex end) {
+		if (start == end) {
+			throw new IllegalArgumentException();
+		}
+		
+		int sid = start.id;
+		int eid = end.id;
+		
+		if (distances[sid][eid] == Double.POSITIVE_INFINITY) {
+			return null;
+		}
+		
+		List<Vertex> vs = new ArrayList<Vertex>();
+		vs.add(start);
+		vs.addAll(intermediateVertices(start, end));
+		vs.add(end);
+		
+		return vs;
+	}
+	
+	/**
+	 * returns the next choice to make for the shortest path from start to end
+	 */
+	public Vertex shortestPathChoice(final Vertex start, Vertex end) {
+		
+		int sid = start.id;
+		int eid = end.id;
+		
+		if (distances[sid][eid] == Double.POSITIVE_INFINITY) {
+			return null;
+		}
+		
+		Vertex n = nextHighest[sid][eid];
+		
+		if (n == null) {
+			return end;
+		}
+		
+		return shortestPathChoice(start, n);
+	}
+	
+	public double distanceBetweenVertices(Vertex a, Vertex b) {
+		return distances[a.id][b.id];
+	}
+	
+	public boolean areNeighbors(Edge a, Edge b) {
+		return neighbors[a.id][b.id];
+	}
+	
+	/**
+	 * tests any part of vertex and any part of edge
+	 */
+	public Entity hitTest(Point p) {
+		assert p != null;
+		for (Vertex v : getAllVertices()) {
+			if (DMath.lessThanEquals(Point.distance(p, v.getPoint()), v.getRadius())) {
+				return v;
+			}
+		}
+		for (Segment in : segTree.getAllSegments()) {
+			Edge e = in.edge;
+			int i = in.index;
+			Point c = e.getPoint(i);
+			Point d = e.getPoint(i+1);
+			if (DMath.lessThanEquals(Point.distance(p, c, d), MODEL.world.ROAD_RADIUS)) {
+				return e;
+			}
+		}
+		return null;
+	}
+	
+	public GraphPosition findClosestGraphPosition(Point p, Point anchor, double radius) {
+		VertexPosition vp = findClosestVertexPosition(p, anchor, radius);
+		EdgePosition ep = findClosestEdgePosition(p, anchor, radius);
+		if (vp == null) {
+			return ep;
+		} else if (ep == null) {
+			return vp;
+		} else if (DMath.equalDistances(p, vp.getPoint(), ep.getPoint())) {
+			assert false;
+		} else if (Point.distance(p, vp.getPoint()) < Point.distance(p, ep.getPoint())) {
+			return vp;
+		} else {
+			return ep;
+		}
+		return null;
+	}
+	
+	public void addSource(Source s) {
+		sources.add(s);
+		refreshVertexIDs();
+	}
+	
+	public void addSink(Sink s) {
+		sinks.add(s);
+		refreshVertexIDs();
+	}
+	
+	public void removeEdgeTop(Edge e) {
+		
+		/*
+		 * have to properly cleanup start and end intersections before removing edges
+		 */
+		if (!e.isLoop()) {
+			
+			Vertex eStart = e.getStart();
+			Vertex eEnd = e.getEnd();
+			
+			destroyEdge(e);
+			
+			postEdgeChange(eStart);
+			postEdgeChange(eEnd);
+			
+		} else if (!e.isStandAlone()) {
+			
+			Vertex v = e.getStart();
+			
+			destroyEdge(e);
+			
+			postEdgeChange(v);
+			
+		} else {
+			destroyEdge(e);
+		}
+		
+		//postTop();
+	}
+	
+	public void removeVertexTop(Vertex v) {
+		
+		Set<Vertex> affectedVertices = new HashSet<Vertex>();
+		
+		/*
+		 * copy, since removing edges modifies v.getEdges()
+		 * and use a set since loops will be in the list twice
+		 */
+		Set<Edge> eds = new HashSet<Edge>(v.getEdges());
+		for (Edge e : eds) {
+			
+			if (!e.isLoop()) {
+				
+				Vertex eStart = e.getStart();
+				Vertex eEnd = e.getEnd();
+				
+				affectedVertices.add(eStart);
+				affectedVertices.add(eEnd);
+				
+				destroyEdge(e);
+				
+			} else {
+				
+				Vertex eV = e.getStart();
+				
+				affectedVertices.add(eV);
+				
+				destroyEdge(e);
+				
+			}
+		}
+		
+		destroyVertex(v);
+		affectedVertices.remove(v);
+		
+		for (Vertex a : affectedVertices) {
+			postEdgeChange(a);
+		}
+		
+		//postTop();
+	}
+	
+	public void preStart() {
+		
+		initializeMatrices();
+		
+		for (Source s : sources) {
+			s.preStart();
+		}
+	}
+	
 	private Edge createEdge(Vertex start, Vertex end, List<Point> pts) {
 		
 		Edge e = new Edge(start, end, pts);
@@ -61,7 +240,7 @@ public class Graph {
 		return e;
 	}
 	
-	void postEdgeChange(Vertex v) {
+	private void postEdgeChange(Vertex v) {
 		
 		if (v instanceof Intersection) {
 			
@@ -106,17 +285,7 @@ public class Graph {
 		return i;
 	}
 	
-	public void addSource(Source s) {
-		sources.add(s);
-		refreshVertexIDs();
-	}
-	
-	public void addSink(Sink s) {
-		sinks.add(s);
-		refreshVertexIDs();
-	}
-	
-	void destroyVertex(Vertex v) {
+	private void destroyVertex(Vertex v) {
 		
 		if (intersections.contains(v)) {
 			intersections.remove(v);
@@ -133,7 +302,7 @@ public class Graph {
 		v.remove();
 	}
 	
-	void destroyEdge(Edge e) {
+	private void destroyEdge(Edge e) {
 		assert edges.contains(e);
 		
 		//logger.debug("destroy Edge: " + e);
@@ -182,17 +351,11 @@ public class Graph {
 		}
 	}
 	
-	
-	
-	
-	
-	
 	double[][] distances;
 	Vertex[][] nextHighest;
 	boolean[][] neighbors;
 	
-	public void preStart() {
-		
+	private void initializeMatrices() {
 		/*
 		 * Floyd-Warshall
 		 */
@@ -281,52 +444,6 @@ public class Graph {
 				}
 			}
 		}
-		
-		
-		for (Source s : sources) {
-			s.preStart();
-		}
-	}
-	
-	public List<Vertex> shortestPath(final Vertex start, Vertex end) {
-		if (start == end) {
-			throw new IllegalArgumentException();
-		}
-		
-		int sid = start.id;
-		int eid = end.id;
-		
-		if (distances[sid][eid] == Double.POSITIVE_INFINITY) {
-			return null;
-		}
-		
-		List<Vertex> vs = new ArrayList<Vertex>();
-		vs.add(start);
-		vs.addAll(intermediateVertices(start, end));
-		vs.add(end);
-		
-		return vs;
-	}
-	
-	/**
-	 * returns the next choice to make for the shortest path from start to end
-	 */
-	public Vertex shortestPathChoice(final Vertex start, Vertex end) {
-		
-		int sid = start.id;
-		int eid = end.id;
-		
-		if (distances[sid][eid] == Double.POSITIVE_INFINITY) {
-			return null;
-		}
-		
-		Vertex n = nextHighest[sid][eid];
-		
-		if (n == null) {
-			return end;
-		}
-		
-		return shortestPathChoice(start, n);
 	}
 	
 	private List<Vertex> intermediateVertices(Vertex start, Vertex end) {
@@ -347,20 +464,6 @@ public class Graph {
 		
 		return vs;
 	}
-	
-	public double distanceBetweenVertices(Vertex a, Vertex b) {
-		return distances[a.id][b.id];
-	}
-	
-	public boolean areNeighbors(Edge a, Edge b) {
-		return neighbors[a.id][b.id];
-	}
-	
-	
-	
-	
-	
-	
 	
 	/**
 	 * tests center of vertex and skeleton of edges 
@@ -384,45 +487,6 @@ public class Graph {
 					return new EdgePosition(e, i, param);
 				}
 			}
-		}
-		return null;
-	}
-	
-	/**
-	 * tests any part of vertex and any part of edge
-	 */
-	public Entity hitTest(Point p) {
-		assert p != null;
-		for (Vertex v : getAllVertices()) {
-			if (DMath.lessThanEquals(Point.distance(p, v.getPoint()), v.getRadius())) {
-				return v;
-			}
-		}
-		for (Segment in : segTree.getAllSegments()) {
-			Edge e = in.edge;
-			int i = in.index;
-			Point c = e.getPoint(i);
-			Point d = e.getPoint(i+1);
-			if (DMath.lessThanEquals(Point.distance(p, c, d), MODEL.world.ROAD_RADIUS)) {
-				return e;
-			}
-		}
-		return null;
-	}
-	
-	public GraphPosition findClosestGraphPosition(Point p, Point anchor, double radius) {
-		VertexPosition vp = findClosestVertexPosition(p, anchor, radius);
-		EdgePosition ep = findClosestEdgePosition(p, anchor, radius);
-		if (vp == null) {
-			return ep;
-		} else if (ep == null) {
-			return vp;
-		} else if (DMath.equals(Point.distance(p, vp.getPoint()), Point.distance(p, ep.getPoint()))) {
-			assert false;
-		} else if (Point.distance(p, vp.getPoint()) < Point.distance(p, ep.getPoint())) {
-			return vp;
-		} else {
-			return ep;
 		}
 		return null;
 	}
@@ -476,7 +540,7 @@ public class Graph {
 	}
 	
 	public void addSegment(Point a, Point b) {
-			
+		
 		assert !a.equals(b);
 		assert !segmentOverlaps(a, b);
 		
@@ -927,8 +991,6 @@ public class Graph {
 			
 		}
 	}
-	
-
 	
 	public boolean checkConsistency() {
 		

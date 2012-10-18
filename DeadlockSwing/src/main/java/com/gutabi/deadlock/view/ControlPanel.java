@@ -1,7 +1,5 @@
 package com.gutabi.deadlock.view;
 
-
-
 import static com.gutabi.deadlock.controller.DeadlockController.CONTROLLER;
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 
@@ -16,9 +14,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-
-
-@SuppressWarnings("serial")
+@SuppressWarnings({"serial", "static-access"})
 public class ControlPanel extends JPanel {
 	
 	public JCheckBox normalCarButton;
@@ -101,7 +97,7 @@ public class ControlPanel extends JPanel {
 		verticalBox.add(hBox);
 		
 		dtField = new JTextField();
-		dtField.setText(Long.toString(MODEL.world.dt));
+		dtField.setText(Double.toString(MODEL.dtSeconds));
 		dtField.setMaximumSize(new Dimension(10000, 100));
 		dtField.setActionCommand("dt");
 		dtField.addActionListener(CONTROLLER);

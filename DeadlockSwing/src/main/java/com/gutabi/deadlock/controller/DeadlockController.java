@@ -123,31 +123,31 @@ public class DeadlockController implements ActionListener {
 			lastDragPanelPoint = p;
 			lastDragTime = System.currentTimeMillis();
 			
-			synchronized (MODEL) {
-				switch (MODEL.getMode()) {
-				case IDLE: {
-					
-					if (lastDragPanelPointWasNull) {
-						// first drag
-						draftStart(lastPressPanelPoint);
-						draftMove(lastDragPanelPoint);
-						VIEW.repaint();
-					} else {
-						assert false;
-					}
-					
-					break;
-				}
-				case DRAFTING:
+			switch (MODEL.getMode()) {
+			case IDLE: {
+				
+				if (lastDragPanelPointWasNull) {
+					// first drag
+					draftStart(lastPressPanelPoint);
 					draftMove(lastDragPanelPoint);
-					//VIEW.renderBackground();
+					
 					VIEW.repaint();
-					break;
-				case RUNNING:
-				case PAUSED:
-					;
-					break;
+					
+				} else {
+					assert false;
 				}
+				
+				break;
+			}
+			case DRAFTING:
+				draftMove(lastDragPanelPoint);
+				//VIEW.renderBackground();
+				VIEW.repaint();
+				break;
+			case RUNNING:
+			case PAUSED:
+				;
+				break;
 			}
 			
 		}
@@ -167,27 +167,25 @@ public class DeadlockController implements ActionListener {
 			
 			lastReleaseTime = System.currentTimeMillis();
 			
-			synchronized (MODEL) {
-				switch (MODEL.getMode()) {
-				case IDLE: {
-					
-					if (lastReleaseTime - lastPressTime < 500 && lastDragPanelPoint == null) {
-						// click
-						;
-					}
-					
-					break;
-				}
-				case DRAFTING:
-					draftEnd();
-					MODEL.world.renderBackground();
-					VIEW.repaint();
-					break;
-				case RUNNING:
-				case PAUSED:
+			switch (MODEL.getMode()) {
+			case IDLE: {
+				
+				if (lastReleaseTime - lastPressTime < 500 && lastDragPanelPoint == null) {
+					// click
 					;
-					break;
 				}
+				
+				break;
+			}
+			case DRAFTING:
+				draftEnd();
+				MODEL.world.renderBackground();
+				VIEW.repaint();
+				break;
+			case RUNNING:
+			case PAUSED:
+				;
+				break;
 			}
 			
 		}
@@ -204,30 +202,29 @@ public class DeadlockController implements ActionListener {
 			
 			Point p = ev.getPoint();
 			
-			synchronized (MODEL) {
-				switch (MODEL.getMode()) {
-				case RUNNING:
-				case PAUSED:
-				case IDLE: {
-					
-					Point worldPoint = p;
-					
-					int x = VIEW.panel.getWidth()/2 - (int)((MODEL.world.WORLD_WIDTH * MODEL.PIXELS_PER_METER)/2);
-					int y = VIEW.panel.getHeight()/2 - (int)((MODEL.world.WORLD_HEIGHT * MODEL.PIXELS_PER_METER)/2);
-					worldPoint = worldPoint.add(new Point(-x, -y));
-					
-					worldPoint = worldPoint.multiply(1/((double)MODEL.PIXELS_PER_METER));
-					
-					Entity closest = MODEL.world.hitTest(worldPoint);
-					MODEL.hilited = closest;
-					
-					VIEW.repaint();
-					break;
-				}
-				case DRAFTING:
-					;
-					break;
-				}
+			switch (MODEL.getMode()) {
+			case RUNNING:
+			case PAUSED:
+			case IDLE: {
+				
+				Point worldPoint = p;
+				
+				int x = VIEW.panel.getWidth()/2 - (int)((MODEL.world.WORLD_WIDTH * MODEL.PIXELS_PER_METER)/2);
+				int y = VIEW.panel.getHeight()/2 - (int)((MODEL.world.WORLD_HEIGHT * MODEL.PIXELS_PER_METER)/2);
+				worldPoint = worldPoint.add(new Point(-x, -y));
+				
+				worldPoint = worldPoint.multiply(1/((double)MODEL.PIXELS_PER_METER));
+				
+				Entity closest = MODEL.world.hitTest(worldPoint);
+				MODEL.hilited = closest;
+				
+				VIEW.repaint();
+				
+				break;
+			}
+			case DRAFTING:
+				;
+				break;
 			}
 			
 		}
@@ -236,42 +233,38 @@ public class DeadlockController implements ActionListener {
 	
 	public void deleteKey() {
 		
-		synchronized (MODEL) {
+		if (MODEL.hilited != null) {
 			
-			if (MODEL.hilited != null) {
+			if (MODEL.hilited instanceof Vertex) {
+				Vertex v = (Vertex)MODEL.hilited;
 				
-				if (MODEL.hilited instanceof Vertex) {
-					Vertex v = (Vertex)MODEL.hilited;
-					
-					if (v instanceof Sink) {
-						return;
-					} else if (v instanceof Source) {
-						return;
-					}
-					
-					MODEL.world.removeVertex(v);
-					
-				} else if (MODEL.hilited instanceof Edge) {
-					Edge e = (Edge)MODEL.hilited;
-					
-					MODEL.world.removeEdge(e);
-					
-				} else if (MODEL.hilited instanceof Car) {
-					Car c = (Car)MODEL.hilited;
-					
-					MODEL.world.removeCar(c);
-					
-				} else {
-					throw new AssertionError();
+				if (v instanceof Sink) {
+					return;
+				} else if (v instanceof Source) {
+					return;
 				}
 				
-				MODEL.hilited = null;
+				MODEL.world.removeVertex(v);
 				
-				MODEL.world.renderBackground();
-				VIEW.repaint();
+			} else if (MODEL.hilited instanceof Edge) {
+				Edge e = (Edge)MODEL.hilited;
+				
+				MODEL.world.removeEdge(e);
+				
+			} else if (MODEL.hilited instanceof Car) {
+				Car c = (Car)MODEL.hilited;
+				
+				MODEL.world.removeCar(c);
+				
+			} else {
+				throw new AssertionError();
 			}
 			
+			MODEL.hilited = null;
 		}
+		
+		MODEL.world.renderBackground();
+		VIEW.repaint();
 		
 	}
 	
@@ -281,60 +274,54 @@ public class DeadlockController implements ActionListener {
 	
 	public void undoKey() {
 		
-		synchronized (MODEL) {
-			switch (MODEL.getMode()) {
-			case IDLE:
-				
-				break;
-			case DRAFTING:
-				;
-				break;
-			case RUNNING:
-			case PAUSED:
-				;
-				break;
-			}
+		switch (MODEL.getMode()) {
+		case IDLE:
+			
+			break;
+		case DRAFTING:
+			;
+			break;
+		case RUNNING:
+		case PAUSED:
+			;
+			break;
 		}
 		
 	}
 	
 	public void redoKey() {
 		
-		synchronized (MODEL) {
-			switch (MODEL.getMode()) {
-			case IDLE:
-				
-				break;
-			case DRAFTING:
-				;
-				break;
-			case RUNNING:
-			case PAUSED:
-				;
-				break;
-			}
+		switch (MODEL.getMode()) {
+		case IDLE:
+			
+			break;
+		case DRAFTING:
+			;
+			break;
+		case RUNNING:
+		case PAUSED:
+			;
+			break;
 		}
 		
 	}
 	
 	public void insertKey() {
 		
-		synchronized (MODEL) {
-			switch (MODEL.getMode()) {
-			case IDLE:
-				
-				MODEL.world.renderBackground();
-				VIEW.repaint();
-				
-				break;
-			case DRAFTING:
-				;
-				break;
-			case RUNNING:
-			case PAUSED:
-				;
-				break;
-			}
+		switch (MODEL.getMode()) {
+		case IDLE:
+			
+			MODEL.world.renderBackground();
+			VIEW.repaint();
+			
+			break;
+		case DRAFTING:
+			;
+			break;
+		case RUNNING:
+		case PAUSED:
+			;
+			break;
 		}
 		
 	}
@@ -346,10 +333,6 @@ public class DeadlockController implements ActionListener {
 		assert Thread.currentThread().getName().equals("controller");
 		
 		MODEL.setMode(ControlMode.RUNNING);
-		
-		MODEL.world.renderBackground();
-		
-		MODEL.world.preStart();
 		
 		Thread t = new Thread(new SimulationRunnable());
 		t.start();
@@ -372,8 +355,9 @@ public class DeadlockController implements ActionListener {
 		assert Thread.currentThread().getName().equals("controller");
 		
 		MODEL.setMode(ControlMode.RUNNING);
-		synchronized (MODEL) {
-			MODEL.notifyAll();
+		
+		synchronized (MODEL.pauseLock) {
+			MODEL.pauseLock.notifyAll();
 		}
 	}
 	
@@ -381,7 +365,7 @@ public class DeadlockController implements ActionListener {
 	
 	private void draftStart(Point p) {
 		assert Thread.currentThread().getName().equals("controller");
-		
+			
 		MODEL.setMode(ControlMode.DRAFTING);
 		
 		MODEL.hilited = null;
@@ -390,6 +374,7 @@ public class DeadlockController implements ActionListener {
 		int y = VIEW.panel.getHeight()/2 - (int)((MODEL.world.WORLD_HEIGHT * MODEL.PIXELS_PER_METER)/2);
 		
 		MODEL.stroke.start(p.add(new Point(-x, -y)));
+			
 	}
 	
 	private void draftMove(Point p) {
@@ -404,7 +389,6 @@ public class DeadlockController implements ActionListener {
 	private void draftEnd() {
 		assert Thread.currentThread().getName().equals("controller");
 		
-		
 		List<Point> curStroke = MODEL.stroke.getPoints();
 		curStroke = massageCurrent(curStroke);
 		if (curStroke.size() >= 2) {
@@ -415,6 +399,7 @@ public class DeadlockController implements ActionListener {
 		MODEL.stroke.clear();
 		
 		MODEL.setMode(ControlMode.IDLE);
+		
 	}
 	
 	@Override
@@ -472,8 +457,8 @@ public class DeadlockController implements ActionListener {
 			
 			String text = VIEW.controlPanel.dtField.getText();
 			try {
-				long dt = Long.parseLong(text);
-				MODEL.world.dt = dt;
+				double dt = Double.parseDouble(text);
+				MODEL.dtSeconds = dt;
 			} catch (NumberFormatException ex) {
 				
 			}

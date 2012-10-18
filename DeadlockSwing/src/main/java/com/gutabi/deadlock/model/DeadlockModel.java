@@ -5,6 +5,12 @@ import com.gutabi.deadlock.core.Entity;
 
 public class DeadlockModel {
 	
+	/**
+	 * move physics forward by dt milliseconds
+	 */
+	//public static long dtMillis = 10;
+	public static double dtSeconds = 0.10;
+	
 	public static final int PIXELS_PER_METER = 32;
 	
 	public static final double MOUSE_RADIUS = Math.sqrt(2 * 0.5 * 0.5) * PIXELS_PER_METER;
@@ -21,6 +27,8 @@ public class DeadlockModel {
 	public Stroke stroke;
 	
 	public Entity hilited;
+	
+	public final Object pauseLock = new Object();
 	
 	public DeadlockModel() {
 		
@@ -42,8 +50,6 @@ public class DeadlockModel {
 	}
 	
 	public ControlMode getMode() {
-		assert Thread.holdsLock(MODEL);
-		
 		return mode;
 	}
 	

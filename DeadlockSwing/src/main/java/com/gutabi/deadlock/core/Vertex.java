@@ -73,10 +73,6 @@ public class Vertex extends Entity {
 	
 	public void adjustRadius() {
 		
-//		while (all borders are not at least 0.1 + ROAD_RADIUS away from each other) {
-//			add 0.1 to radius
-//		}
-		
 		List<Point> borderPoints = new ArrayList<Point>();
 		
 		for (Edge e : eds) {

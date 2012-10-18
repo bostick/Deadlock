@@ -29,20 +29,23 @@ import com.gutabi.deadlock.core.path.STPointPath;
 @SuppressWarnings("static-access")
 public abstract class Car extends Entity {
 	
+	double maxRadsPerSecond = 5.0;
+	
 	public CarStateEnum state;
 	
-	public long startingTime;
-	public long crashingTime;
+	public double startingTime;
+	public double crashingTime;
+	
 	public Source source;
 	
-	GraphPositionPath overallPath;
-	GraphPosition closestGraphPos;
+	private GraphPositionPath overallPath;
+	private GraphPosition closestGraphPos;
 	
 	public final int id;
 	
 	public static int carCounter;
 	
-	Point startPos;
+	Point startPoint;
 	double startHeading;
 	
 	Point p1;
@@ -69,15 +72,19 @@ public abstract class Car extends Entity {
 		
 		overallPath = s.getPathToMatchingSink();
 //		startPos = overallPath.getGraphPosition(0).getPoint();
-		startPos = overallPath.getGraphPosition(0).getPoint();
-		GraphPositionPathPosition overallPos = overallPath.findClosestGraphPositionPathPosition(startPos);
+		
+		closestGraphPos = overallPath.getGraphPosition(0);
+		startPoint = closestGraphPos.getPoint();
+		
+		
+		GraphPositionPathPosition overallPos = overallPath.findClosestGraphPositionPathPosition(startPoint);
 		
 		p1 = new Point(MODEL.world.CAR_LENGTH / 2, MODEL.world.CAR_LENGTH / 4);
 		p2 = new Point(MODEL.world.CAR_LENGTH / 2, -MODEL.world.CAR_LENGTH / 4);
 		p3 = new Point(-MODEL.world.CAR_LENGTH / 2, -MODEL.world.CAR_LENGTH / 4);
 		p4 = new Point(-MODEL.world.CAR_LENGTH / 2, MODEL.world.CAR_LENGTH / 4);
 		
-		STGraphPositionPathPositionPath nextPlannedPath = STGraphPositionPathPositionPath.advanceOneTimeStep(overallPos, (getSpeed() * 1000) * (((float)MODEL.world.dt) / ((float)1000)));
+		STGraphPositionPathPositionPath nextPlannedPath = STGraphPositionPathPositionPath.advanceOneTimeStep(overallPos, getMetersPerSecond() * MODEL.dtSeconds);
 		
 		STPointPath nextRealPath = nextPlannedPath.toSTGraphPositionPath().toSTPointPath();
 		
@@ -86,7 +93,7 @@ public abstract class Car extends Entity {
 		
 //		logger.debug("nextDTGoalPoint: " + nextDTGoalPoint);
 		
-		startHeading = Math.atan2(nextDTGoalPoint.y-startPos.y, nextDTGoalPoint.x-startPos.x);
+		startHeading = Math.atan2(nextDTGoalPoint.y-startPoint.y, nextDTGoalPoint.x-startPoint.x);
 		
 		color = Color.BLUE;
 		
@@ -100,7 +107,7 @@ public abstract class Car extends Entity {
 	 * meters per millisecond
 	 * @return
 	 */
-	public abstract double getSpeed();
+	public abstract double getMetersPerSecond();
 	
 	public CarStateEnum getState() {
 		return state;
@@ -120,9 +127,12 @@ public abstract class Car extends Entity {
 	public void b2dInit() {
 		BodyDef bodyDef = new BodyDef();
 		bodyDef.type = BodyType.DYNAMIC;
-		bodyDef.position.set((float)startPos.x, (float)startPos.y);
+		bodyDef.position.set((float)startPoint.x, (float)startPoint.y);
 		bodyDef.angle = (float)startHeading;
-		bodyDef.bullet = true;
+//		bodyDef.bullet = true;
+		bodyDef.allowSleep = true;
+		bodyDef.awake = true;
+		
 		b2dBody = MODEL.world.b2dWorld.createBody(bodyDef);
 		b2dBody.setUserData(this);
 		
@@ -212,40 +222,52 @@ public abstract class Car extends Entity {
 		}
 	}
 	
-	private Vec2 getLateralVelocity() {
-		Vec2 currentRightNormal = b2dBody.getWorldVector(new Vec2(0, 1));
-		return currentRightNormal.mul(Vec2.dot(currentRightNormal, b2dBody.getLinearVelocity()));
+//	private Vec2 getLateralVelocity() {
+//		Vec2 currentRightNormal = b2dBody.getWorldVector(new Vec2(0, 1));
+//		return currentRightNormal.mul(Vec2.dot(currentRightNormal, b2dBody.getLinearVelocity()));
+//	}
+//	
+//	private Vec2 getForwardVelocity() {
+//		Vec2 currentRightNormal = b2dBody.getWorldVector(new Vec2(1, 0));
+//		return currentRightNormal.mul(Vec2.dot(currentRightNormal, b2dBody.getLinearVelocity()));
+//	}
+	
+//	private void updateFriction() {
+//		
+//		Vec2 lateralImpulse = getLateralVelocity().mul(-b2dBody.getMass());
+//		Vec2 forwardImpulse = getForwardVelocity().mul(-b2dBody.getMass());
+//		
+////		float maxLateralImpulse = 3.0f;
+////		if (impulse.length() > maxLateralImpulse) {
+////			impulse = impulse.mul(maxLateralImpulse / impulse.length());
+////		}
+//		
+//		b2dBody.applyLinearImpulse(lateralImpulse, b2dBody.getWorldCenter());
+//		b2dBody.applyLinearImpulse(forwardImpulse, b2dBody.getWorldCenter());
+//		
+//		b2dBody.applyAngularImpulse(1.0f * b2dBody.getInertia() * -b2dBody.getAngularVelocity());
+//		
+////		Vec2 currentForwardNormal = getForwardVelocity();
+////		float currentForwardSpeed = currentForwardNormal.normalize();
+////		float dragForceMagnitude = -2 * currentForwardSpeed;
+////		b2dBody.applyForce(currentForwardNormal.mul(dragForceMagnitude), b2dBody.getWorldCenter());
+//	}
+	
+	
+//	Vec2 maxIdealLinForce = null;
+//	float maxIdealTorque = 0;
+	
+	private float cancelingForwardImpulseCoefficient() {
+		return 1.0f;
 	}
 	
-	private Vec2 getForwardVelocity() {
-		Vec2 currentRightNormal = b2dBody.getWorldVector(new Vec2(1, 0));
-		return currentRightNormal.mul(Vec2.dot(currentRightNormal, b2dBody.getLinearVelocity()));
+	private float cancelingLateralImpulseCoefficient() {
+		return atleastPartiallyOnRoad ? 0.3f : 0.08f;
 	}
 	
-	private void updateFriction() {
-		
-		Vec2 lateralImpulse = getLateralVelocity().mul(-b2dBody.getMass());
-		Vec2 forwardImpulse = getForwardVelocity().mul(-b2dBody.getMass());
-		
-//		float maxLateralImpulse = 3.0f;
-//		if (impulse.length() > maxLateralImpulse) {
-//			impulse = impulse.mul(maxLateralImpulse / impulse.length());
-//		}
-		
-		b2dBody.applyLinearImpulse(lateralImpulse, b2dBody.getWorldCenter());
-		b2dBody.applyLinearImpulse(forwardImpulse, b2dBody.getWorldCenter());
-		
-		b2dBody.applyAngularImpulse(1.0f * b2dBody.getInertia() * -b2dBody.getAngularVelocity());
-		
-//		Vec2 currentForwardNormal = getForwardVelocity();
-//		float currentForwardSpeed = currentForwardNormal.normalize();
-//		float dragForceMagnitude = -2 * currentForwardSpeed;
-//		b2dBody.applyForce(currentForwardNormal.mul(dragForceMagnitude), b2dBody.getWorldCenter());
+	private float forwardImpulseCoefficient() {
+		return atleastPartiallyOnRoad ? 1.0f : 0.4f;
 	}
-	
-	
-	Vec2 maxIdealLinForce = null;
-	float maxIdealTorque = 0;
 	
 	private void updateDrive() {
 		
@@ -262,15 +284,15 @@ public abstract class Car extends Entity {
 		Vec2 cancelingImpulse = vel.mul(-1).mul(b2dBody.getMass());
 		
 		float cancelingForwardImpulse = Vec2.dot(currentRightNormal, cancelingImpulse);
-		cancelingForwardImpulse = 1.0f * cancelingForwardImpulse;
+		cancelingForwardImpulse =  cancelingForwardImpulseCoefficient() * cancelingForwardImpulse;
 		
 		float cancelingLateralImpulse = Vec2.dot(currentUpNormal, cancelingImpulse);
-		cancelingLateralImpulse = (atleastPartiallyOnRoad ? 0.3f : 0.08f) * cancelingLateralImpulse;
+		cancelingLateralImpulse = cancelingLateralImpulseCoefficient() * cancelingLateralImpulse;
 		
 		b2dBody.applyLinearImpulse(currentRightNormal.mul(cancelingForwardImpulse), b2dBody.getWorldCenter());
 		b2dBody.applyLinearImpulse(currentUpNormal.mul(cancelingLateralImpulse), b2dBody.getWorldCenter());
 		
-		float impulse = ((float)((atleastPartiallyOnRoad ? 1.0 : 0.4) * getSpeed() * 1000)) * b2dBody.getMass();
+		float impulse = ((float)(forwardImpulseCoefficient() * getMetersPerSecond())) * b2dBody.getMass();
 		
 		b2dBody.applyLinearImpulse(currentRightNormal.mul(impulse), b2dBody.getWorldCenter());
 		
@@ -292,7 +314,7 @@ public abstract class Car extends Entity {
 		
 		GraphPositionPathPosition overallPos = overallPath.findClosestGraphPositionPathPosition(curPoint);
 		
-		STGraphPositionPathPositionPath nextPlannedPath = STGraphPositionPathPositionPath.advanceOneTimeStep(overallPos, 0.1f * (getSpeed() * 1000));
+		STGraphPositionPathPositionPath nextPlannedPath = STGraphPositionPathPositionPath.advanceOneTimeStep(overallPos, 0.1f * getMetersPerSecond());
 		
 		STPointPath nextRealPath = nextPlannedPath.toSTGraphPositionPath().toSTPointPath();
 		
@@ -304,7 +326,7 @@ public abstract class Car extends Entity {
 		
 		logger.debug("angular speed: " + curAngVel);
 		
-		float dw = ((float)nextDTGoalAngle) - curAngle;
+		double dw = ((float)nextDTGoalAngle) - curAngle;
 		
 		while (dw > Math.PI) {
 			dw -= 2*Math.PI;
@@ -313,8 +335,7 @@ public abstract class Car extends Entity {
 			dw += 2*Math.PI;
 		}
 		
-		double maxRadsPerMillisecond = 0.005;
-		float maxRads = (float)(maxRadsPerMillisecond * MODEL.world.dt);
+		float maxRads = (float)(maxRadsPerSecond * MODEL.dtSeconds);
 		
 		if (dw > maxRads) {
 			dw = maxRads;
@@ -330,7 +351,7 @@ public abstract class Car extends Entity {
 		
 		b2dBody.applyAngularImpulse(cancelingAngImpulse);
 		
-		float angImpulse = b2dBody.getInertia() * (dw / (((float)MODEL.world.dt) / ((float)1000)));
+		float angImpulse = b2dBody.getInertia() * (float)(dw / MODEL.dtSeconds);
 		
 		logger.debug("angular impulse: " + angImpulse);
 		

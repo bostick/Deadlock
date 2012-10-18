@@ -98,4 +98,10 @@ public class DMath {
 		return lessThanEquals(aa, dd) && lessThanEquals(cc , bb);
 	}
 	
+	public static boolean equalDistances(Point a, Point b, Point c) {
+		double ab = (a.x-b.x)*(a.x-b.x) + (a.y-b.y)*(a.y-b.y);
+		double ac = (a.x-c.x)*(a.x-c.x) + (a.y-c.y)*(a.y-c.y);
+		return DMath.equals(ab, ac);
+	}
+	
 }

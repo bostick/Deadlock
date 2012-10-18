@@ -5,6 +5,7 @@ import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
 import org.apache.log4j.Logger;
 
+@SuppressWarnings("static-access")
 public class SimulationRunnable implements Runnable {
 	
 	ControlMode modeCopy;
@@ -14,46 +15,50 @@ public class SimulationRunnable implements Runnable {
 	@Override
 	public void run() {
 		
-		long t = 0;
-		long currentTime = System.currentTimeMillis();
-		long accumulator = 0;
+		double t = 0;
+		double accumulator = 0;
 		
-		long newTime = System.currentTimeMillis();
+		long currentTimeMillis = System.currentTimeMillis();
+		long newTimeMillis = System.currentTimeMillis();
+		
+		MODEL.world.preStart();
 		
 		outer:
 		while (true) {
 			
-			synchronized (MODEL) {
-				modeCopy = MODEL.getMode();
-				if (modeCopy == ControlMode.IDLE) {
-					break outer;
-				} else if (modeCopy == ControlMode.PAUSED) {
+			modeCopy = MODEL.getMode();
+			if (modeCopy == ControlMode.IDLE) {
+				break outer;
+			} else if (modeCopy == ControlMode.PAUSED) {
+				synchronized (MODEL.pauseLock) {
 					try {
-						MODEL.wait();
+						MODEL.pauseLock.wait();
 					} catch (InterruptedException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-					currentTime = System.currentTimeMillis();
-					accumulator = 0;
 				}
+				currentTimeMillis = System.currentTimeMillis();
+				accumulator = 0;
 			}
 			
-			newTime = System.currentTimeMillis();
-			long frameTime = newTime - currentTime;
+			newTimeMillis = System.currentTimeMillis();
+			long frameTimeMillis = newTimeMillis - currentTimeMillis;
 			//long frameTime = newTime - currentTime - 10;
 //			if (frameTime < 1) {
 //				frameTime = 1;
 //			}
 			
-			currentTime = newTime;
+			currentTimeMillis = newTimeMillis;
 			
-			accumulator += frameTime;
+			double frameTimeSeconds = ((double)frameTimeMillis) / 1000;
 			
-			while (accumulator >= MODEL.world.dt) {
+			accumulator += frameTimeSeconds;
+			
+			while (accumulator >= MODEL.dtSeconds) {
 				MODEL.world.integrate(t);
-				accumulator -= MODEL.world.dt;
-				t += MODEL.world.dt;
+				accumulator -= MODEL.dtSeconds;
+				t += MODEL.dtSeconds;
 			}
 			
 			VIEW.repaint();
