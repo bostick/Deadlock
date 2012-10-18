@@ -24,6 +24,7 @@ import com.gutabi.deadlock.core.Source;
 import com.gutabi.deadlock.core.Vertex;
 import com.gutabi.deadlock.model.Car;
 
+@SuppressWarnings("static-access")
 public class DeadlockController implements ActionListener {
 	
 	public static DeadlockController CONTROLLER = new DeadlockController();
@@ -211,11 +212,11 @@ public class DeadlockController implements ActionListener {
 					
 					Point worldPoint = p;
 					
-					int x = VIEW.panel.getWidth()/2 - (int)((MODEL.world.WORLD_WIDTH * MODEL.world.PIXELS_PER_METER)/2);
-					int y = VIEW.panel.getHeight()/2 - (int)((MODEL.world.WORLD_HEIGHT * MODEL.world.PIXELS_PER_METER)/2);
+					int x = VIEW.panel.getWidth()/2 - (int)((MODEL.world.WORLD_WIDTH * MODEL.PIXELS_PER_METER)/2);
+					int y = VIEW.panel.getHeight()/2 - (int)((MODEL.world.WORLD_HEIGHT * MODEL.PIXELS_PER_METER)/2);
 					worldPoint = worldPoint.add(new Point(-x, -y));
 					
-					worldPoint = worldPoint.multiply(1/((double)MODEL.world.PIXELS_PER_METER));
+					worldPoint = worldPoint.multiply(1/((double)MODEL.PIXELS_PER_METER));
 					
 					Entity closest = MODEL.world.hitTest(worldPoint);
 					MODEL.hilited = closest;
@@ -385,8 +386,8 @@ public class DeadlockController implements ActionListener {
 		
 		MODEL.hilited = null;
 		
-		int x = VIEW.panel.getWidth()/2 - (int)((MODEL.world.WORLD_WIDTH * MODEL.world.PIXELS_PER_METER)/2);
-		int y = VIEW.panel.getHeight()/2 - (int)((MODEL.world.WORLD_HEIGHT * MODEL.world.PIXELS_PER_METER)/2);
+		int x = VIEW.panel.getWidth()/2 - (int)((MODEL.world.WORLD_WIDTH * MODEL.PIXELS_PER_METER)/2);
+		int y = VIEW.panel.getHeight()/2 - (int)((MODEL.world.WORLD_HEIGHT * MODEL.PIXELS_PER_METER)/2);
 		
 		MODEL.stroke.start(p.add(new Point(-x, -y)));
 	}
@@ -394,8 +395,8 @@ public class DeadlockController implements ActionListener {
 	private void draftMove(Point p) {
 		assert Thread.currentThread().getName().equals("controller");
 		
-		int x = VIEW.panel.getWidth()/2 - (int)((MODEL.world.WORLD_WIDTH * MODEL.world.PIXELS_PER_METER)/2);
-		int y = VIEW.panel.getHeight()/2 - (int)((MODEL.world.WORLD_HEIGHT * MODEL.world.PIXELS_PER_METER)/2);
+		int x = VIEW.panel.getWidth()/2 - (int)((MODEL.world.WORLD_WIDTH * MODEL.PIXELS_PER_METER)/2);
+		int y = VIEW.panel.getHeight()/2 - (int)((MODEL.world.WORLD_HEIGHT * MODEL.PIXELS_PER_METER)/2);
 		
 		MODEL.stroke.move(p.add(new Point(-x, -y)));
 	}
@@ -483,6 +484,24 @@ public class DeadlockController implements ActionListener {
 					
 				}}
 			);
+		} else if (e.getActionCommand().equals("debugDraw")) {
+			
+			boolean state = VIEW.controlPanel.debugCheckBox.isSelected();
+			
+			MODEL.DEBUG_DRAW = state;
+			
+			MODEL.world.renderBackground();
+			VIEW.repaint();
+			
+		} else if (e.getActionCommand().equals("fpsDraw")) {
+			
+			boolean state = VIEW.controlPanel.fpsCheckBox.isSelected();
+			
+			MODEL.FPS_DRAW = state;
+			
+			MODEL.world.renderBackground();
+			VIEW.repaint();
+			
 		}
 	}
 	
@@ -505,7 +524,7 @@ public class DeadlockController implements ActionListener {
 	private List<Point> panelToWorld(List<Point> raw) {
 		List<Point> adj = new ArrayList<Point>();
 		for (Point p : raw) {
-			adj.add(p.multiply(1/((double)MODEL.world.PIXELS_PER_METER)));
+			adj.add(p.multiply(1/((double)MODEL.PIXELS_PER_METER)));
 		}
 		return adj;
 	}

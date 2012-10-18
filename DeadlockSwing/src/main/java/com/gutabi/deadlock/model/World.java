@@ -30,11 +30,11 @@ import com.gutabi.deadlock.core.Source;
 import com.gutabi.deadlock.core.Vertex;
 import com.gutabi.deadlock.utils.ImageUtils;
 
+@SuppressWarnings("static-access")
 public class World {
 	
 	public final double CAR_LENGTH = 1.0;
 	public final double ROAD_RADIUS = CAR_LENGTH / 2;
-//	public final double VERTEX_RADIUS = Math.sqrt(2 * ROAD_RADIUS * ROAD_RADIUS);
 	
 	/*
 	 * distance that center of a car has to be from center of a sink in order to be sinked
@@ -43,10 +43,6 @@ public class World {
 	
 	public final double WORLD_WIDTH = 16.0;
 	public final double WORLD_HEIGHT = WORLD_WIDTH;
-	
-	public final int PIXELS_PER_METER = 32;
-	
-	public final double MOUSE_RADIUS = Math.sqrt(2 * ROAD_RADIUS * ROAD_RADIUS) * PIXELS_PER_METER;
 	
 	/*
 	 * spawn cars every SPAWN_FREQUENCY milliseconds
@@ -94,25 +90,25 @@ public class World {
 		normalCar = ImageIO.read(new File("media\\normalCar.png"));
 		normalCar = ImageUtils.createResizedCopy(
 				normalCar,
-				(int)(MODEL.world.CAR_LENGTH * MODEL.world.PIXELS_PER_METER),
-				(int)(MODEL.world.CAR_LENGTH * MODEL.world.PIXELS_PER_METER), true);
+				(int)(MODEL.world.CAR_LENGTH * MODEL.PIXELS_PER_METER),
+				(int)(MODEL.world.CAR_LENGTH * MODEL.PIXELS_PER_METER), true);
 		
 		fastCar = ImageIO.read(new File("media\\fastCar.png"));
 		fastCar = ImageUtils.createResizedCopy(
 				fastCar,
-				(int)(MODEL.world.CAR_LENGTH * MODEL.world.PIXELS_PER_METER),
-				(int)(MODEL.world.CAR_LENGTH * MODEL.world.PIXELS_PER_METER), true);
+				(int)(MODEL.world.CAR_LENGTH * MODEL.PIXELS_PER_METER),
+				(int)(MODEL.world.CAR_LENGTH * MODEL.PIXELS_PER_METER), true);
 		
 		BufferedImage grass = ImageIO.read(new File("media\\grass.png"));
 		
 		tiledGrass = new BufferedImage(
-				(int)(WORLD_WIDTH * PIXELS_PER_METER),
-				(int)(WORLD_HEIGHT * PIXELS_PER_METER),
+				(int)(WORLD_WIDTH * MODEL.PIXELS_PER_METER),
+				(int)(WORLD_HEIGHT * MODEL.PIXELS_PER_METER),
 				BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g2 = tiledGrass.createGraphics();
 		
-		for (int i = 0; i < (WORLD_WIDTH * PIXELS_PER_METER)/grass.getWidth(); i++) {
-			for (int j = 0; j < (WORLD_HEIGHT * PIXELS_PER_METER)/grass.getHeight(); j++) {
+		for (int i = 0; i < (WORLD_WIDTH * MODEL.PIXELS_PER_METER)/grass.getWidth(); i++) {
+			for (int j = 0; j < (WORLD_HEIGHT * MODEL.PIXELS_PER_METER)/grass.getHeight(); j++) {
 				g2.drawImage(grass, grass.getWidth() * i, grass.getHeight() * j, null);
 			}
 		}
@@ -414,8 +410,6 @@ public class World {
 			
 			MODEL.stroke.paint(g2);
 			
-			paintFPS(g2);
-			
 			break;
 		}
 		case IDLE:
@@ -424,7 +418,7 @@ public class World {
 			
 			AffineTransform origTransform = g2.getTransform();
 			AffineTransform trans = (AffineTransform)origTransform.clone();
-			trans.scale(MODEL.world.PIXELS_PER_METER, MODEL.world.PIXELS_PER_METER);
+			trans.scale(MODEL.PIXELS_PER_METER, MODEL.PIXELS_PER_METER);
 			g2.setTransform(trans);
 			
 			for (Car c : carsCopy) {
@@ -437,18 +431,20 @@ public class World {
 			
 			g2.setTransform(origTransform);
 			
-			paintFPS(g2);
-			
 			break;
 		}
+		}
+		
+		if (MODEL.FPS_DRAW) {
+			paintFPS(g2);
 		}
 		
 	}
 	
 	private void paintBackground(Graphics2D g2) {
 		
-		int x = -(int)(((Vertex.INIT_VERTEX_RADIUS) * MODEL.world.PIXELS_PER_METER));
-		int y = -(int)(((Vertex.INIT_VERTEX_RADIUS) * MODEL.world.PIXELS_PER_METER));
+		int x = -(int)(((Vertex.INIT_VERTEX_RADIUS) * MODEL.PIXELS_PER_METER));
+		int y = -(int)(((Vertex.INIT_VERTEX_RADIUS) * MODEL.PIXELS_PER_METER));
 		
 		g2.drawImage(backgroundImage, x, y, null);
 	}
@@ -456,14 +452,14 @@ public class World {
 	public void renderBackground() {
 		
 		backgroundImage = new BufferedImage(
-				(int)((MODEL.world.WORLD_WIDTH + Vertex.INIT_VERTEX_RADIUS + Vertex.INIT_VERTEX_RADIUS) * MODEL.world.PIXELS_PER_METER),
-				(int)((MODEL.world.WORLD_HEIGHT + Vertex.INIT_VERTEX_RADIUS + Vertex.INIT_VERTEX_RADIUS) * MODEL.world.PIXELS_PER_METER),
+				(int)((MODEL.world.WORLD_WIDTH + Vertex.INIT_VERTEX_RADIUS + Vertex.INIT_VERTEX_RADIUS) * MODEL.PIXELS_PER_METER),
+				(int)((MODEL.world.WORLD_HEIGHT + Vertex.INIT_VERTEX_RADIUS + Vertex.INIT_VERTEX_RADIUS) * MODEL.PIXELS_PER_METER),
 				BufferedImage.TYPE_INT_ARGB);
 		Graphics2D backgroundImageG2 = backgroundImage.createGraphics();
 		
 		backgroundImageG2.translate(
-				(int)(Vertex.INIT_VERTEX_RADIUS * MODEL.world.PIXELS_PER_METER),
-				(int)(Vertex.INIT_VERTEX_RADIUS * MODEL.world.PIXELS_PER_METER));
+				(int)(Vertex.INIT_VERTEX_RADIUS * MODEL.PIXELS_PER_METER),
+				(int)(Vertex.INIT_VERTEX_RADIUS * MODEL.PIXELS_PER_METER));
 		
 		backgroundImageG2.drawImage(tiledGrass, 0, 0, null);
 		
@@ -479,7 +475,7 @@ public class World {
 		
 		AffineTransform origTransform = backgroundImageG2.getTransform();
 		AffineTransform trans = (AffineTransform)origTransform.clone();
-		trans.scale(MODEL.world.PIXELS_PER_METER, MODEL.world.PIXELS_PER_METER);
+		trans.scale(MODEL.PIXELS_PER_METER, MODEL.PIXELS_PER_METER);
 		backgroundImageG2.setTransform(trans);
 		
 		for (Edge e : edgesCopy) {
@@ -492,9 +488,17 @@ public class World {
 		
 		backgroundImageG2.setTransform(origTransform);
 		
-		for (Vertex v : verticesCopy) {
-			v.paintID(backgroundImageG2);
+		if (MODEL.DEBUG_DRAW) {
+			
+			for (Vertex v : verticesCopy) {
+				v.paintID(backgroundImageG2);
+			}
+			
+			for (Edge e : edgesCopy) {
+				e.paintSkeleton(backgroundImageG2);
+			}
 		}
+		
 	}
 	
 	/**
@@ -505,13 +509,13 @@ public class World {
 		
 		g2.setColor(Color.WHITE);
 		
-		Point p = new Point(1, 1).multiply(PIXELS_PER_METER);
+		Point p = new Point(1, 1).multiply(MODEL.PIXELS_PER_METER);
 		g2.drawString("FPS: " + fps, (int)p.x, (int)p.y);
 		
-		p = new Point(1, 2).multiply(PIXELS_PER_METER);
+		p = new Point(1, 2).multiply(MODEL.PIXELS_PER_METER);
 		g2.drawString("time: " + t, (int)p.x, (int)p.y);
 		
-		p = new Point(1, 3).multiply(PIXELS_PER_METER);		
+		p = new Point(1, 3).multiply(MODEL.PIXELS_PER_METER);		
 		g2.drawString("body count: " + b2dWorld.getBodyCount(), (int)p.x, (int)p.y);
 		
 	}

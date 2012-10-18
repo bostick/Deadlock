@@ -21,11 +21,13 @@ import javax.swing.JTextField;
 @SuppressWarnings("serial")
 public class ControlPanel extends JPanel {
 	
-	public JCheckBox normalCarButton = new JCheckBox("Normal Cars");
-	public JCheckBox fastCarButton = new JCheckBox("Fast Cars");
+	public JCheckBox normalCarButton;
+	public JCheckBox fastCarButton;
 	public JButton startButton;
 	public JButton stopButton;
 	
+	public JCheckBox fpsCheckBox;
+	public JCheckBox debugCheckBox;
 	public JTextField dtField;
 	
 	public ControlPanel() {
@@ -80,12 +82,31 @@ public class ControlPanel extends JPanel {
 		hBox.add(Box.createHorizontalGlue());
 		verticalBox.add(hBox);
 		
+		fpsCheckBox = new JCheckBox("fps draw");
+		fpsCheckBox.setSelected(true);
+		fpsCheckBox.setActionCommand("fpsDraw");
+		fpsCheckBox.addActionListener(CONTROLLER);
+		hBox = Box.createHorizontalBox();
+		hBox.add(fpsCheckBox);
+		hBox.add(Box.createHorizontalGlue());
+		verticalBox.add(hBox);
+		
+		debugCheckBox = new JCheckBox("debug draw");
+		debugCheckBox.setSelected(true);
+		debugCheckBox.setActionCommand("debugDraw");
+		debugCheckBox.addActionListener(CONTROLLER);
+		hBox = Box.createHorizontalBox();
+		hBox.add(debugCheckBox);
+		hBox.add(Box.createHorizontalGlue());
+		verticalBox.add(hBox);
+		
 		dtField = new JTextField();
 		dtField.setText(Long.toString(MODEL.world.dt));
 		dtField.setMaximumSize(new Dimension(10000, 100));
 		dtField.setActionCommand("dt");
 		dtField.addActionListener(CONTROLLER);
 		hBox = Box.createHorizontalBox();
+		hBox.add(new JLabel("dt"));
 		hBox.add(dtField);
 		hBox.add(Box.createHorizontalGlue());
 		verticalBox.add(hBox);

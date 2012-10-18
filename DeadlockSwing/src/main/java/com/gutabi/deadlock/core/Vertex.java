@@ -12,6 +12,7 @@ import java.util.List;
 
 import com.gutabi.deadlock.utils.Java2DUtils;
 
+@SuppressWarnings("static-access")
 public class Vertex extends Entity {
 	
 	private final Point p;
@@ -210,9 +211,6 @@ public class Vertex extends Entity {
 	 * @param g2 in world coords
 	 */
 	public void paint(Graphics2D g2) {
-//		AffineTransform origTransform = g2.getTransform();
-//		AffineTransform trans = (AffineTransform)origTransform.clone();
-//		g2.setTransform(trans);
 		g2.setColor(color);
 		g2.fill(path);
 	}
@@ -221,12 +219,8 @@ public class Vertex extends Entity {
 	 * @param g2 in world coords
 	 */
 	public void paintHilite(Graphics2D g2) {
-//		AffineTransform origTransform = g2.getTransform();
-//		AffineTransform trans = (AffineTransform)origTransform.clone();
-//		g2.setTransform(trans);
 		g2.setColor(hiliteColor);
 		g2.fill(path);
-//		g2.setTransform(origTransform);
 	}
 	
 	/**
@@ -236,7 +230,7 @@ public class Vertex extends Entity {
 	public void paintID(Graphics2D g2) {
 		g2.setColor(Color.WHITE);
 		Point worldPoint = p.minus(new Point(radius, 0));
-		Point panelPoint = worldPoint.multiply(MODEL.world.PIXELS_PER_METER);
+		Point panelPoint = worldPoint.multiply(MODEL.PIXELS_PER_METER);
 		g2.drawString(Integer.toString(id), (int)(panelPoint.x), (int)(panelPoint.y));
 	}
 	

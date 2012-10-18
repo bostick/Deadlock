@@ -11,6 +11,7 @@ import java.util.Set;
 import com.gutabi.deadlock.core.Event.CloseEvent;
 import com.gutabi.deadlock.core.Event.IntersectionEvent;
 
+@SuppressWarnings("static-access")
 public class GraphController {
 	
 	Graph graph;
@@ -125,7 +126,7 @@ public class GraphController {
 			
 			if (!tooClose) {
 				
-				GraphPosition aP = graph.findClosestGraphPosition(preA, null, MODEL.world.MOUSE_RADIUS/MODEL.world.PIXELS_PER_METER);
+				GraphPosition aP = graph.findClosestGraphPosition(preA, null, MODEL.MOUSE_RADIUS/MODEL.PIXELS_PER_METER);
 				
 				if (aP != null) {
 					
@@ -154,7 +155,7 @@ public class GraphController {
 			
 			if (!tooClose) {
 				
-				GraphPosition bP = graph.findClosestGraphPosition(preB, a, MODEL.world.MOUSE_RADIUS/MODEL.world.PIXELS_PER_METER);
+				GraphPosition bP = graph.findClosestGraphPosition(preB, a, MODEL.MOUSE_RADIUS/MODEL.PIXELS_PER_METER);
 				
 				if (bP != null) {
 					tooClose = true;
@@ -168,7 +169,7 @@ public class GraphController {
 				
 			} else {
 				
-				GraphPosition bP = graph.findClosestGraphPosition(preB, a, MODEL.world.MOUSE_RADIUS/MODEL.world.PIXELS_PER_METER);
+				GraphPosition bP = graph.findClosestGraphPosition(preB, a, MODEL.MOUSE_RADIUS/MODEL.PIXELS_PER_METER);
 				
 				if (bP != null) {
 					

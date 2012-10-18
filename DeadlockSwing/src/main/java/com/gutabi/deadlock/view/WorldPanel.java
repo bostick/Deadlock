@@ -10,7 +10,7 @@ import javax.swing.JPanel;
 
 import org.apache.log4j.Logger;
 
-@SuppressWarnings("serial")
+@SuppressWarnings({"serial", "static-access"})
 public class WorldPanel extends JPanel {
 	
 	Logger logger = Logger.getLogger(WorldPanel.class);
@@ -27,8 +27,8 @@ public class WorldPanel extends JPanel {
 		super.paintComponent(g);
 		Graphics2D g2 = (Graphics2D)g;
 		
-		int x = getWidth()/2 - (int)((MODEL.world.WORLD_WIDTH * MODEL.world.PIXELS_PER_METER)/2);
-		int y = getHeight()/2 - (int)((MODEL.world.WORLD_HEIGHT * MODEL.world.PIXELS_PER_METER)/2);
+		int x = getWidth()/2 - (int)((MODEL.world.WORLD_WIDTH * MODEL.PIXELS_PER_METER)/2);
+		int y = getHeight()/2 - (int)((MODEL.world.WORLD_HEIGHT * MODEL.PIXELS_PER_METER)/2);
 		g2.translate(x, y);
 		
 		MODEL.world.paint(g2);

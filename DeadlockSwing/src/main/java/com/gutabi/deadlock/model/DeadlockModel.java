@@ -5,6 +5,13 @@ import com.gutabi.deadlock.core.Entity;
 
 public class DeadlockModel {
 	
+	public static final int PIXELS_PER_METER = 32;
+	
+	public static final double MOUSE_RADIUS = Math.sqrt(2 * 0.5 * 0.5) * PIXELS_PER_METER;
+	
+	public static boolean FPS_DRAW = true;
+	public static boolean DEBUG_DRAW = true;
+	
 	public static final DeadlockModel MODEL = new DeadlockModel();
 	
 	public World world;

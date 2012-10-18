@@ -26,6 +26,7 @@ import com.gutabi.deadlock.core.path.GraphPositionPathPosition;
 import com.gutabi.deadlock.core.path.STGraphPositionPathPositionPath;
 import com.gutabi.deadlock.core.path.STPointPath;
 
+@SuppressWarnings("static-access")
 public abstract class Car extends Entity {
 	
 	public CarStateEnum state;
@@ -390,7 +391,10 @@ public abstract class Car extends Entity {
 	public void paint(Graphics2D g2) {
 		paintRect(g2);
 		paintImage(g2, image());
-		paintPoint(g2);
+		
+		if (MODEL.DEBUG_DRAW) {
+			paintPoint(g2);
+		}
 	}
 	
 	/**
@@ -409,15 +413,15 @@ public abstract class Car extends Entity {
 		b2dTrans.translate(pos.x, pos.y);
 		b2dTrans.rotate(angle);
 		
-		b2dTrans.scale(1/((double)MODEL.world.PIXELS_PER_METER), 1/((double)MODEL.world.PIXELS_PER_METER));
+		b2dTrans.scale(1/((double)MODEL.PIXELS_PER_METER), 1/((double)MODEL.PIXELS_PER_METER));
 		
 		g2.setTransform(b2dTrans);
 		
 		g2.drawImage(im,
-				(int)(-MODEL.world.CAR_LENGTH * MODEL.world.PIXELS_PER_METER / 2),
-				(int)(-MODEL.world.CAR_LENGTH * MODEL.world.PIXELS_PER_METER / 2),
-				(int)(MODEL.world.CAR_LENGTH * MODEL.world.PIXELS_PER_METER),
-				(int)(MODEL.world.CAR_LENGTH * MODEL.world.PIXELS_PER_METER), null);
+				(int)(-MODEL.world.CAR_LENGTH * MODEL.PIXELS_PER_METER / 2),
+				(int)(-MODEL.world.CAR_LENGTH * MODEL.PIXELS_PER_METER / 2),
+				(int)(MODEL.world.CAR_LENGTH * MODEL.PIXELS_PER_METER),
+				(int)(MODEL.world.CAR_LENGTH * MODEL.PIXELS_PER_METER), null);
 		
 		g2.setTransform(origTransform);
 	}
@@ -447,7 +451,7 @@ public abstract class Car extends Entity {
 		Vec2 pos = closestGraphPos.getPoint().vec2();
 		b2dTrans.translate(pos.x, pos.y);
 		
-		b2dTrans.scale(1/((double)MODEL.world.PIXELS_PER_METER), 1/((double)MODEL.world.PIXELS_PER_METER));
+		b2dTrans.scale(1/((double)MODEL.PIXELS_PER_METER), 1/((double)MODEL.PIXELS_PER_METER));
 		
 		g2.setTransform(b2dTrans);
 		

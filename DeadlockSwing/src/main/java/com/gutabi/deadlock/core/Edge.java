@@ -1,6 +1,5 @@
 package com.gutabi.deadlock.core;
 
-
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 
 import java.awt.Color;
@@ -16,6 +15,7 @@ import org.apache.log4j.Logger;
 import com.bric.geom.AreaX;
 import com.gutabi.deadlock.utils.Java2DUtils;
 
+@SuppressWarnings("static-access")
 public final class Edge extends Entity {
 		
 	private final List<Point> skeleton;
@@ -27,7 +27,6 @@ public final class Edge extends Entity {
 	boolean adjusted;
 	EdgePosition startBorder;
 	EdgePosition endBorder;
-	//AreaX area;
 	
 	private final double totalLength;
 	
@@ -425,27 +424,34 @@ public final class Edge extends Entity {
 	 * @param g2 in world coords
 	 */
 	public void paintHilite(Graphics2D g2) {
-//		AffineTransform origTransform = g2.getTransform();
-//		AffineTransform trans = (AffineTransform)VIEW.worldToPanelTransform.clone();
-//		g2.setTransform(trans);
 		g2.setColor(hiliteColor);
 		g2.fill(path);
-//		g2.setTransform(origTransform);
 	}
 	
 	/**
 	 * @param g2 in world coords
 	 */
 	public void paint(Graphics2D g2) {
-//		AffineTransform origTransform = g2.getTransform();
-//		AffineTransform trans = (AffineTransform)VIEW.worldToPanelTransform.clone();
-//		g2.setTransform(trans);
 		g2.setColor(color);
 		g2.fill(path);
-//		g2.setTransform(origTransform);
 	}
 	
-	
+	/**
+	 * @param g2 in pixels
+	 */
+	public void paintSkeleton(Graphics2D g2) {
+		
+		g2.setColor(Color.BLACK);
+		
+		int[] xs = new int[skeleton.size()];
+		int[] ys = new int[skeleton.size()];
+		for (int i = 0; i < skeleton.size(); i++) {
+			Point p = skeleton.get(i);
+			xs[i] = (int)(p.x * MODEL.PIXELS_PER_METER);
+			ys[i] = (int)(p.y * MODEL.PIXELS_PER_METER);
+		}
+		g2.drawPolyline(xs, ys, skeleton.size());
+	}
 	
 	
 	

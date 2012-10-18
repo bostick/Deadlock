@@ -9,6 +9,7 @@ import java.util.List;
 
 import com.gutabi.deadlock.core.Point;
 
+@SuppressWarnings("static-access")
 public class Stroke {
 	
 	private Point lastPanelPoint;
@@ -61,10 +62,10 @@ public class Stroke {
 		if (lastPanelPoint != null) {
 			
 			g2.drawOval(
-					(int)(lastPanelPoint.x - MODEL.world.MOUSE_RADIUS),
-					(int)(lastPanelPoint.y - MODEL.world.MOUSE_RADIUS),
-					(int)(2 * MODEL.world.MOUSE_RADIUS),
-					(int)(2 * MODEL.world.MOUSE_RADIUS));
+					(int)(lastPanelPoint.x - MODEL.MOUSE_RADIUS),
+					(int)(lastPanelPoint.y - MODEL.MOUSE_RADIUS),
+					(int)(2 * MODEL.MOUSE_RADIUS),
+					(int)(2 * MODEL.MOUSE_RADIUS));
 			
 		}
 		
