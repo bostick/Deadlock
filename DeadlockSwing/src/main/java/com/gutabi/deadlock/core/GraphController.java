@@ -23,17 +23,9 @@ public class GraphController {
 	 * that is too expensive to run during editing
 	 */
 	public void postTop() {
-		
 		for (Vertex v : graph.getAllVertices()) {
-			v.adjustRadius();
+			v.computeRadius();
 		}
-		
-		for (Edge e : graph.getEdges()) {
-			if (!e.adjusted) {
-				e.adjust();
-			}
-		}
-		
 	}
 	
 	public void removeEdgeTop(Edge e) {
@@ -44,10 +36,16 @@ public class GraphController {
 		graph.removeVertexTop(v);
 	}
 	
+	
+	List<List<Point>> editingEdges;
+	List<Point> currentEditingEdge;
+	
 	public void processNewStrokeTop(List<Point> stroke) {
 		
-		boolean tooClose = false;
-		Point tooClosePoint = null;
+		editingEdges = new ArrayList<List<Point>>();
+		currentEditingEdge = new ArrayList<Point>();
+		
+		GraphPosition tooCloseGP = null;
 		
 		for (int i = 0; i < stroke.size()-1; i++) {
 			Point preA = stroke.get(i);
@@ -58,94 +56,123 @@ public class GraphController {
 			Point a;
 			Point b;
 			
-			if (!tooClose) {
+			if (tooCloseGP == null) {
 				
-				GraphPosition aP = graph.findClosestGraphPosition(preA, null, MODEL.MOUSE_RADIUS/MODEL.PIXELS_PER_METER);
+				GraphPosition aP = findClosestGraphPosition(preA, null, MODEL.MOUSE_RADIUS/MODEL.PIXELS_PER_METER);
 				
 				if (aP != null) {
 					
-					if (!aP.getPoint().equals(preA)) {
-						
-						tooClose = true;
-						tooClosePoint = aP.getPoint();
-						a = tooClosePoint;
-						
+					/*
+					 * only set tooClosePoint if aP is not preA exactly
+					 * 
+					 * it is ok to start exactly on an existing graph position, this does not count as too close
+					 */
+					if (aP.getPoint().equals(preA)) {
+						;
 					} else {
-						
-						a = preA;
-						
+						tooCloseGP = aP;
 					}
+					
+					a = aP.getPoint();
 					
 				} else {
 					a = preA;
 				}
 				
 			} else {
-				/*
-				 * a has already been changed by previous iteration
-				 */
-				a = tooClosePoint;
+				a = tooCloseGP.getPoint();
 			}
 			
-			if (!tooClose) {
+			if (tooCloseGP == null) {
 				
-				GraphPosition bP = graph.findClosestGraphPosition(preB, a, MODEL.MOUSE_RADIUS/MODEL.PIXELS_PER_METER);
-				
-				if (bP != null) {
-					tooClose = true;
-					tooClosePoint = bP.getPoint();
-					b = tooClosePoint;
-				} else {
-					b = preB;
-				}
-				
-				processNewSegment(a, b);
-				
-			} else {
-				
-				GraphPosition bP = graph.findClosestGraphPosition(preB, a, MODEL.MOUSE_RADIUS/MODEL.PIXELS_PER_METER);
+				GraphPosition bP = findClosestGraphPosition(preB, a, MODEL.MOUSE_RADIUS/MODEL.PIXELS_PER_METER);
 				
 				if (bP != null) {
 					
-					if (DMath.greaterThan(Point.distance(bP.getPoint(), tooClosePoint), 2 * MODEL.world.ROAD_RADIUS)) {
+					/*
+					 * now too close
+					 */
+					
+					tooCloseGP = bP;
+					
+					b = tooCloseGP.getPoint();
+					
+					processNewSegment(a, b);
+					
+				} else {
+					
+					/*
+					 * never too close
+					 */
+					
+					b = preB;
+					
+					processNewSegment(a, b);
+					
+				}
+				
+			} else {
+				
+				GraphPosition bP = findClosestGraphPosition(preB, a, MODEL.MOUSE_RADIUS/MODEL.PIXELS_PER_METER);
+				
+				if (bP != null) {
+					
+					if (DMath.greaterThan(
+							Point.distance(bP.getPoint(), tooCloseGP.getPoint()),
+							(bP instanceof VertexPosition ? ((VertexPosition)bP).getVertex().getRadius() : Edge.ROAD_RADIUS) + 
+							(tooCloseGP instanceof VertexPosition ? ((VertexPosition)tooCloseGP).getVertex().getRadius() : Edge.ROAD_RADIUS))) {
 						
-						//still too close, but now to a different point
-						tooClosePoint = bP.getPoint();
-						b = tooClosePoint;
+						/*
+						 * still too close, but now to a different point
+						 */
 						
-//						processNewSegment(a, b);
+						tooCloseGP = bP;
+						b = tooCloseGP.getPoint();
+						
+						processNewSegment(a, b);
 						
 					} else {
 						
-						b = tooClosePoint;
+						/*
+						 * still too close, use old tooCloseGP
+						 */
+						
+						b = tooCloseGP.getPoint();
 						
 						processNewSegment(a, b);
 					}
 					
 				} else {
 					
-					if (DMath.greaterThan(Point.distance(preB, tooClosePoint), 2 * MODEL.world.ROAD_RADIUS)) {
+					if (DMath.greaterThan(Point.distance(preB, tooCloseGP.getPoint()),
+							// preB radius
+							MODEL.MOUSE_RADIUS/MODEL.PIXELS_PER_METER +
+							(tooCloseGP instanceof VertexPosition ? ((VertexPosition)tooCloseGP).getVertex().getRadius() : Edge.ROAD_RADIUS))) {
 						
-						tooClose = false;
-						tooClosePoint = null;
+						/*
+						 * no longer too close
+						 */
+						
+						tooCloseGP = null;
 						
 						b = preB;
 						
+						processNewSegment(a, b);
+						
 					} else {
 						
-						b = tooClosePoint;
+						/*
+						 * still too close, use old tooCloseGP
+						 */
+						
+						b = tooCloseGP.getPoint();
+						
+						processNewSegment(a, b);
 						
 					}
-					
-					processNewSegment(a, b);
-					
 				}
-				
 			}
-			
 		}
-		
-//		cleanupEdges();
 	}
 	
 	private void processNewSegment(Point a, Point b) {
@@ -173,10 +200,9 @@ public class GraphController {
 		ranges.add(0.0);
 		ranges.add(1.0);
 		
-		for (Segment in : graph.getAllSegments()) {
-			int index = in.index;
-			Point c = in.edge.getPoint(index);
-			Point d = in.edge.getPoint(index+1);
+		for (Segment s : getAllSegments()) {
+			Point c = s.start;
+			Point d = s.end;
 			
 			try {
 				Point.intersection(a, b, c, d);
@@ -228,15 +254,16 @@ public class GraphController {
 		return ranges;
 	}
 	
+	/**
+	 * segment <a, b> does not overlap any existing segments
+	 */
 	private void processNewRange(Point a, Point b) {
 		
 		Timeline timeline = new Timeline(a, b);
 		
-		for (Segment in : graph.getAllSegments()) {
-			int index = in.index;
-			Edge ed = in.edge;
-			Point c = ed.getPoint(index);
-			Point d = ed.getPoint(index+1);
+		for (Segment s : getAllSegments()) {
+			Point c = s.start;
+			Point d = s.end;
 			
 			try {
 				
@@ -244,19 +271,33 @@ public class GraphController {
 				if (inter != null) {
 					
 					double interParam = Point.param(inter, a, b);
-					double interStartParam = Point.travelBackward(a, b, interParam, 2 * MODEL.world.ROAD_RADIUS);
-					double interEndParam = Point.travelForward(a, b, interParam, 2 * MODEL.world.ROAD_RADIUS);
 					
-					timeline.addEvent(new IntersectionEvent(inter, interParam, interStartParam, interEndParam, in));
+					Point[] ints = new Point[2];
+					int n = Point.circleLineIntersections(inter, Edge.ROAD_RADIUS, a, b, ints);
+					
+					assert n == 2;
+					
+					Point p1 = ints[0];
+					Point p2 = ints[1];
+					
+					double param1 = Point.param(p1, a, b);
+					double param2 = Point.param(p2, a, b);
+					
+					if (param2 > param1) {
+						timeline.addEvent(new IntersectionEvent(inter, interParam, param1, param2, s));
+					} else {
+						timeline.addEvent(new IntersectionEvent(inter, interParam, param2, param1, s));
+					}
+					
 				} else {
 					
 					Point aProjected = Point.point(c, d, DMath.clip(Point.u(c, a, d)));
 					Point bProjected = Point.point(c, d, DMath.clip(Point.u(c, b, d)));
 					
-					CloseEvent cEvent = detectClose(timeline, c, a, b);
-					CloseEvent dEvent = detectClose(timeline, d, a, b);
-					CloseEvent aEvent = detectClose(timeline, aProjected, a, b);
-					CloseEvent bEvent = detectClose(timeline, bProjected, a, b);
+					CloseEvent cEvent = detectClose(c, Edge.ROAD_RADIUS, a, b);
+					CloseEvent dEvent = detectClose(d, Edge.ROAD_RADIUS, a, b);
+					CloseEvent aEvent = detectClose(aProjected, Edge.ROAD_RADIUS, a, b);
+					CloseEvent bEvent = detectClose(bProjected, Edge.ROAD_RADIUS, a, b);
 					
 					CloseEvent e = null;
 					
@@ -334,7 +375,7 @@ public class GraphController {
 			Point aa = a;
 			
 			Point bb = b;
-			graph.addSegment(aa, bb);
+			addSegment(aa, bb);
 			
 		} else if (timeline.aClusterIndex == timeline.bClusterIndex && timeline.aClusterIndex != -1) {
 			
@@ -355,14 +396,14 @@ public class GraphController {
 				
 				bb = e.getSourceStart();
 				if (!aa.equals(bb)) {
-					graph.addSegment(aa, bb);
+					addSegment(aa, bb);
 				}
 				
 				aa = bb;
 				
 				bb = b;
 				if (!aa.equals(bb)) {
-					graph.addSegment(aa, bb);
+					addSegment(aa, bb);
 				}
 			
 			
@@ -387,7 +428,7 @@ public class GraphController {
 					aa = a;
 					
 					bb = Point.point(a, b, c.borderEndParam);
-					graph.addSegment(aa, bb);
+					addSegment(aa, bb);
 					
 					aa = bb;
 					
@@ -399,14 +440,14 @@ public class GraphController {
 						bb = e.getSourceStart();
 						
 						if (!aa.equals(bb)) {
-							graph.addSegment(aa, bb);
+							addSegment(aa, bb);
 						}
 						
 						aa = bb;
 					}
 					
 					bb = Point.point(a, b, c.borderEndParam);
-					graph.addSegment(aa, bb);
+					addSegment(aa, bb);
 					
 					aa = bb;
 					
@@ -428,14 +469,14 @@ public class GraphController {
 				if (c.intersectionEvents.isEmpty()) {
 					
 					bb = Point.point(a, b, c.borderStartParam); 
-					graph.addSegment(aa, bb);
+					addSegment(aa, bb);
 					
 					aa = Point.point(a, b, c.borderEndParam);
 					
 				} else {
 					
 					bb = Point.point(a, b, c.borderStartParam); 
-					graph.addSegment(aa, bb);
+					addSegment(aa, bb);
 					
 					aa = bb;
 					
@@ -443,7 +484,7 @@ public class GraphController {
 						
 						bb = e.getSourceStart();
 						if (!aa.equals(bb)) {
-							graph.addSegment(aa, bb);
+							addSegment(aa, bb);
 						}
 						
 						aa = bb;
@@ -451,7 +492,7 @@ public class GraphController {
 					}
 					
 					bb = Point.point(a, b, c.borderEndParam);
-					graph.addSegment(aa, bb);
+					addSegment(aa, bb);
 					
 					aa = bb;
 					
@@ -471,33 +512,33 @@ public class GraphController {
 				if (c.intersectionEvents.isEmpty()) {
 					
 					bb = Point.point(a, b, c.borderStartParam);
-					graph.addSegment(aa, bb);
+					addSegment(aa, bb);
 					
 					aa = bb;
 					
 					bb = b;
 					if (!aa.equals(bb)) {
-						graph.addSegment(aa, bb);
+						addSegment(aa, bb);
 					}
 					
 				} else {
 					
 					bb = Point.point(a, b, c.borderStartParam);
-					graph.addSegment(aa, bb);
+					addSegment(aa, bb);
 					
 					aa = bb;
 					
 					for (IntersectionEvent e : c.intersectionEvents) {
 						
 						bb = e.getSourceStart();
-						graph.addSegment(aa, bb);
+						addSegment(aa, bb);
 						
 						aa = bb;
 					}
 					
 					bb = b;
 					if (!aa.equals(bb)) {
-						graph.addSegment(aa, bb);
+						addSegment(aa, bb);
 					}
 					
 				}
@@ -505,17 +546,17 @@ public class GraphController {
 			} else {
 				// there is no B cluster
 				bb = b;
-				graph.addSegment(aa, bb);
+				addSegment(aa, bb);
 			}
 			
 		}
 		
 	}
 	
-	private CloseEvent detectClose(Timeline t, Point p, Point a, Point b) {
+	private CloseEvent detectClose(Point p, double radius, Point a, Point b) {
 		//how close is p to <a, b>?
 		Point[] ints = new Point[2];
-		int num = Point.circleLineIntersections(p, 2 * MODEL.world.ROAD_RADIUS, a, b, ints);
+		int num = Point.circleLineIntersections(p, radius, a, b, ints);
 		switch (num) {
 		case 2: {
 			Point p1 = ints[0];
@@ -697,39 +738,20 @@ public class GraphController {
 		
 	}
 	
-//	private void cleanupEdges() {
-//		
-//		List<Edge> toRemove = new ArrayList<Edge>();
-//		boolean changed;
-//		
-//		while (true) {
-//			toRemove.clear();
-//			changed = false;
-//			
-//			for (Edge e : graph.getEdges()) {
-//				if (e.getTotalLength() <= MODEL.world.CAR_LENGTH) {
-//					toRemove.add(e);
-//					changed = true;
-//				}
-//			}
-//			
-//			for (Edge e : toRemove) {
-//				
-//				if (e.isRemoved()) {
-//					/*
-//					 * may be removed from having been merged in a previous iteration
-//					 */
-//					continue;
-//				}
-//				
-//				removeEdgeTop(e);
-//				
-//			}
-//			
-//			if (!changed) {
-//				break;
-//			}
-//		}
-//		
-//	}
+	
+	
+	
+	private GraphPosition findClosestGraphPosition(Point p, Point anchor, double radius) {
+		editing.findClosestGraphPosition(p, anchor, radius);
+		graph.findClosestGraphPosition(p, anchor, radius);
+	}
+	
+	private List<Segment> getAllSegments() {
+		graph.getAllSegments();
+	}
+	
+	private void addSegment(Point a, Point b) {
+		d;
+	}
+	
 }

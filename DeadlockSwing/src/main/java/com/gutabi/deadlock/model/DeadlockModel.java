@@ -6,10 +6,9 @@ import com.gutabi.deadlock.core.Entity;
 public class DeadlockModel {
 	
 	/**
-	 * move physics forward by dt milliseconds
+	 * move physics forward by dt seconds
 	 */
-	//public static long dtMillis = 10;
-	public static double dtSeconds = 0.10;
+	public static double dt = 0.10;
 	
 	public static final int PIXELS_PER_METER = 32;
 	

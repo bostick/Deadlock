@@ -71,12 +71,4 @@ public class Stroke {
 		
 	}
 	
-//	public static class DraftingStroke extends BasicStroke {
-//		
-//		public DraftingStroke() {
-//			super(5, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
-//		}
-//		
-//	}
-	
 }

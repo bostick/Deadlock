@@ -1,7 +1,5 @@
 package com.gutabi.deadlock.core;
 
-import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -88,6 +86,7 @@ public class QuadTree {
 		 * test the point a against all segments <c, d>
 		 */
 		for (Segment si : segIndices) {
+			Edge e = si.edge;
 			double closest = closestParam(a, si);
 			Point ep = si.getPoint(closest);
 			if (anchor != null && a.equals(anchor) && ep.equals(anchor)) {
@@ -97,7 +96,7 @@ public class QuadTree {
 				continue;
 			}
 			double dist = Point.distance(a, ep);
-			if (DMath.lessThanEquals(dist, radius + MODEL.world.ROAD_RADIUS) && (anchor == null || a.equals(anchor) || dist < Point.distance(anchor, ep))) {
+			if (DMath.lessThanEquals(dist, radius + Edge.ROAD_RADIUS) && (anchor == null || a.equals(anchor) || dist < Point.distance(anchor, ep))) {
 				if (bestSegment == null) {
 					bestSegment = si;
 					bestParam = closest;

@@ -32,24 +32,21 @@ import com.gutabi.deadlock.utils.ImageUtils;
 @SuppressWarnings("static-access")
 public class World {
 	
-	public final double CAR_LENGTH = 1.0;
-	public final double ROAD_RADIUS = CAR_LENGTH / 2;
-	
 	/*
 	 * distance that center of a car has to be from center of a sink in order to be sinked
 	 */
-	public final double SINK_EPSILON = 0.5f;
+	public static final double SINK_EPSILON = 0.5f;
 	
-	public final double WORLD_WIDTH = 16.0;
-	public final double WORLD_HEIGHT = WORLD_WIDTH;
+	public static final double WORLD_WIDTH = 16.0;
+	public static final double WORLD_HEIGHT = WORLD_WIDTH;
 	
 	/*
 	 * spawn cars every SPAWN_FREQUENCY seconds
 	 * -1 means no spawning
 	 */
-	public double SPAWN_FREQUENCY_SECONDS = 3.0;
+	public static double SPAWN_FREQUENCY_SECONDS = 3.0;
 	
-	public Random RANDOM = new Random(1);
+	public static Random RANDOM = new Random(1);
 	
 	
 	/*
@@ -84,14 +81,14 @@ public class World {
 		normalCar = ImageIO.read(new File("media\\normalCar.png"));
 		normalCar = ImageUtils.createResizedCopy(
 				normalCar,
-				(int)(MODEL.world.CAR_LENGTH * MODEL.PIXELS_PER_METER),
-				(int)(MODEL.world.CAR_LENGTH * MODEL.PIXELS_PER_METER), true);
+				(int)(Car.CAR_LENGTH * MODEL.PIXELS_PER_METER),
+				(int)(Car.CAR_LENGTH * MODEL.PIXELS_PER_METER), true);
 		
 		fastCar = ImageIO.read(new File("media\\fastCar.png"));
 		fastCar = ImageUtils.createResizedCopy(
 				fastCar,
-				(int)(MODEL.world.CAR_LENGTH * MODEL.PIXELS_PER_METER),
-				(int)(MODEL.world.CAR_LENGTH * MODEL.PIXELS_PER_METER), true);
+				(int)(Car.CAR_LENGTH * MODEL.PIXELS_PER_METER),
+				(int)(Car.CAR_LENGTH * MODEL.PIXELS_PER_METER), true);
 		
 		BufferedImage grass = ImageIO.read(new File("media\\grass.png"));
 		
@@ -198,7 +195,7 @@ public class World {
 		}
 		
 //		logger.debug("before step " + t);
-		b2dWorld.step((float)MODEL.dtSeconds, velocityIterations, positionIterations);
+		b2dWorld.step((float)MODEL.dt, velocityIterations, positionIterations);
 //		logger.debug("after step " + t);
 		
 		List<Car> toBeRemoved = new ArrayList<Car>();
@@ -265,7 +262,7 @@ public class World {
 		for (Car c : cars) {
 			for (Source s : sources) {
 				double dist = c.getPoint().distanceTo(s.getPoint());
-				if (DMath.lessThanEquals(dist, CAR_LENGTH)) {
+				if (DMath.lessThanEquals(dist, c.length)) {
 					toRemove.add(s);
 				}
 			}

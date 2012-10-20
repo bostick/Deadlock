@@ -97,7 +97,7 @@ public class ControlPanel extends JPanel {
 		verticalBox.add(hBox);
 		
 		dtField = new JTextField();
-		dtField.setText(Double.toString(MODEL.dtSeconds));
+		dtField.setText(Double.toString(MODEL.dt));
 		dtField.setMaximumSize(new Dimension(10000, 100));
 		dtField.setActionCommand("dt");
 		dtField.addActionListener(CONTROLLER);

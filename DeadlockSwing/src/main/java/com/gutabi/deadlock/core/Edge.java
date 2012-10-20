@@ -18,14 +18,15 @@ import com.gutabi.deadlock.utils.Java2DUtils;
 
 @SuppressWarnings("static-access")
 public final class Edge extends Entity {
-		
+	
+	public static final double ROAD_RADIUS = 0.5;
+	
 	private final List<Point> skeleton;
 	
 	private final double[] cumulativeDistancesFromStart;
 	private final Vertex start;
 	private final Vertex end;
 	
-	boolean adjusted;
 	EdgePosition startBorder;
 	EdgePosition endBorder;
 	
@@ -36,9 +37,9 @@ public final class Edge extends Entity {
 	
 	private boolean removed = false;
 	
-	private final int hash;
-	
 	public int id;
+	
+	private final int hash;
 	
 	static Logger logger = Logger.getLogger(Edge.class);
 	
@@ -121,6 +122,9 @@ public final class Edge extends Entity {
 	}
 	
 	
+	
+	
+	
 	public boolean hitTest(Point p) {
 		return path.contains(new Point2D.Double(p.x, p.y));
 	}
@@ -154,28 +158,25 @@ public final class Edge extends Entity {
 		return removed;
 	}
 	
-	public void adjust() {
-		
-		assert !adjusted;
-		
+	public void computeBorders() {
 		assert !standalone;
 		
-		startBorder = startBorder(start.getPoint(), start.getRadius());
+		startBorder = startBorder();
 		
-		endBorder = endBorder(end.getPoint(), end.getRadius());
+		endBorder = endBorder();
 		
 		assert startBorder.distanceToStartOfEdge() < endBorder.distanceToStartOfEdge();
-		
-		computeArea();
-		
-		adjusted = true;
 	}
 	
-	public EdgePosition startBorder(Point center, double radius) {
+	/**
+	 * return the edge position that is distance radius away from the start
+	 */
+	private EdgePosition startBorder() {
 		
 		EdgePosition border = null;
 		
-		assert center.equals(skeleton.get(0));
+		Point center = start.getPoint();
+		double radius = start.getRadius();
 		
 		for (int i = 0; i < skeleton.size()-1; i++) {
 			Point a = skeleton.get(i);
@@ -218,11 +219,15 @@ public final class Edge extends Entity {
 		return border;
 	}
 	
-	public EdgePosition endBorder(Point center, double radius) {
+	/**
+	 * return the edge position that is distance radius away from the end
+	 */
+	private EdgePosition endBorder() {
 		
 		EdgePosition border = null;
 		
-		assert center.equals(skeleton.get(skeleton.size()-1));
+		Point center = end.getPoint();
+		double radius = end.getRadius();
 		
 		for (int i = skeleton.size()-2; i >= 0; i--) {
 			Point a = skeleton.get(i);
@@ -265,7 +270,7 @@ public final class Edge extends Entity {
 		return border;
 	}
 	
-	private void computeArea() {
+	void computeArea() {
 		
 //		assert area == null;
 		
@@ -319,12 +324,16 @@ public final class Edge extends Entity {
 	}
 	
 	private void addToArea(AreaX area, EdgePosition a, EdgePosition b) {
+		assert a.getEdge() == b.getEdge();
+		
+//		Edge e = a.getEdge();
+		
 		Point aa = a.getPoint();
 		Point bb = b.getPoint();
 
 		Point diff = new Point(bb.x - aa.x, bb.y - aa.y);
-		Point up = Point.ccw90(diff).multiply(MODEL.world.ROAD_RADIUS / diff.length);
-		Point down = Point.cw90(diff).multiply(MODEL.world.ROAD_RADIUS / diff.length);
+		Point up = Point.ccw90(diff).multiply(ROAD_RADIUS / diff.length);
+		Point down = Point.cw90(diff).multiply(ROAD_RADIUS / diff.length);
 		
 		Point p0 = aa.add(up);
 		Point p1 = aa.add(down);
@@ -337,9 +346,9 @@ public final class Edge extends Entity {
 		path.lineTo(p2.x, p2.y);
 		path.lineTo(p0.x, p0.y);
 		
-		Area disk1 = new Area(new Ellipse2D.Double(aa.x-MODEL.world.ROAD_RADIUS, aa.y-MODEL.world.ROAD_RADIUS, 2 * MODEL.world.ROAD_RADIUS, 2 * MODEL.world.ROAD_RADIUS));
+		Area disk1 = new Area(new Ellipse2D.Double(aa.x-ROAD_RADIUS, aa.y-ROAD_RADIUS, 2 * ROAD_RADIUS, 2 * ROAD_RADIUS));
 		Area rect = new Area(path);
-		Area disk2 = new Area(new Ellipse2D.Double(bb.x-MODEL.world.ROAD_RADIUS, bb.y-MODEL.world.ROAD_RADIUS, 2 * MODEL.world.ROAD_RADIUS, 2 * MODEL.world.ROAD_RADIUS));
+		Area disk2 = new Area(new Ellipse2D.Double(bb.x-ROAD_RADIUS, bb.y-ROAD_RADIUS, 2 * ROAD_RADIUS, 2 * ROAD_RADIUS));
 		
 		Area capsule = new Area();
 		capsule.add(disk1);

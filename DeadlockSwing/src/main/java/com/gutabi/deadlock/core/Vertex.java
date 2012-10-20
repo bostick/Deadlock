@@ -28,7 +28,7 @@ public class Vertex extends Entity {
 	Path2D path;
 	double radius;
 	
-	public static final double INIT_VERTEX_RADIUS = Math.sqrt(2 * MODEL.world.ROAD_RADIUS * MODEL.world.ROAD_RADIUS);
+	public static final double INIT_VERTEX_RADIUS = Math.sqrt(2 * Edge.ROAD_RADIUS * Edge.ROAD_RADIUS);
 	
 	public Vertex(Point p) {
 		
@@ -71,67 +71,57 @@ public class Vertex extends Entity {
 	}	
 	
 	
-	public void adjustRadius() {
+	public void computeRadius() {
 		
-		List<Point> borderPoints = new ArrayList<Point>();
-		
-		for (Edge e : eds) {
-			if (e.getStart() == this) {
-				borderPoints.add(e.startBorder(p, radius).getPoint());
-			}
-			if (e.getEnd() == this) {
-				borderPoints.add(e.endBorder(p, radius).getPoint());
-			}
-		}
-		
-		double minimumDist = Double.POSITIVE_INFINITY;
-		for (int i = 0; i < borderPoints.size()-1; i++) {
-			Point a = borderPoints.get(i);
-			for (int j = i+1; j < borderPoints.size(); j++) {
-				Point b = borderPoints.get(j);
-				double dist = Point.distance(a, b);
-				if (DMath.lessThan(dist, minimumDist)) {
-					minimumDist = dist;
-				}
-			}
-		}
-		
+		loop:
 		while (true) {
 			
-			if (DMath.greaterThan(minimumDist, 2 * MODEL.world.ROAD_RADIUS + 0.1)) {
-				break;
+			boolean tooClose = false;
+			
+			for (int i = 0; i < eds.size()-1; i++) {
+				Edge ei = eds.get(i);
+				
+				EdgePosition borderi;
+				if (ei.getStart() == this) {
+					borderi = ei.startBorder;
+				} else {
+					borderi = ei.endBorder;
+				}
+				
+				for (int j = i+1; i < eds.size(); j++) {
+					Edge ej = eds.get(j);
+					
+					EdgePosition borderj;
+					if (ej.getStart() == this) {
+						borderj = ej.startBorder;
+					} else {
+						borderj = ej.endBorder;
+					}
+					
+					if (DMath.lessThan(Point.distance(borderi.getPoint(), borderj.getPoint()), Edge.ROAD_RADIUS + Edge.ROAD_RADIUS + 0.1)) {
+						tooClose = true;
+					}
+					
+				}
+			}
+			
+			if (!tooClose) {
+				break loop;
 			}
 			
 			radius = radius + 0.1;
 			
-			borderPoints.clear();
-			
 			for (Edge e : eds) {
-				e.adjusted = false;
-				if (e.getStart() == this) {
-					borderPoints.add(e.startBorder(p, radius).getPoint());
-				}
-				if (e.getEnd() == this) {
-					borderPoints.add(e.endBorder(p, radius).getPoint());
-				}
-			}
-			
-			minimumDist = Double.POSITIVE_INFINITY;
-			for (int i = 0; i < borderPoints.size()-1; i++) {
-				Point a = borderPoints.get(i);
-				for (int j = i+1; j < borderPoints.size(); j++) {
-					Point b = borderPoints.get(j);
-					double dist = Point.distance(a, b);
-					if (DMath.lessThan(dist, minimumDist)) {
-						minimumDist = dist;
-					}
-				}
+				e.computeBorders();
 			}
 			
 		}
 		
 		computeArea();
 		
+		for (Edge e : eds) {
+			e.computeArea();
+		}
 	}
 	
 	

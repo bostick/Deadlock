@@ -458,7 +458,7 @@ public class DeadlockController implements ActionListener {
 			String text = VIEW.controlPanel.dtField.getText();
 			try {
 				double dt = Double.parseDouble(text);
-				MODEL.dtSeconds = dt;
+				MODEL.dt = dt;
 			} catch (NumberFormatException ex) {
 				
 			}

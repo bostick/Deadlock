@@ -55,10 +55,10 @@ public class SimulationRunnable implements Runnable {
 			
 			accumulator += frameTimeSeconds;
 			
-			while (accumulator >= MODEL.dtSeconds) {
+			while (accumulator >= MODEL.dt) {
 				MODEL.world.integrate(t);
-				accumulator -= MODEL.dtSeconds;
-				t += MODEL.dtSeconds;
+				accumulator -= MODEL.dt;
+				t += MODEL.dt;
 			}
 			
 			VIEW.repaint();

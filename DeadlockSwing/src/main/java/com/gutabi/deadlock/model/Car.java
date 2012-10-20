@@ -29,6 +29,7 @@ import com.gutabi.deadlock.core.path.STPointPath;
 @SuppressWarnings("static-access")
 public abstract class Car extends Entity {
 	
+	public static final double CAR_LENGTH = 1.0;
 	double maxRadsPerSecond = 5.0;
 	
 	public CarStateEnum state;
@@ -59,6 +60,8 @@ public abstract class Car extends Entity {
 	
 	boolean atleastPartiallyOnRoad;
 	
+	public final double length;
+	
 	static Logger logger = Logger.getLogger(Car.class);
 	
 	public Car(Source s) {
@@ -79,12 +82,12 @@ public abstract class Car extends Entity {
 		
 		GraphPositionPathPosition overallPos = overallPath.findClosestGraphPositionPathPosition(startPoint);
 		
-		p1 = new Point(MODEL.world.CAR_LENGTH / 2, MODEL.world.CAR_LENGTH / 4);
-		p2 = new Point(MODEL.world.CAR_LENGTH / 2, -MODEL.world.CAR_LENGTH / 4);
-		p3 = new Point(-MODEL.world.CAR_LENGTH / 2, -MODEL.world.CAR_LENGTH / 4);
-		p4 = new Point(-MODEL.world.CAR_LENGTH / 2, MODEL.world.CAR_LENGTH / 4);
+		p1 = new Point(CAR_LENGTH / 2, CAR_LENGTH / 4);
+		p2 = new Point(CAR_LENGTH / 2, -CAR_LENGTH / 4);
+		p3 = new Point(-CAR_LENGTH / 2, -CAR_LENGTH / 4);
+		p4 = new Point(-CAR_LENGTH / 2, CAR_LENGTH / 4);
 		
-		STGraphPositionPathPositionPath nextPlannedPath = STGraphPositionPathPositionPath.advanceOneTimeStep(overallPos, getMetersPerSecond() * MODEL.dtSeconds);
+		STGraphPositionPathPositionPath nextPlannedPath = STGraphPositionPathPositionPath.advanceOneTimeStep(overallPos, getMetersPerSecond() * MODEL.dt);
 		
 		STPointPath nextRealPath = nextPlannedPath.toSTGraphPositionPath().toSTPointPath();
 		
@@ -96,6 +99,8 @@ public abstract class Car extends Entity {
 		startHeading = Math.atan2(nextDTGoalPoint.y-startPoint.y, nextDTGoalPoint.x-startPoint.x);
 		
 		color = Color.BLUE;
+		
+		length = CAR_LENGTH;
 		
 		computeArea();
 		
@@ -147,7 +152,7 @@ public abstract class Car extends Entity {
 //				new Vec2((float)p2.getX(), (float)p2.getY()),
 //				new Vec2((float)p3.getX(), (float)p3.getY()),
 //				new Vec2((float)p4.getX(), (float)p4.getY())}, 4);
-		((PolygonShape)b2dShape).setAsBox((float)(MODEL.world.CAR_LENGTH / 2), (float)(MODEL.world.CAR_LENGTH / 4));
+		((PolygonShape)b2dShape).setAsBox((float)(CAR_LENGTH / 2), (float)(CAR_LENGTH / 4));
 		
 		FixtureDef fixtureDef = new FixtureDef();
 		fixtureDef.shape = b2dShape;
@@ -335,7 +340,7 @@ public abstract class Car extends Entity {
 			dw += 2*Math.PI;
 		}
 		
-		float maxRads = (float)(maxRadsPerSecond * MODEL.dtSeconds);
+		float maxRads = (float)(maxRadsPerSecond * MODEL.dt);
 		
 		if (dw > maxRads) {
 			dw = maxRads;
@@ -351,7 +356,7 @@ public abstract class Car extends Entity {
 		
 		b2dBody.applyAngularImpulse(cancelingAngImpulse);
 		
-		float angImpulse = b2dBody.getInertia() * (float)(dw / MODEL.dtSeconds);
+		float angImpulse = b2dBody.getInertia() * (float)(dw / MODEL.dt);
 		
 		logger.debug("angular impulse: " + angImpulse);
 		
@@ -439,10 +444,10 @@ public abstract class Car extends Entity {
 		g2.setTransform(b2dTrans);
 		
 		g2.drawImage(im,
-				(int)(-MODEL.world.CAR_LENGTH * MODEL.PIXELS_PER_METER / 2),
-				(int)(-MODEL.world.CAR_LENGTH * MODEL.PIXELS_PER_METER / 2),
-				(int)(MODEL.world.CAR_LENGTH * MODEL.PIXELS_PER_METER),
-				(int)(MODEL.world.CAR_LENGTH * MODEL.PIXELS_PER_METER), null);
+				(int)(-CAR_LENGTH * MODEL.PIXELS_PER_METER / 2),
+				(int)(-CAR_LENGTH * MODEL.PIXELS_PER_METER / 2),
+				(int)(CAR_LENGTH * MODEL.PIXELS_PER_METER),
+				(int)(CAR_LENGTH * MODEL.PIXELS_PER_METER), null);
 		
 		g2.setTransform(origTransform);
 	}

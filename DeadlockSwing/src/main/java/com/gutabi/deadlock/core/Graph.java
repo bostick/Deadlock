@@ -1,7 +1,5 @@
 package com.gutabi.deadlock.core;
 
-import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -107,7 +105,7 @@ public class Graph {
 			int i = in.index;
 			Point c = e.getPoint(i);
 			Point d = e.getPoint(i+1);
-			if (DMath.lessThanEquals(Point.distance(p, c, d), MODEL.world.ROAD_RADIUS)) {
+			if (DMath.lessThanEquals(Point.distance(p, c, d), Edge.ROAD_RADIUS)) {
 				return e;
 			}
 		}
@@ -139,6 +137,10 @@ public class Graph {
 	public void addSink(Sink s) {
 		sinks.add(s);
 		refreshVertexIDs();
+	}
+	
+	public void addEdgeTop(List<Point> pts) {
+		
 	}
 	
 	public void removeEdgeTop(Edge e) {
@@ -539,7 +541,7 @@ public class Graph {
 		return segTree.findClosestEdgePosition(a, exclude, radius);
 	}
 	
-	public void addSegment(Point a, Point b) {
+	private void addSegment(Point a, Point b) {
 		
 		assert !a.equals(b);
 		assert !segmentOverlaps(a, b);
@@ -1010,9 +1012,9 @@ public class Graph {
 		}
 		
 		for (Edge e : edges) {
-			if (e.getTotalLength() <= MODEL.world.CAR_LENGTH) {
-				throw new IllegalStateException("too small");
-			}
+//			if (e.getTotalLength() <= MODEL.world.CAR_LENGTH) {
+//				throw new IllegalStateException("too small");
+//			}
 			if (e.getStart() == null && e.getEnd() == null) {
 				continue;
 			}
