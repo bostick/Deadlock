@@ -9,31 +9,19 @@ public class QuadTree {
 	
 	public void addEdge(Edge e) {
 		for (int i = 0; i < e.size()-1; i++) {
-			addSegment(e, i);
+			segIndices.add(new Segment(e, i));
 		}
 	}
 	
 	public void removeEdge(Edge e) {
-		for (int i = 0; i < e.size()-1; i++) {
-			removeSegment(e, i);
-		}
-	}
-	
-	private void addSegment(Edge e, int i) {
-		segIndices.add(new Segment(e, i));
-	}
-
-	private void removeSegment(Edge e, int i) {
-		Segment toRemove = null;
+		List<Segment> toRemove = new ArrayList<Segment>();
 		for (Segment si : segIndices) {
-			if (si.edge == e && si.index == i) {
-				toRemove = si;
+			if (si.edge == e) {
+				toRemove.add(si);
 			}
 		}
-		if (toRemove != null) {
-			segIndices.remove(toRemove);
-		} else {
-			assert false;
+		for (Segment si : toRemove) {
+			segIndices.remove(si);
 		}
 	}
 	
@@ -86,7 +74,7 @@ public class QuadTree {
 		 * test the point a against all segments <c, d>
 		 */
 		for (Segment si : segIndices) {
-			Edge e = si.edge;
+//			Edge e = si.edge;
 			double closest = closestParam(a, si);
 			Point ep = si.getPoint(closest);
 			if (anchor != null && a.equals(anchor) && ep.equals(anchor)) {

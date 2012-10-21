@@ -54,7 +54,7 @@ public class TestSimulating {
 	@After
 	public void tearDown() throws Exception {
 		
-		assertTrue(MODEL.world.graph.checkConsistency());
+		assertTrue(MODEL.world.checkConsistency());
 		
 		Thread.sleep(200);
 		
@@ -2477,8 +2477,8 @@ public class TestSimulating {
 			//MODEL.viewLoc = new Point(575, 375);
 			//MODEL.viewLoc = new Point(560, 400);
 			
-			MODEL.world.processNewWorldStroke(new ArrayList<Point>(){{add(new Point(600, 450));add(new Point(700, 450));}});
-			MODEL.world.processNewWorldStroke(new ArrayList<Point>(){{add(new Point(650, 400));add(new Point(650, 500));}});
+			MODEL.world.gc.processNewStrokeTop(new ArrayList<Point>(){{add(new Point(600, 450));add(new Point(700, 450));}});
+			MODEL.world.gc.processNewStrokeTop(new ArrayList<Point>(){{add(new Point(650, 400));add(new Point(650, 500));}});
 			
 			Vertex aV = ((Vertex)MODEL.world.graph.hitTest(new Point(600, 450)));
 			
@@ -2511,8 +2511,8 @@ public class TestSimulating {
 			//MODEL.viewLoc = new Point(575, 375);
 			//MODEL.viewLoc = new Point(560, 400);
 			
-			MODEL.world.processNewWorldStroke(new ArrayList<Point>(){{add(new Point(595, 450));add(new Point(695, 450));}});
-			MODEL.world.processNewWorldStroke(new ArrayList<Point>(){{add(new Point(650, 400));add(new Point(650, 500));}});
+			MODEL.world.gc.processNewStrokeTop(new ArrayList<Point>(){{add(new Point(595, 450));add(new Point(695, 450));}});
+			MODEL.world.gc.processNewStrokeTop(new ArrayList<Point>(){{add(new Point(650, 400));add(new Point(650, 500));}});
 			
 //			MODEL.processStroke(new Point(595, 450), new Point(695, 450));
 //			MODEL.processStroke(new Point(650, 400), new Point(650, 500));
@@ -2550,8 +2550,8 @@ public class TestSimulating {
 			//MODEL.viewLoc = new Point(575, 375);
 			//MODEL.viewLoc = new Point(560, 400);
 			
-			MODEL.world.processNewWorldStroke(new ArrayList<Point>(){{add(new Point(600, 450));add(new Point(700, 450));}});
-			MODEL.world.processNewWorldStroke(new ArrayList<Point>(){{add(new Point(650, 400));add(new Point(650, 500));}});
+			MODEL.world.gc.processNewStrokeTop(new ArrayList<Point>(){{add(new Point(600, 450));add(new Point(700, 450));}});
+			MODEL.world.gc.processNewStrokeTop(new ArrayList<Point>(){{add(new Point(650, 400));add(new Point(650, 500));}});
 //			MODEL.processStroke(new Point(600, 450), new Point(700, 450));
 //			MODEL.processStroke(new Point(650, 400), new Point(650, 500));
 			

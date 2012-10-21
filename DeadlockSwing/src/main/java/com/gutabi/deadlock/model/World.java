@@ -56,10 +56,10 @@ public class World {
 	public double lastSpawnTime;
 	
 	
-	public Graph graph;
+	private Graph graph;
 	private GraphController gc;
 	
-	public List<Car> cars = new ArrayList<Car>();
+	private List<Car> cars = new ArrayList<Car>();
 	
 	org.jbox2d.dynamics.World b2dWorld;
 	private CarEventListener listener;
@@ -69,6 +69,9 @@ public class World {
 	private static BufferedImage tiledGrass;
 	
 	private BufferedImage backgroundImage;
+	
+	public Point renderingUpperLeft;
+	public Point renderingBottomRight;
 	
 	private static Logger logger = Logger.getLogger(World.class);
 	
@@ -112,15 +115,15 @@ public class World {
 		b2dWorld.setContactListener(listener);
 		
 		
-		Source a = new Source(new Point(WORLD_WIDTH/3, 0));
-		Source b = new Source(new Point(2*WORLD_WIDTH/3, 0));
-		Source c = new Source(new Point(0, WORLD_HEIGHT/3));
-		Source d = new Source(new Point(0, 2*WORLD_HEIGHT/3));
+		Source a = new Source(new Point(WORLD_WIDTH/3, 0), graph);
+		Source b = new Source(new Point(2*WORLD_WIDTH/3, 0), graph);
+		Source c = new Source(new Point(0, WORLD_HEIGHT/3), graph);
+		Source d = new Source(new Point(0, 2*WORLD_HEIGHT/3), graph);
 		
-		Sink e = new Sink(new Point(WORLD_WIDTH/3, WORLD_HEIGHT));
-		Sink f = new Sink(new Point(2*WORLD_WIDTH/3, WORLD_HEIGHT));
-		Sink g = new Sink(new Point(WORLD_WIDTH, WORLD_HEIGHT/3));
-		Sink h = new Sink(new Point(WORLD_WIDTH, 2*WORLD_HEIGHT/3));
+		Sink e = new Sink(new Point(WORLD_WIDTH/3, WORLD_HEIGHT), graph);
+		Sink f = new Sink(new Point(2*WORLD_WIDTH/3, WORLD_HEIGHT), graph);
+		Sink g = new Sink(new Point(WORLD_WIDTH, WORLD_HEIGHT/3), graph);
+		Sink h = new Sink(new Point(WORLD_WIDTH, 2*WORLD_HEIGHT/3), graph);
 		
 		a.matchingSink = e;
 		e.matchingSource = a;
@@ -144,7 +147,81 @@ public class World {
 		graph.addSink(g);
 		graph.addSink(h);
 		
+		computeRenderingOffsets();
 	}
+	
+	public void removeVertexTop(Vertex v) {
+		gc.removeVertexTop(v);
+		postTop();
+	}
+	
+	public void removeEdgeTop(Edge e) {
+		gc.removeEdgeTop(e);
+		postTop();
+	}
+	
+	public void removeCarTop(Car c) {
+		c.b2dCleanup();
+		
+		synchronized (MODEL) {
+			cars.remove(c);
+		}
+		
+		postTop();
+	}
+	
+	public void processNewStrokeTop(List<Point> stroke) {
+		gc.processNewStrokeTop(stroke);
+		postTop();
+	}
+	
+	private void postTop() {
+		computeRenderingOffsets();
+	}
+	
+	private void computeRenderingOffsets() {
+		
+		double renderingUpperLeftX = 0.0;
+		double renderingUpperLeftY = 0.0;
+		double renderingBottomRightX = WORLD_WIDTH;
+		double renderingBottomRightY = WORLD_HEIGHT;
+		
+		for (Vertex v : graph.getAllVertices()) {
+			if (v.renderingUpperLeft.x < renderingUpperLeftX) {
+				renderingUpperLeftX = v.renderingUpperLeft.x;
+			}
+			if (v.renderingUpperLeft.y < renderingUpperLeftY) {
+				renderingUpperLeftY = v.renderingUpperLeft.y;
+			}
+			if (v.renderingBottomRight.x > renderingBottomRightX) {
+				renderingBottomRightX = v.renderingBottomRight.x;
+			}
+			if (v.renderingBottomRight.y > renderingBottomRightY) {
+				renderingBottomRightY = v.renderingBottomRight.y;
+			}
+		}
+		for (Edge ed : graph.getEdges()) {
+			if (ed.renderingUpperLeft.x < renderingUpperLeftX) {
+				renderingUpperLeftX = ed.renderingUpperLeft.x;
+			}
+			if (ed.renderingUpperLeft.y < renderingUpperLeftY) {
+				renderingUpperLeftY = ed.renderingUpperLeft.y;
+			}
+			if (ed.renderingBottomRight.x > renderingBottomRightX) {
+				renderingBottomRightX = ed.renderingBottomRight.x;
+			}
+			if (ed.renderingBottomRight.y > renderingBottomRightY) {
+				renderingBottomRightY = ed.renderingBottomRight.y;
+			}
+		}
+		
+		renderingUpperLeft = new Point(renderingUpperLeftX, renderingUpperLeftY);
+		renderingBottomRight = new Point(renderingBottomRightX, renderingBottomRightY);
+	}
+	
+	
+	
+	
 	
 	/*
 	 * run before game loop start
@@ -184,36 +261,25 @@ public class World {
 		
 		this.t = t;
 		
-		synchronized (MODEL) {
-			if (SPAWN_FREQUENCY_SECONDS > 0 && (t == 0 || (t - lastSpawnTime) >= SPAWN_FREQUENCY_SECONDS)) {
-				spawnNewCars();
-			}
-		}
-		
-		for (Car c : cars) {
-			c.preStep();
-		}
+		preStep();
 		
 //		logger.debug("before step " + t);
 		b2dWorld.step((float)MODEL.dt, velocityIterations, positionIterations);
 //		logger.debug("after step " + t);
 		
-		List<Car> toBeRemoved = new ArrayList<Car>();
-		for (Car c : cars) {
-			boolean shouldPersist = c.postStep();
-			if (!shouldPersist) {
-				if (MODEL.hilited == c) {
-					MODEL.hilited = null;
-				}
-				c.b2dCleanup();
-				toBeRemoved.add(c);
+		postStep();
+		
+	}
+	
+	private void preStep() {
+		if (SPAWN_FREQUENCY_SECONDS > 0 && (t == 0 || (t - lastSpawnTime) >= SPAWN_FREQUENCY_SECONDS)) {
+			spawnNewCars();
+		}
+		synchronized (MODEL) {
+			for (Car c : cars) {
+				c.preStep();
 			}
 		}
-		
-		synchronized (MODEL) {
-			cars.removeAll(toBeRemoved);
-		}
-		
 	}
 	
 	private void spawnNewCars() {
@@ -238,9 +304,31 @@ public class World {
 			
 		}
 		
-		cars.addAll(newCars);
+		synchronized (MODEL) {
+			cars.addAll(newCars);
+		}
 		
 		lastSpawnTime = t;
+	}
+	
+	private void postStep() {
+		
+		List<Car> toBeRemoved = new ArrayList<Car>();
+		
+		synchronized (MODEL) {
+			for (Car c : cars) {
+				boolean shouldPersist = c.postStep();
+				if (!shouldPersist) {
+					if (MODEL.hilited == c) {
+						MODEL.hilited = null;
+					}
+					c.b2dCleanup();
+					toBeRemoved.add(c);
+				}
+			}
+		
+			cars.removeAll(toBeRemoved);
+		}
 		
 	}
 	
@@ -258,15 +346,17 @@ public class World {
 		/*
 		 * if only moving cars are blocking a source, then a car will be spawned on the next spawn step that there are no blocking cars 
 		 */
-		
-		for (Car c : cars) {
-			for (Source s : sources) {
-				double dist = c.getPoint().distanceTo(s.getPoint());
-				if (DMath.lessThanEquals(dist, c.length)) {
-					toRemove.add(s);
+		synchronized (MODEL) {
+			for (Car c : cars) {
+				for (Source s : sources) {
+					double dist = c.distanceTo(s.getPoint());
+					if (DMath.lessThanEquals(dist, c.length)) {
+						toRemove.add(s);
+					}
 				}
 			}
 		}
+		
 		for (Vertex v : toRemove) {
 			sources.remove(v);
 		}
@@ -314,28 +404,7 @@ public class World {
 		return graph.areNeighbors(a, b);
 	}
 	
-	public void processNewWorldStroke(List<Point> stroke) {
-		gc.processNewStrokeTop(stroke);
-		gc.postTop();
-	}
 	
-	public void removeEdge(Edge e) {
-		gc.removeEdgeTop(e);
-		gc.postTop();
-	}
-	
-	public void removeVertex(Vertex i) {
-		gc.removeVertexTop(i);
-		gc.postTop();
-	}
-	
-	public void removeCar(Car c) {
-		c.b2dCleanup();
-		
-		synchronized (MODEL) {
-			cars.remove(c);
-		}
-	}
 	
 	
 	
@@ -352,16 +421,18 @@ public class World {
 	}
 	
 	private Car carHitTest(Point p) {
-		for (Car c : cars) {
-			if (c.hitTest(p)) {
-				return c;
+		synchronized (MODEL) {
+			for (Car c : cars) {
+				if (c.hitTest(p)) {
+					return c;
+				}
 			}
 		}
 		return null;
 	}
 	
 	
-	public void paint(Graphics2D g2) {		
+	public void paint(Graphics2D g2) {
 		paintBackground(g2);
 		paintScene(g2);
 	}
@@ -385,12 +456,6 @@ public class World {
 			lastTime = curTime;
 		}
 		
-		List<Car> carsCopy;
-		
-		synchronized (MODEL) {
-			carsCopy = new ArrayList<Car>(cars);
-		}
-		
 		switch (MODEL.getMode()) {
 		case DRAFTING: {
 			
@@ -407,8 +472,10 @@ public class World {
 			trans.scale(MODEL.PIXELS_PER_METER, MODEL.PIXELS_PER_METER);
 			g2.setTransform(trans);
 			
-			for (Car c : carsCopy) {
-				c.paint(g2);
+			synchronized (MODEL) {
+				for (Car c : cars) {
+					c.paint(g2);
+				}
 			}
 			
 			if (MODEL.hilited != null) {
@@ -429,8 +496,8 @@ public class World {
 	
 	private void paintBackground(Graphics2D g2) {
 		
-		int x = -(int)(((Vertex.INIT_VERTEX_RADIUS) * MODEL.PIXELS_PER_METER));
-		int y = -(int)(((Vertex.INIT_VERTEX_RADIUS) * MODEL.PIXELS_PER_METER));
+		int x = (int)(((renderingUpperLeft.x) * MODEL.PIXELS_PER_METER));
+		int y = (int)(((renderingUpperLeft.y) * MODEL.PIXELS_PER_METER));
 		
 		g2.drawImage(backgroundImage, x, y, null);
 	}
@@ -439,14 +506,14 @@ public class World {
 		assert !Thread.holdsLock(MODEL);
 		
 		backgroundImage = new BufferedImage(
-				(int)((MODEL.world.WORLD_WIDTH + Vertex.INIT_VERTEX_RADIUS + Vertex.INIT_VERTEX_RADIUS) * MODEL.PIXELS_PER_METER),
-				(int)((MODEL.world.WORLD_HEIGHT + Vertex.INIT_VERTEX_RADIUS + Vertex.INIT_VERTEX_RADIUS) * MODEL.PIXELS_PER_METER),
+				(int)((renderingBottomRight.x - renderingUpperLeft.x) * MODEL.PIXELS_PER_METER),
+				(int)((renderingBottomRight.y - renderingUpperLeft.y) * MODEL.PIXELS_PER_METER),
 				BufferedImage.TYPE_INT_ARGB);
 		Graphics2D backgroundImageG2 = backgroundImage.createGraphics();
 		
 		backgroundImageG2.translate(
-				(int)(Vertex.INIT_VERTEX_RADIUS * MODEL.PIXELS_PER_METER),
-				(int)(Vertex.INIT_VERTEX_RADIUS * MODEL.PIXELS_PER_METER));
+				(int)((-renderingUpperLeft.x) * MODEL.PIXELS_PER_METER),
+				(int)((-renderingUpperLeft.y) * MODEL.PIXELS_PER_METER));
 		
 		backgroundImageG2.drawImage(tiledGrass, 0, 0, null);
 		
@@ -493,7 +560,10 @@ public class World {
 	 * 
 	 * @param g2
 	 */
-	private void paintFPS(Graphics2D g2) {
+	public void paintFPS(Graphics2D g2) {
+		
+//		g2.setColor(Color.WHITE);
+//		g2.fillRect(0, 0, 200, 200);
 		
 		g2.setColor(Color.WHITE);
 		
@@ -505,6 +575,12 @@ public class World {
 		
 		p = new Point(1, 3).multiply(MODEL.PIXELS_PER_METER);		
 		g2.drawString("body count: " + b2dWorld.getBodyCount(), (int)p.x, (int)p.y);
+		
+		p = new Point(1, 4).multiply(MODEL.PIXELS_PER_METER);		
+		g2.drawString("edge count: " + graph.getEdges().size(), (int)p.x, (int)p.y);
+		
+		p = new Point(1, 5).multiply(MODEL.PIXELS_PER_METER);		
+		g2.drawString("vertex count: " + graph.getAllVertices().size(), (int)p.x, (int)p.y);
 		
 	}
 	

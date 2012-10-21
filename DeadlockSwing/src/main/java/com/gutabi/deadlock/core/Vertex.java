@@ -7,6 +7,7 @@ import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Path2D;
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,8 +16,7 @@ import com.gutabi.deadlock.utils.Java2DUtils;
 @SuppressWarnings("static-access")
 public class Vertex extends Entity {
 	
-	private final Point p;
-	private final int hash;
+	public final Point p;
 	
 	protected final List<Edge> eds = new ArrayList<Edge>();
 	
@@ -28,18 +28,22 @@ public class Vertex extends Entity {
 	Path2D path;
 	double radius;
 	
+	private final int hash;
+	
 	public static final double INIT_VERTEX_RADIUS = Math.sqrt(2 * Edge.ROAD_RADIUS * Edge.ROAD_RADIUS);
 	
-	public Vertex(Point p) {
+	public Vertex(Point p, Graph graph) {
+		super(graph);
 		
 		this.p = p;
 		
 		radius = INIT_VERTEX_RADIUS;
 		
-		computeArea();
+		computePath();
 		
 		int h = 17;
 		h = 37 * h + p.hashCode();
+		h = 37 * h + graph.hashCode();
 		hash = h;
 		
 	}
@@ -62,16 +66,26 @@ public class Vertex extends Entity {
 	}
 	
 	
-	private void computeArea() {
+	private void computePath() {
 		Shape s = new Ellipse2D.Double(p.x - radius, p.y - radius, 2 * radius, 2 * radius);
 		
 		poly = Java2DUtils.shapeToList(s, 0.01);
 		
 		path = Java2DUtils.listToPath(poly);
+		
+		Rectangle2D bound = path.getBounds2D();
+		
+		renderingUpperLeft = new Point(bound.getX(), bound.getY());
+		renderingBottomRight = new Point(bound.getX() + bound.getWidth(), bound.getY() + bound.getHeight());
 	}	
 	
 	
 	public void computeRadius() {
+		
+		radius = INIT_VERTEX_RADIUS;
+		for (Edge e : eds) {
+			e.computeProperties();
+		}
 		
 		loop:
 		while (true) {
@@ -81,24 +95,27 @@ public class Vertex extends Entity {
 			for (int i = 0; i < eds.size()-1; i++) {
 				Edge ei = eds.get(i);
 				
-				EdgePosition borderi;
+				Point borderi;
 				if (ei.getStart() == this) {
-					borderi = ei.startBorder;
+					borderi = ei.getStartBorderPoint();
 				} else {
-					borderi = ei.endBorder;
+					borderi = ei.getEndBorderPoint();
 				}
 				
-				for (int j = i+1; i < eds.size(); j++) {
+				for (int j = i+1; j < eds.size(); j++) {
 					Edge ej = eds.get(j);
 					
-					EdgePosition borderj;
-					if (ej.getStart() == this) {
-						borderj = ej.startBorder;
+					Point borderj;
+					if (ei == ej) {
+						// loop, make sure to get the other point
+						borderj = ej.getEndBorderPoint();
+					} else if (ej.getStart() == this) {
+						borderj = ej.getStartBorderPoint();
 					} else {
-						borderj = ej.endBorder;
+						borderj = ej.getEndBorderPoint();
 					}
 					
-					if (DMath.lessThan(Point.distance(borderi.getPoint(), borderj.getPoint()), Edge.ROAD_RADIUS + Edge.ROAD_RADIUS + 0.1)) {
+					if (DMath.lessThan(Point.distance(borderi, borderj), Edge.ROAD_RADIUS + Edge.ROAD_RADIUS + 0.1)) {
 						tooClose = true;
 					}
 					
@@ -112,15 +129,16 @@ public class Vertex extends Entity {
 			radius = radius + 0.1;
 			
 			for (Edge e : eds) {
-				e.computeBorders();
+				e.computeProperties();
 			}
 			
 		}
 		
-		computeArea();
+		computePath();
 		
 		for (Edge e : eds) {
-			e.computeArea();
+			e.computeProperties();
+			e.computePath();
 		}
 	}
 	

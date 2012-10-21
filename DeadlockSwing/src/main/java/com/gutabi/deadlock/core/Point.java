@@ -454,7 +454,6 @@ public class Point {
 	
 	/**
 	 * returns the number of intersections with the circle and the line
-	 * 
 	 */
 	public static int circleLineIntersections(Point center, double radius, Point a, Point b, Point[] ints) {
 		
@@ -487,6 +486,49 @@ public class Point {
 			
 		} else {
 			return 0;
+		}
+		
+	}
+	
+	/**
+	 * returns the number of intersections with the circle and the segment
+	 */
+	public static int circleSegmentIntersections(Point center, double radius, Point a, Point b, Point[] ints) {
+		
+		int n = circleLineIntersections(center, radius, a, b, ints);
+		
+		if (n == 0) {
+			return 0;
+		} else if (n == 1) {
+			
+			Point i0 = ints[0];
+			
+			if (Point.intersect(i0, a, b)) {
+				return 1;
+			} else {
+				return 0;
+			}
+			
+		} else {
+			
+			Point i0 = ints[0];
+			Point i1 = ints[1];
+			
+			if (Point.intersect(i0, a, b)) {
+				if (Point.intersect(i1, a, b)) {
+					return 2;
+				} else {
+					return 1;
+				}
+			} else {
+				ints[0] = i1;
+				if (Point.intersect(i1, a, b)) {
+					return 1;
+				} else {
+					return 0;
+				}
+			}
+			
 		}
 		
 	}

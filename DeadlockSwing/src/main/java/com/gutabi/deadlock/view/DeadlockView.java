@@ -9,8 +9,6 @@ import javax.swing.JFrame;
 
 import org.apache.log4j.Logger;
 
-import com.gutabi.deadlock.core.Vertex;
-
 @SuppressWarnings("static-access")
 public class DeadlockView {
 	
@@ -60,14 +58,14 @@ public class DeadlockView {
 	public void repaint() {
 		assert !Thread.holdsLock(MODEL);
 		
-		int x = panel.getWidth()/2 - (int)(((MODEL.world.WORLD_WIDTH + Vertex.INIT_VERTEX_RADIUS + Vertex.INIT_VERTEX_RADIUS) * MODEL.PIXELS_PER_METER)/2);
-		int y = panel.getHeight()/2 - (int)(((MODEL.world.WORLD_HEIGHT + Vertex.INIT_VERTEX_RADIUS + Vertex.INIT_VERTEX_RADIUS) * MODEL.PIXELS_PER_METER)/2);
+		int x = (int)(panel.getWidth() * 0.5 - (MODEL.world.WORLD_WIDTH * 0.5 * MODEL.PIXELS_PER_METER) + (MODEL.world.renderingUpperLeft.x * MODEL.PIXELS_PER_METER));
+		int y = (int)(panel.getHeight() * 0.5 - (MODEL.world.WORLD_HEIGHT * 0.5 * MODEL.PIXELS_PER_METER) + (MODEL.world.renderingUpperLeft.y * MODEL.PIXELS_PER_METER));
 		
 		panel.repaint(
 				x,
 				y,
-				(int)(((MODEL.world.WORLD_WIDTH + Vertex.INIT_VERTEX_RADIUS + Vertex.INIT_VERTEX_RADIUS) * MODEL.PIXELS_PER_METER)),
-				(int)(((MODEL.world.WORLD_WIDTH + Vertex.INIT_VERTEX_RADIUS + Vertex.INIT_VERTEX_RADIUS) * MODEL.PIXELS_PER_METER)));
+				(int)(((MODEL.world.renderingBottomRight.x - MODEL.world.renderingUpperLeft.x) * MODEL.PIXELS_PER_METER)),
+				(int)(((MODEL.world.renderingBottomRight.y - MODEL.world.renderingUpperLeft.y) * MODEL.PIXELS_PER_METER)));
 		
 	}
 	

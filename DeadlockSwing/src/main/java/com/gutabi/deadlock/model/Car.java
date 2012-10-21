@@ -30,7 +30,7 @@ import com.gutabi.deadlock.core.path.STPointPath;
 public abstract class Car extends Entity {
 	
 	public static final double CAR_LENGTH = 1.0;
-	double maxRadsPerSecond = 5.0;
+	double maxRadsPerSecond = 45.0;
 	
 	public CarStateEnum state;
 	
@@ -40,7 +40,7 @@ public abstract class Car extends Entity {
 	public Source source;
 	
 	private GraphPositionPath overallPath;
-	private GraphPosition closestGraphPos;
+//	private GraphPosition closestGraphPos;
 	
 	public final int id;
 	
@@ -65,6 +65,7 @@ public abstract class Car extends Entity {
 	static Logger logger = Logger.getLogger(Car.class);
 	
 	public Car(Source s) {
+		super(s.graph);
 		
 		id = carCounter;
 		carCounter++;
@@ -76,7 +77,7 @@ public abstract class Car extends Entity {
 		overallPath = s.getPathToMatchingSink();
 //		startPos = overallPath.getGraphPosition(0).getPoint();
 		
-		closestGraphPos = overallPath.getGraphPosition(0);
+		GraphPosition closestGraphPos = overallPath.getGraphPosition(0);
 		startPoint = closestGraphPos.getPoint();
 		
 		
@@ -183,20 +184,23 @@ public abstract class Car extends Entity {
 		
 	}
 	
-	public void preStep() {
-		
-//		logger.debug("car preStep");
-		
+	private Point carToWorld(Point p) {
 		AffineTransform b2dTrans = new AffineTransform();
 		Vec2 pos = b2dBody.getPosition();
 		float angle = b2dBody.getAngle();
 		b2dTrans.translate(pos.x, pos.y);
 		b2dTrans.rotate(angle);
+		return Point.point(b2dTrans.transform(p.point2D(), null));
+	}
+	
+	public void preStep() {
 		
-		Entity e1 = MODEL.world.graph.hitTest(Point.point(b2dTrans.transform(p1.point2D(), null)));
-		Entity e2 = MODEL.world.graph.hitTest(Point.point(b2dTrans.transform(p2.point2D(), null)));
-		Entity e3 = MODEL.world.graph.hitTest(Point.point(b2dTrans.transform(p3.point2D(), null)));
-		Entity e4 = MODEL.world.graph.hitTest(Point.point(b2dTrans.transform(p4.point2D(), null)));
+//		logger.debug("car preStep");
+		
+		Entity e1 = graph.hitTest(carToWorld(p1));
+		Entity e2 = graph.hitTest(carToWorld(p2));
+		Entity e3 = graph.hitTest(carToWorld(p3));
+		Entity e4 = graph.hitTest(carToWorld(p4));
 		
 		if (e1 == null && e2 == null && e3 == null && e4 == null) {
 			atleastPartiallyOnRoad = false;
@@ -319,7 +323,7 @@ public abstract class Car extends Entity {
 		
 		GraphPositionPathPosition overallPos = overallPath.findClosestGraphPositionPathPosition(curPoint);
 		
-		STGraphPositionPathPositionPath nextPlannedPath = STGraphPositionPathPositionPath.advanceOneTimeStep(overallPos, 0.1f * getMetersPerSecond());
+		STGraphPositionPathPositionPath nextPlannedPath = STGraphPositionPathPositionPath.advanceOneTimeStep(overallPos, 0.2f * getMetersPerSecond());
 		
 		STPointPath nextRealPath = nextPlannedPath.toSTGraphPositionPath().toSTPointPath();
 		
@@ -371,7 +375,7 @@ public abstract class Car extends Entity {
 	 */
 	public boolean postStep() {
 		
-		closestGraphPos = MODEL.world.graph.findClosestGraphPosition(getPoint(), null, Double.POSITIVE_INFINITY);
+//		closestGraphPos = graph.findClosestGraphPosition(getPoint(), null, Double.POSITIVE_INFINITY);
 		
 		switch (state) {
 		case NEW:
@@ -404,9 +408,17 @@ public abstract class Car extends Entity {
 		return id;
 	}
 	
-	public Point getPoint() {
-		Vec2 pos = b2dBody.getPosition();
-		return new Point(pos.x, pos.y);
+//	public Point getPoint() {
+//		Vec2 pos = b2dBody.getPosition();
+//		return new Point(pos.x, pos.y);
+//	}
+	
+	public double distanceTo(Point p) {
+		double d1 = Point.distance(p, carToWorld(p1));
+		double d2 = Point.distance(p, carToWorld(p2));
+		double d3 = Point.distance(p, carToWorld(p3));
+		double d4 = Point.distance(p, carToWorld(p4));
+		return Math.min(Math.min(d1, d2), Math.min(d3, d4));
 	}
 	
 	abstract BufferedImage image();
@@ -415,12 +427,11 @@ public abstract class Car extends Entity {
 	 * @param g2 in world coords
 	 */
 	public void paint(Graphics2D g2) {
-		paintRect(g2);
+//		paintRect(g2);
 		paintImage(g2, image());
-		
-		if (MODEL.DEBUG_DRAW) {
-			paintPoint(g2);
-		}
+//		if (MODEL.DEBUG_DRAW) {
+//			paintPoint(g2);
+//		}
 	}
 	
 	/**
@@ -470,22 +481,22 @@ public abstract class Car extends Entity {
 		g2.setTransform(origTransform);
 	}
 	
-	private void paintPoint(Graphics2D g2) {
-		AffineTransform origTransform = g2.getTransform();
-		
-		AffineTransform b2dTrans = (AffineTransform)origTransform.clone();
-		Vec2 pos = closestGraphPos.getPoint().vec2();
-		b2dTrans.translate(pos.x, pos.y);
-		
-		b2dTrans.scale(1/((double)MODEL.PIXELS_PER_METER), 1/((double)MODEL.PIXELS_PER_METER));
-		
-		g2.setTransform(b2dTrans);
-		
-		g2.setColor(Color.BLACK);
-		
-		g2.fillOval(-2, -2, 4, 4);
-		
-		g2.setTransform(origTransform);
-	}
+//	private void paintPoint(Graphics2D g2) {
+//		AffineTransform origTransform = g2.getTransform();
+//		
+//		AffineTransform b2dTrans = (AffineTransform)origTransform.clone();
+//		Vec2 pos = closestGraphPos.getPoint().vec2();
+//		b2dTrans.translate(pos.x, pos.y);
+//		
+//		b2dTrans.scale(1/((double)MODEL.PIXELS_PER_METER), 1/((double)MODEL.PIXELS_PER_METER));
+//		
+//		g2.setTransform(b2dTrans);
+//		
+//		g2.setColor(Color.BLACK);
+//		
+//		g2.fillOval(-2, -2, 4, 4);
+//		
+//		g2.setTransform(origTransform);
+//	}
 	
 }

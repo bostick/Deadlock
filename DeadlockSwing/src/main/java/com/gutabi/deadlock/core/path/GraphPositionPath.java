@@ -1,7 +1,5 @@
 package com.gutabi.deadlock.core.path;
 
-import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,6 +8,7 @@ import org.apache.log4j.Logger;
 import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Edge;
 import com.gutabi.deadlock.core.EdgePosition;
+import com.gutabi.deadlock.core.Graph;
 import com.gutabi.deadlock.core.GraphPosition;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.Vertex;
@@ -24,6 +23,7 @@ public class GraphPositionPath {
 	private GraphPosition end;
 	
 	List<GraphPosition> poss;
+	final Graph graph;
 	
 	public final double[] cumulativeDistancesFromStart;
 	private final double totalLength;
@@ -32,9 +32,10 @@ public class GraphPositionPath {
 	
 	static Logger logger = Logger.getLogger(GraphPositionPath.class);
 	
-	private GraphPositionPath(List<GraphPosition> poss) {
+	private GraphPositionPath(List<GraphPosition> poss, Graph graph) {
 		
 		this.poss = poss;
+		this.graph = graph;
 		
 		int h = 17;
 		h = 37 * h + poss.hashCode();
@@ -64,26 +65,26 @@ public class GraphPositionPath {
 		assert check();
 	}
 	
-	public static GraphPositionPath createPathFromSkeleton(List<Vertex> origPoss) {
+	public static GraphPositionPath createPathFromSkeleton(List<Vertex> origPoss, Graph graph) {
 		
 		for (int i = 0; i < origPoss.size()-1; i++) {
 			Vertex a = origPoss.get(i);
 			Vertex b = origPoss.get(i+1);
-			if (MODEL.world.graph.distanceBetweenVertices(a, b) == Double.POSITIVE_INFINITY) {
+			if (graph.distanceBetweenVertices(a, b) == Double.POSITIVE_INFINITY) {
 				return null;
 			}
 		}
 		
 		List<GraphPosition> poss = new ArrayList<GraphPosition>();
 		
-		poss.add(new VertexPosition(origPoss.get(0)));
+		poss.add(new VertexPosition(origPoss.get(0), graph));
 		for (int i = 0; i < origPoss.size()-1; i++) {
-			GraphPosition a = new VertexPosition(origPoss.get(i));
-			GraphPosition b = new VertexPosition(origPoss.get(i+1));
+			GraphPosition a = new VertexPosition(origPoss.get(i), graph);
+			GraphPosition b = new VertexPosition(origPoss.get(i+1), graph);
 			calculatePath(poss, a, b);
 		}
 		
-		return new GraphPositionPath(poss);
+		return new GraphPositionPath(poss, graph);
 	}
 	
 	public int hashCode() {
@@ -373,8 +374,8 @@ public class GraphPositionPath {
 				} else {
 					// different edges
 					
-					VertexPosition aStart = new VertexPosition(aa.getEdge().getStart());
-					VertexPosition aEnd = new VertexPosition(aa.getEdge().getEnd());
+					VertexPosition aStart = new VertexPosition(aa.getEdge().getStart(), a.graph);
+					VertexPosition aEnd = new VertexPosition(aa.getEdge().getEnd(), a.graph);
 					
 					double aStartDist = aa.distanceToStartOfEdge() + aStart.distanceTo(b);
 					double aEndDist = aa.distanceToEndOfEdge() + aEnd.distanceTo(b);
@@ -424,8 +425,8 @@ public class GraphPositionPath {
 				} else {
 					// not connected
 					
-					VertexPosition aStart = new VertexPosition(aa.getEdge().getStart());
-					VertexPosition aEnd = new VertexPosition(aa.getEdge().getEnd());
+					VertexPosition aStart = new VertexPosition(aa.getEdge().getStart(), a.graph);
+					VertexPosition aEnd = new VertexPosition(aa.getEdge().getEnd(), a.graph);
 					
 					double aStartDist = aa.distanceToStartOfEdge() + aStart.distanceTo(b);
 					double aEndDist = aa.distanceToEndOfEdge() + aEnd.distanceTo(b);
@@ -491,8 +492,8 @@ public class GraphPositionPath {
 				} else {
 					// not connected
 					
-					VertexPosition bStart = new VertexPosition(bb.getEdge().getStart());
-					VertexPosition bEnd = new VertexPosition(bb.getEdge().getEnd());
+					VertexPosition bStart = new VertexPosition(bb.getEdge().getStart(), a.graph);
+					VertexPosition bEnd = new VertexPosition(bb.getEdge().getEnd(), a.graph);
 					
 					double bStartDist = bb.distanceToStartOfEdge() + bStart.distanceTo(a);
 					double bEndDist = bb.distanceToEndOfEdge() + bEnd.distanceTo(a);
@@ -527,7 +528,7 @@ public class GraphPositionPath {
 					
 					if (eds.isEmpty()) {
 						
-						Vertex choice = MODEL.world.graph.shortestPathChoice(aa.getVertex(), bb.getVertex());
+						Vertex choice = a.graph.shortestPathChoice(aa.getVertex(), bb.getVertex());
 						
 						if (choice == null) {
 							
@@ -535,8 +536,8 @@ public class GraphPositionPath {
 							
 						} else {
 							
-							calculatePath(acc, aa, new VertexPosition(choice));
-							calculatePath(acc, new VertexPosition(choice), bb);
+							calculatePath(acc, aa, new VertexPosition(choice, a.graph));
+							calculatePath(acc, new VertexPosition(choice, a.graph), bb);
 							
 						}
 						

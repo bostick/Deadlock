@@ -244,17 +244,17 @@ public class DeadlockController implements ActionListener {
 					return;
 				}
 				
-				MODEL.world.removeVertex(v);
+				MODEL.world.removeVertexTop(v);
 				
 			} else if (MODEL.hilited instanceof Edge) {
 				Edge e = (Edge)MODEL.hilited;
 				
-				MODEL.world.removeEdge(e);
+				MODEL.world.removeEdgeTop(e);
 				
 			} else if (MODEL.hilited instanceof Car) {
 				Car c = (Car)MODEL.hilited;
 				
-				MODEL.world.removeCar(c);
+				MODEL.world.removeCarTop(c);
 				
 			} else {
 				throw new AssertionError();
@@ -392,7 +392,7 @@ public class DeadlockController implements ActionListener {
 		List<Point> curStroke = MODEL.stroke.getPoints();
 		curStroke = massageCurrent(curStroke);
 		if (curStroke.size() >= 2) {
-			MODEL.world.processNewWorldStroke(curStroke);
+			MODEL.world.processNewStrokeTop(curStroke);
 		}
 		
 		assert MODEL.world.checkConsistency();

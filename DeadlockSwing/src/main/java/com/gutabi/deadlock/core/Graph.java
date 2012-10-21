@@ -10,7 +10,7 @@ public class Graph {
 	
 	private final ArrayList<Edge> edges = new ArrayList<Edge>();
 	private final ArrayList<Intersection> intersections = new ArrayList<Intersection>();
-	private final QuadTree segTree = new QuadTree();
+	final QuadTree segTree = new QuadTree();
 	
 	private final ArrayList<Source> sources = new ArrayList<Source>();
 	private final ArrayList<Sink> sinks = new ArrayList<Sink>();
@@ -114,16 +114,11 @@ public class Graph {
 	
 	public GraphPosition findClosestGraphPosition(Point p, Point anchor, double radius) {
 		VertexPosition vp = findClosestVertexPosition(p, anchor, radius);
+		if (vp != null) {
+			return vp;
+		}
 		EdgePosition ep = findClosestEdgePosition(p, anchor, radius);
-		if (vp == null) {
-			return ep;
-		} else if (ep == null) {
-			return vp;
-		} else if (DMath.equalDistances(p, vp.getPoint(), ep.getPoint())) {
-			assert false;
-		} else if (Point.distance(p, vp.getPoint()) < Point.distance(p, ep.getPoint())) {
-			return vp;
-		} else {
+		if (ep != null) {
 			return ep;
 		}
 		return null;
@@ -139,7 +134,17 @@ public class Graph {
 		refreshVertexIDs();
 	}
 	
-	public void addEdgeTop(List<Point> pts) {
+	public void addIntersection(Intersection i) {
+		intersections.add(i);
+		refreshVertexIDs();
+	}
+	
+	public void createEdgeTop(Vertex start, Vertex end, List<Point> pts) {
+		
+		createEdge(start, end, pts);
+		
+		postEdgeChange(start);
+		postEdgeChange(end);
 		
 	}
 	
@@ -170,7 +175,6 @@ public class Graph {
 			destroyEdge(e);
 		}
 		
-		//postTop();
 	}
 	
 	public void removeVertexTop(Vertex v) {
@@ -212,7 +216,117 @@ public class Graph {
 			postEdgeChange(a);
 		}
 		
-		//postTop();
+	}
+	
+	/**
+	 * split an edge at point
+	 * Edge e will have been removed
+	 * return Intersection at split point
+	 */
+	public Vertex split(final EdgePosition pos) {
+		
+		Edge e = pos.getEdge();
+		int index = pos.getIndex();
+		double param = pos.getParam();
+		final Point p = pos.getPoint();
+		
+//		boolean betweenPoints = (!DMath.equals(param, 0.0));
+		
+		assert param >= 0.0;
+		assert param < 1.0;
+		
+//		final Point c = e.getPoint(index);
+//		final Point d = e.getPoint(index+1);
+		
+		Vertex v = createIntersection(p);
+		
+		Vertex eStart = e.getStart();
+		Vertex eEnd = e.getEnd();
+		
+		if (eStart == null && eEnd == null) {
+			// stand-alone loop
+			
+			List<Point> pts = new ArrayList<Point>();
+			
+			pts.add(p);
+			for (int i = index+1; i < e.size(); i++) {
+				pts.add(e.getPoint(i));
+			}
+			for (int i = 0; i <= index; i++) {
+				pts.add(e.getPoint(i));
+			}
+			pts.add(p);
+			
+			Edge newEdge = createEdge(v, v, pts);
+			
+			destroyEdge(e);
+			
+			return v;
+		}
+		
+		/*
+		 * f1
+		 */
+		
+		Edge f1 = null;
+//		for (Edge ee : eStart.getEdges()) {
+//			if (((ee.getStart() == eStart && ee.getEnd() == v) || (ee.getStart() == v && ee.getEnd() == eStart)) && ee.size() == 2) {
+//				/*
+//				 * both a and b are already both intersections and connected, so just use this
+//				 */
+//				f1 = ee;
+//				break;
+//			}
+//		}
+		if (f1 == null) {
+			
+			List<Point> pts = new ArrayList<Point>();
+			
+			for (int i = 0; i <= index; i++) {
+				pts.add(e.getPoint(i));
+			}
+			pts.add(p);
+			
+			f1 = createEdge(eStart, v, pts);
+		}
+		
+		/*
+		 * f2
+		 */
+		
+		Edge f2 = null;
+		for (Edge ee : eStart.getEdges()) {
+			if (ee == f1) {
+				/*
+				 * ignore if ee is the newly-created edge f1
+				 */
+				continue;
+			}
+			if (((ee.getStart() == v && ee.getEnd() == eEnd) || (ee.getStart() == eEnd && ee.getEnd() == v)) && ee.size() == 2) {
+				/*
+				 * both a and b are already both intersections and connected, so just use this
+				 */
+				f2 = ee;
+				break;
+			}
+		}
+		if (f2 == null) {
+			
+			List<Point> pts = new ArrayList<Point>();
+			
+			pts.add(p);
+			for (int i = index+1; i < e.size(); i++) {
+				pts.add(e.getPoint(i));
+			}
+			
+			f2 = createEdge(v, eEnd, pts);
+		}
+		
+//		assert f1.size() + f2.size() == e.size() + 1 + (betweenPoints ? 1 : 0);
+		
+		destroyEdge(e);
+		
+		return v;
 	}
 	
 	public void preStart() {
@@ -222,24 +336,6 @@ public class Graph {
 		for (Source s : sources) {
 			s.preStart();
 		}
-	}
-	
-	private Edge createEdge(Vertex start, Vertex end, List<Point> pts) {
-		
-		Edge e = new Edge(start, end, pts);
-		edges.add(e);
-		segTree.addEdge(e);
-		
-		refreshEdgeIDs();
-		
-		//logger.debug("createEdge: " + start + " " + end + " n=" + pts.size() );
-		
-		if (!e.isStandAlone()) {
-			start.addEdge(e);
-			end.addEdge(e);
-		}
-		
-		return e;
 	}
 	
 	private void postEdgeChange(Vertex v) {
@@ -278,7 +374,7 @@ public class Graph {
 	
 	private Vertex createIntersection(Point p) {
 		
-		Intersection i = new Intersection(p);
+		Intersection i = new Intersection(p, this);
 		assert !intersections.contains(i);
 		intersections.add(i);
 		
@@ -315,7 +411,6 @@ public class Graph {
 		}
 		
 		edges.remove(e);
-		segTree.removeEdge(e);
 		
 		refreshEdgeIDs();
 		
@@ -473,7 +568,7 @@ public class Graph {
 	private GraphPosition graphHitTest(Point p) {
 		for (Vertex v : getAllVertices()) {
 			if (p.equals(v.getPoint())) {
-				return new VertexPosition(v);
+				return new VertexPosition(v, this);
 			}
 		}
 		for (Segment in : segTree.getAllSegments()) {
@@ -528,7 +623,7 @@ public class Graph {
 		}
 		
 		if (closest != null) {
-			return new VertexPosition(closest);
+			return new VertexPosition(closest, this);
 		} else {
 			return null;
 		}
@@ -541,251 +636,21 @@ public class Graph {
 		return segTree.findClosestEdgePosition(a, exclude, radius);
 	}
 	
-	private void addSegment(Point a, Point b) {
+	private Edge createEdge(Vertex start, Vertex end, List<Point> pts) {
 		
-		assert !a.equals(b);
-		assert !segmentOverlaps(a, b);
+		Edge e = new Edge(start, end, this, pts);
+		edges.add(e);
 		
-//		logger.debug("addSegment: " + a + " " + b);
+		refreshEdgeIDs();
 		
-		GraphPosition aPos = graphHitTest(a);
-		final Vertex aV;
-		if (aPos != null) {
-			if (aPos instanceof VertexPosition) {
-				aV = ((VertexPosition)aPos).getVertex();
-			} else {
-				aV = split((EdgePosition)aPos);
-			}
-		} else {
-			aV = createIntersection(a);
+		//logger.debug("createEdge: " + start + " " + end + " n=" + pts.size() );
+		
+		if (!e.isStandAlone()) {
+			start.addEdge(e);
+			end.addEdge(e);
 		}
 		
-		GraphPosition bPos = graphHitTest(b);
-		final Vertex bV;
-		if (bPos != null) {
-			if (bPos instanceof VertexPosition) {
-				bV = ((VertexPosition)bPos).getVertex();
-			} else {
-				bV = split((EdgePosition)bPos);
-			}
-		} else {
-			bV = createIntersection(b);
-		}
-		
-		List<Point> pts = new ArrayList<Point>();
-		pts.add(aV.getPoint());
-		pts.add(bV.getPoint());
-		Edge newEdge = createEdge(aV, bV, pts);
-		
-		assert edges.contains(newEdge);
-		
-		postEdgeChange(aV);
-		postEdgeChange(bV);
-	}
-	
-	private boolean segmentOverlaps(Point a, Point b) {
-		
-		for (Segment in : segTree.getAllSegments()) {
-			Edge e = in.edge;
-			int i = in.index;
-			Point c = e.getPoint(i);
-			Point d = e.getPoint(i+1);
-			try {
-				Point.intersection(a, b, c, d);
-			} catch (OverlappingException e1) {
-				return true;
-			}
-		}
-		
-		return false;
-		
-	}
-	
-	/**
-	 * split an edge at point
-	 * Edge e will have been removed
-	 * return Intersection at split point
-	 */
-	private Vertex split(final EdgePosition pos) {
-		
-		Edge e = pos.getEdge();
-		int index = pos.getIndex();
-		double param = pos.getParam();
-		final Point p = pos.getPoint();
-		
-		boolean betweenPoints = (!DMath.equals(param, 0.0));
-		
-		assert param >= 0.0;
-		assert param < 1.0;
-		
-		final Point c = e.getPoint(index);
-		final Point d = e.getPoint(index+1);
-		
-		Vertex v = createIntersection(p);
-		
-		Vertex eStart = e.getStart();
-		Vertex eEnd = e.getEnd();
-		
-		if (eStart == null && eEnd == null) {
-			// stand-alone loop
-			
-			List<Point> pts = new ArrayList<Point>();
-			
-			int colinearCount = 0;
-			
-			pts.add(p);
-			try {
-				if (index+1 < e.size()-1) {
-					if (!Point.colinear(p, d, e.getPoint(index+2))) {
-						pts.add(d);
-					} else {
-						colinearCount++;
-					}
-				} else if (index+1 == e.size()-1) {
-					if (!Point.colinear(p, d, e.getPoint(1))) {
-						pts.add(d);
-					} else {
-						colinearCount++;
-					}
-				}
-			} catch (ColinearException ex) {
-				assert false;
-			}
-			// just changed i < e.size()-1; to i < e.size();
-			for (int i = index+2; i < e.size(); i++) {
-				pts.add(e.getPoint(i));
-			}
-			// just changed i = 0 to i = 1
-			for (int i = 1; i < index; i++) {
-				pts.add(e.getPoint(i));
-			}
-			try {
-				if (betweenPoints) {
-					if (index > 0) {
-						if (!Point.colinear(e.getPoint(index-1), c, p)) {
-							pts.add(c);
-						} else {
-							colinearCount++;
-						}
-					} else if (index == 0) {
-						/*
-						 * c has already been added
-						 */
-					}
-				}
-			} catch (ColinearException ex) {
-				assert false;
-			}
-			/*
-			 * if p is exactly the beginning of e (and so also the end), then it has already been added
-			 */
-			if (!(index == 0 && !betweenPoints)) {
-				pts.add(p);
-			}
-			
-			Edge newEdge = createEdge(v, v, pts);
-			
-			assert newEdge.size() == e.size() - colinearCount + (betweenPoints ? 1 : 0);
-			
-			destroyEdge(e);
-			
-			return v;
-			
-		}
-		
-		/*
-		 * f1
-		 */
-		
-		Edge f1 = null;
-		for (Edge ee : eStart.getEdges()) {
-			if (((ee.getStart() == eStart && ee.getEnd() == v) || (ee.getStart() == v && ee.getEnd() == eStart)) && ee.size() == 2) {
-				/*
-				 * both a and b are already both intersections and connected, so just use this
-				 */
-				f1 = ee;
-				break;
-			}
-		}
-		if (f1 == null) {
-			
-			List<Point> pts = new ArrayList<Point>();
-			
-			for (int i = 0; i < index; i++) {
-				pts.add(e.getPoint(i));
-			}
-			try {
-				if (!(index > 0) || !Point.colinear(e.getPoint(index-1), c, p)) {
-					pts.add(c);
-				}
-			} catch (ColinearException ex) {
-				
-				//assert tryFindVertex(c) == null;
-				
-				Vertex cV = createIntersection(c);
-				List<Point> pts2 = new ArrayList<Point>();
-				pts2.add(c);
-				pts2.add(p);
-				createEdge(cV, v, pts2);
-				
-			}
-			pts.add(p);
-			
-			f1 = createEdge(eStart, v, pts);
-		}
-		
-		/*
-		 * f2
-		 */
-		
-		Edge f2 = null;
-		for (Edge ee : eStart.getEdges()) {
-			if (ee == f1) {
-				/*
-				 * ignore if ee is the newly-created edge f1
-				 */
-				continue;
-			}
-			if (((ee.getStart() == v && ee.getEnd() == eEnd) || (ee.getStart() == eEnd && ee.getEnd() == v)) && ee.size() == 2) {
-				/*
-				 * both a and b are already both intersections and connected, so just use this
-				 */
-				f2 = ee;
-				break;
-			}
-		}
-		if (f2 == null) {
-			
-			List<Point> pts = new ArrayList<Point>();
-			
-			pts.add(p);
-			try {
-				if (!(index+1 < e.size()-1) || !Point.colinear(p, d, e.getPoint(index+2))) {
-					pts.add(d);
-				}
-			} catch (ColinearException ex) {
-				
-				//assert tryFindVertex(d) == null;
-				
-				Vertex dV = createIntersection(d);
-				List<Point> pts2 = new ArrayList<Point>();
-				pts2.add(d);
-				pts2.add(p);
-				createEdge(dV, v, pts2);
-				
-			}
-			for (int i = index+2; i < e.size(); i++) {
-				pts.add(e.getPoint(i));
-			}
-			
-			f2 = createEdge(v, eEnd, pts);
-		}
-		
-		assert f1.size() + f2.size() == e.size() + 1 + (betweenPoints ? 1 : 0);
-		
-		destroyEdge(e);
-		
-		return v;
+		return e;
 	}
 	
 	/**
@@ -827,32 +692,13 @@ public class Graph {
 				
 			List<Point> pts = new ArrayList<Point>();
 			
-			int colinearCount = 0;
+			assert e1.getPoint(0) == e1.getPoint(e1.size()-1);
 			
-			int n = e1.size();
-			assert e1.getPoint(0) == e1.getPoint(n-1);
-			
-			// only add if not colinear
-			try {
-				if (!Point.colinear(e1.getPoint(e1.size()-2), e1.getPoint(0), e1.getPoint(1))) {
-					pts.add(e1.getPoint(0));
-				} else {
-					colinearCount++;
-				}
-			} catch (ColinearException ex) {
-				assert false;
-			}
-			for (int i = 1; i < e1.size()-1; i++) {
+			for (int i = 0; i < e1.size(); i++) {
 				pts.add(e1.getPoint(i));
 			}
-			/*
-			 * add whatever the first point is
-			 */
-			pts.add(pts.get(0));
 			
 			Edge newEdge = createEdge(null, null, pts);
-			
-			assert newEdge.size() == e1.size() - colinearCount;
 			
 			destroyEdge(e1);
 			
@@ -862,29 +708,15 @@ public class Graph {
 			
 			List<Point> pts = new ArrayList<Point>();
 			
-			int colinearCount = 0;
-			
-			for (int i = e1.size()-1; i > 0; i--) {
+			for (int i = e1.size()-1; i >= 0; i--) {
 				pts.add(e1.getPoint(i));
 			}
 			assert e1.getPoint(0).equals(e2.getPoint(0));
-			try {
-				// only add if not colinear
-				if (!Point.colinear(e1.getPoint(1), e1.getPoint(0), e2.getPoint(1))) {
-					pts.add(e1.getPoint(0));
-				} else {
-					colinearCount++;
-				}
-			} catch (ColinearException ex) {
-				assert false;
-			}
-			for (int i = 1; i < e2.size(); i++) {
+			for (int i = 0; i < e2.size(); i++) {
 				pts.add(e2.getPoint(i));
 			}
 			
 			Edge newEdge = createEdge(e1End, e2End, pts);
-			
-			assert newEdge.size() == e1.size() + e2.size() - 1 - colinearCount;
 			
 			destroyEdge(e1);
 			destroyEdge(e2);
@@ -895,29 +727,15 @@ public class Graph {
 			
 			List<Point> pts = new ArrayList<Point>();
 			
-			int colinearCount = 0;
-			
-			for (int i = e1.size()-1; i > 0; i--) {
+			for (int i = e1.size()-1; i >= 0; i--) {
 				pts.add(e1.getPoint(i));
 			}
 			assert e1.getPoint(0).equals(e2.getPoint(e2.size()-1));
-			try {
-				// only add if not colinear
-				if (!Point.colinear(e1.getPoint(1), e1.getPoint(0), e2.getPoint(e2.size()-2))) {
-					pts.add(e1.getPoint(0));
-				} else {
-					colinearCount++;
-				}
-			} catch (ColinearException ex) {
-				assert false;
-			}
-			for (int i = e2.size()-2; i >= 0; i--) {
+			for (int i = e2.size()-1; i >= 0; i--) {
 				pts.add(e2.getPoint(i));
 			}
 			
-			Edge newEdge = createEdge(e1End, e2Start, pts);
-			
-			assert newEdge.size() == e1.size() + e2.size() - 1 - colinearCount; 
+			Edge newEdge = createEdge(e1End, e2Start, pts); 
 			
 			destroyEdge(e1);
 			destroyEdge(e2);
@@ -928,29 +746,15 @@ public class Graph {
 			
 			List<Point> pts = new ArrayList<Point>();
 			
-			int colinearCount = 0;
-			
-			for (int i = 0; i < e1.size()-1; i++) {
+			for (int i = 0; i < e1.size(); i++) {
 				pts.add(e1.getPoint(i));
 			}
 			assert e1.getPoint(e1.size()-1).equals(e2.getPoint(0));
-			try {
-				// only add if not colinear
-				if (!Point.colinear(e1.getPoint(e1.size()-2), e1.getPoint(e1.size()-1), e2.getPoint(1))) {
-					pts.add(e1.getPoint(e1.size()-1));
-				} else {
-					colinearCount++;
-				}
-			} catch (ColinearException ex) {
-				assert false;
-			}
-			for (int i = 1; i < e2.size(); i++) {
+			for (int i = 0; i < e2.size(); i++) {
 				pts.add(e2.getPoint(i));
 			}
 			
 			Edge newEdge = createEdge(e1Start, e2End, pts);
-			
-			assert newEdge.size() == e1.size() + e2.size() - 1 - colinearCount;
 			
 			destroyEdge(e1);
 			destroyEdge(e2);
@@ -962,29 +766,14 @@ public class Graph {
 			
 			List<Point> pts = new ArrayList<Point>();
 			
-			int colinearCount = 0;
-			
-			for (int i = 0; i < e1.size()-1; i++) {
+			for (int i = 0; i < e1.size(); i++) {
 				pts.add(e1.getPoint(i));
 			}
-			assert e1.getPoint(e1.size()-1).equals(e2.getPoint(e2.size()-1));
-			try {
-				// only add if not colinear
-				if (!Point.colinear(e1.getPoint(e1.size()-2), e1.getPoint(e1.size()-1), e2.getPoint(e2.size()-2))) {
-					pts.add(e1.getPoint(e1.size()-1));
-				} else {
-					colinearCount++;
-				}
-			} catch (ColinearException ex) {
-				assert false;
-			}
-			for (int i = e2.size()-2; i >= 0; i--) {
+			for (int i = e2.size()-1; i >= 0; i--) {
 				pts.add(e2.getPoint(i));
 			}
 			
 			Edge newEdge = createEdge(e1Start, e2Start, pts);
-			
-			assert newEdge.size() == e1.size() + e2.size() - 1 - colinearCount;
 			
 			destroyEdge(e1);
 			destroyEdge(e2);

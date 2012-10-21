@@ -8,7 +8,7 @@ public class DeadlockModel {
 	/**
 	 * move physics forward by dt seconds
 	 */
-	public static double dt = 0.10;
+	public static double dt = 0.01;
 	
 	public static final int PIXELS_PER_METER = 32;
 	

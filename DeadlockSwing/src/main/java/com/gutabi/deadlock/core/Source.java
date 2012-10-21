@@ -11,8 +11,8 @@ public class Source extends Vertex {
 	public Sink matchingSink;
 	GraphPositionPath pathToMatchingSink;
 	
-	public Source(Point p) {
-		super(p);
+	public Source(Point p, Graph graph) {
+		super(p, graph);
 		color = Color.GREEN;
 		hiliteColor = new Color(255-color.getRed(), 255-color.getGreen(), 255-color.getBlue());
 	}
@@ -22,7 +22,7 @@ public class Source extends Vertex {
 		List<Vertex> poss = new ArrayList<Vertex>();
 		poss.add(this);
 		poss.add(matchingSink);
-		pathToMatchingSink = GraphPositionPath.createPathFromSkeleton(poss);
+		pathToMatchingSink = GraphPositionPath.createPathFromSkeleton(poss, graph);
 		
 	}
 	

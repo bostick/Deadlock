@@ -1,23 +1,21 @@
 package com.gutabi.deadlock.core;
 
-import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 
 public class EdgePosition extends GraphPosition {
 	
 	private final Edge e;
 	private final int index;
-	
 	private final double param;
 	
 	private final boolean bound;
 	
-	private double distanceToStartOfEdge = -1;
-	private double distanceToEndOfEdge = -1;
+	private double lengthToStartOfEdge = -1;
+	private double lengthToEndOfEdge = -1;
 	
 	int hash;
 	
 	public EdgePosition(Edge e, int index, double param) {
-		super(Point.point(e.getPoint(index), e.getPoint(index+1), param));
+		super(Point.point(e.getPoint(index), e.getPoint(index+1), param), e.graph);
 		
 		if (index < 0 || index >= e.size()-1) {
 			throw new IllegalArgumentException();
@@ -37,9 +35,9 @@ public class EdgePosition extends GraphPosition {
 		
 		Point segStart = e.getPoint(index);
 		
-		distanceToStartOfEdge = e.getDistanceFromStart(index) + Point.distance(p, segStart);
+		lengthToStartOfEdge = e.getLengthFromStart(index) + Point.distance(p, segStart);
 		
-		distanceToEndOfEdge = e.getTotalLength() - distanceToStartOfEdge;
+		lengthToEndOfEdge = e.getTotalLength() - lengthToStartOfEdge;
 		
 		int h = 17;
 		h = 37 * h + e.hashCode();
@@ -55,7 +53,7 @@ public class EdgePosition extends GraphPosition {
 	}
 	
 	public String toString() {
-		return e + " " + index + " " + param + "(" + distanceToStartOfEdge + "/" + e.getTotalLength() + ")";
+		return e + " " + index + " " + param + "(" + lengthToStartOfEdge + "/" + e.getTotalLength() + ")";
 	}
 	
 	public boolean equalsP(GraphPosition o) {
@@ -102,7 +100,7 @@ public class EdgePosition extends GraphPosition {
 			EdgePosition ge = (EdgePosition)goal;
 			assert ge.getEdge() == e;
 			
-			if (distanceToStartOfEdge < ge.distanceToStartOfEdge) {
+			if (lengthToStartOfEdge < ge.lengthToStartOfEdge) {
 				return nextBoundForward(e, index, param);
 			} else {
 				return nextBoundBackward(e, index, param);
@@ -141,8 +139,8 @@ public class EdgePosition extends GraphPosition {
 				return distanceToEndOfEdge();
 			}
 			
-			double aaStartPath = MODEL.world.graph.distanceBetweenVertices(e.getStart(), bb.getVertex());
-			double aaEndPath = MODEL.world.graph.distanceBetweenVertices(e.getEnd(), bb.getVertex());
+			double aaStartPath = graph.distanceBetweenVertices(e.getStart(), bb.getVertex());
+			double aaEndPath = graph.distanceBetweenVertices(e.getEnd(), bb.getVertex());
 			
 			double dist = Math.min(aaStartPath + distanceToStartOfEdge(), aaEndPath + distanceToEndOfEdge());
 			
@@ -157,10 +155,10 @@ public class EdgePosition extends GraphPosition {
 				return Math.abs(aa.distanceToStartOfEdge() - bb.distanceToStartOfEdge());
 			}
 			
-			double startStartPath = MODEL.world.graph.distanceBetweenVertices(aa.getEdge().getStart(), bb.getEdge().getStart());
-			double startEndPath = MODEL.world.graph.distanceBetweenVertices(aa.getEdge().getStart(), bb.getEdge().getEnd());
-			double endStartPath = MODEL.world.graph.distanceBetweenVertices(aa.getEdge().getEnd(), bb.getEdge().getStart());
-			double endEndPath = MODEL.world.graph.distanceBetweenVertices(aa.getEdge().getEnd(), bb.getEdge().getEnd());
+			double startStartPath = graph.distanceBetweenVertices(aa.getEdge().getStart(), bb.getEdge().getStart());
+			double startEndPath = graph.distanceBetweenVertices(aa.getEdge().getStart(), bb.getEdge().getEnd());
+			double endStartPath = graph.distanceBetweenVertices(aa.getEdge().getEnd(), bb.getEdge().getStart());
+			double endEndPath = graph.distanceBetweenVertices(aa.getEdge().getEnd(), bb.getEdge().getEnd());
 			
 			double startStartDistance = startStartPath + aa.distanceToStartOfEdge() + bb.distanceToStartOfEdge();
 			double startEndDistance = startEndPath + aa.distanceToStartOfEdge() + bb.distanceToEndOfEdge();
@@ -179,19 +177,19 @@ public class EdgePosition extends GraphPosition {
 	
 	
 	public double distanceToEndOfEdge() {
-		return distanceToEndOfEdge;
+		return lengthToEndOfEdge;
 	}
 	
 	public double distanceToStartOfEdge() {
-		return distanceToStartOfEdge;
+		return lengthToStartOfEdge;
 	}
 	
 	protected double distanceForward(EdgePosition a) {
-		return a.distanceToStartOfEdge - distanceToStartOfEdge;
+		return a.lengthToStartOfEdge - lengthToStartOfEdge;
 	}
 	
 	protected double distanceBackward(EdgePosition a) {
-		return distanceToStartOfEdge - a.distanceToStartOfEdge;
+		return lengthToStartOfEdge - a.lengthToStartOfEdge;
 	}
 	
 	/**
@@ -215,7 +213,7 @@ public class EdgePosition extends GraphPosition {
 			
 			double distToEndOfEdge = distanceToEndOfEdge();
 			if (DMath.equals(dist, distToEndOfEdge)) {
-				return new VertexPosition(e.getEnd());
+				return new VertexPosition(e.getEnd(), graph);
 			} else if (dist > distToEndOfEdge) {
 				throw new IllegalArgumentException();
 			}
@@ -226,7 +224,7 @@ public class EdgePosition extends GraphPosition {
 			
 			double distToStartOfEdge = distanceToStartOfEdge();
 			if (DMath.equals(dist, distToStartOfEdge)) {
-				return new VertexPosition(e.getStart());
+				return new VertexPosition(e.getStart(), graph);
 			} else if (dist > distToStartOfEdge) {
 				throw new IllegalArgumentException();
 			}
@@ -304,7 +302,7 @@ public class EdgePosition extends GraphPosition {
 	
 	private static GraphPosition nextBoundForward(Edge e, int index, double param) {
 		if (index == e.size()-2) {
-			return new VertexPosition(e.getEnd());
+			return new VertexPosition(e.getEnd(), e.graph);
 		} else {
 			return new EdgePosition(e, index+1, 0.0);
 		}
@@ -313,13 +311,13 @@ public class EdgePosition extends GraphPosition {
 	private static GraphPosition nextBoundBackward(Edge e, int index, double param) {
 		if (DMath.equals(param, 0.0)) {
 			if (index == 0 || (index == 1 && DMath.equals(param, 0.0))) {
-				return new VertexPosition(e.getStart());
+				return new VertexPosition(e.getStart(), e.graph);
 			} else {
 				return new EdgePosition(e, index-1, 0.0);
 			}
 		} else {
 			if (index == 0) {
-				return new VertexPosition(e.getStart());
+				return new VertexPosition(e.getStart(), e.graph);
 			} else {
 				return new EdgePosition(e, index, 0.0);
 			}
