@@ -11,8 +11,7 @@ public class DeadlockModel {
 	public static double dt = 0.01;
 	
 	public static final int PIXELS_PER_METER = 32;
-	
-	public static final double MOUSE_RADIUS = Math.sqrt(2 * 0.5 * 0.5) * PIXELS_PER_METER;
+	public static final double METERS_PER_PIXEL = 1 / ((double)PIXELS_PER_METER);
 	
 	public static boolean FPS_DRAW = true;
 	public static boolean DEBUG_DRAW = true;
@@ -36,7 +35,6 @@ public class DeadlockModel {
 	public void init() throws Exception {
 		
 		world = new World();
-		
 		world.init();
 		
 		stroke = new Stroke();
@@ -44,8 +42,8 @@ public class DeadlockModel {
 	}
 	
 	public void clear() {
-		stroke.clearAll();
-		world = new World();
+		stroke = null;
+		world = null;
 	}
 	
 	public ControlMode getMode() {

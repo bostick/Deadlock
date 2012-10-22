@@ -1,6 +1,5 @@
 package com.gutabi.deadlock.core;
 
-
 public class Segment {
 	
 	public final Edge edge;

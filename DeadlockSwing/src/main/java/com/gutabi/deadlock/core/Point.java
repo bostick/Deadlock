@@ -4,7 +4,6 @@ import java.awt.geom.Point2D;
 
 import org.jbox2d.common.Vec2;
 
-
 public class Point {
 	
 	public final double x;
@@ -434,7 +433,7 @@ public class Point {
 		return Math.hypot(a.x - b.x, a.y - b.y);
 	}
 	
-	public static Point add(Point a, Point b) {
+	public static Point plus(Point a, Point b) {
 		return new Point(a.x + b.x, a.y + b.y);
 	}
 	
@@ -442,8 +441,8 @@ public class Point {
 		return new Point(a.x - b.x, a.y - b.y);
 	}
 	
-	public Point add(Point b) {
-		return add(this, b);
+	public Point plus(Point b) {
+		return plus(this, b);
 	}
 	
 	public Point minus(Point b) {
@@ -468,7 +467,7 @@ public class Point {
 		
 		if (DMath.equals(disc, 0.0)) {
 			
-			Point int1 = new Point((dd * dy)/(dr * dr), (-dd * dx)/(dr * dr)).add(center);
+			Point int1 = new Point((dd * dy)/(dr * dr), (-dd * dx)/(dr * dr)).plus(center);
 			
 			ints[0] = int1;
 			
@@ -476,8 +475,8 @@ public class Point {
 			
 		} else if (disc > 0.0) {
 			
-			Point int1 = new Point((dd * dy + sgn(dy) * dx * Math.sqrt(disc))/(dr * dr), (-dd * dx + Math.abs(dy) * Math.sqrt(disc))/(dr * dr)).add(center);
-			Point int2 = new Point((dd * dy - sgn(dy) * dx * Math.sqrt(disc))/(dr * dr), (-dd * dx - Math.abs(dy) * Math.sqrt(disc))/(dr * dr)).add(center);
+			Point int1 = new Point((dd * dy + sgn(dy) * dx * Math.sqrt(disc))/(dr * dr), (-dd * dx + Math.abs(dy) * Math.sqrt(disc))/(dr * dr)).plus(center);
+			Point int2 = new Point((dd * dy - sgn(dy) * dx * Math.sqrt(disc))/(dr * dr), (-dd * dx - Math.abs(dy) * Math.sqrt(disc))/(dr * dr)).plus(center);
 			
 			ints[0] = int1;
 			ints[1] = int2;

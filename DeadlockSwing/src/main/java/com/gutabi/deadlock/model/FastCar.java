@@ -8,6 +8,7 @@ import org.apache.log4j.Logger;
 
 import com.gutabi.deadlock.core.Source;
 
+@SuppressWarnings("static-access")
 public class FastCar extends Car {
 	
 	private final double speed = 5.0;
@@ -16,12 +17,8 @@ public class FastCar extends Car {
 	
 	public FastCar(Source s) {
 		super(s);
-		
-//		logger.debug("fast car: b2dBody linear v: " + b2dBody.getLinearVelocity());
-		
 	}
-
-	@SuppressWarnings("static-access")
+	
 	@Override
 	BufferedImage image() {
 		return MODEL.world.fastCar;

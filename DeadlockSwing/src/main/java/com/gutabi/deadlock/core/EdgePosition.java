@@ -1,6 +1,5 @@
 package com.gutabi.deadlock.core;
 
-
 public class EdgePosition extends GraphPosition {
 	
 	private final Edge e;

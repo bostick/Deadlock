@@ -1,6 +1,5 @@
 package com.gutabi.deadlock.core;
 
-
 public class VertexPosition extends GraphPosition {
 	
 	private final Vertex v;

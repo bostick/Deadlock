@@ -80,7 +80,7 @@ public class Vertex extends Entity {
 	}	
 	
 	
-	public void computeRadius() {
+	public void computeRadius(double maximumRadius) {
 		
 		radius = INIT_VERTEX_RADIUS;
 		for (Edge e : eds) {
@@ -126,7 +126,12 @@ public class Vertex extends Entity {
 				break loop;
 			}
 			
-			radius = radius + 0.1;
+			if (radius + 0.1 > maximumRadius) {
+				radius = maximumRadius;
+				break loop;
+			} else {
+				radius = radius + 0.1;
+			}
 			
 			for (Edge e : eds) {
 				e.computeProperties();

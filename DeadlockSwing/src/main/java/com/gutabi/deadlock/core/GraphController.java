@@ -1,10 +1,9 @@
 package com.gutabi.deadlock.core;
 
-import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
-
 import java.util.List;
 
-@SuppressWarnings("static-access")
+import com.gutabi.deadlock.model.Stroke;
+
 public class GraphController {
 	
 	Graph graph;
@@ -23,16 +22,11 @@ public class GraphController {
 		postTop();
 	}
 	
-	public void processNewStrokeTop(List<Point> stroke) {
+	public void processNewStrokeTop(Stroke stroke) {
 		
-		Point startPoint = stroke.get(0);
-		Point endPoint = stroke.get(stroke.size()-1);
-		
-		GraphPosition startPos = graph.findClosestGraphPosition(startPoint, null, MODEL.MOUSE_RADIUS/MODEL.PIXELS_PER_METER);
-		GraphPosition endPos = graph.findClosestGraphPosition(endPoint, null, MODEL.MOUSE_RADIUS/MODEL.PIXELS_PER_METER);
-		
+		Point startPoint = stroke.getWorldPoint(0);
+		GraphPosition startPos = graph.findClosestGraphPosition(startPoint, stroke.getRadius());
 		Vertex start;
-		Vertex end;
 		
 		if (startPos != null) {
 			if (startPos instanceof VertexPosition) {
@@ -44,7 +38,12 @@ public class GraphController {
 			start = new Intersection(startPoint, graph);
 			graph.addIntersection((Intersection)start);
 		}
-			
+		
+		
+		Point endPoint = stroke.getWorldPoint(stroke.size()-1);
+		GraphPosition endPos = graph.findClosestGraphPosition(endPoint, stroke.getRadius());
+		Vertex end;
+		
 		if (endPos != null) {
 			if (endPos instanceof VertexPosition) {
 				end = ((VertexPosition)endPos).getVertex();
@@ -56,9 +55,26 @@ public class GraphController {
 			graph.addIntersection((Intersection)end);
 		}
 		
-		graph.createEdgeTop(start, end, stroke);
+		graph.createEdgeTop(start, end, stroke.getWorldPoints());
 		
 		postTop();
+		
+		
+		
+//		for (int i = 0; i < stroke.size()-1; i++) {
+//			Point a = stroke.get(i);
+//			Point b = stroke.get(i+1);
+//			find next index and param where exiting start (and completely free)
+//			
+//			find next index and param where entering next event
+//			find next index and param where exiting that event (and completely free)
+//			
+//			find next index and param where entering next event
+//			find next index and param where exiting that event (and completely free)
+//			
+//			find next index and param where entering end
+//		}
+		
 	}
 	
 	/**
@@ -66,8 +82,21 @@ public class GraphController {
 	 * that is too expensive to run during editing
 	 */
 	private void postTop() {
-		for (Vertex v : graph.getAllVertices()) {
-			v.computeRadius();
+		List<Vertex> all = graph.getAllVertices();
+		for (int i = 0; i < all.size(); i++) {
+			Vertex vi = all.get(i);
+			double maximumRadius = Double.POSITIVE_INFINITY;
+			for (int j = 0; j < all.size(); j++) {
+				Vertex vj = all.get(j);
+				if (vi == vj) {
+					continue;
+				}
+				double max = Point.distance(vi.getPoint(), vj.getPoint()) - vj.getRadius();
+				if (max < maximumRadius) {
+					maximumRadius = max;
+				}
+			}
+			vi.computeRadius(maximumRadius);
 		}
 	}
 }

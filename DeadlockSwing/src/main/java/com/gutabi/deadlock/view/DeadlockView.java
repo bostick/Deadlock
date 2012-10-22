@@ -9,16 +9,23 @@ import javax.swing.JFrame;
 
 import org.apache.log4j.Logger;
 
+import com.gutabi.deadlock.core.Point;
+
 @SuppressWarnings("static-access")
 public class DeadlockView {
+	
+	public static DeadlockView VIEW = new DeadlockView();
 	
 	public JFrame frame;
 	public WorldPanel panel;
 	public ControlPanel controlPanel;
 	
-	public final Logger logger = Logger.getLogger(DeadlockView.class);
+	/*
+	 * where in the panel (in pixels) is the world origin?
+	 */
+	public Point worldOrigin;
 	
-	public static DeadlockView VIEW = new DeadlockView();
+	public final Logger logger = Logger.getLogger(DeadlockView.class);
 	
 	public DeadlockView() {
 		;
@@ -55,11 +62,19 @@ public class DeadlockView {
 		return newFrame;
 	}
 	
+	public Point panelToWorld(Point p) {
+		return p.minus(worldOrigin).multiply(MODEL.METERS_PER_PIXEL);
+	}
+	
 	public void repaint() {
 		assert !Thread.holdsLock(MODEL);
 		
-		int x = (int)(panel.getWidth() * 0.5 - (MODEL.world.WORLD_WIDTH * 0.5 * MODEL.PIXELS_PER_METER) + (MODEL.world.renderingUpperLeft.x * MODEL.PIXELS_PER_METER));
-		int y = (int)(panel.getHeight() * 0.5 - (MODEL.world.WORLD_HEIGHT * 0.5 * MODEL.PIXELS_PER_METER) + (MODEL.world.renderingUpperLeft.y * MODEL.PIXELS_PER_METER));
+		worldOrigin = new Point(
+				(int)(panel.getWidth() * 0.5 - (MODEL.world.WORLD_WIDTH * 0.5 * MODEL.PIXELS_PER_METER)),
+				(int)(panel.getHeight() * 0.5 - (MODEL.world.WORLD_HEIGHT * 0.5 * MODEL.PIXELS_PER_METER)));
+		
+		int x = (int)(worldOrigin.x + (MODEL.world.renderingUpperLeft.x * MODEL.PIXELS_PER_METER));
+		int y = (int)(worldOrigin.y + (MODEL.world.renderingUpperLeft.y * MODEL.PIXELS_PER_METER));
 		
 		panel.repaint(
 				x,

@@ -153,42 +153,6 @@ public final class Edge extends Entity {
 		return removed;
 	}
 	
-//	public void computeBorders() {
-//		assert !standalone;
-//		
-//		/*
-//		 * invalidate path, so it has to be recomputed also
-//		 */
-//		path = null;
-//		
-//		double startBorderCombo = startBorderCombo(start, skeleton);
-//		
-//		double endBorderCombo = endBorderCombo(end, skeleton);
-//		
-//		assert startBorderCombo < endBorderCombo;
-//		
-//		startBorderIndex = (int)Math.floor(startBorderCombo);
-//		endBorderIndex = (int)Math.floor(endBorderCombo);
-//		
-//		startBorderParam = startBorderCombo - startBorderIndex;
-//		endBorderParam = endBorderCombo - endBorderIndex;
-//		
-//		if (startBorderCombo < 0) {
-//			assert startBorderIndex == -1;
-//			startBorderPoint = Point.point(start.p, skeleton.get(0), startBorderParam);
-//		} else {
-//			startBorderPoint = Point.point(skeleton.get(startBorderIndex), skeleton.get(startBorderIndex+1), startBorderParam);
-//		}
-//		
-//		if (endBorderCombo >= skeleton.size()-1) {
-//			assert endBorderIndex == skeleton.size()-1;
-//			endBorderPoint = Point.point(skeleton.get(endBorderIndex), end.p, endBorderParam);
-//		} else {
-//			endBorderPoint = Point.point(skeleton.get(endBorderIndex), skeleton.get(endBorderIndex+1), endBorderParam);
-//		}
-//		
-//	}
-	
 	public void computeProperties() {
 		
 		List<Point> adj = raw;
@@ -243,8 +207,9 @@ public final class Edge extends Entity {
 						adj.add(cur);
 					}
 				} catch (ColinearException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					/*
+					 * cur is between pen and last, so just ignore
+					 */
 				}
 			}
 		}
@@ -396,7 +361,6 @@ public final class Edge extends Entity {
 	 */
 	public void computePath() {
 		
-//		assert area == null;
 		assert !standalone;
 		
 		AreaX area = new AreaX();
@@ -434,10 +398,10 @@ public final class Edge extends Entity {
 		Point up = Point.ccw90(diff).multiply(ROAD_RADIUS / diff.length);
 		Point down = Point.cw90(diff).multiply(ROAD_RADIUS / diff.length);
 		
-		Point p0 = a.add(up);
-		Point p1 = a.add(down);
-		Point p2 = b.add(up);
-		Point p3 = b.add(down);
+		Point p0 = a.plus(up);
+		Point p1 = a.plus(down);
+		Point p2 = b.plus(up);
+		Point p3 = b.plus(down);
 		Path2D path = new Path2D.Double();
 		path.moveTo(p0.x, p0.y);
 		path.lineTo(p1.x, p1.y);
@@ -626,16 +590,6 @@ public final class Edge extends Entity {
 			} else {
 				assert count == 1;
 			}
-			
-//			if (i < pts.length-1) {
-//				Point q = pts[i+1];
-//				if (Math.abs(p.getX() - q.getX()) < 1.0E-3) {
-//					assert DMath.equals(p.getX(), q.getX());
-//				}
-//				if (Math.abs(p.getY() - q.getY()) < 1.0E-3) {
-//					assert DMath.equals(p.getY(), q.getY());
-//				}
-//			}
 			
 			if (i == 0) {
 				if (loop) {

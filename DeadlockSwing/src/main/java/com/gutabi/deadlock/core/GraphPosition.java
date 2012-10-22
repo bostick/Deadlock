@@ -15,6 +15,8 @@ public abstract class GraphPosition extends Position {
 	
 	public abstract double distanceTo(GraphPosition b);
 	
+	public abstract boolean isBound();
+	
 	public abstract GraphPosition nextBoundToward(GraphPosition goal);
 	
 	public GraphPosition travel(GraphPosition p, double distance) {

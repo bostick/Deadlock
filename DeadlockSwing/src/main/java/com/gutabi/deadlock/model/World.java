@@ -170,7 +170,7 @@ public class World {
 		postTop();
 	}
 	
-	public void processNewStrokeTop(List<Point> stroke) {
+	public void processNewStrokeTop(Stroke stroke) {
 		gc.processNewStrokeTop(stroke);
 		postTop();
 	}
@@ -251,21 +251,16 @@ public class World {
 	
 	
 	
-	//public float timeStep = ((float)dt) / 1000.0f;
 	int velocityIterations = 6;
 	int positionIterations = 2;
 	
 	public void integrate(double t) {
 		
-//		logger.debug("integrate " + t);
-		
 		this.t = t;
 		
 		preStep();
 		
-//		logger.debug("before step " + t);
 		b2dWorld.step((float)MODEL.dt, velocityIterations, positionIterations);
-//		logger.debug("after step " + t);
 		
 		postStep();
 		
@@ -459,7 +454,7 @@ public class World {
 		switch (MODEL.getMode()) {
 		case DRAFTING: {
 			
-			MODEL.stroke.paint(g2);
+			
 			
 			break;
 		}
@@ -496,8 +491,8 @@ public class World {
 	
 	private void paintBackground(Graphics2D g2) {
 		
-		int x = (int)(((renderingUpperLeft.x) * MODEL.PIXELS_PER_METER));
-		int y = (int)(((renderingUpperLeft.y) * MODEL.PIXELS_PER_METER));
+		int x = (int)((renderingUpperLeft.x * MODEL.PIXELS_PER_METER));
+		int y = (int)((renderingUpperLeft.y * MODEL.PIXELS_PER_METER));
 		
 		g2.drawImage(backgroundImage, x, y, null);
 	}
@@ -561,9 +556,6 @@ public class World {
 	 * @param g2
 	 */
 	public void paintFPS(Graphics2D g2) {
-		
-//		g2.setColor(Color.WHITE);
-//		g2.fillRect(0, 0, 200, 200);
 		
 		g2.setColor(Color.WHITE);
 		

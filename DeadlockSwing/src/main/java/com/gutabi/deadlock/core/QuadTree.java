@@ -64,7 +64,7 @@ public class QuadTree {
 	/**
 	 * find closest edge position to point a
 	 */
-	public EdgePosition findClosestEdgePosition(Point a, Point anchor, double radius) {
+	public EdgePosition findClosestEdgePosition(Point a, double radius) {
 		
 		Segment bestSegment = null;
 		double bestParam = -1;
@@ -74,17 +74,10 @@ public class QuadTree {
 		 * test the point a against all segments <c, d>
 		 */
 		for (Segment si : segIndices) {
-//			Edge e = si.edge;
 			double closest = closestParam(a, si);
 			Point ep = si.getPoint(closest);
-			if (anchor != null && a.equals(anchor) && ep.equals(anchor)) {
-				/*
-				 * if a equals anchor, and exactly on the edge, then ignore (a segment is starting on the edge)
-				 */
-				continue;
-			}
 			double dist = Point.distance(a, ep);
-			if (DMath.lessThanEquals(dist, radius + Edge.ROAD_RADIUS) && (anchor == null || a.equals(anchor) || dist < Point.distance(anchor, ep))) {
+			if (DMath.lessThanEquals(dist, radius + Edge.ROAD_RADIUS)) {
 				if (bestSegment == null) {
 					bestSegment = si;
 					bestParam = closest;

@@ -21,19 +21,16 @@ public class Java2DUtils {
 			int res = pi.currentSegment(coords);
 			switch (res) {
 			case PathIterator.SEG_MOVETO:
-//				logger.debug("moveto");
 				assert poly == null;
 				poly = new ArrayList<Point>();
 				lastPoint = new Point(coords[0], coords[1]);
 				poly.add(lastPoint);
 				break;
 			case PathIterator.SEG_LINETO:
-//				logger.debug("lineto");
 				lastPoint = new Point(coords[0], coords[1]);
 				poly.add(lastPoint);
 				break;
 			case PathIterator.SEG_CLOSE:
-//				logger.debug("close");
 				break;
 			default:
 				assert false;

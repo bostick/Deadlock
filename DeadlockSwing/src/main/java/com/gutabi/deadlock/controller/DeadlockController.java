@@ -6,8 +6,6 @@ import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -23,6 +21,7 @@ import com.gutabi.deadlock.core.Sink;
 import com.gutabi.deadlock.core.Source;
 import com.gutabi.deadlock.core.Vertex;
 import com.gutabi.deadlock.model.Car;
+import com.gutabi.deadlock.model.Stroke;
 
 @SuppressWarnings("static-access")
 public class DeadlockController implements ActionListener {
@@ -207,13 +206,7 @@ public class DeadlockController implements ActionListener {
 			case PAUSED:
 			case IDLE: {
 				
-				Point worldPoint = p;
-				
-				int x = VIEW.panel.getWidth()/2 - (int)((MODEL.world.WORLD_WIDTH * MODEL.PIXELS_PER_METER)/2);
-				int y = VIEW.panel.getHeight()/2 - (int)((MODEL.world.WORLD_HEIGHT * MODEL.PIXELS_PER_METER)/2);
-				worldPoint = worldPoint.add(new Point(-x, -y));
-				
-				worldPoint = worldPoint.multiply(1/((double)MODEL.PIXELS_PER_METER));
+				Point worldPoint = VIEW.panelToWorld(p);
 				
 				Entity closest = MODEL.world.hitTest(worldPoint);
 				MODEL.hilited = closest;
@@ -370,32 +363,27 @@ public class DeadlockController implements ActionListener {
 		
 		MODEL.hilited = null;
 		
-		int x = VIEW.panel.getWidth()/2 - (int)((MODEL.world.WORLD_WIDTH * MODEL.PIXELS_PER_METER)/2);
-		int y = VIEW.panel.getHeight()/2 - (int)((MODEL.world.WORLD_HEIGHT * MODEL.PIXELS_PER_METER)/2);
+		MODEL.stroke = new Stroke();
 		
-		MODEL.stroke.start(p.add(new Point(-x, -y)));
+		MODEL.stroke.start(p);
 			
 	}
 	
 	private void draftMove(Point p) {
 		assert Thread.currentThread().getName().equals("controller");
-		
-		int x = VIEW.panel.getWidth()/2 - (int)((MODEL.world.WORLD_WIDTH * MODEL.PIXELS_PER_METER)/2);
-		int y = VIEW.panel.getHeight()/2 - (int)((MODEL.world.WORLD_HEIGHT * MODEL.PIXELS_PER_METER)/2);
-		
-		MODEL.stroke.move(p.add(new Point(-x, -y)));
+
+		MODEL.stroke.move(p);
 	}
 	
 	private void draftEnd() {
 		assert Thread.currentThread().getName().equals("controller");
 		
-		List<Point> curStroke = MODEL.stroke.getPoints();
-		curStroke = massageCurrent(curStroke);
-		if (curStroke.size() >= 2) {
-			MODEL.world.processNewStrokeTop(curStroke);
+		if (MODEL.stroke.size() >= 2) {
+			MODEL.world.processNewStrokeTop(MODEL.stroke);
 		}
 		
 		assert MODEL.world.checkConsistency();
+		
 		MODEL.stroke.clear();
 		
 		MODEL.setMode(ControlMode.IDLE);
@@ -488,42 +476,6 @@ public class DeadlockController implements ActionListener {
 			VIEW.repaint();
 			
 		}
-	}
-	
-	/*
-	 * deal with general shape here
-	 * 
-	 * do not worry about intersections with other edges here
-	 */
-	private List<Point> massageCurrent(List<Point> raw) {
-		
-		List<Point> m = raw;
-		
-		m = panelToWorld(m);
-		
-		m = removeDuplicates(m);
-		return m;
-		
-	}
-	
-	private List<Point> panelToWorld(List<Point> raw) {
-		List<Point> adj = new ArrayList<Point>();
-		for (Point p : raw) {
-			adj.add(p.multiply(1/((double)MODEL.PIXELS_PER_METER)));
-		}
-		return adj;
-	}
-	
-	private List<Point> removeDuplicates(List<Point> raw) {
-		List<Point> adj = new ArrayList<Point>();
-		Point last = null;
-		for (Point p : raw) {
-			if (last == null || !p.equals(last)) {
-				adj.add(p);
-			}
-			last = p;
-		}
-		return adj;
 	}
 	
 }

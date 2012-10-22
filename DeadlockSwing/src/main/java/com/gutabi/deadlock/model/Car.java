@@ -40,7 +40,6 @@ public abstract class Car extends Entity {
 	public Source source;
 	
 	private GraphPositionPath overallPath;
-//	private GraphPosition closestGraphPos;
 	
 	public final int id;
 	
@@ -75,7 +74,6 @@ public abstract class Car extends Entity {
 		source = s;
 		
 		overallPath = s.getPathToMatchingSink();
-//		startPos = overallPath.getGraphPosition(0).getPoint();
 		
 		GraphPosition closestGraphPos = overallPath.getGraphPosition(0);
 		startPoint = closestGraphPos.getPoint();
@@ -93,13 +91,11 @@ public abstract class Car extends Entity {
 		STPointPath nextRealPath = nextPlannedPath.toSTGraphPositionPath().toSTPointPath();
 		
 		Point nextDTGoalPoint = nextRealPath.end.getSpace();
-//		Point nextDTGoalPoint = overallPath.getEnd().getPoint();
-		
-//		logger.debug("nextDTGoalPoint: " + nextDTGoalPoint);
 		
 		startHeading = Math.atan2(nextDTGoalPoint.y-startPoint.y, nextDTGoalPoint.x-startPoint.x);
 		
 		color = Color.BLUE;
+		hiliteColor = Color.BLUE;
 		
 		length = CAR_LENGTH;
 		
@@ -135,7 +131,6 @@ public abstract class Car extends Entity {
 		bodyDef.type = BodyType.DYNAMIC;
 		bodyDef.position.set((float)startPoint.x, (float)startPoint.y);
 		bodyDef.angle = (float)startHeading;
-//		bodyDef.bullet = true;
 		bodyDef.allowSleep = true;
 		bodyDef.awake = true;
 		
@@ -195,8 +190,6 @@ public abstract class Car extends Entity {
 	
 	public void preStep() {
 		
-//		logger.debug("car preStep");
-		
 		Entity e1 = graph.hitTest(carToWorld(p1));
 		Entity e2 = graph.hitTest(carToWorld(p2));
 		Entity e3 = graph.hitTest(carToWorld(p3));
@@ -213,13 +206,11 @@ public abstract class Car extends Entity {
 			
 			state = CarStateEnum.RUNNING;
 			
-//			updateFriction();
 			updateDrive();
 			updateTurn();
 			break;
 		}
 		case RUNNING: {
-//			updateFriction();
 			updateDrive();
 			updateTurn();
 			break;
@@ -230,41 +221,6 @@ public abstract class Car extends Entity {
 			assert false;
 		}
 	}
-	
-//	private Vec2 getLateralVelocity() {
-//		Vec2 currentRightNormal = b2dBody.getWorldVector(new Vec2(0, 1));
-//		return currentRightNormal.mul(Vec2.dot(currentRightNormal, b2dBody.getLinearVelocity()));
-//	}
-//	
-//	private Vec2 getForwardVelocity() {
-//		Vec2 currentRightNormal = b2dBody.getWorldVector(new Vec2(1, 0));
-//		return currentRightNormal.mul(Vec2.dot(currentRightNormal, b2dBody.getLinearVelocity()));
-//	}
-	
-//	private void updateFriction() {
-//		
-//		Vec2 lateralImpulse = getLateralVelocity().mul(-b2dBody.getMass());
-//		Vec2 forwardImpulse = getForwardVelocity().mul(-b2dBody.getMass());
-//		
-////		float maxLateralImpulse = 3.0f;
-////		if (impulse.length() > maxLateralImpulse) {
-////			impulse = impulse.mul(maxLateralImpulse / impulse.length());
-////		}
-//		
-//		b2dBody.applyLinearImpulse(lateralImpulse, b2dBody.getWorldCenter());
-//		b2dBody.applyLinearImpulse(forwardImpulse, b2dBody.getWorldCenter());
-//		
-//		b2dBody.applyAngularImpulse(1.0f * b2dBody.getInertia() * -b2dBody.getAngularVelocity());
-//		
-////		Vec2 currentForwardNormal = getForwardVelocity();
-////		float currentForwardSpeed = currentForwardNormal.normalize();
-////		float dragForceMagnitude = -2 * currentForwardSpeed;
-////		b2dBody.applyForce(currentForwardNormal.mul(dragForceMagnitude), b2dBody.getWorldCenter());
-//	}
-	
-	
-//	Vec2 maxIdealLinForce = null;
-//	float maxIdealTorque = 0;
 	
 	private float cancelingForwardImpulseCoefficient() {
 		return 1.0f;
@@ -279,8 +235,6 @@ public abstract class Car extends Entity {
 	}
 	
 	private void updateDrive() {
-		
-//		logger.debug("updateDrive");
 		
 		Vec2 currentRightNormal = b2dBody.getWorldVector(new Vec2(1, 0));
 		Vec2 currentUpNormal = b2dBody.getWorldVector(new Vec2(0, 1));
@@ -305,19 +259,13 @@ public abstract class Car extends Entity {
 		
 		b2dBody.applyLinearImpulse(currentRightNormal.mul(impulse), b2dBody.getWorldCenter());
 		
-//		logger.debug("done updateDrive");
-		
 	}
 	
 	private void updateTurn() {
 		
-//		logger.debug("updateTurn");
-		
 		Vec2 curVec = b2dBody.getPosition();
 		
 		float curAngle = b2dBody.getAngle();
-		
-//		logger.debug("curAngle: " + curAngle);
 		
 		Point curPoint = new Point(curVec.x, curVec.y);
 		
@@ -366,16 +314,12 @@ public abstract class Car extends Entity {
 		
 		b2dBody.applyAngularImpulse(angImpulse);
 		
-//		logger.debug("done updateTurn");
-		
 	}
 	
 	/**
 	 * return true if car should persist after time step
 	 */
 	public boolean postStep() {
-		
-//		closestGraphPos = graph.findClosestGraphPosition(getPoint(), null, Double.POSITIVE_INFINITY);
 		
 		switch (state) {
 		case NEW:
@@ -408,11 +352,6 @@ public abstract class Car extends Entity {
 		return id;
 	}
 	
-//	public Point getPoint() {
-//		Vec2 pos = b2dBody.getPosition();
-//		return new Point(pos.x, pos.y);
-//	}
-	
 	public double distanceTo(Point p) {
 		double d1 = Point.distance(p, carToWorld(p1));
 		double d2 = Point.distance(p, carToWorld(p2));
@@ -427,11 +366,7 @@ public abstract class Car extends Entity {
 	 * @param g2 in world coords
 	 */
 	public void paint(Graphics2D g2) {
-//		paintRect(g2);
 		paintImage(g2, image());
-//		if (MODEL.DEBUG_DRAW) {
-//			paintPoint(g2);
-//		}
 	}
 	
 	/**
@@ -450,7 +385,7 @@ public abstract class Car extends Entity {
 		b2dTrans.translate(pos.x, pos.y);
 		b2dTrans.rotate(angle);
 		
-		b2dTrans.scale(1/((double)MODEL.PIXELS_PER_METER), 1/((double)MODEL.PIXELS_PER_METER));
+		b2dTrans.scale(MODEL.METERS_PER_PIXEL, MODEL.METERS_PER_PIXEL);
 		
 		g2.setTransform(b2dTrans);
 		
@@ -474,29 +409,11 @@ public abstract class Car extends Entity {
 		
 		g2.setTransform(b2dTrans);
 		
-		g2.setColor(color);
+		g2.setColor(hiliteColor);
 		
 		g2.fill(path);
 		
 		g2.setTransform(origTransform);
 	}
-	
-//	private void paintPoint(Graphics2D g2) {
-//		AffineTransform origTransform = g2.getTransform();
-//		
-//		AffineTransform b2dTrans = (AffineTransform)origTransform.clone();
-//		Vec2 pos = closestGraphPos.getPoint().vec2();
-//		b2dTrans.translate(pos.x, pos.y);
-//		
-//		b2dTrans.scale(1/((double)MODEL.PIXELS_PER_METER), 1/((double)MODEL.PIXELS_PER_METER));
-//		
-//		g2.setTransform(b2dTrans);
-//		
-//		g2.setColor(Color.BLACK);
-//		
-//		g2.fillOval(-2, -2, 4, 4);
-//		
-//		g2.setTransform(origTransform);
-//	}
 	
 }

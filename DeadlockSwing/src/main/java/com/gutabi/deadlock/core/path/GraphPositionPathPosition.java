@@ -83,10 +83,6 @@ public class GraphPositionPathPosition extends Position {
 		return gpos;
 	}
 	
-//	public Hilitable getHilitable() {
-//		return gpos.getHilitable();
-//	}
-	
 	public double distanceTo(GraphPositionPathPosition p) {
 		
 		logger.debug("distanceTo");

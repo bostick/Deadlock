@@ -112,17 +112,46 @@ public class Graph {
 		return null;
 	}
 	
-	public GraphPosition findClosestGraphPosition(Point p, Point anchor, double radius) {
-		VertexPosition vp = findClosestVertexPosition(p, anchor, radius);
+	public List<Entity> hitTest(Point p, double radius) {
+		assert p != null;
+		List<Entity> hits = new ArrayList<Entity>();
+		for (Vertex v : getAllVertices()) {
+			if (DMath.lessThanEquals(Point.distance(p, v.getPoint()), v.getRadius() + radius)) {
+				hits.add(v);
+			}
+		}
+		for (Segment in : segTree.getAllSegments()) {
+			Edge e = in.edge;
+			int i = in.index;
+			Point c = e.getPoint(i);
+			Point d = e.getPoint(i+1);
+			if (DMath.lessThanEquals(Point.distance(p, c, d), Edge.ROAD_RADIUS + radius)) {
+				hits.add(e);
+			}
+		}
+		return hits;
+	}
+	
+	/**
+	 * hit test with capsule
+	 */
+//	public List<Entity> hitTest(Point a, Point b, double radius) {
+//		
+//	}
+	
+	public GraphPosition findClosestGraphPosition(Point p, double radius) {
+		VertexPosition vp = findClosestVertexPosition(p, radius);
 		if (vp != null) {
 			return vp;
 		}
-		EdgePosition ep = findClosestEdgePosition(p, anchor, radius);
+		EdgePosition ep = findClosestEdgePosition(p, radius);
 		if (ep != null) {
 			return ep;
 		}
 		return null;
 	}
+	
+	
 	
 	public void addSource(Source s) {
 		sources.add(s);
@@ -230,13 +259,8 @@ public class Graph {
 		double param = pos.getParam();
 		final Point p = pos.getPoint();
 		
-//		boolean betweenPoints = (!DMath.equals(param, 0.0));
-		
 		assert param >= 0.0;
 		assert param < 1.0;
-		
-//		final Point c = e.getPoint(index);
-//		final Point d = e.getPoint(index+1);
 		
 		Vertex v = createIntersection(p);
 		
@@ -257,72 +281,30 @@ public class Graph {
 			}
 			pts.add(p);
 			
-			Edge newEdge = createEdge(v, v, pts);
+			createEdge(v, v, pts);
 			
 			destroyEdge(e);
 			
 			return v;
 		}
+			
+		List<Point> f1Pts = new ArrayList<Point>();
 		
-		/*
-		 * f1
-		 */
+		for (int i = 0; i <= index; i++) {
+			f1Pts.add(e.getPoint(i));
+		}
+		f1Pts.add(p);
 		
-		Edge f1 = null;
-//		for (Edge ee : eStart.getEdges()) {
-//			if (((ee.getStart() == eStart && ee.getEnd() == v) || (ee.getStart() == v && ee.getEnd() == eStart)) && ee.size() == 2) {
-//				/*
-//				 * both a and b are already both intersections and connected, so just use this
-//				 */
-//				f1 = ee;
-//				break;
-//			}
-//		}
-		if (f1 == null) {
+		createEdge(eStart, v, f1Pts);
 			
-			List<Point> pts = new ArrayList<Point>();
-			
-			for (int i = 0; i <= index; i++) {
-				pts.add(e.getPoint(i));
-			}
-			pts.add(p);
-			
-			f1 = createEdge(eStart, v, pts);
+		List<Point> f2Pts = new ArrayList<Point>();
+		
+		f2Pts.add(p);
+		for (int i = index+1; i < e.size(); i++) {
+			f2Pts.add(e.getPoint(i));
 		}
 		
-		/*
-		 * f2
-		 */
-		
-		Edge f2 = null;
-		for (Edge ee : eStart.getEdges()) {
-			if (ee == f1) {
-				/*
-				 * ignore if ee is the newly-created edge f1
-				 */
-				continue;
-			}
-			if (((ee.getStart() == v && ee.getEnd() == eEnd) || (ee.getStart() == eEnd && ee.getEnd() == v)) && ee.size() == 2) {
-				/*
-				 * both a and b are already both intersections and connected, so just use this
-				 */
-				f2 = ee;
-				break;
-			}
-		}
-		if (f2 == null) {
-			
-			List<Point> pts = new ArrayList<Point>();
-			
-			pts.add(p);
-			for (int i = index+1; i < e.size(); i++) {
-				pts.add(e.getPoint(i));
-			}
-			
-			f2 = createEdge(v, eEnd, pts);
-		}
-		
-//		assert f1.size() + f2.size() == e.size() + 1 + (betweenPoints ? 1 : 0);
+		createEdge(v, eEnd, f2Pts);
 		
 		destroyEdge(e);
 		
@@ -402,8 +384,6 @@ public class Graph {
 	
 	private void destroyEdge(Edge e) {
 		assert edges.contains(e);
-		
-		//logger.debug("destroy Edge: " + e);
 		
 		if (!e.isStandAlone()) {
 			e.getStart().removeEdge(e);
@@ -563,50 +543,9 @@ public class Graph {
 	}
 	
 	/**
-	 * tests center of vertex and skeleton of edges 
-	 */
-	private GraphPosition graphHitTest(Point p) {
-		for (Vertex v : getAllVertices()) {
-			if (p.equals(v.getPoint())) {
-				return new VertexPosition(v, this);
-			}
-		}
-		for (Segment in : segTree.getAllSegments()) {
-			Edge e = in.edge;
-			int i = in.index;
-			Point c = e.getPoint(i);
-			Point d = e.getPoint(i+1);
-			if (Point.intersect(p, c, d)) {
-				double param = Point.param(p, c, d);
-				if (DMath.equals(param, 1.0)) {
-					return new EdgePosition(e, i+1, 0.0);
-				} else {
-					return new EdgePosition(e, i, param);
-				}
-			}
-		}
-		return null;
-	}
-	
-	/**
 	 * returns the closest vertex within radius that is not the excluded point
 	 */
-	private VertexPosition findClosestVertexPosition(Point a, Point exclude, double radius) {
-		Vertex anchorV = null;
-		if (exclude != null) {
-			GraphPosition pos = graphHitTest(exclude);
-			if (pos instanceof VertexPosition) {
-				VertexPosition poss = (VertexPosition)pos;
-				anchorV = poss.getVertex();
-				if (a.equals(exclude)) {
-					/*
-					 * a equals anchor, so starting this segment
-					 * if exactly on a vertex, then use that one
-					 */
-					return poss;
-				}
-			}
-		}
+	private VertexPosition findClosestVertexPosition(Point a, double radius) {
 		
 		Vertex closest = null;
 		
@@ -614,10 +553,8 @@ public class Graph {
 			Point vp = v.getPoint();
 			double dist = Point.distance(a, vp);
 			if (DMath.lessThanEquals(dist, radius + v.getRadius())) {
-				if (anchorV == null || dist < Point.distance(vp, exclude)) {
-					if (closest == null || (Point.distance(a, vp) < Point.distance(a, closest.getPoint()))) {
-						closest = v;
-					}
+				if (closest == null || (Point.distance(a, vp) < Point.distance(a, closest.getPoint()))) {
+					closest = v;
 				}
 			}	
 		}
@@ -632,25 +569,21 @@ public class Graph {
 	/**
 	 * returns the closest edge within radius that is not in the excluded radius
 	 */
-	private EdgePosition findClosestEdgePosition(Point a, Point exclude, double radius) {
-		return segTree.findClosestEdgePosition(a, exclude, radius);
+	private EdgePosition findClosestEdgePosition(Point a, double radius) {
+		return segTree.findClosestEdgePosition(a, radius);
 	}
 	
-	private Edge createEdge(Vertex start, Vertex end, List<Point> pts) {
+	private void createEdge(Vertex start, Vertex end, List<Point> pts) {
 		
 		Edge e = new Edge(start, end, this, pts);
 		edges.add(e);
 		
 		refreshEdgeIDs();
 		
-		//logger.debug("createEdge: " + start + " " + end + " n=" + pts.size() );
-		
 		if (!e.isStandAlone()) {
 			start.addEdge(e);
 			end.addEdge(e);
 		}
-		
-		return e;
 	}
 	
 	/**
@@ -698,7 +631,7 @@ public class Graph {
 				pts.add(e1.getPoint(i));
 			}
 			
-			Edge newEdge = createEdge(null, null, pts);
+			createEdge(null, null, pts);
 			
 			destroyEdge(e1);
 			
@@ -716,7 +649,7 @@ public class Graph {
 				pts.add(e2.getPoint(i));
 			}
 			
-			Edge newEdge = createEdge(e1End, e2End, pts);
+			createEdge(e1End, e2End, pts);
 			
 			destroyEdge(e1);
 			destroyEdge(e2);
@@ -735,7 +668,7 @@ public class Graph {
 				pts.add(e2.getPoint(i));
 			}
 			
-			Edge newEdge = createEdge(e1End, e2Start, pts); 
+			createEdge(e1End, e2Start, pts); 
 			
 			destroyEdge(e1);
 			destroyEdge(e2);
@@ -754,7 +687,7 @@ public class Graph {
 				pts.add(e2.getPoint(i));
 			}
 			
-			Edge newEdge = createEdge(e1Start, e2End, pts);
+			createEdge(e1Start, e2End, pts);
 			
 			destroyEdge(e1);
 			destroyEdge(e2);
@@ -773,7 +706,7 @@ public class Graph {
 				pts.add(e2.getPoint(i));
 			}
 			
-			Edge newEdge = createEdge(e1Start, e2Start, pts);
+			createEdge(e1Start, e2Start, pts);
 			
 			destroyEdge(e1);
 			destroyEdge(e2);
@@ -801,9 +734,6 @@ public class Graph {
 		}
 		
 		for (Edge e : edges) {
-//			if (e.getTotalLength() <= MODEL.world.CAR_LENGTH) {
-//				throw new IllegalStateException("too small");
-//			}
 			if (e.getStart() == null && e.getEnd() == null) {
 				continue;
 			}

@@ -308,10 +308,6 @@ public class GraphPositionPath {
 		}
 	}
 	
-//	public Hilitable getHilitable(int index) {
-//		return poss.get(index).getHilitable();
-//	}
-	
 	/**
 	 * Position a has already been added
 	 * 

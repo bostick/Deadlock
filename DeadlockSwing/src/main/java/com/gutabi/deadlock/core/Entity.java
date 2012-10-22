@@ -25,4 +25,5 @@ public abstract class Entity {
 	
 	public Point renderingUpperLeft;
 	public Point renderingBottomRight;
+	
 }

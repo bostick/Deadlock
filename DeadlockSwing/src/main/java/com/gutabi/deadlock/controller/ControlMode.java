@@ -6,8 +6,6 @@ public enum ControlMode {
 	
 	DRAFTING,
 	
-//	ZOOMING,
-	
 	RUNNING,
 	
 	PAUSED
