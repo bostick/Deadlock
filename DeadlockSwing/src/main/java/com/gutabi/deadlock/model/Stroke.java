@@ -8,31 +8,54 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.gutabi.deadlock.core.Point;
+import com.gutabi.deadlock.core.Vertex;
 
 @SuppressWarnings("static-access")
 public class Stroke {
 	
-	public static final double MOUSE_RADIUS_PIXELS = Math.sqrt(2 * 0.5 * 0.5) * MODEL.PIXELS_PER_METER;
-	public static final double MOUSE_RADIUS_METERS = Math.sqrt(2 * 0.5 * 0.5);
+//	public static final double MOUSE_RADIUS_METERS = 0.4 * Math.sqrt(2 * 0.5 * 0.5);
+//	public static final double MOUSE_RADIUS_PIXELS = MOUSE_RADIUS_METERS * MODEL.PIXELS_PER_METER;
 	
 	private Point lastPanelPoint;
 	
-	private List<Point> curPanelStroke = new ArrayList<Point>();
-	private List<Point> curWorldStroke = new ArrayList<Point>();
+	public List<Point> curPanelStroke = new ArrayList<Point>();
+	public List<Point> curWorldStroke = new ArrayList<Point>();
 	
 	private List<List<Point>> allPanelStrokes = new ArrayList<List<Point>>();
 
 	public void clear() {
 		lastPanelPoint = null;
-		curPanelStroke.clear();
+		
+		/*
+		 * used to just do clear() for the lists, but that lead to a subtle bug
+		 * the actual curWorldStroke reference was being stored inside of Edges
+		 * and were being used when recomputing Edge properties. So clearing it
+		 * obviously caused problems.
+		 * 
+		 * always better to treat lists as immutable as possible
+		 */
+		
+		curPanelStroke = null;
+		curWorldStroke = null;
 	}
 	
-	public double getRadius() {
-		return MOUSE_RADIUS_METERS;
+//	public double getRadius() {
+//		return MOUSE_RADIUS_METERS;
+//	}
+	
+	public void press(Point p) {
+//		lastPanelPoint = p;
+	}
+	
+	public void move(Point p) {
+//		lastPanelPoint = null;
 	}
 	
 	public void start(Point p) {
 		lastPanelPoint = p;
+		
+		curPanelStroke = new ArrayList<Point>();
+		curWorldStroke = new ArrayList<Point>();
 		
 		curPanelStroke.add(p);
 		curWorldStroke.add(VIEW.panelToWorld(p));
@@ -40,7 +63,7 @@ public class Stroke {
 		allPanelStrokes.add(curPanelStroke);
 	}
 	
-	public void move(Point p) {
+	public void drag(Point p) {
 		lastPanelPoint = p;
 		
 		curPanelStroke.add(p);
@@ -70,26 +93,27 @@ public class Stroke {
 	
 	public void paint(Graphics2D g2) {
 		
-		g2.setColor(Color.RED);
-		int size = curPanelStroke.size();
-		int[] xPoints = new int[size];
-		int[] yPoints = new int[size];
-		for (int i = 0; i < size; i++) {
-			Point p = curPanelStroke.get(i);
-			xPoints[i] = (int)p.x;
-			yPoints[i] = (int)p.y;
+		if (curPanelStroke != null) {
+			g2.setColor(Color.RED);
+			int size = curPanelStroke.size();
+			int[] xPoints = new int[size];
+			int[] yPoints = new int[size];
+			for (int i = 0; i < size; i++) {
+				Point p = curPanelStroke.get(i);
+				xPoints[i] = (int)p.x;
+				yPoints[i] = (int)p.y;
+			}
+			
+			g2.drawPolyline(xPoints, yPoints, size);
 		}
 		
-		g2.drawPolyline(xPoints, yPoints, size);
-		
-		g2.setColor(Color.RED);
 		if (lastPanelPoint != null) {
-			
+			g2.setColor(Color.RED);
 			g2.drawOval(
-					(int)(lastPanelPoint.x - MOUSE_RADIUS_PIXELS),
-					(int)(lastPanelPoint.y - MOUSE_RADIUS_PIXELS),
-					(int)(2 * MOUSE_RADIUS_PIXELS),
-					(int)(2 * MOUSE_RADIUS_PIXELS));
+					(int)(lastPanelPoint.x - (Vertex.INIT_VERTEX_RADIUS * MODEL.PIXELS_PER_METER)),
+					(int)(lastPanelPoint.y - (Vertex.INIT_VERTEX_RADIUS * MODEL.PIXELS_PER_METER)),
+					(int)(2 * (Vertex.INIT_VERTEX_RADIUS * MODEL.PIXELS_PER_METER)),
+					(int)(2 * (Vertex.INIT_VERTEX_RADIUS * MODEL.PIXELS_PER_METER)));
 			
 		}
 		

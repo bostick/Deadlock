@@ -21,7 +21,7 @@ import com.gutabi.deadlock.core.Point;
 public class TestDragging {
 	
 	public static void testPressed(Point p) throws Exception {
-		Point pp = p.add(OFFSET);
+		Point pp = p.plus(OFFSET);
 		CONTROLLER.mc.pressed(new InputEvent(VIEW.panel, pp));
 		CONTROLLER.queueAndWait(empty);
 		Thread.sleep(10);
@@ -29,7 +29,7 @@ public class TestDragging {
 	}
 	
 	public static void testDragged(Point p) throws Exception {
-		Point pp = p.add(OFFSET);
+		Point pp = p.plus(OFFSET);
 		CONTROLLER.mc.dragged(new InputEvent(VIEW.panel, pp));
 		CONTROLLER.queueAndWait(empty);
 		Thread.sleep(10);

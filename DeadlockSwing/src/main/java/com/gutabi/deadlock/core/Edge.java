@@ -49,6 +49,8 @@ public final class Edge extends Entity {
 	public Edge(Vertex start, Vertex end, Graph graph, List<Point> raw) {
 		super(graph);
 		
+		assert !raw.isEmpty();
+		
 		this.start = start;
 		this.end = end;
 		this.raw = raw;
@@ -78,6 +80,10 @@ public final class Edge extends Entity {
 	
 	public int hashCode() {
 		return hash;
+	}
+	
+	public String toString() {
+		return start.id + " " + end.id;
 	}
 	
 	
@@ -155,13 +161,22 @@ public final class Edge extends Entity {
 	
 	public void computeProperties() {
 		
+		assert !raw.isEmpty();
 		List<Point> adj = raw;
 		
-		adj = removeColinear(adj);
+		adj = removeDuplicates(adj);
 		
-		computeBorders(adj);
+		List<Point> newAdj = removeColinear(adj);
+		while (!newAdj.equals(adj)) {
+			adj = newAdj;
+			newAdj = removeColinear(adj);
+		}
+		adj = newAdj;
 		
-		adj = adjustToBorders(adj);
+		if (!standalone) {
+			computeBorders(adj);
+			adj = adjustToBorders(adj);
+		}
 		
 		skeleton = adj;
 		
@@ -187,6 +202,19 @@ public final class Edge extends Entity {
 		
 		computeLengths();
 		
+	}
+	
+	private static List<Point> removeDuplicates(List<Point> stroke) {
+		List<Point> adj = new ArrayList<Point>();
+		adj.add(stroke.get(0));
+		for (int i = 0; i < stroke.size()-1; i++) {
+			Point prev = stroke.get(i);
+			Point cur = stroke.get(i+1);
+			if (!cur.equals(prev)) {
+				adj.add(cur);
+			}
+		}
+		return adj;
 	}
 	
 	private static List<Point> removeColinear(List<Point> stroke) {
@@ -295,7 +323,7 @@ public final class Edge extends Entity {
 			}
 		}
 		
-		throw new IllegalArgumentException();
+		return Double.POSITIVE_INFINITY;
 	}
 	
 	/**
@@ -331,7 +359,7 @@ public final class Edge extends Entity {
 			}
 		}
 		
-		throw new IllegalArgumentException();
+		return Double.NEGATIVE_INFINITY;
 	}
 	
 	private void computeLengths() {

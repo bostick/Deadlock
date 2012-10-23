@@ -124,10 +124,7 @@ public class Vertex extends Entity {
 			
 			if (!tooClose) {
 				break loop;
-			}
-			
-			if (radius + 0.1 > maximumRadius) {
-				radius = maximumRadius;
+			} else if (radius + 0.1 > maximumRadius) {
 				break loop;
 			} else {
 				radius = radius + 0.1;

@@ -112,9 +112,9 @@ public class Graph {
 		return null;
 	}
 	
-	public List<Entity> hitTest(Point p, double radius) {
+	public Set<Entity> hitTest(Point p, double radius) {
 		assert p != null;
-		List<Entity> hits = new ArrayList<Entity>();
+		Set<Entity> hits = new HashSet<Entity>();
 		for (Vertex v : getAllVertices()) {
 			if (DMath.lessThanEquals(Point.distance(p, v.getPoint()), v.getRadius() + radius)) {
 				hits.add(v);
@@ -135,7 +135,7 @@ public class Graph {
 	/**
 	 * hit test with capsule
 	 */
-//	public List<Entity> hitTest(Point a, Point b, double radius) {
+//	public Set<Entity> hitTest(Point a, Point b, double radius) {
 //		
 //	}
 	

@@ -25,55 +25,70 @@ public class GraphController {
 	public void processNewStrokeTop(Stroke stroke) {
 		
 		Point startPoint = stroke.getWorldPoint(0);
-		GraphPosition startPos = graph.findClosestGraphPosition(startPoint, stroke.getRadius());
+		GraphPosition startPos = graph.findClosestGraphPosition(startPoint, Vertex.INIT_VERTEX_RADIUS);
+		
+		int i;
+		for (i = 1; i < stroke.size(); i++) {
+			Point b = stroke.getWorldPoint(i);
+			GraphPosition bPos = graph.findClosestGraphPosition(b, Vertex.INIT_VERTEX_RADIUS);
+			if (bPos != null) {
+				if (startPos != null && bPos.getEntity() == startPos.getEntity()) {
+					continue;
+				} else {
+					break;
+				}
+			}
+		}
+		if (i == stroke.size()) {
+			/*
+			 * we know that the loop reached the end
+			 */
+			i = stroke.size()-1;
+		}
+		
+		Point endPoint = stroke.getWorldPoint(i);
+		GraphPosition endPos = graph.findClosestGraphPosition(endPoint, Vertex.INIT_VERTEX_RADIUS);
+		
+		if (startPos == null && endPos == null) {
+			if (DMath.lessThanEquals(Point.distance(startPoint, endPoint), Vertex.INIT_VERTEX_RADIUS + Vertex.INIT_VERTEX_RADIUS)) {
+				/*
+				 * the two new vertices would be overlapping
+				 */
+				return;
+			}
+		}
+		
+		if (startPos == null) {
+			Intersection start = new Intersection(startPoint, graph);
+			graph.addIntersection(start);
+		}
+		
+		if (endPos == null) {
+			Intersection end = new Intersection(endPoint, graph);
+			graph.addIntersection(end);
+		}
+		
+		startPos = graph.findClosestGraphPosition(startPoint, Vertex.INIT_VERTEX_RADIUS);
+		assert startPos != null;
 		Vertex start;
-		
-		if (startPos != null) {
-			if (startPos instanceof VertexPosition) {
-				start = ((VertexPosition)startPos).getVertex();
-			} else {
-				start = graph.split((EdgePosition)startPos);
-			}
+		if (startPos instanceof EdgePosition) {
+			start = graph.split((EdgePosition)startPos);
 		} else {
-			start = new Intersection(startPoint, graph);
-			graph.addIntersection((Intersection)start);
+			start = ((VertexPosition)startPos).getVertex();
 		}
 		
-		
-		Point endPoint = stroke.getWorldPoint(stroke.size()-1);
-		GraphPosition endPos = graph.findClosestGraphPosition(endPoint, stroke.getRadius());
+		endPos = graph.findClosestGraphPosition(endPoint, Vertex.INIT_VERTEX_RADIUS);
+		assert endPos != null;
 		Vertex end;
-		
-		if (endPos != null) {
-			if (endPos instanceof VertexPosition) {
-				end = ((VertexPosition)endPos).getVertex();
-			} else {
-				end = graph.split((EdgePosition)endPos);
-			}
+		if (endPos instanceof EdgePosition) {
+			end = graph.split((EdgePosition)endPos);
 		} else {
-			end = new Intersection(endPoint, graph);
-			graph.addIntersection((Intersection)end);
+			end = ((VertexPosition)endPos).getVertex();
 		}
 		
-		graph.createEdgeTop(start, end, stroke.getWorldPoints());
+		graph.createEdgeTop(start, end, stroke.getWorldPoints().subList(0, i+1));
 		
 		postTop();
-		
-		
-		
-//		for (int i = 0; i < stroke.size()-1; i++) {
-//			Point a = stroke.get(i);
-//			Point b = stroke.get(i+1);
-//			find next index and param where exiting start (and completely free)
-//			
-//			find next index and param where entering next event
-//			find next index and param where exiting that event (and completely free)
-//			
-//			find next index and param where entering next event
-//			find next index and param where exiting that event (and completely free)
-//			
-//			find next index and param where entering end
-//		}
 		
 	}
 	
