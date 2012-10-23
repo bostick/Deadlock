@@ -126,6 +126,13 @@ public final class Edge extends Entity {
 	}
 	
 	
+	public void preStep(double t) {
+		;
+	}
+	
+	public boolean postStep() {
+		return true;
+	}
 	
 	
 	

@@ -1,15 +1,31 @@
 package com.gutabi.deadlock.core;
 
+import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
+import static com.gutabi.deadlock.view.DeadlockView.VIEW;
+
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.gutabi.deadlock.core.path.GraphPositionPath;
+import com.gutabi.deadlock.model.Car;
+import com.gutabi.deadlock.model.FastCar;
+import com.gutabi.deadlock.model.NormalCar;
+import com.gutabi.deadlock.model.RandomCar;
 
+@SuppressWarnings("static-access")
 public class Source extends Vertex {
 	
+	/*
+	 * spawn cars every SPAWN_FREQUENCY seconds
+	 * -1 means no spawning
+	 */
+	public static double SPAWN_FREQUENCY_SECONDS = 10.0;
+	
 	public Sink matchingSink;
-	GraphPositionPath pathToMatchingSink;
+	GraphPositionPath shortestPathToMatchingSink;
+	
+	public double lastSpawnTime;
 	
 	public Source(Point p, Graph graph) {
 		super(p, graph);
@@ -19,15 +35,103 @@ public class Source extends Vertex {
 	
 	public void preStart() {
 		
+		assert matchingSink != null;
+		
 		List<Vertex> poss = new ArrayList<Vertex>();
 		poss.add(this);
 		poss.add(matchingSink);
-		pathToMatchingSink = GraphPositionPath.createPathFromSkeleton(poss, graph);
+		shortestPathToMatchingSink = GraphPositionPath.createShortestPathFromSkeleton(poss, graph);
 		
+		lastSpawnTime = -1;
 	}
 	
-	public GraphPositionPath getPathToMatchingSink() {
-		return pathToMatchingSink;
+	public GraphPositionPath getShortestPathToMatchingSink() {
+		return shortestPathToMatchingSink;
+	}
+	
+	public void preStep(double t) {
+		
+		if (SPAWN_FREQUENCY_SECONDS > 0 && (t == 0 || (t - lastSpawnTime) >= SPAWN_FREQUENCY_SECONDS)) {
+			if (active()) {
+				spawnNewCar(t);
+			}
+		}
+	}
+	
+	private void spawnNewCar(double t) {
+		
+		Car c = createNewCar();
+		
+		if (c != null) {
+			c.startingTime = t;
+			synchronized (MODEL) {
+				MODEL.world.cars.add(c);
+			}
+		}
+		
+		lastSpawnTime = t;
+	}
+	
+	private boolean active() {
+		
+		double d = MODEL.world.graph.distanceBetweenVertices(this, matchingSink);
+		
+		if (d == Double.POSITIVE_INFINITY) {
+			return false;
+		}
+		
+		synchronized (MODEL) {
+			for (Car c : MODEL.world.cars) {
+				double dist = c.distanceTo(p);
+				if (DMath.lessThanEquals(dist, c.length)) {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+	
+	@SuppressWarnings("rawtypes")
+	private Car createNewCar() {
+		
+		boolean normal = VIEW.controlPanel.normalCarButton.isSelected();
+		boolean fast = VIEW.controlPanel.fastCarButton.isSelected();
+		boolean random = VIEW.controlPanel.randomCarButton.isSelected();
+		
+		List<Class> l = new ArrayList<Class>();
+		if (normal) {
+			l.add(NormalCar.class);
+		}
+		if (fast) {
+			l.add(FastCar.class);
+		}
+		if (random) {
+			l.add(RandomCar.class);
+		}
+		
+		if (l.isEmpty()) {
+			return null;
+		}
+		
+		int r = MODEL.world.RANDOM.nextInt(l.size());
+		
+		Class c = l.get(r);
+		
+		if (c == NormalCar.class) {
+			return new NormalCar(this);
+		} else if (c == FastCar.class) {
+			return new FastCar(this);
+		} else if (c == RandomCar.class) {
+			return new RandomCar(this);
+		} else {
+			throw new AssertionError();
+		}
+		
+	}
+
+	
+	public boolean postStep() {
+		return true;
 	}
 	
 }

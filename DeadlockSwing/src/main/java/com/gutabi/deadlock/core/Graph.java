@@ -1,5 +1,7 @@
 package com.gutabi.deadlock.core;
 
+import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -64,7 +66,7 @@ public class Graph {
 	/**
 	 * returns the next choice to make for the shortest path from start to end
 	 */
-	public Vertex shortestPathChoice(final Vertex start, Vertex end) {
+	public Vertex shortestPathChoice(Vertex start, Vertex end) {
 		
 		int sid = start.id;
 		int eid = end.id;
@@ -82,12 +84,63 @@ public class Graph {
 		return shortestPathChoice(start, n);
 	}
 	
-	public double distanceBetweenVertices(Vertex a, Vertex b) {
-		return distances[a.id][b.id];
+	@SuppressWarnings("static-access")
+	public Vertex randomPathChoice(List<GraphPosition> acc, Vertex start, Vertex end) {
+		
+		List<Edge> eds = new ArrayList<Edge>(start.getEdges());
+		
+		Edge prev = null;
+		if (acc.size() >= 2) {
+			prev = ((EdgePosition)acc.get(acc.size()-2)).getEdge();
+		}
+		
+		for (Edge e : start.getEdges()) {
+			if (prev != null && prev == e) {
+				eds.remove(e);
+			} else {
+				
+				Vertex other;
+				if (start == e.getStart()) {
+					other = e.getEnd();
+				} else {
+					other = e.getStart();
+				}
+				
+				if (other != end && other.getEdges().size() == 1) {
+					eds.remove(e);
+				}
+			}
+		}
+		
+//		if (eds.size() >= 2 && acc.size() >= 2) {
+//			assert acc.get(acc.size()-1) instanceof VertexPosition;
+//			assert acc.get(acc.size()-2) instanceof EdgePosition;
+//			
+//			eds.remove(((EdgePosition)acc.get(acc.size()-2)).getEdge());
+//		}
+		
+//		eds.remove(prev);
+		
+		int n = eds.size();
+		
+		Vertex v;
+		Edge e;
+		
+		int r = MODEL.world.RANDOM.nextInt(n);
+		
+		e = eds.get(r);
+		
+		if (start == e.getStart()) {
+			v = e.getEnd();
+		} else {
+			v = e.getStart();
+		}
+		
+		return v;
 	}
 	
-	public boolean areNeighbors(Edge a, Edge b) {
-		return neighbors[a.id][b.id];
+	public double distanceBetweenVertices(Vertex a, Vertex b) {
+		return distances[a.id][b.id];
 	}
 	
 	/**
@@ -430,7 +483,6 @@ public class Graph {
 	
 	double[][] distances;
 	Vertex[][] nextHighest;
-	boolean[][] neighbors;
 	
 	private void initializeMatrices() {
 		/*
@@ -441,7 +493,6 @@ public class Graph {
 		
 		distances = new double[vertexCount][vertexCount];
 		nextHighest = new Vertex[vertexCount][vertexCount];
-		neighbors = new boolean[edges.size()][edges.size()];
 		
 		/*
 		 * initialize
@@ -452,10 +503,6 @@ public class Graph {
 		for (int i = 0; i < distances.length; i++) {
 			distances[i][i] = 0.0;
 		}
-		for (int i = 0; i < neighbors.length; i++) {
-			Arrays.fill(neighbors[i], false);
-		}
-		
 		
 		/*
 		 * iterate and find shorter distances via edges
@@ -470,11 +517,6 @@ public class Graph {
 				distances[e.getStart().id][e.getEnd().id] = l;
 		    	distances[e.getEnd().id][e.getStart().id] = l;
 			}
-			
-			/*
-			 * initialize neighbors
-			 */
-			neighbors[e.id][e.id] = true;
 		}
 		
 		for (int k = 0; k < vertexCount; k++){
@@ -484,40 +526,6 @@ public class Graph {
 						distances[i][j] = distances[i][k] + distances[k][j];
 						nextHighest[i][j] = vertexIDs[k];
 					}
-				}
-			}
-		}
-		
-		for (Vertex v : sources) {
-			List<Edge> eds = v.getEdges();
-			for (int i = 0; i < eds.size()-1; i++) {
-				for (int j = i+1; j < eds.size(); j++) {
-					Edge ei = eds.get(i);
-					Edge ej = eds.get(j);
-					neighbors[ei.id][ej.id] = true;
-					neighbors[ej.id][ei.id] = true;
-				}
-			}
-		}
-		for (Vertex v : sinks) {
-			List<Edge> eds = v.getEdges();
-			for (int i = 0; i < eds.size()-1; i++) {
-				for (int j = i+1; j < eds.size(); j++) {
-					Edge ei = eds.get(i);
-					Edge ej = eds.get(j);
-					neighbors[ei.id][ej.id] = true;
-					neighbors[ej.id][ei.id] = true;
-				}
-			}
-		}
-		for (Vertex v : intersections) {
-			List<Edge> eds = v.getEdges();
-			for (int i = 0; i < eds.size()-1; i++) {
-				for (int j = i+1; j < eds.size(); j++) {
-					Edge ei = eds.get(i);
-					Edge ej = eds.get(j);
-					neighbors[ei.id][ej.id] = true;
-					neighbors[ej.id][ei.id] = true;
 				}
 			}
 		}

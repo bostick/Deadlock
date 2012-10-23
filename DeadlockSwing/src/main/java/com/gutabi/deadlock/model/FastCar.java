@@ -17,6 +17,8 @@ public class FastCar extends Car {
 	
 	public FastCar(Source s) {
 		super(s);
+		overallPath = s.getShortestPathToMatchingSink();
+		computeStarting();
 	}
 	
 	@Override
@@ -27,4 +29,5 @@ public class FastCar extends Car {
 	public double getMetersPerSecond() {
 		return speed;
 	}
+	
 }

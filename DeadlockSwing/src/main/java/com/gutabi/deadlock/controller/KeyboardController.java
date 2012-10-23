@@ -18,14 +18,14 @@ public class KeyboardController {
 		VIEW.panel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("DELETE"), "deleteKeyAction");
 		VIEW.panel.getActionMap().put("deleteKeyAction", deleteKeyAction);
 		
-		VIEW.panel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("TAB"), "tabKeyAction");
-		VIEW.panel.getActionMap().put("tabKeyAction", tabKeyAction);
-		
-		VIEW.panel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("control Z"), "undoKeyAction");
-		VIEW.panel.getActionMap().put("undoKeyAction", undoKeyAction);
-		
-		VIEW.panel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("control Y"), "redoKeyAction");
-		VIEW.panel.getActionMap().put("redoKeyAction", redoKeyAction);
+//		VIEW.panel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("TAB"), "tabKeyAction");
+//		VIEW.panel.getActionMap().put("tabKeyAction", tabKeyAction);
+//		
+//		VIEW.panel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("control Z"), "undoKeyAction");
+//		VIEW.panel.getActionMap().put("undoKeyAction", undoKeyAction);
+//		
+//		VIEW.panel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("control Y"), "redoKeyAction");
+//		VIEW.panel.getActionMap().put("redoKeyAction", redoKeyAction);
 		
 	}
 	
@@ -45,52 +45,52 @@ public class KeyboardController {
 		}
 	};
 	
-	@SuppressWarnings("serial")
-	public Action tabKeyAction = new AbstractAction() {
-		@Override
-		public void actionPerformed(ActionEvent blah) {
-			
-			CONTROLLER.queue(new Runnable() {
-				public void run() {
-					CONTROLLER.tabKey();
-					MODEL.world.renderBackground();
-					VIEW.repaint();
-				}
-			});
-			
-		}
-	};
-	
-	@SuppressWarnings("serial")
-	public Action undoKeyAction = new AbstractAction() {
-		@Override
-		public void actionPerformed(ActionEvent blah) {
-			
-			CONTROLLER.queue(new Runnable() {
-				public void run() {
-					CONTROLLER.undoKey();
-					MODEL.world.renderBackground();
-					VIEW.repaint();
-				}
-			});
-			
-		}
-	};
-	
-	@SuppressWarnings("serial")
-	public Action redoKeyAction = new AbstractAction() {
-		@Override
-		public void actionPerformed(ActionEvent blah) {
-			
-			CONTROLLER.queue(new Runnable() {
-				public void run() {
-					CONTROLLER.redoKey();
-					MODEL.world.renderBackground();
-					VIEW.repaint();
-				}
-			});
-			
-		}
-	};
+//	@SuppressWarnings("serial")
+//	public Action tabKeyAction = new AbstractAction() {
+//		@Override
+//		public void actionPerformed(ActionEvent blah) {
+//			
+//			CONTROLLER.queue(new Runnable() {
+//				public void run() {
+//					CONTROLLER.tabKey();
+//					MODEL.world.renderBackground();
+//					VIEW.repaint();
+//				}
+//			});
+//			
+//		}
+//	};
+//	
+//	@SuppressWarnings("serial")
+//	public Action undoKeyAction = new AbstractAction() {
+//		@Override
+//		public void actionPerformed(ActionEvent blah) {
+//			
+//			CONTROLLER.queue(new Runnable() {
+//				public void run() {
+//					CONTROLLER.undoKey();
+//					MODEL.world.renderBackground();
+//					VIEW.repaint();
+//				}
+//			});
+//			
+//		}
+//	};
+//	
+//	@SuppressWarnings("serial")
+//	public Action redoKeyAction = new AbstractAction() {
+//		@Override
+//		public void actionPerformed(ActionEvent blah) {
+//			
+//			CONTROLLER.queue(new Runnable() {
+//				public void run() {
+//					CONTROLLER.redoKey();
+//					MODEL.world.renderBackground();
+//					VIEW.repaint();
+//				}
+//			});
+//			
+//		}
+//	};
 	
 }

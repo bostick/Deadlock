@@ -39,7 +39,7 @@ public abstract class Car extends Entity {
 	
 	public Source source;
 	
-	private GraphPositionPath overallPath;
+	protected GraphPositionPath overallPath;
 	
 	public final int id;
 	
@@ -73,18 +73,26 @@ public abstract class Car extends Entity {
 		
 		source = s;
 		
-		overallPath = s.getPathToMatchingSink();
+		color = Color.BLUE;
+		hiliteColor = Color.BLUE;
 		
-		GraphPosition closestGraphPos = overallPath.getGraphPosition(0);
-		startPoint = closestGraphPos.getPoint();
-		
-		
-		GraphPositionPathPosition overallPos = overallPath.findClosestGraphPositionPathPosition(startPoint);
+		length = CAR_LENGTH;
 		
 		p1 = new Point(CAR_LENGTH / 2, CAR_LENGTH / 4);
 		p2 = new Point(CAR_LENGTH / 2, -CAR_LENGTH / 4);
 		p3 = new Point(-CAR_LENGTH / 2, -CAR_LENGTH / 4);
 		p4 = new Point(-CAR_LENGTH / 2, CAR_LENGTH / 4);
+		
+		computeArea();
+		
+	}
+	
+	protected void computeStarting() {
+		
+		GraphPosition closestGraphPos = overallPath.getGraphPosition(0);
+		startPoint = closestGraphPos.getPoint();
+		
+		GraphPositionPathPosition overallPos = overallPath.findClosestGraphPositionPathPosition(startPoint);
 		
 		STGraphPositionPathPositionPath nextPlannedPath = STGraphPositionPathPositionPath.advanceOneTimeStep(overallPos, getMetersPerSecond() * MODEL.dt);
 		
@@ -93,13 +101,6 @@ public abstract class Car extends Entity {
 		Point nextDTGoalPoint = nextRealPath.end.getSpace();
 		
 		startHeading = Math.atan2(nextDTGoalPoint.y-startPoint.y, nextDTGoalPoint.x-startPoint.x);
-		
-		color = Color.BLUE;
-		hiliteColor = Color.BLUE;
-		
-		length = CAR_LENGTH;
-		
-		computeArea();
 		
 		b2dInit();
 		
@@ -126,7 +127,7 @@ public abstract class Car extends Entity {
 		
 	}
 	
-	public void b2dInit() {
+	private void b2dInit() {
 		BodyDef bodyDef = new BodyDef();
 		bodyDef.type = BodyType.DYNAMIC;
 		bodyDef.position.set((float)startPoint.x, (float)startPoint.y);
@@ -188,7 +189,7 @@ public abstract class Car extends Entity {
 		return Point.point(b2dTrans.transform(p.point2D(), null));
 	}
 	
-	public void preStep() {
+	public void preStep(double t) {
 		
 		Entity e1 = graph.hitTest(carToWorld(p1));
 		Entity e2 = graph.hitTest(carToWorld(p2));

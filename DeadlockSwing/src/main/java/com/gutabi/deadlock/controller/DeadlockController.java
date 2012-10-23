@@ -94,7 +94,7 @@ public class DeadlockController implements ActionListener {
 			lastPressPanelPoint = p;
 			lastPressTime = System.currentTimeMillis();
 			
-//			MODEL.stroke.press(p);
+			MODEL.stroke.press(p);
 			
 			lastDragPanelPoint = null;
 			lastDragTime = -1;
@@ -141,12 +141,15 @@ public class DeadlockController implements ActionListener {
 				break;
 			}
 			case DRAFTING:
+				
 				draftMove(lastDragPanelPoint);
 				//VIEW.renderBackground();
 				VIEW.repaint();
 				break;
+				
 			case RUNNING:
 			case PAUSED:
+			case MENU:
 				;
 				break;
 			}
@@ -173,7 +176,22 @@ public class DeadlockController implements ActionListener {
 				
 				if (lastReleaseTime - lastPressTime < 500 && lastDragPanelPoint == null) {
 					// click
-					;
+					
+					Point w = VIEW.panelToWorld(lastPressPanelPoint);
+					
+					Entity hit = MODEL.world.hitTest(w);
+					
+					if (hit != null) {
+						
+						if (hit instanceof Vertex) {
+							
+							((Vertex) hit).getEdges();
+							
+						} else if (hit instanceof Edge) {
+							
+						}
+						
+					}
 				}
 				
 				break;
@@ -186,6 +204,14 @@ public class DeadlockController implements ActionListener {
 			case RUNNING:
 			case PAUSED:
 				;
+				break;
+			case MENU:
+				
+				if (lastReleaseTime - lastPressTime < 500 && lastDragPanelPoint == null) {
+					// click
+					
+				}
+				
 				break;
 			}
 			
@@ -213,13 +239,14 @@ public class DeadlockController implements ActionListener {
 				Entity closest = MODEL.world.hitTest(worldPoint);
 				MODEL.hilited = closest;
 				
-//				MODEL.stroke.move(p);
+				MODEL.stroke.move(p);
 				
 				VIEW.repaint();
 				
 				break;
 			}
 			case DRAFTING:
+			case MENU:
 				;
 				break;
 			}
@@ -265,63 +292,63 @@ public class DeadlockController implements ActionListener {
 		
 	}
 	
-	public void tabKey() {
-		
-	}
+//	public void tabKey() {
+//		
+//	}
 	
-	public void undoKey() {
-		
-		switch (MODEL.getMode()) {
-		case IDLE:
-			
-			break;
-		case DRAFTING:
-			;
-			break;
-		case RUNNING:
-		case PAUSED:
-			;
-			break;
-		}
-		
-	}
+//	public void undoKey() {
+//		
+//		switch (MODEL.getMode()) {
+//		case IDLE:
+//			
+//			break;
+//		case DRAFTING:
+//			;
+//			break;
+//		case RUNNING:
+//		case PAUSED:
+//			;
+//			break;
+//		}
+//		
+//	}
 	
-	public void redoKey() {
-		
-		switch (MODEL.getMode()) {
-		case IDLE:
-			
-			break;
-		case DRAFTING:
-			;
-			break;
-		case RUNNING:
-		case PAUSED:
-			;
-			break;
-		}
-		
-	}
+//	public void redoKey() {
+//		
+//		switch (MODEL.getMode()) {
+//		case IDLE:
+//			
+//			break;
+//		case DRAFTING:
+//			;
+//			break;
+//		case RUNNING:
+//		case PAUSED:
+//			;
+//			break;
+//		}
+//		
+//	}
 	
-	public void insertKey() {
-		
-		switch (MODEL.getMode()) {
-		case IDLE:
-			
-			MODEL.world.renderBackground();
-			VIEW.repaint();
-			
-			break;
-		case DRAFTING:
-			;
-			break;
-		case RUNNING:
-		case PAUSED:
-			;
-			break;
-		}
-		
-	}
+//	public void insertKey() {
+//		
+//		switch (MODEL.getMode()) {
+//		case IDLE:
+//			
+//			MODEL.world.renderBackground();
+//			VIEW.repaint();
+//			
+//			break;
+//		case DRAFTING:
+//			;
+//			break;
+//		case RUNNING:
+//		case PAUSED:
+//			;
+//			break;
+//		}
+//		
+//	}
 
 	
 	

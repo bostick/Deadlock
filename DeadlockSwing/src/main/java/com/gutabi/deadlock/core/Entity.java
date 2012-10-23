@@ -16,6 +16,9 @@ public abstract class Entity {
 	
 	public abstract boolean hitTest(Point p);
 	
+	public abstract void preStep(double t);
+	public abstract boolean postStep();
+	
 	protected Color color;
 	protected Color hiliteColor;
 	

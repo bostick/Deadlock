@@ -13,6 +13,8 @@ public abstract class GraphPosition extends Position {
 		this.graph = graph;
 	}
 	
+	public abstract Entity getEntity();
+	
 	public abstract double distanceTo(GraphPosition b);
 	
 	public abstract boolean isBound();

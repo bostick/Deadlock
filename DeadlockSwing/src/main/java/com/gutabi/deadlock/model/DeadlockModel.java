@@ -28,6 +28,8 @@ public class DeadlockModel {
 	
 	public final Object pauseLock = new Object();
 	
+	public Stats stats;
+	
 	public DeadlockModel() {
 		
 	}
@@ -39,6 +41,7 @@ public class DeadlockModel {
 		
 		stroke = new Stroke();
 		
+		stats = new Stats();
 	}
 	
 	public void clear() {

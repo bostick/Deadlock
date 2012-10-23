@@ -19,6 +19,8 @@ public class ControlPanel extends JPanel {
 	
 	public JCheckBox normalCarButton;
 	public JCheckBox fastCarButton;
+	public JCheckBox randomCarButton;
+	
 	public JButton startButton;
 	public JButton stopButton;
 	
@@ -52,10 +54,17 @@ public class ControlPanel extends JPanel {
 		hBox.add(Box.createHorizontalGlue());
 		verticalBox.add(hBox);
 		
-		hBox = Box.createHorizontalBox();
 		fastCarButton = new JCheckBox("Fast Cars");
 		fastCarButton.setSelected(true);
+		hBox = Box.createHorizontalBox();
 		hBox.add(fastCarButton);
+		hBox.add(Box.createHorizontalGlue());
+		verticalBox.add(hBox);
+		
+		randomCarButton = new JCheckBox("Random Cars");
+		randomCarButton.setSelected(true);
+		hBox = Box.createHorizontalBox();
+		hBox.add(randomCarButton);
 		hBox.add(Box.createHorizontalGlue());
 		verticalBox.add(hBox);
 		

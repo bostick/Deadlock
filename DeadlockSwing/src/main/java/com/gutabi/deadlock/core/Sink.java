@@ -12,4 +12,12 @@ public class Sink extends Vertex {
 		hiliteColor = new Color(255-color.getRed(), 255-color.getGreen(), 255-color.getBlue());
 	}
 	
+	public void preStep(double t) {
+		;
+	}
+	
+	public boolean postStep() {
+		return true;
+	}
+	
 }

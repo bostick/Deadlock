@@ -44,11 +44,11 @@ public class Stroke {
 //	}
 	
 	public void press(Point p) {
-//		lastPanelPoint = p;
+		lastPanelPoint = p;
 	}
 	
 	public void move(Point p) {
-//		lastPanelPoint = null;
+		lastPanelPoint = null;
 	}
 	
 	public void start(Point p) {
@@ -93,8 +93,10 @@ public class Stroke {
 	
 	public void paint(Graphics2D g2) {
 		
-		if (curPanelStroke != null) {
+		if (curPanelStroke != null && !curPanelStroke.isEmpty()) {
+			
 			g2.setColor(Color.RED);
+			
 			int size = curPanelStroke.size();
 			int[] xPoints = new int[size];
 			int[] yPoints = new int[size];
@@ -105,6 +107,13 @@ public class Stroke {
 			}
 			
 			g2.drawPolyline(xPoints, yPoints, size);
+			
+			Point start = curPanelStroke.get(0);
+			g2.drawOval(
+					(int)(start.x - (Vertex.INIT_VERTEX_RADIUS * MODEL.PIXELS_PER_METER)),
+					(int)(start.y - (Vertex.INIT_VERTEX_RADIUS * MODEL.PIXELS_PER_METER)),
+					(int)(2 * (Vertex.INIT_VERTEX_RADIUS * MODEL.PIXELS_PER_METER)),
+					(int)(2 * (Vertex.INIT_VERTEX_RADIUS * MODEL.PIXELS_PER_METER)));
 		}
 		
 		if (lastPanelPoint != null) {

@@ -49,13 +49,11 @@ public class GraphController {
 		Point endPoint = stroke.getWorldPoint(i);
 		GraphPosition endPos = graph.findClosestGraphPosition(endPoint, Vertex.INIT_VERTEX_RADIUS);
 		
-		if (startPos == null && endPos == null) {
-			if (DMath.lessThanEquals(Point.distance(startPoint, endPoint), Vertex.INIT_VERTEX_RADIUS + Vertex.INIT_VERTEX_RADIUS)) {
-				/*
-				 * the two new vertices would be overlapping
-				 */
-				return;
-			}
+		if (DMath.lessThanEquals(Point.distance(startPoint, endPoint), Vertex.INIT_VERTEX_RADIUS + Vertex.INIT_VERTEX_RADIUS)) {
+			/*
+			 * the two new vertices would be overlapping
+			 */
+			return;
 		}
 		
 		if (startPos == null) {

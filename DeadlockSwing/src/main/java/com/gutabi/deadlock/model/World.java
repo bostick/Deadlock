@@ -1,9 +1,7 @@
 package com.gutabi.deadlock.model;
 
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
-import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
@@ -15,14 +13,13 @@ import java.util.Random;
 
 import javax.imageio.ImageIO;
 
-import org.apache.log4j.Logger;
 import org.jbox2d.common.Vec2;
 
-import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Edge;
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Graph;
 import com.gutabi.deadlock.core.GraphController;
+import com.gutabi.deadlock.core.Intersection;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.Sink;
 import com.gutabi.deadlock.core.Source;
@@ -40,32 +37,26 @@ public class World {
 	public static final double WORLD_WIDTH = 16.0;
 	public static final double WORLD_HEIGHT = WORLD_WIDTH;
 	
-	/*
-	 * spawn cars every SPAWN_FREQUENCY seconds
-	 * -1 means no spawning
-	 */
-	public static double SPAWN_FREQUENCY_SECONDS = 3.0;
-	
 	public static Random RANDOM = new Random(1);
-	
 	
 	/*
 	 * simulation state
 	 */
 	public double t;
-	public double lastSpawnTime;
 	
 	
-	private Graph graph;
-	private GraphController gc;
+	public Graph graph;
+	public GraphController gc;
 	
-	private List<Car> cars = new ArrayList<Car>();
+	public List<Car> cars = new ArrayList<Car>();
 	
 	org.jbox2d.dynamics.World b2dWorld;
 	private CarEventListener listener;
 	
 	public static BufferedImage normalCar;
 	public static BufferedImage fastCar;
+	public static BufferedImage randomCar;
+	public static BufferedImage stopSign;
 	private static BufferedImage tiledGrass;
 	
 	private BufferedImage backgroundImage;
@@ -73,7 +64,7 @@ public class World {
 	public Point renderingUpperLeft;
 	public Point renderingBottomRight;
 	
-	private static Logger logger = Logger.getLogger(World.class);
+//	private static Logger logger = Logger.getLogger(World.class);
 	
 	public World() {
 		
@@ -92,6 +83,18 @@ public class World {
 				fastCar,
 				(int)(Car.CAR_LENGTH * MODEL.PIXELS_PER_METER),
 				(int)(Car.CAR_LENGTH * MODEL.PIXELS_PER_METER), true);
+		
+		randomCar = ImageIO.read(new File("media\\randomCar.png"));
+		randomCar = ImageUtils.createResizedCopy(
+				randomCar,
+				(int)(Car.CAR_LENGTH * MODEL.PIXELS_PER_METER),
+				(int)(Car.CAR_LENGTH * MODEL.PIXELS_PER_METER), true);
+		
+		stopSign = ImageIO.read(new File("media\\stop.png"));
+		stopSign = ImageUtils.createResizedCopy(
+				stopSign,
+				(int)(Intersection.STOPSIGN_SIZE),
+				(int)(Intersection.STOPSIGN_SIZE), true);
 		
 		BufferedImage grass = ImageIO.read(new File("media\\grass.png"));
 		
@@ -231,8 +234,6 @@ public class World {
 		graph.preStart();
 		
 		t = 0;
-		lastSpawnTime = -1;
-		
 	}
 	
 	/*
@@ -267,43 +268,16 @@ public class World {
 	}
 	
 	private void preStep() {
-		if (SPAWN_FREQUENCY_SECONDS > 0 && (t == 0 || (t - lastSpawnTime) >= SPAWN_FREQUENCY_SECONDS)) {
-			spawnNewCars();
+		
+		for (Vertex v : graph.getAllVertices()) {
+			v.preStep(t);
 		}
+		
 		synchronized (MODEL) {
 			for (Car c : cars) {
-				c.preStep();
+				c.preStep(t);
 			}
 		}
-	}
-	
-	private void spawnNewCars() {
-		
-		List<Source> sources = activeSources();
-		
-		List<Car> newCars = new ArrayList<Car>();
-		
-		int n = sources.size();
-		
-		for (int i = 0; i < n; i++) {
-			
-			Car c = MODEL.world.createNewCar(sources.get(i));
-			
-			if (c != null) {
-				
-				c.startingTime = t;
-				
-				newCars.add(c);
-				
-			}
-			
-		}
-		
-		synchronized (MODEL) {
-			cars.addAll(newCars);
-		}
-		
-		lastSpawnTime = t;
 	}
 	
 	private void postStep() {
@@ -327,63 +301,6 @@ public class World {
 		
 	}
 	
-	private List<Source> activeSources() {
-		
-		List<Source> sources = new ArrayList<Source>();
-		for (Source s : graph.getSources()) {
-			if (s.getPathToMatchingSink() != null) {
-				sources.add(s);
-			}
-		}
-		
-		List<Source> toRemove = new ArrayList<Source>();
-		
-		/*
-		 * if only moving cars are blocking a source, then a car will be spawned on the next spawn step that there are no blocking cars 
-		 */
-		synchronized (MODEL) {
-			for (Car c : cars) {
-				for (Source s : sources) {
-					double dist = c.distanceTo(s.getPoint());
-					if (DMath.lessThanEquals(dist, c.length)) {
-						toRemove.add(s);
-					}
-				}
-			}
-		}
-		
-		for (Vertex v : toRemove) {
-			sources.remove(v);
-		}
-		
-		return sources;
-		
-	}
-	
-	private Car createNewCar(Source s) {
-		
-		boolean normal = VIEW.controlPanel.normalCarButton.isSelected();
-		boolean fast = VIEW.controlPanel.fastCarButton.isSelected();
-		
-		if (normal && fast) {
-			
-			int r = RANDOM.nextInt(2);
-			if (r == 0) {
-				return new NormalCar(s);
-			} else {
-				return new FastCar(s);
-			}
-			
-		} else if (normal) {
-			return new NormalCar(s);
-		} else if (fast) {
-			return new FastCar(s);
-		} else {
-			return null;
-		}
-		
-	}
-	
 	/**
 	 * the next choice to make
 	 */
@@ -394,11 +311,6 @@ public class World {
 	public double distanceBetweenVertices(Vertex start, Vertex end) {
 		return graph.distanceBetweenVertices(start, end);
 	}
-	
-	public boolean areNeighbors(Edge a, Edge b) {
-		return graph.areNeighbors(a, b);
-	}
-	
 	
 	
 	
@@ -432,32 +344,12 @@ public class World {
 		paintScene(g2);
 	}
 	
-	long lastTime;
-	long curTime;
-	int frameCount;
-	int fps;
-	
 	private void paintScene(Graphics2D g2) {
 		
-		frameCount++;
-		
-		logger.debug("draw scene " + frameCount);
-		
-		curTime = System.currentTimeMillis();
-		
-		if (curTime > lastTime + 1000) {
-			fps = frameCount;
-			frameCount = 0;
-			lastTime = curTime;
-		}
-		
 		switch (MODEL.getMode()) {
-		case DRAFTING: {
-			
-			
-			
+		case DRAFTING:
+		case MENU:
 			break;
-		}
 		case IDLE:
 		case RUNNING:
 		case PAUSED: {
@@ -481,10 +373,6 @@ public class World {
 			
 			break;
 		}
-		}
-		
-		if (MODEL.FPS_DRAW) {
-			paintFPS(g2);
 		}
 		
 	}
@@ -548,31 +436,6 @@ public class World {
 				e.paintBorders(backgroundImageG2);
 			}
 		}
-		
-	}
-	
-	/**
-	 * 
-	 * @param g2
-	 */
-	public void paintFPS(Graphics2D g2) {
-		
-		g2.setColor(Color.WHITE);
-		
-		Point p = new Point(1, 1).multiply(MODEL.PIXELS_PER_METER);
-		g2.drawString("FPS: " + fps, (int)p.x, (int)p.y);
-		
-		p = new Point(1, 2).multiply(MODEL.PIXELS_PER_METER);
-		g2.drawString("time: " + t, (int)p.x, (int)p.y);
-		
-		p = new Point(1, 3).multiply(MODEL.PIXELS_PER_METER);		
-		g2.drawString("body count: " + b2dWorld.getBodyCount(), (int)p.x, (int)p.y);
-		
-		p = new Point(1, 4).multiply(MODEL.PIXELS_PER_METER);		
-		g2.drawString("edge count: " + graph.getEdges().size(), (int)p.x, (int)p.y);
-		
-		p = new Point(1, 5).multiply(MODEL.PIXELS_PER_METER);		
-		g2.drawString("vertex count: " + graph.getAllVertices().size(), (int)p.x, (int)p.y);
 		
 	}
 	

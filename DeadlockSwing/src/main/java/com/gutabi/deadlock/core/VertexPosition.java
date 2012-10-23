@@ -13,8 +13,16 @@ public class VertexPosition extends GraphPosition {
 		return v;
 	}
 	
+	public Entity getEntity() {
+		return v;
+	}
+	
 	public boolean isBound() {
 		return true;
+	}
+	
+	public String toString() {
+		return v.toString();
 	}
 	
 	public boolean equalsP(GraphPosition o) {

@@ -14,7 +14,7 @@ import java.util.List;
 import com.gutabi.deadlock.utils.Java2DUtils;
 
 @SuppressWarnings("static-access")
-public class Vertex extends Entity {
+public abstract class Vertex extends Entity {
 	
 	public final Point p;
 	
@@ -53,7 +53,7 @@ public class Vertex extends Entity {
 	}
 	
 	public String toString() {
-		return "V " + p;
+		return "V " + p + " " + id;
 	}
 	
 	public double getRadius() {

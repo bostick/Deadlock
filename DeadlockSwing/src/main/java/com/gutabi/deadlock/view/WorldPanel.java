@@ -12,7 +12,7 @@ import javax.swing.JPanel;
 
 import org.apache.log4j.Logger;
 
-@SuppressWarnings({"serial"})
+@SuppressWarnings({"serial", "static-access"})
 public class WorldPanel extends JPanel {
 	
 	Logger logger = Logger.getLogger(WorldPanel.class);
@@ -33,6 +33,10 @@ public class WorldPanel extends JPanel {
 		g2.translate(VIEW.worldOrigin.x, VIEW.worldOrigin.y);
 		
 		MODEL.world.paint(g2);
+		
+		if (MODEL.FPS_DRAW) {
+			MODEL.stats.paintFPS(g2);
+		}
 		
 		g2.setTransform(origTrans);
 		
