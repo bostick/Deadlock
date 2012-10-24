@@ -273,10 +273,8 @@ public class World {
 			v.preStep(t);
 		}
 		
-		synchronized (MODEL) {
-			for (Car c : cars) {
-				c.preStep(t);
-			}
+		for (Car c : cars) {
+			c.preStep(t);
 		}
 	}
 	
@@ -371,6 +369,26 @@ public class World {
 			
 			g2.setTransform(origTransform);
 			
+			if (MODEL.DEBUG_DRAW) {
+				
+				List<Edge> edgesCopy;
+				List<Vertex> verticesCopy;
+				
+				synchronized (MODEL) {
+					edgesCopy = new ArrayList<Edge>(MODEL.world.graph.getEdges());
+					verticesCopy = new ArrayList<Vertex>(MODEL.world.graph.getAllVertices());
+				}
+				
+				for (Vertex v : verticesCopy) {
+					v.paintID(g2);
+				}
+				
+				for (Edge e : edgesCopy) {
+					e.paintSkeleton(g2);
+					e.paintBorders(g2);
+				}
+			}
+			
 			break;
 		}
 		}
@@ -424,18 +442,6 @@ public class World {
 		}
 		
 		backgroundImageG2.setTransform(origTransform);
-		
-		if (MODEL.DEBUG_DRAW) {
-			
-			for (Vertex v : verticesCopy) {
-				v.paintID(backgroundImageG2);
-			}
-			
-			for (Edge e : edgesCopy) {
-				e.paintSkeleton(backgroundImageG2);
-				e.paintBorders(backgroundImageG2);
-			}
-		}
 		
 	}
 	

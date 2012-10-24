@@ -35,8 +35,12 @@ public class CarEventListener implements ContactListener {
 	}
 	
 	private void beginContactCarCar(Car a, Car b) {
-		a.crash();
-		b.crash();
+		if (a.getState() != CarStateEnum.CRASHED) {
+			a.crash();
+		}
+		if (b.getState() != CarStateEnum.CRASHED) {
+			b.crash();
+		}
 	}
 	
 	@Override

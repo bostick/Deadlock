@@ -106,7 +106,7 @@ public class Graph {
 					other = e.getStart();
 				}
 				
-				if (other != end && other.getEdges().size() == 1) {
+				if (isDeadEnd(e, other, end)) {
 					eds.remove(e);
 				}
 			}
@@ -141,6 +141,48 @@ public class Graph {
 	
 	public double distanceBetweenVertices(Vertex a, Vertex b) {
 		return distances[a.id][b.id];
+	}
+	
+	/**
+	 * coming down edge e, is vertex v a dead end?
+	 * 
+	 * but if there is a way to end, then it is not a dead end
+	 */
+	public boolean isDeadEnd(Edge e, Vertex v, Vertex end) {
+		return isDeadEnd(e, v, end, new ArrayList<Vertex>());
+	}
+	
+	private boolean isDeadEnd(Edge e, Vertex v, Vertex end, List<Vertex> visited) {
+		/*
+		 * TODO: should figure this out along with distances
+		 */
+		if (v == end) {
+			return false;
+		}
+		if (v.getEdges().size() == 1) {
+			return true;
+		} else {
+			List<Edge> eds = new ArrayList<Edge>(v.getEdges());
+			eds.remove(e);
+			for (Edge ee : eds) {
+				Vertex other;
+				if (v == ee.getStart()) {
+					other = ee.getEnd();
+				} else {
+					other = ee.getStart();
+				}
+				if (visited.contains(other)) {
+					// know there is a loop, so no dead end
+					return false;
+				}
+				List<Vertex> newVisited = new ArrayList<Vertex>(visited);
+				newVisited.add(v);
+				if (!isDeadEnd(ee, other, end, newVisited)) {
+					return false;
+				}
+			}
+			return true;
+		}
 	}
 	
 	/**

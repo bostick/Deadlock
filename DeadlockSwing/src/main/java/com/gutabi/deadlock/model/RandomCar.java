@@ -15,9 +15,9 @@ import com.gutabi.deadlock.core.path.GraphPositionPath;
 @SuppressWarnings("static-access")
 public class RandomCar extends Car {
 	
-	private final double speed = 8.0;
+	private final double speed = 2.0;
 	
-	static Logger logger = Logger.getLogger(NormalCar.class);
+	static Logger logger = Logger.getLogger(RandomCar.class);
 	
 	public RandomCar(Source s) {
 		super(s);
@@ -27,7 +27,7 @@ public class RandomCar extends Car {
 		poss.add(s.matchingSink);
 		overallPath = GraphPositionPath.createRandomPathFromSkeleton(poss, graph);
 		
-		
+//		logger.debug(overallPath);
 		
 		computeStarting();
 	}

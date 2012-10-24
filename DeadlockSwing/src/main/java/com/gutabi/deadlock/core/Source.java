@@ -4,6 +4,7 @@ import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
 import java.awt.Color;
+import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,6 +28,8 @@ public class Source extends Vertex {
 	
 	public double lastSpawnTime;
 	
+	public int outstandingCars;
+	
 	public Source(Point p, Graph graph) {
 		super(p, graph);
 		color = Color.GREEN;
@@ -43,6 +46,7 @@ public class Source extends Vertex {
 		shortestPathToMatchingSink = GraphPositionPath.createShortestPathFromSkeleton(poss, graph);
 		
 		lastSpawnTime = -1;
+		outstandingCars = 0;
 	}
 	
 	public GraphPositionPath getShortestPathToMatchingSink() {
@@ -50,8 +54,12 @@ public class Source extends Vertex {
 	}
 	
 	public void preStep(double t) {
-		
-		if (SPAWN_FREQUENCY_SECONDS > 0 && (t == 0 || (t - lastSpawnTime) >= SPAWN_FREQUENCY_SECONDS)) {
+//		if (SPAWN_FREQUENCY_SECONDS > 0 && (t == 0 || (t - lastSpawnTime) >= SPAWN_FREQUENCY_SECONDS)) {
+//			if (active()) {
+//				spawnNewCar(t);
+//			}
+//		}
+		if (outstandingCars == 0) {
 			if (active()) {
 				spawnNewCar(t);
 			}
@@ -70,6 +78,7 @@ public class Source extends Vertex {
 		}
 		
 		lastSpawnTime = t;
+		outstandingCars++;
 	}
 	
 	private boolean active() {
@@ -132,6 +141,22 @@ public class Source extends Vertex {
 	
 	public boolean postStep() {
 		return true;
+	}
+	
+	
+	/**
+	 * 
+	 * @param g2 in pixels, <0, 0> is world origin
+	 */
+	public void paintID(Graphics2D g2) {
+		g2.setColor(Color.WHITE);
+		
+		Point worldPoint = p.minus(new Point(radius, 0));
+		Point panelPoint = worldPoint.multiply(MODEL.PIXELS_PER_METER);
+		
+		g2.drawString(Integer.toString(id), (int)(panelPoint.x), (int)(panelPoint.y));
+		
+		g2.drawString(Integer.toString(outstandingCars), (int)(panelPoint.x + 10), (int)(panelPoint.y));
 	}
 	
 }

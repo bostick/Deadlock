@@ -21,6 +21,10 @@ public abstract class GraphPosition extends Position {
 	
 	public abstract GraphPosition nextBoundToward(GraphPosition goal);
 	
+	public abstract GraphPosition floor();
+	
+	public abstract GraphPosition ceiling();
+	
 	public GraphPosition travel(GraphPosition p, double distance) {
 		if (p instanceof VertexPosition) {
 			return travelToV((VertexPosition)p, distance);

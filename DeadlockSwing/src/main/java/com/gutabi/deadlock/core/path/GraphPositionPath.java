@@ -37,7 +37,7 @@ public class GraphPositionPath {
 	
 	static Logger logger = Logger.getLogger(GraphPositionPath.class);
 	
-	private GraphPositionPath(List<GraphPosition> poss, Graph graph) {
+	public GraphPositionPath(List<GraphPosition> poss, Graph graph) {
 		
 		this.poss = poss;
 		this.graph = graph;
@@ -114,12 +114,21 @@ public class GraphPositionPath {
 		return new GraphPositionPath(poss, graph);
 	}
 	
+	
+	
+	
 	public int hashCode() {
 		return hash;
 	}
 	
 	public String toString() {
-		return poss.toString();
+		String s = "";
+		for (GraphPosition g : poss) {
+			if (g instanceof VertexPosition) {
+				s = s + g + " ";
+			}
+		}
+		return s;
 	}
 	
 	
@@ -174,38 +183,112 @@ public class GraphPositionPath {
 		
 	}
 	
-	public GraphPositionPathPosition findClosestGraphPositionPathPosition(Point p) {
+	/**
+	 * finds closest position in a graphpositionpath to p
+	 * 
+	 * takes loops in the gpp into account, uses pos as a reference
+	 * where there would be ambiguities about which graphpositions to use (because of looping), use the one closest to pos in the gpp
+	 * 
+	 * also, make sure it is at least pos, no back tracking in allowed
+	 * 
+	 * and since we are only allowing positions further in the path from pos, then at the very least, we will always return the end of the path
+	 * never need to return null or anything
+	 * 
+	 */
+	public GraphPositionPathPosition findClosestGraphPositionPathPosition(Point p, GraphPositionPathPosition pos) {
 		
-		logger.debug("findClosestGraphPositionPathPosition");
-		
-		GraphPositionPathPosition closest = null;
-		double closestDistance = -1;
+		/*
+		 * end of path
+		 */
+		GraphPositionPathPosition closest = new GraphPositionPathPosition(this, poss.size()-1, 0.0);
+		double closestDistance = Point.distance(p, closest.getPoint());
 		
 		for (int i = 0; i < poss.size()-1; i++) {
 			GraphPosition a = poss.get(i);
 			GraphPosition b = poss.get(i+1);
-			double u = DMath.clip(Point.u(a.getPoint(), p, b.getPoint()));
-			if (DMath.equals(u, 1.0)) {
-				if (i < poss.size()-2) {
+			double u;
+			u = Point.u(a.floor().getPoint(), p, b.ceiling().getPoint());
+			if (i == 0) {
+				assert b.isBound();
+				if (a instanceof EdgePosition && u < ((EdgePosition)a).getParam()) {
+					u = ((EdgePosition)a).getParam();
+				} else if (u < 0.0){
+					u = 0.0;
+				}
+				if (u > 1.0) {
+					u = 1.0;
+				}
+				if (DMath.equals(u, 1.0)) {
+					/*
+					 * the next iteration will pick this up
+					 */
 					continue;
-				} else {
+				}
+				Point pOnPath = Point.point(a.floor().getPoint(), b.ceiling().getPoint(), u);
+				double dist = Point.distance(p, pOnPath);
+				if (dist < closestDistance && (i+u) >= pos.getCombo() && Math.abs((i+u)-pos.getCombo()) < Math.abs(closest.getCombo()-pos.getCombo())) {
+					closest = new GraphPositionPathPosition(this, i, u);
+					closestDistance = dist;
+				}
+				
+				
+			} else if (i == poss.size()-2) {
+				assert a.isBound();
+				if (b instanceof EdgePosition && u > ((EdgePosition)b).getParam()) {
+					u = ((EdgePosition)b).getParam();
+				} else if (u > 1.0) {
+					u = 1.0;
+				}
+				if (u < 0.0) {
+					u = 0.0;
+				}
+				if (DMath.equals(u, 1.0)) {
+					/*
+					 * but if last iteration, then do test now
+					 */
 					Point pOnPath = b.getPoint();
 					double dist = Point.distance(p, pOnPath);
-					if (closestDistance == -1 || dist < closestDistance) {
+					if (dist < closestDistance && (i+u) >= pos.getCombo() && Math.abs((i+1+0.0)-pos.getCombo()) < Math.abs(closest.getCombo()-pos.getCombo())) {
 						closest = new GraphPositionPathPosition(this, i+1, 0.0);
 						closestDistance = dist;
 					}
+				} else {
+					Point pOnPath = Point.point(a.floor().getPoint(), b.ceiling().getPoint(), u);
+					double dist = Point.distance(p, pOnPath);
+					if (dist < closestDistance && (i+u) >= pos.getCombo() && Math.abs((i+u)-pos.getCombo()) < Math.abs(closest.getCombo()-pos.getCombo())) {
+						closest = new GraphPositionPathPosition(this, i, u);
+						closestDistance = dist;
+					}
 				}
-			}
-			Point pOnPath = Point.point(a.getPoint(), b.getPoint(), u);
-			double dist = Point.distance(p, pOnPath);
-			if (closestDistance == -1 || dist < closestDistance) {
-				closest = new GraphPositionPathPosition(this, i, u);
-				closestDistance = dist;
+				
+				
+			} else {
+				assert a.isBound();
+				assert b.isBound();
+				assert a.equals(a.floor());
+				assert b.equals(b.ceiling());
+				if (u < 0.0) {
+					u = 0.0;
+				}
+				if (u > 1.0) {
+					u = 1.0;
+				}
+				
+				if (DMath.equals(u, 1.0)) {
+					/*
+					 * the next iteration will pick this up
+					 */
+					continue;
+				}
+				Point pOnPath = Point.point(a.floor().getPoint(), b.ceiling().getPoint(), u);
+				double dist = Point.distance(p, pOnPath);
+				if (dist < closestDistance && (i+u) >= pos.getCombo() && Math.abs((i+u)-pos.getCombo()) < Math.abs(closest.getCombo()-pos.getCombo())) {
+					closest = new GraphPositionPathPosition(this, i, u);
+					closestDistance = dist;
+				}
+				
 			}
 		}
-		
-		logger.debug("done findClosestGraphPositionPathPosition");
 		
 		return closest;
 	}
@@ -600,6 +683,8 @@ public class GraphPositionPath {
 	 * add all Positions up to b, inclusive
 	 */
 	private static void calculateRandomPath(List<GraphPosition> acc, GraphPosition a, GraphPosition b) {
+		
+//		find looping problem
 		
 		VertexPosition aa = (VertexPosition)a;
 		VertexPosition bb = (VertexPosition)b;

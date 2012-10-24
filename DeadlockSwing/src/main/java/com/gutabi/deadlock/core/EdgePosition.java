@@ -93,6 +93,24 @@ public class EdgePosition extends GraphPosition {
 		return bound;
 	}
 	
+	public GraphPosition floor() {
+		if (index != 0) {
+			return new EdgePosition(e, index, 0.0);
+		} else {
+			return new VertexPosition(e.getStart(), graph);
+		}
+	}
+	
+	public GraphPosition ceiling() {
+		if (DMath.equals(param, 0.0)) {
+			return this;
+		} else if (index != e.size()-2) {
+			return new EdgePosition(e, index+1, 0.0);
+		} else {
+			return new VertexPosition(e.getEnd(), graph);
+		}
+	}
+	
 	public GraphPosition nextBoundToward(GraphPosition goal) {
 		
 		if (goal instanceof EdgePosition) {

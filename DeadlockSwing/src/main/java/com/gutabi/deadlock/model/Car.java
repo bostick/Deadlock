@@ -20,6 +20,7 @@ import org.jbox2d.dynamics.FixtureDef;
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.GraphPosition;
 import com.gutabi.deadlock.core.Point;
+import com.gutabi.deadlock.core.Sink;
 import com.gutabi.deadlock.core.Source;
 import com.gutabi.deadlock.core.path.GraphPositionPath;
 import com.gutabi.deadlock.core.path.GraphPositionPathPosition;
@@ -40,6 +41,8 @@ public abstract class Car extends Entity {
 	public Source source;
 	
 	protected GraphPositionPath overallPath;
+	GraphPositionPathPosition overallPos;
+//	private GraphPositionPath restOfPath;
 	
 	public final int id;
 	
@@ -89,10 +92,11 @@ public abstract class Car extends Entity {
 	
 	protected void computeStarting() {
 		
-		GraphPosition closestGraphPos = overallPath.getGraphPosition(0);
-		startPoint = closestGraphPos.getPoint();
+//		restOfPath = overallPath;
 		
-		GraphPositionPathPosition overallPos = overallPath.findClosestGraphPositionPathPosition(startPoint);
+		overallPos = new GraphPositionPathPosition(overallPath, 0, 0.0);
+		GraphPosition closestGraphPos = overallPos.getGraphPosition();
+		startPoint = closestGraphPos.getPoint();
 		
 		STGraphPositionPathPositionPath nextPlannedPath = STGraphPositionPathPositionPath.advanceOneTimeStep(overallPos, getMetersPerSecond() * MODEL.dt);
 		
@@ -157,8 +161,8 @@ public abstract class Car extends Entity {
 		fixtureDef.friction = 1f;
 		b2dFixture = b2dBody.createFixture(fixtureDef);
 		
-		logger.debug("mass: " + b2dBody.getMass());
-		logger.debug("moment of intertia: " + b2dBody.getInertia());
+//		logger.debug("mass: " + b2dBody.getMass());
+//		logger.debug("moment of intertia: " + b2dBody.getInertia());
 		
 	}
 	
@@ -178,6 +182,7 @@ public abstract class Car extends Entity {
 		b2dBody.setLinearDamping(2.0f);
 		b2dBody.setAngularDamping(2.0f);
 		
+		source.outstandingCars--;
 	}
 	
 	private Point carToWorld(Point p) {
@@ -242,8 +247,8 @@ public abstract class Car extends Entity {
 		
 		Vec2 vel = b2dBody.getLinearVelocity();
 		
-		float forwardSpeed = Vec2.dot(currentRightNormal, b2dBody.getLinearVelocity());
-		logger.debug("forward speed: " + forwardSpeed);
+//		float forwardSpeed = Vec2.dot(currentRightNormal, b2dBody.getLinearVelocity());
+//		logger.debug("forward speed: " + forwardSpeed);
 		
 		Vec2 cancelingImpulse = vel.mul(-1).mul(b2dBody.getMass());
 		
@@ -270,11 +275,34 @@ public abstract class Car extends Entity {
 		
 		Point curPoint = new Point(curVec.x, curVec.y);
 		
-		GraphPositionPathPosition overallPos = overallPath.findClosestGraphPositionPathPosition(curPoint);
+		GraphPositionPathPosition newOverallPos = overallPath.findClosestGraphPositionPathPosition(curPoint, overallPos);
 		
-		STGraphPositionPathPositionPath nextPlannedPath = STGraphPositionPathPositionPath.advanceOneTimeStep(overallPos, 0.2f * getMetersPerSecond());
+//		double overallCombo = overallPos.index + overallPos.param;
+//		double newOverallCombo = newOverallPos.index + newOverallPos.param;
+////		
+//		assert newOverallCombo >= overallCombo;
 		
-		STPointPath nextRealPath = nextPlannedPath.toSTGraphPositionPath().toSTPointPath();
+//		logger.debug("newOverallCombo: " + newOverallCombo);
+		
+		overallPos = newOverallPos;
+		
+		STGraphPositionPathPositionPath x = STGraphPositionPathPositionPath.advanceOneTimeStep(overallPos, 0.2f * getMetersPerSecond());
+		
+		// fix pathing problem
+		// uncomment this code to update restOfPath, so that we are always strictly testing what is ahead in the path, to prevent loops when random
+//		d;
+//		GraphPositionPathPosition nextOverallPos = x.get(x.size()-1).getSpace();
+		
+//		logger.debug("nextOverallPos: " + nextOverallPos);
+		
+//		GraphPositionPath restOfPathTest = nextOverallPos.getRestOfPath();
+//		if (restOfPathTest != null) {
+//			restOfPath = restOfPathTest;
+//		} else {
+//			
+//		}
+		
+		STPointPath nextRealPath = x.toSTGraphPositionPath().toSTPointPath();
 		
 		Point nextDTGoalPoint = nextRealPath.end.getSpace();
 		
@@ -282,7 +310,7 @@ public abstract class Car extends Entity {
 		
 		float curAngVel = b2dBody.getAngularVelocity();
 		
-		logger.debug("angular speed: " + curAngVel);
+//		logger.debug("angular speed: " + curAngVel);
 		
 		double dw = ((float)nextDTGoalAngle) - curAngle;
 		
@@ -301,17 +329,17 @@ public abstract class Car extends Entity {
 			dw = -maxRads;
 		}
 		
-		logger.debug("dw: " + dw);
+//		logger.debug("dw: " + dw);
 		
 		float cancelingAngImpulse = 1.0f * b2dBody.getInertia() * -curAngVel;
 		
-		logger.debug("canceling angular impulse: " + cancelingAngImpulse);
+//		logger.debug("canceling angular impulse: " + cancelingAngImpulse);
 		
 		b2dBody.applyAngularImpulse(cancelingAngImpulse);
 		
 		float angImpulse = b2dBody.getInertia() * (float)(dw / MODEL.dt);
 		
-		logger.debug("angular impulse: " + angImpulse);
+//		logger.debug("angular impulse: " + angImpulse);
 		
 		b2dBody.applyAngularImpulse(angImpulse);
 		
@@ -327,12 +355,13 @@ public abstract class Car extends Entity {
 			assert false;
 		case RUNNING: {
 			Vec2 pos = b2dBody.getPosition();
-			Point end = overallPath.getEnd().getPoint();
+			Sink s = (Sink)overallPath.getEnd().getEntity();
 			boolean sinked = false;
-			if (Point.distance(new Point(pos.x,  pos.y), end) < MODEL.world.SINK_EPSILON) {
+			if (Point.distance(new Point(pos.x,  pos.y), s.getPoint()) < MODEL.world.SINK_EPSILON) {
 				sinked = true;
 			}
 			if (sinked) {
+				s.matchingSource.outstandingCars--;
 				state = CarStateEnum.SINKED;
 				return false;
 			}

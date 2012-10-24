@@ -94,6 +94,14 @@ public class VertexPosition extends GraphPosition {
 		}
 	}
 	
+	public GraphPosition floor() {
+		return this;
+	}
+	
+	public GraphPosition ceiling() {
+		return this;
+	}
+	
 	public GraphPosition nextBoundToward(GraphPosition goal) {
 		
 		if (goal instanceof EdgePosition) {

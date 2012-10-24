@@ -53,7 +53,7 @@ public abstract class Vertex extends Entity {
 	}
 	
 	public String toString() {
-		return "V " + p + " " + id;
+		return Integer.toString(id);
 	}
 	
 	public double getRadius() {

@@ -62,6 +62,9 @@ public class DMath {
 		
 	}
 	
+	/**
+	 * clip x between 0 and 1
+	 */
 	public static double clip(double x) {
 		if (x < 0) {
 			return 0;

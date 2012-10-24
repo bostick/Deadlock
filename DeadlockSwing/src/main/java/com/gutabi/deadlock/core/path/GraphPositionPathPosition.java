@@ -1,5 +1,8 @@
 package com.gutabi.deadlock.core.path;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.log4j.Logger;
 
 import com.gutabi.deadlock.core.DMath;
@@ -12,8 +15,8 @@ import com.gutabi.deadlock.core.VertexPosition;
 public class GraphPositionPathPosition extends Position {
 	
 	private final GraphPositionPath path;
-	private final int index;
-	private final double param;
+	public final int index;
+	public final double param;
 	private final boolean bound;
 	
 	private final GraphPosition gpos;
@@ -37,7 +40,11 @@ public class GraphPositionPathPosition extends Position {
 		gpos = path.getGraphPosition(index, param);
 		
 		double acc = path.cumulativeDistancesFromStart[index];
-		acc += path.getGraphPosition(0, 0.0).distanceTo(gpos);
+		if (path.getGraphPosition(0).isBound()) {
+			acc += path.getGraphPosition(0, 0.0).distanceTo(gpos);
+		} else {
+			acc += path.getGraphPosition(0, ((EdgePosition)path.getGraphPosition(0)).getParam()).distanceTo(gpos);
+		}
 		distanceFromStartOfPath = acc;
 		
 		int h = 17;
@@ -65,9 +72,12 @@ public class GraphPositionPathPosition extends Position {
 	}
 	
 	public String toString() {
-		return "Path " + path + " " + index + " " + param + "(" + distanceFromStartOfPath + "/" + path.getTotalLength() + ")" + gpos;
+		return index + " " + param + " (" + distanceFromStartOfPath + "/" + path.getTotalLength() + ")";
 	}
 	
+	public double getCombo() {
+		return index + param;
+	}
 	
 	
 	
@@ -77,6 +87,22 @@ public class GraphPositionPathPosition extends Position {
 	
 	public boolean isEndOfPath() {
 		return (index == path.size()-1) && DMath.equals(param, 0.0);
+	}
+	
+	public GraphPositionPath getRestOfPath() {
+		
+		List<GraphPosition> acc = new ArrayList<GraphPosition>();
+		GraphPositionPathPosition cur = this;
+		while (!cur.isEndOfPath()) {
+			acc.add(cur.gpos);
+			cur = cur.nextBound();
+		}
+		
+		if (!acc.isEmpty()) {
+			return new GraphPositionPath(acc, path.graph);
+		} else {
+			return null;
+		}
 	}
 	
 	public GraphPosition getGraphPosition() {
