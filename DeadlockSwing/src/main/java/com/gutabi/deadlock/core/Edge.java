@@ -10,6 +10,7 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,6 +23,7 @@ import com.gutabi.deadlock.utils.Java2DUtils;
 public final class Edge extends Entity {
 	
 	public static final double ROAD_RADIUS = 0.5;
+	public static final int STOPSIGN_SIZE = 16;
 	
 	private final Vertex start;
 	private final Vertex end;
@@ -554,9 +556,6 @@ public final class Edge extends Entity {
 			g2.setColor(Color.BLACK);
 			g2.setStroke(new BasicStroke(0.05f));
 			g2.draw(path);
-			
-//			paintBorders(g2);
-			
 		}
 	}
 	
@@ -591,6 +590,23 @@ public final class Edge extends Entity {
 		
 	}
 	
+	public void paintSigns(Graphics2D g2) {
+		
+		BufferedImage im = MODEL.world.stopSign;
+		
+		g2.drawImage(im,
+				(int)((startBorderPoint.x * MODEL.PIXELS_PER_METER)-STOPSIGN_SIZE/2),
+				(int)((startBorderPoint.y * MODEL.PIXELS_PER_METER)-STOPSIGN_SIZE/2),
+				(int)(STOPSIGN_SIZE),
+				(int)(STOPSIGN_SIZE), null);
+		
+		g2.drawImage(im,
+				(int)((endBorderPoint.x * MODEL.PIXELS_PER_METER)-STOPSIGN_SIZE/2),
+				(int)((endBorderPoint.y * MODEL.PIXELS_PER_METER)-STOPSIGN_SIZE/2),
+				(int)(STOPSIGN_SIZE),
+				(int)(STOPSIGN_SIZE), null);
+		
+	}
 	
 	
 	

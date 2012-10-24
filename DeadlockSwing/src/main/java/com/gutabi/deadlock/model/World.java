@@ -93,8 +93,8 @@ public class World {
 		stopSign = ImageIO.read(new File("media\\stop.png"));
 		stopSign = ImageUtils.createResizedCopy(
 				stopSign,
-				(int)(Intersection.STOPSIGN_SIZE),
-				(int)(Intersection.STOPSIGN_SIZE), true);
+				(int)(Edge.STOPSIGN_SIZE),
+				(int)(Edge.STOPSIGN_SIZE), true);
 		
 		BufferedImage grass = ImageIO.read(new File("media\\grass.png"));
 		
@@ -352,7 +352,24 @@ public class World {
 		case RUNNING:
 		case PAUSED: {
 			
+			List<Edge> edgesCopy;
+			List<Vertex> verticesCopy;
+			
+			synchronized (MODEL) {
+				edgesCopy = new ArrayList<Edge>(MODEL.world.graph.getEdges());
+				verticesCopy = new ArrayList<Vertex>(MODEL.world.graph.getAllVertices());
+			}
+			
 			AffineTransform origTransform = g2.getTransform();
+			
+			for (Edge e : edgesCopy) {
+				if (MODEL.DEBUG_DRAW) {
+					e.paintSkeleton(g2);
+					e.paintBorders(g2);
+				}
+				e.paintSigns(g2);
+			}
+			
 			AffineTransform trans = (AffineTransform)origTransform.clone();
 			trans.scale(MODEL.PIXELS_PER_METER, MODEL.PIXELS_PER_METER);
 			g2.setTransform(trans);
@@ -371,22 +388,10 @@ public class World {
 			
 			if (MODEL.DEBUG_DRAW) {
 				
-				List<Edge> edgesCopy;
-				List<Vertex> verticesCopy;
-				
-				synchronized (MODEL) {
-					edgesCopy = new ArrayList<Edge>(MODEL.world.graph.getEdges());
-					verticesCopy = new ArrayList<Vertex>(MODEL.world.graph.getAllVertices());
-				}
-				
 				for (Vertex v : verticesCopy) {
 					v.paintID(g2);
 				}
 				
-				for (Edge e : edgesCopy) {
-					e.paintSkeleton(g2);
-					e.paintBorders(g2);
-				}
 			}
 			
 			break;

@@ -6,13 +6,9 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Stroke;
-import java.awt.geom.AffineTransform;
-import java.awt.image.BufferedImage;
 
 @SuppressWarnings("static-access")
 public class Intersection extends Vertex {
-	
-	public static final int STOPSIGN_SIZE = 32;
 	
 	public Intersection(Point p, Graph graph) {
 		super(p, graph);
@@ -28,29 +24,29 @@ public class Intersection extends Vertex {
 		return true;
 	}
 	
-	public void paint(Graphics2D g2) {
-		super.paint(g2);
-		
-		AffineTransform origTransform = g2.getTransform();
-		
-		AffineTransform trans = (AffineTransform)origTransform.clone();
-		trans.translate(p.x, p.y);
-		
-		trans.scale(MODEL.METERS_PER_PIXEL, MODEL.METERS_PER_PIXEL);
-		
-		g2.setTransform(trans);
-		
-		BufferedImage im = MODEL.world.stopSign;
-		
-		g2.drawImage(im,
-				(int)(-STOPSIGN_SIZE/2),
-				(int)(-STOPSIGN_SIZE/2),
-				(int)(STOPSIGN_SIZE),
-				(int)(STOPSIGN_SIZE), null);
-		
-		g2.setTransform(origTransform);
-		
-	}
+//	public void paint(Graphics2D g2) {
+//		super.paint(g2);
+//		
+//		AffineTransform origTransform = g2.getTransform();
+//		
+//		AffineTransform trans = (AffineTransform)origTransform.clone();
+//		trans.translate(p.x, p.y);
+//		
+//		trans.scale(MODEL.METERS_PER_PIXEL, MODEL.METERS_PER_PIXEL);
+//		
+//		g2.setTransform(trans);
+//		
+//		BufferedImage im = MODEL.world.stopSign;
+//		
+//		g2.drawImage(im,
+//				(int)(-STOPSIGN_SIZE/2),
+//				(int)(-STOPSIGN_SIZE/2),
+//				(int)(STOPSIGN_SIZE),
+//				(int)(STOPSIGN_SIZE), null);
+//		
+//		g2.setTransform(origTransform);
+//		
+//	}
 	
 	public void paintHilite(Graphics2D g2) {
 		paint(g2);
