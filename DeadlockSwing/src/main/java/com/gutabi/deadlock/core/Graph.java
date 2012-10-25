@@ -2,20 +2,25 @@ package com.gutabi.deadlock.core;
 
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+@SuppressWarnings("static-access")
 public class Graph {
 	
 	private final ArrayList<Edge> edges = new ArrayList<Edge>();
-	private final ArrayList<Intersection> intersections = new ArrayList<Intersection>();
-	final QuadTree segTree = new QuadTree();
 	
+	private final ArrayList<Intersection> intersections = new ArrayList<Intersection>();
 	private final ArrayList<Source> sources = new ArrayList<Source>();
 	private final ArrayList<Sink> sinks = new ArrayList<Sink>();
+	
+	public List<StopSign> signs = new ArrayList<StopSign>();
 	
 //	private static final Logger logger = Logger.getLogger(Graph.class);
 	
@@ -23,15 +28,7 @@ public class Graph {
 		
 	}
 	
-	public List<Edge> getEdges() {
-		return edges;
-	}
-	
-	public List<Source> getSources() {
-		return sources;
-	}
-	
-	public List<Vertex> getAllVertices() {
+	private List<Vertex> getAllVertices() {
 		List<Vertex> all = new ArrayList<Vertex>();
 		all.addAll(sources);
 		all.addAll(sinks);
@@ -39,11 +36,315 @@ public class Graph {
 		return all;
 	}
 	
-	public List<Segment> getAllSegments() {
-		return segTree.getAllSegments();
+	private List<Segment> getAllSegments() {
+		List<Segment> all = new ArrayList<Segment>();
+		for (Edge e : edges) {
+			all.addAll(e.getSegments());
+		}
+		return all;
 	}
 	
-	public List<Vertex> shortestPath(final Vertex start, Vertex end) {
+	
+	public void addSource(Source s) {
+		sources.add(s);
+		refreshVertexIDs();
+	}
+	
+	public void addSink(Sink s) {
+		sinks.add(s);
+		refreshVertexIDs();
+	}
+	
+	public void addIntersection(Intersection i) {
+		intersections.add(i);
+		refreshVertexIDs();
+	}
+	
+	public Edge createEdgeTop(Vertex start, Vertex end, List<Point> pts) {
+		
+		Edge e = createEdge(start, end, pts);
+		
+		automaticMergeOrDestroy(start);
+		automaticMergeOrDestroy(end);
+		
+		return e;
+	}
+	
+	public void removeEdgeTop(Edge e) {
+		
+		/*
+		 * have to properly cleanup start and end intersections before removing edges
+		 */
+		if (!e.isLoop()) {
+			
+			Vertex eStart = e.getStart();
+			Vertex eEnd = e.getEnd();
+			
+			destroyEdge(e);
+			
+			automaticMergeOrDestroy(eStart);
+			automaticMergeOrDestroy(eEnd);
+			
+		} else if (!e.isStandAlone()) {
+			
+			Vertex v = e.getStart();
+			
+			destroyEdge(e);
+			
+			automaticMergeOrDestroy(v);
+			
+		} else {
+			destroyEdge(e);
+		}
+		
+	}
+	
+	public void removeVertexTop(Vertex v) {
+		
+		Set<Vertex> affectedVertices = new HashSet<Vertex>();
+		
+		/*
+		 * copy, since removing edges modifies v.getEdges()
+		 * and use a set since loops will be in the list twice
+		 */
+		Set<Edge> eds = new HashSet<Edge>(v.getEdges());
+		for (Edge e : eds) {
+			
+			if (!e.isLoop()) {
+				
+				Vertex eStart = e.getStart();
+				Vertex eEnd = e.getEnd();
+				
+				affectedVertices.add(eStart);
+				affectedVertices.add(eEnd);
+				
+				destroyEdge(e);
+				
+			} else {
+				
+				Vertex eV = e.getStart();
+				
+				affectedVertices.add(eV);
+				
+				destroyEdge(e);
+				
+			}
+		}
+		
+		destroyVertex(v);
+		affectedVertices.remove(v);
+		
+		for (Vertex a : affectedVertices) {
+			automaticMergeOrDestroy(a);
+		}
+		
+	}
+	
+	private void automaticMergeOrDestroy(Vertex v) {
+		
+		if (v instanceof Intersection) {
+			
+			List<Edge> cons = v.getEdges();
+			
+			for (Edge e : cons) {
+				assert edges.contains(e);
+			}
+			
+			if (cons.size() == 0) {
+				destroyVertex(v);
+			} else if (cons.size() == 2) {
+				merge(v);
+			}
+			
+		} else if (v instanceof Source) {
+			
+			/*
+			 * sources stay around
+			 */
+			
+		} else if (v instanceof Sink) {
+			
+			/*
+			 * sinks stay around
+			 */
+			
+		} else {
+			assert false;
+		}
+		
+	}
+
+
+	
+	
+	private Edge createEdge(Vertex start, Vertex end, List<Point> pts) {
+		
+		Edge e = new Edge(start, end, pts);
+		edges.add(e);
+		
+		refreshEdgeIDs();
+		
+		if (!e.isStandAlone()) {
+			start.addEdge(e);
+			end.addEdge(e);
+			
+			signs.add(new StopSign(e, 0));
+			signs.add(new StopSign(e, 1));
+		}
+		
+		return e;
+	}
+	
+	private void destroyEdge(Edge e) {
+		assert edges.contains(e);
+		
+		if (!e.isStandAlone()) {
+			e.getStart().removeEdge(e);
+			e.getEnd().removeEdge(e);
+		}
+		
+		edges.remove(e);
+		
+		StopSign s0 = null;
+		StopSign s1 = null;
+		for (StopSign s : signs) {
+			if (s.e == e) {
+				if (s.dir == 0) {
+					s0 = s;
+				}
+				if (s.dir == 1) {
+					s1 = s;
+				}
+			}
+		}
+		
+		if (s0 != null) {
+			signs.remove(s0);
+		}
+		
+		if (s1 != null) {
+			signs.remove(s1);
+		}
+		
+		refreshEdgeIDs();
+		
+	}
+	
+	private Vertex createIntersection(Point p) {
+		
+		Intersection i = new Intersection(p);
+		assert !intersections.contains(i);
+		intersections.add(i);
+		
+		refreshVertexIDs();
+		
+		return i;
+	}
+	
+	private void destroyVertex(Vertex v) {
+		
+		if (intersections.contains(v)) {
+			intersections.remove(v);
+		} else if (sources.contains(v)) {
+			sources.remove(v);
+		} else if (sinks.contains(v)) {
+			sinks.remove(v);
+		} else {
+			assert false;
+		}
+		
+		refreshVertexIDs();
+		
+	}
+	
+	
+	
+	
+	
+	public void preStart() {
+		
+		initializeMatrices();
+		
+		for (Source s : sources) {
+			s.preStart();
+		}
+	}
+	
+	public void computeVertexRadii() {
+		
+		List<Vertex> all = getAllVertices();
+		for (int i = 0; i < all.size(); i++) {
+			Vertex vi = all.get(i);
+			double maximumRadius = Double.POSITIVE_INFINITY;
+			for (int j = 0; j < all.size(); j++) {
+				Vertex vj = all.get(j);
+				if (vi == vj) {
+					continue;
+				}
+				double max = Point.distance(vi.getPoint(), vj.getPoint()) - vj.getRadius();
+				if (max < maximumRadius) {
+					maximumRadius = max;
+				}
+			}
+			vi.computeRadius(maximumRadius);
+		}
+		
+	}
+	
+	public Object[] getRenderingRectCombo(double ulX, double ulY, double brX, double brY) {
+		
+		for (Vertex v : getAllVertices()) {
+			if (v.renderingUpperLeft.x < ulX) {
+				ulX = v.renderingUpperLeft.x;
+			}
+			if (v.renderingUpperLeft.y < ulY) {
+				ulY = v.renderingUpperLeft.y;
+			}
+			if (v.renderingBottomRight.x > brX) {
+				brX = v.renderingBottomRight.x;
+			}
+			if (v.renderingBottomRight.y > brY) {
+				brY = v.renderingBottomRight.y;
+			}
+		}
+		for (Edge ed : edges) {
+			if (ed.renderingUpperLeft.x < ulX) {
+				ulX = ed.renderingUpperLeft.x;
+			}
+			if (ed.renderingUpperLeft.y < ulY) {
+				ulY = ed.renderingUpperLeft.y;
+			}
+			if (ed.renderingBottomRight.x > brX) {
+				brX = ed.renderingBottomRight.x;
+			}
+			if (ed.renderingBottomRight.y > brY) {
+				brY = ed.renderingBottomRight.y;
+			}
+		}
+		
+		Object[] combo = new Object[2];
+		combo[0] = new Point(ulX, ulY);
+		combo[1] = new Dim(brX - ulX, brY - ulY);
+		return combo;
+	}
+	
+	public void preStep(double t) {
+		
+		for (Vertex v : getAllVertices()) {
+			v.preStep(t);
+		}
+		
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	public List<Vertex> shortestPath(Vertex start, Vertex end) {
 		if (start == end) {
 			throw new IllegalArgumentException();
 		}
@@ -84,15 +385,9 @@ public class Graph {
 		return shortestPathChoice(start, n);
 	}
 	
-	@SuppressWarnings("static-access")
-	public Vertex randomPathChoice(List<GraphPosition> acc, Vertex start, Vertex end) {
+	public Vertex randomPathChoice(Edge prev, Vertex start, Vertex end) {
 		
 		List<Edge> eds = new ArrayList<Edge>(start.getEdges());
-		
-		Edge prev = null;
-		if (acc.size() >= 2) {
-			prev = ((EdgePosition)acc.get(acc.size()-2)).getEdge();
-		}
 		
 		for (Edge e : start.getEdges()) {
 			if (prev != null && prev == e) {
@@ -111,15 +406,6 @@ public class Graph {
 				}
 			}
 		}
-		
-//		if (eds.size() >= 2 && acc.size() >= 2) {
-//			assert acc.get(acc.size()-1) instanceof VertexPosition;
-//			assert acc.get(acc.size()-2) instanceof EdgePosition;
-//			
-//			eds.remove(((EdgePosition)acc.get(acc.size()-2)).getEdge());
-//		}
-		
-//		eds.remove(prev);
 		
 		int n = eds.size();
 		
@@ -185,6 +471,8 @@ public class Graph {
 		}
 	}
 	
+	
+	
 	/**
 	 * tests any part of vertex and any part of edge
 	 */
@@ -195,7 +483,7 @@ public class Graph {
 				return v;
 			}
 		}
-		for (Segment in : segTree.getAllSegments()) {
+		for (Segment in : getAllSegments()) {
 			Edge e = in.edge;
 			int i = in.index;
 			Point c = e.getPoint(i);
@@ -215,7 +503,7 @@ public class Graph {
 				hits.add(v);
 			}
 		}
-		for (Segment in : segTree.getAllSegments()) {
+		for (Segment in : getAllSegments()) {
 			Edge e = in.edge;
 			int i = in.index;
 			Point c = e.getPoint(i);
@@ -248,99 +536,11 @@ public class Graph {
 	
 	
 	
-	public void addSource(Source s) {
-		sources.add(s);
-		refreshVertexIDs();
-	}
 	
-	public void addSink(Sink s) {
-		sinks.add(s);
-		refreshVertexIDs();
-	}
 	
-	public void addIntersection(Intersection i) {
-		intersections.add(i);
-		refreshVertexIDs();
-	}
 	
-	public void createEdgeTop(Vertex start, Vertex end, List<Point> pts) {
-		
-		createEdge(start, end, pts);
-		
-		postEdgeChange(start);
-		postEdgeChange(end);
-		
-	}
 	
-	public void removeEdgeTop(Edge e) {
-		
-		/*
-		 * have to properly cleanup start and end intersections before removing edges
-		 */
-		if (!e.isLoop()) {
-			
-			Vertex eStart = e.getStart();
-			Vertex eEnd = e.getEnd();
-			
-			destroyEdge(e);
-			
-			postEdgeChange(eStart);
-			postEdgeChange(eEnd);
-			
-		} else if (!e.isStandAlone()) {
-			
-			Vertex v = e.getStart();
-			
-			destroyEdge(e);
-			
-			postEdgeChange(v);
-			
-		} else {
-			destroyEdge(e);
-		}
-		
-	}
 	
-	public void removeVertexTop(Vertex v) {
-		
-		Set<Vertex> affectedVertices = new HashSet<Vertex>();
-		
-		/*
-		 * copy, since removing edges modifies v.getEdges()
-		 * and use a set since loops will be in the list twice
-		 */
-		Set<Edge> eds = new HashSet<Edge>(v.getEdges());
-		for (Edge e : eds) {
-			
-			if (!e.isLoop()) {
-				
-				Vertex eStart = e.getStart();
-				Vertex eEnd = e.getEnd();
-				
-				affectedVertices.add(eStart);
-				affectedVertices.add(eEnd);
-				
-				destroyEdge(e);
-				
-			} else {
-				
-				Vertex eV = e.getStart();
-				
-				affectedVertices.add(eV);
-				
-				destroyEdge(e);
-				
-			}
-		}
-		
-		destroyVertex(v);
-		affectedVertices.remove(v);
-		
-		for (Vertex a : affectedVertices) {
-			postEdgeChange(a);
-		}
-		
-	}
 	
 	/**
 	 * split an edge at point
@@ -406,91 +606,8 @@ public class Graph {
 		return v;
 	}
 	
-	public void preStart() {
-		
-		initializeMatrices();
-		
-		for (Source s : sources) {
-			s.preStart();
-		}
-	}
 	
-	private void postEdgeChange(Vertex v) {
-		
-		if (v instanceof Intersection) {
-			
-			List<Edge> cons = v.getEdges();
-			
-			for (Edge e : cons) {
-				assert edges.contains(e);
-			}
-			
-			if (cons.size() == 0) {
-				destroyVertex(v);
-			} else if (cons.size() == 2) {
-				merge(v);
-			}
-			
-		} else if (v instanceof Source) {
-			
-			/*
-			 * sources stay around
-			 */
-			
-		} else if (v instanceof Sink) {
-			
-			/*
-			 * sinks stay around
-			 */
-			
-		} else {
-			assert false;
-		}
-		
-	}
 	
-	private Vertex createIntersection(Point p) {
-		
-		Intersection i = new Intersection(p, this);
-		assert !intersections.contains(i);
-		intersections.add(i);
-		
-		refreshVertexIDs();
-		
-		return i;
-	}
-	
-	private void destroyVertex(Vertex v) {
-		
-		if (intersections.contains(v)) {
-			intersections.remove(v);
-		} else if (sources.contains(v)) {
-			sources.remove(v);
-		} else if (sinks.contains(v)) {
-			sinks.remove(v);
-		} else {
-			assert false;
-		}
-		
-		refreshVertexIDs();
-		
-		v.remove();
-	}
-	
-	private void destroyEdge(Edge e) {
-		assert edges.contains(e);
-		
-		if (!e.isStandAlone()) {
-			e.getStart().removeEdge(e);
-			e.getEnd().removeEdge(e);
-		}
-		
-		edges.remove(e);
-		
-		refreshEdgeIDs();
-		
-		e.remove();
-	}
 	
 	Vertex[] vertexIDs;
 	
@@ -610,7 +727,7 @@ public class Graph {
 		}
 		
 		if (closest != null) {
-			return new VertexPosition(closest, this);
+			return new VertexPosition(closest);
 		} else {
 			return null;
 		}
@@ -620,19 +737,76 @@ public class Graph {
 	 * returns the closest edge within radius that is not in the excluded radius
 	 */
 	private EdgePosition findClosestEdgePosition(Point a, double radius) {
-		return segTree.findClosestEdgePosition(a, radius);
+		Segment bestSegment = null;
+		double bestParam = -1;
+		Point bestPoint = null;
+		
+		/*
+		 * test the point a against all segments <c, d>
+		 */
+		for (Segment si : getAllSegments()) {
+			double closest = closestParam(a, si);
+			Point ep = si.getPoint(closest);
+			double dist = Point.distance(a, ep);
+			if (DMath.lessThanEquals(dist, radius + Edge.ROAD_RADIUS)) {
+				if (bestSegment == null) {
+					bestSegment = si;
+					bestParam = closest;
+					bestPoint = ep;
+				} else if (Point.distance(a, ep) < Point.distance(a, bestPoint)) {
+					bestSegment = si;
+					bestParam = closest;
+					bestPoint = ep;
+				}
+			}
+		}
+		
+		if (bestSegment != null) {
+			if (DMath.equals(bestParam, 1.0)) {
+				if (bestSegment.edge.size() > bestSegment.index+2) {
+					return new EdgePosition(bestSegment.edge, bestSegment.index+1, 0.0);
+				} else {
+					/*
+					 * this is really the end of the edge, the vertex, so return null
+					 */
+					return null;
+				}
+			} else if (DMath.equals(bestParam, 0.0) && bestSegment.index == 0) {
+				/*
+				 * this is really the start of the edge, the vertex, so return null
+				 */
+				return null;
+			} else {
+				return new EdgePosition(bestSegment.edge, bestSegment.index, bestParam);
+			}
+		} else {
+			return null;
+		}
 	}
 	
-	private void createEdge(Vertex start, Vertex end, List<Point> pts) {
+	/**
+	 * find closest position on <c, d> to the point b
+	 */
+	private static double closestParam(Point b, Segment si) {
+		Point c = si.start;
+		Point d = si.end;
+		if (b.equals(c)) {
+			return 0.0;
+		}
+		if (b.equals(d)) {
+			return 1.0;
+		}
+		if (c.equals(d)) {
+			throw new IllegalArgumentException("c equals d");
+		}
 		
-		Edge e = new Edge(start, end, this, pts);
-		edges.add(e);
-		
-		refreshEdgeIDs();
-		
-		if (!e.isStandAlone()) {
-			start.addEdge(e);
-			end.addEdge(e);
+		double u = Point.u(c, b, d);
+		if (DMath.lessThanEquals(u, 0.0)) {
+			return 0.0;
+		} else if (DMath.greaterThanEquals(u, 1.0)) {
+			return 1.0;
+		} else {
+			return u;
 		}
 	}
 	
@@ -647,9 +821,6 @@ public class Graph {
 		Edge e1 = v.getEdges().get(0);
 		Edge e2 = v.getEdges().get(1);
 		
-		assert !e1.isRemoved();
-		assert !e2.isRemoved();
-		assert !v.isRemoved();
 		assert edges.contains(e1);
 		assert edges.contains(e2);
 		
@@ -765,6 +936,94 @@ public class Graph {
 			
 		}
 	}
+	
+	
+	
+	public void renderBackground(Graphics2D g2) {
+		
+		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		
+		List<Edge> edgesCopy;
+		List<Vertex> verticesCopy;
+		List<StopSign> signsCopy;
+		synchronized (MODEL) {
+			edgesCopy = new ArrayList<Edge>(edges);
+			verticesCopy = new ArrayList<Vertex>(getAllVertices());
+			signsCopy = new ArrayList<StopSign>(signs);
+		}
+		
+		AffineTransform origTransform = g2.getTransform();
+		AffineTransform trans = (AffineTransform)origTransform.clone();
+		trans.scale(MODEL.PIXELS_PER_METER, MODEL.PIXELS_PER_METER);
+		g2.setTransform(trans);
+		
+		for (Edge e : edgesCopy) {
+			e.paint(g2);
+		}
+		
+		for (Vertex v : verticesCopy) {
+			v.paint(g2);
+		}
+		
+		g2.setTransform(origTransform);
+		
+		for (StopSign s : signsCopy) {
+			s.paint(g2);
+		}
+		
+	}
+	
+	public void paintStats(Graphics2D g2) {
+		
+		Point p = new Point(1, 1).multiply(MODEL.PIXELS_PER_METER);
+		g2.drawString("vertex count: " + getAllVertices().size(), (int)p.x, (int)p.y);
+		
+		p = new Point(1, 2).multiply(MODEL.PIXELS_PER_METER);
+		g2.drawString("edge count: " + edges.size(), (int)p.x, (int)p.y);
+		
+		p = new Point(1, 3).multiply(MODEL.PIXELS_PER_METER);
+		g2.drawString("sign count: " + signs.size(), (int)p.x, (int)p.y);
+		
+	}
+	
+	public void paintScene(Graphics2D g2) {
+		
+		List<Edge> edgesCopy;
+		
+		synchronized (MODEL) {
+			edgesCopy = new ArrayList<Edge>(edges);
+		}
+		
+		for (Edge e : edgesCopy) {
+			if (MODEL.DEBUG_DRAW) {
+				e.paintSkeleton(g2);
+				e.paintBorders(g2);
+			}
+		}
+		
+	}
+	
+	public void paintIDs(Graphics2D g2) {
+		
+		List<Vertex> verticesCopy;
+		synchronized (MODEL) {
+			verticesCopy = new ArrayList<Vertex>(getAllVertices());
+		}
+		
+		if (MODEL.DEBUG_DRAW) {
+			
+			for (Vertex v : verticesCopy) {
+				v.paintID(g2);
+			}
+			
+		}
+		
+	}
+
+	
+	
+	
+	
 	
 	public boolean checkConsistency() {
 		

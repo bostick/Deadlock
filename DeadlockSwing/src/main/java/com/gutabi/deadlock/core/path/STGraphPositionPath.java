@@ -3,17 +3,14 @@ package com.gutabi.deadlock.core.path;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.gutabi.deadlock.core.Graph;
 import com.gutabi.deadlock.core.GraphPosition;
 
 public class STGraphPositionPath {
 	
 	private List<STGraphPosition> poss;
-	private Graph graph;
 	
-	public STGraphPositionPath(List<STGraphPosition> poss, Graph graph) {
+	public STGraphPositionPath(List<STGraphPosition> poss) {
 		this.poss = poss;
-		this.graph = graph;
 	}
 	
 	public STPointPath toSTPointPath() {
@@ -29,7 +26,7 @@ public class STGraphPositionPath {
 		for (STGraphPosition p : poss) {
 			newPath.add(p.getSpace());
 		}
-		return new GraphPositionPath(newPath, graph);
+		return new GraphPositionPath(newPath);
 	}
 	
 }

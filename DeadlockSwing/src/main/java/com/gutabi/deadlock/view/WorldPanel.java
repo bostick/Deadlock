@@ -35,7 +35,7 @@ public class WorldPanel extends JPanel {
 		MODEL.world.paint(g2);
 		
 		if (MODEL.FPS_DRAW) {
-			MODEL.stats.paintFPS(g2);
+			MODEL.stats.paint(g2);
 		}
 		
 		g2.setTransform(origTrans);

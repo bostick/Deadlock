@@ -30,8 +30,8 @@ public class Source extends Vertex {
 	
 	public int outstandingCars;
 	
-	public Source(Point p, Graph graph) {
-		super(p, graph);
+	public Source(Point p) {
+		super(p);
 		color = Color.GREEN;
 		hiliteColor = new Color(255-color.getRed(), 255-color.getGreen(), 255-color.getBlue());
 	}
@@ -43,7 +43,7 @@ public class Source extends Vertex {
 		List<Vertex> poss = new ArrayList<Vertex>();
 		poss.add(this);
 		poss.add(matchingSink);
-		shortestPathToMatchingSink = GraphPositionPath.createShortestPathFromSkeleton(poss, graph);
+		shortestPathToMatchingSink = GraphPositionPath.createShortestPathFromSkeleton(poss);
 		
 		lastSpawnTime = -1;
 		outstandingCars = 0;
@@ -83,7 +83,7 @@ public class Source extends Vertex {
 	
 	private boolean active() {
 		
-		double d = MODEL.world.graph.distanceBetweenVertices(this, matchingSink);
+		double d = MODEL.world.distanceBetweenVertices(this, matchingSink);
 		
 		if (d == Double.POSITIVE_INFINITY) {
 			return false;

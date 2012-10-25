@@ -7,7 +7,6 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 import com.gutabi.deadlock.core.DMath;
-import com.gutabi.deadlock.core.Graph;
 import com.gutabi.deadlock.core.GraphPosition;
 import com.gutabi.deadlock.core.Sink;
 import com.gutabi.deadlock.core.VertexPosition;
@@ -15,8 +14,6 @@ import com.gutabi.deadlock.core.VertexPosition;
 public class STGraphPositionPathPositionPath {
 	
 	private List<STGraphPositionPathPosition> poss;
-	
-	private Graph graph;
 	
 	private List<Double> times;
 	
@@ -29,12 +26,11 @@ public class STGraphPositionPathPositionPath {
 	
 	static Logger logger = Logger.getLogger(STGraphPositionPathPositionPath.class);
 	
-	private STGraphPositionPathPositionPath(List<STGraphPositionPathPosition> poss, Graph graph) {
+	private STGraphPositionPathPositionPath(List<STGraphPositionPathPosition> poss) {
 		
 		assert poss.size() >= 2;
 		
 		this.poss = poss;
-		this.graph = graph;
 		
 		times = new ArrayList<Double>();
 		
@@ -167,7 +163,7 @@ public class STGraphPositionPathPositionPath {
 		
 		logger.debug("done advanceOneTimeStep");
 		
-		return new STGraphPositionPathPositionPath(poss, start.getGraphPosition().graph);
+		return new STGraphPositionPathPositionPath(poss);
 		
 	}
 	
@@ -178,7 +174,7 @@ public class STGraphPositionPathPositionPath {
 		poss.add(new STGraphPositionPathPosition(start, 0.0));
 		poss.add(new STGraphPositionPathPosition(start, 1.0));
 		
-		return new STGraphPositionPathPositionPath(poss, start.getGraphPosition().graph);
+		return new STGraphPositionPathPositionPath(poss);
 	}
 	
 	public STGraphPositionPath toSTGraphPositionPath() {
@@ -186,7 +182,7 @@ public class STGraphPositionPathPositionPath {
 		for (STGraphPositionPathPosition p : poss) {
 			newPath.add(new STGraphPosition(p.getSpace().getGraphPosition(), p.getTime()));
 		}
-		return new STGraphPositionPath(newPath, graph);
+		return new STGraphPositionPath(newPath);
 	}
 	
 	

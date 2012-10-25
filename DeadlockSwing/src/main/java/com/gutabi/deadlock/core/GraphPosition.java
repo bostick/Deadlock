@@ -4,13 +4,10 @@ import org.apache.log4j.Logger;
 
 public abstract class GraphPosition extends Position {
 	
-	public final Graph graph;
-	
 	static Logger logger = Logger.getLogger(GraphPosition.class);
 	
-	GraphPosition(Point p, Graph graph) {
+	GraphPosition(Point p) {
 		super(p);
-		this.graph = graph;
 	}
 	
 	public abstract Entity getEntity();
@@ -84,9 +81,9 @@ public abstract class GraphPosition extends Position {
 			
 			if (ep.getIndex() < p.getIndex() || (ep.getIndex() == p.getIndex() && DMath.lessThan(ep.getParam(), p.getParam()))) {
 				// ep -> p is same direction as edge
-				return ep.travel(new VertexPosition(ep.getEdge().getEnd(), graph), distance);
+				return ep.travel(new VertexPosition(ep.getEdge().getEnd()), distance);
 			} else {
-				return ep.travel(new VertexPosition(ep.getEdge().getStart(), graph), distance);
+				return ep.travel(new VertexPosition(ep.getEdge().getStart()), distance);
 			}
 		}
 		

@@ -10,7 +10,6 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,7 +22,6 @@ import com.gutabi.deadlock.utils.Java2DUtils;
 public final class Edge extends Entity {
 	
 	public static final double ROAD_RADIUS = 0.5;
-	public static final int STOPSIGN_SIZE = 16;
 	
 	private final Vertex start;
 	private final Vertex end;
@@ -40,16 +38,14 @@ public final class Edge extends Entity {
 	private final boolean standalone;
 	private final boolean loop;
 	
-	private boolean removed = false;
-	
 	public int id;
 	
 	private final int hash;
 	
 	static Logger logger = Logger.getLogger(Edge.class);
 	
-	public Edge(Vertex start, Vertex end, Graph graph, List<Point> raw) {
-		super(graph);
+	public Edge(Vertex start, Vertex end, List<Point> raw) {
+		super();
 		
 		assert !raw.isEmpty();
 		
@@ -127,6 +123,15 @@ public final class Edge extends Entity {
 		return endBorderPoint;
 	}
 	
+	public List<Segment> getSegments() {
+		List<Segment> segs = new ArrayList<Segment>();
+		for (int i = 0; i < skeleton.size()-1; i++) {
+			segs.add(new Segment(this, i));
+		}
+		return segs;
+	}
+	
+	
 	
 	public void preStep(double t) {
 		;
@@ -156,18 +161,6 @@ public final class Edge extends Entity {
 		return totalLength - cumulativeLengthsFromStart[i];
 	}
 	
-	public void remove() {
-		assert !removed;
-		
-		graph.segTree.removeEdge(this);
-		
-		removed = true;
-	}
-	
-	public boolean isRemoved() {
-		return removed;
-	}
-	
 	public void computeProperties() {
 		
 		assert !raw.isEmpty();
@@ -188,9 +181,6 @@ public final class Edge extends Entity {
 		}
 		
 		skeleton = adj;
-		
-		graph.segTree.removeEdge(this);
-		graph.segTree.addEdge(this);
 		
 		/*
 		 * after adjustToBorders, the border properties are set to predictable values
@@ -590,24 +580,6 @@ public final class Edge extends Entity {
 		
 	}
 	
-	public void paintSigns(Graphics2D g2) {
-		
-		BufferedImage im = MODEL.world.stopSign;
-		
-		g2.drawImage(im,
-				(int)((startBorderPoint.x * MODEL.PIXELS_PER_METER)-STOPSIGN_SIZE/2),
-				(int)((startBorderPoint.y * MODEL.PIXELS_PER_METER)-STOPSIGN_SIZE/2),
-				(int)(STOPSIGN_SIZE),
-				(int)(STOPSIGN_SIZE), null);
-		
-		g2.drawImage(im,
-				(int)((endBorderPoint.x * MODEL.PIXELS_PER_METER)-STOPSIGN_SIZE/2),
-				(int)((endBorderPoint.y * MODEL.PIXELS_PER_METER)-STOPSIGN_SIZE/2),
-				(int)(STOPSIGN_SIZE),
-				(int)(STOPSIGN_SIZE), null);
-		
-	}
-	
 	
 	
 	
@@ -623,8 +595,6 @@ public final class Edge extends Entity {
 			assert start == end;
 		} else {
 			assert !(start == null || end == null);
-			assert !start.isRemoved();
-			assert !end.isRemoved();
 		}
 		
 		for (int i = 0; i < skeleton.size(); i++) {
@@ -666,7 +636,6 @@ public final class Edge extends Entity {
 	}
 	
 	private void checkColinearity() {
-		assert !isRemoved();
 		
 		for (int i = 0; i < skeleton.size(); i++) {
 			Point p = skeleton.get(i);

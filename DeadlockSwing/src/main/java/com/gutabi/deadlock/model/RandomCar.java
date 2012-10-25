@@ -25,7 +25,7 @@ public class RandomCar extends Car {
 		List<Vertex> poss = new ArrayList<Vertex>();
 		poss.add(s);
 		poss.add(s.matchingSink);
-		overallPath = GraphPositionPath.createRandomPathFromSkeleton(poss, graph);
+		overallPath = GraphPositionPath.createRandomPathFromSkeleton(poss);
 		
 //		logger.debug(overallPath);
 		

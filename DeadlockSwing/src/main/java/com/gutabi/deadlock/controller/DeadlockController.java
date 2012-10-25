@@ -149,7 +149,6 @@ public class DeadlockController implements ActionListener {
 				
 			case RUNNING:
 			case PAUSED:
-			case MENU:
 				;
 				break;
 			}
@@ -205,14 +204,6 @@ public class DeadlockController implements ActionListener {
 			case PAUSED:
 				;
 				break;
-			case MENU:
-				
-				if (lastReleaseTime - lastPressTime < 500 && lastDragPanelPoint == null) {
-					// click
-					
-				}
-				
-				break;
 			}
 			
 		}
@@ -246,9 +237,6 @@ public class DeadlockController implements ActionListener {
 				break;
 			}
 			case DRAFTING:
-			case MENU:
-				;
-				break;
 			}
 			
 		}

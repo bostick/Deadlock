@@ -67,7 +67,7 @@ public abstract class Car extends Entity {
 	static Logger logger = Logger.getLogger(Car.class);
 	
 	public Car(Source s) {
-		super(s.graph);
+		super();
 		
 		id = carCounter;
 		carCounter++;
@@ -196,10 +196,10 @@ public abstract class Car extends Entity {
 	
 	public void preStep(double t) {
 		
-		Entity e1 = graph.hitTest(carToWorld(p1));
-		Entity e2 = graph.hitTest(carToWorld(p2));
-		Entity e3 = graph.hitTest(carToWorld(p3));
-		Entity e4 = graph.hitTest(carToWorld(p4));
+		Entity e1 = MODEL.world.graphHitTest(carToWorld(p1));
+		Entity e2 = MODEL.world.graphHitTest(carToWorld(p2));
+		Entity e3 = MODEL.world.graphHitTest(carToWorld(p3));
+		Entity e4 = MODEL.world.graphHitTest(carToWorld(p4));
 		
 		if (e1 == null && e2 == null && e3 == null && e4 == null) {
 			atleastPartiallyOnRoad = false;

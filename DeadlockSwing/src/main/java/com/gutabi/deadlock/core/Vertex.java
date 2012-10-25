@@ -20,8 +20,6 @@ public abstract class Vertex extends Entity {
 	
 	protected final List<Edge> eds = new ArrayList<Edge>();
 	
-	protected boolean removed = false;
-	
 	public int id;
 	
 	List<Point> poly;
@@ -32,8 +30,8 @@ public abstract class Vertex extends Entity {
 	
 	public static final double INIT_VERTEX_RADIUS = Math.sqrt(2 * Edge.ROAD_RADIUS * Edge.ROAD_RADIUS);
 	
-	public Vertex(Point p, Graph graph) {
-		super(graph);
+	public Vertex(Point p) {
+		super();
 		
 		this.p = p;
 		
@@ -43,7 +41,7 @@ public abstract class Vertex extends Entity {
 		
 		int h = 17;
 		h = 37 * h + p.hashCode();
-		h = 37 * h + graph.hashCode();
+//		h = 37 * h + graph.hashCode();
 		hash = h;
 		
 	}
@@ -177,40 +175,20 @@ public abstract class Vertex extends Entity {
 	
 	public void addEdge(Edge e) {
 		assert e != null;
-		if (removed) {
-			throw new IllegalStateException("vertex has been removed");
-		}
 		eds.add(e);
 	}
 	
 	public void removeEdge(Edge e) {
-		if (removed) {
-			throw new IllegalStateException();
-		}
 		assert eds.contains(e);
 		eds.remove(e);
 	}
 	
 	public List<Edge> getEdges() {
-		if (removed) {
-			throw new IllegalStateException();
-		}
 		return eds;
 	}
 	
 	public Point getPoint() {
 		return p;
-	}
-	
-	public void remove() {
-		assert !removed;
-		assert eds.size() == 0;
-		
-		removed = true;
-	}
-	
-	public boolean isRemoved() {
-		return removed;
 	}
 	
 	/**
@@ -241,7 +219,6 @@ public abstract class Vertex extends Entity {
 	}
 	
 	public void check() {
-		assert !isRemoved();
 		assert getPoint() != null;
 		
 		int edgeCount = eds.size();
@@ -255,8 +232,6 @@ public abstract class Vertex extends Entity {
 		
 		int count;
 		for (Edge e : eds) {
-			
-			assert !e.isRemoved();
 			
 			count = 0;
 			for (Edge f : getEdges()) {

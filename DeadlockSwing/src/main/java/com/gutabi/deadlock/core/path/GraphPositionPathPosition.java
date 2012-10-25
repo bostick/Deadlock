@@ -99,7 +99,7 @@ public class GraphPositionPathPosition extends Position {
 		}
 		
 		if (!acc.isEmpty()) {
-			return new GraphPositionPath(acc, path.graph);
+			return new GraphPositionPath(acc);
 		} else {
 			return null;
 		}

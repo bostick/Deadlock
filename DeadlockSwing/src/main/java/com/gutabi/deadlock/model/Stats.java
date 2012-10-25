@@ -4,6 +4,7 @@ import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
 
 import com.gutabi.deadlock.core.Point;
 
@@ -19,7 +20,7 @@ public class Stats {
 	 * 
 	 * @param g2
 	 */
-	public void paintFPS(Graphics2D g2) {
+	public void paint(Graphics2D g2) {
 		
 		frameCount++;
 		
@@ -36,18 +37,13 @@ public class Stats {
 		Point p = new Point(1, 1).multiply(MODEL.PIXELS_PER_METER);
 		g2.drawString("FPS: " + fps, (int)p.x, (int)p.y);
 		
-		p = new Point(1, 2).multiply(MODEL.PIXELS_PER_METER);
-		g2.drawString("time: " + MODEL.world.t, (int)p.x, (int)p.y);
+		AffineTransform origTrans = (AffineTransform)g2.getTransform().clone();
 		
-		p = new Point(1, 3).multiply(MODEL.PIXELS_PER_METER);		
-		g2.drawString("body count: " + MODEL.world.b2dWorld.getBodyCount(), (int)p.x, (int)p.y);
+		g2.translate(0, MODEL.PIXELS_PER_METER);
 		
-		p = new Point(1, 4).multiply(MODEL.PIXELS_PER_METER);		
-		g2.drawString("edge count: " + MODEL.world.graph.getEdges().size(), (int)p.x, (int)p.y);
+		MODEL.world.paintStats(g2);
 		
-		p = new Point(1, 5).multiply(MODEL.PIXELS_PER_METER);		
-		g2.drawString("vertex count: " + MODEL.world.graph.getAllVertices().size(), (int)p.x, (int)p.y);
-		
+		g2.setTransform(origTrans);
 	}
 	
 }

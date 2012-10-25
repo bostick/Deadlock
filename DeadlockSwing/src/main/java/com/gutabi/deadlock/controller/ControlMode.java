@@ -4,11 +4,11 @@ public enum ControlMode {
 	
 	IDLE,
 	
+	
+	
 	DRAFTING,
 	
 	RUNNING,
 	
-	PAUSED,
-	
-	MENU
+	PAUSED
 }

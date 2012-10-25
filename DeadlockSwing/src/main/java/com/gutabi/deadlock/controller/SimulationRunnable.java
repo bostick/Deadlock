@@ -44,31 +44,28 @@ public class SimulationRunnable implements Runnable {
 			
 			newTimeMillis = System.currentTimeMillis();
 			long frameTimeMillis = newTimeMillis - currentTimeMillis;
-			//long frameTime = newTime - currentTime - 10;
-//			if (frameTime < 1) {
-//				frameTime = 1;
-//			}
 			
 			currentTimeMillis = newTimeMillis;
 			
 			double frameTimeSeconds = ((double)frameTimeMillis) / 1000;
+			/*
+			 * this max value is a heuristic
+			 */
+			if (frameTimeSeconds > 1 * MODEL.dt) {
+				frameTimeSeconds = 1 * MODEL.dt;
+			}
 			
 			accumulator += frameTimeSeconds;
 			
 			while (accumulator >= MODEL.dt) {
+				
 				MODEL.world.integrate(t);
+				
 				accumulator -= MODEL.dt;
 				t += MODEL.dt;
 			}
 			
 			VIEW.repaint();
-			
-//			try {
-//				Thread.sleep(10);
-//			} catch (InterruptedException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
 			
 		} // outer
 		

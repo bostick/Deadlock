@@ -10,8 +10,8 @@ import java.awt.Stroke;
 @SuppressWarnings("static-access")
 public class Intersection extends Vertex {
 	
-	public Intersection(Point p, Graph graph) {
-		super(p, graph);
+	public Intersection(Point p) {
+		super(p);
 		color = new Color(0x44, 0x44, 0x44, 0xff);
 		hiliteColor = new Color(255-color.getRed(), 255-color.getGreen(), 255-color.getBlue());
 	}

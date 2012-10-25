@@ -79,8 +79,8 @@ public class DeadlockView {
 		panel.repaint(
 				x,
 				y,
-				(int)(((MODEL.world.renderingBottomRight.x - MODEL.world.renderingUpperLeft.x) * MODEL.PIXELS_PER_METER)),
-				(int)(((MODEL.world.renderingBottomRight.y - MODEL.world.renderingUpperLeft.y) * MODEL.PIXELS_PER_METER)));
+				(int)((MODEL.world.renderingDim.width * MODEL.PIXELS_PER_METER)),
+				(int)((MODEL.world.renderingDim.height * MODEL.PIXELS_PER_METER)));
 		
 	}
 	

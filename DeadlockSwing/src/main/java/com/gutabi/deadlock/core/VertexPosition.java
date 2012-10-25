@@ -1,11 +1,13 @@
 package com.gutabi.deadlock.core;
 
+import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
+
 public class VertexPosition extends GraphPosition {
 	
 	private final Vertex v;
 	
-	public VertexPosition(Vertex v, Graph graph) {
-		super(v.getPoint(), graph);
+	public VertexPosition(Vertex v) {
+		super(v.getPoint());
 		this.v = v;
 	}
 	
@@ -55,7 +57,7 @@ public class VertexPosition extends GraphPosition {
 		
 		double totalEdgeLength = e.getTotalLength();
 		if (DMath.equals(dist, totalEdgeLength)) {
-			return new VertexPosition(dest, graph);
+			return new VertexPosition(dest);
 		} else if (dist > totalEdgeLength) {
 			throw new IllegalArgumentException();
 		}
@@ -75,7 +77,7 @@ public class VertexPosition extends GraphPosition {
 		if (b instanceof VertexPosition) {
 			VertexPosition bb = (VertexPosition)b;
 			
-			double dist = graph.distanceBetweenVertices(v, bb.v);
+			double dist = MODEL.world.distanceBetweenVertices(v, bb.v);
 			
 			assert DMath.greaterThanEquals(dist, 0.0);
 			
@@ -83,8 +85,8 @@ public class VertexPosition extends GraphPosition {
 		} else {
 			EdgePosition bb = (EdgePosition)b;
 			
-			double bbStartPath = graph.distanceBetweenVertices(v, bb.getEdge().getStart());
-			double bbEndPath = graph.distanceBetweenVertices(v, bb.getEdge().getEnd());
+			double bbStartPath = MODEL.world.distanceBetweenVertices(v, bb.getEdge().getStart());
+			double bbEndPath = MODEL.world.distanceBetweenVertices(v, bb.getEdge().getEnd());
 			
 			double dist = Math.min(bbStartPath + bb.distanceToStartOfEdge(), bbEndPath + bb.distanceToEndOfEdge());
 			

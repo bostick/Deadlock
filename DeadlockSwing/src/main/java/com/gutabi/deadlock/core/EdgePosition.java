@@ -1,5 +1,7 @@
 package com.gutabi.deadlock.core;
 
+import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
+
 public class EdgePosition extends GraphPosition {
 	
 	private final Edge e;
@@ -14,7 +16,7 @@ public class EdgePosition extends GraphPosition {
 	int hash;
 	
 	public EdgePosition(Edge e, int index, double param) {
-		super(Point.point(e.getPoint(index), e.getPoint(index+1), param), e.graph);
+		super(Point.point(e.getPoint(index), e.getPoint(index+1), param));
 		
 		if (index < 0 || index >= e.size()-1) {
 			throw new IllegalArgumentException();
@@ -97,7 +99,7 @@ public class EdgePosition extends GraphPosition {
 		if (index != 0) {
 			return new EdgePosition(e, index, 0.0);
 		} else {
-			return new VertexPosition(e.getStart(), graph);
+			return new VertexPosition(e.getStart());
 		}
 	}
 	
@@ -107,7 +109,7 @@ public class EdgePosition extends GraphPosition {
 		} else if (index != e.size()-2) {
 			return new EdgePosition(e, index+1, 0.0);
 		} else {
-			return new VertexPosition(e.getEnd(), graph);
+			return new VertexPosition(e.getEnd());
 		}
 	}
 	
@@ -156,8 +158,8 @@ public class EdgePosition extends GraphPosition {
 				return distanceToEndOfEdge();
 			}
 			
-			double aaStartPath = graph.distanceBetweenVertices(e.getStart(), bb.getVertex());
-			double aaEndPath = graph.distanceBetweenVertices(e.getEnd(), bb.getVertex());
+			double aaStartPath = MODEL.world.distanceBetweenVertices(e.getStart(), bb.getVertex());
+			double aaEndPath = MODEL.world.distanceBetweenVertices(e.getEnd(), bb.getVertex());
 			
 			double dist = Math.min(aaStartPath + distanceToStartOfEdge(), aaEndPath + distanceToEndOfEdge());
 			
@@ -172,10 +174,10 @@ public class EdgePosition extends GraphPosition {
 				return Math.abs(aa.distanceToStartOfEdge() - bb.distanceToStartOfEdge());
 			}
 			
-			double startStartPath = graph.distanceBetweenVertices(aa.getEdge().getStart(), bb.getEdge().getStart());
-			double startEndPath = graph.distanceBetweenVertices(aa.getEdge().getStart(), bb.getEdge().getEnd());
-			double endStartPath = graph.distanceBetweenVertices(aa.getEdge().getEnd(), bb.getEdge().getStart());
-			double endEndPath = graph.distanceBetweenVertices(aa.getEdge().getEnd(), bb.getEdge().getEnd());
+			double startStartPath = MODEL.world.distanceBetweenVertices(aa.getEdge().getStart(), bb.getEdge().getStart());
+			double startEndPath = MODEL.world.distanceBetweenVertices(aa.getEdge().getStart(), bb.getEdge().getEnd());
+			double endStartPath = MODEL.world.distanceBetweenVertices(aa.getEdge().getEnd(), bb.getEdge().getStart());
+			double endEndPath = MODEL.world.distanceBetweenVertices(aa.getEdge().getEnd(), bb.getEdge().getEnd());
 			
 			double startStartDistance = startStartPath + aa.distanceToStartOfEdge() + bb.distanceToStartOfEdge();
 			double startEndDistance = startEndPath + aa.distanceToStartOfEdge() + bb.distanceToEndOfEdge();
@@ -230,7 +232,7 @@ public class EdgePosition extends GraphPosition {
 			
 			double distToEndOfEdge = distanceToEndOfEdge();
 			if (DMath.equals(dist, distToEndOfEdge)) {
-				return new VertexPosition(e.getEnd(), graph);
+				return new VertexPosition(e.getEnd());
 			} else if (dist > distToEndOfEdge) {
 				throw new IllegalArgumentException();
 			}
@@ -241,7 +243,7 @@ public class EdgePosition extends GraphPosition {
 			
 			double distToStartOfEdge = distanceToStartOfEdge();
 			if (DMath.equals(dist, distToStartOfEdge)) {
-				return new VertexPosition(e.getStart(), graph);
+				return new VertexPosition(e.getStart());
 			} else if (dist > distToStartOfEdge) {
 				throw new IllegalArgumentException();
 			}
@@ -319,7 +321,7 @@ public class EdgePosition extends GraphPosition {
 	
 	private static GraphPosition nextBoundForward(Edge e, int index, double param) {
 		if (index == e.size()-2) {
-			return new VertexPosition(e.getEnd(), e.graph);
+			return new VertexPosition(e.getEnd());
 		} else {
 			return new EdgePosition(e, index+1, 0.0);
 		}
@@ -328,13 +330,13 @@ public class EdgePosition extends GraphPosition {
 	private static GraphPosition nextBoundBackward(Edge e, int index, double param) {
 		if (DMath.equals(param, 0.0)) {
 			if (index == 0 || (index == 1 && DMath.equals(param, 0.0))) {
-				return new VertexPosition(e.getStart(), e.graph);
+				return new VertexPosition(e.getStart());
 			} else {
 				return new EdgePosition(e, index-1, 0.0);
 			}
 		} else {
 			if (index == 0) {
-				return new VertexPosition(e.getStart(), e.graph);
+				return new VertexPosition(e.getStart());
 			} else {
 				return new EdgePosition(e, index, 0.0);
 			}

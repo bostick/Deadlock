@@ -3,7 +3,6 @@ package com.gutabi.deadlock.model;
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 
 import java.awt.Graphics2D;
-import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -15,15 +14,20 @@ import javax.imageio.ImageIO;
 
 import org.jbox2d.common.Vec2;
 
+import com.gutabi.deadlock.core.DMath;
+import com.gutabi.deadlock.core.Dim;
 import com.gutabi.deadlock.core.Edge;
+import com.gutabi.deadlock.core.EdgePosition;
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Graph;
-import com.gutabi.deadlock.core.GraphController;
+import com.gutabi.deadlock.core.GraphPosition;
 import com.gutabi.deadlock.core.Intersection;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.Sink;
 import com.gutabi.deadlock.core.Source;
+import com.gutabi.deadlock.core.StopSign;
 import com.gutabi.deadlock.core.Vertex;
+import com.gutabi.deadlock.core.VertexPosition;
 import com.gutabi.deadlock.utils.ImageUtils;
 
 @SuppressWarnings("static-access")
@@ -45,12 +49,11 @@ public class World {
 	public double t;
 	
 	
-	public Graph graph;
-	public GraphController gc;
+	private Graph graph;
 	
 	public List<Car> cars = new ArrayList<Car>();
 	
-	org.jbox2d.dynamics.World b2dWorld;
+	public org.jbox2d.dynamics.World b2dWorld;
 	private CarEventListener listener;
 	
 	public static BufferedImage normalCar;
@@ -62,7 +65,7 @@ public class World {
 	private BufferedImage backgroundImage;
 	
 	public Point renderingUpperLeft;
-	public Point renderingBottomRight;
+	public Dim renderingDim;
 	
 //	private static Logger logger = Logger.getLogger(World.class);
 	
@@ -93,8 +96,8 @@ public class World {
 		stopSign = ImageIO.read(new File("media\\stop.png"));
 		stopSign = ImageUtils.createResizedCopy(
 				stopSign,
-				(int)(Edge.STOPSIGN_SIZE),
-				(int)(Edge.STOPSIGN_SIZE), true);
+				(int)(StopSign.STOPSIGN_SIZE),
+				(int)(StopSign.STOPSIGN_SIZE), true);
 		
 		BufferedImage grass = ImageIO.read(new File("media\\grass.png"));
 		
@@ -111,22 +114,21 @@ public class World {
 		}
 		
 		graph = new Graph();
-		gc = new GraphController(graph);
 		
 		b2dWorld = new org.jbox2d.dynamics.World(new Vec2(0.0f, 0.0f), true);
 		listener = new CarEventListener();
 		b2dWorld.setContactListener(listener);
 		
 		
-		Source a = new Source(new Point(WORLD_WIDTH/3, 0), graph);
-		Source b = new Source(new Point(2*WORLD_WIDTH/3, 0), graph);
-		Source c = new Source(new Point(0, WORLD_HEIGHT/3), graph);
-		Source d = new Source(new Point(0, 2*WORLD_HEIGHT/3), graph);
+		Source a = new Source(new Point(WORLD_WIDTH/3, 0));
+		Source b = new Source(new Point(2*WORLD_WIDTH/3, 0));
+		Source c = new Source(new Point(0, WORLD_HEIGHT/3));
+		Source d = new Source(new Point(0, 2*WORLD_HEIGHT/3));
 		
-		Sink e = new Sink(new Point(WORLD_WIDTH/3, WORLD_HEIGHT), graph);
-		Sink f = new Sink(new Point(2*WORLD_WIDTH/3, WORLD_HEIGHT), graph);
-		Sink g = new Sink(new Point(WORLD_WIDTH, WORLD_HEIGHT/3), graph);
-		Sink h = new Sink(new Point(WORLD_WIDTH, 2*WORLD_HEIGHT/3), graph);
+		Sink e = new Sink(new Point(WORLD_WIDTH/3, WORLD_HEIGHT));
+		Sink f = new Sink(new Point(2*WORLD_WIDTH/3, WORLD_HEIGHT));
+		Sink g = new Sink(new Point(WORLD_WIDTH, WORLD_HEIGHT/3));
+		Sink h = new Sink(new Point(WORLD_WIDTH, 2*WORLD_HEIGHT/3));
 		
 		a.matchingSink = e;
 		e.matchingSource = a;
@@ -150,16 +152,18 @@ public class World {
 		graph.addSink(g);
 		graph.addSink(h);
 		
-		computeRenderingOffsets();
+		computeRenderingRect();
 	}
 	
+	
+	
 	public void removeVertexTop(Vertex v) {
-		gc.removeVertexTop(v);
+		graph.removeVertexTop(v);
 		postTop();
 	}
 	
 	public void removeEdgeTop(Edge e) {
-		gc.removeEdgeTop(e);
+		graph.removeEdgeTop(e);
 		postTop();
 	}
 	
@@ -174,52 +178,88 @@ public class World {
 	}
 	
 	public void processNewStrokeTop(Stroke stroke) {
-		gc.processNewStrokeTop(stroke);
+		
+		List<Edge> newEdges = new ArrayList<Edge>();
+		
+		Point startPoint = stroke.getWorldPoint(0);
+		GraphPosition startPos = graph.findClosestGraphPosition(startPoint, Vertex.INIT_VERTEX_RADIUS);
+		
+		int i;
+		for (i = 1; i < stroke.size(); i++) {
+			Point b = stroke.getWorldPoint(i);
+			GraphPosition bPos = graph.findClosestGraphPosition(b, Vertex.INIT_VERTEX_RADIUS);
+			if (bPos != null) {
+				if (startPos != null && bPos.getEntity() == startPos.getEntity()) {
+					continue;
+				} else {
+					break;
+				}
+			}
+		}
+		if (i == stroke.size()) {
+			/*
+			 * we know that the loop reached the end
+			 */
+			i = stroke.size()-1;
+		}
+		
+		Point endPoint = stroke.getWorldPoint(i);
+		GraphPosition endPos = graph.findClosestGraphPosition(endPoint, Vertex.INIT_VERTEX_RADIUS);
+		
+		if (DMath.lessThanEquals(Point.distance(startPoint, endPoint), Vertex.INIT_VERTEX_RADIUS + Vertex.INIT_VERTEX_RADIUS)) {
+			/*
+			 * the two new vertices would be overlapping
+			 */
+			return;
+		}
+		
+		if (startPos == null) {
+			Intersection start = new Intersection(startPoint);
+			graph.addIntersection(start);
+		}
+		
+		if (endPos == null) {
+			Intersection end = new Intersection(endPoint);
+			graph.addIntersection(end);
+		}
+		
+		startPos = graph.findClosestGraphPosition(startPoint, Vertex.INIT_VERTEX_RADIUS);
+		assert startPos != null;
+		Vertex start;
+		if (startPos instanceof EdgePosition) {
+			start = graph.split((EdgePosition)startPos);
+		} else {
+			start = ((VertexPosition)startPos).getVertex();
+		}
+		
+		endPos = graph.findClosestGraphPosition(endPoint, Vertex.INIT_VERTEX_RADIUS);
+		assert endPos != null;
+		Vertex end;
+		if (endPos instanceof EdgePosition) {
+			end = graph.split((EdgePosition)endPos);
+		} else {
+			end = ((VertexPosition)endPos).getVertex();
+		}
+		
+		Edge e = graph.createEdgeTop(start, end, stroke.getWorldPoints().subList(0, i+1));
+		newEdges.add(e);
+		
 		postTop();
 	}
 	
 	private void postTop() {
-		computeRenderingOffsets();
+		
+		graph.computeVertexRadii();
+		
+		computeRenderingRect();
 	}
 	
-	private void computeRenderingOffsets() {
+	private void computeRenderingRect() {
 		
-		double renderingUpperLeftX = 0.0;
-		double renderingUpperLeftY = 0.0;
-		double renderingBottomRightX = WORLD_WIDTH;
-		double renderingBottomRightY = WORLD_HEIGHT;
+		Object[] combo = graph.getRenderingRectCombo(0.0, 0.0, WORLD_WIDTH, WORLD_HEIGHT);
 		
-		for (Vertex v : graph.getAllVertices()) {
-			if (v.renderingUpperLeft.x < renderingUpperLeftX) {
-				renderingUpperLeftX = v.renderingUpperLeft.x;
-			}
-			if (v.renderingUpperLeft.y < renderingUpperLeftY) {
-				renderingUpperLeftY = v.renderingUpperLeft.y;
-			}
-			if (v.renderingBottomRight.x > renderingBottomRightX) {
-				renderingBottomRightX = v.renderingBottomRight.x;
-			}
-			if (v.renderingBottomRight.y > renderingBottomRightY) {
-				renderingBottomRightY = v.renderingBottomRight.y;
-			}
-		}
-		for (Edge ed : graph.getEdges()) {
-			if (ed.renderingUpperLeft.x < renderingUpperLeftX) {
-				renderingUpperLeftX = ed.renderingUpperLeft.x;
-			}
-			if (ed.renderingUpperLeft.y < renderingUpperLeftY) {
-				renderingUpperLeftY = ed.renderingUpperLeft.y;
-			}
-			if (ed.renderingBottomRight.x > renderingBottomRightX) {
-				renderingBottomRightX = ed.renderingBottomRight.x;
-			}
-			if (ed.renderingBottomRight.y > renderingBottomRightY) {
-				renderingBottomRightY = ed.renderingBottomRight.y;
-			}
-		}
-		
-		renderingUpperLeft = new Point(renderingUpperLeftX, renderingUpperLeftY);
-		renderingBottomRight = new Point(renderingBottomRightX, renderingBottomRightY);
+		renderingUpperLeft = (Point)combo[0];
+		renderingDim = (Dim)combo[1];
 	}
 	
 	
@@ -269,9 +309,7 @@ public class World {
 	
 	private void preStep() {
 		
-		for (Vertex v : graph.getAllVertices()) {
-			v.preStep(t);
-		}
+		graph.preStep(t);
 		
 		for (Car c : cars) {
 			c.preStep(t);
@@ -306,26 +344,27 @@ public class World {
 		return graph.shortestPathChoice(start, end);
 	}
 	
+	public Vertex randomPathChoice(Edge prev, Vertex start, Vertex end) {
+		return graph.randomPathChoice(prev, start, end);
+	}
+	
 	public double distanceBetweenVertices(Vertex start, Vertex end) {
 		return graph.distanceBetweenVertices(start, end);
 	}
-	
-	
-	
 	
 	public Entity hitTest(Point p) {
 		Car c = carHitTest(p);
 		if (c != null) {
 			return c;
 		}
-		Entity h = graph.hitTest(p);
+		Entity h = graphHitTest(p);
 		if (h != null) {
 			return h;
 		}
 		return null;
 	}
 	
-	private Car carHitTest(Point p) {
+	public Car carHitTest(Point p) {
 		synchronized (MODEL) {
 			for (Car c : cars) {
 				if (c.hitTest(p)) {
@@ -336,6 +375,9 @@ public class World {
 		return null;
 	}
 	
+	public Entity graphHitTest(Point p) {
+		return graph.hitTest(p);
+	}
 	
 	public void paint(Graphics2D g2) {
 		paintBackground(g2);
@@ -346,30 +388,14 @@ public class World {
 		
 		switch (MODEL.getMode()) {
 		case DRAFTING:
-		case MENU:
 			break;
 		case IDLE:
 		case RUNNING:
 		case PAUSED: {
 			
-			List<Edge> edgesCopy;
-			List<Vertex> verticesCopy;
-			
-			synchronized (MODEL) {
-				edgesCopy = new ArrayList<Edge>(MODEL.world.graph.getEdges());
-				verticesCopy = new ArrayList<Vertex>(MODEL.world.graph.getAllVertices());
-			}
+			graph.paintScene(g2);
 			
 			AffineTransform origTransform = g2.getTransform();
-			
-			for (Edge e : edgesCopy) {
-				if (MODEL.DEBUG_DRAW) {
-					e.paintSkeleton(g2);
-					e.paintBorders(g2);
-				}
-				e.paintSigns(g2);
-			}
-			
 			AffineTransform trans = (AffineTransform)origTransform.clone();
 			trans.scale(MODEL.PIXELS_PER_METER, MODEL.PIXELS_PER_METER);
 			g2.setTransform(trans);
@@ -386,17 +412,28 @@ public class World {
 			
 			g2.setTransform(origTransform);
 			
-			if (MODEL.DEBUG_DRAW) {
-				
-				for (Vertex v : verticesCopy) {
-					v.paintID(g2);
-				}
-				
-			}
+			graph.paintIDs(g2);
 			
 			break;
 		}
 		}
+		
+	}
+	
+	public void paintStats(Graphics2D g2) {
+		
+		Point p = new Point(1, 1).multiply(MODEL.PIXELS_PER_METER);
+		g2.drawString("time: " + t, (int)p.x, (int)p.y);
+		
+		p = new Point(1, 2).multiply(MODEL.PIXELS_PER_METER);
+		g2.drawString("body count: " + b2dWorld.getBodyCount(), (int)p.x, (int)p.y);
+		
+		p = new Point(1, 3).multiply(MODEL.PIXELS_PER_METER);
+		g2.drawString("car count: " + cars.size(), (int)p.x, (int)p.y);
+		
+		g2.translate(0, 3 * MODEL.PIXELS_PER_METER);
+		
+		graph.paintStats(g2);
 		
 	}
 	
@@ -412,8 +449,8 @@ public class World {
 		assert !Thread.holdsLock(MODEL);
 		
 		backgroundImage = new BufferedImage(
-				(int)((renderingBottomRight.x - renderingUpperLeft.x) * MODEL.PIXELS_PER_METER),
-				(int)((renderingBottomRight.y - renderingUpperLeft.y) * MODEL.PIXELS_PER_METER),
+				(int)(renderingDim.width * MODEL.PIXELS_PER_METER),
+				(int)(renderingDim.height * MODEL.PIXELS_PER_METER),
 				BufferedImage.TYPE_INT_ARGB);
 		Graphics2D backgroundImageG2 = backgroundImage.createGraphics();
 		
@@ -423,30 +460,7 @@ public class World {
 		
 		backgroundImageG2.drawImage(tiledGrass, 0, 0, null);
 		
-		backgroundImageG2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		
-		List<Edge> edgesCopy;
-		List<Vertex> verticesCopy;
-		
-		synchronized (MODEL) {
-			edgesCopy = new ArrayList<Edge>(MODEL.world.graph.getEdges());
-			verticesCopy = new ArrayList<Vertex>(MODEL.world.graph.getAllVertices());
-		}
-		
-		AffineTransform origTransform = backgroundImageG2.getTransform();
-		AffineTransform trans = (AffineTransform)origTransform.clone();
-		trans.scale(MODEL.PIXELS_PER_METER, MODEL.PIXELS_PER_METER);
-		backgroundImageG2.setTransform(trans);
-		
-		for (Edge e : edgesCopy) {
-			e.paint(backgroundImageG2);
-		}
-		
-		for (Vertex v : verticesCopy) {
-			v.paint(backgroundImageG2);
-		}
-		
-		backgroundImageG2.setTransform(origTransform);
+		graph.renderBackground(backgroundImageG2);
 		
 	}
 	
