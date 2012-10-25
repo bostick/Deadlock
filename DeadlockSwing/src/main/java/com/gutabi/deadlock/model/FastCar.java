@@ -18,7 +18,7 @@ public class FastCar extends Car {
 	public FastCar(Source s) {
 		super(s);
 		overallPath = s.getShortestPathToMatchingSink();
-		computeStarting();
+		computeStartingProperties();
 	}
 	
 	@Override

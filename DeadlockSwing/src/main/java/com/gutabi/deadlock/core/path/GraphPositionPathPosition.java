@@ -8,18 +8,16 @@ import org.apache.log4j.Logger;
 import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.EdgePosition;
 import com.gutabi.deadlock.core.GraphPosition;
-import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.core.Position;
 import com.gutabi.deadlock.core.VertexPosition;
 
-public class GraphPositionPathPosition extends Position {
+public class GraphPositionPathPosition {
 	
 	private final GraphPositionPath path;
 	public final int index;
 	public final double param;
 	private final boolean bound;
 	
-	private final GraphPosition gpos;
+	public final GraphPosition gpos;
 	
 	private final double distanceFromStartOfPath;
 	
@@ -28,9 +26,9 @@ public class GraphPositionPathPosition extends Position {
 	static Logger logger = Logger.getLogger(GraphPositionPathPosition.class);
 	
 	public GraphPositionPathPosition(GraphPositionPath path, int index, double param) {
-		super(DMath.equals(param, 0.0) ?
-				path.getGraphPosition(index).getPoint() :
-					Point.point(path.getGraphPosition(index).getPoint(), path.getGraphPosition(index+1).getPoint(), param));
+//		super(DMath.equals(param, 0.0) ?
+//				path.getGraphPosition(index).getPoint() :
+//					Point.point(path.getGraphPosition(index).getPoint(), path.getGraphPosition(index+1).getPoint(), param));
 		
 		this.path = path;
 		this.index = index;

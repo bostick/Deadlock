@@ -8,7 +8,6 @@ import java.awt.Graphics2D;
 import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Path2D;
-import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,6 +38,8 @@ public final class Edge extends Entity {
 	private final boolean loop;
 	
 	public int id;
+	public StopSign startSign;
+	public StopSign endSign;
 	
 	private final int hash;
 	
@@ -58,9 +59,6 @@ public final class Edge extends Entity {
 		
 		color = new Color(0x88, 0x88, 0x88, 0xff);
 		hiliteColor = new Color(0xff ^ 0x88, 0xff ^ 0x88, 0xff ^ 0x88, 0xff);
-		
-		computeProperties();
-		computePath();
 		
 		int h = 17;
 		if (start != null) {
@@ -123,14 +121,6 @@ public final class Edge extends Entity {
 		return endBorderPoint;
 	}
 	
-	public List<Segment> getSegments() {
-		List<Segment> segs = new ArrayList<Segment>();
-		for (int i = 0; i < skeleton.size()-1; i++) {
-			segs.add(new Segment(this, i));
-		}
-		return segs;
-	}
-	
 	
 	
 	public void preStep(double t) {
@@ -144,10 +134,87 @@ public final class Edge extends Entity {
 	
 	
 	
-	public boolean hitTest(Point p) {
-		return path.contains(new Point2D.Double(p.x, p.y));
+	public boolean hitTest(Point p, double radius) {
+//		return path.contains(new Point2D.Double(p.x, p.y));
+		for (int i = 0; i < skeleton.size()-1; i++) {
+			Point a = skeleton.get(i);
+			Point b = skeleton.get(i+1);
+			if (DMath.lessThanEquals(Point.distance(p, a, b), Edge.ROAD_RADIUS + radius)) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
+	public EdgePosition findClosestEdgePosition(Point p, double radius) {
+		
+		int bestIndex = -1;
+		double bestParam = -1;
+		Point bestPoint = null;
+		
+		for (int i = 0; i < skeleton.size()-1; i++) {
+			Point a = skeleton.get(i);
+			Point b = skeleton.get(i+1);
+			double closest = closestParam(p, i);
+			Point ep = Point.point(a, b, closest);
+			double dist = Point.distance(p, ep);
+			if (DMath.lessThanEquals(dist, radius + Edge.ROAD_RADIUS)) {
+				if (bestPoint == null) {
+					bestIndex = i;
+					bestParam = closest;
+					bestPoint = ep;
+				} else if (Point.distance(p, ep) < Point.distance(p, bestPoint)) {
+					bestIndex = i;
+					bestParam = closest;
+					bestPoint = ep;
+				}
+			}
+		}
+		
+		if (bestPoint != null) {
+			if (bestParam == 1.0) {
+				if (bestIndex == skeleton.size()-2) {
+					return null;
+				} else {
+					return new EdgePosition(this, bestIndex+1, 0.0);
+				}
+			} else {
+				return new EdgePosition(this, bestIndex, bestParam);
+			}
+		} else {
+			return null;
+		}
+	}
+	
+	/**
+	 * find closest position on <c, d> to the point b
+	 */
+	private double closestParam(Point b, int index) {
+		Point c = skeleton.get(index);
+		Point d = skeleton.get(index+1);
+		if (b.equals(c)) {
+			return 0.0;
+		}
+		if (b.equals(d)) {
+			return 1.0;
+		}
+		if (c.equals(d)) {
+			throw new IllegalArgumentException("c equals d");
+		}
+		
+		double u = Point.u(c, b, d);
+		if (DMath.lessThanEquals(u, 0.0)) {
+			return 0.0;
+		} else if (DMath.greaterThanEquals(u, 1.0)) {
+			return 1.0;
+		} else {
+			return u;
+		}
+	}
+	
+	public boolean isDeleteable() {
+		return true;
+	}
 	
 	
 	/**
@@ -190,8 +257,8 @@ public final class Edge extends Entity {
 			endBorderIndex = skeleton.size()-2;
 			startBorderPoint = skeleton.get(startBorderIndex);
 			endBorderPoint = skeleton.get(endBorderIndex);
-			assert DMath.equals(Point.distance(startBorderPoint, start.p), start.radius);
-			assert DMath.equals(Point.distance(endBorderPoint, end.p), end.radius);
+			assert DMath.equals(Point.distance(startBorderPoint, start.p), start.r);
+			assert DMath.equals(Point.distance(endBorderPoint, end.p), end.r);
 		} else {
 			startBorderIndex = -1;
 			endBorderIndex = -1;
@@ -201,6 +268,12 @@ public final class Edge extends Entity {
 		
 		computeLengths();
 		
+		if (startSign != null) {
+			startSign.computePoint();
+		}
+		if (endSign != null) {
+			endSign.computePoint();
+		}
 	}
 	
 	private static List<Point> removeDuplicates(List<Point> stroke) {
@@ -412,11 +485,13 @@ public final class Edge extends Entity {
 		
 		path = Java2DUtils.listToPath(poly);
 		
+		computeRenderingRect();
+	}
+	
+	private void computeRenderingRect() {
 		Rectangle2D bound = path.getBounds2D();
-		
 		renderingUpperLeft = new Point(bound.getX(), bound.getY());
-		renderingBottomRight = new Point(bound.getX() + bound.getWidth(), bound.getY() + bound.getHeight());
-		
+		renderingDim = new Dim(bound.getWidth(), bound.getHeight());
 	}
 	
 	private void addToArea(AreaX area, Point a, Point b) {
@@ -589,50 +664,55 @@ public final class Edge extends Entity {
 	
 	private void check() {
 		
-		assert skeleton.size() >= 2;
-		
 		if (loop) {
 			assert start == end;
 		} else {
 			assert !(start == null || end == null);
 		}
 		
-		for (int i = 0; i < skeleton.size(); i++) {
-			Point p = skeleton.get(i);
+		if (skeleton != null) {
 			
-			int count = 0;
-			for (Point q : skeleton) {
-				if (p.equals(q)) {
-					count++;
+			assert skeleton.size() >= 2;
+			
+			for (int i = 0; i < skeleton.size(); i++) {
+				Point p = skeleton.get(i);
+				
+				int count = 0;
+				for (Point q : skeleton) {
+					if (p.equals(q)) {
+						count++;
+					}
 				}
-			}
-			if (loop && (i == 0 || i == skeleton.size()-1)) {
-				assert count == 2;
-			} else {
-				assert count == 1;
-			}
-			
-			if (i == 0) {
-				if (loop) {
-					if (start != null) {
+				if (loop && (i == 0 || i == skeleton.size()-1)) {
+					assert count == 2;
+				} else {
+					assert count == 1;
+				}
+				
+				if (i == 0) {
+					if (loop) {
+						if (start != null) {
+							assert start.getPoint().equals(p);
+							assert end.getPoint().equals(p);
+						}
+					} else {
 						assert start.getPoint().equals(p);
+					}
+				} else if (i == skeleton.size()-1) {
+					if (loop) {
+						if (end != null) {
+							assert end.getPoint().equals(p);
+						}
+					} else {
 						assert end.getPoint().equals(p);
 					}
-				} else {
-					assert start.getPoint().equals(p);
-				}
-			} else if (i == skeleton.size()-1) {
-				if (loop) {
-					if (end != null) {
-						assert end.getPoint().equals(p);
-					}
-				} else {
-					assert end.getPoint().equals(p);
 				}
 			}
+			
+			checkColinearity();
+			
 		}
 		
-		checkColinearity();
 	}
 	
 	private void checkColinearity() {

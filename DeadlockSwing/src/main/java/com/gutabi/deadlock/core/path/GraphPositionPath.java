@@ -54,8 +54,8 @@ public class GraphPositionPath {
 			if (i == 0) {
 				cumulativeDistancesFromStart[i] = 0;
 			} else {
-				Point a  = poss.get(i-1).getPoint();
-				Point b = poss.get(i).getPoint();
+				Point a  = poss.get(i-1).p;
+				Point b = poss.get(i).p;
 				length = Point.distance(a, b);
 				l += length;
 				cumulativeDistancesFromStart[i] = cumulativeDistancesFromStart[i-1] + length;
@@ -198,13 +198,13 @@ public class GraphPositionPath {
 		 * end of path
 		 */
 		GraphPositionPathPosition closest = new GraphPositionPathPosition(this, poss.size()-1, 0.0);
-		double closestDistance = Point.distance(p, closest.getPoint());
+		double closestDistance = Point.distance(p, closest.gpos.p);
 		
 		for (int i = 0; i < poss.size()-1; i++) {
 			GraphPosition a = poss.get(i);
 			GraphPosition b = poss.get(i+1);
 			double u;
-			u = Point.u(a.floor().getPoint(), p, b.ceiling().getPoint());
+			u = Point.u(a.floor().p, p, b.ceiling().p);
 			if (i == 0) {
 				assert b.isBound();
 				if (a instanceof EdgePosition && u < ((EdgePosition)a).getParam()) {
@@ -221,7 +221,7 @@ public class GraphPositionPath {
 					 */
 					continue;
 				}
-				Point pOnPath = Point.point(a.floor().getPoint(), b.ceiling().getPoint(), u);
+				Point pOnPath = Point.point(a.floor().p, b.ceiling().p, u);
 				double dist = Point.distance(p, pOnPath);
 				if (dist < closestDistance && (i+u) >= pos.getCombo() && Math.abs((i+u)-pos.getCombo()) < Math.abs(closest.getCombo()-pos.getCombo())) {
 					closest = new GraphPositionPathPosition(this, i, u);
@@ -243,14 +243,14 @@ public class GraphPositionPath {
 					/*
 					 * but if last iteration, then do test now
 					 */
-					Point pOnPath = b.getPoint();
+					Point pOnPath = b.p;
 					double dist = Point.distance(p, pOnPath);
 					if (dist < closestDistance && (i+u) >= pos.getCombo() && Math.abs((i+1+0.0)-pos.getCombo()) < Math.abs(closest.getCombo()-pos.getCombo())) {
 						closest = new GraphPositionPathPosition(this, i+1, 0.0);
 						closestDistance = dist;
 					}
 				} else {
-					Point pOnPath = Point.point(a.floor().getPoint(), b.ceiling().getPoint(), u);
+					Point pOnPath = Point.point(a.floor().p, b.ceiling().p, u);
 					double dist = Point.distance(p, pOnPath);
 					if (dist < closestDistance && (i+u) >= pos.getCombo() && Math.abs((i+u)-pos.getCombo()) < Math.abs(closest.getCombo()-pos.getCombo())) {
 						closest = new GraphPositionPathPosition(this, i, u);
@@ -277,7 +277,7 @@ public class GraphPositionPath {
 					 */
 					continue;
 				}
-				Point pOnPath = Point.point(a.floor().getPoint(), b.ceiling().getPoint(), u);
+				Point pOnPath = Point.point(a.floor().p, b.ceiling().p, u);
 				double dist = Point.distance(p, pOnPath);
 				if (dist < closestDistance && (i+u) >= pos.getCombo() && Math.abs((i+u)-pos.getCombo()) < Math.abs(closest.getCombo()-pos.getCombo())) {
 					closest = new GraphPositionPathPosition(this, i, u);

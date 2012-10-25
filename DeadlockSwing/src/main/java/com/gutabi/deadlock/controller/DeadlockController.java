@@ -17,8 +17,7 @@ import com.gutabi.deadlock.DeadlockMain;
 import com.gutabi.deadlock.core.Edge;
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.core.Sink;
-import com.gutabi.deadlock.core.Source;
+import com.gutabi.deadlock.core.StopSign;
 import com.gutabi.deadlock.core.Vertex;
 import com.gutabi.deadlock.model.Car;
 
@@ -247,32 +246,36 @@ public class DeadlockController implements ActionListener {
 		
 		if (MODEL.hilited != null) {
 			
-			if (MODEL.hilited instanceof Vertex) {
-				Vertex v = (Vertex)MODEL.hilited;
+			if (MODEL.hilited.isDeleteable()) {
 				
-				if (v instanceof Sink) {
-					return;
-				} else if (v instanceof Source) {
-					return;
+				if (MODEL.hilited instanceof Vertex) {
+					Vertex v = (Vertex)MODEL.hilited;
+					
+					MODEL.world.removeVertexTop(v);
+					
+				} else if (MODEL.hilited instanceof Edge) {
+					Edge e = (Edge)MODEL.hilited;
+					
+					MODEL.world.removeEdgeTop(e);
+					
+				} else if (MODEL.hilited instanceof Car) {
+					Car c = (Car)MODEL.hilited;
+					
+					MODEL.world.removeCarTop(c);
+					
+				} else if (MODEL.hilited instanceof StopSign) {
+					StopSign s = (StopSign)MODEL.hilited;
+					
+					MODEL.world.removeStopSignTop(s);
+					
+				} else {
+					throw new AssertionError();
 				}
 				
-				MODEL.world.removeVertexTop(v);
+				MODEL.hilited = null;
 				
-			} else if (MODEL.hilited instanceof Edge) {
-				Edge e = (Edge)MODEL.hilited;
-				
-				MODEL.world.removeEdgeTop(e);
-				
-			} else if (MODEL.hilited instanceof Car) {
-				Car c = (Car)MODEL.hilited;
-				
-				MODEL.world.removeCarTop(c);
-				
-			} else {
-				throw new AssertionError();
 			}
 			
-			MODEL.hilited = null;
 		}
 		
 		MODEL.world.renderBackground();

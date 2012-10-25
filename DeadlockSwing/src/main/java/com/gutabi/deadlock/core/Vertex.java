@@ -2,6 +2,7 @@ package com.gutabi.deadlock.core;
 
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Shape;
@@ -22,9 +23,8 @@ public abstract class Vertex extends Entity {
 	
 	public int id;
 	
-	List<Point> poly;
 	Path2D path;
-	double radius;
+	double r;
 	
 	private final int hash;
 	
@@ -35,7 +35,7 @@ public abstract class Vertex extends Entity {
 		
 		this.p = p;
 		
-		radius = INIT_VERTEX_RADIUS;
+		r = INIT_VERTEX_RADIUS;
 		
 		computePath();
 		
@@ -55,32 +55,42 @@ public abstract class Vertex extends Entity {
 	}
 	
 	public double getRadius() {
-		return radius;
+		return r;
 	}
 	
 	
-	public boolean hitTest(Point p) {
-		return DMath.lessThanEquals(Point.distance(p, this.p), radius);
+	public boolean hitTest(Point p, double radius) {
+		return DMath.lessThanEquals(Point.distance(p, this.p), radius + r);
 	}
 	
+	public VertexPosition findClosestVertexPosition(Point a, double radius) {
+		double dist = Point.distance(a, p);
+		if (DMath.lessThanEquals(dist, radius + r)) {
+			return new VertexPosition(this);
+		} else {
+			return null;
+		}
+	}
 	
-	private void computePath() {
-		Shape s = new Ellipse2D.Double(p.x - radius, p.y - radius, 2 * radius, 2 * radius);
+	public void computePath() {
+		Shape s = new Ellipse2D.Double(p.x - r, p.y - r, 2 * r, 2 * r);
 		
-		poly = Java2DUtils.shapeToList(s, 0.01);
+		List<Point> poly = Java2DUtils.shapeToList(s, 0.01);
 		
 		path = Java2DUtils.listToPath(poly);
 		
-		Rectangle2D bound = path.getBounds2D();
-		
-		renderingUpperLeft = new Point(bound.getX(), bound.getY());
-		renderingBottomRight = new Point(bound.getX() + bound.getWidth(), bound.getY() + bound.getHeight());
+		computeRenderingRect();
 	}	
 	
+	private void computeRenderingRect() {
+		Rectangle2D bound = path.getBounds2D();
+		renderingUpperLeft = new Point(bound.getX(), bound.getY());
+		renderingDim = new Dim(bound.getWidth(), bound.getHeight());
+	}
 	
 	public void computeRadius(double maximumRadius) {
 		
-		radius = INIT_VERTEX_RADIUS;
+		r = INIT_VERTEX_RADIUS;
 		for (Edge e : eds) {
 			e.computeProperties();
 		}
@@ -122,10 +132,10 @@ public abstract class Vertex extends Entity {
 			
 			if (!tooClose) {
 				break loop;
-			} else if (radius + 0.1 > maximumRadius) {
+			} else if (r + 0.1 > maximumRadius) {
 				break loop;
 			} else {
-				radius = radius + 0.1;
+				r = r + 0.1;
 			}
 			
 			for (Edge e : eds) {
@@ -204,7 +214,8 @@ public abstract class Vertex extends Entity {
 	 */
 	public void paintHilite(Graphics2D g2) {
 		g2.setColor(hiliteColor);
-		g2.fill(path);
+		g2.setStroke(new BasicStroke(0.05f));
+		g2.draw(path);
 	}
 	
 	/**
@@ -213,7 +224,7 @@ public abstract class Vertex extends Entity {
 	 */
 	public void paintID(Graphics2D g2) {
 		g2.setColor(Color.WHITE);
-		Point worldPoint = p.minus(new Point(radius, 0));
+		Point worldPoint = p.minus(new Point(r, 0));
 		Point panelPoint = worldPoint.multiply(MODEL.PIXELS_PER_METER);
 		g2.drawString(Integer.toString(id), (int)(panelPoint.x), (int)(panelPoint.y));
 	}

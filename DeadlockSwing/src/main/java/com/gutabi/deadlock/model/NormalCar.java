@@ -18,7 +18,7 @@ public class NormalCar extends Car {
 	public NormalCar(Source s) {
 		super(s);
 		overallPath = s.getShortestPathToMatchingSink();
-		computeStarting();
+		computeStartingProperties();
 	}
 	
 	@Override

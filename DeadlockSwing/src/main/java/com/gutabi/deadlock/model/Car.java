@@ -17,6 +17,7 @@ import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.Fixture;
 import org.jbox2d.dynamics.FixtureDef;
 
+import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.GraphPosition;
 import com.gutabi.deadlock.core.Point;
@@ -42,7 +43,6 @@ public abstract class Car extends Entity {
 	
 	protected GraphPositionPath overallPath;
 	GraphPositionPathPosition overallPos;
-//	private GraphPositionPath restOfPath;
 	
 	public final int id;
 	
@@ -86,17 +86,15 @@ public abstract class Car extends Entity {
 		p3 = new Point(-CAR_LENGTH / 2, -CAR_LENGTH / 4);
 		p4 = new Point(-CAR_LENGTH / 2, CAR_LENGTH / 4);
 		
-		computeArea();
+		computePath();
 		
 	}
 	
-	protected void computeStarting() {
-		
-//		restOfPath = overallPath;
+	protected void computeStartingProperties() {
 		
 		overallPos = new GraphPositionPathPosition(overallPath, 0, 0.0);
 		GraphPosition closestGraphPos = overallPos.getGraphPosition();
-		startPoint = closestGraphPos.getPoint();
+		startPoint = closestGraphPos.p;
 		
 		STGraphPositionPathPositionPath nextPlannedPath = STGraphPositionPathPositionPath.advanceOneTimeStep(overallPos, getMetersPerSecond() * MODEL.dt);
 		
@@ -120,7 +118,7 @@ public abstract class Car extends Entity {
 		return state;
 	}
 	
-	private void computeArea() {
+	public void computePath() {
 		
 		path = new GeneralPath();
 		path.moveTo(p1.x, p1.y);
@@ -171,8 +169,27 @@ public abstract class Car extends Entity {
 		MODEL.world.b2dWorld.destroyBody(b2dBody);
 	}
 	
-	public boolean hitTest(Point p) {
-		return b2dShape.testPoint(b2dBody.getTransform(), new Vec2((float)p.x, (float)p.y));
+	public boolean hitTest(Point p, double radius) {
+		if (b2dShape.testPoint(b2dBody.getTransform(), new Vec2((float)p.x, (float)p.y))) {
+			return true;
+		}
+		if (DMath.lessThanEquals(Point.distance(p, p1, p2), radius)) {
+			return true;
+		}
+		if (DMath.lessThanEquals(Point.distance(p, p2, p3), radius)) {
+			return true;
+		}
+		if (DMath.lessThanEquals(Point.distance(p, p3, p4), radius)) {
+			return true;
+		}
+		if (DMath.lessThanEquals(Point.distance(p, p4, p1), radius)) {
+			return true;
+		}
+		return false;
+	}
+	
+	public boolean isDeleteable() {
+		return true;
 	}
 	
 	public void crash() {

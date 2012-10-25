@@ -16,7 +16,7 @@ public class STGraphPositionPath {
 	public STPointPath toSTPointPath() {
 		List<STPoint> newPath = new ArrayList<STPoint>();
 		for (STGraphPosition p : poss) {
-			newPath.add(new STPoint(p.getSpace().getPoint(), p.getTime()));
+			newPath.add(new STPoint(p.getSpace().p, p.getTime()));
 		}
 		return new STPointPath(newPath);
 	}

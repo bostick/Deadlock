@@ -36,14 +36,6 @@ public class Graph {
 		return all;
 	}
 	
-	private List<Segment> getAllSegments() {
-		List<Segment> all = new ArrayList<Segment>();
-		for (Edge e : edges) {
-			all.addAll(e.getSegments());
-		}
-		return all;
-	}
-	
 	
 	public void addSource(Source s) {
 		sources.add(s);
@@ -62,7 +54,7 @@ public class Graph {
 	
 	public Edge createEdgeTop(Vertex start, Vertex end, List<Point> pts) {
 		
-		Edge e = createEdge(start, end, pts);
+		Edge e = createEdge(start, end, pts, 3);
 		
 		automaticMergeOrDestroy(start);
 		automaticMergeOrDestroy(end);
@@ -140,6 +132,12 @@ public class Graph {
 		
 	}
 	
+	public void removeStopSignTop(StopSign s) {
+		
+		destroyStopSign(s);
+		
+	}
+	
 	private void automaticMergeOrDestroy(Vertex v) {
 		
 		if (v instanceof Intersection) {
@@ -177,7 +175,7 @@ public class Graph {
 
 	
 	
-	private Edge createEdge(Vertex start, Vertex end, List<Point> pts) {
+	private Edge createEdge(Vertex start, Vertex end, List<Point> pts, int dec) {
 		
 		Edge e = new Edge(start, end, pts);
 		edges.add(e);
@@ -188,9 +186,22 @@ public class Graph {
 			start.addEdge(e);
 			end.addEdge(e);
 			
-			signs.add(new StopSign(e, 0));
-			signs.add(new StopSign(e, 1));
+			if ((dec & 1) == 1) {
+				StopSign startSign = new StopSign(e, 0);
+				signs.add(startSign);
+				e.startSign = startSign;
+			}
+			
+			if ((dec & 2) == 2) {
+				StopSign endSign = new StopSign(e, 1);
+				signs.add(endSign);
+				e.endSign = endSign;
+			}
+
 		}
+		
+		e.computeProperties();
+		e.computePath();
 		
 		return e;
 	}
@@ -201,33 +212,31 @@ public class Graph {
 		if (!e.isStandAlone()) {
 			e.getStart().removeEdge(e);
 			e.getEnd().removeEdge(e);
+			
+			destroyStopSign(e.startSign);
+			destroyStopSign(e.endSign);
+			
 		}
 		
 		edges.remove(e);
 		
-		StopSign s0 = null;
-		StopSign s1 = null;
-		for (StopSign s : signs) {
-			if (s.e == e) {
-				if (s.dir == 0) {
-					s0 = s;
-				}
-				if (s.dir == 1) {
-					s1 = s;
-				}
-			}
-		}
-		
-		if (s0 != null) {
-			signs.remove(s0);
-		}
-		
-		if (s1 != null) {
-			signs.remove(s1);
-		}
-		
 		refreshEdgeIDs();
 		
+	}
+	
+	private void destroyStopSign(StopSign s) {
+		if (s == null) {
+			return;
+		}
+		
+		if (s.e.startSign == s) {
+			s.e.startSign = null;
+		} else {
+			assert s.e.endSign == s;
+			s.e.endSign = null;
+		}
+		
+		signs.remove(s);
 	}
 	
 	private Vertex createIntersection(Point p) {
@@ -291,7 +300,10 @@ public class Graph {
 		
 	}
 	
-	public Object[] getRenderingRectCombo(double ulX, double ulY, double brX, double brY) {
+	public Object[] getRenderingRectCombo(double ulX, double ulY, double width, double height) {
+		
+		double brX = ulX + width;
+		double brY = ulY + height;
 		
 		for (Vertex v : getAllVertices()) {
 			if (v.renderingUpperLeft.x < ulX) {
@@ -300,11 +312,12 @@ public class Graph {
 			if (v.renderingUpperLeft.y < ulY) {
 				ulY = v.renderingUpperLeft.y;
 			}
-			if (v.renderingBottomRight.x > brX) {
-				brX = v.renderingBottomRight.x;
+			Point renderingBottomRight = new Point(v.renderingUpperLeft.x + v.renderingDim.width, v.renderingUpperLeft.y + v.renderingDim.height);
+			if (renderingBottomRight.x > brX) {
+				brX = renderingBottomRight.x;
 			}
-			if (v.renderingBottomRight.y > brY) {
-				brY = v.renderingBottomRight.y;
+			if (renderingBottomRight.y > brY) {
+				brY = renderingBottomRight.y;
 			}
 		}
 		for (Edge ed : edges) {
@@ -314,13 +327,21 @@ public class Graph {
 			if (ed.renderingUpperLeft.y < ulY) {
 				ulY = ed.renderingUpperLeft.y;
 			}
-			if (ed.renderingBottomRight.x > brX) {
-				brX = ed.renderingBottomRight.x;
+			Point renderingBottomRight = new Point(ed.renderingUpperLeft.x + ed.renderingDim.width, ed.renderingUpperLeft.y + ed.renderingDim.height);
+			if (renderingBottomRight.x > brX) {
+				brX = renderingBottomRight.x;
 			}
-			if (ed.renderingBottomRight.y > brY) {
-				brY = ed.renderingBottomRight.y;
+			if (renderingBottomRight.y > brY) {
+				brY = renderingBottomRight.y;
 			}
 		}
+		
+		/*
+		 * signs do not contribute to the rendering rect
+		 */
+//		for (StopSign s : signs) {
+//			
+//		}
 		
 		Object[] combo = new Object[2];
 		combo[0] = new Point(ulX, ulY);
@@ -478,17 +499,18 @@ public class Graph {
 	 */
 	public Entity hitTest(Point p) {
 		assert p != null;
+		for (StopSign s : signs) {
+			if (s.hitTest(p, 0)) {
+				return s;
+			}
+		}
 		for (Vertex v : getAllVertices()) {
-			if (DMath.lessThanEquals(Point.distance(p, v.getPoint()), v.getRadius())) {
+			if (v.hitTest(p, 0)) {
 				return v;
 			}
 		}
-		for (Segment in : getAllSegments()) {
-			Edge e = in.edge;
-			int i = in.index;
-			Point c = e.getPoint(i);
-			Point d = e.getPoint(i+1);
-			if (DMath.lessThanEquals(Point.distance(p, c, d), Edge.ROAD_RADIUS)) {
+		for (Edge e : edges) {
+			if (e.hitTest(p, 0)) {
 				return e;
 			}
 		}
@@ -498,17 +520,18 @@ public class Graph {
 	public Set<Entity> hitTest(Point p, double radius) {
 		assert p != null;
 		Set<Entity> hits = new HashSet<Entity>();
+		for (StopSign s : signs) {
+			if (s.hitTest(p, radius)) {
+				hits.add(s);
+			}
+		}
 		for (Vertex v : getAllVertices()) {
-			if (DMath.lessThanEquals(Point.distance(p, v.getPoint()), v.getRadius() + radius)) {
+			if (v.hitTest(p, radius)) {
 				hits.add(v);
 			}
 		}
-		for (Segment in : getAllSegments()) {
-			Edge e = in.edge;
-			int i = in.index;
-			Point c = e.getPoint(i);
-			Point d = e.getPoint(i+1);
-			if (DMath.lessThanEquals(Point.distance(p, c, d), Edge.ROAD_RADIUS + radius)) {
+		for (Edge e : edges) {
+			if (e.hitTest(p, radius)) {
 				hits.add(e);
 			}
 		}
@@ -576,7 +599,7 @@ public class Graph {
 			}
 			pts.add(p);
 			
-			createEdge(v, v, pts);
+			createEdge(v, v, pts, 3);
 			
 			destroyEdge(e);
 			
@@ -590,8 +613,8 @@ public class Graph {
 		}
 		f1Pts.add(p);
 		
-		createEdge(eStart, v, f1Pts);
-			
+		createEdge(eStart, v, f1Pts, (e.startSign!=null?1:0)+2);
+		
 		List<Point> f2Pts = new ArrayList<Point>();
 		
 		f2Pts.add(p);
@@ -599,7 +622,7 @@ public class Graph {
 			f2Pts.add(e.getPoint(i));
 		}
 		
-		createEdge(v, eEnd, f2Pts);
+		createEdge(v, eEnd, f2Pts, 1+(e.endSign!=null?2:0));
 		
 		destroyEdge(e);
 		
@@ -714,100 +737,37 @@ public class Graph {
 	 */
 	private VertexPosition findClosestVertexPosition(Point a, double radius) {
 		
-		Vertex closest = null;
+		VertexPosition closest = null;
 		
 		for (Vertex v : getAllVertices()) {
-			Point vp = v.getPoint();
-			double dist = Point.distance(a, vp);
-			if (DMath.lessThanEquals(dist, radius + v.getRadius())) {
-				if (closest == null || (Point.distance(a, vp) < Point.distance(a, closest.getPoint()))) {
-					closest = v;
+			VertexPosition vp = v.findClosestVertexPosition(a, radius);
+			if (vp != null) {
+				if (closest == null || Point.distance(a, vp.p) < Point.distance(a, closest.p)) {
+					closest = vp;
 				}
-			}	
+			}
 		}
 		
-		if (closest != null) {
-			return new VertexPosition(closest);
-		} else {
-			return null;
-		}
+		return closest;
 	}
 	
 	/**
-	 * returns the closest edge within radius that is not in the excluded radius
+	 * returns the closest edge within radius
 	 */
 	private EdgePosition findClosestEdgePosition(Point a, double radius) {
-		Segment bestSegment = null;
-		double bestParam = -1;
-		Point bestPoint = null;
 		
-		/*
-		 * test the point a against all segments <c, d>
-		 */
-		for (Segment si : getAllSegments()) {
-			double closest = closestParam(a, si);
-			Point ep = si.getPoint(closest);
-			double dist = Point.distance(a, ep);
-			if (DMath.lessThanEquals(dist, radius + Edge.ROAD_RADIUS)) {
-				if (bestSegment == null) {
-					bestSegment = si;
-					bestParam = closest;
-					bestPoint = ep;
-				} else if (Point.distance(a, ep) < Point.distance(a, bestPoint)) {
-					bestSegment = si;
-					bestParam = closest;
-					bestPoint = ep;
+		EdgePosition closest = null;
+		
+		for (Edge e : edges) {
+			EdgePosition ep = e.findClosestEdgePosition(a, radius);
+			if (ep != null) {
+				if (closest == null || Point.distance(a, ep.p) < Point.distance(a, closest.p)) {
+					closest = ep;
 				}
 			}
 		}
 		
-		if (bestSegment != null) {
-			if (DMath.equals(bestParam, 1.0)) {
-				if (bestSegment.edge.size() > bestSegment.index+2) {
-					return new EdgePosition(bestSegment.edge, bestSegment.index+1, 0.0);
-				} else {
-					/*
-					 * this is really the end of the edge, the vertex, so return null
-					 */
-					return null;
-				}
-			} else if (DMath.equals(bestParam, 0.0) && bestSegment.index == 0) {
-				/*
-				 * this is really the start of the edge, the vertex, so return null
-				 */
-				return null;
-			} else {
-				return new EdgePosition(bestSegment.edge, bestSegment.index, bestParam);
-			}
-		} else {
-			return null;
-		}
-	}
-	
-	/**
-	 * find closest position on <c, d> to the point b
-	 */
-	private static double closestParam(Point b, Segment si) {
-		Point c = si.start;
-		Point d = si.end;
-		if (b.equals(c)) {
-			return 0.0;
-		}
-		if (b.equals(d)) {
-			return 1.0;
-		}
-		if (c.equals(d)) {
-			throw new IllegalArgumentException("c equals d");
-		}
-		
-		double u = Point.u(c, b, d);
-		if (DMath.lessThanEquals(u, 0.0)) {
-			return 0.0;
-		} else if (DMath.greaterThanEquals(u, 1.0)) {
-			return 1.0;
-		} else {
-			return u;
-		}
+		return closest;
 	}
 	
 	/**
@@ -852,7 +812,7 @@ public class Graph {
 				pts.add(e1.getPoint(i));
 			}
 			
-			createEdge(null, null, pts);
+			createEdge(null, null, pts, 0);
 			
 			destroyEdge(e1);
 			
@@ -870,7 +830,7 @@ public class Graph {
 				pts.add(e2.getPoint(i));
 			}
 			
-			createEdge(e1End, e2End, pts);
+			createEdge(e1End, e2End, pts, (e1.startSign!=null?1:0) + (e2.endSign!=null?2:0));
 			
 			destroyEdge(e1);
 			destroyEdge(e2);
@@ -889,7 +849,7 @@ public class Graph {
 				pts.add(e2.getPoint(i));
 			}
 			
-			createEdge(e1End, e2Start, pts); 
+			createEdge(e1End, e2Start, pts, (e1.endSign!=null?1:0) + (e2.startSign!=null?2:0)); 
 			
 			destroyEdge(e1);
 			destroyEdge(e2);
@@ -908,7 +868,7 @@ public class Graph {
 				pts.add(e2.getPoint(i));
 			}
 			
-			createEdge(e1Start, e2End, pts);
+			createEdge(e1Start, e2End, pts, (e1.startSign!=null?1:0) + (e2.endSign!=null?2:0));
 			
 			destroyEdge(e1);
 			destroyEdge(e2);
@@ -927,7 +887,7 @@ public class Graph {
 				pts.add(e2.getPoint(i));
 			}
 			
-			createEdge(e1Start, e2Start, pts);
+			createEdge(e1Start, e2Start, pts, (e1.startSign!=null?1:0) + (e2.startSign!=null?2:0));
 			
 			destroyEdge(e1);
 			destroyEdge(e2);
@@ -965,11 +925,11 @@ public class Graph {
 			v.paint(g2);
 		}
 		
-		g2.setTransform(origTransform);
-		
 		for (StopSign s : signsCopy) {
 			s.paint(g2);
 		}
+		
+		g2.setTransform(origTransform);
 		
 	}
 	

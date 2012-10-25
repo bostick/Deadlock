@@ -96,8 +96,8 @@ public class World {
 		stopSign = ImageIO.read(new File("media\\stop.png"));
 		stopSign = ImageUtils.createResizedCopy(
 				stopSign,
-				(int)(StopSign.STOPSIGN_SIZE),
-				(int)(StopSign.STOPSIGN_SIZE), true);
+				(int)(StopSign.STOPSIGN_SIZE * MODEL.PIXELS_PER_METER),
+				(int)(StopSign.STOPSIGN_SIZE * MODEL.PIXELS_PER_METER), true);
 		
 		BufferedImage grass = ImageIO.read(new File("media\\grass.png"));
 		
@@ -164,6 +164,11 @@ public class World {
 	
 	public void removeEdgeTop(Edge e) {
 		graph.removeEdgeTop(e);
+		postTop();
+	}
+	
+	public void removeStopSignTop(StopSign e) {
+		graph.removeStopSignTop(e);
 		postTop();
 	}
 	
@@ -367,7 +372,7 @@ public class World {
 	public Car carHitTest(Point p) {
 		synchronized (MODEL) {
 			for (Car c : cars) {
-				if (c.hitTest(p)) {
+				if (c.hitTest(p, 0)) {
 					return c;
 				}
 			}

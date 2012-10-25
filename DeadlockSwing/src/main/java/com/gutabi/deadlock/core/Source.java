@@ -36,6 +36,10 @@ public class Source extends Vertex {
 		hiliteColor = new Color(255-color.getRed(), 255-color.getGreen(), 255-color.getBlue());
 	}
 	
+	public boolean isDeleteable() {
+		return false;
+	}
+	
 	public void preStart() {
 		
 		assert matchingSink != null;
@@ -51,6 +55,14 @@ public class Source extends Vertex {
 	
 	public GraphPositionPath getShortestPathToMatchingSink() {
 		return shortestPathToMatchingSink;
+	}
+	
+	public GraphPositionPath getRandomPathToMatchingSink() {
+		List<Vertex> poss = new ArrayList<Vertex>();
+		poss.add(this);
+		poss.add(matchingSink);
+		GraphPositionPath path = GraphPositionPath.createRandomPathFromSkeleton(poss);
+		return path;
 	}
 	
 	public void preStep(double t) {
@@ -151,7 +163,7 @@ public class Source extends Vertex {
 	public void paintID(Graphics2D g2) {
 		g2.setColor(Color.WHITE);
 		
-		Point worldPoint = p.minus(new Point(radius, 0));
+		Point worldPoint = p.minus(new Point(r, 0));
 		Point panelPoint = worldPoint.multiply(MODEL.PIXELS_PER_METER);
 		
 		g2.drawString(Integer.toString(id), (int)(panelPoint.x), (int)(panelPoint.y));

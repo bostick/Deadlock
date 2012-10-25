@@ -6,16 +6,17 @@ import java.awt.geom.Path2D;
 
 public abstract class Entity {
 	
-	public Entity() {
-		
-	}
+	public abstract boolean hitTest(Point p, double radius);
 	
-	protected Path2D path;
-	
-	public abstract boolean hitTest(Point p);
+	public abstract boolean isDeleteable();
 	
 	public abstract void preStep(double t);
 	public abstract boolean postStep();
+	
+	
+	
+	protected Path2D path;
+	public abstract void computePath();
 	
 	protected Color color;
 	protected Color hiliteColor;
@@ -25,6 +26,6 @@ public abstract class Entity {
 	public abstract void paintHilite(Graphics2D g2);
 	
 	public Point renderingUpperLeft;
-	public Point renderingBottomRight;
+	public Dim renderingDim;
 	
 }

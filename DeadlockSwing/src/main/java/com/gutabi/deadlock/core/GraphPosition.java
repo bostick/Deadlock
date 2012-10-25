@@ -2,12 +2,14 @@ package com.gutabi.deadlock.core;
 
 import org.apache.log4j.Logger;
 
-public abstract class GraphPosition extends Position {
+public abstract class GraphPosition {
+	
+	public final Point p;
 	
 	static Logger logger = Logger.getLogger(GraphPosition.class);
 	
 	GraphPosition(Point p) {
-		super(p);
+		this.p = p;
 	}
 	
 	public abstract Entity getEntity();
