@@ -4,16 +4,16 @@ import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 
 public class EdgePosition extends GraphPosition {
 	
-	private final Edge e;
-	private final int index;
-	private final double param;
+	public final Edge e;
+	public final int index;
+	public final double param;
 	
-	private final boolean bound;
+	public final boolean bound;
 	
-	private double lengthToStartOfEdge = -1;
-	private double lengthToEndOfEdge = -1;
+	public final double lengthToStartOfEdge;
+	public final double lengthToEndOfEdge;
 	
-	int hash;
+	public final int hash;
 	
 	public EdgePosition(Edge e, int index, double param) {
 		super(Point.point(e.getPoint(index), e.getPoint(index+1), param));
@@ -47,6 +47,8 @@ public class EdgePosition extends GraphPosition {
 		int c = (int)(l ^ (l >>> 32));
 		h = 37 * h + c;
 		hash = h;
+		
+		check();
 	}
 	
 	public int hashCode() {
@@ -341,6 +343,30 @@ public class EdgePosition extends GraphPosition {
 				return new EdgePosition(e, index, 0.0);
 			}
 		}
+	}
+	
+	private void check() {
+		
+		double acc = 0;
+		for (int i = 0; i < index; i++) {
+			Point a = e.getPoint(i);
+			Point b = e.getPoint(i+1);
+			acc = acc + Point.distance(a, b);
+		}
+		acc = acc + Point.distance(e.getPoint(index), p);
+		
+		assert DMath.equals(lengthToStartOfEdge, acc);
+		
+		acc = 0;
+		acc = acc + Point.distance(p, e.getPoint(index+1));
+		for (int i = index+1; i < e.size()-1; i++) {
+			Point a = e.getPoint(i);
+			Point b = e.getPoint(i+1);
+			acc = acc + Point.distance(a, b);
+		}
+		
+		assert DMath.equals(lengthToEndOfEdge, acc);
+		
 	}
 	
 }

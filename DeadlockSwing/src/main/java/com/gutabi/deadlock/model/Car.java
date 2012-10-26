@@ -61,6 +61,7 @@ public abstract class Car extends Entity {
 	protected boolean b2dInited;
 	
 	boolean atleastPartiallyOnRoad;
+	boolean completelyOnRoad;
 	
 	public final double length;
 	
@@ -164,7 +165,11 @@ public abstract class Car extends Entity {
 		
 	}
 	
-	public void b2dCleanup() {
+	public void destroy() {
+		b2dCleanup();
+	}
+	
+	private void b2dCleanup() {
 		b2dBody.destroyFixture(b2dFixture);
 		MODEL.world.b2dWorld.destroyBody(b2dBody);
 	}
@@ -222,6 +227,11 @@ public abstract class Car extends Entity {
 			atleastPartiallyOnRoad = false;
 		} else {
 			atleastPartiallyOnRoad = true;
+			if (e1 != null && e2 != null && e3 != null && e4 != null) {
+				completelyOnRoad = true;
+			} else {
+				completelyOnRoad = false;
+			}
 		}
 		
 		switch (state) {
@@ -253,6 +263,10 @@ public abstract class Car extends Entity {
 		return atleastPartiallyOnRoad ? 0.3f : 0.08f;
 	}
 	
+	private float lateralImpulseCoefficient() {
+		return 1.0f;
+	}
+	
 	private float forwardImpulseCoefficient() {
 		return atleastPartiallyOnRoad ? 1.0f : 0.4f;
 	}
@@ -263,25 +277,31 @@ public abstract class Car extends Entity {
 		Vec2 currentUpNormal = b2dBody.getWorldVector(new Vec2(0, 1));
 		
 		Vec2 vel = b2dBody.getLinearVelocity();
-		
-//		float forwardSpeed = Vec2.dot(currentRightNormal, b2dBody.getLinearVelocity());
-//		logger.debug("forward speed: " + forwardSpeed);
+		Vec2 forwardVel = currentRightNormal.mul(Vec2.dot(currentRightNormal, vel));
 		
 		Vec2 cancelingImpulse = vel.mul(-1).mul(b2dBody.getMass());
+		Vec2 cancelingForce = vel.mul(-1).mul(b2dBody.getMass()).mul((float)(1/MODEL.dt));
 		
-		float cancelingForwardImpulse = Vec2.dot(currentRightNormal, cancelingImpulse);
-		cancelingForwardImpulse =  cancelingForwardImpulseCoefficient() * cancelingForwardImpulse;
+		float cancelingForwardImpulse = cancelingForwardImpulseCoefficient() * Vec2.dot(currentRightNormal, cancelingImpulse);
+		float cancelingLateralImpulse = cancelingLateralImpulseCoefficient() * Vec2.dot(currentUpNormal, cancelingImpulse);
 		
-		float cancelingLateralImpulse = Vec2.dot(currentUpNormal, cancelingImpulse);
-		cancelingLateralImpulse = cancelingLateralImpulseCoefficient() * cancelingLateralImpulse;
+		float cancelingForwardForce = cancelingForwardImpulseCoefficient() * Vec2.dot(currentRightNormal, cancelingForce);
+		float cancelingLateralForce = cancelingLateralImpulseCoefficient() * Vec2.dot(currentUpNormal, cancelingForce);
 		
-		b2dBody.applyLinearImpulse(currentRightNormal.mul(cancelingForwardImpulse), b2dBody.getWorldCenter());
-		b2dBody.applyLinearImpulse(currentUpNormal.mul(cancelingLateralImpulse), b2dBody.getWorldCenter());
+//		b2dBody.applyLinearImpulse(currentRightNormal.mul(cancelingForwardImpulse), b2dBody.getWorldCenter());
+//		b2dBody.applyLinearImpulse(currentUpNormal.mul(cancelingLateralImpulse), b2dBody.getWorldCenter());
 		
-		float impulse = ((float)(forwardImpulseCoefficient() * getMetersPerSecond())) * b2dBody.getMass();
+		b2dBody.applyForce(currentRightNormal.mul(cancelingForwardForce), b2dBody.getWorldCenter());
+		b2dBody.applyForce(currentUpNormal.mul(cancelingLateralForce), b2dBody.getWorldCenter());
 		
-		b2dBody.applyLinearImpulse(currentRightNormal.mul(impulse), b2dBody.getWorldCenter());
+		float goalForwardVel = (float)getMetersPerSecond();
+		float goalLateralVel = 0.0f;
 		
+		float forwardImpulse = forwardImpulseCoefficient() * b2dBody.getMass() * goalForwardVel;
+		float lateralImpulse = lateralImpulseCoefficient() * b2dBody.getMass() * goalLateralVel;
+		
+		b2dBody.applyLinearImpulse(currentRightNormal.mul(forwardImpulse), b2dBody.getWorldCenter());
+		b2dBody.applyLinearImpulse(currentUpNormal.mul(lateralImpulse), b2dBody.getWorldCenter());
 	}
 	
 	private void updateTurn() {
@@ -294,30 +314,14 @@ public abstract class Car extends Entity {
 		
 		GraphPositionPathPosition newOverallPos = overallPath.findClosestGraphPositionPathPosition(curPoint, overallPos);
 		
-//		double overallCombo = overallPos.index + overallPos.param;
-//		double newOverallCombo = newOverallPos.index + newOverallPos.param;
-////		
-//		assert newOverallCombo >= overallCombo;
+		Vec2 currentRightNormal = b2dBody.getWorldVector(new Vec2(1, 0));
 		
-//		logger.debug("newOverallCombo: " + newOverallCombo);
+		Vec2 vel = b2dBody.getLinearVelocity();
+		Vec2 forwardVel = currentRightNormal.mul(Vec2.dot(currentRightNormal, vel));
 		
-		overallPos = newOverallPos;
+		double d = .4f * forwardVel.length();
 		
-		STGraphPositionPathPositionPath x = STGraphPositionPathPositionPath.advanceOneTimeStep(overallPos, 0.2f * getMetersPerSecond());
-		
-		// fix pathing problem
-		// uncomment this code to update restOfPath, so that we are always strictly testing what is ahead in the path, to prevent loops when random
-//		d;
-//		GraphPositionPathPosition nextOverallPos = x.get(x.size()-1).getSpace();
-		
-//		logger.debug("nextOverallPos: " + nextOverallPos);
-		
-//		GraphPositionPath restOfPathTest = nextOverallPos.getRestOfPath();
-//		if (restOfPathTest != null) {
-//			restOfPath = restOfPathTest;
-//		} else {
-//			
-//		}
+		STGraphPositionPathPositionPath x = STGraphPositionPathPositionPath.advanceOneTimeStep(newOverallPos, d);
 		
 		STPointPath nextRealPath = x.toSTGraphPositionPath().toSTPointPath();
 		
@@ -326,8 +330,6 @@ public abstract class Car extends Entity {
 		double nextDTGoalAngle = Math.atan2(nextDTGoalPoint.y-curVec.y, nextDTGoalPoint.x-curVec.x);
 		
 		float curAngVel = b2dBody.getAngularVelocity();
-		
-//		logger.debug("angular speed: " + curAngVel);
 		
 		double dw = ((float)nextDTGoalAngle) - curAngle;
 		
@@ -340,26 +342,23 @@ public abstract class Car extends Entity {
 		
 		float maxRads = (float)(maxRadsPerSecond * MODEL.dt);
 		
-		if (dw > maxRads) {
+		if (dw > 5 * maxRads) {
 			dw = maxRads;
-		} else if (dw < -maxRads) {
+		} else if (dw < - 5 * maxRads) {
 			dw = -maxRads;
 		}
 		
-//		logger.debug("dw: " + dw);
+		// and figure in a fixed turning radius
+//		d;
 		
 		float cancelingAngImpulse = 1.0f * b2dBody.getInertia() * -curAngVel;
-		
-//		logger.debug("canceling angular impulse: " + cancelingAngImpulse);
-		
 		b2dBody.applyAngularImpulse(cancelingAngImpulse);
 		
-		float angImpulse = b2dBody.getInertia() * (float)(dw / MODEL.dt);
-		
-//		logger.debug("angular impulse: " + angImpulse);
-		
+		float goalAngVel = (float)(dw / MODEL.dt);
+		float angImpulse = b2dBody.getInertia() * goalAngVel;
 		b2dBody.applyAngularImpulse(angImpulse);
 		
+		overallPos = newOverallPos;
 	}
 	
 	/**

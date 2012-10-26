@@ -2477,12 +2477,12 @@ public class TestSimulating {
 			//MODEL.viewLoc = new Point(575, 375);
 			//MODEL.viewLoc = new Point(560, 400);
 			
-			MODEL.world.gc.processNewStrokeTop(new ArrayList<Point>(){{add(new Point(600, 450));add(new Point(700, 450));}});
-			MODEL.world.gc.processNewStrokeTop(new ArrayList<Point>(){{add(new Point(650, 400));add(new Point(650, 500));}});
+			MODEL.world.processNewStrokeTop(new ArrayList<Point>(){{add(new Point(600, 450));add(new Point(700, 450));}});
+			MODEL.world.processNewStrokeTop(new ArrayList<Point>(){{add(new Point(650, 400));add(new Point(650, 500));}});
 			
-			Vertex aV = ((Vertex)MODEL.world.graph.hitTest(new Point(600, 450)));
+			Vertex aV = ((Vertex)MODEL.world.hitTest(new Point(600, 450)));
 			
-			Vertex bV = ((Vertex)MODEL.world.graph.hitTest(new Point(650, 500)));
+			Vertex bV = ((Vertex)MODEL.world.hitTest(new Point(650, 500)));
 			
 			Car a = new NormalCar((Source)aV);
 			Car b = new NormalCar((Source)bV);
@@ -2511,13 +2511,13 @@ public class TestSimulating {
 			//MODEL.viewLoc = new Point(575, 375);
 			//MODEL.viewLoc = new Point(560, 400);
 			
-			MODEL.world.gc.processNewStrokeTop(new ArrayList<Point>(){{add(new Point(595, 450));add(new Point(695, 450));}});
-			MODEL.world.gc.processNewStrokeTop(new ArrayList<Point>(){{add(new Point(650, 400));add(new Point(650, 500));}});
+			MODEL.world.processNewStrokeTop(new ArrayList<Point>(){{add(new Point(595, 450));add(new Point(695, 450));}});
+			MODEL.world.processNewStrokeTop(new ArrayList<Point>(){{add(new Point(650, 400));add(new Point(650, 500));}});
 			
 //			MODEL.processStroke(new Point(595, 450), new Point(695, 450));
 //			MODEL.processStroke(new Point(650, 400), new Point(650, 500));
-			Vertex aV = ((Vertex)MODEL.world.graph.hitTest(new Point(595, 450)));
-			Vertex bV = ((Vertex)MODEL.world.graph.hitTest(new Point(650, 500)));
+			Vertex aV = ((Vertex)MODEL.world.hitTest(new Point(595, 450)));
+			Vertex bV = ((Vertex)MODEL.world.hitTest(new Point(650, 500)));
 //			MODEL.processStroke(new Point(596, 450), new Point(696, 450));
 //			MODEL.processStroke(new Point(650, 400), new Point(650, 500));
 //			Vertex aV = MODEL.findVertex(new Point(596, 450));
@@ -2550,14 +2550,14 @@ public class TestSimulating {
 			//MODEL.viewLoc = new Point(575, 375);
 			//MODEL.viewLoc = new Point(560, 400);
 			
-			MODEL.world.gc.processNewStrokeTop(new ArrayList<Point>(){{add(new Point(600, 450));add(new Point(700, 450));}});
-			MODEL.world.gc.processNewStrokeTop(new ArrayList<Point>(){{add(new Point(650, 400));add(new Point(650, 500));}});
+			MODEL.world.processNewStrokeTop(new ArrayList<Point>(){{add(new Point(600, 450));add(new Point(700, 450));}});
+			MODEL.world.processNewStrokeTop(new ArrayList<Point>(){{add(new Point(650, 400));add(new Point(650, 500));}});
 //			MODEL.processStroke(new Point(600, 450), new Point(700, 450));
 //			MODEL.processStroke(new Point(650, 400), new Point(650, 500));
 			
-			Vertex aV = ((Vertex)MODEL.world.graph.hitTest(new Point(600, 450)));
-			Vertex bV = ((Vertex)MODEL.world.graph.hitTest(new Point(650, 500)));
-			Vertex cV = ((Vertex)MODEL.world.graph.hitTest(new Point(650, 400)));
+			Vertex aV = ((Vertex)MODEL.world.hitTest(new Point(600, 450)));
+			Vertex bV = ((Vertex)MODEL.world.hitTest(new Point(650, 500)));
+			Vertex cV = ((Vertex)MODEL.world.hitTest(new Point(650, 400)));
 			
 			Car a = new NormalCar((Source)aV);
 			Car b = new NormalCar((Source)bV);

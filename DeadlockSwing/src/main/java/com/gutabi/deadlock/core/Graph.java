@@ -174,7 +174,11 @@ public class Graph {
 
 
 	
-	
+	/**
+	 * dec is a set of bit flags indicating what decorations to add to the new edge
+	 * bit 0 set = add start stop sign
+	 * bit 1 set = add end stop sign
+	 */
 	private Edge createEdge(Vertex start, Vertex end, List<Point> pts, int dec) {
 		
 		Edge e = new Edge(start, end, pts);
@@ -183,6 +187,7 @@ public class Graph {
 		refreshEdgeIDs();
 		
 		if (!e.isStandAlone()) {
+			
 			start.addEdge(e);
 			end.addEdge(e);
 			

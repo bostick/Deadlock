@@ -4,7 +4,7 @@ import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 
 public class VertexPosition extends GraphPosition {
 	
-	private final Vertex v;
+	public final Vertex v;
 	
 	public VertexPosition(Vertex v) {
 		super(v.getPoint());

@@ -22,9 +22,9 @@ public final class Edge extends Entity {
 	
 	public static final double ROAD_RADIUS = 0.5;
 	
-	private final Vertex start;
-	private final Vertex end;
-	private final List<Point> raw;
+	public final Vertex start;
+	public final Vertex end;
+	public final List<Point> raw;
 	
 	private List<Point> skeleton;
 	private Point startBorderPoint;
