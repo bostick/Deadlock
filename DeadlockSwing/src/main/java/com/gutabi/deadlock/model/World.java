@@ -14,6 +14,7 @@ import javax.imageio.ImageIO;
 
 import org.jbox2d.common.Vec2;
 
+import com.gutabi.deadlock.controller.ControlMode;
 import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Dim;
 import com.gutabi.deadlock.core.Edge;
@@ -159,27 +160,28 @@ public class World {
 	
 	public void removeVertexTop(Vertex v) {
 		graph.removeVertexTop(v);
-		postTop();
+		postIdleTop();
 	}
 	
 	public void removeEdgeTop(Edge e) {
 		graph.removeEdgeTop(e);
-		postTop();
+		postIdleTop();
 	}
 	
 	public void removeStopSignTop(StopSign e) {
 		graph.removeStopSignTop(e);
-		postTop();
+		postIdleTop();
 	}
 	
 	public void removeCarTop(Car c) {
-		c.b2dCleanup();
+		
+		c.destroy();
 		
 		synchronized (MODEL) {
 			cars.remove(c);
 		}
 		
-		postTop();
+		postRunningTop();
 	}
 	
 	public void processNewStrokeTop(Stroke stroke) {
@@ -249,14 +251,28 @@ public class World {
 		Edge e = graph.createEdgeTop(start, end, stroke.getWorldPoints().subList(0, i+1));
 		newEdges.add(e);
 		
-		postTop();
+		postDraftingTop();
 	}
 	
-	private void postTop() {
+	private void postIdleTop() {
+		assert MODEL.getMode() == ControlMode.IDLE;
 		
 		graph.computeVertexRadii();
 		
 		computeRenderingRect();
+	}
+	
+	private void postDraftingTop() {
+		assert MODEL.getMode() == ControlMode.DRAFTING;
+		
+		graph.computeVertexRadii();
+		
+		computeRenderingRect();
+	}
+	
+	private void postRunningTop() {
+		assert MODEL.getMode() == ControlMode.RUNNING;
+		;
 	}
 	
 	private void computeRenderingRect() {
@@ -288,7 +304,7 @@ public class World {
 		
 		synchronized (MODEL) {
 			for (Car c : cars) {
-				c.b2dCleanup();
+				c.destroy();
 			}
 			cars.clear();
 		}
@@ -316,8 +332,10 @@ public class World {
 		
 		graph.preStep(t);
 		
-		for (Car c : cars) {
-			c.preStep(t);
+		synchronized (MODEL) {
+			for (Car c : cars) {
+				c.preStep(t);
+			}
 		}
 	}
 	
@@ -332,7 +350,7 @@ public class World {
 					if (MODEL.hilited == c) {
 						MODEL.hilited = null;
 					}
-					c.b2dCleanup();
+					c.destroy();
 					toBeRemoved.add(c);
 				}
 			}
