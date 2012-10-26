@@ -13,9 +13,6 @@ import com.gutabi.deadlock.core.Vertex;
 @SuppressWarnings("static-access")
 public class Stroke {
 	
-//	public static final double MOUSE_RADIUS_METERS = 0.4 * Math.sqrt(2 * 0.5 * 0.5);
-//	public static final double MOUSE_RADIUS_PIXELS = MOUSE_RADIUS_METERS * MODEL.PIXELS_PER_METER;
-	
 	private Point lastPanelPoint;
 	
 	public List<Point> curPanelStroke = new ArrayList<Point>();
@@ -38,10 +35,6 @@ public class Stroke {
 		curPanelStroke = null;
 		curWorldStroke = null;
 	}
-	
-//	public double getRadius() {
-//		return MOUSE_RADIUS_METERS;
-//	}
 	
 	public void press(Point p) {
 		lastPanelPoint = p;
@@ -68,26 +61,6 @@ public class Stroke {
 		
 		curPanelStroke.add(p);
 		curWorldStroke.add(VIEW.panelToWorld(p));
-	}
-	
-	public int size() {
-		return curPanelStroke.size();
-	}
-	
-	public List<Point> getPanelPoints() {
-		return curPanelStroke;
-	}
-	
-	public List<Point> getWorldPoints() {
-		return curWorldStroke;
-	}
-	
-	public Point getPanelPoint(int i) {
-		return curPanelStroke.get(i);
-	}
-	
-	public Point getWorldPoint(int i) {
-		return curWorldStroke.get(i);
 	}
 	
 	

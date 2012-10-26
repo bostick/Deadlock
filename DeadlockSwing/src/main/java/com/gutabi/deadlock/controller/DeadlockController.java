@@ -82,9 +82,9 @@ public class DeadlockController implements ActionListener {
 	
 	public void pressed(InputEvent ev) {
 		
-		Component c = ev.getComponent();
+		Component c = ev.c;
 		
-		Point p = ev.getPoint();
+		Point p = ev.p;
 		
 		if (c == VIEW.panel) {
 			
@@ -110,9 +110,9 @@ public class DeadlockController implements ActionListener {
 	
 	public void dragged(InputEvent ev) {
 		
-		Component c = ev.getComponent();
+		Component c = ev.c;
 		
-		Point p = ev.getPoint();
+		Point p = ev.p;
 		
 		if (c == VIEW.panel) {
 			
@@ -123,7 +123,7 @@ public class DeadlockController implements ActionListener {
 			lastDragPanelPoint = p;
 			lastDragTime = System.currentTimeMillis();
 			
-			switch (MODEL.getMode()) {
+			switch (MODEL.mode) {
 			case IDLE: {
 				
 				if (lastDragPanelPointWasNull) {
@@ -161,7 +161,7 @@ public class DeadlockController implements ActionListener {
 	
 	public void released(InputEvent ev) {
 		
-		Component c = ev.getComponent();
+		Component c = ev.c;
 		
 		if (c == VIEW.panel) {
 			
@@ -169,7 +169,7 @@ public class DeadlockController implements ActionListener {
 			
 			lastReleaseTime = System.currentTimeMillis();
 			
-			switch (MODEL.getMode()) {
+			switch (MODEL.mode) {
 			case IDLE: {
 				
 				if (lastReleaseTime - lastPressTime < 500 && lastDragPanelPoint == null) {
@@ -211,15 +211,15 @@ public class DeadlockController implements ActionListener {
 	
 	public void moved(InputEvent ev) {
 		
-		Component c = ev.getComponent();
+		Component c = ev.c;
 		
 		if (c == VIEW.panel) {
 			
 			VIEW.panel.requestFocusInWindow();
 			
-			Point p = ev.getPoint();
+			Point p = ev.p;
 			
-			switch (MODEL.getMode()) {
+			switch (MODEL.mode) {
 			case RUNNING:
 			case PAUSED:
 			case IDLE: {
@@ -283,71 +283,11 @@ public class DeadlockController implements ActionListener {
 		
 	}
 	
-//	public void tabKey() {
-//		
-//	}
-	
-//	public void undoKey() {
-//		
-//		switch (MODEL.getMode()) {
-//		case IDLE:
-//			
-//			break;
-//		case DRAFTING:
-//			;
-//			break;
-//		case RUNNING:
-//		case PAUSED:
-//			;
-//			break;
-//		}
-//		
-//	}
-	
-//	public void redoKey() {
-//		
-//		switch (MODEL.getMode()) {
-//		case IDLE:
-//			
-//			break;
-//		case DRAFTING:
-//			;
-//			break;
-//		case RUNNING:
-//		case PAUSED:
-//			;
-//			break;
-//		}
-//		
-//	}
-	
-//	public void insertKey() {
-//		
-//		switch (MODEL.getMode()) {
-//		case IDLE:
-//			
-//			MODEL.world.renderBackground();
-//			VIEW.repaint();
-//			
-//			break;
-//		case DRAFTING:
-//			;
-//			break;
-//		case RUNNING:
-//		case PAUSED:
-//			;
-//			break;
-//		}
-//		
-//	}
-
-	
-	
 	
 	public void startRunning() {
 		assert Thread.currentThread().getName().equals("controller");
 		
-		MODEL.setMode(ControlMode.RUNNING);
+		MODEL.mode = ControlMode.RUNNING;
 		
 		Thread t = new Thread(new SimulationRunnable());
 		t.start();
@@ -357,19 +297,19 @@ public class DeadlockController implements ActionListener {
 	public void stopRunning() {
 		assert Thread.currentThread().getName().equals("controller");
 		
-		MODEL.setMode(ControlMode.IDLE);
+		MODEL.mode = ControlMode.IDLE;
 	}
 	
 	public void pauseRunning() {
 		assert Thread.currentThread().getName().equals("controller");
 		
-		MODEL.setMode(ControlMode.PAUSED);
+		MODEL.mode = ControlMode.PAUSED;
 	}
 	
 	public void unpauseRunning() {
 		assert Thread.currentThread().getName().equals("controller");
 		
-		MODEL.setMode(ControlMode.RUNNING);
+		MODEL.mode = ControlMode.RUNNING;
 		
 		synchronized (MODEL.pauseLock) {
 			MODEL.pauseLock.notifyAll();
@@ -381,11 +321,9 @@ public class DeadlockController implements ActionListener {
 	private void draftStart(Point p) {
 		assert Thread.currentThread().getName().equals("controller");
 			
-		MODEL.setMode(ControlMode.DRAFTING);
+		MODEL.mode = ControlMode.DRAFTING;
 		
 		MODEL.hilited = null;
-		
-//		MODEL.stroke = new Stroke();
 		
 		MODEL.stroke.start(p);
 			
@@ -400,9 +338,7 @@ public class DeadlockController implements ActionListener {
 	private void draftEnd() {
 		assert Thread.currentThread().getName().equals("controller");
 		
-		if (MODEL.stroke.size() >= 2) {
-			MODEL.world.processNewStrokeTop(MODEL.stroke);
-		}
+		MODEL.world.processNewStrokeTop(MODEL.stroke);
 		
 		MODEL.stroke.clear();
 		
@@ -411,7 +347,7 @@ public class DeadlockController implements ActionListener {
 		
 		assert MODEL.world.checkConsistency();
 		
-		MODEL.setMode(ControlMode.IDLE);
+		MODEL.mode = ControlMode.IDLE;
 		
 	}
 	

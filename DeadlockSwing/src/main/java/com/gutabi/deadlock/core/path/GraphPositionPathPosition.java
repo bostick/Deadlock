@@ -1,8 +1,5 @@
 package com.gutabi.deadlock.core.path;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.log4j.Logger;
 
 import com.gutabi.deadlock.core.DMath;
@@ -12,38 +9,29 @@ import com.gutabi.deadlock.core.VertexPosition;
 
 public class GraphPositionPathPosition {
 	
-	private final GraphPositionPath path;
+	public final GraphPositionPath path;
 	public final int index;
 	public final double param;
-	private final boolean bound;
+	
+	public final double combo;
+	public final boolean bound;
 	
 	public final GraphPosition gpos;
 	
-	private final double distanceFromStartOfPath;
+	public final double lengthToStartOfPath;
+	public final double lengthToEndOfPath;
 	
 	private final int hash;
 	
 	static Logger logger = Logger.getLogger(GraphPositionPathPosition.class);
 	
 	public GraphPositionPathPosition(GraphPositionPath path, int index, double param) {
-//		super(DMath.equals(param, 0.0) ?
-//				path.getGraphPosition(index).getPoint() :
-//					Point.point(path.getGraphPosition(index).getPoint(), path.getGraphPosition(index+1).getPoint(), param));
 		
 		this.path = path;
 		this.index = index;
 		this.param = param;
-		this.bound = DMath.equals(param, 0.0);
 		
-		gpos = path.getGraphPosition(index, param);
-		
-		double acc = path.cumulativeDistancesFromStart[index];
-		if (path.getGraphPosition(0).isBound()) {
-			acc += path.getGraphPosition(0, 0.0).distanceTo(gpos);
-		} else {
-			acc += path.getGraphPosition(0, ((EdgePosition)path.getGraphPosition(0)).getParam()).distanceTo(gpos);
-		}
-		distanceFromStartOfPath = acc;
+		combo = index+param;
 		
 		int h = 17;
 		h = 37 * h + path.hashCode();
@@ -52,6 +40,19 @@ public class GraphPositionPathPosition {
 		int c = (int)(l ^ (l >>> 32));
 		h = 37 * h + c;
 		hash = h;
+		
+		this.bound = DMath.equals(param, 0.0);
+		gpos = path.getGraphPosition(index, param);
+		
+		double acc = path.cumulativeDistancesFromStart[index];
+		acc += path.get(index).distanceTo(gpos);
+		
+		lengthToStartOfPath = acc;
+		lengthToEndOfPath = path.totalLength - lengthToStartOfPath;
+		
+		assert lengthToStartOfPath <= path.totalLength;
+		assert lengthToEndOfPath >= 0;
+		
 	}
 	
 	public int hashCode() {
@@ -70,11 +71,7 @@ public class GraphPositionPathPosition {
 	}
 	
 	public String toString() {
-		return index + " " + param + " (" + distanceFromStartOfPath + "/" + path.getTotalLength() + ")";
-	}
-	
-	public double getCombo() {
-		return index + param;
+		return index + " " + param + " (" + lengthToStartOfPath + "/" + path.totalLength + ")";
 	}
 	
 	
@@ -84,32 +81,10 @@ public class GraphPositionPathPosition {
 	}
 	
 	public boolean isEndOfPath() {
-		return (index == path.size()-1) && DMath.equals(param, 0.0);
-	}
-	
-	public GraphPositionPath getRestOfPath() {
-		
-		List<GraphPosition> acc = new ArrayList<GraphPosition>();
-		GraphPositionPathPosition cur = this;
-		while (!cur.isEndOfPath()) {
-			acc.add(cur.gpos);
-			cur = cur.nextBound();
-		}
-		
-		if (!acc.isEmpty()) {
-			return new GraphPositionPath(acc);
-		} else {
-			return null;
-		}
-	}
-	
-	public GraphPosition getGraphPosition() {
-		return gpos;
+		return (index == path.size-1) && DMath.equals(param, 0.0);
 	}
 	
 	public double distanceTo(GraphPositionPathPosition p) {
-		
-		logger.debug("distanceTo");
 		
 		int goalIndex = p.index;
 		double goalParam = p.param;
@@ -119,8 +94,6 @@ public class GraphPositionPathPosition {
 			if (gpos.equals(p.gpos)) {
 				String.class.getName();
 			}
-			
-			logger.debug("done distanceTo");
 			
 			return gpos.distanceTo(p.gpos);
 			
@@ -145,8 +118,6 @@ public class GraphPositionPathPosition {
 				
 			}
 			
-			logger.debug("done distanceTo");
-			
 			if (DMath.equals(nextPos.param, goalParam)) {
 				return acc;
 			} else {
@@ -160,10 +131,12 @@ public class GraphPositionPathPosition {
 	
 	public GraphPositionPathPosition travel(double dist) {
 		
-		logger.debug("travel");
-		
 		if (DMath.equals(dist, 0)) {
 			return this;
+		}
+		
+		if (dist < 0) {
+			throw new IllegalArgumentException();
 		}
 		
 		double traveled = 0.0;
@@ -171,30 +144,21 @@ public class GraphPositionPathPosition {
 		GraphPositionPathPosition curPos = this;
 		GraphPositionPathPosition nextPos;
 		
-		int iterations = 0;
 		while (true) {
-			
-			if (iterations == 100) {
-				String.class.getName();
-			}
 			
 			nextPos = curPos.nextBound();
 			double distanceToNextPos = curPos.distanceTo(nextPos);
 			
 			if (DMath.equals(traveled + distanceToNextPos, dist)) {
-				logger.debug("1");
-				
-				logger.debug("done travel");
+
 				return nextPos;
 				
 			} else if (traveled + distanceToNextPos < dist) {
-				logger.debug("2");
 				
 				traveled += distanceToNextPos;
 				curPos = nextPos;
 				
 			} else {
-				logger.debug("3");
 				
 				double toTravel = dist - traveled;
 				
@@ -203,31 +167,28 @@ public class GraphPositionPathPosition {
 				if (curPos.gpos instanceof EdgePosition) {
 					EdgePosition curPosE = (EdgePosition)curPos.gpos;
 					
-					logger.debug("done travel");
-					if (curPosE.getIndex() < g.getIndex() || (curPosE.getIndex() == g.getIndex() && DMath.lessThan(curPosE.getParam(), g.getParam()))) {
+					if (curPosE.index < g.index || (curPosE.index == g.index && DMath.lessThan(curPosE.param, g.param))) {
 						// same direction as edge
 						//assert curPosE.getIndex() == g.getIndex();
-						return new GraphPositionPathPosition(path, curPos.index, g.getParam());
+						return new GraphPositionPathPosition(path, curPos.index, g.param);
 					} else {
-						return new GraphPositionPathPosition(path, curPos.index, 1-g.getParam());
+						return new GraphPositionPathPosition(path, curPos.index, 1-g.param);
 					}
 					
 				} else {
 					VertexPosition curPosE = (VertexPosition)curPos.gpos;
 					
-					logger.debug("done travel");
-					if (g.getEdge().getStart() == curPosE.getVertex()) {
+					if (g.e.start == curPosE.v) {
 						// same direction as edge
-						return new GraphPositionPathPosition(path, curPos.index, g.getParam());
+						return new GraphPositionPathPosition(path, curPos.index, g.param);
 					} else {
-						return new GraphPositionPathPosition(path, curPos.index, 1-g.getParam());
+						return new GraphPositionPathPosition(path, curPos.index, 1-g.param);
 					}
 					
 				}
 				
 			}
 			
-			iterations++;
 		}
 		
 	}
@@ -235,4 +196,5 @@ public class GraphPositionPathPosition {
 	public GraphPositionPathPosition nextBound() {
 		return new GraphPositionPathPosition(path, index+1, 0.0);
 	}
+	
 }

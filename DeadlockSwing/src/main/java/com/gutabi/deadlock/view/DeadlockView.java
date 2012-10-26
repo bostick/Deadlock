@@ -23,7 +23,8 @@ public class DeadlockView {
 	/*
 	 * where in the panel (in pixels) is the world origin?
 	 */
-	public Point worldOrigin;
+	public int worldOriginX;
+	public int worldOriginY;
 	
 	public final Logger logger = Logger.getLogger(DeadlockView.class);
 	
@@ -63,18 +64,17 @@ public class DeadlockView {
 	}
 	
 	public Point panelToWorld(Point p) {
-		return p.minus(worldOrigin).multiply(MODEL.METERS_PER_PIXEL);
+		return new Point((p.x - worldOriginX) * MODEL.METERS_PER_PIXEL, (p.y - worldOriginY) * MODEL.METERS_PER_PIXEL);
 	}
 	
 	public void repaint() {
 		assert !Thread.holdsLock(MODEL);
 		
-		worldOrigin = new Point(
-				(int)(panel.getWidth() * 0.5 - (MODEL.world.WORLD_WIDTH * 0.5 * MODEL.PIXELS_PER_METER)),
-				(int)(panel.getHeight() * 0.5 - (MODEL.world.WORLD_HEIGHT * 0.5 * MODEL.PIXELS_PER_METER)));
+		worldOriginX = (int)(panel.getWidth() * 0.5 - (MODEL.world.WORLD_WIDTH * 0.5 * MODEL.PIXELS_PER_METER));
+		worldOriginY = (int)(panel.getHeight() * 0.5 - (MODEL.world.WORLD_HEIGHT * 0.5 * MODEL.PIXELS_PER_METER));
 		
-		int x = (int)(worldOrigin.x + (MODEL.world.renderingUpperLeft.x * MODEL.PIXELS_PER_METER));
-		int y = (int)(worldOrigin.y + (MODEL.world.renderingUpperLeft.y * MODEL.PIXELS_PER_METER));
+		int x = (int)(worldOriginX + (MODEL.world.renderingUpperLeft.x * MODEL.PIXELS_PER_METER));
+		int y = (int)(worldOriginY + (MODEL.world.renderingUpperLeft.y * MODEL.PIXELS_PER_METER));
 		
 		panel.repaint(
 				x,

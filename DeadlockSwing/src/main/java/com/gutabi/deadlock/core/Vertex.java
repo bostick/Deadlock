@@ -24,14 +24,13 @@ public abstract class Vertex extends Entity {
 	public int id;
 	
 	Path2D path;
-	double r;
+	private double r;
 	
 	private final int hash;
 	
 	public static final double INIT_VERTEX_RADIUS = Math.sqrt(2 * Edge.ROAD_RADIUS * Edge.ROAD_RADIUS);
 	
 	public Vertex(Point p) {
-		super();
 		
 		this.p = p;
 		
@@ -41,7 +40,6 @@ public abstract class Vertex extends Entity {
 		
 		int h = 17;
 		h = 37 * h + p.hashCode();
-//		h = 37 * h + graph.hashCode();
 		hash = h;
 		
 	}
@@ -104,7 +102,7 @@ public abstract class Vertex extends Entity {
 				Edge ei = eds.get(i);
 				
 				Point borderi;
-				if (ei.getStart() == this) {
+				if (ei.start == this) {
 					borderi = ei.getStartBorderPoint();
 				} else {
 					borderi = ei.getEndBorderPoint();
@@ -117,7 +115,7 @@ public abstract class Vertex extends Entity {
 					if (ei == ej) {
 						// loop, make sure to get the other point
 						borderj = ej.getEndBorderPoint();
-					} else if (ej.getStart() == this) {
+					} else if (ej.start == this) {
 						borderj = ej.getStartBorderPoint();
 					} else {
 						borderj = ej.getEndBorderPoint();
@@ -197,10 +195,6 @@ public abstract class Vertex extends Entity {
 		return eds;
 	}
 	
-	public Point getPoint() {
-		return p;
-	}
-	
 	/**
 	 * @param g2 in world coords
 	 */
@@ -230,7 +224,7 @@ public abstract class Vertex extends Entity {
 	}
 	
 	public void check() {
-		assert getPoint() != null;
+		assert p != null;
 		
 		int edgeCount = eds.size();
 		
@@ -245,12 +239,12 @@ public abstract class Vertex extends Entity {
 		for (Edge e : eds) {
 			
 			count = 0;
-			for (Edge f : getEdges()) {
+			for (Edge f : eds) {
 				if (e == f) {
 					count++;
 				}
 			}
-			if (e.getStart() == this && e.getEnd() == this) {
+			if (e.start == this && e.end == this) {
 				/*
 				 * loop with one intersection, so count of edges is 2 for this edge
 				 */

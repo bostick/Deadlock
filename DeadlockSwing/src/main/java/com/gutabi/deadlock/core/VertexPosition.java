@@ -7,12 +7,8 @@ public class VertexPosition extends GraphPosition {
 	public final Vertex v;
 	
 	public VertexPosition(Vertex v) {
-		super(v.getPoint());
+		super(v.p);
 		this.v = v;
-	}
-	
-	public Vertex getVertex() {
-		return v;
 	}
 	
 	public Entity getEntity() {
@@ -34,7 +30,7 @@ public class VertexPosition extends GraphPosition {
 			return false;
 		} else {
 			VertexPosition b = (VertexPosition)o;
-			return (b.getVertex() == v);
+			return (b.v == v);
 		}
 	}
 	
@@ -42,8 +38,6 @@ public class VertexPosition extends GraphPosition {
 	 * the specific way to travel
 	 */
 	public GraphPosition travel(Edge e, Vertex dest, double dist) {
-		
-		logger.debug("travel");
 		
 		if (!(v.getEdges().contains(e))) {
 			throw new IllegalArgumentException();
@@ -62,12 +56,12 @@ public class VertexPosition extends GraphPosition {
 			throw new IllegalArgumentException();
 		}
 		
-		if (v == e.getStart()) {
-			assert dest == e.getEnd();
+		if (v == e.start) {
+			assert dest == e.end;
 			return EdgePosition.travelFromStart(e, dist);
 		} else {
-			assert v == e.getEnd();
-			assert dest == e.getStart();
+			assert v == e.end;
+			assert dest == e.start;
 			return EdgePosition.travelFromEnd(e, dist);
 		}
 		
@@ -85,8 +79,8 @@ public class VertexPosition extends GraphPosition {
 		} else {
 			EdgePosition bb = (EdgePosition)b;
 			
-			double bbStartPath = MODEL.world.distanceBetweenVertices(v, bb.getEdge().getStart());
-			double bbEndPath = MODEL.world.distanceBetweenVertices(v, bb.getEdge().getEnd());
+			double bbStartPath = MODEL.world.distanceBetweenVertices(v, bb.e.start);
+			double bbEndPath = MODEL.world.distanceBetweenVertices(v, bb.e.end);
 			
 			double dist = Math.min(bbStartPath + bb.distanceToStartOfEdge(), bbEndPath + bb.distanceToEndOfEdge());
 			
@@ -109,10 +103,10 @@ public class VertexPosition extends GraphPosition {
 		if (goal instanceof EdgePosition) {
 			EdgePosition ge = (EdgePosition)goal;
 			
-			if (v == ge.getEdge().getEnd()) {
-				return EdgePosition.nextBoundfromEnd(ge.getEdge());
+			if (v == ge.e.end) {
+				return EdgePosition.nextBoundfromEnd(ge.e);
 			} else {
-				return EdgePosition.nextBoundfromStart(ge.getEdge());
+				return EdgePosition.nextBoundfromStart(ge.e);
 			}
 			
 		} else {
@@ -122,9 +116,9 @@ public class VertexPosition extends GraphPosition {
 				throw new IllegalArgumentException();
 			}
 			
-			Edge e = Vertex.commonEdge(v, gv.getVertex());
+			Edge e = Vertex.commonEdge(v, gv.v);
 			
-			if (v == e.getEnd()) {
+			if (v == e.end) {
 				return EdgePosition.nextBoundfromEnd(e);
 			} else {
 				return EdgePosition.nextBoundfromStart(e);

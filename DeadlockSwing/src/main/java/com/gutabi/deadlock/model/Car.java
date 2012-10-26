@@ -10,6 +10,7 @@ import java.awt.image.BufferedImage;
 
 import org.apache.log4j.Logger;
 import org.jbox2d.collision.shapes.PolygonShape;
+import org.jbox2d.common.Mat22;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.BodyDef;
@@ -25,14 +26,11 @@ import com.gutabi.deadlock.core.Sink;
 import com.gutabi.deadlock.core.Source;
 import com.gutabi.deadlock.core.path.GraphPositionPath;
 import com.gutabi.deadlock.core.path.GraphPositionPathPosition;
-import com.gutabi.deadlock.core.path.STGraphPositionPathPositionPath;
-import com.gutabi.deadlock.core.path.STPointPath;
 
 @SuppressWarnings("static-access")
 public abstract class Car extends Entity {
 	
 	public static final double CAR_LENGTH = 1.0;
-	double maxRadsPerSecond = 45.0;
 	
 	public CarStateEnum state;
 	
@@ -59,6 +57,12 @@ public abstract class Car extends Entity {
 	protected PolygonShape b2dShape;
 	protected Fixture b2dFixture;
 	protected boolean b2dInited;
+	
+	/*
+	 * trans is updated from b2dBody transformation after every update
+	 * we use this since we can actually use it to do transforms
+	 */
+	AffineTransform trans;
 	
 	boolean atleastPartiallyOnRoad;
 	boolean completelyOnRoad;
@@ -87,6 +91,8 @@ public abstract class Car extends Entity {
 		p3 = new Point(-CAR_LENGTH / 2, -CAR_LENGTH / 4);
 		p4 = new Point(-CAR_LENGTH / 2, CAR_LENGTH / 4);
 		
+		trans = new AffineTransform();
+		
 		computePath();
 		
 	}
@@ -94,14 +100,12 @@ public abstract class Car extends Entity {
 	protected void computeStartingProperties() {
 		
 		overallPos = new GraphPositionPathPosition(overallPath, 0, 0.0);
-		GraphPosition closestGraphPos = overallPos.getGraphPosition();
+		GraphPosition closestGraphPos = overallPos.gpos;
 		startPoint = closestGraphPos.p;
 		
-		STGraphPositionPathPositionPath nextPlannedPath = STGraphPositionPathPositionPath.advanceOneTimeStep(overallPos, getMetersPerSecond() * MODEL.dt);
+		GraphPositionPathPosition next = overallPos.travel(getMetersPerSecond() * MODEL.dt);
 		
-		STPointPath nextRealPath = nextPlannedPath.toSTGraphPositionPath().toSTPointPath();
-		
-		Point nextDTGoalPoint = nextRealPath.end.getSpace();
+		Point nextDTGoalPoint = next.gpos.p;
 		
 		startHeading = Math.atan2(nextDTGoalPoint.y-startPoint.y, nextDTGoalPoint.x-startPoint.x);
 		
@@ -114,10 +118,6 @@ public abstract class Car extends Entity {
 	 * @return
 	 */
 	public abstract double getMetersPerSecond();
-	
-	public CarStateEnum getState() {
-		return state;
-	}
 	
 	public void computePath() {
 		
@@ -160,9 +160,9 @@ public abstract class Car extends Entity {
 		fixtureDef.friction = 1f;
 		b2dFixture = b2dBody.createFixture(fixtureDef);
 		
-//		logger.debug("mass: " + b2dBody.getMass());
-//		logger.debug("moment of intertia: " + b2dBody.getInertia());
-		
+		Mat22 r = b2dBody.getTransform().R;
+		Vec2 p = b2dBody.getPosition();
+		trans.setTransform(r.col1.x, r.col1.y, r.col2.x, r.col2.y, p.x, p.y);
 	}
 	
 	public void destroy() {
@@ -208,12 +208,7 @@ public abstract class Car extends Entity {
 	}
 	
 	private Point carToWorld(Point p) {
-		AffineTransform b2dTrans = new AffineTransform();
-		Vec2 pos = b2dBody.getPosition();
-		float angle = b2dBody.getAngle();
-		b2dTrans.translate(pos.x, pos.y);
-		b2dTrans.rotate(angle);
-		return Point.point(b2dTrans.transform(p.point2D(), null));
+		return Point.point(trans.transform(p.point2D(), null));
 	}
 	
 	public void preStep(double t) {
@@ -225,6 +220,7 @@ public abstract class Car extends Entity {
 		
 		if (e1 == null && e2 == null && e3 == null && e4 == null) {
 			atleastPartiallyOnRoad = false;
+			completelyOnRoad = false;
 		} else {
 			atleastPartiallyOnRoad = true;
 			if (e1 != null && e2 != null && e3 != null && e4 != null) {
@@ -306,26 +302,30 @@ public abstract class Car extends Entity {
 	
 	private void updateTurn() {
 		
+		Vec2 currentRightNormal = b2dBody.getWorldVector(new Vec2(1, 0));
+		
 		Vec2 curVec = b2dBody.getPosition();
+		
+		Vec2 vel = b2dBody.getLinearVelocity();
+		Vec2 forwardVel = currentRightNormal.mul(Vec2.dot(currentRightNormal, vel));
+		
+		/*
+		 * distance in 0.1 seconds
+		 */
+		double d = 0.1f * forwardVel.length();
 		
 		float curAngle = b2dBody.getAngle();
 		
 		Point curPoint = new Point(curVec.x, curVec.y);
 		
-		GraphPositionPathPosition newOverallPos = overallPath.findClosestGraphPositionPathPosition(curPoint, overallPos);
+		/*
+		 * 2 * dis a heuristic
+		 */
 		
-		Vec2 currentRightNormal = b2dBody.getWorldVector(new Vec2(1, 0));
+		GraphPositionPathPosition newOverallPos = overallPath.findClosestGraphPositionPathPosition(curPoint, overallPos, overallPos.travel(Math.min(2 * d, overallPos.lengthToEndOfPath)));
 		
-		Vec2 vel = b2dBody.getLinearVelocity();
-		Vec2 forwardVel = currentRightNormal.mul(Vec2.dot(currentRightNormal, vel));
-		
-		double d = .4f * forwardVel.length();
-		
-		STGraphPositionPathPositionPath x = STGraphPositionPathPositionPath.advanceOneTimeStep(newOverallPos, d);
-		
-		STPointPath nextRealPath = x.toSTGraphPositionPath().toSTPointPath();
-		
-		Point nextDTGoalPoint = nextRealPath.end.getSpace();
+		GraphPositionPathPosition next = newOverallPos.travel(Math.min(d, newOverallPos.lengthToEndOfPath));
+		Point nextDTGoalPoint = next.gpos.p;
 		
 		double nextDTGoalAngle = Math.atan2(nextDTGoalPoint.y-curVec.y, nextDTGoalPoint.x-curVec.x);
 		
@@ -340,16 +340,18 @@ public abstract class Car extends Entity {
 			dw += 2*Math.PI;
 		}
 		
-		float maxRads = (float)(maxRadsPerSecond * MODEL.dt);
-		
-		if (dw > 5 * maxRads) {
+		/*
+		 * turning radius
+		 * 3 car lengths for 180 deg = 3 meters for 3.14 radians
+		 */
+		double maxRadsPerMeter = 0.06;
+		double maxRads = maxRadsPerMeter * d;
+		if (dw > maxRads) {
 			dw = maxRads;
-		} else if (dw < - 5 * maxRads) {
+		} else if (dw < -maxRads) {
 			dw = -maxRads;
 		}
 		
-		// and figure in a fixed turning radius
-//		d;
 		
 		float cancelingAngImpulse = 1.0f * b2dBody.getInertia() * -curAngVel;
 		b2dBody.applyAngularImpulse(cancelingAngImpulse);
@@ -370,10 +372,15 @@ public abstract class Car extends Entity {
 		case NEW:
 			assert false;
 		case RUNNING: {
+			
+			Mat22 r = b2dBody.getTransform().R;
+			Vec2 p = b2dBody.getPosition();
+			trans.setTransform(r.col1.x, r.col1.y, r.col2.x, r.col2.y, p.x, p.y);
+			
 			Vec2 pos = b2dBody.getPosition();
-			Sink s = (Sink)overallPath.getEnd().getEntity();
+			Sink s = (Sink)overallPath.end.getEntity();
 			boolean sinked = false;
-			if (Point.distance(new Point(pos.x,  pos.y), s.getPoint()) < MODEL.world.SINK_EPSILON) {
+			if (Point.distance(new Point(pos.x,  pos.y), s.p) < MODEL.world.SINK_EPSILON) {
 				sinked = true;
 			}
 			if (sinked) {
@@ -384,6 +391,11 @@ public abstract class Car extends Entity {
 			break;
 		}
 		case CRASHED:
+			
+			Mat22 r = b2dBody.getTransform().R;
+			Vec2 p = b2dBody.getPosition();
+			trans.setTransform(r.col1.x, r.col1.y, r.col2.x, r.col2.y, p.x, p.y);
+			
 			break;
 		case SINKED:
 			assert false;
@@ -393,10 +405,6 @@ public abstract class Car extends Entity {
 	}
 	
 	
-	
-	public int getId() {
-		return id;
-	}
 	
 	public double distanceTo(Point p) {
 		double d1 = Point.distance(p, carToWorld(p1));

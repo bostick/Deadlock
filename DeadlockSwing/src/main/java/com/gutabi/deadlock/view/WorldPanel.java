@@ -30,7 +30,7 @@ public class WorldPanel extends JPanel {
 		
 		AffineTransform origTrans = (AffineTransform)g2.getTransform().clone();
 		
-		g2.translate(VIEW.worldOrigin.x, VIEW.worldOrigin.y);
+		g2.translate(VIEW.worldOriginX, VIEW.worldOriginY);
 		
 		MODEL.world.paint(g2);
 		

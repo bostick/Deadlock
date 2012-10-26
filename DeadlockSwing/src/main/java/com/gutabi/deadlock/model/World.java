@@ -188,12 +188,12 @@ public class World {
 		
 		List<Edge> newEdges = new ArrayList<Edge>();
 		
-		Point startPoint = stroke.getWorldPoint(0);
+		Point startPoint = stroke.curWorldStroke.get(0);
 		GraphPosition startPos = graph.findClosestGraphPosition(startPoint, Vertex.INIT_VERTEX_RADIUS);
 		
 		int i;
-		for (i = 1; i < stroke.size(); i++) {
-			Point b = stroke.getWorldPoint(i);
+		for (i = 1; i < stroke.curWorldStroke.size(); i++) {
+			Point b = stroke.curWorldStroke.get(i);
 			GraphPosition bPos = graph.findClosestGraphPosition(b, Vertex.INIT_VERTEX_RADIUS);
 			if (bPos != null) {
 				if (startPos != null && bPos.getEntity() == startPos.getEntity()) {
@@ -203,14 +203,14 @@ public class World {
 				}
 			}
 		}
-		if (i == stroke.size()) {
+		if (i == stroke.curWorldStroke.size()) {
 			/*
 			 * we know that the loop reached the end
 			 */
-			i = stroke.size()-1;
+			i = stroke.curWorldStroke.size()-1;
 		}
 		
-		Point endPoint = stroke.getWorldPoint(i);
+		Point endPoint = stroke.curWorldStroke.get(i);
 		GraphPosition endPos = graph.findClosestGraphPosition(endPoint, Vertex.INIT_VERTEX_RADIUS);
 		
 		if (DMath.lessThanEquals(Point.distance(startPoint, endPoint), Vertex.INIT_VERTEX_RADIUS + Vertex.INIT_VERTEX_RADIUS)) {
@@ -236,7 +236,7 @@ public class World {
 		if (startPos instanceof EdgePosition) {
 			start = graph.split((EdgePosition)startPos);
 		} else {
-			start = ((VertexPosition)startPos).getVertex();
+			start = ((VertexPosition)startPos).v;
 		}
 		
 		endPos = graph.findClosestGraphPosition(endPoint, Vertex.INIT_VERTEX_RADIUS);
@@ -245,17 +245,17 @@ public class World {
 		if (endPos instanceof EdgePosition) {
 			end = graph.split((EdgePosition)endPos);
 		} else {
-			end = ((VertexPosition)endPos).getVertex();
+			end = ((VertexPosition)endPos).v;
 		}
 		
-		Edge e = graph.createEdgeTop(start, end, stroke.getWorldPoints().subList(0, i+1));
+		Edge e = graph.createEdgeTop(start, end, stroke.curWorldStroke.subList(0, i+1));
 		newEdges.add(e);
 		
 		postDraftingTop();
 	}
 	
 	private void postIdleTop() {
-		assert MODEL.getMode() == ControlMode.IDLE;
+		assert MODEL.mode == ControlMode.IDLE;
 		
 		graph.computeVertexRadii();
 		
@@ -263,7 +263,7 @@ public class World {
 	}
 	
 	private void postDraftingTop() {
-		assert MODEL.getMode() == ControlMode.DRAFTING;
+		assert MODEL.mode == ControlMode.DRAFTING;
 		
 		graph.computeVertexRadii();
 		
@@ -271,7 +271,7 @@ public class World {
 	}
 	
 	private void postRunningTop() {
-		assert MODEL.getMode() == ControlMode.RUNNING;
+		assert MODEL.mode == ControlMode.RUNNING;
 		;
 	}
 	
@@ -409,7 +409,7 @@ public class World {
 	
 	private void paintScene(Graphics2D g2) {
 		
-		switch (MODEL.getMode()) {
+		switch (MODEL.mode) {
 		case DRAFTING:
 			break;
 		case IDLE:

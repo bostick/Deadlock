@@ -69,8 +69,8 @@ public class Graph {
 		 */
 		if (!e.isLoop()) {
 			
-			Vertex eStart = e.getStart();
-			Vertex eEnd = e.getEnd();
+			Vertex eStart = e.start;
+			Vertex eEnd = e.end;
 			
 			destroyEdge(e);
 			
@@ -79,7 +79,7 @@ public class Graph {
 			
 		} else if (!e.isStandAlone()) {
 			
-			Vertex v = e.getStart();
+			Vertex v = e.start;
 			
 			destroyEdge(e);
 			
@@ -104,8 +104,8 @@ public class Graph {
 			
 			if (!e.isLoop()) {
 				
-				Vertex eStart = e.getStart();
-				Vertex eEnd = e.getEnd();
+				Vertex eStart = e.start;
+				Vertex eEnd = e.end;
 				
 				affectedVertices.add(eStart);
 				affectedVertices.add(eEnd);
@@ -114,7 +114,7 @@ public class Graph {
 				
 			} else {
 				
-				Vertex eV = e.getStart();
+				Vertex eV = e.start;
 				
 				affectedVertices.add(eV);
 				
@@ -215,8 +215,8 @@ public class Graph {
 		assert edges.contains(e);
 		
 		if (!e.isStandAlone()) {
-			e.getStart().removeEdge(e);
-			e.getEnd().removeEdge(e);
+			e.start.removeEdge(e);
+			e.end.removeEdge(e);
 			
 			destroyStopSign(e.startSign);
 			destroyStopSign(e.endSign);
@@ -295,7 +295,7 @@ public class Graph {
 				if (vi == vj) {
 					continue;
 				}
-				double max = Point.distance(vi.getPoint(), vj.getPoint()) - vj.getRadius();
+				double max = Point.distance(vi.p, vj.p) - vj.getRadius();
 				if (max < maximumRadius) {
 					maximumRadius = max;
 				}
@@ -421,10 +421,10 @@ public class Graph {
 			} else {
 				
 				Vertex other;
-				if (start == e.getStart()) {
-					other = e.getEnd();
+				if (start == e.start) {
+					other = e.end;
 				} else {
-					other = e.getStart();
+					other = e.start;
 				}
 				
 				if (isDeadEnd(e, other, end)) {
@@ -442,10 +442,10 @@ public class Graph {
 		
 		e = eds.get(r);
 		
-		if (start == e.getStart()) {
-			v = e.getEnd();
+		if (start == e.start) {
+			v = e.end;
 		} else {
-			v = e.getStart();
+			v = e.start;
 		}
 		
 		return v;
@@ -478,10 +478,10 @@ public class Graph {
 			eds.remove(e);
 			for (Edge ee : eds) {
 				Vertex other;
-				if (v == ee.getStart()) {
-					other = ee.getEnd();
+				if (v == ee.start) {
+					other = ee.end;
 				} else {
-					other = ee.getStart();
+					other = ee.start;
 				}
 				if (visited.contains(other)) {
 					// know there is a loop, so no dead end
@@ -577,18 +577,18 @@ public class Graph {
 	 */
 	public Vertex split(final EdgePosition pos) {
 		
-		Edge e = pos.getEdge();
-		int index = pos.getIndex();
-		double param = pos.getParam();
-		final Point p = pos.getPoint();
+		Edge e = pos.e;
+		int index = pos.index;
+		double param = pos.param;
+		final Point p = pos.p;
 		
 		assert param >= 0.0;
 		assert param < 1.0;
 		
 		Vertex v = createIntersection(p);
 		
-		Vertex eStart = e.getStart();
-		Vertex eEnd = e.getEnd();
+		Vertex eStart = e.start;
+		Vertex eEnd = e.end;
 		
 		if (eStart == null && eEnd == null) {
 			// stand-alone loop
@@ -597,10 +597,10 @@ public class Graph {
 			
 			pts.add(p);
 			for (int i = index+1; i < e.size(); i++) {
-				pts.add(e.getPoint(i));
+				pts.add(e.get(i));
 			}
 			for (int i = 0; i <= index; i++) {
-				pts.add(e.getPoint(i));
+				pts.add(e.get(i));
 			}
 			pts.add(p);
 			
@@ -614,7 +614,7 @@ public class Graph {
 		List<Point> f1Pts = new ArrayList<Point>();
 		
 		for (int i = 0; i <= index; i++) {
-			f1Pts.add(e.getPoint(i));
+			f1Pts.add(e.get(i));
 		}
 		f1Pts.add(p);
 		
@@ -624,7 +624,7 @@ public class Graph {
 		
 		f2Pts.add(p);
 		for (int i = index+1; i < e.size(); i++) {
-			f2Pts.add(e.getPoint(i));
+			f2Pts.add(e.get(i));
 		}
 		
 		createEdge(v, eEnd, f2Pts, 1+(e.endSign!=null?2:0));
@@ -696,13 +696,13 @@ public class Graph {
 		 */
 		for(Edge e : edges) {
 			double l = e.getTotalLength();
-			double cur = distances[e.getStart().id][e.getEnd().id];
+			double cur = distances[e.start.id][e.end.id];
 			/*
 			 * there may be multiple edges between start and end, so don't just blindly set it to l
 			 */
 			if (l < cur) {
-				distances[e.getStart().id][e.getEnd().id] = l;
-		    	distances[e.getEnd().id][e.getStart().id] = l;
+				distances[e.start.id][e.end.id] = l;
+		    	distances[e.end.id][e.start.id] = l;
 			}
 		}
 		
@@ -789,11 +789,11 @@ public class Graph {
 		assert edges.contains(e1);
 		assert edges.contains(e2);
 		
-		Vertex e1Start = e1.getStart();
-		Vertex e1End = e1.getEnd();
+		Vertex e1Start = e1.start;
+		Vertex e1End = e1.end;
 		
-		Vertex e2Start = e2.getStart();
-		Vertex e2End = e2.getEnd();
+		Vertex e2Start = e2.start;
+		Vertex e2End = e2.end;
 		
 		assert e1Start != null;
 		assert e1End != null;
@@ -811,10 +811,10 @@ public class Graph {
 				
 			List<Point> pts = new ArrayList<Point>();
 			
-			assert e1.getPoint(0) == e1.getPoint(e1.size()-1);
+			assert e1.get(0) == e1.get(e1.size()-1);
 			
 			for (int i = 0; i < e1.size(); i++) {
-				pts.add(e1.getPoint(i));
+				pts.add(e1.get(i));
 			}
 			
 			createEdge(null, null, pts, 0);
@@ -828,11 +828,11 @@ public class Graph {
 			List<Point> pts = new ArrayList<Point>();
 			
 			for (int i = e1.size()-1; i >= 0; i--) {
-				pts.add(e1.getPoint(i));
+				pts.add(e1.get(i));
 			}
-			assert e1.getPoint(0).equals(e2.getPoint(0));
+			assert e1.get(0).equals(e2.get(0));
 			for (int i = 0; i < e2.size(); i++) {
-				pts.add(e2.getPoint(i));
+				pts.add(e2.get(i));
 			}
 			
 			createEdge(e1End, e2End, pts, (e1.startSign!=null?1:0) + (e2.endSign!=null?2:0));
@@ -847,11 +847,11 @@ public class Graph {
 			List<Point> pts = new ArrayList<Point>();
 			
 			for (int i = e1.size()-1; i >= 0; i--) {
-				pts.add(e1.getPoint(i));
+				pts.add(e1.get(i));
 			}
-			assert e1.getPoint(0).equals(e2.getPoint(e2.size()-1));
+			assert e1.get(0).equals(e2.get(e2.size()-1));
 			for (int i = e2.size()-1; i >= 0; i--) {
-				pts.add(e2.getPoint(i));
+				pts.add(e2.get(i));
 			}
 			
 			createEdge(e1End, e2Start, pts, (e1.endSign!=null?1:0) + (e2.startSign!=null?2:0)); 
@@ -866,11 +866,11 @@ public class Graph {
 			List<Point> pts = new ArrayList<Point>();
 			
 			for (int i = 0; i < e1.size(); i++) {
-				pts.add(e1.getPoint(i));
+				pts.add(e1.get(i));
 			}
-			assert e1.getPoint(e1.size()-1).equals(e2.getPoint(0));
+			assert e1.get(e1.size()-1).equals(e2.get(0));
 			for (int i = 0; i < e2.size(); i++) {
-				pts.add(e2.getPoint(i));
+				pts.add(e2.get(i));
 			}
 			
 			createEdge(e1Start, e2End, pts, (e1.startSign!=null?1:0) + (e2.endSign!=null?2:0));
@@ -886,10 +886,10 @@ public class Graph {
 			List<Point> pts = new ArrayList<Point>();
 			
 			for (int i = 0; i < e1.size(); i++) {
-				pts.add(e1.getPoint(i));
+				pts.add(e1.get(i));
 			}
 			for (int i = e2.size()-1; i >= 0; i--) {
-				pts.add(e2.getPoint(i));
+				pts.add(e2.get(i));
 			}
 			
 			createEdge(e1Start, e2Start, pts, (e1.startSign!=null?1:0) + (e2.startSign!=null?2:0));
@@ -1000,7 +1000,7 @@ public class Graph {
 			 */
 			int count = 0;
 			for (Intersection w : intersections) {
-				if (v.getPoint().equals(w.getPoint())) {
+				if (v.p.equals(w.p)) {
 					count++;
 				}
 			}
@@ -1008,18 +1008,18 @@ public class Graph {
 		}
 		
 		for (Edge e : edges) {
-			if (e.getStart() == null && e.getEnd() == null) {
+			if (e.start == null && e.end == null) {
 				continue;
 			}
 			for (Edge f : edges) {
 				if (e == f) {
 					
 					for (int i = 0; i < e.size()-2; i++) {
-						Point a = e.getPoint(i);
-						Point b = e.getPoint(i+1);
+						Point a = e.get(i);
+						Point b = e.get(i+1);
 						for (int j = i+1; j < f.size()-1; j++) {
-							Point c = f.getPoint(j);
-							Point d = f.getPoint(j+1);
+							Point c = f.get(j);
+							Point d = f.get(j+1);
 							try {
 								Point inter = Point.intersection(a, b, c, d);
 								if (inter != null && !(inter.equals(a) || inter.equals(b) || inter.equals(c) || inter.equals(d))) {
@@ -1035,11 +1035,11 @@ public class Graph {
 				} else {
 					
 					for (int i = 0; i < e.size()-1; i++) {
-						Point a = e.getPoint(i);
-						Point b = e.getPoint(i+1);
+						Point a = e.get(i);
+						Point b = e.get(i+1);
 						for (int j = 0; j < f.size()-1; j++) {
-							Point c = f.getPoint(j);
-							Point d = f.getPoint(j+1);
+							Point c = f.get(j);
+							Point d = f.get(j+1);
 							try {
 								Point inter = Point.intersection(a, b, c, d);
 								if (inter != null && !(inter.equals(a) || inter.equals(b) || inter.equals(c) || inter.equals(d))) {
@@ -1052,21 +1052,21 @@ public class Graph {
 						}
 					}
 					
-					if ((e.getStart() == f.getStart() && e.getEnd() == f.getEnd()) || (e.getStart() == f.getEnd() && e.getEnd() == f.getStart())) {
+					if ((e.start == f.start && e.end == f.end) || (e.start == f.end && e.end == f.start)) {
 						/*
 						 * e and f share endpoints
 						 */
 						Set<Point> shared = new HashSet<Point>();
 						for (int i = 0; i < e.size(); i++) {
-							Point eP = e.getPoint(i);
+							Point eP = e.get(i);
 							for (int j = 0; j < f.size(); j++) {
-								Point fP = f.getPoint(j);
+								Point fP = f.get(j);
 								if (eP.equals(fP)) {
 									shared.add(eP);
 								}
 							}
 						}
-						if (e.getStart() == e.getEnd()) {
+						if (e.start == e.end) {
 							assert shared.size() == 1;
 						} else {
 							assert shared.size() == 2;

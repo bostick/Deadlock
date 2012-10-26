@@ -16,7 +16,7 @@ public class EdgePosition extends GraphPosition {
 	public final int hash;
 	
 	public EdgePosition(Edge e, int index, double param) {
-		super(Point.point(e.getPoint(index), e.getPoint(index+1), param));
+		super(Point.point(e.get(index), e.get(index+1), param));
 		
 		if (index < 0 || index >= e.size()-1) {
 			throw new IllegalArgumentException();
@@ -34,7 +34,7 @@ public class EdgePosition extends GraphPosition {
 		
 		this.bound = DMath.equals(param, 0.0);
 		
-		Point segStart = e.getPoint(index);
+		Point segStart = e.get(index);
 		
 		lengthToStartOfEdge = e.getLengthFromStart(index) + Point.distance(p, segStart);
 		
@@ -48,7 +48,7 @@ public class EdgePosition extends GraphPosition {
 		h = 37 * h + c;
 		hash = h;
 		
-		check();
+		assert check();
 	}
 	
 	public int hashCode() {
@@ -71,26 +71,8 @@ public class EdgePosition extends GraphPosition {
 	}
 	
 	
-	
-	
-	public Point getPoint() {
-		return p;
-	}
-	
-	public Edge getEdge() {
-		return e;
-	}
-	
 	public Entity getEntity() {
 		return e;
-	}
-	
-	public int getIndex() {
-		return index;
-	}
-	
-	public double getParam() {
-		return param;
 	}
 	
 	public boolean isBound() {
@@ -101,7 +83,7 @@ public class EdgePosition extends GraphPosition {
 		if (index != 0) {
 			return new EdgePosition(e, index, 0.0);
 		} else {
-			return new VertexPosition(e.getStart());
+			return new VertexPosition(e.start);
 		}
 	}
 	
@@ -111,7 +93,7 @@ public class EdgePosition extends GraphPosition {
 		} else if (index != e.size()-2) {
 			return new EdgePosition(e, index+1, 0.0);
 		} else {
-			return new VertexPosition(e.getEnd());
+			return new VertexPosition(e.end);
 		}
 	}
 	
@@ -119,7 +101,7 @@ public class EdgePosition extends GraphPosition {
 		
 		if (goal instanceof EdgePosition) {
 			EdgePosition ge = (EdgePosition)goal;
-			assert ge.getEdge() == e;
+			assert ge.e == e;
 			
 			if (lengthToStartOfEdge < ge.lengthToStartOfEdge) {
 				return nextBoundForward(e, index, param);
@@ -130,7 +112,7 @@ public class EdgePosition extends GraphPosition {
 		} else if (goal instanceof VertexPosition) {
 			VertexPosition gv = (VertexPosition)goal;
 			
-			if (gv.getVertex() == e.getEnd()) {
+			if (gv.v == e.end) {
 				return nextBoundForward(e, index, param);
 			} else {
 				return nextBoundBackward(e, index, param);
@@ -154,14 +136,14 @@ public class EdgePosition extends GraphPosition {
 		if (b instanceof VertexPosition) {
 			VertexPosition bb = (VertexPosition)b;
 			
-			if (bb.getVertex() == e.getStart()) {
+			if (bb.v == e.start) {
 				return distanceToStartOfEdge();
-			} else if (bb.getVertex() == e.getEnd()) {
+			} else if (bb.v == e.end) {
 				return distanceToEndOfEdge();
 			}
 			
-			double aaStartPath = MODEL.world.distanceBetweenVertices(e.getStart(), bb.getVertex());
-			double aaEndPath = MODEL.world.distanceBetweenVertices(e.getEnd(), bb.getVertex());
+			double aaStartPath = MODEL.world.distanceBetweenVertices(e.start, bb.v);
+			double aaEndPath = MODEL.world.distanceBetweenVertices(e.end, bb.v);
 			
 			double dist = Math.min(aaStartPath + distanceToStartOfEdge(), aaEndPath + distanceToEndOfEdge());
 			
@@ -172,14 +154,14 @@ public class EdgePosition extends GraphPosition {
 			EdgePosition aa = (EdgePosition)this;
 			EdgePosition bb = (EdgePosition)b;
 			
-			if (aa.getEdge() == bb.getEdge()) {
+			if (aa.e == bb.e) {
 				return Math.abs(aa.distanceToStartOfEdge() - bb.distanceToStartOfEdge());
 			}
 			
-			double startStartPath = MODEL.world.distanceBetweenVertices(aa.getEdge().getStart(), bb.getEdge().getStart());
-			double startEndPath = MODEL.world.distanceBetweenVertices(aa.getEdge().getStart(), bb.getEdge().getEnd());
-			double endStartPath = MODEL.world.distanceBetweenVertices(aa.getEdge().getEnd(), bb.getEdge().getStart());
-			double endEndPath = MODEL.world.distanceBetweenVertices(aa.getEdge().getEnd(), bb.getEdge().getEnd());
+			double startStartPath = MODEL.world.distanceBetweenVertices(aa.e.start, bb.e.start);
+			double startEndPath = MODEL.world.distanceBetweenVertices(aa.e.start, bb.e.end);
+			double endStartPath = MODEL.world.distanceBetweenVertices(aa.e.end, bb.e.start);
+			double endEndPath = MODEL.world.distanceBetweenVertices(aa.e.end, bb.e.end);
 			
 			double startStartDistance = startStartPath + aa.distanceToStartOfEdge() + bb.distanceToStartOfEdge();
 			double startEndDistance = startEndPath + aa.distanceToStartOfEdge() + bb.distanceToEndOfEdge();
@@ -220,7 +202,7 @@ public class EdgePosition extends GraphPosition {
 		if (e.isLoop()) {
 			throw new IllegalArgumentException();
 		}
-		if (!(dest.getVertex() == e.getStart() || dest.getVertex() == e.getEnd())) {
+		if (!(dest.v == e.start || dest.v == e.end)) {
 			throw new IllegalArgumentException();
 		}
 		if (DMath.equals(dist, 0.0)) {
@@ -230,11 +212,11 @@ public class EdgePosition extends GraphPosition {
 			throw new IllegalArgumentException();
 		}
 		
-		if (dest.getVertex() == e.getEnd()) {
+		if (dest.v == e.end) {
 			
 			double distToEndOfEdge = distanceToEndOfEdge();
 			if (DMath.equals(dist, distToEndOfEdge)) {
-				return new VertexPosition(e.getEnd());
+				return new VertexPosition(e.end);
 			} else if (dist > distToEndOfEdge) {
 				throw new IllegalArgumentException();
 			}
@@ -245,7 +227,7 @@ public class EdgePosition extends GraphPosition {
 			
 			double distToStartOfEdge = distanceToStartOfEdge();
 			if (DMath.equals(dist, distToStartOfEdge)) {
-				return new VertexPosition(e.getStart());
+				return new VertexPosition(e.start);
 			} else if (dist > distToStartOfEdge) {
 				throw new IllegalArgumentException();
 			}
@@ -269,8 +251,8 @@ public class EdgePosition extends GraphPosition {
 		double distanceToTravel = dist;
 		
 		while (true) {
-			Point a = e.getPoint(index);
-			Point b = e.getPoint(index+1);
+			Point a = e.get(index);
+			Point b = e.get(index+1);
 			
 			Point c = Point.point(a, b, param);
 			double distanceToEndOfSegment = Point.distance(c, b);
@@ -293,8 +275,8 @@ public class EdgePosition extends GraphPosition {
 		double distanceToTravel = dist;
 		
 		while (true) {
-			Point a = e.getPoint(index);
-			Point b = e.getPoint(index+1);
+			Point a = e.get(index);
+			Point b = e.get(index+1);
 			
 			Point c = Point.point(a, b, param);
 			double distanceToStartOfSegment = Point.distance(c, a);
@@ -323,7 +305,7 @@ public class EdgePosition extends GraphPosition {
 	
 	private static GraphPosition nextBoundForward(Edge e, int index, double param) {
 		if (index == e.size()-2) {
-			return new VertexPosition(e.getEnd());
+			return new VertexPosition(e.end);
 		} else {
 			return new EdgePosition(e, index+1, 0.0);
 		}
@@ -332,41 +314,42 @@ public class EdgePosition extends GraphPosition {
 	private static GraphPosition nextBoundBackward(Edge e, int index, double param) {
 		if (DMath.equals(param, 0.0)) {
 			if (index == 0 || (index == 1 && DMath.equals(param, 0.0))) {
-				return new VertexPosition(e.getStart());
+				return new VertexPosition(e.start);
 			} else {
 				return new EdgePosition(e, index-1, 0.0);
 			}
 		} else {
 			if (index == 0) {
-				return new VertexPosition(e.getStart());
+				return new VertexPosition(e.start);
 			} else {
 				return new EdgePosition(e, index, 0.0);
 			}
 		}
 	}
 	
-	private void check() {
+	private boolean check() {
 		
 		double acc = 0;
 		for (int i = 0; i < index; i++) {
-			Point a = e.getPoint(i);
-			Point b = e.getPoint(i+1);
+			Point a = e.get(i);
+			Point b = e.get(i+1);
 			acc = acc + Point.distance(a, b);
 		}
-		acc = acc + Point.distance(e.getPoint(index), p);
+		acc = acc + Point.distance(e.get(index), p);
 		
 		assert DMath.equals(lengthToStartOfEdge, acc);
 		
 		acc = 0;
-		acc = acc + Point.distance(p, e.getPoint(index+1));
+		acc = acc + Point.distance(p, e.get(index+1));
 		for (int i = index+1; i < e.size()-1; i++) {
-			Point a = e.getPoint(i);
-			Point b = e.getPoint(i+1);
+			Point a = e.get(i);
+			Point b = e.get(i+1);
 			acc = acc + Point.distance(a, b);
 		}
 		
 		assert DMath.equals(lengthToEndOfEdge, acc);
 		
+		return true;
 	}
 	
 }

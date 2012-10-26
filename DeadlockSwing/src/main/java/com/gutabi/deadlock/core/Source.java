@@ -163,7 +163,7 @@ public class Source extends Vertex {
 	public void paintID(Graphics2D g2) {
 		g2.setColor(Color.WHITE);
 		
-		Point worldPoint = p.minus(new Point(r, 0));
+		Point worldPoint = p.minus(new Point(getRadius(), 0));
 		Point panelPoint = worldPoint.multiply(MODEL.PIXELS_PER_METER);
 		
 		g2.drawString(Integer.toString(id), (int)(panelPoint.x), (int)(panelPoint.y));

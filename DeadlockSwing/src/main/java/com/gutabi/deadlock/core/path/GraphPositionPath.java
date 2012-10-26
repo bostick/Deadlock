@@ -15,23 +15,22 @@ import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.Vertex;
 import com.gutabi.deadlock.core.VertexPosition;
 
-
-
 /**
  * Purely spatial 
  */
 @SuppressWarnings("static-access")
 public class GraphPositionPath {
 	
-	private GraphPosition start;
-	private GraphPosition end;
-	
 	List<GraphPosition> poss;
 	
-	public final double[] cumulativeDistancesFromStart;
-	private final double totalLength;
+	public final int size;
+	public final GraphPosition start;
+	public final GraphPosition end;
 	
-	int hash;
+	public final double[] cumulativeDistancesFromStart;
+	public final double totalLength;
+	
+	private final int hash;
 	
 	static Logger logger = Logger.getLogger(GraphPositionPath.class);
 	
@@ -42,6 +41,8 @@ public class GraphPositionPath {
 		int h = 17;
 		h = 37 * h + poss.hashCode();
 		hash = h;
+		
+		size = poss.size();
 		
 		this.start = poss.get(0);
 		this.end = poss.get(poss.size()-1);
@@ -81,8 +82,8 @@ public class GraphPositionPath {
 		
 		poss.add(new VertexPosition(origPoss.get(0)));
 		for (int i = 0; i < origPoss.size()-1; i++) {
-			GraphPosition a = new VertexPosition(origPoss.get(i));
-			GraphPosition b = new VertexPosition(origPoss.get(i+1));
+			VertexPosition a = new VertexPosition(origPoss.get(i));
+			VertexPosition b = new VertexPosition(origPoss.get(i+1));
 			calculateShortestPath(poss, a, b);
 		}
 		
@@ -103,8 +104,8 @@ public class GraphPositionPath {
 		
 		poss.add(new VertexPosition(origPoss.get(0)));
 		for (int i = 0; i < origPoss.size()-1; i++) {
-			GraphPosition a = new VertexPosition(origPoss.get(i));
-			GraphPosition b = new VertexPosition(origPoss.get(i+1));
+			VertexPosition a = new VertexPosition(origPoss.get(i));
+			VertexPosition b = new VertexPosition(origPoss.get(i+1));
 			calculateRandomPath(poss, a, b);
 		}
 		
@@ -129,26 +130,11 @@ public class GraphPositionPath {
 	}
 	
 	
-	
-	public GraphPosition getStart() {
-		return start;
-	}
-	
-	public GraphPosition getEnd() {
-		return end;
-	}
-	
-	public int size() {
-		return poss.size();
-	}
-	
-	public double getTotalLength() {
-		return totalLength;
-	}
-	
-	public GraphPosition getGraphPosition(int index) {
+	public GraphPosition get(int index) {
 		return poss.get(index);
 	}
+	
+	
 	
 	public GraphPositionPathPosition hitTest(GraphPosition pos) {
 		
@@ -170,9 +156,9 @@ public class GraphPositionPath {
 				GraphPosition test1 = poss.get(i);
 				GraphPosition test2 = poss.get(i+1);
 				if (ep1.equals(test1) && ep2.equals(test2)) {
-					return new GraphPositionPathPosition(this, i, ep.getParam());
+					return new GraphPositionPathPosition(this, i, ep.param);
 				} else if (ep1.equals(test2) && ep2.equals(test1)) {
-					return new GraphPositionPathPosition(this, i, 1-ep.getParam());
+					return new GraphPositionPathPosition(this, i, 1-ep.param);
 				}
 			}
 			return null;
@@ -192,12 +178,12 @@ public class GraphPositionPath {
 	 * never need to return null or anything
 	 * 
 	 */
-	public GraphPositionPathPosition findClosestGraphPositionPathPosition(Point p, GraphPositionPathPosition pos) {
+	public GraphPositionPathPosition findClosestGraphPositionPathPosition(Point p, GraphPositionPathPosition min, GraphPositionPathPosition max) {
 		
 		/*
 		 * end of path
 		 */
-		GraphPositionPathPosition closest = new GraphPositionPathPosition(this, poss.size()-1, 0.0);
+		GraphPositionPathPosition closest = max;
 		double closestDistance = Point.distance(p, closest.gpos.p);
 		
 		for (int i = 0; i < poss.size()-1; i++) {
@@ -213,8 +199,8 @@ public class GraphPositionPath {
 			}
 			if (i == 0) {
 				assert b.isBound();
-				if (a instanceof EdgePosition && u < ((EdgePosition)a).getParam()) {
-					u = ((EdgePosition)a).getParam();
+				if (a instanceof EdgePosition && u < ((EdgePosition)a).param) {
+					u = ((EdgePosition)a).param;
 				} else if (u < 0.0){
 					u = 0.0;
 				}
@@ -234,7 +220,7 @@ public class GraphPositionPath {
 					pOnPath = Point.point(a.ceiling().p, b.floor().p, u);
 				}
 				double dist = Point.distance(p, pOnPath);
-				if (dist < closestDistance && (i+u) >= pos.getCombo()) {// && Math.abs((i+u)-pos.getCombo()) < Math.abs(closest.getCombo()-pos.getCombo())) {
+				if (dist < closestDistance && DMath.greaterThanEquals((i+u), min.combo) && DMath.lessThanEquals((i+u), max.combo)) {
 					closest = new GraphPositionPathPosition(this, i, u);
 					closestDistance = dist;
 				}
@@ -242,8 +228,8 @@ public class GraphPositionPath {
 				
 			} else if (i == poss.size()-2) {
 				assert a.isBound();
-				if (b instanceof EdgePosition && u > ((EdgePosition)b).getParam()) {
-					u = ((EdgePosition)b).getParam();
+				if (b instanceof EdgePosition && u > ((EdgePosition)b).param) {
+					u = ((EdgePosition)b).param;
 				} else if (u > 1.0) {
 					u = 1.0;
 				}
@@ -256,7 +242,7 @@ public class GraphPositionPath {
 					 */
 					Point pOnPath = b.p;
 					double dist = Point.distance(p, pOnPath);
-					if (dist < closestDistance && (i+u) >= pos.getCombo()) {// && Math.abs((i+1+0.0)-pos.getCombo()) < Math.abs(closest.getCombo()-pos.getCombo())) {
+					if (dist < closestDistance && DMath.greaterThanEquals((i+u), min.combo) && DMath.lessThanEquals((i+u), max.combo)) {
 						closest = new GraphPositionPathPosition(this, i+1, 0.0);
 						closestDistance = dist;
 					}
@@ -268,7 +254,7 @@ public class GraphPositionPath {
 						pOnPath = Point.point(a.ceiling().p, b.floor().p, u);
 					}
 					double dist = Point.distance(p, pOnPath);
-					if (dist < closestDistance && (i+u) >= pos.getCombo()) {// && Math.abs((i+u)-pos.getCombo()) < Math.abs(closest.getCombo()-pos.getCombo())) {
+					if (dist < closestDistance && DMath.greaterThanEquals((i+u), min.combo) && DMath.lessThanEquals((i+u), max.combo)) {
 						closest = new GraphPositionPathPosition(this, i, u);
 						closestDistance = dist;
 					}
@@ -299,7 +285,7 @@ public class GraphPositionPath {
 					pOnPath = Point.point(a.ceiling().p, b.floor().p, u);
 				}
 				double dist = Point.distance(p, pOnPath);
-				if (dist < closestDistance && (i+u) >= pos.getCombo()) {// && Math.abs((i+u)-pos.getCombo()) < Math.abs(closest.getCombo()-pos.getCombo())) {
+				if (dist < closestDistance && DMath.greaterThanEquals((i+u), min.combo) && DMath.lessThanEquals((i+u), max.combo)) {
 					closest = new GraphPositionPathPosition(this, i, u);
 					closestDistance = dist;
 				}
@@ -319,7 +305,7 @@ public class GraphPositionPath {
 		
 		if (DMath.equals(pathParam, 0.0)) {
 			if (p1 instanceof EdgePosition) {
-				assert DMath.equals(((EdgePosition)p1).getParam(), pathParam);
+				assert DMath.equals(((EdgePosition)p1).param, pathParam);
 			}
 			return p1;
 		}
@@ -339,15 +325,15 @@ public class GraphPositionPath {
 			if (p2 instanceof EdgePosition) {
 				EdgePosition pp2 = (EdgePosition)p2;
 				
-				if (pp1.getIndex() < pp2.getIndex() || (pp1.getIndex() == pp2.getIndex() && DMath.lessThan(pp1.getParam(), pp2.getParam()))) {
+				if (pp1.index < pp2.index || (pp1.index == pp2.index && DMath.lessThan(pp1.param, pp2.param))) {
 					// same direction as edge
 					
-					graphIndex = pp1.getIndex();
+					graphIndex = pp1.index;
 					graphParam = pathParam;
 					
 				} else {
 					
-					graphIndex = pp2.getIndex();
+					graphIndex = pp2.index;
 					graphParam = 1-pathParam;
 					
 				}
@@ -355,10 +341,10 @@ public class GraphPositionPath {
 			} else {
 				VertexPosition pp2 = (VertexPosition)p2;
 				
-				if (pp2.getVertex() == pp1.getEdge().getEnd()) {
+				if (pp2.v == pp1.e.end) {
 					// same direction as edge
 					
-					graphIndex = pp1.getIndex();
+					graphIndex = pp1.index;
 					graphParam = pathParam;
 					
 				} else {
@@ -370,7 +356,7 @@ public class GraphPositionPath {
 				
 			}
 			
-			EdgePosition newE = new EdgePosition(((EdgePosition)p1).getEdge(), graphIndex, graphParam);
+			EdgePosition newE = new EdgePosition(((EdgePosition)p1).e, graphIndex, graphParam);
 			
 			return newE;
 			
@@ -382,7 +368,7 @@ public class GraphPositionPath {
 				
 				EdgePosition p2e = (EdgePosition)p2;
 				
-				if (pp1.getVertex() == pp2.getEdge().getStart()) {
+				if (pp1.v == pp2.e.start) {
 					// same direction as edge
 					
 					graphIndex = 0;
@@ -390,12 +376,12 @@ public class GraphPositionPath {
 					
 				} else {
 					
-					graphIndex = pp2.getIndex();
+					graphIndex = pp2.index;
 					graphParam = 1-pathParam;
 					
 				}
 				
-				EdgePosition newE = new EdgePosition(p2e.getEdge(), graphIndex, graphParam);
+				EdgePosition newE = new EdgePosition(p2e.e, graphIndex, graphParam);
 				
 				return newE;
 				
@@ -403,7 +389,7 @@ public class GraphPositionPath {
 				
 				VertexPosition pp2 = (VertexPosition)p2;
 				
-				List<Edge> eds = Vertex.commonEdges(pp1.getVertex(), pp2.getVertex());
+				List<Edge> eds = Vertex.commonEdges(pp1.v, pp2.v);
 				
 				Edge e = null;
 				
@@ -415,11 +401,11 @@ public class GraphPositionPath {
 				}
 				assert e != null;
 				
-				graphParam = (pp1.getVertex() == e.getStart()) ? pathParam : 1-pathParam;
+				graphParam = (pp1.v == e.start) ? pathParam : 1-pathParam;
 				
-				Vertex p1v = ((VertexPosition)p1).getVertex();
+				Vertex p1v = ((VertexPosition)p1).v;
 				
-				if (p1v == e.getStart()) {
+				if (p1v == e.start) {
 					// same direction as edge
 					
 					graphIndex = 0;
@@ -444,252 +430,42 @@ public class GraphPositionPath {
 	 * 
 	 * add all Positions up to b, inclusive
 	 */
-	private static void calculateShortestPath(List<GraphPosition> acc, GraphPosition a, GraphPosition b) {
+	private static void calculateShortestPath(List<GraphPosition> acc, VertexPosition a, VertexPosition b) {
 		
-		if (a instanceof EdgePosition) {
-			EdgePosition aa = (EdgePosition)a;
+		if (a.equals(b)) {
 			
-			if (b instanceof EdgePosition) {
-				EdgePosition bb = (EdgePosition)b;
-				
-				if (aa.getEdge() == bb.getEdge()) {
-					
-					assert false;
-//					if (aa.equals(bb)) {
-//						
-//						assert false;
-//						
-//					} else if (aa.getIndex() == bb.getIndex()) {
-//						
-//						assert bb.isBound();
-//						acc.add(bb);
-//						
-//					} else if (aa.nextBoundToward(bb).equals(bb)) {
-//						
-//						assert bb.isBound();
-//						acc.add(bb);
-//						
-//					} else if (bb.nextBoundToward(aa).equals(aa)) {
-//						
-//						assert bb.isBound();
-//						acc.add(bb);
-//						
-//					} else {
-//						
-//						GraphPosition bEnd;
-//						if (!bb.isBound()) {
-//							bEnd = bb.nextBoundToward(aa);
-//						} else {
-//							bEnd = bb;
-//						}
-//						
-//						GraphPosition cur = aa;
-//						while (true) {
-//							cur = cur.nextBoundToward(bEnd);
-//							assert cur.isBound();
-//							acc.add(cur);
-//							if (cur.equals(bEnd)) {
-//								break;
-//							}
-//						}
-//						if (!bEnd.equals(bb)) {
-//							assert bb.isBound();
-//							acc.add(bb);
-//						}
-//					
-//					}
-					
-				} else {
-					// different edges
-					
-					assert false;
-//					VertexPosition aStart = new VertexPosition(aa.getEdge().getStart(), a.graph);
-//					VertexPosition aEnd = new VertexPosition(aa.getEdge().getEnd(), a.graph);
-//					
-//					double aStartDist = aa.distanceToStartOfEdge() + aStart.distanceTo(b);
-//					double aEndDist = aa.distanceToEndOfEdge() + aEnd.distanceTo(b);
-//					
-//					if (aStartDist == Double.POSITIVE_INFINITY || aEndDist == Double.POSITIVE_INFINITY) {
-//						
-//						throw new IllegalArgumentException();
-//						
-//					} else if (DMath.lessThanEquals(aStartDist, aEndDist)) {
-//						
-//						calculateShortestPath(acc, aa, aStart);
-//						calculateShortestPath(acc, aStart, bb);
-//						
-//					} else {
-//						
-//						calculateShortestPath(acc, aa, aEnd);
-//						calculateShortestPath(acc, aEnd, bb);
-//						
-//					}
-					
-				}
-				
-			} else {
-				VertexPosition bb = (VertexPosition)b;
-				
-				if (bb.getVertex() == aa.getEdge().getStart() || bb.getVertex() == aa.getEdge().getEnd()) {
-					
-					assert false;
-//					if (aa.nextBoundToward(bb).equals(bb)) {
-//						
-//						assert bb.isBound();
-//						acc.add(bb);
-//						
-//					} else {
-//						
-//						GraphPosition cur = aa;
-//						while (true) {
-//							cur = cur.nextBoundToward(bb);
-//							assert cur.isBound();
-//							acc.add(cur);
-//							if (cur.equals(bb)) {
-//								break;
-//							}
-//						}
-//						
-//					}
-					
-				} else {
-					// not connected
-					
-					assert false;
-//					VertexPosition aStart = new VertexPosition(aa.getEdge().getStart(), a.graph);
-//					VertexPosition aEnd = new VertexPosition(aa.getEdge().getEnd(), a.graph);
-//					
-//					double aStartDist = aa.distanceToStartOfEdge() + aStart.distanceTo(b);
-//					double aEndDist = aa.distanceToEndOfEdge() + aEnd.distanceTo(b);
-//					
-//					if (aStartDist == Double.POSITIVE_INFINITY || aEndDist == Double.POSITIVE_INFINITY) {
-//						
-//						throw new IllegalArgumentException();
-//						
-//					} else if (DMath.lessThanEquals(aStartDist, aEndDist)) {
-//						
-//						calculateShortestPath(acc, aa, aStart);
-//						calculateShortestPath(acc, aStart, bb);
-//						
-//					} else {
-//						
-//						calculateShortestPath(acc, aa, aEnd);
-//						calculateShortestPath(acc, aEnd, bb);
-//						
-//					}
-					
-				}
-				
-			}
+			assert false;
 			
 		} else {
-			VertexPosition aa = (VertexPosition)a;
+			List<Edge> eds = Vertex.commonEdges(a.v, b.v);
 			
-			if (b instanceof EdgePosition) {
-				EdgePosition bb = (EdgePosition)b;
+			if (eds.isEmpty()) {
 				
-				if (aa.getVertex() == bb.getEdge().getStart() || aa.getVertex() == bb.getEdge().getEnd()) {
+				Vertex choice = MODEL.world.shortestPathChoice(a.v, b.v);
+				
+				if (choice == null) {
 					
-					assert false;
-//					if (bb.nextBoundToward(aa).equals(aa)) {
-//						
-//						assert bb.isBound();
-//						acc.add(bb);
-//						
-//					} else {
-//						
-//						GraphPosition bEnd;
-//						if (!bb.isBound()) {
-//							bEnd = bb.nextBoundToward(aa);
-//						} else {
-//							bEnd = bb;
-//						}
-//						
-//						GraphPosition cur = aa;
-//						while (true) {
-//							cur = cur.nextBoundToward(bEnd);
-//							assert cur.isBound();
-//							acc.add(cur);
-//							if (cur.equals(bEnd)) {
-//								break;
-//							}
-//						}
-//						if (!bEnd.equals(bb)) {
-//							assert bb.isBound();
-//							acc.add(bb);
-//						}
-//						
-//					}
+					throw new IllegalArgumentException();
 					
 				} else {
-					// not connected
 					
-					assert false;
-//					VertexPosition bStart = new VertexPosition(bb.getEdge().getStart(), a.graph);
-//					VertexPosition bEnd = new VertexPosition(bb.getEdge().getEnd(), a.graph);
-//					
-//					double bStartDist = bb.distanceToStartOfEdge() + bStart.distanceTo(a);
-//					double bEndDist = bb.distanceToEndOfEdge() + bEnd.distanceTo(a);
-//					
-//					if (bStartDist == Double.POSITIVE_INFINITY || bEndDist == Double.POSITIVE_INFINITY) {
-//						
-//						throw new IllegalArgumentException();
-//						
-//					} else if (DMath.lessThanEquals(bStartDist, bEndDist)) {
-//						
-//						calculateShortestPath(acc, aa, bStart);
-//						calculateShortestPath(acc, bStart, bb);
-//						
-//					} else {
-//						
-//						calculateShortestPath(acc, aa, bEnd);
-//						calculateShortestPath(acc, bEnd, bb);
-//						
-//					}
+					calculateShortestPath(acc, a, new VertexPosition(choice));
+					calculateShortestPath(acc, new VertexPosition(choice), b);
 					
 				}
 				
 			} else {
-				VertexPosition bb = (VertexPosition)b;
 				
-				if (aa.equals(bb)) {
-					
-					assert false;
-					
-				} else {
-					List<Edge> eds = Vertex.commonEdges(aa.getVertex(), bb.getVertex());
-					
-					if (eds.isEmpty()) {
-						
-						Vertex choice = MODEL.world.shortestPathChoice(aa.getVertex(), bb.getVertex());
-						
-						if (choice == null) {
-							
-							throw new IllegalArgumentException();
-							
-						} else {
-							
-							calculateShortestPath(acc, aa, new VertexPosition(choice));
-							calculateShortestPath(acc, new VertexPosition(choice), bb);
-							
-						}
-						
-					} else {
-						
-						Edge shortest = null;
-						for (Edge e : eds) {
-							if (shortest == null || DMath.lessThan(e.getTotalLength(), shortest.getTotalLength())) {
-								shortest = e;
-							}
-						}
-						
-						fillin(acc, aa, bb, shortest);
-						
+				Edge shortest = null;
+				for (Edge e : eds) {
+					if (shortest == null || DMath.lessThan(e.getTotalLength(), shortest.getTotalLength())) {
+						shortest = e;
 					}
 				}
 				
+				fillin(acc, a, b, shortest);
+				
 			}
-			
 		}
 		
 	}
@@ -699,64 +475,37 @@ public class GraphPositionPath {
 	 * 
 	 * add all Positions up to b, inclusive
 	 */
-	private static void calculateRandomPath(List<GraphPosition> acc, GraphPosition a, GraphPosition b) {
+	private static void calculateRandomPath(List<GraphPosition> acc, VertexPosition a, VertexPosition b) {
 		
-//		find looping problem
-		
-		VertexPosition aa = (VertexPosition)a;
-		VertexPosition bb = (VertexPosition)b;
-//		VertexPosition ee = (VertexPosition)end;
-		
-		if (aa.equals(bb)) {
+		if (a.equals(b)) {
 			return;
 		}
 		
-//		if (aa.equals(ee)) {
-//			return;
-//		}
-		
 		Edge prev = null;
 		if (acc.size() >= 2) {
-			prev = ((EdgePosition)acc.get(acc.size()-2)).getEdge();
+			prev = ((EdgePosition)acc.get(acc.size()-2)).e;
 		}
 		
-		Vertex choice = MODEL.world.randomPathChoice(prev, aa.getVertex(), bb.getVertex());
+		Vertex choice = MODEL.world.randomPathChoice(prev, a.v, b.v);
 		VertexPosition choicePos = new VertexPosition(choice);
 		
-		List<Edge> eds = new ArrayList<Edge>(Vertex.commonEdges(aa.getVertex(), choice));
+		List<Edge> eds = new ArrayList<Edge>(Vertex.commonEdges(a.v, choice));
 		if (prev != null) {
 			eds.remove(prev);
 		}
 		
 		int n = MODEL.world.RANDOM.nextInt(eds.size());
 		Edge r = eds.get(n);
-		fillin(acc, aa, choicePos, r);
+		fillin(acc, a, choicePos, r);
 		
-		calculateRandomPath(acc, choicePos, bb);
-//		calculateRandomPath(acc, new VertexPosition(choice, a.graph), end, end);
-		
-//		if (eds.isEmpty()) {
-//			
-//			Vertex choice = a.graph.randomPathChoice(acc, aa.getVertex());
-//			
-//			calculateRandomPath(acc, aa, new VertexPosition(choice, a.graph), end);
-//			calculateRandomPath(acc, new VertexPosition(choice, a.graph), bb, end);
-//			
-//		} else {
-//			
-//			int n = MODEL.world.RANDOM.nextInt(eds.size());
-//			Edge r = eds.get(n);
-//			
-//			fillin(acc, aa, bb, r);
-//			
-//		}
+		calculateRandomPath(acc, choicePos, b);
 		
 	}
 	
 	private static void fillin(List<GraphPosition> acc, VertexPosition aa, VertexPosition bb, Edge e) {
 		
-		if (aa.getVertex() == e.getStart()) {
-			assert bb.getVertex() == e.getEnd();
+		if (aa.v == e.start) {
+			assert bb.v == e.end;
 			
 			GraphPosition cur = EdgePosition.nextBoundfromStart(e);
 				
@@ -772,8 +521,8 @@ public class GraphPositionPath {
 			}
 			
 		} else {
-			assert bb.getVertex() == e.getStart();
-			assert aa.getVertex() == e.getEnd();
+			assert bb.v == e.start;
+			assert aa.v == e.end;
 			
 			GraphPosition cur = EdgePosition.nextBoundfromEnd(e);
 			

@@ -8,8 +8,6 @@ import org.apache.log4j.Logger;
 @SuppressWarnings("static-access")
 public class SimulationRunnable implements Runnable {
 	
-	ControlMode modeCopy;
-	
 	static Logger logger = Logger.getLogger(SimulationRunnable.class);
 	
 	@Override
@@ -26,10 +24,9 @@ public class SimulationRunnable implements Runnable {
 		outer:
 		while (true) {
 			
-			modeCopy = MODEL.getMode();
-			if (modeCopy == ControlMode.IDLE) {
+			if (MODEL.mode == ControlMode.IDLE) {
 				break outer;
-			} else if (modeCopy == ControlMode.PAUSED) {
+			} else if (MODEL.mode == ControlMode.PAUSED) {
 				synchronized (MODEL.pauseLock) {
 					try {
 						MODEL.pauseLock.wait();

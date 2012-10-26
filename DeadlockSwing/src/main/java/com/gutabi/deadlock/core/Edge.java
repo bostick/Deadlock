@@ -32,6 +32,7 @@ public final class Edge extends Entity {
 	private int startBorderIndex;
 	private int endBorderIndex;
 	private double[] cumulativeLengthsFromStart;
+	
 	private double totalLength;
 	
 	private final boolean standalone;
@@ -67,8 +68,7 @@ public final class Edge extends Entity {
 		if (end != null) {
 			h = 37 * h + end.hashCode();
 		}
-//		h = 37 * h + graph.hashCode();
-//		h = 37 * h + raw.hashCode();
+		h = 37 * h + raw.hashCode();
 		hash = h;
 		
 		check();
@@ -100,15 +100,7 @@ public final class Edge extends Entity {
 		return totalLength;
 	}
 	
-	public Vertex getStart() {
-		return start;
-	}
-	
-	public Vertex getEnd() {
-		return end;
-	}
-	
-	public Point getPoint(int i) {
+	public Point get(int i) {
 		assert i >= 0;
 		return skeleton.get(i);
 	}
@@ -135,7 +127,6 @@ public final class Edge extends Entity {
 	
 	
 	public boolean hitTest(Point p, double radius) {
-//		return path.contains(new Point2D.Double(p.x, p.y));
 		for (int i = 0; i < skeleton.size()-1; i++) {
 			Point a = skeleton.get(i);
 			Point b = skeleton.get(i+1);
@@ -257,8 +248,8 @@ public final class Edge extends Entity {
 			endBorderIndex = skeleton.size()-2;
 			startBorderPoint = skeleton.get(startBorderIndex);
 			endBorderPoint = skeleton.get(endBorderIndex);
-			assert DMath.equals(Point.distance(startBorderPoint, start.p), start.r);
-			assert DMath.equals(Point.distance(endBorderPoint, end.p), end.r);
+			assert DMath.equals(Point.distance(startBorderPoint, start.p), start.getRadius());
+			assert DMath.equals(Point.distance(endBorderPoint, end.p), end.getRadius());
 		} else {
 			startBorderIndex = -1;
 			endBorderIndex = -1;
@@ -363,11 +354,13 @@ public final class Edge extends Entity {
 	}
 	
 	/**
-	 * returns index + param, returns -1 if first point is already outside of radius
+	 * returns index + param
+	 * returns -1 + param if first point is already outside of radius
+	 * returns Infinity if last point is still inside radius
 	 */
 	private static double startBorderCombo(Vertex start, List<Point> pts) {
 		
-		Point center = start.getPoint();
+		Point center = start.p;
 		double radius = start.getRadius();
 		
 		for (int i = 0; i < pts.size()-1; i++) {
@@ -399,11 +392,13 @@ public final class Edge extends Entity {
 	}
 	
 	/**
-	 * returns index + param, returns -1 if last point is already outside of radius
+	 * returns index + param
+	 * returns size() + param if last point is outside of radius
+	 * returns -Infinity if first point is inside radius
 	 */
 	private static double endBorderCombo(Vertex end, List<Point> pts) {
 		
-		Point center = end.getPoint();
+		Point center = end.p;
 		double radius = end.getRadius();
 		
 		for (int i = pts.size()-2; i >= 0; i--) {
@@ -527,10 +522,10 @@ public final class Edge extends Entity {
 	
 	
 	public static boolean haveExactlyOneSharedIntersection(Edge a, Edge b) {
-		Vertex as = a.getStart();
-		Vertex ae = a.getEnd();
-		Vertex bs = b.getStart();
-		Vertex be = b.getEnd();
+		Vertex as = a.start;
+		Vertex ae = a.end;
+		Vertex bs = b.start;
+		Vertex be = b.end;
 		if (as == bs) {
 			return (ae != be);
 		} else if (as == be) {
@@ -545,10 +540,10 @@ public final class Edge extends Entity {
 	}
 	
 	public static boolean haveTwoSharedIntersections(Edge a, Edge b) {
-		Vertex as = a.getStart();
-		Vertex ae = a.getEnd();
-		Vertex bs = b.getStart();
-		Vertex be = b.getEnd();
+		Vertex as = a.start;
+		Vertex ae = a.end;
+		Vertex bs = b.start;
+		Vertex be = b.end;
 		if (as == bs) {
 			return (ae == be);
 		} else if (as == be) {
@@ -567,10 +562,10 @@ public final class Edge extends Entity {
 	 */
 	public static Vertex sharedIntersection(Edge a, Edge b) throws SharedVerticesException {
 		assert a != b;
-		Vertex as = a.getStart();
-		Vertex ae = a.getEnd();
-		Vertex bs = b.getStart();
-		Vertex be = b.getEnd();
+		Vertex as = a.start;
+		Vertex ae = a.end;
+		Vertex bs = b.start;
+		Vertex be = b.end;
 		if (as == bs) {
 			if (ae == be) {
 				throw new SharedVerticesException(as, ae);
@@ -692,19 +687,19 @@ public final class Edge extends Entity {
 				if (i == 0) {
 					if (loop) {
 						if (start != null) {
-							assert start.getPoint().equals(p);
-							assert end.getPoint().equals(p);
+							assert start.p.equals(p);
+							assert end.p.equals(p);
 						}
 					} else {
-						assert start.getPoint().equals(p);
+						assert start.p.equals(p);
 					}
 				} else if (i == skeleton.size()-1) {
 					if (loop) {
 						if (end != null) {
-							assert end.getPoint().equals(p);
+							assert end.p.equals(p);
 						}
 					} else {
-						assert end.getPoint().equals(p);
+						assert end.p.equals(p);
 					}
 				}
 			}

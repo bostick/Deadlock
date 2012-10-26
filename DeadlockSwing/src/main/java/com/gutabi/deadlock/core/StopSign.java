@@ -29,14 +29,6 @@ public class StopSign extends Entity {
 		hiliteColor = Color.RED;
 	}
 	
-	public Point getPoint() {
-		return p;
-	}
-	
-	public double getRadius() {
-		return r;
-	}
-	
 	
 	public boolean hitTest(Point p, double radius) {
 		return DMath.lessThanEquals(Point.distance(p, this.p), r + radius);

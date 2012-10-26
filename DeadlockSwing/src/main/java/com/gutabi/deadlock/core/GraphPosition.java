@@ -49,17 +49,13 @@ public abstract class GraphPosition {
 	
 	private GraphPosition travelToV(VertexPosition p, double distance) {
 		
-		logger.debug("travelToV");
-		
 		if (this instanceof VertexPosition) {
 			
-			Vertex v = ((VertexPosition)this).getVertex();
+			Vertex v = ((VertexPosition)this).v;
 			
-			Edge e = Vertex.commonEdge(v, p.getVertex());
+			Edge e = Vertex.commonEdge(v, p.v);
 			
-			GraphPosition traveled = ((VertexPosition)this).travel(e, p.getVertex(), distance);
-			
-			logger.debug("done travelToV");
+			GraphPosition traveled = ((VertexPosition)this).travel(e, p.v, distance);
 			
 			return traveled;
 			
@@ -67,12 +63,10 @@ public abstract class GraphPosition {
 			
 			EdgePosition ep = (EdgePosition)this;
 			
-			assert ep.getEdge().getStart() == p.getVertex() || ep.getEdge().getEnd() == p.getVertex();
-			assert !ep.getEdge().isLoop();
+			assert ep.e.start == p.v || ep.e.end == p.v;
+			assert !ep.e.isLoop();
 			
 			GraphPosition traveled = ep.travel(p, distance);
-			
-			logger.debug("done travelToV");
 			
 			return traveled;
 		}
@@ -85,22 +79,22 @@ public abstract class GraphPosition {
 			
 			VertexPosition vp = (VertexPosition)this;
 			
-			assert p.getEdge().getStart() == vp.getVertex() || p.getEdge().getEnd() == vp.getVertex();
-			assert !p.getEdge().isLoop();
+			assert p.e.start == vp.v || p.e.end == vp.v;
+			assert !p.e.isLoop();
 			
-			return vp.travel(p.getEdge(), (p.getEdge().getStart() == vp.getVertex()) ? p.getEdge().getEnd() : p.getEdge().getStart(), distance);
+			return vp.travel(p.e, (p.e.start == vp.v) ? p.e.end : p.e.start, distance);
 			
 		} else {
 			
 			EdgePosition ep = (EdgePosition)this;
 			
-			assert p.getEdge() == ep.getEdge();
+			assert p.e == ep.e;
 			
-			if (ep.getIndex() < p.getIndex() || (ep.getIndex() == p.getIndex() && DMath.lessThan(ep.getParam(), p.getParam()))) {
+			if (ep.index < p.index || (ep.index == p.index && DMath.lessThan(ep.param, p.param))) {
 				// ep -> p is same direction as edge
-				return ep.travel(new VertexPosition(ep.getEdge().getEnd()), distance);
+				return ep.travel(new VertexPosition(ep.e.end), distance);
 			} else {
-				return ep.travel(new VertexPosition(ep.getEdge().getStart()), distance);
+				return ep.travel(new VertexPosition(ep.e.start), distance);
 			}
 		}
 		

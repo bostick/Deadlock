@@ -5,3 +5,4 @@ jbox2d-serialization
 jbox2d-testbed
 AreaX
 jbox2d-sources
+*.log

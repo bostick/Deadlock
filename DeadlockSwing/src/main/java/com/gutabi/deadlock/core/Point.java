@@ -12,7 +12,6 @@ public class Point {
 	public final double length;
 	
 	private final int hash;
-	private String s;
 	
 	public Point(double x, double y) {
 		
@@ -30,7 +29,6 @@ public class Point {
 		h = 37 * h + c;
 		hash = h;
 		
-		s = "<" + x + ", " + y + ">";
 	}
 	
 	@Override
@@ -52,7 +50,7 @@ public class Point {
 	
 	@Override
 	public String toString() {
-		return s;
+		return "<" + x + ", " + y + ">";
 	}
 	
 	

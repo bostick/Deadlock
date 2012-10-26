@@ -20,7 +20,7 @@ public class DeadlockModel {
 	
 	public World world;
 	
-	private ControlMode mode = ControlMode.IDLE;
+	public ControlMode mode;
 	
 	public Stroke stroke;
 	
@@ -31,7 +31,7 @@ public class DeadlockModel {
 	public Stats stats;
 	
 	public DeadlockModel() {
-		
+		mode = ControlMode.IDLE;
 	}
 	
 	public void init() throws Exception {
@@ -47,14 +47,6 @@ public class DeadlockModel {
 	public void clear() {
 		stroke = null;
 		world = null;
-	}
-	
-	public ControlMode getMode() {
-		return mode;
-	}
-	
-	public void setMode(ControlMode mode) {
-		this.mode = mode;
 	}
 	
 }
