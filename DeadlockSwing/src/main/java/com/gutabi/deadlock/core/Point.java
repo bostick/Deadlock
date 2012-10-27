@@ -384,11 +384,7 @@ public class Point {
 	}
 	
 	public Point multiply(double scale) {
-		double targetLength = length * scale;
-		double atan = Math.atan2(y, x);
-		double c = Math.cos(atan);
-		double s = Math.sin(atan);
-		return new Point(targetLength * c, targetLength * s);
+		return new Point(x * scale, y * scale);
 	}
 	
 	/**
