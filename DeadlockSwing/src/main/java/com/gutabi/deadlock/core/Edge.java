@@ -26,7 +26,8 @@ public final class Edge extends Entity {
 	public final Vertex end;
 	public final List<Point> raw;
 	
-	private List<Point> skeleton;
+	private List<EdgeSegment> segs;
+	
 	private Point startBorderPoint;
 	private Point endBorderPoint;
 	private int startBorderIndex;
@@ -71,7 +72,6 @@ public final class Edge extends Entity {
 		h = 37 * h + raw.hashCode();
 		hash = h;
 		
-		check();
 	}
 	
 	public int hashCode() {
@@ -93,7 +93,7 @@ public final class Edge extends Entity {
 	}
 	
 	public int size() {
-		return skeleton.size();
+		return segs.size()+1;
 	}
 	
 	public double getTotalLength() {
@@ -101,8 +101,15 @@ public final class Edge extends Entity {
 	}
 	
 	public Point get(int i) {
-		assert i >= 0;
-		return skeleton.get(i);
+		if (i == segs.size()) {
+			return segs.get(i-1).b;
+		} else {
+			return segs.get(i).a;
+		}
+	}
+	
+	public EdgeSegment getSegment(int i) {
+		return segs.get(i);
 	}
 	
 	public Point getStartBorderPoint() {
@@ -126,11 +133,17 @@ public final class Edge extends Entity {
 	
 	
 	
+	public boolean hitTest(Point p) {
+//		if () {
+//			
+//		}
+		return hitTest(p, 0.0);
+	}
+	
 	public boolean hitTest(Point p, double radius) {
-		for (int i = 0; i < skeleton.size()-1; i++) {
-			Point a = skeleton.get(i);
-			Point b = skeleton.get(i+1);
-			if (DMath.lessThanEquals(Point.distance(p, a, b), Edge.ROAD_RADIUS + radius)) {
+		for (int i = 0; i < segs.size(); i++) {
+			EdgeSegment s = segs.get(i);
+			if (s.hitTest(p, radius)) {
 				return true;
 			}
 		}
@@ -143,11 +156,10 @@ public final class Edge extends Entity {
 		double bestParam = -1;
 		Point bestPoint = null;
 		
-		for (int i = 0; i < skeleton.size()-1; i++) {
-			Point a = skeleton.get(i);
-			Point b = skeleton.get(i+1);
-			double closest = closestParam(p, i);
-			Point ep = Point.point(a, b, closest);
+		for (int i = 0; i < segs.size(); i++) {
+			EdgeSegment s = segs.get(i);
+			double closest = closestParam(p, s);
+			Point ep = Point.point(s.a, s.b, closest);
 			double dist = Point.distance(p, ep);
 			if (DMath.lessThanEquals(dist, radius + Edge.ROAD_RADIUS)) {
 				if (bestPoint == null) {
@@ -164,7 +176,7 @@ public final class Edge extends Entity {
 		
 		if (bestPoint != null) {
 			if (bestParam == 1.0) {
-				if (bestIndex == skeleton.size()-2) {
+				if (bestIndex == segs.size()-1) {
 					return null;
 				} else {
 					return new EdgePosition(this, bestIndex+1, 0.0);
@@ -180,20 +192,18 @@ public final class Edge extends Entity {
 	/**
 	 * find closest position on <c, d> to the point b
 	 */
-	private double closestParam(Point b, int index) {
-		Point c = skeleton.get(index);
-		Point d = skeleton.get(index+1);
-		if (b.equals(c)) {
+	private double closestParam(Point p, EdgeSegment s) {
+		if (p.equals(s.a)) {
 			return 0.0;
 		}
-		if (b.equals(d)) {
+		if (p.equals(s.b)) {
 			return 1.0;
 		}
-		if (c.equals(d)) {
+		if (s.a.equals(s.b)) {
 			throw new IllegalArgumentException("c equals d");
 		}
 		
-		double u = Point.u(c, b, d);
+		double u = Point.u(s.a, p, s.b);
 		if (DMath.lessThanEquals(u, 0.0)) {
 			return 0.0;
 		} else if (DMath.greaterThanEquals(u, 1.0)) {
@@ -238,16 +248,21 @@ public final class Edge extends Entity {
 			adj = adjustToBorders(adj);
 		}
 		
-		skeleton = adj;
+		segs = new ArrayList<EdgeSegment>();
+		for (int i = 0; i < adj.size()-1; i++) {
+			Point a = adj.get(i);
+			Point b = adj.get(i+1);
+			segs.add(new EdgeSegment(a, b));
+		}
 		
 		/*
 		 * after adjustToBorders, the border properties are set to predictable values
 		 */
 		if (!standalone) {
 			startBorderIndex = 1;
-			endBorderIndex = skeleton.size()-2;
-			startBorderPoint = skeleton.get(startBorderIndex);
-			endBorderPoint = skeleton.get(endBorderIndex);
+			endBorderIndex = segs.size()-1;
+			startBorderPoint = get(startBorderIndex);
+			endBorderPoint = get(endBorderIndex);
 			assert DMath.equals(Point.distance(startBorderPoint, start.p), start.getRadius());
 			assert DMath.equals(Point.distance(endBorderPoint, end.p), end.getRadius());
 		} else {
@@ -431,20 +446,18 @@ public final class Edge extends Entity {
 	
 	private void computeLengths() {
 		
-		cumulativeLengthsFromStart = new double[skeleton.size()];
+		cumulativeLengthsFromStart = new double[segs.size()+1];
 		
 		double length;
 		double l = 0.0;
-		for (int i = 0; i < skeleton.size(); i++) {
+		for (int i = 0; i < segs.size(); i++) {
+			EdgeSegment s = segs.get(i);
 			if (i == 0) {
 				cumulativeLengthsFromStart[i] = 0;
-			} else {
-				Point a  = skeleton.get(i-1);
-				Point b = skeleton.get(i);
-				length = Point.distance(a, b);
-				l += length;
-				cumulativeLengthsFromStart[i] = cumulativeLengthsFromStart[i-1] + length;
 			}
+			length = Point.distance(s.a, s.b);
+			l += length;
+			cumulativeLengthsFromStart[i+1] = cumulativeLengthsFromStart[i] + length;
 		}
 		
 		totalLength = l;
@@ -461,15 +474,14 @@ public final class Edge extends Entity {
 		AreaX area = new AreaX();
 		
 		if (startBorderIndex == endBorderIndex) {
+			assert startBorderPoint.equals(endBorderPoint);
 			
-			addToArea(area, startBorderPoint, endBorderPoint);
+			addToArea(area, startBorderPoint);
 			
 		} else {
 			
 			for (int i = startBorderIndex; i < endBorderIndex; i++) {
-				Point a = skeleton.get(i);
-				Point b = skeleton.get(i+1);
-				addToArea(area, a, b);
+				addToArea(area, segs.get(i));
 			}
 			
 		}
@@ -485,20 +497,20 @@ public final class Edge extends Entity {
 	
 	private void computeRenderingRect() {
 		Rectangle2D bound = path.getBounds2D();
-		renderingUpperLeft = new Point(bound.getX(), bound.getY());
-		renderingDim = new Dim(bound.getWidth(), bound.getHeight());
+		aabbLoc = new Point(bound.getX(), bound.getY());
+		aabbDim = new Dim(bound.getWidth(), bound.getHeight());
 	}
 	
-	private void addToArea(AreaX area, Point a, Point b) {
+	private void addToArea(AreaX area, EdgeSegment s) {
 
-		Point diff = new Point(b.x - a.x, b.y - a.y);
+		Point diff = new Point(s.b.x - s.a.x, s.b.y - s.a.y);
 		Point up = Point.ccw90(diff).multiply(ROAD_RADIUS / diff.length);
 		Point down = Point.cw90(diff).multiply(ROAD_RADIUS / diff.length);
 		
-		Point p0 = a.plus(up);
-		Point p1 = a.plus(down);
-		Point p2 = b.plus(up);
-		Point p3 = b.plus(down);
+		Point p0 = s.a.plus(up);
+		Point p1 = s.a.plus(down);
+		Point p2 = s.b.plus(up);
+		Point p3 = s.b.plus(down);
 		Path2D path = new Path2D.Double();
 		path.moveTo(p0.x, p0.y);
 		path.lineTo(p1.x, p1.y);
@@ -506,9 +518,9 @@ public final class Edge extends Entity {
 		path.lineTo(p2.x, p2.y);
 		path.lineTo(p0.x, p0.y);
 		
-		Area disk1 = new Area(new Ellipse2D.Double(a.x-ROAD_RADIUS, a.y-ROAD_RADIUS, 2 * ROAD_RADIUS, 2 * ROAD_RADIUS));
+		Area disk1 = new Area(new Ellipse2D.Double(s.a.x-ROAD_RADIUS, s.a.y-ROAD_RADIUS, 2 * ROAD_RADIUS, 2 * ROAD_RADIUS));
 		Area rect = new Area(path);
-		Area disk2 = new Area(new Ellipse2D.Double(b.x-ROAD_RADIUS, b.y-ROAD_RADIUS, 2 * ROAD_RADIUS, 2 * ROAD_RADIUS));
+		Area disk2 = new Area(new Ellipse2D.Double(s.b.x-ROAD_RADIUS, s.b.y-ROAD_RADIUS, 2 * ROAD_RADIUS, 2 * ROAD_RADIUS));
 		
 		Area capsule = new Area();
 		capsule.add(disk1);
@@ -517,6 +529,14 @@ public final class Edge extends Entity {
 		
 		area.add(capsule);
 	}
+	
+	private void addToArea(AreaX area, Point p) {
+		
+		Area disk = new Area(new Ellipse2D.Double(p.x-ROAD_RADIUS, p.y-ROAD_RADIUS, 2 * ROAD_RADIUS, 2 * ROAD_RADIUS));
+		
+		area.add(disk);
+	}
+	
 	
 	
 	
@@ -627,14 +647,17 @@ public final class Edge extends Entity {
 		g2.setColor(Color.BLACK);
 		g2.setStroke(new BasicStroke(1.0f));
 		
-		int[] xs = new int[skeleton.size()];
-		int[] ys = new int[skeleton.size()];
-		for (int i = 0; i < skeleton.size(); i++) {
-			Point p = skeleton.get(i);
-			xs[i] = (int)(p.x * MODEL.PIXELS_PER_METER);
-			ys[i] = (int)(p.y * MODEL.PIXELS_PER_METER);
+		int[] xs = new int[segs.size()+1];
+		int[] ys = new int[segs.size()+1];
+		Point a = segs.get(0).a;
+		xs[0] = (int)(a.x * MODEL.PIXELS_PER_METER);
+		ys[0] = (int)(a.y * MODEL.PIXELS_PER_METER);
+		for (int i = 0; i < segs.size(); i++) {
+			Point p = segs.get(i).b;
+			xs[i+1] = (int)(p.x * MODEL.PIXELS_PER_METER);
+			ys[i+1] = (int)(p.y * MODEL.PIXELS_PER_METER);
 		}
-		g2.drawPolyline(xs, ys, skeleton.size());
+		g2.drawPolyline(xs, ys, segs.size()+1);
 	}
 	
 	/**
@@ -650,103 +673,4 @@ public final class Edge extends Entity {
 		
 	}
 	
-	
-	
-	
-	
-	
-	
-	
-	private void check() {
-		
-		if (loop) {
-			assert start == end;
-		} else {
-			assert !(start == null || end == null);
-		}
-		
-		if (skeleton != null) {
-			
-			assert skeleton.size() >= 2;
-			
-			for (int i = 0; i < skeleton.size(); i++) {
-				Point p = skeleton.get(i);
-				
-				int count = 0;
-				for (Point q : skeleton) {
-					if (p.equals(q)) {
-						count++;
-					}
-				}
-				if (loop && (i == 0 || i == skeleton.size()-1)) {
-					assert count == 2;
-				} else {
-					assert count == 1;
-				}
-				
-				if (i == 0) {
-					if (loop) {
-						if (start != null) {
-							assert start.p.equals(p);
-							assert end.p.equals(p);
-						}
-					} else {
-						assert start.p.equals(p);
-					}
-				} else if (i == skeleton.size()-1) {
-					if (loop) {
-						if (end != null) {
-							assert end.p.equals(p);
-						}
-					} else {
-						assert end.p.equals(p);
-					}
-				}
-			}
-			
-			checkColinearity();
-			
-		}
-		
-	}
-	
-	private void checkColinearity() {
-		
-		for (int i = 0; i < skeleton.size(); i++) {
-			Point p = skeleton.get(i);
-			/*
-			 * test point p for colinearity
-			 */
-			if (i == 0) {
-				if (standalone) {
-					/*
-					 * if loop, only check if stand-alone
-					 * if not stand-alone, then it is possible to have first point be colinear
-					 */
-					assert p.equals(skeleton.get(skeleton.size()-1));
-					try {
-						if (Point.colinear(skeleton.get(skeleton.size()-2), p, skeleton.get(1))) {
-							assert false : "Point " + p + " (index 0) is colinear";
-						}
-					} catch (ColinearException ex) {
-						assert false;
-					}
-				}
-			} else if (i == skeleton.size()-1) {
-				;
-			} else if (i == 1) {
-				// don't test if border point (border points may be colinear)
-			} else if (i == skeleton.size()-2) {
-				// don't test if border point (border points may be colinear)
-			} else {
-				try {
-					if (Point.colinear(skeleton.get(i-1), p, skeleton.get(i+1))) {
-						assert false : "Point " + p + " (index " + i + ") is colinear";
-					}
-				} catch (ColinearException ex) {
-					assert false;
-				}
-			}
-		}
-	}
 }

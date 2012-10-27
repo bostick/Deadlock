@@ -71,10 +71,8 @@ public class Source extends Vertex {
 //				spawnNewCar(t);
 //			}
 //		}
-		if (outstandingCars == 0) {
-			if (active()) {
-				spawnNewCar(t);
-			}
+		if (active()) {
+			spawnNewCar(t);
 		}
 	}
 	
@@ -83,17 +81,22 @@ public class Source extends Vertex {
 		Car c = createNewCar();
 		
 		if (c != null) {
+			assert c.hitTest(p, r);
 			c.startingTime = t;
 			synchronized (MODEL) {
 				MODEL.world.cars.add(c);
 			}
+			lastSpawnTime = t;
+			outstandingCars++;
 		}
 		
-		lastSpawnTime = t;
-		outstandingCars++;
 	}
 	
 	private boolean active() {
+		
+		if (outstandingCars > 0) {
+			return false;
+		}
 		
 		double d = MODEL.world.distanceBetweenVertices(this, matchingSink);
 		
@@ -103,12 +106,12 @@ public class Source extends Vertex {
 		
 		synchronized (MODEL) {
 			for (Car c : MODEL.world.cars) {
-				double dist = c.distanceTo(p);
-				if (DMath.lessThanEquals(dist, c.length)) {
+				if (c.hitTest(p, r)) {
 					return false;
 				}
 			}
 		}
+		
 		return true;
 	}
 	

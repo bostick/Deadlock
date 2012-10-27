@@ -9,6 +9,7 @@ import java.awt.geom.GeneralPath;
 import java.awt.image.BufferedImage;
 
 import org.apache.log4j.Logger;
+import org.jbox2d.collision.AABB;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.common.Mat22;
 import org.jbox2d.common.Vec2;
@@ -19,6 +20,7 @@ import org.jbox2d.dynamics.Fixture;
 import org.jbox2d.dynamics.FixtureDef;
 
 import com.gutabi.deadlock.core.DMath;
+import com.gutabi.deadlock.core.Dim;
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.GraphPosition;
 import com.gutabi.deadlock.core.Point;
@@ -40,7 +42,6 @@ public abstract class Car extends Entity {
 	public Source source;
 	
 	protected GraphPositionPath overallPath;
-	GraphPositionPathPosition overallPos;
 	
 	public final int id;
 	
@@ -62,12 +63,19 @@ public abstract class Car extends Entity {
 	 * trans is updated from b2dBody transformation after every update
 	 * we use this since we can actually use it to do transforms
 	 */
-	AffineTransform trans;
-	
+	Point p;
+	Vec2 currentRightNormal;
+	Vec2 currentUpNormal;
+	Vec2 vel;
+	Vec2 forwardVel;
+	float angle;
+	float angularVel;
+	AffineTransform carTrans;
+	Point aabbLoc;
+	Dim aabbDim;
 	boolean atleastPartiallyOnRoad;
 	boolean completelyOnRoad;
-	
-	public final double length;
+	GraphPositionPathPosition overallPos;
 	
 	static Logger logger = Logger.getLogger(Car.class);
 	
@@ -84,14 +92,13 @@ public abstract class Car extends Entity {
 		color = Color.BLUE;
 		hiliteColor = Color.BLUE;
 		
-		length = CAR_LENGTH;
-		
 		p1 = new Point(CAR_LENGTH / 2, CAR_LENGTH / 4);
 		p2 = new Point(CAR_LENGTH / 2, -CAR_LENGTH / 4);
 		p3 = new Point(-CAR_LENGTH / 2, -CAR_LENGTH / 4);
 		p4 = new Point(-CAR_LENGTH / 2, CAR_LENGTH / 4);
 		
-		trans = new AffineTransform();
+		carTrans = new AffineTransform();
+		aabb = new AABB();
 		
 		computePath();
 		
@@ -111,6 +118,7 @@ public abstract class Car extends Entity {
 		
 		b2dInit();
 		
+		computeDynamicProperties();
 	}
 	
 	/**
@@ -160,9 +168,55 @@ public abstract class Car extends Entity {
 		fixtureDef.friction = 1f;
 		b2dFixture = b2dBody.createFixture(fixtureDef);
 		
+	}
+	
+	
+	AABB aabb = new AABB();
+	
+	Vec2 right = new Vec2(1, 0);
+	Vec2 up = new Vec2(0, 1);
+	
+	private void computeDynamicProperties() {
+		
+		Vec2 curVec = b2dBody.getPosition();
+		p = new Point(curVec.x, curVec.y);
+		
+		currentRightNormal = b2dBody.getWorldVector(right);
+		currentUpNormal = b2dBody.getWorldVector(up);
+		vel = b2dBody.getLinearVelocity();
+		angle = b2dBody.getAngle();
+		angularVel = b2dBody.getAngularVelocity();
+		forwardVel = currentRightNormal.mul(Vec2.dot(currentRightNormal, vel));
+		
+		Entity e1 = MODEL.world.graphHitTest(carToWorld(p1));
+		Entity e2 = MODEL.world.graphHitTest(carToWorld(p2));
+		Entity e3 = MODEL.world.graphHitTest(carToWorld(p3));
+		Entity e4 = MODEL.world.graphHitTest(carToWorld(p4));
+		
+		if (e1 == null && e2 == null && e3 == null && e4 == null) {
+			atleastPartiallyOnRoad = false;
+			completelyOnRoad = false;
+		} else {
+			atleastPartiallyOnRoad = true;
+			if (e1 != null && e2 != null && e3 != null && e4 != null) {
+				completelyOnRoad = true;
+			} else {
+				completelyOnRoad = false;
+			}
+		}
+		
 		Mat22 r = b2dBody.getTransform().R;
-		Vec2 p = b2dBody.getPosition();
-		trans.setTransform(r.col1.x, r.col1.y, r.col2.x, r.col2.y, p.x, p.y);
+		carTrans.setTransform(r.col1.x, r.col1.y, r.col2.x, r.col2.y, p.x, p.y);
+		
+		b2dShape.computeAABB(aabb, b2dBody.getTransform());
+		aabbLoc = new Point(aabb.lowerBound.x, aabb.lowerBound.y);
+		aabbDim = new Dim(aabb.upperBound.x-aabb.lowerBound.x, aabb.upperBound.y-aabb.lowerBound.y);
+		
+		double actualDistance = forwardVel.length() * MODEL.dt;
+		
+		GraphPositionPathPosition max = overallPos.travel(Math.min(2 * actualDistance, overallPos.lengthToEndOfPath));
+		overallPos = overallPath.findClosestGraphPositionPathPosition(p, overallPos, max);
+		
 	}
 	
 	public void destroy() {
@@ -172,6 +226,15 @@ public abstract class Car extends Entity {
 	private void b2dCleanup() {
 		b2dBody.destroyFixture(b2dFixture);
 		MODEL.world.b2dWorld.destroyBody(b2dBody);
+	}
+	
+	
+	
+	public boolean hitTest(Point p) {
+//		if () {
+//			aabb.
+//		}
+		return hitTest(p, 0.0);
 	}
 	
 	public boolean hitTest(Point p, double radius) {
@@ -208,27 +271,10 @@ public abstract class Car extends Entity {
 	}
 	
 	private Point carToWorld(Point p) {
-		return Point.point(trans.transform(p.point2D(), null));
+		return Point.point(carTrans.transform(p.point2D(), null));
 	}
 	
 	public void preStep(double t) {
-		
-		Entity e1 = MODEL.world.graphHitTest(carToWorld(p1));
-		Entity e2 = MODEL.world.graphHitTest(carToWorld(p2));
-		Entity e3 = MODEL.world.graphHitTest(carToWorld(p3));
-		Entity e4 = MODEL.world.graphHitTest(carToWorld(p4));
-		
-		if (e1 == null && e2 == null && e3 == null && e4 == null) {
-			atleastPartiallyOnRoad = false;
-			completelyOnRoad = false;
-		} else {
-			atleastPartiallyOnRoad = true;
-			if (e1 != null && e2 != null && e3 != null && e4 != null) {
-				completelyOnRoad = true;
-			} else {
-				completelyOnRoad = false;
-			}
-		}
 		
 		switch (state) {
 		case NEW: {
@@ -292,12 +338,6 @@ public abstract class Car extends Entity {
 	
 	private void updateFriction() {
 		
-		Vec2 currentRightNormal = b2dBody.getWorldVector(new Vec2(1, 0));
-		Vec2 currentUpNormal = b2dBody.getWorldVector(new Vec2(0, 1));
-		
-		Vec2 vel = b2dBody.getLinearVelocity();
-		Vec2 forwardVel = currentRightNormal.mul(Vec2.dot(currentRightNormal, vel));
-		
 		Vec2 cancelingImpulse = vel.mul(-1).mul(b2dBody.getMass());
 		Vec2 cancelingForce = vel.mul(-1).mul(b2dBody.getMass()).mul((float)(1/MODEL.dt));
 		
@@ -313,13 +353,8 @@ public abstract class Car extends Entity {
 		b2dBody.applyForce(currentRightNormal.mul(cancelingForwardForce), b2dBody.getWorldCenter());
 		b2dBody.applyForce(currentUpNormal.mul(cancelingLateralForce), b2dBody.getWorldCenter());
 		
-		
-		
-		
-		float curAngVel = b2dBody.getAngularVelocity();
-		
-		float cancelingAngImpulse = cancelingAngularImpulseCoefficient() * b2dBody.getInertia() * -curAngVel;
-		float cancelingAngForce = cancelingAngularImpulseCoefficient() * b2dBody.getInertia() * -curAngVel * (float)(1/MODEL.dt);
+		float cancelingAngImpulse = cancelingAngularImpulseCoefficient() * b2dBody.getInertia() * -angularVel;
+		float cancelingAngForce = cancelingAngularImpulseCoefficient() * b2dBody.getInertia() * -angularVel * (float)(1/MODEL.dt);
 		
 		//b2dBody.applyAngularImpulse(cancelingAngImpulse);
 		b2dBody.applyTorque(cancelingAngForce);
@@ -327,12 +362,7 @@ public abstract class Car extends Entity {
 	
 	private void updateDrive() {
 		
-		Vec2 currentRightNormal = b2dBody.getWorldVector(new Vec2(1, 0));
-		Vec2 currentUpNormal = b2dBody.getWorldVector(new Vec2(0, 1));
-		
-		Vec2 vel = b2dBody.getLinearVelocity();
-		float forwardSpeed = Vec2.dot(currentRightNormal, vel);
-		Vec2 forwardVel = currentRightNormal.mul(forwardSpeed);
+		float forwardSpeed = forwardVel.length();
 		
 		float goalForwardVel = (float)getMetersPerSecond();
 		float acc = goalForwardVel - forwardSpeed;
@@ -347,38 +377,15 @@ public abstract class Car extends Entity {
 	
 	private void updateTurn() {
 		
-		Vec2 currentRightNormal = b2dBody.getWorldVector(new Vec2(1, 0));
+		double lookaheadDistance = 1.5;
+		double actualDistance = forwardVel.length() * MODEL.dt;
 		
-		Vec2 curVec = b2dBody.getPosition();
-		
-		Vec2 vel = b2dBody.getLinearVelocity();
-		Vec2 forwardVel = currentRightNormal.mul(Vec2.dot(currentRightNormal, vel));
-		
-		/*
-		 * distance in 0.1 seconds
-		 */
-		double d = 0.2f * forwardVel.length();
-		
-		float curAngle = b2dBody.getAngle();
-		
-		Point curPoint = new Point(curVec.x, curVec.y);
-		
-		/*
-		 * 2 * dis a heuristic
-		 */
-		
-		GraphPositionPathPosition max = overallPos.travel(Math.min(2 * d, overallPos.lengthToEndOfPath));
-		
-		logger.debug("given: " + overallPos + "    " + max);
-		GraphPositionPathPosition newOverallPos = overallPath.findClosestGraphPositionPathPosition(curPoint, overallPos, max);
-		logger.debug("newOverall: " + newOverallPos);
-		
-		GraphPositionPathPosition next = newOverallPos.travel(Math.min(d, newOverallPos.lengthToEndOfPath));
+		GraphPositionPathPosition next = overallPos.travel(Math.min(lookaheadDistance, overallPos.lengthToEndOfPath));
 		Point nextDTGoalPoint = next.gpos.p;
 		
-		double nextDTGoalAngle = Math.atan2(nextDTGoalPoint.y-curVec.y, nextDTGoalPoint.x-curVec.x);
+		double nextDTGoalAngle = Math.atan2(nextDTGoalPoint.y-p.y, nextDTGoalPoint.x-p.x);
 		
-		double dw = ((float)nextDTGoalAngle) - curAngle;
+		double dw = ((float)nextDTGoalAngle) - angle;
 		
 		while (dw > Math.PI) {
 			dw -= 2*Math.PI;
@@ -387,7 +394,7 @@ public abstract class Car extends Entity {
 			dw += 2*Math.PI;
 		}
 		
-		double maxRads = maxRadsPerMeter() * d;
+		double maxRads = maxRadsPerMeter() * actualDistance;
 		if (dw > maxRads) {
 			dw = maxRads;
 		} else if (dw < -maxRads) {
@@ -402,7 +409,6 @@ public abstract class Car extends Entity {
 //		b2dBody.applyAngularImpulse(angImpulse);
 		b2dBody.applyTorque(angForce);
 		
-		overallPos = newOverallPos;
 	}
 	
 	/**
@@ -415,14 +421,11 @@ public abstract class Car extends Entity {
 			assert false;
 		case RUNNING: {
 			
-			Mat22 r = b2dBody.getTransform().R;
-			Vec2 p = b2dBody.getPosition();
-			trans.setTransform(r.col1.x, r.col1.y, r.col2.x, r.col2.y, p.x, p.y);
+			computeDynamicProperties();
 			
-			Vec2 pos = b2dBody.getPosition();
 			Sink s = (Sink)overallPath.end.getEntity();
 			boolean sinked = false;
-			if (Point.distance(new Point(pos.x,  pos.y), s.p) < MODEL.world.SINK_EPSILON) {
+			if (Point.distance(p, s.p) < MODEL.world.SINK_EPSILON) {
 				sinked = true;
 			}
 			if (sinked) {
@@ -434,9 +437,9 @@ public abstract class Car extends Entity {
 		}
 		case CRASHED:
 			
-			Mat22 r = b2dBody.getTransform().R;
-			Vec2 p = b2dBody.getPosition();
-			trans.setTransform(r.col1.x, r.col1.y, r.col2.x, r.col2.y, p.x, p.y);
+			if (b2dBody.isAwake()) {
+				computeDynamicProperties();
+			}
 			
 			break;
 		case SINKED:
@@ -462,54 +465,83 @@ public abstract class Car extends Entity {
 	 * @param g2 in world coords
 	 */
 	public void paint(Graphics2D g2) {
+		
+		AffineTransform origTransform = g2.getTransform();
+		
+		g2.transform(carTrans);
+		
+//		paintRect(g2);
+		
+		g2.scale(MODEL.METERS_PER_PIXEL, MODEL.METERS_PER_PIXEL);
+		
 		paintImage(g2, image());
+		
+		if (MODEL.DEBUG_DRAW) {
+			
+			g2.setTransform(origTransform);
+			
+			g2.scale(MODEL.METERS_PER_PIXEL, MODEL.METERS_PER_PIXEL);
+			
+			paintAABB(g2);
+		}
+		
+		g2.setTransform(origTransform);
 	}
 	
 	/**
 	 * @param g2 in world coords
 	 */
 	public void paintHilite(Graphics2D g2) {
+		
+		AffineTransform origTransform = g2.getTransform();
+		
+//		AffineTransform trans = (AffineTransform)origTransform.clone();
+		
+//		trans.concatenate(carTrans);
+		
+//		g2.setTransform(trans);
+		
+		g2.transform(carTrans);
+		
 		paintRect(g2);
+		
+		g2.setTransform(origTransform);
 	}
 	
 	private void paintImage(Graphics2D g2, BufferedImage im) {
-		AffineTransform origTransform = g2.getTransform();
-		
-		AffineTransform b2dTrans = (AffineTransform)origTransform.clone();
-		Vec2 pos = b2dBody.getPosition();
-		float angle = b2dBody.getAngle();
-		b2dTrans.translate(pos.x, pos.y);
-		b2dTrans.rotate(angle);
-		
-		b2dTrans.scale(MODEL.METERS_PER_PIXEL, MODEL.METERS_PER_PIXEL);
-		
-		g2.setTransform(b2dTrans);
 		
 		g2.drawImage(im,
 				(int)(-CAR_LENGTH * MODEL.PIXELS_PER_METER / 2),
 				(int)(-CAR_LENGTH * MODEL.PIXELS_PER_METER / 2),
 				(int)(CAR_LENGTH * MODEL.PIXELS_PER_METER),
 				(int)(CAR_LENGTH * MODEL.PIXELS_PER_METER), null);
-		
-		g2.setTransform(origTransform);
 	}
 	
 	private void paintRect(Graphics2D g2) {
-		AffineTransform origTransform = g2.getTransform();
 		
-		AffineTransform b2dTrans = (AffineTransform)origTransform.clone();
-		Vec2 pos = b2dBody.getPosition();
-		float angle = b2dBody.getAngle();
-		b2dTrans.translate(pos.x, pos.y);
-		b2dTrans.rotate(angle);
-		
-		g2.setTransform(b2dTrans);
+//		if (completelyOnRoad) {
+//			g2.setColor(Color.GREEN);
+//		} else if (atleastPartiallyOnRoad) {
+//			g2.setColor(Color.YELLOW);
+//		} else {
+//			g2.setColor(Color.RED);
+//		}
 		
 		g2.setColor(hiliteColor);
 		
 		g2.fill(path);
 		
-		g2.setTransform(origTransform);
+	}
+	
+	private void paintAABB(Graphics2D g2) {
+		
+		g2.setColor(Color.BLACK);
+		g2.drawRect(
+				(int)(aabbLoc.x * MODEL.PIXELS_PER_METER),
+				(int)(aabbLoc.y * MODEL.PIXELS_PER_METER),
+				(int)(aabbDim.width * MODEL.PIXELS_PER_METER),
+				(int)(aabbDim.height * MODEL.PIXELS_PER_METER));
+		
 	}
 	
 }

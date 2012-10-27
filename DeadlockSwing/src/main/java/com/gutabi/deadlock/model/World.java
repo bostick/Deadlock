@@ -390,7 +390,7 @@ public class World {
 	public Car carHitTest(Point p) {
 		synchronized (MODEL) {
 			for (Car c : cars) {
-				if (c.hitTest(p, 0)) {
+				if (c.hitTest(p)) {
 					return c;
 				}
 			}
@@ -419,9 +419,10 @@ public class World {
 			graph.paintScene(g2);
 			
 			AffineTransform origTransform = g2.getTransform();
-			AffineTransform trans = (AffineTransform)origTransform.clone();
-			trans.scale(MODEL.PIXELS_PER_METER, MODEL.PIXELS_PER_METER);
-			g2.setTransform(trans);
+//			AffineTransform trans = (AffineTransform)origTransform.clone();
+//			trans.scale(MODEL.PIXELS_PER_METER, MODEL.PIXELS_PER_METER);
+//			g2.setTransform(trans);
+			g2.scale(MODEL.PIXELS_PER_METER, MODEL.PIXELS_PER_METER);
 			
 			synchronized (MODEL) {
 				for (Car c : cars) {

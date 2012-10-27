@@ -30,6 +30,14 @@ public class StopSign extends Entity {
 	}
 	
 	
+	
+	public boolean hitTest(Point p) {
+//		if () {
+//			
+//		}
+		return hitTest(p, 0.0);
+	}
+	
 	public boolean hitTest(Point p, double radius) {
 		return DMath.lessThanEquals(Point.distance(p, this.p), r + radius);
 	}
@@ -68,8 +76,8 @@ public class StopSign extends Entity {
 	
 	private void computeRenderingRect() {
 		Rectangle2D bound = path.getBounds2D();
-		renderingUpperLeft = new Point(bound.getX(), bound.getY());
-		renderingDim = new Dim(bound.getWidth(), bound.getHeight());
+		aabbLoc = new Point(bound.getX(), bound.getY());
+		aabbDim = new Dim(bound.getWidth(), bound.getHeight());
 	}
 	
 	public void paint(Graphics2D g2) {

@@ -311,13 +311,13 @@ public class Graph {
 		double brY = ulY + height;
 		
 		for (Vertex v : getAllVertices()) {
-			if (v.renderingUpperLeft.x < ulX) {
-				ulX = v.renderingUpperLeft.x;
+			if (v.aabbLoc.x < ulX) {
+				ulX = v.aabbLoc.x;
 			}
-			if (v.renderingUpperLeft.y < ulY) {
-				ulY = v.renderingUpperLeft.y;
+			if (v.aabbLoc.y < ulY) {
+				ulY = v.aabbLoc.y;
 			}
-			Point renderingBottomRight = new Point(v.renderingUpperLeft.x + v.renderingDim.width, v.renderingUpperLeft.y + v.renderingDim.height);
+			Point renderingBottomRight = new Point(v.aabbLoc.x + v.aabbDim.width, v.aabbLoc.y + v.aabbDim.height);
 			if (renderingBottomRight.x > brX) {
 				brX = renderingBottomRight.x;
 			}
@@ -326,13 +326,13 @@ public class Graph {
 			}
 		}
 		for (Edge ed : edges) {
-			if (ed.renderingUpperLeft.x < ulX) {
-				ulX = ed.renderingUpperLeft.x;
+			if (ed.aabbLoc.x < ulX) {
+				ulX = ed.aabbLoc.x;
 			}
-			if (ed.renderingUpperLeft.y < ulY) {
-				ulY = ed.renderingUpperLeft.y;
+			if (ed.aabbLoc.y < ulY) {
+				ulY = ed.aabbLoc.y;
 			}
-			Point renderingBottomRight = new Point(ed.renderingUpperLeft.x + ed.renderingDim.width, ed.renderingUpperLeft.y + ed.renderingDim.height);
+			Point renderingBottomRight = new Point(ed.aabbLoc.x + ed.aabbDim.width, ed.aabbLoc.y + ed.aabbDim.height);
 			if (renderingBottomRight.x > brX) {
 				brX = renderingBottomRight.x;
 			}
@@ -351,6 +351,7 @@ public class Graph {
 		Object[] combo = new Object[2];
 		combo[0] = new Point(ulX, ulY);
 		combo[1] = new Dim(brX - ulX, brY - ulY);
+		
 		return combo;
 	}
 	
@@ -505,17 +506,17 @@ public class Graph {
 	public Entity hitTest(Point p) {
 		assert p != null;
 		for (StopSign s : signs) {
-			if (s.hitTest(p, 0)) {
+			if (s.hitTest(p)) {
 				return s;
 			}
 		}
 		for (Vertex v : getAllVertices()) {
-			if (v.hitTest(p, 0)) {
+			if (v.hitTest(p)) {
 				return v;
 			}
 		}
 		for (Edge e : edges) {
-			if (e.hitTest(p, 0)) {
+			if (e.hitTest(p)) {
 				return e;
 			}
 		}
@@ -1015,19 +1016,19 @@ public class Graph {
 				if (e == f) {
 					
 					for (int i = 0; i < e.size()-2; i++) {
-						Point a = e.get(i);
-						Point b = e.get(i+1);
+						EdgeSegment es = e.getSegment(i);
+						
 						for (int j = i+1; j < f.size()-1; j++) {
-							Point c = f.get(j);
-							Point d = f.get(j+1);
+							EdgeSegment fs = f.getSegment(j);
+							
 							try {
-								Point inter = Point.intersection(a, b, c, d);
-								if (inter != null && !(inter.equals(a) || inter.equals(b) || inter.equals(c) || inter.equals(d))) {
+								Point inter = Point.intersection(es.a, es.b, fs.a, fs.b);
+								if (inter != null && !(inter.equals(es.a) || inter.equals(es.b) || inter.equals(fs.a) || inter.equals(fs.b))) {
 									//assert false : "No edges should intersect";
 									throw new IllegalStateException("No edges should intersect");
 								}
 							} catch (OverlappingException ex) {
-								throw new IllegalStateException("Segments overlapping: " + "<" + a + " " + b + "> and <" + c + " " + d + ">");
+								throw new IllegalStateException("Segments overlapping");
 							}
 						}
 					}
@@ -1035,19 +1036,19 @@ public class Graph {
 				} else {
 					
 					for (int i = 0; i < e.size()-1; i++) {
-						Point a = e.get(i);
-						Point b = e.get(i+1);
+						EdgeSegment es = e.getSegment(i);
+						
 						for (int j = 0; j < f.size()-1; j++) {
-							Point c = f.get(j);
-							Point d = f.get(j+1);
+							EdgeSegment fs = f.getSegment(j);
+							
 							try {
-								Point inter = Point.intersection(a, b, c, d);
-								if (inter != null && !(inter.equals(a) || inter.equals(b) || inter.equals(c) || inter.equals(d))) {
+								Point inter = Point.intersection(es.a, es.b, fs.a, fs.b);
+								if (inter != null && !(inter.equals(es.a) || inter.equals(es.b) || inter.equals(fs.a) || inter.equals(fs.b))) {
 									//assert false : "No edges should intersect";
 									throw new IllegalStateException("No edges should intersect");
 								}
 							} catch (OverlappingException ex) {
-								throw new IllegalStateException("Segments overlapping: " + "<" + a + " " + b + "> and <" + c + " " + d + ">");
+								throw new IllegalStateException("Segments overlapping");
 							}
 						}
 					}

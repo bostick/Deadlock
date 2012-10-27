@@ -28,7 +28,7 @@ public class WorldPanel extends JPanel {
 		super.paintComponent(g);
 		Graphics2D g2 = (Graphics2D)g;
 		
-		AffineTransform origTrans = (AffineTransform)g2.getTransform().clone();
+		AffineTransform origTrans = g2.getTransform();
 		
 		g2.translate(VIEW.worldOriginX, VIEW.worldOriginY);
 		
