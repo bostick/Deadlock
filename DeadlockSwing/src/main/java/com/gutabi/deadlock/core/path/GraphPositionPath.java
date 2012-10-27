@@ -217,9 +217,20 @@ public class GraphPositionPath {
 			}
 			
 			if (DMath.equals(u, 1.0)) {
-				/*
-				 * the next iteration will pick this up
-				 */
+				if (!b.equals(max)) {
+					/*
+					 * the next iteration will pick this up
+					 */
+				} else {
+					/*
+					 * last iteration, deal with now
+					 */
+					double dist = Point.distance(p, b.gpos.p);
+					if (dist < closestDistance) {
+						closest = b;
+						closestDistance = dist;
+					}
+				}
 			} else {
 				Point pOnPath = Point.point(a.gpos.p, b.gpos.p, u);
 				double dist = Point.distance(p, pOnPath);
