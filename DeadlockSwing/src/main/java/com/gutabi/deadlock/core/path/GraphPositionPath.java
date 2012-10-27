@@ -180,119 +180,120 @@ public class GraphPositionPath {
 	 */
 	public GraphPositionPathPosition findClosestGraphPositionPathPosition(Point p, GraphPositionPathPosition min, GraphPositionPathPosition max) {
 		
-		/*
-		 * end of path
-		 */
-		GraphPositionPathPosition closest = max;
-		double closestDistance = Point.distance(p, closest.gpos.p);
+		GraphPositionPathPosition closest = null;
+		double closestDistance = Double.POSITIVE_INFINITY;
 		
-		for (int i = 0; i < poss.size()-1; i++) {
-			GraphPosition a = poss.get(i);
-			GraphPosition b = poss.get(i+1);
-			boolean sameDirAsEdge = GraphPosition.direction(a, b) == 0;
+		if (min.equals(max)) {
+			return min;
+		} else if (min.index == max.index) {
 			
 			double u;
-			if (sameDirAsEdge) {
-				u = Point.u(a.floor().p, p, b.ceiling().p);
-			} else {
-				u = Point.u(a.ceiling().p, p, b.floor().p);
+			u = Point.u(min.floor().gpos.p, p, max.ceiling().gpos.p);
+			if (u < min.param) {
+				u = min.param;
 			}
-			if (i == 0) {
-				assert b.isBound();
-				if (a instanceof EdgePosition && u < ((EdgePosition)a).param) {
-					u = ((EdgePosition)a).param;
-				} else if (u < 0.0){
-					u = 0.0;
-				}
-				if (u > 1.0) {
-					u = 1.0;
-				}
-				if (DMath.equals(u, 1.0)) {
-					/*
-					 * the next iteration will pick this up
-					 */
-					continue;
-				}
-				Point pOnPath;
-				if (sameDirAsEdge) {
-					pOnPath = Point.point(a.floor().p, b.ceiling().p, u);
-				} else {
-					pOnPath = Point.point(a.ceiling().p, b.floor().p, u);
-				}
-				double dist = Point.distance(p, pOnPath);
-				if (dist < closestDistance && DMath.greaterThanEquals((i+u), min.combo) && DMath.lessThanEquals((i+u), max.combo)) {
-					closest = new GraphPositionPathPosition(this, i, u);
-					closestDistance = dist;
-				}
-				
-				
-			} else if (i == poss.size()-2) {
-				assert a.isBound();
-				if (b instanceof EdgePosition && u > ((EdgePosition)b).param) {
-					u = ((EdgePosition)b).param;
-				} else if (u > 1.0) {
-					u = 1.0;
-				}
-				if (u < 0.0) {
-					u = 0.0;
-				}
-				if (DMath.equals(u, 1.0)) {
-					/*
-					 * but if last iteration, then do test now
-					 */
-					Point pOnPath = b.p;
-					double dist = Point.distance(p, pOnPath);
-					if (dist < closestDistance && DMath.greaterThanEquals((i+u), min.combo) && DMath.lessThanEquals((i+u), max.combo)) {
-						closest = new GraphPositionPathPosition(this, i+1, 0.0);
-						closestDistance = dist;
-					}
-				} else {
-					Point pOnPath;
-					if (sameDirAsEdge) {
-						pOnPath = Point.point(a.floor().p, b.ceiling().p, u);
-					} else {
-						pOnPath = Point.point(a.ceiling().p, b.floor().p, u);
-					}
-					double dist = Point.distance(p, pOnPath);
-					if (dist < closestDistance && DMath.greaterThanEquals((i+u), min.combo) && DMath.lessThanEquals((i+u), max.combo)) {
-						closest = new GraphPositionPathPosition(this, i, u);
-						closestDistance = dist;
-					}
-				}
-				
-				
-			} else {
-				assert a.isBound();
-				assert b.isBound();
-				
-				if (u < 0.0) {
-					u = 0.0;
-				}
-				if (u > 1.0) {
-					u = 1.0;
-				}
-				
-				if (DMath.equals(u, 1.0)) {
-					/*
-					 * the next iteration will pick this up
-					 */
-					continue;
-				}
-				Point pOnPath;
-				if (sameDirAsEdge) {
-					pOnPath = Point.point(a.floor().p, b.ceiling().p, u);
-				} else {
-					pOnPath = Point.point(a.ceiling().p, b.floor().p, u);
-				}
-				double dist = Point.distance(p, pOnPath);
-				if (dist < closestDistance && DMath.greaterThanEquals((i+u), min.combo) && DMath.lessThanEquals((i+u), max.combo)) {
-					closest = new GraphPositionPathPosition(this, i, u);
-					closestDistance = dist;
-				}
-				
+			if (u > max.param) {
+				u = max.param;
 			}
+			
+			closest = new GraphPositionPathPosition(this, min.index, u);
+			
+			return closest;
 		}
 		
+		GraphPositionPathPosition a = min;
+		GraphPositionPathPosition minCeiling = min.ceiling();
+		GraphPositionPathPosition maxFloor = max.floor();
+		GraphPositionPathPosition b;
+		if (!minCeiling.equals(min)) {
+			b = minCeiling;
+			
+			double u = Point.u(a.floor().gpos.p, p, b.gpos.p);
+			if (u < a.param) {
+				u = a.param;
+			}
+			if (u > 1.0) {
+				u = 1.0;
+			}
+			
+			if (DMath.equals(u, 1.0)) {
+				/*
+				 * the next iteration will pick this up
+				 */
+			} else {
+				Point pOnPath = Point.point(a.gpos.p, b.gpos.p, u);
+				double dist = Point.distance(p, pOnPath);
+				if (dist < closestDistance) {
+					closest = new GraphPositionPathPosition(this, a.index, u);
+					closestDistance = dist;
+				}
+			}
+			
+			a = b;
+		}
+		while (true) {
+			
+			if (a.equals(maxFloor)) {
+				break;
+			}
+			
+			b = a.nextBound();
+			
+			double u = Point.u(a.gpos.p, p, b.gpos.p);
+			if (u < 0.0) {
+				u = 0.0;
+			}
+			if (u > 1.0) {
+				u = 1.0;
+			}
+			
+			if (DMath.equals(u, 1.0)) {
+				if (!b.equals(max)) {
+					/*
+					 * the next iteration will pick this up
+					 */
+				} else {
+					/*
+					 * last iteration, deal with now
+					 */
+					double dist = Point.distance(p, b.gpos.p);
+					if (dist < closestDistance) {
+						closest = b;
+						closestDistance = dist;
+					}
+				}
+			} else {
+				Point pOnPath = Point.point(a.gpos.p, b.gpos.p, u);
+				double dist = Point.distance(p, pOnPath);
+				if (dist < closestDistance) {
+					closest = new GraphPositionPathPosition(this, a.index, u);
+					closestDistance = dist;
+				}
+			}
+			
+			a = b;
+		}
+		if (!maxFloor.equals(max)) {
+			b = max;
+			
+			double u = Point.u(a.gpos.p, p, b.ceiling().gpos.p);
+			if (u > b.param) {
+				u = b.param;
+			}
+			if (u < 0.0) {
+				u = 0.0;
+			}
+			
+			Point pOnPath = Point.point(a.gpos.p, b.gpos.p, u);
+			double dist = Point.distance(p, pOnPath);
+			if (dist < closestDistance) {
+				closest = new GraphPositionPathPosition(this, a.index, u);
+				closestDistance = dist;
+			}
+			
+		}
+		
+		assert closest != null;
 		return closest;
 	}
 	
@@ -325,7 +326,7 @@ public class GraphPositionPath {
 			if (p2 instanceof EdgePosition) {
 				EdgePosition pp2 = (EdgePosition)p2;
 				
-				if (pp1.index < pp2.index || (pp1.index == pp2.index && DMath.lessThan(pp1.param, pp2.param))) {
+				if ((pp1.index+pp1.param) < (pp2.index+pp2.param)) {
 					// same direction as edge
 					
 					graphIndex = pp1.index;
