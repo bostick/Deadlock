@@ -54,7 +54,7 @@ public class Graph {
 	
 	public Edge createEdgeTop(Vertex start, Vertex end, List<Point> pts) {
 		
-		Edge e = createEdge(start, end, pts, 3);
+		Edge e = createEdge(start, end, pts, (!start.eds.isEmpty()?1:0)+(!end.eds.isEmpty()?2:0));
 		
 		automaticMergeOrDestroy(start);
 		automaticMergeOrDestroy(end);
