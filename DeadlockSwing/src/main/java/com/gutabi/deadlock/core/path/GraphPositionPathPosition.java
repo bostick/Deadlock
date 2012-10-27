@@ -194,7 +194,24 @@ public class GraphPositionPathPosition {
 	}
 	
 	public GraphPositionPathPosition nextBound() {
+		assert index < path.size-1;
 		return new GraphPositionPathPosition(path, index+1, 0.0);
+	}
+	
+	public GraphPositionPathPosition floor() {
+		if (DMath.equals(param, 0.0)) {
+			return this;
+		} else {
+			return new GraphPositionPathPosition(path, index, 0.0);
+		}
+	}
+	
+	public GraphPositionPathPosition ceiling() {
+		if (DMath.equals(param, 0.0)) {
+			return this;
+		} else {
+			return new GraphPositionPathPosition(path, index+1, 0.0);
+		}
 	}
 	
 }

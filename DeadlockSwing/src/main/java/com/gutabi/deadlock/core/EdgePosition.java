@@ -80,7 +80,9 @@ public class EdgePosition extends GraphPosition {
 	}
 	
 	public GraphPosition floor() {
-		if (index != 0) {
+		if (DMath.equals(param, 0.0)) {
+			return this;
+		} else if (index != 0) {
 			return new EdgePosition(e, index, 0.0);
 		} else {
 			return new VertexPosition(e.start);

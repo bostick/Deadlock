@@ -201,8 +201,8 @@ public abstract class Car extends Entity {
 		
 		state = CarStateEnum.CRASHED;
 		
-		b2dBody.setLinearDamping(2.0f);
-		b2dBody.setAngularDamping(2.0f);
+//		b2dBody.setLinearDamping(2.0f);
+//		b2dBody.setAngularDamping(2.0f);
 		
 		source.outstandingCars--;
 	}
@@ -235,16 +235,30 @@ public abstract class Car extends Entity {
 			
 			state = CarStateEnum.RUNNING;
 			
+			updateFriction();
+			
 			updateDrive();
 			updateTurn();
+			
 			break;
 		}
 		case RUNNING: {
+			
+			updateFriction();
+			
 			updateDrive();
 			updateTurn();
+			
 			break;
 		}
 		case CRASHED:
+			
+			if (b2dBody.isAwake()) {
+				updateFriction();
+			} else {
+//				updateFriction();
+			}
+			
 			break;
 		case SINKED:
 			assert false;
@@ -252,22 +266,31 @@ public abstract class Car extends Entity {
 	}
 	
 	private float cancelingForwardImpulseCoefficient() {
-		return 1.0f;
+		return 0.05f;
 	}
 	
 	private float cancelingLateralImpulseCoefficient() {
-		return atleastPartiallyOnRoad ? 0.3f : 0.08f;
+//		return atleastPartiallyOnRoad ? 0.1f : 0.04f;
+		return 0.05f;
 	}
 	
-	private float lateralImpulseCoefficient() {
-		return 1.0f;
+	private float cancelingAngularImpulseCoefficient() {
+		return 0.05f;
 	}
 	
 	private float forwardImpulseCoefficient() {
 		return atleastPartiallyOnRoad ? 1.0f : 0.4f;
 	}
 	
-	private void updateDrive() {
+	/*
+	 * turning radius
+	 * 3 car lengths for 180 deg = 3 meters for 3.14 radians
+	 */
+	private double maxRadsPerMeter() {
+		return 0.04;
+	}
+	
+	private void updateFriction() {
 		
 		Vec2 currentRightNormal = b2dBody.getWorldVector(new Vec2(1, 0));
 		Vec2 currentUpNormal = b2dBody.getWorldVector(new Vec2(0, 1));
@@ -290,14 +313,36 @@ public abstract class Car extends Entity {
 		b2dBody.applyForce(currentRightNormal.mul(cancelingForwardForce), b2dBody.getWorldCenter());
 		b2dBody.applyForce(currentUpNormal.mul(cancelingLateralForce), b2dBody.getWorldCenter());
 		
+		
+		
+		
+		float curAngVel = b2dBody.getAngularVelocity();
+		
+		float cancelingAngImpulse = cancelingAngularImpulseCoefficient() * b2dBody.getInertia() * -curAngVel;
+		float cancelingAngForce = cancelingAngularImpulseCoefficient() * b2dBody.getInertia() * -curAngVel * (float)(1/MODEL.dt);
+		
+		//b2dBody.applyAngularImpulse(cancelingAngImpulse);
+		b2dBody.applyTorque(cancelingAngForce);
+	}
+	
+	private void updateDrive() {
+		
+		Vec2 currentRightNormal = b2dBody.getWorldVector(new Vec2(1, 0));
+		Vec2 currentUpNormal = b2dBody.getWorldVector(new Vec2(0, 1));
+		
+		Vec2 vel = b2dBody.getLinearVelocity();
+		float forwardSpeed = Vec2.dot(currentRightNormal, vel);
+		Vec2 forwardVel = currentRightNormal.mul(forwardSpeed);
+		
 		float goalForwardVel = (float)getMetersPerSecond();
-		float goalLateralVel = 0.0f;
+		float acc = goalForwardVel - forwardSpeed;
 		
-		float forwardImpulse = forwardImpulseCoefficient() * b2dBody.getMass() * goalForwardVel;
-		float lateralImpulse = lateralImpulseCoefficient() * b2dBody.getMass() * goalLateralVel;
+		float forwardImpulse = forwardImpulseCoefficient() * b2dBody.getMass() * acc;
+		float forwardForce = forwardImpulseCoefficient() * b2dBody.getMass() * acc * (float)(1/MODEL.dt);
 		
-		b2dBody.applyLinearImpulse(currentRightNormal.mul(forwardImpulse), b2dBody.getWorldCenter());
-		b2dBody.applyLinearImpulse(currentUpNormal.mul(lateralImpulse), b2dBody.getWorldCenter());
+		//b2dBody.applyLinearImpulse(currentRightNormal.mul(forwardImpulse), b2dBody.getWorldCenter());
+		b2dBody.applyForce(currentRightNormal.mul(forwardForce), b2dBody.getWorldCenter());
+		
 	}
 	
 	private void updateTurn() {
@@ -312,7 +357,7 @@ public abstract class Car extends Entity {
 		/*
 		 * distance in 0.1 seconds
 		 */
-		double d = 0.1f * forwardVel.length();
+		double d = 0.2f * forwardVel.length();
 		
 		float curAngle = b2dBody.getAngle();
 		
@@ -322,14 +367,16 @@ public abstract class Car extends Entity {
 		 * 2 * dis a heuristic
 		 */
 		
-		GraphPositionPathPosition newOverallPos = overallPath.findClosestGraphPositionPathPosition(curPoint, overallPos, overallPos.travel(Math.min(2 * d, overallPos.lengthToEndOfPath)));
+		GraphPositionPathPosition max = overallPos.travel(Math.min(2 * d, overallPos.lengthToEndOfPath));
+		
+		logger.debug("given: " + overallPos + "    " + max);
+		GraphPositionPathPosition newOverallPos = overallPath.findClosestGraphPositionPathPosition(curPoint, overallPos, max);
+		logger.debug("newOverall: " + newOverallPos);
 		
 		GraphPositionPathPosition next = newOverallPos.travel(Math.min(d, newOverallPos.lengthToEndOfPath));
 		Point nextDTGoalPoint = next.gpos.p;
 		
 		double nextDTGoalAngle = Math.atan2(nextDTGoalPoint.y-curVec.y, nextDTGoalPoint.x-curVec.x);
-		
-		float curAngVel = b2dBody.getAngularVelocity();
 		
 		double dw = ((float)nextDTGoalAngle) - curAngle;
 		
@@ -340,25 +387,20 @@ public abstract class Car extends Entity {
 			dw += 2*Math.PI;
 		}
 		
-		/*
-		 * turning radius
-		 * 3 car lengths for 180 deg = 3 meters for 3.14 radians
-		 */
-		double maxRadsPerMeter = 0.06;
-		double maxRads = maxRadsPerMeter * d;
+		double maxRads = maxRadsPerMeter() * d;
 		if (dw > maxRads) {
 			dw = maxRads;
 		} else if (dw < -maxRads) {
 			dw = -maxRads;
 		}
 		
-		
-		float cancelingAngImpulse = 1.0f * b2dBody.getInertia() * -curAngVel;
-		b2dBody.applyAngularImpulse(cancelingAngImpulse);
-		
 		float goalAngVel = (float)(dw / MODEL.dt);
+		
 		float angImpulse = b2dBody.getInertia() * goalAngVel;
-		b2dBody.applyAngularImpulse(angImpulse);
+		float angForce = b2dBody.getInertia() * goalAngVel * (float)(1/MODEL.dt);
+		
+//		b2dBody.applyAngularImpulse(angImpulse);
+		b2dBody.applyTorque(angForce);
 		
 		overallPos = newOverallPos;
 	}
