@@ -2,8 +2,6 @@ package com.gutabi.deadlock.model;
 
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 
-import java.awt.image.BufferedImage;
-
 import org.apache.log4j.Logger;
 
 import com.gutabi.deadlock.core.Source;
@@ -17,13 +15,9 @@ public class NormalCar extends Car {
 	
 	public NormalCar(Source s) {
 		super(s);
+		image = MODEL.world.normalCar;
 		overallPath = s.getShortestPathToMatchingSink();
 		computeStartingProperties();
-	}
-	
-	@Override
-	BufferedImage image() {
-		return MODEL.world.normalCar;
 	}
 	
 	public double getMetersPerSecond() {

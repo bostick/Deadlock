@@ -954,14 +954,14 @@ public class Graph {
 	
 	public void paintScene(Graphics2D g2) {
 		
-		List<Edge> edgesCopy;
-		
-		synchronized (MODEL) {
-			edgesCopy = new ArrayList<Edge>(edges);
-		}
-		
-		for (Edge e : edgesCopy) {
-			if (MODEL.DEBUG_DRAW) {
+		if (MODEL.DEBUG_DRAW) {
+			List<Edge> edgesCopy;
+			
+			synchronized (MODEL) {
+				edgesCopy = new ArrayList<Edge>(edges);
+			}
+			
+			for (Edge e : edgesCopy) {
 				e.paintSkeleton(g2);
 				e.paintBorders(g2);
 			}
@@ -971,12 +971,12 @@ public class Graph {
 	
 	public void paintIDs(Graphics2D g2) {
 		
-		List<Vertex> verticesCopy;
-		synchronized (MODEL) {
-			verticesCopy = new ArrayList<Vertex>(getAllVertices());
-		}
-		
 		if (MODEL.DEBUG_DRAW) {
+			
+			List<Vertex> verticesCopy;
+			synchronized (MODEL) {
+				verticesCopy = new ArrayList<Vertex>(getAllVertices());
+			}
 			
 			for (Vertex v : verticesCopy) {
 				v.paintID(g2);

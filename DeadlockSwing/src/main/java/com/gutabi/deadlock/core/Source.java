@@ -106,7 +106,16 @@ public class Source extends Vertex {
 		
 		synchronized (MODEL) {
 			for (Car c : MODEL.world.cars) {
-				if (c.hitTest(p, r)) {
+				if (hitTest(c.worldPoint1())) {
+					return false;
+				}
+				if (hitTest(c.worldPoint2())) {
+					return false;
+				}
+				if (hitTest(c.worldPoint3())) {
+					return false;
+				}
+				if (hitTest(c.worldPoint4())) {
 					return false;
 				}
 			}

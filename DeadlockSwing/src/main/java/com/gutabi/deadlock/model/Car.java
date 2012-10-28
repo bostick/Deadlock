@@ -36,6 +36,8 @@ public abstract class Car extends Entity {
 	
 	public CarStateEnum state;
 	
+	protected BufferedImage image;
+	
 	public double startingTime;
 	public double crashingTime;
 	
@@ -71,16 +73,17 @@ public abstract class Car extends Entity {
 	float angle;
 	float angularVel;
 	AffineTransform carTrans;
-	Point aabbLoc;
-	Dim aabbDim;
 	boolean atleastPartiallyOnRoad;
 	boolean completelyOnRoad;
 	GraphPositionPathPosition overallPos;
+	Point worldPoint1;
+	Point worldPoint2;
+	Point worldPoint3;
+	Point worldPoint4;
 	
 	static Logger logger = Logger.getLogger(Car.class);
 	
 	public Car(Source s) {
-		super();
 		
 		id = carCounter;
 		carCounter++;
@@ -98,10 +101,8 @@ public abstract class Car extends Entity {
 		p4 = new Point(-CAR_LENGTH / 2, CAR_LENGTH / 4);
 		
 		carTrans = new AffineTransform();
-		aabb = new AABB();
 		
 		computePath();
-		
 	}
 	
 	protected void computeStartingProperties() {
@@ -188,10 +189,15 @@ public abstract class Car extends Entity {
 		angularVel = b2dBody.getAngularVelocity();
 		forwardVel = currentRightNormal.mul(Vec2.dot(currentRightNormal, vel));
 		
-		Entity e1 = MODEL.world.graphHitTest(carToWorld(p1));
-		Entity e2 = MODEL.world.graphHitTest(carToWorld(p2));
-		Entity e3 = MODEL.world.graphHitTest(carToWorld(p3));
-		Entity e4 = MODEL.world.graphHitTest(carToWorld(p4));
+		worldPoint1 = carToWorld(p1);
+		worldPoint2 = carToWorld(p2);
+		worldPoint3 = carToWorld(p3);
+		worldPoint4 = carToWorld(p4);
+		
+		Entity e1 = MODEL.world.graphHitTest(worldPoint1);
+		Entity e2 = MODEL.world.graphHitTest(worldPoint2);
+		Entity e3 = MODEL.world.graphHitTest(worldPoint3);
+		Entity e4 = MODEL.world.graphHitTest(worldPoint4);
 		
 		if (e1 == null && e2 == null && e3 == null && e4 == null) {
 			atleastPartiallyOnRoad = false;
@@ -219,6 +225,13 @@ public abstract class Car extends Entity {
 		
 	}
 	
+	private Point carToWorld(Point p) {
+		return Point.point(carTrans.transform(p.point2D(), null));
+	}
+	
+	
+	
+	
 	public void destroy() {
 		b2dCleanup();
 	}
@@ -230,15 +243,22 @@ public abstract class Car extends Entity {
 	
 	
 	
-	public boolean hitTest(Point p) {
-//		if () {
-//			aabb.
-//		}
-		return hitTest(p, 0.0);
+	
+	public Point worldPoint1() {
+		return worldPoint1;
+	}
+	public Point worldPoint2() {
+		return worldPoint2;
+	}
+	public Point worldPoint3() {
+		return worldPoint3;
+	}
+	public Point worldPoint4() {
+		return worldPoint4;
 	}
 	
 	public boolean hitTest(Point p, double radius) {
-		if (b2dShape.testPoint(b2dBody.getTransform(), new Vec2((float)p.x, (float)p.y))) {
+		if (b2dShape.testPoint(b2dBody.getTransform(), p.vec2())) {
 			return true;
 		}
 		if (DMath.lessThanEquals(Point.distance(p, p1, p2), radius)) {
@@ -268,10 +288,6 @@ public abstract class Car extends Entity {
 //		b2dBody.setAngularDamping(2.0f);
 		
 		source.outstandingCars--;
-	}
-	
-	private Point carToWorld(Point p) {
-		return Point.point(carTrans.transform(p.point2D(), null));
 	}
 	
 	public void preStep(double t) {
@@ -452,14 +468,12 @@ public abstract class Car extends Entity {
 	
 	
 	public double distanceTo(Point p) {
-		double d1 = Point.distance(p, carToWorld(p1));
-		double d2 = Point.distance(p, carToWorld(p2));
-		double d3 = Point.distance(p, carToWorld(p3));
-		double d4 = Point.distance(p, carToWorld(p4));
+		double d1 = Point.distance(p, worldPoint1);
+		double d2 = Point.distance(p, worldPoint2);
+		double d3 = Point.distance(p, worldPoint3);
+		double d4 = Point.distance(p, worldPoint4);
 		return Math.min(Math.min(d1, d2), Math.min(d3, d4));
 	}
-	
-	abstract BufferedImage image();
 	
 	/**
 	 * @param g2 in world coords
@@ -474,7 +488,7 @@ public abstract class Car extends Entity {
 		
 		g2.scale(MODEL.METERS_PER_PIXEL, MODEL.METERS_PER_PIXEL);
 		
-		paintImage(g2, image());
+		paintImage(g2, image);
 		
 		if (MODEL.DEBUG_DRAW) {
 			
@@ -508,13 +522,14 @@ public abstract class Car extends Entity {
 		g2.setTransform(origTransform);
 	}
 	
+	
+	private static final int imageX = (int)(-CAR_LENGTH * MODEL.PIXELS_PER_METER / 2);
+	private static final int imageY = (int)(-CAR_LENGTH * MODEL.PIXELS_PER_METER / 2);
+	private static final int imageWidth = (int)(CAR_LENGTH * MODEL.PIXELS_PER_METER);
+	private static final int imageHeight = (int)(CAR_LENGTH * MODEL.PIXELS_PER_METER);
+	
 	private void paintImage(Graphics2D g2, BufferedImage im) {
-		
-		g2.drawImage(im,
-				(int)(-CAR_LENGTH * MODEL.PIXELS_PER_METER / 2),
-				(int)(-CAR_LENGTH * MODEL.PIXELS_PER_METER / 2),
-				(int)(CAR_LENGTH * MODEL.PIXELS_PER_METER),
-				(int)(CAR_LENGTH * MODEL.PIXELS_PER_METER), null);
+		g2.drawImage(im, imageX, imageY, imageWidth, imageHeight, null);
 	}
 	
 	private void paintRect(Graphics2D g2) {

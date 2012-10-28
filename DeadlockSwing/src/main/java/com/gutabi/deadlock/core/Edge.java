@@ -48,7 +48,6 @@ public final class Edge extends Entity {
 	static Logger logger = Logger.getLogger(Edge.class);
 	
 	public Edge(Vertex start, Vertex end, List<Point> raw) {
-		super();
 		
 		assert !raw.isEmpty();
 		
@@ -133,12 +132,6 @@ public final class Edge extends Entity {
 	
 	
 	
-	public boolean hitTest(Point p) {
-//		if () {
-//			
-//		}
-		return hitTest(p, 0.0);
-	}
 	
 	public boolean hitTest(Point p, double radius) {
 		for (int i = 0; i < segs.size(); i++) {

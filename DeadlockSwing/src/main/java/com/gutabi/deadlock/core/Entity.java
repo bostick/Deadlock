@@ -6,7 +6,6 @@ import java.awt.geom.Path2D;
 
 public abstract class Entity {
 	
-	public abstract boolean hitTest(Point p);
 	public abstract boolean hitTest(Point p, double radius);
 	
 	public abstract boolean isDeleteable();
@@ -26,7 +25,16 @@ public abstract class Entity {
 	
 	public abstract void paintHilite(Graphics2D g2);
 	
-	public Point aabbLoc;
-	public Dim aabbDim;
+	protected Point aabbLoc;
+	protected Dim aabbDim;
+	
+	public final boolean hitTest(Point p) {
+		if (DMath.lessThanEquals(aabbLoc.x, p.x) && DMath.lessThanEquals(p.x, aabbLoc.x+aabbDim.width) &&
+				DMath.lessThanEquals(aabbLoc.y, p.y) && DMath.lessThanEquals(p.y, aabbLoc.y+aabbDim.height)) {
+			return hitTest(p, 0.0);
+		} else {
+			return false;
+		}
+	}
 	
 }

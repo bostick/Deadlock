@@ -31,13 +31,6 @@ public class StopSign extends Entity {
 	
 	
 	
-	public boolean hitTest(Point p) {
-//		if () {
-//			
-//		}
-		return hitTest(p, 0.0);
-	}
-	
 	public boolean hitTest(Point p, double radius) {
 		return DMath.lessThanEquals(Point.distance(p, this.p), r + radius);
 	}

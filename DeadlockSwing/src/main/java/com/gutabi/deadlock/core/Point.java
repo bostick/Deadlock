@@ -104,7 +104,7 @@ public class Point {
 					if (!DMath.equals(yba, 0.0)) {
 						//assert DMath.equals(cu, (c.y - a.y) / yba, 1.0E-4);
 						//assert DMath.equals(cu * yba, (c.y - a.y), 1.0E-6);
-						assert DMath.equals((c.x - a.x) * yba, (c.y - a.y) * xba, 1.0E-7);
+						assert DMath.equals((c.x - a.x) * yba, (c.y - a.y) * xba);
 					}
 				} else {
 					cu = (c.y - a.y) / yba;
@@ -115,7 +115,7 @@ public class Point {
 					du = (d.x - a.x) / xba;
 					if (!DMath.equals(yba, 0.0)) {
 						//assert DMath.equals(du, (d.y - a.y) / yba, 1.0E-4);
-						assert DMath.equals((d.x - a.x) * yba, (d.y - a.y) * xba, 1.0E-7);
+						assert DMath.equals((d.x - a.x) * yba, (d.y - a.y) * xba);
 					}
 				} else {
 					du = (d.y - a.y) / yba;
@@ -424,7 +424,8 @@ public class Point {
 	}
 	
 	public static double distance(Point a, Point b) {
-		return Math.hypot(a.x - b.x, a.y - b.y);
+//		return Math.hypot(a.x - b.x, a.y - b.y);
+		return Math.sqrt((a.x - b.x)*(a.x - b.x) + (a.y - b.y)*(a.y - b.y));
 	}
 	
 	public static Point plus(Point a, Point b) {
