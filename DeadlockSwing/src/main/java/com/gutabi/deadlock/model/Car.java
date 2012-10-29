@@ -55,6 +55,8 @@ public abstract class Car extends Entity {
 	
 	Point startPoint;
 	double startHeading;
+	float mass;
+	float momentOfInertia;
 	
 	Point p1;
 	Point p2;
@@ -70,6 +72,7 @@ public abstract class Car extends Entity {
 	 * we use this since we can actually use it to do transforms
 	 */
 	Point p;
+	Vec2 pVec2;
 	Vec2 currentRightNormal;
 	Vec2 currentUpNormal;
 	Vec2 vel;
@@ -173,6 +176,9 @@ public abstract class Car extends Entity {
 		fixtureDef.friction = 1f;
 		b2dFixture = b2dBody.createFixture(fixtureDef);
 		
+		mass = b2dBody.getMass();
+		momentOfInertia = b2dBody.getInertia();
+		
 	}
 	
 	
@@ -181,8 +187,8 @@ public abstract class Car extends Entity {
 	
 	private void computeDynamicProperties() {
 		
-		Vec2 curVec = b2dBody.getPosition();
-		p = new Point(curVec.x, curVec.y);
+		pVec2 = b2dBody.getPosition();
+		p = new Point(pVec2.x, pVec2.y);
 		
 		currentRightNormal = b2dBody.getWorldVector(right);
 		currentUpNormal = b2dBody.getWorldVector(up);
@@ -359,8 +365,8 @@ public abstract class Car extends Entity {
 	
 	private void updateFriction() {
 		
-		Vec2 cancelingImpulse = vel.mul(-1).mul(b2dBody.getMass());
-		Vec2 cancelingForce = vel.mul(-1).mul(b2dBody.getMass()).mul((float)(1/MODEL.dt));
+		Vec2 cancelingImpulse = vel.mul(-1).mul(mass);
+		Vec2 cancelingForce = vel.mul(-1).mul(mass).mul((float)(1/MODEL.dt));
 		
 		float cancelingForwardImpulse = cancelingForwardImpulseCoefficient() * Vec2.dot(currentRightNormal, cancelingImpulse);
 		float cancelingLateralImpulse = cancelingLateralImpulseCoefficient() * Vec2.dot(currentUpNormal, cancelingImpulse);
@@ -371,11 +377,11 @@ public abstract class Car extends Entity {
 //		b2dBody.applyLinearImpulse(currentRightNormal.mul(cancelingForwardImpulse), b2dBody.getWorldCenter());
 //		b2dBody.applyLinearImpulse(currentUpNormal.mul(cancelingLateralImpulse), b2dBody.getWorldCenter());
 		
-		b2dBody.applyForce(currentRightNormal.mul(cancelingForwardForce), b2dBody.getWorldCenter());
-		b2dBody.applyForce(currentUpNormal.mul(cancelingLateralForce), b2dBody.getWorldCenter());
+		b2dBody.applyForce(currentRightNormal.mul(cancelingForwardForce), pVec2);
+		b2dBody.applyForce(currentUpNormal.mul(cancelingLateralForce), pVec2);
 		
-		float cancelingAngImpulse = cancelingAngularImpulseCoefficient() * b2dBody.getInertia() * -angularVel;
-		float cancelingAngForce = cancelingAngularImpulseCoefficient() * b2dBody.getInertia() * -angularVel * (float)(1/MODEL.dt);
+		float cancelingAngImpulse = cancelingAngularImpulseCoefficient() * momentOfInertia * -angularVel;
+		float cancelingAngForce = cancelingAngularImpulseCoefficient() * momentOfInertia * -angularVel * (float)(1/MODEL.dt);
 		
 		//b2dBody.applyAngularImpulse(cancelingAngImpulse);
 		b2dBody.applyTorque(cancelingAngForce);
@@ -388,11 +394,11 @@ public abstract class Car extends Entity {
 		float goalForwardVel = (float)getMetersPerSecond();
 		float acc = goalForwardVel - forwardSpeed;
 		
-		float forwardImpulse = forwardImpulseCoefficient() * b2dBody.getMass() * acc;
-		float forwardForce = forwardImpulseCoefficient() * b2dBody.getMass() * acc * (float)(1/MODEL.dt);
+		float forwardImpulse = forwardImpulseCoefficient() * mass * acc;
+		float forwardForce = forwardImpulseCoefficient() * mass * acc * (float)(1/MODEL.dt);
 		
 		//b2dBody.applyLinearImpulse(currentRightNormal.mul(forwardImpulse), b2dBody.getWorldCenter());
-		b2dBody.applyForce(currentRightNormal.mul(forwardForce), b2dBody.getWorldCenter());
+		b2dBody.applyForce(currentRightNormal.mul(forwardForce), pVec2);
 		
 	}
 	
@@ -424,8 +430,8 @@ public abstract class Car extends Entity {
 		
 		float goalAngVel = (float)(dw / MODEL.dt);
 		
-		float angImpulse = b2dBody.getInertia() * goalAngVel;
-		float angForce = b2dBody.getInertia() * goalAngVel * (float)(1/MODEL.dt);
+		float angImpulse = momentOfInertia * goalAngVel;
+		float angForce = momentOfInertia * goalAngVel * (float)(1/MODEL.dt);
 		
 //		b2dBody.applyAngularImpulse(angImpulse);
 		b2dBody.applyTorque(angForce);
@@ -536,6 +542,22 @@ public abstract class Car extends Entity {
 				(int)(CAR_LENGTH * MODEL.PIXELS_PER_METER * 0.5),
 				(int)(CAR_LENGTH * MODEL.PIXELS_PER_METER * 0.25),
 				sheetCol, sheetRow, sheetCol+64, sheetRow+32,
+				null);
+		
+		g2.drawImage(MODEL.world.sheet,
+				(int)(-CAR_LENGTH * MODEL.PIXELS_PER_METER * 0.5),
+				(int)(-CAR_LENGTH * MODEL.PIXELS_PER_METER * 0.25),
+				(int)(CAR_LENGTH * MODEL.PIXELS_PER_METER * 0.5),
+				(int)(CAR_LENGTH * MODEL.PIXELS_PER_METER * 0.25),
+				sheetCol+64, sheetRow, sheetCol+64+64, sheetRow+32,
+				null);
+		
+		g2.drawImage(MODEL.world.sheet,
+				(int)(-CAR_LENGTH * MODEL.PIXELS_PER_METER * 0.5),
+				(int)(-CAR_LENGTH * MODEL.PIXELS_PER_METER * 0.25),
+				(int)(CAR_LENGTH * MODEL.PIXELS_PER_METER * 0.5),
+				(int)(CAR_LENGTH * MODEL.PIXELS_PER_METER * 0.25),
+				sheetCol+64+64, sheetRow, sheetCol+64+64+64, sheetRow+32,
 				null);
 	}
 	

@@ -15,8 +15,8 @@ public class FastCar extends Car {
 		super(s);
 		overallPath = s.getShortestPathToMatchingSink();
 		
-		sheetCol = 64;
-		sheetRow = 0;
+		sheetCol = 0;
+		sheetRow = 32;
 		
 		computeStartingProperties();
 	}

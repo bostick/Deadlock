@@ -77,7 +77,7 @@ public class StopSign extends Entity {
 				(int)(-STOPSIGN_SIZE * MODEL.PIXELS_PER_METER * 0.5),
 				(int)(STOPSIGN_SIZE * MODEL.PIXELS_PER_METER * 0.5),
 				(int)(STOPSIGN_SIZE * MODEL.PIXELS_PER_METER * 0.5),
-				32, 96, 32+32, 96+32,
+				32, 224, 32+32, 224+32,
 				null);
 		
 		g2.setTransform(origTransform);

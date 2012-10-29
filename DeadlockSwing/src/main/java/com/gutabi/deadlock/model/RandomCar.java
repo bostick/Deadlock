@@ -16,7 +16,7 @@ public class RandomCar extends Car {
 		overallPath = s.getRandomPathToMatchingSink();
 		
 		sheetCol = 0;
-		sheetRow = 32;
+		sheetRow = 64;
 		
 		computeStartingProperties();
 	}

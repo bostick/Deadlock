@@ -87,7 +87,7 @@ public class World {
 		for (int i = 0; i < (WORLD_WIDTH * MODEL.PIXELS_PER_METER)/32; i++) {
 			for (int j = 0; j < (WORLD_HEIGHT * MODEL.PIXELS_PER_METER)/32; j++) {
 				//g2.drawImage(grass, grassWidth * i, grassHeight * j, null);
-				g2.drawImage(sheet, 32 * i, 32 * j, 32 * i + 32, 32 * j + 32, 0, 96, 0+32, 96+32, null);
+				g2.drawImage(sheet, 32 * i, 32 * j, 32 * i + 32, 32 * j + 32, 0, 224, 0+32, 224+32, null);
 			}
 		}
 		
