@@ -1,4 +1,4 @@
-package com.gutabi.deadlock.core;
+package com.gutabi.deadlock.core.graph;
 
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 
@@ -12,6 +12,10 @@ import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
 import java.util.List;
 
+import com.gutabi.deadlock.core.DMath;
+import com.gutabi.deadlock.core.Entity;
+import com.gutabi.deadlock.core.Point;
+import com.gutabi.deadlock.core.Rect;
 import com.gutabi.deadlock.utils.Java2DUtils;
 
 @SuppressWarnings("static-access")

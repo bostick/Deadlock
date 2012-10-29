@@ -1,6 +1,9 @@
-package com.gutabi.deadlock.core;
+package com.gutabi.deadlock.core.graph;
 
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
+
+import com.gutabi.deadlock.core.DMath;
+import com.gutabi.deadlock.core.Entity;
 
 public class VertexPosition extends GraphPosition {
 	

@@ -16,8 +16,8 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.gutabi.deadlock.core.Edge;
 import com.gutabi.deadlock.core.Point;
+import com.gutabi.deadlock.core.graph.Edge;
 
 public class TestDragging2 {
 	

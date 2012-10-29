@@ -16,9 +16,9 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.gutabi.deadlock.core.Edge;
 import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.core.Vertex;
+import com.gutabi.deadlock.core.graph.Edge;
+import com.gutabi.deadlock.core.graph.Vertex;
 
 public class TestSimpleGraphs {
 	

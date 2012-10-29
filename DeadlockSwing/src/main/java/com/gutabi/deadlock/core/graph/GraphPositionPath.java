@@ -1,4 +1,4 @@
-package com.gutabi.deadlock.core.path;
+package com.gutabi.deadlock.core.graph;
 
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 
@@ -8,16 +8,8 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 import com.gutabi.deadlock.core.DMath;
-import com.gutabi.deadlock.core.Edge;
-import com.gutabi.deadlock.core.EdgePosition;
-import com.gutabi.deadlock.core.GraphPosition;
 import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.core.Vertex;
-import com.gutabi.deadlock.core.VertexPosition;
 
-/**
- * Purely spatial 
- */
 @SuppressWarnings("static-access")
 public class GraphPositionPath {
 	

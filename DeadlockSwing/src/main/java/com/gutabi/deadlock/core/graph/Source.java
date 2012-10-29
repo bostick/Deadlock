@@ -1,14 +1,16 @@
-package com.gutabi.deadlock.core;
+package com.gutabi.deadlock.core.graph;
 
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.gutabi.deadlock.core.path.GraphPositionPath;
+import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.model.Car;
 import com.gutabi.deadlock.model.FastCar;
 import com.gutabi.deadlock.model.NormalCar;
@@ -165,6 +167,39 @@ public class Source extends Vertex {
 	
 	public boolean postStep() {
 		return true;
+	}
+	
+	
+	
+	
+	/**
+	 * @param g2 in world coords
+	 */
+	public void paint(Graphics2D g2) {
+		
+		AffineTransform origTransform = g2.getTransform();
+		
+		g2.translate(p.x, p.y);
+		
+		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+		g2.setColor(color);
+		g2.fill(path);
+		
+		g2.setTransform(origTransform);
+		
+		if (MODEL.DEBUG_DRAW) {
+			
+			// paint path to sink
+			d;
+			
+			g2.scale(MODEL.METERS_PER_PIXEL, MODEL.METERS_PER_PIXEL);
+			
+			paintAABB(g2);
+			
+			g2.setTransform(origTransform);
+			
+		}
+		
 	}
 	
 	

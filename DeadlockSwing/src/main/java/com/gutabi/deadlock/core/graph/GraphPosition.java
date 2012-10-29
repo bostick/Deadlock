@@ -1,6 +1,10 @@
-package com.gutabi.deadlock.core;
+package com.gutabi.deadlock.core.graph;
 
 import org.apache.log4j.Logger;
+
+import com.gutabi.deadlock.core.DMath;
+import com.gutabi.deadlock.core.Entity;
+import com.gutabi.deadlock.core.Point;
 
 public abstract class GraphPosition {
 	

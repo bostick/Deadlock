@@ -22,13 +22,13 @@ import org.jbox2d.dynamics.FixtureDef;
 
 import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Entity;
-import com.gutabi.deadlock.core.GraphPosition;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.Rect;
-import com.gutabi.deadlock.core.Sink;
-import com.gutabi.deadlock.core.Source;
-import com.gutabi.deadlock.core.path.GraphPositionPath;
-import com.gutabi.deadlock.core.path.GraphPositionPathPosition;
+import com.gutabi.deadlock.core.graph.GraphPosition;
+import com.gutabi.deadlock.core.graph.GraphPositionPath;
+import com.gutabi.deadlock.core.graph.GraphPositionPathPosition;
+import com.gutabi.deadlock.core.graph.Sink;
+import com.gutabi.deadlock.core.graph.Source;
 
 @SuppressWarnings("static-access")
 public abstract class Car extends Entity {
@@ -311,7 +311,6 @@ public abstract class Car extends Entity {
 			updateFriction();
 			
 			updateDrive();
-			updateTurn();
 			
 			break;
 		}
@@ -320,7 +319,6 @@ public abstract class Car extends Entity {
 			updateFriction();
 			
 			updateDrive();
-			updateTurn();
 			
 			break;
 		}
@@ -389,9 +387,17 @@ public abstract class Car extends Entity {
 	
 	private void updateDrive() {
 		
+		double lookaheadDistance = 1.5;
+		
 		float forwardSpeed = forwardVel.length();
 		
+		GraphPositionPathPosition next = overallPos.travel(Math.min(lookaheadDistance, overallPos.lengthToEndOfPath));
+		Point goalPoint = next.gpos.p;
+		
+		Point dp = new Point(goalPoint.x-p.x, goalPoint.y-p.y);
+		
 		float goalForwardVel = (float)getMetersPerSecond();
+		
 		float acc = goalForwardVel - forwardSpeed;
 		
 		float forwardImpulse = forwardImpulseCoefficient() * mass * acc;
@@ -400,18 +406,9 @@ public abstract class Car extends Entity {
 		//b2dBody.applyLinearImpulse(currentRightNormal.mul(forwardImpulse), b2dBody.getWorldCenter());
 		b2dBody.applyForce(currentRightNormal.mul(forwardForce), pVec2);
 		
-	}
-	
-	private void updateTurn() {
 		
-		double lookaheadDistance = 1.5;
-		double actualDistance = forwardVel.length() * MODEL.dt;
 		
-		GraphPositionPathPosition next = overallPos.travel(Math.min(lookaheadDistance, overallPos.lengthToEndOfPath));
-		Point nextDTGoalPoint = next.gpos.p;
-		
-		double nextDTGoalAngle = Math.atan2(nextDTGoalPoint.y-p.y, nextDTGoalPoint.x-p.x);
-		
+		double nextDTGoalAngle = Math.atan2(dp.y, dp.x);
 		double dw = ((float)nextDTGoalAngle) - angle;
 		
 		while (dw > Math.PI) {
@@ -421,6 +418,10 @@ public abstract class Car extends Entity {
 			dw += 2*Math.PI;
 		}
 		
+		/*
+		 * turning radius
+		 */
+		double actualDistance = forwardSpeed * MODEL.dt;
 		double maxRads = maxRadsPerMeter() * actualDistance;
 		if (dw > maxRads) {
 			dw = maxRads;
@@ -437,6 +438,7 @@ public abstract class Car extends Entity {
 		b2dBody.applyTorque(angForce);
 		
 	}
+	
 	
 	/**
 	 * return true if car should persist after time step
@@ -501,19 +503,17 @@ public abstract class Car extends Entity {
 		
 		paintImage(g2);
 		
+		g2.setTransform(origTransform);
+		
 		if (MODEL.DEBUG_DRAW) {
-			
-			g2.setTransform(origTransform);
 			
 			g2.scale(MODEL.METERS_PER_PIXEL, MODEL.METERS_PER_PIXEL);
 			
-			g2.setColor(Color.RED);
-			g2.fillOval((int)((p.x) * MODEL.PIXELS_PER_METER) - 1, (int)((p.y) * MODEL.PIXELS_PER_METER) - 1, 2, 2);
-			
 			paintAABB(g2);
+			
+			g2.setTransform(origTransform);
 		}
 		
-		g2.setTransform(origTransform);
 	}
 	
 	/**
@@ -532,7 +532,7 @@ public abstract class Car extends Entity {
 		g2.setTransform(origTransform);
 	}
 	
-	private void paintImage(Graphics2D g2) {
+	protected void paintImage(Graphics2D g2) {
 		
 		g2.scale(MODEL.METERS_PER_PIXEL, MODEL.METERS_PER_PIXEL);
 		
@@ -544,21 +544,21 @@ public abstract class Car extends Entity {
 				sheetCol, sheetRow, sheetCol+64, sheetRow+32,
 				null);
 		
-		g2.drawImage(MODEL.world.sheet,
-				(int)(-CAR_LENGTH * MODEL.PIXELS_PER_METER * 0.5),
-				(int)(-CAR_LENGTH * MODEL.PIXELS_PER_METER * 0.25),
-				(int)(CAR_LENGTH * MODEL.PIXELS_PER_METER * 0.5),
-				(int)(CAR_LENGTH * MODEL.PIXELS_PER_METER * 0.25),
-				sheetCol+64, sheetRow, sheetCol+64+64, sheetRow+32,
-				null);
-		
-		g2.drawImage(MODEL.world.sheet,
-				(int)(-CAR_LENGTH * MODEL.PIXELS_PER_METER * 0.5),
-				(int)(-CAR_LENGTH * MODEL.PIXELS_PER_METER * 0.25),
-				(int)(CAR_LENGTH * MODEL.PIXELS_PER_METER * 0.5),
-				(int)(CAR_LENGTH * MODEL.PIXELS_PER_METER * 0.25),
-				sheetCol+64+64, sheetRow, sheetCol+64+64+64, sheetRow+32,
-				null);
+//		g2.drawImage(MODEL.world.sheet,
+//				(int)(-CAR_LENGTH * MODEL.PIXELS_PER_METER * 0.5),
+//				(int)(-CAR_LENGTH * MODEL.PIXELS_PER_METER * 0.25),
+//				(int)(CAR_LENGTH * MODEL.PIXELS_PER_METER * 0.5),
+//				(int)(CAR_LENGTH * MODEL.PIXELS_PER_METER * 0.25),
+//				sheetCol+64, sheetRow, sheetCol+64+64, sheetRow+32,
+//				null);
+//		
+//		g2.drawImage(MODEL.world.sheet,
+//				(int)(-CAR_LENGTH * MODEL.PIXELS_PER_METER * 0.5),
+//				(int)(-CAR_LENGTH * MODEL.PIXELS_PER_METER * 0.25),
+//				(int)(CAR_LENGTH * MODEL.PIXELS_PER_METER * 0.5),
+//				(int)(CAR_LENGTH * MODEL.PIXELS_PER_METER * 0.25),
+//				sheetCol+64+64, sheetRow, sheetCol+64+64+64, sheetRow+32,
+//				null);
 	}
 	
 	private void paintRect(Graphics2D g2) {

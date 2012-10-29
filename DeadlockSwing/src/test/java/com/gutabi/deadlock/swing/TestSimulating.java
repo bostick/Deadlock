@@ -17,10 +17,10 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.gutabi.deadlock.core.Edge;
 import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.core.Source;
-import com.gutabi.deadlock.core.Vertex;
+import com.gutabi.deadlock.core.graph.Edge;
+import com.gutabi.deadlock.core.graph.Source;
+import com.gutabi.deadlock.core.graph.Vertex;
 import com.gutabi.deadlock.model.Car;
 import com.gutabi.deadlock.model.NormalCar;
 import com.gutabi.deadlock.model.Stroke;

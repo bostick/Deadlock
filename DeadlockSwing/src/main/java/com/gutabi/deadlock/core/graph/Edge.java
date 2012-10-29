@@ -1,4 +1,4 @@
-package com.gutabi.deadlock.core;
+package com.gutabi.deadlock.core.graph;
 
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 
@@ -16,6 +16,11 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 import com.bric.geom.AreaX;
+import com.gutabi.deadlock.core.ColinearException;
+import com.gutabi.deadlock.core.DMath;
+import com.gutabi.deadlock.core.Entity;
+import com.gutabi.deadlock.core.Point;
+import com.gutabi.deadlock.core.Rect;
 import com.gutabi.deadlock.utils.Java2DUtils;
 
 @SuppressWarnings("static-access")
@@ -27,7 +32,7 @@ public final class Edge extends Entity {
 	public final Vertex end;
 	public final List<Point> raw;
 	
-	private List<EdgeSegment> segs;
+	private List<EdgeSegment> spine;
 	
 	private Path2D path;
 	
@@ -98,7 +103,7 @@ public final class Edge extends Entity {
 	}
 	
 	public int size() {
-		return segs.size()+1;
+		return spine.size()+1;
 	}
 	
 	public double getTotalLength() {
@@ -106,15 +111,15 @@ public final class Edge extends Entity {
 	}
 	
 	public Point get(int i) {
-		if (i == segs.size()) {
-			return segs.get(i-1).b;
+		if (i == spine.size()) {
+			return spine.get(i-1).b;
 		} else {
-			return segs.get(i).a;
+			return spine.get(i).a;
 		}
 	}
 	
 	public EdgeSegment getSegment(int i) {
-		return segs.get(i);
+		return spine.get(i);
 	}
 	
 	public Point getStartBorderPoint() {
@@ -140,8 +145,8 @@ public final class Edge extends Entity {
 	
 	
 	public boolean hitTest(Point p, double radius) {
-		for (int i = 0; i < segs.size(); i++) {
-			EdgeSegment s = segs.get(i);
+		for (int i = 0; i < spine.size(); i++) {
+			EdgeSegment s = spine.get(i);
 			if (s.hitTest(p, radius)) {
 				return true;
 			}
@@ -155,8 +160,8 @@ public final class Edge extends Entity {
 		double bestParam = -1;
 		Point bestPoint = null;
 		
-		for (int i = 0; i < segs.size(); i++) {
-			EdgeSegment s = segs.get(i);
+		for (int i = 0; i < spine.size(); i++) {
+			EdgeSegment s = spine.get(i);
 			double closest = closestParam(p, s);
 			Point ep = Point.point(s.a, s.b, closest);
 			double dist = Point.distance(p, ep);
@@ -175,7 +180,7 @@ public final class Edge extends Entity {
 		
 		if (bestPoint != null) {
 			if (bestParam == 1.0) {
-				if (bestIndex == segs.size()-1) {
+				if (bestIndex == spine.size()-1) {
 					return null;
 				} else {
 					return new EdgePosition(this, bestIndex+1, 0.0);
@@ -237,7 +242,7 @@ public final class Edge extends Entity {
 		 */
 		if (!standalone) {
 			startBorderIndex = 1;
-			endBorderIndex = segs.size()-1;
+			endBorderIndex = spine.size()-1;
 			startBorderPoint = get(startBorderIndex);
 			endBorderPoint = get(endBorderIndex);
 			assert DMath.equals(Point.distance(startBorderPoint, start.p), start.getRadius());
@@ -279,11 +284,11 @@ public final class Edge extends Entity {
 			adj = adjustToBorders(adj);
 		}
 		
-		segs = new ArrayList<EdgeSegment>();
+		spine = new ArrayList<EdgeSegment>();
 		for (int i = 0; i < adj.size()-1; i++) {
 			Point a = adj.get(i);
 			Point b = adj.get(i+1);
-			segs.add(new EdgeSegment(a, b));
+			spine.add(new EdgeSegment(a, b));
 		}
 		
 	}
@@ -452,12 +457,12 @@ public final class Edge extends Entity {
 	
 	private void computeLengths() {
 		
-		cumulativeLengthsFromStart = new double[segs.size()+1];
+		cumulativeLengthsFromStart = new double[spine.size()+1];
 		
 		double length;
 		double l = 0.0;
-		for (int i = 0; i < segs.size(); i++) {
-			EdgeSegment s = segs.get(i);
+		for (int i = 0; i < spine.size(); i++) {
+			EdgeSegment s = spine.get(i);
 			if (i == 0) {
 				cumulativeLengthsFromStart[i] = 0;
 			}
@@ -487,7 +492,7 @@ public final class Edge extends Entity {
 		} else {
 			
 			for (int i = startBorderIndex; i < endBorderIndex; i++) {
-				addToArea(area, segs.get(i));
+				addToArea(area, spine.get(i));
 			}
 			
 		}
@@ -666,17 +671,17 @@ public final class Edge extends Entity {
 		g2.setColor(Color.BLACK);
 //		g2.setStroke(new BasicStroke(1.0f));
 		
-		int[] xs = new int[segs.size()+1];
-		int[] ys = new int[segs.size()+1];
-		Point a = segs.get(0).a;
+		int[] xs = new int[spine.size()+1];
+		int[] ys = new int[spine.size()+1];
+		Point a = spine.get(0).a;
 		xs[0] = (int)(a.x * MODEL.PIXELS_PER_METER);
 		ys[0] = (int)(a.y * MODEL.PIXELS_PER_METER);
-		for (int i = 0; i < segs.size(); i++) {
-			Point p = segs.get(i).b;
+		for (int i = 0; i < spine.size(); i++) {
+			Point p = spine.get(i).b;
 			xs[i+1] = (int)(p.x * MODEL.PIXELS_PER_METER);
 			ys[i+1] = (int)(p.y * MODEL.PIXELS_PER_METER);
 		}
-		g2.drawPolyline(xs, ys, segs.size()+1);
+		g2.drawPolyline(xs, ys, spine.size()+1);
 	}
 	
 	/**

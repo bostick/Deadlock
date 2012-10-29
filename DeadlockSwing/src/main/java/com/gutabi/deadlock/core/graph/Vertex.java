@@ -1,4 +1,4 @@
-package com.gutabi.deadlock.core;
+package com.gutabi.deadlock.core.graph;
 
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 
@@ -12,6 +12,10 @@ import java.awt.geom.Path2D;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.gutabi.deadlock.core.DMath;
+import com.gutabi.deadlock.core.Entity;
+import com.gutabi.deadlock.core.Point;
+import com.gutabi.deadlock.core.Rect;
 import com.gutabi.deadlock.utils.Java2DUtils;
 
 @SuppressWarnings("static-access")
@@ -23,7 +27,7 @@ public abstract class Vertex extends Entity {
 	
 	public int id;
 	
-	private Path2D path;
+	protected Path2D path;
 	protected double r;
 	
 	private final int hash;
@@ -224,33 +228,19 @@ public abstract class Vertex extends Entity {
 	 */
 	public void paint(Graphics2D g2) {
 		
-		if (!MODEL.DEBUG_DRAW) {
-			
-			AffineTransform origTransform = g2.getTransform();
-			
-			g2.translate(p.x, p.y);
-			
-			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
-			g2.setColor(color);
-			g2.fill(path);
-			
-			g2.setTransform(origTransform);
-			
-		} else {
-			
-			AffineTransform origTransform = g2.getTransform();
-			
-			g2.translate(p.x, p.y);
-			
-			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
-			g2.setColor(color);
-			g2.fill(path);
-			
-			g2.setTransform(origTransform);
+		AffineTransform origTransform = g2.getTransform();
+		
+		g2.translate(p.x, p.y);
+		
+		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+		g2.setColor(color);
+		g2.fill(path);
+		
+		g2.setTransform(origTransform);
+		
+		if (MODEL.DEBUG_DRAW) {
 			
 			g2.scale(MODEL.METERS_PER_PIXEL, MODEL.METERS_PER_PIXEL);
-			
-//			logger.debug(g2.getTransform().getTranslateX() + ", " + g2.getTransform().getTranslateY());
 			
 			paintAABB(g2);
 			
@@ -270,7 +260,6 @@ public abstract class Vertex extends Entity {
 		
 		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
 		g2.setColor(hiliteColor);
-//		g2.setStroke(new BasicStroke(0.05f));
 		g2.draw(path);
 		
 		g2.setTransform(origTransform);

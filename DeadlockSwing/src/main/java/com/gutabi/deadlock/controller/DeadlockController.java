@@ -14,11 +14,11 @@ import java.util.concurrent.Future;
 import org.apache.log4j.Logger;
 
 import com.gutabi.deadlock.DeadlockMain;
-import com.gutabi.deadlock.core.Edge;
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.core.StopSign;
-import com.gutabi.deadlock.core.Vertex;
+import com.gutabi.deadlock.core.graph.Edge;
+import com.gutabi.deadlock.core.graph.StopSign;
+import com.gutabi.deadlock.core.graph.Vertex;
 import com.gutabi.deadlock.model.Car;
 import com.gutabi.deadlock.model.Stroke;
 

@@ -1,4 +1,4 @@
-package com.gutabi.deadlock.core;
+package com.gutabi.deadlock.core.graph;
 
 @SuppressWarnings("serial")
 public class SharedVerticesException extends RuntimeException {

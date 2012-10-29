@@ -18,8 +18,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.gutabi.deadlock.controller.DeadlockController;
-import com.gutabi.deadlock.core.Edge;
 import com.gutabi.deadlock.core.Point;
+import com.gutabi.deadlock.core.graph.Edge;
 import com.gutabi.deadlock.view.DeadlockView;
 
 

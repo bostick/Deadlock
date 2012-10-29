@@ -1,4 +1,8 @@
-package com.gutabi.deadlock.core;
+package com.gutabi.deadlock.core.graph;
+
+import com.gutabi.deadlock.core.DMath;
+import com.gutabi.deadlock.core.Dim;
+import com.gutabi.deadlock.core.Point;
 
 public class EdgeSegment {
 	

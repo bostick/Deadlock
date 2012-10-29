@@ -2,7 +2,7 @@ package com.gutabi.deadlock.model;
 
 import org.apache.log4j.Logger;
 
-import com.gutabi.deadlock.core.Source;
+import com.gutabi.deadlock.core.graph.Source;
 
 //@SuppressWarnings("static-access")
 public class FastCar extends Car {

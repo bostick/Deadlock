@@ -1,4 +1,4 @@
-package com.gutabi.deadlock.core;
+package com.gutabi.deadlock.core.graph;
 
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 
@@ -9,6 +9,11 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import com.gutabi.deadlock.core.Entity;
+import com.gutabi.deadlock.core.OverlappingException;
+import com.gutabi.deadlock.core.Point;
+import com.gutabi.deadlock.core.Rect;
 
 @SuppressWarnings("static-access")
 public class Graph {

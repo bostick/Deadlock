@@ -1,11 +1,8 @@
-package com.gutabi.deadlock.core.path;
+package com.gutabi.deadlock.core.graph;
 
 import org.apache.log4j.Logger;
 
 import com.gutabi.deadlock.core.DMath;
-import com.gutabi.deadlock.core.EdgePosition;
-import com.gutabi.deadlock.core.GraphPosition;
-import com.gutabi.deadlock.core.VertexPosition;
 
 public class GraphPositionPathPosition {
 	

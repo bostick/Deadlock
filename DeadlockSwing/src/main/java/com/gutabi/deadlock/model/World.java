@@ -19,19 +19,19 @@ import org.jbox2d.common.Vec2;
 
 import com.gutabi.deadlock.controller.ControlMode;
 import com.gutabi.deadlock.core.DMath;
-import com.gutabi.deadlock.core.Edge;
-import com.gutabi.deadlock.core.EdgePosition;
 import com.gutabi.deadlock.core.Entity;
-import com.gutabi.deadlock.core.Graph;
-import com.gutabi.deadlock.core.GraphPosition;
-import com.gutabi.deadlock.core.Intersection;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.Rect;
-import com.gutabi.deadlock.core.Sink;
-import com.gutabi.deadlock.core.Source;
-import com.gutabi.deadlock.core.StopSign;
-import com.gutabi.deadlock.core.Vertex;
-import com.gutabi.deadlock.core.VertexPosition;
+import com.gutabi.deadlock.core.graph.Edge;
+import com.gutabi.deadlock.core.graph.EdgePosition;
+import com.gutabi.deadlock.core.graph.Graph;
+import com.gutabi.deadlock.core.graph.GraphPosition;
+import com.gutabi.deadlock.core.graph.Intersection;
+import com.gutabi.deadlock.core.graph.Sink;
+import com.gutabi.deadlock.core.graph.Source;
+import com.gutabi.deadlock.core.graph.StopSign;
+import com.gutabi.deadlock.core.graph.Vertex;
+import com.gutabi.deadlock.core.graph.VertexPosition;
 
 @SuppressWarnings("static-access")
 public class World {
