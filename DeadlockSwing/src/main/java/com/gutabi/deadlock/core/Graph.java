@@ -3,7 +3,6 @@ package com.gutabi.deadlock.core;
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 
 import java.awt.Graphics2D;
-import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,6 +20,8 @@ public class Graph {
 	private final ArrayList<Sink> sinks = new ArrayList<Sink>();
 	
 	public List<StopSign> signs = new ArrayList<StopSign>();
+	
+	private Rect aabb;
 	
 //	private static final Logger logger = Logger.getLogger(Graph.class);
 	
@@ -40,16 +41,19 @@ public class Graph {
 	public void addSource(Source s) {
 		sources.add(s);
 		refreshVertexIDs();
+		computeAABB();
 	}
 	
 	public void addSink(Sink s) {
 		sinks.add(s);
 		refreshVertexIDs();
+		computeAABB();
 	}
 	
 	public void addIntersection(Intersection i) {
 		intersections.add(i);
 		refreshVertexIDs();
+		computeAABB();
 	}
 	
 	public Edge createEdgeTop(Vertex start, Vertex end, List<Point> pts) {
@@ -58,6 +62,8 @@ public class Graph {
 		
 		automaticMergeOrDestroy(start);
 		automaticMergeOrDestroy(end);
+		
+		computeAABB();
 		
 		return e;
 	}
@@ -88,6 +94,8 @@ public class Graph {
 		} else {
 			destroyEdge(e);
 		}
+		
+		computeAABB();
 		
 	}
 	
@@ -130,11 +138,15 @@ public class Graph {
 			automaticMergeOrDestroy(a);
 		}
 		
+		computeAABB();
+		
 	}
 	
 	public void removeStopSignTop(StopSign s) {
 		
 		destroyStopSign(s);
+		
+		computeAABB();
 		
 	}
 	
@@ -182,6 +194,7 @@ public class Graph {
 	private Edge createEdge(Vertex start, Vertex end, List<Point> pts, int dec) {
 		
 		Edge e = new Edge(start, end, pts);
+		
 		edges.add(e);
 		
 		refreshEdgeIDs();
@@ -194,19 +207,22 @@ public class Graph {
 			if ((dec & 1) == 1) {
 				StopSign startSign = new StopSign(e, 0);
 				signs.add(startSign);
+				
 				e.startSign = startSign;
+				startSign.computePoint();
+				
 			}
 			
 			if ((dec & 2) == 2) {
 				StopSign endSign = new StopSign(e, 1);
 				signs.add(endSign);
+				
 				e.endSign = endSign;
+				endSign.computePoint();
+				
 			}
 
 		}
-		
-		e.computeProperties();
-		e.computePath();
 		
 		return e;
 	}
@@ -305,40 +321,15 @@ public class Graph {
 		
 	}
 	
-	public Object[] getRenderingRectCombo(double ulX, double ulY, double width, double height) {
+	private void computeAABB() {
 		
-		double brX = ulX + width;
-		double brY = ulY + height;
+		aabb = null;
 		
 		for (Vertex v : getAllVertices()) {
-			if (v.aabbLoc.x < ulX) {
-				ulX = v.aabbLoc.x;
-			}
-			if (v.aabbLoc.y < ulY) {
-				ulY = v.aabbLoc.y;
-			}
-			Point renderingBottomRight = new Point(v.aabbLoc.x + v.aabbDim.width, v.aabbLoc.y + v.aabbDim.height);
-			if (renderingBottomRight.x > brX) {
-				brX = renderingBottomRight.x;
-			}
-			if (renderingBottomRight.y > brY) {
-				brY = renderingBottomRight.y;
-			}
+			aabb = Rect.union(aabb, v.getAABB());
 		}
-		for (Edge ed : edges) {
-			if (ed.aabbLoc.x < ulX) {
-				ulX = ed.aabbLoc.x;
-			}
-			if (ed.aabbLoc.y < ulY) {
-				ulY = ed.aabbLoc.y;
-			}
-			Point renderingBottomRight = new Point(ed.aabbLoc.x + ed.aabbDim.width, ed.aabbLoc.y + ed.aabbDim.height);
-			if (renderingBottomRight.x > brX) {
-				brX = renderingBottomRight.x;
-			}
-			if (renderingBottomRight.y > brY) {
-				brY = renderingBottomRight.y;
-			}
+		for (Edge e : edges) {
+			aabb = Rect.union(aabb, e.getAABB());
 		}
 		
 		/*
@@ -348,11 +339,10 @@ public class Graph {
 //			
 //		}
 		
-		Object[] combo = new Object[2];
-		combo[0] = new Point(ulX, ulY);
-		combo[1] = new Dim(brX - ulX, brY - ulY);
-		
-		return combo;
+	}
+	
+	public Rect getAABB() {
+		return aabb;
 	}
 	
 	public void preStep(double t) {
@@ -906,8 +896,6 @@ public class Graph {
 	
 	
 	public void renderBackground(Graphics2D g2) {
-		
-		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		
 		List<Edge> edgesCopy;
 		List<Vertex> verticesCopy;

@@ -13,8 +13,8 @@ public class DeadlockModel {
 	public static final int PIXELS_PER_METER = 32;
 	public static final double METERS_PER_PIXEL = 1 / ((double)PIXELS_PER_METER);
 	
-	public static boolean FPS_DRAW = true;
-	public static boolean DEBUG_DRAW = true;
+	public static boolean FPS_DRAW = false;
+	public static boolean DEBUG_DRAW = false;
 	
 	public static final DeadlockModel MODEL = new DeadlockModel();
 	

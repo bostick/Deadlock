@@ -2,9 +2,10 @@ package com.gutabi.deadlock.core;
 
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 
-import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Path2D;
@@ -27,6 +28,8 @@ public final class Edge extends Entity {
 	public final List<Point> raw;
 	
 	private List<EdgeSegment> segs;
+	
+	private Path2D path;
 	
 	private Point startBorderPoint;
 	private Point endBorderPoint;
@@ -70,6 +73,9 @@ public final class Edge extends Entity {
 		}
 		h = 37 * h + raw.hashCode();
 		hash = h;
+		
+		computeProperties();
+		computePath();
 		
 	}
 	
@@ -224,29 +230,7 @@ public final class Edge extends Entity {
 	
 	public void computeProperties() {
 		
-		assert !raw.isEmpty();
-		List<Point> adj = raw;
-		
-		adj = removeDuplicates(adj);
-		
-		List<Point> newAdj = removeColinear(adj);
-		while (!newAdj.equals(adj)) {
-			adj = newAdj;
-			newAdj = removeColinear(adj);
-		}
-		adj = newAdj;
-		
-		if (!standalone) {
-			computeBorders(adj);
-			adj = adjustToBorders(adj);
-		}
-		
-		segs = new ArrayList<EdgeSegment>();
-		for (int i = 0; i < adj.size()-1; i++) {
-			Point a = adj.get(i);
-			Point b = adj.get(i+1);
-			segs.add(new EdgeSegment(a, b));
-		}
+		computeSegs();
 		
 		/*
 		 * after adjustToBorders, the border properties are set to predictable values
@@ -273,6 +257,35 @@ public final class Edge extends Entity {
 		if (endSign != null) {
 			endSign.computePoint();
 		}
+		
+	}
+	
+	private void computeSegs() {
+		
+		assert !raw.isEmpty();
+		List<Point> adj = raw;
+		
+		adj = removeDuplicates(adj);
+		
+		List<Point> newAdj = removeColinear(adj);
+		while (!newAdj.equals(adj)) {
+			adj = newAdj;
+			newAdj = removeColinear(adj);
+		}
+		adj = newAdj;
+		
+		if (!standalone) {
+			computeBorders(adj);
+			adj = adjustToBorders(adj);
+		}
+		
+		segs = new ArrayList<EdgeSegment>();
+		for (int i = 0; i < adj.size()-1; i++) {
+			Point a = adj.get(i);
+			Point b = adj.get(i+1);
+			segs.add(new EdgeSegment(a, b));
+		}
+		
 	}
 	
 	private static List<Point> removeDuplicates(List<Point> stroke) {
@@ -485,13 +498,12 @@ public final class Edge extends Entity {
 		
 		path = Java2DUtils.listToPath(poly);
 		
-		computeRenderingRect();
+		computeAABB();
 	}
 	
-	private void computeRenderingRect() {
+	protected void computeAABB() {
 		Rectangle2D bound = path.getBounds2D();
-		aabbLoc = new Point(bound.getX(), bound.getY());
-		aabbDim = new Dim(bound.getWidth(), bound.getHeight());
+		aabb = new Rect(bound.getX(), bound.getY(), bound.getWidth(), bound.getHeight());
 	}
 	
 	private void addToArea(AreaX area, EdgeSegment s) {
@@ -607,29 +619,42 @@ public final class Edge extends Entity {
 	/**
 	 * @param g2 in world coords
 	 */
-	public void paintHilite(Graphics2D g2) {
+	public void paint(Graphics2D g2) {
 		if (!MODEL.DEBUG_DRAW) {
-			g2.setColor(hiliteColor);
-			g2.fill(path);
+			
+			paintPath(g2);
+			
 		} else {
-			g2.setColor(Color.BLACK);
-			g2.setStroke(new BasicStroke(0.05f));
-			g2.draw(path);
+			
+			paintPath(g2);
+			
+			AffineTransform origTransform = g2.getTransform();
+			
+			g2.scale(MODEL.METERS_PER_PIXEL, MODEL.METERS_PER_PIXEL);
+			
+			paintAABB(g2);
+			
+			g2.setTransform(origTransform);
 		}
 	}
 	
 	/**
 	 * @param g2 in world coords
 	 */
-	public void paint(Graphics2D g2) {
-		if (!MODEL.DEBUG_DRAW) {
-			g2.setColor(color);
-			g2.fill(path);
-		} else {
-			g2.setColor(Color.BLACK);
-			g2.setStroke(new BasicStroke(0.05f));
-			g2.draw(path);
-		}
+	public void paintHilite(Graphics2D g2) {
+		drawPath(g2);
+	}
+	
+	private void paintPath(Graphics2D g2) {
+		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+		g2.setColor(color);
+		g2.fill(path);
+	}
+	
+	private void drawPath(Graphics2D g2) {
+		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+		g2.setColor(hiliteColor);
+		g2.draw(path);
 	}
 	
 	/**
@@ -637,8 +662,9 @@ public final class Edge extends Entity {
 	 */
 	public void paintSkeleton(Graphics2D g2) {
 		
+		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
 		g2.setColor(Color.BLACK);
-		g2.setStroke(new BasicStroke(1.0f));
+//		g2.setStroke(new BasicStroke(1.0f));
 		
 		int[] xs = new int[segs.size()+1];
 		int[] ys = new int[segs.size()+1];
@@ -657,6 +683,8 @@ public final class Edge extends Entity {
 	 * @param g2 in world coords
 	 */
 	public void paintBorders(Graphics2D g2) {
+		
+		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
 		
 		g2.setColor(Color.GREEN);
 		g2.fillOval((int)(startBorderPoint.x * MODEL.PIXELS_PER_METER)-2, (int)(startBorderPoint.y * MODEL.PIXELS_PER_METER)-2, 4, 4);

@@ -32,7 +32,7 @@ public class Stats {
 			lastTime = curTime;
 		}
 		
-		g2.setColor(Color.WHITE);
+		g2.setColor(Color.BLACK);
 		
 		Point p = new Point(1, 1).multiply(MODEL.PIXELS_PER_METER);
 		g2.drawString("FPS: " + fps, (int)p.x, (int)p.y);

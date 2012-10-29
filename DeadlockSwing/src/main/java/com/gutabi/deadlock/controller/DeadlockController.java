@@ -325,14 +325,14 @@ public class DeadlockController implements ActionListener {
 		
 		MODEL.hilited = null;
 		
-		MODEL.stroke.start(p);
+		MODEL.stroke.start(VIEW.panelToWorld(p));
 			
 	}
 	
 	private void draftMove(Point p) {
 		assert Thread.currentThread().getName().equals("controller");
 
-		MODEL.stroke.drag(p);
+		MODEL.stroke.drag(VIEW.panelToWorld(p));
 	}
 	
 	private void draftEnd() {
@@ -342,8 +342,8 @@ public class DeadlockController implements ActionListener {
 		
 		MODEL.stroke.clear();
 		
-		MODEL.world.renderBackground();
-		VIEW.repaint();
+//		MODEL.world.renderBackground();
+//		VIEW.repaint();
 		
 		assert MODEL.world.checkConsistency();
 		

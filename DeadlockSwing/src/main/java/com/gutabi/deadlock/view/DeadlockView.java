@@ -2,6 +2,7 @@ package com.gutabi.deadlock.view;
 
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 
+import java.awt.BasicStroke;
 import java.awt.Container;
 
 import javax.swing.BoxLayout;
@@ -10,6 +11,7 @@ import javax.swing.JFrame;
 import org.apache.log4j.Logger;
 
 import com.gutabi.deadlock.core.Point;
+import com.gutabi.deadlock.core.Rect;
 
 @SuppressWarnings("static-access")
 public class DeadlockView {
@@ -25,6 +27,13 @@ public class DeadlockView {
 	 */
 	public int worldOriginX;
 	public int worldOriginY;
+	
+	public int worldAABBX;
+	public int worldAABBY;
+	
+	Rect drawingAABB;
+	
+	public java.awt.Stroke worldStroke = new BasicStroke(0.05f);
 	
 	public final Logger logger = Logger.getLogger(DeadlockView.class);
 	
@@ -73,14 +82,25 @@ public class DeadlockView {
 		worldOriginX = (int)(panel.getWidth() * 0.5 - (MODEL.world.WORLD_WIDTH * 0.5 * MODEL.PIXELS_PER_METER));
 		worldOriginY = (int)(panel.getHeight() * 0.5 - (MODEL.world.WORLD_HEIGHT * 0.5 * MODEL.PIXELS_PER_METER));
 		
-		int x = (int)(worldOriginX + (MODEL.world.renderingUpperLeft.x * MODEL.PIXELS_PER_METER));
-		int y = (int)(worldOriginY + (MODEL.world.renderingUpperLeft.y * MODEL.PIXELS_PER_METER));
+		Rect aabb = MODEL.world.getAABB();
+		aabb = Rect.union(aabb, MODEL.stroke.getAABB());
 		
-		panel.repaint(
-				x,
-				y,
-				(int)((MODEL.world.renderingDim.width * MODEL.PIXELS_PER_METER)),
-				(int)((MODEL.world.renderingDim.height * MODEL.PIXELS_PER_METER)));
+		if (drawingAABB != null && aabb.equals(drawingAABB)) {
+			
+			worldAABBX = (int)(worldOriginX + (aabb.x * MODEL.PIXELS_PER_METER));
+			worldAABBY = (int)(worldOriginY + (aabb.y * MODEL.PIXELS_PER_METER));
+			
+			panel.repaint(
+					worldAABBX,
+					worldAABBY,
+					(int)((aabb.width * MODEL.PIXELS_PER_METER)),
+					(int)((aabb.height * MODEL.PIXELS_PER_METER)));
+			
+		} else {
+			panel.repaint();
+		}
+		
+		drawingAABB = aabb;
 		
 	}
 	

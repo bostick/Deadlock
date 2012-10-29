@@ -2,13 +2,13 @@ package com.gutabi.deadlock.core;
 
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 
-import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.Shape;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Path2D;
-import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,7 +23,7 @@ public abstract class Vertex extends Entity {
 	
 	public int id;
 	
-	Path2D path;
+	private Path2D path;
 	protected double r;
 	
 	private final int hash;
@@ -37,6 +37,7 @@ public abstract class Vertex extends Entity {
 		r = INIT_VERTEX_RADIUS;
 		
 		computePath();
+		computeAABB();
 		
 		int h = 17;
 		h = 37 * h + p.hashCode();
@@ -56,6 +57,19 @@ public abstract class Vertex extends Entity {
 		return r;
 	}
 	
+	public void addEdge(Edge e) {
+		assert e != null;
+		eds.add(e);
+	}
+	
+	public void removeEdge(Edge e) {
+		assert eds.contains(e);
+		eds.remove(e);
+	}
+	
+	public List<Edge> getEdges() {
+		return eds;
+	}
 	
 	
 	
@@ -72,20 +86,16 @@ public abstract class Vertex extends Entity {
 		}
 	}
 	
-	public void computePath() {
-		Shape s = new Ellipse2D.Double(p.x - r, p.y - r, 2 * r, 2 * r);
+	private void computePath() {
+		Shape s = new Ellipse2D.Double(-r, -r, 2 * r, 2 * r);
 		
 		List<Point> poly = Java2DUtils.shapeToList(s, 0.01);
 		
 		path = Java2DUtils.listToPath(poly);
-		
-		computeRenderingRect();
 	}	
 	
-	private void computeRenderingRect() {
-		Rectangle2D bound = path.getBounds2D();
-		aabbLoc = new Point(bound.getX(), bound.getY());
-		aabbDim = new Dim(bound.getWidth(), bound.getHeight());
+	private void computeAABB() {
+		aabb = new Rect(p.x-r, p.y-r, 2*r, 2*r);
 	}
 	
 	public void computeRadius(double maximumRadius) {
@@ -169,7 +179,7 @@ public abstract class Vertex extends Entity {
 			
 		}
 		
-		computePath();
+		computeAABB();
 		
 		for (Edge e : eds) {
 			e.computeProperties();
@@ -208,35 +218,61 @@ public abstract class Vertex extends Entity {
 		
 	}
 	
-	public void addEdge(Edge e) {
-		assert e != null;
-		eds.add(e);
-	}
-	
-	public void removeEdge(Edge e) {
-		assert eds.contains(e);
-		eds.remove(e);
-	}
-	
-	public List<Edge> getEdges() {
-		return eds;
-	}
-	
 	/**
 	 * @param g2 in world coords
 	 */
 	public void paint(Graphics2D g2) {
-		g2.setColor(color);
-		g2.fill(path);
+		
+		if (!MODEL.DEBUG_DRAW) {
+			
+			AffineTransform origTransform = g2.getTransform();
+			
+			g2.translate(p.x, p.y);
+			
+			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+			g2.setColor(color);
+			g2.fill(path);
+			
+			g2.setTransform(origTransform);
+			
+		} else {
+			
+			AffineTransform origTransform = g2.getTransform();
+			
+			g2.translate(p.x, p.y);
+			
+			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+			g2.setColor(color);
+			g2.fill(path);
+			
+			g2.setTransform(origTransform);
+			
+			g2.scale(MODEL.METERS_PER_PIXEL, MODEL.METERS_PER_PIXEL);
+			
+//			logger.debug(g2.getTransform().getTranslateX() + ", " + g2.getTransform().getTranslateY());
+			
+			paintAABB(g2);
+			
+			g2.setTransform(origTransform);
+			
+		}
+		
 	}
 	
 	/**
 	 * @param g2 in world coords
 	 */
 	public void paintHilite(Graphics2D g2) {
+		AffineTransform origTransform = g2.getTransform();
+		
+		g2.translate(p.x, p.y);
+		
+		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
 		g2.setColor(hiliteColor);
-		g2.setStroke(new BasicStroke(0.05f));
+//		g2.setStroke(new BasicStroke(0.05f));
 		g2.draw(path);
+		
+		g2.setTransform(origTransform);
 	}
 	
 	/**
@@ -244,6 +280,8 @@ public abstract class Vertex extends Entity {
 	 * @param g2 in pixels, <0, 0> is world origin
 	 */
 	public void paintID(Graphics2D g2) {
+		
+		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
 		g2.setColor(Color.WHITE);
 		Point worldPoint = p.minus(new Point(r, 0));
 		Point panelPoint = worldPoint.multiply(MODEL.PIXELS_PER_METER);

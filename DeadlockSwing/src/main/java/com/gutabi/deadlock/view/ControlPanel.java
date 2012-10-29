@@ -88,7 +88,7 @@ public class ControlPanel extends JPanel {
 		verticalBox.add(hBox);
 		
 		fpsCheckBox = new JCheckBox("fps draw");
-		fpsCheckBox.setSelected(true);
+		fpsCheckBox.setSelected(MODEL.FPS_DRAW);
 		fpsCheckBox.setActionCommand("fpsDraw");
 		fpsCheckBox.addActionListener(CONTROLLER);
 		hBox = Box.createHorizontalBox();
@@ -97,7 +97,7 @@ public class ControlPanel extends JPanel {
 		verticalBox.add(hBox);
 		
 		debugCheckBox = new JCheckBox("debug draw");
-		debugCheckBox.setSelected(true);
+		debugCheckBox.setSelected(MODEL.DEBUG_DRAW);
 		debugCheckBox.setActionCommand("debugDraw");
 		debugCheckBox.addActionListener(CONTROLLER);
 		hBox = Box.createHorizontalBox();

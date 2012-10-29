@@ -31,16 +31,25 @@ public class WorldPanel extends JPanel {
 		AffineTransform origTrans = g2.getTransform();
 		
 		g2.translate(VIEW.worldOriginX, VIEW.worldOriginY);
+		g2.setStroke(VIEW.worldStroke);
 		
 		MODEL.world.paint(g2);
 		
+		MODEL.stroke.paint(g2);
+		
 		if (MODEL.FPS_DRAW) {
+			
+			g2.setTransform(origTrans);
+			g2.setStroke(VIEW.worldStroke);
+			
+			g2.translate(VIEW.worldAABBX, VIEW.worldAABBY);
+			
 			MODEL.stats.paint(g2);
+			
+			g2.setTransform(origTrans);
 		}
 		
 		g2.setTransform(origTrans);
-		
-		MODEL.stroke.paint(g2);
 		
 	}
 	

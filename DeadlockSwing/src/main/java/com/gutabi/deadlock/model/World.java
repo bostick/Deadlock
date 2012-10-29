@@ -1,8 +1,12 @@
 package com.gutabi.deadlock.model;
 
-import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 
+import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
+import static com.gutabi.deadlock.view.DeadlockView.VIEW;
+
+import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -12,11 +16,11 @@ import java.util.Random;
 
 import javax.imageio.ImageIO;
 
+import org.apache.log4j.Logger;
 import org.jbox2d.common.Vec2;
 
 import com.gutabi.deadlock.controller.ControlMode;
 import com.gutabi.deadlock.core.DMath;
-import com.gutabi.deadlock.core.Dim;
 import com.gutabi.deadlock.core.Edge;
 import com.gutabi.deadlock.core.EdgePosition;
 import com.gutabi.deadlock.core.Entity;
@@ -24,12 +28,15 @@ import com.gutabi.deadlock.core.Graph;
 import com.gutabi.deadlock.core.GraphPosition;
 import com.gutabi.deadlock.core.Intersection;
 import com.gutabi.deadlock.core.Point;
+import com.gutabi.deadlock.core.Rect;
 import com.gutabi.deadlock.core.Sink;
 import com.gutabi.deadlock.core.Source;
 import com.gutabi.deadlock.core.StopSign;
 import com.gutabi.deadlock.core.Vertex;
 import com.gutabi.deadlock.core.VertexPosition;
 import com.gutabi.deadlock.utils.ImageUtils;
+
+
 
 @SuppressWarnings("static-access")
 public class World {
@@ -62,13 +69,14 @@ public class World {
 	public static BufferedImage randomCar;
 	public static BufferedImage stopSign;
 	private static BufferedImage tiledGrass;
+	static Color lightGreen = new Color(128, 255, 128);
 	
 	private BufferedImage backgroundImage;
 	
-	public Point renderingUpperLeft;
-	public Dim renderingDim;
+	private Rect worldRect;
+	private Rect aabb;
 	
-//	private static Logger logger = Logger.getLogger(World.class);
+	private static Logger logger = Logger.getLogger(World.class);
 	
 	public World() {
 		
@@ -153,7 +161,18 @@ public class World {
 		graph.addSink(g);
 		graph.addSink(h);
 		
-		computeRenderingRect();
+		worldRect = new Rect(0, 0, WORLD_WIDTH, WORLD_HEIGHT);
+		
+		computeAABB();
+		
+//		logger.debug("a " + a.getAABB());
+//		logger.debug("b " + b.getAABB());
+//		logger.debug("c " + c.getAABB());
+//		logger.debug("d " + d.getAABB());
+//		logger.debug("e " + e.getAABB());
+//		logger.debug("f " + f.getAABB());
+//		logger.debug("g " + g.getAABB());
+//		logger.debug("h " + h.getAABB());
 	}
 	
 	
@@ -188,12 +207,12 @@ public class World {
 		
 		List<Edge> newEdges = new ArrayList<Edge>();
 		
-		Point startPoint = stroke.curWorldStroke.get(0);
+		Point startPoint = stroke.curStroke.get(0);
 		GraphPosition startPos = graph.findClosestGraphPosition(startPoint, Vertex.INIT_VERTEX_RADIUS);
 		
 		int i;
-		for (i = 1; i < stroke.curWorldStroke.size(); i++) {
-			Point b = stroke.curWorldStroke.get(i);
+		for (i = 1; i < stroke.curStroke.size(); i++) {
+			Point b = stroke.curStroke.get(i);
 			GraphPosition bPos = graph.findClosestGraphPosition(b, Vertex.INIT_VERTEX_RADIUS);
 			if (bPos != null) {
 				if (startPos != null && bPos.getEntity() == startPos.getEntity()) {
@@ -203,14 +222,14 @@ public class World {
 				}
 			}
 		}
-		if (i == stroke.curWorldStroke.size()) {
+		if (i == stroke.curStroke.size()) {
 			/*
 			 * we know that the loop reached the end
 			 */
-			i = stroke.curWorldStroke.size()-1;
+			i = stroke.curStroke.size()-1;
 		}
 		
-		Point endPoint = stroke.curWorldStroke.get(i);
+		Point endPoint = stroke.curStroke.get(i);
 		GraphPosition endPos = graph.findClosestGraphPosition(endPoint, Vertex.INIT_VERTEX_RADIUS);
 		
 		if (DMath.lessThanEquals(Point.distance(startPoint, endPoint), Vertex.INIT_VERTEX_RADIUS + Vertex.INIT_VERTEX_RADIUS)) {
@@ -248,7 +267,7 @@ public class World {
 			end = ((VertexPosition)endPos).v;
 		}
 		
-		Edge e = graph.createEdgeTop(start, end, stroke.curWorldStroke.subList(0, i+1));
+		Edge e = graph.createEdgeTop(start, end, stroke.curStroke.subList(0, i+1));
 		newEdges.add(e);
 		
 		postDraftingTop();
@@ -259,7 +278,7 @@ public class World {
 		
 		graph.computeVertexRadii();
 		
-		computeRenderingRect();
+		computeAABB();
 	}
 	
 	private void postDraftingTop() {
@@ -267,7 +286,7 @@ public class World {
 		
 		graph.computeVertexRadii();
 		
-		computeRenderingRect();
+		computeAABB();
 	}
 	
 	private void postRunningTop() {
@@ -275,15 +294,14 @@ public class World {
 		;
 	}
 	
-	private void computeRenderingRect() {
-		
-		Object[] combo = graph.getRenderingRectCombo(0.0, 0.0, WORLD_WIDTH, WORLD_HEIGHT);
-		
-		renderingUpperLeft = (Point)combo[0];
-		renderingDim = (Dim)combo[1];
+	private void computeAABB() {
+		aabb = worldRect;
+		aabb = Rect.union(aabb, graph.getAABB());
 	}
 	
-	
+	public Rect getAABB() {
+		return aabb;
+	}
 	
 	
 	
@@ -408,8 +426,20 @@ public class World {
 	}
 	
 	public void paint(Graphics2D g2) {
-		paintBackground(g2);
-		paintScene(g2);
+		
+		if (!MODEL.DEBUG_DRAW) {
+			
+			paintBackground(g2);
+			paintScene(g2);
+			
+		} else {
+			
+			paintBackground(g2);
+			paintScene(g2);
+			
+			paintAABB(g2);
+			
+		}
 	}
 	
 	private void paintScene(Graphics2D g2) {
@@ -424,9 +454,7 @@ public class World {
 			graph.paintScene(g2);
 			
 			AffineTransform origTransform = g2.getTransform();
-//			AffineTransform trans = (AffineTransform)origTransform.clone();
-//			trans.scale(MODEL.PIXELS_PER_METER, MODEL.PIXELS_PER_METER);
-//			g2.setTransform(trans);
+			
 			g2.scale(MODEL.PIXELS_PER_METER, MODEL.PIXELS_PER_METER);
 			
 			synchronized (MODEL) {
@@ -468,8 +496,8 @@ public class World {
 	
 	private void paintBackground(Graphics2D g2) {
 		
-		int x = (int)((renderingUpperLeft.x * MODEL.PIXELS_PER_METER));
-		int y = (int)((renderingUpperLeft.y * MODEL.PIXELS_PER_METER));
+		int x = (int)((aabb.x * MODEL.PIXELS_PER_METER));
+		int y = (int)((aabb.y * MODEL.PIXELS_PER_METER));
 		
 		g2.drawImage(backgroundImage, x, y, null);
 	}
@@ -478,18 +506,56 @@ public class World {
 		assert !Thread.holdsLock(MODEL);
 		
 		backgroundImage = new BufferedImage(
-				(int)(renderingDim.width * MODEL.PIXELS_PER_METER),
-				(int)(renderingDim.height * MODEL.PIXELS_PER_METER),
+				(int)(aabb.width * MODEL.PIXELS_PER_METER),
+				(int)(aabb.height * MODEL.PIXELS_PER_METER),
 				BufferedImage.TYPE_INT_ARGB);
 		Graphics2D backgroundImageG2 = backgroundImage.createGraphics();
 		
-		backgroundImageG2.translate(
-				(int)((-renderingUpperLeft.x) * MODEL.PIXELS_PER_METER),
-				(int)((-renderingUpperLeft.y) * MODEL.PIXELS_PER_METER));
+		backgroundImageG2.setStroke(VIEW.worldStroke);
 		
-		backgroundImageG2.drawImage(tiledGrass, 0, 0, null);
+		if (!MODEL.DEBUG_DRAW) {
+			
+			AffineTransform orig = backgroundImageG2.getTransform();
+			
+			backgroundImageG2.translate(
+					(int)((-aabb.x) * MODEL.PIXELS_PER_METER),
+					(int)((-aabb.y) * MODEL.PIXELS_PER_METER));
+			
+			backgroundImageG2.drawImage(tiledGrass, 0, 0, null);
+			
+			graph.renderBackground(backgroundImageG2);
+			
+			backgroundImageG2.setTransform(orig);
+			
+		} else {
+			
+			AffineTransform orig = backgroundImageG2.getTransform();
+			
+			backgroundImageG2.translate(
+					(int)((-aabb.x) * MODEL.PIXELS_PER_METER),
+					(int)((-aabb.y) * MODEL.PIXELS_PER_METER));
+			
+			backgroundImageG2.setColor(lightGreen);
+			backgroundImageG2.fillRect(0, 0, (int)(WORLD_WIDTH * MODEL.PIXELS_PER_METER), (int)(WORLD_HEIGHT * MODEL.PIXELS_PER_METER));
+			
+			graph.renderBackground(backgroundImageG2);
+			
+			backgroundImageG2.setTransform(orig);
+			
+		}
 		
-		graph.renderBackground(backgroundImageG2);
+	}
+	
+	private void paintAABB(Graphics2D g2) {
+		
+		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+		
+		g2.setColor(Color.BLACK);
+		g2.drawRect(
+				(int)(aabb.x * MODEL.PIXELS_PER_METER),
+				(int)(aabb.y * MODEL.PIXELS_PER_METER),
+				(int)(aabb.width * MODEL.PIXELS_PER_METER),
+				(int)(aabb.height * MODEL.PIXELS_PER_METER));
 		
 	}
 	

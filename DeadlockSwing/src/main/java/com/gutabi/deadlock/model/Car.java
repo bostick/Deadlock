@@ -4,8 +4,10 @@ import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
+import java.awt.geom.Path2D;
 import java.awt.image.BufferedImage;
 
 import org.apache.log4j.Logger;
@@ -20,10 +22,10 @@ import org.jbox2d.dynamics.Fixture;
 import org.jbox2d.dynamics.FixtureDef;
 
 import com.gutabi.deadlock.core.DMath;
-import com.gutabi.deadlock.core.Dim;
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.GraphPosition;
 import com.gutabi.deadlock.core.Point;
+import com.gutabi.deadlock.core.Rect;
 import com.gutabi.deadlock.core.Sink;
 import com.gutabi.deadlock.core.Source;
 import com.gutabi.deadlock.core.path.GraphPositionPath;
@@ -36,6 +38,7 @@ public abstract class Car extends Entity {
 	
 	public CarStateEnum state;
 	
+	private Path2D path;
 	protected BufferedImage image;
 	
 	public double startingTime;
@@ -172,8 +175,6 @@ public abstract class Car extends Entity {
 	}
 	
 	
-	AABB aabb = new AABB();
-	
 	Vec2 right = new Vec2(1, 0);
 	Vec2 up = new Vec2(0, 1);
 	
@@ -214,15 +215,21 @@ public abstract class Car extends Entity {
 		Mat22 r = b2dBody.getTransform().R;
 		carTrans.setTransform(r.col1.x, r.col1.y, r.col2.x, r.col2.y, p.x, p.y);
 		
-		b2dShape.computeAABB(aabb, b2dBody.getTransform());
-		aabbLoc = new Point(aabb.lowerBound.x, aabb.lowerBound.y);
-		aabbDim = new Dim(aabb.upperBound.x-aabb.lowerBound.x, aabb.upperBound.y-aabb.lowerBound.y);
+		computeAABB();
 		
 		double actualDistance = forwardVel.length() * MODEL.dt;
 		
 		GraphPositionPathPosition max = overallPos.travel(Math.min(2 * actualDistance, overallPos.lengthToEndOfPath));
 		overallPos = overallPath.findClosestGraphPositionPathPosition(p, overallPos, max);
 		
+	}
+	
+	
+	AABB b2dAABB = new AABB();
+	
+	protected void computeAABB() {
+		b2dShape.computeAABB(b2dAABB, b2dBody.getTransform());
+		aabb = new Rect(b2dAABB.lowerBound.x, b2dAABB.lowerBound.y, b2dAABB.upperBound.x-b2dAABB.lowerBound.x, b2dAABB.upperBound.y-b2dAABB.lowerBound.y);
 	}
 	
 	private Point carToWorld(Point p) {
@@ -480,6 +487,8 @@ public abstract class Car extends Entity {
 	 */
 	public void paint(Graphics2D g2) {
 		
+		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+		
 		AffineTransform origTransform = g2.getTransform();
 		
 		g2.transform(carTrans);
@@ -506,6 +515,8 @@ public abstract class Car extends Entity {
 	 * @param g2 in world coords
 	 */
 	public void paintHilite(Graphics2D g2) {
+		
+		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
 		
 		AffineTransform origTransform = g2.getTransform();
 		
@@ -545,17 +556,6 @@ public abstract class Car extends Entity {
 		g2.setColor(hiliteColor);
 		
 		g2.fill(path);
-		
-	}
-	
-	private void paintAABB(Graphics2D g2) {
-		
-		g2.setColor(Color.BLACK);
-		g2.drawRect(
-				(int)(aabbLoc.x * MODEL.PIXELS_PER_METER),
-				(int)(aabbLoc.y * MODEL.PIXELS_PER_METER),
-				(int)(aabbDim.width * MODEL.PIXELS_PER_METER),
-				(int)(aabbDim.height * MODEL.PIXELS_PER_METER));
 		
 	}
 	
