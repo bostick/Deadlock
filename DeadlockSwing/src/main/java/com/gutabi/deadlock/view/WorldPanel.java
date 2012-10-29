@@ -35,7 +35,9 @@ public class WorldPanel extends JPanel {
 		
 		MODEL.world.paint(g2);
 		
-		MODEL.stroke.paint(g2);
+		if (MODEL.stroke != null) {
+			MODEL.stroke.paint(g2);
+		}
 		
 		if (MODEL.FPS_DRAW) {
 			

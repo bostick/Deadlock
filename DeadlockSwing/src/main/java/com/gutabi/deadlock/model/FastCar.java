@@ -1,12 +1,10 @@
 package com.gutabi.deadlock.model;
 
-import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
-
 import org.apache.log4j.Logger;
 
 import com.gutabi.deadlock.core.Source;
 
-@SuppressWarnings("static-access")
+//@SuppressWarnings("static-access")
 public class FastCar extends Car {
 	
 	private final double speed = 5.0;
@@ -15,8 +13,11 @@ public class FastCar extends Car {
 	
 	public FastCar(Source s) {
 		super(s);
-		image = MODEL.world.fastCar;
 		overallPath = s.getShortestPathToMatchingSink();
+		
+		sheetCol = 64;
+		sheetRow = 0;
+		
 		computeStartingProperties();
 	}
 	

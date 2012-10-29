@@ -8,7 +8,6 @@ import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Path2D;
-import java.awt.image.BufferedImage;
 
 import org.apache.log4j.Logger;
 import org.jbox2d.collision.AABB;
@@ -36,10 +35,12 @@ public abstract class Car extends Entity {
 	
 	public static final double CAR_LENGTH = 1.0;
 	
+	protected int sheetRow;
+	protected int sheetCol;
+	
 	public CarStateEnum state;
 	
 	private Path2D path;
-	protected BufferedImage image;
 	
 	public double startingTime;
 	public double crashingTime;
@@ -291,9 +292,6 @@ public abstract class Car extends Entity {
 		
 		state = CarStateEnum.CRASHED;
 		
-//		b2dBody.setLinearDamping(2.0f);
-//		b2dBody.setAngularDamping(2.0f);
-		
 		source.outstandingCars--;
 	}
 	
@@ -482,6 +480,8 @@ public abstract class Car extends Entity {
 		return Math.min(Math.min(d1, d2), Math.min(d3, d4));
 	}
 	
+	
+	
 	/**
 	 * @param g2 in world coords
 	 */
@@ -493,17 +493,16 @@ public abstract class Car extends Entity {
 		
 		g2.transform(carTrans);
 		
-//		paintRect(g2);
-		
-		g2.scale(MODEL.METERS_PER_PIXEL, MODEL.METERS_PER_PIXEL);
-		
-		paintImage(g2, image);
+		paintImage(g2);
 		
 		if (MODEL.DEBUG_DRAW) {
 			
 			g2.setTransform(origTransform);
 			
 			g2.scale(MODEL.METERS_PER_PIXEL, MODEL.METERS_PER_PIXEL);
+			
+			g2.setColor(Color.RED);
+			g2.fillOval((int)((p.x) * MODEL.PIXELS_PER_METER) - 1, (int)((p.y) * MODEL.PIXELS_PER_METER) - 1, 2, 2);
 			
 			paintAABB(g2);
 		}
@@ -520,12 +519,6 @@ public abstract class Car extends Entity {
 		
 		AffineTransform origTransform = g2.getTransform();
 		
-//		AffineTransform trans = (AffineTransform)origTransform.clone();
-		
-//		trans.concatenate(carTrans);
-		
-//		g2.setTransform(trans);
-		
 		g2.transform(carTrans);
 		
 		paintRect(g2);
@@ -533,30 +526,21 @@ public abstract class Car extends Entity {
 		g2.setTransform(origTransform);
 	}
 	
-	
-	private static final int imageX = (int)(-CAR_LENGTH * MODEL.PIXELS_PER_METER / 2);
-	private static final int imageY = (int)(-CAR_LENGTH * MODEL.PIXELS_PER_METER / 2);
-	private static final int imageWidth = (int)(CAR_LENGTH * MODEL.PIXELS_PER_METER);
-	private static final int imageHeight = (int)(CAR_LENGTH * MODEL.PIXELS_PER_METER);
-	
-	private void paintImage(Graphics2D g2, BufferedImage im) {
-		g2.drawImage(im, imageX, imageY, imageWidth, imageHeight, null);
+	private void paintImage(Graphics2D g2) {
+		
+		g2.scale(MODEL.METERS_PER_PIXEL, MODEL.METERS_PER_PIXEL);
+		
+		g2.drawImage(MODEL.world.sheet,
+				(int)(-CAR_LENGTH * MODEL.PIXELS_PER_METER * 0.5),
+				(int)(-CAR_LENGTH * MODEL.PIXELS_PER_METER * 0.25),
+				(int)(CAR_LENGTH * MODEL.PIXELS_PER_METER * 0.5),
+				(int)(CAR_LENGTH * MODEL.PIXELS_PER_METER * 0.25),
+				sheetCol, sheetRow, sheetCol+64, sheetRow+32,
+				null);
 	}
 	
 	private void paintRect(Graphics2D g2) {
-		
-//		if (completelyOnRoad) {
-//			g2.setColor(Color.GREEN);
-//		} else if (atleastPartiallyOnRoad) {
-//			g2.setColor(Color.YELLOW);
-//		} else {
-//			g2.setColor(Color.RED);
-//		}
-		
 		g2.setColor(hiliteColor);
-		
 		g2.fill(path);
-		
 	}
-	
 }

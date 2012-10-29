@@ -20,6 +20,7 @@ import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.StopSign;
 import com.gutabi.deadlock.core.Vertex;
 import com.gutabi.deadlock.model.Car;
+import com.gutabi.deadlock.model.Stroke;
 
 @SuppressWarnings("static-access")
 public class DeadlockController implements ActionListener {
@@ -93,7 +94,7 @@ public class DeadlockController implements ActionListener {
 			lastPressPanelPoint = p;
 			lastPressTime = System.currentTimeMillis();
 			
-			MODEL.stroke.press(p);
+//			MODEL.stroke.press(p);
 			
 			lastDragPanelPoint = null;
 			lastDragTime = -1;
@@ -229,7 +230,7 @@ public class DeadlockController implements ActionListener {
 				Entity closest = MODEL.world.hitTest(worldPoint);
 				MODEL.hilited = closest;
 				
-				MODEL.stroke.move(p);
+//				MODEL.stroke.move(p);
 				
 				VIEW.repaint();
 				
@@ -325,14 +326,15 @@ public class DeadlockController implements ActionListener {
 		
 		MODEL.hilited = null;
 		
-		MODEL.stroke.start(VIEW.panelToWorld(p));
+		MODEL.stroke = new Stroke();
+		MODEL.stroke.add(VIEW.panelToWorld(p));
 			
 	}
 	
 	private void draftMove(Point p) {
 		assert Thread.currentThread().getName().equals("controller");
 
-		MODEL.stroke.drag(VIEW.panelToWorld(p));
+		MODEL.stroke.add(VIEW.panelToWorld(p));
 	}
 	
 	private void draftEnd() {
@@ -340,7 +342,7 @@ public class DeadlockController implements ActionListener {
 		
 		MODEL.world.processNewStrokeTop(MODEL.stroke);
 		
-		MODEL.stroke.clear();
+		MODEL.stroke = null;
 		
 //		MODEL.world.renderBackground();
 //		VIEW.repaint();

@@ -1,6 +1,5 @@
 package com.gutabi.deadlock.model;
 
-
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
@@ -16,7 +15,6 @@ import java.util.Random;
 
 import javax.imageio.ImageIO;
 
-import org.apache.log4j.Logger;
 import org.jbox2d.common.Vec2;
 
 import com.gutabi.deadlock.controller.ControlMode;
@@ -34,9 +32,6 @@ import com.gutabi.deadlock.core.Source;
 import com.gutabi.deadlock.core.StopSign;
 import com.gutabi.deadlock.core.Vertex;
 import com.gutabi.deadlock.core.VertexPosition;
-import com.gutabi.deadlock.utils.ImageUtils;
-
-
 
 @SuppressWarnings("static-access")
 public class World {
@@ -64,10 +59,7 @@ public class World {
 	public org.jbox2d.dynamics.World b2dWorld;
 	private CarEventListener listener;
 	
-	public static BufferedImage normalCar;
-	public static BufferedImage fastCar;
-	public static BufferedImage randomCar;
-	public static BufferedImage stopSign;
+	public static BufferedImage sheet;
 	private static BufferedImage tiledGrass;
 	static Color lightGreen = new Color(128, 255, 128);
 	
@@ -76,7 +68,7 @@ public class World {
 	private Rect worldRect;
 	private Rect aabb;
 	
-	private static Logger logger = Logger.getLogger(World.class);
+//	private static Logger logger = Logger.getLogger(World.class);
 	
 	public World() {
 		
@@ -84,31 +76,7 @@ public class World {
 	
 	public void init() throws Exception {
 		
-		normalCar = ImageIO.read(new File("media\\normalCar.png"));
-		normalCar = ImageUtils.createResizedCopy(
-				normalCar,
-				(int)(Car.CAR_LENGTH * MODEL.PIXELS_PER_METER),
-				(int)(Car.CAR_LENGTH * MODEL.PIXELS_PER_METER), true);
-		
-		fastCar = ImageIO.read(new File("media\\fastCar.png"));
-		fastCar = ImageUtils.createResizedCopy(
-				fastCar,
-				(int)(Car.CAR_LENGTH * MODEL.PIXELS_PER_METER),
-				(int)(Car.CAR_LENGTH * MODEL.PIXELS_PER_METER), true);
-		
-		randomCar = ImageIO.read(new File("media\\randomCar.png"));
-		randomCar = ImageUtils.createResizedCopy(
-				randomCar,
-				(int)(Car.CAR_LENGTH * MODEL.PIXELS_PER_METER),
-				(int)(Car.CAR_LENGTH * MODEL.PIXELS_PER_METER), true);
-		
-		stopSign = ImageIO.read(new File("media\\stop.png"));
-		stopSign = ImageUtils.createResizedCopy(
-				stopSign,
-				(int)(StopSign.STOPSIGN_SIZE * MODEL.PIXELS_PER_METER),
-				(int)(StopSign.STOPSIGN_SIZE * MODEL.PIXELS_PER_METER), true);
-		
-		BufferedImage grass = ImageIO.read(new File("media\\grass.png"));
+		sheet = ImageIO.read(new File("media\\sheet.png"));
 		
 		tiledGrass = new BufferedImage(
 				(int)(WORLD_WIDTH * MODEL.PIXELS_PER_METER),
@@ -116,9 +84,10 @@ public class World {
 				BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g2 = tiledGrass.createGraphics();
 		
-		for (int i = 0; i < (WORLD_WIDTH * MODEL.PIXELS_PER_METER)/grass.getWidth(); i++) {
-			for (int j = 0; j < (WORLD_HEIGHT * MODEL.PIXELS_PER_METER)/grass.getHeight(); j++) {
-				g2.drawImage(grass, grass.getWidth() * i, grass.getHeight() * j, null);
+		for (int i = 0; i < (WORLD_WIDTH * MODEL.PIXELS_PER_METER)/32; i++) {
+			for (int j = 0; j < (WORLD_HEIGHT * MODEL.PIXELS_PER_METER)/32; j++) {
+				//g2.drawImage(grass, grassWidth * i, grassHeight * j, null);
+				g2.drawImage(sheet, 32 * i, 32 * j, 32 * i + 32, 32 * j + 32, 0, 96, 0+32, 96+32, null);
 			}
 		}
 		
@@ -165,14 +134,6 @@ public class World {
 		
 		computeAABB();
 		
-//		logger.debug("a " + a.getAABB());
-//		logger.debug("b " + b.getAABB());
-//		logger.debug("c " + c.getAABB());
-//		logger.debug("d " + d.getAABB());
-//		logger.debug("e " + e.getAABB());
-//		logger.debug("f " + f.getAABB());
-//		logger.debug("g " + g.getAABB());
-//		logger.debug("h " + h.getAABB());
 	}
 	
 	
@@ -207,12 +168,12 @@ public class World {
 		
 		List<Edge> newEdges = new ArrayList<Edge>();
 		
-		Point startPoint = stroke.curStroke.get(0);
+		Point startPoint = stroke.pts.get(0);
 		GraphPosition startPos = graph.findClosestGraphPosition(startPoint, Vertex.INIT_VERTEX_RADIUS);
 		
 		int i;
-		for (i = 1; i < stroke.curStroke.size(); i++) {
-			Point b = stroke.curStroke.get(i);
+		for (i = 1; i < stroke.pts.size(); i++) {
+			Point b = stroke.pts.get(i);
 			GraphPosition bPos = graph.findClosestGraphPosition(b, Vertex.INIT_VERTEX_RADIUS);
 			if (bPos != null) {
 				if (startPos != null && bPos.getEntity() == startPos.getEntity()) {
@@ -222,14 +183,14 @@ public class World {
 				}
 			}
 		}
-		if (i == stroke.curStroke.size()) {
+		if (i == stroke.pts.size()) {
 			/*
 			 * we know that the loop reached the end
 			 */
-			i = stroke.curStroke.size()-1;
+			i = stroke.pts.size()-1;
 		}
 		
-		Point endPoint = stroke.curStroke.get(i);
+		Point endPoint = stroke.pts.get(i);
 		GraphPosition endPos = graph.findClosestGraphPosition(endPoint, Vertex.INIT_VERTEX_RADIUS);
 		
 		if (DMath.lessThanEquals(Point.distance(startPoint, endPoint), Vertex.INIT_VERTEX_RADIUS + Vertex.INIT_VERTEX_RADIUS)) {
@@ -267,7 +228,7 @@ public class World {
 			end = ((VertexPosition)endPos).v;
 		}
 		
-		Edge e = graph.createEdgeTop(start, end, stroke.curStroke.subList(0, i+1));
+		Edge e = graph.createEdgeTop(start, end, stroke.pts.subList(0, i+1));
 		newEdges.add(e);
 		
 		postDraftingTop();
@@ -406,13 +367,6 @@ public class World {
 	}
 	
 	public Car carHitTest(Point p) {
-//		synchronized (MODEL) {
-//			for (Car c : cars) {
-//				if (c.hitTest(p)) {
-//					return c;
-//				}
-//			}
-//		}
 		for (Car c : cars) {
 			if (c.hitTest(p)) {
 				return c;

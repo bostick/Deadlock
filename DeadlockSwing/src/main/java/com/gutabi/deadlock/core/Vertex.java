@@ -179,6 +179,7 @@ public abstract class Vertex extends Entity {
 			
 		}
 		
+		computePath();
 		computeAABB();
 		
 		for (Edge e : eds) {

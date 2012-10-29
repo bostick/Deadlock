@@ -63,8 +63,8 @@ public class TestSimpleGraphs {
 			if (a == b) {
 				return 0;
 			}
-			Point aP = a.getPoint();
-			Point bP = b.getPoint();
+			Point aP = a.p;
+			Point bP = b.p;
 			if (aP.x < bP.x) {
 				return -1;
 			} else if (aP.x > bP.x) {

@@ -23,6 +23,7 @@ import com.gutabi.deadlock.core.Source;
 import com.gutabi.deadlock.core.Vertex;
 import com.gutabi.deadlock.model.Car;
 import com.gutabi.deadlock.model.NormalCar;
+import com.gutabi.deadlock.model.Stroke;
 
 @SuppressWarnings("serial")
 public class TestSimulating {
@@ -2477,8 +2478,8 @@ public class TestSimulating {
 			//MODEL.viewLoc = new Point(575, 375);
 			//MODEL.viewLoc = new Point(560, 400);
 			
-			MODEL.world.processNewStrokeTop(new ArrayList<Point>(){{add(new Point(600, 450));add(new Point(700, 450));}});
-			MODEL.world.processNewStrokeTop(new ArrayList<Point>(){{add(new Point(650, 400));add(new Point(650, 500));}});
+			MODEL.world.processNewStrokeTop(new Stroke(){{pts.addAll(new ArrayList<Point>(){{add(new Point(600, 450));add(new Point(700, 450));}});}});
+			MODEL.world.processNewStrokeTop(new Stroke(){{pts.addAll(new ArrayList<Point>(){{add(new Point(650, 400));add(new Point(650, 500));}});}});
 			
 			Vertex aV = ((Vertex)MODEL.world.hitTest(new Point(600, 450)));
 			
@@ -2511,8 +2512,8 @@ public class TestSimulating {
 			//MODEL.viewLoc = new Point(575, 375);
 			//MODEL.viewLoc = new Point(560, 400);
 			
-			MODEL.world.processNewStrokeTop(new ArrayList<Point>(){{add(new Point(595, 450));add(new Point(695, 450));}});
-			MODEL.world.processNewStrokeTop(new ArrayList<Point>(){{add(new Point(650, 400));add(new Point(650, 500));}});
+			MODEL.world.processNewStrokeTop(new Stroke(){{pts.addAll(new ArrayList<Point>(){{add(new Point(595, 450));add(new Point(695, 450));}});}});
+			MODEL.world.processNewStrokeTop(new Stroke(){{pts.addAll(new ArrayList<Point>(){{add(new Point(650, 400));add(new Point(650, 500));}});}});
 			
 //			MODEL.processStroke(new Point(595, 450), new Point(695, 450));
 //			MODEL.processStroke(new Point(650, 400), new Point(650, 500));
@@ -2550,8 +2551,8 @@ public class TestSimulating {
 			//MODEL.viewLoc = new Point(575, 375);
 			//MODEL.viewLoc = new Point(560, 400);
 			
-			MODEL.world.processNewStrokeTop(new ArrayList<Point>(){{add(new Point(600, 450));add(new Point(700, 450));}});
-			MODEL.world.processNewStrokeTop(new ArrayList<Point>(){{add(new Point(650, 400));add(new Point(650, 500));}});
+			MODEL.world.processNewStrokeTop(new Stroke(){{pts.addAll(new ArrayList<Point>(){{add(new Point(600, 450));add(new Point(700, 450));}});}});
+			MODEL.world.processNewStrokeTop(new Stroke(){{pts.addAll(new ArrayList<Point>(){{add(new Point(650, 400));add(new Point(650, 500));}});}});
 //			MODEL.processStroke(new Point(600, 450), new Point(700, 450));
 //			MODEL.processStroke(new Point(650, 400), new Point(650, 500));
 			

@@ -10,7 +10,6 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
 import java.util.List;
 
 import com.gutabi.deadlock.utils.Java2DUtils;
@@ -69,21 +68,17 @@ public class StopSign extends Entity {
 		
 		AffineTransform origTransform = g2.getTransform();
 		
-		AffineTransform trans = (AffineTransform)origTransform.clone();
+		g2.translate(p.x, p.y);
 		
-		trans.translate(p.x, p.y);
+		g2.scale(MODEL.METERS_PER_PIXEL, MODEL.METERS_PER_PIXEL);
 		
-		trans.scale(MODEL.METERS_PER_PIXEL, MODEL.METERS_PER_PIXEL);
-		
-		g2.setTransform(trans);
-		
-		BufferedImage im = MODEL.world.stopSign;
-		
-		g2.drawImage(im,
-				(int)(-STOPSIGN_SIZE * MODEL.PIXELS_PER_METER / 2),
-				(int)(-STOPSIGN_SIZE * MODEL.PIXELS_PER_METER / 2),
-				(int)(STOPSIGN_SIZE * MODEL.PIXELS_PER_METER),
-				(int)(STOPSIGN_SIZE * MODEL.PIXELS_PER_METER), null);
+		g2.drawImage(MODEL.world.sheet,
+				(int)(-STOPSIGN_SIZE * MODEL.PIXELS_PER_METER * 0.5),
+				(int)(-STOPSIGN_SIZE * MODEL.PIXELS_PER_METER * 0.5),
+				(int)(STOPSIGN_SIZE * MODEL.PIXELS_PER_METER * 0.5),
+				(int)(STOPSIGN_SIZE * MODEL.PIXELS_PER_METER * 0.5),
+				32, 96, 32+32, 96+32,
+				null);
 		
 		g2.setTransform(origTransform);
 	}

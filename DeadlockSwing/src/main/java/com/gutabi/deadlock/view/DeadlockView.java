@@ -83,7 +83,9 @@ public class DeadlockView {
 		worldOriginY = (int)(panel.getHeight() * 0.5 - (MODEL.world.WORLD_HEIGHT * 0.5 * MODEL.PIXELS_PER_METER));
 		
 		Rect aabb = MODEL.world.getAABB();
-		aabb = Rect.union(aabb, MODEL.stroke.getAABB());
+		if (MODEL.stroke != null) {
+			aabb = Rect.union(aabb, MODEL.stroke.getAABB());
+		}
 		
 		if (drawingAABB != null && aabb.equals(drawingAABB)) {
 			

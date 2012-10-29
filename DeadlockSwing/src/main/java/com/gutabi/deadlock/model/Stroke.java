@@ -15,15 +15,47 @@ import com.gutabi.deadlock.core.Vertex;
 @SuppressWarnings("static-access")
 public class Stroke {
 	
-	private Point lastPoint;
+//	private Point lastPoint;
 	
-//	public List<Point> curPanelStroke = new ArrayList<Point>();
-	public List<Point> curStroke = new ArrayList<Point>();
+	public List<Point> pts;
 	
-	private List<List<Point>> allStrokes = new ArrayList<List<Point>>();
-
-	public void clear() {
-		lastPoint = null;
+	public Stroke() {
+		pts = new ArrayList<Point>();
+	}
+	
+	
+	private Rect aabb;
+	
+	public final Rect getAABB() {
+		return aabb;
+	}
+	
+//	public void press(Point p) {
+//		lastPoint = p;
+//	}
+//	
+//	public void move(Point p) {
+//		lastPoint = null;
+//	}
+	
+	public void add(Point p) {
+//		lastPoint = p;
+		
+		pts.add(p);
+		
+		computeAABB();
+	}
+	
+//	public void drag(Point p) {
+////		lastPoint = p;
+//		
+//		pts.add(p);
+//		
+//		computeAABB();
+//	}
+	
+//	public void clear() {
+//		lastPoint = null;
 		
 		/*
 		 * used to just do clear() for the lists, but that lead to a subtle bug
@@ -34,56 +66,14 @@ public class Stroke {
 		 * always better to treat lists as immutable as possible
 		 */
 		
-//		curPanelStroke = null;
-		curStroke = null;
-	}
-	
-	
-	private Rect aabb;
-	
-	public final Rect getAABB() {
-		return aabb;
-	}
-	
-	public void press(Point p) {
-//		lastPanelPoint = p;
-		lastPoint = p;
-	}
-	
-	public void move(Point p) {
-//		lastPanelPoint = null;
-		lastPoint = p;
-	}
-	
-	public void start(Point p) {
-//		lastPanelPoint = p;
-		lastPoint = p;
-		
-//		curPanelStroke = new ArrayList<Point>();
-		curStroke = new ArrayList<Point>();
-		
-		curStroke.add(p);
-//		curWorldStroke.add(VIEW.panelToWorld(p));
-		
-		allStrokes.add(curStroke);
-		
-		computeAABB();
-	}
-	
-	public void drag(Point p) {
-		lastPoint = p;
-		
-		curStroke.add(p);
-//		curWorldStroke.add(VIEW.panelToWorld(p));
-		
-		computeAABB();
-	}
+//		curStroke = null;
+//	}
 	
 	private void computeAABB() {
 		
 		aabb = null;
 		
-		for (Point p : curStroke) {
+		for (Point p : pts) {
 			aabb = Rect.union(aabb, new Rect(p.x-Vertex.INIT_VERTEX_RADIUS, p.y-Vertex.INIT_VERTEX_RADIUS, 2*Vertex.INIT_VERTEX_RADIUS, 2*Vertex.INIT_VERTEX_RADIUS));
 		}
 		
@@ -106,34 +96,32 @@ public class Stroke {
 	
 	private void paintStroke(Graphics2D g2) {
 		
-		if (curStroke != null && !curStroke.isEmpty()) {
+		if (!pts.isEmpty()) {
 			
 			g2.setColor(Color.RED);
 			
-			int size = curStroke.size();
+			int size = pts.size();
 			int[] xPoints = new int[size];
 			int[] yPoints = new int[size];
 			for (int i = 0; i < size; i++) {
-				Point p = curStroke.get(i);
+				Point p = pts.get(i);
 				xPoints[i] = (int)(p.x * MODEL.PIXELS_PER_METER);
 				yPoints[i] = (int)(p.y * MODEL.PIXELS_PER_METER);
 			}
 			
 			g2.drawPolyline(xPoints, yPoints, size);
 			
-			Point start = curStroke.get(0);
+			Point start = pts.get(0);
 			g2.drawOval(
 					(int)((start.x - Vertex.INIT_VERTEX_RADIUS) * MODEL.PIXELS_PER_METER),
 					(int)((start.y - Vertex.INIT_VERTEX_RADIUS) * MODEL.PIXELS_PER_METER),
 					(int)((2 * Vertex.INIT_VERTEX_RADIUS) * MODEL.PIXELS_PER_METER),
 					(int)((2 * Vertex.INIT_VERTEX_RADIUS) * MODEL.PIXELS_PER_METER));
-		}
-		
-		if (lastPoint != null) {
-			g2.setColor(Color.RED);
+			
+			Point end = pts.get(pts.size()-1);
 			g2.drawOval(
-					(int)((lastPoint.x - Vertex.INIT_VERTEX_RADIUS) * MODEL.PIXELS_PER_METER),
-					(int)((lastPoint.y - Vertex.INIT_VERTEX_RADIUS) * MODEL.PIXELS_PER_METER),
+					(int)((end.x - Vertex.INIT_VERTEX_RADIUS) * MODEL.PIXELS_PER_METER),
+					(int)((end.y - Vertex.INIT_VERTEX_RADIUS) * MODEL.PIXELS_PER_METER),
 					(int)((2 * Vertex.INIT_VERTEX_RADIUS) * MODEL.PIXELS_PER_METER),
 					(int)((2 * Vertex.INIT_VERTEX_RADIUS) * MODEL.PIXELS_PER_METER));
 			
@@ -143,7 +131,7 @@ public class Stroke {
 	
 	private void paintAABB(Graphics2D g2) {
 		
-		if (curStroke != null && !curStroke.isEmpty()) {
+		if (!pts.isEmpty()) {
 			
 			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
 			
