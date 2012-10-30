@@ -102,6 +102,9 @@ public final class Edge extends Entity {
 		return loop;
 	}
 	
+	/**
+	 * how many points?
+	 */
 	public int size() {
 		return spine.size()+1;
 	}
@@ -665,24 +668,23 @@ public final class Edge extends Entity {
 	/**
 	 * @param g2 in pixels
 	 */
-	public void paintSkeleton(Graphics2D g2) {
-		
-		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
-		g2.setColor(Color.BLACK);
-//		g2.setStroke(new BasicStroke(1.0f));
-		
-		int[] xs = new int[spine.size()+1];
-		int[] ys = new int[spine.size()+1];
-		Point a = spine.get(0).a;
-		xs[0] = (int)(a.x * MODEL.PIXELS_PER_METER);
-		ys[0] = (int)(a.y * MODEL.PIXELS_PER_METER);
-		for (int i = 0; i < spine.size(); i++) {
-			Point p = spine.get(i).b;
-			xs[i+1] = (int)(p.x * MODEL.PIXELS_PER_METER);
-			ys[i+1] = (int)(p.y * MODEL.PIXELS_PER_METER);
-		}
-		g2.drawPolyline(xs, ys, spine.size()+1);
-	}
+//	public void paintSkeleton(Graphics2D g2) {
+//		
+//		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+//		g2.setColor(Color.BLACK);
+//		
+//		int[] xs = new int[spine.size()+1];
+//		int[] ys = new int[spine.size()+1];
+//		Point a = spine.get(0).a;
+//		xs[0] = (int)(a.x * MODEL.PIXELS_PER_METER);
+//		ys[0] = (int)(a.y * MODEL.PIXELS_PER_METER);
+//		for (int i = 0; i < spine.size(); i++) {
+//			Point p = spine.get(i).b;
+//			xs[i+1] = (int)(p.x * MODEL.PIXELS_PER_METER);
+//			ys[i+1] = (int)(p.y * MODEL.PIXELS_PER_METER);
+//		}
+//		g2.drawPolyline(xs, ys, spine.size()+1);
+//	}
 	
 	/**
 	 * @param g2 in world coords

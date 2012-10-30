@@ -2,6 +2,8 @@ package com.gutabi.deadlock.core.graph;
 
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 
+import java.awt.Color;
+import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,7 +15,7 @@ import com.gutabi.deadlock.core.Point;
 @SuppressWarnings("static-access")
 public class GraphPositionPath {
 	
-	List<GraphPosition> poss;
+	List<GraphPosition> spine;
 	
 	public final int size;
 	public final GraphPosition start;
@@ -22,13 +24,15 @@ public class GraphPositionPath {
 	public final double[] cumulativeDistancesFromStart;
 	public final double totalLength;
 	
+	List<GraphPositionPathPosition> eventPositions;
+	
 	private final int hash;
 	
 	static Logger logger = Logger.getLogger(GraphPositionPath.class);
 	
 	public GraphPositionPath(List<GraphPosition> poss) {
 		
-		this.poss = poss;
+		this.spine = poss;
 		
 		int h = 17;
 		h = 37 * h + poss.hashCode();
@@ -56,6 +60,27 @@ public class GraphPositionPath {
 		}
 		
 		totalLength = l;
+		
+		
+		
+		eventPositions = new ArrayList<GraphPositionPathPosition>();
+		
+		for (int i = 0; i < poss.size(); i++) {
+			GraphPosition gp = poss.get(i);
+			if (!gp.getEvents().isEmpty()) {
+				assert gp.isBound();
+				if (gp instanceof EdgePosition) {
+					EdgePosition ep = (EdgePosition)gp;
+					/*
+					 * only count signs in the correct direction: edge -> sign -> vertex
+					 */
+					if (poss.get(i+1) instanceof VertexPosition) {
+						eventPositions.add(new GraphPositionPathPosition(this, i, 0.0));
+					}
+				}
+			}
+		}
+		
 		
 		assert check();
 	}
@@ -113,7 +138,7 @@ public class GraphPositionPath {
 	
 	public String toString() {
 		String s = "";
-		for (GraphPosition g : poss) {
+		for (GraphPosition g : spine) {
 			if (g instanceof VertexPosition) {
 				s = s + g + " ";
 			}
@@ -123,40 +148,55 @@ public class GraphPositionPath {
 	
 	
 	public GraphPosition get(int index) {
-		return poss.get(index);
+		return spine.get(index);
 	}
 	
 	
-	
-	public GraphPositionPathPosition hitTest(GraphPosition pos) {
+	/**
+	 * return list of events starting from position pos, and going distance dist
+	 */
+	public List<StopSign> events(GraphPositionPathPosition pos, double dist) {
 		
-		assert pos != null;
-		
-		if (pos.isBound()) {
-			for (int i = 0; i < poss.size(); i++) {
-				GraphPosition test = poss.get(i);
-				if (pos.equals(test)) {
-					return new GraphPositionPathPosition(this, i, 0.0);
-				}
+		List<StopSign> acc = new ArrayList<StopSign>();
+		for (GraphPositionPathPosition e : eventPositions) {
+			if (e.combo >= pos.combo && DMath.lessThanEquals(pos.distanceTo(e), dist)) {
+				acc.addAll(e.gpos.getEvents());
 			}
-			return null;
-		} else {
-			EdgePosition ep = (EdgePosition)pos;
-			GraphPosition ep1 = ep.nextBoundBackward();
-			GraphPosition ep2 = ep.nextBoundForward();
-			for (int i = 0; i < poss.size()-1; i++) {
-				GraphPosition test1 = poss.get(i);
-				GraphPosition test2 = poss.get(i+1);
-				if (ep1.equals(test1) && ep2.equals(test2)) {
-					return new GraphPositionPathPosition(this, i, ep.param);
-				} else if (ep1.equals(test2) && ep2.equals(test1)) {
-					return new GraphPositionPathPosition(this, i, 1-ep.param);
-				}
-			}
-			return null;
 		}
 		
+		return acc;
 	}
+	
+	
+//	public GraphPositionPathPosition hitTest(GraphPosition pos) {
+//		
+//		assert pos != null;
+//		
+//		if (pos.isBound()) {
+//			for (int i = 0; i < spine.size(); i++) {
+//				GraphPosition test = spine.get(i);
+//				if (pos.equals(test)) {
+//					return new GraphPositionPathPosition(this, i, 0.0);
+//				}
+//			}
+//			return null;
+//		} else {
+//			EdgePosition ep = (EdgePosition)pos;
+//			GraphPosition ep1 = ep.nextBoundBackward();
+//			GraphPosition ep2 = ep.nextBoundForward();
+//			for (int i = 0; i < spine.size()-1; i++) {
+//				GraphPosition test1 = spine.get(i);
+//				GraphPosition test2 = spine.get(i+1);
+//				if (ep1.equals(test1) && ep2.equals(test2)) {
+//					return new GraphPositionPathPosition(this, i, ep.param);
+//				} else if (ep1.equals(test2) && ep2.equals(test1)) {
+//					return new GraphPositionPathPosition(this, i, 1-ep.param);
+//				}
+//			}
+//			return null;
+//		}
+//		
+//	}
 	
 	/**
 	 * finds closest position in a graphpositionpath to p
@@ -305,7 +345,7 @@ public class GraphPositionPath {
 	 */
 	public GraphPosition getGraphPosition(int pathIndex, double pathParam) {
 		
-		GraphPosition p1 = poss.get(pathIndex);
+		GraphPosition p1 = spine.get(pathIndex);
 		
 		if (DMath.equals(pathParam, 0.0)) {
 			if (p1 instanceof EdgePosition) {
@@ -314,7 +354,7 @@ public class GraphPositionPath {
 			return p1;
 		}
 		
-		GraphPosition p2 = poss.get(pathIndex+1);
+		GraphPosition p2 = spine.get(pathIndex+1);
 		
 		int graphIndex;
 		double graphParam;
@@ -512,7 +552,7 @@ public class GraphPositionPath {
 			assert bb.v == e.end;
 			
 			GraphPosition cur = EdgePosition.nextBoundfromStart(e);
-				
+			
 			acc.add(cur);
 			
 			while (true) {
@@ -547,10 +587,25 @@ public class GraphPositionPath {
 		
 	}
 	
+	public void paint(Graphics2D g2) {
+		
+		g2.setColor(Color.RED);
+		
+		int[] xs = new int[spine.size()];
+		int[] ys = new int[spine.size()];
+		for (int i = 0; i < spine.size(); i++) {
+			Point p = spine.get(i).p;
+			xs[i] = (int)(p.x * MODEL.PIXELS_PER_METER);
+			ys[i] = (int)(p.y * MODEL.PIXELS_PER_METER);
+		}
+		g2.drawPolyline(xs, ys, spine.size());
+		
+	}
+	
 	private boolean check() {
-		for (int i = 1; i < poss.size(); i++) {
-			GraphPosition cur = poss.get(i);
-			GraphPosition prev = poss.get(i-1);
+		for (int i = 1; i < spine.size(); i++) {
+			GraphPosition cur = spine.get(i);
+			GraphPosition prev = spine.get(i-1);
 			
 			assert prev.nextBoundToward(cur).equals(cur);
 			

@@ -68,7 +68,7 @@ public class GraphPositionPathPosition {
 	}
 	
 	public String toString() {
-		return index + " " + param + " (" + lengthToStartOfPath + "/" + path.totalLength + ")";
+		return "GPPP " + index + " " + param + " (" + lengthToStartOfPath + "/" + path.totalLength + ")";
 	}
 	
 	

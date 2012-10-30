@@ -21,6 +21,9 @@ public class SimulationRunnable implements Runnable {
 		
 		MODEL.world.preStart();
 		
+		MODEL.world.renderBackground();
+		VIEW.repaint();
+		
 		outer:
 		while (true) {
 			

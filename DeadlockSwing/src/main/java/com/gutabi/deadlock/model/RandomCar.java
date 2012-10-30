@@ -13,7 +13,7 @@ import com.gutabi.deadlock.core.graph.Source;
 @SuppressWarnings("static-access")
 public class RandomCar extends Car {
 	
-	private final double speed = 6.0;
+	private final double speed = 2.0;
 	
 	static Logger logger = Logger.getLogger(RandomCar.class);
 	
@@ -50,10 +50,9 @@ public class RandomCar extends Car {
 		
 		if (MODEL.DEBUG_DRAW) {
 			
-			// paint random path
-			d;
-			
 			g2.scale(MODEL.METERS_PER_PIXEL, MODEL.METERS_PER_PIXEL);
+			
+			overallPath.paint(g2);
 			
 			paintAABB(g2);
 			

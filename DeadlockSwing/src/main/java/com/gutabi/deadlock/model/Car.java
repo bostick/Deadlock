@@ -8,6 +8,8 @@ import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Path2D;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.jbox2d.collision.AABB;
@@ -29,6 +31,7 @@ import com.gutabi.deadlock.core.graph.GraphPositionPath;
 import com.gutabi.deadlock.core.graph.GraphPositionPathPosition;
 import com.gutabi.deadlock.core.graph.Sink;
 import com.gutabi.deadlock.core.graph.Source;
+import com.gutabi.deadlock.core.graph.StopSign;
 
 @SuppressWarnings("static-access")
 public abstract class Car extends Entity {
@@ -68,8 +71,7 @@ public abstract class Car extends Entity {
 	protected boolean b2dInited;
 	
 	/*
-	 * trans is updated from b2dBody transformation after every update
-	 * we use this since we can actually use it to do transforms
+	 * dynamic properties
 	 */
 	Point p;
 	Vec2 pVec2;
@@ -87,6 +89,17 @@ public abstract class Car extends Entity {
 	Point worldPoint2;
 	Point worldPoint3;
 	Point worldPoint4;
+	
+	/*
+	 * 
+	 */
+	StopSign curEvent;
+	List<StopSign> oldEvents = new ArrayList<StopSign>();
+	double decelTime = -1;
+	double accelTime = -1;
+	double stoppedTime = -1;
+	Point goalPoint;
+	boolean braking;
 	
 	static Logger logger = Logger.getLogger(Car.class);
 	
@@ -173,7 +186,7 @@ public abstract class Car extends Entity {
 		FixtureDef fixtureDef = new FixtureDef();
 		fixtureDef.shape = b2dShape;
 		fixtureDef.density = 1.0f;
-		fixtureDef.friction = 1f;
+		fixtureDef.friction = 0.3f;
 		b2dFixture = b2dBody.createFixture(fixtureDef);
 		
 		mass = b2dBody.getMass();
@@ -195,7 +208,11 @@ public abstract class Car extends Entity {
 		vel = b2dBody.getLinearVelocity();
 		angle = b2dBody.getAngle();
 		angularVel = b2dBody.getAngularVelocity();
+		
 		forwardVel = currentRightNormal.mul(Vec2.dot(currentRightNormal, vel));
+		if (DMath.equals(vel.length(), 0.0)) {
+			String.class.getName();
+		}
 		
 		worldPoint1 = carToWorld(p1);
 		worldPoint2 = carToWorld(p2);
@@ -304,24 +321,12 @@ public abstract class Car extends Entity {
 	public void preStep(double t) {
 		
 		switch (state) {
-		case NEW: {
-			
+		case NEW:
 			state = CarStateEnum.RUNNING;
-			
+		case RUNNING:
 			updateFriction();
-			
-			updateDrive();
-			
+			updateDrive(t);
 			break;
-		}
-		case RUNNING: {
-			
-			updateFriction();
-			
-			updateDrive();
-			
-			break;
-		}
 		case CRASHED:
 			
 			if (b2dBody.isAwake()) {
@@ -375,36 +380,123 @@ public abstract class Car extends Entity {
 //		b2dBody.applyLinearImpulse(currentRightNormal.mul(cancelingForwardImpulse), b2dBody.getWorldCenter());
 //		b2dBody.applyLinearImpulse(currentUpNormal.mul(cancelingLateralImpulse), b2dBody.getWorldCenter());
 		
-		b2dBody.applyForce(currentRightNormal.mul(cancelingForwardForce), pVec2);
-		b2dBody.applyForce(currentUpNormal.mul(cancelingLateralForce), pVec2);
+		if (!DMath.equals(cancelingForwardForce, 0.0)) {
+//			logger.debug("cancelingForwardForce: " + cancelingForwardForce);
+			b2dBody.applyForce(currentRightNormal.mul(cancelingForwardForce), pVec2);
+		}
+		if (!DMath.equals(cancelingLateralForce, 0.0)) {
+//			logger.debug("cancelingLateralForce: " + cancelingLateralForce);
+			b2dBody.applyForce(currentUpNormal.mul(cancelingLateralForce), pVec2);
+		}
 		
 		float cancelingAngImpulse = cancelingAngularImpulseCoefficient() * momentOfInertia * -angularVel;
 		float cancelingAngForce = cancelingAngularImpulseCoefficient() * momentOfInertia * -angularVel * (float)(1/MODEL.dt);
 		
 		//b2dBody.applyAngularImpulse(cancelingAngImpulse);
-		b2dBody.applyTorque(cancelingAngForce);
+		if (!DMath.equals(cancelingAngForce, 0.0)) {
+			b2dBody.applyTorque(cancelingAngForce);
+		}
 	}
 	
-	private void updateDrive() {
+	private void updateDrive(double t) {
 		
-		double lookaheadDistance = 1.5;
+		double steeringLookaheadDistance = CAR_LENGTH * 1.5;
+		double eventLookaheadDistance = CAR_LENGTH * 3;
 		
-		float forwardSpeed = forwardVel.length();
+		if (curEvent == null) {
+			List<StopSign> events = overallPath.events(overallPos, Math.min(eventLookaheadDistance, overallPos.lengthToEndOfPath));
+			/*
+			 * since we deal with events before actually reaching them (front of car reaches them vs center of car where position is counted),
+			 * simply keep a list of already processed events to use to filter
+			 */
+			events.removeAll(oldEvents);
+			
+			if (!events.isEmpty()) {
+				
+				logger.debug("setting curEvent: " + events + "     " + oldEvents);
+				
+				curEvent = events.get(0);
+			}
+		}
+		double forwardSpeed = forwardVel.length();
+		double goalForwardVel;
+		Point dp;
+		if (curEvent != null) {
+			
+			if (stoppedTime == -1) {
+				
+				if (decelTime == -1) {
+					
+					decelTime = t;
+					
+					logger.debug("decelTime: " + decelTime);
+					
+					braking = true;
+					
+					goalPoint = curEvent.getPoint();
+					
+				}
+				
+				dp = new Point(goalPoint.x-p.x, goalPoint.y-p.y);
+				/*
+				 * subtract CAR_LENGTH/2 to get the front of the car at the sign
+				 */
+				goalForwardVel = getMetersPerSecond() * ((dp.length - CAR_LENGTH/2) / (eventLookaheadDistance - CAR_LENGTH/2));
+//				if (goalForwardVel < 0.01) {
+//					goalForwardVel = 0;
+//				}
+				
+			} else if (t <= stoppedTime + 2) {
+				
+				goalPoint = curEvent.getPoint();
+				dp = new Point(goalPoint.x-p.x, goalPoint.y-p.y);
+				goalForwardVel = 0;
+				
+			} else {
+				
+				accelTime = t;
+				
+				logger.debug("accelTime: " + accelTime);
+				
+				oldEvents.add(curEvent);
+				curEvent = null;
+				stoppedTime = -1;
+				decelTime = -1;
+				
+				braking = false;
+				
+				GraphPositionPathPosition next = overallPos.travel(Math.min(steeringLookaheadDistance, overallPos.lengthToEndOfPath));
+				goalPoint = next.gpos.p;
+				dp = new Point(goalPoint.x-p.x, goalPoint.y-p.y);
+				goalForwardVel = (float)getMetersPerSecond();
+				
+			}
+			
+		} else {
+			braking = false;
+			GraphPositionPathPosition next = overallPos.travel(Math.min(steeringLookaheadDistance, overallPos.lengthToEndOfPath));
+			goalPoint = next.gpos.p;
+			dp = new Point(goalPoint.x-p.x, goalPoint.y-p.y);
+			goalForwardVel = (float)getMetersPerSecond();
+		}
 		
-		GraphPositionPathPosition next = overallPos.travel(Math.min(lookaheadDistance, overallPos.lengthToEndOfPath));
-		Point goalPoint = next.gpos.p;
-		
-		Point dp = new Point(goalPoint.x-p.x, goalPoint.y-p.y);
-		
-		float goalForwardVel = (float)getMetersPerSecond();
-		
-		float acc = goalForwardVel - forwardSpeed;
+		float acc = (float)(goalForwardVel - forwardSpeed);
+//		if (braking) {
+//			if (acc > 0) {
+//				acc = 0;
+//			}
+//		} else {
+//			
+//		}
 		
 		float forwardImpulse = forwardImpulseCoefficient() * mass * acc;
 		float forwardForce = forwardImpulseCoefficient() * mass * acc * (float)(1/MODEL.dt);
 		
 		//b2dBody.applyLinearImpulse(currentRightNormal.mul(forwardImpulse), b2dBody.getWorldCenter());
-		b2dBody.applyForce(currentRightNormal.mul(forwardForce), pVec2);
+		if (!DMath.equals(forwardForce, 0.0)) {
+//			logger.debug("forwardForce: " + forwardForce);
+			b2dBody.applyForce(currentRightNormal.mul(forwardForce), pVec2);
+		}
 		
 		
 		
@@ -435,7 +527,9 @@ public abstract class Car extends Entity {
 		float angForce = momentOfInertia * goalAngVel * (float)(1/MODEL.dt);
 		
 //		b2dBody.applyAngularImpulse(angImpulse);
-		b2dBody.applyTorque(angForce);
+		if (!DMath.equals(angForce, 0.0)) {
+			b2dBody.applyTorque(angForce);
+		}
 		
 	}
 	
@@ -443,7 +537,7 @@ public abstract class Car extends Entity {
 	/**
 	 * return true if car should persist after time step
 	 */
-	public boolean postStep() {
+	public boolean postStep(double t) {
 		
 		switch (state) {
 		case NEW:
@@ -451,6 +545,23 @@ public abstract class Car extends Entity {
 		case RUNNING: {
 			
 			computeDynamicProperties();
+			
+			if (curEvent != null) {
+				
+				if (stoppedTime == -1) {
+					
+					if (DMath.equals(vel.length(), 0.0)) {
+						
+						logger.debug("stopped at time " + t);
+						stoppedTime = t;
+						
+					}
+					
+				} else {
+					
+				}
+				
+			}
 			
 			Sink s = (Sink)overallPath.end.getEntity();
 			boolean sinked = false;
@@ -509,6 +620,8 @@ public abstract class Car extends Entity {
 			
 			g2.scale(MODEL.METERS_PER_PIXEL, MODEL.METERS_PER_PIXEL);
 			
+			g2.fillOval((int)(goalPoint.x * MODEL.PIXELS_PER_METER), (int)(goalPoint.y * MODEL.PIXELS_PER_METER), 2, 2);
+			
 			paintAABB(g2);
 			
 			g2.setTransform(origTransform);
@@ -552,13 +665,16 @@ public abstract class Car extends Entity {
 //				sheetCol+64, sheetRow, sheetCol+64+64, sheetRow+32,
 //				null);
 //		
-//		g2.drawImage(MODEL.world.sheet,
-//				(int)(-CAR_LENGTH * MODEL.PIXELS_PER_METER * 0.5),
-//				(int)(-CAR_LENGTH * MODEL.PIXELS_PER_METER * 0.25),
-//				(int)(CAR_LENGTH * MODEL.PIXELS_PER_METER * 0.5),
-//				(int)(CAR_LENGTH * MODEL.PIXELS_PER_METER * 0.25),
-//				sheetCol+64+64, sheetRow, sheetCol+64+64+64, sheetRow+32,
-//				null);
+		if (braking) {
+			g2.drawImage(MODEL.world.sheet,
+					(int)(-CAR_LENGTH * MODEL.PIXELS_PER_METER * 0.5),
+					(int)(-CAR_LENGTH * MODEL.PIXELS_PER_METER * 0.25),
+					(int)(CAR_LENGTH * MODEL.PIXELS_PER_METER * 0.5),
+					(int)(CAR_LENGTH * MODEL.PIXELS_PER_METER * 0.25),
+					sheetCol+64+64, sheetRow, sheetCol+64+64+64, sheetRow+32,
+					null);
+		}
+		
 	}
 	
 	private void paintRect(Graphics2D g2) {

@@ -38,6 +38,10 @@ public class StopSign extends Entity {
 		computePath();
 	}
 	
+	public Point getPoint() {
+		return p;
+	}
+	
 	public boolean hitTest(Point p, double radius) {
 		return DMath.lessThanEquals(Point.distance(p, this.p), r + radius);
 	}
@@ -49,6 +53,8 @@ public class StopSign extends Entity {
 		} else {
 			p = e.getEndBorderPoint();
 		}
+		
+		computeAABB();
 	}
 	
 	private void computePath() {
@@ -58,12 +64,11 @@ public class StopSign extends Entity {
 		
 		path = Java2DUtils.listToPath(poly);
 		
-		computeAABB();
 	}	
 	
 	private void computeAABB() {
 		Rectangle2D bound = path.getBounds2D();
-		aabb = new Rect(bound.getX(), bound.getY(), bound.getWidth(), bound.getHeight());
+		aabb = new Rect(p.x + bound.getX(), p.y + bound.getY(), bound.getWidth(), bound.getHeight());
 	}
 	
 	public void paint(Graphics2D g2) {
@@ -85,11 +90,23 @@ public class StopSign extends Entity {
 				null);
 		
 		g2.setTransform(origTransform);
+		
+		if (MODEL.DEBUG_DRAW) {
+			
+			g2.scale(MODEL.METERS_PER_PIXEL, MODEL.METERS_PER_PIXEL);
+			
+			paintAABB(g2);
+			
+			g2.setTransform(origTransform);
+			
+		}
 	}
 	
 	public void paintHilite(Graphics2D g2) {
 		
 		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+		
+		g2.translate(p.x, p.y);
 		
 		g2.setColor(hiliteColor);
 		g2.fill(path);

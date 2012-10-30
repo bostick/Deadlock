@@ -324,7 +324,7 @@ public class World {
 		
 		synchronized (MODEL) {
 			for (Car c : cars) {
-				boolean shouldPersist = c.postStep();
+				boolean shouldPersist = c.postStep(t);
 				if (!shouldPersist) {
 					if (MODEL.hilited == c) {
 						MODEL.hilited = null;

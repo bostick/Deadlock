@@ -955,7 +955,7 @@ public class Graph {
 			}
 			
 			for (Edge e : edgesCopy) {
-				e.paintSkeleton(g2);
+//				e.paintSkeleton(g2);
 				e.paintBorders(g2);
 			}
 		}

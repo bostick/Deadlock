@@ -189,10 +189,11 @@ public class Source extends Vertex {
 		
 		if (MODEL.DEBUG_DRAW) {
 			
-			// paint path to sink
-			d;
-			
 			g2.scale(MODEL.METERS_PER_PIXEL, MODEL.METERS_PER_PIXEL);
+			
+//			if (shortestPathToMatchingSink != null) {
+//				shortestPathToMatchingSink.paint(g2);
+//			}
 			
 			paintAABB(g2);
 			

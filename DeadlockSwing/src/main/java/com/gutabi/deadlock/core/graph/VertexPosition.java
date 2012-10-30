@@ -2,6 +2,9 @@ package com.gutabi.deadlock.core.graph;
 
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Entity;
 
@@ -9,9 +12,13 @@ public class VertexPosition extends GraphPosition {
 	
 	public final Vertex v;
 	
+	public final List<StopSign> events;
+	
 	public VertexPosition(Vertex v) {
 		super(v.p);
 		this.v = v;
+		
+		events = new ArrayList<StopSign>();
 	}
 	
 	public Entity getEntity() {
@@ -20,6 +27,10 @@ public class VertexPosition extends GraphPosition {
 	
 	public boolean isBound() {
 		return true;
+	}
+	
+	public List<StopSign> getEvents() {
+		return events;
 	}
 	
 	public String toString() {
