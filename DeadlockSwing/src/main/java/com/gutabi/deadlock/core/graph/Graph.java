@@ -837,7 +837,7 @@ public class Graph {
 				pts.add(e2.get(i));
 			}
 			
-			createEdge(e1End, e2End, pts, (e1.startSign!=null?1:0) + (e2.endSign!=null?2:0));
+			createEdge(e1End, e2End, pts, (e1.endSign!=null?1:0) + (e2.endSign!=null?2:0));
 			
 			destroyEdge(e1);
 			destroyEdge(e2);
