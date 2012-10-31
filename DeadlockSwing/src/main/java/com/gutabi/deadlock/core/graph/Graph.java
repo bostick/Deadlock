@@ -109,10 +109,10 @@ public class Graph {
 		Set<Vertex> affectedVertices = new HashSet<Vertex>();
 		
 		/*
-		 * copy, since removing edges modifies v.getEdges()
+		 * copy, since removing edges modifies v.eds
 		 * and use a set since loops will be in the list twice
 		 */
-		Set<Edge> eds = new HashSet<Edge>(v.getEdges());
+		Set<Edge> eds = new HashSet<Edge>(v.eds);
 		for (Edge e : eds) {
 			
 			if (!e.isLoop()) {
@@ -159,7 +159,7 @@ public class Graph {
 		
 		if (v instanceof Intersection) {
 			
-			List<Edge> cons = v.getEdges();
+			List<Edge> cons = v.eds;
 			
 			for (Edge e : cons) {
 				assert edges.contains(e);
@@ -305,6 +305,14 @@ public class Graph {
 		}
 	}
 	
+	public void postStop() {
+		
+		for (Vertex v : getAllVertices()) {
+			v.postStop();
+		}
+		
+	}
+	
 	public void computeVertexRadii() {
 		
 		List<Vertex> all = getAllVertices();
@@ -364,8 +372,6 @@ public class Graph {
 	
 	
 	
-	
-	
 	public List<Vertex> shortestPath(Vertex start, Vertex end) {
 		if (start == end) {
 			throw new IllegalArgumentException();
@@ -409,9 +415,9 @@ public class Graph {
 	
 	public Vertex randomPathChoice(Edge prev, Vertex start, Vertex end) {
 		
-		List<Edge> eds = new ArrayList<Edge>(start.getEdges());
+		List<Edge> eds = new ArrayList<Edge>(start.eds);
 		
-		for (Edge e : start.getEdges()) {
+		for (Edge e : start.eds) {
 			if (prev != null && prev == e) {
 				eds.remove(e);
 			} else {
@@ -467,10 +473,10 @@ public class Graph {
 		if (v == end) {
 			return false;
 		}
-		if (v.getEdges().size() == 1) {
+		if (v.eds.size() == 1) {
 			return true;
 		} else {
-			List<Edge> eds = new ArrayList<Edge>(v.getEdges());
+			List<Edge> eds = new ArrayList<Edge>(v.eds);
 			eds.remove(e);
 			for (Edge ee : eds) {
 				Vertex other;
@@ -778,9 +784,9 @@ public class Graph {
 	 */
 	private void merge(Vertex v) {
 		
-		assert v.getEdges().size() == 2;
-		Edge e1 = v.getEdges().get(0);
-		Edge e2 = v.getEdges().get(1);
+		assert v.eds.size() == 2;
+		Edge e1 = v.eds.get(0);
+		Edge e2 = v.eds.get(1);
 		
 		assert edges.contains(e1);
 		assert edges.contains(e2);
@@ -803,7 +809,7 @@ public class Graph {
 		if (e1 == e2) {
 			// in the middle of merging a stand-alone loop
 			assert v == e1Start && v == e1End;
-			assert v.getEdges().size() == 2;
+			assert v.eds.size() == 2;
 				
 			List<Point> pts = new ArrayList<Point>();
 			

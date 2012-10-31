@@ -53,7 +53,7 @@ public class VertexPosition extends GraphPosition {
 	 */
 	public GraphPosition travel(Edge e, Vertex dest, double dist) {
 		
-		if (!(v.getEdges().contains(e))) {
+		if (!(v.eds.contains(e))) {
 			throw new IllegalArgumentException();
 		}
 		if (DMath.equals(dist, 0.0)) {

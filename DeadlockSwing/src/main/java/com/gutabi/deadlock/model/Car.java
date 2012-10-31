@@ -32,15 +32,16 @@ import com.gutabi.deadlock.core.graph.GraphPositionPathPosition;
 import com.gutabi.deadlock.core.graph.Sink;
 import com.gutabi.deadlock.core.graph.Source;
 import com.gutabi.deadlock.core.graph.StopSign;
+import com.gutabi.deadlock.core.graph.VertexPosition;
 
 @SuppressWarnings("static-access")
 public abstract class Car extends Entity {
 	
 	public static final double CAR_LENGTH = 1.0;
-	public static final double COMPLETE_STOP_WAIT_TIME = 1.0;
+	public static final double COMPLETE_STOP_WAIT_TIME = 0.0;
 	double steeringLookaheadDistance = CAR_LENGTH * 1.5;
 //	double eventLookaheadDistance = CAR_LENGTH * 3;
-	
+	double eventLookaheadDistance = getMetersPerSecond() * 0.2;
 	
 	
 	protected int sheetRow;
@@ -99,9 +100,11 @@ public abstract class Car extends Entity {
 	 * 
 	 */
 	StopSign curEvent;
-	List<StopSign> oldEvents = new ArrayList<StopSign>();
+	GraphPositionPathPosition curEventPosition;
+	GraphPositionPathPosition curEventMatchingPosition;
+	List<GraphPositionPathPosition> oldEventPositions = new ArrayList<GraphPositionPathPosition>();
 	double decelTime = -1;
-//	double accelTime = -1;
+	double accelTime = -1;
 	double stoppedTime = -1;
 	Point goalPoint;
 	
@@ -245,9 +248,7 @@ public abstract class Car extends Entity {
 		
 		computeAABB();
 		
-		double actualDistance = forwardVel.length() * MODEL.dt;
-		
-		GraphPositionPathPosition max = overallPos.travel(Math.min(2 * actualDistance, overallPos.lengthToEndOfPath));
+		GraphPositionPathPosition max = overallPos.travel(Math.min(2 * CAR_LENGTH, overallPos.lengthToEndOfPath));
 		overallPos = overallPath.findClosestGraphPositionPathPosition(p, overallPos, max);
 		
 	}
@@ -328,21 +329,23 @@ public abstract class Car extends Entity {
 			
 		} else {
 			
-			double eventLookaheadDistance = getMetersPerSecond() * 0.6;
-			
 			if (curEvent == null) {
-				List<StopSign> events = overallPath.events(overallPos, Math.min(eventLookaheadDistance, overallPos.lengthToEndOfPath));
+				List<GraphPositionPathPosition> eventPositions = overallPath.eventPositions(overallPos, Math.min(eventLookaheadDistance, overallPos.lengthToEndOfPath));
 				/*
 				 * since we deal with events before actually reaching them (front of car reaches them vs center of car where position is counted),
 				 * simply keep a list of already processed events to use to filter
 				 */
-				events.removeAll(oldEvents);
+				eventPositions.removeAll(oldEventPositions);
 				
-				if (!events.isEmpty()) {
+				if (!eventPositions.isEmpty()) {
 					
-					logger.debug("setting curEvent: " + events + "     " + oldEvents);
+//					logger.debug("setting curEvent: " + events + "     " + oldEvents);
 					
-					curEvent = events.get(0);
+					curEventPosition = eventPositions.get(0);
+					GraphPositionPathPosition n = curEventPosition.nextBound();
+					assert n.gpos instanceof VertexPosition;
+					curEventMatchingPosition = n.nextBound().travel(CAR_LENGTH / 2);
+					curEvent = curEventPosition.gpos.getEvents().get(0);
 					
 				}
 			}
@@ -350,22 +353,38 @@ public abstract class Car extends Entity {
 			if (curEvent != null) {
 				
 				if (decelTime == -1) {
+					// start braking
 					
 					logger.debug("decel: " + t);
+					
+					curEvent.v.queue.add(this);
 					
 					assert state == CarStateEnum.DRIVING;
 					state = CarStateEnum.BRAKING;
 					
-				} else if (stoppedTime != -1 && t > stoppedTime + COMPLETE_STOP_WAIT_TIME) {
+				} else if (stoppedTime != -1 && t > stoppedTime + COMPLETE_STOP_WAIT_TIME && accelTime == -1 && curEvent.v.queue.get(0) == this) {
+					// start driving
 					
-					oldEvents.add(curEvent);
-					curEvent = null;
-					stoppedTime = -1;
-					decelTime = -1;
+					oldEventPositions.add(curEventPosition);
 					
 					assert state == CarStateEnum.BRAKING;
 					state = CarStateEnum.DRIVING;
+					
+				} else if (overallPos.combo >= curEventMatchingPosition.combo) {
+					assert curEvent.v.queue.get(0) == this;
+					
+					stoppedTime = -1;
+					decelTime = -1;
+					accelTime = -1;
+					
+					curEvent.v.queue.remove(this);
+					
+					curEventPosition = null;
+					curEventMatchingPosition = null;
+					curEvent = null;
+					
 				}
+				
 				
 			} else {
 				assert state == CarStateEnum.DRIVING;
@@ -402,7 +421,7 @@ public abstract class Car extends Entity {
 	}
 	
 	private float cancelingAngularImpulseCoefficient() {
-		return 0.05f;
+		return 0.1f;
 	}
 	
 	private float forwardImpulseCoefficient() {
@@ -419,7 +438,7 @@ public abstract class Car extends Entity {
 	 * 3 car lengths for 180 deg = 3 meters for 3.14 radians
 	 */
 	private double maxRadsPerMeter() {
-		return 0.04;
+		return 0.4;
 	}
 	
 	private void updateFriction() {
@@ -456,6 +475,10 @@ public abstract class Car extends Entity {
 	
 	private void updateDrive(double t) {
 		
+		if (stoppedTime != -1) {
+			accelTime = t;
+		}
+		
 		double goalForwardVel = (float)getMetersPerSecond();
 		
 		double forwardSpeed = forwardVel.length();
@@ -480,8 +503,6 @@ public abstract class Car extends Entity {
 	
 	private void updateBrake(double t) {
 		
-		double eventLookaheadDistance = getMetersPerSecond() * 0.6;
-		
 		double forwardSpeed = forwardVel.length();
 		
 		Point dp;
@@ -497,9 +518,12 @@ public abstract class Car extends Entity {
 			 * subtract CAR_LENGTH/2 to get the front of the car at the sign
 			 */
 			goalForwardVel = getMetersPerSecond() * ((dp.length - CAR_LENGTH/2) / (eventLookaheadDistance - CAR_LENGTH/2));
-//			goalForwardVel = 0;
+			if (goalForwardVel < 1.0) {
+				goalForwardVel = 0;
+			}
+			goalForwardVel = 0;
 		} else {
-			assert t <= stoppedTime + COMPLETE_STOP_WAIT_TIME;
+//			assert t <= stoppedTime + COMPLETE_STOP_WAIT_TIME;
 			
 			dp = new Point(goalPoint.x-p.x, goalPoint.y-p.y);
 			goalForwardVel = 0;

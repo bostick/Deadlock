@@ -16,6 +16,7 @@ import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.Rect;
+import com.gutabi.deadlock.model.Car;
 import com.gutabi.deadlock.utils.Java2DUtils;
 
 @SuppressWarnings("static-access")
@@ -29,6 +30,8 @@ public abstract class Vertex extends Entity {
 	
 	protected Path2D path;
 	protected double r;
+	
+	public final List<Car> queue = new ArrayList<Car>();
 	
 	private final int hash;
 	
@@ -71,10 +74,6 @@ public abstract class Vertex extends Entity {
 		eds.remove(e);
 	}
 	
-	public List<Edge> getEdges() {
-		return eds;
-	}
-	
 	
 	
 	public boolean hitTest(Point p, double radius) {
@@ -89,6 +88,16 @@ public abstract class Vertex extends Entity {
 			return null;
 		}
 	}
+	
+	public void postStop() {
+		queue.clear();
+	}
+	
+	
+	
+	
+	
+	
 	
 	private void computePath() {
 		Shape s = new Ellipse2D.Double(-r, -r, 2 * r, 2 * r);
@@ -273,9 +282,13 @@ public abstract class Vertex extends Entity {
 		
 		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
 		g2.setColor(Color.WHITE);
+		
 		Point worldPoint = p.minus(new Point(r, 0));
 		Point panelPoint = worldPoint.multiply(MODEL.PIXELS_PER_METER);
+		
 		g2.drawString(Integer.toString(id), (int)(panelPoint.x), (int)(panelPoint.y));
+		
+		g2.drawString(Integer.toString(queue.size()), (int)(panelPoint.x + 10), (int)(panelPoint.y));
 	}
 	
 	public void check() {

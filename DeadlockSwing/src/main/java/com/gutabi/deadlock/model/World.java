@@ -281,6 +281,8 @@ public class World {
 	 */
 	public void postStop() {
 		
+		graph.postStop();
+		
 		synchronized (MODEL) {
 			for (Car c : cars) {
 				c.destroy();

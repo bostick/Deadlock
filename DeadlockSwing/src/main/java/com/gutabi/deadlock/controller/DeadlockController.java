@@ -184,7 +184,7 @@ public class DeadlockController implements ActionListener {
 						
 						if (hit instanceof Vertex) {
 							
-							((Vertex) hit).getEdges();
+//							((Vertex) hit).getEdges();
 							
 						} else if (hit instanceof Edge) {
 							

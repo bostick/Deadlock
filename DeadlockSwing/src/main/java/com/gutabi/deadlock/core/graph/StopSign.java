@@ -23,7 +23,9 @@ public class StopSign extends Entity {
 	
 	public static final double STOPSIGN_SIZE = 0.5;
 	
-	Edge e;
+	public final Edge e;
+	public final Vertex v;
+	
 	int dir;
 	Point p;
 	double r = 0.5 * STOPSIGN_SIZE;
@@ -33,6 +35,13 @@ public class StopSign extends Entity {
 	public StopSign(Edge e, int dir) {
 		this.e = e;
 		this.dir = dir;
+		
+		if (dir == 0) {
+			v = e.start;
+		} else {
+			v = e.end;
+		}
+		
 		hiliteColor = Color.RED;
 		
 		computePath();

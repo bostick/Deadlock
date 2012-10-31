@@ -155,12 +155,12 @@ public class GraphPositionPath {
 	/**
 	 * return list of events starting from position pos, and going distance dist
 	 */
-	public List<StopSign> events(GraphPositionPathPosition pos, double dist) {
+	public List<GraphPositionPathPosition> eventPositions(GraphPositionPathPosition pos, double dist) {
 		
-		List<StopSign> acc = new ArrayList<StopSign>();
+		List<GraphPositionPathPosition> acc = new ArrayList<GraphPositionPathPosition>();
 		for (GraphPositionPathPosition e : eventPositions) {
 			if (e.combo >= pos.combo && DMath.lessThanEquals(pos.distanceTo(e), dist)) {
-				acc.addAll(e.gpos.getEvents());
+				acc.add(e);
 			}
 		}
 		
