@@ -2,9 +2,6 @@ package com.gutabi.deadlock.core.graph;
 
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
@@ -20,7 +17,8 @@ public class EdgePosition extends GraphPosition {
 	public final double lengthToStartOfEdge;
 	public final double lengthToEndOfEdge;
 	
-	public final List<StopSign> events;
+//	public final List<StopSign> events;
+	public final StopSign sign;
 	
 	public final int hash;
 	
@@ -41,24 +39,21 @@ public class EdgePosition extends GraphPosition {
 		this.index = index;
 		this.param = param;
 		
-		events = new ArrayList<StopSign>();
+//		events = new ArrayList<StopSign>();
 		if (DMath.equals(param, 0.0)) {
 			bound = true;
 			
 			if (index == 1) {
-				if (e.startSign != null) {
-					assert p.equals(e.startSign.p);
-					events.add(e.startSign);
-				}
+				sign = e.startSign;
 			} else if (index == e.size()-2) {
-				if (e.endSign != null) {
-					assert p.equals(e.endSign.p);
-					events.add(e.endSign);
-				}
+				sign = e.endSign;
+			} else {
+				sign = null;
 			}
 			
 		} else {
 			bound = false;
+			sign = null;
 		}
 		
 		Point segStart = e.get(index);
@@ -86,9 +81,9 @@ public class EdgePosition extends GraphPosition {
 		return e + " " + index + " " + param + "(" + lengthToStartOfEdge + "/" + e.getTotalLength() + ")";
 	}
 	
-	public List<StopSign> getEvents() {
-		return events;
-	}
+//	public List<StopSign> getEvents() {
+//		return events;
+//	}
 	
 	public boolean equalsP(GraphPosition o) {
 		if (this == o) {

@@ -1,16 +1,10 @@
 package com.gutabi.deadlock.model;
 
-import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
-
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
-import java.awt.geom.AffineTransform;
-
 import org.apache.log4j.Logger;
 
 import com.gutabi.deadlock.core.graph.Source;
 
-@SuppressWarnings("static-access")
+//@SuppressWarnings("static-access")
 public class RandomCar extends Car {
 	
 	private final double speed = 2.0;

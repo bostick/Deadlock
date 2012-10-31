@@ -24,7 +24,7 @@ public class GraphPositionPath {
 	public final double[] cumulativeDistancesFromStart;
 	public final double totalLength;
 	
-	List<GraphPositionPathPosition> eventPositions;
+	List<GraphPositionPathPosition> borderPositions;
 	
 	private final int hash;
 	
@@ -63,20 +63,17 @@ public class GraphPositionPath {
 		
 		
 		
-		eventPositions = new ArrayList<GraphPositionPathPosition>();
+		borderPositions = new ArrayList<GraphPositionPathPosition>();
 		
 		for (int i = 0; i < poss.size(); i++) {
 			GraphPosition gp = poss.get(i);
-			if (!gp.getEvents().isEmpty()) {
-				assert gp.isBound();
-				if (gp instanceof EdgePosition) {
-//					EdgePosition ep = (EdgePosition)gp;
-					/*
-					 * only count signs in the correct direction: edge -> sign -> vertex
-					 */
-					if (poss.get(i+1) instanceof VertexPosition) {
-						eventPositions.add(new GraphPositionPathPosition(this, i, 0.0));
-					}
+			if (gp instanceof EdgePosition && poss.get(i+1) instanceof VertexPosition) {
+//				EdgePosition ep = (EdgePosition)gp;
+				/*
+				 * only count signs in the correct direction: edge -> sign -> vertex
+				 */
+				if (poss.get(i+1) instanceof VertexPosition) {
+					borderPositions.add(new GraphPositionPathPosition(this, i, 0.0));
 				}
 			}
 		}
@@ -155,10 +152,10 @@ public class GraphPositionPath {
 	/**
 	 * return list of events starting from position pos, and going distance dist
 	 */
-	public List<GraphPositionPathPosition> eventPositions(GraphPositionPathPosition pos, double dist) {
+	public List<GraphPositionPathPosition> borderPositions(GraphPositionPathPosition pos, double dist) {
 		
 		List<GraphPositionPathPosition> acc = new ArrayList<GraphPositionPathPosition>();
-		for (GraphPositionPathPosition e : eventPositions) {
+		for (GraphPositionPathPosition e : borderPositions) {
 			if (e.combo >= pos.combo && DMath.lessThanEquals(pos.distanceTo(e), dist)) {
 				acc.add(e);
 			}

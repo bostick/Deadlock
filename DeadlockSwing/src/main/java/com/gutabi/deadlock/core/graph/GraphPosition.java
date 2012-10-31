@@ -1,7 +1,5 @@
 package com.gutabi.deadlock.core.graph;
 
-import java.util.List;
-
 import org.apache.log4j.Logger;
 
 import com.gutabi.deadlock.core.DMath;
@@ -30,7 +28,7 @@ public abstract class GraphPosition {
 	
 	public abstract GraphPosition ceiling();
 	
-	public abstract List<StopSign> getEvents();
+//	public abstract List<StopSign> getEvents();
 	
 	@Override
 	public boolean equals(Object o) {

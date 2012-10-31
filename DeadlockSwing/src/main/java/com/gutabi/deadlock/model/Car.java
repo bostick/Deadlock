@@ -26,6 +26,7 @@ import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.Rect;
+import com.gutabi.deadlock.core.graph.EdgePosition;
 import com.gutabi.deadlock.core.graph.GraphPosition;
 import com.gutabi.deadlock.core.graph.GraphPositionPath;
 import com.gutabi.deadlock.core.graph.GraphPositionPathPosition;
@@ -41,7 +42,7 @@ public abstract class Car extends Entity {
 	public static final double COMPLETE_STOP_WAIT_TIME = 0.0;
 	double steeringLookaheadDistance = CAR_LENGTH * 1.5;
 //	double eventLookaheadDistance = CAR_LENGTH * 3;
-	double eventLookaheadDistance = getMetersPerSecond() * 0.2;
+	double eventLookaheadDistance = getMetersPerSecond() * 0.3;
 	
 	
 	protected int sheetRow;
@@ -99,10 +100,11 @@ public abstract class Car extends Entity {
 	/*
 	 * 
 	 */
-	StopSign curEvent;
-	GraphPositionPathPosition curEventPosition;
-	GraphPositionPathPosition curEventMatchingPosition;
-	List<GraphPositionPathPosition> oldEventPositions = new ArrayList<GraphPositionPathPosition>();
+	StopSign curSign;
+	GraphPositionPathPosition curBorderPosition;
+	GraphPositionPathPosition curVertexPosition;
+	GraphPositionPathPosition curBorderMatchingPosition;
+	List<GraphPositionPathPosition> oldBorderPositions = new ArrayList<GraphPositionPathPosition>();
 	double decelTime = -1;
 	double accelTime = -1;
 	double stoppedTime = -1;
@@ -193,7 +195,7 @@ public abstract class Car extends Entity {
 		FixtureDef fixtureDef = new FixtureDef();
 		fixtureDef.shape = b2dShape;
 		fixtureDef.density = 1.0f;
-		fixtureDef.friction = 0.3f;
+		fixtureDef.friction = 0.8f;
 		b2dFixture = b2dBody.createFixture(fixtureDef);
 		
 		mass = b2dBody.getMass();
@@ -217,6 +219,9 @@ public abstract class Car extends Entity {
 		angularVel = b2dBody.getAngularVelocity();
 		
 		forwardVel = currentRightNormal.mul(Vec2.dot(currentRightNormal, vel));
+		
+		logger.debug("forwardVel: " + forwardVel.length());
+		
 		if (DMath.equals(vel.length(), 0.0)) {
 			String.class.getName();
 		}
@@ -329,59 +334,70 @@ public abstract class Car extends Entity {
 			
 		} else {
 			
-			if (curEvent == null) {
-				List<GraphPositionPathPosition> eventPositions = overallPath.eventPositions(overallPos, Math.min(eventLookaheadDistance, overallPos.lengthToEndOfPath));
+			if (curBorderPosition == null) {
+				List<GraphPositionPathPosition> borderPositions = overallPath.borderPositions(overallPos, Math.min(eventLookaheadDistance, overallPos.lengthToEndOfPath));
 				/*
 				 * since we deal with events before actually reaching them (front of car reaches them vs center of car where position is counted),
 				 * simply keep a list of already processed events to use to filter
 				 */
-				eventPositions.removeAll(oldEventPositions);
+				borderPositions.removeAll(oldBorderPositions);
 				
-				if (!eventPositions.isEmpty()) {
+				if (!borderPositions.isEmpty()) {
 					
 //					logger.debug("setting curEvent: " + events + "     " + oldEvents);
 					
-					curEventPosition = eventPositions.get(0);
-					GraphPositionPathPosition n = curEventPosition.nextBound();
-					assert n.gpos instanceof VertexPosition;
-					curEventMatchingPosition = n.nextBound().travel(CAR_LENGTH / 2);
-					curEvent = curEventPosition.gpos.getEvents().get(0);
+					curBorderPosition = borderPositions.get(0);
+					curVertexPosition = curBorderPosition.nextBound();
+					assert curVertexPosition.gpos instanceof VertexPosition;
+					if (!curVertexPosition.isEndOfPath()) {
+						curBorderMatchingPosition = curVertexPosition.nextBound().travel(CAR_LENGTH / 2);
+					} else {
+						curBorderMatchingPosition = null;
+					}
+					
+					curSign = ((EdgePosition)curBorderPosition.gpos).sign;
+					
+					((VertexPosition)curVertexPosition.gpos).v.queue.add(this);
 					
 				}
 			}
 			
-			if (curEvent != null) {
+			if (curBorderPosition != null) {
 				
-				if (decelTime == -1) {
-					// start braking
+				if (curSign != null) {
+					if (decelTime == -1) {
+						// start braking
+						
+//						logger.debug("decel: " + t);
+						
+						assert state == CarStateEnum.DRIVING;
+						state = CarStateEnum.BRAKING;
+						
+					} else if (stoppedTime != -1 && t > stoppedTime + COMPLETE_STOP_WAIT_TIME && accelTime == -1 && ((VertexPosition)curVertexPosition.gpos).v.queue.get(0) == this) {
+						// start driving
+						
+						oldBorderPositions.add(curBorderPosition);
+						
+						assert state == CarStateEnum.BRAKING;
+						state = CarStateEnum.DRIVING;
+						
+					}
+				}
+				
+				if (curBorderMatchingPosition != null && overallPos.combo >= curBorderMatchingPosition.combo) {
 					
-					logger.debug("decel: " + t);
+					if (curSign != null) {
+						stoppedTime = -1;
+						decelTime = -1;
+						accelTime = -1;
+					}
 					
-					curEvent.v.queue.add(this);
+					((VertexPosition)curVertexPosition.gpos).v.queue.remove(this);
 					
-					assert state == CarStateEnum.DRIVING;
-					state = CarStateEnum.BRAKING;
-					
-				} else if (stoppedTime != -1 && t > stoppedTime + COMPLETE_STOP_WAIT_TIME && accelTime == -1 && curEvent.v.queue.get(0) == this) {
-					// start driving
-					
-					oldEventPositions.add(curEventPosition);
-					
-					assert state == CarStateEnum.BRAKING;
-					state = CarStateEnum.DRIVING;
-					
-				} else if (overallPos.combo >= curEventMatchingPosition.combo) {
-					assert curEvent.v.queue.get(0) == this;
-					
-					stoppedTime = -1;
-					decelTime = -1;
-					accelTime = -1;
-					
-					curEvent.v.queue.remove(this);
-					
-					curEventPosition = null;
-					curEventMatchingPosition = null;
-					curEvent = null;
+					curBorderPosition = null;
+					curVertexPosition = null;
+					curBorderMatchingPosition = null;
+					curSign = null;
 					
 				}
 				
@@ -401,7 +417,7 @@ public abstract class Car extends Entity {
 			updateDrive(t);
 			break;
 		case BRAKING:
-			goalPoint = curEvent.getPoint();
+			goalPoint = curBorderPosition.gpos.p;
 			updateBrake(t);
 			break;
 		case CRASHED:
@@ -429,7 +445,7 @@ public abstract class Car extends Entity {
 	}
 	
 	private float brakeImpulseCoefficient() {
-		return 0.2f;
+		return 0.1f;
 //		return 0.1f;
 	}
 	
@@ -443,11 +459,11 @@ public abstract class Car extends Entity {
 	
 	private void updateFriction() {
 		
-		Vec2 cancelingImpulse = vel.mul(-1).mul(mass);
+//		Vec2 cancelingImpulse = vel.mul(-1).mul(mass);
 		Vec2 cancelingForce = vel.mul(-1).mul(mass).mul((float)(1/MODEL.dt));
 		
-		float cancelingForwardImpulse = cancelingForwardImpulseCoefficient() * Vec2.dot(currentRightNormal, cancelingImpulse);
-		float cancelingLateralImpulse = cancelingLateralImpulseCoefficient() * Vec2.dot(currentUpNormal, cancelingImpulse);
+//		float cancelingForwardImpulse = cancelingForwardImpulseCoefficient() * Vec2.dot(currentRightNormal, cancelingImpulse);
+//		float cancelingLateralImpulse = cancelingLateralImpulseCoefficient() * Vec2.dot(currentUpNormal, cancelingImpulse);
 		
 		float cancelingForwardForce = cancelingForwardImpulseCoefficient() * Vec2.dot(currentRightNormal, cancelingForce);
 		float cancelingLateralForce = cancelingLateralImpulseCoefficient() * Vec2.dot(currentUpNormal, cancelingForce);
@@ -464,7 +480,7 @@ public abstract class Car extends Entity {
 			b2dBody.applyForce(currentUpNormal.mul(cancelingLateralForce), pVec2);
 		}
 		
-		float cancelingAngImpulse = cancelingAngularImpulseCoefficient() * momentOfInertia * -angularVel;
+//		float cancelingAngImpulse = cancelingAngularImpulseCoefficient() * momentOfInertia * -angularVel;
 		float cancelingAngForce = cancelingAngularImpulseCoefficient() * momentOfInertia * -angularVel * (float)(1/MODEL.dt);
 		
 		//b2dBody.applyAngularImpulse(cancelingAngImpulse);
@@ -487,9 +503,16 @@ public abstract class Car extends Entity {
 		if (acc < 0) {
 			acc = 0;
 		}
+		if (acc > 0.1) {
+			acc = 0.1f;
+		}
 		
-		float forwardImpulse = forwardImpulseCoefficient() * mass * acc;
+//		float forwardImpulse = forwardImpulseCoefficient() * mass * acc;
 		float forwardForce = forwardImpulseCoefficient() * mass * acc * (float)(1/MODEL.dt);
+		
+//		if (forwardForce > 20) {
+//			String.class.getName();
+//		}
 		
 		//b2dBody.applyLinearImpulse(currentRightNormal.mul(forwardImpulse), b2dBody.getWorldCenter());
 		if (!DMath.equals(forwardForce, 0.0)) {
@@ -521,7 +544,7 @@ public abstract class Car extends Entity {
 			if (goalForwardVel < 1.0) {
 				goalForwardVel = 0;
 			}
-			goalForwardVel = 0;
+//			goalForwardVel = 0;
 		} else {
 //			assert t <= stoppedTime + COMPLETE_STOP_WAIT_TIME;
 			
@@ -535,7 +558,7 @@ public abstract class Car extends Entity {
 			acc = 0;
 		}
 		
-		float brakeImpulse = brakeImpulseCoefficient() * mass * acc;
+//		float brakeImpulse = brakeImpulseCoefficient() * mass * acc;
 		float brakeForce = brakeImpulseCoefficient() * mass * acc * (float)(1/MODEL.dt);
 		
 		if (!DMath.equals(brakeForce, 0.0)) {
@@ -573,7 +596,7 @@ public abstract class Car extends Entity {
 		
 		float goalAngVel = (float)(dw / MODEL.dt);
 		
-		float angImpulse = momentOfInertia * goalAngVel;
+//		float angImpulse = momentOfInertia * goalAngVel;
 		float angForce = momentOfInertia * goalAngVel * (float)(1/MODEL.dt);
 		
 //		b2dBody.applyAngularImpulse(angImpulse);
@@ -600,6 +623,7 @@ public abstract class Car extends Entity {
 			}
 			if (sinked) {
 				s.matchingSource.outstandingCars--;
+				s.queue.remove(this);
 				state = CarStateEnum.SINKED;
 				return false;
 			}
@@ -607,18 +631,12 @@ public abstract class Car extends Entity {
 		}
 		case BRAKING:
 			
-			if (curEvent != null) {
+			if (stoppedTime == -1) {
 				
-				if (stoppedTime == -1) {
+				if (DMath.equals(vel.length(), 0.0)) {
 					
-					if (DMath.equals(vel.length(), 0.0)) {
-						
-						logger.debug("stopped: " + t);
-						stoppedTime = t;
-						
-					}
-					
-				} else {
+//					logger.debug("stopped: " + t);
+					stoppedTime = t;
 					
 				}
 				
@@ -665,7 +683,9 @@ public abstract class Car extends Entity {
 			
 			g2.scale(MODEL.METERS_PER_PIXEL, MODEL.METERS_PER_PIXEL);
 			
-			g2.fillOval((int)(goalPoint.x * MODEL.PIXELS_PER_METER), (int)(goalPoint.y * MODEL.PIXELS_PER_METER), 2, 2);
+			if (goalPoint != null) {
+				g2.fillOval((int)(goalPoint.x * MODEL.PIXELS_PER_METER), (int)(goalPoint.y * MODEL.PIXELS_PER_METER), 2, 2);
+			}
 			
 			paintAABB(g2);
 			
