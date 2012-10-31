@@ -5,22 +5,16 @@ import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Area;
-import java.awt.geom.Ellipse2D;
-import java.awt.geom.Path2D;
-import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import com.bric.geom.AreaX;
 import com.gutabi.deadlock.core.ColinearException;
 import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.Rect;
-import com.gutabi.deadlock.utils.Java2DUtils;
 
 @SuppressWarnings("static-access")
 public final class Edge extends Entity {
@@ -32,8 +26,6 @@ public final class Edge extends Entity {
 	public final List<Point> raw;
 	
 	private List<EdgeSegment> spine;
-	
-	private Path2D path;
 	
 	private Point startBorderPoint;
 	private Point endBorderPoint;
@@ -49,6 +41,9 @@ public final class Edge extends Entity {
 	public int id;
 	public StopSign startSign;
 	public StopSign endSign;
+	
+	protected Color color;
+	protected Color hiliteColor;
 	
 	private final int hash;
 	
@@ -79,7 +74,6 @@ public final class Edge extends Entity {
 		hash = h;
 		
 		computeProperties();
-		computePath();
 		
 	}
 	
@@ -147,8 +141,7 @@ public final class Edge extends Entity {
 	
 	
 	public boolean hitTest(Point p, double radius) {
-		for (int i = 0; i < spine.size(); i++) {
-			EdgeSegment s = spine.get(i);
+		for (EdgeSegment s : spine) {
 			if (s.hitTest(p, radius)) {
 				return true;
 			}
@@ -264,6 +257,8 @@ public final class Edge extends Entity {
 		if (endSign != null) {
 			endSign.computePoint();
 		}
+		
+		computeAABB();
 		
 	}
 	
@@ -477,81 +472,37 @@ public final class Edge extends Entity {
 		
 	}
 	
-	/**
-	 * computes path, and also renderingUpperLeft and renderingBottomRight
-	 */
-	public void computePath() {
-		
-		assert !standalone;
-		
-		AreaX area = new AreaX();
-		
-		if (startBorderIndex == endBorderIndex) {
-			assert startBorderPoint.equals(endBorderPoint);
-			
-			addToArea(area, startBorderPoint);
-			
-		} else {
-			
-			for (int i = startBorderIndex; i < endBorderIndex; i++) {
-				addToArea(area, spine.get(i));
-			}
-			
+	private void computeAABB() {
+		aabb = null;
+		for (EdgeSegment s : spine) {
+			aabb = Rect.union(aabb, s.aabb);
 		}
-		
-		assert area.isSingular();
-		
-		List<Point> poly = Java2DUtils.shapeToList(area, 0.1);
-		
-		path = Java2DUtils.listToPath(poly);
-		
-		computeAABB();
 	}
 	
-	protected void computeAABB() {
-		Rectangle2D bound = path.getBounds2D();
-		aabb = new Rect(bound.getX(), bound.getY(), bound.getWidth(), bound.getHeight());
+	protected Rect aabb;
+	public final Rect getAABB() {
+		return aabb;
 	}
 	
-	private void addToArea(AreaX area, EdgeSegment s) {
-
-		Point diff = new Point(s.b.x - s.a.x, s.b.y - s.a.y);
-		Point up = Point.ccw90(diff).multiply(ROAD_RADIUS / diff.length);
-		Point down = Point.cw90(diff).multiply(ROAD_RADIUS / diff.length);
-		
-		Point p0 = s.a.plus(up);
-		Point p1 = s.a.plus(down);
-		Point p2 = s.b.plus(up);
-		Point p3 = s.b.plus(down);
-		Path2D path = new Path2D.Double();
-		path.moveTo(p0.x, p0.y);
-		path.lineTo(p1.x, p1.y);
-		path.lineTo(p3.x, p3.y);
-		path.lineTo(p2.x, p2.y);
-		path.lineTo(p0.x, p0.y);
-		
-		Area disk1 = new Area(new Ellipse2D.Double(s.a.x-ROAD_RADIUS, s.a.y-ROAD_RADIUS, 2 * ROAD_RADIUS, 2 * ROAD_RADIUS));
-		Area rect = new Area(path);
-		Area disk2 = new Area(new Ellipse2D.Double(s.b.x-ROAD_RADIUS, s.b.y-ROAD_RADIUS, 2 * ROAD_RADIUS, 2 * ROAD_RADIUS));
-		
-		Area capsule = new Area();
-		capsule.add(disk1);
-		capsule.add(rect);
-		capsule.add(disk2);
-		
-		area.add(capsule);
+	public final boolean hitTest(Point p) {
+		if (DMath.lessThanEquals(aabb.x, p.x) && DMath.lessThanEquals(p.x, aabb.x+aabb.width) &&
+				DMath.lessThanEquals(aabb.y, p.y) && DMath.lessThanEquals(p.y, aabb.y+aabb.height)) {
+			return hitTest(p, 0.0);
+		} else {
+			return false;
+		}
 	}
 	
-	private void addToArea(AreaX area, Point p) {
+	protected void paintAABB(Graphics2D g2) {
 		
-		Area disk = new Area(new Ellipse2D.Double(p.x-ROAD_RADIUS, p.y-ROAD_RADIUS, 2 * ROAD_RADIUS, 2 * ROAD_RADIUS));
+		g2.setColor(Color.BLACK);
+		g2.drawRect(
+				(int)(aabb.x * MODEL.PIXELS_PER_METER),
+				(int)(aabb.y * MODEL.PIXELS_PER_METER),
+				(int)(aabb.width * MODEL.PIXELS_PER_METER),
+				(int)(aabb.height * MODEL.PIXELS_PER_METER));
 		
-		area.add(disk);
 	}
-	
-	
-	
-	
 	
 	public static boolean haveExactlyOneSharedIntersection(Edge a, Edge b) {
 		Vertex as = a.start;
@@ -653,15 +604,32 @@ public final class Edge extends Entity {
 	}
 	
 	private void paintPath(Graphics2D g2) {
-//		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+		
+		AffineTransform origTransform = g2.getTransform();
+		
+		g2.scale(MODEL.METERS_PER_PIXEL, MODEL.METERS_PER_PIXEL);
+		
 		g2.setColor(color);
-		g2.fill(path);
+		
+		for (EdgeSegment s : spine) {
+			s.paint(g2);
+		}
+		
+		g2.setTransform(origTransform);
 	}
 	
 	private void drawPath(Graphics2D g2) {
-//		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+		AffineTransform origTransform = g2.getTransform();
+		
+		g2.scale(MODEL.METERS_PER_PIXEL, MODEL.METERS_PER_PIXEL);
+		
 		g2.setColor(hiliteColor);
-		g2.draw(path);
+		
+		for (EdgeSegment s : spine) {
+			s.draw(g2);
+		}
+		
+		g2.setTransform(origTransform);
 	}
 	
 	/**
@@ -689,8 +657,6 @@ public final class Edge extends Entity {
 	 * @param g2 in world coords
 	 */
 	public void paintBorders(Graphics2D g2) {
-		
-//		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
 		
 		g2.setColor(Color.GREEN);
 		g2.fillOval((int)(startBorderPoint.x * MODEL.PIXELS_PER_METER)-2, (int)(startBorderPoint.y * MODEL.PIXELS_PER_METER)-2, 4, 4);

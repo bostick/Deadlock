@@ -4,18 +4,12 @@ import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.Shape;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Ellipse2D;
-import java.awt.geom.Path2D;
-import java.awt.geom.Rectangle2D;
-import java.util.List;
 
 import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.Rect;
-import com.gutabi.deadlock.utils.Java2DUtils;
 
 @SuppressWarnings("static-access")
 public class StopSign extends Entity {
@@ -29,7 +23,8 @@ public class StopSign extends Entity {
 	Point p;
 	double r = 0.5 * STOPSIGN_SIZE;
 	
-	private Path2D path;
+	protected Color color;
+	protected Color hiliteColor;
 	
 	public StopSign(Edge e, int dir) {
 		this.e = e;
@@ -43,11 +38,47 @@ public class StopSign extends Entity {
 		
 		hiliteColor = Color.RED;
 		
-		computePath();
 	}
 	
 	public Point getPoint() {
 		return p;
+	}
+	
+	public boolean isDeleteable() {
+		return true;
+	}
+	
+	public void preStep(double t) {
+		;
+	}
+	
+	public boolean postStep() {
+		return true;
+	}
+	
+	protected Rect aabb;
+	public final Rect getAABB() {
+		return aabb;
+	}
+	
+	public final boolean hitTest(Point p) {
+		if (DMath.lessThanEquals(aabb.x, p.x) && DMath.lessThanEquals(p.x, aabb.x+aabb.width) &&
+				DMath.lessThanEquals(aabb.y, p.y) && DMath.lessThanEquals(p.y, aabb.y+aabb.height)) {
+			return hitTest(p, 0.0);
+		} else {
+			return false;
+		}
+	}
+	
+	protected void paintAABB(Graphics2D g2) {
+		
+		g2.setColor(Color.BLACK);
+		g2.drawRect(
+				(int)(aabb.x * MODEL.PIXELS_PER_METER),
+				(int)(aabb.y * MODEL.PIXELS_PER_METER),
+				(int)(aabb.width * MODEL.PIXELS_PER_METER),
+				(int)(aabb.height * MODEL.PIXELS_PER_METER));
+		
 	}
 	
 	public boolean hitTest(Point p, double radius) {
@@ -63,25 +94,13 @@ public class StopSign extends Entity {
 		}
 		
 		computeAABB();
-	}
-	
-	private void computePath() {
-		Shape s = new Ellipse2D.Double(-r, -r, 2 * r, 2 * r);
-		
-		List<Point> poly = Java2DUtils.shapeToList(s, 0.01);
-		
-		path = Java2DUtils.listToPath(poly);
-		
 	}	
 	
 	private void computeAABB() {
-		Rectangle2D bound = path.getBounds2D();
-		aabb = new Rect(p.x + bound.getX(), p.y + bound.getY(), bound.getWidth(), bound.getHeight());
+		aabb = new Rect(p.x-r, p.y-r, 2*r, 2*r);
 	}
 	
 	public void paint(Graphics2D g2) {
-		
-//		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
 		
 		AffineTransform origTransform = g2.getTransform();
 		
@@ -112,12 +131,19 @@ public class StopSign extends Entity {
 	
 	public void paintHilite(Graphics2D g2) {
 		
-//		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+		AffineTransform origTransform = g2.getTransform();
 		
-		g2.translate(p.x, p.y);
+		g2.scale(MODEL.METERS_PER_PIXEL, MODEL.METERS_PER_PIXEL);
 		
 		g2.setColor(hiliteColor);
-		g2.fill(path);
+		
+		g2.fillOval(
+				(int)((p.x - r) * MODEL.PIXELS_PER_METER),
+				(int)((p.y - r) * MODEL.PIXELS_PER_METER),
+				(int)((2 * r) * MODEL.PIXELS_PER_METER),
+				(int)((2 * r) * MODEL.PIXELS_PER_METER));
+		
+		g2.setTransform(origTransform);
 	}
 	
 }

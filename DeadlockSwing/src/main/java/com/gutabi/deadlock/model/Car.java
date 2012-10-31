@@ -5,8 +5,6 @@ import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.GeneralPath;
-import java.awt.geom.Path2D;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,8 +46,6 @@ public abstract class Car extends Entity {
 	protected int sheetCol;
 	
 	public CarStateEnum state;
-	
-	private Path2D path;
 	
 	public double startingTime;
 	public double crashingTime;
@@ -109,6 +105,9 @@ public abstract class Car extends Entity {
 	double stoppedTime = -1;
 	Point goalPoint;
 	
+	protected Color color;
+	protected Color hiliteColor;
+	
 	static Logger logger = Logger.getLogger(Car.class);
 	
 	public Car(Source s) {
@@ -130,7 +129,6 @@ public abstract class Car extends Entity {
 		
 		carTrans = new AffineTransform();
 		
-		computePath();
 	}
 	
 	protected void computeStartingProperties() {
@@ -155,17 +153,6 @@ public abstract class Car extends Entity {
 	 * @return
 	 */
 	public abstract double getMetersPerSecond();
-	
-	public void computePath() {
-		
-		path = new GeneralPath();
-		path.moveTo(p1.x, p1.y);
-		path.lineTo(p2.x, p2.y);
-		path.lineTo(p3.x, p3.y);
-		path.lineTo(p4.x, p4.y);
-		path.closePath();
-		
-	}
 	
 	private void b2dInit() {
 		BodyDef bodyDef = new BodyDef();
@@ -317,6 +304,35 @@ public abstract class Car extends Entity {
 	}
 	
 	public boolean isDeleteable() {
+		return true;
+	}
+	
+	protected Rect aabb;
+	public final Rect getAABB() {
+		return aabb;
+	}
+	
+	public final boolean hitTest(Point p) {
+		if (DMath.lessThanEquals(aabb.x, p.x) && DMath.lessThanEquals(p.x, aabb.x+aabb.width) &&
+				DMath.lessThanEquals(aabb.y, p.y) && DMath.lessThanEquals(p.y, aabb.y+aabb.height)) {
+			return hitTest(p, 0.0);
+		} else {
+			return false;
+		}
+	}
+	
+	protected void paintAABB(Graphics2D g2) {
+		
+		g2.setColor(Color.BLACK);
+		g2.drawRect(
+				(int)(aabb.x * MODEL.PIXELS_PER_METER),
+				(int)(aabb.y * MODEL.PIXELS_PER_METER),
+				(int)(aabb.width * MODEL.PIXELS_PER_METER),
+				(int)(aabb.height * MODEL.PIXELS_PER_METER));
+		
+	}
+	
+	public boolean postStep() {
 		return true;
 	}
 	
@@ -668,8 +684,6 @@ public abstract class Car extends Entity {
 	 */
 	public void paint(Graphics2D g2) {
 		
-//		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
-		
 		AffineTransform origTransform = g2.getTransform();
 		
 		g2.transform(carTrans);
@@ -698,11 +712,7 @@ public abstract class Car extends Entity {
 	 */
 	public void paintHilite(Graphics2D g2) {
 		
-//		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
-		
 		AffineTransform origTransform = g2.getTransform();
-		
-		g2.transform(carTrans);
 		
 		paintRect(g2);
 		
@@ -742,7 +752,23 @@ public abstract class Car extends Entity {
 	}
 	
 	private void paintRect(Graphics2D g2) {
+		
+		g2.scale(MODEL.METERS_PER_PIXEL, MODEL.METERS_PER_PIXEL);
+		
 		g2.setColor(hiliteColor);
-		g2.fill(path);
+		
+		int[] xPoints = new int[4];
+		int[] yPoints = new int[4];
+		
+		xPoints[0] = (int)(worldPoint1.x * MODEL.PIXELS_PER_METER);
+		xPoints[1] = (int)(worldPoint2.x * MODEL.PIXELS_PER_METER);
+		xPoints[2] = (int)(worldPoint3.x * MODEL.PIXELS_PER_METER);
+		xPoints[3] = (int)(worldPoint4.x * MODEL.PIXELS_PER_METER);
+		yPoints[0] = (int)(worldPoint1.y * MODEL.PIXELS_PER_METER);
+		yPoints[1] = (int)(worldPoint2.y * MODEL.PIXELS_PER_METER);
+		yPoints[2] = (int)(worldPoint3.y * MODEL.PIXELS_PER_METER);
+		yPoints[3] = (int)(worldPoint4.y * MODEL.PIXELS_PER_METER);
+		
+		g2.fillPolygon(xPoints, yPoints, 4);
 	}
 }

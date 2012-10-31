@@ -4,10 +4,7 @@ import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.Shape;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Ellipse2D;
-import java.awt.geom.Path2D;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,7 +13,6 @@ import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.Rect;
 import com.gutabi.deadlock.model.Car;
-import com.gutabi.deadlock.utils.Java2DUtils;
 
 @SuppressWarnings("static-access")
 public abstract class Vertex extends Entity {
@@ -27,10 +23,12 @@ public abstract class Vertex extends Entity {
 	
 	public int id;
 	
-	protected Path2D path;
 	protected double r;
 	
 	public final List<Car> queue = new ArrayList<Car>();
+	
+	protected Color color;
+	protected Color hiliteColor;
 	
 	private final int hash;
 	
@@ -42,7 +40,6 @@ public abstract class Vertex extends Entity {
 		
 		r = INIT_VERTEX_RADIUS;
 		
-		computePath();
 		computeAABB();
 		
 		int h = 17;
@@ -92,22 +89,33 @@ public abstract class Vertex extends Entity {
 		queue.clear();
 	}
 	
-	
-	
-	
-	
-	
-	
-	private void computePath() {
-		Shape s = new Ellipse2D.Double(-r, -r, 2 * r, 2 * r);
-		
-		List<Point> poly = Java2DUtils.shapeToList(s, 0.01);
-		
-		path = Java2DUtils.listToPath(poly);
-	}	
-	
 	private void computeAABB() {
 		aabb = new Rect(p.x-r, p.y-r, 2*r, 2*r);
+	}
+	
+	protected Rect aabb;
+	public final Rect getAABB() {
+		return aabb;
+	}
+	
+	public final boolean hitTest(Point p) {
+		if (DMath.lessThanEquals(aabb.x, p.x) && DMath.lessThanEquals(p.x, aabb.x+aabb.width) &&
+				DMath.lessThanEquals(aabb.y, p.y) && DMath.lessThanEquals(p.y, aabb.y+aabb.height)) {
+			return hitTest(p, 0.0);
+		} else {
+			return false;
+		}
+	}
+	
+	protected void paintAABB(Graphics2D g2) {
+		
+		g2.setColor(Color.BLACK);
+		g2.drawRect(
+				(int)(aabb.x * MODEL.PIXELS_PER_METER),
+				(int)(aabb.y * MODEL.PIXELS_PER_METER),
+				(int)(aabb.width * MODEL.PIXELS_PER_METER),
+				(int)(aabb.height * MODEL.PIXELS_PER_METER));
+		
 	}
 	
 	public void computeRadius(double maximumRadius) {
@@ -191,12 +199,10 @@ public abstract class Vertex extends Entity {
 			
 		}
 		
-		computePath();
 		computeAABB();
 		
 		for (Edge e : eds) {
 			e.computeProperties();
-			e.computePath();
 		}
 	}
 	
@@ -238,11 +244,15 @@ public abstract class Vertex extends Entity {
 		
 		AffineTransform origTransform = g2.getTransform();
 		
-		g2.translate(p.x, p.y);
+		g2.scale(MODEL.METERS_PER_PIXEL, MODEL.METERS_PER_PIXEL);
 		
-//		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
 		g2.setColor(color);
-		g2.fill(path);
+		
+		g2.fillOval(
+				(int)((p.x - r) * MODEL.PIXELS_PER_METER),
+				(int)((p.y - r) * MODEL.PIXELS_PER_METER),
+				(int)((2 * r) * MODEL.PIXELS_PER_METER),
+				(int)((2 * r) * MODEL.PIXELS_PER_METER));
 		
 		g2.setTransform(origTransform);
 		
@@ -262,13 +272,16 @@ public abstract class Vertex extends Entity {
 	 * @param g2 in world coords
 	 */
 	public void paintHilite(Graphics2D g2) {
+		
 		AffineTransform origTransform = g2.getTransform();
 		
-		g2.translate(p.x, p.y);
-		
-//		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
 		g2.setColor(hiliteColor);
-		g2.draw(path);
+		
+		g2.fillOval(
+				(int)((p.x - r) * MODEL.PIXELS_PER_METER),
+				(int)((p.y - r) * MODEL.PIXELS_PER_METER),
+				(int)((2 * r) * MODEL.PIXELS_PER_METER),
+				(int)((2 * r) * MODEL.PIXELS_PER_METER));
 		
 		g2.setTransform(origTransform);
 	}
@@ -279,7 +292,6 @@ public abstract class Vertex extends Entity {
 	 */
 	public void paintID(Graphics2D g2) {
 		
-//		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
 		g2.setColor(Color.WHITE);
 		
 		Point worldPoint = p.minus(new Point(r, 0));

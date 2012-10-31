@@ -8,7 +8,6 @@
 	<classpathentry kind="lib" path="lib/slf4j-simple-1.7.1.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="lib" path="classes"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/AreaX"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/jbox2d-library"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
