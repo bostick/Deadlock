@@ -2,9 +2,8 @@ package com.gutabi.deadlock.model;
 
 public enum CarStateEnum {
 	
-	NEW,
-	
-	RUNNING,
+	DRIVING,
+	BRAKING,
 	
 	CRASHED,
 	

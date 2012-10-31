@@ -70,7 +70,7 @@ public class GraphPositionPath {
 			if (!gp.getEvents().isEmpty()) {
 				assert gp.isBound();
 				if (gp instanceof EdgePosition) {
-					EdgePosition ep = (EdgePosition)gp;
+//					EdgePosition ep = (EdgePosition)gp;
 					/*
 					 * only count signs in the correct direction: edge -> sign -> vertex
 					 */

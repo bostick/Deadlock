@@ -37,6 +37,11 @@ import com.gutabi.deadlock.core.graph.StopSign;
 public abstract class Car extends Entity {
 	
 	public static final double CAR_LENGTH = 1.0;
+	public static final double COMPLETE_STOP_WAIT_TIME = 1.0;
+	double steeringLookaheadDistance = CAR_LENGTH * 1.5;
+//	double eventLookaheadDistance = CAR_LENGTH * 3;
+	
+	
 	
 	protected int sheetRow;
 	protected int sheetCol;
@@ -96,10 +101,9 @@ public abstract class Car extends Entity {
 	StopSign curEvent;
 	List<StopSign> oldEvents = new ArrayList<StopSign>();
 	double decelTime = -1;
-	double accelTime = -1;
+//	double accelTime = -1;
 	double stoppedTime = -1;
 	Point goalPoint;
-	boolean braking;
 	
 	static Logger logger = Logger.getLogger(Car.class);
 	
@@ -108,7 +112,7 @@ public abstract class Car extends Entity {
 		id = carCounter;
 		carCounter++;
 		
-		state = CarStateEnum.NEW;
+		state = CarStateEnum.DRIVING;
 		
 		source = s;
 		
@@ -320,21 +324,68 @@ public abstract class Car extends Entity {
 	
 	public void preStep(double t) {
 		
-		switch (state) {
-		case NEW:
-			state = CarStateEnum.RUNNING;
-		case RUNNING:
-			updateFriction();
-			updateDrive(t);
-			break;
-		case CRASHED:
+		if (state == CarStateEnum.CRASHED) {
 			
-			if (b2dBody.isAwake()) {
-				updateFriction();
-			} else {
-//				updateFriction();
+		} else {
+			
+			double eventLookaheadDistance = getMetersPerSecond() * 0.6;
+			
+			if (curEvent == null) {
+				List<StopSign> events = overallPath.events(overallPos, Math.min(eventLookaheadDistance, overallPos.lengthToEndOfPath));
+				/*
+				 * since we deal with events before actually reaching them (front of car reaches them vs center of car where position is counted),
+				 * simply keep a list of already processed events to use to filter
+				 */
+				events.removeAll(oldEvents);
+				
+				if (!events.isEmpty()) {
+					
+					logger.debug("setting curEvent: " + events + "     " + oldEvents);
+					
+					curEvent = events.get(0);
+					
+				}
 			}
 			
+			if (curEvent != null) {
+				
+				if (decelTime == -1) {
+					
+					logger.debug("decel: " + t);
+					
+					assert state == CarStateEnum.DRIVING;
+					state = CarStateEnum.BRAKING;
+					
+				} else if (stoppedTime != -1 && t > stoppedTime + COMPLETE_STOP_WAIT_TIME) {
+					
+					oldEvents.add(curEvent);
+					curEvent = null;
+					stoppedTime = -1;
+					decelTime = -1;
+					
+					assert state == CarStateEnum.BRAKING;
+					state = CarStateEnum.DRIVING;
+				}
+				
+			} else {
+				assert state == CarStateEnum.DRIVING;
+			}
+			
+		}
+		
+		updateFriction();
+		
+		switch (state) {
+		case DRIVING:
+			GraphPositionPathPosition next = overallPos.travel(Math.min(steeringLookaheadDistance, overallPos.lengthToEndOfPath));
+			goalPoint = next.gpos.p;
+			updateDrive(t);
+			break;
+		case BRAKING:
+			goalPoint = curEvent.getPoint();
+			updateBrake(t);
+			break;
+		case CRASHED:
 			break;
 		case SINKED:
 			assert false;
@@ -342,12 +393,12 @@ public abstract class Car extends Entity {
 	}
 	
 	private float cancelingForwardImpulseCoefficient() {
-		return 0.05f;
+		return 0.02f;
 	}
 	
 	private float cancelingLateralImpulseCoefficient() {
 //		return atleastPartiallyOnRoad ? 0.1f : 0.04f;
-		return 0.05f;
+		return 0.1f;
 	}
 	
 	private float cancelingAngularImpulseCoefficient() {
@@ -355,7 +406,12 @@ public abstract class Car extends Entity {
 	}
 	
 	private float forwardImpulseCoefficient() {
-		return atleastPartiallyOnRoad ? 1.0f : 0.4f;
+		return 1.0f;
+	}
+	
+	private float brakeImpulseCoefficient() {
+		return 0.2f;
+//		return 0.1f;
 	}
 	
 	/*
@@ -400,94 +456,14 @@ public abstract class Car extends Entity {
 	
 	private void updateDrive(double t) {
 		
-		double steeringLookaheadDistance = CAR_LENGTH * 1.5;
-		double eventLookaheadDistance = CAR_LENGTH * 3;
+		double goalForwardVel = (float)getMetersPerSecond();
 		
-		if (curEvent == null) {
-			List<StopSign> events = overallPath.events(overallPos, Math.min(eventLookaheadDistance, overallPos.lengthToEndOfPath));
-			/*
-			 * since we deal with events before actually reaching them (front of car reaches them vs center of car where position is counted),
-			 * simply keep a list of already processed events to use to filter
-			 */
-			events.removeAll(oldEvents);
-			
-			if (!events.isEmpty()) {
-				
-				logger.debug("setting curEvent: " + events + "     " + oldEvents);
-				
-				curEvent = events.get(0);
-			}
-		}
 		double forwardSpeed = forwardVel.length();
-		double goalForwardVel;
-		Point dp;
-		if (curEvent != null) {
-			
-			if (stoppedTime == -1) {
-				
-				if (decelTime == -1) {
-					
-					decelTime = t;
-					
-					logger.debug("decelTime: " + decelTime);
-					
-					braking = true;
-					
-					goalPoint = curEvent.getPoint();
-					
-				}
-				
-				dp = new Point(goalPoint.x-p.x, goalPoint.y-p.y);
-				/*
-				 * subtract CAR_LENGTH/2 to get the front of the car at the sign
-				 */
-				goalForwardVel = getMetersPerSecond() * ((dp.length - CAR_LENGTH/2) / (eventLookaheadDistance - CAR_LENGTH/2));
-//				if (goalForwardVel < 0.01) {
-//					goalForwardVel = 0;
-//				}
-				
-			} else if (t <= stoppedTime + 2) {
-				
-				goalPoint = curEvent.getPoint();
-				dp = new Point(goalPoint.x-p.x, goalPoint.y-p.y);
-				goalForwardVel = 0;
-				
-			} else {
-				
-				accelTime = t;
-				
-				logger.debug("accelTime: " + accelTime);
-				
-				oldEvents.add(curEvent);
-				curEvent = null;
-				stoppedTime = -1;
-				decelTime = -1;
-				
-				braking = false;
-				
-				GraphPositionPathPosition next = overallPos.travel(Math.min(steeringLookaheadDistance, overallPos.lengthToEndOfPath));
-				goalPoint = next.gpos.p;
-				dp = new Point(goalPoint.x-p.x, goalPoint.y-p.y);
-				goalForwardVel = (float)getMetersPerSecond();
-				
-			}
-			
-		} else {
-			braking = false;
-			GraphPositionPathPosition next = overallPos.travel(Math.min(steeringLookaheadDistance, overallPos.lengthToEndOfPath));
-			goalPoint = next.gpos.p;
-			dp = new Point(goalPoint.x-p.x, goalPoint.y-p.y);
-			goalForwardVel = (float)getMetersPerSecond();
-		}
 		
 		float acc = (float)(goalForwardVel - forwardSpeed);
-//		if (braking) {
-//			if (acc > 0) {
-//				acc = 0;
-//			}
-//		} else {
-//			
-//		}
+		if (acc < 0) {
+			acc = 0;
+		}
 		
 		float forwardImpulse = forwardImpulseCoefficient() * mass * acc;
 		float forwardForce = forwardImpulseCoefficient() * mass * acc * (float)(1/MODEL.dt);
@@ -498,7 +474,57 @@ public abstract class Car extends Entity {
 			b2dBody.applyForce(currentRightNormal.mul(forwardForce), pVec2);
 		}
 		
+		updateTurn();
 		
+	}
+	
+	private void updateBrake(double t) {
+		
+		double eventLookaheadDistance = getMetersPerSecond() * 0.6;
+		
+		double forwardSpeed = forwardVel.length();
+		
+		Point dp;
+		double goalForwardVel;
+		if (stoppedTime == -1) {
+			
+			if (decelTime == -1) {
+				decelTime = t;
+			}
+			
+			dp = new Point(goalPoint.x-p.x, goalPoint.y-p.y);
+			/*
+			 * subtract CAR_LENGTH/2 to get the front of the car at the sign
+			 */
+			goalForwardVel = getMetersPerSecond() * ((dp.length - CAR_LENGTH/2) / (eventLookaheadDistance - CAR_LENGTH/2));
+//			goalForwardVel = 0;
+		} else {
+			assert t <= stoppedTime + COMPLETE_STOP_WAIT_TIME;
+			
+			dp = new Point(goalPoint.x-p.x, goalPoint.y-p.y);
+			goalForwardVel = 0;
+			
+		}
+		
+		float acc = (float)(goalForwardVel - forwardSpeed);
+		if (acc > 0) {
+			acc = 0;
+		}
+		
+		float brakeImpulse = brakeImpulseCoefficient() * mass * acc;
+		float brakeForce = brakeImpulseCoefficient() * mass * acc * (float)(1/MODEL.dt);
+		
+		if (!DMath.equals(brakeForce, 0.0)) {
+			b2dBody.applyForce(currentRightNormal.mul(brakeForce), pVec2);
+		}
+		
+		updateTurn();
+	}
+	
+	private void updateTurn() {
+		
+		Point dp = new Point(goalPoint.x-p.x, goalPoint.y-p.y);
+		double forwardSpeed = forwardVel.length();
 		
 		double nextDTGoalAngle = Math.atan2(dp.y, dp.x);
 		double dw = ((float)nextDTGoalAngle) - angle;
@@ -533,35 +559,15 @@ public abstract class Car extends Entity {
 		
 	}
 	
-	
 	/**
 	 * return true if car should persist after time step
 	 */
 	public boolean postStep(double t) {
 		
+		computeDynamicProperties();
+		
 		switch (state) {
-		case NEW:
-			assert false;
-		case RUNNING: {
-			
-			computeDynamicProperties();
-			
-			if (curEvent != null) {
-				
-				if (stoppedTime == -1) {
-					
-					if (DMath.equals(vel.length(), 0.0)) {
-						
-						logger.debug("stopped at time " + t);
-						stoppedTime = t;
-						
-					}
-					
-				} else {
-					
-				}
-				
-			}
+		case DRIVING: {
 			
 			Sink s = (Sink)overallPath.end.getEntity();
 			boolean sinked = false;
@@ -575,12 +581,27 @@ public abstract class Car extends Entity {
 			}
 			break;
 		}
-		case CRASHED:
+		case BRAKING:
 			
-			if (b2dBody.isAwake()) {
-				computeDynamicProperties();
+			if (curEvent != null) {
+				
+				if (stoppedTime == -1) {
+					
+					if (DMath.equals(vel.length(), 0.0)) {
+						
+						logger.debug("stopped: " + t);
+						stoppedTime = t;
+						
+					}
+					
+				} else {
+					
+				}
+				
 			}
 			
+			break;
+		case CRASHED:
 			break;
 		case SINKED:
 			assert false;
@@ -665,7 +686,7 @@ public abstract class Car extends Entity {
 //				sheetCol+64, sheetRow, sheetCol+64+64, sheetRow+32,
 //				null);
 //		
-		if (braking) {
+		if (state == CarStateEnum.BRAKING) {
 			g2.drawImage(MODEL.world.sheet,
 					(int)(-CAR_LENGTH * MODEL.PIXELS_PER_METER * 0.5),
 					(int)(-CAR_LENGTH * MODEL.PIXELS_PER_METER * 0.25),
