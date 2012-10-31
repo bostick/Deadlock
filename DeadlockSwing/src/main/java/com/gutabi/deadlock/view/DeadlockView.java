@@ -66,8 +66,8 @@ public class DeadlockView {
 		
 		newFrame.pack();
 		
-		newFrame.setSize(WindowInfo.windowWidth(), WindowInfo.windowHeight());
-		newFrame.setLocation(WindowInfo.windowX(), WindowInfo.windowY());
+		newFrame.setSize((int)(WindowInfo.windowDim().width), (int)(WindowInfo.windowDim().height));
+		newFrame.setLocation((int)(WindowInfo.windowLoc().x), (int)(WindowInfo.windowLoc().y));
 		
 		return newFrame;
 	}

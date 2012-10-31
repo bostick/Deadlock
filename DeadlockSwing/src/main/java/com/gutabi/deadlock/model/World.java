@@ -5,7 +5,6 @@ import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -98,15 +97,21 @@ public class World {
 		b2dWorld.setContactListener(listener);
 		
 		
-		Source a = new Source(new Point(WORLD_WIDTH/3, 0));
-		Source b = new Source(new Point(2*WORLD_WIDTH/3, 0));
-		Source c = new Source(new Point(0, WORLD_HEIGHT/3));
-		Source d = new Source(new Point(0, 2*WORLD_HEIGHT/3));
+		Source a = new Source(new Point(WORLD_WIDTH/4, 0));
+		Source b = new Source(new Point(2*WORLD_WIDTH/4, 0));
+		Source t1 = new Source(new Point(3*WORLD_WIDTH/4, 0));
 		
-		Sink e = new Sink(new Point(WORLD_WIDTH/3, WORLD_HEIGHT));
-		Sink f = new Sink(new Point(2*WORLD_WIDTH/3, WORLD_HEIGHT));
-		Sink g = new Sink(new Point(WORLD_WIDTH, WORLD_HEIGHT/3));
-		Sink h = new Sink(new Point(WORLD_WIDTH, 2*WORLD_HEIGHT/3));
+		Source c = new Source(new Point(0, WORLD_HEIGHT/4));
+		Source d = new Source(new Point(0, 2*WORLD_HEIGHT/4));
+		Source t2 = new Source(new Point(0, 3*WORLD_HEIGHT/4));
+		
+		Sink e = new Sink(new Point(WORLD_WIDTH/4, WORLD_HEIGHT));
+		Sink f = new Sink(new Point(2*WORLD_WIDTH/4, WORLD_HEIGHT));
+		Sink t3 = new Sink(new Point(3*WORLD_WIDTH/4, WORLD_HEIGHT));
+		
+		Sink g = new Sink(new Point(WORLD_WIDTH, WORLD_HEIGHT/4));
+		Sink h = new Sink(new Point(WORLD_WIDTH, 2*WORLD_HEIGHT/4));
+		Sink t4 = new Sink(new Point(WORLD_WIDTH, 3*WORLD_HEIGHT/4));
 		
 		a.matchingSink = e;
 		e.matchingSource = a;
@@ -114,21 +119,33 @@ public class World {
 		b.matchingSink = f;
 		f.matchingSource = b;
 		
+		t1.matchingSink = t3;
+		t3.matchingSource = t1;
+		
 		c.matchingSink = g;
 		g.matchingSource = c;
 		
 		d.matchingSink = h;
 		h.matchingSource = d;
 		
+		t2.matchingSink = t4;
+		t4.matchingSource = t2;
+		
 		graph.addSource(a);
 		graph.addSource(b);
+		graph.addSource(t1);
+		
 		graph.addSource(c);
 		graph.addSource(d);
+		graph.addSource(t2);
 		
 		graph.addSink(e);
 		graph.addSink(f);
+		graph.addSink(t3);
+		
 		graph.addSink(g);
 		graph.addSink(h);
+		graph.addSink(t4);
 		
 		worldRect = new Rect(0, 0, WORLD_WIDTH, WORLD_HEIGHT);
 		
@@ -504,7 +521,7 @@ public class World {
 	
 	private void paintAABB(Graphics2D g2) {
 		
-		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+//		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
 		
 		g2.setColor(Color.BLACK);
 		g2.drawRect(

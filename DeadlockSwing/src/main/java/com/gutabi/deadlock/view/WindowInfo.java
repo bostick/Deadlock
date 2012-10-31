@@ -6,6 +6,9 @@ import java.awt.GraphicsEnvironment;
 import java.awt.Insets;
 import java.awt.Toolkit;
 
+import com.gutabi.deadlock.core.Dim;
+import com.gutabi.deadlock.core.Point;
+
 public class WindowInfo {
 	
 	private static Insets screenInsets;
@@ -18,36 +21,24 @@ public class WindowInfo {
 		screenDim = Toolkit.getDefaultToolkit().getScreenSize();
 	}
 	
-	public static int windowWidth() {
-		return screenDim.width - screenInsets.left - screenInsets.right;
+//	public static int windowWidth() {
+//		return screenDim.width - screenInsets.left - screenInsets.right;
+//	}
+//	
+//	public static int windowHeight() {
+//		return screenDim.height - screenInsets.top - screenInsets.bottom;
+//	}
+	
+	public static Dim windowDim() {
+		return new Dim(screenDim.width - screenInsets.left - screenInsets.right, screenDim.height - screenInsets.top - screenInsets.bottom);
 	}
 	
-	public static int windowHeight() {
-		return screenDim.height - screenInsets.top - screenInsets.bottom;
+	public static Point windowLoc() {
+		return new Point(screenInsets.left, screenInsets.top);
 	}
 	
-	public static Dimension windowDim() {
-		return new Dimension(screenDim.width - screenInsets.left - screenInsets.right, screenDim.height - screenInsets.top - screenInsets.bottom);
-	}
-	
-	public static int windowX() {
-		return screenInsets.left;
-	}
-	
-	public static int windowY() {
-		return screenInsets.top;
-	}
-	
-	public static int screenWidth() {
-		return screenDim.width;
-	}
-	
-	public static int screenHeight() {
-		return screenDim.height;
-	}
-	
-	public static Dimension screenDim() {
-		return new Dimension(screenDim.width, screenDim.height);
+	public static Dim screenDim() {
+		return new Dim(screenDim.width, screenDim.height);
 	}
 	
 }
