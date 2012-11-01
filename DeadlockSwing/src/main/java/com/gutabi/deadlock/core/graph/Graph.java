@@ -524,34 +524,6 @@ public class Graph {
 		return null;
 	}
 	
-	public Set<Entity> hitTest(Point p, double radius) {
-		assert p != null;
-		Set<Entity> hits = new HashSet<Entity>();
-		for (StopSign s : signs) {
-			if (s.hitTest(p, radius)) {
-				hits.add(s);
-			}
-		}
-		for (Vertex v : getAllVertices()) {
-			if (v.hitTest(p, radius)) {
-				hits.add(v);
-			}
-		}
-		for (Edge e : edges) {
-			if (e.hitTest(p, radius)) {
-				hits.add(e);
-			}
-		}
-		return hits;
-	}
-	
-	/**
-	 * hit test with capsule
-	 */
-//	public Set<Entity> hitTest(Point a, Point b, double radius) {
-//		
-//	}
-	
 	public GraphPosition findClosestGraphPosition(Point p, double radius) {
 		VertexPosition vp = findClosestVertexPosition(p, radius);
 		if (vp != null) {

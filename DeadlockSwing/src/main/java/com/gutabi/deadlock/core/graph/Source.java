@@ -80,7 +80,7 @@ public class Source extends Vertex {
 		Car c = createNewCar();
 		
 		if (c != null) {
-			assert c.hitTest(p, r);
+//			assert c.hitTest(p, r);
 			c.startingTime = t;
 			synchronized (MODEL) {
 				MODEL.world.cars.add(c);
@@ -165,21 +165,5 @@ public class Source extends Vertex {
 	public boolean postStep() {
 		return true;
 	}
-	
-	
-//	/**
-//	 * 
-//	 * @param g2 in pixels, <0, 0> is world origin
-//	 */
-//	public void paintID(Graphics2D g2) {
-//		super.paintID(g2);
-//		
-//		Point worldPoint = p.minus(new Point(getRadius(), 0));
-//		Point panelPoint = worldPoint.multiply(MODEL.PIXELS_PER_METER);
-//		
-//		g2.drawString(Integer.toString(id), (int)(panelPoint.x), (int)(panelPoint.y));
-//		
-//		g2.drawString(Integer.toString(outstandingCars), (int)(panelPoint.x + 10), (int)(panelPoint.y));
-//	}
 	
 }

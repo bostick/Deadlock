@@ -9,13 +9,9 @@ public class VertexPosition extends GraphPosition {
 	
 	public final Vertex v;
 	
-//	public final List<StopSign> events;
-	
 	public VertexPosition(Vertex v) {
 		super(v.p);
 		this.v = v;
-		
-//		events = new ArrayList<StopSign>();
 	}
 	
 	public Entity getEntity() {
@@ -25,10 +21,6 @@ public class VertexPosition extends GraphPosition {
 	public boolean isBound() {
 		return true;
 	}
-	
-//	public List<StopSign> getEvents() {
-//		return events;
-//	}
 	
 	public String toString() {
 		return v.toString();

@@ -14,8 +14,6 @@ import com.gutabi.deadlock.core.graph.Vertex;
 @SuppressWarnings("static-access")
 public class Stroke {
 	
-//	private Point lastPoint;
-	
 	public List<Point> pts;
 	
 	public Stroke() {
@@ -29,44 +27,12 @@ public class Stroke {
 		return aabb;
 	}
 	
-//	public void press(Point p) {
-//		lastPoint = p;
-//	}
-//	
-//	public void move(Point p) {
-//		lastPoint = null;
-//	}
-	
 	public void add(Point p) {
-//		lastPoint = p;
 		
 		pts.add(p);
 		
 		computeAABB();
 	}
-	
-//	public void drag(Point p) {
-////		lastPoint = p;
-//		
-//		pts.add(p);
-//		
-//		computeAABB();
-//	}
-	
-//	public void clear() {
-//		lastPoint = null;
-		
-		/*
-		 * used to just do clear() for the lists, but that lead to a subtle bug
-		 * the actual curWorldStroke reference was being stored inside of Edges
-		 * and were being used when recomputing Edge properties. So clearing it
-		 * obviously caused problems.
-		 * 
-		 * always better to treat lists as immutable as possible
-		 */
-		
-//		curStroke = null;
-//	}
 	
 	private void computeAABB() {
 		
@@ -131,8 +97,6 @@ public class Stroke {
 	private void paintAABB(Graphics2D g2) {
 		
 		if (!pts.isEmpty()) {
-			
-//			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
 			
 			g2.setColor(Color.BLACK);
 			g2.drawRect(

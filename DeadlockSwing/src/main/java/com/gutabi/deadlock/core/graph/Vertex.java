@@ -71,9 +71,14 @@ public abstract class Vertex extends Entity {
 	}
 	
 	
-	
-	public boolean hitTest(Point p, double radius) {
-		return DMath.lessThanEquals(Point.distance(p, this.p), radius + r);
+	public final boolean hitTest(Point p) {
+		if (aabb.hitTest(p)) {
+			
+			return DMath.lessThanEquals(Point.distance(p, this.p), r);
+			
+		} else {
+			return false;
+		}
 	}
 	
 	public VertexPosition findClosestVertexPosition(Point a, double radius) {
@@ -96,15 +101,6 @@ public abstract class Vertex extends Entity {
 	protected Rect aabb;
 	public final Rect getAABB() {
 		return aabb;
-	}
-	
-	public final boolean hitTest(Point p) {
-		if (DMath.lessThanEquals(aabb.x, p.x) && DMath.lessThanEquals(p.x, aabb.x+aabb.width) &&
-				DMath.lessThanEquals(aabb.y, p.y) && DMath.lessThanEquals(p.y, aabb.y+aabb.height)) {
-			return hitTest(p, 0.0);
-		} else {
-			return false;
-		}
 	}
 	
 	protected void paintAABB(Graphics2D g2) {
@@ -275,6 +271,8 @@ public abstract class Vertex extends Entity {
 		
 		AffineTransform origTransform = g2.getTransform();
 		
+		g2.scale(MODEL.METERS_PER_PIXEL, MODEL.METERS_PER_PIXEL);
+		
 		g2.setColor(hiliteColor);
 		
 		g2.fillOval(
@@ -284,6 +282,7 @@ public abstract class Vertex extends Entity {
 				(int)((2 * r) * MODEL.PIXELS_PER_METER));
 		
 		g2.setTransform(origTransform);
+		
 	}
 	
 	/**

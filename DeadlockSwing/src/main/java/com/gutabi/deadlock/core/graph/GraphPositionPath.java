@@ -68,7 +68,6 @@ public class GraphPositionPath {
 		for (int i = 0; i < poss.size(); i++) {
 			GraphPosition gp = poss.get(i);
 			if (gp instanceof EdgePosition && poss.get(i+1) instanceof VertexPosition) {
-//				EdgePosition ep = (EdgePosition)gp;
 				/*
 				 * only count signs in the correct direction: edge -> sign -> vertex
 				 */
@@ -163,37 +162,6 @@ public class GraphPositionPath {
 		
 		return acc;
 	}
-	
-	
-//	public GraphPositionPathPosition hitTest(GraphPosition pos) {
-//		
-//		assert pos != null;
-//		
-//		if (pos.isBound()) {
-//			for (int i = 0; i < spine.size(); i++) {
-//				GraphPosition test = spine.get(i);
-//				if (pos.equals(test)) {
-//					return new GraphPositionPathPosition(this, i, 0.0);
-//				}
-//			}
-//			return null;
-//		} else {
-//			EdgePosition ep = (EdgePosition)pos;
-//			GraphPosition ep1 = ep.nextBoundBackward();
-//			GraphPosition ep2 = ep.nextBoundForward();
-//			for (int i = 0; i < spine.size()-1; i++) {
-//				GraphPosition test1 = spine.get(i);
-//				GraphPosition test2 = spine.get(i+1);
-//				if (ep1.equals(test1) && ep2.equals(test2)) {
-//					return new GraphPositionPathPosition(this, i, ep.param);
-//				} else if (ep1.equals(test2) && ep2.equals(test1)) {
-//					return new GraphPositionPathPosition(this, i, 1-ep.param);
-//				}
-//			}
-//			return null;
-//		}
-//		
-//	}
 	
 	/**
 	 * finds closest position in a graphpositionpath to p

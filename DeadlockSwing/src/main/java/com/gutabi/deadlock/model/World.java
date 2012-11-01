@@ -43,6 +43,9 @@ public class World {
 	public static final double WORLD_WIDTH = 16.0;
 	public static final double WORLD_HEIGHT = WORLD_WIDTH;
 	
+	public static final int GRASS_WIDTH = 32;
+	public static final int GRASS_HEIGHT = 32;
+	
 	public static Random RANDOM = new Random(1);
 	
 	/*
@@ -83,10 +86,9 @@ public class World {
 				BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g2 = tiledGrass.createGraphics();
 		
-		for (int i = 0; i < (WORLD_WIDTH * MODEL.PIXELS_PER_METER)/32; i++) {
-			for (int j = 0; j < (WORLD_HEIGHT * MODEL.PIXELS_PER_METER)/32; j++) {
-				//g2.drawImage(grass, grassWidth * i, grassHeight * j, null);
-				g2.drawImage(sheet, 32 * i, 32 * j, 32 * i + 32, 32 * j + 32, 0, 224, 0+32, 224+32, null);
+		for (int i = 0; i < (WORLD_WIDTH * MODEL.PIXELS_PER_METER)/GRASS_WIDTH; i++) {
+			for (int j = 0; j < (WORLD_HEIGHT * MODEL.PIXELS_PER_METER)/GRASS_HEIGHT; j++) {
+				g2.drawImage(sheet, GRASS_WIDTH * i, GRASS_HEIGHT * j, GRASS_WIDTH * i + GRASS_WIDTH, GRASS_HEIGHT * j + GRASS_HEIGHT, 0, 224, 0+GRASS_WIDTH, 224+GRASS_HEIGHT, null);
 			}
 		}
 		
@@ -520,8 +522,6 @@ public class World {
 	}
 	
 	private void paintAABB(Graphics2D g2) {
-		
-//		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
 		
 		g2.setColor(Color.BLACK);
 		g2.drawRect(

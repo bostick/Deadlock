@@ -29,8 +29,8 @@ public class EdgeSegment {
 		
 	}
 	
-	public boolean hitTest(Point p, double radius) {
-		if (DMath.lessThanEquals(Point.distance(p, a, b), Edge.ROAD_RADIUS + radius)) {
+	public boolean hitTest(Point p) {
+		if (DMath.lessThanEquals(Point.distance(p, a, b), Edge.ROAD_RADIUS)) {
 			return true;
 		}
 		return false;

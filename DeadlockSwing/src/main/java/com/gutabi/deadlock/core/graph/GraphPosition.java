@@ -28,8 +28,6 @@ public abstract class GraphPosition {
 	
 	public abstract GraphPosition ceiling();
 	
-//	public abstract List<StopSign> getEvents();
-	
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) {
@@ -105,44 +103,5 @@ public abstract class GraphPosition {
 		}
 		
 	}
-	
-	/**
-	 * returns:
-	 * 0 if a, b are along the direction of the edge
-	 * 1 if b, a are along the direction of the edge
-	 * 
-	 * exception otherwise
-	 */
-//	public static int direction(GraphPosition a, GraphPosition b) {
-//		assert !a.equals(b);
-//		
-//		if (a instanceof EdgePosition) {
-//			EdgePosition aa = (EdgePosition)a;
-//			
-//			if (b instanceof EdgePosition) {
-//				EdgePosition bb = (EdgePosition)b;
-//				
-//				assert aa.e == bb.e;
-//				
-//				return (aa.index+aa.param < bb.index+bb.param)?0:1; 
-//				
-//			} else {
-//				VertexPosition bb = (VertexPosition)b;
-//				
-//				assert aa.e.start == bb.v || aa.e.end == bb.v;
-//				
-//				return (bb.v == aa.e.end)?0:1;
-//				
-//			}
-//		} else {
-//			VertexPosition aa = (VertexPosition)a;
-//			
-//			EdgePosition bb = (EdgePosition)b;
-//			
-//			assert bb.e.start == aa.v || bb.e.end == aa.v;
-//			
-//			return (aa.v == bb.e.start)?0:1;
-//		}
-//	}
 	
 }

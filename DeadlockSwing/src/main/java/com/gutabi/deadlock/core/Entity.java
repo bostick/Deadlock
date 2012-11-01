@@ -9,7 +9,7 @@ public abstract class Entity {
 	
 	static Logger logger = Logger.getLogger(Entity.class);
 	
-	public abstract boolean hitTest(Point p, double radius);
+	public abstract boolean hitTest(Point p);
 	
 	public abstract boolean isDeleteable();
 	

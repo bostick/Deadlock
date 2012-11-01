@@ -17,7 +17,6 @@ public class EdgePosition extends GraphPosition {
 	public final double lengthToStartOfEdge;
 	public final double lengthToEndOfEdge;
 	
-//	public final List<StopSign> events;
 	public final StopSign sign;
 	
 	public final int hash;
@@ -39,7 +38,6 @@ public class EdgePosition extends GraphPosition {
 		this.index = index;
 		this.param = param;
 		
-//		events = new ArrayList<StopSign>();
 		if (DMath.equals(param, 0.0)) {
 			bound = true;
 			
@@ -80,10 +78,6 @@ public class EdgePosition extends GraphPosition {
 	public String toString() {
 		return e + " " + index + " " + param + "(" + lengthToStartOfEdge + "/" + e.getTotalLength() + ")";
 	}
-	
-//	public List<StopSign> getEvents() {
-//		return events;
-//	}
 	
 	public boolean equalsP(GraphPosition o) {
 		if (this == o) {

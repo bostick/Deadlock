@@ -62,9 +62,10 @@ public class StopSign extends Entity {
 	}
 	
 	public final boolean hitTest(Point p) {
-		if (DMath.lessThanEquals(aabb.x, p.x) && DMath.lessThanEquals(p.x, aabb.x+aabb.width) &&
-				DMath.lessThanEquals(aabb.y, p.y) && DMath.lessThanEquals(p.y, aabb.y+aabb.height)) {
-			return hitTest(p, 0.0);
+		if (aabb.hitTest(p)) {
+			
+			return DMath.lessThanEquals(Point.distance(p, this.p), r);
+			
 		} else {
 			return false;
 		}
@@ -79,10 +80,6 @@ public class StopSign extends Entity {
 				(int)(aabb.width * MODEL.PIXELS_PER_METER),
 				(int)(aabb.height * MODEL.PIXELS_PER_METER));
 		
-	}
-	
-	public boolean hitTest(Point p, double radius) {
-		return DMath.lessThanEquals(Point.distance(p, this.p), r + radius);
 	}
 	
 	public void computePoint() {

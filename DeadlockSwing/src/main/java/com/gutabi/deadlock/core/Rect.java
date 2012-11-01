@@ -59,6 +59,17 @@ public class Rect {
 		}
 	}
 	
+	public boolean hitTest(Point p) {
+		if (DMath.lessThanEquals(x, p.x) && DMath.lessThanEquals(p.x, x+width) &&
+				DMath.lessThanEquals(y, p.y) && DMath.lessThanEquals(p.y, y+height)) {
+			
+			return true;
+			
+		} else {
+			return false;
+		}
+	}
+	
 	public static final Rect union(Rect a, Rect b) {
 		if (a == null) {
 			return b;

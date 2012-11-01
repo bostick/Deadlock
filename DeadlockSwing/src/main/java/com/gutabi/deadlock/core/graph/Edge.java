@@ -140,13 +140,19 @@ public final class Edge extends Entity {
 	
 	
 	
-	public boolean hitTest(Point p, double radius) {
-		for (EdgeSegment s : spine) {
-			if (s.hitTest(p, radius)) {
-				return true;
+	public final boolean hitTest(Point p) {
+		if (aabb.hitTest(p)) {
+			
+			for (EdgeSegment s : spine) {
+				if (s.hitTest(p)) {
+					return true;
+				}
 			}
+			return false;
+			
+		} else {
+			return false;
 		}
-		return false;
 	}
 	
 	public EdgePosition findClosestEdgePosition(Point p, double radius) {
@@ -482,15 +488,6 @@ public final class Edge extends Entity {
 	protected Rect aabb;
 	public final Rect getAABB() {
 		return aabb;
-	}
-	
-	public final boolean hitTest(Point p) {
-		if (DMath.lessThanEquals(aabb.x, p.x) && DMath.lessThanEquals(p.x, aabb.x+aabb.width) &&
-				DMath.lessThanEquals(aabb.y, p.y) && DMath.lessThanEquals(p.y, aabb.y+aabb.height)) {
-			return hitTest(p, 0.0);
-		} else {
-			return false;
-		}
 	}
 	
 	protected void paintAABB(Graphics2D g2) {

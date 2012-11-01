@@ -536,4 +536,25 @@ public class Point {
 			return 1;
 		}
 	}
+	
+	/**
+	 * 
+	 * return 1 if p is to the left of <a, b>
+	 * return -1 if p is to the right
+	 * return 0 if p is on the line
+	 */
+	public static int halfPlane(Point p, Point p1, Point p2) {
+		double a = -(p2.y - p1.y);
+		double b = p2.x - p1.x;
+		double c = -(a * p1.x + b * p1.y);
+		double d = a * p.x + b * p.y + c;
+		if (DMath.equals(d, 0.0)) {
+			return 0;
+		} else if (d > 0) {
+			return 1;
+		} else {
+			return -1;
+		}
+	}
+	
 }

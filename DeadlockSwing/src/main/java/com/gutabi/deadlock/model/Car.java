@@ -38,7 +38,6 @@ public abstract class Car extends Entity {
 	public static final double CAR_LENGTH = 1.0;
 	public static final double COMPLETE_STOP_WAIT_TIME = 0.0;
 	double steeringLookaheadDistance = CAR_LENGTH * 1.5;
-//	double eventLookaheadDistance = CAR_LENGTH * 3;
 	double eventLookaheadDistance = getMetersPerSecond() * 0.3;
 	
 	
@@ -239,8 +238,10 @@ public abstract class Car extends Entity {
 		
 		computeAABB();
 		
-		GraphPositionPathPosition max = overallPos.travel(Math.min(2 * CAR_LENGTH, overallPos.lengthToEndOfPath));
-		overallPos = overallPath.findClosestGraphPositionPathPosition(p, overallPos, max);
+		if (overallPos != null) {
+			GraphPositionPathPosition max = overallPos.travel(Math.min(2 * CAR_LENGTH, overallPos.lengthToEndOfPath));
+			overallPos = overallPath.findClosestGraphPositionPathPosition(p, overallPos, max);
+		}
 		
 	}
 	
@@ -284,23 +285,26 @@ public abstract class Car extends Entity {
 		return worldPoint4;
 	}
 	
-	public boolean hitTest(Point p, double radius) {
-		if (b2dShape.testPoint(b2dBody.getTransform(), p.vec2())) {
+	public final boolean hitTest(Point p) {
+		if (aabb.hitTest(p)) {
+			
+			if (Point.halfPlane(p, worldPoint1, worldPoint2) != -1) {
+				return false;
+			}
+			if (Point.halfPlane(p, worldPoint2, worldPoint3) != -1) {
+				return false;
+			}
+			if (Point.halfPlane(p, worldPoint3, worldPoint4) != -1) {
+				return false;
+			}
+			if (Point.halfPlane(p, worldPoint4, worldPoint1) != -1) {
+				return false;
+			}
 			return true;
+			
+		} else {
+			return false;
 		}
-		if (DMath.lessThanEquals(Point.distance(p, p1, p2), radius)) {
-			return true;
-		}
-		if (DMath.lessThanEquals(Point.distance(p, p2, p3), radius)) {
-			return true;
-		}
-		if (DMath.lessThanEquals(Point.distance(p, p3, p4), radius)) {
-			return true;
-		}
-		if (DMath.lessThanEquals(Point.distance(p, p4, p1), radius)) {
-			return true;
-		}
-		return false;
 	}
 	
 	public boolean isDeleteable() {
@@ -310,15 +314,6 @@ public abstract class Car extends Entity {
 	protected Rect aabb;
 	public final Rect getAABB() {
 		return aabb;
-	}
-	
-	public final boolean hitTest(Point p) {
-		if (DMath.lessThanEquals(aabb.x, p.x) && DMath.lessThanEquals(p.x, aabb.x+aabb.width) &&
-				DMath.lessThanEquals(aabb.y, p.y) && DMath.lessThanEquals(p.y, aabb.y+aabb.height)) {
-			return hitTest(p, 0.0);
-		} else {
-			return false;
-		}
 	}
 	
 	protected void paintAABB(Graphics2D g2) {
@@ -340,7 +335,27 @@ public abstract class Car extends Entity {
 		
 		state = CarStateEnum.CRASHED;
 		
+		overallPos = null;
+		
 		source.outstandingCars--;
+		
+		if (curBorderPosition != null) {
+			
+			if (curSign != null) {
+				stoppedTime = -1;
+				decelTime = -1;
+				accelTime = -1;
+			}
+			
+			((VertexPosition)curVertexPosition.gpos).v.queue.remove(this);
+			
+			curBorderPosition = null;
+			curVertexPosition = null;
+			curBorderMatchingPosition = null;
+			curSign = null;
+			
+		}
+		
 	}
 	
 	public void preStep(double t) {
@@ -461,7 +476,6 @@ public abstract class Car extends Entity {
 	
 	private float brakeImpulseCoefficient() {
 		return 0.1f;
-//		return 0.1f;
 	}
 	
 	/*
@@ -559,10 +573,7 @@ public abstract class Car extends Entity {
 			if (goalForwardVel < 1.0) {
 				goalForwardVel = 0;
 			}
-//			goalForwardVel = 0;
-		} else {
-//			assert t <= stoppedTime + COMPLETE_STOP_WAIT_TIME;
-			
+		} else {			
 			dp = new Point(goalPoint.x-p.x, goalPoint.y-p.y);
 			goalForwardVel = 0;
 			
