@@ -12,6 +12,7 @@ import com.gutabi.deadlock.model.Car;
 import com.gutabi.deadlock.model.FastCar;
 import com.gutabi.deadlock.model.NormalCar;
 import com.gutabi.deadlock.model.RandomCar;
+import com.gutabi.deadlock.model.ReallyFastCar;
 
 @SuppressWarnings("static-access")
 public class Source extends Vertex {
@@ -129,6 +130,7 @@ public class Source extends Vertex {
 		boolean normal = VIEW.controlPanel.normalCarButton.isSelected();
 		boolean fast = VIEW.controlPanel.fastCarButton.isSelected();
 		boolean random = VIEW.controlPanel.randomCarButton.isSelected();
+		boolean really = VIEW.controlPanel.reallyFastCarButton.isSelected();
 		
 		List<Class> l = new ArrayList<Class>();
 		if (normal) {
@@ -139,6 +141,9 @@ public class Source extends Vertex {
 		}
 		if (random) {
 			l.add(RandomCar.class);
+		}
+		if (really) {
+			l.add(ReallyFastCar.class);
 		}
 		
 		if (l.isEmpty()) {
@@ -155,6 +160,8 @@ public class Source extends Vertex {
 			return new FastCar(this);
 		} else if (c == RandomCar.class) {
 			return new RandomCar(this);
+		} else if (c == ReallyFastCar.class) {
+			return new ReallyFastCar(this);
 		} else {
 			throw new AssertionError();
 		}

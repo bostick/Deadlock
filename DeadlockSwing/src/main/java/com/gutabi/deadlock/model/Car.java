@@ -131,6 +131,8 @@ public abstract class Car extends Entity {
 	
 	protected void computeStartingProperties() {
 		
+		logger.debug("spawn");
+		
 		overallPos = new GraphPositionPathPosition(overallPath, 0, 0.0);
 		GraphPosition closestGraphPos = overallPos.gpos;
 		startPoint = closestGraphPos.p;
@@ -139,9 +141,17 @@ public abstract class Car extends Entity {
 		
 		Point nextDTGoalPoint = next.gpos.p;
 		
-		startHeading = Math.atan2(nextDTGoalPoint.y-startPoint.y, nextDTGoalPoint.x-startPoint.x);
+		Point dp = new Point(nextDTGoalPoint.x-startPoint.x, nextDTGoalPoint.y-startPoint.y);
+		
+		startHeading = Math.atan2(dp.y, dp.x);
 		
 		b2dInit();
+		
+		Vec2 v = dp.vec2();
+		v.normalize();
+		v.mulLocal((float)getMetersPerSecond());
+		
+		b2dBody.setLinearVelocity(v);
 		
 		computeDynamicProperties();
 	}
@@ -204,6 +214,8 @@ public abstract class Car extends Entity {
 		
 		forwardVel = currentRightNormal.mul(Vec2.dot(currentRightNormal, vel));
 		
+		logger.debug("vel: " + forwardVel.length());
+		
 		Mat22 r = b2dBody.getTransform().R;
 		carTrans = new Matrix(r.col1.x, r.col2.x, r.col1.y, r.col2.y);
 		
@@ -229,12 +241,11 @@ public abstract class Car extends Entity {
 			}
 		}
 		
-		computeAABB();
-		
-		if (overallPos != null) {
-			GraphPositionPathPosition max = overallPos.travel(Math.min(2 * CAR_LENGTH, overallPos.lengthToEndOfPath));
-			overallPos = overallPath.findClosestGraphPositionPathPosition(p, overallPos, max);
+		if (!atleastPartiallyOnRoad) {
+			skid();
 		}
+		
+		computeAABB();
 		
 	}
 	
@@ -351,11 +362,45 @@ public abstract class Car extends Entity {
 		
 	}
 	
+	private void skid() {
+		
+		state = CarStateEnum.SKIDDED;
+		
+		overallPos = null;
+		
+		source.outstandingCars--;
+		
+		if (curBorderPosition != null) {
+			
+			if (curSign != null) {
+				stoppedTime = -1;
+				decelTime = -1;
+				accelTime = -1;
+			}
+			
+			((VertexPosition)curVertexPosition.gpos).v.queue.remove(this);
+			
+			curBorderPosition = null;
+			curVertexPosition = null;
+			curBorderMatchingPosition = null;
+			curSign = null;
+			
+		}
+		
+	}
+	
 	public void preStep(double t) {
 		
-		if (state == CarStateEnum.CRASHED) {
+		if (state == CarStateEnum.CRASHED || state == CarStateEnum.SKIDDED || state == CarStateEnum.SINKED) {
 			
 		} else {
+			
+			/*
+			 * calculate current overall position on graph
+			 */
+			GraphPositionPathPosition max = overallPos.travel(Math.min(2 * CAR_LENGTH, overallPos.lengthToEndOfPath));
+			overallPos = overallPath.findClosestGraphPositionPathPosition(p, overallPos, max);
+			
 			
 			if (curBorderPosition == null) {
 				List<GraphPositionPathPosition> borderPositions = overallPath.borderPositions(overallPos, Math.min(eventLookaheadDistance, overallPos.lengthToEndOfPath));
@@ -444,14 +489,14 @@ public abstract class Car extends Entity {
 			updateBrake(t);
 			break;
 		case CRASHED:
-			break;
+		case SKIDDED:
 		case SINKED:
-			assert false;
+			break;
 		}
 	}
 	
 	private float cancelingForwardImpulseCoefficient() {
-		return 0.02f;
+		return 0.01f;
 	}
 	
 	private float cancelingLateralImpulseCoefficient() {
@@ -514,6 +559,9 @@ public abstract class Car extends Entity {
 	private void updateDrive(double t) {
 		
 		if (stoppedTime != -1) {
+			
+			logger.debug("accel");
+			
 			accelTime = t;
 		}
 		
@@ -555,6 +603,9 @@ public abstract class Car extends Entity {
 		if (stoppedTime == -1) {
 			
 			if (decelTime == -1) {
+				
+				logger.debug("decel");
+				
 				decelTime = t;
 			}
 			
@@ -641,6 +692,9 @@ public abstract class Car extends Entity {
 				sinked = true;
 			}
 			if (sinked) {
+				
+				logger.debug("sink");
+				
 				s.matchingSource.outstandingCars--;
 				s.queue.remove(this);
 				state = CarStateEnum.SINKED;
@@ -663,9 +717,9 @@ public abstract class Car extends Entity {
 			
 			break;
 		case CRASHED:
-			break;
+		case SKIDDED:
 		case SINKED:
-			assert false;
+			break;
 		}
 		
 		return true;	
