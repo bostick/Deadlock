@@ -12,12 +12,12 @@ public class Dim {
 		this.height = height;
 	}
 	
-	public Dim times(double factor) {
-		return new Dim(width * factor, height * factor);
-	}
-	
-	public Point divide(double b) {
-		return new Point(width / b, height / b);
-	}
+//	public Dim times(double factor) {
+//		return new Dim(width * factor, height * factor);
+//	}
+//	
+//	public Point divide(double b) {
+//		return new Point(width / b, height / b);
+//	}
 	
 }

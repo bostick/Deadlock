@@ -366,26 +366,14 @@ public class Point {
 		}
 	}
 	
-	public Point normalize() {
-		double atan = Math.atan2(y, x);
-		return new Point(Math.cos(atan), Math.sin(atan));
-	}
+//	public Point normalize() {
+//		double atan = Math.atan2(y, x);
+//		return new Point(Math.cos(atan), Math.sin(atan));
+//	}
 	
-	public static Point ccw90(Point p) {
-		return new Point(-p.y, p.x);
-	}
-	
-	public static Point cw90(Point p) {
-		return new Point(p.y, -p.x);
-	}
-	
-	public static double signedArea(Point p0, Point p1, Point p2) {
-		return (p1.x-p0.x)*(p2.y-p0.y) - (p2.x-p0.x)*(p1.y-p0.y);
-	}
-	
-	public Point multiply(double scale) {
-		return new Point(x * scale, y * scale);
-	}
+//	public static double signedArea(Point p0, Point p1, Point p2) {
+//		return (p1.x-p0.x)*(p2.y-p0.y) - (p2.x-p0.x)*(p1.y-p0.y);
+//	}
 	
 	/**
 	 * assuming it is, return param for point b on line defined by &lt;c, d>
@@ -424,26 +412,14 @@ public class Point {
 	}
 	
 	public static double distance(Point a, Point b) {
-//		return Math.hypot(a.x - b.x, a.y - b.y);
 		return Math.sqrt((a.x - b.x)*(a.x - b.x) + (a.y - b.y)*(a.y - b.y));
-	}
-	
-	public static Point plus(Point a, Point b) {
-		return new Point(a.x + b.x, a.y + b.y);
-	}
-	
-	public static Point minus(Point a, Point b) {
-		return new Point(a.x - b.x, a.y - b.y);
-	}
-	
-	public Point plus(Point b) {
-		return plus(this, b);
-	}
-	
-	public Point minus(Point b) {
-		return minus(this, b);
 	}	
 	
+	public static boolean equalDistances(Point a, Point b, Point c) {
+		double ab = (a.x-b.x)*(a.x-b.x) + (a.y-b.y)*(a.y-b.y);
+		double ac = (a.x-c.x)*(a.x-c.x) + (a.y-c.y)*(a.y-c.y);
+		return DMath.equals(ab, ac);
+	}
 	
 	
 	/**
@@ -470,8 +446,8 @@ public class Point {
 			
 		} else if (disc > 0.0) {
 			
-			Point int1 = new Point((dd * dy + sgn(dy) * dx * Math.sqrt(disc))/(dr * dr), (-dd * dx + Math.abs(dy) * Math.sqrt(disc))/(dr * dr)).plus(center);
-			Point int2 = new Point((dd * dy - sgn(dy) * dx * Math.sqrt(disc))/(dr * dr), (-dd * dx - Math.abs(dy) * Math.sqrt(disc))/(dr * dr)).plus(center);
+			Point int1 = new Point((dd * dy + DMath.sgn(dy) * dx * Math.sqrt(disc))/(dr * dr), (-dd * dx + Math.abs(dy) * Math.sqrt(disc))/(dr * dr)).plus(center);
+			Point int2 = new Point((dd * dy - DMath.sgn(dy) * dx * Math.sqrt(disc))/(dr * dr), (-dd * dx - Math.abs(dy) * Math.sqrt(disc))/(dr * dr)).plus(center);
 			
 			ints[0] = int1;
 			ints[1] = int2;
@@ -527,16 +503,6 @@ public class Point {
 		
 	}
 	
-	private static double sgn(double x) {
-		if (DMath.equals(x, 0.0)) {
-			return 1;
-		} else if (x < 0.0) {
-			return -1;
-		} else {
-			return 1;
-		}
-	}
-	
 	/**
 	 * 
 	 * return 1 if p is to the left of <a, b>
@@ -555,6 +521,37 @@ public class Point {
 		} else {
 			return -1;
 		}
+	}
+	
+	
+	
+	
+	public static Point ccw90(Point p) {
+		return new Point(-p.y, p.x);
+	}
+	
+	public static Point cw90(Point p) {
+		return new Point(p.y, -p.x);
+	}
+	
+	public Point multiply(double scale) {
+		return new Point(x * scale, y * scale);
+	}
+	
+	public static Point plus(Point a, Point b) {
+		return new Point(a.x + b.x, a.y + b.y);
+	}
+	
+	public static Point minus(Point a, Point b) {
+		return new Point(a.x - b.x, a.y - b.y);
+	}
+	
+	public Point plus(Point b) {
+		return plus(this, b);
+	}
+	
+	public Point minus(Point b) {
+		return minus(this, b);
 	}
 	
 }

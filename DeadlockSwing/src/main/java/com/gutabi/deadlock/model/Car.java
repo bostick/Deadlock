@@ -21,6 +21,7 @@ import org.jbox2d.dynamics.FixtureDef;
 
 import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Entity;
+import com.gutabi.deadlock.core.Matrix;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.Rect;
 import com.gutabi.deadlock.core.graph.EdgePosition;
@@ -82,7 +83,7 @@ public abstract class Car extends Entity {
 	Vec2 forwardVel;
 	float angle;
 	float angularVel;
-	AffineTransform carTrans;
+	Matrix carTrans;
 	boolean atleastPartiallyOnRoad;
 	boolean completelyOnRoad;
 	GraphPositionPathPosition overallPos;
@@ -125,8 +126,6 @@ public abstract class Car extends Entity {
 		p2 = new Point(CAR_LENGTH / 2, -CAR_LENGTH / 4);
 		p3 = new Point(-CAR_LENGTH / 2, -CAR_LENGTH / 4);
 		p4 = new Point(-CAR_LENGTH / 2, CAR_LENGTH / 4);
-		
-		carTrans = new AffineTransform();
 		
 	}
 	
@@ -205,11 +204,8 @@ public abstract class Car extends Entity {
 		
 		forwardVel = currentRightNormal.mul(Vec2.dot(currentRightNormal, vel));
 		
-//		logger.debug("forwardVel: " + forwardVel.length());
-		
-		if (DMath.equals(vel.length(), 0.0)) {
-			String.class.getName();
-		}
+		Mat22 r = b2dBody.getTransform().R;
+		carTrans = new Matrix(r.col1.x, r.col2.x, r.col1.y, r.col2.y);
 		
 		worldPoint1 = carToWorld(p1);
 		worldPoint2 = carToWorld(p2);
@@ -233,9 +229,6 @@ public abstract class Car extends Entity {
 			}
 		}
 		
-		Mat22 r = b2dBody.getTransform().R;
-		carTrans.setTransform(r.col1.x, r.col1.y, r.col2.x, r.col2.y, p.x, p.y);
-		
 		computeAABB();
 		
 		if (overallPos != null) {
@@ -253,8 +246,8 @@ public abstract class Car extends Entity {
 		aabb = new Rect(b2dAABB.lowerBound.x, b2dAABB.lowerBound.y, b2dAABB.upperBound.x-b2dAABB.lowerBound.x, b2dAABB.upperBound.y-b2dAABB.lowerBound.y);
 	}
 	
-	private Point carToWorld(Point p) {
-		return Point.point(carTrans.transform(p.point2D(), null));
+	private Point carToWorld(Point c) {
+		return carTrans.times(c).plus(p);
 	}
 	
 	
@@ -463,7 +456,7 @@ public abstract class Car extends Entity {
 	
 	private float cancelingLateralImpulseCoefficient() {
 //		return atleastPartiallyOnRoad ? 0.1f : 0.04f;
-		return 0.1f;
+		return 0.05f;
 	}
 	
 	private float cancelingAngularImpulseCoefficient() {
@@ -483,7 +476,7 @@ public abstract class Car extends Entity {
 	 * 3 car lengths for 180 deg = 3 meters for 3.14 radians
 	 */
 	private double maxRadsPerMeter() {
-		return 0.4;
+		return 0.1;
 	}
 	
 	private void updateFriction() {
@@ -697,7 +690,8 @@ public abstract class Car extends Entity {
 		
 		AffineTransform origTransform = g2.getTransform();
 		
-		g2.transform(carTrans);
+		g2.translate(p.x, p.y);
+		g2.transform(carTrans.affineTransform());
 		
 		paintImage(g2);
 		
