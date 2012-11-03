@@ -227,10 +227,14 @@ public class DeadlockController implements ActionListener {
 				
 				Point worldPoint = VIEW.panelToWorld(p);
 				
+//				MODEL.world.testPoint(worldPoint);
+				
 				Entity closest = MODEL.world.hitTest(worldPoint);
 				MODEL.hilited = closest;
 				
 //				MODEL.stroke.move(p);
+				
+//				MODEL.world.renderBackground();
 				
 				VIEW.repaint();
 				
@@ -326,7 +330,7 @@ public class DeadlockController implements ActionListener {
 		
 		MODEL.hilited = null;
 		
-		MODEL.stroke = new Stroke();
+		MODEL.stroke = new Stroke(Vertex.INIT_VERTEX_RADIUS);
 		MODEL.stroke.add(VIEW.panelToWorld(p));
 			
 	}

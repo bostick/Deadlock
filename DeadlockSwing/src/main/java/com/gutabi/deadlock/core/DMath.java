@@ -110,4 +110,29 @@ public class DMath {
 			return 1;
 		}
 	}
+	
+	
+	public static double quadraticSolve(double a, double b, double c, double[] roots) {
+		
+		double discriminant = b*b - 4*a*c;
+		
+		if (DMath.equals(discriminant, 0.0)) {
+			
+			roots[0] = -b / (2*a);
+			
+			return discriminant;
+			
+		} else if (discriminant > 0) {
+			
+			roots[0] = (-b + Math.sqrt(discriminant)) / (2 * a);
+			roots[1] = (-b - Math.sqrt(discriminant)) / (2 * a);
+			
+			return discriminant;
+			
+		} else {
+			
+			return discriminant;
+			
+		}
+	}
 }

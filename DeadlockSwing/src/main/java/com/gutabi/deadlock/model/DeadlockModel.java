@@ -39,7 +39,7 @@ public class DeadlockModel {
 		world = new World();
 		world.init();
 		
-		stroke = new Stroke();
+//		stroke = new Stroke();
 		
 		stats = new Stats();
 	}

@@ -9,15 +9,17 @@ import java.util.List;
 
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.Rect;
-import com.gutabi.deadlock.core.graph.Vertex;
 
 @SuppressWarnings("static-access")
 public class Stroke {
 	
 	public List<Point> pts;
 	
-	public Stroke() {
+	public final double r;
+	
+	public Stroke(double r) {
 		pts = new ArrayList<Point>();
+		this.r = r;
 	}
 	
 	
@@ -39,7 +41,7 @@ public class Stroke {
 		aabb = null;
 		
 		for (Point p : pts) {
-			aabb = Rect.union(aabb, new Rect(p.x-Vertex.INIT_VERTEX_RADIUS, p.y-Vertex.INIT_VERTEX_RADIUS, 2*Vertex.INIT_VERTEX_RADIUS, 2*Vertex.INIT_VERTEX_RADIUS));
+			aabb = Rect.union(aabb, new Rect(p.x-r, p.y-r, 2*r, 2*r));
 		}
 		
 	}
@@ -78,17 +80,17 @@ public class Stroke {
 			
 			Point start = pts.get(0);
 			g2.drawOval(
-					(int)((start.x - Vertex.INIT_VERTEX_RADIUS) * MODEL.PIXELS_PER_METER),
-					(int)((start.y - Vertex.INIT_VERTEX_RADIUS) * MODEL.PIXELS_PER_METER),
-					(int)((2 * Vertex.INIT_VERTEX_RADIUS) * MODEL.PIXELS_PER_METER),
-					(int)((2 * Vertex.INIT_VERTEX_RADIUS) * MODEL.PIXELS_PER_METER));
+					(int)((start.x - r) * MODEL.PIXELS_PER_METER),
+					(int)((start.y - r) * MODEL.PIXELS_PER_METER),
+					(int)((2 * r) * MODEL.PIXELS_PER_METER),
+					(int)((2 * r) * MODEL.PIXELS_PER_METER));
 			
 			Point end = pts.get(pts.size()-1);
 			g2.drawOval(
-					(int)((end.x - Vertex.INIT_VERTEX_RADIUS) * MODEL.PIXELS_PER_METER),
-					(int)((end.y - Vertex.INIT_VERTEX_RADIUS) * MODEL.PIXELS_PER_METER),
-					(int)((2 * Vertex.INIT_VERTEX_RADIUS) * MODEL.PIXELS_PER_METER),
-					(int)((2 * Vertex.INIT_VERTEX_RADIUS) * MODEL.PIXELS_PER_METER));
+					(int)((end.x - r) * MODEL.PIXELS_PER_METER),
+					(int)((end.y - r) * MODEL.PIXELS_PER_METER),
+					(int)((2 * r) * MODEL.PIXELS_PER_METER),
+					(int)((2 * r) * MODEL.PIXELS_PER_METER));
 			
 		}
 		

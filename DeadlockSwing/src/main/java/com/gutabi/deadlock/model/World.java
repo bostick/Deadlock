@@ -14,26 +14,25 @@ import java.util.Random;
 
 import javax.imageio.ImageIO;
 
+import org.apache.log4j.Logger;
 import org.jbox2d.common.Vec2;
 
 import com.gutabi.deadlock.controller.ControlMode;
-import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.Rect;
 import com.gutabi.deadlock.core.graph.Edge;
-import com.gutabi.deadlock.core.graph.EdgePosition;
 import com.gutabi.deadlock.core.graph.Graph;
-import com.gutabi.deadlock.core.graph.GraphPosition;
 import com.gutabi.deadlock.core.graph.Intersection;
 import com.gutabi.deadlock.core.graph.Sink;
 import com.gutabi.deadlock.core.graph.Source;
 import com.gutabi.deadlock.core.graph.StopSign;
+import com.gutabi.deadlock.core.graph.SweepEvent;
+import com.gutabi.deadlock.core.graph.SweepEventListener;
 import com.gutabi.deadlock.core.graph.Vertex;
-import com.gutabi.deadlock.core.graph.VertexPosition;
 
 @SuppressWarnings("static-access")
-public class World {
+public class World implements SweepEventListener {
 	
 	/*
 	 * distance that center of a car has to be from center of a sink in order to be sinked
@@ -70,7 +69,7 @@ public class World {
 	private Rect worldRect;
 	private Rect aabb;
 	
-//	private static Logger logger = Logger.getLogger(World.class);
+	private static Logger logger = Logger.getLogger(World.class);
 	
 	public World() {
 		
@@ -93,6 +92,7 @@ public class World {
 		}
 		
 		graph = new Graph();
+		graph.addSweepEventListener(this);
 		
 		b2dWorld = new org.jbox2d.dynamics.World(new Vec2(0.0f, 0.0f), true);
 		listener = new CarEventListener();
@@ -185,73 +185,65 @@ public class World {
 	
 	public void processNewStrokeTop(Stroke stroke) {
 		
-		List<Edge> newEdges = new ArrayList<Edge>();
+		List<Entity> startHits = graphHitTest(stroke.pts.get(0), Vertex.INIT_VERTEX_RADIUS);
+		List<Entity> endHits = graphHitTest(stroke.pts.get(stroke.pts.size()-1), Vertex.INIT_VERTEX_RADIUS);
 		
-		Point startPoint = stroke.pts.get(0);
-		GraphPosition startPos = graph.findClosestGraphPosition(startPoint, Vertex.INIT_VERTEX_RADIUS);
+		events = new ArrayList<SweepEvent>();
 		
-		int i;
-		for (i = 1; i < stroke.pts.size(); i++) {
-			Point b = stroke.pts.get(i);
-			GraphPosition bPos = graph.findClosestGraphPosition(b, Vertex.INIT_VERTEX_RADIUS);
-			if (bPos != null) {
-				if (startPos != null && bPos.getEntity() == startPos.getEntity()) {
-					continue;
-				} else {
-					break;
-				}
-			}
-		}
-		if (i == stroke.pts.size()) {
-			/*
-			 * we know that the loop reached the end
-			 */
-			i = stroke.pts.size()-1;
+		for (int i = 0; i < stroke.pts.size()-1; i++) {
+			sweep(stroke, i);
 		}
 		
-		Point endPoint = stroke.pts.get(i);
-		GraphPosition endPos = graph.findClosestGraphPosition(endPoint, Vertex.INIT_VERTEX_RADIUS);
-		
-		if (DMath.lessThanEquals(Point.distance(startPoint, endPoint), Vertex.INIT_VERTEX_RADIUS + Vertex.INIT_VERTEX_RADIUS)) {
-			/*
-			 * the two new vertices would be overlapping
-			 */
-			return;
-		}
-		
-		if (startPos == null) {
-			Intersection start = new Intersection(startPoint);
+		if (startHits.isEmpty() && endHits.isEmpty() && events.isEmpty()) {
+			
+			Intersection start = new Intersection(stroke.pts.get(0));
 			graph.addIntersection(start);
-		}
-		
-		if (endPos == null) {
-			Intersection end = new Intersection(endPoint);
+			Intersection end = new Intersection(stroke.pts.get(stroke.pts.size()-1));
 			graph.addIntersection(end);
-		}
-		
-		startPos = graph.findClosestGraphPosition(startPoint, Vertex.INIT_VERTEX_RADIUS);
-		assert startPos != null;
-		Vertex start;
-		if (startPos instanceof EdgePosition) {
-			start = graph.split((EdgePosition)startPos);
+			
+			graph.createEdgeTop(start, end, stroke.pts);
+			
 		} else {
-			start = ((VertexPosition)startPos).v;
+			
+			if (!events.isEmpty()) {
+				
+				for (SweepEvent e : events) {
+					
+					logger.debug(e.type + " " + e.index + "." + e.param + " " + e.o);
+					
+				}
+				
+			}
+			
 		}
-		
-		endPos = graph.findClosestGraphPosition(endPoint, Vertex.INIT_VERTEX_RADIUS);
-		assert endPos != null;
-		Vertex end;
-		if (endPos instanceof EdgePosition) {
-			end = graph.split((EdgePosition)endPos);
-		} else {
-			end = ((VertexPosition)endPos).v;
-		}
-		
-		Edge e = graph.createEdgeTop(start, end, stroke.pts.subList(0, i+1));
-		newEdges.add(e);
 		
 		postDraftingTop();
 	}
+	
+	private void sweep(Stroke s, int index) {
+		graph.sweep(s, index);
+		
+	}
+	
+	
+	List<SweepEvent> events = new ArrayList<SweepEvent>();
+	
+	public void enter(SweepEvent e) {
+//		logger.debug("enter " + combo + " " + c.hashCode());
+		events.add(e);
+	}
+	
+	public void exit(SweepEvent e) {
+//		logger.debug("exit " + combo + " " + c.hashCode());
+		events.add(e);
+	}
+	
+	public void intersect(SweepEvent e) {
+//		logger.debug("intersect " + combo + " " + c.hashCode());
+		events.add(e);
+	}
+	
+	
 	
 	private void postIdleTop() {
 		assert MODEL.mode == ControlMode.IDLE;
@@ -398,6 +390,10 @@ public class World {
 	
 	public Entity graphHitTest(Point p) {
 		return graph.hitTest(p);
+	}
+	
+	public List<Entity> graphHitTest(Point p, double radius) {
+		return graph.hitTest(p, radius);
 	}
 	
 	public void paint(Graphics2D g2) {

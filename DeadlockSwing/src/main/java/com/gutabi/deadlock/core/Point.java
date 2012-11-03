@@ -366,10 +366,10 @@ public class Point {
 		}
 	}
 	
-//	public Point normalize() {
-//		double atan = Math.atan2(y, x);
-//		return new Point(Math.cos(atan), Math.sin(atan));
-//	}
+	public Point normalize() {
+		double atan = Math.atan2(y, x);
+		return new Point(Math.cos(atan), Math.sin(atan));
+	}
 	
 //	public static double signedArea(Point p0, Point p1, Point p2) {
 //		return (p1.x-p0.x)*(p2.y-p0.y) - (p2.x-p0.x)*(p1.y-p0.y);
@@ -524,13 +524,21 @@ public class Point {
 	}
 	
 	
+	public static double dot(Point a, Point b) {
+		return (a.x * b.x) + (a.y * b.y);
+	}
 	
-	
-	public static Point ccw90(Point p) {
+	/**
+	 * for coord system with <0, 0> in upper left, y extending down
+	 */
+	public static Point cw90(Point p) {
 		return new Point(-p.y, p.x);
 	}
 	
-	public static Point cw90(Point p) {
+	/**
+	 * for coord system with <0, 0> in upper left, y extending down
+	 */
+	public static Point ccw90(Point p) {
 		return new Point(p.y, -p.x);
 	}
 	

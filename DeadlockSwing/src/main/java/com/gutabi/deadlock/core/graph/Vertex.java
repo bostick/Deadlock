@@ -12,7 +12,9 @@ import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.Rect;
+import com.gutabi.deadlock.core.graph.SweepEvent.SweepEventType;
 import com.gutabi.deadlock.model.Car;
+import com.gutabi.deadlock.model.Stroke;
 
 @SuppressWarnings("static-access")
 public abstract class Vertex extends Entity {
@@ -29,6 +31,8 @@ public abstract class Vertex extends Entity {
 	
 	protected Color color;
 	protected Color hiliteColor;
+	
+	SweepEventListener l;
 	
 	private final int hash;
 	
@@ -71,6 +75,86 @@ public abstract class Vertex extends Entity {
 	}
 	
 	
+	
+	public void setSweepEventListener(SweepEventListener l) {
+		this.l = l;
+	}
+	
+	public void sweep(Stroke s, int index) {
+		
+		Point c = s.pts.get(index);
+		Point d = s.pts.get(index+1);
+		
+		boolean outside;
+		if (hitTest(c, s.r)) {
+			outside = false;
+		} else {
+			outside = true;
+		}
+		
+		boolean i = Point.intersect(p, c, d);
+		if (i) {
+			double cdParam = Point.param(p, c, d);
+			l.intersect(new SweepEvent(SweepEventType.INTERSECTIONVERTEX, index, cdParam, this));
+		}
+		
+		double aCoeff = ((d.x - c.x)*(d.x - c.x) + (d.y - c.y)*(d.y - c.y));
+		double bCoeff = -2 * ((d.x - c.x)*(p.x - c.x) + (d.y - c.y)*(p.y - c.y));
+		double cCoeff = ((p.x - c.x)*(p.x - c.x) + (p.y - c.y)*(p.y - c.y) - (s.r + r)*(s.r + r));
+		double[] roots = new double[2];
+		double discriminant = DMath.quadraticSolve(aCoeff, bCoeff, cCoeff, roots);
+		if (DMath.equals(discriminant, 0.0)) {
+			/*
+			 * 1 event
+			 */
+			double cdParam = roots[0];
+			if (DMath.greaterThanEquals(cdParam, 0.0) && DMath.lessThanEquals(cdParam, 1.0)) {
+				Point p = Point.point(c, d, cdParam);
+				assert DMath.equals(Point.distance(p, this.p), r + s.r);
+				if (outside) {
+					l.enter(new SweepEvent(SweepEventType.ENTERVERTEX, index, cdParam, this));
+				} else {
+					l.exit(new SweepEvent(SweepEventType.EXITVERTEX, index, cdParam, this));
+				}
+			}
+
+		} else if (discriminant > 0) {
+			/*
+			 * 2 events
+			 */
+			double cdParam0 = roots[0];
+			if (DMath.greaterThanEquals(cdParam0, 0.0) && DMath.lessThanEquals(cdParam0, 1.0)) {
+				Point p0 = Point.point(c, d, cdParam0);
+				assert DMath.equals(Point.distance(p0, this.p), r + s.r);
+				if (outside) {
+					l.enter(new SweepEvent(SweepEventType.ENTERVERTEX, index, cdParam0, this));
+				} else {
+					l.exit(new SweepEvent(SweepEventType.EXITVERTEX, index, cdParam0, this));
+				}
+			}
+			double cdParam1 = roots[1];
+			if (DMath.greaterThanEquals(cdParam1, 0.0) && DMath.lessThanEquals(cdParam1, 1.0)) {
+				Point p1 = Point.point(c, d, cdParam1);
+				assert DMath.equals(Point.distance(p1, this.p), r + s.r);
+				if (outside) {
+					l.enter(new SweepEvent(SweepEventType.ENTERVERTEX, index, cdParam1, this));
+				} else {
+					l.exit(new SweepEvent(SweepEventType.EXITVERTEX, index, cdParam1, this));
+				}
+			}
+			
+		} else {
+			/*
+			 * 0 events
+			 */
+		}
+		
+		
+	}
+	
+	
+	
+	
 	public final boolean hitTest(Point p) {
 		if (aabb.hitTest(p)) {
 			
@@ -81,13 +165,8 @@ public abstract class Vertex extends Entity {
 		}
 	}
 	
-	public VertexPosition findClosestVertexPosition(Point a, double radius) {
-		double dist = Point.distance(a, p);
-		if (DMath.lessThanEquals(dist, radius + r)) {
-			return new VertexPosition(this);
-		} else {
-			return null;
-		}
+	public final boolean hitTest(Point p, double radius) {
+		return DMath.lessThanEquals(Point.distance(p, this.p), r + radius);
 	}
 	
 	public void postStop() {

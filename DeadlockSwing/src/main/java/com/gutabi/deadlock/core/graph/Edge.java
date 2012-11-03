@@ -15,6 +15,7 @@ import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.Rect;
+import com.gutabi.deadlock.model.Stroke;
 
 @SuppressWarnings("static-access")
 public final class Edge extends Entity {
@@ -25,7 +26,8 @@ public final class Edge extends Entity {
 	public final Vertex end;
 	public final List<Point> raw;
 	
-	private List<EdgeSegment> spine;
+	private List<Capsule> caps;
+	private SweepEventListener l;
 	
 	private Point startBorderPoint;
 	private Point endBorderPoint;
@@ -57,12 +59,6 @@ public final class Edge extends Entity {
 		this.end = end;
 		this.raw = raw;
 		
-		loop = (start == end);
-		standalone = (loop) ? start == null : false;
-		
-		color = new Color(0x88, 0x88, 0x88, 0xff);
-		hiliteColor = new Color(0xff ^ 0x88, 0xff ^ 0x88, 0xff ^ 0x88, 0xff);
-		
 		int h = 17;
 		if (start != null) {
 			h = 37 * h + start.hashCode();
@@ -72,6 +68,12 @@ public final class Edge extends Entity {
 		}
 		h = 37 * h + raw.hashCode();
 		hash = h;
+		
+		loop = (start == end);
+		standalone = (loop) ? start == null : false;
+		
+		color = new Color(0x88, 0x88, 0x88, 0xff);
+		hiliteColor = new Color(0xff ^ 0x88, 0xff ^ 0x88, 0xff ^ 0x88, 0xff);
 		
 		computeProperties();
 		
@@ -99,7 +101,7 @@ public final class Edge extends Entity {
 	 * how many points?
 	 */
 	public int size() {
-		return spine.size()+1;
+		return caps.size()+1;
 	}
 	
 	public double getTotalLength() {
@@ -107,15 +109,15 @@ public final class Edge extends Entity {
 	}
 	
 	public Point get(int i) {
-		if (i == spine.size()) {
-			return spine.get(i-1).b;
+		if (i == caps.size()) {
+			return caps.get(i-1).b;
 		} else {
-			return spine.get(i).a;
+			return caps.get(i).a;
 		}
 	}
 	
-	public EdgeSegment getSegment(int i) {
-		return spine.get(i);
+	public Capsule getCapsule(int i) {
+		return caps.get(i);
 	}
 	
 	public Point getStartBorderPoint() {
@@ -140,10 +142,49 @@ public final class Edge extends Entity {
 	
 	
 	
+	
+	
+	public void setSweepEventListener(SweepEventListener l) {
+		this.l = l;
+	}
+	
+	public void sweep(Stroke s, int index) {
+		for (Capsule c : caps) {
+			c.setSweepEventListener(l);
+			c.sweep(s, index);
+		}
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	public final boolean hitTest(Point p) {
 		if (aabb.hitTest(p)) {
 			
-			for (EdgeSegment s : spine) {
+			for (Capsule s : caps) {
 				if (s.hitTest(p)) {
 					return true;
 				}
@@ -155,67 +196,13 @@ public final class Edge extends Entity {
 		}
 	}
 	
-	public EdgePosition findClosestEdgePosition(Point p, double radius) {
-		
-		int bestIndex = -1;
-		double bestParam = -1;
-		Point bestPoint = null;
-		
-		for (int i = 0; i < spine.size(); i++) {
-			EdgeSegment s = spine.get(i);
-			double closest = closestParam(p, s);
-			Point ep = Point.point(s.a, s.b, closest);
-			double dist = Point.distance(p, ep);
-			if (DMath.lessThanEquals(dist, radius + Edge.ROAD_RADIUS)) {
-				if (bestPoint == null) {
-					bestIndex = i;
-					bestParam = closest;
-					bestPoint = ep;
-				} else if (Point.distance(p, ep) < Point.distance(p, bestPoint)) {
-					bestIndex = i;
-					bestParam = closest;
-					bestPoint = ep;
-				}
+	public final boolean hitTest(Point p, double radius) {
+		for (Capsule s : caps) {
+			if (s.hitTest(p, radius)) {
+				return true;
 			}
 		}
-		
-		if (bestPoint != null) {
-			if (bestParam == 1.0) {
-				if (bestIndex == spine.size()-1) {
-					return null;
-				} else {
-					return new EdgePosition(this, bestIndex+1, 0.0);
-				}
-			} else {
-				return new EdgePosition(this, bestIndex, bestParam);
-			}
-		} else {
-			return null;
-		}
-	}
-	
-	/**
-	 * find closest position on <c, d> to the point b
-	 */
-	private double closestParam(Point p, EdgeSegment s) {
-		if (p.equals(s.a)) {
-			return 0.0;
-		}
-		if (p.equals(s.b)) {
-			return 1.0;
-		}
-		if (s.a.equals(s.b)) {
-			throw new IllegalArgumentException("c equals d");
-		}
-		
-		double u = Point.u(s.a, p, s.b);
-		if (DMath.lessThanEquals(u, 0.0)) {
-			return 0.0;
-		} else if (DMath.greaterThanEquals(u, 1.0)) {
-			return 1.0;
-		} else {
-			return u;
-		}
+		return false;
 	}
 	
 	public boolean isDeleteable() {
@@ -236,14 +223,14 @@ public final class Edge extends Entity {
 	
 	public void computeProperties() {
 		
-		computeSegs();
+		computeCaps();
 		
 		/*
 		 * after adjustToBorders, the border properties are set to predictable values
 		 */
 		if (!standalone) {
 			startBorderIndex = 1;
-			endBorderIndex = spine.size()-1;
+			endBorderIndex = caps.size()-1;
 			startBorderPoint = get(startBorderIndex);
 			endBorderPoint = get(endBorderIndex);
 			assert DMath.equals(Point.distance(startBorderPoint, start.p), start.getRadius());
@@ -268,7 +255,7 @@ public final class Edge extends Entity {
 		
 	}
 	
-	private void computeSegs() {
+	private void computeCaps() {
 		
 		assert !raw.isEmpty();
 		List<Point> adj = raw;
@@ -287,11 +274,12 @@ public final class Edge extends Entity {
 			adj = adjustToBorders(adj);
 		}
 		
-		spine = new ArrayList<EdgeSegment>();
+		caps = new ArrayList<Capsule>();
 		for (int i = 0; i < adj.size()-1; i++) {
 			Point a = adj.get(i);
 			Point b = adj.get(i+1);
-			spine.add(new EdgeSegment(a, b));
+			Capsule c = new Capsule(a, b, Edge.ROAD_RADIUS);
+			caps.add(c);
 		}
 		
 	}
@@ -460,12 +448,12 @@ public final class Edge extends Entity {
 	
 	private void computeLengths() {
 		
-		cumulativeLengthsFromStart = new double[spine.size()+1];
+		cumulativeLengthsFromStart = new double[caps.size()+1];
 		
 		double length;
 		double l = 0.0;
-		for (int i = 0; i < spine.size(); i++) {
-			EdgeSegment s = spine.get(i);
+		for (int i = 0; i < caps.size(); i++) {
+			Capsule s = caps.get(i);
 			if (i == 0) {
 				cumulativeLengthsFromStart[i] = 0;
 			}
@@ -480,7 +468,7 @@ public final class Edge extends Entity {
 	
 	private void computeAABB() {
 		aabb = null;
-		for (EdgeSegment s : spine) {
+		for (Capsule s : caps) {
 			aabb = Rect.union(aabb, s.aabb);
 		}
 	}
@@ -608,7 +596,7 @@ public final class Edge extends Entity {
 		
 		g2.setColor(color);
 		
-		for (EdgeSegment s : spine) {
+		for (Capsule s : caps) {
 			s.paint(g2);
 		}
 		
@@ -622,7 +610,7 @@ public final class Edge extends Entity {
 		
 		g2.setColor(hiliteColor);
 		
-		for (EdgeSegment s : spine) {
+		for (Capsule s : caps) {
 			s.draw(g2);
 		}
 		

@@ -38,6 +38,14 @@ public class EdgePosition extends GraphPosition {
 		this.index = index;
 		this.param = param;
 		
+		int h = 17;
+		h = 37 * h + e.hashCode();
+		h = 37 * h + index;
+		long l = Double.doubleToLongBits(param);
+		int c = (int)(l ^ (l >>> 32));
+		h = 37 * h + c;
+		hash = h;
+		
 		if (DMath.equals(param, 0.0)) {
 			bound = true;
 			
@@ -59,14 +67,6 @@ public class EdgePosition extends GraphPosition {
 		lengthToStartOfEdge = e.getLengthFromStart(index) + Point.distance(p, segStart);
 		
 		lengthToEndOfEdge = e.getTotalLength() - lengthToStartOfEdge;
-		
-		int h = 17;
-		h = 37 * h + e.hashCode();
-		h = 37 * h + index;
-		long l = Double.doubleToLongBits(param);
-		int c = (int)(l ^ (l >>> 32));
-		h = 37 * h + c;
-		hash = h;
 		
 		assert check();
 	}

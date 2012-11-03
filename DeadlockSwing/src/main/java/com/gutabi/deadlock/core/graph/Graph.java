@@ -6,6 +6,7 @@ import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -14,9 +15,10 @@ import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.OverlappingException;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.Rect;
+import com.gutabi.deadlock.model.Stroke;
 
 @SuppressWarnings("static-access")
-public class Graph {
+public class Graph implements SweepEventListener {
 	
 	private final ArrayList<Edge> edges = new ArrayList<Edge>();
 	
@@ -26,11 +28,15 @@ public class Graph {
 	
 	public List<StopSign> signs = new ArrayList<StopSign>();
 	
+	private List<SweepEventListener> listeners;
+	
 	private Rect aabb;
 	
 //	private static final Logger logger = Logger.getLogger(Graph.class);
 	
 	public Graph() {
+		
+		listeners = new ArrayList<SweepEventListener>();
 		
 	}
 	
@@ -188,8 +194,79 @@ public class Graph {
 		}
 		
 	}
-
-
+	
+	
+	
+	
+	
+	
+	
+	public void addSweepEventListener(SweepEventListener l) {
+		listeners.add(l);
+	}
+	
+	public void sweep(Stroke s, int index) {
+		events = new ArrayList<SweepEvent>();
+		
+		for (Vertex v : getAllVertices()) {
+			v.setSweepEventListener(this);
+			v.sweep(s, index);
+		}
+		for (Edge e : edges) {
+			e.setSweepEventListener(this);
+			e.sweep(s, index);
+		}
+		
+		Collections.sort(events, SweepEvent.COMPARATOR);
+		
+		for (SweepEvent e : events) {
+			for (SweepEventListener l : listeners) {
+				switch (e.type) {
+				case ENTERSIDE:
+				case ENTERVERTEX:
+				case ENTERCAP:
+					l.enter(e);
+					break;
+				case EXITSIDE:
+				case EXITVERTEX:
+				case EXITCAP:
+					l.exit(e);
+					break;
+				case INTERSECTIONCAPSULE:
+				case INTERSECTIONVERTEX:
+					l.intersect(e);
+					break;
+				}
+			}
+		}
+		
+	}
+	
+	List<SweepEvent> events;
+	
+	public void enter(SweepEvent e) {
+//		logger.debug("enter " + combo + " " + c.hashCode());
+		events.add(e);
+	}
+	
+	public void exit(SweepEvent e) {
+//		logger.debug("exit " + combo + " " + c.hashCode());
+		events.add(e);
+	}
+	
+	public void intersect(SweepEvent e) {
+//		logger.debug("intersect " + combo + " " + c.hashCode());
+		events.add(e);
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	/**
 	 * dec is a set of bit flags indicating what decorations to add to the new edge
@@ -524,16 +601,24 @@ public class Graph {
 		return null;
 	}
 	
-	public GraphPosition findClosestGraphPosition(Point p, double radius) {
-		VertexPosition vp = findClosestVertexPosition(p, radius);
-		if (vp != null) {
-			return vp;
+	/**
+	 * even if hitting both a vertex and an edge, only return vertex
+	 * ignore stop signs
+	 */
+	public List<Entity> hitTest(Point p, double radius) {
+		assert p != null;
+		List<Entity> entities = new ArrayList<Entity>();
+		for (Vertex v : getAllVertices()) {
+			if (v.hitTest(p, radius)) {
+				entities.add(v);
+			}
 		}
-		EdgePosition ep = findClosestEdgePosition(p, radius);
-		if (ep != null) {
-			return ep;
+		for (Edge e : edges) {
+			if (e.hitTest(p, radius)) {
+				entities.add(e);
+			}
 		}
-		return null;
+		return entities;
 	}
 	
 	
@@ -709,44 +794,6 @@ public class Graph {
 		vs.addAll(intermediateVertices(n, end));
 		
 		return vs;
-	}
-	
-	/**
-	 * returns the closest vertex within radius that is not the excluded point
-	 */
-	private VertexPosition findClosestVertexPosition(Point a, double radius) {
-		
-		VertexPosition closest = null;
-		
-		for (Vertex v : getAllVertices()) {
-			VertexPosition vp = v.findClosestVertexPosition(a, radius);
-			if (vp != null) {
-				if (closest == null || Point.distance(a, vp.p) < Point.distance(a, closest.p)) {
-					closest = vp;
-				}
-			}
-		}
-		
-		return closest;
-	}
-	
-	/**
-	 * returns the closest edge within radius
-	 */
-	private EdgePosition findClosestEdgePosition(Point a, double radius) {
-		
-		EdgePosition closest = null;
-		
-		for (Edge e : edges) {
-			EdgePosition ep = e.findClosestEdgePosition(a, radius);
-			if (ep != null) {
-				if (closest == null || Point.distance(a, ep.p) < Point.distance(a, closest.p)) {
-					closest = ep;
-				}
-			}
-		}
-		
-		return closest;
 	}
 	
 	/**
@@ -987,10 +1034,10 @@ public class Graph {
 				if (e == f) {
 					
 					for (int i = 0; i < e.size()-2; i++) {
-						EdgeSegment es = e.getSegment(i);
+						Capsule es = e.getCapsule(i);
 						
 						for (int j = i+1; j < f.size()-1; j++) {
-							EdgeSegment fs = f.getSegment(j);
+							Capsule fs = f.getCapsule(j);
 							
 							try {
 								Point inter = Point.intersection(es.a, es.b, fs.a, fs.b);
@@ -1007,10 +1054,10 @@ public class Graph {
 				} else {
 					
 					for (int i = 0; i < e.size()-1; i++) {
-						EdgeSegment es = e.getSegment(i);
+						Capsule es = e.getCapsule(i);
 						
 						for (int j = 0; j < f.size()-1; j++) {
-							EdgeSegment fs = f.getSegment(j);
+							Capsule fs = f.getCapsule(j);
 							
 							try {
 								Point inter = Point.intersection(es.a, es.b, fs.a, fs.b);
