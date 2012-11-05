@@ -205,7 +205,7 @@ public class Graph implements SweepEventListener {
 		sweepStart(stroke);
 		
 		if (count == 0) {
-			logger.debug("start in nothing");
+//			logger.debug("start in nothing");
 			vertexEvents.add(new SweepEvent(SweepEventType.NOTHINGSTART, stroke.pts.get(0), 0, 0.0, null));
 		} else {
 
@@ -216,7 +216,7 @@ public class Graph implements SweepEventListener {
 		}
 		
 		if (count == 0) {
-			logger.debug("end in nothing");
+//			logger.debug("end in nothing");
 			vertexEvents.add(new SweepEvent(SweepEventType.NOTHINGEND, stroke.pts.get(stroke.pts.size()-1), stroke.pts.size()-1, 0.0, null));
 		} else {
 			
@@ -240,9 +240,19 @@ public class Graph implements SweepEventListener {
 			addIntersection(ii);
 		}
 		
-		for (int i = 0; i < vertexEvents.size()-1; i++) {
+		for (int i = 0; i < vertexEvents.size()-1; i+=2) {
 			SweepEvent e0 = vertexEvents.get(i);
 			SweepEvent e1 = vertexEvents.get(i+1);
+			
+			if (e0.type == SweepEventType.VERTEXSTART && e1.type == SweepEventType.EXITVERTEX) {
+				i = i+1;
+				e0 = vertexEvents.get(i);
+				e1 = vertexEvents.get(i+1);
+			} else if (e0.type == SweepEventType.CAPSULESTART && e1.type == SweepEventType.EXITCAPSULE) {
+				i = i+1;
+				e0 = vertexEvents.get(i);
+				e1 = vertexEvents.get(i+1);
+			}
 			
 			Vertex v0 = (Vertex)bestHitTest(e0.p, stroke.r);
 			
@@ -322,9 +332,15 @@ public class Graph implements SweepEventListener {
 		switch (e.type) {
 		case CAPSULESTART:
 			count++;
+			if (count == 1) {
+				vertexEvents.add(e);
+			}
 			break;
 		case VERTEXSTART:
 			count++;
+			if (count == 1) {
+				vertexEvents.add(e);
+			}
 			break;
 		case ENTERCAPSULE:
 		case ENTERVERTEX:

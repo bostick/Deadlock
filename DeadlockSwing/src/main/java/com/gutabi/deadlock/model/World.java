@@ -328,9 +328,11 @@ public class World {
 	}
 	
 	public Car carHitTest(Point p) {
-		for (Car c : cars) {
-			if (c.hitTest(p)) {
-				return c;
+		synchronized (MODEL) {
+			for (Car c : cars) {
+				if (c.hitTest(p)) {
+					return c;
+				}
 			}
 		}
 		return null;
