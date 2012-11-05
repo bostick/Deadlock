@@ -14,25 +14,20 @@ import java.util.Random;
 
 import javax.imageio.ImageIO;
 
-import org.apache.log4j.Logger;
 import org.jbox2d.common.Vec2;
 
-import com.gutabi.deadlock.controller.ControlMode;
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.Rect;
 import com.gutabi.deadlock.core.graph.Edge;
 import com.gutabi.deadlock.core.graph.Graph;
-import com.gutabi.deadlock.core.graph.Intersection;
 import com.gutabi.deadlock.core.graph.Sink;
 import com.gutabi.deadlock.core.graph.Source;
 import com.gutabi.deadlock.core.graph.StopSign;
-import com.gutabi.deadlock.core.graph.SweepEvent;
-import com.gutabi.deadlock.core.graph.SweepEventListener;
 import com.gutabi.deadlock.core.graph.Vertex;
 
 @SuppressWarnings("static-access")
-public class World implements SweepEventListener {
+public class World {
 	
 	/*
 	 * distance that center of a car has to be from center of a sink in order to be sinked
@@ -53,7 +48,7 @@ public class World implements SweepEventListener {
 	public double t;
 	
 	
-	private Graph graph;
+	public Graph graph;
 	
 	public List<Car> cars = new ArrayList<Car>();
 	
@@ -69,7 +64,7 @@ public class World implements SweepEventListener {
 	private Rect worldRect;
 	private Rect aabb;
 	
-	private static Logger logger = Logger.getLogger(World.class);
+//	private static Logger logger = Logger.getLogger(World.class);
 	
 	public World() {
 		
@@ -92,7 +87,6 @@ public class World implements SweepEventListener {
 		}
 		
 		graph = new Graph();
-		graph.addSweepEventListener(this);
 		
 		b2dWorld = new org.jbox2d.dynamics.World(new Vec2(0.0f, 0.0f), true);
 		listener = new CarEventListener();
@@ -185,76 +179,30 @@ public class World implements SweepEventListener {
 	
 	public void processNewStrokeTop(Stroke stroke) {
 		
-		List<Entity> startHits = graphHitTest(stroke.pts.get(0), Vertex.INIT_VERTEX_RADIUS);
-		List<Entity> endHits = graphHitTest(stroke.pts.get(stroke.pts.size()-1), Vertex.INIT_VERTEX_RADIUS);
-		
-		events = new ArrayList<SweepEvent>();
-		
-		for (int i = 0; i < stroke.pts.size()-1; i++) {
-			sweep(stroke, i);
-		}
-		
-		if (startHits.isEmpty() && endHits.isEmpty() && events.isEmpty()) {
-			
-			Intersection start = new Intersection(stroke.pts.get(0));
-			graph.addIntersection(start);
-			Intersection end = new Intersection(stroke.pts.get(stroke.pts.size()-1));
-			graph.addIntersection(end);
-			
-			graph.createEdgeTop(start, end, stroke.pts);
-			
-		} else {
-			
-			if (!events.isEmpty()) {
-				
-				for (SweepEvent e : events) {
-					
-					logger.debug(e.type + " " + e.index + "." + e.param + " " + e.o);
-					
-				}
-				
-			}
-			
-		}
+		graph.processNewStrokeTop(stroke);
 		
 		postDraftingTop();
 	}
 	
-	private void sweep(Stroke s, int index) {
-		graph.sweep(s, index);
-		
-	}
 	
 	
-	List<SweepEvent> events = new ArrayList<SweepEvent>();
 	
-	public void enter(SweepEvent e) {
-//		logger.debug("enter " + combo + " " + c.hashCode());
-		events.add(e);
-	}
 	
-	public void exit(SweepEvent e) {
-//		logger.debug("exit " + combo + " " + c.hashCode());
-		events.add(e);
-	}
 	
-	public void intersect(SweepEvent e) {
-//		logger.debug("intersect " + combo + " " + c.hashCode());
-		events.add(e);
-	}
+	
 	
 	
 	
 	private void postIdleTop() {
-		assert MODEL.mode == ControlMode.IDLE;
+//		assert MODEL.mode == ControlMode.IDLE;
 		
 		graph.computeVertexRadii();
 		
 		computeAABB();
 	}
 	
-	private void postDraftingTop() {
-		assert MODEL.mode == ControlMode.DRAFTING;
+	public void postDraftingTop() {
+//		assert MODEL.mode == ControlMode.DRAFTING;
 		
 		graph.computeVertexRadii();
 		
@@ -262,7 +210,7 @@ public class World implements SweepEventListener {
 	}
 	
 	private void postRunningTop() {
-		assert MODEL.mode == ControlMode.RUNNING;
+//		assert MODEL.mode == ControlMode.RUNNING;
 		;
 	}
 	
@@ -392,8 +340,8 @@ public class World implements SweepEventListener {
 		return graph.hitTest(p);
 	}
 	
-	public List<Entity> graphHitTest(Point p, double radius) {
-		return graph.hitTest(p, radius);
+	public Entity bestHitTest(Point p, double radius) {
+		return graph.bestHitTest(p, radius);
 	}
 	
 	public void paint(Graphics2D g2) {

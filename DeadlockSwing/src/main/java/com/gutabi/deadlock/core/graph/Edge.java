@@ -116,6 +116,9 @@ public final class Edge extends Entity {
 		}
 	}
 	
+	/*
+	 * used in debugging
+	 */
 	public Capsule getCapsule(int i) {
 		return caps.get(i);
 	}
@@ -148,32 +151,33 @@ public final class Edge extends Entity {
 		this.l = l;
 	}
 	
+	public void sweepStart(Stroke s) {
+		
+		/*
+		 * TODO:
+		 * a lot of room for improvement
+		 * adjacent capsules share caps, so could share calculation
+		 */
+		for (Capsule c : caps.subList(1, caps.size()-1)) {
+			c.setSweepEventListener(l);
+			c.sweepStart(s);
+		}
+		
+	}
+	
 	public void sweep(Stroke s, int index) {
-		for (Capsule c : caps) {
+		
+		/*
+		 * TODO:
+		 * a lot of room for improvement
+		 * adjacent capsules share caps, so could share calculation
+		 */
+		for (Capsule c : caps.subList(1, caps.size()-1)) {
 			c.setSweepEventListener(l);
 			c.sweep(s, index);
 		}
+		
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	
 	
 	
@@ -184,7 +188,7 @@ public final class Edge extends Entity {
 	public final boolean hitTest(Point p) {
 		if (aabb.hitTest(p)) {
 			
-			for (Capsule s : caps) {
+			for (Capsule s : caps.subList(1, caps.size()-1)) {
 				if (s.hitTest(p)) {
 					return true;
 				}
@@ -197,13 +201,87 @@ public final class Edge extends Entity {
 	}
 	
 	public final boolean hitTest(Point p, double radius) {
-		for (Capsule s : caps) {
+		for (Capsule s : caps.subList(1, caps.size()-1)) {
 			if (s.hitTest(p, radius)) {
 				return true;
 			}
 		}
 		return false;
 	}
+	
+	public EdgePosition skeletonHitTest(Point p) {
+		for (int i = 0; i < caps.size(); i++) {
+			Capsule c = caps.get(i);
+			double param = c.skeletonHitTest(p);
+			if (param != -1) {
+				return new EdgePosition(this, i, param);
+			}
+		}
+		return null;
+	}
+	
+	public EdgePosition findClosestEdgePosition(Point p, double radius) {
+
+		int bestIndex = -1;
+		double bestParam = -1;
+		Point bestPoint = null;
+
+		for (int i = 0; i < caps.size(); i++) {
+			Capsule c = caps.get(i);
+			double closest = closestParam(p, c);
+			Point ep = Point.point(c.a, c.b, closest);
+			double dist = Point.distance(p, ep);
+			if (DMath.lessThanEquals(dist, radius + Edge.ROAD_RADIUS)) {
+				if (bestPoint == null) {
+					bestIndex = i;
+					bestParam = closest;
+					bestPoint = ep;
+				} else if (Point.distance(p, ep) < Point.distance(p, bestPoint)) {
+					bestIndex = i;
+					bestParam = closest;
+					bestPoint = ep;
+				}
+			}
+		}
+
+		if (bestPoint != null) {
+			if (bestParam == 1.0) {
+				if (bestIndex == caps.size()-1) {
+					return null;
+				} else {
+					return new EdgePosition(this, bestIndex+1, 0.0);
+				}
+			} else {
+				return new EdgePosition(this, bestIndex, bestParam);
+			}
+		} else {
+			return null;
+		}
+	}
+	
+	/**
+	 * find closest position on <c, d> to the point b
+	 */
+	private double closestParam(Point p, Capsule c) {
+		if (p.equals(c.a)) {
+			return 0.0;
+		}
+		if (p.equals(c.b)) {
+			return 1.0;
+		}
+
+		double u = Point.u(c.a, p, c.b);
+		if (DMath.lessThanEquals(u, 0.0)) {
+			return 0.0;
+		} else if (DMath.greaterThanEquals(u, 1.0)) {
+			return 1.0;
+		} else {
+			return u;
+		}
+	}
+	
+	
+	
 	
 	public boolean isDeleteable() {
 		return true;
@@ -468,7 +546,7 @@ public final class Edge extends Entity {
 	
 	private void computeAABB() {
 		aabb = null;
-		for (Capsule s : caps) {
+		for (Capsule s : caps.subList(1, caps.size()-1)) {
 			aabb = Rect.union(aabb, s.aabb);
 		}
 	}
@@ -596,7 +674,7 @@ public final class Edge extends Entity {
 		
 		g2.setColor(color);
 		
-		for (Capsule s : caps) {
+		for (Capsule s : caps.subList(1, caps.size()-1)) {
 			s.paint(g2);
 		}
 		
@@ -610,7 +688,7 @@ public final class Edge extends Entity {
 		
 		g2.setColor(hiliteColor);
 		
-		for (Capsule s : caps) {
+		for (Capsule s : caps.subList(1, caps.size()-1)) {
 			s.draw(g2);
 		}
 		

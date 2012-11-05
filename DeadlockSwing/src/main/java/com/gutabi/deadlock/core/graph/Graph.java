@@ -11,10 +11,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
+
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.OverlappingException;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.Rect;
+import com.gutabi.deadlock.core.graph.SweepEvent.SweepEventType;
 import com.gutabi.deadlock.model.Stroke;
 
 @SuppressWarnings("static-access")
@@ -28,15 +31,11 @@ public class Graph implements SweepEventListener {
 	
 	public List<StopSign> signs = new ArrayList<StopSign>();
 	
-	private List<SweepEventListener> listeners;
-	
 	private Rect aabb;
 	
-//	private static final Logger logger = Logger.getLogger(Graph.class);
+	private static final Logger logger = Logger.getLogger(Graph.class);
 	
 	public Graph() {
-		
-		listeners = new ArrayList<SweepEventListener>();
 		
 	}
 	
@@ -198,11 +197,101 @@ public class Graph implements SweepEventListener {
 	
 	
 	
+	public void processNewStrokeTop(Stroke stroke) {
+		
+		count = 0;
+		vertexEvents = new ArrayList<SweepEvent>();
+		
+		sweepStart(stroke);
+		
+		if (count == 0) {
+			logger.debug("start in nothing");
+			vertexEvents.add(new SweepEvent(SweepEventType.NOTHINGSTART, stroke.pts.get(0), 0, 0.0, null));
+		} else {
+
+		}
+		
+		for (int i = 0; i < stroke.pts.size()-1; i++) {
+			sweep(stroke, i);
+		}
+		
+		if (count == 0) {
+			logger.debug("end in nothing");
+			vertexEvents.add(new SweepEvent(SweepEventType.NOTHINGEND, stroke.pts.get(stroke.pts.size()-1), stroke.pts.size()-1, 0.0, null));
+		} else {
+			
+		}
+		
+		
+		logger.debug("vertexEvents:");
+		logger.debug(vertexEvents);
+		
+		SweepEvent e = vertexEvents.get(0);
+		Point p = e.p;
+		Entity hit = bestHitTest(p, stroke.r);
+		if (hit instanceof Edge) {
+			EdgePosition pos = findClosestEdgePosition(p, stroke.r);
+			split(pos);
+		} else if (hit instanceof Vertex) {
+			;
+		} else {
+			assert hitTest(p) == null;
+			Intersection ii = new Intersection(p);
+			addIntersection(ii);
+		}
+		
+		for (int i = 0; i < vertexEvents.size()-1; i++) {
+			SweepEvent e0 = vertexEvents.get(i);
+			SweepEvent e1 = vertexEvents.get(i+1);
+			
+			Vertex v0 = (Vertex)bestHitTest(e0.p, stroke.r);
+			
+			Vertex v1;
+			Point p1 = e1.p;
+			Entity hit1 = bestHitTest(p1, stroke.r);
+			if (hit1 instanceof Edge) {
+				EdgePosition pos = findClosestEdgePosition(p1, stroke.r);
+				v1 = split(pos);
+			} else if (hit1 instanceof Vertex) {
+				v1 = (Vertex)hit1;
+			} else {
+				assert hitTest(p1) == null;
+				Intersection ii = new Intersection(p1);
+				addIntersection(ii);
+				v1 = ii;
+			}
+			
+			createEdgeTop(v0, v1, stroke.pts.subList(e0.index, e1.index+1));
+		}
+		
+	}
 	
+	List<SweepEvent> events;
+	int count = 0;
+	List<SweepEvent> vertexEvents;
 	
+	public void sweepStart(Stroke s) {
+		events = new ArrayList<SweepEvent>();
+		
+		for (Vertex v : getAllVertices()) {
+			v.setSweepEventListener(this);
+			v.sweepStart(s);
+		}
+		for (Edge e : edges) {
+			e.setSweepEventListener(this);
+			e.sweepStart(s);
+		}
+		
+		Collections.sort(events, SweepEvent.COMPARATOR);
+		
+		for (SweepEvent e : events) {
+			startSorted(e);
+		}
+		
+	}
 	
-	public void addSweepEventListener(SweepEventListener l) {
-		listeners.add(l);
+	public void start(SweepEvent e) {
+		events.add(e);
 	}
 	
 	public void sweep(Stroke s, int index) {
@@ -220,51 +309,68 @@ public class Graph implements SweepEventListener {
 		Collections.sort(events, SweepEvent.COMPARATOR);
 		
 		for (SweepEvent e : events) {
-			for (SweepEventListener l : listeners) {
-				switch (e.type) {
-				case ENTERSIDE:
-				case ENTERVERTEX:
-				case ENTERCAP:
-					l.enter(e);
-					break;
-				case EXITSIDE:
-				case EXITVERTEX:
-				case EXITCAP:
-					l.exit(e);
-					break;
-				case INTERSECTIONCAPSULE:
-				case INTERSECTIONVERTEX:
-					l.intersect(e);
-					break;
-				}
-			}
+			eventSorted(e);
 		}
 		
 	}
 	
-	List<SweepEvent> events;
-	
-	public void enter(SweepEvent e) {
-//		logger.debug("enter " + combo + " " + c.hashCode());
+	public void event(SweepEvent e) {
 		events.add(e);
 	}
 	
-	public void exit(SweepEvent e) {
-//		logger.debug("exit " + combo + " " + c.hashCode());
-		events.add(e);
+	private void startSorted(SweepEvent e) {
+		switch (e.type) {
+		case CAPSULESTART:
+			count++;
+			break;
+		case VERTEXSTART:
+			count++;
+			break;
+		case ENTERCAPSULE:
+		case ENTERVERTEX:
+		case EXITCAPSULE:
+		case EXITVERTEX:
+		case NOTHINGSTART:
+		case NOTHINGEND:
+			assert false;
+			break;
+		}
 	}
 	
-	public void intersect(SweepEvent e) {
-//		logger.debug("intersect " + combo + " " + c.hashCode());
-		events.add(e);
+	private void eventSorted(SweepEvent e) {
+		switch (e.type) {
+		case CAPSULESTART:
+		case VERTEXSTART:
+		case NOTHINGSTART:
+		case NOTHINGEND:
+			assert false;
+			break;
+		case ENTERVERTEX:
+			count++;
+			if (count == 1) {
+				vertexEvents.add(e);
+			}
+			break;
+		case ENTERCAPSULE:
+			count++;
+			if (count == 1) {
+				vertexEvents.add(e);
+			}
+			break;
+		case EXITVERTEX:
+			count--;
+			if (count == 0) {
+				vertexEvents.add(e);
+			}
+			break;
+		case EXITCAPSULE:
+			count--;
+			if (count == 0) {
+				vertexEvents.add(e);
+			}
+			break;
+		}
 	}
-	
-	
-	
-	
-	
-	
-	
 	
 	
 	
@@ -342,7 +448,7 @@ public class Graph implements SweepEventListener {
 		signs.remove(s);
 	}
 	
-	private Vertex createIntersection(Point p) {
+	private Intersection createIntersection(Point p) {
 		
 		Intersection i = new Intersection(p);
 		assert !intersections.contains(i);
@@ -605,25 +711,56 @@ public class Graph implements SweepEventListener {
 	 * even if hitting both a vertex and an edge, only return vertex
 	 * ignore stop signs
 	 */
-	public List<Entity> hitTest(Point p, double radius) {
+	public Entity bestHitTest(Point p, double radius) {
 		assert p != null;
-		List<Entity> entities = new ArrayList<Entity>();
 		for (Vertex v : getAllVertices()) {
 			if (v.hitTest(p, radius)) {
-				entities.add(v);
+				return v;
 			}
 		}
 		for (Edge e : edges) {
 			if (e.hitTest(p, radius)) {
-				entities.add(e);
+				return e;
 			}
 		}
-		return entities;
+		return null;
 	}
 	
+	public GraphPosition skeletonHitTest(Point p) {
+		assert p != null;
+		for (Vertex v : getAllVertices()) {
+			VertexPosition pos = v.skeletonHitTest(p);
+			if (pos != null) {
+				return pos;
+			}
+		}
+		for (Edge e : edges) {
+			EdgePosition pos = e.skeletonHitTest(p);
+			if (pos != null) {
+				return pos;
+			}
+		}
+		return null;
+	}
 	
-	
-	
+	/**
+	 * returns the closest edge within radius
+	 */
+	public EdgePosition findClosestEdgePosition(Point a, double radius) {
+
+		EdgePosition closest = null;
+
+		for (Edge e : edges) {
+			EdgePosition ep = e.findClosestEdgePosition(a, radius);
+			if (ep != null) {
+				if (closest == null || Point.distance(a, ep.p) < Point.distance(a, closest.p)) {
+					closest = ep;
+				}
+			}
+		}
+
+		return closest;
+	}
 	
 	
 	
@@ -634,7 +771,9 @@ public class Graph implements SweepEventListener {
 	 * Edge e will have been removed
 	 * return Intersection at split point
 	 */
-	public Vertex split(final EdgePosition pos) {
+	public Intersection split(EdgePosition pos) {
+		
+//		EdgePosition pos = (EdgePosition)skeletonHitTest(p);
 		
 		Edge e = pos.e;
 		int index = pos.index;
@@ -644,7 +783,7 @@ public class Graph implements SweepEventListener {
 		assert param >= 0.0;
 		assert param < 1.0;
 		
-		Vertex v = createIntersection(p);
+		Intersection v = createIntersection(p);
 		
 		Vertex eStart = e.start;
 		Vertex eEnd = e.end;

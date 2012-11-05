@@ -11,9 +11,6 @@ import javax.swing.UnsupportedLookAndFeelException;
 
 import org.apache.log4j.Logger;
 
-import com.gutabi.deadlock.controller.InputEvent;
-import com.gutabi.deadlock.core.Point;
-
 public class DeadlockMain  {
 	
 	static Logger logger = Logger.getLogger("deadlock");
@@ -33,9 +30,23 @@ public class DeadlockMain  {
 		VIEW.repaint();
 		
 		
-		CONTROLLER.mc.pressed(new InputEvent(VIEW.panel, new Point(550, 250)));
-		CONTROLLER.mc.dragged(new InputEvent(VIEW.panel, new Point(900, 550)));
-		CONTROLLER.mc.released(new InputEvent(VIEW.panel, new Point(900, 550)));
+//		Intersection start = new Intersection(VIEW.panelToWorld(new Point(550, 250)));
+//		MODEL.world.graph.addIntersection(start);
+//		
+//		Intersection end = new Intersection(VIEW.panelToWorld(new Point(900, 550)));
+//		MODEL.world.graph.addIntersection(end);
+		
+//		List<Point> pts = new ArrayList<Point>();
+//		pts.add(VIEW.panelToWorld(new Point(550, 250)));
+//		pts.add(VIEW.panelToWorld(new Point(900, 550)));
+//		MODEL.world.graph.createEdgeTop(start, end, pts);
+//		
+//		MODEL.world.postDraftingTop();
+//		
+//		
+//		
+//		MODEL.world.renderBackground();
+//		VIEW.repaint();
 		
 	}
 	

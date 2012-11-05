@@ -80,6 +80,16 @@ public abstract class Vertex extends Entity {
 		this.l = l;
 	}
 	
+	public void sweepStart(Stroke s) {
+		
+		Point c = s.pts.get(0);
+		
+		if (hitTest(c, s.r)) {
+			l.start(new SweepEvent(SweepEventType.VERTEXSTART, c, 0, 0.0, this));
+		}
+		
+	}
+	
 	public void sweep(Stroke s, int index) {
 		
 		Point c = s.pts.get(index);
@@ -90,12 +100,6 @@ public abstract class Vertex extends Entity {
 			outside = false;
 		} else {
 			outside = true;
-		}
-		
-		boolean i = Point.intersect(p, c, d);
-		if (i) {
-			double cdParam = Point.param(p, c, d);
-			l.intersect(new SweepEvent(SweepEventType.INTERSECTIONVERTEX, index, cdParam, this));
 		}
 		
 		double aCoeff = ((d.x - c.x)*(d.x - c.x) + (d.y - c.y)*(d.y - c.y));
@@ -112,9 +116,9 @@ public abstract class Vertex extends Entity {
 				Point p = Point.point(c, d, cdParam);
 				assert DMath.equals(Point.distance(p, this.p), r + s.r);
 				if (outside) {
-					l.enter(new SweepEvent(SweepEventType.ENTERVERTEX, index, cdParam, this));
+					l.event(new SweepEvent(SweepEventType.ENTERVERTEX, p, index, cdParam, this));
 				} else {
-					l.exit(new SweepEvent(SweepEventType.EXITVERTEX, index, cdParam, this));
+					l.event(new SweepEvent(SweepEventType.EXITVERTEX, p, index, cdParam, this));
 				}
 			}
 
@@ -127,9 +131,9 @@ public abstract class Vertex extends Entity {
 				Point p0 = Point.point(c, d, cdParam0);
 				assert DMath.equals(Point.distance(p0, this.p), r + s.r);
 				if (outside) {
-					l.enter(new SweepEvent(SweepEventType.ENTERVERTEX, index, cdParam0, this));
+					l.event(new SweepEvent(SweepEventType.ENTERVERTEX, p0, index, cdParam0, this));
 				} else {
-					l.exit(new SweepEvent(SweepEventType.EXITVERTEX, index, cdParam0, this));
+					l.event(new SweepEvent(SweepEventType.EXITVERTEX, p0, index, cdParam0, this));
 				}
 			}
 			double cdParam1 = roots[1];
@@ -137,9 +141,9 @@ public abstract class Vertex extends Entity {
 				Point p1 = Point.point(c, d, cdParam1);
 				assert DMath.equals(Point.distance(p1, this.p), r + s.r);
 				if (outside) {
-					l.enter(new SweepEvent(SweepEventType.ENTERVERTEX, index, cdParam1, this));
+					l.event(new SweepEvent(SweepEventType.ENTERVERTEX, p1, index, cdParam1, this));
 				} else {
-					l.exit(new SweepEvent(SweepEventType.EXITVERTEX, index, cdParam1, this));
+					l.event(new SweepEvent(SweepEventType.EXITVERTEX, p1, index, cdParam1, this));
 				}
 			}
 			
@@ -151,7 +155,8 @@ public abstract class Vertex extends Entity {
 		
 		
 	}
-	
+
+
 	
 	
 	
@@ -167,6 +172,13 @@ public abstract class Vertex extends Entity {
 	
 	public final boolean hitTest(Point p, double radius) {
 		return DMath.lessThanEquals(Point.distance(p, this.p), r + radius);
+	}
+	
+	public VertexPosition skeletonHitTest(Point p) {
+		if (p.equals(this.p)) {
+			return new VertexPosition(this);
+		}
+		return null;
 	}
 	
 	public void postStop() {
@@ -383,14 +395,14 @@ public abstract class Vertex extends Entity {
 	public void check() {
 		assert p != null;
 		
-		int edgeCount = eds.size();
+//		int edgeCount = eds.size();
 		
-		assert edgeCount != 0;
+//		assert edgeCount != 0;
 		
 		/*
 		 * edgeCount cannot be 2, edges should just be merged
 		 */
-		assert edgeCount != 2;
+//		assert edgeCount != 2;
 		
 		int count;
 		for (Edge e : eds) {
