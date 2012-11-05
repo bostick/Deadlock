@@ -28,13 +28,13 @@ import com.gutabi.deadlock.core.graph.EdgePosition;
 import com.gutabi.deadlock.core.graph.GraphPosition;
 import com.gutabi.deadlock.core.graph.GraphPositionPath;
 import com.gutabi.deadlock.core.graph.GraphPositionPathPosition;
-import com.gutabi.deadlock.core.graph.Sink;
-import com.gutabi.deadlock.core.graph.Source;
 import com.gutabi.deadlock.core.graph.StopSign;
 import com.gutabi.deadlock.core.graph.VertexPosition;
+import com.gutabi.deadlock.core.graph.WorldSink;
+import com.gutabi.deadlock.core.graph.WorldSource;
 
 @SuppressWarnings("static-access")
-public abstract class Car extends Entity {
+public abstract class Car implements Entity {
 	
 	public static final double CAR_LENGTH = 1.0;
 	public static final double COMPLETE_STOP_WAIT_TIME = 0.0;
@@ -50,7 +50,7 @@ public abstract class Car extends Entity {
 	public double startingTime;
 	public double crashingTime;
 	
-	public Source source;
+	public  WorldSource source;
 	
 	protected GraphPositionPath overallPath;
 	
@@ -110,7 +110,7 @@ public abstract class Car extends Entity {
 	
 	static Logger logger = Logger.getLogger(Car.class);
 	
-	public Car(Source s) {
+	public Car( WorldSource s) {
 		
 		id = carCounter;
 		carCounter++;
@@ -331,10 +331,6 @@ public abstract class Car extends Entity {
 		
 	}
 	
-	public boolean postStep() {
-		return true;
-	}
-	
 	public void crash() {
 		
 		state = CarStateEnum.CRASHED;
@@ -351,7 +347,7 @@ public abstract class Car extends Entity {
 				accelTime = -1;
 			}
 			
-			((VertexPosition)curVertexPosition.gpos).v.queue.remove(this);
+			((VertexPosition)curVertexPosition.gpos).v.carQueue.remove(this);
 			
 			curBorderPosition = null;
 			curVertexPosition = null;
@@ -378,7 +374,7 @@ public abstract class Car extends Entity {
 				accelTime = -1;
 			}
 			
-			((VertexPosition)curVertexPosition.gpos).v.queue.remove(this);
+			((VertexPosition)curVertexPosition.gpos).v.carQueue.remove(this);
 			
 			curBorderPosition = null;
 			curVertexPosition = null;
@@ -387,6 +383,14 @@ public abstract class Car extends Entity {
 			
 		}
 		
+	}
+	
+	public void preStart() {
+		;
+	}
+	
+	public void postStop() {
+		;
 	}
 	
 	public void preStep(double t) {
@@ -425,7 +429,7 @@ public abstract class Car extends Entity {
 					
 					curSign = ((EdgePosition)curBorderPosition.gpos).sign;
 					
-					((VertexPosition)curVertexPosition.gpos).v.queue.add(this);
+					((VertexPosition)curVertexPosition.gpos).v.carQueue.add(this);
 					
 				}
 			}
@@ -441,7 +445,7 @@ public abstract class Car extends Entity {
 						assert state == CarStateEnum.DRIVING;
 						state = CarStateEnum.BRAKING;
 						
-					} else if (stoppedTime != -1 && t > stoppedTime + COMPLETE_STOP_WAIT_TIME && accelTime == -1 && ((VertexPosition)curVertexPosition.gpos).v.queue.get(0) == this) {
+					} else if (stoppedTime != -1 && t > stoppedTime + COMPLETE_STOP_WAIT_TIME && accelTime == -1 && ((VertexPosition)curVertexPosition.gpos).v.carQueue.get(0) == this) {
 						// start driving
 						
 						oldBorderPositions.add(curBorderPosition);
@@ -460,7 +464,7 @@ public abstract class Car extends Entity {
 						accelTime = -1;
 					}
 					
-					((VertexPosition)curVertexPosition.gpos).v.queue.remove(this);
+					((VertexPosition)curVertexPosition.gpos).v.carQueue.remove(this);
 					
 					curBorderPosition = null;
 					curVertexPosition = null;
@@ -679,6 +683,7 @@ public abstract class Car extends Entity {
 	/**
 	 * return true if car should persist after time step
 	 */
+	@Override
 	public boolean postStep(double t) {
 		
 		computeDynamicProperties();
@@ -686,7 +691,7 @@ public abstract class Car extends Entity {
 		switch (state) {
 		case DRIVING: {
 			
-			Sink s = (Sink)overallPath.end.getEntity();
+			WorldSink s = (WorldSink)overallPath.end.getEntity();
 			boolean sinked = false;
 			if (Point.distance(p, s.p) < MODEL.world.SINK_EPSILON) {
 				sinked = true;
@@ -696,7 +701,7 @@ public abstract class Car extends Entity {
 				logger.debug("sink");
 				
 				s.matchingSource.outstandingCars--;
-				s.queue.remove(this);
+				s.carQueue.remove(this);
 				state = CarStateEnum.SINKED;
 				return false;
 			}

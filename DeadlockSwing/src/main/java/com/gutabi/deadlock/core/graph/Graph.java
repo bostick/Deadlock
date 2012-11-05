@@ -29,7 +29,8 @@ public class Graph implements SweepEventListener {
 	private final ArrayList<Source> sources = new ArrayList<Source>();
 	private final ArrayList<Sink> sinks = new ArrayList<Sink>();
 	
-	public List<StopSign> signs = new ArrayList<StopSign>();
+	private List<StopSign> signs = new ArrayList<StopSign>();
+	private List<Merger> mergers = new ArrayList<Merger>();
 	
 	private Rect aabb;
 	
@@ -48,13 +49,13 @@ public class Graph implements SweepEventListener {
 	}
 	
 	
-	public void addSource(Source s) {
+	public void addSource(WorldSource s) {
 		sources.add(s);
 		refreshVertexIDs();
 		computeAABB();
 	}
 	
-	public void addSink(Sink s) {
+	public void addSink(WorldSink s) {
 		sinks.add(s);
 		refreshVertexIDs();
 		computeAABB();
@@ -152,6 +153,25 @@ public class Graph implements SweepEventListener {
 		
 	}
 	
+	public void removeMergerTop(Merger m) {
+		
+		Vertex top = m.top;
+		Vertex left = m.left;
+		Vertex right = m.right;
+		Vertex bottom = m.bottom;
+		
+		destroyMerger(m);
+		
+		automaticMergeOrDestroy(top);
+		automaticMergeOrDestroy(left);
+		automaticMergeOrDestroy(right);
+		automaticMergeOrDestroy(bottom);
+		
+		refreshVertexIDs();
+		
+		computeAABB();
+	}
+	
 	public void removeStopSignTop(StopSign s) {
 		
 		destroyStopSign(s);
@@ -199,27 +219,34 @@ public class Graph implements SweepEventListener {
 	
 	public void processNewStrokeTop(Stroke stroke) {
 		
-		count = 0;
+		vertexCount = 0;
+		capsuleCount = 0;
 		vertexEvents = new ArrayList<SweepEvent>();
+//		startVertex = null;
 		
 		sweepStart(stroke);
 		
-		if (count == 0) {
+		if ((vertexCount + capsuleCount) == 0) {
 //			logger.debug("start in nothing");
-			vertexEvents.add(new SweepEvent(SweepEventType.NOTHINGSTART, stroke.pts.get(0), 0, 0.0, null));
+			vertexEvents.add(new SweepEvent(null, stroke.pts.get(0), 0, 0.0));
+		} else if (vertexCount > 0) {
+			SweepEvent e = new SweepEvent(SweepEventType.ENTERVERTEX, stroke.pts.get(0), 0, 0.0);
+			vertexEvents.add(e);
 		} else {
-
+			vertexEvents.add(new SweepEvent(SweepEventType.ENTERCAPSULE, stroke.pts.get(0), 0, 0.0));
 		}
 		
 		for (int i = 0; i < stroke.pts.size()-1; i++) {
 			sweep(stroke, i);
 		}
 		
-		if (count == 0) {
+		if ((vertexCount + capsuleCount) == 0) {
 //			logger.debug("end in nothing");
-			vertexEvents.add(new SweepEvent(SweepEventType.NOTHINGEND, stroke.pts.get(stroke.pts.size()-1), stroke.pts.size()-1, 0.0, null));
+			vertexEvents.add(new SweepEvent(null, stroke.pts.get(stroke.pts.size()-1), stroke.pts.size()-1, 0.0));
+		} else if (vertexCount > 0) {
+			vertexEvents.add(new SweepEvent(SweepEventType.EXITVERTEX, stroke.pts.get(stroke.pts.size()-1), stroke.pts.size()-1, 0.0));
 		} else {
-			
+			vertexEvents.add(new SweepEvent(SweepEventType.EXITCAPSULE, stroke.pts.get(stroke.pts.size()-1), stroke.pts.size()-1, 0.0));
 		}
 		
 		
@@ -228,44 +255,63 @@ public class Graph implements SweepEventListener {
 		
 		SweepEvent e = vertexEvents.get(0);
 		Point p = e.p;
-		Entity hit = bestHitTest(p, stroke.r);
-		if (hit instanceof Edge) {
+//		Entity hit = bestHitTest(p, stroke.r);
+		if (e.type == SweepEventType.ENTERCAPSULE) {
+			logger.debug("split");
 			EdgePosition pos = findClosestEdgePosition(p, stroke.r);
 			split(pos);
-		} else if (hit instanceof Vertex) {
-			;
+//			e.setVertex(v);
+		} else if (e.type == SweepEventType.ENTERVERTEX) {
+			logger.debug("already exists");
+//			Vertex v = e.getVertex();
 		} else {
-			assert hitTest(p) == null;
-			Intersection ii = new Intersection(p);
-			addIntersection(ii);
+//			assert hitTest(p) == null;
+			logger.debug("create");
+			Intersection v = new Intersection(p);
+			addIntersection(v);
+//			e.setVertex(v);
 		}
 		
 		for (int i = 0; i < vertexEvents.size()-1; i+=2) {
 			SweepEvent e0 = vertexEvents.get(i);
 			SweepEvent e1 = vertexEvents.get(i+1);
 			
-			if (e0.type == SweepEventType.VERTEXSTART && e1.type == SweepEventType.EXITVERTEX) {
+			if (e0.type == SweepEventType.ENTERVERTEX && e1.type == SweepEventType.EXITVERTEX) {
+				
+//				e1.setVertex(e0.getVertex());
+				
 				i = i+1;
 				e0 = vertexEvents.get(i);
 				e1 = vertexEvents.get(i+1);
-			} else if (e0.type == SweepEventType.CAPSULESTART && e1.type == SweepEventType.EXITCAPSULE) {
+			} else if (e0.type == SweepEventType.ENTERCAPSULE && e1.type == SweepEventType.EXITCAPSULE) {
 				i = i+1;
 				e0 = vertexEvents.get(i);
 				e1 = vertexEvents.get(i+1);
 			}
 			
-			Vertex v0 = (Vertex)bestHitTest(e0.p, stroke.r);
+			Entity bh = bestHitTest(e0.p, stroke.r);
+			if (bh == null) {
+				logger.debug("broken");
+				return;
+			} else if (bh instanceof Edge) {
+				logger.debug("broken 2");
+				return;
+			}
+			Vertex v0 = (Vertex)bh;
 			
 			Vertex v1;
 			Point p1 = e1.p;
 			Entity hit1 = bestHitTest(p1, stroke.r);
 			if (hit1 instanceof Edge) {
+				logger.debug("split");
 				EdgePosition pos = findClosestEdgePosition(p1, stroke.r);
 				v1 = split(pos);
 			} else if (hit1 instanceof Vertex) {
+				logger.debug("already exists");
 				v1 = (Vertex)hit1;
 			} else {
 				assert hitTest(p1) == null;
+				logger.debug("create");
 				Intersection ii = new Intersection(p1);
 				addIntersection(ii);
 				v1 = ii;
@@ -277,8 +323,10 @@ public class Graph implements SweepEventListener {
 	}
 	
 	List<SweepEvent> events;
-	int count = 0;
+	int vertexCount = 0;
+	int capsuleCount = 0;
 	List<SweepEvent> vertexEvents;
+//	Vertex startVertex;
 	
 	public void sweepStart(Stroke s) {
 		events = new ArrayList<SweepEvent>();
@@ -330,24 +378,27 @@ public class Graph implements SweepEventListener {
 	
 	private void startSorted(SweepEvent e) {
 		switch (e.type) {
-		case CAPSULESTART:
-			count++;
-			if (count == 1) {
-				vertexEvents.add(e);
-			}
-			break;
-		case VERTEXSTART:
-			count++;
-			if (count == 1) {
-				vertexEvents.add(e);
-			}
-			break;
+//		case CAPSULESTART:
+//			count++;
+////			if (count == 1) {
+////				vertexEvents.add(e);
+////			}
+//			break;
+//		case VERTEXSTART:
+//			count++;
+////			if (count == 1) {
+////				vertexEvents.add(e);
+////			}
+//			break;
 		case ENTERCAPSULE:
+			capsuleCount++;
+			break;
 		case ENTERVERTEX:
+//			startVertex = e.getVertex();
+			vertexCount++;
+			break;
 		case EXITCAPSULE:
 		case EXITVERTEX:
-		case NOTHINGSTART:
-		case NOTHINGEND:
 			assert false;
 			break;
 		}
@@ -355,40 +406,60 @@ public class Graph implements SweepEventListener {
 	
 	private void eventSorted(SweepEvent e) {
 		switch (e.type) {
-		case CAPSULESTART:
-		case VERTEXSTART:
-		case NOTHINGSTART:
-		case NOTHINGEND:
-			assert false;
-			break;
+//		case CAPSULESTART:
+//		case VERTEXSTART:
+//		case NOTHINGSTART:
+//		case NOTHINGEND:
+//			assert false;
+//			break;
 		case ENTERVERTEX:
-			count++;
-			if (count == 1) {
+			vertexCount++;
+			if ((vertexCount + capsuleCount) == 1) {
 				vertexEvents.add(e);
 			}
 			break;
 		case ENTERCAPSULE:
-			count++;
-			if (count == 1) {
+			capsuleCount++;
+			if ((vertexCount + capsuleCount) == 1) {
 				vertexEvents.add(e);
 			}
 			break;
 		case EXITVERTEX:
-			count--;
-			if (count == 0) {
+			vertexCount--;
+			if ((vertexCount + capsuleCount) == 0) {
 				vertexEvents.add(e);
 			}
 			break;
 		case EXITCAPSULE:
-			count--;
-			if (count == 0) {
+			capsuleCount--;
+			if ((vertexCount + capsuleCount) == 0) {
 				vertexEvents.add(e);
 			}
 			break;
 		}
 	}
 	
-	
+	public void insertMergerTop(Point p) {
+		
+		Merger m = new Merger(new Point(p.x-Merger.MERGER_WIDTH/2, p.y-Merger.MERGER_HEIGHT/2));
+		
+		mergers.add(m);
+		
+		sinks.add(m.top);
+		sinks.add(m.left);
+		
+		sources.add(m.right);
+		sources.add(m.bottom);
+		
+		refreshVertexIDs();
+		
+		m.top.m = m;
+		m.left.m = m;
+		m.right.m = m;
+		m.bottom.m = m;
+		
+		computeAABB();
+	}
 	
 	/**
 	 * dec is a set of bit flags indicating what decorations to add to the new edge
@@ -405,8 +476,8 @@ public class Graph implements SweepEventListener {
 		
 		if (!e.isStandAlone()) {
 			
-			start.addEdge(e);
-			end.addEdge(e);
+			start.eds.add(e);
+			end.eds.add(e);
 			
 			if ((dec & 1) == 1) {
 				StopSign startSign = new StopSign(e, 0);
@@ -435,8 +506,9 @@ public class Graph implements SweepEventListener {
 		assert edges.contains(e);
 		
 		if (!e.isStandAlone()) {
-			e.start.removeEdge(e);
-			e.end.removeEdge(e);
+			
+			e.start.eds.remove(e);
+			e.end.eds.remove(e);
 			
 			destroyStopSign(e.startSign);
 			destroyStopSign(e.endSign);
@@ -446,6 +518,17 @@ public class Graph implements SweepEventListener {
 		edges.remove(e);
 		
 		refreshEdgeIDs();
+		
+	}
+	
+	private void destroyMerger(Merger m) {
+		
+		m.top.m = null;
+		m.left.m = null;
+		m.right.m = null;
+		m.bottom.m = null;
+		
+		mergers.remove(m);
 		
 	}
 	
@@ -720,6 +803,11 @@ public class Graph implements SweepEventListener {
 				return e;
 			}
 		}
+		for (Merger m : mergers) {
+			if (m.hitTest(p)) {
+				return m;
+			}
+		}
 		return null;
 	}
 	
@@ -742,22 +830,22 @@ public class Graph implements SweepEventListener {
 		return null;
 	}
 	
-	public GraphPosition skeletonHitTest(Point p) {
-		assert p != null;
-		for (Vertex v : getAllVertices()) {
-			VertexPosition pos = v.skeletonHitTest(p);
-			if (pos != null) {
-				return pos;
-			}
-		}
-		for (Edge e : edges) {
-			EdgePosition pos = e.skeletonHitTest(p);
-			if (pos != null) {
-				return pos;
-			}
-		}
-		return null;
-	}
+//	public GraphPosition skeletonHitTest(Point p) {
+//		assert p != null;
+//		for (Vertex v : getAllVertices()) {
+//			VertexPosition pos = v.skeletonHitTest(p);
+//			if (pos != null) {
+//				return pos;
+//			}
+//		}
+//		for (Edge e : edges) {
+//			EdgePosition pos = e.skeletonHitTest(p);
+//			if (pos != null) {
+//				return pos;
+//			}
+//		}
+//		return null;
+//	}
 	
 	/**
 	 * returns the closest edge within radius
@@ -918,6 +1006,12 @@ public class Graph implements SweepEventListener {
 				distances[e.start.id][e.end.id] = l;
 		    	distances[e.end.id][e.start.id] = l;
 			}
+		}
+		for (Merger m : mergers) {
+			distances[m.top.id][m.bottom.id] = Merger.MERGER_HEIGHT;
+			distances[m.bottom.id][m.top.id] = Merger.MERGER_HEIGHT;
+			distances[m.left.id][m.right.id] = Merger.MERGER_WIDTH;
+			distances[m.right.id][m.left.id] = Merger.MERGER_WIDTH;
 		}
 		
 		for (int k = 0; k < vertexCount; k++){
@@ -1084,10 +1178,12 @@ public class Graph implements SweepEventListener {
 		
 		List<Edge> edgesCopy;
 		List<Vertex> verticesCopy;
+		List<Merger> mergersCopy;
 		List<StopSign> signsCopy;
 		synchronized (MODEL) {
 			edgesCopy = new ArrayList<Edge>(edges);
 			verticesCopy = new ArrayList<Vertex>(getAllVertices());
+			mergersCopy = new ArrayList<Merger>(mergers);
 			signsCopy = new ArrayList<StopSign>(signs);
 		}
 		
@@ -1102,6 +1198,10 @@ public class Graph implements SweepEventListener {
 		
 		for (Vertex v : verticesCopy) {
 			v.paint(g2);
+		}
+		
+		for (Merger m : mergersCopy) {
+			m.paint(g2);
 		}
 		
 		for (StopSign s : signsCopy) {

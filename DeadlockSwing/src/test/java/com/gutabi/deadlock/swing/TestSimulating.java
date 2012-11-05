@@ -19,8 +19,8 @@ import org.junit.Test;
 
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.graph.Edge;
-import com.gutabi.deadlock.core.graph.Source;
 import com.gutabi.deadlock.core.graph.Vertex;
+import com.gutabi.deadlock.core.graph.WorldSource;
 import com.gutabi.deadlock.model.Car;
 import com.gutabi.deadlock.model.NormalCar;
 import com.gutabi.deadlock.model.Stroke;
@@ -2485,8 +2485,8 @@ public class TestSimulating {
 			
 			Vertex bV = ((Vertex)MODEL.world.hitTest(new Point(650, 500)));
 			
-			Car a = new NormalCar((Source)aV);
-			Car b = new NormalCar((Source)bV);
+			Car a = new NormalCar((WorldSource)aV);
+			Car b = new NormalCar((WorldSource)bV);
 			
 			MODEL.world.cars.add(a);
 			MODEL.world.cars.add(b);
@@ -2524,8 +2524,8 @@ public class TestSimulating {
 //			Vertex aV = MODEL.findVertex(new Point(596, 450));
 //			Vertex bV = MODEL.findVertex(new Point(650, 500));
 			
-			Car a = new NormalCar((Source)aV);
-			Car b = new NormalCar((Source)bV);
+			Car a = new NormalCar((WorldSource)aV);
+			Car b = new NormalCar((WorldSource)bV);
 			
 			MODEL.world.cars.add(a);
 			MODEL.world.cars.add(b);
@@ -2560,9 +2560,9 @@ public class TestSimulating {
 			Vertex bV = ((Vertex)MODEL.world.hitTest(new Point(650, 500)));
 			Vertex cV = ((Vertex)MODEL.world.hitTest(new Point(650, 400)));
 			
-			Car a = new NormalCar((Source)aV);
-			Car b = new NormalCar((Source)bV);
-			Car c = new NormalCar((Source)cV);
+			Car a = new NormalCar((WorldSource)aV);
+			Car b = new NormalCar((WorldSource)bV);
+			Car c = new NormalCar((WorldSource)cV);
 			
 			MODEL.world.cars.add(a);
 			MODEL.world.cars.add(b);

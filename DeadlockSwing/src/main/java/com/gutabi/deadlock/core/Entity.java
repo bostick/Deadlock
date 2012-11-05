@@ -2,25 +2,28 @@ package com.gutabi.deadlock.core;
 
 import java.awt.Graphics2D;
 
-import org.apache.log4j.Logger;
-
 //@SuppressWarnings("static-access")
-public abstract class Entity {
+public interface Entity {
 	
-	static Logger logger = Logger.getLogger(Entity.class);
+	boolean hitTest(Point p);
 	
-	public abstract boolean hitTest(Point p);
+	boolean isDeleteable();
 	
-	public abstract boolean isDeleteable();
+	void preStart();
 	
-	public abstract void preStep(double t);
+	void postStop();
 	
-	public abstract boolean postStep();
+	void preStep(double t);
 	
-	public abstract void paint(Graphics2D g2);
+	/**
+	 * return true if car should persist after time step
+	 */
+	boolean postStep(double t);
 	
-	public abstract void paintHilite(Graphics2D g2);
+	void paint(Graphics2D g2);
 	
-	public abstract Rect getAABB();
+	void paintHilite(Graphics2D g2);
+	
+	Rect getAABB();
 	
 }

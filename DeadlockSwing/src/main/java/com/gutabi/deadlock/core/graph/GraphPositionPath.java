@@ -398,38 +398,39 @@ public class GraphPositionPath {
 				
 				VertexPosition pp2 = (VertexPosition)p2;
 				
-				List<Edge> eds = Vertex.commonEdges(pp1.v, pp2.v);
-				
-				Edge e = null;
-				
-				for (Edge ce : eds) {
-					if (ce.size() == 2) {
-						e = ce;
-						break;
-					}
-				}
-				assert e != null;
-				
-				graphParam = (pp1.v == e.start) ? pathParam : 1-pathParam;
-				
-				Vertex p1v = ((VertexPosition)p1).v;
-				
-				if (p1v == e.start) {
-					// same direction as edge
-					
-					graphIndex = 0;
-					graphParam = pathParam;
-					
-				} else {
-					
-					graphIndex = 0;
-					graphParam = 1-pathParam;
-					
-				}
-				
-				EdgePosition newE = new EdgePosition(e, graphIndex, graphParam);
-				
-				return newE;
+				throw new IllegalArgumentException();
+//				List<Edge> eds = Vertex.commonEdges(pp1.v, pp2.v);
+//				
+//				Edge e = null;
+//				
+//				for (Edge ce : eds) {
+//					if (ce.size() == 2) {
+//						e = ce;
+//						break;
+//					}
+//				}
+//				assert e != null;
+//				
+//				graphParam = (pp1.v == e.start) ? pathParam : 1-pathParam;
+//				
+//				Vertex p1v = ((VertexPosition)p1).v;
+//				
+//				if (p1v == e.start) {
+//					// same direction as edge
+//					
+//					graphIndex = 0;
+//					graphParam = pathParam;
+//					
+//				} else {
+//					
+//					graphIndex = 0;
+//					graphParam = 1-pathParam;
+//					
+//				}
+//				
+//				EdgePosition newE = new EdgePosition(e, graphIndex, graphParam);
+//				
+//				return newE;
 			}
 		}
 	}

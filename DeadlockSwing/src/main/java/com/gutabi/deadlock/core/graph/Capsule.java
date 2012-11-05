@@ -91,7 +91,7 @@ public class Capsule {
 		Point c = s.pts.get(0);
 		
 		if (hitTest(c, s.r)) {
-			l.start(new SweepEvent(SweepEventType.CAPSULESTART, c, 0, 0.0, this));
+			l.start(new SweepEvent(SweepEventType.ENTERCAPSULE, c, 0, 0.0));
 		}
 		
 	}
@@ -126,9 +126,9 @@ public class Capsule {
 			if (DMath.greaterThanEquals(abParam, 0.0) && DMath.lessThanEquals(abParam, 1.0)) {
 				assert DMath.equals(Point.distance(p, a, b), r + s.r);
 				if (outside) {
-					l.event(new SweepEvent(SweepEventType.ENTERCAPSULE, p, index, cdParam, this));
+					l.event(new SweepEvent(SweepEventType.ENTERCAPSULE, p, index, cdParam));
 				} else {
-					l.event(new SweepEvent(SweepEventType.EXITCAPSULE, p, index, cdParam, this));
+					l.event(new SweepEvent(SweepEventType.EXITCAPSULE, p, index, cdParam));
 				}
 			}
 		}
@@ -145,9 +145,9 @@ public class Capsule {
 			if (DMath.greaterThanEquals(abParam, 0.0) && DMath.lessThanEquals(abParam, 1.0)) {
 				assert DMath.equals(Point.distance(p, a, b), r + s.r);
 				if (outside) {
-					l.event(new SweepEvent(SweepEventType.ENTERCAPSULE, p, index, cdParam, this));
+					l.event(new SweepEvent(SweepEventType.ENTERCAPSULE, p, index, cdParam));
 				} else {
-					l.event(new SweepEvent(SweepEventType.EXITCAPSULE, p, index, cdParam, this));
+					l.event(new SweepEvent(SweepEventType.EXITCAPSULE, p, index, cdParam));
 				}
 			}
 		}
@@ -185,9 +185,9 @@ public class Capsule {
 				if (DMath.lessThan(u, 0.0)) {
 					assert DMath.equals(Point.distance(p, a, b), r + s.r);
 					if (outside) {
-						l.event(new SweepEvent(SweepEventType.ENTERCAPSULE, p, index, cdParam, this));
+						l.event(new SweepEvent(SweepEventType.ENTERCAPSULE, p, index, cdParam));
 					} else {
-						l.event(new SweepEvent(SweepEventType.EXITCAPSULE, p, index, cdParam, this));
+						l.event(new SweepEvent(SweepEventType.EXITCAPSULE, p, index, cdParam));
 					}
 				}
 			}
@@ -203,9 +203,9 @@ public class Capsule {
 				if (DMath.lessThan(u0, 0.0)) {
 					assert DMath.equals(Point.distance(p0, a, b), r + s.r);
 					if (outside) {
-						l.event(new SweepEvent(SweepEventType.ENTERCAPSULE, p0, index, cdParam0, this));
+						l.event(new SweepEvent(SweepEventType.ENTERCAPSULE, p0, index, cdParam0));
 					} else {
-						l.event(new SweepEvent(SweepEventType.EXITCAPSULE, p0, index, cdParam0, this));
+						l.event(new SweepEvent(SweepEventType.EXITCAPSULE, p0, index, cdParam0));
 					}
 				}
 			}
@@ -216,9 +216,9 @@ public class Capsule {
 				if (DMath.lessThan(u1, 0.0)) {
 					assert DMath.equals(Point.distance(p1, a, b), r + s.r);
 					if (outside) {
-						l.event(new SweepEvent(SweepEventType.ENTERCAPSULE, p1, index, cdParam1, this));
+						l.event(new SweepEvent(SweepEventType.ENTERCAPSULE, p1, index, cdParam1));
 					} else {
-						l.event(new SweepEvent(SweepEventType.EXITCAPSULE, p1, index, cdParam1, this));
+						l.event(new SweepEvent(SweepEventType.EXITCAPSULE, p1, index, cdParam1));
 					}
 				}
 			}
@@ -262,9 +262,9 @@ public class Capsule {
 				if (DMath.greaterThan(u, 1.0)) {
 					assert DMath.equals(Point.distance(p, a, b), r + s.r);
 					if (outside) {
-						l.event(new SweepEvent(SweepEventType.ENTERCAPSULE, p, index, cdParam, this));
+						l.event(new SweepEvent(SweepEventType.ENTERCAPSULE, p, index, cdParam));
 					} else {
-						l.event(new SweepEvent(SweepEventType.EXITCAPSULE, p, index, cdParam, this));
+						l.event(new SweepEvent(SweepEventType.EXITCAPSULE, p, index, cdParam));
 					}
 				}
 			}
@@ -280,9 +280,9 @@ public class Capsule {
 				if (DMath.greaterThan(u0, 1.0)) {
 					assert DMath.equals(Point.distance(p0, a, b), r + s.r);
 					if (outside) {
-						l.event(new SweepEvent(SweepEventType.ENTERCAPSULE, p0, index, cdParam0, this));
+						l.event(new SweepEvent(SweepEventType.ENTERCAPSULE, p0, index, cdParam0));
 					} else {
-						l.event(new SweepEvent(SweepEventType.EXITCAPSULE, p0, index, cdParam0, this));
+						l.event(new SweepEvent(SweepEventType.EXITCAPSULE, p0, index, cdParam0));
 					}
 				}
 			}
@@ -293,9 +293,9 @@ public class Capsule {
 				if (DMath.greaterThan(u1, 1.0)) {
 					assert DMath.equals(Point.distance(p1, a, b), r + s.r);
 					if (outside) {
-						l.event(new SweepEvent(SweepEventType.ENTERCAPSULE, p1, index, cdParam1, this));
+						l.event(new SweepEvent(SweepEventType.ENTERCAPSULE, p1, index, cdParam1));
 					} else {
-						l.event(new SweepEvent(SweepEventType.EXITCAPSULE, p1, index, cdParam1, this));
+						l.event(new SweepEvent(SweepEventType.EXITCAPSULE, p1, index, cdParam1));
 					}
 				}
 			}

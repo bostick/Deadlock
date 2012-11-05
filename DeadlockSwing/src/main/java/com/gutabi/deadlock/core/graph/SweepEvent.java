@@ -14,11 +14,10 @@ public class SweepEvent {
 		ENTERVERTEX,
 		EXITVERTEX,
 		
-		CAPSULESTART,
-		VERTEXSTART,
-		
-		NOTHINGSTART,
-		NOTHINGEND
+//		CAPSULESTART,
+//		VERTEXSTART,
+//		NOTHINGSTART,
+//		NOTHINGEND
 		
 	}
 	
@@ -26,19 +25,33 @@ public class SweepEvent {
 	public final Point p;
 	public final int index;
 	public final double param;
-	public final Object o;
+//	public final Object o;
 	
-	public SweepEvent(SweepEventType type, Point p, int index, double param, Object o) {
+//	private Vertex v;
+	
+	public SweepEvent(SweepEventType type, Point p, int index, double param) {
 		this.type = type;
 		this.p = p;
 		this.index = index;
 		this.param = param;
-		this.o = o;
+//		this.o = o;
 	}
 	
 	public String toString() {
-		return type.toString();
+		if (type != null) {
+			return type.toString();
+		} else {
+			return "null";
+		}
 	}
+	
+//	public void setVertex(Vertex v) {
+//		this.v = v;
+//	}
+//	
+//	public Vertex getVertex() {
+//		return v;
+//	}
 	
 	public static Comparator<SweepEvent> COMPARATOR = new SweepEventComparator();
 	

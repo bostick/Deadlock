@@ -12,7 +12,7 @@ import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.Rect;
 
 @SuppressWarnings("static-access")
-public class StopSign extends Entity {
+public class StopSign implements Entity {
 	
 	public static final double STOPSIGN_SIZE = 0.5;
 	
@@ -48,11 +48,19 @@ public class StopSign extends Entity {
 		return true;
 	}
 	
+	public void preStart() {
+		;
+	}
+	
+	public void postStop() {
+		;
+	}
+	
 	public void preStep(double t) {
 		;
 	}
 	
-	public boolean postStep() {
+	public boolean postStep(double t) {
 		return true;
 	}
 	

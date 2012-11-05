@@ -18,6 +18,9 @@ public class KeyboardController {
 		VIEW.panel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("DELETE"), "deleteKeyAction");
 		VIEW.panel.getActionMap().put("deleteKeyAction", deleteKeyAction);
 		
+		VIEW.panel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("INSERT"), "insertKeyAction");
+		VIEW.panel.getActionMap().put("insertKeyAction", insertKeyAction);
+		
 //		VIEW.panel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("TAB"), "tabKeyAction");
 //		VIEW.panel.getActionMap().put("tabKeyAction", tabKeyAction);
 //		
@@ -37,6 +40,22 @@ public class KeyboardController {
 			CONTROLLER.queue(new Runnable() {
 				public void run() {
 					CONTROLLER.deleteKey();
+					MODEL.world.renderBackground();
+					VIEW.repaint();
+				}
+			});
+			
+		}
+	};
+	
+	@SuppressWarnings("serial")
+	public Action insertKeyAction = new AbstractAction() {
+		@Override
+		public void actionPerformed(ActionEvent blah) {
+			
+			CONTROLLER.queue(new Runnable() {
+				public void run() {
+					CONTROLLER.insertKey();
 					MODEL.world.renderBackground();
 					VIEW.repaint();
 				}

@@ -4,16 +4,18 @@ import java.awt.Color;
 
 import com.gutabi.deadlock.core.Point;
 
-public class Intersection extends Vertex {
+public class WorldSink extends Sink {
 	
-	public Intersection(Point p) {
+	public WorldSource matchingSource;
+	
+	public  WorldSink(Point p) {
 		super(p);
-		color = new Color(0x44, 0x44, 0x44, 0xff);
+		color = Color.RED;
 		hiliteColor = new Color(255-color.getRed(), 255-color.getGreen(), 255-color.getBlue());
 	}
 	
 	public boolean isDeleteable() {
-		return true;
+		return false;
 	}
 	
 	public void preStart() {

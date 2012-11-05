@@ -18,7 +18,7 @@ import com.gutabi.deadlock.core.Rect;
 import com.gutabi.deadlock.model.Stroke;
 
 @SuppressWarnings("static-access")
-public final class Edge extends Entity {
+public final class Edge implements Entity {
 	
 	public static final double ROAD_RADIUS = 0.5;
 	
@@ -133,11 +133,19 @@ public final class Edge extends Entity {
 	
 	
 	
+	public void preStart() {
+		;
+	}
+	
+	public void postStop() {
+		;
+	}
+	
 	public void preStep(double t) {
 		;
 	}
 	
-	public boolean postStep() {
+	public boolean postStep(double t) {
 		return true;
 	}
 	

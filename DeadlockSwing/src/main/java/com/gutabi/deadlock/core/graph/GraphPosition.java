@@ -55,13 +55,15 @@ public abstract class GraphPosition {
 		
 		if (this instanceof VertexPosition) {
 			
-			Vertex v = ((VertexPosition)this).v;
+//			Vertex v = ((VertexPosition)this).v;
+//			
+//			Edge e = Vertex.commonEdge(v, p.v);
+//			
+//			GraphPosition traveled = ((VertexPosition)this).travel(e, p.v, distance);
+//			
+//			return traveled;
 			
-			Edge e = Vertex.commonEdge(v, p.v);
-			
-			GraphPosition traveled = ((VertexPosition)this).travel(e, p.v, distance);
-			
-			return traveled;
+			throw new IllegalArgumentException();
 			
 		} else {
 			

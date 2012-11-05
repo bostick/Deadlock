@@ -17,6 +17,7 @@ import com.gutabi.deadlock.DeadlockMain;
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.graph.Edge;
+import com.gutabi.deadlock.core.graph.Merger;
 import com.gutabi.deadlock.core.graph.StopSign;
 import com.gutabi.deadlock.core.graph.Vertex;
 import com.gutabi.deadlock.model.Car;
@@ -210,6 +211,9 @@ public class DeadlockController implements ActionListener {
 		
 	}
 	
+	
+	Point lastMovedWorldPoint;
+	
 	public void moved(InputEvent ev) {
 		
 		Component c = ev.c;
@@ -220,21 +224,15 @@ public class DeadlockController implements ActionListener {
 			
 			Point p = ev.p;
 			
+			lastMovedWorldPoint = VIEW.panelToWorld(p);
+			
 			switch (MODEL.mode) {
 			case RUNNING:
 			case PAUSED:
 			case IDLE: {
 				
-				Point worldPoint = VIEW.panelToWorld(p);
-				
-//				MODEL.world.testPoint(worldPoint);
-				
-				Entity closest = MODEL.world.hitTest(worldPoint);
+				Entity closest = MODEL.world.hitTest(lastMovedWorldPoint);
 				MODEL.hilited = closest;
-				
-//				MODEL.stroke.move(p);
-				
-//				MODEL.world.renderBackground();
 				
 				VIEW.repaint();
 				
@@ -253,7 +251,12 @@ public class DeadlockController implements ActionListener {
 			
 			if (MODEL.hilited.isDeleteable()) {
 				
-				if (MODEL.hilited instanceof Vertex) {
+				if (MODEL.hilited instanceof Car) {
+					Car c = (Car)MODEL.hilited;
+					
+					MODEL.world.removeCarTop(c);
+					
+				} else if (MODEL.hilited instanceof Vertex) {
 					Vertex v = (Vertex)MODEL.hilited;
 					
 					MODEL.world.removeVertexTop(v);
@@ -263,10 +266,10 @@ public class DeadlockController implements ActionListener {
 					
 					MODEL.world.removeEdgeTop(e);
 					
-				} else if (MODEL.hilited instanceof Car) {
-					Car c = (Car)MODEL.hilited;
+				} else if (MODEL.hilited instanceof Merger) {
+					Merger e = (Merger)MODEL.hilited;
 					
-					MODEL.world.removeCarTop(c);
+					MODEL.world.removeMergerTop(e);
 					
 				} else if (MODEL.hilited instanceof StopSign) {
 					StopSign s = (StopSign)MODEL.hilited;
@@ -288,7 +291,15 @@ public class DeadlockController implements ActionListener {
 		
 	}
 	
-	
+	public void insertKey() {
+		
+		MODEL.world.insertMergerTop(lastMovedWorldPoint);
+		
+		MODEL.world.renderBackground();
+		VIEW.repaint();
+		
+	}
+
 	public void startRunning() {
 		assert Thread.currentThread().getName().equals("controller");
 		

@@ -2,7 +2,7 @@ package com.gutabi.deadlock.model;
 
 import org.apache.log4j.Logger;
 
-import com.gutabi.deadlock.core.graph.Source;
+import com.gutabi.deadlock.core.graph.WorldSource;
 
 //@SuppressWarnings("static-access")
 public class NormalCar extends Car {
@@ -11,7 +11,7 @@ public class NormalCar extends Car {
 	
 	static Logger logger = Logger.getLogger(NormalCar.class);
 	
-	public NormalCar(Source s) {
+	public NormalCar(WorldSource s) {
 		super(s);
 		overallPath = s.getShortestPathToMatchingSink();
 		

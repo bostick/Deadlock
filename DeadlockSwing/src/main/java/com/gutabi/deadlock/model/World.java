@@ -21,10 +21,11 @@ import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.Rect;
 import com.gutabi.deadlock.core.graph.Edge;
 import com.gutabi.deadlock.core.graph.Graph;
-import com.gutabi.deadlock.core.graph.Sink;
-import com.gutabi.deadlock.core.graph.Source;
+import com.gutabi.deadlock.core.graph.Merger;
 import com.gutabi.deadlock.core.graph.StopSign;
 import com.gutabi.deadlock.core.graph.Vertex;
+import com.gutabi.deadlock.core.graph.WorldSink;
+import com.gutabi.deadlock.core.graph.WorldSource;
 
 @SuppressWarnings("static-access")
 public class World {
@@ -93,21 +94,21 @@ public class World {
 		b2dWorld.setContactListener(listener);
 		
 		
-		Source a = new Source(new Point(WORLD_WIDTH/4, 0));
-		Source b = new Source(new Point(2*WORLD_WIDTH/4, 0));
-		Source t1 = new Source(new Point(3*WORLD_WIDTH/4, 0));
+		WorldSource a = new WorldSource(new Point(WORLD_WIDTH/4, 0));
+		WorldSource b = new WorldSource(new Point(2*WORLD_WIDTH/4, 0));
+		WorldSource t1 = new WorldSource(new Point(3*WORLD_WIDTH/4, 0));
 		
-		Source c = new Source(new Point(0, WORLD_HEIGHT/4));
-		Source d = new Source(new Point(0, 2*WORLD_HEIGHT/4));
-		Source t2 = new Source(new Point(0, 3*WORLD_HEIGHT/4));
+		WorldSource c = new WorldSource(new Point(0, WORLD_HEIGHT/4));
+		WorldSource d = new WorldSource(new Point(0, 2*WORLD_HEIGHT/4));
+		WorldSource t2 = new WorldSource(new Point(0, 3*WORLD_HEIGHT/4));
 		
-		Sink e = new Sink(new Point(WORLD_WIDTH/4, WORLD_HEIGHT));
-		Sink f = new Sink(new Point(2*WORLD_WIDTH/4, WORLD_HEIGHT));
-		Sink t3 = new Sink(new Point(3*WORLD_WIDTH/4, WORLD_HEIGHT));
+		WorldSink e = new WorldSink(new Point(WORLD_WIDTH/4, WORLD_HEIGHT));
+		WorldSink f = new WorldSink(new Point(2*WORLD_WIDTH/4, WORLD_HEIGHT));
+		WorldSink t3 = new WorldSink(new Point(3*WORLD_WIDTH/4, WORLD_HEIGHT));
 		
-		Sink g = new Sink(new Point(WORLD_WIDTH, WORLD_HEIGHT/4));
-		Sink h = new Sink(new Point(WORLD_WIDTH, 2*WORLD_HEIGHT/4));
-		Sink t4 = new Sink(new Point(WORLD_WIDTH, 3*WORLD_HEIGHT/4));
+		WorldSink g = new WorldSink(new Point(WORLD_WIDTH, WORLD_HEIGHT/4));
+		WorldSink h = new WorldSink(new Point(WORLD_WIDTH, 2*WORLD_HEIGHT/4));
+		WorldSink t4 = new WorldSink(new Point(WORLD_WIDTH, 3*WORLD_HEIGHT/4));
 		
 		a.matchingSink = e;
 		e.matchingSource = a;
@@ -161,6 +162,11 @@ public class World {
 		postIdleTop();
 	}
 	
+	public void removeMergerTop(Merger m) {
+		graph.removeMergerTop(m);
+		postIdleTop();
+	}
+	
 	public void removeStopSignTop(StopSign e) {
 		graph.removeStopSignTop(e);
 		postIdleTop();
@@ -184,7 +190,13 @@ public class World {
 		postDraftingTop();
 	}
 	
-	
+	public void insertMergerTop(Point p) {
+		
+		graph.insertMergerTop(p);
+		
+		postIdleTop();
+		
+	}
 	
 	
 	
@@ -320,7 +332,7 @@ public class World {
 		if (c != null) {
 			return c;
 		}
-		Entity h = graphHitTest(p);
+		Entity h = graph.hitTest(p);
 		if (h != null) {
 			return h;
 		}
@@ -342,9 +354,9 @@ public class World {
 		return graph.hitTest(p);
 	}
 	
-	public Entity bestHitTest(Point p, double radius) {
-		return graph.bestHitTest(p, radius);
-	}
+//	public Entity bestHitTest(Point p, double radius) {
+//		return graph.bestHitTest(p, radius);
+//	}
 	
 	public void paint(Graphics2D g2) {
 		

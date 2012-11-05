@@ -113,19 +113,20 @@ public class VertexPosition extends GraphPosition {
 			}
 			
 		} else {
-			VertexPosition gv = (VertexPosition)goal;
-			
-			if (gv == this) {
-				throw new IllegalArgumentException();
-			}
-			
-			Edge e = Vertex.commonEdge(v, gv.v);
-			
-			if (v == e.end) {
-				return EdgePosition.nextBoundfromEnd(e);
-			} else {
-				return EdgePosition.nextBoundfromStart(e);
-			}
+//			VertexPosition gv = (VertexPosition)goal;
+//			
+//			if (gv == this) {
+//				throw new IllegalArgumentException();
+//			}
+//			
+//			Edge e = Vertex.commonEdge(v, gv.v);
+//			
+//			if (v == e.end) {
+//				return EdgePosition.nextBoundfromEnd(e);
+//			} else {
+//				return EdgePosition.nextBoundfromStart(e);
+//			}
+			throw new IllegalArgumentException();
 			
 		}
 		

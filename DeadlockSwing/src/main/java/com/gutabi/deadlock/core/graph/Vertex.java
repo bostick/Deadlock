@@ -17,17 +17,18 @@ import com.gutabi.deadlock.model.Car;
 import com.gutabi.deadlock.model.Stroke;
 
 @SuppressWarnings("static-access")
-public abstract class Vertex extends Entity {
+public abstract class Vertex implements Entity {
 	
 	public final Point p;
 	
 	protected final List<Edge> eds = new ArrayList<Edge>();
+	protected Merger m;
 	
 	public int id;
 	
 	protected double r;
 	
-	public final List<Car> queue = new ArrayList<Car>();
+	public final List<Car> carQueue = new ArrayList<Car>();
 	
 	protected Color color;
 	protected Color hiliteColor;
@@ -42,14 +43,13 @@ public abstract class Vertex extends Entity {
 		
 		this.p = p;
 		
-		r = INIT_VERTEX_RADIUS;
-		
-		computeAABB();
-		
 		int h = 17;
 		h = 37 * h + p.hashCode();
 		hash = h;
 		
+		r = INIT_VERTEX_RADIUS;
+		
+		computeAABB();
 	}
 	
 	public int hashCode() {
@@ -64,15 +64,15 @@ public abstract class Vertex extends Entity {
 		return r;
 	}
 	
-	public void addEdge(Edge e) {
-		assert e != null;
-		eds.add(e);
-	}
-	
-	public void removeEdge(Edge e) {
-		assert eds.contains(e);
-		eds.remove(e);
-	}
+//	public void addEdge(Edge e) {
+//		assert e != null;
+//		eds.add(e);
+//	}
+//	
+//	public void removeEdge(Edge e) {
+//		assert eds.contains(e);
+//		eds.remove(e);
+//	}
 	
 	
 	
@@ -85,7 +85,9 @@ public abstract class Vertex extends Entity {
 		Point c = s.pts.get(0);
 		
 		if (hitTest(c, s.r)) {
-			l.start(new SweepEvent(SweepEventType.VERTEXSTART, c, 0, 0.0, this));
+			SweepEvent e = new SweepEvent(SweepEventType.ENTERVERTEX, c, 0, 0.0);
+//			e.setVertex(this);
+			l.start(e);
 		}
 		
 	}
@@ -116,9 +118,11 @@ public abstract class Vertex extends Entity {
 				Point p = Point.point(c, d, cdParam);
 				assert DMath.equals(Point.distance(p, this.p), r + s.r);
 				if (outside) {
-					l.event(new SweepEvent(SweepEventType.ENTERVERTEX, p, index, cdParam, this));
+					SweepEvent e = new SweepEvent(SweepEventType.ENTERVERTEX, p, index, cdParam);
+//					e.setVertex(this);
+					l.event(e);
 				} else {
-					l.event(new SweepEvent(SweepEventType.EXITVERTEX, p, index, cdParam, this));
+					l.event(new SweepEvent(SweepEventType.EXITVERTEX, p, index, cdParam));
 				}
 			}
 
@@ -131,9 +135,11 @@ public abstract class Vertex extends Entity {
 				Point p0 = Point.point(c, d, cdParam0);
 				assert DMath.equals(Point.distance(p0, this.p), r + s.r);
 				if (outside) {
-					l.event(new SweepEvent(SweepEventType.ENTERVERTEX, p0, index, cdParam0, this));
+					SweepEvent e = new SweepEvent(SweepEventType.ENTERVERTEX, p0, index, cdParam0);
+//					e.setVertex(this);
+					l.event(e);
 				} else {
-					l.event(new SweepEvent(SweepEventType.EXITVERTEX, p0, index, cdParam0, this));
+					l.event(new SweepEvent(SweepEventType.EXITVERTEX, p0, index, cdParam0));
 				}
 			}
 			double cdParam1 = roots[1];
@@ -141,9 +147,11 @@ public abstract class Vertex extends Entity {
 				Point p1 = Point.point(c, d, cdParam1);
 				assert DMath.equals(Point.distance(p1, this.p), r + s.r);
 				if (outside) {
-					l.event(new SweepEvent(SweepEventType.ENTERVERTEX, p1, index, cdParam1, this));
+					SweepEvent e = new SweepEvent(SweepEventType.ENTERVERTEX, p1, index, cdParam1);
+//					e.setVertex(this);
+					l.event(e);
 				} else {
-					l.event(new SweepEvent(SweepEventType.EXITVERTEX, p1, index, cdParam1, this));
+					l.event(new SweepEvent(SweepEventType.EXITVERTEX, p1, index, cdParam1));
 				}
 			}
 			
@@ -179,10 +187,6 @@ public abstract class Vertex extends Entity {
 			return new VertexPosition(this);
 		}
 		return null;
-	}
-	
-	public void postStop() {
-		queue.clear();
 	}
 	
 	private void computeAABB() {
@@ -294,7 +298,7 @@ public abstract class Vertex extends Entity {
 	}
 	
 	
-	public static List<Edge> commonEdges(Vertex a, Vertex b) {
+	public static List<EdgeX> commonEdgesX(Vertex a, Vertex b) {
 		
 		if (a == b) {
 			throw new IllegalArgumentException();
@@ -312,17 +316,17 @@ public abstract class Vertex extends Entity {
 		return common;
 	}
 	
-	public static Edge commonEdge(Vertex a, Vertex b) {
-		
-		List<Edge> common = commonEdges(a, b);
-		
-		if (common.size() != 1) {
-			throw new IllegalArgumentException();
-		} else {
-			return common.get(0);
-		}
-		
-	}
+//	public static EdgeX commonEdgeX(Vertex a, Vertex b) {
+//		
+//		List<Edge> common = commonEdges(a, b);
+//		
+//		if (common.size() != 1) {
+//			throw new IllegalArgumentException();
+//		} else {
+//			return common.get(0);
+//		}
+//		
+//	}
 	
 	/**
 	 * @param g2 in world coords
@@ -389,7 +393,7 @@ public abstract class Vertex extends Entity {
 		
 		g2.drawString(Integer.toString(id), (int)(panelPoint.x), (int)(panelPoint.y));
 		
-		g2.drawString(Integer.toString(queue.size()), (int)(panelPoint.x + 10), (int)(panelPoint.y));
+		g2.drawString(Integer.toString(carQueue.size()), (int)(panelPoint.x + 10), (int)(panelPoint.y));
 	}
 	
 	public void check() {
