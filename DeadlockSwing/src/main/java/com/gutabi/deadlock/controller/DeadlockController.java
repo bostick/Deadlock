@@ -16,7 +16,7 @@ import org.apache.log4j.Logger;
 import com.gutabi.deadlock.DeadlockMain;
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.core.graph.Edge;
+import com.gutabi.deadlock.core.graph.Road;
 import com.gutabi.deadlock.core.graph.Merger;
 import com.gutabi.deadlock.core.graph.StopSign;
 import com.gutabi.deadlock.core.graph.Vertex;
@@ -187,7 +187,7 @@ public class DeadlockController implements ActionListener {
 							
 //							((Vertex) hit).getEdges();
 							
-						} else if (hit instanceof Edge) {
+						} else if (hit instanceof Road) {
 							
 						}
 						
@@ -261,10 +261,10 @@ public class DeadlockController implements ActionListener {
 					
 					MODEL.world.removeVertexTop(v);
 					
-				} else if (MODEL.hilited instanceof Edge) {
-					Edge e = (Edge)MODEL.hilited;
+				} else if (MODEL.hilited instanceof Road) {
+					Road e = (Road)MODEL.hilited;
 					
-					MODEL.world.removeEdgeTop(e);
+					MODEL.world.removeRoadTop(e);
 					
 				} else if (MODEL.hilited instanceof Merger) {
 					Merger e = (Merger)MODEL.hilited;

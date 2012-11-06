@@ -21,7 +21,7 @@ public abstract class Vertex implements Entity {
 	
 	public final Point p;
 	
-	protected final List<Edge> eds = new ArrayList<Edge>();
+	protected final List<Road> roads = new ArrayList<Road>();
 	protected Merger m;
 	
 	public int id;
@@ -37,7 +37,7 @@ public abstract class Vertex implements Entity {
 	
 	private final int hash;
 	
-	public static final double INIT_VERTEX_RADIUS = Math.sqrt(2 * Edge.ROAD_RADIUS * Edge.ROAD_RADIUS);
+	public static final double INIT_VERTEX_RADIUS = Math.sqrt(2 * Road.ROAD_RADIUS * Road.ROAD_RADIUS);
 	
 	public Vertex(Point p) {
 		
@@ -212,7 +212,7 @@ public abstract class Vertex implements Entity {
 	public void computeRadius(double maximumRadius) {
 		
 		r = INIT_VERTEX_RADIUS;
-		for (Edge e : eds) {
+		for (Road e : roads) {
 			e.computeProperties();
 		}
 		
@@ -221,27 +221,27 @@ public abstract class Vertex implements Entity {
 			
 			boolean tooClose = false;
 			
-			for (int i = 0; i < eds.size()-1; i++) {
-				Edge ei = eds.get(i);
+			for (int i = 0; i < roads.size()-1; i++) {
+				Road ei = roads.get(i);
 				
 				Point borderi;
 				if (ei.start == this) {
 					borderi = ei.getStartBorderPoint();
 					
-					for (int j = i+1; j < eds.size(); j++) {
-						Edge ej = eds.get(j);
+					for (int j = i+1; j < roads.size(); j++) {
+						Road ej = roads.get(j);
 						
 						Point borderj;
 						if (ej.start == this && ei != ej) {
 							borderj = ej.getStartBorderPoint();
-							if (DMath.lessThan(Point.distance(borderi, borderj), Edge.ROAD_RADIUS + Edge.ROAD_RADIUS + 0.1)) {
+							if (DMath.lessThan(Point.distance(borderi, borderj), Road.ROAD_RADIUS + Road.ROAD_RADIUS + 0.1)) {
 								tooClose = true;
 							}
 						}
 						
 						if (ej.end == this) {
 							borderj = ej.getEndBorderPoint();
-							if (DMath.lessThan(Point.distance(borderi, borderj), Edge.ROAD_RADIUS + Edge.ROAD_RADIUS + 0.1)) {
+							if (DMath.lessThan(Point.distance(borderi, borderj), Road.ROAD_RADIUS + Road.ROAD_RADIUS + 0.1)) {
 								tooClose = true;
 							}
 						}
@@ -253,20 +253,20 @@ public abstract class Vertex implements Entity {
 				if (ei.end == this) {
 					borderi = ei.getEndBorderPoint();
 					
-					for (int j = i+1; j < eds.size(); j++) {
-						Edge ej = eds.get(j);
+					for (int j = i+1; j < roads.size(); j++) {
+						Road ej = roads.get(j);
 						
 						Point borderj;
 						if (ej.start == this) {
 							borderj = ej.getStartBorderPoint();
-							if (DMath.lessThan(Point.distance(borderi, borderj), Edge.ROAD_RADIUS + Edge.ROAD_RADIUS + 0.1)) {
+							if (DMath.lessThan(Point.distance(borderi, borderj), Road.ROAD_RADIUS + Road.ROAD_RADIUS + 0.1)) {
 								tooClose = true;
 							}
 						}
 						
 						if (ej.end == this && ei != ej) {
 							borderj = ej.getEndBorderPoint();
-							if (DMath.lessThan(Point.distance(borderi, borderj), Edge.ROAD_RADIUS + Edge.ROAD_RADIUS + 0.1)) {
+							if (DMath.lessThan(Point.distance(borderi, borderj), Road.ROAD_RADIUS + Road.ROAD_RADIUS + 0.1)) {
 								tooClose = true;
 							}
 						}
@@ -284,7 +284,7 @@ public abstract class Vertex implements Entity {
 				r = r + 0.1;
 			}
 			
-			for (Edge e : eds) {
+			for (Road e : roads) {
 				e.computeProperties();
 			}
 			
@@ -292,25 +292,30 @@ public abstract class Vertex implements Entity {
 		
 		computeAABB();
 		
-		for (Edge e : eds) {
+		for (Road e : roads) {
 			e.computeProperties();
 		}
 	}
 	
 	
-	public static List<EdgeX> commonEdgesX(Vertex a, Vertex b) {
+	public static List<Edge> commonEdges(Vertex a, Vertex b) {
 		
 		if (a == b) {
 			throw new IllegalArgumentException();
 		}
 		
 		List<Edge> common = new ArrayList<Edge>();
-		for (Edge e1 : a.eds) {
-			for (Edge e2 : b.eds) {
-				if (e1 == e2) {
-					common.add(e1);
+		
+		for (Road r1 : a.roads) {
+			for (Road r2 : b.roads) {
+				if (r1 == r2) {
+					common.add(r1);
 				}
 			}
+		}
+		
+		if (a.m != null && a.m == b.m) {
+			common.add(a.m);
 		}
 		
 		return common;
@@ -409,22 +414,22 @@ public abstract class Vertex implements Entity {
 //		assert edgeCount != 2;
 		
 		int count;
-		for (Edge e : eds) {
+		for (Road e : roads) {
 			
 			count = 0;
-			for (Edge f : eds) {
+			for (Road f : roads) {
 				if (e == f) {
 					count++;
 				}
 			}
 			if (e.start == this && e.end == this) {
 				/*
-				 * loop with one intersection, so count of edges is 2 for this edge
+				 * loop with one intersection, so count of roads is 2 for this road
 				 */
 				assert count == 2;
 			} else {
 				/*
-				 * otherwise, all edges in v should be unique
+				 * otherwise, all roads in v should be unique
 				 */
 				assert count == 1;
 			}

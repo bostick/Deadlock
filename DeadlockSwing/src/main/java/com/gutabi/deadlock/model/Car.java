@@ -2,7 +2,9 @@ package com.gutabi.deadlock.model;
 
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 
+import java.awt.AlphaComposite;
 import java.awt.Color;
+import java.awt.Composite;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
@@ -16,6 +18,7 @@ import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.BodyType;
+import org.jbox2d.dynamics.Filter;
 import org.jbox2d.dynamics.Fixture;
 import org.jbox2d.dynamics.FixtureDef;
 
@@ -24,10 +27,11 @@ import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Matrix;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.Rect;
-import com.gutabi.deadlock.core.graph.EdgePosition;
 import com.gutabi.deadlock.core.graph.GraphPosition;
 import com.gutabi.deadlock.core.graph.GraphPositionPath;
 import com.gutabi.deadlock.core.graph.GraphPositionPathPosition;
+import com.gutabi.deadlock.core.graph.Merger;
+import com.gutabi.deadlock.core.graph.RoadPosition;
 import com.gutabi.deadlock.core.graph.StopSign;
 import com.gutabi.deadlock.core.graph.VertexPosition;
 import com.gutabi.deadlock.core.graph.WorldSink;
@@ -40,7 +44,6 @@ public abstract class Car implements Entity {
 	public static final double COMPLETE_STOP_WAIT_TIME = 0.0;
 	double steeringLookaheadDistance = CAR_LENGTH * 1.5;
 	double eventLookaheadDistance = getMetersPerSecond() * 0.3;
-	
 	
 	protected int sheetRow;
 	protected int sheetCol;
@@ -86,6 +89,7 @@ public abstract class Car implements Entity {
 	Matrix carTrans;
 	boolean atleastPartiallyOnRoad;
 	boolean completelyOnRoad;
+	boolean inMerger;
 	GraphPositionPathPosition overallPos;
 	Point worldPoint1;
 	Point worldPoint2;
@@ -200,6 +204,14 @@ public abstract class Car implements Entity {
 	
 	Vec2 right = new Vec2(1, 0);
 	Vec2 up = new Vec2(0, 1);
+	Filter normalCarFilter = new Filter();
+	Filter mergingCarFilter = new Filter();
+	{
+		normalCarFilter.categoryBits = 1;
+		normalCarFilter.maskBits = 1;
+		mergingCarFilter.categoryBits = 2;
+		mergingCarFilter.maskBits = 0;
+	}
 	
 	private void computeDynamicProperties() {
 		
@@ -219,6 +231,8 @@ public abstract class Car implements Entity {
 		Mat22 r = b2dBody.getTransform().R;
 		carTrans = new Matrix(r.col1.x, r.col2.x, r.col1.y, r.col2.y);
 		
+		
+		
 		worldPoint1 = carToWorld(p1);
 		worldPoint2 = carToWorld(p2);
 		worldPoint3 = carToWorld(p3);
@@ -229,21 +243,38 @@ public abstract class Car implements Entity {
 		Entity e3 = MODEL.world.graphHitTest(worldPoint3);
 		Entity e4 = MODEL.world.graphHitTest(worldPoint4);
 		
+		boolean wasInMerger = inMerger;
 		if (e1 == null && e2 == null && e3 == null && e4 == null) {
 			atleastPartiallyOnRoad = false;
 			completelyOnRoad = false;
+			inMerger = false;
 		} else {
 			atleastPartiallyOnRoad = true;
 			if (e1 != null && e2 != null && e3 != null && e4 != null) {
 				completelyOnRoad = true;
+				if (e1 instanceof Merger && e2 instanceof Merger && e3 instanceof Merger && e4 instanceof Merger) {
+					inMerger = true;
+				} else {
+					inMerger = false;
+				}
 			} else {
 				completelyOnRoad = false;
+				inMerger = false;
 			}
 		}
 		
 		if (!atleastPartiallyOnRoad) {
 			skid();
 		}
+		
+		if (inMerger == !wasInMerger) {
+			if (inMerger) {
+				b2dFixture.setFilterData(mergingCarFilter);
+			} else {
+				b2dFixture.setFilterData(normalCarFilter);
+			}
+		}
+		
 		
 		computeAABB();
 		
@@ -427,7 +458,7 @@ public abstract class Car implements Entity {
 						curBorderMatchingPosition = null;
 					}
 					
-					curSign = ((EdgePosition)curBorderPosition.gpos).sign;
+					curSign = ((RoadPosition)curBorderPosition.gpos).sign;
 					
 					((VertexPosition)curVertexPosition.gpos).v.carQueue.add(this);
 					
@@ -783,9 +814,21 @@ public abstract class Car implements Entity {
 		g2.setTransform(origTransform);
 	}
 	
+	
+	static Composite aComp = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f);
+	static Composite normalComp = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f);
+	
 	protected void paintImage(Graphics2D g2) {
 		
+		Composite origComposite = g2.getComposite();
+		
 		g2.scale(MODEL.METERS_PER_PIXEL, MODEL.METERS_PER_PIXEL);
+		
+		if (inMerger) {
+			g2.setComposite(aComp);
+		} else {
+			g2.setComposite(normalComp);
+		}
 		
 		g2.drawImage(MODEL.world.sheet,
 				(int)(-CAR_LENGTH * MODEL.PIXELS_PER_METER * 0.5),
@@ -812,6 +855,8 @@ public abstract class Car implements Entity {
 					sheetCol+64+64, sheetRow, sheetCol+64+64+64, sheetRow+32,
 					null);
 		}
+		
+		g2.setComposite(origComposite);
 		
 	}
 	

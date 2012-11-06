@@ -17,7 +17,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.core.graph.Edge;
+import com.gutabi.deadlock.core.graph.Road;
 import com.gutabi.deadlock.core.graph.Vertex;
 
 public class TestSimpleGraphs {
@@ -81,7 +81,7 @@ public class TestSimpleGraphs {
 		}
 	};
 	
-	List<Edge> edges;
+	List<Road> edges;
 	List<Vertex> vertices;
 	
 	@Test

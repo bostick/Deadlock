@@ -23,7 +23,7 @@ import com.gutabi.deadlock.model.Stroke;
 @SuppressWarnings("static-access")
 public class Graph implements SweepEventListener {
 	
-	private final ArrayList<Edge> edges = new ArrayList<Edge>();
+	private final ArrayList<Road> roads = new ArrayList<Road>();
 	
 	private final ArrayList<Intersection> intersections = new ArrayList<Intersection>();
 	private final ArrayList<Source> sources = new ArrayList<Source>();
@@ -67,9 +67,9 @@ public class Graph implements SweepEventListener {
 		computeAABB();
 	}
 	
-	public Edge createEdgeTop(Vertex start, Vertex end, List<Point> pts) {
+	public Road createRoadTop(Vertex start, Vertex end, List<Point> pts) {
 		
-		Edge e = createEdge(start, end, pts, (!start.eds.isEmpty()?1:0)+(!end.eds.isEmpty()?2:0));
+		Road e = createRoad(start, end, pts, (!start.roads.isEmpty()?1:0)+(!end.roads.isEmpty()?2:0));
 		
 		automaticMergeOrDestroy(start);
 		automaticMergeOrDestroy(end);
@@ -79,17 +79,17 @@ public class Graph implements SweepEventListener {
 		return e;
 	}
 	
-	public void removeEdgeTop(Edge e) {
+	public void removeRoadTop(Road e) {
 		
 		/*
-		 * have to properly cleanup start and end intersections before removing edges
+		 * have to properly cleanup start and end intersections before removing roads
 		 */
 		if (!e.isLoop()) {
 			
 			Vertex eStart = e.start;
 			Vertex eEnd = e.end;
 			
-			destroyEdge(e);
+			destroyRoad(e);
 			
 			automaticMergeOrDestroy(eStart);
 			automaticMergeOrDestroy(eEnd);
@@ -98,12 +98,12 @@ public class Graph implements SweepEventListener {
 			
 			Vertex v = e.start;
 			
-			destroyEdge(e);
+			destroyRoad(e);
 			
 			automaticMergeOrDestroy(v);
 			
 		} else {
-			destroyEdge(e);
+			destroyRoad(e);
 		}
 		
 		computeAABB();
@@ -115,11 +115,11 @@ public class Graph implements SweepEventListener {
 		Set<Vertex> affectedVertices = new HashSet<Vertex>();
 		
 		/*
-		 * copy, since removing edges modifies v.eds
+		 * copy, since removing roads modifies v.eds
 		 * and use a set since loops will be in the list twice
 		 */
-		Set<Edge> eds = new HashSet<Edge>(v.eds);
-		for (Edge e : eds) {
+		Set<Road> roads = new HashSet<Road>(v.roads);
+		for (Road e : roads) {
 			
 			if (!e.isLoop()) {
 				
@@ -129,7 +129,7 @@ public class Graph implements SweepEventListener {
 				affectedVertices.add(eStart);
 				affectedVertices.add(eEnd);
 				
-				destroyEdge(e);
+				destroyRoad(e);
 				
 			} else {
 				
@@ -137,7 +137,7 @@ public class Graph implements SweepEventListener {
 				
 				affectedVertices.add(eV);
 				
-				destroyEdge(e);
+				destroyRoad(e);
 				
 			}
 		}
@@ -184,15 +184,15 @@ public class Graph implements SweepEventListener {
 		
 		if (v instanceof Intersection) {
 			
-			List<Edge> cons = v.eds;
+//			List<Road> cons = v.roads;
 			
-			for (Edge e : cons) {
-				assert edges.contains(e);
+			for (Road e : v.roads) {
+				assert roads.contains(e);
 			}
 			
-			if (cons.size() == 0) {
+			if (v.roads.size() == 0) {
 				destroyVertex(v);
-			} else if (cons.size() == 2) {
+			} else if (v.roads.size() == 2) {
 				merge(v);
 			}
 			
@@ -258,7 +258,7 @@ public class Graph implements SweepEventListener {
 //		Entity hit = bestHitTest(p, stroke.r);
 		if (e.type == SweepEventType.ENTERCAPSULE) {
 			logger.debug("split");
-			EdgePosition pos = findClosestEdgePosition(p, stroke.r);
+			RoadPosition pos = findClosestRoadPosition(p, stroke.r);
 			split(pos);
 //			e.setVertex(v);
 		} else if (e.type == SweepEventType.ENTERVERTEX) {
@@ -293,7 +293,7 @@ public class Graph implements SweepEventListener {
 			if (bh == null) {
 				logger.debug("broken");
 				return;
-			} else if (bh instanceof Edge) {
+			} else if (bh instanceof Road) {
 				logger.debug("broken 2");
 				return;
 			}
@@ -302,9 +302,9 @@ public class Graph implements SweepEventListener {
 			Vertex v1;
 			Point p1 = e1.p;
 			Entity hit1 = bestHitTest(p1, stroke.r);
-			if (hit1 instanceof Edge) {
+			if (hit1 instanceof Road) {
 				logger.debug("split");
-				EdgePosition pos = findClosestEdgePosition(p1, stroke.r);
+				RoadPosition pos = findClosestRoadPosition(p1, stroke.r);
 				v1 = split(pos);
 			} else if (hit1 instanceof Vertex) {
 				logger.debug("already exists");
@@ -317,7 +317,7 @@ public class Graph implements SweepEventListener {
 				v1 = ii;
 			}
 			
-			createEdgeTop(v0, v1, stroke.pts.subList(e0.index, e1.index+1));
+			createRoadTop(v0, v1, stroke.pts.subList(e0.index, e1.index+1));
 		}
 		
 	}
@@ -335,7 +335,7 @@ public class Graph implements SweepEventListener {
 			v.setSweepEventListener(this);
 			v.sweepStart(s);
 		}
-		for (Edge e : edges) {
+		for (Road e : roads) {
 			e.setSweepEventListener(this);
 			e.sweepStart(s);
 		}
@@ -359,7 +359,7 @@ public class Graph implements SweepEventListener {
 			v.setSweepEventListener(this);
 			v.sweep(s, index);
 		}
-		for (Edge e : edges) {
+		for (Road e : roads) {
 			e.setSweepEventListener(this);
 			e.sweep(s, index);
 		}
@@ -462,22 +462,22 @@ public class Graph implements SweepEventListener {
 	}
 	
 	/**
-	 * dec is a set of bit flags indicating what decorations to add to the new edge
+	 * dec is a set of bit flags indicating what decorations to add to the new road
 	 * bit 0 set = add start stop sign
 	 * bit 1 set = add end stop sign
 	 */
-	private Edge createEdge(Vertex start, Vertex end, List<Point> pts, int dec) {
+	private Road createRoad(Vertex start, Vertex end, List<Point> pts, int dec) {
 		
-		Edge e = new Edge(start, end, pts);
+		Road e = new Road(start, end, pts);
 		
-		edges.add(e);
+		roads.add(e);
 		
-		refreshEdgeIDs();
+		refreshRoadIDs();
 		
 		if (!e.isStandAlone()) {
 			
-			start.eds.add(e);
-			end.eds.add(e);
+			start.roads.add(e);
+			end.roads.add(e);
 			
 			if ((dec & 1) == 1) {
 				StopSign startSign = new StopSign(e, 0);
@@ -502,22 +502,22 @@ public class Graph implements SweepEventListener {
 		return e;
 	}
 	
-	private void destroyEdge(Edge e) {
-		assert edges.contains(e);
+	private void destroyRoad(Road e) {
+		assert roads.contains(e);
 		
 		if (!e.isStandAlone()) {
 			
-			e.start.eds.remove(e);
-			e.end.eds.remove(e);
+			e.start.roads.remove(e);
+			e.end.roads.remove(e);
 			
 			destroyStopSign(e.startSign);
 			destroyStopSign(e.endSign);
 			
 		}
 		
-		edges.remove(e);
+		roads.remove(e);
 		
-		refreshEdgeIDs();
+		refreshRoadIDs();
 		
 	}
 	
@@ -623,7 +623,7 @@ public class Graph implements SweepEventListener {
 		for (Vertex v : getAllVertices()) {
 			aabb = Rect.union(aabb, v.getAABB());
 		}
-		for (Edge e : edges) {
+		for (Road e : roads) {
 			aabb = Rect.union(aabb, e.getAABB());
 		}
 		
@@ -697,11 +697,15 @@ public class Graph implements SweepEventListener {
 	
 	public Vertex randomPathChoice(Edge prev, Vertex start, Vertex end) {
 		
-		List<Edge> eds = new ArrayList<Edge>(start.eds);
+		List<Edge> edges = new ArrayList<Edge>();
+		edges.addAll(start.roads);
+		if (start.m != null) {
+			edges.add(start.m);
+		}
 		
-		for (Edge e : start.eds) {
+		for (Road e : start.roads) {
 			if (prev != null && prev == e) {
-				eds.remove(e);
+				edges.remove(e);
 			} else {
 				
 				Vertex other;
@@ -712,24 +716,59 @@ public class Graph implements SweepEventListener {
 				}
 				
 				if (isDeadEnd(e, other, end)) {
-					eds.remove(e);
+					edges.remove(e);
+				}
+			}
+		}
+		if (start.m != null) {
+			if (prev != null && prev == start.m) {
+				edges.remove(start.m);
+			} else {
+				
+				Vertex other;
+				if (start == start.m.top) {
+					other = start.m.bottom;
+				} else if (start == start.m.left) {
+					other = start.m.right;
+				} else if (start == start.m.right) {
+					other = start.m.left;
+				} else {
+					assert start == start.m.bottom;
+					other = start.m.top;
+				}
+				
+				if (isDeadEnd(start.m, other, end)) {
+					edges.remove(start.m);
 				}
 			}
 		}
 		
-		int n = eds.size();
+		int n = edges.size();
 		
 		Vertex v;
 		Edge e;
 		
 		int r = MODEL.world.RANDOM.nextInt(n);
 		
-		e = eds.get(r);
+		e = edges.get(r);
 		
-		if (start == e.start) {
-			v = e.end;
+		if (e instanceof Road) {
+			if (start == ((Road)e).start) {
+				v = ((Road)e).end;
+			} else {
+				v = ((Road)e).start;
+			}
 		} else {
-			v = e.start;
+			if (start == ((Merger)e).top) {
+				v = ((Merger)e).bottom;
+			} else if (start == ((Merger)e).left) {
+				v = ((Merger)e).right;
+			} else if (start == ((Merger)e).right) {
+				v = ((Merger)e).left;
+			} else {
+				assert start == ((Merger)e).bottom;
+				v = ((Merger)e).top;
+			}
 		}
 		
 		return v;
@@ -740,7 +779,7 @@ public class Graph implements SweepEventListener {
 	}
 	
 	/**
-	 * coming down edge e, is vertex v a dead end?
+	 * coming down road e, is vertex v a dead end?
 	 * 
 	 * but if there is a way to end, then it is not a dead end
 	 */
@@ -755,17 +794,35 @@ public class Graph implements SweepEventListener {
 		if (v == end) {
 			return false;
 		}
-		if (v.eds.size() == 1) {
+		if ((v.roads.size() + ((v.m!=null)?1:0)) == 1) {
 			return true;
 		} else {
-			List<Edge> eds = new ArrayList<Edge>(v.eds);
+			List<Edge> eds = new ArrayList<Edge>();
+			eds.addAll(v.roads);
+			if (v.m != null) {
+				eds.add(v.m);
+			}
 			eds.remove(e);
 			for (Edge ee : eds) {
 				Vertex other;
-				if (v == ee.start) {
-					other = ee.end;
+				if (ee instanceof Road) {
+					Road r = (Road)ee;
+					if (v == r.start) {
+						other = r.end;
+					} else {
+						other = r.start;
+					}
 				} else {
-					other = ee.start;
+					Merger m = (Merger)ee;
+					if (v == m.top) {
+						other = m.bottom;
+					} else if (v == m.left) {
+						other = m.right;
+					} else if (v == m.right) {
+						other = m.left;
+					} else {
+						other = m.top;
+					}
 				}
 				if (visited.contains(other)) {
 					// know there is a loop, so no dead end
@@ -784,7 +841,7 @@ public class Graph implements SweepEventListener {
 	
 	
 	/**
-	 * tests any part of vertex and any part of edge
+	 * tests any part of vertex and any part of road
 	 */
 	public Entity hitTest(Point p) {
 		assert p != null;
@@ -798,7 +855,7 @@ public class Graph implements SweepEventListener {
 				return v;
 			}
 		}
-		for (Edge e : edges) {
+		for (Road e : roads) {
 			if (e.hitTest(p)) {
 				return e;
 			}
@@ -812,7 +869,7 @@ public class Graph implements SweepEventListener {
 	}
 	
 	/**
-	 * even if hitting both a vertex and an edge, only return vertex
+	 * even if hitting both a vertex and a road, only return vertex
 	 * ignore stop signs
 	 */
 	public Entity bestHitTest(Point p, double radius) {
@@ -822,7 +879,7 @@ public class Graph implements SweepEventListener {
 				return v;
 			}
 		}
-		for (Edge e : edges) {
+		for (Road e : roads) {
 			if (e.hitTest(p, radius)) {
 				return e;
 			}
@@ -848,14 +905,14 @@ public class Graph implements SweepEventListener {
 //	}
 	
 	/**
-	 * returns the closest edge within radius
+	 * returns the closest road within radius
 	 */
-	public EdgePosition findClosestEdgePosition(Point a, double radius) {
+	public RoadPosition findClosestRoadPosition(Point a, double radius) {
 
-		EdgePosition closest = null;
+		RoadPosition closest = null;
 
-		for (Edge e : edges) {
-			EdgePosition ep = e.findClosestEdgePosition(a, radius);
+		for (Road e : roads) {
+			RoadPosition ep = e.findClosestRoadPosition(a, radius);
 			if (ep != null) {
 				if (closest == null || Point.distance(a, ep.p) < Point.distance(a, closest.p)) {
 					closest = ep;
@@ -871,15 +928,15 @@ public class Graph implements SweepEventListener {
 	
 	
 	/**
-	 * split an edge at point
-	 * Edge e will have been removed
+	 * split a road at point
+	 * Road e will have been removed
 	 * return Intersection at split point
 	 */
-	public Intersection split(EdgePosition pos) {
+	public Intersection split(RoadPosition pos) {
 		
 //		EdgePosition pos = (EdgePosition)skeletonHitTest(p);
 		
-		Edge e = pos.e;
+		Road e = pos.r;
 		int index = pos.index;
 		double param = pos.param;
 		final Point p = pos.p;
@@ -906,9 +963,9 @@ public class Graph implements SweepEventListener {
 			}
 			pts.add(p);
 			
-			createEdge(v, v, pts, 3);
+			createRoad(v, v, pts, 3);
 			
-			destroyEdge(e);
+			destroyRoad(e);
 			
 			return v;
 		}
@@ -920,7 +977,7 @@ public class Graph implements SweepEventListener {
 		}
 		f1Pts.add(p);
 		
-		createEdge(eStart, v, f1Pts, (e.startSign!=null?1:0)+2);
+		createRoad(eStart, v, f1Pts, (e.startSign!=null?1:0)+2);
 		
 		List<Point> f2Pts = new ArrayList<Point>();
 		
@@ -929,9 +986,9 @@ public class Graph implements SweepEventListener {
 			f2Pts.add(e.get(i));
 		}
 		
-		createEdge(v, eEnd, f2Pts, 1+(e.endSign!=null?2:0));
+		createRoad(v, eEnd, f2Pts, 1+(e.endSign!=null?2:0));
 		
-		destroyEdge(e);
+		destroyRoad(e);
 		
 		return v;
 	}
@@ -962,9 +1019,9 @@ public class Graph implements SweepEventListener {
 		}
 	}
 	
-	private void refreshEdgeIDs() {
+	private void refreshRoadIDs() {
 		int id = 0;
-		for (Edge e : edges) {
+		for (Road e : roads) {
 			e.id = id;
 			id++;
 		}
@@ -994,13 +1051,13 @@ public class Graph implements SweepEventListener {
 		}
 		
 		/*
-		 * iterate and find shorter distances via edges
+		 * iterate and find shorter distances via roads and mergers
 		 */
-		for(Edge e : edges) {
+		for(Road e : roads) {
 			double l = e.getTotalLength();
 			double cur = distances[e.start.id][e.end.id];
 			/*
-			 * there may be multiple edges between start and end, so don't just blindly set it to l
+			 * there may be multiple roads between start and end, so don't just blindly set it to l
 			 */
 			if (l < cur) {
 				distances[e.start.id][e.end.id] = l;
@@ -1046,18 +1103,18 @@ public class Graph implements SweepEventListener {
 	}
 	
 	/**
-	 * merge two edges (possibly the same edge) at the given intersection
+	 * merge two roads (possibly the same road) at the given intersection
 	 * 
-	 * no colinear points in returned edge
+	 * no colinear points in returned road
 	 */
 	private void merge(Vertex v) {
 		
-		assert v.eds.size() == 2;
-		Edge e1 = v.eds.get(0);
-		Edge e2 = v.eds.get(1);
+		assert v.roads.size() == 2;
+		Road e1 = v.roads.get(0);
+		Road e2 = v.roads.get(1);
 		
-		assert edges.contains(e1);
-		assert edges.contains(e2);
+		assert roads.contains(e1);
+		assert roads.contains(e2);
 		
 		Vertex e1Start = e1.start;
 		Vertex e1End = e1.end;
@@ -1077,7 +1134,7 @@ public class Graph implements SweepEventListener {
 		if (e1 == e2) {
 			// in the middle of merging a stand-alone loop
 			assert v == e1Start && v == e1End;
-			assert v.eds.size() == 2;
+			assert v.roads.size() == 2;
 				
 			List<Point> pts = new ArrayList<Point>();
 			
@@ -1087,9 +1144,9 @@ public class Graph implements SweepEventListener {
 				pts.add(e1.get(i));
 			}
 			
-			createEdge(null, null, pts, 0);
+			createRoad(null, null, pts, 0);
 			
-			destroyEdge(e1);
+			destroyRoad(e1);
 			
 			destroyVertex(v);
 			
@@ -1105,10 +1162,10 @@ public class Graph implements SweepEventListener {
 				pts.add(e2.get(i));
 			}
 			
-			createEdge(e1End, e2End, pts, (e1.endSign!=null?1:0) + (e2.endSign!=null?2:0));
+			createRoad(e1End, e2End, pts, (e1.endSign!=null?1:0) + (e2.endSign!=null?2:0));
 			
-			destroyEdge(e1);
-			destroyEdge(e2);
+			destroyRoad(e1);
+			destroyRoad(e2);
 			
 			destroyVertex(v);
 			
@@ -1124,10 +1181,10 @@ public class Graph implements SweepEventListener {
 				pts.add(e2.get(i));
 			}
 			
-			createEdge(e1End, e2Start, pts, (e1.endSign!=null?1:0) + (e2.startSign!=null?2:0)); 
+			createRoad(e1End, e2Start, pts, (e1.endSign!=null?1:0) + (e2.startSign!=null?2:0)); 
 			
-			destroyEdge(e1);
-			destroyEdge(e2);
+			destroyRoad(e1);
+			destroyRoad(e2);
 			
 			destroyVertex(v);
 			
@@ -1143,10 +1200,10 @@ public class Graph implements SweepEventListener {
 				pts.add(e2.get(i));
 			}
 			
-			createEdge(e1Start, e2End, pts, (e1.startSign!=null?1:0) + (e2.endSign!=null?2:0));
+			createRoad(e1Start, e2End, pts, (e1.startSign!=null?1:0) + (e2.endSign!=null?2:0));
 			
-			destroyEdge(e1);
-			destroyEdge(e2);
+			destroyRoad(e1);
+			destroyRoad(e2);
 			
 			destroyVertex(v);
 			
@@ -1162,10 +1219,10 @@ public class Graph implements SweepEventListener {
 				pts.add(e2.get(i));
 			}
 			
-			createEdge(e1Start, e2Start, pts, (e1.startSign!=null?1:0) + (e2.startSign!=null?2:0));
+			createRoad(e1Start, e2Start, pts, (e1.startSign!=null?1:0) + (e2.startSign!=null?2:0));
 			
-			destroyEdge(e1);
-			destroyEdge(e2);
+			destroyRoad(e1);
+			destroyRoad(e2);
 			
 			destroyVertex(v);
 			
@@ -1176,12 +1233,12 @@ public class Graph implements SweepEventListener {
 	
 	public void renderBackground(Graphics2D g2) {
 		
-		List<Edge> edgesCopy;
+		List<Road> roadsCopy;
 		List<Vertex> verticesCopy;
 		List<Merger> mergersCopy;
 		List<StopSign> signsCopy;
 		synchronized (MODEL) {
-			edgesCopy = new ArrayList<Edge>(edges);
+			roadsCopy = new ArrayList<Road>(roads);
 			verticesCopy = new ArrayList<Vertex>(getAllVertices());
 			mergersCopy = new ArrayList<Merger>(mergers);
 			signsCopy = new ArrayList<StopSign>(signs);
@@ -1192,7 +1249,7 @@ public class Graph implements SweepEventListener {
 		trans.scale(MODEL.PIXELS_PER_METER, MODEL.PIXELS_PER_METER);
 		g2.setTransform(trans);
 		
-		for (Edge e : edgesCopy) {
+		for (Road e : roadsCopy) {
 			e.paint(g2);
 		}
 		
@@ -1218,7 +1275,7 @@ public class Graph implements SweepEventListener {
 		g2.drawString("vertex count: " + getAllVertices().size(), (int)p.x, (int)p.y);
 		
 		p = new Point(1, 2).multiply(MODEL.PIXELS_PER_METER);
-		g2.drawString("edge count: " + edges.size(), (int)p.x, (int)p.y);
+		g2.drawString("road count: " + roads.size(), (int)p.x, (int)p.y);
 		
 		p = new Point(1, 3).multiply(MODEL.PIXELS_PER_METER);
 		g2.drawString("sign count: " + signs.size(), (int)p.x, (int)p.y);
@@ -1228,13 +1285,13 @@ public class Graph implements SweepEventListener {
 	public void paintScene(Graphics2D g2) {
 		
 		if (MODEL.DEBUG_DRAW) {
-			List<Edge> edgesCopy;
+			List<Road> roadsCopy;
 			
 			synchronized (MODEL) {
-				edgesCopy = new ArrayList<Edge>(edges);
+				roadsCopy = new ArrayList<Road>(roads);
 			}
 			
-			for (Edge e : edgesCopy) {
+			for (Road e : roadsCopy) {
 //				e.paintSkeleton(g2);
 				e.paintBorders(g2);
 			}
@@ -1281,11 +1338,11 @@ public class Graph implements SweepEventListener {
 			assert count == 1;
 		}
 		
-		for (Edge e : edges) {
+		for (Road e : roads) {
 			if (e.start == null && e.end == null) {
 				continue;
 			}
-			for (Edge f : edges) {
+			for (Road f : roads) {
 				if (e == f) {
 					
 					for (int i = 0; i < e.size()-2; i++) {
@@ -1298,7 +1355,7 @@ public class Graph implements SweepEventListener {
 								Point inter = Point.intersection(es.a, es.b, fs.a, fs.b);
 								if (inter != null && !(inter.equals(es.a) || inter.equals(es.b) || inter.equals(fs.a) || inter.equals(fs.b))) {
 									//assert false : "No edges should intersect";
-									throw new IllegalStateException("No edges should intersect");
+									throw new IllegalStateException("No roads should intersect");
 								}
 							} catch (OverlappingException ex) {
 								throw new IllegalStateException("Segments overlapping");
@@ -1318,7 +1375,7 @@ public class Graph implements SweepEventListener {
 								Point inter = Point.intersection(es.a, es.b, fs.a, fs.b);
 								if (inter != null && !(inter.equals(es.a) || inter.equals(es.b) || inter.equals(fs.a) || inter.equals(fs.b))) {
 									//assert false : "No edges should intersect";
-									throw new IllegalStateException("No edges should intersect");
+									throw new IllegalStateException("No roads should intersect");
 								}
 							} catch (OverlappingException ex) {
 								throw new IllegalStateException("Segments overlapping");

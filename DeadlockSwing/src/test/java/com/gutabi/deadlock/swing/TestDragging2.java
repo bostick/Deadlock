@@ -17,7 +17,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.core.graph.Edge;
+import com.gutabi.deadlock.core.graph.Road;
 
 public class TestDragging2 {
 	
@@ -60,7 +60,7 @@ public class TestDragging2 {
 	}
 	
 	
-	List<Edge> edges;
+	List<Road> edges;
 	
 	@Test
 	public void testBug1() throws Exception {

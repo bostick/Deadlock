@@ -159,27 +159,27 @@ public class GraphPositionPathPosition {
 				
 				double toTravel = dist - traveled;
 				
-				EdgePosition g = (EdgePosition)(curPos.gpos.travel(nextPos.gpos, toTravel));
+				EdgePosition g = (EdgePosition)(curPos.gpos.travelTo(nextPos.gpos, toTravel));
 				
 				if (curPos.gpos instanceof EdgePosition) {
 					EdgePosition curPosE = (EdgePosition)curPos.gpos;
 					
-					if (curPosE.index < g.index || (curPosE.index == g.index && DMath.lessThan(curPosE.param, g.param))) {
+					if (curPosE.getIndex() < g.getIndex() || (curPosE.getIndex() == g.getIndex() && curPosE.getParam() < g.getParam())) {
 						// same direction as edge
 						//assert curPosE.getIndex() == g.getIndex();
-						return new GraphPositionPathPosition(path, curPos.index, g.param);
+						return new GraphPositionPathPosition(path, curPos.index, g.getParam());
 					} else {
-						return new GraphPositionPathPosition(path, curPos.index, 1-g.param);
+						return new GraphPositionPathPosition(path, curPos.index, 1-g.getParam());
 					}
 					
 				} else {
 					VertexPosition curPosE = (VertexPosition)curPos.gpos;
 					
-					if (g.e.start == curPosE.v) {
+					if (g.vs.get(0) == curPosE.vs.get(0)) {
 						// same direction as edge
-						return new GraphPositionPathPosition(path, curPos.index, g.param);
+						return new GraphPositionPathPosition(path, curPos.index, g.getParam());
 					} else {
-						return new GraphPositionPathPosition(path, curPos.index, 1-g.param);
+						return new GraphPositionPathPosition(path, curPos.index, 1-g.getParam());
 					}
 					
 				}

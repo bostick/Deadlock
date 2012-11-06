@@ -18,7 +18,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.core.graph.Edge;
+import com.gutabi.deadlock.core.graph.Road;
 import com.gutabi.deadlock.core.graph.Vertex;
 import com.gutabi.deadlock.core.graph.WorldSource;
 import com.gutabi.deadlock.model.Car;
@@ -64,7 +64,7 @@ public class TestSimulating {
 		}
 	}
 	
-	List<Edge> edges;
+	List<Road> edges;
 	
 	/**
 	 * test with integer length edge, helps expose edge cases

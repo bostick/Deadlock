@@ -10,9 +10,10 @@ import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.Rect;
+import com.gutabi.deadlock.core.graph.MergerPosition.MergerDirection;
 
 @SuppressWarnings("static-access")
-public class Merger implements Entity {
+public class Merger implements Entity, Edge {
 	
 	public static final double MERGER_WIDTH = 5.0;
 	public static final double MERGER_HEIGHT = 5.0;
@@ -46,6 +47,48 @@ public class Merger implements Entity {
 		left.matchingSource = right;
 		right.matchingSink = left;
 		
+	}
+	
+	public double getTotalLength(Vertex a, Vertex b) {
+		if (a == top) {
+			assert b == bottom;
+			return MERGER_HEIGHT;
+		} else if (a == left) {
+			assert b == right;
+			return MERGER_WIDTH;
+		} else if (a == right) {
+			assert b == left;
+			return MERGER_WIDTH;
+		} else {
+			assert a == bottom;
+			assert b== top;
+			return MERGER_HEIGHT;
+		}
+	}
+	
+	public GraphPosition travelFromConnectedVertex(Vertex v, double dist) {
+		if (v == top) {
+			assert DMath.lessThan(dist, MERGER_HEIGHT);
+			
+			return new MergerPosition(this, MergerDirection.TOPBOTTOM, dist / MERGER_HEIGHT);
+			
+		} else if (v == left) {
+			assert DMath.lessThan(dist, MERGER_WIDTH);
+			
+			return new MergerPosition(this, MergerDirection.LEFTRIGHT, dist / MERGER_WIDTH);
+			
+		} else if (v == right) {
+			assert DMath.lessThan(dist, MERGER_WIDTH);
+			
+			return new MergerPosition(this, MergerDirection.LEFTRIGHT, dist / MERGER_WIDTH);
+			
+		} else {
+			assert v == bottom;
+			assert DMath.lessThan(dist, MERGER_HEIGHT);
+			
+			return new MergerPosition(this, MergerDirection.TOPBOTTOM, dist / MERGER_HEIGHT);
+			
+		}
 	}
 	
 	public boolean hitTest(Point p) {

@@ -16,7 +16,7 @@ public class StopSign implements Entity {
 	
 	public static final double STOPSIGN_SIZE = 0.5;
 	
-	public final Edge e;
+	public final Road e;
 	public final Vertex v;
 	
 	int dir;
@@ -26,7 +26,7 @@ public class StopSign implements Entity {
 	protected Color color;
 	protected Color hiliteColor;
 	
-	public StopSign(Edge e, int dir) {
+	public StopSign(Road e, int dir) {
 		this.e = e;
 		this.dir = dir;
 		

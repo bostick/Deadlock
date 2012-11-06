@@ -22,6 +22,7 @@ import com.gutabi.deadlock.core.Rect;
 import com.gutabi.deadlock.core.graph.Edge;
 import com.gutabi.deadlock.core.graph.Graph;
 import com.gutabi.deadlock.core.graph.Merger;
+import com.gutabi.deadlock.core.graph.Road;
 import com.gutabi.deadlock.core.graph.StopSign;
 import com.gutabi.deadlock.core.graph.Vertex;
 import com.gutabi.deadlock.core.graph.WorldSink;
@@ -157,8 +158,8 @@ public class World {
 		postIdleTop();
 	}
 	
-	public void removeEdgeTop(Edge e) {
-		graph.removeEdgeTop(e);
+	public void removeRoadTop(Road e) {
+		graph.removeRoadTop(e);
 		postIdleTop();
 	}
 	

@@ -29,25 +29,6 @@ public class DeadlockMain  {
 		MODEL.world.renderBackground();
 		VIEW.repaint();
 		
-		
-//		Intersection start = new Intersection(VIEW.panelToWorld(new Point(550, 250)));
-//		MODEL.world.graph.addIntersection(start);
-//		
-//		Intersection end = new Intersection(VIEW.panelToWorld(new Point(900, 550)));
-//		MODEL.world.graph.addIntersection(end);
-		
-//		List<Point> pts = new ArrayList<Point>();
-//		pts.add(VIEW.panelToWorld(new Point(550, 250)));
-//		pts.add(VIEW.panelToWorld(new Point(900, 550)));
-//		MODEL.world.graph.createEdgeTop(start, end, pts);
-//		
-//		MODEL.world.postDraftingTop();
-//		
-//		
-//		
-//		MODEL.world.renderBackground();
-//		VIEW.repaint();
-		
 	}
 	
 	public static Thread.UncaughtExceptionHandler handler = new Thread.UncaughtExceptionHandler() {
