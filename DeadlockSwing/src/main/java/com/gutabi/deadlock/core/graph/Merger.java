@@ -29,6 +29,7 @@ public class Merger implements Entity, Edge {
 	public final MergerSource right;
 	public final MergerSource bottom;
 	
+	
 	public Merger(Point ul) {
 		this.ul = ul;
 		
@@ -46,6 +47,7 @@ public class Merger implements Entity, Edge {
 		
 		left.matchingSource = right;
 		right.matchingSink = left;
+		
 		
 	}
 	
@@ -99,7 +101,10 @@ public class Merger implements Entity, Edge {
 			return false;
 		}
 	}
-
+	
+	
+	
+	
 	@Override
 	public boolean isDeleteable() {
 		return true;

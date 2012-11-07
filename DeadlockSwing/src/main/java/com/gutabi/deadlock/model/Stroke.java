@@ -7,6 +7,7 @@ import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.Rect;
 
@@ -34,6 +35,14 @@ public class Stroke {
 		pts.add(p);
 		
 		computeAABB();
+	}
+	
+	public Point getPoint(int index, double param) {
+		if (DMath.equals(param, 0.0)) {
+			return pts.get(index);
+		} else {
+			return Point.point(pts.get(index), pts.get(index+1), param);
+		}
 	}
 	
 	private void computeAABB() {

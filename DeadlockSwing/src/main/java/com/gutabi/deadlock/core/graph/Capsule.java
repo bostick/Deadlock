@@ -12,6 +12,7 @@ import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.Rect;
 import com.gutabi.deadlock.core.graph.SweepEvent.SweepEventType;
 import com.gutabi.deadlock.model.Stroke;
+import com.gutabi.deadlock.model.SweepUtils;
 
 @SuppressWarnings("static-access")
 public class Capsule {
@@ -32,7 +33,7 @@ public class Capsule {
 	
 	public final Rect aabb;
 	
-	SweepEventListener l;
+//	SweepEventListener l;
 	
 	private final int hash;
 	
@@ -82,27 +83,27 @@ public class Capsule {
 		return "(" + a + " " + b + ")";
 	}
 	
-	public void setSweepEventListener(SweepEventListener l) {
-		this.l = l;
-	}
+//	public void setSweepEventListener(SweepEventListener l) {
+//		this.l = l;
+//	}
 	
-	public void sweepStart(Stroke s) {
+	public void sweepStart(Stroke s, SweepEventListener l) {
 		
 		Point c = s.pts.get(0);
 		
 		if (hitTest(c, s.r)) {
-			l.start(new SweepEvent(SweepEventType.ENTERCAPSULE, c, 0, 0.0));
+			l.start(new SweepEvent(SweepEventType.ENTERCAPSULE, s, 0, 0.0));
 		}
 		
 	}
 	
-	public void sweep(Stroke s, int index) {
-		sweepACap(s, index);
-		sweepSides(s, index);
-		sweepBCap(s, index);
+	public void sweep(Stroke s, int index, SweepEventListener l) {
+		sweepACap(s, index, l);
+		sweepSides(s, index, l);
+		sweepBCap(s, index, l);
 	}
 	
-	private void sweepSides(Stroke s, int index) {
+	private void sweepSides(Stroke s, int index, SweepEventListener l) {
 		
 		Point c = s.pts.get(index);
 		Point d = s.pts.get(index+1);
@@ -117,44 +118,45 @@ public class Capsule {
 		/*
 		 * handle aUp, bUp side
 		 */
-		double cDistance = Point.dot(c.minus(aUp), n);
-		double dDistance = Point.dot(d.minus(aUp), n);
-		double cdParam = (s.r - cDistance) / (dDistance - cDistance);
-		if (DMath.greaterThanEquals(cdParam, 0.0) && DMath.lessThanEquals(cdParam, 1.0)) {
-			Point p = Point.point(c, d, cdParam);
-			double abParam = Point.u(a, p, b);
-			if (DMath.greaterThanEquals(abParam, 0.0) && DMath.lessThanEquals(abParam, 1.0)) {
-				assert DMath.equals(Point.distance(p, a, b), r + s.r);
-				if (outside) {
-					l.event(new SweepEvent(SweepEventType.ENTERCAPSULE, p, index, cdParam));
-				} else {
-					l.event(new SweepEvent(SweepEventType.EXITCAPSULE, p, index, cdParam));
-				}
+//		double cDistance = Point.dot(c.minus(aUp), n);
+//		double dDistance = Point.dot(d.minus(aUp), n);
+//		double cdParam = (s.r - cDistance) / (dDistance - cDistance);
+//		if (DMath.greaterThanEquals(cdParam, 0.0) && DMath.lessThanEquals(cdParam, 1.0)) {
+//			Point p = Point.point(c, d, cdParam);
+//			double abParam = Point.u(a, p, b);
+//			if (DMath.greaterThanEquals(abParam, 0.0) && DMath.lessThanEquals(abParam, 1.0)) {
+//				assert DMath.equals(Point.distance(p, a, b), r + s.r);
+//				if (outside) {
+//					l.event(new SweepEvent(SweepEventType.ENTERCAPSULE, p, index, cdParam));
+//				} else {
+//					l.event(new SweepEvent(SweepEventType.EXITCAPSULE, p, index, cdParam));
+//				}
+//			}
+//		}
+		double cdParam = SweepUtils.sweepCircleLine(aUp, bUp, c, d, s.r);
+		if (cdParam != -1) {
+			if (outside) {
+				l.event(new SweepEvent(SweepEventType.ENTERCAPSULE, s, index, cdParam));
+			} else {
+				l.event(new SweepEvent(SweepEventType.EXITCAPSULE, s, index, cdParam));
 			}
 		}
 		
 		/*
 		 * handle aDown, bDown side
 		 */
-		cDistance = Point.dot(c.minus(aDown), n);
-		dDistance = Point.dot(d.minus(aDown), n);
-		cdParam = (-s.r - cDistance) / (dDistance - cDistance);
-		if (DMath.greaterThanEquals(cdParam, 0.0) && DMath.lessThanEquals(cdParam, 1.0)) {
-			Point p = Point.point(c, d, cdParam);
-			double abParam = Point.u(a, p, b);
-			if (DMath.greaterThanEquals(abParam, 0.0) && DMath.lessThanEquals(abParam, 1.0)) {
-				assert DMath.equals(Point.distance(p, a, b), r + s.r);
-				if (outside) {
-					l.event(new SweepEvent(SweepEventType.ENTERCAPSULE, p, index, cdParam));
-				} else {
-					l.event(new SweepEvent(SweepEventType.EXITCAPSULE, p, index, cdParam));
-				}
+		cdParam = SweepUtils.sweepCircleLine(bDown, aDown, c, d, s.r);
+		if (cdParam != -1) {
+			if (outside) {
+				l.event(new SweepEvent(SweepEventType.ENTERCAPSULE, s, index, cdParam));
+			} else {
+				l.event(new SweepEvent(SweepEventType.EXITCAPSULE, s, index, cdParam));
 			}
 		}
 		
 	}
 	
-	private void sweepACap(Stroke s, int index) {
+	private void sweepACap(Stroke s, int index, SweepEventListener l) {
 		
 		Point c = s.pts.get(index);
 		Point d = s.pts.get(index+1);
@@ -185,9 +187,9 @@ public class Capsule {
 				if (DMath.lessThan(u, 0.0)) {
 					assert DMath.equals(Point.distance(p, a, b), r + s.r);
 					if (outside) {
-						l.event(new SweepEvent(SweepEventType.ENTERCAPSULE, p, index, cdParam));
+						l.event(new SweepEvent(SweepEventType.ENTERCAPSULE, s, index, cdParam));
 					} else {
-						l.event(new SweepEvent(SweepEventType.EXITCAPSULE, p, index, cdParam));
+						l.event(new SweepEvent(SweepEventType.EXITCAPSULE, s, index, cdParam));
 					}
 				}
 			}
@@ -203,9 +205,9 @@ public class Capsule {
 				if (DMath.lessThan(u0, 0.0)) {
 					assert DMath.equals(Point.distance(p0, a, b), r + s.r);
 					if (outside) {
-						l.event(new SweepEvent(SweepEventType.ENTERCAPSULE, p0, index, cdParam0));
+						l.event(new SweepEvent(SweepEventType.ENTERCAPSULE, s, index, cdParam0));
 					} else {
-						l.event(new SweepEvent(SweepEventType.EXITCAPSULE, p0, index, cdParam0));
+						l.event(new SweepEvent(SweepEventType.EXITCAPSULE, s, index, cdParam0));
 					}
 				}
 			}
@@ -216,9 +218,9 @@ public class Capsule {
 				if (DMath.lessThan(u1, 0.0)) {
 					assert DMath.equals(Point.distance(p1, a, b), r + s.r);
 					if (outside) {
-						l.event(new SweepEvent(SweepEventType.ENTERCAPSULE, p1, index, cdParam1));
+						l.event(new SweepEvent(SweepEventType.ENTERCAPSULE, s, index, cdParam1));
 					} else {
-						l.event(new SweepEvent(SweepEventType.EXITCAPSULE, p1, index, cdParam1));
+						l.event(new SweepEvent(SweepEventType.EXITCAPSULE, s, index, cdParam1));
 					}
 				}
 			}
@@ -231,7 +233,7 @@ public class Capsule {
 		
 	}
 	
-	private void sweepBCap(Stroke s, int index) {
+	private void sweepBCap(Stroke s, int index, SweepEventListener l) {
 		
 		Point c = s.pts.get(index);
 		Point d = s.pts.get(index+1);
@@ -262,9 +264,9 @@ public class Capsule {
 				if (DMath.greaterThan(u, 1.0)) {
 					assert DMath.equals(Point.distance(p, a, b), r + s.r);
 					if (outside) {
-						l.event(new SweepEvent(SweepEventType.ENTERCAPSULE, p, index, cdParam));
+						l.event(new SweepEvent(SweepEventType.ENTERCAPSULE, s, index, cdParam));
 					} else {
-						l.event(new SweepEvent(SweepEventType.EXITCAPSULE, p, index, cdParam));
+						l.event(new SweepEvent(SweepEventType.EXITCAPSULE, s, index, cdParam));
 					}
 				}
 			}
@@ -280,9 +282,9 @@ public class Capsule {
 				if (DMath.greaterThan(u0, 1.0)) {
 					assert DMath.equals(Point.distance(p0, a, b), r + s.r);
 					if (outside) {
-						l.event(new SweepEvent(SweepEventType.ENTERCAPSULE, p0, index, cdParam0));
+						l.event(new SweepEvent(SweepEventType.ENTERCAPSULE, s, index, cdParam0));
 					} else {
-						l.event(new SweepEvent(SweepEventType.EXITCAPSULE, p0, index, cdParam0));
+						l.event(new SweepEvent(SweepEventType.EXITCAPSULE, s, index, cdParam0));
 					}
 				}
 			}
@@ -293,9 +295,9 @@ public class Capsule {
 				if (DMath.greaterThan(u1, 1.0)) {
 					assert DMath.equals(Point.distance(p1, a, b), r + s.r);
 					if (outside) {
-						l.event(new SweepEvent(SweepEventType.ENTERCAPSULE, p1, index, cdParam1));
+						l.event(new SweepEvent(SweepEventType.ENTERCAPSULE, s, index, cdParam1));
 					} else {
-						l.event(new SweepEvent(SweepEventType.EXITCAPSULE, p1, index, cdParam1));
+						l.event(new SweepEvent(SweepEventType.EXITCAPSULE, s, index, cdParam1));
 					}
 				}
 			}

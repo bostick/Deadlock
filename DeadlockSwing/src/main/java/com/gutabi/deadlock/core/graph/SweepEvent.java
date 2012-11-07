@@ -3,7 +3,7 @@ package com.gutabi.deadlock.core.graph;
 import java.util.Comparator;
 
 import com.gutabi.deadlock.core.DMath;
-import com.gutabi.deadlock.core.Point;
+import com.gutabi.deadlock.model.Stroke;
 
 public class SweepEvent {
 	
@@ -14,6 +14,9 @@ public class SweepEvent {
 		ENTERVERTEX,
 		EXITVERTEX,
 		
+		ENTERMERGER,
+		EXITMERGER
+		
 //		CAPSULESTART,
 //		VERTEXSTART,
 //		NOTHINGSTART,
@@ -22,16 +25,16 @@ public class SweepEvent {
 	}
 	
 	public final SweepEventType type;
-	public final Point p;
+	public final Stroke s;
 	public final int index;
 	public final double param;
 //	public final Object o;
 	
 //	private Vertex v;
 	
-	public SweepEvent(SweepEventType type, Point p, int index, double param) {
+	public SweepEvent(SweepEventType type, Stroke s, int index, double param) {
 		this.type = type;
-		this.p = p;
+		this.s = s;
 		this.index = index;
 		this.param = param;
 //		this.o = o;

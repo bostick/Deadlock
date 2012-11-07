@@ -27,7 +27,7 @@ public final class Road implements Entity, Edge {
 	public final List<Point> raw;
 	
 	private List<Capsule> caps;
-	private SweepEventListener l;
+//	private SweepEventListener l;
 	
 	private Point startBorderPoint;
 	private Point endBorderPoint;
@@ -159,11 +159,11 @@ public final class Road implements Entity, Edge {
 	
 	
 	
-	public void setSweepEventListener(SweepEventListener l) {
-		this.l = l;
-	}
+//	public void setSweepEventListener(SweepEventListener l) {
+//		this.l = l;
+//	}
 	
-	public void sweepStart(Stroke s) {
+	public void sweepStart(Stroke s, SweepEventListener l) {
 		
 		/*
 		 * TODO:
@@ -171,13 +171,13 @@ public final class Road implements Entity, Edge {
 		 * adjacent capsules share caps, so could share calculation
 		 */
 		for (Capsule c : caps.subList(1, caps.size()-1)) {
-			c.setSweepEventListener(l);
-			c.sweepStart(s);
+//			c.setSweepEventListener(l);
+			c.sweepStart(s, l);
 		}
 		
 	}
 	
-	public void sweep(Stroke s, int index) {
+	public void sweep(Stroke s, int index, SweepEventListener l) {
 		
 		/*
 		 * TODO:
@@ -185,8 +185,8 @@ public final class Road implements Entity, Edge {
 		 * adjacent capsules share caps, so could share calculation
 		 */
 		for (Capsule c : caps.subList(1, caps.size()-1)) {
-			c.setSweepEventListener(l);
-			c.sweep(s, index);
+//			c.setSweepEventListener(l);
+			c.sweep(s, index, l);
 		}
 		
 	}

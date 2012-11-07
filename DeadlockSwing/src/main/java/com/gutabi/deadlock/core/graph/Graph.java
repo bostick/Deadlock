@@ -182,7 +182,19 @@ public class Graph implements SweepEventListener {
 	
 	private void automaticMergeOrDestroy(Vertex v) {
 		
-		if (v instanceof Intersection) {
+		if (v instanceof WorldSource) {
+			
+			/*
+			 * sources stay around
+			 */
+			
+		} else if (v instanceof WorldSink) {
+			
+			/*
+			 * sinks stay around
+			 */
+			
+		} else {
 			
 //			List<Road> cons = v.roads;
 			
@@ -196,20 +208,6 @@ public class Graph implements SweepEventListener {
 				merge(v);
 			}
 			
-		} else if (v instanceof Source) {
-			
-			/*
-			 * sources stay around
-			 */
-			
-		} else if (v instanceof Sink) {
-			
-			/*
-			 * sinks stay around
-			 */
-			
-		} else {
-			assert false;
 		}
 		
 	}
@@ -228,12 +226,12 @@ public class Graph implements SweepEventListener {
 		
 		if ((vertexCount + capsuleCount) == 0) {
 //			logger.debug("start in nothing");
-			vertexEvents.add(new SweepEvent(null, stroke.pts.get(0), 0, 0.0));
+			vertexEvents.add(new SweepEvent(null, stroke, 0, 0.0));
 		} else if (vertexCount > 0) {
-			SweepEvent e = new SweepEvent(SweepEventType.ENTERVERTEX, stroke.pts.get(0), 0, 0.0);
+			SweepEvent e = new SweepEvent(SweepEventType.ENTERVERTEX, stroke, 0, 0.0);
 			vertexEvents.add(e);
 		} else {
-			vertexEvents.add(new SweepEvent(SweepEventType.ENTERCAPSULE, stroke.pts.get(0), 0, 0.0));
+			vertexEvents.add(new SweepEvent(SweepEventType.ENTERCAPSULE, stroke, 0, 0.0));
 		}
 		
 		for (int i = 0; i < stroke.pts.size()-1; i++) {
@@ -242,11 +240,11 @@ public class Graph implements SweepEventListener {
 		
 		if ((vertexCount + capsuleCount) == 0) {
 //			logger.debug("end in nothing");
-			vertexEvents.add(new SweepEvent(null, stroke.pts.get(stroke.pts.size()-1), stroke.pts.size()-1, 0.0));
+			vertexEvents.add(new SweepEvent(null, stroke, stroke.pts.size()-1, 0.0));
 		} else if (vertexCount > 0) {
-			vertexEvents.add(new SweepEvent(SweepEventType.EXITVERTEX, stroke.pts.get(stroke.pts.size()-1), stroke.pts.size()-1, 0.0));
+			vertexEvents.add(new SweepEvent(SweepEventType.EXITVERTEX, stroke, stroke.pts.size()-1, 0.0));
 		} else {
-			vertexEvents.add(new SweepEvent(SweepEventType.EXITCAPSULE, stroke.pts.get(stroke.pts.size()-1), stroke.pts.size()-1, 0.0));
+			vertexEvents.add(new SweepEvent(SweepEventType.EXITCAPSULE, stroke, stroke.pts.size()-1, 0.0));
 		}
 		
 		
@@ -254,7 +252,7 @@ public class Graph implements SweepEventListener {
 		logger.debug(vertexEvents);
 		
 		SweepEvent e = vertexEvents.get(0);
-		Point p = e.p;
+		Point p = stroke.getPoint(e.index, e.param);
 //		Entity hit = bestHitTest(p, stroke.r);
 		if (e.type == SweepEventType.ENTERCAPSULE) {
 			logger.debug("split");
@@ -289,7 +287,8 @@ public class Graph implements SweepEventListener {
 				e1 = vertexEvents.get(i+1);
 			}
 			
-			Entity bh = bestHitTest(e0.p, stroke.r);
+			Point e0p = stroke.getPoint(e0.index, e0.param);
+			Entity bh = bestHitTest(e0p, stroke.r);
 			if (bh == null) {
 				logger.debug("broken");
 				return;
@@ -300,19 +299,19 @@ public class Graph implements SweepEventListener {
 			Vertex v0 = (Vertex)bh;
 			
 			Vertex v1;
-			Point p1 = e1.p;
-			Entity hit1 = bestHitTest(p1, stroke.r);
+			Point e1p = stroke.getPoint(e1.index, e1.param);
+			Entity hit1 = bestHitTest(e1p, stroke.r);
 			if (hit1 instanceof Road) {
 				logger.debug("split");
-				RoadPosition pos = findClosestRoadPosition(p1, stroke.r);
+				RoadPosition pos = findClosestRoadPosition(e1p, stroke.r);
 				v1 = split(pos);
 			} else if (hit1 instanceof Vertex) {
 				logger.debug("already exists");
 				v1 = (Vertex)hit1;
 			} else {
-				assert hitTest(p1) == null;
+				assert hitTest(e1p) == null;
 				logger.debug("create");
-				Intersection ii = new Intersection(p1);
+				Intersection ii = new Intersection(e1p);
 				addIntersection(ii);
 				v1 = ii;
 			}
@@ -332,13 +331,14 @@ public class Graph implements SweepEventListener {
 		events = new ArrayList<SweepEvent>();
 		
 		for (Vertex v : getAllVertices()) {
-			v.setSweepEventListener(this);
-			v.sweepStart(s);
+			v.sweepStart(s, this);
 		}
 		for (Road e : roads) {
-			e.setSweepEventListener(this);
-			e.sweepStart(s);
+			e.sweepStart(s, this);
 		}
+//		for (Merger m : mergers) {
+//			m.sweepStart(s, this);
+//		}
 		
 		Collections.sort(events, SweepEvent.COMPARATOR);
 		
@@ -356,13 +356,14 @@ public class Graph implements SweepEventListener {
 		events = new ArrayList<SweepEvent>();
 		
 		for (Vertex v : getAllVertices()) {
-			v.setSweepEventListener(this);
-			v.sweep(s, index);
+			v.sweep(s, index, this);
 		}
 		for (Road e : roads) {
-			e.setSweepEventListener(this);
-			e.sweep(s, index);
+			e.sweep(s, index, this);
 		}
+//		for (Merger m : mergers) {
+//			m.sweep(s, index, this);
+//		}
 		
 		Collections.sort(events, SweepEvent.COMPARATOR);
 		

@@ -33,7 +33,7 @@ public abstract class Vertex implements Entity {
 	protected Color color;
 	protected Color hiliteColor;
 	
-	SweepEventListener l;
+//	SweepEventListener l;
 	
 	private final int hash;
 	
@@ -76,23 +76,23 @@ public abstract class Vertex implements Entity {
 	
 	
 	
-	public void setSweepEventListener(SweepEventListener l) {
-		this.l = l;
-	}
+//	public void setSweepEventListener(SweepEventListener l) {
+//		this.l = l;
+//	}
 	
-	public void sweepStart(Stroke s) {
+	public void sweepStart(Stroke s, SweepEventListener l) {
 		
 		Point c = s.pts.get(0);
 		
 		if (hitTest(c, s.r)) {
-			SweepEvent e = new SweepEvent(SweepEventType.ENTERVERTEX, c, 0, 0.0);
+			SweepEvent e = new SweepEvent(SweepEventType.ENTERVERTEX, s, 0, 0.0);
 //			e.setVertex(this);
 			l.start(e);
 		}
 		
 	}
 	
-	public void sweep(Stroke s, int index) {
+	public void sweep(Stroke s, int index, SweepEventListener l) {
 		
 		Point c = s.pts.get(index);
 		Point d = s.pts.get(index+1);
@@ -118,11 +118,11 @@ public abstract class Vertex implements Entity {
 				Point p = Point.point(c, d, cdParam);
 				assert DMath.equals(Point.distance(p, this.p), r + s.r);
 				if (outside) {
-					SweepEvent e = new SweepEvent(SweepEventType.ENTERVERTEX, p, index, cdParam);
+					SweepEvent e = new SweepEvent(SweepEventType.ENTERVERTEX, s, index, cdParam);
 //					e.setVertex(this);
 					l.event(e);
 				} else {
-					l.event(new SweepEvent(SweepEventType.EXITVERTEX, p, index, cdParam));
+					l.event(new SweepEvent(SweepEventType.EXITVERTEX, s, index, cdParam));
 				}
 			}
 
@@ -135,11 +135,11 @@ public abstract class Vertex implements Entity {
 				Point p0 = Point.point(c, d, cdParam0);
 				assert DMath.equals(Point.distance(p0, this.p), r + s.r);
 				if (outside) {
-					SweepEvent e = new SweepEvent(SweepEventType.ENTERVERTEX, p0, index, cdParam0);
+					SweepEvent e = new SweepEvent(SweepEventType.ENTERVERTEX, s, index, cdParam0);
 //					e.setVertex(this);
 					l.event(e);
 				} else {
-					l.event(new SweepEvent(SweepEventType.EXITVERTEX, p0, index, cdParam0));
+					l.event(new SweepEvent(SweepEventType.EXITVERTEX, s, index, cdParam0));
 				}
 			}
 			double cdParam1 = roots[1];
@@ -147,11 +147,11 @@ public abstract class Vertex implements Entity {
 				Point p1 = Point.point(c, d, cdParam1);
 				assert DMath.equals(Point.distance(p1, this.p), r + s.r);
 				if (outside) {
-					SweepEvent e = new SweepEvent(SweepEventType.ENTERVERTEX, p1, index, cdParam1);
+					SweepEvent e = new SweepEvent(SweepEventType.ENTERVERTEX, s, index, cdParam1);
 //					e.setVertex(this);
 					l.event(e);
 				} else {
-					l.event(new SweepEvent(SweepEventType.EXITVERTEX, p1, index, cdParam1));
+					l.event(new SweepEvent(SweepEventType.EXITVERTEX, s, index, cdParam1));
 				}
 			}
 			
