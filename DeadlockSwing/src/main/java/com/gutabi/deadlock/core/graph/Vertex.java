@@ -6,6 +6,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import com.gutabi.deadlock.core.DMath;
@@ -15,6 +16,7 @@ import com.gutabi.deadlock.core.Rect;
 import com.gutabi.deadlock.core.graph.SweepEvent.SweepEventType;
 import com.gutabi.deadlock.model.Car;
 import com.gutabi.deadlock.model.Stroke;
+import com.gutabi.deadlock.model.SweepUtils;
 
 @SuppressWarnings("static-access")
 public abstract class Vertex implements Entity {
@@ -104,63 +106,25 @@ public abstract class Vertex implements Entity {
 			outside = true;
 		}
 		
-		double aCoeff = ((d.x - c.x)*(d.x - c.x) + (d.y - c.y)*(d.y - c.y));
-		double bCoeff = -2 * ((d.x - c.x)*(p.x - c.x) + (d.y - c.y)*(p.y - c.y));
-		double cCoeff = ((p.x - c.x)*(p.x - c.x) + (p.y - c.y)*(p.y - c.y) - (s.r + r)*(s.r + r));
-		double[] roots = new double[2];
-		double discriminant = DMath.quadraticSolve(aCoeff, bCoeff, cCoeff, roots);
-		if (DMath.equals(discriminant, 0.0)) {
-			/*
-			 * 1 event
-			 */
-			double cdParam = roots[0];
-			if (DMath.greaterThanEquals(cdParam, 0.0) && DMath.lessThanEquals(cdParam, 1.0)) {
-				Point p = Point.point(c, d, cdParam);
-				assert DMath.equals(Point.distance(p, this.p), r + s.r);
-				if (outside) {
-					SweepEvent e = new SweepEvent(SweepEventType.ENTERVERTEX, s, index, cdParam);
-//					e.setVertex(this);
-					l.event(e);
-				} else {
-					l.event(new SweepEvent(SweepEventType.EXITVERTEX, s, index, cdParam));
-				}
-			}
-
-		} else if (discriminant > 0) {
-			/*
-			 * 2 events
-			 */
-			double cdParam0 = roots[0];
-			if (DMath.greaterThanEquals(cdParam0, 0.0) && DMath.lessThanEquals(cdParam0, 1.0)) {
-				Point p0 = Point.point(c, d, cdParam0);
-				assert DMath.equals(Point.distance(p0, this.p), r + s.r);
-				if (outside) {
-					SweepEvent e = new SweepEvent(SweepEventType.ENTERVERTEX, s, index, cdParam0);
-//					e.setVertex(this);
-					l.event(e);
-				} else {
-					l.event(new SweepEvent(SweepEventType.EXITVERTEX, s, index, cdParam0));
-				}
-			}
-			double cdParam1 = roots[1];
-			if (DMath.greaterThanEquals(cdParam1, 0.0) && DMath.lessThanEquals(cdParam1, 1.0)) {
-				Point p1 = Point.point(c, d, cdParam1);
-				assert DMath.equals(Point.distance(p1, this.p), r + s.r);
-				if (outside) {
-					SweepEvent e = new SweepEvent(SweepEventType.ENTERVERTEX, s, index, cdParam1);
-//					e.setVertex(this);
-					l.event(e);
-				} else {
-					l.event(new SweepEvent(SweepEventType.EXITVERTEX, s, index, cdParam1));
-				}
-			}
-			
-		} else {
-			/*
-			 * 0 events
-			 */
+		double[] params = new double[2];
+		Arrays.fill(params, Double.POSITIVE_INFINITY);
+		int paramCount = SweepUtils.sweepCircleCircle(p, c, d, s.r, r, params);
+		
+		Arrays.sort(params);
+		for (int i = 0; i < paramCount-1; i++) {
+			double p0 = params[i];
+			double p1 = params[i+1];
+			assert !DMath.equals(p0, p1);
 		}
 		
+		for (int i = 0; i < paramCount; i++) {
+			if (outside) {
+				l.event(new SweepEvent(SweepEventType.ENTERVERTEX, s, index, params[i]));
+			} else {
+				l.event(new SweepEvent(SweepEventType.EXITVERTEX, s, index, params[i]));
+			}
+			outside = !outside;
+		}
 		
 	}
 

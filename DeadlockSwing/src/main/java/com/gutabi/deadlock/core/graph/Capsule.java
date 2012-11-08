@@ -4,10 +4,12 @@ import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.util.Arrays;
 
 import org.apache.log4j.Logger;
 
 import com.gutabi.deadlock.core.DMath;
+import com.gutabi.deadlock.core.OverlappingException;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.Rect;
 import com.gutabi.deadlock.core.graph.SweepEvent.SweepEventType;
@@ -98,12 +100,6 @@ public class Capsule {
 	}
 	
 	public void sweep(Stroke s, int index, SweepEventListener l) {
-		sweepACap(s, index, l);
-		sweepSides(s, index, l);
-		sweepBCap(s, index, l);
-	}
-	
-	private void sweepSides(Stroke s, int index, SweepEventListener l) {
 		
 		Point c = s.pts.get(index);
 		Point d = s.pts.get(index+1);
@@ -115,197 +111,67 @@ public class Capsule {
 			outside = true;
 		}
 		
+		double[] params = new double[2];
+		Arrays.fill(params, Double.POSITIVE_INFINITY);
+		int paramCount = 0;
+		
 		/*
-		 * handle aUp, bUp side
+		 * a cap
 		 */
-//		double cDistance = Point.dot(c.minus(aUp), n);
-//		double dDistance = Point.dot(d.minus(aUp), n);
-//		double cdParam = (s.r - cDistance) / (dDistance - cDistance);
-//		if (DMath.greaterThanEquals(cdParam, 0.0) && DMath.lessThanEquals(cdParam, 1.0)) {
-//			Point p = Point.point(c, d, cdParam);
-//			double abParam = Point.u(a, p, b);
-//			if (DMath.greaterThanEquals(abParam, 0.0) && DMath.lessThanEquals(abParam, 1.0)) {
-//				assert DMath.equals(Point.distance(p, a, b), r + s.r);
-//				if (outside) {
-//					l.event(new SweepEvent(SweepEventType.ENTERCAPSULE, p, index, cdParam));
-//				} else {
-//					l.event(new SweepEvent(SweepEventType.EXITCAPSULE, p, index, cdParam));
-//				}
-//			}
-//		}
+		
+		double[] capParams = new double[2];
+		int n = SweepUtils.sweepCircleCap(b, a, c, d, s.r, r, capParams);
+		
+		for (int i = 0; i < n; i++) {
+			params[paramCount] = capParams[i];
+			paramCount++;
+		}
+		
+		/*
+		 * top side, left hand side of <a, b>
+		 */
+		
 		double cdParam = SweepUtils.sweepCircleLine(aUp, bUp, c, d, s.r);
 		if (cdParam != -1) {
-			if (outside) {
-				l.event(new SweepEvent(SweepEventType.ENTERCAPSULE, s, index, cdParam));
-			} else {
-				l.event(new SweepEvent(SweepEventType.EXITCAPSULE, s, index, cdParam));
-			}
+			params[paramCount] = cdParam;
+			paramCount++;
 		}
 		
 		/*
-		 * handle aDown, bDown side
+		 * b cap
 		 */
+		
+		n = SweepUtils.sweepCircleCap(a, b, c, d, s.r, r, capParams);
+		
+		for (int i = 0; i < n; i++) {
+			params[paramCount] = capParams[i];
+			paramCount++;
+		}
+		
+		/*
+		 * bottom side
+		 */
+		
 		cdParam = SweepUtils.sweepCircleLine(bDown, aDown, c, d, s.r);
 		if (cdParam != -1) {
+			params[paramCount] = cdParam;
+			paramCount++;
+		}
+		
+		Arrays.sort(params);
+		for (int i = 0; i < paramCount-1; i++) {
+			double p0 = params[i];
+			double p1 = params[i+1];
+			assert !DMath.equals(p0, p1);
+		}
+		
+		for (int i = 0; i < paramCount; i++) {
 			if (outside) {
-				l.event(new SweepEvent(SweepEventType.ENTERCAPSULE, s, index, cdParam));
+				l.event(new SweepEvent(SweepEventType.ENTERCAPSULE, s, index, params[i]));
 			} else {
-				l.event(new SweepEvent(SweepEventType.EXITCAPSULE, s, index, cdParam));
+				l.event(new SweepEvent(SweepEventType.EXITCAPSULE, s, index, params[i]));
 			}
-		}
-		
-	}
-	
-	private void sweepACap(Stroke s, int index, SweepEventListener l) {
-		
-		Point c = s.pts.get(index);
-		Point d = s.pts.get(index+1);
-		
-		boolean outside;
-		if (hitTest(c, s.r)) {
-			outside = false;
-		} else {
-			outside = true;
-		}
-		
-		/*
-		 * handle a cap
-		 */
-		double aCoeff = ((d.x - c.x)*(d.x - c.x) + (d.y - c.y)*(d.y - c.y));
-		double bCoeff = -2 * ((d.x - c.x)*(a.x - c.x) + (d.y - c.y)*(a.y - c.y));
-		double cCoeff = ((a.x - c.x)*(a.x - c.x) + (a.y - c.y)*(a.y - c.y) - (s.r + r)*(s.r + r));
-		double[] roots = new double[2];
-		double discriminant = DMath.quadraticSolve(aCoeff, bCoeff, cCoeff, roots);
-		if (DMath.equals(discriminant, 0.0)) {
-			/*
-			 * 1 event
-			 */
-			double cdParam = roots[0];
-			if (DMath.greaterThanEquals(cdParam, 0.0) && DMath.lessThanEquals(cdParam, 1.0)) {
-				Point p = Point.point(c, d, cdParam);
-				double u = Point.u(a, p, b);
-				if (DMath.lessThan(u, 0.0)) {
-					assert DMath.equals(Point.distance(p, a, b), r + s.r);
-					if (outside) {
-						l.event(new SweepEvent(SweepEventType.ENTERCAPSULE, s, index, cdParam));
-					} else {
-						l.event(new SweepEvent(SweepEventType.EXITCAPSULE, s, index, cdParam));
-					}
-				}
-			}
-
-		} else if (discriminant > 0) {
-			/*
-			 * 2 events
-			 */
-			double cdParam0 = roots[0];
-			if (DMath.greaterThanEquals(cdParam0, 0.0) && DMath.lessThanEquals(cdParam0, 1.0)) {
-				Point p0 = Point.point(c, d, cdParam0);
-				double u0 = Point.u(a, p0, b);
-				if (DMath.lessThan(u0, 0.0)) {
-					assert DMath.equals(Point.distance(p0, a, b), r + s.r);
-					if (outside) {
-						l.event(new SweepEvent(SweepEventType.ENTERCAPSULE, s, index, cdParam0));
-					} else {
-						l.event(new SweepEvent(SweepEventType.EXITCAPSULE, s, index, cdParam0));
-					}
-				}
-			}
-			double cdParam1 = roots[1];
-			if (DMath.greaterThanEquals(cdParam1, 0.0) && DMath.lessThanEquals(cdParam1, 1.0)) {
-				Point p1 = Point.point(c, d, cdParam1);
-				double u1 = Point.u(a, p1, b);
-				if (DMath.lessThan(u1, 0.0)) {
-					assert DMath.equals(Point.distance(p1, a, b), r + s.r);
-					if (outside) {
-						l.event(new SweepEvent(SweepEventType.ENTERCAPSULE, s, index, cdParam1));
-					} else {
-						l.event(new SweepEvent(SweepEventType.EXITCAPSULE, s, index, cdParam1));
-					}
-				}
-			}
-			
-		} else {
-			/*
-			 * 0 events
-			 */
-		}
-		
-	}
-	
-	private void sweepBCap(Stroke s, int index, SweepEventListener l) {
-		
-		Point c = s.pts.get(index);
-		Point d = s.pts.get(index+1);
-		
-		boolean outside;
-		if (hitTest(c, s.r)) {
-			outside = false;
-		} else {
-			outside = true;
-		}
-		
-		/*
-		 * handle b cap
-		 */
-		double aCoeff = ((d.x - c.x)*(d.x - c.x) + (d.y - c.y)*(d.y - c.y));
-		double bCoeff = -2 * ((d.x - c.x)*(b.x - c.x) + (d.y - c.y)*(b.y - c.y));
-		double cCoeff = ((b.x - c.x)*(b.x - c.x) + (b.y - c.y)*(b.y - c.y) - (s.r + r)*(s.r + r));
-		double[] roots = new double[2];
-		double discriminant = DMath.quadraticSolve(aCoeff, bCoeff, cCoeff, roots);
-		if (DMath.equals(discriminant, 0.0)) {
-			/*
-			 * 1 event
-			 */
-			double cdParam = roots[0];
-			if (DMath.greaterThanEquals(cdParam, 0.0) && DMath.lessThanEquals(cdParam, 1.0)) {
-				Point p = Point.point(c, d, cdParam);
-				double u = Point.u(a, p, b);
-				if (DMath.greaterThan(u, 1.0)) {
-					assert DMath.equals(Point.distance(p, a, b), r + s.r);
-					if (outside) {
-						l.event(new SweepEvent(SweepEventType.ENTERCAPSULE, s, index, cdParam));
-					} else {
-						l.event(new SweepEvent(SweepEventType.EXITCAPSULE, s, index, cdParam));
-					}
-				}
-			}
-			
-		} else if (discriminant > 0) {
-			/*
-			 * 2 events
-			 */
-			double cdParam0 = roots[0];
-			if (DMath.greaterThanEquals(cdParam0, 0.0) && DMath.lessThanEquals(cdParam0, 1.0)) {
-				Point p0 = Point.point(c, d, cdParam0);
-				double u0 = Point.u(a, p0, b);
-				if (DMath.greaterThan(u0, 1.0)) {
-					assert DMath.equals(Point.distance(p0, a, b), r + s.r);
-					if (outside) {
-						l.event(new SweepEvent(SweepEventType.ENTERCAPSULE, s, index, cdParam0));
-					} else {
-						l.event(new SweepEvent(SweepEventType.EXITCAPSULE, s, index, cdParam0));
-					}
-				}
-			}
-			double cdParam1 = roots[1];
-			if (DMath.greaterThanEquals(cdParam1, 0.0) && DMath.lessThanEquals(cdParam1, 1.0)) {
-				Point p1 = Point.point(c, d, cdParam1);
-				double u1 = Point.u(a, p1, b);
-				if (DMath.greaterThan(u1, 1.0)) {
-					assert DMath.equals(Point.distance(p1, a, b), r + s.r);
-					if (outside) {
-						l.event(new SweepEvent(SweepEventType.ENTERCAPSULE, s, index, cdParam1));
-					} else {
-						l.event(new SweepEvent(SweepEventType.EXITCAPSULE, s, index, cdParam1));
-					}
-				}
-			}
-			
-		} else {
-			/*
-			 * 0 events
-			 */
+			outside = !outside;
 		}
 		
 	}
@@ -335,6 +201,20 @@ public class Capsule {
 			return Point.param(p, a, b);
 		}
 		return -1;
+	}
+	
+	public double findSkeletonIntersection(Point c, Point d) {
+		try {
+			Point inter = Point.intersection(a, b, c, d);
+			if (inter != null) {
+				return Point.param(inter, a, b);
+			} else {
+				return -1;
+			}
+		} catch (OverlappingException e) {
+			assert false;
+			return -1;
+		}
 	}
 	
 	public void paint(Graphics2D g2) {

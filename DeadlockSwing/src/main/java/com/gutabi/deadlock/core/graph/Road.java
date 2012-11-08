@@ -229,12 +229,23 @@ public final class Road implements Entity, Edge {
 		return false;
 	}
 	
-	public RoadPosition skeletonHitTest(Point p) {
-		for (int i = 0; i < caps.size(); i++) {
-			Capsule c = caps.get(i);
-			double param = c.skeletonHitTest(p);
-			if (param != -1) {
-				return new RoadPosition(this, i, param);
+//	public RoadPosition skeletonHitTest(Point p) {
+//		for (int i = 0; i < caps.size(); i++) {
+//			Capsule c = caps.get(i);
+//			double param = c.skeletonHitTest(p);
+//			if (param != -1) {
+//				return new RoadPosition(this, i, param);
+//			}
+//		}
+//		return null;
+//	}
+	
+	public RoadPosition findSkeletonIntersection(Point c, Point d) {
+		for (int i = 0; i < caps.size(); i ++) {
+			Capsule cap = caps.get(i);
+			double abParam = cap.findSkeletonIntersection(c, d);
+			if (abParam != -1 && !DMath.equals(abParam, 1.0)) {
+				return new RoadPosition(this, i, abParam);
 			}
 		}
 		return null;
@@ -370,6 +381,7 @@ public final class Road implements Entity, Edge {
 		if (!standalone) {
 			computeBorders(adj);
 			adj = adjustToBorders(adj);
+			adj = removeDuplicates(adj);
 		}
 		
 		caps = new ArrayList<Capsule>();

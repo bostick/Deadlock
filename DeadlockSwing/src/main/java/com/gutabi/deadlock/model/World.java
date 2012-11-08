@@ -145,6 +145,11 @@ public class World {
 		graph.addSink(h);
 		graph.addSink(t4);
 		
+		Stroke s = new Stroke(Vertex.INIT_VERTEX_RADIUS);
+		s.add(new Point(5, 5));
+		s.add(new Point(10, 10));
+		graph.processNewStrokeTop(s);
+		
 		worldRect = new Rect(0, 0, WORLD_WIDTH, WORLD_HEIGHT);
 		
 		computeAABB();

@@ -5,12 +5,16 @@ import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
+import java.util.Arrays;
 
 import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.Rect;
 import com.gutabi.deadlock.core.graph.MergerPosition.MergerDirection;
+import com.gutabi.deadlock.core.graph.SweepEvent.SweepEventType;
+import com.gutabi.deadlock.model.Stroke;
+import com.gutabi.deadlock.model.SweepUtils;
 
 @SuppressWarnings("static-access")
 public class Merger implements Entity, Edge {
@@ -29,6 +33,10 @@ public class Merger implements Entity, Edge {
 	public final MergerSource right;
 	public final MergerSource bottom;
 	
+	private Point p0;
+	private Point p1;
+	private Point p2;
+	private Point p3;
 	
 	public Merger(Point ul) {
 		this.ul = ul;
@@ -48,6 +56,10 @@ public class Merger implements Entity, Edge {
 		left.matchingSource = right;
 		right.matchingSink = left;
 		
+		p0 = ul;
+		p1 = new Point(ul.x + MERGER_WIDTH, ul.y);
+		p2 = new Point(ul.x + MERGER_WIDTH, ul.y + MERGER_HEIGHT);
+		p3 = new Point(ul.x, ul.y + MERGER_HEIGHT);
 		
 	}
 	
@@ -67,6 +79,77 @@ public class Merger implements Entity, Edge {
 			return MERGER_HEIGHT;
 		}
 	}
+	
+	
+	public void sweepStart(Stroke s, SweepEventListener l) {
+		
+		Point c = s.pts.get(0);
+		
+		if (hitTest(c, s.r)) {
+			l.start(new SweepEvent(SweepEventType.ENTERMERGER, s, 0, 0.0));
+		}
+		
+	}
+	
+	public void sweep(Stroke s, int index, SweepEventListener l) {
+		
+		Point c = s.pts.get(index);
+		Point d = s.pts.get(index+1);
+		
+		boolean outside;
+		if (hitTest(c, s.r)) {
+			outside = false;
+		} else {
+			outside = true;
+		}
+		
+		double[] params = new double[2];
+		Arrays.fill(params, Double.POSITIVE_INFINITY);
+		int paramCount = 0;
+		
+		double cdParam = SweepUtils.sweepCircleLine(p0, p1, c, d, s.r);
+		if (cdParam != -1) {
+			params[paramCount] = cdParam;
+			paramCount++;
+		}
+		
+		cdParam = SweepUtils.sweepCircleLine(p1, p2, c, d, s.r);
+		if (cdParam != -1) {
+			params[paramCount] = cdParam;
+			paramCount++;
+		}
+		
+		cdParam = SweepUtils.sweepCircleLine(p2, p3, c, d, s.r);
+		if (cdParam != -1) {
+			params[paramCount] = cdParam;
+			paramCount++;
+		}
+		
+		cdParam = SweepUtils.sweepCircleLine(p3, p0, c, d, s.r);
+		if (cdParam != -1) {
+			params[paramCount] = cdParam;
+			paramCount++;
+		}
+		
+		Arrays.sort(params);
+		for (int i = 0; i < paramCount-1; i++) {
+			double p0 = params[i];
+			double p1 = params[i+1];
+			assert !DMath.equals(p0, p1);
+		}
+		
+		for (int i = 0; i < paramCount; i++) {
+			if (outside) {
+				l.event(new SweepEvent(SweepEventType.ENTERMERGER, s, index, params[i]));
+			} else {
+				l.event(new SweepEvent(SweepEventType.EXITMERGER, s, index, params[i]));
+			}
+			outside = !outside;
+		}
+		
+	}
+	
+	
 	
 	public GraphPosition travelFromConnectedVertex(Vertex v, double dist) {
 		if (v == top) {
@@ -102,6 +185,22 @@ public class Merger implements Entity, Edge {
 		}
 	}
 	
+	public boolean hitTest(Point p, double r) {
+		if (hitTest(p)) {
+			return true;
+		} else {
+			if (DMath.lessThanEquals(Point.distance(p, p0, p1), r)) {
+				return true;
+			} else if (DMath.lessThanEquals(Point.distance(p, p1, p2), r)) {
+				return true;
+			} else if (DMath.lessThanEquals(Point.distance(p, p2, p3), r)) {
+				return true;
+			} else if (DMath.lessThanEquals(Point.distance(p, p3, p0), r)) {
+				return true;
+			}
+			return false;
+		}
+	}
 	
 	
 	
