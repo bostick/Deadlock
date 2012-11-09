@@ -1,0 +1,46 @@
+
+
+
+
+create outline of Merger before inserting
+hit INSERT key first to show outline, to enter INSERT MERGER mode
+hit INSERT again to insert it
+test if Merger is hitting anything else before adding
+
+
+
+
+
+
+
+
+drive straight from one border to another without going through vertex center
+
+
+road shape desription
+lines and circular arcs
+adding capsules
+stop using area, areax
+constructive area geometry for edges
+
+
+
+add Tile
+add Level
+world serialization
+
+
+quad tree implementation
+
+
+switch to using floats
+
+
+switch to opengl
+
+
+
+lower precision on stroke world points
+
+
+start work on popup menu
