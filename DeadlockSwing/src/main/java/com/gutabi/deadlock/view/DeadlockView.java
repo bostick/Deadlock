@@ -94,6 +94,7 @@ public class DeadlockView {
 		if (MODEL.stroke != null) {
 			aabb = Rect.union(aabb, MODEL.stroke.getAABB());
 		}
+		aabb = Rect.union(aabb, MODEL.cursor.getAABB());
 		
 		if (drawingAABB != null && aabb.equals(drawingAABB)) {
 			

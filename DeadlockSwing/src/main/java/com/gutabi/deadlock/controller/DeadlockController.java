@@ -156,6 +156,7 @@ public class DeadlockController implements ActionListener {
 				
 			case RUNNING:
 			case PAUSED:
+			case MERGEROUTLINE:
 				;
 				break;
 			}
@@ -209,6 +210,7 @@ public class DeadlockController implements ActionListener {
 				break;
 			case RUNNING:
 			case PAUSED:
+			case MERGEROUTLINE:
 				;
 				break;
 			}
@@ -259,6 +261,10 @@ public class DeadlockController implements ActionListener {
 				break;
 			}
 			case DRAFTING:
+				assert false;
+			case MERGEROUTLINE:
+				
+				VIEW.repaint();
 				
 				break;
 			}
@@ -323,6 +329,10 @@ public class DeadlockController implements ActionListener {
 		case IDLE:
 			
 			mode = ControlMode.MERGEROUTLINE;
+			
+			MODEL.cursor.computeAABB();
+			
+			VIEW.repaint();
 			
 			break;
 		case MERGEROUTLINE:

@@ -10,6 +10,7 @@ test if Merger is hitting anything else before adding
 
 
 
+add arrow images for sources and sinks
 
 
 

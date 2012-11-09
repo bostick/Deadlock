@@ -2,6 +2,7 @@ package com.gutabi.deadlock.core.graph;
 
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
@@ -299,4 +300,64 @@ public class Merger implements Entity, Edge, Sweepable {
 		g2.setTransform(origTransform);
 		
 	}
+	
+	
+	
+	//java.awt.Stroke mergerOutlineStroke = new BasicStroke(float width, int cap, int join, float miterlimit, float[] dash, float dash_phase);
+	static java.awt.Stroke mergerOutlineStroke = new BasicStroke(7.5f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 0.0f, new float[]{15.0f}, 0.0f);
+	
+	public static void paintOutline(Point p, Graphics2D g2) {
+		
+		java.awt.Stroke origStroke = g2.getStroke();
+		
+		g2.setStroke(mergerOutlineStroke);
+		g2.setColor(Color.GRAY);
+		
+		g2.drawRect(
+				(int)((p.x - Merger.MERGER_WIDTH/2) * MODEL.PIXELS_PER_METER),
+				(int)((p.y - Merger.MERGER_WIDTH/2) * MODEL.PIXELS_PER_METER),
+				(int)((Merger.MERGER_WIDTH) * MODEL.PIXELS_PER_METER),
+				(int)((Merger.MERGER_HEIGHT) * MODEL.PIXELS_PER_METER));
+		
+		Point top = p.plus(new Point(0, -Merger.MERGER_HEIGHT/2));
+		Point left = p.plus(new Point(-Merger.MERGER_WIDTH/2, 0));
+		Point right = p.plus(new Point(Merger.MERGER_WIDTH/2, 0));
+		Point bottom = p.plus(new Point(0, Merger.MERGER_HEIGHT/2));
+		
+		g2.drawOval(
+				(int)((top.x - Vertex.INIT_VERTEX_RADIUS) * MODEL.PIXELS_PER_METER),
+				(int)((top.y - Vertex.INIT_VERTEX_RADIUS) * MODEL.PIXELS_PER_METER),
+				(int)((2*Vertex.INIT_VERTEX_RADIUS) * MODEL.PIXELS_PER_METER),
+				(int)((2*Vertex.INIT_VERTEX_RADIUS) * MODEL.PIXELS_PER_METER));
+		
+		g2.drawOval(
+				(int)((left.x - Vertex.INIT_VERTEX_RADIUS) * MODEL.PIXELS_PER_METER),
+				(int)((left.y - Vertex.INIT_VERTEX_RADIUS) * MODEL.PIXELS_PER_METER),
+				(int)((2*Vertex.INIT_VERTEX_RADIUS) * MODEL.PIXELS_PER_METER),
+				(int)((2*Vertex.INIT_VERTEX_RADIUS) * MODEL.PIXELS_PER_METER));
+		
+		g2.drawOval(
+				(int)((right.x - Vertex.INIT_VERTEX_RADIUS) * MODEL.PIXELS_PER_METER),
+				(int)((right.y - Vertex.INIT_VERTEX_RADIUS) * MODEL.PIXELS_PER_METER),
+				(int)((2*Vertex.INIT_VERTEX_RADIUS) * MODEL.PIXELS_PER_METER),
+				(int)((2*Vertex.INIT_VERTEX_RADIUS) * MODEL.PIXELS_PER_METER));
+		
+		g2.drawOval(
+				(int)((bottom.x - Vertex.INIT_VERTEX_RADIUS) * MODEL.PIXELS_PER_METER),
+				(int)((bottom.y - Vertex.INIT_VERTEX_RADIUS) * MODEL.PIXELS_PER_METER),
+				(int)((2*Vertex.INIT_VERTEX_RADIUS) * MODEL.PIXELS_PER_METER),
+				(int)((2*Vertex.INIT_VERTEX_RADIUS) * MODEL.PIXELS_PER_METER));
+		
+		g2.setStroke(origStroke);
+		
+	}
+	
+	public static Rect outlineAABB(Point p) {
+		return new Rect(
+				p.x - Merger.MERGER_WIDTH/2 - Vertex.INIT_VERTEX_RADIUS,
+				p.y - Merger.MERGER_HEIGHT/2 - Vertex.INIT_VERTEX_RADIUS,
+				Merger.MERGER_WIDTH + 2 * Vertex.INIT_VERTEX_RADIUS,
+				Merger.MERGER_HEIGHT + 2 * Vertex.INIT_VERTEX_RADIUS);
+	}
+	
 }

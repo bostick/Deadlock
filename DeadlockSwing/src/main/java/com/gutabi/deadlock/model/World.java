@@ -448,10 +448,10 @@ public class World {
 		
 		switch (CONTROLLER.mode) {
 		case DRAFTING:
-			break;
 		case IDLE:
 		case RUNNING:
-		case PAUSED: {
+		case PAUSED:
+		case MERGEROUTLINE: {
 			
 			graph.paintScene(g2);
 			
