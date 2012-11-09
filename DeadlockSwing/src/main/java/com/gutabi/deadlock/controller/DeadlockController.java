@@ -16,8 +16,8 @@ import org.apache.log4j.Logger;
 import com.gutabi.deadlock.DeadlockMain;
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.core.graph.Road;
 import com.gutabi.deadlock.core.graph.Merger;
+import com.gutabi.deadlock.core.graph.Road;
 import com.gutabi.deadlock.core.graph.StopSign;
 import com.gutabi.deadlock.core.graph.Vertex;
 import com.gutabi.deadlock.model.Car;
@@ -213,6 +213,8 @@ public class DeadlockController implements ActionListener {
 	
 	
 	Point lastMovedWorldPoint;
+//	Point penMovedWorldPoint;
+//	Stroke s = new Stroke(Vertex.INIT_VERTEX_RADIUS);
 	
 	public void moved(InputEvent ev) {
 		
@@ -224,6 +226,7 @@ public class DeadlockController implements ActionListener {
 			
 			Point p = ev.p;
 			
+//			penMovedWorldPoint = lastMovedWorldPoint;
 			lastMovedWorldPoint = VIEW.panelToWorld(p);
 			
 			switch (MODEL.mode) {
@@ -236,6 +239,15 @@ public class DeadlockController implements ActionListener {
 				
 				VIEW.repaint();
 				
+				
+//				s.add(lastMovedWorldPoint);
+				
+//				List<SweepEvent> ve = s.vertexEvents();
+//				for (SweepEvent e : ve) {
+//					logger.debug("event: " + e);
+//				}
+				
+				
 				break;
 			}
 			case DRAFTING:
@@ -243,6 +255,10 @@ public class DeadlockController implements ActionListener {
 			
 		}
 		
+	}
+	
+	public void qKey() {
+//		s = new Stroke(Vertex.INIT_VERTEX_RADIUS);
 	}
 	
 	public void deleteKey() {

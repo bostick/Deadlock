@@ -14,10 +14,9 @@ import com.gutabi.deadlock.core.Rect;
 import com.gutabi.deadlock.core.graph.MergerPosition.MergerDirection;
 import com.gutabi.deadlock.core.graph.SweepEvent.SweepEventType;
 import com.gutabi.deadlock.model.Stroke;
-import com.gutabi.deadlock.model.SweepUtils;
 
 @SuppressWarnings("static-access")
-public class Merger implements Entity, Edge {
+public class Merger implements Entity, Edge, Sweepable {
 	
 	public static final double MERGER_WIDTH = 5.0;
 	public static final double MERGER_HEIGHT = 5.0;
@@ -86,7 +85,17 @@ public class Merger implements Entity, Edge {
 		Point c = s.pts.get(0);
 		
 		if (hitTest(c, s.r)) {
-			l.start(new SweepEvent(SweepEventType.ENTERMERGER, s, 0, 0.0));
+			l.start(new SweepEvent(SweepEventType.ENTERMERGER, this, s, 0, 0.0));
+		}
+		
+	}
+	
+	public void sweepEnd(Stroke s, SweepEventListener l) {
+		
+		Point d = s.pts.get(s.pts.size()-1);
+		
+		if (hitTest(d, s.r)) {
+			l.end(new SweepEvent(SweepEventType.EXITMERGER, this, s, s.pts.size()-1, 0.0));
 		}
 		
 	}
@@ -132,19 +141,24 @@ public class Merger implements Entity, Edge {
 		}
 		
 		Arrays.sort(params);
-		for (int i = 0; i < paramCount-1; i++) {
-			double p0 = params[i];
-			double p1 = params[i+1];
-			assert !DMath.equals(p0, p1);
+		if (paramCount == 2 && DMath.equals(params[0], params[1])) {
+			/*
+			 * hit a seam
+			 */
+			paramCount = 1;
 		}
 		
 		for (int i = 0; i < paramCount; i++) {
-			if (outside) {
-				l.event(new SweepEvent(SweepEventType.ENTERMERGER, s, index, params[i]));
-			} else {
-				l.event(new SweepEvent(SweepEventType.EXITMERGER, s, index, params[i]));
+			double param = params[i];
+			assert DMath.greaterThanEquals(param, 0.0) && DMath.lessThanEquals(param, 1.0);
+			if (DMath.lessThan(param, 1.0) || index == s.pts.size()-1) {
+				if (outside) {
+					l.event(new SweepEvent(SweepEventType.ENTERMERGER, this, s, index, param));
+				} else {
+					l.event(new SweepEvent(SweepEventType.EXITMERGER, this, s, index, param));
+				}
+				outside = !outside;
 			}
-			outside = !outside;
 		}
 		
 	}
@@ -189,6 +203,17 @@ public class Merger implements Entity, Edge {
 		if (hitTest(p)) {
 			return true;
 		} else {
+			
+//			if (DMath.equals(Point.distance(p, p0, p1), r)) {
+//				String.class.getName();
+//			} else if (DMath.equals(Point.distance(p, p1, p2), r)) {
+//				String.class.getName();
+//			} else if (DMath.equals(Point.distance(p, p2, p3), r)) {
+//				String.class.getName();
+//			} else if (DMath.equals(Point.distance(p, p3, p0), r)) {
+//				String.class.getName();
+//			}
+			
 			if (DMath.lessThanEquals(Point.distance(p, p0, p1), r)) {
 				return true;
 			} else if (DMath.lessThanEquals(Point.distance(p, p1, p2), r)) {

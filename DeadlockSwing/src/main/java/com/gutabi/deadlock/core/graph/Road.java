@@ -177,6 +177,20 @@ public final class Road implements Entity, Edge {
 		
 	}
 	
+	public void sweepEnd(Stroke s, SweepEventListener l) {
+		
+		/*
+		 * TODO:
+		 * a lot of room for improvement
+		 * adjacent capsules share caps, so could share calculation
+		 */
+		for (Capsule c : caps.subList(1, caps.size()-1)) {
+//			c.setSweepEventListener(l);
+			c.sweepEnd(s, l);
+		}
+		
+	}
+	
 	public void sweep(Stroke s, int index, SweepEventListener l) {
 		
 		/*
@@ -578,9 +592,15 @@ public final class Road implements Entity, Edge {
 	
 	private void computeAABB() {
 		aabb = null;
-		for (Capsule s : caps.subList(1, caps.size()-1)) {
-			aabb = Rect.union(aabb, s.aabb);
+		
+		if (startBorderPoint.equals(endBorderPoint)) {
+			aabb = new Rect(startBorderPoint.x, startBorderPoint.y, 0.0, 0.0);
+		} else {
+			for (Capsule s : caps.subList(1, caps.size()-1)) {
+				aabb = Rect.union(aabb, s.aabb);
+			}
 		}
+		
 	}
 	
 	protected Rect aabb;

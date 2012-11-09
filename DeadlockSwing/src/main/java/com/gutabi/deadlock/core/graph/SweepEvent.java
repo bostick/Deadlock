@@ -25,6 +25,7 @@ public class SweepEvent {
 	}
 	
 	public final SweepEventType type;
+	public final Sweepable o;
 	public final Stroke s;
 	public final int index;
 	public final double param;
@@ -32,8 +33,9 @@ public class SweepEvent {
 	
 //	private Vertex v;
 	
-	public SweepEvent(SweepEventType type, Stroke s, int index, double param) {
+	public SweepEvent(SweepEventType type, Sweepable o, Stroke s, int index, double param) {
 		this.type = type;
+		this.o = o;
 		this.s = s;
 		this.index = index;
 		this.param = param;

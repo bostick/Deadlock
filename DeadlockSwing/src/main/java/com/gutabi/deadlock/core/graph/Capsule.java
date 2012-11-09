@@ -14,10 +14,9 @@ import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.Rect;
 import com.gutabi.deadlock.core.graph.SweepEvent.SweepEventType;
 import com.gutabi.deadlock.model.Stroke;
-import com.gutabi.deadlock.model.SweepUtils;
 
 @SuppressWarnings("static-access")
-public class Capsule {
+public class Capsule implements Sweepable {
 	
 	public final Point a;
 	public final Point b;
@@ -94,7 +93,17 @@ public class Capsule {
 		Point c = s.pts.get(0);
 		
 		if (hitTest(c, s.r)) {
-			l.start(new SweepEvent(SweepEventType.ENTERCAPSULE, s, 0, 0.0));
+			l.start(new SweepEvent(SweepEventType.ENTERCAPSULE, this, s, 0, 0.0));
+		}
+		
+	}
+	
+	public void sweepEnd(Stroke s, SweepEventListener l) {
+		
+		Point d = s.pts.get(s.pts.size()-1);
+		
+		if (hitTest(d, s.r)) {
+			l.end(new SweepEvent(SweepEventType.EXITCAPSULE, this, s, s.pts.size()-1, 0.0));
 		}
 		
 	}
@@ -103,6 +112,11 @@ public class Capsule {
 		
 		Point c = s.pts.get(index);
 		Point d = s.pts.get(index+1);
+		
+		if (a.equals(new Point(6.6875, 8.4375)) && b.equals(new Point(7.1875, 7.875)) &&
+				c.equals(new Point(6.875, 6.375)) && d.equals(new Point(7.21875, 7.0))) {
+			String.class.getName();
+		}
 		
 		boolean outside;
 		if (hitTest(c, s.r)) {
@@ -120,11 +134,24 @@ public class Capsule {
 		 */
 		
 		double[] capParams = new double[2];
-		int n = SweepUtils.sweepCircleCap(b, a, c, d, s.r, r, capParams);
+		//int n = SweepUtils.sweepCircleCap(b, a, c, d, s.r, r, capParams);
+		int n = SweepUtils.sweepCircleCircle(a, c, d, s.r, r, capParams);
 		
 		for (int i = 0; i < n; i++) {
-			params[paramCount] = capParams[i];
-			paramCount++;
+			
+			double cdParam = capParams[i];
+			
+			/*
+			 * still have to test that it is beyond the end points
+			 */
+			Point p = Point.point(c, d, cdParam);
+			double abParam = Point.u(a, p, b);
+			
+			if (DMath.lessThanEquals(abParam, 0.0)) {
+				params[paramCount] = cdParam;
+				paramCount++;
+			}
+			
 		}
 		
 		/*
@@ -132,20 +159,44 @@ public class Capsule {
 		 */
 		
 		double cdParam = SweepUtils.sweepCircleLine(aUp, bUp, c, d, s.r);
+		
 		if (cdParam != -1) {
-			params[paramCount] = cdParam;
-			paramCount++;
+			
+			/*
+			 * still have to test that it isn't beyond the end points
+			 */
+			Point p = Point.point(c, d, cdParam);
+			double abParam = Point.u(aUp, p, bUp);
+			
+			if (DMath.greaterThanEquals(abParam, 0.0) && DMath.lessThanEquals(abParam, 1.0)) {
+				params[paramCount] = cdParam;
+				paramCount++;
+			}
+			
 		}
 		
 		/*
 		 * b cap
 		 */
 		
-		n = SweepUtils.sweepCircleCap(a, b, c, d, s.r, r, capParams);
+//		n = SweepUtils.sweepCircleCap(a, b, c, d, s.r, r, capParams);
+		n = SweepUtils.sweepCircleCircle(b, c, d, s.r, r, capParams);
 		
 		for (int i = 0; i < n; i++) {
-			params[paramCount] = capParams[i];
-			paramCount++;
+			
+			cdParam = capParams[i];
+			
+			/*
+			 * still have to test that it is beyond the end points
+			 */
+			Point p = Point.point(c, d, cdParam);
+			double abParam = Point.u(a, p, b);
+			
+			if (DMath.greaterThanEquals(abParam, 1.0)) {
+				params[paramCount] = cdParam;
+				paramCount++;
+			}
+			
 		}
 		
 		/*
@@ -153,25 +204,46 @@ public class Capsule {
 		 */
 		
 		cdParam = SweepUtils.sweepCircleLine(bDown, aDown, c, d, s.r);
+		
 		if (cdParam != -1) {
-			params[paramCount] = cdParam;
-			paramCount++;
+//			logger.debug("bottom side: " + 1);
+		}
+		
+		if (cdParam != -1) {
+			
+			/*
+			 * still have to test that it isn't beyond the end points
+			 */
+			Point p = Point.point(c, d, cdParam);
+			double abParam = Point.u(bDown, p, aDown);
+			
+			if (DMath.greaterThanEquals(abParam, 0.0) && DMath.lessThanEquals(abParam, 1.0)) {
+				params[paramCount] = cdParam;
+				paramCount++;
+			}
+			
 		}
 		
 		Arrays.sort(params);
-		for (int i = 0; i < paramCount-1; i++) {
-			double p0 = params[i];
-			double p1 = params[i+1];
-			assert !DMath.equals(p0, p1);
+		if (paramCount == 2 && DMath.equals(params[0], params[1])) {
+			/*
+			 * hit a seam
+			 */
+			paramCount = 1;
 		}
 		
 		for (int i = 0; i < paramCount; i++) {
-			if (outside) {
-				l.event(new SweepEvent(SweepEventType.ENTERCAPSULE, s, index, params[i]));
-			} else {
-				l.event(new SweepEvent(SweepEventType.EXITCAPSULE, s, index, params[i]));
+			double param = params[i];
+			assert DMath.greaterThanEquals(param, 0.0) && DMath.lessThanEquals(param, 1.0);
+			
+			if (DMath.lessThan(param, 1.0) || index == s.pts.size()-1) {
+				if (outside) {
+					l.event(new SweepEvent(SweepEventType.ENTERCAPSULE, this, s, index, param));
+				} else {
+					l.event(new SweepEvent(SweepEventType.EXITCAPSULE, this, s, index, param));
+				}
+				outside = !outside;
 			}
-			outside = !outside;
 		}
 		
 	}
@@ -190,6 +262,9 @@ public class Capsule {
 	}
 	
 	public boolean hitTest(Point p, double radius) {
+//		if (DMath.equals(Point.distance(p, a, b), r + radius)) {
+//			String.class.getName();
+//		}
 		if (DMath.lessThanEquals(Point.distance(p, a, b), r + radius)) {
 			return true;
 		}

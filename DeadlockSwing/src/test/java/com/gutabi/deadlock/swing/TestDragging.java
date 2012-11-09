@@ -43,6 +43,28 @@ public class TestDragging {
 		VIEW.repaint();
 	}
 	
+	public static void testWorldPressed(Point p) throws Exception {
+//		Point pp = p.plus(OFFSET);
+		CONTROLLER.mc.pressed(new InputEvent(VIEW.panel, VIEW.worldToPanel(p)));
+		CONTROLLER.queueAndWait(empty);
+		Thread.sleep(10);
+		VIEW.repaint();
+	}
+	
+	public static void testWorldDragged(Point p) throws Exception {
+//		Point pp = p.plus(OFFSET);
+		CONTROLLER.mc.dragged(new InputEvent(VIEW.panel, VIEW.worldToPanel(p)));
+		CONTROLLER.queueAndWait(empty);
+		Thread.sleep(10);
+		VIEW.repaint();
+	}
+	
+	public static void testWorldReleased() throws Exception {
+		CONTROLLER.mc.released(new InputEvent(VIEW.panel, null));
+		CONTROLLER.queueAndWait(empty);
+		Thread.sleep(10);
+		VIEW.repaint();
+	}
 	static Runnable empty = new Runnable(){
 		@Override
 		public void run() {

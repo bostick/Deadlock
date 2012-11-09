@@ -16,10 +16,9 @@ import com.gutabi.deadlock.core.Rect;
 import com.gutabi.deadlock.core.graph.SweepEvent.SweepEventType;
 import com.gutabi.deadlock.model.Car;
 import com.gutabi.deadlock.model.Stroke;
-import com.gutabi.deadlock.model.SweepUtils;
 
 @SuppressWarnings("static-access")
-public abstract class Vertex implements Entity {
+public abstract class Vertex implements Entity, Sweepable {
 	
 	public final Point p;
 	
@@ -87,9 +86,21 @@ public abstract class Vertex implements Entity {
 		Point c = s.pts.get(0);
 		
 		if (hitTest(c, s.r)) {
-			SweepEvent e = new SweepEvent(SweepEventType.ENTERVERTEX, s, 0, 0.0);
+			SweepEvent e = new SweepEvent(SweepEventType.ENTERVERTEX, this, s, 0, 0.0);
 //			e.setVertex(this);
 			l.start(e);
+		}
+		
+	}
+	
+	public void sweepEnd(Stroke s, SweepEventListener l) {
+		
+		Point d = s.pts.get(s.pts.size()-1);
+		
+		if (hitTest(d, s.r)) {
+			SweepEvent e = new SweepEvent(SweepEventType.EXITVERTEX, this, s, s.pts.size()-1, 0.0);
+//			e.setVertex(this);
+			l.end(e);
 		}
 		
 	}
@@ -111,19 +122,27 @@ public abstract class Vertex implements Entity {
 		int paramCount = SweepUtils.sweepCircleCircle(p, c, d, s.r, r, params);
 		
 		Arrays.sort(params);
-		for (int i = 0; i < paramCount-1; i++) {
-			double p0 = params[i];
-			double p1 = params[i+1];
-			assert !DMath.equals(p0, p1);
+//		for (int i = 0; i < paramCount-1; i++) {
+//			double p0 = params[i];
+//			double p1 = params[i+1];
+//			assert !DMath.equals(p0, p1);
+//		}
+		
+		if (paramCount == 2) {
+			String.class.getName();
 		}
 		
 		for (int i = 0; i < paramCount; i++) {
-			if (outside) {
-				l.event(new SweepEvent(SweepEventType.ENTERVERTEX, s, index, params[i]));
-			} else {
-				l.event(new SweepEvent(SweepEventType.EXITVERTEX, s, index, params[i]));
+			double param = params[i];
+			assert DMath.greaterThanEquals(param, 0.0) && DMath.lessThanEquals(param, 1.0);
+			if (DMath.lessThan(param, 1.0) || index == s.pts.size()-1) {
+				if (outside) {
+					l.event(new SweepEvent(SweepEventType.ENTERVERTEX, this, s, index, param));
+				} else {
+					l.event(new SweepEvent(SweepEventType.EXITVERTEX, this, s, index, param));
+				}
+				outside = !outside;
 			}
-			outside = !outside;
 		}
 		
 	}
@@ -143,6 +162,10 @@ public abstract class Vertex implements Entity {
 	}
 	
 	public final boolean hitTest(Point p, double radius) {
+//		if (DMath.equals(Point.distance(p, this.p), r + radius)) {
+//			String.class.getName();
+//		}
+//		return DMath.lessThanEquals(Point.distance(p, this.p), r + radius);
 		return DMath.lessThanEquals(Point.distance(p, this.p), r + radius);
 	}
 	

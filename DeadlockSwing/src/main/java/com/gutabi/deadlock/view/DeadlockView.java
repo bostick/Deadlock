@@ -43,6 +43,10 @@ public class DeadlockView {
 	
 	public void init() throws Exception {
 		frame = createFrame(false);
+		
+		worldOriginX = (int)(panel.getWidth() * 0.5 - (MODEL.world.WORLD_WIDTH * 0.5 * MODEL.PIXELS_PER_METER));
+		worldOriginY = (int)(panel.getHeight() * 0.5 - (MODEL.world.WORLD_HEIGHT * 0.5 * MODEL.PIXELS_PER_METER));
+		
 	}
 	
 	public JFrame createFrame(boolean fullScreen) {
@@ -74,6 +78,10 @@ public class DeadlockView {
 	
 	public Point panelToWorld(Point p) {
 		return new Point((p.x - worldOriginX) * MODEL.METERS_PER_PIXEL, (p.y - worldOriginY) * MODEL.METERS_PER_PIXEL);
+	}
+	
+	public Point worldToPanel(Point p) {
+		return new Point(p.x * MODEL.PIXELS_PER_METER + worldOriginX, p.y * MODEL.PIXELS_PER_METER + worldOriginY);
 	}
 	
 	public void repaint() {

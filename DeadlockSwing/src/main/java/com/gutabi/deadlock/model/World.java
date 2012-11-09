@@ -21,9 +21,11 @@ import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.Rect;
 import com.gutabi.deadlock.core.graph.Edge;
 import com.gutabi.deadlock.core.graph.Graph;
+import com.gutabi.deadlock.core.graph.Intersection;
 import com.gutabi.deadlock.core.graph.Merger;
 import com.gutabi.deadlock.core.graph.Road;
 import com.gutabi.deadlock.core.graph.StopSign;
+import com.gutabi.deadlock.core.graph.SweepEventListener;
 import com.gutabi.deadlock.core.graph.Vertex;
 import com.gutabi.deadlock.core.graph.WorldSink;
 import com.gutabi.deadlock.core.graph.WorldSource;
@@ -70,6 +72,57 @@ public class World {
 	
 	public World() {
 		
+//		WorldSource a = new WorldSource(new Point(WORLD_WIDTH/4, 0));
+//		WorldSource b = new WorldSource(new Point(2*WORLD_WIDTH/4, 0));
+//		WorldSource t1 = new WorldSource(new Point(3*WORLD_WIDTH/4, 0));
+//		
+//		WorldSource c = new WorldSource(new Point(0, WORLD_HEIGHT/4));
+//		WorldSource d = new WorldSource(new Point(0, 2*WORLD_HEIGHT/4));
+//		WorldSource t2 = new WorldSource(new Point(0, 3*WORLD_HEIGHT/4));
+//		
+//		WorldSink e = new WorldSink(new Point(WORLD_WIDTH/4, WORLD_HEIGHT));
+//		WorldSink f = new WorldSink(new Point(2*WORLD_WIDTH/4, WORLD_HEIGHT));
+//		WorldSink t3 = new WorldSink(new Point(3*WORLD_WIDTH/4, WORLD_HEIGHT));
+//		
+//		WorldSink g = new WorldSink(new Point(WORLD_WIDTH, WORLD_HEIGHT/4));
+//		WorldSink h = new WorldSink(new Point(WORLD_WIDTH, 2*WORLD_HEIGHT/4));
+//		WorldSink t4 = new WorldSink(new Point(WORLD_WIDTH, 3*WORLD_HEIGHT/4));
+//		
+//		a.matchingSink = e;
+//		e.matchingSource = a;
+//		
+//		b.matchingSink = f;
+//		f.matchingSource = b;
+//		
+//		t1.matchingSink = t3;
+//		t3.matchingSource = t1;
+//		
+//		c.matchingSink = g;
+//		g.matchingSource = c;
+//		
+//		d.matchingSink = h;
+//		h.matchingSource = d;
+//		
+//		t2.matchingSink = t4;
+//		t4.matchingSource = t2;
+//		
+//		graph.addSource(a);
+//		graph.addSource(b);
+//		graph.addSource(t1);
+//		
+//		graph.addSource(c);
+//		graph.addSource(d);
+//		graph.addSource(t2);
+//		
+//		graph.addSink(e);
+//		graph.addSink(f);
+//		graph.addSink(t3);
+//		
+//		graph.addSink(g);
+//		graph.addSink(h);
+//		graph.addSink(t4);
+
+		
 	}
 	
 	public void init() throws Exception {
@@ -94,69 +147,23 @@ public class World {
 		listener = new CarEventListener();
 		b2dWorld.setContactListener(listener);
 		
-		
-		WorldSource a = new WorldSource(new Point(WORLD_WIDTH/4, 0));
-		WorldSource b = new WorldSource(new Point(2*WORLD_WIDTH/4, 0));
-		WorldSource t1 = new WorldSource(new Point(3*WORLD_WIDTH/4, 0));
-		
-		WorldSource c = new WorldSource(new Point(0, WORLD_HEIGHT/4));
-		WorldSource d = new WorldSource(new Point(0, 2*WORLD_HEIGHT/4));
-		WorldSource t2 = new WorldSource(new Point(0, 3*WORLD_HEIGHT/4));
-		
-		WorldSink e = new WorldSink(new Point(WORLD_WIDTH/4, WORLD_HEIGHT));
-		WorldSink f = new WorldSink(new Point(2*WORLD_WIDTH/4, WORLD_HEIGHT));
-		WorldSink t3 = new WorldSink(new Point(3*WORLD_WIDTH/4, WORLD_HEIGHT));
-		
-		WorldSink g = new WorldSink(new Point(WORLD_WIDTH, WORLD_HEIGHT/4));
-		WorldSink h = new WorldSink(new Point(WORLD_WIDTH, 2*WORLD_HEIGHT/4));
-		WorldSink t4 = new WorldSink(new Point(WORLD_WIDTH, 3*WORLD_HEIGHT/4));
-		
-		a.matchingSink = e;
-		e.matchingSource = a;
-		
-		b.matchingSink = f;
-		f.matchingSource = b;
-		
-		t1.matchingSink = t3;
-		t3.matchingSource = t1;
-		
-		c.matchingSink = g;
-		g.matchingSource = c;
-		
-		d.matchingSink = h;
-		h.matchingSource = d;
-		
-		t2.matchingSink = t4;
-		t4.matchingSource = t2;
-		
-		graph.addSource(a);
-		graph.addSource(b);
-		graph.addSource(t1);
-		
-		graph.addSource(c);
-		graph.addSource(d);
-		graph.addSource(t2);
-		
-		graph.addSink(e);
-		graph.addSink(f);
-		graph.addSink(t3);
-		
-		graph.addSink(g);
-		graph.addSink(h);
-		graph.addSink(t4);
-		
-		Stroke s = new Stroke(Vertex.INIT_VERTEX_RADIUS);
-		s.add(new Point(5, 5));
-		s.add(new Point(10, 10));
-		graph.processNewStrokeTop(s);
-		
 		worldRect = new Rect(0, 0, WORLD_WIDTH, WORLD_HEIGHT);
 		
 		computeAABB();
 		
 	}
 	
+	public void addSource(WorldSource s) {
+		graph.addSource(s);
+	}
 	
+	public void addSink(WorldSink s) {
+		graph.addSink(s);
+	}
+	
+	public void addIntersection(Intersection i) {
+		graph.addIntersection(i);
+	}
 	
 	public void removeVertexTop(Vertex v) {
 		graph.removeVertexTop(v);
@@ -194,6 +201,18 @@ public class World {
 		graph.processNewStrokeTop(stroke);
 		
 		postDraftingTop();
+	}
+	
+	public void sweepStart(Stroke s, SweepEventListener l) {
+		graph.sweepStart(s, l);
+	}
+	
+	public void sweepEnd(Stroke s, SweepEventListener l) {
+		graph.sweepEnd(s, l);
+	}
+	
+	public void sweep(Stroke s, int index, SweepEventListener l) {
+		graph.sweep(s, index, l);
 	}
 	
 	public void insertMergerTop(Point p) {
