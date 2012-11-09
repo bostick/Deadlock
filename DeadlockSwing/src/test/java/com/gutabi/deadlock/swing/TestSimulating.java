@@ -49,6 +49,7 @@ public class TestSimulating {
 	public void setUp() throws Exception {
 		
 		//CONTROLLER.strat = MassageStrategy.NONE;
+		MODEL.init();
 		
 	}
 
@@ -59,9 +60,9 @@ public class TestSimulating {
 		
 		Thread.sleep(200);
 		
-		synchronized (MODEL) {
-			MODEL.clear();
-		}
+//		synchronized (MODEL) {
+//			MODEL.clear();
+//		}
 	}
 	
 	List<Road> edges;

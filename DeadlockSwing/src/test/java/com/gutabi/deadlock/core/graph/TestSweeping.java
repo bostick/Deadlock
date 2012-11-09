@@ -9,6 +9,7 @@ import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.After;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -28,6 +29,13 @@ public class TestSweeping {
 		
 	}
 	
+	@Before
+	public void setUp() throws Exception {
+		
+		MODEL.init();
+		
+	}
+	
 	@After
 	public void tearDown() throws Exception {
 		
@@ -35,7 +43,7 @@ public class TestSweeping {
 		
 		Thread.sleep(2000);
 		
-		MODEL.clear();
+//		MODEL.
 	}
 	
 	@Test

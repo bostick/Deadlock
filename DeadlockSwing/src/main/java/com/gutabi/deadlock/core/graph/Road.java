@@ -234,9 +234,9 @@ public final class Road implements Entity, Edge {
 		}
 	}
 	
-	public final boolean hitTest(Point p, double radius) {
+	public final boolean bestHitTest(Point p, double radius) {
 		for (Capsule s : caps.subList(1, caps.size()-1)) {
-			if (s.hitTest(p, radius)) {
+			if (s.bestHitTest(p, radius)) {
 				return true;
 			}
 		}

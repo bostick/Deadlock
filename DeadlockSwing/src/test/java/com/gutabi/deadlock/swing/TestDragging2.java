@@ -45,7 +45,7 @@ public class TestDragging2 {
 	@Before
 	public void setUp() throws Exception {
 		
-		
+		MODEL.init();
 		
 	}
 
@@ -56,7 +56,7 @@ public class TestDragging2 {
 		
 		Thread.sleep(2000);
 		
-		MODEL.clear();
+//		MODEL.clear();
 	}
 	
 	

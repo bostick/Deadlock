@@ -85,7 +85,7 @@ public abstract class Vertex implements Entity, Sweepable {
 		
 		Point c = s.pts.get(0);
 		
-		if (hitTest(c, s.r)) {
+		if (bestHitTest(c, s.r)) {
 			SweepEvent e = new SweepEvent(SweepEventType.ENTERVERTEX, this, s, 0, 0.0);
 //			e.setVertex(this);
 			l.start(e);
@@ -97,7 +97,7 @@ public abstract class Vertex implements Entity, Sweepable {
 		
 		Point d = s.pts.get(s.pts.size()-1);
 		
-		if (hitTest(d, s.r)) {
+		if (bestHitTest(d, s.r)) {
 			SweepEvent e = new SweepEvent(SweepEventType.EXITVERTEX, this, s, s.pts.size()-1, 0.0);
 //			e.setVertex(this);
 			l.end(e);
@@ -111,7 +111,7 @@ public abstract class Vertex implements Entity, Sweepable {
 		Point d = s.pts.get(index+1);
 		
 		boolean outside;
-		if (hitTest(c, s.r)) {
+		if (bestHitTest(c, s.r)) {
 			outside = false;
 		} else {
 			outside = true;
@@ -161,7 +161,7 @@ public abstract class Vertex implements Entity, Sweepable {
 		}
 	}
 	
-	public final boolean hitTest(Point p, double radius) {
+	public final boolean bestHitTest(Point p, double radius) {
 //		if (DMath.equals(Point.distance(p, this.p), r + radius)) {
 //			String.class.getName();
 //		}

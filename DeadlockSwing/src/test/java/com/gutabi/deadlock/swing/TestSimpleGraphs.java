@@ -40,11 +40,14 @@ public class TestSimpleGraphs {
 
 	@Before
 	public void setUp() throws Exception {
+		
+		MODEL.init();
+		
 	}
 
 	@After
 	public void tearDown() throws Exception {
-		MODEL.clear();
+//		MODEL.clear();
 	}
 	
 //	Comparator<Edge> edgeComparator = new Comparator<Edge>() {

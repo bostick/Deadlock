@@ -28,6 +28,8 @@ public class DeadlockController implements ActionListener {
 	
 	public static DeadlockController CONTROLLER = new DeadlockController();
 	
+	public ControlMode mode;
+	
 	public MouseController mc;
 	public KeyboardController kc;
 	
@@ -36,7 +38,7 @@ public class DeadlockController implements ActionListener {
 	Logger logger = Logger.getLogger(DeadlockController.class);
 	
 	public DeadlockController() {
-		
+		mode = ControlMode.IDLE;
 	}
 	
 	public void init() {
@@ -107,6 +109,7 @@ public class DeadlockController implements ActionListener {
 	
 	
 	Point lastDragPanelPoint;
+	Point lastDragWorldPoint;
 	Point lastDragPreviewPoint;
 	long lastDragTime;
 	
@@ -123,9 +126,12 @@ public class DeadlockController implements ActionListener {
 			boolean lastDragPanelPointWasNull = (lastDragPanelPoint == null);
 			
 			lastDragPanelPoint = p;
+			lastDragWorldPoint = VIEW.panelToWorld(p);
 			lastDragTime = System.currentTimeMillis();
 			
-			switch (MODEL.mode) {
+			MODEL.cursor.setPoint(lastDragWorldPoint);
+			
+			switch (mode) {
 			case IDLE: {
 				
 				if (lastDragPanelPointWasNull) {
@@ -171,27 +177,27 @@ public class DeadlockController implements ActionListener {
 			
 			lastReleaseTime = System.currentTimeMillis();
 			
-			switch (MODEL.mode) {
+			switch (mode) {
 			case IDLE: {
 				
 				if (lastReleaseTime - lastPressTime < 500 && lastDragPanelPoint == null) {
 					// click
 					
-					Point w = VIEW.panelToWorld(lastPressPanelPoint);
-					
-					Entity hit = MODEL.world.hitTest(w);
-					
-					if (hit != null) {
-						
-						if (hit instanceof Vertex) {
-							
-//							((Vertex) hit).getEdges();
-							
-						} else if (hit instanceof Road) {
-							
-						}
-						
-					}
+//					Point w = VIEW.panelToWorld(lastPressPanelPoint);
+//					
+//					Entity hit = MODEL.world.hitTest(w);
+//					
+//					if (hit != null) {
+//						
+//						if (hit instanceof Vertex) {
+//							
+////							((Vertex) hit).getEdges();
+//							
+//						} else if (hit instanceof Road) {
+//							
+//						}
+//						
+//					}
 				}
 				
 				break;
@@ -229,12 +235,14 @@ public class DeadlockController implements ActionListener {
 //			penMovedWorldPoint = lastMovedWorldPoint;
 			lastMovedWorldPoint = VIEW.panelToWorld(p);
 			
-			switch (MODEL.mode) {
+			MODEL.cursor.setPoint(lastMovedWorldPoint);
+			
+			switch (mode) {
 			case RUNNING:
 			case PAUSED:
 			case IDLE: {
 				
-				Entity closest = MODEL.world.hitTest(lastMovedWorldPoint);
+				Entity closest = MODEL.world.bestHitTest(MODEL.cursor.getPoint(), MODEL.cursor.r);
 				MODEL.hilited = closest;
 				
 				VIEW.repaint();
@@ -251,6 +259,8 @@ public class DeadlockController implements ActionListener {
 				break;
 			}
 			case DRAFTING:
+				
+				break;
 			}
 			
 		}
@@ -309,17 +319,27 @@ public class DeadlockController implements ActionListener {
 	
 	public void insertKey() {
 		
-		MODEL.world.insertMergerTop(lastMovedWorldPoint);
-		
-		MODEL.world.renderBackground();
-		VIEW.repaint();
+		switch (mode) {
+		case IDLE:
+			
+			mode = ControlMode.MERGEROUTLINE;
+			
+			break;
+		case MERGEROUTLINE:
+			MODEL.world.insertMergerTop(lastMovedWorldPoint);
+			MODEL.world.renderBackground();
+			VIEW.repaint();
+			break;
+		default:
+			break;
+		}
 		
 	}
 
 	public void startRunning() {
 		assert Thread.currentThread().getName().equals("controller");
 		
-		MODEL.mode = ControlMode.RUNNING;
+		mode = ControlMode.RUNNING;
 		
 		Thread t = new Thread(new SimulationRunnable());
 		t.start();
@@ -329,19 +349,19 @@ public class DeadlockController implements ActionListener {
 	public void stopRunning() {
 		assert Thread.currentThread().getName().equals("controller");
 		
-		MODEL.mode = ControlMode.IDLE;
+		mode = ControlMode.IDLE;
 	}
 	
 	public void pauseRunning() {
 		assert Thread.currentThread().getName().equals("controller");
 		
-		MODEL.mode = ControlMode.PAUSED;
+		mode = ControlMode.PAUSED;
 	}
 	
 	public void unpauseRunning() {
 		assert Thread.currentThread().getName().equals("controller");
 		
-		MODEL.mode = ControlMode.RUNNING;
+		mode = ControlMode.RUNNING;
 		
 		synchronized (MODEL.pauseLock) {
 			MODEL.pauseLock.notifyAll();
@@ -353,7 +373,7 @@ public class DeadlockController implements ActionListener {
 	private void draftStart(Point p) {
 		assert Thread.currentThread().getName().equals("controller");
 			
-		MODEL.mode = ControlMode.DRAFTING;
+		mode = ControlMode.DRAFTING;
 		
 		MODEL.hilited = null;
 		
@@ -380,7 +400,7 @@ public class DeadlockController implements ActionListener {
 		
 		assert MODEL.world.checkConsistency();
 		
-		MODEL.mode = ControlMode.IDLE;
+		mode = ControlMode.IDLE;
 		
 	}
 	

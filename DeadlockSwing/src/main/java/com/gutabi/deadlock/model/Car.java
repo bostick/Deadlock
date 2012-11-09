@@ -342,6 +342,27 @@ public abstract class Car implements Entity {
 		}
 	}
 	
+	public final boolean bestHitTest(Point p, double r) {
+		if (hitTest(p)) {
+			
+			return true;
+			
+		} else {
+			
+			if (DMath.lessThanEquals(Point.distance(p, worldPoint1, worldPoint2), r)) {
+				return true;
+			} else if (DMath.lessThanEquals(Point.distance(p, worldPoint2, worldPoint3), r)) {
+				return true;
+			} else if (DMath.lessThanEquals(Point.distance(p, worldPoint3, worldPoint4), r)) {
+				return true;
+			} else if (DMath.lessThanEquals(Point.distance(p, worldPoint4, worldPoint1), r)) {
+				return true;
+			}
+			return false;
+			
+		}
+	}
+	
 	public boolean isDeleteable() {
 		return true;
 	}

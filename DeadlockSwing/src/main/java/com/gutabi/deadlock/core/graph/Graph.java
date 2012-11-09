@@ -275,7 +275,7 @@ public class Graph {
 			}
 			
 			Point e0p = stroke.getPoint(e0.index, e0.param);
-			Entity bh = bestHitTest(e0p, stroke.r);
+			Entity bh = graphBestHitTest(e0p, stroke.r);
 			if (bh == null) {
 				logger.debug("broken");
 				return;
@@ -287,7 +287,7 @@ public class Graph {
 			
 			Vertex v1;
 			Point e1p = stroke.getPoint(e1.index, e1.param);
-			Entity hit1 = bestHitTest(e1p, stroke.r);
+			Entity hit1 = graphBestHitTest(e1p, stroke.r);
 			if (hit1 instanceof Road) {
 				logger.debug("split");
 				
@@ -332,7 +332,7 @@ public class Graph {
 				}
 				
 			} else {
-				assert hitTest(e1p) == null;
+				assert graphHitTest(e1p) == null;
 				logger.debug("create");
 				Intersection ii = new Intersection(e1p);
 				addIntersection(ii);
@@ -806,13 +806,8 @@ public class Graph {
 	/**
 	 * tests any part of vertex and any part of road
 	 */
-	public Entity hitTest(Point p) {
+	public Entity graphHitTest(Point p) {
 		assert p != null;
-		for (StopSign s : signs) {
-			if (s.hitTest(p)) {
-				return s;
-			}
-		}
 		for (Vertex v : getAllVertices()) {
 			if (v.hitTest(p)) {
 				return v;
@@ -831,20 +826,41 @@ public class Graph {
 		return null;
 	}
 	
-	/**
-	 * even if hitting both a vertex and a road, only return vertex
-	 * ignore stop signs
-	 */
-	public Entity bestHitTest(Point p, double radius) {
+	public StopSign signHitTest(Point p) {
+		assert p != null;
+		for (StopSign s : signs) {
+			if (s.hitTest(p)) {
+				return s;
+			}
+		}
+		return null;
+	}
+	
+	public Entity graphBestHitTest(Point p, double r) {
 		assert p != null;
 		for (Vertex v : getAllVertices()) {
-			if (v.hitTest(p, radius)) {
+			if (v.bestHitTest(p, r)) {
 				return v;
 			}
 		}
 		for (Road e : roads) {
-			if (e.hitTest(p, radius)) {
+			if (e.bestHitTest(p, r)) {
 				return e;
+			}
+		}
+		for (Merger m : mergers) {
+			if (m.bestHitTest(p, r)) {
+				return m;
+			}
+		}
+		return null;
+	}
+	
+	public StopSign signBestHitTest(Point p, double r) {
+		assert p != null;
+		for (StopSign s : signs) {
+			if (s.bestHitTest(p, r)) {
+				return s;
 			}
 		}
 		return null;

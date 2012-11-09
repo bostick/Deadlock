@@ -84,7 +84,7 @@ public class Merger implements Entity, Edge, Sweepable {
 		
 		Point c = s.pts.get(0);
 		
-		if (hitTest(c, s.r)) {
+		if (bestHitTest(c, s.r)) {
 			l.start(new SweepEvent(SweepEventType.ENTERMERGER, this, s, 0, 0.0));
 		}
 		
@@ -94,7 +94,7 @@ public class Merger implements Entity, Edge, Sweepable {
 		
 		Point d = s.pts.get(s.pts.size()-1);
 		
-		if (hitTest(d, s.r)) {
+		if (bestHitTest(d, s.r)) {
 			l.end(new SweepEvent(SweepEventType.EXITMERGER, this, s, s.pts.size()-1, 0.0));
 		}
 		
@@ -106,7 +106,7 @@ public class Merger implements Entity, Edge, Sweepable {
 		Point d = s.pts.get(index+1);
 		
 		boolean outside;
-		if (hitTest(c, s.r)) {
+		if (bestHitTest(c, s.r)) {
 			outside = false;
 		} else {
 			outside = true;
@@ -199,7 +199,7 @@ public class Merger implements Entity, Edge, Sweepable {
 		}
 	}
 	
-	public boolean hitTest(Point p, double r) {
+	public boolean bestHitTest(Point p, double r) {
 		if (hitTest(p)) {
 			return true;
 		} else {

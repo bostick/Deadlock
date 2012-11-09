@@ -100,7 +100,7 @@ public class TestDragging {
 	@Before
 	public void setUp() throws Exception {
 		
-		
+		MODEL.init();
 		
 	}
 
@@ -111,7 +111,7 @@ public class TestDragging {
 		
 		Thread.sleep(2000);
 		
-		MODEL.clear();
+//		MODEL.world = null;
 	}
 	
 	

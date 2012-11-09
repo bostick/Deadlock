@@ -92,7 +92,7 @@ public class Capsule implements Sweepable {
 		
 		Point c = s.pts.get(0);
 		
-		if (hitTest(c, s.r)) {
+		if (bestHitTest(c, s.r)) {
 			l.start(new SweepEvent(SweepEventType.ENTERCAPSULE, this, s, 0, 0.0));
 		}
 		
@@ -102,7 +102,7 @@ public class Capsule implements Sweepable {
 		
 		Point d = s.pts.get(s.pts.size()-1);
 		
-		if (hitTest(d, s.r)) {
+		if (bestHitTest(d, s.r)) {
 			l.end(new SweepEvent(SweepEventType.EXITCAPSULE, this, s, s.pts.size()-1, 0.0));
 		}
 		
@@ -119,7 +119,7 @@ public class Capsule implements Sweepable {
 		}
 		
 		boolean outside;
-		if (hitTest(c, s.r)) {
+		if (bestHitTest(c, s.r)) {
 			outside = false;
 		} else {
 			outside = true;
@@ -261,7 +261,7 @@ public class Capsule implements Sweepable {
 		}
 	}
 	
-	public boolean hitTest(Point p, double radius) {
+	public boolean bestHitTest(Point p, double radius) {
 //		if (DMath.equals(Point.distance(p, a, b), r + radius)) {
 //			String.class.getName();
 //		}

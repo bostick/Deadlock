@@ -1,7 +1,7 @@
 package com.gutabi.deadlock.model;
 
-import com.gutabi.deadlock.controller.ControlMode;
 import com.gutabi.deadlock.core.Entity;
+import com.gutabi.deadlock.core.graph.Vertex;
 
 public class DeadlockModel {
 	
@@ -20,8 +20,7 @@ public class DeadlockModel {
 	
 	public World world;
 	
-	public ControlMode mode;
-	
+	public Cursor cursor;
 	public Stroke stroke;
 	
 	public Entity hilited;
@@ -31,7 +30,7 @@ public class DeadlockModel {
 	public Stats stats;
 	
 	public DeadlockModel() {
-		mode = ControlMode.IDLE;
+		
 	}
 	
 	public void init() throws Exception {
@@ -39,14 +38,15 @@ public class DeadlockModel {
 		world = new World();
 		world.init();
 		
+		cursor = new Cursor(Vertex.INIT_VERTEX_RADIUS);
 //		stroke = new Stroke();
 		
 		stats = new Stats();
 	}
 	
-	public void clear() {
-		stroke = null;
-		world = null;
-	}
+//	public void clear() {
+//		stroke = null;
+//		world = null;
+//	}
 	
 }

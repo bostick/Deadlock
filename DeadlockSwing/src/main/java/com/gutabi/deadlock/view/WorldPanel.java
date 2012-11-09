@@ -39,6 +39,10 @@ public class WorldPanel extends JPanel {
 			MODEL.stroke.paint(g2);
 		}
 		
+		if (MODEL.cursor != null) {
+			MODEL.cursor.paint(g2);
+		}
+		
 		if (MODEL.FPS_DRAW) {
 			
 			g2.setTransform(origTrans);

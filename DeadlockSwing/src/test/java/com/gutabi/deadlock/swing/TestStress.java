@@ -38,11 +38,14 @@ public class TestStress {
 
 	@Before
 	public void setUp() throws Exception {
+		
+		MODEL.init();
+		
 	}
 
 	@After
 	public void tearDown() throws Exception {
-		MODEL.clear();
+//		MODEL.clear();
 	}
 	
 	

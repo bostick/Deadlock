@@ -4,11 +4,13 @@ public enum ControlMode {
 	
 	IDLE,
 	
-	
-	
 	DRAFTING,
 	
 	RUNNING,
 	
-	PAUSED
+	PAUSED,
+	
+	
+	MERGEROUTLINE
+	
 }

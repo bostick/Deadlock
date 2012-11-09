@@ -47,13 +47,13 @@ public class TestDraggingFuzz {
 	@Before
 	public void setUp() throws Exception {
 		
-		
+		MODEL.init();
 		
 	}
 
 	@After
 	public void tearDown() throws Exception {
-		MODEL.clear();
+//		MODEL.clear();
 	}
 	
 	
@@ -114,7 +114,12 @@ public class TestDraggingFuzz {
 
 				@Override
 				public void run() {
-					MODEL.clear();
+					try {
+						MODEL.init();
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					//CONTROLLER.allStrokes.clear();
 				}});
 			

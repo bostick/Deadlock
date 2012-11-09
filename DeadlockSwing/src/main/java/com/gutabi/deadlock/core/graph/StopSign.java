@@ -79,6 +79,16 @@ public class StopSign implements Entity {
 		}
 	}
 	
+	public final boolean bestHitTest(Point p, double r) {
+		if (hitTest(p)) {
+			
+			return true;
+			
+		} else {
+			return DMath.lessThanEquals(Point.distance(p, this.p), this.r + r);
+		}
+	}
+	
 	protected void paintAABB(Graphics2D g2) {
 		
 		g2.setColor(Color.BLACK);
