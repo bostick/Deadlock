@@ -1,12 +1,15 @@
 
 
+fix car goal point
+overallPos is correct, but goalPoint is not correct inside of mergers
 
 
-create outline of Merger before inserting
-hit INSERT key first to show outline, to enter INSERT MERGER mode
-hit INSERT again to insert it
 test if Merger is hitting anything else before adding
 
+
+outline for regular cursor
+
+skeleton for roads and mergers
 
 
 

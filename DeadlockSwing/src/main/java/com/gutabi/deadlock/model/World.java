@@ -20,6 +20,7 @@ import org.jbox2d.common.Vec2;
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.Rect;
+import com.gutabi.deadlock.core.graph.Axis;
 import com.gutabi.deadlock.core.graph.Edge;
 import com.gutabi.deadlock.core.graph.Graph;
 import com.gutabi.deadlock.core.graph.Intersection;
@@ -75,21 +76,21 @@ public class World {
 		
 		graph = new Graph();
 		
-		WorldSource a = new WorldSource(new Point(WORLD_WIDTH/4, 0));
-		WorldSource b = new WorldSource(new Point(2*WORLD_WIDTH/4, 0));
-		WorldSource t1 = new WorldSource(new Point(3*WORLD_WIDTH/4, 0));
+		WorldSource a = new WorldSource(new Point(WORLD_WIDTH/4, 0), Axis.TOPBOTTOM);
+		WorldSource b = new WorldSource(new Point(2*WORLD_WIDTH/4, 0), Axis.TOPBOTTOM);
+		WorldSource t1 = new WorldSource(new Point(3*WORLD_WIDTH/4, 0), Axis.TOPBOTTOM);
 		
-		WorldSource c = new WorldSource(new Point(0, WORLD_HEIGHT/4));
-		WorldSource d = new WorldSource(new Point(0, 2*WORLD_HEIGHT/4));
-		WorldSource t2 = new WorldSource(new Point(0, 3*WORLD_HEIGHT/4));
+		WorldSource c = new WorldSource(new Point(0, WORLD_HEIGHT/4), Axis.LEFTRIGHT);
+		WorldSource d = new WorldSource(new Point(0, 2*WORLD_HEIGHT/4), Axis.LEFTRIGHT);
+		WorldSource t2 = new WorldSource(new Point(0, 3*WORLD_HEIGHT/4), Axis.LEFTRIGHT);
 		
-		WorldSink e = new WorldSink(new Point(WORLD_WIDTH/4, WORLD_HEIGHT));
-		WorldSink f = new WorldSink(new Point(2*WORLD_WIDTH/4, WORLD_HEIGHT));
-		WorldSink t3 = new WorldSink(new Point(3*WORLD_WIDTH/4, WORLD_HEIGHT));
+		WorldSink e = new WorldSink(new Point(WORLD_WIDTH/4, WORLD_HEIGHT), Axis.TOPBOTTOM);
+		WorldSink f = new WorldSink(new Point(2*WORLD_WIDTH/4, WORLD_HEIGHT), Axis.TOPBOTTOM);
+		WorldSink t3 = new WorldSink(new Point(3*WORLD_WIDTH/4, WORLD_HEIGHT), Axis.TOPBOTTOM);
 		
-		WorldSink g = new WorldSink(new Point(WORLD_WIDTH, WORLD_HEIGHT/4));
-		WorldSink h = new WorldSink(new Point(WORLD_WIDTH, 2*WORLD_HEIGHT/4));
-		WorldSink t4 = new WorldSink(new Point(WORLD_WIDTH, 3*WORLD_HEIGHT/4));
+		WorldSink g = new WorldSink(new Point(WORLD_WIDTH, WORLD_HEIGHT/4), Axis.LEFTRIGHT);
+		WorldSink h = new WorldSink(new Point(WORLD_WIDTH, 2*WORLD_HEIGHT/4), Axis.LEFTRIGHT);
+		WorldSink t4 = new WorldSink(new Point(WORLD_WIDTH, 3*WORLD_HEIGHT/4), Axis.LEFTRIGHT);
 		
 		a.matchingSink = e;
 		e.matchingSource = a;

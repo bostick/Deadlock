@@ -20,6 +20,8 @@ import com.gutabi.deadlock.model.Stroke;
 @SuppressWarnings("static-access")
 public abstract class Vertex implements Entity, Sweepable {
 	
+	public static final double INIT_VERTEX_RADIUS = Math.sqrt(2 * Road.ROAD_RADIUS * Road.ROAD_RADIUS);
+	
 	public final Point p;
 	
 	protected final List<Road> roads = new ArrayList<Road>();
@@ -37,8 +39,6 @@ public abstract class Vertex implements Entity, Sweepable {
 //	SweepEventListener l;
 	
 	private final int hash;
-	
-	public static final double INIT_VERTEX_RADIUS = Math.sqrt(2 * Road.ROAD_RADIUS * Road.ROAD_RADIUS);
 	
 	public Vertex(Point p) {
 		

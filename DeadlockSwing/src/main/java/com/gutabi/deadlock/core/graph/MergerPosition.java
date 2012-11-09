@@ -14,13 +14,8 @@ public class MergerPosition extends EdgePosition {
 	 * 0 indicates traveling from left to right
 	 * 1 indicates traveling from top to bottom
 	 */
-	public final MergerDirection dir;
+	public final Axis dir;
 	public final double param;
-	
-	public enum MergerDirection {
-		TOPBOTTOM,
-		LEFTRIGHT
-	}
 	
 	public final double distanceToLeftOfMerger;
 	public final double distanceToRightOfMerger;
@@ -29,8 +24,8 @@ public class MergerPosition extends EdgePosition {
 	
 	private final int hash;
 	
-	public MergerPosition(Merger m, MergerDirection dir, double param) {
-		super((dir==MergerDirection.LEFTRIGHT) ? Point.point(m.left.p, m.right.p, param) : Point.point(m.top.p, m.bottom.p, param));
+	public MergerPosition(Merger m, Axis dir, double param) {
+		super((dir==Axis.LEFTRIGHT) ? Point.point(m.left.p, m.right.p, param) : Point.point(m.top.p, m.bottom.p, param));
 		
 		if (DMath.lessThanEquals(param, 0.0) || DMath.greaterThanEquals(param, 1.0)) {
 			throw new IllegalArgumentException();
@@ -48,7 +43,7 @@ public class MergerPosition extends EdgePosition {
 		h = 37 * h + c;
 		hash = h;
 		
-		if (dir==MergerDirection.LEFTRIGHT) {
+		if (dir==Axis.LEFTRIGHT) {
 			vs = new ArrayList<Vertex>();
 			vs.add(m.left);
 			vs.add(m.right);
@@ -58,7 +53,7 @@ public class MergerPosition extends EdgePosition {
 			vs.add(m.bottom);
 		}
 		
-		if (dir==MergerDirection.LEFTRIGHT) {
+		if (dir==Axis.LEFTRIGHT) {
 			distanceToLeftOfMerger = param * Merger.MERGER_WIDTH;
 			distanceToRightOfMerger = Merger.MERGER_WIDTH-distanceToLeftOfMerger;
 			distanceToTopOfMerger = -1;
@@ -91,11 +86,11 @@ public class MergerPosition extends EdgePosition {
 	}
 	
 	public GraphPosition floor() {
-		return (dir==MergerDirection.LEFTRIGHT) ? new VertexPosition(m.left) : new VertexPosition(m.top);
+		return (dir==Axis.LEFTRIGHT) ? new VertexPosition(m.left) : new VertexPosition(m.top);
 	}
 	
 	public GraphPosition ceiling() {
-		return (dir==MergerDirection.LEFTRIGHT) ? new VertexPosition(m.right) : new VertexPosition(m.bottom);
+		return (dir==Axis.LEFTRIGHT) ? new VertexPosition(m.right) : new VertexPosition(m.bottom);
 	}
 	
 	public boolean isBound() {
@@ -112,7 +107,7 @@ public class MergerPosition extends EdgePosition {
 	
 	public GraphPosition nextBoundToward(GraphPosition goal) {
 		VertexPosition vg = (VertexPosition)goal;
-		if (dir==MergerDirection.LEFTRIGHT) {
+		if (dir==Axis.LEFTRIGHT) {
 			assert vg.v == m.left || vg.v == m.right;
 			return vg;
 		} else {
@@ -127,7 +122,7 @@ public class MergerPosition extends EdgePosition {
 	
 	public double distanceToConnectedVertex(Vertex v) {
 		assert vs.contains(v);
-		if (dir == MergerDirection.LEFTRIGHT) {
+		if (dir == Axis.LEFTRIGHT) {
 			if (v == m.left) {
 				return distanceToLeftOfMerger;
 			} else {
@@ -146,20 +141,20 @@ public class MergerPosition extends EdgePosition {
 		
 		if (v == m.top) {
 			
-			return new MergerPosition(m, MergerDirection.TOPBOTTOM, param - dist / Merger.MERGER_HEIGHT);
+			return new MergerPosition(m, Axis.TOPBOTTOM, param - dist / Merger.MERGER_HEIGHT);
 			
 		} else if (v == m.left) {
 			
-			return new MergerPosition(m, MergerDirection.LEFTRIGHT, param - dist / Merger.MERGER_WIDTH);
+			return new MergerPosition(m, Axis.LEFTRIGHT, param - dist / Merger.MERGER_WIDTH);
 			
 		} else if (v == m.right) {
 			
-			return new MergerPosition(m, MergerDirection.LEFTRIGHT, param + dist / Merger.MERGER_WIDTH);
+			return new MergerPosition(m, Axis.LEFTRIGHT, param + dist / Merger.MERGER_WIDTH);
 			
 		} else {
 			assert v == m.bottom;
 			
-			return new MergerPosition(m, MergerDirection.TOPBOTTOM, param + dist / Merger.MERGER_HEIGHT);
+			return new MergerPosition(m, Axis.TOPBOTTOM, param + dist / Merger.MERGER_HEIGHT);
 			
 		}
 		

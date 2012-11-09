@@ -8,8 +8,8 @@ public class MergerSource extends Source {
 	
 	public MergerSink matchingSink;
 	
-	public MergerSource(Point p) {
-		super(p);
+	public MergerSource(Point p, Axis a) {
+		super(p, a);
 		color = Color.GREEN;
 		hiliteColor = new Color(255-color.getRed(), 255-color.getGreen(), 255-color.getBlue());
 	}

@@ -11,7 +11,6 @@ import org.apache.log4j.Logger;
 
 import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.core.graph.MergerPosition.MergerDirection;
 
 @SuppressWarnings("static-access")
 public class GraphPositionPath {
@@ -575,21 +574,21 @@ public class GraphPositionPath {
 			if (aa.v == m.top) {
 				assert bb.v == m.bottom;
 				
-				acc.add(new MergerPosition(m, MergerDirection.TOPBOTTOM, 0.5));
+				acc.add(new MergerPosition(m, Axis.TOPBOTTOM, 0.5));
 				
 				acc.add(bb);
 				
 			} else if (aa.v == m.left) {
 				assert bb.v == m.right;
 				
-				acc.add(new MergerPosition(m, MergerDirection.LEFTRIGHT, 0.5));
+				acc.add(new MergerPosition(m, Axis.LEFTRIGHT, 0.5));
 				
 				acc.add(bb);
 				
 			} else if (aa.v == m.right) {
 				assert bb.v == m.left;
 				
-				acc.add(new MergerPosition(m, MergerDirection.LEFTRIGHT, 0.5));
+				acc.add(new MergerPosition(m, Axis.LEFTRIGHT, 0.5));
 				
 				acc.add(bb);
 				
@@ -597,7 +596,7 @@ public class GraphPositionPath {
 				assert aa.v == m.bottom;
 				assert bb.v == m.top;
 				
-				acc.add(new MergerPosition(m, MergerDirection.TOPBOTTOM, 0.5));
+				acc.add(new MergerPosition(m, Axis.TOPBOTTOM, 0.5));
 				
 				acc.add(bb);
 				

@@ -31,6 +31,7 @@ import com.gutabi.deadlock.core.graph.GraphPosition;
 import com.gutabi.deadlock.core.graph.GraphPositionPath;
 import com.gutabi.deadlock.core.graph.GraphPositionPathPosition;
 import com.gutabi.deadlock.core.graph.Merger;
+import com.gutabi.deadlock.core.graph.MergerPosition;
 import com.gutabi.deadlock.core.graph.RoadPosition;
 import com.gutabi.deadlock.core.graph.StopSign;
 import com.gutabi.deadlock.core.graph.VertexPosition;
@@ -536,7 +537,21 @@ public abstract class Car implements Entity {
 		
 		switch (state) {
 		case DRIVING:
-			GraphPositionPathPosition next = overallPos.travel(Math.min(steeringLookaheadDistance, overallPos.lengthToEndOfPath));
+			
+			double lookaheadDistance = Math.min(steeringLookaheadDistance, overallPos.lengthToEndOfPath);
+			
+			GraphPositionPathPosition next = overallPos.travel(lookaheadDistance);
+			
+			if (overallPos.gpos instanceof RoadPosition && next.gpos instanceof MergerPosition) {
+				
+				double roadToVertex = ((RoadPosition)overallPos.gpos).lengthToEndOfRoad;
+				double vertexToMerger = ((MergerPosition)next.gpos).distanceToLeftOfMerger;
+				
+//				double nextDist = overallPos.distanceTo(next);
+//				assert DMath.equals(nextDist, lookaheadDistance);
+				
+			}
+			
 			goalPoint = next.gpos.p;
 			updateDrive(t);
 			break;
@@ -813,7 +828,8 @@ public abstract class Car implements Entity {
 			g2.scale(MODEL.METERS_PER_PIXEL, MODEL.METERS_PER_PIXEL);
 			
 			if (goalPoint != null) {
-				g2.fillOval((int)(goalPoint.x * MODEL.PIXELS_PER_METER), (int)(goalPoint.y * MODEL.PIXELS_PER_METER), 2, 2);
+				g2.setColor(Color.WHITE);
+				g2.fillOval((int)(goalPoint.x * MODEL.PIXELS_PER_METER) - 2, (int)(goalPoint.y * MODEL.PIXELS_PER_METER) - 2, 4, 4);
 			}
 			
 			paintAABB(g2);

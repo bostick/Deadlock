@@ -608,17 +608,6 @@ public final class Road implements Entity, Edge {
 		return aabb;
 	}
 	
-	protected void paintAABB(Graphics2D g2) {
-		
-		g2.setColor(Color.BLACK);
-		g2.drawRect(
-				(int)(aabb.x * MODEL.PIXELS_PER_METER),
-				(int)(aabb.y * MODEL.PIXELS_PER_METER),
-				(int)(aabb.width * MODEL.PIXELS_PER_METER),
-				(int)(aabb.height * MODEL.PIXELS_PER_METER));
-		
-	}
-	
 	public static boolean haveExactlyOneSharedIntersection(Road a, Road b) {
 		Vertex as = a.start;
 		Vertex ae = a.end;
@@ -705,6 +694,8 @@ public final class Road implements Entity, Edge {
 			
 			g2.scale(MODEL.METERS_PER_PIXEL, MODEL.METERS_PER_PIXEL);
 			
+			paintSkeleton(g2);
+			
 			paintAABB(g2);
 			
 			g2.setTransform(origTransform);
@@ -750,23 +741,26 @@ public final class Road implements Entity, Edge {
 	/**
 	 * @param g2 in pixels
 	 */
-//	public void paintSkeleton(Graphics2D g2) {
-//		
-//		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
-//		g2.setColor(Color.BLACK);
-//		
-//		int[] xs = new int[spine.size()+1];
-//		int[] ys = new int[spine.size()+1];
-//		Point a = spine.get(0).a;
-//		xs[0] = (int)(a.x * MODEL.PIXELS_PER_METER);
-//		ys[0] = (int)(a.y * MODEL.PIXELS_PER_METER);
-//		for (int i = 0; i < spine.size(); i++) {
-//			Point p = spine.get(i).b;
-//			xs[i+1] = (int)(p.x * MODEL.PIXELS_PER_METER);
-//			ys[i+1] = (int)(p.y * MODEL.PIXELS_PER_METER);
-//		}
-//		g2.drawPolyline(xs, ys, spine.size()+1);
-//	}
+	public void paintSkeleton(Graphics2D g2) {
+		
+		g2.setColor(Color.BLACK);
+		
+		for (Capsule s : caps) {
+			s.drawSkeleton(g2);
+		}
+		
+	}
+	
+	protected void paintAABB(Graphics2D g2) {
+		
+		g2.setColor(Color.BLACK);
+		g2.drawRect(
+				(int)(aabb.x * MODEL.PIXELS_PER_METER),
+				(int)(aabb.y * MODEL.PIXELS_PER_METER),
+				(int)(aabb.width * MODEL.PIXELS_PER_METER),
+				(int)(aabb.height * MODEL.PIXELS_PER_METER));
+		
+	}
 	
 	/**
 	 * @param g2 in world coords

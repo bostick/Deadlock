@@ -2,7 +2,6 @@ package com.gutabi.deadlock.core.graph;
 
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 
-import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
@@ -12,8 +11,8 @@ import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.Rect;
-import com.gutabi.deadlock.core.graph.MergerPosition.MergerDirection;
 import com.gutabi.deadlock.core.graph.SweepEvent.SweepEventType;
+import com.gutabi.deadlock.model.Cursor;
 import com.gutabi.deadlock.model.Stroke;
 
 @SuppressWarnings("static-access")
@@ -38,17 +37,17 @@ public class Merger implements Entity, Edge, Sweepable {
 	private Point p2;
 	private Point p3;
 	
-	public Merger(Point ul) {
-		this.ul = ul;
+	public Merger(Point center) {
+		this.ul = center.plus(new Point(-MERGER_WIDTH/2,  -MERGER_HEIGHT/2));
 		
 		aabb = new Rect(ul.x, ul.y, MERGER_WIDTH, MERGER_HEIGHT);
 		color = Color.BLUE;
 		hiliteColor = Color.ORANGE;
 		
-		top = new MergerSink(new Point(ul.x + MERGER_WIDTH/2, ul.y));
-		left = new MergerSink(new Point(ul.x, ul.y + MERGER_HEIGHT/2));
-		right = new MergerSource(new Point(ul.x + MERGER_WIDTH, ul.y + MERGER_HEIGHT/2));
-		bottom = new MergerSource(new Point(ul.x + MERGER_WIDTH/2, ul.y+MERGER_HEIGHT));
+		top = new MergerSink(new Point(ul.x + MERGER_WIDTH/2, ul.y), Axis.TOPBOTTOM);
+		left = new MergerSink(new Point(ul.x, ul.y + MERGER_HEIGHT/2), Axis.LEFTRIGHT);
+		right = new MergerSource(new Point(ul.x + MERGER_WIDTH, ul.y + MERGER_HEIGHT/2), Axis.LEFTRIGHT);
+		bottom = new MergerSource(new Point(ul.x + MERGER_WIDTH/2, ul.y+MERGER_HEIGHT), Axis.TOPBOTTOM);
 		
 		top.matchingSource = bottom;
 		bottom.matchingSink = top;
@@ -170,23 +169,23 @@ public class Merger implements Entity, Edge, Sweepable {
 		if (v == top) {
 			assert DMath.lessThan(dist, MERGER_HEIGHT);
 			
-			return new MergerPosition(this, MergerDirection.TOPBOTTOM, dist / MERGER_HEIGHT);
+			return new MergerPosition(this, Axis.TOPBOTTOM, dist / MERGER_HEIGHT);
 			
 		} else if (v == left) {
 			assert DMath.lessThan(dist, MERGER_WIDTH);
 			
-			return new MergerPosition(this, MergerDirection.LEFTRIGHT, dist / MERGER_WIDTH);
+			return new MergerPosition(this, Axis.LEFTRIGHT, dist / MERGER_WIDTH);
 			
 		} else if (v == right) {
 			assert DMath.lessThan(dist, MERGER_WIDTH);
 			
-			return new MergerPosition(this, MergerDirection.LEFTRIGHT, dist / MERGER_WIDTH);
+			return new MergerPosition(this, Axis.LEFTRIGHT, 1 - dist / MERGER_WIDTH);
 			
 		} else {
 			assert v == bottom;
 			assert DMath.lessThan(dist, MERGER_HEIGHT);
 			
-			return new MergerPosition(this, MergerDirection.TOPBOTTOM, dist / MERGER_HEIGHT);
+			return new MergerPosition(this, Axis.TOPBOTTOM, 1 - dist / MERGER_HEIGHT);
 			
 		}
 	}
@@ -273,6 +272,10 @@ public class Merger implements Entity, Edge, Sweepable {
 				(int)(MERGER_WIDTH * MODEL.PIXELS_PER_METER),
 				(int)(MERGER_HEIGHT * MODEL.PIXELS_PER_METER));
 		
+		if (MODEL.DEBUG_DRAW) {
+			paintSkeleton(g2);
+		}
+		
 		g2.setTransform(origTransform);
 		
 //		top.paint(g2);
@@ -301,16 +304,32 @@ public class Merger implements Entity, Edge, Sweepable {
 		
 	}
 	
+	void paintSkeleton(Graphics2D g2) {
+		
+		g2.setColor(Color.BLACK);
+		
+		g2.drawLine(
+				(int)((top.p.x) * MODEL.PIXELS_PER_METER),
+				(int)((top.p.y + Vertex.INIT_VERTEX_RADIUS) * MODEL.PIXELS_PER_METER),
+				(int)((bottom.p.x) * MODEL.PIXELS_PER_METER),
+				(int)((bottom.p.y - Vertex.INIT_VERTEX_RADIUS) * MODEL.PIXELS_PER_METER));
+		
+		g2.drawLine(
+				(int)((left.p.x + Vertex.INIT_VERTEX_RADIUS) * MODEL.PIXELS_PER_METER),
+				(int)((left.p.y) * MODEL.PIXELS_PER_METER),
+				(int)((right.p.x - Vertex.INIT_VERTEX_RADIUS) * MODEL.PIXELS_PER_METER),
+				(int)((right.p.y) * MODEL.PIXELS_PER_METER));
+		
+	}
 	
 	
 	//java.awt.Stroke mergerOutlineStroke = new BasicStroke(float width, int cap, int join, float miterlimit, float[] dash, float dash_phase);
-	static java.awt.Stroke mergerOutlineStroke = new BasicStroke(7.5f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 0.0f, new float[]{15.0f}, 0.0f);
 	
 	public static void paintOutline(Point p, Graphics2D g2) {
 		
 		java.awt.Stroke origStroke = g2.getStroke();
 		
-		g2.setStroke(mergerOutlineStroke);
+		g2.setStroke(Cursor.outlineStroke);
 		g2.setColor(Color.GRAY);
 		
 		g2.drawRect(

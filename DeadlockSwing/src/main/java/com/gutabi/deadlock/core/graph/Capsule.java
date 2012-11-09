@@ -361,4 +361,14 @@ public class Capsule implements Sweepable {
 				(int)(2 * r * MODEL.PIXELS_PER_METER));
 		
 	}
+	
+	public void drawSkeleton(Graphics2D g2) {
+		
+		g2.drawLine(
+				(int)(a.x * MODEL.PIXELS_PER_METER),
+				(int)(a.y * MODEL.PIXELS_PER_METER),
+				(int)(b.x * MODEL.PIXELS_PER_METER),
+				(int)(b.y * MODEL.PIXELS_PER_METER));
+		
+	}
 }

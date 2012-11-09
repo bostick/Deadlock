@@ -3,6 +3,7 @@ package com.gutabi.deadlock.model;
 import static com.gutabi.deadlock.controller.DeadlockController.CONTROLLER;
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 
@@ -68,20 +69,32 @@ public class Cursor {
 		
 	}
 	
+	
+	public static java.awt.Stroke outlineStroke = new BasicStroke(7.5f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 0.0f, new float[]{15.0f}, 0.0f);
+	
 	private void paintCursor(Graphics2D g2) {
 		
 		if (p != null) {
 			
 			switch (CONTROLLER.mode) {
+			case RUNNING:
+				return;
 			case DRAFTING:
 			case IDLE:
 			case PAUSED:
-			case RUNNING:
+				
+				java.awt.Stroke origStroke = g2.getStroke();
+				
+				g2.setStroke(outlineStroke);
+				
 				g2.drawOval(
 						(int)((p.x - r) * MODEL.PIXELS_PER_METER),
 						(int)((p.y - r) * MODEL.PIXELS_PER_METER),
 						(int)((2 * r) * MODEL.PIXELS_PER_METER),
 						(int)((2 * r) * MODEL.PIXELS_PER_METER));
+				
+				g2.setStroke(origStroke);
+				
 				break;
 			case MERGEROUTLINE:
 				

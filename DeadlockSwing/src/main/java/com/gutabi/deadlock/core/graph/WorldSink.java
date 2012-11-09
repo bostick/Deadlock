@@ -8,8 +8,8 @@ public class WorldSink extends Sink {
 	
 	public WorldSource matchingSource;
 	
-	public  WorldSink(Point p) {
-		super(p);
+	public  WorldSink(Point p, Axis a) {
+		super(p, a);
 		color = Color.RED;
 		hiliteColor = new Color(255-color.getRed(), 255-color.getGreen(), 255-color.getBlue());
 	}

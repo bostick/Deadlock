@@ -161,6 +161,9 @@ public class GraphPositionPathPosition {
 				
 				EdgePosition g = (EdgePosition)(curPos.gpos.travelTo(nextPos.gpos, toTravel));
 				
+				double fromCurToG = curPos.gpos.distanceTo(g);
+				assert DMath.equals(fromCurToG, toTravel);
+				
 				if (curPos.gpos instanceof EdgePosition) {
 					EdgePosition curPosE = (EdgePosition)curPos.gpos;
 					

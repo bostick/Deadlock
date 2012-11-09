@@ -402,7 +402,9 @@ public class Graph {
 	
 	public void insertMergerTop(Point p) {
 		
-		Merger m = new Merger(new Point(p.x-Merger.MERGER_WIDTH/2, p.y-Merger.MERGER_HEIGHT/2));
+		
+		
+		Merger m = new Merger(p);
 		
 		mergers.add(m);
 		
@@ -1226,12 +1228,12 @@ public class Graph {
 			e.paint(g2);
 		}
 		
-		for (Vertex v : verticesCopy) {
-			v.paint(g2);
-		}
-		
 		for (Merger m : mergersCopy) {
 			m.paint(g2);
+		}
+		
+		for (Vertex v : verticesCopy) {
+			v.paint(g2);
 		}
 		
 		for (StopSign s : signsCopy) {
