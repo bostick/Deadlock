@@ -1,5 +1,6 @@
 package com.gutabi.deadlock.model;
 
+import static com.gutabi.deadlock.controller.DeadlockController.CONTROLLER;
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
@@ -72,55 +73,57 @@ public class World {
 	
 	public World() {
 		
-//		WorldSource a = new WorldSource(new Point(WORLD_WIDTH/4, 0));
-//		WorldSource b = new WorldSource(new Point(2*WORLD_WIDTH/4, 0));
-//		WorldSource t1 = new WorldSource(new Point(3*WORLD_WIDTH/4, 0));
-//		
-//		WorldSource c = new WorldSource(new Point(0, WORLD_HEIGHT/4));
-//		WorldSource d = new WorldSource(new Point(0, 2*WORLD_HEIGHT/4));
-//		WorldSource t2 = new WorldSource(new Point(0, 3*WORLD_HEIGHT/4));
-//		
-//		WorldSink e = new WorldSink(new Point(WORLD_WIDTH/4, WORLD_HEIGHT));
-//		WorldSink f = new WorldSink(new Point(2*WORLD_WIDTH/4, WORLD_HEIGHT));
-//		WorldSink t3 = new WorldSink(new Point(3*WORLD_WIDTH/4, WORLD_HEIGHT));
-//		
-//		WorldSink g = new WorldSink(new Point(WORLD_WIDTH, WORLD_HEIGHT/4));
-//		WorldSink h = new WorldSink(new Point(WORLD_WIDTH, 2*WORLD_HEIGHT/4));
-//		WorldSink t4 = new WorldSink(new Point(WORLD_WIDTH, 3*WORLD_HEIGHT/4));
-//		
-//		a.matchingSink = e;
-//		e.matchingSource = a;
-//		
-//		b.matchingSink = f;
-//		f.matchingSource = b;
-//		
-//		t1.matchingSink = t3;
-//		t3.matchingSource = t1;
-//		
-//		c.matchingSink = g;
-//		g.matchingSource = c;
-//		
-//		d.matchingSink = h;
-//		h.matchingSource = d;
-//		
-//		t2.matchingSink = t4;
-//		t4.matchingSource = t2;
-//		
-//		graph.addSource(a);
-//		graph.addSource(b);
-//		graph.addSource(t1);
-//		
-//		graph.addSource(c);
-//		graph.addSource(d);
-//		graph.addSource(t2);
-//		
-//		graph.addSink(e);
-//		graph.addSink(f);
-//		graph.addSink(t3);
-//		
-//		graph.addSink(g);
-//		graph.addSink(h);
-//		graph.addSink(t4);
+		graph = new Graph();
+		
+		WorldSource a = new WorldSource(new Point(WORLD_WIDTH/4, 0));
+		WorldSource b = new WorldSource(new Point(2*WORLD_WIDTH/4, 0));
+		WorldSource t1 = new WorldSource(new Point(3*WORLD_WIDTH/4, 0));
+		
+		WorldSource c = new WorldSource(new Point(0, WORLD_HEIGHT/4));
+		WorldSource d = new WorldSource(new Point(0, 2*WORLD_HEIGHT/4));
+		WorldSource t2 = new WorldSource(new Point(0, 3*WORLD_HEIGHT/4));
+		
+		WorldSink e = new WorldSink(new Point(WORLD_WIDTH/4, WORLD_HEIGHT));
+		WorldSink f = new WorldSink(new Point(2*WORLD_WIDTH/4, WORLD_HEIGHT));
+		WorldSink t3 = new WorldSink(new Point(3*WORLD_WIDTH/4, WORLD_HEIGHT));
+		
+		WorldSink g = new WorldSink(new Point(WORLD_WIDTH, WORLD_HEIGHT/4));
+		WorldSink h = new WorldSink(new Point(WORLD_WIDTH, 2*WORLD_HEIGHT/4));
+		WorldSink t4 = new WorldSink(new Point(WORLD_WIDTH, 3*WORLD_HEIGHT/4));
+		
+		a.matchingSink = e;
+		e.matchingSource = a;
+		
+		b.matchingSink = f;
+		f.matchingSource = b;
+		
+		t1.matchingSink = t3;
+		t3.matchingSource = t1;
+		
+		c.matchingSink = g;
+		g.matchingSource = c;
+		
+		d.matchingSink = h;
+		h.matchingSource = d;
+		
+		t2.matchingSink = t4;
+		t4.matchingSource = t2;
+		
+		graph.addSource(a);
+		graph.addSource(b);
+		graph.addSource(t1);
+		
+		graph.addSource(c);
+		graph.addSource(d);
+		graph.addSource(t2);
+		
+		graph.addSink(e);
+		graph.addSink(f);
+		graph.addSink(t3);
+		
+		graph.addSink(g);
+		graph.addSink(h);
+		graph.addSink(t4);
 
 		
 	}
@@ -140,8 +143,6 @@ public class World {
 				g2.drawImage(sheet, GRASS_WIDTH * i, GRASS_HEIGHT * j, GRASS_WIDTH * i + GRASS_WIDTH, GRASS_HEIGHT * j + GRASS_HEIGHT, 0, 224, 0+GRASS_WIDTH, 224+GRASS_HEIGHT, null);
 			}
 		}
-		
-		graph = new Graph();
 		
 		b2dWorld = new org.jbox2d.dynamics.World(new Vec2(0.0f, 0.0f), true);
 		listener = new CarEventListener();
@@ -357,7 +358,27 @@ public class World {
 		if (c != null) {
 			return c;
 		}
-		Entity h = graph.hitTest(p);
+		StopSign s = signHitTest(p);
+		if (s != null) {
+			return s;
+		}
+		Entity h = graphHitTest(p);
+		if (h != null) {
+			return h;
+		}
+		return null;
+	}
+	
+	public Entity bestHitTest(Point p, double r) {
+		Car c = carBestHitTest(p, r);
+		if (c != null) {
+			return c;
+		}
+		StopSign s = signBestHitTest(p, r);
+		if (s != null) {
+			return s;
+		}
+		Entity h = graphBestHitTest(p, r);
 		if (h != null) {
 			return h;
 		}
@@ -375,8 +396,31 @@ public class World {
 		return null;
 	}
 	
+	public Car carBestHitTest(Point p, double r) {
+		synchronized (MODEL) {
+			for (Car c : cars) {
+				if (c.bestHitTest(p, r)) {
+					return c;
+				}
+			}
+		}
+		return null;
+	}
+	
 	public Entity graphHitTest(Point p) {
-		return graph.hitTest(p);
+		return graph.graphHitTest(p);
+	}
+	
+	public StopSign signHitTest(Point p) {
+		return graph.signHitTest(p);
+	}
+	
+	public StopSign signBestHitTest(Point p, double r) {
+		return graph.signBestHitTest(p, r);
+	}
+	
+	public Entity graphBestHitTest(Point p, double r) {
+		return graph.graphBestHitTest(p, r);
 	}
 	
 //	public Entity bestHitTest(Point p, double radius) {
@@ -402,7 +446,7 @@ public class World {
 	
 	private void paintScene(Graphics2D g2) {
 		
-		switch (MODEL.mode) {
+		switch (CONTROLLER.mode) {
 		case DRAFTING:
 			break;
 		case IDLE:
