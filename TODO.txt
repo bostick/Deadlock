@@ -1,6 +1,18 @@
 
 IMMEDIATELY:
 
+skids
+line segments of when a car goes off-road
+
+crashes
+find a fire gif and start animating sprites
+
+status of cursor
+how many vertices, capsules, etc. currently hitting?
+
+ideal physics
+option to remove braking, friction, skidding, etc.
+
 test if Merger is hitting anything else before adding
 
 IN THE NEXT WEEK:
