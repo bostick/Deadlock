@@ -1007,8 +1007,6 @@ public class Graph {
 		 */
 		for (int i = 0; i < distances.length; i++) {
 			Arrays.fill(distances[i], Double.POSITIVE_INFINITY);
-		}
-		for (int i = 0; i < distances.length; i++) {
 			distances[i][i] = 0.0;
 		}
 		
@@ -1263,17 +1261,13 @@ public class Graph {
 	
 	public void paintIDs(Graphics2D g2) {
 		
-		if (MODEL.DEBUG_DRAW) {
-			
-			List<Vertex> verticesCopy;
-			synchronized (MODEL) {
-				verticesCopy = new ArrayList<Vertex>(getAllVertices());
-			}
-			
-			for (Vertex v : verticesCopy) {
-				v.paintID(g2);
-			}
-			
+		List<Vertex> verticesCopy;
+		synchronized (MODEL) {
+			verticesCopy = new ArrayList<Vertex>(getAllVertices());
+		}
+		
+		for (Vertex v : verticesCopy) {
+			v.paintID(g2);
 		}
 		
 	}

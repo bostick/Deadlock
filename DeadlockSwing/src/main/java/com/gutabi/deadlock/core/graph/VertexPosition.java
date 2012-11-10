@@ -11,7 +11,7 @@ public class VertexPosition extends GraphPosition {
 	private final int hash;
 	
 	public VertexPosition(Vertex v) {
-		super(v.p);
+		super(v.p, v, Axis.NONE);
 		this.v = v;
 		
 		int h = 17;

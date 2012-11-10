@@ -472,7 +472,11 @@ public class World {
 			
 			g2.setTransform(origTransform);
 			
-			graph.paintIDs(g2);
+			if (MODEL.DEBUG_DRAW) {
+				
+				graph.paintIDs(g2);
+				
+			}
 			
 			break;
 		}

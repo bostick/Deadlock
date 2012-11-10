@@ -1,6 +1,7 @@
 package com.gutabi.deadlock.view;
 
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
+import static com.gutabi.deadlock.controller.DeadlockController.CONTROLLER;
 
 import java.awt.BasicStroke;
 import java.awt.Container;
@@ -91,10 +92,18 @@ public class DeadlockView {
 		worldOriginY = (int)(panel.getHeight() * 0.5 - (MODEL.world.WORLD_HEIGHT * 0.5 * MODEL.PIXELS_PER_METER));
 		
 		Rect aabb = MODEL.world.getAABB();
-		if (MODEL.stroke != null) {
+		
+		switch (CONTROLLER.mode) {
+		case DRAFTING:
 			aabb = Rect.union(aabb, MODEL.stroke.getAABB());
+		case IDLE:
+		case MERGEROUTLINE:
+			aabb = Rect.union(aabb, MODEL.cursor.getAABB());
+			break;
+		case PAUSED:
+		case RUNNING:
+			break;
 		}
-		aabb = Rect.union(aabb, MODEL.cursor.getAABB());
 		
 		if (drawingAABB != null && aabb.equals(drawingAABB)) {
 			

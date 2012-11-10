@@ -22,7 +22,7 @@ public class RoadPosition extends EdgePosition {
 	private final int hash;
 	
 	public RoadPosition(Road r, int index, double param) {
-		super(Point.point(r.get(index), r.get(index+1), param));
+		super(Point.point(r.get(index), r.get(index+1), param), r, Axis.NONE);
 		
 		if (index < 0 || index >= r.size()-1) {
 			throw new IllegalArgumentException();

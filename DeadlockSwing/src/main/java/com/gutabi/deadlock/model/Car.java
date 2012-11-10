@@ -87,6 +87,7 @@ public abstract class Car implements Entity {
 	float angle;
 	float angularVel;
 	Matrix carTrans;
+	float carAngle;
 	boolean atleastPartiallyOnRoad;
 	boolean completelyOnRoad;
 	boolean inMerger;
@@ -142,22 +143,24 @@ public abstract class Car implements Entity {
 		GraphPosition closestGraphPos = overallPos.gpos;
 		startPoint = closestGraphPos.p;
 		
-		pathingLogger.debug("overall path:");
-		for (GraphPosition gp : overallPath.poss) {
-			pathingLogger.debug(gp);
-		}
-		pathingLogger.debug("");
-		
-		pathingLogger.debug("overall path bounds:");
-		GraphPositionPathPosition cur = overallPos;
-		while (true) {
-			pathingLogger.debug(cur);
-			if (cur.isEndOfPath()) {
-				break;
+		if (pathingLogger.isDebugEnabled()) {
+			pathingLogger.debug("overall path:");
+			for (GraphPosition gp : overallPath.poss) {
+				pathingLogger.debug(gp);
 			}
-			cur = cur.nextBound();
+			pathingLogger.debug("");
+			
+			pathingLogger.debug("overall path bounds:");
+			GraphPositionPathPosition cur = overallPos;
+			while (true) {
+				pathingLogger.debug(cur);
+				if (cur.isEndOfPath()) {
+					break;
+				}
+				cur = cur.nextBound();
+			}
+			pathingLogger.debug("");
 		}
-		pathingLogger.debug("");
 		
 		GraphPositionPathPosition next = overallPos.travel(getMetersPerSecond() * MODEL.dt);
 		
@@ -244,10 +247,14 @@ public abstract class Car implements Entity {
 		
 		forwardVel = currentRightNormal.mul(Vec2.dot(currentRightNormal, vel));
 		
-		logger.debug("vel: " + forwardVel.length());
+		if (logger.isDebugEnabled()) {
+			logger.debug("vel: " + forwardVel.length());
+		}
 		
 		Mat22 r = b2dBody.getTransform().R;
 		carTrans = new Matrix(r.col1.x, r.col2.x, r.col1.y, r.col2.y);
+		carAngle = b2dBody.getAngle();
+		
 		
 		
 		
@@ -475,7 +482,9 @@ public abstract class Car implements Entity {
 			GraphPositionPathPosition max = overallPos.travel(Math.min(2 * CAR_LENGTH, overallPos.lengthToEndOfPath));
 			overallPos = overallPath.findClosestGraphPositionPathPosition(p, overallPos, max);
 			
-			pathingLogger.debug("overallPos: " + overallPos.gpos);
+			if (pathingLogger.isDebugEnabled()) {
+				pathingLogger.debug("overallPos: " + overallPos.gpos);
+			}
 			
 //			pathingLogger.debug("next bound after overallPos: " + overallPos.nextBound().gpos);
 			
@@ -562,7 +571,9 @@ public abstract class Car implements Entity {
 			
 			GraphPositionPathPosition next = overallPos.travel(lookaheadDistance);
 			
-			pathingLogger.debug("goalPoint: " + next.gpos);
+			if (pathingLogger.isDebugEnabled()) {
+				pathingLogger.debug("goalPoint: " + next.gpos);
+			}
 			
 			double nextDist = overallPos.distanceTo(next);
 			assert DMath.equals(nextDist, lookaheadDistance);
@@ -774,7 +785,7 @@ public abstract class Car implements Entity {
 		switch (state) {
 		case DRIVING: {
 			
-			WorldSink s = (WorldSink)overallPath.end.getEntity();
+			WorldSink s = (WorldSink)overallPath.end.e;
 			boolean sinked = false;
 			if (Point.distance(p, s.p) < MODEL.world.SINK_EPSILON) {
 				sinked = true;
@@ -833,7 +844,8 @@ public abstract class Car implements Entity {
 		AffineTransform origTransform = g2.getTransform();
 		
 		g2.translate(p.x, p.y);
-		g2.transform(carTrans.affineTransform());
+//		g2.transform(carTrans.affineTransform());
+		g2.rotate(carAngle);
 		
 		paintImage(g2);
 		

@@ -1,11 +1,6 @@
 
 IMMEDIATELY:
 
-fix car goal point
-overallPos is correct, but goalPoint is not correct inside of mergers
-
-remove sweepCircleCap
-
 test if Merger is hitting anything else before adding
 
 IN THE NEXT WEEK:
@@ -32,6 +27,14 @@ switch to opengl
 start work on popup menu
 
 DONE:
+
+remove sweepCircleCap
+
+fix car goal point
+overallPos is correct, but goalPoint is not correct inside of mergers
+
+fix vertex distance problem
+wiring up a merger backwards doesn't work
 
 fix automatic merging of merger vertices
 add 2 roads to a merger vertex

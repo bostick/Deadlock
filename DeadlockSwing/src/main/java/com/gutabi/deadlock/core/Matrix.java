@@ -4,7 +4,7 @@ import java.awt.geom.AffineTransform;
 
 public class Matrix {
 	
-	double[][] m;
+	public final double[][] m;
 	
 	public Matrix(double a, double b, double c, double d) {
 		

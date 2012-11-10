@@ -7,14 +7,8 @@ import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
 
 public class MergerPosition extends EdgePosition {
-	
+
 	public final Merger m;
-	/**
-	 * dir is 0 or 1
-	 * 0 indicates traveling from left to right
-	 * 1 indicates traveling from top to bottom
-	 */
-	public final Axis a;
 	public final int index;
 	public final double param;
 	
@@ -28,7 +22,8 @@ public class MergerPosition extends EdgePosition {
 	private final int hash;
 	
 	public MergerPosition(Merger m, Axis a, int index, double param) {
-		super(Point.point(m.get(index, a), m.get(index+1, a), param));
+		super(Point.point(m.get(index, a), m.get(index+1, a), param), m, a);
+		this.m = m;
 		
 		if (index < 0 || index >= 2) {
 			throw new IllegalArgumentException();
@@ -40,8 +35,6 @@ public class MergerPosition extends EdgePosition {
 			throw new IllegalArgumentException();
 		}
 		
-		this.m = m;
-		this.a = a;
 		this.index = index;
 		this.param = param;
 		
@@ -91,7 +84,7 @@ public class MergerPosition extends EdgePosition {
 	}
 	
 	public String toString() {
-		return m + " " + param + " (" + (a==Axis.LEFTRIGHT?distanceToLeftOfMerger:distanceToTopOfMerger) + "/" + (a==Axis.LEFTRIGHT?Merger.MERGER_WIDTH:Merger.MERGER_HEIGHT) + ")";
+		return m + " " + index + " " + param + " (" + (a==Axis.LEFTRIGHT?distanceToLeftOfMerger:distanceToTopOfMerger) + "/" + (a==Axis.LEFTRIGHT?Merger.MERGER_WIDTH:Merger.MERGER_HEIGHT) + ")";
 	}
 	
 	@Override
@@ -277,7 +270,11 @@ public class MergerPosition extends EdgePosition {
 			return new VertexPosition(m.left);
 		} else {
 			assert index == 1;
-			return new MergerPosition(m, Axis.LEFTRIGHT, 1, 0.0);
+			if (DMath.equals(param, 0.0)) {
+				return new VertexPosition(m.left);
+			} else {
+				return new MergerPosition(m, Axis.LEFTRIGHT, 1, 0.0);
+			}
 		}
 	}
 	
@@ -295,7 +292,11 @@ public class MergerPosition extends EdgePosition {
 			return new VertexPosition(m.top);
 		} else {
 			assert index == 1;
-			return new MergerPosition(m, Axis.TOPBOTTOM, 1, 0.0);
+			if (DMath.equals(param, 0.0)) {
+				return new VertexPosition(m.top);
+			} else {
+				return new MergerPosition(m, Axis.TOPBOTTOM, 1, 0.0);
+			}
 		}
 	}
 	
