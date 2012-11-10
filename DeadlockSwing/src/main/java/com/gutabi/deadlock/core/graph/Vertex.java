@@ -33,11 +33,8 @@ public abstract class Vertex implements Entity, Sweepable {
 	
 	public final List<Car> carQueue = new ArrayList<Car>();
 	
-	protected Color color;
 	protected Color hiliteColor;
-	
-//	SweepEventListener l;
-	
+		
 	private final int hash;
 	
 	public Vertex(Point p) {
@@ -58,28 +55,14 @@ public abstract class Vertex implements Entity, Sweepable {
 	}
 	
 	public String toString() {
-		return Integer.toString(id);
+		return "Vertex[" + id + "]";
 	}
 	
 	public double getRadius() {
 		return r;
 	}
 	
-//	public void addEdge(Edge e) {
-//		assert e != null;
-//		eds.add(e);
-//	}
-//	
-//	public void removeEdge(Edge e) {
-//		assert eds.contains(e);
-//		eds.remove(e);
-//	}
 	
-	
-	
-//	public void setSweepEventListener(SweepEventListener l) {
-//		this.l = l;
-//	}
 	
 	public void sweepStart(Stroke s, SweepEventListener l) {
 		
@@ -87,7 +70,6 @@ public abstract class Vertex implements Entity, Sweepable {
 		
 		if (bestHitTest(c, s.r)) {
 			SweepEvent e = new SweepEvent(SweepEventType.ENTERVERTEX, this, s, 0, 0.0);
-//			e.setVertex(this);
 			l.start(e);
 		}
 		
@@ -99,7 +81,6 @@ public abstract class Vertex implements Entity, Sweepable {
 		
 		if (bestHitTest(d, s.r)) {
 			SweepEvent e = new SweepEvent(SweepEventType.EXITVERTEX, this, s, s.pts.size()-1, 0.0);
-//			e.setVertex(this);
 			l.end(e);
 		}
 		
@@ -122,11 +103,6 @@ public abstract class Vertex implements Entity, Sweepable {
 		int paramCount = SweepUtils.sweepCircleCircle(p, c, d, s.r, r, params);
 		
 		Arrays.sort(params);
-//		for (int i = 0; i < paramCount-1; i++) {
-//			double p0 = params[i];
-//			double p1 = params[i+1];
-//			assert !DMath.equals(p0, p1);
-//		}
 		
 		if (paramCount == 2) {
 			String.class.getName();
@@ -162,10 +138,6 @@ public abstract class Vertex implements Entity, Sweepable {
 	}
 	
 	public final boolean bestHitTest(Point p, double radius) {
-//		if (DMath.equals(Point.distance(p, this.p), r + radius)) {
-//			String.class.getName();
-//		}
-//		return DMath.lessThanEquals(Point.distance(p, this.p), r + radius);
 		return DMath.lessThanEquals(Point.distance(p, this.p), r + radius);
 	}
 	
@@ -308,48 +280,12 @@ public abstract class Vertex implements Entity, Sweepable {
 		return common;
 	}
 	
-//	public static EdgeX commonEdgeX(Vertex a, Vertex b) {
-//		
-//		List<Edge> common = commonEdges(a, b);
-//		
-//		if (common.size() != 1) {
-//			throw new IllegalArgumentException();
-//		} else {
-//			return common.get(0);
-//		}
-//		
-//	}
+
 	
 	/**
 	 * @param g2 in world coords
 	 */
-	public void paint(Graphics2D g2) {
-		
-		AffineTransform origTransform = g2.getTransform();
-		
-		g2.scale(MODEL.METERS_PER_PIXEL, MODEL.METERS_PER_PIXEL);
-		
-		g2.setColor(color);
-		
-		g2.fillOval(
-				(int)((p.x - r) * MODEL.PIXELS_PER_METER),
-				(int)((p.y - r) * MODEL.PIXELS_PER_METER),
-				(int)((2 * r) * MODEL.PIXELS_PER_METER),
-				(int)((2 * r) * MODEL.PIXELS_PER_METER));
-		
-		g2.setTransform(origTransform);
-		
-		if (MODEL.DEBUG_DRAW) {
-			
-			g2.scale(MODEL.METERS_PER_PIXEL, MODEL.METERS_PER_PIXEL);
-			
-			paintAABB(g2);
-			
-			g2.setTransform(origTransform);
-			
-		}
-		
-	}
+	public abstract void paint(Graphics2D g2);
 	
 	/**
 	 * @param g2 in world coords

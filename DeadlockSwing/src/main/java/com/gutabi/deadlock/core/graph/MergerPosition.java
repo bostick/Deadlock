@@ -14,7 +14,8 @@ public class MergerPosition extends EdgePosition {
 	 * 0 indicates traveling from left to right
 	 * 1 indicates traveling from top to bottom
 	 */
-	public final Axis dir;
+	public final Axis a;
+	public final int index;
 	public final double param;
 	
 	public final double distanceToLeftOfMerger;
@@ -22,28 +23,38 @@ public class MergerPosition extends EdgePosition {
 	public final double distanceToTopOfMerger;
 	public final double distanceToBottomOfMerger;
 	
+	public final boolean bound;
+	
 	private final int hash;
 	
-	public MergerPosition(Merger m, Axis dir, double param) {
-		super((dir==Axis.LEFTRIGHT) ? Point.point(m.left.p, m.right.p, param) : Point.point(m.top.p, m.bottom.p, param));
+	public MergerPosition(Merger m, Axis a, int index, double param) {
+		super(Point.point(m.get(index, a), m.get(index+1, a), param));
 		
-		if (DMath.lessThanEquals(param, 0.0) || DMath.greaterThanEquals(param, 1.0)) {
+		if (index < 0 || index >= 2) {
+			throw new IllegalArgumentException();
+		}
+		if (DMath.lessThan(param, 0.0) || DMath.greaterThanEquals(param, 1.0)) {
+			throw new IllegalArgumentException();
+		}
+		if (index == 0 && DMath.equals(param, 0.0)) {
 			throw new IllegalArgumentException();
 		}
 		
 		this.m = m;
-		this.dir = dir;
+		this.a = a;
+		this.index = index;
 		this.param = param;
 		
 		int h = 17;
 		h = 37 * h + m.hashCode();
-		h = 37 * h + dir.hashCode();
+		h = 37 * h + a.hashCode();
+		h = 37 * h + index;
 		long l = Double.doubleToLongBits(param);
 		int c = (int)(l ^ (l >>> 32));
 		h = 37 * h + c;
 		hash = h;
 		
-		if (dir==Axis.LEFTRIGHT) {
+		if (a==Axis.LEFTRIGHT) {
 			vs = new ArrayList<Vertex>();
 			vs.add(m.left);
 			vs.add(m.right);
@@ -53,13 +64,21 @@ public class MergerPosition extends EdgePosition {
 			vs.add(m.bottom);
 		}
 		
-		if (dir==Axis.LEFTRIGHT) {
-			distanceToLeftOfMerger = param * Merger.MERGER_WIDTH;
+		if (DMath.equals(param, 0.0)) {
+			bound = true;
+		} else {
+			bound = false;
+		}
+		
+		Point b = m.get(index, a);
+		
+		if (a==Axis.LEFTRIGHT) {
+			distanceToLeftOfMerger = m.getLengthFromLeft(index) + Point.distance(p, b);
 			distanceToRightOfMerger = Merger.MERGER_WIDTH-distanceToLeftOfMerger;
 			distanceToTopOfMerger = -1;
 			distanceToBottomOfMerger = -1;
 		} else {
-			distanceToTopOfMerger = param * Merger.MERGER_HEIGHT;
+			distanceToTopOfMerger = m.getLengthFromTop(index) + Point.distance(p, b);
 			distanceToBottomOfMerger = Merger.MERGER_HEIGHT-distanceToTopOfMerger;
 			distanceToLeftOfMerger = -1;
 			distanceToRightOfMerger = -1;
@@ -69,6 +88,10 @@ public class MergerPosition extends EdgePosition {
 	
 	public int hashCode() {
 		return hash;
+	}
+	
+	public String toString() {
+		return m + " " + param + " (" + (a==Axis.LEFTRIGHT?distanceToLeftOfMerger:distanceToTopOfMerger) + "/" + (a==Axis.LEFTRIGHT?Merger.MERGER_WIDTH:Merger.MERGER_HEIGHT) + ")";
 	}
 	
 	@Override
@@ -81,24 +104,36 @@ public class MergerPosition extends EdgePosition {
 			return false;
 		} else {
 			MergerPosition b = (MergerPosition)o;
-			return (m == b.m) && (dir == b.dir) && DMath.equals(param, b.param);
+			return (m == b.m) && (a == b.a) && index == b.index && DMath.equals(param, b.param);
 		}
 	}
 	
 	public GraphPosition floor() {
-		return (dir==Axis.LEFTRIGHT) ? new VertexPosition(m.left) : new VertexPosition(m.top);
+		if (DMath.equals(param, 0.0)) {
+			return this;
+		} else if (index != 0) {
+			return new MergerPosition(m, a, index, 0.0);
+		} else {
+			return (a==Axis.LEFTRIGHT) ? new VertexPosition(m.left) : new VertexPosition(m.top);
+		}
 	}
 	
 	public GraphPosition ceiling() {
-		return (dir==Axis.LEFTRIGHT) ? new VertexPosition(m.right) : new VertexPosition(m.bottom);
+		if (DMath.equals(param, 0.0)) {
+			return this;
+		} else if (index != 1) {
+			return new MergerPosition(m, a, index+1, 0.0);
+		} else {
+			return (a==Axis.LEFTRIGHT) ? new VertexPosition(m.right) : new VertexPosition(m.bottom);
+		}
 	}
 	
 	public boolean isBound() {
-		return false;
+		return bound;
 	}
 	
 	public int getIndex() {
-		return 0;
+		return index;
 	}
 	
 	public double getParam() {
@@ -106,14 +141,55 @@ public class MergerPosition extends EdgePosition {
 	}
 	
 	public GraphPosition nextBoundToward(GraphPosition goal) {
-		VertexPosition vg = (VertexPosition)goal;
-		if (dir==Axis.LEFTRIGHT) {
-			assert vg.v == m.left || vg.v == m.right;
-			return vg;
+		
+		if (goal instanceof VertexPosition) {
+			
+			VertexPosition vg = (VertexPosition)goal;
+			
+			if (a==Axis.LEFTRIGHT) {
+				assert vg.v == m.left || vg.v == m.right;
+				
+				if (vg.v == m.left) {
+					return nextBoundToLeft(m, index, param);
+				} else {
+					return nextBoundToRight(m, index, param);
+				}
+				
+			} else {
+				assert vg.v == m.top || vg.v == m.bottom;
+				
+				if (vg.v == m.top) {
+					return nextBoundToTop(m, index, param);
+				} else {
+					return nextBoundToBottom(m, index, param);
+				}
+				
+			}
+			
 		} else {
-			assert vg.v == m.top || vg.v == m.bottom;
-			return vg;
+			MergerPosition mg = (MergerPosition)goal;
+			assert mg.a == a;
+			assert !equals(mg);
+			
+			if (a==Axis.LEFTRIGHT) {
+				
+				if (distanceToLeftOfMerger < mg.distanceToLeftOfMerger) {
+					return nextBoundToRight(m, index, param);
+				} else {
+					return nextBoundToLeft(m, index, param);
+				}
+				
+			} else {
+				
+				if (distanceToTopOfMerger < mg.distanceToTopOfMerger) {
+					return nextBoundToBottom(m, index, param);
+				} else {
+					return nextBoundToTop(m, index, param);
+				}
+			}
+			
 		}
+		
 	}
 	
 	public Entity getEntity() {
@@ -122,7 +198,7 @@ public class MergerPosition extends EdgePosition {
 	
 	public double distanceToConnectedVertex(Vertex v) {
 		assert vs.contains(v);
-		if (dir == Axis.LEFTRIGHT) {
+		if (a == Axis.LEFTRIGHT) {
 			if (v == m.left) {
 				return distanceToLeftOfMerger;
 			} else {
@@ -141,178 +217,195 @@ public class MergerPosition extends EdgePosition {
 		
 		if (v == m.top) {
 			
-			return new MergerPosition(m, Axis.TOPBOTTOM, param - dist / Merger.MERGER_HEIGHT);
+			return travelToTop(m, index, param, dist);
 			
 		} else if (v == m.left) {
 			
-			return new MergerPosition(m, Axis.LEFTRIGHT, param - dist / Merger.MERGER_WIDTH);
+			return travelToLeft(m, index, param, dist);
 			
 		} else if (v == m.right) {
 			
-			return new MergerPosition(m, Axis.LEFTRIGHT, param + dist / Merger.MERGER_WIDTH);
+			return travelToRight(m, index, param, dist);
 			
 		} else {
 			assert v == m.bottom;
 			
-			return new MergerPosition(m, Axis.TOPBOTTOM, param + dist / Merger.MERGER_HEIGHT);
+			return travelToBottom(m, index, param, dist);
 			
 		}
 		
 	}
 	
-//	public double distanceTo(GraphPosition goal) {
-//		
-//		if (goal instanceof VertexPosition) {
-//			VertexPosition vg = (VertexPosition)goal;
-//			
-//			if (dir==MergerDirection.LEFTRIGHT) {
-//				if (vg.v == m.left) {
-//					return distanceToLeftOfMerger;
-//				} else if (vg.v == m.right) {
-//					return distanceToRightOfMerger;
-//				}
-//				
-//				double leftPath = MODEL.world.distanceBetweenVertices(m.left, vg.v);
-//				double rightPath = MODEL.world.distanceBetweenVertices(m.right, vg.v);
-//				
-//				double dist = Math.min(leftPath + distanceToLeftOfMerger, rightPath + distanceToRightOfMerger);
-//				
-//				assert DMath.greaterThanEquals(dist, 0.0);
-//				
-//				return dist;
-//				
-//			} else {
-//				if (vg.v == m.top) {
-//					return distanceToTopOfMerger;
-//				} else if (vg.v == m.bottom) {
-//					return distanceToBottomOfMerger;
-//				}
-//				
-//				double topPath = MODEL.world.distanceBetweenVertices(m.top, vg.v);
-//				double bottomPath = MODEL.world.distanceBetweenVertices(m.bottom, vg.v);
-//				
-//				double dist = Math.min(topPath + distanceToTopOfMerger, bottomPath + distanceToBottomOfMerger);
-//				
-//				assert DMath.greaterThanEquals(dist, 0.0);
-//				
-//				return dist;
-//			}
-//			
-//		} else if (goal instanceof RoadPosition) {
-//			RoadPosition eg = (RoadPosition)goal;
-//			
-//			if (dir==MergerDirection.LEFTRIGHT) {
-//				
-//				double leftStartPath = MODEL.world.distanceBetweenVertices(m.left, eg.r.start);
-//				double leftEndPath = MODEL.world.distanceBetweenVertices(m.left, eg.r.end);
-//				double rightStartPath = MODEL.world.distanceBetweenVertices(m.right, eg.r.start);
-//				double rightEndPath = MODEL.world.distanceBetweenVertices(m.right, eg.r.end);
-//				
-//				double leftStartDistance = leftStartPath + distanceToLeftOfMerger + eg.distanceToStartOfRoad();
-//				double leftEndDistance = leftEndPath + distanceToLeftOfMerger + eg.distanceToEndOfRoad();
-//				double rightStartDistance = rightStartPath + distanceToRightOfMerger + eg.distanceToStartOfRoad();
-//				double rightEndDistance = rightEndPath + distanceToRightOfMerger + eg.distanceToEndOfRoad();
-//				
-//				double dist = Math.min(Math.min(leftStartDistance, leftEndDistance), Math.min(rightStartDistance, rightEndDistance));
-//				
-//				assert DMath.greaterThanEquals(dist, 0.0);
-//				
-//				return dist;
-//				
-//			} else {
-//				
-//				double topStartPath = MODEL.world.distanceBetweenVertices(m.top, eg.r.start);
-//				double topEndPath = MODEL.world.distanceBetweenVertices(m.top, eg.r.end);
-//				double bottomStartPath = MODEL.world.distanceBetweenVertices(m.bottom, eg.r.start);
-//				double bottomEndPath = MODEL.world.distanceBetweenVertices(m.bottom, eg.r.end);
-//				
-//				double topStartDistance = topStartPath + distanceToTopOfMerger + eg.distanceToStartOfRoad();
-//				double topEndDistance = topEndPath + distanceToTopOfMerger + eg.distanceToEndOfRoad();
-//				double bottomStartDistance = bottomStartPath + distanceToBottomOfMerger + eg.distanceToStartOfRoad();
-//				double bottomEndDistance = bottomEndPath + distanceToBottomOfMerger + eg.distanceToEndOfRoad();
-//				
-//				double dist = Math.min(Math.min(topStartDistance, topEndDistance), Math.min(bottomStartDistance, bottomEndDistance));
-//				
-//				assert DMath.greaterThanEquals(dist, 0.0);
-//				
-//				return dist;
-//				
-//			}
-//			
-//		} else {
-//			MergerPosition mg = (MergerPosition)goal;
-//			
-//			if (dir==MergerDirection.LEFTRIGHT) {
-//				
-//				if (m == mg.m && mg.dir == MergerDirection.LEFTRIGHT) {
-//					return Math.abs(distanceToLeftOfMerger - mg.distanceToLeftOfMerger);
-//				}
-//				
-//				if (mg.dir == MergerDirection.LEFTRIGHT) {
-//					
-//					double leftLeftPath = MODEL.world.distanceBetweenVertices(m.left, eg.r.end);
-//					double leftRightPath = MODEL.world.distanceBetweenVertices(m.left, eg.r.end);
-//					double rightLeftPath = MODEL.world.distanceBetweenVertices(m.right, eg.r.end);
-//					double rightRightPath = MODEL.world.distanceBetweenVertices(m.right, eg.r.end);
-//					
-//					double leftLeftDistance = leftEndPath + distanceToLeftOfMerger + eg.distanceToEndOfRoad();
-//					double leftRightDistance = leftEndPath + distanceToLeftOfMerger + eg.distanceToEndOfRoad();
-//					double rightLeftDistance = rightEndPath + distanceToRightOfMerger + eg.distanceToEndOfRoad();
-//					double rightRightDistance = rightEndPath + distanceToRightOfMerger + eg.distanceToEndOfRoad();
-//					
-//					double dist = Math.min(Math.min(leftStartDistance, leftEndDistance), Math.min(rightStartDistance, rightEndDistance));
-//					
-//					assert DMath.greaterThanEquals(dist, 0.0);
-//					
-//					return dist;
-//					
-//				} else {
-//					
-//					double leftTopPath = MODEL.world.distanceBetweenVertices(m.left, eg.r.start);
-//					double leftBottomPath = MODEL.world.distanceBetweenVertices(m.left, eg.r.end);
-//					double rightTopPath = MODEL.world.distanceBetweenVertices(m.right, eg.r.start);
-//					double rightBottomPath = MODEL.world.distanceBetweenVertices(m.right, eg.r.end);
-//					
-//					double leftTopDistance = leftStartPath + distanceToLeftOfMerger + eg.distanceToStartOfRoad();
-//					double leftBottomDistance = leftEndPath + distanceToLeftOfMerger + eg.distanceToEndOfRoad();
-//					double rightTopDistance = rightStartPath + distanceToRightOfMerger + eg.distanceToStartOfRoad();
-//					double rightBottomDistance = rightEndPath + distanceToRightOfMerger + eg.distanceToEndOfRoad();
-//					
-//					double dist = Math.min(Math.min(leftStartDistance, leftEndDistance), Math.min(rightStartDistance, rightEndDistance));
-//					
-//					assert DMath.greaterThanEquals(dist, 0.0);
-//					
-//					return dist;
-//					
-//				}
-//				
-//			} else {
-//				
-//				if (m == mg.m && mg.dir == MergerDirection.TOPBOTTOM) {
-//					return Math.abs(distanceToTopOfMerger - mg.distanceToTopOfMerger);
-//				}
-//				
-//				double topStartPath = MODEL.world.distanceBetweenVertices(m.top, eg.r.start);
-//				double topEndPath = MODEL.world.distanceBetweenVertices(m.top, eg.r.end);
-//				double bottomStartPath = MODEL.world.distanceBetweenVertices(m.bottom, eg.r.start);
-//				double bottomEndPath = MODEL.world.distanceBetweenVertices(m.bottom, eg.r.end);
-//				
-//				double topStartDistance = topStartPath + distanceToTopOfMerger + eg.distanceToStartOfRoad();
-//				double topEndDistance = topEndPath + distanceToTopOfMerger + eg.distanceToEndOfRoad();
-//				double bottomStartDistance = bottomStartPath + distanceToBottomOfMerger + eg.distanceToStartOfRoad();
-//				double bottomEndDistance = bottomEndPath + distanceToBottomOfMerger + eg.distanceToEndOfRoad();
-//				
-//				double dist = Math.min(Math.min(topStartDistance, topEndDistance), Math.min(bottomStartDistance, bottomEndDistance));
-//				
-//				assert DMath.greaterThanEquals(dist, 0.0);
-//				
-//				return dist;
-//				
-//			}
-//
-//		}
-//		
-//	}
+	public static GraphPosition travelFromTop(Merger m, double dist) {
+		return travelToBottom(m, 0, 0.0, dist);
+	}
 	
+	public static GraphPosition travelFromBottom(Merger m, double dist) {
+		return travelToTop(m, 1, 1.0, dist);
+	}
+	
+	public static GraphPosition travelFromLeft(Merger m, double dist) {
+		return travelToRight(m, 0, 0.0, dist);
+	}
+	
+	public static GraphPosition travelFromRight(Merger m, double dist) {
+		return travelToLeft(m, 1, 1.0, dist);
+	}
+	
+	public static GraphPosition nextBoundFromTop(Merger m) {
+		return nextBoundToBottom(m, 0, 0.0);
+	}
+	
+	public static GraphPosition nextBoundFromBottom(Merger m) {
+		return nextBoundToTop(m, 1, 1.0);
+	}
+	
+	public static GraphPosition nextBoundFromLeft(Merger m) {
+		return nextBoundToRight(m, 0, 0.0);
+	}
+	
+	public static GraphPosition nextBoundFromRight(Merger m) {
+		return nextBoundToLeft(m, 1, 1.0);
+	}
+	
+	
+	
+	
+	
+	private static GraphPosition nextBoundToLeft(Merger m, int index, double param) {
+		if (index == 0) {
+			return new VertexPosition(m.left);
+		} else {
+			assert index == 1;
+			return new MergerPosition(m, Axis.LEFTRIGHT, 1, 0.0);
+		}
+	}
+	
+	private static GraphPosition nextBoundToRight(Merger m, int index, double param) {
+		if (index == 0) {
+			return new MergerPosition(m, Axis.LEFTRIGHT, 1, 0.0);
+		} else {
+			assert index == 1;
+			return new VertexPosition(m.right);
+		}
+	}
+
+	private static GraphPosition nextBoundToTop(Merger m, int index, double param) {
+		if (index == 0) {
+			return new VertexPosition(m.top);
+		} else {
+			assert index == 1;
+			return new MergerPosition(m, Axis.TOPBOTTOM, 1, 0.0);
+		}
+	}
+	
+	private static GraphPosition nextBoundToBottom(Merger m, int index, double param) {
+		if (index == 0) {
+			return new MergerPosition(m, Axis.TOPBOTTOM, 1, 0.0);
+		} else {
+			assert index == 1;
+			return new VertexPosition(m.bottom);
+		}
+	}
+	
+	private static GraphPosition travelToLeft(Merger m, int index, double param, double dist) {
+		
+		double distanceToTravel = dist;
+		
+		while (true) {
+			Point a = m.get(index, Axis.LEFTRIGHT);
+			Point b = m.get(index+1, Axis.LEFTRIGHT);
+			
+			Point c = Point.point(a, b, param);
+			double distanceToStartOfSegment = Point.distance(c, a);
+			
+			if (DMath.equals(distanceToTravel, distanceToStartOfSegment)) {
+				return new MergerPosition(m, Axis.LEFTRIGHT, index, 0.0);
+			} else if (distanceToTravel < distanceToStartOfSegment) {
+				double newParam = Point.travelBackward(a, b, param, distanceToTravel);
+				return new MergerPosition(m, Axis.LEFTRIGHT, index, newParam);
+			} else {
+				index--;
+				param = 1.0;
+				distanceToTravel -= distanceToStartOfSegment;
+			}
+		}
+		
+	}
+	
+	private static GraphPosition travelToRight(Merger m, int index, double param, double dist) {
+		
+		double distanceToTravel = dist;
+		
+		while (true) {
+			Point a = m.get(index, Axis.LEFTRIGHT);
+			Point b = m.get(index+1, Axis.LEFTRIGHT);
+			
+			Point c = Point.point(a, b, param);
+			double distanceToEndOfSegment = Point.distance(c, b);
+			
+			if (DMath.equals(distanceToTravel, distanceToEndOfSegment)) {
+				return new MergerPosition(m, Axis.LEFTRIGHT, index+1, 0.0);
+			} else if (distanceToTravel < distanceToEndOfSegment) {
+				double newParam = Point.travelForward(a, b, param, distanceToTravel);
+				return new MergerPosition(m, Axis.LEFTRIGHT, index, newParam);
+			} else {
+				index++;
+				param = 0.0;
+				distanceToTravel -= distanceToEndOfSegment;
+			}
+		}
+		
+	}
+	
+	private static GraphPosition travelToTop(Merger m, int index, double param, double dist) {
+		
+		double distanceToTravel = dist;
+		
+		while (true) {
+			Point a = m.get(index, Axis.TOPBOTTOM);
+			Point b = m.get(index+1, Axis.TOPBOTTOM);
+			
+			Point c = Point.point(a, b, param);
+			double distanceToStartOfSegment = Point.distance(c, a);
+			
+			if (DMath.equals(distanceToTravel, distanceToStartOfSegment)) {
+				return new MergerPosition(m, Axis.TOPBOTTOM, index, 0.0);
+			} else if (distanceToTravel < distanceToStartOfSegment) {
+				double newParam = Point.travelBackward(a, b, param, distanceToTravel);
+				return new MergerPosition(m, Axis.TOPBOTTOM, index, newParam);
+			} else {
+				index--;
+				param = 1.0;
+				distanceToTravel -= distanceToStartOfSegment;
+			}
+		}
+		
+	}
+	
+	private static GraphPosition travelToBottom(Merger m, int index, double param, double dist) {
+		
+		double distanceToTravel = dist;
+		
+		while (true) {
+			Point a = m.get(index, Axis.TOPBOTTOM);
+			Point b = m.get(index+1, Axis.TOPBOTTOM);
+			
+			Point c = Point.point(a, b, param);
+			double distanceToEndOfSegment = Point.distance(c, b);
+			
+			if (DMath.equals(distanceToTravel, distanceToEndOfSegment)) {
+				return new MergerPosition(m, Axis.TOPBOTTOM, index+1, 0.0);
+			} else if (distanceToTravel < distanceToEndOfSegment) {
+				double newParam = Point.travelForward(a, b, param, distanceToTravel);
+				return new MergerPosition(m, Axis.TOPBOTTOM, index, newParam);
+			} else {
+				index++;
+				param = 0.0;
+				distanceToTravel -= distanceToEndOfSegment;
+			}
+		}
+		
+	}
 	
 }

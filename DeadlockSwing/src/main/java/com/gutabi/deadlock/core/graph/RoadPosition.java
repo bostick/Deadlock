@@ -80,7 +80,7 @@ public class RoadPosition extends EdgePosition {
 	}
 	
 	public String toString() {
-		return r + " " + index + " " + param + "(" + lengthToStartOfRoad + "/" + r.getTotalLength() + ")";
+		return r + " " + index + Double.toString(param).substring(1) + " (" + lengthToStartOfRoad + "/" + r.getTotalLength() + ")";
 	}
 	
 	@Override
@@ -139,6 +139,7 @@ public class RoadPosition extends EdgePosition {
 		if (goal instanceof RoadPosition) {
 			RoadPosition ge = (RoadPosition)goal;
 			assert ge.r == r;
+			assert !equals(ge);
 			
 			if (lengthToStartOfRoad < ge.lengthToStartOfRoad) {
 				return nextBoundForward(r, index, param);
@@ -146,7 +147,7 @@ public class RoadPosition extends EdgePosition {
 				return nextBoundBackward(r, index, param);
 			}
 			
-		} else if (goal instanceof VertexPosition) {
+		} else {
 			VertexPosition gv = (VertexPosition)goal;
 			
 			if (gv.v == r.end) {
@@ -155,8 +156,6 @@ public class RoadPosition extends EdgePosition {
 				return nextBoundBackward(r, index, param);
 			}
 			
-		} else {
-			throw new AssertionError();
 		}
 		
 	}
@@ -190,50 +189,6 @@ public class RoadPosition extends EdgePosition {
 		
 	}
 	
-//	public double distanceTo(GraphPosition b) {
-//		if (b instanceof VertexPosition) {
-//			VertexPosition bb = (VertexPosition)b;
-//			
-//			if (bb.v == r.start) {
-//				return distanceToStartOfRoad();
-//			} else if (bb.v == r.end) {
-//				return distanceToEndOfRoad();
-//			}
-//			
-//			double aaStartPath = MODEL.world.distanceBetweenVertices(r.start, bb.v);
-//			double aaEndPath = MODEL.world.distanceBetweenVertices(r.end, bb.v);
-//			
-//			double dist = Math.min(aaStartPath + distanceToStartOfRoad(), aaEndPath + distanceToEndOfRoad());
-//			
-//			assert DMath.greaterThanEquals(dist, 0.0);
-//			
-//			return dist;
-//		} else {
-//			RoadPosition aa = (RoadPosition)this;
-//			RoadPosition bb = (RoadPosition)b;
-//			
-//			if (aa.r == bb.r) {
-//				return Math.abs(aa.distanceToStartOfRoad() - bb.distanceToStartOfRoad());
-//			}
-//			
-//			double startStartPath = MODEL.world.distanceBetweenVertices(aa.r.start, bb.r.start);
-//			double startEndPath = MODEL.world.distanceBetweenVertices(aa.r.start, bb.r.end);
-//			double endStartPath = MODEL.world.distanceBetweenVertices(aa.r.end, bb.r.start);
-//			double endEndPath = MODEL.world.distanceBetweenVertices(aa.r.end, bb.r.end);
-//			
-//			double startStartDistance = startStartPath + aa.distanceToStartOfRoad() + bb.distanceToStartOfRoad();
-//			double startEndDistance = startEndPath + aa.distanceToStartOfRoad() + bb.distanceToEndOfRoad();
-//			double endStartDistance = endStartPath + aa.distanceToEndOfRoad() + bb.distanceToStartOfRoad();
-//			double endEndDistance = endEndPath + aa.distanceToEndOfRoad() + bb.distanceToEndOfRoad();
-//			
-//			double dist = Math.min(Math.min(startStartDistance, startEndDistance), Math.min(endStartDistance, endEndDistance));
-//			
-//			assert DMath.greaterThanEquals(dist, 0.0);
-//			
-//			return dist;
-//		}
-//	}
-	
 	
 	
 	
@@ -252,49 +207,6 @@ public class RoadPosition extends EdgePosition {
 	protected double distanceBackward(RoadPosition a) {
 		return lengthToStartOfRoad - a.lengthToStartOfRoad;
 	}
-	
-	/**
-	 * the specific way to travel
-	 */
-//	public GraphPosition travel(VertexPosition dest, double dist) {
-//		if (r.isLoop()) {
-//			throw new IllegalArgumentException();
-//		}
-//		if (!(dest.v == r.start || dest.v == r.end)) {
-//			throw new IllegalArgumentException();
-//		}
-//		if (DMath.equals(dist, 0.0)) {
-//			return this;
-//		}
-//		if (dist < 0.0) {
-//			throw new IllegalArgumentException();
-//		}
-//		
-//		if (dest.v == r.end) {
-//			
-////			double distToEndOfEdge = distanceToEndOfRoad();
-//			if (DMath.equals(dist, lengthToEndOfRoad)) {
-//				return new VertexPosition(r.end);
-//			} else if (dist > lengthToEndOfRoad) {
-//				throw new IllegalArgumentException();
-//			}
-//			
-//			return travelForward(r, index, param, dist);
-//			
-//		} else {
-//			
-////			double distToStartOfEdge = distanceToStartOfRoad();
-//			if (DMath.equals(dist, lengthToStartOfRoad)) {
-//				return new VertexPosition(r.start);
-//			} else if (dist > lengthToStartOfRoad) {
-//				throw new IllegalArgumentException();
-//			}
-//			
-//			return travelBackward(r, index, param, dist);
-//			
-//		}
-//		
-//	}
 	
 	public static GraphPosition travelFromStart(Road e, double dist) {
 		return travelForward(e, 0, 0.0, dist);

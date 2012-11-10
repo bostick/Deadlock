@@ -1,33 +1,20 @@
 
+IMMEDIATELY:
 
 fix car goal point
 overallPos is correct, but goalPoint is not correct inside of mergers
 
+remove sweepCircleCap
 
 test if Merger is hitting anything else before adding
 
+IN THE NEXT WEEK:
 
-outline for regular cursor
+add countdowns
 
-skeleton for roads and mergers
-
-
-
-add arrow images for sources and sinks
-
-
-
+LONGTERM:
 
 drive straight from one border to another without going through vertex center
-
-
-road shape desription
-lines and circular arcs
-adding capsules
-stop using area, areax
-constructive area geometry for edges
-
-
 
 add Tile
 add Level
@@ -42,9 +29,25 @@ switch to using floats
 
 switch to opengl
 
+start work on popup menu
 
+DONE:
+
+fix automatic merging of merger vertices
+add 2 roads to a merger vertex
+
+outline for regular cursor
+
+skeleton for roads and mergers
+
+add arrow images for sources and sinks
+
+ON HOLD FOR NOW:
+
+road shape desription
+lines and circular arcs
+adding capsules
+stop using area, areax
+constructive area geometry for edges
 
 lower precision on stroke world points
-
-
-start work on popup menu

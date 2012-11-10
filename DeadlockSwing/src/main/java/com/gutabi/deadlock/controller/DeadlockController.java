@@ -221,8 +221,6 @@ public class DeadlockController implements ActionListener {
 	
 	
 	Point lastMovedWorldPoint;
-//	Point penMovedWorldPoint;
-//	Stroke s = new Stroke(Vertex.INIT_VERTEX_RADIUS);
 	
 	public void moved(InputEvent ev) {
 		
@@ -234,7 +232,6 @@ public class DeadlockController implements ActionListener {
 			
 			Point p = ev.p;
 			
-//			penMovedWorldPoint = lastMovedWorldPoint;
 			lastMovedWorldPoint = VIEW.panelToWorld(p);
 			
 			MODEL.cursor.setPoint(lastMovedWorldPoint);
@@ -244,19 +241,11 @@ public class DeadlockController implements ActionListener {
 			case PAUSED:
 			case IDLE: {
 				
-				Entity closest = MODEL.world.bestHitTest(MODEL.cursor.getPoint(), MODEL.cursor.r);
+//				Entity closest = MODEL.world.bestHitTest(MODEL.cursor.getPoint(), MODEL.cursor.r);
+				Entity closest = MODEL.world.hitTest(MODEL.cursor.getPoint());
 				MODEL.hilited = closest;
 				
 				VIEW.repaint();
-				
-				
-//				s.add(lastMovedWorldPoint);
-				
-//				List<SweepEvent> ve = s.vertexEvents();
-//				for (SweepEvent e : ve) {
-//					logger.debug("event: " + e);
-//				}
-				
 				
 				break;
 			}

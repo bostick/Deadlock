@@ -37,6 +37,9 @@ public class Merger implements Entity, Edge, Sweepable {
 	private Point p2;
 	private Point p3;
 	
+	private double[] cumulativeLengthsFromTop;
+	private double[] cumulativeLengthsFromLeft;
+	
 	public Merger(Point center) {
 		this.ul = center.plus(new Point(-MERGER_WIDTH/2,  -MERGER_HEIGHT/2));
 		
@@ -60,6 +63,12 @@ public class Merger implements Entity, Edge, Sweepable {
 		p2 = new Point(ul.x + MERGER_WIDTH, ul.y + MERGER_HEIGHT);
 		p3 = new Point(ul.x, ul.y + MERGER_HEIGHT);
 		
+		computeLengths();
+		
+	}
+	
+	public String toString() {
+		return "Merger[" + top.id + " " + left.id + " " + right.id + " " + bottom.id + "]";
 	}
 	
 	public double getTotalLength(Vertex a, Vertex b) {
@@ -169,23 +178,23 @@ public class Merger implements Entity, Edge, Sweepable {
 		if (v == top) {
 			assert DMath.lessThan(dist, MERGER_HEIGHT);
 			
-			return new MergerPosition(this, Axis.TOPBOTTOM, dist / MERGER_HEIGHT);
+			return MergerPosition.travelFromTop(this, dist);
 			
 		} else if (v == left) {
 			assert DMath.lessThan(dist, MERGER_WIDTH);
 			
-			return new MergerPosition(this, Axis.LEFTRIGHT, dist / MERGER_WIDTH);
+			return MergerPosition.travelFromLeft(this, dist);
 			
 		} else if (v == right) {
 			assert DMath.lessThan(dist, MERGER_WIDTH);
 			
-			return new MergerPosition(this, Axis.LEFTRIGHT, 1 - dist / MERGER_WIDTH);
+			return MergerPosition.travelFromRight(this, dist);
 			
 		} else {
 			assert v == bottom;
 			assert DMath.lessThan(dist, MERGER_HEIGHT);
 			
-			return new MergerPosition(this, Axis.TOPBOTTOM, 1 - dist / MERGER_HEIGHT);
+			return MergerPosition.travelFromBottom(this, dist);
 			
 		}
 	}
@@ -251,7 +260,58 @@ public class Merger implements Entity, Edge, Sweepable {
 	public boolean postStep(double t) {
 		return true;
 	}
-
+	
+	public Point get(int index, Axis a) {
+		if (index == 0 || index == 2) {
+			if (a == Axis.TOPBOTTOM) {
+				if (index == 0) {
+					return ul.plus(new Point(Merger.MERGER_WIDTH/2, 0));
+				} else {
+					return ul.plus(new Point(Merger.MERGER_WIDTH/2, Merger.MERGER_HEIGHT));
+				}
+			} else {
+				if (index == 0) {
+					return ul.plus(new Point(0, Merger.MERGER_HEIGHT/2));
+				} else {
+					return ul.plus(new Point(Merger.MERGER_WIDTH, Merger.MERGER_HEIGHT/2));
+				}
+			}
+		} else {
+			assert index == 1;
+			return ul.plus(new Point(Merger.MERGER_WIDTH/2, Merger.MERGER_HEIGHT/2));
+		}
+	}
+	
+	public double getLengthFromLeft(int i) {
+		return cumulativeLengthsFromLeft[i];
+	}
+	
+	public double getLengthFromTop(int i) {
+		return cumulativeLengthsFromTop[i];
+	}
+	
+	private void computeLengths() {
+		
+		cumulativeLengthsFromTop = new double[3];
+		cumulativeLengthsFromLeft = new double[3];
+		
+		double length;
+		for (int i = 0; i < 2; i++) {
+			if (i == 0) {
+				cumulativeLengthsFromTop[i] = 0;
+			}
+			length = Merger.MERGER_HEIGHT/2;
+			cumulativeLengthsFromTop[i+1] = cumulativeLengthsFromTop[i] + length;
+		}
+		for (int i = 0; i < 2; i++) {
+			if (i == 0) {
+				cumulativeLengthsFromLeft[i] = 0;
+			}
+			length = Merger.MERGER_HEIGHT/2;
+			cumulativeLengthsFromLeft[i+1] = cumulativeLengthsFromLeft[i] + length;
+		}
+	}
+	
 	@Override
 	public Rect getAABB() {
 		return aabb;
@@ -329,7 +389,7 @@ public class Merger implements Entity, Edge, Sweepable {
 		
 		java.awt.Stroke origStroke = g2.getStroke();
 		
-		g2.setStroke(Cursor.outlineStroke);
+		g2.setStroke(Cursor.dashedOutlineStroke);
 		g2.setColor(Color.GRAY);
 		
 		g2.drawRect(

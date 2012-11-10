@@ -70,7 +70,8 @@ public class Cursor {
 	}
 	
 	
-	public static java.awt.Stroke outlineStroke = new BasicStroke(7.5f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 0.0f, new float[]{15.0f}, 0.0f);
+	public static java.awt.Stroke dashedOutlineStroke = new BasicStroke(7.5f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 0.0f, new float[]{15.0f}, 0.0f);
+	public static java.awt.Stroke solidOutlineStroke = new BasicStroke(2.5f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
 	
 	private void paintCursor(Graphics2D g2) {
 		
@@ -85,7 +86,8 @@ public class Cursor {
 				
 				java.awt.Stroke origStroke = g2.getStroke();
 				
-				g2.setStroke(outlineStroke);
+				g2.setColor(Color.GRAY);
+				g2.setStroke(solidOutlineStroke);
 				
 				g2.drawOval(
 						(int)((p.x - r) * MODEL.PIXELS_PER_METER),

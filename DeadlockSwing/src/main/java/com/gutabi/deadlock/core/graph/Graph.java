@@ -162,10 +162,10 @@ public class Graph {
 		
 		destroyMerger(m);
 		
-		automaticMergeOrDestroy(top);
-		automaticMergeOrDestroy(left);
-		automaticMergeOrDestroy(right);
-		automaticMergeOrDestroy(bottom);
+		forceMergeOrDestroy(top);
+		forceMergeOrDestroy(left);
+		forceMergeOrDestroy(right);
+		forceMergeOrDestroy(bottom);
 		
 		refreshVertexIDs();
 		
@@ -182,37 +182,29 @@ public class Graph {
 	
 	private void automaticMergeOrDestroy(Vertex v) {
 		
-		if (v instanceof WorldSource) {
-			
-			/*
-			 * sources stay around
-			 */
-			
-		} else if (v instanceof WorldSink) {
-			
-			/*
-			 * sinks stay around
-			 */
-			
-		} else {
-			
-//			List<Road> cons = v.roads;
-			
-			for (Road e : v.roads) {
-				assert roads.contains(e);
-			}
-			
-			if (v.roads.size() == 0) {
-				destroyVertex(v);
-			} else if (v.roads.size() == 2) {
-				merge(v);
-			}
-			
+		if (!v.isDeleteable()) {
+			return;
 		}
+			
+		forceMergeOrDestroy(v);
 		
 	}
 	
-	
+	private void forceMergeOrDestroy(Vertex v) {
+			
+		for (Road e : v.roads) {
+			assert roads.contains(e);
+		}
+		
+		if (v.roads.size() == 0) {
+			destroyVertex(v);
+		} else if (v.roads.size() == 2) {
+			merge(v);
+		}
+		
+	}
+
+
 	
 	
 	public void processNewStrokeTop(Stroke stroke) {
@@ -224,25 +216,20 @@ public class Graph {
 		
 		SweepEvent e = vertexEvents.get(0);
 		Point p = stroke.getPoint(e.index, e.param);
-//		Entity hit = bestHitTest(p, stroke.r);
 		if (e.type == SweepEventType.ENTERCAPSULE) {
 			logger.debug("split");
 			RoadPosition pos = findClosestRoadPosition(p, stroke.r);
 			split(pos);
-//			e.setVertex(v);
 		} else if (e.type == SweepEventType.ENTERVERTEX) {
 			logger.debug("already exists");
-//			Vertex v = e.getVertex();
 		} else if (e.type == SweepEventType.ENTERMERGER) {
 			
 			return;
 			
 		} else if (e.type == null) {
-//			assert hitTest(p) == null;
 			logger.debug("create");
 			Intersection v = new Intersection(p);
 			addIntersection(v);
-//			e.setVertex(v);
 		}
 		
 		for (int i = 0; i < vertexEvents.size()-1; i+=2) {
@@ -532,7 +519,7 @@ public class Graph {
 		} else if (sinks.contains(v)) {
 			sinks.remove(v);
 		} else {
-			assert false;
+			assert false : "Vertex was not in lists";
 		}
 		
 		refreshVertexIDs();

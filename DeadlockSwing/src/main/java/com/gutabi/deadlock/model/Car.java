@@ -31,7 +31,6 @@ import com.gutabi.deadlock.core.graph.GraphPosition;
 import com.gutabi.deadlock.core.graph.GraphPositionPath;
 import com.gutabi.deadlock.core.graph.GraphPositionPathPosition;
 import com.gutabi.deadlock.core.graph.Merger;
-import com.gutabi.deadlock.core.graph.MergerPosition;
 import com.gutabi.deadlock.core.graph.RoadPosition;
 import com.gutabi.deadlock.core.graph.StopSign;
 import com.gutabi.deadlock.core.graph.VertexPosition;
@@ -114,8 +113,9 @@ public abstract class Car implements Entity {
 	protected Color hiliteColor;
 	
 	static Logger logger = Logger.getLogger(Car.class);
-	
-	public Car( WorldSource s) {
+	static Logger pathingLogger = Logger.getLogger("com.gutabi.deadlock.model.Car.pathing");
+			
+	public Car(WorldSource s) {
 		
 		id = carCounter;
 		carCounter++;
@@ -141,6 +141,23 @@ public abstract class Car implements Entity {
 		overallPos = new GraphPositionPathPosition(overallPath, 0, 0.0);
 		GraphPosition closestGraphPos = overallPos.gpos;
 		startPoint = closestGraphPos.p;
+		
+		pathingLogger.debug("overall path:");
+		for (GraphPosition gp : overallPath.poss) {
+			pathingLogger.debug(gp);
+		}
+		pathingLogger.debug("");
+		
+		pathingLogger.debug("overall path bounds:");
+		GraphPositionPathPosition cur = overallPos;
+		while (true) {
+			pathingLogger.debug(cur);
+			if (cur.isEndOfPath()) {
+				break;
+			}
+			cur = cur.nextBound();
+		}
+		pathingLogger.debug("");
 		
 		GraphPositionPathPosition next = overallPos.travel(getMetersPerSecond() * MODEL.dt);
 		
@@ -458,6 +475,9 @@ public abstract class Car implements Entity {
 			GraphPositionPathPosition max = overallPos.travel(Math.min(2 * CAR_LENGTH, overallPos.lengthToEndOfPath));
 			overallPos = overallPath.findClosestGraphPositionPathPosition(p, overallPos, max);
 			
+			pathingLogger.debug("overallPos: " + overallPos.gpos);
+			
+//			pathingLogger.debug("next bound after overallPos: " + overallPos.nextBound().gpos);
 			
 			if (curBorderPosition == null) {
 				List<GraphPositionPathPosition> borderPositions = overallPath.borderPositions(overallPos, Math.min(eventLookaheadDistance, overallPos.lengthToEndOfPath));
@@ -542,17 +562,13 @@ public abstract class Car implements Entity {
 			
 			GraphPositionPathPosition next = overallPos.travel(lookaheadDistance);
 			
-			if (overallPos.gpos instanceof RoadPosition && next.gpos instanceof MergerPosition) {
-				
-				double roadToVertex = ((RoadPosition)overallPos.gpos).lengthToEndOfRoad;
-				double vertexToMerger = ((MergerPosition)next.gpos).distanceToLeftOfMerger;
-				
-//				double nextDist = overallPos.distanceTo(next);
-//				assert DMath.equals(nextDist, lookaheadDistance);
-				
-			}
+			pathingLogger.debug("goalPoint: " + next.gpos);
+			
+			double nextDist = overallPos.distanceTo(next);
+			assert DMath.equals(nextDist, lookaheadDistance);
 			
 			goalPoint = next.gpos.p;
+			
 			updateDrive(t);
 			break;
 		case BRAKING:

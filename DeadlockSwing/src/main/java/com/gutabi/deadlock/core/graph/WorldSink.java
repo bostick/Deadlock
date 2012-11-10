@@ -10,8 +10,7 @@ public class WorldSink extends Sink {
 	
 	public  WorldSink(Point p, Axis a) {
 		super(p, a);
-		color = Color.RED;
-		hiliteColor = new Color(255-color.getRed(), 255-color.getGreen(), 255-color.getBlue());
+		hiliteColor = new Color(0, 255, 255);
 	}
 	
 	public boolean isDeleteable() {

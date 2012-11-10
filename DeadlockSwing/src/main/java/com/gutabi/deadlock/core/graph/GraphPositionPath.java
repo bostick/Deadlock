@@ -15,7 +15,7 @@ import com.gutabi.deadlock.core.Point;
 @SuppressWarnings("static-access")
 public class GraphPositionPath {
 	
-	List<GraphPosition> spine;
+	public final List<GraphPosition> poss;
 	
 	public final int size;
 	public final GraphPosition start;
@@ -32,7 +32,7 @@ public class GraphPositionPath {
 	
 	public GraphPositionPath(List<GraphPosition> poss) {
 		
-		this.spine = poss;
+		this.poss = poss;
 		
 		int h = 17;
 		h = 37 * h + poss.hashCode();
@@ -134,7 +134,7 @@ public class GraphPositionPath {
 	
 	public String toString() {
 		String s = "";
-		for (GraphPosition g : spine) {
+		for (GraphPosition g : poss) {
 			if (g instanceof VertexPosition) {
 				s = s + g + " ";
 			}
@@ -144,7 +144,7 @@ public class GraphPositionPath {
 	
 	
 	public GraphPosition get(int index) {
-		return spine.get(index);
+		return poss.get(index);
 	}
 	
 	
@@ -284,7 +284,9 @@ public class GraphPositionPath {
 		if (!maxFloor.equals(max)) {
 			b = max;
 			
-			double u = Point.u(a.gpos.p, p, b.ceiling().gpos.p);
+			GraphPositionPathPosition bCeil = b.ceiling();
+			
+			double u = Point.u(a.gpos.p, p, bCeil.gpos.p);
 			if (u > b.param) {
 				u = b.param;
 			}
@@ -310,137 +312,17 @@ public class GraphPositionPath {
 	 */
 	public GraphPosition getGraphPosition(int pathIndex, double pathParam) {
 		
-		GraphPosition p1 = spine.get(pathIndex);
+		GraphPosition p1 = poss.get(pathIndex);
 		
 		if (DMath.equals(pathParam, 0.0)) {
-//			if (p1 instanceof EdgePosition) {
-//				assert DMath.equals(((EdgePosition)p1).getParam(), pathParam);
-//			}
 			return p1;
 		}
 		
-		GraphPosition p2 = spine.get(pathIndex+1);
+		GraphPosition p2 = poss.get(pathIndex+1);
 		
 		double dist = p1.distanceTo(p2);
 		
 		return p1.travelTo(p2, pathParam * dist);
-		
-//		int graphIndex;
-//		double graphParam;
-//		
-//		/*
-//		 * p1 and p2 might not be bounds, so have to convert from pathParam to graphParam
-//		 */
-//		
-//		if (p1 instanceof EdgePosition) {
-//			EdgePosition pp1 = (EdgePosition)p1;
-//			
-//			if (p2 instanceof EdgePosition) {
-//				EdgePosition pp2 = (EdgePosition)p2;
-//				
-//				if ((pp1.getIndex()+pp1.getParam()) < (pp2.getIndex()+pp2.getParam())) {
-//					// same direction as edge
-//					
-//					graphIndex = pp1.getIndex();
-//					graphParam = pathParam;
-//					
-//				} else {
-//					
-//					graphIndex = pp2.getIndex();
-//					graphParam = 1-pathParam;
-//					
-//				}
-//				
-//			} else {
-//				VertexPosition pp2 = (VertexPosition)p2;
-//				
-//				if (pp2.v == pp1.vs.get(1)) {
-//					// same direction as edge
-//					
-//					graphIndex = pp1.getIndex();
-//					graphParam = pathParam;
-//					
-//				} else {
-//					
-//					graphIndex = 0;
-//					graphParam = 1-pathParam;
-//					
-//				}
-//				
-//			}
-//			
-//			if (p1 instanceof RoadPosition) {
-//				return new RoadPosition(((RoadPosition)p1).r, graphIndex, graphParam);
-//			} else {
-//				return new MergerPosition(((MergerPosition)p1).m, ((MergerPosition)p1).dir, graphParam);
-//			}
-//			
-//		} else {
-//			VertexPosition pp1 = (VertexPosition)p1;
-//			
-//			if (p2 instanceof EdgePosition) {
-//				EdgePosition pp2 = (EdgePosition)p2;
-//				
-////				RoadPosition p2e = (RoadPosition)p2;
-//				
-//				if (pp1.v == pp2.vs.get(0)) {
-//					// same direction as edge
-//					
-//					graphIndex = 0;
-//					graphParam = pathParam;
-//					
-//				} else {
-//					
-//					graphIndex = pp2.getIndex();
-//					graphParam = 1-pathParam;
-//					
-//				}
-//				
-//				if (pp2 instanceof RoadPosition) {
-//					return new RoadPosition(((RoadPosition)pp2).r, graphIndex, graphParam);
-//				} else {
-//					return new MergerPosition(((MergerPosition)pp2).m, ((MergerPosition)pp2).dir, graphParam);
-//				}
-//				
-//			} else {
-//				
-//				VertexPosition pp2 = (VertexPosition)p2;
-//				
-//				throw new IllegalArgumentException();
-////				List<Edge> eds = Vertex.commonEdges(pp1.v, pp2.v);
-////				
-////				Edge e = null;
-////				
-////				for (Edge ce : eds) {
-////					if (ce.size() == 2) {
-////						e = ce;
-////						break;
-////					}
-////				}
-////				assert e != null;
-////				
-////				graphParam = (pp1.v == e.start) ? pathParam : 1-pathParam;
-////				
-////				Vertex p1v = ((VertexPosition)p1).v;
-////				
-////				if (p1v == e.start) {
-////					// same direction as edge
-////					
-////					graphIndex = 0;
-////					graphParam = pathParam;
-////					
-////				} else {
-////					
-////					graphIndex = 0;
-////					graphParam = 1-pathParam;
-////					
-////				}
-////				
-////				EdgePosition newE = new EdgePosition(e, graphIndex, graphParam);
-////				
-////				return newE;
-//			}
-//		}
 	}
 	
 	/**
@@ -574,31 +456,67 @@ public class GraphPositionPath {
 			if (aa.v == m.top) {
 				assert bb.v == m.bottom;
 				
-				acc.add(new MergerPosition(m, Axis.TOPBOTTOM, 0.5));
+				GraphPosition cur = MergerPosition.nextBoundFromTop(m);
 				
-				acc.add(bb);
+				acc.add(cur);
+				
+				while (true) {
+					if (cur.equals(bb)) {
+						break;
+					}
+					cur = cur.nextBoundToward(bb);
+					assert cur.isBound();
+					acc.add(cur);
+				}
 				
 			} else if (aa.v == m.left) {
 				assert bb.v == m.right;
 				
-				acc.add(new MergerPosition(m, Axis.LEFTRIGHT, 0.5));
+				GraphPosition cur = MergerPosition.nextBoundFromLeft(m);
 				
-				acc.add(bb);
+				acc.add(cur);
+				
+				while (true) {
+					if (cur.equals(bb)) {
+						break;
+					}
+					cur = cur.nextBoundToward(bb);
+					assert cur.isBound();
+					acc.add(cur);
+				}
 				
 			} else if (aa.v == m.right) {
 				assert bb.v == m.left;
 				
-				acc.add(new MergerPosition(m, Axis.LEFTRIGHT, 0.5));
+				GraphPosition cur = MergerPosition.nextBoundFromRight(m);
 				
-				acc.add(bb);
+				acc.add(cur);
+				
+				while (true) {
+					if (cur.equals(bb)) {
+						break;
+					}
+					cur = cur.nextBoundToward(bb);
+					assert cur.isBound();
+					acc.add(cur);
+				}
 				
 			} else {
 				assert aa.v == m.bottom;
 				assert bb.v == m.top;
 				
-				acc.add(new MergerPosition(m, Axis.TOPBOTTOM, 0.5));
+				GraphPosition cur = MergerPosition.nextBoundFromBottom(m);
 				
-				acc.add(bb);
+				acc.add(cur);
+				
+				while (true) {
+					if (cur.equals(bb)) {
+						break;
+					}
+					cur = cur.nextBoundToward(bb);
+					assert cur.isBound();
+					acc.add(cur);
+				}
 				
 			}
 		}
@@ -609,30 +527,22 @@ public class GraphPositionPath {
 		
 		g2.setColor(Color.RED);
 		
-		int[] xs = new int[spine.size()];
-		int[] ys = new int[spine.size()];
-		for (int i = 0; i < spine.size(); i++) {
-			Point p = spine.get(i).p;
+		int[] xs = new int[poss.size()];
+		int[] ys = new int[poss.size()];
+		for (int i = 0; i < poss.size(); i++) {
+			Point p = poss.get(i).p;
 			xs[i] = (int)(p.x * MODEL.PIXELS_PER_METER);
 			ys[i] = (int)(p.y * MODEL.PIXELS_PER_METER);
 		}
-		g2.drawPolyline(xs, ys, spine.size());
+		g2.drawPolyline(xs, ys, poss.size());
 		
 	}
 	
 	private boolean check() {
-		/*
-		 * MergerPositions don't have a bound, so think of new way to test consistency
-		 */
-//		for (int i = 1; i < spine.size(); i++) {
-//			GraphPosition cur = spine.get(i);
-//			GraphPosition prev = spine.get(i-1);
-//			
-//			GraphPosition prevNext = prev.nextBoundToward(cur);
-//			
-//			assert prevNext.equals(cur);
-//			
-//		}
+		for (int i = 0; i < poss.size(); i++) {
+			GraphPosition a = poss.get(i);
+			assert a.isBound();
+		}
 		return true;
 	}
 	
