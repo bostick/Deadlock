@@ -16,7 +16,7 @@ import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.Rect;
 import com.gutabi.deadlock.core.geom.Capsule;
 import com.gutabi.deadlock.core.geom.SweepEventListener;
-import com.gutabi.deadlock.model.Stroke;
+import com.gutabi.deadlock.core.geom.Sweeper;
 
 @SuppressWarnings("static-access")
 public class Graph {
@@ -244,7 +244,7 @@ public class Graph {
 	
 	
 	
-	public void sweepStart(Stroke s, SweepEventListener l) {
+	public void sweepStart(Sweeper s, SweepEventListener l) {
 		
 		for (Vertex v : vertices) {
 			v.sweepStart(s, l);
@@ -255,7 +255,7 @@ public class Graph {
 		
 	}
 	
-	public void sweep(Stroke s, int index, SweepEventListener l) {
+	public void sweep(Sweeper s, int index, SweepEventListener l) {
 		for (Vertex v : vertices) {
 			v.sweep(s, index, l);
 		}

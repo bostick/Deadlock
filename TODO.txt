@@ -1,23 +1,13 @@
 
 IMMEDIATELY:
 
-work on .graph package
-move classes
-make Graph a pure graph class
-move Road, Merger, Sink, Source, etc. to .model
-
-
 add SAT code
 find uses of halfPlane
 reexamine all bestHitTest implementations
 WorldSource.active()
 Car.computeDynamicProperties()
 
-
-
 test if Merger is hitting anything else before adding
-
-
 
 crashes
 find a fire gif and start animating sprites
@@ -76,6 +66,13 @@ skeleton for roads and mergers
 add arrow images for sources and sinks
 
 ON HOLD FOR NOW:
+
+
+work on .graph package
+move classes
+make Graph a pure graph class
+move Road, Merger, Sink, Source, etc. to .model
+
 
 road shape desription
 lines and circular arcs

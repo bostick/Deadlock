@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
+import com.gutabi.deadlock.model.StopSign;
 
 public class RoadPosition extends EdgePosition {
 	

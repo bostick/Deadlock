@@ -3,7 +3,6 @@ package com.gutabi.deadlock.core.geom;
 import java.util.Comparator;
 
 import com.gutabi.deadlock.core.DMath;
-import com.gutabi.deadlock.model.Stroke;
 
 public class SweepEvent {
 	
@@ -26,14 +25,14 @@ public class SweepEvent {
 	
 	public final SweepEventType type;
 	public final Sweepable o;
-	public final Stroke s;
+	public final Sweeper s;
 	public final int index;
 	public final double param;
 //	public final Object o;
 	
 //	private Vertex v;
 	
-	public SweepEvent(SweepEventType type, Sweepable o, Stroke s, int index, double param) {
+	public SweepEvent(SweepEventType type, Sweepable o, Sweeper s, int index, double param) {
 		this.type = type;
 		this.o = o;
 		this.s = s;

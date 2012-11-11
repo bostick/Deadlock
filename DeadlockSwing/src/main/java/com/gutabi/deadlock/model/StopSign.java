@@ -1,4 +1,4 @@
-package com.gutabi.deadlock.core.graph;
+package com.gutabi.deadlock.model;
 
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 
@@ -10,6 +10,8 @@ import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.Rect;
+import com.gutabi.deadlock.core.graph.Road;
+import com.gutabi.deadlock.core.graph.Vertex;
 
 @SuppressWarnings("static-access")
 public class StopSign implements Entity {

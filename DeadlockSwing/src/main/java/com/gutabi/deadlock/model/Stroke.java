@@ -17,6 +17,7 @@ import com.gutabi.deadlock.core.Rect;
 import com.gutabi.deadlock.core.geom.SweepEvent;
 import com.gutabi.deadlock.core.geom.SweepEvent.SweepEventType;
 import com.gutabi.deadlock.core.geom.SweepEventListener;
+import com.gutabi.deadlock.core.geom.Sweeper;
 import com.gutabi.deadlock.core.graph.Graph;
 import com.gutabi.deadlock.core.graph.Intersection;
 import com.gutabi.deadlock.core.graph.Road;
@@ -25,7 +26,7 @@ import com.gutabi.deadlock.core.graph.RoadSegment;
 import com.gutabi.deadlock.core.graph.Vertex;
 
 @SuppressWarnings("static-access")
-public class Stroke implements SweepEventListener {
+public class Stroke implements SweepEventListener, Sweeper {
 	
 	public List<Point> pts;
 	
@@ -45,11 +46,23 @@ public class Stroke implements SweepEventListener {
 		return aabb;
 	}
 	
+	public double getRadius() {
+		return r;
+	}
+	
 	public void add(Point p) {
 		
 		pts.add(p);
 		
 		computeAABB();
+	}
+	
+	public Point get(int index) {
+		return pts.get(index);
+	}
+	
+	public int size() {
+		return pts.size();
 	}
 	
 	public Point getPoint(int index, double param) {

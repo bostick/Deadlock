@@ -28,10 +28,9 @@ import com.gutabi.deadlock.core.graph.Edge;
 import com.gutabi.deadlock.core.graph.Graph;
 import com.gutabi.deadlock.core.graph.Merger;
 import com.gutabi.deadlock.core.graph.Road;
-import com.gutabi.deadlock.core.graph.StopSign;
 import com.gutabi.deadlock.core.graph.Vertex;
-import com.gutabi.deadlock.core.graph.WorldSink;
-import com.gutabi.deadlock.core.graph.WorldSource;
+import com.gutabi.deadlock.model.fixture.WorldSink;
+import com.gutabi.deadlock.model.fixture.WorldSource;
 
 @SuppressWarnings("static-access")
 public class World {

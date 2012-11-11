@@ -20,9 +20,9 @@ import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.graph.Merger;
 import com.gutabi.deadlock.core.graph.Road;
-import com.gutabi.deadlock.core.graph.StopSign;
 import com.gutabi.deadlock.core.graph.Vertex;
 import com.gutabi.deadlock.model.Car;
+import com.gutabi.deadlock.model.StopSign;
 import com.gutabi.deadlock.model.Stroke;
 
 @SuppressWarnings("static-access")

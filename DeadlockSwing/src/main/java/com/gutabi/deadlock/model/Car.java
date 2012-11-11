@@ -32,10 +32,9 @@ import com.gutabi.deadlock.core.graph.GraphPositionPath;
 import com.gutabi.deadlock.core.graph.GraphPositionPathPosition;
 import com.gutabi.deadlock.core.graph.Merger;
 import com.gutabi.deadlock.core.graph.RoadPosition;
-import com.gutabi.deadlock.core.graph.StopSign;
 import com.gutabi.deadlock.core.graph.VertexPosition;
-import com.gutabi.deadlock.core.graph.WorldSink;
-import com.gutabi.deadlock.core.graph.WorldSource;
+import com.gutabi.deadlock.model.fixture.WorldSink;
+import com.gutabi.deadlock.model.fixture.WorldSource;
 
 @SuppressWarnings("static-access")
 public abstract class Car implements Entity {

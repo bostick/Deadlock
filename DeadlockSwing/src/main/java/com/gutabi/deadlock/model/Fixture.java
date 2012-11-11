@@ -1,4 +1,4 @@
-package com.gutabi.deadlock.core.graph;
+package com.gutabi.deadlock.model;
 
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 
@@ -6,6 +6,8 @@ import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 
 import com.gutabi.deadlock.core.Point;
+import com.gutabi.deadlock.core.graph.Axis;
+import com.gutabi.deadlock.core.graph.Vertex;
 
 @SuppressWarnings("static-access")
 public abstract class Fixture extends Vertex {

@@ -1,8 +1,10 @@
-package com.gutabi.deadlock.model;
+package com.gutabi.deadlock.model.car;
 
 import org.apache.log4j.Logger;
 
-import com.gutabi.deadlock.core.graph.WorldSource;
+import com.gutabi.deadlock.model.Car;
+import com.gutabi.deadlock.model.fixture.WorldSource;
+
 
 //@SuppressWarnings("static-access")
 public class NormalCar extends Car {

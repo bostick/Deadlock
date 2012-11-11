@@ -18,8 +18,8 @@ import com.gutabi.deadlock.core.geom.SweepEvent.SweepEventType;
 import com.gutabi.deadlock.core.geom.SweepEventListener;
 import com.gutabi.deadlock.core.geom.SweepUtils;
 import com.gutabi.deadlock.core.geom.Sweepable;
+import com.gutabi.deadlock.core.geom.Sweeper;
 import com.gutabi.deadlock.model.Car;
-import com.gutabi.deadlock.model.Stroke;
 
 @SuppressWarnings("static-access")
 public abstract class Vertex implements Entity, Sweepable {
@@ -68,11 +68,11 @@ public abstract class Vertex implements Entity, Sweepable {
 	
 	
 	
-	public void sweepStart(Stroke s, SweepEventListener l) {
+	public void sweepStart(Sweeper s, SweepEventListener l) {
 		
-		Point c = s.pts.get(0);
+		Point c = s.get(0);
 		
-		if (bestHitTest(c, s.r) != null) {
+		if (bestHitTest(c, s.getRadius()) != null) {
 			SweepEvent e = new SweepEvent(SweepEventType.ENTERVERTEX, this, s, 0, 0.0);
 			l.start(e);
 		}
@@ -90,13 +90,13 @@ public abstract class Vertex implements Entity, Sweepable {
 //		
 //	}
 	
-	public void sweep(Stroke s, int index, SweepEventListener l) {
+	public void sweep(Sweeper s, int index, SweepEventListener l) {
 		
-		Point c = s.pts.get(index);
-		Point d = s.pts.get(index+1);
+		Point c = s.get(index);
+		Point d = s.get(index+1);
 		
 		boolean outside;
-		if (bestHitTest(c, s.r) != null) {
+		if (bestHitTest(c, s.getRadius()) != null) {
 			outside = false;
 		} else {
 			outside = true;
@@ -104,7 +104,7 @@ public abstract class Vertex implements Entity, Sweepable {
 		
 		double[] params = new double[2];
 		Arrays.fill(params, Double.POSITIVE_INFINITY);
-		int paramCount = SweepUtils.sweepCircleCircle(p, c, d, s.r, r, params);
+		int paramCount = SweepUtils.sweepCircleCircle(p, c, d, s.getRadius(), r, params);
 		
 		Arrays.sort(params);
 		
@@ -115,7 +115,7 @@ public abstract class Vertex implements Entity, Sweepable {
 		for (int i = 0; i < paramCount; i++) {
 			double param = params[i];
 			assert DMath.greaterThanEquals(param, 0.0) && DMath.lessThanEquals(param, 1.0);
-			if (DMath.lessThan(param, 1.0) || index == s.pts.size()-1) {
+			if (DMath.lessThan(param, 1.0) || index == s.size()-1) {
 				if (outside) {
 					l.event(new SweepEvent(SweepEventType.ENTERVERTEX, this, s, index, param));
 				} else {

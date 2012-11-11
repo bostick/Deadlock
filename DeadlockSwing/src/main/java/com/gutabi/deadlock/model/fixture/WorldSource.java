@@ -1,4 +1,4 @@
-package com.gutabi.deadlock.core.graph;
+package com.gutabi.deadlock.model.fixture;
 
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 import static com.gutabi.deadlock.view.DeadlockView.VIEW;
@@ -8,11 +8,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.gutabi.deadlock.core.Point;
+import com.gutabi.deadlock.core.graph.Axis;
+import com.gutabi.deadlock.core.graph.GraphPositionPath;
+import com.gutabi.deadlock.core.graph.Vertex;
 import com.gutabi.deadlock.model.Car;
-import com.gutabi.deadlock.model.FastCar;
-import com.gutabi.deadlock.model.NormalCar;
-import com.gutabi.deadlock.model.RandomCar;
-import com.gutabi.deadlock.model.ReallyFastCar;
+import com.gutabi.deadlock.model.car.FastCar;
+import com.gutabi.deadlock.model.car.NormalCar;
+import com.gutabi.deadlock.model.car.RandomCar;
+import com.gutabi.deadlock.model.car.ReallyFastCar;
 
 @SuppressWarnings("static-access")
 public class WorldSource extends Source {

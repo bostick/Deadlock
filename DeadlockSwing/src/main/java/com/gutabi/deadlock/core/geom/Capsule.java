@@ -13,7 +13,6 @@ import com.gutabi.deadlock.core.OverlappingException;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.Rect;
 import com.gutabi.deadlock.core.geom.SweepEvent.SweepEventType;
-import com.gutabi.deadlock.model.Stroke;
 
 @SuppressWarnings("static-access")
 public class Capsule implements Sweepable {
@@ -84,11 +83,11 @@ public class Capsule implements Sweepable {
 		return "(" + a + " " + b + ")";
 	}
 	
-	public void sweepStart(Stroke s, SweepEventListener l) {
+	public void sweepStart(Sweeper s, SweepEventListener l) {
 		
-		Point c = s.pts.get(0);
+		Point c = s.get(0);
 		
-		if (bestHitTest(c, s.r) != null) {
+		if (bestHitTest(c, s.getRadius()) != null) {
 			l.start(new SweepEvent(SweepEventType.ENTERCAPSULE, this, s, 0, 0.0));
 		}
 		
@@ -104,13 +103,13 @@ public class Capsule implements Sweepable {
 //		
 //	}
 	
-	public void sweep(Stroke s, int index, SweepEventListener l) {
+	public void sweep(Sweeper s, int index, SweepEventListener l) {
 		
-		Point c = s.pts.get(index);
-		Point d = s.pts.get(index+1);
+		Point c = s.get(index);
+		Point d = s.get(index+1);
 		
 		boolean outside;
-		if (bestHitTest(c, s.r) != null) {
+		if (bestHitTest(c, s.getRadius()) != null) {
 			outside = false;
 		} else {
 			outside = true;
@@ -126,7 +125,7 @@ public class Capsule implements Sweepable {
 		
 		double[] capParams = new double[2];
 		//int n = SweepUtils.sweepCircleCap(b, a, c, d, s.r, r, capParams);
-		int n = SweepUtils.sweepCircleCircle(a, c, d, s.r, r, capParams);
+		int n = SweepUtils.sweepCircleCircle(a, c, d, s.getRadius(), r, capParams);
 		
 		for (int i = 0; i < n; i++) {
 			
@@ -149,7 +148,7 @@ public class Capsule implements Sweepable {
 		 * top side, left hand side of <a, b>
 		 */
 		
-		double cdParam = SweepUtils.sweepCircleLine(aUp, bUp, c, d, s.r);
+		double cdParam = SweepUtils.sweepCircleLine(aUp, bUp, c, d, s.getRadius());
 		
 		if (cdParam != -1) {
 			
@@ -171,7 +170,7 @@ public class Capsule implements Sweepable {
 		 */
 		
 //		n = SweepUtils.sweepCircleCap(a, b, c, d, s.r, r, capParams);
-		n = SweepUtils.sweepCircleCircle(b, c, d, s.r, r, capParams);
+		n = SweepUtils.sweepCircleCircle(b, c, d, s.getRadius(), r, capParams);
 		
 		for (int i = 0; i < n; i++) {
 			
@@ -194,7 +193,7 @@ public class Capsule implements Sweepable {
 		 * bottom side
 		 */
 		
-		cdParam = SweepUtils.sweepCircleLine(bDown, aDown, c, d, s.r);
+		cdParam = SweepUtils.sweepCircleLine(bDown, aDown, c, d, s.getRadius());
 		
 		if (cdParam != -1) {
 //			logger.debug("bottom side: " + 1);
@@ -227,7 +226,7 @@ public class Capsule implements Sweepable {
 			double param = params[i];
 			assert DMath.greaterThanEquals(param, 0.0) && DMath.lessThanEquals(param, 1.0);
 			
-			if (DMath.lessThan(param, 1.0) || index == s.pts.size()-1) {
+			if (DMath.lessThan(param, 1.0) || index == s.size()-1) {
 				if (outside) {
 					l.event(new SweepEvent(SweepEventType.ENTERCAPSULE, this, s, index, param));
 				} else {

@@ -20,10 +20,10 @@ import org.junit.Test;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.graph.Road;
 import com.gutabi.deadlock.core.graph.Vertex;
-import com.gutabi.deadlock.core.graph.WorldSource;
 import com.gutabi.deadlock.model.Car;
-import com.gutabi.deadlock.model.NormalCar;
 import com.gutabi.deadlock.model.Stroke;
+import com.gutabi.deadlock.model.car.NormalCar;
+import com.gutabi.deadlock.model.fixture.WorldSource;
 
 @SuppressWarnings("serial")
 public class TestSimulating {

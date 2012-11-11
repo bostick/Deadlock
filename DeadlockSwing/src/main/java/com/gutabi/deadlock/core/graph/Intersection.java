@@ -7,6 +7,7 @@ import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 
 import com.gutabi.deadlock.core.Point;
+import com.gutabi.deadlock.core.graph.Vertex;
 
 @SuppressWarnings("static-access")
 public class Intersection extends Vertex {

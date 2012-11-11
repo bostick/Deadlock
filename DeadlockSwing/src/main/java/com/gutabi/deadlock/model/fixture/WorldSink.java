@@ -1,8 +1,9 @@
-package com.gutabi.deadlock.core.graph;
+package com.gutabi.deadlock.model.fixture;
 
 import java.awt.Color;
 
 import com.gutabi.deadlock.core.Point;
+import com.gutabi.deadlock.core.graph.Axis;
 
 public class WorldSink extends Sink {
 	

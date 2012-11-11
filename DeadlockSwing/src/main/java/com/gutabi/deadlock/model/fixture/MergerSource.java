@@ -1,14 +1,15 @@
-package com.gutabi.deadlock.core.graph;
+package com.gutabi.deadlock.model.fixture;
 
 import java.awt.Color;
 
 import com.gutabi.deadlock.core.Point;
+import com.gutabi.deadlock.core.graph.Axis;
 
-public class MergerSink extends Sink {
+public class MergerSource extends Source {
 	
-	public MergerSource matchingSource;
+	public MergerSink matchingSink;
 	
-	public MergerSink(Point p, Axis a) {
+	public MergerSource(Point p, Axis a) {
 		super(p, a);
 		hiliteColor = new Color(0, 255, 255);
 	}
@@ -17,7 +18,7 @@ public class MergerSink extends Sink {
 	public boolean isDeleteable() {
 		return false;
 	}
-	
+
 	public void preStart() {
 		;
 	}

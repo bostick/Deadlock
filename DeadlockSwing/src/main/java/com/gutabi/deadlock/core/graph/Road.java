@@ -17,7 +17,8 @@ import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.Rect;
 import com.gutabi.deadlock.core.geom.Capsule;
 import com.gutabi.deadlock.core.geom.SweepEventListener;
-import com.gutabi.deadlock.model.Stroke;
+import com.gutabi.deadlock.core.geom.Sweeper;
+import com.gutabi.deadlock.model.StopSign;
 
 @SuppressWarnings("static-access")
 public class Road extends Edge {
@@ -194,7 +195,7 @@ public class Road extends Edge {
 		}
 	}
 	
-	public void sweepStart(Stroke s, SweepEventListener l) {
+	public void sweepStart(Sweeper s, SweepEventListener l) {
 		
 		/*
 		 * TODO:
@@ -220,7 +221,7 @@ public class Road extends Edge {
 //		
 //	}
 	
-	public void sweep(Stroke s, int index, SweepEventListener l) {
+	public void sweep(Sweeper s, int index, SweepEventListener l) {
 		
 		/*
 		 * TODO:
