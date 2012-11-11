@@ -519,15 +519,22 @@ public class World {
 	
 	private void paintBackground(Graphics2D g2) {
 		
-		int x = (int)((aabb.x * MODEL.PIXELS_PER_METER));
-		int y = (int)((aabb.y * MODEL.PIXELS_PER_METER));
+		drawBackground(g2);
 		
-		g2.drawImage(backgroundImage, x, y, null);
-		
-		if (skidMarksImage != null) {
-			g2.drawImage(skidMarksImage, 0, 0, null);
+		if (skidMarksActive) {
+			drawSkidMarks(g2);
 		}
 		
+	}
+	
+	private void drawBackground(Graphics2D g2) {
+		int x = (int)((aabb.x * MODEL.PIXELS_PER_METER));
+		int y = (int)((aabb.y * MODEL.PIXELS_PER_METER));
+		g2.drawImage(backgroundImage, x, y, null);
+	}
+	
+	private void drawSkidMarks(Graphics2D g2) {
+		g2.drawImage(skidMarksImage, 0, 0, null);
 	}
 	
 //	public Runnable renderBackgroundRunnable = new Runnable() {
@@ -589,6 +596,7 @@ public class World {
 	
 	private BufferedImage skidMarksImage;
 	private Graphics2D skidMarksImageG2;
+	private boolean skidMarksActive;
 	
 	public void renderSkidMarksFresh() {
 		skidMarksImage = new BufferedImage(
@@ -625,6 +633,8 @@ public class World {
 					(int)(s1.x * MODEL.PIXELS_PER_METER),
 					(int)(s1.y * MODEL.PIXELS_PER_METER));
 		}
+		
+		skidMarksActive = true;
 		
 //		skidMarksImageG2.setTransform(origTransform);
 		

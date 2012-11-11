@@ -32,8 +32,6 @@ public class DeadlockView {
 	public int worldAABBX;
 	public int worldAABBY;
 	
-	Rect drawingAABB;
-	
 	public java.awt.Stroke worldStroke = new BasicStroke(0.05f);
 	
 	public final Logger logger = Logger.getLogger(DeadlockView.class);
@@ -89,6 +87,9 @@ public class DeadlockView {
 		MODEL.world.renderBackgroundFresh();
 	}
 	
+	
+	Rect prevAABB;
+	
 	public void repaint() {
 		assert !Thread.holdsLock(MODEL);
 		
@@ -109,10 +110,10 @@ public class DeadlockView {
 			break;
 		}
 		
-		if (drawingAABB != null && aabb.equals(drawingAABB)) {
-			
-			worldAABBX = (int)(worldOriginX + (aabb.x * MODEL.PIXELS_PER_METER));
-			worldAABBY = (int)(worldOriginY + (aabb.y * MODEL.PIXELS_PER_METER));
+		worldAABBX = (int)(worldOriginX + (aabb.x * MODEL.PIXELS_PER_METER));
+		worldAABBY = (int)(worldOriginY + (aabb.y * MODEL.PIXELS_PER_METER));
+		
+		if (aabb == prevAABB) {
 			
 			panel.repaint(
 					worldAABBX,
@@ -121,10 +122,13 @@ public class DeadlockView {
 					(int)((aabb.height * MODEL.PIXELS_PER_METER)));
 			
 		} else {
+			/*
+			 * aabb has changed, so do a whole repaint
+			 */
 			panel.repaint();
 		}
 		
-		drawingAABB = aabb;
+		prevAABB = aabb;
 		
 	}
 	
