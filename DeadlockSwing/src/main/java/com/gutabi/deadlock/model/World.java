@@ -4,6 +4,7 @@ import static com.gutabi.deadlock.controller.DeadlockController.CONTROLLER;
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
@@ -14,6 +15,7 @@ import java.util.List;
 import java.util.Random;
 
 import javax.imageio.ImageIO;
+import javax.swing.SwingUtilities;
 
 import org.jbox2d.common.Vec2;
 
@@ -65,8 +67,6 @@ public class World {
 	public static BufferedImage sheet;
 	private static BufferedImage tiledGrass;
 	static Color lightGreen = new Color(128, 255, 128);
-	
-	private BufferedImage backgroundImage;
 	
 	private Rect worldRect;
 	private Rect aabb;
@@ -270,6 +270,8 @@ public class World {
 	 */
 	public void preStart() {
 		
+		renderSkidMarksFresh();
+		
 		graph.preStart();
 		
 		t = 0;
@@ -282,7 +284,7 @@ public class World {
 		
 		graph.postStop();
 		
-		skidMarks.clear();
+//		skidMarks.clear();
 		
 		synchronized (MODEL) {
 			for (Car c : cars) {
@@ -290,6 +292,8 @@ public class World {
 			}
 			cars.clear();
 		}
+		
+		skidMarksImage = null;
 		
 	}
 	
@@ -338,6 +342,11 @@ public class World {
 			}
 		
 			cars.removeAll(toBeRemoved);
+		}
+		
+		if (!skidMarks.isEmpty()) {
+			renderSkidMarksIncremental();
+			skidMarks.clear();
 		}
 		
 	}
@@ -431,6 +440,8 @@ public class World {
 //		return graph.bestHitTest(p, radius);
 //	}
 	
+	
+	
 	public void paint(Graphics2D g2) {
 		
 		if (!MODEL.DEBUG_DRAW) {
@@ -461,19 +472,7 @@ public class World {
 			
 			AffineTransform origTransform = g2.getTransform();
 			
-			g2.setColor(Color.BLACK);
-			
-			for (int i = 0; i < skidMarks.size(); i+=2) {
-				Point s0 = skidMarks.get(i);
-				Point s1 = skidMarks.get(i+1);
-				g2.drawLine(
-						(int)(s0.x * MODEL.PIXELS_PER_METER),
-						(int)(s0.y * MODEL.PIXELS_PER_METER),
-						(int)(s1.x * MODEL.PIXELS_PER_METER),
-						(int)(s1.y * MODEL.PIXELS_PER_METER));
-			}
-			
-			g2.setTransform(origTransform);
+//			g2.setTransform(origTransform);
 			
 			g2.scale(MODEL.PIXELS_PER_METER, MODEL.PIXELS_PER_METER);
 			
@@ -524,16 +523,33 @@ public class World {
 		int y = (int)((aabb.y * MODEL.PIXELS_PER_METER));
 		
 		g2.drawImage(backgroundImage, x, y, null);
+		
+		if (skidMarksImage != null) {
+			g2.drawImage(skidMarksImage, 0, 0, null);
+		}
+		
 	}
 	
-	public void renderBackground() {
+//	public Runnable renderBackgroundRunnable = new Runnable() {
+//		public void run() {
+//			renderBackground();
+//		}
+//	};
+	
+	
+	private BufferedImage backgroundImage;
+	private Graphics2D backgroundImageG2;
+	
+	public void renderBackgroundFresh() {
 		assert !Thread.holdsLock(MODEL);
+		assert SwingUtilities.isEventDispatchThread();
+//		assert Thread.currentThread().getName().equals("controller");
 		
 		backgroundImage = new BufferedImage(
 				(int)(aabb.width * MODEL.PIXELS_PER_METER),
 				(int)(aabb.height * MODEL.PIXELS_PER_METER),
 				BufferedImage.TYPE_INT_ARGB);
-		Graphics2D backgroundImageG2 = backgroundImage.createGraphics();
+		backgroundImageG2 = backgroundImage.createGraphics();
 		
 		backgroundImageG2.setStroke(VIEW.worldStroke);
 		
@@ -567,6 +583,50 @@ public class World {
 			backgroundImageG2.setTransform(orig);
 			
 		}
+		
+	}
+	
+	
+	private BufferedImage skidMarksImage;
+	private Graphics2D skidMarksImageG2;
+	
+	public void renderSkidMarksFresh() {
+		skidMarksImage = new BufferedImage(
+				(int)(WORLD_WIDTH * MODEL.PIXELS_PER_METER),
+				(int)(WORLD_HEIGHT * MODEL.PIXELS_PER_METER),
+				BufferedImage.TYPE_INT_ARGB);
+		skidMarksImageG2 = skidMarksImage.createGraphics();
+	}
+	
+	
+	
+	static java.awt.Stroke skidMarkStroke = new BasicStroke(2.5f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
+	
+	public void renderSkidMarksIncremental() {
+		assert !Thread.holdsLock(MODEL);
+//		assert SwingUtilities.isEventDispatchThread();
+//		assert Thread.currentThread().getName().equals("controller");
+		
+//		AffineTransform origTransform = skidMarksImageG2.getTransform();
+		
+//		skidMarksImageG2.translate(
+//				(int)((-aabb.x) * MODEL.PIXELS_PER_METER),
+//				(int)((-aabb.y) * MODEL.PIXELS_PER_METER));
+		
+		skidMarksImageG2.setColor(Color.BLACK);
+		skidMarksImageG2.setStroke(skidMarkStroke);
+		
+		for (int i = 0; i < skidMarks.size(); i+=2) {
+			Point s0 = skidMarks.get(i);
+			Point s1 = skidMarks.get(i+1);
+			skidMarksImageG2.drawLine(
+					(int)(s0.x * MODEL.PIXELS_PER_METER),
+					(int)(s0.y * MODEL.PIXELS_PER_METER),
+					(int)(s1.x * MODEL.PIXELS_PER_METER),
+					(int)(s1.y * MODEL.PIXELS_PER_METER));
+		}
+		
+//		skidMarksImageG2.setTransform(origTransform);
 		
 	}
 	

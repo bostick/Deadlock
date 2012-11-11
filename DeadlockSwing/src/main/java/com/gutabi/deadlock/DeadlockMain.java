@@ -6,6 +6,7 @@ import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
 import java.io.IOException;
 
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
@@ -26,7 +27,7 @@ public class DeadlockMain  {
 		VIEW.frame.setVisible(true);
 		VIEW.panel.requestFocusInWindow();
 		
-		MODEL.world.renderBackground();
+		VIEW.renderBackgroundFresh();
 		VIEW.repaint();
 		
 	}
@@ -44,7 +45,7 @@ public class DeadlockMain  {
 		
 		UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
 		
-		javax.swing.SwingUtilities.invokeLater(new Runnable() {
+		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
 				try {

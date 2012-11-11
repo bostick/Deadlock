@@ -11,6 +11,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import javax.swing.SwingUtilities;
+
 import org.apache.log4j.Logger;
 
 import com.gutabi.deadlock.DeadlockMain;
@@ -78,6 +80,20 @@ public class DeadlockController implements ActionListener {
 		f.get();
 	}
 	
+	Runnable renderRunnable = new Runnable() {
+		public void run() {
+			renderAndPaint();
+		}
+	};
+	
+	public void renderAndPaintInBackground() {
+		SwingUtilities.invokeLater(renderRunnable);
+	}
+	
+	public void renderAndPaint() {
+		VIEW.renderBackgroundFresh();
+		VIEW.repaint();
+	}
 	
 	Point lastPressPanelPoint;
 	long lastPressTime;
@@ -205,8 +221,9 @@ public class DeadlockController implements ActionListener {
 			}
 			case DRAFTING:
 				draftEnd();
-				MODEL.world.renderBackground();
-				VIEW.repaint();
+				
+				renderAndPaintInBackground();
+				
 				break;
 			case RUNNING:
 			case PAUSED:
@@ -307,8 +324,7 @@ public class DeadlockController implements ActionListener {
 			
 		}
 		
-		MODEL.world.renderBackground();
-		VIEW.repaint();
+		renderAndPaintInBackground();
 		
 	}
 	
@@ -334,8 +350,7 @@ public class DeadlockController implements ActionListener {
 				
 				MODEL.cursor.computeAABB();
 				
-				MODEL.world.renderBackground();
-				VIEW.repaint();
+				renderAndPaintInBackground();
 				
 			}
 			
@@ -487,8 +502,7 @@ public class DeadlockController implements ActionListener {
 			
 			MODEL.DEBUG_DRAW = state;
 			
-			MODEL.world.renderBackground();
-			VIEW.repaint();
+			renderAndPaintInBackground();
 			
 		} else if (e.getActionCommand().equals("fpsDraw")) {
 			
@@ -496,8 +510,7 @@ public class DeadlockController implements ActionListener {
 			
 			MODEL.FPS_DRAW = state;
 			
-			MODEL.world.renderBackground();
-			VIEW.repaint();
+			renderAndPaintInBackground();
 			
 		}
 	}

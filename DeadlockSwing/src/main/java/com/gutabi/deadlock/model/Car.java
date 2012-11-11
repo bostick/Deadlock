@@ -96,6 +96,8 @@ public abstract class Car implements Entity {
 	Point worldPoint2;
 	Point worldPoint3;
 	Point worldPoint4;
+	Point prevWorldPoint3;
+	Point prevWorldPoint4;
 	
 	/*
 	 * 
@@ -239,8 +241,8 @@ public abstract class Car implements Entity {
 //		Point prevP = p;
 //		Point prevWorldPoint1 = worldPoint1;
 //		Point prevWorldPoint2 = worldPoint1;
-		Point prevWorldPoint3 = worldPoint1;
-		Point prevWorldPoint4 = worldPoint1;
+		prevWorldPoint3 = worldPoint3;
+		prevWorldPoint4 = worldPoint4;
 		
 		pVec2 = b2dBody.getPosition();
 		p = new Point(pVec2.x, pVec2.y);
@@ -292,13 +294,6 @@ public abstract class Car implements Entity {
 				completelyOnRoad = false;
 				inMerger = false;
 			}
-		}
-		
-		if (!completelyOnRoad) {
-			MODEL.world.skidMarks.add(prevWorldPoint3);
-			MODEL.world.skidMarks.add(worldPoint3);
-			MODEL.world.skidMarks.add(prevWorldPoint4);
-			MODEL.world.skidMarks.add(worldPoint4);
 		}
 		
 		if (!atleastPartiallyOnRoad) {
@@ -803,6 +798,14 @@ public abstract class Car implements Entity {
 			if (Point.distance(p, s.p) < MODEL.world.SINK_EPSILON) {
 				sinked = true;
 			}
+			
+			if (!completelyOnRoad) {
+				MODEL.world.skidMarks.add(prevWorldPoint3);
+				MODEL.world.skidMarks.add(worldPoint3);
+				MODEL.world.skidMarks.add(prevWorldPoint4);
+				MODEL.world.skidMarks.add(worldPoint4);
+			}
+			
 			if (sinked) {
 				
 				logger.debug("sink");
@@ -826,6 +829,11 @@ public abstract class Car implements Entity {
 				}
 				
 			}
+			
+			MODEL.world.skidMarks.add(prevWorldPoint3);
+			MODEL.world.skidMarks.add(worldPoint3);
+			MODEL.world.skidMarks.add(prevWorldPoint4);
+			MODEL.world.skidMarks.add(worldPoint4);
 			
 			break;
 		case CRASHED:

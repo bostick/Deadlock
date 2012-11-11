@@ -1,13 +1,6 @@
 
 IMMEDIATELY:
 
-skids
-line segments of when a car goes off-road
-
-work on getting a separate layer to draw skids on, don't want individual line segment accumulating forever
-
-
-
 work on .graph package
 move classes
 make Graph a pure graph class
@@ -60,6 +53,10 @@ switch to opengl
 start work on popup menu
 
 DONE:
+
+skids
+line segments of when a car goes off-road
+work on getting a separate layer to draw skids on, don't want individual line segment accumulating forever
 
 remove sweepCircleCap
 

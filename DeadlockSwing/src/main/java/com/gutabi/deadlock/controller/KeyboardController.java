@@ -1,10 +1,10 @@
 package com.gutabi.deadlock.controller;
 
 import static com.gutabi.deadlock.controller.DeadlockController.CONTROLLER;
-import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
 import java.awt.event.ActionEvent;
+import java.util.concurrent.ExecutionException;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -40,13 +40,21 @@ public class KeyboardController {
 		@Override
 		public void actionPerformed(ActionEvent blah) {
 			
-			CONTROLLER.queue(new Runnable() {
-				public void run() {
-					CONTROLLER.deleteKey();
-					MODEL.world.renderBackground();
-					VIEW.repaint();
-				}
-			});
+			try {
+				CONTROLLER.queueAndWait(new Runnable() {
+					public void run() {
+						CONTROLLER.deleteKey();
+					}
+				});
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ExecutionException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			CONTROLLER.renderAndPaint();
 			
 		}
 	};
@@ -56,13 +64,21 @@ public class KeyboardController {
 		@Override
 		public void actionPerformed(ActionEvent blah) {
 			
-			CONTROLLER.queue(new Runnable() {
-				public void run() {
-					CONTROLLER.insertKey();
-					MODEL.world.renderBackground();
-					VIEW.repaint();
-				}
-			});
+			try {
+				CONTROLLER.queueAndWait(new Runnable() {
+					public void run() {
+						CONTROLLER.insertKey();
+					}
+				});
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ExecutionException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			CONTROLLER.renderAndPaint();
 			
 		}
 	};
@@ -72,11 +88,19 @@ public class KeyboardController {
 		@Override
 		public void actionPerformed(ActionEvent blah) {
 			
-			CONTROLLER.queue(new Runnable() {
-				public void run() {
-					CONTROLLER.qKey();
-				}
-			});
+			try {
+				CONTROLLER.queueAndWait(new Runnable() {
+					public void run() {
+						CONTROLLER.qKey();
+					}
+				});
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ExecutionException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			
 		}
 	};

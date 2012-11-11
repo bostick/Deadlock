@@ -85,6 +85,10 @@ public class DeadlockView {
 		return new Point(p.x * MODEL.PIXELS_PER_METER + worldOriginX, p.y * MODEL.PIXELS_PER_METER + worldOriginY);
 	}
 	
+	public void renderBackgroundFresh() {
+		MODEL.world.renderBackgroundFresh();
+	}
+	
 	public void repaint() {
 		assert !Thread.holdsLock(MODEL);
 		
