@@ -57,6 +57,8 @@ public class World {
 	
 	public List<Car> cars = new ArrayList<Car>();
 	
+	List<Point> skidMarks = new ArrayList<Point>();
+	
 	public org.jbox2d.dynamics.World b2dWorld;
 	private CarEventListener listener;
 	
@@ -280,6 +282,8 @@ public class World {
 		
 		graph.postStop();
 		
+		skidMarks.clear();
+		
 		synchronized (MODEL) {
 			for (Car c : cars) {
 				c.destroy();
@@ -456,6 +460,20 @@ public class World {
 			graph.paintScene(g2);
 			
 			AffineTransform origTransform = g2.getTransform();
+			
+			g2.setColor(Color.BLACK);
+			
+			for (int i = 0; i < skidMarks.size(); i+=2) {
+				Point s0 = skidMarks.get(i);
+				Point s1 = skidMarks.get(i+1);
+				g2.drawLine(
+						(int)(s0.x * MODEL.PIXELS_PER_METER),
+						(int)(s0.y * MODEL.PIXELS_PER_METER),
+						(int)(s1.x * MODEL.PIXELS_PER_METER),
+						(int)(s1.y * MODEL.PIXELS_PER_METER));
+			}
+			
+			g2.setTransform(origTransform);
 			
 			g2.scale(MODEL.PIXELS_PER_METER, MODEL.PIXELS_PER_METER);
 			

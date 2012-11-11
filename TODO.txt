@@ -1,6 +1,13 @@
 
 IMMEDIATELY:
 
+skids
+line segments of when a car goes off-road
+
+work on getting a separate layer to draw skids on, don't want individual line segment accumulating forever
+
+
+
 work on .graph package
 move classes
 make Graph a pure graph class
@@ -17,8 +24,7 @@ Car.computeDynamicProperties()
 
 test if Merger is hitting anything else before adding
 
-skids
-line segments of when a car goes off-road
+
 
 crashes
 find a fire gif and start animating sprites
@@ -28,6 +34,7 @@ how many vertices, capsules, etc. currently hitting?
 
 ideal physics
 option to remove braking, friction, skidding, etc.
+
 
 IN THE NEXT WEEK:
 
