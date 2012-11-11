@@ -13,7 +13,11 @@ import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.Rect;
-import com.gutabi.deadlock.core.graph.SweepEvent.SweepEventType;
+import com.gutabi.deadlock.core.geom.SweepEvent;
+import com.gutabi.deadlock.core.geom.SweepEvent.SweepEventType;
+import com.gutabi.deadlock.core.geom.SweepEventListener;
+import com.gutabi.deadlock.core.geom.SweepUtils;
+import com.gutabi.deadlock.core.geom.Sweepable;
 import com.gutabi.deadlock.model.Car;
 import com.gutabi.deadlock.model.Stroke;
 
@@ -68,23 +72,23 @@ public abstract class Vertex implements Entity, Sweepable {
 		
 		Point c = s.pts.get(0);
 		
-		if (bestHitTest(c, s.r)) {
+		if (bestHitTest(c, s.r) != null) {
 			SweepEvent e = new SweepEvent(SweepEventType.ENTERVERTEX, this, s, 0, 0.0);
 			l.start(e);
 		}
 		
 	}
 	
-	public void sweepEnd(Stroke s, SweepEventListener l) {
-		
-		Point d = s.pts.get(s.pts.size()-1);
-		
-		if (bestHitTest(d, s.r)) {
-			SweepEvent e = new SweepEvent(SweepEventType.EXITVERTEX, this, s, s.pts.size()-1, 0.0);
-			l.end(e);
-		}
-		
-	}
+//	public void sweepEnd(Stroke s, SweepEventListener l) {
+//		
+//		Point d = s.pts.get(s.pts.size()-1);
+//		
+//		if (bestHitTest(d, s.r)) {
+//			SweepEvent e = new SweepEvent(SweepEventType.EXITVERTEX, this, s, s.pts.size()-1, 0.0);
+//			l.end(e);
+//		}
+//		
+//	}
 	
 	public void sweep(Stroke s, int index, SweepEventListener l) {
 		
@@ -92,7 +96,7 @@ public abstract class Vertex implements Entity, Sweepable {
 		Point d = s.pts.get(index+1);
 		
 		boolean outside;
-		if (bestHitTest(c, s.r)) {
+		if (bestHitTest(c, s.r) != null) {
 			outside = false;
 		} else {
 			outside = true;
@@ -127,18 +131,26 @@ public abstract class Vertex implements Entity, Sweepable {
 	
 	
 	
-	public final boolean hitTest(Point p) {
+	public Entity hitTest(Point p) {
 		if (aabb.hitTest(p)) {
 			
-			return DMath.lessThanEquals(Point.distance(p, this.p), r);
+			if (DMath.lessThanEquals(Point.distance(p, this.p), r)) {
+				return this;
+			} else {
+				return null;
+			}
 			
 		} else {
-			return false;
+			return null;
 		}
 	}
 	
-	public final boolean bestHitTest(Point p, double radius) {
-		return DMath.lessThanEquals(Point.distance(p, this.p), r + radius);
+	public Entity bestHitTest(Point p, double radius) {
+		if (DMath.lessThanEquals(Point.distance(p, this.p), r + radius)) {
+			return this;
+		} else {
+			return null;
+		}
 	}
 	
 	public VertexPosition skeletonHitTest(Point p) {

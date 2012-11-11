@@ -15,10 +15,12 @@ import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.Rect;
+import com.gutabi.deadlock.core.geom.Capsule;
+import com.gutabi.deadlock.core.geom.SweepEventListener;
 import com.gutabi.deadlock.model.Stroke;
 
 @SuppressWarnings("static-access")
-public final class Road implements Entity, Edge {
+public class Road extends Edge {
 	
 	public static final double ROAD_RADIUS = 0.5;
 	
@@ -26,7 +28,7 @@ public final class Road implements Entity, Edge {
 	public final Vertex end;
 	public final List<Point> raw;
 	
-	private List<Capsule> caps;
+	private List<RoadSegment> segs;
 	
 	private Point startBorderPoint;
 	private Point endBorderPoint;
@@ -39,7 +41,6 @@ public final class Road implements Entity, Edge {
 	private final boolean standalone;
 	private final boolean loop;
 	
-	public int id;
 	public StopSign startSign;
 	public StopSign endSign;
 	
@@ -50,7 +51,7 @@ public final class Road implements Entity, Edge {
 	
 	static Logger logger = Logger.getLogger(Road.class);
 	
-	public Road(Vertex start, Vertex end, List<Point> raw) {
+	public Road(Vertex start, Vertex end, List<Point> raw, int dec) {
 		
 		assert !raw.isEmpty();
 		
@@ -66,6 +67,7 @@ public final class Road implements Entity, Edge {
 			h = 37 * h + end.hashCode();
 		}
 		h = 37 * h + raw.hashCode();
+		h = 37 * h + dec;
 		hash = h;
 		
 		loop = (start == end);
@@ -76,6 +78,30 @@ public final class Road implements Entity, Edge {
 		
 		computeProperties();
 		
+		if (!standalone) {
+			
+			start.roads.add(this);
+			end.roads.add(this);
+			
+			if ((dec & 1) == 1) {
+				startSign = new StopSign(this, 0);
+				startSign.computePoint();
+			}
+			
+			if ((dec & 2) == 2) {
+				endSign = new StopSign(this, 1);
+				endSign.computePoint();
+			}
+
+		}
+		
+	}
+	
+	public void destroy() {
+		if (!standalone) {
+			start.roads.remove(this);
+			end.roads.remove(this);
+		}
 	}
 	
 	public int hashCode() {
@@ -100,22 +126,18 @@ public final class Road implements Entity, Edge {
 	 * how many points?
 	 */
 	public int size() {
-		return caps.size()+1;
+		return segs.size()+1;
 	}
 	
 	public double getTotalLength(Vertex a, Vertex b) {
 		return totalLength;
 	}
 	
-	public double getTotalLength() {
-		return totalLength;
-	}
-	
 	public Point get(int i) {
-		if (i == caps.size()) {
-			return caps.get(i-1).b;
+		if (i == segs.size()) {
+			return segs.get(i-1).b;
 		} else {
-			return caps.get(i).a;
+			return segs.get(i).a;
 		}
 	}
 	
@@ -123,7 +145,7 @@ public final class Road implements Entity, Edge {
 	 * used in debugging
 	 */
 	public Capsule getCapsule(int i) {
-		return caps.get(i);
+		return segs.get(i);
 	}
 	
 	public Point getStartBorderPoint() {
@@ -152,7 +174,25 @@ public final class Road implements Entity, Edge {
 		return true;
 	}
 	
+	public void enterDistancesMatrix(double[][] distances) {
+		double cur = distances[start.id][end.id];
+		/*
+		 * there may be multiple roads between start and end, so don't just blindly set it to l
+		 */
+		if (totalLength < cur) {
+			distances[start.id][end.id] = totalLength;
+	    	distances[end.id][start.id] = totalLength;
+		}
+	}
 	
+	public void removeStopSignTop(StopSign s) {
+		assert s == startSign || s == endSign;
+		if (s == startSign) {
+			startSign = null;
+		} else {
+			endSign = null;
+		}
+	}
 	
 	public void sweepStart(Stroke s, SweepEventListener l) {
 		
@@ -161,24 +201,24 @@ public final class Road implements Entity, Edge {
 		 * a lot of room for improvement
 		 * adjacent capsules share caps, so could share calculation
 		 */
-		for (Capsule c : caps.subList(1, caps.size()-1)) {
+		for (Capsule c : segs.subList(1, segs.size()-1)) {
 			c.sweepStart(s, l);
 		}
 		
 	}
 	
-	public void sweepEnd(Stroke s, SweepEventListener l) {
-		
-		/*
-		 * TODO:
-		 * a lot of room for improvement
-		 * adjacent capsules share caps, so could share calculation
-		 */
-		for (Capsule c : caps.subList(1, caps.size()-1)) {
-			c.sweepEnd(s, l);
-		}
-		
-	}
+//	public void sweepEnd(Stroke s, SweepEventListener l) {
+//		
+//		/*
+//		 * TODO:
+//		 * a lot of room for improvement
+//		 * adjacent capsules share caps, so could share calculation
+//		 */
+//		for (Capsule c : segs.subList(1, segs.size()-1)) {
+//			c.sweepEnd(s, l);
+//		}
+//		
+//	}
 	
 	public void sweep(Stroke s, int index, SweepEventListener l) {
 		
@@ -187,7 +227,7 @@ public final class Road implements Entity, Edge {
 		 * a lot of room for improvement
 		 * adjacent capsules share caps, so could share calculation
 		 */
-		for (Capsule c : caps.subList(1, caps.size()-1)) {
+		for (Capsule c : segs.subList(1, segs.size()-1)) {
 			c.sweep(s, index, l);
 		}
 		
@@ -207,28 +247,49 @@ public final class Road implements Entity, Edge {
 		
 	}
 	
-	public final boolean hitTest(Point p) {
+	public Entity hitTest(Point p) {
 		if (aabb.hitTest(p)) {
 			
-			for (Capsule s : caps.subList(1, caps.size()-1)) {
-				if (s.hitTest(p)) {
-					return true;
+			for (RoadSegment s : segs.subList(1, segs.size()-1)) {
+				if (s.hitTest(p) != null) {
+					return this;
 				}
 			}
-			return false;
+			return null;
 			
 		} else {
-			return false;
+			return null;
 		}
 	}
 	
-	public final boolean bestHitTest(Point p, double radius) {
-		for (Capsule s : caps.subList(1, caps.size()-1)) {
-			if (s.bestHitTest(p, radius)) {
-				return true;
+	public Entity decorationsHitTest(Point p) {
+		
+		Entity hit;
+		
+		if (startSign != null) {
+			hit = startSign.hitTest(p);
+			if (hit != null) {
+				return hit;
 			}
 		}
-		return false;
+		
+		if (endSign != null) {
+			hit = endSign.hitTest(p);
+			if (hit != null) {
+				return hit;
+			}
+		}
+		
+		return null;
+	}
+	
+	public Entity bestHitTest(Point p, double radius) {
+		for (RoadSegment s : segs.subList(1, segs.size()-1)) {
+			if (s.bestHitTest(p, radius) != null) {
+				return this;
+			}
+		}
+		return null;
 	}
 	
 //	public RoadPosition skeletonHitTest(Point p) {
@@ -243,8 +304,8 @@ public final class Road implements Entity, Edge {
 //	}
 	
 	public RoadPosition findSkeletonIntersection(Point c, Point d) {
-		for (int i = 0; i < caps.size(); i ++) {
-			Capsule cap = caps.get(i);
+		for (int i = 0; i < segs.size(); i ++) {
+			Capsule cap = segs.get(i);
 			double abParam = cap.findSkeletonIntersection(c, d);
 			if (abParam != -1 && !DMath.equals(abParam, 1.0)) {
 				return new RoadPosition(this, i, abParam);
@@ -259,8 +320,8 @@ public final class Road implements Entity, Edge {
 		double bestParam = -1;
 		Point bestPoint = null;
 
-		for (int i = 0; i < caps.size(); i++) {
-			Capsule c = caps.get(i);
+		for (int i = 0; i < segs.size(); i++) {
+			Capsule c = segs.get(i);
 			double closest = closestParam(p, c);
 			Point ep = Point.point(c.a, c.b, closest);
 			double dist = Point.distance(p, ep);
@@ -279,7 +340,7 @@ public final class Road implements Entity, Edge {
 
 		if (bestPoint != null) {
 			if (bestParam == 1.0) {
-				if (bestIndex == caps.size()-1) {
+				if (bestIndex == segs.size()-1) {
 					return null;
 				} else {
 					return new RoadPosition(this, bestIndex+1, 0.0);
@@ -341,7 +402,7 @@ public final class Road implements Entity, Edge {
 		 */
 		if (!standalone) {
 			startBorderIndex = 1;
-			endBorderIndex = caps.size()-1;
+			endBorderIndex = segs.size()-1;
 			startBorderPoint = get(startBorderIndex);
 			endBorderPoint = get(endBorderIndex);
 			assert DMath.equals(Point.distance(startBorderPoint, start.p), start.getRadius());
@@ -386,12 +447,12 @@ public final class Road implements Entity, Edge {
 			adj = removeDuplicates(adj);
 		}
 		
-		caps = new ArrayList<Capsule>();
+		segs = new ArrayList<RoadSegment>();
 		for (int i = 0; i < adj.size()-1; i++) {
 			Point a = adj.get(i);
 			Point b = adj.get(i+1);
-			Capsule c = new Capsule(a, b, Road.ROAD_RADIUS);
-			caps.add(c);
+			RoadSegment c = new RoadSegment(this, a, b);
+			segs.add(c);
 		}
 		
 	}
@@ -560,12 +621,12 @@ public final class Road implements Entity, Edge {
 	
 	private void computeLengths() {
 		
-		cumulativeLengthsFromStart = new double[caps.size()+1];
+		cumulativeLengthsFromStart = new double[segs.size()+1];
 		
 		double length;
 		double l = 0.0;
-		for (int i = 0; i < caps.size(); i++) {
-			Capsule s = caps.get(i);
+		for (int i = 0; i < segs.size(); i++) {
+			Capsule s = segs.get(i);
 			if (i == 0) {
 				cumulativeLengthsFromStart[i] = 0;
 			}
@@ -584,7 +645,7 @@ public final class Road implements Entity, Edge {
 		if (startBorderPoint.equals(endBorderPoint)) {
 			aabb = new Rect(startBorderPoint.x, startBorderPoint.y, 0.0, 0.0);
 		} else {
-			for (Capsule s : caps.subList(1, caps.size()-1)) {
+			for (Capsule s : segs.subList(1, segs.size()-1)) {
 				aabb = Rect.union(aabb, s.aabb);
 			}
 		}
@@ -633,40 +694,6 @@ public final class Road implements Entity, Edge {
 	}
 	
 	/**
-	 * returns the single shared intersection between roads a and b
-	 */
-	public static Vertex sharedIntersection(Road a, Road b) throws SharedVerticesException {
-		assert a != b;
-		Vertex as = a.start;
-		Vertex ae = a.end;
-		Vertex bs = b.start;
-		Vertex be = b.end;
-		if (as == bs) {
-			if (ae == be) {
-				throw new SharedVerticesException(as, ae);
-			}
-			return as;
-		} else if (as == be) {
-			if (ae == bs) {
-				throw new SharedVerticesException(as, ae);
-			}
-			return as;
-		} else if (ae == bs) {
-			if (as == be) {
-				throw new SharedVerticesException(as, ae);
-			}
-			return ae;
-		} else if (ae == be) {
-			if (as == bs) {
-				throw new SharedVerticesException(as, ae);
-			}
-			return be;
-		} else {
-			return null;
-		}
-	}
-	
-	/**
 	 * @param g2 in world coords
 	 */
 	public void paint(Graphics2D g2) {
@@ -705,7 +732,7 @@ public final class Road implements Entity, Edge {
 		
 		g2.setColor(color);
 		
-		for (Capsule s : caps.subList(1, caps.size()-1)) {
+		for (Capsule s : segs.subList(1, segs.size()-1)) {
 			s.paint(g2);
 		}
 		
@@ -719,7 +746,7 @@ public final class Road implements Entity, Edge {
 		
 		g2.setColor(hiliteColor);
 		
-		for (Capsule s : caps.subList(1, caps.size()-1)) {
+		for (Capsule s : segs.subList(1, segs.size()-1)) {
 			s.draw(g2);
 		}
 		
@@ -733,7 +760,7 @@ public final class Road implements Entity, Edge {
 		
 		g2.setColor(Color.BLACK);
 		
-		for (Capsule s : caps) {
+		for (Capsule s : segs) {
 			s.drawSkeleton(g2);
 		}
 		
@@ -763,4 +790,15 @@ public final class Road implements Entity, Edge {
 		
 	}
 	
+	public void paintDecorations(Graphics2D g2) {
+		
+		if (startSign != null) {
+			startSign.paint(g2);
+		}
+		
+		if (endSign != null) {
+			endSign.paint(g2);
+		}
+		
+	}
 }

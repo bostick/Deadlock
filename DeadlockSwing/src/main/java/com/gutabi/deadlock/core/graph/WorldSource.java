@@ -113,16 +113,16 @@ public class WorldSource extends Source {
 		
 		synchronized (MODEL) {
 			for (Car c : MODEL.world.cars) {
-				if (hitTest(c.worldPoint1())) {
+				if (hitTest(c.worldPoint1()) != null) {
 					return false;
 				}
-				if (hitTest(c.worldPoint2())) {
+				if (hitTest(c.worldPoint2()) != null) {
 					return false;
 				}
-				if (hitTest(c.worldPoint3())) {
+				if (hitTest(c.worldPoint3()) != null) {
 					return false;
 				}
-				if (hitTest(c.worldPoint4())) {
+				if (hitTest(c.worldPoint4()) != null) {
 					return false;
 				}
 			}

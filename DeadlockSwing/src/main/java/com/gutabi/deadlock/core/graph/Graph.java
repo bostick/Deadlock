@@ -10,104 +10,95 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
-
-import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.OverlappingException;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.Rect;
-import com.gutabi.deadlock.core.graph.SweepEvent.SweepEventType;
+import com.gutabi.deadlock.core.geom.Capsule;
+import com.gutabi.deadlock.core.geom.SweepEventListener;
 import com.gutabi.deadlock.model.Stroke;
 
 @SuppressWarnings("static-access")
 public class Graph {
 	
-	private final ArrayList<Road> roads = new ArrayList<Road>();
-	
-	private final ArrayList<Intersection> intersections = new ArrayList<Intersection>();
-	private final ArrayList<Source> sources = new ArrayList<Source>();
-	private final ArrayList<Sink> sinks = new ArrayList<Sink>();
-	
-	private List<StopSign> signs = new ArrayList<StopSign>();
-	private List<Merger> mergers = new ArrayList<Merger>();
+	public final List<Vertex> vertices = new ArrayList<Vertex>();
+	public final List<Edge> edges = new ArrayList<Edge>();
 	
 	private Rect aabb;
 	
-	private static final Logger logger = Logger.getLogger(Graph.class);
+//	private static final Logger logger = Logger.getLogger(Graph.class);
 	
 	public Graph() {
 		
 	}
 	
-	private List<Vertex> getAllVertices() {
-		List<Vertex> all = new ArrayList<Vertex>();
-		all.addAll(sources);
-		all.addAll(sinks);
-		all.addAll(intersections);
-		return all;
-	}
-	
-	
-	public void addSource(WorldSource s) {
-		sources.add(s);
-		refreshVertexIDs();
-		computeAABB();
-	}
-	
-	public void addSink(WorldSink s) {
-		sinks.add(s);
-		refreshVertexIDs();
-		computeAABB();
-	}
-	
-	public void addIntersection(Intersection i) {
-		intersections.add(i);
-		refreshVertexIDs();
-		computeAABB();
-	}
-	
-	public Road createRoadTop(Vertex start, Vertex end, List<Point> pts) {
+	public void preStart() {
 		
-		Road e = createRoad(start, end, pts, (!start.roads.isEmpty()?1:0)+(!end.roads.isEmpty()?2:0));
+		initializeMatrices();
+		
+		for (Vertex v : vertices) {
+			v.preStart();
+		}
+	}
+	
+	public void postStop() {
+		
+		for (Vertex v : vertices) {
+			v.postStop();
+		}
+		
+	}
+	
+	public void preStep(double t) {
+		
+		for (Vertex v : vertices) {
+			v.preStep(t);
+		}
+		
+	}
+	
+	public void computeVertexRadii() {
+		
+		for (int i = 0; i < vertices.size(); i++) {
+			Vertex vi = vertices.get(i);
+			double maximumRadius = Double.POSITIVE_INFINITY;
+			for (int j = 0; j < vertices.size(); j++) {
+				Vertex vj = vertices.get(j);
+				if (vi == vj) {
+					continue;
+				}
+				double max = Point.distance(vi.p, vj.p) - vj.getRadius();
+				if (max < maximumRadius) {
+					maximumRadius = max;
+				}
+			}
+			vi.computeRadius(maximumRadius);
+		}
+		
+	}
+	
+	public Rect getAABB() {
+		return aabb;
+	}
+	
+	public void addVertexTop(Vertex v) {
+		addVertex(v);
+		computeAABB();
+	}
+	
+	public void createRoadTop(Vertex start, Vertex end, List<Point> pts) {
+		
+		createRoad(start, end, pts, (!start.roads.isEmpty()?1:0)+(!end.roads.isEmpty()?2:0));
 		
 		automaticMergeOrDestroy(start);
 		automaticMergeOrDestroy(end);
 		
 		computeAABB();
-		
-		return e;
 	}
 	
-	public void removeRoadTop(Road e) {
-		
-		/*
-		 * have to properly cleanup start and end intersections before removing roads
-		 */
-		if (!e.isLoop()) {
-			
-			Vertex eStart = e.start;
-			Vertex eEnd = e.end;
-			
-			destroyRoad(e);
-			
-			automaticMergeOrDestroy(eStart);
-			automaticMergeOrDestroy(eEnd);
-			
-		} else if (!e.isStandAlone()) {
-			
-			Vertex v = e.start;
-			
-			destroyRoad(e);
-			
-			automaticMergeOrDestroy(v);
-			
-		} else {
-			destroyRoad(e);
-		}
-		
+	public void insertMergerTop(Point p) {
+		createMerger(p);
 		computeAABB();
-		
 	}
 	
 	public void removeVertexTop(Vertex v) {
@@ -121,29 +112,38 @@ public class Graph {
 		Set<Road> roads = new HashSet<Road>(v.roads);
 		for (Road e : roads) {
 			
-			if (!e.isLoop()) {
-				
-				Vertex eStart = e.start;
-				Vertex eEnd = e.end;
-				
-				affectedVertices.add(eStart);
-				affectedVertices.add(eEnd);
-				
-				destroyRoad(e);
-				
-			} else {
-				
-				Vertex eV = e.start;
-				
-				affectedVertices.add(eV);
-				
-				destroyRoad(e);
-				
+			if (e.start != null) {
+				affectedVertices.add(e.start);
 			}
+			if (e.end != null) {
+				affectedVertices.add(e.end);
+			}
+			
+			destroyRoad(e);
 		}
 		
 		destroyVertex(v);
 		affectedVertices.remove(v);
+		
+		for (Vertex a : affectedVertices) {
+			automaticMergeOrDestroy(a);
+		}
+		
+		computeAABB();
+		
+	}
+	
+	public void removeRoadTop(Road e) {
+		
+		Set<Vertex> affectedVertices = new HashSet<Vertex>();
+		if (e.start != null) {
+			affectedVertices.add(e.start);
+		}
+		if (e.end != null) {
+			affectedVertices.add(e.end);
+		}
+		
+		destroyRoad(e);
 		
 		for (Vertex a : affectedVertices) {
 			automaticMergeOrDestroy(a);
@@ -167,17 +167,7 @@ public class Graph {
 		forceMergeOrDestroy(right);
 		forceMergeOrDestroy(bottom);
 		
-		refreshVertexIDs();
-		
 		computeAABB();
-	}
-	
-	public void removeStopSignTop(StopSign s) {
-		
-		destroyStopSign(s);
-		
-		computeAABB();
-		
 	}
 	
 	private void automaticMergeOrDestroy(Vertex v) {
@@ -191,10 +181,6 @@ public class Graph {
 	}
 	
 	private void forceMergeOrDestroy(Vertex v) {
-			
-		for (Road e : v.roads) {
-			assert roads.contains(e);
-		}
 		
 		if (v.roads.size() == 0) {
 			destroyVertex(v);
@@ -203,212 +189,10 @@ public class Graph {
 		}
 		
 	}
-
-
 	
-	
-	public void processNewStrokeTop(Stroke stroke) {
-		
-		List<SweepEvent> vertexEvents = stroke.vertexEvents();
-		
-		logger.debug("vertexEvents:");
-		logger.debug(vertexEvents);
-		
-		SweepEvent e = vertexEvents.get(0);
-		Point p = stroke.getPoint(e.index, e.param);
-		if (e.type == SweepEventType.ENTERCAPSULE) {
-			logger.debug("split");
-			RoadPosition pos = findClosestRoadPosition(p, stroke.r);
-			split(pos);
-		} else if (e.type == SweepEventType.ENTERVERTEX) {
-			logger.debug("already exists");
-		} else if (e.type == SweepEventType.ENTERMERGER) {
-			
-			return;
-			
-		} else if (e.type == null) {
-			logger.debug("create");
-			Intersection v = new Intersection(p);
-			addIntersection(v);
-		}
-		
-		for (int i = 0; i < vertexEvents.size()-1; i+=2) {
-			SweepEvent e0 = vertexEvents.get(i);
-			SweepEvent e1 = vertexEvents.get(i+1);
-			
-			if (e0.type == SweepEventType.ENTERVERTEX && e1.type == SweepEventType.EXITVERTEX) {
-				
-				logger.debug("skipping");
-				i = i+1;
-				if (i == vertexEvents.size()-1) {
-					break;
-				}
-				e0 = vertexEvents.get(i);
-				e1 = vertexEvents.get(i+1);
-			} else if (e0.type == SweepEventType.ENTERCAPSULE && e1.type == SweepEventType.EXITCAPSULE) {
-				
-				logger.debug("skipping");
-				
-				i = i+1;
-				if (i == vertexEvents.size()-1) {
-					break;
-				}
-				e0 = vertexEvents.get(i);
-				e1 = vertexEvents.get(i+1);
-			} else if (e1.type == SweepEventType.ENTERMERGER) {
-				
-				return;
-				
-			}
-			
-			Point e0p = stroke.getPoint(e0.index, e0.param);
-			Entity bh = graphBestHitTest(e0p, stroke.r);
-			if (bh == null) {
-				logger.debug("broken");
-				return;
-			} else if (bh instanceof Road) {
-				logger.debug("broken 2");
-				return;
-			}
-			Vertex v0 = (Vertex)bh;
-			
-			Vertex v1;
-			Point e1p = stroke.getPoint(e1.index, e1.param);
-			Entity hit1 = graphBestHitTest(e1p, stroke.r);
-			if (hit1 instanceof Road) {
-				logger.debug("split");
-				
-				RoadPosition pos = null;
-				
-				/*
-				 * find better place to split by checking for intersection with road
-				 */
-				for (int j = e1.index; j < stroke.pts.size()-1; j++) {
-					Point a = stroke.pts.get(j);
-					Point b = stroke.pts.get(j+1);
-					
-					RoadPosition skeletonIntersection = ((Road) hit1).findSkeletonIntersection(a, b);
-					
-					if (skeletonIntersection != null) {
-						
-						double strokeCombo = j + Point.param(skeletonIntersection.p, a, b);
-						
-						if (DMath.greaterThanEquals((strokeCombo), (e1.index+e1.param))
-//								&& DMath.lessThanEquals(Point.distance(skeletonIntersection.p, e1p), stroke.r)
-								) {
-							pos = skeletonIntersection;
-							break;
-						}
-					}
-					
-				}
-				
-				if (pos == null) {
-					pos = findClosestRoadPosition(e1p, stroke.r);
-				}
-				
-				v1 = split(pos);
-				
-			} else if (hit1 instanceof Vertex) {
-				logger.debug("already exists");
-				v1 = (Vertex)hit1;
-				
-				if (v1 == v0) {
-					logger.debug("same vertex");
-					return;
-				}
-				
-			} else {
-				assert graphHitTest(e1p) == null;
-				logger.debug("create");
-				Intersection ii = new Intersection(e1p);
-				addIntersection(ii);
-				v1 = ii;
-				
-			}
-			
-			List<Point> roadPts = new ArrayList<Point>();
-			roadPts.add(stroke.getPoint(e0.index, e0.param));
-			for (int j = e0.index+1; j < e1.index; j++) {
-				roadPts.add(stroke.pts.get(j));
-			}
-			roadPts.add(stroke.pts.get(e1.index));
-			if (!DMath.equals(e1.param, 0.0)) {
-				roadPts.add(stroke.getPoint(e1.index, e1.param));
-			}
-			
-//			stroke.pts.subList(e0.index, e1.index+1)
-			
-			createRoadTop(v0, v1, roadPts);
-			
-			computeVertexRadii();
-			
-		}
-		
-	}
-	
-	public void sweepStart(Stroke s, SweepEventListener l) {
-		
-		for (Vertex v : getAllVertices()) {
-			v.sweepStart(s, l);
-		}
-		for (Road e : roads) {
-			e.sweepStart(s, l);
-		}
-		for (Merger m : mergers) {
-			m.sweepStart(s, l);
-		}
-		
-	}
-	
-	public void sweepEnd(Stroke s, SweepEventListener l) {
-		
-		for (Vertex v : getAllVertices()) {
-			v.sweepEnd(s, l);
-		}
-		for (Road e : roads) {
-			e.sweepEnd(s, l);
-		}
-		for (Merger m : mergers) {
-			m.sweepEnd(s, l);
-		}
-		
-	}
-	
-	public void sweep(Stroke s, int index, SweepEventListener l) {
-		for (Vertex v : getAllVertices()) {
-			v.sweep(s, index, l);
-		}
-		for (Road e : roads) {
-			e.sweep(s, index, l);
-		}
-		for (Merger m : mergers) {
-			m.sweep(s, index, l);
-		}
-	}
-	
-	public void insertMergerTop(Point p) {
-		
-		
-		
-		Merger m = new Merger(p);
-		
-		mergers.add(m);
-		
-		sinks.add(m.top);
-		sinks.add(m.left);
-		
-		sources.add(m.right);
-		sources.add(m.bottom);
-		
+	private void addVertex(Vertex v) {
+		vertices.add(v);
 		refreshVertexIDs();
-		
-		m.top.m = m;
-		m.left.m = m;
-		m.right.m = m;
-		m.bottom.m = m;
-		
-		computeAABB();
 	}
 	
 	/**
@@ -417,192 +201,85 @@ public class Graph {
 	 * bit 1 set = add end stop sign
 	 */
 	private Road createRoad(Vertex start, Vertex end, List<Point> pts, int dec) {
-		
 		assert pts.size() >= 2;
-		
-		Road e = new Road(start, end, pts);
-		
-		roads.add(e);
-		
-		refreshRoadIDs();
-		
-		if (!e.isStandAlone()) {
-			
-			start.roads.add(e);
-			end.roads.add(e);
-			
-			if ((dec & 1) == 1) {
-				StopSign startSign = new StopSign(e, 0);
-				signs.add(startSign);
-				
-				e.startSign = startSign;
-				startSign.computePoint();
-				
-			}
-			
-			if ((dec & 2) == 2) {
-				StopSign endSign = new StopSign(e, 1);
-				signs.add(endSign);
-				
-				e.endSign = endSign;
-				endSign.computePoint();
-				
-			}
-
-		}
-		
+		Road e = new Road(start, end, pts, dec);
+		edges.add(e);
+		refreshEdgeIDs();
 		return e;
 	}
 	
-	private void destroyRoad(Road e) {
-		assert roads.contains(e);
+	private void createMerger(Point p) {
+		Merger m = new Merger(p);
 		
-		if (!e.isStandAlone()) {
-			
-			e.start.roads.remove(e);
-			e.end.roads.remove(e);
-			
-			destroyStopSign(e.startSign);
-			destroyStopSign(e.endSign);
-			
-		}
+		edges.add(m);
+		refreshEdgeIDs();
 		
-		roads.remove(e);
+		vertices.add(m.top);
+		vertices.add(m.left);
 		
-		refreshRoadIDs();
-		
-	}
-	
-	private void destroyMerger(Merger m) {
-		
-		m.top.m = null;
-		m.left.m = null;
-		m.right.m = null;
-		m.bottom.m = null;
-		
-		mergers.remove(m);
-		
-	}
-	
-	private void destroyStopSign(StopSign s) {
-		if (s == null) {
-			return;
-		}
-		
-		if (s.e.startSign == s) {
-			s.e.startSign = null;
-		} else {
-			assert s.e.endSign == s;
-			s.e.endSign = null;
-		}
-		
-		signs.remove(s);
-	}
-	
-	private Intersection createIntersection(Point p) {
-		
-		Intersection i = new Intersection(p);
-		assert !intersections.contains(i);
-		intersections.add(i);
+		vertices.add(m.right);
+		vertices.add(m.bottom);
 		
 		refreshVertexIDs();
-		
-		return i;
 	}
 	
 	private void destroyVertex(Vertex v) {
-		
-		if (intersections.contains(v)) {
-			intersections.remove(v);
-		} else if (sources.contains(v)) {
-			sources.remove(v);
-		} else if (sinks.contains(v)) {
-			sinks.remove(v);
-		} else {
-			assert false : "Vertex was not in lists";
-		}
-		
+		vertices.remove(v);
 		refreshVertexIDs();
-		
+	}
+	
+	private void destroyRoad(Road r) {
+		assert edges.contains(r);
+		r.destroy();
+		edges.remove(r);
+		refreshEdgeIDs();
+	}
+	
+	private void destroyMerger(Merger m) {
+		assert edges.contains(m);
+		m.destroy();
+		edges.remove(m);
+		refreshEdgeIDs();
 	}
 	
 	
 	
-	
-	
-	public void preStart() {
+	public void sweepStart(Stroke s, SweepEventListener l) {
 		
-		initializeMatrices();
-		
-		for (Source s : sources) {
-			s.preStart();
+		for (Vertex v : vertices) {
+			v.sweepStart(s, l);
 		}
-	}
-	
-	public void postStop() {
-		
-		for (Vertex v : getAllVertices()) {
-			v.postStop();
-		}
-		
-	}
-	
-	public void computeVertexRadii() {
-		
-		List<Vertex> all = getAllVertices();
-		for (int i = 0; i < all.size(); i++) {
-			Vertex vi = all.get(i);
-			double maximumRadius = Double.POSITIVE_INFINITY;
-			for (int j = 0; j < all.size(); j++) {
-				Vertex vj = all.get(j);
-				if (vi == vj) {
-					continue;
-				}
-				double max = Point.distance(vi.p, vj.p) - vj.getRadius();
-				if (max < maximumRadius) {
-					maximumRadius = max;
-				}
-			}
-			vi.computeRadius(maximumRadius);
+		for (Edge e : edges) {
+			e.sweepStart(s, l);
 		}
 		
 	}
+	
+	public void sweep(Stroke s, int index, SweepEventListener l) {
+		for (Vertex v : vertices) {
+			v.sweep(s, index, l);
+		}
+		for (Edge e : edges) {
+			e.sweep(s, index, l);
+		}
+	}
+	
+	
+	
+	
 	
 	private void computeAABB() {
 		
 		aabb = null;
 		
-		for (Vertex v : getAllVertices()) {
+		for (Vertex v : vertices) {
 			aabb = Rect.union(aabb, v.getAABB());
 		}
-		for (Road e : roads) {
+		for (Edge e : edges) {
 			aabb = Rect.union(aabb, e.getAABB());
 		}
 		
-		/*
-		 * signs do not contribute to the rendering rect
-		 */
-//		for (StopSign s : signs) {
-//			
-//		}
-		
 	}
-	
-	public Rect getAABB() {
-		return aabb;
-	}
-	
-	public void preStep(double t) {
-		
-		for (Vertex v : getAllVertices()) {
-			v.preStep(t);
-		}
-		
-	}
-	
-	
-	
-	
 	
 	
 	
@@ -797,74 +474,42 @@ public class Graph {
 	 */
 	public Entity graphHitTest(Point p) {
 		assert p != null;
-		for (Vertex v : getAllVertices()) {
-			if (v.hitTest(p)) {
-				return v;
+		Entity hit;
+		for (Edge e : edges) {
+			hit = e.decorationsHitTest(p);
+			if (hit != null) {
+				return hit;
 			}
 		}
-		for (Road e : roads) {
-			if (e.hitTest(p)) {
+		for (Vertex v : vertices) {
+			hit = v.hitTest(p);
+			if (hit != null) {
+				return hit;
+			}
+		}
+		for (Edge e : edges) {
+			hit = e.hitTest(p);
+			if (hit != null) {
 				return e;
 			}
 		}
-		for (Merger m : mergers) {
-			if (m.hitTest(p)) {
-				return m;
-			}
-		}
 		return null;
 	}
 	
-	public StopSign signHitTest(Point p) {
+	public Entity pureGraphBestHitTest(Point p, double r) {
 		assert p != null;
-		for (StopSign s : signs) {
-			if (s.hitTest(p)) {
-				return s;
-			}
-		}
-		return null;
-	}
-	
-	public Entity graphBestHitTest(Point p, double r) {
-		assert p != null;
-		for (Vertex v : getAllVertices()) {
-			if (v.bestHitTest(p, r)) {
+		for (Vertex v : vertices) {
+			if (v.bestHitTest(p, r) != null) {
 				return v;
 			}
 		}
-		for (Road e : roads) {
-			if (e.bestHitTest(p, r)) {
+		for (Edge e : edges) {
+			if (e.bestHitTest(p, r) != null) {
 				return e;
 			}
 		}
-		for (Merger m : mergers) {
-			if (m.bestHitTest(p, r)) {
-				return m;
-			}
-		}
 		return null;
 	}
-	
-	public StopSign signBestHitTest(Point p, double r) {
-		assert p != null;
-		for (StopSign s : signs) {
-			if (s.bestHitTest(p, r)) {
-				return s;
-			}
-		}
-		return null;
-	}
-	
-//	public RoadPosition roadSkeletonHitTest(Point p) {
-//		assert p != null;
-//		for (Road r : roads) {
-//			RoadPosition pos = r.skeletonHitTest(p);
-//			if (pos != null) {
-//				return pos;
-//			}
-//		}
-//		return null;
-//	}
 	
 	/**
 	 * returns the closest road within radius
@@ -872,7 +517,14 @@ public class Graph {
 	public RoadPosition findClosestRoadPosition(Point a, double radius) {
 
 		RoadPosition closest = null;
-
+		
+		List<Road> roads = new ArrayList<Road>();
+		for (Edge e : edges) {
+			if (e instanceof Road) {
+				roads.add((Road)e);
+			}
+		}
+		
 		for (Road e : roads) {
 			RoadPosition ep = e.findClosestRoadPosition(a, radius);
 			if (ep != null) {
@@ -896,8 +548,6 @@ public class Graph {
 	 */
 	public Intersection split(RoadPosition pos) {
 		
-//		EdgePosition pos = (EdgePosition)skeletonHitTest(p);
-		
 		Road e = pos.r;
 		int index = pos.index;
 		double param = pos.param;
@@ -906,7 +556,8 @@ public class Graph {
 		assert param >= 0.0;
 		assert param < 1.0;
 		
-		Intersection v = createIntersection(p);
+		Intersection v = new Intersection(p);
+		addVertex(v);
 		
 		Vertex eStart = e.start;
 		Vertex eEnd = e.end;
@@ -961,29 +612,19 @@ public class Graph {
 	Vertex[] vertexIDs;
 	
 	private void refreshVertexIDs() {
-		int vertexCount = intersections.size() + sources.size() + sinks.size();
+		int vertexCount = vertices.size();
 		vertexIDs = new Vertex[vertexCount];
 		int id = 0;
-		for (Vertex v : sources) {
-			v.id = id;
-			vertexIDs[id] = v;
-			id++;
-		}
-		for (Vertex v : sinks) {
-			v.id = id;
-			vertexIDs[id] = v;
-			id++;
-		}
-		for (Vertex v : intersections) {
+		for (Vertex v : vertices) {
 			v.id = id;
 			vertexIDs[id] = v;
 			id++;
 		}
 	}
 	
-	private void refreshRoadIDs() {
+	private void refreshEdgeIDs() {
 		int id = 0;
-		for (Road e : roads) {
+		for (Edge e : edges) {
 			e.id = id;
 			id++;
 		}
@@ -997,7 +638,7 @@ public class Graph {
 		 * Floyd-Warshall
 		 */
 		
-		int vertexCount = intersections.size() + sources.size() + sinks.size();
+		int vertexCount = vertices.size();
 		
 		distances = new double[vertexCount][vertexCount];
 		nextHighest = new Vertex[vertexCount][vertexCount];
@@ -1013,22 +654,8 @@ public class Graph {
 		/*
 		 * iterate and find shorter distances via roads and mergers
 		 */
-		for(Road e : roads) {
-			double l = e.getTotalLength();
-			double cur = distances[e.start.id][e.end.id];
-			/*
-			 * there may be multiple roads between start and end, so don't just blindly set it to l
-			 */
-			if (l < cur) {
-				distances[e.start.id][e.end.id] = l;
-		    	distances[e.end.id][e.start.id] = l;
-			}
-		}
-		for (Merger m : mergers) {
-			distances[m.top.id][m.bottom.id] = Merger.MERGER_HEIGHT;
-			distances[m.bottom.id][m.top.id] = Merger.MERGER_HEIGHT;
-			distances[m.left.id][m.right.id] = Merger.MERGER_WIDTH;
-			distances[m.right.id][m.left.id] = Merger.MERGER_WIDTH;
+		for (Edge e : edges) {
+			e.enterDistancesMatrix(distances);
 		}
 		
 		for (int k = 0; k < vertexCount; k++){
@@ -1073,8 +700,8 @@ public class Graph {
 		Road e1 = v.roads.get(0);
 		Road e2 = v.roads.get(1);
 		
-		assert roads.contains(e1);
-		assert roads.contains(e2);
+		assert edges.contains(e1);
+		assert edges.contains(e2);
 		
 		Vertex e1Start = e1.start;
 		Vertex e1End = e1.end;
@@ -1193,15 +820,11 @@ public class Graph {
 	
 	public void renderBackground(Graphics2D g2) {
 		
-		List<Road> roadsCopy;
+		List<Edge> edgesCopy;
 		List<Vertex> verticesCopy;
-		List<Merger> mergersCopy;
-		List<StopSign> signsCopy;
 		synchronized (MODEL) {
-			roadsCopy = new ArrayList<Road>(roads);
-			verticesCopy = new ArrayList<Vertex>(getAllVertices());
-			mergersCopy = new ArrayList<Merger>(mergers);
-			signsCopy = new ArrayList<StopSign>(signs);
+			edgesCopy = new ArrayList<Edge>(edges);
+			verticesCopy = new ArrayList<Vertex>(vertices);
 		}
 		
 		AffineTransform origTransform = g2.getTransform();
@@ -1209,20 +832,16 @@ public class Graph {
 		trans.scale(MODEL.PIXELS_PER_METER, MODEL.PIXELS_PER_METER);
 		g2.setTransform(trans);
 		
-		for (Road e : roadsCopy) {
+		for (Edge e : edgesCopy) {
 			e.paint(g2);
-		}
-		
-		for (Merger m : mergersCopy) {
-			m.paint(g2);
 		}
 		
 		for (Vertex v : verticesCopy) {
 			v.paint(g2);
 		}
 		
-		for (StopSign s : signsCopy) {
-			s.paint(g2);
+		for (Edge e : edgesCopy) {
+			e.paintDecorations(g2);
 		}
 		
 		g2.setTransform(origTransform);
@@ -1232,26 +851,23 @@ public class Graph {
 	public void paintStats(Graphics2D g2) {
 		
 		Point p = new Point(1, 1).multiply(MODEL.PIXELS_PER_METER);
-		g2.drawString("vertex count: " + getAllVertices().size(), (int)p.x, (int)p.y);
+		g2.drawString("vertex count: " + vertices.size(), (int)p.x, (int)p.y);
 		
 		p = new Point(1, 2).multiply(MODEL.PIXELS_PER_METER);
-		g2.drawString("road count: " + roads.size(), (int)p.x, (int)p.y);
-		
-		p = new Point(1, 3).multiply(MODEL.PIXELS_PER_METER);
-		g2.drawString("sign count: " + signs.size(), (int)p.x, (int)p.y);
+		g2.drawString("edge count: " + edges.size(), (int)p.x, (int)p.y);
 		
 	}
 	
 	public void paintScene(Graphics2D g2) {
 		
 		if (MODEL.DEBUG_DRAW) {
-			List<Road> roadsCopy;
+			List<Edge> edgesCopy;
 			
 			synchronized (MODEL) {
-				roadsCopy = new ArrayList<Road>(roads);
+				edgesCopy = new ArrayList<Edge>(edges);
 			}
 			
-			for (Road e : roadsCopy) {
+			for (Edge e : edgesCopy) {
 //				e.paintSkeleton(g2);
 				e.paintBorders(g2);
 			}
@@ -1263,7 +879,7 @@ public class Graph {
 		
 		List<Vertex> verticesCopy;
 		synchronized (MODEL) {
-			verticesCopy = new ArrayList<Vertex>(getAllVertices());
+			verticesCopy = new ArrayList<Vertex>(vertices);
 		}
 		
 		for (Vertex v : verticesCopy) {
@@ -1279,19 +895,11 @@ public class Graph {
 	
 	public boolean checkConsistency() {
 		
-		for (Intersection v : intersections) {
-			v.check();
-			
-			/*
-			 * there should only be 1 intersection with this point
-			 */
-			int count = 0;
-			for (Intersection w : intersections) {
-				if (v.p.equals(w.p)) {
-					count++;
-				}
+		List<Road> roads = new ArrayList<Road>();
+		for (Edge e : edges) {
+			if (e instanceof Road) {
+				roads.add((Road)e);
 			}
-			assert count == 1;
 		}
 		
 		for (Road e : roads) {

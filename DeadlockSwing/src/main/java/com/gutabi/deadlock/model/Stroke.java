@@ -11,11 +11,18 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 import com.gutabi.deadlock.core.DMath;
+import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.Rect;
-import com.gutabi.deadlock.core.graph.SweepEvent;
-import com.gutabi.deadlock.core.graph.SweepEvent.SweepEventType;
-import com.gutabi.deadlock.core.graph.SweepEventListener;
+import com.gutabi.deadlock.core.geom.SweepEvent;
+import com.gutabi.deadlock.core.geom.SweepEvent.SweepEventType;
+import com.gutabi.deadlock.core.geom.SweepEventListener;
+import com.gutabi.deadlock.core.graph.Graph;
+import com.gutabi.deadlock.core.graph.Intersection;
+import com.gutabi.deadlock.core.graph.Road;
+import com.gutabi.deadlock.core.graph.RoadPosition;
+import com.gutabi.deadlock.core.graph.RoadSegment;
+import com.gutabi.deadlock.core.graph.Vertex;
 
 @SuppressWarnings("static-access")
 public class Stroke implements SweepEventListener {
@@ -55,13 +62,194 @@ public class Stroke implements SweepEventListener {
 	
 	
 	
+	public void processNewStrokeTop(Graph g) {
+		
+		List<SweepEvent> vertexEvents = vertexEvents();
+		
+		for (int i = 0; i < vertexEvents.size(); i++) {
+			
+			SweepEvent e = vertexEvents.get(i);
+			
+			Point ep = getPoint(e.index, e.param);
+			
+			if (e.type == null) {
+				
+				Entity hit = g.pureGraphBestHitTest(ep, r);
+				assert hit == null;
+				logger.debug("create");
+				Intersection v = new Intersection(ep);
+				g.addVertexTop(v);
+				
+			} else if (e.type == SweepEventType.ENTERCAPSULE) {
+				Entity hit = g.pureGraphBestHitTest(ep, r);
+				
+				if (hit instanceof Road) {
+					
+					assert hit instanceof Road;
+					logger.debug("split");
+					
+					Road r = ((RoadSegment)e.o).r;
+					assert g.edges.contains(r);
+					
+					RoadPosition pos = null;
+					
+					/*
+					 * find better place to split by checking for intersection with road
+					 */
+					for (int j = e.index; j < pts.size()-1; j++) {
+						Point a = pts.get(j);
+						Point b = pts.get(j+1);
+						
+						RoadPosition skeletonIntersection = r.findSkeletonIntersection(a, b);
+						
+						if (skeletonIntersection != null) {
+							
+							double strokeCombo = j + Point.param(skeletonIntersection.p, a, b);
+							
+							if (DMath.greaterThanEquals((strokeCombo), (e.index+e.param))
+									&& DMath.lessThanEquals(Point.distance(skeletonIntersection.p, ep), this.r)
+									) {
+								pos = skeletonIntersection;
+								break;
+							}
+						}
+						
+					}
+					
+					if (pos == null) {
+						pos = g.findClosestRoadPosition(ep, this.r);
+					}
+					
+					g.split(pos);
+					
+				} else if (hit instanceof Vertex) {
+					
+				} else {
+					assert false;
+				}
+				
+			} else if (e.type == SweepEventType.EXITCAPSULE) {
+				
+				Entity hit = g.pureGraphBestHitTest(ep, this.r);
+				if (hit instanceof Road) {
+					
+					logger.debug("split");
+					
+					Road r = ((RoadSegment)e.o).r;
+					assert g.edges.contains(r);
+					
+					RoadPosition pos = null;
+					
+					/*
+					 * find better place to split by checking for intersection with road
+					 */
+					for (int j = e.index; j >= 0; j--) {
+						Point a = pts.get(j);
+						Point b = pts.get(j+1);
+						
+						RoadPosition skeletonIntersection = r.findSkeletonIntersection(a, b);
+						
+						if (skeletonIntersection != null) {
+							
+							double strokeCombo = j + Point.param(skeletonIntersection.p, a, b);
+							
+							if (DMath.lessThanEquals((strokeCombo), (e.index+e.param))
+									&& DMath.lessThanEquals(Point.distance(skeletonIntersection.p, ep), this.r)
+									) {
+								pos = skeletonIntersection;
+								break;
+							}
+						}
+						
+					}
+					
+					if (pos == null) {
+						pos = g.findClosestRoadPosition(ep, this.r);
+					}
+					
+					g.split(pos);
+					
+				} else if (hit instanceof Vertex) {
+					
+				} else {
+					assert false;
+				}
+				
+			}
+		}
+			
+			
+		for (int i = 0; i < vertexEvents.size()-1; i++) {
+			SweepEvent e0 = vertexEvents.get(i);
+			SweepEvent e1 = vertexEvents.get(i+1);
+			
+			if (e0.type == SweepEventType.ENTERVERTEX && e1.type == SweepEventType.EXITVERTEX) {
+				
+				logger.debug("skipping");
+				i = i+1;
+				if (i == vertexEvents.size()-1) {
+					break;
+				}
+				e0 = vertexEvents.get(i);
+				e1 = vertexEvents.get(i+1);
+				
+			} else if (e0.type == SweepEventType.ENTERCAPSULE && e1.type == SweepEventType.EXITCAPSULE) {
+				
+				logger.debug("skipping");
+				
+				i = i+1;
+				if (i == vertexEvents.size()-1) {
+					break;
+				}
+				e0 = vertexEvents.get(i);
+				e1 = vertexEvents.get(i+1);
+				
+			} else if (e0.type == SweepEventType.ENTERMERGER || e1.type == SweepEventType.ENTERMERGER) {
+				
+				return;
+				
+			}
+			
+			Point e0p = getPoint(e0.index, e0.param);
+			Point e1p = getPoint(e1.index, e1.param);
+			
+			Vertex v0 = (Vertex)g.pureGraphBestHitTest(e0p, this.r);
+			Vertex v1 = (Vertex)g.pureGraphBestHitTest(e1p, this.r);
+			
+			if (v0 == v1) {
+				logger.debug("same vertex");
+//				assert false;
+//				return;
+				continue;
+			}
+			
+			List<Point> roadPts = new ArrayList<Point>();
+			roadPts.add(getPoint(e0.index, e0.param));
+			for (int j = e0.index+1; j < e1.index; j++) {
+				roadPts.add(pts.get(j));
+			}
+			roadPts.add(pts.get(e1.index));
+			if (!DMath.equals(e1.param, 0.0)) {
+				roadPts.add(getPoint(e1.index, e1.param));
+			}
+			
+			g.createRoadTop(v0, v1, roadPts);
+			
+			g.computeVertexRadii();
+			
+		}
+		
+	}
+	
+	
+	
 	List<SweepEvent> events;
 	int vertexCount;
 	int capsuleCount;
 	int mergerCount;
 	List<SweepEvent> vertexEvents;
 	
-	public List<SweepEvent> vertexEvents() {
+	private List<SweepEvent> vertexEvents() {
 		
 		vertexCount = 0;
 		capsuleCount = 0;
@@ -89,7 +277,7 @@ public class Stroke implements SweepEventListener {
 			sweep(i);
 		}
 		
-		sweepEnd();
+//		sweepEnd();
 		
 //		logger.debug("counts at end: " + vertexCount + " " + capsuleCount + " " + mergerCount);
 		
@@ -105,6 +293,11 @@ public class Stroke implements SweepEventListener {
 //			assert mergerCount > 0;
 //			vertexEvents.add(new SweepEvent(SweepEventType.EXITMERGER, this, pts.size()-1, 0.0));
 //		}
+		
+		if (logger.isDebugEnabled()) {
+			logger.debug("vertexEvents:");
+			logger.debug(vertexEvents);
+		}
 		
 		return vertexEvents;
 	}
@@ -122,18 +315,18 @@ public class Stroke implements SweepEventListener {
 		
 	}
 	
-	public void sweepEnd() {
-		events = new ArrayList<SweepEvent>();
-		
-		MODEL.world.sweepEnd(this, this);
-		
-		Collections.sort(events, SweepEvent.COMPARATOR);
-		
-		for (SweepEvent e : events) {
-			endSorted(e);
-		}
-		
-	}
+//	public void sweepEnd() {
+//		events = new ArrayList<SweepEvent>();
+//		
+//		MODEL.world.sweepEnd(this, this);
+//		
+//		Collections.sort(events, SweepEvent.COMPARATOR);
+//		
+//		for (SweepEvent e : events) {
+//			endSorted(e);
+//		}
+//		
+//	}
 	
 	public void sweep(int index) {
 		events = new ArrayList<SweepEvent>();
@@ -156,10 +349,10 @@ public class Stroke implements SweepEventListener {
 //		logger.debug("start: added to events: " + events);
 	}
 	
-	public void end(SweepEvent e) {
-		events.add(e);
-//		logger.debug("start: added to events: " + events);
-	}
+//	public void end(SweepEvent e) {
+//		events.add(e);
+////		logger.debug("start: added to events: " + events);
+//	}
 	
 	public void event(SweepEvent e) {
 		if (events.isEmpty() && e.type == SweepEventType.EXITVERTEX && vertexCount == 0) {
@@ -209,33 +402,33 @@ public class Stroke implements SweepEventListener {
 		}
 	}
 	
-	private void endSorted(SweepEvent e) {
-		logger.debug("endSorted: " + e + " " + e.o + " " + e.index + "" + e.param);
-		switch (e.type) {
-		case EXITCAPSULE:
-			capsuleCount--;
-			if ((vertexCount + capsuleCount + mergerCount) == 0) {
-				vertexEvents.add(e);
-			}
-			break;
-		case EXITVERTEX:
-//			startVertex = e.getVertex();
-			vertexCount--;
-			if ((vertexCount + capsuleCount + mergerCount) == 0) {
-				vertexEvents.add(e);
-			}
-			break;
-		case EXITMERGER:
-			mergerCount--;
-			if ((vertexCount + capsuleCount + mergerCount) == 0) {
-				vertexEvents.add(e);
-			}
-			break;
-		default:
-			assert false;
-			break;
-		}
-	}
+//	private void endSorted(SweepEvent e) {
+//		logger.debug("endSorted: " + e + " " + e.o + " " + e.index + "" + e.param);
+//		switch (e.type) {
+//		case EXITCAPSULE:
+//			capsuleCount--;
+//			if ((vertexCount + capsuleCount + mergerCount) == 0) {
+//				vertexEvents.add(e);
+//			}
+//			break;
+//		case EXITVERTEX:
+////			startVertex = e.getVertex();
+//			vertexCount--;
+//			if ((vertexCount + capsuleCount + mergerCount) == 0) {
+//				vertexEvents.add(e);
+//			}
+//			break;
+//		case EXITMERGER:
+//			mergerCount--;
+//			if ((vertexCount + capsuleCount + mergerCount) == 0) {
+//				vertexEvents.add(e);
+//			}
+//			break;
+//		default:
+//			assert false;
+//			break;
+//		}
+//	}
 	
 	private void eventSorted(SweepEvent e) {
 		logger.debug("eventSorted: " + e + " " + e.o + " " + e.index + "" + e.param);

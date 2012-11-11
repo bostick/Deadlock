@@ -5,7 +5,9 @@ import java.awt.Graphics2D;
 //@SuppressWarnings("static-access")
 public interface Entity {
 	
-	boolean hitTest(Point p);
+	Entity hitTest(Point p);
+	
+	Entity bestHitTest(Point p, double r);
 	
 	boolean isDeleteable();
 	

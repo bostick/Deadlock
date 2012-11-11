@@ -70,7 +70,7 @@ public class RoadPosition extends EdgePosition {
 		
 		lengthToStartOfRoad = r.getLengthFromStart(index) + Point.distance(p, segStart);
 		
-		lengthToEndOfRoad = r.getTotalLength() - lengthToStartOfRoad;
+		lengthToEndOfRoad = r.getTotalLength(r.start, r.end) - lengthToStartOfRoad;
 		
 		assert check();
 	}
@@ -80,7 +80,7 @@ public class RoadPosition extends EdgePosition {
 	}
 	
 	public String toString() {
-		return r + " " + index + Double.toString(param).substring(1) + " (" + lengthToStartOfRoad + "/" + r.getTotalLength() + ")";
+		return r + " " + index + Double.toString(param).substring(1) + " (" + lengthToStartOfRoad + "/" + r.getTotalLength(r.start, r.end) + ")";
 	}
 	
 	@Override

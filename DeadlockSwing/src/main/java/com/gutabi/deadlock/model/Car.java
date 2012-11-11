@@ -345,45 +345,45 @@ public abstract class Car implements Entity {
 		return worldPoint4;
 	}
 	
-	public final boolean hitTest(Point p) {
+	public Car hitTest(Point p) {
 		if (aabb.hitTest(p)) {
 			
 			if (Point.halfPlane(p, worldPoint1, worldPoint2) != -1) {
-				return false;
+				return null;
 			}
 			if (Point.halfPlane(p, worldPoint2, worldPoint3) != -1) {
-				return false;
+				return null;
 			}
 			if (Point.halfPlane(p, worldPoint3, worldPoint4) != -1) {
-				return false;
+				return null;
 			}
 			if (Point.halfPlane(p, worldPoint4, worldPoint1) != -1) {
-				return false;
+				return null;
 			}
-			return true;
+			return this;
 			
 		} else {
-			return false;
+			return null;
 		}
 	}
 	
-	public final boolean bestHitTest(Point p, double r) {
-		if (hitTest(p)) {
+	public Car bestHitTest(Point p, double r) {
+		if (hitTest(p) != null) {
 			
-			return true;
+			return this;
 			
 		} else {
 			
 			if (DMath.lessThanEquals(Point.distance(p, worldPoint1, worldPoint2), r)) {
-				return true;
+				return this;
 			} else if (DMath.lessThanEquals(Point.distance(p, worldPoint2, worldPoint3), r)) {
-				return true;
+				return this;
 			} else if (DMath.lessThanEquals(Point.distance(p, worldPoint3, worldPoint4), r)) {
-				return true;
+				return this;
 			} else if (DMath.lessThanEquals(Point.distance(p, worldPoint4, worldPoint1), r)) {
-				return true;
+				return this;
 			}
-			return false;
+			return null;
 			
 		}
 	}

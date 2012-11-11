@@ -69,23 +69,25 @@ public class StopSign implements Entity {
 		return aabb;
 	}
 	
-	public final boolean hitTest(Point p) {
+	public Entity hitTest(Point p) {
 		if (aabb.hitTest(p)) {
 			
-			return DMath.lessThanEquals(Point.distance(p, this.p), r);
+			if (DMath.lessThanEquals(Point.distance(p, this.p), r)) {
+				return this;
+			} else {
+				return null;
+			}
 			
 		} else {
-			return false;
+			return null;
 		}
 	}
 	
-	public final boolean bestHitTest(Point p, double r) {
-		if (hitTest(p)) {
-			
-			return true;
-			
+	public Entity bestHitTest(Point p, double r) {
+		if (DMath.lessThanEquals(Point.distance(p, this.p), this.r + r)) {
+			return this;
 		} else {
-			return DMath.lessThanEquals(Point.distance(p, this.p), this.r + r);
+			return null;
 		}
 	}
 	

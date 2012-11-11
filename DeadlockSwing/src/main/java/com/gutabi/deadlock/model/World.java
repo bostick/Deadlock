@@ -20,14 +20,13 @@ import org.jbox2d.common.Vec2;
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.Rect;
+import com.gutabi.deadlock.core.geom.SweepEventListener;
 import com.gutabi.deadlock.core.graph.Axis;
 import com.gutabi.deadlock.core.graph.Edge;
 import com.gutabi.deadlock.core.graph.Graph;
-import com.gutabi.deadlock.core.graph.Intersection;
 import com.gutabi.deadlock.core.graph.Merger;
 import com.gutabi.deadlock.core.graph.Road;
 import com.gutabi.deadlock.core.graph.StopSign;
-import com.gutabi.deadlock.core.graph.SweepEventListener;
 import com.gutabi.deadlock.core.graph.Vertex;
 import com.gutabi.deadlock.core.graph.WorldSink;
 import com.gutabi.deadlock.core.graph.WorldSource;
@@ -110,21 +109,21 @@ public class World {
 		t2.matchingSink = t4;
 		t4.matchingSource = t2;
 		
-		graph.addSource(a);
-		graph.addSource(b);
-		graph.addSource(t1);
+		graph.addVertexTop(a);
+		graph.addVertexTop(b);
+		graph.addVertexTop(t1);
 		
-		graph.addSource(c);
-		graph.addSource(d);
-		graph.addSource(t2);
+		graph.addVertexTop(c);
+		graph.addVertexTop(d);
+		graph.addVertexTop(t2);
 		
-		graph.addSink(e);
-		graph.addSink(f);
-		graph.addSink(t3);
+		graph.addVertexTop(e);
+		graph.addVertexTop(f);
+		graph.addVertexTop(t3);
 		
-		graph.addSink(g);
-		graph.addSink(h);
-		graph.addSink(t4);
+		graph.addVertexTop(g);
+		graph.addVertexTop(h);
+		graph.addVertexTop(t4);
 
 		
 	}
@@ -155,17 +154,17 @@ public class World {
 		
 	}
 	
-	public void addSource(WorldSource s) {
-		graph.addSource(s);
-	}
-	
-	public void addSink(WorldSink s) {
-		graph.addSink(s);
-	}
-	
-	public void addIntersection(Intersection i) {
-		graph.addIntersection(i);
-	}
+//	public void addSource(WorldSource s) {
+//		graph.addVertex(s);
+//	}
+//	
+//	public void addSink(WorldSink s) {
+//		graph.addVertex(s);
+//	}
+//	
+//	public void addIntersection(Intersection i) {
+//		graph.addVertex(i);
+//	}
 	
 	public void removeVertexTop(Vertex v) {
 		graph.removeVertexTop(v);
@@ -182,8 +181,8 @@ public class World {
 		postIdleTop();
 	}
 	
-	public void removeStopSignTop(StopSign e) {
-		graph.removeStopSignTop(e);
+	public void removeStopSignTop(StopSign s) {
+		s.e.removeStopSignTop(s);
 		postIdleTop();
 	}
 	
@@ -200,7 +199,7 @@ public class World {
 	
 	public void processNewStrokeTop(Stroke stroke) {
 		
-		graph.processNewStrokeTop(stroke);
+		stroke.processNewStrokeTop(graph);
 		
 		postDraftingTop();
 	}
@@ -209,9 +208,9 @@ public class World {
 		graph.sweepStart(s, l);
 	}
 	
-	public void sweepEnd(Stroke s, SweepEventListener l) {
-		graph.sweepEnd(s, l);
-	}
+//	public void sweepEnd(Stroke s, SweepEventListener l) {
+//		graph.sweepEnd(s, l);
+//	}
 	
 	public void sweep(Stroke s, int index, SweepEventListener l) {
 		graph.sweep(s, index, l);
@@ -359,10 +358,10 @@ public class World {
 		if (c != null) {
 			return c;
 		}
-		StopSign s = signHitTest(p);
-		if (s != null) {
-			return s;
-		}
+//		StopSign s = signHitTest(p);
+//		if (s != null) {
+//			return s;
+//		}
 		Entity h = graphHitTest(p);
 		if (h != null) {
 			return h;
@@ -370,26 +369,26 @@ public class World {
 		return null;
 	}
 	
-	public Entity bestHitTest(Point p, double r) {
-		Car c = carBestHitTest(p, r);
-		if (c != null) {
-			return c;
-		}
-		StopSign s = signBestHitTest(p, r);
-		if (s != null) {
-			return s;
-		}
-		Entity h = graphBestHitTest(p, r);
-		if (h != null) {
-			return h;
-		}
-		return null;
-	}
+//	public Entity bestHitTestX(Point p, double r) {
+//		Car c = carBestHitTest(p, r);
+//		if (c != null) {
+//			return c;
+//		}
+////		StopSign s = signBestHitTest(p, r);
+////		if (s != null) {
+////			return s;
+////		}
+//		Entity h = graphBestHitTest(p, r);
+//		if (h != null) {
+//			return h;
+//		}
+//		return null;
+//	}
 	
 	public Car carHitTest(Point p) {
 		synchronized (MODEL) {
 			for (Car c : cars) {
-				if (c.hitTest(p)) {
+				if (c.hitTest(p) != null) {
 					return c;
 				}
 			}
@@ -400,7 +399,7 @@ public class World {
 	public Car carBestHitTest(Point p, double r) {
 		synchronized (MODEL) {
 			for (Car c : cars) {
-				if (c.bestHitTest(p, r)) {
+				if (c.bestHitTest(p, r) != null) {
 					return c;
 				}
 			}
@@ -412,17 +411,17 @@ public class World {
 		return graph.graphHitTest(p);
 	}
 	
-	public StopSign signHitTest(Point p) {
-		return graph.signHitTest(p);
-	}
+//	public StopSign signHitTest(Point p) {
+//		return graph.signHitTest(p);
+//	}
+//	
+//	public StopSign signBestHitTest(Point p, double r) {
+//		return graph.signBestHitTest(p, r);
+//	}
 	
-	public StopSign signBestHitTest(Point p, double r) {
-		return graph.signBestHitTest(p, r);
-	}
-	
-	public Entity graphBestHitTest(Point p, double r) {
-		return graph.graphBestHitTest(p, r);
-	}
+//	public Entity graphBestHitTest(Point p, double r) {
+//		return graph.graphBestHitTest(p, r);
+//	}
 	
 //	public Entity bestHitTest(Point p, double radius) {
 //		return graph.bestHitTest(p, radius);

@@ -1,4 +1,4 @@
-package com.gutabi.deadlock.core.graph;
+package com.gutabi.deadlock.core.geom;
 
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 
@@ -12,7 +12,7 @@ import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.OverlappingException;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.Rect;
-import com.gutabi.deadlock.core.graph.SweepEvent.SweepEventType;
+import com.gutabi.deadlock.core.geom.SweepEvent.SweepEventType;
 import com.gutabi.deadlock.model.Stroke;
 
 @SuppressWarnings("static-access")
@@ -84,42 +84,33 @@ public class Capsule implements Sweepable {
 		return "(" + a + " " + b + ")";
 	}
 	
-//	public void setSweepEventListener(SweepEventListener l) {
-//		this.l = l;
-//	}
-	
 	public void sweepStart(Stroke s, SweepEventListener l) {
 		
 		Point c = s.pts.get(0);
 		
-		if (bestHitTest(c, s.r)) {
+		if (bestHitTest(c, s.r) != null) {
 			l.start(new SweepEvent(SweepEventType.ENTERCAPSULE, this, s, 0, 0.0));
 		}
 		
 	}
 	
-	public void sweepEnd(Stroke s, SweepEventListener l) {
-		
-		Point d = s.pts.get(s.pts.size()-1);
-		
-		if (bestHitTest(d, s.r)) {
-			l.end(new SweepEvent(SweepEventType.EXITCAPSULE, this, s, s.pts.size()-1, 0.0));
-		}
-		
-	}
+//	public void sweepEnd(Stroke s, SweepEventListener l) {
+//		
+//		Point d = s.pts.get(s.pts.size()-1);
+//		
+//		if (bestHitTest(d, s.r)) {
+//			l.end(new SweepEvent(SweepEventType.EXITCAPSULE, this, s, s.pts.size()-1, 0.0));
+//		}
+//		
+//	}
 	
 	public void sweep(Stroke s, int index, SweepEventListener l) {
 		
 		Point c = s.pts.get(index);
 		Point d = s.pts.get(index+1);
 		
-		if (a.equals(new Point(6.6875, 8.4375)) && b.equals(new Point(7.1875, 7.875)) &&
-				c.equals(new Point(6.875, 6.375)) && d.equals(new Point(7.21875, 7.0))) {
-			String.class.getName();
-		}
-		
 		boolean outside;
-		if (bestHitTest(c, s.r)) {
+		if (bestHitTest(c, s.r) != null) {
 			outside = false;
 		} else {
 			outside = true;
@@ -248,27 +239,24 @@ public class Capsule implements Sweepable {
 		
 	}
 	
-	public boolean hitTest(Point p) {
+	public Capsule hitTest(Point p) {
 		if (aabb.hitTest(p)) {
 			
 			if (DMath.lessThanEquals(Point.distance(p, a, b), r)) {
-				return true;
+				return this;
 			}
-			return false;
+			return null;
 			
 		} else {
-			return false;
+			return null;
 		}
 	}
 	
-	public boolean bestHitTest(Point p, double radius) {
-//		if (DMath.equals(Point.distance(p, a, b), r + radius)) {
-//			String.class.getName();
-//		}
+	public Capsule bestHitTest(Point p, double radius) {
 		if (DMath.lessThanEquals(Point.distance(p, a, b), r + radius)) {
-			return true;
+			return this;
 		}
-		return false;
+		return null;
 	}
 	
 	public double skeletonHitTest(Point p) {

@@ -326,16 +326,20 @@ public class DeadlockController implements ActionListener {
 			break;
 		case MERGEROUTLINE:
 			
-			MODEL.world.insertMergerTop(lastMovedWorldPoint);
+			if (true) {
+				
+				MODEL.world.insertMergerTop(lastMovedWorldPoint);
+				
+				mode = ControlMode.IDLE;
+				
+				MODEL.cursor.computeAABB();
+				
+				MODEL.world.renderBackground();
+				VIEW.repaint();
+				
+			}
 			
-			mode = ControlMode.IDLE;
-			
-			MODEL.cursor.computeAABB();
-			
-			MODEL.world.renderBackground();
-			VIEW.repaint();
 			break;
-			
 		default:
 			break;
 		}

@@ -1,6 +1,22 @@
 
 IMMEDIATELY:
 
+work on .graph package
+move classes
+make Graph a pure graph class
+move Road, Merger, Sink, Source, etc. to .model
+
+
+add SAT code
+find uses of halfPlane
+reexamine all bestHitTest implementations
+WorldSource.active()
+Car.computeDynamicProperties()
+
+
+
+test if Merger is hitting anything else before adding
+
 skids
 line segments of when a car goes off-road
 
@@ -12,8 +28,6 @@ how many vertices, capsules, etc. currently hitting?
 
 ideal physics
 option to remove braking, friction, skidding, etc.
-
-test if Merger is hitting anything else before adding
 
 IN THE NEXT WEEK:
 

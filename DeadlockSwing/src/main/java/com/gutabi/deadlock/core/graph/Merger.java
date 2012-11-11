@@ -11,12 +11,15 @@ import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.Rect;
-import com.gutabi.deadlock.core.graph.SweepEvent.SweepEventType;
+import com.gutabi.deadlock.core.geom.SweepEvent;
+import com.gutabi.deadlock.core.geom.SweepEvent.SweepEventType;
+import com.gutabi.deadlock.core.geom.SweepEventListener;
+import com.gutabi.deadlock.core.geom.SweepUtils;
 import com.gutabi.deadlock.model.Cursor;
 import com.gutabi.deadlock.model.Stroke;
 
 @SuppressWarnings("static-access")
-public class Merger implements Entity, Edge, Sweepable {
+public class Merger extends Edge {
 	
 	public static final double MERGER_WIDTH = 5.0;
 	public static final double MERGER_HEIGHT = 5.0;
@@ -41,6 +44,7 @@ public class Merger implements Entity, Edge, Sweepable {
 	private double[] cumulativeLengthsFromLeft;
 	
 	public Merger(Point center) {
+		
 		this.ul = center.plus(new Point(-MERGER_WIDTH/2,  -MERGER_HEIGHT/2));
 		
 		aabb = new Rect(ul.x, ul.y, MERGER_WIDTH, MERGER_HEIGHT);
@@ -63,8 +67,20 @@ public class Merger implements Entity, Edge, Sweepable {
 		p2 = new Point(ul.x + MERGER_WIDTH, ul.y + MERGER_HEIGHT);
 		p3 = new Point(ul.x, ul.y + MERGER_HEIGHT);
 		
+		top.m = this;
+		left.m = this;
+		right.m = this;
+		bottom.m = this;
+		
 		computeLengths();
 		
+	}
+	
+	public void destroy() {
+		top.m = null;
+		left.m = null;
+		right.m = null;
+		bottom.m = null;
 	}
 	
 	public String toString() {
@@ -72,42 +88,41 @@ public class Merger implements Entity, Edge, Sweepable {
 	}
 	
 	public double getTotalLength(Vertex a, Vertex b) {
-		if (a == top) {
-			assert b == bottom;
+		if (a == top || a == bottom) {
 			return MERGER_HEIGHT;
-		} else if (a == left) {
-			assert b == right;
-			return MERGER_WIDTH;
-		} else if (a == right) {
-			assert b == left;
-			return MERGER_WIDTH;
 		} else {
-			assert a == bottom;
-			assert b== top;
-			return MERGER_HEIGHT;
+			return MERGER_WIDTH;
 		}
 	}
+	
+	public void enterDistancesMatrix(double[][] distances) {
+		distances[top.id][bottom.id] = Merger.MERGER_HEIGHT;
+		distances[bottom.id][top.id] = Merger.MERGER_HEIGHT;
+		distances[left.id][right.id] = Merger.MERGER_WIDTH;
+		distances[right.id][left.id] = Merger.MERGER_WIDTH;
+	}
+	
 	
 	
 	public void sweepStart(Stroke s, SweepEventListener l) {
 		
 		Point c = s.pts.get(0);
 		
-		if (bestHitTest(c, s.r)) {
+		if (bestHitTest(c, s.r) != null) {
 			l.start(new SweepEvent(SweepEventType.ENTERMERGER, this, s, 0, 0.0));
 		}
 		
 	}
 	
-	public void sweepEnd(Stroke s, SweepEventListener l) {
-		
-		Point d = s.pts.get(s.pts.size()-1);
-		
-		if (bestHitTest(d, s.r)) {
-			l.end(new SweepEvent(SweepEventType.EXITMERGER, this, s, s.pts.size()-1, 0.0));
-		}
-		
-	}
+//	public void sweepEnd(Stroke s, SweepEventListener l) {
+//		
+//		Point d = s.pts.get(s.pts.size()-1);
+//		
+//		if (bestHitTest(d, s.r)) {
+//			l.end(new SweepEvent(SweepEventType.EXITMERGER, this, s, s.pts.size()-1, 0.0));
+//		}
+//		
+//	}
 	
 	public void sweep(Stroke s, int index, SweepEventListener l) {
 		
@@ -115,7 +130,7 @@ public class Merger implements Entity, Edge, Sweepable {
 		Point d = s.pts.get(index+1);
 		
 		boolean outside;
-		if (bestHitTest(c, s.r)) {
+		if (bestHitTest(c, s.r) != null) {
 			outside = false;
 		} else {
 			outside = true;
@@ -199,18 +214,22 @@ public class Merger implements Entity, Edge, Sweepable {
 		}
 	}
 	
-	public boolean hitTest(Point p) {
+	public Entity hitTest(Point p) {
 		if (DMath.lessThanEquals(ul.x, p.x) && DMath.lessThanEquals(p.x, ul.x+MERGER_WIDTH) &&
 				DMath.lessThanEquals(ul.y, p.y) && DMath.lessThanEquals(p.y, ul.y+MERGER_HEIGHT)) {
-			return true;
+			return this;
 		} else {
-			return false;
+			return null;
 		}
 	}
 	
-	public boolean bestHitTest(Point p, double r) {
-		if (hitTest(p)) {
-			return true;
+	public Entity decorationsHitTest(Point p) {
+		return null;
+	}
+	
+	public Entity bestHitTest(Point p, double r) {
+		if (hitTest(p) != null) {
+			return this;
 		} else {
 			
 //			if (DMath.equals(Point.distance(p, p0, p1), r)) {
@@ -224,15 +243,15 @@ public class Merger implements Entity, Edge, Sweepable {
 //			}
 			
 			if (DMath.lessThanEquals(Point.distance(p, p0, p1), r)) {
-				return true;
+				return this;
 			} else if (DMath.lessThanEquals(Point.distance(p, p1, p2), r)) {
-				return true;
+				return this;
 			} else if (DMath.lessThanEquals(Point.distance(p, p2, p3), r)) {
-				return true;
+				return this;
 			} else if (DMath.lessThanEquals(Point.distance(p, p3, p0), r)) {
-				return true;
+				return this;
 			}
-			return false;
+			return null;
 		}
 	}
 	
@@ -382,6 +401,19 @@ public class Merger implements Entity, Edge, Sweepable {
 		
 	}
 	
+	public void paintBorders(Graphics2D g2) {
+		
+//		g2.setColor(Color.GREEN);
+//		g2.fillOval((int)(startBorderPoint.x * MODEL.PIXELS_PER_METER)-2, (int)(startBorderPoint.y * MODEL.PIXELS_PER_METER)-2, 4, 4);
+//		
+//		g2.setColor(Color.RED);
+//		g2.fillOval((int)(endBorderPoint.x * MODEL.PIXELS_PER_METER)-2, (int)(endBorderPoint.y * MODEL.PIXELS_PER_METER)-2, 4, 4);
+		
+	}
+	
+	public void paintDecorations(Graphics2D g2) {
+		
+	}
 	
 	//java.awt.Stroke mergerOutlineStroke = new BasicStroke(float width, int cap, int join, float miterlimit, float[] dash, float dash_phase);
 	
