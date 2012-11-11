@@ -88,7 +88,7 @@ public class Graph {
 	
 	public void createRoadTop(Vertex start, Vertex end, List<Point> pts) {
 		
-		createRoad(start, end, pts, (!start.roads.isEmpty()?1:0)+(!end.roads.isEmpty()?2:0));
+		createRoad(start, end, pts, (start.m==null&&!start.roads.isEmpty()?1:0)+(end.m==null&&!end.roads.isEmpty()?2:0));
 		
 		automaticMergeOrDestroy(start);
 		automaticMergeOrDestroy(end);
