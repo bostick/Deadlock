@@ -1,13 +1,18 @@
 package com.gutabi.deadlock.core.geom;
 
-import com.gutabi.deadlock.core.Point;
+import java.util.List;
 
-public interface Sweeper {
+public abstract class Sweeper extends CapsuleSequence {
 	
-	Point get(int i);
+	public Sweeper(Object parent, List<Capsule> caps) {
+		super(parent, caps);
+	}
 	
-	int size();
+	/*
+	 * callbacks
+	 */
+	public abstract void start(SweepEvent s);
 	
-	double getRadius();
+	public abstract void event(SweepEvent s);
 	
 }

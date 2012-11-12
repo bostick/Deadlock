@@ -13,13 +13,14 @@ import java.util.Set;
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.OverlappingException;
 import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.core.Rect;
 import com.gutabi.deadlock.core.geom.Capsule;
-import com.gutabi.deadlock.core.geom.SweepEventListener;
+import com.gutabi.deadlock.core.geom.Rect;
+import com.gutabi.deadlock.core.geom.Shape;
+import com.gutabi.deadlock.core.geom.Sweepable;
 import com.gutabi.deadlock.core.geom.Sweeper;
 
 @SuppressWarnings("static-access")
-public class Graph {
+public class Graph implements Sweepable {
 	
 	public final List<Vertex> vertices = new ArrayList<Vertex>();
 	public final List<Edge> edges = new ArrayList<Edge>();
@@ -244,23 +245,23 @@ public class Graph {
 	
 	
 	
-	public void sweepStart(Sweeper s, SweepEventListener l) {
+	public void sweepStart(Sweeper s) {
 		
 		for (Vertex v : vertices) {
-			v.sweepStart(s, l);
+			v.sweepStart(s);
 		}
 		for (Edge e : edges) {
-			e.sweepStart(s, l);
+			e.sweepStart(s);
 		}
 		
 	}
 	
-	public void sweep(Sweeper s, int index, SweepEventListener l) {
+	public void sweep(Sweeper s, int index) {
 		for (Vertex v : vertices) {
-			v.sweep(s, index, l);
+			v.sweep(s, index);
 		}
 		for (Edge e : edges) {
-			e.sweep(s, index, l);
+			e.sweep(s, index);
 		}
 	}
 	
@@ -496,16 +497,39 @@ public class Graph {
 		return null;
 	}
 	
-	public Entity pureGraphBestHitTest(Point p, double r) {
-		assert p != null;
+	public Entity graphBestHitTest(Shape s) {
+		Entity hit;
+		for (Edge ed : edges) {
+			hit = ed.decorationsBestHitTest(s);
+			if (hit != null) {
+				return hit;
+			}
+		}
 		for (Vertex v : vertices) {
-			if (v.bestHitTest(p, r) != null) {
+			hit = v.bestHitTest(s);
+			if (hit != null) {
+				return hit;
+			}
+		}
+		for (Edge ed : edges) {
+			hit = ed.bestHitTest(s);
+			if (hit != null) {
+				return ed;
+			}
+		}
+		return null;
+	}
+	
+	public Entity pureGraphBestHitTest(Shape s) {
+//		assert p != null;
+		for (Vertex v : vertices) {
+			if (v.bestHitTest(s) != null) {
 				return v;
 			}
 		}
-		for (Edge e : edges) {
-			if (e.bestHitTest(p, r) != null) {
-				return e;
+		for (Edge ed : edges) {
+			if (ed.bestHitTest(s) != null) {
+				return ed;
 			}
 		}
 		return null;
@@ -514,7 +538,7 @@ public class Graph {
 	/**
 	 * returns the closest road within radius
 	 */
-	public RoadPosition findClosestRoadPosition(Point a, double radius) {
+	public RoadPosition findClosestRoadPosition(Point p, double radius) {
 
 		RoadPosition closest = null;
 		
@@ -525,10 +549,10 @@ public class Graph {
 			}
 		}
 		
-		for (Road e : roads) {
-			RoadPosition ep = e.findClosestRoadPosition(a, radius);
+		for (Road r : roads) {
+			RoadPosition ep = r.findClosestRoadPosition(p, radius);
 			if (ep != null) {
-				if (closest == null || Point.distance(a, ep.p) < Point.distance(a, closest.p)) {
+				if (closest == null || p.distanceTo(ep.p) < p.distanceTo(closest.p)) {
 					closest = ep;
 				}
 			}
@@ -548,7 +572,7 @@ public class Graph {
 	 */
 	public Intersection split(RoadPosition pos) {
 		
-		Road e = pos.r;
+		Road r = pos.r;
 		int index = pos.index;
 		double param = pos.param;
 		final Point p = pos.p;
@@ -559,8 +583,8 @@ public class Graph {
 		Intersection v = new Intersection(p);
 		addVertex(v);
 		
-		Vertex eStart = e.start;
-		Vertex eEnd = e.end;
+		Vertex eStart = r.start;
+		Vertex eEnd = r.end;
 		
 		if (eStart == null && eEnd == null) {
 			// stand-alone loop
@@ -568,17 +592,17 @@ public class Graph {
 			List<Point> pts = new ArrayList<Point>();
 			
 			pts.add(p);
-			for (int i = index+1; i < e.size(); i++) {
-				pts.add(e.get(i));
+			for (int i = index+1; i < r.pointCount(); i++) {
+				pts.add(r.getPoint(i));
 			}
 			for (int i = 0; i <= index; i++) {
-				pts.add(e.get(i));
+				pts.add(r.getPoint(i));
 			}
 			pts.add(p);
 			
 			createRoad(v, v, pts, 3);
 			
-			destroyRoad(e);
+			destroyRoad(r);
 			
 			return v;
 		}
@@ -586,22 +610,22 @@ public class Graph {
 		List<Point> f1Pts = new ArrayList<Point>();
 		
 		for (int i = 0; i <= index; i++) {
-			f1Pts.add(e.get(i));
+			f1Pts.add(r.getPoint(i));
 		}
 		f1Pts.add(p);
 		
-		createRoad(eStart, v, f1Pts, (e.startSign!=null?1:0)+2);
+		createRoad(eStart, v, f1Pts, (r.startSign!=null?1:0)+2);
 		
 		List<Point> f2Pts = new ArrayList<Point>();
 		
 		f2Pts.add(p);
-		for (int i = index+1; i < e.size(); i++) {
-			f2Pts.add(e.get(i));
+		for (int i = index+1; i < r.pointCount(); i++) {
+			f2Pts.add(r.getPoint(i));
 		}
 		
-		createRoad(v, eEnd, f2Pts, 1+(e.endSign!=null?2:0));
+		createRoad(v, eEnd, f2Pts, 1+(r.endSign!=null?2:0));
 		
-		destroyRoad(e);
+		destroyRoad(r);
 		
 		return v;
 	}
@@ -725,10 +749,10 @@ public class Graph {
 				
 			List<Point> pts = new ArrayList<Point>();
 			
-			assert e1.get(0) == e1.get(e1.size()-1);
+			assert e1.getPoint(0) == e1.getPoint(e1.pointCount()-1);
 			
-			for (int i = 0; i < e1.size(); i++) {
-				pts.add(e1.get(i));
+			for (int i = 0; i < e1.pointCount(); i++) {
+				pts.add(e1.getPoint(i));
 			}
 			
 			createRoad(null, null, pts, 0);
@@ -741,12 +765,12 @@ public class Graph {
 			
 			List<Point> pts = new ArrayList<Point>();
 			
-			for (int i = e1.size()-1; i >= 0; i--) {
-				pts.add(e1.get(i));
+			for (int i = e1.pointCount()-1; i >= 0; i--) {
+				pts.add(e1.getPoint(i));
 			}
-			assert e1.get(0).equals(e2.get(0));
-			for (int i = 0; i < e2.size(); i++) {
-				pts.add(e2.get(i));
+			assert e1.getPoint(0).equals(e2.getPoint(0));
+			for (int i = 0; i < e2.pointCount(); i++) {
+				pts.add(e2.getPoint(i));
 			}
 			
 			createRoad(e1End, e2End, pts, (e1.endSign!=null?1:0) + (e2.endSign!=null?2:0));
@@ -760,12 +784,12 @@ public class Graph {
 			
 			List<Point> pts = new ArrayList<Point>();
 			
-			for (int i = e1.size()-1; i >= 0; i--) {
-				pts.add(e1.get(i));
+			for (int i = e1.pointCount()-1; i >= 0; i--) {
+				pts.add(e1.getPoint(i));
 			}
-			assert e1.get(0).equals(e2.get(e2.size()-1));
-			for (int i = e2.size()-1; i >= 0; i--) {
-				pts.add(e2.get(i));
+			assert e1.getPoint(0).equals(e2.getPoint(e2.pointCount()-1));
+			for (int i = e2.pointCount()-1; i >= 0; i--) {
+				pts.add(e2.getPoint(i));
 			}
 			
 			createRoad(e1End, e2Start, pts, (e1.endSign!=null?1:0) + (e2.startSign!=null?2:0)); 
@@ -779,12 +803,12 @@ public class Graph {
 			
 			List<Point> pts = new ArrayList<Point>();
 			
-			for (int i = 0; i < e1.size(); i++) {
-				pts.add(e1.get(i));
+			for (int i = 0; i < e1.pointCount(); i++) {
+				pts.add(e1.getPoint(i));
 			}
-			assert e1.get(e1.size()-1).equals(e2.get(0));
-			for (int i = 0; i < e2.size(); i++) {
-				pts.add(e2.get(i));
+			assert e1.getPoint(e1.pointCount()-1).equals(e2.getPoint(0));
+			for (int i = 0; i < e2.pointCount(); i++) {
+				pts.add(e2.getPoint(i));
 			}
 			
 			createRoad(e1Start, e2End, pts, (e1.startSign!=null?1:0) + (e2.endSign!=null?2:0));
@@ -799,11 +823,11 @@ public class Graph {
 			
 			List<Point> pts = new ArrayList<Point>();
 			
-			for (int i = 0; i < e1.size(); i++) {
-				pts.add(e1.get(i));
+			for (int i = 0; i < e1.pointCount(); i++) {
+				pts.add(e1.getPoint(i));
 			}
-			for (int i = e2.size()-1; i >= 0; i--) {
-				pts.add(e2.get(i));
+			for (int i = e2.pointCount()-1; i >= 0; i--) {
+				pts.add(e2.getPoint(i));
 			}
 			
 			createRoad(e1Start, e2Start, pts, (e1.startSign!=null?1:0) + (e2.startSign!=null?2:0));
@@ -909,10 +933,10 @@ public class Graph {
 			for (Road f : roads) {
 				if (e == f) {
 					
-					for (int i = 0; i < e.size()-2; i++) {
+					for (int i = 0; i < e.pointCount()-2; i++) {
 						Capsule es = e.getCapsule(i);
 						
-						for (int j = i+1; j < f.size()-1; j++) {
+						for (int j = i+1; j < f.pointCount()-1; j++) {
 							Capsule fs = f.getCapsule(j);
 							
 							try {
@@ -929,10 +953,10 @@ public class Graph {
 					
 				} else {
 					
-					for (int i = 0; i < e.size()-1; i++) {
+					for (int i = 0; i < e.pointCount()-1; i++) {
 						Capsule es = e.getCapsule(i);
 						
-						for (int j = 0; j < f.size()-1; j++) {
+						for (int j = 0; j < f.pointCount()-1; j++) {
 							Capsule fs = f.getCapsule(j);
 							
 							try {
@@ -952,10 +976,10 @@ public class Graph {
 						 * e and f share endpoints
 						 */
 						Set<Point> shared = new HashSet<Point>();
-						for (int i = 0; i < e.size(); i++) {
-							Point eP = e.get(i);
-							for (int j = 0; j < f.size(); j++) {
-								Point fP = f.get(j);
+						for (int i = 0; i < e.pointCount(); i++) {
+							Point eP = e.getPoint(i);
+							for (int j = 0; j < f.pointCount(); j++) {
+								Point fP = f.getPoint(j);
 								if (eP.equals(fP)) {
 									shared.add(eP);
 								}

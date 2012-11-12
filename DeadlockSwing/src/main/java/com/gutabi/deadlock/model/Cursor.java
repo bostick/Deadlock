@@ -8,7 +8,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 
 import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.core.Rect;
+import com.gutabi.deadlock.core.geom.Rect;
 import com.gutabi.deadlock.core.graph.Merger;
 
 @SuppressWarnings("static-access")

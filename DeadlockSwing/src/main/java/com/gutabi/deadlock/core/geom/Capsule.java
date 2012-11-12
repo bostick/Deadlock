@@ -11,11 +11,13 @@ import org.apache.log4j.Logger;
 import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.OverlappingException;
 import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.core.Rect;
 import com.gutabi.deadlock.core.geom.SweepEvent.SweepEventType;
 
 @SuppressWarnings("static-access")
-public class Capsule implements Sweepable {
+public class Capsule extends Shape {
+	
+	public final Circle ac;
+	public final Circle bc;
 	
 	public final Point a;
 	public final Point b;
@@ -31,29 +33,33 @@ public class Capsule implements Sweepable {
 	private final Point bUp;
 	private final Point bDown;
 	
-	public final Rect aabb;
-	
 //	SweepEventListener l;
 	
 	private final int hash;
 	
 	static Logger logger = Logger.getLogger(Capsule.class);
 	
-	public Capsule(Point a, Point b, double r) {
+	public Capsule(Object parent, Circle ac, Circle bc) {
+		super(parent);
+		
+		this.ac = ac;
+		this.bc = bc;
+		
+		this.a = ac.center;
+		this.b = bc.center;
+		this.r = ac.radius;
+		
 		if (a.equals(b)) {
 			throw new IllegalArgumentException("a equals b");
 		}
-			
-		this.a = a;
-		this.b = b;
-		this.r = r;
+		
+		if (!DMath.equals(ac.radius, bc.radius)) {
+			throw new IllegalArgumentException("radii not equal");
+		}
 		
 		int h = 17;
-		h = 37 * h + a.hashCode();
-		h = 37 * h + b.hashCode();
-		long l = Double.doubleToLongBits(r);
-		int c = (int)(l ^ (l >>> 32));
-		h = 37 * h + c;
+		h = 37 * h + ac.hashCode();
+		h = 37 * h + bc.hashCode();
 		hash = h;
 		
 		Point diff = new Point(b.x - a.x, b.y - a.y);
@@ -83,12 +89,17 @@ public class Capsule implements Sweepable {
 		return "(" + a + " " + b + ")";
 	}
 	
-	public void sweepStart(Sweeper s, SweepEventListener l) {
+	public boolean hitTest(Point p) {
+		return 
+	}
+	
+	public void sweepStart(Sweeper s) {
 		
-		Point c = s.get(0);
+		Capsule firstCap = s.get(0);
+		Point c = firstCap.a;
 		
-		if (bestHitTest(c, s.getRadius()) != null) {
-			l.start(new SweepEvent(SweepEventType.ENTERCAPSULE, this, s, 0, 0.0));
+		if (bestHitTest(c, s.radius)) {
+			s.start(new SweepEvent(SweepEventType.ENTERCAPSULE, this, s, 0, 0.0));
 		}
 		
 	}
@@ -103,13 +114,14 @@ public class Capsule implements Sweepable {
 //		
 //	}
 	
-	public void sweep(Sweeper s, int index, SweepEventListener l) {
+	public void sweep(Sweeper s, int index) {
 		
-		Point c = s.get(index);
-		Point d = s.get(index+1);
+		Capsule cap = s.get(index);
+		Point c = cap.a;
+		Point d = cap.b;
 		
 		boolean outside;
-		if (bestHitTest(c, s.getRadius()) != null) {
+		if (bestHitTest(c, cap.r)) {
 			outside = false;
 		} else {
 			outside = true;
@@ -125,7 +137,7 @@ public class Capsule implements Sweepable {
 		
 		double[] capParams = new double[2];
 		//int n = SweepUtils.sweepCircleCap(b, a, c, d, s.r, r, capParams);
-		int n = SweepUtils.sweepCircleCircle(a, c, d, s.getRadius(), r, capParams);
+		int n = SweepUtils.sweepCircleCircle(a, c, d, cap.r, r, capParams);
 		
 		for (int i = 0; i < n; i++) {
 			
@@ -148,7 +160,7 @@ public class Capsule implements Sweepable {
 		 * top side, left hand side of <a, b>
 		 */
 		
-		double cdParam = SweepUtils.sweepCircleLine(aUp, bUp, c, d, s.getRadius());
+		double cdParam = SweepUtils.sweepCircleLine(aUp, bUp, c, d, cap.r);
 		
 		if (cdParam != -1) {
 			
@@ -170,7 +182,7 @@ public class Capsule implements Sweepable {
 		 */
 		
 //		n = SweepUtils.sweepCircleCap(a, b, c, d, s.r, r, capParams);
-		n = SweepUtils.sweepCircleCircle(b, c, d, s.getRadius(), r, capParams);
+		n = SweepUtils.sweepCircleCircle(b, c, d, cap.r, r, capParams);
 		
 		for (int i = 0; i < n; i++) {
 			
@@ -193,7 +205,7 @@ public class Capsule implements Sweepable {
 		 * bottom side
 		 */
 		
-		cdParam = SweepUtils.sweepCircleLine(bDown, aDown, c, d, s.getRadius());
+		cdParam = SweepUtils.sweepCircleLine(bDown, aDown, c, d, cap.r);
 		
 		if (cdParam != -1) {
 //			logger.debug("bottom side: " + 1);
@@ -226,11 +238,11 @@ public class Capsule implements Sweepable {
 			double param = params[i];
 			assert DMath.greaterThanEquals(param, 0.0) && DMath.lessThanEquals(param, 1.0);
 			
-			if (DMath.lessThan(param, 1.0) || index == s.size()-1) {
+			if (DMath.lessThan(param, 1.0) || index == s.pointCount()-1) {
 				if (outside) {
-					l.event(new SweepEvent(SweepEventType.ENTERCAPSULE, this, s, index, param));
+					s.event(new SweepEvent(SweepEventType.ENTERCAPSULE, this, s, index, param));
 				} else {
-					l.event(new SweepEvent(SweepEventType.EXITCAPSULE, this, s, index, param));
+					s.event(new SweepEvent(SweepEventType.EXITCAPSULE, this, s, index, param));
 				}
 				outside = !outside;
 			}
@@ -238,25 +250,29 @@ public class Capsule implements Sweepable {
 		
 	}
 	
-	public Capsule hitTest(Point p) {
-		if (aabb.hitTest(p)) {
-			
-			if (DMath.lessThanEquals(Point.distance(p, a, b), r)) {
-				return this;
-			}
-			return null;
-			
-		} else {
-			return null;
-		}
-	}
-	
-	public Capsule bestHitTest(Point p, double radius) {
-		if (DMath.lessThanEquals(Point.distance(p, a, b), r + radius)) {
-			return this;
-		}
-		return null;
-	}
+//	public Capsule hitTest(Point p) {
+//		if (aabb.hitTest(p)) {
+//			
+//			if (DMath.lessThanEquals(Point.distance(p, a, b), r)) {
+//				return this;
+//			}
+//			return null;
+//			
+//		} else {
+//			return null;
+//		}
+//	}
+//	
+//	public Capsule bestHitTest(Point p, double radius) {
+//		if (DMath.lessThanEquals(Point.distance(p, a, b), r + radius)) {
+//			return this;
+//		}
+//		return null;
+//	}
+//	
+//	public Capsule bestHitTest(Quad q) {
+//		
+//	}
 	
 	public double skeletonHitTest(Point p) {
 		if (Point.intersect(p, a, b)){

@@ -1,4 +1,8 @@
-package com.gutabi.deadlock.core;
+package com.gutabi.deadlock.core.geom;
+
+import com.gutabi.deadlock.core.DMath;
+import com.gutabi.deadlock.core.Dim;
+import com.gutabi.deadlock.core.Point;
 
 public class Rect {
 	
@@ -11,22 +15,6 @@ public class Rect {
 	
 	private final double brX;
 	private final double brY;
-	
-	public Rect(Point ul, Dim dim) {
-		this.ul = ul;
-		this.dim = dim;
-		
-		x = ul.x;
-		y = ul.y;
-		width = dim.width;
-		height = dim.height;
-		
-		assert width >= 0;
-		assert height >= 0;
-		
-		brX = x + width;
-		brY = y + height;
-	}
 	
 	public Rect(double x, double y, double width, double height) {
 		this.x = x;

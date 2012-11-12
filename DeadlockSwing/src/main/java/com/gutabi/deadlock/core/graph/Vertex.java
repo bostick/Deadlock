@@ -6,23 +6,15 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.core.Rect;
-import com.gutabi.deadlock.core.geom.SweepEvent;
-import com.gutabi.deadlock.core.geom.SweepEvent.SweepEventType;
-import com.gutabi.deadlock.core.geom.SweepEventListener;
-import com.gutabi.deadlock.core.geom.SweepUtils;
-import com.gutabi.deadlock.core.geom.Sweepable;
-import com.gutabi.deadlock.core.geom.Sweeper;
 import com.gutabi.deadlock.model.Car;
 
 @SuppressWarnings("static-access")
-public abstract class Vertex implements Entity, Sweepable {
+public abstract class Vertex extends Entity {
 	
 	public static final double INIT_VERTEX_RADIUS = Math.sqrt(2 * Road.ROAD_RADIUS * Road.ROAD_RADIUS);
 	
@@ -51,7 +43,6 @@ public abstract class Vertex implements Entity, Sweepable {
 		
 		r = INIT_VERTEX_RADIUS;
 		
-		computeAABB();
 	}
 	
 	public int hashCode() {
@@ -66,19 +57,6 @@ public abstract class Vertex implements Entity, Sweepable {
 		return r;
 	}
 	
-	
-	
-	public void sweepStart(Sweeper s, SweepEventListener l) {
-		
-		Point c = s.get(0);
-		
-		if (bestHitTest(c, s.getRadius()) != null) {
-			SweepEvent e = new SweepEvent(SweepEventType.ENTERVERTEX, this, s, 0, 0.0);
-			l.start(e);
-		}
-		
-	}
-	
 //	public void sweepEnd(Stroke s, SweepEventListener l) {
 //		
 //		Point d = s.pts.get(s.pts.size()-1);
@@ -90,94 +68,11 @@ public abstract class Vertex implements Entity, Sweepable {
 //		
 //	}
 	
-	public void sweep(Sweeper s, int index, SweepEventListener l) {
-		
-		Point c = s.get(index);
-		Point d = s.get(index+1);
-		
-		boolean outside;
-		if (bestHitTest(c, s.getRadius()) != null) {
-			outside = false;
-		} else {
-			outside = true;
-		}
-		
-		double[] params = new double[2];
-		Arrays.fill(params, Double.POSITIVE_INFINITY);
-		int paramCount = SweepUtils.sweepCircleCircle(p, c, d, s.getRadius(), r, params);
-		
-		Arrays.sort(params);
-		
-		if (paramCount == 2) {
-			String.class.getName();
-		}
-		
-		for (int i = 0; i < paramCount; i++) {
-			double param = params[i];
-			assert DMath.greaterThanEquals(param, 0.0) && DMath.lessThanEquals(param, 1.0);
-			if (DMath.lessThan(param, 1.0) || index == s.size()-1) {
-				if (outside) {
-					l.event(new SweepEvent(SweepEventType.ENTERVERTEX, this, s, index, param));
-				} else {
-					l.event(new SweepEvent(SweepEventType.EXITVERTEX, this, s, index, param));
-				}
-				outside = !outside;
-			}
-		}
-		
-	}
-
-
-	
-	
-	
-	public Entity hitTest(Point p) {
-		if (aabb.hitTest(p)) {
-			
-			if (DMath.lessThanEquals(Point.distance(p, this.p), r)) {
-				return this;
-			} else {
-				return null;
-			}
-			
-		} else {
-			return null;
-		}
-	}
-	
-	public Entity bestHitTest(Point p, double radius) {
-		if (DMath.lessThanEquals(Point.distance(p, this.p), r + radius)) {
-			return this;
-		} else {
-			return null;
-		}
-	}
-	
 	public VertexPosition skeletonHitTest(Point p) {
 		if (p.equals(this.p)) {
 			return new VertexPosition(this);
 		}
 		return null;
-	}
-	
-	private void computeAABB() {
-		aabb = new Rect(p.x-r, p.y-r, 2*r, 2*r);
-	}
-	
-	protected Rect aabb;
-	public final Rect getAABB() {
-		return aabb;
-	}
-	
-	protected void paintAABB(Graphics2D g2) {
-		
-		g2.setColor(Color.BLACK);
-		g2.drawRect(
-				(int)(aabb.x * MODEL.PIXELS_PER_METER),
-				(int)(aabb.y * MODEL.PIXELS_PER_METER),
-				(int)(aabb.width * MODEL.PIXELS_PER_METER),
-				(int)(aabb.height * MODEL.PIXELS_PER_METER));
-		
 	}
 	
 	public void computeRadius(double maximumRadius) {
@@ -260,8 +155,6 @@ public abstract class Vertex implements Entity, Sweepable {
 			}
 			
 		}
-		
-		computeAABB();
 		
 		for (Road e : roads) {
 			e.computeProperties();

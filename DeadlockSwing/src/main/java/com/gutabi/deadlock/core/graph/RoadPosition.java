@@ -23,9 +23,9 @@ public class RoadPosition extends EdgePosition {
 	private final int hash;
 	
 	public RoadPosition(Road r, int index, double param) {
-		super(Point.point(r.get(index), r.get(index+1), param), r, Axis.NONE);
+		super(Point.point(r.getPoint(index), r.getPoint(index+1), param), r, Axis.NONE);
 		
-		if (index < 0 || index >= r.size()-1) {
+		if (index < 0 || index >= r.pointCount()-1) {
 			throw new IllegalArgumentException();
 		}
 		if (DMath.lessThan(param, 0.0) || DMath.greaterThanEquals(param, 1.0)) {
@@ -56,7 +56,7 @@ public class RoadPosition extends EdgePosition {
 			
 			if (index == 1) {
 				sign = r.startSign;
-			} else if (index == r.size()-2) {
+			} else if (index == r.pointCount()-2) {
 				sign = r.endSign;
 			} else {
 				sign = null;
@@ -67,7 +67,7 @@ public class RoadPosition extends EdgePosition {
 			sign = null;
 		}
 		
-		Point segStart = r.get(index);
+		Point segStart = r.getPoint(index);
 		
 		lengthToStartOfRoad = r.getLengthFromStart(index) + Point.distance(p, segStart);
 		
@@ -128,7 +128,7 @@ public class RoadPosition extends EdgePosition {
 	public GraphPosition ceiling() {
 		if (DMath.equals(param, 0.0)) {
 			return this;
-		} else if (index != r.size()-2) {
+		} else if (index != r.pointCount()-2) {
 			return new RoadPosition(r, index+1, 0.0);
 		} else {
 			return new VertexPosition(r.end);
@@ -214,7 +214,7 @@ public class RoadPosition extends EdgePosition {
 	}
 	
 	public static GraphPosition travelFromEnd(Road e, double dist) {
-		return travelBackward(e, e.size()-2, 1.0, dist);
+		return travelBackward(e, e.pointCount()-2, 1.0, dist);
 	}
 	
 	private static GraphPosition travelForward(Road e, int index, double param, double dist) {
@@ -222,8 +222,8 @@ public class RoadPosition extends EdgePosition {
 		double distanceToTravel = dist;
 		
 		while (true) {
-			Point a = e.get(index);
-			Point b = e.get(index+1);
+			Point a = e.getPoint(index);
+			Point b = e.getPoint(index+1);
 			
 			Point c = Point.point(a, b, param);
 			double distanceToEndOfSegment = Point.distance(c, b);
@@ -246,8 +246,8 @@ public class RoadPosition extends EdgePosition {
 		double distanceToTravel = dist;
 		
 		while (true) {
-			Point a = e.get(index);
-			Point b = e.get(index+1);
+			Point a = e.getPoint(index);
+			Point b = e.getPoint(index+1);
 			
 			Point c = Point.point(a, b, param);
 			double distanceToStartOfSegment = Point.distance(c, a);
@@ -271,11 +271,11 @@ public class RoadPosition extends EdgePosition {
 	}
 	
 	public static GraphPosition nextBoundfromEnd(Road e) {
-		return nextBoundBackward(e, e.size()-2, 1.0);
+		return nextBoundBackward(e, e.pointCount()-2, 1.0);
 	}
 	
 	private static GraphPosition nextBoundForward(Road e, int index, double param) {
-		if (index == e.size()-2) {
+		if (index == e.pointCount()-2) {
 			return new VertexPosition(e.end);
 		} else {
 			return new RoadPosition(e, index+1, 0.0);
@@ -302,19 +302,19 @@ public class RoadPosition extends EdgePosition {
 		
 		double acc = 0;
 		for (int i = 0; i < index; i++) {
-			Point a = r.get(i);
-			Point b = r.get(i+1);
+			Point a = r.getPoint(i);
+			Point b = r.getPoint(i+1);
 			acc = acc + Point.distance(a, b);
 		}
-		acc = acc + Point.distance(r.get(index), p);
+		acc = acc + Point.distance(r.getPoint(index), p);
 		
 		assert DMath.equals(lengthToStartOfRoad, acc);
 		
 		acc = 0;
-		acc = acc + Point.distance(p, r.get(index+1));
-		for (int i = index+1; i < r.size()-1; i++) {
-			Point a = r.get(i);
-			Point b = r.get(i+1);
+		acc = acc + Point.distance(p, r.getPoint(index+1));
+		for (int i = index+1; i < r.pointCount()-1; i++) {
+			Point a = r.getPoint(i);
+			Point b = r.getPoint(i+1);
 			acc = acc + Point.distance(a, b);
 		}
 		

@@ -5,17 +5,13 @@ import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
-import java.util.Arrays;
 
 import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.core.Rect;
-import com.gutabi.deadlock.core.geom.SweepEvent;
-import com.gutabi.deadlock.core.geom.SweepEvent.SweepEventType;
-import com.gutabi.deadlock.core.geom.SweepEventListener;
-import com.gutabi.deadlock.core.geom.SweepUtils;
-import com.gutabi.deadlock.core.geom.Sweeper;
+import com.gutabi.deadlock.core.geom.Quad;
+import com.gutabi.deadlock.core.geom.Rect;
+import com.gutabi.deadlock.core.geom.Shape;
 import com.gutabi.deadlock.model.Cursor;
 import com.gutabi.deadlock.model.fixture.MergerSink;
 import com.gutabi.deadlock.model.fixture.MergerSource;
@@ -28,7 +24,6 @@ public class Merger extends Edge {
 	
 	public final Point ul;
 	
-	private Rect aabb;
 	private Color color;
 	private Color hiliteColor;
 	
@@ -37,10 +32,7 @@ public class Merger extends Edge {
 	public final MergerSource right;
 	public final MergerSource bottom;
 	
-	private Point p0;
-	private Point p1;
-	private Point p2;
-	private Point p3;
+	public final Quad worldQuad;
 	
 	private double[] cumulativeLengthsFromTop;
 	private double[] cumulativeLengthsFromLeft;
@@ -49,7 +41,6 @@ public class Merger extends Edge {
 		
 		this.ul = center.plus(new Point(-MERGER_WIDTH/2,  -MERGER_HEIGHT/2));
 		
-		aabb = new Rect(ul.x, ul.y, MERGER_WIDTH, MERGER_HEIGHT);
 		color = Color.BLUE;
 		hiliteColor = Color.ORANGE;
 		
@@ -64,10 +55,11 @@ public class Merger extends Edge {
 		left.matchingSource = right;
 		right.matchingSink = left;
 		
-		p0 = ul;
-		p1 = new Point(ul.x + MERGER_WIDTH, ul.y);
-		p2 = new Point(ul.x + MERGER_WIDTH, ul.y + MERGER_HEIGHT);
-		p3 = new Point(ul.x, ul.y + MERGER_HEIGHT);
+		Point p0 = ul;
+		Point p1 = new Point(ul.x + MERGER_WIDTH, ul.y);
+		Point p2 = new Point(ul.x + MERGER_WIDTH, ul.y + MERGER_HEIGHT);
+		Point p3 = new Point(ul.x, ul.y + MERGER_HEIGHT);
+		worldQuad = new Quad(this, p0, p1, p2, p3);
 		
 		top.m = this;
 		left.m = this;
@@ -104,18 +96,6 @@ public class Merger extends Edge {
 		distances[right.id][left.id] = Merger.MERGER_WIDTH;
 	}
 	
-	
-	
-	public void sweepStart(Sweeper s, SweepEventListener l) {
-		
-		Point c = s.get(0);
-		
-		if (bestHitTest(c, s.getRadius()) != null) {
-			l.start(new SweepEvent(SweepEventType.ENTERMERGER, this, s, 0, 0.0));
-		}
-		
-	}
-	
 //	public void sweepEnd(Stroke s, SweepEventListener l) {
 //		
 //		Point d = s.pts.get(s.pts.size()-1);
@@ -125,70 +105,6 @@ public class Merger extends Edge {
 //		}
 //		
 //	}
-	
-	public void sweep(Sweeper s, int index, SweepEventListener l) {
-		
-		Point c = s.get(index);
-		Point d = s.get(index+1);
-		
-		boolean outside;
-		if (bestHitTest(c, s.getRadius()) != null) {
-			outside = false;
-		} else {
-			outside = true;
-		}
-		
-		double[] params = new double[2];
-		Arrays.fill(params, Double.POSITIVE_INFINITY);
-		int paramCount = 0;
-		
-		double cdParam = SweepUtils.sweepCircleLine(p0, p1, c, d, s.getRadius());
-		if (cdParam != -1) {
-			params[paramCount] = cdParam;
-			paramCount++;
-		}
-		
-		cdParam = SweepUtils.sweepCircleLine(p1, p2, c, d, s.getRadius());
-		if (cdParam != -1) {
-			params[paramCount] = cdParam;
-			paramCount++;
-		}
-		
-		cdParam = SweepUtils.sweepCircleLine(p2, p3, c, d, s.getRadius());
-		if (cdParam != -1) {
-			params[paramCount] = cdParam;
-			paramCount++;
-		}
-		
-		cdParam = SweepUtils.sweepCircleLine(p3, p0, c, d, s.getRadius());
-		if (cdParam != -1) {
-			params[paramCount] = cdParam;
-			paramCount++;
-		}
-		
-		Arrays.sort(params);
-		if (paramCount == 2 && DMath.equals(params[0], params[1])) {
-			/*
-			 * hit a seam
-			 */
-			paramCount = 1;
-		}
-		
-		for (int i = 0; i < paramCount; i++) {
-			double param = params[i];
-			assert DMath.greaterThanEquals(param, 0.0) && DMath.lessThanEquals(param, 1.0);
-			if (DMath.lessThan(param, 1.0) || index == s.size()-1) {
-				if (outside) {
-					l.event(new SweepEvent(SweepEventType.ENTERMERGER, this, s, index, param));
-				} else {
-					l.event(new SweepEvent(SweepEventType.EXITMERGER, this, s, index, param));
-				}
-				outside = !outside;
-			}
-		}
-		
-	}
-	
 	
 	
 	public GraphPosition travelFromConnectedVertex(Vertex v, double dist) {
@@ -216,46 +132,44 @@ public class Merger extends Edge {
 		}
 	}
 	
-	public Entity hitTest(Point p) {
-		if (DMath.lessThanEquals(ul.x, p.x) && DMath.lessThanEquals(p.x, ul.x+MERGER_WIDTH) &&
-				DMath.lessThanEquals(ul.y, p.y) && DMath.lessThanEquals(p.y, ul.y+MERGER_HEIGHT)) {
-			return this;
-		} else {
-			return null;
-		}
-	}
+//	public Entity hitTest(Point p) {
+//		if (DMath.lessThanEquals(ul.x, p.x) && DMath.lessThanEquals(p.x, ul.x+MERGER_WIDTH) &&
+//				DMath.lessThanEquals(ul.y, p.y) && DMath.lessThanEquals(p.y, ul.y+MERGER_HEIGHT)) {
+//			return this;
+//		} else {
+//			return null;
+//		}
+//	}
 	
 	public Entity decorationsHitTest(Point p) {
 		return null;
 	}
 	
-	public Entity bestHitTest(Point p, double r) {
-		if (hitTest(p) != null) {
-			return this;
-		} else {
-			
-//			if (DMath.equals(Point.distance(p, p0, p1), r)) {
-//				String.class.getName();
-//			} else if (DMath.equals(Point.distance(p, p1, p2), r)) {
-//				String.class.getName();
-//			} else if (DMath.equals(Point.distance(p, p2, p3), r)) {
-//				String.class.getName();
-//			} else if (DMath.equals(Point.distance(p, p3, p0), r)) {
-//				String.class.getName();
-//			}
-			
-			if (DMath.lessThanEquals(Point.distance(p, p0, p1), r)) {
-				return this;
-			} else if (DMath.lessThanEquals(Point.distance(p, p1, p2), r)) {
-				return this;
-			} else if (DMath.lessThanEquals(Point.distance(p, p2, p3), r)) {
-				return this;
-			} else if (DMath.lessThanEquals(Point.distance(p, p3, p0), r)) {
-				return this;
-			}
-			return null;
-		}
+	public Entity decorationsBestHitTest(Shape s) {
+		return null;
 	}
+	
+//	public Entity bestHitTest(Point p, double r) {
+//		if (hitTest(p) != null) {
+//			return this;
+//		} else {
+//			
+//			if (DMath.lessThanEquals(Point.distance(p, worldQuad.p0, worldQuad.p1), r)) {
+//				return this;
+//			} else if (DMath.lessThanEquals(Point.distance(p, worldQuad.p1, worldQuad.p2), r)) {
+//				return this;
+//			} else if (DMath.lessThanEquals(Point.distance(p, worldQuad.p2, worldQuad.p3), r)) {
+//				return this;
+//			} else if (DMath.lessThanEquals(Point.distance(p, worldQuad.p3, worldQuad.p0), r)) {
+//				return this;
+//			}
+//			return null;
+//		}
+//	}
+//	
+//	public Entity bestHitTest(Quad q) {
+//		
+//	}
 	
 	
 	
@@ -331,11 +245,6 @@ public class Merger extends Edge {
 			length = Merger.MERGER_HEIGHT/2;
 			cumulativeLengthsFromLeft[i+1] = cumulativeLengthsFromLeft[i] + length;
 		}
-	}
-	
-	@Override
-	public Rect getAABB() {
-		return aabb;
 	}
 	
 	@Override

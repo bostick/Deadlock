@@ -3,6 +3,7 @@ package com.gutabi.deadlock.core.geom;
 import java.util.Comparator;
 
 import com.gutabi.deadlock.core.DMath;
+import com.gutabi.deadlock.core.Point;
 
 public class SweepEvent {
 	
@@ -24,21 +25,28 @@ public class SweepEvent {
 	}
 	
 	public final SweepEventType type;
-	public final Sweepable o;
-	public final Sweeper s;
+	public final Shape shape;
+	public final Sweeper sweeper;
 	public final int index;
 	public final double param;
 //	public final Object o;
+	public final Point p;
+	public final Circle circle;
+	
 	
 //	private Vertex v;
 	
-	public SweepEvent(SweepEventType type, Sweepable o, Sweeper s, int index, double param) {
+	public SweepEvent(SweepEventType type, Shape shape, Sweeper sweeper, int index, double param) {
 		this.type = type;
-		this.o = o;
-		this.s = s;
+		this.shape = shape;
+		this.sweeper = sweeper;
 		this.index = index;
 		this.param = param;
 //		this.o = o;
+		
+		p = sweeper.getPoint(index, param);
+		circle = new Circle(sweeper, p, sweeper.radius);
+		
 	}
 	
 	public String toString() {

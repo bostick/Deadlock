@@ -6,15 +6,13 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 
-import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.core.Rect;
 import com.gutabi.deadlock.core.graph.Road;
 import com.gutabi.deadlock.core.graph.Vertex;
 
 @SuppressWarnings("static-access")
-public class StopSign implements Entity {
+public class StopSign extends Entity {
 	
 	public static final double STOPSIGN_SIZE = 0.5;
 	
@@ -66,44 +64,6 @@ public class StopSign implements Entity {
 		return true;
 	}
 	
-	protected Rect aabb;
-	public final Rect getAABB() {
-		return aabb;
-	}
-	
-	public Entity hitTest(Point p) {
-		if (aabb.hitTest(p)) {
-			
-			if (DMath.lessThanEquals(Point.distance(p, this.p), r)) {
-				return this;
-			} else {
-				return null;
-			}
-			
-		} else {
-			return null;
-		}
-	}
-	
-	public Entity bestHitTest(Point p, double r) {
-		if (DMath.lessThanEquals(Point.distance(p, this.p), this.r + r)) {
-			return this;
-		} else {
-			return null;
-		}
-	}
-	
-	protected void paintAABB(Graphics2D g2) {
-		
-		g2.setColor(Color.BLACK);
-		g2.drawRect(
-				(int)(aabb.x * MODEL.PIXELS_PER_METER),
-				(int)(aabb.y * MODEL.PIXELS_PER_METER),
-				(int)(aabb.width * MODEL.PIXELS_PER_METER),
-				(int)(aabb.height * MODEL.PIXELS_PER_METER));
-		
-	}
-	
 	public void computePoint() {
 		
 		if (dir == 0) {
@@ -112,12 +72,7 @@ public class StopSign implements Entity {
 			p = e.getEndBorderPoint();
 		}
 		
-		computeAABB();
 	}	
-	
-	private void computeAABB() {
-		aabb = new Rect(p.x-r, p.y-r, 2*r, 2*r);
-	}
 	
 	public void paint(Graphics2D g2) {
 		

@@ -21,19 +21,22 @@ import org.jbox2d.common.Vec2;
 
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.core.Rect;
-import com.gutabi.deadlock.core.geom.SweepEventListener;
+import com.gutabi.deadlock.core.geom.Rect;
+import com.gutabi.deadlock.core.geom.Shape;
+import com.gutabi.deadlock.core.geom.Sweepable;
+import com.gutabi.deadlock.core.geom.Sweeper;
 import com.gutabi.deadlock.core.graph.Axis;
 import com.gutabi.deadlock.core.graph.Edge;
 import com.gutabi.deadlock.core.graph.Graph;
 import com.gutabi.deadlock.core.graph.Merger;
 import com.gutabi.deadlock.core.graph.Road;
+import com.gutabi.deadlock.core.graph.RoadPosition;
 import com.gutabi.deadlock.core.graph.Vertex;
 import com.gutabi.deadlock.model.fixture.WorldSink;
 import com.gutabi.deadlock.model.fixture.WorldSource;
 
 @SuppressWarnings("static-access")
-public class World {
+public class World implements Sweepable {
 	
 	/*
 	 * distance that center of a car has to be from center of a sink in order to be sinked
@@ -54,11 +57,11 @@ public class World {
 	public double t;
 	
 	
-	public Graph graph;
+	private Graph graph;
 	
-	public List<Car> cars = new ArrayList<Car>();
+	private List<Car> cars = new ArrayList<Car>();
 	
-	List<Point> skidMarks = new ArrayList<Point>();
+	private List<Point> skidMarks = new ArrayList<Point>();
 	
 	public org.jbox2d.dynamics.World b2dWorld;
 	private CarEventListener listener;
@@ -167,6 +170,23 @@ public class World {
 //		graph.addVertex(i);
 //	}
 	
+	public void addVertexTop(Vertex v) {
+		graph.addVertexTop(v);
+		
+		postIdleTop();
+	}
+	
+	public void createRoadTop(Vertex start, Vertex end, List<Point> pts) {
+		graph.createRoadTop(start, end, pts);
+		
+		postDraftingTop();
+		
+	}
+	
+	public void splitRoadTop(RoadPosition pos) {
+		graph.split(pos);
+	}
+	
 	public void removeVertexTop(Vertex v) {
 		graph.removeVertexTop(v);
 		postIdleTop();
@@ -198,23 +218,23 @@ public class World {
 		postRunningTop();
 	}
 	
-	public void processNewStrokeTop(Stroke stroke) {
-		
-		stroke.processNewStrokeTop(graph);
-		
-		postDraftingTop();
-	}
+//	public void processNewStrokeTop(Stroke stroke) {
+//		
+//		stroke.processNewStrokeTop(graph);
+//		
+//		postDraftingTop();
+//	}
 	
-	public void sweepStart(Stroke s, SweepEventListener l) {
-		graph.sweepStart(s, l);
+	public void sweepStart(Sweeper s) {
+		graph.sweepStart(s);
 	}
 	
 //	public void sweepEnd(Stroke s, SweepEventListener l) {
 //		graph.sweepEnd(s, l);
 //	}
 	
-	public void sweep(Stroke s, int index, SweepEventListener l) {
-		graph.sweep(s, index, l);
+	public void sweep(Sweeper s, int index) {
+		graph.sweep(s, index);
 	}
 	
 	public void insertMergerTop(Point p) {
@@ -324,6 +344,10 @@ public class World {
 		}
 	}
 	
+	public void addCar(Car c) {
+		cars.add(c);
+	}
+	
 	private void postStep() {
 		
 		List<Car> toBeRemoved = new ArrayList<Car>();
@@ -348,6 +372,11 @@ public class World {
 			skidMarks.clear();
 		}
 		
+	}
+	
+	public void addSkidMarks(Point a, Point b) {
+		skidMarks.add(a);
+		skidMarks.add(b);
 	}
 	
 	/**
@@ -408,10 +437,10 @@ public class World {
 		return null;
 	}
 	
-	public Car carBestHitTest(Point p, double r) {
+	public Car carBestHitTest(Shape s) {
 		synchronized (MODEL) {
 			for (Car c : cars) {
-				if (c.bestHitTest(p, r) != null) {
+				if (c.bestHitTest(s) != null) {
 					return c;
 				}
 			}
@@ -421,6 +450,10 @@ public class World {
 	
 	public Entity graphHitTest(Point p) {
 		return graph.graphHitTest(p);
+	}
+	
+	public Entity graphBestHitTest(Shape s) {
+		return graph.graphBestHitTest(s);
 	}
 	
 //	public StopSign signHitTest(Point p) {
@@ -435,11 +468,37 @@ public class World {
 //		return graph.graphBestHitTest(p, r);
 //	}
 	
-//	public Entity bestHitTest(Point p, double radius) {
-//		return graph.bestHitTest(p, radius);
+//	public Entity pureGraphBestHitTest(Entity e) {
+//		return graph.pureGraphBestHitTest(e);
 //	}
 	
+	public Entity pureGraphBestHitTest(Shape s) {
+		return graph.pureGraphBestHitTest(s);
+	}
 	
+	public RoadPosition findClosestRoadPosition(Point p, double radius) {
+		return graph.findClosestRoadPosition(p, radius);
+	}
+	
+	public boolean isValidRoad(Road r) {
+		return graph.edges.contains(r);
+	}
+	
+	/*
+	 * is this vertex under any cars?
+	 */
+	public boolean isUnderAnyCars(Vertex v) {
+		
+		synchronized (MODEL) {
+			for (Car c : MODEL.world.cars) {
+				if (c.bestHitTest(v.shape) != null) {
+					return true;
+				}
+			}
+		}
+		
+		return false;
+	}
 	
 	public void paint(Graphics2D g2) {
 		

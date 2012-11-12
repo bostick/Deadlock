@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.jbox2d.collision.AABB;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.common.Mat22;
 import org.jbox2d.common.Vec2;
@@ -26,7 +25,8 @@ import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Matrix;
 import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.core.Rect;
+import com.gutabi.deadlock.core.geom.Geom;
+import com.gutabi.deadlock.core.geom.Quad;
 import com.gutabi.deadlock.core.graph.GraphPosition;
 import com.gutabi.deadlock.core.graph.GraphPositionPath;
 import com.gutabi.deadlock.core.graph.GraphPositionPathPosition;
@@ -37,7 +37,7 @@ import com.gutabi.deadlock.model.fixture.WorldSink;
 import com.gutabi.deadlock.model.fixture.WorldSource;
 
 @SuppressWarnings("static-access")
-public abstract class Car implements Entity {
+public abstract class Car extends Entity {
 	
 	public static final double CAR_LENGTH = 1.0;
 	public static final double COMPLETE_STOP_WAIT_TIME = 0.0;
@@ -65,10 +65,7 @@ public abstract class Car implements Entity {
 	float mass;
 	float momentOfInertia;
 	
-	Point p1;
-	Point p2;
-	Point p3;
-	Point p4;
+	Quad localQuad;
 	protected Body b2dBody;
 	protected PolygonShape b2dShape;
 	protected Fixture b2dFixture;
@@ -88,15 +85,16 @@ public abstract class Car implements Entity {
 	Matrix carTrans;
 	float carAngle;
 	boolean atleastPartiallyOnRoad;
-	boolean completelyOnRoad;
+//	boolean completelyOnRoad;
 	boolean inMerger;
 	GraphPositionPathPosition overallPos;
-	Point worldPoint1;
-	Point worldPoint2;
-	Point worldPoint3;
-	Point worldPoint4;
+//	Point worldPoint1;
+//	Point worldPoint2;
+//	Point worldPoint3;
+//	Point worldPoint4;
+	Quad worldQuad;
+	Point prevWorldPoint2;
 	Point prevWorldPoint3;
-	Point prevWorldPoint4;
 	
 	/*
 	 * 
@@ -129,10 +127,11 @@ public abstract class Car implements Entity {
 		color = Color.BLUE;
 		hiliteColor = Color.BLUE;
 		
-		p1 = new Point(CAR_LENGTH / 2, CAR_LENGTH / 4);
-		p2 = new Point(CAR_LENGTH / 2, -CAR_LENGTH / 4);
-		p3 = new Point(-CAR_LENGTH / 2, -CAR_LENGTH / 4);
-		p4 = new Point(-CAR_LENGTH / 2, CAR_LENGTH / 4);
+		Point p0 = new Point(-CAR_LENGTH / 2, CAR_LENGTH / 4);
+		Point p1 = new Point(CAR_LENGTH / 2, CAR_LENGTH / 4);
+		Point p2 = new Point(CAR_LENGTH / 2, -CAR_LENGTH / 4);
+		Point p3 = new Point(-CAR_LENGTH / 2, -CAR_LENGTH / 4);
+		localQuad = new Quad(this, p0, p1, p2, p3);
 		
 	}
 	
@@ -240,8 +239,8 @@ public abstract class Car implements Entity {
 //		Point prevP = p;
 //		Point prevWorldPoint1 = worldPoint1;
 //		Point prevWorldPoint2 = worldPoint1;
-		prevWorldPoint3 = worldPoint3;
-		prevWorldPoint4 = worldPoint4;
+		prevWorldPoint2 = worldQuad.p2;
+		prevWorldPoint3 = worldQuad.p3;
 		
 		pVec2 = b2dBody.getPosition();
 		p = new Point(pVec2.x, pVec2.y);
@@ -262,35 +261,24 @@ public abstract class Car implements Entity {
 		carTrans = new Matrix(r.col1.x, r.col2.x, r.col1.y, r.col2.y);
 		carAngle = b2dBody.getAngle();
 		
+//		worldPoint1 = carToWorld(p1);
+//		worldPoint2 = carToWorld(p2);
+//		worldPoint3 = carToWorld(p3);
+//		worldPoint4 = carToWorld(p4);
+		worldQuad = Geom.localToWorld(localQuad, carTrans, p);
 		
-		
-		
-		worldPoint1 = carToWorld(p1);
-		worldPoint2 = carToWorld(p2);
-		worldPoint3 = carToWorld(p3);
-		worldPoint4 = carToWorld(p4);
-		
-		Entity e1 = MODEL.world.graphHitTest(worldPoint1);
-		Entity e2 = MODEL.world.graphHitTest(worldPoint2);
-		Entity e3 = MODEL.world.graphHitTest(worldPoint3);
-		Entity e4 = MODEL.world.graphHitTest(worldPoint4);
+		Entity e = MODEL.world.graphBestHitTest(shape);
 		
 		boolean wasInMerger = inMerger;
-		if (e1 == null && e2 == null && e3 == null && e4 == null) {
+		if (e == null) {
 			atleastPartiallyOnRoad = false;
-			completelyOnRoad = false;
+//			completelyOnRoad = false;
 			inMerger = false;
 		} else {
 			atleastPartiallyOnRoad = true;
-			if (e1 != null && e2 != null && e3 != null && e4 != null) {
-				completelyOnRoad = true;
-				if (e1 instanceof Merger && e2 instanceof Merger && e3 instanceof Merger && e4 instanceof Merger) {
-					inMerger = true;
-				} else {
-					inMerger = false;
-				}
+			if (e instanceof Merger && ((Quad)shape).containedIn((Quad)e.shape)) {
+				inMerger = true;
 			} else {
-				completelyOnRoad = false;
 				inMerger = false;
 			}
 		}
@@ -308,22 +296,25 @@ public abstract class Car implements Entity {
 		}
 		
 		
-		computeAABB();
+//		computeAABB();
 		
 	}
 	
+//	protected void computeAABB() {
+//		
+//		aabb = null;
+//		
+//		aabb = new Rect(b2dAABB.lowerBound.x, b2dAABB.lowerBound.y, b2dAABB.upperBound.x-b2dAABB.lowerBound.x, b2dAABB.upperBound.y-b2dAABB.lowerBound.y);
+//	}
 	
-	AABB b2dAABB = new AABB();
 	
-	protected void computeAABB() {
-		b2dShape.computeAABB(b2dAABB, b2dBody.getTransform());
-		aabb = new Rect(b2dAABB.lowerBound.x, b2dAABB.lowerBound.y, b2dAABB.upperBound.x-b2dAABB.lowerBound.x, b2dAABB.upperBound.y-b2dAABB.lowerBound.y);
-	}
-	
-	private Point carToWorld(Point c) {
-		return carTrans.times(c).plus(p);
-	}
-	
+//	private Point carToWorld(Point c) {
+//		return carTrans.times(c).plus(p);
+//	}
+//	
+//	private Quad carToWorld(Quad q) {
+//		return carTrans.times(c).plus(p);
+//	}
 	
 	
 	
@@ -339,80 +330,47 @@ public abstract class Car implements Entity {
 	
 	
 	
-	public Point worldPoint1() {
-		return worldPoint1;
-	}
-	public Point worldPoint2() {
-		return worldPoint2;
-	}
-	public Point worldPoint3() {
-		return worldPoint3;
-	}
-	public Point worldPoint4() {
-		return worldPoint4;
-	}
+//	public Point worldPoint1() {
+//		return worldPoint1;
+//	}
+//	public Point worldPoint2() {
+//		return worldPoint2;
+//	}
+//	public Point worldPoint3() {
+//		return worldPoint3;
+//	}
+//	public Point worldPoint4() {
+//		return worldPoint4;
+//	}
 	
-	public Car hitTest(Point p) {
-		if (aabb.hitTest(p)) {
-			
-			if (Point.halfPlane(p, worldPoint1, worldPoint2) != -1) {
-				return null;
-			}
-			if (Point.halfPlane(p, worldPoint2, worldPoint3) != -1) {
-				return null;
-			}
-			if (Point.halfPlane(p, worldPoint3, worldPoint4) != -1) {
-				return null;
-			}
-			if (Point.halfPlane(p, worldPoint4, worldPoint1) != -1) {
-				return null;
-			}
-			return this;
-			
-		} else {
-			return null;
-		}
-	}
-	
-	public Car bestHitTest(Point p, double r) {
-		if (hitTest(p) != null) {
-			
-			return this;
-			
-		} else {
-			
-			if (DMath.lessThanEquals(Point.distance(p, worldPoint1, worldPoint2), r)) {
-				return this;
-			} else if (DMath.lessThanEquals(Point.distance(p, worldPoint2, worldPoint3), r)) {
-				return this;
-			} else if (DMath.lessThanEquals(Point.distance(p, worldPoint3, worldPoint4), r)) {
-				return this;
-			} else if (DMath.lessThanEquals(Point.distance(p, worldPoint4, worldPoint1), r)) {
-				return this;
-			}
-			return null;
-			
-		}
-	}
+//	public Car hitTest(Point p) {
+//		if (aabb.hitTest(p)) {
+//			
+//			if (worldQuad.hitTest(p)) {
+//				return this;
+//			} else {
+//				return null;
+//			}
+//			
+//		} else {
+//			return null;
+//		}
+//	}
+//	
+//	public Car bestHitTest(Point p, double r) {
+//		if (worldQuad.bestHitTest(p, r)) {
+//			return this;
+//		} else {
+//			return null;
+//		}
+//	}
+//	
+//	public Car bestHitTest(Quad q) {
+//		
+//	}
 	
 	public boolean isDeleteable() {
 		return true;
-	}
-	
-	protected Rect aabb;
-	public final Rect getAABB() {
-		return aabb;
-	}
-	
-	protected void paintAABB(Graphics2D g2) {
-		
-		g2.setColor(Color.BLACK);
-		g2.drawRect(
-				(int)(aabb.x * MODEL.PIXELS_PER_METER),
-				(int)(aabb.y * MODEL.PIXELS_PER_METER),
-				(int)(aabb.width * MODEL.PIXELS_PER_METER),
-				(int)(aabb.height * MODEL.PIXELS_PER_METER));
-		
 	}
 	
 	public void crash() {
@@ -798,11 +756,9 @@ public abstract class Car implements Entity {
 				sinked = true;
 			}
 			
-			if (!completelyOnRoad) {
-				MODEL.world.skidMarks.add(prevWorldPoint3);
-				MODEL.world.skidMarks.add(worldPoint3);
-				MODEL.world.skidMarks.add(prevWorldPoint4);
-				MODEL.world.skidMarks.add(worldPoint4);
+			if (!atleastPartiallyOnRoad) {
+				MODEL.world.addSkidMarks(prevWorldPoint2, worldQuad.p2);
+				MODEL.world.addSkidMarks(prevWorldPoint3, worldQuad.p3);
 			}
 			
 			if (sinked) {
@@ -829,10 +785,8 @@ public abstract class Car implements Entity {
 				
 			}
 			
-			MODEL.world.skidMarks.add(prevWorldPoint3);
-			MODEL.world.skidMarks.add(worldPoint3);
-			MODEL.world.skidMarks.add(prevWorldPoint4);
-			MODEL.world.skidMarks.add(worldPoint4);
+			MODEL.world.addSkidMarks(prevWorldPoint2, worldQuad.p2);
+			MODEL.world.addSkidMarks(prevWorldPoint3, worldQuad.p3);
 			
 			break;
 		case CRASHED:
@@ -846,13 +800,13 @@ public abstract class Car implements Entity {
 	
 	
 	
-	public double distanceTo(Point p) {
-		double d1 = Point.distance(p, worldPoint1);
-		double d2 = Point.distance(p, worldPoint2);
-		double d3 = Point.distance(p, worldPoint3);
-		double d4 = Point.distance(p, worldPoint4);
-		return Math.min(Math.min(d1, d2), Math.min(d3, d4));
-	}
+//	public double distanceTo(Point p) {
+//		double d1 = Point.distance(p, worldPoint1);
+//		double d2 = Point.distance(p, worldPoint2);
+//		double d3 = Point.distance(p, worldPoint3);
+//		double d4 = Point.distance(p, worldPoint4);
+//		return Math.min(Math.min(d1, d2), Math.min(d3, d4));
+//	}
 	
 	
 	
@@ -951,18 +905,6 @@ public abstract class Car implements Entity {
 		
 		g2.setColor(hiliteColor);
 		
-		int[] xPoints = new int[4];
-		int[] yPoints = new int[4];
-		
-		xPoints[0] = (int)(worldPoint1.x * MODEL.PIXELS_PER_METER);
-		xPoints[1] = (int)(worldPoint2.x * MODEL.PIXELS_PER_METER);
-		xPoints[2] = (int)(worldPoint3.x * MODEL.PIXELS_PER_METER);
-		xPoints[3] = (int)(worldPoint4.x * MODEL.PIXELS_PER_METER);
-		yPoints[0] = (int)(worldPoint1.y * MODEL.PIXELS_PER_METER);
-		yPoints[1] = (int)(worldPoint2.y * MODEL.PIXELS_PER_METER);
-		yPoints[2] = (int)(worldPoint3.y * MODEL.PIXELS_PER_METER);
-		yPoints[3] = (int)(worldPoint4.y * MODEL.PIXELS_PER_METER);
-		
-		g2.fillPolygon(xPoints, yPoints, 4);
+		worldQuad.paint(g2);
 	}
 }

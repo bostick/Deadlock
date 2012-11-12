@@ -5,7 +5,6 @@ import org.apache.log4j.Logger;
 import com.gutabi.deadlock.model.Car;
 import com.gutabi.deadlock.model.fixture.WorldSource;
 
-
 //@SuppressWarnings("static-access")
 public class FastCar extends Car {
 	

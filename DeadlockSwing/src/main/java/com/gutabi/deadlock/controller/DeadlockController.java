@@ -6,6 +6,8 @@ import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -16,10 +18,16 @@ import javax.swing.SwingUtilities;
 import org.apache.log4j.Logger;
 
 import com.gutabi.deadlock.DeadlockMain;
+import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
+import com.gutabi.deadlock.core.geom.Capsule;
+import com.gutabi.deadlock.core.geom.SweepEvent;
+import com.gutabi.deadlock.core.geom.SweepEvent.SweepEventType;
+import com.gutabi.deadlock.core.graph.Intersection;
 import com.gutabi.deadlock.core.graph.Merger;
 import com.gutabi.deadlock.core.graph.Road;
+import com.gutabi.deadlock.core.graph.RoadPosition;
 import com.gutabi.deadlock.core.graph.Vertex;
 import com.gutabi.deadlock.model.Car;
 import com.gutabi.deadlock.model.StopSign;
@@ -292,27 +300,27 @@ public class DeadlockController implements ActionListener {
 				if (MODEL.hilited instanceof Car) {
 					Car c = (Car)MODEL.hilited;
 					
-					MODEL.world.removeCarTop(c);
+					removeCarTop(c);
 					
 				} else if (MODEL.hilited instanceof Vertex) {
 					Vertex v = (Vertex)MODEL.hilited;
 					
-					MODEL.world.removeVertexTop(v);
+					removeVertexTop(v);
 					
 				} else if (MODEL.hilited instanceof Road) {
 					Road e = (Road)MODEL.hilited;
 					
-					MODEL.world.removeRoadTop(e);
+					removeRoadTop(e);
 					
 				} else if (MODEL.hilited instanceof Merger) {
 					Merger e = (Merger)MODEL.hilited;
 					
-					MODEL.world.removeMergerTop(e);
+					removeMergerTop(e);
 					
 				} else if (MODEL.hilited instanceof StopSign) {
 					StopSign s = (StopSign)MODEL.hilited;
 					
-					MODEL.world.removeStopSignTop(s);
+					removeStopSignTop(s);
 					
 				} else {
 					throw new AssertionError();
@@ -416,7 +424,7 @@ public class DeadlockController implements ActionListener {
 	private void draftEnd() {
 		assert Thread.currentThread().getName().equals("controller");
 		
-		MODEL.world.processNewStrokeTop(MODEL.stroke);
+		processNewStroke();
 		
 		MODEL.stroke = null;
 		
@@ -513,6 +521,217 @@ public class DeadlockController implements ActionListener {
 			renderAndPaintInBackground();
 			
 		}
+	}
+	
+	
+	
+	private void removeVertexTop(Vertex v) {
+		MODEL.world.removeVertexTop(v);
+//		postIdleTop();
+	}
+	
+	private void removeRoadTop(Road e) {
+		MODEL.world.removeRoadTop(e);
+//		postIdleTop();
+	}
+	
+	private void removeMergerTop(Merger m) {
+		MODEL.world.removeMergerTop(m);
+//		postIdleTop();
+	}
+	
+	private void removeStopSignTop(StopSign s) {
+		MODEL.world.removeStopSignTop(s);
+//		postIdleTop();
+	}
+	
+	private void removeCarTop(Car c) {
+		MODEL.world.removeCarTop(c);
+//		c.destroy();
+//		
+//		synchronized (MODEL) {
+//			cars.remove(c);
+//		}
+//		
+//		postRunningTop();
+	}
+	
+	
+	
+	public void processNewStroke() {
+		
+		Stroke s = MODEL.stroke;
+		
+		List<SweepEvent> events = s.events();
+		
+		for (int i = 0; i < events.size(); i++) {
+			
+			SweepEvent e = events.get(i);
+			
+			if (e.type == null) {
+				
+				Entity hit = MODEL.world.pureGraphBestHitTest(e.circle);
+				assert hit == null;
+				logger.debug("create");
+				Intersection v = new Intersection(e.p);
+				MODEL.world.addVertexTop(v);
+				
+			} else if (e.type == SweepEventType.ENTERCAPSULE) {
+				Entity hit = MODEL.world.pureGraphBestHitTest(e.circle);
+				
+				if (hit instanceof Road) {
+					
+					assert hit instanceof Road;
+					logger.debug("split");
+					
+					Road r = (Road)((Capsule)e.shape).parent;
+					assert MODEL.world.isValidRoad(r);
+					
+					RoadPosition pos = null;
+					
+					/*
+					 * find better place to split by checking for intersection with road
+					 */
+					for (int j = e.index; j < s.pts.size()-1; j++) {
+						Point a = s.pts.get(j);
+						Point b = s.pts.get(j+1);
+						
+						RoadPosition skeletonIntersection = r.findSkeletonIntersection(a, b);
+						
+						if (skeletonIntersection != null) {
+							
+							double strokeCombo = j + Point.param(skeletonIntersection.p, a, b);
+							
+							if (DMath.greaterThanEquals((strokeCombo), (e.index+e.param))
+									&& DMath.lessThanEquals(Point.distance(skeletonIntersection.p, e.p), s.r)
+									) {
+								pos = skeletonIntersection;
+								break;
+							}
+						}
+						
+					}
+					
+					if (pos == null) {
+						pos = MODEL.world.findClosestRoadPosition(e.p, e.circle.radius);
+					}
+					
+					MODEL.world.splitRoadTop(pos);
+					
+				} else if (hit instanceof Vertex) {
+					
+				} else {
+					assert false;
+				}
+				
+			} else if (e.type == SweepEventType.EXITCAPSULE) {
+				
+				Entity hit = MODEL.world.pureGraphBestHitTest(e.circle);
+				if (hit instanceof Road) {
+					
+					logger.debug("split");
+					
+					Road r = (Road)((Capsule)e.shape).parent;
+					assert MODEL.world.isValidRoad(r);
+					
+					RoadPosition pos = null;
+					
+					/*
+					 * find better place to split by checking for intersection with road
+					 */
+					for (int j = e.index; j >= 0; j--) {
+						Point a = s.pts.get(j);
+						Point b = s.pts.get(j+1);
+						
+						RoadPosition skeletonIntersection = r.findSkeletonIntersection(a, b);
+						
+						if (skeletonIntersection != null) {
+							
+							double strokeCombo = j + Point.param(skeletonIntersection.p, a, b);
+							
+							if (DMath.lessThanEquals((strokeCombo), (e.index+e.param))
+									&& DMath.lessThanEquals(Point.distance(skeletonIntersection.p, e.p), s.r)
+									) {
+								pos = skeletonIntersection;
+								break;
+							}
+						}
+						
+					}
+					
+					if (pos == null) {
+						pos = MODEL.world.findClosestRoadPosition(e.p, e.circle.radius);
+					}
+					
+					MODEL.world.splitRoadTop(pos);
+					
+				} else if (hit instanceof Vertex) {
+					
+				} else {
+					assert false;
+				}
+				
+			}
+		}
+			
+			
+		for (int i = 0; i < events.size()-1; i++) {
+			SweepEvent e0 = events.get(i);
+			SweepEvent e1 = events.get(i+1);
+			
+			if (e0.type == SweepEventType.ENTERVERTEX && e1.type == SweepEventType.EXITVERTEX) {
+				
+				logger.debug("skipping");
+				i = i+1;
+				if (i == events.size()-1) {
+					break;
+				}
+				e0 = events.get(i);
+				e1 = events.get(i+1);
+				
+			} else if (e0.type == SweepEventType.ENTERCAPSULE && e1.type == SweepEventType.EXITCAPSULE) {
+				
+				logger.debug("skipping");
+				
+				i = i+1;
+				if (i == events.size()-1) {
+					break;
+				}
+				e0 = events.get(i);
+				e1 = events.get(i+1);
+				
+			} else if (e0.type == SweepEventType.ENTERMERGER || e1.type == SweepEventType.ENTERMERGER) {
+				
+				return;
+				
+			}
+			
+//			Point e0p = s.getPoint(e0.index, e0.param);
+//			Point e1p = s.getPoint(e1.index, e1.param);
+			
+			Vertex v0 = (Vertex)MODEL.world.pureGraphBestHitTest(e0.circle);
+			Vertex v1 = (Vertex)MODEL.world.pureGraphBestHitTest(e1.circle);
+			
+			if (v0 == v1) {
+				logger.debug("same vertex");
+//				assert false;
+//				return;
+				continue;
+			}
+			
+			List<Point> roadPts = new ArrayList<Point>();
+			roadPts.add(e0.p);
+			for (int j = e0.index+1; j < e1.index; j++) {
+				roadPts.add(s.pts.get(j));
+			}
+			roadPts.add(s.pts.get(e1.index));
+			if (!DMath.equals(e1.param, 0.0)) {
+				roadPts.add(e1.p);
+			}
+			
+			MODEL.world.createRoadTop(v0, v1, roadPts);
+		}
+		
 	}
 	
 }

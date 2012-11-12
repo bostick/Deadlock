@@ -2479,8 +2479,11 @@ public class TestSimulating {
 			//MODEL.viewLoc = new Point(575, 375);
 			//MODEL.viewLoc = new Point(560, 400);
 			
-			MODEL.world.processNewStrokeTop(new Stroke(Vertex.INIT_VERTEX_RADIUS){{pts.addAll(new ArrayList<Point>(){{add(new Point(600, 450));add(new Point(700, 450));}});}});
-			MODEL.world.processNewStrokeTop(new Stroke(Vertex.INIT_VERTEX_RADIUS){{pts.addAll(new ArrayList<Point>(){{add(new Point(650, 400));add(new Point(650, 500));}});}});
+			MODEL.stroke = new Stroke(Vertex.INIT_VERTEX_RADIUS){{pts.addAll(new ArrayList<Point>(){{add(new Point(600, 450));add(new Point(700, 450));}});}};
+			CONTROLLER.processNewStroke();
+			
+			MODEL.stroke = new Stroke(Vertex.INIT_VERTEX_RADIUS){{pts.addAll(new ArrayList<Point>(){{add(new Point(650, 400));add(new Point(650, 500));}});}};
+			CONTROLLER.processNewStroke();
 			
 			Vertex aV = ((Vertex)MODEL.world.hitTest(new Point(600, 450)));
 			
@@ -2489,8 +2492,8 @@ public class TestSimulating {
 			Car a = new NormalCar((WorldSource)aV);
 			Car b = new NormalCar((WorldSource)bV);
 			
-			MODEL.world.cars.add(a);
-			MODEL.world.cars.add(b);
+			MODEL.world.addCar(a);
+			MODEL.world.addCar(b);
 		}
 		
 		CONTROLLER.queue(new Runnable(){
@@ -2513,8 +2516,11 @@ public class TestSimulating {
 			//MODEL.viewLoc = new Point(575, 375);
 			//MODEL.viewLoc = new Point(560, 400);
 			
-			MODEL.world.processNewStrokeTop(new Stroke(Vertex.INIT_VERTEX_RADIUS){{pts.addAll(new ArrayList<Point>(){{add(new Point(595, 450));add(new Point(695, 450));}});}});
-			MODEL.world.processNewStrokeTop(new Stroke(Vertex.INIT_VERTEX_RADIUS){{pts.addAll(new ArrayList<Point>(){{add(new Point(650, 400));add(new Point(650, 500));}});}});
+			MODEL.stroke = new Stroke(Vertex.INIT_VERTEX_RADIUS){{pts.addAll(new ArrayList<Point>(){{add(new Point(595, 450));add(new Point(695, 450));}});}};
+			CONTROLLER.processNewStroke();
+			
+			MODEL.stroke = new Stroke(Vertex.INIT_VERTEX_RADIUS){{pts.addAll(new ArrayList<Point>(){{add(new Point(650, 400));add(new Point(650, 500));}});}};
+			CONTROLLER.processNewStroke();
 			
 //			MODEL.processStroke(new Point(595, 450), new Point(695, 450));
 //			MODEL.processStroke(new Point(650, 400), new Point(650, 500));
@@ -2528,8 +2534,8 @@ public class TestSimulating {
 			Car a = new NormalCar((WorldSource)aV);
 			Car b = new NormalCar((WorldSource)bV);
 			
-			MODEL.world.cars.add(a);
-			MODEL.world.cars.add(b);
+			MODEL.world.addCar(a);
+			MODEL.world.addCar(b);
 		}
 		
 		CONTROLLER.queue(new Runnable(){
@@ -2552,8 +2558,11 @@ public class TestSimulating {
 			//MODEL.viewLoc = new Point(575, 375);
 			//MODEL.viewLoc = new Point(560, 400);
 			
-			MODEL.world.processNewStrokeTop(new Stroke(Vertex.INIT_VERTEX_RADIUS){{pts.addAll(new ArrayList<Point>(){{add(new Point(600, 450));add(new Point(700, 450));}});}});
-			MODEL.world.processNewStrokeTop(new Stroke(Vertex.INIT_VERTEX_RADIUS){{pts.addAll(new ArrayList<Point>(){{add(new Point(650, 400));add(new Point(650, 500));}});}});
+			MODEL.stroke = new Stroke(Vertex.INIT_VERTEX_RADIUS){{pts.addAll(new ArrayList<Point>(){{add(new Point(600, 450));add(new Point(700, 450));}});}};
+			CONTROLLER.processNewStroke();
+			
+			MODEL.stroke = new Stroke(Vertex.INIT_VERTEX_RADIUS){{pts.addAll(new ArrayList<Point>(){{add(new Point(650, 400));add(new Point(650, 500));}});}};
+			CONTROLLER.processNewStroke();
 //			MODEL.processStroke(new Point(600, 450), new Point(700, 450));
 //			MODEL.processStroke(new Point(650, 400), new Point(650, 500));
 			
@@ -2565,9 +2574,9 @@ public class TestSimulating {
 			Car b = new NormalCar((WorldSource)bV);
 			Car c = new NormalCar((WorldSource)cV);
 			
-			MODEL.world.cars.add(a);
-			MODEL.world.cars.add(b);
-			MODEL.world.cars.add(c);
+			MODEL.world.addCar(a);
+			MODEL.world.addCar(b);
+			MODEL.world.addCar(c);
 		}
 		
 		CONTROLLER.queue(new Runnable(){

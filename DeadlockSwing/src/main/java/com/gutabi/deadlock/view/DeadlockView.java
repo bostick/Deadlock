@@ -1,7 +1,7 @@
 package com.gutabi.deadlock.view;
 
-import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 import static com.gutabi.deadlock.controller.DeadlockController.CONTROLLER;
+import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 
 import java.awt.BasicStroke;
 import java.awt.Container;
@@ -12,7 +12,7 @@ import javax.swing.JFrame;
 import org.apache.log4j.Logger;
 
 import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.core.Rect;
+import com.gutabi.deadlock.core.geom.Rect;
 
 @SuppressWarnings("static-access")
 public class DeadlockView {

@@ -14,10 +14,10 @@ import com.gutabi.deadlock.core.ColinearException;
 import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.core.Rect;
 import com.gutabi.deadlock.core.geom.Capsule;
-import com.gutabi.deadlock.core.geom.SweepEventListener;
-import com.gutabi.deadlock.core.geom.Sweeper;
+import com.gutabi.deadlock.core.geom.CapsuleSequence;
+import com.gutabi.deadlock.core.geom.Circle;
+import com.gutabi.deadlock.core.geom.Shape;
 import com.gutabi.deadlock.model.StopSign;
 
 @SuppressWarnings("static-access")
@@ -29,7 +29,7 @@ public class Road extends Edge {
 	public final Vertex end;
 	public final List<Point> raw;
 	
-	private List<RoadSegment> segs;
+	private CapsuleSequence seq;
 	
 	private Point startBorderPoint;
 	private Point endBorderPoint;
@@ -123,31 +123,28 @@ public class Road extends Edge {
 		return loop;
 	}
 	
-	/**
-	 * how many points?
-	 */
-	public int size() {
-		return segs.size()+1;
+	public int pointCount() {
+		return seq.pointCount();
 	}
 	
 	public double getTotalLength(Vertex a, Vertex b) {
 		return totalLength;
 	}
 	
-	public Point get(int i) {
-		if (i == segs.size()) {
-			return segs.get(i-1).b;
-		} else {
-			return segs.get(i).a;
-		}
+	public Point getPoint(int i) {
+		return seq.getPoint(i);
+	}
+	
+	public Capsule getCapsule(int i) {
+		return seq.getCapsule(i);
 	}
 	
 	/*
 	 * used in debugging
 	 */
-	public Capsule getCapsule(int i) {
-		return segs.get(i);
-	}
+//	public Capsule getCapsule(int i) {
+//		return segs.get(i);
+//	}
 	
 	public Point getStartBorderPoint() {
 		return startBorderPoint;
@@ -195,49 +192,6 @@ public class Road extends Edge {
 		}
 	}
 	
-	public void sweepStart(Sweeper s, SweepEventListener l) {
-		
-		/*
-		 * TODO:
-		 * a lot of room for improvement
-		 * adjacent capsules share caps, so could share calculation
-		 */
-		for (Capsule c : segs.subList(1, segs.size()-1)) {
-			c.sweepStart(s, l);
-		}
-		
-	}
-	
-//	public void sweepEnd(Stroke s, SweepEventListener l) {
-//		
-//		/*
-//		 * TODO:
-//		 * a lot of room for improvement
-//		 * adjacent capsules share caps, so could share calculation
-//		 */
-//		for (Capsule c : segs.subList(1, segs.size()-1)) {
-//			c.sweepEnd(s, l);
-//		}
-//		
-//	}
-	
-	public void sweep(Sweeper s, int index, SweepEventListener l) {
-		
-		/*
-		 * TODO:
-		 * a lot of room for improvement
-		 * adjacent capsules share caps, so could share calculation
-		 */
-		for (Capsule c : segs.subList(1, segs.size()-1)) {
-			c.sweep(s, index, l);
-		}
-		
-	}
-	
-	
-	
-	
-	
 	public GraphPosition travelFromConnectedVertex(Vertex v, double dist) {
 		
 		if (v == start) {
@@ -248,20 +202,20 @@ public class Road extends Edge {
 		
 	}
 	
-	public Entity hitTest(Point p) {
-		if (aabb.hitTest(p)) {
-			
-			for (RoadSegment s : segs.subList(1, segs.size()-1)) {
-				if (s.hitTest(p) != null) {
-					return this;
-				}
-			}
-			return null;
-			
-		} else {
-			return null;
-		}
-	}
+//	public Entity hitTest(Point p) {
+//		if (aabb.hitTest(p)) {
+//			
+//			for (RoadSegment s : segs.subList(1, segs.size()-1)) {
+//				if (s.hitTest(p) != null) {
+//					return this;
+//				}
+//			}
+//			return null;
+//			
+//		} else {
+//			return null;
+//		}
+//	}
 	
 	public Entity decorationsHitTest(Point p) {
 		
@@ -284,14 +238,45 @@ public class Road extends Edge {
 		return null;
 	}
 	
-	public Entity bestHitTest(Point p, double radius) {
-		for (RoadSegment s : segs.subList(1, segs.size()-1)) {
-			if (s.bestHitTest(p, radius) != null) {
-				return this;
+	public Entity decorationsBestHitTest(Shape s) {
+		
+		Entity hit;
+		
+		if (startSign != null) {
+			hit = startSign.bestHitTest(s);
+			if (hit != null) {
+				return hit;
 			}
 		}
+		
+		if (endSign != null) {
+			hit = endSign.bestHitTest(s);
+			if (hit != null) {
+				return hit;
+			}
+		}
+		
 		return null;
+		
 	}
+
+//	public Entity bestHitTest(Point p, double radius) {
+//		for (RoadSegment s : segs.subList(1, segs.size()-1)) {
+//			if (s.bestHitTest(p, radius) != null) {
+//				return this;
+//			}
+//		}
+//		return null;
+//	}
+//	
+//	public Entity bestHitTest(Quad q) {
+//		for (RoadSegment s : segs.subList(1, segs.size()-1)) {
+//			if (s.bestHitTest(q) != null) {
+//				return this;
+//			}
+//		}
+//		return null;
+//	}
 	
 //	public RoadPosition skeletonHitTest(Point p) {
 //		for (int i = 0; i < caps.size(); i++) {
@@ -305,8 +290,8 @@ public class Road extends Edge {
 //	}
 	
 	public RoadPosition findSkeletonIntersection(Point c, Point d) {
-		for (int i = 0; i < segs.size(); i ++) {
-			Capsule cap = segs.get(i);
+		for (int i = 0; i < seq.capsuleCount(); i ++) {
+			Capsule cap = seq.getCapsule(i);
 			double abParam = cap.findSkeletonIntersection(c, d);
 			if (abParam != -1 && !DMath.equals(abParam, 1.0)) {
 				return new RoadPosition(this, i, abParam);
@@ -321,8 +306,8 @@ public class Road extends Edge {
 		double bestParam = -1;
 		Point bestPoint = null;
 
-		for (int i = 0; i < segs.size(); i++) {
-			Capsule c = segs.get(i);
+		for (int i = 0; i < seq.capsuleCount(); i++) {
+			Capsule c = seq.getCapsule(i);
 			double closest = closestParam(p, c);
 			Point ep = Point.point(c.a, c.b, closest);
 			double dist = Point.distance(p, ep);
@@ -341,7 +326,7 @@ public class Road extends Edge {
 
 		if (bestPoint != null) {
 			if (bestParam == 1.0) {
-				if (bestIndex == segs.size()-1) {
+				if (bestIndex == seq.capsuleCount()-1) {
 					return null;
 				} else {
 					return new RoadPosition(this, bestIndex+1, 0.0);
@@ -403,9 +388,9 @@ public class Road extends Edge {
 		 */
 		if (!standalone) {
 			startBorderIndex = 1;
-			endBorderIndex = segs.size()-1;
-			startBorderPoint = get(startBorderIndex);
-			endBorderPoint = get(endBorderIndex);
+			endBorderIndex = seq.capsuleCount()-1;
+			startBorderPoint = seq.getPoint(startBorderIndex);
+			endBorderPoint = seq.getPoint(endBorderIndex);
 			assert DMath.equals(Point.distance(startBorderPoint, start.p), start.getRadius());
 			assert DMath.equals(Point.distance(endBorderPoint, end.p), end.getRadius());
 		} else {
@@ -423,8 +408,6 @@ public class Road extends Edge {
 		if (endSign != null) {
 			endSign.computePoint();
 		}
-		
-		computeAABB();
 		
 	}
 	
@@ -448,14 +431,19 @@ public class Road extends Edge {
 			adj = removeDuplicates(adj);
 		}
 		
-		segs = new ArrayList<RoadSegment>();
-		for (int i = 0; i < adj.size()-1; i++) {
-			Point a = adj.get(i);
-			Point b = adj.get(i+1);
-			RoadSegment c = new RoadSegment(this, a, b);
-			segs.add(c);
+		List<Circle> circs = new ArrayList<Circle>();
+		for (Point p : adj) {
+			circs.add(new Circle(this, p, ROAD_RADIUS));
 		}
 		
+		List<Capsule> caps = new ArrayList<Capsule>();
+		for (int i = 0; i < adj.size()-1; i++) {
+			Circle a = circs.get(i);
+			Circle b = circs.get(i+1);
+			caps.add(new Capsule(this, a, b));
+		}
+		
+		seq = new CapsuleSequence(this, caps);
 	}
 	
 	private static List<Point> removeDuplicates(List<Point> stroke) {
@@ -622,12 +610,12 @@ public class Road extends Edge {
 	
 	private void computeLengths() {
 		
-		cumulativeLengthsFromStart = new double[segs.size()+1];
+		cumulativeLengthsFromStart = new double[seq.pointCount()];
 		
 		double length;
 		double l = 0.0;
-		for (int i = 0; i < segs.size(); i++) {
-			Capsule s = segs.get(i);
+		for (int i = 0; i < seq.capsuleCount(); i++) {
+			Capsule s = seq.getCapsule(i);
 			if (i == 0) {
 				cumulativeLengthsFromStart[i] = 0;
 			}
@@ -638,24 +626,6 @@ public class Road extends Edge {
 		
 		totalLength = l;
 		
-	}
-	
-	private void computeAABB() {
-		aabb = null;
-		
-		if (startBorderPoint.equals(endBorderPoint)) {
-			aabb = new Rect(startBorderPoint.x, startBorderPoint.y, 0.0, 0.0);
-		} else {
-			for (Capsule s : segs.subList(1, segs.size()-1)) {
-				aabb = Rect.union(aabb, s.aabb);
-			}
-		}
-		
-	}
-	
-	protected Rect aabb;
-	public final Rect getAABB() {
-		return aabb;
 	}
 	
 	public static boolean haveExactlyOneSharedIntersection(Road a, Road b) {
@@ -698,13 +668,10 @@ public class Road extends Edge {
 	 * @param g2 in world coords
 	 */
 	public void paint(Graphics2D g2) {
-		if (!MODEL.DEBUG_DRAW) {
-			
-			paintPath(g2);
-			
-		} else {
-			
-			paintPath(g2);
+		
+		paintPath(g2);
+		
+		if (MODEL.DEBUG_DRAW) {
 			
 			AffineTransform origTransform = g2.getTransform();
 			
@@ -727,31 +694,18 @@ public class Road extends Edge {
 	
 	private void paintPath(Graphics2D g2) {
 		
-		AffineTransform origTransform = g2.getTransform();
-		
-		g2.scale(MODEL.METERS_PER_PIXEL, MODEL.METERS_PER_PIXEL);
-		
 		g2.setColor(color);
 		
-		for (Capsule s : segs.subList(1, segs.size()-1)) {
-			s.paint(g2);
-		}
+		seq.paint(g2);
 		
-		g2.setTransform(origTransform);
 	}
 	
 	private void drawPath(Graphics2D g2) {
-		AffineTransform origTransform = g2.getTransform();
-		
-		g2.scale(MODEL.METERS_PER_PIXEL, MODEL.METERS_PER_PIXEL);
 		
 		g2.setColor(hiliteColor);
 		
-		for (Capsule s : segs.subList(1, segs.size()-1)) {
-			s.draw(g2);
-		}
+		seq.draw(g2);
 		
-		g2.setTransform(origTransform);
 	}
 	
 	/**
@@ -761,20 +715,7 @@ public class Road extends Edge {
 		
 		g2.setColor(Color.BLACK);
 		
-		for (Capsule s : segs) {
-			s.drawSkeleton(g2);
-		}
-		
-	}
-	
-	protected void paintAABB(Graphics2D g2) {
-		
-		g2.setColor(Color.BLACK);
-		g2.drawRect(
-				(int)(aabb.x * MODEL.PIXELS_PER_METER),
-				(int)(aabb.y * MODEL.PIXELS_PER_METER),
-				(int)(aabb.width * MODEL.PIXELS_PER_METER),
-				(int)(aabb.height * MODEL.PIXELS_PER_METER));
+		seq.drawSkeleton(g2);
 		
 	}
 	

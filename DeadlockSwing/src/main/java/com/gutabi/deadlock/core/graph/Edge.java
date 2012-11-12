@@ -4,9 +4,9 @@ import java.awt.Graphics2D;
 
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.core.geom.Sweepable;
+import com.gutabi.deadlock.core.geom.Shape;
 
-public abstract class Edge implements Entity, Sweepable {
+public abstract class Edge extends Entity {
 	
 	public int id;
 	
@@ -20,6 +20,9 @@ public abstract class Edge implements Entity, Sweepable {
 	
 	
 	public abstract Entity decorationsHitTest(Point p);
+	
+	public abstract Entity decorationsBestHitTest(Shape s);
+	
 	
 	public abstract void paintDecorations(Graphics2D g2);
 

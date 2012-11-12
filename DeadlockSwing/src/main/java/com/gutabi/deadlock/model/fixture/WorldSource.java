@@ -94,7 +94,7 @@ public class WorldSource extends Source {
 //			assert c.hitTest(p, r);
 			c.startingTime = t;
 			synchronized (MODEL) {
-				MODEL.world.cars.add(c);
+				MODEL.world.addCar(c);
 			}
 //			lastSpawnTime = t;
 			outstandingCars++;
@@ -114,21 +114,8 @@ public class WorldSource extends Source {
 			return false;
 		}
 		
-		synchronized (MODEL) {
-			for (Car c : MODEL.world.cars) {
-				if (hitTest(c.worldPoint1()) != null) {
-					return false;
-				}
-				if (hitTest(c.worldPoint2()) != null) {
-					return false;
-				}
-				if (hitTest(c.worldPoint3()) != null) {
-					return false;
-				}
-				if (hitTest(c.worldPoint4()) != null) {
-					return false;
-				}
-			}
+		if (MODEL.world.isUnderAnyCars(this)) {
+			return false;
 		}
 		
 		return true;
