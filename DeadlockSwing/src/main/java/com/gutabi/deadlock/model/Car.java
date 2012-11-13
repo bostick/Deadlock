@@ -390,7 +390,7 @@ public abstract class Car extends Entity {
 		
 		overallPos = null;
 		
-		source.outstandingCars--;
+//		source.outstandingCars--;
 		
 		if (curBorderPosition != null) {
 			
@@ -417,7 +417,7 @@ public abstract class Car extends Entity {
 		
 		overallPos = null;
 		
-		source.outstandingCars--;
+//		source.outstandingCars--;
 		
 		if (curBorderPosition != null) {
 			
@@ -767,11 +767,6 @@ public abstract class Car extends Entity {
 				sinked = true;
 			}
 			
-			if (!atleastPartiallyOnRoad) {
-				MODEL.world.addSkidMarks(prevWorldPoint0, worldQuad.p0);
-				MODEL.world.addSkidMarks(prevWorldPoint3, worldQuad.p3);
-			}
-			
 			if (sinked) {
 				
 				logger.debug("sink");
@@ -801,7 +796,13 @@ public abstract class Car extends Entity {
 			
 			break;
 		case CRASHED:
+			break;
 		case SKIDDED:
+			
+			MODEL.world.addSkidMarks(prevWorldPoint0, worldQuad.p0);
+			MODEL.world.addSkidMarks(prevWorldPoint3, worldQuad.p3);
+			
+			break;
 		case SINKED:
 			break;
 		}

@@ -1,15 +1,13 @@
 
 IMMEDIATELY:
 
-skidding if completely off road
+status of cursor
+how many vertices, capsules, etc. currently hitting?
 
 test if Merger is hitting anything else before adding
 
 crashes
 find a fire gif and start animating sprites
-
-status of cursor
-how many vertices, capsules, etc. currently hitting?
 
 ideal physics
 option to remove braking, friction, skidding, etc.
@@ -39,6 +37,8 @@ switch to opengl
 start work on popup menu
 
 DONE:
+
+skidding if completely off road
 
 intersecting methods
 containment methods
