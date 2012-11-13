@@ -40,7 +40,7 @@ public class Circle extends Shape {
 		if (s instanceof Quad) {
 			Quad ss = (Quad)s;
 			
-			
+			return ShapeUtils.intersect(ss, this);
 			
 		} else {
 			Circle ss = (Circle)s;
@@ -49,6 +49,11 @@ public class Circle extends Shape {
 			
 		}
 		
+	}
+	
+	public Point project(Point axis) {
+		double cen = Point.dot(axis, center);
+		return new Point(cen-radius, cen+radius);
 	}
 	
 	public void sweepStart(Sweeper s) {

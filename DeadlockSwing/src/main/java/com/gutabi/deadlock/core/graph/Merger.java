@@ -60,6 +60,7 @@ public class Merger extends Edge {
 		Point p2 = new Point(ul.x + MERGER_WIDTH, ul.y + MERGER_HEIGHT);
 		Point p3 = new Point(ul.x, ul.y + MERGER_HEIGHT);
 		worldQuad = new Quad(this, p0, p1, p2, p3);
+		shape = worldQuad;
 		
 		top.m = this;
 		left.m = this;

@@ -17,12 +17,32 @@ public class Quad extends Shape {
 	public final Point p2;
 	public final Point p3;
 	
+	public final Point n01;
+	public final Point n12;
+	public final Point n23;
+	public final Point n30;
+	
 	public Quad(Object parent, Point p0, Point p1, Point p2, Point p3) {
 		super(parent);
 		this.p0 = p0;
 		this.p1 = p1;
 		this.p2 = p2;
 		this.p3 = p3;
+		
+		
+		Point edge;
+		edge = p1.minus(p0);
+		n01 = Point.ccw90(edge).normalize();
+		edge = p2.minus(p1);
+		n12 = Point.ccw90(edge).normalize();
+		edge = p3.minus(p2);
+		n23 = Point.ccw90(edge).normalize();
+		edge = p0.minus(p3);
+		n30 = Point.ccw90(edge).normalize();
+		
+		
+		
+		
 		
 		double ulX = Math.min(Math.min(p0.x, p1.x), Math.min(p2.x, p3.x));
 		double ulY = Math.min(Math.min(p0.y, p1.y), Math.min(p2.y, p3.y));
@@ -34,16 +54,16 @@ public class Quad extends Shape {
 	
 	public boolean hitTest(Point p) {
 		
-		if (Geom.halfPlane(p, p0, p1) == 1) {
+		if (Geom.halfPlane(p, p0, p1) == -1) {
 			return false;
 		}
-		if (Geom.halfPlane(p, p1, p2) == 1) {
+		if (Geom.halfPlane(p, p1, p2) == -1) {
 			return false;
 		}
-		if (Geom.halfPlane(p, p2, p3) == 1) {
+		if (Geom.halfPlane(p, p2, p3) == -1) {
 			return false;
 		}
-		if (Geom.halfPlane(p, p3, p0) == 1) {
+		if (Geom.halfPlane(p, p3, p0) == -1) {
 			return false;
 		}
 		return true;
@@ -55,15 +75,43 @@ public class Quad extends Shape {
 		if (s instanceof Quad) {
 			Quad ss = (Quad)s;
 			
-			
+			return ShapeUtils.intersect(this, ss);
 			
 		} else {
 			Circle ss = (Circle)s;
 			
-			
+			return ShapeUtils.intersect(this, ss);
 			
 		}
 		
+	}
+	
+	public Point project(Point axis) {
+		double min = Point.dot(axis, p0);
+		double max = min;
+		
+		double p = Point.dot(axis, p1);
+		if (p < min) {
+			min = p;
+		} else if (p > max) {
+			max = p;
+		}
+		
+		p = Point.dot(axis, p2);
+		if (p < min) {
+			min = p;
+		} else if (p > max) {
+			max = p;
+		}
+		
+		p = Point.dot(axis, p3);
+		if (p < min) {
+			min = p;
+		} else if (p > max) {
+			max = p;
+		}
+		
+		return new Point(min, max);
 	}
 	
 	public void sweepStart(Sweeper s) {
@@ -154,7 +202,7 @@ public class Quad extends Shape {
 //	}
 	
 	public boolean containedIn(Quad q) {
-		return hitTest(q.p0) && hitTest(q.p1) && hitTest(q.p2) && hitTest(q.p3);
+		return q.hitTest(p0) && q.hitTest(p1) && q.hitTest(p2) && q.hitTest(p3);
 	}
 	
 	public void paint(Graphics2D g2) {

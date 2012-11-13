@@ -8,8 +8,8 @@ public class Geom {
 	
 	/**
 	 * 
-	 * return 1 if p is to the left of <a, b>
-	 * return -1 if p is to the right
+	 * return -1 if p is to the left of <a, b>
+	 * return 1 if p is to the right
 	 * return 0 if p is on the line
 	 */
 	public static int halfPlane(Point p, Point p1, Point p2) {

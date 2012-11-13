@@ -56,5 +56,15 @@ public class Intersection extends Vertex {
 		
 		g2.setTransform(origTransform);
 		
+		if (MODEL.DEBUG_DRAW) {
+			
+			g2.scale(MODEL.METERS_PER_PIXEL, MODEL.METERS_PER_PIXEL);
+			
+			paintAABB(g2);
+			
+			g2.setTransform(origTransform);
+			
+		}
+		
 	}
 }

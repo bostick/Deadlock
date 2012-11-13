@@ -1,21 +1,7 @@
 
 IMMEDIATELY:
 
-intersecting methods
-containment methods
-
-add shapes to capsules, vertices, cars, mergers, signs
-
-
 skidding if completely off road
-
-
-
-add SAT code
-find uses of halfPlane
-reexamine all bestHitTest implementations
-WorldSource.active()
-Car.computeDynamicProperties()
 
 test if Merger is hitting anything else before adding
 
@@ -53,6 +39,18 @@ switch to opengl
 start work on popup menu
 
 DONE:
+
+intersecting methods
+containment methods
+
+add shapes to capsules, vertices, cars, mergers, signs
+
+add SAT code
+find uses of halfPlane
+reexamine all bestHitTest implementations
+WorldSource.active()
+Car.computeDynamicProperties()
+
 
 add Circle and Quad classes
 

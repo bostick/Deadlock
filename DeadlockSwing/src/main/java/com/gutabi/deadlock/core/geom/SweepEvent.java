@@ -48,9 +48,9 @@ public class SweepEvent {
 		circle = new Circle(sweeper, p, sweeper.radius);
 		
 		if (shape != null) {
-			if (!shape.intersect(circle)) {
-				shape.intersect(circle);
-			}
+			/*
+			 * TODO: be more specific and test if bordering
+			 */
 			assert shape.intersect(circle);
 		}
 		

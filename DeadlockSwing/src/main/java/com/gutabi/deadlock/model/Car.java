@@ -93,7 +93,7 @@ public abstract class Car extends Entity {
 //	Point worldPoint3;
 //	Point worldPoint4;
 	Quad worldQuad;
-	Point prevWorldPoint2;
+	Point prevWorldPoint0;
 	Point prevWorldPoint3;
 	
 	/*
@@ -249,7 +249,7 @@ public abstract class Car extends Entity {
 //		Point prevP = p;
 //		Point prevWorldPoint1 = worldPoint1;
 //		Point prevWorldPoint2 = worldPoint1;
-		prevWorldPoint2 = worldQuad.p2;
+		prevWorldPoint0 = worldQuad.p0;
 		prevWorldPoint3 = worldQuad.p3;
 		
 		pVec2 = b2dBody.getPosition();
@@ -768,7 +768,7 @@ public abstract class Car extends Entity {
 			}
 			
 			if (!atleastPartiallyOnRoad) {
-				MODEL.world.addSkidMarks(prevWorldPoint2, worldQuad.p2);
+				MODEL.world.addSkidMarks(prevWorldPoint0, worldQuad.p0);
 				MODEL.world.addSkidMarks(prevWorldPoint3, worldQuad.p3);
 			}
 			
@@ -796,7 +796,7 @@ public abstract class Car extends Entity {
 				
 			}
 			
-			MODEL.world.addSkidMarks(prevWorldPoint2, worldQuad.p2);
+			MODEL.world.addSkidMarks(prevWorldPoint0, worldQuad.p0);
 			MODEL.world.addSkidMarks(prevWorldPoint3, worldQuad.p3);
 			
 			break;

@@ -1,6 +1,6 @@
 package com.gutabi.deadlock.core.geom;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import org.junit.Test;
 
@@ -19,4 +19,18 @@ public class TestShapes {
 		
 	}
 	
+	@Test
+	public void test2() throws Exception {
+		
+		Quad q = new Quad(null, new Point(0, 0), new Point(1, 0), new Point(1, 1), new Point(0, 1));
+		
+		assertTrue(q.hitTest(new Point(0.5, 0.5)));
+	}
+	
+	@Test
+	public void test3() throws Exception {
+		
+		int s = Geom.halfPlane(new Point(0.5, 0.5), new Point(0, 0), new Point(1, 0));
+		assertEquals(s, 1);
+	}
 }

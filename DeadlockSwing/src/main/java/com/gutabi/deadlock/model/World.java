@@ -592,7 +592,7 @@ public class World implements Sweepable {
 	}
 	
 	private void drawSkidMarks(Graphics2D g2) {
-		g2.drawImage(skidMarksImage, 0, 0, null);
+//		g2.drawImage(skidMarksImage, 0, 0, null);
 	}
 	
 //	public Runnable renderBackgroundRunnable = new Runnable() {
