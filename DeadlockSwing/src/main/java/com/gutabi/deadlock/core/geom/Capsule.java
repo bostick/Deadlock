@@ -168,6 +168,11 @@ public class Capsule extends Shape {
 			double abParam = Point.u(a, p, b);
 			
 			if (DMath.lessThanEquals(abParam, 0.0)) {
+				
+				assert ac.intersect(new Circle(null, p, cap.r));
+				
+				logger.debug("a cap");
+				
 				params[paramCount] = cdParam;
 				paramCount++;
 			}
@@ -189,6 +194,9 @@ public class Capsule extends Shape {
 			double abParam = Point.u(aUp, p, bUp);
 			
 			if (DMath.greaterThanEquals(abParam, 0.0) && DMath.lessThanEquals(abParam, 1.0)) {
+				
+				logger.debug("top side");
+				
 				params[paramCount] = cdParam;
 				paramCount++;
 			}
@@ -213,6 +221,11 @@ public class Capsule extends Shape {
 			double abParam = Point.u(a, p, b);
 			
 			if (DMath.greaterThanEquals(abParam, 1.0)) {
+				
+				assert bc.intersect(new Circle(null, p, cap.r));
+				
+				logger.debug("b cap");
+				
 				params[paramCount] = cdParam;
 				paramCount++;
 			}
@@ -238,6 +251,9 @@ public class Capsule extends Shape {
 			double abParam = Point.u(bDown, p, aDown);
 			
 			if (DMath.greaterThanEquals(abParam, 0.0) && DMath.lessThanEquals(abParam, 1.0)) {
+				
+				logger.debug("bottom side");
+				
 				params[paramCount] = cdParam;
 				paramCount++;
 			}

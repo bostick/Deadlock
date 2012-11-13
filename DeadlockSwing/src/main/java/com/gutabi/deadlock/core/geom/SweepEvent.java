@@ -47,6 +47,13 @@ public class SweepEvent {
 		p = sweeper.getPoint(index, param);
 		circle = new Circle(sweeper, p, sweeper.radius);
 		
+		if (shape != null) {
+			if (!shape.intersect(circle)) {
+				shape.intersect(circle);
+			}
+			assert shape.intersect(circle);
+		}
+		
 	}
 	
 	public String toString() {

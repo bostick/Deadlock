@@ -51,7 +51,19 @@ public class Quad extends Shape {
 	}
 	
 	public boolean intersect(Shape s) {
-		return s.hitTest(p0) || s.hitTest(p1) || s.hitTest(p2) || s.hitTest(p3);
+		
+		if (s instanceof Quad) {
+			Quad ss = (Quad)s;
+			
+			
+			
+		} else {
+			Circle ss = (Circle)s;
+			
+			
+			
+		}
+		
 	}
 	
 	public void sweepStart(Sweeper s) {

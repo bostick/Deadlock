@@ -6,6 +6,8 @@ import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Point;
 
@@ -15,6 +17,8 @@ public class CapsuleSequence extends Shape {
 	public final List<Capsule> caps;
 	
 	public final double radius;
+	
+	static Logger logger = Logger.getLogger(CapsuleSequence.class);
 	
 	public CapsuleSequence(Object parent, List<Capsule> caps) {
 		super(parent);
@@ -96,9 +100,14 @@ public class CapsuleSequence extends Shape {
 	}
 	
 	public boolean intersect(Shape s) {
+		logger.debug("testing intersecting of: " + s);
 		for (Capsule c : caps) {
+			logger.debug("testing intersect with " + c + ": ");
 			if (c.intersect(s)) {
+				logger.debug("yes");
 				return true;
+			} else {
+				logger.debug("nope");
 			}
 		}
 		return false;
