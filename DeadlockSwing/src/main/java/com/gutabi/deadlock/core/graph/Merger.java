@@ -12,7 +12,6 @@ import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.Quad;
 import com.gutabi.deadlock.core.geom.Rect;
 import com.gutabi.deadlock.core.geom.Shape;
-import com.gutabi.deadlock.model.Cursor;
 import com.gutabi.deadlock.model.fixture.MergerSink;
 import com.gutabi.deadlock.model.fixture.MergerSource;
 
@@ -97,16 +96,6 @@ public class Merger extends Edge {
 		distances[right.id][left.id] = Merger.MERGER_WIDTH;
 	}
 	
-//	public void sweepEnd(Stroke s, SweepEventListener l) {
-//		
-//		Point d = s.pts.get(s.pts.size()-1);
-//		
-//		if (bestHitTest(d, s.r)) {
-//			l.end(new SweepEvent(SweepEventType.EXITMERGER, this, s, s.pts.size()-1, 0.0));
-//		}
-//		
-//	}
-	
 	
 	public GraphPosition travelFromConnectedVertex(Vertex v, double dist) {
 		if (v == top) {
@@ -133,15 +122,6 @@ public class Merger extends Edge {
 		}
 	}
 	
-//	public Entity hitTest(Point p) {
-//		if (DMath.lessThanEquals(ul.x, p.x) && DMath.lessThanEquals(p.x, ul.x+MERGER_WIDTH) &&
-//				DMath.lessThanEquals(ul.y, p.y) && DMath.lessThanEquals(p.y, ul.y+MERGER_HEIGHT)) {
-//			return this;
-//		} else {
-//			return null;
-//		}
-//	}
-	
 	public Entity decorationsHitTest(Point p) {
 		return null;
 	}
@@ -149,29 +129,6 @@ public class Merger extends Edge {
 	public Entity decorationsBestHitTest(Shape s) {
 		return null;
 	}
-	
-//	public Entity bestHitTest(Point p, double r) {
-//		if (hitTest(p) != null) {
-//			return this;
-//		} else {
-//			
-//			if (DMath.lessThanEquals(Point.distance(p, worldQuad.p0, worldQuad.p1), r)) {
-//				return this;
-//			} else if (DMath.lessThanEquals(Point.distance(p, worldQuad.p1, worldQuad.p2), r)) {
-//				return this;
-//			} else if (DMath.lessThanEquals(Point.distance(p, worldQuad.p2, worldQuad.p3), r)) {
-//				return this;
-//			} else if (DMath.lessThanEquals(Point.distance(p, worldQuad.p3, worldQuad.p0), r)) {
-//				return this;
-//			}
-//			return null;
-//		}
-//	}
-//	
-//	public Entity bestHitTest(Quad q) {
-//		
-//	}
-	
 	
 	
 	@Override
@@ -269,11 +226,6 @@ public class Merger extends Edge {
 		
 		g2.setTransform(origTransform);
 		
-//		top.paint(g2);
-//		left.paint(g2);
-//		right.paint(g2);
-//		bottom.paint(g2);
-		
 	}
 
 	@Override
@@ -314,65 +266,11 @@ public class Merger extends Edge {
 	}
 	
 	public void paintBorders(Graphics2D g2) {
-		
-//		g2.setColor(Color.GREEN);
-//		g2.fillOval((int)(startBorderPoint.x * MODEL.PIXELS_PER_METER)-2, (int)(startBorderPoint.y * MODEL.PIXELS_PER_METER)-2, 4, 4);
-//		
-//		g2.setColor(Color.RED);
-//		g2.fillOval((int)(endBorderPoint.x * MODEL.PIXELS_PER_METER)-2, (int)(endBorderPoint.y * MODEL.PIXELS_PER_METER)-2, 4, 4);
-		
+		;
 	}
 	
 	public void paintDecorations(Graphics2D g2) {
-		
-	}
-	
-	//java.awt.Stroke mergerOutlineStroke = new BasicStroke(float width, int cap, int join, float miterlimit, float[] dash, float dash_phase);
-	
-	public static void paintOutline(Point p, Graphics2D g2) {
-		
-		java.awt.Stroke origStroke = g2.getStroke();
-		
-		g2.setStroke(Cursor.dashedOutlineStroke);
-		g2.setColor(Color.GRAY);
-		
-		g2.drawRect(
-				(int)((p.x - Merger.MERGER_WIDTH/2) * MODEL.PIXELS_PER_METER),
-				(int)((p.y - Merger.MERGER_WIDTH/2) * MODEL.PIXELS_PER_METER),
-				(int)((Merger.MERGER_WIDTH) * MODEL.PIXELS_PER_METER),
-				(int)((Merger.MERGER_HEIGHT) * MODEL.PIXELS_PER_METER));
-		
-		Point top = p.plus(new Point(0, -Merger.MERGER_HEIGHT/2));
-		Point left = p.plus(new Point(-Merger.MERGER_WIDTH/2, 0));
-		Point right = p.plus(new Point(Merger.MERGER_WIDTH/2, 0));
-		Point bottom = p.plus(new Point(0, Merger.MERGER_HEIGHT/2));
-		
-		g2.drawOval(
-				(int)((top.x - Vertex.INIT_VERTEX_RADIUS) * MODEL.PIXELS_PER_METER),
-				(int)((top.y - Vertex.INIT_VERTEX_RADIUS) * MODEL.PIXELS_PER_METER),
-				(int)((2*Vertex.INIT_VERTEX_RADIUS) * MODEL.PIXELS_PER_METER),
-				(int)((2*Vertex.INIT_VERTEX_RADIUS) * MODEL.PIXELS_PER_METER));
-		
-		g2.drawOval(
-				(int)((left.x - Vertex.INIT_VERTEX_RADIUS) * MODEL.PIXELS_PER_METER),
-				(int)((left.y - Vertex.INIT_VERTEX_RADIUS) * MODEL.PIXELS_PER_METER),
-				(int)((2*Vertex.INIT_VERTEX_RADIUS) * MODEL.PIXELS_PER_METER),
-				(int)((2*Vertex.INIT_VERTEX_RADIUS) * MODEL.PIXELS_PER_METER));
-		
-		g2.drawOval(
-				(int)((right.x - Vertex.INIT_VERTEX_RADIUS) * MODEL.PIXELS_PER_METER),
-				(int)((right.y - Vertex.INIT_VERTEX_RADIUS) * MODEL.PIXELS_PER_METER),
-				(int)((2*Vertex.INIT_VERTEX_RADIUS) * MODEL.PIXELS_PER_METER),
-				(int)((2*Vertex.INIT_VERTEX_RADIUS) * MODEL.PIXELS_PER_METER));
-		
-		g2.drawOval(
-				(int)((bottom.x - Vertex.INIT_VERTEX_RADIUS) * MODEL.PIXELS_PER_METER),
-				(int)((bottom.y - Vertex.INIT_VERTEX_RADIUS) * MODEL.PIXELS_PER_METER),
-				(int)((2*Vertex.INIT_VERTEX_RADIUS) * MODEL.PIXELS_PER_METER),
-				(int)((2*Vertex.INIT_VERTEX_RADIUS) * MODEL.PIXELS_PER_METER));
-		
-		g2.setStroke(origStroke);
-		
+		;
 	}
 	
 	public static Rect outlineAABB(Point p) {

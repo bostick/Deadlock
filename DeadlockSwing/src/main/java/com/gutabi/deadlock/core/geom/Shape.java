@@ -1,5 +1,7 @@
 package com.gutabi.deadlock.core.geom;
 
+import java.awt.Graphics2D;
+
 import com.gutabi.deadlock.core.Point;
 
 public abstract class Shape implements Sweepable {
@@ -12,14 +14,14 @@ public abstract class Shape implements Sweepable {
 		this.parent = parent;
 	}
 	
-	public abstract boolean hitTest(Point p);
+	public abstract Shape plus(Point p);
 	
-//	public abstract boolean bestHitTest(Point c, double r);
+	public abstract boolean hitTest(Point p);
 	
 	public abstract boolean intersect(Shape s);
 	
-//	public abstract boolean containedIn(Shape s);
+	public abstract void paint(Graphics2D g2);
 	
-//	public abstract double distanceTo(Point p);
+	public abstract void draw(Graphics2D g2);
 	
 }

@@ -109,4 +109,8 @@ public class Rect {
 		return new Rect(ulX, ulY, brX-ulX, brY-ulY);
 	}
 	
+	public Rect plus(Point p) {
+		return new Rect(x + p.x, y + p.y, width, height);
+	}
+	
 }

@@ -139,13 +139,6 @@ public class Road extends Edge {
 		return seq.getCapsule(i);
 	}
 	
-	/*
-	 * used in debugging
-	 */
-//	public Capsule getCapsule(int i) {
-//		return segs.get(i);
-//	}
-	
 	public Point getStartBorderPoint() {
 		return startBorderPoint;
 	}
@@ -202,21 +195,6 @@ public class Road extends Edge {
 		
 	}
 	
-//	public Entity hitTest(Point p) {
-//		if (aabb.hitTest(p)) {
-//			
-//			for (RoadSegment s : segs.subList(1, segs.size()-1)) {
-//				if (s.hitTest(p) != null) {
-//					return this;
-//				}
-//			}
-//			return null;
-//			
-//		} else {
-//			return null;
-//		}
-//	}
-	
 	public Entity decorationsHitTest(Point p) {
 		
 		Entity hit;
@@ -259,35 +237,6 @@ public class Road extends Edge {
 		return null;
 		
 	}
-
-//	public Entity bestHitTest(Point p, double radius) {
-//		for (RoadSegment s : segs.subList(1, segs.size()-1)) {
-//			if (s.bestHitTest(p, radius) != null) {
-//				return this;
-//			}
-//		}
-//		return null;
-//	}
-//	
-//	public Entity bestHitTest(Quad q) {
-//		for (RoadSegment s : segs.subList(1, segs.size()-1)) {
-//			if (s.bestHitTest(q) != null) {
-//				return this;
-//			}
-//		}
-//		return null;
-//	}
-	
-//	public RoadPosition skeletonHitTest(Point p) {
-//		for (int i = 0; i < caps.size(); i++) {
-//			Capsule c = caps.get(i);
-//			double param = c.skeletonHitTest(p);
-//			if (param != -1) {
-//				return new RoadPosition(this, i, param);
-//			}
-//		}
-//		return null;
-//	}
 	
 	public RoadPosition findSkeletonIntersection(Point c, Point d) {
 		for (int i = 0; i < seq.capsuleCount(); i ++) {

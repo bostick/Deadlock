@@ -43,16 +43,10 @@ public class DeadlockModel {
 		world = new World();
 		world.init();
 		
-		cursor = new Cursor(Vertex.INIT_VERTEX_RADIUS);
-//		stroke = new Stroke();
+		cursor = new RegularCursor(Vertex.INIT_VERTEX_RADIUS);
 		
 		stats = new Stats();
 	}
-	
-	
-	
-//	private BufferedImage backgroundImage;
-//	private Graphics2D backgroundImageG2;
 	
 	public void paint(Graphics2D g2) {
 		
@@ -84,12 +78,5 @@ public class DeadlockModel {
 		}
 		
 	}
-	
-	
-	
-//	public void clear() {
-//		stroke = null;
-//		world = null;
-//	}
 	
 }

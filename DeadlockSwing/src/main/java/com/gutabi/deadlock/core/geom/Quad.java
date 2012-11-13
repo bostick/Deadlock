@@ -52,6 +52,10 @@ public class Quad extends Shape {
 		aabb = new Rect(ulX, ulY, (brX - ulX), (brY - ulY));
 	}
 	
+	public Quad plus(Point p) {
+		return new Quad(parent, p0.plus(p), p1.plus(p), p2.plus(p), p3.plus(p));
+	}
+	
 	public boolean hitTest(Point p) {
 		
 		if (Geom.halfPlane(p, p0, p1) == -1) {
@@ -119,7 +123,7 @@ public class Quad extends Shape {
 		Capsule cap = s.getCapsule(0);
 		
 		if (intersect(cap.ac)) {
-			s.start(new SweepEvent(SweepEventType.ENTERMERGER, this, s, 0, 0.0));
+			s.start(new SweepEvent(SweepEventType.ENTERQUAD, this, s, 0, 0.0));
 		}
 		
 	}
@@ -178,28 +182,15 @@ public class Quad extends Shape {
 			assert DMath.greaterThanEquals(param, 0.0) && DMath.lessThanEquals(param, 1.0);
 			if (DMath.lessThan(param, 1.0) || index == s.pointCount()-1) {
 				if (outside) {
-					s.event(new SweepEvent(SweepEventType.ENTERMERGER, this, s, index, param));
+					s.event(new SweepEvent(SweepEventType.ENTERQUAD, this, s, index, param));
 				} else {
-					s.event(new SweepEvent(SweepEventType.EXITMERGER, this, s, index, param));
+					s.event(new SweepEvent(SweepEventType.EXITQUAD, this, s, index, param));
 				}
 				outside = !outside;
 			}
 		}
 		
 	}
-	
-	
-	
-//	public double distanceTo(Point p) {
-//		if (hitTest(p)) {
-//			return 0.0;
-//		}
-//		double d0 = Point.distance(p, p0, p1);
-//		double d1 = Point.distance(p, p1, p2);
-//		double d2 = Point.distance(p, p2, p3);
-//		double d3 = Point.distance(p, p3, p0);
-//		return Math.min(Math.min(d0, d1), Math.min(d2, d3));
-//	}
 	
 	public boolean containedIn(Quad q) {
 		return q.hitTest(p0) && q.hitTest(p1) && q.hitTest(p2) && q.hitTest(p3);
@@ -222,4 +213,23 @@ public class Quad extends Shape {
 		g2.fillPolygon(xPoints, yPoints, 4);
 		
 	}
+	
+	public void draw(Graphics2D g2) {
+		
+		int[] xPoints = new int[4];
+		int[] yPoints = new int[4];
+		
+		xPoints[0] = (int)(p0.x * MODEL.PIXELS_PER_METER);
+		xPoints[1] = (int)(p1.x * MODEL.PIXELS_PER_METER);
+		xPoints[2] = (int)(p2.x * MODEL.PIXELS_PER_METER);
+		xPoints[3] = (int)(p3.x * MODEL.PIXELS_PER_METER);
+		yPoints[0] = (int)(p0.y * MODEL.PIXELS_PER_METER);
+		yPoints[1] = (int)(p1.y * MODEL.PIXELS_PER_METER);
+		yPoints[2] = (int)(p2.y * MODEL.PIXELS_PER_METER);
+		yPoints[3] = (int)(p3.y * MODEL.PIXELS_PER_METER);
+		
+		g2.drawPolygon(xPoints, yPoints, 4);
+		
+	}
+
 }

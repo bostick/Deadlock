@@ -86,7 +86,6 @@ public class Stroke {
 				events.add(e);
 			}
 		};
-//		startVertex = null;
 		
 		events = new ArrayList<SweepEvent>();
 		
@@ -102,20 +101,16 @@ public class Stroke {
 			logger.debug("start in nothing");
 			vertexEvents.add(new SweepEvent(null, null, sweeper, 0, 0.0));
 		}
-//		else if (vertexCount > 0) {
-//			SweepEvent e = new SweepEvent(SweepEventType.ENTERVERTEX, this, 0, 0.0);
-//			vertexEvents.add(e);
-//		} else if (capsuleCount > 0) {
-//			vertexEvents.add(new SweepEvent(SweepEventType.ENTERCAPSULE, this, 0, 0.0));
-//		} else {
-//			assert mergerCount > 0;
-//			vertexEvents.add(new SweepEvent(SweepEventType.ENTERMERGER, this, 0, 0.0));
-//		}
 		
 		for (int i = 0; i < pts.size()-1; i++) {
+			
 			events = new ArrayList<SweepEvent>();
 			
 			MODEL.world.sweep(sweeper, i);
+			
+//			for (int j = 0; j < i; j++) {
+//				caps.get(j).sweep(sweeper, i);
+//			}
 			
 			Collections.sort(events, SweepEvent.COMPARATOR);
 			
@@ -124,22 +119,10 @@ public class Stroke {
 			}
 		}
 		
-//		sweepEnd();
-		
-//		logger.debug("counts at end: " + vertexCount + " " + capsuleCount + " " + mergerCount);
-		
 		if ((vertexCount + capsuleCount + mergerCount) == 0) {
 			logger.debug("end in nothing");
 			vertexEvents.add(new SweepEvent(null, null, sweeper, pts.size()-1, 0.0));
 		}
-//		else if (vertexCount > 0) {
-//			vertexEvents.add(new SweepEvent(SweepEventType.EXITVERTEX, this, pts.size()-1, 0.0));
-//		} else if (capsuleCount > 0) {
-//			vertexEvents.add(new SweepEvent(SweepEventType.EXITCAPSULE, this, pts.size()-1, 0.0));
-//		} else {
-//			assert mergerCount > 0;
-//			vertexEvents.add(new SweepEvent(SweepEventType.EXITMERGER, this, pts.size()-1, 0.0));
-//		}
 		
 		if (logger.isDebugEnabled()) {
 			logger.debug("vertexEvents:");
@@ -149,79 +132,22 @@ public class Stroke {
 		return vertexEvents;
 	}
 	
-//	public void sweepStart() {
-//		
-//		
-//	}
-	
-//	public void sweepEnd() {
-//		events = new ArrayList<SweepEvent>();
-//		
-//		MODEL.world.sweepEnd(this, this);
-//		
-//		Collections.sort(events, SweepEvent.COMPARATOR);
-//		
-//		for (SweepEvent e : events) {
-//			endSorted(e);
-//		}
-//		
-//	}
-	
-//	public void sweep(int index) {
-//		
-//		
-//	}
-	
-//	public void start(SweepEvent e) {
-//		if (events.isEmpty() && e.type == SweepEventType.EXITVERTEX && vertexCount == 0) {
-//			String.class.getName();
-//		}
-//		events.add(e);
-////		logger.debug("start: added to events: " + events);
-//	}
-	
-//	public void end(SweepEvent e) {
-//		events.add(e);
-////		logger.debug("start: added to events: " + events);
-//	}
-	
-//	public void event(SweepEvent e) {
-//		if (events.isEmpty() && e.type == SweepEventType.EXITVERTEX && vertexCount == 0) {
-//			String.class.getName();
-//		}
-//		events.add(e);
-////		logger.debug("event: added to events: " + events);
-//	}
-//	
 	private void startSorted(SweepEvent e) {
 		logger.debug("startSorted: " + e + " " + e.shape + " " + e.index + "" + e.param);
 		switch (e.type) {
-//		case CAPSULESTART:
-//			count++;
-////			if (count == 1) {
-////				vertexEvents.add(e);
-////			}
-//			break;
-//		case VERTEXSTART:
-//			count++;
-////			if (count == 1) {
-////				vertexEvents.add(e);
-////			}
-//			break;
 		case ENTERCAPSULE:
 			capsuleCount++;
 			if ((vertexCount + capsuleCount + mergerCount) == 1) {
 				vertexEvents.add(e);
 			}
 			break;
-		case ENTERVERTEX:
-//			startVertex = e.getVertex();
+		case ENTERCIRCLE:
 			vertexCount++;
 			if ((vertexCount + capsuleCount + mergerCount) == 1) {
 				vertexEvents.add(e);
 			}
 			break;
-		case ENTERMERGER:
+		case ENTERQUAD:
 			mergerCount++;
 			if ((vertexCount + capsuleCount + mergerCount) == 1) {
 				vertexEvents.add(e);
@@ -233,44 +159,10 @@ public class Stroke {
 		}
 	}
 	
-//	private void endSorted(SweepEvent e) {
-//		logger.debug("endSorted: " + e + " " + e.o + " " + e.index + "" + e.param);
-//		switch (e.type) {
-//		case EXITCAPSULE:
-//			capsuleCount--;
-//			if ((vertexCount + capsuleCount + mergerCount) == 0) {
-//				vertexEvents.add(e);
-//			}
-//			break;
-//		case EXITVERTEX:
-////			startVertex = e.getVertex();
-//			vertexCount--;
-//			if ((vertexCount + capsuleCount + mergerCount) == 0) {
-//				vertexEvents.add(e);
-//			}
-//			break;
-//		case EXITMERGER:
-//			mergerCount--;
-//			if ((vertexCount + capsuleCount + mergerCount) == 0) {
-//				vertexEvents.add(e);
-//			}
-//			break;
-//		default:
-//			assert false;
-//			break;
-//		}
-//	}
-	
 	private void eventSorted(SweepEvent e) {
 		logger.debug("eventSorted: " + e + " " + e.shape + " " + e.index + "" + e.param);
 		switch (e.type) {
-//		case CAPSULESTART:
-//		case VERTEXSTART:
-//		case NOTHINGSTART:
-//		case NOTHINGEND:
-//			assert false;
-//			break;
-		case ENTERVERTEX:
+		case ENTERCIRCLE:
 			vertexCount++;
 			if ((vertexCount + capsuleCount + mergerCount) == 1) {
 				vertexEvents.add(e);
@@ -282,7 +174,7 @@ public class Stroke {
 				vertexEvents.add(e);
 			}
 			break;
-		case EXITVERTEX:
+		case EXITCIRCLE:
 			vertexCount--;
 			assert vertexCount >= 0;
 			if ((vertexCount + capsuleCount + mergerCount) == 0) {
@@ -296,13 +188,13 @@ public class Stroke {
 				vertexEvents.add(e);
 			}
 			break;
-		case ENTERMERGER:
+		case ENTERQUAD:
 			mergerCount++;
 			if ((vertexCount + capsuleCount + mergerCount) == 1) {
 				vertexEvents.add(e);
 			}
 			break;
-		case EXITMERGER:
+		case EXITQUAD:
 			mergerCount--;
 			assert mergerCount >= 0;
 			if ((vertexCount + capsuleCount + mergerCount) == 0) {

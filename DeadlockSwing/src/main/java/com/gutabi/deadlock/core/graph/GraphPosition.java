@@ -31,12 +31,6 @@ public abstract class GraphPosition {
 		this.a = a;
 	}
 	
-//	public abstract Entity getEntity();
-//	
-//	public abstract Axis getAxis();
-	
-//	public abstract GraphPosition travelFromConnectedVertex(Vertex v, double dist);
-	
 	public abstract double distanceToConnectedVertex(Vertex v);
 	
 	public double distanceTo(GraphPosition p) {
@@ -156,60 +150,5 @@ public abstract class GraphPosition {
 		}
 		
 	}
-	
-//	private GraphPosition travelToV(VertexPosition p, double distance) {
-//		
-//		if (this instanceof VertexPosition) {
-//			
-////			Vertex v = ((VertexPosition)this).v;
-////			
-////			Edge e = Vertex.commonEdge(v, p.v);
-////			
-////			GraphPosition traveled = ((VertexPosition)this).travel(e, p.v, distance);
-////			
-////			return traveled;
-//			
-//			throw new IllegalArgumentException();
-//			
-//		} else {
-//			
-//			RoadPosition ep = (RoadPosition)this;
-//			
-//			assert ep.r.start == p.v || ep.r.end == p.v;
-//			assert !ep.r.isLoop();
-//			
-//			GraphPosition traveled = ep.travel(p, distance);
-//			
-//			return traveled;
-//		}
-//		
-//	}
-	
-//	private GraphPosition travelToE(RoadPosition p, double distance) {
-//		
-//		if (this instanceof VertexPosition) {
-//			
-//			VertexPosition vp = (VertexPosition)this;
-//			
-//			assert p.r.start == vp.v || p.r.end == vp.v;
-//			assert !p.r.isLoop();
-//			
-//			return vp.travel(p.r, (p.r.start == vp.v) ? p.r.end : p.r.start, distance);
-//			
-//		} else {
-//			
-//			RoadPosition ep = (RoadPosition)this;
-//			
-//			assert p.r == ep.r;
-//			
-//			if (ep.index < p.index || (ep.index == p.index && DMath.lessThan(ep.param, p.param))) {
-//				// ep -> p is same direction as edge
-//				return ep.travel(new VertexPosition(ep.r.end), distance);
-//			} else {
-//				return ep.travel(new VertexPosition(ep.r.start), distance);
-//			}
-//		}
-//		
-//	}
 	
 }

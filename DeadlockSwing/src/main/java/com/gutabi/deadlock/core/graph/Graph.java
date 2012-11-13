@@ -18,6 +18,7 @@ import com.gutabi.deadlock.core.geom.Rect;
 import com.gutabi.deadlock.core.geom.Shape;
 import com.gutabi.deadlock.core.geom.Sweepable;
 import com.gutabi.deadlock.core.geom.Sweeper;
+import com.gutabi.deadlock.model.Cursor;
 
 @SuppressWarnings("static-access")
 public class Graph implements Sweepable {
@@ -561,7 +562,19 @@ public class Graph implements Sweepable {
 		return closest;
 	}
 	
-	
+	public boolean cursorIntersect(Cursor c) {
+		for (Vertex v : vertices) {
+			if (c.intersect(v.shape)) {
+				return true;
+			}
+		}
+		for (Edge ed : edges) {
+			if (c.intersect(ed.shape)) {
+				return true;
+			}
+		}
+		return false;
+	}
 	
 	
 	

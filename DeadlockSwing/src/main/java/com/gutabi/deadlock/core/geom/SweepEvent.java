@@ -11,16 +11,12 @@ public class SweepEvent {
 		
 		ENTERCAPSULE,
 		EXITCAPSULE,
-		ENTERVERTEX,
-		EXITVERTEX,
 		
-		ENTERMERGER,
-		EXITMERGER
+		ENTERCIRCLE,
+		EXITCIRCLE,
 		
-//		CAPSULESTART,
-//		VERTEXSTART,
-//		NOTHINGSTART,
-//		NOTHINGEND
+		ENTERQUAD,
+		EXITQUAD
 		
 	}
 	
@@ -29,12 +25,8 @@ public class SweepEvent {
 	public final Sweeper sweeper;
 	public final int index;
 	public final double param;
-//	public final Object o;
 	public final Point p;
 	public final Circle circle;
-	
-	
-//	private Vertex v;
 	
 	public SweepEvent(SweepEventType type, Shape shape, Sweeper sweeper, int index, double param) {
 		this.type = type;
@@ -42,7 +34,6 @@ public class SweepEvent {
 		this.sweeper = sweeper;
 		this.index = index;
 		this.param = param;
-//		this.o = o;
 		
 		p = sweeper.getPoint(index, param);
 		circle = new Circle(sweeper, p, sweeper.radius);
@@ -63,14 +54,6 @@ public class SweepEvent {
 			return "null";
 		}
 	}
-	
-//	public void setVertex(Vertex v) {
-//		this.v = v;
-//	}
-//	
-//	public Vertex getVertex() {
-//		return v;
-//	}
 	
 	public static Comparator<SweepEvent> COMPARATOR = new SweepEventComparator();
 	

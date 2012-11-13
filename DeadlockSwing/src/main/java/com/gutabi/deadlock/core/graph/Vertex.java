@@ -59,17 +59,6 @@ public abstract class Vertex extends Entity {
 		return r;
 	}
 	
-//	public void sweepEnd(Stroke s, SweepEventListener l) {
-//		
-//		Point d = s.pts.get(s.pts.size()-1);
-//		
-//		if (bestHitTest(d, s.r)) {
-//			SweepEvent e = new SweepEvent(SweepEventType.EXITVERTEX, this, s, s.pts.size()-1, 0.0);
-//			l.end(e);
-//		}
-//		
-//	}
-	
 	public VertexPosition skeletonHitTest(Point p) {
 		if (p.equals(this.p)) {
 			return new VertexPosition(this);
@@ -208,11 +197,7 @@ public abstract class Vertex extends Entity {
 		
 		g2.setColor(hiliteColor);
 		
-		g2.fillOval(
-				(int)((p.x - r) * MODEL.PIXELS_PER_METER),
-				(int)((p.y - r) * MODEL.PIXELS_PER_METER),
-				(int)((2 * r) * MODEL.PIXELS_PER_METER),
-				(int)((2 * r) * MODEL.PIXELS_PER_METER));
+		shape.paint(g2);
 		
 		g2.setTransform(origTransform);
 		

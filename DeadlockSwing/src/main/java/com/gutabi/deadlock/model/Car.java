@@ -85,13 +85,8 @@ public abstract class Car extends Entity {
 	Matrix carTrans;
 	float carAngle;
 	boolean atleastPartiallyOnRoad;
-//	boolean completelyOnRoad;
 	boolean inMerger;
 	GraphPositionPathPosition overallPos;
-//	Point worldPoint1;
-//	Point worldPoint2;
-//	Point worldPoint3;
-//	Point worldPoint4;
 	Quad worldQuad;
 	Point prevWorldPoint0;
 	Point prevWorldPoint3;
@@ -246,9 +241,6 @@ public abstract class Car extends Entity {
 	
 	private void computeDynamicProperties() {
 		
-//		Point prevP = p;
-//		Point prevWorldPoint1 = worldPoint1;
-//		Point prevWorldPoint2 = worldPoint1;
 		prevWorldPoint0 = worldQuad.p0;
 		prevWorldPoint3 = worldQuad.p3;
 		
@@ -271,10 +263,6 @@ public abstract class Car extends Entity {
 		carTrans = new Matrix(r.col1.x, r.col2.x, r.col1.y, r.col2.y);
 		carAngle = b2dBody.getAngle();
 		
-//		worldPoint1 = carToWorld(p1);
-//		worldPoint2 = carToWorld(p2);
-//		worldPoint3 = carToWorld(p3);
-//		worldPoint4 = carToWorld(p4);
 		worldQuad = Geom.localToWorld(localQuad, carTrans, p);
 		shape = worldQuad;
 		
@@ -283,7 +271,6 @@ public abstract class Car extends Entity {
 		boolean wasInMerger = inMerger;
 		if (e == null) {
 			atleastPartiallyOnRoad = false;
-//			completelyOnRoad = false;
 			inMerger = false;
 		} else {
 			atleastPartiallyOnRoad = true;
@@ -306,27 +293,7 @@ public abstract class Car extends Entity {
 			}
 		}
 		
-		
-//		computeAABB();
-		
 	}
-	
-//	protected void computeAABB() {
-//		
-//		aabb = null;
-//		
-//		aabb = new Rect(b2dAABB.lowerBound.x, b2dAABB.lowerBound.y, b2dAABB.upperBound.x-b2dAABB.lowerBound.x, b2dAABB.upperBound.y-b2dAABB.lowerBound.y);
-//	}
-	
-	
-//	private Point carToWorld(Point c) {
-//		return carTrans.times(c).plus(p);
-//	}
-//	
-//	private Quad carToWorld(Quad q) {
-//		return carTrans.times(c).plus(p);
-//	}
-	
 	
 	
 	public void destroy() {
@@ -338,47 +305,6 @@ public abstract class Car extends Entity {
 		MODEL.world.b2dWorld.destroyBody(b2dBody);
 	}
 	
-	
-	
-	
-//	public Point worldPoint1() {
-//		return worldPoint1;
-//	}
-//	public Point worldPoint2() {
-//		return worldPoint2;
-//	}
-//	public Point worldPoint3() {
-//		return worldPoint3;
-//	}
-//	public Point worldPoint4() {
-//		return worldPoint4;
-//	}
-	
-//	public Car hitTest(Point p) {
-//		if (aabb.hitTest(p)) {
-//			
-//			if (worldQuad.hitTest(p)) {
-//				return this;
-//			} else {
-//				return null;
-//			}
-//			
-//		} else {
-//			return null;
-//		}
-//	}
-//	
-//	public Car bestHitTest(Point p, double r) {
-//		if (worldQuad.bestHitTest(p, r)) {
-//			return this;
-//		} else {
-//			return null;
-//		}
-//	}
-//	
-//	public Car bestHitTest(Quad q) {
-//		
-//	}
 	
 	public boolean isDeleteable() {
 		return true;
@@ -809,17 +735,6 @@ public abstract class Car extends Entity {
 		
 		return true;	
 	}
-	
-	
-	
-//	public double distanceTo(Point p) {
-//		double d1 = Point.distance(p, worldPoint1);
-//		double d2 = Point.distance(p, worldPoint2);
-//		double d3 = Point.distance(p, worldPoint3);
-//		double d4 = Point.distance(p, worldPoint4);
-//		return Math.min(Math.min(d1, d2), Math.min(d3, d4));
-//	}
-	
 	
 	
 	/**

@@ -1,11 +1,6 @@
 
 IMMEDIATELY:
 
-status of cursor
-how many vertices, capsules, etc. currently hitting?
-
-test if Merger is hitting anything else before adding
-
 crashes
 find a fire gif and start animating sprites
 
@@ -14,6 +9,13 @@ option to remove braking, friction, skidding, etc.
 
 
 IN THE NEXT WEEK:
+
+draw a loop
+stand-alone loop
+
+status of cursor
+how many vertices, capsules, etc. currently hitting?
+
 
 add countdowns
 
@@ -37,6 +39,9 @@ switch to opengl
 start work on popup menu
 
 DONE:
+
+test if Merger is hitting anything else before adding
+
 
 skidding if completely off road
 

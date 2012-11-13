@@ -46,13 +46,9 @@ public class Intersection extends Vertex {
 		
 		g2.scale(MODEL.METERS_PER_PIXEL, MODEL.METERS_PER_PIXEL);
 		
-		g2.setColor(hiliteColor);
+		g2.setColor(color);
 		
-		g2.fillOval(
-				(int)((p.x - r) * MODEL.PIXELS_PER_METER),
-				(int)((p.y - r) * MODEL.PIXELS_PER_METER),
-				(int)((2 * r) * MODEL.PIXELS_PER_METER),
-				(int)((2 * r) * MODEL.PIXELS_PER_METER));
+		shape.paint(g2);
 		
 		g2.setTransform(origTransform);
 		

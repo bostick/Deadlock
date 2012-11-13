@@ -35,8 +35,6 @@ public class Capsule extends Shape {
 	private final Point bUp;
 	private final Point bDown;
 	
-//	SweepEventListener l;
-	
 	private final int hash;
 	
 	static Logger logger = Logger.getLogger(Capsule.class);
@@ -89,12 +87,9 @@ public class Capsule extends Shape {
 		return "(" + a + " " + b + ")";
 	}
 	
-//	public double distanceTo(Point p) {
-//		double aDist = ac.distanceTo(p);
-//		double bDist = bc.distanceTo(p);
-//		double mDist = middle.distanceTo(p);
-//		return Math.min(aDist, Math.min(mDist, bDist));
-//	}
+	public Capsule plus(Point p) {
+		return new Capsule(parent, new Circle(parent, a.plus(p), ac.radius), new Circle(parent, b.plus(p), bc.radius));
+	}
 	
 	public boolean hitTest(Point p) {
 		if (ac.hitTest(p)) {
@@ -154,7 +149,6 @@ public class Capsule extends Shape {
 		 */
 		
 		double[] capParams = new double[2];
-		//int n = SweepUtils.sweepCircleCap(b, a, c, d, s.r, r, capParams);
 		int n = SweepUtils.sweepCircleCircle(a, c, d, cap.r, r, capParams);
 		
 		for (int i = 0; i < n; i++) {
@@ -207,7 +201,6 @@ public class Capsule extends Shape {
 		 * b cap
 		 */
 		
-//		n = SweepUtils.sweepCircleCap(a, b, c, d, s.r, r, capParams);
 		n = SweepUtils.sweepCircleCircle(b, c, d, cap.r, r, capParams);
 		
 		for (int i = 0; i < n; i++) {
@@ -284,30 +277,6 @@ public class Capsule extends Shape {
 		
 	}
 	
-//	public Capsule hitTest(Point p) {
-//		if (aabb.hitTest(p)) {
-//			
-//			if (DMath.lessThanEquals(Point.distance(p, a, b), r)) {
-//				return this;
-//			}
-//			return null;
-//			
-//		} else {
-//			return null;
-//		}
-//	}
-//	
-//	public Capsule bestHitTest(Point p, double radius) {
-//		if (DMath.lessThanEquals(Point.distance(p, a, b), r + radius)) {
-//			return this;
-//		}
-//		return null;
-//	}
-//	
-//	public Capsule bestHitTest(Quad q) {
-//		
-//	}
-	
 	public double skeletonHitTest(Point p) {
 		if (Point.intersect(p, a, b)){
 			return Point.param(p, a, b);
@@ -331,29 +300,21 @@ public class Capsule extends Shape {
 	
 	public void paint(Graphics2D g2) {
 		
-		int[] xPoints = new int[4];
-		int[] yPoints = new int[4];
+//		int[] xPoints = new int[4];
+//		int[] yPoints = new int[4];
+//		
+//		xPoints[0] = (int)(aUp.x * MODEL.PIXELS_PER_METER);
+//		xPoints[1] = (int)(bUp.x * MODEL.PIXELS_PER_METER);
+//		xPoints[2] = (int)(bDown.x * MODEL.PIXELS_PER_METER);
+//		xPoints[3] = (int)(aDown.x * MODEL.PIXELS_PER_METER);
+//		yPoints[0] = (int)(aUp.y * MODEL.PIXELS_PER_METER);
+//		yPoints[1] = (int)(bUp.y * MODEL.PIXELS_PER_METER);
+//		yPoints[2] = (int)(bDown.y * MODEL.PIXELS_PER_METER);
+//		yPoints[3] = (int)(aDown.y * MODEL.PIXELS_PER_METER);
 		
-		xPoints[0] = (int)(aUp.x * MODEL.PIXELS_PER_METER);
-		xPoints[1] = (int)(bUp.x * MODEL.PIXELS_PER_METER);
-		xPoints[2] = (int)(bDown.x * MODEL.PIXELS_PER_METER);
-		xPoints[3] = (int)(aDown.x * MODEL.PIXELS_PER_METER);
-		yPoints[0] = (int)(aUp.y * MODEL.PIXELS_PER_METER);
-		yPoints[1] = (int)(bUp.y * MODEL.PIXELS_PER_METER);
-		yPoints[2] = (int)(bDown.y * MODEL.PIXELS_PER_METER);
-		yPoints[3] = (int)(aDown.y * MODEL.PIXELS_PER_METER);
-		
-		g2.fillOval(
-				(int)((a.x - r) * MODEL.PIXELS_PER_METER),
-				(int)((a.y - r) * MODEL.PIXELS_PER_METER),
-				(int)(2 * r * MODEL.PIXELS_PER_METER),
-				(int)(2 * r * MODEL.PIXELS_PER_METER));
-		g2.fillPolygon(xPoints, yPoints, 4);
-		g2.fillOval(
-				(int)((b.x - r) * MODEL.PIXELS_PER_METER),
-				(int)((b.y - r) * MODEL.PIXELS_PER_METER),
-				(int)(2 * r * MODEL.PIXELS_PER_METER),
-				(int)(2 * r * MODEL.PIXELS_PER_METER));
+		ac.paint(g2);
+		middle.paint(g2);
+		bc.paint(g2);
 		
 		if (MODEL.DEBUG_DRAW) {
 			
@@ -373,29 +334,33 @@ public class Capsule extends Shape {
 	
 	public void draw(Graphics2D g2) {
 		
-		int[] xPoints = new int[4];
-		int[] yPoints = new int[4];
+//		int[] xPoints = new int[4];
+//		int[] yPoints = new int[4];
+//		
+//		xPoints[0] = (int)(aUp.x * MODEL.PIXELS_PER_METER);
+//		xPoints[1] = (int)(bUp.x * MODEL.PIXELS_PER_METER);
+//		xPoints[2] = (int)(bDown.x * MODEL.PIXELS_PER_METER);
+//		xPoints[3] = (int)(aDown.x * MODEL.PIXELS_PER_METER);
+//		yPoints[0] = (int)(aUp.y * MODEL.PIXELS_PER_METER);
+//		yPoints[1] = (int)(bUp.y * MODEL.PIXELS_PER_METER);
+//		yPoints[2] = (int)(bDown.y * MODEL.PIXELS_PER_METER);
+//		yPoints[3] = (int)(aDown.y * MODEL.PIXELS_PER_METER);
 		
-		xPoints[0] = (int)(aUp.x * MODEL.PIXELS_PER_METER);
-		xPoints[1] = (int)(bUp.x * MODEL.PIXELS_PER_METER);
-		xPoints[2] = (int)(bDown.x * MODEL.PIXELS_PER_METER);
-		xPoints[3] = (int)(aDown.x * MODEL.PIXELS_PER_METER);
-		yPoints[0] = (int)(aUp.y * MODEL.PIXELS_PER_METER);
-		yPoints[1] = (int)(bUp.y * MODEL.PIXELS_PER_METER);
-		yPoints[2] = (int)(bDown.y * MODEL.PIXELS_PER_METER);
-		yPoints[3] = (int)(aDown.y * MODEL.PIXELS_PER_METER);
+//		g2.drawOval(
+//				(int)((a.x - r) * MODEL.PIXELS_PER_METER),
+//				(int)((a.y - r) * MODEL.PIXELS_PER_METER),
+//				(int)(2 * r * MODEL.PIXELS_PER_METER),
+//				(int)(2 * r * MODEL.PIXELS_PER_METER));
+//		g2.drawPolygon(xPoints, yPoints, 4);
+//		g2.drawOval(
+//				(int)((b.x - r) * MODEL.PIXELS_PER_METER),
+//				(int)((b.y - r) * MODEL.PIXELS_PER_METER),
+//				(int)(2 * r * MODEL.PIXELS_PER_METER),
+//				(int)(2 * r * MODEL.PIXELS_PER_METER));
 		
-		g2.drawOval(
-				(int)((a.x - r) * MODEL.PIXELS_PER_METER),
-				(int)((a.y - r) * MODEL.PIXELS_PER_METER),
-				(int)(2 * r * MODEL.PIXELS_PER_METER),
-				(int)(2 * r * MODEL.PIXELS_PER_METER));
-		g2.drawPolygon(xPoints, yPoints, 4);
-		g2.drawOval(
-				(int)((b.x - r) * MODEL.PIXELS_PER_METER),
-				(int)((b.y - r) * MODEL.PIXELS_PER_METER),
-				(int)(2 * r * MODEL.PIXELS_PER_METER),
-				(int)(2 * r * MODEL.PIXELS_PER_METER));
+		ac.draw(g2);
+		middle.draw(g2);
+		bc.draw(g2);
 		
 	}
 	

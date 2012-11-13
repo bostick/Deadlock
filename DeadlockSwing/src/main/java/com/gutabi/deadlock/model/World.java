@@ -158,18 +158,6 @@ public class World implements Sweepable {
 		
 	}
 	
-//	public void addSource(WorldSource s) {
-//		graph.addVertex(s);
-//	}
-//	
-//	public void addSink(WorldSink s) {
-//		graph.addVertex(s);
-//	}
-//	
-//	public void addIntersection(Intersection i) {
-//		graph.addVertex(i);
-//	}
-	
 	public void addVertexTop(Vertex v) {
 		graph.addVertexTop(v);
 		
@@ -218,20 +206,9 @@ public class World implements Sweepable {
 		postRunningTop();
 	}
 	
-//	public void processNewStrokeTop(Stroke stroke) {
-//		
-//		stroke.processNewStrokeTop(graph);
-//		
-//		postDraftingTop();
-//	}
-	
 	public void sweepStart(Sweeper s) {
 		graph.sweepStart(s);
 	}
-	
-//	public void sweepEnd(Stroke s, SweepEventListener l) {
-//		graph.sweepEnd(s, l);
-//	}
 	
 	public void sweep(Sweeper s, int index) {
 		graph.sweep(s, index);
@@ -302,8 +279,6 @@ public class World implements Sweepable {
 	public void postStop() {
 		
 		graph.postStop();
-		
-//		skidMarks.clear();
 		
 		synchronized (MODEL) {
 			for (Car c : cars) {
@@ -399,32 +374,12 @@ public class World implements Sweepable {
 		if (c != null) {
 			return c;
 		}
-//		StopSign s = signHitTest(p);
-//		if (s != null) {
-//			return s;
-//		}
 		Entity h = graphHitTest(p);
 		if (h != null) {
 			return h;
 		}
 		return null;
 	}
-	
-//	public Entity bestHitTestX(Point p, double r) {
-//		Car c = carBestHitTest(p, r);
-//		if (c != null) {
-//			return c;
-//		}
-////		StopSign s = signBestHitTest(p, r);
-////		if (s != null) {
-////			return s;
-////		}
-//		Entity h = graphBestHitTest(p, r);
-//		if (h != null) {
-//			return h;
-//		}
-//		return null;
-//	}
 	
 	public Car carHitTest(Point p) {
 		synchronized (MODEL) {
@@ -456,22 +411,6 @@ public class World implements Sweepable {
 		return graph.graphBestHitTest(s);
 	}
 	
-//	public StopSign signHitTest(Point p) {
-//		return graph.signHitTest(p);
-//	}
-//	
-//	public StopSign signBestHitTest(Point p, double r) {
-//		return graph.signBestHitTest(p, r);
-//	}
-	
-//	public Entity graphBestHitTest(Point p, double r) {
-//		return graph.graphBestHitTest(p, r);
-//	}
-	
-//	public Entity pureGraphBestHitTest(Entity e) {
-//		return graph.pureGraphBestHitTest(e);
-//	}
-	
 	public Entity pureGraphBestHitTest(Shape s) {
 		return graph.pureGraphBestHitTest(s);
 	}
@@ -498,6 +437,10 @@ public class World implements Sweepable {
 		}
 		
 		return false;
+	}
+	
+	public boolean cursorIntersect(Cursor c) {
+		return graph.cursorIntersect(c);
 	}
 	
 	public void paint(Graphics2D g2) {
@@ -595,12 +538,6 @@ public class World implements Sweepable {
 		g2.drawImage(skidMarksImage, 0, 0, null);
 	}
 	
-//	public Runnable renderBackgroundRunnable = new Runnable() {
-//		public void run() {
-//			renderBackground();
-//		}
-//	};
-	
 	
 	private BufferedImage backgroundImage;
 	private Graphics2D backgroundImageG2;
@@ -670,14 +607,6 @@ public class World implements Sweepable {
 	
 	public void renderSkidMarksIncremental() {
 		assert !Thread.holdsLock(MODEL);
-//		assert SwingUtilities.isEventDispatchThread();
-//		assert Thread.currentThread().getName().equals("controller");
-		
-//		AffineTransform origTransform = skidMarksImageG2.getTransform();
-		
-//		skidMarksImageG2.translate(
-//				(int)((-aabb.x) * MODEL.PIXELS_PER_METER),
-//				(int)((-aabb.y) * MODEL.PIXELS_PER_METER));
 		
 		skidMarksImageG2.setColor(Color.BLACK);
 		skidMarksImageG2.setStroke(skidMarkStroke);
@@ -693,8 +622,6 @@ public class World implements Sweepable {
 		}
 		
 		skidMarksActive = true;
-		
-//		skidMarksImageG2.setTransform(origTransform);
 		
 	}
 	

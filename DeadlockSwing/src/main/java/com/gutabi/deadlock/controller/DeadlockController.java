@@ -21,7 +21,6 @@ import com.gutabi.deadlock.DeadlockMain;
 import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.core.geom.Capsule;
 import com.gutabi.deadlock.core.geom.SweepEvent;
 import com.gutabi.deadlock.core.geom.SweepEvent.SweepEventType;
 import com.gutabi.deadlock.core.graph.Intersection;
@@ -30,6 +29,8 @@ import com.gutabi.deadlock.core.graph.Road;
 import com.gutabi.deadlock.core.graph.RoadPosition;
 import com.gutabi.deadlock.core.graph.Vertex;
 import com.gutabi.deadlock.model.Car;
+import com.gutabi.deadlock.model.MergerCursor;
+import com.gutabi.deadlock.model.RegularCursor;
 import com.gutabi.deadlock.model.StopSign;
 import com.gutabi.deadlock.model.Stroke;
 
@@ -246,6 +247,7 @@ public class DeadlockController implements ActionListener {
 	
 	
 	Point lastMovedWorldPoint;
+	Point penMovedWorldPoint;
 	
 	public void moved(InputEvent ev) {
 		
@@ -257,6 +259,7 @@ public class DeadlockController implements ActionListener {
 			
 			Point p = ev.p;
 			
+			penMovedWorldPoint = lastMovedWorldPoint;
 			lastMovedWorldPoint = VIEW.panelToWorld(p);
 			
 			MODEL.cursor.setPoint(lastMovedWorldPoint);
@@ -269,6 +272,10 @@ public class DeadlockController implements ActionListener {
 //				Entity closest = MODEL.world.bestHitTest(MODEL.cursor.getPoint(), MODEL.cursor.r);
 				Entity closest = MODEL.world.hitTest(MODEL.cursor.getPoint());
 				MODEL.hilited = closest;
+				
+				if (penMovedWorldPoint != null) {
+					
+				}
 				
 				VIEW.repaint();
 				
@@ -343,20 +350,24 @@ public class DeadlockController implements ActionListener {
 			
 			mode = ControlMode.MERGEROUTLINE;
 			
-			MODEL.cursor.computeAABB();
+			MODEL.cursor = new MergerCursor();
+			
+			MODEL.cursor.setPoint(lastMovedWorldPoint);
 			
 			VIEW.repaint();
 			
 			break;
 		case MERGEROUTLINE:
 			
-			if (true) {
+			if (!MODEL.world.cursorIntersect(MODEL.cursor)) {
 				
 				MODEL.world.insertMergerTop(lastMovedWorldPoint);
 				
 				mode = ControlMode.IDLE;
 				
-				MODEL.cursor.computeAABB();
+				MODEL.cursor = new RegularCursor(Vertex.INIT_VERTEX_RADIUS);
+				
+				MODEL.cursor.setPoint(lastMovedWorldPoint);
 				
 				renderAndPaintInBackground();
 				
@@ -527,33 +538,22 @@ public class DeadlockController implements ActionListener {
 	
 	private void removeVertexTop(Vertex v) {
 		MODEL.world.removeVertexTop(v);
-//		postIdleTop();
 	}
 	
 	private void removeRoadTop(Road e) {
 		MODEL.world.removeRoadTop(e);
-//		postIdleTop();
 	}
 	
 	private void removeMergerTop(Merger m) {
 		MODEL.world.removeMergerTop(m);
-//		postIdleTop();
 	}
 	
 	private void removeStopSignTop(StopSign s) {
 		MODEL.world.removeStopSignTop(s);
-//		postIdleTop();
 	}
 	
 	private void removeCarTop(Car c) {
 		MODEL.world.removeCarTop(c);
-//		c.destroy();
-//		
-//		synchronized (MODEL) {
-//			cars.remove(c);
-//		}
-//		
-//		postRunningTop();
 	}
 	
 	
@@ -581,11 +581,10 @@ public class DeadlockController implements ActionListener {
 				
 				if (hit instanceof Road) {
 					
-					assert hit instanceof Road;
 					logger.debug("split");
 					
-					Road r = (Road)((Capsule)e.shape).parent;
-					assert MODEL.world.isValidRoad(r);
+//					Road r = (Road)((Capsule)e.shape).parent;
+//					assert MODEL.world.isValidRoad(r);
 					
 					RoadPosition pos = null;
 					
@@ -596,7 +595,7 @@ public class DeadlockController implements ActionListener {
 						Point a = s.pts.get(j);
 						Point b = s.pts.get(j+1);
 						
-						RoadPosition skeletonIntersection = r.findSkeletonIntersection(a, b);
+						RoadPosition skeletonIntersection = ((Road)hit).findSkeletonIntersection(a, b);
 						
 						if (skeletonIntersection != null) {
 							
@@ -631,8 +630,8 @@ public class DeadlockController implements ActionListener {
 					
 					logger.debug("split");
 					
-					Road r = (Road)((Capsule)e.shape).parent;
-					assert MODEL.world.isValidRoad(r);
+//					Road r = (Road)((Capsule)e.shape).parent;
+//					assert MODEL.world.isValidRoad(r);
 					
 					RoadPosition pos = null;
 					
@@ -643,7 +642,7 @@ public class DeadlockController implements ActionListener {
 						Point a = s.pts.get(j);
 						Point b = s.pts.get(j+1);
 						
-						RoadPosition skeletonIntersection = r.findSkeletonIntersection(a, b);
+						RoadPosition skeletonIntersection = ((Road)hit).findSkeletonIntersection(a, b);
 						
 						if (skeletonIntersection != null) {
 							
@@ -679,7 +678,7 @@ public class DeadlockController implements ActionListener {
 			SweepEvent e0 = events.get(i);
 			SweepEvent e1 = events.get(i+1);
 			
-			if (e0.type == SweepEventType.ENTERVERTEX && e1.type == SweepEventType.EXITVERTEX) {
+			if (e0.type == SweepEventType.ENTERCIRCLE && e1.type == SweepEventType.EXITCIRCLE) {
 				
 				logger.debug("skipping");
 				i = i+1;
@@ -700,14 +699,11 @@ public class DeadlockController implements ActionListener {
 				e0 = events.get(i);
 				e1 = events.get(i+1);
 				
-			} else if (e0.type == SweepEventType.ENTERMERGER || e1.type == SweepEventType.ENTERMERGER) {
+			} else if (e0.type == SweepEventType.ENTERQUAD || e1.type == SweepEventType.EXITQUAD) {
 				
 				return;
 				
 			}
-			
-//			Point e0p = s.getPoint(e0.index, e0.param);
-//			Point e1p = s.getPoint(e1.index, e1.param);
 			
 			Vertex v0 = (Vertex)MODEL.world.pureGraphBestHitTest(e0.circle);
 			Vertex v1 = (Vertex)MODEL.world.pureGraphBestHitTest(e1.circle);

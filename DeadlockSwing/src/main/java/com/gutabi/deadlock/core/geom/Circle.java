@@ -1,5 +1,8 @@
 package com.gutabi.deadlock.core.geom;
 
+import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
+
+import java.awt.Graphics2D;
 import java.util.Arrays;
 
 import org.apache.log4j.Logger;
@@ -8,6 +11,7 @@ import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.SweepEvent.SweepEventType;
 
+@SuppressWarnings("static-access")
 public class Circle extends Shape {
 	
 	public final Point center;
@@ -27,9 +31,9 @@ public class Circle extends Shape {
 		return "Circle(" + center + ", " + radius + ")";
 	}
 	
-//	public double distanceTo(Point p) {
-//		
-//	}
+	public Circle plus(Point p) {
+		return new Circle(parent, center.plus(p), radius);
+	}
 	
 	public boolean hitTest(Point p) {
 		return DMath.lessThanEquals(Point.distance(p, center), radius);
@@ -61,7 +65,7 @@ public class Circle extends Shape {
 		Capsule cap = s.getCapsule(0);
 		
 		if (intersect(cap.ac)) {
-			SweepEvent e = new SweepEvent(SweepEventType.ENTERVERTEX, this, s, 0, 0.0);
+			SweepEvent e = new SweepEvent(SweepEventType.ENTERCIRCLE, this, s, 0, 0.0);
 			s.start(e);
 		}
 		
@@ -95,14 +99,33 @@ public class Circle extends Shape {
 			assert DMath.greaterThanEquals(param, 0.0) && DMath.lessThanEquals(param, 1.0);
 			if (DMath.lessThan(param, 1.0) || index == s.pointCount()-1) {
 				if (outside) {
-					s.event(new SweepEvent(SweepEventType.ENTERVERTEX, this, s, index, param));
+					s.event(new SweepEvent(SweepEventType.ENTERCIRCLE, this, s, index, param));
 				} else {
-					s.event(new SweepEvent(SweepEventType.EXITVERTEX, this, s, index, param));
+					s.event(new SweepEvent(SweepEventType.EXITCIRCLE, this, s, index, param));
 				}
 				outside = !outside;
 			}
 		}
 		
 	}
-
+	
+	public void paint(Graphics2D g2) {
+		
+		g2.fillOval(
+				(int)((center.x - radius) * MODEL.PIXELS_PER_METER),
+				(int)((center.y - radius) * MODEL.PIXELS_PER_METER),
+				(int)((2 * radius) * MODEL.PIXELS_PER_METER),
+				(int)((2 * radius) * MODEL.PIXELS_PER_METER));
+		
+	}
+	
+	public void draw(Graphics2D g2) {
+		
+		g2.drawOval(
+				(int)((center.x - radius) * MODEL.PIXELS_PER_METER),
+				(int)((center.y - radius) * MODEL.PIXELS_PER_METER),
+				(int)((2 * radius) * MODEL.PIXELS_PER_METER),
+				(int)((2 * radius) * MODEL.PIXELS_PER_METER));
+		
+	}
 }

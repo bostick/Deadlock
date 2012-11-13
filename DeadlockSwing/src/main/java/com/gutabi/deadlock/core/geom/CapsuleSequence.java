@@ -4,6 +4,7 @@ import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -65,6 +66,14 @@ public class CapsuleSequence extends Shape {
 	
 	public int pointCount() {
 		return caps.size()+1;
+	}
+	
+	public CapsuleSequence plus(Point p) {
+		List<Capsule> newCaps = new ArrayList<Capsule>();
+		for (Capsule c : caps) {
+			newCaps.add(c.plus(p));
+		}
+		return new CapsuleSequence(parent, newCaps);
 	}
 	
 	public void sweepStart(Sweeper s) {

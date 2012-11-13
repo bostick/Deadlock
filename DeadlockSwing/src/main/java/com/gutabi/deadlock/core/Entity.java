@@ -23,14 +23,6 @@ public abstract class Entity implements Sweepable {
 		}
 	}
 	
-//	public final Entity bestHitTest(Point c, double r) {
-//		if (shape.bestHitTest(c, r)) {
-//			return this;
-//		} else {
-//			return null;
-//		}
-//	}
-	
 	public final Entity bestHitTest(Shape s) {
 		if (shape.intersect(s)) {
 			return this;
@@ -38,10 +30,6 @@ public abstract class Entity implements Sweepable {
 			return null;
 		}
 	}
-	
-//	public final boolean containedIn(Entity e) {
-//		return shape.containedIn(e.shape);
-//	}
 	
 	public final void sweepStart(Sweeper s) {
 		shape.sweepStart(s);
