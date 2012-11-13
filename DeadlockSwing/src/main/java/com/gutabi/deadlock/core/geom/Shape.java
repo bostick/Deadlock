@@ -16,10 +16,10 @@ public abstract class Shape implements Sweepable {
 	
 //	public abstract boolean bestHitTest(Point c, double r);
 	
-	public abstract boolean bestHitTest(Shape s);
+	public abstract boolean intersect(Shape s);
 	
 //	public abstract boolean containedIn(Shape s);
 	
-	public abstract double distanceTo(Point p);
+//	public abstract double distanceTo(Point p);
 	
 }

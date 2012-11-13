@@ -3,6 +3,7 @@ package com.gutabi.deadlock.core.geom;
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 
 import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
 import java.util.List;
 
 import com.gutabi.deadlock.core.DMath;
@@ -27,6 +28,11 @@ public class CapsuleSequence extends Shape {
 		}
 		
 		radius = caps.get(0).r;
+		
+		aabb = null;
+		for (Capsule c : caps) {
+			aabb = Rect.union(aabb, c.aabb);
+		}
 	}
 	
 	public Capsule getCapsule(int index) {
@@ -34,8 +40,8 @@ public class CapsuleSequence extends Shape {
 	}
 	
 	public Point getPoint(int index) {
-		if (index == caps.size()-1) {
-			return caps.get(index).b;
+		if (index == caps.size()) {
+			return caps.get(index-1).b;
 		} else {
 			return caps.get(index).a;
 		}
@@ -57,6 +63,29 @@ public class CapsuleSequence extends Shape {
 		return caps.size()+1;
 	}
 	
+	public void sweepStart(Sweeper s) {
+		for (Capsule c : caps) {
+			c.sweepStart(s);
+		}
+	}
+	
+	public void sweep(Sweeper s, int index) {
+		for (Capsule c : caps) {
+			c.sweep(s, index);
+		}
+	}
+	
+//	public double distanceTo(Point p) {
+//		double bestDist = Double.POSITIVE_INFINITY;
+//		for (Capsule c : caps) {
+//			double d = c.distanceTo(p);
+//			if (DMath.lessThan(d, bestDist)) {
+//				bestDist = d;
+//			}
+//		}
+//		return bestDist;
+//	}
+	
 	public boolean hitTest(Point p) {
 		for (Capsule c : caps) {
 			if (c.hitTest(p)) {
@@ -66,7 +95,18 @@ public class CapsuleSequence extends Shape {
 		return false;
 	}
 	
+	public boolean intersect(Shape s) {
+		for (Capsule c : caps) {
+			if (c.intersect(s)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	public void paint(Graphics2D g2) {
+		
+		AffineTransform origTransform = g2.getTransform();
 		
 		g2.scale(MODEL.METERS_PER_PIXEL, MODEL.METERS_PER_PIXEL);
 		
@@ -74,9 +114,12 @@ public class CapsuleSequence extends Shape {
 			c.paint(g2);
 		}
 		
+		g2.setTransform(origTransform);
 	}
 	
 	public void draw(Graphics2D g2) {
+		
+		AffineTransform origTransform = g2.getTransform();
 		
 		g2.scale(MODEL.METERS_PER_PIXEL, MODEL.METERS_PER_PIXEL);
 		
@@ -84,6 +127,7 @@ public class CapsuleSequence extends Shape {
 			c.draw(g2);
 		}
 		
+		g2.setTransform(origTransform);
 	}
 	
 	public void drawSkeleton(Graphics2D g2) {

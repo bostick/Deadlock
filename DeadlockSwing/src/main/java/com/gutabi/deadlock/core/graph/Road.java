@@ -444,6 +444,8 @@ public class Road extends Edge {
 		}
 		
 		seq = new CapsuleSequence(this, caps);
+		
+		shape = seq;
 	}
 	
 	private static List<Point> removeDuplicates(List<Point> stroke) {
@@ -626,42 +628,6 @@ public class Road extends Edge {
 		
 		totalLength = l;
 		
-	}
-	
-	public static boolean haveExactlyOneSharedIntersection(Road a, Road b) {
-		Vertex as = a.start;
-		Vertex ae = a.end;
-		Vertex bs = b.start;
-		Vertex be = b.end;
-		if (as == bs) {
-			return (ae != be);
-		} else if (as == be) {
-			return (ae != bs);
-		} else if (ae == bs) {
-			return (as != be);
-		} else if (ae == be) {
-			return (as != bs);
-		} else {
-			return false;
-		}
-	}
-	
-	public static boolean haveTwoSharedIntersections(Road a, Road b) {
-		Vertex as = a.start;
-		Vertex ae = a.end;
-		Vertex bs = b.start;
-		Vertex be = b.end;
-		if (as == bs) {
-			return (ae == be);
-		} else if (as == be) {
-			return (ae == bs);
-		} else if (ae == bs) {
-			return (as == be);
-		} else if (ae == be) {
-			return (as == bs);
-		} else {
-			return false;
-		}
 	}
 	
 	/**

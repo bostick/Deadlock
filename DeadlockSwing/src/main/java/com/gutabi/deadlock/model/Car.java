@@ -172,6 +172,16 @@ public abstract class Car extends Entity {
 		
 		b2dInit();
 		
+		
+		pVec2 = b2dBody.getPosition();
+		p = new Point(pVec2.x, pVec2.y);
+		Mat22 r = b2dBody.getTransform().R;
+		carTrans = new Matrix(r.col1.x, r.col2.x, r.col1.y, r.col2.y);
+		
+		worldQuad = Geom.localToWorld(localQuad, carTrans, p);
+		shape = worldQuad;
+		
+		
 		Vec2 v = dp.vec2();
 		v.normalize();
 		v.mulLocal((float)getMetersPerSecond());
@@ -266,6 +276,7 @@ public abstract class Car extends Entity {
 //		worldPoint3 = carToWorld(p3);
 //		worldPoint4 = carToWorld(p4);
 		worldQuad = Geom.localToWorld(localQuad, carTrans, p);
+		shape = worldQuad;
 		
 		Entity e = MODEL.world.graphBestHitTest(shape);
 		

@@ -11,6 +11,7 @@ import java.util.List;
 import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
+import com.gutabi.deadlock.core.geom.Circle;
 import com.gutabi.deadlock.model.Car;
 
 @SuppressWarnings("static-access")
@@ -43,6 +44,7 @@ public abstract class Vertex extends Entity {
 		
 		r = INIT_VERTEX_RADIUS;
 		
+		shape = new Circle(this, p, r);
 	}
 	
 	public int hashCode() {
@@ -78,6 +80,8 @@ public abstract class Vertex extends Entity {
 	public void computeRadius(double maximumRadius) {
 		
 		r = INIT_VERTEX_RADIUS;
+		shape = new Circle(this, p, r);
+		
 		for (Road e : roads) {
 			e.computeProperties();
 		}
@@ -148,6 +152,7 @@ public abstract class Vertex extends Entity {
 				break loop;
 			} else {
 				r = r + 0.1;
+				shape = new Circle(this, p, r);
 			}
 			
 			for (Road e : roads) {

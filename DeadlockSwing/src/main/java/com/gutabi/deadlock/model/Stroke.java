@@ -11,9 +11,10 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 import com.gutabi.deadlock.core.Point;
+import com.gutabi.deadlock.core.geom.Capsule;
+import com.gutabi.deadlock.core.geom.Circle;
 import com.gutabi.deadlock.core.geom.Rect;
 import com.gutabi.deadlock.core.geom.SweepEvent;
-import com.gutabi.deadlock.core.geom.SweepEvent.SweepEventType;
 import com.gutabi.deadlock.core.geom.Sweeper;
 
 @SuppressWarnings("static-access")
@@ -63,9 +64,39 @@ public class Stroke {
 		capsuleCount = 0;
 		mergerCount = 0;
 		vertexEvents = new ArrayList<SweepEvent>();
+		
+		List<Circle> circs = new ArrayList<Circle>();
+		for (Point p : pts) {
+			circs.add(new Circle(this, p, r));
+		}
+		
+		List<Capsule> caps = new ArrayList<Capsule>();
+		for (int i = 0; i < pts.size()-1; i++) {
+			Circle a = circs.get(i);
+			Circle b = circs.get(i+1);
+			caps.add(new Capsule(this, a, b));
+		}
+		
+		sweeper = new Sweeper(this, caps) {
+			public void start(SweepEvent e) {
+				events.add(e);
+			}
+			
+			public void event(SweepEvent e) {
+				events.add(e);
+			}
+		};
 //		startVertex = null;
 		
-		sweepStart();
+		events = new ArrayList<SweepEvent>();
+		
+		MODEL.world.sweepStart(sweeper);
+		
+		Collections.sort(events, SweepEvent.COMPARATOR);
+		
+		for (SweepEvent e : events) {
+			startSorted(e);
+		}
 		
 		if ((vertexCount + capsuleCount + mergerCount) == 0) {
 			logger.debug("start in nothing");
@@ -82,7 +113,15 @@ public class Stroke {
 //		}
 		
 		for (int i = 0; i < pts.size()-1; i++) {
-			sweep(i);
+			events = new ArrayList<SweepEvent>();
+			
+			MODEL.world.sweep(sweeper, i);
+			
+			Collections.sort(events, SweepEvent.COMPARATOR);
+			
+			for (SweepEvent e : events) {
+				eventSorted(e);
+			}
 		}
 		
 //		sweepEnd();
@@ -110,18 +149,10 @@ public class Stroke {
 		return vertexEvents;
 	}
 	
-	public void sweepStart() {
-		events = new ArrayList<SweepEvent>();
-		
-		MODEL.world.sweepStart(sweeper);
-		
-		Collections.sort(events, SweepEvent.COMPARATOR);
-		
-		for (SweepEvent e : events) {
-			startSorted(e);
-		}
-		
-	}
+//	public void sweepStart() {
+//		
+//		
+//	}
 	
 //	public void sweepEnd() {
 //		events = new ArrayList<SweepEvent>();
@@ -136,40 +167,32 @@ public class Stroke {
 //		
 //	}
 	
-	public void sweep(int index) {
-		events = new ArrayList<SweepEvent>();
-		
-		MODEL.world.sweep(sweeper, index);
-		
-		Collections.sort(events, SweepEvent.COMPARATOR);
-		
-		for (SweepEvent e : events) {
-			eventSorted(e);
-		}
-		
-	}
+//	public void sweep(int index) {
+//		
+//		
+//	}
 	
-	public void start(SweepEvent e) {
-		if (events.isEmpty() && e.type == SweepEventType.EXITVERTEX && vertexCount == 0) {
-			String.class.getName();
-		}
-		events.add(e);
-//		logger.debug("start: added to events: " + events);
-	}
+//	public void start(SweepEvent e) {
+//		if (events.isEmpty() && e.type == SweepEventType.EXITVERTEX && vertexCount == 0) {
+//			String.class.getName();
+//		}
+//		events.add(e);
+////		logger.debug("start: added to events: " + events);
+//	}
 	
 //	public void end(SweepEvent e) {
 //		events.add(e);
 ////		logger.debug("start: added to events: " + events);
 //	}
 	
-	public void event(SweepEvent e) {
-		if (events.isEmpty() && e.type == SweepEventType.EXITVERTEX && vertexCount == 0) {
-			String.class.getName();
-		}
-		events.add(e);
-//		logger.debug("event: added to events: " + events);
-	}
-	
+//	public void event(SweepEvent e) {
+//		if (events.isEmpty() && e.type == SweepEventType.EXITVERTEX && vertexCount == 0) {
+//			String.class.getName();
+//		}
+//		events.add(e);
+////		logger.debug("event: added to events: " + events);
+//	}
+//	
 	private void startSorted(SweepEvent e) {
 		logger.debug("startSorted: " + e + " " + e.shape.parent + " " + e.index + "" + e.param);
 		switch (e.type) {

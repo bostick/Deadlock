@@ -19,6 +19,8 @@ public class Capsule extends Shape {
 	public final Circle ac;
 	public final Circle bc;
 	
+	private final Quad middle;
+	
 	public final Point a;
 	public final Point b;
 	public final double r;
@@ -72,12 +74,10 @@ public class Capsule extends Shape {
 		bUp = b.plus(u);
 		bDown = b.plus(d);
 		
-		double ulX = Math.min(a.x, b.x) - r;
-		double ulY = Math.min(a.y, b.y) - r;
-		double brX = Math.max(a.x, b.x) + r;
-		double brY = Math.max(a.y, b.y) + r;
+		middle = new Quad(parent, aUp, bUp, bDown, aDown);
 		
-		aabb = new Rect(ulX, ulY, brX - ulX, brY - ulY);
+		aabb = ac.aabb;
+		aabb = Rect.union(aabb, bc.aabb);
 		
 	}
 	
@@ -89,39 +89,57 @@ public class Capsule extends Shape {
 		return "(" + a + " " + b + ")";
 	}
 	
+//	public double distanceTo(Point p) {
+//		double aDist = ac.distanceTo(p);
+//		double bDist = bc.distanceTo(p);
+//		double mDist = middle.distanceTo(p);
+//		return Math.min(aDist, Math.min(mDist, bDist));
+//	}
+	
 	public boolean hitTest(Point p) {
-		return 
+		if (ac.hitTest(p)) {
+			return true;
+		}
+		if (bc.hitTest(p)) {
+			return true;
+		}
+		if (middle.hitTest(p)) {
+			return true;
+		}
+		return false;
+	}
+	
+	public boolean intersect(Shape s) {
+		if (ac.intersect(s)) {
+			return true;
+		}
+		if (bc.intersect(s)) {
+			return true;
+		}
+		if (middle.intersect(s)) {
+			return true;
+		}
+		return false;
 	}
 	
 	public void sweepStart(Sweeper s) {
 		
-		Capsule firstCap = s.get(0);
-		Point c = firstCap.a;
+		Capsule firstCap = s.getCapsule(0);
 		
-		if (bestHitTest(c, s.radius)) {
+		if (intersect(firstCap.ac)) {
 			s.start(new SweepEvent(SweepEventType.ENTERCAPSULE, this, s, 0, 0.0));
 		}
 		
 	}
 	
-//	public void sweepEnd(Stroke s, SweepEventListener l) {
-//		
-//		Point d = s.pts.get(s.pts.size()-1);
-//		
-//		if (bestHitTest(d, s.r)) {
-//			l.end(new SweepEvent(SweepEventType.EXITCAPSULE, this, s, s.pts.size()-1, 0.0));
-//		}
-//		
-//	}
-	
 	public void sweep(Sweeper s, int index) {
 		
-		Capsule cap = s.get(index);
+		Capsule cap = s.getCapsule(index);
 		Point c = cap.a;
 		Point d = cap.b;
 		
 		boolean outside;
-		if (bestHitTest(c, cap.r)) {
+		if (intersect(cap.ac)) {
 			outside = false;
 		} else {
 			outside = true;

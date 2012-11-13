@@ -8,6 +8,7 @@ import java.awt.geom.AffineTransform;
 
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
+import com.gutabi.deadlock.core.geom.Circle;
 import com.gutabi.deadlock.core.graph.Road;
 import com.gutabi.deadlock.core.graph.Vertex;
 
@@ -72,6 +73,7 @@ public class StopSign extends Entity {
 			p = e.getEndBorderPoint();
 		}
 		
+		shape = new Circle(this, p, r);
 	}	
 	
 	public void paint(Graphics2D g2) {

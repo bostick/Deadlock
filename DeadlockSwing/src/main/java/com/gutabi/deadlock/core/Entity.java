@@ -32,7 +32,7 @@ public abstract class Entity implements Sweepable {
 //	}
 	
 	public final Entity bestHitTest(Shape s) {
-		if (shape.bestHitTest(s)) {
+		if (shape.intersect(s)) {
 			return this;
 		} else {
 			return null;

@@ -23,6 +23,13 @@ public class Quad extends Shape {
 		this.p1 = p1;
 		this.p2 = p2;
 		this.p3 = p3;
+		
+		double ulX = Math.min(Math.min(p0.x, p1.x), Math.min(p2.x, p3.x));
+		double ulY = Math.min(Math.min(p0.y, p1.y), Math.min(p2.y, p3.y));
+		double brX = Math.max(Math.max(p0.x, p1.x), Math.max(p2.x, p3.x));
+		double brY = Math.max(Math.max(p0.y, p1.y), Math.max(p2.y, p3.y));
+		
+		aabb = new Rect(ulX, ulY, (brX - ulX), (brY - ulY));
 	}
 	
 	public boolean hitTest(Point p) {
@@ -43,32 +50,15 @@ public class Quad extends Shape {
 		
 	}
 	
-	public boolean bestHitTest(Point p, double r) {
-		if (hitTest(p)) {
-			
-			return true;
-			
-		} else {
-			
-			if (DMath.lessThanEquals(Point.distance(p, p0, p1), r)) {
-				return true;
-			} else if (DMath.lessThanEquals(Point.distance(p, p1, p2), r)) {
-				return true;
-			} else if (DMath.lessThanEquals(Point.distance(p, p2, p3), r)) {
-				return true;
-			} else if (DMath.lessThanEquals(Point.distance(p, p3, p0), r)) {
-				return true;
-			}
-			return false;
-			
-		}
+	public boolean intersect(Shape s) {
+		return s.hitTest(p0) || s.hitTest(p1) || s.hitTest(p2) || s.hitTest(p3);
 	}
 	
 	public void sweepStart(Sweeper s) {
 		
-		Point c = s.get(0);
+		Capsule cap = s.getCapsule(0);
 		
-		if (bestHitTest(c, s.getRadius())) {
+		if (intersect(cap.ac)) {
 			s.start(new SweepEvent(SweepEventType.ENTERMERGER, this, s, 0, 0.0));
 		}
 		
@@ -76,11 +66,12 @@ public class Quad extends Shape {
 	
 	public void sweep(Sweeper s, int index) {
 		
-		Point c = s.get(index);
-		Point d = s.get(index+1);
+		Capsule cap = s.getCapsule(index);
+		Point c = cap.a;
+		Point d = cap.b;
 		
 		boolean outside;
-		if (bestHitTest(c, s.getRadius())) {
+		if (intersect(cap.ac)) {
 			outside = false;
 		} else {
 			outside = true;
@@ -90,25 +81,25 @@ public class Quad extends Shape {
 		Arrays.fill(params, Double.POSITIVE_INFINITY);
 		int paramCount = 0;
 		
-		double cdParam = SweepUtils.sweepCircleLine(p0, p1, c, d, s.getRadius());
+		double cdParam = SweepUtils.sweepCircleLine(p0, p1, c, d, cap.r);
 		if (cdParam != -1) {
 			params[paramCount] = cdParam;
 			paramCount++;
 		}
 		
-		cdParam = SweepUtils.sweepCircleLine(p1, p2, c, d, s.getRadius());
+		cdParam = SweepUtils.sweepCircleLine(p1, p2, c, d, cap.r);
 		if (cdParam != -1) {
 			params[paramCount] = cdParam;
 			paramCount++;
 		}
 		
-		cdParam = SweepUtils.sweepCircleLine(p2, p3, c, d, s.getRadius());
+		cdParam = SweepUtils.sweepCircleLine(p2, p3, c, d, cap.r);
 		if (cdParam != -1) {
 			params[paramCount] = cdParam;
 			paramCount++;
 		}
 		
-		cdParam = SweepUtils.sweepCircleLine(p3, p0, c, d, s.getRadius());
+		cdParam = SweepUtils.sweepCircleLine(p3, p0, c, d, cap.r);
 		if (cdParam != -1) {
 			params[paramCount] = cdParam;
 			paramCount++;
@@ -125,7 +116,7 @@ public class Quad extends Shape {
 		for (int i = 0; i < paramCount; i++) {
 			double param = params[i];
 			assert DMath.greaterThanEquals(param, 0.0) && DMath.lessThanEquals(param, 1.0);
-			if (DMath.lessThan(param, 1.0) || index == s.size()-1) {
+			if (DMath.lessThan(param, 1.0) || index == s.pointCount()-1) {
 				if (outside) {
 					s.event(new SweepEvent(SweepEventType.ENTERMERGER, this, s, index, param));
 				} else {
@@ -139,19 +130,19 @@ public class Quad extends Shape {
 	
 	
 	
-	public double distanceTo(Point p) {
-		if (hitTest(p)) {
-			return 0.0;
-		}
-		double d0 = Point.distance(p, p0, p1);
-		double d1 = Point.distance(p, p1, p2);
-		double d2 = Point.distance(p, p2, p3);
-		double d3 = Point.distance(p, p3, p0);
-		return Math.min(Math.min(d0, d1), Math.min(d2, d3));
-	}
+//	public double distanceTo(Point p) {
+//		if (hitTest(p)) {
+//			return 0.0;
+//		}
+//		double d0 = Point.distance(p, p0, p1);
+//		double d1 = Point.distance(p, p1, p2);
+//		double d2 = Point.distance(p, p2, p3);
+//		double d3 = Point.distance(p, p3, p0);
+//		return Math.min(Math.min(d0, d1), Math.min(d2, d3));
+//	}
 	
 	public boolean containedIn(Quad q) {
-		
+		return hitTest(q.p0) && hitTest(q.p1) && hitTest(q.p2) && hitTest(q.p3);
 	}
 	
 	public void paint(Graphics2D g2) {

@@ -15,17 +15,39 @@ public class Circle extends Shape {
 		super(parent);
 		this.center = center;
 		this.radius = radius;
+		
+		aabb = new Rect(center.x - radius, center.y - radius, 2*radius, 2*radius);
 	}
+	
+//	public double distanceTo(Point p) {
+//		
+//	}
 	
 	public boolean hitTest(Point p) {
 		return DMath.lessThanEquals(Point.distance(p, center), radius);
 	}
 	
+	public boolean intersect(Shape s) {
+		
+		if (s instanceof Quad) {
+			Quad ss = (Quad)s;
+			
+			return ss.intersect(this);
+			
+		} else {
+			Circle ss = (Circle)s;
+			
+			return DMath.lessThanEquals(Point.distance(center, ss.center), radius + ss.radius);
+			
+		}
+		
+	}
+	
 	public void sweepStart(Sweeper s) {
 		
-		Point c = s.get(0);
+		Capsule cap = s.getCapsule(0);
 		
-		if (bestHitTest(c, s.getRadius())) {
+		if (intersect(cap.ac)) {
 			SweepEvent e = new SweepEvent(SweepEventType.ENTERVERTEX, this, s, 0, 0.0);
 			s.start(e);
 		}
@@ -34,11 +56,12 @@ public class Circle extends Shape {
 	
 	public void sweep(Sweeper s, int index) {
 		
-		Point c = s.get(index);
-		Point d = s.get(index+1);
+		Capsule cap = s.getCapsule(index);
+		Point c = cap.a;
+		Point d = cap.b;
 		
 		boolean outside;
-		if (bestHitTest(c, s.getRadius())) {
+		if (intersect(cap.ac)) {
 			outside = false;
 		} else {
 			outside = true;
@@ -46,7 +69,7 @@ public class Circle extends Shape {
 		
 		double[] params = new double[2];
 		Arrays.fill(params, Double.POSITIVE_INFINITY);
-		int paramCount = SweepUtils.sweepCircleCircle(center, c, d, s.getRadius(), radius, params);
+		int paramCount = SweepUtils.sweepCircleCircle(center, c, d, cap.r, radius, params);
 		
 		Arrays.sort(params);
 		
@@ -57,7 +80,7 @@ public class Circle extends Shape {
 		for (int i = 0; i < paramCount; i++) {
 			double param = params[i];
 			assert DMath.greaterThanEquals(param, 0.0) && DMath.lessThanEquals(param, 1.0);
-			if (DMath.lessThan(param, 1.0) || index == s.size()-1) {
+			if (DMath.lessThan(param, 1.0) || index == s.pointCount()-1) {
 				if (outside) {
 					s.event(new SweepEvent(SweepEventType.ENTERVERTEX, this, s, index, param));
 				} else {
