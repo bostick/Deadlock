@@ -155,6 +155,7 @@ public class World implements Sweepable {
 		
 		postDraftingTop();
 		
+//		CONTROLLER.renderAndPaint();
 		assert checkConsistency();
 	}
 	

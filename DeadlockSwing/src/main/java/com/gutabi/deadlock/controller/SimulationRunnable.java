@@ -72,6 +72,8 @@ public class SimulationRunnable implements Runnable {
 		
 		MODEL.world.postStop();
 		
+		VIEW.repaint();
+		
 	}
 	
 }

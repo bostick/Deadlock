@@ -30,6 +30,7 @@ public class DeadlockModel {
 	public Stroke stroke;
 	
 	public Stroke debugStroke;
+	public Stroke debugStroke2;
 	
 	public Entity hilited;
 	

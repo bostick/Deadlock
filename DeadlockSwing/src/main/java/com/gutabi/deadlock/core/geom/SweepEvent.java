@@ -73,15 +73,25 @@ public class SweepEvent {
 		public int compare(SweepEvent a, SweepEvent b) {
 			if (a.index == b.index) {
 				if (DMath.equals(a.param, b.param)) {
-					return 0;
-				}
-				if (a.param < b.param) {
+					if (a.type == b.type) {
+						return 0;
+					} else {
+						if (a.type == SweepEventType.ENTERCIRCLE && b.type == SweepEventType.ENTERCAPSULE) {
+							return -1;
+						} else {
+							/*
+							 * this is where Vertices take precedence over capsules
+							 * order vertices before capsules
+							 */
+							throw new IllegalStateException("finish implementing");
+						}
+					}
+				} else if (a.param < b.param) {
 					return -1;
 				} else {
 					return 1;
 				}
-			}
-			if (a.index < b.index) {
+			} else if (a.index < b.index) {
 				return -1;
 			} else {
 				return 1;

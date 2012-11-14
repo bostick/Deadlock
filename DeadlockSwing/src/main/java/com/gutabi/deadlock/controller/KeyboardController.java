@@ -56,7 +56,7 @@ public class KeyboardController implements KeyListener {
 				e.printStackTrace();
 			}
 			
-			CONTROLLER.renderAndPaint();
+//			CONTROLLER.renderAndPaint();
 			
 		}
 	};
@@ -80,7 +80,7 @@ public class KeyboardController implements KeyListener {
 				e.printStackTrace();
 			}
 			
-			CONTROLLER.renderAndPaint();
+//			CONTROLLER.renderAndPaint();
 			
 		}
 	};

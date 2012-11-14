@@ -384,7 +384,7 @@ public class TestSweeping {
 		
 	}
 	
-	@SuppressWarnings("static-access")
+//	@SuppressWarnings("static-access")
 	@Test
 	public void test6() throws Exception {
 		
@@ -522,4 +522,130 @@ public class TestSweeping {
 		
 	}
 	
+	
+	@SuppressWarnings("static-access")
+	@Test
+	public void test7() throws Exception {
+		
+		MODEL.DEBUG_DRAW = true;
+		
+		testWorldPressed(new Point(0.71875, 3.90625));
+		testWorldDragged(new Point(0.78125, 3.90625));
+		testWorldDragged(new Point(1.03125, 3.90625));
+		testWorldDragged(new Point(1.3125, 3.90625));
+		testWorldDragged(new Point(1.65625, 3.90625));
+		testWorldDragged(new Point(2.09375, 3.875));
+		testWorldDragged(new Point(2.78125, 3.8125));
+		testWorldDragged(new Point(3.71875, 3.71875));
+		testWorldDragged(new Point(4.5625, 3.65625));
+		testWorldDragged(new Point(5.25, 3.65625));
+		testWorldDragged(new Point(5.9375, 3.65625));
+		testWorldDragged(new Point(6.625, 3.53125));
+		testWorldDragged(new Point(7.46875, 3.4375));
+		testWorldDragged(new Point(8.15625, 3.375));
+		testWorldDragged(new Point(8.84375, 3.375));
+		testWorldDragged(new Point(9.375, 3.25));
+		testWorldDragged(new Point(9.8125, 3.25));
+		testWorldDragged(new Point(10.4063, 3.25));
+		testWorldDragged(new Point(11., 3.25));
+		testWorldDragged(new Point(11.5938, 3.25));
+		testWorldDragged(new Point(12.0313, 3.25));
+		testWorldDragged(new Point(12.4375, 3.25));
+		testWorldDragged(new Point(12.6563, 3.25));
+		testWorldDragged(new Point(12.9063, 3.25));
+		testWorldDragged(new Point(13.0938, 3.25));
+		testWorldDragged(new Point(13.2188, 3.25));
+		testWorldDragged(new Point(13.4063, 3.25));
+		testWorldDragged(new Point(13.5625, 3.25));
+		testWorldDragged(new Point(13.6875, 3.3125));
+		testWorldDragged(new Point(13.9375, 3.3125));
+		testWorldDragged(new Point(14.25, 3.4375));
+		testWorldDragged(new Point(14.4375, 3.46875));
+		testWorldDragged(new Point(14.625, 3.46875));
+		testWorldDragged(new Point(14.8125, 3.46875));
+		testWorldDragged(new Point(14.9063, 3.53125));
+		testWorldDragged(new Point(15.0313, 3.53125));
+		testWorldDragged(new Point(15.125, 3.53125));
+		testWorldDragged(new Point(15.2188, 3.53125));
+		testWorldDragged(new Point(15.3125, 3.5625));
+		testWorldDragged(new Point(15.3438, 3.5625));
+		testWorldDragged(new Point(15.375, 3.59375));
+		testWorldDragged(new Point(15.4063, 3.59375));
+		testWorldDragged(new Point(15.5, 3.65625));
+		testWorldDragged(new Point(15.5313, 3.65625));
+		testWorldDragged(new Point(15.5625, 3.65625));
+		testWorldReleased();
+
+		testWorldPressed(new Point(8.625, 3.59375));
+		testWorldDragged(new Point(8.625, 3.65625));
+		testWorldDragged(new Point(8.625, 3.84375));
+		testWorldDragged(new Point(8.625, 4.09375));
+		testWorldDragged(new Point(8.625, 4.375));
+		testWorldDragged(new Point(8.625, 4.8125));
+		testWorldDragged(new Point(8.625, 5.40625));
+		testWorldDragged(new Point(8.625, 6.0625));
+		testWorldDragged(new Point(8.625, 6.75));
+		testWorldDragged(new Point(8.625, 7.53125));
+		testWorldDragged(new Point(8.625, 8.375));
+		testWorldDragged(new Point(8.625, 9.03125));
+		testWorldDragged(new Point(8.625, 9.46875));
+		testWorldDragged(new Point(8.625, 9.75));
+		testWorldDragged(new Point(8.625, 10.0938));
+		testWorldDragged(new Point(8.625, 10.3438));
+		testWorldDragged(new Point(8.53125, 10.875));
+		testWorldDragged(new Point(8.53125, 11.375));
+		testWorldDragged(new Point(8.53125, 11.8125));
+		testWorldDragged(new Point(8.53125, 12.0938));
+		testWorldDragged(new Point(8.53125, 12.3438));
+		testWorldDragged(new Point(8.53125, 12.5938));
+		testWorldDragged(new Point(8.53125, 12.875));
+		testWorldDragged(new Point(8.53125, 13.0625));
+		testWorldDragged(new Point(8.53125, 13.3125));
+		testWorldDragged(new Point(8.53125, 13.5938));
+		testWorldDragged(new Point(8.53125, 13.7813));
+		testWorldDragged(new Point(8.53125, 13.9063));
+		testWorldDragged(new Point(8.53125, 14.0938));
+		testWorldDragged(new Point(8.53125, 14.25));
+		testWorldDragged(new Point(8.53125, 14.3125));
+		testWorldDragged(new Point(8.5, 14.4063));
+		testWorldDragged(new Point(8.5, 14.5));
+		testWorldDragged(new Point(8.5, 14.625));
+		testWorldDragged(new Point(8.46875, 14.7188));
+		testWorldDragged(new Point(8.46875, 14.8438));
+		testWorldDragged(new Point(8.46875, 15.0313));
+		testWorldDragged(new Point(8.40625, 15.1875));
+		testWorldDragged(new Point(8.40625, 15.375));
+		testWorldDragged(new Point(8.40625, 15.5625));
+		testWorldDragged(new Point(8.40625, 15.6875));
+		testWorldDragged(new Point(8.40625, 15.7813));
+		testWorldDragged(new Point(8.40625, 15.8125));
+		testWorldDragged(new Point(8.40625, 15.8438));
+		testWorldDragged(new Point(8.40625, 15.9063));
+		testWorldDragged(new Point(8.40625, 15.9375));
+		testWorldReleased();
+
+		testWorldPressed(new Point(8.0625, 3.8125));
+		testWorldDragged(new Point(8.0625, 3.875));
+		testWorldDragged(new Point(8., 4.));
+		testWorldDragged(new Point(7.8125, 4.15625));
+		testWorldDragged(new Point(7.5, 4.40625));
+		testWorldDragged(new Point(7.09375, 4.75));
+		testWorldDragged(new Point(6.6875, 5.21875));
+		testWorldDragged(new Point(6.25, 5.9375));
+		testWorldDragged(new Point(5.90625, 6.625));
+		testWorldDragged(new Point(5.5, 7.1875));
+		testWorldDragged(new Point(5.15625, 7.65625));
+		testWorldDragged(new Point(4.84375, 8.0625));
+		testWorldDragged(new Point(4.4375, 8.53125));
+		testWorldDragged(new Point(4., 9.));
+		testWorldDragged(new Point(3.6875, 9.46875));
+		testWorldDragged(new Point(3.4375, 9.71875));
+		testWorldDragged(new Point(3.34375, 9.8125));
+		testWorldDragged(new Point(3.28125, 9.84375));
+		testWorldDragged(new Point(3.28125, 9.875));
+		testWorldDragged(new Point(3.21875, 9.90625));
+		testWorldReleased();
+		
+		
+	}
 }

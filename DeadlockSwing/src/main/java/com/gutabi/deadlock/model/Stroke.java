@@ -15,6 +15,7 @@ import com.gutabi.deadlock.core.geom.Capsule;
 import com.gutabi.deadlock.core.geom.Circle;
 import com.gutabi.deadlock.core.geom.Rect;
 import com.gutabi.deadlock.core.geom.SweepEvent;
+import com.gutabi.deadlock.core.geom.SweepEvent.SweepEventType;
 import com.gutabi.deadlock.core.geom.Sweeper;
 
 @SuppressWarnings("static-access")
@@ -110,10 +111,6 @@ public class Stroke {
 			
 			MODEL.world.sweep(sweeper, i);
 			
-//			for (int j = 0; j < i; j++) {
-//				caps.get(j).sweep(sweeper, i);
-//			}
-			
 			Collections.sort(events, SweepEvent.COMPARATOR);
 			
 			for (SweepEvent e : events) {
@@ -126,12 +123,63 @@ public class Stroke {
 			vertexEvents.add(new SweepEvent(null, null, sweeper, pts.size()-1, 0.0));
 		}
 		
-		if (logger.isDebugEnabled()) {
-			logger.debug("vertexEvents:");
-			logger.debug(vertexEvents);
+		/*
+		 * go through and give vertex events higher precedence over capsule events
+		 * remove any capsule events between matching vertex events
+		 * and also remove the matching capsule event
+		 */
+		
+		List<SweepEvent> adj = new ArrayList<SweepEvent>();
+		boolean insideCircle = false;
+		boolean lookingForExitCapsule = false;
+		for (int i = 0; i < vertexEvents.size(); i++) {
+			SweepEvent e = vertexEvents.get(i);
+			if (!insideCircle) {
+				if (e.type == SweepEventType.ENTERCIRCLE) {
+					insideCircle = true;
+					adj.add(e);
+				} else if (e.type == SweepEventType.EXITCIRCLE) {
+					assert false;
+				} else {
+					if (lookingForExitCapsule) {
+						if (e.type == SweepEventType.EXITCAPSULE) {
+							lookingForExitCapsule = false;
+						} else {
+							/*
+							 * finish implementing
+							 */
+							assert false;
+						}
+					} else {
+						adj.add(e);
+					}
+				}
+			} else {
+				if (e.type == SweepEventType.ENTERCIRCLE) {
+					assert false;
+				} else if (e.type == SweepEventType.EXITCIRCLE) {
+					insideCircle = false;
+					adj.add(e);
+				} else if (e.type == SweepEventType.ENTERCAPSULE) {
+					lookingForExitCapsule = true;
+				} else if (e.type == SweepEventType.EXITCAPSULE) {
+					assert lookingForExitCapsule;
+					lookingForExitCapsule = false;
+				} else {
+					/*
+					 * finish implementing
+					 */
+					assert false;
+				}
+			}
 		}
 		
-		return vertexEvents;
+		if (logger.isDebugEnabled()) {
+			logger.debug("vertexEvents:");
+			logger.debug(adj);
+		}
+		
+		return adj;
 	}
 	
 	private void startSorted(SweepEvent e) {
@@ -141,19 +189,28 @@ public class Stroke {
 		switch (e.type) {
 		case ENTERCAPSULE:
 			capsuleCount++;
-			if ((vertexCount + capsuleCount + mergerCount) == 1) {
+//			if ((vertexCount + capsuleCount + mergerCount) == 1) {
+//				vertexEvents.add(e);
+//			}
+			if (capsuleCount == 1) {
 				vertexEvents.add(e);
 			}
 			break;
 		case ENTERCIRCLE:
 			vertexCount++;
-			if ((vertexCount + capsuleCount + mergerCount) == 1) {
+//			if ((vertexCount + capsuleCount + mergerCount) == 1) {
+//				vertexEvents.add(e);
+//			}
+			if (vertexCount == 1) {
 				vertexEvents.add(e);
 			}
 			break;
 		case ENTERQUAD:
 			mergerCount++;
-			if ((vertexCount + capsuleCount + mergerCount) == 1) {
+//			if ((vertexCount + capsuleCount + mergerCount) == 1) {
+//				vertexEvents.add(e);
+//			}
+			if (mergerCount == 1) {
 				vertexEvents.add(e);
 			}
 			break;
@@ -170,40 +227,58 @@ public class Stroke {
 		switch (e.type) {
 		case ENTERCIRCLE:
 			vertexCount++;
-			if ((vertexCount + capsuleCount + mergerCount) == 1) {
-				vertexEvents.add(e);
-			}
-			break;
-		case ENTERCAPSULE:
-			capsuleCount++;
-			if ((vertexCount + capsuleCount + mergerCount) == 1) {
+//			if ((vertexCount + capsuleCount + mergerCount) == 1) {
+//				vertexEvents.add(e);
+//			}
+			if (vertexCount == 1) {
 				vertexEvents.add(e);
 			}
 			break;
 		case EXITCIRCLE:
 			vertexCount--;
 			assert vertexCount >= 0;
-			if ((vertexCount + capsuleCount + mergerCount) == 0) {
+//			if ((vertexCount + capsuleCount + mergerCount) == 0) {
+//				vertexEvents.add(e);
+//			}
+			if (vertexCount == 0) {
+				vertexEvents.add(e);
+			}
+			break;
+		case ENTERCAPSULE:
+			capsuleCount++;
+//			if ((vertexCount + capsuleCount + mergerCount) == 1) {
+//				vertexEvents.add(e);
+//			}
+			if (capsuleCount == 1) {
 				vertexEvents.add(e);
 			}
 			break;
 		case EXITCAPSULE:
 			capsuleCount--;
 			assert capsuleCount >= 0;
-			if ((vertexCount + capsuleCount + mergerCount) == 0) {
+//			if ((vertexCount + capsuleCount + mergerCount) == 0) {
+//				vertexEvents.add(e);
+//			}
+			if (capsuleCount == 0) {
 				vertexEvents.add(e);
 			}
 			break;
 		case ENTERQUAD:
 			mergerCount++;
-			if ((vertexCount + capsuleCount + mergerCount) == 1) {
+//			if ((vertexCount + capsuleCount + mergerCount) == 1) {
+//				vertexEvents.add(e);
+//			}
+			if (mergerCount == 1) {
 				vertexEvents.add(e);
 			}
 			break;
 		case EXITQUAD:
 			mergerCount--;
 			assert mergerCount >= 0;
-			if ((vertexCount + capsuleCount + mergerCount) == 0) {
+//			if ((vertexCount + capsuleCount + mergerCount) == 0) {
+//				vertexEvents.add(e);
+//			}
+			if (mergerCount == 0) {
 				vertexEvents.add(e);
 			}
 			break;

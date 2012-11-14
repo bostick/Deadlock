@@ -92,17 +92,17 @@ public class DeadlockController implements ActionListener {
 		f.get();
 	}
 	
-	Runnable renderRunnable = new Runnable() {
-		public void run() {
-			renderAndPaint();
-		}
-	};
+//	Runnable renderRunnable = new Runnable() {
+//		public void run() {
+//			renderAndPaint();
+//		}
+//	};
 	
-	public void renderAndPaintInBackground() {
-		SwingUtilities.invokeLater(renderRunnable);
-	}
+//	public void renderAndPaintInBackground() {
+//		SwingUtilities.invokeLater(renderRunnable);
+//	}
 	
-	public void renderAndPaint() {
+	public void renderBackgroundAndPaint() {
 		VIEW.renderBackgroundFresh();
 		VIEW.repaint();
 	}
@@ -234,7 +234,7 @@ public class DeadlockController implements ActionListener {
 			case DRAFTING:
 				draftEnd();
 				
-				renderAndPaintInBackground();
+				renderBackgroundAndPaint();
 				
 				break;
 			case RUNNING:
@@ -250,7 +250,6 @@ public class DeadlockController implements ActionListener {
 	
 	
 	Point lastMovedWorldPoint;
-	Point penMovedWorldPoint;
 	
 	public void moved(InputEvent ev) {
 		
@@ -262,26 +261,19 @@ public class DeadlockController implements ActionListener {
 			
 			Point p = ev.p;
 			
-			penMovedWorldPoint = lastMovedWorldPoint;
 			lastMovedWorldPoint = VIEW.panelToWorld(p);
 			
 			switch (mode) {
 			case RUNNING:
+				break;
 			case PAUSED:
 			case IDLE: {
-				
-				//MODEL.debugStroke.add(lastMovedWorldPoint);
 				
 				if (MODEL.cursor != null) {
 					MODEL.cursor.setPoint(lastMovedWorldPoint);
 					
-//					Entity closest = MODEL.world.bestHitTest(MODEL.cursor.getPoint(), MODEL.cursor.r);
 					Entity closest = MODEL.world.hitTest(lastMovedWorldPoint);
 					MODEL.hilited = closest;
-					
-				}
-				
-				if (penMovedWorldPoint != null) {
 					
 				}
 				
@@ -351,7 +343,7 @@ public class DeadlockController implements ActionListener {
 			
 		}
 		
-		renderAndPaintInBackground();
+		renderBackgroundAndPaint();
 		
 	}
 	
@@ -381,7 +373,7 @@ public class DeadlockController implements ActionListener {
 				
 				MODEL.cursor.setPoint(lastMovedWorldPoint);
 				
-				renderAndPaintInBackground();
+				renderBackgroundAndPaint();
 				
 			}
 			
@@ -412,6 +404,8 @@ public class DeadlockController implements ActionListener {
 		MODEL.cursor.setPoint(lastMovedWorldPoint);
 		
 		mode = ControlMode.IDLE;
+		
+//		VIEW.repaint();
 	}
 	
 	public void pauseRunning() {
@@ -463,6 +457,7 @@ public class DeadlockController implements ActionListener {
 		
 		assert MODEL.world.checkConsistency();
 		
+		MODEL.debugStroke2 = MODEL.debugStroke;
 		MODEL.debugStroke = MODEL.stroke;
 		MODEL.stroke = null;
 		
@@ -546,7 +541,7 @@ public class DeadlockController implements ActionListener {
 			
 			MODEL.DEBUG_DRAW = state;
 			
-			renderAndPaintInBackground();
+			renderBackgroundAndPaint();
 			
 		} else if (e.getActionCommand().equals("fpsDraw")) {
 			
@@ -554,7 +549,7 @@ public class DeadlockController implements ActionListener {
 			
 			MODEL.FPS_DRAW = state;
 			
-			renderAndPaintInBackground();
+			renderBackgroundAndPaint();
 			
 		}
 	}
@@ -589,6 +584,9 @@ public class DeadlockController implements ActionListener {
 		
 		List<SweepEvent> events = s.events();
 		
+		/*
+		 * go through and create or split where needed to make sure vertices are present
+		 */
 		for (int i = 0; i < events.size(); i++) {
 			
 			SweepEvent e = events.get(i);
@@ -637,6 +635,8 @@ public class DeadlockController implements ActionListener {
 								
 //								assert !(MODEL.world.pureGraphBestHitTest(new Circle(null, pos.p, e.circle.radius)) instanceof Vertex);
 								
+								logger.debug("found intersection");
+								
 								break;
 							}
 						}
@@ -644,6 +644,7 @@ public class DeadlockController implements ActionListener {
 					}
 					
 					if (pos == null) {
+						logger.debug("pos was null");
 						pos = MODEL.world.findClosestRoadPosition(e.p, e.circle.radius);
 					}
 					
@@ -696,6 +697,8 @@ public class DeadlockController implements ActionListener {
 								
 //								assert !(MODEL.world.pureGraphBestHitTest(new Circle(null, pos.p, e.circle.radius)) instanceof Vertex);
 								
+								logger.debug("found intersection");
+								
 								break;
 							}
 						}
@@ -703,6 +706,7 @@ public class DeadlockController implements ActionListener {
 					}
 					
 					if (pos == null) {
+						logger.debug("pos was null");
 						pos = MODEL.world.findClosestRoadPosition(e.p, e.circle.radius);
 					}
 					
@@ -730,7 +734,10 @@ public class DeadlockController implements ActionListener {
 			}
 			
 		}
-			
+		
+		/*
+		 * now go through and create roads
+		 */
 		for (int i = 0; i < events.size()-1; i++) {
 			SweepEvent e0 = events.get(i);
 			SweepEvent e1 = events.get(i+1);
