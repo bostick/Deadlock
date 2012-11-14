@@ -1,5 +1,6 @@
 package com.gutabi.deadlock.model;
 
+import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 
 import java.awt.Color;
@@ -84,7 +85,7 @@ public class StopSign extends Entity {
 		
 		g2.scale(MODEL.METERS_PER_PIXEL, MODEL.METERS_PER_PIXEL);
 		
-		g2.drawImage(MODEL.world.sheet,
+		g2.drawImage(VIEW.sheet,
 				(int)(-STOPSIGN_SIZE * MODEL.PIXELS_PER_METER * 0.5),
 				(int)(-STOPSIGN_SIZE * MODEL.PIXELS_PER_METER * 0.5),
 				(int)(STOPSIGN_SIZE * MODEL.PIXELS_PER_METER * 0.5),

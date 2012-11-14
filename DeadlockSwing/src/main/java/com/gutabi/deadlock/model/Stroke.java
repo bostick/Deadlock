@@ -133,7 +133,7 @@ public class Stroke {
 	}
 	
 	private void startSorted(SweepEvent e) {
-		logger.debug("startSorted: " + e + " " + e.shape + " " + e.index + "" + e.param);
+//		logger.debug("startSorted: " + e + " " + e.shape + " " + e.index + "" + e.param);
 		switch (e.type) {
 		case ENTERCAPSULE:
 			capsuleCount++;
@@ -160,7 +160,7 @@ public class Stroke {
 	}
 	
 	private void eventSorted(SweepEvent e) {
-		logger.debug("eventSorted: " + e + " " + e.shape + " " + e.index + "" + e.param);
+//		logger.debug("eventSorted: " + e + " " + e.shape + " " + e.index + "" + e.param);
 		switch (e.type) {
 		case ENTERCIRCLE:
 			vertexCount++;

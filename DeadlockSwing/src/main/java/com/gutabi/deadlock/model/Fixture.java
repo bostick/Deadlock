@@ -8,6 +8,7 @@ import java.awt.geom.AffineTransform;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.graph.Axis;
 import com.gutabi.deadlock.core.graph.Vertex;
+import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
 @SuppressWarnings("static-access")
 public abstract class Fixture extends Vertex {
@@ -26,7 +27,7 @@ public abstract class Fixture extends Vertex {
 		g2.scale(MODEL.METERS_PER_PIXEL, MODEL.METERS_PER_PIXEL);
 		
 		if (a == Axis.LEFTRIGHT) {
-			g2.drawImage(MODEL.world.sheet,
+			g2.drawImage(VIEW.sheet,
 					(int)((p.x - r) * MODEL.PIXELS_PER_METER),
 					(int)((p.y - r) * MODEL.PIXELS_PER_METER),
 					(int)((p.x + r) * MODEL.PIXELS_PER_METER),
@@ -34,7 +35,7 @@ public abstract class Fixture extends Vertex {
 					128, 224, 128+32, 224+32,
 					null);
 		} else {
-			g2.drawImage(MODEL.world.sheet,
+			g2.drawImage(VIEW.sheet,
 					(int)((p.x - r) * MODEL.PIXELS_PER_METER),
 					(int)((p.y - r) * MODEL.PIXELS_PER_METER),
 					(int)((p.x + r) * MODEL.PIXELS_PER_METER),

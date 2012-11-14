@@ -36,7 +36,7 @@ public class TestSimulating {
 		MODEL.init();
 		
 		VIEW.frame.setVisible(true);
-		VIEW.panel.requestFocusInWindow();
+		VIEW.canvas.requestFocusInWindow();
 		
 	}
 

@@ -36,7 +36,7 @@ public class TestDraggingFuzz {
 		VIEW.init();
 		
 		VIEW.frame.setVisible(true);
-		VIEW.panel.requestFocusInWindow();
+		VIEW.canvas.requestFocusInWindow();
 		
 	}
 	

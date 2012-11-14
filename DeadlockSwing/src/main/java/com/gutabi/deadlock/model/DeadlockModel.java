@@ -2,6 +2,7 @@ package com.gutabi.deadlock.model;
 
 import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 
@@ -49,6 +50,9 @@ public class DeadlockModel {
 	}
 	
 	public void paint(Graphics2D g2) {
+		
+		g2.setColor(Color.WHITE);
+		g2.fillRect(0, 0, 1427, 822);
 		
 		AffineTransform origTrans = g2.getTransform();
 		

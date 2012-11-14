@@ -34,7 +34,7 @@ public class TestDragging2 {
 		MODEL.init();
 		
 		VIEW.frame.setVisible(true);
-		VIEW.panel.requestFocusInWindow();
+		VIEW.canvas.requestFocusInWindow();
 		
 	}
 

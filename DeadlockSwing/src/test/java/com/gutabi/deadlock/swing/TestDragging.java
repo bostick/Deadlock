@@ -22,7 +22,7 @@ public class TestDragging {
 	
 	public static void testPressed(Point p) throws Exception {
 		Point pp = p.plus(OFFSET);
-		CONTROLLER.mc.pressed(new InputEvent(VIEW.panel, pp));
+		CONTROLLER.mc.pressed(new InputEvent(VIEW.canvas, pp));
 		CONTROLLER.queueAndWait(empty);
 		Thread.sleep(10);
 		VIEW.repaint();
@@ -30,14 +30,14 @@ public class TestDragging {
 	
 	public static void testDragged(Point p) throws Exception {
 		Point pp = p.plus(OFFSET);
-		CONTROLLER.mc.dragged(new InputEvent(VIEW.panel, pp));
+		CONTROLLER.mc.dragged(new InputEvent(VIEW.canvas, pp));
 		CONTROLLER.queueAndWait(empty);
 		Thread.sleep(10);
 		VIEW.repaint();
 	}
 	
 	public static void testReleased() throws Exception {
-		CONTROLLER.mc.released(new InputEvent(VIEW.panel, null));
+		CONTROLLER.mc.released(new InputEvent(VIEW.canvas, null));
 		CONTROLLER.queueAndWait(empty);
 		Thread.sleep(10);
 		VIEW.repaint();
@@ -45,7 +45,7 @@ public class TestDragging {
 	
 	public static void testWorldPressed(Point p) throws Exception {
 //		Point pp = p.plus(OFFSET);
-		CONTROLLER.mc.pressed(new InputEvent(VIEW.panel, VIEW.worldToPanel(p)));
+		CONTROLLER.mc.pressed(new InputEvent(VIEW.canvas, VIEW.worldToPanel(p)));
 		CONTROLLER.queueAndWait(empty);
 		Thread.sleep(10);
 		VIEW.repaint();
@@ -53,14 +53,14 @@ public class TestDragging {
 	
 	public static void testWorldDragged(Point p) throws Exception {
 //		Point pp = p.plus(OFFSET);
-		CONTROLLER.mc.dragged(new InputEvent(VIEW.panel, VIEW.worldToPanel(p)));
+		CONTROLLER.mc.dragged(new InputEvent(VIEW.canvas, VIEW.worldToPanel(p)));
 		CONTROLLER.queueAndWait(empty);
 		Thread.sleep(10);
 		VIEW.repaint();
 	}
 	
 	public static void testWorldReleased() throws Exception {
-		CONTROLLER.mc.released(new InputEvent(VIEW.panel, null));
+		CONTROLLER.mc.released(new InputEvent(VIEW.canvas, null));
 		CONTROLLER.queueAndWait(empty);
 		Thread.sleep(10);
 		VIEW.repaint();
@@ -89,7 +89,7 @@ public class TestDragging {
 		MODEL.init();
 		
 		VIEW.frame.setVisible(true);
-		VIEW.panel.requestFocusInWindow();
+		VIEW.canvas.requestFocusInWindow();
 		
 	}
 

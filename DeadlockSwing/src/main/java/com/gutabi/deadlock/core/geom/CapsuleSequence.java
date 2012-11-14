@@ -109,14 +109,14 @@ public class CapsuleSequence extends Shape {
 	}
 	
 	public boolean intersect(Shape s) {
-		logger.debug("testing intersecting of: " + s);
+//		logger.debug("testing intersecting of: " + s);
 		for (Capsule c : caps) {
-			logger.debug("testing intersect with " + c + ": ");
+//			logger.debug("testing intersect with " + c + ": ");
 			if (c.intersect(s)) {
-				logger.debug("yes");
+//				logger.debug("yes");
 				return true;
 			} else {
-				logger.debug("nope");
+//				logger.debug("nope");
 			}
 		}
 		return false;

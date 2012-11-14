@@ -1,6 +1,7 @@
 package com.gutabi.deadlock.model;
 
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
+import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
 import java.awt.AlphaComposite;
 import java.awt.Color;
@@ -715,18 +716,18 @@ public abstract class Car extends Entity {
 					
 				}
 				
+//				MODEL.world.addSkidMarks(prevWorldPoint0, worldQuad.p0);
+//				MODEL.world.addSkidMarks(prevWorldPoint3, worldQuad.p3);
+				
 			}
-			
-			MODEL.world.addSkidMarks(prevWorldPoint0, worldQuad.p0);
-			MODEL.world.addSkidMarks(prevWorldPoint3, worldQuad.p3);
 			
 			break;
 		case CRASHED:
 			break;
 		case SKIDDED:
 			
-			MODEL.world.addSkidMarks(prevWorldPoint0, worldQuad.p0);
-			MODEL.world.addSkidMarks(prevWorldPoint3, worldQuad.p3);
+//			MODEL.world.addSkidMarks(prevWorldPoint0, worldQuad.p0);
+//			MODEL.world.addSkidMarks(prevWorldPoint3, worldQuad.p3);
 			
 			break;
 		case SINKED:
@@ -796,7 +797,7 @@ public abstract class Car extends Entity {
 			g2.setComposite(normalComp);
 		}
 		
-		g2.drawImage(MODEL.world.sheet,
+		g2.drawImage(VIEW.sheet,
 				(int)(-CAR_LENGTH * MODEL.PIXELS_PER_METER * 0.5),
 				(int)(-CAR_LENGTH * MODEL.PIXELS_PER_METER * 0.25),
 				(int)(CAR_LENGTH * MODEL.PIXELS_PER_METER * 0.5),
@@ -813,7 +814,7 @@ public abstract class Car extends Entity {
 //				null);
 //		
 		if (state == CarStateEnum.BRAKING) {
-			g2.drawImage(MODEL.world.sheet,
+			g2.drawImage(VIEW.sheet,
 					(int)(-CAR_LENGTH * MODEL.PIXELS_PER_METER * 0.5),
 					(int)(-CAR_LENGTH * MODEL.PIXELS_PER_METER * 0.25),
 					(int)(CAR_LENGTH * MODEL.PIXELS_PER_METER * 0.5),

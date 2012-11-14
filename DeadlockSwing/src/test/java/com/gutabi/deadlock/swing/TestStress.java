@@ -28,7 +28,7 @@ public class TestStress {
 		CONTROLLER.init();
 		
 		VIEW.frame.setVisible(true);
-		VIEW.panel.requestFocusInWindow();
+		VIEW.canvas.requestFocusInWindow();
 		
 	}
 	

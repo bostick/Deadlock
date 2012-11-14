@@ -57,8 +57,8 @@ public class DeadlockController implements ActionListener {
 		mc = new MouseController();
 		kc = new KeyboardController();
 		
-		VIEW.panel.addMouseListener(mc);
-		VIEW.panel.addMouseMotionListener(mc);
+		VIEW.canvas.addMouseListener(mc);
+		VIEW.canvas.addMouseMotionListener(mc);
 		
 		kc.init();
 		
@@ -115,9 +115,9 @@ public class DeadlockController implements ActionListener {
 		
 		Point p = ev.p;
 		
-		if (c == VIEW.panel) {
+		if (c == VIEW.canvas) {
 			
-			VIEW.panel.requestFocusInWindow();
+			VIEW.canvas.requestFocusInWindow();
 			
 			lastPressPanelPoint = p;
 			lastPressTime = System.currentTimeMillis();
@@ -144,9 +144,9 @@ public class DeadlockController implements ActionListener {
 		
 		Point p = ev.p;
 		
-		if (c == VIEW.panel) {
+		if (c == VIEW.canvas) {
 			
-			VIEW.panel.requestFocusInWindow();
+			VIEW.canvas.requestFocusInWindow();
 			
 			boolean lastDragPanelPointWasNull = (lastDragPanelPoint == null);
 			
@@ -197,9 +197,9 @@ public class DeadlockController implements ActionListener {
 		
 		Component c = ev.c;
 		
-		if (c == VIEW.panel) {
+		if (c == VIEW.canvas) {
 			
-			VIEW.panel.requestFocusInWindow();
+			VIEW.canvas.requestFocusInWindow();
 			
 			lastReleaseTime = System.currentTimeMillis();
 			
@@ -253,25 +253,28 @@ public class DeadlockController implements ActionListener {
 		
 		Component c = ev.c;
 		
-		if (c == VIEW.panel) {
+		if (c == VIEW.canvas) {
 			
-			VIEW.panel.requestFocusInWindow();
+			VIEW.canvas.requestFocusInWindow();
 			
 			Point p = ev.p;
 			
 			penMovedWorldPoint = lastMovedWorldPoint;
 			lastMovedWorldPoint = VIEW.panelToWorld(p);
 			
-			MODEL.cursor.setPoint(lastMovedWorldPoint);
-			
 			switch (mode) {
 			case RUNNING:
 			case PAUSED:
 			case IDLE: {
 				
-//				Entity closest = MODEL.world.bestHitTest(MODEL.cursor.getPoint(), MODEL.cursor.r);
-				Entity closest = MODEL.world.hitTest(MODEL.cursor.getPoint());
-				MODEL.hilited = closest;
+				if (MODEL.cursor != null) {
+					MODEL.cursor.setPoint(lastMovedWorldPoint);
+					
+//					Entity closest = MODEL.world.bestHitTest(MODEL.cursor.getPoint(), MODEL.cursor.r);
+					Entity closest = MODEL.world.hitTest(lastMovedWorldPoint);
+					MODEL.hilited = closest;
+					
+				}
 				
 				if (penMovedWorldPoint != null) {
 					
@@ -385,6 +388,8 @@ public class DeadlockController implements ActionListener {
 		
 		mode = ControlMode.RUNNING;
 		
+		MODEL.cursor = null;
+		
 		Thread t = new Thread(new SimulationRunnable());
 		t.start();
 		
@@ -393,11 +398,19 @@ public class DeadlockController implements ActionListener {
 	public void stopRunning() {
 		assert Thread.currentThread().getName().equals("controller");
 		
+		MODEL.cursor = new RegularCursor(Vertex.INIT_VERTEX_RADIUS);
+		
+		MODEL.cursor.setPoint(lastMovedWorldPoint);
+		
 		mode = ControlMode.IDLE;
 	}
 	
 	public void pauseRunning() {
 		assert Thread.currentThread().getName().equals("controller");
+		
+		MODEL.cursor.setPoint(lastMovedWorldPoint);
+		
+		mode = ControlMode.IDLE;
 		
 		mode = ControlMode.PAUSED;
 	}
@@ -406,6 +419,8 @@ public class DeadlockController implements ActionListener {
 		assert Thread.currentThread().getName().equals("controller");
 		
 		mode = ControlMode.RUNNING;
+		
+		MODEL.cursor = null;
 		
 		synchronized (MODEL.pauseLock) {
 			MODEL.pauseLock.notifyAll();

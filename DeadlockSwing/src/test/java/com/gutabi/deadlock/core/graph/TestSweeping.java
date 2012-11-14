@@ -25,7 +25,7 @@ public class TestSweeping {
 		MODEL.init();
 		
 		VIEW.frame.setVisible(true);
-		VIEW.panel.requestFocusInWindow();
+		VIEW.canvas.requestFocusInWindow();
 		
 	}
 	
