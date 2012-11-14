@@ -13,8 +13,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import javax.swing.SwingUtilities;
-
 import org.apache.log4j.Logger;
 
 import com.gutabi.deadlock.DeadlockMain;
@@ -283,7 +281,10 @@ public class DeadlockController implements ActionListener {
 			}
 			case DRAFTING:
 				assert false;
+				break;
 			case MERGEROUTLINE:
+				
+				MODEL.cursor.setPoint(lastMovedWorldPoint);
 				
 				VIEW.repaint();
 				

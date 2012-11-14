@@ -78,6 +78,10 @@ public class SweepEvent {
 					} else {
 						if (a.type == SweepEventType.ENTERCIRCLE && b.type == SweepEventType.ENTERCAPSULE) {
 							return -1;
+						} else if (a.type == SweepEventType.ENTERCIRCLE && b.type == SweepEventType.ENTERQUAD) {
+							return -1;
+						} else if (a.type == SweepEventType.ENTERQUAD && b.type == SweepEventType.ENTERCAPSULE) {
+							return 0;
 						} else {
 							/*
 							 * this is where Vertices take precedence over capsules

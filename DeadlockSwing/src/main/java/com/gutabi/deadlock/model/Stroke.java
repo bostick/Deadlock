@@ -132,6 +132,7 @@ public class Stroke {
 		List<SweepEvent> adj = new ArrayList<SweepEvent>();
 		boolean insideCircle = false;
 		boolean lookingForExitCapsule = false;
+		boolean lookingForExitQuad = false;
 		for (int i = 0; i < vertexEvents.size(); i++) {
 			SweepEvent e = vertexEvents.get(i);
 			if (!insideCircle) {
@@ -141,17 +142,19 @@ public class Stroke {
 				} else if (e.type == SweepEventType.EXITCIRCLE) {
 					assert false;
 				} else {
-					if (lookingForExitCapsule) {
-						if (e.type == SweepEventType.EXITCAPSULE) {
-							lookingForExitCapsule = false;
-						} else {
-							/*
-							 * finish implementing
-							 */
-							assert false;
-						}
-					} else {
+					if (!lookingForExitCapsule && !lookingForExitQuad) {
 						adj.add(e);
+					} else {
+						if (lookingForExitCapsule) {
+							if (e.type == SweepEventType.EXITCAPSULE) {
+								lookingForExitCapsule = false;
+							}
+						}
+						if (lookingForExitQuad) {
+							if (e.type == SweepEventType.EXITQUAD) {
+								lookingForExitQuad = false;
+							}
+						}
 					}
 				}
 			} else {
@@ -165,6 +168,11 @@ public class Stroke {
 				} else if (e.type == SweepEventType.EXITCAPSULE) {
 					assert lookingForExitCapsule;
 					lookingForExitCapsule = false;
+				} else if (e.type == SweepEventType.ENTERQUAD) {
+					lookingForExitQuad = true;
+				} else if (e.type == SweepEventType.EXITQUAD) {
+					assert lookingForExitQuad;
+					lookingForExitQuad = false;
 				} else {
 					/*
 					 * finish implementing

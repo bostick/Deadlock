@@ -1,6 +1,10 @@
 
 IMMEDIATELY:
 
+enforce prohibition of roads on mergers
+
+enforce prohibition of roads and mergers beyond the world sides
+
 crashes
 find a fire gif and start animating sprites
 
@@ -12,10 +16,6 @@ IN THE NEXT WEEK:
 
 draw a loop
 stand-alone loop
-
-status of cursor
-how many vertices, capsules, etc. currently hitting?
-diagnostics
 
 
 add countdowns
@@ -40,6 +40,8 @@ switch to opengl
 start work on popup menu
 
 DONE:
+
+fix all seen problems with local input!
 
 animated grass
 
@@ -84,6 +86,11 @@ skeleton for roads and mergers
 add arrow images for sources and sinks
 
 ON HOLD FOR NOW:
+
+
+status of cursor
+how many vertices, capsules, etc. currently hitting?
+diagnostics
 
 
 work on .graph package
