@@ -4,6 +4,7 @@ import java.util.Comparator;
 
 import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Point;
+import com.gutabi.deadlock.core.graph.Vertex;
 
 public class SweepEvent {
 	
@@ -27,6 +28,8 @@ public class SweepEvent {
 	public final double param;
 	public final Point p;
 	public final Circle circle;
+	
+	private Vertex v;
 	
 	public SweepEvent(SweepEventType type, Shape shape, Sweeper sweeper, int index, double param) {
 		this.type = type;
@@ -53,6 +56,14 @@ public class SweepEvent {
 		} else {
 			return "null";
 		}
+	}
+	
+	public void setVertex(Vertex v) {
+		this.v = v;
+	}
+	
+	public Vertex getVertex() {
+		return v;
 	}
 	
 	public static Comparator<SweepEvent> COMPARATOR = new SweepEventComparator();

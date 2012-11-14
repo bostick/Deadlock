@@ -21,6 +21,7 @@ import com.gutabi.deadlock.DeadlockMain;
 import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
+import com.gutabi.deadlock.core.geom.Circle;
 import com.gutabi.deadlock.core.geom.SweepEvent;
 import com.gutabi.deadlock.core.geom.SweepEvent.SweepEventType;
 import com.gutabi.deadlock.core.graph.Intersection;
@@ -61,6 +62,8 @@ public class DeadlockController implements ActionListener {
 		VIEW.canvas.addMouseMotionListener(mc);
 		
 		kc.init();
+		
+//		MODEL.debugStroke = new Stroke(Vertex.INIT_VERTEX_RADIUS);
 		
 		e = Executors.newSingleThreadExecutor();
 		
@@ -267,6 +270,8 @@ public class DeadlockController implements ActionListener {
 			case PAUSED:
 			case IDLE: {
 				
+				//MODEL.debugStroke.add(lastMovedWorldPoint);
+				
 				if (MODEL.cursor != null) {
 					MODEL.cursor.setPoint(lastMovedWorldPoint);
 					
@@ -298,7 +303,11 @@ public class DeadlockController implements ActionListener {
 	}
 	
 	public void qKey() {
-//		s = new Stroke(Vertex.INIT_VERTEX_RADIUS);
+		MODEL.debugStroke = new Stroke(Vertex.INIT_VERTEX_RADIUS);
+	}
+	
+	public void wKey() {
+		MODEL.debugStroke.events();
 	}
 	
 	public void deleteKey() {
@@ -452,12 +461,13 @@ public class DeadlockController implements ActionListener {
 		
 		processNewStroke();
 		
+		assert MODEL.world.checkConsistency();
+		
+		MODEL.debugStroke = MODEL.stroke;
 		MODEL.stroke = null;
 		
 //		MODEL.world.renderBackground();
 //		VIEW.repaint();
-		
-		assert MODEL.world.checkConsistency();
 		
 		mode = ControlMode.IDLE;
 		
@@ -591,6 +601,10 @@ public class DeadlockController implements ActionListener {
 				Intersection v = new Intersection(e.p);
 				MODEL.world.addVertexTop(v);
 				
+				e.setVertex(v);
+				
+				assert MODEL.world.checkConsistency();
+				
 			} else if (e.type == SweepEventType.ENTERCAPSULE) {
 				Entity hit = MODEL.world.pureGraphBestHitTest(e.circle);
 				
@@ -620,6 +634,9 @@ public class DeadlockController implements ActionListener {
 									&& DMath.lessThanEquals(Point.distance(skeletonIntersection.p, e.p), s.r)
 									) {
 								pos = skeletonIntersection;
+								
+//								assert !(MODEL.world.pureGraphBestHitTest(new Circle(null, pos.p, e.circle.radius)) instanceof Vertex);
+								
 								break;
 							}
 						}
@@ -630,10 +647,19 @@ public class DeadlockController implements ActionListener {
 						pos = MODEL.world.findClosestRoadPosition(e.p, e.circle.radius);
 					}
 					
-					MODEL.world.splitRoadTop(pos);
+					Entity hit2 = MODEL.world.pureGraphBestHitTest(new Circle(null, pos.p, e.circle.radius));
+					
+					if (hit2 instanceof Road) {
+						Vertex v = MODEL.world.splitRoadTop(pos);
+						e.setVertex(v);
+					} else {
+						e.setVertex((Vertex)hit2);
+					}
+					
+					assert MODEL.world.checkConsistency();
 					
 				} else if (hit instanceof Vertex) {
-					
+					e.setVertex((Vertex)hit);
 				} else {
 					assert false;
 				}
@@ -667,6 +693,9 @@ public class DeadlockController implements ActionListener {
 									&& DMath.lessThanEquals(Point.distance(skeletonIntersection.p, e.p), s.r)
 									) {
 								pos = skeletonIntersection;
+								
+//								assert !(MODEL.world.pureGraphBestHitTest(new Circle(null, pos.p, e.circle.radius)) instanceof Vertex);
+								
 								break;
 							}
 						}
@@ -677,17 +706,30 @@ public class DeadlockController implements ActionListener {
 						pos = MODEL.world.findClosestRoadPosition(e.p, e.circle.radius);
 					}
 					
-					MODEL.world.splitRoadTop(pos);
+					Entity hit2 = MODEL.world.pureGraphBestHitTest(new Circle(null, pos.p, e.circle.radius));
+					
+					if (hit2 instanceof Road) {
+						Vertex v = MODEL.world.splitRoadTop(pos);
+						e.setVertex(v);
+					} else {
+						e.setVertex((Vertex)hit2);
+					}
+					
+					assert MODEL.world.checkConsistency();
 					
 				} else if (hit instanceof Vertex) {
-					
+					e.setVertex((Vertex)hit);
 				} else {
 					assert false;
 				}
 				
+			} else if (e.type == SweepEventType.ENTERCIRCLE) {
+				e.setVertex((Vertex)e.shape.parent);
+			} else if (e.type == SweepEventType.EXITCIRCLE) {
+				e.setVertex((Vertex)e.shape.parent);
 			}
-		}
 			
+		}
 			
 		for (int i = 0; i < events.size()-1; i++) {
 			SweepEvent e0 = events.get(i);
@@ -720,8 +762,10 @@ public class DeadlockController implements ActionListener {
 				
 			}
 			
-			Vertex v0 = (Vertex)MODEL.world.pureGraphBestHitTest(e0.circle);
-			Vertex v1 = (Vertex)MODEL.world.pureGraphBestHitTest(e1.circle);
+//			Vertex v0 = (Vertex)MODEL.world.pureGraphBestHitTest(e0.circle);
+//			Vertex v1 = (Vertex)MODEL.world.pureGraphBestHitTest(e1.circle);
+			Vertex v0 = e0.getVertex();
+			Vertex v1 = e1.getVertex();
 			
 			if (v0 == v1) {
 				logger.debug("same vertex");

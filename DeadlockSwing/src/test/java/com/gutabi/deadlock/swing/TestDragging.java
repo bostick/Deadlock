@@ -91,6 +91,10 @@ public class TestDragging {
 		VIEW.frame.setVisible(true);
 		VIEW.canvas.requestFocusInWindow();
 		
+		VIEW.canvas.postDisplay();
+		
+		VIEW.renderBackgroundFresh();
+		
 	}
 
 	@AfterClass

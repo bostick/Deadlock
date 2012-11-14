@@ -133,6 +133,10 @@ public class Capsule extends Shape {
 		Point c = cap.a;
 		Point d = cap.b;
 		
+		if ((a.equals(new Point(8.09375, 7.65625)) && b.equals(new Point(8.53125, 7.71875))) && index == 12) {
+			String.class.getName();
+		}
+		
 		boolean outside;
 		if (intersect(cap.ac)) {
 			outside = false;

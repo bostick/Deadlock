@@ -100,6 +100,8 @@ public class Stroke {
 		if ((vertexCount + capsuleCount + mergerCount) == 0) {
 			logger.debug("start in nothing");
 			vertexEvents.add(new SweepEvent(null, null, sweeper, 0, 0.0));
+		} else {
+			logger.debug("end counts: " + vertexCount + " " + capsuleCount + " " + mergerCount);
 		}
 		
 		for (int i = 0; i < pts.size()-1; i++) {
@@ -133,7 +135,9 @@ public class Stroke {
 	}
 	
 	private void startSorted(SweepEvent e) {
-//		logger.debug("startSorted: " + e + " " + e.shape + " " + e.index + "" + e.param);
+		if (logger.isDebugEnabled()) {
+			logger.debug("startSorted: " + e + " " + e.shape + " " + e.index + " " + e.param);
+		}
 		switch (e.type) {
 		case ENTERCAPSULE:
 			capsuleCount++;
@@ -160,7 +164,9 @@ public class Stroke {
 	}
 	
 	private void eventSorted(SweepEvent e) {
-//		logger.debug("eventSorted: " + e + " " + e.shape + " " + e.index + "" + e.param);
+		if (logger.isDebugEnabled()) {
+			logger.debug("eventSorted: " + e + " " + e.shape + " " + e.index + " " + e.param);
+		}
 		switch (e.type) {
 		case ENTERCIRCLE:
 			vertexCount++;

@@ -10,6 +10,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.OverlappingException;
 import com.gutabi.deadlock.core.Point;
@@ -207,6 +208,7 @@ public class Graph implements Sweepable {
 		Road e = new Road(start, end, pts, dec);
 		edges.add(e);
 		refreshEdgeIDs();
+		
 		return e;
 	}
 	
@@ -931,6 +933,17 @@ public class Graph implements Sweepable {
 	
 	
 	public boolean checkConsistency() {
+		
+		for (Vertex v : vertices) {
+			for (Vertex w : vertices) {
+				if (v == w) {
+					
+				} else {
+					double distance = Point.distance(v.p, w.p);
+					assert DMath.greaterThan(distance, v.r + w.r);
+				}
+			}
+		}
 		
 		List<Road> roads = new ArrayList<Road>();
 		for (Edge e : edges) {

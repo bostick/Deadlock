@@ -362,6 +362,10 @@ public class Road extends Edge {
 	
 	private void computeCaps() {
 		
+		if (hash == 1577748441) {
+			String.class.getName();
+		}
+		
 		assert !raw.isEmpty();
 		List<Point> adj = raw;
 		
@@ -395,6 +399,7 @@ public class Road extends Edge {
 		seq = new CapsuleSequence(this, caps);
 		
 		shape = seq;
+		
 	}
 	
 	private static List<Point> removeDuplicates(List<Point> stroke) {

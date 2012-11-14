@@ -12,8 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import javax.swing.SwingUtilities;
-
 import org.jbox2d.common.Vec2;
 
 import com.gutabi.deadlock.core.Entity;
@@ -54,7 +52,9 @@ public class World implements Sweepable {
 	 */
 	public double t;
 	
-	AnimatedGrass animatedGrass;
+	AnimatedGrass animatedGrass1;
+	AnimatedGrass animatedGrass2;
+	AnimatedGrass animatedGrass3;
 	private Graph graph;
 	
 	private List<Car> cars = new ArrayList<Car>();
@@ -75,7 +75,9 @@ public class World implements Sweepable {
 		
 		graph = new Graph();
 		
-		animatedGrass = new AnimatedGrass();
+		animatedGrass1 = new AnimatedGrass(new Point(WORLD_WIDTH/4, WORLD_HEIGHT/4));
+		animatedGrass2 = new AnimatedGrass(new Point(3*WORLD_WIDTH/4, 2*WORLD_HEIGHT/4));
+		animatedGrass3 = new AnimatedGrass(new Point(WORLD_WIDTH/4, 3*WORLD_HEIGHT/4));
 		
 		WorldSource a = new WorldSource(new Point(WORLD_WIDTH/4, 0), Axis.TOPBOTTOM);
 		WorldSource b = new WorldSource(new Point(2*WORLD_WIDTH/4, 0), Axis.TOPBOTTOM);
@@ -153,10 +155,11 @@ public class World implements Sweepable {
 		
 		postDraftingTop();
 		
+		assert checkConsistency();
 	}
 	
-	public void splitRoadTop(RoadPosition pos) {
-		graph.split(pos);
+	public Vertex splitRoadTop(RoadPosition pos) {
+		return graph.split(pos);
 	}
 	
 	public void removeVertexTop(Vertex v) {
@@ -254,7 +257,9 @@ public class World implements Sweepable {
 //		renderSkidMarksIncremental();
 //		skidMarks = new ArrayList<Point>();
 		
-		animatedGrass.preStart();
+		animatedGrass1.preStart();
+		animatedGrass2.preStart();
+		animatedGrass3.preStart();
 		
 		graph.preStart();
 		
@@ -513,7 +518,9 @@ public class World implements Sweepable {
 		
 		g2.drawImage(backgroundGrassImage, 0, 0, null);
 		
-		animatedGrass.paint(g2);
+		animatedGrass1.paint(g2);
+		animatedGrass2.paint(g2);
+		animatedGrass3.paint(g2);
 		
 		int x = (int)((aabb.x * MODEL.PIXELS_PER_METER));
 		int y = (int)((aabb.y * MODEL.PIXELS_PER_METER));
@@ -543,7 +550,7 @@ public class World implements Sweepable {
 	
 	public void renderBackgroundFresh() {
 		assert !Thread.holdsLock(MODEL);
-		assert SwingUtilities.isEventDispatchThread();
+//		assert SwingUtilities.isEventDispatchThread();
 //		assert Thread.currentThread().getName().equals("controller");
 		
 		backgroundGraphImage = new BufferedImage(

@@ -29,6 +29,8 @@ public class DeadlockModel {
 	public Cursor cursor;
 	public Stroke stroke;
 	
+	public Stroke debugStroke;
+	
 	public Entity hilited;
 	
 	public final Object pauseLock = new Object();
