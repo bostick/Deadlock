@@ -83,7 +83,8 @@ public class ShapeUtils {
 		
 		
 		Point edge = c1.center.minus(closest);
-		Point a = Point.ccw90(edge).normalize();
+//		Point a = Point.ccw90(edge).normalize();
+		Point a = edge.normalize();
 		Point p0 = q0.project(a);
 		Point p1 = c1.project(a);
 		if (!DMath.rangesOverlap(p0.x, p0.y, p1.x, p1.y)) {
