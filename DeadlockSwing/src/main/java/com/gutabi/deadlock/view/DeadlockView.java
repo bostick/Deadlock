@@ -42,6 +42,7 @@ public class DeadlockView {
 	public java.awt.Stroke worldStroke = new BasicStroke(0.05f);
 	
 	public BufferedImage sheet;
+	public BufferedImage explosionSheet;
 	public BufferedImage tiledGrass;
 	
 	public final Logger logger = Logger.getLogger(DeadlockView.class);
@@ -57,6 +58,7 @@ public class DeadlockView {
 		worldOriginY = (int)(canvas.getHeight() * 0.5 - (MODEL.world.WORLD_HEIGHT * 0.5 * MODEL.PIXELS_PER_METER));
 		
 		sheet = ImageIO.read(new File("media\\sheet.png"));
+		explosionSheet = ImageIO.read(new File("media\\explosionSheet.png"));
 		
 		tiledGrass = new BufferedImage(
 				(int)(World.WORLD_WIDTH * MODEL.PIXELS_PER_METER),

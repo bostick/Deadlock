@@ -24,6 +24,10 @@ public class Intersection extends Vertex {
 		return true;
 	}
 	
+	public boolean supportsStopSigns() {
+		return true;
+	}
+	
 	public void preStart() {
 		;
 	}

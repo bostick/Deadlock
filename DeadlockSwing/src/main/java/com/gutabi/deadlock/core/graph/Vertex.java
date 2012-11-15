@@ -8,6 +8,8 @@ import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
@@ -34,6 +36,8 @@ public abstract class Vertex extends Entity {
 		
 	private final int hash;
 	
+	static Logger logger = Logger.getLogger(Vertex.class);
+	
 	public Vertex(Point p) {
 		
 		this.p = p;
@@ -59,6 +63,8 @@ public abstract class Vertex extends Entity {
 		return r;
 	}
 	
+	public abstract boolean supportsStopSigns();
+	
 	public VertexPosition skeletonHitTest(Point p) {
 		if (p.equals(this.p)) {
 			return new VertexPosition(this);
@@ -67,6 +73,12 @@ public abstract class Vertex extends Entity {
 	}
 	
 	public void computeRadius(double maximumRadius) {
+		
+		if (logger.isDebugEnabled()) {
+			logger.debug("aabb before: " + shape.aabb);
+		}
+		
+		double oldR = r;
 		
 		r = INIT_VERTEX_RADIUS;
 		shape = new Circle(this, p, r);
@@ -153,6 +165,15 @@ public abstract class Vertex extends Entity {
 		for (Road e : roads) {
 			e.computeProperties();
 		}
+		
+		if (logger.isDebugEnabled()) {
+			logger.debug("aabb after: " + shape.aabb);
+		}
+		
+		if (r != oldR) {
+			String.class.getName();
+		}
+		
 	}
 	
 	

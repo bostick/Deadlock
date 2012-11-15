@@ -61,6 +61,10 @@ public class Point {
 		return new Vec2((float)x, (float)y);
 	}
 	
+	public static Point point(Vec2 p) {
+		return new Point(p.x, p.y);
+	}
+	
 	public Point2D point2D() {
 		return new Point2D.Double(x, y);
 	}

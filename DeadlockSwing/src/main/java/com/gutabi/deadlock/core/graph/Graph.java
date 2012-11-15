@@ -10,6 +10,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
+
 import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.OverlappingException;
@@ -29,7 +31,7 @@ public class Graph implements Sweepable {
 	
 	private Rect aabb;
 	
-//	private static final Logger logger = Logger.getLogger(Graph.class);
+	private static final Logger logger = Logger.getLogger(Graph.class);
 	
 	public Graph() {
 		
@@ -78,6 +80,8 @@ public class Graph implements Sweepable {
 			vi.computeRadius(maximumRadius);
 		}
 		
+		computeAABB();
+		
 	}
 	
 	public Rect getAABB() {
@@ -91,7 +95,7 @@ public class Graph implements Sweepable {
 	
 	public void createRoadTop(Vertex start, Vertex end, List<Point> pts) {
 		
-		createRoad(start, end, pts, (start.m==null&&!start.roads.isEmpty()?1:0)+(end.m==null&&!end.roads.isEmpty()?2:0));
+		createRoad(start, end, pts, (start.m==null&&start.supportsStopSigns()&!start.roads.isEmpty()?1:0)+(end.m==null&&end.supportsStopSigns()&&!end.roads.isEmpty()?2:0));
 		
 		automaticMergeOrDestroy(start);
 		automaticMergeOrDestroy(end);
@@ -274,6 +278,10 @@ public class Graph implements Sweepable {
 	
 	private void computeAABB() {
 		
+		if (logger.isDebugEnabled()) {
+			logger.debug("aabb before: " + aabb);
+		}
+		
 		aabb = null;
 		
 		for (Vertex v : vertices) {
@@ -281,6 +289,10 @@ public class Graph implements Sweepable {
 		}
 		for (Edge e : edges) {
 			aabb = Rect.union(aabb, e.getAABB());
+		}
+		
+		if (logger.isDebugEnabled()) {
+			logger.debug("aabb after: " + aabb);
 		}
 		
 	}

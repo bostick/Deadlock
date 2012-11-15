@@ -29,6 +29,7 @@ import com.gutabi.deadlock.core.graph.RoadPosition;
 import com.gutabi.deadlock.core.graph.Vertex;
 import com.gutabi.deadlock.model.fixture.WorldSink;
 import com.gutabi.deadlock.model.fixture.WorldSource;
+import com.gutabi.deadlock.view.AnimatedExplosion;
 import com.gutabi.deadlock.view.AnimatedGrass;
 
 @SuppressWarnings("static-access")
@@ -55,9 +56,12 @@ public class World implements Sweepable {
 	AnimatedGrass animatedGrass1;
 	AnimatedGrass animatedGrass2;
 	AnimatedGrass animatedGrass3;
+	
 	private Graph graph;
 	
 	private List<Car> cars = new ArrayList<Car>();
+	
+	private List<AnimatedExplosion> explosions = new ArrayList<AnimatedExplosion>();
 	
 //	private List<Point> skidMarks = new ArrayList<Point>();
 	
@@ -194,20 +198,32 @@ public class World implements Sweepable {
 		postRunningTop();
 	}
 	
-	public void sweepStart(Sweeper s) {
-		graph.sweepStart(s);
-	}
-	
-	public void sweep(Sweeper s, int index) {
-		graph.sweep(s, index);
-	}
-	
 	public void insertMergerTop(Point p) {
 		
 		graph.insertMergerTop(p);
 		
 		postIdleTop();
 		
+	}
+	
+	
+	
+	public void addExplosion(AnimatedExplosion x) {
+		explosions.add(x);
+	}
+	
+	
+	
+	
+	
+	
+	
+	public void sweepStart(Sweeper s) {
+		graph.sweepStart(s);
+	}
+	
+	public void sweep(Sweeper s, int index) {
+		graph.sweep(s, index);
 	}
 	
 	
@@ -303,12 +319,22 @@ public class World implements Sweepable {
 	
 	private void preStep() {
 		
+		animatedGrass1.preStep(t);
+		animatedGrass2.preStep(t);
+		animatedGrass3.preStep(t);
+		
 		graph.preStep(t);
 		
 		synchronized (MODEL) {
+			
 			for (Car c : cars) {
 				c.preStep(t);
 			}
+			
+			for (AnimatedExplosion x : explosions) {
+				x.preStep(t);
+			}
+			
 		}
 	}
 	
@@ -321,6 +347,7 @@ public class World implements Sweepable {
 		List<Car> toBeRemoved = new ArrayList<Car>();
 		
 		synchronized (MODEL) {
+			
 			for (Car c : cars) {
 				boolean shouldPersist = c.postStep(t);
 				if (!shouldPersist) {
@@ -333,6 +360,18 @@ public class World implements Sweepable {
 			}
 		
 			cars.removeAll(toBeRemoved);
+			
+			List<AnimatedExplosion> exToBeRemoved = new ArrayList<AnimatedExplosion>();
+			
+			for (AnimatedExplosion e : explosions) {
+				boolean shouldPersist = e.postStep(t);
+				if (!shouldPersist) {
+					exToBeRemoved.add(e);
+				}
+			}
+			
+			explosions.removeAll(exToBeRemoved);
+			
 		}
 		
 //		if (!skidMarks.isEmpty()) {
@@ -467,9 +506,15 @@ public class World implements Sweepable {
 			g2.scale(MODEL.PIXELS_PER_METER, MODEL.PIXELS_PER_METER);
 			
 			synchronized (MODEL) {
+				
 				for (Car c : cars) {
 					c.paint(g2);
 				}
+				
+				for (AnimatedExplosion x : explosions) {
+					x.paint(g2);
+				}
+				
 			}
 			
 			if (MODEL.hilited != null) {

@@ -17,6 +17,8 @@ public class Circle extends Shape {
 	public final Point center;
 	public final double radius;
 	
+	private final int hash;
+	
 	static Logger logger = Logger.getLogger(Circle.class);
 	
 	public Circle(Object parent, Point center, double radius) {
@@ -24,11 +26,36 @@ public class Circle extends Shape {
 		this.center = center;
 		this.radius = radius;
 		
+		int h = 17;
+		h = 37 * h + center.hashCode();
+		long l = Double.doubleToLongBits(radius);
+		int c = (int)(l ^ (l >>> 32));
+		h = 37 * h + c;
+		hash = h;
+		
 		aabb = new Rect(center.x - radius, center.y - radius, 2*radius, 2*radius);
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		} else if (!(o instanceof Shape)) {
+			throw new IllegalArgumentException();
+		} else if (!(o instanceof Circle)) {
+			return false;
+		} else {
+			Circle b = (Circle)o;
+			return center.equals(b.center) && DMath.equals(radius, b.radius);
+		}
 	}
 	
 	public String toString() {
 		return "Circle(" + center + ", " + radius + ")";
+	}
+	
+	public int hashCode() {
+		return hash;
 	}
 	
 	public Circle plus(Point p) {

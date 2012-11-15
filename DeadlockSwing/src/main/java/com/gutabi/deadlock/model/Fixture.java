@@ -20,6 +20,10 @@ public abstract class Fixture extends Vertex {
 		this.a = a;
 	}
 	
+	public boolean supportsStopSigns() {
+		return false;
+	}
+	
 	public void paint(Graphics2D g2) {
 		
 		AffineTransform origTransform = g2.getTransform();

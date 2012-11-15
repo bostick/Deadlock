@@ -23,20 +23,18 @@ public class AnimatedGrass {
 	}
 	
 	public void preStart() {
-		
 		lastFrame = -1;
 		lastTime = -1;
-		
 	}
 	
-	public void paint(Graphics2D g2) {
+	public void preStep(double t) {
 		
 		if (lastTime == -1) {
 			
-			lastTime = MODEL.world.t + phase;
+			lastTime = t + phase;
 			lastFrame = 0;
 			
-		} else if ((MODEL.world.t - lastTime) > 1.0) {
+		} else if ((t - lastTime) > 1.0) {
 			
 			switch (lastFrame) {
 			case 0:
@@ -53,9 +51,12 @@ public class AnimatedGrass {
 				break;
 			}
 			
-			lastTime = MODEL.world.t;
+			lastTime = t;
 		}
 		
+	}
+	
+	public void paint(Graphics2D g2) {
 		switch (lastFrame) {
 		case 0:
 			paint0(g2);

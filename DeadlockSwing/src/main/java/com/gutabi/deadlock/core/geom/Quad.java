@@ -22,6 +22,8 @@ public class Quad extends Shape {
 	public final Point n23;
 	public final Point n30;
 	
+	private final int hash;
+	
 	public Quad(Object parent, Point p0, Point p1, Point p2, Point p3) {
 		super(parent);
 		this.p0 = p0;
@@ -29,6 +31,12 @@ public class Quad extends Shape {
 		this.p2 = p2;
 		this.p3 = p3;
 		
+		int h = 17;
+		h = 37 * h + p0.hashCode();
+		h = 37 * h + p1.hashCode();
+		h = 37 * h + p2.hashCode();
+		h = 37 * h + p3.hashCode();
+		hash = h;
 		
 		Point edge;
 		edge = p1.minus(p0);
@@ -50,6 +58,24 @@ public class Quad extends Shape {
 		double brY = Math.max(Math.max(p0.y, p1.y), Math.max(p2.y, p3.y));
 		
 		aabb = new Rect(ulX, ulY, (brX - ulX), (brY - ulY));
+	}
+	
+	public int hashCode() {
+		return hash;
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		} else if (!(o instanceof Shape)) {
+			throw new IllegalArgumentException();
+		} else if (!(o instanceof Quad)) {
+			return false;
+		} else {
+			Quad b = (Quad)o;
+			return p0.equals(b.p0) && p1.equals(b.p1) && p2.equals(b.p2) && p3.equals(b.p3);
+		}
 	}
 	
 	public Quad plus(Point p) {

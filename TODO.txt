@@ -1,45 +1,49 @@
 
 IMMEDIATELY:
 
-enforce prohibition of roads on mergers
-
-enforce prohibition of roads and mergers beyond the world sides
-
 crashes
 find a fire gif and start animating sprites
 
 ideal physics
 option to remove braking, friction, skidding, etc.
 
+radius for cars to see other cars and brake
+radius for cars to see a crash and reroute
 
 IN THE NEXT WEEK:
+
+directional arrows
+
+enforce prohibition of roads on mergers
+
+enforce prohibition of roads and mergers beyond the world sides
+
 
 draw a loop
 stand-alone loop
 
+self-intersecting stroke
 
 add countdowns
 
-LONGTERM:
-
-drive straight from one border to another without going through vertex center
-
 add Tile
 add Level
-world serialization
-
-
-quad tree implementation
-
-
-switch to using floats
-
-
-switch to opengl
+scripting, saving, editing, etc.
 
 start work on popup menu
 
+LONGTERM:
+
+quad tree implementation
+
+switch to using floats
+
+switch to opengl
+
 DONE:
+
+fix adding 2 roads to a vertex and making it extend past world aabb
+does not refresh world aabb
 
 fix all seen problems with local input!
 
@@ -87,6 +91,7 @@ add arrow images for sources and sinks
 
 ON HOLD FOR NOW:
 
+drive straight from one border to another without going through vertex center
 
 status of cursor
 how many vertices, capsules, etc. currently hitting?
