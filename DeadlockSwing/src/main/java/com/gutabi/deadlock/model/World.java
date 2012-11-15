@@ -6,7 +6,6 @@ import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
@@ -488,6 +487,22 @@ public class World implements Sweepable {
 		}
 	}
 	
+	private void paintBackground(Graphics2D g2) {
+		
+		g2.drawImage(backgroundGrassImage, 0, 0, null);
+		
+		animatedGrass1.paint(g2);
+		animatedGrass2.paint(g2);
+		animatedGrass3.paint(g2);
+		
+		int x = (int)((aabb.x * MODEL.PIXELS_PER_METER));
+		int y = (int)((aabb.y * MODEL.PIXELS_PER_METER));
+		g2.drawImage(backgroundGraphImage, x, y, null);
+		
+//		drawSkidMarks(g2);
+		
+	}
+	
 	private void paintScene(Graphics2D g2) {
 		
 		switch (CONTROLLER.mode) {
@@ -498,12 +513,6 @@ public class World implements Sweepable {
 		case MERGEROUTLINE: {
 			
 			graph.paintScene(g2);
-			
-			AffineTransform origTransform = g2.getTransform();
-			
-//			g2.setTransform(origTransform);
-			
-			g2.scale(MODEL.PIXELS_PER_METER, MODEL.PIXELS_PER_METER);
 			
 			synchronized (MODEL) {
 				
@@ -520,8 +529,6 @@ public class World implements Sweepable {
 			if (MODEL.hilited != null) {
 				MODEL.hilited.paintHilite(g2);
 			}
-			
-			g2.setTransform(origTransform);
 			
 			if (MODEL.DEBUG_DRAW) {
 				
@@ -550,27 +557,6 @@ public class World implements Sweepable {
 		
 		graph.paintStats(g2);
 		
-	}
-	
-	private void paintBackground(Graphics2D g2) {
-		
-		drawBackground(g2);
-		
-//		drawSkidMarks(g2);
-		
-	}
-	
-	private void drawBackground(Graphics2D g2) {
-		
-		g2.drawImage(backgroundGrassImage, 0, 0, null);
-		
-		animatedGrass1.paint(g2);
-		animatedGrass2.paint(g2);
-		animatedGrass3.paint(g2);
-		
-		int x = (int)((aabb.x * MODEL.PIXELS_PER_METER));
-		int y = (int)((aabb.y * MODEL.PIXELS_PER_METER));
-		g2.drawImage(backgroundGraphImage, x, y, null);
 	}
 	
 	
@@ -613,17 +599,6 @@ public class World implements Sweepable {
 		
 		Graphics2D backgroundGrassImageG2 = backgroundGrassImage.createGraphics();
 		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
 		if (!MODEL.DEBUG_DRAW) {
 			
 			backgroundGrassImageG2.drawImage(VIEW.tiledGrass, 0, 0, null);
@@ -634,8 +609,6 @@ public class World implements Sweepable {
 			backgroundGrassImageG2.fillRect(0, 0, (int)(WORLD_WIDTH * MODEL.PIXELS_PER_METER), (int)(WORLD_HEIGHT * MODEL.PIXELS_PER_METER));
 			
 		}
-		
-		
 		
 		backgroundGraphImageG2.setStroke(VIEW.worldStroke);
 		

@@ -304,18 +304,6 @@ public class Capsule extends Shape {
 	
 	public void paint(Graphics2D g2) {
 		
-//		int[] xPoints = new int[4];
-//		int[] yPoints = new int[4];
-//		
-//		xPoints[0] = (int)(aUp.x * MODEL.PIXELS_PER_METER);
-//		xPoints[1] = (int)(bUp.x * MODEL.PIXELS_PER_METER);
-//		xPoints[2] = (int)(bDown.x * MODEL.PIXELS_PER_METER);
-//		xPoints[3] = (int)(aDown.x * MODEL.PIXELS_PER_METER);
-//		yPoints[0] = (int)(aUp.y * MODEL.PIXELS_PER_METER);
-//		yPoints[1] = (int)(bUp.y * MODEL.PIXELS_PER_METER);
-//		yPoints[2] = (int)(bDown.y * MODEL.PIXELS_PER_METER);
-//		yPoints[3] = (int)(aDown.y * MODEL.PIXELS_PER_METER);
-		
 		ac.paint(g2);
 		middle.paint(g2);
 		bc.paint(g2);
@@ -337,30 +325,6 @@ public class Capsule extends Shape {
 	}
 	
 	public void draw(Graphics2D g2) {
-		
-//		int[] xPoints = new int[4];
-//		int[] yPoints = new int[4];
-//		
-//		xPoints[0] = (int)(aUp.x * MODEL.PIXELS_PER_METER);
-//		xPoints[1] = (int)(bUp.x * MODEL.PIXELS_PER_METER);
-//		xPoints[2] = (int)(bDown.x * MODEL.PIXELS_PER_METER);
-//		xPoints[3] = (int)(aDown.x * MODEL.PIXELS_PER_METER);
-//		yPoints[0] = (int)(aUp.y * MODEL.PIXELS_PER_METER);
-//		yPoints[1] = (int)(bUp.y * MODEL.PIXELS_PER_METER);
-//		yPoints[2] = (int)(bDown.y * MODEL.PIXELS_PER_METER);
-//		yPoints[3] = (int)(aDown.y * MODEL.PIXELS_PER_METER);
-		
-//		g2.drawOval(
-//				(int)((a.x - r) * MODEL.PIXELS_PER_METER),
-//				(int)((a.y - r) * MODEL.PIXELS_PER_METER),
-//				(int)(2 * r * MODEL.PIXELS_PER_METER),
-//				(int)(2 * r * MODEL.PIXELS_PER_METER));
-//		g2.drawPolygon(xPoints, yPoints, 4);
-//		g2.drawOval(
-//				(int)((b.x - r) * MODEL.PIXELS_PER_METER),
-//				(int)((b.y - r) * MODEL.PIXELS_PER_METER),
-//				(int)(2 * r * MODEL.PIXELS_PER_METER),
-//				(int)(2 * r * MODEL.PIXELS_PER_METER));
 		
 		ac.draw(g2);
 		middle.draw(g2);

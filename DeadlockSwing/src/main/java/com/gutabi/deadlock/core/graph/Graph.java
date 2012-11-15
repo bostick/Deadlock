@@ -3,7 +3,6 @@ package com.gutabi.deadlock.core.graph;
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 
 import java.awt.Graphics2D;
-import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -878,11 +877,6 @@ public class Graph implements Sweepable {
 			verticesCopy = new ArrayList<Vertex>(vertices);
 		}
 		
-		AffineTransform origTransform = g2.getTransform();
-		AffineTransform trans = (AffineTransform)origTransform.clone();
-		trans.scale(MODEL.PIXELS_PER_METER, MODEL.PIXELS_PER_METER);
-		g2.setTransform(trans);
-		
 		for (Edge e : edgesCopy) {
 			e.paint(g2);
 		}
@@ -894,8 +888,6 @@ public class Graph implements Sweepable {
 		for (Edge e : edgesCopy) {
 			e.paintDecorations(g2);
 		}
-		
-		g2.setTransform(origTransform);
 		
 	}
 	
@@ -919,7 +911,6 @@ public class Graph implements Sweepable {
 			}
 			
 			for (Edge e : edgesCopy) {
-//				e.paintSkeleton(g2);
 				e.paintBorders(g2);
 			}
 		}

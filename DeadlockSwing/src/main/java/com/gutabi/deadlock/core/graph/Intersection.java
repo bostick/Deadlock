@@ -46,23 +46,24 @@ public class Intersection extends Vertex {
 	
 	public void paint(Graphics2D g2) {
 		
-		AffineTransform origTransform = g2.getTransform();
+//		AffineTransform origTransform = g2.getTransform();
 		
-		g2.scale(MODEL.METERS_PER_PIXEL, MODEL.METERS_PER_PIXEL);
+//		trans.scale(MODEL.PIXELS_PER_METER, MODEL.PIXELS_PER_METER);
+//		g2.scale(MODEL.METERS_PER_PIXEL, MODEL.METERS_PER_PIXEL);
 		
 		g2.setColor(color);
 		
 		shape.paint(g2);
 		
-		g2.setTransform(origTransform);
+//		g2.setTransform(origTransform);
 		
 		if (MODEL.DEBUG_DRAW) {
 			
-			g2.scale(MODEL.METERS_PER_PIXEL, MODEL.METERS_PER_PIXEL);
+//			g2.scale(MODEL.METERS_PER_PIXEL, MODEL.METERS_PER_PIXEL);
 			
 			paintAABB(g2);
 			
-			g2.setTransform(origTransform);
+//			g2.setTransform(origTransform);
 			
 		}
 		

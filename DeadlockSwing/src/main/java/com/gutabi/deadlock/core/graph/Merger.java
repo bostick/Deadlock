@@ -4,7 +4,6 @@ import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.geom.AffineTransform;
 
 import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Entity;
@@ -208,10 +207,6 @@ public class Merger extends Edge {
 	@Override
 	public void paint(Graphics2D g2) {
 		
-		AffineTransform origTransform = g2.getTransform();
-		
-		g2.scale(MODEL.METERS_PER_PIXEL, MODEL.METERS_PER_PIXEL);
-		
 		g2.setColor(color);
 		
 		g2.fillRect(
@@ -222,18 +217,13 @@ public class Merger extends Edge {
 		
 		if (MODEL.DEBUG_DRAW) {
 			paintSkeleton(g2);
+			paintAABB(g2);
 		}
-		
-		g2.setTransform(origTransform);
 		
 	}
 
 	@Override
 	public void paintHilite(Graphics2D g2) {
-		
-		AffineTransform origTransform = g2.getTransform();
-		
-		g2.scale(MODEL.METERS_PER_PIXEL, MODEL.METERS_PER_PIXEL);
 		
 		g2.setColor(hiliteColor);
 		
@@ -242,8 +232,6 @@ public class Merger extends Edge {
 				(int)(ul.y * MODEL.PIXELS_PER_METER),
 				(int)(MERGER_WIDTH * MODEL.PIXELS_PER_METER),
 				(int)(MERGER_HEIGHT * MODEL.PIXELS_PER_METER));
-		
-		g2.setTransform(origTransform);
 		
 	}
 	

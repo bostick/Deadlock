@@ -197,27 +197,18 @@ public class Stroke {
 		switch (e.type) {
 		case ENTERCAPSULE:
 			capsuleCount++;
-//			if ((vertexCount + capsuleCount + mergerCount) == 1) {
-//				vertexEvents.add(e);
-//			}
 			if (capsuleCount == 1) {
 				vertexEvents.add(e);
 			}
 			break;
 		case ENTERCIRCLE:
 			vertexCount++;
-//			if ((vertexCount + capsuleCount + mergerCount) == 1) {
-//				vertexEvents.add(e);
-//			}
 			if (vertexCount == 1) {
 				vertexEvents.add(e);
 			}
 			break;
 		case ENTERQUAD:
 			mergerCount++;
-//			if ((vertexCount + capsuleCount + mergerCount) == 1) {
-//				vertexEvents.add(e);
-//			}
 			if (mergerCount == 1) {
 				vertexEvents.add(e);
 			}
@@ -235,9 +226,6 @@ public class Stroke {
 		switch (e.type) {
 		case ENTERCIRCLE:
 			vertexCount++;
-//			if ((vertexCount + capsuleCount + mergerCount) == 1) {
-//				vertexEvents.add(e);
-//			}
 			if (vertexCount == 1) {
 				vertexEvents.add(e);
 			}
@@ -245,18 +233,12 @@ public class Stroke {
 		case EXITCIRCLE:
 			vertexCount--;
 			assert vertexCount >= 0;
-//			if ((vertexCount + capsuleCount + mergerCount) == 0) {
-//				vertexEvents.add(e);
-//			}
 			if (vertexCount == 0) {
 				vertexEvents.add(e);
 			}
 			break;
 		case ENTERCAPSULE:
 			capsuleCount++;
-//			if ((vertexCount + capsuleCount + mergerCount) == 1) {
-//				vertexEvents.add(e);
-//			}
 			if (capsuleCount == 1) {
 				vertexEvents.add(e);
 			}
@@ -264,18 +246,12 @@ public class Stroke {
 		case EXITCAPSULE:
 			capsuleCount--;
 			assert capsuleCount >= 0;
-//			if ((vertexCount + capsuleCount + mergerCount) == 0) {
-//				vertexEvents.add(e);
-//			}
 			if (capsuleCount == 0) {
 				vertexEvents.add(e);
 			}
 			break;
 		case ENTERQUAD:
 			mergerCount++;
-//			if ((vertexCount + capsuleCount + mergerCount) == 1) {
-//				vertexEvents.add(e);
-//			}
 			if (mergerCount == 1) {
 				vertexEvents.add(e);
 			}
@@ -283,9 +259,6 @@ public class Stroke {
 		case EXITQUAD:
 			mergerCount--;
 			assert mergerCount >= 0;
-//			if ((vertexCount + capsuleCount + mergerCount) == 0) {
-//				vertexEvents.add(e);
-//			}
 			if (mergerCount == 0) {
 				vertexEvents.add(e);
 			}
@@ -305,14 +278,11 @@ public class Stroke {
 	}
 	
 	public void paint(Graphics2D g2) {
+			
+		paintStroke(g2);
 		
-		if (!MODEL.DEBUG_DRAW) {
+		if (MODEL.DEBUG_DRAW) {
 			
-			paintStroke(g2);
-			
-		} else {
-			
-			paintStroke(g2);
 			paintAABB(g2);
 			
 		}

@@ -743,19 +743,9 @@ public abstract class Car extends Entity {
 	 */
 	public void paint(Graphics2D g2) {
 		
-		AffineTransform origTransform = g2.getTransform();
-		
-		g2.translate(p.x, p.y);
-//		g2.transform(carTrans.affineTransform());
-		g2.rotate(carAngle);
-		
 		paintImage(g2);
 		
-		g2.setTransform(origTransform);
-		
 		if (MODEL.DEBUG_DRAW) {
-			
-			g2.scale(MODEL.METERS_PER_PIXEL, MODEL.METERS_PER_PIXEL);
 			
 			if (goalPoint != null) {
 				g2.setColor(Color.WHITE);
@@ -764,7 +754,6 @@ public abstract class Car extends Entity {
 			
 			paintAABB(g2);
 			
-			g2.setTransform(origTransform);
 		}
 		
 	}
@@ -773,12 +762,7 @@ public abstract class Car extends Entity {
 	 * @param g2 in world coords
 	 */
 	public void paintHilite(Graphics2D g2) {
-		
-		AffineTransform origTransform = g2.getTransform();
-		
 		paintRect(g2);
-		
-		g2.setTransform(origTransform);
 	}
 	
 	
@@ -787,7 +771,14 @@ public abstract class Car extends Entity {
 	
 	protected void paintImage(Graphics2D g2) {
 		
+		AffineTransform origTransform = g2.getTransform();
+		
 		Composite origComposite = g2.getComposite();
+		
+		g2.scale(MODEL.PIXELS_PER_METER, MODEL.PIXELS_PER_METER);
+		
+		g2.translate(p.x, p.y);
+		g2.rotate(carAngle);
 		
 		g2.scale(MODEL.METERS_PER_PIXEL, MODEL.METERS_PER_PIXEL);
 		
@@ -824,6 +815,7 @@ public abstract class Car extends Entity {
 		}
 		
 		g2.setComposite(origComposite);
+		g2.setTransform(origTransform);
 		
 	}
 	

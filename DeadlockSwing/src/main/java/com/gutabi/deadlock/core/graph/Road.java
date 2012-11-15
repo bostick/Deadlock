@@ -4,7 +4,6 @@ import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -593,15 +592,10 @@ public class Road extends Edge {
 		
 		if (MODEL.DEBUG_DRAW) {
 			
-			AffineTransform origTransform = g2.getTransform();
-			
-			g2.scale(MODEL.METERS_PER_PIXEL, MODEL.METERS_PER_PIXEL);
-			
 			paintSkeleton(g2);
 			
 			paintAABB(g2);
 			
-			g2.setTransform(origTransform);
 		}
 	}
 	

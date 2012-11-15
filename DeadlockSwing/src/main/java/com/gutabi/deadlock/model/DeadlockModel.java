@@ -72,12 +72,9 @@ public class DeadlockModel {
 			cursor.paint(g2);
 		}
 		
+		g2.setTransform(origTrans);
+		
 		if (FPS_DRAW) {
-			
-			g2.setTransform(origTrans);
-			g2.setStroke(VIEW.worldStroke);
-			
-			g2.translate(VIEW.worldAABBX, VIEW.worldAABBY);
 			
 			stats.paint(g2);
 			

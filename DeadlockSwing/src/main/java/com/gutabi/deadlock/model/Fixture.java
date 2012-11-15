@@ -1,14 +1,13 @@
 package com.gutabi.deadlock.model;
 
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
+import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
 import java.awt.Graphics2D;
-import java.awt.geom.AffineTransform;
 
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.graph.Axis;
 import com.gutabi.deadlock.core.graph.Vertex;
-import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
 @SuppressWarnings("static-access")
 public abstract class Fixture extends Vertex {
@@ -25,10 +24,6 @@ public abstract class Fixture extends Vertex {
 	}
 	
 	public void paint(Graphics2D g2) {
-		
-		AffineTransform origTransform = g2.getTransform();
-		
-		g2.scale(MODEL.METERS_PER_PIXEL, MODEL.METERS_PER_PIXEL);
 		
 		if (a == Axis.LEFTRIGHT) {
 			g2.drawImage(VIEW.sheet,
@@ -48,15 +43,9 @@ public abstract class Fixture extends Vertex {
 					null);
 		}
 		
-		g2.setTransform(origTransform);
-		
 		if (MODEL.DEBUG_DRAW) {
 			
-			g2.scale(MODEL.METERS_PER_PIXEL, MODEL.METERS_PER_PIXEL);
-			
 			paintAABB(g2);
-			
-			g2.setTransform(origTransform);
 			
 		}
 		

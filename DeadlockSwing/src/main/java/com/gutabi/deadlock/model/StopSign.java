@@ -81,8 +81,8 @@ public class StopSign extends Entity {
 		
 		AffineTransform origTransform = g2.getTransform();
 		
+		g2.scale(MODEL.PIXELS_PER_METER, MODEL.PIXELS_PER_METER);
 		g2.translate(p.x, p.y);
-		
 		g2.scale(MODEL.METERS_PER_PIXEL, MODEL.METERS_PER_PIXEL);
 		
 		g2.drawImage(VIEW.sheet,
@@ -108,10 +108,6 @@ public class StopSign extends Entity {
 	
 	public void paintHilite(Graphics2D g2) {
 		
-		AffineTransform origTransform = g2.getTransform();
-		
-		g2.scale(MODEL.METERS_PER_PIXEL, MODEL.METERS_PER_PIXEL);
-		
 		g2.setColor(hiliteColor);
 		
 		g2.fillOval(
@@ -120,7 +116,6 @@ public class StopSign extends Entity {
 				(int)((2 * r) * MODEL.PIXELS_PER_METER),
 				(int)((2 * r) * MODEL.PIXELS_PER_METER));
 		
-		g2.setTransform(origTransform);
 	}
 	
 }

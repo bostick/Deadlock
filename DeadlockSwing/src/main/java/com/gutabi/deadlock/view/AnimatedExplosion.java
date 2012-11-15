@@ -58,8 +58,6 @@ public class AnimatedExplosion {
 	
 	private void paint(Graphics2D g2, int index) {
 		
-		g2.scale(MODEL.METERS_PER_PIXEL, MODEL.METERS_PER_PIXEL);
-		
 		g2.drawImage(VIEW.explosionSheet,
 				(int)(ul.x * MODEL.PIXELS_PER_METER) ,
 				(int)(ul.y * MODEL.PIXELS_PER_METER),
