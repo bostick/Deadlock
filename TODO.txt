@@ -1,14 +1,10 @@
 
 IMMEDIATELY:
 
-crashes
-find a fire gif and start animating sprites
-
-ideal physics
-option to remove braking, friction, skidding, etc.
-
 radius for cars to see other cars and brake
 radius for cars to see a crash and reroute
+
+option to remove braking, friction, skidding, etc.
 
 IN THE NEXT WEEK:
 
@@ -18,7 +14,6 @@ enforce prohibition of roads on mergers
 
 enforce prohibition of roads and mergers beyond the world sides
 
-
 draw a loop
 stand-alone loop
 
@@ -26,7 +21,7 @@ self-intersecting stroke
 
 add countdowns
 
-add Tile
+add Quadrant
 add Level
 scripting, saving, editing, etc.
 
@@ -39,8 +34,20 @@ quad tree implementation
 switch to using floats
 
 switch to opengl
+or at least add it
+
+cleanup user input
+lines and curves for roads
 
 DONE:
+
+with ideal physics, need to update goalPoint intelligently
+when at stopsign, gaolPoint is not being updated and it ending up directly under center of car, which leads to crazy behavior
+
+ideal physics
+
+crashes
+find a fire gif and start animating sprites
 
 fix adding 2 roads to a vertex and making it extend past world aabb
 does not refresh world aabb

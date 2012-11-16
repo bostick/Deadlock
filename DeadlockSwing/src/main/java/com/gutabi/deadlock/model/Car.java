@@ -42,8 +42,52 @@ public abstract class Car extends Entity {
 	
 	public static final double CAR_LENGTH = 1.0;
 	public static final double COMPLETE_STOP_WAIT_TIME = 0.0;
-	double steeringLookaheadDistance = CAR_LENGTH * 1.5;
-	double eventLookaheadDistance = getMetersPerSecond() * 0.3;
+	
+	public abstract double getMaxSpeed();
+	
+//	double steeringLookaheadDistance = CAR_LENGTH * 1.5;
+//	double eventLookaheadDistance = getMaxSpeed() * 0.3;
+//	/*
+//	 * turning radius
+//	 * 3 car lengths for 180 deg = 3 meters for 3.14 radians
+//	 */
+//	private double maxRadsPerMeter = 0.1;
+//	private double cancelingForwardImpulseCoefficient = 0.01f;
+//	private double cancelingLateralImpulseCoefficient = 0.05f;
+//	private double cancelingAngularImpulseCoefficient = 0.1f;
+//	
+//	private double forwardImpulseCoefficient = 1.0f;
+//	private double brakeImpulseCoefficient = 0.1f;
+//	private double maxAcceleration = 0.1f;
+	
+	
+	double steeringLookaheadDistance = CAR_LENGTH * 0.5;
+	double eventLookaheadDistance = CAR_LENGTH * 0.5;
+	/*
+	 * turning radius
+	 * 3 car lengths for 180 deg = 3 meters for 3.14 radians
+	 */
+	private double maxRadsPerMeter = Double.POSITIVE_INFINITY;
+	private double maxAcceleration = Double.POSITIVE_INFINITY;
+	private double maxDeceleration = 0.0;
+	
+	private double frictionForwardImpulseCoefficient = 0.0f;
+	private double frictionLateralImpulseCoefficient = 0.0f;
+	private double frictionAngularImpulseCoefficient = 0.0f;
+	
+	private double driveForwardImpulseCoefficient = 1.0f;
+	private double driveLateralImpulseCoefficient = 1.0f;
+	
+	private double brakeForwardImpulseCoefficient = 1.0f;
+	private double brakeLateralImpulseCoefficient = 1.0f;
+	
+	private double turnAngularImpulseCoefficient = 1.0f;
+	
+	
+	
+	
+	
+	
 	
 	protected int sheetRow;
 	protected int sheetCol;
@@ -158,7 +202,7 @@ public abstract class Car extends Entity {
 			pathingLogger.debug("");
 		}
 		
-		GraphPositionPathPosition next = overallPos.travel(getMetersPerSecond() * MODEL.dt);
+		GraphPositionPathPosition next = overallPos.travel(getMaxSpeed() * MODEL.dt);
 		
 		Point nextDTGoalPoint = next.gpos.p;
 		
@@ -180,18 +224,12 @@ public abstract class Car extends Entity {
 		
 		Vec2 v = dp.vec2();
 		v.normalize();
-		v.mulLocal((float)getMetersPerSecond());
+		v.mulLocal((float)getMaxSpeed());
 		
 		b2dBody.setLinearVelocity(v);
 		
 		computeDynamicProperties();
 	}
-	
-	/**
-	 * meters per millisecond
-	 * @return
-	 */
-	public abstract double getMetersPerSecond();
 	
 	private void b2dInit() {
 		BodyDef bodyDef = new BodyDef();
@@ -257,7 +295,7 @@ public abstract class Car extends Entity {
 		forwardVel = currentRightNormal.mul(Vec2.dot(currentRightNormal, vel));
 		
 		if (logger.isDebugEnabled()) {
-			logger.debug("vel: " + forwardVel.length());
+			logger.debug("vel: " + forwardVel);
 		}
 		
 		Mat22 r = b2dBody.getTransform().R;
@@ -482,11 +520,14 @@ public abstract class Car extends Entity {
 			assert DMath.equals(nextDist, lookaheadDistance);
 			
 			goalPoint = next.gpos.p;
+			assert DMath.greaterThan(Point.distance(goalPoint, p), CAR_LENGTH/4) : "heuristic failed";
 			
 			updateDrive(t);
 			break;
 		case BRAKING:
 			goalPoint = curBorderPosition.gpos.p;
+			assert DMath.greaterThan(Point.distance(goalPoint, p), CAR_LENGTH/4) : "heuristic failed";
+			
 			updateBrake(t);
 			break;
 		case CRASHED:
@@ -496,100 +537,57 @@ public abstract class Car extends Entity {
 		}
 	}
 	
-	private float cancelingForwardImpulseCoefficient() {
-		return 0.01f;
-	}
-	
-	private float cancelingLateralImpulseCoefficient() {
-//		return atleastPartiallyOnRoad ? 0.1f : 0.04f;
-		return 0.05f;
-	}
-	
-	private float cancelingAngularImpulseCoefficient() {
-		return 0.1f;
-	}
-	
-	private float forwardImpulseCoefficient() {
-		return 1.0f;
-	}
-	
-	private float brakeImpulseCoefficient() {
-		return 0.1f;
-	}
-	
-	/*
-	 * turning radius
-	 * 3 car lengths for 180 deg = 3 meters for 3.14 radians
-	 */
-	private double maxRadsPerMeter() {
-		return 0.1;
-	}
-	
 	private void updateFriction() {
 		
-//		Vec2 cancelingImpulse = vel.mul(-1).mul(mass);
-		Vec2 cancelingForce = vel.mul(-1).mul(mass).mul((float)(1/MODEL.dt));
+		Vec2 cancelingImpulse = vel.mul(-1).mul(mass);
 		
-//		float cancelingForwardImpulse = cancelingForwardImpulseCoefficient() * Vec2.dot(currentRightNormal, cancelingImpulse);
-//		float cancelingLateralImpulse = cancelingLateralImpulseCoefficient() * Vec2.dot(currentUpNormal, cancelingImpulse);
+		float cancelingForwardImpulse = (float)(frictionForwardImpulseCoefficient * Vec2.dot(currentRightNormal, cancelingImpulse));
+		float cancelingLateralImpulse = (float)(frictionLateralImpulseCoefficient * Vec2.dot(currentUpNormal, cancelingImpulse));
 		
-		float cancelingForwardForce = cancelingForwardImpulseCoefficient() * Vec2.dot(currentRightNormal, cancelingForce);
-		float cancelingLateralForce = cancelingLateralImpulseCoefficient() * Vec2.dot(currentUpNormal, cancelingForce);
+		b2dBody.applyLinearImpulse(currentRightNormal.mul(cancelingForwardImpulse), b2dBody.getWorldCenter());
+		b2dBody.applyLinearImpulse(currentUpNormal.mul(cancelingLateralImpulse), b2dBody.getWorldCenter());
 		
-//		b2dBody.applyLinearImpulse(currentRightNormal.mul(cancelingForwardImpulse), b2dBody.getWorldCenter());
-//		b2dBody.applyLinearImpulse(currentUpNormal.mul(cancelingLateralImpulse), b2dBody.getWorldCenter());
+		float cancelingAngImpulse = (float)(frictionAngularImpulseCoefficient * momentOfInertia * -angularVel);
 		
-		if (!DMath.equals(cancelingForwardForce, 0.0)) {
-//			logger.debug("cancelingForwardForce: " + cancelingForwardForce);
-			b2dBody.applyForce(currentRightNormal.mul(cancelingForwardForce), pVec2);
-		}
-		if (!DMath.equals(cancelingLateralForce, 0.0)) {
-//			logger.debug("cancelingLateralForce: " + cancelingLateralForce);
-			b2dBody.applyForce(currentUpNormal.mul(cancelingLateralForce), pVec2);
-		}
-		
-//		float cancelingAngImpulse = cancelingAngularImpulseCoefficient() * momentOfInertia * -angularVel;
-		float cancelingAngForce = cancelingAngularImpulseCoefficient() * momentOfInertia * -angularVel * (float)(1/MODEL.dt);
-		
-		//b2dBody.applyAngularImpulse(cancelingAngImpulse);
-		if (!DMath.equals(cancelingAngForce, 0.0)) {
-			b2dBody.applyTorque(cancelingAngForce);
-		}
+		b2dBody.applyAngularImpulse(cancelingAngImpulse);
 	}
 	
 	private void updateDrive(double t) {
 		
 		if (stoppedTime != -1) {
 			
-			logger.debug("accel");
+//			logger.debug("accel");
 			
 			accelTime = t;
 		}
 		
-		double goalForwardVel = (float)getMetersPerSecond();
+		double goalForwardVel = (float)getMaxSpeed();
 		
 		double forwardSpeed = forwardVel.length();
 		
-		float acc = (float)(goalForwardVel - forwardSpeed);
-		if (acc < 0) {
-			acc = 0;
+		float dv;
+		if (goalForwardVel > forwardSpeed) {
+			dv = (float)(goalForwardVel - forwardSpeed);
+		} else {
+			dv = 0.0f;
 		}
-		if (acc > 0.1) {
-			acc = 0.1f;
-		}
-		
-//		float forwardImpulse = forwardImpulseCoefficient() * mass * acc;
-		float forwardForce = forwardImpulseCoefficient() * mass * acc * (float)(1/MODEL.dt);
-		
-//		if (forwardForce > 20) {
-//			String.class.getName();
+//		if (acc < 0) {
+//			assert false;
 //		}
-		
-		//b2dBody.applyLinearImpulse(currentRightNormal.mul(forwardImpulse), b2dBody.getWorldCenter());
-		if (!DMath.equals(forwardForce, 0.0)) {
-//			logger.debug("forwardForce: " + forwardForce);
-			b2dBody.applyForce(currentRightNormal.mul(forwardForce), pVec2);
+		if (dv > maxAcceleration * MODEL.dt) {
+			dv = (float)(maxAcceleration * MODEL.dt);
 		}
+		
+//		logger.debug("acc for driving: " + acc);
+		
+		float forwardImpulse = (float)(driveForwardImpulseCoefficient * mass * dv);
+		
+		b2dBody.applyLinearImpulse(currentRightNormal.mul(forwardImpulse), b2dBody.getWorldCenter());
+		
+		Vec2 cancelingImpulse = vel.mul(-1).mul(mass);
+		float driveLateralImpulse = (float)(driveLateralImpulseCoefficient * Vec2.dot(currentUpNormal, cancelingImpulse));
+		
+		b2dBody.applyLinearImpulse(currentUpNormal.mul(driveLateralImpulse), b2dBody.getWorldCenter());
 		
 		updateTurn();
 		
@@ -599,7 +597,6 @@ public abstract class Car extends Entity {
 		
 		double forwardSpeed = forwardVel.length();
 		
-		Point dp;
 		double goalForwardVel;
 		if (stoppedTime == -1) {
 			
@@ -610,31 +607,57 @@ public abstract class Car extends Entity {
 				decelTime = t;
 			}
 			
-			dp = new Point(goalPoint.x-p.x, goalPoint.y-p.y);
-			/*
-			 * subtract CAR_LENGTH/2 to get the front of the car at the sign
-			 */
-			goalForwardVel = getMetersPerSecond() * ((dp.length - CAR_LENGTH/2) / (eventLookaheadDistance - CAR_LENGTH/2));
-			if (goalForwardVel < 1.0) {
-				goalForwardVel = 0;
+			if (DMath.greaterThan(eventLookaheadDistance, CAR_LENGTH/2)) {
+				
+				Point dp = new Point(goalPoint.x-p.x, goalPoint.y-p.y);
+				/*
+				 * subtract CAR_LENGTH/2 to get the front of the car at the sign
+				 */
+				if (dp.length < CAR_LENGTH/2) {
+					/*
+					 * within CAR_LENGTH/2 of goal
+					 */
+					goalForwardVel = 0.0;
+				} else {
+					goalForwardVel = getMaxSpeed() * ((dp.length - CAR_LENGTH/2) / (eventLookaheadDistance - CAR_LENGTH/2));
+				}
+				if (goalForwardVel < 0.0) {
+					assert false;
+				}
+//				if (goalForwardVel < 1.0) {
+//					goalForwardVel = 0;
+//				}
+				
+			} else {
+				
+				goalForwardVel = 0.0;
+				
 			}
+			
 		} else {			
-			dp = new Point(goalPoint.x-p.x, goalPoint.y-p.y);
+//			Point dp = new Point(goalPoint.x-p.x, goalPoint.y-p.y);
 			goalForwardVel = 0;
 			
 		}
 		
-		float acc = (float)(goalForwardVel - forwardSpeed);
-		if (acc > 0) {
-			acc = 0;
+		float dv = (float)(goalForwardVel - forwardSpeed);
+		if (dv < maxDeceleration * MODEL.dt) {
+			dv = (float)(maxDeceleration * MODEL.dt);
+		}
+		if (dv > 0) {
+			assert false;
 		}
 		
-//		float brakeImpulse = brakeImpulseCoefficient() * mass * acc;
-		float brakeForce = brakeImpulseCoefficient() * mass * acc * (float)(1/MODEL.dt);
+		//logger.debug("acc for braking: " + -forwardVel.length());
 		
-		if (!DMath.equals(brakeForce, 0.0)) {
-			b2dBody.applyForce(currentRightNormal.mul(brakeForce), pVec2);
-		}
+		Vec2 cancelingVel = vel.mul(-1);
+		
+		float rightBrakeImpulse = (float)(brakeForwardImpulseCoefficient * Vec2.dot(cancelingVel, currentRightNormal) * mass);
+		
+		float upBrakeImpulse = (float)(brakeLateralImpulseCoefficient * Vec2.dot(cancelingVel, currentUpNormal) * mass);
+		
+		b2dBody.applyLinearImpulse(currentRightNormal.mul(rightBrakeImpulse), pVec2);
+		b2dBody.applyLinearImpulse(currentUpNormal.mul(upBrakeImpulse), pVec2);
 		
 		updateTurn();
 	}
@@ -658,22 +681,24 @@ public abstract class Car extends Entity {
 		 * turning radius
 		 */
 		double actualDistance = forwardSpeed * MODEL.dt;
-		double maxRads = maxRadsPerMeter() * actualDistance;
+		double maxRads = maxRadsPerMeter * actualDistance;
 		if (dw > maxRads) {
 			dw = maxRads;
 		} else if (dw < -maxRads) {
 			dw = -maxRads;
 		}
 		
+//		if (dw > 0.52) {
+//			String.class.getName();
+//		} else if (dw < -0.52) {
+//			String.class.getName();
+//		}
+		
 		float goalAngVel = (float)(dw / MODEL.dt);
 		
-//		float angImpulse = momentOfInertia * goalAngVel;
-		float angForce = momentOfInertia * goalAngVel * (float)(1/MODEL.dt);
+		float angImpulse = (float)(turnAngularImpulseCoefficient * momentOfInertia * (goalAngVel - angularVel));
 		
-//		b2dBody.applyAngularImpulse(angImpulse);
-		if (!DMath.equals(angForce, 0.0)) {
-			b2dBody.applyTorque(angForce);
-		}
+		b2dBody.applyAngularImpulse(angImpulse);
 		
 	}
 	

@@ -294,6 +294,9 @@ public class World implements Sweepable {
 				c.destroy();
 			}
 			cars.clear();
+			
+			explosions.clear();
+			
 		}
 		
 //		skidMarks.clear();

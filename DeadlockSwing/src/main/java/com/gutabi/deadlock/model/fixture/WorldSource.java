@@ -24,12 +24,12 @@ public class WorldSource extends Source {
 	 * spawn cars every SPAWN_FREQUENCY seconds
 	 * -1 means no spawning
 	 */
-//	public static double SPAWN_FREQUENCY_SECONDS = 10.0;
+	public static double SPAWN_FREQUENCY_SECONDS = 3.0;
 	
 	public WorldSink matchingSink;
 	GraphPositionPath shortestPathToMatchingSink;
 	
-//	public double lastSpawnTime;
+	public double lastSpawnTime;
 	
 	public int outstandingCars;
 	
@@ -59,7 +59,7 @@ public class WorldSource extends Source {
 		poss.add(matchingSink);
 		shortestPathToMatchingSink = GraphPositionPath.createShortestPathFromSkeleton(poss);
 		
-//		lastSpawnTime = -1;
+		lastSpawnTime = -1;
 		outstandingCars = 0;
 	}
 	
@@ -81,7 +81,7 @@ public class WorldSource extends Source {
 //				spawnNewCar(t);
 //			}
 //		}
-		if (active()) {
+		if (active(t)) {
 			spawnNewCar(t);
 		}
 	}
@@ -96,15 +96,18 @@ public class WorldSource extends Source {
 			synchronized (MODEL) {
 				MODEL.world.addCar(c);
 			}
-//			lastSpawnTime = t;
+			lastSpawnTime = t;
 			outstandingCars++;
 		}
 		
 	}
 	
-	private boolean active() {
+	private boolean active(double t) {
 		
-		if (outstandingCars > 0) {
+//		if (outstandingCars > 0) {
+//			return false;
+//		}
+		if (lastSpawnTime != -1 && (t - lastSpawnTime) < SPAWN_FREQUENCY_SECONDS) {
 			return false;
 		}
 		

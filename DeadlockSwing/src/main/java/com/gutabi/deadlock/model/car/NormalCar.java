@@ -23,7 +23,7 @@ public class NormalCar extends Car {
 		computeStartingProperties();
 	}
 	
-	public double getMetersPerSecond() {
+	public double getMaxSpeed() {
 		return speed;
 	}
 	
