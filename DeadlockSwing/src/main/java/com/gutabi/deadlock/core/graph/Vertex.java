@@ -228,9 +228,8 @@ public abstract class Vertex extends Entity {
 		Point worldPoint = p.minus(new Point(r, 0));
 		Point panelPoint = worldPoint.multiply(MODEL.PIXELS_PER_METER);
 		
-		g2.drawString(Integer.toString(id), (int)(panelPoint.x), (int)(panelPoint.y));
+		g2.drawString(id + " " + carQueue.size(), (int)(panelPoint.x), (int)(panelPoint.y));
 		
-		g2.drawString(Integer.toString(carQueue.size()), (int)(panelPoint.x + 10), (int)(panelPoint.y));
 	}
 	
 	public void check() {

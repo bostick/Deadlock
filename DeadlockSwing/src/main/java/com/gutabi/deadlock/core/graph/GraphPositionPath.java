@@ -11,6 +11,7 @@ import org.apache.log4j.Logger;
 
 import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Point;
+import com.gutabi.deadlock.model.event.VertexEvent;
 
 @SuppressWarnings("static-access")
 public class GraphPositionPath {
@@ -151,12 +152,12 @@ public class GraphPositionPath {
 	/**
 	 * return list of events starting from position pos, and going distance dist
 	 */
-	public List<GraphPositionPathPosition> borderPositions(GraphPositionPathPosition pos, double dist) {
+	public List<VertexEvent> vertexEvents(GraphPositionPathPosition pos, double dist) {
 		
-		List<GraphPositionPathPosition> acc = new ArrayList<GraphPositionPathPosition>();
+		List<VertexEvent> acc = new ArrayList<VertexEvent>();
 		for (GraphPositionPathPosition e : borderPositions) {
 			if (e.combo >= pos.combo && DMath.lessThanEquals(pos.distanceTo(e), dist)) {
-				acc.add(e);
+				acc.add(new VertexEvent(e));
 			}
 		}
 		

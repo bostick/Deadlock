@@ -592,8 +592,6 @@ public class Road extends Edge {
 		
 		if (MODEL.DEBUG_DRAW) {
 			
-			paintSkeleton(g2);
-			
 			paintAABB(g2);
 			
 		}
@@ -625,7 +623,7 @@ public class Road extends Edge {
 	/**
 	 * @param g2 in pixels
 	 */
-	public void paintSkeleton(Graphics2D g2) {
+	private void paintSkeleton(Graphics2D g2) {
 		
 		g2.setColor(Color.BLACK);
 		
@@ -654,6 +652,12 @@ public class Road extends Edge {
 		
 		if (endSign != null) {
 			endSign.paint(g2);
+		}
+		
+		if (MODEL.DEBUG_DRAW) {
+			
+			paintSkeleton(g2);
+			
 		}
 		
 	}

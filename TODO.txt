@@ -1,7 +1,7 @@
 
 IMMEDIATELY:
 
-radius for cars to see other cars and brake
+radius for cars to see car in front on same road and brake
 radius for cars to see a crash and reroute
 
 option to remove braking, friction, skidding, etc.

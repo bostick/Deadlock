@@ -105,13 +105,13 @@ public class CapsuleSequence extends Shape {
 	}
 	
 	public void paint(Graphics2D g2) {
-		for (Capsule c : caps.subList(1, caps.size()-1)) {
+		for (Capsule c : caps) {
 			c.paint(g2);
 		}
 	}
 	
 	public void draw(Graphics2D g2) {
-		for (Capsule c : caps.subList(1, caps.size()-1)) {
+		for (Capsule c : caps) {
 			c.draw(g2);
 		}
 	}

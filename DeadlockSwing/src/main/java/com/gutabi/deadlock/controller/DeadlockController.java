@@ -734,6 +734,7 @@ public class DeadlockController implements ActionListener {
 				e.setVertex((Vertex)e.shape.parent);
 			}
 			
+			assert e.getVertex() != null;
 		}
 		
 		/*

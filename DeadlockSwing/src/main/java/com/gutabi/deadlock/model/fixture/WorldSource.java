@@ -33,6 +33,8 @@ public class WorldSource extends Source {
 	
 	public int outstandingCars;
 	
+	static int carIDCounter;
+	
 	public  WorldSource(Point p, Axis a) {
 		super(p, a);
 		hiliteColor = new Color(0, 255, 255);
@@ -61,6 +63,7 @@ public class WorldSource extends Source {
 		
 		lastSpawnTime = -1;
 		outstandingCars = 0;
+		carIDCounter = 0;
 	}
 	
 	public GraphPositionPath getShortestPathToMatchingSink() {
@@ -93,6 +96,8 @@ public class WorldSource extends Source {
 		if (c != null) {
 //			assert c.hitTest(p, r);
 			c.startingTime = t;
+			c.id = carIDCounter;
+			carIDCounter++;
 			synchronized (MODEL) {
 				MODEL.world.addCar(c);
 			}
