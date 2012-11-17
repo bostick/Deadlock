@@ -32,7 +32,9 @@ import com.gutabi.deadlock.core.graph.GraphPosition;
 import com.gutabi.deadlock.core.graph.GraphPositionPath;
 import com.gutabi.deadlock.core.graph.GraphPositionPathPosition;
 import com.gutabi.deadlock.core.graph.Merger;
-import com.gutabi.deadlock.model.event.VertexEvent;
+import com.gutabi.deadlock.model.event.CarProximityEvent;
+import com.gutabi.deadlock.model.event.DrivingEvent;
+import com.gutabi.deadlock.model.event.VertexArrivalEvent;
 import com.gutabi.deadlock.model.fixture.WorldSink;
 import com.gutabi.deadlock.model.fixture.WorldSource;
 
@@ -40,7 +42,7 @@ import com.gutabi.deadlock.model.fixture.WorldSource;
 public abstract class Car extends Entity {
 	
 	public static final double CAR_LENGTH = 1.0;
-	public static final double COMPLETE_STOP_WAIT_TIME = 0.0;
+	public static final double COMPLETE_STOP_WAIT_TIME = 1.0;
 	
 	public abstract double getMaxSpeed();
 	
@@ -61,7 +63,14 @@ public abstract class Car extends Entity {
 	
 	
 	double steeringLookaheadDistance = CAR_LENGTH * 0.5;
-	double eventLookaheadDistance = CAR_LENGTH * 0.5;
+//	double eventLookaheadDistance = CAR_LENGTH * 0.5;
+	
+	/*
+	 * distance from center of this car to center of other car
+	 */
+	double carProximityLookahead = 0.5 * CAR_LENGTH + 0.5 * CAR_LENGTH + getMaxSpeed() * MODEL.dt + 0.2;
+	double vertexArrivalLookahead = CAR_LENGTH * 0.5;
+	
 	/*
 	 * turning radius
 	 * 3 car lengths for 180 deg = 3 meters for 3.14 radians
@@ -138,12 +147,14 @@ public abstract class Car extends Entity {
 	/*
 	 * 
 	 */
-	VertexEvent curVertexEvent;
+//	DrivingEvent curDrivingEvent;
+	List<DrivingEvent> drivingEvents = new ArrayList<DrivingEvent>();
+	List<VertexArrivalEvent> vertexDepartureQueue = new ArrayList<VertexArrivalEvent>();
 //	GraphPositionPathPosition curVertexPosition;
 //	GraphPositionPathPosition curBorderMatchingPosition;
-	List<VertexEvent> oldVertexEvents = new ArrayList<VertexEvent>();
+//	List<VertexArrivalEvent> oldVertexArrivalEvents = new ArrayList<VertexArrivalEvent>();
 	double decelTime = -1;
-	double accelTime = -1;
+//	double accelTime = -1;
 	double stoppedTime = -1;
 	Point goalPoint;
 	
@@ -168,6 +179,10 @@ public abstract class Car extends Entity {
 		Point p3 = new Point(-CAR_LENGTH / 2, -CAR_LENGTH / 4);
 		localQuad = new Quad(this, p0, p1, p2, p3);
 		
+	}
+	
+	public String toString() {
+		return Integer.toString(id);
 	}
 	
 	protected void computeStartingProperties() {
@@ -353,21 +368,30 @@ public abstract class Car extends Entity {
 		
 //		source.outstandingCars--;
 		
-		if (curVertexEvent != null) {
+		if (curDrivingEvent == null) {
 			
-			if (curVertexEvent.sign != null) {
+		} else if (curDrivingEvent instanceof VertexArrivalEvent) {
+			
+			if (((VertexArrivalEvent)curDrivingEvent).sign != null) {
 				stoppedTime = -1;
 				decelTime = -1;
-				accelTime = -1;
+//				accelTime = -1;
 			}
 			
-			curVertexEvent.v.carQueue.remove(this);
+			((VertexArrivalEvent)curDrivingEvent).v.carQueue.remove(this);
 			
-			curVertexEvent = null;
-//			curVertexPosition = null;
-//			curBorderMatchingPosition = null;
-//			curSign = null;
+			curDrivingEvent = null;
 			
+		} else if (curDrivingEvent instanceof CarProximityEvent) {
+			
+			stoppedTime = -1;
+			decelTime = -1;
+//			accelTime = -1;
+			
+			curDrivingEvent = null;
+			
+		} else {
+			assert false;
 		}
 		
 	}
@@ -381,18 +405,30 @@ public abstract class Car extends Entity {
 		
 //		source.outstandingCars--;
 		
-		if (curVertexEvent != null) {
+		if (curDrivingEvent == null) {
 			
-			if (curVertexEvent.sign != null) {
+		} else if (curDrivingEvent instanceof VertexArrivalEvent) {
+			
+			if (((VertexArrivalEvent)curDrivingEvent).sign != null) {
 				stoppedTime = -1;
 				decelTime = -1;
-				accelTime = -1;
+//				accelTime = -1;
 			}
 			
-			curVertexEvent.v.carQueue.remove(this);
+			((VertexArrivalEvent)curDrivingEvent).v.carQueue.remove(this);
 			
-			curVertexEvent = null;
+			curDrivingEvent = null;
 			
+		} else if (curDrivingEvent instanceof CarProximityEvent) {
+			
+			stoppedTime = -1;
+			decelTime = -1;
+//			accelTime = -1;
+			
+			curDrivingEvent = null;
+			
+		} else {
+			assert false;
 		}
 		
 	}
@@ -423,67 +459,128 @@ public abstract class Car extends Entity {
 			
 //			pathingLogger.debug("next bound after overallPos: " + overallPos.nextBound().gpos);
 			
-			if (curVertexEvent == null) {
-				
-				List<VertexEvent> vertexEvents = overallPath.vertexEvents(overallPos, Math.min(eventLookaheadDistance, overallPos.lengthToEndOfPath));
+			DrivingEvent newDrivingEvent = null;
+			Car carProx = MODEL.world.carProximityTest(this, overallPos, Math.min(carProximityLookahead, overallPos.lengthToEndOfPath));
+			if (carProx != null) {
+				newDrivingEvent = new CarProximityEvent(this, carProx, overallPos.travel(CAR_LENGTH / 2));
+			} else {
+				VertexArrivalEvent vertexArr = overallPath.vertexArrivalTest(overallPos, Math.min(vertexArrivalLookahead, overallPos.lengthToEndOfPath));
 				/*
 				 * since we deal with events before actually reaching them (front of car reaches them vs center of car where position is counted),
 				 * simply keep a list of already processed events to use to filter
 				 */
-				vertexEvents.removeAll(oldVertexEvents);
-				
-				if (!vertexEvents.isEmpty()) {
-					
+//				vertexArrivalEvents.removeAll(oldVertexArrivalEvents);
+				if (vertexArr != null) {
 //					logger.debug("setting curEvent: " + events + "     " + oldEvents);
 					
-					curVertexEvent = vertexEvents.get(0);
-					
-					curVertexEvent.v.carQueue.add(this);
+					if (!vertexDepartureQueue.contains(vertexArr)) {
+						newDrivingEvent = vertexArr;
+						
+//						oldVertexArrivalEvents.add(((VertexArrivalEvent)newDrivingEvent));
+						
+						if (!vertexArr.v.carQueue.contains(this)) {
+							vertexArr.v.carQueue.add(this);
+						}
+					}
 					
 				}
-				
 			}
 			
-			if (curVertexEvent != null) {
+			if (newDrivingEvent != null) {
+				if (curDrivingEvent == null) {
+					curDrivingEvent = newDrivingEvent;
+				} else {
+					if (curDrivingEvent.equals(newDrivingEvent)) {
+//						assert newDrivingEvent == null;
+					} else {
+//						assert newDrivingEvent == null;
+					}
+				}
+			}
+			
+			if (curDrivingEvent != null) {
 				
-				if (curVertexEvent.sign != null) {
+				if (curDrivingEvent instanceof CarProximityEvent) {
+					
 					if (decelTime == -1) {
 						// start braking
 						
 						assert state == CarStateEnum.DRIVING;
 						state = CarStateEnum.BRAKING;
 						
-					} else if (stoppedTime != -1 && t > stoppedTime + COMPLETE_STOP_WAIT_TIME && accelTime == -1 && curVertexEvent.v.carQueue.get(0) == this) {
-						// start driving
+					} else {
 						
-						oldVertexEvents.add(curVertexEvent);
+						Car otherCar = ((CarProximityEvent) curDrivingEvent).otherCar;
 						
-						assert state == CarStateEnum.BRAKING;
-						state = CarStateEnum.DRIVING;
+						if (stoppedTime != -1 && t > stoppedTime + COMPLETE_STOP_WAIT_TIME && (otherCar.overallPos == null || overallPos.distanceTo(otherCar.overallPos) > 1.2 * CAR_LENGTH)) {
+							// start driving
+							
+							assert state == CarStateEnum.BRAKING;
+							state = CarStateEnum.DRIVING;
+							
+							stoppedTime = -1;
+							decelTime = -1;
+//							accelTime = -1;
+							
+							curDrivingEvent = null;
+							
+						}
 						
 					}
-				}
-				
-				if (curVertexEvent.borderMatchingPosition != null && overallPos.combo >= curVertexEvent.borderMatchingPosition.combo) {
-					/*
-					 * driving past exit of intersection, so cleanup
-					 */
 					
-					if (curVertexEvent.sign != null) {
-						stoppedTime = -1;
-						decelTime = -1;
-						accelTime = -1;
+				} else if (curDrivingEvent instanceof VertexArrivalEvent) {
+					
+					if (((VertexArrivalEvent)curDrivingEvent).sign != null) {
+						if (decelTime == -1) {
+							// start braking
+							
+							assert state == CarStateEnum.DRIVING;
+							state = CarStateEnum.BRAKING;
+							
+						} else if (stoppedTime != -1 && t > stoppedTime + COMPLETE_STOP_WAIT_TIME && ((VertexArrivalEvent)curDrivingEvent).v.carQueue.get(0) == this) {
+							// start driving
+							
+							assert state == CarStateEnum.BRAKING;
+							state = CarStateEnum.DRIVING;
+							
+							stoppedTime = -1;
+							decelTime = -1;
+//							accelTime = -1;
+							
+//							assert vertexDepartureQueue.isEmpty();
+							vertexDepartureQueue.add((VertexArrivalEvent)curDrivingEvent);
+							
+							curDrivingEvent = null;
+							
+						}
 					}
 					
-					curVertexEvent.v.carQueue.remove(this);
-					
-					curVertexEvent = null;
-					
+				} else {
+					assert false;
 				}
-				
 				
 			} else {
 				assert state == CarStateEnum.DRIVING;
+			}
+			
+			if (!vertexDepartureQueue.isEmpty()) {
+				
+				List<VertexArrivalEvent> toRemove = new ArrayList<VertexArrivalEvent>();
+				for (VertexArrivalEvent e : vertexDepartureQueue) {
+					if (e.borderMatchingPosition != null && overallPos.combo >= e.borderMatchingPosition.combo) {
+						/*
+						 * driving past exit of intersection, so cleanup
+						 */
+						
+						e.v.carQueue.remove(this);
+						
+						toRemove.add(e);
+						
+					}
+				}
+				for (VertexArrivalEvent e : toRemove) {
+					vertexDepartureQueue.remove(e);
+				}
 			}
 			
 		}
@@ -510,7 +607,7 @@ public abstract class Car extends Entity {
 			updateDrive(t);
 			break;
 		case BRAKING:
-			goalPoint = curVertexEvent.borderPosition.gpos.p;
+			goalPoint = curDrivingEvent.getGraphPositionPathPosition().gpos.p;
 //			assert DMath.greaterThan(Point.distance(goalPoint, p), CAR_LENGTH/4) : "heuristic failed";
 			
 			updateBrake(t);
@@ -539,12 +636,12 @@ public abstract class Car extends Entity {
 	
 	private void updateDrive(double t) {
 		
-		if (stoppedTime != -1) {
-			
-//			logger.debug("accel");
-			
-			accelTime = t;
-		}
+//		if (stoppedTime != -1) {
+//			
+////			logger.debug("accel");
+//			
+////			accelTime = t;
+//		}
 		
 		double goalForwardVel = (float)getMaxSpeed();
 		
@@ -673,6 +770,9 @@ public abstract class Car extends Entity {
 			if (sinked) {
 				
 				logger.debug("sink");
+				
+				overallPos = null;
+				goalPoint = null;
 				
 				s.matchingSource.outstandingCars--;
 				s.carQueue.remove(this);
@@ -813,7 +913,14 @@ public abstract class Car extends Entity {
 		Point worldPoint = p.minus(new Point(CAR_LENGTH/2, 0));
 		Point panelPoint = worldPoint.multiply(MODEL.PIXELS_PER_METER);
 		
-		g2.drawString(Integer.toString(id), (int)(panelPoint.x), (int)(panelPoint.y));
+		AffineTransform origTransform = g2.getTransform();
+		
+		g2.translate((int)(panelPoint.x), (int)(panelPoint.y));
+		g2.scale(2.0, 2.0);
+		
+		g2.drawString(Integer.toString(id), 0, 0);
+		
+		g2.setTransform(origTransform);
 		
 //		g2.drawString(Integer.toString(carQueue.size()), (int)(panelPoint.x + 10), (int)(panelPoint.y));
 	}

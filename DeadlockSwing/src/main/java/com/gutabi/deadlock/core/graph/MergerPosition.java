@@ -11,6 +11,7 @@ public class MergerPosition extends EdgePosition {
 	public final Merger m;
 	public final int index;
 	public final double param;
+	public final double combo;
 	
 	public final double distanceToLeftOfMerger;
 	public final double distanceToRightOfMerger;
@@ -37,6 +38,8 @@ public class MergerPosition extends EdgePosition {
 		
 		this.index = index;
 		this.param = param;
+		
+		combo = index+param;
 		
 		int h = 17;
 		h = 37 * h + m.hashCode();
@@ -131,6 +134,10 @@ public class MergerPosition extends EdgePosition {
 	
 	public double getParam() {
 		return param;
+	}
+	
+	public double getCombo() {
+		return combo;
 	}
 	
 	public GraphPosition nextBoundToward(GraphPosition goal) {

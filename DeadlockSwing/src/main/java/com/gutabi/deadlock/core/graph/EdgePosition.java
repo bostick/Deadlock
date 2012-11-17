@@ -13,5 +13,7 @@ public abstract class EdgePosition extends GraphPosition {
 	public abstract int getIndex();
 	
 	public abstract double getParam();
+	
+	public abstract double getCombo();
 
 }

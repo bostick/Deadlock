@@ -1,5 +1,7 @@
 package com.gutabi.deadlock.core.graph;
 
+import java.util.Comparator;
+
 import org.apache.log4j.Logger;
 
 import com.gutabi.deadlock.core.DMath;
@@ -67,8 +69,27 @@ public class GraphPositionPathPosition {
 		}
 	}
 	
+	public static Comparator<GraphPositionPathPosition> COMPARATOR = new GraphPositionPathPositionComparator();
+	
+	static class GraphPositionPathPositionComparator implements Comparator<GraphPositionPathPosition> {
+
+		public int compare(GraphPositionPathPosition a, GraphPositionPathPosition b) {
+			if (a.equals(b)) {
+				return 0;
+			}
+			assert a.path == b.path;
+			if (a.combo < b.combo) {
+				return -1;
+			} else {
+				return 1;
+			}
+		}
+		
+	}
+	
+	
 	public String toString() {
-		return "GPPP[" + gpos + "]" + index + " " + param + " (" + lengthToStartOfPath + "/" + path.totalLength + ")";
+		return "GPPP[...] " + index + " " + param + " " + gpos;
 	}
 	
 	
@@ -81,7 +102,19 @@ public class GraphPositionPathPosition {
 		return (index == path.size-1) && DMath.equals(param, 0.0);
 	}
 	
-	public double distanceTo(GraphPositionPathPosition p) {
+	public double distanceTo(GraphPositionPathPosition pp) {
+		
+		assert pp != null;
+		
+		GraphPositionPathPosition p;
+		if (pp.path == path) {
+			p = pp;
+		} else {
+			p = path.hitTest(pp.gpos);
+			if (p == null) {
+				return Double.POSITIVE_INFINITY;
+			}
+		}
 		
 		int goalIndex = p.index;
 		double goalParam = p.param;

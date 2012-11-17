@@ -24,7 +24,7 @@ public class WorldSource extends Source {
 	 * spawn cars every SPAWN_FREQUENCY seconds
 	 * -1 means no spawning
 	 */
-	public static double SPAWN_FREQUENCY_SECONDS = 3.0;
+	public static double SPAWN_FREQUENCY_SECONDS = 2.0;
 	
 	public WorldSink matchingSink;
 	GraphPositionPath shortestPathToMatchingSink;

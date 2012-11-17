@@ -11,19 +11,17 @@ import com.gutabi.deadlock.model.StopSign;
  * arriving at a vertex
  *
  */
-public class VertexEvent {
+public class VertexArrivalEvent extends DrivingEvent {
 	
 	public final StopSign sign;
 	public final Vertex v;
 	
-	public final GraphPositionPathPosition borderPosition;
 	public final GraphPositionPathPosition borderMatchingPosition;
 	
-	public VertexEvent(GraphPositionPathPosition borderPosition) {
+	public VertexArrivalEvent(GraphPositionPathPosition gppp) {
+		super(gppp);
 		
-		this.borderPosition = borderPosition;
-		
-		GraphPositionPathPosition vertexPosition = borderPosition.nextBound();
+		GraphPositionPathPosition vertexPosition = gppp.nextBound();
 		
 		assert vertexPosition.gpos instanceof VertexPosition;
 		if (!vertexPosition.isEndOfPath()) {
@@ -32,21 +30,22 @@ public class VertexEvent {
 			borderMatchingPosition = null;
 		}
 		
-		sign = ((RoadPosition)borderPosition.gpos).sign;
+		sign = ((RoadPosition)gppp.gpos).sign;
 		
 		v = ((VertexPosition)vertexPosition.gpos).v;
 		
 	}
 	
-	@Override
 	public boolean equals(Object o) {
 		if (this == o) {
 			return true;
-		} else if (!(o instanceof VertexEvent)) {
+		} else if (!(o instanceof DrivingEvent)) {
+			throw new IllegalArgumentException();
+		} else if (!(o instanceof VertexArrivalEvent)) {
 			return false;
 		} else {
-			VertexEvent b = (VertexEvent)o;
-			return borderPosition.equals(b.borderPosition);
+			VertexArrivalEvent b = (VertexArrivalEvent)o;
+			return v == b.v;
 		}
 	}
 	

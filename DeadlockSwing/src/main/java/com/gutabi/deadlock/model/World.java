@@ -13,6 +13,7 @@ import java.util.Random;
 
 import org.jbox2d.common.Vec2;
 
+import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.Rect;
@@ -22,6 +23,8 @@ import com.gutabi.deadlock.core.geom.Sweeper;
 import com.gutabi.deadlock.core.graph.Axis;
 import com.gutabi.deadlock.core.graph.Edge;
 import com.gutabi.deadlock.core.graph.Graph;
+import com.gutabi.deadlock.core.graph.GraphPositionPath;
+import com.gutabi.deadlock.core.graph.GraphPositionPathPosition;
 import com.gutabi.deadlock.core.graph.Merger;
 import com.gutabi.deadlock.core.graph.Road;
 import com.gutabi.deadlock.core.graph.RoadPosition;
@@ -327,11 +330,16 @@ public class World implements Sweepable {
 		
 		graph.preStep(t);
 		
+		List<Car> carsCopy;
 		synchronized (MODEL) {
-			
-			for (Car c : cars) {
-				c.preStep(t);
-			}
+			carsCopy = new ArrayList<Car>(cars);
+		}
+		
+		for (Car c : carsCopy) {
+			c.preStep(t);
+		}
+		
+		synchronized (MODEL) {
 			
 			for (AnimatedExplosion x : explosions) {
 				x.preStep(t);
@@ -402,6 +410,33 @@ public class World implements Sweepable {
 	public double distanceBetweenVertices(Vertex start, Vertex end) {
 		return graph.distanceBetweenVertices(start, end);
 	}
+	
+	/**
+	 * returns a sorted list of car proximity events
+	 */
+	public Car carProximityTest(Car test, GraphPositionPathPosition center, double dist) {
+		
+//		GraphPositionPathPosition closest = null;
+		
+		GraphPositionPath path = center.path;
+		
+		for (Car c : cars) {
+			if (c == test) {
+				continue;
+			}
+			if (c.overallPos != null) {
+				GraphPositionPathPosition otherCarCenter = path.hitTest(c.overallPos.gpos);
+				if (otherCarCenter != null) {
+					if (DMath.greaterThanEquals(otherCarCenter.combo, center.combo) && DMath.lessThanEquals(center.distanceTo(otherCarCenter), dist)) {
+						return c;
+					}
+				}
+			}
+		}
+		
+		return null;
+	}
+	
 	
 	public Entity hitTest(Point p) {
 		Car c = carHitTest(p);

@@ -80,6 +80,10 @@ public class Merger extends Edge {
 		return "Merger[" + top.id + " " + left.id + " " + right.id + " " + bottom.id + "]";
 	}
 	
+	public int pointCount() {
+		return 3;
+	}
+	
 	public double getTotalLength(Vertex a, Vertex b) {
 		if (a == top || a == bottom) {
 			return MERGER_HEIGHT;

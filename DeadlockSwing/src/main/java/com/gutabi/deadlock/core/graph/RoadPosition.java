@@ -12,6 +12,7 @@ public class RoadPosition extends EdgePosition {
 	public final Road r;
 	public final int index;
 	public final double param;
+	public final double combo;
 	
 	public final boolean bound;
 	
@@ -38,6 +39,8 @@ public class RoadPosition extends EdgePosition {
 		this.r = r;
 		this.index = index;
 		this.param = param;
+		
+		this.combo = index + param;
 		
 		int h = 17;
 		h = 37 * h + r.hashCode();
@@ -113,6 +116,10 @@ public class RoadPosition extends EdgePosition {
 	
 	public double getParam() {
 		return param;
+	}
+	
+	public double getCombo() {
+		return combo;
 	}
 	
 	public GraphPosition floor() {

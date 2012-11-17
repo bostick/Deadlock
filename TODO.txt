@@ -1,9 +1,6 @@
 
 IMMEDIATELY:
 
-radius for cars to see car in front on same road and brake
-radius for cars to see a crash and reroute
-
 option to remove braking, friction, skidding, etc.
 
 IN THE NEXT WEEK:
@@ -40,6 +37,20 @@ cleanup user input
 lines and curves for roads
 
 DONE:
+
+fix being too close to stop signs (think I've done this)
+
+
+handle 2 events:
+accelerating through intersection, and close to another car
+
+radius for cars to see car in front on same road and brake
+
+funky behavior with goalPoints and car proximity
+
+car ids
+
+skeleton in vertices
 
 with ideal physics, need to update goalPoint intelligently
 when at stopsign, gaolPoint is not being updated and it ending up directly under center of car, which leads to crazy behavior
@@ -97,6 +108,8 @@ skeleton for roads and mergers
 add arrow images for sources and sinks
 
 ON HOLD FOR NOW:
+
+radius for cars to see a crash and reroute
 
 drive straight from one border to another without going through vertex center
 

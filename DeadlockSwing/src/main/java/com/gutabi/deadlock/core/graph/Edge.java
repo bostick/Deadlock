@@ -10,11 +10,13 @@ public abstract class Edge extends Entity {
 	
 	public int id;
 	
-	public abstract GraphPosition travelFromConnectedVertex(Vertex v, double dist);
+	public abstract int pointCount();
 	
 	public abstract double getTotalLength(Vertex a, Vertex b);
 	
 	public abstract void enterDistancesMatrix(double[][] distances);
+	
+	public abstract GraphPosition travelFromConnectedVertex(Vertex v, double dist);
 	
 	public abstract void paintBorders(Graphics2D g2);
 	
