@@ -335,14 +335,16 @@ public class GraphPositionPath {
 					assert false;
 				} else {
 					
-					if (pos.e == ((VertexPosition)a).v) {
+					if (pos.entity == ((VertexPosition)a).v) {
 //						assert false;
+						
+						assert getGraphPosition(i, 0.0).equals(pos);
 						return new GraphPositionPathPosition(this, i, 0.0);
 					}
 					
-					Edge e = (Edge)((EdgePosition)b).e;
+					Edge e = (Edge)((EdgePosition)b).entity;
 					
-					if (pos.e != e) {
+					if (pos.entity != e || pos.axis != b.axis) {
 //						assert false;
 						continue;
 					}
@@ -364,6 +366,7 @@ public class GraphPositionPath {
 							double gpppParam = (i + abCombo)-gpppIndex;
 							
 //							assert false;
+							assert getGraphPosition(gpppIndex, gpppParam).equals(pos);
 							return new GraphPositionPathPosition(this, gpppIndex, gpppParam);
 						}
 						
@@ -386,6 +389,7 @@ public class GraphPositionPath {
 							double gpppParam = (i + abCombo)-gpppIndex;
 							
 //							assert false;
+							assert getGraphPosition(gpppIndex, gpppParam).equals(pos);
 							return new GraphPositionPathPosition(this, gpppIndex, gpppParam);
 							
 						}
@@ -399,9 +403,9 @@ public class GraphPositionPath {
 			} else {
 				if (b instanceof VertexPosition) {
 					
-					Edge e = (Edge)((EdgePosition)a).e;
+					Edge e = (Edge)((EdgePosition)a).entity;
 					
-					if (pos.e != e) {
+					if (pos.entity != e || pos.axis != a.axis) {
 //						assert false;
 						continue;
 					}
@@ -410,9 +414,9 @@ public class GraphPositionPath {
 					
 					if (((VertexPosition)b).v == a.vs.get(0)) {
 						
-						if (DMath.lessThanEquals(((EdgePosition)a).getCombo(), combo) && DMath.lessThanEquals(combo, 0.0)) {
+						if (DMath.greaterThanEquals(((EdgePosition)a).getCombo(), combo) && DMath.greaterThanEquals(combo, 0.0)) {
 							
-							double abCombo = (combo - ((EdgePosition)a).getCombo()) / ((e.pointCount()-1)+0.0 - ((EdgePosition)a).getCombo());
+							double abCombo = (combo - ((EdgePosition)a).getCombo()) / (0.0 - ((EdgePosition)a).getCombo());
 							assert DMath.lessThanEquals(0.0, abCombo) && DMath.lessThanEquals(abCombo, 1.0);
 							
 							/*
@@ -423,6 +427,7 @@ public class GraphPositionPath {
 							double gpppParam = (i + abCombo)-gpppIndex;
 							
 //							assert false;
+							assert getGraphPosition(gpppIndex, gpppParam).equals(pos);
 							return new GraphPositionPathPosition(this, gpppIndex, gpppParam);
 						}
 						
@@ -445,6 +450,7 @@ public class GraphPositionPath {
 							double gpppParam = (i + abCombo)-gpppIndex;
 							
 //							assert false;
+							assert getGraphPosition(gpppIndex, gpppParam).equals(pos);
 							return new GraphPositionPathPosition(this, gpppIndex, gpppParam);
 						}
 						
@@ -455,9 +461,11 @@ public class GraphPositionPath {
 					
 				} else {
 					
-					Edge e = (Edge)((EdgePosition)a).e;
+					Edge e = (Edge)((EdgePosition)a).entity;
+					assert e == b.entity;
+					assert a.axis == b.axis;
 					
-					if (pos.e != e) {
+					if (pos.entity != e || pos.axis != a.axis) {
 //						assert false;
 						continue;
 					}
@@ -475,6 +483,7 @@ public class GraphPositionPath {
 							double gpppParam = (i + abCombo)-gpppIndex;
 							
 //							assert false;
+							assert getGraphPosition(gpppIndex, gpppParam).equals(pos);
 							return new GraphPositionPathPosition(this, gpppIndex, gpppParam);
 						}
 						
@@ -492,6 +501,7 @@ public class GraphPositionPath {
 							double gpppParam = (i + abCombo)-gpppIndex;
 							
 //							assert false;
+							assert getGraphPosition(gpppIndex, gpppParam).equals(pos);
 							return new GraphPositionPathPosition(this, gpppIndex, gpppParam);
 							
 						}

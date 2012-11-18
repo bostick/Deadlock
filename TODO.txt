@@ -16,7 +16,19 @@ stand-alone loop
 
 self-intersecting stroke
 
-add countdowns
+
+add countdowns/monitors:
+which car will be coming next from which source?
+what is the capacity of the entire world?
+what is the flow of each source/sink?
+
+
+debugging:
+reversing from a crash
+slowing down / speeding up simulation
+
+
+
 
 add Quadrant
 add Level
@@ -39,7 +51,6 @@ lines and curves for roads
 DONE:
 
 fix being too close to stop signs (think I've done this)
-
 
 handle 2 events:
 accelerating through intersection, and close to another car

@@ -13,8 +13,8 @@ import com.gutabi.deadlock.core.Point;
 public abstract class GraphPosition {
 	
 	public final Point p;
-	public final Entity e;
-	public final Axis a;
+	public final Entity entity;
+	public final Axis axis;
 	
 	/**
 	 * vs should be set so that:
@@ -27,15 +27,15 @@ public abstract class GraphPosition {
 	
 	public GraphPosition(Point p, Entity e, Axis a) {
 		this.p = p;
-		this.e = e;
-		this.a = a;
+		this.entity = e;
+		this.axis = a;
 	}
 	
 	public abstract double distanceToConnectedVertex(Vertex v);
 	
 	public double distanceTo(GraphPosition p) {
 		
-		if (e == p.e && a == p.a) {
+		if (entity == p.entity && axis == p.axis) {
 			
 			return Math.abs(distanceToConnectedVertex(vs.get(0)) - p.distanceToConnectedVertex(p.vs.get(0)));
 			
@@ -82,7 +82,7 @@ public abstract class GraphPosition {
 			return this;
 		}
 		
-		if (e == p.e && a == p.a) {
+		if (entity == p.entity && axis == p.axis) {
 			
 			double signedDistance = distanceToConnectedVertex(vs.get(0));
 			double signedDistanceP = p.distanceToConnectedVertex(p.vs.get(0));
@@ -131,7 +131,7 @@ public abstract class GraphPosition {
 				
 			} else if (DMath.greaterThan(distance, distanceToConnectedVertex(bestVertex) + MODEL.world.distanceBetweenVertices(bestVertex, bestVertexP))) {
 				
-				return ((Edge)p.e).travelFromConnectedVertex(bestVertexP, distance-(distanceToConnectedVertex(bestVertex) + MODEL.world.distanceBetweenVertices(bestVertex, bestVertexP)));
+				return ((Edge)p.entity).travelFromConnectedVertex(bestVertexP, distance-(distanceToConnectedVertex(bestVertex) + MODEL.world.distanceBetweenVertices(bestVertex, bestVertexP)));
 				
 			} else if (DMath.equals(distance, distanceToConnectedVertex(bestVertex))) {
 				
@@ -139,7 +139,7 @@ public abstract class GraphPosition {
 				
 			} else if (DMath.greaterThan(distance, distanceToConnectedVertex(bestVertex))) {
 				
-				return ((Edge)e).travelFromConnectedVertex(bestVertex, distance-(distanceToConnectedVertex(bestVertex)));
+				return ((Edge)entity).travelFromConnectedVertex(bestVertex, distance-(distanceToConnectedVertex(bestVertex)));
 				
 			} else {
 				

@@ -27,4 +27,8 @@ public class CarProximityEvent extends DrivingEvent {
 		}
 	}
 	
+	public String toString() {
+		return "CarProximityEvent[car = " + c + ", otherCar = " + otherCar + "]";
+	}
+	
 }

@@ -427,8 +427,11 @@ public class World implements Sweepable {
 			if (c.overallPos != null) {
 				GraphPositionPathPosition otherCarCenter = path.hitTest(c.overallPos.gpos);
 				if (otherCarCenter != null) {
-					if (DMath.greaterThanEquals(otherCarCenter.combo, center.combo) && DMath.lessThanEquals(center.distanceTo(otherCarCenter), dist)) {
-						return c;
+					if (DMath.greaterThanEquals(otherCarCenter.combo, center.combo)) {
+						double centerCenterDist = center.distanceTo(otherCarCenter);
+						if (DMath.lessThanEquals(centerCenterDist, dist)) {
+							return c;
+						}
 					}
 				}
 			}

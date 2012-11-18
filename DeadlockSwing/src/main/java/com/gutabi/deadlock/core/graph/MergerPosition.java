@@ -87,7 +87,7 @@ public class MergerPosition extends EdgePosition {
 	}
 	
 	public String toString() {
-		return m + " " + index + " " + param + " (" + (a==Axis.LEFTRIGHT?distanceToLeftOfMerger:distanceToTopOfMerger) + "/" + (a==Axis.LEFTRIGHT?Merger.MERGER_WIDTH:Merger.MERGER_HEIGHT) + ")";
+		return m + " " + index + " " + param + " (" + (axis==Axis.LEFTRIGHT?distanceToLeftOfMerger:distanceToTopOfMerger) + "/" + (axis==Axis.LEFTRIGHT?Merger.MERGER_WIDTH:Merger.MERGER_HEIGHT) + ")";
 	}
 	
 	@Override
@@ -100,7 +100,7 @@ public class MergerPosition extends EdgePosition {
 			return false;
 		} else {
 			MergerPosition b = (MergerPosition)o;
-			return (m == b.m) && (a == b.a) && index == b.index && DMath.equals(param, b.param);
+			return (m == b.m) && (axis == b.axis) && index == b.index && DMath.equals(param, b.param);
 		}
 	}
 	
@@ -108,9 +108,9 @@ public class MergerPosition extends EdgePosition {
 		if (DMath.equals(param, 0.0)) {
 			return this;
 		} else if (index != 0) {
-			return new MergerPosition(m, a, index, 0.0);
+			return new MergerPosition(m, axis, index, 0.0);
 		} else {
-			return (a==Axis.LEFTRIGHT) ? new VertexPosition(m.left) : new VertexPosition(m.top);
+			return (axis==Axis.LEFTRIGHT) ? new VertexPosition(m.left) : new VertexPosition(m.top);
 		}
 	}
 	
@@ -118,9 +118,9 @@ public class MergerPosition extends EdgePosition {
 		if (DMath.equals(param, 0.0)) {
 			return this;
 		} else if (index != 1) {
-			return new MergerPosition(m, a, index+1, 0.0);
+			return new MergerPosition(m, axis, index+1, 0.0);
 		} else {
-			return (a==Axis.LEFTRIGHT) ? new VertexPosition(m.right) : new VertexPosition(m.bottom);
+			return (axis==Axis.LEFTRIGHT) ? new VertexPosition(m.right) : new VertexPosition(m.bottom);
 		}
 	}
 	
@@ -146,7 +146,7 @@ public class MergerPosition extends EdgePosition {
 			
 			VertexPosition vg = (VertexPosition)goal;
 			
-			if (a==Axis.LEFTRIGHT) {
+			if (axis==Axis.LEFTRIGHT) {
 				assert vg.v == m.left || vg.v == m.right;
 				
 				if (vg.v == m.left) {
@@ -168,10 +168,10 @@ public class MergerPosition extends EdgePosition {
 			
 		} else {
 			MergerPosition mg = (MergerPosition)goal;
-			assert mg.a == a;
+			assert mg.axis == axis;
 			assert !equals(mg);
 			
-			if (a==Axis.LEFTRIGHT) {
+			if (axis==Axis.LEFTRIGHT) {
 				
 				if (distanceToLeftOfMerger < mg.distanceToLeftOfMerger) {
 					return nextBoundToRight(m, index, param);
@@ -198,7 +198,7 @@ public class MergerPosition extends EdgePosition {
 	
 	public double distanceToConnectedVertex(Vertex v) {
 		assert vs.contains(v);
-		if (a == Axis.LEFTRIGHT) {
+		if (axis == Axis.LEFTRIGHT) {
 			if (v == m.left) {
 				return distanceToLeftOfMerger;
 			} else {

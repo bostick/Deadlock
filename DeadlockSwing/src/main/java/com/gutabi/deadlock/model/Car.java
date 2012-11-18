@@ -68,7 +68,7 @@ public abstract class Car extends Entity {
 	/*
 	 * distance from center of this car to center of other car
 	 */
-	double carProximityLookahead = 0.5 * CAR_LENGTH + 0.5 * CAR_LENGTH + getMaxSpeed() * MODEL.dt + 0.2;
+	double carProximityLookahead = 0.5 * CAR_LENGTH + 0.5 * CAR_LENGTH + getMaxSpeed() * MODEL.dt + 0.4;
 	double vertexArrivalLookahead = CAR_LENGTH * 0.5;
 	
 	/*
@@ -147,8 +147,7 @@ public abstract class Car extends Entity {
 	/*
 	 * 
 	 */
-//	DrivingEvent curDrivingEvent;
-	List<DrivingEvent> drivingEvents = new ArrayList<DrivingEvent>();
+	DrivingEvent curDrivingEvent;
 	List<VertexArrivalEvent> vertexDepartureQueue = new ArrayList<VertexArrivalEvent>();
 //	GraphPositionPathPosition curVertexPosition;
 //	GraphPositionPathPosition curBorderMatchingPosition;
@@ -163,7 +162,8 @@ public abstract class Car extends Entity {
 	
 	static Logger logger = Logger.getLogger(Car.class);
 	static Logger pathingLogger = Logger.getLogger("com.gutabi.deadlock.model.Car.pathing");
-			
+	static Logger eventingLogger = Logger.getLogger("com.gutabi.deadlock.model.Car.eventing");
+	
 	public Car(WorldSource s) {
 		
 		state = CarStateEnum.DRIVING;
@@ -489,11 +489,46 @@ public abstract class Car extends Entity {
 			if (newDrivingEvent != null) {
 				if (curDrivingEvent == null) {
 					curDrivingEvent = newDrivingEvent;
+					if (eventingLogger.isDebugEnabled()) {
+						eventingLogger.debug("t: " + t + " car " + this + ": " + curDrivingEvent);
+					}
 				} else {
 					if (curDrivingEvent.equals(newDrivingEvent)) {
 //						assert newDrivingEvent == null;
 					} else {
-//						assert newDrivingEvent == null;
+						
+						if (curDrivingEvent instanceof CarProximityEvent && newDrivingEvent instanceof VertexArrivalEvent) {
+							
+							stoppedTime = -1;
+							curDrivingEvent = newDrivingEvent;
+							
+						} else if (curDrivingEvent instanceof VertexArrivalEvent && newDrivingEvent instanceof CarProximityEvent) {
+							
+							stoppedTime = -1;
+							curDrivingEvent = newDrivingEvent;
+							if (eventingLogger.isDebugEnabled()) {
+								eventingLogger.debug("t: " + t + " car " + this + ": " + curDrivingEvent);
+							}
+							
+							/*
+							 * may have been at intersection with no stop sign, so make sure to be braking now
+							 */
+							
+							state = CarStateEnum.BRAKING;
+							
+						} else if (curDrivingEvent instanceof CarProximityEvent && newDrivingEvent instanceof CarProximityEvent &&
+								((CarProximityEvent)curDrivingEvent).otherCar == ((CarProximityEvent)newDrivingEvent).otherCar) {
+							
+							stoppedTime = -1;
+							curDrivingEvent = newDrivingEvent;
+							if (eventingLogger.isDebugEnabled()) {
+								eventingLogger.debug("t: " + t + " car " + this + ": " + curDrivingEvent);
+							}
+							
+						} else {
+							assert false;
+						}
+						
 					}
 				}
 			}
@@ -512,8 +547,12 @@ public abstract class Car extends Entity {
 						
 						Car otherCar = ((CarProximityEvent) curDrivingEvent).otherCar;
 						
-						if (stoppedTime != -1 && t > stoppedTime + COMPLETE_STOP_WAIT_TIME && (otherCar.overallPos == null || overallPos.distanceTo(otherCar.overallPos) > 1.2 * CAR_LENGTH)) {
+						if (stoppedTime != -1 && t > stoppedTime + COMPLETE_STOP_WAIT_TIME &&
+								(otherCar.overallPos == null || DMath.greaterThan(overallPos.distanceTo(otherCar.overallPos), carProximityLookahead))) {
 							// start driving
+							
+							Car carProx2 = MODEL.world.carProximityTest(this, overallPos, Math.min(carProximityLookahead, overallPos.lengthToEndOfPath));
+							assert carProx2 == null;
 							
 							assert state == CarStateEnum.BRAKING;
 							state = CarStateEnum.DRIVING;
@@ -523,6 +562,9 @@ public abstract class Car extends Entity {
 //							accelTime = -1;
 							
 							curDrivingEvent = null;
+							if (eventingLogger.isDebugEnabled()) {
+								eventingLogger.debug("t: " + t + " car " + this + ": " + curDrivingEvent);
+							}
 							
 						}
 						
@@ -551,8 +593,33 @@ public abstract class Car extends Entity {
 							vertexDepartureQueue.add((VertexArrivalEvent)curDrivingEvent);
 							
 							curDrivingEvent = null;
+							if (eventingLogger.isDebugEnabled()) {
+								eventingLogger.debug("t: " + t + " car " + this + ": " + curDrivingEvent);
+							}
 							
 						}
+					} else {
+						
+						/*
+						 * could have simply been passing through, so never braking
+						 * or could have ben already had CarProximityEvent, it went away and was masking a VertexArrivalevent, so immediately go to that
+						 * so already braking without a stop sign
+						 * 
+						 * all that matters now is to be driving
+						 */
+						
+						state = CarStateEnum.DRIVING;
+						
+						stoppedTime = -1;
+						decelTime = -1;
+						
+						vertexDepartureQueue.add((VertexArrivalEvent)curDrivingEvent);
+						
+						curDrivingEvent = null;
+						if (eventingLogger.isDebugEnabled()) {
+							eventingLogger.debug("t: " + t + " car " + this + ": " + curDrivingEvent);
+						}
+						
 					}
 					
 				} else {
@@ -761,7 +828,7 @@ public abstract class Car extends Entity {
 		switch (state) {
 		case DRIVING: {
 			
-			WorldSink s = (WorldSink)overallPath.end.e;
+			WorldSink s = (WorldSink)overallPath.end.entity;
 			boolean sinked = false;
 			if (Point.distance(p, s.p) < MODEL.world.SINK_EPSILON) {
 				sinked = true;
