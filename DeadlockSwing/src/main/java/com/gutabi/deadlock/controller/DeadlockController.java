@@ -353,13 +353,27 @@ public class DeadlockController implements ActionListener {
 		switch (mode) {
 		case IDLE:
 			
-			mode = ControlMode.MERGEROUTLINE;
-			
-			MODEL.cursor = new MergerCursor();
-			
-			MODEL.cursor.setPoint(lastMovedWorldPoint);
-			
-			VIEW.repaint();
+			if (MODEL.hilited != null) {
+				
+				if (MODEL.hilited instanceof StopSign) {
+					StopSign s = (StopSign)MODEL.hilited;
+					
+					s.setEnabled(true);
+					
+					renderBackgroundAndPaint();
+				}
+				
+			} else {
+				
+				mode = ControlMode.MERGEROUTLINE;
+				
+				MODEL.cursor = new MergerCursor();
+				
+				MODEL.cursor.setPoint(lastMovedWorldPoint);
+				
+				VIEW.repaint();
+				
+			}
 			
 			break;
 		case MERGEROUTLINE:
@@ -370,13 +384,36 @@ public class DeadlockController implements ActionListener {
 				
 				mode = ControlMode.IDLE;
 				
-				MODEL.cursor = new RegularCursor(Vertex.INIT_VERTEX_RADIUS);
+				MODEL.cursor = new RegularCursor();
 				
 				MODEL.cursor.setPoint(lastMovedWorldPoint);
 				
 				renderBackgroundAndPaint();
 				
 			}
+			
+			break;
+		default:
+			break;
+		}
+		
+	}
+	
+	public void escKey() {
+		
+		switch (mode) {
+		case IDLE:
+			
+			break;
+		case MERGEROUTLINE:
+			
+			mode = ControlMode.IDLE;
+			
+			MODEL.cursor = new RegularCursor();
+			
+			MODEL.cursor.setPoint(lastMovedWorldPoint);
+			
+			VIEW.repaint();
 			
 			break;
 		default:
@@ -400,7 +437,7 @@ public class DeadlockController implements ActionListener {
 	public void stopRunning() {
 		assert Thread.currentThread().getName().equals("controller");
 		
-		MODEL.cursor = new RegularCursor(Vertex.INIT_VERTEX_RADIUS);
+		MODEL.cursor = new RegularCursor();
 		
 		MODEL.cursor.setPoint(lastMovedWorldPoint);
 		

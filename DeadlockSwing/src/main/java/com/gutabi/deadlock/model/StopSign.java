@@ -25,8 +25,10 @@ public class StopSign extends Entity {
 	Point p;
 	double r = 0.5 * STOPSIGN_SIZE;
 	
-	protected Color color;
-	protected Color hiliteColor;
+//	protected Color color;
+//	protected Color hiliteColor;
+	
+	private boolean enabled;
 	
 	public StopSign(Road e, int dir) {
 		this.e = e;
@@ -36,9 +38,11 @@ public class StopSign extends Entity {
 			v = e.start;
 		} else {
 			v = e.end;
-		}
+		} 
 		
-		hiliteColor = Color.RED;
+		enabled = false;
+		
+		computePoint();
 		
 	}
 	
@@ -48,6 +52,14 @@ public class StopSign extends Entity {
 	
 	public boolean isDeleteable() {
 		return true;
+	}
+	
+	public boolean isEnabled() {
+		return enabled;
+	}
+	
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
 	}
 	
 	public void preStart() {
@@ -79,38 +91,54 @@ public class StopSign extends Entity {
 	
 	public void paint(Graphics2D g2) {
 		
-		AffineTransform origTransform = g2.getTransform();
-		
-		g2.scale(MODEL.PIXELS_PER_METER, MODEL.PIXELS_PER_METER);
-		g2.translate(p.x, p.y);
-		g2.scale(MODEL.METERS_PER_PIXEL, MODEL.METERS_PER_PIXEL);
-		
-		g2.drawImage(VIEW.sheet,
-				(int)(-STOPSIGN_SIZE * MODEL.PIXELS_PER_METER * 0.5),
-				(int)(-STOPSIGN_SIZE * MODEL.PIXELS_PER_METER * 0.5),
-				(int)(STOPSIGN_SIZE * MODEL.PIXELS_PER_METER * 0.5),
-				(int)(STOPSIGN_SIZE * MODEL.PIXELS_PER_METER * 0.5),
-				32, 224, 32+32, 224+32,
-				null);
-		
-		g2.setTransform(origTransform);
+		if (enabled) {
+			
+			AffineTransform origTransform = g2.getTransform();
+			
+			g2.scale(MODEL.PIXELS_PER_METER, MODEL.PIXELS_PER_METER);
+			g2.translate(p.x, p.y);
+			g2.scale(MODEL.METERS_PER_PIXEL, MODEL.METERS_PER_PIXEL);
+			
+			g2.drawImage(VIEW.sheet,
+					(int)(-STOPSIGN_SIZE * MODEL.PIXELS_PER_METER * 0.5),
+					(int)(-STOPSIGN_SIZE * MODEL.PIXELS_PER_METER * 0.5),
+					(int)(STOPSIGN_SIZE * MODEL.PIXELS_PER_METER * 0.5),
+					(int)(STOPSIGN_SIZE * MODEL.PIXELS_PER_METER * 0.5),
+					32, 224, 32+32, 224+32,
+					null);
+			
+			g2.setTransform(origTransform);
+			
+		}
 		
 		if (MODEL.DEBUG_DRAW) {
 			
 			paintAABB(g2);
 			
 		}
+		
 	}
 	
 	public void paintHilite(Graphics2D g2) {
 		
-		g2.setColor(hiliteColor);
-		
-		g2.fillOval(
-				(int)((p.x - r) * MODEL.PIXELS_PER_METER),
-				(int)((p.y - r) * MODEL.PIXELS_PER_METER),
-				(int)((2 * r) * MODEL.PIXELS_PER_METER),
-				(int)((2 * r) * MODEL.PIXELS_PER_METER));
+		if (enabled) {
+			
+			g2.setColor(Color.RED);
+			
+			shape.paint(g2);
+			
+		} else {
+			
+			java.awt.Stroke origStroke = g2.getStroke();
+			g2.setStroke(RegularCursor.solidOutlineStroke);
+			
+			g2.setColor(Color.WHITE);
+			
+			shape.draw(g2);
+			
+			g2.setStroke(origStroke);
+			
+		}
 		
 	}
 	

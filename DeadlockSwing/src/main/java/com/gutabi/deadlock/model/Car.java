@@ -35,6 +35,8 @@ import com.gutabi.deadlock.core.graph.Merger;
 import com.gutabi.deadlock.model.event.CarProximityEvent;
 import com.gutabi.deadlock.model.event.DrivingEvent;
 import com.gutabi.deadlock.model.event.VertexArrivalEvent;
+import com.gutabi.deadlock.model.event.VertexEvent;
+import com.gutabi.deadlock.model.event.VertexSpawnEvent;
 import com.gutabi.deadlock.model.fixture.WorldSink;
 import com.gutabi.deadlock.model.fixture.WorldSource;
 
@@ -71,7 +73,7 @@ public abstract class Car extends Entity {
 	
 	
 	double steeringLookaheadDistance = CAR_LENGTH * 0.5;
-	double carProximityLookahead = 0.5 * CAR_LENGTH + 0.5 * CAR_LENGTH + getMaxSpeed() * MODEL.dt + 0.4;
+	double carProximityLookahead = 0.5 * CAR_LENGTH + 0.5 * CAR_LENGTH + getMaxSpeed() * MODEL.dt + 0.8 * CAR_LENGTH;
 	double vertexArrivalLookahead = CAR_LENGTH * 0.5;
 	/*
 	 * turning radius
@@ -95,15 +97,15 @@ public abstract class Car extends Entity {
 	
 	
 	
-	protected int sheetRow;
-	protected int sheetCol;
+//	protected int sheetRow;
+//	protected int sheetCol;
 	
 	public CarStateEnum state;
 	
 	public double startingTime;
 	public double crashingTime;
 	
-	public  WorldSource source;
+	public WorldSource source;
 	
 	protected GraphPositionPath overallPath;
 	
@@ -147,7 +149,7 @@ public abstract class Car extends Entity {
 	 * 
 	 */
 	DrivingEvent curDrivingEvent;
-	List<VertexArrivalEvent> vertexDepartureQueue = new ArrayList<VertexArrivalEvent>();
+	List<VertexEvent> vertexDepartureQueue = new ArrayList<VertexEvent>();
 //	GraphPositionPathPosition curVertexPosition;
 //	GraphPositionPathPosition curBorderMatchingPosition;
 //	List<VertexArrivalEvent> oldVertexArrivalEvents = new ArrayList<VertexArrivalEvent>();
@@ -178,19 +180,29 @@ public abstract class Car extends Entity {
 		Point p3 = new Point(-CAR_LENGTH / 2, -CAR_LENGTH / 4);
 		localQuad = new Quad(this, p0, p1, p2, p3);
 		
+		computeStartingProperties();
 	}
 	
 	public String toString() {
 		return Integer.toString(id);
 	}
 	
-	protected void computeStartingProperties() {
+	protected abstract void computePath();
+	
+	protected abstract int getSheetRow();
+	
+	private void computeStartingProperties() {
 		
 		logger.debug("spawn");
+		
+		computePath();
 		
 		overallPos = new GraphPositionPathPosition(overallPath, 0, 0.0);
 		GraphPosition closestGraphPos = overallPos.gpos;
 		startPoint = closestGraphPos.p;
+		
+		vertexDepartureQueue.add(new VertexSpawnEvent(overallPos));
+		source.carQueue.add(this);
 		
 		if (pathingLogger.isDebugEnabled()) {
 			pathingLogger.debug("overall path:");
@@ -382,7 +394,7 @@ public abstract class Car extends Entity {
 			
 		} else if (curDrivingEvent instanceof VertexArrivalEvent) {
 			
-			if (((VertexArrivalEvent)curDrivingEvent).sign != null) {
+			if (((VertexArrivalEvent)curDrivingEvent).sign.isEnabled()) {
 				stoppedTime = -1;
 				decelTime = -1;
 //				accelTime = -1;
@@ -419,7 +431,7 @@ public abstract class Car extends Entity {
 			
 		} else if (curDrivingEvent instanceof VertexArrivalEvent) {
 			
-			if (((VertexArrivalEvent)curDrivingEvent).sign != null) {
+			if (((VertexArrivalEvent)curDrivingEvent).sign.isEnabled()) {
 				stoppedTime = -1;
 				decelTime = -1;
 //				accelTime = -1;
@@ -472,7 +484,7 @@ public abstract class Car extends Entity {
 			DrivingEvent newDrivingEvent = null;
 			Car carProx = MODEL.world.carProximityTest(this, overallPos, Math.min(carProximityLookahead, overallPos.lengthToEndOfPath));
 			if (carProx != null) {
-				newDrivingEvent = new CarProximityEvent(this, carProx, overallPos.travel(CAR_LENGTH / 2));
+				newDrivingEvent = new CarProximityEvent(this, carProx);
 			} else {
 				VertexArrivalEvent vertexArr = overallPath.vertexArrivalTest(overallPos, Math.min(vertexArrivalLookahead, overallPos.lengthToEndOfPath));
 				/*
@@ -535,6 +547,15 @@ public abstract class Car extends Entity {
 								eventingLogger.debug("t: " + t + " car " + this + ": " + curDrivingEvent);
 							}
 							
+						} else if (curDrivingEvent instanceof CarProximityEvent && newDrivingEvent instanceof CarProximityEvent &&
+								((CarProximityEvent)curDrivingEvent).otherCar != ((CarProximityEvent)newDrivingEvent).otherCar) {
+							
+							stoppedTime = -1;
+							curDrivingEvent = newDrivingEvent;
+							if (eventingLogger.isDebugEnabled()) {
+								eventingLogger.debug("t: " + t + " car " + this + ": " + curDrivingEvent);
+							}
+							
 						} else {
 							assert false;
 						}
@@ -582,7 +603,7 @@ public abstract class Car extends Entity {
 					
 				} else if (curDrivingEvent instanceof VertexArrivalEvent) {
 					
-					if (((VertexArrivalEvent)curDrivingEvent).sign != null) {
+					if (((VertexArrivalEvent)curDrivingEvent).sign.isEnabled()) {
 						if (decelTime == -1) {
 							// start braking
 							
@@ -642,9 +663,9 @@ public abstract class Car extends Entity {
 			
 			if (!vertexDepartureQueue.isEmpty()) {
 				
-				List<VertexArrivalEvent> toRemove = new ArrayList<VertexArrivalEvent>();
-				for (VertexArrivalEvent e : vertexDepartureQueue) {
-					if (e.borderMatchingPosition != null && overallPos.combo >= e.borderMatchingPosition.combo) {
+				List<VertexEvent> toRemove = new ArrayList<VertexEvent>();
+				for (VertexEvent e : vertexDepartureQueue) {
+					if (e.carPastExitPosition != null && overallPos.combo >= e.carPastExitPosition.combo) {
 						/*
 						 * driving past exit of intersection, so cleanup
 						 */
@@ -655,7 +676,7 @@ public abstract class Car extends Entity {
 						
 					}
 				}
-				for (VertexArrivalEvent e : toRemove) {
+				for (VertexEvent e : toRemove) {
 					vertexDepartureQueue.remove(e);
 				}
 			}
@@ -684,7 +705,7 @@ public abstract class Car extends Entity {
 			updateDrive(t);
 			break;
 		case BRAKING:
-			goalPoint = curDrivingEvent.getGraphPositionPathPosition().gpos.p;
+			goalPoint = null;
 //			assert DMath.greaterThan(Point.distance(goalPoint, p), CAR_LENGTH/4) : "heuristic failed";
 			
 			updateBrake(t);
@@ -746,7 +767,49 @@ public abstract class Car extends Entity {
 		
 		b2dBody.applyLinearImpulse(currentUpNormal.mul(driveLateralImpulse), b2dBody.getWorldCenter());
 		
-		updateTurn();
+		
+		
+		Point dp = new Point(goalPoint.x-p.x, goalPoint.y-p.y);
+		
+		double goalAngle = Math.atan2(dp.y, dp.x);
+		
+		logger.debug("updateTurn: goalAngle: " + goalAngle);
+		
+		double dw = ((float)goalAngle) - angle;
+		
+		while (dw > Math.PI) {
+			dw -= 2*Math.PI;
+		}
+		while (dw < -Math.PI) {
+			dw += 2*Math.PI;
+		}
+		
+		/*
+		 * turning radius
+		 */
+		
+		double actualDistance = Math.abs(forwardSpeed * MODEL.dt);
+		double maxRads = maxRadsPerMeter * actualDistance;
+		double negMaxRads = -maxRads;
+		if (dw > maxRads) {
+			dw = maxRads;
+		} else if (dw < negMaxRads) {
+			dw = negMaxRads;
+		}
+		
+//		if (dw > 0.52) {
+//			String.class.getName();
+//		} else if (dw < -0.52) {
+//			String.class.getName();
+//		}
+		
+		logger.debug("updateTurn: dw: " + dw);
+		
+		float goalAngVel = (float)(dw / MODEL.dt);
+		
+		float angImpulse = (float)(turnAngularImpulseCoefficient * momentOfInertia * (goalAngVel - angularVel));
+		
+		b2dBody.applyAngularImpulse(angImpulse);
 		
 	}
 	
@@ -787,53 +850,12 @@ public abstract class Car extends Entity {
 		b2dBody.applyLinearImpulse(currentRightNormal.mul(rightBrakeImpulse), pVec2);
 		b2dBody.applyLinearImpulse(currentUpNormal.mul(upBrakeImpulse), pVec2);
 		
-		updateTurn();
-	}
-	
-	private void updateTurn() {
 		
-		Point dp = new Point(goalPoint.x-p.x, goalPoint.y-p.y);
-		
-		double goalAngle = Math.atan2(dp.y, dp.x);
-		
-		logger.debug("updateTurn: goalAngle: " + goalAngle);
-		
-		double dw = ((float)goalAngle) - angle;
-		
-		while (dw > Math.PI) {
-			dw -= 2*Math.PI;
-		}
-		while (dw < -Math.PI) {
-			dw += 2*Math.PI;
-		}
-		
-		/*
-		 * turning radius
-		 */
-		
-		double actualDistance = Math.abs(forwardSpeed * MODEL.dt);
-		double maxRads = maxRadsPerMeter * actualDistance;
-		double negMaxRads = -maxRads;
-		if (dw > maxRads) {
-			dw = maxRads;
-		} else if (dw < negMaxRads) {
-			dw = negMaxRads;
-		}
-		
-		if (dw > 0.52) {
-			String.class.getName();
-		} else if (dw < -0.52) {
-			String.class.getName();
-		}
-		
-		logger.debug("updateTurn: dw: " + dw);
-		
-		float goalAngVel = (float)(dw / MODEL.dt);
+		double goalAngVel = 0.0;
 		
 		float angImpulse = (float)(turnAngularImpulseCoefficient * momentOfInertia * (goalAngVel - angularVel));
 		
 		b2dBody.applyAngularImpulse(angImpulse);
-		
 	}
 	
 	/**
@@ -952,6 +974,8 @@ public abstract class Car extends Entity {
 			g2.setComposite(normalComp);
 		}
 		
+		int sheetCol = 0;
+		int sheetRow = getSheetRow();
 		g2.drawImage(VIEW.sheet,
 				(int)(-CAR_LENGTH * MODEL.PIXELS_PER_METER * 0.5),
 				(int)(-CAR_LENGTH * MODEL.PIXELS_PER_METER * 0.25),

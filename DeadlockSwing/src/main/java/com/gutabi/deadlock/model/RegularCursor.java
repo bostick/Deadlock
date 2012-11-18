@@ -10,6 +10,7 @@ import java.awt.geom.AffineTransform;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.Circle;
 import com.gutabi.deadlock.core.geom.Shape;
+import com.gutabi.deadlock.core.graph.Vertex;
 
 @SuppressWarnings("static-access")
 public class RegularCursor extends Cursor {
@@ -18,9 +19,9 @@ public class RegularCursor extends Cursor {
 	
 	Circle circle;
 	
-	public RegularCursor(double r) {
+	public RegularCursor() {
 		
-		circle = new Circle(this, new Point(0, 0), r);
+		circle = new Circle(this, new Point(0, 0), Vertex.INIT_VERTEX_RADIUS);
 		
 		localAABB = circle.aabb;
 		

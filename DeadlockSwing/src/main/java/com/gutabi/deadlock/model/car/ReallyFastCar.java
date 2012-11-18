@@ -15,16 +15,18 @@ public class ReallyFastCar extends Car {
 	
 	public ReallyFastCar(WorldSource s) {
 		super(s);
-		overallPath = s.getShortestPathToMatchingSink();
-		
-		sheetCol = 0;
-		sheetRow = 64;
-		
-		computeStartingProperties();
 	}
 	
 	public double getMaxSpeed() {
 		return speed;
+	}
+	
+	protected int getSheetRow() {
+		return 64;
+	}
+	
+	protected void computePath() {
+		overallPath = source.getShortestPathToMatchingSink();
 	}
 	
 }

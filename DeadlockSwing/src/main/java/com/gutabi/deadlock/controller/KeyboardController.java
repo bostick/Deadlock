@@ -17,24 +17,6 @@ public class KeyboardController implements KeyListener {
 		
 		VIEW.canvas.addKeyListener(this);
 		
-//		VIEW.canvas.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("DELETE"), "deleteKeyAction");
-//		VIEW.canvas.getActionMap().put("deleteKeyAction", deleteKeyAction);
-//		
-//		VIEW.canvas.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("INSERT"), "insertKeyAction");
-//		VIEW.canvas.getActionMap().put("insertKeyAction", insertKeyAction);
-//		
-//		VIEW.canvas.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("Q"), "qKeyAction");
-//		VIEW.canvas.getActionMap().put("qKeyAction", qKeyAction);
-		
-//		VIEW.panel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("TAB"), "tabKeyAction");
-//		VIEW.panel.getActionMap().put("tabKeyAction", tabKeyAction);
-//		
-//		VIEW.panel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("control Z"), "undoKeyAction");
-//		VIEW.panel.getActionMap().put("undoKeyAction", undoKeyAction);
-//		
-//		VIEW.panel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("control Y"), "redoKeyAction");
-//		VIEW.panel.getActionMap().put("redoKeyAction", redoKeyAction);
-		
 	}
 	
 	@SuppressWarnings("serial")
@@ -143,25 +125,11 @@ public class KeyboardController implements KeyListener {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
-		} else if (e.getKeyCode() == KeyEvent.VK_Q) {
+		} else if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
 			try {
 				CONTROLLER.queueAndWait(new Runnable() {
 					public void run() {
-						CONTROLLER.qKey();
-					}
-				});
-			} catch (InterruptedException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			} catch (ExecutionException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-		} else if (e.getKeyCode() == KeyEvent.VK_W) {
-			try {
-				CONTROLLER.queueAndWait(new Runnable() {
-					public void run() {
-						CONTROLLER.wKey();
+						CONTROLLER.escKey();
 					}
 				});
 			} catch (InterruptedException e1) {

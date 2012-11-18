@@ -498,18 +498,18 @@ public class World implements Sweepable {
 	/*
 	 * is this vertex under any cars?
 	 */
-	public boolean isUnderAnyCars(Vertex v) {
-		
-		synchronized (MODEL) {
-			for (Car c : MODEL.world.cars) {
-				if (c.bestHitTest(v.shape) != null) {
-					return true;
-				}
-			}
-		}
-		
-		return false;
-	}
+//	public boolean isUnderAnyCars(Vertex v) {
+//		
+//		synchronized (MODEL) {
+//			for (Car c : MODEL.world.cars) {
+//				if (c.bestHitTest(v.shape) != null) {
+//					return true;
+//				}
+//			}
+//		}
+//		
+//		return false;
+//	}
 	
 	public boolean cursorIntersect(Cursor c) {
 		return graph.cursorIntersect(c);

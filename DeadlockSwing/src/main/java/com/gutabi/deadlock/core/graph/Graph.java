@@ -640,7 +640,7 @@ public class Graph implements Sweepable {
 		}
 		f1Pts.add(p);
 		
-		createRoad(eStart, v, f1Pts, (r.startSign!=null?1:0)+2);
+		createRoad(eStart, v, f1Pts, (r.startSign.isEnabled()?1:0)+2);
 		
 		List<Point> f2Pts = new ArrayList<Point>();
 		
@@ -649,7 +649,7 @@ public class Graph implements Sweepable {
 			f2Pts.add(r.getPoint(i));
 		}
 		
-		createRoad(v, eEnd, f2Pts, 1+(r.endSign!=null?2:0));
+		createRoad(v, eEnd, f2Pts, 1+(r.endSign.isEnabled()?2:0));
 		
 		destroyRoad(r);
 		
@@ -799,7 +799,7 @@ public class Graph implements Sweepable {
 				pts.add(e2.getPoint(i));
 			}
 			
-			createRoad(e1End, e2End, pts, (e1.endSign!=null?1:0) + (e2.endSign!=null?2:0));
+			createRoad(e1End, e2End, pts, (e1.endSign.isEnabled()?1:0) + (e2.endSign.isEnabled()?2:0));
 			
 			destroyRoad(e1);
 			destroyRoad(e2);
@@ -818,7 +818,7 @@ public class Graph implements Sweepable {
 				pts.add(e2.getPoint(i));
 			}
 			
-			createRoad(e1End, e2Start, pts, (e1.endSign!=null?1:0) + (e2.startSign!=null?2:0)); 
+			createRoad(e1End, e2Start, pts, (e1.endSign.isEnabled()?1:0) + (e2.startSign.isEnabled()?2:0)); 
 			
 			destroyRoad(e1);
 			destroyRoad(e2);
@@ -837,7 +837,7 @@ public class Graph implements Sweepable {
 				pts.add(e2.getPoint(i));
 			}
 			
-			createRoad(e1Start, e2End, pts, (e1.startSign!=null?1:0) + (e2.endSign!=null?2:0));
+			createRoad(e1Start, e2End, pts, (e1.startSign.isEnabled()?1:0) + (e2.endSign.isEnabled()?2:0));
 			
 			destroyRoad(e1);
 			destroyRoad(e2);
@@ -856,7 +856,7 @@ public class Graph implements Sweepable {
 				pts.add(e2.getPoint(i));
 			}
 			
-			createRoad(e1Start, e2Start, pts, (e1.startSign!=null?1:0) + (e2.startSign!=null?2:0));
+			createRoad(e1Start, e2Start, pts, (e1.startSign.isEnabled()?1:0) + (e2.startSign.isEnabled()?2:0));
 			
 			destroyRoad(e1);
 			destroyRoad(e2);

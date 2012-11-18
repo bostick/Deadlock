@@ -1,6 +1,7 @@
 package com.gutabi.deadlock.core.graph;
 
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
+import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -10,12 +11,18 @@ import com.gutabi.deadlock.core.Point;
 @SuppressWarnings("static-access")
 public class Intersection extends Vertex {
 	
-	Color color;
+	private Turning t;
+	
+	private final Color color;
 	
 	public Intersection(Point p) {
 		super(p);
-		color = new Color(0x44, 0x44, 0x44, 0xff);
-		hiliteColor = new Color(255-color.getRed(), 255-color.getGreen(), 255-color.getBlue());
+		
+		t = Turning.NONE;
+		
+		//color = new Color(0x44, 0x44, 0x44, 0xff);
+		color = Color.GRAY;
+		
 	}
 	
 	public boolean isDeleteable() {
@@ -48,6 +55,24 @@ public class Intersection extends Vertex {
 		
 		shape.paint(g2);
 		
+		if (t == Turning.CLOCKWISE) {
+			g2.drawImage(VIEW.sheet,
+					(int)((p.x) * MODEL.PIXELS_PER_METER) - 16,
+					(int)((p.y) * MODEL.PIXELS_PER_METER) - 16,
+					(int)((p.x) * MODEL.PIXELS_PER_METER) + 16,
+					(int)((p.y) * MODEL.PIXELS_PER_METER) + 16,
+					160, 224, 160+32, 224+32,
+					null);
+		} else if (t == Turning.COUNTERCLOCKWISE) {
+			g2.drawImage(VIEW.sheet,
+					(int)((p.x) * MODEL.PIXELS_PER_METER) - 16,
+					(int)((p.y) * MODEL.PIXELS_PER_METER) - 16,
+					(int)((p.x) * MODEL.PIXELS_PER_METER) + 16,
+					(int)((p.y) * MODEL.PIXELS_PER_METER) + 16,
+					192, 224, 192+32, 224+32,
+					null);
+		}
+				
 		if (MODEL.DEBUG_DRAW) {
 			
 			paintAABB(g2);

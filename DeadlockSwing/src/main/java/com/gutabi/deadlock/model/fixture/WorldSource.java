@@ -122,7 +122,11 @@ public class WorldSource extends Source {
 			return false;
 		}
 		
-		if (MODEL.world.isUnderAnyCars(this)) {
+//		if (MODEL.world.isUnderAnyCars(this)) {
+//			return false;
+//		}
+		
+		if (!carQueue.isEmpty()) {
 			return false;
 		}
 		

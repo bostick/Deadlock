@@ -7,7 +7,6 @@ import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 
 import com.gutabi.deadlock.core.Entity;
-import com.gutabi.deadlock.core.graph.Vertex;
 
 public class DeadlockModel {
 	
@@ -47,7 +46,7 @@ public class DeadlockModel {
 		world = new World();
 		world.init();
 		
-		cursor = new RegularCursor(Vertex.INIT_VERTEX_RADIUS);
+		cursor = new RegularCursor();
 		
 		stats = new Stats();
 	}

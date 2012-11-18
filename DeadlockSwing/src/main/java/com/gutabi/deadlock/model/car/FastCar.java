@@ -14,16 +14,17 @@ public class FastCar extends Car {
 	
 	public FastCar(WorldSource s) {
 		super(s);
-		overallPath = s.getShortestPathToMatchingSink();
-		
-		sheetCol = 0;
-		sheetRow = 32;
-		
-		computeStartingProperties();
 	}
 	
 	public double getMaxSpeed() {
 		return speed;
 	}
 	
+	protected int getSheetRow() {
+		return 32;
+	}
+	
+	protected void computePath() {
+		overallPath = source.getShortestPathToMatchingSink();
+	}
 }

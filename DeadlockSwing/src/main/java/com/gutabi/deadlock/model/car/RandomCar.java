@@ -15,16 +15,18 @@ public class RandomCar extends Car {
 	
 	public RandomCar(WorldSource s) {
 		super(s);
-		overallPath = s.getRandomPathToMatchingSink();
-		
-		sheetCol = 0;
-		sheetRow = 64;
-		
-		computeStartingProperties();
 	}
 	
 	public double getMaxSpeed() {
 		return speed;
+	}
+	
+	protected int getSheetRow() {
+		return 64;
+	}
+	
+	protected void computePath() {
+		overallPath = source.getRandomPathToMatchingSink();
 	}
 	
 }

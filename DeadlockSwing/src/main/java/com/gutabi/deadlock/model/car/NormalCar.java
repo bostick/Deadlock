@@ -15,16 +15,17 @@ public class NormalCar extends Car {
 	
 	public NormalCar(WorldSource s) {
 		super(s);
-		overallPath = s.getShortestPathToMatchingSink();
-		
-		sheetCol = 0;
-		sheetRow = 0;
-		
-		computeStartingProperties();
 	}
 	
 	public double getMaxSpeed() {
 		return speed;
 	}
 	
+	protected int getSheetRow() {
+		return 0;
+	}
+	
+	protected void computePath() {
+		overallPath = source.getShortestPathToMatchingSink();
+	}
 }

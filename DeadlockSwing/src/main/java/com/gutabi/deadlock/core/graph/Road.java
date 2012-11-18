@@ -41,8 +41,8 @@ public class Road extends Edge {
 	private final boolean standalone;
 	private final boolean loop;
 	
-	public StopSign startSign;
-	public StopSign endSign;
+	public final StopSign startSign;
+	public final StopSign endSign;
 	
 	protected Color color;
 	protected Color hiliteColor;
@@ -73,7 +73,8 @@ public class Road extends Edge {
 		loop = (start == end);
 		standalone = (loop) ? start == null : false;
 		
-		color = new Color(0x88, 0x88, 0x88, 0xff);
+//		color = new Color(0x88, 0x88, 0x88, 0xff);
+		color = Color.GRAY;
 		hiliteColor = new Color(0xff ^ 0x88, 0xff ^ 0x88, 0xff ^ 0x88, 0xff);
 		
 		computeProperties();
@@ -83,16 +84,20 @@ public class Road extends Edge {
 			start.roads.add(this);
 			end.roads.add(this);
 			
+			startSign = new StopSign(this, 0);
+			endSign = new StopSign(this, 1);
+			
 			if ((dec & 1) == 1) {
-				startSign = new StopSign(this, 0);
-				startSign.computePoint();
+				startSign.setEnabled(true);
 			}
 			
 			if ((dec & 2) == 2) {
-				endSign = new StopSign(this, 1);
-				endSign.computePoint();
+				endSign.setEnabled(true);
 			}
 
+		} else {
+			startSign = null;
+			endSign = null;
 		}
 		
 	}
@@ -178,9 +183,9 @@ public class Road extends Edge {
 	public void removeStopSignTop(StopSign s) {
 		assert s == startSign || s == endSign;
 		if (s == startSign) {
-			startSign = null;
+			startSign.setEnabled(false);
 		} else {
-			endSign = null;
+			endSign.setEnabled(false);
 		}
 	}
 	
