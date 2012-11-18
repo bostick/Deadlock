@@ -630,7 +630,7 @@ public class DeadlockController implements ActionListener {
 							double strokeCombo = j + Point.param(skeletonIntersection.p, a, b);
 							
 							if (DMath.greaterThanEquals((strokeCombo), (e.index+e.param))
-									&& DMath.lessThanEquals(Point.distance(skeletonIntersection.p, e.p), s.r)
+									&& DMath.lessThanEquals(Point.distance(skeletonIntersection.p, e.p), s.r + s.r)
 									) {
 								pos = skeletonIntersection;
 								
@@ -692,7 +692,7 @@ public class DeadlockController implements ActionListener {
 							double strokeCombo = j + Point.param(skeletonIntersection.p, a, b);
 							
 							if (DMath.lessThanEquals((strokeCombo), (e.index+e.param))
-									&& DMath.lessThanEquals(Point.distance(skeletonIntersection.p, e.p), s.r)
+									&& DMath.lessThanEquals(Point.distance(skeletonIntersection.p, e.p), s.r + s.r)
 									) {
 								pos = skeletonIntersection;
 								
