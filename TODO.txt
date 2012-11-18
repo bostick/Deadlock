@@ -1,8 +1,6 @@
 
 IMMEDIATELY:
 
-option to switch between real and ideal physics
-
 hover over where signs and arrows would be, hit key to add them
 hit key to change direction of arrows
 directional arrows in middle of intersections
@@ -132,6 +130,9 @@ skeleton for roads and mergers
 add arrow images for sources and sinks
 
 ON HOLD FOR NOW:
+
+option to switch between real and ideal physics
+
 
 radius for cars to see a crash and reroute
 

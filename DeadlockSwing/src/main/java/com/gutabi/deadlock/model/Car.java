@@ -46,50 +46,48 @@ public abstract class Car extends Entity {
 	
 	public abstract double getMaxSpeed();
 	
+	
+	
 //	double steeringLookaheadDistance = CAR_LENGTH * 1.5;
-//	double eventLookaheadDistance = getMaxSpeed() * 0.3;
+//	double carProximityLookahead = 0.5 * CAR_LENGTH + 0.5 * CAR_LENGTH + getMaxSpeed() * MODEL.dt + 0.4;
+//	double vertexArrivalLookahead = CAR_LENGTH * 0.5 + CAR_LENGTH + getMaxSpeed() * MODEL.dt + 0.4;
 //	/*
 //	 * turning radius
 //	 * 3 car lengths for 180 deg = 3 meters for 3.14 radians
 //	 */
-//	private double maxRadsPerMeter = 0.1;
-//	private double cancelingForwardImpulseCoefficient = 0.01f;
-//	private double cancelingLateralImpulseCoefficient = 0.05f;
-//	private double cancelingAngularImpulseCoefficient = 0.1f;
-//	
-//	private double forwardImpulseCoefficient = 1.0f;
-//	private double brakeImpulseCoefficient = 0.1f;
-//	private double maxAcceleration = 0.1f;
+//	private double maxRadsPerMeter = Double.POSITIVE_INFINITY;
+//	private double maxAcceleration = getMaxSpeed() / 3.0;
+//	private double maxDeceleration = -getMaxSpeed() / 3.0;
+//	private double frictionForwardImpulseCoefficient = 0.0;
+//	private double frictionLateralImpulseCoefficient = 0.0;
+//	private double frictionAngularImpulseCoefficient = 0.0;
+//	private double driveForwardImpulseCoefficient = 1.0;
+//	private double driveLateralImpulseCoefficient = 1.0;
+//	private double brakeForwardImpulseCoefficient = 1.0;
+//	private double brakeLateralImpulseCoefficient = 1.0;
+//	private double turnAngularImpulseCoefficient = 1.0;
+	
+	
 	
 	
 	double steeringLookaheadDistance = CAR_LENGTH * 0.5;
-//	double eventLookaheadDistance = CAR_LENGTH * 0.5;
-	
-	/*
-	 * distance from center of this car to center of other car
-	 */
 	double carProximityLookahead = 0.5 * CAR_LENGTH + 0.5 * CAR_LENGTH + getMaxSpeed() * MODEL.dt + 0.4;
 	double vertexArrivalLookahead = CAR_LENGTH * 0.5;
-	
 	/*
 	 * turning radius
 	 * 3 car lengths for 180 deg = 3 meters for 3.14 radians
 	 */
 	private double maxRadsPerMeter = Double.POSITIVE_INFINITY;
 	private double maxAcceleration = Double.POSITIVE_INFINITY;
-	private double maxDeceleration = 0.0;
-	
-	private double frictionForwardImpulseCoefficient = 0.0f;
-	private double frictionLateralImpulseCoefficient = 0.0f;
-	private double frictionAngularImpulseCoefficient = 0.0f;
-	
-	private double driveForwardImpulseCoefficient = 1.0f;
-	private double driveLateralImpulseCoefficient = 1.0f;
-	
-	private double brakeForwardImpulseCoefficient = 1.0f;
-	private double brakeLateralImpulseCoefficient = 1.0f;
-	
-	private double turnAngularImpulseCoefficient = 1.0f;
+	private double maxDeceleration = Double.NEGATIVE_INFINITY;
+	private double frictionForwardImpulseCoefficient = 0.0;
+	private double frictionLateralImpulseCoefficient = 0.0;
+	private double frictionAngularImpulseCoefficient = 0.0;
+	private double driveForwardImpulseCoefficient = 1.0;
+	private double driveLateralImpulseCoefficient = 1.0;
+	private double brakeForwardImpulseCoefficient = 1.0;
+	private double brakeLateralImpulseCoefficient = 1.0;
+	private double turnAngularImpulseCoefficient = 1.0;
 	
 	
 	
@@ -133,10 +131,11 @@ public abstract class Car extends Entity {
 	Vec2 currentUpNormal;
 	Vec2 vel;
 	Vec2 forwardVel;
+	double forwardSpeed;
 	float angle;
 	float angularVel;
 	Matrix carTrans;
-	float carAngle;
+//	float carAngle;
 	boolean atleastPartiallyOnRoad;
 	boolean inMerger;
 	GraphPositionPathPosition overallPos;
@@ -296,21 +295,32 @@ public abstract class Car extends Entity {
 		pVec2 = b2dBody.getPosition();
 		p = new Point(pVec2.x, pVec2.y);
 		
+		if (logger.isDebugEnabled()) {
+			logger.debug("p: " + p);
+		}
+		
 		currentRightNormal = b2dBody.getWorldVector(right);
 		currentUpNormal = b2dBody.getWorldVector(up);
 		vel = b2dBody.getLinearVelocity();
 		angle = b2dBody.getAngle();
+		assert !Double.isNaN(angle);
+		
+		if (logger.isDebugEnabled()) {
+			logger.debug("angle: " + angle);
+		}
+		
 		angularVel = b2dBody.getAngularVelocity();
 		
 		forwardVel = currentRightNormal.mul(Vec2.dot(currentRightNormal, vel));
+		forwardSpeed = Vec2.dot(vel, currentRightNormal);
 		
 		if (logger.isDebugEnabled()) {
-			logger.debug("vel: " + forwardVel);
+			logger.debug("forwardSpeed: " + forwardSpeed);
 		}
 		
 		Mat22 r = b2dBody.getTransform().R;
 		carTrans = new Matrix(r.col1.x, r.col2.x, r.col1.y, r.col2.y);
-		carAngle = b2dBody.getAngle();
+//		carAngle = b2dBody.getAngle();
 		
 		worldQuad = Geom.localToWorld(localQuad, carTrans, p);
 		shape = worldQuad;
@@ -712,19 +722,17 @@ public abstract class Car extends Entity {
 		
 		double goalForwardVel = (float)getMaxSpeed();
 		
-		double forwardSpeed = forwardVel.length();
-		
-		float dv;
+		double dv;
 		if (goalForwardVel > forwardSpeed) {
-			dv = (float)(goalForwardVel - forwardSpeed);
+			dv = goalForwardVel - forwardSpeed;
 		} else {
 			dv = 0.0f;
 		}
-//		if (acc < 0) {
-//			assert false;
-//		}
+		if (dv < 0) {
+			assert false;
+		}
 		if (dv > maxAcceleration * MODEL.dt) {
-			dv = (float)(maxAcceleration * MODEL.dt);
+			dv = maxAcceleration * MODEL.dt;
 		}
 		
 //		logger.debug("acc for driving: " + acc);
@@ -744,8 +752,6 @@ public abstract class Car extends Entity {
 	
 	private void updateBrake(double t) {
 		
-		double forwardSpeed = forwardVel.length();
-		
 		if (decelTime == -1) {
 			
 			logger.debug("decel");
@@ -755,21 +761,28 @@ public abstract class Car extends Entity {
 		
 		double goalForwardVel = 0.0;
 		
-		float dv = (float)(goalForwardVel - forwardSpeed);
+		double dv = (goalForwardVel - forwardSpeed);
 		if (dv < maxDeceleration * MODEL.dt) {
-			dv = (float)(maxDeceleration * MODEL.dt);
+			dv = (maxDeceleration * MODEL.dt);
 		}
 		if (dv > 0) {
-			assert false;
+//			assert false;
 		}
 		
 		//logger.debug("acc for braking: " + -forwardVel.length());
 		
 		Vec2 cancelingVel = vel.mul(-1);
+		double cancelingRightVel = Vec2.dot(cancelingVel, currentRightNormal);
+		double cancelingUpVel = Vec2.dot(cancelingVel, currentUpNormal);
 		
-		float rightBrakeImpulse = (float)(brakeForwardImpulseCoefficient * Vec2.dot(cancelingVel, currentRightNormal) * mass);
+		if (dv != cancelingRightVel) {
+//			assert false;
+		}
 		
-		float upBrakeImpulse = (float)(brakeLateralImpulseCoefficient * Vec2.dot(cancelingVel, currentUpNormal) * mass);
+		logger.debug("braking dv: " + dv);
+		
+		float rightBrakeImpulse = (float)(brakeForwardImpulseCoefficient * dv * mass);
+		float upBrakeImpulse = (float)(brakeLateralImpulseCoefficient * cancelingUpVel * mass);
 		
 		b2dBody.applyLinearImpulse(currentRightNormal.mul(rightBrakeImpulse), pVec2);
 		b2dBody.applyLinearImpulse(currentUpNormal.mul(upBrakeImpulse), pVec2);
@@ -780,10 +793,12 @@ public abstract class Car extends Entity {
 	private void updateTurn() {
 		
 		Point dp = new Point(goalPoint.x-p.x, goalPoint.y-p.y);
-		double forwardSpeed = forwardVel.length();
 		
-		double nextDTGoalAngle = Math.atan2(dp.y, dp.x);
-		double dw = ((float)nextDTGoalAngle) - angle;
+		double goalAngle = Math.atan2(dp.y, dp.x);
+		
+		logger.debug("updateTurn: goalAngle: " + goalAngle);
+		
+		double dw = ((float)goalAngle) - angle;
 		
 		while (dw > Math.PI) {
 			dw -= 2*Math.PI;
@@ -795,19 +810,23 @@ public abstract class Car extends Entity {
 		/*
 		 * turning radius
 		 */
-		double actualDistance = forwardSpeed * MODEL.dt;
+		
+		double actualDistance = Math.abs(forwardSpeed * MODEL.dt);
 		double maxRads = maxRadsPerMeter * actualDistance;
+		double negMaxRads = -maxRads;
 		if (dw > maxRads) {
 			dw = maxRads;
-		} else if (dw < -maxRads) {
-			dw = -maxRads;
+		} else if (dw < negMaxRads) {
+			dw = negMaxRads;
 		}
 		
-//		if (dw > 0.52) {
-//			String.class.getName();
-//		} else if (dw < -0.52) {
-//			String.class.getName();
-//		}
+		if (dw > 0.52) {
+			String.class.getName();
+		} else if (dw < -0.52) {
+			String.class.getName();
+		}
+		
+		logger.debug("updateTurn: dw: " + dw);
 		
 		float goalAngVel = (float)(dw / MODEL.dt);
 		
@@ -854,7 +873,7 @@ public abstract class Car extends Entity {
 				
 				if (DMath.equals(vel.length(), 0.0)) {
 					
-//					logger.debug("stopped: " + t);
+					logger.debug("stopped: " + t);
 					stoppedTime = t;
 					
 				}
@@ -923,7 +942,7 @@ public abstract class Car extends Entity {
 		g2.scale(MODEL.PIXELS_PER_METER, MODEL.PIXELS_PER_METER);
 		
 		g2.translate(p.x, p.y);
-		g2.rotate(carAngle);
+		g2.rotate(angle);
 		
 		g2.scale(MODEL.METERS_PER_PIXEL, MODEL.METERS_PER_PIXEL);
 		
