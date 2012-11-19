@@ -11,6 +11,8 @@ public enum ControlMode {
 	PAUSED,
 	
 	
-	MERGEROUTLINE
+	MERGERCURSOR,
+	
+	FIXTURECURSOR
 	
 }

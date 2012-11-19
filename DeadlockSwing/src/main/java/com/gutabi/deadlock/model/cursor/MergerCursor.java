@@ -1,4 +1,4 @@
-package com.gutabi.deadlock.model;
+package com.gutabi.deadlock.model.cursor;
 
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 
@@ -14,6 +14,7 @@ import com.gutabi.deadlock.core.geom.Rect;
 import com.gutabi.deadlock.core.geom.Shape;
 import com.gutabi.deadlock.core.graph.Merger;
 import com.gutabi.deadlock.core.graph.Vertex;
+import com.gutabi.deadlock.model.Cursor;
 
 @SuppressWarnings("static-access")
 public class MergerCursor extends Cursor {
@@ -25,6 +26,8 @@ public class MergerCursor extends Cursor {
 	private Circle bottom;
 	private Circle right;
 	private Quad q;
+	
+	private Rect localAABB;
 	
 	public MergerCursor() {
 		
@@ -46,6 +49,12 @@ public class MergerCursor extends Cursor {
 		localAABB = Rect.union(localAABB, right.aabb);
 		localAABB = Rect.union(localAABB, bottom.aabb);
 		
+	}
+	
+	public void setPoint(Point p) {
+		this.p = p;
+		
+		aabb = localAABB.plus(p);
 	}
 	
 	public boolean intersect(Shape s) {

@@ -7,6 +7,7 @@ import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 
 import com.gutabi.deadlock.core.Entity;
+import com.gutabi.deadlock.model.cursor.RegularCursor;
 
 public class DeadlockModel {
 	

@@ -1,4 +1,4 @@
-package com.gutabi.deadlock.model;
+package com.gutabi.deadlock.model.cursor;
 
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 
@@ -9,8 +9,10 @@ import java.awt.geom.AffineTransform;
 
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.Circle;
+import com.gutabi.deadlock.core.geom.Rect;
 import com.gutabi.deadlock.core.geom.Shape;
 import com.gutabi.deadlock.core.graph.Vertex;
+import com.gutabi.deadlock.model.Cursor;
 
 @SuppressWarnings("static-access")
 public class RegularCursor extends Cursor {
@@ -19,12 +21,20 @@ public class RegularCursor extends Cursor {
 	
 	Circle circle;
 	
+	private Rect localAABB;
+	
 	public RegularCursor() {
 		
 		circle = new Circle(this, new Point(0, 0), Vertex.INIT_VERTEX_RADIUS);
 		
 		localAABB = circle.aabb;
 		
+	}
+	
+	public void setPoint(Point p) {
+		this.p = p;
+		
+		aabb = localAABB.plus(p);
 	}
 	
 	public boolean intersect(Shape s) {

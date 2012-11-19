@@ -130,7 +130,8 @@ public class DeadlockView {
 		case DRAFTING:
 			aabb = Rect.union(aabb, MODEL.stroke.getAABB());
 		case IDLE:
-		case MERGEROUTLINE:
+		case MERGERCURSOR:
+		case FIXTURECURSOR:
 			aabb = Rect.union(aabb, MODEL.cursor.getAABB());
 			break;
 		case PAUSED:

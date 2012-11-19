@@ -31,10 +31,13 @@ import com.gutabi.deadlock.core.graph.RoadPosition;
 import com.gutabi.deadlock.core.graph.Turning;
 import com.gutabi.deadlock.core.graph.Vertex;
 import com.gutabi.deadlock.model.Car;
-import com.gutabi.deadlock.model.MergerCursor;
-import com.gutabi.deadlock.model.RegularCursor;
 import com.gutabi.deadlock.model.StopSign;
 import com.gutabi.deadlock.model.Stroke;
+import com.gutabi.deadlock.model.cursor.FixtureCursor;
+import com.gutabi.deadlock.model.cursor.MergerCursor;
+import com.gutabi.deadlock.model.cursor.RegularCursor;
+import com.gutabi.deadlock.model.fixture.WorldSink;
+import com.gutabi.deadlock.model.fixture.WorldSource;
 
 @SuppressWarnings("static-access")
 public class DeadlockController implements ActionListener {
@@ -185,7 +188,8 @@ public class DeadlockController implements ActionListener {
 				
 			case RUNNING:
 			case PAUSED:
-			case MERGEROUTLINE:
+			case MERGERCURSOR:
+			case FIXTURECURSOR:
 				;
 				break;
 			}
@@ -240,7 +244,8 @@ public class DeadlockController implements ActionListener {
 				break;
 			case RUNNING:
 			case PAUSED:
-			case MERGEROUTLINE:
+			case MERGERCURSOR:
+			case FIXTURECURSOR:
 				;
 				break;
 			}
@@ -268,29 +273,16 @@ public class DeadlockController implements ActionListener {
 			case RUNNING:
 				break;
 			case PAUSED:
-			case IDLE: {
-				
-				if (MODEL.cursor != null) {
-					MODEL.cursor.setPoint(lastMovedWorldPoint);
-					
-					Entity closest = MODEL.world.hitTest(lastMovedWorldPoint);
-					MODEL.hilited = closest;
-					
-				}
-				
-				VIEW.repaint();
-				
-				break;
-			}
 			case DRAFTING:
 				assert false;
 				break;
-			case MERGEROUTLINE:
-				
+			case IDLE:
+				Entity closest = MODEL.world.hitTest(lastMovedWorldPoint);
+				MODEL.hilited = closest;
+			case MERGERCURSOR:
+			case FIXTURECURSOR:
 				MODEL.cursor.setPoint(lastMovedWorldPoint);
-				
 				VIEW.repaint();
-				
 				break;
 			}
 			
@@ -299,11 +291,70 @@ public class DeadlockController implements ActionListener {
 	}
 	
 	public void qKey() {
-		MODEL.debugStroke = new Stroke(Vertex.INIT_VERTEX_RADIUS);
+		
+		switch (mode) {
+		case IDLE:
+			
+			if (!MODEL.world.cursorIntersect(MODEL.cursor)) {
+				
+				MODEL.world.addVertexTop(new Intersection(lastMovedWorldPoint));
+				
+				renderBackgroundAndPaint();
+				
+			}
+			
+			break;
+		default:
+			break;
+		}
+		
 	}
 	
 	public void wKey() {
-		MODEL.debugStroke.events();
+		
+		switch (mode) {
+		case IDLE:
+			
+			mode = ControlMode.FIXTURECURSOR;
+			
+			MODEL.cursor = new FixtureCursor();
+			
+			MODEL.cursor.setPoint(lastMovedWorldPoint);
+			
+			VIEW.repaint();
+			
+			break;
+		case FIXTURECURSOR:
+			FixtureCursor fc = (FixtureCursor)MODEL.cursor;
+			Axis axis = fc.getAxis();
+			
+			if (!MODEL.world.cursorIntersect(MODEL.cursor)) {
+				
+				WorldSource source = new WorldSource(fc.getSourcePoint(), axis);
+				WorldSink sink = new WorldSink(fc.getSinkPoint(), axis);
+				
+				source.matchingSink = sink;
+				sink.matchingSource = source;
+				
+				MODEL.world.addVertexTop(source);
+				
+				MODEL.world.addVertexTop(sink);
+				
+				mode = ControlMode.IDLE;
+				
+				MODEL.cursor = new RegularCursor();
+				
+				MODEL.cursor.setPoint(lastMovedWorldPoint);
+				
+				renderBackgroundAndPaint();
+				
+			}
+			
+			break;
+		default:
+			break;
+		}
+		
 	}
 	
 	public void deleteKey() {
@@ -368,7 +419,7 @@ public class DeadlockController implements ActionListener {
 				
 			} else {
 				
-				mode = ControlMode.MERGEROUTLINE;
+				mode = ControlMode.MERGERCURSOR;
 				
 				MODEL.cursor = new MergerCursor();
 				
@@ -379,7 +430,7 @@ public class DeadlockController implements ActionListener {
 			}
 			
 			break;
-		case MERGEROUTLINE:
+		case MERGERCURSOR:
 			
 			if (!MODEL.world.cursorIntersect(MODEL.cursor)) {
 				
@@ -396,7 +447,10 @@ public class DeadlockController implements ActionListener {
 			}
 			
 			break;
-		default:
+		case RUNNING:
+		case PAUSED:
+		case FIXTURECURSOR:
+		case DRAFTING:
 			break;
 		}
 		
@@ -405,11 +459,8 @@ public class DeadlockController implements ActionListener {
 	public void escKey() {
 		
 		switch (mode) {
-		case IDLE:
-			
-			break;
-		case MERGEROUTLINE:
-			
+		case MERGERCURSOR:
+		case FIXTURECURSOR:
 			mode = ControlMode.IDLE;
 			
 			MODEL.cursor = new RegularCursor();
@@ -419,7 +470,10 @@ public class DeadlockController implements ActionListener {
 			VIEW.repaint();
 			
 			break;
-		default:
+		case RUNNING:
+		case PAUSED:
+		case DRAFTING:
+		case IDLE:
 			break;
 		}
 		

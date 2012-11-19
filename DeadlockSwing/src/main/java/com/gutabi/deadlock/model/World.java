@@ -1,6 +1,5 @@
 package com.gutabi.deadlock.model;
 
-import static com.gutabi.deadlock.controller.DeadlockController.CONTROLLER;
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
@@ -546,39 +545,28 @@ public class World implements Sweepable {
 	
 	private void paintScene(Graphics2D g2) {
 		
-		switch (CONTROLLER.mode) {
-		case DRAFTING:
-		case IDLE:
-		case RUNNING:
-		case PAUSED:
-		case MERGEROUTLINE: {
+		graph.paintScene(g2);
+		
+		synchronized (MODEL) {
 			
-			graph.paintScene(g2);
-			
-			synchronized (MODEL) {
-				
-				for (Car c : cars) {
-					c.paint(g2);
-				}
-				
-				for (AnimatedExplosion x : explosions) {
-					x.paint(g2);
-				}
-				
+			for (Car c : cars) {
+				c.paint(g2);
 			}
 			
-			if (MODEL.hilited != null) {
-				MODEL.hilited.paintHilite(g2);
+			for (AnimatedExplosion x : explosions) {
+				x.paint(g2);
 			}
 			
-			if (MODEL.DEBUG_DRAW) {
-				
-				graph.paintIDs(g2);
-				
-			}
-			
-			break;
 		}
+		
+		if (MODEL.hilited != null) {
+			MODEL.hilited.paintHilite(g2);
+		}
+		
+		if (MODEL.DEBUG_DRAW) {
+			
+			graph.paintIDs(g2);
+			
 		}
 		
 	}

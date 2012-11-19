@@ -12,6 +12,7 @@ import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.Circle;
 import com.gutabi.deadlock.core.graph.Road;
 import com.gutabi.deadlock.core.graph.Vertex;
+import com.gutabi.deadlock.model.cursor.RegularCursor;
 
 @SuppressWarnings("static-access")
 public class StopSign extends Entity {

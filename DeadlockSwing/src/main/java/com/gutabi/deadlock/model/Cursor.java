@@ -14,15 +14,9 @@ public abstract class Cursor {
 	
 	protected Point p;
 	
-	protected Rect localAABB;
+	protected Rect aabb;
 	
-	private Rect aabb;
-	
-	public final void setPoint(Point p) {
-		this.p = p;
-		
-		aabb = localAABB.plus(p);
-	}
+	public abstract void setPoint(Point p);
 	
 	public final Point getPoint() {
 		return p;
