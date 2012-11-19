@@ -339,6 +339,9 @@ public class Graph implements Sweepable {
 		return shortestPathChoice(start, n);
 	}
 	
+	/**
+	 * returns the a random next choice to make
+	 */
 	public Vertex randomPathChoice(Edge prev, Vertex start, Vertex end) {
 		
 		List<Edge> edges = new ArrayList<Edge>();
@@ -350,39 +353,84 @@ public class Graph implements Sweepable {
 		for (Road e : start.roads) {
 			if (prev != null && prev == e) {
 				edges.remove(e);
-			} else {
-				
-				Vertex other;
-				if (start == e.start) {
-					other = e.end;
-				} else {
-					other = e.start;
-				}
-				
+				continue;
+			}
+			
+			Vertex other;
+			if (start == e.start) {
+				other = e.end;
 				if (isDeadEnd(e, other, end)) {
 					edges.remove(e);
+					continue;
+				}
+				if (e.getDirection(Axis.NONE) == EdgeDirection.ENDTOSTART) {
+					edges.remove(e);
+					continue;
+				}
+				if (distances[other.id][end.id] == Double.POSITIVE_INFINITY) {
+					edges.remove(e);
+					continue;
+				}
+				
+			} else {
+				other = e.start;
+				if (isDeadEnd(e, other, end)) {
+					edges.remove(e);
+					continue;
+				}
+				if (e.getDirection(Axis.NONE) == EdgeDirection.STARTTOEND) {
+					edges.remove(e);
+					continue;
+				}
+				if (distances[other.id][end.id] == Double.POSITIVE_INFINITY) {
+					edges.remove(e);
+					continue;
 				}
 			}
+			
 		}
 		if (start.m != null) {
 			if (prev != null && prev == start.m) {
 				edges.remove(start.m);
 			} else {
-				
 				Vertex other;
 				if (start == start.m.top) {
 					other = start.m.bottom;
+					if (isDeadEnd(start.m, other, end)) {
+						edges.remove(start.m);
+					} else if (start.m.getDirection(Axis.TOPBOTTOM) == EdgeDirection.ENDTOSTART) {
+						edges.remove(start.m);
+					} else if (distances[other.id][end.id] == Double.POSITIVE_INFINITY) {
+						edges.remove(start.m);
+					}
 				} else if (start == start.m.left) {
 					other = start.m.right;
+					if (isDeadEnd(start.m, other, end)) {
+						edges.remove(start.m);
+					} else if (start.m.getDirection(Axis.LEFTRIGHT) == EdgeDirection.ENDTOSTART) {
+						edges.remove(start.m);
+					} else if (distances[other.id][end.id] == Double.POSITIVE_INFINITY) {
+						edges.remove(start.m);
+					}
 				} else if (start == start.m.right) {
 					other = start.m.left;
+					if (isDeadEnd(start.m, other, end)) {
+						edges.remove(start.m);
+					} else if (start.m.getDirection(Axis.LEFTRIGHT) == EdgeDirection.STARTTOEND) {
+						edges.remove(start.m);
+					} else if (distances[other.id][end.id] == Double.POSITIVE_INFINITY) {
+						edges.remove(start.m);
+					}
 				} else {
 					assert start == start.m.bottom;
 					other = start.m.top;
-				}
-				
-				if (isDeadEnd(start.m, other, end)) {
-					edges.remove(start.m);
+					if (isDeadEnd(start.m, other, end)) {
+						edges.remove(start.m);
+					} else if (start.m.getDirection(Axis.LEFTRIGHT) == EdgeDirection.STARTTOEND) {
+						edges.remove(start.m);
+					} else if (distances[other.id][end.id] == Double.POSITIVE_INFINITY) {
+						edges.remove(start.m);
+					}
 				}
 			}
 		}

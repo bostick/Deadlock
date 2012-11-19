@@ -1,8 +1,16 @@
 
 IMMEDIATELY:
 
+insert stand-alone intersections
+
 insert world sources/sinks
 cursor with outline connecting source and sink along edge of quadrant
+
+snap to grid
+
+remember user actions, useful for undo, redo
+
+
 
 add Quadrant
 just 2x2 to start

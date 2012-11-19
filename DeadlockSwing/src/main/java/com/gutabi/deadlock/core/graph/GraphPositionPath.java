@@ -554,10 +554,9 @@ public class GraphPositionPath {
 				Edge shortest = null;
 				for (Edge e : edges) {
 					
-					boolean aIsStart;
 					if (e instanceof Road) {
 						Road r = (Road)e;
-						aIsStart = a.v == r.start;
+						boolean aIsStart = a.v == r.start;
 						
 						if ((aIsStart?(e.getDirection(Axis.NONE) != EdgeDirection.ENDTOSTART):(e.getDirection(Axis.NONE) != EdgeDirection.STARTTOEND))) {
 							if (shortest == null || DMath.lessThan(e.getTotalLength(a.v, b.v), shortest.getTotalLength(a.v, b.v))) {
@@ -567,7 +566,7 @@ public class GraphPositionPath {
 						
 					} else {
 						Merger m = (Merger)e;
-						aIsStart = a.v == m.top || a.v == m.left;
+						boolean aIsStart = a.v == m.top || a.v == m.left;
 						
 						if (a.v == m.top || a.v == m.bottom) {
 							
@@ -624,9 +623,52 @@ public class GraphPositionPath {
 		
 		List<Edge> edges = new ArrayList<Edge>();
 		edges.addAll(Vertex.commonEdges(a.v, choice));
+		
+		List<Edge> toRemove = new ArrayList<Edge>();
+		
 		if (prev != null) {
-			edges.remove(prev);
+			toRemove.add(prev);
 		}
+		
+		for (Edge e : edges) {
+			
+			if (e instanceof Road) {
+				Road r = (Road)e;
+				boolean aIsStart = a.v == r.start;
+				
+				if ((aIsStart?(e.getDirection(Axis.NONE) != EdgeDirection.ENDTOSTART):(e.getDirection(Axis.NONE) != EdgeDirection.STARTTOEND))) {
+					
+				} else {
+					toRemove.add(e);
+				}
+				
+			} else {
+				Merger m = (Merger)e;
+				boolean aIsStart = a.v == m.top || a.v == m.left;
+				
+				if (a.v == m.top || a.v == m.bottom) {
+					
+					if ((aIsStart?(e.getDirection(Axis.TOPBOTTOM) != EdgeDirection.ENDTOSTART):(e.getDirection(Axis.TOPBOTTOM) != EdgeDirection.STARTTOEND))) {
+						
+					} else {
+						toRemove.add(e);
+					}
+					
+				} else {
+					
+					if ((aIsStart?(e.getDirection(Axis.LEFTRIGHT) != EdgeDirection.ENDTOSTART):(e.getDirection(Axis.LEFTRIGHT) != EdgeDirection.STARTTOEND))) {
+						
+					} else {
+						toRemove.add(e);
+					}
+					
+				}
+				
+			}
+			
+		}
+		
+		edges.removeAll(toRemove);
 		
 		int n = MODEL.world.RANDOM.nextInt(edges.size());
 		Edge e = edges.get(n);
