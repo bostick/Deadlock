@@ -1,7 +1,5 @@
 package com.gutabi.deadlock.core.graph;
 
-import java.util.ArrayList;
-
 import com.gutabi.deadlock.core.Entity;
 
 public class VertexPosition extends GraphPosition {
@@ -17,9 +15,6 @@ public class VertexPosition extends GraphPosition {
 		int h = 17;
 		h = 37 * h + v.hashCode();
 		hash = h;
-		
-		vs = new ArrayList<Vertex>();
-		vs.add(v);
 		
 	}
 	
@@ -54,7 +49,7 @@ public class VertexPosition extends GraphPosition {
 	}
 	
 	public double distanceToConnectedVertex(Vertex v) {
-		assert vs.contains(v);
+		assert entity.getVertices(axis).contains(v);
 		return 0.0;
 	}
 	

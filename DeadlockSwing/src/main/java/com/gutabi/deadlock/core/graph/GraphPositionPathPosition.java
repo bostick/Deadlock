@@ -211,7 +211,7 @@ public class GraphPositionPathPosition {
 				} else {
 					VertexPosition curPosE = (VertexPosition)curPos.gpos;
 					
-					if (g.vs.get(0) == curPosE.vs.get(0)) {
+					if (g.entity.getVertices(g.axis).get(0) == curPosE.entity.getVertices(curPosE.axis).get(0)) {
 						// same direction as edge
 						return new GraphPositionPathPosition(path, curPos.index, g.getParam());
 					} else {

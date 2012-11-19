@@ -6,13 +6,17 @@ import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.Shape;
 
-public abstract class Edge extends Entity {
+public abstract class Edge extends GraphEntity {
 	
 	public int id;
 	
 	public abstract int pointCount();
 	
 	public abstract double getTotalLength(Vertex a, Vertex b);
+	
+	public abstract EdgeDirection getDirection(Axis a);
+	
+	public abstract void setDirection(Axis a, EdgeDirection dir);
 	
 	public abstract void enterDistancesMatrix(double[][] distances);
 	

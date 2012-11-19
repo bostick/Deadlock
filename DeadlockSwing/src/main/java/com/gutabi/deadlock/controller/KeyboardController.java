@@ -139,6 +139,48 @@ public class KeyboardController implements KeyListener {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
+		} else if (e.getKeyCode() == KeyEvent.VK_1) {
+			try {
+				CONTROLLER.queueAndWait(new Runnable() {
+					public void run() {
+						CONTROLLER.d1Key();
+					}
+				});
+			} catch (InterruptedException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (ExecutionException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		} else if (e.getKeyCode() == KeyEvent.VK_2) {
+			try {
+				CONTROLLER.queueAndWait(new Runnable() {
+					public void run() {
+						CONTROLLER.d2Key();
+					}
+				});
+			} catch (InterruptedException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (ExecutionException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		} else if (e.getKeyCode() == KeyEvent.VK_3) {
+			try {
+				CONTROLLER.queueAndWait(new Runnable() {
+					public void run() {
+						CONTROLLER.d3Key();
+					}
+				});
+			} catch (InterruptedException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (ExecutionException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 		}
 	}
 

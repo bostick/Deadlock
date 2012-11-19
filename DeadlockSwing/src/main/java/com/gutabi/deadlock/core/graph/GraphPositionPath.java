@@ -351,7 +351,7 @@ public class GraphPositionPath {
 					
 					double combo = ((EdgePosition)pos).getCombo();
 					
-					if (((VertexPosition)a).v == b.vs.get(0)) {
+					if (((VertexPosition)a).v == b.entity.getVertices(b.axis).get(0)) {
 						
 						if (DMath.lessThanEquals(0.0, combo) && DMath.lessThanEquals(combo, ((EdgePosition)b).getCombo())) {
 							
@@ -374,7 +374,7 @@ public class GraphPositionPath {
 						continue;
 						
 					} else {
-						assert ((VertexPosition)a).v == b.vs.get(1);
+						assert ((VertexPosition)a).v == b.entity.getVertices(b.axis).get(1);
 						
 						if (DMath.greaterThanEquals((e.pointCount()-1)+0.0, combo) && DMath.greaterThanEquals(combo, ((EdgePosition)b).getCombo())) {
 							
@@ -412,7 +412,7 @@ public class GraphPositionPath {
 					
 					double combo = ((EdgePosition)pos).getCombo();
 					
-					if (((VertexPosition)b).v == a.vs.get(0)) {
+					if (((VertexPosition)b).v == a.entity.getVertices(a.axis).get(0)) {
 						
 						if (DMath.greaterThanEquals(((EdgePosition)a).getCombo(), combo) && DMath.greaterThanEquals(combo, 0.0)) {
 							
@@ -435,7 +435,7 @@ public class GraphPositionPath {
 						continue;
 						
 					} else {
-						assert ((VertexPosition)b).v == a.vs.get(1);
+						assert ((VertexPosition)b).v == a.entity.getVertices(a.axis).get(1);
 						
 						if (DMath.lessThanEquals(((EdgePosition)a).getCombo(), combo) && DMath.lessThanEquals(combo, (e.pointCount()-1)+0.0)) {
 							
@@ -549,13 +549,46 @@ public class GraphPositionPath {
 					
 				}
 				
-			} else {
-				
+			} else { 
+						
 				Edge shortest = null;
 				for (Edge e : edges) {
-					if (shortest == null || DMath.lessThan(e.getTotalLength(a.v, b.v), shortest.getTotalLength(a.v, b.v))) {
-						shortest = e;
+					
+					boolean aIsStart;
+					if (e instanceof Road) {
+						Road r = (Road)e;
+						aIsStart = a.v == r.start;
+						
+						if ((aIsStart?(e.getDirection(Axis.NONE) != EdgeDirection.ENDTOSTART):(e.getDirection(Axis.NONE) != EdgeDirection.STARTTOEND))) {
+							if (shortest == null || DMath.lessThan(e.getTotalLength(a.v, b.v), shortest.getTotalLength(a.v, b.v))) {
+								shortest = e;
+							}
+						}
+						
+					} else {
+						Merger m = (Merger)e;
+						aIsStart = a.v == m.top || a.v == m.left;
+						
+						if (a.v == m.top || a.v == m.bottom) {
+							
+							if ((aIsStart?(e.getDirection(Axis.TOPBOTTOM) != EdgeDirection.ENDTOSTART):(e.getDirection(Axis.TOPBOTTOM) != EdgeDirection.STARTTOEND))) {
+								if (shortest == null || DMath.lessThan(e.getTotalLength(a.v, b.v), shortest.getTotalLength(a.v, b.v))) {
+									shortest = e;
+								}
+							}
+							
+						} else {
+							
+							if ((aIsStart?(e.getDirection(Axis.LEFTRIGHT) != EdgeDirection.ENDTOSTART):(e.getDirection(Axis.LEFTRIGHT) != EdgeDirection.STARTTOEND))) {
+								if (shortest == null || DMath.lessThan(e.getTotalLength(a.v, b.v), shortest.getTotalLength(a.v, b.v))) {
+									shortest = e;
+								}
+							}
+							
+						}
+						
 					}
+					
 				}
 				
 				fillin(acc, a, b, shortest);

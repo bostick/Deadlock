@@ -1,17 +1,8 @@
 
 IMMEDIATELY:
 
-hover over where signs and arrows would be, hit key to add them
-hit key to change direction of arrows
-directional arrows in middle of intersections
-
-insert stand-alone intersections
-
-think about automatic merging/destroying behavior, if you can insert stand-alone intersections
-
 insert world sources/sinks
 cursor with outline connecting source and sink along edge of quadrant
-
 
 add Quadrant
 just 2x2 to start
@@ -22,6 +13,8 @@ enforce prohibition of roads on mergers
 enforce prohibition of roads and mergers beyond the world sides
 
 enforce prohibition of cars beyonds world sides
+
+resizing window
 
 SOON:
 
@@ -60,6 +53,11 @@ cleanup user input
 lines and curves for roads
 
 DONE:
+
+1-way directional arrows for roads
+hit key to change direction of arrows
+
+hover over where signs and arrows would be, hit key to add them
 
 fix being too close to stop signs (think I've done this)
 

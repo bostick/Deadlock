@@ -324,6 +324,20 @@ public class Capsule extends Shape {
 		}
 	}
 	
+	
+	
+//	public void paintDirection(Graphics2D g2) {
+//		
+//		g2.setStroke(directionStroke);
+//		g2.setColor(Color.BLACK);
+//		
+//		g2.drawLine(
+//				(int)(a.x * MODEL.PIXELS_PER_METER),
+//				(int)(a.y * MODEL.PIXELS_PER_METER),
+//				(int)(b.x * MODEL.PIXELS_PER_METER),
+//				(int)(b.y * MODEL.PIXELS_PER_METER));
+//	}
+	
 	public void draw(Graphics2D g2) {
 		
 		ac.draw(g2);

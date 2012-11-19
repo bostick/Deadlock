@@ -10,13 +10,12 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 import com.gutabi.deadlock.core.DMath;
-import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.Circle;
 import com.gutabi.deadlock.model.Car;
 
 @SuppressWarnings("static-access")
-public abstract class Vertex extends Entity {
+public abstract class Vertex extends GraphEntity {
 	
 	public static final double INIT_VERTEX_RADIUS = Math.sqrt(2 * Road.ROAD_RADIUS * Road.ROAD_RADIUS);
 	
@@ -35,6 +34,8 @@ public abstract class Vertex extends Entity {
 		
 	private final int hash;
 	
+	private final List<Vertex> vs;
+	
 	static Logger logger = Logger.getLogger(Vertex.class);
 	
 	public Vertex(Point p) {
@@ -48,6 +49,9 @@ public abstract class Vertex extends Entity {
 		r = INIT_VERTEX_RADIUS;
 		
 		shape = new Circle(this, p, r);
+		
+		vs = new ArrayList<Vertex>();
+		vs.add(this);
 	}
 	
 	public int hashCode() {
@@ -60,6 +64,10 @@ public abstract class Vertex extends Entity {
 	
 	public double getRadius() {
 		return r;
+	}
+	
+	public List<Vertex> getVertices(Axis a) {
+		return vs;
 	}
 	
 	public abstract boolean supportsStopSigns();

@@ -2,8 +2,11 @@ package com.gutabi.deadlock.core.graph;
 
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Polygon;
+import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,7 +50,11 @@ public class Road extends Edge {
 	protected Color color;
 	protected Color hiliteColor;
 	
+	private EdgeDirection direction;
+	
 	private final int hash;
+	
+	private final List<Vertex> vs;
 	
 	static Logger logger = Logger.getLogger(Road.class);
 	
@@ -77,9 +84,15 @@ public class Road extends Edge {
 		color = Color.GRAY;
 		hiliteColor = new Color(0xff ^ 0x88, 0xff ^ 0x88, 0xff ^ 0x88, 0xff);
 		
+		direction = EdgeDirection.NONE;
+		
 		computeProperties();
 		
 		if (!standalone) {
+			
+			vs = new ArrayList<Vertex>();
+			vs.add(start);
+			vs.add(end);
 			
 			start.roads.add(this);
 			end.roads.add(this);
@@ -94,10 +107,21 @@ public class Road extends Edge {
 			if ((dec & 2) == 2) {
 				endSign.setEnabled(true);
 			}
-
+			
+			if ((dec & 4) == 4) {
+				
+				if ((dec & 8) == 0) {
+					direction = EdgeDirection.STARTTOEND;
+				} else {
+					direction = EdgeDirection.ENDTOSTART;
+				}
+				
+			}
+			
 		} else {
 			startSign = null;
 			endSign = null;
+			vs = new ArrayList<Vertex>();
 		}
 		
 	}
@@ -118,7 +142,6 @@ public class Road extends Edge {
 	}
 	
 	
-	
 	public boolean isStandAlone() {
 		return standalone;
 	}
@@ -129,6 +152,10 @@ public class Road extends Edge {
 	
 	public int pointCount() {
 		return seq.pointCount();
+	}
+	
+	public int capsuleCount() {
+		return seq.capsuleCount();
 	}
 	
 	public double getTotalLength(Vertex a, Vertex b) {
@@ -149,6 +176,30 @@ public class Road extends Edge {
 	
 	public Point getEndBorderPoint() {
 		return endBorderPoint;
+	}
+	
+	public void setDirection(Axis a, EdgeDirection dir) {
+		if (a == Axis.NONE) {
+			this.direction = dir;
+		} else {
+			throw new IllegalArgumentException();
+		}
+	}
+	
+	public EdgeDirection getDirection(Axis a) {
+		if (a == Axis.NONE) {
+			return direction;
+		} else {
+			throw new IllegalArgumentException();
+		}
+	}
+	
+	public List<Vertex> getVertices(Axis a) {
+		if (a == Axis.NONE) {
+			return vs;
+		} else {
+			throw new IllegalArgumentException();
+		}
 	}
 	
 	
@@ -172,11 +223,23 @@ public class Road extends Edge {
 	public void enterDistancesMatrix(double[][] distances) {
 		double cur = distances[start.id][end.id];
 		/*
-		 * there may be multiple roads between start and end, so don't just blindly set it to l
+		 * there may be multiple roads between start and end, so don't just blindly set it to totalLength
 		 */
 		if (totalLength < cur) {
-			distances[start.id][end.id] = totalLength;
-	    	distances[end.id][start.id] = totalLength;
+			switch (direction) {
+			case NONE:
+				distances[start.id][end.id] = totalLength;
+		    	distances[end.id][start.id] = totalLength;
+				break;
+			case STARTTOEND:
+				distances[start.id][end.id] = totalLength;
+//		    	distances[end.id][start.id] = totalLength;
+				break;
+			case ENDTOSTART:
+//				distances[start.id][end.id] = totalLength;
+		    	distances[end.id][start.id] = totalLength;
+				break;
+			}
 		}
 	}
 	
@@ -609,11 +672,59 @@ public class Road extends Edge {
 		drawPath(g2);
 	}
 	
+	
+	static java.awt.Stroke directionStroke = new BasicStroke(2.5f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
+	
+	static Polygon arrowPointer = new Polygon(new int[]{0, -20, -20}, new int[]{0, -10, 10}, 3);
+	
 	private void paintPath(Graphics2D g2) {
 		
 		g2.setColor(color);
 		
 		seq.paint(g2);
+		
+		if (direction != EdgeDirection.NONE) {
+			
+			AffineTransform origTransform = g2.getTransform();
+			java.awt.Stroke origStroke = g2.getStroke();
+			g2.setStroke(directionStroke);
+			g2.setColor(Color.LIGHT_GRAY);
+			
+			seq.drawSkeleton(g2);
+			
+			if (direction == EdgeDirection.STARTTOEND) {
+				
+				Capsule c = seq.getCapsule(capsuleCount()-2);
+				
+				double angle = Math.atan2(c.b.y-c.a.y, c.b.x-c.a.x);
+				
+				g2.scale(MODEL.PIXELS_PER_METER, MODEL.PIXELS_PER_METER);
+				g2.translate(endBorderPoint.x, endBorderPoint.y);
+				g2.rotate(angle);
+				g2.scale(MODEL.METERS_PER_PIXEL, MODEL.METERS_PER_PIXEL);
+				
+				g2.fillPolygon(arrowPointer);
+				
+			} else {
+				
+				Capsule c = seq.getCapsule(1);
+				
+				double angle = Math.atan2(c.b.y-c.a.y, c.b.x-c.a.x);
+				
+				g2.scale(MODEL.PIXELS_PER_METER, MODEL.PIXELS_PER_METER);
+				g2.translate(startBorderPoint.x, startBorderPoint.y);
+				g2.rotate(angle);
+				g2.scale(MODEL.METERS_PER_PIXEL, MODEL.METERS_PER_PIXEL);
+				g2.rotate(Math.PI);
+				
+				g2.fillPolygon(arrowPointer);
+				
+			}
+			
+			g2.setTransform(origTransform);
+			g2.setStroke(origStroke);
+			
+		}
 		
 	}
 	

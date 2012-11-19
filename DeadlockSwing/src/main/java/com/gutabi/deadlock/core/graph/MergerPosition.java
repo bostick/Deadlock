@@ -1,7 +1,5 @@
 package com.gutabi.deadlock.core.graph;
 
-import java.util.ArrayList;
-
 import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
@@ -49,16 +47,6 @@ public class MergerPosition extends EdgePosition {
 		int c = (int)(l ^ (l >>> 32));
 		h = 37 * h + c;
 		hash = h;
-		
-		if (a==Axis.LEFTRIGHT) {
-			vs = new ArrayList<Vertex>();
-			vs.add(m.left);
-			vs.add(m.right);
-		} else {
-			vs = new ArrayList<Vertex>();
-			vs.add(m.top);
-			vs.add(m.bottom);
-		}
 		
 		if (DMath.equals(param, 0.0)) {
 			bound = true;
@@ -197,7 +185,7 @@ public class MergerPosition extends EdgePosition {
 	}
 	
 	public double distanceToConnectedVertex(Vertex v) {
-		assert vs.contains(v);
+		assert entity.getVertices(axis).contains(v);
 		if (axis == Axis.LEFTRIGHT) {
 			if (v == m.left) {
 				return distanceToLeftOfMerger;

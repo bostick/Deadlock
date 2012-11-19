@@ -962,10 +962,8 @@ public abstract class Car extends Entity {
 		Composite origComposite = g2.getComposite();
 		
 		g2.scale(MODEL.PIXELS_PER_METER, MODEL.PIXELS_PER_METER);
-		
 		g2.translate(p.x, p.y);
 		g2.rotate(angle);
-		
 		g2.scale(MODEL.METERS_PER_PIXEL, MODEL.METERS_PER_PIXEL);
 		
 		if (inMerger) {

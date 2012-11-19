@@ -33,6 +33,10 @@ public class Intersection extends Vertex {
 		return true;
 	}
 	
+	public void setTurning(Turning t) {
+		this.t = t;
+	}
+	
 	public void preStart() {
 		;
 	}
@@ -78,6 +82,14 @@ public class Intersection extends Vertex {
 			paintAABB(g2);
 			
 		}
+		
+	}
+	
+	public void paintHilite(Graphics2D g2) {
+		
+		g2.setColor(Color.WHITE);
+		
+		shape.draw(g2);
 		
 	}
 }

@@ -626,6 +626,9 @@ public class Graph implements Sweepable {
 			}
 			pts.add(p);
 			
+			/*
+			 * 3 so that both stop signs are introduced
+			 */
 			createRoad(v, v, pts, 3);
 			
 			destroyRoad(r);
@@ -640,7 +643,20 @@ public class Graph implements Sweepable {
 		}
 		f1Pts.add(p);
 		
-		createRoad(eStart, v, f1Pts, (r.startSign.isEnabled()?1:0)+2);
+		int directionMask = 0;
+		switch (r.getDirection(Axis.NONE)) {
+		case NONE:
+			directionMask = 0;
+			break;
+		case STARTTOEND:
+			directionMask = 4;
+			break;
+		case ENDTOSTART:
+			directionMask = 4 + 8;
+			break;
+		}
+		
+		createRoad(eStart, v, f1Pts, (r.startSign.isEnabled()?1:0)+2+directionMask);
 		
 		List<Point> f2Pts = new ArrayList<Point>();
 		
@@ -649,7 +665,7 @@ public class Graph implements Sweepable {
 			f2Pts.add(r.getPoint(i));
 		}
 		
-		createRoad(v, eEnd, f2Pts, 1+(r.endSign.isEnabled()?2:0));
+		createRoad(v, eEnd, f2Pts, 1+(r.endSign.isEnabled()?2:0)+directionMask);
 		
 		destroyRoad(r);
 		
@@ -787,81 +803,100 @@ public class Graph implements Sweepable {
 			
 			destroyVertex(v);
 			
-		} else if (v == e1Start && v == e2Start) {
-			
-			List<Point> pts = new ArrayList<Point>();
-			
-			for (int i = e1.pointCount()-1; i >= 0; i--) {
-				pts.add(e1.getPoint(i));
-			}
-			assert e1.getPoint(0).equals(e2.getPoint(0));
-			for (int i = 0; i < e2.pointCount(); i++) {
-				pts.add(e2.getPoint(i));
-			}
-			
-			createRoad(e1End, e2End, pts, (e1.endSign.isEnabled()?1:0) + (e2.endSign.isEnabled()?2:0));
-			
-			destroyRoad(e1);
-			destroyRoad(e2);
-			
-			destroyVertex(v);
-			
-		} else if (v == e1Start && v == e2End) {
-			
-			List<Point> pts = new ArrayList<Point>();
-			
-			for (int i = e1.pointCount()-1; i >= 0; i--) {
-				pts.add(e1.getPoint(i));
-			}
-			assert e1.getPoint(0).equals(e2.getPoint(e2.pointCount()-1));
-			for (int i = e2.pointCount()-1; i >= 0; i--) {
-				pts.add(e2.getPoint(i));
-			}
-			
-			createRoad(e1End, e2Start, pts, (e1.endSign.isEnabled()?1:0) + (e2.startSign.isEnabled()?2:0)); 
-			
-			destroyRoad(e1);
-			destroyRoad(e2);
-			
-			destroyVertex(v);
-			
-		} else if (v == e1End && v == e2Start) {
-			
-			List<Point> pts = new ArrayList<Point>();
-			
-			for (int i = 0; i < e1.pointCount(); i++) {
-				pts.add(e1.getPoint(i));
-			}
-			assert e1.getPoint(e1.pointCount()-1).equals(e2.getPoint(0));
-			for (int i = 0; i < e2.pointCount(); i++) {
-				pts.add(e2.getPoint(i));
-			}
-			
-			createRoad(e1Start, e2End, pts, (e1.startSign.isEnabled()?1:0) + (e2.endSign.isEnabled()?2:0));
-			
-			destroyRoad(e1);
-			destroyRoad(e2);
-			
-			destroyVertex(v);
-			
 		} else {
-			assert v == e1End && v == e2End;
 			
-			List<Point> pts = new ArrayList<Point>();
-			
-			for (int i = 0; i < e1.pointCount(); i++) {
-				pts.add(e1.getPoint(i));
+			int directionMask = 0;
+			if (e1.getDirection(Axis.NONE) == e2.getDirection(Axis.NONE)) {
+				switch (e1.getDirection(Axis.NONE)) {
+				case NONE:
+					directionMask = 0;
+					break;
+				case STARTTOEND:
+					directionMask = 4;
+					break;
+				case ENDTOSTART:
+					directionMask = 4 + 8;
+					break;
+				}
 			}
-			for (int i = e2.pointCount()-1; i >= 0; i--) {
-				pts.add(e2.getPoint(i));
+			
+			if (v == e1Start && v == e2Start) {
+				
+				List<Point> pts = new ArrayList<Point>();
+				
+				for (int i = e1.pointCount()-1; i >= 0; i--) {
+					pts.add(e1.getPoint(i));
+				}
+				assert e1.getPoint(0).equals(e2.getPoint(0));
+				for (int i = 0; i < e2.pointCount(); i++) {
+					pts.add(e2.getPoint(i));
+				}
+				
+				createRoad(e1End, e2End, pts, (e1.endSign.isEnabled()?1:0) + (e2.endSign.isEnabled()?2:0)+directionMask);
+				
+				destroyRoad(e1);
+				destroyRoad(e2);
+				
+				destroyVertex(v);
+				
+			} else if (v == e1Start && v == e2End) {
+				
+				List<Point> pts = new ArrayList<Point>();
+				
+				for (int i = e1.pointCount()-1; i >= 0; i--) {
+					pts.add(e1.getPoint(i));
+				}
+				assert e1.getPoint(0).equals(e2.getPoint(e2.pointCount()-1));
+				for (int i = e2.pointCount()-1; i >= 0; i--) {
+					pts.add(e2.getPoint(i));
+				}
+				
+				createRoad(e1End, e2Start, pts, (e1.endSign.isEnabled()?1:0) + (e2.startSign.isEnabled()?2:0)+directionMask); 
+				
+				destroyRoad(e1);
+				destroyRoad(e2);
+				
+				destroyVertex(v);
+				
+			} else if (v == e1End && v == e2Start) {
+				
+				List<Point> pts = new ArrayList<Point>();
+				
+				for (int i = 0; i < e1.pointCount(); i++) {
+					pts.add(e1.getPoint(i));
+				}
+				assert e1.getPoint(e1.pointCount()-1).equals(e2.getPoint(0));
+				for (int i = 0; i < e2.pointCount(); i++) {
+					pts.add(e2.getPoint(i));
+				}
+				
+				createRoad(e1Start, e2End, pts, (e1.startSign.isEnabled()?1:0) + (e2.endSign.isEnabled()?2:0)+directionMask);
+				
+				destroyRoad(e1);
+				destroyRoad(e2);
+				
+				destroyVertex(v);
+				
+			} else {
+				assert v == e1End && v == e2End;
+				
+				List<Point> pts = new ArrayList<Point>();
+				
+				for (int i = 0; i < e1.pointCount(); i++) {
+					pts.add(e1.getPoint(i));
+				}
+				for (int i = e2.pointCount()-1; i >= 0; i--) {
+					pts.add(e2.getPoint(i));
+				}
+				
+				createRoad(e1Start, e2Start, pts, (e1.startSign.isEnabled()?1:0) + (e2.startSign.isEnabled()?2:0)+directionMask);
+				
+				destroyRoad(e1);
+				destroyRoad(e2);
+				
+				destroyVertex(v);
+				
 			}
-			
-			createRoad(e1Start, e2Start, pts, (e1.startSign.isEnabled()?1:0) + (e2.startSign.isEnabled()?2:0));
-			
-			destroyRoad(e1);
-			destroyRoad(e2);
-			
-			destroyVertex(v);
 			
 		}
 	}

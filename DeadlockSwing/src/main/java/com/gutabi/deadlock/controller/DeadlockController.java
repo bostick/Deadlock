@@ -22,10 +22,13 @@ import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.Circle;
 import com.gutabi.deadlock.core.geom.SweepEvent;
 import com.gutabi.deadlock.core.geom.SweepEvent.SweepEventType;
+import com.gutabi.deadlock.core.graph.Axis;
+import com.gutabi.deadlock.core.graph.EdgeDirection;
 import com.gutabi.deadlock.core.graph.Intersection;
 import com.gutabi.deadlock.core.graph.Merger;
 import com.gutabi.deadlock.core.graph.Road;
 import com.gutabi.deadlock.core.graph.RoadPosition;
+import com.gutabi.deadlock.core.graph.Turning;
 import com.gutabi.deadlock.core.graph.Vertex;
 import com.gutabi.deadlock.model.Car;
 import com.gutabi.deadlock.model.MergerCursor;
@@ -421,7 +424,101 @@ public class DeadlockController implements ActionListener {
 		}
 		
 	}
+	
+	public void d1Key() {
+		
+		switch (mode) {
+		case IDLE:
+			
+			if (MODEL.hilited != null) {
+				
+				if (MODEL.hilited instanceof Intersection) {
+					Intersection i = (Intersection)MODEL.hilited;
+					
+					i.setTurning(Turning.COUNTERCLOCKWISE);
+					
+					renderBackgroundAndPaint();
+				} else if (MODEL.hilited instanceof Road) {
+					Road r = (Road)MODEL.hilited;
+					
+					r.setDirection(Axis.NONE, EdgeDirection.STARTTOEND);
+					
+					renderBackgroundAndPaint();
+					
+				}
+				
+			}
+			
+			break;
+		default:
+			break;
+		}
+		
+	}
+	
+	public void d2Key() {
+		
+		switch (mode) {
+		case IDLE:
+			
+			if (MODEL.hilited != null) {
+				
+				if (MODEL.hilited instanceof Intersection) {
+					Intersection i = (Intersection)MODEL.hilited;
+					
+					i.setTurning(Turning.CLOCKWISE);
+					
+					renderBackgroundAndPaint();
+					
+				} else if (MODEL.hilited instanceof Road) {
+					Road r = (Road)MODEL.hilited;
+					
+					r.setDirection(Axis.NONE, EdgeDirection.ENDTOSTART);
+					
+					renderBackgroundAndPaint();
+					
+				}
+				
+			}
+			
+			break;
+		default:
+			break;
+		}
+		
+	}
 
+	public void d3Key() {
+		
+		switch (mode) {
+		case IDLE:
+			
+			if (MODEL.hilited != null) {
+				
+				if (MODEL.hilited instanceof Intersection) {
+					Intersection i = (Intersection)MODEL.hilited;
+					
+					i.setTurning(Turning.NONE);
+					
+					renderBackgroundAndPaint();
+				} else if (MODEL.hilited instanceof Road) {
+					Road r = (Road)MODEL.hilited;
+					
+					r.setDirection(Axis.NONE, EdgeDirection.NONE);
+				
+					renderBackgroundAndPaint();
+					
+				}
+				
+			}
+			
+			break;
+		default:
+			break;
+		}
+		
+	}
+	
 	public void startRunning() {
 		assert Thread.currentThread().getName().equals("controller");
 		

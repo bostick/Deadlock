@@ -4,6 +4,8 @@ import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Entity;
@@ -35,6 +37,12 @@ public class Merger extends Edge {
 	private double[] cumulativeLengthsFromTop;
 	private double[] cumulativeLengthsFromLeft;
 	
+	private final List<Vertex> leftRightVS;
+	private final List<Vertex> topBottomVS;
+	
+	private EdgeDirection leftRightDir;
+	private EdgeDirection topBottomDir;
+	
 	public Merger(Point center) {
 		
 		this.ul = center.plus(new Point(-MERGER_WIDTH/2,  -MERGER_HEIGHT/2));
@@ -65,6 +73,14 @@ public class Merger extends Edge {
 		right.m = this;
 		bottom.m = this;
 		
+		leftRightVS = new ArrayList<Vertex>();
+		leftRightVS.add(left);
+		leftRightVS.add(right);
+		
+		topBottomVS = new ArrayList<Vertex>();
+		topBottomVS.add(top);
+		topBottomVS.add(bottom);
+		
 		computeLengths();
 		
 	}
@@ -91,6 +107,37 @@ public class Merger extends Edge {
 			return MERGER_WIDTH;
 		}
 	}
+	
+	public List<Vertex> getVertices(Axis a) {
+		if (a == Axis.LEFTRIGHT) {
+			return leftRightVS;
+		} else if (a == Axis.TOPBOTTOM) {
+			return topBottomVS;
+		} else {
+			throw new IllegalArgumentException();
+		}
+	}
+	
+	public void setDirection(Axis a, EdgeDirection dir) {
+		if (a == Axis.LEFTRIGHT) {
+			this.leftRightDir = dir;
+		} else if (a == Axis.TOPBOTTOM) {
+			this.topBottomDir = dir;
+		} else {
+			throw new IllegalArgumentException();
+		}
+	}
+	
+	public EdgeDirection getDirection(Axis a) {
+		if (a == Axis.LEFTRIGHT) {
+			return leftRightDir;
+		} if (a == Axis.TOPBOTTOM) {
+			return topBottomDir;
+		} else {
+			throw new IllegalArgumentException();
+		}
+	}
+	
 	
 	public void enterDistancesMatrix(double[][] distances) {
 		distances[top.id][bottom.id] = Merger.MERGER_HEIGHT;

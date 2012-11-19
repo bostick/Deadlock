@@ -1,7 +1,5 @@
 package com.gutabi.deadlock.core.graph;
 
-import java.util.ArrayList;
-
 import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
@@ -49,10 +47,6 @@ public class RoadPosition extends EdgePosition {
 		int c = (int)(l ^ (l >>> 32));
 		h = 37 * h + c;
 		hash = h;
-		
-		vs = new ArrayList<Vertex>();
-		vs.add(r.start);
-		vs.add(r.end);
 		
 		if (DMath.equals(param, 0.0)) {
 			bound = true;
@@ -177,7 +171,7 @@ public class RoadPosition extends EdgePosition {
 	}
 	
 	public double distanceToConnectedVertex(Vertex v) {
-		assert vs.contains(v);
+		assert entity.getVertices(axis).contains(v);
 		if (v == r.start) {
 			return lengthToStartOfRoad;
 		} else {

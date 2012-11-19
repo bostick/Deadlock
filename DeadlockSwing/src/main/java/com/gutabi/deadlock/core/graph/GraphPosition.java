@@ -7,25 +7,17 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 import com.gutabi.deadlock.core.DMath;
-import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
 
 public abstract class GraphPosition {
 	
 	public final Point p;
-	public final Entity entity;
+	public final GraphEntity entity;
 	public final Axis axis;
-	
-	/**
-	 * vs should be set so that:
-	 * vs.get(0) is the "reference" vertex
-	 * vs.get(1) is the "other" vertex
-	 */
-	protected List<Vertex> vs;
 	
 	static Logger logger = Logger.getLogger(GraphPosition.class);
 	
-	public GraphPosition(Point p, Entity e, Axis a) {
+	public GraphPosition(Point p, GraphEntity e, Axis a) {
 		this.p = p;
 		this.entity = e;
 		this.axis = a;
@@ -37,13 +29,15 @@ public abstract class GraphPosition {
 		
 		if (entity == p.entity && axis == p.axis) {
 			
-			return Math.abs(distanceToConnectedVertex(vs.get(0)) - p.distanceToConnectedVertex(p.vs.get(0)));
+			List<Vertex> vs = entity.getVertices(axis);
+			
+			return Math.abs(distanceToConnectedVertex(vs.get(0)) - p.distanceToConnectedVertex(vs.get(0)));
 			
 		} else {
 			
 			double bestDist = Double.POSITIVE_INFINITY;
-			for (Vertex v : vs) {
-				for (Vertex w : p.vs) {
+			for (Vertex v : entity.getVertices(axis)) {
+				for (Vertex w : p.entity.getVertices(p.axis)) {
 					double dist = 0.0;
 					assert dist >= 0.0;
 					dist += distanceToConnectedVertex(v);
@@ -84,8 +78,10 @@ public abstract class GraphPosition {
 		
 		if (entity == p.entity && axis == p.axis) {
 			
+			List<Vertex> vs = entity.getVertices(axis);
+			
 			double signedDistance = distanceToConnectedVertex(vs.get(0));
-			double signedDistanceP = p.distanceToConnectedVertex(p.vs.get(0));
+			double signedDistanceP = p.distanceToConnectedVertex(vs.get(0));
 			
 			assert DMath.lessThanEquals(distance, Math.abs(signedDistance - signedDistanceP));
 			
@@ -108,8 +104,8 @@ public abstract class GraphPosition {
 			Vertex bestVertex = null;
 			Vertex bestVertexP = null;
 			double bestDist = Double.POSITIVE_INFINITY;
-			for (Vertex v : vs) {
-				for (Vertex w : p.vs) {
+			for (Vertex v : entity.getVertices(axis)) {
+				for (Vertex w : p.entity.getVertices(p.axis)) {
 					double dist = distanceToConnectedVertex(v) + MODEL.world.distanceBetweenVertices(v, w) + p.distanceToConnectedVertex(w);
 					if (dist < bestDist) {
 						bestVertex = v;
