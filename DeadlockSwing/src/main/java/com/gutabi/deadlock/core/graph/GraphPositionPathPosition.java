@@ -106,15 +106,12 @@ public class GraphPositionPathPosition {
 		
 		assert pp != null;
 		
-		GraphPositionPathPosition p;
-		if (pp.path == path) {
-			p = pp;
-		} else {
-			p = path.hitTest(pp.gpos);
-			if (p == null) {
-				return Double.POSITIVE_INFINITY;
-			}
+		GraphPositionPathPosition p = path.hitTest(pp.gpos, this);
+		if (p == null) {
+			return Double.POSITIVE_INFINITY;
 		}
+		
+		assert DMath.greaterThanEquals(p.combo, combo);
 		
 		int goalIndex = p.index;
 		double goalParam = p.param;
@@ -172,27 +169,36 @@ public class GraphPositionPathPosition {
 		double traveled = 0.0;
 		
 		GraphPositionPathPosition curPos = this;
-		GraphPositionPathPosition nextPos;
+		GraphPositionPathPosition nextBound;
 		
 		while (true) {
 			
-			nextPos = curPos.nextBound();
-			double distanceToNextPos = curPos.distanceTo(nextPos);
+			nextBound = curPos.nextBound();
+			double distanceToNextBound = curPos.distanceTo(nextBound);
 			
-			if (DMath.equals(traveled + distanceToNextPos, dist)) {
+			if (DMath.equals(traveled + distanceToNextBound, dist)) {
 
-				return nextPos;
+				return nextBound;
 				
-			} else if (traveled + distanceToNextPos < dist) {
+			} else if (traveled + distanceToNextBound < dist) {
 				
-				traveled += distanceToNextPos;
-				curPos = nextPos;
+				traveled += distanceToNextBound;
+				curPos = nextBound;
 				
 			} else {
+				/*
+				 * traveled + distanceToNextBound > dist, so
+				 * 
+				 * distanceToNextBound > dist - traveled
+				 * 
+				 * distanceToNextBound > toTravel
+				 * 
+				 * we are not going to reach the next bound, so we know it has to be an EdgePosition
+				 */
 				
 				double toTravel = dist - traveled;
 				
-				EdgePosition g = (EdgePosition)(curPos.gpos.travelTo(nextPos.gpos, toTravel));
+				EdgePosition g = (EdgePosition)curPos.gpos.travelTo(nextBound.gpos, toTravel);
 				
 				double fromCurToG = curPos.gpos.distanceTo(g);
 				assert DMath.equals(fromCurToG, toTravel);

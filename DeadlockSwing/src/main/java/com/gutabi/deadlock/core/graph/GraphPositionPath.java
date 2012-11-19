@@ -324,139 +324,94 @@ public class GraphPositionPath {
 		return p1.travelTo(p2, pathParam * dist);
 	}
 	
-	public GraphPositionPathPosition hitTest(GraphPosition pos) {
+	/**
+	 * test gp for a position on this path, but only start looking after startingPosition
+	 * this is to help handle loops
+	 */
+	public GraphPositionPathPosition hitTest(GraphPosition gp, GraphPositionPathPosition startingPosition) {
+		
+		if (poss.get(0) instanceof VertexPosition) {
+			if (gp.entity == ((VertexPosition)poss.get(0)).v) {
+				assert getGraphPosition(0, 0.0).equals(gp);
+				if (DMath.greaterThanEquals(0+0.0, startingPosition.combo)) {
+					return new GraphPositionPathPosition(this, 0, 0.0);
+				}
+			}
+		}
 		
 		for (int i = 0; i < poss.size()-1; i++) {
 			GraphPosition a = poss.get(i);
 			GraphPosition b = poss.get(i+1);
 			
+			double combo;
+			double aCombo;
+			double bCombo;
 			if (a instanceof VertexPosition) {
 				if (b instanceof VertexPosition) {
 					assert false;
+					aCombo = -1;
+					bCombo = -1;
+					combo = ((EdgePosition)gp).getCombo();
 				} else {
-					
-					if (pos.entity == ((VertexPosition)a).v) {
-//						assert false;
-						
-						assert getGraphPosition(i, 0.0).equals(pos);
-						return new GraphPositionPathPosition(this, i, 0.0);
-					}
 					
 					Edge e = (Edge)((EdgePosition)b).entity;
 					
-					if (pos.entity != e || pos.axis != b.axis) {
-//						assert false;
+					if (gp.entity != e || gp.axis != b.axis) {
 						continue;
 					}
 					
-					double combo = ((EdgePosition)pos).getCombo();
+					combo = ((EdgePosition)gp).getCombo();
 					
 					if (((VertexPosition)a).v == b.entity.getVertices(b.axis).get(0)) {
-						
-						if (DMath.lessThanEquals(0.0, combo) && DMath.lessThanEquals(combo, ((EdgePosition)b).getCombo())) {
-							
-							double abCombo = (combo - 0.0) / (((EdgePosition)b).getCombo() - 0.0);
-							assert DMath.lessThanEquals(0.0, abCombo) && DMath.lessThanEquals(abCombo, 1.0);
-							
-							/*
-							 * abCombo is [0, 1] between a and b
-							 */
-							
-							int gpppIndex = (int)Math.floor(i + abCombo);
-							double gpppParam = (i + abCombo)-gpppIndex;
-							
-//							assert false;
-							assert getGraphPosition(gpppIndex, gpppParam).equals(pos);
-							return new GraphPositionPathPosition(this, gpppIndex, gpppParam);
+						aCombo = 0.0;
+						bCombo = ((EdgePosition)b).getCombo();
+						if (!(DMath.lessThanEquals(aCombo, combo) && DMath.lessThanEquals(combo, bCombo))) {
+							continue;
 						}
-						
-//						assert false;
-						continue;
-						
 					} else {
 						assert ((VertexPosition)a).v == b.entity.getVertices(b.axis).get(1);
-						
-						if (DMath.greaterThanEquals((e.pointCount()-1)+0.0, combo) && DMath.greaterThanEquals(combo, ((EdgePosition)b).getCombo())) {
-							
-							double abCombo = (combo - (e.pointCount()-1)+0.0) / (((EdgePosition)b).getCombo() - (e.pointCount()-1)+0.0);
-							assert DMath.lessThanEquals(0.0, abCombo) && DMath.lessThanEquals(abCombo, 1.0);
-							
-							/*
-							 * abCombo is [0, 1] between a and b
-							 */
-							
-							int gpppIndex = (int)Math.floor(i + abCombo);
-							double gpppParam = (i + abCombo)-gpppIndex;
-							
-//							assert false;
-							assert getGraphPosition(gpppIndex, gpppParam).equals(pos);
-							return new GraphPositionPathPosition(this, gpppIndex, gpppParam);
-							
+						aCombo = (e.pointCount()-1)+0.0;
+						bCombo = ((EdgePosition)b).getCombo();
+						if (!(DMath.greaterThanEquals(aCombo, combo) && DMath.greaterThanEquals(combo, bCombo))) {
+							continue;
 						}
-						
-//						assert false;
-						continue;
-						
 					}
-					
 				}
+				
 			} else {
 				if (b instanceof VertexPosition) {
 					
-					Edge e = (Edge)((EdgePosition)a).entity;
-					
-					if (pos.entity != e || pos.axis != a.axis) {
-//						assert false;
+					if (gp.entity == ((VertexPosition)b).v) {
+						assert getGraphPosition(i+1, 0.0).equals(gp);
+						if (DMath.greaterThanEquals(i+1+0.0, startingPosition.combo)) {
+							return new GraphPositionPathPosition(this, i+1, 0.0);
+						}
+						
 						continue;
 					}
 					
-					double combo = ((EdgePosition)pos).getCombo();
+					Edge e = (Edge)((EdgePosition)a).entity;
+					
+					if (gp.entity != e || gp.axis != a.axis) {
+						continue;
+					}
+					
+					combo = ((EdgePosition)gp).getCombo();
 					
 					if (((VertexPosition)b).v == a.entity.getVertices(a.axis).get(0)) {
-						
-						if (DMath.greaterThanEquals(((EdgePosition)a).getCombo(), combo) && DMath.greaterThanEquals(combo, 0.0)) {
-							
-							double abCombo = (combo - ((EdgePosition)a).getCombo()) / (0.0 - ((EdgePosition)a).getCombo());
-							assert DMath.lessThanEquals(0.0, abCombo) && DMath.lessThanEquals(abCombo, 1.0);
-							
-							/*
-							 * abCombo is [0, 1] between a and b
-							 */
-							
-							int gpppIndex = (int)Math.floor(i + abCombo);
-							double gpppParam = (i + abCombo)-gpppIndex;
-							
-//							assert false;
-							assert getGraphPosition(gpppIndex, gpppParam).equals(pos);
-							return new GraphPositionPathPosition(this, gpppIndex, gpppParam);
+						aCombo = ((EdgePosition)a).getCombo();
+						bCombo = 0.0;
+						if (!(DMath.greaterThanEquals(aCombo, combo) && DMath.greaterThanEquals(combo, bCombo))) {
+							continue;
 						}
-						
-//						assert false;
-						continue;
 						
 					} else {
 						assert ((VertexPosition)b).v == a.entity.getVertices(a.axis).get(1);
-						
-						if (DMath.lessThanEquals(((EdgePosition)a).getCombo(), combo) && DMath.lessThanEquals(combo, (e.pointCount()-1)+0.0)) {
-							
-							double abCombo = (combo - ((EdgePosition)a).getCombo()) / ((e.pointCount()-1)+0.0 - ((EdgePosition)a).getCombo());
-							assert DMath.lessThanEquals(0.0, abCombo) && DMath.lessThanEquals(abCombo, 1.0);
-							
-							/*
-							 * abCombo is [0, 1] between a and b
-							 */
-							
-							int gpppIndex = (int)Math.floor(i + abCombo);
-							double gpppParam = (i + abCombo)-gpppIndex;
-							
-//							assert false;
-							assert getGraphPosition(gpppIndex, gpppParam).equals(pos);
-							return new GraphPositionPathPosition(this, gpppIndex, gpppParam);
+						aCombo = ((EdgePosition)a).getCombo();
+						bCombo = (e.pointCount()-1)+0.0;
+						if (!(DMath.lessThanEquals(aCombo, combo) && DMath.lessThanEquals(combo, bCombo))) {
+							continue;
 						}
-						
-//						assert false;
-						continue;
-						
 					}
 					
 				} else {
@@ -465,58 +420,41 @@ public class GraphPositionPath {
 					assert e == b.entity;
 					assert a.axis == b.axis;
 					
-					if (pos.entity != e || pos.axis != a.axis) {
-//						assert false;
+					if (gp.entity != e || gp.axis != a.axis) {
 						continue;
 					}
 					
-					double combo = ((EdgePosition)pos).getCombo();
+					combo = ((EdgePosition)gp).getCombo();
 					
-					if (DMath.lessThan(((EdgePosition)a).getCombo(), ((EdgePosition)b).getCombo())) {
-						
-						if (DMath.lessThanEquals(((EdgePosition)a).getCombo(), combo) && DMath.lessThanEquals(combo, ((EdgePosition)b).getCombo())) {
-							
-							double abCombo = (combo - ((EdgePosition)a).getCombo()) / (((EdgePosition)b).getCombo() - ((EdgePosition)a).getCombo());
-							assert DMath.lessThanEquals(0.0, abCombo) && DMath.lessThanEquals(abCombo, 1.0);
-							
-							int gpppIndex = (int)Math.floor(i + abCombo);
-							double gpppParam = (i + abCombo)-gpppIndex;
-							
-//							assert false;
-							assert getGraphPosition(gpppIndex, gpppParam).equals(pos);
-							return new GraphPositionPathPosition(this, gpppIndex, gpppParam);
+					aCombo = ((EdgePosition)a).getCombo();
+					bCombo = ((EdgePosition)b).getCombo();
+					if (DMath.lessThan(aCombo, bCombo)) {
+						if (!(DMath.lessThanEquals(aCombo, combo) && DMath.lessThanEquals(combo, bCombo))) {
+							continue;
 						}
-						
-//						assert false;
-						continue;
-						
 					} else {
-						
-						if (DMath.greaterThanEquals(((EdgePosition)a).getCombo(), combo) && DMath.greaterThanEquals(combo, ((EdgePosition)b).getCombo())) {
-							
-							double abCombo = (combo - ((EdgePosition)a).getCombo()) / (((EdgePosition)b).getCombo() - ((EdgePosition)a).getCombo());
-							assert DMath.lessThanEquals(0.0, abCombo) && DMath.lessThanEquals(abCombo, 1.0);
-							
-							int gpppIndex = (int)Math.floor(i + abCombo);
-							double gpppParam = (i + abCombo)-gpppIndex;
-							
-//							assert false;
-							assert getGraphPosition(gpppIndex, gpppParam).equals(pos);
-							return new GraphPositionPathPosition(this, gpppIndex, gpppParam);
-							
+						if (!(DMath.greaterThanEquals(aCombo, combo) && DMath.greaterThanEquals(combo, bCombo))) {
+							continue;
 						}
-						
-//						assert false;
-						continue;
-						
 					}
 					
 				}
 			}
 			
+			double abCombo = (combo - aCombo) / (bCombo - aCombo);
+			assert DMath.lessThanEquals(0.0, abCombo) && DMath.lessThanEquals(abCombo, 1.0);
+			
+			int gpppIndex = (int)Math.floor(i + abCombo);
+			double gpppParam = (i + abCombo)-gpppIndex;
+			
+			assert getGraphPosition(gpppIndex, gpppParam).equals(gp);
+			
+			if (DMath.greaterThanEquals(gpppIndex+gpppParam, startingPosition.combo)) {
+				return new GraphPositionPathPosition(this, gpppIndex, gpppParam);
+			}
+			
 		}
 		
-//		assert false;
 		return null;
 	}
 	

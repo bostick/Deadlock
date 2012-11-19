@@ -1,12 +1,8 @@
 
 IMMEDIATELY:
 
-insert stand-alone intersections
+snap to grid for inserting intersections and sources/sinks
 
-insert world sources/sinks
-cursor with outline connecting source and sink along edge of quadrant
-
-snap to grid
 
 remember user actions, useful for undo, redo
 
@@ -61,6 +57,11 @@ cleanup user input
 lines and curves for roads
 
 DONE:
+
+insert world sources/sinks
+cursor with outline connecting source and sink along edge of quadrant
+
+insert stand-alone intersections
 
 1-way directional arrows for roads
 hit key to change direction of arrows

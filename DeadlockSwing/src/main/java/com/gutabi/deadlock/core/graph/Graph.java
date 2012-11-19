@@ -463,6 +463,8 @@ public class Graph implements Sweepable {
 			}
 		}
 		
+//		assert distances[v.id][end.id] != Double.POSITIVE_INFINITY;
+		
 		return v;
 	}
 	
@@ -484,9 +486,15 @@ public class Graph implements Sweepable {
 		 * TODO: should figure this out along with distances
 		 */
 		if (v == end) {
+			/*
+			 * reached end!
+			 */
 			return false;
 		}
 		if ((v.roads.size() + ((v.m!=null)?1:0)) == 1) {
+			/*
+			 * literally only one edge
+			 */
 			return true;
 		} else {
 			List<Edge> eds = new ArrayList<Edge>();
@@ -516,14 +524,16 @@ public class Graph implements Sweepable {
 						other = m.top;
 					}
 				}
-				if (visited.contains(other)) {
-					// know there is a loop, so no dead end
-					return false;
-				}
-				List<Vertex> newVisited = new ArrayList<Vertex>(visited);
-				newVisited.add(v);
-				if (!isDeadEnd(ee, other, end, newVisited)) {
-					return false;
+				if (ee.canTravelFromTo(v, other)) {
+					if (visited.contains(other)) {
+						// know there is a loop, so no dead end
+						return false;
+					}
+					List<Vertex> newVisited = new ArrayList<Vertex>(visited);
+					newVisited.add(v);
+					if (!isDeadEnd(ee, other, end, newVisited)) {
+						return false;
+					}
 				}
 			}
 			return true;

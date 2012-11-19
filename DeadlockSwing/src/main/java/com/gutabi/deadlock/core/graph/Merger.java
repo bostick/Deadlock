@@ -138,6 +138,22 @@ public class Merger extends Edge {
 		}
 	}
 	
+	public boolean canTravelFromTo(Vertex a, Vertex b) {
+		if (a == top) {
+			assert b == bottom;
+			return topBottomDir != EdgeDirection.ENDTOSTART;
+		} else if (a == left) {
+			assert b == right;
+			return leftRightDir != EdgeDirection.ENDTOSTART;
+		} else if (a == right) {
+			assert b == left;
+			return leftRightDir != EdgeDirection.STARTTOEND;
+		} else {
+			assert a == bottom;
+			assert b == top;
+			return topBottomDir != EdgeDirection.STARTTOEND;
+		}
+	}
 	
 	public void enterDistancesMatrix(double[][] distances) {
 		distances[top.id][bottom.id] = Merger.MERGER_HEIGHT;

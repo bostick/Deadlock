@@ -202,6 +202,17 @@ public class Road extends Edge {
 		}
 	}
 	
+	public boolean canTravelFromTo(Vertex a, Vertex b) {
+		if (a == start) {
+			assert b == end;
+			return direction != EdgeDirection.ENDTOSTART;
+		} else {
+			assert a == end;
+			assert b == start;
+			return direction != EdgeDirection.STARTTOEND;
+		}
+	}
+	
 	
 	
 	public void preStart() {

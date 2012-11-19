@@ -22,12 +22,12 @@ import com.gutabi.deadlock.core.geom.Sweeper;
 import com.gutabi.deadlock.core.graph.Axis;
 import com.gutabi.deadlock.core.graph.Edge;
 import com.gutabi.deadlock.core.graph.Graph;
-import com.gutabi.deadlock.core.graph.GraphPositionPath;
 import com.gutabi.deadlock.core.graph.GraphPositionPathPosition;
 import com.gutabi.deadlock.core.graph.Merger;
 import com.gutabi.deadlock.core.graph.Road;
 import com.gutabi.deadlock.core.graph.RoadPosition;
 import com.gutabi.deadlock.core.graph.Vertex;
+import com.gutabi.deadlock.model.cursor.RegularCursor;
 import com.gutabi.deadlock.model.fixture.WorldSink;
 import com.gutabi.deadlock.model.fixture.WorldSource;
 import com.gutabi.deadlock.view.AnimatedExplosion;
@@ -75,6 +75,8 @@ public class World implements Sweepable {
 	private Rect aabb;
 	
 //	private static Logger logger = Logger.getLogger(World.class);
+	
+	private boolean grid;
 	
 	public World() {
 		
@@ -133,7 +135,6 @@ public class World implements Sweepable {
 		graph.addVertexTop(g);
 		graph.addVertexTop(h);
 		graph.addVertexTop(t4);
-
 		
 	}
 	
@@ -147,6 +148,14 @@ public class World implements Sweepable {
 		
 		computeAABB();
 		
+	}
+	
+	public void setGrid(boolean g) {
+		this.grid = g;
+	}
+	
+	public boolean getGrid() {
+		return grid;
 	}
 	
 	public void addVertexTop(Vertex v) {
@@ -417,20 +426,19 @@ public class World implements Sweepable {
 		
 //		GraphPositionPathPosition closest = null;
 		
-		GraphPositionPath path = center.path;
+//		GraphPositionPath restOfPath = center.restOfPath();
 		
 		for (Car c : cars) {
 			if (c == test) {
 				continue;
 			}
 			if (c.overallPos != null) {
-				GraphPositionPathPosition otherCarCenter = path.hitTest(c.overallPos.gpos);
+				GraphPositionPathPosition otherCarCenter = center.path.hitTest(c.overallPos.gpos, center);
 				if (otherCarCenter != null) {
-					if (DMath.greaterThanEquals(otherCarCenter.combo, center.combo)) {
-						double centerCenterDist = center.distanceTo(otherCarCenter);
-						if (DMath.lessThanEquals(centerCenterDist, dist)) {
-							return c;
-						}
+					assert DMath.greaterThanEquals(otherCarCenter.combo, center.combo);
+					double centerCenterDist = center.distanceTo(otherCarCenter);
+					if (DMath.lessThanEquals(centerCenterDist, dist)) {
+						return c;
 					}
 				}
 			}
@@ -630,12 +638,40 @@ public class World implements Sweepable {
 		
 		if (!MODEL.DEBUG_DRAW) {
 			
-			backgroundGrassImageG2.drawImage(VIEW.tiledGrass, 0, 0, null);
+			BufferedImage tiledGrass = new BufferedImage(
+					(int)(World.WORLD_WIDTH * MODEL.PIXELS_PER_METER),
+					(int)(World.WORLD_HEIGHT * MODEL.PIXELS_PER_METER),
+					BufferedImage.TYPE_INT_ARGB);
+			Graphics2D g2 = tiledGrass.createGraphics();
+			
+			for (int i = 0; i < (World.WORLD_WIDTH * MODEL.PIXELS_PER_METER)/World.GRASS_WIDTH; i++) {
+				for (int j = 0; j < (World.WORLD_HEIGHT * MODEL.PIXELS_PER_METER)/World.GRASS_HEIGHT; j++) {
+					g2.drawImage(VIEW.sheet,
+							World.GRASS_WIDTH * i, World.GRASS_HEIGHT * j, World.GRASS_WIDTH * i + World.GRASS_WIDTH, World.GRASS_HEIGHT * j + World.GRASS_HEIGHT,
+							0, 224, 0+World.GRASS_WIDTH, 224+World.GRASS_HEIGHT, null);
+				}
+			} 
+			
+			backgroundGrassImageG2.drawImage(tiledGrass, 0, 0, null);
 			
 		} else {
 			
 			backgroundGrassImageG2.setColor(lightGreen);
 			backgroundGrassImageG2.fillRect(0, 0, (int)(WORLD_WIDTH * MODEL.PIXELS_PER_METER), (int)(WORLD_HEIGHT * MODEL.PIXELS_PER_METER));
+			
+		}
+		
+		if (grid) {
+			
+			backgroundGrassImageG2.setColor(Color.GRAY);
+			backgroundGrassImageG2.setStroke(RegularCursor.solidOutlineStroke);
+			
+			for (int i = 1; i <= 7; i++) {
+				backgroundGrassImageG2.drawLine((int)(0 * MODEL.PIXELS_PER_METER), (int)(WORLD_HEIGHT * i * 0.125 * MODEL.PIXELS_PER_METER), (int)(WORLD_WIDTH * MODEL.PIXELS_PER_METER), (int)(WORLD_HEIGHT * i * 0.125 * MODEL.PIXELS_PER_METER));
+			}
+			for (int i = 1; i <= 7; i++) {
+				backgroundGrassImageG2.drawLine((int)(WORLD_WIDTH * i * 0.125 * MODEL.PIXELS_PER_METER), (int)(0 * MODEL.PIXELS_PER_METER), (int)(WORLD_WIDTH * i * 0.125 * MODEL.PIXELS_PER_METER), (int)(WORLD_HEIGHT * MODEL.PIXELS_PER_METER));	
+			}
 			
 		}
 		

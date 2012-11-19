@@ -357,6 +357,16 @@ public class DeadlockController implements ActionListener {
 		
 	}
 	
+	public void gKey() {
+		
+		boolean g = MODEL.world.getGrid();
+		
+		MODEL.world.setGrid(!g);
+		
+		renderBackgroundAndPaint();
+		
+	}
+	
 	public void deleteKey() {
 		
 		if (MODEL.hilited != null) {

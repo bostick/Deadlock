@@ -18,7 +18,6 @@ import org.apache.log4j.Logger;
 
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.Rect;
-import com.gutabi.deadlock.model.World;
 
 @SuppressWarnings("static-access")
 public class DeadlockView {
@@ -43,7 +42,7 @@ public class DeadlockView {
 	
 	public BufferedImage sheet;
 	public BufferedImage explosionSheet;
-	public BufferedImage tiledGrass;
+//	public BufferedImage tiledGrass;
 	
 	public final Logger logger = Logger.getLogger(DeadlockView.class);
 	
@@ -59,20 +58,6 @@ public class DeadlockView {
 		
 		sheet = ImageIO.read(new File("media\\sheet.png"));
 		explosionSheet = ImageIO.read(new File("media\\explosionSheet.png"));
-		
-		tiledGrass = new BufferedImage(
-				(int)(World.WORLD_WIDTH * MODEL.PIXELS_PER_METER),
-				(int)(World.WORLD_HEIGHT * MODEL.PIXELS_PER_METER),
-				BufferedImage.TYPE_INT_ARGB);
-		Graphics2D g2 = tiledGrass.createGraphics();
-		
-		for (int i = 0; i < (World.WORLD_WIDTH * MODEL.PIXELS_PER_METER)/World.GRASS_WIDTH; i++) {
-			for (int j = 0; j < (World.WORLD_HEIGHT * MODEL.PIXELS_PER_METER)/World.GRASS_HEIGHT; j++) {
-				g2.drawImage(sheet,
-						World.GRASS_WIDTH * i, World.GRASS_HEIGHT * j, World.GRASS_WIDTH * i + World.GRASS_WIDTH, World.GRASS_HEIGHT * j + World.GRASS_HEIGHT,
-						0, 224, 0+World.GRASS_WIDTH, 224+World.GRASS_HEIGHT, null);
-			}
-		} 
 		
 	}
 	
