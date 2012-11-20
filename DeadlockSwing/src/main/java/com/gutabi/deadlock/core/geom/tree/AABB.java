@@ -1,10 +1,16 @@
-package com.gutabi.deadlock.core.geom;
+package com.gutabi.deadlock.core.geom.tree;
+
+import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
+
+import java.awt.Color;
+import java.awt.Graphics2D;
 
 import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Dim;
 import com.gutabi.deadlock.core.Point;
 
-public class Rect {
+@SuppressWarnings("static-access")
+public class AABB {
 	
 	public final Point ul;
 	public final Dim dim;
@@ -16,7 +22,7 @@ public class Rect {
 	private final double brX;
 	private final double brY;
 	
-	public Rect(double x, double y, double width, double height) {
+	public AABB(double x, double y, double width, double height) {
 		this.x = x;
 		this.y = y;
 		this.width = width;
@@ -39,26 +45,36 @@ public class Rect {
 	public boolean equals(Object o) {
 		if (o == this) {
 			return true;
-		} else if (!(o instanceof Rect)) {
+		} else if (!(o instanceof AABB)) {
 			return false;
 		} else {
-			Rect b = (Rect)o;
+			AABB b = (AABB)o;
 			return DMath.equals(x, b.x) && DMath.equals(y, b.y) && DMath.equals(width, b.width) && DMath.equals(height, b.height);
 		}
 	}
 	
-	public boolean hitTest(Point p) {
-		if (DMath.lessThanEquals(x, p.x) && DMath.lessThanEquals(p.x, x+width) &&
-				DMath.lessThanEquals(y, p.y) && DMath.lessThanEquals(p.y, y+height)) {
-			
-			return true;
-			
-		} else {
+//	public boolean hitTest(Point p) {
+//		if (DMath.lessThanEquals(x, p.x) && DMath.lessThanEquals(p.x, x+width) &&
+//				DMath.lessThanEquals(y, p.y) && DMath.lessThanEquals(p.y, y+height)) {
+//			
+//			return true;
+//			
+//		} else {
+//			return false;
+//		}
+//	}
+	
+	public boolean intersect(AABB a) {
+		
+		if (DMath.greaterThan(a.x, brX) || DMath.greaterThan(x, a.brX) ||
+				DMath.greaterThan(a.y, brY) || DMath.greaterThan(y, a.brY)) {
 			return false;
 		}
+		
+		return true;
 	}
 	
-	public static final Rect union(Rect a, Rect b) {
+	public static final AABB union(AABB a, AABB b) {
 		if (a == null) {
 			return b;
 		}
@@ -106,11 +122,23 @@ public class Rect {
 			return b;
 		}
 		
-		return new Rect(ulX, ulY, brX-ulX, brY-ulY);
+		return new AABB(ulX, ulY, brX-ulX, brY-ulY);
 	}
 	
-	public Rect plus(Point p) {
-		return new Rect(x + p.x, y + p.y, width, height);
+	public AABB plus(Point p) {
+		return new AABB(x + p.x, y + p.y, width, height);
 	}
 	
+	public void paint(Graphics2D g2) {
+		
+		g2.setColor(Color.BLACK);
+		
+		g2.drawRect(
+				(int)(x * MODEL.PIXELS_PER_METER),
+				(int)(y * MODEL.PIXELS_PER_METER),
+				(int)(width * MODEL.PIXELS_PER_METER),
+				(int)(height * MODEL.PIXELS_PER_METER));
+		
+	}
+
 }

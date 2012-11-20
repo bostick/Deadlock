@@ -228,8 +228,10 @@ public class GraphPositionPath {
 					}
 				}
 			} else {
+				
 				Point pOnPath = Point.point(a.gpos.p, b.gpos.p, u);
 				double dist = Point.distance(p, pOnPath);
+				
 				if (dist < closestDistance) {
 					closest = new GraphPositionPathPosition(this, a.index, u);
 					closestDistance = dist;

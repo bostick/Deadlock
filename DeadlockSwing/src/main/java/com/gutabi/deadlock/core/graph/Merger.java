@@ -11,8 +11,8 @@ import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.Quad;
-import com.gutabi.deadlock.core.geom.Rect;
 import com.gutabi.deadlock.core.geom.Shape;
+import com.gutabi.deadlock.core.geom.tree.AABB;
 import com.gutabi.deadlock.model.fixture.MergerSink;
 import com.gutabi.deadlock.model.fixture.MergerSource;
 
@@ -284,7 +284,9 @@ public class Merger extends Edge {
 		
 		if (MODEL.DEBUG_DRAW) {
 			paintSkeleton(g2);
-			paintAABB(g2);
+			
+			shape.aabb.paint(g2);
+			
 		}
 		
 	}
@@ -328,8 +330,8 @@ public class Merger extends Edge {
 		;
 	}
 	
-	public static Rect outlineAABB(Point p) {
-		return new Rect(
+	public static AABB outlineAABB(Point p) {
+		return new AABB(
 				p.x - Merger.MERGER_WIDTH/2 - Vertex.INIT_VERTEX_RADIUS,
 				p.y - Merger.MERGER_HEIGHT/2 - Vertex.INIT_VERTEX_RADIUS,
 				Merger.MERGER_WIDTH + 2 * Vertex.INIT_VERTEX_RADIUS,

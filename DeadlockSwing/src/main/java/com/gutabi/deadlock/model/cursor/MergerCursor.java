@@ -10,8 +10,8 @@ import java.awt.geom.AffineTransform;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.Circle;
 import com.gutabi.deadlock.core.geom.Quad;
-import com.gutabi.deadlock.core.geom.Rect;
 import com.gutabi.deadlock.core.geom.Shape;
+import com.gutabi.deadlock.core.geom.tree.AABB;
 import com.gutabi.deadlock.core.graph.Merger;
 import com.gutabi.deadlock.core.graph.Vertex;
 import com.gutabi.deadlock.model.Cursor;
@@ -27,7 +27,7 @@ public class MergerCursor extends Cursor {
 	private Circle right;
 	private Quad q;
 	
-	private Rect localAABB;
+	private AABB localAABB;
 	
 	public MergerCursor() {
 		
@@ -44,10 +44,10 @@ public class MergerCursor extends Cursor {
 		bottom = new Circle(this, new Point(ul.x + Merger.MERGER_WIDTH/2, ul.y+Merger.MERGER_HEIGHT), Vertex.INIT_VERTEX_RADIUS);
 		
 		localAABB = q.aabb;
-		localAABB = Rect.union(localAABB, top.aabb);
-		localAABB = Rect.union(localAABB, left.aabb);
-		localAABB = Rect.union(localAABB, right.aabb);
-		localAABB = Rect.union(localAABB, bottom.aabb);
+		localAABB = AABB.union(localAABB, top.aabb);
+		localAABB = AABB.union(localAABB, left.aabb);
+		localAABB = AABB.union(localAABB, right.aabb);
+		localAABB = AABB.union(localAABB, bottom.aabb);
 		
 	}
 	
@@ -110,7 +110,8 @@ public class MergerCursor extends Cursor {
 		
 		if (MODEL.DEBUG_DRAW) {
 			
-			paintAABB(g2);
+//			paintAABB(g2);
+			aabb.paint(g2);
 			
 		}
 		

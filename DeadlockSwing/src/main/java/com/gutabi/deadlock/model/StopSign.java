@@ -1,7 +1,7 @@
 package com.gutabi.deadlock.model;
 
-import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
+import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -114,7 +114,8 @@ public class StopSign extends Entity {
 		
 		if (MODEL.DEBUG_DRAW) {
 			
-			paintAABB(g2);
+//			paintAABB(g2);
+			shape.aabb.paint(g2);
 			
 		}
 		

@@ -6,9 +6,9 @@ public class Matrix {
 	
 	public final double[][] m;
 	
-	public Matrix(double a, double b, double c, double d) {
+	public Matrix(double[][] m, double a, double b, double c, double d) {
 		
-		m = new double[2][2];
+		this.m = m;
 		m[0][0] = a;
 		m[0][1] = b;
 		m[1][0] = c;

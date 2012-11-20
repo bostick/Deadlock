@@ -7,8 +7,8 @@ import java.awt.Graphics2D;
 
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.Circle;
-import com.gutabi.deadlock.core.geom.Rect;
 import com.gutabi.deadlock.core.geom.Shape;
+import com.gutabi.deadlock.core.geom.tree.AABB;
 import com.gutabi.deadlock.core.graph.Axis;
 import com.gutabi.deadlock.core.graph.Vertex;
 import com.gutabi.deadlock.model.Cursor;
@@ -57,8 +57,8 @@ public class FixtureCursor extends Cursor {
 		}
 		
 		aabb = null;
-		aabb = Rect.union(aabb, worldSource.aabb);
-		aabb = Rect.union(aabb, worldSink.aabb);
+		aabb = AABB.union(aabb, worldSource.aabb);
+		aabb = AABB.union(aabb, worldSink.aabb);
 		
 	}
 	
@@ -111,7 +111,8 @@ public class FixtureCursor extends Cursor {
 		
 		if (MODEL.DEBUG_DRAW) {
 			
-			paintAABB(g2);
+//			paintAABB(g2);
+			aabb.paint(g2);
 			
 		}
 		

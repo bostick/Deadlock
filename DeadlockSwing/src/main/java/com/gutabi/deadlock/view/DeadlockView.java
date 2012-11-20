@@ -17,7 +17,7 @@ import javax.swing.JFrame;
 import org.apache.log4j.Logger;
 
 import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.core.geom.Rect;
+import com.gutabi.deadlock.core.geom.tree.AABB;
 
 @SuppressWarnings("static-access")
 public class DeadlockView {
@@ -110,7 +110,7 @@ public class DeadlockView {
 	}
 	
 	
-	Rect prevAABB;
+	AABB prevAABB;
 	
 	public void repaint() {
 		assert !Thread.holdsLock(MODEL);
@@ -120,15 +120,15 @@ public class DeadlockView {
 //		worldOriginX = (int)(canvas.getWidth() * 0.5 - ((MODEL.world.WORLD_WIDTH * 1.0 - MODEL.world.QUADRANT_WIDTH * 0.5) * MODEL.PIXELS_PER_METER));
 //		worldOriginY = (int)(canvas.getHeight() * 0.5 - ((MODEL.world.WORLD_HEIGHT * 1.0 - MODEL.world.QUADRANT_HEIGHT * 0.5) * MODEL.PIXELS_PER_METER));
 		
-		Rect aabb = MODEL.world.getAABB();
+		AABB aabb = MODEL.world.getAABB();
 		
 		switch (CONTROLLER.mode) {
 		case DRAFTING:
-			aabb = Rect.union(aabb, MODEL.stroke.getAABB());
+			aabb = AABB.union(aabb, MODEL.stroke.getAABB());
 		case IDLE:
 		case MERGERCURSOR:
 		case FIXTURECURSOR:
-			aabb = Rect.union(aabb, MODEL.cursor.getAABB());
+			aabb = AABB.union(aabb, MODEL.cursor.getAABB());
 			break;
 		case PAUSED:
 		case RUNNING:

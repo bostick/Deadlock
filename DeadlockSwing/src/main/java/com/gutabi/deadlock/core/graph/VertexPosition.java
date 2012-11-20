@@ -6,19 +6,19 @@ public class VertexPosition extends GraphPosition {
 	
 	public final Vertex v;
 	
-	private final int hash;
+	private int hash;
 	
 	public VertexPosition(Vertex v) {
 		super(v.p, v, Axis.NONE);
 		this.v = v;
-		
-		int h = 17;
-		h = 37 * h + v.hashCode();
-		hash = h;
-		
 	}
 	
 	public int hashCode() {
+		if (hash == 0) {
+			int h = 17;
+			h = 37 * h + v.hashCode();
+			hash = h;
+		}
 		return hash;
 	}
 	

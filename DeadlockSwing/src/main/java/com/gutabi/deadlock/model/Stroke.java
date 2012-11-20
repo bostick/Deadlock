@@ -13,10 +13,10 @@ import org.apache.log4j.Logger;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.Capsule;
 import com.gutabi.deadlock.core.geom.Circle;
-import com.gutabi.deadlock.core.geom.Rect;
 import com.gutabi.deadlock.core.geom.SweepEvent;
 import com.gutabi.deadlock.core.geom.SweepEvent.SweepEventType;
 import com.gutabi.deadlock.core.geom.Sweeper;
+import com.gutabi.deadlock.core.geom.tree.AABB;
 
 @SuppressWarnings("static-access")
 public class Stroke {
@@ -35,9 +35,9 @@ public class Stroke {
 	}
 	
 	
-	private Rect aabb;
+	private AABB aabb;
 	
-	public final Rect getAABB() {
+	public final AABB getAABB() {
 		return aabb;
 	}
 	
@@ -272,7 +272,7 @@ public class Stroke {
 		aabb = null;
 		
 		for (Point p : pts) {
-			aabb = Rect.union(aabb, new Rect(p.x-r, p.y-r, 2*r, 2*r));
+			aabb = AABB.union(aabb, new AABB(p.x-r, p.y-r, 2*r, 2*r));
 		}
 		
 	}
@@ -283,7 +283,8 @@ public class Stroke {
 		
 		if (MODEL.DEBUG_DRAW) {
 			
-			paintAABB(g2);
+//			paintAABB(g2);
+			aabb.paint(g2);
 			
 		}
 		
@@ -324,19 +325,19 @@ public class Stroke {
 		
 	}
 	
-	private void paintAABB(Graphics2D g2) {
-		
-		if (!pts.isEmpty()) {
-			
-			g2.setColor(Color.BLACK);
-			g2.drawRect(
-					(int)(aabb.x * MODEL.PIXELS_PER_METER),
-					(int)(aabb.y * MODEL.PIXELS_PER_METER),
-					(int)(aabb.width * MODEL.PIXELS_PER_METER),
-					(int)(aabb.height * MODEL.PIXELS_PER_METER));
-			
-		}
-		
-	}
+//	private void paintAABB(Graphics2D g2) {
+//		
+//		if (!pts.isEmpty()) {
+//			
+//			g2.setColor(Color.BLACK);
+//			g2.drawRect(
+//					(int)(aabb.x * MODEL.PIXELS_PER_METER),
+//					(int)(aabb.y * MODEL.PIXELS_PER_METER),
+//					(int)(aabb.width * MODEL.PIXELS_PER_METER),
+//					(int)(aabb.height * MODEL.PIXELS_PER_METER));
+//			
+//		}
+//		
+//	}
 	
 }

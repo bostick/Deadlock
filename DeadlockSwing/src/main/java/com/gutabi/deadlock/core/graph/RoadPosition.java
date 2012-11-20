@@ -19,7 +19,7 @@ public class RoadPosition extends EdgePosition {
 	
 	public final StopSign sign;
 	
-	private final int hash;
+	private int hash;
 	
 	public RoadPosition(Road r, int index, double param) {
 		super(Point.point(r.getPoint(index), r.getPoint(index+1), param), r, Axis.NONE);
@@ -39,14 +39,6 @@ public class RoadPosition extends EdgePosition {
 		this.param = param;
 		
 		this.combo = index + param;
-		
-		int h = 17;
-		h = 37 * h + r.hashCode();
-		h = 37 * h + index;
-		long l = Double.doubleToLongBits(param);
-		int c = (int)(l ^ (l >>> 32));
-		h = 37 * h + c;
-		hash = h;
 		
 		if (DMath.equals(param, 0.0)) {
 			bound = true;
@@ -74,6 +66,15 @@ public class RoadPosition extends EdgePosition {
 	}
 	
 	public int hashCode() {
+		if (hash == 0) {
+			int h = 17;
+			h = 37 * h + r.hashCode();
+			h = 37 * h + index;
+			long l = Double.doubleToLongBits(param);
+			int c = (int)(l ^ (l >>> 32));
+			h = 37 * h + c;
+			hash = h;
+		}
 		return hash;
 	}
 	

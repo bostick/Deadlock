@@ -8,6 +8,7 @@ import org.apache.log4j.Logger;
 
 import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Point;
+import com.gutabi.deadlock.core.geom.tree.AABB;
 
 //@SuppressWarnings("static-access")
 public class CapsuleSequence extends Shape {
@@ -33,7 +34,7 @@ public class CapsuleSequence extends Shape {
 		
 		aabb = null;
 		for (Capsule c : caps) {
-			aabb = Rect.union(aabb, c.aabb);
+			aabb = AABB.union(aabb, c.aabb);
 		}
 	}
 	
@@ -95,12 +96,17 @@ public class CapsuleSequence extends Shape {
 	}
 	
 	public boolean intersect(Shape s) {
+		
+		if (!s.aabb.intersect(aabb)) {
+			return false;
+		}
+		
 		for (Capsule c : caps) {
 			if (c.intersect(s)) {
 				return true;
-			} else {
 			}
 		}
+		
 		return false;
 	}
 	

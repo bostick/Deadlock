@@ -15,10 +15,10 @@ import org.jbox2d.common.Vec2;
 import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.core.geom.Rect;
 import com.gutabi.deadlock.core.geom.Shape;
 import com.gutabi.deadlock.core.geom.Sweepable;
 import com.gutabi.deadlock.core.geom.Sweeper;
+import com.gutabi.deadlock.core.geom.tree.AABB;
 import com.gutabi.deadlock.core.graph.Axis;
 import com.gutabi.deadlock.core.graph.Edge;
 import com.gutabi.deadlock.core.graph.Graph;
@@ -74,8 +74,8 @@ public class World implements Sweepable {
 	
 	static Color lightGreen = new Color(128, 255, 128);
 	
-	private Rect worldRect;
-	private Rect aabb;
+	private AABB worldRect;
+	private AABB aabb;
 	
 //	private static Logger logger = Logger.getLogger(World.class);
 	
@@ -145,7 +145,7 @@ public class World implements Sweepable {
 		listener = new CarEventListener();
 		b2dWorld.setContactListener(listener);
 		
-		worldRect = new Rect(0, 0, WORLD_WIDTH, WORLD_HEIGHT);
+		worldRect = new AABB(0, 0, WORLD_WIDTH, WORLD_HEIGHT);
 		
 		computeAABB();
 		
@@ -259,10 +259,10 @@ public class World implements Sweepable {
 	
 	private void computeAABB() {
 		aabb = worldRect;
-		aabb = Rect.union(aabb, graph.getAABB());
+		aabb = AABB.union(aabb, graph.getAABB());
 	}
 	
-	public Rect getAABB() {
+	public AABB getAABB() {
 		return aabb;
 	}
 	
@@ -523,7 +523,8 @@ public class World implements Sweepable {
 			
 		if (MODEL.DEBUG_DRAW) {
 			
-			paintAABB(g2);
+//			paintAABB(g2);
+			aabb.paint(g2);
 			
 		}
 	}
@@ -730,16 +731,16 @@ public class World implements Sweepable {
 //		
 //	}
 	
-	private void paintAABB(Graphics2D g2) {
-		
-		g2.setColor(Color.BLACK);
-		g2.drawRect(
-				(int)(aabb.x * MODEL.PIXELS_PER_METER),
-				(int)(aabb.y * MODEL.PIXELS_PER_METER),
-				(int)(aabb.width * MODEL.PIXELS_PER_METER),
-				(int)(aabb.height * MODEL.PIXELS_PER_METER));
-		
-	}
+//	private void paintAABB(Graphics2D g2) {
+//		
+//		g2.setColor(Color.BLACK);
+//		g2.drawRect(
+//				(int)(aabb.x * MODEL.PIXELS_PER_METER),
+//				(int)(aabb.y * MODEL.PIXELS_PER_METER),
+//				(int)(aabb.width * MODEL.PIXELS_PER_METER),
+//				(int)(aabb.height * MODEL.PIXELS_PER_METER));
+//		
+//	}
 	
 	public boolean checkConsistency() {
 		return graph.checkConsistency();

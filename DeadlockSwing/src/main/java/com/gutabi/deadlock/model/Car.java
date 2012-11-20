@@ -136,6 +136,7 @@ public abstract class Car extends Entity {
 	double forwardSpeed;
 	float angle;
 	float angularVel;
+	double[][] carTransArr;
 	Matrix carTrans;
 //	float carAngle;
 	boolean atleastPartiallyOnRoad;
@@ -237,7 +238,8 @@ public abstract class Car extends Entity {
 		pVec2 = b2dBody.getPosition();
 		p = new Point(pVec2.x, pVec2.y);
 		Mat22 r = b2dBody.getTransform().R;
-		carTrans = new Matrix(r.col1.x, r.col2.x, r.col1.y, r.col2.y);
+		carTransArr = new double[2][2];
+		carTrans = new Matrix(carTransArr, r.col1.x, r.col2.x, r.col1.y, r.col2.y);
 		
 		worldQuad = Geom.localToWorld(localQuad, carTrans, p);
 		shape = worldQuad;
@@ -331,7 +333,7 @@ public abstract class Car extends Entity {
 		}
 		
 		Mat22 r = b2dBody.getTransform().R;
-		carTrans = new Matrix(r.col1.x, r.col2.x, r.col1.y, r.col2.y);
+		carTrans = new Matrix(carTransArr, r.col1.x, r.col2.x, r.col1.y, r.col2.y);
 //		carAngle = b2dBody.getAngle();
 		
 		worldQuad = Geom.localToWorld(localQuad, carTrans, p);
@@ -947,7 +949,8 @@ public abstract class Car extends Entity {
 				g2.fillOval((int)(goalPoint.x * MODEL.PIXELS_PER_METER) - 2, (int)(goalPoint.y * MODEL.PIXELS_PER_METER) - 2, 4, 4);
 			}
 			
-			paintAABB(g2);
+//			paintAABB(g2);
+			shape.aabb.paint(g2);
 			
 		}
 		

@@ -2,7 +2,9 @@ package com.gutabi.deadlock.core.graph;
 
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 
@@ -15,23 +17,37 @@ public abstract class GraphPosition {
 	public final GraphEntity entity;
 	public final Axis axis;
 	
+	private Map<GraphPosition, Double> distMap;
+	
 	static Logger logger = Logger.getLogger(GraphPosition.class);
 	
 	public GraphPosition(Point p, GraphEntity e, Axis a) {
 		this.p = p;
 		this.entity = e;
 		this.axis = a;
+		
+		distMap = new HashMap<GraphPosition, Double>();
 	}
 	
 	public abstract double distanceToConnectedVertex(Vertex v);
 	
 	public double distanceTo(GraphPosition p) {
 		
+		Double hashedDist = distMap.get(p);
+		
+		if (hashedDist != null) {
+			return hashedDist;
+		}
+		
 		if (entity == p.entity && axis == p.axis) {
 			
 			List<Vertex> vs = entity.getVertices(axis);
 			
-			return Math.abs(distanceToConnectedVertex(vs.get(0)) - p.distanceToConnectedVertex(vs.get(0)));
+			double toHash = Math.abs(distanceToConnectedVertex(vs.get(0)) - p.distanceToConnectedVertex(vs.get(0)));
+			
+			distMap.put(p, toHash);
+			
+			return toHash;
 			
 		} else {
 			
@@ -53,6 +69,9 @@ public abstract class GraphPosition {
 			}
 			
 			assert bestDist >= 0.0;
+			
+			distMap.put(p, bestDist);
+			
 			return bestDist;
 			
 		}

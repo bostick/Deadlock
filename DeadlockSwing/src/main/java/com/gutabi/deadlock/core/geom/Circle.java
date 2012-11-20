@@ -10,6 +10,7 @@ import org.apache.log4j.Logger;
 import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.SweepEvent.SweepEventType;
+import com.gutabi.deadlock.core.geom.tree.AABB;
 
 @SuppressWarnings("static-access")
 public class Circle extends Shape {
@@ -33,7 +34,7 @@ public class Circle extends Shape {
 		h = 37 * h + c;
 		hash = h;
 		
-		aabb = new Rect(center.x - radius, center.y - radius, 2*radius, 2*radius);
+		aabb = new AABB(center.x - radius, center.y - radius, 2*radius, 2*radius);
 	}
 	
 	@Override

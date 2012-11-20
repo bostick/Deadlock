@@ -16,10 +16,10 @@ import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.OverlappingException;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.Capsule;
-import com.gutabi.deadlock.core.geom.Rect;
 import com.gutabi.deadlock.core.geom.Shape;
 import com.gutabi.deadlock.core.geom.Sweepable;
 import com.gutabi.deadlock.core.geom.Sweeper;
+import com.gutabi.deadlock.core.geom.tree.AABB;
 import com.gutabi.deadlock.model.Cursor;
 
 @SuppressWarnings("static-access")
@@ -28,7 +28,7 @@ public class Graph implements Sweepable {
 	public final List<Vertex> vertices = new ArrayList<Vertex>();
 	public final List<Edge> edges = new ArrayList<Edge>();
 	
-	private Rect aabb;
+	private AABB aabb;
 	
 	private static final Logger logger = Logger.getLogger(Graph.class);
 	
@@ -83,7 +83,7 @@ public class Graph implements Sweepable {
 		
 	}
 	
-	public Rect getAABB() {
+	public AABB getAABB() {
 		return aabb;
 	}
 	
@@ -284,10 +284,10 @@ public class Graph implements Sweepable {
 		aabb = null;
 		
 		for (Vertex v : vertices) {
-			aabb = Rect.union(aabb, v.getAABB());
+			aabb = AABB.union(aabb, v.getAABB());
 		}
 		for (Edge e : edges) {
-			aabb = Rect.union(aabb, e.getAABB());
+			aabb = AABB.union(aabb, e.getAABB());
 		}
 		
 		if (logger.isDebugEnabled()) {

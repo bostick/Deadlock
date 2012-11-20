@@ -12,6 +12,7 @@ import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.OverlappingException;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.SweepEvent.SweepEventType;
+import com.gutabi.deadlock.core.geom.tree.AABB;
 
 @SuppressWarnings("static-access")
 public class Capsule extends Shape {
@@ -64,9 +65,10 @@ public class Capsule extends Shape {
 		
 		Point diff = new Point(b.x - a.x, b.y - a.y);
 		n = Point.ccw90(diff).normalize();
+		Point nd = Point.cw90(diff).normalize();
 		
-		Point u = Point.ccw90(diff).multiply(r / diff.length);
-		Point d = Point.cw90(diff).multiply(r / diff.length);
+		Point u = n.multiply(r);
+		Point d = nd.multiply(r);
 		aUp = a.plus(u);
 		aDown = a.plus(d);
 		bUp = b.plus(u);
@@ -75,7 +77,7 @@ public class Capsule extends Shape {
 		middle = new Quad(parent, aUp, bUp, bDown, aDown);
 		
 		aabb = ac.aabb;
-		aabb = Rect.union(aabb, bc.aabb);
+		aabb = AABB.union(aabb, bc.aabb);
 		
 	}
 	

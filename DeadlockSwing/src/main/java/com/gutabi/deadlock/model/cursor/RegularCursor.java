@@ -9,8 +9,8 @@ import java.awt.geom.AffineTransform;
 
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.Circle;
-import com.gutabi.deadlock.core.geom.Rect;
 import com.gutabi.deadlock.core.geom.Shape;
+import com.gutabi.deadlock.core.geom.tree.AABB;
 import com.gutabi.deadlock.core.graph.Vertex;
 import com.gutabi.deadlock.model.Cursor;
 
@@ -21,7 +21,7 @@ public class RegularCursor extends Cursor {
 	
 	Circle circle;
 	
-	private Rect localAABB;
+	private AABB localAABB;
 	
 	public RegularCursor() {
 		
@@ -66,7 +66,8 @@ public class RegularCursor extends Cursor {
 		
 		if (MODEL.DEBUG_DRAW) {
 			
-			paintAABB(g2);
+//			paintAABB(g2);
+			aabb.paint(g2);
 			
 		}
 		

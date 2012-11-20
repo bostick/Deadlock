@@ -18,7 +18,7 @@ public class MergerPosition extends EdgePosition {
 	
 	public final boolean bound;
 	
-	private final int hash;
+	private int hash;
 	
 	public MergerPosition(Merger m, Axis a, int index, double param) {
 		super(Point.point(m.get(index, a), m.get(index+1, a), param), m, a);
@@ -38,15 +38,6 @@ public class MergerPosition extends EdgePosition {
 		this.param = param;
 		
 		combo = index+param;
-		
-		int h = 17;
-		h = 37 * h + m.hashCode();
-		h = 37 * h + a.hashCode();
-		h = 37 * h + index;
-		long l = Double.doubleToLongBits(param);
-		int c = (int)(l ^ (l >>> 32));
-		h = 37 * h + c;
-		hash = h;
 		
 		if (DMath.equals(param, 0.0)) {
 			bound = true;
@@ -71,6 +62,16 @@ public class MergerPosition extends EdgePosition {
 	}
 	
 	public int hashCode() {
+		if (hash == 0) {
+			int h = 17;
+			h = 37 * h + m.hashCode();
+			h = 37 * h + axis.hashCode();
+			h = 37 * h + index;
+			long l = Double.doubleToLongBits(param);
+			int c = (int)(l ^ (l >>> 32));
+			h = 37 * h + c;
+			hash = h;
+		}
 		return hash;
 	}
 	

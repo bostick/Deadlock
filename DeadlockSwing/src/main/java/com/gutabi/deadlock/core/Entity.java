@@ -1,16 +1,13 @@
 package com.gutabi.deadlock.core;
 
-import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
-
-import java.awt.Color;
 import java.awt.Graphics2D;
 
-import com.gutabi.deadlock.core.geom.Rect;
 import com.gutabi.deadlock.core.geom.Shape;
 import com.gutabi.deadlock.core.geom.Sweepable;
 import com.gutabi.deadlock.core.geom.Sweeper;
+import com.gutabi.deadlock.core.geom.tree.AABB;
 
-@SuppressWarnings("static-access")
+//@SuppressWarnings("static-access")
 public abstract class Entity implements Sweepable {
 	
 	public Shape shape;
@@ -24,6 +21,11 @@ public abstract class Entity implements Sweepable {
 	}
 	
 	public final Entity bestHitTest(Shape s) {
+		
+		if (!shape.aabb.intersect(s.aabb)) {
+			return null;
+		}
+		
 		if (shape.intersect(s)) {
 			return this;
 		} else {
@@ -39,7 +41,7 @@ public abstract class Entity implements Sweepable {
 		shape.sweep(s, index);
 	}
 	
-	public final Rect getAABB() {
+	public final AABB getAABB() {
 		return shape.aabb;
 	}
 	
@@ -59,16 +61,5 @@ public abstract class Entity implements Sweepable {
 	public abstract void paint(Graphics2D g2);
 	
 	public abstract void paintHilite(Graphics2D g2);
-	
-	public final void paintAABB(Graphics2D g2) {
-		
-		g2.setColor(Color.BLACK);
-		g2.drawRect(
-				(int)(shape.aabb.x * MODEL.PIXELS_PER_METER),
-				(int)(shape.aabb.y * MODEL.PIXELS_PER_METER),
-				(int)(shape.aabb.width * MODEL.PIXELS_PER_METER),
-				(int)(shape.aabb.height * MODEL.PIXELS_PER_METER));
-		
-	}
 	
 }

@@ -9,25 +9,16 @@ public class Point {
 	public final double x;
 	public final double y;
 	
-	public final double length;
+//	public final double length;
 	
-	private final int hash;
+	private int hash;
 	
 	public Point(double x, double y) {
 		
 		this.x = x;
 		this.y = y;
 		
-		length = Math.hypot(x, y);
-		
-		int h = 17;
-		long l = Double.doubleToLongBits(x);
-		int c = (int)(l ^ (l >>> 32));
-		h = 37 * h + c;
-		l = Double.doubleToLongBits(y);
-		c = (int)(l ^ (l >>> 32));
-		h = 37 * h + c;
-		hash = h;
+//		length = Math.hypot(x, y);
 		
 	}
 	
@@ -45,6 +36,16 @@ public class Point {
 	
 	@Override
 	public int hashCode() {
+		if (hash == 0) {
+			int h = 17;
+			long l = Double.doubleToLongBits(x);
+			int c = (int)(l ^ (l >>> 32));
+			h = 37 * h + c;
+			l = Double.doubleToLongBits(y);
+			c = (int)(l ^ (l >>> 32));
+			h = 37 * h + c;
+			hash = h;
+		}
 		return hash;
 	}
 	
@@ -418,6 +419,10 @@ public class Point {
 	public static double distance(Point a, Point b) {
 		return Math.sqrt((a.x - b.x)*(a.x - b.x) + (a.y - b.y)*(a.y - b.y));
 	}	
+	
+	public static double distance(double ax, double ay, double bx, double by) {
+		return Math.sqrt((ax - bx)*(ax - bx) + (ay - by)*(ay - by));
+	}
 	
 	public static boolean equalDistances(Point a, Point b, Point c) {
 		double ab = (a.x-b.x)*(a.x-b.x) + (a.y-b.y)*(a.y-b.y);

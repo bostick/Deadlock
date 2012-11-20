@@ -8,6 +8,7 @@ import java.util.Arrays;
 import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.SweepEvent.SweepEventType;
+import com.gutabi.deadlock.core.geom.tree.AABB;
 
 @SuppressWarnings("static-access")
 public class Quad extends Shape {
@@ -22,7 +23,7 @@ public class Quad extends Shape {
 	public final Point n23;
 	public final Point n30;
 	
-	private final int hash;
+	private int hash;
 	
 	public Quad(Object parent, Point p0, Point p1, Point p2, Point p3) {
 		super(parent);
@@ -30,13 +31,6 @@ public class Quad extends Shape {
 		this.p1 = p1;
 		this.p2 = p2;
 		this.p3 = p3;
-		
-		int h = 17;
-		h = 37 * h + p0.hashCode();
-		h = 37 * h + p1.hashCode();
-		h = 37 * h + p2.hashCode();
-		h = 37 * h + p3.hashCode();
-		hash = h;
 		
 		Point edge;
 		edge = p1.minus(p0);
@@ -48,19 +42,23 @@ public class Quad extends Shape {
 		edge = p0.minus(p3);
 		n30 = Point.ccw90(edge).normalize();
 		
-		
-		
-		
-		
 		double ulX = Math.min(Math.min(p0.x, p1.x), Math.min(p2.x, p3.x));
 		double ulY = Math.min(Math.min(p0.y, p1.y), Math.min(p2.y, p3.y));
 		double brX = Math.max(Math.max(p0.x, p1.x), Math.max(p2.x, p3.x));
 		double brY = Math.max(Math.max(p0.y, p1.y), Math.max(p2.y, p3.y));
 		
-		aabb = new Rect(ulX, ulY, (brX - ulX), (brY - ulY));
+		aabb = new AABB(ulX, ulY, (brX - ulX), (brY - ulY));
 	}
 	
 	public int hashCode() {
+		if (hash == 0) {
+			int h = 17;
+			h = 37 * h + p0.hashCode();
+			h = 37 * h + p1.hashCode();
+			h = 37 * h + p2.hashCode();
+			h = 37 * h + p3.hashCode();
+			hash = h;
+		}
 		return hash;
 	}
 	

@@ -671,7 +671,8 @@ public class Road extends Edge {
 		
 		if (MODEL.DEBUG_DRAW) {
 			
-			paintAABB(g2);
+//			paintAABB(g2);
+			shape.aabb.paint(g2);
 			
 		}
 	}
