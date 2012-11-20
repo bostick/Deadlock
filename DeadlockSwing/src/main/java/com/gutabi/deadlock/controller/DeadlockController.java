@@ -68,6 +68,9 @@ public class DeadlockController implements ActionListener {
 		VIEW.canvas.addMouseListener(mc);
 		VIEW.canvas.addMouseMotionListener(mc);
 		
+		VIEW.previewPanel.addMouseListener(mc);
+		VIEW.previewPanel.addMouseMotionListener(mc);
+		
 		kc.init();
 		
 //		MODEL.debugStroke = new Stroke(Vertex.INIT_VERTEX_RADIUS);
@@ -115,6 +118,7 @@ public class DeadlockController implements ActionListener {
 	}
 	
 	Point lastPressPanelPoint;
+	Point lastPressPreviewPoint;
 	long lastPressTime;
 	
 	Point origWorldViewLoc;
@@ -132,12 +136,19 @@ public class DeadlockController implements ActionListener {
 			lastPressPanelPoint = p;
 			lastPressTime = System.currentTimeMillis();
 			
-//			MODEL.stroke.press(p);
-			
 			lastDragPanelPoint = null;
 			lastDragTime = -1;
 			
-			VIEW.repaint();
+		} else if (c == VIEW.previewPanel) {
+			
+			VIEW.previewPanel.requestFocusInWindow();
+			
+			lastPressPreviewPoint = p;
+			lastPressTime = System.currentTimeMillis();
+			
+			lastDragPreviewPoint = null;
+			lastDragTime = -1;
+			
 		}
 		
 	}
@@ -147,6 +158,9 @@ public class DeadlockController implements ActionListener {
 	Point lastDragWorldPoint;
 	Point lastDragPreviewPoint;
 	long lastDragTime;
+	
+	int originalX;
+	int originalY;
 	
 	public void dragged(InputEvent ev) {
 		
@@ -196,6 +210,30 @@ public class DeadlockController implements ActionListener {
 				;
 				break;
 			}
+			
+		} else if (c == VIEW.previewPanel) {
+			
+			VIEW.previewPanel.requestFocusInWindow();
+			
+			boolean lastDragPreviewPointWasNull = (lastDragPreviewPoint == null);
+			
+			lastDragPreviewPoint = p;
+			lastDragTime = System.currentTimeMillis();
+			
+			if (lastDragPreviewPointWasNull) {
+				
+				originalX = VIEW.worldOriginX;
+				originalY = VIEW.worldOriginY;
+				
+			}
+			
+			int x = (int)(lastDragPreviewPoint.x - lastPressPreviewPoint.x);
+			int y = (int)(lastDragPreviewPoint.y - lastPressPreviewPoint.y);
+			
+			VIEW.worldOriginX = originalX + 10*x;
+			VIEW.worldOriginY = originalY + 10*y;
+			
+			VIEW.repaint();
 			
 		}
 		

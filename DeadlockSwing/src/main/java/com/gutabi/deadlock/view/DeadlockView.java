@@ -28,10 +28,10 @@ public class DeadlockView {
 //	public WorldPanel panel;
 	public WorldCanvas canvas;
 	public ControlPanel controlPanel;
+	public PreviewPanel previewPanel;
 	
-	/*
-	 * where in the panel (in pixels) is the world origin?
-	 */
+	public int worldOffsetX;
+	public int worldOffsetY;
 	public int worldOriginX;
 	public int worldOriginY;
 	
@@ -53,8 +53,15 @@ public class DeadlockView {
 	public void init() throws Exception {
 		frame = createFrame(false);
 		
-		worldOriginX = (int)(canvas.getWidth() * 0.5 - (MODEL.world.WORLD_WIDTH * 0.5 * MODEL.PIXELS_PER_METER));
-		worldOriginY = (int)(canvas.getHeight() * 0.5 - (MODEL.world.WORLD_HEIGHT * 0.5 * MODEL.PIXELS_PER_METER));
+		assert canvas.getWidth() == 1427;
+		assert canvas.getHeight() == 822;
+		
+		worldOffsetX = (int)(canvas.getWidth() * 0.5 - ((MODEL.world.WORLD_WIDTH * 0.0 + MODEL.world.QUADRANT_WIDTH * 0.5) * MODEL.PIXELS_PER_METER));
+		worldOffsetY = (int)(canvas.getHeight() * 0.5 - ((MODEL.world.WORLD_HEIGHT * 0.0 + MODEL.world.QUADRANT_HEIGHT * 0.5) * MODEL.PIXELS_PER_METER));
+//		worldOffsetX = 25;
+//		worldOffsetY = 25;
+		worldOriginX = 0;
+		worldOriginY = 00;
 		
 		sheet = ImageIO.read(new File("media\\sheet.png"));
 		explosionSheet = ImageIO.read(new File("media\\explosionSheet.png"));
@@ -71,6 +78,8 @@ public class DeadlockView {
 		
 		canvas = new WorldCanvas();
 		canvas.setFocusable(true);
+		
+		previewPanel = new PreviewPanel();
 		
 		controlPanel = new ControlPanel();
 		controlPanel.init();
@@ -89,11 +98,11 @@ public class DeadlockView {
 	}
 	
 	public Point panelToWorld(Point p) {
-		return new Point((p.x - worldOriginX) * MODEL.METERS_PER_PIXEL, (p.y - worldOriginY) * MODEL.METERS_PER_PIXEL);
+		return new Point((p.x - (worldOffsetX - worldOriginX)) * MODEL.METERS_PER_PIXEL, (p.y - (worldOffsetY - worldOriginY)) * MODEL.METERS_PER_PIXEL);
 	}
 	
 	public Point worldToPanel(Point p) {
-		return new Point(p.x * MODEL.PIXELS_PER_METER + worldOriginX, p.y * MODEL.PIXELS_PER_METER + worldOriginY);
+		return new Point(p.x * MODEL.PIXELS_PER_METER + (worldOffsetX - worldOriginX), p.y * MODEL.PIXELS_PER_METER + (worldOffsetY - worldOriginY));
 	}
 	
 	public void renderBackgroundFresh() {
@@ -106,8 +115,10 @@ public class DeadlockView {
 	public void repaint() {
 		assert !Thread.holdsLock(MODEL);
 		
-		worldOriginX = (int)(canvas.getWidth() * 0.5 - (MODEL.world.WORLD_WIDTH * 0.5 * MODEL.PIXELS_PER_METER));
-		worldOriginY = (int)(canvas.getHeight() * 0.5 - (MODEL.world.WORLD_HEIGHT * 0.5 * MODEL.PIXELS_PER_METER));
+////		worldOriginX = (int)(canvas.getWidth() * 0.5 - ((MODEL.world.WORLD_WIDTH * 0.0 + MODEL.world.QUADRANT_WIDTH * 0.5) * MODEL.PIXELS_PER_METER));
+////		worldOriginY = (int)(canvas.getHeight() * 0.5 - ((MODEL.world.WORLD_HEIGHT * 0.0 + MODEL.world.QUADRANT_HEIGHT * 0.5) * MODEL.PIXELS_PER_METER));
+//		worldOriginX = (int)(canvas.getWidth() * 0.5 - ((MODEL.world.WORLD_WIDTH * 1.0 - MODEL.world.QUADRANT_WIDTH * 0.5) * MODEL.PIXELS_PER_METER));
+//		worldOriginY = (int)(canvas.getHeight() * 0.5 - ((MODEL.world.WORLD_HEIGHT * 1.0 - MODEL.world.QUADRANT_HEIGHT * 0.5) * MODEL.PIXELS_PER_METER));
 		
 		Rect aabb = MODEL.world.getAABB();
 		
@@ -124,14 +135,16 @@ public class DeadlockView {
 			break;
 		}
 		
-		worldAABBX = (int)(worldOriginX + (aabb.x * MODEL.PIXELS_PER_METER));
-		worldAABBY = (int)(worldOriginY + (aabb.y * MODEL.PIXELS_PER_METER));
+		worldAABBX = (int)(worldOffsetX - worldOriginX + (aabb.x * MODEL.PIXELS_PER_METER));
+		worldAABBY = (int)(worldOffsetY - worldOriginY + (aabb.y * MODEL.PIXELS_PER_METER));
 		
 		Graphics2D g2 = (Graphics2D)canvas.bs.getDrawGraphics();
 		
 		MODEL.paint(g2);
 		
 		canvas.bs.show();
+		
+		controlPanel.repaint();
 		
 		Toolkit.getDefaultToolkit().sync();
 		

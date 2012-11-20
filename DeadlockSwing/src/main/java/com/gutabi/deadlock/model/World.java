@@ -41,8 +41,11 @@ public class World implements Sweepable {
 	 */
 	public static final double SINK_EPSILON = 0.5f;
 	
-	public static final double WORLD_WIDTH = 16.0;
+	public static final double WORLD_WIDTH = 2 * 16.0;
 	public static final double WORLD_HEIGHT = WORLD_WIDTH;
+	
+	public static final double QUADRANT_WIDTH = 16.0;
+	public static final double QUADRANT_HEIGHT = QUADRANT_WIDTH;
 	
 	public static final int GRASS_WIDTH = 32;
 	public static final int GRASS_HEIGHT = 32;
@@ -656,11 +659,11 @@ public class World implements Sweepable {
 			backgroundGrassImageG2.setColor(Color.GRAY);
 			backgroundGrassImageG2.setStroke(RegularCursor.solidOutlineStroke);
 			
-			for (int i = 1; i <= 7; i++) {
-				backgroundGrassImageG2.drawLine((int)(0 * MODEL.PIXELS_PER_METER), (int)(WORLD_HEIGHT * i * 0.125 * MODEL.PIXELS_PER_METER), (int)(WORLD_WIDTH * MODEL.PIXELS_PER_METER), (int)(WORLD_HEIGHT * i * 0.125 * MODEL.PIXELS_PER_METER));
+			for (int i = 0; i <= WORLD_HEIGHT; i+=2) {
+				backgroundGrassImageG2.drawLine((int)(0 * MODEL.PIXELS_PER_METER), (int)(i * MODEL.PIXELS_PER_METER), (int)(WORLD_WIDTH * MODEL.PIXELS_PER_METER), (int)(i * MODEL.PIXELS_PER_METER));
 			}
-			for (int i = 1; i <= 7; i++) {
-				backgroundGrassImageG2.drawLine((int)(WORLD_WIDTH * i * 0.125 * MODEL.PIXELS_PER_METER), (int)(0 * MODEL.PIXELS_PER_METER), (int)(WORLD_WIDTH * i * 0.125 * MODEL.PIXELS_PER_METER), (int)(WORLD_HEIGHT * MODEL.PIXELS_PER_METER));	
+			for (int i = 0; i <= WORLD_WIDTH; i+=2) {
+				backgroundGrassImageG2.drawLine((int)(i * MODEL.PIXELS_PER_METER), (int)(0 * MODEL.PIXELS_PER_METER), (int)(i * MODEL.PIXELS_PER_METER), (int)(WORLD_HEIGHT * MODEL.PIXELS_PER_METER));	
 			}
 			
 		}

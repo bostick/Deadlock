@@ -1,7 +1,9 @@
 package com.gutabi.deadlock.view;
 
+
 import static com.gutabi.deadlock.controller.DeadlockController.CONTROLLER;
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
+import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
 import java.awt.Dimension;
 
@@ -126,10 +128,17 @@ public class ControlPanel extends JPanel {
 		
 		verticalBox.add(Box.createVerticalGlue());
 		
+		Box previewBox = Box.createHorizontalBox();
+		//buttonBox.add(Box.createHorizontalGlue());
+		previewBox.add(Box.createHorizontalGlue());
+		previewBox.add(VIEW.previewPanel);
+		//buttonBox.add(Box.createHorizontalGlue());
+		previewBox.add(Box.createHorizontalGlue());
+		verticalBox.add(previewBox);
+		
 		verticalBox.add(Box.createRigidArea(new Dimension(0, 30)));
 		
 		add(verticalBox);
-		
 	}
 	
 }
