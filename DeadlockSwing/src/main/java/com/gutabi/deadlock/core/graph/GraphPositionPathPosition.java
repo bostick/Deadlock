@@ -102,14 +102,15 @@ public class GraphPositionPathPosition {
 		return (index == path.size-1) && DMath.equals(param, 0.0);
 	}
 	
-	public double distanceTo(GraphPositionPathPosition pp) {
+	public double distanceTo(GraphPositionPathPosition p) {
 		
-		assert pp != null;
+		assert p.path == path;
+		assert p != null;
 		
-		GraphPositionPathPosition p = path.hitTest(pp.gpos, this);
-		if (p == null) {
-			return Double.POSITIVE_INFINITY;
-		}
+//		GraphPositionPathPosition p = path.hitTest(pp.gpos, this);
+//		if (p == null) {
+//			return Double.POSITIVE_INFINITY;
+//		}
 		
 		assert DMath.greaterThanEquals(p.combo, combo);
 		

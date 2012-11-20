@@ -1,6 +1,12 @@
 
 IMMEDIATELY:
 
+enforce only 1 road to fixtures
+interesting problem:
+
+
+
+
 snap to grid for inserting intersections and sources/sinks
 
 
@@ -55,6 +61,8 @@ or at least add it
 
 cleanup user input
 lines and curves for roads
+spline/curve editor
+
 
 DONE:
 

@@ -44,7 +44,7 @@ import com.gutabi.deadlock.model.fixture.WorldSource;
 public abstract class Car extends Entity {
 	
 	public static final double CAR_LENGTH = 1.0;
-	public static final double COMPLETE_STOP_WAIT_TIME = 1.0;
+	public static final double COMPLETE_STOP_WAIT_TIME = 0.0;
 	
 	public abstract double getMaxSpeed();
 	
@@ -578,23 +578,32 @@ public abstract class Car extends Entity {
 						
 						Car otherCar = ((CarProximityEvent) curDrivingEvent).otherCar;
 						
-						if (stoppedTime != -1 && t > stoppedTime + COMPLETE_STOP_WAIT_TIME &&
-								(otherCar.overallPos == null || DMath.greaterThan(overallPos.distanceTo(otherCar.overallPos), carProximityLookahead))) {
-							// start driving
+						if (stoppedTime != -1 && t > stoppedTime + COMPLETE_STOP_WAIT_TIME) {
 							
-							Car carProx2 = MODEL.world.carProximityTest(this, overallPos, Math.min(carProximityLookahead, overallPos.lengthToEndOfPath));
-							assert carProx2 == null;
+							GraphPositionPathPosition otherPosition = null;
+							if (otherCar.overallPos != null) {
+								otherPosition = overallPath.hitTest(otherCar.overallPos.gpos, overallPos);
+							}
 							
-							assert state == CarStateEnum.BRAKING;
-							state = CarStateEnum.DRIVING;
-							
-							stoppedTime = -1;
-							decelTime = -1;
-//							accelTime = -1;
-							
-							curDrivingEvent = null;
-							if (eventingLogger.isDebugEnabled()) {
-								eventingLogger.debug("t: " + t + " car " + this + ": " + curDrivingEvent);
+							if (otherPosition == null || DMath.greaterThan(overallPos.distanceTo(otherPosition), carProximityLookahead)) {
+								
+								// start driving
+								
+								Car carProx2 = MODEL.world.carProximityTest(this, overallPos, Math.min(carProximityLookahead, overallPos.lengthToEndOfPath));
+								assert carProx2 == null;
+								
+								assert state == CarStateEnum.BRAKING;
+								state = CarStateEnum.DRIVING;
+								
+								stoppedTime = -1;
+								decelTime = -1;
+//								accelTime = -1;
+								
+								curDrivingEvent = null;
+								if (eventingLogger.isDebugEnabled()) {
+									eventingLogger.debug("t: " + t + " car " + this + ": " + curDrivingEvent);
+								}
+								
 							}
 							
 						}
