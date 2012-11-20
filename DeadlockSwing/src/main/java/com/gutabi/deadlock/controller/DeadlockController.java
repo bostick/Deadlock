@@ -24,12 +24,15 @@ import com.gutabi.deadlock.core.geom.SweepEvent;
 import com.gutabi.deadlock.core.geom.SweepEvent.SweepEventType;
 import com.gutabi.deadlock.core.graph.Axis;
 import com.gutabi.deadlock.core.graph.EdgeDirection;
+import com.gutabi.deadlock.core.graph.EdgePosition;
+import com.gutabi.deadlock.core.graph.GraphPosition;
 import com.gutabi.deadlock.core.graph.Intersection;
 import com.gutabi.deadlock.core.graph.Merger;
 import com.gutabi.deadlock.core.graph.Road;
 import com.gutabi.deadlock.core.graph.RoadPosition;
 import com.gutabi.deadlock.core.graph.Turning;
 import com.gutabi.deadlock.core.graph.Vertex;
+import com.gutabi.deadlock.core.graph.VertexPosition;
 import com.gutabi.deadlock.model.Car;
 import com.gutabi.deadlock.model.StopSign;
 import com.gutabi.deadlock.model.Stroke;
@@ -809,24 +812,34 @@ public class DeadlockController implements ActionListener {
 				
 				assert MODEL.world.checkConsistency();
 				
-			} else if (e.type == SweepEventType.ENTERCAPSULE) {
+			} else if (e.type == SweepEventType.ENTERCAPSULE || e.type == SweepEventType.EXITCAPSULE) {
+				
 				Entity hit = MODEL.world.pureGraphBestHitTest(e.circle);
 				
-				if (hit instanceof Road) {
+				if (hit == null || hit instanceof Road) {
 					
-					logger.debug("split");
-					
-//					Road r = (Road)((Capsule)e.shape).parent;
-//					assert MODEL.world.isValidRoad(r);
-					
-					RoadPosition pos = null;
+					GraphPosition pos = null;
 					
 					/*
 					 * find better place to split by checking for intersection with road
 					 */
-					for (int j = e.index; j < s.pts.size()-1; j++) {
+					for (int j = e.index; (e.type == SweepEventType.ENTERCAPSULE) ? j < s.pts.size()-1 : j >= 0; j += (e.type == SweepEventType.ENTERCAPSULE) ? 1 : -1) {
 						Point a = s.pts.get(j);
 						Point b = s.pts.get(j+1);
+						
+						if (hit == null) {
+							if (e.type == SweepEventType.ENTERCAPSULE) {
+								hit = MODEL.world.pureGraphBestHitTest(new Circle(null, b, e.circle.radius));
+							} else {
+								hit = MODEL.world.pureGraphBestHitTest(new Circle(null, a, e.circle.radius));
+							}
+							if (hit == null) {
+								continue;
+							} else if (hit instanceof Vertex) {
+								pos = new VertexPosition((Vertex)hit);
+								break;
+							}
+						}
 						
 						RoadPosition skeletonIntersection = ((Road)hit).findSkeletonIntersection(a, b);
 						
@@ -834,12 +847,10 @@ public class DeadlockController implements ActionListener {
 							
 							double strokeCombo = j + Point.param(skeletonIntersection.p, a, b);
 							
-							if (DMath.greaterThanEquals((strokeCombo), (e.index+e.param))
+							if ((e.type == SweepEventType.ENTERCAPSULE) ? DMath.greaterThanEquals(strokeCombo, (e.index+e.param)) : DMath.lessThanEquals(strokeCombo, (e.index+e.param))
 									&& DMath.lessThanEquals(Point.distance(skeletonIntersection.p, e.p), s.r + s.r)
 									) {
 								pos = skeletonIntersection;
-								
-//								assert !(MODEL.world.pureGraphBestHitTest(new Circle(null, pos.p, e.circle.radius)) instanceof Vertex);
 								
 								logger.debug("found intersection");
 								
@@ -854,72 +865,18 @@ public class DeadlockController implements ActionListener {
 						pos = MODEL.world.findClosestRoadPosition(e.p, e.circle.radius);
 					}
 					
-					Entity hit2 = MODEL.world.pureGraphBestHitTest(new Circle(null, pos.p, e.circle.radius));
-					
-					if (hit2 instanceof Road) {
-						Vertex v = MODEL.world.splitRoadTop(pos);
-						e.setVertex(v);
+					Entity hit2;
+					if (pos instanceof EdgePosition) {
+						hit2 = MODEL.world.pureGraphBestHitTest(new Circle(null, pos.p, e.circle.radius));
 					} else {
-						e.setVertex((Vertex)hit2);
+						hit2 = ((VertexPosition)pos).v;
 					}
-					
-					assert MODEL.world.checkConsistency();
-					
-				} else if (hit instanceof Vertex) {
-					e.setVertex((Vertex)hit);
-				} else {
-					assert false;
-				}
-				
-			} else if (e.type == SweepEventType.EXITCAPSULE) {
-				
-				Entity hit = MODEL.world.pureGraphBestHitTest(e.circle);
-				if (hit instanceof Road) {
-					
-					logger.debug("split");
-					
-//					Road r = (Road)((Capsule)e.shape).parent;
-//					assert MODEL.world.isValidRoad(r);
-					
-					RoadPosition pos = null;
-					
-					/*
-					 * find better place to split by checking for intersection with road
-					 */
-					for (int j = e.index; j >= 0; j--) {
-						Point a = s.pts.get(j);
-						Point b = s.pts.get(j+1);
-						
-						RoadPosition skeletonIntersection = ((Road)hit).findSkeletonIntersection(a, b);
-						
-						if (skeletonIntersection != null) {
-							
-							double strokeCombo = j + Point.param(skeletonIntersection.p, a, b);
-							
-							if (DMath.lessThanEquals((strokeCombo), (e.index+e.param))
-									&& DMath.lessThanEquals(Point.distance(skeletonIntersection.p, e.p), s.r + s.r)
-									) {
-								pos = skeletonIntersection;
-								
-//								assert !(MODEL.world.pureGraphBestHitTest(new Circle(null, pos.p, e.circle.radius)) instanceof Vertex);
-								
-								logger.debug("found intersection");
-								
-								break;
-							}
-						}
-						
-					}
-					
-					if (pos == null) {
-						logger.debug("pos was null");
-						pos = MODEL.world.findClosestRoadPosition(e.p, e.circle.radius);
-					}
-					
-					Entity hit2 = MODEL.world.pureGraphBestHitTest(new Circle(null, pos.p, e.circle.radius));
 					
 					if (hit2 instanceof Road) {
-						Vertex v = MODEL.world.splitRoadTop(pos);
+						Vertex v = MODEL.world.splitRoadTop((RoadPosition)pos);
+						
+						assert e.circle.intersect(v.shape);
+						
 						e.setVertex(v);
 					} else {
 						e.setVertex((Vertex)hit2);
