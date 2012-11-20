@@ -76,8 +76,6 @@ public class World implements Sweepable {
 	
 //	private static Logger logger = Logger.getLogger(World.class);
 	
-	private boolean grid;
-	
 	public World() {
 		
 		graph = new Graph();
@@ -148,14 +146,6 @@ public class World implements Sweepable {
 		
 		computeAABB();
 		
-	}
-	
-	public void setGrid(boolean g) {
-		this.grid = g;
-	}
-	
-	public boolean getGrid() {
-		return grid;
 	}
 	
 	public void addVertexTop(Vertex v) {
@@ -661,7 +651,7 @@ public class World implements Sweepable {
 			
 		}
 		
-		if (grid) {
+		if (MODEL.grid) {
 			
 			backgroundGrassImageG2.setColor(Color.GRAY);
 			backgroundGrassImageG2.setStroke(RegularCursor.solidOutlineStroke);

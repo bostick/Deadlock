@@ -281,7 +281,16 @@ public class DeadlockController implements ActionListener {
 				MODEL.hilited = closest;
 			case MERGERCURSOR:
 			case FIXTURECURSOR:
-				MODEL.cursor.setPoint(lastMovedWorldPoint);
+				
+				if (MODEL.grid) {
+					
+					Point closestGridPoint = new Point(2 * Math.round(0.5 * lastMovedWorldPoint.x), 2 * Math.round(0.5 * lastMovedWorldPoint.y));
+					MODEL.cursor.setPoint(closestGridPoint);
+					
+				} else {
+					MODEL.cursor.setPoint(lastMovedWorldPoint);
+				}
+				
 				VIEW.repaint();
 				break;
 			}
@@ -297,7 +306,7 @@ public class DeadlockController implements ActionListener {
 			
 			if (!MODEL.world.cursorIntersect(MODEL.cursor)) {
 				
-				MODEL.world.addVertexTop(new Intersection(lastMovedWorldPoint));
+				MODEL.world.addVertexTop(new Intersection(MODEL.cursor.getPoint()));
 				
 				renderBackgroundAndPaint();
 				
@@ -359,9 +368,7 @@ public class DeadlockController implements ActionListener {
 	
 	public void gKey() {
 		
-		boolean g = MODEL.world.getGrid();
-		
-		MODEL.world.setGrid(!g);
+		MODEL.grid = !MODEL.grid;
 		
 		renderBackgroundAndPaint();
 		
@@ -444,7 +451,7 @@ public class DeadlockController implements ActionListener {
 			
 			if (!MODEL.world.cursorIntersect(MODEL.cursor)) {
 				
-				MODEL.world.insertMergerTop(lastMovedWorldPoint);
+				MODEL.world.insertMergerTop(MODEL.cursor.getPoint());
 				
 				mode = ControlMode.IDLE;
 				

@@ -38,6 +38,8 @@ public class DeadlockModel {
 	
 	public Stats stats;
 	
+	public boolean grid;
+	
 	public DeadlockModel() {
 		
 	}
