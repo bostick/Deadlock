@@ -1,8 +1,6 @@
 package com.gutabi.deadlock.core.graph;
 
 import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.apache.log4j.Logger;
 
@@ -64,6 +62,8 @@ public class GraphPositionPathPosition {
 	public boolean equals(Object o) {
 		if (this == o) {
 			return true;
+		} else if (!hash) {
+			
 		} else if (!(o instanceof GraphPositionPathPosition)) {
 			return false;
 		} else {
@@ -106,84 +106,101 @@ public class GraphPositionPathPosition {
 	}
 	
 	
-	private Map<GraphPositionPathPosition, Double> distMap = new HashMap<GraphPositionPathPosition, Double>();
-	
 	public double distanceTo(GraphPositionPathPosition p) {
 		
 		assert p.path == path;
-		assert p != null;
 		
 		assert DMath.greaterThanEquals(p.combo, combo);
 		
-		Double hashedDist = distMap.get(p);
-		if (hashedDist != null) {
-			return hashedDist;
-		}
+		return p.lengthToStartOfPath - lengthToStartOfPath;
 		
-		int goalIndex = p.index;
-		double goalParam = p.param;
-		
-		if (index == goalIndex || (goalIndex == index+1 && DMath.equals(goalParam, 0.0))) {
-			
-//			if (gpos.equals(p.gpos)) {
-//				String.class.getName();
-//			}
-			
-			double toHash = gpos.distanceTo(p.gpos);
-			
-			distMap.put(p, toHash);
-			
-			return toHash;
-			
-		} else {
-			
-			double acc = 0.0;
-			GraphPositionPathPosition curPos = this;
-			GraphPositionPathPosition nextPos = curPos.nextBound();
-			
-			acc += curPos.distanceTo(nextPos);
-			
-			while (true) {
-				
-				if (nextPos.index == goalIndex) {
-					break;
-				}
-				
-				curPos = nextPos;
-				nextPos = curPos.nextBound();
-				
-				acc += curPos.distanceTo(nextPos);
-				
-			}
-			
-			if (DMath.equals(nextPos.param, goalParam)) {
-				
-				distMap.put(p, acc);
-				
-				return acc;
-				
-			} else {
-				
-				acc = acc + nextPos.gpos.distanceTo(p.gpos);
-				
-				distMap.put(p, acc);
-				
-				return acc;
-				
-			}
-			
-		}
 	}
+	
+//	private Map<GraphPositionPathPosition, Double> distMap = new HashMap<GraphPositionPathPosition, Double>();
+//	int hashedCount;
+//	int unhashedCount;
+//	
+//	public double distanceTo(GraphPositionPathPosition p) {
+//		
+//		assert p.path == path;
+//		
+//		assert DMath.greaterThanEquals(p.combo, combo);
+//		
+//		Double hashedDist = distMap.get(p);
+//		if (hashedDist != null) {
+//			hashedCount++;
+//			return hashedDist;
+//		} else {
+//			unhashedCount++;
+//		}
+//		
+//		int goalIndex = p.index;
+//		double goalParam = p.param;
+//		
+//		if (index == goalIndex || (goalIndex == index+1 && DMath.equals(goalParam, 0.0))) {
+//			
+////			if (gpos.equals(p.gpos)) {
+////				String.class.getName();
+////			}
+//			
+//			double toHash = gpos.distanceTo(p.gpos);
+//			
+//			distMap.put(p, toHash);
+//			
+//			return toHash;
+//			
+//		} else {
+//			
+//			double acc = 0.0;
+//			GraphPositionPathPosition curPos = this;
+//			GraphPositionPathPosition nextPos = curPos.nextBound();
+//			
+//			acc += curPos.distanceTo(nextPos);
+//			
+//			while (true) {
+//				
+//				if (nextPos.index == goalIndex) {
+//					break;
+//				}
+//				
+//				curPos = nextPos;
+//				nextPos = curPos.nextBound();
+//				
+//				acc += curPos.distanceTo(nextPos);
+//				
+//			}
+//			
+//			if (DMath.equals(nextPos.param, goalParam)) {
+//				
+//				distMap.put(p, acc);
+//				
+//				return acc;
+//				
+//			} else {
+//				
+//				acc = acc + nextPos.gpos.distanceTo(p.gpos);
+//				
+//				distMap.put(p, acc);
+//				
+//				return acc;
+//				
+//			}
+//			
+//		}
+//	}
 	
 	public GraphPositionPathPosition travel(double dist) {
 		
-		if (DMath.equals(dist, 0)) {
+		if (DMath.equals(dist, 0.0)) {
 			return this;
 		}
 		
-		if (dist < 0) {
-			throw new IllegalArgumentException();
-		}
+		assert dist > 0.0;
+		
+		/*
+		 * find combinations that would make computing easier
+		 */
+		d;
 		
 		double traveled = 0.0;
 		

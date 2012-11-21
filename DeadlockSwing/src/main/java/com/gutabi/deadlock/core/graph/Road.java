@@ -66,17 +66,6 @@ public class Road extends Edge {
 		this.end = end;
 		this.raw = raw;
 		
-		int h = 17;
-		if (start != null) {
-			h = 37 * h + start.hashCode();
-		}
-		if (end != null) {
-			h = 37 * h + end.hashCode();
-		}
-		h = 37 * h + raw.hashCode();
-		h = 37 * h + dec;
-		hash = h;
-		
 		loop = (start == end);
 		standalone = (loop) ? start == null : false;
 		
@@ -134,6 +123,18 @@ public class Road extends Edge {
 	}
 	
 	public int hashCode() {
+		if () {
+			int h = 17;
+			if (start != null) {
+				h = 37 * h + start.hashCode();
+			}
+			if (end != null) {
+				h = 37 * h + end.hashCode();
+			}
+			h = 37 * h + raw.hashCode();
+			h = 37 * h + dec;
+			hash = h;
+		}
 		return hash;
 	}
 	
@@ -402,10 +403,6 @@ public class Road extends Edge {
 		return cumulativeLengthsFromStart[i];
 	}
 	
-	public double getLengthFromEnd(int i) {
-		return totalLength - cumulativeLengthsFromStart[i];
-	}
-	
 	public void computeProperties() {
 		
 		computeCaps();
@@ -440,9 +437,9 @@ public class Road extends Edge {
 	
 	private void computeCaps() {
 		
-		if (hash == 1577748441) {
-			String.class.getName();
-		}
+//		if (hash == 1577748441) {
+//			String.class.getName();
+//		}
 		
 		assert !raw.isEmpty();
 		List<Point> adj = raw;

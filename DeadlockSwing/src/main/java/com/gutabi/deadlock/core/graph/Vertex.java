@@ -42,10 +42,6 @@ public abstract class Vertex extends GraphEntity {
 		
 		this.p = p;
 		
-		int h = 17;
-		h = 37 * h + p.hashCode();
-		hash = h;
-		
 		r = INIT_VERTEX_RADIUS;
 		
 		shape = new Circle(this, p, r);
@@ -55,6 +51,11 @@ public abstract class Vertex extends GraphEntity {
 	}
 	
 	public int hashCode() {
+		if () {
+			int h = 17;
+			h = 37 * h + p.hashCode();
+			hash = h;
+		}
 		return hash;
 	}
 	

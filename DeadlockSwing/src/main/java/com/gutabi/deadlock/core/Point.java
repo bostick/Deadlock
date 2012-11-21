@@ -26,6 +26,8 @@ public class Point {
 	public boolean equals(Object o) {
 		if (this == o) {
 			return true;
+		} else if (!hash) {
+			
 		} else if (!(o instanceof Point)) {
 			return false;
 		} else {

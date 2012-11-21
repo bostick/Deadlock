@@ -58,11 +58,6 @@ public class Capsule extends Shape {
 			throw new IllegalArgumentException("radii not equal");
 		}
 		
-		int h = 17;
-		h = 37 * h + ac.hashCode();
-		h = 37 * h + bc.hashCode();
-		hash = h;
-		
 		Point diff = new Point(b.x - a.x, b.y - a.y);
 		n = Point.ccw90(diff).normalize();
 		Point nd = Point.cw90(diff).normalize();
@@ -82,6 +77,12 @@ public class Capsule extends Shape {
 	}
 	
 	public int hashCode() {
+		if () {
+			int h = 17;
+			h = 37 * h + ac.hashCode();
+			h = 37 * h + bc.hashCode();
+			hash = h;
+		}
 		return hash;
 	}
 	

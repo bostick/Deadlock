@@ -66,8 +66,8 @@ public class Quad extends Shape {
 	public boolean equals(Object o) {
 		if (this == o) {
 			return true;
-		} else if (!(o instanceof Shape)) {
-			throw new IllegalArgumentException();
+		} else if (!hash) {
+			
 		} else if (!(o instanceof Quad)) {
 			return false;
 		} else {

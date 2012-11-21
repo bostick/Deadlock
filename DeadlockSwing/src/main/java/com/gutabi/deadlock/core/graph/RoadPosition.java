@@ -86,8 +86,8 @@ public class RoadPosition extends EdgePosition {
 	public boolean equals(Object o) {
 		if (this == o) {
 			return true;
-		} else if (!(o instanceof GraphPosition)) {
-			throw new IllegalArgumentException();
+		} else if (!hash) {
+			
 		} else if (!(o instanceof RoadPosition)) {
 			return false;
 		} else {
@@ -115,26 +115,6 @@ public class RoadPosition extends EdgePosition {
 	
 	public double getCombo() {
 		return combo;
-	}
-	
-	public GraphPosition floor() {
-		if (DMath.equals(param, 0.0)) {
-			return this;
-		} else if (index != 0) {
-			return new RoadPosition(r, index, 0.0);
-		} else {
-			return new VertexPosition(r.start);
-		}
-	}
-	
-	public GraphPosition ceiling() {
-		if (DMath.equals(param, 0.0)) {
-			return this;
-		} else if (index != r.pointCount()-2) {
-			return new RoadPosition(r, index+1, 0.0);
-		} else {
-			return new VertexPosition(r.end);
-		}
 	}
 	
 	public GraphPosition nextBoundToward(GraphPosition goal) {
@@ -195,9 +175,9 @@ public class RoadPosition extends EdgePosition {
 	
 	
 	
-	public double distanceToEndOfRoad() {
-		return lengthToEndOfRoad;
-	}
+//	public double distanceToEndOfRoad() {
+//		return lengthToEndOfRoad;
+//	}
 	
 	public double distanceToStartOfRoad() {
 		return lengthToStartOfRoad;

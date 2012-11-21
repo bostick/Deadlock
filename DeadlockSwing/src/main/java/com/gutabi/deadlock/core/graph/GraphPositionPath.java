@@ -33,10 +33,6 @@ public class GraphPositionPath {
 		
 		this.poss = poss;
 		
-		int h = 17;
-		h = 37 * h + poss.hashCode();
-		hash = h;
-		
 		size = poss.size();
 		
 		this.start = poss.get(0);
@@ -128,6 +124,11 @@ public class GraphPositionPath {
 	
 	
 	public int hashCode() {
+		if () {
+			int h = 17;
+			h = 37 * h + poss.hashCode();
+			hash = h;
+		}
 		return hash;
 	}
 	

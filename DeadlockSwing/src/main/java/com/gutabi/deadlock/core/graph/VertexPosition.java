@@ -38,8 +38,8 @@ public class VertexPosition extends GraphPosition {
 	public boolean equals(Object o) {
 		if (this == o) {
 			return true;
-		} else if (!(o instanceof GraphPosition)) {
-			throw new IllegalArgumentException();
+		} else if (!hash) {
+			
 		} else if (!(o instanceof VertexPosition)) {
 			return false;
 		} else {
@@ -51,14 +51,6 @@ public class VertexPosition extends GraphPosition {
 	public double distanceToConnectedVertex(Vertex v) {
 		assert entity.getVertices(axis).contains(v);
 		return 0.0;
-	}
-	
-	public GraphPosition floor() {
-		return this;
-	}
-	
-	public GraphPosition ceiling() {
-		return this;
 	}
 	
 	public GraphPosition nextBoundToward(GraphPosition goal) {

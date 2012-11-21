@@ -16,6 +16,7 @@ import javax.swing.JFrame;
 
 import org.apache.log4j.Logger;
 
+import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.tree.AABB;
 
@@ -56,12 +57,20 @@ public class DeadlockView {
 		assert canvas.getWidth() == 1427;
 		assert canvas.getHeight() == 822;
 		
-		worldOffsetX = (int)(canvas.getWidth() * 0.5 - ((MODEL.world.WORLD_WIDTH * 0.0 + MODEL.world.QUADRANT_WIDTH * 0.5) * MODEL.PIXELS_PER_METER));
-		worldOffsetY = (int)(canvas.getHeight() * 0.5 - ((MODEL.world.WORLD_HEIGHT * 0.0 + MODEL.world.QUADRANT_HEIGHT * 0.5) * MODEL.PIXELS_PER_METER));
+		if (DMath.lessThanEquals(MODEL.world.WORLD_WIDTH * MODEL.PIXELS_PER_METER, canvas.getWidth())) {
+			worldOffsetX = (int)(canvas.getWidth() * 0.5 - ((MODEL.world.WORLD_WIDTH * 0.5) * MODEL.PIXELS_PER_METER));
+		} else {
+			worldOffsetX = (int)(canvas.getWidth() * 0.5 - ((MODEL.world.QUADRANT_WIDTH * 0.5) * MODEL.PIXELS_PER_METER));
+		}
+		if (DMath.lessThanEquals(MODEL.world.WORLD_HEIGHT * MODEL.PIXELS_PER_METER, canvas.getHeight())) {
+			worldOffsetY = (int)(canvas.getHeight() * 0.5 - ((MODEL.world.WORLD_HEIGHT * 0.5) * MODEL.PIXELS_PER_METER));
+		} else {
+			worldOffsetY = (int)(canvas.getHeight() * 0.5 - ((MODEL.world.QUADRANT_HEIGHT * 0.5) * MODEL.PIXELS_PER_METER));
+		}
 //		worldOffsetX = 25;
 //		worldOffsetY = 25;
 		worldOriginX = 0;
-		worldOriginY = 00;
+		worldOriginY = 0;
 		
 		sheet = ImageIO.read(new File("media\\sheet.png"));
 		explosionSheet = ImageIO.read(new File("media\\explosionSheet.png"));

@@ -31,12 +31,19 @@ public abstract class GraphPosition {
 	
 	public abstract double distanceToConnectedVertex(Vertex v);
 	
+	
+	int hashedCount;
+	int unhashedCount;
+	
 	public double distanceTo(GraphPosition p) {
 		
 		Double hashedDist = distMap.get(p);
 		
 		if (hashedDist != null) {
+			hashedCount++;
 			return hashedDist;
+		} else {
+			unhashedCount++;
 		}
 		
 		if (entity == p.entity && axis == p.axis) {
@@ -55,13 +62,9 @@ public abstract class GraphPosition {
 			for (Vertex v : entity.getVertices(axis)) {
 				for (Vertex w : p.entity.getVertices(p.axis)) {
 					double dist = 0.0;
-					assert dist >= 0.0;
 					dist += distanceToConnectedVertex(v);
-					assert dist >= 0.0;
 					dist += MODEL.world.distanceBetweenVertices(v, w);
-					assert dist >= 0.0;
 					dist += p.distanceToConnectedVertex(w);
-					assert dist >= 0.0;
 					if (dist < bestDist) {
 						bestDist = dist;
 					}
@@ -82,22 +85,42 @@ public abstract class GraphPosition {
 	
 	public abstract GraphPosition nextBoundToward(GraphPosition goal);
 	
-	public abstract GraphPosition floor();
-	
-	public abstract GraphPosition ceiling();
-	
 	public GraphPosition travelTo(GraphPosition p, double distance) {
-		
-		double distanceToP = distanceTo(p);
-		assert DMath.lessThanEquals(distance, distanceToP);
 		
 		if (DMath.equals(distance, 0.0)) {
 			return this;
 		}
 		
+		double distanceToP = distanceTo(p);
+		assert DMath.lessThanEquals(distance, distanceToP);
+		
+		/*
+		 * figure out the combinations that would make easier computing
+		 */
+		d;
+		
 		if (entity == p.entity && axis == p.axis) {
 			
 			List<Vertex> vs = entity.getVertices(axis);
+			Vertex ref = vs.get(0);
+			Vertex other = vs.get(1);
+			
+			/*
+			 * if they are next to each other, then we can do less work
+			 */
+			if (this instanceof VertexPosition) {
+				if (p instanceof VertexPosition) {
+					
+				} else {
+					
+				}
+			} else {
+				if (p instanceof VertexPosition) {
+					
+				} else {
+					
+				}
+			}
 			
 			double signedDistance = distanceToConnectedVertex(vs.get(0));
 			double signedDistanceP = p.distanceToConnectedVertex(vs.get(0));

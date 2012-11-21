@@ -41,8 +41,8 @@ public class Circle extends Shape {
 	public boolean equals(Object o) {
 		if (this == o) {
 			return true;
-		} else if (!(o instanceof Shape)) {
-			throw new IllegalArgumentException();
+		} else if (!hash) {
+			
 		} else if (!(o instanceof Circle)) {
 			return false;
 		} else {

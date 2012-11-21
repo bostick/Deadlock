@@ -83,33 +83,13 @@ public class MergerPosition extends EdgePosition {
 	public boolean equals(Object o) {
 		if (this == o) {
 			return true;
-		} else if (!(o instanceof GraphPosition)) {
-			throw new IllegalArgumentException();
+		} else if (!hash) {
+			
 		} else if (!(o instanceof MergerPosition)) {
 			return false;
 		} else {
 			MergerPosition b = (MergerPosition)o;
 			return (m == b.m) && (axis == b.axis) && index == b.index && DMath.equals(param, b.param);
-		}
-	}
-	
-	public GraphPosition floor() {
-		if (DMath.equals(param, 0.0)) {
-			return this;
-		} else if (index != 0) {
-			return new MergerPosition(m, axis, index, 0.0);
-		} else {
-			return (axis==Axis.LEFTRIGHT) ? new VertexPosition(m.left) : new VertexPosition(m.top);
-		}
-	}
-	
-	public GraphPosition ceiling() {
-		if (DMath.equals(param, 0.0)) {
-			return this;
-		} else if (index != 1) {
-			return new MergerPosition(m, axis, index+1, 0.0);
-		} else {
-			return (axis==Axis.LEFTRIGHT) ? new VertexPosition(m.right) : new VertexPosition(m.bottom);
 		}
 	}
 	
