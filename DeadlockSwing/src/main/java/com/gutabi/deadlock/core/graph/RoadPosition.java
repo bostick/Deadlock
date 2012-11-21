@@ -86,8 +86,8 @@ public class RoadPosition extends EdgePosition {
 	public boolean equals(Object o) {
 		if (this == o) {
 			return true;
-		} else if (!hash) {
-			
+		} else if (o.hashCode() != hashCode()) {
+			return false;
 		} else if (!(o instanceof RoadPosition)) {
 			return false;
 		} else {
@@ -152,7 +152,7 @@ public class RoadPosition extends EdgePosition {
 	}
 	
 	public double distanceToConnectedVertex(Vertex v) {
-		assert entity.getVertices(axis).contains(v);
+//		assert entity.getVertices(axis).contains(v);
 		if (v == r.start) {
 			return lengthToStartOfRoad;
 		} else {

@@ -27,8 +27,8 @@ public class VertexArrivalEvent extends VertexEvent {
 	public boolean equals(Object o) {
 		if (this == o) {
 			return true;
-		} else if (!hash) {
-			
+		} else if (o.hashCode() != hashCode()) {
+			return false;
 		} else if (!(o instanceof VertexArrivalEvent)) {
 			return false;
 		} else {

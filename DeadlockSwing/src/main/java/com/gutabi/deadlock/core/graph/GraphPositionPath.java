@@ -25,7 +25,7 @@ public class GraphPositionPath {
 	
 	List<GraphPositionPathPosition> borderPositions;
 	
-	private final int hash;
+	private int hash;
 	
 	static Logger logger = Logger.getLogger(GraphPositionPath.class);
 	
@@ -124,7 +124,7 @@ public class GraphPositionPath {
 	
 	
 	public int hashCode() {
-		if () {
+		if (hash == 0) {
 			int h = 17;
 			h = 37 * h + poss.hashCode();
 			hash = h;
@@ -322,9 +322,9 @@ public class GraphPositionPath {
 		
 		GraphPosition p2 = poss.get(pathIndex+1);
 		
-		double dist = p1.distanceTo(p2);
+		//double dist = p1.distanceTo(p2);
 		
-		return p1.travelTo(p2, pathParam * dist);
+		return p1.travelToNeighborWithParam(p2, pathParam);
 	}
 	
 	/**
@@ -365,14 +365,14 @@ public class GraphPositionPath {
 					
 					combo = ((EdgePosition)gp).getCombo();
 					
-					if (((VertexPosition)a).v == b.entity.getVertices(b.axis).get(0)) {
+					if (((VertexPosition)a).v == b.entity.getReferenceVertex(b.axis)) {
 						aCombo = 0.0;
 						bCombo = ((EdgePosition)b).getCombo();
 						if (!(DMath.lessThanEquals(aCombo, combo) && DMath.lessThanEquals(combo, bCombo))) {
 							continue;
 						}
 					} else {
-						assert ((VertexPosition)a).v == b.entity.getVertices(b.axis).get(1);
+						assert ((VertexPosition)a).v == b.entity.getOtherVertex(b.axis);
 						aCombo = (e.pointCount()-1)+0.0;
 						bCombo = ((EdgePosition)b).getCombo();
 						if (!(DMath.greaterThanEquals(aCombo, combo) && DMath.greaterThanEquals(combo, bCombo))) {
@@ -401,7 +401,7 @@ public class GraphPositionPath {
 					
 					combo = ((EdgePosition)gp).getCombo();
 					
-					if (((VertexPosition)b).v == a.entity.getVertices(a.axis).get(0)) {
+					if (((VertexPosition)b).v == a.entity.getReferenceVertex(a.axis)) {
 						aCombo = ((EdgePosition)a).getCombo();
 						bCombo = 0.0;
 						if (!(DMath.greaterThanEquals(aCombo, combo) && DMath.greaterThanEquals(combo, bCombo))) {
@@ -409,7 +409,7 @@ public class GraphPositionPath {
 						}
 						
 					} else {
-						assert ((VertexPosition)b).v == a.entity.getVertices(a.axis).get(1);
+						assert ((VertexPosition)b).v == a.entity.getOtherVertex(a.axis);
 						aCombo = ((EdgePosition)a).getCombo();
 						bCombo = (e.pointCount()-1)+0.0;
 						if (!(DMath.lessThanEquals(aCombo, combo) && DMath.lessThanEquals(combo, bCombo))) {

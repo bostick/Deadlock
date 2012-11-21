@@ -17,63 +17,94 @@ public abstract class GraphPosition {
 	public final GraphEntity entity;
 	public final Axis axis;
 	
-	private Map<GraphPosition, Double> distMap;
-	
 	static Logger logger = Logger.getLogger(GraphPosition.class);
 	
 	public GraphPosition(Point p, GraphEntity e, Axis a) {
 		this.p = p;
 		this.entity = e;
 		this.axis = a;
-		
-		distMap = new HashMap<GraphPosition, Double>();
 	}
 	
 	public abstract double distanceToConnectedVertex(Vertex v);
 	
 	
-	int hashedCount;
-	int unhashedCount;
+//	private Map<GraphPosition, Double> distMap = new HashMap<GraphPosition, Double>();
+//	int hashedCount;
+//	int unhashedCount;
 	
-	public double distanceTo(GraphPosition p) {
+	public static double distanceTo(GraphPosition a, GraphPosition b) {
 		
-		Double hashedDist = distMap.get(p);
+//		Double hashedDist = distMap.get(p);
 		
-		if (hashedDist != null) {
-			hashedCount++;
-			return hashedDist;
-		} else {
-			unhashedCount++;
-		}
+//		if (hashedDist != null) {
+//			hashedCount++;
+//			return hashedDist;
+//		} else {
+//			unhashedCount++;
+//		}
 		
-		if (entity == p.entity && axis == p.axis) {
+		assert !equals(p);
+		
+		if (this and p are neighbors) {
 			
-			List<Vertex> vs = entity.getVertices(axis);
 			
-			double toHash = Math.abs(distanceToConnectedVertex(vs.get(0)) - p.distanceToConnectedVertex(vs.get(0)));
 			
-			distMap.put(p, toHash);
+		} else if (entity == p.entity && axis == p.axis) {
 			
-			return toHash;
+//			List<Vertex> vs =entity.getVertices(axis);
+			Vertex ref = entity.getReferenceVertex(axis);
+			
+			double dist = Math.abs(distanceToConnectedVertex(ref) - p.distanceToConnectedVertex(ref));
+			
+//			distMap.put(p, dist);
+			
+			return dist;
 			
 		} else {
 			
 			double bestDist = Double.POSITIVE_INFINITY;
-			for (Vertex v : entity.getVertices(axis)) {
-				for (Vertex w : p.entity.getVertices(p.axis)) {
-					double dist = 0.0;
-					dist += distanceToConnectedVertex(v);
-					dist += MODEL.world.distanceBetweenVertices(v, w);
-					dist += p.distanceToConnectedVertex(w);
-					if (dist < bestDist) {
-						bestDist = dist;
-					}
-				}
+			
+			Vertex v0 = entity.getReferenceVertex(axis);
+			Vertex v1 = entity.getOtherVertex(axis);
+			Vertex w0 = p.entity.getReferenceVertex(p.axis);
+			Vertex w1 = p.entity.getOtherVertex(p.axis);
+			
+			double distanceToConnectedVertexV0 = distanceToConnectedVertex(v0);
+			double distanceToConnectedVertexV1 = distanceToConnectedVertex(v1);
+			double pDistanceToConnectedVertexW0 = p.distanceToConnectedVertex(w0);
+			double pDistanceToConnectedVertexW1 = p.distanceToConnectedVertex(w1);
+			
+			double dist = distanceToConnectedVertexV0;
+			dist += MODEL.world.distanceBetweenVertices(v0, w0);
+			dist += pDistanceToConnectedVertexW0;
+			if (dist < bestDist) {
+				bestDist = dist;
+			}
+			
+			dist = distanceToConnectedVertexV0;
+			dist += MODEL.world.distanceBetweenVertices(v0, w1);
+			dist += pDistanceToConnectedVertexW1;
+			if (dist < bestDist) {
+				bestDist = dist;
+			}
+			
+			dist = distanceToConnectedVertexV1;
+			dist += MODEL.world.distanceBetweenVertices(v1, w0);
+			dist += pDistanceToConnectedVertexW0;
+			if (dist < bestDist) {
+				bestDist = dist;
+			}
+			
+			dist = distanceToConnectedVertexV1;
+			dist += MODEL.world.distanceBetweenVertices(v1, w1);
+			dist += pDistanceToConnectedVertexW1;
+			if (dist < bestDist) {
+				bestDist = dist;
 			}
 			
 			assert bestDist >= 0.0;
 			
-			distMap.put(p, bestDist);
+//			distMap.put(p, bestDist);
 			
 			return bestDist;
 			
@@ -91,39 +122,20 @@ public abstract class GraphPosition {
 			return this;
 		}
 		
-		double distanceToP = distanceTo(p);
-		assert DMath.lessThanEquals(distance, distanceToP);
+		assert !equals(p);
+		assert DMath.lessThanEquals(distance, GraphPosition.distanceTo(this, p));
 		
-		/*
-		 * figure out the combinations that would make easier computing
-		 */
-		d;
-		
-		if (entity == p.entity && axis == p.axis) {
+		if (this and p are neighbors) {
 			
-			List<Vertex> vs = entity.getVertices(axis);
-			Vertex ref = vs.get(0);
-			Vertex other = vs.get(1);
 			
-			/*
-			 * if they are next to each other, then we can do less work
-			 */
-			if (this instanceof VertexPosition) {
-				if (p instanceof VertexPosition) {
-					
-				} else {
-					
-				}
-			} else {
-				if (p instanceof VertexPosition) {
-					
-				} else {
-					
-				}
-			}
 			
-			double signedDistance = distanceToConnectedVertex(vs.get(0));
-			double signedDistanceP = p.distanceToConnectedVertex(vs.get(0));
+		} else if (entity == p.entity && axis == p.axis) {
+			
+			Vertex ref = entity.getReferenceVertex(axis);
+			Vertex other = entity.getOtherVertex(axis);
+			
+			double signedDistance = distanceToConnectedVertex(ref);
+			double signedDistanceP = p.distanceToConnectedVertex(ref);
 			
 			assert DMath.lessThanEquals(distance, Math.abs(signedDistance - signedDistanceP));
 			
@@ -134,9 +146,9 @@ public abstract class GraphPosition {
 			} else {
 				
 				if (signedDistance > signedDistanceP) {
-					return ((EdgePosition)this).travelToConnectedVertex(vs.get(0), distance);
+					return ((EdgePosition)this).travelToConnectedVertex(ref, distance);
 				} else {
-					return ((EdgePosition)this).travelToConnectedVertex(vs.get(1), distance);
+					return ((EdgePosition)this).travelToConnectedVertex(other, distance);
 				}
 				
 			}
@@ -146,15 +158,51 @@ public abstract class GraphPosition {
 			Vertex bestVertex = null;
 			Vertex bestVertexP = null;
 			double bestDist = Double.POSITIVE_INFINITY;
-			for (Vertex v : entity.getVertices(axis)) {
-				for (Vertex w : p.entity.getVertices(p.axis)) {
-					double dist = distanceToConnectedVertex(v) + MODEL.world.distanceBetweenVertices(v, w) + p.distanceToConnectedVertex(w);
-					if (dist < bestDist) {
-						bestVertex = v;
-						bestVertexP = w;
-						bestDist = dist;
-					}
-				}
+			
+			Vertex v0 = entity.getReferenceVertex(axis);
+			Vertex v1 = entity.getOtherVertex(axis);
+			Vertex w0 = p.entity.getReferenceVertex(p.axis);
+			Vertex w1 = p.entity.getOtherVertex(p.axis);
+			
+			double distanceToConnectedVertexV0 = distanceToConnectedVertex(v0);
+			double distanceToConnectedVertexV1 = distanceToConnectedVertex(v1);
+			double pDistanceToConnectedVertexW0 = p.distanceToConnectedVertex(w0);
+			double pDistanceToConnectedVertexW1 = p.distanceToConnectedVertex(w1);
+			
+			double dist = distanceToConnectedVertexV0;
+			dist += MODEL.world.distanceBetweenVertices(v0, w0);
+			dist += pDistanceToConnectedVertexW0;
+			if (dist < bestDist) {
+				bestDist = dist;
+				bestVertex = v0;
+				bestVertexP = w0;
+			}
+			
+			dist = distanceToConnectedVertexV0;
+			dist += MODEL.world.distanceBetweenVertices(v0, w1);
+			dist += pDistanceToConnectedVertexW1;
+			if (dist < bestDist) {
+				bestDist = dist;
+				bestVertex = v0;
+				bestVertexP = w1;
+			}
+			
+			dist = distanceToConnectedVertexV1;
+			dist += MODEL.world.distanceBetweenVertices(v1, w0);
+			dist += pDistanceToConnectedVertexW0;
+			if (dist < bestDist) {
+				bestDist = dist;
+				bestVertex = v1;
+				bestVertexP = w0;
+			}
+			
+			dist = distanceToConnectedVertexV1;
+			dist += MODEL.world.distanceBetweenVertices(v1, w1);
+			dist += pDistanceToConnectedVertexW1;
+			if (dist < bestDist) {
+				bestDist = dist;
+				bestVertex = v1;
+				bestVertexP = w1;
 			}
 			
 			assert DMath.lessThanEquals(distance, bestDist);

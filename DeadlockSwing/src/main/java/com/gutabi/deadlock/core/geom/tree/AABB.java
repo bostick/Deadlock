@@ -45,8 +45,8 @@ public class AABB {
 	public boolean equals(Object o) {
 		if (o == this) {
 			return true;
-		} else if (!hash) {
-			
+		} else if (o.hashCode() != hashCode()) {
+			return false;
 		} else if (!(o instanceof AABB)) {
 			return false;
 		} else {

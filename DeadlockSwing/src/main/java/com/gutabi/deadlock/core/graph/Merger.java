@@ -4,8 +4,6 @@ import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.util.ArrayList;
-import java.util.List;
 
 import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Entity;
@@ -37,8 +35,8 @@ public class Merger extends Edge {
 	private double[] cumulativeLengthsFromTop;
 	private double[] cumulativeLengthsFromLeft;
 	
-	private final List<Vertex> leftRightVS;
-	private final List<Vertex> topBottomVS;
+//	private final List<Vertex> leftRightVS;
+//	private final List<Vertex> topBottomVS;
 	
 	private EdgeDirection leftRightDir;
 	private EdgeDirection topBottomDir;
@@ -73,13 +71,13 @@ public class Merger extends Edge {
 		right.m = this;
 		bottom.m = this;
 		
-		leftRightVS = new ArrayList<Vertex>();
-		leftRightVS.add(left);
-		leftRightVS.add(right);
-		
-		topBottomVS = new ArrayList<Vertex>();
-		topBottomVS.add(top);
-		topBottomVS.add(bottom);
+//		leftRightVS = new ArrayList<Vertex>();
+//		leftRightVS.add(left);
+//		leftRightVS.add(right);
+//		
+//		topBottomVS = new ArrayList<Vertex>();
+//		topBottomVS.add(top);
+//		topBottomVS.add(bottom);
 		
 		computeLengths();
 		
@@ -108,13 +106,31 @@ public class Merger extends Edge {
 		}
 	}
 	
-	public List<Vertex> getVertices(Axis a) {
+//	public List<Vertex> getVertices(Axis a) {
+//		if (a == Axis.LEFTRIGHT) {
+//			return leftRightVS;
+//		} else if (a == Axis.TOPBOTTOM) {
+//			return topBottomVS;
+//		} else {
+//			throw new IllegalArgumentException();
+//		}
+//	}
+	
+	public Vertex getReferenceVertex(Axis a) {
+		assert a != Axis.NONE;
 		if (a == Axis.LEFTRIGHT) {
-			return leftRightVS;
-		} else if (a == Axis.TOPBOTTOM) {
-			return topBottomVS;
+			return left;
 		} else {
-			throw new IllegalArgumentException();
+			return top;
+		}
+	}
+	
+	public Vertex getOtherVertex(Axis a) {
+		assert a != Axis.NONE;
+		if (a == Axis.LEFTRIGHT) {
+			return right;
+		} else {
+			return bottom;
 		}
 	}
 	

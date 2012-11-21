@@ -30,6 +30,7 @@ public class Road extends Edge {
 	public final Vertex start;
 	public final Vertex end;
 	public final List<Point> raw;
+	public final int dec;
 	
 	private CapsuleSequence seq;
 	
@@ -52,9 +53,9 @@ public class Road extends Edge {
 	
 	private EdgeDirection direction;
 	
-	private final int hash;
+	private int hash;
 	
-	private final List<Vertex> vs;
+//	private final List<Vertex> vs;
 	
 	static Logger logger = Logger.getLogger(Road.class);
 	
@@ -65,6 +66,7 @@ public class Road extends Edge {
 		this.start = start;
 		this.end = end;
 		this.raw = raw;
+		this.dec = dec;
 		
 		loop = (start == end);
 		standalone = (loop) ? start == null : false;
@@ -79,9 +81,9 @@ public class Road extends Edge {
 		
 		if (!standalone) {
 			
-			vs = new ArrayList<Vertex>();
-			vs.add(start);
-			vs.add(end);
+//			vs = new ArrayList<Vertex>();
+//			vs.add(start);
+//			vs.add(end);
 			
 			start.roads.add(this);
 			end.roads.add(this);
@@ -110,7 +112,7 @@ public class Road extends Edge {
 		} else {
 			startSign = null;
 			endSign = null;
-			vs = new ArrayList<Vertex>();
+//			vs = new ArrayList<Vertex>();
 		}
 		
 	}
@@ -123,7 +125,7 @@ public class Road extends Edge {
 	}
 	
 	public int hashCode() {
-		if () {
+		if (hash == 0) {
 			int h = 17;
 			if (start != null) {
 				h = 37 * h + start.hashCode();
@@ -195,12 +197,14 @@ public class Road extends Edge {
 		}
 	}
 	
-	public List<Vertex> getVertices(Axis a) {
-		if (a == Axis.NONE) {
-			return vs;
-		} else {
-			throw new IllegalArgumentException();
-		}
+	public Vertex getReferenceVertex(Axis a) {
+		assert a == Axis.NONE;
+		return start;
+	}
+	
+	public Vertex getOtherVertex(Axis a) {
+		assert a == Axis.NONE;
+		return end;
 	}
 	
 	public boolean canTravelFromTo(Vertex a, Vertex b) {

@@ -18,7 +18,7 @@ public class Circle extends Shape {
 	public final Point center;
 	public final double radius;
 	
-	private final int hash;
+	private int hash;
 	
 	static Logger logger = Logger.getLogger(Circle.class);
 	
@@ -27,13 +27,6 @@ public class Circle extends Shape {
 		this.center = center;
 		this.radius = radius;
 		
-		int h = 17;
-		h = 37 * h + center.hashCode();
-		long l = Double.doubleToLongBits(radius);
-		int c = (int)(l ^ (l >>> 32));
-		h = 37 * h + c;
-		hash = h;
-		
 		aabb = new AABB(center.x - radius, center.y - radius, 2*radius, 2*radius);
 	}
 	
@@ -41,8 +34,8 @@ public class Circle extends Shape {
 	public boolean equals(Object o) {
 		if (this == o) {
 			return true;
-		} else if (!hash) {
-			
+		} else if (o.hashCode() != hashCode()) {
+			return false;
 		} else if (!(o instanceof Circle)) {
 			return false;
 		} else {
@@ -56,6 +49,14 @@ public class Circle extends Shape {
 	}
 	
 	public int hashCode() {
+		if (hash == 0) {
+			int h = 17;
+			h = 37 * h + center.hashCode();
+			long l = Double.doubleToLongBits(radius);
+			int c = (int)(l ^ (l >>> 32));
+			h = 37 * h + c;
+			hash = h;
+		}
 		return hash;
 	}
 	

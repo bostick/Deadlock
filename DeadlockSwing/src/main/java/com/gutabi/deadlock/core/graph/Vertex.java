@@ -32,9 +32,9 @@ public abstract class Vertex extends GraphEntity {
 	
 	protected Color hiliteColor;
 		
-	private final int hash;
+	private int hash;
 	
-	private final List<Vertex> vs;
+//	private final List<Vertex> vs;
 	
 	static Logger logger = Logger.getLogger(Vertex.class);
 	
@@ -46,12 +46,12 @@ public abstract class Vertex extends GraphEntity {
 		
 		shape = new Circle(this, p, r);
 		
-		vs = new ArrayList<Vertex>();
-		vs.add(this);
+//		vs = new ArrayList<Vertex>();
+//		vs.add(this);
 	}
 	
 	public int hashCode() {
-		if () {
+		if (hash == 0) {
 			int h = 17;
 			h = 37 * h + p.hashCode();
 			hash = h;
@@ -67,8 +67,12 @@ public abstract class Vertex extends GraphEntity {
 		return r;
 	}
 	
-	public List<Vertex> getVertices(Axis a) {
-		return vs;
+	public Vertex getReferenceVertex(Axis a) {
+		return this;
+	}
+	
+	public Vertex getOtherVertex(Axis a) {
+		return this;
 	}
 	
 	public abstract boolean supportsStopSigns();

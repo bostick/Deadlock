@@ -36,7 +36,7 @@ public class Capsule extends Shape {
 	private final Point bUp;
 	private final Point bDown;
 	
-	private final int hash;
+	private int hash;
 	
 	static Logger logger = Logger.getLogger(Capsule.class);
 	
@@ -77,7 +77,7 @@ public class Capsule extends Shape {
 	}
 	
 	public int hashCode() {
-		if () {
+		if (hash == 0) {
 			int h = 17;
 			h = 37 * h + ac.hashCode();
 			h = 37 * h + bc.hashCode();

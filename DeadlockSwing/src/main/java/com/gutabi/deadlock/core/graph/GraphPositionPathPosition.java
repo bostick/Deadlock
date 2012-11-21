@@ -5,6 +5,7 @@ import java.util.Comparator;
 import org.apache.log4j.Logger;
 
 import com.gutabi.deadlock.core.DMath;
+import com.gutabi.deadlock.core.Point;
 
 public class GraphPositionPathPosition {
 	
@@ -36,7 +37,10 @@ public class GraphPositionPathPosition {
 		gpos = path.getGraphPosition(index, param);
 		
 		double acc = path.cumulativeDistancesFromStart[index];
-		acc += path.get(index).distanceTo(gpos);
+		
+		assert DMath.equals(GraphPosition.distanceTo(path.get(index), gpos), Point.distance(path.get(index).p, gpos.p));
+//		acc += GraphPosition.distanceTo(path.get(index), gpos);
+		acc += Point.distance(path.get(index).p, gpos.p);
 		
 		lengthToStartOfPath = acc;
 		lengthToEndOfPath = path.totalLength - lengthToStartOfPath;
@@ -62,8 +66,8 @@ public class GraphPositionPathPosition {
 	public boolean equals(Object o) {
 		if (this == o) {
 			return true;
-		} else if (!hash) {
-			
+		} else if (o.hashCode() != hashCode()) {
+			return false;
 		} else if (!(o instanceof GraphPositionPathPosition)) {
 			return false;
 		} else {
@@ -109,7 +113,7 @@ public class GraphPositionPathPosition {
 	public double distanceTo(GraphPositionPathPosition p) {
 		
 		assert p.path == path;
-		
+		assert !equals(p);
 		assert DMath.greaterThanEquals(p.combo, combo);
 		
 		return p.lengthToStartOfPath - lengthToStartOfPath;
@@ -197,67 +201,86 @@ public class GraphPositionPathPosition {
 		
 		assert dist > 0.0;
 		
-		/*
-		 * find combinations that would make computing easier
-		 */
-		d;
-		
 		double traveled = 0.0;
 		
 		GraphPositionPathPosition curPos = this;
-		GraphPositionPathPosition nextBound;
+		GraphPositionPathPosition nextVertexPosition;
 		
 		while (true) {
 			
-			nextBound = curPos.nextBound();
-			double distanceToNextBound = curPos.distanceTo(nextBound);
+			nextVertexPosition = curPos.nextVertexPosition();
+			double distanceToNextVertexPosition = curPos.distanceTo(nextVertexPosition);
 			
-			if (DMath.equals(traveled + distanceToNextBound, dist)) {
-
-				return nextBound;
+			if (DMath.equals(traveled + distanceToNextVertexPosition, dist)) {
 				
-			} else if (traveled + distanceToNextBound < dist) {
+				return nextVertexPosition;
 				
-				traveled += distanceToNextBound;
-				curPos = nextBound;
+			} else if (traveled + distanceToNextVertexPosition < dist) {
+				
+				traveled += distanceToNextVertexPosition;
+				curPos = nextVertexPosition;
 				
 			} else {
 				/*
-				 * traveled + distanceToNextBound > dist, so
-				 * 
-				 * distanceToNextBound > dist - traveled
-				 * 
-				 * distanceToNextBound > toTravel
-				 * 
-				 * we are not going to reach the next bound, so we know it has to be an EdgePosition
+				 * traveled + distanceToNextVertexPosition > dist
 				 */
+				 
+				GraphPositionPathPosition nextBound;
 				
-				double toTravel = dist - traveled;
-				
-				EdgePosition g = (EdgePosition)curPos.gpos.travelTo(nextBound.gpos, toTravel);
-				
-				double fromCurToG = curPos.gpos.distanceTo(g);
-				assert DMath.equals(fromCurToG, toTravel);
-				
-				if (curPos.gpos instanceof EdgePosition) {
-					EdgePosition curPosE = (EdgePosition)curPos.gpos;
+				while (true) {
 					
-					if (curPosE.getIndex() < g.getIndex() || (curPosE.getIndex() == g.getIndex() && curPosE.getParam() < g.getParam())) {
-						// same direction as edge
-						//assert curPosE.getIndex() == g.getIndex();
-						return new GraphPositionPathPosition(path, curPos.index, g.getParam());
+					nextBound = curPos.nextBound();
+					double distanceToNextBound = curPos.distanceTo(nextBound);
+					
+					if (DMath.equals(traveled + distanceToNextBound, dist)) {
+
+						return nextBound;
+						
+					} else if (traveled + distanceToNextBound < dist) {
+						
+						traveled += distanceToNextBound;
+						curPos = nextBound;
+						
 					} else {
-						return new GraphPositionPathPosition(path, curPos.index, 1-g.getParam());
-					}
-					
-				} else {
-					VertexPosition curPosE = (VertexPosition)curPos.gpos;
-					
-					if (g.entity.getVertices(g.axis).get(0) == curPosE.entity.getVertices(curPosE.axis).get(0)) {
-						// same direction as edge
-						return new GraphPositionPathPosition(path, curPos.index, g.getParam());
-					} else {
-						return new GraphPositionPathPosition(path, curPos.index, 1-g.getParam());
+						/*
+						 * traveled + distanceToNextBound > dist, so
+						 * 
+						 * distanceToNextBound > dist - traveled
+						 * 
+						 * distanceToNextBound > toTravel
+						 * 
+						 * we are not going to reach the next bound, so we know it has to be an EdgePosition
+						 */
+						
+						double toTravel = dist - traveled;
+						
+						EdgePosition g = (EdgePosition)curPos.gpos.travelTo(nextBound.gpos, toTravel);
+						
+						assert DMath.equals(GraphPosition.distanceTo(curPos.gpos, g), toTravel);
+						
+						if (curPos.gpos instanceof EdgePosition) {
+							EdgePosition curPosE = (EdgePosition)curPos.gpos;
+							
+							if (curPosE.getIndex() < g.getIndex() || (curPosE.getIndex() == g.getIndex() && curPosE.getParam() < g.getParam())) {
+								// same direction as edge
+								//assert curPosE.getIndex() == g.getIndex();
+								return new GraphPositionPathPosition(path, curPos.index, g.getParam());
+							} else {
+								return new GraphPositionPathPosition(path, curPos.index, 1-g.getParam());
+							}
+							
+						} else {
+							VertexPosition curPosV = (VertexPosition)curPos.gpos;
+							
+							if (g.entity.getReferenceVertex(g.axis) == curPosV.v) {
+								// same direction as edge
+								return new GraphPositionPathPosition(path, curPos.index, g.getParam());
+							} else {
+								return new GraphPositionPathPosition(path, curPos.index, 1-g.getParam());
+							}
+							
+						}
+						
 					}
 					
 				}
