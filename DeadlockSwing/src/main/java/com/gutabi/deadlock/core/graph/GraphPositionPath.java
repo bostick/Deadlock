@@ -322,9 +322,9 @@ public class GraphPositionPath {
 		
 		GraphPosition p2 = poss.get(pathIndex+1);
 		
-		//double dist = p1.distanceTo(p2);
+		double dist = Point.distance(p1.p, p2.p);
 		
-		return p1.travelToNeighborWithParam(p2, pathParam);
+		return p1.travelToNeighbor(p2, dist * pathParam);
 	}
 	
 	/**
@@ -450,7 +450,8 @@ public class GraphPositionPath {
 			int gpppIndex = (int)Math.floor(i + abCombo);
 			double gpppParam = (i + abCombo)-gpppIndex;
 			
-			assert getGraphPosition(gpppIndex, gpppParam).equals(gp);
+//			GraphPosition test = getGraphPosition(gpppIndex, gpppParam);
+//			assert test.equals(gp);
 			
 			if (DMath.greaterThanEquals(gpppIndex+gpppParam, startingPosition.combo)) {
 				return new GraphPositionPathPosition(this, gpppIndex, gpppParam);

@@ -1,11 +1,5 @@
 package com.gutabi.deadlock.core.graph;
 
-import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.log4j.Logger;
 
 import com.gutabi.deadlock.core.DMath;
@@ -32,208 +26,256 @@ public abstract class GraphPosition {
 //	int hashedCount;
 //	int unhashedCount;
 	
-	public static double distanceTo(GraphPosition a, GraphPosition b) {
-		
-//		Double hashedDist = distMap.get(p);
-		
-//		if (hashedDist != null) {
-//			hashedCount++;
-//			return hashedDist;
+//	public static double distanceToX(GraphPosition a, GraphPosition b) {
+//		
+//		assert !a.equals(b);
+//		
+//		if (a and b are neighbors) {
+//			
+//			
+//			
+//		} else if (a.entity == b.entity && a.axis == b.axis) {
+//			
+//			Vertex ref = a.entity.getReferenceVertex(a.axis);
+//			
+//			double dist = Math.abs(a.distanceToConnectedVertex(ref) - b.distanceToConnectedVertex(ref));
+//			
+//			return dist;
+//			
 //		} else {
-//			unhashedCount++;
+//			
+//			double bestDist = Double.POSITIVE_INFINITY;
+//			
+//			Vertex v0 = a.entity.getReferenceVertex(a.axis);
+//			Vertex v1 = a.entity.getOtherVertex(a.axis);
+//			Vertex w0 = b.entity.getReferenceVertex(b.axis);
+//			Vertex w1 = b.entity.getOtherVertex(b.axis);
+//			
+//			double distanceToConnectedVertexV0 = a.distanceToConnectedVertex(v0);
+//			double distanceToConnectedVertexV1 = a.distanceToConnectedVertex(v1);
+//			double pDistanceToConnectedVertexW0 = b.distanceToConnectedVertex(w0);
+//			double pDistanceToConnectedVertexW1 = b.distanceToConnectedVertex(w1);
+//			
+//			double dist = distanceToConnectedVertexV0;
+//			dist += MODEL.world.distanceBetweenVertices(v0, w0);
+//			dist += pDistanceToConnectedVertexW0;
+//			if (dist < bestDist) {
+//				bestDist = dist;
+//			}
+//			
+//			dist = distanceToConnectedVertexV0;
+//			dist += MODEL.world.distanceBetweenVertices(v0, w1);
+//			dist += pDistanceToConnectedVertexW1;
+//			if (dist < bestDist) {
+//				bestDist = dist;
+//			}
+//			
+//			dist = distanceToConnectedVertexV1;
+//			dist += MODEL.world.distanceBetweenVertices(v1, w0);
+//			dist += pDistanceToConnectedVertexW0;
+//			if (dist < bestDist) {
+//				bestDist = dist;
+//			}
+//			
+//			dist = distanceToConnectedVertexV1;
+//			dist += MODEL.world.distanceBetweenVertices(v1, w1);
+//			dist += pDistanceToConnectedVertexW1;
+//			if (dist < bestDist) {
+//				bestDist = dist;
+//			}
+//			
+//			assert bestDist >= 0.0;
+//			
+//			return bestDist;
+//			
 //		}
-		
-		assert !equals(p);
-		
-		if (this and p are neighbors) {
-			
-			
-			
-		} else if (entity == p.entity && axis == p.axis) {
-			
-//			List<Vertex> vs =entity.getVertices(axis);
-			Vertex ref = entity.getReferenceVertex(axis);
-			
-			double dist = Math.abs(distanceToConnectedVertex(ref) - p.distanceToConnectedVertex(ref));
-			
-//			distMap.put(p, dist);
-			
-			return dist;
-			
-		} else {
-			
-			double bestDist = Double.POSITIVE_INFINITY;
-			
-			Vertex v0 = entity.getReferenceVertex(axis);
-			Vertex v1 = entity.getOtherVertex(axis);
-			Vertex w0 = p.entity.getReferenceVertex(p.axis);
-			Vertex w1 = p.entity.getOtherVertex(p.axis);
-			
-			double distanceToConnectedVertexV0 = distanceToConnectedVertex(v0);
-			double distanceToConnectedVertexV1 = distanceToConnectedVertex(v1);
-			double pDistanceToConnectedVertexW0 = p.distanceToConnectedVertex(w0);
-			double pDistanceToConnectedVertexW1 = p.distanceToConnectedVertex(w1);
-			
-			double dist = distanceToConnectedVertexV0;
-			dist += MODEL.world.distanceBetweenVertices(v0, w0);
-			dist += pDistanceToConnectedVertexW0;
-			if (dist < bestDist) {
-				bestDist = dist;
-			}
-			
-			dist = distanceToConnectedVertexV0;
-			dist += MODEL.world.distanceBetweenVertices(v0, w1);
-			dist += pDistanceToConnectedVertexW1;
-			if (dist < bestDist) {
-				bestDist = dist;
-			}
-			
-			dist = distanceToConnectedVertexV1;
-			dist += MODEL.world.distanceBetweenVertices(v1, w0);
-			dist += pDistanceToConnectedVertexW0;
-			if (dist < bestDist) {
-				bestDist = dist;
-			}
-			
-			dist = distanceToConnectedVertexV1;
-			dist += MODEL.world.distanceBetweenVertices(v1, w1);
-			dist += pDistanceToConnectedVertexW1;
-			if (dist < bestDist) {
-				bestDist = dist;
-			}
-			
-			assert bestDist >= 0.0;
-			
-//			distMap.put(p, bestDist);
-			
-			return bestDist;
-			
-		}
-		
-	}
+//		
+//	}
 	
 	public abstract boolean isBound();
 	
 	public abstract GraphPosition nextBoundToward(GraphPosition goal);
 	
-	public GraphPosition travelTo(GraphPosition p, double distance) {
+	public GraphPosition travelToNeighbor(GraphPosition p, double distance) {
 		
 		if (DMath.equals(distance, 0.0)) {
 			return this;
 		}
 		
 		assert !equals(p);
-		assert DMath.lessThanEquals(distance, GraphPosition.distanceTo(this, p));
+//		assert DMath.lessThanEquals(distance, GraphPosition.distanceTo(this, p));
+		assert p.isBound();
 		
-		if (this and p are neighbors) {
+		if (this instanceof VertexPosition) {
+			VertexPosition vv = (VertexPosition)this;
 			
+			if (p instanceof VertexPosition) {
+				assert false;
+				return null;
+			} else {
+				EdgePosition pe = (EdgePosition)p;
+				if (vv.v == pe.entity.getReferenceVertex(pe.axis)) {
+//					assert pe.isBound();
+					assert pe.getIndex() == 1;
+					
+					return ((Edge)pe.entity).travelFromConnectedVertex(vv.v, distance);
+							
+					
+				} else {
+					assert vv.v == pe.entity.getOtherVertex(pe.axis);
+					assert pe.isBound();
+					assert pe.getIndex() == ((Edge)pe.entity).pointCount()-2;
+					
+					return ((Edge)pe.entity).travelFromConnectedVertex(vv.v, distance);
+				}
+			}
+		} else {
+			EdgePosition ee = (EdgePosition)this;
 			
-			
-		} else if (entity == p.entity && axis == p.axis) {
-			
-			Vertex ref = entity.getReferenceVertex(axis);
-			Vertex other = entity.getOtherVertex(axis);
-			
-			double signedDistance = distanceToConnectedVertex(ref);
-			double signedDistanceP = p.distanceToConnectedVertex(ref);
-			
-			assert DMath.lessThanEquals(distance, Math.abs(signedDistance - signedDistanceP));
-			
-			if (DMath.equals(Math.abs(signedDistance - signedDistanceP), distance)) {
+			if (p instanceof VertexPosition) {
+				VertexPosition pv = (VertexPosition)p;
 				
-				return p;
+				if (pv.v == ee.entity.getReferenceVertex(ee.axis)) {
+//					assert ee.isBound();
+//					assert ee.getIndex() == 1;
+					
+					return ee.travelToConnectedVertex(pv.v, distance);
+					
+				} else {
+					assert pv.v == ee.entity.getOtherVertex(ee.axis);
+//					assert ee.isBound();
+					assert ee.getIndex() == ((Edge)ee.entity).pointCount()-2;
+					
+					return ee.travelToConnectedVertex(pv.v, distance);
+				}
 				
 			} else {
+				EdgePosition pe = (EdgePosition)p;
 				
-				if (signedDistance > signedDistanceP) {
-					return ((EdgePosition)this).travelToConnectedVertex(ref, distance);
+				assert ee.entity == pe.entity;
+				assert ee.axis == pe.axis;
+				
+				if (ee.getCombo() < pe.getCombo()) {
+					return ee.travelToConnectedVertex(ee.entity.getOtherVertex(ee.axis), distance);
 				} else {
-					return ((EdgePosition)this).travelToConnectedVertex(other, distance);
+					return ee.travelToConnectedVertex(ee.entity.getReferenceVertex(ee.axis), distance);
 				}
 				
 			}
-			
-		} else {
-			
-			Vertex bestVertex = null;
-			Vertex bestVertexP = null;
-			double bestDist = Double.POSITIVE_INFINITY;
-			
-			Vertex v0 = entity.getReferenceVertex(axis);
-			Vertex v1 = entity.getOtherVertex(axis);
-			Vertex w0 = p.entity.getReferenceVertex(p.axis);
-			Vertex w1 = p.entity.getOtherVertex(p.axis);
-			
-			double distanceToConnectedVertexV0 = distanceToConnectedVertex(v0);
-			double distanceToConnectedVertexV1 = distanceToConnectedVertex(v1);
-			double pDistanceToConnectedVertexW0 = p.distanceToConnectedVertex(w0);
-			double pDistanceToConnectedVertexW1 = p.distanceToConnectedVertex(w1);
-			
-			double dist = distanceToConnectedVertexV0;
-			dist += MODEL.world.distanceBetweenVertices(v0, w0);
-			dist += pDistanceToConnectedVertexW0;
-			if (dist < bestDist) {
-				bestDist = dist;
-				bestVertex = v0;
-				bestVertexP = w0;
-			}
-			
-			dist = distanceToConnectedVertexV0;
-			dist += MODEL.world.distanceBetweenVertices(v0, w1);
-			dist += pDistanceToConnectedVertexW1;
-			if (dist < bestDist) {
-				bestDist = dist;
-				bestVertex = v0;
-				bestVertexP = w1;
-			}
-			
-			dist = distanceToConnectedVertexV1;
-			dist += MODEL.world.distanceBetweenVertices(v1, w0);
-			dist += pDistanceToConnectedVertexW0;
-			if (dist < bestDist) {
-				bestDist = dist;
-				bestVertex = v1;
-				bestVertexP = w0;
-			}
-			
-			dist = distanceToConnectedVertexV1;
-			dist += MODEL.world.distanceBetweenVertices(v1, w1);
-			dist += pDistanceToConnectedVertexW1;
-			if (dist < bestDist) {
-				bestDist = dist;
-				bestVertex = v1;
-				bestVertexP = w1;
-			}
-			
-			assert DMath.lessThanEquals(distance, bestDist);
-			
-			if (DMath.equals(distance, bestDist)) {
-				
-				return p;
-				
-			} else if (DMath.equals(distance, distanceToConnectedVertex(bestVertex) + MODEL.world.distanceBetweenVertices(bestVertex, bestVertexP))) {
-				
-				return new VertexPosition(bestVertexP);
-				
-			} else if (DMath.greaterThan(distance, distanceToConnectedVertex(bestVertex) + MODEL.world.distanceBetweenVertices(bestVertex, bestVertexP))) {
-				
-				return ((Edge)p.entity).travelFromConnectedVertex(bestVertexP, distance-(distanceToConnectedVertex(bestVertex) + MODEL.world.distanceBetweenVertices(bestVertex, bestVertexP)));
-				
-			} else if (DMath.equals(distance, distanceToConnectedVertex(bestVertex))) {
-				
-				return new VertexPosition(bestVertex);
-				
-			} else if (DMath.greaterThan(distance, distanceToConnectedVertex(bestVertex))) {
-				
-				return ((Edge)entity).travelFromConnectedVertex(bestVertex, distance-(distanceToConnectedVertex(bestVertex)));
-				
-			} else {
-				
-				return ((EdgePosition)this).travelToConnectedVertex(bestVertex, distance);
-				
-			}
-			
 		}
+		
+//		if (this and p are neighbors) {
+//			
+//			
+//			
+//		}
+//		else if (entity == p.entity && axis == p.axis) {
+//			
+//			Vertex ref = entity.getReferenceVertex(axis);
+//			Vertex other = entity.getOtherVertex(axis);
+//			
+//			double signedDistance = distanceToConnectedVertex(ref);
+//			double signedDistanceP = p.distanceToConnectedVertex(ref);
+//			
+//			assert DMath.lessThanEquals(distance, Math.abs(signedDistance - signedDistanceP));
+//			
+//			if (DMath.equals(Math.abs(signedDistance - signedDistanceP), distance)) {
+//				
+//				return p;
+//				
+//			} else {
+//				
+//				if (signedDistance > signedDistanceP) {
+//					return ((EdgePosition)this).travelToConnectedVertex(ref, distance);
+//				} else {
+//					return ((EdgePosition)this).travelToConnectedVertex(other, distance);
+//				}
+//				
+//			}
+//			
+//		}
+		
+//		else {
+//			
+//			Vertex bestVertex = null;
+//			Vertex bestVertexP = null;
+//			double bestDist = Double.POSITIVE_INFINITY;
+//			
+//			Vertex v0 = entity.getReferenceVertex(axis);
+//			Vertex v1 = entity.getOtherVertex(axis);
+//			Vertex w0 = p.entity.getReferenceVertex(p.axis);
+//			Vertex w1 = p.entity.getOtherVertex(p.axis);
+//			
+//			double distanceToConnectedVertexV0 = distanceToConnectedVertex(v0);
+//			double distanceToConnectedVertexV1 = distanceToConnectedVertex(v1);
+//			double pDistanceToConnectedVertexW0 = p.distanceToConnectedVertex(w0);
+//			double pDistanceToConnectedVertexW1 = p.distanceToConnectedVertex(w1);
+//			
+//			double dist = distanceToConnectedVertexV0;
+//			dist += MODEL.world.distanceBetweenVertices(v0, w0);
+//			dist += pDistanceToConnectedVertexW0;
+//			if (dist < bestDist) {
+//				bestDist = dist;
+//				bestVertex = v0;
+//				bestVertexP = w0;
+//			}
+//			
+//			dist = distanceToConnectedVertexV0;
+//			dist += MODEL.world.distanceBetweenVertices(v0, w1);
+//			dist += pDistanceToConnectedVertexW1;
+//			if (dist < bestDist) {
+//				bestDist = dist;
+//				bestVertex = v0;
+//				bestVertexP = w1;
+//			}
+//			
+//			dist = distanceToConnectedVertexV1;
+//			dist += MODEL.world.distanceBetweenVertices(v1, w0);
+//			dist += pDistanceToConnectedVertexW0;
+//			if (dist < bestDist) {
+//				bestDist = dist;
+//				bestVertex = v1;
+//				bestVertexP = w0;
+//			}
+//			
+//			dist = distanceToConnectedVertexV1;
+//			dist += MODEL.world.distanceBetweenVertices(v1, w1);
+//			dist += pDistanceToConnectedVertexW1;
+//			if (dist < bestDist) {
+//				bestDist = dist;
+//				bestVertex = v1;
+//				bestVertexP = w1;
+//			}
+//			
+//			assert DMath.lessThanEquals(distance, bestDist);
+//			
+//			if (DMath.equals(distance, bestDist)) {
+//				
+//				return p;
+//				
+//			} else if (DMath.equals(distance, distanceToConnectedVertex(bestVertex) + MODEL.world.distanceBetweenVertices(bestVertex, bestVertexP))) {
+//				
+//				return new VertexPosition(bestVertexP);
+//				
+//			} else if (DMath.greaterThan(distance, distanceToConnectedVertex(bestVertex) + MODEL.world.distanceBetweenVertices(bestVertex, bestVertexP))) {
+//				
+//				return ((Edge)p.entity).travelFromConnectedVertex(bestVertexP, distance-(distanceToConnectedVertex(bestVertex) + MODEL.world.distanceBetweenVertices(bestVertex, bestVertexP)));
+//				
+//			} else if (DMath.equals(distance, distanceToConnectedVertex(bestVertex))) {
+//				
+//				return new VertexPosition(bestVertex);
+//				
+//			} else if (DMath.greaterThan(distance, distanceToConnectedVertex(bestVertex))) {
+//				
+//				return ((Edge)entity).travelFromConnectedVertex(bestVertex, distance-(distanceToConnectedVertex(bestVertex)));
+//				
+//			} else {
+//				
+//				return ((EdgePosition)this).travelToConnectedVertex(bestVertex, distance);
+//				
+//			}
+//			
+//		}
 		
 	}
 	

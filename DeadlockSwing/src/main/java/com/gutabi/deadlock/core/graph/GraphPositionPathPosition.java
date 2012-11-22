@@ -38,7 +38,7 @@ public class GraphPositionPathPosition {
 		
 		double acc = path.cumulativeDistancesFromStart[index];
 		
-		assert DMath.equals(GraphPosition.distanceTo(path.get(index), gpos), Point.distance(path.get(index).p, gpos.p));
+//		assert DMath.equals(GraphPosition.distanceTo(path.get(index), gpos), Point.distance(path.get(index).p, gpos.p));
 //		acc += GraphPosition.distanceTo(path.get(index), gpos);
 		acc += Point.distance(path.get(index).p, gpos.p);
 		
@@ -254,9 +254,9 @@ public class GraphPositionPathPosition {
 						
 						double toTravel = dist - traveled;
 						
-						EdgePosition g = (EdgePosition)curPos.gpos.travelTo(nextBound.gpos, toTravel);
+						EdgePosition g = (EdgePosition)curPos.gpos.travelToNeighbor(nextBound.gpos, toTravel);
 						
-						assert DMath.equals(GraphPosition.distanceTo(curPos.gpos, g), toTravel);
+//						assert DMath.equals(GraphPosition.distanceTo(curPos.gpos, g), toTravel);
 						
 						if (curPos.gpos instanceof EdgePosition) {
 							EdgePosition curPosE = (EdgePosition)curPos.gpos;
@@ -294,6 +294,17 @@ public class GraphPositionPathPosition {
 	public GraphPositionPathPosition nextBound() {
 		assert index < path.size-1;
 		return new GraphPositionPathPosition(path, index+1, 0.0);
+	}
+	
+	public GraphPositionPathPosition nextVertexPosition() {
+		int i = index+1;
+		while (true) {
+			GraphPosition gpos = path.get(i);
+			if (gpos instanceof VertexPosition) {
+				return new GraphPositionPathPosition(path, i, 0.0);
+			}
+			i++;
+		}
 	}
 	
 	public GraphPositionPathPosition floor() {
