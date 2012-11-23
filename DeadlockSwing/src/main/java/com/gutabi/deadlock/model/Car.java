@@ -141,7 +141,7 @@ public abstract class Car extends Entity {
 //	float carAngle;
 	boolean atleastPartiallyOnRoad;
 	boolean inMerger;
-	GraphPositionPathPosition overallPos;
+	public GraphPositionPathPosition overallPos;
 	Quad worldQuad;
 	Point prevWorldPoint0;
 	Point prevWorldPoint3;
@@ -484,7 +484,7 @@ public abstract class Car extends Entity {
 //			pathingLogger.debug("next bound after overallPos: " + overallPos.nextBound().gpos);
 			
 			DrivingEvent newDrivingEvent = null;
-			Car carProx = MODEL.world.carProximityTest(this, overallPos, Math.min(carProximityLookahead, overallPos.lengthToEndOfPath));
+			Car carProx = overallPath.carProximityTest(overallPos, Math.min(carProximityLookahead, overallPos.lengthToEndOfPath));
 			if (carProx != null) {
 				newDrivingEvent = new CarProximityEvent(this, carProx);
 			} else {
@@ -591,7 +591,7 @@ public abstract class Car extends Entity {
 								
 								// start driving
 								
-								Car carProx2 = MODEL.world.carProximityTest(this, overallPos, Math.min(carProximityLookahead, overallPos.lengthToEndOfPath));
+								Car carProx2 = overallPath.carProximityTest(overallPos, Math.min(carProximityLookahead, overallPos.lengthToEndOfPath));
 								assert carProx2 == null;
 								
 								assert state == CarStateEnum.BRAKING;

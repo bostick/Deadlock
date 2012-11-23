@@ -12,7 +12,6 @@ import java.util.Random;
 
 import org.jbox2d.common.Vec2;
 
-import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.Shape;
@@ -22,7 +21,6 @@ import com.gutabi.deadlock.core.geom.tree.AABB;
 import com.gutabi.deadlock.core.graph.Axis;
 import com.gutabi.deadlock.core.graph.Edge;
 import com.gutabi.deadlock.core.graph.Graph;
-import com.gutabi.deadlock.core.graph.GraphPositionPathPosition;
 import com.gutabi.deadlock.core.graph.Merger;
 import com.gutabi.deadlock.core.graph.Road;
 import com.gutabi.deadlock.core.graph.RoadPosition;
@@ -63,7 +61,7 @@ public class World implements Sweepable {
 	
 	private Graph graph;
 	
-	private List<Car> cars = new ArrayList<Car>();
+	public List<Car> cars = new ArrayList<Car>();
 	
 	private List<AnimatedExplosion> explosions = new ArrayList<AnimatedExplosion>();
 	
@@ -390,6 +388,8 @@ public class World implements Sweepable {
 //			skidMarks.clear();
 //		}
 		
+		graph.postStep(t);
+		
 	}
 	
 //	public void addSkidMarks(Point a, Point b) {
@@ -411,35 +411,6 @@ public class World implements Sweepable {
 	public double distanceBetweenVertices(Vertex start, Vertex end) {
 		return graph.distanceBetweenVertices(start, end);
 	}
-	
-	/**
-	 * returns a sorted list of car proximity events
-	 */
-	public Car carProximityTest(Car test, GraphPositionPathPosition center, double dist) {
-		
-//		GraphPositionPathPosition closest = null;
-		
-//		GraphPositionPath restOfPath = center.restOfPath();
-		
-		for (Car c : cars) {
-			if (c == test) {
-				continue;
-			}
-			if (c.overallPos != null) {
-				GraphPositionPathPosition otherCarCenter = center.path.hitTest(c.overallPos.gpos, center);
-				if (otherCarCenter != null) {
-					assert DMath.greaterThanEquals(otherCarCenter.combo, center.combo);
-					double centerCenterDist = center.distanceTo(otherCarCenter);
-					if (DMath.lessThanEquals(centerCenterDist, dist)) {
-						return c;
-					}
-				}
-			}
-		}
-		
-		return null;
-	}
-	
 	
 	public Entity hitTest(Point p) {
 		Car c = carHitTest(p);

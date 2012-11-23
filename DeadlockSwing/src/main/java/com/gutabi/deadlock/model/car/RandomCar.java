@@ -29,4 +29,20 @@ public class RandomCar extends Car {
 		overallPath = source.getRandomPathToMatchingSink();
 	}
 	
+	public void preStep(double t) {
+		
+		overallPath.precomputeHitTestData();
+		
+		super.preStep(t);
+		
+	}
+	
+	public boolean postStep(double t) {
+		
+		boolean res = super.postStep(t);
+		
+		overallPath.clearHitTestData();
+		
+		return res;
+	}
 }

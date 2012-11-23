@@ -1,7 +1,5 @@
 package com.gutabi.deadlock.core.graph;
 
-import java.util.Comparator;
-
 import org.apache.log4j.Logger;
 
 import com.gutabi.deadlock.core.DMath;
@@ -37,9 +35,6 @@ public class GraphPositionPathPosition {
 		gpos = path.getGraphPosition(index, param);
 		
 		double acc = path.cumulativeDistancesFromStart[index];
-		
-//		assert DMath.equals(GraphPosition.distanceTo(path.get(index), gpos), Point.distance(path.get(index).p, gpos.p));
-//		acc += GraphPosition.distanceTo(path.get(index), gpos);
 		acc += Point.distance(path.get(index).p, gpos.p);
 		
 		lengthToStartOfPath = acc;
@@ -66,8 +61,6 @@ public class GraphPositionPathPosition {
 	public boolean equals(Object o) {
 		if (this == o) {
 			return true;
-		} else if (o.hashCode() != hashCode()) {
-			return false;
 		} else if (!(o instanceof GraphPositionPathPosition)) {
 			return false;
 		} else {
@@ -76,30 +69,9 @@ public class GraphPositionPathPosition {
 		}
 	}
 	
-	public static Comparator<GraphPositionPathPosition> COMPARATOR = new GraphPositionPathPositionComparator();
-	
-	static class GraphPositionPathPositionComparator implements Comparator<GraphPositionPathPosition> {
-
-		public int compare(GraphPositionPathPosition a, GraphPositionPathPosition b) {
-			if (a.equals(b)) {
-				return 0;
-			}
-			assert a.path == b.path;
-			if (a.combo < b.combo) {
-				return -1;
-			} else {
-				return 1;
-			}
-		}
-		
-	}
-	
-	
 	public String toString() {
 		return "GPPP[...] " + index + " " + param + " " + gpos;
 	}
-	
-	
 	
 	public boolean isBound() {
 		return bound;
@@ -119,79 +91,6 @@ public class GraphPositionPathPosition {
 		return p.lengthToStartOfPath - lengthToStartOfPath;
 		
 	}
-	
-//	private Map<GraphPositionPathPosition, Double> distMap = new HashMap<GraphPositionPathPosition, Double>();
-//	int hashedCount;
-//	int unhashedCount;
-//	
-//	public double distanceTo(GraphPositionPathPosition p) {
-//		
-//		assert p.path == path;
-//		
-//		assert DMath.greaterThanEquals(p.combo, combo);
-//		
-//		Double hashedDist = distMap.get(p);
-//		if (hashedDist != null) {
-//			hashedCount++;
-//			return hashedDist;
-//		} else {
-//			unhashedCount++;
-//		}
-//		
-//		int goalIndex = p.index;
-//		double goalParam = p.param;
-//		
-//		if (index == goalIndex || (goalIndex == index+1 && DMath.equals(goalParam, 0.0))) {
-//			
-////			if (gpos.equals(p.gpos)) {
-////				String.class.getName();
-////			}
-//			
-//			double toHash = gpos.distanceTo(p.gpos);
-//			
-//			distMap.put(p, toHash);
-//			
-//			return toHash;
-//			
-//		} else {
-//			
-//			double acc = 0.0;
-//			GraphPositionPathPosition curPos = this;
-//			GraphPositionPathPosition nextPos = curPos.nextBound();
-//			
-//			acc += curPos.distanceTo(nextPos);
-//			
-//			while (true) {
-//				
-//				if (nextPos.index == goalIndex) {
-//					break;
-//				}
-//				
-//				curPos = nextPos;
-//				nextPos = curPos.nextBound();
-//				
-//				acc += curPos.distanceTo(nextPos);
-//				
-//			}
-//			
-//			if (DMath.equals(nextPos.param, goalParam)) {
-//				
-//				distMap.put(p, acc);
-//				
-//				return acc;
-//				
-//			} else {
-//				
-//				acc = acc + nextPos.gpos.distanceTo(p.gpos);
-//				
-//				distMap.put(p, acc);
-//				
-//				return acc;
-//				
-//			}
-//			
-//		}
-//	}
 	
 	public GraphPositionPathPosition travel(double dist) {
 		
@@ -255,8 +154,6 @@ public class GraphPositionPathPosition {
 						double toTravel = dist - traveled;
 						
 						EdgePosition g = (EdgePosition)curPos.gpos.travelToNeighbor(nextBound.gpos, toTravel);
-						
-//						assert DMath.equals(GraphPosition.distanceTo(curPos.gpos, g), toTravel);
 						
 						if (curPos.gpos instanceof EdgePosition) {
 							EdgePosition curPosE = (EdgePosition)curPos.gpos;

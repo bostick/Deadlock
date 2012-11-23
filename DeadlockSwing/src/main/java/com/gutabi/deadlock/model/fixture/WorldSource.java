@@ -44,14 +44,6 @@ public class WorldSource extends Source {
 		return false;
 	}
 	
-	public void postStop() {
-		carQueue.clear();
-	}
-	
-	public boolean postStep(double t) {
-		return true;
-	}
-	
 	public void preStart() {
 		
 		assert matchingSink != null;
@@ -66,6 +58,35 @@ public class WorldSource extends Source {
 		carIDCounter = 0;
 	}
 	
+	public void postStop() {
+		carQueue.clear();
+	}
+	
+	public void preStep(double t) {
+//		if (SPAWN_FREQUENCY_SECONDS > 0 && (t == 0 || (t - lastSpawnTime) >= SPAWN_FREQUENCY_SECONDS)) {
+//			if (active()) {
+//				spawnNewCar(t);
+//			}
+//		}
+		
+		if (shortestPathToMatchingSink != null) {
+			shortestPathToMatchingSink.precomputeHitTestData();
+		}
+		
+		if (active(t)) {
+			spawnNewCar(t);
+		}
+	}
+	
+	public boolean postStep(double t) {
+		
+		if (shortestPathToMatchingSink != null) {
+			shortestPathToMatchingSink.clearHitTestData();
+		}
+		
+		return true;
+	}
+	
 	public GraphPositionPath getShortestPathToMatchingSink() {
 		return shortestPathToMatchingSink;
 	}
@@ -76,17 +97,6 @@ public class WorldSource extends Source {
 		poss.add(matchingSink);
 		GraphPositionPath path = GraphPositionPath.createRandomPathFromSkeleton(poss);
 		return path;
-	}
-	
-	public void preStep(double t) {
-//		if (SPAWN_FREQUENCY_SECONDS > 0 && (t == 0 || (t - lastSpawnTime) >= SPAWN_FREQUENCY_SECONDS)) {
-//			if (active()) {
-//				spawnNewCar(t);
-//			}
-//		}
-		if (active(t)) {
-			spawnNewCar(t);
-		}
 	}
 	
 	private void spawnNewCar(double t) {
