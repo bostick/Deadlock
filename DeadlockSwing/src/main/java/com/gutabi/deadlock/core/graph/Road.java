@@ -321,12 +321,16 @@ public class Road extends Edge {
 		
 	}
 	
-	public RoadPosition findSkeletonIntersection(Point c, Point d) {
+	public GraphPosition findSkeletonIntersection(Point c, Point d) {
 		for (int i = 0; i < seq.capsuleCount(); i ++) {
 			Capsule cap = seq.getCapsule(i);
 			double abParam = cap.findSkeletonIntersection(c, d);
-			if (abParam != -1 && !DMath.equals(abParam, 1.0)) {
-				return new RoadPosition(this, i, abParam);
+			if (abParam != -1) {
+				if (DMath.equals(abParam, 1.0) && i < seq.capsuleCount()-1) {
+					return new RoadPosition(this, i+1, 0.0);
+				} else {
+					return new RoadPosition(this, i, abParam);
+				}
 			}
 		}
 		return null;

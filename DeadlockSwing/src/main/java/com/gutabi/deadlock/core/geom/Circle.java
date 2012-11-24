@@ -34,8 +34,6 @@ public class Circle extends Shape {
 	public boolean equals(Object o) {
 		if (this == o) {
 			return true;
-		} else if (o.hashCode() != hashCode()) {
-			return false;
 		} else if (!(o instanceof Circle)) {
 			return false;
 		} else {
@@ -75,18 +73,24 @@ public class Circle extends Shape {
 			
 			return ShapeUtils.intersect(ss, this);
 			
-		} else {
+		} else if (s instanceof Circle) {
 			Circle ss = (Circle)s;
 			
 			return DMath.lessThanEquals(Point.distance(center, ss.center), radius + ss.radius);
+			
+		} else {
+			
+			return s.intersect(this);
 			
 		}
 		
 	}
 	
-	public Point project(Point axis) {
+	public void project(Point axis, double[] out) {
 		double cen = Point.dot(axis, center);
-		return new Point(cen-radius, cen+radius);
+		
+		out[0] = cen-radius;
+		out[1] = cen+radius;
 	}
 	
 	public void sweepStart(Sweeper s) {

@@ -20,8 +20,8 @@ public class Quad extends Shape {
 	
 	public final Point n01;
 	public final Point n12;
-	public final Point n23;
-	public final Point n30;
+//	public final Point n23;
+//	public final Point n30;
 	
 	private int hash;
 	
@@ -34,13 +34,13 @@ public class Quad extends Shape {
 		
 		Point edge;
 		edge = p1.minus(p0);
-		n01 = Point.ccw90(edge).normalize();
+		n01 = Point.ccw90AndNormalize(edge);
 		edge = p2.minus(p1);
-		n12 = Point.ccw90(edge).normalize();
-		edge = p3.minus(p2);
-		n23 = Point.ccw90(edge).normalize();
-		edge = p0.minus(p3);
-		n30 = Point.ccw90(edge).normalize();
+		n12 = Point.ccw90AndNormalize(edge);
+//		edge = p3.minus(p2);
+//		n23 = Point.ccw90(edge).normalize();
+//		edge = p0.minus(p3);
+//		n30 = Point.ccw90(edge).normalize();
 		
 		double ulX = Math.min(Math.min(p0.x, p1.x), Math.min(p2.x, p3.x));
 		double ulY = Math.min(Math.min(p0.y, p1.y), Math.min(p2.y, p3.y));
@@ -66,8 +66,6 @@ public class Quad extends Shape {
 	public boolean equals(Object o) {
 		if (this == o) {
 			return true;
-		} else if (o.hashCode() != hashCode()) {
-			return false;
 		} else if (!(o instanceof Quad)) {
 			return false;
 		} else {
@@ -105,16 +103,18 @@ public class Quad extends Shape {
 			
 			return ShapeUtils.intersect(this, ss);
 			
-		} else {
+		} else if (s instanceof Circle) {
 			Circle ss = (Circle)s;
 			
 			return ShapeUtils.intersect(this, ss);
 			
+		} else {
+			return s.intersect(this);
 		}
 		
 	}
 	
-	public Point project(Point axis) {
+	public void project(Point axis, double[] out) {
 		double min = Point.dot(axis, p0);
 		double max = min;
 		
@@ -139,7 +139,8 @@ public class Quad extends Shape {
 			max = p;
 		}
 		
-		return new Point(min, max);
+		out[0] = min;
+		out[1] = max;
 	}
 	
 	public void sweepStart(Sweeper s) {

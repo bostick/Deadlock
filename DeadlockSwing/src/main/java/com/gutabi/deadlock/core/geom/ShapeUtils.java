@@ -7,51 +7,30 @@ public class ShapeUtils {
 	
 	public static boolean intersect(Quad q0, Quad q1) {
 		
-		Point p0 = q0.project(q0.n01);
-		Point p1 = q1.project(q0.n01);
-		if (!DMath.rangesOverlap(p0.x, p0.y, p1.x, p1.y)) {
+		double[] q0Projection = new double[2];
+		double[] q1Projection = new double[2];
+		
+		q0.project(q0.n01, q0Projection);
+		q1.project(q0.n01, q1Projection);
+		if (!DMath.rangesOverlap(q0Projection, q1Projection)) {
 			return false;
 		}
 		
-		p0 = q0.project(q0.n12);
-		p1 = q1.project(q0.n12);
-		if (!DMath.rangesOverlap(p0.x, p0.y, p1.x, p1.y)) {
+		q0.project(q0.n01, q0Projection);
+		q1.project(q0.n01, q1Projection);
+		if (!DMath.rangesOverlap(q0Projection, q1Projection)) {
 			return false;
 		}
 		
-		p0 = q0.project(q0.n23);
-		p1 = q1.project(q0.n23);
-		if (!DMath.rangesOverlap(p0.x, p0.y, p1.x, p1.y)) {
+		q0.project(q1.n01, q0Projection);
+		q1.project(q1.n01, q1Projection);
+		if (!DMath.rangesOverlap(q0Projection, q1Projection)) {
 			return false;
 		}
 		
-		p0 = q0.project(q0.n30);
-		p1 = q1.project(q0.n30);
-		if (!DMath.rangesOverlap(p0.x, p0.y, p1.x, p1.y)) {
-			return false;
-		}
-		
-		p0 = q0.project(q1.n01);
-		p1 = q1.project(q1.n01);
-		if (!DMath.rangesOverlap(p0.x, p0.y, p1.x, p1.y)) {
-			return false;
-		}
-		
-		p0 = q0.project(q1.n12);
-		p1 = q1.project(q1.n12);
-		if (!DMath.rangesOverlap(p0.x, p0.y, p1.x, p1.y)) {
-			return false;
-		}
-		
-		p0 = q0.project(q1.n23);
-		p1 = q1.project(q1.n23);
-		if (!DMath.rangesOverlap(p0.x, p0.y, p1.x, p1.y)) {
-			return false;
-		}
-		
-		p0 = q0.project(q1.n30);
-		p1 = q1.project(q1.n30);
-		if (!DMath.rangesOverlap(p0.x, p0.y, p1.x, p1.y)) {
+		q0.project(q1.n12, q0Projection);
+		q1.project(q1.n12, q1Projection);
+		if (!DMath.rangesOverlap(q0Projection, q1Projection)) {
 			return false;
 		}
 		
@@ -59,6 +38,21 @@ public class ShapeUtils {
 	}
 	
 	public static boolean intersect(Quad q0, Circle c1) {
+		
+		double[] q0Projection = new double[2];
+		double[] c1Projection = new double[2];
+		
+		q0.project(q0.n01, q0Projection);
+		c1.project(q0.n01, c1Projection);
+		if (!DMath.rangesOverlap(q0Projection, c1Projection)) {
+			return false;
+		}
+		
+		q0.project(q0.n12, q0Projection);
+		c1.project(q0.n12, c1Projection);
+		if (!DMath.rangesOverlap(q0Projection, c1Projection)) {
+			return false;
+		}
 		
 		Point closest = q0.p0;
 		double closestDist = Point.distance(q0.p0, c1.center);
@@ -81,39 +75,10 @@ public class ShapeUtils {
 			closestDist = dist;
 		}
 		
-		
-		Point edge = c1.center.minus(closest);
-//		Point a = Point.ccw90(edge).normalize();
-		Point a = edge.normalize();
-		Point p0 = q0.project(a);
-		Point p1 = c1.project(a);
-		if (!DMath.rangesOverlap(p0.x, p0.y, p1.x, p1.y)) {
-			return false;
-		}
-		
-		
-		
-		p0 = q0.project(q0.n01);
-		p1 = c1.project(q0.n01);
-		if (!DMath.rangesOverlap(p0.x, p0.y, p1.x, p1.y)) {
-			return false;
-		}
-		
-		p0 = q0.project(q0.n12);
-		p1 = c1.project(q0.n12);
-		if (!DMath.rangesOverlap(p0.x, p0.y, p1.x, p1.y)) {
-			return false;
-		}
-		
-		p0 = q0.project(q0.n23);
-		p1 = c1.project(q0.n23);
-		if (!DMath.rangesOverlap(p0.x, p0.y, p1.x, p1.y)) {
-			return false;
-		}
-		
-		p0 = q0.project(q0.n30);
-		p1 = c1.project(q0.n30);
-		if (!DMath.rangesOverlap(p0.x, p0.y, p1.x, p1.y)) {
+		Point a = c1.center.minusAndNormalize(closest);
+		q0.project(a, q0Projection);
+		c1.project(a, c1Projection);
+		if (!DMath.rangesOverlap(q0Projection, c1Projection)) {
 			return false;
 		}
 		

@@ -1,12 +1,10 @@
 package com.gutabi.deadlock.view;
 
-import static com.gutabi.deadlock.controller.DeadlockController.CONTROLLER;
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 
 import java.awt.BasicStroke;
 import java.awt.Container;
 import java.awt.Graphics2D;
-import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.io.File;
 
@@ -18,7 +16,6 @@ import org.apache.log4j.Logger;
 
 import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.core.geom.tree.AABB;
 
 @SuppressWarnings("static-access")
 public class DeadlockView {
@@ -31,19 +28,20 @@ public class DeadlockView {
 	public ControlPanel controlPanel;
 	public PreviewPanel previewPanel;
 	
+//	public Graphics2D canvasGraphics2D;
+	
 	public int worldOffsetX;
 	public int worldOffsetY;
 	public int worldOriginX;
 	public int worldOriginY;
 	
-	public int worldAABBX;
-	public int worldAABBY;
+//	public int worldAABBX;
+//	public int worldAABBY;
 	
 	public java.awt.Stroke worldStroke = new BasicStroke(0.05f);
 	
 	public BufferedImage sheet;
 	public BufferedImage explosionSheet;
-//	public BufferedImage tiledGrass;
 	
 	public final Logger logger = Logger.getLogger(DeadlockView.class);
 	
@@ -119,33 +117,40 @@ public class DeadlockView {
 	}
 	
 	
-	AABB prevAABB;
+//	AABB prevAABB;
 	
 	public void repaint() {
 		assert !Thread.holdsLock(MODEL);
+//		assert SwingUtilities.isEventDispatchThread();
 		
 ////		worldOriginX = (int)(canvas.getWidth() * 0.5 - ((MODEL.world.WORLD_WIDTH * 0.0 + MODEL.world.QUADRANT_WIDTH * 0.5) * MODEL.PIXELS_PER_METER));
 ////		worldOriginY = (int)(canvas.getHeight() * 0.5 - ((MODEL.world.WORLD_HEIGHT * 0.0 + MODEL.world.QUADRANT_HEIGHT * 0.5) * MODEL.PIXELS_PER_METER));
 //		worldOriginX = (int)(canvas.getWidth() * 0.5 - ((MODEL.world.WORLD_WIDTH * 1.0 - MODEL.world.QUADRANT_WIDTH * 0.5) * MODEL.PIXELS_PER_METER));
 //		worldOriginY = (int)(canvas.getHeight() * 0.5 - ((MODEL.world.WORLD_HEIGHT * 1.0 - MODEL.world.QUADRANT_HEIGHT * 0.5) * MODEL.PIXELS_PER_METER));
 		
-		AABB aabb = MODEL.world.getAABB();
+//		AABB aabb = MODEL.world.getAABB();
+//		
+//		switch (CONTROLLER.mode) {
+//		case DRAFTING:
+//			aabb = AABB.union(aabb, MODEL.stroke.getAABB());
+//		case IDLE:
+//		case MERGERCURSOR:
+//		case FIXTURECURSOR:
+//			aabb = AABB.union(aabb, MODEL.cursor.getAABB());
+//			break;
+//		case PAUSED:
+//		case RUNNING:
+//			break;
+//		}
 		
-		switch (CONTROLLER.mode) {
-		case DRAFTING:
-			aabb = AABB.union(aabb, MODEL.stroke.getAABB());
-		case IDLE:
-		case MERGERCURSOR:
-		case FIXTURECURSOR:
-			aabb = AABB.union(aabb, MODEL.cursor.getAABB());
-			break;
-		case PAUSED:
-		case RUNNING:
-			break;
-		}
+//		worldAABBX = (int)(worldOffsetX - worldOriginX + (aabb.x * MODEL.PIXELS_PER_METER));
+//		worldAABBY = (int)(worldOffsetY - worldOriginY + (aabb.y * MODEL.PIXELS_PER_METER));
 		
-		worldAABBX = (int)(worldOffsetX - worldOriginX + (aabb.x * MODEL.PIXELS_PER_METER));
-		worldAABBY = (int)(worldOffsetY - worldOriginY + (aabb.y * MODEL.PIXELS_PER_METER));
+		
+//		MODEL.paint(VIEW.canvasGraphics2D);
+//		
+//		canvas.bs.show();
+		
 		
 		Graphics2D g2 = (Graphics2D)canvas.bs.getDrawGraphics();
 		
@@ -153,9 +158,13 @@ public class DeadlockView {
 		
 		canvas.bs.show();
 		
-		controlPanel.repaint();
+		g2.dispose();
 		
-		Toolkit.getDefaultToolkit().sync();
+		
+//		canvas.repaint();
+//		controlPanel.repaint();
+		
+//		Toolkit.getDefaultToolkit().sync();
 		
 //		if (aabb == prevAABB) {
 //			
@@ -172,8 +181,12 @@ public class DeadlockView {
 //			canvas.repaint();
 //		}
 		
-		prevAABB = aabb;
+//		prevAABB = aabb;
 		
+	}
+	
+	public void repaintControlPanel() {
+		controlPanel.repaint();
 	}
 	
 }

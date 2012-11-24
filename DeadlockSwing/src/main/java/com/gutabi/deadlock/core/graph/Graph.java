@@ -61,6 +61,14 @@ public class Graph implements Sweepable {
 		
 	}
 	
+	public void postStep(double t) {
+		
+		for (Vertex v : vertices) {
+			v.postStep(t);
+		}
+		
+	}
+	
 	public void computeVertexRadii() {
 		
 		for (int i = 0; i < vertices.size(); i++) {
@@ -569,28 +577,28 @@ public class Graph implements Sweepable {
 		return null;
 	}
 	
-	public Entity graphBestHitTest(Shape s) {
-		Entity hit;
-		for (Edge ed : edges) {
-			hit = ed.decorationsBestHitTest(s);
-			if (hit != null) {
-				return hit;
-			}
-		}
-		for (Vertex v : vertices) {
-			hit = v.bestHitTest(s);
-			if (hit != null) {
-				return hit;
-			}
-		}
-		for (Edge ed : edges) {
-			hit = ed.bestHitTest(s);
-			if (hit != null) {
-				return ed;
-			}
-		}
-		return null;
-	}
+//	public Entity graphBestHitTestX(Shape s) {
+//		Entity hit;
+//		for (Edge ed : edges) {
+//			hit = ed.decorationsBestHitTest(s);
+//			if (hit != null) {
+//				return hit;
+//			}
+//		}
+//		for (Vertex v : vertices) {
+//			hit = v.bestHitTest(s);
+//			if (hit != null) {
+//				return hit;
+//			}
+//		}
+//		for (Edge ed : edges) {
+//			hit = ed.bestHitTest(s);
+//			if (hit != null) {
+//				return ed;
+//			}
+//		}
+//		return null;
+//	}
 	
 	public Entity pureGraphBestHitTest(Shape s) {
 //		assert p != null;

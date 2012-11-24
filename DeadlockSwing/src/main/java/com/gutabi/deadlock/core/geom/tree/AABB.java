@@ -45,8 +45,6 @@ public class AABB {
 	public boolean equals(Object o) {
 		if (o == this) {
 			return true;
-		} else if (o.hashCode() != hashCode()) {
-			return false;
 		} else if (!(o instanceof AABB)) {
 			return false;
 		} else {
@@ -55,25 +53,9 @@ public class AABB {
 		}
 	}
 	
-//	public boolean hitTest(Point p) {
-//		if (DMath.lessThanEquals(x, p.x) && DMath.lessThanEquals(p.x, x+width) &&
-//				DMath.lessThanEquals(y, p.y) && DMath.lessThanEquals(p.y, y+height)) {
-//			
-//			return true;
-//			
-//		} else {
-//			return false;
-//		}
-//	}
-	
 	public boolean intersect(AABB a) {
-		
-		if (DMath.greaterThan(a.x, brX) || DMath.greaterThan(x, a.brX) ||
-				DMath.greaterThan(a.y, brY) || DMath.greaterThan(y, a.brY)) {
-			return false;
-		}
-		
-		return true;
+		return DMath.lessThanEquals(a.x, brX) && DMath.lessThanEquals(x, a.brX) &&
+				DMath.lessThanEquals(a.y, brY) && DMath.lessThanEquals(y, a.brY);
 	}
 	
 	public static final AABB union(AABB a, AABB b) {

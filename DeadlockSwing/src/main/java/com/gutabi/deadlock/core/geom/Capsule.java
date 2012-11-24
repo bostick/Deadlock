@@ -59,8 +59,8 @@ public class Capsule extends Shape {
 		}
 		
 		Point diff = new Point(b.x - a.x, b.y - a.y);
-		n = Point.ccw90(diff).normalize();
-		Point nd = Point.cw90(diff).normalize();
+		n = Point.ccw90AndNormalize(diff);
+		Point nd = Point.cw90AndNormalize(diff);
 		
 		Point u = n.multiply(r);
 		Point d = nd.multiply(r);

@@ -12,6 +12,7 @@ import org.apache.log4j.Logger;
 
 import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Point;
+import com.gutabi.deadlock.core.geom.tree.AABB;
 import com.gutabi.deadlock.model.Car;
 import com.gutabi.deadlock.model.event.VertexArrivalEvent;
 
@@ -30,6 +31,8 @@ public class GraphPositionPath {
 	List<GraphPositionPathPosition> borderPositions;
 	
 	private int hash;
+	
+	private final AABB aabb;
 	
 	static Logger logger = Logger.getLogger(GraphPositionPath.class);
 	
@@ -61,6 +64,12 @@ public class GraphPositionPath {
 		totalLength = l;
 		
 		
+		AABB acc = null;
+		for (int i = 0; i < poss.size(); i++) {
+			GraphPosition p = poss.get(i);
+			acc = AABB.union(acc, p.entity.getAABB());
+		}
+		aabb = acc;
 		
 		borderPositions = new ArrayList<GraphPositionPathPosition>();
 		
@@ -181,7 +190,10 @@ public class GraphPositionPath {
 	 */
 	public GraphPositionPathPosition findClosestGraphPositionPathPosition(Point p, GraphPositionPathPosition min, GraphPositionPathPosition max) {
 		
-		GraphPositionPathPosition closest = null;
+		//GraphPositionPathPosition closest = null;
+		int closestIndex = -1;
+		double closestParam = -1;
+		
 		double closestDistance = Double.POSITIVE_INFINITY;
 		
 		if (min.equals(max)) {
@@ -197,8 +209,15 @@ public class GraphPositionPath {
 				u = max.param;
 			}
 			
-			closest = new GraphPositionPathPosition(this, min.index, u);
+//			closest = new GraphPositionPathPosition(this, min.index, u);
+			closestIndex = min.index;
+			closestParam = u;
 			
+			Point pOnPath = Point.point(min.floor().gpos.p, max.ceiling().gpos.p, u);
+			double dist = Point.distance(p, pOnPath);
+			closestDistance = dist;
+			
+			GraphPositionPathPosition closest = new GraphPositionPathPosition(this, closestIndex, closestParam);
 			return closest;
 		}
 		
@@ -228,17 +247,23 @@ public class GraphPositionPath {
 					 */
 					double dist = Point.distance(p, b.gpos.p);
 					if (dist < closestDistance) {
-						closest = b;
+//						closest = b;
+						closestIndex = b.index;
+						closestParam = b.param;
+						
 						closestDistance = dist;
 					}
 				}
 			} else {
 				
-				Point pOnPath = Point.point(a.gpos.p, b.gpos.p, u);
+				Point pOnPath = Point.point(a.floor().gpos.p, b.gpos.p, u);
 				double dist = Point.distance(p, pOnPath);
 				
 				if (dist < closestDistance) {
-					closest = new GraphPositionPathPosition(this, a.index, u);
+//					closest = new GraphPositionPathPosition(this, a.index, u);
+					closestIndex = a.index;
+					closestParam = u;
+					
 					closestDistance = dist;
 				}
 			}
@@ -272,7 +297,10 @@ public class GraphPositionPath {
 					 */
 					double dist = Point.distance(p, b.gpos.p);
 					if (dist < closestDistance) {
-						closest = b;
+//						closest = b;
+						closestIndex = b.index;
+						closestParam = b.param;
+						
 						closestDistance = dist;
 					}
 				}
@@ -280,7 +308,10 @@ public class GraphPositionPath {
 				Point pOnPath = Point.point(a.gpos.p, b.gpos.p, u);
 				double dist = Point.distance(p, pOnPath);
 				if (dist < closestDistance) {
-					closest = new GraphPositionPathPosition(this, a.index, u);
+//					closest = new GraphPositionPathPosition(this, a.index, u);
+					closestIndex = a.index;
+					closestParam = u;
+					
 					closestDistance = dist;
 				}
 			}
@@ -300,16 +331,23 @@ public class GraphPositionPath {
 				u = 0.0;
 			}
 			
-			Point pOnPath = Point.point(a.gpos.p, b.gpos.p, u);
+			Point pOnPath = Point.point(a.gpos.p, bCeil.gpos.p, u);
 			double dist = Point.distance(p, pOnPath);
 			if (dist < closestDistance) {
-				closest = new GraphPositionPathPosition(this, a.index, u);
+//				closest = new GraphPositionPathPosition(this, a.index, u);
+				closestIndex = a.index;
+				closestParam = u;
+				
 				closestDistance = dist;
 			}
 			
 		}
 		
-		assert closest != null;
+		assert closestIndex != -1;
+		assert closestParam != -1;
+		
+		GraphPositionPathPosition closest = new GraphPositionPathPosition(this, closestIndex, closestParam);
+		
 		return closest;
 	}
 	
@@ -338,6 +376,13 @@ public class GraphPositionPath {
 		
 		for (Car c : MODEL.world.cars) {
 			
+			if (c.overallPos == null) {
+				continue;
+			}
+			if (!aabb.intersect(c.getAABB())) {
+				continue;
+			}
+			
 			GraphPosition gp = c.overallPos.gpos;
 			
 //			if (DMath.equals(startingPosition.combo, 0.0)) {
@@ -345,6 +390,7 @@ public class GraphPositionPath {
 				if (gp.entity == ((VertexPosition)poss.get(0)).v) {
 					assert getGraphPosition(0, 0.0).equals(gp);
 					hitMap.put(new GraphPositionPathPosition(this, 0, 0.0), c);
+					continue;
 				}
 			}
 //			}
@@ -394,7 +440,6 @@ public class GraphPositionPath {
 						if (gp.entity == ((VertexPosition)b).v) {
 							assert getGraphPosition(i+1, 0.0).equals(gp);
 							hitMap.put(new GraphPositionPathPosition(this, i+1, 0.0), c);
-							
 							continue;
 						}
 						

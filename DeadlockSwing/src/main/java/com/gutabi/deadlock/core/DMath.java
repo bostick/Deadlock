@@ -75,7 +75,12 @@ public class DMath {
 		}
 	}
 	
-	public static boolean rangesOverlap(double a, double b, double c, double d) {
+	public static boolean rangesOverlap(double[] r0, double[] r1) {
+		
+		double a = r0[0];
+		double b = r0[1];
+		double c = r1[0];
+		double d = r1[1];
 		
 		double aa;
 		double bb;

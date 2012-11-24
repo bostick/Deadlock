@@ -24,7 +24,6 @@ import org.jbox2d.dynamics.FixtureDef;
 
 import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Entity;
-import com.gutabi.deadlock.core.Matrix;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.Geom;
 import com.gutabi.deadlock.core.geom.Quad;
@@ -44,6 +43,10 @@ import com.gutabi.deadlock.model.fixture.WorldSource;
 public abstract class Car extends Entity {
 	
 	public static final double CAR_LENGTH = 1.0;
+	
+	public static final int HALF_CAR_LENGTH_PIXELS = (int)Math.round(CAR_LENGTH * MODEL.PIXELS_PER_METER * 0.5);
+	public static final int HALF_CAR_WIDTH_PIXELS = (int)Math.round(CAR_LENGTH * MODEL.PIXELS_PER_METER * 0.25);
+	
 	public static final double COMPLETE_STOP_WAIT_TIME = 0.0;
 	
 	public abstract double getMaxSpeed();
@@ -92,13 +95,7 @@ public abstract class Car extends Entity {
 	private double turnAngularImpulseCoefficient = 1.0;
 	
 	
-	
-	
-	
-	
-	
-//	protected int sheetRow;
-//	protected int sheetCol;
+
 	
 	public CarStateEnum state;
 	
@@ -137,8 +134,7 @@ public abstract class Car extends Entity {
 	float angle;
 	float angularVel;
 	double[][] carTransArr;
-	Matrix carTrans;
-//	float carAngle;
+//	Matrix carTrans;
 	boolean atleastPartiallyOnRoad;
 	boolean inMerger;
 	public GraphPositionPathPosition overallPos;
@@ -151,11 +147,7 @@ public abstract class Car extends Entity {
 	 */
 	DrivingEvent curDrivingEvent;
 	List<VertexEvent> vertexDepartureQueue = new ArrayList<VertexEvent>();
-//	GraphPositionPathPosition curVertexPosition;
-//	GraphPositionPathPosition curBorderMatchingPosition;
-//	List<VertexArrivalEvent> oldVertexArrivalEvents = new ArrayList<VertexArrivalEvent>();
 	double decelTime = -1;
-//	double accelTime = -1;
 	double stoppedTime = -1;
 	Point goalPoint;
 	
@@ -239,9 +231,13 @@ public abstract class Car extends Entity {
 		p = new Point(pVec2.x, pVec2.y);
 		Mat22 r = b2dBody.getTransform().R;
 		carTransArr = new double[2][2];
-		carTrans = new Matrix(carTransArr, r.col1.x, r.col2.x, r.col1.y, r.col2.y);
+		carTransArr[0][0] = r.col1.x;
+		carTransArr[0][1] = r.col2.x;
+		carTransArr[1][0] = r.col1.y;
+		carTransArr[1][1] = r.col2.y;
+//		carTrans = new Matrix(carTransArr, r.col1.x, r.col2.x, r.col1.y, r.col2.y);
 		
-		worldQuad = Geom.localToWorld(localQuad, carTrans, p);
+		worldQuad = Geom.localToWorld(localQuad, carTransArr, p);
 		shape = worldQuad;
 		
 		
@@ -333,13 +329,16 @@ public abstract class Car extends Entity {
 		}
 		
 		Mat22 r = b2dBody.getTransform().R;
-		carTrans = new Matrix(carTransArr, r.col1.x, r.col2.x, r.col1.y, r.col2.y);
-//		carAngle = b2dBody.getAngle();
+//		carTrans = new Matrix(carTransArr, r.col1.x, r.col2.x, r.col1.y, r.col2.y);
+		carTransArr[0][0] = r.col1.x;
+		carTransArr[0][1] = r.col2.x;
+		carTransArr[1][0] = r.col1.y;
+		carTransArr[1][1] = r.col2.y;
 		
-		worldQuad = Geom.localToWorld(localQuad, carTrans, p);
+		worldQuad = Geom.localToWorld(localQuad, carTransArr, p);
 		shape = worldQuad;
 		
-		Entity e = MODEL.world.graphBestHitTest(shape);
+		Entity e = MODEL.world.pureGraphBestHitTest(shape);
 		
 		boolean wasInMerger = inMerger;
 		if (e == null) {
@@ -399,7 +398,6 @@ public abstract class Car extends Entity {
 			if (((VertexArrivalEvent)curDrivingEvent).sign.isEnabled()) {
 				stoppedTime = -1;
 				decelTime = -1;
-//				accelTime = -1;
 			}
 			
 			((VertexArrivalEvent)curDrivingEvent).v.carQueue.remove(this);
@@ -410,7 +408,6 @@ public abstract class Car extends Entity {
 			
 			stoppedTime = -1;
 			decelTime = -1;
-//			accelTime = -1;
 			
 			curDrivingEvent = null;
 			
@@ -436,7 +433,6 @@ public abstract class Car extends Entity {
 			if (((VertexArrivalEvent)curDrivingEvent).sign.isEnabled()) {
 				stoppedTime = -1;
 				decelTime = -1;
-//				accelTime = -1;
 			}
 			
 			((VertexArrivalEvent)curDrivingEvent).v.carQueue.remove(this);
@@ -447,7 +443,6 @@ public abstract class Car extends Entity {
 			
 			stoppedTime = -1;
 			decelTime = -1;
-//			accelTime = -1;
 			
 			curDrivingEvent = null;
 			
@@ -481,196 +476,11 @@ public abstract class Car extends Entity {
 				pathingLogger.debug("overallPos: " + overallPos.gpos);
 			}
 			
-//			pathingLogger.debug("next bound after overallPos: " + overallPos.nextBound().gpos);
+			DrivingEvent newDrivingEvent = findNewDrivingEvent();
 			
-			DrivingEvent newDrivingEvent = null;
-			Car carProx = overallPath.carProximityTest(overallPos, Math.min(carProximityLookahead, overallPos.lengthToEndOfPath));
-			if (carProx != null) {
-				newDrivingEvent = new CarProximityEvent(this, carProx);
-			} else {
-				VertexArrivalEvent vertexArr = overallPath.vertexArrivalTest(overallPos, Math.min(vertexArrivalLookahead, overallPos.lengthToEndOfPath));
-				/*
-				 * since we deal with events before actually reaching them (front of car reaches them vs center of car where position is counted),
-				 * simply keep a list of already processed events to use to filter
-				 */
-//				vertexArrivalEvents.removeAll(oldVertexArrivalEvents);
-				if (vertexArr != null) {
-//					logger.debug("setting curEvent: " + events + "     " + oldEvents);
-					
-					if (!vertexDepartureQueue.contains(vertexArr)) {
-						newDrivingEvent = vertexArr;
-						
-//						oldVertexArrivalEvents.add(((VertexArrivalEvent)newDrivingEvent));
-						
-						if (!vertexArr.v.carQueue.contains(this)) {
-							vertexArr.v.carQueue.add(this);
-						}
-					}
-					
-				}
-			}
+			processNewDrivingEvent(newDrivingEvent, t);
 			
-			if (newDrivingEvent != null) {
-				if (curDrivingEvent == null) {
-					curDrivingEvent = newDrivingEvent;
-					if (eventingLogger.isDebugEnabled()) {
-						eventingLogger.debug("t: " + t + " car " + this + ": " + curDrivingEvent);
-					}
-				} else {
-					if (curDrivingEvent.equals(newDrivingEvent)) {
-//						assert newDrivingEvent == null;
-					} else {
-						
-						if (curDrivingEvent instanceof CarProximityEvent && newDrivingEvent instanceof VertexArrivalEvent) {
-							
-							stoppedTime = -1;
-							curDrivingEvent = newDrivingEvent;
-							
-						} else if (curDrivingEvent instanceof VertexArrivalEvent && newDrivingEvent instanceof CarProximityEvent) {
-							
-							stoppedTime = -1;
-							curDrivingEvent = newDrivingEvent;
-							if (eventingLogger.isDebugEnabled()) {
-								eventingLogger.debug("t: " + t + " car " + this + ": " + curDrivingEvent);
-							}
-							
-							/*
-							 * may have been at intersection with no stop sign, so make sure to be braking now
-							 */
-							
-							state = CarStateEnum.BRAKING;
-							
-						} else if (curDrivingEvent instanceof CarProximityEvent && newDrivingEvent instanceof CarProximityEvent &&
-								((CarProximityEvent)curDrivingEvent).otherCar == ((CarProximityEvent)newDrivingEvent).otherCar) {
-							
-							stoppedTime = -1;
-							curDrivingEvent = newDrivingEvent;
-							if (eventingLogger.isDebugEnabled()) {
-								eventingLogger.debug("t: " + t + " car " + this + ": " + curDrivingEvent);
-							}
-							
-						} else if (curDrivingEvent instanceof CarProximityEvent && newDrivingEvent instanceof CarProximityEvent &&
-								((CarProximityEvent)curDrivingEvent).otherCar != ((CarProximityEvent)newDrivingEvent).otherCar) {
-							
-							stoppedTime = -1;
-							curDrivingEvent = newDrivingEvent;
-							if (eventingLogger.isDebugEnabled()) {
-								eventingLogger.debug("t: " + t + " car " + this + ": " + curDrivingEvent);
-							}
-							
-						} else {
-							assert false;
-						}
-						
-					}
-				}
-			}
-			
-			if (curDrivingEvent != null) {
-				
-				if (curDrivingEvent instanceof CarProximityEvent) {
-					
-					if (decelTime == -1) {
-						// start braking
-						
-						assert state == CarStateEnum.DRIVING;
-						state = CarStateEnum.BRAKING;
-						
-					} else {
-						
-						Car otherCar = ((CarProximityEvent) curDrivingEvent).otherCar;
-						
-						if (stoppedTime != -1 && t > stoppedTime + COMPLETE_STOP_WAIT_TIME) {
-							
-							GraphPositionPathPosition otherPosition = null;
-							if (otherCar.overallPos != null) {
-								otherPosition = overallPath.hitTest(otherCar.overallPos.gpos, overallPos);
-							}
-							
-							if (otherPosition == null || DMath.greaterThan(overallPos.distanceTo(otherPosition), carProximityLookahead)) {
-								
-								// start driving
-								
-								Car carProx2 = overallPath.carProximityTest(overallPos, Math.min(carProximityLookahead, overallPos.lengthToEndOfPath));
-								assert carProx2 == null;
-								
-								assert state == CarStateEnum.BRAKING;
-								state = CarStateEnum.DRIVING;
-								
-								stoppedTime = -1;
-								decelTime = -1;
-//								accelTime = -1;
-								
-								curDrivingEvent = null;
-								if (eventingLogger.isDebugEnabled()) {
-									eventingLogger.debug("t: " + t + " car " + this + ": " + curDrivingEvent);
-								}
-								
-							}
-							
-						}
-						
-					}
-					
-				} else if (curDrivingEvent instanceof VertexArrivalEvent) {
-					
-					if (((VertexArrivalEvent)curDrivingEvent).sign.isEnabled()) {
-						if (decelTime == -1) {
-							// start braking
-							
-							assert state == CarStateEnum.DRIVING;
-							state = CarStateEnum.BRAKING;
-							
-						} else if (stoppedTime != -1 && t > stoppedTime + COMPLETE_STOP_WAIT_TIME && ((VertexArrivalEvent)curDrivingEvent).v.carQueue.get(0) == this) {
-							// start driving
-							
-							assert state == CarStateEnum.BRAKING;
-							state = CarStateEnum.DRIVING;
-							
-							stoppedTime = -1;
-							decelTime = -1;
-//							accelTime = -1;
-							
-//							assert vertexDepartureQueue.isEmpty();
-							vertexDepartureQueue.add((VertexArrivalEvent)curDrivingEvent);
-							
-							curDrivingEvent = null;
-							if (eventingLogger.isDebugEnabled()) {
-								eventingLogger.debug("t: " + t + " car " + this + ": " + curDrivingEvent);
-							}
-							
-						}
-					} else {
-						
-						/*
-						 * could have simply been passing through, so never braking
-						 * or could have ben already had CarProximityEvent, it went away and was masking a VertexArrivalevent, so immediately go to that
-						 * so already braking without a stop sign
-						 * 
-						 * all that matters now is to be driving
-						 */
-						
-						state = CarStateEnum.DRIVING;
-						
-						stoppedTime = -1;
-						decelTime = -1;
-						
-						vertexDepartureQueue.add((VertexArrivalEvent)curDrivingEvent);
-						
-						curDrivingEvent = null;
-						if (eventingLogger.isDebugEnabled()) {
-							eventingLogger.debug("t: " + t + " car " + this + ": " + curDrivingEvent);
-						}
-						
-					}
-					
-				} else {
-					assert false;
-				}
-				
-			} else {
-				assert state == CarStateEnum.DRIVING;
-			}
+			handleCurrentDrivingEvent(t);
 			
 			if (!vertexDepartureQueue.isEmpty()) {
 				
@@ -699,32 +509,213 @@ public abstract class Car extends Entity {
 		switch (state) {
 		case DRIVING:
 			
-			double lookaheadDistance = Math.min(steeringLookaheadDistance, overallPos.lengthToEndOfPath);
-			
-			GraphPositionPathPosition next = overallPos.travel(lookaheadDistance);
+			GraphPositionPathPosition next = overallPos.travel(Math.min(steeringLookaheadDistance, overallPos.lengthToEndOfPath));
 			
 			if (pathingLogger.isDebugEnabled()) {
 				pathingLogger.debug("goalPoint: " + next.gpos);
 			}
 			
-			double nextDist = overallPos.distanceTo(next);
-			assert DMath.equals(nextDist, lookaheadDistance);
-			
 			goalPoint = next.gpos.p;
-//			assert DMath.greaterThan(Point.distance(goalPoint, p), CAR_LENGTH/4) : "heuristic failed";
-			
 			updateDrive(t);
 			break;
 		case BRAKING:
 			goalPoint = null;
-//			assert DMath.greaterThan(Point.distance(goalPoint, p), CAR_LENGTH/4) : "heuristic failed";
-			
 			updateBrake(t);
 			break;
 		case CRASHED:
 		case SKIDDED:
 		case SINKED:
 			break;
+		}
+	}
+	
+	private DrivingEvent findNewDrivingEvent() {
+		
+		DrivingEvent newDrivingEvent = null;
+		
+		Car carProx = overallPath.carProximityTest(overallPos, Math.min(carProximityLookahead, overallPos.lengthToEndOfPath));
+		if (carProx != null) {
+			newDrivingEvent = new CarProximityEvent(this, carProx);
+		} else {
+			VertexArrivalEvent vertexArr = overallPath.vertexArrivalTest(overallPos, Math.min(vertexArrivalLookahead, overallPos.lengthToEndOfPath));
+			if (vertexArr != null) {
+//				logger.debug("setting curEvent: " + events + "     " + oldEvents);
+				
+				if (!vertexDepartureQueue.contains(vertexArr)) {
+					newDrivingEvent = vertexArr;
+					
+					if (!vertexArr.v.carQueue.contains(this)) {
+						vertexArr.v.carQueue.add(this);
+					}
+				}
+				
+			}
+		}
+		
+		return newDrivingEvent;
+	}
+	
+	private void processNewDrivingEvent(DrivingEvent newDrivingEvent, double t) {
+		
+		if (newDrivingEvent != null) {
+			if (curDrivingEvent == null) {
+				curDrivingEvent = newDrivingEvent;
+				if (eventingLogger.isDebugEnabled()) {
+					eventingLogger.debug("t: " + t + " car " + this + ": " + curDrivingEvent);
+				}
+			} else {
+				if (curDrivingEvent.equals(newDrivingEvent)) {
+					
+				} else {
+					
+					if (curDrivingEvent instanceof CarProximityEvent && newDrivingEvent instanceof VertexArrivalEvent) {
+						
+						stoppedTime = -1;
+						curDrivingEvent = newDrivingEvent;
+						
+					} else if (curDrivingEvent instanceof VertexArrivalEvent && newDrivingEvent instanceof CarProximityEvent) {
+						
+						stoppedTime = -1;
+						curDrivingEvent = newDrivingEvent;
+						if (eventingLogger.isDebugEnabled()) {
+							eventingLogger.debug("t: " + t + " car " + this + ": " + curDrivingEvent);
+						}
+						
+						/*
+						 * may have been at intersection with no stop sign, so make sure to be braking now
+						 */
+						
+						state = CarStateEnum.BRAKING;
+						
+					} else if (curDrivingEvent instanceof CarProximityEvent && newDrivingEvent instanceof CarProximityEvent &&
+							((CarProximityEvent)curDrivingEvent).otherCar == ((CarProximityEvent)newDrivingEvent).otherCar) {
+						
+						stoppedTime = -1;
+						curDrivingEvent = newDrivingEvent;
+						if (eventingLogger.isDebugEnabled()) {
+							eventingLogger.debug("t: " + t + " car " + this + ": " + curDrivingEvent);
+						}
+						
+					} else if (curDrivingEvent instanceof CarProximityEvent && newDrivingEvent instanceof CarProximityEvent &&
+							((CarProximityEvent)curDrivingEvent).otherCar != ((CarProximityEvent)newDrivingEvent).otherCar) {
+						
+						stoppedTime = -1;
+						curDrivingEvent = newDrivingEvent;
+						if (eventingLogger.isDebugEnabled()) {
+							eventingLogger.debug("t: " + t + " car " + this + ": " + curDrivingEvent);
+						}
+						
+					} else {
+						assert false;
+					}
+					
+				}
+			}
+		}
+		
+	}
+	
+	private void handleCurrentDrivingEvent(double t) {
+		
+		if (curDrivingEvent == null) {
+			return;
+		}
+		
+		if (curDrivingEvent instanceof CarProximityEvent) {
+			
+			if (decelTime == -1) {
+				// start braking
+				
+				assert state == CarStateEnum.DRIVING;
+				state = CarStateEnum.BRAKING;
+				
+			} else {
+				
+				Car otherCar = ((CarProximityEvent) curDrivingEvent).otherCar;
+				
+				if (stoppedTime != -1 && t > stoppedTime + COMPLETE_STOP_WAIT_TIME) {
+					
+					GraphPositionPathPosition otherPosition = null;
+					if (otherCar.overallPos != null) {
+						otherPosition = overallPath.hitTest(otherCar.overallPos.gpos, overallPos);
+					}
+					
+					if (otherPosition == null || DMath.greaterThan(overallPos.distanceTo(otherPosition), carProximityLookahead)) {
+						
+						// start driving
+						
+						Car carProx2 = overallPath.carProximityTest(overallPos, Math.min(carProximityLookahead, overallPos.lengthToEndOfPath));
+						assert carProx2 == null;
+						
+						assert state == CarStateEnum.BRAKING;
+						state = CarStateEnum.DRIVING;
+						
+						stoppedTime = -1;
+						decelTime = -1;
+						
+						curDrivingEvent = null;
+						if (eventingLogger.isDebugEnabled()) {
+							eventingLogger.debug("t: " + t + " car " + this + ": " + curDrivingEvent);
+						}
+						
+					}
+					
+				}
+				
+			}
+			
+		} else if (curDrivingEvent instanceof VertexArrivalEvent) {
+			
+			if (((VertexArrivalEvent)curDrivingEvent).sign.isEnabled()) {
+				if (decelTime == -1) {
+					// start braking
+					
+					assert state == CarStateEnum.DRIVING;
+					state = CarStateEnum.BRAKING;
+					
+				} else if (stoppedTime != -1 && t > stoppedTime + COMPLETE_STOP_WAIT_TIME && ((VertexArrivalEvent)curDrivingEvent).v.carQueue.get(0) == this) {
+					// start driving
+					
+					assert state == CarStateEnum.BRAKING;
+					state = CarStateEnum.DRIVING;
+					
+					stoppedTime = -1;
+					decelTime = -1;
+					
+					vertexDepartureQueue.add((VertexArrivalEvent)curDrivingEvent);
+					
+					curDrivingEvent = null;
+					if (eventingLogger.isDebugEnabled()) {
+						eventingLogger.debug("t: " + t + " car " + this + ": " + curDrivingEvent);
+					}
+					
+				}
+			} else {
+				
+				/*
+				 * could have simply been passing through, so never braking
+				 * or could have ben already had CarProximityEvent, it went away and was masking a VertexArrivalevent, so immediately go to that
+				 * so already braking without a stop sign
+				 * 
+				 * all that matters now is to be driving
+				 */
+				
+				state = CarStateEnum.DRIVING;
+				
+				stoppedTime = -1;
+				decelTime = -1;
+				
+				vertexDepartureQueue.add((VertexArrivalEvent)curDrivingEvent);
+				
+				curDrivingEvent = null;
+				if (eventingLogger.isDebugEnabled()) {
+					eventingLogger.debug("t: " + t + " car " + this + ": " + curDrivingEvent);
+				}
+				
+			}
+			
+		} else {
+			assert false;
 		}
 	}
 	
@@ -784,7 +775,9 @@ public abstract class Car extends Entity {
 		
 		double goalAngle = Math.atan2(dp.y, dp.x);
 		
-		logger.debug("updateTurn: goalAngle: " + goalAngle);
+		if (logger.isDebugEnabled()) {
+			logger.debug("updateTurn: goalAngle: " + goalAngle);
+		}
 		
 		double dw = ((float)goalAngle) - angle;
 		
@@ -814,7 +807,9 @@ public abstract class Car extends Entity {
 //			String.class.getName();
 //		}
 		
-		logger.debug("updateTurn: dw: " + dw);
+		if (logger.isDebugEnabled()) {
+			logger.debug("updateTurn: dw: " + dw);
+		}
 		
 		float goalAngVel = (float)(dw / MODEL.dt);
 		
@@ -853,7 +848,9 @@ public abstract class Car extends Entity {
 //			assert false;
 		}
 		
-		logger.debug("braking dv: " + dv);
+		if (logger.isDebugEnabled()) {
+			logger.debug("braking dv: " + dv);
+		}
 		
 		float rightBrakeImpulse = (float)(brakeForwardImpulseCoefficient * dv * mass);
 		float upBrakeImpulse = (float)(brakeLateralImpulseCoefficient * cancelingUpVel * mass);
@@ -904,9 +901,11 @@ public abstract class Car extends Entity {
 			
 			if (stoppedTime == -1) {
 				
-				if (DMath.equals(vel.length(), 0.0)) {
+				if (DMath.equals(vel.lengthSquared(), 0.0)) {
 					
-					logger.debug("stopped: " + t);
+					if (logger.isDebugEnabled()) {
+						logger.debug("stopped: " + t);
+					}
 					stoppedTime = t;
 					
 				}
@@ -987,10 +986,10 @@ public abstract class Car extends Entity {
 		int sheetCol = 0;
 		int sheetRow = getSheetRow();
 		g2.drawImage(VIEW.sheet,
-				(int)(-CAR_LENGTH * MODEL.PIXELS_PER_METER * 0.5),
-				(int)(-CAR_LENGTH * MODEL.PIXELS_PER_METER * 0.25),
-				(int)(CAR_LENGTH * MODEL.PIXELS_PER_METER * 0.5),
-				(int)(CAR_LENGTH * MODEL.PIXELS_PER_METER * 0.25),
+				-HALF_CAR_LENGTH_PIXELS,
+				-HALF_CAR_WIDTH_PIXELS,
+				HALF_CAR_LENGTH_PIXELS,
+				HALF_CAR_WIDTH_PIXELS,
 				sheetCol, sheetRow, sheetCol+64, sheetRow+32,
 				null);
 		
@@ -1004,10 +1003,10 @@ public abstract class Car extends Entity {
 //		
 		if (state == CarStateEnum.BRAKING) {
 			g2.drawImage(VIEW.sheet,
-					(int)(-CAR_LENGTH * MODEL.PIXELS_PER_METER * 0.5),
-					(int)(-CAR_LENGTH * MODEL.PIXELS_PER_METER * 0.25),
-					(int)(CAR_LENGTH * MODEL.PIXELS_PER_METER * 0.5),
-					(int)(CAR_LENGTH * MODEL.PIXELS_PER_METER * 0.25),
+					-HALF_CAR_LENGTH_PIXELS,
+					-HALF_CAR_WIDTH_PIXELS,
+					HALF_CAR_LENGTH_PIXELS,
+					HALF_CAR_WIDTH_PIXELS,
 					sheetCol+64+64, sheetRow, sheetCol+64+64+64, sheetRow+32,
 					null);
 		}

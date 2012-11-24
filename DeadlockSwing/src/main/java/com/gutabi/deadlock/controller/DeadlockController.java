@@ -9,16 +9,13 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 import org.apache.log4j.Logger;
 
-import com.gutabi.deadlock.DeadlockMain;
 import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
+import com.gutabi.deadlock.core.geom.Capsule;
 import com.gutabi.deadlock.core.geom.Circle;
 import com.gutabi.deadlock.core.geom.SweepEvent;
 import com.gutabi.deadlock.core.geom.SweepEvent.SweepEventType;
@@ -51,8 +48,9 @@ public class DeadlockController implements ActionListener {
 	
 	public MouseController mc;
 	public KeyboardController kc;
+//	public WindowController wc;
 	
-	ExecutorService e;
+//	ExecutorService e;
 	
 	Logger logger = Logger.getLogger(DeadlockController.class);
 	
@@ -64,9 +62,14 @@ public class DeadlockController implements ActionListener {
 		
 		mc = new MouseController();
 		kc = new KeyboardController();
+//		wc = new WindowController();
 		
 		VIEW.canvas.addMouseListener(mc);
 		VIEW.canvas.addMouseMotionListener(mc);
+		
+//		VIEW.frame.addWindowFocusListener(wc);
+//		VIEW.frame.addWindowListener(wc);
+//		VIEW.frame.addWindowStateListener(wc);
 		
 		VIEW.previewPanel.addMouseListener(mc);
 		VIEW.previewPanel.addMouseMotionListener(mc);
@@ -75,31 +78,32 @@ public class DeadlockController implements ActionListener {
 		
 //		MODEL.debugStroke = new Stroke(Vertex.INIT_VERTEX_RADIUS);
 		
-		e = Executors.newSingleThreadExecutor();
-		
-		try {
-			queueAndWait(new Runnable(){
-
-				@Override
-				public void run() {
-					Thread.currentThread().setName("controller");
-					Thread.currentThread().setUncaughtExceptionHandler(DeadlockMain.handler);
-				}});
-			
-		} catch (Exception e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
+//		e = Executors.newSingleThreadExecutor();
+//		
+//		try {
+//			queueAndWait(new Runnable(){
+//
+//				@Override
+//				public void run() {
+//					Thread.currentThread().setName("controller");
+//					Thread.currentThread().setUncaughtExceptionHandler(DeadlockMain.handler);
+//				}});
+//			
+//		} catch (Exception e1) {
+//			// TODO Auto-generated catch block
+//			e1.printStackTrace();
+//		}
 	}
 	
 	public void queue(Runnable task) {
-		//Future f = e.submit(task);
-		e.execute(task);
+//		e.execute(task);
+		task.run();
 	}
 	
 	public void queueAndWait(Runnable task) throws InterruptedException, ExecutionException {
-		Future<?> f = e.submit(task);
-		f.get();
+//		Future<?> f = e.submit(task);
+//		f.get();
+		task.run();
 	}
 	
 //	Runnable renderRunnable = new Runnable() {
@@ -112,10 +116,10 @@ public class DeadlockController implements ActionListener {
 //		SwingUtilities.invokeLater(renderRunnable);
 //	}
 	
-	public void renderBackgroundAndPaint() {
-		VIEW.renderBackgroundFresh();
-		VIEW.repaint();
-	}
+//	public void renderBackgroundAndPaint() {
+//		VIEW.renderBackgroundFresh();
+//		VIEW.repaint();
+//	}
 	
 	Point lastPressPanelPoint;
 	Point lastPressPreviewPoint;
@@ -233,6 +237,8 @@ public class DeadlockController implements ActionListener {
 			VIEW.worldOriginX = originalX + 10*x;
 			VIEW.worldOriginY = originalY + 10*y;
 			
+			VIEW.repaintControlPanel();
+			VIEW.renderBackgroundFresh();
 			VIEW.repaint();
 			
 		}
@@ -280,7 +286,8 @@ public class DeadlockController implements ActionListener {
 			case DRAFTING:
 				draftEnd();
 				
-				renderBackgroundAndPaint();
+				VIEW.renderBackgroundFresh();
+				VIEW.repaint();
 				
 				break;
 			case RUNNING:
@@ -349,7 +356,8 @@ public class DeadlockController implements ActionListener {
 				
 				MODEL.world.addVertexTop(new Intersection(MODEL.cursor.getPoint()));
 				
-				renderBackgroundAndPaint();
+				VIEW.renderBackgroundFresh();
+				VIEW.repaint();
 				
 			}
 			
@@ -396,7 +404,8 @@ public class DeadlockController implements ActionListener {
 				
 				MODEL.cursor.setPoint(lastMovedWorldPoint);
 				
-				renderBackgroundAndPaint();
+				VIEW.renderBackgroundFresh();
+				VIEW.repaint();
 				
 			}
 			
@@ -411,7 +420,8 @@ public class DeadlockController implements ActionListener {
 		
 		MODEL.grid = !MODEL.grid;
 		
-		renderBackgroundAndPaint();
+		VIEW.renderBackgroundFresh();
+		VIEW.repaint();
 		
 	}
 	
@@ -456,7 +466,8 @@ public class DeadlockController implements ActionListener {
 			
 		}
 		
-		renderBackgroundAndPaint();
+		VIEW.renderBackgroundFresh();
+		VIEW.repaint();
 		
 	}
 	
@@ -472,7 +483,8 @@ public class DeadlockController implements ActionListener {
 					
 					s.setEnabled(true);
 					
-					renderBackgroundAndPaint();
+					VIEW.renderBackgroundFresh();
+					VIEW.repaint();
 				}
 				
 			} else {
@@ -500,7 +512,8 @@ public class DeadlockController implements ActionListener {
 				
 				MODEL.cursor.setPoint(lastMovedWorldPoint);
 				
-				renderBackgroundAndPaint();
+				VIEW.renderBackgroundFresh();
+				VIEW.repaint();
 				
 			}
 			
@@ -549,13 +562,16 @@ public class DeadlockController implements ActionListener {
 					
 					i.setTurning(Turning.COUNTERCLOCKWISE);
 					
-					renderBackgroundAndPaint();
+					VIEW.renderBackgroundFresh();
+					VIEW.repaint();
+					
 				} else if (MODEL.hilited instanceof Road) {
 					Road r = (Road)MODEL.hilited;
 					
 					r.setDirection(Axis.NONE, EdgeDirection.STARTTOEND);
 					
-					renderBackgroundAndPaint();
+					VIEW.renderBackgroundFresh();
+					VIEW.repaint();
 					
 				}
 				
@@ -580,14 +596,16 @@ public class DeadlockController implements ActionListener {
 					
 					i.setTurning(Turning.CLOCKWISE);
 					
-					renderBackgroundAndPaint();
+					VIEW.renderBackgroundFresh();
+					VIEW.repaint();
 					
 				} else if (MODEL.hilited instanceof Road) {
 					Road r = (Road)MODEL.hilited;
 					
 					r.setDirection(Axis.NONE, EdgeDirection.ENDTOSTART);
 					
-					renderBackgroundAndPaint();
+					VIEW.renderBackgroundFresh();
+					VIEW.repaint();
 					
 				}
 				
@@ -612,13 +630,16 @@ public class DeadlockController implements ActionListener {
 					
 					i.setTurning(Turning.NONE);
 					
-					renderBackgroundAndPaint();
+					VIEW.renderBackgroundFresh();
+					VIEW.repaint();
+					
 				} else if (MODEL.hilited instanceof Road) {
 					Road r = (Road)MODEL.hilited;
 					
 					r.setDirection(Axis.NONE, EdgeDirection.NONE);
 				
-					renderBackgroundAndPaint();
+					VIEW.renderBackgroundFresh();
+					VIEW.repaint();
 					
 				}
 				
@@ -632,7 +653,7 @@ public class DeadlockController implements ActionListener {
 	}
 	
 	public void startRunning() {
-		assert Thread.currentThread().getName().equals("controller");
+//		assert Thread.currentThread().getName().equals("controller");
 		
 		mode = ControlMode.RUNNING;
 		
@@ -644,7 +665,7 @@ public class DeadlockController implements ActionListener {
 	}
 	
 	public void stopRunning() {
-		assert Thread.currentThread().getName().equals("controller");
+//		assert Thread.currentThread().getName().equals("controller");
 		
 		MODEL.cursor = new RegularCursor();
 		
@@ -680,7 +701,7 @@ public class DeadlockController implements ActionListener {
 	
 	
 	private void draftStart(Point p) {
-		assert Thread.currentThread().getName().equals("controller");
+//		assert Thread.currentThread().getName().equals("controller");
 			
 		mode = ControlMode.DRAFTING;
 		
@@ -692,13 +713,13 @@ public class DeadlockController implements ActionListener {
 	}
 	
 	private void draftMove(Point p) {
-		assert Thread.currentThread().getName().equals("controller");
+//		assert Thread.currentThread().getName().equals("controller");
 
 		MODEL.stroke.add(VIEW.panelToWorld(p));
 	}
 	
 	private void draftEnd() {
-		assert Thread.currentThread().getName().equals("controller");
+//		assert Thread.currentThread().getName().equals("controller");
 		
 		processNewStroke();
 		
@@ -788,7 +809,8 @@ public class DeadlockController implements ActionListener {
 			
 			MODEL.DEBUG_DRAW = state;
 			
-			renderBackgroundAndPaint();
+			VIEW.renderBackgroundFresh();
+			VIEW.repaint();
 			
 		} else if (e.getActionCommand().equals("fpsDraw")) {
 			
@@ -796,7 +818,8 @@ public class DeadlockController implements ActionListener {
 			
 			MODEL.FPS_DRAW = state;
 			
-			renderBackgroundAndPaint();
+			VIEW.renderBackgroundFresh();
+			VIEW.repaint();
 			
 		}
 	}
@@ -854,40 +877,44 @@ public class DeadlockController implements ActionListener {
 				
 				Entity hit = MODEL.world.pureGraphBestHitTest(e.circle);
 				
-				if (hit == null || hit instanceof Road) {
+				if (hit instanceof Vertex) {
+					e.setVertex((Vertex)hit);
+					continue;
+				}
+				
+				GraphPosition pos = null;
+				
+				/*
+				 * find better place to split by checking for intersection with road
+				 */
+				Circle a;
+				Circle b;
+				int j = e.index;
+				if (e.type == SweepEventType.ENTERCAPSULE) {
+					a = e.circle;
+					b = new Circle(null, s.pts.get(j+1), e.circle.radius);
+				} else {
+					a = new Circle(null, s.pts.get(j), e.circle.radius);
+					b = e.circle;
+				}
+				
+				while (true) {
 					
-					GraphPosition pos = null;
+					hit = MODEL.world.pureGraphBestHitTest(new Capsule(null, a, b));
 					
-					/*
-					 * find better place to split by checking for intersection with road
-					 */
-					for (int j = e.index; (e.type == SweepEventType.ENTERCAPSULE) ? j < s.pts.size()-1 : j >= 0; j += (e.type == SweepEventType.ENTERCAPSULE) ? 1 : -1) {
-						Point a = s.pts.get(j);
-						Point b = s.pts.get(j+1);
+					if (hit == null) {
 						
-						if (hit == null) {
-							if (e.type == SweepEventType.ENTERCAPSULE) {
-								hit = MODEL.world.pureGraphBestHitTest(new Circle(null, b, e.circle.radius));
-							} else {
-								hit = MODEL.world.pureGraphBestHitTest(new Circle(null, a, e.circle.radius));
-							}
-							if (hit == null) {
-								continue;
-							} else if (hit instanceof Vertex) {
-								pos = new VertexPosition((Vertex)hit);
-								break;
-							}
-						}
+					} else if (hit instanceof Vertex) {
+						pos = new VertexPosition((Vertex)hit);
+						break;
+					} else {
 						
-						RoadPosition skeletonIntersection = ((Road)hit).findSkeletonIntersection(a, b);
+						RoadPosition skeletonIntersection = (RoadPosition)((Road)hit).findSkeletonIntersection(a.center, b.center);
 						
 						if (skeletonIntersection != null) {
 							
-							double strokeCombo = j + Point.param(skeletonIntersection.p, a, b);
-							
-							if ((e.type == SweepEventType.ENTERCAPSULE) ? DMath.greaterThanEquals(strokeCombo, (e.index+e.param)) : DMath.lessThanEquals(strokeCombo, (e.index+e.param))
-									&& DMath.lessThanEquals(Point.distance(skeletonIntersection.p, e.p), s.r + s.r)
-									) {
+							if (DMath.lessThanEquals(Point.distance(skeletonIntersection.p, e.p), s.r + s.r)) {
+								
 								pos = skeletonIntersection;
 								
 								logger.debug("found intersection");
@@ -898,35 +925,40 @@ public class DeadlockController implements ActionListener {
 						
 					}
 					
-					if (pos == null) {
-						logger.debug("pos was null");
-						pos = MODEL.world.findClosestRoadPosition(e.p, e.circle.radius);
+					j += (e.type == SweepEventType.ENTERCAPSULE) ? 1 : -1;
+					
+					if (!((e.type == SweepEventType.ENTERCAPSULE) ? j < s.pts.size()-1 : j >= 0)) {
+						break;
 					}
 					
-					Entity hit2;
-					if (pos instanceof EdgePosition) {
-						hit2 = MODEL.world.pureGraphBestHitTest(new Circle(null, pos.p, e.circle.radius));
-					} else {
-						hit2 = ((VertexPosition)pos).v;
-					}
+					a = new Circle(null, s.pts.get(j), e.circle.radius);
+					b = new Circle(null, s.pts.get(j+1), e.circle.radius);
 					
-					if (hit2 instanceof Road) {
-						Vertex v = MODEL.world.splitRoadTop((RoadPosition)pos);
-						
-						assert e.circle.intersect(v.shape);
-						
-						e.setVertex(v);
-					} else {
-						e.setVertex((Vertex)hit2);
-					}
-					
-					assert MODEL.world.checkConsistency();
-					
-				} else if (hit instanceof Vertex) {
-					e.setVertex((Vertex)hit);
-				} else {
-					assert false;
 				}
+				
+				if (pos == null) {
+					logger.debug("pos was null");
+					pos = MODEL.world.findClosestRoadPosition(e.p, e.circle.radius);
+				}
+				
+				Entity hit2;
+				if (pos instanceof EdgePosition) {
+					hit2 = MODEL.world.pureGraphBestHitTest(new Circle(null, pos.p, e.circle.radius));
+				} else {
+					hit2 = ((VertexPosition)pos).v;
+				}
+				
+				if (hit2 instanceof Road) {
+					Vertex v = MODEL.world.splitRoadTop((RoadPosition)pos);
+					
+					assert e.circle.intersect(v.shape);
+					
+					e.setVertex(v);
+				} else {
+					e.setVertex((Vertex)hit2);
+				}
+				
+				assert MODEL.world.checkConsistency();
 				
 			} else if (e.type == SweepEventType.ENTERCIRCLE) {
 				e.setVertex((Vertex)e.shape.parent);

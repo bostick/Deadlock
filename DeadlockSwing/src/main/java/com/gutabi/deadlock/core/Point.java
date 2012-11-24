@@ -9,25 +9,16 @@ public class Point {
 	public final double x;
 	public final double y;
 	
-//	public final double length;
-	
 	private int hash;
 	
 	public Point(double x, double y) {
-		
 		this.x = x;
 		this.y = y;
-		
-//		length = Math.hypot(x, y);
-		
 	}
 	
-	@Override
 	public boolean equals(Object o) {
 		if (this == o) {
 			return true;
-		} else if (o.hashCode() != hashCode()) {
-			return false;
 		} else if (!(o instanceof Point)) {
 			return false;
 		} else {
@@ -36,7 +27,6 @@ public class Point {
 		}
 	}
 	
-	@Override
 	public int hashCode() {
 		if (hash == 0) {
 			int h = 17;
@@ -231,17 +221,19 @@ public class Point {
 			throw new IllegalArgumentException();
 		}
 		
-		Point c = point(start, end, param);
+//		Point c = point(start, end, param);
+		double cx = start.x + param * (end.x - start.x);
+		double cy = start.y + param * (end.y - start.y);
 		
 		double rad = Math.atan2(end.y - start.y, end.x - start.x);
-		double x = Math.cos(rad) * dist + c.x;
-		double y = Math.sin(rad) * dist + c.y;
+		double x = Math.cos(rad) * dist + cx;
+		double y = Math.sin(rad) * dist + cy;
 		
-		Point m = new Point(x, y);
+//		Point m = new Point(x, y);
 		
-		assert DMath.equals(distance(c, m), dist);
+		assert DMath.equals(distance(cx, cy, x, y), dist);
 		
-		return param(m, start, end);
+		return param(x, y, start, end);
 		
 	}
 	
@@ -257,17 +249,19 @@ public class Point {
 			throw new IllegalArgumentException();
 		}
 		
-		Point c = point(start, end, param);
+//		Point c = point(start, end, param);
+		double cx = start.x + param * (end.x - start.x);
+		double cy = start.y + param * (end.y - start.y);
 		
 		double rad = Math.atan2(start.y - end.y, start.x - end.x);
-		double x = Math.cos(rad) * dist + c.x;
-		double y = Math.sin(rad) * dist + c.y;
+		double x = Math.cos(rad) * dist + cx;
+		double y = Math.sin(rad) * dist + cy;
 		
-		Point m = new Point(x, y);
+//		Point m = new Point(x, y);
 		
-		assert DMath.equals(distance(c, m), dist);
+		assert DMath.equals(distance(cx, cy, x, y), dist);
 		
-		return param(m, start, end);
+		return param(x, y, start, end);
 		
 	}
 	
@@ -373,30 +367,37 @@ public class Point {
 		}
 	}
 	
-	public Point normalize() {
-		double atan = Math.atan2(y, x);
-		return new Point(Math.cos(atan), Math.sin(atan));
-	}
+//	public Point normalizeX() {
+////		double atan = Math.atan2(y, x);
+////		return new Point(Math.cos(atan), Math.sin(atan));
+//		double len = Math.hypot(x, y);
+//		double invLen = 1 / len;
+//		return new Point(x * invLen, y * invLen);
+//	}
 	
 //	public static double signedArea(Point p0, Point p1, Point p2) {
 //		return (p1.x-p0.x)*(p2.y-p0.y) - (p2.x-p0.x)*(p1.y-p0.y);
 //	}
 	
+	public static double param(Point b, Point c, Point d) {
+		return param(b.x, b.y, c, d);
+	}
+	
 	/**
 	 * assuming it is, return param for point b on line defined by &lt;c, d>
 	 */
-	public static double param(Point b, Point c, Point d) {
+	public static double param(double bx, double by, Point c, Point d) {
 		
-		if (b.equals(c)) {
+		if (DMath.equals(bx, c.x) && DMath.equals(by, c.y)) {
 			return 0.0;
 		}
-		if (b.equals(d)) {
+		if (DMath.equals(bx, d.x) && DMath.equals(by, d.y)) {
 			return 1.0;
 		}
 		
-		double xbc = b.x - c.x;
+		double xbc = bx - c.x;
 		double xdc = d.x - c.x;
-		double ybc = b.y - c.y;
+		double ybc = by - c.y;
 		double ydc = d.y - c.y;
 		if (DMath.equals(xdc, 0.0)) {
 			assert DMath.equals(xbc, 0);
@@ -522,35 +523,56 @@ public class Point {
 	/**
 	 * for coord system with <0, 0> in upper left, y extending down
 	 */
-	public static Point cw90(Point p) {
-		return new Point(-p.y, p.x);
+	public static Point cw90AndNormalize(Point p) {
+		double newX = -p.y;
+		double newY = p.x;
+		
+		double len = Math.hypot(newX, newY);
+		double invLen = 1 / len;
+		return new Point(newX * invLen, newY * invLen);
 	}
 	
 	/**
 	 * for coord system with <0, 0> in upper left, y extending down
 	 */
-	public static Point ccw90(Point p) {
-		return new Point(p.y, -p.x);
+	public static Point ccw90AndNormalize(Point p) {
+		double newX = p.y;
+		double newY = -p.x;
+		
+		double len = Math.hypot(newX, newY);
+		double invLen = 1 / len;
+		return new Point(newX * invLen, newY * invLen);
 	}
 	
 	public Point multiply(double scale) {
 		return new Point(x * scale, y * scale);
 	}
 	
-	public static Point plus(Point a, Point b) {
-		return new Point(a.x + b.x, a.y + b.y);
-	}
-	
-	public static Point minus(Point a, Point b) {
-		return new Point(a.x - b.x, a.y - b.y);
-	}
+//	public static Point plus(Point a, Point b) {
+//		return new Point(a.x + b.x, a.y + b.y);
+//	}
+//	
+//	public static Point minus(Point a, Point b) {
+//		return new Point(a.x - b.x, a.y - b.y);
+//	}
 	
 	public Point plus(Point b) {
-		return plus(this, b);
+		return new Point(x + b.x, y + b.y);
 	}
 	
 	public Point minus(Point b) {
-		return minus(this, b);
+		return new Point(x - b.x, y - b.y);
+	}
+	
+	public Point minusAndNormalize(Point b) {
+		
+		double newX = x - b.x;
+		double newY = y - b.y;
+		
+		double len = Math.hypot(newX, newY);
+		double invLen = 1 / len;
+		return new Point(newX * invLen, newY * invLen);
+		
 	}
 	
 }

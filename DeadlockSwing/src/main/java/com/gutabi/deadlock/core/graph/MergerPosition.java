@@ -83,8 +83,6 @@ public class MergerPosition extends EdgePosition {
 	public boolean equals(Object o) {
 		if (this == o) {
 			return true;
-		} else if (o.hashCode() != hashCode()) {
-			return false;
 		} else if (!(o instanceof MergerPosition)) {
 			return false;
 		} else {
@@ -166,7 +164,6 @@ public class MergerPosition extends EdgePosition {
 	}
 	
 	public double distanceToConnectedVertex(Vertex v) {
-//		assert entity.getVertices(axis).contains(v);
 		if (axis == Axis.LEFTRIGHT) {
 			if (v == m.left) {
 				return distanceToLeftOfMerger;

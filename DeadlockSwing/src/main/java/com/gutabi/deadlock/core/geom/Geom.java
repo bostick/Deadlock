@@ -26,15 +26,15 @@ public class Geom {
 		}
 	}
 	
-	public static Point localToWorld(Point l, Matrix m, Point t) {
-		return m.times(l).plus(t);
+	public static Point localToWorld(Point l, double[][] m, Point t) {
+		return Matrix.times(m, l).plus(t);
 	}
 	
-	public static Quad localToWorld(Quad q, Matrix m, Point t) {
-		Point w0 = m.times(q.p0).plus(t);
-		Point w1 = m.times(q.p1).plus(t);
-		Point w2 = m.times(q.p2).plus(t);
-		Point w3 = m.times(q.p3).plus(t);
+	public static Quad localToWorld(Quad q, double[][] m, Point t) {
+		Point w0 = Matrix.times(m, q.p0).plus(t);
+		Point w1 = Matrix.times(m, q.p1).plus(t);
+		Point w2 = Matrix.times(m, q.p2).plus(t);
+		Point w3 = Matrix.times(m, q.p3).plus(t);
 		return new Quad(q.parent, w0, w1, w2, w3);
 	}
 }

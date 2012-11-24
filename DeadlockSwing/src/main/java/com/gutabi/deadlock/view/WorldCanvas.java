@@ -1,17 +1,21 @@
 package com.gutabi.deadlock.view;
 
+
+import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
+
 import java.awt.Canvas;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferStrategy;
 
-import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
+
 
 @SuppressWarnings("serial")
 public class WorldCanvas extends Canvas {
 	
 	BufferStrategy bs;
+//	Graphics2D canvasGraphics2D;
 	
 	public WorldCanvas() {
 		
@@ -24,15 +28,21 @@ public class WorldCanvas extends Canvas {
 	public void postDisplay() {
 		this.createBufferStrategy(2);
 		bs = getBufferStrategy();
+//		canvasGraphics2D = (Graphics2D)bs.getDrawGraphics();
 	}
 	
-	@Override
+	
+	
+//	@Override
 	public void paint(Graphics g) {
+		
 //		super.paint(g);
-		Graphics2D g2 = (Graphics2D)g;
+//		Graphics2D g2 = (Graphics2D)g;
 		
-		MODEL.paint(g2);
+		bs.show();
 		
+//
+//		
 	}
 	
 }

@@ -17,7 +17,7 @@ public class SweepUtils {
 	public static double sweepCircleLine(Point a, Point b, Point c, Point d, double r) {
 		
 		Point diff = new Point(b.x - a.x, b.y - a.y);
-		Point norm = Point.ccw90(diff).normalize();
+		Point norm = Point.ccw90AndNormalize(diff);
 		
 		/*
 		 * test <a, b>

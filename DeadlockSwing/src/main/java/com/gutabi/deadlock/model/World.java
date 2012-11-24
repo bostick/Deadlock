@@ -450,9 +450,9 @@ public class World implements Sweepable {
 		return graph.graphHitTest(p);
 	}
 	
-	public Entity graphBestHitTest(Shape s) {
-		return graph.graphBestHitTest(s);
-	}
+//	public Entity graphBestHitTestX(Shape s) {
+//		return graph.graphBestHitTest(s);
+//	}
 	
 	public Entity pureGraphBestHitTest(Shape s) {
 		return graph.pureGraphBestHitTest(s);

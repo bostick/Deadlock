@@ -27,7 +27,8 @@ public class Stats {
 		
 		g2.setStroke(VIEW.worldStroke);
 		
-		g2.translate(VIEW.worldAABBX, VIEW.worldAABBY);
+//		g2.translate(VIEW.worldAABBX, VIEW.worldAABBY);
+		g2.translate(10, 10);
 		
 		frameCount++;
 		

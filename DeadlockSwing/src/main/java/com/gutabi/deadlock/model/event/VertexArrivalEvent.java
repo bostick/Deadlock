@@ -13,15 +13,10 @@ public class VertexArrivalEvent extends VertexEvent {
 	public final GraphPositionPathPosition entrancePosition;
 	public final StopSign sign;
 	
-//	public final GraphPositionPathPosition borderMatchingPosition;
-	
 	private int hash;
 	
 	public VertexArrivalEvent(GraphPositionPathPosition entrancePosition) {
 		super(entrancePosition.nextBound());
-//		super(((VertexPosition)(gppp.nextBound()).gpos).v);
-		
-//		this.gppp = gppp;
 		this.entrancePosition = entrancePosition;
 		
 		sign = ((RoadPosition)entrancePosition.gpos).sign;
@@ -41,8 +36,6 @@ public class VertexArrivalEvent extends VertexEvent {
 	public boolean equals(Object o) {
 		if (this == o) {
 			return true;
-		} else if (o.hashCode() != hashCode()) {
-			return false;
 		} else if (!(o instanceof VertexArrivalEvent)) {
 			return false;
 		} else {
@@ -50,9 +43,5 @@ public class VertexArrivalEvent extends VertexEvent {
 			return v == b.v;
 		}
 	}
-	
-//	public GraphPositionPathPosition getGraphPositionPathPosition() {
-//		return gppp;
-//	}
 	
 }
