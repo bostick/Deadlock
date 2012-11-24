@@ -10,26 +10,26 @@ public class ShapeUtils {
 		double[] q0Projection = new double[2];
 		double[] q1Projection = new double[2];
 		
-		q0.project(q0.n01, q0Projection);
+		q0.projectN01(q0Projection);
 		q1.project(q0.n01, q1Projection);
 		if (!DMath.rangesOverlap(q0Projection, q1Projection)) {
 			return false;
 		}
 		
-		q0.project(q0.n01, q0Projection);
-		q1.project(q0.n01, q1Projection);
+		q0.projectN12(q0Projection);
+		q1.project(q0.n12, q1Projection);
 		if (!DMath.rangesOverlap(q0Projection, q1Projection)) {
 			return false;
 		}
 		
 		q0.project(q1.n01, q0Projection);
-		q1.project(q1.n01, q1Projection);
+		q1.projectN01(q1Projection);
 		if (!DMath.rangesOverlap(q0Projection, q1Projection)) {
 			return false;
 		}
 		
 		q0.project(q1.n12, q0Projection);
-		q1.project(q1.n12, q1Projection);
+		q1.projectN12(q1Projection);
 		if (!DMath.rangesOverlap(q0Projection, q1Projection)) {
 			return false;
 		}
@@ -42,13 +42,13 @@ public class ShapeUtils {
 		double[] q0Projection = new double[2];
 		double[] c1Projection = new double[2];
 		
-		q0.project(q0.n01, q0Projection);
+		q0.projectN01(q0Projection);
 		c1.project(q0.n01, c1Projection);
 		if (!DMath.rangesOverlap(q0Projection, c1Projection)) {
 			return false;
 		}
 		
-		q0.project(q0.n12, q0Projection);
+		q0.projectN12(q0Projection);
 		c1.project(q0.n12, c1Projection);
 		if (!DMath.rangesOverlap(q0Projection, c1Projection)) {
 			return false;

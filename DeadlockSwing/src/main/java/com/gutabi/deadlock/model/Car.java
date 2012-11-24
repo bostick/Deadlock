@@ -980,17 +980,17 @@ public abstract class Car extends Entity {
 		if (inMerger) {
 			g2.setComposite(aComp);
 		} else {
-			g2.setComposite(normalComp);
+//			g2.setComposite(normalComp);
 		}
 		
-		int sheetCol = 0;
+//		int sheetCol = 0;
 		int sheetRow = getSheetRow();
 		g2.drawImage(VIEW.sheet,
 				-HALF_CAR_LENGTH_PIXELS,
 				-HALF_CAR_WIDTH_PIXELS,
 				HALF_CAR_LENGTH_PIXELS,
 				HALF_CAR_WIDTH_PIXELS,
-				sheetCol, sheetRow, sheetCol+64, sheetRow+32,
+				64, sheetRow, 64+32, sheetRow+16,
 				null);
 		
 //		g2.drawImage(MODEL.world.sheet,
@@ -1002,16 +1002,20 @@ public abstract class Car extends Entity {
 //				null);
 //		
 		if (state == CarStateEnum.BRAKING) {
-			g2.drawImage(VIEW.sheet,
-					-HALF_CAR_LENGTH_PIXELS,
-					-HALF_CAR_WIDTH_PIXELS,
-					HALF_CAR_LENGTH_PIXELS,
-					HALF_CAR_WIDTH_PIXELS,
-					sheetCol+64+64, sheetRow, sheetCol+64+64+64, sheetRow+32,
-					null);
+//			g2.drawImage(VIEW.sheet,
+//					-HALF_CAR_LENGTH_PIXELS,
+//					-HALF_CAR_WIDTH_PIXELS,
+//					HALF_CAR_LENGTH_PIXELS,
+//					HALF_CAR_WIDTH_PIXELS,
+//					192, sheetRow, 192+64, sheetRow+32,
+//					null);
 		}
 		
-		g2.setComposite(origComposite);
+		if (inMerger) {
+			g2.setComposite(origComposite);
+		} else {
+//			g2.setComposite(normalComp);
+		}
 		g2.setTransform(origTransform);
 		
 	}

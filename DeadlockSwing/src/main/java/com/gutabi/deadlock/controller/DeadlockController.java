@@ -677,7 +677,7 @@ public class DeadlockController implements ActionListener {
 	}
 	
 	public void pauseRunning() {
-		assert Thread.currentThread().getName().equals("controller");
+//		assert Thread.currentThread().getName().equals("controller");
 		
 		MODEL.cursor.setPoint(lastMovedWorldPoint);
 		

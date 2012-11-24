@@ -23,6 +23,9 @@ public class Quad extends Shape {
 //	public final Point n23;
 //	public final Point n30;
 	
+	double[] n01Projection;
+	double[] n12Projection;
+	
 	private int hash;
 	
 	public Quad(Object parent, Point p0, Point p1, Point p2, Point p3) {
@@ -41,6 +44,12 @@ public class Quad extends Shape {
 //		n23 = Point.ccw90(edge).normalize();
 //		edge = p0.minus(p3);
 //		n30 = Point.ccw90(edge).normalize();
+		
+		n01Projection = new double[2];
+		project(n01, n01Projection);
+		
+		n12Projection = new double[2];
+		project(n12, n12Projection);
 		
 		double ulX = Math.min(Math.min(p0.x, p1.x), Math.min(p2.x, p3.x));
 		double ulY = Math.min(Math.min(p0.y, p1.y), Math.min(p2.y, p3.y));
@@ -141,6 +150,16 @@ public class Quad extends Shape {
 		
 		out[0] = min;
 		out[1] = max;
+	}
+	
+	public void projectN01(double[] out) {
+		out[0] = n01Projection[0];
+		out[1] = n01Projection[1];
+	}
+	
+	public void projectN12(double[] out) {
+		out[0] = n12Projection[0];
+		out[1] = n12Projection[1];
 	}
 	
 	public void sweepStart(Sweeper s) {
