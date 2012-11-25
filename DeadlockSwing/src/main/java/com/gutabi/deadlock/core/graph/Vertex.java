@@ -21,8 +21,8 @@ public abstract class Vertex extends GraphEntity {
 	
 	public final Point p;
 	
-	protected final List<Road> roads = new ArrayList<Road>();
-	protected Merger m;
+	public final List<Road> roads = new ArrayList<Road>();
+	public Merger m;
 	
 	public int id;
 	
@@ -239,9 +239,9 @@ public abstract class Vertex extends GraphEntity {
 		g2.setColor(Color.WHITE);
 		
 		Point worldPoint = p.minus(new Point(r, 0));
-		Point panelPoint = worldPoint.multiply(MODEL.PIXELS_PER_METER);
+		Point canvasPoint = worldPoint.multiply(MODEL.PIXELS_PER_METER);
 		
-		g2.drawString(id + " " + carQueue.size(), (int)(panelPoint.x), (int)(panelPoint.y));
+		g2.drawString(id + " " + carQueue.size(), (int)(canvasPoint.x), (int)(canvasPoint.y));
 		
 	}
 	

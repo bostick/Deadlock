@@ -8,19 +8,6 @@ import com.gutabi.deadlock.core.graph.Vertex;
 
 public class SweepEvent {
 	
-	public enum SweepEventType {
-		
-		ENTERCAPSULE,
-		EXITCAPSULE,
-		
-		ENTERCIRCLE,
-		EXITCIRCLE,
-		
-		ENTERQUAD,
-		EXITQUAD
-		
-	}
-	
 	public final SweepEventType type;
 	public final Shape shape;
 	public final Sweeper sweeper;
@@ -45,7 +32,7 @@ public class SweepEvent {
 			/*
 			 * TODO: be more specific and test if bordering
 			 */
-			assert shape.intersect(circle);
+			assert ShapeUtils.intersect(shape, circle);
 		}
 		
 	}
@@ -76,11 +63,11 @@ public class SweepEvent {
 					if (a.type == b.type) {
 						return 0;
 					} else {
-						if (a.type == SweepEventType.ENTERCIRCLE && b.type == SweepEventType.ENTERCAPSULE) {
+						if (a.type == SweepEventType.ENTERVERTEX && b.type == SweepEventType.ENTERROADCAPSULE) {
 							return -1;
-						} else if (a.type == SweepEventType.ENTERCIRCLE && b.type == SweepEventType.ENTERQUAD) {
+						} else if (a.type == SweepEventType.ENTERVERTEX && b.type == SweepEventType.ENTERMERGER) {
 							return -1;
-						} else if (a.type == SweepEventType.ENTERQUAD && b.type == SweepEventType.ENTERCAPSULE) {
+						} else if (a.type == SweepEventType.ENTERMERGER && b.type == SweepEventType.ENTERROADCAPSULE) {
 							return 0;
 						} else {
 							/*

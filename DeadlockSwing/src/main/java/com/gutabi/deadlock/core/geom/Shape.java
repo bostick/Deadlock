@@ -7,11 +7,11 @@ import com.gutabi.deadlock.core.geom.tree.AABB;
 
 public abstract class Shape implements Sweepable {
 	
-	public final Object parent;
+	public final Sweepable parent;
 	
 	public AABB aabb;
 	
-	public Shape(Object parent) {
+	public Shape(Sweepable parent) {
 		this.parent = parent;
 	}
 	
@@ -19,7 +19,7 @@ public abstract class Shape implements Sweepable {
 	
 	public abstract boolean hitTest(Point p);
 	
-	public abstract boolean intersect(Shape s);
+//	public abstract boolean intersect(Shape s);
 	
 	public abstract void paint(Graphics2D g2);
 	

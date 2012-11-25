@@ -14,7 +14,7 @@ import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.Capsule;
 import com.gutabi.deadlock.core.geom.Circle;
 import com.gutabi.deadlock.core.geom.SweepEvent;
-import com.gutabi.deadlock.core.geom.SweepEvent.SweepEventType;
+import com.gutabi.deadlock.core.geom.SweepEventType;
 import com.gutabi.deadlock.core.geom.Sweeper;
 import com.gutabi.deadlock.core.geom.tree.AABB;
 
@@ -68,17 +68,17 @@ public class Stroke {
 		
 		List<Circle> circs = new ArrayList<Circle>();
 		for (Point p : pts) {
-			circs.add(new Circle(this, p, r));
+			circs.add(new Circle(null, p, r));
 		}
 		
 		List<Capsule> caps = new ArrayList<Capsule>();
 		for (int i = 0; i < pts.size()-1; i++) {
 			Circle a = circs.get(i);
 			Circle b = circs.get(i+1);
-			caps.add(new Capsule(this, a, b));
+			caps.add(new Capsule(null, a, b));
 		}
 		
-		sweeper = new Sweeper(this, caps) {
+		sweeper = new Sweeper(null, caps) {
 			public void start(SweepEvent e) {
 				events.add(e);
 			}
@@ -123,54 +123,66 @@ public class Stroke {
 			vertexEvents.add(new SweepEvent(null, null, sweeper, pts.size()-1, 0.0));
 		}
 		
+		
+		List<SweepEvent> adj = new ArrayList<SweepEvent>();
+		
+		for (int i = 0; i < vertexEvents.size(); i++) {
+			SweepEvent e = vertexEvents.get(i);
+			if (e.type == SweepEventType.EXITMERGER) {
+				/*
+				 * if there is an EXITMERGER event, then ignore this stroke
+				 */
+				return adj;
+			}
+		}
+		
 		/*
 		 * go through and give vertex events higher precedence over capsule events
 		 * remove any capsule events between matching vertex events
 		 * and also remove the matching capsule event
 		 */
 		
-		List<SweepEvent> adj = new ArrayList<SweepEvent>();
 		boolean insideCircle = false;
 		boolean lookingForExitCapsule = false;
 		boolean lookingForExitQuad = false;
 		for (int i = 0; i < vertexEvents.size(); i++) {
 			SweepEvent e = vertexEvents.get(i);
 			if (!insideCircle) {
-				if (e.type == SweepEventType.ENTERCIRCLE) {
+				if (e.type == SweepEventType.ENTERVERTEX) {
 					insideCircle = true;
 					adj.add(e);
-				} else if (e.type == SweepEventType.EXITCIRCLE) {
+				} else if (e.type == SweepEventType.EXITVERTEX) {
 					assert false;
 				} else {
 					if (!lookingForExitCapsule && !lookingForExitQuad) {
 						adj.add(e);
 					} else {
 						if (lookingForExitCapsule) {
-							if (e.type == SweepEventType.EXITCAPSULE) {
+							if (e.type == SweepEventType.EXITROADCAPSULE) {
 								lookingForExitCapsule = false;
 							}
 						}
 						if (lookingForExitQuad) {
-							if (e.type == SweepEventType.EXITQUAD) {
+							if (e.type == SweepEventType.EXITMERGER) {
 								lookingForExitQuad = false;
 							}
 						}
 					}
 				}
 			} else {
-				if (e.type == SweepEventType.ENTERCIRCLE) {
+				if (e.type == SweepEventType.ENTERVERTEX) {
 					assert false;
-				} else if (e.type == SweepEventType.EXITCIRCLE) {
+				} else if (e.type == SweepEventType.EXITVERTEX) {
 					insideCircle = false;
 					adj.add(e);
-				} else if (e.type == SweepEventType.ENTERCAPSULE) {
+				} else if (e.type == SweepEventType.ENTERROADCAPSULE) {
 					lookingForExitCapsule = true;
-				} else if (e.type == SweepEventType.EXITCAPSULE) {
+				} else if (e.type == SweepEventType.EXITROADCAPSULE) {
 					assert lookingForExitCapsule;
 					lookingForExitCapsule = false;
-				} else if (e.type == SweepEventType.ENTERQUAD) {
+				} else if (e.type == SweepEventType.ENTERMERGER) {
 					lookingForExitQuad = true;
-				} else if (e.type == SweepEventType.EXITQUAD) {
+				} else if (e.type == SweepEventType.EXITMERGER) {
 					assert lookingForExitQuad;
 					lookingForExitQuad = false;
 				} else {
@@ -195,19 +207,19 @@ public class Stroke {
 			logger.debug("startSorted: " + e + " " + e.shape + " " + e.index + " " + e.param);
 		}
 		switch (e.type) {
-		case ENTERCAPSULE:
+		case ENTERROADCAPSULE:
 			capsuleCount++;
 			if (capsuleCount == 1) {
 				vertexEvents.add(e);
 			}
 			break;
-		case ENTERCIRCLE:
+		case ENTERVERTEX:
 			vertexCount++;
 			if (vertexCount == 1) {
 				vertexEvents.add(e);
 			}
 			break;
-		case ENTERQUAD:
+		case ENTERMERGER:
 			mergerCount++;
 			if (mergerCount == 1) {
 				vertexEvents.add(e);
@@ -224,39 +236,39 @@ public class Stroke {
 			logger.debug("eventSorted: " + e + " " + e.shape + " " + e.index + " " + e.param);
 		}
 		switch (e.type) {
-		case ENTERCIRCLE:
+		case ENTERVERTEX:
 			vertexCount++;
 			if (vertexCount == 1) {
 				vertexEvents.add(e);
 			}
 			break;
-		case EXITCIRCLE:
+		case EXITVERTEX:
 			vertexCount--;
 			assert vertexCount >= 0;
 			if (vertexCount == 0) {
 				vertexEvents.add(e);
 			}
 			break;
-		case ENTERCAPSULE:
+		case ENTERROADCAPSULE:
 			capsuleCount++;
 			if (capsuleCount == 1) {
 				vertexEvents.add(e);
 			}
 			break;
-		case EXITCAPSULE:
+		case EXITROADCAPSULE:
 			capsuleCount--;
 			assert capsuleCount >= 0;
 			if (capsuleCount == 0) {
 				vertexEvents.add(e);
 			}
 			break;
-		case ENTERQUAD:
+		case ENTERMERGER:
 			mergerCount++;
 			if (mergerCount == 1) {
 				vertexEvents.add(e);
 			}
 			break;
-		case EXITQUAD:
+		case EXITMERGER:
 			mergerCount--;
 			assert mergerCount >= 0;
 			if (mergerCount == 0) {
@@ -272,7 +284,7 @@ public class Stroke {
 		aabb = null;
 		
 		for (Point p : pts) {
-			aabb = AABB.union(aabb, new AABB(p.x-r, p.y-r, 2*r, 2*r));
+			aabb = AABB.union(aabb, new AABB(null, p.x-r, p.y-r, 2*r, 2*r));
 		}
 		
 	}

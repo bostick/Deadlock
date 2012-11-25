@@ -99,12 +99,8 @@ public class DeadlockView {
 		return newFrame;
 	}
 	
-	public Point panelToWorld(Point p) {
+	public Point canvasToWorld(Point p) {
 		return new Point((p.x - (0 - worldOriginX)) * MODEL.METERS_PER_PIXEL, (p.y - (0 - worldOriginY)) * MODEL.METERS_PER_PIXEL);
-	}
-	
-	public Point worldToPanel(Point p) {
-		return new Point(p.x * MODEL.PIXELS_PER_METER + (0 - worldOriginX), p.y * MODEL.PIXELS_PER_METER + (0 - worldOriginY));
 	}
 	
 	public void renderBackgroundFresh() {

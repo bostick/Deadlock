@@ -9,7 +9,6 @@ import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.Quad;
-import com.gutabi.deadlock.core.geom.Shape;
 import com.gutabi.deadlock.core.geom.tree.AABB;
 import com.gutabi.deadlock.model.fixture.MergerSink;
 import com.gutabi.deadlock.model.fixture.MergerSource;
@@ -178,6 +177,13 @@ public class Merger extends Edge {
 		distances[right.id][left.id] = Merger.MERGER_WIDTH;
 	}
 	
+//	public void sweepStart(Sweeper s) {
+//		shape.sweepStart(s);
+//	}
+//	
+//	public void sweep(Sweeper s, int index) {
+//		shape.sweep(s, index);
+//	}
 	
 	public GraphPosition travelFromConnectedVertex(Vertex v, double dist) {
 		if (v == top) {
@@ -208,7 +214,7 @@ public class Merger extends Edge {
 		return null;
 	}
 	
-	public Entity decorationsBestHitTest(Shape s) {
+	public Entity decorationsBestHitTest(Entity e) {
 		return null;
 	}
 	
@@ -347,7 +353,7 @@ public class Merger extends Edge {
 	}
 	
 	public static AABB outlineAABB(Point p) {
-		return new AABB(
+		return new AABB(null,
 				p.x - Merger.MERGER_WIDTH/2 - Vertex.INIT_VERTEX_RADIUS,
 				p.y - Merger.MERGER_HEIGHT/2 - Vertex.INIT_VERTEX_RADIUS,
 				Merger.MERGER_WIDTH + 2 * Vertex.INIT_VERTEX_RADIUS,

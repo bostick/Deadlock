@@ -7,7 +7,6 @@ import java.util.Arrays;
 
 import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.core.geom.SweepEvent.SweepEventType;
 import com.gutabi.deadlock.core.geom.tree.AABB;
 
 @SuppressWarnings("static-access")
@@ -26,7 +25,7 @@ public class Quad extends Shape {
 	
 	private int hash;
 	
-	public Quad(Object parent, Point p0, Point p1, Point p2, Point p3) {
+	public Quad(Sweepable parent, Point p0, Point p1, Point p2, Point p3) {
 		super(parent);
 		this.p0 = p0;
 		this.p1 = p1;
@@ -39,18 +38,12 @@ public class Quad extends Shape {
 		edge = p2.minus(p1);
 		n12 = Point.ccw90AndNormalize(edge);
 		
-		n01Projection = new double[2];
-		project(n01, n01Projection);
-		
-		n12Projection = new double[2];
-		project(n12, n12Projection);
-		
 		double ulX = Math.min(Math.min(p0.x, p1.x), Math.min(p2.x, p3.x));
 		double ulY = Math.min(Math.min(p0.y, p1.y), Math.min(p2.y, p3.y));
 		double brX = Math.max(Math.max(p0.x, p1.x), Math.max(p2.x, p3.x));
 		double brY = Math.max(Math.max(p0.y, p1.y), Math.max(p2.y, p3.y));
 		
-		aabb = new AABB(ulX, ulY, (brX - ulX), (brY - ulY));
+		aabb = new AABB(parent, ulX, ulY, (brX - ulX), (brY - ulY));
 	}
 	
 	public int hashCode() {
@@ -77,6 +70,14 @@ public class Quad extends Shape {
 		}
 	}
 	
+	private void computeProjections() {
+		n01Projection = new double[2];
+		project(n01, n01Projection);
+		
+		n12Projection = new double[2];
+		project(n12, n12Projection);
+	}
+	
 	public Quad plus(Point p) {
 		return new Quad(parent, p0.plus(p), p1.plus(p), p2.plus(p), p3.plus(p));
 	}
@@ -99,23 +100,23 @@ public class Quad extends Shape {
 		
 	}
 	
-	public boolean intersect(Shape s) {
-		
-		if (s instanceof Quad) {
-			Quad ss = (Quad)s;
-			
-			return ShapeUtils.intersect(this, ss);
-			
-		} else if (s instanceof Circle) {
-			Circle ss = (Circle)s;
-			
-			return ShapeUtils.intersect(this, ss);
-			
-		} else {
-			return s.intersect(this);
-		}
-		
-	}
+//	public boolean intersect(Shape s) {
+//		
+//		if (s instanceof Quad) {
+//			Quad ss = (Quad)s;
+//			
+//			return ShapeUtils.intersect(this, ss);
+//			
+//		} else if (s instanceof Circle) {
+//			Circle ss = (Circle)s;
+//			
+//			return ShapeUtils.intersect(this, ss);
+//			
+//		} else {
+//			return s.intersect(this);
+//		}
+//		
+//	}
 	
 	public void project(Point axis, double[] out) {
 		double min = Point.dot(axis, p0);
@@ -147,11 +148,17 @@ public class Quad extends Shape {
 	}
 	
 	public void projectN01(double[] out) {
+		if (n01Projection == null) {
+			computeProjections();
+		}
 		out[0] = n01Projection[0];
 		out[1] = n01Projection[1];
 	}
 	
 	public void projectN12(double[] out) {
+		if (n12Projection == null) {
+			computeProjections();
+		}
 		out[0] = n12Projection[0];
 		out[1] = n12Projection[1];
 	}
@@ -160,8 +167,8 @@ public class Quad extends Shape {
 		
 		Capsule cap = s.getCapsule(0);
 		
-		if (intersect(cap.ac)) {
-			s.start(new SweepEvent(SweepEventType.ENTERQUAD, this, s, 0, 0.0));
+		if (ShapeUtils.intersect(this, cap.ac)) {
+			s.start(new SweepEvent(SweepEventType.enter(parent), this, s, 0, 0.0));
 		}
 		
 	}
@@ -173,7 +180,7 @@ public class Quad extends Shape {
 		Point d = cap.b;
 		
 		boolean outside;
-		if (intersect(cap.ac)) {
+		if (ShapeUtils.intersect(this, cap.ac)) {
 			outside = false;
 		} else {
 			outside = true;
@@ -220,9 +227,9 @@ public class Quad extends Shape {
 			assert DMath.greaterThanEquals(param, 0.0) && DMath.lessThanEquals(param, 1.0);
 			if (DMath.lessThan(param, 1.0) || index == s.pointCount()-1) {
 				if (outside) {
-					s.event(new SweepEvent(SweepEventType.ENTERQUAD, this, s, index, param));
+					s.event(new SweepEvent(SweepEventType.enter(parent), this, s, index, param));
 				} else {
-					s.event(new SweepEvent(SweepEventType.EXITQUAD, this, s, index, param));
+					s.event(new SweepEvent(SweepEventType.exit(parent), this, s, index, param));
 				}
 				outside = !outside;
 			}

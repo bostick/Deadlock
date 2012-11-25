@@ -337,7 +337,7 @@ public abstract class Car extends Entity {
 		worldQuad = Geom.localToWorld(localQuad, carTransArr, p);
 		shape = worldQuad;
 		
-		Entity e = MODEL.world.pureGraphBestHitTest(shape);
+		Entity e = MODEL.world.pureGraphBestHitTest(this);
 		
 		boolean wasInMerger = inMerger;
 		if (e == null) {
@@ -1012,11 +1012,11 @@ public abstract class Car extends Entity {
 		g2.setColor(Color.WHITE);
 		
 		Point worldPoint = p.minus(new Point(CAR_LENGTH/2, 0));
-		Point panelPoint = worldPoint.multiply(MODEL.PIXELS_PER_METER);
+		Point canvasPoint = worldPoint.multiply(MODEL.PIXELS_PER_METER);
 		
 		AffineTransform origTransform = g2.getTransform();
 		
-		g2.translate((int)(panelPoint.x), (int)(panelPoint.y));
+		g2.translate((int)(canvasPoint.x), (int)(canvasPoint.y));
 		g2.scale(2.0, 2.0);
 		
 		g2.drawString(Integer.toString(id), 0, 0);

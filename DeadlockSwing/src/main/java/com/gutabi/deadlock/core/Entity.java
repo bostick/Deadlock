@@ -3,6 +3,7 @@ package com.gutabi.deadlock.core;
 import java.awt.Graphics2D;
 
 import com.gutabi.deadlock.core.geom.Shape;
+import com.gutabi.deadlock.core.geom.ShapeUtils;
 import com.gutabi.deadlock.core.geom.Sweepable;
 import com.gutabi.deadlock.core.geom.Sweeper;
 import com.gutabi.deadlock.core.geom.tree.AABB;
@@ -20,17 +21,18 @@ public abstract class Entity implements Sweepable {
 		}
 	}
 	
-	public final Entity bestHitTest(Shape s) {
-		
-		if (!shape.aabb.intersect(s.aabb)) {
-			return null;
-		}
-		
-		if (shape.intersect(s)) {
+	public final Entity bestHitTest(Entity e) {
+		if (ShapeUtils.intersect(shape, e.shape)) {
 			return this;
-		} else {
-			return null;
 		}
+		return null;
+	}
+	
+	public final Entity bestHitTest(Shape s) {
+		if (ShapeUtils.intersect(shape, s)) {
+			return this;
+		}
+		return null;
 	}
 	
 	public final void sweepStart(Sweeper s) {

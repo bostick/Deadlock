@@ -25,6 +25,10 @@ public abstract class Cursor {
 	
 	public abstract boolean intersect(Shape s);
 	
+	public abstract boolean intersect(AABB aabb);
+	
+	public abstract boolean completelyWithin(AABB aabb);
+	
 	public abstract void paint(Graphics2D g2);
 	
 //	protected final void paintAABB(Graphics2D g2) {

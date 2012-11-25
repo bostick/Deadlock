@@ -4,7 +4,7 @@ import java.util.List;
 
 public abstract class Sweeper extends CapsuleSequence {
 	
-	public Sweeper(Object parent, List<Capsule> caps) {
+	public Sweeper(Sweepable parent, List<Capsule> caps) {
 		super(parent, caps);
 	}
 	

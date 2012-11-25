@@ -16,8 +16,9 @@ import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.Capsule;
 import com.gutabi.deadlock.core.geom.Circle;
+import com.gutabi.deadlock.core.geom.ShapeUtils;
 import com.gutabi.deadlock.core.geom.SweepEvent;
-import com.gutabi.deadlock.core.geom.SweepEvent.SweepEventType;
+import com.gutabi.deadlock.core.geom.SweepEventType;
 import com.gutabi.deadlock.core.graph.Axis;
 import com.gutabi.deadlock.core.graph.EdgeDirection;
 import com.gutabi.deadlock.core.graph.EdgePosition;
@@ -69,7 +70,7 @@ public class DeadlockController implements ActionListener {
 		
 	}
 	
-	Point lastPressPanelPoint;
+	Point lastPressCanvasPoint;
 	Point lastPressPreviewPoint;
 	long lastPressTime;
 	
@@ -85,10 +86,10 @@ public class DeadlockController implements ActionListener {
 			
 			VIEW.canvas.requestFocusInWindow();
 			
-			lastPressPanelPoint = p;
+			lastPressCanvasPoint = p;
 			lastPressTime = System.currentTimeMillis();
 			
-			lastDragPanelPoint = null;
+			lastDragCanvasPoint = null;
 			lastDragTime = -1;
 			
 		} else if (c == VIEW.previewPanel) {
@@ -106,7 +107,7 @@ public class DeadlockController implements ActionListener {
 	}
 	
 	
-	Point lastDragPanelPoint;
+	Point lastDragCanvasPoint;
 	Point lastDragWorldPoint;
 	Point lastDragPreviewPoint;
 	long lastDragTime;
@@ -124,10 +125,10 @@ public class DeadlockController implements ActionListener {
 			
 			VIEW.canvas.requestFocusInWindow();
 			
-			boolean lastDragPanelPointWasNull = (lastDragPanelPoint == null);
+			boolean lastDragCanvasPointWasNull = (lastDragCanvasPoint == null);
 			
-			lastDragPanelPoint = p;
-			lastDragWorldPoint = VIEW.panelToWorld(p);
+			lastDragCanvasPoint = p;
+			lastDragWorldPoint = VIEW.canvasToWorld(p);
 			lastDragTime = System.currentTimeMillis();
 			
 			MODEL.cursor.setPoint(lastDragWorldPoint);
@@ -135,10 +136,10 @@ public class DeadlockController implements ActionListener {
 			switch (mode) {
 			case IDLE: {
 				
-				if (lastDragPanelPointWasNull) {
+				if (lastDragCanvasPointWasNull) {
 					// first drag
-					draftStart(lastPressPanelPoint);
-					draftMove(lastDragPanelPoint);
+					draftStart(lastPressCanvasPoint);
+					draftMove(lastDragCanvasPoint);
 					
 					VIEW.repaint();
 					
@@ -150,7 +151,7 @@ public class DeadlockController implements ActionListener {
 			}
 			case DRAFTING:
 				
-				draftMove(lastDragPanelPoint);
+				draftMove(lastDragCanvasPoint);
 				
 				VIEW.repaint();
 				break;
@@ -182,11 +183,10 @@ public class DeadlockController implements ActionListener {
 			int x = (int)(lastDragPreviewPoint.x - lastPressPreviewPoint.x);
 			int y = (int)(lastDragPreviewPoint.y - lastPressPreviewPoint.y);
 			
-			VIEW.worldOriginX = originalX + 10 * x;
-			VIEW.worldOriginY = originalY + 10 * y;
+			VIEW.worldOriginX = originalX + (int)((MODEL.world.getWorldWidth() * MODEL.PIXELS_PER_METER / 100) * x);
+			VIEW.worldOriginY = originalY + (int)((MODEL.world.getWorldHeight() * MODEL.PIXELS_PER_METER / 100) * y);
 			
 			VIEW.repaintControlPanel();
-			VIEW.renderBackgroundFresh();
 			VIEW.repaint();
 			
 		}
@@ -209,7 +209,7 @@ public class DeadlockController implements ActionListener {
 			switch (mode) {
 			case IDLE: {
 				
-				if (lastReleaseTime - lastPressTime < 500 && lastDragPanelPoint == null) {
+				if (lastReleaseTime - lastPressTime < 500 && lastDragCanvasPoint == null) {
 					// click
 					
 //					Point w = VIEW.panelToWorld(lastPressPanelPoint);
@@ -263,7 +263,7 @@ public class DeadlockController implements ActionListener {
 			
 			Point p = ev.p;
 			
-			lastMovedWorldPoint = VIEW.panelToWorld(p);
+			lastMovedWorldPoint = VIEW.canvasToWorld(p);
 			
 			switch (mode) {
 			case RUNNING:
@@ -273,8 +273,13 @@ public class DeadlockController implements ActionListener {
 				assert false;
 				break;
 			case IDLE:
+				
 				Entity closest = MODEL.world.hitTest(lastMovedWorldPoint);
 				MODEL.hilited = closest;
+				
+				int quad = MODEL.world.findQuadrant(lastMovedWorldPoint);
+				MODEL.hilitedQuad = quad;
+				
 			case MERGERCURSOR:
 			case FIXTURECURSOR:
 				
@@ -300,13 +305,16 @@ public class DeadlockController implements ActionListener {
 		switch (mode) {
 		case IDLE:
 			
-			if (!MODEL.world.cursorIntersect(MODEL.cursor)) {
+			if (MODEL.world.completelyContains(MODEL.cursor)) {
 				
-				MODEL.world.addVertexTop(new Intersection(MODEL.cursor.getPoint()));
-				
-				VIEW.renderBackgroundFresh();
-				VIEW.repaint();
-				
+				if (!MODEL.world.graphIntersect(MODEL.cursor)) {
+					
+					MODEL.world.addVertexTop(new Intersection(MODEL.cursor.getPoint()));
+					
+					VIEW.renderBackgroundFresh();
+					VIEW.repaint();
+					
+				}
 			}
 			
 			break;
@@ -334,7 +342,7 @@ public class DeadlockController implements ActionListener {
 			FixtureCursor fc = (FixtureCursor)MODEL.cursor;
 			Axis axis = fc.getAxis();
 			
-			if (!MODEL.world.cursorIntersect(MODEL.cursor)) {
+			if (!MODEL.world.graphIntersect(MODEL.cursor)) {
 				
 				WorldSource source = new WorldSource(fc.getSourcePoint(), axis);
 				WorldSink sink = new WorldSink(fc.getSinkPoint(), axis);
@@ -450,18 +458,22 @@ public class DeadlockController implements ActionListener {
 			break;
 		case MERGERCURSOR:
 			
-			if (!MODEL.world.cursorIntersect(MODEL.cursor)) {
+			if (MODEL.world.completelyContains(MODEL.cursor)) {
 				
-				MODEL.world.insertMergerTop(MODEL.cursor.getPoint());
-				
-				mode = ControlMode.IDLE;
-				
-				MODEL.cursor = new RegularCursor();
-				
-				MODEL.cursor.setPoint(lastMovedWorldPoint);
-				
-				VIEW.renderBackgroundFresh();
-				VIEW.repaint();
+				if (!MODEL.world.graphIntersect(MODEL.cursor)) {
+					
+					MODEL.world.insertMergerTop(MODEL.cursor.getPoint());
+					
+					mode = ControlMode.IDLE;
+					
+					MODEL.cursor = new RegularCursor();
+					
+					MODEL.cursor.setPoint(lastMovedWorldPoint);
+					
+					VIEW.renderBackgroundFresh();
+					VIEW.repaint();
+					
+				}
 				
 			}
 			
@@ -651,13 +663,13 @@ public class DeadlockController implements ActionListener {
 		MODEL.hilited = null;
 		
 		MODEL.stroke = new Stroke(Vertex.INIT_VERTEX_RADIUS);
-		MODEL.stroke.add(VIEW.panelToWorld(p));
+		MODEL.stroke.add(VIEW.canvasToWorld(p));
 			
 	}
 	
 	private void draftMove(Point p) {
 
-		MODEL.stroke.add(VIEW.panelToWorld(p));
+		MODEL.stroke.add(VIEW.canvasToWorld(p));
 	}
 	
 	private void draftEnd() {
@@ -764,7 +776,38 @@ public class DeadlockController implements ActionListener {
 		
 		Stroke s = MODEL.stroke;
 		
+		for (int i = 0; i < s.pts.size()-1; i++) {
+			Point a = s.pts.get(i);
+			Point b = s.pts.get(i+1);
+			Circle ac = new Circle(null, a, Vertex.INIT_VERTEX_RADIUS);
+			Circle bc = new Circle(null, b, Vertex.INIT_VERTEX_RADIUS);
+			Capsule cap = new Capsule(null, ac, bc);
+			if (!MODEL.world.completelyContains(cap)) {
+				return;
+			}
+		}
+		
 		List<SweepEvent> events = s.events();
+		
+		/*
+		 * go through and find any merger events
+		 */
+		for (int i = 0; i < events.size(); i++) {
+			SweepEvent e = events.get(i);
+			if (e.type == SweepEventType.ENTERMERGER) {
+				return;
+			}
+			if (i < events.size()-1) {
+				SweepEvent f = events.get(i+1);
+				if (e.type == SweepEventType.EXITVERTEX && f.type == SweepEventType.ENTERVERTEX) {
+					Vertex ev = (Vertex)e.shape.parent;
+					Vertex fv = (Vertex)f.shape.parent;
+					if (ev.m != null && ev.m == fv.m) {
+						return;
+					}
+				}
+			}
+		}
 		
 		/*
 		 * go through and create or split where needed to make sure vertices are present
@@ -785,7 +828,7 @@ public class DeadlockController implements ActionListener {
 				
 				assert MODEL.world.checkConsistency();
 				
-			} else if (e.type == SweepEventType.ENTERCAPSULE || e.type == SweepEventType.EXITCAPSULE) {
+			} else if (e.type == SweepEventType.ENTERROADCAPSULE || e.type == SweepEventType.EXITROADCAPSULE) {
 				
 				Entity hit = MODEL.world.pureGraphBestHitTest(e.circle);
 				
@@ -802,7 +845,7 @@ public class DeadlockController implements ActionListener {
 				Circle a;
 				Circle b;
 				int j = e.index;
-				if (e.type == SweepEventType.ENTERCAPSULE) {
+				if (e.type == SweepEventType.ENTERROADCAPSULE) {
 					a = e.circle;
 					b = new Circle(null, s.pts.get(j+1), e.circle.radius);
 				} else {
@@ -837,9 +880,9 @@ public class DeadlockController implements ActionListener {
 						
 					}
 					
-					j += (e.type == SweepEventType.ENTERCAPSULE) ? 1 : -1;
+					j += (e.type == SweepEventType.ENTERROADCAPSULE) ? 1 : -1;
 					
-					if (!((e.type == SweepEventType.ENTERCAPSULE) ? j < s.pts.size()-1 : j >= 0)) {
+					if (!((e.type == SweepEventType.ENTERROADCAPSULE) ? j < s.pts.size()-1 : j >= 0)) {
 						break;
 					}
 					
@@ -863,7 +906,7 @@ public class DeadlockController implements ActionListener {
 				if (hit2 instanceof Road) {
 					Vertex v = MODEL.world.splitRoadTop((RoadPosition)pos);
 					
-					assert e.circle.intersect(v.shape);
+					assert ShapeUtils.intersect(e.circle, (Circle)v.shape);
 					
 					e.setVertex(v);
 				} else {
@@ -872,10 +915,12 @@ public class DeadlockController implements ActionListener {
 				
 				assert MODEL.world.checkConsistency();
 				
-			} else if (e.type == SweepEventType.ENTERCIRCLE) {
+			} else if (e.type == SweepEventType.ENTERVERTEX) {
 				e.setVertex((Vertex)e.shape.parent);
-			} else if (e.type == SweepEventType.EXITCIRCLE) {
+			} else if (e.type == SweepEventType.EXITVERTEX) {
 				e.setVertex((Vertex)e.shape.parent);
+			} else {
+				assert false;
 			}
 			
 			assert e.getVertex() != null;
@@ -888,7 +933,7 @@ public class DeadlockController implements ActionListener {
 			SweepEvent e0 = events.get(i);
 			SweepEvent e1 = events.get(i+1);
 			
-			if (e0.type == SweepEventType.ENTERCIRCLE && e1.type == SweepEventType.EXITCIRCLE) {
+			if (e0.type == SweepEventType.ENTERVERTEX && e1.type == SweepEventType.EXITVERTEX) {
 				
 				logger.debug("skipping");
 				i = i+1;
@@ -898,7 +943,7 @@ public class DeadlockController implements ActionListener {
 				e0 = events.get(i);
 				e1 = events.get(i+1);
 				
-			} else if (e0.type == SweepEventType.ENTERCAPSULE && e1.type == SweepEventType.EXITCAPSULE) {
+			} else if (e0.type == SweepEventType.ENTERROADCAPSULE && e1.type == SweepEventType.EXITROADCAPSULE) {
 				
 				logger.debug("skipping");
 				
@@ -908,10 +953,6 @@ public class DeadlockController implements ActionListener {
 				}
 				e0 = events.get(i);
 				e1 = events.get(i+1);
-				
-			} else if (e0.type == SweepEventType.ENTERQUAD || e1.type == SweepEventType.EXITQUAD) {
-				
-				return;
 				
 			}
 			

@@ -19,7 +19,6 @@ import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.Capsule;
 import com.gutabi.deadlock.core.geom.CapsuleSequence;
 import com.gutabi.deadlock.core.geom.Circle;
-import com.gutabi.deadlock.core.geom.Shape;
 import com.gutabi.deadlock.model.StopSign;
 
 @SuppressWarnings("static-access")
@@ -299,19 +298,19 @@ public class Road extends Edge {
 		return null;
 	}
 	
-	public Entity decorationsBestHitTest(Shape s) {
+	public Entity decorationsBestHitTest(Entity e) {
 		
 		Entity hit;
 		
 		if (startSign != null) {
-			hit = startSign.bestHitTest(s);
+			hit = startSign.bestHitTest(e);
 			if (hit != null) {
 				return hit;
 			}
 		}
 		
 		if (endSign != null) {
-			hit = endSign.bestHitTest(s);
+			hit = endSign.bestHitTest(e);
 			if (hit != null) {
 				return hit;
 			}

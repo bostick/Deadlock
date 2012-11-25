@@ -15,6 +15,7 @@ import org.jbox2d.common.Vec2;
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.Shape;
+import com.gutabi.deadlock.core.geom.ShapeUtils;
 import com.gutabi.deadlock.core.geom.Sweepable;
 import com.gutabi.deadlock.core.geom.Sweeper;
 import com.gutabi.deadlock.core.geom.tree.AABB;
@@ -57,6 +58,8 @@ public class World implements Sweepable {
 	AnimatedGrass animatedGrass3;
 	
 	public int[][] quadrants;
+	public int quadrantCols;
+	public int quadrantRows;
 	
 	private Graph graph = new Graph();
 	
@@ -83,6 +86,9 @@ public class World implements Sweepable {
 				{1, 1, 0},
 				{0, 1, 0},
 		};
+		
+		quadrantCols = quadrants[0].length;
+		quadrantRows = quadrants.length;
 		
 //		animatedGrass1 = new AnimatedGrass(new Point(WORLD_WIDTH/4, WORLD_HEIGHT/4));
 //		animatedGrass2 = new AnimatedGrass(new Point(3*WORLD_WIDTH/4, 2*WORLD_HEIGHT/4));
@@ -141,11 +147,80 @@ public class World implements Sweepable {
 	}
 	
 	public double getWorldWidth() {
-		return quadrants[0].length * QUADRANT_WIDTH;
+		return quadrantCols * QUADRANT_WIDTH;
 	}
 	
 	public double getWorldHeight() {
-		return quadrants.length * QUADRANT_HEIGHT;
+		return quadrantRows * QUADRANT_HEIGHT;
+	}
+	
+	public int findQuadrant(Point p) {
+		int col = (int)Math.floor(p.x / QUADRANT_WIDTH);
+		int row = (int)Math.floor(p.y / QUADRANT_HEIGHT);
+		if (col < 0 || col > quadrantCols-1) {
+			return -1;
+		}
+		if (row < 0 || row > quadrantRows-1) {
+			return -1;
+		}
+		return row * quadrantCols + col;
+	}
+	
+	public int quadrantUp(int c) {
+		assert c != -1;
+		if (!(c > quadrantCols - 1)) {
+			return -1;
+		}
+		return c - quadrantCols;
+	}
+	
+	public int quadrantDown(int c) {
+		assert c != -1;
+		if (!(c < quadrantRows * quadrantCols)) {
+			return -1;
+		}
+		return c + quadrantCols;
+	}
+	
+	public int quadrantLeft(int c) {
+		assert c != -1;
+		if (!(c % quadrantCols > 0)) {
+			return -1;
+		}
+		return c - 1;
+	}
+	
+	public int quadrantRight(int c) {
+		assert c != -1;
+		if (!(c % quadrantCols < quadrantCols-1)) {
+			return -1;
+		}
+		return c + 1;
+	}
+	
+	public boolean isValidQuadrant(int cur) {
+		return cur >= 0 && cur < quadrantRows * quadrantCols;
+	}
+	
+	public boolean isActiveQuadrant(int cur) {
+		assert cur != -1;
+		assert cur >= 0;
+		assert cur < quadrantRows * quadrantCols;
+		int r = cur / quadrantCols;
+		int c = cur % quadrantCols;
+		if (r < 0 || r > quadrantRows-1) {
+			return false;
+		}
+		if (c < 0 || c > quadrantCols-1) {
+			return false;
+		}
+		return quadrants[r][c] == 1;
+	}
+	
+	public Point quadrantCenter(int q) {
+		int r = q / quadrantCols;
+		int c = q % quadrantCols;
+		return new Point(c * QUADRANT_WIDTH + QUADRANT_WIDTH/2, r * QUADRANT_HEIGHT + QUADRANT_HEIGHT/2);
 	}
 	
 	public void init() throws Exception {
@@ -154,7 +229,7 @@ public class World implements Sweepable {
 		listener = new CarEventListener();
 		b2dWorld.setContactListener(listener);
 		
-		worldRect = new AABB(0, 0, getWorldWidth(), getWorldHeight());
+		worldRect = new AABB(null, 0, 0, getWorldWidth(), getWorldHeight());
 		
 		computeAABB();
 		
@@ -282,9 +357,15 @@ public class World implements Sweepable {
 //		renderSkidMarksIncremental();
 //		skidMarks = new ArrayList<Point>();
 		
-		animatedGrass1.preStart();
-		animatedGrass2.preStart();
-		animatedGrass3.preStart();
+		if (animatedGrass1 != null) {
+			animatedGrass1.preStart();
+		}
+		if (animatedGrass2 != null) {
+			animatedGrass2.preStart();
+		}
+		if (animatedGrass3 != null) {
+			animatedGrass3.preStart();
+		}
 		
 		graph.preStart();
 		
@@ -330,9 +411,15 @@ public class World implements Sweepable {
 	
 	private void preStep() {
 		
-		animatedGrass1.preStep(t);
-		animatedGrass2.preStep(t);
-		animatedGrass3.preStep(t);
+		if (animatedGrass1 != null) {
+			animatedGrass1.preStep(t);
+		}
+		if (animatedGrass2 != null) {
+			animatedGrass2.preStep(t);
+		}
+		if (animatedGrass3 != null) {
+			animatedGrass3.preStep(t);
+		}
 		
 		graph.preStep(t);
 		
@@ -457,6 +544,10 @@ public class World implements Sweepable {
 		return graph.graphHitTest(p);
 	}
 	
+	public Entity pureGraphBestHitTest(Entity e) {
+		return graph.pureGraphBestHitTest(e);
+	}
+	
 	public Entity pureGraphBestHitTest(Shape s) {
 		return graph.pureGraphBestHitTest(s);
 	}
@@ -465,12 +556,68 @@ public class World implements Sweepable {
 		return graph.findClosestRoadPosition(p, radius);
 	}
 	
-	public boolean isValidRoad(Road r) {
-		return graph.edges.contains(r);
+//	public boolean isValidRoad(Road r) {
+//		return graph.edges.contains(r);
+//	}
+	
+	public boolean graphIntersect(Cursor c) {
+		return graph.cursorIntersect(c);
 	}
 	
-	public boolean cursorIntersect(Cursor c) {
-		return graph.cursorIntersect(c);
+	public boolean completelyContains(Shape s) {
+		
+		if (!s.aabb.completelyWithin(worldRect)) {
+			return false;
+		} else {
+			
+			for (int i = 0; i < quadrantRows; i++) {
+				for (int j = 0; j < quadrantCols; j++) {
+					if (quadrants[j][i] == 0) {
+						
+						AABB quadAABB = new AABB(null, i * QUADRANT_WIDTH, j * QUADRANT_HEIGHT, QUADRANT_WIDTH, QUADRANT_HEIGHT);
+						
+						if (ShapeUtils.intersect(s, quadAABB)) {
+							return false;
+						}
+						
+					} else {
+						
+					}
+				}
+			}
+			
+		}
+		
+		return true;
+		
+	}
+	
+	public boolean completelyContains(Cursor c) {
+		
+		if (!c.completelyWithin(worldRect)) {
+			return false;
+		} else {
+			
+			for (int i = 0; i < quadrantRows; i++) {
+				for (int j = 0; j < quadrantCols; j++) {
+					if (quadrants[j][i] == 0) {
+						
+						AABB quadAABB = new AABB(null, i * QUADRANT_WIDTH, j * QUADRANT_HEIGHT, QUADRANT_WIDTH, QUADRANT_HEIGHT);
+						
+						if (c.intersect(quadAABB)) {
+							return false;
+						}
+						
+					} else {
+						
+					}
+				}
+			}
+			
+		}
+		
+		return true;
+		
 	}
 	
 	public void paint(Graphics2D g2) {
@@ -488,6 +635,19 @@ public class World implements Sweepable {
 	private void paintBackground(Graphics2D g2) {
 		
 		g2.drawImage(backgroundGrassImage, 0, 0, null);
+		
+//		if (MODEL.hilitedQuad != -1) {
+//			
+//			int r = MODEL.hilitedQuad / quadrantCols;
+//			int c = MODEL.hilitedQuad % quadrantCols;
+//			
+//			g2.setColor(Color.BLUE);
+//			g2.drawRect(
+//					(int)(c * QUADRANT_WIDTH * MODEL.PIXELS_PER_METER),
+//					(int)(r * QUADRANT_HEIGHT * MODEL.PIXELS_PER_METER),
+//					(int)(QUADRANT_WIDTH * MODEL.PIXELS_PER_METER),
+//					(int)(QUADRANT_HEIGHT * MODEL.PIXELS_PER_METER));
+//		}
 		
 		if (animatedGrass1 != null) {
 			animatedGrass1.paint(g2);
@@ -606,10 +766,10 @@ public class World implements Sweepable {
 				}
 			} 
 			
-			for (int i = 0; i < quadrants[0].length; i++) {
-				for (int j = 0; j < quadrants.length; j++) {
+			for (int i = 0; i < quadrantRows; i++) {
+				for (int j = 0; j < quadrantCols; j++) {
 					if (quadrants[i][j] == 1) {
-						backgroundGrassImageG2.drawImage(quadrantGrass, (int)(i * QUADRANT_WIDTH * MODEL.PIXELS_PER_METER), (int)(j * QUADRANT_HEIGHT * MODEL.PIXELS_PER_METER), null);
+						backgroundGrassImageG2.drawImage(quadrantGrass, (int)(j * QUADRANT_WIDTH * MODEL.PIXELS_PER_METER), (int)(i * QUADRANT_HEIGHT * MODEL.PIXELS_PER_METER), null);
 					}
 				}
 			}
@@ -618,12 +778,12 @@ public class World implements Sweepable {
 			
 			backgroundGrassImageG2.setColor(lightGreen);
 			
-			for (int i = 0; i < quadrants[0].length; i++) {
-				for (int j = 0; j < quadrants.length; j++) {
+			for (int i = 0; i < quadrantRows; i++) {
+				for (int j = 0; j < quadrantCols; j++) {
 					if (quadrants[i][j] == 1) {
 						backgroundGrassImageG2.fillRect(
-								(int)(i * QUADRANT_WIDTH * MODEL.PIXELS_PER_METER),
-								(int)(j * QUADRANT_HEIGHT * MODEL.PIXELS_PER_METER),
+								(int)(j * QUADRANT_WIDTH * MODEL.PIXELS_PER_METER),
+								(int)(i * QUADRANT_HEIGHT * MODEL.PIXELS_PER_METER),
 								(int)(QUADRANT_WIDTH * MODEL.PIXELS_PER_METER),
 								(int)(QUADRANT_HEIGHT * MODEL.PIXELS_PER_METER));
 					}
@@ -637,9 +797,9 @@ public class World implements Sweepable {
 			backgroundGrassImageG2.setColor(Color.GRAY);
 			backgroundGrassImageG2.setStroke(RegularCursor.solidOutlineStroke);
 			
-			for (int i = 0; i < quadrants[0].length; i++) {
-				for (int j = 0; j < quadrants.length; j++) {
-					if (quadrants[i][j] == 1) {
+			for (int i = 0; i < quadrantRows; i++) {
+				for (int j = 0; j < quadrantCols; j++) {
+					if (quadrants[j][i] == 1) {
 						for (int k = 0; k <= QUADRANT_HEIGHT; k+=2) {
 							backgroundGrassImageG2.drawLine(
 									(int)((i * QUADRANT_WIDTH + 0) * MODEL.PIXELS_PER_METER),

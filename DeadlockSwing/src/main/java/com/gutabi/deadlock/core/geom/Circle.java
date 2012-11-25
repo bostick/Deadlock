@@ -9,7 +9,6 @@ import org.apache.log4j.Logger;
 
 import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.core.geom.SweepEvent.SweepEventType;
 import com.gutabi.deadlock.core.geom.tree.AABB;
 
 @SuppressWarnings("static-access")
@@ -22,12 +21,12 @@ public class Circle extends Shape {
 	
 	static Logger logger = Logger.getLogger(Circle.class);
 	
-	public Circle(Object parent, Point center, double radius) {
+	public Circle(Sweepable parent, Point center, double radius) {
 		super(parent);
 		this.center = center;
 		this.radius = radius;
 		
-		aabb = new AABB(center.x - radius, center.y - radius, 2*radius, 2*radius);
+		aabb = new AABB(parent, center.x - radius, center.y - radius, 2*radius, 2*radius);
 	}
 	
 	@Override
@@ -66,25 +65,25 @@ public class Circle extends Shape {
 		return DMath.lessThanEquals(Point.distance(p, center), radius);
 	}
 	
-	public boolean intersect(Shape s) {
-		
-		if (s instanceof Quad) {
-			Quad ss = (Quad)s;
-			
-			return ShapeUtils.intersect(ss, this);
-			
-		} else if (s instanceof Circle) {
-			Circle ss = (Circle)s;
-			
-			return DMath.lessThanEquals(Point.distance(center, ss.center), radius + ss.radius);
-			
-		} else {
-			
-			return s.intersect(this);
-			
-		}
-		
-	}
+//	public boolean intersect(Shape s) {
+//		
+//		if (s instanceof Quad) {
+//			Quad ss = (Quad)s;
+//			
+//			return ShapeUtils.intersect(ss, this);
+//			
+//		} else if (s instanceof Circle) {
+//			Circle ss = (Circle)s;
+//			
+//			return ShapeUtils.intersect(ss, this);
+//			
+//		} else {
+//			
+//			return s.intersect(this);
+//			
+//		}
+//		
+//	}
 	
 	public void project(Point axis, double[] out) {
 		double cen = Point.dot(axis, center);
@@ -97,8 +96,8 @@ public class Circle extends Shape {
 		
 		Capsule cap = s.getCapsule(0);
 		
-		if (intersect(cap.ac)) {
-			SweepEvent e = new SweepEvent(SweepEventType.ENTERCIRCLE, this, s, 0, 0.0);
+		if (ShapeUtils.intersect(this, cap.ac)) {
+			SweepEvent e = new SweepEvent(SweepEventType.enter(parent), this, s, 0, 0.0);
 			s.start(e);
 		}
 		
@@ -111,7 +110,7 @@ public class Circle extends Shape {
 		Point d = cap.b;
 		
 		boolean outside;
-		if (intersect(cap.ac)) {
+		if (ShapeUtils.intersect(this, cap.ac)) {
 			outside = false;
 		} else {
 			outside = true;
@@ -132,9 +131,9 @@ public class Circle extends Shape {
 			assert DMath.greaterThanEquals(param, 0.0) && DMath.lessThanEquals(param, 1.0);
 			if (DMath.lessThan(param, 1.0) || index == s.pointCount()-1) {
 				if (outside) {
-					s.event(new SweepEvent(SweepEventType.ENTERCIRCLE, this, s, index, param));
+					s.event(new SweepEvent(SweepEventType.enter(parent), this, s, index, param));
 				} else {
-					s.event(new SweepEvent(SweepEventType.EXITCIRCLE, this, s, index, param));
+					s.event(new SweepEvent(SweepEventType.exit(parent), this, s, index, param));
 				}
 				outside = !outside;
 			}

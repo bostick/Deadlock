@@ -33,6 +33,7 @@ public class DeadlockModel {
 	public Stroke debugStroke2;
 	
 	public Entity hilited;
+	public int hilitedQuad = -1;
 	
 	public final Object pauseLock = new Object();
 	

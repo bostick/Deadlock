@@ -11,7 +11,6 @@ import org.apache.log4j.Logger;
 import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.OverlappingException;
 import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.core.geom.SweepEvent.SweepEventType;
 import com.gutabi.deadlock.core.geom.tree.AABB;
 
 @SuppressWarnings("static-access")
@@ -20,7 +19,7 @@ public class Capsule extends Shape {
 	public final Circle ac;
 	public final Circle bc;
 	
-	private final Quad middle;
+	public final Quad middle;
 	
 	public final Point a;
 	public final Point b;
@@ -40,7 +39,7 @@ public class Capsule extends Shape {
 	
 	static Logger logger = Logger.getLogger(Capsule.class);
 	
-	public Capsule(Object parent, Circle ac, Circle bc) {
+	public Capsule(Sweepable parent, Circle ac, Circle bc) {
 		super(parent);
 		
 		this.ac = ac;
@@ -107,25 +106,25 @@ public class Capsule extends Shape {
 		return false;
 	}
 	
-	public boolean intersect(Shape s) {
-		if (ac.intersect(s)) {
-			return true;
-		}
-		if (bc.intersect(s)) {
-			return true;
-		}
-		if (middle.intersect(s)) {
-			return true;
-		}
-		return false;
-	}
+//	public boolean intersect(Shape s) {
+//		if (ac.intersect(s)) {
+//			return true;
+//		}
+//		if (bc.intersect(s)) {
+//			return true;
+//		}
+//		if (middle.intersect(s)) {
+//			return true;
+//		}
+//		return false;
+//	}
 	
 	public void sweepStart(Sweeper s) {
 		
 		Capsule firstCap = s.getCapsule(0);
 		
-		if (intersect(firstCap.ac)) {
-			s.start(new SweepEvent(SweepEventType.ENTERCAPSULE, this, s, 0, 0.0));
+		if (ShapeUtils.intersect(this, firstCap.ac)) {
+			s.start(new SweepEvent(SweepEventType.enter(parent), this, s, 0, 0.0));
 		}
 		
 	}
@@ -141,7 +140,7 @@ public class Capsule extends Shape {
 		}
 		
 		boolean outside;
-		if (intersect(cap.ac)) {
+		if (ShapeUtils.intersect(this, cap.ac)) {
 			outside = false;
 		} else {
 			outside = true;
@@ -170,7 +169,7 @@ public class Capsule extends Shape {
 			
 			if (DMath.lessThanEquals(abParam, 0.0)) {
 				
-				assert ac.intersect(new Circle(null, p, cap.r));
+				assert ShapeUtils.intersect(ac, new Circle(null, p, cap.r));
 				
 				logger.debug("a cap");
 				
@@ -222,7 +221,7 @@ public class Capsule extends Shape {
 			
 			if (DMath.greaterThanEquals(abParam, 1.0)) {
 				
-				assert bc.intersect(new Circle(null, p, cap.r));
+				assert ShapeUtils.intersect(bc, new Circle(null, p, cap.r));
 				
 				logger.debug("b cap");
 				
@@ -274,9 +273,9 @@ public class Capsule extends Shape {
 			
 			if (DMath.lessThan(param, 1.0) || index == s.pointCount()-1) {
 				if (outside) {
-					s.event(new SweepEvent(SweepEventType.ENTERCAPSULE, this, s, index, param));
+					s.event(new SweepEvent(SweepEventType.enter(parent), this, s, index, param));
 				} else {
-					s.event(new SweepEvent(SweepEventType.EXITCAPSULE, this, s, index, param));
+					s.event(new SweepEvent(SweepEventType.exit(parent), this, s, index, param));
 				}
 				outside = !outside;
 			}

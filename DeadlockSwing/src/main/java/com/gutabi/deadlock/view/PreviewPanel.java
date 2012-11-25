@@ -26,9 +26,9 @@ public class PreviewPanel extends JPanel {
 		g.fillRect(0, 0, 100, 100);
 		
 		g.setColor(Color.GREEN);
-		for (int i = 0; i < MODEL.world.quadrants[0].length; i++) {
-			for (int j = 0; j < MODEL.world.quadrants.length; j++) {
-				if (MODEL.world.quadrants[i][j] == 1) {
+		for (int i = 0; i < MODEL.world.quadrantRows; i++) {
+			for (int j = 0; j < MODEL.world.quadrantCols; j++) {
+				if (MODEL.world.quadrants[j][i] == 1) {
 					g.fillRect(i * 33, j * 33, 33, 33);
 				}
 			}

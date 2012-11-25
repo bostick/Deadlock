@@ -19,7 +19,7 @@ public class CapsuleSequence extends Shape {
 	
 	static Logger logger = Logger.getLogger(CapsuleSequence.class);
 	
-	public CapsuleSequence(Object parent, List<Capsule> caps) {
+	public CapsuleSequence(Sweepable parent, List<Capsule> caps) {
 		super(parent);
 		
 		this.caps = caps;
@@ -95,20 +95,20 @@ public class CapsuleSequence extends Shape {
 		return false;
 	}
 	
-	public boolean intersect(Shape s) {
-		
-		if (!s.aabb.intersect(aabb)) {
-			return false;
-		}
-		
-		for (Capsule c : caps) {
-			if (c.intersect(s)) {
-				return true;
-			}
-		}
-		
-		return false;
-	}
+//	public boolean intersect(Shape s) {
+//		
+//		if (!s.aabb.intersect(aabb)) {
+//			return false;
+//		}
+//		
+//		for (Capsule c : caps) {
+//			if (c.intersect(s)) {
+//				return true;
+//			}
+//		}
+//		
+//		return false;
+//	}
 	
 	public void paint(Graphics2D g2) {
 		for (Capsule c : caps) {

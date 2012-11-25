@@ -600,6 +600,21 @@ public class Graph implements Sweepable {
 //		return null;
 //	}
 	
+	public Entity pureGraphBestHitTest(Entity e) {
+//		assert p != null;
+		for (Vertex v : vertices) {
+			if (v.bestHitTest(e) != null) {
+				return v;
+			}
+		}
+		for (Edge ed : edges) {
+			if (ed.bestHitTest(e) != null) {
+				return ed;
+			}
+		}
+		return null;
+	}
+	
 	public Entity pureGraphBestHitTest(Shape s) {
 //		assert p != null;
 		for (Vertex v : vertices) {

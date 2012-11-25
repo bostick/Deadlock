@@ -4,7 +4,6 @@ import java.awt.Graphics2D;
 
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.core.geom.Shape;
 
 public abstract class Edge extends GraphEntity {
 	
@@ -29,7 +28,7 @@ public abstract class Edge extends GraphEntity {
 	
 	public abstract Entity decorationsHitTest(Point p);
 	
-	public abstract Entity decorationsBestHitTest(Shape s);
+	public abstract Entity decorationsBestHitTest(Entity e);
 	
 	
 	public abstract void paintDecorations(Graphics2D g2);

@@ -8,9 +8,12 @@ import java.awt.Graphics2D;
 import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Dim;
 import com.gutabi.deadlock.core.Point;
+import com.gutabi.deadlock.core.geom.Shape;
+import com.gutabi.deadlock.core.geom.Sweepable;
+import com.gutabi.deadlock.core.geom.Sweeper;
 
 @SuppressWarnings("static-access")
-public class AABB {
+public class AABB extends Shape {
 	
 	public final Point ul;
 	public final Dim dim;
@@ -22,7 +25,19 @@ public class AABB {
 	private final double brX;
 	private final double brY;
 	
-	public AABB(double x, double y, double width, double height) {
+	public final Point p0;
+	public final Point p1;
+	public final Point p2;
+	public final Point p3;
+	
+	public final Point n01;
+	public final Point n12;
+	
+	double[] n01Projection;
+	double[] n12Projection;
+	
+	public AABB(Sweepable parent, double x, double y, double width, double height) {
+		super(parent);
 		this.x = x;
 		this.y = y;
 		this.width = width;
@@ -36,6 +51,17 @@ public class AABB {
 		
 		brX = x + width;
 		brY = y + height;
+		
+		p0 = ul;
+		p1 = new Point(ul.x + width, ul.y);
+		p2 = new Point(brX, brY);
+		p3 = new Point(ul.x, ul.y + height);
+		
+//		Point edge;
+//		edge = new Point(width, 0);
+		n01 = new Point(0, -1);
+//		edge = new Point(0, height);
+		n12 = new Point(1, 0);
 	}
 	
 	public String toString() {
@@ -53,9 +79,78 @@ public class AABB {
 		}
 	}
 	
+	
+	public void project(Point axis, double[] out) {
+		double min = Point.dot(axis, p0);
+		double max = min;
+		
+		double p = Point.dot(axis, p1);
+		if (p < min) {
+			min = p;
+		} else if (p > max) {
+			max = p;
+		}
+		
+		p = Point.dot(axis, p2);
+		if (p < min) {
+			min = p;
+		} else if (p > max) {
+			max = p;
+		}
+		
+		p = Point.dot(axis, p3);
+		if (p < min) {
+			min = p;
+		} else if (p > max) {
+			max = p;
+		}
+		
+		out[0] = min;
+		out[1] = max;
+	}
+	
+	private void computeProjections() {
+		n01Projection = new double[2];
+		project(n01, n01Projection);
+		
+		n12Projection = new double[2];
+		project(n12, n12Projection);
+	}
+	
+	public void projectN01(double[] out) {
+		if (n01Projection == null) {
+			computeProjections();
+		}
+		out[0] = n01Projection[0];
+		out[1] = n01Projection[1];
+	}
+	
+	public void projectN12(double[] out) {
+		if (n12Projection == null) {
+			computeProjections();
+		}
+		out[0] = n12Projection[0];
+		out[1] = n12Projection[1];
+	}
+	
+	
+	public boolean hitTest(Point p) {
+		return DMath.lessThanEquals(x, p.x) && DMath.lessThanEquals(p.x, brX) &&
+				DMath.lessThanEquals(y, p.y) && DMath.lessThanEquals(p.y, brY);
+	}
+	
 	public boolean intersect(AABB a) {
 		return DMath.lessThanEquals(a.x, brX) && DMath.lessThanEquals(x, a.brX) &&
 				DMath.lessThanEquals(a.y, brY) && DMath.lessThanEquals(y, a.brY);
+	}
+	
+//	public boolean intersect(Shape a) {
+//		return ShapeUtils.intersect();
+//	}
+	
+	public boolean completelyWithin(AABB par) {
+		return DMath.lessThanEquals(par.x, x) && DMath.lessThanEquals(brX, par.brX) &&
+				DMath.lessThanEquals(par.y, y) && DMath.lessThanEquals(brY, par.brY);
 	}
 	
 	public static final AABB union(AABB a, AABB b) {
@@ -106,14 +201,26 @@ public class AABB {
 			return b;
 		}
 		
-		return new AABB(ulX, ulY, brX-ulX, brY-ulY);
+		return new AABB(null, ulX, ulY, brX-ulX, brY-ulY);
 	}
 	
 	public AABB plus(Point p) {
-		return new AABB(x + p.x, y + p.y, width, height);
+		return new AABB(parent, x + p.x, y + p.y, width, height);
 	}
 	
 	public void paint(Graphics2D g2) {
+		
+		g2.setColor(Color.BLACK);
+		
+		g2.fillRect(
+				(int)(x * MODEL.PIXELS_PER_METER),
+				(int)(y * MODEL.PIXELS_PER_METER),
+				(int)(width * MODEL.PIXELS_PER_METER),
+				(int)(height * MODEL.PIXELS_PER_METER));
+		
+	}
+	
+	public void draw(Graphics2D g2) {
 		
 		g2.setColor(Color.BLACK);
 		
@@ -123,6 +230,16 @@ public class AABB {
 				(int)(width * MODEL.PIXELS_PER_METER),
 				(int)(height * MODEL.PIXELS_PER_METER));
 		
+	}
+
+	@Override
+	public void sweepStart(Sweeper s) {
+		assert false;
+	}
+
+	@Override
+	public void sweep(Sweeper s, int index) {
+		assert false;
 	}
 
 }
