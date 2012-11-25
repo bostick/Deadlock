@@ -6,7 +6,6 @@ import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.util.concurrent.ExecutionException;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -24,21 +23,7 @@ public class KeyboardController implements KeyListener {
 		@Override
 		public void actionPerformed(ActionEvent blah) {
 			
-			try {
-				CONTROLLER.queueAndWait(new Runnable() {
-					public void run() {
-						CONTROLLER.deleteKey();
-					}
-				});
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (ExecutionException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-//			CONTROLLER.renderAndPaint();
+			CONTROLLER.deleteKey();
 			
 		}
 	};
@@ -48,21 +33,7 @@ public class KeyboardController implements KeyListener {
 		@Override
 		public void actionPerformed(ActionEvent blah) {
 			
-			try {
-				CONTROLLER.queueAndWait(new Runnable() {
-					public void run() {
-						CONTROLLER.insertKey();
-					}
-				});
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (ExecutionException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-//			CONTROLLER.renderAndPaint();
+			CONTROLLER.insertKey();
 			
 		}
 	};
@@ -72,19 +43,7 @@ public class KeyboardController implements KeyListener {
 		@Override
 		public void actionPerformed(ActionEvent blah) {
 			
-			try {
-				CONTROLLER.queueAndWait(new Runnable() {
-					public void run() {
-						CONTROLLER.qKey();
-					}
-				});
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (ExecutionException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			CONTROLLER.qKey();
 			
 		}
 	};
@@ -98,131 +57,23 @@ public class KeyboardController implements KeyListener {
 	@Override
 	public void keyReleased(KeyEvent e) {
 		if (e.getKeyCode() == KeyEvent.VK_INSERT) {
-			try {
-				CONTROLLER.queueAndWait(new Runnable() {
-					public void run() {
-						CONTROLLER.insertKey();
-					}
-				});
-			} catch (InterruptedException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			} catch (ExecutionException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
+			CONTROLLER.insertKey();
 		} else if (e.getKeyCode() == KeyEvent.VK_DELETE) {
-			try {
-				CONTROLLER.queueAndWait(new Runnable() {
-					public void run() {
-						CONTROLLER.deleteKey();
-					}
-				});
-			} catch (InterruptedException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			} catch (ExecutionException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
+			CONTROLLER.deleteKey();
 		} else if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-			try {
-				CONTROLLER.queueAndWait(new Runnable() {
-					public void run() {
-						CONTROLLER.escKey();
-					}
-				});
-			} catch (InterruptedException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			} catch (ExecutionException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
+			CONTROLLER.escKey();
 		} else if (e.getKeyCode() == KeyEvent.VK_Q) {
-			try {
-				CONTROLLER.queueAndWait(new Runnable() {
-					public void run() {
-						CONTROLLER.qKey();
-					}
-				});
-			} catch (InterruptedException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			} catch (ExecutionException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
+			CONTROLLER.qKey();
 		} else if (e.getKeyCode() == KeyEvent.VK_W) {
-			try {
-				CONTROLLER.queueAndWait(new Runnable() {
-					public void run() {
-						CONTROLLER.wKey();
-					}
-				});
-			} catch (InterruptedException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			} catch (ExecutionException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
+			CONTROLLER.wKey();
 		} else if (e.getKeyCode() == KeyEvent.VK_G) {
-			try {
-				CONTROLLER.queueAndWait(new Runnable() {
-					public void run() {
-						CONTROLLER.gKey();
-					}
-				});
-			} catch (InterruptedException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			} catch (ExecutionException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
+			CONTROLLER.gKey();
 		} else if (e.getKeyCode() == KeyEvent.VK_1) {
-			try {
-				CONTROLLER.queueAndWait(new Runnable() {
-					public void run() {
-						CONTROLLER.d1Key();
-					}
-				});
-			} catch (InterruptedException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			} catch (ExecutionException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
+			CONTROLLER.d1Key();
 		} else if (e.getKeyCode() == KeyEvent.VK_2) {
-			try {
-				CONTROLLER.queueAndWait(new Runnable() {
-					public void run() {
-						CONTROLLER.d2Key();
-					}
-				});
-			} catch (InterruptedException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			} catch (ExecutionException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
+			CONTROLLER.d2Key();
 		} else if (e.getKeyCode() == KeyEvent.VK_3) {
-			try {
-				CONTROLLER.queueAndWait(new Runnable() {
-					public void run() {
-						CONTROLLER.d3Key();
-					}
-				});
-			} catch (InterruptedException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			} catch (ExecutionException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
+			CONTROLLER.d3Key();
 		}
 	}
 
@@ -230,53 +81,5 @@ public class KeyboardController implements KeyListener {
 	public void keyTyped(KeyEvent e) {
 		
 	}
-	
-//	@SuppressWarnings("serial")
-//	public Action tabKeyAction = new AbstractAction() {
-//		@Override
-//		public void actionPerformed(ActionEvent blah) {
-//			
-//			CONTROLLER.queue(new Runnable() {
-//				public void run() {
-//					CONTROLLER.tabKey();
-//					MODEL.world.renderBackground();
-//					VIEW.repaint();
-//				}
-//			});
-//			
-//		}
-//	};
-//	
-//	@SuppressWarnings("serial")
-//	public Action undoKeyAction = new AbstractAction() {
-//		@Override
-//		public void actionPerformed(ActionEvent blah) {
-//			
-//			CONTROLLER.queue(new Runnable() {
-//				public void run() {
-//					CONTROLLER.undoKey();
-//					MODEL.world.renderBackground();
-//					VIEW.repaint();
-//				}
-//			});
-//			
-//		}
-//	};
-//	
-//	@SuppressWarnings("serial")
-//	public Action redoKeyAction = new AbstractAction() {
-//		@Override
-//		public void actionPerformed(ActionEvent blah) {
-//			
-//			CONTROLLER.queue(new Runnable() {
-//				public void run() {
-//					CONTROLLER.redoKey();
-//					MODEL.world.renderBackground();
-//					VIEW.repaint();
-//				}
-//			});
-//			
-//		}
-//	};
 	
 }

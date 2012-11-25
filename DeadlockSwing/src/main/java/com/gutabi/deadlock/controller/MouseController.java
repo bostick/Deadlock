@@ -35,39 +35,19 @@ public class MouseController implements MouseListener, MouseMotionListener {
 	}
 	
 	public void pressed(final InputEvent ev) {
-		CONTROLLER.queue(new Runnable(){
-			@Override
-			public void run() {
-				CONTROLLER.pressed(ev);
-			}}
-		);
+		CONTROLLER.pressed(ev);
 	}
 	
 	public void dragged(final InputEvent ev) {
-		CONTROLLER.queue(new Runnable(){
-			@Override
-			public void run() {
-				CONTROLLER.dragged(ev);
-			}}
-		);
+		CONTROLLER.dragged(ev);
 	}
 	
 	public void released(final InputEvent ev) {
-		CONTROLLER.queue(new Runnable(){
-			@Override
-			public void run() {
-				CONTROLLER.released(ev);
-			}}
-		);
+		CONTROLLER.released(ev);
 	}
 	
 	public void moved(final InputEvent ev) {
-		CONTROLLER.queue(new Runnable(){
-			@Override
-			public void run() {
-				CONTROLLER.moved(ev);
-			}}
-		);
+		CONTROLLER.moved(ev);
 	}
 	
 	@Override

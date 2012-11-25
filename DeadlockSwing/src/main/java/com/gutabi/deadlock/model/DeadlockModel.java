@@ -61,7 +61,7 @@ public class DeadlockModel {
 		
 		AffineTransform origTrans = g2.getTransform();
 		
-		g2.translate(VIEW.worldOffsetX - VIEW.worldOriginX, VIEW.worldOffsetY - VIEW.worldOriginY);
+		g2.translate((-VIEW.worldOriginX), (-VIEW.worldOriginY));
 		g2.setStroke(VIEW.worldStroke);
 		
 		world.paint(g2);

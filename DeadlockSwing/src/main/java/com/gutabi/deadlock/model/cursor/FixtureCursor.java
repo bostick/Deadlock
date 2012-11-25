@@ -12,7 +12,6 @@ import com.gutabi.deadlock.core.geom.tree.AABB;
 import com.gutabi.deadlock.core.graph.Axis;
 import com.gutabi.deadlock.core.graph.Vertex;
 import com.gutabi.deadlock.model.Cursor;
-import com.gutabi.deadlock.model.World;
 
 @SuppressWarnings("static-access")
 public class FixtureCursor extends Cursor {
@@ -33,8 +32,8 @@ public class FixtureCursor extends Cursor {
 	public void setPoint(Point p) {
 		this.p = p;
 		
-		double distToTopOrBottom = Math.min(p.y - 0.0, World.WORLD_HEIGHT - p.y);
-		double distToLeftOrRight = Math.min(p.x - 0.0, World.WORLD_WIDTH - p.x);
+		double distToTopOrBottom = Math.min(p.y - 0.0, MODEL.world.getWorldHeight() - p.y);
+		double distToLeftOrRight = Math.min(p.x - 0.0, MODEL.world.getWorldWidth() - p.x);
 		
 		if (distToTopOrBottom < distToLeftOrRight) {
 			axis = Axis.TOPBOTTOM;
@@ -45,11 +44,11 @@ public class FixtureCursor extends Cursor {
 		switch (axis) {
 		case LEFTRIGHT:
 			worldSource = new Circle(this, new Point(0.0, p.y), Vertex.INIT_VERTEX_RADIUS);
-			worldSink = new Circle(this, new Point(World.WORLD_WIDTH, p.y), Vertex.INIT_VERTEX_RADIUS);
+			worldSink = new Circle(this, new Point(MODEL.world.getWorldWidth(), p.y), Vertex.INIT_VERTEX_RADIUS);
 			break;
 		case TOPBOTTOM:
 			worldSource = new Circle(this, new Point(p.x, 0.0), Vertex.INIT_VERTEX_RADIUS);
-			worldSink = new Circle(this, new Point(p.x, World.WORLD_HEIGHT), Vertex.INIT_VERTEX_RADIUS);
+			worldSink = new Circle(this, new Point(p.x, MODEL.world.getWorldHeight()), Vertex.INIT_VERTEX_RADIUS);
 			break;
 		default:
 			assert false;
@@ -94,12 +93,12 @@ public class FixtureCursor extends Cursor {
 		case LEFTRIGHT:
 			worldSource.draw(g2);
 			worldSink.draw(g2);
-			g2.drawLine((int)(0.0 * MODEL.PIXELS_PER_METER), (int)(p.y * MODEL.PIXELS_PER_METER), (int)(World.WORLD_WIDTH * MODEL.PIXELS_PER_METER), (int)(p.y * MODEL.PIXELS_PER_METER));
+			g2.drawLine((int)(0.0 * MODEL.PIXELS_PER_METER), (int)(p.y * MODEL.PIXELS_PER_METER), (int)(MODEL.world.getWorldWidth() * MODEL.PIXELS_PER_METER), (int)(p.y * MODEL.PIXELS_PER_METER));
 			break;
 		case TOPBOTTOM:
 			worldSource.draw(g2);
 			worldSink.draw(g2);
-			g2.drawLine((int)(p.x * MODEL.PIXELS_PER_METER), (int)(0.0 * MODEL.PIXELS_PER_METER), (int)(p.x * MODEL.PIXELS_PER_METER), (int)(World.WORLD_HEIGHT * MODEL.PIXELS_PER_METER));
+			g2.drawLine((int)(p.x * MODEL.PIXELS_PER_METER), (int)(0.0 * MODEL.PIXELS_PER_METER), (int)(p.x * MODEL.PIXELS_PER_METER), (int)(MODEL.world.getWorldHeight() * MODEL.PIXELS_PER_METER));
 			break;
 		default:
 			assert false;

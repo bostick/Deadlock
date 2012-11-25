@@ -20,8 +20,6 @@ public class Quad extends Shape {
 	
 	public final Point n01;
 	public final Point n12;
-//	public final Point n23;
-//	public final Point n30;
 	
 	double[] n01Projection;
 	double[] n12Projection;
@@ -40,10 +38,6 @@ public class Quad extends Shape {
 		n01 = Point.ccw90AndNormalize(edge);
 		edge = p2.minus(p1);
 		n12 = Point.ccw90AndNormalize(edge);
-//		edge = p3.minus(p2);
-//		n23 = Point.ccw90(edge).normalize();
-//		edge = p0.minus(p3);
-//		n30 = Point.ccw90(edge).normalize();
 		
 		n01Projection = new double[2];
 		project(n01, n01Projection);

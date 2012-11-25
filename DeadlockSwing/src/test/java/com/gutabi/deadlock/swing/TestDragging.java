@@ -23,7 +23,7 @@ public class TestDragging {
 	public static void testPressed(Point p) throws Exception {
 		Point pp = p.plus(OFFSET);
 		CONTROLLER.mc.pressed(new InputEvent(VIEW.canvas, pp));
-		CONTROLLER.queueAndWait(empty);
+//		CONTROLLER.queueAndWait(empty);
 		Thread.sleep(10);
 		VIEW.repaint();
 	}
@@ -31,14 +31,14 @@ public class TestDragging {
 	public static void testDragged(Point p) throws Exception {
 		Point pp = p.plus(OFFSET);
 		CONTROLLER.mc.dragged(new InputEvent(VIEW.canvas, pp));
-		CONTROLLER.queueAndWait(empty);
+//		CONTROLLER.queueAndWait(empty);
 		Thread.sleep(10);
 		VIEW.repaint();
 	}
 	
 	public static void testReleased() throws Exception {
 		CONTROLLER.mc.released(new InputEvent(VIEW.canvas, null));
-		CONTROLLER.queueAndWait(empty);
+//		CONTROLLER.queueAndWait(empty);
 		Thread.sleep(10);
 		VIEW.repaint();
 	}

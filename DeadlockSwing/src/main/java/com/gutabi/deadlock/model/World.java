@@ -18,7 +18,6 @@ import com.gutabi.deadlock.core.geom.Shape;
 import com.gutabi.deadlock.core.geom.Sweepable;
 import com.gutabi.deadlock.core.geom.Sweeper;
 import com.gutabi.deadlock.core.geom.tree.AABB;
-import com.gutabi.deadlock.core.graph.Axis;
 import com.gutabi.deadlock.core.graph.Edge;
 import com.gutabi.deadlock.core.graph.Graph;
 import com.gutabi.deadlock.core.graph.Merger;
@@ -26,8 +25,6 @@ import com.gutabi.deadlock.core.graph.Road;
 import com.gutabi.deadlock.core.graph.RoadPosition;
 import com.gutabi.deadlock.core.graph.Vertex;
 import com.gutabi.deadlock.model.cursor.RegularCursor;
-import com.gutabi.deadlock.model.fixture.WorldSink;
-import com.gutabi.deadlock.model.fixture.WorldSource;
 import com.gutabi.deadlock.view.AnimatedExplosion;
 import com.gutabi.deadlock.view.AnimatedGrass;
 
@@ -39,14 +36,14 @@ public class World implements Sweepable {
 	 */
 	public static final double SINK_EPSILON = 0.5f;
 	
-	public static final double WORLD_WIDTH = 2 * 16.0;
-	public static final double WORLD_HEIGHT = WORLD_WIDTH;
+//	public static final double WORLD_WIDTH = 2 * 16.0;
+//	public static final double WORLD_HEIGHT = WORLD_WIDTH;
 	
 	public static final double QUADRANT_WIDTH = 16.0;
 	public static final double QUADRANT_HEIGHT = QUADRANT_WIDTH;
 	
-	public static final int GRASS_WIDTH = 32;
-	public static final int GRASS_HEIGHT = 32;
+//	public static final int GRASS_WIDTH = 32;
+//	public static final int GRASS_HEIGHT = 32;
 	
 	public static Random RANDOM = new Random(1);
 	
@@ -59,7 +56,9 @@ public class World implements Sweepable {
 	AnimatedGrass animatedGrass2;
 	AnimatedGrass animatedGrass3;
 	
-	private Graph graph;
+	public int[][] quadrants;
+	
+	private Graph graph = new Graph();
 	
 	public List<Car> cars = new ArrayList<Car>();
 	
@@ -79,62 +78,74 @@ public class World implements Sweepable {
 	
 	public World() {
 		
-		graph = new Graph();
+		quadrants = new int[][] {
+				{1, 1, 1},
+				{1, 1, 0},
+				{0, 1, 0},
+		};
 		
-		animatedGrass1 = new AnimatedGrass(new Point(WORLD_WIDTH/4, WORLD_HEIGHT/4));
-		animatedGrass2 = new AnimatedGrass(new Point(3*WORLD_WIDTH/4, 2*WORLD_HEIGHT/4));
-		animatedGrass3 = new AnimatedGrass(new Point(WORLD_WIDTH/4, 3*WORLD_HEIGHT/4));
+//		animatedGrass1 = new AnimatedGrass(new Point(WORLD_WIDTH/4, WORLD_HEIGHT/4));
+//		animatedGrass2 = new AnimatedGrass(new Point(3*WORLD_WIDTH/4, 2*WORLD_HEIGHT/4));
+//		animatedGrass3 = new AnimatedGrass(new Point(WORLD_WIDTH/4, 3*WORLD_HEIGHT/4));
+//		
+//		WorldSource a = new WorldSource(new Point(WORLD_WIDTH/4, 0), Axis.TOPBOTTOM);
+//		WorldSource b = new WorldSource(new Point(2*WORLD_WIDTH/4, 0), Axis.TOPBOTTOM);
+//		WorldSource t1 = new WorldSource(new Point(3*WORLD_WIDTH/4, 0), Axis.TOPBOTTOM);
+//		
+//		WorldSource c = new WorldSource(new Point(0, WORLD_HEIGHT/4), Axis.LEFTRIGHT);
+//		WorldSource d = new WorldSource(new Point(0, 2*WORLD_HEIGHT/4), Axis.LEFTRIGHT);
+//		WorldSource t2 = new WorldSource(new Point(0, 3*WORLD_HEIGHT/4), Axis.LEFTRIGHT);
+//		
+//		WorldSink e = new WorldSink(new Point(WORLD_WIDTH/4, WORLD_HEIGHT), Axis.TOPBOTTOM);
+//		WorldSink f = new WorldSink(new Point(2*WORLD_WIDTH/4, WORLD_HEIGHT), Axis.TOPBOTTOM);
+//		WorldSink t3 = new WorldSink(new Point(3*WORLD_WIDTH/4, WORLD_HEIGHT), Axis.TOPBOTTOM);
+//		
+//		WorldSink g = new WorldSink(new Point(WORLD_WIDTH, WORLD_HEIGHT/4), Axis.LEFTRIGHT);
+//		WorldSink h = new WorldSink(new Point(WORLD_WIDTH, 2*WORLD_HEIGHT/4), Axis.LEFTRIGHT);
+//		WorldSink t4 = new WorldSink(new Point(WORLD_WIDTH, 3*WORLD_HEIGHT/4), Axis.LEFTRIGHT);
+//		
+//		a.matchingSink = e;
+//		e.matchingSource = a;
+//		
+//		b.matchingSink = f;
+//		f.matchingSource = b;
+//		
+//		t1.matchingSink = t3;
+//		t3.matchingSource = t1;
+//		
+//		c.matchingSink = g;
+//		g.matchingSource = c;
+//		
+//		d.matchingSink = h;
+//		h.matchingSource = d;
+//		
+//		t2.matchingSink = t4;
+//		t4.matchingSource = t2;
+//		
+//		graph.addVertexTop(a);
+//		graph.addVertexTop(b);
+//		graph.addVertexTop(t1);
+//		
+//		graph.addVertexTop(c);
+//		graph.addVertexTop(d);
+//		graph.addVertexTop(t2);
+//		
+//		graph.addVertexTop(e);
+//		graph.addVertexTop(f);
+//		graph.addVertexTop(t3);
+//		
+//		graph.addVertexTop(g);
+//		graph.addVertexTop(h);
+//		graph.addVertexTop(t4);
 		
-		WorldSource a = new WorldSource(new Point(WORLD_WIDTH/4, 0), Axis.TOPBOTTOM);
-		WorldSource b = new WorldSource(new Point(2*WORLD_WIDTH/4, 0), Axis.TOPBOTTOM);
-		WorldSource t1 = new WorldSource(new Point(3*WORLD_WIDTH/4, 0), Axis.TOPBOTTOM);
-		
-		WorldSource c = new WorldSource(new Point(0, WORLD_HEIGHT/4), Axis.LEFTRIGHT);
-		WorldSource d = new WorldSource(new Point(0, 2*WORLD_HEIGHT/4), Axis.LEFTRIGHT);
-		WorldSource t2 = new WorldSource(new Point(0, 3*WORLD_HEIGHT/4), Axis.LEFTRIGHT);
-		
-		WorldSink e = new WorldSink(new Point(WORLD_WIDTH/4, WORLD_HEIGHT), Axis.TOPBOTTOM);
-		WorldSink f = new WorldSink(new Point(2*WORLD_WIDTH/4, WORLD_HEIGHT), Axis.TOPBOTTOM);
-		WorldSink t3 = new WorldSink(new Point(3*WORLD_WIDTH/4, WORLD_HEIGHT), Axis.TOPBOTTOM);
-		
-		WorldSink g = new WorldSink(new Point(WORLD_WIDTH, WORLD_HEIGHT/4), Axis.LEFTRIGHT);
-		WorldSink h = new WorldSink(new Point(WORLD_WIDTH, 2*WORLD_HEIGHT/4), Axis.LEFTRIGHT);
-		WorldSink t4 = new WorldSink(new Point(WORLD_WIDTH, 3*WORLD_HEIGHT/4), Axis.LEFTRIGHT);
-		
-		a.matchingSink = e;
-		e.matchingSource = a;
-		
-		b.matchingSink = f;
-		f.matchingSource = b;
-		
-		t1.matchingSink = t3;
-		t3.matchingSource = t1;
-		
-		c.matchingSink = g;
-		g.matchingSource = c;
-		
-		d.matchingSink = h;
-		h.matchingSource = d;
-		
-		t2.matchingSink = t4;
-		t4.matchingSource = t2;
-		
-		graph.addVertexTop(a);
-		graph.addVertexTop(b);
-		graph.addVertexTop(t1);
-		
-		graph.addVertexTop(c);
-		graph.addVertexTop(d);
-		graph.addVertexTop(t2);
-		
-		graph.addVertexTop(e);
-		graph.addVertexTop(f);
-		graph.addVertexTop(t3);
-		
-		graph.addVertexTop(g);
-		graph.addVertexTop(h);
-		graph.addVertexTop(t4);
-		
+	}
+	
+	public double getWorldWidth() {
+		return quadrants[0].length * QUADRANT_WIDTH;
+	}
+	
+	public double getWorldHeight() {
+		return quadrants.length * QUADRANT_HEIGHT;
 	}
 	
 	public void init() throws Exception {
@@ -143,7 +154,7 @@ public class World implements Sweepable {
 		listener = new CarEventListener();
 		b2dWorld.setContactListener(listener);
 		
-		worldRect = new AABB(0, 0, WORLD_WIDTH, WORLD_HEIGHT);
+		worldRect = new AABB(0, 0, getWorldWidth(), getWorldHeight());
 		
 		computeAABB();
 		
@@ -160,7 +171,6 @@ public class World implements Sweepable {
 		
 		postDraftingTop();
 		
-//		CONTROLLER.renderAndPaint();
 		assert checkConsistency();
 	}
 	
@@ -235,7 +245,6 @@ public class World implements Sweepable {
 	
 	
 	private void postIdleTop() {
-//		assert MODEL.mode == ControlMode.IDLE;
 		
 		graph.computeVertexRadii();
 		
@@ -243,7 +252,6 @@ public class World implements Sweepable {
 	}
 	
 	public void postDraftingTop() {
-//		assert MODEL.mode == ControlMode.DRAFTING;
 		
 		graph.computeVertexRadii();
 		
@@ -251,7 +259,6 @@ public class World implements Sweepable {
 	}
 	
 	private void postRunningTop() {
-//		assert MODEL.mode == ControlMode.RUNNING;
 		;
 	}
 	
@@ -450,10 +457,6 @@ public class World implements Sweepable {
 		return graph.graphHitTest(p);
 	}
 	
-//	public Entity graphBestHitTestX(Shape s) {
-//		return graph.graphBestHitTest(s);
-//	}
-	
 	public Entity pureGraphBestHitTest(Shape s) {
 		return graph.pureGraphBestHitTest(s);
 	}
@@ -466,22 +469,6 @@ public class World implements Sweepable {
 		return graph.edges.contains(r);
 	}
 	
-	/*
-	 * is this vertex under any cars?
-	 */
-//	public boolean isUnderAnyCars(Vertex v) {
-//		
-//		synchronized (MODEL) {
-//			for (Car c : MODEL.world.cars) {
-//				if (c.bestHitTest(v.shape) != null) {
-//					return true;
-//				}
-//			}
-//		}
-//		
-//		return false;
-//	}
-	
 	public boolean cursorIntersect(Cursor c) {
 		return graph.cursorIntersect(c);
 	}
@@ -493,8 +480,6 @@ public class World implements Sweepable {
 		paintScene(g2);
 			
 		if (MODEL.DEBUG_DRAW) {
-			
-//			paintAABB(g2);
 			aabb.paint(g2);
 			
 		}
@@ -504,9 +489,15 @@ public class World implements Sweepable {
 		
 		g2.drawImage(backgroundGrassImage, 0, 0, null);
 		
-		animatedGrass1.paint(g2);
-		animatedGrass2.paint(g2);
-		animatedGrass3.paint(g2);
+		if (animatedGrass1 != null) {
+			animatedGrass1.paint(g2);
+		}
+		if (animatedGrass2 != null) {
+			animatedGrass2.paint(g2);
+		}
+		if (animatedGrass3 != null) {
+			animatedGrass3.paint(g2);
+		}
 		
 		int x = (int)((aabb.x * MODEL.PIXELS_PER_METER));
 		int y = (int)((aabb.y * MODEL.PIXELS_PER_METER));
@@ -584,8 +575,6 @@ public class World implements Sweepable {
 	
 	public void renderBackgroundFresh() {
 		assert !Thread.holdsLock(MODEL);
-//		assert SwingUtilities.isEventDispatchThread();
-//		assert Thread.currentThread().getName().equals("controller");
 		
 		backgroundGraphImage = new BufferedImage(
 				(int)(aabb.width * MODEL.PIXELS_PER_METER),
@@ -595,34 +584,51 @@ public class World implements Sweepable {
 		Graphics2D backgroundGraphImageG2 = backgroundGraphImage.createGraphics();
 		
 		backgroundGrassImage = new BufferedImage(
-				(int)(WORLD_WIDTH * MODEL.PIXELS_PER_METER),
-				(int)(WORLD_HEIGHT * MODEL.PIXELS_PER_METER),
+				(int)(getWorldWidth() * MODEL.PIXELS_PER_METER),
+				(int)(getWorldHeight() * MODEL.PIXELS_PER_METER),
 				BufferedImage.TYPE_INT_ARGB);
 		
 		Graphics2D backgroundGrassImageG2 = backgroundGrassImage.createGraphics();
 		
 		if (!MODEL.DEBUG_DRAW) {
 			
-			BufferedImage tiledGrass = new BufferedImage(
-					(int)(World.WORLD_WIDTH * MODEL.PIXELS_PER_METER),
-					(int)(World.WORLD_HEIGHT * MODEL.PIXELS_PER_METER),
+			BufferedImage quadrantGrass = new BufferedImage(
+					(int)(QUADRANT_WIDTH * MODEL.PIXELS_PER_METER),
+					(int)(QUADRANT_HEIGHT * MODEL.PIXELS_PER_METER),
 					BufferedImage.TYPE_INT_ARGB);
-			Graphics2D g2 = tiledGrass.createGraphics();
+			Graphics2D g2 = quadrantGrass.createGraphics();
 			
-			for (int i = 0; i < (World.WORLD_WIDTH * MODEL.PIXELS_PER_METER)/World.GRASS_WIDTH; i++) {
-				for (int j = 0; j < (World.WORLD_HEIGHT * MODEL.PIXELS_PER_METER)/World.GRASS_HEIGHT; j++) {
+			for (int i = 0; i < (QUADRANT_WIDTH * MODEL.PIXELS_PER_METER)/32; i++) {
+				for (int j = 0; j < (QUADRANT_HEIGHT * MODEL.PIXELS_PER_METER)/32; j++) {
 					g2.drawImage(VIEW.sheet,
-							World.GRASS_WIDTH * i, World.GRASS_HEIGHT * j, World.GRASS_WIDTH * i + World.GRASS_WIDTH, World.GRASS_HEIGHT * j + World.GRASS_HEIGHT,
-							0, 224, 0+World.GRASS_WIDTH, 224+World.GRASS_HEIGHT, null);
+							32 * i, 32 * j, 32 * i + 32, 32 * j + 32,
+							0, 224, 0+32, 224+32, null);
 				}
 			} 
 			
-			backgroundGrassImageG2.drawImage(tiledGrass, 0, 0, null);
+			for (int i = 0; i < quadrants[0].length; i++) {
+				for (int j = 0; j < quadrants.length; j++) {
+					if (quadrants[i][j] == 1) {
+						backgroundGrassImageG2.drawImage(quadrantGrass, (int)(i * QUADRANT_WIDTH * MODEL.PIXELS_PER_METER), (int)(j * QUADRANT_HEIGHT * MODEL.PIXELS_PER_METER), null);
+					}
+				}
+			}
 			
 		} else {
 			
 			backgroundGrassImageG2.setColor(lightGreen);
-			backgroundGrassImageG2.fillRect(0, 0, (int)(WORLD_WIDTH * MODEL.PIXELS_PER_METER), (int)(WORLD_HEIGHT * MODEL.PIXELS_PER_METER));
+			
+			for (int i = 0; i < quadrants[0].length; i++) {
+				for (int j = 0; j < quadrants.length; j++) {
+					if (quadrants[i][j] == 1) {
+						backgroundGrassImageG2.fillRect(
+								(int)(i * QUADRANT_WIDTH * MODEL.PIXELS_PER_METER),
+								(int)(j * QUADRANT_HEIGHT * MODEL.PIXELS_PER_METER),
+								(int)(QUADRANT_WIDTH * MODEL.PIXELS_PER_METER),
+								(int)(QUADRANT_HEIGHT * MODEL.PIXELS_PER_METER));
+					}
+				}
+			}
 			
 		}
 		
@@ -631,11 +637,25 @@ public class World implements Sweepable {
 			backgroundGrassImageG2.setColor(Color.GRAY);
 			backgroundGrassImageG2.setStroke(RegularCursor.solidOutlineStroke);
 			
-			for (int i = 0; i <= WORLD_HEIGHT; i+=2) {
-				backgroundGrassImageG2.drawLine((int)(0 * MODEL.PIXELS_PER_METER), (int)(i * MODEL.PIXELS_PER_METER), (int)(WORLD_WIDTH * MODEL.PIXELS_PER_METER), (int)(i * MODEL.PIXELS_PER_METER));
-			}
-			for (int i = 0; i <= WORLD_WIDTH; i+=2) {
-				backgroundGrassImageG2.drawLine((int)(i * MODEL.PIXELS_PER_METER), (int)(0 * MODEL.PIXELS_PER_METER), (int)(i * MODEL.PIXELS_PER_METER), (int)(WORLD_HEIGHT * MODEL.PIXELS_PER_METER));	
+			for (int i = 0; i < quadrants[0].length; i++) {
+				for (int j = 0; j < quadrants.length; j++) {
+					if (quadrants[i][j] == 1) {
+						for (int k = 0; k <= QUADRANT_HEIGHT; k+=2) {
+							backgroundGrassImageG2.drawLine(
+									(int)((i * QUADRANT_WIDTH + 0) * MODEL.PIXELS_PER_METER),
+									(int)((j * QUADRANT_HEIGHT + k) * MODEL.PIXELS_PER_METER),
+									(int)((i * QUADRANT_WIDTH + QUADRANT_WIDTH) * MODEL.PIXELS_PER_METER),
+									(int)((j * QUADRANT_HEIGHT + k) * MODEL.PIXELS_PER_METER));
+						}
+						for (int k = 0; k <= QUADRANT_WIDTH; k+=2) {
+							backgroundGrassImageG2.drawLine(
+									(int)((i * QUADRANT_WIDTH + k) * MODEL.PIXELS_PER_METER),
+									(int)((j * QUADRANT_HEIGHT + 0) * MODEL.PIXELS_PER_METER),
+									(int)((i * QUADRANT_WIDTH + k) * MODEL.PIXELS_PER_METER),
+									(int)((j * QUADRANT_HEIGHT + QUADRANT_HEIGHT) * MODEL.PIXELS_PER_METER));	
+						}
+					}
+				}
 			}
 			
 		}

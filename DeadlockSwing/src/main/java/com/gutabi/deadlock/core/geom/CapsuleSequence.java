@@ -116,12 +116,6 @@ public class CapsuleSequence extends Shape {
 		}
 	}
 	
-//	public void paintDirection(Graphics2D g2) {
-//		for (Capsule c : caps) {
-//			c.paintDirection(g2);
-//		}
-//	}
-	
 	public void draw(Graphics2D g2) {
 		for (Capsule c : caps) {
 			c.draw(g2);

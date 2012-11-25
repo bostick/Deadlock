@@ -166,7 +166,6 @@ public class GraphPositionPath {
 	 */
 	public VertexArrivalEvent vertexArrivalTest(GraphPositionPathPosition pos, double dist) {
 		
-//		List<VertexArrivalEvent> acc = new ArrayList<VertexArrivalEvent>();
 		for (GraphPositionPathPosition p : borderPositions) {
 			if (p.combo >= pos.combo && DMath.lessThanEquals(pos.distanceTo(p), dist)) {
 				return new VertexArrivalEvent(p);
@@ -190,7 +189,6 @@ public class GraphPositionPath {
 	 */
 	public GraphPositionPathPosition findClosestGraphPositionPathPosition(Point p, GraphPositionPathPosition min, GraphPositionPathPosition max) {
 		
-		//GraphPositionPathPosition closest = null;
 		int closestIndex = -1;
 		double closestParam = -1;
 		
@@ -209,7 +207,6 @@ public class GraphPositionPath {
 				u = max.param;
 			}
 			
-//			closest = new GraphPositionPathPosition(this, min.index, u);
 			closestIndex = min.index;
 			closestParam = u;
 			
@@ -247,7 +244,6 @@ public class GraphPositionPath {
 					 */
 					double dist = Point.distance(p, b.gpos.p);
 					if (dist < closestDistance) {
-//						closest = b;
 						closestIndex = b.index;
 						closestParam = b.param;
 						
@@ -260,7 +256,6 @@ public class GraphPositionPath {
 				double dist = Point.distance(p, pOnPath);
 				
 				if (dist < closestDistance) {
-//					closest = new GraphPositionPathPosition(this, a.index, u);
 					closestIndex = a.index;
 					closestParam = u;
 					
@@ -297,7 +292,6 @@ public class GraphPositionPath {
 					 */
 					double dist = Point.distance(p, b.gpos.p);
 					if (dist < closestDistance) {
-//						closest = b;
 						closestIndex = b.index;
 						closestParam = b.param;
 						
@@ -308,7 +302,6 @@ public class GraphPositionPath {
 				Point pOnPath = Point.point(a.gpos.p, b.gpos.p, u);
 				double dist = Point.distance(p, pOnPath);
 				if (dist < closestDistance) {
-//					closest = new GraphPositionPathPosition(this, a.index, u);
 					closestIndex = a.index;
 					closestParam = u;
 					
@@ -334,7 +327,6 @@ public class GraphPositionPath {
 			Point pOnPath = Point.point(a.gpos.p, bCeil.gpos.p, u);
 			double dist = Point.distance(p, pOnPath);
 			if (dist < closestDistance) {
-//				closest = new GraphPositionPathPosition(this, a.index, u);
 				closestIndex = a.index;
 				closestParam = u;
 				
@@ -385,7 +377,6 @@ public class GraphPositionPath {
 			
 			GraphPosition gp = c.overallPos.gpos;
 			
-//			if (DMath.equals(startingPosition.combo, 0.0)) {
 			if (poss.get(0) instanceof VertexPosition) {
 				if (gp.entity == ((VertexPosition)poss.get(0)).v) {
 					assert getGraphPosition(0, 0.0).equals(gp);
@@ -393,7 +384,6 @@ public class GraphPositionPath {
 					continue;
 				}
 			}
-//			}
 			
 			for (int i = 0; i < poss.size()-1; i++) {
 				GraphPosition a = poss.get(i);
@@ -500,14 +490,10 @@ public class GraphPositionPath {
 				int gpppIndex = (int)Math.floor(i + abCombo);
 				double gpppParam = (i + abCombo)-gpppIndex;
 				
-//				GraphPosition test = getGraphPosition(gpppIndex, gpppParam);
-//				assert test.equals(gp);
-				
 				hitMap.put(new GraphPositionPathPosition(this, gpppIndex, gpppParam), c);
 				
 			}
 			
-//			return null;
 		}
 		
 	}
@@ -527,11 +513,9 @@ public class GraphPositionPath {
 			if (otherCarCenter.equals(center)) {
 				continue;
 			}
-//			GraphPositionPathPosition otherCarCenter = hitTest(c.overallPos.gpos, center);
 			if (DMath.lessThan(otherCarCenter.combo, center.combo)) {
 				continue;
 			}
-//			assert DMath.greaterThanEquals(otherCarCenter.combo, center.combo);
 			double centerCenterDist = center.distanceTo(otherCarCenter);
 			if (DMath.lessThanEquals(centerCenterDist, dist)) {
 				assert !c.overallPos.equals(center);
@@ -549,7 +533,6 @@ public class GraphPositionPath {
 	public GraphPositionPathPosition hitTest(GraphPosition gp, GraphPositionPathPosition startingPosition) {
 		for (Entry<GraphPositionPathPosition, Car> entry : hitMap.entrySet()) {
 			GraphPositionPathPosition gppp = entry.getKey();
-//			Car c = entry.getValue();
 			if (gppp.gpos.equals(gp)) {
 				if (DMath.greaterThanEquals(gppp.combo, startingPosition.combo)) {
 					return gppp;

@@ -249,15 +249,12 @@ public class Point {
 			throw new IllegalArgumentException();
 		}
 		
-//		Point c = point(start, end, param);
 		double cx = start.x + param * (end.x - start.x);
 		double cy = start.y + param * (end.y - start.y);
 		
 		double rad = Math.atan2(start.y - end.y, start.x - end.x);
 		double x = Math.cos(rad) * dist + cx;
 		double y = Math.sin(rad) * dist + cy;
-		
-//		Point m = new Point(x, y);
 		
 		assert DMath.equals(distance(cx, cy, x, y), dist);
 		
@@ -366,18 +363,6 @@ public class Point {
 			return distance(b, p);
 		}
 	}
-	
-//	public Point normalizeX() {
-////		double atan = Math.atan2(y, x);
-////		return new Point(Math.cos(atan), Math.sin(atan));
-//		double len = Math.hypot(x, y);
-//		double invLen = 1 / len;
-//		return new Point(x * invLen, y * invLen);
-//	}
-	
-//	public static double signedArea(Point p0, Point p1, Point p2) {
-//		return (p1.x-p0.x)*(p2.y-p0.y) - (p2.x-p0.x)*(p1.y-p0.y);
-//	}
 	
 	public static double param(Point b, Point c, Point d) {
 		return param(b.x, b.y, c, d);
@@ -547,14 +532,6 @@ public class Point {
 	public Point multiply(double scale) {
 		return new Point(x * scale, y * scale);
 	}
-	
-//	public static Point plus(Point a, Point b) {
-//		return new Point(a.x + b.x, a.y + b.y);
-//	}
-//	
-//	public static Point minus(Point a, Point b) {
-//		return new Point(a.x - b.x, a.y - b.y);
-//	}
 	
 	public Point plus(Point b) {
 		return new Point(x + b.x, y + b.y);

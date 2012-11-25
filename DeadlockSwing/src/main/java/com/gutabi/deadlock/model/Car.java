@@ -106,6 +106,8 @@ public abstract class Car extends Entity {
 	
 	protected GraphPositionPath overallPath;
 	
+	public GraphPositionPathPosition overallPos;
+	
 	public int id;
 	
 	public static int carCounter;
@@ -134,10 +136,9 @@ public abstract class Car extends Entity {
 	float angle;
 	float angularVel;
 	double[][] carTransArr;
-//	Matrix carTrans;
 	boolean atleastPartiallyOnRoad;
 	boolean inMerger;
-	public GraphPositionPathPosition overallPos;
+	
 	Quad worldQuad;
 	Point prevWorldPoint0;
 	Point prevWorldPoint3;
@@ -191,7 +192,7 @@ public abstract class Car extends Entity {
 		computePath();
 		
 		overallPos = new GraphPositionPathPosition(overallPath, 0, 0.0);
-		GraphPosition closestGraphPos = overallPos.gpos;
+		GraphPosition closestGraphPos = overallPath.getGraphPosition(0, 0.0);
 		startPoint = closestGraphPos.p;
 		
 		vertexDepartureQueue.add(new VertexSpawnEvent(overallPos));
@@ -235,7 +236,6 @@ public abstract class Car extends Entity {
 		carTransArr[0][1] = r.col2.x;
 		carTransArr[1][0] = r.col1.y;
 		carTransArr[1][1] = r.col2.y;
-//		carTrans = new Matrix(carTransArr, r.col1.x, r.col2.x, r.col1.y, r.col2.y);
 		
 		worldQuad = Geom.localToWorld(localQuad, carTransArr, p);
 		shape = worldQuad;
@@ -329,7 +329,6 @@ public abstract class Car extends Entity {
 		}
 		
 		Mat22 r = b2dBody.getTransform().R;
-//		carTrans = new Matrix(carTransArr, r.col1.x, r.col2.x, r.col1.y, r.col2.y);
 		carTransArr[0][0] = r.col1.x;
 		carTransArr[0][1] = r.col2.x;
 		carTransArr[1][0] = r.col1.y;
@@ -736,13 +735,6 @@ public abstract class Car extends Entity {
 	
 	private void updateDrive(double t) {
 		
-//		if (stoppedTime != -1) {
-//			
-////			logger.debug("accel");
-//			
-////			accelTime = t;
-//		}
-		
 		double goalForwardVel = (float)getMaxSpeed();
 		
 		double dv;
@@ -948,7 +940,6 @@ public abstract class Car extends Entity {
 				g2.fillOval((int)(goalPoint.x * MODEL.PIXELS_PER_METER) - 2, (int)(goalPoint.y * MODEL.PIXELS_PER_METER) - 2, 4, 4);
 			}
 			
-//			paintAABB(g2);
 			shape.aabb.paint(g2);
 			
 		}
@@ -979,11 +970,8 @@ public abstract class Car extends Entity {
 		
 		if (inMerger) {
 			g2.setComposite(aComp);
-		} else {
-//			g2.setComposite(normalComp);
 		}
 		
-//		int sheetCol = 0;
 		int sheetRow = getSheetRow();
 		g2.drawImage(VIEW.sheet,
 				-HALF_CAR_LENGTH_PIXELS,
@@ -993,14 +981,6 @@ public abstract class Car extends Entity {
 				64, sheetRow, 64+32, sheetRow+16,
 				null);
 		
-//		g2.drawImage(MODEL.world.sheet,
-//				(int)(-CAR_LENGTH * MODEL.PIXELS_PER_METER * 0.5),
-//				(int)(-CAR_LENGTH * MODEL.PIXELS_PER_METER * 0.25),
-//				(int)(CAR_LENGTH * MODEL.PIXELS_PER_METER * 0.5),
-//				(int)(CAR_LENGTH * MODEL.PIXELS_PER_METER * 0.25),
-//				sheetCol+64, sheetRow, sheetCol+64+64, sheetRow+32,
-//				null);
-//		
 		if (state == CarStateEnum.BRAKING) {
 //			g2.drawImage(VIEW.sheet,
 //					-HALF_CAR_LENGTH_PIXELS,
@@ -1013,8 +993,6 @@ public abstract class Car extends Entity {
 		
 		if (inMerger) {
 			g2.setComposite(origComposite);
-		} else {
-//			g2.setComposite(normalComp);
 		}
 		g2.setTransform(origTransform);
 		
@@ -1045,7 +1023,6 @@ public abstract class Car extends Entity {
 		
 		g2.setTransform(origTransform);
 		
-//		g2.drawString(Integer.toString(carQueue.size()), (int)(panelPoint.x + 10), (int)(panelPoint.y));
 	}
 
 }

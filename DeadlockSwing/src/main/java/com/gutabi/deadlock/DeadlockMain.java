@@ -30,7 +30,6 @@ public class DeadlockMain  {
 		VIEW.canvas.postDisplay();
 		
 		VIEW.renderBackgroundFresh();
-//		VIEW.repaint();
 		
 	}
 	

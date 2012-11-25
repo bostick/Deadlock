@@ -8,7 +8,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 import org.apache.log4j.Logger;
 
@@ -48,9 +47,6 @@ public class DeadlockController implements ActionListener {
 	
 	public MouseController mc;
 	public KeyboardController kc;
-//	public WindowController wc;
-	
-//	ExecutorService e;
 	
 	Logger logger = Logger.getLogger(DeadlockController.class);
 	
@@ -62,64 +58,16 @@ public class DeadlockController implements ActionListener {
 		
 		mc = new MouseController();
 		kc = new KeyboardController();
-//		wc = new WindowController();
 		
 		VIEW.canvas.addMouseListener(mc);
 		VIEW.canvas.addMouseMotionListener(mc);
-		
-//		VIEW.frame.addWindowFocusListener(wc);
-//		VIEW.frame.addWindowListener(wc);
-//		VIEW.frame.addWindowStateListener(wc);
 		
 		VIEW.previewPanel.addMouseListener(mc);
 		VIEW.previewPanel.addMouseMotionListener(mc);
 		
 		kc.init();
 		
-//		MODEL.debugStroke = new Stroke(Vertex.INIT_VERTEX_RADIUS);
-		
-//		e = Executors.newSingleThreadExecutor();
-//		
-//		try {
-//			queueAndWait(new Runnable(){
-//
-//				@Override
-//				public void run() {
-//					Thread.currentThread().setName("controller");
-//					Thread.currentThread().setUncaughtExceptionHandler(DeadlockMain.handler);
-//				}});
-//			
-//		} catch (Exception e1) {
-//			// TODO Auto-generated catch block
-//			e1.printStackTrace();
-//		}
 	}
-	
-	public void queue(Runnable task) {
-//		e.execute(task);
-		task.run();
-	}
-	
-	public void queueAndWait(Runnable task) throws InterruptedException, ExecutionException {
-//		Future<?> f = e.submit(task);
-//		f.get();
-		task.run();
-	}
-	
-//	Runnable renderRunnable = new Runnable() {
-//		public void run() {
-//			renderAndPaint();
-//		}
-//	};
-	
-//	public void renderAndPaintInBackground() {
-//		SwingUtilities.invokeLater(renderRunnable);
-//	}
-	
-//	public void renderBackgroundAndPaint() {
-//		VIEW.renderBackgroundFresh();
-//		VIEW.repaint();
-//	}
 	
 	Point lastPressPanelPoint;
 	Point lastPressPreviewPoint;
@@ -203,7 +151,7 @@ public class DeadlockController implements ActionListener {
 			case DRAFTING:
 				
 				draftMove(lastDragPanelPoint);
-				//VIEW.renderBackground();
+				
 				VIEW.repaint();
 				break;
 				
@@ -234,8 +182,8 @@ public class DeadlockController implements ActionListener {
 			int x = (int)(lastDragPreviewPoint.x - lastPressPreviewPoint.x);
 			int y = (int)(lastDragPreviewPoint.y - lastPressPreviewPoint.y);
 			
-			VIEW.worldOriginX = originalX + 10*x;
-			VIEW.worldOriginY = originalY + 10*y;
+			VIEW.worldOriginX = originalX + 10 * x;
+			VIEW.worldOriginY = originalY + 10 * y;
 			
 			VIEW.repaintControlPanel();
 			VIEW.renderBackgroundFresh();
@@ -653,7 +601,6 @@ public class DeadlockController implements ActionListener {
 	}
 	
 	public void startRunning() {
-//		assert Thread.currentThread().getName().equals("controller");
 		
 		mode = ControlMode.RUNNING;
 		
@@ -665,7 +612,6 @@ public class DeadlockController implements ActionListener {
 	}
 	
 	public void stopRunning() {
-//		assert Thread.currentThread().getName().equals("controller");
 		
 		MODEL.cursor = new RegularCursor();
 		
@@ -673,11 +619,9 @@ public class DeadlockController implements ActionListener {
 		
 		mode = ControlMode.IDLE;
 		
-//		VIEW.repaint();
 	}
 	
 	public void pauseRunning() {
-//		assert Thread.currentThread().getName().equals("controller");
 		
 		MODEL.cursor.setPoint(lastMovedWorldPoint);
 		
@@ -701,7 +645,6 @@ public class DeadlockController implements ActionListener {
 	
 	
 	private void draftStart(Point p) {
-//		assert Thread.currentThread().getName().equals("controller");
 			
 		mode = ControlMode.DRAFTING;
 		
@@ -713,13 +656,11 @@ public class DeadlockController implements ActionListener {
 	}
 	
 	private void draftMove(Point p) {
-//		assert Thread.currentThread().getName().equals("controller");
 
 		MODEL.stroke.add(VIEW.panelToWorld(p));
 	}
 	
 	private void draftEnd() {
-//		assert Thread.currentThread().getName().equals("controller");
 		
 		processNewStroke();
 		
@@ -728,9 +669,6 @@ public class DeadlockController implements ActionListener {
 		MODEL.debugStroke2 = MODEL.debugStroke;
 		MODEL.debugStroke = MODEL.stroke;
 		MODEL.stroke = null;
-		
-//		MODEL.world.renderBackground();
-//		VIEW.repaint();
 		
 		mode = ControlMode.IDLE;
 		
@@ -745,12 +683,7 @@ public class DeadlockController implements ActionListener {
 			
 			VIEW.controlPanel.stopButton.setEnabled(true);
 			
-			CONTROLLER.queue(new Runnable(){
-				@Override
-				public void run() {
-					CONTROLLER.startRunning();
-				}}
-			);
+			CONTROLLER.startRunning();
 			
 		} else if (e.getActionCommand().equals("stop")) {
 			
@@ -759,34 +692,19 @@ public class DeadlockController implements ActionListener {
 			
 			VIEW.controlPanel.stopButton.setEnabled(false);
 			
-			CONTROLLER.queue(new Runnable(){
-				@Override
-				public void run() {
-					CONTROLLER.stopRunning();
-				}}
-			);
+			CONTROLLER.stopRunning();
 		} else if (e.getActionCommand().equals("pause")) {
 			
 			VIEW.controlPanel.startButton.setText("Unpause");
 			VIEW.controlPanel.startButton.setActionCommand("unpause");
 			
-			CONTROLLER.queue(new Runnable(){
-				@Override
-				public void run() {
-					CONTROLLER.pauseRunning();
-				}}
-			);
+			CONTROLLER.pauseRunning();
 		} else if (e.getActionCommand().equals("unpause")) {
 			
 			VIEW.controlPanel.startButton.setText("Pause");
 			VIEW.controlPanel.startButton.setActionCommand("pause");
 			
-			CONTROLLER.queue(new Runnable(){
-				@Override
-				public void run() {
-					CONTROLLER.unpauseRunning();
-				}}
-			);
+			CONTROLLER.unpauseRunning();
 		} else if (e.getActionCommand().equals("dt")) {
 			
 			String text = VIEW.controlPanel.dtField.getText();
@@ -797,12 +715,6 @@ public class DeadlockController implements ActionListener {
 				
 			}
 			
-			CONTROLLER.queue(new Runnable(){
-				@Override
-				public void run() {
-					
-				}}
-			);
 		} else if (e.getActionCommand().equals("debugDraw")) {
 			
 			boolean state = VIEW.controlPanel.debugCheckBox.isSelected();
@@ -1003,15 +915,11 @@ public class DeadlockController implements ActionListener {
 				
 			}
 			
-//			Vertex v0 = (Vertex)MODEL.world.pureGraphBestHitTest(e0.circle);
-//			Vertex v1 = (Vertex)MODEL.world.pureGraphBestHitTest(e1.circle);
 			Vertex v0 = e0.getVertex();
 			Vertex v1 = e1.getVertex();
 			
 			if (v0 == v1) {
 				logger.debug("same vertex");
-//				assert false;
-//				return;
 				continue;
 			}
 			
