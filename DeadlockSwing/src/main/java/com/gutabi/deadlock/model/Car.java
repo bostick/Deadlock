@@ -1005,13 +1005,20 @@ public abstract class Car extends Entity {
 				null);
 		
 		if (state == CarStateEnum.BRAKING) {
-//			g2.drawImage(VIEW.sheet,
-//					-HALF_CAR_LENGTH_PIXELS,
-//					-HALF_CAR_WIDTH_PIXELS,
-//					HALF_CAR_LENGTH_PIXELS,
-//					HALF_CAR_WIDTH_PIXELS,
-//					192, sheetRow, 192+64, sheetRow+32,
-//					null);
+			g2.drawImage(VIEW.sheet,
+					-HALF_CAR_LENGTH_PIXELS - 4,
+					-HALF_CAR_WIDTH_PIXELS / 2 - 4,
+					-HALF_CAR_LENGTH_PIXELS + 4,
+					-HALF_CAR_WIDTH_PIXELS / 2 + 4,
+					0, 288, 0+8, 288+8,
+					null);
+			g2.drawImage(VIEW.sheet,
+					-HALF_CAR_LENGTH_PIXELS - 4,
+					HALF_CAR_WIDTH_PIXELS / 2 - 4,
+					-HALF_CAR_LENGTH_PIXELS + 4,
+					HALF_CAR_WIDTH_PIXELS / 2 + 4,
+					0, 288, 0+8, 288+8,
+					null);
 		}
 		
 		if (inMerger) {

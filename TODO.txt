@@ -1,8 +1,6 @@
 
 IMMEDIATELY:
 
-better brake lights
-
 map on preview
 
 SOON:
@@ -49,6 +47,8 @@ spline/curve editor
 
 
 DONE:
+
+better brake lights
 
 enforce only 1 road to fixtures
 interesting problem:
