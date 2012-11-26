@@ -1,7 +1,6 @@
 
 IMMEDIATELY:
 
-map on preview
 
 SOON:
 
@@ -47,6 +46,8 @@ spline/curve editor
 
 
 DONE:
+
+map on preview
 
 better brake lights
 
@@ -157,6 +158,8 @@ skeleton for roads and mergers
 add arrow images for sources and sinks
 
 ON HOLD FOR NOW:
+
+draw a buffer around the preview, draw the aabb not the world rect
 
 option to switch between real and ideal physics
 

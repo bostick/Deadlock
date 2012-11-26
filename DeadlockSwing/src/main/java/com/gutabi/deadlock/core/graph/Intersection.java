@@ -5,6 +5,7 @@ import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
 
 import com.gutabi.deadlock.core.Point;
 
@@ -13,7 +14,7 @@ public class Intersection extends Vertex {
 	
 	private Turning t;
 	
-	private final Color color;
+//	private final Color color;
 	
 	public Intersection(Point p) {
 		super(p);
@@ -21,7 +22,7 @@ public class Intersection extends Vertex {
 		t = Turning.NONE;
 		
 		//color = new Color(0x44, 0x44, 0x44, 0xff);
-		color = Color.GRAY;
+//		color = Color.GRAY;
 		
 	}
 	
@@ -53,14 +54,14 @@ public class Intersection extends Vertex {
 		return true;
 	}
 	
-	public void paint(Graphics2D g2) {
+	public void paint(Graphics2D backgroundGraphImageG2, Graphics2D previewBackgroundImageG2) {
 		
-		g2.setColor(color);
+		backgroundGraphImageG2.setColor(Color.GRAY);
 		
-		shape.paint(g2);
+		shape.paint(backgroundGraphImageG2);
 		
 		if (t == Turning.CLOCKWISE) {
-			g2.drawImage(VIEW.sheet,
+			backgroundGraphImageG2.drawImage(VIEW.sheet,
 					(int)((p.x) * MODEL.PIXELS_PER_METER) - 16,
 					(int)((p.y) * MODEL.PIXELS_PER_METER) - 16,
 					(int)((p.x) * MODEL.PIXELS_PER_METER) + 16,
@@ -68,7 +69,7 @@ public class Intersection extends Vertex {
 					160, 224, 160+32, 224+32,
 					null);
 		} else if (t == Turning.COUNTERCLOCKWISE) {
-			g2.drawImage(VIEW.sheet,
+			backgroundGraphImageG2.drawImage(VIEW.sheet,
 					(int)((p.x) * MODEL.PIXELS_PER_METER) - 16,
 					(int)((p.y) * MODEL.PIXELS_PER_METER) - 16,
 					(int)((p.x) * MODEL.PIXELS_PER_METER) + 16,
@@ -76,10 +77,20 @@ public class Intersection extends Vertex {
 					192, 224, 192+32, 224+32,
 					null);
 		}
-				
+		
+		previewBackgroundImageG2.setColor(Color.GRAY);
+		
+		AffineTransform origTransform = previewBackgroundImageG2.getTransform();
+		
+		previewBackgroundImageG2.scale(100 / (MODEL.world.worldWidth * MODEL.PIXELS_PER_METER), 100 / (MODEL.world.worldHeight * MODEL.PIXELS_PER_METER));
+		
+		shape.paint(previewBackgroundImageG2);
+		
+		previewBackgroundImageG2.setTransform(origTransform);
+		
 		if (MODEL.DEBUG_DRAW) {
 			
-			shape.getAABB().draw(g2);
+			shape.getAABB().draw(backgroundGraphImageG2);
 			
 		}
 		

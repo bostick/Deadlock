@@ -186,7 +186,7 @@ public class DeadlockController implements ActionListener {
 			VIEW.worldOriginX = originalX + (int)((MODEL.world.worldWidth * MODEL.PIXELS_PER_METER / 100) * x);
 			VIEW.worldOriginY = originalY + (int)((MODEL.world.worldHeight * MODEL.PIXELS_PER_METER / 100) * y);
 			
-			VIEW.repaintControlPanel();
+//			VIEW.repaintControlPanel();
 			VIEW.repaint();
 			
 		}

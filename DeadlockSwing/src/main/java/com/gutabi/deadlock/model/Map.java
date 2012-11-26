@@ -173,9 +173,6 @@ public class Map {
 		return true;
 	}
 	
-	
-	static Color lightGreen = new Color(128, 255, 128);
-	
 	public void renderBackground(Graphics2D backgroundGrassImageG2, Graphics2D previewBackgroundGrassImageG2) {
 		for (int i = 0; i < quadrantCols; i++) {
 			for (int j = 0; j < quadrantRows; j++) {
@@ -187,7 +184,7 @@ public class Map {
 						
 					} else {
 						
-						backgroundGrassImageG2.setColor(lightGreen);
+						backgroundGrassImageG2.setColor(VIEW.LIGHTGREEN);
 						backgroundGrassImageG2.fillRect(
 								(int)(i * MODEL.QUADRANT_WIDTH * MODEL.PIXELS_PER_METER),
 								(int)(j * MODEL.QUADRANT_HEIGHT * MODEL.PIXELS_PER_METER),
@@ -215,7 +212,7 @@ public class Map {
 						}
 					}
 					
-					previewBackgroundGrassImageG2.setColor(Color.GREEN);
+					previewBackgroundGrassImageG2.setColor(VIEW.DARKGREEN);
 					previewBackgroundGrassImageG2.fillRect(
 							(int)(i * 100 / quadrantCols),
 							(int)(j * 100 / quadrantRows),

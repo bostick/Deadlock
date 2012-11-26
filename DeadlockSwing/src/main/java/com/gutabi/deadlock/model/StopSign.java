@@ -32,7 +32,7 @@ public class StopSign extends Entity {
 	
 	private boolean enabled;
 	
-	private Shape shape;
+	private Circle shape;
 	
 	public StopSign(Road e, int dir) {
 		this.e = e;

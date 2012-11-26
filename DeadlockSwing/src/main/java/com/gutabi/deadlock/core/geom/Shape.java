@@ -11,7 +11,7 @@ public abstract class Shape {
 	
 	public abstract boolean hitTest(Point p);
 	
-	public abstract void paint(Graphics2D g2);
+//	public abstract void paint(Graphics2D g2);
 	
 	public abstract AABB getAABB();
 	

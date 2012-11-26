@@ -44,6 +44,9 @@ public abstract class Edge extends Entity {
 	public abstract Entity decorationsBestHitTest(Shape e);
 	
 	
-	public abstract void paintDecorations(Graphics2D g2);
+	
+	public abstract void paint(Graphics2D backgroundGraphImageG2, Graphics2D previewBackgroundImageG2);
+	
+	public abstract void paintDecorations(Graphics2D backgroundGraphImageG2, Graphics2D previewBackgroundImageG2);
 
 }

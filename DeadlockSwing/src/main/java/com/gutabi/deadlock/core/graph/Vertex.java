@@ -34,7 +34,7 @@ public abstract class Vertex extends Entity {
 	
 	protected Color hiliteColor;
 	
-	protected SweepableShape shape;
+	protected Circle shape;
 	
 	private int hash;
 	
@@ -241,7 +241,7 @@ public abstract class Vertex extends Entity {
 	/**
 	 * @param g2 in world coords
 	 */
-	public abstract void paint(Graphics2D g2);
+	public abstract void paint(Graphics2D backgroundGraphImageG2, Graphics2D previewBackgroundImageG2);
 	
 	/**
 	 * @param g2 in world coords

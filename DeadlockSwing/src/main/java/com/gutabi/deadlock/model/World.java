@@ -606,9 +606,9 @@ public class World implements Sweepable {
 		
 		Graphics2D backgroundGrassImageG2 = VIEW.backgroundGrassImage.createGraphics();
 		
-		VIEW.previewBackgroundGrassImage = new BufferedImage(100, 100, BufferedImage.TYPE_INT_ARGB);
+		VIEW.previewBackgroundImage = new BufferedImage(100, 100, BufferedImage.TYPE_INT_ARGB);
 		
-		Graphics2D previewBackgroundGrassImageG2 = VIEW.previewBackgroundGrassImage.createGraphics();
+		Graphics2D previewBackgroundImageG2 = VIEW.previewBackgroundImage.createGraphics();
 		
 		
 		VIEW.backgroundGraphImage = new BufferedImage(
@@ -618,10 +618,10 @@ public class World implements Sweepable {
 		
 		Graphics2D backgroundGraphImageG2 = VIEW.backgroundGraphImage.createGraphics();
 		
-		previewBackgroundGrassImageG2.setColor(Color.WHITE);
-		previewBackgroundGrassImageG2.fillRect(0, 0, 100, 100);
+		previewBackgroundImageG2.setColor(Color.WHITE);
+		previewBackgroundImageG2.fillRect(0, 0, 100, 100);
 		
-		map.renderBackground(backgroundGrassImageG2, previewBackgroundGrassImageG2);
+		map.renderBackground(backgroundGrassImageG2, previewBackgroundImageG2);
 		
 		backgroundGraphImageG2.setStroke(VIEW.worldStroke);
 		
@@ -629,7 +629,7 @@ public class World implements Sweepable {
 				(int)((-aabb.x) * MODEL.PIXELS_PER_METER),
 				(int)((-aabb.y) * MODEL.PIXELS_PER_METER));
 		
-		graph.renderBackground(backgroundGraphImageG2);
+		graph.renderBackground(backgroundGraphImageG2, previewBackgroundImageG2);
 		
 		
 		

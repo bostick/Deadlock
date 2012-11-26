@@ -4,6 +4,7 @@ import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
 
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
@@ -30,8 +31,6 @@ public class Merger extends Edge {
 	public final MergerSource right;
 	public final MergerSource bottom;
 	
-	public final Quad worldQuad;
-	
 	private double[] cumulativeLengthsFromTop;
 	private double[] cumulativeLengthsFromLeft;
 	
@@ -41,7 +40,7 @@ public class Merger extends Edge {
 	private EdgeDirection leftRightDir;
 	private EdgeDirection topBottomDir;
 	
-	private SweepableShape shape;
+	private Quad shape;
 	
 	public Merger(Point center) {
 		
@@ -65,8 +64,7 @@ public class Merger extends Edge {
 		Point p1 = new Point(ul.x + MERGER_WIDTH, ul.y);
 		Point p2 = new Point(ul.x + MERGER_WIDTH, ul.y + MERGER_HEIGHT);
 		Point p3 = new Point(ul.x, ul.y + MERGER_HEIGHT);
-		worldQuad = new Quad(this, p0, p1, p2, p3);
-		shape = worldQuad;
+		shape = new Quad(this, p0, p1, p2, p3);
 		
 		top.m = this;
 		left.m = this;
@@ -302,20 +300,33 @@ public class Merger extends Edge {
 	}
 	
 	@Override
-	public void paint(Graphics2D g2) {
+	public void paint(Graphics2D backgroundGraphImageG2, Graphics2D previewBackgroundImageG2) {
 		
-		g2.setColor(color);
+		backgroundGraphImageG2.setColor(color);
 		
-		g2.fillRect(
-				(int)(ul.x * MODEL.PIXELS_PER_METER),
-				(int)(ul.y * MODEL.PIXELS_PER_METER),
-				(int)(MERGER_WIDTH * MODEL.PIXELS_PER_METER),
-				(int)(MERGER_HEIGHT * MODEL.PIXELS_PER_METER));
+//		backgroundGraphImageG2.fillRect(
+//				(int)(ul.x * MODEL.PIXELS_PER_METER),
+//				(int)(ul.y * MODEL.PIXELS_PER_METER),
+//				(int)(MERGER_WIDTH * MODEL.PIXELS_PER_METER),
+//				(int)(MERGER_HEIGHT * MODEL.PIXELS_PER_METER));
+		shape.paint(backgroundGraphImageG2);
+		
+		{
+			AffineTransform origTransform = previewBackgroundImageG2.getTransform();
+			
+			previewBackgroundImageG2.setColor(color);
+			
+			previewBackgroundImageG2.scale(100 / (MODEL.world.worldWidth * MODEL.PIXELS_PER_METER), 100 / (MODEL.world.worldHeight * MODEL.PIXELS_PER_METER));
+			
+			shape.paint(previewBackgroundImageG2);
+			
+			previewBackgroundImageG2.setTransform(origTransform);
+		}
 		
 		if (MODEL.DEBUG_DRAW) {
-			paintSkeleton(g2);
+			paintSkeleton(backgroundGraphImageG2);
 			
-			shape.getAABB().paint(g2);
+			shape.getAABB().paint(backgroundGraphImageG2);
 			
 		}
 		
@@ -356,7 +367,7 @@ public class Merger extends Edge {
 		;
 	}
 	
-	public void paintDecorations(Graphics2D g2) {
+	public void paintDecorations(Graphics2D g2, Graphics2D g22) {
 		;
 	}
 	

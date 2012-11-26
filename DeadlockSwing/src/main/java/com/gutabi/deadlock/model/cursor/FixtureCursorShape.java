@@ -72,7 +72,6 @@ public class FixtureCursorShape extends Shape {
 		assert false;
 	}
 	
-	@Override
 	public void paint(Graphics2D g2) {
 		
 		java.awt.Stroke origStroke = g2.getStroke();

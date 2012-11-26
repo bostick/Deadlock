@@ -985,7 +985,7 @@ public class Graph implements Sweepable {
 	
 	
 	
-	public void renderBackground(Graphics2D g2) {
+	public void renderBackground(Graphics2D backgroundGraphImageG2, Graphics2D previewBackgroundImageG2) {
 		
 		List<Edge> edgesCopy;
 		List<Vertex> verticesCopy;
@@ -995,15 +995,15 @@ public class Graph implements Sweepable {
 		}
 		
 		for (Edge e : edgesCopy) {
-			e.paint(g2);
+			e.paint(backgroundGraphImageG2, previewBackgroundImageG2);
 		}
 		
 		for (Vertex v : verticesCopy) {
-			v.paint(g2);
+			v.paint(backgroundGraphImageG2, previewBackgroundImageG2);
 		}
 		
 		for (Edge e : edgesCopy) {
-			e.paintDecorations(g2);
+			e.paintDecorations(backgroundGraphImageG2, previewBackgroundImageG2);
 		}
 		
 	}

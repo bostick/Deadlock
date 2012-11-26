@@ -3,6 +3,7 @@ package com.gutabi.deadlock.view;
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 
 import java.awt.BasicStroke;
+import java.awt.Color;
 import java.awt.Container;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
@@ -36,8 +37,11 @@ public class DeadlockView {
 	
 	public BufferedImage quadrantGrass;
 	public BufferedImage backgroundGrassImage;
-	public BufferedImage previewBackgroundGrassImage;
+	public BufferedImage previewBackgroundImage;
 	public BufferedImage backgroundGraphImage;
+	
+	public static Color LIGHTGREEN = new Color(128, 255, 128);
+	public static Color DARKGREEN = new Color(0, 128, 0);
 	
 	public final Logger logger = Logger.getLogger(DeadlockView.class);
 	
@@ -116,10 +120,12 @@ public class DeadlockView {
 		
 		g2.dispose();
 		
+		controlPanel.repaint();
+		
 	}
 	
-	public void repaintControlPanel() {
-		controlPanel.repaint();
-	}
+//	public void repaintControlPanel() {
+//		controlPanel.repaint();
+//	}
 	
 }

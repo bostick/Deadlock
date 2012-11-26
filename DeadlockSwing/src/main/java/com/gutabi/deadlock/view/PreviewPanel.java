@@ -22,7 +22,7 @@ public class PreviewPanel extends JPanel {
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		
-		g.drawImage(VIEW.previewBackgroundGrassImage, 0, 0, null);
+		g.drawImage(VIEW.previewBackgroundImage, 0, 0, null);
 		
 		int width = (int)(1427 * 100 / (MODEL.world.worldWidth * MODEL.PIXELS_PER_METER));
 		int height = (int)(822 * 100 / (MODEL.world.worldHeight * MODEL.PIXELS_PER_METER));

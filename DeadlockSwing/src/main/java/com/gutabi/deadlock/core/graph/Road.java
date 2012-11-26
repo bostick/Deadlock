@@ -680,14 +680,14 @@ public class Road extends Edge {
 	/**
 	 * @param g2 in world coords
 	 */
-	public void paint(Graphics2D g2) {
+	public void paint(Graphics2D backgroundGraphImageG2, Graphics2D previewBackgroundImageG2) {
 		
-		paintPath(g2);
+		paintPath(backgroundGraphImageG2, previewBackgroundImageG2);
 		
 		if (MODEL.DEBUG_DRAW) {
 			
 //			paintAABB(g2);
-			shape.getAABB().draw(g2);
+			shape.getAABB().draw(backgroundGraphImageG2);
 			
 		}
 	}
@@ -704,20 +704,32 @@ public class Road extends Edge {
 	
 	static Polygon arrowPointer = new Polygon(new int[]{0, -20, -20}, new int[]{0, -10, 10}, 3);
 	
-	private void paintPath(Graphics2D g2) {
+	private void paintPath(Graphics2D backgroundGraphImageG2, Graphics2D previewBackgroundImageG2) {
 		
-		g2.setColor(color);
+		backgroundGraphImageG2.setColor(color);
 		
-		seq.paint(g2);
+		seq.paint(backgroundGraphImageG2);
+		
+		previewBackgroundImageG2.setColor(color);
+		
+		{
+			AffineTransform origTransform = previewBackgroundImageG2.getTransform();
+			
+			previewBackgroundImageG2.scale(100 / (MODEL.world.worldWidth * MODEL.PIXELS_PER_METER), 100 / (MODEL.world.worldHeight * MODEL.PIXELS_PER_METER));
+			
+			seq.paint(previewBackgroundImageG2);
+			
+			previewBackgroundImageG2.setTransform(origTransform);
+		}
 		
 		if (direction != EdgeDirection.NONE) {
 			
-			AffineTransform origTransform = g2.getTransform();
-			java.awt.Stroke origStroke = g2.getStroke();
-			g2.setStroke(directionStroke);
-			g2.setColor(Color.LIGHT_GRAY);
+			AffineTransform origTransform = backgroundGraphImageG2.getTransform();
+			java.awt.Stroke origStroke = backgroundGraphImageG2.getStroke();
+			backgroundGraphImageG2.setStroke(directionStroke);
+			backgroundGraphImageG2.setColor(Color.LIGHT_GRAY);
 			
-			seq.drawSkeleton(g2);
+			seq.drawSkeleton(backgroundGraphImageG2);
 			
 			if (direction == EdgeDirection.STARTTOEND) {
 				
@@ -725,12 +737,12 @@ public class Road extends Edge {
 				
 				double angle = Math.atan2(c.b.y-c.a.y, c.b.x-c.a.x);
 				
-				g2.scale(MODEL.PIXELS_PER_METER, MODEL.PIXELS_PER_METER);
-				g2.translate(endBorderPoint.x, endBorderPoint.y);
-				g2.rotate(angle);
-				g2.scale(MODEL.METERS_PER_PIXEL, MODEL.METERS_PER_PIXEL);
+				backgroundGraphImageG2.scale(MODEL.PIXELS_PER_METER, MODEL.PIXELS_PER_METER);
+				backgroundGraphImageG2.translate(endBorderPoint.x, endBorderPoint.y);
+				backgroundGraphImageG2.rotate(angle);
+				backgroundGraphImageG2.scale(MODEL.METERS_PER_PIXEL, MODEL.METERS_PER_PIXEL);
 				
-				g2.fillPolygon(arrowPointer);
+				backgroundGraphImageG2.fillPolygon(arrowPointer);
 				
 			} else {
 				
@@ -738,18 +750,18 @@ public class Road extends Edge {
 				
 				double angle = Math.atan2(c.b.y-c.a.y, c.b.x-c.a.x);
 				
-				g2.scale(MODEL.PIXELS_PER_METER, MODEL.PIXELS_PER_METER);
-				g2.translate(startBorderPoint.x, startBorderPoint.y);
-				g2.rotate(angle);
-				g2.scale(MODEL.METERS_PER_PIXEL, MODEL.METERS_PER_PIXEL);
-				g2.rotate(Math.PI);
+				backgroundGraphImageG2.scale(MODEL.PIXELS_PER_METER, MODEL.PIXELS_PER_METER);
+				backgroundGraphImageG2.translate(startBorderPoint.x, startBorderPoint.y);
+				backgroundGraphImageG2.rotate(angle);
+				backgroundGraphImageG2.scale(MODEL.METERS_PER_PIXEL, MODEL.METERS_PER_PIXEL);
+				backgroundGraphImageG2.rotate(Math.PI);
 				
-				g2.fillPolygon(arrowPointer);
+				backgroundGraphImageG2.fillPolygon(arrowPointer);
 				
 			}
 			
-			g2.setTransform(origTransform);
-			g2.setStroke(origStroke);
+			backgroundGraphImageG2.setTransform(origTransform);
+			backgroundGraphImageG2.setStroke(origStroke);
 			
 		}
 		
@@ -787,19 +799,19 @@ public class Road extends Edge {
 		
 	}
 	
-	public void paintDecorations(Graphics2D g2) {
+	public void paintDecorations(Graphics2D backgroundGraphImageG2, Graphics2D previewBackgroundImageG2) {
 		
 		if (startSign != null) {
-			startSign.paint(g2);
+			startSign.paint(backgroundGraphImageG2);
 		}
 		
 		if (endSign != null) {
-			endSign.paint(g2);
+			endSign.paint(backgroundGraphImageG2);
 		}
 		
 		if (MODEL.DEBUG_DRAW) {
 			
-			paintSkeleton(g2);
+			paintSkeleton(backgroundGraphImageG2);
 			
 		}
 		

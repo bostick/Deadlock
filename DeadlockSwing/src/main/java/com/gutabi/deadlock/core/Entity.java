@@ -53,8 +53,8 @@ public abstract class Entity {
 	 */
 	public abstract boolean postStep(double t);
 	
-	public abstract void paint(Graphics2D g2);
-	
+//	public abstract void paint(Graphics2D g2);
+//	
 	public abstract void paintHilite(Graphics2D g2);
 	
 }
