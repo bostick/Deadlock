@@ -793,11 +793,11 @@ public abstract class Car extends Entity {
 			dw = negMaxRads;
 		}
 		
-//		if (dw > 0.52) {
-//			String.class.getName();
-//		} else if (dw < -0.52) {
-//			String.class.getName();
-//		}
+		if (dw > 0.52) {
+			String.class.getName();
+		} else if (dw < -0.52) {
+			String.class.getName();
+		}
 		
 		if (logger.isDebugEnabled()) {
 			logger.debug("updateTurn: dw: " + dw);
@@ -909,11 +909,20 @@ public abstract class Car extends Entity {
 			
 			break;
 		case CRASHED:
+			
+			if (!MODEL.world.completelyContains(shape)) {
+				return false;
+			}
+			
 			break;
 		case SKIDDED:
 			
 //			MODEL.world.addSkidMarks(prevWorldPoint0, worldQuad.p0);
 //			MODEL.world.addSkidMarks(prevWorldPoint3, worldQuad.p3);
+			
+			if (!MODEL.world.completelyContains(shape)) {
+				return false;
+			}
 			
 			break;
 		case SINKED:
@@ -940,7 +949,7 @@ public abstract class Car extends Entity {
 				g2.fillOval((int)(goalPoint.x * MODEL.PIXELS_PER_METER) - 2, (int)(goalPoint.y * MODEL.PIXELS_PER_METER) - 2, 4, 4);
 			}
 			
-			shape.aabb.paint(g2);
+			shape.aabb.draw(g2);
 			
 		}
 		

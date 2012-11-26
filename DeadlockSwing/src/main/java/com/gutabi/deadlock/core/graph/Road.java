@@ -267,14 +267,12 @@ public class Road extends Edge {
 		}
 	}
 	
-	public GraphPosition travelFromConnectedVertex(Vertex v, double dist) {
-		
-		if (v == start) {
-			return RoadPosition.travelFromStart(this, dist);
-		} else {
-			return RoadPosition.travelFromEnd(this, dist);
-		}
-		
+	public GraphPosition travelFromReferenceVertex(Axis a, double dist) {
+		return RoadPosition.travelFromStart(this, dist);
+	}
+	
+	public GraphPosition travelFromOtherVertex(Axis a, double dist) {
+		return RoadPosition.travelFromEnd(this, dist);
 	}
 	
 	public Entity decorationsHitTest(Point p) {
@@ -676,7 +674,7 @@ public class Road extends Edge {
 		if (MODEL.DEBUG_DRAW) {
 			
 //			paintAABB(g2);
-			shape.aabb.paint(g2);
+			shape.aabb.draw(g2);
 			
 		}
 	}

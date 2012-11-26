@@ -79,7 +79,7 @@ public class Intersection extends Vertex {
 				
 		if (MODEL.DEBUG_DRAW) {
 			
-			shape.aabb.paint(g2);
+			shape.aabb.draw(g2);
 			
 		}
 		

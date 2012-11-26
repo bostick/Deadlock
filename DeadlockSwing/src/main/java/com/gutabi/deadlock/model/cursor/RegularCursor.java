@@ -74,7 +74,7 @@ public class RegularCursor extends Cursor {
 		if (MODEL.DEBUG_DRAW) {
 			
 //			paintAABB(g2);
-			aabb.paint(g2);
+			aabb.draw(g2);
 			
 		}
 		

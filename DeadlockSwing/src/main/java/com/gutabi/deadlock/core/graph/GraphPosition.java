@@ -19,7 +19,7 @@ public abstract class GraphPosition {
 		this.axis = a;
 	}
 	
-	public abstract double distanceToConnectedVertex(Vertex v);
+//	public abstract double distanceToConnectedVertex(Vertex v);
 	
 	
 //	private Map<GraphPosition, Double> distMap = new HashMap<GraphPosition, Double>();
@@ -114,11 +114,14 @@ public abstract class GraphPosition {
 				return null;
 			} else {
 				EdgePosition pe = (EdgePosition)p;
+				
+				assert !(pe.entity instanceof Road && ((Road)pe.entity).isLoop());
+				
 				if (vv.v == pe.entity.getReferenceVertex(pe.axis)) {
 //					assert pe.isBound();
 					assert pe.getIndex() == 1;
 					
-					return ((Edge)pe.entity).travelFromConnectedVertex(vv.v, distance);
+					return ((Edge)pe.entity).travelFromReferenceVertex(pe.axis, distance);
 							
 					
 				} else {
@@ -126,7 +129,7 @@ public abstract class GraphPosition {
 					assert pe.isBound();
 					assert pe.getIndex() == ((Edge)pe.entity).pointCount()-2;
 					
-					return ((Edge)pe.entity).travelFromConnectedVertex(vv.v, distance);
+					return ((Edge)pe.entity).travelFromOtherVertex(pe.axis, distance);
 				}
 			}
 		} else {
@@ -135,18 +138,20 @@ public abstract class GraphPosition {
 			if (p instanceof VertexPosition) {
 				VertexPosition pv = (VertexPosition)p;
 				
+				assert !(ee.entity instanceof Road && ((Road)ee.entity).isLoop());
+				
 				if (pv.v == ee.entity.getReferenceVertex(ee.axis)) {
 //					assert ee.isBound();
 //					assert ee.getIndex() == 1;
 					
-					return ee.travelToConnectedVertex(pv.v, distance);
+					return ee.travelToReferenceVertex(ee.axis, distance);
 					
 				} else {
 					assert pv.v == ee.entity.getOtherVertex(ee.axis);
 //					assert ee.isBound();
 					assert ee.getIndex() == ((Edge)ee.entity).pointCount()-2;
 					
-					return ee.travelToConnectedVertex(pv.v, distance);
+					return ee.travelToOtherVertex(ee.axis, distance);
 				}
 				
 			} else {
@@ -156,9 +161,9 @@ public abstract class GraphPosition {
 				assert ee.axis == pe.axis;
 				
 				if (ee.getCombo() < pe.getCombo()) {
-					return ee.travelToConnectedVertex(ee.entity.getOtherVertex(ee.axis), distance);
+					return ee.travelToOtherVertex(ee.axis, distance);
 				} else {
-					return ee.travelToConnectedVertex(ee.entity.getReferenceVertex(ee.axis), distance);
+					return ee.travelToReferenceVertex(ee.axis, distance);
 				}
 				
 			}

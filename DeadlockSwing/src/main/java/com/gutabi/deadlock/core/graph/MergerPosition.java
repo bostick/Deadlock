@@ -179,27 +179,22 @@ public class MergerPosition extends EdgePosition {
 		}
 	}
 	
-	public GraphPosition travelToConnectedVertex(Vertex v, double dist) {
-		
-		if (v == m.top) {
-			
+	public GraphPosition travelToReferenceVertex(Axis a, double dist) {
+		if (a == Axis.TOPBOTTOM) {
 			return travelToTop(m, index, param, dist);
-			
-		} else if (v == m.left) {
-			
-			return travelToLeft(m, index, param, dist);
-			
-		} else if (v == m.right) {
-			
-			return travelToRight(m, index, param, dist);
-			
 		} else {
-			assert v == m.bottom;
-			
-			return travelToBottom(m, index, param, dist);
-			
+			assert a == Axis.LEFTRIGHT;
+			return travelToLeft(m, index, param, dist);	
 		}
-		
+	}
+	
+	public GraphPosition travelToOtherVertex(Axis a, double dist) {
+		if (a == Axis.TOPBOTTOM) {
+			return travelToBottom(m, index, param, dist);
+		} else {
+			assert a == Axis.LEFTRIGHT;
+			return travelToRight(m, index, param, dist);	
+		}
 	}
 	
 	public static GraphPosition travelFromTop(Merger m, double dist) {

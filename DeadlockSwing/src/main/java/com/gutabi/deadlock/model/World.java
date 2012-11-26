@@ -627,7 +627,7 @@ public class World implements Sweepable {
 		paintScene(g2);
 			
 		if (MODEL.DEBUG_DRAW) {
-			aabb.paint(g2);
+			aabb.draw(g2);
 			
 		}
 	}

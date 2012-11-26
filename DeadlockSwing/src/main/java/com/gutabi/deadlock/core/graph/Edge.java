@@ -21,7 +21,9 @@ public abstract class Edge extends GraphEntity {
 	
 	public abstract boolean canTravelFromTo(Vertex a, Vertex b);
 	
-	public abstract GraphPosition travelFromConnectedVertex(Vertex v, double dist);
+	public abstract GraphPosition travelFromReferenceVertex(Axis a, double dist);
+	
+	public abstract GraphPosition travelFromOtherVertex(Axis a, double dist);
 	
 	public abstract void paintBorders(Graphics2D g2);
 	

@@ -366,6 +366,9 @@ public class GraphPositionPath {
 	
 	public void precomputeHitTestData() {
 		
+		assert hitMap.isEmpty();
+		
+		carLoop:
 		for (Car c : MODEL.world.cars) {
 			
 			if (c.overallPos == null) {
@@ -380,8 +383,9 @@ public class GraphPositionPath {
 			if (poss.get(0) instanceof VertexPosition) {
 				if (gp.entity == ((VertexPosition)poss.get(0)).v) {
 					assert getGraphPosition(0, 0.0).equals(gp);
+					assert !hitMap.containsValue(c);
 					hitMap.put(new GraphPositionPathPosition(this, 0, 0.0), c);
-					continue;
+					continue carLoop;
 				}
 			}
 			
@@ -408,6 +412,8 @@ public class GraphPositionPath {
 						
 						combo = ((EdgePosition)gp).getCombo();
 						
+						assert !(b.entity instanceof Road && ((Road)b.entity).isLoop());
+						
 						if (((VertexPosition)a).v == b.entity.getReferenceVertex(b.axis)) {
 							aCombo = 0.0;
 							bCombo = ((EdgePosition)b).getCombo();
@@ -429,8 +435,9 @@ public class GraphPositionPath {
 						
 						if (gp.entity == ((VertexPosition)b).v) {
 							assert getGraphPosition(i+1, 0.0).equals(gp);
+							assert !hitMap.containsValue(c);
 							hitMap.put(new GraphPositionPathPosition(this, i+1, 0.0), c);
-							continue;
+							continue carLoop;
 						}
 						
 						Edge e = (Edge)((EdgePosition)a).entity;
@@ -440,6 +447,8 @@ public class GraphPositionPath {
 						}
 						
 						combo = ((EdgePosition)gp).getCombo();
+						
+						assert !(a.entity instanceof Road && ((Road)a.entity).isLoop());
 						
 						if (((VertexPosition)b).v == a.entity.getReferenceVertex(a.axis)) {
 							aCombo = ((EdgePosition)a).getCombo();
@@ -490,7 +499,9 @@ public class GraphPositionPath {
 				int gpppIndex = (int)Math.floor(i + abCombo);
 				double gpppParam = (i + abCombo)-gpppIndex;
 				
+				assert !hitMap.containsValue(c);
 				hitMap.put(new GraphPositionPathPosition(this, gpppIndex, gpppParam), c);
+				continue carLoop;
 				
 			}
 			

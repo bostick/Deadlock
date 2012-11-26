@@ -115,7 +115,7 @@ public class StopSign extends Entity {
 		if (MODEL.DEBUG_DRAW) {
 			
 //			paintAABB(g2);
-			shape.aabb.paint(g2);
+			shape.aabb.draw(g2);
 			
 		}
 		

@@ -4,7 +4,9 @@ import com.gutabi.deadlock.core.Point;
 
 public abstract class EdgePosition extends GraphPosition {
 	
-	public abstract GraphPosition travelToConnectedVertex(Vertex v, double dist);
+	public abstract GraphPosition travelToReferenceVertex(Axis a, double dist);
+	
+	public abstract GraphPosition travelToOtherVertex(Axis a, double dist);
 	
 	public EdgePosition(Point p, Edge e, Axis a) {
 		super(p, e, a);

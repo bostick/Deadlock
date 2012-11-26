@@ -169,6 +169,8 @@ public class GraphPositionPathPosition {
 						} else {
 							VertexPosition curPosV = (VertexPosition)curPos.gpos;
 							
+							assert !(g.entity instanceof Road && ((Road)g.entity).isLoop());
+							
 							if (g.entity.getReferenceVertex(g.axis) == curPosV.v) {
 								// same direction as edge
 								return new GraphPositionPathPosition(path, curPos.index, g.getParam());

@@ -1,7 +1,7 @@
 
 IMMEDIATELY:
 
-enforce prohibition of cars beyonds world sides
+fix issues with loops in roads
 
 enforce only 1 road to fixtures
 interesting problem:
@@ -62,6 +62,8 @@ spline/curve editor
 
 
 DONE:
+
+enforce prohibition of cars beyonds world sides
 
 enforce prohibition of roads and mergers beyond the world sides
 

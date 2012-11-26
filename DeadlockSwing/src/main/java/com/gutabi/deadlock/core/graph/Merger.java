@@ -5,7 +5,6 @@ import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 import java.awt.Color;
 import java.awt.Graphics2D;
 
-import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.Quad;
@@ -185,28 +184,21 @@ public class Merger extends Edge {
 //		shape.sweep(s, index);
 //	}
 	
-	public GraphPosition travelFromConnectedVertex(Vertex v, double dist) {
-		if (v == top) {
-			assert DMath.lessThan(dist, MERGER_HEIGHT);
-			
+	public GraphPosition travelFromReferenceVertex(Axis a, double dist) {
+		if (a == Axis.TOPBOTTOM) {
 			return MergerPosition.travelFromTop(this, dist);
-			
-		} else if (v == left) {
-			assert DMath.lessThan(dist, MERGER_WIDTH);
-			
-			return MergerPosition.travelFromLeft(this, dist);
-			
-		} else if (v == right) {
-			assert DMath.lessThan(dist, MERGER_WIDTH);
-			
-			return MergerPosition.travelFromRight(this, dist);
-			
 		} else {
-			assert v == bottom;
-			assert DMath.lessThan(dist, MERGER_HEIGHT);
-			
+			assert a == Axis.LEFTRIGHT;
+			return MergerPosition.travelFromLeft(this, dist);
+		}
+	}
+	
+	public GraphPosition travelFromOtherVertex(Axis a, double dist) {
+		if (a == Axis.TOPBOTTOM) {
 			return MergerPosition.travelFromBottom(this, dist);
-			
+		} else {
+			assert a == Axis.LEFTRIGHT;
+			return MergerPosition.travelFromRight(this, dist);
 		}
 	}
 	

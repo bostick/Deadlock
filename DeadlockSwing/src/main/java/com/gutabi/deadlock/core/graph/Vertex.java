@@ -191,18 +191,26 @@ public abstract class Vertex extends GraphEntity {
 	
 	public static List<Edge> commonEdges(Vertex a, Vertex b) {
 		
-		if (a == b) {
-			throw new IllegalArgumentException();
-		}
-		
 		List<Edge> common = new ArrayList<Edge>();
 		
-		for (Road r1 : a.roads) {
-			for (Road r2 : b.roads) {
-				if (r1 == r2) {
-					common.add(r1);
+		if (a == b) {
+			
+			for (Road r : a.roads) {
+				if (r.start == a && r.end == a) {
+					common.add(r);
 				}
 			}
+			
+		} else {
+			
+			for (Road r1 : a.roads) {
+				for (Road r2 : b.roads) {
+					if (r1 == r2) {
+						common.add(r1);
+					}
+				}
+			}
+			
 		}
 		
 		if (a.m != null && a.m == b.m) {
