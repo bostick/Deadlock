@@ -11,6 +11,9 @@ import com.gutabi.deadlock.model.cursor.RegularCursor;
 
 public class DeadlockModel {
 	
+	public static final double QUADRANT_WIDTH = 16.0;
+	public static final double QUADRANT_HEIGHT = QUADRANT_WIDTH;
+	
 	/**
 	 * move physics forward by dt seconds
 	 */
@@ -33,7 +36,7 @@ public class DeadlockModel {
 	public Stroke debugStroke2;
 	
 	public Entity hilited;
-	public int hilitedQuad = -1;
+//	public int hilitedQuad = -1;
 	
 	public final Object pauseLock = new Object();
 	
@@ -53,6 +56,10 @@ public class DeadlockModel {
 		cursor = new RegularCursor();
 		
 		stats = new Stats();
+	}
+	
+	public void renderBackground() {
+		world.renderBackground();
 	}
 	
 	public void paint(Graphics2D g2) {

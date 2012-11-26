@@ -4,14 +4,11 @@ import java.awt.Graphics2D;
 
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.Shape;
-import com.gutabi.deadlock.core.geom.tree.AABB;
 
 //@SuppressWarnings("static-access")
 public abstract class Cursor {
 	
 	protected Point p;
-	
-	protected AABB aabb;
 	
 	public abstract void setPoint(Point p);
 	
@@ -19,15 +16,13 @@ public abstract class Cursor {
 		return p;
 	}
 	
-	public final AABB getAABB() {
-		return aabb;
-	}
+	public abstract Shape getShape();
 	
-	public abstract boolean intersect(Shape s);
+//	public abstract boolean intersect(Shape s);
+//	
+//	public abstract boolean intersect(AABB aabb);
 	
-	public abstract boolean intersect(AABB aabb);
-	
-	public abstract boolean completelyWithin(AABB aabb);
+//	public abstract boolean completelyWithin(AABB aabb);
 	
 	public abstract void paint(Graphics2D g2);
 	

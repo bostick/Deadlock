@@ -17,10 +17,11 @@ import com.gutabi.deadlock.core.OverlappingException;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.Capsule;
 import com.gutabi.deadlock.core.geom.Shape;
+import com.gutabi.deadlock.core.geom.ShapeUtils;
 import com.gutabi.deadlock.core.geom.Sweepable;
 import com.gutabi.deadlock.core.geom.Sweeper;
 import com.gutabi.deadlock.core.geom.tree.AABB;
-import com.gutabi.deadlock.model.Cursor;
+import com.gutabi.deadlock.model.Fixture;
 
 @SuppressWarnings("static-access")
 public class Graph implements Sweepable {
@@ -262,20 +263,20 @@ public class Graph implements Sweepable {
 	public void sweepStart(Sweeper s) {
 		
 		for (Vertex v : vertices) {
-			v.sweepStart(s);
+			v.getShape().sweepStart(s);
 		}
 		for (Edge e : edges) {
-			e.sweepStart(s);
+			e.getShape().sweepStart(s);
 		}
 		
 	}
 	
 	public void sweep(Sweeper s, int index) {
 		for (Vertex v : vertices) {
-			v.sweep(s, index);
+			v.getShape().sweep(s, index);
 		}
 		for (Edge e : edges) {
-			e.sweep(s, index);
+			e.getShape().sweep(s, index);
 		}
 	}
 	
@@ -292,10 +293,10 @@ public class Graph implements Sweepable {
 		aabb = null;
 		
 		for (Vertex v : vertices) {
-			aabb = AABB.union(aabb, v.getAABB());
+			aabb = AABB.union(aabb, v.getShape().getAABB());
 		}
 		for (Edge e : edges) {
-			aabb = AABB.union(aabb, e.getAABB());
+			aabb = AABB.union(aabb, e.getShape().getAABB());
 		}
 		
 		if (logger.isDebugEnabled()) {
@@ -600,30 +601,30 @@ public class Graph implements Sweepable {
 //		return null;
 //	}
 	
-	public Entity pureGraphBestHitTest(Entity e) {
-//		assert p != null;
-		for (Vertex v : vertices) {
-			if (v.bestHitTest(e) != null) {
-				return v;
-			}
-		}
-		for (Edge ed : edges) {
-			if (ed.bestHitTest(e) != null) {
-				return ed;
-			}
-		}
-		return null;
-	}
+//	public Entity pureGraphBestHitTest(Entity e) {
+////		assert p != null;
+//		for (Vertex v : vertices) {
+//			if (v.bestHitTest(e) != null) {
+//				return v;
+//			}
+//		}
+//		for (Edge ed : edges) {
+//			if (ed.bestHitTest(e) != null) {
+//				return ed;
+//			}
+//		}
+//		return null;
+//	}
 	
 	public Entity pureGraphBestHitTest(Shape s) {
 //		assert p != null;
 		for (Vertex v : vertices) {
-			if (v.bestHitTest(s) != null) {
+			if (ShapeUtils.intersect(v.getShape(), s)) {
 				return v;
 			}
 		}
 		for (Edge ed : edges) {
-			if (ed.bestHitTest(s) != null) {
+			if (ShapeUtils.intersect(ed.getShape(), s)) {
 				return ed;
 			}
 		}
@@ -656,19 +657,19 @@ public class Graph implements Sweepable {
 		return closest;
 	}
 	
-	public boolean cursorIntersect(Cursor c) {
-		for (Vertex v : vertices) {
-			if (c.intersect(v.shape)) {
-				return true;
-			}
-		}
-		for (Edge ed : edges) {
-			if (c.intersect(ed.shape)) {
-				return true;
-			}
-		}
-		return false;
-	}
+//	public boolean intersect(Shape s) {
+//		for (Vertex v : vertices) {
+//			if (c.intersect(v.shape)) {
+//				return true;
+//			}
+//		}
+//		for (Edge ed : edges) {
+//			if (c.intersect(ed.shape)) {
+//				return true;
+//			}
+//		}
+//		return false;
+//	}
 	
 	
 	
@@ -1054,6 +1055,12 @@ public class Graph implements Sweepable {
 	public boolean checkConsistency() {
 		
 		for (Vertex v : vertices) {
+			if (v instanceof Fixture) {
+				/*
+				 * disallow more than 1 road from a fixture
+				 */
+				assert v.roads.size() <= 1;
+			}
 			for (Vertex w : vertices) {
 				if (v == w) {
 					

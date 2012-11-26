@@ -14,7 +14,7 @@ import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.tree.AABB;
 
 @SuppressWarnings("static-access")
-public class Capsule extends Shape {
+public class Capsule extends SweepableShape {
 	
 	public final Circle ac;
 	public final Circle bc;
@@ -35,13 +35,14 @@ public class Capsule extends Shape {
 	private final Point bUp;
 	private final Point bDown;
 	
+	public final AABB aabb;
+	
 	private int hash;
 	
 	static Logger logger = Logger.getLogger(Capsule.class);
 	
-	public Capsule(Sweepable parent, Circle ac, Circle bc) {
+	public Capsule(Object parent, Circle ac, Circle bc) {
 		super(parent);
-		
 		this.ac = ac;
 		this.bc = bc;
 		
@@ -70,8 +71,7 @@ public class Capsule extends Shape {
 		
 		middle = new Quad(parent, aUp, bUp, bDown, aDown);
 		
-		aabb = ac.aabb;
-		aabb = AABB.union(aabb, bc.aabb);
+		aabb = AABB.union(ac.getAABB(), bc.getAABB());
 		
 	}
 	
@@ -118,6 +118,10 @@ public class Capsule extends Shape {
 //		}
 //		return false;
 //	}
+	
+	public AABB getAABB() {
+		return aabb;
+	}
 	
 	public void sweepStart(Sweeper s) {
 		

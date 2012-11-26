@@ -9,8 +9,6 @@ import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Dim;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.Shape;
-import com.gutabi.deadlock.core.geom.Sweepable;
-import com.gutabi.deadlock.core.geom.Sweeper;
 
 @SuppressWarnings("static-access")
 public class AABB extends Shape {
@@ -36,8 +34,7 @@ public class AABB extends Shape {
 	double[] n01Projection;
 	double[] n12Projection;
 	
-	public AABB(Sweepable parent, double x, double y, double width, double height) {
-		super(parent);
+	public AABB(double x, double y, double width, double height) {
 		this.x = x;
 		this.y = y;
 		this.width = width;
@@ -79,6 +76,9 @@ public class AABB extends Shape {
 		}
 	}
 	
+	public AABB getAABB() {
+		return this;
+	}
 	
 	public void project(Point axis, double[] out) {
 		double min = Point.dot(axis, p0);
@@ -201,11 +201,11 @@ public class AABB extends Shape {
 			return b;
 		}
 		
-		return new AABB(null, ulX, ulY, brX-ulX, brY-ulY);
+		return new AABB(ulX, ulY, brX-ulX, brY-ulY);
 	}
 	
 	public AABB plus(Point p) {
-		return new AABB(parent, x + p.x, y + p.y, width, height);
+		return new AABB(x + p.x, y + p.y, width, height);
 	}
 	
 	public void paint(Graphics2D g2) {
@@ -230,16 +230,6 @@ public class AABB extends Shape {
 				(int)(width * MODEL.PIXELS_PER_METER),
 				(int)(height * MODEL.PIXELS_PER_METER));
 		
-	}
-
-	@Override
-	public void sweepStart(Sweeper s) {
-		assert false;
-	}
-
-	@Override
-	public void sweep(Sweeper s, int index) {
-		assert false;
 	}
 
 }

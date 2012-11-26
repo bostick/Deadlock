@@ -26,8 +26,6 @@ public class DeadlockView {
 	public ControlPanel controlPanel;
 	public PreviewPanel previewPanel;
 	
-//	public int worldOffsetX;
-//	public int worldOffsetY;
 	public int worldOriginX;
 	public int worldOriginY;
 	
@@ -35,6 +33,11 @@ public class DeadlockView {
 	
 	public BufferedImage sheet;
 	public BufferedImage explosionSheet;
+	
+	public BufferedImage quadrantGrass;
+	public BufferedImage backgroundGrassImage;
+	public BufferedImage previewBackgroundGrassImage;
+	public BufferedImage backgroundGraphImage;
 	
 	public final Logger logger = Logger.getLogger(DeadlockView.class);
 	
@@ -47,26 +50,25 @@ public class DeadlockView {
 		
 		assert canvas.getWidth() == 1427;
 		assert canvas.getHeight() == 822;
-		
-//		if (DMath.lessThanEquals(MODEL.world.WORLD_WIDTH * MODEL.PIXELS_PER_METER, canvas.getWidth())) {
-//			worldOffsetX = (int)(canvas.getWidth() * 0.5 - ((MODEL.world.WORLD_WIDTH * 0.5) * MODEL.PIXELS_PER_METER));
-//		} else {
-//			worldOffsetX = (int)(canvas.getWidth() * 0.5 - ((MODEL.world.QUADRANT_WIDTH * 0.5) * MODEL.PIXELS_PER_METER));
-//		}
-//		if (DMath.lessThanEquals(MODEL.world.WORLD_HEIGHT * MODEL.PIXELS_PER_METER, canvas.getHeight())) {
-//			worldOffsetY = (int)(canvas.getHeight() * 0.5 - ((MODEL.world.WORLD_HEIGHT * 0.5) * MODEL.PIXELS_PER_METER));
-//		} else {
-//			worldOffsetY = (int)(canvas.getHeight() * 0.5 - ((MODEL.world.QUADRANT_HEIGHT * 0.5) * MODEL.PIXELS_PER_METER));
-//		}
-		
-//		worldOffsetX = (int)(canvas.getWidth() * 0.5 - (((MODEL.world.getWorldWidth() * 0.5) - (MODEL.world.QUADRANT_WIDTH * 0.5)) * MODEL.PIXELS_PER_METER));
-//		worldOffsetY = (int)(canvas.getHeight() * 0.5 - (((MODEL.world.getWorldHeight() * 0.5) - (MODEL.world.QUADRANT_HEIGHT * 0.5)) * MODEL.PIXELS_PER_METER));
-		
+				
 		worldOriginX = 0;
 		worldOriginY = 0;
 		
 		sheet = ImageIO.read(new File("media\\sheet.png"));
 		explosionSheet = ImageIO.read(new File("media\\explosionSheet.png"));
+		
+		quadrantGrass = new BufferedImage(
+				(int)(MODEL.QUADRANT_WIDTH * MODEL.PIXELS_PER_METER),
+				(int)(MODEL.QUADRANT_HEIGHT * MODEL.PIXELS_PER_METER),
+				BufferedImage.TYPE_INT_ARGB);
+		Graphics2D quadrantGrassG2 = VIEW.quadrantGrass.createGraphics();
+		for (int i = 0; i < (MODEL.QUADRANT_WIDTH * MODEL.PIXELS_PER_METER)/32; i++) {
+			for (int j = 0; j < (MODEL.QUADRANT_HEIGHT * MODEL.PIXELS_PER_METER)/32; j++) {
+				quadrantGrassG2.drawImage(VIEW.sheet,
+						32 * i, 32 * j, 32 * i + 32, 32 * j + 32,
+						0, 224, 0+32, 224+32, null);
+			}
+		}
 		
 	}
 	
@@ -101,10 +103,6 @@ public class DeadlockView {
 	
 	public Point canvasToWorld(Point p) {
 		return new Point((p.x - (0 - worldOriginX)) * MODEL.METERS_PER_PIXEL, (p.y - (0 - worldOriginY)) * MODEL.METERS_PER_PIXEL);
-	}
-	
-	public void renderBackgroundFresh() {
-		MODEL.world.renderBackgroundFresh();
 	}
 	
 	public void repaint() {

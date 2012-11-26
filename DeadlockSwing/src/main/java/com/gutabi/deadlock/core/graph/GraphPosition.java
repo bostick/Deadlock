@@ -3,17 +3,18 @@ package com.gutabi.deadlock.core.graph;
 import org.apache.log4j.Logger;
 
 import com.gutabi.deadlock.core.DMath;
+import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
 
 public abstract class GraphPosition {
 	
 	public final Point p;
-	public final GraphEntity entity;
+	public final Entity entity;
 	public final Axis axis;
 	
 	static Logger logger = Logger.getLogger(GraphPosition.class);
 	
-	public GraphPosition(Point p, GraphEntity e, Axis a) {
+	public GraphPosition(Point p, Entity e, Axis a) {
 		this.p = p;
 		this.entity = e;
 		this.axis = a;
@@ -94,7 +95,9 @@ public abstract class GraphPosition {
 	
 	public abstract boolean isBound();
 	
-	public abstract GraphPosition nextBoundToward(GraphPosition goal);
+//	public abstract GraphPosition nextBoundToward(GraphPosition goal);
+	
+	
 	
 	public GraphPosition travelToNeighbor(GraphPosition p, double distance) {
 		
@@ -107,7 +110,7 @@ public abstract class GraphPosition {
 		assert p.isBound();
 		
 		if (this instanceof VertexPosition) {
-			VertexPosition vv = (VertexPosition)this;
+//			VertexPosition vv = (VertexPosition)this;
 			
 			if (p instanceof VertexPosition) {
 				assert false;
@@ -115,18 +118,18 @@ public abstract class GraphPosition {
 			} else {
 				EdgePosition pe = (EdgePosition)p;
 				
-				assert !(pe.entity instanceof Road && ((Road)pe.entity).isLoop());
+//				assert !(pe.entity instanceof Road && ((Road)pe.entity).isLoop());
 				
-				if (vv.v == pe.entity.getReferenceVertex(pe.axis)) {
+				if (pe.getIndex() == 1) {
 //					assert pe.isBound();
-					assert pe.getIndex() == 1;
+//					assert pe.getIndex() == 1;
 					
 					return ((Edge)pe.entity).travelFromReferenceVertex(pe.axis, distance);
 							
 					
 				} else {
-					assert vv.v == pe.entity.getOtherVertex(pe.axis);
-					assert pe.isBound();
+//					assert vv.v == pe.entity.getOtherVertex(pe.axis);
+//					assert pe.isBound();
 					assert pe.getIndex() == ((Edge)pe.entity).pointCount()-2;
 					
 					return ((Edge)pe.entity).travelFromOtherVertex(pe.axis, distance);
@@ -136,18 +139,18 @@ public abstract class GraphPosition {
 			EdgePosition ee = (EdgePosition)this;
 			
 			if (p instanceof VertexPosition) {
-				VertexPosition pv = (VertexPosition)p;
+//				VertexPosition pv = (VertexPosition)p;
 				
-				assert !(ee.entity instanceof Road && ((Road)ee.entity).isLoop());
+//				assert !(ee.entity instanceof Road && ((Road)ee.entity).isLoop());
 				
-				if (pv.v == ee.entity.getReferenceVertex(ee.axis)) {
+				if (DMath.lessThan(0.0, ee.getCombo()) && DMath.lessThanEquals(ee.getCombo(), 1.0)) {
 //					assert ee.isBound();
 //					assert ee.getIndex() == 1;
 					
 					return ee.travelToReferenceVertex(ee.axis, distance);
 					
 				} else {
-					assert pv.v == ee.entity.getOtherVertex(ee.axis);
+//					assert pv.v == ee.entity.getOtherVertex(ee.axis);
 //					assert ee.isBound();
 					assert ee.getIndex() == ((Edge)ee.entity).pointCount()-2;
 					

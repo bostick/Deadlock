@@ -10,6 +10,7 @@ import java.awt.geom.AffineTransform;
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.Circle;
+import com.gutabi.deadlock.core.geom.Shape;
 import com.gutabi.deadlock.core.graph.Road;
 import com.gutabi.deadlock.core.graph.Vertex;
 import com.gutabi.deadlock.model.cursor.RegularCursor;
@@ -30,6 +31,8 @@ public class StopSign extends Entity {
 //	protected Color hiliteColor;
 	
 	private boolean enabled;
+	
+	private Shape shape;
 	
 	public StopSign(Road e, int dir) {
 		this.e = e;
@@ -61,6 +64,18 @@ public class StopSign extends Entity {
 	
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
+	}
+	
+	public Shape getShape() {
+		return shape;
+	}
+	
+	public final Entity hitTest(Point p) {
+		if (shape.hitTest(p)) {
+			return this;
+		} else {
+			return null;
+		}
 	}
 	
 	public void preStart() {
@@ -115,7 +130,7 @@ public class StopSign extends Entity {
 		if (MODEL.DEBUG_DRAW) {
 			
 //			paintAABB(g2);
-			shape.aabb.draw(g2);
+			shape.getAABB().draw(g2);
 			
 		}
 		

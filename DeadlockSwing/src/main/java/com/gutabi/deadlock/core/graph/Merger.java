@@ -8,6 +8,8 @@ import java.awt.Graphics2D;
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.Quad;
+import com.gutabi.deadlock.core.geom.Shape;
+import com.gutabi.deadlock.core.geom.SweepableShape;
 import com.gutabi.deadlock.core.geom.tree.AABB;
 import com.gutabi.deadlock.model.fixture.MergerSink;
 import com.gutabi.deadlock.model.fixture.MergerSource;
@@ -38,6 +40,8 @@ public class Merger extends Edge {
 	
 	private EdgeDirection leftRightDir;
 	private EdgeDirection topBottomDir;
+	
+	private SweepableShape shape;
 	
 	public Merger(Point center) {
 		
@@ -169,6 +173,18 @@ public class Merger extends Edge {
 		}
 	}
 	
+	public SweepableShape getShape() {
+		return shape;
+	}
+	
+	public final Entity hitTest(Point p) {
+		if (shape.hitTest(p)) {
+			return this;
+		} else {
+			return null;
+		}
+	}
+	
 	public void enterDistancesMatrix(double[][] distances) {
 		distances[top.id][bottom.id] = Merger.MERGER_HEIGHT;
 		distances[bottom.id][top.id] = Merger.MERGER_HEIGHT;
@@ -206,7 +222,7 @@ public class Merger extends Edge {
 		return null;
 	}
 	
-	public Entity decorationsBestHitTest(Entity e) {
+	public Entity decorationsBestHitTest(Shape s) {
 		return null;
 	}
 	
@@ -299,7 +315,7 @@ public class Merger extends Edge {
 		if (MODEL.DEBUG_DRAW) {
 			paintSkeleton(g2);
 			
-			shape.aabb.paint(g2);
+			shape.getAABB().paint(g2);
 			
 		}
 		
@@ -345,7 +361,7 @@ public class Merger extends Edge {
 	}
 	
 	public static AABB outlineAABB(Point p) {
-		return new AABB(null,
+		return new AABB(
 				p.x - Merger.MERGER_WIDTH/2 - Vertex.INIT_VERTEX_RADIUS,
 				p.y - Merger.MERGER_HEIGHT/2 - Vertex.INIT_VERTEX_RADIUS,
 				Merger.MERGER_WIDTH + 2 * Vertex.INIT_VERTEX_RADIUS,

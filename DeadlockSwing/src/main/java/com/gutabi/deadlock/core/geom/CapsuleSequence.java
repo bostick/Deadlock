@@ -11,17 +11,18 @@ import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.tree.AABB;
 
 //@SuppressWarnings("static-access")
-public class CapsuleSequence extends Shape {
+public class CapsuleSequence extends SweepableShape {
 	
 	public final List<Capsule> caps;
 	
 	public final double radius;
 	
+	public final AABB aabb;
+	
 	static Logger logger = Logger.getLogger(CapsuleSequence.class);
 	
-	public CapsuleSequence(Sweepable parent, List<Capsule> caps) {
+	public CapsuleSequence(Object parent, List<Capsule> caps) {
 		super(parent);
-		
 		this.caps = caps;
 		
 		for (int i = 0; i < caps.size()-1; i++) {
@@ -32,10 +33,11 @@ public class CapsuleSequence extends Shape {
 		
 		radius = caps.get(0).r;
 		
-		aabb = null;
+		AABB aabbTmp = null;
 		for (Capsule c : caps) {
-			aabb = AABB.union(aabb, c.aabb);
+			aabbTmp = AABB.union(aabbTmp, c.aabb);
 		}
+		aabb = aabbTmp;
 	}
 	
 	public Capsule getCapsule(int index) {
@@ -64,6 +66,10 @@ public class CapsuleSequence extends Shape {
 	
 	public int pointCount() {
 		return caps.size()+1;
+	}
+	
+	public AABB getAABB() {
+		return aabb;
 	}
 	
 	public CapsuleSequence plus(Point p) {

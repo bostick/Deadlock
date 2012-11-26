@@ -10,12 +10,14 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 import com.gutabi.deadlock.core.DMath;
+import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.Circle;
+import com.gutabi.deadlock.core.geom.SweepableShape;
 import com.gutabi.deadlock.model.Car;
 
 @SuppressWarnings("static-access")
-public abstract class Vertex extends GraphEntity {
+public abstract class Vertex extends Entity {
 	
 	public static final double INIT_VERTEX_RADIUS = Math.sqrt(2 * Road.ROAD_RADIUS * Road.ROAD_RADIUS);
 	
@@ -31,7 +33,9 @@ public abstract class Vertex extends GraphEntity {
 	public final List<Car> carQueue = new ArrayList<Car>();
 	
 	protected Color hiliteColor;
-		
+	
+	protected SweepableShape shape;
+	
 	private int hash;
 	
 //	private final List<Vertex> vs;
@@ -67,12 +71,24 @@ public abstract class Vertex extends GraphEntity {
 		return r;
 	}
 	
+	public SweepableShape getShape() {
+		return shape;
+	}
+	
 	public Vertex getReferenceVertex(Axis a) {
 		return this;
 	}
 	
 	public Vertex getOtherVertex(Axis a) {
 		return this;
+	}
+	
+	public final Entity hitTest(Point p) {
+		if (shape.hitTest(p)) {
+			return this;
+		} else {
+			return null;
+		}
 	}
 	
 	public abstract boolean supportsStopSigns();
@@ -87,7 +103,7 @@ public abstract class Vertex extends GraphEntity {
 	public void computeRadius(double maximumRadius) {
 		
 		if (logger.isDebugEnabled()) {
-			logger.debug("aabb before: " + shape.aabb);
+			logger.debug("aabb before: " + shape.getAABB());
 		}
 		
 		double oldR = r;
@@ -179,7 +195,7 @@ public abstract class Vertex extends GraphEntity {
 		}
 		
 		if (logger.isDebugEnabled()) {
-			logger.debug("aabb after: " + shape.aabb);
+			logger.debug("aabb after: " + shape.getAABB());
 		}
 		
 		if (r != oldR) {

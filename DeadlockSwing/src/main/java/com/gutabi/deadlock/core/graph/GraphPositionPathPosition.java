@@ -167,14 +167,15 @@ public class GraphPositionPathPosition {
 							}
 							
 						} else {
-							VertexPosition curPosV = (VertexPosition)curPos.gpos;
+//							VertexPosition curPosV = (VertexPosition)curPos.gpos;
 							
-							assert !(g.entity instanceof Road && ((Road)g.entity).isLoop());
+//							assert !(g.entity instanceof Road && ((Road)g.entity).isLoop());
 							
-							if (g.entity.getReferenceVertex(g.axis) == curPosV.v) {
+							if (((EdgePosition)nextBound.gpos).getIndex() == 1) {
 								// same direction as edge
 								return new GraphPositionPathPosition(path, curPos.index, g.getParam());
 							} else {
+								assert ((EdgePosition)nextBound.gpos).getIndex() == ((Edge)((EdgePosition)nextBound.gpos).entity).pointCount()-2;
 								return new GraphPositionPathPosition(path, curPos.index, 1-g.getParam());
 							}
 							

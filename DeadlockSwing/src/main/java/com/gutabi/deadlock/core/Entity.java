@@ -3,49 +3,42 @@ package com.gutabi.deadlock.core;
 import java.awt.Graphics2D;
 
 import com.gutabi.deadlock.core.geom.Shape;
-import com.gutabi.deadlock.core.geom.ShapeUtils;
-import com.gutabi.deadlock.core.geom.Sweepable;
-import com.gutabi.deadlock.core.geom.Sweeper;
-import com.gutabi.deadlock.core.geom.tree.AABB;
 
 //@SuppressWarnings("static-access")
-public abstract class Entity implements Sweepable {
+public abstract class Entity {
 	
-	public Shape shape;
+	public abstract Shape getShape();
 	
-	public final Entity hitTest(Point p) {
-		if (shape.hitTest(p)) {
-			return this;
-		} else {
-			return null;
-		}
-	}
+	public abstract Entity hitTest(Point p);
 	
-	public final Entity bestHitTest(Entity e) {
-		if (ShapeUtils.intersect(shape, e.shape)) {
-			return this;
-		}
-		return null;
-	}
+//	public Shape shape;
+//	
+//	public final Entity hitTest(Point p) {
+//		if (shape.hitTest(p)) {
+//			return this;
+//		} else {
+//			return null;
+//		}
+//	}
 	
-	public final Entity bestHitTest(Shape s) {
-		if (ShapeUtils.intersect(shape, s)) {
-			return this;
-		}
-		return null;
-	}
+//	public final Entity intersect(Shape s) {
+//		if (ShapeUtils.intersect(shape, s)) {
+//			return this;
+//		}
+//		return null;
+//	}
 	
-	public final void sweepStart(Sweeper s) {
-		shape.sweepStart(s);
-	}
-	
-	public final void sweep(Sweeper s, int index) {
-		shape.sweep(s, index);
-	}
-	
-	public final AABB getAABB() {
-		return shape.aabb;
-	}
+//	public final void sweepStart(Sweeper s) {
+//		shape.sweepStart(s);
+//	}
+//	
+//	public final void sweep(Sweeper s, int index) {
+//		shape.sweep(s, index);
+//	}
+//	
+//	public final AABB getAABB() {
+//		return shape.aabb;
+//	}
 	
 	public abstract boolean isDeleteable();
 	

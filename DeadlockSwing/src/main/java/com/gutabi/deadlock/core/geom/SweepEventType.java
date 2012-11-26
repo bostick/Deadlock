@@ -15,7 +15,7 @@ public enum SweepEventType {
 	ENTERMERGER,
 	EXITMERGER;
 	
-	public static SweepEventType enter(Sweepable parent) {
+	public static SweepEventType enter(Object parent) {
 		if (parent instanceof Vertex) {
 			return SweepEventType.ENTERVERTEX;
 		} else if (parent instanceof Road) {
@@ -28,7 +28,7 @@ public enum SweepEventType {
 		}
 	}
 	
-	public static SweepEventType exit(Sweepable parent) {
+	public static SweepEventType exit(Object parent) {
 		if (parent instanceof Vertex) {
 			return SweepEventType.EXITVERTEX;
 		} else if (parent instanceof Road) {

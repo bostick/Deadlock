@@ -46,7 +46,7 @@ public abstract class Fixture extends Vertex {
 		if (MODEL.DEBUG_DRAW) {
 			
 //			paintAABB(g2);
-			shape.aabb.draw(g2);
+			shape.getAABB().draw(g2);
 			
 		}
 		

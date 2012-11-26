@@ -10,7 +10,7 @@ import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.tree.AABB;
 
 @SuppressWarnings("static-access")
-public class Quad extends Shape {
+public class Quad extends SweepableShape {
 	
 	public final Point p0;
 	public final Point p1;
@@ -23,9 +23,11 @@ public class Quad extends Shape {
 	double[] n01Projection;
 	double[] n12Projection;
 	
+	public final AABB aabb;
+	
 	private int hash;
 	
-	public Quad(Sweepable parent, Point p0, Point p1, Point p2, Point p3) {
+	public Quad(Object parent, Point p0, Point p1, Point p2, Point p3) {
 		super(parent);
 		this.p0 = p0;
 		this.p1 = p1;
@@ -43,7 +45,7 @@ public class Quad extends Shape {
 		double brX = Math.max(Math.max(p0.x, p1.x), Math.max(p2.x, p3.x));
 		double brY = Math.max(Math.max(p0.y, p1.y), Math.max(p2.y, p3.y));
 		
-		aabb = new AABB(parent, ulX, ulY, (brX - ulX), (brY - ulY));
+		aabb = new AABB(ulX, ulY, (brX - ulX), (brY - ulY));
 	}
 	
 	public int hashCode() {
@@ -98,6 +100,10 @@ public class Quad extends Shape {
 		}
 		return true;
 		
+	}
+	
+	public AABB getAABB() {
+		return aabb;
 	}
 	
 //	public boolean intersect(Shape s) {

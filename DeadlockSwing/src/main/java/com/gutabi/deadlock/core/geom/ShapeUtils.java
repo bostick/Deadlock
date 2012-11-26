@@ -3,6 +3,8 @@ package com.gutabi.deadlock.core.geom;
 import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.tree.AABB;
+import com.gutabi.deadlock.model.cursor.FixtureCursorShape;
+import com.gutabi.deadlock.model.cursor.MergerCursorShape;
 
 public class ShapeUtils {
 	
@@ -39,9 +41,44 @@ public class ShapeUtils {
 				return intersect(s1, s0);
 			} else if (s1 instanceof Circle) {
 				return intersectCC((Circle)s0, (Circle)s1);
+			} else if (s1 instanceof FixtureCursorShape) {
+				return intersect(s1, s0);
+			} else if (s1 instanceof MergerCursorShape) {
+				return intersect(s1, s0);
 			} else if (s1 instanceof Quad) {
 				return intersectCQ((Circle)s0, (Quad)s1);
 			}
+		} else if (s0 instanceof FixtureCursorShape) {
+			FixtureCursorShape fc0 = (FixtureCursorShape)s0;
+			
+			if (intersect(fc0.worldSource, s1)) {
+				return true;
+			}
+			if (intersect(fc0.worldSink, s1)) {
+				return true;
+			}
+			return false;
+			
+		} else if (s0 instanceof MergerCursorShape) {
+			MergerCursorShape mc0 = (MergerCursorShape)s0;
+			
+			if (intersect(mc0.worldQ, s1)) {
+				return true;
+			}
+			if (intersect(mc0.worldTop, s1)) {
+				return true;
+			}
+			if (intersect(mc0.worldLeft, s1)) {
+				return true;
+			}
+			if (intersect(mc0.worldRight, s1)) {
+				return true;
+			}
+			if (intersect(mc0.worldBottom, s1)) {
+				return true;
+			}
+			return false;
+			
 		} else if (s0 instanceof Quad) {
 			if (s1 instanceof AABB) {
 				return intersectAQ((AABB)s1, (Quad)s0);
@@ -49,6 +86,10 @@ public class ShapeUtils {
 				return intersect(s1, s0);
 			} else if (s1 instanceof Circle) {
 				return intersectCQ((Circle)s1, (Quad)s0);
+			} else if (s1 instanceof FixtureCursorShape) {
+				return intersect(s1, s0);
+			} else if (s1 instanceof MergerCursorShape) {
+				return intersect(s1, s0);
 			} else if (s1 instanceof Quad) {
 				return intersectQQ((Quad)s0, (Quad)s1);
 			}

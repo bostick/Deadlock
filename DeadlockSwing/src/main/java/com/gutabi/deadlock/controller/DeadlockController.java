@@ -183,8 +183,8 @@ public class DeadlockController implements ActionListener {
 			int x = (int)(lastDragPreviewPoint.x - lastPressPreviewPoint.x);
 			int y = (int)(lastDragPreviewPoint.y - lastPressPreviewPoint.y);
 			
-			VIEW.worldOriginX = originalX + (int)((MODEL.world.getWorldWidth() * MODEL.PIXELS_PER_METER / 100) * x);
-			VIEW.worldOriginY = originalY + (int)((MODEL.world.getWorldHeight() * MODEL.PIXELS_PER_METER / 100) * y);
+			VIEW.worldOriginX = originalX + (int)((MODEL.world.worldWidth * MODEL.PIXELS_PER_METER / 100) * x);
+			VIEW.worldOriginY = originalY + (int)((MODEL.world.worldHeight * MODEL.PIXELS_PER_METER / 100) * y);
 			
 			VIEW.repaintControlPanel();
 			VIEW.repaint();
@@ -234,7 +234,7 @@ public class DeadlockController implements ActionListener {
 			case DRAFTING:
 				draftEnd();
 				
-				VIEW.renderBackgroundFresh();
+				MODEL.renderBackground();
 				VIEW.repaint();
 				
 				break;
@@ -277,9 +277,6 @@ public class DeadlockController implements ActionListener {
 				Entity closest = MODEL.world.hitTest(lastMovedWorldPoint);
 				MODEL.hilited = closest;
 				
-				int quad = MODEL.world.findQuadrant(lastMovedWorldPoint);
-				MODEL.hilitedQuad = quad;
-				
 			case MERGERCURSOR:
 			case FIXTURECURSOR:
 				
@@ -305,13 +302,13 @@ public class DeadlockController implements ActionListener {
 		switch (mode) {
 		case IDLE:
 			
-			if (MODEL.world.completelyContains(MODEL.cursor)) {
+			if (MODEL.world.completelyContains(MODEL.cursor.getShape())) {
 				
-				if (!MODEL.world.graphIntersect(MODEL.cursor)) {
+				if (MODEL.world.pureGraphBestHitTest(MODEL.cursor.getShape()) == null) {
 					
 					MODEL.world.addVertexTop(new Intersection(MODEL.cursor.getPoint()));
 					
-					VIEW.renderBackgroundFresh();
+					MODEL.renderBackground();
 					VIEW.repaint();
 					
 				}
@@ -342,7 +339,7 @@ public class DeadlockController implements ActionListener {
 			FixtureCursor fc = (FixtureCursor)MODEL.cursor;
 			Axis axis = fc.getAxis();
 			
-			if (!MODEL.world.graphIntersect(MODEL.cursor)) {
+			if (MODEL.world.pureGraphBestHitTest(MODEL.cursor.getShape()) == null) {
 				
 				WorldSource source = new WorldSource(fc.getSourcePoint(), axis);
 				WorldSink sink = new WorldSink(fc.getSinkPoint(), axis);
@@ -360,7 +357,7 @@ public class DeadlockController implements ActionListener {
 				
 				MODEL.cursor.setPoint(lastMovedWorldPoint);
 				
-				VIEW.renderBackgroundFresh();
+				MODEL.renderBackground();
 				VIEW.repaint();
 				
 			}
@@ -376,7 +373,7 @@ public class DeadlockController implements ActionListener {
 		
 		MODEL.grid = !MODEL.grid;
 		
-		VIEW.renderBackgroundFresh();
+		MODEL.renderBackground();
 		VIEW.repaint();
 		
 	}
@@ -422,7 +419,7 @@ public class DeadlockController implements ActionListener {
 			
 		}
 		
-		VIEW.renderBackgroundFresh();
+		MODEL.renderBackground();
 		VIEW.repaint();
 		
 	}
@@ -439,7 +436,7 @@ public class DeadlockController implements ActionListener {
 					
 					s.setEnabled(true);
 					
-					VIEW.renderBackgroundFresh();
+					MODEL.renderBackground();
 					VIEW.repaint();
 				}
 				
@@ -458,9 +455,9 @@ public class DeadlockController implements ActionListener {
 			break;
 		case MERGERCURSOR:
 			
-			if (MODEL.world.completelyContains(MODEL.cursor)) {
+			if (MODEL.world.completelyContains(MODEL.cursor.getShape())) {
 				
-				if (!MODEL.world.graphIntersect(MODEL.cursor)) {
+				if (MODEL.world.pureGraphBestHitTest(MODEL.cursor.getShape()) == null) {
 					
 					MODEL.world.insertMergerTop(MODEL.cursor.getPoint());
 					
@@ -470,7 +467,7 @@ public class DeadlockController implements ActionListener {
 					
 					MODEL.cursor.setPoint(lastMovedWorldPoint);
 					
-					VIEW.renderBackgroundFresh();
+					MODEL.renderBackground();
 					VIEW.repaint();
 					
 				}
@@ -522,7 +519,7 @@ public class DeadlockController implements ActionListener {
 					
 					i.setTurning(Turning.COUNTERCLOCKWISE);
 					
-					VIEW.renderBackgroundFresh();
+					MODEL.renderBackground();
 					VIEW.repaint();
 					
 				} else if (MODEL.hilited instanceof Road) {
@@ -530,7 +527,7 @@ public class DeadlockController implements ActionListener {
 					
 					r.setDirection(Axis.NONE, EdgeDirection.STARTTOEND);
 					
-					VIEW.renderBackgroundFresh();
+					MODEL.renderBackground();
 					VIEW.repaint();
 					
 				}
@@ -556,7 +553,7 @@ public class DeadlockController implements ActionListener {
 					
 					i.setTurning(Turning.CLOCKWISE);
 					
-					VIEW.renderBackgroundFresh();
+					MODEL.renderBackground();
 					VIEW.repaint();
 					
 				} else if (MODEL.hilited instanceof Road) {
@@ -564,7 +561,7 @@ public class DeadlockController implements ActionListener {
 					
 					r.setDirection(Axis.NONE, EdgeDirection.ENDTOSTART);
 					
-					VIEW.renderBackgroundFresh();
+					MODEL.renderBackground();
 					VIEW.repaint();
 					
 				}
@@ -590,7 +587,7 @@ public class DeadlockController implements ActionListener {
 					
 					i.setTurning(Turning.NONE);
 					
-					VIEW.renderBackgroundFresh();
+					MODEL.renderBackground();
 					VIEW.repaint();
 					
 				} else if (MODEL.hilited instanceof Road) {
@@ -598,7 +595,7 @@ public class DeadlockController implements ActionListener {
 					
 					r.setDirection(Axis.NONE, EdgeDirection.NONE);
 				
-					VIEW.renderBackgroundFresh();
+					MODEL.renderBackground();
 					VIEW.repaint();
 					
 				}
@@ -733,7 +730,7 @@ public class DeadlockController implements ActionListener {
 			
 			MODEL.DEBUG_DRAW = state;
 			
-			VIEW.renderBackgroundFresh();
+			MODEL.renderBackground();
 			VIEW.repaint();
 			
 		} else if (e.getActionCommand().equals("fpsDraw")) {
@@ -742,7 +739,7 @@ public class DeadlockController implements ActionListener {
 			
 			MODEL.FPS_DRAW = state;
 			
-			VIEW.renderBackgroundFresh();
+			MODEL.renderBackground();
 			VIEW.repaint();
 			
 		}
@@ -790,19 +787,30 @@ public class DeadlockController implements ActionListener {
 		List<SweepEvent> events = s.events();
 		
 		/*
-		 * go through and find any merger events
+		 * go through and find any merger events and fixture events
 		 */
 		for (int i = 0; i < events.size(); i++) {
 			SweepEvent e = events.get(i);
 			if (e.type == SweepEventType.ENTERMERGER) {
 				return;
 			}
+//			if (e.type == SweepEventType.ENTERVERTEX) {
+//				Vertex v = (Vertex)e.shape.parent;
+//				if (v instanceof Fixture && (v.roads.size() + (v.m!=null?1:0)) > 0) {
+//					assert ((v.roads.size() + (v.m!=null?1:0))) == 1;
+//					return;
+//				}
+//			}
 			if (i < events.size()-1) {
 				SweepEvent f = events.get(i+1);
 				if (e.type == SweepEventType.EXITVERTEX && f.type == SweepEventType.ENTERVERTEX) {
 					Vertex ev = (Vertex)e.shape.parent;
 					Vertex fv = (Vertex)f.shape.parent;
 					if (ev.m != null && ev.m == fv.m) {
+						/*
+						 * FIXME: this currently disallows connecting vertices in a merger, even outside the merger
+						 * fix this so that it's only a road within the merger that is disallowed
+						 */
 						return;
 					}
 				}
@@ -826,7 +834,7 @@ public class DeadlockController implements ActionListener {
 				
 				e.setVertex(v);
 				
-				assert MODEL.world.checkConsistency();
+//				assert MODEL.world.checkConsistency();
 				
 			} else if (e.type == SweepEventType.ENTERROADCAPSULE || e.type == SweepEventType.EXITROADCAPSULE) {
 				
@@ -906,14 +914,14 @@ public class DeadlockController implements ActionListener {
 				if (hit2 instanceof Road) {
 					Vertex v = MODEL.world.splitRoadTop((RoadPosition)pos);
 					
-					assert ShapeUtils.intersect(e.circle, (Circle)v.shape);
+					assert ShapeUtils.intersect(e.circle, (Circle)v.getShape());
 					
 					e.setVertex(v);
 				} else {
 					e.setVertex((Vertex)hit2);
 				}
 				
-				assert MODEL.world.checkConsistency();
+//				assert MODEL.world.checkConsistency();
 				
 			} else if (e.type == SweepEventType.ENTERVERTEX) {
 				e.setVertex((Vertex)e.shape.parent);

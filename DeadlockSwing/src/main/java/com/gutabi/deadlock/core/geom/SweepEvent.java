@@ -9,7 +9,7 @@ import com.gutabi.deadlock.core.graph.Vertex;
 public class SweepEvent {
 	
 	public final SweepEventType type;
-	public final Shape shape;
+	public final SweepableShape shape;
 	public final Sweeper sweeper;
 	public final int index;
 	public final double param;
@@ -18,7 +18,7 @@ public class SweepEvent {
 	
 	private Vertex v;
 	
-	public SweepEvent(SweepEventType type, Shape shape, Sweeper sweeper, int index, double param) {
+	public SweepEvent(SweepEventType type, SweepableShape shape, Sweeper sweeper, int index, double param) {
 		this.type = type;
 		this.shape = shape;
 		this.sweeper = sweeper;

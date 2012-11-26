@@ -1,19 +1,6 @@
 
 IMMEDIATELY:
 
-fix issues with loops in roads
-
-enforce only 1 road to fixtures
-interesting problem:
-currently, the car proximity test works by testing distances of the first car's GP to the second car's GP, based on the first car's path
-so, if the second car is not somewhere on the first car's path, no proximity is detected
-if world sinks are connected, so that some car can just pass through them on its way, then it may be in the middle of a sink when 
-another car is reaching it's path's end in that sink. And there are no stop signs.
-The first car may be past the VertexPosition, and so it is nowhere on the second car's path
-but the second car hasn't been sinked yet, so there is a crash
-
-add Quadrant class
-
 better brake lights
 
 map on preview
@@ -62,6 +49,19 @@ spline/curve editor
 
 
 DONE:
+
+enforce only 1 road to fixtures
+interesting problem:
+currently, the car proximity test works by testing distances of the first car's GP to the second car's GP, based on the first car's path
+so, if the second car is not somewhere on the first car's path, no proximity is detected
+if world sinks are connected, so that some car can just pass through them on its way, then it may be in the middle of a sink when 
+another car is reaching it's path's end in that sink. And there are no stop signs.
+The first car may be past the VertexPosition, and so it is nowhere on the second car's path
+but the second car hasn't been sinked yet, so there is a crash
+
+add Quadrant class
+
+fix issues with loops in roads
 
 enforce prohibition of cars beyonds world sides
 

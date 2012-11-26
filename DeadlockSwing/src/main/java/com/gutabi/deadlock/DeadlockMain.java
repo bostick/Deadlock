@@ -24,12 +24,12 @@ public class DeadlockMain  {
 		
 		CONTROLLER.init();
 		
+		MODEL.renderBackground();
+		
 		VIEW.frame.setVisible(true);
 		VIEW.canvas.requestFocusInWindow();
 		
 		VIEW.canvas.postDisplay();
-		
-		VIEW.renderBackgroundFresh();
 		
 	}
 	

@@ -284,7 +284,7 @@ public class Stroke {
 		aabb = null;
 		
 		for (Point p : pts) {
-			aabb = AABB.union(aabb, new AABB(null, p.x-r, p.y-r, 2*r, 2*r));
+			aabb = AABB.union(aabb, new AABB(p.x-r, p.y-r, 2*r, 2*r));
 		}
 		
 	}

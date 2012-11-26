@@ -115,30 +115,12 @@ public class RoadPosition extends EdgePosition {
 		return combo;
 	}
 	
-	public GraphPosition nextBoundToward(GraphPosition goal) {
-		
-		if (goal instanceof RoadPosition) {
-			RoadPosition ge = (RoadPosition)goal;
-			assert ge.r == r;
-			assert !equals(ge);
-			
-			if (lengthToStartOfRoad < ge.lengthToStartOfRoad) {
-				return nextBoundForward(r, index, param);
-			} else {
-				return nextBoundBackward(r, index, param);
-			}
-			
-		} else {
-			VertexPosition gv = (VertexPosition)goal;
-			
-			if (gv.v == r.end) {
-				return nextBoundForward(r, index, param);
-			} else {
-				return nextBoundBackward(r, index, param);
-			}
-			
-		}
-		
+	public GraphPosition nextBoundTowardReferenceVertex() {
+		return nextBoundBackward(r, index, param);
+	}
+	
+	public GraphPosition nextBoundTowardOtherVertex() {
+		return nextBoundForward(r, index, param);
 	}
 	
 	public GraphPosition nextBoundBackward() {
@@ -234,12 +216,12 @@ public class RoadPosition extends EdgePosition {
 		
 	}
 	
-	public static GraphPosition nextBoundfromStart(Road e) {
-		return nextBoundForward(e, 0, 0.0);
+	public static RoadPosition nextBoundfromStart(Road e) {
+		return (RoadPosition)nextBoundForward(e, 0, 0.0);
 	}
 	
-	public static GraphPosition nextBoundfromEnd(Road e) {
-		return nextBoundBackward(e, e.pointCount()-2, 1.0);
+	public static RoadPosition nextBoundfromEnd(Road e) {
+		return (RoadPosition)nextBoundBackward(e, e.pointCount()-2, 1.0);
 	}
 	
 	private static GraphPosition nextBoundForward(Road e, int index, double param) {

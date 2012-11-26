@@ -12,21 +12,23 @@ import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.tree.AABB;
 
 @SuppressWarnings("static-access")
-public class Circle extends Shape {
+public class Circle extends SweepableShape {
 	
 	public final Point center;
 	public final double radius;
+	
+	public final AABB aabb;
 	
 	private int hash;
 	
 	static Logger logger = Logger.getLogger(Circle.class);
 	
-	public Circle(Sweepable parent, Point center, double radius) {
+	public Circle(Object parent, Point center, double radius) {
 		super(parent);
 		this.center = center;
 		this.radius = radius;
 		
-		aabb = new AABB(parent, center.x - radius, center.y - radius, 2*radius, 2*radius);
+		aabb = new AABB(center.x - radius, center.y - radius, 2*radius, 2*radius);
 	}
 	
 	@Override
@@ -63,6 +65,10 @@ public class Circle extends Shape {
 	
 	public boolean hitTest(Point p) {
 		return DMath.lessThanEquals(Point.distance(p, center), radius);
+	}
+	
+	public AABB getAABB() {
+		return aabb;
 	}
 	
 //	public boolean intersect(Shape s) {

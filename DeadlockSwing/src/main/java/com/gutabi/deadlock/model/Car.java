@@ -27,6 +27,7 @@ import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.Geom;
 import com.gutabi.deadlock.core.geom.Quad;
+import com.gutabi.deadlock.core.geom.Shape;
 import com.gutabi.deadlock.core.graph.GraphPosition;
 import com.gutabi.deadlock.core.graph.GraphPositionPath;
 import com.gutabi.deadlock.core.graph.GraphPositionPathPosition;
@@ -154,6 +155,8 @@ public abstract class Car extends Entity {
 	
 	protected Color color;
 	protected Color hiliteColor;
+	
+	private Shape shape;
 	
 	static Logger logger = Logger.getLogger(Car.class);
 	static Logger pathingLogger = Logger.getLogger("com.gutabi.deadlock.model.Car.pathing");
@@ -337,7 +340,7 @@ public abstract class Car extends Entity {
 		worldQuad = Geom.localToWorld(localQuad, carTransArr, p);
 		shape = worldQuad;
 		
-		Entity e = MODEL.world.pureGraphBestHitTest(this);
+		Entity e = MODEL.world.pureGraphBestHitTest(this.shape);
 		
 		boolean wasInMerger = inMerger;
 		if (e == null) {
@@ -345,7 +348,7 @@ public abstract class Car extends Entity {
 			inMerger = false;
 		} else {
 			atleastPartiallyOnRoad = true;
-			if (e instanceof Merger && ((Quad)shape).containedIn((Quad)e.shape)) {
+			if (e instanceof Merger && ((Quad)shape).containedIn((Quad)e.getShape())) {
 				inMerger = true;
 			} else {
 				inMerger = false;
@@ -376,6 +379,17 @@ public abstract class Car extends Entity {
 		MODEL.world.b2dWorld.destroyBody(b2dBody);
 	}
 	
+	public final Entity hitTest(Point p) {
+		if (shape.hitTest(p)) {
+			return this;
+		} else {
+			return null;
+		}
+	}
+	
+	public Shape getShape() {
+		return shape;
+	}
 	
 	public boolean isDeleteable() {
 		return true;
@@ -793,11 +807,11 @@ public abstract class Car extends Entity {
 			dw = negMaxRads;
 		}
 		
-		if (dw > 0.52) {
-			String.class.getName();
-		} else if (dw < -0.52) {
-			String.class.getName();
-		}
+//		if (dw > 0.52) {
+//			String.class.getName();
+//		} else if (dw < -0.52) {
+//			String.class.getName();
+//		}
 		
 		if (logger.isDebugEnabled()) {
 			logger.debug("updateTurn: dw: " + dw);
@@ -949,7 +963,7 @@ public abstract class Car extends Entity {
 				g2.fillOval((int)(goalPoint.x * MODEL.PIXELS_PER_METER) - 2, (int)(goalPoint.y * MODEL.PIXELS_PER_METER) - 2, 4, 4);
 			}
 			
-			shape.aabb.draw(g2);
+			shape.getAABB().draw(g2);
 			
 		}
 		

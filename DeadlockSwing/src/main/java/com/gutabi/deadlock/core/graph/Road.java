@@ -19,6 +19,9 @@ import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.Capsule;
 import com.gutabi.deadlock.core.geom.CapsuleSequence;
 import com.gutabi.deadlock.core.geom.Circle;
+import com.gutabi.deadlock.core.geom.Shape;
+import com.gutabi.deadlock.core.geom.ShapeUtils;
+import com.gutabi.deadlock.core.geom.SweepableShape;
 import com.gutabi.deadlock.model.StopSign;
 
 @SuppressWarnings("static-access")
@@ -55,6 +58,8 @@ public class Road extends Edge {
 	private int hash;
 	
 //	private final List<Vertex> vs;
+	
+	private SweepableShape shape;
 	
 	static Logger logger = Logger.getLogger(Road.class);
 	
@@ -206,6 +211,14 @@ public class Road extends Edge {
 		return end;
 	}
 	
+	public final Entity hitTest(Point p) {
+		if (shape.hitTest(p)) {
+			return this;
+		} else {
+			return null;
+		}
+	}
+	
 	public boolean canTravelFromTo(Vertex a, Vertex b) {
 		if (a == start) {
 			assert b == end;
@@ -296,21 +309,17 @@ public class Road extends Edge {
 		return null;
 	}
 	
-	public Entity decorationsBestHitTest(Entity e) {
-		
-		Entity hit;
+	public Entity decorationsBestHitTest(Shape s) {
 		
 		if (startSign != null) {
-			hit = startSign.bestHitTest(e);
-			if (hit != null) {
-				return hit;
+			if (ShapeUtils.intersect(startSign.getShape(), s)) {
+				return startSign;
 			}
 		}
 		
 		if (endSign != null) {
-			hit = endSign.bestHitTest(e);
-			if (hit != null) {
-				return hit;
+			if (ShapeUtils.intersect(endSign.getShape(), s)) {
+				return endSign;
 			}
 		}
 		
@@ -480,6 +489,10 @@ public class Road extends Edge {
 		
 		shape = seq;
 		
+	}
+	
+	public SweepableShape getShape() {
+		return shape;
 	}
 	
 	private static List<Point> removeDuplicates(List<Point> stroke) {
@@ -674,7 +687,7 @@ public class Road extends Edge {
 		if (MODEL.DEBUG_DRAW) {
 			
 //			paintAABB(g2);
-			shape.aabb.draw(g2);
+			shape.getAABB().draw(g2);
 			
 		}
 	}

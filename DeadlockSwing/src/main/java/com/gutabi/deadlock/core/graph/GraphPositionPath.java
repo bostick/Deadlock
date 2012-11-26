@@ -67,7 +67,7 @@ public class GraphPositionPath {
 		AABB acc = null;
 		for (int i = 0; i < poss.size(); i++) {
 			GraphPosition p = poss.get(i);
-			acc = AABB.union(acc, p.entity.getAABB());
+			acc = AABB.union(acc, p.entity.getShape().getAABB());
 		}
 		aabb = acc;
 		
@@ -374,7 +374,7 @@ public class GraphPositionPath {
 			if (c.overallPos == null) {
 				continue;
 			}
-			if (!aabb.intersect(c.getAABB())) {
+			if (!aabb.intersect(c.getShape().getAABB())) {
 				continue;
 			}
 			
@@ -412,16 +412,17 @@ public class GraphPositionPath {
 						
 						combo = ((EdgePosition)gp).getCombo();
 						
-						assert !(b.entity instanceof Road && ((Road)b.entity).isLoop());
+//						assert !(b.entity instanceof Road && ((Road)b.entity).isLoop());
 						
-						if (((VertexPosition)a).v == b.entity.getReferenceVertex(b.axis)) {
+						if (((EdgePosition)b).getIndex() == 1) {
 							aCombo = 0.0;
 							bCombo = ((EdgePosition)b).getCombo();
 							if (!(DMath.lessThanEquals(aCombo, combo) && DMath.lessThanEquals(combo, bCombo))) {
 								continue;
 							}
 						} else {
-							assert ((VertexPosition)a).v == b.entity.getOtherVertex(b.axis);
+//							assert ((VertexPosition)a).v == b.entity.getOtherVertex(b.axis);
+							assert ((EdgePosition)b).getIndex() == ((Edge)b.entity).pointCount()-2;
 							aCombo = (e.pointCount()-1)+0.0;
 							bCombo = ((EdgePosition)b).getCombo();
 							if (!(DMath.greaterThanEquals(aCombo, combo) && DMath.greaterThanEquals(combo, bCombo))) {
@@ -448,17 +449,17 @@ public class GraphPositionPath {
 						
 						combo = ((EdgePosition)gp).getCombo();
 						
-						assert !(a.entity instanceof Road && ((Road)a.entity).isLoop());
+//						assert !(a.entity instanceof Road && ((Road)a.entity).isLoop());
 						
-						if (((VertexPosition)b).v == a.entity.getReferenceVertex(a.axis)) {
+						if (((EdgePosition)a).getIndex() == 1) {
 							aCombo = ((EdgePosition)a).getCombo();
 							bCombo = 0.0;
 							if (!(DMath.greaterThanEquals(aCombo, combo) && DMath.greaterThanEquals(combo, bCombo))) {
 								continue;
 							}
-							
 						} else {
-							assert ((VertexPosition)b).v == a.entity.getOtherVertex(a.axis);
+//							assert ((VertexPosition)b).v == a.entity.getOtherVertex(a.axis);
+							assert ((EdgePosition)a).getIndex() == ((Edge)a.entity).pointCount()-2;
 							aCombo = ((EdgePosition)a).getCombo();
 							bCombo = (e.pointCount()-1)+0.0;
 							if (!(DMath.lessThanEquals(aCombo, combo) && DMath.lessThanEquals(combo, bCombo))) {
@@ -623,7 +624,8 @@ public class GraphPositionPath {
 					
 				}
 				
-				fillin(acc, a, b, shortest);
+				assert a.v != b.v;
+				fillin(acc, a, b, shortest, 2);
 				
 			}
 		}
@@ -705,123 +707,74 @@ public class GraphPositionPath {
 		
 		int n = MODEL.world.RANDOM.nextInt(edges.size());
 		Edge e = edges.get(n);
-		fillin(acc, a, choicePos, e);
+		int dir;
+		if (a.v == choicePos.v) {
+			dir = MODEL.world.RANDOM.nextInt(2);
+		} else {
+			dir = 2;
+		}
+		fillin(acc, a, choicePos, e, dir);
 		
 		calculateRandomPath(acc, choicePos, b);
 		
 	}
 	
-	private static void fillin(List<GraphPosition> acc, VertexPosition aa, VertexPosition bb, Edge e) {
+	private static void fillin(List<GraphPosition> acc, VertexPosition aa, VertexPosition bb, Edge e, int dir) {
 		
-		if (e instanceof Road) {
-			Road r = (Road)e;
+		if (dir == 0 || (dir == 2 && aa.v == ((Road)e).getReferenceVertex(Axis.NONE))) {
 			
-			if (aa.v == r.start) {
-				assert bb.v == r.end;
-				
-				GraphPosition cur = RoadPosition.nextBoundfromStart(r);
-				
-				acc.add(cur);
-				
-				while (true) {
-					if (cur.equals(bb)) {
-						break;
-					}
-					cur = cur.nextBoundToward(bb);
-					assert cur.isBound();
-					acc.add(cur);
-				}
-				
+			GraphPosition cur;
+			if (e instanceof Road) {
+				assert aa.v == ((Road)e).start;
+				assert bb.v == ((Road)e).end;
+				cur = RoadPosition.nextBoundfromStart((Road)e);
 			} else {
-				assert bb.v == r.start;
-				assert aa.v == r.end;
-				
-				GraphPosition cur = RoadPosition.nextBoundfromEnd(r);
-				
-				acc.add(cur);
-				
-				while (true) {
-					
-					if (cur.equals(bb)) {
-						break;
-					}
-					
-					cur = cur.nextBoundToward(bb);
-					assert cur.isBound();
-					acc.add(cur);
+				if (aa.v == ((Merger)e).top) {
+					cur = MergerPosition.nextBoundFromTop((Merger)e);
+				} else {
+					assert aa.v == ((Merger)e).left;
+					cur = MergerPosition.nextBoundFromLeft((Merger)e);
 				}
-				
+			}
+			
+			acc.add(cur);
+			
+			while (true) {
+				if (cur.equals(bb)) {
+					break;
+				}
+				cur = ((EdgePosition)cur).nextBoundTowardOtherVertex();
+				assert cur.isBound();
+				acc.add(cur);
 			}
 			
 		} else {
-			Merger m = (Merger)e;
 			
-			if (aa.v == m.top) {
-				assert bb.v == m.bottom;
-				
-				GraphPosition cur = MergerPosition.nextBoundFromTop(m);
-				
-				acc.add(cur);
-				
-				while (true) {
-					if (cur.equals(bb)) {
-						break;
-					}
-					cur = cur.nextBoundToward(bb);
-					assert cur.isBound();
-					acc.add(cur);
-				}
-				
-			} else if (aa.v == m.left) {
-				assert bb.v == m.right;
-				
-				GraphPosition cur = MergerPosition.nextBoundFromLeft(m);
-				
-				acc.add(cur);
-				
-				while (true) {
-					if (cur.equals(bb)) {
-						break;
-					}
-					cur = cur.nextBoundToward(bb);
-					assert cur.isBound();
-					acc.add(cur);
-				}
-				
-			} else if (aa.v == m.right) {
-				assert bb.v == m.left;
-				
-				GraphPosition cur = MergerPosition.nextBoundFromRight(m);
-				
-				acc.add(cur);
-				
-				while (true) {
-					if (cur.equals(bb)) {
-						break;
-					}
-					cur = cur.nextBoundToward(bb);
-					assert cur.isBound();
-					acc.add(cur);
-				}
-				
+			GraphPosition cur;
+			if (e instanceof Road) {
+				assert aa.v == ((Road)e).end;
+				assert bb.v == ((Road)e).start;
+				cur = RoadPosition.nextBoundfromEnd((Road)e);
 			} else {
-				assert aa.v == m.bottom;
-				assert bb.v == m.top;
-				
-				GraphPosition cur = MergerPosition.nextBoundFromBottom(m);
-				
-				acc.add(cur);
-				
-				while (true) {
-					if (cur.equals(bb)) {
-						break;
-					}
-					cur = cur.nextBoundToward(bb);
-					assert cur.isBound();
-					acc.add(cur);
+				if (aa.v == ((Merger)e).bottom) {
+					cur = MergerPosition.nextBoundFromBottom((Merger)e);
+				} else {
+					assert aa.v == ((Merger)e).right;
+					cur = MergerPosition.nextBoundFromRight((Merger)e);
 				}
-				
 			}
+			
+			acc.add(cur);
+			
+			while (true) {
+				if (cur.equals(bb)) {
+					break;
+				}
+				cur = ((EdgePosition)cur).nextBoundTowardReferenceVertex();
+				assert cur.isBound();
+				acc.add(cur);
+			}
+			
 		}
 		
 	}

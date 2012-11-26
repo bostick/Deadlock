@@ -15,7 +15,6 @@ import org.jbox2d.common.Vec2;
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.Shape;
-import com.gutabi.deadlock.core.geom.ShapeUtils;
 import com.gutabi.deadlock.core.geom.Sweepable;
 import com.gutabi.deadlock.core.geom.Sweeper;
 import com.gutabi.deadlock.core.geom.tree.AABB;
@@ -25,26 +24,19 @@ import com.gutabi.deadlock.core.graph.Merger;
 import com.gutabi.deadlock.core.graph.Road;
 import com.gutabi.deadlock.core.graph.RoadPosition;
 import com.gutabi.deadlock.core.graph.Vertex;
-import com.gutabi.deadlock.model.cursor.RegularCursor;
 import com.gutabi.deadlock.view.AnimatedExplosion;
 import com.gutabi.deadlock.view.AnimatedGrass;
 
 @SuppressWarnings("static-access")
 public class World implements Sweepable {
 	
+	public final double worldWidth;
+	public final double worldHeight;
+	
 	/*
 	 * distance that center of a car has to be from center of a sink in order to be sinked
 	 */
 	public static final double SINK_EPSILON = 0.5f;
-	
-//	public static final double WORLD_WIDTH = 2 * 16.0;
-//	public static final double WORLD_HEIGHT = WORLD_WIDTH;
-	
-	public static final double QUADRANT_WIDTH = 16.0;
-	public static final double QUADRANT_HEIGHT = QUADRANT_WIDTH;
-	
-//	public static final int GRASS_WIDTH = 32;
-//	public static final int GRASS_HEIGHT = 32;
 	
 	public static Random RANDOM = new Random(1);
 	
@@ -53,13 +45,11 @@ public class World implements Sweepable {
 	 */
 	public double t;
 	
+	private Map map;
+	
 	AnimatedGrass animatedGrass1;
 	AnimatedGrass animatedGrass2;
 	AnimatedGrass animatedGrass3;
-	
-	public int[][] quadrants;
-	public int quadrantCols;
-	public int quadrantRows;
 	
 	private Graph graph = new Graph();
 	
@@ -72,23 +62,24 @@ public class World implements Sweepable {
 	public org.jbox2d.dynamics.World b2dWorld;
 	private CarEventListener listener;
 	
-	static Color lightGreen = new Color(128, 255, 128);
-	
-	private AABB worldRect;
+//	private AABB worldRect;
 	private AABB aabb;
 	
 //	private static Logger logger = Logger.getLogger(World.class);
 	
 	public World() {
 		
-		quadrants = new int[][] {
+		int[][] ini = new int[][] {
 				{1, 1, 1},
 				{1, 1, 0},
 				{0, 1, 0},
 		};
 		
-		quadrantCols = quadrants[0].length;
-		quadrantRows = quadrants.length;
+		map = new Map(ini);
+		
+		worldWidth = map.quadrantCols * MODEL.QUADRANT_WIDTH;
+		
+		worldHeight = map.quadrantRows * MODEL.QUADRANT_HEIGHT;
 		
 //		animatedGrass1 = new AnimatedGrass(new Point(WORLD_WIDTH/4, WORLD_HEIGHT/4));
 //		animatedGrass2 = new AnimatedGrass(new Point(3*WORLD_WIDTH/4, 2*WORLD_HEIGHT/4));
@@ -146,94 +137,39 @@ public class World implements Sweepable {
 		
 	}
 	
-	public double getWorldWidth() {
-		return quadrantCols * QUADRANT_WIDTH;
-	}
-	
-	public double getWorldHeight() {
-		return quadrantRows * QUADRANT_HEIGHT;
-	}
-	
-	public int findQuadrant(Point p) {
-		int col = (int)Math.floor(p.x / QUADRANT_WIDTH);
-		int row = (int)Math.floor(p.y / QUADRANT_HEIGHT);
-		if (col < 0 || col > quadrantCols-1) {
-			return -1;
-		}
-		if (row < 0 || row > quadrantRows-1) {
-			return -1;
-		}
-		return row * quadrantCols + col;
-	}
-	
-	public int quadrantUp(int c) {
-		assert c != -1;
-		if (!(c > quadrantCols - 1)) {
-			return -1;
-		}
-		return c - quadrantCols;
-	}
-	
-	public int quadrantDown(int c) {
-		assert c != -1;
-		if (!(c < quadrantRows * quadrantCols)) {
-			return -1;
-		}
-		return c + quadrantCols;
-	}
-	
-	public int quadrantLeft(int c) {
-		assert c != -1;
-		if (!(c % quadrantCols > 0)) {
-			return -1;
-		}
-		return c - 1;
-	}
-	
-	public int quadrantRight(int c) {
-		assert c != -1;
-		if (!(c % quadrantCols < quadrantCols-1)) {
-			return -1;
-		}
-		return c + 1;
-	}
-	
-	public boolean isValidQuadrant(int cur) {
-		return cur >= 0 && cur < quadrantRows * quadrantCols;
-	}
-	
-	public boolean isActiveQuadrant(int cur) {
-		assert cur != -1;
-		assert cur >= 0;
-		assert cur < quadrantRows * quadrantCols;
-		int r = cur / quadrantCols;
-		int c = cur % quadrantCols;
-		if (r < 0 || r > quadrantRows-1) {
-			return false;
-		}
-		if (c < 0 || c > quadrantCols-1) {
-			return false;
-		}
-		return quadrants[r][c] == 1;
-	}
-	
-	public Point quadrantCenter(int q) {
-		int r = q / quadrantCols;
-		int c = q % quadrantCols;
-		return new Point(c * QUADRANT_WIDTH + QUADRANT_WIDTH/2, r * QUADRANT_HEIGHT + QUADRANT_HEIGHT/2);
-	}
-	
 	public void init() throws Exception {
 		
 		b2dWorld = new org.jbox2d.dynamics.World(new Vec2(0.0f, 0.0f), true);
 		listener = new CarEventListener();
 		b2dWorld.setContactListener(listener);
 		
-		worldRect = new AABB(null, 0, 0, getWorldWidth(), getWorldHeight());
+//		worldRect = new AABB(0, 0, worldWidth, worldHeight);
 		
 		computeAABB();
 		
 	}
+	
+	public Quadrant findQuadrant(Point p) {
+		return map.findQuadrant(p);
+	}
+	
+	public Quadrant upFixPoint(Quadrant q) {
+		return map.upFixPoint(q);
+	}
+	
+	public Quadrant leftFixPoint(Quadrant q) {
+		return map.leftFixPoint(q);
+	}
+	
+	public Quadrant rightFixPoint(Quadrant q) {
+		return map.rightFixPoint(q);
+	}
+	
+	public Quadrant downFixPoint(Quadrant q) {
+		return map.downFixPoint(q);
+	}
+	
+	
 	
 	public void addVertexTop(Vertex v) {
 		graph.addVertexTop(v);
@@ -246,7 +182,7 @@ public class World implements Sweepable {
 		
 		postDraftingTop();
 		
-		assert checkConsistency();
+//		assert checkConsistency();
 	}
 	
 	public Vertex splitRoadTop(RoadPosition pos) {
@@ -338,7 +274,7 @@ public class World implements Sweepable {
 	}
 	
 	private void computeAABB() {
-		aabb = worldRect;
+		aabb = map.aabb;
 		aabb = AABB.union(aabb, graph.getAABB());
 	}
 	
@@ -529,24 +465,24 @@ public class World implements Sweepable {
 		return null;
 	}
 	
-	public Car carBestHitTest(Shape s) {
-		synchronized (MODEL) {
-			for (Car c : cars) {
-				if (c.bestHitTest(s) != null) {
-					return c;
-				}
-			}
-		}
-		return null;
-	}
+//	public Car carIntersect(Shape s) {
+//		synchronized (MODEL) {
+//			for (Car c : cars) {
+//				if (c.intersect(s) != null) {
+//					return c;
+//				}
+//			}
+//		}
+//		return null;
+//	}
 	
 	public Entity graphHitTest(Point p) {
 		return graph.graphHitTest(p);
 	}
 	
-	public Entity pureGraphBestHitTest(Entity e) {
-		return graph.pureGraphBestHitTest(e);
-	}
+//	public Entity pureGraphBestHitTest(Entity e) {
+//		return graph.pureGraphBestHitTest(e);
+//	}
 	
 	public Entity pureGraphBestHitTest(Shape s) {
 		return graph.pureGraphBestHitTest(s);
@@ -556,68 +492,12 @@ public class World implements Sweepable {
 		return graph.findClosestRoadPosition(p, radius);
 	}
 	
-//	public boolean isValidRoad(Road r) {
-//		return graph.edges.contains(r);
+//	public boolean graphIntersect(Cursor c) {
+//		return graph.cursorIntersect(c);
 //	}
 	
-	public boolean graphIntersect(Cursor c) {
-		return graph.cursorIntersect(c);
-	}
-	
 	public boolean completelyContains(Shape s) {
-		
-		if (!s.aabb.completelyWithin(worldRect)) {
-			return false;
-		} else {
-			
-			for (int i = 0; i < quadrantRows; i++) {
-				for (int j = 0; j < quadrantCols; j++) {
-					if (quadrants[j][i] == 0) {
-						
-						AABB quadAABB = new AABB(null, i * QUADRANT_WIDTH, j * QUADRANT_HEIGHT, QUADRANT_WIDTH, QUADRANT_HEIGHT);
-						
-						if (ShapeUtils.intersect(s, quadAABB)) {
-							return false;
-						}
-						
-					} else {
-						
-					}
-				}
-			}
-			
-		}
-		
-		return true;
-		
-	}
-	
-	public boolean completelyContains(Cursor c) {
-		
-		if (!c.completelyWithin(worldRect)) {
-			return false;
-		} else {
-			
-			for (int i = 0; i < quadrantRows; i++) {
-				for (int j = 0; j < quadrantCols; j++) {
-					if (quadrants[j][i] == 0) {
-						
-						AABB quadAABB = new AABB(null, i * QUADRANT_WIDTH, j * QUADRANT_HEIGHT, QUADRANT_WIDTH, QUADRANT_HEIGHT);
-						
-						if (c.intersect(quadAABB)) {
-							return false;
-						}
-						
-					} else {
-						
-					}
-				}
-			}
-			
-		}
-		
-		return true;
-		
+		return map.completelyContains(s);
 	}
 	
 	public void paint(Graphics2D g2) {
@@ -634,20 +514,7 @@ public class World implements Sweepable {
 	
 	private void paintBackground(Graphics2D g2) {
 		
-		g2.drawImage(backgroundGrassImage, 0, 0, null);
-		
-//		if (MODEL.hilitedQuad != -1) {
-//			
-//			int r = MODEL.hilitedQuad / quadrantCols;
-//			int c = MODEL.hilitedQuad % quadrantCols;
-//			
-//			g2.setColor(Color.BLUE);
-//			g2.drawRect(
-//					(int)(c * QUADRANT_WIDTH * MODEL.PIXELS_PER_METER),
-//					(int)(r * QUADRANT_HEIGHT * MODEL.PIXELS_PER_METER),
-//					(int)(QUADRANT_WIDTH * MODEL.PIXELS_PER_METER),
-//					(int)(QUADRANT_HEIGHT * MODEL.PIXELS_PER_METER));
-//		}
+		g2.drawImage(VIEW.backgroundGrassImage, 0, 0, null);
 		
 		if (animatedGrass1 != null) {
 			animatedGrass1.paint(g2);
@@ -661,7 +528,7 @@ public class World implements Sweepable {
 		
 		int x = (int)((aabb.x * MODEL.PIXELS_PER_METER));
 		int y = (int)((aabb.y * MODEL.PIXELS_PER_METER));
-		g2.drawImage(backgroundGraphImage, x, y, null);
+		g2.drawImage(VIEW.backgroundGraphImage, x, y, null);
 		
 //		drawSkidMarks(g2);
 		
@@ -729,119 +596,45 @@ public class World implements Sweepable {
 //	}
 //	
 	
-	private BufferedImage backgroundGrassImage;
-	
-	private BufferedImage backgroundGraphImage;
-	
-	public void renderBackgroundFresh() {
+	public void renderBackground() {
 		assert !Thread.holdsLock(MODEL);
 		
-		backgroundGraphImage = new BufferedImage(
+		VIEW.backgroundGrassImage = new BufferedImage(
+				(int)(worldWidth * MODEL.PIXELS_PER_METER),
+				(int)(worldHeight * MODEL.PIXELS_PER_METER),
+				BufferedImage.TYPE_INT_ARGB);
+		
+		Graphics2D backgroundGrassImageG2 = VIEW.backgroundGrassImage.createGraphics();
+		
+		VIEW.previewBackgroundGrassImage = new BufferedImage(100, 100, BufferedImage.TYPE_INT_ARGB);
+		
+		Graphics2D previewBackgroundGrassImageG2 = VIEW.previewBackgroundGrassImage.createGraphics();
+		
+		
+		VIEW.backgroundGraphImage = new BufferedImage(
 				(int)(aabb.width * MODEL.PIXELS_PER_METER),
 				(int)(aabb.height * MODEL.PIXELS_PER_METER),
 				BufferedImage.TYPE_INT_ARGB);
 		
-		Graphics2D backgroundGraphImageG2 = backgroundGraphImage.createGraphics();
+		Graphics2D backgroundGraphImageG2 = VIEW.backgroundGraphImage.createGraphics();
 		
-		backgroundGrassImage = new BufferedImage(
-				(int)(getWorldWidth() * MODEL.PIXELS_PER_METER),
-				(int)(getWorldHeight() * MODEL.PIXELS_PER_METER),
-				BufferedImage.TYPE_INT_ARGB);
+		previewBackgroundGrassImageG2.setColor(Color.WHITE);
+		previewBackgroundGrassImageG2.fillRect(0, 0, 100, 100);
 		
-		Graphics2D backgroundGrassImageG2 = backgroundGrassImage.createGraphics();
-		
-		if (!MODEL.DEBUG_DRAW) {
-			
-			BufferedImage quadrantGrass = new BufferedImage(
-					(int)(QUADRANT_WIDTH * MODEL.PIXELS_PER_METER),
-					(int)(QUADRANT_HEIGHT * MODEL.PIXELS_PER_METER),
-					BufferedImage.TYPE_INT_ARGB);
-			Graphics2D g2 = quadrantGrass.createGraphics();
-			
-			for (int i = 0; i < (QUADRANT_WIDTH * MODEL.PIXELS_PER_METER)/32; i++) {
-				for (int j = 0; j < (QUADRANT_HEIGHT * MODEL.PIXELS_PER_METER)/32; j++) {
-					g2.drawImage(VIEW.sheet,
-							32 * i, 32 * j, 32 * i + 32, 32 * j + 32,
-							0, 224, 0+32, 224+32, null);
-				}
-			} 
-			
-			for (int i = 0; i < quadrantRows; i++) {
-				for (int j = 0; j < quadrantCols; j++) {
-					if (quadrants[i][j] == 1) {
-						backgroundGrassImageG2.drawImage(quadrantGrass, (int)(j * QUADRANT_WIDTH * MODEL.PIXELS_PER_METER), (int)(i * QUADRANT_HEIGHT * MODEL.PIXELS_PER_METER), null);
-					}
-				}
-			}
-			
-		} else {
-			
-			backgroundGrassImageG2.setColor(lightGreen);
-			
-			for (int i = 0; i < quadrantRows; i++) {
-				for (int j = 0; j < quadrantCols; j++) {
-					if (quadrants[i][j] == 1) {
-						backgroundGrassImageG2.fillRect(
-								(int)(j * QUADRANT_WIDTH * MODEL.PIXELS_PER_METER),
-								(int)(i * QUADRANT_HEIGHT * MODEL.PIXELS_PER_METER),
-								(int)(QUADRANT_WIDTH * MODEL.PIXELS_PER_METER),
-								(int)(QUADRANT_HEIGHT * MODEL.PIXELS_PER_METER));
-					}
-				}
-			}
-			
-		}
-		
-		if (MODEL.grid) {
-			
-			backgroundGrassImageG2.setColor(Color.GRAY);
-			backgroundGrassImageG2.setStroke(RegularCursor.solidOutlineStroke);
-			
-			for (int i = 0; i < quadrantRows; i++) {
-				for (int j = 0; j < quadrantCols; j++) {
-					if (quadrants[j][i] == 1) {
-						for (int k = 0; k <= QUADRANT_HEIGHT; k+=2) {
-							backgroundGrassImageG2.drawLine(
-									(int)((i * QUADRANT_WIDTH + 0) * MODEL.PIXELS_PER_METER),
-									(int)((j * QUADRANT_HEIGHT + k) * MODEL.PIXELS_PER_METER),
-									(int)((i * QUADRANT_WIDTH + QUADRANT_WIDTH) * MODEL.PIXELS_PER_METER),
-									(int)((j * QUADRANT_HEIGHT + k) * MODEL.PIXELS_PER_METER));
-						}
-						for (int k = 0; k <= QUADRANT_WIDTH; k+=2) {
-							backgroundGrassImageG2.drawLine(
-									(int)((i * QUADRANT_WIDTH + k) * MODEL.PIXELS_PER_METER),
-									(int)((j * QUADRANT_HEIGHT + 0) * MODEL.PIXELS_PER_METER),
-									(int)((i * QUADRANT_WIDTH + k) * MODEL.PIXELS_PER_METER),
-									(int)((j * QUADRANT_HEIGHT + QUADRANT_HEIGHT) * MODEL.PIXELS_PER_METER));	
-						}
-					}
-				}
-			}
-			
-		}
+		map.renderBackground(backgroundGrassImageG2, previewBackgroundGrassImageG2);
 		
 		backgroundGraphImageG2.setStroke(VIEW.worldStroke);
 		
-		if (!MODEL.DEBUG_DRAW) {
-			
-			backgroundGraphImageG2.translate(
-					(int)((-aabb.x) * MODEL.PIXELS_PER_METER),
-					(int)((-aabb.y) * MODEL.PIXELS_PER_METER));
-			
-			graph.renderBackground(backgroundGraphImageG2);
-			
-		} else {
-			
-			backgroundGraphImageG2.translate(
-					(int)((-aabb.x) * MODEL.PIXELS_PER_METER),
-					(int)((-aabb.y) * MODEL.PIXELS_PER_METER));
-			
-			graph.renderBackground(backgroundGraphImageG2);
-			
-		}
+		backgroundGraphImageG2.translate(
+				(int)((-aabb.x) * MODEL.PIXELS_PER_METER),
+				(int)((-aabb.y) * MODEL.PIXELS_PER_METER));
 		
-		backgroundGrassImageG2.dispose();
+		graph.renderBackground(backgroundGraphImageG2);
+		
+		
+		
 		backgroundGraphImageG2.dispose();
+		backgroundGrassImageG2.dispose();
 		
 	}
 	
@@ -879,17 +672,6 @@ public class World implements Sweepable {
 //		}
 //		
 ////		skidMarksImageG2.dispose();
-//		
-//	}
-	
-//	private void paintAABB(Graphics2D g2) {
-//		
-//		g2.setColor(Color.BLACK);
-//		g2.drawRect(
-//				(int)(aabb.x * MODEL.PIXELS_PER_METER),
-//				(int)(aabb.y * MODEL.PIXELS_PER_METER),
-//				(int)(aabb.width * MODEL.PIXELS_PER_METER),
-//				(int)(aabb.height * MODEL.PIXELS_PER_METER));
 //		
 //	}
 	

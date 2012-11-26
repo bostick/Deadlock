@@ -8,6 +8,10 @@ public abstract class EdgePosition extends GraphPosition {
 	
 	public abstract GraphPosition travelToOtherVertex(Axis a, double dist);
 	
+	public abstract GraphPosition nextBoundTowardReferenceVertex();
+	
+	public abstract GraphPosition nextBoundTowardOtherVertex();
+	
 	public EdgePosition(Point p, Edge e, Axis a) {
 		super(p, e, a);
 	}
