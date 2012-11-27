@@ -1,15 +1,14 @@
 package com.gutabi.deadlock.core.geom;
 
-import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
-
-import java.awt.Graphics2D;
+import java.awt.geom.GeneralPath;
 import java.util.Arrays;
 
 import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.tree.AABB;
+import com.gutabi.deadlock.view.RenderingContext;
 
-@SuppressWarnings("static-access")
+//@SuppressWarnings("static-access")
 public class Quad extends SweepableShape {
 	
 	public final Point p0;
@@ -22,6 +21,8 @@ public class Quad extends SweepableShape {
 	
 	double[] n01Projection;
 	double[] n12Projection;
+	
+	private GeneralPath poly;
 	
 	public final AABB aabb;
 	
@@ -44,6 +45,13 @@ public class Quad extends SweepableShape {
 		double ulY = Math.min(Math.min(p0.y, p1.y), Math.min(p2.y, p3.y));
 		double brX = Math.max(Math.max(p0.x, p1.x), Math.max(p2.x, p3.x));
 		double brY = Math.max(Math.max(p0.y, p1.y), Math.max(p2.y, p3.y));
+		
+		poly = new GeneralPath();
+		poly.moveTo(p0.x, p0.y);
+		poly.lineTo(p1.x, p1.y);
+		poly.lineTo(p2.x, p2.y);
+		poly.lineTo(p3.x, p3.y);
+		poly.closePath();
 		
 		aabb = new AABB(ulX, ulY, (brX - ulX), (brY - ulY));
 	}
@@ -105,24 +113,6 @@ public class Quad extends SweepableShape {
 	public AABB getAABB() {
 		return aabb;
 	}
-	
-//	public boolean intersect(Shape s) {
-//		
-//		if (s instanceof Quad) {
-//			Quad ss = (Quad)s;
-//			
-//			return ShapeUtils.intersect(this, ss);
-//			
-//		} else if (s instanceof Circle) {
-//			Circle ss = (Circle)s;
-//			
-//			return ShapeUtils.intersect(this, ss);
-//			
-//		} else {
-//			return s.intersect(this);
-//		}
-//		
-//	}
 	
 	public void project(Point axis, double[] out) {
 		double min = Point.dot(axis, p0);
@@ -247,39 +237,15 @@ public class Quad extends SweepableShape {
 		return q.hitTest(p0) && q.hitTest(p1) && q.hitTest(p2) && q.hitTest(p3);
 	}
 	
-	public void paint(Graphics2D g2) {
+	public void paint(RenderingContext ctxt) {
 		
-		int[] xPoints = new int[4];
-		int[] yPoints = new int[4];
-		
-		xPoints[0] = (int)(p0.x * MODEL.PIXELS_PER_METER);
-		xPoints[1] = (int)(p1.x * MODEL.PIXELS_PER_METER);
-		xPoints[2] = (int)(p2.x * MODEL.PIXELS_PER_METER);
-		xPoints[3] = (int)(p3.x * MODEL.PIXELS_PER_METER);
-		yPoints[0] = (int)(p0.y * MODEL.PIXELS_PER_METER);
-		yPoints[1] = (int)(p1.y * MODEL.PIXELS_PER_METER);
-		yPoints[2] = (int)(p2.y * MODEL.PIXELS_PER_METER);
-		yPoints[3] = (int)(p3.y * MODEL.PIXELS_PER_METER);
-		
-		g2.fillPolygon(xPoints, yPoints, 4);
+		ctxt.g2.fill(poly);
 		
 	}
 	
-	public void draw(Graphics2D g2) {
+	public void draw(RenderingContext ctxt) {
 		
-		int[] xPoints = new int[4];
-		int[] yPoints = new int[4];
-		
-		xPoints[0] = (int)(p0.x * MODEL.PIXELS_PER_METER);
-		xPoints[1] = (int)(p1.x * MODEL.PIXELS_PER_METER);
-		xPoints[2] = (int)(p2.x * MODEL.PIXELS_PER_METER);
-		xPoints[3] = (int)(p3.x * MODEL.PIXELS_PER_METER);
-		yPoints[0] = (int)(p0.y * MODEL.PIXELS_PER_METER);
-		yPoints[1] = (int)(p1.y * MODEL.PIXELS_PER_METER);
-		yPoints[2] = (int)(p2.y * MODEL.PIXELS_PER_METER);
-		yPoints[3] = (int)(p3.y * MODEL.PIXELS_PER_METER);
-		
-		g2.drawPolygon(xPoints, yPoints, 4);
+		ctxt.g2.draw(poly);
 		
 	}
 

@@ -4,7 +4,6 @@ import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
 import java.awt.Color;
-import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 
 import com.gutabi.deadlock.core.Entity;
@@ -14,6 +13,7 @@ import com.gutabi.deadlock.core.geom.Shape;
 import com.gutabi.deadlock.core.graph.Road;
 import com.gutabi.deadlock.core.graph.Vertex;
 import com.gutabi.deadlock.model.cursor.RegularCursor;
+import com.gutabi.deadlock.view.RenderingContext;
 
 @SuppressWarnings("static-access")
 public class StopSign extends Entity {
@@ -26,9 +26,6 @@ public class StopSign extends Entity {
 	int dir;
 	Point p;
 	double r = 0.5 * STOPSIGN_SIZE;
-	
-//	protected Color color;
-//	protected Color hiliteColor;
 	
 	private boolean enabled;
 	
@@ -105,55 +102,53 @@ public class StopSign extends Entity {
 		shape = new Circle(this, p, r);
 	}	
 	
-	public void paint(Graphics2D g2) {
+	public void paint(RenderingContext ctxt) {
 		
 		if (enabled) {
 			
-			AffineTransform origTransform = g2.getTransform();
+			AffineTransform origTransform = ctxt.g2.getTransform();
 			
-			g2.scale(MODEL.PIXELS_PER_METER, MODEL.PIXELS_PER_METER);
-			g2.translate(p.x, p.y);
-			g2.scale(MODEL.METERS_PER_PIXEL, MODEL.METERS_PER_PIXEL);
+			ctxt.g2.translate(p.x, p.y);
+			ctxt.g2.scale(MODEL.METERS_PER_PIXEL_DEBUG, MODEL.METERS_PER_PIXEL_DEBUG);
 			
-			g2.drawImage(VIEW.sheet,
-					(int)(-STOPSIGN_SIZE * MODEL.PIXELS_PER_METER * 0.5),
-					(int)(-STOPSIGN_SIZE * MODEL.PIXELS_PER_METER * 0.5),
-					(int)(STOPSIGN_SIZE * MODEL.PIXELS_PER_METER * 0.5),
-					(int)(STOPSIGN_SIZE * MODEL.PIXELS_PER_METER * 0.5),
+			ctxt.g2.drawImage(VIEW.sheet,
+					(int)(-MODEL.world.stopSignSizePixels() * 0.5),
+					(int)(-MODEL.world.stopSignSizePixels() * 0.5),
+					(int)(MODEL.world.stopSignSizePixels() * 0.5),
+					(int)(MODEL.world.stopSignSizePixels() * 0.5),
 					32, 224, 32+32, 224+32,
 					null);
 			
-			g2.setTransform(origTransform);
+			ctxt.g2.setTransform(origTransform);
 			
 		}
 		
 		if (MODEL.DEBUG_DRAW) {
 			
-//			paintAABB(g2);
-			shape.getAABB().draw(g2);
+			shape.getAABB().draw(ctxt);
 			
 		}
 		
 	}
 	
-	public void paintHilite(Graphics2D g2) {
+	public void paintHilite(RenderingContext ctxt) {
 		
 		if (enabled) {
 			
-			g2.setColor(Color.RED);
+			ctxt.g2.setColor(Color.RED);
 			
-			shape.paint(g2);
+			shape.paint(ctxt);
 			
 		} else {
 			
-			java.awt.Stroke origStroke = g2.getStroke();
-			g2.setStroke(RegularCursor.solidOutlineStroke);
+			java.awt.Stroke origStroke = ctxt.g2.getStroke();
+			ctxt.g2.setStroke(RegularCursor.solidOutlineStroke);
 			
-			g2.setColor(Color.WHITE);
+			ctxt.g2.setColor(Color.WHITE);
 			
-			shape.draw(g2);
+			shape.draw(ctxt);
 			
-			g2.setStroke(origStroke);
+			ctxt.g2.setStroke(origStroke);
 			
 		}
 		

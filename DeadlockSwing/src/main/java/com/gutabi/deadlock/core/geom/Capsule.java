@@ -3,7 +3,6 @@ package com.gutabi.deadlock.core.geom;
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 
 import java.awt.Color;
-import java.awt.Graphics2D;
 import java.util.Arrays;
 
 import org.apache.log4j.Logger;
@@ -12,6 +11,8 @@ import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.OverlappingException;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.tree.AABB;
+import com.gutabi.deadlock.view.RenderingContext;
+import com.gutabi.deadlock.view.RenderingContextType;
 
 @SuppressWarnings("static-access")
 public class Capsule extends SweepableShape {
@@ -34,6 +35,9 @@ public class Capsule extends SweepableShape {
 	private final Point aDown;
 	private final Point bUp;
 	private final Point bDown;
+	
+	private final Line debugNormalLine;
+	private final Line debugSkeletonLine;
 	
 	public final AABB aabb;
 	
@@ -71,6 +75,9 @@ public class Capsule extends SweepableShape {
 		
 		middle = new Quad(parent, aUp, bUp, bDown, aDown);
 		
+		debugNormalLine = new Line(a.x, a.y, a.x+n.x, a.y+n.y);
+		debugSkeletonLine = new Line(a.x, a.y, b.x, b.y);
+		
 		aabb = AABB.union(ac.getAABB(), bc.getAABB());
 		
 	}
@@ -105,19 +112,6 @@ public class Capsule extends SweepableShape {
 		}
 		return false;
 	}
-	
-//	public boolean intersect(Shape s) {
-//		if (ac.intersect(s)) {
-//			return true;
-//		}
-//		if (bc.intersect(s)) {
-//			return true;
-//		}
-//		if (middle.intersect(s)) {
-//			return true;
-//		}
-//		return false;
-//	}
 	
 	public AABB getAABB() {
 		return aabb;
@@ -308,57 +302,36 @@ public class Capsule extends SweepableShape {
 		}
 	}
 	
-	public void paint(Graphics2D g2) {
+	public void paint(RenderingContext ctxt) {
 		
-		ac.paint(g2);
-		middle.paint(g2);
-		bc.paint(g2);
+		ac.paint(ctxt);
+		middle.paint(ctxt);
+		bc.paint(ctxt);
 		
-		if (MODEL.DEBUG_DRAW) {
-			
-			Color c = g2.getColor();
-			g2.setColor(Color.BLUE);
-			
-			g2.drawLine(
-					(int)(a.x * MODEL.PIXELS_PER_METER),
-					(int)(a.y * MODEL.PIXELS_PER_METER),
-					(int)((a.x + n.x) * MODEL.PIXELS_PER_METER),
-					(int)((a.y + n.y) * MODEL.PIXELS_PER_METER));
-			
-			g2.setColor(c);
-			
+		if (ctxt.type == RenderingContextType.CANVAS) {
+			if (MODEL.DEBUG_DRAW) {
+				
+				Color c = ctxt.g2.getColor();
+				ctxt.g2.setColor(Color.BLUE);
+				
+				debugNormalLine.draw(ctxt);
+				
+				ctxt.g2.setColor(c);
+				
+			}
 		}
-	}
-	
-	
-	
-//	public void paintDirection(Graphics2D g2) {
-//		
-//		g2.setStroke(directionStroke);
-//		g2.setColor(Color.BLACK);
-//		
-//		g2.drawLine(
-//				(int)(a.x * MODEL.PIXELS_PER_METER),
-//				(int)(a.y * MODEL.PIXELS_PER_METER),
-//				(int)(b.x * MODEL.PIXELS_PER_METER),
-//				(int)(b.y * MODEL.PIXELS_PER_METER));
-//	}
-	
-	public void draw(Graphics2D g2) {
-		
-		ac.draw(g2);
-		middle.draw(g2);
-		bc.draw(g2);
 		
 	}
 	
-	public void drawSkeleton(Graphics2D g2) {
+	public void draw(RenderingContext ctxt) {
+		ac.draw(ctxt);
+		middle.draw(ctxt);
+		bc.draw(ctxt);
+	}
+	
+	public void drawSkeleton(RenderingContext ctxt) {
 		
-		g2.drawLine(
-				(int)(a.x * MODEL.PIXELS_PER_METER),
-				(int)(a.y * MODEL.PIXELS_PER_METER),
-				(int)(b.x * MODEL.PIXELS_PER_METER),
-				(int)(b.y * MODEL.PIXELS_PER_METER));
+		debugSkeletonLine.draw(ctxt);
 		
 	}
 }

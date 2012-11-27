@@ -3,7 +3,6 @@ package com.gutabi.deadlock.model;
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 
 import java.awt.Color;
-import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -12,16 +11,18 @@ import org.apache.log4j.Logger;
 
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.Capsule;
+import com.gutabi.deadlock.core.geom.CapsuleSequence;
 import com.gutabi.deadlock.core.geom.Circle;
 import com.gutabi.deadlock.core.geom.SweepEvent;
 import com.gutabi.deadlock.core.geom.SweepEventType;
 import com.gutabi.deadlock.core.geom.Sweeper;
 import com.gutabi.deadlock.core.geom.tree.AABB;
+import com.gutabi.deadlock.view.RenderingContext;
 
 @SuppressWarnings("static-access")
 public class Stroke {
 	
-	public List<Point> pts;
+	private List<Circle> cs;
 	
 	public final double r;
 	
@@ -30,7 +31,7 @@ public class Stroke {
 	static Logger logger = Logger.getLogger(Stroke.class);
 	
 	public Stroke(double r) {
-		pts = new ArrayList<Point>();
+		cs = new ArrayList<Circle>();
 		this.r = r;
 	}
 	
@@ -47,9 +48,21 @@ public class Stroke {
 	
 	public void add(Point p) {
 		
-		pts.add(p);
+		cs.add(new Circle(null, p, r));
 		
 		computeAABB();
+	}
+	
+	public Point get(int index) {
+		return cs.get(index).center;
+	}
+	
+	public Circle getCircle(int index) {
+		return cs.get(index);
+	}
+	
+	public int size() {
+		return cs.size();
 	}
 	
 	List<SweepEvent> events;
@@ -66,15 +79,10 @@ public class Stroke {
 		mergerCount = 0;
 		vertexEvents = new ArrayList<SweepEvent>();
 		
-		List<Circle> circs = new ArrayList<Circle>();
-		for (Point p : pts) {
-			circs.add(new Circle(null, p, r));
-		}
-		
 		List<Capsule> caps = new ArrayList<Capsule>();
-		for (int i = 0; i < pts.size()-1; i++) {
-			Circle a = circs.get(i);
-			Circle b = circs.get(i+1);
+		for (int i = 0; i < cs.size()-1; i++) {
+			Circle a = cs.get(i);
+			Circle b = cs.get(i+1);
 			caps.add(new Capsule(null, a, b));
 		}
 		
@@ -105,7 +113,7 @@ public class Stroke {
 			logger.debug("end counts: " + vertexCount + " " + capsuleCount + " " + mergerCount);
 		}
 		
-		for (int i = 0; i < pts.size()-1; i++) {
+		for (int i = 0; i < cs.size()-1; i++) {
 			
 			events = new ArrayList<SweepEvent>();
 			
@@ -120,7 +128,7 @@ public class Stroke {
 		
 		if ((vertexCount + capsuleCount + mergerCount) == 0) {
 			logger.debug("end in nothing");
-			vertexEvents.add(new SweepEvent(null, null, sweeper, pts.size()-1, 0.0));
+			vertexEvents.add(new SweepEvent(null, null, sweeper, cs.size()-1, 0.0));
 		}
 		
 		
@@ -283,73 +291,41 @@ public class Stroke {
 		
 		aabb = null;
 		
-		for (Point p : pts) {
-			aabb = AABB.union(aabb, new AABB(p.x-r, p.y-r, 2*r, 2*r));
+		for (Circle c : cs) {
+			aabb = AABB.union(aabb, c.aabb);
 		}
 		
 	}
 	
-	public void paint(Graphics2D g2) {
+	public void paint(RenderingContext ctxt) {
 			
-		paintStroke(g2);
+		paintStroke(ctxt);
 		
 		if (MODEL.DEBUG_DRAW) {
 			
-//			paintAABB(g2);
-			aabb.draw(g2);
+			aabb.draw(ctxt);
 			
 		}
 		
 	}
 	
-	private void paintStroke(Graphics2D g2) {
+	private void paintStroke(RenderingContext ctxt) {
 		
-		if (!pts.isEmpty()) {
+		if (!cs.isEmpty()) {
 			
-			g2.setColor(Color.RED);
+			ctxt.g2.setColor(Color.GRAY);
 			
-			int size = pts.size();
-			int[] xPoints = new int[size];
-			int[] yPoints = new int[size];
-			for (int i = 0; i < size; i++) {
-				Point p = pts.get(i);
-				xPoints[i] = (int)(p.x * MODEL.PIXELS_PER_METER);
-				yPoints[i] = (int)(p.y * MODEL.PIXELS_PER_METER);
+			List<Capsule> caps = new ArrayList<Capsule>();
+			for (int i = 0; i < cs.size()-1; i++) {
+				caps.add(new Capsule(null, cs.get(i), cs.get(i+1)));
 			}
 			
-			g2.drawPolyline(xPoints, yPoints, size);
+			CapsuleSequence seq = new CapsuleSequence(null, caps);
 			
-			Point start = pts.get(0);
-			g2.drawOval(
-					(int)((start.x - r) * MODEL.PIXELS_PER_METER),
-					(int)((start.y - r) * MODEL.PIXELS_PER_METER),
-					(int)((2 * r) * MODEL.PIXELS_PER_METER),
-					(int)((2 * r) * MODEL.PIXELS_PER_METER));
-			
-			Point end = pts.get(pts.size()-1);
-			g2.drawOval(
-					(int)((end.x - r) * MODEL.PIXELS_PER_METER),
-					(int)((end.y - r) * MODEL.PIXELS_PER_METER),
-					(int)((2 * r) * MODEL.PIXELS_PER_METER),
-					(int)((2 * r) * MODEL.PIXELS_PER_METER));
+			seq.draw(ctxt);
 			
 		}
 		
 	}
-	
-//	private void paintAABB(Graphics2D g2) {
-//		
-//		if (!pts.isEmpty()) {
-//			
-//			g2.setColor(Color.BLACK);
-//			g2.drawRect(
-//					(int)(aabb.x * MODEL.PIXELS_PER_METER),
-//					(int)(aabb.y * MODEL.PIXELS_PER_METER),
-//					(int)(aabb.width * MODEL.PIXELS_PER_METER),
-//					(int)(aabb.height * MODEL.PIXELS_PER_METER));
-//			
-//		}
-//		
-//	}
 	
 }

@@ -45,41 +45,5 @@ public class VertexPosition extends GraphPosition {
 			return (v == b.v);
 		}
 	}
-	
-	public double distanceToConnectedVertex(Vertex v) {
-		return 0.0;
-	}
-	
-//	public GraphPosition nextBoundToward(GraphPosition goal) {
-//		
-//		if (goal instanceof RoadPosition) {
-//			RoadPosition ge = (RoadPosition)goal;
-//			
-//			if (v == ge.r.end) {
-//				return RoadPosition.nextBoundfromEnd(ge.r);
-//			} else {
-//				return RoadPosition.nextBoundfromStart(ge.r);
-//			}
-//			
-//		} else if (goal instanceof MergerPosition) {
-//			MergerPosition me = (MergerPosition)goal;
-//			
-//			if (v == me.m.top) {
-//				return new VertexPosition(me.m.bottom);
-//			} else if (v == me.m.left) {
-//				return new VertexPosition(me.m.right);
-//			} else if (v == me.m.right) {
-//				return new VertexPosition(me.m.left);
-//			} else {
-//				assert v == me.m.bottom;
-//				return new VertexPosition(me.m.top);
-//			}
-//			
-//		} else {
-//			throw new IllegalArgumentException();
-//			
-//		}
-//		
-//	}
 
 }

@@ -1,11 +1,10 @@
 package com.gutabi.deadlock.core.graph;
 
-import java.awt.Graphics2D;
-
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.Shape;
 import com.gutabi.deadlock.core.geom.SweepableShape;
+import com.gutabi.deadlock.view.RenderingContext;
 
 public abstract class Edge extends Entity {
 	
@@ -36,8 +35,6 @@ public abstract class Edge extends Entity {
 	
 	public abstract GraphPosition travelFromOtherVertex(Axis a, double dist);
 	
-	public abstract void paintBorders(Graphics2D g2);
-	
 	
 	public abstract Entity decorationsHitTest(Point p);
 	
@@ -45,8 +42,10 @@ public abstract class Edge extends Entity {
 	
 	
 	
-	public abstract void paint(Graphics2D backgroundGraphImageG2, Graphics2D previewBackgroundImageG2);
+	public abstract void paintBorders(RenderingContext ctxt);
 	
-	public abstract void paintDecorations(Graphics2D backgroundGraphImageG2, Graphics2D previewBackgroundImageG2);
+	public abstract void paint(RenderingContext ctxt);
+	
+	public abstract void paintDecorations(RenderingContext ctxt);
 
 }

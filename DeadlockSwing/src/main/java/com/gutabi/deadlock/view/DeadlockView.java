@@ -62,12 +62,12 @@ public class DeadlockView {
 		explosionSheet = ImageIO.read(new File("media\\explosionSheet.png"));
 		
 		quadrantGrass = new BufferedImage(
-				(int)(MODEL.QUADRANT_WIDTH * MODEL.PIXELS_PER_METER),
-				(int)(MODEL.QUADRANT_HEIGHT * MODEL.PIXELS_PER_METER),
+				(int)(MODEL.world.quadrantWidthPixels()),
+				(int)(MODEL.world.quadrantHeightPixels()),
 				BufferedImage.TYPE_INT_ARGB);
 		Graphics2D quadrantGrassG2 = VIEW.quadrantGrass.createGraphics();
-		for (int i = 0; i < (MODEL.QUADRANT_WIDTH * MODEL.PIXELS_PER_METER)/32; i++) {
-			for (int j = 0; j < (MODEL.QUADRANT_HEIGHT * MODEL.PIXELS_PER_METER)/32; j++) {
+		for (int i = 0; i < (MODEL.world.quadrantWidthPixels())/32; i++) {
+			for (int j = 0; j < (MODEL.world.quadrantHeightPixels())/32; j++) {
 				quadrantGrassG2.drawImage(VIEW.sheet,
 						32 * i, 32 * j, 32 * i + 32, 32 * j + 32,
 						0, 224, 0+32, 224+32, null);
@@ -106,7 +106,7 @@ public class DeadlockView {
 	}
 	
 	public Point canvasToWorld(Point p) {
-		return new Point((p.x - (0 - worldOriginX)) * MODEL.METERS_PER_PIXEL, (p.y - (0 - worldOriginY)) * MODEL.METERS_PER_PIXEL);
+		return new Point((p.x + worldOriginX) / MODEL.PIXELS_PER_METER_DEBUG, (p.y + worldOriginY) / MODEL.PIXELS_PER_METER_DEBUG);
 	}
 	
 	public void repaint() {
@@ -114,7 +114,7 @@ public class DeadlockView {
 		
 		Graphics2D g2 = (Graphics2D)canvas.bs.getDrawGraphics();
 		
-		MODEL.paint(g2);
+		MODEL.paint(new RenderingContext(g2, RenderingContextType.CANVAS));
 		
 		canvas.bs.show();
 		
@@ -123,9 +123,5 @@ public class DeadlockView {
 		controlPanel.repaint();
 		
 	}
-	
-//	public void repaintControlPanel() {
-//		controlPanel.repaint();
-//	}
 	
 }

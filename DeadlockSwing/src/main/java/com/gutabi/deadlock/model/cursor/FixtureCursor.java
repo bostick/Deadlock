@@ -2,14 +2,12 @@ package com.gutabi.deadlock.model.cursor;
 
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 
-import java.awt.Graphics2D;
-
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.Shape;
-import com.gutabi.deadlock.core.geom.tree.AABB;
 import com.gutabi.deadlock.core.graph.Axis;
 import com.gutabi.deadlock.model.Cursor;
 import com.gutabi.deadlock.model.Quadrant;
+import com.gutabi.deadlock.view.RenderingContext;
 
 @SuppressWarnings("static-access")
 public class FixtureCursor extends Cursor {
@@ -28,9 +26,6 @@ public class FixtureCursor extends Cursor {
 	private FixtureCursorShape shape;
 	
 	public FixtureCursor() {
-		
-//		sourceCircle = new Circle(this, new Point(0, 0), Vertex.INIT_VERTEX_RADIUS);
-//		sinkCircle = new Circle(this, new Point(0, 0), Vertex.INIT_VERTEX_RADIUS);
 		
 		axis = Axis.NONE;
 	}
@@ -109,21 +104,7 @@ public class FixtureCursor extends Cursor {
 		return shape.worldSink.center;
 	}
 	
-//	public boolean intersect(Shape s) {
-//		return ShapeUtils.intersect(s, shape.worldSource) || ShapeUtils.intersect(s, shape.worldSink);
-//	}
-	
-	public boolean intersect(AABB aabb) {
-		assert false;
-		return false;
-	}
-	
-	public boolean completelyWithin(AABB par) {
-		assert false;
-		return false;
-	}
-	
-	public void paint(Graphics2D g2) {
+	public void paint(RenderingContext ctxt) {
 		
 		if (p == null) {
 			return;
@@ -133,21 +114,10 @@ public class FixtureCursor extends Cursor {
 			
 		} else {
 			
-			shape.paint(g2);
+			shape.paint(ctxt);
 			
 		}
 		
-		if (MODEL.DEBUG_DRAW) {
-			
-//			int r = currentQuadrant / MODEL.world.quadrantCols;
-//			int c = currentQuadrant % MODEL.world.quadrantCols;
-//			
-//			g2.setColor(Color.BLACK);
-//			g2.drawString(Double.toString(distToTopOrBottom), (int)(p.x * MODEL.PIXELS_PER_METER) - 0 - 10, (int)(p.y * MODEL.PIXELS_PER_METER) - 10 - 10);
-//			g2.drawString(Double.toString(distToLeftOrRight), (int)(p.x * MODEL.PIXELS_PER_METER) - 10 - 10, (int)(p.y * MODEL.PIXELS_PER_METER) - 0 - 10);
-//			g2.drawString(Integer.toString(right), (int)(p.x * MODEL.PIXELS_PER_METER) + 10 - 10, (int)(p.y * MODEL.PIXELS_PER_METER) - 0 - 10);
-//			g2.drawString(Integer.toString(bottom), (int)(p.x * MODEL.PIXELS_PER_METER) - 0 - 10, (int)(p.y * MODEL.PIXELS_PER_METER) + 10 - 10);
-		}
 	}
 	
 }

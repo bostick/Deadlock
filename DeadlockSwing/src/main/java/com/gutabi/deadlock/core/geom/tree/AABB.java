@@ -1,16 +1,15 @@
 package com.gutabi.deadlock.core.geom.tree;
 
-import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
-
-import java.awt.Color;
-import java.awt.Graphics2D;
+import java.awt.BasicStroke;
+import java.awt.geom.Rectangle2D;
 
 import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Dim;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.Shape;
+import com.gutabi.deadlock.view.RenderingContext;
 
-@SuppressWarnings("static-access")
+//@SuppressWarnings("static-access")
 public class AABB extends Shape {
 	
 	public final Point ul;
@@ -30,6 +29,8 @@ public class AABB extends Shape {
 	
 	public final Point n01;
 	public final Point n12;
+	
+	private final Rectangle2D rect;
 	
 	double[] n01Projection;
 	double[] n12Projection;
@@ -54,11 +55,11 @@ public class AABB extends Shape {
 		p2 = new Point(brX, brY);
 		p3 = new Point(ul.x, ul.y + height);
 		
-//		Point edge;
-//		edge = new Point(width, 0);
 		n01 = new Point(0, -1);
-//		edge = new Point(0, height);
 		n12 = new Point(1, 0);
+		
+		rect = new Rectangle2D.Double(x, y, width, height);
+		
 	}
 	
 	public String toString() {
@@ -144,10 +145,6 @@ public class AABB extends Shape {
 				DMath.lessThanEquals(a.y, brY) && DMath.lessThanEquals(y, a.brY);
 	}
 	
-//	public boolean intersect(Shape a) {
-//		return ShapeUtils.intersect();
-//	}
-	
 	public boolean completelyWithin(AABB par) {
 		return DMath.lessThanEquals(par.x, x) && DMath.lessThanEquals(brX, par.brX) &&
 				DMath.lessThanEquals(par.y, y) && DMath.lessThanEquals(brY, par.brY);
@@ -208,27 +205,17 @@ public class AABB extends Shape {
 		return new AABB(x + p.x, y + p.y, width, height);
 	}
 	
-	public void paint(Graphics2D g2) {
+	public static java.awt.Stroke aabbStroke = new BasicStroke(0.001f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER);
+	
+	public void paint(RenderingContext ctxt) {
 		
-		g2.setColor(Color.BLACK);
-		
-		g2.fillRect(
-				(int)(x * MODEL.PIXELS_PER_METER),
-				(int)(y * MODEL.PIXELS_PER_METER),
-				(int)(width * MODEL.PIXELS_PER_METER),
-				(int)(height * MODEL.PIXELS_PER_METER));
+		ctxt.g2.fill(rect);
 		
 	}
 	
-	public void draw(Graphics2D g2) {
+	public void draw(RenderingContext ctxt) {
 		
-		g2.setColor(Color.BLACK);
-		
-		g2.drawRect(
-				(int)(x * MODEL.PIXELS_PER_METER),
-				(int)(y * MODEL.PIXELS_PER_METER),
-				(int)(width * MODEL.PIXELS_PER_METER),
-				(int)(height * MODEL.PIXELS_PER_METER));
+		ctxt.g2.draw(rect);
 		
 	}
 

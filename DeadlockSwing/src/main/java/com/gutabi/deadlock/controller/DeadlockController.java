@@ -27,7 +27,6 @@ import com.gutabi.deadlock.core.graph.Intersection;
 import com.gutabi.deadlock.core.graph.Merger;
 import com.gutabi.deadlock.core.graph.Road;
 import com.gutabi.deadlock.core.graph.RoadPosition;
-import com.gutabi.deadlock.core.graph.Turning;
 import com.gutabi.deadlock.core.graph.Vertex;
 import com.gutabi.deadlock.core.graph.VertexPosition;
 import com.gutabi.deadlock.model.Car;
@@ -183,10 +182,9 @@ public class DeadlockController implements ActionListener {
 			int x = (int)(lastDragPreviewPoint.x - lastPressPreviewPoint.x);
 			int y = (int)(lastDragPreviewPoint.y - lastPressPreviewPoint.y);
 			
-			VIEW.worldOriginX = originalX + (int)((MODEL.world.worldWidth * MODEL.PIXELS_PER_METER / 100) * x);
-			VIEW.worldOriginY = originalY + (int)((MODEL.world.worldHeight * MODEL.PIXELS_PER_METER / 100) * y);
+			VIEW.worldOriginX = originalX + (int)((MODEL.world.worldWidthPixels() / 100.0) * x);
+			VIEW.worldOriginY = originalY + (int)((MODEL.world.worldHeightPixels() / 100.0) * y);
 			
-//			VIEW.repaintControlPanel();
 			VIEW.repaint();
 			
 		}
@@ -266,13 +264,12 @@ public class DeadlockController implements ActionListener {
 			lastMovedWorldPoint = VIEW.canvasToWorld(p);
 			
 			switch (mode) {
-			case RUNNING:
-				break;
 			case PAUSED:
 			case DRAFTING:
 				assert false;
 				break;
 			case IDLE:
+			case RUNNING:
 				
 				Entity closest = MODEL.world.hitTest(lastMovedWorldPoint);
 				MODEL.hilited = closest;
@@ -280,13 +277,15 @@ public class DeadlockController implements ActionListener {
 			case MERGERCURSOR:
 			case FIXTURECURSOR:
 				
-				if (MODEL.grid) {
-					
-					Point closestGridPoint = new Point(2 * Math.round(0.5 * lastMovedWorldPoint.x), 2 * Math.round(0.5 * lastMovedWorldPoint.y));
-					MODEL.cursor.setPoint(closestGridPoint);
-					
-				} else {
-					MODEL.cursor.setPoint(lastMovedWorldPoint);
+				if (MODEL.cursor != null) {
+					if (MODEL.grid) {
+						
+						Point closestGridPoint = new Point(2 * Math.round(0.5 * lastMovedWorldPoint.x), 2 * Math.round(0.5 * lastMovedWorldPoint.y));
+						MODEL.cursor.setPoint(closestGridPoint);
+						
+					} else {
+						MODEL.cursor.setPoint(lastMovedWorldPoint);
+					}
 				}
 				
 				VIEW.repaint();
@@ -514,15 +513,7 @@ public class DeadlockController implements ActionListener {
 			
 			if (MODEL.hilited != null) {
 				
-				if (MODEL.hilited instanceof Intersection) {
-					Intersection i = (Intersection)MODEL.hilited;
-					
-					i.setTurning(Turning.COUNTERCLOCKWISE);
-					
-					MODEL.renderBackground();
-					VIEW.repaint();
-					
-				} else if (MODEL.hilited instanceof Road) {
+				if (MODEL.hilited instanceof Road) {
 					Road r = (Road)MODEL.hilited;
 					
 					r.setDirection(Axis.NONE, EdgeDirection.STARTTOEND);
@@ -548,15 +539,7 @@ public class DeadlockController implements ActionListener {
 			
 			if (MODEL.hilited != null) {
 				
-				if (MODEL.hilited instanceof Intersection) {
-					Intersection i = (Intersection)MODEL.hilited;
-					
-					i.setTurning(Turning.CLOCKWISE);
-					
-					MODEL.renderBackground();
-					VIEW.repaint();
-					
-				} else if (MODEL.hilited instanceof Road) {
+				if (MODEL.hilited instanceof Road) {
 					Road r = (Road)MODEL.hilited;
 					
 					r.setDirection(Axis.NONE, EdgeDirection.ENDTOSTART);
@@ -582,15 +565,7 @@ public class DeadlockController implements ActionListener {
 			
 			if (MODEL.hilited != null) {
 				
-				if (MODEL.hilited instanceof Intersection) {
-					Intersection i = (Intersection)MODEL.hilited;
-					
-					i.setTurning(Turning.NONE);
-					
-					MODEL.renderBackground();
-					VIEW.repaint();
-					
-				} else if (MODEL.hilited instanceof Road) {
+				if (MODEL.hilited instanceof Road) {
 					Road r = (Road)MODEL.hilited;
 					
 					r.setDirection(Axis.NONE, EdgeDirection.NONE);
@@ -773,12 +748,8 @@ public class DeadlockController implements ActionListener {
 		
 		Stroke s = MODEL.stroke;
 		
-		for (int i = 0; i < s.pts.size()-1; i++) {
-			Point a = s.pts.get(i);
-			Point b = s.pts.get(i+1);
-			Circle ac = new Circle(null, a, Vertex.INIT_VERTEX_RADIUS);
-			Circle bc = new Circle(null, b, Vertex.INIT_VERTEX_RADIUS);
-			Capsule cap = new Capsule(null, ac, bc);
+		for (int i = 0; i < s.size()-1; i++) {
+			Capsule cap = new Capsule(null, s.getCircle(i), s.getCircle(i+1));
 			if (!MODEL.world.completelyContains(cap)) {
 				return;
 			}
@@ -855,9 +826,9 @@ public class DeadlockController implements ActionListener {
 				int j = e.index;
 				if (e.type == SweepEventType.ENTERROADCAPSULE) {
 					a = e.circle;
-					b = new Circle(null, s.pts.get(j+1), e.circle.radius);
+					b = s.getCircle(j+1);
 				} else {
-					a = new Circle(null, s.pts.get(j), e.circle.radius);
+					a = s.getCircle(j);
 					b = e.circle;
 				}
 				
@@ -890,12 +861,12 @@ public class DeadlockController implements ActionListener {
 					
 					j += (e.type == SweepEventType.ENTERROADCAPSULE) ? 1 : -1;
 					
-					if (!((e.type == SweepEventType.ENTERROADCAPSULE) ? j < s.pts.size()-1 : j >= 0)) {
+					if (!((e.type == SweepEventType.ENTERROADCAPSULE) ? j < s.size()-1 : j >= 0)) {
 						break;
 					}
 					
-					a = new Circle(null, s.pts.get(j), e.circle.radius);
-					b = new Circle(null, s.pts.get(j+1), e.circle.radius);
+					a = s.getCircle(j);
+					b = s.getCircle(j+1);
 					
 				}
 				
@@ -975,9 +946,9 @@ public class DeadlockController implements ActionListener {
 			List<Point> roadPts = new ArrayList<Point>();
 			roadPts.add(e0.p);
 			for (int j = e0.index+1; j < e1.index; j++) {
-				roadPts.add(s.pts.get(j));
+				roadPts.add(s.get(j));
 			}
-			roadPts.add(s.pts.get(e1.index));
+			roadPts.add(s.get(e1.index));
 			if (!DMath.equals(e1.param, 0.0)) {
 				roadPts.add(e1.p);
 			}

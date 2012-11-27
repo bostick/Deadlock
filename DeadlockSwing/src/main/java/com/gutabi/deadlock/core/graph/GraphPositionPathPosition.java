@@ -85,7 +85,6 @@ public class GraphPositionPathPosition {
 	public double distanceTo(GraphPositionPathPosition p) {
 		
 		assert p.path == path;
-//		assert !equals(p);
 		assert DMath.greaterThanEquals(p.combo, combo);
 		
 		return p.lengthToStartOfPath - lengthToStartOfPath;
@@ -160,16 +159,12 @@ public class GraphPositionPathPosition {
 							
 							if (curPosE.getIndex() < g.getIndex() || (curPosE.getIndex() == g.getIndex() && curPosE.getParam() < g.getParam())) {
 								// same direction as edge
-								//assert curPosE.getIndex() == g.getIndex();
 								return new GraphPositionPathPosition(path, curPos.index, g.getParam());
 							} else {
 								return new GraphPositionPathPosition(path, curPos.index, 1-g.getParam());
 							}
 							
 						} else {
-//							VertexPosition curPosV = (VertexPosition)curPos.gpos;
-							
-//							assert !(g.entity instanceof Road && ((Road)g.entity).isLoop());
 							
 							if (((EdgePosition)nextBound.gpos).getIndex() == 1) {
 								// same direction as edge

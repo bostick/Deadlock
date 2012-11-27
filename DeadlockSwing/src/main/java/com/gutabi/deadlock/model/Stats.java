@@ -4,12 +4,11 @@ import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
 import java.awt.Color;
-import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 
-import com.gutabi.deadlock.core.Point;
+import com.gutabi.deadlock.view.RenderingContext;
 
-@SuppressWarnings("static-access")
+//@SuppressWarnings("static-access")
 public class Stats {
 	
 	long lastTime;
@@ -21,14 +20,14 @@ public class Stats {
 	 * 
 	 * @param g2
 	 */
-	public void paint(Graphics2D g2) {
+	public void paint(RenderingContext ctxt) {
 		
-		AffineTransform origTransform = g2.getTransform();
+		ctxt.g2.setColor(Color.BLACK);
+		ctxt.g2.setStroke(VIEW.worldStroke);
 		
-		g2.setStroke(VIEW.worldStroke);
+		AffineTransform origTransform = ctxt.g2.getTransform();
 		
-//		g2.translate(VIEW.worldAABBX, VIEW.worldAABBY);
-		g2.translate(10, 10);
+		ctxt.g2.translate(10, 10);
 		
 		frameCount++;
 		
@@ -40,16 +39,13 @@ public class Stats {
 			lastTime = curTime;
 		}
 		
-		g2.setColor(Color.BLACK);
+		ctxt.g2.drawString("FPS: " + fps, 0, 0);
 		
-		Point p = new Point(1, 1).multiply(MODEL.PIXELS_PER_METER);
-		g2.drawString("FPS: " + fps, (int)p.x, (int)p.y);
+		ctxt.g2.translate(0, 10);
 		
-		g2.translate(0, MODEL.PIXELS_PER_METER);
+		MODEL.world.paintStats(ctxt);
 		
-		MODEL.world.paintStats(g2);
-		
-		g2.setTransform(origTransform);
+		ctxt.g2.setTransform(origTransform);
 	}
 	
 }

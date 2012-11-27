@@ -3,7 +3,7 @@ package com.gutabi.deadlock.core.graph;
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 
 import java.awt.Color;
-import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,6 +15,7 @@ import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.Circle;
 import com.gutabi.deadlock.core.geom.SweepableShape;
 import com.gutabi.deadlock.model.Car;
+import com.gutabi.deadlock.view.RenderingContext;
 
 @SuppressWarnings("static-access")
 public abstract class Vertex extends Entity {
@@ -38,8 +39,6 @@ public abstract class Vertex extends Entity {
 	
 	private int hash;
 	
-//	private final List<Vertex> vs;
-	
 	static Logger logger = Logger.getLogger(Vertex.class);
 	
 	public Vertex(Point p) {
@@ -50,8 +49,6 @@ public abstract class Vertex extends Entity {
 		
 		shape = new Circle(this, p, r);
 		
-//		vs = new ArrayList<Vertex>();
-//		vs.add(this);
 	}
 	
 	public int hashCode() {
@@ -241,16 +238,16 @@ public abstract class Vertex extends Entity {
 	/**
 	 * @param g2 in world coords
 	 */
-	public abstract void paint(Graphics2D backgroundGraphImageG2, Graphics2D previewBackgroundImageG2);
+	public abstract void paint(RenderingContext ctxt);
 	
 	/**
 	 * @param g2 in world coords
 	 */
-	public void paintHilite(Graphics2D g2) {
+	public void paintHilite(RenderingContext ctxt) {
 		
-		g2.setColor(hiliteColor);
+		ctxt.g2.setColor(hiliteColor);
 		
-		shape.paint(g2);
+		shape.paint(ctxt);
 		
 	}
 	
@@ -258,14 +255,19 @@ public abstract class Vertex extends Entity {
 	 * 
 	 * @param g2 in pixels, <0, 0> is world origin
 	 */
-	public void paintID(Graphics2D g2) {
+	public void paintID(RenderingContext ctxt) {
 		
-		g2.setColor(Color.WHITE);
+		ctxt.g2.setColor(Color.WHITE);
 		
-		Point worldPoint = p.minus(new Point(r, 0));
-		Point canvasPoint = worldPoint.multiply(MODEL.PIXELS_PER_METER);
+		AffineTransform origTransform = ctxt.g2.getTransform();
 		
-		g2.drawString(id + " " + carQueue.size(), (int)(canvasPoint.x), (int)(canvasPoint.y));
+		ctxt.g2.translate(p.x-r, p.y);
+		
+		ctxt.g2.scale(MODEL.METERS_PER_PIXEL_DEBUG, MODEL.METERS_PER_PIXEL_DEBUG);
+		
+		ctxt.g2.drawString(id + " " + carQueue.size(), 0, 0);
+		
+		ctxt.g2.setTransform(origTransform);
 		
 	}
 	

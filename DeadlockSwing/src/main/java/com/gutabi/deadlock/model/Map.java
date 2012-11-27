@@ -1,16 +1,12 @@
 package com.gutabi.deadlock.model;
 
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
-import static com.gutabi.deadlock.view.DeadlockView.VIEW;
-
-import java.awt.Color;
-import java.awt.Graphics2D;
 
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.Shape;
 import com.gutabi.deadlock.core.geom.ShapeUtils;
 import com.gutabi.deadlock.core.geom.tree.AABB;
-import com.gutabi.deadlock.model.cursor.RegularCursor;
+import com.gutabi.deadlock.view.RenderingContext;
 
 @SuppressWarnings("static-access")
 public class Map {
@@ -156,11 +152,12 @@ public class Map {
 		
 		for (int i = 0; i < quadrantCols; i++) {
 			for (int j = 0; j < quadrantRows; j++) {
-				if (!quadrants[j][i].active) {
+				
+				Quadrant q = quadrants[j][i];
+				
+				if (!q.active) {
 					
-					AABB quadAABB = new AABB(i * MODEL.QUADRANT_WIDTH, j * MODEL.QUADRANT_HEIGHT, MODEL.QUADRANT_WIDTH, MODEL.QUADRANT_HEIGHT);
-					
-					if (ShapeUtils.intersect(s, quadAABB)) {
+					if (ShapeUtils.intersect(s, q.aabb)) {
 						return false;
 					}
 					
@@ -173,53 +170,11 @@ public class Map {
 		return true;
 	}
 	
-	public void renderBackground(Graphics2D backgroundGrassImageG2, Graphics2D previewBackgroundGrassImageG2) {
+	public void renderBackground(RenderingContext ctxt) {
 		for (int i = 0; i < quadrantCols; i++) {
 			for (int j = 0; j < quadrantRows; j++) {
-				if (quadrants[j][i].active) {
-					
-					if (!MODEL.DEBUG_DRAW) {
-						
-						backgroundGrassImageG2.drawImage(VIEW.quadrantGrass, (int)(i * MODEL.QUADRANT_WIDTH * MODEL.PIXELS_PER_METER), (int)(j * MODEL.QUADRANT_HEIGHT * MODEL.PIXELS_PER_METER), null);
-						
-					} else {
-						
-						backgroundGrassImageG2.setColor(VIEW.LIGHTGREEN);
-						backgroundGrassImageG2.fillRect(
-								(int)(i * MODEL.QUADRANT_WIDTH * MODEL.PIXELS_PER_METER),
-								(int)(j * MODEL.QUADRANT_HEIGHT * MODEL.PIXELS_PER_METER),
-								(int)(MODEL.QUADRANT_WIDTH * MODEL.PIXELS_PER_METER),
-								(int)(MODEL.QUADRANT_HEIGHT * MODEL.PIXELS_PER_METER));
-						
-					}
-					
-					if (MODEL.grid) {
-						backgroundGrassImageG2.setColor(Color.GRAY);
-						backgroundGrassImageG2.setStroke(RegularCursor.solidOutlineStroke);
-						for (int k = 0; k <= MODEL.QUADRANT_HEIGHT; k+=2) {
-							backgroundGrassImageG2.drawLine(
-									(int)((i * MODEL.QUADRANT_WIDTH + 0) * MODEL.PIXELS_PER_METER),
-									(int)((j * MODEL.QUADRANT_HEIGHT + k) * MODEL.PIXELS_PER_METER),
-									(int)((i * MODEL.QUADRANT_WIDTH + MODEL.QUADRANT_WIDTH) * MODEL.PIXELS_PER_METER),
-									(int)((j * MODEL.QUADRANT_HEIGHT + k) * MODEL.PIXELS_PER_METER));
-						}
-						for (int k = 0; k <= MODEL.QUADRANT_WIDTH; k+=2) {
-							backgroundGrassImageG2.drawLine(
-									(int)((i * MODEL.QUADRANT_WIDTH + k) * MODEL.PIXELS_PER_METER),
-									(int)((j * MODEL.QUADRANT_HEIGHT + 0) * MODEL.PIXELS_PER_METER),
-									(int)((i * MODEL.QUADRANT_WIDTH + k) * MODEL.PIXELS_PER_METER),
-									(int)((j * MODEL.QUADRANT_HEIGHT + MODEL.QUADRANT_HEIGHT) * MODEL.PIXELS_PER_METER));	
-						}
-					}
-					
-					previewBackgroundGrassImageG2.setColor(VIEW.DARKGREEN);
-					previewBackgroundGrassImageG2.fillRect(
-							(int)(i * 100 / quadrantCols),
-							(int)(j * 100 / quadrantRows),
-							(int)(100 / quadrantCols),
-							(int)(100 / quadrantRows));
-					
-				}
+				Quadrant q = quadrants[j][i];
+				q.paint(ctxt);
 			}
 		}
 	}

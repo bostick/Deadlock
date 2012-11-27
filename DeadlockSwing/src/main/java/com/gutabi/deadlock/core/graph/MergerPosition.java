@@ -123,58 +123,6 @@ public class MergerPosition extends EdgePosition {
 		}
 	}
 	
-//	public GraphPosition nextBoundToward(GraphPosition goal) {
-//		
-//		if (goal instanceof VertexPosition) {
-//			
-//			VertexPosition vg = (VertexPosition)goal;
-//			
-//			if (axis==Axis.LEFTRIGHT) {
-//				assert vg.v == m.left || vg.v == m.right;
-//				
-//				if (vg.v == m.left) {
-//					return nextBoundToLeft(m, index, param);
-//				} else {
-//					return nextBoundToRight(m, index, param);
-//				}
-//				
-//			} else {
-//				assert vg.v == m.top || vg.v == m.bottom;
-//				
-//				if (vg.v == m.top) {
-//					return nextBoundToTop(m, index, param);
-//				} else {
-//					return nextBoundToBottom(m, index, param);
-//				}
-//				
-//			}
-//			
-//		} else {
-//			MergerPosition mg = (MergerPosition)goal;
-//			assert mg.axis == axis;
-//			assert !equals(mg);
-//			
-//			if (axis==Axis.LEFTRIGHT) {
-//				
-//				if (distanceToLeftOfMerger < mg.distanceToLeftOfMerger) {
-//					return nextBoundToRight(m, index, param);
-//				} else {
-//					return nextBoundToLeft(m, index, param);
-//				}
-//				
-//			} else {
-//				
-//				if (distanceToTopOfMerger < mg.distanceToTopOfMerger) {
-//					return nextBoundToBottom(m, index, param);
-//				} else {
-//					return nextBoundToTop(m, index, param);
-//				}
-//			}
-//			
-//		}
-//		
-//	}
-	
 	public Entity getEntity() {
 		return m;
 	}

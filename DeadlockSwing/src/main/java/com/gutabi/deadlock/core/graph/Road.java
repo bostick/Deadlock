@@ -4,9 +4,6 @@ import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.Polygon;
-import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,6 +12,7 @@ import org.apache.log4j.Logger;
 import com.gutabi.deadlock.core.ColinearException;
 import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Entity;
+import com.gutabi.deadlock.core.Matrix;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.Capsule;
 import com.gutabi.deadlock.core.geom.CapsuleSequence;
@@ -22,12 +20,18 @@ import com.gutabi.deadlock.core.geom.Circle;
 import com.gutabi.deadlock.core.geom.Shape;
 import com.gutabi.deadlock.core.geom.ShapeUtils;
 import com.gutabi.deadlock.core.geom.SweepableShape;
+import com.gutabi.deadlock.core.geom.Triangle;
+import com.gutabi.deadlock.core.geom.tree.AABB;
 import com.gutabi.deadlock.model.StopSign;
+import com.gutabi.deadlock.view.RenderingContext;
+import com.gutabi.deadlock.view.RenderingContextType;
 
 @SuppressWarnings("static-access")
 public class Road extends Edge {
 	
 	public static final double ROAD_RADIUS = 0.5;
+	
+	public static final double borderPointRadius = 0.2;
 	
 	public final Vertex start;
 	public final Vertex end;
@@ -36,8 +40,8 @@ public class Road extends Edge {
 	
 	private CapsuleSequence seq;
 	
-	private Point startBorderPoint;
-	private Point endBorderPoint;
+	private Circle startBorderPoint;
+	private Circle endBorderPoint;
 	private int startBorderIndex;
 	private int endBorderIndex;
 	private double[] cumulativeLengthsFromStart;
@@ -61,6 +65,8 @@ public class Road extends Edge {
 	
 	private SweepableShape shape;
 	
+	private Triangle arrowPointer;
+	
 	static Logger logger = Logger.getLogger(Road.class);
 	
 	public Road(Vertex start, Vertex end, List<Point> raw, int dec) {
@@ -75,7 +81,6 @@ public class Road extends Edge {
 		loop = (start == end);
 		standalone = (loop) ? start == null : false;
 		
-//		color = new Color(0x88, 0x88, 0x88, 0xff);
 		color = Color.GRAY;
 		hiliteColor = new Color(0xff ^ 0x88, 0xff ^ 0x88, 0xff ^ 0x88, 0xff);
 		
@@ -84,10 +89,6 @@ public class Road extends Edge {
 		computeProperties();
 		
 		if (!standalone) {
-			
-//			vs = new ArrayList<Vertex>();
-//			vs.add(start);
-//			vs.add(end);
 			
 			start.roads.add(this);
 			end.roads.add(this);
@@ -116,7 +117,6 @@ public class Road extends Edge {
 		} else {
 			startSign = null;
 			endSign = null;
-//			vs = new ArrayList<Vertex>();
 		}
 		
 	}
@@ -178,16 +178,51 @@ public class Road extends Edge {
 	}
 	
 	public Point getStartBorderPoint() {
-		return startBorderPoint;
+		return startBorderPoint.center;
 	}
 	
 	public Point getEndBorderPoint() {
-		return endBorderPoint;
+		return endBorderPoint.center;
 	}
 	
 	public void setDirection(Axis a, EdgeDirection dir) {
 		if (a == Axis.NONE) {
 			this.direction = dir;
+			
+			if (dir == EdgeDirection.STARTTOEND) {
+				
+				Capsule c = seq.getCapsule(capsuleCount()-2);
+				
+				double angle = Math.atan2(c.b.y-c.a.y, c.b.x-c.a.x);
+				
+				double[][] rotMat = new double[][]{ { Math.cos(angle), -Math.sin(angle) }, { Math.sin(angle), Math.cos(angle) } };
+				
+				Point p0 = Matrix.times(rotMat, new Point(0, 0)).plus(endBorderPoint.center);
+				Point p1 = Matrix.times(rotMat, new Point(-1, 0.3)).plus(endBorderPoint.center);
+				Point p2 = Matrix.times(rotMat, new Point(-1, -0.3)).plus(endBorderPoint.center);
+				
+				arrowPointer = new Triangle(p0, p1, p2);
+				
+			} else if (dir == EdgeDirection.ENDTOSTART) {
+				
+				Capsule c = seq.getCapsule(1);
+				
+				double angle = Math.atan2(c.b.y-c.a.y, c.b.x-c.a.x);
+				
+				double[][] rotMat = new double[][]{ { Math.cos(angle), -Math.sin(angle) }, { Math.sin(angle), Math.cos(angle) } };
+				
+				Point p0 = Matrix.times(rotMat, new Point(0, 0)).plus(startBorderPoint.center);
+				Point p1 = Matrix.times(rotMat, new Point(1, 0.3)).plus(startBorderPoint.center);
+				Point p2 = Matrix.times(rotMat, new Point(1, -0.3)).plus(startBorderPoint.center);
+				
+				arrowPointer = new Triangle(p0, p1, p2);
+				
+			} else {
+				
+				arrowPointer = null;
+				
+			}
+			
 		} else {
 			throw new IllegalArgumentException();
 		}
@@ -261,10 +296,8 @@ public class Road extends Edge {
 				break;
 			case STARTTOEND:
 				distances[start.id][end.id] = totalLength;
-//		    	distances[end.id][start.id] = totalLength;
 				break;
 			case ENDTOSTART:
-//				distances[start.id][end.id] = totalLength;
 		    	distances[end.id][start.id] = totalLength;
 				break;
 			}
@@ -427,10 +460,12 @@ public class Road extends Edge {
 		if (!standalone) {
 			startBorderIndex = 1;
 			endBorderIndex = seq.capsuleCount()-1;
-			startBorderPoint = seq.getPoint(startBorderIndex);
-			endBorderPoint = seq.getPoint(endBorderIndex);
-			assert DMath.equals(Point.distance(startBorderPoint, start.p), start.getRadius());
-			assert DMath.equals(Point.distance(endBorderPoint, end.p), end.getRadius());
+			
+			startBorderPoint = new Circle(null, seq.getPoint(startBorderIndex), borderPointRadius);
+			endBorderPoint = new Circle(null, seq.getPoint(endBorderIndex), borderPointRadius);
+			
+			assert DMath.equals(Point.distance(startBorderPoint.center, start.p), start.getRadius());
+			assert DMath.equals(Point.distance(endBorderPoint.center, end.p), end.getRadius());
 		} else {
 			startBorderIndex = -1;
 			endBorderIndex = -1;
@@ -450,10 +485,6 @@ public class Road extends Edge {
 	}
 	
 	private void computeCaps() {
-		
-//		if (hash == 1577748441) {
-//			String.class.getName();
-//		}
 		
 		assert !raw.isEmpty();
 		List<Point> adj = raw;
@@ -543,12 +574,12 @@ public class Road extends Edge {
 			assert startBorderIndex == -1;
 			double startBorderParam = c-startBorderIndex;
 			assert 0 <= startBorderParam && startBorderParam <= 1;
-			startBorderPoint = Point.point(start.p, pts.get(startBorderIndex+1), startBorderParam);
+			startBorderPoint = new Circle(null, Point.point(start.p, pts.get(startBorderIndex+1), startBorderParam), borderPointRadius);
 		} else {
 			startBorderIndex = (int)Math.floor(c);
 			double startBorderParam = c-startBorderIndex;
 			assert 0 <= startBorderParam && startBorderParam <= 1;
-			startBorderPoint = Point.point(pts.get(startBorderIndex), pts.get(startBorderIndex+1), startBorderParam);
+			startBorderPoint = new Circle(null, Point.point(pts.get(startBorderIndex), pts.get(startBorderIndex+1), startBorderParam), borderPointRadius);
 		}
 		
 		c = endBorderCombo(end, pts);
@@ -557,12 +588,12 @@ public class Road extends Edge {
 			assert endBorderIndex == pts.size()-1;
 			double endBorderParam = c-endBorderIndex;
 			assert 0 <= endBorderParam && endBorderParam <= 1;
-			endBorderPoint = Point.point(pts.get(endBorderIndex), end.p, endBorderParam);
+			endBorderPoint = new Circle(null, Point.point(pts.get(endBorderIndex), end.p, endBorderParam), borderPointRadius);
 		} else {
 			endBorderIndex = (int)Math.floor(c);
 			double endBorderParam = c-endBorderIndex;
 			assert 0 <= endBorderParam && endBorderParam <= 1;
-			endBorderPoint = Point.point(pts.get(endBorderIndex), pts.get(endBorderIndex+1), endBorderParam);
+			endBorderPoint = new Circle(null, Point.point(pts.get(endBorderIndex), pts.get(endBorderIndex+1), endBorderParam), borderPointRadius);
 		}
 		
 	}
@@ -571,11 +602,11 @@ public class Road extends Edge {
 		
 		List<Point> adj = new ArrayList<Point>();
 		adj.add(start.p);
-		adj.add(startBorderPoint);
+		adj.add(startBorderPoint.center);
 		for (int i = startBorderIndex+1; i < endBorderIndex; i++) {
 			adj.add(pts.get(i));
 		}
-		adj.add(endBorderPoint);
+		adj.add(endBorderPoint.center);
 		adj.add(end.p);
 		
 		return adj;
@@ -680,139 +711,98 @@ public class Road extends Edge {
 	/**
 	 * @param g2 in world coords
 	 */
-	public void paint(Graphics2D backgroundGraphImageG2, Graphics2D previewBackgroundImageG2) {
+	public void paint(RenderingContext ctxt) {
 		
-		paintPath(backgroundGraphImageG2, previewBackgroundImageG2);
+		paintPath(ctxt);
 		
-		if (MODEL.DEBUG_DRAW) {
-			
-//			paintAABB(g2);
-			shape.getAABB().draw(backgroundGraphImageG2);
-			
+		if (ctxt.type == RenderingContextType.CANVAS) {
+			if (MODEL.DEBUG_DRAW) {
+				ctxt.g2.setColor(Color.BLACK);
+				ctxt.g2.setStroke(AABB.aabbStroke);
+				shape.getAABB().draw(ctxt);	
+			}
 		}
+		
 	}
 	
 	/**
 	 * @param g2 in world coords
 	 */
-	public void paintHilite(Graphics2D g2) {
-		drawPath(g2);
+	public void paintHilite(RenderingContext ctxt) {
+		drawPath(ctxt);
 	}
 	
 	
-	static java.awt.Stroke directionStroke = new BasicStroke(2.5f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
+	static java.awt.Stroke directionStroke = new BasicStroke(0.1f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
 	
-	static Polygon arrowPointer = new Polygon(new int[]{0, -20, -20}, new int[]{0, -10, 10}, 3);
-	
-	private void paintPath(Graphics2D backgroundGraphImageG2, Graphics2D previewBackgroundImageG2) {
+	private void paintPath(RenderingContext ctxt) {
 		
-		backgroundGraphImageG2.setColor(color);
+		ctxt.g2.setColor(color);
 		
-		seq.paint(backgroundGraphImageG2);
+		seq.paint(ctxt);
 		
-		previewBackgroundImageG2.setColor(color);
-		
-		{
-			AffineTransform origTransform = previewBackgroundImageG2.getTransform();
-			
-			previewBackgroundImageG2.scale(100 / (MODEL.world.worldWidth * MODEL.PIXELS_PER_METER), 100 / (MODEL.world.worldHeight * MODEL.PIXELS_PER_METER));
-			
-			seq.paint(previewBackgroundImageG2);
-			
-			previewBackgroundImageG2.setTransform(origTransform);
-		}
-		
-		if (direction != EdgeDirection.NONE) {
-			
-			AffineTransform origTransform = backgroundGraphImageG2.getTransform();
-			java.awt.Stroke origStroke = backgroundGraphImageG2.getStroke();
-			backgroundGraphImageG2.setStroke(directionStroke);
-			backgroundGraphImageG2.setColor(Color.LIGHT_GRAY);
-			
-			seq.drawSkeleton(backgroundGraphImageG2);
-			
-			if (direction == EdgeDirection.STARTTOEND) {
+		if (ctxt.type == RenderingContextType.CANVAS) {
+			if (direction != EdgeDirection.NONE) {
 				
-				Capsule c = seq.getCapsule(capsuleCount()-2);
+				java.awt.Stroke origStroke = ctxt.g2.getStroke();
+				ctxt.g2.setStroke(directionStroke);
+				ctxt.g2.setColor(Color.LIGHT_GRAY);
 				
-				double angle = Math.atan2(c.b.y-c.a.y, c.b.x-c.a.x);
+				seq.drawSkeleton(ctxt);
 				
-				backgroundGraphImageG2.scale(MODEL.PIXELS_PER_METER, MODEL.PIXELS_PER_METER);
-				backgroundGraphImageG2.translate(endBorderPoint.x, endBorderPoint.y);
-				backgroundGraphImageG2.rotate(angle);
-				backgroundGraphImageG2.scale(MODEL.METERS_PER_PIXEL, MODEL.METERS_PER_PIXEL);
+				arrowPointer.paint(ctxt);
 				
-				backgroundGraphImageG2.fillPolygon(arrowPointer);
-				
-			} else {
-				
-				Capsule c = seq.getCapsule(1);
-				
-				double angle = Math.atan2(c.b.y-c.a.y, c.b.x-c.a.x);
-				
-				backgroundGraphImageG2.scale(MODEL.PIXELS_PER_METER, MODEL.PIXELS_PER_METER);
-				backgroundGraphImageG2.translate(startBorderPoint.x, startBorderPoint.y);
-				backgroundGraphImageG2.rotate(angle);
-				backgroundGraphImageG2.scale(MODEL.METERS_PER_PIXEL, MODEL.METERS_PER_PIXEL);
-				backgroundGraphImageG2.rotate(Math.PI);
-				
-				backgroundGraphImageG2.fillPolygon(arrowPointer);
+				ctxt.g2.setStroke(origStroke);
 				
 			}
-			
-			backgroundGraphImageG2.setTransform(origTransform);
-			backgroundGraphImageG2.setStroke(origStroke);
-			
 		}
 		
 	}
 	
-	private void drawPath(Graphics2D g2) {
+	private void drawPath(RenderingContext ctxt) {
 		
-		g2.setColor(hiliteColor);
+		ctxt.g2.setColor(hiliteColor);
 		
-		seq.draw(g2);
+		seq.draw(ctxt);
 		
 	}
 	
 	/**
 	 * @param g2 in pixels
 	 */
-	private void paintSkeleton(Graphics2D g2) {
+	private void paintSkeleton(RenderingContext ctxt) {
 		
-		g2.setColor(Color.BLACK);
+		ctxt.g2.setColor(Color.BLACK);
 		
-		seq.drawSkeleton(g2);
+		seq.drawSkeleton(ctxt);
 		
 	}
 	
 	/**
 	 * @param g2 in world coords
 	 */
-	public void paintBorders(Graphics2D g2) {
+	public void paintBorders(RenderingContext ctxt) {
 		
-		g2.setColor(Color.GREEN);
-		g2.fillOval((int)(startBorderPoint.x * MODEL.PIXELS_PER_METER)-2, (int)(startBorderPoint.y * MODEL.PIXELS_PER_METER)-2, 4, 4);
+		ctxt.g2.setColor(Color.GREEN);
+		startBorderPoint.paint(ctxt);
 		
-		g2.setColor(Color.RED);
-		g2.fillOval((int)(endBorderPoint.x * MODEL.PIXELS_PER_METER)-2, (int)(endBorderPoint.y * MODEL.PIXELS_PER_METER)-2, 4, 4);
+		ctxt.g2.setColor(Color.RED);
+		endBorderPoint.paint(ctxt);
 		
 	}
 	
-	public void paintDecorations(Graphics2D backgroundGraphImageG2, Graphics2D previewBackgroundImageG2) {
+	public void paintDecorations(RenderingContext ctxt) {
 		
-		if (startSign != null) {
-			startSign.paint(backgroundGraphImageG2);
-		}
-		
-		if (endSign != null) {
-			endSign.paint(backgroundGraphImageG2);
-		}
-		
-		if (MODEL.DEBUG_DRAW) {
+		if (ctxt.type == RenderingContextType.CANVAS) {
+			startSign.paint(ctxt);
 			
-			paintSkeleton(backgroundGraphImageG2);
+			endSign.paint(ctxt);
 			
+			if (MODEL.DEBUG_DRAW) {
+				
+				paintSkeleton(ctxt);
+				
+			}
 		}
 		
 	}

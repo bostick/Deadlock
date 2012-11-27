@@ -6,7 +6,6 @@ import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Composite;
-import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +24,7 @@ import org.jbox2d.dynamics.FixtureDef;
 import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
+import com.gutabi.deadlock.core.geom.Circle;
 import com.gutabi.deadlock.core.geom.Geom;
 import com.gutabi.deadlock.core.geom.Quad;
 import com.gutabi.deadlock.core.geom.Shape;
@@ -39,14 +39,12 @@ import com.gutabi.deadlock.model.event.VertexEvent;
 import com.gutabi.deadlock.model.event.VertexSpawnEvent;
 import com.gutabi.deadlock.model.fixture.WorldSink;
 import com.gutabi.deadlock.model.fixture.WorldSource;
+import com.gutabi.deadlock.view.RenderingContext;
 
 @SuppressWarnings("static-access")
 public abstract class Car extends Entity {
 	
 	public static final double CAR_LENGTH = 1.0;
-	
-	public static final int HALF_CAR_LENGTH_PIXELS = (int)Math.round(CAR_LENGTH * MODEL.PIXELS_PER_METER * 0.5);
-	public static final int HALF_CAR_WIDTH_PIXELS = (int)Math.round(CAR_LENGTH * MODEL.PIXELS_PER_METER * 0.25);
 	
 	public static final double COMPLETE_STOP_WAIT_TIME = 0.0;
 	
@@ -140,7 +138,6 @@ public abstract class Car extends Entity {
 	boolean atleastPartiallyOnRoad;
 	boolean inMerger;
 	
-	Quad worldQuad;
 	Point prevWorldPoint0;
 	Point prevWorldPoint3;
 	
@@ -151,12 +148,12 @@ public abstract class Car extends Entity {
 	List<VertexEvent> vertexDepartureQueue = new ArrayList<VertexEvent>();
 	double decelTime = -1;
 	double stoppedTime = -1;
-	Point goalPoint;
+	Circle goalPoint;
 	
 	protected Color color;
 	protected Color hiliteColor;
 	
-	private Shape shape;
+	private Quad shape;
 	
 	static Logger logger = Logger.getLogger(Car.class);
 	static Logger pathingLogger = Logger.getLogger("com.gutabi.deadlock.model.Car.pathing");
@@ -171,10 +168,10 @@ public abstract class Car extends Entity {
 		color = Color.BLUE;
 		hiliteColor = Color.BLUE;
 		
-		Point p0 = new Point(-CAR_LENGTH / 2, CAR_LENGTH / 4);
-		Point p1 = new Point(CAR_LENGTH / 2, CAR_LENGTH / 4);
-		Point p2 = new Point(CAR_LENGTH / 2, -CAR_LENGTH / 4);
-		Point p3 = new Point(-CAR_LENGTH / 2, -CAR_LENGTH / 4);
+		Point p0 = new Point(-CAR_LENGTH / 2, -CAR_LENGTH / 4);
+		Point p1 = new Point(CAR_LENGTH / 2, -CAR_LENGTH / 4);
+		Point p2 = new Point(CAR_LENGTH / 2, CAR_LENGTH / 4);
+		Point p3 = new Point(-CAR_LENGTH / 2, CAR_LENGTH / 4);
 		localQuad = new Quad(this, p0, p1, p2, p3);
 		
 		computeStartingProperties();
@@ -240,8 +237,7 @@ public abstract class Car extends Entity {
 		carTransArr[1][0] = r.col1.y;
 		carTransArr[1][1] = r.col2.y;
 		
-		worldQuad = Geom.localToWorld(localQuad, carTransArr, p);
-		shape = worldQuad;
+		shape = Geom.localToWorld(localQuad, carTransArr, p);
 		
 		
 		Vec2 v = dp.vec2();
@@ -302,8 +298,8 @@ public abstract class Car extends Entity {
 	
 	private void computeDynamicProperties() {
 		
-		prevWorldPoint0 = worldQuad.p0;
-		prevWorldPoint3 = worldQuad.p3;
+//		prevWorldPoint0 = worldQuad.p0;
+//		prevWorldPoint3 = worldQuad.p3;
 		
 		pVec2 = b2dBody.getPosition();
 		p = new Point(pVec2.x, pVec2.y);
@@ -337,8 +333,7 @@ public abstract class Car extends Entity {
 		carTransArr[1][0] = r.col1.y;
 		carTransArr[1][1] = r.col2.y;
 		
-		worldQuad = Geom.localToWorld(localQuad, carTransArr, p);
-		shape = worldQuad;
+		shape = Geom.localToWorld(localQuad, carTransArr, p);
 		
 		Entity e = MODEL.world.pureGraphBestHitTest(this.shape);
 		
@@ -428,6 +423,8 @@ public abstract class Car extends Entity {
 			assert false;
 		}
 		
+		cleanupVertexDepartureQueue();
+		
 	}
 	
 	private void skid() {
@@ -463,6 +460,8 @@ public abstract class Car extends Entity {
 			assert false;
 		}
 		
+		cleanupVertexDepartureQueue();
+		
 	}
 	
 	public void preStart() {
@@ -495,25 +494,7 @@ public abstract class Car extends Entity {
 			
 			handleCurrentDrivingEvent(t);
 			
-			if (!vertexDepartureQueue.isEmpty()) {
-				
-				List<VertexEvent> toRemove = new ArrayList<VertexEvent>();
-				for (VertexEvent e : vertexDepartureQueue) {
-					if (e.carPastExitPosition != null && overallPos.combo >= e.carPastExitPosition.combo) {
-						/*
-						 * driving past exit of intersection, so cleanup
-						 */
-						
-						e.v.carQueue.remove(this);
-						
-						toRemove.add(e);
-						
-					}
-				}
-				for (VertexEvent e : toRemove) {
-					vertexDepartureQueue.remove(e);
-				}
-			}
+			cleanupVertexDepartureQueue();
 			
 		}
 		
@@ -528,7 +509,7 @@ public abstract class Car extends Entity {
 				pathingLogger.debug("goalPoint: " + next.gpos);
 			}
 			
-			goalPoint = next.gpos.p;
+			goalPoint = new Circle(null, next.gpos.p, 0.2);
 			updateDrive(t);
 			break;
 		case BRAKING:
@@ -732,6 +713,30 @@ public abstract class Car extends Entity {
 		}
 	}
 	
+	private void cleanupVertexDepartureQueue() {
+		
+		if (!vertexDepartureQueue.isEmpty()) {
+			
+			List<VertexEvent> toRemove = new ArrayList<VertexEvent>();
+			for (VertexEvent e : vertexDepartureQueue) {
+				if (overallPos == null || e.carPastExitPosition == null || overallPos.combo >= e.carPastExitPosition.combo) {
+					/*
+					 * driving past exit of intersection, so cleanup
+					 */
+					
+					e.v.carQueue.remove(this);
+					
+					toRemove.add(e);
+					
+				}
+			}
+			for (VertexEvent e : toRemove) {
+				vertexDepartureQueue.remove(e);
+			}
+		}
+		
+	}
+	
 	private void updateFriction() {
 		
 		Vec2 cancelingImpulse = vel.mul(-1).mul(mass);
@@ -777,7 +782,7 @@ public abstract class Car extends Entity {
 		
 		
 		
-		Point dp = new Point(goalPoint.x-p.x, goalPoint.y-p.y);
+		Point dp = new Point(goalPoint.center.x-p.x, goalPoint.center.y-p.y);
 		
 		double goalAngle = Math.atan2(dp.y, dp.x);
 		
@@ -896,9 +901,12 @@ public abstract class Car extends Entity {
 				overallPos = null;
 				goalPoint = null;
 				
+				cleanupVertexDepartureQueue();
+				
 				s.matchingSource.outstandingCars--;
 				s.carQueue.remove(this);
 				state = CarStateEnum.SINKED;
+				
 				return false;
 			}
 			break;
@@ -950,20 +958,17 @@ public abstract class Car extends Entity {
 	/**
 	 * @param g2 in world coords
 	 */
-	public void paint(Graphics2D g2) {
+	public void paint(RenderingContext ctxt) {
 		
-		paintImage(g2);
+		paintImage(ctxt);
 		
 		if (MODEL.DEBUG_DRAW) {
 			
-			paintID(g2);
+			paintID(ctxt);
 			
-			if (goalPoint != null) {
-				g2.setColor(Color.WHITE);
-				g2.fillOval((int)(goalPoint.x * MODEL.PIXELS_PER_METER) - 2, (int)(goalPoint.y * MODEL.PIXELS_PER_METER) - 2, 4, 4);
-			}
+			goalPoint.paint(ctxt);
 			
-			shape.getAABB().draw(g2);
+			shape.getAABB().draw(ctxt);
 			
 		}
 		
@@ -972,86 +977,82 @@ public abstract class Car extends Entity {
 	/**
 	 * @param g2 in world coords
 	 */
-	public void paintHilite(Graphics2D g2) {
-		paintRect(g2);
+	public void paintHilite(RenderingContext ctxt) {
+		paintRect(ctxt);
 	}
 	
 	
 	static Composite aComp = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f);
 	static Composite normalComp = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f);
 	
-	protected void paintImage(Graphics2D g2) {
+	protected void paintImage(RenderingContext ctxt) {
 		
-		AffineTransform origTransform = g2.getTransform();
+		AffineTransform origTransform = ctxt.g2.getTransform();
 		
-		Composite origComposite = g2.getComposite();
+		Composite origComposite = ctxt.g2.getComposite();
 		
-		g2.scale(MODEL.PIXELS_PER_METER, MODEL.PIXELS_PER_METER);
-		g2.translate(p.x, p.y);
-		g2.rotate(angle);
-		g2.scale(MODEL.METERS_PER_PIXEL, MODEL.METERS_PER_PIXEL);
+		ctxt.g2.translate(p.x, p.y);
+		ctxt.g2.rotate(angle);
+		
+		ctxt.g2.scale(MODEL.METERS_PER_PIXEL_DEBUG, MODEL.METERS_PER_PIXEL_DEBUG);
 		
 		if (inMerger) {
-			g2.setComposite(aComp);
+			ctxt.g2.setComposite(aComp);
 		}
 		
 		int sheetRow = getSheetRow();
-		g2.drawImage(VIEW.sheet,
-				-HALF_CAR_LENGTH_PIXELS,
-				-HALF_CAR_WIDTH_PIXELS,
-				HALF_CAR_LENGTH_PIXELS,
-				HALF_CAR_WIDTH_PIXELS,
+		ctxt.g2.drawImage(VIEW.sheet,
+				-MODEL.world.halfCarLengthPixels(),
+				-MODEL.world.halfCarWidthPixels(),
+				MODEL.world.halfCarLengthPixels(),
+				MODEL.world.halfCarWidthPixels(),
 				64, sheetRow, 64+32, sheetRow+16,
 				null);
 		
 		if (state == CarStateEnum.BRAKING) {
-			g2.drawImage(VIEW.sheet,
-					-HALF_CAR_LENGTH_PIXELS - 4,
-					-HALF_CAR_WIDTH_PIXELS / 2 - 4,
-					-HALF_CAR_LENGTH_PIXELS + 4,
-					-HALF_CAR_WIDTH_PIXELS / 2 + 4,
+			ctxt.g2.drawImage(VIEW.sheet,
+					-MODEL.world.halfCarLengthPixels() - 4,
+					-MODEL.world.halfCarWidthPixels() / 2 - 4,
+					-MODEL.world.halfCarLengthPixels() + 4,
+					-MODEL.world.halfCarWidthPixels() / 2 + 4,
 					0, 288, 0+8, 288+8,
 					null);
-			g2.drawImage(VIEW.sheet,
-					-HALF_CAR_LENGTH_PIXELS - 4,
-					HALF_CAR_WIDTH_PIXELS / 2 - 4,
-					-HALF_CAR_LENGTH_PIXELS + 4,
-					HALF_CAR_WIDTH_PIXELS / 2 + 4,
+			ctxt.g2.drawImage(VIEW.sheet,
+					-MODEL.world.halfCarLengthPixels() - 4,
+					MODEL.world.halfCarWidthPixels() / 2 - 4,
+					-MODEL.world.halfCarLengthPixels() + 4,
+					MODEL.world.halfCarWidthPixels() / 2 + 4,
 					0, 288, 0+8, 288+8,
 					null);
 		}
 		
 		if (inMerger) {
-			g2.setComposite(origComposite);
+			ctxt.g2.setComposite(origComposite);
 		}
-		g2.setTransform(origTransform);
+		ctxt.g2.setTransform(origTransform);
 		
 	}
 	
-	private void paintRect(Graphics2D g2) {
+	private void paintRect(RenderingContext ctxt) {
 		
-		g2.scale(MODEL.METERS_PER_PIXEL, MODEL.METERS_PER_PIXEL);
+		ctxt.g2.setColor(hiliteColor);
 		
-		g2.setColor(hiliteColor);
-		
-		worldQuad.paint(g2);
+		shape.paint(ctxt);
 	}
 	
-	public void paintID(Graphics2D g2) {
+	public void paintID(RenderingContext ctxt) {
 		
-		g2.setColor(Color.WHITE);
+		ctxt.g2.setColor(Color.WHITE);
 		
-		Point worldPoint = p.minus(new Point(CAR_LENGTH/2, 0));
-		Point canvasPoint = worldPoint.multiply(MODEL.PIXELS_PER_METER);
+		AffineTransform origTransform = ctxt.g2.getTransform();
 		
-		AffineTransform origTransform = g2.getTransform();
+		ctxt.g2.translate(-CAR_LENGTH/2, 0.0);
 		
-		g2.translate((int)(canvasPoint.x), (int)(canvasPoint.y));
-		g2.scale(2.0, 2.0);
+		ctxt.g2.scale(MODEL.METERS_PER_PIXEL_DEBUG, MODEL.METERS_PER_PIXEL_DEBUG);
 		
-		g2.drawString(Integer.toString(id), 0, 0);
+		ctxt.g2.drawString(Integer.toString(id), 0, 0);
 		
-		g2.setTransform(origTransform);
+		ctxt.g2.setTransform(origTransform);
 		
 	}
 

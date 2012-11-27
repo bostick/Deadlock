@@ -1,8 +1,6 @@
 package com.gutabi.deadlock.core.geom;
 
-import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
-
-import java.awt.Graphics2D;
+import java.awt.geom.Ellipse2D;
 import java.util.Arrays;
 
 import org.apache.log4j.Logger;
@@ -10,14 +8,17 @@ import org.apache.log4j.Logger;
 import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.tree.AABB;
+import com.gutabi.deadlock.view.RenderingContext;
 
-@SuppressWarnings("static-access")
+//@SuppressWarnings("static-access")
 public class Circle extends SweepableShape {
 	
 	public final Point center;
 	public final double radius;
 	
 	public final AABB aabb;
+	
+	private final Ellipse2D ellipse;
 	
 	private int hash;
 	
@@ -27,6 +28,8 @@ public class Circle extends SweepableShape {
 		super(parent);
 		this.center = center;
 		this.radius = radius;
+		
+		ellipse = new Ellipse2D.Double(center.x - radius, center.y - radius, 2*radius, 2*radius);
 		
 		aabb = new AABB(center.x - radius, center.y - radius, 2*radius, 2*radius);
 	}
@@ -70,26 +73,6 @@ public class Circle extends SweepableShape {
 	public AABB getAABB() {
 		return aabb;
 	}
-	
-//	public boolean intersect(Shape s) {
-//		
-//		if (s instanceof Quad) {
-//			Quad ss = (Quad)s;
-//			
-//			return ShapeUtils.intersect(ss, this);
-//			
-//		} else if (s instanceof Circle) {
-//			Circle ss = (Circle)s;
-//			
-//			return ShapeUtils.intersect(ss, this);
-//			
-//		} else {
-//			
-//			return s.intersect(this);
-//			
-//		}
-//		
-//	}
 	
 	public void project(Point axis, double[] out) {
 		double cen = Point.dot(axis, center);
@@ -147,23 +130,15 @@ public class Circle extends SweepableShape {
 		
 	}
 	
-	public void paint(Graphics2D g2) {
+	public void paint(RenderingContext ctxt) {
 		
-		g2.fillOval(
-				(int)((center.x - radius) * MODEL.PIXELS_PER_METER),
-				(int)((center.y - radius) * MODEL.PIXELS_PER_METER),
-				(int)((2 * radius) * MODEL.PIXELS_PER_METER),
-				(int)((2 * radius) * MODEL.PIXELS_PER_METER));
+		ctxt.g2.fill(ellipse);
 		
 	}
 	
-	public void draw(Graphics2D g2) {
+	public void draw(RenderingContext ctxt) {
 		
-		g2.drawOval(
-				(int)((center.x - radius) * MODEL.PIXELS_PER_METER),
-				(int)((center.y - radius) * MODEL.PIXELS_PER_METER),
-				(int)((2 * radius) * MODEL.PIXELS_PER_METER),
-				(int)((2 * radius) * MODEL.PIXELS_PER_METER));
+		ctxt.g2.draw(ellipse);
 		
 	}
 }

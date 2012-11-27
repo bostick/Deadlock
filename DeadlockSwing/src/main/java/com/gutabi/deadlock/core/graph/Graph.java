@@ -2,7 +2,6 @@ package com.gutabi.deadlock.core.graph;
 
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 
-import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -22,6 +21,8 @@ import com.gutabi.deadlock.core.geom.Sweepable;
 import com.gutabi.deadlock.core.geom.Sweeper;
 import com.gutabi.deadlock.core.geom.tree.AABB;
 import com.gutabi.deadlock.model.Fixture;
+import com.gutabi.deadlock.view.RenderingContext;
+import com.gutabi.deadlock.view.RenderingContextType;
 
 @SuppressWarnings("static-access")
 public class Graph implements Sweepable {
@@ -578,46 +579,7 @@ public class Graph implements Sweepable {
 		return null;
 	}
 	
-//	public Entity graphBestHitTestX(Shape s) {
-//		Entity hit;
-//		for (Edge ed : edges) {
-//			hit = ed.decorationsBestHitTest(s);
-//			if (hit != null) {
-//				return hit;
-//			}
-//		}
-//		for (Vertex v : vertices) {
-//			hit = v.bestHitTest(s);
-//			if (hit != null) {
-//				return hit;
-//			}
-//		}
-//		for (Edge ed : edges) {
-//			hit = ed.bestHitTest(s);
-//			if (hit != null) {
-//				return ed;
-//			}
-//		}
-//		return null;
-//	}
-	
-//	public Entity pureGraphBestHitTest(Entity e) {
-////		assert p != null;
-//		for (Vertex v : vertices) {
-//			if (v.bestHitTest(e) != null) {
-//				return v;
-//			}
-//		}
-//		for (Edge ed : edges) {
-//			if (ed.bestHitTest(e) != null) {
-//				return ed;
-//			}
-//		}
-//		return null;
-//	}
-	
 	public Entity pureGraphBestHitTest(Shape s) {
-//		assert p != null;
 		for (Vertex v : vertices) {
 			if (ShapeUtils.intersect(v.getShape(), s)) {
 				return v;
@@ -656,22 +618,6 @@ public class Graph implements Sweepable {
 
 		return closest;
 	}
-	
-//	public boolean intersect(Shape s) {
-//		for (Vertex v : vertices) {
-//			if (c.intersect(v.shape)) {
-//				return true;
-//			}
-//		}
-//		for (Edge ed : edges) {
-//			if (c.intersect(ed.shape)) {
-//				return true;
-//			}
-//		}
-//		return false;
-//	}
-	
-	
 	
 	/**
 	 * split a road at point
@@ -985,7 +931,7 @@ public class Graph implements Sweepable {
 	
 	
 	
-	public void renderBackground(Graphics2D backgroundGraphImageG2, Graphics2D previewBackgroundImageG2) {
+	public void renderBackground(RenderingContext ctxt) {
 		
 		List<Edge> edgesCopy;
 		List<Vertex> verticesCopy;
@@ -995,46 +941,46 @@ public class Graph implements Sweepable {
 		}
 		
 		for (Edge e : edgesCopy) {
-			e.paint(backgroundGraphImageG2, previewBackgroundImageG2);
+			e.paint(ctxt);
 		}
 		
 		for (Vertex v : verticesCopy) {
-			v.paint(backgroundGraphImageG2, previewBackgroundImageG2);
+			v.paint(ctxt);
 		}
 		
 		for (Edge e : edgesCopy) {
-			e.paintDecorations(backgroundGraphImageG2, previewBackgroundImageG2);
+			e.paintDecorations(ctxt);
 		}
 		
 	}
 	
-	public void paintStats(Graphics2D g2) {
+	public void paintStats(RenderingContext ctxt) {
 		
-		Point p = new Point(1, 1).multiply(MODEL.PIXELS_PER_METER);
-		g2.drawString("vertex count: " + vertices.size(), (int)p.x, (int)p.y);
+		ctxt.g2.drawString("vertex count: " + vertices.size(), 0, 0);
 		
-		p = new Point(1, 2).multiply(MODEL.PIXELS_PER_METER);
-		g2.drawString("edge count: " + edges.size(), (int)p.x, (int)p.y);
+		ctxt.g2.drawString("edge count: " + edges.size(), 0, 10);
 		
 	}
 	
-	public void paintScene(Graphics2D g2) {
+	public void paintScene(RenderingContext ctxt) {
 		
-		if (MODEL.DEBUG_DRAW) {
-			List<Edge> edgesCopy;
-			
-			synchronized (MODEL) {
-				edgesCopy = new ArrayList<Edge>(edges);
-			}
-			
-			for (Edge e : edgesCopy) {
-				e.paintBorders(g2);
+		if (ctxt.type == RenderingContextType.CANVAS) {
+			if (MODEL.DEBUG_DRAW) {
+				List<Edge> edgesCopy;
+				
+				synchronized (MODEL) {
+					edgesCopy = new ArrayList<Edge>(edges);
+				}
+				
+				for (Edge e : edgesCopy) {
+					e.paintBorders(ctxt);
+				}
 			}
 		}
 		
 	}
 	
-	public void paintIDs(Graphics2D g2) {
+	public void paintIDs(RenderingContext ctxt) {
 		
 		List<Vertex> verticesCopy;
 		synchronized (MODEL) {
@@ -1042,7 +988,7 @@ public class Graph implements Sweepable {
 		}
 		
 		for (Vertex v : verticesCopy) {
-			v.paintID(g2);
+			v.paintID(ctxt);
 		}
 		
 	}

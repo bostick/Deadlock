@@ -5,6 +5,7 @@ import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +27,8 @@ import com.gutabi.deadlock.core.graph.RoadPosition;
 import com.gutabi.deadlock.core.graph.Vertex;
 import com.gutabi.deadlock.view.AnimatedExplosion;
 import com.gutabi.deadlock.view.AnimatedGrass;
+import com.gutabi.deadlock.view.RenderingContext;
+import com.gutabi.deadlock.view.RenderingContextType;
 
 @SuppressWarnings("static-access")
 public class World implements Sweepable {
@@ -62,7 +65,6 @@ public class World implements Sweepable {
 	public org.jbox2d.dynamics.World b2dWorld;
 	private CarEventListener listener;
 	
-//	private AABB worldRect;
 	private AABB aabb;
 	
 //	private static Logger logger = Logger.getLogger(World.class);
@@ -137,13 +139,59 @@ public class World implements Sweepable {
 		
 	}
 	
+	public int worldWidthPixels() {
+		return (int)(worldWidth * MODEL.PIXELS_PER_METER_DEBUG);
+	}
+	
+	public int worldHeightPixels() {
+		return (int)(worldHeight * MODEL.PIXELS_PER_METER_DEBUG);
+	}
+	
+	public int aabbXPixels() {
+		return (int)(aabb.x * MODEL.PIXELS_PER_METER_DEBUG);
+	}
+	
+	public int aabbYPixels() {
+		return (int)(aabb.y * MODEL.PIXELS_PER_METER_DEBUG);
+	}
+	
+	public int aabbWidthPixels() {
+		return (int)(aabb.width * MODEL.PIXELS_PER_METER_DEBUG);
+	}
+	
+	public int aabbHeightPixels() {
+		return (int)(aabb.height * MODEL.PIXELS_PER_METER_DEBUG);
+	}
+	
+	public int quadrantWidthPixels() {
+		return (int)(MODEL.QUADRANT_WIDTH * MODEL.PIXELS_PER_METER_DEBUG);
+	}
+	
+	public int quadrantHeightPixels() {
+		return (int)(MODEL.QUADRANT_HEIGHT * MODEL.PIXELS_PER_METER_DEBUG);
+	}
+	
+	public int stopSignSizePixels() {
+		return (int)(StopSign.STOPSIGN_SIZE * MODEL.PIXELS_PER_METER_DEBUG);
+	}
+	
+	public int fixtureRadiusPixels(double r) {
+		return (int)(r * MODEL.PIXELS_PER_METER_DEBUG);
+	}
+	
+	public int halfCarLengthPixels() {
+		return (int)Math.round(Car.CAR_LENGTH * MODEL.PIXELS_PER_METER_DEBUG * 0.5);
+	}
+	
+	public int halfCarWidthPixels() {
+		return (int)Math.round(Car.CAR_LENGTH * MODEL.PIXELS_PER_METER_DEBUG * 0.25);
+	}
+	
 	public void init() throws Exception {
 		
 		b2dWorld = new org.jbox2d.dynamics.World(new Vec2(0.0f, 0.0f), true);
 		listener = new CarEventListener();
 		b2dWorld.setContactListener(listener);
-		
-//		worldRect = new AABB(0, 0, worldWidth, worldHeight);
 		
 		computeAABB();
 		
@@ -465,24 +513,9 @@ public class World implements Sweepable {
 		return null;
 	}
 	
-//	public Car carIntersect(Shape s) {
-//		synchronized (MODEL) {
-//			for (Car c : cars) {
-//				if (c.intersect(s) != null) {
-//					return c;
-//				}
-//			}
-//		}
-//		return null;
-//	}
-	
 	public Entity graphHitTest(Point p) {
 		return graph.graphHitTest(p);
 	}
-	
-//	public Entity pureGraphBestHitTest(Entity e) {
-//		return graph.pureGraphBestHitTest(e);
-//	}
 	
 	public Entity pureGraphBestHitTest(Shape s) {
 		return graph.pureGraphBestHitTest(s);
@@ -492,90 +525,95 @@ public class World implements Sweepable {
 		return graph.findClosestRoadPosition(p, radius);
 	}
 	
-//	public boolean graphIntersect(Cursor c) {
-//		return graph.cursorIntersect(c);
-//	}
-	
 	public boolean completelyContains(Shape s) {
 		return map.completelyContains(s);
 	}
 	
-	public void paint(Graphics2D g2) {
+	public void paint(RenderingContext ctxt) {
 		
-		paintBackground(g2);
+		paintBackground(ctxt);
 		
-		paintScene(g2);
+		paintScene(ctxt);
 			
 		if (MODEL.DEBUG_DRAW) {
-			aabb.draw(g2);
+			aabb.draw(ctxt);
 			
 		}
 	}
 	
-	private void paintBackground(Graphics2D g2) {
+	private void paintBackground(RenderingContext ctxt) {
 		
-		g2.drawImage(VIEW.backgroundGrassImage, 0, 0, null);
+		AffineTransform origTransform = ctxt.g2.getTransform();
+		
+		ctxt.g2.scale(MODEL.METERS_PER_PIXEL_DEBUG, MODEL.METERS_PER_PIXEL_DEBUG);
+		ctxt.g2.drawImage(VIEW.backgroundGrassImage, 0, 0, null);
+		
+		ctxt.g2.setTransform(origTransform);
 		
 		if (animatedGrass1 != null) {
-			animatedGrass1.paint(g2);
+			animatedGrass1.paint(ctxt);
 		}
 		if (animatedGrass2 != null) {
-			animatedGrass2.paint(g2);
+			animatedGrass2.paint(ctxt);
 		}
 		if (animatedGrass3 != null) {
-			animatedGrass3.paint(g2);
+			animatedGrass3.paint(ctxt);
 		}
 		
-		int x = (int)((aabb.x * MODEL.PIXELS_PER_METER));
-		int y = (int)((aabb.y * MODEL.PIXELS_PER_METER));
-		g2.drawImage(VIEW.backgroundGraphImage, x, y, null);
+		origTransform = ctxt.g2.getTransform();
+		
+		ctxt.g2.scale(MODEL.METERS_PER_PIXEL_DEBUG, MODEL.METERS_PER_PIXEL_DEBUG);
+		ctxt.g2.drawImage(VIEW.backgroundGraphImage, aabbXPixels(), aabbYPixels(), null);
+		
+		ctxt.g2.setTransform(origTransform);
 		
 //		drawSkidMarks(g2);
 		
 	}
 	
-	private void paintScene(Graphics2D g2) {
+	private void paintScene(RenderingContext ctxt) {
 		
-		graph.paintScene(g2);
+		graph.paintScene(ctxt);
 		
 		synchronized (MODEL) {
 			
 			for (Car c : cars) {
-				c.paint(g2);
+				c.paint(ctxt);
 			}
 			
 			for (AnimatedExplosion x : explosions) {
-				x.paint(g2);
+				x.paint(ctxt);
 			}
 			
 		}
 		
 		if (MODEL.hilited != null) {
-			MODEL.hilited.paintHilite(g2);
+			MODEL.hilited.paintHilite(ctxt);
 		}
 		
 		if (MODEL.DEBUG_DRAW) {
 			
-			graph.paintIDs(g2);
+			graph.paintIDs(ctxt);
 			
 		}
 		
 	}
 	
-	public void paintStats(Graphics2D g2) {
+	public void paintStats(RenderingContext ctxt) {
 		
-		Point p = new Point(1, 1).multiply(MODEL.PIXELS_PER_METER);
-		g2.drawString("time: " + t, (int)p.x, (int)p.y);
+		ctxt.g2.drawString("time: " + t, 0, 0);
 		
-		p = new Point(1, 2).multiply(MODEL.PIXELS_PER_METER);
-		g2.drawString("body count: " + b2dWorld.getBodyCount(), (int)p.x, (int)p.y);
+		ctxt.g2.drawString("body count: " + b2dWorld.getBodyCount(), 0, 10);
 		
-		p = new Point(1, 3).multiply(MODEL.PIXELS_PER_METER);
-		g2.drawString("car count: " + cars.size(), (int)p.x, (int)p.y);
+		ctxt.g2.drawString("car count: " + cars.size(), 0, 20);
 		
-		g2.translate(0, 3 * MODEL.PIXELS_PER_METER);
+		AffineTransform origTransform = ctxt.g2.getTransform();
 		
-		graph.paintStats(g2);
+		ctxt.g2.translate(0, 30);
+		
+		graph.paintStats(ctxt);
+		
+		ctxt.g2.setTransform(origTransform);
 		
 	}
 	
@@ -600,8 +638,8 @@ public class World implements Sweepable {
 		assert !Thread.holdsLock(MODEL);
 		
 		VIEW.backgroundGrassImage = new BufferedImage(
-				(int)(worldWidth * MODEL.PIXELS_PER_METER),
-				(int)(worldHeight * MODEL.PIXELS_PER_METER),
+				worldWidthPixels(),
+				worldHeightPixels(),
 				BufferedImage.TYPE_INT_ARGB);
 		
 		Graphics2D backgroundGrassImageG2 = VIEW.backgroundGrassImage.createGraphics();
@@ -612,8 +650,8 @@ public class World implements Sweepable {
 		
 		
 		VIEW.backgroundGraphImage = new BufferedImage(
-				(int)(aabb.width * MODEL.PIXELS_PER_METER),
-				(int)(aabb.height * MODEL.PIXELS_PER_METER),
+				aabbWidthPixels(),
+				aabbHeightPixels(),
 				BufferedImage.TYPE_INT_ARGB);
 		
 		Graphics2D backgroundGraphImageG2 = VIEW.backgroundGraphImage.createGraphics();
@@ -621,15 +659,53 @@ public class World implements Sweepable {
 		previewBackgroundImageG2.setColor(Color.WHITE);
 		previewBackgroundImageG2.fillRect(0, 0, 100, 100);
 		
-		map.renderBackground(backgroundGrassImageG2, previewBackgroundImageG2);
+		
+		AffineTransform origBackgroundTransform = backgroundGrassImageG2.getTransform();
+		
+		backgroundGrassImageG2.scale(MODEL.PIXELS_PER_METER_DEBUG, MODEL.PIXELS_PER_METER_DEBUG);
+		
+		RenderingContext backgroundCanvasContext = new RenderingContext(backgroundGrassImageG2, RenderingContextType.CANVAS);
+		
+		
+		
+		AffineTransform origPreviewTransform = previewBackgroundImageG2.getTransform();
+		
+		previewBackgroundImageG2.scale(100.0 / MODEL.world.worldWidthPixels(), 100.0 / MODEL.world.worldHeightPixels());
+		
+		previewBackgroundImageG2.scale(MODEL.PIXELS_PER_METER_DEBUG, MODEL.PIXELS_PER_METER_DEBUG);
+		
+		RenderingContext backgroundPreviewContext = new RenderingContext(previewBackgroundImageG2, RenderingContextType.PREVIEW);
+		
+		
+		map.renderBackground(backgroundCanvasContext);
+		
+		map.renderBackground(backgroundPreviewContext);
+		
+		backgroundGrassImageG2.setTransform(origBackgroundTransform);
+		previewBackgroundImageG2.setTransform(origPreviewTransform);
+		
+		
 		
 		backgroundGraphImageG2.setStroke(VIEW.worldStroke);
 		
 		backgroundGraphImageG2.translate(
-				(int)((-aabb.x) * MODEL.PIXELS_PER_METER),
-				(int)((-aabb.y) * MODEL.PIXELS_PER_METER));
+				-aabbXPixels(),
+				-aabbYPixels());
 		
-		graph.renderBackground(backgroundGraphImageG2, previewBackgroundImageG2);
+		backgroundGraphImageG2.scale(MODEL.PIXELS_PER_METER_DEBUG, MODEL.PIXELS_PER_METER_DEBUG);
+		
+		backgroundCanvasContext = new RenderingContext(backgroundGraphImageG2, RenderingContextType.CANVAS);
+		
+		
+		
+		previewBackgroundImageG2.scale(MODEL.PIXELS_PER_METER_DEBUG, MODEL.PIXELS_PER_METER_DEBUG);
+		previewBackgroundImageG2.scale(100.0 / MODEL.world.worldWidthPixels(), 100.0 / MODEL.world.worldHeightPixels());
+		
+		
+		
+		graph.renderBackground(backgroundCanvasContext);
+		
+		graph.renderBackground(backgroundPreviewContext);
 		
 		
 		

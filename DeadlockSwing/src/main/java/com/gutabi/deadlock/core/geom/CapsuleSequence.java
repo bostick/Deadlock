@@ -1,6 +1,5 @@
 package com.gutabi.deadlock.core.geom;
 
-import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,6 +8,7 @@ import org.apache.log4j.Logger;
 import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.tree.AABB;
+import com.gutabi.deadlock.view.RenderingContext;
 
 //@SuppressWarnings("static-access")
 public class CapsuleSequence extends SweepableShape {
@@ -101,36 +101,21 @@ public class CapsuleSequence extends SweepableShape {
 		return false;
 	}
 	
-//	public boolean intersect(Shape s) {
-//		
-//		if (!s.aabb.intersect(aabb)) {
-//			return false;
-//		}
-//		
-//		for (Capsule c : caps) {
-//			if (c.intersect(s)) {
-//				return true;
-//			}
-//		}
-//		
-//		return false;
-//	}
-	
-	public void paint(Graphics2D g2) {
+	public void paint(RenderingContext ctxt) {
 		for (Capsule c : caps) {
-			c.paint(g2);
+			c.paint(ctxt);
 		}
 	}
 	
-	public void draw(Graphics2D g2) {
+	public void draw(RenderingContext ctxt) {
 		for (Capsule c : caps) {
-			c.draw(g2);
+			c.draw(ctxt);
 		}
 	}
 	
-	public void drawSkeleton(Graphics2D g2) {
+	public void drawSkeleton(RenderingContext ctxt) {
 		for (Capsule c : caps) {
-			c.drawSkeleton(g2);
+			c.drawSkeleton(ctxt);
 		}
 	}
 	

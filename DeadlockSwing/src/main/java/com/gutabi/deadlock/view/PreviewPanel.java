@@ -9,7 +9,8 @@ import java.awt.Graphics;
 
 import javax.swing.JPanel;
 
-@SuppressWarnings({"serial", "static-access"})
+//@SuppressWarnings({"serial", "static-access"})
+@SuppressWarnings({"serial"})
 public class PreviewPanel extends JPanel {
 	
 	public PreviewPanel() {
@@ -24,11 +25,11 @@ public class PreviewPanel extends JPanel {
 		
 		g.drawImage(VIEW.previewBackgroundImage, 0, 0, null);
 		
-		int width = (int)(1427 * 100 / (MODEL.world.worldWidth * MODEL.PIXELS_PER_METER));
-		int height = (int)(822 * 100 / (MODEL.world.worldHeight * MODEL.PIXELS_PER_METER));
+		int width = (int)(1427 * 100.0 / MODEL.world.worldWidthPixels());
+		int height = (int)(822 * 100.0 / MODEL.world.aabbHeightPixels());
 		
-		int x = (int)(VIEW.worldOriginX * (100 - width) / (MODEL.world.worldWidth * MODEL.PIXELS_PER_METER - 1427));
-		int y = (int)(VIEW.worldOriginY * (100 - height) / (MODEL.world.worldHeight * MODEL.PIXELS_PER_METER - 822));
+		int x = (int)(VIEW.worldOriginX * (100 - width) / (MODEL.world.worldWidthPixels() - 1427));
+		int y = (int)(VIEW.worldOriginY * (100 - height) / (MODEL.world.worldHeightPixels() - 822));
 		
 		g.setColor(Color.BLUE);
 		g.drawRect(x, y, width, height);

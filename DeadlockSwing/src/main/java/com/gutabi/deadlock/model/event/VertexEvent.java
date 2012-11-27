@@ -13,12 +13,6 @@ public abstract class VertexEvent extends DrivingEvent {
 	
 	public VertexEvent(GraphPositionPathPosition vertexPosition) {
 		this.vertexPosition = vertexPosition;
-		//super(gppp);
-		
-		
-		//this.v = ((VertexPosition)(gppp.nextBound()).gpos).v;
-		
-		//GraphPositionPathPosition vertexPosition = gppp.nextBound();
 		
 		assert vertexPosition.gpos instanceof VertexPosition;
 		

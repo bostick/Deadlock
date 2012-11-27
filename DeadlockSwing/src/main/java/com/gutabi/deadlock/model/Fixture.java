@@ -3,12 +3,12 @@ package com.gutabi.deadlock.model;
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
-import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.graph.Axis;
 import com.gutabi.deadlock.core.graph.Vertex;
+import com.gutabi.deadlock.view.RenderingContext;
 
 @SuppressWarnings("static-access")
 public abstract class Fixture extends Vertex {
@@ -24,43 +24,50 @@ public abstract class Fixture extends Vertex {
 		return false;
 	}
 	
-	public void paint(Graphics2D backgroundGraphImageG2, Graphics2D previewBackgroundImageG2) {
+	public void paint(RenderingContext ctxt) {
 		
-		if (a == Axis.LEFTRIGHT) {
-			backgroundGraphImageG2.drawImage(VIEW.sheet,
-					(int)((p.x - r) * MODEL.PIXELS_PER_METER),
-					(int)((p.y - r) * MODEL.PIXELS_PER_METER),
-					(int)((p.x + r) * MODEL.PIXELS_PER_METER),
-					(int)((p.y + r) * MODEL.PIXELS_PER_METER),
-					128, 224, 128+32, 224+32,
-					null);
-		} else {
-			backgroundGraphImageG2.drawImage(VIEW.sheet,
-					(int)((p.x - r) * MODEL.PIXELS_PER_METER),
-					(int)((p.y - r) * MODEL.PIXELS_PER_METER),
-					(int)((p.x + r) * MODEL.PIXELS_PER_METER),
-					(int)((p.y + r) * MODEL.PIXELS_PER_METER),
-					96, 224, 96+32, 224+32,
-					null);
-		}
-		
-//		previewBackgroundImageG2.fillOval((int)((p.x - r) * 100 / MODEL.world.worldWidth), (int)((p.y - r) * 100 / MODEL.world.worldHeight), (int)((2 * r) * 100 / MODEL.world.worldHeight), (int)((2 * r) * 100 / MODEL.world.worldHeight));
-		
-		previewBackgroundImageG2.setColor(VIEW.LIGHTGREEN);
-		
-		AffineTransform origTransform = previewBackgroundImageG2.getTransform();
-		
-		previewBackgroundImageG2.scale(100 / (MODEL.world.worldWidth * MODEL.PIXELS_PER_METER), 100 / (MODEL.world.worldHeight * MODEL.PIXELS_PER_METER));
-		
-		shape.paint(previewBackgroundImageG2);
-		
-		previewBackgroundImageG2.setTransform(origTransform);
-		
-		if (MODEL.DEBUG_DRAW) {
+		switch (ctxt.type) {
+		case CANVAS:
+			if (!MODEL.DEBUG_DRAW) {
+				
+				AffineTransform origTransform = ctxt.g2.getTransform();
+				
+				ctxt.g2.translate(p.x, p.y);
+				ctxt.g2.scale(MODEL.METERS_PER_PIXEL_DEBUG, MODEL.METERS_PER_PIXEL_DEBUG);
+				
+				if (a == Axis.LEFTRIGHT) {
+					ctxt.g2.drawImage(VIEW.sheet,
+							-MODEL.world.fixtureRadiusPixels(r),
+							-MODEL.world.fixtureRadiusPixels(r),
+							MODEL.world.fixtureRadiusPixels(r),
+							MODEL.world.fixtureRadiusPixels(r),
+							128, 224, 128+32, 224+32,
+							null);
+				} else {
+					ctxt.g2.drawImage(VIEW.sheet,
+							-MODEL.world.fixtureRadiusPixels(r),
+							-MODEL.world.fixtureRadiusPixels(r),
+							MODEL.world.fixtureRadiusPixels(r),
+							MODEL.world.fixtureRadiusPixels(r),
+							96, 224, 96+32, 224+32,
+							null);
+				}
+				
+				ctxt.g2.setTransform(origTransform);
+				
+			} else {
+				
+				shape.draw(ctxt);
+				
+				shape.getAABB().draw(ctxt);
+				
+			}
+			break;
+		case PREVIEW:
+			ctxt.g2.setColor(VIEW.LIGHTGREEN);
 			
-//			paintAABB(g2);
-			shape.getAABB().draw(backgroundGraphImageG2);
-			
+			shape.paint(ctxt);
+			break;
 		}
 		
 	}

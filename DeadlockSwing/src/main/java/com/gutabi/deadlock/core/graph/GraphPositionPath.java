@@ -412,8 +412,6 @@ public class GraphPositionPath {
 						
 						combo = ((EdgePosition)gp).getCombo();
 						
-//						assert !(b.entity instanceof Road && ((Road)b.entity).isLoop());
-						
 						if (((EdgePosition)b).getIndex() == 1) {
 							aCombo = 0.0;
 							bCombo = ((EdgePosition)b).getCombo();
@@ -421,7 +419,6 @@ public class GraphPositionPath {
 								continue;
 							}
 						} else {
-//							assert ((VertexPosition)a).v == b.entity.getOtherVertex(b.axis);
 							assert ((EdgePosition)b).getIndex() == ((Edge)b.entity).pointCount()-2;
 							aCombo = (e.pointCount()-1)+0.0;
 							bCombo = ((EdgePosition)b).getCombo();
@@ -449,8 +446,6 @@ public class GraphPositionPath {
 						
 						combo = ((EdgePosition)gp).getCombo();
 						
-//						assert !(a.entity instanceof Road && ((Road)a.entity).isLoop());
-						
 						if (((EdgePosition)a).getIndex() == 1) {
 							aCombo = ((EdgePosition)a).getCombo();
 							bCombo = 0.0;
@@ -458,7 +453,6 @@ public class GraphPositionPath {
 								continue;
 							}
 						} else {
-//							assert ((VertexPosition)b).v == a.entity.getOtherVertex(a.axis);
 							assert ((EdgePosition)a).getIndex() == ((Edge)a.entity).pointCount()-2;
 							aCombo = ((EdgePosition)a).getCombo();
 							bCombo = (e.pointCount()-1)+0.0;

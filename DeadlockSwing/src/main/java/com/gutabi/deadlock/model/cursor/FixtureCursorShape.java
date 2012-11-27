@@ -3,14 +3,15 @@ package com.gutabi.deadlock.model.cursor;
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 
 import java.awt.Color;
-import java.awt.Graphics2D;
 
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.Circle;
+import com.gutabi.deadlock.core.geom.Line;
 import com.gutabi.deadlock.core.geom.Shape;
 import com.gutabi.deadlock.core.geom.tree.AABB;
 import com.gutabi.deadlock.core.graph.Axis;
 import com.gutabi.deadlock.core.graph.Vertex;
+import com.gutabi.deadlock.view.RenderingContext;
 
 @SuppressWarnings("static-access")
 public class FixtureCursorShape extends Shape {
@@ -19,6 +20,8 @@ public class FixtureCursorShape extends Shape {
 	public final Axis axis;
 	public final Circle worldSource;
 	public final Circle worldSink;
+	
+	final Line line;
 	
 	public final AABB aabb;
 	
@@ -31,15 +34,18 @@ public class FixtureCursorShape extends Shape {
 		case LEFTRIGHT:
 			worldSource = new Circle(null, new Point(source.x - MODEL.QUADRANT_WIDTH/2, p.y), Vertex.INIT_VERTEX_RADIUS);
 			worldSink = new Circle(null, new Point(sink.x + MODEL.QUADRANT_WIDTH/2, p.y), Vertex.INIT_VERTEX_RADIUS);
+			line = new Line(worldSource.center.x, p.y, worldSink.center.x, p.y);
 			break;
 		case TOPBOTTOM:
 			worldSource = new Circle(null, new Point(p.x, source.y - MODEL.QUADRANT_HEIGHT/2), Vertex.INIT_VERTEX_RADIUS);
 			worldSink = new Circle(null, new Point(p.x, sink.y + MODEL.QUADRANT_HEIGHT/2), Vertex.INIT_VERTEX_RADIUS);
+			line = new Line(p.x, worldSource.center.y, p.x, worldSink.center.y);
 			break;
 		default:
 			assert false;
 			worldSource = null;
 			worldSink = null;
+			line = null;
 			break;
 		}
 		
@@ -68,49 +74,26 @@ public class FixtureCursorShape extends Shape {
 	}
 
 	@Override
-	public void draw(Graphics2D g2) {
+	public void draw(RenderingContext ctxt) {
 		assert false;
 	}
 	
-	public void paint(Graphics2D g2) {
+	public void paint(RenderingContext ctxt) {
 		
-		java.awt.Stroke origStroke = g2.getStroke();
-//		AffineTransform origTransform = g2.getTransform();
+		java.awt.Stroke origStroke = ctxt.g2.getStroke();
 		
-		g2.setColor(Color.GRAY);
-		g2.setStroke(RegularCursor.solidOutlineStroke);
+		ctxt.g2.setColor(Color.GRAY);
+		ctxt.g2.setStroke(RegularCursor.solidOutlineStroke);
 		
-		switch (axis) {
-		case LEFTRIGHT:
-			worldSource.draw(g2);
-			worldSink.draw(g2);
-			g2.drawLine(
-					(int)(worldSource.center.x * MODEL.PIXELS_PER_METER),
-					(int)(p.y * MODEL.PIXELS_PER_METER),
-					(int)(worldSink.center.x * MODEL.PIXELS_PER_METER),
-					(int)(p.y * MODEL.PIXELS_PER_METER));
-			break;
-		case TOPBOTTOM:
-			worldSource.draw(g2);
-			worldSink.draw(g2);
-			g2.drawLine(
-					(int)(p.x * MODEL.PIXELS_PER_METER),
-					(int)(worldSource.center.y * MODEL.PIXELS_PER_METER),
-					(int)(p.x * MODEL.PIXELS_PER_METER),
-					(int)(worldSink.center.y * MODEL.PIXELS_PER_METER));
-			break;
-		default:
-			assert false;
-			break;
-		}
+		worldSource.draw(ctxt);
+		worldSink.draw(ctxt);
+		line.draw(ctxt);
 		
-		g2.setStroke(origStroke);
-//		g2.setTransform(origTransform);
+		ctxt.g2.setStroke(origStroke);
 		
 		if (MODEL.DEBUG_DRAW) {
 			
-//			paintAABB(g2);
-			aabb.draw(g2);
+			aabb.draw(ctxt);
 			
 		}
 		

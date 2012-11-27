@@ -131,14 +131,6 @@ public class RoadPosition extends EdgePosition {
 		return nextBoundForward(r, index, param);
 	}
 	
-//	public double distanceToConnectedVertex(Vertex v) {
-//		if (v == r.start) {
-//			return lengthToStartOfRoad;
-//		} else {
-//			return lengthToEndOfRoad;
-//		}
-//	}
-	
 	public GraphPosition travelToReferenceVertex(Axis a, double dist) {
 		return travelBackward(r, index, param, dist);
 	}

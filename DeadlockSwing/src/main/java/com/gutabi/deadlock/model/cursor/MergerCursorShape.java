@@ -2,9 +2,7 @@ package com.gutabi.deadlock.model.cursor;
 
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 
-import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 
 import com.gutabi.deadlock.core.Point;
@@ -14,11 +12,10 @@ import com.gutabi.deadlock.core.geom.Shape;
 import com.gutabi.deadlock.core.geom.tree.AABB;
 import com.gutabi.deadlock.core.graph.Merger;
 import com.gutabi.deadlock.core.graph.Vertex;
+import com.gutabi.deadlock.view.RenderingContext;
 
 @SuppressWarnings("static-access")
 public class MergerCursorShape extends Shape {
-	
-	public static java.awt.Stroke dashedOutlineStroke = new BasicStroke(7.5f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 0.0f, new float[]{15.0f}, 0.0f);
 	
 	private Point ul;
 	private Point p0;
@@ -75,38 +72,31 @@ public class MergerCursorShape extends Shape {
 	}
 	
 	@Override
-	public void draw(Graphics2D g2) {
+	public void draw(RenderingContext ctxt) {
 		assert false;
 	}
 	
-	public void paint(Graphics2D g2) {
+	public void paint(RenderingContext ctxt) {
 		
-//		if (p == null) {
-//			return;
-//		}
+		java.awt.Stroke origStroke = ctxt.g2.getStroke();
+		AffineTransform origTransform = ctxt.g2.getTransform();
 		
-		java.awt.Stroke origStroke = g2.getStroke();
-		AffineTransform origTransform = g2.getTransform();
+		ctxt.g2.setStroke(RegularCursor.solidOutlineStroke);
+		ctxt.g2.setColor(Color.GRAY);
 		
-		g2.setStroke(dashedOutlineStroke);
-		g2.setColor(Color.GRAY);
+		worldQ.draw(ctxt);
 		
-//		g2.translate(p.x * MODEL.PIXELS_PER_METER, p.y * MODEL.PIXELS_PER_METER);
+		worldTop.draw(ctxt);
+		worldLeft.draw(ctxt);
+		worldRight.draw(ctxt);
+		worldBottom.draw(ctxt);
 		
-		worldQ.draw(g2);
-		
-		worldTop.draw(g2);
-		worldLeft.draw(g2);
-		worldRight.draw(g2);
-		worldBottom.draw(g2);
-		
-		g2.setStroke(origStroke);
-		g2.setTransform(origTransform);
+		ctxt.g2.setStroke(origStroke);
+		ctxt.g2.setTransform(origTransform);
 		
 		if (MODEL.DEBUG_DRAW) {
 			
-//			paintAABB(g2);
-			aabb.paint(g2);
+			aabb.paint(ctxt);
 			
 		}
 		

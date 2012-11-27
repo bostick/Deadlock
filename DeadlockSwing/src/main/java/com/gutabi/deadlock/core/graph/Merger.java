@@ -3,17 +3,16 @@ package com.gutabi.deadlock.core.graph;
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 
 import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.geom.AffineTransform;
 
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
+import com.gutabi.deadlock.core.geom.Line;
 import com.gutabi.deadlock.core.geom.Quad;
 import com.gutabi.deadlock.core.geom.Shape;
 import com.gutabi.deadlock.core.geom.SweepableShape;
-import com.gutabi.deadlock.core.geom.tree.AABB;
 import com.gutabi.deadlock.model.fixture.MergerSink;
 import com.gutabi.deadlock.model.fixture.MergerSource;
+import com.gutabi.deadlock.view.RenderingContext;
 
 @SuppressWarnings("static-access")
 public class Merger extends Edge {
@@ -34,13 +33,13 @@ public class Merger extends Edge {
 	private double[] cumulativeLengthsFromTop;
 	private double[] cumulativeLengthsFromLeft;
 	
-//	private final List<Vertex> leftRightVS;
-//	private final List<Vertex> topBottomVS;
-	
 	private EdgeDirection leftRightDir;
 	private EdgeDirection topBottomDir;
 	
 	private Quad shape;
+	
+	private final Line debugSkeletonTopBottomLine;
+	private final Line debugSkeletonLeftRightLine;
 	
 	public Merger(Point center) {
 		
@@ -71,15 +70,10 @@ public class Merger extends Edge {
 		right.m = this;
 		bottom.m = this;
 		
-//		leftRightVS = new ArrayList<Vertex>();
-//		leftRightVS.add(left);
-//		leftRightVS.add(right);
-//		
-//		topBottomVS = new ArrayList<Vertex>();
-//		topBottomVS.add(top);
-//		topBottomVS.add(bottom);
-		
 		computeLengths();
+		
+		debugSkeletonTopBottomLine = new Line(top.shape.center.x, top.shape.center.y, bottom.shape.center.x, bottom.shape.center.y);
+		debugSkeletonLeftRightLine = new Line(left.shape.center.x, left.shape.center.y, right.shape.center.x, right.shape.center.y);
 		
 	}
 	
@@ -105,16 +99,6 @@ public class Merger extends Edge {
 			return MERGER_WIDTH;
 		}
 	}
-	
-//	public List<Vertex> getVertices(Axis a) {
-//		if (a == Axis.LEFTRIGHT) {
-//			return leftRightVS;
-//		} else if (a == Axis.TOPBOTTOM) {
-//			return topBottomVS;
-//		} else {
-//			throw new IllegalArgumentException();
-//		}
-//	}
 	
 	public Vertex getReferenceVertex(Axis a) {
 		assert a != Axis.NONE;
@@ -189,14 +173,6 @@ public class Merger extends Edge {
 		distances[left.id][right.id] = Merger.MERGER_WIDTH;
 		distances[right.id][left.id] = Merger.MERGER_WIDTH;
 	}
-	
-//	public void sweepStart(Sweeper s) {
-//		shape.sweepStart(s);
-//	}
-//	
-//	public void sweep(Sweeper s, int index) {
-//		shape.sweep(s, index);
-//	}
 	
 	public GraphPosition travelFromReferenceVertex(Axis a, double dist) {
 		if (a == Axis.TOPBOTTOM) {
@@ -300,83 +276,59 @@ public class Merger extends Edge {
 	}
 	
 	@Override
-	public void paint(Graphics2D backgroundGraphImageG2, Graphics2D previewBackgroundImageG2) {
+	public void paint(RenderingContext ctxt) {
 		
-		backgroundGraphImageG2.setColor(color);
-		
-//		backgroundGraphImageG2.fillRect(
-//				(int)(ul.x * MODEL.PIXELS_PER_METER),
-//				(int)(ul.y * MODEL.PIXELS_PER_METER),
-//				(int)(MERGER_WIDTH * MODEL.PIXELS_PER_METER),
-//				(int)(MERGER_HEIGHT * MODEL.PIXELS_PER_METER));
-		shape.paint(backgroundGraphImageG2);
-		
-		{
-			AffineTransform origTransform = previewBackgroundImageG2.getTransform();
-			
-			previewBackgroundImageG2.setColor(color);
-			
-			previewBackgroundImageG2.scale(100 / (MODEL.world.worldWidth * MODEL.PIXELS_PER_METER), 100 / (MODEL.world.worldHeight * MODEL.PIXELS_PER_METER));
-			
-			shape.paint(previewBackgroundImageG2);
-			
-			previewBackgroundImageG2.setTransform(origTransform);
-		}
-		
-		if (MODEL.DEBUG_DRAW) {
-			paintSkeleton(backgroundGraphImageG2);
-			
-			shape.getAABB().paint(backgroundGraphImageG2);
-			
+		switch (ctxt.type) {
+		case CANVAS:
+			if (!MODEL.DEBUG_DRAW) {
+				
+				ctxt.g2.setColor(color);
+				
+				shape.paint(ctxt);
+				
+			} else {
+				
+				ctxt.g2.setColor(color);
+				
+				shape.draw(ctxt);
+				
+				paintSkeleton(ctxt);
+				
+			}
+			break;
+		case PREVIEW:
+			ctxt.g2.setColor(color);
+			shape.paint(ctxt);
+			break;
 		}
 		
 	}
 
 	@Override
-	public void paintHilite(Graphics2D g2) {
+	public void paintHilite(RenderingContext ctxt) {
 		
-		g2.setColor(hiliteColor);
+		ctxt.g2.setColor(hiliteColor);
 		
-		g2.fillRect(
-				(int)(ul.x * MODEL.PIXELS_PER_METER),
-				(int)(ul.y * MODEL.PIXELS_PER_METER),
-				(int)(MERGER_WIDTH * MODEL.PIXELS_PER_METER),
-				(int)(MERGER_HEIGHT * MODEL.PIXELS_PER_METER));
+		shape.paint(ctxt);
 		
 	}
 	
-	void paintSkeleton(Graphics2D g2) {
+	void paintSkeleton(RenderingContext ctxt) {
 		
-		g2.setColor(Color.BLACK);
+		ctxt.g2.setColor(Color.BLACK);
 		
-		g2.drawLine(
-				(int)((top.p.x) * MODEL.PIXELS_PER_METER),
-				(int)((top.p.y + Vertex.INIT_VERTEX_RADIUS) * MODEL.PIXELS_PER_METER),
-				(int)((bottom.p.x) * MODEL.PIXELS_PER_METER),
-				(int)((bottom.p.y - Vertex.INIT_VERTEX_RADIUS) * MODEL.PIXELS_PER_METER));
+		debugSkeletonTopBottomLine.draw(ctxt);
 		
-		g2.drawLine(
-				(int)((left.p.x + Vertex.INIT_VERTEX_RADIUS) * MODEL.PIXELS_PER_METER),
-				(int)((left.p.y) * MODEL.PIXELS_PER_METER),
-				(int)((right.p.x - Vertex.INIT_VERTEX_RADIUS) * MODEL.PIXELS_PER_METER),
-				(int)((right.p.y) * MODEL.PIXELS_PER_METER));
+		debugSkeletonLeftRightLine.draw(ctxt);
 		
 	}
 	
-	public void paintBorders(Graphics2D g2) {
+	public void paintBorders(RenderingContext ctxt) {
 		;
 	}
 	
-	public void paintDecorations(Graphics2D g2, Graphics2D g22) {
+	public void paintDecorations(RenderingContext ctxt) {
 		;
-	}
-	
-	public static AABB outlineAABB(Point p) {
-		return new AABB(
-				p.x - Merger.MERGER_WIDTH/2 - Vertex.INIT_VERTEX_RADIUS,
-				p.y - Merger.MERGER_HEIGHT/2 - Vertex.INIT_VERTEX_RADIUS,
-				Merger.MERGER_WIDTH + 2 * Vertex.INIT_VERTEX_RADIUS,
-				Merger.MERGER_HEIGHT + 2 * Vertex.INIT_VERTEX_RADIUS);
 	}
 	
 }
