@@ -1,6 +1,16 @@
 
 IMMEDIATELY:
 
+move out all of the PIXELS_PER_METER usage and draw shapes in world coords
+no uses of AffineTransform
+
+100 -> PREVIEW_WIDTH
+
+zooming
+snapping
+
+start work on menu
+start work on popup menu
 
 SOON:
 
@@ -46,6 +56,8 @@ spline/curve editor
 
 
 DONE:
+
+fix arrow directions
 
 map on preview
 
