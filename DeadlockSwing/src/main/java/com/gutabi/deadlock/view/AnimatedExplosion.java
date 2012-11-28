@@ -1,14 +1,14 @@
 package com.gutabi.deadlock.view;
 
-import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 import static com.gutabi.deadlock.view.DeadlockView.VIEW;
-
-import java.awt.geom.AffineTransform;
 
 import com.gutabi.deadlock.core.Point;
 
-@SuppressWarnings("static-access")
+//@SuppressWarnings("static-access")
 public class AnimatedExplosion {
+	
+	public static final double explosionWidth = 2.21875;
+	public static final double explosionHeight = 3.125;
 	
 	Point p;
 	int lastFrame;
@@ -56,19 +56,12 @@ public class AnimatedExplosion {
 	
 	private void paint(RenderingContext ctxt, int index) {
 		
-		AffineTransform origTransform = ctxt.g2.getTransform();
-		
-		ctxt.g2.translate(p.x, p.y);
-		ctxt.g2.scale(MODEL.METERS_PER_PIXEL_DEBUG, MODEL.METERS_PER_PIXEL_DEBUG);
-		
-		ctxt.g2.drawImage(VIEW.explosionSheet,
-				(int)(-71/2),
-				(int)(-100/2),
-				(int)(71/2),
-				(int)(100/2),
-				71 * index, 0, 71 * index + 71, 100, null);
-		
-		ctxt.g2.setTransform(origTransform);
+		ctxt.paintImage(p.x - explosionWidth/2, p.y - explosionHeight/2, VIEW.explosionSheet,
+				0,
+				0,
+				VIEW.metersToPixels(explosionWidth),
+				VIEW.metersToPixels(explosionHeight),
+				71 * index, 0, 71 * index + 71, 100);
 		
 	}
 	

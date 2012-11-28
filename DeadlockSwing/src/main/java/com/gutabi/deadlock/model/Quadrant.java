@@ -4,7 +4,6 @@ import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
 import java.awt.Color;
-import java.awt.geom.AffineTransform;
 
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.Line;
@@ -46,13 +45,15 @@ public class Quadrant {
 			case CANVAS:
 				if (!MODEL.DEBUG_DRAW) {
 					
-					AffineTransform origTransform = ctxt.g2.getTransform();
-					
-					ctxt.g2.scale(MODEL.METERS_PER_PIXEL_DEBUG, MODEL.METERS_PER_PIXEL_DEBUG);
-					
-					ctxt.g2.drawImage(VIEW.quadrantGrass, (int)(c * MODEL.world.quadrantWidthPixels()), (int)(r * MODEL.world.quadrantHeightPixels()), null);
-					
-					ctxt.g2.setTransform(origTransform);
+					ctxt.paintImage(c * MODEL.QUADRANT_WIDTH, r * MODEL.QUADRANT_HEIGHT, VIEW.quadrantGrass,
+							0,
+							0,
+							VIEW.metersToPixels(MODEL.QUADRANT_WIDTH),
+							VIEW.metersToPixels(MODEL.QUADRANT_HEIGHT),
+							0,
+							0,
+							VIEW.metersToPixels(MODEL.QUADRANT_WIDTH),
+							VIEW.metersToPixels(MODEL.QUADRANT_HEIGHT));
 					
 				} else {
 					

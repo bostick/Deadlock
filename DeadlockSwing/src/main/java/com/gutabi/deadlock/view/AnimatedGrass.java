@@ -3,12 +3,12 @@ package com.gutabi.deadlock.view;
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
-import java.awt.geom.AffineTransform;
-
 import com.gutabi.deadlock.core.Point;
 
 @SuppressWarnings("static-access")
 public class AnimatedGrass {
+	
+	public static double GRASS_SIZE = 1.0;
 	
 	Point p;
 	int lastFrame;
@@ -74,55 +74,34 @@ public class AnimatedGrass {
 	
 	private void paint0(RenderingContext ctxt) {
 		
-		AffineTransform origTransform = ctxt.g2.getTransform();
-		
-		ctxt.g2.translate(p.x, p.y);
-		ctxt.g2.scale(MODEL.METERS_PER_PIXEL_DEBUG, MODEL.METERS_PER_PIXEL_DEBUG);
-		
-		ctxt.g2.drawImage(VIEW.sheet,
-				-16,
-				-16,
-				16,
-				16,
-				0, 256, 0+32, 256+32, null);
-		
-		ctxt.g2.setTransform(origTransform);
+		ctxt.paintImage(p.x - AnimatedGrass.GRASS_SIZE/2, p.y - AnimatedGrass.GRASS_SIZE/2, VIEW.sheet,
+				0,
+				0,
+				VIEW.metersToPixels(GRASS_SIZE),
+				VIEW.metersToPixels(GRASS_SIZE),
+				0, 256, 0+32, 256+32);
 		
 	}
 	
 	private void paint1(RenderingContext ctxt) {
 		
-		AffineTransform origTransform = ctxt.g2.getTransform();
-		
-		ctxt.g2.translate(p.x, p.y);
-		ctxt.g2.scale(MODEL.METERS_PER_PIXEL_DEBUG, MODEL.METERS_PER_PIXEL_DEBUG);
-		
-		ctxt.g2.drawImage(VIEW.sheet,
-				-16,
-				-16,
-				16,
-				16,
-				32, 256, 32+32, 256+32, null);
-		
-		ctxt.g2.setTransform(origTransform);
+		ctxt.paintImage(p.x - AnimatedGrass.GRASS_SIZE/2, p.y - AnimatedGrass.GRASS_SIZE/2, VIEW.sheet,
+				0,
+				0,
+				VIEW.metersToPixels(GRASS_SIZE),
+				VIEW.metersToPixels(GRASS_SIZE),
+				32, 256, 32+32, 256+32);
 		
 	}
 	
 	private void paint2(RenderingContext ctxt) {
 		
-		AffineTransform origTransform = ctxt.g2.getTransform();
-		
-		ctxt.g2.translate(p.x, p.y);
-		ctxt.g2.scale(MODEL.METERS_PER_PIXEL_DEBUG, MODEL.METERS_PER_PIXEL_DEBUG);
-		
-		ctxt.g2.drawImage(VIEW.sheet,
-				-16,
-				-16,
-				16,
-				16,
-				64, 256, 64+32, 256+32, null);
-		
-		ctxt.g2.setTransform(origTransform);
+		ctxt.paintImage(p.x - AnimatedGrass.GRASS_SIZE/2, p.y - AnimatedGrass.GRASS_SIZE/2, VIEW.sheet,
+				0,
+				0,
+				VIEW.metersToPixels(GRASS_SIZE),
+				VIEW.metersToPixels(GRASS_SIZE),
+				64, 256, 64+32, 256+32);
 		
 	}
 }

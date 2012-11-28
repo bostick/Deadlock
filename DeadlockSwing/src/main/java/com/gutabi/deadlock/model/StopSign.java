@@ -4,7 +4,6 @@ import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
 import java.awt.Color;
-import java.awt.geom.AffineTransform;
 
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
@@ -106,20 +105,12 @@ public class StopSign extends Entity {
 		
 		if (enabled) {
 			
-			AffineTransform origTransform = ctxt.g2.getTransform();
-			
-			ctxt.g2.translate(p.x, p.y);
-			ctxt.g2.scale(MODEL.METERS_PER_PIXEL_DEBUG, MODEL.METERS_PER_PIXEL_DEBUG);
-			
-			ctxt.g2.drawImage(VIEW.sheet,
-					(int)(-MODEL.world.stopSignSizePixels() * 0.5),
-					(int)(-MODEL.world.stopSignSizePixels() * 0.5),
-					(int)(MODEL.world.stopSignSizePixels() * 0.5),
-					(int)(MODEL.world.stopSignSizePixels() * 0.5),
-					32, 224, 32+32, 224+32,
-					null);
-			
-			ctxt.g2.setTransform(origTransform);
+			ctxt.paintImage(p.x - StopSign.STOPSIGN_SIZE/2, p.y - StopSign.STOPSIGN_SIZE/2, VIEW.sheet,
+					0,
+					0,
+					VIEW.metersToPixels(STOPSIGN_SIZE),
+					VIEW.metersToPixels(STOPSIGN_SIZE),
+					32, 224, 32+32, 224+32);
 			
 		}
 		

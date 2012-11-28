@@ -20,16 +20,19 @@ public class TestSweeping {
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 		
-		VIEW.init();
-		CONTROLLER.init();
 		MODEL.init();
+		
+		VIEW.init();
+		
+		CONTROLLER.init();
+		
+		MODEL.renderBackground();
 		
 		VIEW.frame.setVisible(true);
 		VIEW.canvas.requestFocusInWindow();
 		
 		VIEW.canvas.postDisplay();
 		
-		VIEW.renderBackgroundFresh();
 	}
 	
 	@Before

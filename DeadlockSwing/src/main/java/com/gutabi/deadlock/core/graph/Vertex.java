@@ -1,9 +1,6 @@
 package com.gutabi.deadlock.core.graph;
 
-import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
-
 import java.awt.Color;
-import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,7 +14,7 @@ import com.gutabi.deadlock.core.geom.SweepableShape;
 import com.gutabi.deadlock.model.Car;
 import com.gutabi.deadlock.view.RenderingContext;
 
-@SuppressWarnings("static-access")
+//@SuppressWarnings("static-access")
 public abstract class Vertex extends Entity {
 	
 	public static final double INIT_VERTEX_RADIUS = Math.sqrt(2 * Road.ROAD_RADIUS * Road.ROAD_RADIUS);
@@ -259,16 +256,7 @@ public abstract class Vertex extends Entity {
 		
 		ctxt.g2.setColor(Color.WHITE);
 		
-		AffineTransform origTransform = ctxt.g2.getTransform();
-		
-		ctxt.g2.translate(p.x-r, p.y);
-		
-		ctxt.g2.scale(MODEL.METERS_PER_PIXEL_DEBUG, MODEL.METERS_PER_PIXEL_DEBUG);
-		
-		ctxt.g2.drawString(id + " " + carQueue.size(), 0, 0);
-		
-		ctxt.g2.setTransform(origTransform);
-		
+		ctxt.paintString(p.x-r, p.y, id + " " + carQueue.size());
 	}
 	
 	public void check() {

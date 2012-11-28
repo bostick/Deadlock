@@ -3,8 +3,6 @@ package com.gutabi.deadlock.model;
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
-import java.awt.geom.AffineTransform;
-
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.graph.Axis;
 import com.gutabi.deadlock.core.graph.Vertex;
@@ -30,30 +28,25 @@ public abstract class Fixture extends Vertex {
 		case CANVAS:
 			if (!MODEL.DEBUG_DRAW) {
 				
-				AffineTransform origTransform = ctxt.g2.getTransform();
-				
-				ctxt.g2.translate(p.x, p.y);
-				ctxt.g2.scale(MODEL.METERS_PER_PIXEL_DEBUG, MODEL.METERS_PER_PIXEL_DEBUG);
-				
 				if (a == Axis.LEFTRIGHT) {
-					ctxt.g2.drawImage(VIEW.sheet,
-							-MODEL.world.fixtureRadiusPixels(r),
-							-MODEL.world.fixtureRadiusPixels(r),
-							MODEL.world.fixtureRadiusPixels(r),
-							MODEL.world.fixtureRadiusPixels(r),
-							128, 224, 128+32, 224+32,
-							null);
+					
+					ctxt.paintImage(p.x - r, p.y - r, VIEW.sheet,
+							0,
+							0,
+							2 * VIEW.metersToPixels(r),
+							2 * VIEW.metersToPixels(r),
+							128, 224, 128+32, 224+32);
+					
 				} else {
-					ctxt.g2.drawImage(VIEW.sheet,
-							-MODEL.world.fixtureRadiusPixels(r),
-							-MODEL.world.fixtureRadiusPixels(r),
-							MODEL.world.fixtureRadiusPixels(r),
-							MODEL.world.fixtureRadiusPixels(r),
-							96, 224, 96+32, 224+32,
-							null);
+					
+					ctxt.paintImage(p.x - r, p.y - r, VIEW.sheet,
+							0,
+							0,
+							2 * VIEW.metersToPixels(r),
+							2 * VIEW.metersToPixels(r),
+							96, 224, 96+32, 224+32);
+					
 				}
-				
-				ctxt.g2.setTransform(origTransform);
 				
 			} else {
 				

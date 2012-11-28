@@ -3,10 +3,7 @@ package com.gutabi.deadlock.model;
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -28,7 +25,6 @@ import com.gutabi.deadlock.core.graph.Vertex;
 import com.gutabi.deadlock.view.AnimatedExplosion;
 import com.gutabi.deadlock.view.AnimatedGrass;
 import com.gutabi.deadlock.view.RenderingContext;
-import com.gutabi.deadlock.view.RenderingContextType;
 
 @SuppressWarnings("static-access")
 public class World implements Sweepable {
@@ -48,13 +44,13 @@ public class World implements Sweepable {
 	 */
 	public double t;
 	
-	private Map map;
+	public Map map;
 	
 	AnimatedGrass animatedGrass1;
 	AnimatedGrass animatedGrass2;
 	AnimatedGrass animatedGrass3;
 	
-	private Graph graph = new Graph();
+	public Graph graph = new Graph();
 	
 	public List<Car> cars = new ArrayList<Car>();
 	
@@ -65,7 +61,7 @@ public class World implements Sweepable {
 	public org.jbox2d.dynamics.World b2dWorld;
 	private CarEventListener listener;
 	
-	private AABB aabb;
+	public AABB aabb;
 	
 //	private static Logger logger = Logger.getLogger(World.class);
 	
@@ -83,7 +79,8 @@ public class World implements Sweepable {
 		
 		worldHeight = map.quadrantRows * MODEL.QUADRANT_HEIGHT;
 		
-//		animatedGrass1 = new AnimatedGrass(new Point(WORLD_WIDTH/4, WORLD_HEIGHT/4));
+//		animatedGrass1 = new AnimatedGrass(new Point(worldWidth/4, worldHeight/4));
+		
 //		animatedGrass2 = new AnimatedGrass(new Point(3*WORLD_WIDTH/4, 2*WORLD_HEIGHT/4));
 //		animatedGrass3 = new AnimatedGrass(new Point(WORLD_WIDTH/4, 3*WORLD_HEIGHT/4));
 //		
@@ -137,54 +134,6 @@ public class World implements Sweepable {
 //		graph.addVertexTop(h);
 //		graph.addVertexTop(t4);
 		
-	}
-	
-	public int worldWidthPixels() {
-		return (int)(worldWidth * MODEL.PIXELS_PER_METER_DEBUG);
-	}
-	
-	public int worldHeightPixels() {
-		return (int)(worldHeight * MODEL.PIXELS_PER_METER_DEBUG);
-	}
-	
-	public int aabbXPixels() {
-		return (int)(aabb.x * MODEL.PIXELS_PER_METER_DEBUG);
-	}
-	
-	public int aabbYPixels() {
-		return (int)(aabb.y * MODEL.PIXELS_PER_METER_DEBUG);
-	}
-	
-	public int aabbWidthPixels() {
-		return (int)(aabb.width * MODEL.PIXELS_PER_METER_DEBUG);
-	}
-	
-	public int aabbHeightPixels() {
-		return (int)(aabb.height * MODEL.PIXELS_PER_METER_DEBUG);
-	}
-	
-	public int quadrantWidthPixels() {
-		return (int)(MODEL.QUADRANT_WIDTH * MODEL.PIXELS_PER_METER_DEBUG);
-	}
-	
-	public int quadrantHeightPixels() {
-		return (int)(MODEL.QUADRANT_HEIGHT * MODEL.PIXELS_PER_METER_DEBUG);
-	}
-	
-	public int stopSignSizePixels() {
-		return (int)(StopSign.STOPSIGN_SIZE * MODEL.PIXELS_PER_METER_DEBUG);
-	}
-	
-	public int fixtureRadiusPixels(double r) {
-		return (int)(r * MODEL.PIXELS_PER_METER_DEBUG);
-	}
-	
-	public int halfCarLengthPixels() {
-		return (int)Math.round(Car.CAR_LENGTH * MODEL.PIXELS_PER_METER_DEBUG * 0.5);
-	}
-	
-	public int halfCarWidthPixels() {
-		return (int)Math.round(Car.CAR_LENGTH * MODEL.PIXELS_PER_METER_DEBUG * 0.25);
 	}
 	
 	public void init() throws Exception {
@@ -543,12 +492,8 @@ public class World implements Sweepable {
 	
 	private void paintBackground(RenderingContext ctxt) {
 		
-		AffineTransform origTransform = ctxt.g2.getTransform();
-		
-		ctxt.g2.scale(MODEL.METERS_PER_PIXEL_DEBUG, MODEL.METERS_PER_PIXEL_DEBUG);
-		ctxt.g2.drawImage(VIEW.backgroundGrassImage, 0, 0, null);
-		
-		ctxt.g2.setTransform(origTransform);
+		ctxt.paintImage(0, 0, VIEW.canvasGrassImage, 0, 0, VIEW.canvasGrassImage.getWidth(), VIEW.canvasGrassImage.getHeight(),
+				0, 0, VIEW.canvasGrassImage.getWidth(), VIEW.canvasGrassImage.getHeight());
 		
 		if (animatedGrass1 != null) {
 			animatedGrass1.paint(ctxt);
@@ -560,12 +505,8 @@ public class World implements Sweepable {
 			animatedGrass3.paint(ctxt);
 		}
 		
-		origTransform = ctxt.g2.getTransform();
-		
-		ctxt.g2.scale(MODEL.METERS_PER_PIXEL_DEBUG, MODEL.METERS_PER_PIXEL_DEBUG);
-		ctxt.g2.drawImage(VIEW.backgroundGraphImage, aabbXPixels(), aabbYPixels(), null);
-		
-		ctxt.g2.setTransform(origTransform);
+		ctxt.paintImage(aabb.x, aabb.y, VIEW.canvasGraphImage, 0, 0, VIEW.canvasGraphImage.getWidth(), VIEW.canvasGraphImage.getHeight(),
+				0, 0, VIEW.canvasGraphImage.getWidth(), VIEW.canvasGraphImage.getHeight());
 		
 //		drawSkidMarks(g2);
 		
@@ -601,15 +542,19 @@ public class World implements Sweepable {
 	
 	public void paintStats(RenderingContext ctxt) {
 		
-		ctxt.g2.drawString("time: " + t, 0, 0);
-		
-		ctxt.g2.drawString("body count: " + b2dWorld.getBodyCount(), 0, 10);
-		
-		ctxt.g2.drawString("car count: " + cars.size(), 0, 20);
-		
 		AffineTransform origTransform = ctxt.g2.getTransform();
 		
-		ctxt.g2.translate(0, 30);
+		ctxt.paintString(0, 0, "time: " + t);
+		
+		ctxt.g2.translate(0, 1);
+		
+		ctxt.paintString(0, 0, "body count: " + b2dWorld.getBodyCount());
+		
+		ctxt.g2.translate(0, 1);
+		
+		ctxt.paintString(0, 0, "car count: " + cars.size());
+		
+		ctxt.g2.translate(0, 1);
 		
 		graph.paintStats(ctxt);
 		
@@ -634,85 +579,85 @@ public class World implements Sweepable {
 //	}
 //	
 	
-	public void renderBackground() {
-		assert !Thread.holdsLock(MODEL);
-		
-		VIEW.backgroundGrassImage = new BufferedImage(
-				worldWidthPixels(),
-				worldHeightPixels(),
-				BufferedImage.TYPE_INT_ARGB);
-		
-		Graphics2D backgroundGrassImageG2 = VIEW.backgroundGrassImage.createGraphics();
-		
-		VIEW.previewBackgroundImage = new BufferedImage(100, 100, BufferedImage.TYPE_INT_ARGB);
-		
-		Graphics2D previewBackgroundImageG2 = VIEW.previewBackgroundImage.createGraphics();
-		
-		
-		VIEW.backgroundGraphImage = new BufferedImage(
-				aabbWidthPixels(),
-				aabbHeightPixels(),
-				BufferedImage.TYPE_INT_ARGB);
-		
-		Graphics2D backgroundGraphImageG2 = VIEW.backgroundGraphImage.createGraphics();
-		
-		previewBackgroundImageG2.setColor(Color.WHITE);
-		previewBackgroundImageG2.fillRect(0, 0, 100, 100);
-		
-		
-		AffineTransform origBackgroundTransform = backgroundGrassImageG2.getTransform();
-		
-		backgroundGrassImageG2.scale(MODEL.PIXELS_PER_METER_DEBUG, MODEL.PIXELS_PER_METER_DEBUG);
-		
-		RenderingContext backgroundCanvasContext = new RenderingContext(backgroundGrassImageG2, RenderingContextType.CANVAS);
-		
-		
-		
-		AffineTransform origPreviewTransform = previewBackgroundImageG2.getTransform();
-		
-		previewBackgroundImageG2.scale(100.0 / MODEL.world.worldWidthPixels(), 100.0 / MODEL.world.worldHeightPixels());
-		
-		previewBackgroundImageG2.scale(MODEL.PIXELS_PER_METER_DEBUG, MODEL.PIXELS_PER_METER_DEBUG);
-		
-		RenderingContext backgroundPreviewContext = new RenderingContext(previewBackgroundImageG2, RenderingContextType.PREVIEW);
-		
-		
-		map.renderBackground(backgroundCanvasContext);
-		
-		map.renderBackground(backgroundPreviewContext);
-		
-		backgroundGrassImageG2.setTransform(origBackgroundTransform);
-		previewBackgroundImageG2.setTransform(origPreviewTransform);
-		
-		
-		
-		backgroundGraphImageG2.setStroke(VIEW.worldStroke);
-		
-		backgroundGraphImageG2.translate(
-				-aabbXPixels(),
-				-aabbYPixels());
-		
-		backgroundGraphImageG2.scale(MODEL.PIXELS_PER_METER_DEBUG, MODEL.PIXELS_PER_METER_DEBUG);
-		
-		backgroundCanvasContext = new RenderingContext(backgroundGraphImageG2, RenderingContextType.CANVAS);
-		
-		
-		
-		previewBackgroundImageG2.scale(MODEL.PIXELS_PER_METER_DEBUG, MODEL.PIXELS_PER_METER_DEBUG);
-		previewBackgroundImageG2.scale(100.0 / MODEL.world.worldWidthPixels(), 100.0 / MODEL.world.worldHeightPixels());
-		
-		
-		
-		graph.renderBackground(backgroundCanvasContext);
-		
-		graph.renderBackground(backgroundPreviewContext);
-		
-		
-		
-		backgroundGraphImageG2.dispose();
-		backgroundGrassImageG2.dispose();
-		
-	}
+//	public void renderBackgroundX() {
+//		assert !Thread.holdsLock(MODEL);
+//		
+//		VIEW.backgroundGrassImage = new BufferedImage(
+//				VIEW.metersToPixels(worldWidth),
+//				VIEW.metersToPixels(worldHeight),
+//				BufferedImage.TYPE_INT_ARGB);
+//		
+//		Graphics2D backgroundGrassImageG2 = VIEW.backgroundGrassImage.createGraphics();
+//		
+//		VIEW.previewBackgroundImage = new BufferedImage(100, 100, BufferedImage.TYPE_INT_ARGB);
+//		
+//		Graphics2D previewBackgroundImageG2 = VIEW.previewBackgroundImage.createGraphics();
+//		
+//		
+//		previewBackgroundImageG2.setColor(Color.WHITE);
+//		previewBackgroundImageG2.fillRect(0, 0, 100, 100);
+//		
+//		
+//		AffineTransform origBackgroundTransform = backgroundGrassImageG2.getTransform();
+//		
+//		backgroundGrassImageG2.scale(VIEW.PIXELS_PER_METER_DEBUG, VIEW.PIXELS_PER_METER_DEBUG);
+//		
+//		RenderingContext backgroundCanvasContext = new RenderingContext(backgroundGrassImageG2, RenderingContextType.CANVAS);
+//		
+//		
+//		
+//		AffineTransform origPreviewTransform = previewBackgroundImageG2.getTransform();
+//		
+//		previewBackgroundImageG2.scale(100.0 / VIEW.metersToPixels(worldWidth), 100.0 / VIEW.metersToPixels(worldHeight));
+//		
+//		previewBackgroundImageG2.scale(VIEW.PIXELS_PER_METER_DEBUG, VIEW.PIXELS_PER_METER_DEBUG);
+//		
+//		RenderingContext backgroundPreviewContext = new RenderingContext(previewBackgroundImageG2, RenderingContextType.PREVIEW);
+//		
+//		
+//		map.renderBackground(backgroundCanvasContext);
+//		
+//		map.renderBackground(backgroundPreviewContext);
+//		
+//		backgroundGrassImageG2.setTransform(origBackgroundTransform);
+//		previewBackgroundImageG2.setTransform(origPreviewTransform);
+//		
+//		
+//		
+//		VIEW.backgroundGraphImage = new BufferedImage(
+//				VIEW.metersToPixels(aabb.width),
+//				VIEW.metersToPixels(aabb.height),
+//				BufferedImage.TYPE_INT_ARGB);
+//		
+//		Graphics2D backgroundGraphImageG2 = VIEW.backgroundGraphImage.createGraphics();
+//		
+//		backgroundGraphImageG2.setStroke(VIEW.worldStroke);
+//		
+//		backgroundGraphImageG2.translate(
+//				-VIEW.metersToPixels(aabb.x),
+//				-VIEW.metersToPixels(aabb.y));
+//		
+//		backgroundGraphImageG2.scale(VIEW.PIXELS_PER_METER_DEBUG, VIEW.PIXELS_PER_METER_DEBUG);
+//		
+//		backgroundCanvasContext = new RenderingContext(backgroundGraphImageG2, RenderingContextType.CANVAS);
+//		
+//		
+//		
+//		previewBackgroundImageG2.scale(VIEW.PIXELS_PER_METER_DEBUG, VIEW.PIXELS_PER_METER_DEBUG);
+//		previewBackgroundImageG2.scale(100.0 / VIEW.metersToPixels(worldWidth), 100.0 / VIEW.metersToPixels(worldHeight));
+//		
+//		
+//		
+//		graph.renderBackground(backgroundCanvasContext);
+//		
+//		graph.renderBackground(backgroundPreviewContext);
+//		
+//		
+//		
+//		backgroundGraphImageG2.dispose();
+//		backgroundGrassImageG2.dispose();
+//		
+//	}
 	
 	
 //	private BufferedImage skidMarksImage;

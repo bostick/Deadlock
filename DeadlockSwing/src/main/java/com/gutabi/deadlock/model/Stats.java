@@ -25,9 +25,9 @@ public class Stats {
 		ctxt.g2.setColor(Color.BLACK);
 		ctxt.g2.setStroke(VIEW.worldStroke);
 		
-		AffineTransform origTransform = ctxt.g2.getTransform();
+		AffineTransform origTransform1 = ctxt.g2.getTransform();
 		
-		ctxt.g2.translate(10, 10);
+		ctxt.g2.translate(1, 1);
 		
 		frameCount++;
 		
@@ -39,13 +39,13 @@ public class Stats {
 			lastTime = curTime;
 		}
 		
-		ctxt.g2.drawString("FPS: " + fps, 0, 0);
+		ctxt.paintString(0, 0, "FPS: " + fps);
 		
-		ctxt.g2.translate(0, 10);
+		ctxt.g2.translate(0, 1);
 		
 		MODEL.world.paintStats(ctxt);
 		
-		ctxt.g2.setTransform(origTransform);
+		ctxt.g2.setTransform(origTransform1);
 	}
 	
 }

@@ -2,6 +2,7 @@ package com.gutabi.deadlock.core.graph;
 
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 
+import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -956,10 +957,15 @@ public class Graph implements Sweepable {
 	
 	public void paintStats(RenderingContext ctxt) {
 		
-		ctxt.g2.drawString("vertex count: " + vertices.size(), 0, 0);
+		AffineTransform origTransform = ctxt.g2.getTransform();
 		
-		ctxt.g2.drawString("edge count: " + edges.size(), 0, 10);
+		ctxt.paintString(0, 0, "vertex count: " + vertices.size());
 		
+		ctxt.g2.translate(0, 1);
+		
+		ctxt.paintString(0, 0, "edge count: " + edges.size());
+		
+		ctxt.g2.setTransform(origTransform);
 	}
 	
 	public void paintScene(RenderingContext ctxt) {

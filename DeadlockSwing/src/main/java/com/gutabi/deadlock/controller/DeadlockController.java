@@ -182,8 +182,8 @@ public class DeadlockController implements ActionListener {
 			int x = (int)(lastDragPreviewPoint.x - lastPressPreviewPoint.x);
 			int y = (int)(lastDragPreviewPoint.y - lastPressPreviewPoint.y);
 			
-			VIEW.worldOriginX = originalX + (int)((MODEL.world.worldWidthPixels() / 100.0) * x);
-			VIEW.worldOriginY = originalY + (int)((MODEL.world.worldHeightPixels() / 100.0) * y);
+			VIEW.worldOriginX = originalX + (int)(VIEW.metersToPixels(MODEL.world.worldWidth) * x / 100.0);
+			VIEW.worldOriginY = originalY + (int)(VIEW.metersToPixels(MODEL.world.worldHeight) * y / 100.0);
 			
 			VIEW.repaint();
 			
@@ -232,7 +232,7 @@ public class DeadlockController implements ActionListener {
 			case DRAFTING:
 				draftEnd();
 				
-				MODEL.renderBackground();
+				VIEW.renderBackground();
 				VIEW.repaint();
 				
 				break;
@@ -307,7 +307,7 @@ public class DeadlockController implements ActionListener {
 					
 					MODEL.world.addVertexTop(new Intersection(MODEL.cursor.getPoint()));
 					
-					MODEL.renderBackground();
+					VIEW.renderBackground();
 					VIEW.repaint();
 					
 				}
@@ -356,7 +356,7 @@ public class DeadlockController implements ActionListener {
 				
 				MODEL.cursor.setPoint(lastMovedWorldPoint);
 				
-				MODEL.renderBackground();
+				VIEW.renderBackground();
 				VIEW.repaint();
 				
 			}
@@ -372,7 +372,7 @@ public class DeadlockController implements ActionListener {
 		
 		MODEL.grid = !MODEL.grid;
 		
-		MODEL.renderBackground();
+		VIEW.renderBackground();
 		VIEW.repaint();
 		
 	}
@@ -418,7 +418,7 @@ public class DeadlockController implements ActionListener {
 			
 		}
 		
-		MODEL.renderBackground();
+		VIEW.renderBackground();
 		VIEW.repaint();
 		
 	}
@@ -435,7 +435,7 @@ public class DeadlockController implements ActionListener {
 					
 					s.setEnabled(true);
 					
-					MODEL.renderBackground();
+					VIEW.renderBackground();
 					VIEW.repaint();
 				}
 				
@@ -466,7 +466,7 @@ public class DeadlockController implements ActionListener {
 					
 					MODEL.cursor.setPoint(lastMovedWorldPoint);
 					
-					MODEL.renderBackground();
+					VIEW.renderBackground();
 					VIEW.repaint();
 					
 				}
@@ -518,7 +518,7 @@ public class DeadlockController implements ActionListener {
 					
 					r.setDirection(Axis.NONE, EdgeDirection.STARTTOEND);
 					
-					MODEL.renderBackground();
+					VIEW.renderBackground();
 					VIEW.repaint();
 					
 				}
@@ -544,7 +544,7 @@ public class DeadlockController implements ActionListener {
 					
 					r.setDirection(Axis.NONE, EdgeDirection.ENDTOSTART);
 					
-					MODEL.renderBackground();
+					VIEW.renderBackground();
 					VIEW.repaint();
 					
 				}
@@ -570,7 +570,7 @@ public class DeadlockController implements ActionListener {
 					
 					r.setDirection(Axis.NONE, EdgeDirection.NONE);
 				
-					MODEL.renderBackground();
+					VIEW.renderBackground();
 					VIEW.repaint();
 					
 				}
@@ -705,7 +705,7 @@ public class DeadlockController implements ActionListener {
 			
 			MODEL.DEBUG_DRAW = state;
 			
-			MODEL.renderBackground();
+			VIEW.renderBackground();
 			VIEW.repaint();
 			
 		} else if (e.getActionCommand().equals("fpsDraw")) {
@@ -714,7 +714,7 @@ public class DeadlockController implements ActionListener {
 			
 			MODEL.FPS_DRAW = state;
 			
-			MODEL.renderBackground();
+			VIEW.renderBackground();
 			VIEW.repaint();
 			
 		}

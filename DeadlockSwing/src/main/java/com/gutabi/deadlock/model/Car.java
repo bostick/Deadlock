@@ -45,6 +45,9 @@ import com.gutabi.deadlock.view.RenderingContext;
 public abstract class Car extends Entity {
 	
 	public static final double CAR_LENGTH = 1.0;
+	public static final double CAR_WIDTH = 0.5;
+	
+	public static final double BRAKE_SIZE = 0.25;
 	
 	public static final double COMPLETE_STOP_WAIT_TIME = 0.0;
 	
@@ -987,43 +990,40 @@ public abstract class Car extends Entity {
 	
 	protected void paintImage(RenderingContext ctxt) {
 		
+		int sheetRow = getSheetRow();
+		
 		AffineTransform origTransform = ctxt.g2.getTransform();
 		
-		Composite origComposite = ctxt.g2.getComposite();
+		Composite origComposite = null;
+		if (inMerger) {
+			origComposite = ctxt.g2.getComposite();
+			ctxt.g2.setComposite(aComp);
+		}
 		
 		ctxt.g2.translate(p.x, p.y);
 		ctxt.g2.rotate(angle);
 		
-		ctxt.g2.scale(MODEL.METERS_PER_PIXEL_DEBUG, MODEL.METERS_PER_PIXEL_DEBUG);
-		
-		if (inMerger) {
-			ctxt.g2.setComposite(aComp);
-		}
-		
-		int sheetRow = getSheetRow();
-		ctxt.g2.drawImage(VIEW.sheet,
-				-MODEL.world.halfCarLengthPixels(),
-				-MODEL.world.halfCarWidthPixels(),
-				MODEL.world.halfCarLengthPixels(),
-				MODEL.world.halfCarWidthPixels(),
-				64, sheetRow, 64+32, sheetRow+16,
-				null);
+		ctxt.paintImage(-Car.CAR_LENGTH/2, -Car.CAR_WIDTH/2, VIEW.sheet,
+				0, 0, VIEW.metersToPixels(CAR_LENGTH), VIEW.metersToPixels(CAR_WIDTH),
+				64, sheetRow, 64+32, sheetRow+16);
 		
 		if (state == CarStateEnum.BRAKING) {
-			ctxt.g2.drawImage(VIEW.sheet,
-					-MODEL.world.halfCarLengthPixels() - 4,
-					-MODEL.world.halfCarWidthPixels() / 2 - 4,
-					-MODEL.world.halfCarLengthPixels() + 4,
-					-MODEL.world.halfCarWidthPixels() / 2 + 4,
-					0, 288, 0+8, 288+8,
-					null);
-			ctxt.g2.drawImage(VIEW.sheet,
-					-MODEL.world.halfCarLengthPixels() - 4,
-					MODEL.world.halfCarWidthPixels() / 2 - 4,
-					-MODEL.world.halfCarLengthPixels() + 4,
-					MODEL.world.halfCarWidthPixels() / 2 + 4,
-					0, 288, 0+8, 288+8,
-					null);
+			
+			ctxt.paintImage(-Car.CAR_LENGTH/2 - Car.BRAKE_SIZE/2, -Car.CAR_WIDTH/4 - Car.BRAKE_SIZE/2,
+					VIEW.sheet,
+					0,
+					0,
+					VIEW.metersToPixels(BRAKE_SIZE),
+					VIEW.metersToPixels(BRAKE_SIZE),
+					0, 288, 0+8, 288+8);
+			
+			ctxt.paintImage(-Car.CAR_LENGTH/2 - Car.BRAKE_SIZE/2, Car.CAR_WIDTH/4 - Car.BRAKE_SIZE/2, VIEW.sheet,
+					0,
+					0,
+					VIEW.metersToPixels(BRAKE_SIZE),
+					VIEW.metersToPixels(BRAKE_SIZE),
+					0, 288, 0+8, 288+8);
+			
 		}
 		
 		if (inMerger) {
@@ -1044,15 +1044,7 @@ public abstract class Car extends Entity {
 		
 		ctxt.g2.setColor(Color.WHITE);
 		
-		AffineTransform origTransform = ctxt.g2.getTransform();
-		
-		ctxt.g2.translate(-CAR_LENGTH/2, 0.0);
-		
-		ctxt.g2.scale(MODEL.METERS_PER_PIXEL_DEBUG, MODEL.METERS_PER_PIXEL_DEBUG);
-		
-		ctxt.g2.drawString(Integer.toString(id), 0, 0);
-		
-		ctxt.g2.setTransform(origTransform);
+		ctxt.paintString(-CAR_LENGTH/2, 0.0, Integer.toString(id));
 		
 	}
 
