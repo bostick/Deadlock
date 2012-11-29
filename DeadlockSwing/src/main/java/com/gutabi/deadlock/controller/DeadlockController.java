@@ -52,7 +52,7 @@ public class DeadlockController implements ActionListener {
 	Logger logger = Logger.getLogger(DeadlockController.class);
 	
 	public DeadlockController() {
-		mode = ControlMode.IDLE;
+		
 	}
 	
 	public void init() {
@@ -60,11 +60,7 @@ public class DeadlockController implements ActionListener {
 		mc = new MouseController();
 		kc = new KeyboardController();
 		
-		VIEW.canvas.addMouseListener(mc);
-		VIEW.canvas.addMouseMotionListener(mc);
-		
-		VIEW.previewPanel.addMouseListener(mc);
-		VIEW.previewPanel.addMouseMotionListener(mc);
+		mc.init();
 		
 		kc.init();
 		
@@ -159,6 +155,7 @@ public class DeadlockController implements ActionListener {
 			case PAUSED:
 			case MERGERCURSOR:
 			case FIXTURECURSOR:
+			case MENU:
 				;
 				break;
 			}
@@ -174,25 +171,20 @@ public class DeadlockController implements ActionListener {
 			
 			if (lastDragPreviewPointWasNull) {
 				
-				originalViewport = VIEW.viewport;
+				originalViewport = VIEW.worldViewport;
 				
 			}
 			
 			double dx = lastDragPreviewPoint.x - lastPressPreviewPoint.x;
 			double dy = lastDragPreviewPoint.y - lastPressPreviewPoint.y;
 			
-//			double width = (int)(1427.0 / VIEW.metersToPixels(MODEL.world.worldWidth) * 100.0);
-//			double height = (int)(822.0 / VIEW.metersToPixels(MODEL.world.worldHeight) * 100.0);
-//			double width = (int)(1427.0 / VIEW.metersToPixels(1.0) * 100.0);
-//			double height = (int)(822.0 / VIEW.metersToPixels(1.0) * 100.0);
-			
-			VIEW.viewport = new AABB(
-					originalViewport.x + MODEL.world.worldWidth * dx / 100.0,
-					originalViewport.y + MODEL.world.worldHeight * dy / 100.0,
+			VIEW.worldViewport = new AABB(
+					originalViewport.x + (MODEL.world.worldWidth / 100.0) * dx,
+					originalViewport.y + (MODEL.world.worldHeight / 100.0) * dy,
 					originalViewport.width,
 					originalViewport.height);
 			
-			VIEW.renderBackground();
+			VIEW.renderWorldBackground();
 			VIEW.repaint();
 			
 		}
@@ -240,7 +232,7 @@ public class DeadlockController implements ActionListener {
 			case DRAFTING:
 				draftEnd();
 				
-				VIEW.renderBackground();
+				VIEW.renderWorldBackground();
 				VIEW.repaint();
 				
 				break;
@@ -248,6 +240,7 @@ public class DeadlockController implements ActionListener {
 			case PAUSED:
 			case MERGERCURSOR:
 			case FIXTURECURSOR:
+			case MENU:
 				;
 				break;
 			}
@@ -299,6 +292,8 @@ public class DeadlockController implements ActionListener {
 				
 				VIEW.repaint();
 				break;
+			case MENU:
+				break;
 			}
 			
 		}
@@ -315,6 +310,7 @@ public class DeadlockController implements ActionListener {
 			case PAUSED:
 			case DRAFTING:
 			case RUNNING:
+			case MENU:
 				break;
 			case IDLE:
 			case MERGERCURSOR:
@@ -346,6 +342,7 @@ public class DeadlockController implements ActionListener {
 			case PAUSED:
 			case DRAFTING:
 			case RUNNING:
+			case MENU:
 				break;
 			case IDLE:
 			case MERGERCURSOR:
@@ -381,7 +378,7 @@ public class DeadlockController implements ActionListener {
 					
 					MODEL.world.addVertexTop(new Intersection(MODEL.cursor.getPoint()));
 					
-					VIEW.renderBackground();
+					VIEW.renderWorldBackground();
 					VIEW.repaint();
 					
 				}
@@ -430,7 +427,7 @@ public class DeadlockController implements ActionListener {
 				
 				MODEL.cursor.setPoint(lastMovedWorldPoint);
 				
-				VIEW.renderBackground();
+				VIEW.renderWorldBackground();
 				VIEW.repaint();
 				
 			}
@@ -446,7 +443,7 @@ public class DeadlockController implements ActionListener {
 		
 		MODEL.grid = !MODEL.grid;
 		
-		VIEW.renderBackground();
+		VIEW.renderWorldBackground();
 		VIEW.repaint();
 		
 	}
@@ -492,7 +489,7 @@ public class DeadlockController implements ActionListener {
 			
 		}
 		
-		VIEW.renderBackground();
+		VIEW.renderWorldBackground();
 		VIEW.repaint();
 		
 	}
@@ -509,7 +506,7 @@ public class DeadlockController implements ActionListener {
 					
 					s.setEnabled(true);
 					
-					VIEW.renderBackground();
+					VIEW.renderWorldBackground();
 					VIEW.repaint();
 				}
 				
@@ -540,7 +537,7 @@ public class DeadlockController implements ActionListener {
 					
 					MODEL.cursor.setPoint(lastMovedWorldPoint);
 					
-					VIEW.renderBackground();
+					VIEW.renderWorldBackground();
 					VIEW.repaint();
 					
 				}
@@ -552,6 +549,7 @@ public class DeadlockController implements ActionListener {
 		case PAUSED:
 		case FIXTURECURSOR:
 		case DRAFTING:
+		case MENU:
 			break;
 		}
 		
@@ -575,6 +573,7 @@ public class DeadlockController implements ActionListener {
 		case PAUSED:
 		case DRAFTING:
 		case IDLE:
+		case MENU:
 			break;
 		}
 		
@@ -592,7 +591,7 @@ public class DeadlockController implements ActionListener {
 					
 					r.setDirection(Axis.NONE, EdgeDirection.STARTTOEND);
 					
-					VIEW.renderBackground();
+					VIEW.renderWorldBackground();
 					VIEW.repaint();
 					
 				}
@@ -618,7 +617,7 @@ public class DeadlockController implements ActionListener {
 					
 					r.setDirection(Axis.NONE, EdgeDirection.ENDTOSTART);
 					
-					VIEW.renderBackground();
+					VIEW.renderWorldBackground();
 					VIEW.repaint();
 					
 				}
@@ -644,7 +643,7 @@ public class DeadlockController implements ActionListener {
 					
 					r.setDirection(Axis.NONE, EdgeDirection.NONE);
 				
-					VIEW.renderBackground();
+					VIEW.renderWorldBackground();
 					VIEW.repaint();
 					
 				}
@@ -660,14 +659,14 @@ public class DeadlockController implements ActionListener {
 	
 	public void plusKey() {
 		
-		Point center = new Point(VIEW.viewport.x + VIEW.viewport.width / 2, VIEW.viewport.y + VIEW.viewport.height / 2);
+		Point center = new Point(VIEW.worldViewport.x + VIEW.worldViewport.width / 2, VIEW.worldViewport.y + VIEW.worldViewport.height / 2);
 		
 		VIEW.PIXELS_PER_METER_DEBUG = 1.1 * VIEW.PIXELS_PER_METER_DEBUG; 
 		
 		double newWidth = 1427.0 / VIEW.PIXELS_PER_METER_DEBUG;
 		double newHeight = 822.0 / VIEW.PIXELS_PER_METER_DEBUG;
 		
-		VIEW.viewport = new AABB(center.x - newWidth/2, center.y - newHeight/2, newWidth, newHeight);
+		VIEW.worldViewport = new AABB(center.x - newWidth/2, center.y - newHeight/2, newWidth, newHeight);
 		
 		lastMovedWorldPoint = VIEW.canvasToWorld(lastMovedCanvasPoint);
 		
@@ -698,23 +697,25 @@ public class DeadlockController implements ActionListener {
 			
 			VIEW.repaint();
 			break;
+		case MENU:
+			break;
 		}
 		
-		VIEW.renderBackground();
+		VIEW.renderWorldBackground();
 		VIEW.repaint();
 		
 	}
 	
 	public void minusKey() {
 		
-		Point center = new Point(VIEW.viewport.x + VIEW.viewport.width / 2, VIEW.viewport.y + VIEW.viewport.height / 2);
+		Point center = new Point(VIEW.worldViewport.x + VIEW.worldViewport.width / 2, VIEW.worldViewport.y + VIEW.worldViewport.height / 2);
 		
 		VIEW.PIXELS_PER_METER_DEBUG = 0.9 * VIEW.PIXELS_PER_METER_DEBUG; 
 		
 		double newWidth = 1427.0 / VIEW.PIXELS_PER_METER_DEBUG;
 		double newHeight = 822.0 / VIEW.PIXELS_PER_METER_DEBUG;
 		
-		VIEW.viewport = new AABB(center.x - newWidth/2, center.y - newHeight/2, newWidth, newHeight);
+		VIEW.worldViewport = new AABB(center.x - newWidth/2, center.y - newHeight/2, newWidth, newHeight);
 		
 		lastMovedWorldPoint = VIEW.canvasToWorld(lastMovedCanvasPoint);
 		
@@ -745,9 +746,11 @@ public class DeadlockController implements ActionListener {
 			
 			VIEW.repaint();
 			break;
+		case MENU:
+			break;
 		}
 		
-		VIEW.renderBackground();
+		VIEW.renderWorldBackground();
 		VIEW.repaint();
 		
 	}
@@ -873,7 +876,7 @@ public class DeadlockController implements ActionListener {
 			
 			MODEL.DEBUG_DRAW = state;
 			
-			VIEW.renderBackground();
+			VIEW.renderWorldBackground();
 			VIEW.repaint();
 			
 		} else if (e.getActionCommand().equals("fpsDraw")) {
@@ -882,7 +885,7 @@ public class DeadlockController implements ActionListener {
 			
 			MODEL.FPS_DRAW = state;
 			
-			VIEW.renderBackground();
+			VIEW.renderWorldBackground();
 			VIEW.repaint();
 			
 		}

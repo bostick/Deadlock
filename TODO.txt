@@ -1,20 +1,18 @@
 
 IMMEDIATELY:
 
-assert canvasGrassImage and canvasGraphImage are never bigger than canvas
-
-fix viewport problems
-
-cursor size independent of zoom
-
-100 -> PREVIEW_WIDTH
-
-snapping
-
 start work on menu
 start work on popup menu
 
 SOON:
+
+snapping to width
+sna[[ing to height
+
+100 -> PREVIEW_WIDTH
+
+assert canvasGrassImage and canvasGraphImage are never bigger than canvas
+fix viewport problems
 
 resizing window
 
@@ -58,6 +56,8 @@ spline/curve editor
 
 
 DONE:
+
+cursor size independent of zoom
 
 cursor leaving/entering canvas
 

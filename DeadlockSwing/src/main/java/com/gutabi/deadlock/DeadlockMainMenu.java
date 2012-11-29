@@ -13,25 +13,20 @@ import javax.swing.UnsupportedLookAndFeelException;
 import org.apache.log4j.Logger;
 
 import com.gutabi.deadlock.controller.ControlMode;
-import com.gutabi.deadlock.model.World;
 
-public class DeadlockMain  {
+public class DeadlockMainMenu  {
 	
 	static Logger logger = Logger.getLogger("deadlock");
 	
 	static void createAndShowGUI(String[] args) throws Exception {
 		
 		MODEL.init();
-		MODEL.world = new World();
-		MODEL.world.init();
 		
 		VIEW.init();
 		
 		CONTROLLER.init();
 		
-		CONTROLLER.mode = ControlMode.IDLE;
-		
-		VIEW.renderWorldBackground();
+		CONTROLLER.mode = ControlMode.MENU;
 		
 		VIEW.frame.setVisible(true);
 		VIEW.canvas.requestFocusInWindow();

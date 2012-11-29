@@ -13,6 +13,10 @@ public enum ControlMode {
 	
 	MERGERCURSOR,
 	
-	FIXTURECURSOR
+	FIXTURECURSOR,
+	
+	
+	
+	MENU
 	
 }

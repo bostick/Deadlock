@@ -41,9 +41,6 @@ public class DeadlockModel {
 	
 	public void init() throws Exception {
 		
-		world = new World();
-		world.init();
-		
 		cursor = new RegularCursor();
 		
 		stats = new Stats();

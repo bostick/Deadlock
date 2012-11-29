@@ -1,6 +1,7 @@
 package com.gutabi.deadlock.controller;
 
 import static com.gutabi.deadlock.controller.DeadlockController.CONTROLLER;
+import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -13,6 +14,16 @@ import com.gutabi.deadlock.core.Point;
 public class MouseController implements MouseListener, MouseMotionListener {
 	
 	static Logger logger = Logger.getLogger("deadlock");
+	
+	public void init() {
+		
+		VIEW.canvas.addMouseListener(this);
+		VIEW.canvas.addMouseMotionListener(this);
+		
+		VIEW.previewPanel.addMouseListener(this);
+		VIEW.previewPanel.addMouseMotionListener(this);
+		
+	}
 	
 	@Override
 	public void mousePressed(MouseEvent ev) {

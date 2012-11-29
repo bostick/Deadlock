@@ -23,16 +23,21 @@ public class PreviewPanel extends JPanel {
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		
-		g.drawImage(VIEW.previewImage, 0, 0, null);
+		if (VIEW.previewImage != null) {
+			
+			g.drawImage(VIEW.previewImage, 0, 0, null);
+			
+			int x = (int)(VIEW.worldViewport.x / MODEL.world.worldWidth * 100.);
+			int y = (int)(VIEW.worldViewport.y / MODEL.world.worldHeight * 100.);
+			
+			int width = (int)(VIEW.worldViewport.width / MODEL.world.worldWidth * 100.);
+			int height = (int)(VIEW.worldViewport.height / MODEL.world.worldHeight * 100.);
+			
+			g.setColor(Color.BLUE);
+			g.drawRect(x, y, width, height);
+			
+		}
 		
-		int x = (int)(VIEW.viewport.x / MODEL.world.worldWidth * 100.);
-		int y = (int)(VIEW.viewport.y / MODEL.world.worldHeight * 100.);
-		
-		int width = (int)(VIEW.viewport.width / MODEL.world.worldWidth * 100.);
-		int height = (int)(VIEW.viewport.height / MODEL.world.worldHeight * 100.);
-		
-		g.setColor(Color.BLUE);
-		g.drawRect(x, y, width, height);
 	}
 
 }
