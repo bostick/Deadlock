@@ -33,57 +33,72 @@ public class FixtureCursor extends Cursor {
 	public void setPoint(Point p) {
 		this.p = p;
 		
-		currentQuadrant = MODEL.world.findQuadrant(p);
-		
-		if (currentQuadrant == null) {
-			shape = null;
-			axis = null;
-			return;
-		}
-		
-		if (!currentQuadrant.active) {
-			shape = null;
-			axis = null;
-			return;
-		}
-		
-		top = MODEL.world.upFixPoint(currentQuadrant);
-		Point topCenter = top.center();
-		
-		bottom = MODEL.world.downFixPoint(currentQuadrant);
-		Point bottomCenter = bottom.center();
-		
-		left = MODEL.world.leftFixPoint(currentQuadrant);
-		Point leftCenter = left.center();
-		
-		right = MODEL.world.rightFixPoint(currentQuadrant);
-		Point rightCenter = right.center();
-		
-		double distToTop = Math.abs(p.y - (topCenter.y - MODEL.QUADRANT_HEIGHT/2));
-		double distToBottom = Math.abs(p.y - (bottomCenter.y + MODEL.QUADRANT_HEIGHT/2));
-		double distToLeft = Math.abs(p.x - (leftCenter.x - MODEL.QUADRANT_WIDTH/2));
-		double distToRight = Math.abs(p.x - (rightCenter.x + MODEL.QUADRANT_WIDTH/2));
-		
-		distToTopOrBottom = Math.min(distToTop, distToBottom);
-		
-		distToLeftOrRight = Math.min(distToLeft, distToRight);
-		
-		if (distToTopOrBottom < distToLeftOrRight) {
-			axis = Axis.TOPBOTTOM;
+		if (p != null) {
+			currentQuadrant = MODEL.world.findQuadrant(p);
+			
+			if (currentQuadrant == null) {
+				shape = null;
+				axis = null;
+				return;
+			}
+			
+			if (!currentQuadrant.active) {
+				shape = null;
+				axis = null;
+				return;
+			}
+			
+			top = MODEL.world.upFixPoint(currentQuadrant);
+			Point topCenter = top.center();
+			
+			bottom = MODEL.world.downFixPoint(currentQuadrant);
+			Point bottomCenter = bottom.center();
+			
+			left = MODEL.world.leftFixPoint(currentQuadrant);
+			Point leftCenter = left.center();
+			
+			right = MODEL.world.rightFixPoint(currentQuadrant);
+			Point rightCenter = right.center();
+			
+			double distToTop = Math.abs(p.y - (topCenter.y - MODEL.QUADRANT_HEIGHT/2));
+			double distToBottom = Math.abs(p.y - (bottomCenter.y + MODEL.QUADRANT_HEIGHT/2));
+			double distToLeft = Math.abs(p.x - (leftCenter.x - MODEL.QUADRANT_WIDTH/2));
+			double distToRight = Math.abs(p.x - (rightCenter.x + MODEL.QUADRANT_WIDTH/2));
+			
+			distToTopOrBottom = Math.min(distToTop, distToBottom);
+			
+			distToLeftOrRight = Math.min(distToLeft, distToRight);
+			
+			if (distToTopOrBottom < distToLeftOrRight) {
+				axis = Axis.TOPBOTTOM;
+			} else {
+				axis = Axis.LEFTRIGHT;
+			}
+			
+			switch (axis) {
+			case LEFTRIGHT:
+				shape = new FixtureCursorShape(p, leftCenter, rightCenter, axis);
+				break;
+			case TOPBOTTOM:
+				shape = new FixtureCursorShape(p, topCenter, bottomCenter, axis);
+				break;
+			default:
+				assert false;
+				break;
+			}
 		} else {
-			axis = Axis.LEFTRIGHT;
-		}
-		
-		switch (axis) {
-		case LEFTRIGHT:
-			shape = new FixtureCursorShape(p, leftCenter, rightCenter, axis);
-			break;
-		case TOPBOTTOM:
-			shape = new FixtureCursorShape(p, topCenter, bottomCenter, axis);
-			break;
-		default:
-			assert false;
-			break;
+			currentQuadrant = null;
+			top = null;
+			left = null;
+			right = null;
+			bottom = null;
+			
+			distToTopOrBottom = -1;
+			distToLeftOrRight = -1;
+			
+			axis = null;
+			
+			shape = null;
 		}
 		
 	}

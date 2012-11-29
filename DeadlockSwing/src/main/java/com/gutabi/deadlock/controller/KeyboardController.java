@@ -15,6 +15,8 @@ public class KeyboardController implements KeyListener {
 	public void init() {
 		
 		VIEW.canvas.addKeyListener(this);
+		VIEW.controlPanel.addKeyListener(this);
+		VIEW.previewPanel.addKeyListener(this);
 		
 	}
 	
@@ -74,6 +76,10 @@ public class KeyboardController implements KeyListener {
 			CONTROLLER.d2Key();
 		} else if (e.getKeyCode() == KeyEvent.VK_3) {
 			CONTROLLER.d3Key();
+		} else if (e.getKeyCode() == KeyEvent.VK_PLUS || e.getKeyCode() == KeyEvent.VK_EQUALS) {
+			CONTROLLER.plusKey();
+		} else if (e.getKeyCode() == KeyEvent.VK_MINUS) {
+			CONTROLLER.minusKey();
 		}
 	}
 

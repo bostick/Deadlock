@@ -12,4 +12,15 @@ public class Dim {
 		this.height = height;
 	}
 	
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		} else if (!(o instanceof Dim)) {
+			return false;
+		} else {
+			Dim b = (Dim)o;
+			return DMath.equals(width, b.width) && DMath.equals(height, b.height);
+		}
+	}
+	
 }

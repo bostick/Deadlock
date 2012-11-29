@@ -25,11 +25,11 @@ public class PreviewPanel extends JPanel {
 		
 		g.drawImage(VIEW.previewImage, 0, 0, null);
 		
-		int width = (int)(1427 * 100.0 / VIEW.metersToPixels(MODEL.world.worldWidth));
-		int height = (int)(822 * 100.0 / VIEW.metersToPixels(MODEL.world.worldHeight));
+		int x = (int)(VIEW.viewport.x / MODEL.world.worldWidth * 100.);
+		int y = (int)(VIEW.viewport.y / MODEL.world.worldHeight * 100.);
 		
-		int x = (int)(VIEW.worldOriginX * (100 - width) / (VIEW.metersToPixels(MODEL.world.worldWidth) - 1427));
-		int y = (int)(VIEW.worldOriginY * (100 - height) / (VIEW.metersToPixels(MODEL.world.worldHeight) - 822));
+		int width = (int)(VIEW.viewport.width / MODEL.world.worldWidth * 100.);
+		int height = (int)(VIEW.viewport.height / MODEL.world.worldHeight * 100.);
 		
 		g.setColor(Color.BLUE);
 		g.drawRect(x, y, width, height);

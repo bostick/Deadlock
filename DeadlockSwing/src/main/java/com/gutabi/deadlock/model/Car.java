@@ -969,7 +969,9 @@ public abstract class Car extends Entity {
 			
 			paintID(ctxt);
 			
-			goalPoint.paint(ctxt);
+			if (goalPoint != null) {
+				goalPoint.paint(ctxt);
+			}
 			
 			shape.getAABB().draw(ctxt);
 			

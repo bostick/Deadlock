@@ -13,7 +13,11 @@ public class MergerCursor extends Cursor {
 	public void setPoint(Point p) {
 		this.p = p;
 		
-		shape = new MergerCursorShape(p);
+		if (p != null) {
+			shape = new MergerCursorShape(p);
+		} else {
+			shape = null;
+		}
 		
 	}
 	

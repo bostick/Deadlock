@@ -3,6 +3,7 @@ package com.gutabi.deadlock.model;
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 
 import com.gutabi.deadlock.core.Entity;
@@ -11,7 +12,6 @@ import com.gutabi.deadlock.core.geom.Circle;
 import com.gutabi.deadlock.core.geom.Shape;
 import com.gutabi.deadlock.core.graph.Road;
 import com.gutabi.deadlock.core.graph.Vertex;
-import com.gutabi.deadlock.model.cursor.RegularCursor;
 import com.gutabi.deadlock.view.RenderingContext;
 
 @SuppressWarnings("static-access")
@@ -133,7 +133,7 @@ public class StopSign extends Entity {
 		} else {
 			
 			java.awt.Stroke origStroke = ctxt.g2.getStroke();
-			ctxt.g2.setStroke(RegularCursor.solidOutlineStroke);
+			ctxt.g2.setStroke(new BasicStroke((float)(3.2 / VIEW.PIXELS_PER_METER_DEBUG), BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
 			
 			ctxt.g2.setColor(Color.WHITE);
 			

@@ -1,12 +1,14 @@
 
 IMMEDIATELY:
 
-move out all of the PIXELS_PER_METER usage and draw shapes in world coords
-no uses of AffineTransform
+assert canvasGrassImage and canvasGraphImage are never bigger than canvas
+
+fix viewport problems
+
+cursor size independent of zoom
 
 100 -> PREVIEW_WIDTH
 
-zooming
 snapping
 
 start work on menu
@@ -56,6 +58,13 @@ spline/curve editor
 
 
 DONE:
+
+cursor leaving/entering canvas
+
+zooming keeps canvasCenter constant
+
+move out all of the PIXELS_PER_METER usage and draw shapes in world coords
+no uses of AffineTransform
 
 fix arrow directions
 

@@ -19,6 +19,7 @@ import com.gutabi.deadlock.core.geom.Circle;
 import com.gutabi.deadlock.core.geom.ShapeUtils;
 import com.gutabi.deadlock.core.geom.SweepEvent;
 import com.gutabi.deadlock.core.geom.SweepEventType;
+import com.gutabi.deadlock.core.geom.tree.AABB;
 import com.gutabi.deadlock.core.graph.Axis;
 import com.gutabi.deadlock.core.graph.EdgeDirection;
 import com.gutabi.deadlock.core.graph.EdgePosition;
@@ -111,8 +112,7 @@ public class DeadlockController implements ActionListener {
 	Point lastDragPreviewPoint;
 	long lastDragTime;
 	
-	int originalX;
-	int originalY;
+	AABB originalViewport;
 	
 	public void dragged(InputEvent ev) {
 		
@@ -174,17 +174,25 @@ public class DeadlockController implements ActionListener {
 			
 			if (lastDragPreviewPointWasNull) {
 				
-				originalX = VIEW.worldOriginX;
-				originalY = VIEW.worldOriginY;
+				originalViewport = VIEW.viewport;
 				
 			}
 			
-			int x = (int)(lastDragPreviewPoint.x - lastPressPreviewPoint.x);
-			int y = (int)(lastDragPreviewPoint.y - lastPressPreviewPoint.y);
+			double dx = lastDragPreviewPoint.x - lastPressPreviewPoint.x;
+			double dy = lastDragPreviewPoint.y - lastPressPreviewPoint.y;
 			
-			VIEW.worldOriginX = originalX + (int)(VIEW.metersToPixels(MODEL.world.worldWidth) * x / 100.0);
-			VIEW.worldOriginY = originalY + (int)(VIEW.metersToPixels(MODEL.world.worldHeight) * y / 100.0);
+//			double width = (int)(1427.0 / VIEW.metersToPixels(MODEL.world.worldWidth) * 100.0);
+//			double height = (int)(822.0 / VIEW.metersToPixels(MODEL.world.worldHeight) * 100.0);
+//			double width = (int)(1427.0 / VIEW.metersToPixels(1.0) * 100.0);
+//			double height = (int)(822.0 / VIEW.metersToPixels(1.0) * 100.0);
 			
+			VIEW.viewport = new AABB(
+					originalViewport.x + MODEL.world.worldWidth * dx / 100.0,
+					originalViewport.y + MODEL.world.worldHeight * dy / 100.0,
+					originalViewport.width,
+					originalViewport.height);
+			
+			VIEW.renderBackground();
 			VIEW.repaint();
 			
 		}
@@ -249,6 +257,7 @@ public class DeadlockController implements ActionListener {
 	}
 	
 	
+	Point lastMovedCanvasPoint;
 	Point lastMovedWorldPoint;
 	
 	public void moved(InputEvent ev) {
@@ -259,9 +268,9 @@ public class DeadlockController implements ActionListener {
 			
 			VIEW.canvas.requestFocusInWindow();
 			
-			Point p = ev.p;
+			lastMovedCanvasPoint = ev.p;
 			
-			lastMovedWorldPoint = VIEW.canvasToWorld(p);
+			lastMovedWorldPoint = VIEW.canvasToWorld(lastMovedCanvasPoint);
 			
 			switch (mode) {
 			case PAUSED:
@@ -274,6 +283,71 @@ public class DeadlockController implements ActionListener {
 				Entity closest = MODEL.world.hitTest(lastMovedWorldPoint);
 				MODEL.hilited = closest;
 				
+			case MERGERCURSOR:
+			case FIXTURECURSOR:
+				
+				if (MODEL.cursor != null) {
+					if (MODEL.grid) {
+						
+						Point closestGridPoint = new Point(2 * Math.round(0.5 * lastMovedWorldPoint.x), 2 * Math.round(0.5 * lastMovedWorldPoint.y));
+						MODEL.cursor.setPoint(closestGridPoint);
+						
+					} else {
+						MODEL.cursor.setPoint(lastMovedWorldPoint);
+					}
+				}
+				
+				VIEW.repaint();
+				break;
+			}
+			
+		}
+		
+	}
+	
+	public void exited(InputEvent ev) {
+		
+		Component c = ev.c;
+		
+		if (c == VIEW.canvas) {
+			
+			switch (mode) {
+			case PAUSED:
+			case DRAFTING:
+			case RUNNING:
+				break;
+			case IDLE:
+			case MERGERCURSOR:
+			case FIXTURECURSOR:
+				
+				if (MODEL.cursor != null) {
+					MODEL.cursor.setPoint(null);
+				}
+				
+				VIEW.repaint();
+				break;
+			}
+			
+		}
+		
+	}
+	
+	public void entered(InputEvent ev) {
+		
+		Component c = ev.c;
+		
+		if (c == VIEW.canvas) {
+			
+			Point p = ev.p;
+			
+			lastMovedWorldPoint = VIEW.canvasToWorld(p);
+			
+			switch (mode) {
+			case PAUSED:
+			case DRAFTING:
+			case RUNNING:
+				break;
+			case IDLE:
 			case MERGERCURSOR:
 			case FIXTURECURSOR:
 				
@@ -581,6 +655,100 @@ public class DeadlockController implements ActionListener {
 		default:
 			break;
 		}
+		
+	}
+	
+	public void plusKey() {
+		
+		Point center = new Point(VIEW.viewport.x + VIEW.viewport.width / 2, VIEW.viewport.y + VIEW.viewport.height / 2);
+		
+		VIEW.PIXELS_PER_METER_DEBUG = 1.1 * VIEW.PIXELS_PER_METER_DEBUG; 
+		
+		double newWidth = 1427.0 / VIEW.PIXELS_PER_METER_DEBUG;
+		double newHeight = 822.0 / VIEW.PIXELS_PER_METER_DEBUG;
+		
+		VIEW.viewport = new AABB(center.x - newWidth/2, center.y - newHeight/2, newWidth, newHeight);
+		
+		lastMovedWorldPoint = VIEW.canvasToWorld(lastMovedCanvasPoint);
+		
+		switch (mode) {
+		case PAUSED:
+		case DRAFTING:
+			assert false;
+			break;
+		case IDLE:
+		case RUNNING:
+			
+			Entity closest = MODEL.world.hitTest(lastMovedWorldPoint);
+			MODEL.hilited = closest;
+			
+		case MERGERCURSOR:
+		case FIXTURECURSOR:
+			
+			if (MODEL.cursor != null) {
+				if (MODEL.grid) {
+					
+					Point closestGridPoint = new Point(2 * Math.round(0.5 * lastMovedWorldPoint.x), 2 * Math.round(0.5 * lastMovedWorldPoint.y));
+					MODEL.cursor.setPoint(closestGridPoint);
+					
+				} else {
+					MODEL.cursor.setPoint(lastMovedWorldPoint);
+				}
+			}
+			
+			VIEW.repaint();
+			break;
+		}
+		
+		VIEW.renderBackground();
+		VIEW.repaint();
+		
+	}
+	
+	public void minusKey() {
+		
+		Point center = new Point(VIEW.viewport.x + VIEW.viewport.width / 2, VIEW.viewport.y + VIEW.viewport.height / 2);
+		
+		VIEW.PIXELS_PER_METER_DEBUG = 0.9 * VIEW.PIXELS_PER_METER_DEBUG; 
+		
+		double newWidth = 1427.0 / VIEW.PIXELS_PER_METER_DEBUG;
+		double newHeight = 822.0 / VIEW.PIXELS_PER_METER_DEBUG;
+		
+		VIEW.viewport = new AABB(center.x - newWidth/2, center.y - newHeight/2, newWidth, newHeight);
+		
+		lastMovedWorldPoint = VIEW.canvasToWorld(lastMovedCanvasPoint);
+		
+		switch (mode) {
+		case PAUSED:
+		case DRAFTING:
+			assert false;
+			break;
+		case IDLE:
+		case RUNNING:
+			
+			Entity closest = MODEL.world.hitTest(lastMovedWorldPoint);
+			MODEL.hilited = closest;
+			
+		case MERGERCURSOR:
+		case FIXTURECURSOR:
+			
+			if (MODEL.cursor != null) {
+				if (MODEL.grid) {
+					
+					Point closestGridPoint = new Point(2 * Math.round(0.5 * lastMovedWorldPoint.x), 2 * Math.round(0.5 * lastMovedWorldPoint.y));
+					MODEL.cursor.setPoint(closestGridPoint);
+					
+				} else {
+					MODEL.cursor.setPoint(lastMovedWorldPoint);
+				}
+			}
+			
+			VIEW.repaint();
+			break;
+		}
+		
+		VIEW.renderBackground();
+		VIEW.repaint();
 		
 	}
 	

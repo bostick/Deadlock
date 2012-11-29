@@ -1,7 +1,9 @@
 package com.gutabi.deadlock.model.cursor;
 
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
+import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 
 import com.gutabi.deadlock.core.Point;
@@ -83,7 +85,7 @@ public class FixtureCursorShape extends Shape {
 		java.awt.Stroke origStroke = ctxt.g2.getStroke();
 		
 		ctxt.g2.setColor(Color.GRAY);
-		ctxt.g2.setStroke(RegularCursor.solidOutlineStroke);
+		ctxt.g2.setStroke(new BasicStroke((float)(3.2 / VIEW.PIXELS_PER_METER_DEBUG), BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
 		
 		worldSource.draw(ctxt);
 		worldSink.draw(ctxt);
