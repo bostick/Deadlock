@@ -41,7 +41,7 @@ public class Intersection extends Vertex {
 	
 	public void paint(RenderingContext ctxt) {
 		
-		ctxt.g2.setColor(Color.GRAY);
+		ctxt.setColor(Color.GRAY);
 		
 		shape.paint(ctxt);
 		
@@ -57,7 +57,7 @@ public class Intersection extends Vertex {
 	
 	public void paintHilite(RenderingContext ctxt) {
 		
-		ctxt.g2.setColor(Color.WHITE);
+		ctxt.setColor(Color.WHITE);
 		
 		shape.draw(ctxt);
 		

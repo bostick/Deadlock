@@ -717,8 +717,8 @@ public class Road extends Edge {
 		
 		if (ctxt.type == RenderingContextType.CANVAS) {
 			if (MODEL.DEBUG_DRAW) {
-				ctxt.g2.setColor(Color.BLACK);
-				ctxt.g2.setStroke(AABB.aabbStroke);
+				ctxt.setColor(Color.BLACK);
+				ctxt.setStroke(AABB.aabbStroke);
 				shape.getAABB().draw(ctxt);	
 			}
 		}
@@ -737,22 +737,22 @@ public class Road extends Edge {
 	
 	private void paintPath(RenderingContext ctxt) {
 		
-		ctxt.g2.setColor(color);
+		ctxt.setColor(color);
 		
 		seq.paint(ctxt);
 		
 		if (ctxt.type == RenderingContextType.CANVAS) {
 			if (direction != EdgeDirection.NONE) {
 				
-				java.awt.Stroke origStroke = ctxt.g2.getStroke();
-				ctxt.g2.setStroke(directionStroke);
-				ctxt.g2.setColor(Color.LIGHT_GRAY);
+				java.awt.Stroke origStroke = ctxt.getStroke();
+				ctxt.setStroke(directionStroke);
+				ctxt.setColor(Color.LIGHT_GRAY);
 				
 				seq.drawSkeleton(ctxt);
 				
 				arrowPointer.paint(ctxt);
 				
-				ctxt.g2.setStroke(origStroke);
+				ctxt.setStroke(origStroke);
 				
 			}
 		}
@@ -761,7 +761,7 @@ public class Road extends Edge {
 	
 	private void drawPath(RenderingContext ctxt) {
 		
-		ctxt.g2.setColor(hiliteColor);
+		ctxt.setColor(hiliteColor);
 		
 		seq.draw(ctxt);
 		
@@ -772,7 +772,7 @@ public class Road extends Edge {
 	 */
 	private void paintSkeleton(RenderingContext ctxt) {
 		
-		ctxt.g2.setColor(Color.BLACK);
+		ctxt.setColor(Color.BLACK);
 		
 		seq.drawSkeleton(ctxt);
 		
@@ -783,10 +783,10 @@ public class Road extends Edge {
 	 */
 	public void paintBorders(RenderingContext ctxt) {
 		
-		ctxt.g2.setColor(Color.GREEN);
+		ctxt.setColor(Color.GREEN);
 		startBorderPoint.paint(ctxt);
 		
-		ctxt.g2.setColor(Color.RED);
+		ctxt.setColor(Color.RED);
 		endBorderPoint.paint(ctxt);
 		
 	}

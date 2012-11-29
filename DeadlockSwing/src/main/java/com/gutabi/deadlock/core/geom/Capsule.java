@@ -311,12 +311,12 @@ public class Capsule extends SweepableShape {
 		if (ctxt.type == RenderingContextType.CANVAS) {
 			if (MODEL.DEBUG_DRAW) {
 				
-				Color c = ctxt.g2.getColor();
-				ctxt.g2.setColor(Color.BLUE);
+				Color c = ctxt.getColor();
+				ctxt.setColor(Color.BLUE);
 				
 				debugNormalLine.draw(ctxt);
 				
-				ctxt.g2.setColor(c);
+				ctxt.setColor(c);
 				
 			}
 		}

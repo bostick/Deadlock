@@ -3,6 +3,7 @@ package com.gutabi.deadlock.model;
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
+import java.awt.Color;
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.List;
@@ -485,6 +486,7 @@ public class World implements Sweepable {
 		paintScene(ctxt);
 			
 		if (MODEL.DEBUG_DRAW) {
+			ctxt.setColor(Color.BLACK);
 			aabb.draw(ctxt);
 			
 		}
@@ -542,23 +544,23 @@ public class World implements Sweepable {
 	
 	public void paintStats(RenderingContext ctxt) {
 		
-		AffineTransform origTransform = ctxt.g2.getTransform();
+		AffineTransform origTransform = ctxt.getTransform();
 		
 		ctxt.paintString(0, 0, "time: " + t);
 		
-		ctxt.g2.translate(0, 1);
+		ctxt.translate(0, 1);
 		
 		ctxt.paintString(0, 0, "body count: " + b2dWorld.getBodyCount());
 		
-		ctxt.g2.translate(0, 1);
+		ctxt.translate(0, 1);
 		
 		ctxt.paintString(0, 0, "car count: " + cars.size());
 		
-		ctxt.g2.translate(0, 1);
+		ctxt.translate(0, 1);
 		
 		graph.paintStats(ctxt);
 		
-		ctxt.g2.setTransform(origTransform);
+		ctxt.setTransform(origTransform);
 		
 	}
 	

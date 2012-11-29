@@ -132,13 +132,13 @@ public class Circle extends SweepableShape {
 	
 	public void paint(RenderingContext ctxt) {
 		
-		ctxt.g2.fill(ellipse);
+		ctxt.fill(ellipse);
 		
 	}
 	
 	public void draw(RenderingContext ctxt) {
 		
-		ctxt.g2.draw(ellipse);
+		ctxt.draw(ellipse);
 		
 	}
 }

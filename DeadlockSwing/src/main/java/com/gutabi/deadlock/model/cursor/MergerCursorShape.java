@@ -80,11 +80,11 @@ public class MergerCursorShape extends Shape {
 	
 	public void paint(RenderingContext ctxt) {
 		
-		java.awt.Stroke origStroke = ctxt.g2.getStroke();
-		AffineTransform origTransform = ctxt.g2.getTransform();
+		java.awt.Stroke origStroke = ctxt.getStroke();
+		AffineTransform origTransform = ctxt.getTransform();
 		
-		ctxt.g2.setStroke(new BasicStroke((float)(3.2 / VIEW.PIXELS_PER_METER_DEBUG), BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
-		ctxt.g2.setColor(Color.GRAY);
+		ctxt.setStroke(new BasicStroke((float)(3.2 / VIEW.PIXELS_PER_METER_DEBUG), BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+		ctxt.setColor(Color.GRAY);
 		
 		worldQ.draw(ctxt);
 		
@@ -93,8 +93,8 @@ public class MergerCursorShape extends Shape {
 		worldRight.draw(ctxt);
 		worldBottom.draw(ctxt);
 		
-		ctxt.g2.setStroke(origStroke);
-		ctxt.g2.setTransform(origTransform);
+		ctxt.setStroke(origStroke);
+		ctxt.setTransform(origTransform);
 		
 		if (MODEL.DEBUG_DRAW) {
 			

@@ -282,13 +282,13 @@ public class Merger extends Edge {
 		case CANVAS:
 			if (!MODEL.DEBUG_DRAW) {
 				
-				ctxt.g2.setColor(color);
+				ctxt.setColor(color);
 				
 				shape.paint(ctxt);
 				
 			} else {
 				
-				ctxt.g2.setColor(color);
+				ctxt.setColor(color);
 				
 				shape.draw(ctxt);
 				
@@ -297,7 +297,7 @@ public class Merger extends Edge {
 			}
 			break;
 		case PREVIEW:
-			ctxt.g2.setColor(color);
+			ctxt.setColor(color);
 			shape.paint(ctxt);
 			break;
 		}
@@ -307,7 +307,7 @@ public class Merger extends Edge {
 	@Override
 	public void paintHilite(RenderingContext ctxt) {
 		
-		ctxt.g2.setColor(hiliteColor);
+		ctxt.setColor(hiliteColor);
 		
 		shape.paint(ctxt);
 		
@@ -315,7 +315,7 @@ public class Merger extends Edge {
 	
 	void paintSkeleton(RenderingContext ctxt) {
 		
-		ctxt.g2.setColor(Color.BLACK);
+		ctxt.setColor(Color.BLACK);
 		
 		debugSkeletonTopBottomLine.draw(ctxt);
 		

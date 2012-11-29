@@ -209,13 +209,13 @@ public class AABB extends Shape {
 	
 	public void paint(RenderingContext ctxt) {
 		
-		ctxt.g2.fill(rect);
+		ctxt.fill(rect);
 		
 	}
 	
 	public void draw(RenderingContext ctxt) {
 		
-		ctxt.g2.draw(rect);
+		ctxt.draw(rect);
 		
 	}
 

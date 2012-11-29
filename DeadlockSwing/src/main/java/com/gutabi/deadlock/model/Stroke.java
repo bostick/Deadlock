@@ -313,7 +313,7 @@ public class Stroke {
 		
 		if (!cs.isEmpty()) {
 			
-			ctxt.g2.setColor(Color.GRAY);
+			ctxt.setColor(Color.GRAY);
 			
 			List<Capsule> caps = new ArrayList<Capsule>();
 			for (int i = 0; i < cs.size()-1; i++) {

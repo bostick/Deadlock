@@ -44,14 +44,14 @@ public class RegularCursor extends Cursor {
 			return;
 		}
 		
-		java.awt.Stroke origStroke = ctxt.g2.getStroke();
+		java.awt.Stroke origStroke = ctxt.getStroke();
 		
-		ctxt.g2.setColor(Color.GRAY);
-		ctxt.g2.setStroke(new BasicStroke((float)(3.2 / VIEW.PIXELS_PER_METER_DEBUG), BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+		ctxt.setColor(Color.GRAY);
+		ctxt.setStroke(new BasicStroke((float)(3.2 / VIEW.PIXELS_PER_METER_DEBUG), BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
 		
 		shape.draw(ctxt);
 		
-		ctxt.g2.setStroke(origStroke);
+		ctxt.setStroke(origStroke);
 		
 	}
 	

@@ -21,7 +21,7 @@ public class Triangle {
 	
 	public void paint(RenderingContext ctxt) {
 		
-		ctxt.g2.fill(tri);
+		ctxt.fill(tri);
 		
 	}
 	

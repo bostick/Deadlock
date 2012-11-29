@@ -15,7 +15,7 @@ public class Line {
 	
 	public void draw(RenderingContext ctxt) {
 		
-		ctxt.g2.draw(line);
+		ctxt.draw(line);
 		
 	}
 	

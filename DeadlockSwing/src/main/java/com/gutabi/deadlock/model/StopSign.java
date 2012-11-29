@@ -126,20 +126,20 @@ public class StopSign extends Entity {
 		
 		if (enabled) {
 			
-			ctxt.g2.setColor(Color.RED);
+			ctxt.setColor(Color.RED);
 			
 			shape.paint(ctxt);
 			
 		} else {
 			
-			java.awt.Stroke origStroke = ctxt.g2.getStroke();
-			ctxt.g2.setStroke(new BasicStroke((float)(3.2 / VIEW.PIXELS_PER_METER_DEBUG), BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+			java.awt.Stroke origStroke = ctxt.getStroke();
+			ctxt.setStroke(new BasicStroke((float)(3.2 / VIEW.PIXELS_PER_METER_DEBUG), BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
 			
-			ctxt.g2.setColor(Color.WHITE);
+			ctxt.setColor(Color.WHITE);
 			
 			shape.draw(ctxt);
 			
-			ctxt.g2.setStroke(origStroke);
+			ctxt.setStroke(origStroke);
 			
 		}
 		

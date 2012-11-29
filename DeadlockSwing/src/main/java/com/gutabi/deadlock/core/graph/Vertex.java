@@ -242,7 +242,7 @@ public abstract class Vertex extends Entity {
 	 */
 	public void paintHilite(RenderingContext ctxt) {
 		
-		ctxt.g2.setColor(hiliteColor);
+		ctxt.setColor(hiliteColor);
 		
 		shape.paint(ctxt);
 		
@@ -254,7 +254,7 @@ public abstract class Vertex extends Entity {
 	 */
 	public void paintID(RenderingContext ctxt) {
 		
-		ctxt.g2.setColor(Color.WHITE);
+		ctxt.setColor(Color.WHITE);
 		
 		ctxt.paintString(p.x-r, p.y, id + " " + carQueue.size());
 	}

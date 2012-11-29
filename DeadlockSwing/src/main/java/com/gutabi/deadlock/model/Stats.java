@@ -22,12 +22,12 @@ public class Stats {
 	 */
 	public void paint(RenderingContext ctxt) {
 		
-		ctxt.g2.setColor(Color.BLACK);
-		ctxt.g2.setStroke(VIEW.worldStroke);
+		ctxt.setColor(Color.BLACK);
+		ctxt.setStroke(VIEW.worldStroke);
 		
-		AffineTransform origTransform1 = ctxt.g2.getTransform();
+		AffineTransform origTransform1 = ctxt.getTransform();
 		
-		ctxt.g2.translate(1, 1);
+		ctxt.translate(1, 1);
 		
 		frameCount++;
 		
@@ -41,11 +41,11 @@ public class Stats {
 		
 		ctxt.paintString(0, 0, "FPS: " + fps);
 		
-		ctxt.g2.translate(0, 1);
+		ctxt.translate(0, 1);
 		
 		MODEL.world.paintStats(ctxt);
 		
-		ctxt.g2.setTransform(origTransform1);
+		ctxt.setTransform(origTransform1);
 	}
 	
 }

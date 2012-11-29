@@ -957,15 +957,15 @@ public class Graph implements Sweepable {
 	
 	public void paintStats(RenderingContext ctxt) {
 		
-		AffineTransform origTransform = ctxt.g2.getTransform();
+		AffineTransform origTransform = ctxt.getTransform();
 		
 		ctxt.paintString(0, 0, "vertex count: " + vertices.size());
 		
-		ctxt.g2.translate(0, 1);
+		ctxt.translate(0, 1);
 		
 		ctxt.paintString(0, 0, "edge count: " + edges.size());
 		
-		ctxt.g2.setTransform(origTransform);
+		ctxt.setTransform(origTransform);
 	}
 	
 	public void paintScene(RenderingContext ctxt) {

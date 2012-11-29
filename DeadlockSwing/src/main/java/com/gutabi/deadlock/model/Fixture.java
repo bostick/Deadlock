@@ -57,7 +57,7 @@ public abstract class Fixture extends Vertex {
 			}
 			break;
 		case PREVIEW:
-			ctxt.g2.setColor(VIEW.LIGHTGREEN);
+			ctxt.setColor(VIEW.LIGHTGREEN);
 			
 			shape.paint(ctxt);
 			break;

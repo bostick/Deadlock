@@ -994,16 +994,16 @@ public abstract class Car extends Entity {
 		
 		int sheetRow = getSheetRow();
 		
-		AffineTransform origTransform = ctxt.g2.getTransform();
+		AffineTransform origTransform = ctxt.getTransform();
 		
 		Composite origComposite = null;
 		if (inMerger) {
-			origComposite = ctxt.g2.getComposite();
-			ctxt.g2.setComposite(aComp);
+			origComposite = ctxt.getComposite();
+			ctxt.setComposite(aComp);
 		}
 		
-		ctxt.g2.translate(p.x, p.y);
-		ctxt.g2.rotate(angle);
+		ctxt.translate(p.x, p.y);
+		ctxt.rotate(angle);
 		
 		ctxt.paintImage(-Car.CAR_LENGTH/2, -Car.CAR_WIDTH/2, VIEW.sheet,
 				0, 0, VIEW.metersToPixels(CAR_LENGTH), VIEW.metersToPixels(CAR_WIDTH),
@@ -1029,22 +1029,22 @@ public abstract class Car extends Entity {
 		}
 		
 		if (inMerger) {
-			ctxt.g2.setComposite(origComposite);
+			ctxt.setComposite(origComposite);
 		}
-		ctxt.g2.setTransform(origTransform);
+		ctxt.setTransform(origTransform);
 		
 	}
 	
 	private void paintRect(RenderingContext ctxt) {
 		
-		ctxt.g2.setColor(hiliteColor);
+		ctxt.setColor(hiliteColor);
 		
 		shape.paint(ctxt);
 	}
 	
 	public void paintID(RenderingContext ctxt) {
 		
-		ctxt.g2.setColor(Color.WHITE);
+		ctxt.setColor(Color.WHITE);
 		
 		ctxt.paintString(-CAR_LENGTH/2, 0.0, Integer.toString(id));
 		

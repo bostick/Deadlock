@@ -239,13 +239,13 @@ public class Quad extends SweepableShape {
 	
 	public void paint(RenderingContext ctxt) {
 		
-		ctxt.g2.fill(poly);
+		ctxt.fill(poly);
 		
 	}
 	
 	public void draw(RenderingContext ctxt) {
 		
-		ctxt.g2.draw(poly);
+		ctxt.draw(poly);
 		
 	}
 

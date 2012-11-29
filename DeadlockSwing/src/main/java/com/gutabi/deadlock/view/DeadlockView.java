@@ -31,7 +31,6 @@ public class DeadlockView {
 	
 	public double PIXELS_PER_METER_DEBUG = 32.0;
 	
-	//public Point worldOrigin;
 	public AABB viewport;
 	
 	public java.awt.Stroke worldStroke = new BasicStroke(0.05f);
@@ -43,8 +42,6 @@ public class DeadlockView {
 	public BufferedImage canvasGrassImage;
 	public BufferedImage previewImage;
 	public BufferedImage canvasGraphImage;
-	
-//	private Dim worldAABBDimAtImageCreation;
 	
 	public static Color LIGHTGREEN = new Color(128, 255, 128);
 	public static Color DARKGREEN = new Color(0, 128, 0);
@@ -62,15 +59,14 @@ public class DeadlockView {
 		assert canvas.getWidth() == 1427;
 		assert canvas.getHeight() == 822;
 		
-//		worldOrigin = new Point(0, 0);
 		viewport = new AABB(0, 0, 1427.0 / PIXELS_PER_METER_DEBUG, 822.0 / PIXELS_PER_METER_DEBUG);
 		
 		sheet = ImageIO.read(new File("media\\sheet.png"));
 		explosionSheet = ImageIO.read(new File("media\\explosionSheet.png"));
 		
 		quadrantGrass = new BufferedImage(
-				metersToPixels(MODEL.QUADRANT_WIDTH),
-				metersToPixels(MODEL.QUADRANT_HEIGHT),
+				512,
+				512,
 				BufferedImage.TYPE_INT_ARGB);
 		Graphics2D quadrantGrassG2 = VIEW.quadrantGrass.createGraphics();
 		for (int i = 0; i < metersToPixels(MODEL.QUADRANT_WIDTH)/32; i++) {
@@ -134,22 +130,17 @@ public class DeadlockView {
 	
 	private void paintCanvas(RenderingContext ctxt) {
 		
-		ctxt.g2.setColor(Color.WHITE);
-		ctxt.g2.fillRect(0, 0, 1427, 822);
+		ctxt.setColor(Color.WHITE);
+		ctxt.fillRect(0, 0, 1427, 822);
 		
-		ctxt.g2.setStroke(worldStroke);
+		ctxt.setStroke(worldStroke);
 		
-		AffineTransform origTrans = ctxt.g2.getTransform();
+		AffineTransform origTrans = ctxt.getTransform();
 		
-		ctxt.g2.scale(PIXELS_PER_METER_DEBUG, PIXELS_PER_METER_DEBUG);
-		ctxt.g2.translate(-viewport.x, -viewport.y);
+		ctxt.scale(PIXELS_PER_METER_DEBUG, PIXELS_PER_METER_DEBUG);
+		ctxt.translate(-viewport.x, -viewport.y);
 		
 		MODEL.world.paint(ctxt);
-		
-//		if (MODEL.DEBUG_DRAW) {
-//			ctxt.g2.setColor(Color.CYAN);
-//			new Circle(null, viewport.ul.plus(new Point(viewport.width/2, viewport.height/2)), Math.min(viewport.width/2, viewport.height/2)).paint(ctxt);
-//		}
 		
 		if (MODEL.stroke != null) {
 			MODEL.stroke.paint(ctxt);
@@ -161,12 +152,12 @@ public class DeadlockView {
 		
 		if (MODEL.FPS_DRAW) {
 			
-			ctxt.g2.translate(viewport.x / PIXELS_PER_METER_DEBUG, viewport.y / PIXELS_PER_METER_DEBUG);
+			ctxt.translate(viewport.x / PIXELS_PER_METER_DEBUG, viewport.y / PIXELS_PER_METER_DEBUG);
 			
 			MODEL.stats.paint(ctxt);
 		}
 		
-		ctxt.g2.setTransform(origTrans);
+		ctxt.setTransform(origTrans);
 		
 	}
 	
@@ -188,38 +179,25 @@ public class DeadlockView {
 	public void renderBackground() {
 		assert !Thread.holdsLock(MODEL);
 		
-//		canvasGrassImage = new BufferedImage(
-//				metersToPixels(MODEL.world.worldWidth),
-//				metersToPixels(MODEL.world.worldHeight),
-//				BufferedImage.TYPE_INT_RGB); 
 		canvasGrassImage = new BufferedImage(
-				1427,
-				822,
-				BufferedImage.TYPE_INT_RGB);
-				
+				metersToPixels(MODEL.world.worldWidth),
+				metersToPixels(MODEL.world.worldHeight),
+				BufferedImage.TYPE_INT_RGB); 
+//		canvasGrassImage = new BufferedImage(
+//				1427,
+//				822,
+//				BufferedImage.TYPE_INT_RGB);
+		
 		Graphics2D canvasGrassImageG2 = canvasGrassImage.createGraphics();
 		
 		canvasGrassImageG2.setColor(Color.WHITE);
 		canvasGrassImageG2.fillRect(0, 0, metersToPixels(MODEL.world.worldWidth), metersToPixels(MODEL.world.worldHeight));
 		
-//		canvasGrassImageG2.translate(VIEW.viewport.x, VIEW.viewport.y);
-		
 //		canvasGrassImageG2.translate(
-//				-metersToPixels(viewport.x),
-//				-metersToPixels(viewport.y));
-		canvasGrassImageG2.translate(
-				metersToPixels(viewport.x),
-				metersToPixels(viewport.y));
+//				metersToPixels(viewport.x),
+//				metersToPixels(viewport.y));
 				
 		canvasGrassImageG2.scale(VIEW.PIXELS_PER_METER_DEBUG, VIEW.PIXELS_PER_METER_DEBUG);
-		
-//		canvasGrassImageG2.translate(
-//				viewport.x,
-//				viewport.y);
-		
-//		canvasGrassImageG2.translate(
-//				-metersToPixels(viewport.x),
-//				-metersToPixels(viewport.y));
 		
 		RenderingContext canvasGrassContext = new RenderingContext(canvasGrassImageG2, RenderingContextType.CANVAS);
 		
@@ -238,15 +216,14 @@ public class DeadlockView {
 		
 		canvasGraphImageG2.setStroke(VIEW.worldStroke);
 		
+//		canvasGrassImageG2.translate(
+//				metersToPixels(viewport.x),
+//				metersToPixels(viewport.y));
 		canvasGraphImageG2.translate(
 				-metersToPixels(MODEL.world.aabb.x),
 				-metersToPixels(MODEL.world.aabb.y));
 		
 		canvasGraphImageG2.scale(VIEW.PIXELS_PER_METER_DEBUG, VIEW.PIXELS_PER_METER_DEBUG);
-		
-//		canvasGraphImageG2.translate(
-//				viewport.x,
-//				viewport.y);
 		
 		RenderingContext canvasGraphContext = new RenderingContext(canvasGraphImageG2, RenderingContextType.CANVAS);
 		
