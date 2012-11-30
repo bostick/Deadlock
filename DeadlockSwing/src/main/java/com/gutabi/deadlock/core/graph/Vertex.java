@@ -10,7 +10,6 @@ import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.Circle;
-import com.gutabi.deadlock.core.geom.SweepableShape;
 import com.gutabi.deadlock.model.Car;
 import com.gutabi.deadlock.view.RenderingContext;
 
@@ -65,7 +64,7 @@ public abstract class Vertex extends Entity {
 		return r;
 	}
 	
-	public SweepableShape getShape() {
+	public Circle getShape() {
 		return shape;
 	}
 	

@@ -338,7 +338,7 @@ public abstract class Car extends Entity {
 		
 		shape = Geom.localToWorld(localQuad, carTransArr, p);
 		
-		Entity e = MODEL.world.pureGraphBestHitTest(this.shape);
+		Entity e = MODEL.world.pureGraphBestHitTestQuad(this.shape);
 		
 		boolean wasInMerger = inMerger;
 		if (e == null) {
@@ -815,11 +815,11 @@ public abstract class Car extends Entity {
 			dw = negMaxRads;
 		}
 		
-		if (dw > 0.52) {
-			String.class.getName();
-		} else if (dw < -0.52) {
-			String.class.getName();
-		}
+//		if (dw > 0.52) {
+//			String.class.getName();
+//		} else if (dw < -0.52) {
+//			String.class.getName();
+//		}
 		
 		if (logger.isDebugEnabled()) {
 			logger.debug("updateTurn: dw: " + dw);

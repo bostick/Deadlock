@@ -121,7 +121,7 @@ public class Capsule extends SweepableShape {
 		
 		Capsule firstCap = s.getCapsule(0);
 		
-		if (ShapeUtils.intersect(this, firstCap.ac)) {
+		if (ShapeUtils.intersectCCap(firstCap.ac, this)) {
 			s.start(new SweepEvent(SweepEventType.enter(parent), this, s, 0, 0.0));
 		}
 		
@@ -133,12 +133,12 @@ public class Capsule extends SweepableShape {
 		Point c = cap.a;
 		Point d = cap.b;
 		
-		if ((a.equals(new Point(8.09375, 7.65625)) && b.equals(new Point(8.53125, 7.71875))) && index == 12) {
-			String.class.getName();
-		}
+//		if ((a.equals(new Point(8.09375, 7.65625)) && b.equals(new Point(8.53125, 7.71875))) && index == 12) {
+//			String.class.getName();
+//		}
 		
 		boolean outside;
-		if (ShapeUtils.intersect(this, cap.ac)) {
+		if (ShapeUtils.intersectCCap(cap.ac, this)) {
 			outside = false;
 		} else {
 			outside = true;
@@ -167,7 +167,7 @@ public class Capsule extends SweepableShape {
 			
 			if (DMath.lessThanEquals(abParam, 0.0)) {
 				
-				assert ShapeUtils.intersect(ac, new Circle(null, p, cap.r));
+				assert ShapeUtils.intersectCC(ac, new Circle(null, p, cap.r));
 				
 				logger.debug("a cap");
 				
@@ -219,7 +219,7 @@ public class Capsule extends SweepableShape {
 			
 			if (DMath.greaterThanEquals(abParam, 1.0)) {
 				
-				assert ShapeUtils.intersect(bc, new Circle(null, p, cap.r));
+				assert ShapeUtils.intersectCC(bc, new Circle(null, p, cap.r));
 				
 				logger.debug("b cap");
 				

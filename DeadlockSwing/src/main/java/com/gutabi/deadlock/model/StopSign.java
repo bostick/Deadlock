@@ -8,7 +8,6 @@ import java.awt.Color;
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.Circle;
-import com.gutabi.deadlock.core.geom.Shape;
 import com.gutabi.deadlock.core.graph.Road;
 import com.gutabi.deadlock.core.graph.Vertex;
 import com.gutabi.deadlock.view.RenderingContext;
@@ -61,7 +60,7 @@ public class StopSign extends Entity {
 		this.enabled = enabled;
 	}
 	
-	public Shape getShape() {
+	public Circle getShape() {
 		return shape;
 	}
 	

@@ -231,6 +231,72 @@ public class ShapeUtils {
 		return true;
 	}
 	
+	public static boolean intersectCCap(Circle c0, Capsule c1) {
+		if (intersectCC(c1.ac, c0)) {
+			return true;
+		}
+		if (intersectCC(c1.bc, c0)) {
+			return true;
+		}
+		if (intersectCQ(c0, c1.middle)) {
+			return true;
+		}
+		return false;
+	}
+	
+	public static boolean intersectCCapSeq(Circle c0, CapsuleSequence cs1) {
+		for (Capsule c : cs1.caps) {
+			if (ShapeUtils.intersectCCap(c0, c)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public static boolean intersectCapCap(Capsule c0, Capsule c1) {
+		if (intersectCCap(c0.ac, c1)) {
+			return true;
+		}
+		if (intersectCCap(c0.bc, c1)) {
+			return true;
+		}
+		if (intersectCapQ(c1, c0.middle)) {
+			return true;
+		}
+		return false;
+	}
+	
+	public static boolean intersectCapQ(Capsule c0, Quad q1) {
+		if (intersectCQ(c0.ac, q1)) {
+			return true;
+		}
+		if (intersectCQ(c0.bc, q1)) {
+			return true;
+		}
+		if (intersectQQ(q1, c0.middle)) {
+			return true;
+		}
+		return false;
+	}
+	
+	public static boolean intersectCapCapSeq(Capsule c0, CapsuleSequence cs1) {
+		for (Capsule c : cs1.caps) {
+			if (ShapeUtils.intersectCapCap(c0, c)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public static boolean intersectCapSeqQ(CapsuleSequence cs0, Quad q1) {
+		for (Capsule c : cs0.caps) {
+			if (ShapeUtils.intersectCapQ(c, q1)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	public static boolean intersectQQ(Quad q0, Quad q1) {
 		
 		double[] q0Projection = new double[2];

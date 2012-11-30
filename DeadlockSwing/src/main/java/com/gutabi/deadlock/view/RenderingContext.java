@@ -102,7 +102,7 @@ public class RenderingContext {
 		g2.draw(line);
 	}
 	
-	public void fillRect(int x, int y, int width, int height) {
+	public void fillRectX(int x, int y, int width, int height) {
 		g2.fillRect(x, y, width, height);
 	}
 	

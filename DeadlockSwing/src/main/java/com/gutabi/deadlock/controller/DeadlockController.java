@@ -19,7 +19,6 @@ import com.gutabi.deadlock.core.geom.Circle;
 import com.gutabi.deadlock.core.geom.ShapeUtils;
 import com.gutabi.deadlock.core.geom.SweepEvent;
 import com.gutabi.deadlock.core.geom.SweepEventType;
-import com.gutabi.deadlock.core.geom.tree.AABB;
 import com.gutabi.deadlock.core.graph.Axis;
 import com.gutabi.deadlock.core.graph.EdgeDirection;
 import com.gutabi.deadlock.core.graph.EdgePosition;
@@ -108,7 +107,7 @@ public class DeadlockController implements ActionListener {
 	Point lastDragPreviewPoint;
 	long lastDragTime;
 	
-	AABB originalViewport;
+//	AABB originalViewport;
 	
 	public void dragged(InputEvent ev) {
 		
@@ -164,28 +163,21 @@ public class DeadlockController implements ActionListener {
 			
 			VIEW.previewPanel.requestFocusInWindow();
 			
-			boolean lastDragPreviewPointWasNull = (lastDragPreviewPoint == null);
-			
+			Point penDragPreviewPoint = lastDragPreviewPoint;
 			lastDragPreviewPoint = p;
 			lastDragTime = System.currentTimeMillis();
 			
-			if (lastDragPreviewPointWasNull) {
+			if (penDragPreviewPoint != null) {
 				
-				originalViewport = VIEW.worldViewport;
+				double dx = lastDragPreviewPoint.x - penDragPreviewPoint.x;
+				double dy = lastDragPreviewPoint.y - penDragPreviewPoint.y;
+				
+				VIEW.pan(new Point(dx, dy));
+				
+				VIEW.renderWorldBackground();
+				VIEW.repaint();
 				
 			}
-			
-			double dx = lastDragPreviewPoint.x - lastPressPreviewPoint.x;
-			double dy = lastDragPreviewPoint.y - lastPressPreviewPoint.y;
-			
-			VIEW.worldViewport = new AABB(
-					originalViewport.x + (MODEL.world.worldWidth / 100.0) * dx,
-					originalViewport.y + (MODEL.world.worldHeight / 100.0) * dy,
-					originalViewport.width,
-					originalViewport.height);
-			
-			VIEW.renderWorldBackground();
-			VIEW.repaint();
 			
 		}
 		
@@ -265,9 +257,9 @@ public class DeadlockController implements ActionListener {
 			
 			lastMovedWorldPoint = VIEW.canvasToWorld(lastMovedCanvasPoint);
 			
-			if (logger.isDebugEnabled()) {
-				logger.debug("moved. canvas: " + ev.p + " " + " world: " + lastMovedWorldPoint + " viewport: " + VIEW.worldViewport.ul);
-			}
+//			if (logger.isDebugEnabled()) {
+//				logger.debug("moved. canvas: " + ev.p + " " + " world: " + lastMovedWorldPoint + " viewport: " + VIEW.worldViewport.ul);
+//			}
 			
 			switch (mode) {
 			case PAUSED:
@@ -663,14 +655,7 @@ public class DeadlockController implements ActionListener {
 	
 	public void plusKey() {
 		
-		Point center = new Point(VIEW.worldViewport.x + VIEW.worldViewport.width / 2, VIEW.worldViewport.y + VIEW.worldViewport.height / 2);
-		
-		VIEW.PIXELS_PER_METER_DEBUG = 1.1 * VIEW.PIXELS_PER_METER_DEBUG; 
-		
-		double newWidth = 1427.0 / VIEW.PIXELS_PER_METER_DEBUG;
-		double newHeight = 822.0 / VIEW.PIXELS_PER_METER_DEBUG;
-		
-		VIEW.worldViewport = new AABB(center.x - newWidth/2, center.y - newHeight/2, newWidth, newHeight);
+		VIEW.zoom(1.1);
 		
 		lastMovedWorldPoint = VIEW.canvasToWorld(lastMovedCanvasPoint);
 		
@@ -712,14 +697,7 @@ public class DeadlockController implements ActionListener {
 	
 	public void minusKey() {
 		
-		Point center = new Point(VIEW.worldViewport.x + VIEW.worldViewport.width / 2, VIEW.worldViewport.y + VIEW.worldViewport.height / 2);
-		
-		VIEW.PIXELS_PER_METER_DEBUG = 0.9 * VIEW.PIXELS_PER_METER_DEBUG; 
-		
-		double newWidth = 1427.0 / VIEW.PIXELS_PER_METER_DEBUG;
-		double newHeight = 822.0 / VIEW.PIXELS_PER_METER_DEBUG;
-		
-		VIEW.worldViewport = new AABB(center.x - newWidth/2, center.y - newHeight/2, newWidth, newHeight);
+		VIEW.zoom(0.9);
 		
 		lastMovedWorldPoint = VIEW.canvasToWorld(lastMovedCanvasPoint);
 		
@@ -972,7 +950,7 @@ public class DeadlockController implements ActionListener {
 			
 			if (e.type == null) {
 				
-				Entity hit = MODEL.world.pureGraphBestHitTest(e.circle);
+				Entity hit = MODEL.world.pureGraphBestHitTestCircle(e.circle);
 				assert hit == null;
 				logger.debug("create");
 				Intersection v = new Intersection(e.p);
@@ -984,7 +962,7 @@ public class DeadlockController implements ActionListener {
 				
 			} else if (e.type == SweepEventType.ENTERROADCAPSULE || e.type == SweepEventType.EXITROADCAPSULE) {
 				
-				Entity hit = MODEL.world.pureGraphBestHitTest(e.circle);
+				Entity hit = MODEL.world.pureGraphBestHitTestCircle(e.circle);
 				
 				if (hit instanceof Vertex) {
 					e.setVertex((Vertex)hit);
@@ -1009,7 +987,7 @@ public class DeadlockController implements ActionListener {
 				
 				while (true) {
 					
-					hit = MODEL.world.pureGraphBestHitTest(new Capsule(null, a, b));
+					hit = MODEL.world.pureGraphBestHitTestCapsule(new Capsule(null, a, b));
 					
 					if (hit == null) {
 						
@@ -1052,7 +1030,7 @@ public class DeadlockController implements ActionListener {
 				
 				Entity hit2;
 				if (pos instanceof EdgePosition) {
-					hit2 = MODEL.world.pureGraphBestHitTest(new Circle(null, pos.p, e.circle.radius));
+					hit2 = MODEL.world.pureGraphBestHitTestCircle(new Circle(null, pos.p, e.circle.radius));
 				} else {
 					hit2 = ((VertexPosition)pos).v;
 				}
@@ -1060,7 +1038,7 @@ public class DeadlockController implements ActionListener {
 				if (hit2 instanceof Road) {
 					Vertex v = MODEL.world.splitRoadTop((RoadPosition)pos);
 					
-					assert ShapeUtils.intersect(e.circle, (Circle)v.getShape());
+					assert ShapeUtils.intersectCC(e.circle, v.getShape());
 					
 					e.setVertex(v);
 				} else {

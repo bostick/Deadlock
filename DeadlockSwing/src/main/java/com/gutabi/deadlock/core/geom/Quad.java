@@ -163,7 +163,7 @@ public class Quad extends SweepableShape {
 		
 		Capsule cap = s.getCapsule(0);
 		
-		if (ShapeUtils.intersect(this, cap.ac)) {
+		if (ShapeUtils.intersectCQ(cap.ac, this)) {
 			s.start(new SweepEvent(SweepEventType.enter(parent), this, s, 0, 0.0));
 		}
 		
@@ -176,7 +176,7 @@ public class Quad extends SweepableShape {
 		Point d = cap.b;
 		
 		boolean outside;
-		if (ShapeUtils.intersect(this, cap.ac)) {
+		if (ShapeUtils.intersectCQ(cap.ac, this)) {
 			outside = false;
 		} else {
 			outside = true;

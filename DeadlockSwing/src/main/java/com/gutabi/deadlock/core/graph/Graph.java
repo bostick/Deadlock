@@ -16,6 +16,9 @@ import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.OverlappingException;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.Capsule;
+import com.gutabi.deadlock.core.geom.CapsuleSequence;
+import com.gutabi.deadlock.core.geom.Circle;
+import com.gutabi.deadlock.core.geom.Quad;
 import com.gutabi.deadlock.core.geom.Shape;
 import com.gutabi.deadlock.core.geom.ShapeUtils;
 import com.gutabi.deadlock.core.geom.Sweepable;
@@ -589,6 +592,66 @@ public class Graph implements Sweepable {
 		for (Edge ed : edges) {
 			if (ShapeUtils.intersect(ed.getShape(), s)) {
 				return ed;
+			}
+		}
+		return null;
+	}
+	
+	public Entity pureGraphBestHitTestQuad(Quad q) {
+		for (Vertex v : vertices) {
+			if (ShapeUtils.intersectCQ(v.getShape(), q)) {
+				return v;
+			}
+		}
+		for (Edge ed : edges) {
+			if (ed instanceof Road) {
+				if (ShapeUtils.intersectCapSeqQ((CapsuleSequence)ed.getShape(), q)) {
+					return ed;
+				}
+			} else {
+				if (ShapeUtils.intersectQQ((Quad)ed.getShape(), q)) {
+					return ed;
+				}
+			}
+		}
+		return null;
+	}
+	
+	public Entity pureGraphBestHitTestCircle(Circle c) {
+		for (Vertex v : vertices) {
+			if (ShapeUtils.intersectCC(v.getShape(), c)) {
+				return v;
+			}
+		}
+		for (Edge ed : edges) {
+			if (ed instanceof Road) {
+				if (ShapeUtils.intersectCCapSeq(c, (CapsuleSequence)ed.getShape())) {
+					return ed;
+				}
+			} else {
+				if (ShapeUtils.intersectCQ(c, (Quad)ed.getShape())) {
+					return ed;
+				}
+			}
+		}
+		return null;
+	}
+	
+	public Entity pureGraphBestHitTestCapsule(Capsule c) {
+		for (Vertex v : vertices) {
+			if (ShapeUtils.intersectCCap(v.getShape(), c)) {
+				return v;
+			}
+		}
+		for (Edge ed : edges) {
+			if (ed instanceof Road) {
+				if (ShapeUtils.intersectCapCapSeq(c, (CapsuleSequence)ed.getShape())) {
+					return ed;
+				}
+			} else {
+				if (ShapeUtils.intersectCapQ(c, (Quad)ed.getShape())) {
+					return ed;
+				}
 			}
 		}
 		return null;

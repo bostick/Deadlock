@@ -28,6 +28,12 @@ public class DeadlockView {
 	
 	public static DeadlockView VIEW = new DeadlockView();
 	
+	public static final int CANVAS_WIDTH = 1427;
+	public static final int CANVAS_HEIGHT = 822;
+	
+	public static final int PREVIEW_WIDTH = 100;
+	public static final int PREVIEW_HEIGHT = 100;
+	
 	public JFrame frame;
 	public WorldCanvas canvas;
 	public ControlPanel controlPanel;
@@ -36,9 +42,6 @@ public class DeadlockView {
 	public double PIXELS_PER_METER_DEBUG = 32.0;
 	
 	public AABB worldViewport;
-	
-	
-//	public java.awt.Stroke worldStroke = new BasicStroke(0.05f);
 	
 	public BufferedImage sheet;
 	public BufferedImage explosionSheet;
@@ -62,10 +65,10 @@ public class DeadlockView {
 		
 		frame = createFrame(false);
 		
-		assert canvas.getWidth() == 1427;
-		assert canvas.getHeight() == 822;
+		assert canvas.getWidth() == CANVAS_WIDTH;
+		assert canvas.getHeight() == CANVAS_HEIGHT;
 		
-		worldViewport = new AABB(0, 0, 1427.0 / PIXELS_PER_METER_DEBUG, 822.0 / PIXELS_PER_METER_DEBUG);
+		worldViewport = new AABB(0, 0, CANVAS_WIDTH / PIXELS_PER_METER_DEBUG, CANVAS_HEIGHT / PIXELS_PER_METER_DEBUG);
 		
 		sheet = ImageIO.read(new File("media\\sheet.png"));
 		explosionSheet = ImageIO.read(new File("media\\explosionSheet.png"));
@@ -84,15 +87,9 @@ public class DeadlockView {
 			}
 		}
 		
-		canvasGrassImage = new BufferedImage(
-				1427,
-				822,
-				BufferedImage.TYPE_INT_RGB);
+		canvasGrassImage = new BufferedImage(CANVAS_WIDTH, CANVAS_HEIGHT, BufferedImage.TYPE_INT_RGB);
 		
-		canvasGraphImage = new BufferedImage(
-				1427,
-				822,
-				BufferedImage.TYPE_INT_ARGB);
+		canvasGraphImage = new BufferedImage(CANVAS_WIDTH, CANVAS_HEIGHT, BufferedImage.TYPE_INT_ARGB);
 		
 	}
 	
@@ -135,20 +132,51 @@ public class DeadlockView {
 		return (int)(Math.round(m * PIXELS_PER_METER_DEBUG));
 	}
 	
+	public Point previewToWorld(Point p) {
+		return new Point((MODEL.world.worldWidth / PREVIEW_WIDTH) * p.x, (MODEL.world.worldHeight / PREVIEW_HEIGHT) * p.y);
+	}
+	
+	public Point worldToPreview(Point p) {
+		return new Point((PREVIEW_WIDTH / MODEL.world.worldWidth) * p.x, (PREVIEW_HEIGHT / MODEL.world.worldHeight) * p.y);
+	}
+	
+	public void pan(Point prevDp) {
+		Point worldDP = VIEW.previewToWorld(prevDp);
+		
+		VIEW.worldViewport = new AABB(
+				VIEW.worldViewport.x + worldDP.x,
+				VIEW.worldViewport.y + worldDP.y,
+				VIEW.worldViewport.width,
+				VIEW.worldViewport.height);
+	}
+	
+	public void zoom(double factor) {
+		
+		Point center = new Point(VIEW.worldViewport.x + VIEW.worldViewport.width / 2, VIEW.worldViewport.y + VIEW.worldViewport.height / 2);
+		
+		VIEW.PIXELS_PER_METER_DEBUG = factor * VIEW.PIXELS_PER_METER_DEBUG; 
+		
+		double newWidth = CANVAS_WIDTH / VIEW.PIXELS_PER_METER_DEBUG;
+		double newHeight = CANVAS_HEIGHT / VIEW.PIXELS_PER_METER_DEBUG;
+		
+		VIEW.worldViewport = new AABB(center.x - newWidth/2, center.y - newHeight/2, newWidth, newHeight);
+		
+	}
+	
 	private void paintCanvas(RenderingContext ctxt) {
 		
-		ctxt.setColor(Color.WHITE);
-		ctxt.fillRect(0, 0, 1427, 822);
+//		ctxt.setColor(Color.WHITE);
+//		ctxt.fillRect(0, 0, CANVAS_WIDTH, VIEW.CANVAS_HEIGHT);
 		
 		if (CONTROLLER.mode == ControlMode.MENU) {
 			
 			PIXELS_PER_METER_DEBUG = 1.0;
 			
-			ctxt.paintImage(1427/2 - 800/2, 822/2 - 600/2, titleBackground, 0, 0, 800, 600, 0, 0, 800, 600);
+			ctxt.paintImage(CANVAS_WIDTH/2 - 800/2, VIEW.CANVAS_HEIGHT/2 - 600/2, titleBackground, 0, 0, 800, 600, 0, 0, 800, 600);
 			
 			ctxt.setFont(new Font("Times", Font.PLAIN, 96));
 			
-			ctxt.paintString(1427/2 - 800/2, 822/2, "Deadlock");
+			ctxt.paintString(CANVAS_WIDTH/2 - 800/2, VIEW.CANVAS_HEIGHT/2, "Deadlock");
 			
 		} else {
 			
@@ -202,7 +230,7 @@ public class DeadlockView {
 		Graphics2D canvasGrassImageG2 = canvasGrassImage.createGraphics();
 		
 		canvasGrassImageG2.setColor(Color.WHITE);
-		canvasGrassImageG2.fillRect(0, 0, 1427, 822);
+		canvasGrassImageG2.fillRect(0, 0, CANVAS_WIDTH, VIEW.CANVAS_HEIGHT);
 		
 		canvasGrassImageG2.translate((int)(-VIEW.worldViewport.x * PIXELS_PER_METER_DEBUG), (int)(-VIEW.worldViewport.y * PIXELS_PER_METER_DEBUG));
 		
@@ -223,7 +251,7 @@ public class DeadlockView {
 		AlphaComposite c = AlphaComposite.getInstance(AlphaComposite.SRC, 0.0f);
 		canvasGraphImageG2.setComposite(c);
 		canvasGraphImageG2.setColor(new Color(0, 0, 0, 0));
-		canvasGraphImageG2.fillRect(0, 0, 1427, 822);
+		canvasGraphImageG2.fillRect(0, 0, CANVAS_WIDTH, VIEW.CANVAS_HEIGHT);
 		canvasGraphImageG2.setComposite(orig);
 		
 		canvasGraphImageG2.translate((int)((-VIEW.worldViewport.x) * PIXELS_PER_METER_DEBUG), (int)((-VIEW.worldViewport.y) * PIXELS_PER_METER_DEBUG));
@@ -240,14 +268,14 @@ public class DeadlockView {
 	
 		
 		
-		previewImage = new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);
+		previewImage = new BufferedImage(PREVIEW_WIDTH, PREVIEW_HEIGHT, BufferedImage.TYPE_INT_RGB);
 		
 		Graphics2D previewImageG2 = previewImage.createGraphics();
 		
 		previewImageG2.setColor(Color.WHITE);
-		previewImageG2.fillRect(0, 0, 100, 100);
+		previewImageG2.fillRect(0, 0, PREVIEW_WIDTH, PREVIEW_HEIGHT);
 		
-		previewImageG2.scale(100.0 / MODEL.world.worldWidth, 100.0 / MODEL.world.worldHeight);
+		previewImageG2.scale(PREVIEW_WIDTH / MODEL.world.worldWidth, PREVIEW_HEIGHT / MODEL.world.worldHeight);
 		
 		RenderingContext previewContext = new RenderingContext(previewImageG2, RenderingContextType.PREVIEW);
 		

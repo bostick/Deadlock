@@ -13,6 +13,9 @@ import org.jbox2d.common.Vec2;
 
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
+import com.gutabi.deadlock.core.geom.Capsule;
+import com.gutabi.deadlock.core.geom.Circle;
+import com.gutabi.deadlock.core.geom.Quad;
 import com.gutabi.deadlock.core.geom.Shape;
 import com.gutabi.deadlock.core.geom.Sweepable;
 import com.gutabi.deadlock.core.geom.Sweeper;
@@ -469,6 +472,18 @@ public class World implements Sweepable {
 	
 	public Entity pureGraphBestHitTest(Shape s) {
 		return graph.pureGraphBestHitTest(s);
+	}
+	
+	public Entity pureGraphBestHitTestQuad(Quad q) {
+		return graph.pureGraphBestHitTestQuad(q);
+	}
+	
+	public Entity pureGraphBestHitTestCircle(Circle c) {
+		return graph.pureGraphBestHitTestCircle(c);
+	}
+	
+	public Entity pureGraphBestHitTestCapsule(Capsule c) {
+		return graph.pureGraphBestHitTestCapsule(c);
 	}
 	
 	public RoadPosition findClosestRoadPosition(Point p, double radius) {

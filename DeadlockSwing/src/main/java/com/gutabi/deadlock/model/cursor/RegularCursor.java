@@ -1,13 +1,12 @@
 package com.gutabi.deadlock.model.cursor;
 
 
-import static com.gutabi.deadlock.view.DeadlockView.VIEW;
-
 import java.awt.Color;
 
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.Circle;
 import com.gutabi.deadlock.core.geom.Shape;
+import com.gutabi.deadlock.core.graph.Vertex;
 import com.gutabi.deadlock.model.Cursor;
 import com.gutabi.deadlock.view.RenderingContext;
 
@@ -26,7 +25,7 @@ public class RegularCursor extends Cursor {
 		this.p = p;
 		
 		if (p != null) {
-			shape = new Circle(null, p, 22.6274 / VIEW.PIXELS_PER_METER_DEBUG);
+			shape = new Circle(null, p, Vertex.INIT_VERTEX_RADIUS);
 		} else {
 			shape = null;
 		}

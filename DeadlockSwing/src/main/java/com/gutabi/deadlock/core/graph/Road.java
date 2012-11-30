@@ -19,7 +19,6 @@ import com.gutabi.deadlock.core.geom.CapsuleSequence;
 import com.gutabi.deadlock.core.geom.Circle;
 import com.gutabi.deadlock.core.geom.Shape;
 import com.gutabi.deadlock.core.geom.ShapeUtils;
-import com.gutabi.deadlock.core.geom.SweepableShape;
 import com.gutabi.deadlock.core.geom.Triangle;
 import com.gutabi.deadlock.model.StopSign;
 import com.gutabi.deadlock.view.RenderingContext;
@@ -60,9 +59,7 @@ public class Road extends Edge {
 	
 	private int hash;
 	
-//	private final List<Vertex> vs;
-	
-	private SweepableShape shape;
+	private CapsuleSequence shape;
 	
 	private Triangle arrowPointer;
 	
@@ -521,7 +518,7 @@ public class Road extends Edge {
 		
 	}
 	
-	public SweepableShape getShape() {
+	public CapsuleSequence getShape() {
 		return shape;
 	}
 	

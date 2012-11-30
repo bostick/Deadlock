@@ -85,7 +85,7 @@ public class Circle extends SweepableShape {
 		
 		Capsule cap = s.getCapsule(0);
 		
-		if (ShapeUtils.intersect(this, cap.ac)) {
+		if (ShapeUtils.intersectCC(this, cap.ac)) {
 			SweepEvent e = new SweepEvent(SweepEventType.enter(parent), this, s, 0, 0.0);
 			s.start(e);
 		}
@@ -99,7 +99,7 @@ public class Circle extends SweepableShape {
 		Point d = cap.b;
 		
 		boolean outside;
-		if (ShapeUtils.intersect(this, cap.ac)) {
+		if (ShapeUtils.intersectCC(this, cap.ac)) {
 			outside = false;
 		} else {
 			outside = true;
