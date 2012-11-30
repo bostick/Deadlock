@@ -19,7 +19,7 @@ public class WorldCanvas extends Canvas {
 	}
 	
 	public void postDisplay() {
-		this.createBufferStrategy(2);
+		this.createBufferStrategy(3);
 		bs = getBufferStrategy();
 	}
 	

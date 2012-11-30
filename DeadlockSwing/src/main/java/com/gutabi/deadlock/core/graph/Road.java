@@ -21,7 +21,6 @@ import com.gutabi.deadlock.core.geom.Shape;
 import com.gutabi.deadlock.core.geom.ShapeUtils;
 import com.gutabi.deadlock.core.geom.SweepableShape;
 import com.gutabi.deadlock.core.geom.Triangle;
-import com.gutabi.deadlock.core.geom.tree.AABB;
 import com.gutabi.deadlock.model.StopSign;
 import com.gutabi.deadlock.view.RenderingContext;
 import com.gutabi.deadlock.view.RenderingContextType;
@@ -718,7 +717,7 @@ public class Road extends Edge {
 		if (ctxt.type == RenderingContextType.CANVAS) {
 			if (MODEL.DEBUG_DRAW) {
 				ctxt.setColor(Color.BLACK);
-				ctxt.setStroke(AABB.aabbStroke);
+				ctxt.setPixelStroke();
 				shape.getAABB().draw(ctxt);	
 			}
 		}
@@ -729,6 +728,8 @@ public class Road extends Edge {
 	 * @param g2 in world coords
 	 */
 	public void paintHilite(RenderingContext ctxt) {
+		ctxt.setColor(hiliteColor);
+		ctxt.setPixelStroke();
 		drawPath(ctxt);
 	}
 	
@@ -744,7 +745,6 @@ public class Road extends Edge {
 		if (ctxt.type == RenderingContextType.CANVAS) {
 			if (direction != EdgeDirection.NONE) {
 				
-				java.awt.Stroke origStroke = ctxt.getStroke();
 				ctxt.setStroke(directionStroke);
 				ctxt.setColor(Color.LIGHT_GRAY);
 				
@@ -752,19 +752,13 @@ public class Road extends Edge {
 				
 				arrowPointer.paint(ctxt);
 				
-				ctxt.setStroke(origStroke);
-				
 			}
 		}
 		
 	}
 	
 	private void drawPath(RenderingContext ctxt) {
-		
-		ctxt.setColor(hiliteColor);
-		
 		seq.draw(ctxt);
-		
 	}
 	
 	/**

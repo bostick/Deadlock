@@ -1,11 +1,8 @@
 package com.gutabi.deadlock.model.cursor;
 
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
-import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
-import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.geom.AffineTransform;
 
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.Circle;
@@ -80,10 +77,7 @@ public class MergerCursorShape extends Shape {
 	
 	public void paint(RenderingContext ctxt) {
 		
-		java.awt.Stroke origStroke = ctxt.getStroke();
-		AffineTransform origTransform = ctxt.getTransform();
-		
-		ctxt.setStroke(new BasicStroke((float)(3.2 / VIEW.PIXELS_PER_METER_DEBUG), BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+		ctxt.setPixelStroke();
 		ctxt.setColor(Color.GRAY);
 		
 		worldQ.draw(ctxt);
@@ -92,9 +86,6 @@ public class MergerCursorShape extends Shape {
 		worldLeft.draw(ctxt);
 		worldRight.draw(ctxt);
 		worldBottom.draw(ctxt);
-		
-		ctxt.setStroke(origStroke);
-		ctxt.setTransform(origTransform);
 		
 		if (MODEL.DEBUG_DRAW) {
 			

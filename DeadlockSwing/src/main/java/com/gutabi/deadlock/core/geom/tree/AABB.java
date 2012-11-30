@@ -1,6 +1,5 @@
 package com.gutabi.deadlock.core.geom.tree;
 
-import java.awt.BasicStroke;
 import java.awt.geom.Rectangle2D;
 
 import com.gutabi.deadlock.core.DMath;
@@ -205,18 +204,12 @@ public class AABB extends Shape {
 		return new AABB(x + p.x, y + p.y, width, height);
 	}
 	
-	public static java.awt.Stroke aabbStroke = new BasicStroke(0.001f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER);
-	
 	public void paint(RenderingContext ctxt) {
-		
-		ctxt.fill(rect);
-		
+		ctxt.fill(rect);	
 	}
 	
 	public void draw(RenderingContext ctxt) {
-		
 		ctxt.draw(rect);
-		
 	}
 
 }

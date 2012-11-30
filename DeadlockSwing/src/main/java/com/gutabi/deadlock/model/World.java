@@ -487,6 +487,7 @@ public class World implements Sweepable {
 			
 		if (MODEL.DEBUG_DRAW) {
 			ctxt.setColor(Color.BLACK);
+			ctxt.setPixelStroke();
 			aabb.draw(ctxt);
 			
 		}
@@ -494,8 +495,12 @@ public class World implements Sweepable {
 	
 	private void paintBackground(RenderingContext ctxt) {
 		
-		ctxt.paintImage(0, 0, VIEW.canvasGrassImage, 0, 0, VIEW.canvasGrassImage.getWidth(), VIEW.canvasGrassImage.getHeight(),
+		AffineTransform origTransform = ctxt.getTransform();
+		ctxt.translate(VIEW.worldViewport.x, VIEW.worldViewport.y);
+		ctxt.paintImage(
+				0, 0, VIEW.canvasGrassImage, 0, 0, VIEW.canvasGrassImage.getWidth(), VIEW.canvasGrassImage.getHeight(),
 				0, 0, VIEW.canvasGrassImage.getWidth(), VIEW.canvasGrassImage.getHeight());
+		ctxt.setTransform(origTransform);
 		
 		if (animatedGrass1 != null) {
 			animatedGrass1.paint(ctxt);
@@ -507,8 +512,12 @@ public class World implements Sweepable {
 			animatedGrass3.paint(ctxt);
 		}
 		
-		ctxt.paintImage(aabb.x, aabb.y, VIEW.canvasGraphImage, 0, 0, VIEW.canvasGraphImage.getWidth(), VIEW.canvasGraphImage.getHeight(),
+		origTransform = ctxt.getTransform();
+		ctxt.translate(VIEW.worldViewport.x, VIEW.worldViewport.y);
+		ctxt.paintImage(
+				0, 0, VIEW.canvasGraphImage, 0, 0, VIEW.canvasGraphImage.getWidth(), VIEW.canvasGraphImage.getHeight(),
 				0, 0, VIEW.canvasGraphImage.getWidth(), VIEW.canvasGraphImage.getHeight());
+		ctxt.setTransform(origTransform);
 		
 //		drawSkidMarks(g2);
 		

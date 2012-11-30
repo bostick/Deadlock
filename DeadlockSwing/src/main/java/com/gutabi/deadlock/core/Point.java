@@ -304,7 +304,7 @@ public class Point {
 			return true;
 		}
 		if (c.equals(d)) {
-			throw new IllegalArgumentException("c equals d");
+			throw new ColinearException();
 		}
 		double xbc = b.x - c.x;
 		double xdc = d.x - c.x;

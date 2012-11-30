@@ -58,6 +58,7 @@ public class Intersection extends Vertex {
 	public void paintHilite(RenderingContext ctxt) {
 		
 		ctxt.setColor(Color.WHITE);
+		ctxt.setPixelStroke();
 		
 		shape.draw(ctxt);
 		

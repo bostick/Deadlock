@@ -13,12 +13,38 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.gutabi.deadlock.controller.ControlMode;
 import com.gutabi.deadlock.controller.InputEvent;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.graph.Road;
+import com.gutabi.deadlock.model.World;
 
 
 public class TestDragging {
+	
+	@BeforeClass
+	public static void setUpBeforeClass() throws Exception {
+		
+		MODEL.init();
+		MODEL.world = new World();
+		MODEL.world.init();
+		
+		VIEW.init();
+		
+		CONTROLLER.init();
+		
+		CONTROLLER.mode = ControlMode.IDLE;
+		
+		VIEW.renderWorldBackground();
+		
+		VIEW.frame.setVisible(true);
+		VIEW.canvas.requestFocusInWindow();
+		
+		VIEW.canvas.postDisplay();
+		
+		VIEW.repaint();
+		
+	}
 	
 	public static void testPressed(Point p) throws Exception {
 		Point pp = p.plus(OFFSET);
@@ -45,23 +71,23 @@ public class TestDragging {
 	
 	public static void testWorldPressed(Point p) throws Exception {
 //		Point pp = p.plus(OFFSET);
-		CONTROLLER.mc.pressed(new InputEvent(VIEW.canvas, VIEW.worldToPanel(p)));
-		CONTROLLER.queueAndWait(empty);
+		CONTROLLER.mc.pressed(new InputEvent(VIEW.canvas, VIEW.worldToCanvas(p)));
+//		CONTROLLER.queueAndWait(empty);
 		Thread.sleep(10);
 		VIEW.repaint();
 	}
 	
 	public static void testWorldDragged(Point p) throws Exception {
 //		Point pp = p.plus(OFFSET);
-		CONTROLLER.mc.dragged(new InputEvent(VIEW.canvas, VIEW.worldToPanel(p)));
-		CONTROLLER.queueAndWait(empty);
+		CONTROLLER.mc.dragged(new InputEvent(VIEW.canvas, VIEW.worldToCanvas(p)));
+//		CONTROLLER.queueAndWait(empty);
 		Thread.sleep(10);
 		VIEW.repaint();
 	}
 	
 	public static void testWorldReleased() throws Exception {
 		CONTROLLER.mc.released(new InputEvent(VIEW.canvas, null));
-		CONTROLLER.queueAndWait(empty);
+//		CONTROLLER.queueAndWait(empty);
 		Thread.sleep(10);
 		VIEW.repaint();
 	}
@@ -75,27 +101,6 @@ public class TestDragging {
 	
 	
 	static Point OFFSET = new Point(0, 0);
-	
-	@BeforeClass
-	public static void setUpBeforeClass() throws Exception {
-		
-//		VIEW = new DeadlockView();
-//		CONTROLLER = new DeadlockController();
-		
-//		VIEW.window = new Window();
-//		VIEW.logger = new Logger(VIEW.getClass());
-		VIEW.init();
-		CONTROLLER.init();
-		MODEL.init();
-		
-		VIEW.frame.setVisible(true);
-		VIEW.canvas.requestFocusInWindow();
-		
-		VIEW.canvas.postDisplay();
-		
-		VIEW.renderBackgroundFresh();
-		
-	}
 
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
@@ -131,12 +136,12 @@ public class TestDragging {
 		testDragged(new Point(4, 4));
 		testReleased();
 		
-		CONTROLLER.queueAndWait(new Runnable() {
-			@Override
-			public void run() {
-//				edges = MODEL.world.graph.getEdges();
-			}
-		});
+//		CONTROLLER.queueAndWait(new Runnable() {
+//			@Override
+//			public void run() {
+////				edges = MODEL.world.graph.getEdges();
+//			}
+//		});
 		 
 //		assertEquals(edges.size(),  1);
 //		Edge e = edges.get(0);
@@ -155,12 +160,12 @@ public class TestDragging {
 		testDragged(new Point(267, 582));
 		testReleased();
 		
-		CONTROLLER.queueAndWait(new Runnable() {
-			@Override
-			public void run() {
-				;
-			}
-		});
+//		CONTROLLER.queueAndWait(new Runnable() {
+//			@Override
+//			public void run() {
+//				;
+//			}
+//		});
 		
 	}
 	
@@ -175,12 +180,12 @@ public class TestDragging {
 		testDragged(new Point(1, 3));
 		testReleased();
 		
-		CONTROLLER.queueAndWait(new Runnable() {
-			@Override
-			public void run() {
-				;
-			}
-		});
+//		CONTROLLER.queueAndWait(new Runnable() {
+//			@Override
+//			public void run() {
+//				;
+//			}
+//		});
 		
 	}
 	
@@ -238,12 +243,12 @@ public class TestDragging {
 		testDragged(new Point(521, 635));
 		testReleased();
 		
-		CONTROLLER.queueAndWait(new Runnable() {
-			@Override
-			public void run() {
-				;
-			}
-		});
+//		CONTROLLER.queueAndWait(new Runnable() {
+//			@Override
+//			public void run() {
+//				;
+//			}
+//		});
 		
 	}
 	
@@ -260,12 +265,12 @@ public class TestDragging {
 		testDragged(new Point(4, 4));
 		testReleased();
 		
-		CONTROLLER.queueAndWait(new Runnable() {
-			@Override
-			public void run() {
-				;
-			}
-		});
+//		CONTROLLER.queueAndWait(new Runnable() {
+//			@Override
+//			public void run() {
+//				;
+//			}
+//		});
 		
 	}
 	
@@ -416,12 +421,12 @@ public class TestDragging {
 		testDragged(new Point(643, 292));
 		testReleased();
 		
-		CONTROLLER.queueAndWait(new Runnable() {
-			@Override
-			public void run() {
-				;
-			}
-		});
+//		CONTROLLER.queueAndWait(new Runnable() {
+//			@Override
+//			public void run() {
+//				;
+//			}
+//		});
 		
 	}
 	
@@ -484,12 +489,12 @@ public class TestDragging {
 		testDragged(new Point(580, 423));
 		testReleased();
 		
-		CONTROLLER.queueAndWait(new Runnable() {
-			@Override
-			public void run() {
-				;
-			}
-		});
+//		CONTROLLER.queueAndWait(new Runnable() {
+//			@Override
+//			public void run() {
+//				;
+//			}
+//		});
 		
 	}
 	
@@ -506,12 +511,12 @@ public class TestDragging {
 		testDragged(new Point(0, 50));
 		testReleased();
 		
-		CONTROLLER.queueAndWait(new Runnable() {
-			@Override
-			public void run() {
-				;
-			}
-		});
+//		CONTROLLER.queueAndWait(new Runnable() {
+//			@Override
+//			public void run() {
+//				;
+//			}
+//		});
 		
 	}
 	
@@ -528,12 +533,12 @@ public class TestDragging {
 		testDragged(new Point(2, 0));
 		testReleased();
 		
-		CONTROLLER.queueAndWait(new Runnable() {
-			@Override
-			public void run() {
-				;
-			}
-		});
+//		CONTROLLER.queueAndWait(new Runnable() {
+//			@Override
+//			public void run() {
+//				;
+//			}
+//		});
 		
 	}
 	
@@ -553,12 +558,12 @@ public class TestDragging {
 		testDragged(new Point(3, 6));
 		testReleased();
 		
-		CONTROLLER.queueAndWait(new Runnable() {
-			@Override
-			public void run() {
-				;
-			}
-		});
+//		CONTROLLER.queueAndWait(new Runnable() {
+//			@Override
+//			public void run() {
+//				;
+//			}
+//		});
 		
 	}
 	
@@ -576,12 +581,12 @@ public class TestDragging {
 		testDragged(new Point(16, 1));
 		testReleased();
 		
-		CONTROLLER.queueAndWait(new Runnable() {
-			@Override
-			public void run() {
-				;
-			}
-		});
+//		CONTROLLER.queueAndWait(new Runnable() {
+//			@Override
+//			public void run() {
+//				;
+//			}
+//		});
 		
 	}
 	
@@ -629,12 +634,12 @@ public class TestDragging {
 		testDragged(new Point(583, 463));
 		testReleased();
 		
-		CONTROLLER.queueAndWait(new Runnable() {
-			@Override
-			public void run() {
-				;
-			}
-		});
+//		CONTROLLER.queueAndWait(new Runnable() {
+//			@Override
+//			public void run() {
+//				;
+//			}
+//		});
 		
 	}
 	
@@ -676,12 +681,12 @@ public class TestDragging {
 		testDragged(new Point(640, 415));
 		testReleased();
 		
-		CONTROLLER.queueAndWait(new Runnable() {
-			@Override
-			public void run() {
-				;
-			}
-		});
+//		CONTROLLER.queueAndWait(new Runnable() {
+//			@Override
+//			public void run() {
+//				;
+//			}
+//		});
 		
 	}
 	
@@ -702,12 +707,12 @@ public class TestDragging {
 		testDragged(new Point(44, 25));
 		testReleased();
 		
-		CONTROLLER.queueAndWait(new Runnable() {
-			@Override
-			public void run() {
-				;
-			}
-		});
+//		CONTROLLER.queueAndWait(new Runnable() {
+//			@Override
+//			public void run() {
+//				;
+//			}
+//		});
 		
 	}
 	
@@ -761,12 +766,12 @@ public class TestDragging {
 		testDragged(new Point(5, 19));
 		testReleased();
 		
-		CONTROLLER.queueAndWait(new Runnable() {
-			@Override
-			public void run() {
-				;
-			}
-		});
+//		CONTROLLER.queueAndWait(new Runnable() {
+//			@Override
+//			public void run() {
+//				;
+//			}
+//		});
 		
 	}
 	
@@ -787,12 +792,12 @@ public class TestDragging {
 		testDragged(new Point(46, 49));
 		testReleased();
 		
-		CONTROLLER.queueAndWait(new Runnable() {
-			@Override
-			public void run() {
-				String.class.getClass();
-			}
-		});
+//		CONTROLLER.queueAndWait(new Runnable() {
+//			@Override
+//			public void run() {
+//				String.class.getClass();
+//			}
+//		});
 		
 	}
 	
@@ -810,12 +815,12 @@ public class TestDragging {
 		testDragged(new Point(2, 78));
 		testReleased();
 		
-		CONTROLLER.queueAndWait(new Runnable() {
-			@Override
-			public void run() {
-				String.class.getClass();
-			}
-		});
+//		CONTROLLER.queueAndWait(new Runnable() {
+//			@Override
+//			public void run() {
+//				String.class.getClass();
+//			}
+//		});
 		
 	}
 	
@@ -840,12 +845,12 @@ public class TestDragging {
 		testDragged(new Point(3, 34));
 		testReleased();
 		
-		CONTROLLER.queueAndWait(new Runnable() {
-			@Override
-			public void run() {
-				String.class.getClass();
-			}
-		});
+//		CONTROLLER.queueAndWait(new Runnable() {
+//			@Override
+//			public void run() {
+//				String.class.getClass();
+//			}
+//		});
 		
 	}
 	
@@ -863,12 +868,12 @@ public class TestDragging {
 		testDragged(new Point(3, 84));
 		testReleased();
 		
-		CONTROLLER.queueAndWait(new Runnable() {
-			@Override
-			public void run() {
-				;
-			}
-		});
+//		CONTROLLER.queueAndWait(new Runnable() {
+//			@Override
+//			public void run() {
+//				;
+//			}
+//		});
 		
 	}
 	
@@ -894,12 +899,12 @@ public class TestDragging {
 		testDragged(new Point(26, 80));
 		testReleased();
 		
-		CONTROLLER.queueAndWait(new Runnable() {
-			@Override
-			public void run() {
-				;
-			}
-		});
+//		CONTROLLER.queueAndWait(new Runnable() {
+//			@Override
+//			public void run() {
+//				;
+//			}
+//		});
 		
 	}
 	
@@ -924,12 +929,12 @@ public class TestDragging {
 		testDragged(new Point(44, 94));
 		testReleased();
 		
-		CONTROLLER.queueAndWait(new Runnable() {
-			@Override
-			public void run() {
-				;
-			}
-		});
+//		CONTROLLER.queueAndWait(new Runnable() {
+//			@Override
+//			public void run() {
+//				;
+//			}
+//		});
 		
 	}
 	
@@ -958,12 +963,12 @@ public class TestDragging {
 		testDragged(new Point(44, 94));
 		testReleased();
 		
-		CONTROLLER.queueAndWait(new Runnable() {
-			@Override
-			public void run() {
-				String.class.getClass();
-			}
-		});
+//		CONTROLLER.queueAndWait(new Runnable() {
+//			@Override
+//			public void run() {
+//				String.class.getClass();
+//			}
+//		});
 		
 	}
 	
@@ -984,12 +989,12 @@ public class TestDragging {
 		testDragged(new Point(21, 9));
 		testReleased();
 		
-		CONTROLLER.queueAndWait(new Runnable() {
-			@Override
-			public void run() {
-				String.class.getClass();
-			}
-		});
+//		CONTROLLER.queueAndWait(new Runnable() {
+//			@Override
+//			public void run() {
+//				String.class.getClass();
+//			}
+//		});
 		
 	}
 	
@@ -1007,12 +1012,12 @@ public class TestDragging {
 		testDragged(new Point(699, 311));
 		testReleased();
 		
-		CONTROLLER.queueAndWait(new Runnable() {
-			@Override
-			public void run() {
-				;
-			}
-		});
+//		CONTROLLER.queueAndWait(new Runnable() {
+//			@Override
+//			public void run() {
+//				;
+//			}
+//		});
 		
 	}
 	
@@ -1029,12 +1034,12 @@ public class TestDragging {
 		testDragged(new Point(684, 308));
 		testReleased();
 		
-		CONTROLLER.queueAndWait(new Runnable() {
-			@Override
-			public void run() {
-				;
-			}
-		});
+//		CONTROLLER.queueAndWait(new Runnable() {
+//			@Override
+//			public void run() {
+//				;
+//			}
+//		});
 		
 	}
 	
@@ -1051,12 +1056,12 @@ public class TestDragging {
 		testDragged(new Point(583, 442));
 		testReleased();
 		
-		CONTROLLER.queueAndWait(new Runnable() {
-			@Override
-			public void run() {
-				;
-			}
-		});
+//		CONTROLLER.queueAndWait(new Runnable() {
+//			@Override
+//			public void run() {
+//				;
+//			}
+//		});
 		
 	}
 	
@@ -1083,12 +1088,12 @@ public class TestDragging {
 		testDragged(new Point(56, 85));
 		testReleased();
 		
-		CONTROLLER.queueAndWait(new Runnable() {
-			@Override
-			public void run() {
-				;
-			}
-		});
+//		CONTROLLER.queueAndWait(new Runnable() {
+//			@Override
+//			public void run() {
+//				;
+//			}
+//		});
 		
 	}
 	
@@ -1109,12 +1114,12 @@ public class TestDragging {
 		testDragged(new Point(56, 85));
 		testReleased();
 		
-		CONTROLLER.queueAndWait(new Runnable() {
-			@Override
-			public void run() {
-				;
-			}
-		});
+//		CONTROLLER.queueAndWait(new Runnable() {
+//			@Override
+//			public void run() {
+//				;
+//			}
+//		});
 		
 	}
 	
@@ -1133,12 +1138,12 @@ public class TestDragging {
 		testDragged(new Point(5, 19));
 		testReleased();
 		
-		CONTROLLER.queueAndWait(new Runnable() {
-			@Override
-			public void run() {
-				;
-			}
-		});
+//		CONTROLLER.queueAndWait(new Runnable() {
+//			@Override
+//			public void run() {
+//				;
+//			}
+//		});
 		
 	}
 	
@@ -1162,12 +1167,12 @@ public class TestDragging {
 		testDragged(new Point(56, 85));
 		testReleased();
 		
-		CONTROLLER.queueAndWait(new Runnable() {
-			@Override
-			public void run() {
-				;
-			}
-		});
+//		CONTROLLER.queueAndWait(new Runnable() {
+//			@Override
+//			public void run() {
+//				;
+//			}
+//		});
 		
 	}
 	
@@ -1207,12 +1212,12 @@ public class TestDragging {
 		testDragged(new Point(82, 8));
 		testReleased();
 		
-		CONTROLLER.queueAndWait(new Runnable() {
-			@Override
-			public void run() {
-				String.class.getClass();
-			}
-		});
+//		CONTROLLER.queueAndWait(new Runnable() {
+//			@Override
+//			public void run() {
+//				String.class.getClass();
+//			}
+//		});
 		
 	}
 	
@@ -1237,12 +1242,12 @@ public class TestDragging {
 		testDragged(new Point(491, 36));
 		testReleased();
 		
-		CONTROLLER.queueAndWait(new Runnable() {
-			@Override
-			public void run() {
-				String.class.getClass();
-			}
-		});
+//		CONTROLLER.queueAndWait(new Runnable() {
+//			@Override
+//			public void run() {
+//				String.class.getClass();
+//			}
+//		});
 		
 	}
 	
@@ -1287,12 +1292,12 @@ public class TestDragging {
 		testDragged(new Point(262, 444));
 		testReleased();
 		
-		CONTROLLER.queueAndWait(new Runnable() {
-			@Override
-			public void run() {
-				;
-			}
-		});
+//		CONTROLLER.queueAndWait(new Runnable() {
+//			@Override
+//			public void run() {
+//				;
+//			}
+//		});
 		
 	}
 	
@@ -1674,12 +1679,12 @@ public class TestDragging {
 
 
 		
-		CONTROLLER.queueAndWait(new Runnable() {
-			@Override
-			public void run() {
-				;
-			}
-		});
+//		CONTROLLER.queueAndWait(new Runnable() {
+//			@Override
+//			public void run() {
+//				;
+//			}
+//		});
 		
 	}
 	
@@ -1698,12 +1703,12 @@ public class TestDragging {
 		testDragged(new Point(661, 570));
 		testReleased();
 		
-		CONTROLLER.queueAndWait(new Runnable() {
-			@Override
-			public void run() {
-				CONTROLLER.mc.hashCode();
-			}
-		});
+//		CONTROLLER.queueAndWait(new Runnable() {
+//			@Override
+//			public void run() {
+//				CONTROLLER.mc.hashCode();
+//			}
+//		});
 		
 	}
 	
@@ -1723,12 +1728,12 @@ public class TestDragging {
 		testDragged(new Point(58, 11));
 		testReleased();
 		
-		CONTROLLER.queueAndWait(new Runnable() {
-			@Override
-			public void run() {
-				CONTROLLER.mc.hashCode();
-			}
-		});
+//		CONTROLLER.queueAndWait(new Runnable() {
+//			@Override
+//			public void run() {
+//				CONTROLLER.mc.hashCode();
+//			}
+//		});
 		
 	}
 	
@@ -1747,12 +1752,12 @@ public class TestDragging {
 		testDragged(new Point(775, 457));
 		testReleased();
 		
-		CONTROLLER.queueAndWait(new Runnable() {
-			@Override
-			public void run() {
-				CONTROLLER.mc.hashCode();
-			}
-		});
+//		CONTROLLER.queueAndWait(new Runnable() {
+//			@Override
+//			public void run() {
+//				CONTROLLER.mc.hashCode();
+//			}
+//		});
 		
 	}
 	
@@ -1773,12 +1778,12 @@ public class TestDragging {
 		testDragged(new Point(760, 460));
 		testReleased();
 		
-		CONTROLLER.queueAndWait(new Runnable() {
-			@Override
-			public void run() {
-				CONTROLLER.mc.hashCode();
-			}
-		});
+//		CONTROLLER.queueAndWait(new Runnable() {
+//			@Override
+//			public void run() {
+//				CONTROLLER.mc.hashCode();
+//			}
+//		});
 		
 	}
 	
@@ -1791,12 +1796,12 @@ public class TestDragging {
 		testDragged(new Point(12, 5));
 		testReleased();
 		
-		CONTROLLER.queueAndWait(new Runnable() {
-			@Override
-			public void run() {
-				;
-			}
-		});
+//		CONTROLLER.queueAndWait(new Runnable() {
+//			@Override
+//			public void run() {
+//				;
+//			}
+//		});
 		
 //		Point a = new Point(3, 5);
 //		List<Segment> in = MODEL.findAllSegments(a);
@@ -1820,12 +1825,12 @@ public class TestDragging {
 		testDragged(new Point(707., 553.));
 		testReleased();
 		
-		CONTROLLER.queueAndWait(new Runnable() {
-			@Override
-			public void run() {
-				String.class.getClass();
-			}
-		});
+//		CONTROLLER.queueAndWait(new Runnable() {
+//			@Override
+//			public void run() {
+//				String.class.getClass();
+//			}
+//		});
 		
 	}
 	
@@ -1858,12 +1863,12 @@ public class TestDragging {
 		testDragged(new Point(193., 401.));
 		testReleased();
 		
-		CONTROLLER.queueAndWait(new Runnable() {
-			@Override
-			public void run() {
-				String.class.getClass();
-			}
-		});
+//		CONTROLLER.queueAndWait(new Runnable() {
+//			@Override
+//			public void run() {
+//				String.class.getClass();
+//			}
+//		});
 		
 		/*
 		 * test that <193, 401> is at the end
@@ -1985,12 +1990,12 @@ public class TestDragging {
 		testDragged(new Point(1100., 429.));
 		testReleased();
 		
-		CONTROLLER.queueAndWait(new Runnable() {
-			@Override
-			public void run() {
-				String.class.getClass();
-			}
-		});
+//		CONTROLLER.queueAndWait(new Runnable() {
+//			@Override
+//			public void run() {
+//				String.class.getClass();
+//			}
+//		});
 		
 		/*
 		 * test that <193, 401> is at the end

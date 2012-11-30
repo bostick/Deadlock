@@ -13,7 +13,9 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.gutabi.deadlock.controller.ControlMode;
 import com.gutabi.deadlock.core.Point;
+import com.gutabi.deadlock.model.World;
 
 public class TestSweeping {
 	
@@ -21,17 +23,23 @@ public class TestSweeping {
 	public static void setUpBeforeClass() throws Exception {
 		
 		MODEL.init();
+		MODEL.world = new World();
+		MODEL.world.init();
 		
 		VIEW.init();
 		
 		CONTROLLER.init();
 		
-		MODEL.renderBackground();
+		CONTROLLER.mode = ControlMode.IDLE;
+		
+		VIEW.renderWorldBackground();
 		
 		VIEW.frame.setVisible(true);
 		VIEW.canvas.requestFocusInWindow();
 		
 		VIEW.canvas.postDisplay();
+		
+		VIEW.repaint();
 		
 	}
 	

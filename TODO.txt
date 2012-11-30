@@ -11,9 +11,6 @@ sna[[ing to height
 
 100 -> PREVIEW_WIDTH
 
-assert canvasGrassImage and canvasGraphImage are never bigger than canvas
-fix viewport problems
-
 resizing window
 
 remember user actions, useful for undo, redo
@@ -56,6 +53,11 @@ spline/curve editor
 
 
 DONE:
+
+figure out fixing VIEW.canvasToWorld when preview has been dragged
+
+assert canvasGrassImage and canvasGraphImage are never bigger than canvas
+fix viewport problems
 
 cursor size independent of zoom
 

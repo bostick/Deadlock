@@ -1,7 +1,6 @@
 package com.gutabi.deadlock.model;
 
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
-import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -300,11 +299,8 @@ public class Stroke {
 	
 	public void paint(RenderingContext ctxt) {
 		
-		java.awt.Stroke origStroke = ctxt.getStroke();
-		ctxt.setStroke(VIEW.worldStroke);
+		ctxt.setPixelStroke();
 		paintStroke(ctxt);
-		
-		ctxt.setStroke(origStroke);
 		
 		if (MODEL.DEBUG_DRAW) {
 			

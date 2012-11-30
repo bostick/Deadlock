@@ -512,7 +512,7 @@ public abstract class Car extends Entity {
 				pathingLogger.debug("goalPoint: " + next.gpos);
 			}
 			
-			goalPoint = new Circle(null, next.gpos.p, 0.2);
+			goalPoint = new Circle(null, next.gpos.p, 0.1);
 			updateDrive(t);
 			break;
 		case BRAKING:
@@ -973,6 +973,8 @@ public abstract class Car extends Entity {
 				goalPoint.paint(ctxt);
 			}
 			
+			ctxt.setColor(Color.BLACK);
+			ctxt.setPixelStroke();
 			shape.getAABB().draw(ctxt);
 			
 		}
@@ -1045,7 +1047,7 @@ public abstract class Car extends Entity {
 	public void paintID(RenderingContext ctxt) {
 		
 		ctxt.setColor(Color.WHITE);
-		
+		ctxt.setPixelStroke();
 		ctxt.paintString(-CAR_LENGTH/2, 0.0, Integer.toString(id));
 		
 	}

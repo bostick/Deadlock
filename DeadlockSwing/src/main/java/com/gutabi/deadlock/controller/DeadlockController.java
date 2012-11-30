@@ -265,6 +265,10 @@ public class DeadlockController implements ActionListener {
 			
 			lastMovedWorldPoint = VIEW.canvasToWorld(lastMovedCanvasPoint);
 			
+			if (logger.isDebugEnabled()) {
+				logger.debug("moved. canvas: " + ev.p + " " + " world: " + lastMovedWorldPoint + " viewport: " + VIEW.worldViewport.ul);
+			}
+			
 			switch (mode) {
 			case PAUSED:
 			case DRAFTING:

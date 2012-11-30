@@ -2,6 +2,7 @@ package com.gutabi.deadlock.view;
 
 import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Composite;
 import java.awt.Font;
@@ -41,12 +42,16 @@ public class RenderingContext {
 		g2.setStroke(s);
 	}
 	
+	public void setPixelStroke() {
+		g2.setStroke(new BasicStroke((float)(1.0 / g2.getTransform().getScaleX()), BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER));
+	}
+	
 	public AffineTransform getTransform() {
 		return g2.getTransform();
 	}
 	
-	public void scale(double sx, double sy) {
-		g2.scale(sx, sy);
+	public void scale(double s) {
+		g2.scale(s, s);
 	}
 	
 	public void translate(double tx, double ty) {
@@ -82,16 +87,13 @@ public class RenderingContext {
 		g2.translate(x, y);
 		g2.scale(1 / VIEW.PIXELS_PER_METER_DEBUG, 1 / VIEW.PIXELS_PER_METER_DEBUG);
 		g2.drawString(str, 0, 0);
-		
 		g2.setTransform(origTransform);
 	}
 	
 	public void paintImage(double x, double y, Image img, int dx1, int dy1, int dx2, int dy2, int sx1, int sy1, int sx2, int sy2) {
 		AffineTransform origTransform = g2.getTransform();
-		
 		g2.translate(x, y);
 		g2.scale(1 / VIEW.PIXELS_PER_METER_DEBUG, 1 / VIEW.PIXELS_PER_METER_DEBUG);
-		
 		g2.drawImage(img, dx1, dy1, dx2, dy2, sx1, sy1, sx2, sy2, null);
 		g2.setTransform(origTransform);
 	}
@@ -125,10 +127,7 @@ public class RenderingContext {
 	}
 	
 	public void draw(Rectangle2D e) {
-//		AffineTransform origTransform = g2.getTransform();
-//		g2.translate(VIEW.viewport.x, VIEW.viewport.y);
 		g2.draw(e);
-//		g2.setTransform(origTransform);
 	}
 	
 }

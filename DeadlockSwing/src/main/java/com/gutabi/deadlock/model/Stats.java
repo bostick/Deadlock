@@ -1,7 +1,6 @@
 package com.gutabi.deadlock.model;
 
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
-import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
 import java.awt.Color;
 import java.awt.geom.AffineTransform;
@@ -23,7 +22,7 @@ public class Stats {
 	public void paint(RenderingContext ctxt) {
 		
 		ctxt.setColor(Color.BLACK);
-		ctxt.setStroke(VIEW.worldStroke);
+		ctxt.setPixelStroke();
 		
 		AffineTransform origTransform1 = ctxt.getTransform();
 		

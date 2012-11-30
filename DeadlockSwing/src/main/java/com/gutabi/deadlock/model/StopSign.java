@@ -3,7 +3,6 @@ package com.gutabi.deadlock.model;
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
-import java.awt.BasicStroke;
 import java.awt.Color;
 
 import com.gutabi.deadlock.core.Entity;
@@ -123,24 +122,13 @@ public class StopSign extends Entity {
 	}
 	
 	public void paintHilite(RenderingContext ctxt) {
-		
 		if (enabled) {
-			
 			ctxt.setColor(Color.RED);
-			
 			shape.paint(ctxt);
-			
 		} else {
-			
-			java.awt.Stroke origStroke = ctxt.getStroke();
-			ctxt.setStroke(new BasicStroke((float)(3.2 / VIEW.PIXELS_PER_METER_DEBUG), BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
-			
+			ctxt.setPixelStroke();
 			ctxt.setColor(Color.WHITE);
-			
 			shape.draw(ctxt);
-			
-			ctxt.setStroke(origStroke);
-			
 		}
 		
 	}

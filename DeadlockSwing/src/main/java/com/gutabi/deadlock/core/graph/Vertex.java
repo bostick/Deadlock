@@ -241,11 +241,8 @@ public abstract class Vertex extends Entity {
 	 * @param g2 in world coords
 	 */
 	public void paintHilite(RenderingContext ctxt) {
-		
 		ctxt.setColor(hiliteColor);
-		
 		shape.paint(ctxt);
-		
 	}
 	
 	/**

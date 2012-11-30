@@ -3,7 +3,6 @@ package com.gutabi.deadlock.model;
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
-import java.awt.BasicStroke;
 import java.awt.Color;
 
 import com.gutabi.deadlock.core.Point;
@@ -58,12 +57,11 @@ public class Quadrant {
 				} else {
 					
 					
-					ctxt.setColor(VIEW.LIGHTGREEN);
-					
+					ctxt.setColor(VIEW.DARKGREEN);
 					aabb.paint(ctxt);
 					
-					ctxt.setColor(VIEW.DARKGREEN);
-					ctxt.setStroke(new BasicStroke((float)(3.2 / VIEW.PIXELS_PER_METER_DEBUG), BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+					ctxt.setColor(Color.BLACK);
+					ctxt.setPixelStroke();
 					aabb.draw(ctxt);
 					
 					ctxt.setColor(Color.BLACK);
@@ -74,7 +72,7 @@ public class Quadrant {
 				if (MODEL.grid) {
 					
 					ctxt.setColor(Color.GRAY);
-					ctxt.setStroke(new BasicStroke((float)(3.2 / VIEW.PIXELS_PER_METER_DEBUG), BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+					ctxt.setPixelStroke();
 					
 					for (int k = 0; k <= MODEL.QUADRANT_HEIGHT; k+=2) {
 						Line line = new Line(c * MODEL.QUADRANT_WIDTH + 0, r * MODEL.QUADRANT_HEIGHT + k, c * MODEL.QUADRANT_WIDTH + MODEL.QUADRANT_WIDTH, r * MODEL.QUADRANT_HEIGHT + k);

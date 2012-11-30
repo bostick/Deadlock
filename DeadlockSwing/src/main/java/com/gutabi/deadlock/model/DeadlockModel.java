@@ -46,8 +46,4 @@ public class DeadlockModel {
 		stats = new Stats();
 	}
 	
-//	public void renderBackground() {
-//		world.renderBackground();
-//	}
-	
 }
