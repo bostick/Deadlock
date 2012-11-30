@@ -22,6 +22,11 @@ public class MergerPosition extends EdgePosition {
 	
 	public MergerPosition(Merger m, Axis a, int index, double param) {
 		super(Point.point(m.get(index, a), m.get(index+1, a), param), m, a);
+		
+		if (index == 0 && param > 0.8) {
+			String.class.getName();
+		}
+		
 		this.m = m;
 		
 		if (index < 0 || index >= 2) {

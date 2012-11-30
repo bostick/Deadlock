@@ -406,20 +406,24 @@ public class GraphPositionPath {
 						
 						Edge e = (Edge)((EdgePosition)b).entity;
 						
-						if (gp.entity != e || gp.axis != b.axis) {
+						if (gp.entity != e) {
+							continue;
+						}
+						if (gp instanceof EdgePosition && ((EdgePosition)gp).axis != ((EdgePosition)b).axis) {
 							continue;
 						}
 						
+						
 						combo = ((EdgePosition)gp).getCombo();
 						
-						if (((EdgePosition)b).getIndex() == 1) {
+						if (((VertexPosition)a).v == ((Edge)b.entity).getReferenceVertex(((EdgePosition)b).axis)) {
 							aCombo = 0.0;
 							bCombo = ((EdgePosition)b).getCombo();
 							if (!(DMath.lessThanEquals(aCombo, combo) && DMath.lessThanEquals(combo, bCombo))) {
 								continue;
 							}
 						} else {
-							assert ((EdgePosition)b).getIndex() == ((Edge)b.entity).pointCount()-2;
+							assert ((VertexPosition)a).v == ((Edge)b.entity).getOtherVertex(((EdgePosition)b).axis);
 							aCombo = (e.pointCount()-1)+0.0;
 							bCombo = ((EdgePosition)b).getCombo();
 							if (!(DMath.greaterThanEquals(aCombo, combo) && DMath.greaterThanEquals(combo, bCombo))) {
@@ -440,20 +444,23 @@ public class GraphPositionPath {
 						
 						Edge e = (Edge)((EdgePosition)a).entity;
 						
-						if (gp.entity != e || gp.axis != a.axis) {
+						if (gp.entity != e) {
+							continue;
+						}
+						if (gp instanceof EdgePosition && ((EdgePosition)gp).axis != ((EdgePosition)a).axis) {
 							continue;
 						}
 						
 						combo = ((EdgePosition)gp).getCombo();
 						
-						if (((EdgePosition)a).getIndex() == 1) {
+						if (((VertexPosition)b).v == ((Edge)a.entity).getReferenceVertex(((EdgePosition)a).axis)) {
 							aCombo = ((EdgePosition)a).getCombo();
 							bCombo = 0.0;
 							if (!(DMath.greaterThanEquals(aCombo, combo) && DMath.greaterThanEquals(combo, bCombo))) {
 								continue;
 							}
 						} else {
-							assert ((EdgePosition)a).getIndex() == ((Edge)a.entity).pointCount()-2;
+							assert ((VertexPosition)b).v == ((Edge)a.entity).getOtherVertex(((EdgePosition)a).axis);
 							aCombo = ((EdgePosition)a).getCombo();
 							bCombo = (e.pointCount()-1)+0.0;
 							if (!(DMath.lessThanEquals(aCombo, combo) && DMath.lessThanEquals(combo, bCombo))) {
@@ -465,9 +472,12 @@ public class GraphPositionPath {
 						
 						Edge e = (Edge)((EdgePosition)a).entity;
 						assert e == b.entity;
-						assert a.axis == b.axis;
+						assert ((EdgePosition)a).axis == ((EdgePosition)b).axis;
 						
-						if (gp.entity != e || gp.axis != a.axis) {
+						if (gp.entity != e) {
+							continue;
+						}
+						if (gp instanceof EdgePosition && ((EdgePosition)gp).axis != ((EdgePosition)a).axis) {
 							continue;
 						}
 						
@@ -715,7 +725,9 @@ public class GraphPositionPath {
 	
 	private static void fillin(List<GraphPosition> acc, VertexPosition aa, VertexPosition bb, Edge e, int dir) {
 		
-		if (dir == 0 || (dir == 2 && aa.v == ((Road)e).getReferenceVertex(Axis.NONE))) {
+		if (dir == 0 || (dir == 2 && (
+				(e instanceof Road && (aa.v == ((Road)e).getReferenceVertex(Axis.NONE))) ||
+				(e instanceof Merger && (aa.v == ((Merger)e).getReferenceVertex(Axis.TOPBOTTOM) || aa.v == ((Merger)e).getReferenceVertex(Axis.LEFTRIGHT)))))) {
 			
 			GraphPosition cur;
 			if (e instanceof Road) {

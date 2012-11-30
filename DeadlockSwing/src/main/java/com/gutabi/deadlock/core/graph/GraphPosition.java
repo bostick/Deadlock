@@ -10,14 +10,14 @@ public abstract class GraphPosition {
 	
 	public final Point p;
 	public final Entity entity;
-	public final Axis axis;
+//	public final Axis axis;
 	
 	static Logger logger = Logger.getLogger(GraphPosition.class);
 	
-	public GraphPosition(Point p, Entity e, Axis a) {
+	public GraphPosition(Point p, Entity e) {
 		this.p = p;
 		this.entity = e;
-		this.axis = a;
+//		this.axis = a;
 	}
 	
 	public abstract boolean isBound();
@@ -39,12 +39,12 @@ public abstract class GraphPosition {
 			} else {
 				EdgePosition pe = (EdgePosition)p;
 				
-				if (pe.getIndex() == 1) {
+				if (((VertexPosition)this).v == ((Edge)pe.entity).getReferenceVertex(pe.axis)) {
 					
 					return ((Edge)pe.entity).travelFromReferenceVertex(pe.axis, distance);
 					
 				} else {
-					assert pe.getIndex() == ((Edge)pe.entity).pointCount()-2;
+					assert ((VertexPosition)this).v == ((Edge)pe.entity).getOtherVertex(pe.axis);
 					
 					return ((Edge)pe.entity).travelFromOtherVertex(pe.axis, distance);
 				}
@@ -54,12 +54,12 @@ public abstract class GraphPosition {
 			
 			if (p instanceof VertexPosition) {
 				
-				if (DMath.lessThan(0.0, ee.getCombo()) && DMath.lessThanEquals(ee.getCombo(), 1.0)) {
+				if (((VertexPosition)p).v == ((Edge)ee.entity).getReferenceVertex(ee.axis)) {
 					
 					return ee.travelToReferenceVertex(ee.axis, distance);
 					
 				} else {
-					assert ee.getIndex() == ((Edge)ee.entity).pointCount()-2;
+					assert ((VertexPosition)p).v == ((Edge)ee.entity).getOtherVertex(ee.axis);
 					
 					return ee.travelToOtherVertex(ee.axis, distance);
 				}

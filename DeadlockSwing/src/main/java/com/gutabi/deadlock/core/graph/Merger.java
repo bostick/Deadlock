@@ -289,7 +289,7 @@ public class Merger extends Edge {
 			} else {
 				
 				ctxt.setColor(color);
-				
+				ctxt.setPixelStroke();
 				shape.draw(ctxt);
 				
 				paintSkeleton(ctxt);
@@ -316,7 +316,7 @@ public class Merger extends Edge {
 	void paintSkeleton(RenderingContext ctxt) {
 		
 		ctxt.setColor(Color.BLACK);
-		
+		ctxt.setPixelStroke();
 		debugSkeletonTopBottomLine.draw(ctxt);
 		
 		debugSkeletonLeftRightLine.draw(ctxt);

@@ -9,7 +9,7 @@ public class VertexPosition extends GraphPosition {
 	private int hash;
 	
 	public VertexPosition(Vertex v) {
-		super(v.p, v, Axis.NONE);
+		super(v.p, v);
 		this.v = v;
 	}
 	

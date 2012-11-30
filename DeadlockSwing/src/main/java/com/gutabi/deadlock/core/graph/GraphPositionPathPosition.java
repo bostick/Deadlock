@@ -166,11 +166,11 @@ public class GraphPositionPathPosition {
 							
 						} else {
 							
-							if (((EdgePosition)nextBound.gpos).getIndex() == 1) {
+							if (((VertexPosition)curPos.gpos).v == ((Edge)((EdgePosition)nextBound.gpos).entity).getReferenceVertex(((EdgePosition)nextBound.gpos).axis)) {
 								// same direction as edge
 								return new GraphPositionPathPosition(path, curPos.index, g.getParam());
 							} else {
-								assert ((EdgePosition)nextBound.gpos).getIndex() == ((Edge)((EdgePosition)nextBound.gpos).entity).pointCount()-2;
+								assert ((VertexPosition)curPos.gpos).v == ((Edge)((EdgePosition)nextBound.gpos).entity).getOtherVertex(((EdgePosition)nextBound.gpos).axis);
 								return new GraphPositionPathPosition(path, curPos.index, 1-g.getParam());
 							}
 							

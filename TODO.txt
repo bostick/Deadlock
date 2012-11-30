@@ -1,6 +1,8 @@
 
 IMMEDIATELY:
 
+fix mergers
+
 start work on menu
 start work on popup menu
 

@@ -815,11 +815,11 @@ public abstract class Car extends Entity {
 			dw = negMaxRads;
 		}
 		
-//		if (dw > 0.52) {
-//			String.class.getName();
-//		} else if (dw < -0.52) {
-//			String.class.getName();
-//		}
+		if (dw > 0.52) {
+			String.class.getName();
+		} else if (dw < -0.52) {
+			String.class.getName();
+		}
 		
 		if (logger.isDebugEnabled()) {
 			logger.debug("updateTurn: dw: " + dw);
