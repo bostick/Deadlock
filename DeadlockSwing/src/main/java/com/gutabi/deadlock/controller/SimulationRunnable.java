@@ -63,13 +63,13 @@ public class SimulationRunnable implements Runnable {
 				t += MODEL.dt;
 			}
 			
-			VIEW.repaint();
+			VIEW.repaintCanvas();
 			
 		} // outer
 		
 		MODEL.world.postStop();
 		
-		VIEW.repaint();
+		VIEW.repaintCanvas();
 		
 	}
 	

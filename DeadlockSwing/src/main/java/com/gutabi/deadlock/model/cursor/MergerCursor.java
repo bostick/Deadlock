@@ -25,13 +25,13 @@ public class MergerCursor extends Cursor {
 		return shape;
 	}
 	
-	public void paint(RenderingContext ctxt) {
+	public void draw(RenderingContext ctxt) {
 	
 		if (p == null) {
 			return;
 		}
 		
-		shape.paint(ctxt);
+		shape.draw(ctxt);
 		
 	}
 

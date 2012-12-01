@@ -17,6 +17,6 @@ public abstract class Cursor {
 	
 	public abstract Shape getShape();
 	
-	public abstract void paint(RenderingContext ctxt);
+	public abstract void draw(RenderingContext ctxt);
 	
 }

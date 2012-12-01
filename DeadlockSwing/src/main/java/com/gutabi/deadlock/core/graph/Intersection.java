@@ -15,7 +15,7 @@ public class Intersection extends Vertex {
 		super(p);
 	}
 	
-	public boolean isDeleteable() {
+	public boolean isUserDeleteable() {
 		return true;
 	}
 	

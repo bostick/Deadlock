@@ -55,7 +55,7 @@ public class Road extends Edge {
 	protected Color color;
 	protected Color hiliteColor;
 	
-	private EdgeDirection direction;
+	private Direction direction;
 	
 	private int hash;
 	
@@ -80,7 +80,7 @@ public class Road extends Edge {
 		color = Color.GRAY;
 		hiliteColor = new Color(0xff ^ 0x88, 0xff ^ 0x88, 0xff ^ 0x88, 0xff);
 		
-		direction = EdgeDirection.NONE;
+//		direction = Direction.NONE;
 		
 		computeProperties();
 		
@@ -103,9 +103,9 @@ public class Road extends Edge {
 			if ((dec & 4) == 4) {
 				
 				if ((dec & 8) == 0) {
-					direction = EdgeDirection.STARTTOEND;
+					direction = Direction.STARTTOEND;
 				} else {
-					direction = EdgeDirection.ENDTOSTART;
+					direction = Direction.ENDTOSTART;
 				}
 				
 			}
@@ -181,11 +181,11 @@ public class Road extends Edge {
 		return endBorderPoint.center;
 	}
 	
-	public void setDirection(Axis a, EdgeDirection dir) {
-		if (a == Axis.NONE) {
+	public void setDirection(Axis a, Direction dir) {
+		if (a == null) {
 			this.direction = dir;
 			
-			if (dir == EdgeDirection.STARTTOEND) {
+			if (dir == Direction.STARTTOEND) {
 				
 				Capsule c = seq.getCapsule(capsuleCount()-2);
 				
@@ -199,7 +199,7 @@ public class Road extends Edge {
 				
 				arrowPointer = new Triangle(p0, p1, p2);
 				
-			} else if (dir == EdgeDirection.ENDTOSTART) {
+			} else if (dir == Direction.ENDTOSTART) {
 				
 				Capsule c = seq.getCapsule(1);
 				
@@ -224,8 +224,8 @@ public class Road extends Edge {
 		}
 	}
 	
-	public EdgeDirection getDirection(Axis a) {
-		if (a == Axis.NONE) {
+	public Direction getDirection(Axis a) {
+		if (a == null) {
 			return direction;
 		} else {
 			throw new IllegalArgumentException();
@@ -233,12 +233,12 @@ public class Road extends Edge {
 	}
 	
 	public Vertex getReferenceVertex(Axis a) {
-		assert a == Axis.NONE;
+		assert a == null;
 		return start;
 	}
 	
 	public Vertex getOtherVertex(Axis a) {
-		assert a == Axis.NONE;
+		assert a == null;
 		return end;
 	}
 	
@@ -253,11 +253,11 @@ public class Road extends Edge {
 	public boolean canTravelFromTo(Vertex a, Vertex b) {
 		if (a == start) {
 			assert b == end;
-			return direction != EdgeDirection.ENDTOSTART;
+			return direction != Direction.ENDTOSTART;
 		} else {
 			assert a == end;
 			assert b == start;
-			return direction != EdgeDirection.STARTTOEND;
+			return direction != Direction.STARTTOEND;
 		}
 	}
 	
@@ -285,17 +285,18 @@ public class Road extends Edge {
 		 * there may be multiple roads between start and end, so don't just blindly set it to totalLength
 		 */
 		if (totalLength < cur) {
-			switch (direction) {
-			case NONE:
+			if (direction != null) {
+				switch (direction) {
+				case STARTTOEND:
+					distances[start.id][end.id] = totalLength;
+					break;
+				case ENDTOSTART:
+			    	distances[end.id][start.id] = totalLength;
+					break;
+				}
+			} else {
 				distances[start.id][end.id] = totalLength;
 		    	distances[end.id][start.id] = totalLength;
-				break;
-			case STARTTOEND:
-				distances[start.id][end.id] = totalLength;
-				break;
-			case ENDTOSTART:
-		    	distances[end.id][start.id] = totalLength;
-				break;
 			}
 		}
 	}
@@ -434,7 +435,7 @@ public class Road extends Edge {
 	
 	
 	
-	public boolean isDeleteable() {
+	public boolean isUserDeleteable() {
 		return true;
 	}
 	
@@ -740,7 +741,7 @@ public class Road extends Edge {
 		seq.paint(ctxt);
 		
 		if (ctxt.type == RenderingContextType.CANVAS) {
-			if (direction != EdgeDirection.NONE) {
+			if (direction != null) {
 				
 				ctxt.setStroke(directionStroke);
 				ctxt.setColor(Color.LIGHT_GRAY);

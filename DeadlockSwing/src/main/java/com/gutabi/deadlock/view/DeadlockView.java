@@ -11,10 +11,11 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
-import java.io.File;
+import java.net.URL;
 
 import javax.imageio.ImageIO;
 import javax.swing.BoxLayout;
+import javax.swing.JApplet;
 import javax.swing.JFrame;
 
 import org.apache.log4j.Logger;
@@ -34,7 +35,8 @@ public class DeadlockView {
 	public static final int PREVIEW_WIDTH = 100;
 	public static final int PREVIEW_HEIGHT = 100;
 	
-	public JFrame frame;
+	public URL codebase;
+//	private JFrame frame;
 	public WorldCanvas canvas;
 	public ControlPanel controlPanel;
 	public PreviewPanel previewPanel;
@@ -63,16 +65,14 @@ public class DeadlockView {
 	
 	public void init() throws Exception {
 		
-		frame = createFrame(false);
-		
 		assert canvas.getWidth() == CANVAS_WIDTH;
 		assert canvas.getHeight() == CANVAS_HEIGHT;
 		
 		worldViewport = new AABB(0, 0, CANVAS_WIDTH / PIXELS_PER_METER_DEBUG, CANVAS_HEIGHT / PIXELS_PER_METER_DEBUG);
 		
-		sheet = ImageIO.read(new File("media\\sheet.png"));
-		explosionSheet = ImageIO.read(new File("media\\explosionSheet.png"));
-		titleBackground = ImageIO.read(new File("media\\title_background.png"));
+		sheet = ImageIO.read(new URL(codebase, "media/sheet.png"));
+		explosionSheet = ImageIO.read(new URL(codebase, "media\\explosionSheet.png"));
+		titleBackground = ImageIO.read(new URL(codebase, "media\\title_background.png"));
 		
 		quadrantGrass = new BufferedImage(
 				512,
@@ -93,7 +93,7 @@ public class DeadlockView {
 		
 	}
 	
-	public JFrame createFrame(boolean fullScreen) {
+	public JFrame setupFrame() {
 		
 		JFrame newFrame;
 		
@@ -120,6 +120,31 @@ public class DeadlockView {
 		newFrame.setLocation((int)(WindowInfo.windowLoc().x), (int)(WindowInfo.windowLoc().y));
 		
 		return newFrame;
+	}
+	
+	public void setupApplet(JApplet app) {
+		
+//		app.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+//		app.setJMenuBar(null);
+		
+		canvas = new WorldCanvas();
+		canvas.setFocusable(true);
+		
+		previewPanel = new PreviewPanel();
+		
+		controlPanel = new ControlPanel();
+		controlPanel.init();
+		
+		Container cp = app.getContentPane();
+		cp.setLayout(new BoxLayout(cp, BoxLayout.X_AXIS));
+		cp.add(canvas);
+		cp.add(controlPanel);
+		
+//		app.pack();
+		
+		app.setSize((int)(WindowInfo.windowDim().width), (int)(WindowInfo.windowDim().height));
+		app.setLocation((int)(WindowInfo.windowLoc().x), (int)(WindowInfo.windowLoc().y));
 	}
 	
 	public Point canvasToWorld(Point p) {
@@ -192,7 +217,7 @@ public class DeadlockView {
 			}
 			
 			if (MODEL.cursor != null) {
-				MODEL.cursor.paint(ctxt);
+				MODEL.cursor.draw(ctxt);
 			}
 			
 			if (MODEL.FPS_DRAW) {
@@ -209,7 +234,7 @@ public class DeadlockView {
 		
 	}
 	
-	public void repaint() {
+	public void repaintCanvas() {
 		assert !Thread.holdsLock(MODEL);
 		
 		Graphics2D g2 = (Graphics2D)canvas.bs.getDrawGraphics();
@@ -220,8 +245,12 @@ public class DeadlockView {
 		
 		g2.dispose();
 		
-		controlPanel.repaint();
+//		controlPanel.repaint();
 		
+	}
+	
+	public void repaintControlPanel() {
+		controlPanel.repaint();
 	}
 	
 	public void renderWorldBackground() {

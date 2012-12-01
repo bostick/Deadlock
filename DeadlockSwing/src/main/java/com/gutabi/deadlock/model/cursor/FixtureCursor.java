@@ -27,7 +27,7 @@ public class FixtureCursor extends Cursor {
 	
 	public FixtureCursor() {
 		
-		axis = Axis.NONE;
+//		axis = Axis.NONE;
 	}
 	
 	public void setPoint(Point p) {
@@ -119,7 +119,7 @@ public class FixtureCursor extends Cursor {
 		return shape.worldSink.center;
 	}
 	
-	public void paint(RenderingContext ctxt) {
+	public void draw(RenderingContext ctxt) {
 		
 		if (p == null) {
 			return;
@@ -129,7 +129,7 @@ public class FixtureCursor extends Cursor {
 			
 		} else {
 			
-			shape.paint(ctxt);
+			shape.draw(ctxt);
 			
 		}
 		

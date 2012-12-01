@@ -1,31 +1,26 @@
 package com.gutabi.deadlock.model.cursor;
 
-
-import java.awt.Color;
-
 import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.core.geom.Circle;
 import com.gutabi.deadlock.core.geom.Shape;
 import com.gutabi.deadlock.core.graph.Vertex;
 import com.gutabi.deadlock.model.Cursor;
 import com.gutabi.deadlock.view.RenderingContext;
 
-//@SuppressWarnings("static-access")
-public class RegularCursor extends Cursor {
+public class StraightEdgeCursor extends Cursor {
 	
-//	public static java.awt.Stroke solidOutlineStroke = new BasicStroke(0.1f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
+	public final Vertex first;
 	
-	Circle shape;
+	StraightEdgeCursorShape shape;
 	
-	public RegularCursor() {
-		
+	public StraightEdgeCursor(Vertex first) {
+		this.first = first;
 	}
 	
 	public void setPoint(Point p) {
 		this.p = p;
 		
 		if (p != null) {
-			shape = new Circle(null, p, Vertex.INIT_VERTEX_RADIUS);
+			shape = new StraightEdgeCursorShape(first.p, p);
 		} else {
 			shape = null;
 		}
@@ -42,11 +37,7 @@ public class RegularCursor extends Cursor {
 			return;
 		}
 		
-		ctxt.setColor(Color.GRAY);
-		ctxt.setPixelStroke();
-		
 		shape.draw(ctxt);
 		
 	}
-	
 }

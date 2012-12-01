@@ -10,8 +10,7 @@ import com.gutabi.deadlock.core.geom.Line;
 import com.gutabi.deadlock.core.geom.Quad;
 import com.gutabi.deadlock.core.geom.Shape;
 import com.gutabi.deadlock.core.geom.SweepableShape;
-import com.gutabi.deadlock.model.fixture.MergerSink;
-import com.gutabi.deadlock.model.fixture.MergerSource;
+import com.gutabi.deadlock.model.Fixture;
 import com.gutabi.deadlock.view.RenderingContext;
 
 @SuppressWarnings("static-access")
@@ -25,16 +24,16 @@ public class Merger extends Edge {
 	private Color color;
 	private Color hiliteColor;
 	
-	public final MergerSink top;
-	public final MergerSink left;
-	public final MergerSource right;
-	public final MergerSource bottom;
+	public final Fixture top;
+	public final Fixture left;
+	public final Fixture right;
+	public final Fixture bottom;
 	
 	private double[] cumulativeLengthsFromTop;
 	private double[] cumulativeLengthsFromLeft;
 	
-	private EdgeDirection leftRightDir;
-	private EdgeDirection topBottomDir;
+	private Direction leftRightDir;
+	private Direction topBottomDir;
 	
 	private Quad shape;
 	
@@ -48,16 +47,26 @@ public class Merger extends Edge {
 		color = Color.BLUE;
 		hiliteColor = Color.ORANGE;
 		
-		top = new MergerSink(new Point(ul.x + MERGER_WIDTH/2, ul.y), Axis.TOPBOTTOM);
-		left = new MergerSink(new Point(ul.x, ul.y + MERGER_HEIGHT/2), Axis.LEFTRIGHT);
-		right = new MergerSource(new Point(ul.x + MERGER_WIDTH, ul.y + MERGER_HEIGHT/2), Axis.LEFTRIGHT);
-		bottom = new MergerSource(new Point(ul.x + MERGER_WIDTH/2, ul.y+MERGER_HEIGHT), Axis.TOPBOTTOM);
+		top = new Fixture(new Point(ul.x + MERGER_WIDTH/2, ul.y), Axis.TOPBOTTOM);
+		left = new Fixture(new Point(ul.x, ul.y + MERGER_HEIGHT/2), Axis.LEFTRIGHT);
+		right = new Fixture(new Point(ul.x + MERGER_WIDTH, ul.y + MERGER_HEIGHT/2), Axis.LEFTRIGHT);
+		bottom = new Fixture(new Point(ul.x + MERGER_WIDTH/2, ul.y+MERGER_HEIGHT), Axis.TOPBOTTOM);
 		
-		top.matchingSource = bottom;
-		bottom.matchingSink = top;
+		top.match = bottom;
+		bottom.match = top;
 		
-		left.matchingSource = right;
-		right.matchingSink = left;
+		left.match = right;
+		right.match = left;
+		
+//		top.type = FixtureType.SINK;
+//		bottom.type = FixtureType.SOURCE;
+//		left.type = FixtureType.SINK;
+//		right.type = FixtureType.SOURCE;
+		
+		top.s = Side.BOTTOM;
+		bottom.s = Side.BOTTOM;
+		left.s = Side.RIGHT;
+		right.s = Side.RIGHT;
 		
 		Point p0 = ul;
 		Point p1 = new Point(ul.x + MERGER_WIDTH, ul.y);
@@ -101,7 +110,7 @@ public class Merger extends Edge {
 	}
 	
 	public Vertex getReferenceVertex(Axis a) {
-		assert a != Axis.NONE;
+		assert a != null;
 		if (a == Axis.LEFTRIGHT) {
 			return left;
 		} else {
@@ -110,7 +119,7 @@ public class Merger extends Edge {
 	}
 	
 	public Vertex getOtherVertex(Axis a) {
-		assert a != Axis.NONE;
+		assert a != null;
 		if (a == Axis.LEFTRIGHT) {
 			return right;
 		} else {
@@ -118,7 +127,7 @@ public class Merger extends Edge {
 		}
 	}
 	
-	public void setDirection(Axis a, EdgeDirection dir) {
+	public void setDirection(Axis a, Direction dir) {
 		if (a == Axis.LEFTRIGHT) {
 			this.leftRightDir = dir;
 		} else if (a == Axis.TOPBOTTOM) {
@@ -128,7 +137,7 @@ public class Merger extends Edge {
 		}
 	}
 	
-	public EdgeDirection getDirection(Axis a) {
+	public Direction getDirection(Axis a) {
 		if (a == Axis.LEFTRIGHT) {
 			return leftRightDir;
 		} if (a == Axis.TOPBOTTOM) {
@@ -141,17 +150,17 @@ public class Merger extends Edge {
 	public boolean canTravelFromTo(Vertex a, Vertex b) {
 		if (a == top) {
 			assert b == bottom;
-			return topBottomDir != EdgeDirection.ENDTOSTART;
+			return topBottomDir != Direction.ENDTOSTART;
 		} else if (a == left) {
 			assert b == right;
-			return leftRightDir != EdgeDirection.ENDTOSTART;
+			return leftRightDir != Direction.ENDTOSTART;
 		} else if (a == right) {
 			assert b == left;
-			return leftRightDir != EdgeDirection.STARTTOEND;
+			return leftRightDir != Direction.STARTTOEND;
 		} else {
 			assert a == bottom;
 			assert b == top;
-			return topBottomDir != EdgeDirection.STARTTOEND;
+			return topBottomDir != Direction.STARTTOEND;
 		}
 	}
 	
@@ -202,7 +211,7 @@ public class Merger extends Edge {
 	
 	
 	@Override
-	public boolean isDeleteable() {
+	public boolean isUserDeleteable() {
 		return true;
 	}
 	

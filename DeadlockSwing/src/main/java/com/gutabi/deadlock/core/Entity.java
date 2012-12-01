@@ -10,7 +10,7 @@ public abstract class Entity {
 	
 	public abstract Entity hitTest(Point p);
 	
-	public abstract boolean isDeleteable();
+	public abstract boolean isUserDeleteable();
 	
 	public abstract void preStart();
 	

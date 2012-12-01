@@ -192,7 +192,7 @@ public class Graph implements Sweepable {
 	
 	private void automaticMergeOrDestroy(Vertex v) {
 		
-		if (!v.isDeleteable()) {
+		if (!v.isUserDeleteable()) {
 			return;
 		}
 			
@@ -377,7 +377,7 @@ public class Graph implements Sweepable {
 					edges.remove(e);
 					continue;
 				}
-				if (e.getDirection(Axis.NONE) == EdgeDirection.ENDTOSTART) {
+				if (e.getDirection(null) == Direction.ENDTOSTART) {
 					edges.remove(e);
 					continue;
 				}
@@ -392,7 +392,7 @@ public class Graph implements Sweepable {
 					edges.remove(e);
 					continue;
 				}
-				if (e.getDirection(Axis.NONE) == EdgeDirection.STARTTOEND) {
+				if (e.getDirection(null) == Direction.STARTTOEND) {
 					edges.remove(e);
 					continue;
 				}
@@ -412,7 +412,7 @@ public class Graph implements Sweepable {
 					other = start.m.bottom;
 					if (isDeadEnd(start.m, other, end)) {
 						edges.remove(start.m);
-					} else if (start.m.getDirection(Axis.TOPBOTTOM) == EdgeDirection.ENDTOSTART) {
+					} else if (start.m.getDirection(Axis.TOPBOTTOM) == Direction.ENDTOSTART) {
 						edges.remove(start.m);
 					} else if (distances[other.id][end.id] == Double.POSITIVE_INFINITY) {
 						edges.remove(start.m);
@@ -421,7 +421,7 @@ public class Graph implements Sweepable {
 					other = start.m.right;
 					if (isDeadEnd(start.m, other, end)) {
 						edges.remove(start.m);
-					} else if (start.m.getDirection(Axis.LEFTRIGHT) == EdgeDirection.ENDTOSTART) {
+					} else if (start.m.getDirection(Axis.LEFTRIGHT) == Direction.ENDTOSTART) {
 						edges.remove(start.m);
 					} else if (distances[other.id][end.id] == Double.POSITIVE_INFINITY) {
 						edges.remove(start.m);
@@ -430,7 +430,7 @@ public class Graph implements Sweepable {
 					other = start.m.left;
 					if (isDeadEnd(start.m, other, end)) {
 						edges.remove(start.m);
-					} else if (start.m.getDirection(Axis.LEFTRIGHT) == EdgeDirection.STARTTOEND) {
+					} else if (start.m.getDirection(Axis.LEFTRIGHT) == Direction.STARTTOEND) {
 						edges.remove(start.m);
 					} else if (distances[other.id][end.id] == Double.POSITIVE_INFINITY) {
 						edges.remove(start.m);
@@ -440,7 +440,7 @@ public class Graph implements Sweepable {
 					other = start.m.top;
 					if (isDeadEnd(start.m, other, end)) {
 						edges.remove(start.m);
-					} else if (start.m.getDirection(Axis.LEFTRIGHT) == EdgeDirection.STARTTOEND) {
+					} else if (start.m.getDirection(Axis.LEFTRIGHT) == Direction.STARTTOEND) {
 						edges.remove(start.m);
 					} else if (distances[other.id][end.id] == Double.POSITIVE_INFINITY) {
 						edges.remove(start.m);
@@ -736,16 +736,18 @@ public class Graph implements Sweepable {
 		f1Pts.add(p);
 		
 		int directionMask = 0;
-		switch (r.getDirection(Axis.NONE)) {
-		case NONE:
+		Direction dir = r.getDirection(null);
+		if (dir != null) {
+			switch (dir) {
+			case STARTTOEND:
+				directionMask = 4;
+				break;
+			case ENDTOSTART:
+				directionMask = 4 + 8;
+				break;
+			}
+		} else {
 			directionMask = 0;
-			break;
-		case STARTTOEND:
-			directionMask = 4;
-			break;
-		case ENDTOSTART:
-			directionMask = 4 + 8;
-			break;
 		}
 		
 		createRoad(eStart, v, f1Pts, (r.startSign.isEnabled()?1:0)+2+directionMask);
@@ -898,17 +900,19 @@ public class Graph implements Sweepable {
 		} else {
 			
 			int directionMask = 0;
-			if (e1.getDirection(Axis.NONE) == e2.getDirection(Axis.NONE)) {
-				switch (e1.getDirection(Axis.NONE)) {
-				case NONE:
+			if (e1.getDirection(null) == e2.getDirection(null)) {
+				Direction dir = e1.getDirection(null);
+				if (dir != null) {
+					switch (dir) {
+					case STARTTOEND:
+						directionMask = 4;
+						break;
+					case ENDTOSTART:
+						directionMask = 4 + 8;
+						break;
+					}
+				} else {
 					directionMask = 0;
-					break;
-				case STARTTOEND:
-					directionMask = 4;
-					break;
-				case ENDTOSTART:
-					directionMask = 4 + 8;
-					break;
 				}
 			}
 			

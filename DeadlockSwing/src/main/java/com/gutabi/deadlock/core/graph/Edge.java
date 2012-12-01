@@ -14,9 +14,9 @@ public abstract class Edge extends Entity {
 	
 	public abstract double getTotalLength(Vertex a, Vertex b);
 	
-	public abstract EdgeDirection getDirection(Axis a);
+	public abstract Direction getDirection(Axis a);
 	
-	public abstract void setDirection(Axis a, EdgeDirection dir);
+	public abstract void setDirection(Axis a, Direction dir);
 	
 	
 	public abstract SweepableShape getShape();

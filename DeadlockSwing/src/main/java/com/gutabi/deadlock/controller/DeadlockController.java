@@ -20,23 +20,25 @@ import com.gutabi.deadlock.core.geom.ShapeUtils;
 import com.gutabi.deadlock.core.geom.SweepEvent;
 import com.gutabi.deadlock.core.geom.SweepEventType;
 import com.gutabi.deadlock.core.graph.Axis;
-import com.gutabi.deadlock.core.graph.EdgeDirection;
+import com.gutabi.deadlock.core.graph.Direction;
 import com.gutabi.deadlock.core.graph.EdgePosition;
 import com.gutabi.deadlock.core.graph.GraphPosition;
 import com.gutabi.deadlock.core.graph.Intersection;
 import com.gutabi.deadlock.core.graph.Merger;
 import com.gutabi.deadlock.core.graph.Road;
 import com.gutabi.deadlock.core.graph.RoadPosition;
+import com.gutabi.deadlock.core.graph.Side;
 import com.gutabi.deadlock.core.graph.Vertex;
 import com.gutabi.deadlock.core.graph.VertexPosition;
 import com.gutabi.deadlock.model.Car;
+import com.gutabi.deadlock.model.Fixture;
+import com.gutabi.deadlock.model.FixtureType;
 import com.gutabi.deadlock.model.StopSign;
 import com.gutabi.deadlock.model.Stroke;
 import com.gutabi.deadlock.model.cursor.FixtureCursor;
 import com.gutabi.deadlock.model.cursor.MergerCursor;
 import com.gutabi.deadlock.model.cursor.RegularCursor;
-import com.gutabi.deadlock.model.fixture.WorldSink;
-import com.gutabi.deadlock.model.fixture.WorldSource;
+import com.gutabi.deadlock.model.cursor.StraightEdgeCursor;
 
 @SuppressWarnings("static-access")
 public class DeadlockController implements ActionListener {
@@ -135,7 +137,7 @@ public class DeadlockController implements ActionListener {
 					draftStart(lastPressCanvasPoint);
 					draftMove(lastDragCanvasPoint);
 					
-					VIEW.repaint();
+					VIEW.repaintCanvas();
 					
 				} else {
 					assert false;
@@ -147,13 +149,14 @@ public class DeadlockController implements ActionListener {
 				
 				draftMove(lastDragCanvasPoint);
 				
-				VIEW.repaint();
+				VIEW.repaintCanvas();
 				break;
 				
 			case RUNNING:
 			case PAUSED:
 			case MERGERCURSOR:
 			case FIXTURECURSOR:
+			case STRAIGHTEDGECURSOR:
 			case MENU:
 				;
 				break;
@@ -175,7 +178,8 @@ public class DeadlockController implements ActionListener {
 				VIEW.pan(new Point(dx, dy));
 				
 				VIEW.renderWorldBackground();
-				VIEW.repaint();
+				VIEW.repaintCanvas();
+				VIEW.repaintControlPanel();
 				
 			}
 			
@@ -225,13 +229,15 @@ public class DeadlockController implements ActionListener {
 				draftEnd();
 				
 				VIEW.renderWorldBackground();
-				VIEW.repaint();
+				VIEW.repaintCanvas();
+				VIEW.repaintControlPanel();
 				
 				break;
 			case RUNNING:
 			case PAUSED:
 			case MERGERCURSOR:
 			case FIXTURECURSOR:
+			case STRAIGHTEDGECURSOR:
 			case MENU:
 				;
 				break;
@@ -272,8 +278,25 @@ public class DeadlockController implements ActionListener {
 				Entity closest = MODEL.world.hitTest(lastMovedWorldPoint);
 				MODEL.hilited = closest;
 				
+				if (MODEL.cursor != null) {
+					if (MODEL.grid) {
+						
+						Point closestGridPoint = new Point(2 * Math.round(0.5 * lastMovedWorldPoint.x), 2 * Math.round(0.5 * lastMovedWorldPoint.y));
+						MODEL.cursor.setPoint(closestGridPoint);
+						
+					} else {
+						MODEL.cursor.setPoint(lastMovedWorldPoint);
+					}
+				}
+				
+				VIEW.repaintCanvas();
+				break;
+				
 			case MERGERCURSOR:
 			case FIXTURECURSOR:
+			case STRAIGHTEDGECURSOR:
+				
+				MODEL.hilited = null;
 				
 				if (MODEL.cursor != null) {
 					if (MODEL.grid) {
@@ -286,7 +309,7 @@ public class DeadlockController implements ActionListener {
 					}
 				}
 				
-				VIEW.repaint();
+				VIEW.repaintCanvas();
 				break;
 			case MENU:
 				break;
@@ -311,12 +334,13 @@ public class DeadlockController implements ActionListener {
 			case IDLE:
 			case MERGERCURSOR:
 			case FIXTURECURSOR:
+			case STRAIGHTEDGECURSOR:
 				
 				if (MODEL.cursor != null) {
 					MODEL.cursor.setPoint(null);
 				}
 				
-				VIEW.repaint();
+				VIEW.repaintCanvas();
 				break;
 			}
 			
@@ -343,7 +367,7 @@ public class DeadlockController implements ActionListener {
 			case IDLE:
 			case MERGERCURSOR:
 			case FIXTURECURSOR:
-				
+			case STRAIGHTEDGECURSOR:
 				if (MODEL.cursor != null) {
 					if (MODEL.grid) {
 						
@@ -355,7 +379,7 @@ public class DeadlockController implements ActionListener {
 					}
 				}
 				
-				VIEW.repaint();
+				VIEW.repaintCanvas();
 				break;
 			}
 			
@@ -370,18 +394,84 @@ public class DeadlockController implements ActionListener {
 			
 			if (MODEL.world.completelyContains(MODEL.cursor.getShape())) {
 				
-				if (MODEL.world.pureGraphBestHitTest(MODEL.cursor.getShape()) == null) {
+				Entity hit = MODEL.world.pureGraphBestHitTest(MODEL.cursor.getShape());
+				if (hit == null) {
 					
 					MODEL.world.addVertexTop(new Intersection(MODEL.cursor.getPoint()));
 					
 					VIEW.renderWorldBackground();
-					VIEW.repaint();
+					VIEW.repaintControlPanel();
+					VIEW.repaintCanvas();
+					
+				} else if (hit instanceof Vertex) {
+					
+					mode = ControlMode.STRAIGHTEDGECURSOR;
+					
+					MODEL.cursor = new StraightEdgeCursor((Vertex)hit);
+					
+					MODEL.cursor.setPoint(lastMovedWorldPoint);
+					
+					VIEW.repaintCanvas();
 					
 				}
 			}
 			
 			break;
-		default:
+			
+		case STRAIGHTEDGECURSOR:
+			
+			Vertex first = ((StraightEdgeCursor)MODEL.cursor).first;
+			Vertex second = null;
+			
+			Entity hit = MODEL.world.pureGraphBestHitTest(MODEL.cursor.getShape());
+			if (hit == null) {
+				
+				second = new Intersection(MODEL.cursor.getPoint());
+				
+				MODEL.world.addVertexTop(second);
+				
+			} else if (hit instanceof Vertex) {
+				
+				second = (Vertex)hit;
+				
+			} else if (hit instanceof Road) {
+				
+				RoadPosition pos = MODEL.world.findClosestRoadPosition(MODEL.cursor.getPoint(), Vertex.INIT_VERTEX_RADIUS);
+				
+				assert pos != null;
+				
+				second = MODEL.world.splitRoadTop(pos);
+				
+			}
+			
+			if (second != null) {
+				
+				List<Point> roadPts = new ArrayList<Point>();
+				roadPts.add(first.p);
+				roadPts.add(second.p);
+				MODEL.world.createRoadTop(first, second, roadPts);
+				
+				VIEW.renderWorldBackground();
+				VIEW.repaintControlPanel();
+				
+			}
+			
+			mode = ControlMode.IDLE;
+			
+			MODEL.cursor = new RegularCursor();
+			
+			MODEL.cursor.setPoint(lastMovedWorldPoint);
+			
+			VIEW.repaintCanvas();
+			
+			break;
+			
+		case RUNNING:
+		case PAUSED:
+		case MERGERCURSOR:
+		case FIXTURECURSOR:
+		case DRAFTING:
+		case MENU:
 			break;
 		}
 		
@@ -398,7 +488,7 @@ public class DeadlockController implements ActionListener {
 			
 			MODEL.cursor.setPoint(lastMovedWorldPoint);
 			
-			VIEW.repaint();
+			VIEW.repaintCanvas();
 			
 			break;
 		case FIXTURECURSOR:
@@ -407,11 +497,25 @@ public class DeadlockController implements ActionListener {
 			
 			if (MODEL.world.pureGraphBestHitTest(MODEL.cursor.getShape()) == null) {
 				
-				WorldSource source = new WorldSource(fc.getSourcePoint(), axis);
-				WorldSink sink = new WorldSink(fc.getSinkPoint(), axis);
+				Fixture source = new Fixture(fc.getSourcePoint(), axis);
+				Fixture sink = new Fixture(fc.getSinkPoint(), axis);
 				
-				source.matchingSink = sink;
-				sink.matchingSource = source;
+				source.type = FixtureType.SOURCE;
+				sink.type = FixtureType.SINK;
+				
+				source.match = sink;
+				sink.match = source;
+				
+				switch (axis) {
+				case TOPBOTTOM:
+					source.s = Side.BOTTOM;
+					sink.s = Side.BOTTOM;
+					break;
+				case LEFTRIGHT:
+					source.s = Side.RIGHT;
+					sink.s = Side.RIGHT;
+					break;
+				}
 				
 				MODEL.world.addVertexTop(source);
 				
@@ -424,12 +528,18 @@ public class DeadlockController implements ActionListener {
 				MODEL.cursor.setPoint(lastMovedWorldPoint);
 				
 				VIEW.renderWorldBackground();
-				VIEW.repaint();
+				VIEW.repaintCanvas();
+				VIEW.repaintControlPanel();
 				
 			}
 			
 			break;
-		default:
+		case RUNNING:
+		case PAUSED:
+		case MERGERCURSOR:
+		case STRAIGHTEDGECURSOR:
+		case DRAFTING:
+		case MENU:
 			break;
 		}
 		
@@ -440,7 +550,7 @@ public class DeadlockController implements ActionListener {
 		MODEL.grid = !MODEL.grid;
 		
 		VIEW.renderWorldBackground();
-		VIEW.repaint();
+		VIEW.repaintCanvas();
 		
 	}
 	
@@ -448,7 +558,7 @@ public class DeadlockController implements ActionListener {
 		
 		if (MODEL.hilited != null) {
 			
-			if (MODEL.hilited.isDeleteable()) {
+			if (MODEL.hilited.isUserDeleteable()) {
 				
 				if (MODEL.hilited instanceof Car) {
 					Car c = (Car)MODEL.hilited;
@@ -486,7 +596,8 @@ public class DeadlockController implements ActionListener {
 		}
 		
 		VIEW.renderWorldBackground();
-		VIEW.repaint();
+		VIEW.repaintCanvas();
+		VIEW.repaintControlPanel();
 		
 	}
 	
@@ -503,7 +614,7 @@ public class DeadlockController implements ActionListener {
 					s.setEnabled(true);
 					
 					VIEW.renderWorldBackground();
-					VIEW.repaint();
+					VIEW.repaintCanvas();
 				}
 				
 			} else {
@@ -514,7 +625,7 @@ public class DeadlockController implements ActionListener {
 				
 				MODEL.cursor.setPoint(lastMovedWorldPoint);
 				
-				VIEW.repaint();
+				VIEW.repaintCanvas();
 				
 			}
 			
@@ -534,7 +645,8 @@ public class DeadlockController implements ActionListener {
 					MODEL.cursor.setPoint(lastMovedWorldPoint);
 					
 					VIEW.renderWorldBackground();
-					VIEW.repaint();
+					VIEW.repaintCanvas();
+					VIEW.repaintControlPanel();
 					
 				}
 				
@@ -544,6 +656,7 @@ public class DeadlockController implements ActionListener {
 		case RUNNING:
 		case PAUSED:
 		case FIXTURECURSOR:
+		case STRAIGHTEDGECURSOR:
 		case DRAFTING:
 		case MENU:
 			break;
@@ -556,13 +669,15 @@ public class DeadlockController implements ActionListener {
 		switch (mode) {
 		case MERGERCURSOR:
 		case FIXTURECURSOR:
+		case STRAIGHTEDGECURSOR:
+			
 			mode = ControlMode.IDLE;
 			
 			MODEL.cursor = new RegularCursor();
 			
 			MODEL.cursor.setPoint(lastMovedWorldPoint);
 			
-			VIEW.repaint();
+			VIEW.repaintCanvas();
 			
 			break;
 		case RUNNING:
@@ -585,10 +700,28 @@ public class DeadlockController implements ActionListener {
 				if (MODEL.hilited instanceof Road) {
 					Road r = (Road)MODEL.hilited;
 					
-					r.setDirection(Axis.NONE, EdgeDirection.STARTTOEND);
+					r.setDirection(null, Direction.STARTTOEND);
 					
 					VIEW.renderWorldBackground();
-					VIEW.repaint();
+					VIEW.repaintCanvas();
+					
+				} else if (MODEL.hilited instanceof Fixture) {
+					Fixture f = (Fixture)MODEL.hilited;
+					
+					Fixture g = f.match;
+					
+					if (f.type != null) {
+						f.type = f.type.other();
+					}
+					if (g.type != null) {
+						g.type = g.type.other();
+					}
+					
+					f.s = f.s.other();
+					g.s = g.s.other();
+					
+					VIEW.renderWorldBackground();
+					VIEW.repaintCanvas();
 					
 				}
 				
@@ -611,10 +744,10 @@ public class DeadlockController implements ActionListener {
 				if (MODEL.hilited instanceof Road) {
 					Road r = (Road)MODEL.hilited;
 					
-					r.setDirection(Axis.NONE, EdgeDirection.ENDTOSTART);
+					r.setDirection(null, Direction.ENDTOSTART);
 					
 					VIEW.renderWorldBackground();
-					VIEW.repaint();
+					VIEW.repaintCanvas();
 					
 				}
 				
@@ -637,10 +770,10 @@ public class DeadlockController implements ActionListener {
 				if (MODEL.hilited instanceof Road) {
 					Road r = (Road)MODEL.hilited;
 					
-					r.setDirection(Axis.NONE, EdgeDirection.NONE);
+					r.setDirection(null, null);
 				
 					VIEW.renderWorldBackground();
-					VIEW.repaint();
+					VIEW.repaintCanvas();
 					
 				}
 				
@@ -672,6 +805,7 @@ public class DeadlockController implements ActionListener {
 			
 		case MERGERCURSOR:
 		case FIXTURECURSOR:
+		case STRAIGHTEDGECURSOR:
 			
 			if (MODEL.cursor != null) {
 				if (MODEL.grid) {
@@ -684,14 +818,14 @@ public class DeadlockController implements ActionListener {
 				}
 			}
 			
-			VIEW.repaint();
+			VIEW.renderWorldBackground();
+			VIEW.repaintCanvas();
+			VIEW.repaintControlPanel();
+			
 			break;
 		case MENU:
 			break;
 		}
-		
-		VIEW.renderWorldBackground();
-		VIEW.repaint();
 		
 	}
 	
@@ -714,6 +848,7 @@ public class DeadlockController implements ActionListener {
 			
 		case MERGERCURSOR:
 		case FIXTURECURSOR:
+		case STRAIGHTEDGECURSOR:
 			
 			if (MODEL.cursor != null) {
 				if (MODEL.grid) {
@@ -726,14 +861,14 @@ public class DeadlockController implements ActionListener {
 				}
 			}
 			
-			VIEW.repaint();
+			VIEW.renderWorldBackground();
+			VIEW.repaintCanvas();
+			VIEW.repaintControlPanel();
+			
 			break;
 		case MENU:
 			break;
 		}
-		
-		VIEW.renderWorldBackground();
-		VIEW.repaint();
 		
 	}
 	
@@ -859,7 +994,7 @@ public class DeadlockController implements ActionListener {
 			MODEL.DEBUG_DRAW = state;
 			
 			VIEW.renderWorldBackground();
-			VIEW.repaint();
+			VIEW.repaintCanvas();
 			
 		} else if (e.getActionCommand().equals("fpsDraw")) {
 			
@@ -868,7 +1003,7 @@ public class DeadlockController implements ActionListener {
 			MODEL.FPS_DRAW = state;
 			
 			VIEW.renderWorldBackground();
-			VIEW.repaint();
+			VIEW.repaintCanvas();
 			
 		}
 	}

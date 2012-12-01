@@ -3,7 +3,7 @@ package com.gutabi.deadlock.model.car;
 import org.apache.log4j.Logger;
 
 import com.gutabi.deadlock.model.Car;
-import com.gutabi.deadlock.model.fixture.WorldSource;
+import com.gutabi.deadlock.model.Fixture;
 
 
 //@SuppressWarnings("static-access")
@@ -13,7 +13,7 @@ public class NormalCar extends Car {
 	
 	static Logger logger = Logger.getLogger(NormalCar.class);
 	
-	public NormalCar(WorldSource s) {
+	public NormalCar(Fixture s) {
 		super(s);
 	}
 	
@@ -26,6 +26,6 @@ public class NormalCar extends Car {
 	}
 	
 	protected void computePath() {
-		overallPath = source.getShortestPathToMatchingSink();
+		overallPath = source.getShortestPathToMatch();
 	}
 }

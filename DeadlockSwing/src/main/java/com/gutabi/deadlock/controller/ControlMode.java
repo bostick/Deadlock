@@ -15,6 +15,8 @@ public enum ControlMode {
 	
 	FIXTURECURSOR,
 	
+	STRAIGHTEDGECURSOR,
+	
 	
 	
 	MENU

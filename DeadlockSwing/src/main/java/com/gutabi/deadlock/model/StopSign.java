@@ -48,7 +48,7 @@ public class StopSign extends Entity {
 		return p;
 	}
 	
-	public boolean isDeleteable() {
+	public boolean isUserDeleteable() {
 		return true;
 	}
 	

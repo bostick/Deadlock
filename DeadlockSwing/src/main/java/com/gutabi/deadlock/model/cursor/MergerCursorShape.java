@@ -72,11 +72,6 @@ public class MergerCursorShape extends Shape {
 	
 	@Override
 	public void draw(RenderingContext ctxt) {
-		assert false;
-	}
-	
-	public void paint(RenderingContext ctxt) {
-		
 		ctxt.setPixelStroke();
 		ctxt.setColor(Color.GRAY);
 		
@@ -92,7 +87,10 @@ public class MergerCursorShape extends Shape {
 			aabb.paint(ctxt);
 			
 		}
-		
+	}
+	
+	public void paint(RenderingContext ctxt) {
+		assert false;
 	}
 
 }

@@ -5,7 +5,9 @@ import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
 import java.io.IOException;
+import java.net.URL;
 
+import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -25,6 +27,8 @@ public class DeadlockMain  {
 		MODEL.world = new World();
 		MODEL.world.init();
 		
+		VIEW.codebase = new URL("file:.");
+		JFrame frame = VIEW.setupFrame();
 		VIEW.init();
 		
 		CONTROLLER.init();
@@ -33,12 +37,13 @@ public class DeadlockMain  {
 		
 		VIEW.renderWorldBackground();
 		
-		VIEW.frame.setVisible(true);
+		frame.setVisible(true);
 		VIEW.canvas.requestFocusInWindow();
 		
 		VIEW.canvas.postDisplay();
 		
-		VIEW.repaint();
+		VIEW.repaintCanvas();
+		VIEW.repaintControlPanel();
 	}
 	
 	public static Thread.UncaughtExceptionHandler handler = new Thread.UncaughtExceptionHandler() {

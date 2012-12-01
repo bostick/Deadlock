@@ -4,31 +4,37 @@ import static com.gutabi.deadlock.controller.DeadlockController.CONTROLLER;
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
-import java.io.IOException;
-
+import javax.swing.JApplet;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
 
 import org.apache.log4j.Logger;
 
 import com.gutabi.deadlock.controller.ControlMode;
+import com.gutabi.deadlock.model.World;
 
-public class DeadlockMainMenu  {
+@SuppressWarnings("serial")
+public class DeadlockApplet extends JApplet {
 	
 	static Logger logger = Logger.getLogger("deadlock");
 	
-	static void createAndShowGUI(String[] args) throws Exception {
+	static void createAndShowGUI(DeadlockApplet app) throws Exception {
 		
 		MODEL.init();
+		MODEL.world = new World();
+		MODEL.world.init();
 		
+		VIEW.codebase = app.getCodeBase();
+		VIEW.setupApplet(app);
 		VIEW.init();
 		
 		CONTROLLER.init();
 		
-		CONTROLLER.mode = ControlMode.MENU;
+		CONTROLLER.mode = ControlMode.IDLE;
 		
-		VIEW.frame.setVisible(true);
+		VIEW.renderWorldBackground();
+		
+		app.setVisible(true);
 		VIEW.canvas.requestFocusInWindow();
 		
 		VIEW.canvas.postDisplay();
@@ -44,23 +50,30 @@ public class DeadlockMainMenu  {
 		}
 	};
 	
-	public static void main(final String[] args) throws ClassNotFoundException, InstantiationException, IllegalAccessException, UnsupportedLookAndFeelException, IOException {
+	public void init() {
 		
 		Thread.setDefaultUncaughtExceptionHandler(handler);
 		
-		UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
-		
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					createAndShowGUI(args);
-				} catch (Exception e) {
-					e.printStackTrace();
-					System.exit(1);
+		try {
+			
+			UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+			
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					try {
+						createAndShowGUI(DeadlockApplet.this);
+					} catch (Exception e) {
+						e.printStackTrace();
+						System.exit(1);
+					}
 				}
-			}
-		});
+			});
+			
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+		}
+		
 	}
 	
 }

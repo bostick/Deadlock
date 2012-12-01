@@ -18,7 +18,6 @@ import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.Filter;
-import org.jbox2d.dynamics.Fixture;
 import org.jbox2d.dynamics.FixtureDef;
 
 import com.gutabi.deadlock.core.DMath;
@@ -37,8 +36,6 @@ import com.gutabi.deadlock.model.event.DrivingEvent;
 import com.gutabi.deadlock.model.event.VertexArrivalEvent;
 import com.gutabi.deadlock.model.event.VertexEvent;
 import com.gutabi.deadlock.model.event.VertexSpawnEvent;
-import com.gutabi.deadlock.model.fixture.WorldSink;
-import com.gutabi.deadlock.model.fixture.WorldSource;
 import com.gutabi.deadlock.view.RenderingContext;
 
 @SuppressWarnings("static-access")
@@ -104,7 +101,7 @@ public abstract class Car extends Entity {
 	public double startingTime;
 	public double crashingTime;
 	
-	public WorldSource source;
+	public Fixture source;
 	
 	protected GraphPositionPath overallPath;
 	
@@ -122,7 +119,7 @@ public abstract class Car extends Entity {
 	Quad localQuad;
 	protected Body b2dBody;
 	protected PolygonShape b2dShape;
-	protected Fixture b2dFixture;
+	protected org.jbox2d.dynamics.Fixture b2dFixture;
 	protected boolean b2dInited;
 	
 	/*
@@ -162,7 +159,7 @@ public abstract class Car extends Entity {
 	static Logger pathingLogger = Logger.getLogger("com.gutabi.deadlock.model.Car.pathing");
 	static Logger eventingLogger = Logger.getLogger("com.gutabi.deadlock.model.Car.eventing");
 	
-	public Car(WorldSource s) {
+	public Car(Fixture s) {
 		
 		state = CarStateEnum.DRIVING;
 		
@@ -389,7 +386,7 @@ public abstract class Car extends Entity {
 		return shape;
 	}
 	
-	public boolean isDeleteable() {
+	public boolean isUserDeleteable() {
 		return true;
 	}
 	
@@ -891,7 +888,7 @@ public abstract class Car extends Entity {
 		switch (state) {
 		case DRIVING: {
 			
-			WorldSink s = (WorldSink)overallPath.end.entity;
+			Fixture s = (Fixture)overallPath.end.entity;
 			boolean sinked = false;
 			if (Point.distance(p, s.p) < MODEL.world.SINK_EPSILON) {
 				sinked = true;
@@ -906,7 +903,7 @@ public abstract class Car extends Entity {
 				
 				cleanupVertexDepartureQueue();
 				
-				s.matchingSource.outstandingCars--;
+				s.match.outstandingCars--;
 				s.carQueue.remove(this);
 				state = CarStateEnum.SINKED;
 				

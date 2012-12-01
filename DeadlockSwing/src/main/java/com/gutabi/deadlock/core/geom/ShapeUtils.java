@@ -5,6 +5,7 @@ import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.tree.AABB;
 import com.gutabi.deadlock.model.cursor.FixtureCursorShape;
 import com.gutabi.deadlock.model.cursor.MergerCursorShape;
+import com.gutabi.deadlock.model.cursor.StraightEdgeCursorShape;
 
 public class ShapeUtils {
 	
@@ -47,6 +48,8 @@ public class ShapeUtils {
 				return intersect(s1, s0);
 			} else if (s1 instanceof Quad) {
 				return intersectCQ((Circle)s0, (Quad)s1);
+			} else if (s1 instanceof StraightEdgeCursorShape) {
+				return intersect(s1, s0);
 			}
 		} else if (s0 instanceof FixtureCursorShape) {
 			FixtureCursorShape fc0 = (FixtureCursorShape)s0;
@@ -92,7 +95,17 @@ public class ShapeUtils {
 				return intersect(s1, s0);
 			} else if (s1 instanceof Quad) {
 				return intersectQQ((Quad)s0, (Quad)s1);
+			} else if (s1 instanceof StraightEdgeCursorShape) {
+				return intersect(s1, s0);
 			}
+		} else if (s0 instanceof StraightEdgeCursorShape) {
+			StraightEdgeCursorShape sec0 = (StraightEdgeCursorShape)s0;
+			
+			if (intersect(sec0.pCircle, s1)) {
+				return true;
+			}
+			return false;
+			
 		}
 		
 		assert false;

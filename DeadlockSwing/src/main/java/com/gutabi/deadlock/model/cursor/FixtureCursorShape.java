@@ -75,11 +75,6 @@ public class FixtureCursorShape extends Shape {
 
 	@Override
 	public void draw(RenderingContext ctxt) {
-		assert false;
-	}
-	
-	public void paint(RenderingContext ctxt) {
-		
 		ctxt.setColor(Color.GRAY);
 		ctxt.setPixelStroke();
 		
@@ -92,7 +87,10 @@ public class FixtureCursorShape extends Shape {
 			aabb.draw(ctxt);
 			
 		}
-		
+	}
+	
+	public void paint(RenderingContext ctxt) {
+		assert false;
 	} 
 	
 }

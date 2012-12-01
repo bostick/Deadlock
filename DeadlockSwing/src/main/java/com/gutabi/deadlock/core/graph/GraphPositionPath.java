@@ -596,7 +596,7 @@ public class GraphPositionPath {
 						Road r = (Road)e;
 						boolean aIsStart = a.v == r.start;
 						
-						if ((aIsStart?(e.getDirection(Axis.NONE) != EdgeDirection.ENDTOSTART):(e.getDirection(Axis.NONE) != EdgeDirection.STARTTOEND))) {
+						if ((aIsStart?(e.getDirection(null) != Direction.ENDTOSTART):(e.getDirection(null) != Direction.STARTTOEND))) {
 							if (shortest == null || DMath.lessThan(e.getTotalLength(a.v, b.v), shortest.getTotalLength(a.v, b.v))) {
 								shortest = e;
 							}
@@ -608,7 +608,7 @@ public class GraphPositionPath {
 						
 						if (a.v == m.top || a.v == m.bottom) {
 							
-							if ((aIsStart?(e.getDirection(Axis.TOPBOTTOM) != EdgeDirection.ENDTOSTART):(e.getDirection(Axis.TOPBOTTOM) != EdgeDirection.STARTTOEND))) {
+							if ((aIsStart?(e.getDirection(Axis.TOPBOTTOM) != Direction.ENDTOSTART):(e.getDirection(Axis.TOPBOTTOM) != Direction.STARTTOEND))) {
 								if (shortest == null || DMath.lessThan(e.getTotalLength(a.v, b.v), shortest.getTotalLength(a.v, b.v))) {
 									shortest = e;
 								}
@@ -616,7 +616,7 @@ public class GraphPositionPath {
 							
 						} else {
 							
-							if ((aIsStart?(e.getDirection(Axis.LEFTRIGHT) != EdgeDirection.ENDTOSTART):(e.getDirection(Axis.LEFTRIGHT) != EdgeDirection.STARTTOEND))) {
+							if ((aIsStart?(e.getDirection(Axis.LEFTRIGHT) != Direction.ENDTOSTART):(e.getDirection(Axis.LEFTRIGHT) != Direction.STARTTOEND))) {
 								if (shortest == null || DMath.lessThan(e.getTotalLength(a.v, b.v), shortest.getTotalLength(a.v, b.v))) {
 									shortest = e;
 								}
@@ -675,7 +675,7 @@ public class GraphPositionPath {
 				Road r = (Road)e;
 				boolean aIsStart = a.v == r.start;
 				
-				if ((aIsStart?(e.getDirection(Axis.NONE) != EdgeDirection.ENDTOSTART):(e.getDirection(Axis.NONE) != EdgeDirection.STARTTOEND))) {
+				if ((aIsStart?(e.getDirection(null) != Direction.ENDTOSTART):(e.getDirection(null) != Direction.STARTTOEND))) {
 					
 				} else {
 					toRemove.add(e);
@@ -687,7 +687,7 @@ public class GraphPositionPath {
 				
 				if (a.v == m.top || a.v == m.bottom) {
 					
-					if ((aIsStart?(e.getDirection(Axis.TOPBOTTOM) != EdgeDirection.ENDTOSTART):(e.getDirection(Axis.TOPBOTTOM) != EdgeDirection.STARTTOEND))) {
+					if ((aIsStart?(e.getDirection(Axis.TOPBOTTOM) != Direction.ENDTOSTART):(e.getDirection(Axis.TOPBOTTOM) != Direction.STARTTOEND))) {
 						
 					} else {
 						toRemove.add(e);
@@ -695,7 +695,7 @@ public class GraphPositionPath {
 					
 				} else {
 					
-					if ((aIsStart?(e.getDirection(Axis.LEFTRIGHT) != EdgeDirection.ENDTOSTART):(e.getDirection(Axis.LEFTRIGHT) != EdgeDirection.STARTTOEND))) {
+					if ((aIsStart?(e.getDirection(Axis.LEFTRIGHT) != Direction.ENDTOSTART):(e.getDirection(Axis.LEFTRIGHT) != Direction.STARTTOEND))) {
 						
 					} else {
 						toRemove.add(e);
@@ -726,7 +726,7 @@ public class GraphPositionPath {
 	private static void fillin(List<GraphPosition> acc, VertexPosition aa, VertexPosition bb, Edge e, int dir) {
 		
 		if (dir == 0 || (dir == 2 && (
-				(e instanceof Road && (aa.v == ((Road)e).getReferenceVertex(Axis.NONE))) ||
+				(e instanceof Road && (aa.v == ((Road)e).getReferenceVertex(null))) ||
 				(e instanceof Merger && (aa.v == ((Merger)e).getReferenceVertex(Axis.TOPBOTTOM) || aa.v == ((Merger)e).getReferenceVertex(Axis.LEFTRIGHT)))))) {
 			
 			GraphPosition cur;
