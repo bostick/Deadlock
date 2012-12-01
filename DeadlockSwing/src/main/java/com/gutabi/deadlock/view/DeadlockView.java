@@ -189,6 +189,7 @@ public class DeadlockView {
 	}
 	
 	private void paintCanvas(RenderingContext ctxt) {
+//		assert SwingUtilities.isEventDispatchThread();
 		
 //		ctxt.setColor(Color.WHITE);
 //		ctxt.fillRect(0, 0, CANVAS_WIDTH, VIEW.CANVAS_HEIGHT);
@@ -234,26 +235,47 @@ public class DeadlockView {
 		
 	}
 	
+//	private Runnable repaintRunner = new Runnable() {
+//		public void run() {
+//			repaintCanvas();
+//		}
+//	};
+//	
+//	public void repaintCanvasOnEDT() {
+////		assert !SwingUtilities.isEventDispatchThread();
+//		SwingUtilities.invokeLater(repaintRunner);
+//	}
+	
 	public void repaintCanvas() {
+//		assert SwingUtilities.isEventDispatchThread();
 		assert !Thread.holdsLock(MODEL);
 		
-		Graphics2D g2 = (Graphics2D)canvas.bs.getDrawGraphics();
-		
-		paintCanvas(new RenderingContext(g2, RenderingContextType.CANVAS));
-		
-		canvas.bs.show();
-		
-		g2.dispose();
-		
-//		controlPanel.repaint();
+		do {
+			
+			do {
+				
+				Graphics2D g2 = (Graphics2D)canvas.bs.getDrawGraphics();
+				
+				paintCanvas(new RenderingContext(g2, RenderingContextType.CANVAS));
+				
+				g2.dispose();
+				
+			} while (canvas.bs.contentsRestored());
+			
+			canvas.bs.show();
+//			canvas.repaint();
+			
+		} while (canvas.bs.contentsLost());
 		
 	}
 	
 	public void repaintControlPanel() {
+//		assert SwingUtilities.isEventDispatchThread();
 		controlPanel.repaint();
 	}
 	
 	public void renderWorldBackground() {
+//		assert !SwingUtilities.isEventDispatchThread();
 		assert !Thread.holdsLock(MODEL);
 		
 		Graphics2D canvasGrassImageG2 = canvasGrassImage.createGraphics();

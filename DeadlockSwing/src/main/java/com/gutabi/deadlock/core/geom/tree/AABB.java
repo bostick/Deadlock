@@ -18,8 +18,8 @@ public class AABB extends Shape {
 	public final double width;
 	public final double height;
 	
-	private final double brX;
-	private final double brY;
+	public final double brX;
+	public final double brY;
 	
 	public final Point p0;
 	public final Point p1;
@@ -137,11 +137,6 @@ public class AABB extends Shape {
 	public boolean hitTest(Point p) {
 		return DMath.lessThanEquals(x, p.x) && DMath.lessThanEquals(p.x, brX) &&
 				DMath.lessThanEquals(y, p.y) && DMath.lessThanEquals(p.y, brY);
-	}
-	
-	public boolean intersect(AABB a) {
-		return DMath.lessThanEquals(a.x, brX) && DMath.lessThanEquals(x, a.brX) &&
-				DMath.lessThanEquals(a.y, brY) && DMath.lessThanEquals(y, a.brY);
 	}
 	
 	public boolean completelyWithin(AABB par) {

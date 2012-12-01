@@ -15,15 +15,17 @@ public class RandomCar extends Car {
 	
 	public RandomCar(Fixture s) {
 		super(s);
+		sheetRowStart = 64;
+		sheetRowEnd = sheetRowStart + 16;
 	}
 	
 	public double getMaxSpeed() {
 		return speed;
 	}
 	
-	protected int getSheetRow() {
-		return 64;
-	}
+//	protected int getSheetRow() {
+//		return 64;
+//	}
 	
 	protected void computePath() {
 		overallPath = source.getRandomPathToMatch();

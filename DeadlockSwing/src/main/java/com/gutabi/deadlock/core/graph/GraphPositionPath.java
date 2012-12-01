@@ -12,7 +12,6 @@ import org.apache.log4j.Logger;
 
 import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.core.geom.tree.AABB;
 import com.gutabi.deadlock.model.Car;
 import com.gutabi.deadlock.model.event.VertexArrivalEvent;
 
@@ -28,11 +27,15 @@ public class GraphPositionPath {
 	public final double[] cumulativeDistancesFromStart;
 	public final double totalLength;
 	
+	public final boolean hasLoop;
+	
+	public final List<Edge> edges = new ArrayList<Edge>();
+	
 	List<GraphPositionPathPosition> borderPositions;
 	
 	private int hash;
 	
-	private final AABB aabb;
+//	private final AABB aabb;
 	
 	static Logger logger = Logger.getLogger(GraphPositionPath.class);
 	
@@ -64,12 +67,41 @@ public class GraphPositionPath {
 		totalLength = l;
 		
 		
-		AABB acc = null;
+		List<Vertex> visited = new ArrayList<Vertex>();
+		boolean tmp = false;
 		for (int i = 0; i < poss.size(); i++) {
-			GraphPosition p = poss.get(i);
-			acc = AABB.union(acc, p.entity.getShape().getAABB());
+			GraphPosition pos = poss.get(i);
+			if (pos instanceof VertexPosition) {
+				/*
+				 * work to determine hasLoop
+				 */
+				if (!tmp) {
+					Vertex v = ((VertexPosition)pos).v;
+					if (visited.contains(v)) {
+						tmp = true;
+					} else {
+						visited.add(v);
+					}
+				}
+			} else {
+				/*
+				 * work to determine list of edges
+				 */
+				Edge e = (Edge)((EdgePosition)pos).entity;
+				edges.add(e);
+			}
 		}
-		aabb = acc;
+		hasLoop = tmp;
+		
+		
+//		AABB acc = null;
+//		for (int i = 0; i < poss.size(); i++) {
+//			GraphPosition p = poss.get(i);
+//			acc = AABB.union(acc, p.entity.getShape().getAABB());
+//		}
+//		aabb = acc;
+		
+		
 		
 		borderPositions = new ArrayList<GraphPositionPathPosition>();
 		
@@ -80,13 +112,52 @@ public class GraphPositionPath {
 				 * only count signs in the correct direction: road -> sign -> vertex
 				 */
 				if (poss.get(i+1) instanceof VertexPosition) {
-					borderPositions.add(new GraphPositionPathPosition(this, i, 0.0));
+					borderPositions.add(new GraphPositionPathPosition(this, i, 0.0, poss.get(i)));
 				}
 			}
 		}
 		
 		
 		assert check();
+	}
+	
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		} else if (hashCode() != o.hashCode()) {
+			/*
+			 * should be ok to do here
+			 */
+			return false;
+		} else if (!(o instanceof GraphPositionPath)) {
+			return false;
+		} else {
+			GraphPositionPath b = (GraphPositionPath)o;
+			return poss.equals(b.poss);
+		}
+	}
+	
+	public int hashCode() {
+		if (hash == 0) {
+			int h = 17;
+			h = 37 * h + poss.hashCode();
+			hash = h;
+		}
+		return hash;
+	}
+	
+	public String toString() {
+		String s = "";
+		for (GraphPosition g : poss) {
+			if (g instanceof VertexPosition) {
+				s = s + g + " ";
+			}
+		}
+		return s;
+	}
+	
+	public GraphPosition get(int index) {
+		return poss.get(index);
 	}
 	
 	public static GraphPositionPath createShortestPathFromSkeleton(List<Vertex> origPoss) {
@@ -134,33 +205,6 @@ public class GraphPositionPath {
 	}
 	
 	
-	
-	
-	public int hashCode() {
-		if (hash == 0) {
-			int h = 17;
-			h = 37 * h + poss.hashCode();
-			hash = h;
-		}
-		return hash;
-	}
-	
-	public String toString() {
-		String s = "";
-		for (GraphPosition g : poss) {
-			if (g instanceof VertexPosition) {
-				s = s + g + " ";
-			}
-		}
-		return s;
-	}
-	
-	
-	public GraphPosition get(int index) {
-		return poss.get(index);
-	}
-	
-	
 	/**
 	 * return list of events starting from position pos, and going distance dist
 	 */
@@ -196,7 +240,8 @@ public class GraphPositionPath {
 		
 		if (min.equals(max)) {
 			return min;
-		} else if (min.index == max.index) {
+		}
+		if (min.index == max.index) {
 			
 			double u;
 			u = Point.u(min.floor().gpos.p, p, max.ceiling().gpos.p);
@@ -214,7 +259,7 @@ public class GraphPositionPath {
 			double dist = Point.distance(p, pOnPath);
 			closestDistance = dist;
 			
-			GraphPositionPathPosition closest = new GraphPositionPathPosition(this, closestIndex, closestParam);
+			GraphPositionPathPosition closest = new GraphPositionPathPosition(this, closestIndex, closestParam, getGraphPosition(closestIndex, closestParam));
 			return closest;
 		}
 		
@@ -338,7 +383,7 @@ public class GraphPositionPath {
 		assert closestIndex != -1;
 		assert closestParam != -1;
 		
-		GraphPositionPathPosition closest = new GraphPositionPathPosition(this, closestIndex, closestParam);
+		GraphPositionPathPosition closest = new GraphPositionPathPosition(this, closestIndex, closestParam, getGraphPosition(closestIndex, closestParam));
 		
 		return closest;
 	}
@@ -374,7 +419,28 @@ public class GraphPositionPath {
 			if (c.overallPos == null) {
 				continue;
 			}
-			if (!aabb.intersect(c.getShape().getAABB())) {
+			if (this.equals(c.overallPath) && !hasLoop) {
+				
+				hitMap.put(c.overallPos, c);
+				continue;
+				
+			}
+//			Set<Edge> edgesTmp = new HashSet<Edge>(edges);
+//			edgesTmp.retainAll(c.overallPath.edges);
+//			if (edgesTmp.isEmpty()) {
+//				/*
+//				 * no shared edges
+//				 */
+//				continue;
+//			}
+			boolean sharedEdges = false;
+			for (Edge e : c.overallPath.edges) {
+				if (edges.contains(e)) {
+					sharedEdges = true;
+					break;
+				}
+			}
+			if (!sharedEdges) {
 				continue;
 			}
 			
@@ -384,7 +450,7 @@ public class GraphPositionPath {
 				if (gp.entity == ((VertexPosition)poss.get(0)).v) {
 					assert getGraphPosition(0, 0.0).equals(gp);
 					assert !hitMap.containsValue(c);
-					hitMap.put(new GraphPositionPathPosition(this, 0, 0.0), c);
+					hitMap.put(new GraphPositionPathPosition(this, 0, 0.0, poss.get(0)), c);
 					continue carLoop;
 				}
 			}
@@ -438,7 +504,7 @@ public class GraphPositionPath {
 						if (gp.entity == ((VertexPosition)b).v) {
 							assert getGraphPosition(i+1, 0.0).equals(gp);
 							assert !hitMap.containsValue(c);
-							hitMap.put(new GraphPositionPathPosition(this, i+1, 0.0), c);
+							hitMap.put(new GraphPositionPathPosition(this, i+1, 0.0, poss.get(i+1)), c);
 							continue carLoop;
 						}
 						
@@ -505,7 +571,7 @@ public class GraphPositionPath {
 				double gpppParam = (i + abCombo)-gpppIndex;
 				
 				assert !hitMap.containsValue(c);
-				hitMap.put(new GraphPositionPathPosition(this, gpppIndex, gpppParam), c);
+				hitMap.put(new GraphPositionPathPosition(this, gpppIndex, gpppParam, getGraphPosition(gpppIndex, gpppParam)), c);
 				continue carLoop;
 				
 			}

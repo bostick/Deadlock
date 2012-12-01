@@ -14,15 +14,17 @@ public class FastCar extends Car {
 	
 	public FastCar(Fixture s) {
 		super(s);
+		sheetRowStart = 32;
+		sheetRowEnd = sheetRowStart + 16;
 	}
 	
 	public double getMaxSpeed() {
 		return speed;
 	}
 	
-	protected int getSheetRow() {
-		return 32;
-	}
+//	protected int getSheetRow() {
+//		return 32;
+//	}
 	
 	protected void computePath() {
 		overallPath = source.getShortestPathToMatch();

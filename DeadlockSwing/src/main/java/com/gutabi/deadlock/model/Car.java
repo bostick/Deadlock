@@ -44,9 +44,28 @@ public abstract class Car extends Entity {
 	public static final double CAR_LENGTH = 1.0;
 	public static final double CAR_WIDTH = 0.5;
 	
+	public static final double CAR_LOCALX = -CAR_LENGTH / 2;
+	public static final double CAR_LOCALY = -CAR_WIDTH / 2;
+	
 	public static final double BRAKE_SIZE = 0.25;
+	public static final double BRAKE_LOCALX = -BRAKE_SIZE / 2;
+	public static final double BRAKE_LOCALY = -BRAKE_SIZE / 2;
+	
+	public static final double CAR_BRAKE1X = CAR_LOCALX + BRAKE_LOCALX;
+	public static final double CAR_BRAKE1Y = CAR_LOCALY + CAR_WIDTH/4 + BRAKE_LOCALY;
+	
+	public static final double CAR_BRAKE2X = CAR_LOCALX + BRAKE_LOCALX;
+	public static final double CAR_BRAKE2Y = CAR_LOCALY + 3 * CAR_WIDTH/4 + BRAKE_LOCALY;
+	
+	
+	public static final int brakeRowStart = 288;
+	public static final int brakeRowEnd = brakeRowStart + 8;
+	
 	
 	public static final double COMPLETE_STOP_WAIT_TIME = 0.0;
+	
+	protected int sheetRowStart;
+	protected int sheetRowEnd;
 	
 	public abstract double getMaxSpeed();
 	
@@ -103,7 +122,7 @@ public abstract class Car extends Entity {
 	
 	public Fixture source;
 	
-	protected GraphPositionPath overallPath;
+	public GraphPositionPath overallPath;
 	
 	public GraphPositionPathPosition overallPos;
 	
@@ -183,7 +202,7 @@ public abstract class Car extends Entity {
 	
 	protected abstract void computePath();
 	
-	protected abstract int getSheetRow();
+//	protected abstract int getSheetRow();
 	
 	private void computeStartingProperties() {
 		
@@ -191,31 +210,31 @@ public abstract class Car extends Entity {
 		
 		computePath();
 		
-		overallPos = new GraphPositionPathPosition(overallPath, 0, 0.0);
+		overallPos = new GraphPositionPathPosition(overallPath, 0, 0.0, overallPath.get(0));
 		GraphPosition closestGraphPos = overallPath.getGraphPosition(0, 0.0);
 		startPoint = closestGraphPos.p;
 		
 		vertexDepartureQueue.add(new VertexSpawnEvent(overallPos));
 		source.carQueue.add(this);
 		
-		if (pathingLogger.isDebugEnabled()) {
-			pathingLogger.debug("overall path:");
-			for (GraphPosition gp : overallPath.poss) {
-				pathingLogger.debug(gp);
-			}
-			pathingLogger.debug("");
-			
-			pathingLogger.debug("overall path bounds:");
-			GraphPositionPathPosition cur = overallPos;
-			while (true) {
-				pathingLogger.debug(cur);
-				if (cur.isEndOfPath()) {
-					break;
-				}
-				cur = cur.nextBound();
-			}
-			pathingLogger.debug("");
-		}
+//		if (pathingLogger.isDebugEnabled()) {
+//			pathingLogger.debug("overall path:");
+//			for (GraphPosition gp : overallPath.poss) {
+//				pathingLogger.debug(gp);
+//			}
+//			pathingLogger.debug("");
+//			
+//			pathingLogger.debug("overall path bounds:");
+//			GraphPositionPathPosition cur = overallPos;
+//			while (true) {
+//				pathingLogger.debug(cur);
+//				if (cur.isEndOfPath()) {
+//					break;
+//				}
+//				cur = cur.nextBound();
+//			}
+//			pathingLogger.debug("");
+//		}
 		
 		GraphPositionPathPosition next = overallPos.travel(getMaxSpeed() * MODEL.dt);
 		
@@ -991,8 +1010,6 @@ public abstract class Car extends Entity {
 	
 	protected void paintImage(RenderingContext ctxt) {
 		
-		int sheetRow = getSheetRow();
-		
 		AffineTransform origTransform = ctxt.getTransform();
 		
 		Composite origComposite = null;
@@ -1004,26 +1021,30 @@ public abstract class Car extends Entity {
 		ctxt.translate(p.x, p.y);
 		ctxt.rotate(angle);
 		
-		ctxt.paintImage(-Car.CAR_LENGTH/2, -Car.CAR_WIDTH/2, VIEW.sheet,
-				0, 0, VIEW.metersToPixels(CAR_LENGTH), VIEW.metersToPixels(CAR_WIDTH),
-				64, sheetRow, 64+32, sheetRow+16);
+		ctxt.paintImage(
+				CAR_LOCALX, CAR_LOCALY,
+				VIEW.sheet,
+				0, 0, (int)(CAR_LENGTH * VIEW.PIXELS_PER_METER_DEBUG), (int)(CAR_WIDTH * VIEW.PIXELS_PER_METER_DEBUG),
+				64, sheetRowStart, 64+32, sheetRowEnd);
 		
 		if (state == CarStateEnum.BRAKING) {
 			
-			ctxt.paintImage(-Car.CAR_LENGTH/2 - Car.BRAKE_SIZE/2, -Car.CAR_WIDTH/4 - Car.BRAKE_SIZE/2,
+			int brakePixels = (int)(BRAKE_SIZE * VIEW.PIXELS_PER_METER_DEBUG);
+			
+			ctxt.paintImage(CAR_BRAKE1X, CAR_BRAKE1Y,
 					VIEW.sheet,
 					0,
 					0,
-					VIEW.metersToPixels(BRAKE_SIZE),
-					VIEW.metersToPixels(BRAKE_SIZE),
-					0, 288, 0+8, 288+8);
+					brakePixels,
+					brakePixels,
+					0, brakeRowStart, 0+8, brakeRowEnd);
 			
-			ctxt.paintImage(-Car.CAR_LENGTH/2 - Car.BRAKE_SIZE/2, Car.CAR_WIDTH/4 - Car.BRAKE_SIZE/2, VIEW.sheet,
+			ctxt.paintImage(CAR_BRAKE2X, CAR_BRAKE2Y, VIEW.sheet,
 					0,
 					0,
-					VIEW.metersToPixels(BRAKE_SIZE),
-					VIEW.metersToPixels(BRAKE_SIZE),
-					0, 288, 0+8, 288+8);
+					brakePixels,
+					brakePixels,
+					0, brakeRowStart, 0+8, brakeRowEnd);
 			
 		}
 		

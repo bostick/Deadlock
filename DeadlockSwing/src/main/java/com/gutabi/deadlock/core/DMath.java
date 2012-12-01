@@ -30,19 +30,19 @@ public class DMath {
 	}
 	
 	public static boolean lessThanEquals(double a, double b) {
-		return a < b || equals(a, b);
+		return (a - b) < 1.0E-7;
 	}
 	
 	public static boolean greaterThanEquals(double a, double b) {
-		return a > b || equals(a, b);
+		return (b - a) < 1.0E-7;
 	}
 	
 	public static boolean lessThan(double a, double b) {
-		return a < b && !equals(a, b);
+		return (b - a) >= 1.0E-7;
 	}
 	
 	public static boolean greaterThan(double a, double b) {
-		return a > b && !equals(a, b);
+		return (a - b) >= 1.0E-7;
 	}
 	
 	public static Comparator<Double> COMPARATOR = new DoubleComparator();
@@ -82,28 +82,19 @@ public class DMath {
 		double c = r1[0];
 		double d = r1[1];
 		
-		double aa;
-		double bb;
-		double cc;
-		double dd;
-		
 		if (a < b) {
-			aa = a;
-			bb = b;
+			if (c < d) {
+				return lessThanEquals(a, d) && lessThanEquals(c , b);
+			} else {
+				return lessThanEquals(a, c) && lessThanEquals(d , b);
+			}
 		} else {
-			aa = b;
-			bb = a;
+			if (c < d) {
+				return lessThanEquals(b, d) && lessThanEquals(c , a);
+			} else {
+				return lessThanEquals(b, c) && lessThanEquals(d , a);
+			}
 		}
-		
-		if (c < d) {
-			cc = c;
-			dd = d;
-		} else {
-			cc = d;
-			dd = c;
-		}
-		
-		return lessThanEquals(aa, dd) && lessThanEquals(cc , bb);
 	}
 	
 	public static double sgn(double x) {

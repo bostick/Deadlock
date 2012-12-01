@@ -112,7 +112,16 @@ public class ShapeUtils {
 		return false;
 	}
 	
+	public static boolean intersectAA(AABB a0, AABB a1) {
+		return DMath.lessThanEquals(a0.x, a1.brX) && DMath.lessThanEquals(a1.x, a0.brX) &&
+				DMath.lessThanEquals(a0.y, a1.brY) && DMath.lessThanEquals(a1.y, a0.brY);
+	}
+	
 	public static boolean intersectAC(AABB a0, Circle c1) {
+		
+		if (!intersectAA(a0, c1.aabb)) {
+			return false;
+		}
 		
 		double[] c1Projection = new double[2];
 		double[] a0Projection = new double[2];
@@ -162,6 +171,10 @@ public class ShapeUtils {
 	
 	public static boolean intersectAQ(AABB a0, Quad q1) {
 		
+		if (!intersectAA(a0, q1.aabb)) {
+			return false;
+		}
+		
 		double[] a0Projection = new double[2];
 		double[] q1Projection = new double[2];
 		
@@ -197,6 +210,10 @@ public class ShapeUtils {
 	}
 	
 	public static boolean intersectCQ(Circle c0, Quad q1) {
+		
+		if (!intersectAA(c0.aabb, q1.aabb)) {
+			return false;
+		}
 		
 		double[] c0Projection = new double[2];
 		double[] q1Projection = new double[2];
@@ -258,6 +275,11 @@ public class ShapeUtils {
 	}
 	
 	public static boolean intersectCCapSeq(Circle c0, CapsuleSequence cs1) {
+		
+		if (!intersectAA(c0.aabb, cs1.aabb)) {
+			return false;
+		}
+		
 		for (Capsule c : cs1.caps) {
 			if (ShapeUtils.intersectCCap(c0, c)) {
 				return true;
@@ -293,6 +315,11 @@ public class ShapeUtils {
 	}
 	
 	public static boolean intersectCapCapSeq(Capsule c0, CapsuleSequence cs1) {
+		
+		if (!intersectAA(c0.aabb, cs1.aabb)) {
+			return false;
+		}
+		
 		for (Capsule c : cs1.caps) {
 			if (ShapeUtils.intersectCapCap(c0, c)) {
 				return true;
@@ -302,6 +329,11 @@ public class ShapeUtils {
 	}
 	
 	public static boolean intersectCapSeqQ(CapsuleSequence cs0, Quad q1) {
+		
+		if (!intersectAA(cs0.aabb, q1.aabb)) {
+			return false;
+		}
+		
 		for (Capsule c : cs0.caps) {
 			if (ShapeUtils.intersectCapQ(c, q1)) {
 				return true;

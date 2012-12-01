@@ -15,15 +15,17 @@ public class NormalCar extends Car {
 	
 	public NormalCar(Fixture s) {
 		super(s);
+		sheetRowStart = 0;
+		sheetRowEnd = sheetRowStart + 16;
 	}
 	
 	public double getMaxSpeed() {
 		return speed;
 	}
 	
-	protected int getSheetRow() {
-		return 0;
-	}
+//	protected int getSheetRow() {
+//		return 0;
+//	}
 	
 	protected void computePath() {
 		overallPath = source.getShortestPathToMatch();
