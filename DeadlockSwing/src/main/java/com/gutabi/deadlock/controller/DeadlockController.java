@@ -109,8 +109,6 @@ public class DeadlockController implements ActionListener {
 	Point lastDragPreviewPoint;
 	long lastDragTime;
 	
-//	AABB originalViewport;
-	
 	public void dragged(InputEvent ev) {
 		
 		Component c = ev.c;
@@ -206,21 +204,6 @@ public class DeadlockController implements ActionListener {
 				if (lastReleaseTime - lastPressTime < 500 && lastDragCanvasPoint == null) {
 					// click
 					
-//					Point w = VIEW.panelToWorld(lastPressPanelPoint);
-//					
-//					Entity hit = MODEL.world.hitTest(w);
-//					
-//					if (hit != null) {
-//						
-//						if (hit instanceof Vertex) {
-//							
-////							((Vertex) hit).getEdges();
-//							
-//						} else if (hit instanceof Road) {
-//							
-//						}
-//						
-//					}
 				}
 				
 				break;
@@ -262,10 +245,6 @@ public class DeadlockController implements ActionListener {
 			lastMovedCanvasPoint = ev.p;
 			
 			lastMovedWorldPoint = VIEW.canvasToWorld(lastMovedCanvasPoint);
-			
-//			if (logger.isDebugEnabled()) {
-//				logger.debug("moved. canvas: " + ev.p + " " + " world: " + lastMovedWorldPoint + " viewport: " + VIEW.worldViewport.ul);
-//			}
 			
 			switch (mode) {
 			case PAUSED:
@@ -392,69 +371,44 @@ public class DeadlockController implements ActionListener {
 		switch (mode) {
 		case IDLE:
 			
-			if (MODEL.world.completelyContains(MODEL.cursor.getShape())) {
+			Entity hit = MODEL.world.pureGraphBestHitTest(MODEL.cursor.getShape());
+			if (hit == null) {
 				
-				Entity hit = MODEL.world.pureGraphBestHitTest(MODEL.cursor.getShape());
-				if (hit == null) {
-					
-					MODEL.world.addVertexTop(new Intersection(MODEL.cursor.getPoint()));
-					
-					VIEW.renderWorldBackground();
-					VIEW.repaintControlPanel();
-					VIEW.repaintCanvas();
-					
-				} else if (hit instanceof Vertex) {
-					
-					mode = ControlMode.STRAIGHTEDGECURSOR;
-					
-					MODEL.cursor = new StraightEdgeCursor((Vertex)hit);
-					
-					MODEL.cursor.setPoint(lastMovedWorldPoint);
-					
-					VIEW.repaintCanvas();
-					
-				}
+				MODEL.world.addVertexTop(new Intersection(MODEL.cursor.getPoint()));
+				
+				VIEW.renderWorldBackground();
+				VIEW.repaintControlPanel();
+				VIEW.repaintCanvas();
+				
+			} else if (hit instanceof Vertex) {
+				
+				mode = ControlMode.STRAIGHTEDGECURSOR;
+				
+				MODEL.cursor = new StraightEdgeCursor((Vertex)hit);
+				
+				MODEL.cursor.setPoint(lastMovedWorldPoint);
+				
+				VIEW.repaintCanvas();
+				
 			}
 			
 			break;
 			
 		case STRAIGHTEDGECURSOR:
 			
-			Vertex first = ((StraightEdgeCursor)MODEL.cursor).first;
-			Vertex second = null;
+			Point first = ((StraightEdgeCursor)MODEL.cursor).first.p;
+			Point second = MODEL.cursor.getPoint();
 			
-			Entity hit = MODEL.world.pureGraphBestHitTest(MODEL.cursor.getShape());
-			if (hit == null) {
-				
-				second = new Intersection(MODEL.cursor.getPoint());
-				
-				MODEL.world.addVertexTop(second);
-				
-			} else if (hit instanceof Vertex) {
-				
-				second = (Vertex)hit;
-				
-			} else if (hit instanceof Road) {
-				
-				RoadPosition pos = MODEL.world.findClosestRoadPosition(MODEL.cursor.getPoint(), Vertex.INIT_VERTEX_RADIUS);
-				
-				assert pos != null;
-				
-				second = MODEL.world.splitRoadTop(pos);
-				
-			}
+			Stroke s = new Stroke();
+			s.add(first);
+			s.add(second);
 			
-			if (second != null) {
-				
-				List<Point> roadPts = new ArrayList<Point>();
-				roadPts.add(first.p);
-				roadPts.add(second.p);
-				MODEL.world.createRoadTop(first, second, roadPts);
-				
-				VIEW.renderWorldBackground();
-				VIEW.repaintControlPanel();
-				
-			}
+			processNewStroke(s);
+			
+			assert MODEL.world.checkConsistency();
+			
+			VIEW.renderWorldBackground();
+			VIEW.repaintControlPanel();
 			
 			mode = ControlMode.IDLE;
 			
@@ -922,7 +876,7 @@ public class DeadlockController implements ActionListener {
 		
 		MODEL.hilited = null;
 		
-		MODEL.stroke = new Stroke(Vertex.INIT_VERTEX_RADIUS);
+		MODEL.stroke = new Stroke();
 		MODEL.stroke.add(VIEW.canvasToWorld(p));
 			
 	}
@@ -934,7 +888,7 @@ public class DeadlockController implements ActionListener {
 	
 	private void draftEnd() {
 		
-		processNewStroke();
+		processNewStroke(MODEL.stroke);
 		
 		assert MODEL.world.checkConsistency();
 		
@@ -1032,16 +986,19 @@ public class DeadlockController implements ActionListener {
 	
 	
 	
-	public void processNewStroke() {
+	public void processNewStroke(Stroke s) {
 		
-		Stroke s = MODEL.stroke;
-		
-		for (int i = 0; i < s.size()-1; i++) {
-			Capsule cap = new Capsule(null, s.getCircle(i), s.getCircle(i+1));
-			if (!MODEL.world.completelyContains(cap)) {
-				return;
-			}
-		}
+		/*
+		 * TODO:
+		 * fix this and turn on
+		 * a stroke that starts/ends on a fixture may technically be outside of the quadrant, but it should still count
+		 */
+//		for (int i = 0; i < s.size()-1; i++) {
+//			Capsule cap = new Capsule(null, s.getCircle(i), s.getCircle(i+1));
+//			if (!MODEL.world.completelyContains(cap)) {
+//				return;
+//			}
+//		}
 		
 		List<SweepEvent> events = s.events();
 		
@@ -1093,8 +1050,6 @@ public class DeadlockController implements ActionListener {
 				
 				e.setVertex(v);
 				
-//				assert MODEL.world.checkConsistency();
-				
 			} else if (e.type == SweepEventType.ENTERROADCAPSULE || e.type == SweepEventType.EXITROADCAPSULE) {
 				
 				Entity hit = MODEL.world.pureGraphBestHitTestCircle(e.circle);
@@ -1106,6 +1061,21 @@ public class DeadlockController implements ActionListener {
 				
 				GraphPosition pos = null;
 				
+				double nextEventCombo;
+				if (e.type == SweepEventType.ENTERROADCAPSULE) {
+					if (i < events.size()-1) {
+						nextEventCombo = events.get(i+1).combo;
+					} else {
+						nextEventCombo = Double.POSITIVE_INFINITY;
+					}
+				} else {
+					if (i >= 1) {
+						nextEventCombo = events.get(i-1).combo;
+					} else {
+						nextEventCombo = Double.NEGATIVE_INFINITY;
+					}
+				}
+				
 				/*
 				 * find better place to split by checking for intersection with road
 				 */
@@ -1114,9 +1084,20 @@ public class DeadlockController implements ActionListener {
 				int j = e.index;
 				if (e.type == SweepEventType.ENTERROADCAPSULE) {
 					a = e.circle;
-					b = s.getCircle(j+1);
+					if (DMath.lessThan(nextEventCombo, j+1)) {
+						/*
+						 * next event is before next stroke point, so use the event circle
+						 */
+						b = events.get(i+1).circle;
+					} else {
+						b = s.getCircle(j+1);
+					}
 				} else {
-					a = s.getCircle(j);
+					if (DMath.greaterThan(nextEventCombo, j)) {
+						a = events.get(i-1).circle;
+					} else {
+						a = s.getCircle(j);
+					}
 					b = e.circle;
 				}
 				
@@ -1135,7 +1116,7 @@ public class DeadlockController implements ActionListener {
 						
 						if (skeletonIntersection != null) {
 							
-							if (DMath.lessThanEquals(Point.distance(skeletonIntersection.p, e.p), s.r + s.r)) {
+							if (DMath.lessThanEquals(Point.distance(skeletonIntersection.p, e.p), Stroke.STROKE_RADIUS + Stroke.STROKE_RADIUS)) {
 								
 								pos = skeletonIntersection;
 								
@@ -1149,7 +1130,7 @@ public class DeadlockController implements ActionListener {
 					
 					j += (e.type == SweepEventType.ENTERROADCAPSULE) ? 1 : -1;
 					
-					if (!((e.type == SweepEventType.ENTERROADCAPSULE) ? j < s.size()-1 : j >= 0)) {
+					if (!((e.type == SweepEventType.ENTERROADCAPSULE) ? j < Math.min(nextEventCombo, s.size()-1) : j >= Math.max(nextEventCombo, 0))) {
 						break;
 					}
 					
@@ -1179,8 +1160,6 @@ public class DeadlockController implements ActionListener {
 				} else {
 					e.setVertex((Vertex)hit2);
 				}
-				
-//				assert MODEL.world.checkConsistency();
 				
 			} else if (e.type == SweepEventType.ENTERVERTEX) {
 				e.setVertex((Vertex)e.shape.parent);
@@ -1236,8 +1215,13 @@ public class DeadlockController implements ActionListener {
 			for (int j = e0.index+1; j < e1.index; j++) {
 				roadPts.add(s.get(j));
 			}
-			roadPts.add(s.get(e1.index));
-			if (!DMath.equals(e1.param, 0.0)) {
+			if (e1.index >= e0.index+1) {
+				roadPts.add(s.get(e1.index));
+				if (!DMath.equals(e1.param, 0.0)) {
+					roadPts.add(e1.p);
+				}
+			} else {
+				assert e1.index == e0.index;
 				roadPts.add(e1.p);
 			}
 			

@@ -17,24 +17,21 @@ import com.gutabi.deadlock.core.geom.SweepEvent;
 import com.gutabi.deadlock.core.geom.SweepEventType;
 import com.gutabi.deadlock.core.geom.Sweeper;
 import com.gutabi.deadlock.core.geom.tree.AABB;
+import com.gutabi.deadlock.core.graph.Vertex;
 import com.gutabi.deadlock.view.RenderingContext;
 
 @SuppressWarnings("static-access")
 public class Stroke {
 	
+	public static final double STROKE_RADIUS = Vertex.INIT_VERTEX_RADIUS;
+	
 	private List<Circle> cs;
-	
-	public final double r;
-	
-	private 
 	
 	static Logger logger = Logger.getLogger(Stroke.class);
 	
-	public Stroke(double r) {
+	public Stroke() {
 		cs = new ArrayList<Circle>();
-		this.r = r;
 	}
-	
 	
 	private AABB aabb;
 	
@@ -42,13 +39,9 @@ public class Stroke {
 		return aabb;
 	}
 	
-	public double getRadius() {
-		return r;
-	}
-	
 	public void add(Point p) {
 		
-		cs.add(new Circle(null, p, r));
+		cs.add(new Circle(null, p, STROKE_RADIUS));
 		
 		computeAABB();
 	}
@@ -201,6 +194,16 @@ public class Stroke {
 				}
 			}
 		}
+		
+		/*
+		 * TODO
+		 * go through and verify that events are well formed:
+		 * every ENTERROADCAPSULE and EXITROADCAPSULE match up
+		 * every ENTER AND EXIT VERTEX match up
+		 * every ENTER AND EXIT MERGER match up
+		 * 
+		 * figure out FSM that is actually accurate
+		 */
 		
 		if (logger.isDebugEnabled()) {
 			logger.debug("vertexEvents:");

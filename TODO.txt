@@ -1,6 +1,13 @@
 
 IMMEDIATELY:
 
+fix problem with doing 2 straight edge cursors
+the merging messes up 
+
+fix intersection problem with straight edge cursors
+
+
+
 start work on menu
 start work on popup menu
 

@@ -1124,20 +1124,14 @@ public class Graph implements Sweepable {
 					
 				} else {
 					
-					for (int i = 0; i < e.pointCount()-1; i++) {
+					for (int i = 1; i < e.capsuleCount()-1; i++) {
 						Capsule es = e.getCapsule(i);
 						
-						for (int j = 0; j < f.pointCount()-1; j++) {
+						for (int j = 1; j < f.capsuleCount()-1; j++) {
 							Capsule fs = f.getCapsule(j);
 							
-							try {
-								Point inter = Point.intersection(es.a, es.b, fs.a, fs.b);
-								if (inter != null && !(inter.equals(es.a) || inter.equals(es.b) || inter.equals(fs.a) || inter.equals(fs.b))) {
-									//assert false : "No edges should intersect";
-									throw new IllegalStateException("No roads should intersect");
-								}
-							} catch (OverlappingException ex) {
-								throw new IllegalStateException("Segments overlapping");
+							if (ShapeUtils.intersectCapCap(es, fs)) {
+								assert false;
 							}
 						}
 					}

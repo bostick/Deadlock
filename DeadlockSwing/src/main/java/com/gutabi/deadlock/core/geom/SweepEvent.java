@@ -13,6 +13,9 @@ public class SweepEvent {
 	public final Sweeper sweeper;
 	public final int index;
 	public final double param;
+	
+	public final double combo;
+	
 	public final Point p;
 	public final Circle circle;
 	
@@ -24,6 +27,8 @@ public class SweepEvent {
 		this.sweeper = sweeper;
 		this.index = index;
 		this.param = param;
+		
+		this.combo = index+param;
 		
 		p = sweeper.getPoint(index, param);
 		circle = new Circle(sweeper, p, sweeper.radius);

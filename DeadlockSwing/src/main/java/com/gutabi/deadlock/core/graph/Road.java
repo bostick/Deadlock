@@ -600,7 +600,7 @@ public class Road extends Edge {
 		List<Point> adj = new ArrayList<Point>();
 		adj.add(start.p);
 		adj.add(startBorderPoint.center);
-		for (int i = startBorderIndex+1; i < endBorderIndex; i++) {
+		for (int i = startBorderIndex+1; i <= endBorderIndex; i++) {
 			adj.add(pts.get(i));
 		}
 		adj.add(endBorderPoint.center);

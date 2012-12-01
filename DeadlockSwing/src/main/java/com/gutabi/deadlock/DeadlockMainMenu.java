@@ -5,7 +5,9 @@ import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
 import java.io.IOException;
+import java.net.URL;
 
+import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -22,13 +24,15 @@ public class DeadlockMainMenu  {
 		
 		MODEL.init();
 		
+		VIEW.codebase = new URL("file:.");
+		JFrame frame = VIEW.setupFrame();
 		VIEW.init();
 		
 		CONTROLLER.init();
 		
 		CONTROLLER.mode = ControlMode.MENU;
 		
-		VIEW.frame.setVisible(true);
+		frame.setVisible(true);
 		VIEW.canvas.requestFocusInWindow();
 		
 		VIEW.canvas.postDisplay();
