@@ -19,7 +19,7 @@ public class VertexArrivalEvent extends VertexEvent {
 		super(entrancePosition.nextBound());
 		this.entrancePosition = entrancePosition;
 		
-		sign = ((RoadPosition)entrancePosition.gpos).sign;
+		sign = ((RoadPosition)entrancePosition.getGraphPosition()).sign;
 		
 	}
 	

@@ -179,24 +179,24 @@ public class ShapeUtils {
 		double[] q1Projection = new double[2];
 		
 		a0.projectN01(a0Projection);
-		q1.project(a0.n01, q1Projection);
+		q1.project(a0.getN01(), q1Projection);
 		if (!DMath.rangesOverlap(a0Projection, q1Projection)) {
 			return false;
 		}
 		
 		a0.projectN12(a0Projection);
-		q1.project(a0.n12, q1Projection);
+		q1.project(a0.getN12(), q1Projection);
 		if (!DMath.rangesOverlap(a0Projection, q1Projection)) {
 			return false;
 		}
 		
-		a0.project(q1.n01, a0Projection);
+		a0.project(q1.getN01(), a0Projection);
 		q1.projectN01(q1Projection);
 		if (!DMath.rangesOverlap(a0Projection, q1Projection)) {
 			return false;
 		}
 		
-		a0.project(q1.n12, a0Projection);
+		a0.project(q1.getN12(), a0Projection);
 		q1.projectN12(q1Projection);
 		if (!DMath.rangesOverlap(a0Projection, q1Projection)) {
 			return false;
@@ -219,13 +219,13 @@ public class ShapeUtils {
 		double[] q1Projection = new double[2];
 		
 		q1.projectN01(q1Projection);
-		c0.project(q1.n01, c0Projection);
+		c0.project(q1.getN01(), c0Projection);
 		if (!DMath.rangesOverlap(q1Projection, c0Projection)) {
 			return false;
 		}
 		
 		q1.projectN12(q1Projection);
-		c0.project(q1.n12, c0Projection);
+		c0.project(q1.getN12(), c0Projection);
 		if (!DMath.rangesOverlap(q1Projection, c0Projection)) {
 			return false;
 		}
@@ -348,24 +348,24 @@ public class ShapeUtils {
 		double[] q1Projection = new double[2];
 		
 		q0.projectN01(q0Projection);
-		q1.project(q0.n01, q1Projection);
+		q1.project(q0.getN01(), q1Projection);
 		if (!DMath.rangesOverlap(q0Projection, q1Projection)) {
 			return false;
 		}
 		
 		q0.projectN12(q0Projection);
-		q1.project(q0.n12, q1Projection);
+		q1.project(q0.getN12(), q1Projection);
 		if (!DMath.rangesOverlap(q0Projection, q1Projection)) {
 			return false;
 		}
 		
-		q0.project(q1.n01, q0Projection);
+		q0.project(q1.getN01(), q0Projection);
 		q1.projectN01(q1Projection);
 		if (!DMath.rangesOverlap(q0Projection, q1Projection)) {
 			return false;
 		}
 		
-		q0.project(q1.n12, q0Projection);
+		q0.project(q1.getN12(), q0Projection);
 		q1.projectN12(q1Projection);
 		if (!DMath.rangesOverlap(q0Projection, q1Projection)) {
 			return false;

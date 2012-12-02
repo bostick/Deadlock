@@ -14,9 +14,9 @@ public abstract class VertexEvent extends DrivingEvent {
 	public VertexEvent(GraphPositionPathPosition vertexPosition) {
 		this.vertexPosition = vertexPosition;
 		
-		assert vertexPosition.gpos instanceof VertexPosition;
+//		assert vertexPosition.gpos instanceof VertexPosition;
 		
-		v = ((VertexPosition)vertexPosition.gpos).v;
+		v = ((VertexPosition)vertexPosition.getGraphPosition()).v;
 		
 		if (!vertexPosition.isEndOfPath()) {
 			carPastExitPosition = vertexPosition.nextBound().travel(Car.CAR_LENGTH/2);

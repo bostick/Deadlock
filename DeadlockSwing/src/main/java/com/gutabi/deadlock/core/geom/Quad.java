@@ -16,8 +16,8 @@ public class Quad extends SweepableShape {
 	public final Point p2;
 	public final Point p3;
 	
-	public final Point n01;
-	public final Point n12;
+	private Point n01;
+	private Point n12;
 	
 	double[] n01Projection;
 	double[] n12Projection;
@@ -35,23 +35,10 @@ public class Quad extends SweepableShape {
 		this.p2 = p2;
 		this.p3 = p3;
 		
-		Point edge;
-		edge = p1.minus(p0);
-		n01 = Point.ccw90AndNormalize(edge);
-		edge = p2.minus(p1);
-		n12 = Point.ccw90AndNormalize(edge);
-		
 		double ulX = Math.min(Math.min(p0.x, p1.x), Math.min(p2.x, p3.x));
 		double ulY = Math.min(Math.min(p0.y, p1.y), Math.min(p2.y, p3.y));
 		double brX = Math.max(Math.max(p0.x, p1.x), Math.max(p2.x, p3.x));
 		double brY = Math.max(Math.max(p0.y, p1.y), Math.max(p2.y, p3.y));
-		
-		poly = new GeneralPath();
-		poly.moveTo(p0.x, p0.y);
-		poly.lineTo(p1.x, p1.y);
-		poly.lineTo(p2.x, p2.y);
-		poly.lineTo(p3.x, p3.y);
-		poly.closePath();
 		
 		aabb = new AABB(ulX, ulY, (brX - ulX), (brY - ulY));
 	}
@@ -81,11 +68,52 @@ public class Quad extends SweepableShape {
 	}
 	
 	private void computeProjections() {
+		
+		if (n01 == null) {
+			computeN01();
+		}
+		if (n12 == null) {
+			computeN12();
+		}
+		
 		n01Projection = new double[2];
 		project(n01, n01Projection);
 		
 		n12Projection = new double[2];
 		project(n12, n12Projection);
+	}
+	
+	private void computeN01() {
+		Point edge = p1.minus(p0);
+		n01 = Point.ccw90AndNormalize(edge);
+	}
+	
+	private void computeN12() {
+		Point edge = p2.minus(p1);
+		n12 = Point.ccw90AndNormalize(edge);
+	}
+	
+	private void computePoly() {
+		poly = new GeneralPath();
+		poly.moveTo(p0.x, p0.y);
+		poly.lineTo(p1.x, p1.y);
+		poly.lineTo(p2.x, p2.y);
+		poly.lineTo(p3.x, p3.y);
+		poly.closePath();
+	}
+	
+	public Point getN01() {
+		if (n01 == null) {
+			computeN01();
+		}
+		return n01;
+	}
+	
+	public Point getN12() {
+		if (n12 == null) {
+			computeN12();
+		}
+		return n12;
 	}
 	
 	public Quad plus(Point p) {
@@ -239,11 +267,19 @@ public class Quad extends SweepableShape {
 	
 	public void paint(RenderingContext ctxt) {
 		
+		if (poly == null) {
+			computePoly();
+		}
+		
 		ctxt.fill(poly);
 		
 	}
 	
 	public void draw(RenderingContext ctxt) {
+		
+		if (poly == null) {
+			computePoly();
+		}
 		
 		ctxt.draw(poly);
 		

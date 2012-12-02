@@ -364,22 +364,22 @@ public class World implements Sweepable {
 		
 		graph.preStep(t);
 		
-		List<Car> carsCopy;
-		synchronized (MODEL) {
-			carsCopy = new ArrayList<Car>(cars);
-		}
+//		List<Car> carsCopy;
+//		synchronized (MODEL) {
+//		carsCopy = new ArrayList<Car>(cars);
+//		}
 		
-		for (Car c : carsCopy) {
+		for (Car c : cars) {
 			c.preStep(t);
 		}
 		
-		synchronized (MODEL) {
+//		synchronized (MODEL) {
 			
 			for (AnimatedExplosion x : explosions) {
 				x.preStep(t);
 			}
 			
-		}
+//		}
 	}
 	
 	public void addCar(Car c) {

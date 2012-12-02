@@ -23,11 +23,9 @@ import org.jbox2d.dynamics.FixtureDef;
 import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.core.geom.Circle;
 import com.gutabi.deadlock.core.geom.Geom;
 import com.gutabi.deadlock.core.geom.Quad;
 import com.gutabi.deadlock.core.geom.Shape;
-import com.gutabi.deadlock.core.graph.GraphPosition;
 import com.gutabi.deadlock.core.graph.GraphPositionPath;
 import com.gutabi.deadlock.core.graph.GraphPositionPathPosition;
 import com.gutabi.deadlock.core.graph.Merger;
@@ -62,7 +60,7 @@ public abstract class Car extends Entity {
 	public static final int brakeRowEnd = brakeRowStart + 8;
 	
 	
-	public static final double COMPLETE_STOP_WAIT_TIME = 0.0;
+	public static final double COMPLETE_STOP_WAIT_TIME = 0.5;
 	
 	protected int sheetRowStart;
 	protected int sheetRowEnd;
@@ -167,7 +165,7 @@ public abstract class Car extends Entity {
 	List<VertexEvent> vertexDepartureQueue = new ArrayList<VertexEvent>();
 	double decelTime = -1;
 	double stoppedTime = -1;
-	Circle goalPoint;
+	Point goalPoint;
 	
 	protected Color color;
 	protected Color hiliteColor;
@@ -210,9 +208,9 @@ public abstract class Car extends Entity {
 		
 		computePath();
 		
-		overallPos = new GraphPositionPathPosition(overallPath, 0, 0.0, overallPath.get(0));
-		GraphPosition closestGraphPos = overallPath.getGraphPosition(0, 0.0);
-		startPoint = closestGraphPos.p;
+		overallPos = new GraphPositionPathPosition(overallPath, 0, 0.0);
+//		GraphPosition closestGraphPos = overallPath.get(0);
+		startPoint = overallPos.p;
 		
 		vertexDepartureQueue.add(new VertexSpawnEvent(overallPos));
 		source.carQueue.add(this);
@@ -238,7 +236,7 @@ public abstract class Car extends Entity {
 		
 		GraphPositionPathPosition next = overallPos.travel(getMaxSpeed() * MODEL.dt);
 		
-		Point nextDTGoalPoint = next.gpos.p;
+		Point nextDTGoalPoint = next.p;
 		
 		Point dp = new Point(nextDTGoalPoint.x-startPoint.x, nextDTGoalPoint.y-startPoint.y);
 		
@@ -265,7 +263,8 @@ public abstract class Car extends Entity {
 		
 		b2dBody.setLinearVelocity(v);
 		
-		computeDynamicProperties();
+		computeDynamicPropertiesAlways();
+		computeDynamicPropertiesMoving();
 	}
 	
 	private void b2dInit() {
@@ -315,7 +314,11 @@ public abstract class Car extends Entity {
 		mergingCarFilter.maskBits = 0;
 	}
 	
-	private void computeDynamicProperties() {
+	private void computeDynamicPropertiesAlways() {
+		vel = b2dBody.getLinearVelocity();
+	}
+	
+	private void computeDynamicPropertiesMoving() {
 		
 //		prevWorldPoint0 = worldQuad.p0;
 //		prevWorldPoint3 = worldQuad.p3;
@@ -329,7 +332,7 @@ public abstract class Car extends Entity {
 		
 		currentRightNormal = b2dBody.getWorldVector(right);
 		currentUpNormal = b2dBody.getWorldVector(up);
-		vel = b2dBody.getLinearVelocity();
+		
 		angle = b2dBody.getAngle();
 		assert !Double.isNaN(angle);
 		
@@ -354,31 +357,49 @@ public abstract class Car extends Entity {
 		
 		shape = Geom.localToWorld(localQuad, carTransArr, p);
 		
-		Entity e = MODEL.world.pureGraphBestHitTestQuad(this.shape);
+		Entity hit = null;
 		
-		boolean wasInMerger = inMerger;
-		if (e == null) {
-			atleastPartiallyOnRoad = false;
-			inMerger = false;
-		} else {
-			atleastPartiallyOnRoad = true;
-			if (e instanceof Merger && ((Quad)shape).containedIn((Quad)e.getShape())) {
-				inMerger = true;
-			} else {
+		switch (state) {
+		case DRIVING:
+		case BRAKING:
+			overallPos = overallPath.findClosestGraphPositionPathPosition(p, overallPos);
+			
+			hit = MODEL.world.pureGraphBestHitTestQuadOnlyOnPath(this.shape, overallPath);
+			
+			boolean wasInMerger = inMerger;
+			if (hit == null) {
+				atleastPartiallyOnRoad = false;
 				inMerger = false;
-			}
-		}
-		
-		if (!atleastPartiallyOnRoad) {
-			skid();
-		}
-		
-		if (inMerger == !wasInMerger) {
-			if (inMerger) {
-				b2dFixture.setFilterData(mergingCarFilter);
 			} else {
-				b2dFixture.setFilterData(normalCarFilter);
+				atleastPartiallyOnRoad = true;
+				if (hit instanceof Merger && ((Quad)shape).containedIn((Quad)hit.getShape())) {
+					inMerger = true;
+				} else {
+					inMerger = false;
+				}
 			}
+			
+			if (!atleastPartiallyOnRoad) {
+				skid();
+			}
+			
+			if (inMerger == !wasInMerger) {
+				if (inMerger) {
+					b2dFixture.setFilterData(mergingCarFilter);
+				} else {
+					b2dFixture.setFilterData(normalCarFilter);
+				}
+			}
+			
+			break;
+		case SINKED:
+		case SKIDDED:
+		case CRASHED:
+//			overallPos = null;
+			
+//			hit = MODEL.world.pureGraphBestHitTestQuad(this.shape);
+			
+			break;
 		}
 		
 	}
@@ -413,8 +434,8 @@ public abstract class Car extends Entity {
 		
 		state = CarStateEnum.CRASHED;
 		
-		overallPos = null;
-		goalPoint = null;
+//		overallPos = null;
+//		goalPoint = null;
 		
 //		source.outstandingCars--;
 		
@@ -450,8 +471,8 @@ public abstract class Car extends Entity {
 		
 		state = CarStateEnum.SKIDDED;
 		
-		overallPos = null;
-		goalPoint = null;
+//		overallPos = null;
+//		goalPoint = null;
 		
 //		source.outstandingCars--;
 		
@@ -493,19 +514,8 @@ public abstract class Car extends Entity {
 	
 	public void preStep(double t) {
 		
-		if (state == CarStateEnum.CRASHED || state == CarStateEnum.SKIDDED || state == CarStateEnum.SINKED) {
-			
-		} else {
-			
-			/*
-			 * calculate current overall position on graph
-			 */
-			GraphPositionPathPosition max = overallPos.travel(Math.min(2 * CAR_LENGTH, overallPos.lengthToEndOfPath));
-			overallPos = overallPath.findClosestGraphPositionPathPosition(p, overallPos, max);
-			
-			if (pathingLogger.isDebugEnabled()) {
-				pathingLogger.debug("overallPos: " + overallPos.gpos);
-			}
+		switch (state) {
+		case DRIVING: {
 			
 			DrivingEvent newDrivingEvent = findNewDrivingEvent();
 			
@@ -515,30 +525,63 @@ public abstract class Car extends Entity {
 			
 			cleanupVertexDepartureQueue();
 			
+			break;
 		}
-		
-		updateFriction();
+		case BRAKING: {
+			
+			DrivingEvent newDrivingEvent = findNewDrivingEvent();
+			
+			processNewDrivingEvent(newDrivingEvent, t);
+			
+			handleCurrentDrivingEvent(t);
+			
+			cleanupVertexDepartureQueue();
+			
+			break;
+		}
+		case CRASHED:
+		case SKIDDED:
+		case SINKED:
+			break;
+		}
 		
 		switch (state) {
 		case DRIVING:
 			
 			GraphPositionPathPosition next = overallPos.travel(Math.min(steeringLookaheadDistance, overallPos.lengthToEndOfPath));
 			
-			if (pathingLogger.isDebugEnabled()) {
-				pathingLogger.debug("goalPoint: " + next.gpos);
-			}
+//			if (pathingLogger.isDebugEnabled()) {
+//				pathingLogger.debug("goalPoint: " + next.gpos);
+//			}
 			
-			goalPoint = new Circle(null, next.gpos.p, 0.1);
+			goalPoint = next.p;
+			
+			updateFriction();
 			updateDrive(t);
 			break;
+			
 		case BRAKING:
 			goalPoint = null;
+			
+			updateFriction();
 			updateBrake(t);
 			break;
+			
 		case CRASHED:
-		case SKIDDED:
-		case SINKED:
+			
+			updateFriction();
 			break;
+			
+		case SKIDDED:
+			
+			updateFriction();
+			break;
+			
+		case SINKED:
+			
+			updateFriction();
+			break;
+			
 		}
 	}
 	
@@ -650,7 +693,7 @@ public abstract class Car extends Entity {
 					
 					GraphPositionPathPosition otherPosition = null;
 					if (otherCar.overallPos != null) {
-						otherPosition = overallPath.hitTest(otherCar.overallPos.gpos, overallPos);
+						otherPosition = overallPath.hitTest(otherCar.overallPos.getGraphPosition(), overallPos);
 					}
 					
 					if (otherPosition == null || DMath.greaterThan(overallPos.distanceTo(otherPosition), carProximityLookahead)) {
@@ -801,7 +844,7 @@ public abstract class Car extends Entity {
 		
 		
 		
-		Point dp = new Point(goalPoint.center.x-p.x, goalPoint.center.y-p.y);
+		Point dp = new Point(goalPoint.x-p.x, goalPoint.y-p.y);
 		
 		double goalAngle = Math.atan2(dp.y, dp.x);
 		
@@ -902,10 +945,11 @@ public abstract class Car extends Entity {
 	@Override
 	public boolean postStep(double t) {
 		
-		computeDynamicProperties();
-		
 		switch (state) {
 		case DRIVING: {
+			
+			computeDynamicPropertiesAlways();
+			computeDynamicPropertiesMoving();
 			
 			Fixture s = (Fixture)overallPath.end.entity;
 			boolean sinked = false;
@@ -917,8 +961,8 @@ public abstract class Car extends Entity {
 				
 				logger.debug("sink");
 				
-				overallPos = null;
-				goalPoint = null;
+//				overallPos = null;
+//				goalPoint = null;
 				
 				cleanupVertexDepartureQueue();
 				
@@ -931,6 +975,8 @@ public abstract class Car extends Entity {
 			break;
 		}
 		case BRAKING:
+			
+			computeDynamicPropertiesAlways();
 			
 			if (stoppedTime == -1) {
 				
@@ -946,10 +992,20 @@ public abstract class Car extends Entity {
 //				MODEL.world.addSkidMarks(prevWorldPoint0, worldQuad.p0);
 //				MODEL.world.addSkidMarks(prevWorldPoint3, worldQuad.p3);
 				
+				computeDynamicPropertiesMoving();
+				
+			} else {
+				
+				
+				//computeDynamicPropertiesMoving();
+				
 			}
 			
 			break;
 		case CRASHED:
+			
+			computeDynamicPropertiesAlways();
+			computeDynamicPropertiesMoving();
 			
 			if (!MODEL.world.completelyContains(shape)) {
 				return false;
@@ -957,6 +1013,9 @@ public abstract class Car extends Entity {
 			
 			break;
 		case SKIDDED:
+			
+			computeDynamicPropertiesAlways();
+			computeDynamicPropertiesMoving();
 			
 //			MODEL.world.addSkidMarks(prevWorldPoint0, worldQuad.p0);
 //			MODEL.world.addSkidMarks(prevWorldPoint3, worldQuad.p3);
@@ -967,6 +1026,10 @@ public abstract class Car extends Entity {
 			
 			break;
 		case SINKED:
+			
+			computeDynamicPropertiesAlways();
+			computeDynamicPropertiesMoving();
+			
 			break;
 		}
 		
@@ -985,9 +1048,9 @@ public abstract class Car extends Entity {
 			
 			paintID(ctxt);
 			
-			if (goalPoint != null) {
-				goalPoint.paint(ctxt);
-			}
+//			if (goalPoint != null) {
+//				goalPoint.paint(ctxt);
+//			}
 			
 			ctxt.setColor(Color.BLACK);
 			ctxt.setPixelStroke();

@@ -26,10 +26,13 @@ public class AABB extends Shape {
 	public final Point p2;
 	public final Point p3;
 	
-	public final Point n01;
-	public final Point n12;
+	public static final Point UP = new Point(0, -1);
+	public static final Point LEFT = new Point(1, 0);
 	
-	private final Rectangle2D rect;
+	public final Point n01 = UP;
+	public final Point n12 = LEFT;
+	
+	private Rectangle2D rect;
 	
 	double[] n01Projection;
 	double[] n12Projection;
@@ -54,11 +57,6 @@ public class AABB extends Shape {
 		p2 = new Point(brX, brY);
 		p3 = new Point(ul.x, ul.y + height);
 		
-		n01 = new Point(0, -1);
-		n12 = new Point(1, 0);
-		
-		rect = new Rectangle2D.Double(x, y, width, height);
-		
 	}
 	
 	public String toString() {
@@ -78,6 +76,10 @@ public class AABB extends Shape {
 	
 	public AABB getAABB() {
 		return this;
+	}
+	
+	private void computeRect() {
+		rect = new Rectangle2D.Double(x, y, width, height);
 	}
 	
 	public void project(Point axis, double[] out) {
@@ -110,11 +112,20 @@ public class AABB extends Shape {
 	}
 	
 	private void computeProjections() {
+		
 		n01Projection = new double[2];
 		project(n01, n01Projection);
 		
 		n12Projection = new double[2];
 		project(n12, n12Projection);
+	}
+	
+	public Point getN01() {
+		return n01;
+	}
+	
+	public Point getN12() {
+		return n12;
 	}
 	
 	public void projectN01(double[] out) {
@@ -200,10 +211,16 @@ public class AABB extends Shape {
 	}
 	
 	public void paint(RenderingContext ctxt) {
+		if (rect == null) {
+			computeRect();
+		}
 		ctxt.fill(rect);	
 	}
 	
 	public void draw(RenderingContext ctxt) {
+		if (rect == null) {
+			computeRect();
+		}
 		ctxt.draw(rect);
 	}
 
