@@ -23,7 +23,6 @@ public class VertexArrivalEvent extends VertexEvent {
 		
 	}
 	
-	@Override
 	public int hashCode() {
 		if (hash == 0) {
 			int h = 17;

@@ -32,24 +32,20 @@ public class StraightEdgeCursorShape extends Shape {
 		
 	}
 	
-	@Override
 	public boolean hitTest(Point p) {
 		assert false;
 		return false;
 	}
 	
-	@Override
 	public Shape plus(Point p) {
 		assert false;
 		return null;
 	}
 	
-	@Override
 	public AABB getAABB() {
 		return aabb;
 	}
 	
-	@Override
 	public void draw(RenderingContext ctxt) {
 		ctxt.setColor(Color.GRAY);
 		ctxt.setPixelStroke();

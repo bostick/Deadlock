@@ -78,7 +78,10 @@ public class World implements Sweepable {
 //		};
 		
 		int[][] ini = new int[][] {
-				{1}
+				{1, 1, 1, 1},
+				{1, 1, 1, 1},
+				{1, 1, 1, 1},
+				{1, 1, 1, 1}
 		};
 		
 		map = new Map(ini);

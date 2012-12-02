@@ -10,6 +10,7 @@ import java.awt.event.KeyListener;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 
+@SuppressWarnings("serial")
 public class KeyboardController implements KeyListener {
 	
 	public void init() {
@@ -20,9 +21,7 @@ public class KeyboardController implements KeyListener {
 		
 	}
 	
-	@SuppressWarnings("serial")
 	public Action deleteKeyAction = new AbstractAction() {
-		@Override
 		public void actionPerformed(ActionEvent blah) {
 			
 			CONTROLLER.deleteKey();
@@ -30,9 +29,7 @@ public class KeyboardController implements KeyListener {
 		}
 	};
 	
-	@SuppressWarnings("serial")
 	public Action insertKeyAction = new AbstractAction() {
-		@Override
 		public void actionPerformed(ActionEvent blah) {
 			
 			CONTROLLER.insertKey();
@@ -40,23 +37,19 @@ public class KeyboardController implements KeyListener {
 		}
 	};
 	
-	@SuppressWarnings("serial")
 	public Action qKeyAction = new AbstractAction() {
-		@Override
 		public void actionPerformed(ActionEvent blah) {
 			
 			CONTROLLER.qKey();
 			
 		}
 	};
-
-	@Override
+	
 	public void keyPressed(KeyEvent arg0) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
 	public void keyReleased(KeyEvent e) {
 		if (e.getKeyCode() == KeyEvent.VK_INSERT) {
 			CONTROLLER.insertKey();
@@ -83,7 +76,6 @@ public class KeyboardController implements KeyListener {
 		}
 	}
 
-	@Override
 	public void keyTyped(KeyEvent e) {
 		
 	}

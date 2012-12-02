@@ -18,7 +18,6 @@ public class CarEventListener implements ContactListener {
 	
 	static Logger logger = Logger.getLogger(CarEventListener.class);
 	
-	@Override
 	public void beginContact(Contact contact) {
 		
 		Body bodyA = contact.getFixtureA().getBody();
@@ -63,7 +62,6 @@ public class CarEventListener implements ContactListener {
 		
 	}
 	
-	@Override
 	public void endContact(Contact contact) {
 		
 		Body bodyA = contact.getFixtureA().getBody();
@@ -90,12 +88,10 @@ public class CarEventListener implements ContactListener {
 		;
 	}
 	
-	@Override
 	public void preSolve(Contact contact, Manifold oldManifold) {
 		;
 	}
 
-	@Override
 	public void postSolve(Contact contact, ContactImpulse impulse) {
 		;
 	}

@@ -28,7 +28,6 @@ import com.gutabi.deadlock.core.geom.Quad;
 import com.gutabi.deadlock.core.geom.Shape;
 import com.gutabi.deadlock.core.graph.GraphPositionPath;
 import com.gutabi.deadlock.core.graph.GraphPositionPathPosition;
-import com.gutabi.deadlock.core.graph.Merger;
 import com.gutabi.deadlock.model.event.CarProximityEvent;
 import com.gutabi.deadlock.model.event.DrivingEvent;
 import com.gutabi.deadlock.model.event.VertexArrivalEvent;
@@ -152,7 +151,7 @@ public abstract class Car extends Entity {
 	float angle;
 	float angularVel;
 	double[][] carTransArr;
-	boolean atleastPartiallyOnRoad;
+//	boolean atleastPartiallyOnRoad;
 	boolean inMerger;
 	
 	Point prevWorldPoint0;
@@ -357,39 +356,40 @@ public abstract class Car extends Entity {
 		
 		shape = Geom.localToWorld(localQuad, carTransArr, p);
 		
-		Entity hit = null;
+//		Entity hit = null;
 		
 		switch (state) {
 		case DRIVING:
 		case BRAKING:
+			
 			overallPos = overallPath.findClosestGraphPositionPathPosition(p, overallPos);
 			
-			hit = MODEL.world.pureGraphBestHitTestQuadOnlyOnPath(this.shape, overallPath);
-			
-			boolean wasInMerger = inMerger;
-			if (hit == null) {
-				atleastPartiallyOnRoad = false;
-				inMerger = false;
-			} else {
-				atleastPartiallyOnRoad = true;
-				if (hit instanceof Merger && ((Quad)shape).containedIn((Quad)hit.getShape())) {
-					inMerger = true;
-				} else {
-					inMerger = false;
-				}
-			}
-			
-			if (!atleastPartiallyOnRoad) {
-				skid();
-			}
-			
-			if (inMerger == !wasInMerger) {
-				if (inMerger) {
-					b2dFixture.setFilterData(mergingCarFilter);
-				} else {
-					b2dFixture.setFilterData(normalCarFilter);
-				}
-			}
+//			hit = overallPath.pureGraphBestHitTestQuad(this.shape);
+//			
+//			boolean wasInMerger = inMerger;
+//			if (hit == null) {
+//				atleastPartiallyOnRoad = false;
+//				inMerger = false;
+//			} else {
+//				atleastPartiallyOnRoad = true;
+//				if (hit instanceof Merger && ((Quad)shape).containedIn((Quad)hit.getShape())) {
+//					inMerger = true;
+//				} else {
+//					inMerger = false;
+//				}
+//			}
+//			
+//			if (!atleastPartiallyOnRoad) {
+//				skid();
+//			}
+//			
+//			if (inMerger == !wasInMerger) {
+//				if (inMerger) {
+//					b2dFixture.setFilterData(mergingCarFilter);
+//				} else {
+//					b2dFixture.setFilterData(normalCarFilter);
+//				}
+//			}
 			
 			break;
 		case SINKED:
@@ -467,42 +467,42 @@ public abstract class Car extends Entity {
 		
 	}
 	
-	private void skid() {
-		
-		state = CarStateEnum.SKIDDED;
-		
-//		overallPos = null;
-//		goalPoint = null;
-		
-//		source.outstandingCars--;
-		
-		if (curDrivingEvent == null) {
-			
-		} else if (curDrivingEvent instanceof VertexArrivalEvent) {
-			
-			if (((VertexArrivalEvent)curDrivingEvent).sign.isEnabled()) {
-				stoppedTime = -1;
-				decelTime = -1;
-			}
-			
-			((VertexArrivalEvent)curDrivingEvent).v.carQueue.remove(this);
-			
-			curDrivingEvent = null;
-			
-		} else if (curDrivingEvent instanceof CarProximityEvent) {
-			
-			stoppedTime = -1;
-			decelTime = -1;
-			
-			curDrivingEvent = null;
-			
-		} else {
-			assert false;
-		}
-		
-		cleanupVertexDepartureQueue();
-		
-	}
+//	private void skid() {
+//		
+//		state = CarStateEnum.SKIDDED;
+//		
+////		overallPos = null;
+////		goalPoint = null;
+//		
+////		source.outstandingCars--;
+//		
+//		if (curDrivingEvent == null) {
+//			
+//		} else if (curDrivingEvent instanceof VertexArrivalEvent) {
+//			
+//			if (((VertexArrivalEvent)curDrivingEvent).sign.isEnabled()) {
+//				stoppedTime = -1;
+//				decelTime = -1;
+//			}
+//			
+//			((VertexArrivalEvent)curDrivingEvent).v.carQueue.remove(this);
+//			
+//			curDrivingEvent = null;
+//			
+//		} else if (curDrivingEvent instanceof CarProximityEvent) {
+//			
+//			stoppedTime = -1;
+//			decelTime = -1;
+//			
+//			curDrivingEvent = null;
+//			
+//		} else {
+//			assert false;
+//		}
+//		
+//		cleanupVertexDepartureQueue();
+//		
+//	}
 	
 	public void preStart() {
 		;
@@ -942,7 +942,6 @@ public abstract class Car extends Entity {
 	/**
 	 * return true if car should persist after time step
 	 */
-	@Override
 	public boolean postStep(double t) {
 		
 		switch (state) {

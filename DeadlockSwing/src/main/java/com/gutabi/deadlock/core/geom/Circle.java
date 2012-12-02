@@ -34,7 +34,6 @@ public class Circle extends SweepableShape {
 		aabb = new AABB(center.x - radius, center.y - radius, 2*radius, 2*radius);
 	}
 	
-	@Override
 	public boolean equals(Object o) {
 		if (this == o) {
 			return true;

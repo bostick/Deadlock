@@ -84,7 +84,6 @@ public class MergerPosition extends EdgePosition {
 		return m + " " + index + " " + param + " (" + (axis==Axis.LEFTRIGHT?distanceToLeftOfMerger:distanceToTopOfMerger) + "/" + (axis==Axis.LEFTRIGHT?Merger.MERGER_WIDTH:Merger.MERGER_HEIGHT) + ")";
 	}
 	
-	@Override
 	public boolean equals(Object o) {
 		if (this == o) {
 			return true;

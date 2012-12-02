@@ -55,7 +55,6 @@ public class Quad extends SweepableShape {
 		return hash;
 	}
 	
-	@Override
 	public boolean equals(Object o) {
 		if (this == o) {
 			return true;

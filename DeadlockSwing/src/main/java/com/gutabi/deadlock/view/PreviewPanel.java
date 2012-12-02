@@ -20,7 +20,6 @@ public class PreviewPanel extends JPanel {
 		setMaximumSize(new Dimension(VIEW.PREVIEW_WIDTH, VIEW.PREVIEW_HEIGHT));
 	}
 	
-	@Override
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		

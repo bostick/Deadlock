@@ -52,7 +52,6 @@ public final class Fixture extends Vertex {
 		return false;
 	}
 	
-	@Override
 	public final boolean isUserDeleteable() {
 		return false;
 	}

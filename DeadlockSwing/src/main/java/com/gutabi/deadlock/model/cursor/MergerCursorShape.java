@@ -58,19 +58,16 @@ public class MergerCursorShape extends Shape {
 		return aabb;
 	}
 	
-	@Override
 	public boolean hitTest(Point p) {
 		assert false;
 		return false;
 	}
 	
-	@Override
 	public Shape plus(Point p) {
 		assert false;
 		return null;
 	}
 	
-	@Override
 	public void draw(RenderingContext ctxt) {
 		ctxt.setPixelStroke();
 		ctxt.setColor(Color.GRAY);

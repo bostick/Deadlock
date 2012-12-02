@@ -209,8 +209,6 @@ public class Merger extends Edge {
 		return null;
 	}
 	
-	
-	@Override
 	public boolean isUserDeleteable() {
 		return true;
 	}
@@ -223,12 +221,10 @@ public class Merger extends Edge {
 		;
 	}
 	
-	@Override
 	public void preStep(double t) {
 		;
 	}
-
-	@Override
+	
 	public boolean postStep(double t) {
 		return true;
 	}
@@ -284,7 +280,6 @@ public class Merger extends Edge {
 		}
 	}
 	
-	@Override
 	public void paint(RenderingContext ctxt) {
 		
 		switch (ctxt.type) {
@@ -312,8 +307,7 @@ public class Merger extends Edge {
 		}
 		
 	}
-
-	@Override
+	
 	public void paintHilite(RenderingContext ctxt) {
 		
 		ctxt.setColor(hiliteColor);

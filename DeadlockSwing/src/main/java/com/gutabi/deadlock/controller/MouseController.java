@@ -25,32 +25,26 @@ public class MouseController implements MouseListener, MouseMotionListener {
 		
 	}
 	
-	@Override
 	public void mousePressed(MouseEvent ev) {
 		pressed(new InputEvent(ev.getComponent(), new Point(ev.getX(), ev.getY())));
 	}
 	
-	@Override
 	public void mouseDragged(MouseEvent ev) {
 		dragged(new InputEvent(ev.getComponent(), new Point(ev.getX(), ev.getY())));
 	}
 	
-	@Override
 	public void mouseReleased(MouseEvent ev) {
 		released(new InputEvent(ev.getComponent(), new Point(ev.getX(), ev.getY())));
 	}
 	
-	@Override
 	public void mouseMoved(MouseEvent ev) {
 		moved(new InputEvent(ev.getComponent(), new Point(ev.getX(), ev.getY())));
 	}
 	
-	@Override
 	public void mouseEntered(MouseEvent ev) {
 		entered(new InputEvent(ev.getComponent(), new Point(ev.getX(), ev.getY())));
 	}
-
-	@Override
+	
 	public void mouseExited(MouseEvent ev) {
 		exited(new InputEvent(ev.getComponent(), new Point(ev.getX(), ev.getY())));
 	}
@@ -79,7 +73,6 @@ public class MouseController implements MouseListener, MouseMotionListener {
 		CONTROLLER.exited(ev);
 	}
 	
-	@Override
 	public void mouseClicked(MouseEvent arg0) {
 		;
 	}

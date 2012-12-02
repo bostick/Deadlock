@@ -44,8 +44,7 @@ public class DeadlockApplet extends JApplet {
 	}
 	
 	public static Thread.UncaughtExceptionHandler handler = new Thread.UncaughtExceptionHandler() {
-		@Override
-		public void uncaughtException(Thread thread, Throwable t) {
+			public void uncaughtException(Thread thread, Throwable t) {
 			logger.error("Error in thread " + thread.getName() + ": " + t.getMessage(), t);
 		}
 	};
@@ -59,8 +58,7 @@ public class DeadlockApplet extends JApplet {
 			UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
 			
 			SwingUtilities.invokeLater(new Runnable() {
-				@Override
-				public void run() {
+							public void run() {
 					try {
 						createAndShowGUI(DeadlockApplet.this);
 					} catch (Exception e) {

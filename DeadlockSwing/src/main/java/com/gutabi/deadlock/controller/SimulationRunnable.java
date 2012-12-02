@@ -11,7 +11,6 @@ public class SimulationRunnable implements Runnable {
 	
 	static Logger logger = Logger.getLogger(SimulationRunnable.class);
 	
-	@Override
 	public void run() {
 		
 		double t = 0;
