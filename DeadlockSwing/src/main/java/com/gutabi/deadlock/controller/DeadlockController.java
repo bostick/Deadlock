@@ -255,7 +255,10 @@ public class DeadlockController implements ActionListener {
 			case RUNNING:
 				
 				Entity closest = MODEL.world.hitTest(lastMovedWorldPoint);
-				MODEL.hilited = closest;
+				
+				synchronized (MODEL) {
+					MODEL.hilited = closest;
+				}
 				
 				if (MODEL.cursor != null) {
 					if (MODEL.grid) {
@@ -755,7 +758,10 @@ public class DeadlockController implements ActionListener {
 		case RUNNING:
 			
 			Entity closest = MODEL.world.hitTest(lastMovedWorldPoint);
-			MODEL.hilited = closest;
+			
+			synchronized (MODEL) {
+				MODEL.hilited = closest;
+			}
 			
 		case MERGERCURSOR:
 		case FIXTURECURSOR:
@@ -798,7 +804,10 @@ public class DeadlockController implements ActionListener {
 		case RUNNING:
 			
 			Entity closest = MODEL.world.hitTest(lastMovedWorldPoint);
-			MODEL.hilited = closest;
+			
+			synchronized (MODEL) {
+				MODEL.hilited = closest;
+			}
 			
 		case MERGERCURSOR:
 		case FIXTURECURSOR:
@@ -956,6 +965,24 @@ public class DeadlockController implements ActionListener {
 			MODEL.FPS_DRAW = state;
 			
 			VIEW.renderWorldBackground();
+			VIEW.repaintCanvas();
+			
+		} else if (e.getActionCommand().equals("stopSignDraw")) {
+			
+			boolean state = VIEW.controlPanel.stopSignCheckBox.isSelected();
+			
+			MODEL.STOPSIGN_DRAW = state;
+			
+			VIEW.renderWorldBackground();
+			VIEW.repaintCanvas();
+			
+		} else if (e.getActionCommand().equals("carTextureDraw")) {
+			
+			boolean state = VIEW.controlPanel.carTextureCheckBox.isSelected();
+			
+			MODEL.CARTEXTURE_DRAW = state;
+			
+//			VIEW.renderWorldBackground();
 			VIEW.repaintCanvas();
 			
 		}

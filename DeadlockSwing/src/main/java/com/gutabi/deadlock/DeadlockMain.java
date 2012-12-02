@@ -26,6 +26,7 @@ public class DeadlockMain  {
 		MODEL.init();
 //		MODEL.world = new World();
 		MODEL.world = new FourByFourGridWorld();
+//		MODEL.world = new OneByOneWorld();
 		MODEL.world.init();
 		
 		VIEW.codebase = new URL("file:.");

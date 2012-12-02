@@ -77,8 +77,10 @@ public final class Fixture extends Vertex {
 		
 		if (type == FixtureType.SOURCE) {
 			
-			shortestPathToMatch.currentCars.clear();
-			shortestPathToMatch.sharedEdgesMap.clear();
+			if (shortestPathToMatch != null) {
+				shortestPathToMatch.currentCars.clear();
+				shortestPathToMatch.sharedEdgesMap.clear();
+			}
 			
 		}
 		

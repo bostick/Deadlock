@@ -101,20 +101,24 @@ public class StopSign extends Entity {
 	
 	public void paint(RenderingContext ctxt) {
 		
-		if (enabled) {
+		if (MODEL.STOPSIGN_DRAW) {
 			
-			ctxt.paintImage(p.x - StopSign.STOPSIGN_SIZE/2, p.y - StopSign.STOPSIGN_SIZE/2, VIEW.sheet,
-					0,
-					0,
-					VIEW.metersToPixels(STOPSIGN_SIZE),
-					VIEW.metersToPixels(STOPSIGN_SIZE),
-					32, 224, 32+32, 224+32);
+			if (enabled) {
+				
+				ctxt.paintImage(p.x - StopSign.STOPSIGN_SIZE/2, p.y - StopSign.STOPSIGN_SIZE/2, VIEW.sheet,
+						0,
+						0,
+						VIEW.metersToPixels(STOPSIGN_SIZE),
+						VIEW.metersToPixels(STOPSIGN_SIZE),
+						32, 224, 32+32, 224+32);
+				
+			}
 			
-		}
-		
-		if (MODEL.DEBUG_DRAW) {
-			
-			shape.getAABB().draw(ctxt);
+			if (MODEL.DEBUG_DRAW) {
+				
+				shape.getAABB().draw(ctxt);
+				
+			}
 			
 		}
 		

@@ -434,12 +434,15 @@ public abstract class Car extends Entity {
 		
 		state = CarStateEnum.CRASHED;
 		
-//		overallPos = null;
+		overallPos = null;
 //		goalPoint = null;
 		
 //		source.outstandingCars--;
 		
 		overallPath.currentCars.remove(this);
+		for (GraphPositionPath path : overallPath.sharedEdgesMap.keySet()) {
+			path.currentCars.remove(this);
+		}
 		
 		if (curDrivingEvent == null) {
 			
@@ -531,9 +534,9 @@ public abstract class Car extends Entity {
 		}
 		case BRAKING: {
 			
-			DrivingEvent newDrivingEvent = findNewDrivingEvent();
+//			DrivingEvent newDrivingEvent = findNewDrivingEvent();
 			
-			processNewDrivingEvent(newDrivingEvent, t);
+//			processNewDrivingEvent(newDrivingEvent, t);
 			
 			handleCurrentDrivingEvent(t);
 			
@@ -962,12 +965,15 @@ public abstract class Car extends Entity {
 				
 				logger.debug("sink");
 				
-//				overallPos = null;
+				overallPos = null;
 //				goalPoint = null;
 				
 				cleanupVertexDepartureQueue();
 				
 				overallPath.currentCars.remove(this);
+				for (GraphPositionPath path : overallPath.sharedEdgesMap.keySet()) {
+					path.currentCars.remove(this);
+				}
 				
 				s.match.outstandingCars--;
 				s.carQueue.remove(this);
@@ -1045,20 +1051,57 @@ public abstract class Car extends Entity {
 	 */
 	public void paint(RenderingContext ctxt) {
 		
-		paintImage(ctxt);
-		
-		if (MODEL.DEBUG_DRAW) {
+		switch (state) {
+		case BRAKING:
 			
-			paintID(ctxt);
+			if (MODEL.CARTEXTURE_DRAW) {
+				paintImage(ctxt);
+			} else {
+				paintRect(ctxt);
+			}
 			
-//			if (goalPoint != null) {
-//				goalPoint.paint(ctxt);
-//			}
+			paintBrakes(ctxt);
 			
-			ctxt.setColor(Color.BLACK);
-			ctxt.setPixelStroke();
-			shape.getAABB().draw(ctxt);
+			if (MODEL.DEBUG_DRAW) {
+				
+				paintID(ctxt);
+				
+//				if (goalPoint != null) {
+//					goalPoint.paint(ctxt);
+//				}
+				
+				ctxt.setColor(Color.BLACK);
+				ctxt.setPixelStroke();
+				shape.getAABB().draw(ctxt);
+				
+			}
 			
+			break;
+		case DRIVING:
+		case SINKED:
+		case SKIDDED:
+		case CRASHED:
+			
+			if (MODEL.CARTEXTURE_DRAW) {
+				paintImage(ctxt);
+			} else {
+				paintRect(ctxt);
+			}
+			
+			if (MODEL.DEBUG_DRAW) {
+				
+				paintID(ctxt);
+				
+//				if (goalPoint != null) {
+//					goalPoint.paint(ctxt);
+//				}
+				
+				ctxt.setColor(Color.BLACK);
+				ctxt.setPixelStroke();
+				shape.getAABB().draw(ctxt);
+				
+			}
+			break;
 		}
 		
 	}
@@ -1093,27 +1136,6 @@ public abstract class Car extends Entity {
 				0, 0, (int)(CAR_LENGTH * VIEW.PIXELS_PER_METER_DEBUG), (int)(CAR_WIDTH * VIEW.PIXELS_PER_METER_DEBUG),
 				64, sheetRowStart, 64+32, sheetRowEnd);
 		
-		if (state == CarStateEnum.BRAKING) {
-			
-			int brakePixels = (int)(BRAKE_SIZE * VIEW.PIXELS_PER_METER_DEBUG);
-			
-			ctxt.paintImage(CAR_BRAKE1X, CAR_BRAKE1Y,
-					VIEW.sheet,
-					0,
-					0,
-					brakePixels,
-					brakePixels,
-					0, brakeRowStart, 0+8, brakeRowEnd);
-			
-			ctxt.paintImage(CAR_BRAKE2X, CAR_BRAKE2Y, VIEW.sheet,
-					0,
-					0,
-					brakePixels,
-					brakePixels,
-					0, brakeRowStart, 0+8, brakeRowEnd);
-			
-		}
-		
 		if (inMerger) {
 			ctxt.setComposite(origComposite);
 		}
@@ -1128,12 +1150,45 @@ public abstract class Car extends Entity {
 		shape.paint(ctxt);
 	}
 	
+	private void paintBrakes(RenderingContext ctxt) {
+		
+		AffineTransform origTransform = ctxt.getTransform();
+		
+		ctxt.translate(p.x, p.y);
+		ctxt.rotate(angle);
+		
+		int brakePixels = (int)(BRAKE_SIZE * VIEW.PIXELS_PER_METER_DEBUG);
+		
+		ctxt.paintImage(CAR_BRAKE1X, CAR_BRAKE1Y,
+				VIEW.sheet,
+				0,
+				0,
+				brakePixels,
+				brakePixels,
+				0, brakeRowStart, 0+8, brakeRowEnd);
+		
+		ctxt.paintImage(CAR_BRAKE2X, CAR_BRAKE2Y, VIEW.sheet,
+				0,
+				0,
+				brakePixels,
+				brakePixels,
+				0, brakeRowStart, 0+8, brakeRowEnd);
+		
+		ctxt.setTransform(origTransform);
+		
+	}
+	
 	public void paintID(RenderingContext ctxt) {
+		
+		AffineTransform origTransform = ctxt.getTransform();
+		
+		ctxt.translate(p.x, p.y);
 		
 		ctxt.setColor(Color.WHITE);
 		ctxt.setPixelStroke();
-		ctxt.paintString(-CAR_LENGTH/2, 0.0, Integer.toString(id));
+		ctxt.paintString(CAR_LOCALX, 0.0, Integer.toString(id));
 		
+		ctxt.setTransform(origTransform);
 	}
 
 }

@@ -2,6 +2,7 @@ package com.gutabi.deadlock.model.car;
 
 import org.apache.log4j.Logger;
 
+import com.gutabi.deadlock.core.graph.GraphPositionPath;
 import com.gutabi.deadlock.model.Car;
 import com.gutabi.deadlock.model.Fixture;
 
@@ -22,12 +23,14 @@ public class FastCar extends Car {
 		return speed;
 	}
 	
-//	protected int getSheetRow() {
-//		return 32;
-//	}
-	
 	protected void computePath() {
+		
 		overallPath = source.getShortestPathToMatch();
+		
 		overallPath.currentCars.add(this);
+		for (GraphPositionPath path : overallPath.sharedEdgesMap.keySet()) {
+			path.currentCars.add(this);
+		}
+		
 	}
 }

@@ -36,6 +36,11 @@ public class GraphPositionPath {
 	
 	public final List<Car> currentCars = new ArrayList<Car>();
 	
+	/**
+	 * given another path, what is the set of shared edges?
+	 * 
+	 * empty sets are returned as null
+	 */
 	public final Map<GraphPositionPath, Set<Edge>> sharedEdgesMap = new HashMap<GraphPositionPath, Set<Edge>>();
 	
 	private int hash;
@@ -446,7 +451,8 @@ public class GraphPositionPath {
 //			if (c.overallPos == null) {
 //				continue;
 //			}
-			if (!hasLoop) {
+			
+			if (c.overallPath.equals(this) && !hasLoop) {
 				
 				hitMap.put(c.overallPos, c);
 				continue;
@@ -454,9 +460,7 @@ public class GraphPositionPath {
 			}
 			
 			Set<Edge> sharedEdges = sharedEdgesMap.get(c.overallPath);
-			if (sharedEdges.isEmpty()) {
-				continue;
-			}
+			assert !sharedEdges.isEmpty();
 			
 			GraphPosition gp = c.overallPos.getGraphPosition();
 			

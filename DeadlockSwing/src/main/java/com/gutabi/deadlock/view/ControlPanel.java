@@ -28,6 +28,8 @@ public class ControlPanel extends JPanel {
 	public JButton stopButton;
 	
 	public JCheckBox fpsCheckBox;
+	public JCheckBox stopSignCheckBox;
+	public JCheckBox carTextureCheckBox;
 	public JCheckBox debugCheckBox;
 	public JTextField dtField;
 	
@@ -103,6 +105,24 @@ public class ControlPanel extends JPanel {
 		fpsCheckBox.addActionListener(CONTROLLER);
 		hBox = Box.createHorizontalBox();
 		hBox.add(fpsCheckBox);
+		hBox.add(Box.createHorizontalGlue());
+		verticalBox.add(hBox);
+		
+		stopSignCheckBox = new JCheckBox("draw stop signs");
+		stopSignCheckBox.setSelected(MODEL.STOPSIGN_DRAW);
+		stopSignCheckBox.setActionCommand("stopSignDraw");
+		stopSignCheckBox.addActionListener(CONTROLLER);
+		hBox = Box.createHorizontalBox();
+		hBox.add(stopSignCheckBox);
+		hBox.add(Box.createHorizontalGlue());
+		verticalBox.add(hBox);
+		
+		carTextureCheckBox = new JCheckBox("draw car textures");
+		carTextureCheckBox.setSelected(MODEL.CARTEXTURE_DRAW);
+		carTextureCheckBox.setActionCommand("carTextureDraw");
+		carTextureCheckBox.addActionListener(CONTROLLER);
+		hBox = Box.createHorizontalBox();
+		hBox.add(carTextureCheckBox);
 		hBox.add(Box.createHorizontalGlue());
 		verticalBox.add(hBox);
 		

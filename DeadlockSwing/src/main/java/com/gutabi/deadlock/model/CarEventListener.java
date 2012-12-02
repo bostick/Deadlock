@@ -45,11 +45,11 @@ public class CarEventListener implements ContactListener {
 		WorldManifold worldManifold = new WorldManifold();
 		c.getWorldManifold(worldManifold);
 		
+		Vec2 p = worldManifold.points[0];
+		
+		MODEL.world.addExplosion(new AnimatedExplosion(Point.point(p)));
+		
 		if (a.state != CarStateEnum.CRASHED || b.state != CarStateEnum.CRASHED) {
-			
-			Vec2 p = worldManifold.points[0];
-			
-			MODEL.world.addExplosion(new AnimatedExplosion(Point.point(p)));
 			
 			if (a.state != CarStateEnum.CRASHED) {
 				a.crash();

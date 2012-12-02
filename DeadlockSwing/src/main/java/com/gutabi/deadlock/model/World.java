@@ -239,7 +239,18 @@ public class World implements Sweepable {
 	
 	
 	public void addExplosion(AnimatedExplosion x) {
+		
+		if (explosions.size() == 100) {
+			
+			explosions.remove(0);
+			
+		} else {
+			assert explosions.size() < 100;
+		}
+		
 		explosions.add(x);
+		
+		assert explosions.size() <= 100;
 	}
 	
 	
@@ -519,9 +530,13 @@ public class World implements Sweepable {
 		
 		AffineTransform origTransform = ctxt.getTransform();
 		ctxt.translate(VIEW.worldViewport.x, VIEW.worldViewport.y);
-		ctxt.paintImage(
-				0, 0, VIEW.canvasGrassImage, 0, 0, VIEW.canvasGrassImage.getWidth(), VIEW.canvasGrassImage.getHeight(),
-				0, 0, VIEW.canvasGrassImage.getWidth(), VIEW.canvasGrassImage.getHeight());
+		
+		synchronized (VIEW) {
+			ctxt.paintImage(
+					0, 0, VIEW.canvasGrassImage, 0, 0, VIEW.canvasGrassImage.getWidth(), VIEW.canvasGrassImage.getHeight(),
+					0, 0, VIEW.canvasGrassImage.getWidth(), VIEW.canvasGrassImage.getHeight());
+		}
+		
 		ctxt.setTransform(origTransform);
 		
 		if (animatedGrass1 != null) {
@@ -536,9 +551,13 @@ public class World implements Sweepable {
 		
 		origTransform = ctxt.getTransform();
 		ctxt.translate(VIEW.worldViewport.x, VIEW.worldViewport.y);
-		ctxt.paintImage(
-				0, 0, VIEW.canvasGraphImage, 0, 0, VIEW.canvasGraphImage.getWidth(), VIEW.canvasGraphImage.getHeight(),
-				0, 0, VIEW.canvasGraphImage.getWidth(), VIEW.canvasGraphImage.getHeight());
+		
+		synchronized (VIEW) {
+			ctxt.paintImage(
+					0, 0, VIEW.canvasGraphImage, 0, 0, VIEW.canvasGraphImage.getWidth(), VIEW.canvasGraphImage.getHeight(),
+					0, 0, VIEW.canvasGraphImage.getWidth(), VIEW.canvasGraphImage.getHeight());
+		}
+		
 		ctxt.setTransform(origTransform);
 		
 //		drawSkidMarks(g2);
@@ -549,20 +568,25 @@ public class World implements Sweepable {
 		
 		graph.paintScene(ctxt);
 		
+		List<Car> carsCopy;
+		List<AnimatedExplosion> explosionsCopy;
+		Entity hilitedCopy;
 		synchronized (MODEL) {
-			
-			for (Car c : cars) {
-				c.paint(ctxt);
-			}
-			
-			for (AnimatedExplosion x : explosions) {
-				x.paint(ctxt);
-			}
-			
+			carsCopy = new ArrayList<Car>(cars);
+			explosionsCopy = new ArrayList<AnimatedExplosion>(explosions);
+			hilitedCopy = MODEL.hilited;
 		}
 		
-		if (MODEL.hilited != null) {
-			MODEL.hilited.paintHilite(ctxt);
+		for (Car c : carsCopy) {
+			c.paint(ctxt);
+		}
+		
+		for (AnimatedExplosion x : explosionsCopy) {
+			x.paint(ctxt);
+		}
+		
+		if (hilitedCopy != null) {
+			hilitedCopy.paintHilite(ctxt);
 		}
 		
 		if (MODEL.DEBUG_DRAW) {
@@ -586,6 +610,10 @@ public class World implements Sweepable {
 		ctxt.translate(0, 1);
 		
 		ctxt.paintString(0, 0, "car count: " + cars.size());
+		
+		ctxt.translate(0, 1);
+		
+		ctxt.paintString(0, 0, "splosions count: " + explosions.size());
 		
 		ctxt.translate(0, 1);
 		

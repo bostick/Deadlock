@@ -17,6 +17,7 @@ import javax.imageio.ImageIO;
 import javax.swing.BoxLayout;
 import javax.swing.JApplet;
 import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
 
 import org.apache.log4j.Logger;
 
@@ -54,6 +55,10 @@ public class DeadlockView {
 	public BufferedImage previewImage;
 	public BufferedImage canvasGraphImage;
 	
+//	public boolean inMiddleOfRenderGrass;
+//	public boolean inMiddleOfRenderGraph;
+	
+	
 	public static Color LIGHTGREEN = new Color(128, 255, 128);
 	public static Color DARKGREEN = new Color(0, 128, 0);
 	
@@ -68,7 +73,11 @@ public class DeadlockView {
 		assert canvas.getWidth() == CANVAS_WIDTH;
 		assert canvas.getHeight() == CANVAS_HEIGHT;
 		
-		worldViewport = new AABB(0, 0, CANVAS_WIDTH / PIXELS_PER_METER_DEBUG, CANVAS_HEIGHT / PIXELS_PER_METER_DEBUG);
+		worldViewport = new AABB(
+				-(CANVAS_WIDTH / PIXELS_PER_METER_DEBUG) / 2 + MODEL.world.worldWidth/2 ,
+				-(CANVAS_HEIGHT / PIXELS_PER_METER_DEBUG) / 2 + MODEL.world.worldHeight/2,
+				CANVAS_WIDTH / PIXELS_PER_METER_DEBUG,
+				CANVAS_HEIGHT / PIXELS_PER_METER_DEBUG);
 		
 		sheet = ImageIO.read(new URL(codebase, "media/sheet.png"));
 		explosionSheet = ImageIO.read(new URL(codebase, "media\\explosionSheet.png"));
@@ -250,6 +259,12 @@ public class DeadlockView {
 //		assert SwingUtilities.isEventDispatchThread();
 		assert !Thread.holdsLock(MODEL);
 		
+		if (SwingUtilities.isEventDispatchThread()) {
+			if (CONTROLLER.mode == ControlMode.RUNNING) {
+				return;
+			}
+		}
+		
 		do {
 			
 			do {
@@ -278,46 +293,43 @@ public class DeadlockView {
 //		assert !SwingUtilities.isEventDispatchThread();
 		assert !Thread.holdsLock(MODEL);
 		
-		Graphics2D canvasGrassImageG2 = canvasGrassImage.createGraphics();
+		synchronized (VIEW) {
+			Graphics2D canvasGrassImageG2 = canvasGrassImage.createGraphics();
+			
+			canvasGrassImageG2.setColor(Color.WHITE);
+			canvasGrassImageG2.fillRect(0, 0, CANVAS_WIDTH, VIEW.CANVAS_HEIGHT);
+			
+			canvasGrassImageG2.translate((int)(-VIEW.worldViewport.x * PIXELS_PER_METER_DEBUG), (int)(-VIEW.worldViewport.y * PIXELS_PER_METER_DEBUG));
+			
+			canvasGrassImageG2.scale(VIEW.PIXELS_PER_METER_DEBUG, VIEW.PIXELS_PER_METER_DEBUG);
+			
+			RenderingContext canvasGrassContext = new RenderingContext(canvasGrassImageG2, RenderingContextType.CANVAS);
+			
+			MODEL.world.map.renderBackground(canvasGrassContext);
+			
+			canvasGrassImageG2.dispose();
+		}
 		
-		canvasGrassImageG2.setColor(Color.WHITE);
-		canvasGrassImageG2.fillRect(0, 0, CANVAS_WIDTH, VIEW.CANVAS_HEIGHT);
-		
-		canvasGrassImageG2.translate((int)(-VIEW.worldViewport.x * PIXELS_PER_METER_DEBUG), (int)(-VIEW.worldViewport.y * PIXELS_PER_METER_DEBUG));
-		
-		canvasGrassImageG2.scale(VIEW.PIXELS_PER_METER_DEBUG, VIEW.PIXELS_PER_METER_DEBUG);
-		
-		RenderingContext canvasGrassContext = new RenderingContext(canvasGrassImageG2, RenderingContextType.CANVAS);
-		
-		MODEL.world.map.renderBackground(canvasGrassContext);
-		
-		canvasGrassImageG2.dispose();
-		
-		
-		
-		
-		Graphics2D canvasGraphImageG2 = canvasGraphImage.createGraphics();
-		
-		Composite orig = canvasGraphImageG2.getComposite();
-		AlphaComposite c = AlphaComposite.getInstance(AlphaComposite.SRC, 0.0f);
-		canvasGraphImageG2.setComposite(c);
-		canvasGraphImageG2.setColor(new Color(0, 0, 0, 0));
-		canvasGraphImageG2.fillRect(0, 0, CANVAS_WIDTH, VIEW.CANVAS_HEIGHT);
-		canvasGraphImageG2.setComposite(orig);
-		
-		canvasGraphImageG2.translate((int)((-VIEW.worldViewport.x) * PIXELS_PER_METER_DEBUG), (int)((-VIEW.worldViewport.y) * PIXELS_PER_METER_DEBUG));
-		
-		canvasGraphImageG2.scale(VIEW.PIXELS_PER_METER_DEBUG, VIEW.PIXELS_PER_METER_DEBUG);
-		
-		RenderingContext canvasGraphContext = new RenderingContext(canvasGraphImageG2, RenderingContextType.CANVAS);
-		
-		MODEL.world.graph.renderBackground(canvasGraphContext);
-		
-		canvasGraphImageG2.dispose();
-		
-		
-	
-		
+		synchronized (VIEW) {
+			Graphics2D canvasGraphImageG2 = canvasGraphImage.createGraphics();
+			
+			Composite orig = canvasGraphImageG2.getComposite();
+			AlphaComposite c = AlphaComposite.getInstance(AlphaComposite.SRC, 0.0f);
+			canvasGraphImageG2.setComposite(c);
+			canvasGraphImageG2.setColor(new Color(0, 0, 0, 0));
+			canvasGraphImageG2.fillRect(0, 0, CANVAS_WIDTH, VIEW.CANVAS_HEIGHT);
+			canvasGraphImageG2.setComposite(orig);
+			
+			canvasGraphImageG2.translate((int)((-VIEW.worldViewport.x) * PIXELS_PER_METER_DEBUG), (int)((-VIEW.worldViewport.y) * PIXELS_PER_METER_DEBUG));
+			
+			canvasGraphImageG2.scale(VIEW.PIXELS_PER_METER_DEBUG, VIEW.PIXELS_PER_METER_DEBUG);
+			
+			RenderingContext canvasGraphContext = new RenderingContext(canvasGraphImageG2, RenderingContextType.CANVAS);
+			
+			MODEL.world.graph.renderBackground(canvasGraphContext);
+			
+			canvasGraphImageG2.dispose();
+		}
 		
 		previewImage = new BufferedImage(PREVIEW_WIDTH, PREVIEW_HEIGHT, BufferedImage.TYPE_INT_RGB);
 		
