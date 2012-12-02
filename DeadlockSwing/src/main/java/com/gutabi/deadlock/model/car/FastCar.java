@@ -28,5 +28,6 @@ public class FastCar extends Car {
 	
 	protected void computePath() {
 		overallPath = source.getShortestPathToMatch();
+		overallPath.currentCars.add(this);
 	}
 }

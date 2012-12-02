@@ -29,6 +29,7 @@ public class RandomCar extends Car {
 	
 	protected void computePath() {
 		overallPath = source.getRandomPathToMatch();
+		overallPath.currentCars.add(this);
 	}
 	
 	public void preStep(double t) {

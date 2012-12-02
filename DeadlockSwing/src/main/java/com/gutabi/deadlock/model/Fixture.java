@@ -34,7 +34,7 @@ public final class Fixture extends Vertex {
 	public FixtureType type;
 	public Fixture match;
 	
-	GraphPositionPath shortestPathToMatch;
+	public GraphPositionPath shortestPathToMatch;
 	
 	public double lastSpawnTime;
 	
@@ -72,7 +72,16 @@ public final class Fixture extends Vertex {
 	}
 	
 	public void postStop() {
+		
 		carQueue.clear();
+		
+		if (type == FixtureType.SOURCE) {
+			
+			shortestPathToMatch.currentCars.clear();
+			shortestPathToMatch.sharedEdgesMap.clear();
+			
+		}
+		
 	}
 	
 	public void preStep(double t) {
@@ -161,7 +170,7 @@ public final class Fixture extends Vertex {
 		
 		boolean normal = VIEW.controlPanel.normalCarButton.isSelected();
 		boolean fast = VIEW.controlPanel.fastCarButton.isSelected();
-		boolean random = VIEW.controlPanel.randomCarButton.isSelected();
+//		boolean random = VIEW.controlPanel.randomCarButton.isSelected();
 		boolean really = VIEW.controlPanel.reallyFastCarButton.isSelected();
 		
 		List<Class> l = new ArrayList<Class>();
@@ -171,9 +180,9 @@ public final class Fixture extends Vertex {
 		if (fast) {
 			l.add(FastCar.class);
 		}
-		if (random) {
-			l.add(RandomCar.class);
-		}
+//		if (random) {
+//			l.add(RandomCar.class);
+//		}
 		if (really) {
 			l.add(ReallyFastCar.class);
 		}

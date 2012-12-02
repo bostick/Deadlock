@@ -34,13 +34,13 @@ public class Graph implements Sweepable {
 	public final List<Vertex> vertices = new ArrayList<Vertex>();
 	public final List<Edge> edges = new ArrayList<Edge>();
 	
+	public final List<GraphPositionPath> paths = new ArrayList<GraphPositionPath>();
+//	public final Map<GraphPositionPath, Entry<GraphPositionPath, Set<Edge>>> pathMap1 = new HashMap<GraphPositionPath, Entry<GraphPositionPath, Set<Edge>>>();
+//	public final Map<GraphPositionPath, Set<Edge>> pathMap2 = new HashMap<GraphPositionPath, Set<Edge>>();
+	
 	private AABB aabb;
 	
 	private static final Logger logger = Logger.getLogger(Graph.class);
-	
-	public Graph() {
-		
-	}
 	
 	public void preStart() {
 		
@@ -48,7 +48,28 @@ public class Graph implements Sweepable {
 		
 		for (Vertex v : vertices) {
 			v.preStart();
+			if (v instanceof Fixture) {
+				Fixture f = (Fixture)v;
+				if (f.shortestPathToMatch != null) {
+					paths.add(f.shortestPathToMatch);
+				}
+			}
 		}
+		
+		for (int i = 0; i < paths.size()-1; i++) {
+			GraphPositionPath ipath = paths.get(i);
+			for (int j = i+1; i < paths.size(); i++) {
+				GraphPositionPath jpath = paths.get(j);
+				
+				Set<Edge> sharedEdges = new HashSet<Edge>(ipath.edges);
+				sharedEdges.retainAll(jpath.edges);
+				
+				ipath.sharedEdgesMap.put(jpath, sharedEdges);
+				jpath.sharedEdgesMap.put(ipath, sharedEdges);
+				
+			}
+		}
+		
 	}
 	
 	public void postStop() {
@@ -56,6 +77,10 @@ public class Graph implements Sweepable {
 		for (Vertex v : vertices) {
 			v.postStop();
 		}
+		
+		paths.clear();
+//		pathMap1.clear();
+//		pathMap2.clear();
 		
 	}
 	

@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 
@@ -31,11 +32,13 @@ public class GraphPositionPath {
 	
 	public final List<Edge> edges = new ArrayList<Edge>();
 	
-	List<GraphPositionPathPosition> borderPositions;
+	private List<GraphPositionPathPosition> borderPositions;
+	
+	public final List<Car> currentCars = new ArrayList<Car>();
+	
+	public final Map<GraphPositionPath, Set<Edge>> sharedEdgesMap = new HashMap<GraphPositionPath, Set<Edge>>();
 	
 	private int hash;
-	
-//	private final AABB aabb;
 	
 	static Logger logger = Logger.getLogger(GraphPositionPath.class);
 	
@@ -438,33 +441,20 @@ public class GraphPositionPath {
 		assert hitMap.isEmpty();
 		
 		carLoop:
-		for (Car c : MODEL.world.cars) {
+		for (Car c : currentCars) {
 			
-			if (c.overallPos == null) {
-				continue;
-			}
-			if (this.equals(c.overallPath) && !hasLoop) {
+//			if (c.overallPos == null) {
+//				continue;
+//			}
+			if (!hasLoop) {
 				
 				hitMap.put(c.overallPos, c);
 				continue;
 				
 			}
-//			Set<Edge> edgesTmp = new HashSet<Edge>(edges);
-//			edgesTmp.retainAll(c.overallPath.edges);
-//			if (edgesTmp.isEmpty()) {
-//				/*
-//				 * no shared edges
-//				 */
-//				continue;
-//			}
-			boolean sharedEdges = false;
-			for (Edge e : c.overallPath.edges) {
-				if (edges.contains(e)) {
-					sharedEdges = true;
-					break;
-				}
-			}
-			if (!sharedEdges) {
+			
+			Set<Edge> sharedEdges = sharedEdgesMap.get(c.overallPath);
+			if (sharedEdges.isEmpty()) {
 				continue;
 			}
 			

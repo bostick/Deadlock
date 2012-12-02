@@ -64,12 +64,12 @@ public class ControlPanel extends JPanel {
 		hBox.add(Box.createHorizontalGlue());
 		verticalBox.add(hBox);
 		
-		randomCarButton = new JCheckBox("Random Cars");
-		randomCarButton.setSelected(true);
-		hBox = Box.createHorizontalBox();
-		hBox.add(randomCarButton);
-		hBox.add(Box.createHorizontalGlue());
-		verticalBox.add(hBox);
+//		randomCarButton = new JCheckBox("Random Cars");
+//		randomCarButton.setSelected(true);
+//		hBox = Box.createHorizontalBox();
+//		hBox.add(randomCarButton);
+//		hBox.add(Box.createHorizontalGlue());
+//		verticalBox.add(hBox);
 		
 		reallyFastCarButton = new JCheckBox("Really Fast Cars");
 		reallyFastCarButton.setSelected(true);

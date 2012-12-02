@@ -439,6 +439,8 @@ public abstract class Car extends Entity {
 		
 //		source.outstandingCars--;
 		
+		overallPath.currentCars.remove(this);
+		
 		if (curDrivingEvent == null) {
 			
 		} else if (curDrivingEvent instanceof VertexArrivalEvent) {
@@ -964,6 +966,8 @@ public abstract class Car extends Entity {
 //				goalPoint = null;
 				
 				cleanupVertexDepartureQueue();
+				
+				overallPath.currentCars.remove(this);
 				
 				s.match.outstandingCars--;
 				s.carQueue.remove(this);

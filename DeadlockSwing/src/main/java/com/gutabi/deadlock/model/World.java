@@ -69,7 +69,7 @@ public class World implements Sweepable {
 	
 //	private static Logger logger = Logger.getLogger(World.class);
 	
-	public World() {
+	public World(int quadrantCols, int quadrantRows) {
 		
 //		int[][] ini = new int[][] {
 //				{1, 1, 1},
@@ -77,18 +77,18 @@ public class World implements Sweepable {
 //				{0, 1, 0},
 //		};
 		
-		int[][] ini = new int[][] {
-				{1, 1, 1, 1},
-				{1, 1, 1, 1},
-				{1, 1, 1, 1},
-				{1, 1, 1, 1}
-		};
+//		int[][] ini = new int[][] {
+//				{1, 1, 1, 1},
+//				{1, 1, 1, 1},
+//				{1, 1, 1, 1},
+//				{1, 1, 1, 1}
+//		};
 		
-		map = new Map(ini);
+//		map = new Map(ini);
+//		
+		worldWidth = quadrantCols * MODEL.QUADRANT_WIDTH;
 		
-		worldWidth = map.quadrantCols * MODEL.QUADRANT_WIDTH;
-		
-		worldHeight = map.quadrantRows * MODEL.QUADRANT_HEIGHT;
+		worldHeight = quadrantRows * MODEL.QUADRANT_HEIGHT;
 		
 //		animatedGrass1 = new AnimatedGrass(new Point(worldWidth/4, worldHeight/4));
 		
