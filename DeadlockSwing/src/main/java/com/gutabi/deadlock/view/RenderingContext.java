@@ -42,8 +42,8 @@ public class RenderingContext {
 		g2.setStroke(s);
 	}
 	
-	public void setPixelStroke() {
-		g2.setStroke(new BasicStroke((float)(1.0 / g2.getTransform().getScaleX()), BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER));
+	public void setPixelStroke(int pix) {
+		g2.setStroke(new BasicStroke((float)(pix / VIEW.PIXELS_PER_METER_DEBUG), BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER));
 	}
 	
 	public AffineTransform getTransform() {
@@ -82,10 +82,10 @@ public class RenderingContext {
 		g2.setFont(f);
 	}
 	
-	public void paintString(double x, double y, String str) {
+	public void paintString(double x, double y, double s, String str) {
 		AffineTransform origTransform = g2.getTransform();
 		g2.translate(x, y);
-		g2.scale(1 / VIEW.PIXELS_PER_METER_DEBUG, 1 / VIEW.PIXELS_PER_METER_DEBUG);
+		g2.scale(s / VIEW.PIXELS_PER_METER_DEBUG, s / VIEW.PIXELS_PER_METER_DEBUG);
 		g2.drawString(str, 0, 0);
 		g2.setTransform(origTransform);
 	}

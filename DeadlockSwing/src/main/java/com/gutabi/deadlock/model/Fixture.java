@@ -251,7 +251,7 @@ public final class Fixture extends Vertex {
 				shape.paint(ctxt);
 				
 				ctxt.setColor(Color.BLACK);
-				ctxt.setPixelStroke();
+				ctxt.setPixelStroke(1);
 				shape.getAABB().draw(ctxt);
 				
 			}

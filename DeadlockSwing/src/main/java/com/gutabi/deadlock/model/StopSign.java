@@ -129,7 +129,7 @@ public class StopSign extends Entity {
 			ctxt.setColor(Color.RED);
 			shape.paint(ctxt);
 		} else {
-			ctxt.setPixelStroke();
+			ctxt.setPixelStroke(1);
 			ctxt.setColor(Color.WHITE);
 			shape.draw(ctxt);
 		}

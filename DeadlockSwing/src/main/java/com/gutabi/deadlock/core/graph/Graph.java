@@ -1053,11 +1053,11 @@ public class Graph implements Sweepable {
 		
 		AffineTransform origTransform = ctxt.getTransform();
 		
-		ctxt.paintString(0, 0, "vertex count: " + vertices.size());
+		ctxt.paintString(0, 0, 1.0, "vertex count: " + vertices.size());
 		
 		ctxt.translate(0, 1);
 		
-		ctxt.paintString(0, 0, "edge count: " + edges.size());
+		ctxt.paintString(0, 0, 1.0, "edge count: " + edges.size());
 		
 		ctxt.setTransform(origTransform);
 	}

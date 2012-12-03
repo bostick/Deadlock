@@ -26,6 +26,8 @@ import com.gutabi.deadlock.core.graph.Merger;
 import com.gutabi.deadlock.core.graph.Road;
 import com.gutabi.deadlock.core.graph.RoadPosition;
 import com.gutabi.deadlock.core.graph.Vertex;
+import com.gutabi.deadlock.model.event.CarProximityEvent;
+import com.gutabi.deadlock.model.event.VertexArrivalEvent;
 import com.gutabi.deadlock.view.AnimatedExplosion;
 import com.gutabi.deadlock.view.AnimatedGrass;
 import com.gutabi.deadlock.view.RenderingContext;
@@ -378,23 +380,204 @@ public class World implements Sweepable {
 		
 		graph.preStep(t);
 		
-//		List<Car> carsCopy;
-//		synchronized (MODEL) {
-//		carsCopy = new ArrayList<Car>(cars);
-//		}
-		
 		for (Car c : cars) {
 			c.preStep(t);
 		}
 		
-//		synchronized (MODEL) {
+		/*
+		 * find deadlock cycles
+		 */
+		carLoop:
+		for (int i = 0; i < cars.size(); i++) {
+			Car ci = cars.get(i);
 			
-			for (AnimatedExplosion x : explosions) {
-				x.preStep(t);
+//			boolean inCycle = false;
+			
+			Car to = findDeadlockCause(ci);
+			Car h = findDeadlockCause(findDeadlockCause(ci));
+			
+//			cycleFindingLoop:
+			while (true) {
+				if (to == null || h == null) {
+					continue carLoop;
+				}
+				if (to.deadlocked || h.deadlocked) {
+					continue carLoop;
+				}
+				if (to == h) {
+					break;
+				}
+				to = findDeadlockCause(to);
+				h = findDeadlockCause(findDeadlockCause(h));
 			}
 			
-//		}
+//			int mu = 0;
+			to = ci;
+			while (true) {
+				if (to == h) {
+					break;
+				}
+				to = findDeadlockCause(to);
+				h = findDeadlockCause(h);
+//				mu += 1;
+			}
+			
+//			int lam = 1;
+			h = findDeadlockCause(to);
+			
+			assert h.stoppedTime != -1;
+			assert h.state == CarStateEnum.BRAKING;
+			h.deadlocked = true;
+//			h.deadlockedTime = t;
+			
+			while (true) {
+//				if (h == ci) {
+//					inCycle = true;
+//				}
+				if (to == h) {
+					break;
+				}
+				h = findDeadlockCause(h);
+				
+				assert h.stoppedTime != -1;
+				assert h.state == CarStateEnum.BRAKING;
+				h.deadlocked = true;
+//				h.deadlockedTime = t;
+				
+//				lam += 1;
+			}        
+			
+//			if (inCycle) {
+//				
+//				ci.deadlocked = true;
+//				ci.deadlockedTime = t;
+//				
+//			}
+		}
+		
+		/*
+		 * 
+		 */
+		for (int i = 0; i < cars.size(); i++) {
+			Car ci = cars.get(i);
+			if (ci.curDrivingEvent != null) {
+				if (!ci.deadlocked) {
+					Car cause = findDeadlockCause(ci);
+					if (cause != null &&
+							cause.deadlocked) {
+						
+						if (ci.curDrivingEvent instanceof CarProximityEvent) {
+							
+							if (cause.stoppedTime <= ci.stoppedTime) {
+								
+								assert ci.stoppedTime != -1;
+								assert ci.state == CarStateEnum.BRAKING;
+								ci.deadlocked = true;
+//								ci.deadlockedTime = t;
+								
+							} else {
+								assert false;
+							}
+							
+						} else if (ci.curDrivingEvent instanceof VertexArrivalEvent) {
+							
+							assert ci.stoppedTime != -1;
+							assert ci.state == CarStateEnum.BRAKING;
+							ci.deadlocked = true;
+//							ci.deadlockedTime = t;
+							
+						} else {
+							assert false;
+						}
+						
+						
+					}
+				}
+			}
+		}
+		
+		for (AnimatedExplosion x : explosions) {
+			x.preStep(t);
+		}
+		
 	}
+	
+	private Car findDeadlockCause(Car c) {
+		if (c == null) {
+			return null;
+		}
+		if (c.curDrivingEvent != null) {
+			if (c.curDrivingEvent instanceof CarProximityEvent) {
+				Car next = ((CarProximityEvent)c.curDrivingEvent).otherCar;
+				
+//				if (next.deadlocked) {
+					
+				/*
+				 * nexti became deadlocked before ci last stopped
+				 * ci may be stopped, but nexti may have since moved the CarProximityEvent, and then became deadlocked
+				 */
+				
+				if (c.stoppedTime != -1 &&
+						next.stoppedTime != -1 &&
+						(next.stoppedTime <= c.stoppedTime
+//									|| ci.stoppedTime == ci.startingTime
+							)
+						) {
+					return next;
+				}
+//						else if (ci.stoppedTime != -1 && nexti.stoppedTime != -1) {
+//							assert false;
+//						}
+					
+//				}
+				
+			}
+			
+			else if (c.curDrivingEvent instanceof VertexArrivalEvent) {
+				
+				Vertex v = ((VertexArrivalEvent)c.curDrivingEvent).v;
+				
+				assert v.carQueue.contains(c);
+				
+				Car leavingCar = v.carQueue.get(0);
+				
+				if (leavingCar != c) {
+//					if (leavingCar.deadlocked) {
+						
+					/*
+					 * find next car to leave queue
+					 * leavingCar.deadlocked &&
+							leavingCar became deadlocked before ci last stopped
+					 */
+					if (c.stoppedTime != -1 &&
+							leavingCar.stoppedTime != -1
+//							&& (leavingCar.stoppedTime <= c.stoppedTime
+//								)
+							) {
+						
+						return leavingCar;
+						
+					}
+//					else if (c.stoppedTime != -1) {
+//						assert false;
+//					}
+						
+//					}
+				}
+				
+			}
+			
+			
+		}
+		
+		return null;
+	}
+	
+	
+	
+	
+	
+	
 	
 	public void addCar(Car c) {
 		cars.add(c);
@@ -520,7 +703,7 @@ public class World implements Sweepable {
 			
 		if (MODEL.DEBUG_DRAW) {
 			ctxt.setColor(Color.BLACK);
-			ctxt.setPixelStroke();
+			ctxt.setPixelStroke(1);
 			aabb.draw(ctxt);
 			
 		}
@@ -601,19 +784,19 @@ public class World implements Sweepable {
 		
 		AffineTransform origTransform = ctxt.getTransform();
 		
-		ctxt.paintString(0, 0, "time: " + t);
+		ctxt.paintString(0, 0, 1.0, "time: " + t);
 		
 		ctxt.translate(0, 1);
 		
-		ctxt.paintString(0, 0, "body count: " + b2dWorld.getBodyCount());
+		ctxt.paintString(0, 0, 1.0, "body count: " + b2dWorld.getBodyCount());
 		
 		ctxt.translate(0, 1);
 		
-		ctxt.paintString(0, 0, "car count: " + cars.size());
+		ctxt.paintString(0, 0, 1.0, "car count: " + cars.size());
 		
 		ctxt.translate(0, 1);
 		
-		ctxt.paintString(0, 0, "splosions count: " + explosions.size());
+		ctxt.paintString(0, 0, 1.0, "splosions count: " + explosions.size());
 		
 		ctxt.translate(0, 1);
 		

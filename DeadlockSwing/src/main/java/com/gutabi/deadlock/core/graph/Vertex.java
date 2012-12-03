@@ -252,7 +252,7 @@ public abstract class Vertex extends Entity {
 		
 		ctxt.setColor(Color.WHITE);
 		
-		ctxt.paintString(p.x-r, p.y, id + " " + carQueue.size());
+		ctxt.paintString(p.x-r, p.y, 1.0, id + " " + carQueue.size());
 	}
 	
 	public void check() {

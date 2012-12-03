@@ -61,18 +61,18 @@ public class Quadrant {
 					aabb.paint(ctxt);
 					
 					ctxt.setColor(Color.BLACK);
-					ctxt.setPixelStroke();
+					ctxt.setPixelStroke(1);
 					aabb.draw(ctxt);
 					
 					ctxt.setColor(Color.BLACK);
-					ctxt.paintString(c * MODEL.QUADRANT_WIDTH, r * MODEL.QUADRANT_HEIGHT + 1, c + " " + r);
+					ctxt.paintString(c * MODEL.QUADRANT_WIDTH, r * MODEL.QUADRANT_HEIGHT + 1, 1.0, c + " " + r);
 					
 				}
 				
 				if (MODEL.grid) {
 					
 					ctxt.setColor(Color.GRAY);
-					ctxt.setPixelStroke();
+					ctxt.setPixelStroke(1);
 					
 					for (int k = 0; k <= MODEL.QUADRANT_HEIGHT; k+=2) {
 						Line line = new Line(c * MODEL.QUADRANT_WIDTH + 0, r * MODEL.QUADRANT_HEIGHT + k, c * MODEL.QUADRANT_WIDTH + MODEL.QUADRANT_WIDTH, r * MODEL.QUADRANT_HEIGHT + k);

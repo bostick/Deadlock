@@ -216,11 +216,11 @@ public class GraphPositionPath {
 	/**
 	 * return list of events starting from position pos, and going distance dist
 	 */
-	public VertexArrivalEvent vertexArrivalTest(GraphPositionPathPosition pos, double dist) {
+	public VertexArrivalEvent vertexArrivalTest(Car c, double dist) {
 		
 		for (GraphPositionPathPosition p : borderPositions) {
-			if (p.combo >= pos.combo && DMath.lessThanEquals(pos.distanceTo(p), dist)) {
-				return new VertexArrivalEvent(p);
+			if (p.combo >= c.overallPos.combo && DMath.lessThanEquals(c.overallPos.distanceTo(p), dist)) {
+				return new VertexArrivalEvent(c, p);
 			}
 		}
 		

@@ -73,6 +73,8 @@ public class KeyboardController implements KeyListener {
 			CONTROLLER.plusKey();
 		} else if (e.getKeyCode() == KeyEvent.VK_MINUS) {
 			CONTROLLER.minusKey();
+		} else if (e.getKeyCode() == KeyEvent.VK_SLASH) {
+			CONTROLLER.slashKey();
 		}
 	}
 

@@ -113,6 +113,9 @@ public abstract class Car extends Entity {
 
 	
 	public CarStateEnum state;
+	public boolean deadlocked;
+//	public double deadlockedTime = -1;
+	
 	
 	public double startingTime;
 	public double crashingTime;
@@ -160,10 +163,10 @@ public abstract class Car extends Entity {
 	/*
 	 * 
 	 */
-	DrivingEvent curDrivingEvent;
+	public DrivingEvent curDrivingEvent;
 	List<VertexEvent> vertexDepartureQueue = new ArrayList<VertexEvent>();
 	double decelTime = -1;
-	double stoppedTime = -1;
+	public double stoppedTime = -1;
 	Point goalPoint;
 	
 	protected Color color;
@@ -444,29 +447,11 @@ public abstract class Car extends Entity {
 			path.currentCars.remove(this);
 		}
 		
-		if (curDrivingEvent == null) {
-			
-		} else if (curDrivingEvent instanceof VertexArrivalEvent) {
-			
-			if (((VertexArrivalEvent)curDrivingEvent).sign.isEnabled()) {
-				stoppedTime = -1;
-				decelTime = -1;
-			}
-			
-			((VertexArrivalEvent)curDrivingEvent).v.carQueue.remove(this);
-			
-			curDrivingEvent = null;
-			
-		} else if (curDrivingEvent instanceof CarProximityEvent) {
-			
-			stoppedTime = -1;
-			decelTime = -1;
-			
-			curDrivingEvent = null;
-			
-		} else {
-			assert false;
-		}
+		stoppedTime = -1;
+		deadlocked = false;
+		decelTime = -1;
+		
+		curDrivingEvent = null;
 		
 		cleanupVertexDepartureQueue();
 		
@@ -534,9 +519,9 @@ public abstract class Car extends Entity {
 		}
 		case BRAKING: {
 			
-//			DrivingEvent newDrivingEvent = findNewDrivingEvent();
+			DrivingEvent newDrivingEvent = findNewDrivingEvent();
 			
-//			processNewDrivingEvent(newDrivingEvent, t);
+			processNewDrivingEvent(newDrivingEvent, t);
 			
 			handleCurrentDrivingEvent(t);
 			
@@ -547,6 +532,7 @@ public abstract class Car extends Entity {
 		case CRASHED:
 		case SKIDDED:
 		case SINKED:
+//			cleanupVertexDepartureQueue();
 			break;
 		}
 		
@@ -598,13 +584,13 @@ public abstract class Car extends Entity {
 		if (carProx != null) {
 			newDrivingEvent = new CarProximityEvent(this, carProx);
 		} else {
-			VertexArrivalEvent vertexArr = overallPath.vertexArrivalTest(overallPos, Math.min(vertexArrivalLookahead, overallPos.lengthToEndOfPath));
+			VertexArrivalEvent vertexArr = overallPath.vertexArrivalTest(this, Math.min(vertexArrivalLookahead, overallPos.lengthToEndOfPath));
 			if (vertexArr != null) {
 //				logger.debug("setting curEvent: " + events + "     " + oldEvents);
 				
 				if (!vertexDepartureQueue.contains(vertexArr)) {
 					newDrivingEvent = vertexArr;
-					
+					vertexDepartureQueue.add((VertexArrivalEvent)newDrivingEvent);
 					if (!vertexArr.v.carQueue.contains(this)) {
 						vertexArr.v.carQueue.add(this);
 					}
@@ -631,12 +617,12 @@ public abstract class Car extends Entity {
 					
 					if (curDrivingEvent instanceof CarProximityEvent && newDrivingEvent instanceof VertexArrivalEvent) {
 						
-						stoppedTime = -1;
+//						stoppedTime = -1;
 						curDrivingEvent = newDrivingEvent;
 						
 					} else if (curDrivingEvent instanceof VertexArrivalEvent && newDrivingEvent instanceof CarProximityEvent) {
 						
-						stoppedTime = -1;
+//						stoppedTime = -1;
 						curDrivingEvent = newDrivingEvent;
 						if (eventingLogger.isDebugEnabled()) {
 							eventingLogger.debug("t: " + t + " car " + this + ": " + curDrivingEvent);
@@ -651,7 +637,7 @@ public abstract class Car extends Entity {
 					} else if (curDrivingEvent instanceof CarProximityEvent && newDrivingEvent instanceof CarProximityEvent &&
 							((CarProximityEvent)curDrivingEvent).otherCar == ((CarProximityEvent)newDrivingEvent).otherCar) {
 						
-						stoppedTime = -1;
+//						stoppedTime = -1;
 						curDrivingEvent = newDrivingEvent;
 						if (eventingLogger.isDebugEnabled()) {
 							eventingLogger.debug("t: " + t + " car " + this + ": " + curDrivingEvent);
@@ -660,7 +646,7 @@ public abstract class Car extends Entity {
 					} else if (curDrivingEvent instanceof CarProximityEvent && newDrivingEvent instanceof CarProximityEvent &&
 							((CarProximityEvent)curDrivingEvent).otherCar != ((CarProximityEvent)newDrivingEvent).otherCar) {
 						
-						stoppedTime = -1;
+//						stoppedTime = -1;
 						curDrivingEvent = newDrivingEvent;
 						if (eventingLogger.isDebugEnabled()) {
 							eventingLogger.debug("t: " + t + " car " + this + ": " + curDrivingEvent);
@@ -709,9 +695,11 @@ public abstract class Car extends Entity {
 						assert carProx2 == null;
 						
 						assert state == CarStateEnum.BRAKING;
+//						assert !deadlocked : "actually fix this, the other car could be CRASHED";
 						state = CarStateEnum.DRIVING;
 						
 						stoppedTime = -1;
+						deadlocked = false;
 						decelTime = -1;
 						
 						curDrivingEvent = null;
@@ -738,12 +726,14 @@ public abstract class Car extends Entity {
 					// start driving
 					
 					assert state == CarStateEnum.BRAKING;
+//					assert !deadlocked : "actually fix this, the other car could be CRASHED";
 					state = CarStateEnum.DRIVING;
 					
 					stoppedTime = -1;
+					deadlocked = false;
 					decelTime = -1;
 					
-					vertexDepartureQueue.add((VertexArrivalEvent)curDrivingEvent);
+//					vertexDepartureQueue.add((VertexArrivalEvent)curDrivingEvent);
 					
 					curDrivingEvent = null;
 					if (eventingLogger.isDebugEnabled()) {
@@ -761,12 +751,14 @@ public abstract class Car extends Entity {
 				 * all that matters now is to be driving
 				 */
 				
+//				assert !deadlocked;
 				state = CarStateEnum.DRIVING;
 				
 				stoppedTime = -1;
+				deadlocked = false;
 				decelTime = -1;
 				
-				vertexDepartureQueue.add((VertexArrivalEvent)curDrivingEvent);
+//				vertexDepartureQueue.add((VertexArrivalEvent)curDrivingEvent);
 				
 				curDrivingEvent = null;
 				if (eventingLogger.isDebugEnabled()) {
@@ -786,10 +778,33 @@ public abstract class Car extends Entity {
 			
 			List<VertexEvent> toRemove = new ArrayList<VertexEvent>();
 			for (VertexEvent e : vertexDepartureQueue) {
-				if (overallPos == null || e.carPastExitPosition == null || overallPos.combo >= e.carPastExitPosition.combo) {
+				if (overallPos == null) {
+					/*
+					 * crashed or skidded
+					 */
+					
+					e.v.carQueue.remove(this);
+					
+					toRemove.add(e);
+					
+				} else if (e.carPastExitPosition == null) {
+					/*
+					 * at sink
+					 */
+					
+					e.v.carQueue.remove(this);
+					
+					toRemove.add(e);
+					
+				} else if (overallPos.combo >= e.carPastExitPosition.combo) {
 					/*
 					 * driving past exit of intersection, so cleanup
 					 */
+					
+					/*
+					 * sign may not be enabled, so this car may be further up in queue
+					 */
+					//assert e.v.carQueue.indexOf(this) == 0;
 					
 					e.v.carQueue.remove(this);
 					
@@ -976,7 +991,7 @@ public abstract class Car extends Entity {
 				}
 				
 				s.match.outstandingCars--;
-				s.carQueue.remove(this);
+//				s.carQueue.remove(this);
 				state = CarStateEnum.SINKED;
 				
 				return false;
@@ -1013,6 +1028,8 @@ public abstract class Car extends Entity {
 			break;
 		case CRASHED:
 			
+//			cleanupVertexDepartureQueue();
+			
 			computeDynamicPropertiesAlways();
 			computeDynamicPropertiesMoving();
 			
@@ -1022,6 +1039,8 @@ public abstract class Car extends Entity {
 			
 			break;
 		case SKIDDED:
+			
+//			cleanupVertexDepartureQueue();
 			
 			computeDynamicPropertiesAlways();
 			computeDynamicPropertiesMoving();
@@ -1054,9 +1073,15 @@ public abstract class Car extends Entity {
 		switch (state) {
 		case BRAKING:
 			
-			if (MODEL.CARTEXTURE_DRAW) {
-				paintImage(ctxt);
+			if (!deadlocked) {
+				if (MODEL.CARTEXTURE_DRAW) {
+					paintImage(ctxt);
+				} else {
+					ctxt.setColor(Color.BLUE);
+					paintRect(ctxt);
+				}
 			} else {
+				ctxt.setColor(Color.RED);
 				paintRect(ctxt);
 			}
 			
@@ -1064,15 +1089,11 @@ public abstract class Car extends Entity {
 			
 			if (MODEL.DEBUG_DRAW) {
 				
-				paintID(ctxt);
-				
-//				if (goalPoint != null) {
-//					goalPoint.paint(ctxt);
-//				}
-				
 				ctxt.setColor(Color.BLACK);
-				ctxt.setPixelStroke();
+				ctxt.setPixelStroke(1);
 				shape.getAABB().draw(ctxt);
+				
+				paintID(ctxt);
 				
 			}
 			
@@ -1085,20 +1106,17 @@ public abstract class Car extends Entity {
 			if (MODEL.CARTEXTURE_DRAW) {
 				paintImage(ctxt);
 			} else {
+				ctxt.setColor(Color.BLUE);
 				paintRect(ctxt);
 			}
 			
 			if (MODEL.DEBUG_DRAW) {
 				
-				paintID(ctxt);
-				
-//				if (goalPoint != null) {
-//					goalPoint.paint(ctxt);
-//				}
-				
 				ctxt.setColor(Color.BLACK);
-				ctxt.setPixelStroke();
+				ctxt.setPixelStroke(1);
 				shape.getAABB().draw(ctxt);
+				
+				paintID(ctxt);
 				
 			}
 			break;
@@ -1110,6 +1128,7 @@ public abstract class Car extends Entity {
 	 * @param g2 in world coords
 	 */
 	public void paintHilite(RenderingContext ctxt) {
+		ctxt.setColor(hiliteColor);
 		paintRect(ctxt);
 	}
 	
@@ -1144,9 +1163,6 @@ public abstract class Car extends Entity {
 	}
 	
 	private void paintRect(RenderingContext ctxt) {
-		
-		ctxt.setColor(hiliteColor);
-		
 		shape.paint(ctxt);
 	}
 	
@@ -1178,15 +1194,14 @@ public abstract class Car extends Entity {
 		
 	}
 	
-	public void paintID(RenderingContext ctxt) {
+	private void paintID(RenderingContext ctxt) {
 		
 		AffineTransform origTransform = ctxt.getTransform();
 		
 		ctxt.translate(p.x, p.y);
 		
 		ctxt.setColor(Color.WHITE);
-		ctxt.setPixelStroke();
-		ctxt.paintString(CAR_LOCALX, 0.0, Integer.toString(id));
+		ctxt.paintString(CAR_LOCALX, 0.0, 2.0, Integer.toString(id));
 		
 		ctxt.setTransform(origTransform);
 	}

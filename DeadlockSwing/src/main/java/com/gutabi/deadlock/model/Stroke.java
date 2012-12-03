@@ -302,7 +302,7 @@ public class Stroke {
 	
 	public void paint(RenderingContext ctxt) {
 		
-		ctxt.setPixelStroke();
+		ctxt.setPixelStroke(1);
 		paintStroke(ctxt);
 		
 		if (MODEL.DEBUG_DRAW) {

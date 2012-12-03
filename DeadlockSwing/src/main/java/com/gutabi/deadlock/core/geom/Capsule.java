@@ -313,7 +313,7 @@ public class Capsule extends SweepableShape {
 				
 				Color c = ctxt.getColor();
 				ctxt.setColor(Color.BLUE);
-				ctxt.setPixelStroke();
+				ctxt.setPixelStroke(1);
 				
 				debugNormalLine.draw(ctxt);
 				

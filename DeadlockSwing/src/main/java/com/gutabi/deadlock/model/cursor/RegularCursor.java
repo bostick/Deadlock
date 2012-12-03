@@ -43,7 +43,7 @@ public class RegularCursor extends Cursor {
 		}
 		
 		ctxt.setColor(Color.GRAY);
-		ctxt.setPixelStroke();
+		ctxt.setPixelStroke(1);
 		
 		shape.draw(ctxt);
 		

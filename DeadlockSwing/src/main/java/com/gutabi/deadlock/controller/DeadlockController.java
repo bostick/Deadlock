@@ -51,6 +51,7 @@ public class DeadlockController implements ActionListener {
 	public KeyboardController kc;
 	
 	Logger logger = Logger.getLogger(DeadlockController.class);
+	Logger reportingLogger = Logger.getLogger("com.gutabi.deadlock.controller.DeadlockController.reporting");
 	
 	public DeadlockController() {
 		
@@ -248,6 +249,7 @@ public class DeadlockController implements ActionListener {
 			
 			switch (mode) {
 			case PAUSED:
+				break;
 			case DRAFTING:
 				assert false;
 				break;
@@ -750,10 +752,10 @@ public class DeadlockController implements ActionListener {
 		lastMovedWorldPoint = VIEW.canvasToWorld(lastMovedCanvasPoint);
 		
 		switch (mode) {
-		case PAUSED:
 		case DRAFTING:
 			assert false;
 			break;
+		case PAUSED:
 		case IDLE:
 		case RUNNING:
 			
@@ -796,11 +798,11 @@ public class DeadlockController implements ActionListener {
 		lastMovedWorldPoint = VIEW.canvasToWorld(lastMovedCanvasPoint);
 		
 		switch (mode) {
-		case PAUSED:
 		case DRAFTING:
 			assert false;
 			break;
 		case IDLE:
+		case PAUSED:
 		case RUNNING:
 			
 			Entity closest = MODEL.world.hitTest(lastMovedWorldPoint);
@@ -835,6 +837,31 @@ public class DeadlockController implements ActionListener {
 		
 	}
 	
+	public void slashKey() {
+		
+		if (reportingLogger.isDebugEnabled()) {
+			
+			List<Car> carsCopy;
+			synchronized (MODEL) {
+				carsCopy = new ArrayList<Car>(MODEL.world.cars);
+			}
+			
+			reportingLogger.debug("car report:");
+			
+			for (Car c : carsCopy) {
+				reportingLogger.debug(c.id + " " + c.curDrivingEvent + " " + c.stoppedTime);
+			}
+			reportingLogger.debug("");
+		}
+		
+	}
+	
+	
+	
+	
+	
+	
+	
 	public void startRunning() {
 		
 		mode = ControlMode.RUNNING;
@@ -858,7 +885,7 @@ public class DeadlockController implements ActionListener {
 	
 	public void pauseRunning() {
 		
-		MODEL.cursor.setPoint(lastMovedWorldPoint);
+//		MODEL.cursor.setPoint(lastMovedWorldPoint);
 		
 		mode = ControlMode.IDLE;
 		
@@ -866,11 +893,11 @@ public class DeadlockController implements ActionListener {
 	}
 	
 	public void unpauseRunning() {
-		assert Thread.currentThread().getName().equals("controller");
+//		assert Thread.currentThread().getName().equals("controller");
 		
 		mode = ControlMode.RUNNING;
 		
-		MODEL.cursor = null;
+//		MODEL.cursor = null;
 		
 		synchronized (MODEL.pauseLock) {
 			MODEL.pauseLock.notifyAll();

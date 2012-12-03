@@ -1,0 +1,82 @@
+
+
+country side:
+grass
+
+
+
+
+city scape:
+grid, buildings to hit
+raods exist, more work with signs, directions, etc.
+
+
+
+
+
+ice road truckers:
+ice, rainy
+no brakes
+
+
+
+
+
+
+
+
+levels get harder and harder
+
+
+1.
+connect all matching fixtures
+simple
+show creating intersections
+around rocks, water
+through quadrants
+
+
+
+
+2.
+no deadlocks
+
+
+
+
+
+3.
+no skidding
+no crashes
+
+
+
+4.
+no delays in spawning
+
+
+
+5.
+maximize flow
+
+
+
+6.
+minimize roads
+
+
+
+
+
+
+
+
+
+scoring:
+
+
+
+
+
+
+

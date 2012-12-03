@@ -715,7 +715,7 @@ public class Road extends Edge {
 		if (ctxt.type == RenderingContextType.CANVAS) {
 			if (MODEL.DEBUG_DRAW) {
 				ctxt.setColor(Color.BLACK);
-				ctxt.setPixelStroke();
+				ctxt.setPixelStroke(1);
 				shape.getAABB().draw(ctxt);	
 			}
 		}
@@ -727,7 +727,7 @@ public class Road extends Edge {
 	 */
 	public void paintHilite(RenderingContext ctxt) {
 		ctxt.setColor(hiliteColor);
-		ctxt.setPixelStroke();
+		ctxt.setPixelStroke(1);
 		drawPath(ctxt);
 	}
 	

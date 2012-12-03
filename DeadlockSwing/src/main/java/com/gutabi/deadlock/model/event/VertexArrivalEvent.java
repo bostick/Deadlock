@@ -2,6 +2,7 @@ package com.gutabi.deadlock.model.event;
 
 import com.gutabi.deadlock.core.graph.GraphPositionPathPosition;
 import com.gutabi.deadlock.core.graph.RoadPosition;
+import com.gutabi.deadlock.model.Car;
 import com.gutabi.deadlock.model.StopSign;
 
 /**
@@ -10,22 +11,29 @@ import com.gutabi.deadlock.model.StopSign;
  */
 public class VertexArrivalEvent extends VertexEvent {
 	
+	public final Car c;
 	public final GraphPositionPathPosition entrancePosition;
 	public final StopSign sign;
 	
 	private int hash;
 	
-	public VertexArrivalEvent(GraphPositionPathPosition entrancePosition) {
+	public VertexArrivalEvent(Car c, GraphPositionPathPosition entrancePosition) {
 		super(entrancePosition.nextBound());
+		this.c = c;
 		this.entrancePosition = entrancePosition;
 		
 		sign = ((RoadPosition)entrancePosition.getGraphPosition()).sign;
 		
 	}
 	
+	public String toString() {
+		return "VertexArrivalEvent[car = " + c + ", v = " + v + "]";
+	}
+	
 	public int hashCode() {
 		if (hash == 0) {
 			int h = 17;
+			h = 37 * h + c.hashCode();
 			h = 37 * h + entrancePosition.hashCode();
 			hash = h;
 		}

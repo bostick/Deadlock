@@ -1,15 +1,24 @@
 
+TODAY:
+
+rework the deadend detection, precompute it, combine code with cycle detection?
+
 IMMEDIATELY:
 
-fix problem with doing 2 straight edge cursors
-the merging messes up 
+do not spawn if there will be a CarProximityEvent
+this will prevent the newly spawned car from not being considered deadlocked
 
-fix intersection problem with straight edge cursors
+only on grid within active quadrants
 
-
+with grid on, switching to other cursors snaps to grid
 
 start work on menu
 start work on popup menu
+
+add countdowns/monitors:
+which car will be coming next from which source?
+what is the capacity of the entire world?
+what is the flow of each source/sink?
 
 SOON:
 
@@ -25,12 +34,6 @@ draw a loop
 stand-alone loop
 
 self-intersecting stroke
-
-
-add countdowns/monitors:
-which car will be coming next from which source?
-what is the capacity of the entire world?
-what is the flow of each source/sink?
 
 
 debugging:
@@ -58,6 +61,24 @@ spline/curve editor
 
 
 DONE:
+
+fix problem with doing 2 straight edge cursors
+the merging messes up 
+
+fix intersection problem with straight edge cursors
+
+good car id painting while debugging
+
+log driving events for easier deadlock debugging
+
+car report
+
+pausing
+
+
+fix deadlock detection to get head-on collisions working
+
+get proper cycle detection in to get 2+-cycles
 
 fixture cursor:
 switch directions

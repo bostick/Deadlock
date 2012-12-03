@@ -33,11 +33,11 @@ public class WorldCanvas extends Canvas {
 	
 	public void paint(Graphics g) {
 		
-		if (SwingUtilities.isEventDispatchThread()) {
-			if (CONTROLLER.mode == ControlMode.RUNNING) {
-				return;
-			}
-		}
+//		if (SwingUtilities.isEventDispatchThread()) {
+//			if (CONTROLLER.mode == ControlMode.RUNNING) {
+//				return;
+//			}
+//		}
 		
 		bs.show();
 	}

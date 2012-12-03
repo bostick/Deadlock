@@ -211,7 +211,7 @@ public class DeadlockView {
 			
 			ctxt.setFont(new Font("Times", Font.PLAIN, 96));
 			
-			ctxt.paintString(CANVAS_WIDTH/2 - 800/2, VIEW.CANVAS_HEIGHT/2, "Deadlock");
+			ctxt.paintString(CANVAS_WIDTH/2 - 800/2, VIEW.CANVAS_HEIGHT/2, 1.0, "Deadlock");
 			
 		} else {
 			
