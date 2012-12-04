@@ -1,25 +1,17 @@
 
 TODAY:
 
-profile precomputeHitTestData when there are a lot of overlaps
-
-actually remember both VertexArrivalEvents and CarProximityEvents
-keep a queue of events for each car
-to test:
-open 4x4 grid world
-randomly remove some intersections so as to make cars more likely to share roads in opposite directions
-
-make sure there are no crashes, no asserts, and everything deadlocks as it's supposed to
-
-
-
-
 figure out how to create a deadlock with a crashed car
 
 IMMEDIATELY:
 
 do not spawn if there will be a CarProximityEvent
 this will prevent the newly spawned car from not being considered deadlocked
+
+and do not spawn if close to a crashed car
+
+
+
 
 only on grid within active quadrants
 
@@ -34,6 +26,26 @@ what is the capacity of the entire world?
 what is the flow of each source/sink?
 
 SOON:
+
+for CarProximityEvents:
+broadcast from moving car to other cars.
+If one car is moving, and one car is not moving, there should be a broadcast from moving -> not moving
+This way, if no cars are moving, there is no check for CarProximityEvents
+
+
+
+enforce prohibition of roads and mergers beyond the world sides
+
+enforce prohibition of roads on mergers
+
+enforce only 1 road to fixtures
+interesting problem:
+currently, the car proximity test works by testing distances of the first car's GP to the second car's GP, based on the first car's path
+so, if the second car is not somewhere on the first car's path, no proximity is detected
+if world sinks are connected, so that some car can just pass through them on its way, then it may be in the middle of a sink when 
+another car is reaching it's path's end in that sink. And there are no stop signs.
+The first car may be past the VertexPosition, and so it is nowhere on the second car's path
+but the second car hasn't been sinked yet, so there is a crash
 
 work on outlining:
 for white edge of roads
@@ -83,6 +95,13 @@ spline/curve editor
 
 DONE:
 
+actually remember both VertexArrivalEvents and CarProximityEvents
+
+profile precomputeHitTestData when there are a lot of overlaps
+
+separate out new precomputeHitTestData (which is currently buggy) from old
+compare differences in hitMap
+
 bring back real physics
 need friction for crashes
 
@@ -130,24 +149,11 @@ map on preview
 
 better brake lights
 
-enforce only 1 road to fixtures
-interesting problem:
-currently, the car proximity test works by testing distances of the first car's GP to the second car's GP, based on the first car's path
-so, if the second car is not somewhere on the first car's path, no proximity is detected
-if world sinks are connected, so that some car can just pass through them on its way, then it may be in the middle of a sink when 
-another car is reaching it's path's end in that sink. And there are no stop signs.
-The first car may be past the VertexPosition, and so it is nowhere on the second car's path
-but the second car hasn't been sinked yet, so there is a crash
-
 add Quadrant class
 
 fix issues with loops in roads
 
 enforce prohibition of cars beyonds world sides
-
-enforce prohibition of roads and mergers beyond the world sides
-
-enforce prohibition of roads on mergers
 
 fixture cursor working with quadrants
 

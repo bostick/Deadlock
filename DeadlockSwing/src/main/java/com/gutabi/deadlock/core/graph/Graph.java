@@ -61,8 +61,8 @@ public class Graph implements Sweepable {
 			for (int j = i+1; j < paths.size(); j++) {
 				GraphPositionPath jpath = paths.get(j);
 				
-				Set<Edge> sharedEdges = new HashSet<Edge>(ipath.edges);
-				sharedEdges.retainAll(jpath.edges);
+				Set<Edge> sharedEdges = new HashSet<Edge>(ipath.edgesMap.keySet());
+				sharedEdges.retainAll(jpath.edgesMap.keySet());
 				
 				if (!sharedEdges.isEmpty()) {
 					ipath.sharedEdgesMap.put(jpath, sharedEdges);

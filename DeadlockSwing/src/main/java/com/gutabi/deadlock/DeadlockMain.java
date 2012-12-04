@@ -15,7 +15,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 import org.apache.log4j.Logger;
 
 import com.gutabi.deadlock.controller.ControlMode;
-import com.gutabi.deadlock.examples.OneByOneWorld;
+import com.gutabi.deadlock.examples.FourByFourGridWorld;
 
 public class DeadlockMain  {
 	
@@ -25,8 +25,8 @@ public class DeadlockMain  {
 		
 		MODEL.init();
 //		MODEL.world = new World();
-//		MODEL.world = new FourByFourGridWorld();
-		MODEL.world = new OneByOneWorld();
+		MODEL.world = new FourByFourGridWorld();
+//		MODEL.world = new OneByOneWorld();
 		MODEL.world.init();
 		
 		VIEW.codebase = new URL("file:.");

@@ -19,7 +19,7 @@ import com.gutabi.deadlock.model.event.VertexArrivalEvent;
 @SuppressWarnings("static-access")
 public class GraphPositionPath {
 	
-	public final List<GraphPosition> poss;
+	private final List<GraphPosition> poss;
 	
 	public final int size;
 	public final GraphPosition start;
@@ -30,7 +30,8 @@ public class GraphPositionPath {
 	
 	public final boolean hasLoop;
 	
-	public final List<Edge> edges = new ArrayList<Edge>();
+	public final Map<Vertex, Integer> verticesMap = new HashMap<Vertex, Integer>();
+	public final Map<Edge, Integer> edgesMap = new HashMap<Edge, Integer>();
 	
 	private List<GraphPositionPathPosition> borderPositions;
 	
@@ -80,27 +81,30 @@ public class GraphPositionPath {
 		for (int i = 0; i < poss.size(); i++) {
 			GraphPosition pos = poss.get(i);
 			if (pos instanceof VertexPosition) {
+				Vertex v = ((VertexPosition)pos).v;
 				/*
 				 * work to determine hasLoop
 				 */
 				if (!tmp) {
-					Vertex v = ((VertexPosition)pos).v;
 					if (visited.contains(v)) {
 						tmp = true;
 					} else {
 						visited.add(v);
 					}
 				}
+				verticesMap.put(v, i);
 			} else {
 				/*
 				 * work to determine list of edges
 				 */
 				Edge e = (Edge)((EdgePosition)pos).entity;
-				edges.add(e);
+				if (!edgesMap.containsKey(e)) {
+					edgesMap.put(e, i-1);
+				}
 			}
 		}
 		hasLoop = tmp;
-		
+		assert !hasLoop;
 		
 //		AABB acc = null;
 //		for (int i = 0; i < poss.size(); i++) {
@@ -423,7 +427,7 @@ public class GraphPositionPath {
 	/**
 	 * 
 	 */
-//	public GraphPosition getGraphPosition(int pathIndex, double pathParam) {
+//	private GraphPosition getGraphPosition(int pathIndex, double pathParam) {
 //		
 //		GraphPosition p1 = poss.get(pathIndex);
 //		
@@ -443,14 +447,187 @@ public class GraphPositionPath {
 	
 	public void precomputeHitTestData() {
 		
-		assert hitMap.isEmpty();
+//		Map<Car, GraphPositionPathPosition> o = precomputeHitTestDataOld();
+		
+		Map<Car, GraphPositionPathPosition> n = precomputeHitTestDataNew();
+		
+//		if (!o.equals(n)) {
+//			assert false;
+//		}
+		
+		hitMap = n;
+		
+	}
+	
+//	private Map<Car, GraphPositionPathPosition> precomputeHitTestDataOld() {
+//		
+////		assert hitMap.isEmpty();
+//		Map<Car, GraphPositionPathPosition> map = new HashMap<Car, GraphPositionPathPosition>();
+//		
+//		carLoop:
+//		for (Car c : currentCars) {
+//			
+//			if (c.overallPath.equals(this) && !hasLoop) {
+//				
+//				map.put(c, c.overallPos);
+//				continue;
+//				
+//			}
+//			
+//			Set<Edge> sharedEdges = sharedEdgesMap.get(c.overallPath);
+//			assert !sharedEdges.isEmpty();
+//			
+//			GraphPosition gp = c.overallPos.getGraphPosition();
+//			
+//			if (poss.get(0) instanceof VertexPosition) {
+//				if (gp.entity == ((VertexPosition)poss.get(0)).v) {
+//					assert !map.containsValue(c);
+//					map.put(c, new GraphPositionPathPosition(this, 0, 0.0));
+//					continue carLoop;
+//				}
+//			}
+//			
+//			for (int i = 0; i < poss.size()-1; i++) {
+//				GraphPosition a = poss.get(i);
+//				GraphPosition b = poss.get(i+1);
+//				
+//				double combo;
+//				double aCombo;
+//				double bCombo;
+//				if (a instanceof VertexPosition) {
+//					if (b instanceof VertexPosition) {
+//						assert false;
+//						aCombo = -1;
+//						bCombo = -1;
+//						combo = ((EdgePosition)gp).getCombo();
+//					} else {
+//						
+//						Edge e = (Edge)((EdgePosition)b).entity;
+//						
+//						if (gp.entity != e) {
+//							continue;
+//						}
+//						if (gp instanceof EdgePosition && ((EdgePosition)gp).axis != ((EdgePosition)b).axis) {
+//							continue;
+//						}
+//						
+//						
+//						combo = ((EdgePosition)gp).getCombo();
+//						
+//						if (((VertexPosition)a).v == ((Edge)b.entity).getReferenceVertex(((EdgePosition)b).axis)) {
+//							aCombo = 0.0;
+//							bCombo = ((EdgePosition)b).getCombo();
+//							if (!(DMath.lessThanEquals(aCombo, combo) && DMath.lessThanEquals(combo, bCombo))) {
+//								continue;
+//							}
+//						} else {
+//							assert ((VertexPosition)a).v == ((Edge)b.entity).getOtherVertex(((EdgePosition)b).axis);
+//							aCombo = (e.pointCount()-1)+0.0;
+//							bCombo = ((EdgePosition)b).getCombo();
+//							if (!(DMath.greaterThanEquals(aCombo, combo) && DMath.greaterThanEquals(combo, bCombo))) {
+//								continue;
+//							}
+//						}
+//					}
+//					
+//				} else {
+//					if (b instanceof VertexPosition) {
+//						
+//						if (gp.entity == ((VertexPosition)b).v) {
+//							assert !map.containsValue(c);
+//							map.put(c, new GraphPositionPathPosition(this, i+1, 0.0));
+//							continue carLoop;
+//						}
+//						
+//						Edge e = (Edge)((EdgePosition)a).entity;
+//						
+//						if (gp.entity != e) {
+//							continue;
+//						}
+//						if (gp instanceof EdgePosition && ((EdgePosition)gp).axis != ((EdgePosition)a).axis) {
+//							continue;
+//						}
+//						
+//						combo = ((EdgePosition)gp).getCombo();
+//						
+//						if (((VertexPosition)b).v == ((Edge)a.entity).getReferenceVertex(((EdgePosition)a).axis)) {
+//							aCombo = ((EdgePosition)a).getCombo();
+//							bCombo = 0.0;
+//							if (!(DMath.greaterThanEquals(aCombo, combo) && DMath.greaterThanEquals(combo, bCombo))) {
+//								continue;
+//							}
+//						} else {
+//							assert ((VertexPosition)b).v == ((Edge)a.entity).getOtherVertex(((EdgePosition)a).axis);
+//							aCombo = ((EdgePosition)a).getCombo();
+//							bCombo = (e.pointCount()-1)+0.0;
+//							if (!(DMath.lessThanEquals(aCombo, combo) && DMath.lessThanEquals(combo, bCombo))) {
+//								continue;
+//							}
+//						}
+//						
+//					} else {
+//						
+//						Edge e = (Edge)((EdgePosition)a).entity;
+//						assert e == b.entity;
+//						assert ((EdgePosition)a).axis == ((EdgePosition)b).axis;
+//						
+//						if (gp.entity != e) {
+//							continue;
+//						}
+//						if (gp instanceof EdgePosition && ((EdgePosition)gp).axis != ((EdgePosition)a).axis) {
+//							continue;
+//						}
+//						
+//						combo = ((EdgePosition)gp).getCombo();
+//						
+//						aCombo = ((EdgePosition)a).getCombo();
+//						bCombo = ((EdgePosition)b).getCombo();
+//						if (DMath.lessThan(aCombo, bCombo)) {
+//							if (!(DMath.lessThanEquals(aCombo, combo) && DMath.lessThanEquals(combo, bCombo))) {
+//								continue;
+//							}
+//						} else {
+//							if (!(DMath.greaterThanEquals(aCombo, combo) && DMath.greaterThanEquals(combo, bCombo))) {
+//								continue;
+//							}
+//						}
+//						
+//					}
+//				}
+//				
+//				double abCombo = (combo - aCombo) / (bCombo - aCombo);
+//				assert DMath.lessThanEquals(0.0, abCombo) && DMath.lessThanEquals(abCombo, 1.0);
+//				
+//				int gpppIndex = (int)Math.floor(i + abCombo);
+//				double gpppParam = (i + abCombo)-gpppIndex;
+//				
+//				assert !map.containsValue(c);
+//				map.put(c, new GraphPositionPathPosition(this, gpppIndex, gpppParam));
+//				continue carLoop;
+//				
+//			}
+//			
+//			
+//			
+//			
+//		}
+//		
+//		return map;
+//		
+//	}
+	
+	private Map<Car, GraphPositionPathPosition> precomputeHitTestDataNew() {
+		
+		Map<Car, GraphPositionPathPosition> map = new HashMap<Car, GraphPositionPathPosition>();
+		
+//		assert hitMap.isEmpty();
 		
 		carLoop:
 		for (Car c : currentCars) {
 			
 			if (c.overallPath.equals(this) && !hasLoop) {
 				
-				hitMap.put(c, c.overallPos);
+				map.put(c, c.overallPos);
 				continue;
 				
 			}
@@ -460,136 +637,58 @@ public class GraphPositionPath {
 			
 			GraphPosition gp = c.overallPos.getGraphPosition();
 			
-			if (poss.get(0) instanceof VertexPosition) {
-				if (gp.entity == ((VertexPosition)poss.get(0)).v) {
-					assert !hitMap.containsValue(c);
-					hitMap.put(c, new GraphPositionPathPosition(this, 0, 0.0));
-					continue carLoop;
-				}
-			}
-			
-			for (int i = 0; i < poss.size()-1; i++) {
-				GraphPosition a = poss.get(i);
-				GraphPosition b = poss.get(i+1);
+			if (gp instanceof VertexPosition) {
+				VertexPosition vp = (VertexPosition)gp;
 				
-				double combo;
-				double aCombo;
-				double bCombo;
-				if (a instanceof VertexPosition) {
-					if (b instanceof VertexPosition) {
-						assert false;
-						aCombo = -1;
-						bCombo = -1;
-						combo = ((EdgePosition)gp).getCombo();
+				if (verticesMap.containsKey(vp.v)) {
+					
+					int vi = verticesMap.get(vp.v);
+					
+					assert !map.containsValue(c);
+					map.put(c, new GraphPositionPathPosition(this, vi, 0.0));
+					
+				}
+				
+				continue carLoop;
+				
+			} else {
+				EdgePosition ep = (EdgePosition)gp;
+				
+				Edge e = (Edge)ep.entity;
+				
+				if (edgesMap.containsKey(e)) {
+					
+					int ei = edgesMap.get(e);
+					
+					Vertex v = ((VertexPosition)poss.get(ei)).v;
+					
+					if (e.getReferenceVertex(ep.axis) == v) {
+						
+						assert !map.containsValue(c);
+						map.put(c, new GraphPositionPathPosition(this, ei + ep.getIndex(), ep.getParam()));
+						
+						
 					} else {
+						assert e.getOtherVertex(ep.axis) == v;
 						
-						Edge e = (Edge)((EdgePosition)b).entity;
+						double newCombo = e.pointCount()-1 - ep.getCombo();
 						
-						if (gp.entity != e) {
-							continue;
-						}
-						if (gp instanceof EdgePosition && ((EdgePosition)gp).axis != ((EdgePosition)b).axis) {
-							continue;
-						}
+						int newIndex = (int)Math.floor(newCombo);
+						double newParam = newCombo - newIndex;
 						
+						assert !map.containsValue(c);
+						map.put(c, new GraphPositionPathPosition(this, ei + newIndex, newParam));
 						
-						combo = ((EdgePosition)gp).getCombo();
-						
-						if (((VertexPosition)a).v == ((Edge)b.entity).getReferenceVertex(((EdgePosition)b).axis)) {
-							aCombo = 0.0;
-							bCombo = ((EdgePosition)b).getCombo();
-							if (!(DMath.lessThanEquals(aCombo, combo) && DMath.lessThanEquals(combo, bCombo))) {
-								continue;
-							}
-						} else {
-							assert ((VertexPosition)a).v == ((Edge)b.entity).getOtherVertex(((EdgePosition)b).axis);
-							aCombo = (e.pointCount()-1)+0.0;
-							bCombo = ((EdgePosition)b).getCombo();
-							if (!(DMath.greaterThanEquals(aCombo, combo) && DMath.greaterThanEquals(combo, bCombo))) {
-								continue;
-							}
-						}
 					}
 					
-				} else {
-					if (b instanceof VertexPosition) {
-						
-						if (gp.entity == ((VertexPosition)b).v) {
-							assert !hitMap.containsValue(c);
-							hitMap.put(c, new GraphPositionPathPosition(this, i+1, 0.0));
-							continue carLoop;
-						}
-						
-						Edge e = (Edge)((EdgePosition)a).entity;
-						
-						if (gp.entity != e) {
-							continue;
-						}
-						if (gp instanceof EdgePosition && ((EdgePosition)gp).axis != ((EdgePosition)a).axis) {
-							continue;
-						}
-						
-						combo = ((EdgePosition)gp).getCombo();
-						
-						if (((VertexPosition)b).v == ((Edge)a.entity).getReferenceVertex(((EdgePosition)a).axis)) {
-							aCombo = ((EdgePosition)a).getCombo();
-							bCombo = 0.0;
-							if (!(DMath.greaterThanEquals(aCombo, combo) && DMath.greaterThanEquals(combo, bCombo))) {
-								continue;
-							}
-						} else {
-							assert ((VertexPosition)b).v == ((Edge)a.entity).getOtherVertex(((EdgePosition)a).axis);
-							aCombo = ((EdgePosition)a).getCombo();
-							bCombo = (e.pointCount()-1)+0.0;
-							if (!(DMath.lessThanEquals(aCombo, combo) && DMath.lessThanEquals(combo, bCombo))) {
-								continue;
-							}
-						}
-						
-					} else {
-						
-						Edge e = (Edge)((EdgePosition)a).entity;
-						assert e == b.entity;
-						assert ((EdgePosition)a).axis == ((EdgePosition)b).axis;
-						
-						if (gp.entity != e) {
-							continue;
-						}
-						if (gp instanceof EdgePosition && ((EdgePosition)gp).axis != ((EdgePosition)a).axis) {
-							continue;
-						}
-						
-						combo = ((EdgePosition)gp).getCombo();
-						
-						aCombo = ((EdgePosition)a).getCombo();
-						bCombo = ((EdgePosition)b).getCombo();
-						if (DMath.lessThan(aCombo, bCombo)) {
-							if (!(DMath.lessThanEquals(aCombo, combo) && DMath.lessThanEquals(combo, bCombo))) {
-								continue;
-							}
-						} else {
-							if (!(DMath.greaterThanEquals(aCombo, combo) && DMath.greaterThanEquals(combo, bCombo))) {
-								continue;
-							}
-						}
-						
-					}
 				}
 				
-				double abCombo = (combo - aCombo) / (bCombo - aCombo);
-				assert DMath.lessThanEquals(0.0, abCombo) && DMath.lessThanEquals(abCombo, 1.0);
-				
-				int gpppIndex = (int)Math.floor(i + abCombo);
-				double gpppParam = (i + abCombo)-gpppIndex;
-				
-				assert !hitMap.containsValue(c);
-				hitMap.put(c, new GraphPositionPathPosition(this, gpppIndex, gpppParam));
 				continue carLoop;
 				
 			}
-			
 		}
 		
+		return map;
 	}
 	
 	public void clearHitTestData() {
