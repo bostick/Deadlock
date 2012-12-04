@@ -30,6 +30,7 @@ public class ControlPanel extends JPanel {
 	public JCheckBox fpsCheckBox;
 	public JCheckBox stopSignCheckBox;
 	public JCheckBox carTextureCheckBox;
+	public JCheckBox explosionsCheckBox;
 	public JCheckBox debugCheckBox;
 	public JTextField dtField;
 	
@@ -123,6 +124,15 @@ public class ControlPanel extends JPanel {
 		carTextureCheckBox.addActionListener(CONTROLLER);
 		hBox = Box.createHorizontalBox();
 		hBox.add(carTextureCheckBox);
+		hBox.add(Box.createHorizontalGlue());
+		verticalBox.add(hBox);
+		
+		explosionsCheckBox = new JCheckBox("draw explosions");
+		explosionsCheckBox.setSelected(MODEL.EXPLOSIONS_DRAW);
+		explosionsCheckBox.setActionCommand("explosionsDraw");
+		explosionsCheckBox.addActionListener(CONTROLLER);
+		hBox = Box.createHorizontalBox();
+		hBox.add(explosionsCheckBox);
 		hBox.add(Box.createHorizontalGlue());
 		verticalBox.add(hBox);
 		

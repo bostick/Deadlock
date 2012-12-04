@@ -848,9 +848,9 @@ public class DeadlockController implements ActionListener {
 			
 			reportingLogger.debug("car report:");
 			
-			for (Car c : carsCopy) {
-				reportingLogger.debug(c.id + " " + c.curDrivingEvent + " " + c.stoppedTime);
-			}
+//			for (Car c : carsCopy) {
+//				reportingLogger.debug(c.id + " " + c.curDrivingEvent + " " + c.stoppedTime);
+//			}
 			reportingLogger.debug("");
 		}
 		
@@ -1008,6 +1008,15 @@ public class DeadlockController implements ActionListener {
 			boolean state = VIEW.controlPanel.carTextureCheckBox.isSelected();
 			
 			MODEL.CARTEXTURE_DRAW = state;
+			
+//			VIEW.renderWorldBackground();
+			VIEW.repaintCanvas();
+			
+		} else if (e.getActionCommand().equals("explosionsDraw")) {
+			
+			boolean state = VIEW.controlPanel.explosionsCheckBox.isSelected();
+			
+			MODEL.EXPLOSIONS_DRAW = state;
 			
 //			VIEW.renderWorldBackground();
 			VIEW.repaintCanvas();

@@ -439,7 +439,7 @@ public class GraphPositionPath {
 //	}
 	
 	
-	private Map<GraphPositionPathPosition, Car> hitMap = new HashMap<GraphPositionPathPosition, Car>();
+	private Map<Car, GraphPositionPathPosition> hitMap = new HashMap<Car, GraphPositionPathPosition>();
 	
 	public void precomputeHitTestData() {
 		
@@ -448,13 +448,9 @@ public class GraphPositionPath {
 		carLoop:
 		for (Car c : currentCars) {
 			
-//			if (c.overallPos == null) {
-//				continue;
-//			}
-			
 			if (c.overallPath.equals(this) && !hasLoop) {
 				
-				hitMap.put(c.overallPos, c);
+				hitMap.put(c, c.overallPos);
 				continue;
 				
 			}
@@ -466,9 +462,8 @@ public class GraphPositionPath {
 			
 			if (poss.get(0) instanceof VertexPosition) {
 				if (gp.entity == ((VertexPosition)poss.get(0)).v) {
-//					assert getGraphPosition(0, 0.0).equals(gp);
 					assert !hitMap.containsValue(c);
-					hitMap.put(new GraphPositionPathPosition(this, 0, 0.0), c);
+					hitMap.put(c, new GraphPositionPathPosition(this, 0, 0.0));
 					continue carLoop;
 				}
 			}
@@ -520,9 +515,8 @@ public class GraphPositionPath {
 					if (b instanceof VertexPosition) {
 						
 						if (gp.entity == ((VertexPosition)b).v) {
-//							assert getGraphPosition(i+1, 0.0).equals(gp);
 							assert !hitMap.containsValue(c);
-							hitMap.put(new GraphPositionPathPosition(this, i+1, 0.0), c);
+							hitMap.put(c, new GraphPositionPathPosition(this, i+1, 0.0));
 							continue carLoop;
 						}
 						
@@ -589,7 +583,7 @@ public class GraphPositionPath {
 				double gpppParam = (i + abCombo)-gpppIndex;
 				
 				assert !hitMap.containsValue(c);
-				hitMap.put(new GraphPositionPathPosition(this, gpppIndex, gpppParam), c);
+				hitMap.put(c, new GraphPositionPathPosition(this, gpppIndex, gpppParam));
 				continue carLoop;
 				
 			}
@@ -607,9 +601,9 @@ public class GraphPositionPath {
 	 */
 	public Car carProximityTest(GraphPositionPathPosition center, double dist) {
 		
-		for (Entry<GraphPositionPathPosition, Car> entry : hitMap.entrySet()) {
-			GraphPositionPathPosition otherCarCenter = entry.getKey();
-			Car c = entry.getValue();
+		for (Entry<Car, GraphPositionPathPosition> entry : hitMap.entrySet()) {
+			GraphPositionPathPosition otherCarCenter = entry.getValue();
+			Car c = entry.getKey();
 			if (otherCarCenter.equals(center)) {
 				continue;
 			}
@@ -632,16 +626,30 @@ public class GraphPositionPath {
 	 * test gp for a position on this path, but only start looking after startingPosition
 	 * this is to help handle loops in paths
 	 */
-	public GraphPositionPathPosition hitTest(GraphPosition gp, GraphPositionPathPosition startingPosition) {
-		for (Entry<GraphPositionPathPosition, Car> entry : hitMap.entrySet()) {
-			GraphPositionPathPosition gppp = entry.getKey();
-			if (gppp.getGraphPosition().equals(gp)) {
-				if (DMath.greaterThanEquals(gppp.combo, startingPosition.combo)) {
-					return gppp;
-				}
-			}
+	public GraphPositionPathPosition hitTest(Car c, GraphPositionPathPosition startingPosition) {
+		
+		GraphPositionPathPosition gppp = hitMap.get(c);
+		
+		if (gppp == null) {
+			/*
+			 * a car may have driven and no longer be itnerecting with this path
+			 */
+			return null;
 		}
+		
+		if (DMath.greaterThanEquals(gppp.combo, startingPosition.combo)) {
+			return gppp;
+		}
+		
 		return null;
+		
+//		for (Entry<Car, GraphPositionPathPosition> entry : hitMap.entrySet()) {
+//			GraphPositionPathPosition gppp = entry.getValue();
+//			if (gppp.getGraphPosition().equals(gp)) {
+//				
+//			}
+//		}
+//		return null;
 	}
 	
 	/**

@@ -538,13 +538,11 @@ public class Graph implements Sweepable {
 			 */
 			return true;
 		} else {
-			List<Edge> eds = new ArrayList<Edge>();
-			eds.addAll(v.roads);
-			if (v.m != null) {
-				eds.add(v.m);
-			}
-			eds.remove(e);
+			List<Edge> eds = v.getEdges();
 			for (Edge ee : eds) {
+				if (ee == e) {
+					continue;
+				}
 				Vertex other;
 				if (ee instanceof Road) {
 					Road r = (Road)ee;

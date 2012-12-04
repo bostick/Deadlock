@@ -17,6 +17,7 @@ public class DeadlockModel {
 	public static boolean FPS_DRAW = false;
 	public static boolean STOPSIGN_DRAW = true;
 	public static boolean CARTEXTURE_DRAW = true;
+	public static boolean EXPLOSIONS_DRAW = true;
 	public static boolean DEBUG_DRAW = false;
 	
 	public static final DeadlockModel MODEL = new DeadlockModel();

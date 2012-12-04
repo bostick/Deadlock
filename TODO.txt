@@ -1,7 +1,20 @@
 
 TODAY:
 
-rework the deadend detection, precompute it, combine code with cycle detection?
+profile precomputeHitTestData when there are a lot of overlaps
+
+actually remember both VertexArrivalEvents and CarProximityEvents
+keep a queue of events for each car
+to test:
+open 4x4 grid world
+randomly remove some intersections so as to make cars more likely to share roads in opposite directions
+
+make sure there are no crashes, no asserts, and everything deadlocks as it's supposed to
+
+
+
+
+figure out how to create a deadlock with a crashed car
 
 IMMEDIATELY:
 
@@ -21,6 +34,12 @@ what is the capacity of the entire world?
 what is the flow of each source/sink?
 
 SOON:
+
+work on outlining:
+for white edge of roads
+water
+fog of ware
+
 
 snapping to width
 snapping to height
@@ -48,6 +67,8 @@ start work on popup menu
 
 LONGTERM:
 
+rework the deadend detection, precompute it, combine code with cycle detection?
+
 quad tree implementation
 
 switch to using floats
@@ -61,6 +82,9 @@ spline/curve editor
 
 
 DONE:
+
+bring back real physics
+need friction for crashes
 
 fix problem with doing 2 straight edge cursors
 the merging messes up 

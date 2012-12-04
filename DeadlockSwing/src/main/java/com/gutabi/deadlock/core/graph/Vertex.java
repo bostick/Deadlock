@@ -68,12 +68,13 @@ public abstract class Vertex extends Entity {
 		return shape;
 	}
 	
-	public Vertex getReferenceVertex(Axis a) {
-		return this;
-	}
-	
-	public Vertex getOtherVertex(Axis a) {
-		return this;
+	public List<Edge> getEdges() {
+		List<Edge> eds = new ArrayList<Edge>();
+		eds.addAll(roads);
+		if (m != null) {
+			eds.add(m);
+		}
+		return eds;
 	}
 	
 	public final Entity hitTest(Point p) {

@@ -27,6 +27,7 @@ import com.gutabi.deadlock.core.graph.Road;
 import com.gutabi.deadlock.core.graph.RoadPosition;
 import com.gutabi.deadlock.core.graph.Vertex;
 import com.gutabi.deadlock.model.event.CarProximityEvent;
+import com.gutabi.deadlock.model.event.DrivingEvent;
 import com.gutabi.deadlock.model.event.VertexArrivalEvent;
 import com.gutabi.deadlock.view.AnimatedExplosion;
 import com.gutabi.deadlock.view.AnimatedGrass;
@@ -460,26 +461,21 @@ public class World implements Sweepable {
 		 */
 		for (int i = 0; i < cars.size(); i++) {
 			Car ci = cars.get(i);
-			if (ci.curDrivingEvent != null) {
-				if (!ci.deadlocked) {
-					Car cause = findDeadlockCause(ci);
+			
+			if (!ci.deadlocked) {
+				DrivingEvent e = findDeadlockEvent(ci);
+				
+				if (e == null) {
+					continue;
+				}
+				
+				if (e instanceof CarProximityEvent) {
+					
+					Car cause = ((CarProximityEvent)e).otherCar;
 					if (cause != null &&
 							cause.deadlocked) {
 						
-						if (ci.curDrivingEvent instanceof CarProximityEvent) {
-							
-							if (cause.stoppedTime <= ci.stoppedTime) {
-								
-								assert ci.stoppedTime != -1;
-								assert ci.state == CarStateEnum.BRAKING;
-								ci.deadlocked = true;
-//								ci.deadlockedTime = t;
-								
-							} else {
-								assert false;
-							}
-							
-						} else if (ci.curDrivingEvent instanceof VertexArrivalEvent) {
+						if (cause.stoppedTime <= ci.stoppedTime) {
 							
 							assert ci.stoppedTime != -1;
 							assert ci.state == CarStateEnum.BRAKING;
@@ -487,13 +483,35 @@ public class World implements Sweepable {
 //							ci.deadlockedTime = t;
 							
 						} else {
-							assert false;
+//							assert false;
 						}
 						
+					}
+					
+				} else if (e instanceof VertexArrivalEvent) {
+					
+					Car cause = ((VertexArrivalEvent)e).v.carQueue.get(0);
+					
+					if (cause != ci) {
+						
+						if (cause != null &&
+								cause.deadlocked) {
+							
+							assert ci.stoppedTime != -1;
+							assert ci.state == CarStateEnum.BRAKING;
+							ci.deadlocked = true;
+//							ci.deadlockedTime = t;
+							
+						}
 						
 					}
+					
+				} else {
+					assert false;
 				}
+				
 			}
+			
 		}
 		
 		for (AnimatedExplosion x : explosions) {
@@ -502,78 +520,81 @@ public class World implements Sweepable {
 		
 	}
 	
-	private Car findDeadlockCause(Car c) {
+	private DrivingEvent findDeadlockEvent(Car c) {
 		if (c == null) {
 			return null;
 		}
-		if (c.curDrivingEvent != null) {
-			if (c.curDrivingEvent instanceof CarProximityEvent) {
-				Car next = ((CarProximityEvent)c.curDrivingEvent).otherCar;
-				
-//				if (next.deadlocked) {
-					
-				/*
-				 * nexti became deadlocked before ci last stopped
-				 * ci may be stopped, but nexti may have since moved the CarProximityEvent, and then became deadlocked
-				 */
-				
+		
+		if (c.curVertexArrivalEvent != null) {
+			
+			Vertex v = c.curVertexArrivalEvent.v;
+			
+			assert v.carQueue.contains(c);
+			
+			Car leavingCar = v.carQueue.get(0);
+			
+			if (leavingCar != c) {
 				if (c.stoppedTime != -1 &&
-						next.stoppedTime != -1 &&
-						(next.stoppedTime <= c.stoppedTime
-//									|| ci.stoppedTime == ci.startingTime
-							)
+						leavingCar.stoppedTime != -1
 						) {
-					return next;
-				}
-//						else if (ci.stoppedTime != -1 && nexti.stoppedTime != -1) {
-//							assert false;
-//						}
 					
-//				}
-				
-			}
-			
-			else if (c.curDrivingEvent instanceof VertexArrivalEvent) {
-				
-				Vertex v = ((VertexArrivalEvent)c.curDrivingEvent).v;
-				
-				assert v.carQueue.contains(c);
-				
-				Car leavingCar = v.carQueue.get(0);
-				
-				if (leavingCar != c) {
-//					if (leavingCar.deadlocked) {
-						
-					/*
-					 * find next car to leave queue
-					 * leavingCar.deadlocked &&
-							leavingCar became deadlocked before ci last stopped
-					 */
-					if (c.stoppedTime != -1 &&
-							leavingCar.stoppedTime != -1
-//							&& (leavingCar.stoppedTime <= c.stoppedTime
-//								)
-							) {
-						
-						return leavingCar;
-						
-					}
-//					else if (c.stoppedTime != -1) {
-//						assert false;
-//					}
-						
-//					}
+					return c.curVertexArrivalEvent;
+					
 				}
-				
 			}
 			
+		}
+		
+		if (c.curCarProximityEvent != null) {
+			Car next = c.curCarProximityEvent.otherCar;
 			
+			if (c.stoppedTime != -1 &&
+					next.stoppedTime != -1
+					) {
+				return c.curCarProximityEvent;
+			}
 		}
 		
 		return null;
 	}
 	
-	
+	private Car findDeadlockCause(Car c) {
+		if (c == null) {
+			return null;
+		}
+		
+		if (c.curCarProximityEvent != null) {
+			Car next = c.curCarProximityEvent.otherCar;
+			
+			if (c.stoppedTime != -1 &&
+					next.stoppedTime != -1
+					) {
+				return next;
+			}
+		}
+		
+		if (c.curVertexArrivalEvent != null) {
+			
+			Vertex v = c.curVertexArrivalEvent.v;
+			
+			assert v.carQueue.contains(c);
+			
+			Car leavingCar = v.carQueue.get(0);
+			
+			if (leavingCar != c) {
+				if (c.stoppedTime != -1 &&
+						leavingCar.stoppedTime != -1
+						) {
+					
+					return leavingCar;
+					
+				}
+			}
+			
+		}
+		
+		return null;
+	}
 	
 	
 	
