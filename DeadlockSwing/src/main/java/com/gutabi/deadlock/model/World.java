@@ -394,68 +394,64 @@ public class World implements Sweepable {
 		for (int i = 0; i < cars.size(); i++) {
 			Car ci = cars.get(i);
 			
-//			boolean inCycle = false;
-			
-			Car to = findDeadlockCause(ci);
-			Car h = findDeadlockCause(findDeadlockCause(ci));
-			
-//			cycleFindingLoop:
-			while (true) {
-				if (to == null || h == null) {
-					continue carLoop;
+			switch (ci.state) {
+			case DRIVING:
+			case BRAKING:
+			case SINKED:
+				
+				Car to = findDeadlockCause(ci);
+				Car h = findDeadlockCause(findDeadlockCause(ci));
+				
+				while (true) {
+					if (to == null || h == null) {
+						continue carLoop;
+					}
+					if (to.deadlocked || h.deadlocked) {
+						continue carLoop;
+					}
+					if (to == h) {
+						break;
+					}
+					to = findDeadlockCause(to);
+					h = findDeadlockCause(findDeadlockCause(h));
 				}
-				if (to.deadlocked || h.deadlocked) {
-					continue carLoop;
+				
+				to = ci;
+				while (true) {
+					if (to == h) {
+						break;
+					}
+					to = findDeadlockCause(to);
+					h = findDeadlockCause(h);
 				}
-				if (to == h) {
-					break;
-				}
-				to = findDeadlockCause(to);
-				h = findDeadlockCause(findDeadlockCause(h));
-			}
-			
-//			int mu = 0;
-			to = ci;
-			while (true) {
-				if (to == h) {
-					break;
-				}
-				to = findDeadlockCause(to);
-				h = findDeadlockCause(h);
-//				mu += 1;
-			}
-			
-//			int lam = 1;
-			h = findDeadlockCause(to);
-			
-			assert h.stoppedTime != -1;
-			assert h.state == CarStateEnum.BRAKING;
-			h.deadlocked = true;
-//			h.deadlockedTime = t;
-			
-			while (true) {
-//				if (h == ci) {
-//					inCycle = true;
-//				}
-				if (to == h) {
-					break;
-				}
-				h = findDeadlockCause(h);
+				
+				h = findDeadlockCause(to);
 				
 				assert h.stoppedTime != -1;
 				assert h.state == CarStateEnum.BRAKING;
 				h.deadlocked = true;
-//				h.deadlockedTime = t;
 				
-//				lam += 1;
-			}        
-			
-//			if (inCycle) {
-//				
-//				ci.deadlocked = true;
-//				ci.deadlockedTime = t;
-//				
-//			}
+				while (true) {
+					if (to == h) {
+						break;
+					}
+					h = findDeadlockCause(h);
+					
+					assert h.stoppedTime != -1;
+					assert h.state == CarStateEnum.BRAKING;
+					h.deadlocked = true;
+				}
+				
+				break;
+			case CRASHED:
+			case SKIDDED:
+				
+				if (ci.stoppedTime != -1) {
+					ci.deadlocked = true;
+				}
+				
+				break;
+			}
 		}
 		
 		/*

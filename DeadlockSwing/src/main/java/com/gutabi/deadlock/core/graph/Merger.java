@@ -21,9 +21,6 @@ public class Merger extends Edge {
 	
 	public final Point ul;
 	
-	private Color color;
-	private Color hiliteColor;
-	
 	public final Fixture top;
 	public final Fixture left;
 	public final Fixture right;
@@ -44,9 +41,6 @@ public class Merger extends Edge {
 		
 		this.ul = center.plus(new Point(-MERGER_WIDTH/2,  -MERGER_HEIGHT/2));
 		
-		color = Color.BLUE;
-		hiliteColor = Color.ORANGE;
-		
 		top = new Fixture(new Point(ul.x + MERGER_WIDTH/2, ul.y), Axis.TOPBOTTOM);
 		left = new Fixture(new Point(ul.x, ul.y + MERGER_HEIGHT/2), Axis.LEFTRIGHT);
 		right = new Fixture(new Point(ul.x + MERGER_WIDTH, ul.y + MERGER_HEIGHT/2), Axis.LEFTRIGHT);
@@ -63,10 +57,10 @@ public class Merger extends Edge {
 //		left.type = FixtureType.SINK;
 //		right.type = FixtureType.SOURCE;
 		
-		top.s = Side.BOTTOM;
-		bottom.s = Side.BOTTOM;
-		left.s = Side.RIGHT;
-		right.s = Side.RIGHT;
+		top.setSide(Side.BOTTOM);
+		bottom.setSide(Side.BOTTOM);
+		left.setSide(Side.RIGHT);
+		right.setSide(Side.RIGHT);
 		
 		Point p0 = ul;
 		Point p1 = new Point(ul.x + MERGER_WIDTH, ul.y);
@@ -286,13 +280,13 @@ public class Merger extends Edge {
 		case CANVAS:
 			if (!MODEL.DEBUG_DRAW) {
 				
-				ctxt.setColor(color);
+				ctxt.setColor(Color.GRAY);
 				
 				shape.paint(ctxt);
 				
 			} else {
 				
-				ctxt.setColor(color);
+				ctxt.setColor(Color.GRAY);
 				ctxt.setPixelStroke(1);
 				shape.draw(ctxt);
 				
@@ -301,7 +295,7 @@ public class Merger extends Edge {
 			}
 			break;
 		case PREVIEW:
-			ctxt.setColor(color);
+			ctxt.setColor(Color.GRAY);
 			shape.paint(ctxt);
 			break;
 		}
@@ -309,11 +303,9 @@ public class Merger extends Edge {
 	}
 	
 	public void paintHilite(RenderingContext ctxt) {
-		
-		ctxt.setColor(hiliteColor);
-		
-		shape.paint(ctxt);
-		
+		ctxt.setPixelStroke(1);
+		ctxt.setColor(Color.GRAY);
+		shape.draw(ctxt);
 	}
 	
 	void paintSkeleton(RenderingContext ctxt) {

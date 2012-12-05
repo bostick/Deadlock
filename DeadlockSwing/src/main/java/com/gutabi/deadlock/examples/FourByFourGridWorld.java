@@ -36,19 +36,19 @@ public class FourByFourGridWorld extends World {
 			
 			if (i % 2 == 0) {
 				
-				source.type = FixtureType.SINK;
-				sink.type = FixtureType.SOURCE;
+				source.setType(FixtureType.SINK);
+				sink.setType(FixtureType.SOURCE);
 				
-				source.s = Side.TOP;
-				sink.s = Side.TOP;
+				source.setSide(Side.TOP);
+				sink.setSide(Side.TOP);
 				
 			} else {
 				
-				source.type = FixtureType.SOURCE;
-				sink.type = FixtureType.SINK;
+				source.setType(FixtureType.SOURCE);
+				sink.setType(FixtureType.SINK);
 				
-				source.s = Side.BOTTOM;
-				sink.s = Side.BOTTOM;
+				source.setSide(Side.BOTTOM);
+				sink.setSide(Side.BOTTOM);
 				
 			}
 			
@@ -70,19 +70,19 @@ public class FourByFourGridWorld extends World {
 			
 			if (i % 2 == 0) {
 				
-				source.type = FixtureType.SINK;
-				sink.type = FixtureType.SOURCE;
+				source.setType(FixtureType.SINK);
+				sink.setType(FixtureType.SOURCE);
 				
-				source.s = Side.LEFT;
-				sink.s = Side.LEFT;
+				source.setSide(Side.LEFT);
+				sink.setSide(Side.LEFT);
 				
 			} else {
 				
-				source.type = FixtureType.SOURCE;
-				sink.type = FixtureType.SINK;
+				source.setType(FixtureType.SOURCE);
+				sink.setType(FixtureType.SINK);
 				
-				source.s = Side.RIGHT;
-				sink.s = Side.RIGHT;
+				source.setSide(Side.RIGHT);
+				sink.setSide(Side.RIGHT);
 				
 			}
 			
@@ -97,6 +97,8 @@ public class FourByFourGridWorld extends World {
 		}
 		
 		super.init();
+		
+		
 		
 	}
 

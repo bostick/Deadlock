@@ -33,6 +33,14 @@ public class DeadlockMain  {
 		JFrame frame = VIEW.setupFrame();
 		VIEW.init();
 		
+//		VIEW.PIXELS_PER_METER_DEBUG = 12.5;
+//		
+//		VIEW.worldViewport = new AABB(
+//				-(VIEW.CANVAS_WIDTH / VIEW.PIXELS_PER_METER_DEBUG) / 2 + MODEL.world.worldWidth/2 ,
+//				-(VIEW.CANVAS_HEIGHT / VIEW.PIXELS_PER_METER_DEBUG) / 2 + MODEL.world.worldHeight/2,
+//				VIEW.CANVAS_WIDTH / VIEW.PIXELS_PER_METER_DEBUG,
+//				VIEW.CANVAS_HEIGHT / VIEW.PIXELS_PER_METER_DEBUG);
+		
 		CONTROLLER.init();
 		
 		

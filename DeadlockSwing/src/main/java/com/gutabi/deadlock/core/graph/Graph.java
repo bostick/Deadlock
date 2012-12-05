@@ -61,8 +61,14 @@ public class Graph implements Sweepable {
 			for (int j = i+1; j < paths.size(); j++) {
 				GraphPositionPath jpath = paths.get(j);
 				
-				Set<Edge> sharedEdges = new HashSet<Edge>(ipath.edgesMap.keySet());
-				sharedEdges.retainAll(jpath.edgesMap.keySet());
+				Set<Edge> sharedEdges = new HashSet<Edge>();
+				for (Edge e : ipath.edgesMap.keySet()) {
+					for (Edge f : jpath.edgesMap.keySet()) {
+						if (e == f && ipath.axesMap.get(e) == jpath.axesMap.get(f)) {
+							sharedEdges.add(e);
+						}
+					}
+				}
 				
 				if (!sharedEdges.isEmpty()) {
 					ipath.sharedEdgesMap.put(jpath, sharedEdges);
@@ -1063,9 +1069,27 @@ public class Graph implements Sweepable {
 	public void paintScene(RenderingContext ctxt) {
 		
 		if (ctxt.type == RenderingContextType.CANVAS) {
-			if (MODEL.DEBUG_DRAW) {
-				List<Edge> edgesCopy;
+			if (!MODEL.DEBUG_DRAW) {
 				
+				List<Vertex> verticesCopy;
+				synchronized (MODEL) {
+					verticesCopy = new ArrayList<Vertex>(vertices);
+				}
+				for (Vertex v : verticesCopy) {
+					v.paintScene(ctxt);
+				}
+				
+			} else {
+				
+				List<Vertex> verticesCopy;
+				synchronized (MODEL) {
+					verticesCopy = new ArrayList<Vertex>(vertices);
+				}
+				for (Vertex v : verticesCopy) {
+					v.paintScene(ctxt);
+				}
+				
+				List<Edge> edgesCopy;
 				synchronized (MODEL) {
 					edgesCopy = new ArrayList<Edge>(edges);
 				}
@@ -1073,6 +1097,7 @@ public class Graph implements Sweepable {
 				for (Edge e : edgesCopy) {
 					e.paintBorders(ctxt);
 				}
+				
 			}
 		}
 		
@@ -1084,7 +1109,6 @@ public class Graph implements Sweepable {
 		synchronized (MODEL) {
 			verticesCopy = new ArrayList<Vertex>(vertices);
 		}
-		
 		for (Vertex v : verticesCopy) {
 			v.paintID(ctxt);
 		}

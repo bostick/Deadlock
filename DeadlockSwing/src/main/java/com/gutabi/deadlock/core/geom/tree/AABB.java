@@ -18,6 +18,7 @@ public class AABB extends Shape {
 	public final double width;
 	public final double height;
 	
+	public final Point br;
 	public final double brX;
 	public final double brY;
 	
@@ -51,6 +52,7 @@ public class AABB extends Shape {
 		
 		brX = x + width;
 		brY = y + height;
+		br = new Point(brX, brY);
 		
 		p0 = ul;
 		p1 = new Point(ul.x + width, ul.y);

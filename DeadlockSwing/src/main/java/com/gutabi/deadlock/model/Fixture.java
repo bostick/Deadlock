@@ -8,6 +8,8 @@ import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jbox2d.callbacks.QueryCallback;
+
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.graph.Axis;
 import com.gutabi.deadlock.core.graph.GraphPositionPath;
@@ -17,6 +19,7 @@ import com.gutabi.deadlock.model.car.FastCar;
 import com.gutabi.deadlock.model.car.NormalCar;
 import com.gutabi.deadlock.model.car.RandomCar;
 import com.gutabi.deadlock.model.car.ReallyFastCar;
+import com.gutabi.deadlock.view.ProgressMeter;
 import com.gutabi.deadlock.view.RenderingContext;
 
 @SuppressWarnings("static-access")
@@ -30,8 +33,8 @@ public final class Fixture extends Vertex {
 	
 	public final Axis a;
 	
-	public Side s;
-	public FixtureType type;
+	private Side s;
+	private FixtureType type;
 	public Fixture match;
 	
 	public GraphPositionPath shortestPathToMatch;
@@ -39,6 +42,13 @@ public final class Fixture extends Vertex {
 	public double lastSpawnTime;
 	
 	public int outstandingCars;
+	
+	
+	
+	private org.jbox2d.collision.AABB b2dAABB;
+	private ProgressMeter progress;
+	
+	
 	
 	static int carIDCounter;
 	
@@ -48,12 +58,50 @@ public final class Fixture extends Vertex {
 		hiliteColor = new Color(0, 255, 255);
 	}
 	
+	public void setType(FixtureType type) {
+		this.type = type;
+		
+		if (type == FixtureType.SOURCE) {
+			
+			b2dAABB = new org.jbox2d.collision.AABB(shape.aabb.ul.vec2(), shape.aabb.br.vec2());
+			progress = new ProgressMeter(p.x - r - 1.5, p.y - r, 2, 0.5);
+			
+		} else {
+			
+			b2dAABB = null;
+			progress = null;
+			
+		}
+		
+	}
+	
+	public FixtureType getType() {
+		return type;
+	}
+	
+	public void setSide(Side s) {
+		this.s = s;
+	}
+	
+	public Side getSide() {
+		return s;
+	}
+	
 	public final boolean supportsStopSigns() {
 		return false;
 	}
 	
 	public final boolean isUserDeleteable() {
 		return false;
+	}
+	
+	public void computeRadius(double maximumRadius) {
+		super.computeRadius(maximumRadius);
+		if (type == FixtureType.SOURCE) {
+			
+			b2dAABB = new org.jbox2d.collision.AABB(shape.aabb.ul.vec2(), shape.aabb.br.vec2());
+			
+		}
 	}
 	
 	public void preStart() {
@@ -82,6 +130,8 @@ public final class Fixture extends Vertex {
 				shortestPathToMatch.sharedEdgesMap.clear();
 			}
 			
+			progress.setProgress(0.0);
+			
 		}
 		
 	}
@@ -97,6 +147,8 @@ public final class Fixture extends Vertex {
 			if (shortestPathToMatch != null) {
 				shortestPathToMatch.precomputeHitTestData();
 			}
+			
+			progress.setProgress((t - lastSpawnTime) / SPAWN_FREQUENCY_SECONDS);
 			
 			if (active(t)) {
 				spawnNewCar(t);
@@ -141,6 +193,16 @@ public final class Fixture extends Vertex {
 		
 	}
 	
+	
+	private boolean overlapping;
+	
+	private QueryCallback qc = new QueryCallback() {
+		public boolean reportFixture(org.jbox2d.dynamics.Fixture fixture) {
+			overlapping = true;
+			return false;
+		}
+	};
+	
 	private boolean active(double t) {
 		
 		double d = MODEL.world.distanceBetweenVertices(this, match);
@@ -157,6 +219,12 @@ public final class Fixture extends Vertex {
 		}
 		
 		if (!carQueue.isEmpty()) {
+			return false;
+		}
+		
+		overlapping = false;
+		MODEL.world.b2dWorld.queryAABB(qc, b2dAABB);
+		if (overlapping) {
 			return false;
 		}
 		
@@ -260,5 +328,13 @@ public final class Fixture extends Vertex {
 		}
 		
 	}
-
+	
+	public void paintScene(RenderingContext ctxt) {
+		
+		if (type == FixtureType.SOURCE) {
+			progress.paint(ctxt);
+		}
+		
+	}
+	
 }

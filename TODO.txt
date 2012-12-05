@@ -1,23 +1,32 @@
 
 TODAY:
 
-do not spawn if there will be a CarProximityEvent
-this will prevent the newly spawned car from not being considered deadlocked
+delete merger connected to roads:
+vertices stay behind
 
-do not spawn if close to a crashed car
-
-
-figure out how to create a deadlock with a crashed car
-
+add flow meter to sinks
 
 IMMEDIATELY:
+
+for CarProximityEvents:
+broadcast from moving car to other cars.
+If one car is moving, and one car is not moving, there should be a broadcast from moving -> not moving
+This way, if no cars are moving, there is no check for CarProximityEvents
+
+fix strokes
+already filter out capsule events when there is a higher-precedent vertex to handle
+but this is not completely correct
+sometimes the capsule and vertex that have close events are not overlapping
+when there is something like [ENTERVERTEX, ENTERROADCAPSULE, EXITVERTEX, EXITROADCAPSULE, ...
+then test whether the vertex and capsule are overlapping
+if they are not overlapping, then they are just close together and the capsule should not be ignored (this leads to overlapping roads BAD!)
+
+start work on menu
+start work on popup menu
 
 only on grid within active quadrants
 
 with grid on, switching to other cursors snaps to grid
-
-start work on menu
-start work on popup menu
 
 add countdowns/monitors:
 which car will be coming next from which source?
@@ -26,12 +35,9 @@ what is the flow of each source/sink?
 
 SOON:
 
-for CarProximityEvents:
-broadcast from moving car to other cars.
-If one car is moving, and one car is not moving, there should be a broadcast from moving -> not moving
-This way, if no cars are moving, there is no check for CarProximityEvents
+CarProximityEvent with crashed cars
 
-
+deadlocks with crashes cars
 
 enforce prohibition of roads and mergers beyond the world sides
 
@@ -74,7 +80,7 @@ slowing down / speeding up simulation
 add Level
 scripting, saving, editing, etc.
 
-start work on popup menu
+
 
 LONGTERM:
 
@@ -93,6 +99,13 @@ spline/curve editor
 
 
 DONE:
+
+fix b2d box drawing showing that braked cars are moving
+seems to be jbox2d problem
+
+do not spawn if close to a crashed car
+
+draw jbox2d aabb tree
 
 actually remember both VertexArrivalEvents and CarProximityEvents
 

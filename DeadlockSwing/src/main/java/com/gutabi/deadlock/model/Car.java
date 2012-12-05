@@ -28,6 +28,7 @@ import com.gutabi.deadlock.core.geom.Quad;
 import com.gutabi.deadlock.core.geom.Shape;
 import com.gutabi.deadlock.core.graph.GraphPositionPath;
 import com.gutabi.deadlock.core.graph.GraphPositionPathPosition;
+import com.gutabi.deadlock.core.graph.Merger;
 import com.gutabi.deadlock.model.event.CarProximityEvent;
 import com.gutabi.deadlock.model.event.DrivingEvent;
 import com.gutabi.deadlock.model.event.VertexArrivalEvent;
@@ -370,32 +371,32 @@ public abstract class Car extends Entity {
 			
 			overallPos = overallPath.findClosestGraphPositionPathPosition(p, overallPos);
 			
-//			hit = overallPath.pureGraphBestHitTestQuad(this.shape);
-//			
-//			boolean wasInMerger = inMerger;
-//			if (hit == null) {
+			Entity hit = overallPath.pureGraphBestHitTestQuad(this.shape, overallPos);
+			
+			boolean wasInMerger = inMerger;
+			if (hit == null) {
 //				atleastPartiallyOnRoad = false;
-//				inMerger = false;
-//			} else {
+				inMerger = false;
+			} else {
 //				atleastPartiallyOnRoad = true;
-//				if (hit instanceof Merger && ((Quad)shape).containedIn((Quad)hit.getShape())) {
-//					inMerger = true;
-//				} else {
-//					inMerger = false;
-//				}
-//			}
-//			
+				if (hit instanceof Merger && ((Quad)shape).containedIn((Quad)hit.getShape())) {
+					inMerger = true;
+				} else {
+					inMerger = false;
+				}
+			}
+			
 //			if (!atleastPartiallyOnRoad) {
 //				skid();
 //			}
-//			
-//			if (inMerger == !wasInMerger) {
-//				if (inMerger) {
-//					b2dFixture.setFilterData(mergingCarFilter);
-//				} else {
-//					b2dFixture.setFilterData(normalCarFilter);
-//				}
-//			}
+			
+			if (inMerger == !wasInMerger) {
+				if (inMerger) {
+					b2dFixture.setFilterData(mergingCarFilter);
+				} else {
+					b2dFixture.setFilterData(normalCarFilter);
+				}
+			}
 			
 			break;
 		case SINKED:
@@ -991,22 +992,40 @@ public abstract class Car extends Entity {
 			
 			break;
 		case CRASHED:
-			
-			computeDynamicPropertiesAlways();
-			computeDynamicPropertiesMoving();
-			
-			if (!MODEL.world.completelyContains(shape)) {
-				return false;
-			}
-			
-			break;
 		case SKIDDED:
-			
 			computeDynamicPropertiesAlways();
-			computeDynamicPropertiesMoving();
+//			computeDynamicPropertiesMoving();
 			
-//			MODEL.world.addSkidMarks(prevWorldPoint0, worldQuad.p0);
-//			MODEL.world.addSkidMarks(prevWorldPoint3, worldQuad.p3);
+			if (stoppedTime == -1) {
+				
+				if (DMath.equals(vel.lengthSquared(), 0.0)) {
+					
+					if (logger.isDebugEnabled()) {
+						logger.debug("stopped: " + t);
+					}
+					stoppedTime = t;
+					
+				}
+				
+//				MODEL.world.addSkidMarks(prevWorldPoint0, worldQuad.p0);
+//				MODEL.world.addSkidMarks(prevWorldPoint3, worldQuad.p3);
+				
+				computeDynamicPropertiesMoving();
+				
+			} else {
+				
+				if (!DMath.equals(vel.lengthSquared(), 0.0)) {
+					
+					stoppedTime = -1;
+					deadlocked = false;
+					
+					computeDynamicPropertiesMoving();
+					
+				}
+				
+				//computeDynamicPropertiesMoving();
+				
+			}
 			
 			if (!MODEL.world.completelyContains(shape)) {
 				return false;
@@ -1015,8 +1034,7 @@ public abstract class Car extends Entity {
 			break;
 		case SINKED:
 			
-			computeDynamicPropertiesAlways();
-			computeDynamicPropertiesMoving();
+			assert false;
 			
 			break;
 		}
@@ -1024,6 +1042,8 @@ public abstract class Car extends Entity {
 		return true;	
 	}
 	
+	
+	static Color redOrange = new Color(255, 67, 0);
 	
 	/**
 	 * @param g2 in world coords
@@ -1085,8 +1105,13 @@ public abstract class Car extends Entity {
 			if (MODEL.CARTEXTURE_DRAW) {
 				paintImage(ctxt);
 			} else {
-				ctxt.setColor(Color.ORANGE);
-				paintRect(ctxt);
+				if (!deadlocked) {
+					ctxt.setColor(Color.ORANGE);
+					paintRect(ctxt);
+				} else {
+					ctxt.setColor(redOrange);
+					paintRect(ctxt);
+				}
 			}
 			
 			if (MODEL.DEBUG_DRAW) {

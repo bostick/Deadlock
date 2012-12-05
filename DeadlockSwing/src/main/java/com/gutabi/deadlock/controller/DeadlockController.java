@@ -459,20 +459,20 @@ public class DeadlockController implements ActionListener {
 				Fixture source = new Fixture(fc.getSourcePoint(), axis);
 				Fixture sink = new Fixture(fc.getSinkPoint(), axis);
 				
-				source.type = FixtureType.SOURCE;
-				sink.type = FixtureType.SINK;
+				source.setType(FixtureType.SOURCE);
+				sink.setType(FixtureType.SINK);
 				
 				source.match = sink;
 				sink.match = source;
 				
 				switch (axis) {
 				case TOPBOTTOM:
-					source.s = Side.BOTTOM;
-					sink.s = Side.BOTTOM;
+					source.setSide(Side.BOTTOM);
+					sink.setSide(Side.BOTTOM);
 					break;
 				case LEFTRIGHT:
-					source.s = Side.RIGHT;
-					sink.s = Side.RIGHT;
+					source.setSide(Side.RIGHT);
+					sink.setSide(Side.RIGHT);
 					break;
 				}
 				
@@ -669,15 +669,15 @@ public class DeadlockController implements ActionListener {
 					
 					Fixture g = f.match;
 					
-					if (f.type != null) {
-						f.type = f.type.other();
+					if (f.getType() != null) {
+						f.setType(f.getType().other());
 					}
-					if (g.type != null) {
-						g.type = g.type.other();
+					if (g.getType() != null) {
+						g.setType(g.getType().other());
 					}
 					
-					f.s = f.s.other();
-					g.s = g.s.other();
+					f.setSide(f.getSide().other());
+					g.setSide(g.getSide().other());
 					
 					VIEW.renderWorldBackground();
 					VIEW.repaintCanvas();
@@ -838,21 +838,6 @@ public class DeadlockController implements ActionListener {
 	}
 	
 	public void slashKey() {
-		
-		if (reportingLogger.isDebugEnabled()) {
-			
-			List<Car> carsCopy;
-			synchronized (MODEL) {
-				carsCopy = new ArrayList<Car>(MODEL.world.cars);
-			}
-			
-			reportingLogger.debug("car report:");
-			
-//			for (Car c : carsCopy) {
-//				reportingLogger.debug(c.id + " " + c.curDrivingEvent + " " + c.stoppedTime);
-//			}
-			reportingLogger.debug("");
-		}
 		
 	}
 	

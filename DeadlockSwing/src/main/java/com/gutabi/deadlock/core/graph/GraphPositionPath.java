@@ -12,7 +12,11 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 
 import com.gutabi.deadlock.core.DMath;
+import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
+import com.gutabi.deadlock.core.geom.CapsuleSequence;
+import com.gutabi.deadlock.core.geom.Quad;
+import com.gutabi.deadlock.core.geom.ShapeUtils;
 import com.gutabi.deadlock.model.Car;
 import com.gutabi.deadlock.model.event.VertexArrivalEvent;
 
@@ -34,6 +38,7 @@ public class GraphPositionPath {
 	
 	public final Map<Vertex, Integer> verticesMap = new HashMap<Vertex, Integer>();
 	public final Map<Edge, Integer> edgesMap = new HashMap<Edge, Integer>();
+	public final Map<Edge, Axis> axesMap = new HashMap<Edge, Axis>();
 	
 	private List<GraphPositionPathPosition> borderPositions;
 	
@@ -102,6 +107,18 @@ public class GraphPositionPath {
 				Edge e = (Edge)((EdgePosition)pos).entity;
 				if (!edgesMap.containsKey(e)) {
 					edgesMap.put(e, i-1);
+					if (e instanceof Merger) {
+						Vertex v = ((VertexPosition)poss.get(i-1)).v;
+						Merger m = (Merger)e;
+						if (v == m.top || v == m.bottom) {
+							axesMap.put(e, Axis.TOPBOTTOM);
+						} else {
+							assert v == m.left || v == m.right;
+							axesMap.put(e, Axis.LEFTRIGHT);
+						}
+					} else {
+						axesMap.put(e, null);
+					}
 				}
 			}
 		}
@@ -752,6 +769,33 @@ public class GraphPositionPath {
 //			}
 //		}
 //		return null;
+	}
+	
+	public Entity pureGraphBestHitTestQuad(Quad q, GraphPositionPathPosition min) {
+		
+		for (Entry<Vertex, Integer> ent : verticesMap.entrySet()) {
+			int i = ent.getValue();
+			Vertex v = ent.getKey();
+			if (i >= min.combo && ShapeUtils.intersectCQ(v.getShape(), q)) {
+				return v;
+			}
+		}
+		for (Entry<Edge, Integer> ent : edgesMap.entrySet()) {
+			int i = ent.getValue();
+			Edge e = ent.getKey();
+			if (i + e.pointCount() >= min.combo) {
+				if (e instanceof Road) {
+					if (ShapeUtils.intersectCapSeqQ((CapsuleSequence)e.getShape(), q)) {
+						return e;
+					}
+				} else {
+					if (ShapeUtils.intersectQQ((Quad)e.getShape(), q)) {
+						return e;
+					}
+				}
+			}
+		}
+		return null;
 	}
 	
 	/**

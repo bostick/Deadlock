@@ -100,8 +100,6 @@ public abstract class Vertex extends Entity {
 			logger.debug("aabb before: " + shape.getAABB());
 		}
 		
-		double oldR = r;
-		
 		r = INIT_VERTEX_RADIUS;
 		shape = new Circle(this, p, r);
 		
@@ -192,10 +190,6 @@ public abstract class Vertex extends Entity {
 			logger.debug("aabb after: " + shape.getAABB());
 		}
 		
-		if (r != oldR) {
-			String.class.getName();
-		}
-		
 	}
 	
 	
@@ -232,23 +226,15 @@ public abstract class Vertex extends Entity {
 	
 
 	
-	/**
-	 * @param g2 in world coords
-	 */
 	public abstract void paint(RenderingContext ctxt);
 	
-	/**
-	 * @param g2 in world coords
-	 */
+	public abstract void paintScene(RenderingContext ctxt);
+	
 	public void paintHilite(RenderingContext ctxt) {
 		ctxt.setColor(hiliteColor);
 		shape.paint(ctxt);
 	}
 	
-	/**
-	 * 
-	 * @param g2 in pixels, <0, 0> is world origin
-	 */
 	public void paintID(RenderingContext ctxt) {
 		
 		ctxt.setColor(Color.WHITE);
