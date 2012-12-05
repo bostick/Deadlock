@@ -1,17 +1,16 @@
 
 TODAY:
 
-figure out how to create a deadlock with a crashed car
-
-IMMEDIATELY:
-
 do not spawn if there will be a CarProximityEvent
 this will prevent the newly spawned car from not being considered deadlocked
 
-and do not spawn if close to a crashed car
+do not spawn if close to a crashed car
 
 
+figure out how to create a deadlock with a crashed car
 
+
+IMMEDIATELY:
 
 only on grid within active quadrants
 

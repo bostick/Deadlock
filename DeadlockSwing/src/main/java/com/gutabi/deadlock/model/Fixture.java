@@ -143,22 +143,18 @@ public final class Fixture extends Vertex {
 	
 	private boolean active(double t) {
 		
-//		if (outstandingCars > 0) {
-//			return false;
-//		}
-		if (lastSpawnTime != -1 && (t - lastSpawnTime) < SPAWN_FREQUENCY_SECONDS) {
-			return false;
-		}
-		
 		double d = MODEL.world.distanceBetweenVertices(this, match);
 		
 		if (d == Double.POSITIVE_INFINITY) {
 			return false;
 		}
 		
-//		if (MODEL.world.isUnderAnyCars(this)) {
+//		if (outstandingCars > 0) {
 //			return false;
 //		}
+		if (lastSpawnTime != -1 && (t - lastSpawnTime) < SPAWN_FREQUENCY_SECONDS) {
+			return false;
+		}
 		
 		if (!carQueue.isEmpty()) {
 			return false;

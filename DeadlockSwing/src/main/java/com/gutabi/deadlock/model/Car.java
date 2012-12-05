@@ -235,7 +235,7 @@ public abstract class Car extends Entity {
 		
 		computePath();
 		
-		overallPos = new GraphPositionPathPosition(overallPath, 0, 0.0);
+		overallPos = overallPath.startingPos;
 		startPoint = overallPos.p;
 		
 		vertexDepartureQueue.add(new VertexSpawnEvent(overallPos));
@@ -641,65 +641,6 @@ public abstract class Car extends Entity {
 		
 	}
 	
-//	private void processNewDrivingEvent(DrivingEvent newDrivingEvent, double t) {
-//		
-//		if (newDrivingEvent != null) {
-//			if (eventQueue.isEmpty()) {
-//				eventQueue.add(newDrivingEvent);
-//				if (eventingLogger.isDebugEnabled()) {
-//					eventingLogger.debug("t: " + t + " car " + this + ": " + newDrivingEvent);
-//				}
-//			} else {
-//				if (eventQueue.contains(newDrivingEvent)) {
-//					
-//				} else {
-//					
-//					if (curDrivingEvent instanceof CarProximityEvent && newDrivingEvent instanceof VertexArrivalEvent) {
-//						
-//						eventQueue.add(newDrivingEvent);
-//						
-//					} else if (curDrivingEvent instanceof VertexArrivalEvent && newDrivingEvent instanceof CarProximityEvent) {
-//						
-////						curDrivingEvent = newDrivingEvent;
-//						eventQueue.add(newDrivingEvent);
-////						if (eventingLogger.isDebugEnabled()) {
-////							eventingLogger.debug("t: " + t + " car " + this + ": " + newDrivingEvent);
-////						}
-//						
-//						/*
-//						 * may have been at intersection with no stop sign, so make sure to be braking now
-//						 */
-//						
-//						state = CarStateEnum.BRAKING;
-//						
-//					} else if (curDrivingEvent instanceof CarProximityEvent && newDrivingEvent instanceof CarProximityEvent &&
-//							((CarProximityEvent)curDrivingEvent).otherCar == ((CarProximityEvent)newDrivingEvent).otherCar) {
-//						
-////						curDrivingEvent = newDrivingEvent;
-////						eventQueue.add(newDrivingEvent);
-////						if (eventingLogger.isDebugEnabled()) {
-////							eventingLogger.debug("t: " + t + " car " + this + ": " + newDrivingEvent);
-////						}
-//						
-//					} else if (curDrivingEvent instanceof CarProximityEvent && newDrivingEvent instanceof CarProximityEvent &&
-//							((CarProximityEvent)curDrivingEvent).otherCar != ((CarProximityEvent)newDrivingEvent).otherCar) {
-//						
-////						curDrivingEvent = newDrivingEvent;
-//						eventQueue.add(newDrivingEvent);
-//						if (eventingLogger.isDebugEnabled()) {
-//							eventingLogger.debug("t: " + t + " car " + this + ": " + newDrivingEvent);
-//						}
-//						
-//					} else {
-//						assert false;
-//					}
-//					
-//				}
-//			}
-//		}
-//		
-//	}
-	
 	private boolean handleDrivingEvent(DrivingEvent e, double t) {
 		
 		if (e instanceof CarProximityEvent) {
@@ -845,7 +786,15 @@ public abstract class Car extends Entity {
 	
 	private void updateFriction() {
 		
+//		if (stoppedTime != -1) {
+//			return;
+//		}
+		
 		Vec2 cancelingImpulse = vel.mul(-1).mul(mass);
+		
+		if (cancelingImpulse.lengthSquared() == 0.0f) {
+			return;
+		}
 		
 		float cancelingForwardImpulse = (float)(frictionForwardImpulseCoefficient * Vec2.dot(currentRightNormal, cancelingImpulse));
 		float cancelingLateralImpulse = (float)(frictionLateralImpulseCoefficient * Vec2.dot(currentUpNormal, cancelingImpulse));
@@ -943,6 +892,10 @@ public abstract class Car extends Entity {
 //			logger.debug("decel");
 			
 			decelTime = t;
+		}
+		
+		if (stoppedTime != -1) {
+			return;
 		}
 		
 		//logger.debug("acc for braking: " + -forwardVel.length());

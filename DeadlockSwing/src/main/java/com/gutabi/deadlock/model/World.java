@@ -156,6 +156,8 @@ public class World implements Sweepable {
 		listener = new CarEventListener();
 		b2dWorld.setContactListener(listener);
 		
+//		b2dWorld.setDebugDraw(JBox2D);
+		
 		computeAABB();
 		
 	}
@@ -475,16 +477,22 @@ public class World implements Sweepable {
 					if (cause != null &&
 							cause.deadlocked) {
 						
-						if (cause.stoppedTime <= ci.stoppedTime) {
+						if (cause.stoppedTime <= ci.stoppedTime || (t - ci.stoppedTime > Car.COMPLETE_STOP_WAIT_TIME)) {
 							
 							assert ci.stoppedTime != -1;
 							assert ci.state == CarStateEnum.BRAKING;
 							ci.deadlocked = true;
 //							ci.deadlockedTime = t;
 							
-						} else {
-//							assert false;
 						}
+//						else if (ci.stoppedTime == ci.startingTime) {
+//							/**
+//							 * has not moved from spawn point and was "stopped" before the cause stopped
+//							 */
+//							assert ci.stoppedTime != -1;
+//							assert ci.state == CarStateEnum.BRAKING;
+//							ci.deadlocked = true;
+//						}
 						
 					}
 					
@@ -771,6 +779,11 @@ public class World implements Sweepable {
 	private void paintScene(RenderingContext ctxt) {
 		
 		graph.paintScene(ctxt);
+		
+		if (MODEL.DEBUG_DRAW) {
+			b2dWorld.setDebugDraw(ctxt);
+			b2dWorld.drawDebugData();
+		}
 		
 		List<Car> carsCopy;
 		List<AnimatedExplosion> explosionsCopy;

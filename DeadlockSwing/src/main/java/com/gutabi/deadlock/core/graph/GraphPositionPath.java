@@ -30,6 +30,8 @@ public class GraphPositionPath {
 	
 	public final boolean hasLoop;
 	
+	public final GraphPositionPathPosition startingPos;
+	
 	public final Map<Vertex, Integer> verticesMap = new HashMap<Vertex, Integer>();
 	public final Map<Edge, Integer> edgesMap = new HashMap<Edge, Integer>();
 	
@@ -129,6 +131,7 @@ public class GraphPositionPath {
 			}
 		}
 		
+		startingPos = new GraphPositionPathPosition(this, 0, 0.0);
 		
 		assert check();
 	}
