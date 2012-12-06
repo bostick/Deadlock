@@ -7,6 +7,8 @@ import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -20,7 +22,7 @@ import javax.swing.JTextField;
 import com.gutabi.deadlock.controller.ControlMode;
 
 @SuppressWarnings({"serial", "static-access"})
-public class ControlPanel extends JPanel {
+public class ControlPanel extends JPanel implements ActionListener {
 	
 	public JCheckBox normalCarButton;
 	public JCheckBox fastCarButton;
@@ -86,10 +88,10 @@ public class ControlPanel extends JPanel {
 		
 		startButton = new JButton("Start");
 		startButton.setActionCommand("start");
-		startButton.addActionListener(CONTROLLER);
+		startButton.addActionListener(this);
 		stopButton = new JButton("Stop");
 		stopButton.setActionCommand("stop");
-		stopButton.addActionListener(CONTROLLER);
+		stopButton.addActionListener(this);
 		stopButton.setEnabled(false);
 		hBox = Box.createHorizontalBox();
 		hBox.add(startButton);
@@ -106,7 +108,7 @@ public class ControlPanel extends JPanel {
 		fpsCheckBox = new JCheckBox("fps draw");
 		fpsCheckBox.setSelected(MODEL.FPS_DRAW);
 		fpsCheckBox.setActionCommand("fpsDraw");
-		fpsCheckBox.addActionListener(CONTROLLER);
+		fpsCheckBox.addActionListener(this);
 		hBox = Box.createHorizontalBox();
 		hBox.add(fpsCheckBox);
 		hBox.add(Box.createHorizontalGlue());
@@ -115,7 +117,7 @@ public class ControlPanel extends JPanel {
 		stopSignCheckBox = new JCheckBox("draw stop signs");
 		stopSignCheckBox.setSelected(MODEL.STOPSIGN_DRAW);
 		stopSignCheckBox.setActionCommand("stopSignDraw");
-		stopSignCheckBox.addActionListener(CONTROLLER);
+		stopSignCheckBox.addActionListener(this);
 		hBox = Box.createHorizontalBox();
 		hBox.add(stopSignCheckBox);
 		hBox.add(Box.createHorizontalGlue());
@@ -124,7 +126,7 @@ public class ControlPanel extends JPanel {
 		carTextureCheckBox = new JCheckBox("draw car textures");
 		carTextureCheckBox.setSelected(MODEL.CARTEXTURE_DRAW);
 		carTextureCheckBox.setActionCommand("carTextureDraw");
-		carTextureCheckBox.addActionListener(CONTROLLER);
+		carTextureCheckBox.addActionListener(this);
 		hBox = Box.createHorizontalBox();
 		hBox.add(carTextureCheckBox);
 		hBox.add(Box.createHorizontalGlue());
@@ -133,7 +135,7 @@ public class ControlPanel extends JPanel {
 		explosionsCheckBox = new JCheckBox("draw explosions");
 		explosionsCheckBox.setSelected(MODEL.EXPLOSIONS_DRAW);
 		explosionsCheckBox.setActionCommand("explosionsDraw");
-		explosionsCheckBox.addActionListener(CONTROLLER);
+		explosionsCheckBox.addActionListener(this);
 		hBox = Box.createHorizontalBox();
 		hBox.add(explosionsCheckBox);
 		hBox.add(Box.createHorizontalGlue());
@@ -142,7 +144,7 @@ public class ControlPanel extends JPanel {
 		debugCheckBox = new JCheckBox("debug draw");
 		debugCheckBox.setSelected(MODEL.DEBUG_DRAW);
 		debugCheckBox.setActionCommand("debugDraw");
-		debugCheckBox.addActionListener(CONTROLLER);
+		debugCheckBox.addActionListener(this);
 		hBox = Box.createHorizontalBox();
 		hBox.add(debugCheckBox);
 		hBox.add(Box.createHorizontalGlue());
@@ -152,7 +154,7 @@ public class ControlPanel extends JPanel {
 		dtField.setText(Double.toString(MODEL.dt));
 		dtField.setMaximumSize(new Dimension(10000, 100));
 		dtField.setActionCommand("dt");
-		dtField.addActionListener(CONTROLLER);
+		dtField.addActionListener(this);
 		hBox = Box.createHorizontalBox();
 		hBox.add(new JLabel("dt"));
 		hBox.add(dtField);
@@ -172,6 +174,92 @@ public class ControlPanel extends JPanel {
 		verticalBox.add(Box.createRigidArea(new Dimension(0, 30)));
 		
 		add(verticalBox);
+	}
+	
+	public void actionPerformed(ActionEvent e) {
+		if (e.getActionCommand().equals("start")) {
+			
+			VIEW.controlPanel.startButton.setText("Pause");
+			VIEW.controlPanel.startButton.setActionCommand("pause");
+			
+			VIEW.controlPanel.stopButton.setEnabled(true);
+			
+			CONTROLLER.startRunning();
+			
+		} else if (e.getActionCommand().equals("stop")) {
+			
+			VIEW.controlPanel.startButton.setText("Start");
+			VIEW.controlPanel.startButton.setActionCommand("start");
+			
+			VIEW.controlPanel.stopButton.setEnabled(false);
+			
+			CONTROLLER.stopRunning();
+		} else if (e.getActionCommand().equals("pause")) {
+			
+			VIEW.controlPanel.startButton.setText("Unpause");
+			VIEW.controlPanel.startButton.setActionCommand("unpause");
+			
+			CONTROLLER.pauseRunning();
+		} else if (e.getActionCommand().equals("unpause")) {
+			
+			VIEW.controlPanel.startButton.setText("Pause");
+			VIEW.controlPanel.startButton.setActionCommand("pause");
+			
+			CONTROLLER.unpauseRunning();
+		} else if (e.getActionCommand().equals("dt")) {
+			
+			String text = VIEW.controlPanel.dtField.getText();
+			try {
+				double dt = Double.parseDouble(text);
+				MODEL.dt = dt;
+			} catch (NumberFormatException ex) {
+				
+			}
+			
+		} else if (e.getActionCommand().equals("debugDraw")) {
+			
+			boolean state = VIEW.controlPanel.debugCheckBox.isSelected();
+			
+			MODEL.DEBUG_DRAW = state;
+			
+			VIEW.renderWorldBackground();
+			VIEW.repaintCanvas();
+			
+		} else if (e.getActionCommand().equals("fpsDraw")) {
+			
+			boolean state = VIEW.controlPanel.fpsCheckBox.isSelected();
+			
+			MODEL.FPS_DRAW = state;
+			
+			VIEW.renderWorldBackground();
+			VIEW.repaintCanvas();
+			
+		} else if (e.getActionCommand().equals("stopSignDraw")) {
+			
+			boolean state = VIEW.controlPanel.stopSignCheckBox.isSelected();
+			
+			MODEL.STOPSIGN_DRAW = state;
+			
+			VIEW.renderWorldBackground();
+			VIEW.repaintCanvas();
+			
+		} else if (e.getActionCommand().equals("carTextureDraw")) {
+			
+			boolean state = VIEW.controlPanel.carTextureCheckBox.isSelected();
+			
+			MODEL.CARTEXTURE_DRAW = state;
+			
+			VIEW.repaintCanvas();
+			
+		} else if (e.getActionCommand().equals("explosionsDraw")) {
+			
+			boolean state = VIEW.controlPanel.explosionsCheckBox.isSelected();
+			
+			MODEL.EXPLOSIONS_DRAW = state;
+			
+			VIEW.repaintCanvas();
+			
+		}
 	}
 	
 	public void paint(Graphics g) {

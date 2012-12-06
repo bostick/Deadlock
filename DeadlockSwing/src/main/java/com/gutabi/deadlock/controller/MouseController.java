@@ -1,8 +1,8 @@
 package com.gutabi.deadlock.controller;
 
-import static com.gutabi.deadlock.controller.DeadlockController.CONTROLLER;
 import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
+import java.awt.Component;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -49,32 +49,88 @@ public class MouseController implements MouseListener, MouseMotionListener {
 		exited(new InputEvent(ev.getComponent(), new Point(ev.getX(), ev.getY())));
 	}
 	
-	public void pressed(final InputEvent ev) {
-		CONTROLLER.pressed(ev);
-	}
-	
-	public void dragged(final InputEvent ev) {
-		CONTROLLER.dragged(ev);
-	}
-	
-	public void released(final InputEvent ev) {
-		CONTROLLER.released(ev);
-	}
-	
-	public void moved(final InputEvent ev) {
-		CONTROLLER.moved(ev);
-	}
-	
-	public void entered(final InputEvent ev) {
-		CONTROLLER.entered(ev);
-	}
-	
-	public void exited(final InputEvent ev) {
-		CONTROLLER.exited(ev);
-	}
-	
 	public void mouseClicked(MouseEvent arg0) {
 		;
 	}
 	
+	public void pressed(InputEvent ev) {
+		
+		Component c = ev.c;
+		
+		if (c == VIEW.canvas) {
+			
+			VIEW.canvas.pressed(ev);
+			
+		} else if (c == VIEW.previewPanel) {
+			
+			VIEW.previewPanel.pressed(ev);
+			
+		}
+		
+	}
+	
+	public void dragged(InputEvent ev) {
+		
+		Component c = ev.c;
+		
+		if (c == VIEW.canvas) {
+			
+			VIEW.canvas.dragged(ev);
+			
+		} else if (c == VIEW.previewPanel) {
+			
+			VIEW.previewPanel.dragged(ev);
+			
+		}
+		
+	}
+	
+	public void released(InputEvent ev) {
+		
+		Component c = ev.c;
+		
+		if (c == VIEW.canvas) {
+			
+			VIEW.canvas.released(ev);
+			
+		}
+		
+	}
+	
+	public void moved(InputEvent ev) {
+		
+		Component c = ev.c;
+		
+		if (c == VIEW.canvas) {
+			
+			VIEW.canvas.moved(ev);
+			
+		}
+		
+	}
+	
+	public void entered(InputEvent ev) {
+		
+		Component c = ev.c;
+		
+		if (c == VIEW.canvas) {
+			
+			VIEW.canvas.entered(ev);
+			
+		}
+		
+	}
+	
+	public void exited(InputEvent ev) {
+		
+		Component c = ev.c;
+		
+		if (c == VIEW.canvas) {
+			
+			VIEW.canvas.exited(ev);
+			
+		}
+		
+	}
+
 }

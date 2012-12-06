@@ -3,9 +3,6 @@ package com.gutabi.deadlock.controller;
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
-import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,29 +16,20 @@ import com.gutabi.deadlock.core.geom.Circle;
 import com.gutabi.deadlock.core.geom.ShapeUtils;
 import com.gutabi.deadlock.core.geom.SweepEvent;
 import com.gutabi.deadlock.core.geom.SweepEventType;
-import com.gutabi.deadlock.core.graph.Axis;
-import com.gutabi.deadlock.core.graph.Direction;
 import com.gutabi.deadlock.core.graph.EdgePosition;
 import com.gutabi.deadlock.core.graph.GraphPosition;
 import com.gutabi.deadlock.core.graph.Intersection;
 import com.gutabi.deadlock.core.graph.Merger;
 import com.gutabi.deadlock.core.graph.Road;
 import com.gutabi.deadlock.core.graph.RoadPosition;
-import com.gutabi.deadlock.core.graph.Side;
 import com.gutabi.deadlock.core.graph.Vertex;
 import com.gutabi.deadlock.core.graph.VertexPosition;
 import com.gutabi.deadlock.model.Car;
-import com.gutabi.deadlock.model.Fixture;
-import com.gutabi.deadlock.model.FixtureType;
 import com.gutabi.deadlock.model.StopSign;
 import com.gutabi.deadlock.model.Stroke;
-import com.gutabi.deadlock.model.cursor.FixtureCursor;
-import com.gutabi.deadlock.model.cursor.MergerCursor;
-import com.gutabi.deadlock.model.cursor.RegularCursor;
-import com.gutabi.deadlock.model.cursor.StraightEdgeCursor;
 
-@SuppressWarnings("static-access")
-public class DeadlockController implements ActionListener {
+//@SuppressWarnings("static-access")
+public class DeadlockController {
 	
 	public static DeadlockController CONTROLLER = new DeadlockController();
 	
@@ -51,7 +39,7 @@ public class DeadlockController implements ActionListener {
 	public KeyboardController kc;
 	
 	Logger logger = Logger.getLogger(DeadlockController.class);
-	Logger reportingLogger = Logger.getLogger("com.gutabi.deadlock.controller.DeadlockController.reporting");
+//	Logger reportingLogger = Logger.getLogger("com.gutabi.deadlock.controller.DeadlockController.reporting");
 	
 	public DeadlockController() {
 		
@@ -68,863 +56,9 @@ public class DeadlockController implements ActionListener {
 		
 	}
 	
-	Point lastPressCanvasPoint;
-	Point lastPressPreviewPoint;
-	long lastPressTime;
-	
-	Point origWorldViewLoc;
-	
-	public void pressed(InputEvent ev) {
-		
-		Component c = ev.c;
-		
-		Point p = ev.p;
-		
-		if (c == VIEW.canvas) {
-			
-			VIEW.canvas.requestFocusInWindow();
-			
-			lastPressCanvasPoint = p;
-			lastPressTime = System.currentTimeMillis();
-			
-			lastDragCanvasPoint = null;
-			lastDragTime = -1;
-			
-		} else if (c == VIEW.previewPanel) {
-			
-			VIEW.previewPanel.requestFocusInWindow();
-			
-			lastPressPreviewPoint = p;
-			lastPressTime = System.currentTimeMillis();
-			
-			lastDragPreviewPoint = null;
-			lastDragTime = -1;
-			
-		}
-		
-	}
-	
-	
-	Point lastDragCanvasPoint;
-	Point lastDragWorldPoint;
-	Point lastDragPreviewPoint;
-	long lastDragTime;
-	
-	public void dragged(InputEvent ev) {
-		
-		Component c = ev.c;
-		
-		Point p = ev.p;
-		
-		if (c == VIEW.canvas) {
-			
-			VIEW.canvas.requestFocusInWindow();
-			
-			boolean lastDragCanvasPointWasNull = (lastDragCanvasPoint == null);
-			
-			lastDragCanvasPoint = p;
-			lastDragWorldPoint = VIEW.canvasToWorld(p);
-			lastDragTime = System.currentTimeMillis();
-			
-			MODEL.cursor.setPoint(lastDragWorldPoint);
-			
-			switch (mode) {
-			case IDLE: {
-				
-				if (lastDragCanvasPointWasNull) {
-					// first drag
-					draftStart(lastPressCanvasPoint);
-					draftMove(lastDragCanvasPoint);
-					
-					VIEW.repaintCanvas();
-					
-				} else {
-					assert false;
-				}
-				
-				break;
-			}
-			case DRAFTING:
-				
-				draftMove(lastDragCanvasPoint);
-				
-				VIEW.repaintCanvas();
-				break;
-				
-			case RUNNING:
-			case PAUSED:
-			case MERGERCURSOR:
-			case FIXTURECURSOR:
-			case STRAIGHTEDGECURSOR:
-			case MENU:
-				;
-				break;
-			}
-			
-		} else if (c == VIEW.previewPanel) {
-			
-			VIEW.previewPanel.requestFocusInWindow();
-			
-			Point penDragPreviewPoint = lastDragPreviewPoint;
-			lastDragPreviewPoint = p;
-			lastDragTime = System.currentTimeMillis();
-			
-			if (penDragPreviewPoint != null) {
-				
-				double dx = lastDragPreviewPoint.x - penDragPreviewPoint.x;
-				double dy = lastDragPreviewPoint.y - penDragPreviewPoint.y;
-				
-				VIEW.pan(new Point(dx, dy));
-				
-				VIEW.renderWorldBackground();
-				VIEW.repaintCanvas();
-				VIEW.repaintControlPanel();
-				
-			}
-			
-		}
-		
-	}
-	
-	
-	long lastReleaseTime;
-	
-	public void released(InputEvent ev) {
-		
-		Component c = ev.c;
-		
-		if (c == VIEW.canvas) {
-			
-			VIEW.canvas.requestFocusInWindow();
-			
-			lastReleaseTime = System.currentTimeMillis();
-			
-			switch (mode) {
-			case IDLE: {
-				
-				if (lastReleaseTime - lastPressTime < 500 && lastDragCanvasPoint == null) {
-					// click
-					
-				}
-				
-				break;
-			}
-			case DRAFTING:
-				draftEnd();
-				
-				VIEW.renderWorldBackground();
-				VIEW.repaintCanvas();
-				VIEW.repaintControlPanel();
-				
-				break;
-			case RUNNING:
-			case PAUSED:
-			case MERGERCURSOR:
-			case FIXTURECURSOR:
-			case STRAIGHTEDGECURSOR:
-			case MENU:
-				;
-				break;
-			}
-			
-		}
-		
-	}
-	
-	
-	Point lastMovedCanvasPoint;
-	Point lastMovedWorldPoint;
-	
-	public void moved(InputEvent ev) {
-		
-		Component c = ev.c;
-		
-		if (c == VIEW.canvas) {
-			
-			VIEW.canvas.requestFocusInWindow();
-			
-			lastMovedCanvasPoint = ev.p;
-			
-			switch (mode) {
-			case MENU:
-				break;
-			case PAUSED:
-				
-				lastMovedWorldPoint = VIEW.canvasToWorld(lastMovedCanvasPoint);
-				
-				break;
-			case DRAFTING:
-				
-				assert false;
-				lastMovedWorldPoint = VIEW.canvasToWorld(lastMovedCanvasPoint);
-				
-				break;
-			case IDLE:
-			case RUNNING:
-				
-				lastMovedWorldPoint = VIEW.canvasToWorld(lastMovedCanvasPoint);
-				
-				Entity closest = MODEL.world.hitTest(lastMovedWorldPoint);
-				
-				synchronized (MODEL) {
-					MODEL.hilited = closest;
-				}
-				
-				if (MODEL.cursor != null) {
-					if (MODEL.grid) {
-						
-						Point closestGridPoint = new Point(2 * Math.round(0.5 * lastMovedWorldPoint.x), 2 * Math.round(0.5 * lastMovedWorldPoint.y));
-						MODEL.cursor.setPoint(closestGridPoint);
-						
-					} else {
-						MODEL.cursor.setPoint(lastMovedWorldPoint);
-					}
-				}
-				
-				VIEW.repaintCanvas();
-				break;
-				
-			case MERGERCURSOR:
-			case FIXTURECURSOR:
-			case STRAIGHTEDGECURSOR:
-				
-				lastMovedWorldPoint = VIEW.canvasToWorld(lastMovedCanvasPoint);
-				
-				MODEL.hilited = null;
-				
-				if (MODEL.cursor != null) {
-					if (MODEL.grid) {
-						
-						Point closestGridPoint = new Point(2 * Math.round(0.5 * lastMovedWorldPoint.x), 2 * Math.round(0.5 * lastMovedWorldPoint.y));
-						MODEL.cursor.setPoint(closestGridPoint);
-						
-					} else {
-						MODEL.cursor.setPoint(lastMovedWorldPoint);
-					}
-				}
-				
-				VIEW.repaintCanvas();
-				break;
-			}
-			
-		}
-		
-	}
-	
-	public void exited(InputEvent ev) {
-		
-		Component c = ev.c;
-		
-		if (c == VIEW.canvas) {
-			
-			switch (mode) {
-			case PAUSED:
-			case DRAFTING:
-			case RUNNING:
-			case MENU:
-				break;
-			case IDLE:
-			case MERGERCURSOR:
-			case FIXTURECURSOR:
-			case STRAIGHTEDGECURSOR:
-				
-				if (MODEL.cursor != null) {
-					MODEL.cursor.setPoint(null);
-				}
-				
-				VIEW.repaintCanvas();
-				break;
-			}
-			
-		}
-		
-	}
-	
-	public void entered(InputEvent ev) {
-		
-		Component c = ev.c;
-		
-		if (c == VIEW.canvas) {
-			
-			Point p = ev.p;
-			
-			switch (mode) {
-			case MENU:
-				break;
-				
-			case PAUSED:
-			case DRAFTING:
-			case RUNNING:
-				
-				lastMovedWorldPoint = VIEW.canvasToWorld(p);
-				
-				break;
-			case IDLE:
-			case MERGERCURSOR:
-			case FIXTURECURSOR:
-			case STRAIGHTEDGECURSOR:
-				
-				lastMovedWorldPoint = VIEW.canvasToWorld(p);
-				
-				if (MODEL.cursor != null) {
-					if (MODEL.grid) {
-						
-						Point closestGridPoint = new Point(2 * Math.round(0.5 * lastMovedWorldPoint.x), 2 * Math.round(0.5 * lastMovedWorldPoint.y));
-						MODEL.cursor.setPoint(closestGridPoint);
-						
-					} else {
-						MODEL.cursor.setPoint(lastMovedWorldPoint);
-					}
-				}
-				
-				VIEW.repaintCanvas();
-				break;
-			}
-			
-		}
-		
-	}
-	
-	public void qKey() {
-		
-		switch (mode) {
-		case IDLE:
-			
-			Entity hit = MODEL.world.pureGraphBestHitTest(MODEL.cursor.getShape());
-			if (hit == null) {
-				
-				MODEL.world.addVertexTop(new Intersection(MODEL.cursor.getPoint()));
-				
-				VIEW.renderWorldBackground();
-				VIEW.repaintControlPanel();
-				VIEW.repaintCanvas();
-				
-			} else if (hit instanceof Vertex) {
-				
-				mode = ControlMode.STRAIGHTEDGECURSOR;
-				
-				MODEL.cursor = new StraightEdgeCursor((Vertex)hit);
-				
-				MODEL.cursor.setPoint(lastMovedWorldPoint);
-				
-				VIEW.repaintCanvas();
-				
-			}
-			
-			break;
-			
-		case STRAIGHTEDGECURSOR:
-			
-			Point first = ((StraightEdgeCursor)MODEL.cursor).first.p;
-			Point second = MODEL.cursor.getPoint();
-			
-			Stroke s = new Stroke();
-			s.add(first);
-			s.add(second);
-			
-			processNewStroke(s);
-			
-			assert MODEL.world.checkConsistency();
-			
-			VIEW.renderWorldBackground();
-			VIEW.repaintControlPanel();
-			
-			mode = ControlMode.IDLE;
-			
-			MODEL.cursor = new RegularCursor();
-			
-			MODEL.cursor.setPoint(lastMovedWorldPoint);
-			
-			VIEW.repaintCanvas();
-			
-			break;
-			
-		case RUNNING:
-		case PAUSED:
-		case MERGERCURSOR:
-		case FIXTURECURSOR:
-		case DRAFTING:
-		case MENU:
-			break;
-		}
-		
-	}
-	
-	public void wKey() {
-		
-		switch (mode) {
-		case IDLE:
-			
-			mode = ControlMode.FIXTURECURSOR;
-			
-			MODEL.cursor = new FixtureCursor();
-			
-			MODEL.cursor.setPoint(lastMovedWorldPoint);
-			
-			VIEW.repaintCanvas();
-			
-			break;
-		case FIXTURECURSOR:
-			FixtureCursor fc = (FixtureCursor)MODEL.cursor;
-			Axis axis = fc.getAxis();
-			
-			if (MODEL.world.pureGraphBestHitTest(MODEL.cursor.getShape()) == null) {
-				
-				Fixture source = new Fixture(fc.getSourcePoint(), axis);
-				Fixture sink = new Fixture(fc.getSinkPoint(), axis);
-				
-				source.setType(FixtureType.SOURCE);
-				sink.setType(FixtureType.SINK);
-				
-				source.match = sink;
-				sink.match = source;
-				
-				switch (axis) {
-				case TOPBOTTOM:
-					source.setSide(Side.BOTTOM);
-					sink.setSide(Side.BOTTOM);
-					break;
-				case LEFTRIGHT:
-					source.setSide(Side.RIGHT);
-					sink.setSide(Side.RIGHT);
-					break;
-				}
-				
-				MODEL.world.addVertexTop(source);
-				
-				MODEL.world.addVertexTop(sink);
-				
-				mode = ControlMode.IDLE;
-				
-				MODEL.cursor = new RegularCursor();
-				
-				MODEL.cursor.setPoint(lastMovedWorldPoint);
-				
-				VIEW.renderWorldBackground();
-				VIEW.repaintCanvas();
-				VIEW.repaintControlPanel();
-				
-			}
-			
-			break;
-		case RUNNING:
-		case PAUSED:
-		case MERGERCURSOR:
-		case STRAIGHTEDGECURSOR:
-		case DRAFTING:
-		case MENU:
-			break;
-		}
-		
-	}
-	
-	public void gKey() {
-		
-		MODEL.grid = !MODEL.grid;
-		
-		VIEW.renderWorldBackground();
-		VIEW.repaintCanvas();
-		
-	}
-	
-	public void deleteKey() {
-		
-		if (MODEL.hilited != null) {
-			
-			if (MODEL.hilited.isUserDeleteable()) {
-				
-				if (MODEL.hilited instanceof Car) {
-					Car c = (Car)MODEL.hilited;
-					
-					removeCarTop(c);
-					
-				} else if (MODEL.hilited instanceof Vertex) {
-					Vertex v = (Vertex)MODEL.hilited;
-					
-					removeVertexTop(v);
-					
-				} else if (MODEL.hilited instanceof Road) {
-					Road e = (Road)MODEL.hilited;
-					
-					removeRoadTop(e);
-					
-				} else if (MODEL.hilited instanceof Merger) {
-					Merger e = (Merger)MODEL.hilited;
-					
-					removeMergerTop(e);
-					
-				} else if (MODEL.hilited instanceof StopSign) {
-					StopSign s = (StopSign)MODEL.hilited;
-					
-					removeStopSignTop(s);
-					
-				} else {
-					throw new AssertionError();
-				}
-				
-				MODEL.hilited = null;
-				
-			}
-			
-		}
-		
-		VIEW.renderWorldBackground();
-		VIEW.repaintCanvas();
-		VIEW.repaintControlPanel();
-		
-	}
-	
-	public void insertKey() {
-		
-		switch (mode) {
-		case IDLE:
-			
-			if (MODEL.hilited != null) {
-				
-				if (MODEL.hilited instanceof StopSign) {
-					StopSign s = (StopSign)MODEL.hilited;
-					
-					s.setEnabled(true);
-					
-					VIEW.renderWorldBackground();
-					VIEW.repaintCanvas();
-				}
-				
-			} else {
-				
-				mode = ControlMode.MERGERCURSOR;
-				
-				MODEL.cursor = new MergerCursor();
-				
-				MODEL.cursor.setPoint(lastMovedWorldPoint);
-				
-				VIEW.repaintCanvas();
-				
-			}
-			
-			break;
-		case MERGERCURSOR:
-			
-			if (MODEL.world.completelyContains(MODEL.cursor.getShape())) {
-				
-				if (MODEL.world.pureGraphBestHitTest(MODEL.cursor.getShape()) == null) {
-					
-					MODEL.world.insertMergerTop(MODEL.cursor.getPoint());
-					
-					mode = ControlMode.IDLE;
-					
-					MODEL.cursor = new RegularCursor();
-					
-					MODEL.cursor.setPoint(lastMovedWorldPoint);
-					
-					VIEW.renderWorldBackground();
-					VIEW.repaintCanvas();
-					VIEW.repaintControlPanel();
-					
-				}
-				
-			}
-			
-			break;
-		case RUNNING:
-		case PAUSED:
-		case FIXTURECURSOR:
-		case STRAIGHTEDGECURSOR:
-		case DRAFTING:
-		case MENU:
-			break;
-		}
-		
-	}
-	
-	public void escKey() {
-		
-		switch (mode) {
-		case MERGERCURSOR:
-		case FIXTURECURSOR:
-		case STRAIGHTEDGECURSOR:
-			
-			mode = ControlMode.IDLE;
-			
-			MODEL.cursor = new RegularCursor();
-			
-			MODEL.cursor.setPoint(lastMovedWorldPoint);
-			
-			VIEW.repaintCanvas();
-			
-			break;
-		case RUNNING:
-		case PAUSED:
-		case DRAFTING:
-		case IDLE:
-		case MENU:
-			break;
-		}
-		
-	}
-	
-	public void d1Key() {
-		
-		switch (mode) {
-		case IDLE:
-			
-			if (MODEL.hilited != null) {
-				
-				if (MODEL.hilited instanceof Road) {
-					Road r = (Road)MODEL.hilited;
-					
-					r.setDirection(null, Direction.STARTTOEND);
-					
-					VIEW.renderWorldBackground();
-					VIEW.repaintCanvas();
-					
-				} else if (MODEL.hilited instanceof Fixture) {
-					Fixture f = (Fixture)MODEL.hilited;
-					
-					Fixture g = f.match;
-					
-					if (f.getType() != null) {
-						f.setType(f.getType().other());
-					}
-					if (g.getType() != null) {
-						g.setType(g.getType().other());
-					}
-					
-					f.setSide(f.getSide().other());
-					g.setSide(g.getSide().other());
-					
-					VIEW.renderWorldBackground();
-					VIEW.repaintCanvas();
-					
-				}
-				
-			}
-			
-			break;
-		default:
-			break;
-		}
-		
-	}
-	
-	public void d2Key() {
-		
-		switch (mode) {
-		case IDLE:
-			
-			if (MODEL.hilited != null) {
-				
-				if (MODEL.hilited instanceof Road) {
-					Road r = (Road)MODEL.hilited;
-					
-					r.setDirection(null, Direction.ENDTOSTART);
-					
-					VIEW.renderWorldBackground();
-					VIEW.repaintCanvas();
-					
-				}
-				
-			}
-			
-			break;
-		default:
-			break;
-		}
-		
-	}
-
-	public void d3Key() {
-		
-		switch (mode) {
-		case IDLE:
-			
-			if (MODEL.hilited != null) {
-				
-				if (MODEL.hilited instanceof Road) {
-					Road r = (Road)MODEL.hilited;
-					
-					r.setDirection(null, null);
-				
-					VIEW.renderWorldBackground();
-					VIEW.repaintCanvas();
-					
-				}
-				
-			}
-			
-			break;
-		default:
-			break;
-		}
-		
-	}
-	
-	public void plusKey() {
-		
-		VIEW.zoom(1.1);
-		
-		lastMovedWorldPoint = VIEW.canvasToWorld(lastMovedCanvasPoint);
-		
-		switch (mode) {
-		case DRAFTING:
-			assert false;
-			break;
-		case PAUSED:
-		case IDLE:
-		case RUNNING:
-			
-			Entity closest = MODEL.world.hitTest(lastMovedWorldPoint);
-			
-			synchronized (MODEL) {
-				MODEL.hilited = closest;
-			}
-			
-		case MERGERCURSOR:
-		case FIXTURECURSOR:
-		case STRAIGHTEDGECURSOR:
-			
-			if (MODEL.cursor != null) {
-				if (MODEL.grid) {
-					
-					Point closestGridPoint = new Point(2 * Math.round(0.5 * lastMovedWorldPoint.x), 2 * Math.round(0.5 * lastMovedWorldPoint.y));
-					MODEL.cursor.setPoint(closestGridPoint);
-					
-				} else {
-					MODEL.cursor.setPoint(lastMovedWorldPoint);
-				}
-			}
-			
-			VIEW.renderWorldBackground();
-			VIEW.repaintCanvas();
-			VIEW.repaintControlPanel();
-			
-			break;
-		case MENU:
-			break;
-		}
-		
-	}
-	
-	public void minusKey() {
-		
-		VIEW.zoom(0.9);
-		
-		lastMovedWorldPoint = VIEW.canvasToWorld(lastMovedCanvasPoint);
-		
-		switch (mode) {
-		case DRAFTING:
-			assert false;
-			break;
-		case IDLE:
-		case PAUSED:
-		case RUNNING:
-			
-			Entity closest = MODEL.world.hitTest(lastMovedWorldPoint);
-			
-			synchronized (MODEL) {
-				MODEL.hilited = closest;
-			}
-			
-		case MERGERCURSOR:
-		case FIXTURECURSOR:
-		case STRAIGHTEDGECURSOR:
-			
-			if (MODEL.cursor != null) {
-				if (MODEL.grid) {
-					
-					Point closestGridPoint = new Point(2 * Math.round(0.5 * lastMovedWorldPoint.x), 2 * Math.round(0.5 * lastMovedWorldPoint.y));
-					MODEL.cursor.setPoint(closestGridPoint);
-					
-				} else {
-					MODEL.cursor.setPoint(lastMovedWorldPoint);
-				}
-			}
-			
-			VIEW.renderWorldBackground();
-			VIEW.repaintCanvas();
-			VIEW.repaintControlPanel();
-			
-			break;
-		case MENU:
-			break;
-		}
-		
-	}
-	
-	public void slashKey() {
-		
-	}
-	
-	
-	public void downKey() {
-		
-		switch (mode) {
-		case MENU:
-			
-			if (MODEL.menu.hilited == null) {
-				
-				MODEL.menu.hilited = MODEL.menu.firstMenuItem;
-				
-			} else {
-				
-				MODEL.menu.hilited = MODEL.menu.hilited.down;
-				
-			}
-			
-			VIEW.repaintCanvas();
-			
-			break;
-		case DRAFTING:
-		case IDLE:
-		case PAUSED:
-		case RUNNING:
-		case MERGERCURSOR:
-		case FIXTURECURSOR:
-		case STRAIGHTEDGECURSOR:
-			break;
-		}
-		
-	}
-
-	public void upKey() {
-		
-		switch (mode) {
-		case MENU:
-			
-			if (MODEL.menu.hilited == null) {
-				
-				MODEL.menu.hilited = MODEL.menu.firstMenuItem;
-				
-			} else {
-				
-				MODEL.menu.hilited = MODEL.menu.hilited.up;
-				
-			}
-			
-			VIEW.repaintCanvas();
-			
-			break;
-		case DRAFTING:
-		case IDLE:
-		case PAUSED:
-		case RUNNING:
-		case MERGERCURSOR:
-		case FIXTURECURSOR:
-		case STRAIGHTEDGECURSOR:
-			break;
-		}
-		
-	}
-	
-	
-	
-	
-	
 	public void startRunning() {
 		
 		mode = ControlMode.RUNNING;
-		
-		MODEL.cursor = null;
 		
 		Thread t = new Thread(new SimulationRunnable());
 		t.start();
@@ -933,29 +67,18 @@ public class DeadlockController implements ActionListener {
 	
 	public void stopRunning() {
 		
-		MODEL.cursor = new RegularCursor();
-		
-		MODEL.cursor.setPoint(lastMovedWorldPoint);
-		
 		mode = ControlMode.IDLE;
 		
 	}
 	
 	public void pauseRunning() {
 		
-//		MODEL.cursor.setPoint(lastMovedWorldPoint);
-		
-		mode = ControlMode.IDLE;
-		
 		mode = ControlMode.PAUSED;
 	}
 	
 	public void unpauseRunning() {
-//		assert Thread.currentThread().getName().equals("controller");
 		
 		mode = ControlMode.RUNNING;
-		
-//		MODEL.cursor = null;
 		
 		synchronized (MODEL.pauseLock) {
 			MODEL.pauseLock.notifyAll();
@@ -964,7 +87,7 @@ public class DeadlockController implements ActionListener {
 	
 	
 	
-	private void draftStart(Point p) {
+	public void draftStart(Point p) {
 			
 		mode = ControlMode.DRAFTING;
 		
@@ -975,12 +98,12 @@ public class DeadlockController implements ActionListener {
 			
 	}
 	
-	private void draftMove(Point p) {
+	public void draftMove(Point p) {
 
 		MODEL.stroke.add(VIEW.canvasToWorld(p));
 	}
 	
-	private void draftEnd() {
+	public void draftEnd() {
 		
 		processNewStroke(MODEL.stroke);
 		
@@ -994,117 +117,25 @@ public class DeadlockController implements ActionListener {
 		
 	}
 	
-	public void actionPerformed(ActionEvent e) {
-		if (e.getActionCommand().equals("start")) {
-			
-			VIEW.controlPanel.startButton.setText("Pause");
-			VIEW.controlPanel.startButton.setActionCommand("pause");
-			
-			VIEW.controlPanel.stopButton.setEnabled(true);
-			
-			CONTROLLER.startRunning();
-			
-		} else if (e.getActionCommand().equals("stop")) {
-			
-			VIEW.controlPanel.startButton.setText("Start");
-			VIEW.controlPanel.startButton.setActionCommand("start");
-			
-			VIEW.controlPanel.stopButton.setEnabled(false);
-			
-			CONTROLLER.stopRunning();
-		} else if (e.getActionCommand().equals("pause")) {
-			
-			VIEW.controlPanel.startButton.setText("Unpause");
-			VIEW.controlPanel.startButton.setActionCommand("unpause");
-			
-			CONTROLLER.pauseRunning();
-		} else if (e.getActionCommand().equals("unpause")) {
-			
-			VIEW.controlPanel.startButton.setText("Pause");
-			VIEW.controlPanel.startButton.setActionCommand("pause");
-			
-			CONTROLLER.unpauseRunning();
-		} else if (e.getActionCommand().equals("dt")) {
-			
-			String text = VIEW.controlPanel.dtField.getText();
-			try {
-				double dt = Double.parseDouble(text);
-				MODEL.dt = dt;
-			} catch (NumberFormatException ex) {
-				
-			}
-			
-		} else if (e.getActionCommand().equals("debugDraw")) {
-			
-			boolean state = VIEW.controlPanel.debugCheckBox.isSelected();
-			
-			MODEL.DEBUG_DRAW = state;
-			
-			VIEW.renderWorldBackground();
-			VIEW.repaintCanvas();
-			
-		} else if (e.getActionCommand().equals("fpsDraw")) {
-			
-			boolean state = VIEW.controlPanel.fpsCheckBox.isSelected();
-			
-			MODEL.FPS_DRAW = state;
-			
-			VIEW.renderWorldBackground();
-			VIEW.repaintCanvas();
-			
-		} else if (e.getActionCommand().equals("stopSignDraw")) {
-			
-			boolean state = VIEW.controlPanel.stopSignCheckBox.isSelected();
-			
-			MODEL.STOPSIGN_DRAW = state;
-			
-			VIEW.renderWorldBackground();
-			VIEW.repaintCanvas();
-			
-		} else if (e.getActionCommand().equals("carTextureDraw")) {
-			
-			boolean state = VIEW.controlPanel.carTextureCheckBox.isSelected();
-			
-			MODEL.CARTEXTURE_DRAW = state;
-			
-//			VIEW.renderWorldBackground();
-			VIEW.repaintCanvas();
-			
-		} else if (e.getActionCommand().equals("explosionsDraw")) {
-			
-			boolean state = VIEW.controlPanel.explosionsCheckBox.isSelected();
-			
-			MODEL.EXPLOSIONS_DRAW = state;
-			
-//			VIEW.renderWorldBackground();
-			VIEW.repaintCanvas();
-			
-		}
-	}
-	
-	
-	
-	private void removeVertexTop(Vertex v) {
+	public void removeVertexTop(Vertex v) {
 		MODEL.world.removeVertexTop(v);
 	}
 	
-	private void removeRoadTop(Road e) {
+	public void removeRoadTop(Road e) {
 		MODEL.world.removeRoadTop(e);
 	}
 	
-	private void removeMergerTop(Merger m) {
+	public void removeMergerTop(Merger m) {
 		MODEL.world.removeMergerTop(m);
 	}
 	
-	private void removeStopSignTop(StopSign s) {
+	public void removeStopSignTop(StopSign s) {
 		MODEL.world.removeStopSignTop(s);
 	}
 	
-	private void removeCarTop(Car c) {
+	public void removeCarTop(Car c) {
 		MODEL.world.removeCarTop(c);
 	}
-	
-	
 	
 	public void processNewStroke(Stroke s) {
 		

@@ -18,9 +18,17 @@ public class MainMenu extends Menu {
 	
 	public MainMenu() {
 		
-		sandboxMenuItem = new MenuItem("Sandbox Mode...", new Point(VIEW.CANVAS_WIDTH/2 - 800/2, VIEW.CANVAS_HEIGHT/2));
+		sandboxMenuItem = new MenuItem("Sandbox Mode...", new Point(VIEW.CANVAS_WIDTH/2 - 800/2, VIEW.CANVAS_HEIGHT/2)) {
+			public void action() {
+				
+			}
+		};
 		
-		quitMenuItem = new MenuItem("Quit", new Point(VIEW.CANVAS_WIDTH/2 - 800/2, VIEW.CANVAS_HEIGHT/2 + 100));
+		quitMenuItem = new MenuItem("Quit", new Point(VIEW.CANVAS_WIDTH/2 - 800/2, VIEW.CANVAS_HEIGHT/2 + 100)) {
+			public void action() {
+				System.exit(0);
+			}
+		};
 		
 		sandboxMenuItem.down = quitMenuItem;
 		sandboxMenuItem.up = quitMenuItem;

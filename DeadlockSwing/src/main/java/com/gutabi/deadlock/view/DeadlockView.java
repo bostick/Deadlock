@@ -37,7 +37,7 @@ public class DeadlockView {
 	
 	public URL codebase;
 //	private JFrame frame;
-	public WorldCanvas canvas;
+	public Canvas canvas;
 	public ControlPanel controlPanel;
 	public PreviewPanel previewPanel;
 	
@@ -105,7 +105,7 @@ public class DeadlockView {
 		
 		newFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
-		canvas = new WorldCanvas();
+		canvas = new Canvas();
 		canvas.setFocusable(true);
 		
 		previewPanel = new PreviewPanel();
@@ -132,7 +132,7 @@ public class DeadlockView {
 		
 //		app.setJMenuBar(null);
 		
-		canvas = new WorldCanvas();
+		canvas = new Canvas();
 		canvas.setFocusable(true);
 		
 		previewPanel = new PreviewPanel();

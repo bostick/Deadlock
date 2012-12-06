@@ -11,7 +11,7 @@ import com.gutabi.deadlock.core.geom.tree.AABB;
 import com.gutabi.deadlock.view.RenderingContext;
 
 //@SuppressWarnings("static-access")
-public class MenuItem {
+public abstract class MenuItem {
 	
 	public final String text;
 	public final Point p;
@@ -27,6 +27,8 @@ public class MenuItem {
 		this.text = text;
 		this.p = p;
 	}
+	
+	public abstract void action();
 	
 	public void paint(RenderingContext ctxt) {
 		

@@ -8,6 +8,7 @@ import java.awt.Graphics;
 
 import javax.swing.JPanel;
 
+import com.gutabi.deadlock.controller.InputEvent;
 import com.gutabi.deadlock.core.Point;
 
 @SuppressWarnings({"serial", "static-access"})
@@ -18,6 +19,50 @@ public class PreviewPanel extends JPanel {
 		setSize(new Dimension(VIEW.PREVIEW_WIDTH, VIEW.PREVIEW_HEIGHT));
 		setPreferredSize(new Dimension(VIEW.PREVIEW_WIDTH, VIEW.PREVIEW_HEIGHT));
 		setMaximumSize(new Dimension(VIEW.PREVIEW_WIDTH, VIEW.PREVIEW_HEIGHT));
+	}
+	
+	Point lastPressPreviewPoint;
+	Point lastDragPreviewPoint;
+	long lastPressTime;
+	long lastDragTime;
+	
+	public void pressed(InputEvent ev) {
+		
+		requestFocusInWindow();
+		
+		Point p = ev.p;
+		
+		lastPressPreviewPoint = p;
+		lastPressTime = System.currentTimeMillis();
+		
+		lastDragPreviewPoint = null;
+		lastDragTime = -1;
+		
+	}
+	
+	public void dragged(InputEvent ev) {
+		
+		VIEW.previewPanel.requestFocusInWindow();
+		
+		Point p = ev.p;
+		
+		Point penDragPreviewPoint = lastDragPreviewPoint;
+		lastDragPreviewPoint = p;
+		lastDragTime = System.currentTimeMillis();
+		
+		if (penDragPreviewPoint != null) {
+			
+			double dx = lastDragPreviewPoint.x - penDragPreviewPoint.x;
+			double dy = lastDragPreviewPoint.y - penDragPreviewPoint.y;
+			
+			VIEW.pan(new Point(dx, dy));
+			
+			VIEW.renderWorldBackground();
+			VIEW.repaintCanvas();
+			VIEW.repaintControlPanel();
+			
+		}
+		
 	}
 	
 	public void paintComponent(Graphics g) {
