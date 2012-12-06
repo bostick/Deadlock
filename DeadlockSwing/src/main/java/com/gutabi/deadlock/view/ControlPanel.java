@@ -6,6 +6,7 @@ import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
 import java.awt.Dimension;
+import java.awt.Graphics;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -15,6 +16,8 @@ import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+
+import com.gutabi.deadlock.controller.ControlMode;
 
 @SuppressWarnings({"serial", "static-access"})
 public class ControlPanel extends JPanel {
@@ -171,4 +174,15 @@ public class ControlPanel extends JPanel {
 		add(verticalBox);
 	}
 	
+	public void paint(Graphics g) {
+		
+		if (CONTROLLER.mode == ControlMode.MENU) {
+			
+		} else {
+			
+			super.paint(g);
+			
+		}
+		
+	}
 }

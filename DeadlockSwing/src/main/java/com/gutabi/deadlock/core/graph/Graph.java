@@ -213,6 +213,11 @@ public class Graph implements Sweepable {
 		Vertex right = m.right;
 		Vertex bottom = m.bottom;
 		
+		removeVertexTop(top);
+		removeVertexTop(left);
+		removeVertexTop(right);
+		removeVertexTop(bottom);
+		
 		destroyMerger(m);
 		
 		forceMergeOrDestroy(top);

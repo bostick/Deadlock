@@ -9,6 +9,8 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Stroke;
+import java.awt.font.FontRenderContext;
+import java.awt.font.TextLayout;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.GeneralPath;
@@ -34,6 +36,10 @@ public class RenderingContext extends DebugDraw {
 		this.type = type;
 		
 		m_drawFlags = DebugDraw.e_dynamicTreeBit;
+	}
+	
+	public FontRenderContext getFontRenderContext() {
+		return g2.getFontRenderContext();
 	}
 	
 	public Color getColor() {
@@ -176,6 +182,14 @@ public class RenderingContext extends DebugDraw {
 	@Override
 	public void drawString(float x, float y, String s, Color3f color) {
 //		assert false;
+	}
+	
+	public void draw(TextLayout layout, double x, double y) {
+		layout.draw(g2, (float)x, (float)y);
+	}
+	
+	public Font getFont() {
+		return g2.getFont();
 	}
 	
 }

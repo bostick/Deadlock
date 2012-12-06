@@ -1,8 +1,47 @@
 
-TODAY:
+shutter mode:
+require a button press to advance next timestep
 
-delete merger connected to roads:
-vertices stay behind
+debug shutter mode:
+somehow display all entities, points, etc. that were queried that time step
+help with tracking down unecessary work being done
+
+
+
+
+capture the flag:
+2 players, 4 players
+auto-generated map:
+big center area, randomly generated branches, all 4 branches symmetrical
+fog of war
+can lay down roads, but only a car driving by will illuminate surroudning area
+get points for having cars get sinked
+
+cannot delete roads
+
+crashing
+
+
+
+
+
+unlockers
+vertices a and b are linked.
+leaving b unlocks a and lets cars enter a
+for one-way roads
+normally an intersection is it's own unlocker
+
+vertex can also be unlocked by a timer
+
+a sink can be a source's unlocker
+
+
+
+
+
+
+
+TODAY:
 
 add flow meter to sinks
 
@@ -99,6 +138,9 @@ spline/curve editor
 
 
 DONE:
+
+delete merger connected to roads:
+vertices stay behind
 
 fix b2d box drawing showing that braked cars are moving
 seems to be jbox2d problem

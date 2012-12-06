@@ -11,7 +11,7 @@ import javax.swing.UIManager;
 import org.apache.log4j.Logger;
 
 import com.gutabi.deadlock.controller.ControlMode;
-import com.gutabi.deadlock.model.World;
+import com.gutabi.deadlock.examples.OneByOneWorld;
 
 @SuppressWarnings("serial")
 public class DeadlockApplet extends JApplet {
@@ -21,7 +21,7 @@ public class DeadlockApplet extends JApplet {
 	static void createAndShowGUI(DeadlockApplet app) throws Exception {
 		
 		MODEL.init();
-		MODEL.world = new World();
+		MODEL.world = new OneByOneWorld();
 		MODEL.world.init();
 		
 		VIEW.codebase = app.getCodeBase();
@@ -58,7 +58,7 @@ public class DeadlockApplet extends JApplet {
 			UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
 			
 			SwingUtilities.invokeLater(new Runnable() {
-							public void run() {
+				public void run() {
 					try {
 						createAndShowGUI(DeadlockApplet.this);
 					} catch (Exception e) {

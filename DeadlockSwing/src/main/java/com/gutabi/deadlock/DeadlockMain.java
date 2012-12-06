@@ -4,7 +4,6 @@ import static com.gutabi.deadlock.controller.DeadlockController.CONTROLLER;
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
-import java.io.IOException;
 import java.net.URL;
 
 import javax.swing.JFrame;
@@ -15,19 +14,20 @@ import javax.swing.UnsupportedLookAndFeelException;
 import org.apache.log4j.Logger;
 
 import com.gutabi.deadlock.controller.ControlMode;
-import com.gutabi.deadlock.examples.FourByFourGridWorld;
+import com.gutabi.deadlock.model.menu.MainMenu;
 
 public class DeadlockMain  {
 	
-	static Logger logger = Logger.getLogger("deadlock");
+static Logger logger = Logger.getLogger("deadlock");
 	
-	static void createAndShowGUI(String[] args) throws Exception {
+	static void createAndShowGUI() throws Exception {
 		
+		MODEL.menu = new MainMenu();
 		MODEL.init();
 //		MODEL.world = new World();
-		MODEL.world = new FourByFourGridWorld();
+//		MODEL.world = new FourByFourGridWorld();
 //		MODEL.world = new OneByOneWorld();
-		MODEL.world.init();
+//		MODEL.world.init();
 		
 		VIEW.codebase = new URL("file:.");
 		JFrame frame = VIEW.setupFrame();
@@ -45,9 +45,10 @@ public class DeadlockMain  {
 		
 		
 		
-		CONTROLLER.mode = ControlMode.IDLE;
+//		CONTROLLER.mode = ControlMode.IDLE;
+		CONTROLLER.mode = ControlMode.MENU;
 		
-		VIEW.renderWorldBackground();
+//		VIEW.renderWorldBackground();
 		
 		frame.setVisible(true);
 		VIEW.canvas.requestFocusInWindow();
@@ -55,7 +56,7 @@ public class DeadlockMain  {
 		VIEW.canvas.postDisplay();
 		
 		VIEW.repaintCanvas();
-		VIEW.repaintControlPanel();
+//		VIEW.repaintControlPanel();
 	}
 	
 	public static Thread.UncaughtExceptionHandler handler = new Thread.UncaughtExceptionHandler() {
@@ -64,22 +65,23 @@ public class DeadlockMain  {
 		}
 	};
 	
-	public static void main(final String[] args) throws ClassNotFoundException, InstantiationException, IllegalAccessException, UnsupportedLookAndFeelException, IOException {
+	public static void main(final String[] args) throws UnsupportedLookAndFeelException, InstantiationException, IllegalAccessException, ClassNotFoundException {
 		
 		Thread.setDefaultUncaughtExceptionHandler(handler);
 		
 		UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
 		
 		SwingUtilities.invokeLater(new Runnable() {
-					public void run() {
+			public void run() {
 				try {
-					createAndShowGUI(args);
+					createAndShowGUI();
 				} catch (Exception e) {
 					e.printStackTrace();
 					System.exit(1);
 				}
 			}
 		});
+		
 	}
 	
 }

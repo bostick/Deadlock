@@ -74,24 +74,15 @@ public class World implements Sweepable {
 	
 	public World(int quadrantCols, int quadrantRows) {
 		
-//		int[][] ini = new int[][] {
-//				{1, 1, 1},
-//				{1, 1, 0},
-//				{0, 1, 0},
-//		};
-		
-//		int[][] ini = new int[][] {
-//				{1, 1, 1, 1},
-//				{1, 1, 1, 1},
-//				{1, 1, 1, 1},
-//				{1, 1, 1, 1}
-//		};
-		
-//		map = new Map(ini);
-//		
 		worldWidth = quadrantCols * MODEL.QUADRANT_WIDTH;
 		
 		worldHeight = quadrantRows * MODEL.QUADRANT_HEIGHT;
+		
+		VIEW.worldViewport = new AABB(
+				-(VIEW.CANVAS_WIDTH / VIEW.PIXELS_PER_METER_DEBUG) / 2 + MODEL.world.worldWidth/2 ,
+				-(VIEW.CANVAS_HEIGHT / VIEW.PIXELS_PER_METER_DEBUG) / 2 + MODEL.world.worldHeight/2,
+				VIEW.CANVAS_WIDTH / VIEW.PIXELS_PER_METER_DEBUG,
+				VIEW.CANVAS_HEIGHT / VIEW.PIXELS_PER_METER_DEBUG);
 		
 //		animatedGrass1 = new AnimatedGrass(new Point(worldWidth/4, worldHeight/4));
 		

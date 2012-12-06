@@ -120,7 +120,7 @@ public abstract class Car extends Entity {
 	 */
 	private double maxRadsPerMeter = Double.POSITIVE_INFINITY;
 	private double maxAcceleration = Double.POSITIVE_INFINITY;
-	private double maxDeceleration = Double.NEGATIVE_INFINITY;
+//	private double maxDeceleration = Double.NEGATIVE_INFINITY;
 	private double frictionForwardImpulseCoefficient = 0.01;
 	private double frictionLateralImpulseCoefficient = 0.04;
 	private double frictionAngularImpulseCoefficient = 0.02;

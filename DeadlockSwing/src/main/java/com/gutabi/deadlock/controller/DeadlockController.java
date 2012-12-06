@@ -245,16 +245,24 @@ public class DeadlockController implements ActionListener {
 			
 			lastMovedCanvasPoint = ev.p;
 			
-			lastMovedWorldPoint = VIEW.canvasToWorld(lastMovedCanvasPoint);
-			
 			switch (mode) {
+			case MENU:
+				break;
 			case PAUSED:
+				
+				lastMovedWorldPoint = VIEW.canvasToWorld(lastMovedCanvasPoint);
+				
 				break;
 			case DRAFTING:
+				
 				assert false;
+				lastMovedWorldPoint = VIEW.canvasToWorld(lastMovedCanvasPoint);
+				
 				break;
 			case IDLE:
 			case RUNNING:
+				
+				lastMovedWorldPoint = VIEW.canvasToWorld(lastMovedCanvasPoint);
 				
 				Entity closest = MODEL.world.hitTest(lastMovedWorldPoint);
 				
@@ -280,6 +288,8 @@ public class DeadlockController implements ActionListener {
 			case FIXTURECURSOR:
 			case STRAIGHTEDGECURSOR:
 				
+				lastMovedWorldPoint = VIEW.canvasToWorld(lastMovedCanvasPoint);
+				
 				MODEL.hilited = null;
 				
 				if (MODEL.cursor != null) {
@@ -294,8 +304,6 @@ public class DeadlockController implements ActionListener {
 				}
 				
 				VIEW.repaintCanvas();
-				break;
-			case MENU:
 				break;
 			}
 			
@@ -340,18 +348,24 @@ public class DeadlockController implements ActionListener {
 			
 			Point p = ev.p;
 			
-			lastMovedWorldPoint = VIEW.canvasToWorld(p);
-			
 			switch (mode) {
+			case MENU:
+				break;
+				
 			case PAUSED:
 			case DRAFTING:
 			case RUNNING:
-			case MENU:
+				
+				lastMovedWorldPoint = VIEW.canvasToWorld(p);
+				
 				break;
 			case IDLE:
 			case MERGERCURSOR:
 			case FIXTURECURSOR:
 			case STRAIGHTEDGECURSOR:
+				
+				lastMovedWorldPoint = VIEW.canvasToWorld(p);
+				
 				if (MODEL.cursor != null) {
 					if (MODEL.grid) {
 						
@@ -842,6 +856,65 @@ public class DeadlockController implements ActionListener {
 	}
 	
 	
+	public void downKey() {
+		
+		switch (mode) {
+		case MENU:
+			
+			if (MODEL.menu.hilited == null) {
+				
+				MODEL.menu.hilited = MODEL.menu.firstMenuItem;
+				
+			} else {
+				
+				MODEL.menu.hilited = MODEL.menu.hilited.down;
+				
+			}
+			
+			VIEW.repaintCanvas();
+			
+			break;
+		case DRAFTING:
+		case IDLE:
+		case PAUSED:
+		case RUNNING:
+		case MERGERCURSOR:
+		case FIXTURECURSOR:
+		case STRAIGHTEDGECURSOR:
+			break;
+		}
+		
+	}
+
+	public void upKey() {
+		
+		switch (mode) {
+		case MENU:
+			
+			if (MODEL.menu.hilited == null) {
+				
+				MODEL.menu.hilited = MODEL.menu.firstMenuItem;
+				
+			} else {
+				
+				MODEL.menu.hilited = MODEL.menu.hilited.up;
+				
+			}
+			
+			VIEW.repaintCanvas();
+			
+			break;
+		case DRAFTING:
+		case IDLE:
+		case PAUSED:
+		case RUNNING:
+		case MERGERCURSOR:
+		case FIXTURECURSOR:
+		case STRAIGHTEDGECURSOR:
+			break;
+		}
+		
+	}
 	
 	
 	

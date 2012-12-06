@@ -7,7 +7,6 @@ import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Composite;
 import java.awt.Container;
-import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
@@ -49,6 +48,7 @@ public class DeadlockView {
 	public BufferedImage sheet;
 	public BufferedImage explosionSheet;
 	public BufferedImage titleBackground;
+	public BufferedImage title_white;
 	
 	public BufferedImage quadrantGrass;
 	public BufferedImage canvasGrassImage;
@@ -73,15 +73,10 @@ public class DeadlockView {
 		assert canvas.getWidth() == CANVAS_WIDTH;
 		assert canvas.getHeight() == CANVAS_HEIGHT;
 		
-		worldViewport = new AABB(
-				-(CANVAS_WIDTH / PIXELS_PER_METER_DEBUG) / 2 + MODEL.world.worldWidth/2 ,
-				-(CANVAS_HEIGHT / PIXELS_PER_METER_DEBUG) / 2 + MODEL.world.worldHeight/2,
-				CANVAS_WIDTH / PIXELS_PER_METER_DEBUG,
-				CANVAS_HEIGHT / PIXELS_PER_METER_DEBUG);
-		
 		sheet = ImageIO.read(new URL(codebase, "media/sheet.png"));
 		explosionSheet = ImageIO.read(new URL(codebase, "media\\explosionSheet.png"));
 		titleBackground = ImageIO.read(new URL(codebase, "media\\title_background.png"));
+		title_white = ImageIO.read(new URL(codebase, "media\\title_white.png"));
 		
 		quadrantGrass = new BufferedImage(
 				512,
@@ -198,20 +193,10 @@ public class DeadlockView {
 	}
 	
 	private void paintCanvas(RenderingContext ctxt) {
-//		assert SwingUtilities.isEventDispatchThread();
-		
-//		ctxt.setColor(Color.WHITE);
-//		ctxt.fillRect(0, 0, CANVAS_WIDTH, VIEW.CANVAS_HEIGHT);
 		
 		if (CONTROLLER.mode == ControlMode.MENU) {
 			
-			PIXELS_PER_METER_DEBUG = 1.0;
-			
-			ctxt.paintImage(CANVAS_WIDTH/2 - 800/2, VIEW.CANVAS_HEIGHT/2 - 600/2, titleBackground, 0, 0, 800, 600, 0, 0, 800, 600);
-			
-			ctxt.setFont(new Font("Times", Font.PLAIN, 96));
-			
-			ctxt.paintString(CANVAS_WIDTH/2 - 800/2, VIEW.CANVAS_HEIGHT/2, 1.0, "Deadlock");
+			MODEL.menu.paint(ctxt);
 			
 		} else {
 			
@@ -286,7 +271,15 @@ public class DeadlockView {
 	
 	public void repaintControlPanel() {
 //		assert SwingUtilities.isEventDispatchThread();
-		controlPanel.repaint();
+		
+		if (CONTROLLER.mode == ControlMode.MENU) {
+			
+		} else {
+			
+			controlPanel.repaint();
+			
+		}
+		
 	}
 	
 	public void renderWorldBackground() {

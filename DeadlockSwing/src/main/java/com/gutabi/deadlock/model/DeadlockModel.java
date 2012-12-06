@@ -2,6 +2,7 @@ package com.gutabi.deadlock.model;
 
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.model.cursor.RegularCursor;
+import com.gutabi.deadlock.model.menu.Menu;
 
 //@SuppressWarnings("static-access")
 public class DeadlockModel {
@@ -21,6 +22,8 @@ public class DeadlockModel {
 	public static boolean DEBUG_DRAW = false;
 	
 	public static final DeadlockModel MODEL = new DeadlockModel();
+	
+	public Menu menu;
 	
 	public World world;
 	
