@@ -1,4 +1,4 @@
-package com.gutabi.deadlock.model;
+package com.gutabi.deadlock.model.car;
 
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 import static com.gutabi.deadlock.view.DeadlockView.VIEW;
@@ -26,14 +26,10 @@ import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.Geom;
 import com.gutabi.deadlock.core.geom.Quad;
 import com.gutabi.deadlock.core.geom.Shape;
-import com.gutabi.deadlock.core.graph.GraphPositionPath;
-import com.gutabi.deadlock.core.graph.GraphPositionPathPosition;
-import com.gutabi.deadlock.core.graph.Merger;
-import com.gutabi.deadlock.model.event.CarProximityEvent;
-import com.gutabi.deadlock.model.event.DrivingEvent;
-import com.gutabi.deadlock.model.event.VertexArrivalEvent;
-import com.gutabi.deadlock.model.event.VertexEvent;
-import com.gutabi.deadlock.model.event.VertexSpawnEvent;
+import com.gutabi.deadlock.model.graph.Fixture;
+import com.gutabi.deadlock.model.graph.GraphPositionPath;
+import com.gutabi.deadlock.model.graph.GraphPositionPathPosition;
+import com.gutabi.deadlock.model.graph.Merger;
 import com.gutabi.deadlock.view.RenderingContext;
 
 @SuppressWarnings("static-access")

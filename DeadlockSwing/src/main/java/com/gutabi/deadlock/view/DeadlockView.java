@@ -23,7 +23,7 @@ import org.apache.log4j.Logger;
 
 import com.gutabi.deadlock.controller.ControlMode;
 import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.core.geom.tree.AABB;
+import com.gutabi.deadlock.core.geom.AABB;
 
 @SuppressWarnings("static-access")
 public class DeadlockView {

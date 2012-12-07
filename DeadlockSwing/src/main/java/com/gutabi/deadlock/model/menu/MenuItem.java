@@ -8,7 +8,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 
 import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.core.geom.tree.AABB;
+import com.gutabi.deadlock.core.geom.AABB;
 import com.gutabi.deadlock.view.RenderingContext;
 
 //@SuppressWarnings("static-access")

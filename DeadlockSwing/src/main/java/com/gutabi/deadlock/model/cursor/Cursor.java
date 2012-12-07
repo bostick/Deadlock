@@ -1,4 +1,4 @@
-package com.gutabi.deadlock.model;
+package com.gutabi.deadlock.model.cursor;
 
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.Shape;

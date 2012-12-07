@@ -1,4 +1,4 @@
-package com.gutabi.deadlock.core.graph;
+package com.gutabi.deadlock.model.graph;
 
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 

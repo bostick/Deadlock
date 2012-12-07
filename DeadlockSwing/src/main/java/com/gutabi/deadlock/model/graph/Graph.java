@@ -1,4 +1,4 @@
-package com.gutabi.deadlock.core.graph;
+package com.gutabi.deadlock.model.graph;
 
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 
@@ -15,6 +15,7 @@ import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.OverlappingException;
 import com.gutabi.deadlock.core.Point;
+import com.gutabi.deadlock.core.geom.AABB;
 import com.gutabi.deadlock.core.geom.Capsule;
 import com.gutabi.deadlock.core.geom.CapsuleSequence;
 import com.gutabi.deadlock.core.geom.Circle;
@@ -23,8 +24,6 @@ import com.gutabi.deadlock.core.geom.Shape;
 import com.gutabi.deadlock.core.geom.ShapeUtils;
 import com.gutabi.deadlock.core.geom.Sweepable;
 import com.gutabi.deadlock.core.geom.Sweeper;
-import com.gutabi.deadlock.core.geom.tree.AABB;
-import com.gutabi.deadlock.model.Fixture;
 import com.gutabi.deadlock.view.RenderingContext;
 import com.gutabi.deadlock.view.RenderingContextType;
 

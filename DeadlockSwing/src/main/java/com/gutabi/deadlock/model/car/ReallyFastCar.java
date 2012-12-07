@@ -2,9 +2,8 @@ package com.gutabi.deadlock.model.car;
 
 import org.apache.log4j.Logger;
 
-import com.gutabi.deadlock.core.graph.GraphPositionPath;
-import com.gutabi.deadlock.model.Car;
-import com.gutabi.deadlock.model.Fixture;
+import com.gutabi.deadlock.model.graph.Fixture;
+import com.gutabi.deadlock.model.graph.GraphPositionPath;
 
 //@SuppressWarnings("static-access")
 public class ReallyFastCar extends Car {

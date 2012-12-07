@@ -1,4 +1,4 @@
-package com.gutabi.deadlock.model;
+package com.gutabi.deadlock.model.car;
 
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 

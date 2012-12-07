@@ -16,17 +16,17 @@ import com.gutabi.deadlock.core.geom.Circle;
 import com.gutabi.deadlock.core.geom.ShapeUtils;
 import com.gutabi.deadlock.core.geom.SweepEvent;
 import com.gutabi.deadlock.core.geom.SweepEventType;
-import com.gutabi.deadlock.core.graph.EdgePosition;
-import com.gutabi.deadlock.core.graph.GraphPosition;
-import com.gutabi.deadlock.core.graph.Intersection;
-import com.gutabi.deadlock.core.graph.Merger;
-import com.gutabi.deadlock.core.graph.Road;
-import com.gutabi.deadlock.core.graph.RoadPosition;
-import com.gutabi.deadlock.core.graph.Vertex;
-import com.gutabi.deadlock.core.graph.VertexPosition;
-import com.gutabi.deadlock.model.Car;
 import com.gutabi.deadlock.model.StopSign;
 import com.gutabi.deadlock.model.Stroke;
+import com.gutabi.deadlock.model.car.Car;
+import com.gutabi.deadlock.model.graph.EdgePosition;
+import com.gutabi.deadlock.model.graph.GraphPosition;
+import com.gutabi.deadlock.model.graph.Intersection;
+import com.gutabi.deadlock.model.graph.Merger;
+import com.gutabi.deadlock.model.graph.Road;
+import com.gutabi.deadlock.model.graph.RoadPosition;
+import com.gutabi.deadlock.model.graph.Vertex;
+import com.gutabi.deadlock.model.graph.VertexPosition;
 
 //@SuppressWarnings("static-access")
 public class DeadlockController {

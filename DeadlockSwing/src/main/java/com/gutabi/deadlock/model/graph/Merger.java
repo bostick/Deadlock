@@ -1,4 +1,4 @@
-package com.gutabi.deadlock.core.graph;
+package com.gutabi.deadlock.model.graph;
 
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 
@@ -10,7 +10,6 @@ import com.gutabi.deadlock.core.geom.Line;
 import com.gutabi.deadlock.core.geom.Quad;
 import com.gutabi.deadlock.core.geom.Shape;
 import com.gutabi.deadlock.core.geom.SweepableShape;
-import com.gutabi.deadlock.model.Fixture;
 import com.gutabi.deadlock.view.RenderingContext;
 
 @SuppressWarnings("static-access")

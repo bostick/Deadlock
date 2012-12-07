@@ -1,4 +1,4 @@
-package com.gutabi.deadlock.core.graph;
+package com.gutabi.deadlock.model.graph;
 
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 
@@ -17,8 +17,8 @@ import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.CapsuleSequence;
 import com.gutabi.deadlock.core.geom.Quad;
 import com.gutabi.deadlock.core.geom.ShapeUtils;
-import com.gutabi.deadlock.model.Car;
-import com.gutabi.deadlock.model.event.VertexArrivalEvent;
+import com.gutabi.deadlock.model.car.Car;
+import com.gutabi.deadlock.model.car.VertexArrivalEvent;
 
 @SuppressWarnings("static-access")
 public class GraphPositionPath {

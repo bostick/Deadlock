@@ -18,12 +18,12 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.core.graph.Road;
-import com.gutabi.deadlock.core.graph.Vertex;
-import com.gutabi.deadlock.model.Car;
 import com.gutabi.deadlock.model.Stroke;
+import com.gutabi.deadlock.model.car.Car;
 import com.gutabi.deadlock.model.car.NormalCar;
 import com.gutabi.deadlock.model.fixture.WorldSource;
+import com.gutabi.deadlock.model.graph.Road;
+import com.gutabi.deadlock.model.graph.Vertex;
 
 @SuppressWarnings("serial")
 public class TestSimulating {

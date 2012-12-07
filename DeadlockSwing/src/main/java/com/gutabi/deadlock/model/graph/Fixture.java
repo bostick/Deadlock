@@ -1,4 +1,4 @@
-package com.gutabi.deadlock.model;
+package com.gutabi.deadlock.model.graph;
 
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 import static com.gutabi.deadlock.view.DeadlockView.VIEW;
@@ -11,10 +11,7 @@ import java.util.List;
 import org.jbox2d.callbacks.QueryCallback;
 
 import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.core.graph.Axis;
-import com.gutabi.deadlock.core.graph.GraphPositionPath;
-import com.gutabi.deadlock.core.graph.Side;
-import com.gutabi.deadlock.core.graph.Vertex;
+import com.gutabi.deadlock.model.car.Car;
 import com.gutabi.deadlock.model.car.FastCar;
 import com.gutabi.deadlock.model.car.NormalCar;
 import com.gutabi.deadlock.model.car.RandomCar;

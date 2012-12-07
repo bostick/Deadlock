@@ -1,4 +1,4 @@
-package com.gutabi.deadlock.core.graph;
+package com.gutabi.deadlock.model.graph;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -10,7 +10,7 @@ import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.Circle;
-import com.gutabi.deadlock.model.Car;
+import com.gutabi.deadlock.model.car.Car;
 import com.gutabi.deadlock.view.RenderingContext;
 
 //@SuppressWarnings("static-access")

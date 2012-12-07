@@ -4,7 +4,7 @@ import java.util.Comparator;
 
 import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.core.graph.Vertex;
+import com.gutabi.deadlock.model.graph.Vertex;
 
 public class SweepEvent {
 	

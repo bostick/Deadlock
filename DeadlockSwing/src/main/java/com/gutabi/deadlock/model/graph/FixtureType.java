@@ -1,4 +1,4 @@
-package com.gutabi.deadlock.model;
+package com.gutabi.deadlock.model.graph;
 
 public enum FixtureType {
 

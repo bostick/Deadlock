@@ -1,8 +1,8 @@
 package com.gutabi.deadlock.core.geom;
 
-import com.gutabi.deadlock.core.graph.Merger;
-import com.gutabi.deadlock.core.graph.Road;
-import com.gutabi.deadlock.core.graph.Vertex;
+import com.gutabi.deadlock.model.graph.Merger;
+import com.gutabi.deadlock.model.graph.Road;
+import com.gutabi.deadlock.model.graph.Vertex;
 
 public enum SweepEventType {
 	

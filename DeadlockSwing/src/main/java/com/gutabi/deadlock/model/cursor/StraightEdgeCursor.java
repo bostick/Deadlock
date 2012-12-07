@@ -2,8 +2,7 @@ package com.gutabi.deadlock.model.cursor;
 
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.Shape;
-import com.gutabi.deadlock.core.graph.Vertex;
-import com.gutabi.deadlock.model.Cursor;
+import com.gutabi.deadlock.model.graph.Vertex;
 import com.gutabi.deadlock.view.RenderingContext;
 
 public class StraightEdgeCursor extends Cursor {

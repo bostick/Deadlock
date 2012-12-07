@@ -16,8 +16,8 @@ import org.junit.Test;
 import com.gutabi.deadlock.controller.ControlMode;
 import com.gutabi.deadlock.controller.InputEvent;
 import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.core.graph.Road;
 import com.gutabi.deadlock.model.World;
+import com.gutabi.deadlock.model.graph.Road;
 
 
 public class TestDragging {

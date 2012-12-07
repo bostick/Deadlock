@@ -1,9 +1,8 @@
-package com.gutabi.deadlock.model.event;
+package com.gutabi.deadlock.model.car;
 
-import com.gutabi.deadlock.core.graph.GraphPositionPathPosition;
-import com.gutabi.deadlock.core.graph.RoadPosition;
-import com.gutabi.deadlock.model.Car;
 import com.gutabi.deadlock.model.StopSign;
+import com.gutabi.deadlock.model.graph.GraphPositionPathPosition;
+import com.gutabi.deadlock.model.graph.RoadPosition;
 
 /**
  * arriving at a vertex

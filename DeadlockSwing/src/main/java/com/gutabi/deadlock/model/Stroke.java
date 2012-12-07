@@ -10,14 +10,14 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 import com.gutabi.deadlock.core.Point;
+import com.gutabi.deadlock.core.geom.AABB;
 import com.gutabi.deadlock.core.geom.Capsule;
 import com.gutabi.deadlock.core.geom.CapsuleSequence;
 import com.gutabi.deadlock.core.geom.Circle;
 import com.gutabi.deadlock.core.geom.SweepEvent;
 import com.gutabi.deadlock.core.geom.SweepEventType;
 import com.gutabi.deadlock.core.geom.Sweeper;
-import com.gutabi.deadlock.core.geom.tree.AABB;
-import com.gutabi.deadlock.core.graph.Vertex;
+import com.gutabi.deadlock.model.graph.Vertex;
 import com.gutabi.deadlock.view.RenderingContext;
 
 @SuppressWarnings("static-access")

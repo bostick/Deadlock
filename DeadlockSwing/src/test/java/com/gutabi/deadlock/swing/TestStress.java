@@ -16,7 +16,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.core.graph.Road;
+import com.gutabi.deadlock.model.graph.Road;
 
 public class TestStress {
 	

@@ -1,6 +1,5 @@
-package com.gutabi.deadlock.model.event;
+package com.gutabi.deadlock.model.car;
 
-import com.gutabi.deadlock.model.Car;
 
 public class CarProximityEvent extends DrivingEvent {
 	

@@ -5,12 +5,12 @@ import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 import java.awt.Color;
 
 import com.gutabi.deadlock.core.Point;
+import com.gutabi.deadlock.core.geom.AABB;
 import com.gutabi.deadlock.core.geom.Circle;
 import com.gutabi.deadlock.core.geom.Line;
 import com.gutabi.deadlock.core.geom.Shape;
-import com.gutabi.deadlock.core.geom.tree.AABB;
-import com.gutabi.deadlock.core.graph.Axis;
-import com.gutabi.deadlock.core.graph.Vertex;
+import com.gutabi.deadlock.model.graph.Axis;
+import com.gutabi.deadlock.model.graph.Vertex;
 import com.gutabi.deadlock.view.RenderingContext;
 
 @SuppressWarnings("static-access")

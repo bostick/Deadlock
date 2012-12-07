@@ -3,9 +3,9 @@ package com.gutabi.deadlock.model;
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 
 import com.gutabi.deadlock.core.Point;
+import com.gutabi.deadlock.core.geom.AABB;
 import com.gutabi.deadlock.core.geom.Shape;
 import com.gutabi.deadlock.core.geom.ShapeUtils;
-import com.gutabi.deadlock.core.geom.tree.AABB;
 import com.gutabi.deadlock.view.RenderingContext;
 
 @SuppressWarnings("static-access")

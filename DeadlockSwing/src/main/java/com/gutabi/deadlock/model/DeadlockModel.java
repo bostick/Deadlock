@@ -1,6 +1,7 @@
 package com.gutabi.deadlock.model;
 
 import com.gutabi.deadlock.core.Entity;
+import com.gutabi.deadlock.model.cursor.Cursor;
 import com.gutabi.deadlock.model.cursor.RegularCursor;
 import com.gutabi.deadlock.model.menu.Menu;
 

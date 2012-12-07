@@ -6,8 +6,8 @@ import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 import java.awt.Color;
 
 import com.gutabi.deadlock.core.Point;
+import com.gutabi.deadlock.core.geom.AABB;
 import com.gutabi.deadlock.core.geom.Line;
-import com.gutabi.deadlock.core.geom.tree.AABB;
 import com.gutabi.deadlock.view.RenderingContext;
 
 @SuppressWarnings("static-access")

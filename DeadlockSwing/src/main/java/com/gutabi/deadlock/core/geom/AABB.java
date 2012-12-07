@@ -1,11 +1,10 @@
-package com.gutabi.deadlock.core.geom.tree;
+package com.gutabi.deadlock.core.geom;
 
 import java.awt.geom.Rectangle2D;
 
 import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Dim;
 import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.core.geom.Shape;
 import com.gutabi.deadlock.view.RenderingContext;
 
 //@SuppressWarnings("static-access")

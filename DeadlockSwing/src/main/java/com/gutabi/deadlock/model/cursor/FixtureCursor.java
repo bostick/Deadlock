@@ -4,9 +4,8 @@ import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.Shape;
-import com.gutabi.deadlock.core.graph.Axis;
-import com.gutabi.deadlock.model.Cursor;
 import com.gutabi.deadlock.model.Quadrant;
+import com.gutabi.deadlock.model.graph.Axis;
 import com.gutabi.deadlock.view.RenderingContext;
 
 @SuppressWarnings("static-access")
