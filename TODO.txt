@@ -1,4 +1,26 @@
 
+straightedge cursor:
+allow starting in roads
+draw capsules
+
+add circular road cursor
+
+add quad curve cursor
+add cubic curve cursor
+
+map editor
+
+scripting:
+saving to files
+reading from files
+
+
+
+
+
+
+
+
 shutter mode:
 require a button press to advance next timestep
 

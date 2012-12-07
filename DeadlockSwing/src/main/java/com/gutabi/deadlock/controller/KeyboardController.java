@@ -9,13 +9,19 @@ import java.awt.event.KeyListener;
 
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
+import com.gutabi.deadlock.core.geom.Circle;
+import com.gutabi.deadlock.core.geom.ShapeUtils;
 import com.gutabi.deadlock.core.graph.Axis;
 import com.gutabi.deadlock.core.graph.Direction;
+import com.gutabi.deadlock.core.graph.EdgePosition;
+import com.gutabi.deadlock.core.graph.GraphPosition;
 import com.gutabi.deadlock.core.graph.Intersection;
 import com.gutabi.deadlock.core.graph.Merger;
 import com.gutabi.deadlock.core.graph.Road;
+import com.gutabi.deadlock.core.graph.RoadPosition;
 import com.gutabi.deadlock.core.graph.Side;
 import com.gutabi.deadlock.core.graph.Vertex;
+import com.gutabi.deadlock.core.graph.VertexPosition;
 import com.gutabi.deadlock.model.Car;
 import com.gutabi.deadlock.model.Fixture;
 import com.gutabi.deadlock.model.FixtureType;
@@ -28,14 +34,6 @@ import com.gutabi.deadlock.model.cursor.StraightEdgeCursor;
 
 //@SuppressWarnings("serial")
 public class KeyboardController implements KeyListener {
-	
-//	public void init() {
-//		
-//		VIEW.canvas.addKeyListener(this);
-//		VIEW.controlPanel.addKeyListener(this);
-//		VIEW.previewPanel.addKeyListener(this);
-//		
-//	}
 	
 	public void keyPressed(KeyEvent arg0) {
 		
@@ -93,7 +91,27 @@ public class KeyboardController implements KeyListener {
 				VIEW.repaintControlPanel();
 				VIEW.repaintCanvas();
 				
-			} else if (hit instanceof Vertex) {
+			} else if (hit instanceof Road || hit instanceof Vertex) {
+				
+				if (hit instanceof Road) {
+					GraphPosition pos = MODEL.world.findClosestRoadPosition(MODEL.cursor.getPoint(), ((Circle)MODEL.cursor.getShape()).radius);
+					
+					Entity hit2;
+					if (pos instanceof EdgePosition) {
+						hit2 = MODEL.world.pureGraphBestHitTestCircle(new Circle(null, pos.p, ((Circle)MODEL.cursor.getShape()).radius));
+					} else {
+						hit2 = ((VertexPosition)pos).v;
+					}
+					
+					if (hit2 instanceof Road) {
+						hit = MODEL.world.splitRoadTop((RoadPosition)pos);
+						
+						assert ShapeUtils.intersectCC((Circle)MODEL.cursor.getShape(), (Circle)hit.getShape());
+						
+					} else {
+						hit = hit2;
+					}
+				}
 				
 				CONTROLLER.mode = ControlMode.STRAIGHTEDGECURSOR;
 				
@@ -555,17 +573,7 @@ public class KeyboardController implements KeyListener {
 		switch (CONTROLLER.mode) {
 		case MENU:
 			
-			if (MODEL.menu.hilited == null) {
-				
-				MODEL.menu.hilited = MODEL.menu.firstMenuItem;
-				
-			} else {
-				
-				MODEL.menu.hilited = MODEL.menu.hilited.down;
-				
-			}
-			
-			VIEW.repaintCanvas();
+			MODEL.menu.downKey();
 			
 			break;
 		case DRAFTING:
@@ -585,17 +593,7 @@ public class KeyboardController implements KeyListener {
 		switch (CONTROLLER.mode) {
 		case MENU:
 			
-			if (MODEL.menu.hilited == null) {
-				
-				MODEL.menu.hilited = MODEL.menu.firstMenuItem;
-				
-			} else {
-				
-				MODEL.menu.hilited = MODEL.menu.hilited.up;
-				
-			}
-			
-			VIEW.repaintCanvas();
+			MODEL.menu.upKey();
 			
 			break;
 		case DRAFTING:

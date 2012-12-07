@@ -14,6 +14,7 @@ import java.net.URL;
 
 import javax.imageio.ImageIO;
 import javax.swing.BoxLayout;
+import javax.swing.JApplet;
 import javax.swing.JFrame;
 import javax.swing.RootPaneContainer;
 import javax.swing.SwingUtilities;
@@ -28,9 +29,6 @@ import com.gutabi.deadlock.core.geom.tree.AABB;
 public class DeadlockView {
 	
 	public static DeadlockView VIEW = new DeadlockView();
-	
-//	public static final int CANVAS_WIDTH = 1427;
-//	public static final int CANVAS_HEIGHT = 822;
 	
 	public static final int PREVIEW_WIDTH = 100;
 	public static final int PREVIEW_HEIGHT = 100;
@@ -50,6 +48,7 @@ public class DeadlockView {
 	public BufferedImage explosionSheet;
 	public BufferedImage titleBackground;
 	public BufferedImage title_white;
+	public BufferedImage copyright;
 	
 	public BufferedImage quadrantGrass;
 	public BufferedImage canvasGrassImage;
@@ -76,6 +75,7 @@ public class DeadlockView {
 		explosionSheet = ImageIO.read(new URL(codebase, "media\\explosionSheet.png"));
 		titleBackground = ImageIO.read(new URL(codebase, "media\\title_background.png"));
 		title_white = ImageIO.read(new URL(codebase, "media\\title_white.png"));
+		copyright = ImageIO.read(new URL(codebase, "media\\copyright.png"));
 		
 		quadrantGrass = new BufferedImage(
 				512,
@@ -109,13 +109,13 @@ public class DeadlockView {
 		container = newFrame;
 	}
 	
-//	public void setupApplet() {
-//		
-//		setupContent(app);
-//		
-//		app.setSize((int)(WindowInfo.windowDim().width), (int)(WindowInfo.windowDim().height));
-//		app.setLocation((int)(WindowInfo.windowLoc().x), (int)(WindowInfo.windowLoc().y));
-//	}
+	public void setupApplet(JApplet app) {
+		
+		setupCanvas(app);
+		
+		app.setSize((int)(WindowInfo.windowDim().width), (int)(WindowInfo.windowDim().height));
+		app.setLocation((int)(WindowInfo.windowLoc().x), (int)(WindowInfo.windowLoc().y));
+	}
 	
 	public void setupCanvas(RootPaneContainer container) {
 		

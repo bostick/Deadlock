@@ -190,8 +190,8 @@ public abstract class Car extends Entity {
 	 */
 	//public DrivingEvent curDrivingEvent;
 //	List<DrivingEvent> eventQueue = new ArrayList<DrivingEvent>();
-	VertexArrivalEvent curVertexArrivalEvent;
-	CarProximityEvent curCarProximityEvent;
+	public VertexArrivalEvent curVertexArrivalEvent;
+	public CarProximityEvent curCarProximityEvent;
 	List<VertexEvent> vertexDepartureQueue = new ArrayList<VertexEvent>();
 	double decelTime = -1;
 	public double stoppedTime = -1;

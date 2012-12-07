@@ -54,9 +54,9 @@ public class Capsule extends SweepableShape {
 		this.b = bc.center;
 		this.r = ac.radius;
 		
-		if (a.equals(b)) {
-			throw new IllegalArgumentException("a equals b");
-		}
+//		if (a.equals(b)) {
+//			throw new IllegalArgumentException("a equals b");
+//		}
 		
 		if (!DMath.equals(ac.radius, bc.radius)) {
 			throw new IllegalArgumentException("radii not equal");

@@ -10,19 +10,25 @@ import java.awt.geom.AffineTransform;
 import javax.swing.JFrame;
 
 import com.gutabi.deadlock.controller.ControlMode;
-import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.examples.OneByOneWorld;
 import com.gutabi.deadlock.view.RenderingContext;
 
 //@SuppressWarnings("static-access")
 public class MainMenu extends Menu {
 	
-	private final MenuItem sandboxMenuItem;
-	private final MenuItem quitMenuItem;
+	static Color menuBackground = new Color(0x88, 0x88, 0x88);
 	
 	public MainMenu() {
 		
-		sandboxMenuItem = new MenuItem("Sandbox Mode...") {
+		MenuItem puzzleMenuItem = new MenuItem("Puzzle Mode") {
+			public void action() {
+				
+			}
+		};
+		puzzleMenuItem.active = false;
+		add(puzzleMenuItem);
+		
+		MenuItem sandboxMenuItem = new MenuItem("Sandbox Mode") {
 			public void action() {
 				
 				try {
@@ -62,34 +68,39 @@ public class MainMenu extends Menu {
 				
 			}
 		};
+		add(sandboxMenuItem);
 		
-		quitMenuItem = new MenuItem("Quit") {
+		MenuItem editorMenuItem = new MenuItem("Map Editor...") {
+			public void action() {
+				
+			}
+		};
+//		editorMenuItem.active = false;
+		add(editorMenuItem);
+		
+		MenuItem loadMenuItem = new MenuItem("Load...") {
+			public void action() {
+				
+			}
+		};
+		loadMenuItem.active = false;
+		add(loadMenuItem);
+		
+		MenuItem captureMenuItem = new MenuItem("Capture the Flag") {
+			public void action() {
+				
+			}
+		};
+		captureMenuItem.active = false;
+		add(captureMenuItem);
+		
+		MenuItem quitMenuItem = new MenuItem("Quit") {
 			public void action() {
 				System.exit(0);
 			}
 		};
+		add(quitMenuItem);
 		
-		sandboxMenuItem.down = quitMenuItem;
-		sandboxMenuItem.up = quitMenuItem;
-		
-		quitMenuItem.down = sandboxMenuItem;
-		quitMenuItem.up = sandboxMenuItem;
-		
-		firstMenuItem = sandboxMenuItem;
-		
-	}
-	
-	public MenuItem hitTest(Point p) {
-		
-		if (sandboxMenuItem.hitTest(p)) {
-			return sandboxMenuItem;
-		}
-		
-		if (quitMenuItem.hitTest(p)) {
-			return quitMenuItem;
-		}
-		
-		return null;
 	}
 	
 	public void render(RenderingContext ctxt) {
@@ -98,25 +109,35 @@ public class MainMenu extends Menu {
 		
 		ctxt.paintImage(800/2 - 498/2, 20, VIEW.title_white, 0, 0, 498, 90, 0, 0, 498, 90);
 		
-		ctxt.setColor(Color.WHITE);
+		ctxt.paintImage(800/2 - 432/2, 550, VIEW.copyright, 0, 0, 432, 38, 0, 0, 432, 38);
 		
-		sandboxMenuItem.renderLocal(ctxt);
-		quitMenuItem.renderLocal(ctxt);
+		int widest = 0;
+		int totalHeight = 0;
+		for (MenuItem item : items) {
+			item.renderLocal(ctxt);
+			if ((int)item.localAABB.width > widest) {
+				widest = (int)item.localAABB.width;
+			}
+			totalHeight += (int)item.localAABB.height;
+		}
 		
 		AffineTransform origTransform = ctxt.getTransform();
 		
-		ctxt.translate(800/2 - sandboxMenuItem.localAABB.width/2, 600/2 - sandboxMenuItem.localAABB.height/2);
+		ctxt.translate(800/2 - widest/2, 200);
 		
-		sandboxMenuItem.render(ctxt);
-		
-		ctxt.translate(0, 100);
-		
-		quitMenuItem.render(ctxt);
+		for (MenuItem item : items) {
+			item.render(ctxt);
+			ctxt.translate(0, item.localAABB.height + 10);
+		}
 		
 		ctxt.setTransform(origTransform);
 		
-		sandboxMenuItem.paint(ctxt);
-		quitMenuItem.paint(ctxt);
+		ctxt.setColor(menuBackground);
+		ctxt.fillRect((int)(800/2 - widest/2 - 5), 200 - 5, (int)(widest + 10), totalHeight + 10 * (items.size() - 1) + 5 + 5);
+		
+		for (MenuItem item : items) {
+			item.paint(ctxt);
+		}
 		
 	}
 	

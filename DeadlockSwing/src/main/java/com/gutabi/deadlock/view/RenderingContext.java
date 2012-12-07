@@ -128,9 +128,9 @@ public class RenderingContext extends DebugDraw {
 		g2.draw(line);
 	}
 	
-//	public void fillRectX(int x, int y, int width, int height) {
-//		g2.fillRect(x, y, width, height);
-//	}
+	public void fillRect(int x, int y, int width, int height) {
+		g2.fillRect(x, y, width, height);
+	}
 	
 	public void fill(Ellipse2D e) {
 		g2.fill(e);

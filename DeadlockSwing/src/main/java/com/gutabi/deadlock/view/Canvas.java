@@ -139,16 +139,24 @@ public class Canvas extends java.awt.Canvas {
 	}
 	
 	public Point lastMovedCanvasPoint;
+	public Point lastMovedMenuPoint;
 	public Point lastMovedWorldPoint;
 	
 	public void moved(InputEvent ev) {
 		
 		VIEW.canvas.requestFocusInWindow();
 		
-		lastMovedCanvasPoint = ev.p;
+		Point p = ev.p;
+		
+		lastMovedCanvasPoint = p;
 		
 		switch (CONTROLLER.mode) {
 		case MENU:
+			
+			lastMovedMenuPoint = VIEW.canvasToMenu(lastMovedCanvasPoint);
+			
+			MODEL.menu.move(lastMovedMenuPoint);
+			
 			break;
 		case PAUSED:
 			
@@ -305,7 +313,6 @@ public class Canvas extends java.awt.Canvas {
 	}
 	
 	public void paint(Graphics g) {
-		
 		bs.show();
 	}
 	

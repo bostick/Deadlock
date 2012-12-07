@@ -15,7 +15,6 @@ import com.gutabi.deadlock.view.RenderingContext;
 public abstract class MenuItem {
 	
 	public final String text;
-//	public Point p;
 	
 	public MenuItem up;
 	public MenuItem left;
@@ -30,7 +29,9 @@ public abstract class MenuItem {
 	
 	public Point ul;
 	
-	static private Font f = new Font("Times", Font.PLAIN, 96);
+	public boolean active = true;
+	
+	static private Font f = new Font("Visitor TT1 BRK", Font.PLAIN, 48);
 	
 	public MenuItem(String text) {
 		this.text = text;
@@ -68,7 +69,11 @@ public abstract class MenuItem {
 	}
 	
 	public void paint(RenderingContext ctxt) {
-		ctxt.setColor(Color.WHITE);
+		if (active) {
+			ctxt.setColor(Color.WHITE);
+		} else {
+			ctxt.setColor(Color.GRAY);
+		}
 		ctxt.draw(layout, baseline.x, baseline.y);
 	}
 	
