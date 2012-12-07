@@ -212,6 +212,37 @@ public class Canvas extends java.awt.Canvas {
 		
 	}
 	
+	Point lastClickedCanvasPoint;
+	Point lastClickedMenuPoint;
+	
+	public void clicked(InputEvent ev) {
+		
+		requestFocusInWindow();
+		
+		Point p = ev.p;
+		
+		lastClickedCanvasPoint = p;
+		
+		switch (CONTROLLER.mode) {
+		case MENU:
+			
+			lastClickedMenuPoint = VIEW.canvasToMenu(lastClickedCanvasPoint);
+			
+			MODEL.menu.click(lastClickedMenuPoint);
+			
+			break;
+		case PAUSED:
+		case DRAFTING:
+		case IDLE:
+		case RUNNING:			
+		case MERGERCURSOR:
+		case FIXTURECURSOR:
+		case STRAIGHTEDGECURSOR:
+			break;
+		}
+		
+	}
+	
 	public void entered(InputEvent ev) {
 		
 		Point p = ev.p;

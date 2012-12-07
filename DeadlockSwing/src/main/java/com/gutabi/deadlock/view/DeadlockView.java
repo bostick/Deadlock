@@ -55,6 +55,8 @@ public class DeadlockView {
 	public BufferedImage previewImage;
 	public BufferedImage canvasGraphImage;
 	
+	public BufferedImage canvasMenuImage;
+	
 //	public boolean inMiddleOfRenderGrass;
 //	public boolean inMiddleOfRenderGraph;
 	
@@ -95,6 +97,7 @@ public class DeadlockView {
 		
 		canvasGraphImage = new BufferedImage(CANVAS_WIDTH, CANVAS_HEIGHT, BufferedImage.TYPE_INT_ARGB);
 		
+		canvasMenuImage = new BufferedImage(800, 600, BufferedImage.TYPE_INT_RGB);
 	}
 	
 	public JFrame setupFrame() {
@@ -157,6 +160,10 @@ public class DeadlockView {
 				p.y / PIXELS_PER_METER_DEBUG + worldViewport.y);
 	}
 	
+	public Point canvasToMenu(Point p) {
+		return new Point(p.x - (CANVAS_WIDTH/2 - 800/2), p.y - (CANVAS_HEIGHT/2 - 600/2));
+	}
+	
 	public int metersToPixels(double m) {
 		return (int)(Math.round(m * PIXELS_PER_METER_DEBUG));
 	}
@@ -196,7 +203,14 @@ public class DeadlockView {
 		
 		if (CONTROLLER.mode == ControlMode.MENU) {
 			
+			AffineTransform origTrans = ctxt.getTransform();
+			
+			ctxt.scale(PIXELS_PER_METER_DEBUG);
+			ctxt.translate(CANVAS_WIDTH/2 - 800/2, CANVAS_HEIGHT/2 - 600/2);
+			
 			MODEL.menu.paint(ctxt);
+			
+			ctxt.setTransform(origTrans);
 			
 		} else {
 			
@@ -341,5 +355,21 @@ public class DeadlockView {
 		
 		previewImageG2.dispose();
 	}
+	
+	public void renderMenu() {
+	
+		synchronized (VIEW) {
+			Graphics2D canvasMenuImageG2 = canvasMenuImage.createGraphics();
+			
+			RenderingContext canvasMenuContext = new RenderingContext(canvasMenuImageG2, RenderingContextType.CANVAS);
+			
+			MODEL.menu.render(canvasMenuContext);
+			
+			canvasMenuImageG2.dispose();
+		}
+		
+		
+	}
+	
 	
 }

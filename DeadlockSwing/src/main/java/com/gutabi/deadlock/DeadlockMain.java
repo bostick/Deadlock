@@ -49,6 +49,7 @@ static Logger logger = Logger.getLogger("deadlock");
 		CONTROLLER.mode = ControlMode.MENU;
 		
 //		VIEW.renderWorldBackground();
+		VIEW.renderMenu();
 		
 		frame.setVisible(true);
 		VIEW.canvas.requestFocusInWindow();

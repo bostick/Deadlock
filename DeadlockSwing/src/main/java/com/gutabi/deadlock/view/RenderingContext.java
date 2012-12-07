@@ -5,7 +5,6 @@ import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Composite;
-import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Stroke;
@@ -94,9 +93,9 @@ public class RenderingContext extends DebugDraw {
 		g2.rotate(a);
 	}
 	
-	public void setFont(Font f) {
-		g2.setFont(f);
-	}
+//	public void setFont(Font f) {
+//		g2.setFont(f);
+//	}
 	
 	public void paintString(double x, double y, double s, String str) {
 		AffineTransform origTransform = g2.getTransform();
@@ -184,12 +183,12 @@ public class RenderingContext extends DebugDraw {
 //		assert false;
 	}
 	
-	public void draw(TextLayout layout, double x, double y) {
-		layout.draw(g2, (float)x, (float)y);
+	public void draw(TextLayout layout, double baselineX, double baselineY) {
+		layout.draw(g2, (float)baselineX, (float)baselineY);
 	}
 	
-	public Font getFont() {
-		return g2.getFont();
-	}
+//	public Font getFont() {
+//		return g2.getFont();
+//	}
 	
 }

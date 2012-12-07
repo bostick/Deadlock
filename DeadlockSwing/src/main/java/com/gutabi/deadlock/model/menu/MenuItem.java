@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.font.FontRenderContext;
 import java.awt.font.TextLayout;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 
 import com.gutabi.deadlock.core.Point;
@@ -14,47 +15,67 @@ import com.gutabi.deadlock.view.RenderingContext;
 public abstract class MenuItem {
 	
 	public final String text;
-	public final Point p;
+//	public Point p;
 	
 	public MenuItem up;
 	public MenuItem left;
 	public MenuItem right;
 	public MenuItem down;
 	
+	private TextLayout layout;
+	
+	public AABB localAABB;
+	public Point baseline;
 	public AABB aabb;
 	
-	public MenuItem(String text, Point p) {
+	public Point ul;
+	
+	static private Font f = new Font("Times", Font.PLAIN, 96);
+	
+	public MenuItem(String text) {
 		this.text = text;
-		this.p = p;
+	}
+	
+	public boolean hitTest(Point p) {
+		if (aabb.hitTest(p)) {
+			return true;
+		}
+		return false;
 	}
 	
 	public abstract void action();
 	
-	public void paint(RenderingContext ctxt) {
-		
-		Font f = ctxt.getFont();
+	public void renderLocal(RenderingContext ctxt) {
 		FontRenderContext frc = ctxt.getFontRenderContext();
+		layout = new TextLayout(text, f, frc);
+		Rectangle2D bounds = layout.getBounds();
+		localAABB = new AABB(bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight());
+	}
+	
+	public void render(RenderingContext ctxt) {
 		
-		TextLayout l = new TextLayout(text, f, frc);
+		AffineTransform trans = ctxt.getTransform();
 		
-		ctxt.draw(l, p.x, p.y);
+		double x = trans.getTranslateX();
+		double y = trans.getTranslateY();
+		
+		ul = new Point(x, y);
+		
+		aabb = new AABB(x, y, localAABB.width, localAABB.height);
+		
+		baseline = new Point(x - localAABB.x, y - localAABB.y);
 		
 	}
 	
+	public void paint(RenderingContext ctxt) {
+		ctxt.setColor(Color.WHITE);
+		ctxt.draw(layout, baseline.x, baseline.y);
+	}
+	
 	public void paintHilited(RenderingContext ctxt) {
-		
-		Font f = ctxt.getFont();
-		FontRenderContext frc = ctxt.getFontRenderContext();
-		
-		TextLayout l = new TextLayout(text, f, frc);
-		
-		Rectangle2D bounds = l.getBounds();
-		AABB aabb = new AABB(p.x + bounds.getX(), p.y + bounds.getY(), bounds.getWidth(), bounds.getHeight());
-		
 		ctxt.setColor(Color.RED);
 		ctxt.setPixelStroke(1);
 		aabb.draw(ctxt);
-		
 	}
 	
 }

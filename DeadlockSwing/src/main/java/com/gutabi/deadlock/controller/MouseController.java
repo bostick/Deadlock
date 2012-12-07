@@ -49,8 +49,8 @@ public class MouseController implements MouseListener, MouseMotionListener {
 		exited(new InputEvent(ev.getComponent(), new Point(ev.getX(), ev.getY())));
 	}
 	
-	public void mouseClicked(MouseEvent arg0) {
-		;
+	public void mouseClicked(MouseEvent ev) {
+		clicked(new InputEvent(ev.getComponent(), new Point(ev.getX(), ev.getY())));
 	}
 	
 	public void pressed(InputEvent ev) {
@@ -104,6 +104,18 @@ public class MouseController implements MouseListener, MouseMotionListener {
 		if (c == VIEW.canvas) {
 			
 			VIEW.canvas.moved(ev);
+			
+		}
+		
+	}
+	
+	public void clicked(InputEvent ev) {
+		
+		Component c = ev.c;
+		
+		if (c == VIEW.canvas) {
+			
+			VIEW.canvas.clicked(ev);
 			
 		}
 		
