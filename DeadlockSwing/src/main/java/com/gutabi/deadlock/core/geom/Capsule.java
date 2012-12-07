@@ -133,10 +133,6 @@ public class Capsule extends SweepableShape {
 		Point c = cap.a;
 		Point d = cap.b;
 		
-//		if ((a.equals(new Point(8.09375, 7.65625)) && b.equals(new Point(8.53125, 7.71875))) && index == 12) {
-//			String.class.getName();
-//		}
-		
 		boolean outside;
 		if (ShapeUtils.intersectCCap(cap.ac, this)) {
 			outside = false;
@@ -313,7 +309,7 @@ public class Capsule extends SweepableShape {
 				
 				Color c = ctxt.getColor();
 				ctxt.setColor(Color.BLUE);
-				ctxt.setPixelStroke(1);
+				ctxt.setWorldPixelStroke(1);
 				
 				debugNormalLine.draw(ctxt);
 				

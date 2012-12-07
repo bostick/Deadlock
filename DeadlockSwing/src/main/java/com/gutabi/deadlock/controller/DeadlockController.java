@@ -42,19 +42,19 @@ public class DeadlockController {
 //	Logger reportingLogger = Logger.getLogger("com.gutabi.deadlock.controller.DeadlockController.reporting");
 	
 	public DeadlockController() {
-		
-	}
-	
-	public void init() {
-		
 		mc = new MouseController();
 		kc = new KeyboardController();
-		
-		mc.init();
-		
-		kc.init();
-		
 	}
+	
+//	public void init() {
+//		
+//		
+//		
+//		mc.init();
+//		
+//		kc.init();
+//		
+//	}
 	
 	public void startRunning() {
 		

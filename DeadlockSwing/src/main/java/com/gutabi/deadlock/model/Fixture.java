@@ -300,7 +300,7 @@ public final class Fixture extends Vertex {
 					break;
 				}
 				
-				ctxt.paintImage(-r, -r, VIEW.sheet,
+				ctxt.paintWorldImage(-r, -r, VIEW.sheet,
 						0,
 						0,
 						2 * VIEW.metersToPixels(r),
@@ -315,7 +315,7 @@ public final class Fixture extends Vertex {
 				shape.paint(ctxt);
 				
 				ctxt.setColor(Color.BLACK);
-				ctxt.setPixelStroke(1);
+				ctxt.setWorldPixelStroke(1);
 				shape.getAABB().draw(ctxt);
 				
 			}

@@ -74,7 +74,7 @@ public class AnimatedGrass {
 	
 	private void paint0(RenderingContext ctxt) {
 		
-		ctxt.paintImage(p.x - AnimatedGrass.GRASS_SIZE/2, p.y - AnimatedGrass.GRASS_SIZE/2, VIEW.sheet,
+		ctxt.paintWorldImage(p.x - AnimatedGrass.GRASS_SIZE/2, p.y - AnimatedGrass.GRASS_SIZE/2, VIEW.sheet,
 				0,
 				0,
 				VIEW.metersToPixels(GRASS_SIZE),
@@ -85,7 +85,7 @@ public class AnimatedGrass {
 	
 	private void paint1(RenderingContext ctxt) {
 		
-		ctxt.paintImage(p.x - AnimatedGrass.GRASS_SIZE/2, p.y - AnimatedGrass.GRASS_SIZE/2, VIEW.sheet,
+		ctxt.paintWorldImage(p.x - AnimatedGrass.GRASS_SIZE/2, p.y - AnimatedGrass.GRASS_SIZE/2, VIEW.sheet,
 				0,
 				0,
 				VIEW.metersToPixels(GRASS_SIZE),
@@ -96,7 +96,7 @@ public class AnimatedGrass {
 	
 	private void paint2(RenderingContext ctxt) {
 		
-		ctxt.paintImage(p.x - AnimatedGrass.GRASS_SIZE/2, p.y - AnimatedGrass.GRASS_SIZE/2, VIEW.sheet,
+		ctxt.paintWorldImage(p.x - AnimatedGrass.GRASS_SIZE/2, p.y - AnimatedGrass.GRASS_SIZE/2, VIEW.sheet,
 				0,
 				0,
 				VIEW.metersToPixels(GRASS_SIZE),

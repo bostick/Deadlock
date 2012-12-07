@@ -35,8 +35,6 @@ public class Graph implements Sweepable {
 	public final List<Edge> edges = new ArrayList<Edge>();
 	
 	public final List<GraphPositionPath> paths = new ArrayList<GraphPositionPath>();
-//	public final Map<GraphPositionPath, Entry<GraphPositionPath, Set<Edge>>> pathMap1 = new HashMap<GraphPositionPath, Entry<GraphPositionPath, Set<Edge>>>();
-//	public final Map<GraphPositionPath, Set<Edge>> pathMap2 = new HashMap<GraphPositionPath, Set<Edge>>();
 	
 	private AABB aabb;
 	
@@ -87,8 +85,6 @@ public class Graph implements Sweepable {
 		}
 		
 		paths.clear();
-//		pathMap1.clear();
-//		pathMap2.clear();
 		
 	}
 	
@@ -514,8 +510,6 @@ public class Graph implements Sweepable {
 				v = ((Merger)e).top;
 			}
 		}
-		
-//		assert distances[v.id][end.id] != Double.POSITIVE_INFINITY;
 		
 		return v;
 	}
@@ -1062,11 +1056,11 @@ public class Graph implements Sweepable {
 		
 		AffineTransform origTransform = ctxt.getTransform();
 		
-		ctxt.paintString(0, 0, 1.0, "vertex count: " + vertices.size());
+		ctxt.paintWorldString(0, 0, 1.0, "vertex count: " + vertices.size());
 		
 		ctxt.translate(0, 1);
 		
-		ctxt.paintString(0, 0, 1.0, "edge count: " + edges.size());
+		ctxt.paintWorldString(0, 0, 1.0, "edge count: " + edges.size());
 		
 		ctxt.setTransform(origTransform);
 	}

@@ -29,13 +29,13 @@ import com.gutabi.deadlock.model.cursor.StraightEdgeCursor;
 //@SuppressWarnings("serial")
 public class KeyboardController implements KeyListener {
 	
-	public void init() {
-		
-		VIEW.canvas.addKeyListener(this);
-		VIEW.controlPanel.addKeyListener(this);
-		VIEW.previewPanel.addKeyListener(this);
-		
-	}
+//	public void init() {
+//		
+//		VIEW.canvas.addKeyListener(this);
+//		VIEW.controlPanel.addKeyListener(this);
+//		VIEW.previewPanel.addKeyListener(this);
+//		
+//	}
 	
 	public void keyPressed(KeyEvent arg0) {
 		

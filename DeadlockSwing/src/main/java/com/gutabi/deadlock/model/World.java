@@ -79,10 +79,10 @@ public class World implements Sweepable {
 		worldHeight = quadrantRows * MODEL.QUADRANT_HEIGHT;
 		
 		VIEW.worldViewport = new AABB(
-				-(VIEW.CANVAS_WIDTH / VIEW.PIXELS_PER_METER_DEBUG) / 2 + MODEL.world.worldWidth/2 ,
-				-(VIEW.CANVAS_HEIGHT / VIEW.PIXELS_PER_METER_DEBUG) / 2 + MODEL.world.worldHeight/2,
-				VIEW.CANVAS_WIDTH / VIEW.PIXELS_PER_METER_DEBUG,
-				VIEW.CANVAS_HEIGHT / VIEW.PIXELS_PER_METER_DEBUG);
+				-(VIEW.canvas.getWidth() / VIEW.PIXELS_PER_METER_DEBUG) / 2 + worldWidth/2 ,
+				-(VIEW.canvas.getHeight() / VIEW.PIXELS_PER_METER_DEBUG) / 2 + worldHeight/2,
+				VIEW.canvas.getWidth() / VIEW.PIXELS_PER_METER_DEBUG,
+				VIEW.canvas.getHeight() / VIEW.PIXELS_PER_METER_DEBUG);
 		
 //		animatedGrass1 = new AnimatedGrass(new Point(worldWidth/4, worldHeight/4));
 		
@@ -146,8 +146,6 @@ public class World implements Sweepable {
 		b2dWorld = new org.jbox2d.dynamics.World(new Vec2(0.0f, 0.0f), true);
 		listener = new CarEventListener();
 		b2dWorld.setContactListener(listener);
-		
-//		b2dWorld.setDebugDraw(JBox2D);
 		
 		computeAABB();
 		
@@ -469,17 +467,8 @@ public class World implements Sweepable {
 							assert ci.stoppedTime != -1;
 							assert ci.state == CarStateEnum.BRAKING;
 							ci.deadlocked = true;
-//							ci.deadlockedTime = t;
 							
 						}
-//						else if (ci.stoppedTime == ci.startingTime) {
-//							/**
-//							 * has not moved from spawn point and was "stopped" before the cause stopped
-//							 */
-//							assert ci.stoppedTime != -1;
-//							assert ci.state == CarStateEnum.BRAKING;
-//							ci.deadlocked = true;
-//						}
 						
 					}
 					
@@ -495,7 +484,6 @@ public class World implements Sweepable {
 							assert ci.stoppedTime != -1;
 							assert ci.state == CarStateEnum.BRAKING;
 							ci.deadlocked = true;
-//							ci.deadlockedTime = t;
 							
 						}
 						
@@ -719,7 +707,7 @@ public class World implements Sweepable {
 			
 		if (MODEL.DEBUG_DRAW) {
 			ctxt.setColor(Color.BLACK);
-			ctxt.setPixelStroke(1);
+			ctxt.setWorldPixelStroke(1);
 			aabb.draw(ctxt);
 			
 		}
@@ -731,7 +719,7 @@ public class World implements Sweepable {
 		ctxt.translate(VIEW.worldViewport.x, VIEW.worldViewport.y);
 		
 		synchronized (VIEW) {
-			ctxt.paintImage(
+			ctxt.paintWorldImage(
 					0, 0, VIEW.canvasGrassImage, 0, 0, VIEW.canvasGrassImage.getWidth(), VIEW.canvasGrassImage.getHeight(),
 					0, 0, VIEW.canvasGrassImage.getWidth(), VIEW.canvasGrassImage.getHeight());
 		}
@@ -752,7 +740,7 @@ public class World implements Sweepable {
 		ctxt.translate(VIEW.worldViewport.x, VIEW.worldViewport.y);
 		
 		synchronized (VIEW) {
-			ctxt.paintImage(
+			ctxt.paintWorldImage(
 					0, 0, VIEW.canvasGraphImage, 0, 0, VIEW.canvasGraphImage.getWidth(), VIEW.canvasGraphImage.getHeight(),
 					0, 0, VIEW.canvasGraphImage.getWidth(), VIEW.canvasGraphImage.getHeight());
 		}
@@ -805,19 +793,19 @@ public class World implements Sweepable {
 		
 		AffineTransform origTransform = ctxt.getTransform();
 		
-		ctxt.paintString(0, 0, 1.0, "time: " + t);
+		ctxt.paintWorldString(0, 0, 1.0, "time: " + t);
 		
 		ctxt.translate(0, 1);
 		
-		ctxt.paintString(0, 0, 1.0, "body count: " + b2dWorld.getBodyCount());
+		ctxt.paintWorldString(0, 0, 1.0, "body count: " + b2dWorld.getBodyCount());
 		
 		ctxt.translate(0, 1);
 		
-		ctxt.paintString(0, 0, 1.0, "car count: " + cars.size());
+		ctxt.paintWorldString(0, 0, 1.0, "car count: " + cars.size());
 		
 		ctxt.translate(0, 1);
 		
-		ctxt.paintString(0, 0, 1.0, "splosions count: " + explosions.size());
+		ctxt.paintWorldString(0, 0, 1.0, "splosions count: " + explosions.size());
 		
 		ctxt.translate(0, 1);
 		

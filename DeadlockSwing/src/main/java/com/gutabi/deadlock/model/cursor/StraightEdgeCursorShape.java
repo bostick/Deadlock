@@ -48,7 +48,7 @@ public class StraightEdgeCursorShape extends Shape {
 	
 	public void draw(RenderingContext ctxt) {
 		ctxt.setColor(Color.GRAY);
-		ctxt.setPixelStroke(1);
+		ctxt.setWorldPixelStroke(1);
 		
 		pCircle.draw(ctxt);
 		line.draw(ctxt);

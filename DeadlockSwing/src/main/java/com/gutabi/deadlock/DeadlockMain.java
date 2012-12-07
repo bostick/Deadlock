@@ -24,40 +24,21 @@ static Logger logger = Logger.getLogger("deadlock");
 		
 		MODEL.menu = new MainMenu();
 		MODEL.init();
-//		MODEL.world = new World();
-//		MODEL.world = new FourByFourGridWorld();
-//		MODEL.world = new OneByOneWorld();
-//		MODEL.world.init();
 		
 		VIEW.codebase = new URL("file:.");
-		JFrame frame = VIEW.setupFrame();
+		VIEW.setupFrame();
 		VIEW.init();
 		
-//		VIEW.PIXELS_PER_METER_DEBUG = 12.5;
-//		
-//		VIEW.worldViewport = new AABB(
-//				-(VIEW.CANVAS_WIDTH / VIEW.PIXELS_PER_METER_DEBUG) / 2 + MODEL.world.worldWidth/2 ,
-//				-(VIEW.CANVAS_HEIGHT / VIEW.PIXELS_PER_METER_DEBUG) / 2 + MODEL.world.worldHeight/2,
-//				VIEW.CANVAS_WIDTH / VIEW.PIXELS_PER_METER_DEBUG,
-//				VIEW.CANVAS_HEIGHT / VIEW.PIXELS_PER_METER_DEBUG);
-		
-		CONTROLLER.init();
-		
-		
-		
-//		CONTROLLER.mode = ControlMode.IDLE;
 		CONTROLLER.mode = ControlMode.MENU;
 		
-//		VIEW.renderWorldBackground();
 		VIEW.renderMenu();
 		
-		frame.setVisible(true);
+		((JFrame)VIEW.container).setVisible(true);
 		VIEW.canvas.requestFocusInWindow();
 		
-		VIEW.canvas.postDisplay();
+		VIEW.postDisplay();
 		
 		VIEW.repaintCanvas();
-//		VIEW.repaintControlPanel();
 	}
 	
 	public static Thread.UncaughtExceptionHandler handler = new Thread.UncaughtExceptionHandler() {

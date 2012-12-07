@@ -1070,7 +1070,7 @@ public abstract class Car extends Entity {
 			if (MODEL.DEBUG_DRAW) {
 				
 				ctxt.setColor(Color.BLACK);
-				ctxt.setPixelStroke(1);
+				ctxt.setWorldPixelStroke(1);
 				shape.getAABB().draw(ctxt);
 				
 				paintID(ctxt);
@@ -1091,7 +1091,7 @@ public abstract class Car extends Entity {
 			if (MODEL.DEBUG_DRAW) {
 				
 				ctxt.setColor(Color.BLACK);
-				ctxt.setPixelStroke(1);
+				ctxt.setWorldPixelStroke(1);
 				shape.getAABB().draw(ctxt);
 				
 				paintID(ctxt);
@@ -1117,7 +1117,7 @@ public abstract class Car extends Entity {
 			if (MODEL.DEBUG_DRAW) {
 				
 				ctxt.setColor(Color.BLACK);
-				ctxt.setPixelStroke(1);
+				ctxt.setWorldPixelStroke(1);
 				shape.getAABB().draw(ctxt);
 				
 				paintID(ctxt);
@@ -1153,7 +1153,7 @@ public abstract class Car extends Entity {
 		ctxt.translate(p.x, p.y);
 		ctxt.rotate(angle);
 		
-		ctxt.paintImage(
+		ctxt.paintWorldImage(
 				CAR_LOCALX, CAR_LOCALY,
 				VIEW.sheet,
 				0, 0, (int)(CAR_LENGTH * VIEW.PIXELS_PER_METER_DEBUG), (int)(CAR_WIDTH * VIEW.PIXELS_PER_METER_DEBUG),
@@ -1179,7 +1179,7 @@ public abstract class Car extends Entity {
 		
 		int brakePixels = (int)(BRAKE_SIZE * VIEW.PIXELS_PER_METER_DEBUG);
 		
-		ctxt.paintImage(CAR_BRAKE1X, CAR_BRAKE1Y,
+		ctxt.paintWorldImage(CAR_BRAKE1X, CAR_BRAKE1Y,
 				VIEW.sheet,
 				0,
 				0,
@@ -1187,7 +1187,7 @@ public abstract class Car extends Entity {
 				brakePixels,
 				0, brakeRowStart, 0+8, brakeRowEnd);
 		
-		ctxt.paintImage(CAR_BRAKE2X, CAR_BRAKE2Y, VIEW.sheet,
+		ctxt.paintWorldImage(CAR_BRAKE2X, CAR_BRAKE2Y, VIEW.sheet,
 				0,
 				0,
 				brakePixels,
@@ -1205,7 +1205,7 @@ public abstract class Car extends Entity {
 		ctxt.translate(p.x, p.y);
 		
 		ctxt.setColor(Color.WHITE);
-		ctxt.paintString(CAR_LOCALX, 0.0, 2.0, Integer.toString(id));
+		ctxt.paintWorldString(CAR_LOCALX, 0.0, 2.0, Integer.toString(id));
 		
 		ctxt.setTransform(origTransform);
 	}

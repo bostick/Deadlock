@@ -15,15 +15,15 @@ public class MouseController implements MouseListener, MouseMotionListener {
 	
 	static Logger logger = Logger.getLogger("deadlock");
 	
-	public void init() {
-		
-		VIEW.canvas.addMouseListener(this);
-		VIEW.canvas.addMouseMotionListener(this);
-		
-		VIEW.previewPanel.addMouseListener(this);
-		VIEW.previewPanel.addMouseMotionListener(this);
-		
-	}
+//	public void init() {
+//		
+//		VIEW.canvas.addMouseListener(this);
+//		VIEW.canvas.addMouseMotionListener(this);
+//		
+//		VIEW.previewPanel.addMouseListener(this);
+//		VIEW.previewPanel.addMouseMotionListener(this);
+//		
+//	}
 	
 	public void mousePressed(MouseEvent ev) {
 		pressed(new InputEvent(ev.getComponent(), new Point(ev.getX(), ev.getY())));

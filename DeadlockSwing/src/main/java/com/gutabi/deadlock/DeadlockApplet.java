@@ -28,8 +28,6 @@ public class DeadlockApplet extends JApplet {
 		VIEW.setupApplet(app);
 		VIEW.init();
 		
-		CONTROLLER.init();
-		
 		CONTROLLER.mode = ControlMode.IDLE;
 		
 		VIEW.renderWorldBackground();

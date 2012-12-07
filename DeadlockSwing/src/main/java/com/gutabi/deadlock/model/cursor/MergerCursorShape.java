@@ -69,7 +69,7 @@ public class MergerCursorShape extends Shape {
 	}
 	
 	public void draw(RenderingContext ctxt) {
-		ctxt.setPixelStroke(1);
+		ctxt.setWorldPixelStroke(1);
 		ctxt.setColor(Color.GRAY);
 		
 		worldQ.draw(ctxt);

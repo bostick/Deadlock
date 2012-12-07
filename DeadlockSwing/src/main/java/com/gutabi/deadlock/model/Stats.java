@@ -22,7 +22,7 @@ public class Stats {
 	public void paint(RenderingContext ctxt) {
 		
 		ctxt.setColor(Color.BLACK);
-		ctxt.setPixelStroke(1);
+		ctxt.setWorldPixelStroke(1);
 		
 		AffineTransform origTransform1 = ctxt.getTransform();
 		
@@ -38,7 +38,7 @@ public class Stats {
 			lastTime = curTime;
 		}
 		
-		ctxt.paintString(0, 0, 1.0, "FPS: " + fps);
+		ctxt.paintWorldString(0, 0, 1.0, "FPS: " + fps);
 		
 		ctxt.translate(0, 1);
 		

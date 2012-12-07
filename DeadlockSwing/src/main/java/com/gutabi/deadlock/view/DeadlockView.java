@@ -14,8 +14,8 @@ import java.net.URL;
 
 import javax.imageio.ImageIO;
 import javax.swing.BoxLayout;
-import javax.swing.JApplet;
 import javax.swing.JFrame;
+import javax.swing.RootPaneContainer;
 import javax.swing.SwingUtilities;
 
 import org.apache.log4j.Logger;
@@ -29,14 +29,15 @@ public class DeadlockView {
 	
 	public static DeadlockView VIEW = new DeadlockView();
 	
-	public static final int CANVAS_WIDTH = 1427;
-	public static final int CANVAS_HEIGHT = 822;
+//	public static final int CANVAS_WIDTH = 1427;
+//	public static final int CANVAS_HEIGHT = 822;
 	
 	public static final int PREVIEW_WIDTH = 100;
 	public static final int PREVIEW_HEIGHT = 100;
 	
 	public URL codebase;
-//	private JFrame frame;
+	
+	public RootPaneContainer container;
 	public Canvas canvas;
 	public ControlPanel controlPanel;
 	public PreviewPanel previewPanel;
@@ -57,10 +58,6 @@ public class DeadlockView {
 	
 	public BufferedImage canvasMenuImage;
 	
-//	public boolean inMiddleOfRenderGrass;
-//	public boolean inMiddleOfRenderGraph;
-	
-	
 	public static Color LIGHTGREEN = new Color(128, 255, 128);
 	public static Color DARKGREEN = new Color(0, 128, 0);
 	
@@ -72,8 +69,8 @@ public class DeadlockView {
 	
 	public void init() throws Exception {
 		
-		assert canvas.getWidth() == CANVAS_WIDTH;
-		assert canvas.getHeight() == CANVAS_HEIGHT;
+//		assert canvas.getWidth() == CANVAS_WIDTH;
+//		assert canvas.getHeight() == CANVAS_HEIGHT;
 		
 		sheet = ImageIO.read(new URL(codebase, "media/sheet.png"));
 		explosionSheet = ImageIO.read(new URL(codebase, "media\\explosionSheet.png"));
@@ -93,14 +90,10 @@ public class DeadlockView {
 			}
 		}
 		
-		canvasGrassImage = new BufferedImage(CANVAS_WIDTH, CANVAS_HEIGHT, BufferedImage.TYPE_INT_RGB);
-		
-		canvasGraphImage = new BufferedImage(CANVAS_WIDTH, CANVAS_HEIGHT, BufferedImage.TYPE_INT_ARGB);
-		
 		canvasMenuImage = new BufferedImage(800, 600, BufferedImage.TYPE_INT_RGB);
 	}
 	
-	public JFrame setupFrame() {
+	public void setupFrame() {
 		
 		JFrame newFrame;
 		
@@ -108,50 +101,93 @@ public class DeadlockView {
 		
 		newFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
-		canvas = new Canvas();
-		canvas.setFocusable(true);
-		
-		previewPanel = new PreviewPanel();
-		
-		controlPanel = new ControlPanel();
-		controlPanel.init();
-		
-		Container cp = newFrame.getContentPane();
-		cp.setLayout(new BoxLayout(cp, BoxLayout.X_AXIS));
-		cp.add(canvas);
-		cp.add(controlPanel);
-		
-		newFrame.pack();
+		setupCanvas(newFrame);
 		
 		newFrame.setSize((int)(WindowInfo.windowDim().width), (int)(WindowInfo.windowDim().height));
 		newFrame.setLocation((int)(WindowInfo.windowLoc().x), (int)(WindowInfo.windowLoc().y));
 		
-		return newFrame;
+		container = newFrame;
 	}
 	
-	public void setupApplet(JApplet app) {
-		
-//		app.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		
-//		app.setJMenuBar(null);
+//	public void setupApplet() {
+//		
+//		setupContent(app);
+//		
+//		app.setSize((int)(WindowInfo.windowDim().width), (int)(WindowInfo.windowDim().height));
+//		app.setLocation((int)(WindowInfo.windowLoc().x), (int)(WindowInfo.windowLoc().y));
+//	}
+	
+	public void setupCanvas(RootPaneContainer container) {
 		
 		canvas = new Canvas();
 		canvas.setFocusable(true);
 		
+		canvas.addMouseListener(CONTROLLER.mc);
+		canvas.addMouseMotionListener(CONTROLLER.mc);
+		canvas.addKeyListener(CONTROLLER.kc);
+		
+		Container cp = container.getContentPane();
+//		cp.setLayout(new BoxLayout(cp, BoxLayout.X_AXIS));
+		cp.add(canvas);
+		
+	}
+	
+	public void teardownCanvas(RootPaneContainer container) {
+		
+		Container cp = container.getContentPane();
+		cp.remove(canvas);
+		
+		canvas = null;
+		
+	}
+	
+	public void setupCanvasAndControlPanel(RootPaneContainer container) {
+		
+		canvas = new Canvas();
+		canvas.setFocusable(true);
+		
+		canvas.addMouseListener(CONTROLLER.mc);
+		canvas.addMouseMotionListener(CONTROLLER.mc);
+		canvas.addKeyListener(CONTROLLER.kc);
+		
 		previewPanel = new PreviewPanel();
+		
+		previewPanel.addMouseListener(CONTROLLER.mc);
+		previewPanel.addMouseMotionListener(CONTROLLER.mc);
+		previewPanel.addKeyListener(CONTROLLER.kc);
 		
 		controlPanel = new ControlPanel();
 		controlPanel.init();
+		controlPanel.addKeyListener(CONTROLLER.kc);
 		
-		Container cp = app.getContentPane();
+		Container cp = container.getContentPane();
 		cp.setLayout(new BoxLayout(cp, BoxLayout.X_AXIS));
 		cp.add(canvas);
 		cp.add(controlPanel);
 		
-//		app.pack();
+	}
+	
+	public void teardownCanvasAndControlPanel(RootPaneContainer container) {
 		
-		app.setSize((int)(WindowInfo.windowDim().width), (int)(WindowInfo.windowDim().height));
-		app.setLocation((int)(WindowInfo.windowLoc().x), (int)(WindowInfo.windowLoc().y));
+		Container cp = container.getContentPane();
+		
+		cp.remove(canvas);
+		cp.remove(controlPanel);
+		
+		canvas = null;
+		previewPanel = null;
+		controlPanel = null;
+		
+	}
+	
+	public void postDisplay() {
+		
+		canvas.postDisplay();
+		
+		canvasGrassImage = new BufferedImage(canvas.getWidth(), canvas.getHeight(), BufferedImage.TYPE_INT_RGB);
+		
+		canvasGraphImage = new BufferedImage(canvas.getWidth(), canvas.getHeight(), BufferedImage.TYPE_INT_ARGB);
+		
 	}
 	
 	public Point canvasToWorld(Point p) {
@@ -161,7 +197,7 @@ public class DeadlockView {
 	}
 	
 	public Point canvasToMenu(Point p) {
-		return new Point(p.x - (CANVAS_WIDTH/2 - 800/2), p.y - (CANVAS_HEIGHT/2 - 600/2));
+		return new Point(p.x - (canvas.getWidth()/2 - 800/2), p.y - (canvas.getHeight()/2 - 600/2));
 	}
 	
 	public int metersToPixels(double m) {
@@ -192,8 +228,8 @@ public class DeadlockView {
 		
 		VIEW.PIXELS_PER_METER_DEBUG = factor * VIEW.PIXELS_PER_METER_DEBUG; 
 		
-		double newWidth = CANVAS_WIDTH / VIEW.PIXELS_PER_METER_DEBUG;
-		double newHeight = CANVAS_HEIGHT / VIEW.PIXELS_PER_METER_DEBUG;
+		double newWidth = canvas.getWidth() / VIEW.PIXELS_PER_METER_DEBUG;
+		double newHeight = canvas.getHeight() / VIEW.PIXELS_PER_METER_DEBUG;
 		
 		VIEW.worldViewport = new AABB(center.x - newWidth/2, center.y - newHeight/2, newWidth, newHeight);
 		
@@ -205,8 +241,7 @@ public class DeadlockView {
 			
 			AffineTransform origTrans = ctxt.getTransform();
 			
-			ctxt.scale(PIXELS_PER_METER_DEBUG);
-			ctxt.translate(CANVAS_WIDTH/2 - 800/2, CANVAS_HEIGHT/2 - 600/2);
+			ctxt.translate(canvas.getWidth()/2 - 800/2, canvas.getHeight()/2 - 600/2);
 			
 			MODEL.menu.paint(ctxt);
 			
@@ -231,7 +266,6 @@ public class DeadlockView {
 			
 			if (MODEL.FPS_DRAW) {
 				
-//				ctxt.translate(worldViewport.x / PIXELS_PER_METER_DEBUG, worldViewport.y / PIXELS_PER_METER_DEBUG);
 				ctxt.translate(worldViewport.x, worldViewport.y);
 				
 				MODEL.stats.paint(ctxt);
@@ -243,19 +277,7 @@ public class DeadlockView {
 		
 	}
 	
-//	private Runnable repaintRunner = new Runnable() {
-//		public void run() {
-//			repaintCanvas();
-//		}
-//	};
-//	
-//	public void repaintCanvasOnEDT() {
-////		assert !SwingUtilities.isEventDispatchThread();
-//		SwingUtilities.invokeLater(repaintRunner);
-//	}
-	
 	public void repaintCanvas() {
-//		assert SwingUtilities.isEventDispatchThread();
 		assert !Thread.holdsLock(MODEL);
 		
 		if (SwingUtilities.isEventDispatchThread()) {
@@ -277,14 +299,12 @@ public class DeadlockView {
 			} while (canvas.bs.contentsRestored());
 			
 			canvas.bs.show();
-//			canvas.repaint();
 			
 		} while (canvas.bs.contentsLost());
 		
 	}
 	
 	public void repaintControlPanel() {
-//		assert SwingUtilities.isEventDispatchThread();
 		
 		if (CONTROLLER.mode == ControlMode.MENU) {
 			
@@ -297,14 +317,13 @@ public class DeadlockView {
 	}
 	
 	public void renderWorldBackground() {
-//		assert !SwingUtilities.isEventDispatchThread();
 		assert !Thread.holdsLock(MODEL);
 		
 		synchronized (VIEW) {
 			Graphics2D canvasGrassImageG2 = canvasGrassImage.createGraphics();
 			
 			canvasGrassImageG2.setColor(Color.WHITE);
-			canvasGrassImageG2.fillRect(0, 0, CANVAS_WIDTH, VIEW.CANVAS_HEIGHT);
+			canvasGrassImageG2.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
 			
 			canvasGrassImageG2.translate((int)(-VIEW.worldViewport.x * PIXELS_PER_METER_DEBUG), (int)(-VIEW.worldViewport.y * PIXELS_PER_METER_DEBUG));
 			
@@ -324,7 +343,7 @@ public class DeadlockView {
 			AlphaComposite c = AlphaComposite.getInstance(AlphaComposite.SRC, 0.0f);
 			canvasGraphImageG2.setComposite(c);
 			canvasGraphImageG2.setColor(new Color(0, 0, 0, 0));
-			canvasGraphImageG2.fillRect(0, 0, CANVAS_WIDTH, VIEW.CANVAS_HEIGHT);
+			canvasGraphImageG2.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
 			canvasGraphImageG2.setComposite(orig);
 			
 			canvasGraphImageG2.translate((int)((-VIEW.worldViewport.x) * PIXELS_PER_METER_DEBUG), (int)((-VIEW.worldViewport.y) * PIXELS_PER_METER_DEBUG));

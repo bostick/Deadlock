@@ -4,7 +4,6 @@ import static com.gutabi.deadlock.controller.DeadlockController.CONTROLLER;
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
-import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.image.BufferStrategy;
 
@@ -12,17 +11,17 @@ import com.gutabi.deadlock.controller.InputEvent;
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
 
-//@SuppressWarnings("serial")
-@SuppressWarnings({"serial", "static-access"})
+@SuppressWarnings("serial")
+//@SuppressWarnings({"serial", "static-access"})
 public class Canvas extends java.awt.Canvas {
 	
 	BufferStrategy bs;
 	
 	public Canvas() {
 		
-		setSize(new Dimension(VIEW.CANVAS_WIDTH, VIEW.CANVAS_HEIGHT));
-		setPreferredSize(new Dimension(VIEW.CANVAS_WIDTH, VIEW.CANVAS_HEIGHT));
-		setMaximumSize(new Dimension(VIEW.CANVAS_WIDTH, VIEW.CANVAS_HEIGHT));
+//		setSize(new Dimension(VIEW.CANVAS_WIDTH, VIEW.CANVAS_HEIGHT));
+//		setPreferredSize(new Dimension(VIEW.CANVAS_WIDTH, VIEW.CANVAS_HEIGHT));
+//		setMaximumSize(new Dimension(VIEW.CANVAS_WIDTH, VIEW.CANVAS_HEIGHT));
 		
 	}
 	

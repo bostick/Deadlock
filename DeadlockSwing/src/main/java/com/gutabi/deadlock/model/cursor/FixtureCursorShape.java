@@ -72,7 +72,7 @@ public class FixtureCursorShape extends Shape {
 
 	public void draw(RenderingContext ctxt) {
 		ctxt.setColor(Color.GRAY);
-		ctxt.setPixelStroke(1);
+		ctxt.setWorldPixelStroke(1);
 		
 		worldSource.draw(ctxt);
 		worldSink.draw(ctxt);

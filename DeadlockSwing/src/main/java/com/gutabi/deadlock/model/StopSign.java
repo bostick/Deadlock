@@ -105,7 +105,7 @@ public class StopSign extends Entity {
 			
 			if (enabled) {
 				
-				ctxt.paintImage(p.x - StopSign.STOPSIGN_SIZE/2, p.y - StopSign.STOPSIGN_SIZE/2, VIEW.sheet,
+				ctxt.paintWorldImage(p.x - StopSign.STOPSIGN_SIZE/2, p.y - StopSign.STOPSIGN_SIZE/2, VIEW.sheet,
 						0,
 						0,
 						VIEW.metersToPixels(STOPSIGN_SIZE),
@@ -129,7 +129,7 @@ public class StopSign extends Entity {
 			ctxt.setColor(Color.RED);
 			shape.paint(ctxt);
 		} else {
-			ctxt.setPixelStroke(1);
+			ctxt.setWorldPixelStroke(1);
 			ctxt.setColor(Color.WHITE);
 			shape.draw(ctxt);
 		}
