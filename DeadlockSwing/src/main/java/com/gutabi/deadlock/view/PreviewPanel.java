@@ -1,7 +1,7 @@
 package com.gutabi.deadlock.view;
 
+import static com.gutabi.deadlock.DeadlockApplication.APP;
 import static com.gutabi.deadlock.view.DeadlockView.VIEW;
-import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -17,9 +17,9 @@ import com.gutabi.deadlock.core.Point;
 public class PreviewPanel extends JPanel {
 	
 	public PreviewPanel() {
-		setSize(new Dimension(MODEL.world.PREVIEW_WIDTH, MODEL.world.PREVIEW_HEIGHT));
-		setPreferredSize(new Dimension(MODEL.world.PREVIEW_WIDTH, MODEL.world.PREVIEW_HEIGHT));
-		setMaximumSize(new Dimension(MODEL.world.PREVIEW_WIDTH, MODEL.world.PREVIEW_HEIGHT));
+		setSize(new Dimension(APP.world.PREVIEW_WIDTH, APP.world.PREVIEW_HEIGHT));
+		setPreferredSize(new Dimension(APP.world.PREVIEW_WIDTH, APP.world.PREVIEW_HEIGHT));
+		setMaximumSize(new Dimension(APP.world.PREVIEW_WIDTH, APP.world.PREVIEW_HEIGHT));
 	}
 	
 	Point lastPressPreviewPoint;
@@ -56,9 +56,9 @@ public class PreviewPanel extends JPanel {
 			double dx = lastDragPreviewPoint.x - penDragPreviewPoint.x;
 			double dy = lastDragPreviewPoint.y - penDragPreviewPoint.y;
 			
-			MODEL.world.pan(new Point(dx, dy));
+			APP.world.pan(new Point(dx, dy));
 			
-			MODEL.world.render();
+			APP.world.render();
 			VIEW.repaintCanvas();
 			VIEW.repaintControlPanel();
 			
@@ -69,13 +69,13 @@ public class PreviewPanel extends JPanel {
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		
-		if (MODEL.world.previewImage != null) {
+		if (APP.world.previewImage != null) {
 			
-			g.drawImage(MODEL.world.previewImage, 0, 0, null);
+			g.drawImage(APP.world.previewImage, 0, 0, null);
 			
-			Point prevLoc = MODEL.world.worldToPreview(MODEL.world.worldViewport.ul);
+			Point prevLoc = APP.world.worldToPreview(APP.world.worldViewport.ul);
 			
-			Point prevDim = MODEL.world.worldToPreview(new Point(MODEL.world.worldViewport.width, MODEL.world.worldViewport.height));
+			Point prevDim = APP.world.worldToPreview(new Point(APP.world.worldViewport.width, APP.world.worldViewport.height));
 			
 			g.setColor(Color.BLUE);
 			g.drawRect(

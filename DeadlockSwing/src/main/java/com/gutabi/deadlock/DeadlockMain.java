@@ -1,7 +1,7 @@
 package com.gutabi.deadlock;
 
+import static com.gutabi.deadlock.DeadlockApplication.APP;
 import static com.gutabi.deadlock.controller.DeadlockController.CONTROLLER;
-import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
 import java.net.URL;
@@ -14,8 +14,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 import org.apache.log4j.Logger;
 
 import com.gutabi.deadlock.controller.ControlMode;
-import com.gutabi.deadlock.model.menu.MainMenu;
-import static com.gutabi.deadlock.DeadlockApplication.APP;
+import com.gutabi.deadlock.menu.MainMenu;
 
 public class DeadlockMain  {
 	
@@ -23,7 +22,7 @@ static Logger logger = Logger.getLogger("deadlock");
 	
 	static void createAndShowGUI() throws Exception {
 		
-		MODEL.menu = new MainMenu();
+		APP.menu = new MainMenu();
 		
 		APP.codebase = new URL("file:.");
 		
@@ -32,7 +31,7 @@ static Logger logger = Logger.getLogger("deadlock");
 		
 		CONTROLLER.mode = ControlMode.MENU;
 		
-		MODEL.menu.render();
+		APP.menu.render();
 		
 		((JFrame)VIEW.container).setVisible(true);
 		VIEW.canvas.requestFocusInWindow();

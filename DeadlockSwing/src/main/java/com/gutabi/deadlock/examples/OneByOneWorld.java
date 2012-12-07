@@ -1,6 +1,6 @@
 package com.gutabi.deadlock.examples;
 
-import com.gutabi.deadlock.model.World;
+import com.gutabi.deadlock.world.World;
 
 public class OneByOneWorld extends World {
 

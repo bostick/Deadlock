@@ -1,12 +1,12 @@
 package com.gutabi.deadlock.examples;
 
 import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.model.Stroke;
-import com.gutabi.deadlock.model.World;
-import com.gutabi.deadlock.model.graph.Axis;
-import com.gutabi.deadlock.model.graph.Fixture;
-import com.gutabi.deadlock.model.graph.FixtureType;
-import com.gutabi.deadlock.model.graph.Side;
+import com.gutabi.deadlock.world.Stroke;
+import com.gutabi.deadlock.world.World;
+import com.gutabi.deadlock.world.graph.Axis;
+import com.gutabi.deadlock.world.graph.Fixture;
+import com.gutabi.deadlock.world.graph.FixtureType;
+import com.gutabi.deadlock.world.graph.Side;
 
 public class FourByFourGridWorld extends World {
 

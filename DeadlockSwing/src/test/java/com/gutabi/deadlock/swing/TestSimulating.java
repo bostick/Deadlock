@@ -1,7 +1,7 @@
 package com.gutabi.deadlock.swing;
 
+import static com.gutabi.deadlock.DeadlockModel.APP;
 import static com.gutabi.deadlock.controller.DeadlockController.CONTROLLER;
-import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 import static com.gutabi.deadlock.swing.TestDragging.testDragged;
 import static com.gutabi.deadlock.swing.TestDragging.testPressed;
 import static com.gutabi.deadlock.swing.TestDragging.testReleased;
@@ -18,12 +18,12 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.model.Stroke;
-import com.gutabi.deadlock.model.car.Car;
-import com.gutabi.deadlock.model.car.NormalCar;
 import com.gutabi.deadlock.model.fixture.WorldSource;
-import com.gutabi.deadlock.model.graph.Road;
-import com.gutabi.deadlock.model.graph.Vertex;
+import com.gutabi.deadlock.world.Stroke;
+import com.gutabi.deadlock.world.car.Car;
+import com.gutabi.deadlock.world.car.NormalCar;
+import com.gutabi.deadlock.world.graph.Road;
+import com.gutabi.deadlock.world.graph.Vertex;
 
 @SuppressWarnings("serial")
 public class TestSimulating {
@@ -33,7 +33,7 @@ public class TestSimulating {
 		
 		VIEW.init();
 		CONTROLLER.init();
-		MODEL.init();
+		APP.init();
 		
 		VIEW.frame.setVisible(true);
 		VIEW.canvas.requestFocusInWindow();
@@ -49,14 +49,14 @@ public class TestSimulating {
 	public void setUp() throws Exception {
 		
 		//CONTROLLER.strat = MassageStrategy.NONE;
-		MODEL.init();
+		APP.init();
 		
 	}
 
 	@After
 	public void tearDown() throws Exception {
 		
-		assertTrue(MODEL.world.checkConsistency());
+		assertTrue(APP.world.checkConsistency());
 		
 		Thread.sleep(200);
 		
@@ -2473,27 +2473,27 @@ public class TestSimulating {
 	@Test
 	public void test3() throws Exception {
 		
-		synchronized (MODEL) {
+		synchronized (APP) {
 			
 			//MODEL.viewDim = new Dim(200, 500);
 			//MODEL.viewLoc = new Point(575, 375);
 			//MODEL.viewLoc = new Point(560, 400);
 			
-			MODEL.stroke = new Stroke(Vertex.INIT_VERTEX_RADIUS){{pts.addAll(new ArrayList<Point>(){{add(new Point(600, 450));add(new Point(700, 450));}});}};
+			APP.stroke = new Stroke(Vertex.INIT_VERTEX_RADIUS){{pts.addAll(new ArrayList<Point>(){{add(new Point(600, 450));add(new Point(700, 450));}});}};
 			CONTROLLER.processNewStroke();
 			
-			MODEL.stroke = new Stroke(Vertex.INIT_VERTEX_RADIUS){{pts.addAll(new ArrayList<Point>(){{add(new Point(650, 400));add(new Point(650, 500));}});}};
+			APP.stroke = new Stroke(Vertex.INIT_VERTEX_RADIUS){{pts.addAll(new ArrayList<Point>(){{add(new Point(650, 400));add(new Point(650, 500));}});}};
 			CONTROLLER.processNewStroke();
 			
-			Vertex aV = ((Vertex)MODEL.world.hitTest(new Point(600, 450)));
+			Vertex aV = ((Vertex)APP.world.hitTest(new Point(600, 450)));
 			
-			Vertex bV = ((Vertex)MODEL.world.hitTest(new Point(650, 500)));
+			Vertex bV = ((Vertex)APP.world.hitTest(new Point(650, 500)));
 			
 			Car a = new NormalCar((WorldSource)aV);
 			Car b = new NormalCar((WorldSource)bV);
 			
-			MODEL.world.addCar(a);
-			MODEL.world.addCar(b);
+			APP.world.addCar(a);
+			APP.world.addCar(b);
 		}
 		
 		CONTROLLER.queue(new Runnable(){
@@ -2510,22 +2510,22 @@ public class TestSimulating {
 	@Test
 	public void test4() throws Exception {
 		
-		synchronized (MODEL) {
+		synchronized (APP) {
 			
 			//MODEL.viewDim = new Dim(200, 500);
 			//MODEL.viewLoc = new Point(575, 375);
 			//MODEL.viewLoc = new Point(560, 400);
 			
-			MODEL.stroke = new Stroke(Vertex.INIT_VERTEX_RADIUS){{pts.addAll(new ArrayList<Point>(){{add(new Point(595, 450));add(new Point(695, 450));}});}};
+			APP.stroke = new Stroke(Vertex.INIT_VERTEX_RADIUS){{pts.addAll(new ArrayList<Point>(){{add(new Point(595, 450));add(new Point(695, 450));}});}};
 			CONTROLLER.processNewStroke();
 			
-			MODEL.stroke = new Stroke(Vertex.INIT_VERTEX_RADIUS){{pts.addAll(new ArrayList<Point>(){{add(new Point(650, 400));add(new Point(650, 500));}});}};
+			APP.stroke = new Stroke(Vertex.INIT_VERTEX_RADIUS){{pts.addAll(new ArrayList<Point>(){{add(new Point(650, 400));add(new Point(650, 500));}});}};
 			CONTROLLER.processNewStroke();
 			
 //			MODEL.processStroke(new Point(595, 450), new Point(695, 450));
 //			MODEL.processStroke(new Point(650, 400), new Point(650, 500));
-			Vertex aV = ((Vertex)MODEL.world.hitTest(new Point(595, 450)));
-			Vertex bV = ((Vertex)MODEL.world.hitTest(new Point(650, 500)));
+			Vertex aV = ((Vertex)APP.world.hitTest(new Point(595, 450)));
+			Vertex bV = ((Vertex)APP.world.hitTest(new Point(650, 500)));
 //			MODEL.processStroke(new Point(596, 450), new Point(696, 450));
 //			MODEL.processStroke(new Point(650, 400), new Point(650, 500));
 //			Vertex aV = MODEL.findVertex(new Point(596, 450));
@@ -2534,8 +2534,8 @@ public class TestSimulating {
 			Car a = new NormalCar((WorldSource)aV);
 			Car b = new NormalCar((WorldSource)bV);
 			
-			MODEL.world.addCar(a);
-			MODEL.world.addCar(b);
+			APP.world.addCar(a);
+			APP.world.addCar(b);
 		}
 		
 		CONTROLLER.queue(new Runnable(){
@@ -2552,31 +2552,31 @@ public class TestSimulating {
 	@Test
 	public void test5() throws Exception {
 		
-		synchronized (MODEL) {
+		synchronized (APP) {
 			
 			//MODEL.viewDim = new Dim(200, 500);
 			//MODEL.viewLoc = new Point(575, 375);
 			//MODEL.viewLoc = new Point(560, 400);
 			
-			MODEL.stroke = new Stroke(Vertex.INIT_VERTEX_RADIUS){{pts.addAll(new ArrayList<Point>(){{add(new Point(600, 450));add(new Point(700, 450));}});}};
+			APP.stroke = new Stroke(Vertex.INIT_VERTEX_RADIUS){{pts.addAll(new ArrayList<Point>(){{add(new Point(600, 450));add(new Point(700, 450));}});}};
 			CONTROLLER.processNewStroke();
 			
-			MODEL.stroke = new Stroke(Vertex.INIT_VERTEX_RADIUS){{pts.addAll(new ArrayList<Point>(){{add(new Point(650, 400));add(new Point(650, 500));}});}};
+			APP.stroke = new Stroke(Vertex.INIT_VERTEX_RADIUS){{pts.addAll(new ArrayList<Point>(){{add(new Point(650, 400));add(new Point(650, 500));}});}};
 			CONTROLLER.processNewStroke();
 //			MODEL.processStroke(new Point(600, 450), new Point(700, 450));
 //			MODEL.processStroke(new Point(650, 400), new Point(650, 500));
 			
-			Vertex aV = ((Vertex)MODEL.world.hitTest(new Point(600, 450)));
-			Vertex bV = ((Vertex)MODEL.world.hitTest(new Point(650, 500)));
-			Vertex cV = ((Vertex)MODEL.world.hitTest(new Point(650, 400)));
+			Vertex aV = ((Vertex)APP.world.hitTest(new Point(600, 450)));
+			Vertex bV = ((Vertex)APP.world.hitTest(new Point(650, 500)));
+			Vertex cV = ((Vertex)APP.world.hitTest(new Point(650, 400)));
 			
 			Car a = new NormalCar((WorldSource)aV);
 			Car b = new NormalCar((WorldSource)bV);
 			Car c = new NormalCar((WorldSource)cV);
 			
-			MODEL.world.addCar(a);
-			MODEL.world.addCar(b);
-			MODEL.world.addCar(c);
+			APP.world.addCar(a);
+			APP.world.addCar(b);
+			APP.world.addCar(c);
 		}
 		
 		CONTROLLER.queue(new Runnable(){

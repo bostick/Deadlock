@@ -1,9 +1,9 @@
 package com.gutabi.deadlock.view;
 
+import static com.gutabi.deadlock.DeadlockApplication.APP;
 import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
 import com.gutabi.deadlock.core.Point;
-import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 
 //@SuppressWarnings("static-access")
 public class AnimatedExplosion {
@@ -60,8 +60,8 @@ public class AnimatedExplosion {
 		ctxt.paintWorldImage(p.x - explosionWidth/2, p.y - explosionHeight/2, VIEW.explosionSheet,
 				0,
 				0,
-				(int)Math.round(MODEL.world.PIXELS_PER_METER_DEBUG * explosionWidth),
-				(int)Math.round(MODEL.world.PIXELS_PER_METER_DEBUG * explosionHeight),
+				(int)Math.round(APP.world.PIXELS_PER_METER_DEBUG * explosionWidth),
+				(int)Math.round(APP.world.PIXELS_PER_METER_DEBUG * explosionHeight),
 				71 * index, 0, 71 * index + 71, 100);
 		
 	}

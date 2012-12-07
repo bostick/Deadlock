@@ -1,7 +1,7 @@
 package com.gutabi.deadlock.controller;
 
+import static com.gutabi.deadlock.DeadlockApplication.APP;
 import static com.gutabi.deadlock.controller.DeadlockController.CONTROLLER;
-import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -52,7 +52,7 @@ public class KeyboardController implements KeyListener {
 	public void qKey() {
 		switch (CONTROLLER.mode) {
 		case WORLD:
-			MODEL.world.qKey();
+			APP.world.qKey();
 			break;
 		case MENU:
 			break;
@@ -62,7 +62,7 @@ public class KeyboardController implements KeyListener {
 	public void wKey() {
 		switch (CONTROLLER.mode) {
 		case WORLD:
-			MODEL.world.wKey();
+			APP.world.wKey();
 			break;
 		case MENU:
 			break;
@@ -72,7 +72,7 @@ public class KeyboardController implements KeyListener {
 	public void gKey() {
 		switch (CONTROLLER.mode) {
 		case WORLD:
-			MODEL.world.gKey();
+			APP.world.gKey();
 			break;
 		case MENU:
 			break;
@@ -82,7 +82,7 @@ public class KeyboardController implements KeyListener {
 	public void deleteKey() {
 		switch (CONTROLLER.mode) {
 		case WORLD:
-			MODEL.world.deleteKey();
+			APP.world.deleteKey();
 			break;
 		case MENU:
 			break;
@@ -92,7 +92,7 @@ public class KeyboardController implements KeyListener {
 	public void insertKey() {
 		switch (CONTROLLER.mode) {
 		case WORLD:
-			MODEL.world.insertKey();
+			APP.world.insertKey();
 			break;
 		case MENU:
 			break;
@@ -102,7 +102,7 @@ public class KeyboardController implements KeyListener {
 	public void escKey() {
 		switch (CONTROLLER.mode) {
 		case WORLD:
-			MODEL.world.escKey();
+			APP.world.escKey();
 			break;
 		case MENU:
 			break;
@@ -112,7 +112,7 @@ public class KeyboardController implements KeyListener {
 	public void d1Key() {
 		switch (CONTROLLER.mode) {
 		case WORLD:
-			MODEL.world.d1Key();
+			APP.world.d1Key();
 			break;
 		case MENU:
 			break;
@@ -122,7 +122,7 @@ public class KeyboardController implements KeyListener {
 	public void d2Key() {
 		switch (CONTROLLER.mode) {
 		case WORLD:
-			MODEL.world.d2Key();
+			APP.world.d2Key();
 			break;
 		case MENU:
 			break;
@@ -132,7 +132,7 @@ public class KeyboardController implements KeyListener {
 	public void d3Key() {
 		switch (CONTROLLER.mode) {
 		case WORLD:
-			MODEL.world.d3Key();
+			APP.world.d3Key();
 			break;
 		case MENU:
 			break;
@@ -142,7 +142,7 @@ public class KeyboardController implements KeyListener {
 	public void plusKey() {
 		switch (CONTROLLER.mode) {
 		case WORLD:
-			MODEL.world.plusKey();
+			APP.world.plusKey();
 			break;
 		case MENU:
 			break;
@@ -152,7 +152,7 @@ public class KeyboardController implements KeyListener {
 	public void minusKey() {
 		switch (CONTROLLER.mode) {
 		case WORLD:
-			MODEL.world.minusKey();
+			APP.world.minusKey();
 			break;
 		case MENU:
 			break;
@@ -164,7 +164,7 @@ public class KeyboardController implements KeyListener {
 		case WORLD:
 			break;
 		case MENU:
-			MODEL.menu.downKey();
+			APP.menu.downKey();
 			break;
 		}
 	}
@@ -174,7 +174,7 @@ public class KeyboardController implements KeyListener {
 		case WORLD:
 			break;
 		case MENU:
-			MODEL.menu.upKey();
+			APP.menu.upKey();
 			break;
 		}
 	}
@@ -184,7 +184,7 @@ public class KeyboardController implements KeyListener {
 		case WORLD:
 			break;
 		case MENU:
-			MODEL.menu.enterKey();
+			APP.menu.enterKey();
 			break;
 		}
 		

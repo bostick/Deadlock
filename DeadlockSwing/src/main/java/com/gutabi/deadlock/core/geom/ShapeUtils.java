@@ -2,9 +2,9 @@ package com.gutabi.deadlock.core.geom;
 
 import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.model.cursor.FixtureCursorShape;
-import com.gutabi.deadlock.model.cursor.MergerCursorShape;
-import com.gutabi.deadlock.model.cursor.StraightEdgeCursorShape;
+import com.gutabi.deadlock.world.cursor.FixtureCursorShape;
+import com.gutabi.deadlock.world.cursor.MergerCursorShape;
+import com.gutabi.deadlock.world.cursor.StraightEdgeCursorShape;
 
 public class ShapeUtils {
 	

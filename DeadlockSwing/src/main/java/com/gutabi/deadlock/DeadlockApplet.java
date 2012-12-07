@@ -2,8 +2,8 @@
 package com.gutabi.deadlock;
 
 
+import static com.gutabi.deadlock.DeadlockApplication.APP;
 import static com.gutabi.deadlock.controller.DeadlockController.CONTROLLER;
-import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
 import javax.swing.JApplet;
@@ -13,9 +13,7 @@ import javax.swing.UIManager;
 import org.apache.log4j.Logger;
 
 import com.gutabi.deadlock.controller.ControlMode;
-import com.gutabi.deadlock.model.menu.MainMenu;
-
-import static com.gutabi.deadlock.DeadlockApplication.APP;
+import com.gutabi.deadlock.menu.MainMenu;
 
 @SuppressWarnings("serial")
 public class DeadlockApplet extends JApplet {
@@ -24,7 +22,7 @@ public class DeadlockApplet extends JApplet {
 	
 	static void createAndShowGUI(DeadlockApplet app) throws Exception {
 		
-		MODEL.menu = new MainMenu();
+		APP.menu = new MainMenu();
 		
 		APP.codebase = app.getCodeBase();
 		VIEW.setupApplet(app);
@@ -32,7 +30,7 @@ public class DeadlockApplet extends JApplet {
 		
 		CONTROLLER.mode = ControlMode.MENU;
 		
-		MODEL.menu.render();
+		APP.menu.render();
 		
 		app.setVisible(true);
 		VIEW.canvas.requestFocusInWindow();

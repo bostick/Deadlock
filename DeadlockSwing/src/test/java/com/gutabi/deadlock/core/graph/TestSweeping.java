@@ -1,7 +1,7 @@
 package com.gutabi.deadlock.core.graph;
 
+import static com.gutabi.deadlock.DeadlockModel.APP;
 import static com.gutabi.deadlock.controller.DeadlockController.CONTROLLER;
-import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 import static com.gutabi.deadlock.swing.TestDragging.testWorldDragged;
 import static com.gutabi.deadlock.swing.TestDragging.testWorldPressed;
 import static com.gutabi.deadlock.swing.TestDragging.testWorldReleased;
@@ -15,16 +15,16 @@ import org.junit.Test;
 
 import com.gutabi.deadlock.controller.ControlMode;
 import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.model.World;
+import com.gutabi.deadlock.world.World;
 
 public class TestSweeping {
 	
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 		
-		MODEL.init();
-		MODEL.world = new World();
-		MODEL.world.init();
+		APP.init();
+		APP.world = new World();
+		APP.world.init();
 		
 		VIEW.init();
 		
@@ -49,14 +49,14 @@ public class TestSweeping {
 		VIEW.canvas.removeMouseListener(CONTROLLER.mc);
 		VIEW.canvas.removeMouseMotionListener(CONTROLLER.mc);
 		
-		MODEL.init();
+		APP.init();
 		
 	}
 	
 	@After
 	public void tearDown() throws Exception {
 		
-		assertTrue(MODEL.world.checkConsistency());
+		assertTrue(APP.world.checkConsistency());
 		
 		Thread.sleep(2000);
 		
@@ -538,7 +538,7 @@ public class TestSweeping {
 	@Test
 	public void test7() throws Exception {
 		
-		MODEL.DEBUG_DRAW = true;
+		APP.DEBUG_DRAW = true;
 		
 		testWorldPressed(new Point(0.71875, 3.90625));
 		testWorldDragged(new Point(0.78125, 3.90625));

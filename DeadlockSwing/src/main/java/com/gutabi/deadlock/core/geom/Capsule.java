@@ -1,6 +1,6 @@
 package com.gutabi.deadlock.core.geom;
 
-import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
+import static com.gutabi.deadlock.DeadlockApplication.APP;
 
 import java.awt.Color;
 import java.util.Arrays;
@@ -304,7 +304,7 @@ public class Capsule extends SweepableShape {
 		bc.paint(ctxt);
 		
 		if (ctxt.type == RenderingContextType.CANVAS) {
-			if (MODEL.DEBUG_DRAW) {
+			if (APP.DEBUG_DRAW) {
 				
 				Color c = ctxt.getColor();
 				ctxt.setColor(Color.BLUE);

@@ -1,7 +1,7 @@
 package com.gutabi.deadlock.swing;
 
+import static com.gutabi.deadlock.DeadlockModel.APP;
 import static com.gutabi.deadlock.controller.DeadlockController.CONTROLLER;
-import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 import static org.junit.Assert.assertTrue;
 
@@ -16,8 +16,8 @@ import org.junit.Test;
 import com.gutabi.deadlock.controller.ControlMode;
 import com.gutabi.deadlock.controller.InputEvent;
 import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.model.World;
-import com.gutabi.deadlock.model.graph.Road;
+import com.gutabi.deadlock.world.World;
+import com.gutabi.deadlock.world.graph.Road;
 
 
 public class TestDragging {
@@ -25,9 +25,9 @@ public class TestDragging {
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 		
-		MODEL.init();
-		MODEL.world = new World();
-		MODEL.world.init();
+		APP.init();
+		APP.world = new World();
+		APP.world.init();
 		
 		VIEW.init();
 		
@@ -109,14 +109,14 @@ public class TestDragging {
 	@Before
 	public void setUp() throws Exception {
 		
-		MODEL.init();
+		APP.init();
 		
 	}
 
 	@After
 	public void tearDown() throws Exception {
 		
-		assertTrue(MODEL.world.checkConsistency());
+		assertTrue(APP.world.checkConsistency());
 		
 		Thread.sleep(2000);
 		

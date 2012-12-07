@@ -1,6 +1,6 @@
 package com.gutabi.deadlock.view;
 
-import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
+import static com.gutabi.deadlock.DeadlockApplication.APP;
 import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
 import com.gutabi.deadlock.core.Point;
@@ -18,7 +18,7 @@ public class AnimatedGrass {
 	public AnimatedGrass(Point p) {
 		this.p = p;
 		
-		phase = MODEL.world.RANDOM.nextDouble();
+		phase = APP.world.RANDOM.nextDouble();
 		
 	}
 	
@@ -77,8 +77,8 @@ public class AnimatedGrass {
 		ctxt.paintWorldImage(p.x - AnimatedGrass.GRASS_SIZE/2, p.y - AnimatedGrass.GRASS_SIZE/2, VIEW.sheet,
 				0,
 				0,
-				(int)Math.round(MODEL.world.PIXELS_PER_METER_DEBUG * GRASS_SIZE),
-				(int)Math.round(MODEL.world.PIXELS_PER_METER_DEBUG * GRASS_SIZE),
+				(int)Math.round(APP.world.PIXELS_PER_METER_DEBUG * GRASS_SIZE),
+				(int)Math.round(APP.world.PIXELS_PER_METER_DEBUG * GRASS_SIZE),
 				0, 256, 0+32, 256+32);
 		
 	}
@@ -88,8 +88,8 @@ public class AnimatedGrass {
 		ctxt.paintWorldImage(p.x - AnimatedGrass.GRASS_SIZE/2, p.y - AnimatedGrass.GRASS_SIZE/2, VIEW.sheet,
 				0,
 				0,
-				(int)Math.round(MODEL.world.PIXELS_PER_METER_DEBUG * GRASS_SIZE),
-				(int)Math.round(MODEL.world.PIXELS_PER_METER_DEBUG * GRASS_SIZE),
+				(int)Math.round(APP.world.PIXELS_PER_METER_DEBUG * GRASS_SIZE),
+				(int)Math.round(APP.world.PIXELS_PER_METER_DEBUG * GRASS_SIZE),
 				32, 256, 32+32, 256+32);
 		
 	}
@@ -99,8 +99,8 @@ public class AnimatedGrass {
 		ctxt.paintWorldImage(p.x - AnimatedGrass.GRASS_SIZE/2, p.y - AnimatedGrass.GRASS_SIZE/2, VIEW.sheet,
 				0,
 				0,
-				(int)Math.round(MODEL.world.PIXELS_PER_METER_DEBUG * GRASS_SIZE),
-				(int)Math.round(MODEL.world.PIXELS_PER_METER_DEBUG * GRASS_SIZE),
+				(int)Math.round(APP.world.PIXELS_PER_METER_DEBUG * GRASS_SIZE),
+				(int)Math.round(APP.world.PIXELS_PER_METER_DEBUG * GRASS_SIZE),
 				64, 256, 64+32, 256+32);
 		
 	}

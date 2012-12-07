@@ -1,7 +1,7 @@
 package com.gutabi.deadlock.view;
 
+import static com.gutabi.deadlock.DeadlockApplication.APP;
 import static com.gutabi.deadlock.controller.DeadlockController.CONTROLLER;
-import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
 import java.awt.Graphics;
@@ -31,7 +31,7 @@ public class Canvas extends java.awt.Canvas {
 		
 		switch (CONTROLLER.mode) {
 		case WORLD:
-			MODEL.world.postDisplay();
+			APP.world.postDisplay();
 			break;
 		case MENU:
 			break;
@@ -50,7 +50,7 @@ public class Canvas extends java.awt.Canvas {
 		case MENU:
 			break;
 		case WORLD:
-			MODEL.world.pressed(ev);
+			APP.world.pressed(ev);
 			break;
 		}
 		
@@ -64,7 +64,7 @@ public class Canvas extends java.awt.Canvas {
 		case MENU:
 			break;
 		case WORLD:
-			MODEL.world.dragged(ev);
+			APP.world.dragged(ev);
 			break;
 		}
 		
@@ -78,7 +78,7 @@ public class Canvas extends java.awt.Canvas {
 		case MENU:
 			break;
 		case WORLD:
-			MODEL.world.released(ev);
+			APP.world.released(ev);
 			break;
 		}
 		
@@ -94,10 +94,10 @@ public class Canvas extends java.awt.Canvas {
 		
 		switch (CONTROLLER.mode) {
 		case MENU:
-			MODEL.menu.moved(ev);
+			APP.menu.moved(ev);
 			break;
 		case WORLD:
-			MODEL.world.moved(ev);
+			APP.world.moved(ev);
 			break;
 		}
 		
@@ -111,7 +111,7 @@ public class Canvas extends java.awt.Canvas {
 		
 		switch (CONTROLLER.mode) {
 		case MENU:
-			MODEL.menu.clicked(ev);
+			APP.menu.clicked(ev);
 			break;
 		case WORLD:
 			break;
@@ -125,7 +125,7 @@ public class Canvas extends java.awt.Canvas {
 		case MENU:
 			break;
 		case WORLD:
-			MODEL.world.entered(ev);
+			APP.world.entered(ev);
 			break;
 		}
 		
@@ -137,7 +137,7 @@ public class Canvas extends java.awt.Canvas {
 		case MENU:
 			break;
 		case WORLD:
-			MODEL.world.exited(ev);
+			APP.world.exited(ev);
 			break;
 		}
 		
