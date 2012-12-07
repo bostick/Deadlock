@@ -12,6 +12,7 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.jbox2d.common.Vec2;
@@ -268,15 +269,15 @@ public class World implements Sweepable {
 	
 	
 	public void addVertexTop(Vertex v) {
-		graph.addVertexTop(v);
+		Set<Vertex> affected = graph.addVertexTop(v);
 		
-		postIdleTop();
+		postIdleTop(affected);
 	}
 	
 	public void createRoadTop(Vertex start, Vertex end, List<Point> pts) {
-		graph.createRoadTop(start, end, pts);
+		Set<Vertex> affected = graph.createRoadTop(start, end, pts);
 		
-		postDraftingTop();
+		postDraftingTop(affected);
 		
 //		assert checkConsistency();
 	}
@@ -286,23 +287,25 @@ public class World implements Sweepable {
 	}
 	
 	public void removeVertexTop(Vertex v) {
-		graph.removeVertexTop(v);
-		postIdleTop();
+		Set<Vertex> affected = graph.removeVertexTop(v);
+		
+		postIdleTop(affected);
 	}
 	
 	public void removeRoadTop(Road e) {
-		graph.removeRoadTop(e);
-		postIdleTop();
+		Set<Vertex> affected = graph.removeRoadTop(e);
+		
+		postIdleTop(affected);
 	}
 	
 	public void removeMergerTop(Merger m) {
-		graph.removeMergerTop(m);
-		postIdleTop();
+		Set<Vertex> affected = graph.removeMergerTop(m);
+		
+		postIdleTop(affected);
 	}
 	
 	public void removeStopSignTop(StopSign s) {
 		s.e.removeStopSignTop(s);
-		postIdleTop();
 	}
 	
 	public void removeCarTop(Car c) {
@@ -317,10 +320,9 @@ public class World implements Sweepable {
 	}
 	
 	public void insertMergerTop(Point p) {
+		Set<Vertex> affected = graph.insertMergerTop(p);
 		
-		graph.insertMergerTop(p);
-		
-		postIdleTop();
+		postIdleTop(affected);
 		
 	}
 	
@@ -1410,16 +1412,16 @@ public class World implements Sweepable {
 	
 	
 	
-	private void postIdleTop() {
+	private void postIdleTop(Set<Vertex> affected) {
 		
-		graph.computeVertexRadii();
+		graph.computeVertexRadii(affected);
 		
 		computeAABB();
 	}
 	
-	public void postDraftingTop() {
+	public void postDraftingTop(Set<Vertex> affected) {
 		
-		graph.computeVertexRadii();
+		graph.computeVertexRadii(affected);
 		
 		computeAABB();
 	}

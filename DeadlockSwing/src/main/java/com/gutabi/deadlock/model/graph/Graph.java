@@ -103,22 +103,21 @@ public class Graph implements Sweepable {
 		
 	}
 	
-	public void computeVertexRadiiX() {
+	public void computeVertexRadii(Set<Vertex> affected) {
 		
-		for (int i = 0; i < vertices.size(); i++) {
-			Vertex vi = vertices.get(i);
-			double maximumRadius = Double.POSITIVE_INFINITY;
+		for (Vertex v : affected) {
+			double maximumRadiusForV = Double.POSITIVE_INFINITY;
 			for (int j = 0; j < vertices.size(); j++) {
 				Vertex vj = vertices.get(j);
-				if (vi == vj) {
+				if (v == vj) {
 					continue;
 				}
-				double max = Point.distance(vi.p, vj.p) - vj.getRadius();
-				if (max < maximumRadius) {
-					maximumRadius = max;
+				double max = Point.distance(v.p, vj.p) - vj.getRadius();
+				if (max < maximumRadiusForV) {
+					maximumRadiusForV = max;
 				}
 			}
-			vi.computeRadius(maximumRadius);
+			v.computeRadius(maximumRadiusForV);
 		}
 		
 		computeAABB();
@@ -129,27 +128,56 @@ public class Graph implements Sweepable {
 		return aabb;
 	}
 	
-	public void addVertexTop(Vertex v) {
+	public Set<Vertex> addVertexTop(Vertex v) {
+		
 		addVertex(v);
+		
+		Set<Vertex> affected = new HashSet<Vertex>();
+		affected.add(v);
+		
 		computeAABB();
+		
+		return affected;
 	}
 	
-	public void createRoadTop(Vertex start, Vertex end, List<Point> pts) {
+	public Set<Vertex> createRoadTop(Vertex start, Vertex end, List<Point> pts) {
 		
 		createRoad(start, end, pts, (start.m==null&&start.supportsStopSigns()&!start.roads.isEmpty()?1:0)+(end.m==null&&end.supportsStopSigns()&&!end.roads.isEmpty()?2:0));
 		
-		automaticMergeOrDestroy(start);
-		automaticMergeOrDestroy(end);
+		Set<Vertex> affected = new HashSet<Vertex>();
+		
+		boolean persist;
+		persist = automaticMergeOrDestroy(start);
+		if (persist) {
+			affected.add(start);
+		}
+		
+		persist = automaticMergeOrDestroy(end);
+		if (persist) {
+			affected.add(end);
+		}
 		
 		computeAABB();
+		
+		return affected;
 	}
 	
-	public void insertMergerTop(Point p) {
-		createMerger(p);
+	public Set<Vertex> insertMergerTop(Point p) {
+		
+		Merger m = createMerger(p);
+		
+		Set<Vertex> affected = new HashSet<Vertex>();
+		affected.add(m.top);
+		affected.add(m.left);
+		affected.add(m.right);
+		affected.add(m.bottom);
+		
 		computeAABB();
+		
+		return affected;
 	}
 	
-	public void removeVertexTop(Vertex v) {
+	public Set<Vertex> removeVertexTop(Vertex v) {
 		
 		Set<Vertex> affectedVertices = new HashSet<Vertex>();
 		
@@ -173,15 +201,21 @@ public class Graph implements Sweepable {
 		destroyVertex(v);
 		affectedVertices.remove(v);
 		
+		Set<Vertex> affected = new HashSet<Vertex>();
+		
 		for (Vertex a : affectedVertices) {
-			automaticMergeOrDestroy(a);
+			boolean persist = automaticMergeOrDestroy(a);
+			if (persist) {
+				affected.add(a);
+			}
 		}
 		
 		computeAABB();
 		
+		return affected;
 	}
 	
-	public void removeRoadTop(Road e) {
+	public Set<Vertex> removeRoadTop(Road e) {
 		
 		Set<Vertex> affectedVertices = new HashSet<Vertex>();
 		if (e.start != null) {
@@ -193,25 +227,33 @@ public class Graph implements Sweepable {
 		
 		destroyRoad(e);
 		
+		Set<Vertex> affected = new HashSet<Vertex>();
+		
 		for (Vertex a : affectedVertices) {
-			automaticMergeOrDestroy(a);
+			boolean persist = automaticMergeOrDestroy(a);
+			if (persist) {
+				affected.add(a);
+			}
 		}
 		
 		computeAABB();
 		
+		return affected;
 	}
 	
-	public void removeMergerTop(Merger m) {
+	public Set<Vertex> removeMergerTop(Merger m) {
 		
 		Vertex top = m.top;
 		Vertex left = m.left;
 		Vertex right = m.right;
 		Vertex bottom = m.bottom;
 		
-		removeVertexTop(top);
-		removeVertexTop(left);
-		removeVertexTop(right);
-		removeVertexTop(bottom);
+		Set<Vertex> affected = new HashSet<Vertex>();
+		
+		affected.addAll(removeVertexTop(top));
+		affected.addAll(removeVertexTop(left));
+		affected.addAll(removeVertexTop(right));
+		affected.addAll(removeVertexTop(bottom));
 		
 		destroyMerger(m);
 		
@@ -221,26 +263,32 @@ public class Graph implements Sweepable {
 		forceMergeOrDestroy(bottom);
 		
 		computeAABB();
+		
+		return affected;
 	}
 	
-	private void automaticMergeOrDestroy(Vertex v) {
+	private boolean automaticMergeOrDestroy(Vertex v) {
 		
 		if (!v.isUserDeleteable()) {
-			return;
+			return true;
 		}
-			
-		forceMergeOrDestroy(v);
 		
+		boolean persist = forceMergeOrDestroy(v);
+		
+		return persist;
 	}
 	
-	private void forceMergeOrDestroy(Vertex v) {
+	private boolean forceMergeOrDestroy(Vertex v) {
 		
 		if (v.roads.size() == 0) {
 			destroyVertex(v);
+			return false;
 		} else if (v.roads.size() == 2) {
 			merge(v);
+			return false;
 		}
 		
+		return true;
 	}
 	
 	private void addVertex(Vertex v) {
@@ -262,7 +310,7 @@ public class Graph implements Sweepable {
 		return e;
 	}
 	
-	private void createMerger(Point p) {
+	private Merger createMerger(Point p) {
 		Merger m = new Merger(p);
 		
 		edges.add(m);
@@ -275,6 +323,8 @@ public class Graph implements Sweepable {
 		vertices.add(m.bottom);
 		
 		refreshVertexIDs();
+		
+		return m;
 	}
 	
 	private void destroyVertex(Vertex v) {
