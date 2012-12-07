@@ -15,6 +15,7 @@ import org.apache.log4j.Logger;
 
 import com.gutabi.deadlock.controller.ControlMode;
 import com.gutabi.deadlock.model.menu.MainMenu;
+import static com.gutabi.deadlock.DeadlockApplication.APP;
 
 public class DeadlockMain  {
 	
@@ -23,15 +24,15 @@ static Logger logger = Logger.getLogger("deadlock");
 	static void createAndShowGUI() throws Exception {
 		
 		MODEL.menu = new MainMenu();
-		MODEL.init();
 		
-		VIEW.codebase = new URL("file:.");
+		APP.codebase = new URL("file:.");
+		
 		VIEW.setupFrame();
 		VIEW.init();
 		
 		CONTROLLER.mode = ControlMode.MENU;
 		
-		VIEW.renderMenu();
+		MODEL.menu.render();
 		
 		((JFrame)VIEW.container).setVisible(true);
 		VIEW.canvas.requestFocusInWindow();

@@ -184,7 +184,7 @@ public class ControlPanel extends JPanel implements ActionListener {
 			
 			VIEW.controlPanel.stopButton.setEnabled(true);
 			
-			CONTROLLER.startRunning();
+			MODEL.world.startRunning();
 			
 		} else if (e.getActionCommand().equals("stop")) {
 			
@@ -193,19 +193,22 @@ public class ControlPanel extends JPanel implements ActionListener {
 			
 			VIEW.controlPanel.stopButton.setEnabled(false);
 			
-			CONTROLLER.stopRunning();
+			MODEL.world.stopRunning();
+			
 		} else if (e.getActionCommand().equals("pause")) {
 			
 			VIEW.controlPanel.startButton.setText("Unpause");
 			VIEW.controlPanel.startButton.setActionCommand("unpause");
 			
-			CONTROLLER.pauseRunning();
+			MODEL.world.pauseRunning();
+			
 		} else if (e.getActionCommand().equals("unpause")) {
 			
 			VIEW.controlPanel.startButton.setText("Pause");
 			VIEW.controlPanel.startButton.setActionCommand("pause");
 			
-			CONTROLLER.unpauseRunning();
+			MODEL.world.unpauseRunning();
+			
 		} else if (e.getActionCommand().equals("dt")) {
 			
 			String text = VIEW.controlPanel.dtField.getText();
@@ -222,7 +225,7 @@ public class ControlPanel extends JPanel implements ActionListener {
 			
 			MODEL.DEBUG_DRAW = state;
 			
-			VIEW.renderWorldBackground();
+			MODEL.world.render();
 			VIEW.repaintCanvas();
 			
 		} else if (e.getActionCommand().equals("fpsDraw")) {
@@ -231,7 +234,7 @@ public class ControlPanel extends JPanel implements ActionListener {
 			
 			MODEL.FPS_DRAW = state;
 			
-			VIEW.renderWorldBackground();
+			MODEL.world.render();
 			VIEW.repaintCanvas();
 			
 		} else if (e.getActionCommand().equals("stopSignDraw")) {
@@ -240,7 +243,7 @@ public class ControlPanel extends JPanel implements ActionListener {
 			
 			MODEL.STOPSIGN_DRAW = state;
 			
-			VIEW.renderWorldBackground();
+			MODEL.world.render();
 			VIEW.repaintCanvas();
 			
 		} else if (e.getActionCommand().equals("carTextureDraw")) {

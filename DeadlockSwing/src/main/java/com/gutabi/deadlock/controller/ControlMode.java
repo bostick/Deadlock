@@ -2,22 +2,22 @@ package com.gutabi.deadlock.controller;
 
 public enum ControlMode {
 	
-	IDLE,
+//	IDLE,
+//	
+//	DRAFTING,
+//	
+//	RUNNING,
+//	
+//	PAUSED,
+//	
+//	
+//	MERGERCURSOR,
+//	
+//	FIXTURECURSOR,
+//	
+//	STRAIGHTEDGECURSOR,
 	
-	DRAFTING,
-	
-	RUNNING,
-	
-	PAUSED,
-	
-	
-	MERGERCURSOR,
-	
-	FIXTURECURSOR,
-	
-	STRAIGHTEDGECURSOR,
-	
-	
+	WORLD,
 	
 	MENU
 	

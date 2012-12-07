@@ -2,9 +2,11 @@ package com.gutabi.deadlock.model.menu;
 
 import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.gutabi.deadlock.controller.InputEvent;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.view.RenderingContext;
 
@@ -15,6 +17,14 @@ public abstract class Menu {
 	
 	public MenuItem hilited;
 	public MenuItem firstMenuItem;
+	
+	public BufferedImage canvasMenuImage;
+	
+	public Menu() {
+		
+		canvasMenuImage = new BufferedImage(800, 600, BufferedImage.TYPE_INT_RGB);
+		
+	}
 	
 	public void add(MenuItem item) {
 		
@@ -47,16 +57,6 @@ public abstract class Menu {
 		}
 		
 		return null;
-	}
-	
-	public void click(Point p) {
-		
-		MenuItem item = hitTest(p);
-		
-		if (item != null) {
-			item.action();
-		}
-		
 	}
 	
 	public void downKey() {
@@ -99,16 +99,52 @@ public abstract class Menu {
 		
 	}
 	
-	public void move(Point p) {
-		MenuItem hit = hitTest(p);
+	public void enterKey() {
+		
+		if (hilited != null && hilited.active) {
+			hilited.action();
+		}
+		
+	}
+	
+	public Point canvasToMenu(Point p) {
+		return new Point(p.x - (VIEW.canvas.getWidth()/2 - 800/2), p.y - (VIEW.canvas.getHeight()/2 - 600/2));
+	}
+	
+	public Point lastMovedMenuPoint;
+	
+	public void moved(InputEvent ev) {
+		
+		VIEW.canvas.requestFocusInWindow();
+		
+		Point p = ev.p;
+		
+		lastMovedMenuPoint = canvasToMenu(p);
+		
+		MenuItem hit = hitTest(lastMovedMenuPoint);
 		if (hit != null && hit.active) {
 			hilited = hit;
 		}
 		
 		VIEW.repaintCanvas();
+		
 	}
 	
-	public abstract void render(RenderingContext ctxt);
+	Point lastClickedMenuPoint;
+	
+	public void clicked(InputEvent ev) {
+		
+		lastClickedMenuPoint = canvasToMenu(ev.p);
+		
+		MenuItem item = hitTest(lastClickedMenuPoint);
+		
+		if (item != null && item.active) {
+			item.action();
+		}
+		
+	}
+	
+	public abstract void render();
 	
 	public abstract void paint(RenderingContext ctxt);
 	

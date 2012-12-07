@@ -3,14 +3,21 @@ package com.gutabi.deadlock.model;
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
+import java.awt.AlphaComposite;
 import java.awt.Color;
+import java.awt.Composite;
+import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import org.apache.log4j.Logger;
 import org.jbox2d.common.Vec2;
 
+import com.gutabi.deadlock.controller.InputEvent;
+import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.AABB;
@@ -18,6 +25,9 @@ import com.gutabi.deadlock.core.geom.Capsule;
 import com.gutabi.deadlock.core.geom.Circle;
 import com.gutabi.deadlock.core.geom.Quad;
 import com.gutabi.deadlock.core.geom.Shape;
+import com.gutabi.deadlock.core.geom.ShapeUtils;
+import com.gutabi.deadlock.core.geom.SweepEvent;
+import com.gutabi.deadlock.core.geom.SweepEventType;
 import com.gutabi.deadlock.core.geom.Sweepable;
 import com.gutabi.deadlock.core.geom.Sweeper;
 import com.gutabi.deadlock.model.car.Car;
@@ -26,21 +36,64 @@ import com.gutabi.deadlock.model.car.CarProximityEvent;
 import com.gutabi.deadlock.model.car.CarStateEnum;
 import com.gutabi.deadlock.model.car.DrivingEvent;
 import com.gutabi.deadlock.model.car.VertexArrivalEvent;
+import com.gutabi.deadlock.model.cursor.Cursor;
+import com.gutabi.deadlock.model.cursor.FixtureCursor;
+import com.gutabi.deadlock.model.cursor.MergerCursor;
+import com.gutabi.deadlock.model.cursor.RegularCursor;
+import com.gutabi.deadlock.model.cursor.StraightEdgeCursor;
+import com.gutabi.deadlock.model.graph.Axis;
+import com.gutabi.deadlock.model.graph.Direction;
 import com.gutabi.deadlock.model.graph.Edge;
+import com.gutabi.deadlock.model.graph.EdgePosition;
+import com.gutabi.deadlock.model.graph.Fixture;
+import com.gutabi.deadlock.model.graph.FixtureType;
 import com.gutabi.deadlock.model.graph.Graph;
+import com.gutabi.deadlock.model.graph.GraphPosition;
+import com.gutabi.deadlock.model.graph.Intersection;
 import com.gutabi.deadlock.model.graph.Merger;
 import com.gutabi.deadlock.model.graph.Road;
 import com.gutabi.deadlock.model.graph.RoadPosition;
+import com.gutabi.deadlock.model.graph.Side;
 import com.gutabi.deadlock.model.graph.Vertex;
+import com.gutabi.deadlock.model.graph.VertexPosition;
 import com.gutabi.deadlock.view.AnimatedExplosion;
 import com.gutabi.deadlock.view.AnimatedGrass;
 import com.gutabi.deadlock.view.RenderingContext;
+import com.gutabi.deadlock.view.RenderingContextType;
 
 @SuppressWarnings("static-access")
 public class World implements Sweepable {
 	
 	public final double worldWidth;
 	public final double worldHeight;
+	
+	public double PIXELS_PER_METER_DEBUG = 32.0;
+	
+	public AABB worldViewport;
+	
+	public WorldMode mode;
+	
+	public Cursor cursor;
+	public Stroke stroke;
+	
+	public Stroke debugStroke;
+	public Stroke debugStroke2;
+	
+	public Entity hilited;
+	
+	public final Object pauseLock = new Object();
+	
+	public Stats stats;
+	
+	public boolean grid;
+	
+	public BufferedImage quadrantGrass;
+	public BufferedImage canvasGrassImage;
+	public BufferedImage canvasGraphImage;
+	public BufferedImage previewImage;
+	
+	public static final int PREVIEW_WIDTH = 100;
+	public static final int PREVIEW_HEIGHT = 100;
 	
 	/*
 	 * distance that center of a car has to be from center of a sink in order to be sinked
@@ -73,19 +126,51 @@ public class World implements Sweepable {
 	
 	public AABB aabb;
 	
-//	private static Logger logger = Logger.getLogger(World.class);
+	private static Logger logger = Logger.getLogger(World.class);
 	
-	public World(int quadrantCols, int quadrantRows) {
+	public World(int[][] ini) {
+		
+		int quadrantCols = ini[0].length;
+		int quadrantRows = ini.length;
+		
+		map = new Map(ini);
 		
 		worldWidth = quadrantCols * MODEL.QUADRANT_WIDTH;
 		
 		worldHeight = quadrantRows * MODEL.QUADRANT_HEIGHT;
 		
-		VIEW.worldViewport = new AABB(
-				-(VIEW.canvas.getWidth() / VIEW.PIXELS_PER_METER_DEBUG) / 2 + worldWidth/2 ,
-				-(VIEW.canvas.getHeight() / VIEW.PIXELS_PER_METER_DEBUG) / 2 + worldHeight/2,
-				VIEW.canvas.getWidth() / VIEW.PIXELS_PER_METER_DEBUG,
-				VIEW.canvas.getHeight() / VIEW.PIXELS_PER_METER_DEBUG);
+		worldViewport = new AABB(
+				-(VIEW.canvas.getWidth() / PIXELS_PER_METER_DEBUG) / 2 + worldWidth/2 ,
+				-(VIEW.canvas.getHeight() / PIXELS_PER_METER_DEBUG) / 2 + worldHeight/2,
+				VIEW.canvas.getWidth() / PIXELS_PER_METER_DEBUG,
+				VIEW.canvas.getHeight() / PIXELS_PER_METER_DEBUG);
+		
+		
+		quadrantGrass = new BufferedImage(
+				512,
+				512,
+				BufferedImage.TYPE_INT_ARGB);
+		Graphics2D quadrantGrassG2 = quadrantGrass.createGraphics();
+		for (int i = 0; i < (int)Math.round(PIXELS_PER_METER_DEBUG * MODEL.QUADRANT_WIDTH)/32; i++) {
+			for (int j = 0; j < (int)Math.round(PIXELS_PER_METER_DEBUG * MODEL.QUADRANT_HEIGHT)/32; j++) {
+				quadrantGrassG2.drawImage(VIEW.sheet,
+						32 * i, 32 * j, 32 * i + 32, 32 * j + 32,
+						0, 224, 0+32, 224+32, null);
+			}
+		}
+		
+		
+		mode = WorldMode.IDLE;
+		
+		cursor = new RegularCursor();
+		
+		stats = new Stats();
+		
+		b2dWorld = new org.jbox2d.dynamics.World(new Vec2(0.0f, 0.0f), true);
+		listener = new CarEventListener();
+		b2dWorld.setContactListener(listener);
+		
+		computeAABB();
 		
 //		animatedGrass1 = new AnimatedGrass(new Point(worldWidth/4, worldHeight/4));
 		
@@ -146,13 +231,19 @@ public class World implements Sweepable {
 	
 	public void init() throws Exception {
 		
-		b2dWorld = new org.jbox2d.dynamics.World(new Vec2(0.0f, 0.0f), true);
-		listener = new CarEventListener();
-		b2dWorld.setContactListener(listener);
+	}
+	
+	public void postDisplay() {
 		
-		computeAABB();
+		canvasGrassImage = new BufferedImage(VIEW.canvas.getWidth(), VIEW.canvas.getHeight(), BufferedImage.TYPE_INT_RGB);
+		
+		canvasGraphImage = new BufferedImage(VIEW.canvas.getWidth(), VIEW.canvas.getHeight(), BufferedImage.TYPE_INT_ARGB);
+		
+		previewImage = new BufferedImage(PREVIEW_WIDTH, PREVIEW_HEIGHT, BufferedImage.TYPE_INT_RGB);
 		
 	}
+	
+	
 	
 	public Quadrant findQuadrant(Point p) {
 		return map.findQuadrant(p);
@@ -232,6 +323,1054 @@ public class World implements Sweepable {
 		postIdleTop();
 		
 	}
+	
+	
+	
+	
+	
+	
+	public void startRunning() {
+		
+		mode = WorldMode.RUNNING;
+		
+		Thread t = new Thread(new SimulationRunnable());
+		t.start();
+		
+	}
+	
+	public void stopRunning() {
+		
+		mode = WorldMode.IDLE;
+		
+	}
+	
+	public void pauseRunning() {
+		
+		mode = WorldMode.PAUSED;
+	}
+	
+	public void unpauseRunning() {
+		
+		mode = WorldMode.RUNNING;
+		
+		synchronized (pauseLock) {
+			pauseLock.notifyAll();
+		}
+	}
+	
+	public void draftStart(Point p) {
+		
+		mode = WorldMode.DRAFTING;
+		
+		hilited = null;
+		
+		stroke = new Stroke();
+		stroke.add(p);
+			
+	}
+	
+	public void draftMove(Point p) {
+
+		stroke.add(p);
+	}
+	
+	public void draftEnd() {
+		
+		processNewStroke(stroke);
+		
+		assert checkConsistency();
+		
+		debugStroke2 = debugStroke;
+		debugStroke = stroke;
+		stroke = null;
+		
+		mode = WorldMode.IDLE;
+		
+	}
+	
+	public void processNewStroke(Stroke s) {
+		
+		/*
+		 * TODO:
+		 * fix this and turn on
+		 * a stroke that starts/ends on a fixture may technically be outside of the quadrant, but it should still count
+		 */
+//		for (int i = 0; i < s.size()-1; i++) {
+//			Capsule cap = new Capsule(null, s.getCircle(i), s.getCircle(i+1));
+//			if (!completelyContains(cap)) {
+//				return;
+//			}
+//		}
+		
+		List<SweepEvent> events = s.events();
+		
+		/*
+		 * go through and find any merger events and fixture events
+		 */
+		for (int i = 0; i < events.size(); i++) {
+			SweepEvent e = events.get(i);
+			if (e.type == SweepEventType.ENTERMERGER) {
+				return;
+			}
+//			if (e.type == SweepEventType.ENTERVERTEX) {
+//				Vertex v = (Vertex)e.shape.parent;
+//				if (v instanceof Fixture && (v.roads.size() + (v.m!=null?1:0)) > 0) {
+//					assert ((v.roads.size() + (v.m!=null?1:0))) == 1;
+//					return;
+//				}
+//			}
+			if (i < events.size()-1) {
+				SweepEvent f = events.get(i+1);
+				if (e.type == SweepEventType.EXITVERTEX && f.type == SweepEventType.ENTERVERTEX) {
+					Vertex ev = (Vertex)e.shape.parent;
+					Vertex fv = (Vertex)f.shape.parent;
+					if (ev.m != null && ev.m == fv.m) {
+						/*
+						 * FIXME: this currently disallows connecting vertices in a merger, even outside the merger
+						 * fix this so that it's only a road within the merger that is disallowed
+						 */
+						return;
+					}
+				}
+			}
+		}
+		
+		/*
+		 * go through and create or split where needed to make sure vertices are present
+		 */
+		for (int i = 0; i < events.size(); i++) {
+			
+			SweepEvent e = events.get(i);
+			
+			if (e.type == null) {
+				
+				Entity hit = pureGraphBestHitTestCircle(e.circle);
+				assert hit == null;
+				logger.debug("create");
+				Intersection v = new Intersection(e.p);
+				addVertexTop(v);
+				
+				e.setVertex(v);
+				
+			} else if (e.type == SweepEventType.ENTERROADCAPSULE || e.type == SweepEventType.EXITROADCAPSULE) {
+				
+				Entity hit = pureGraphBestHitTestCircle(e.circle);
+				
+				if (hit instanceof Vertex) {
+					e.setVertex((Vertex)hit);
+					continue;
+				}
+				
+				GraphPosition pos = null;
+				
+				double nextEventCombo;
+				if (e.type == SweepEventType.ENTERROADCAPSULE) {
+					if (i < events.size()-1) {
+						nextEventCombo = events.get(i+1).combo;
+					} else {
+						nextEventCombo = Double.POSITIVE_INFINITY;
+					}
+				} else {
+					if (i >= 1) {
+						nextEventCombo = events.get(i-1).combo;
+					} else {
+						nextEventCombo = Double.NEGATIVE_INFINITY;
+					}
+				}
+				
+				/*
+				 * find better place to split by checking for intersection with road
+				 */
+				Circle a;
+				Circle b;
+				int j = e.index;
+				if (e.type == SweepEventType.ENTERROADCAPSULE) {
+					a = e.circle;
+					if (DMath.lessThan(nextEventCombo, j+1)) {
+						/*
+						 * next event is before next stroke point, so use the event circle
+						 */
+						b = events.get(i+1).circle;
+					} else {
+						b = s.getCircle(j+1);
+					}
+				} else {
+					if (DMath.greaterThan(nextEventCombo, j)) {
+						a = events.get(i-1).circle;
+					} else {
+						a = s.getCircle(j);
+					}
+					b = e.circle;
+				}
+				
+				while (true) {
+					
+					hit = pureGraphBestHitTestCapsule(new Capsule(null, a, b));
+					
+					if (hit == null) {
+						
+					} else if (hit instanceof Vertex) {
+						pos = new VertexPosition((Vertex)hit);
+						break;
+					} else {
+						
+						RoadPosition skeletonIntersection = (RoadPosition)((Road)hit).findSkeletonIntersection(a.center, b.center);
+						
+						if (skeletonIntersection != null) {
+							
+							if (DMath.lessThanEquals(Point.distance(skeletonIntersection.p, e.p), Stroke.STROKE_RADIUS + Stroke.STROKE_RADIUS)) {
+								
+								pos = skeletonIntersection;
+								
+								logger.debug("found intersection");
+								
+								break;
+							}
+						}
+						
+					}
+					
+					j += (e.type == SweepEventType.ENTERROADCAPSULE) ? 1 : -1;
+					
+					if (!((e.type == SweepEventType.ENTERROADCAPSULE) ? j < Math.min(nextEventCombo, s.size()-1) : j >= Math.max(nextEventCombo, 0))) {
+						break;
+					}
+					
+					a = s.getCircle(j);
+					b = s.getCircle(j+1);
+					
+				}
+				
+				if (pos == null) {
+					logger.debug("pos was null");
+					pos = findClosestRoadPosition(e.p, e.circle.radius);
+				}
+				
+				Entity hit2;
+				if (pos instanceof EdgePosition) {
+					hit2 = pureGraphBestHitTestCircle(new Circle(null, pos.p, e.circle.radius));
+				} else {
+					hit2 = ((VertexPosition)pos).v;
+				}
+				
+				if (hit2 instanceof Road) {
+					Vertex v = splitRoadTop((RoadPosition)pos);
+					
+					assert ShapeUtils.intersectCC(e.circle, v.getShape());
+					
+					e.setVertex(v);
+				} else {
+					e.setVertex((Vertex)hit2);
+				}
+				
+			} else if (e.type == SweepEventType.ENTERVERTEX) {
+				e.setVertex((Vertex)e.shape.parent);
+			} else if (e.type == SweepEventType.EXITVERTEX) {
+				e.setVertex((Vertex)e.shape.parent);
+			} else {
+				assert false;
+			}
+			
+			assert e.getVertex() != null;
+		}
+		
+		/*
+		 * now go through and create roads
+		 */
+		for (int i = 0; i < events.size()-1; i++) {
+			SweepEvent e0 = events.get(i);
+			SweepEvent e1 = events.get(i+1);
+			
+			if (e0.type == SweepEventType.ENTERVERTEX && e1.type == SweepEventType.EXITVERTEX) {
+				
+				logger.debug("skipping");
+				i = i+1;
+				if (i == events.size()-1) {
+					break;
+				}
+				e0 = events.get(i);
+				e1 = events.get(i+1);
+				
+			} else if (e0.type == SweepEventType.ENTERROADCAPSULE && e1.type == SweepEventType.EXITROADCAPSULE) {
+				
+				logger.debug("skipping");
+				
+				i = i+1;
+				if (i == events.size()-1) {
+					break;
+				}
+				e0 = events.get(i);
+				e1 = events.get(i+1);
+				
+			}
+			
+			Vertex v0 = e0.getVertex();
+			Vertex v1 = e1.getVertex();
+			
+			if (v0 == v1) {
+				logger.debug("same vertex");
+				continue;
+			}
+			
+			List<Point> roadPts = new ArrayList<Point>();
+			roadPts.add(e0.p);
+			for (int j = e0.index+1; j < e1.index; j++) {
+				roadPts.add(s.get(j));
+			}
+			if (e1.index >= e0.index+1) {
+				roadPts.add(s.get(e1.index));
+				if (!DMath.equals(e1.param, 0.0)) {
+					roadPts.add(e1.p);
+				}
+			} else {
+				assert e1.index == e0.index;
+				roadPts.add(e1.p);
+			}
+			
+			createRoadTop(v0, v1, roadPts);
+		}
+		
+	}
+	
+	public void pan(Point prevDp) {
+		Point worldDP = previewToWorld(prevDp);
+		
+		worldViewport = new AABB(
+				worldViewport.x + worldDP.x,
+				worldViewport.y + worldDP.y,
+				worldViewport.width,
+				worldViewport.height);
+	}
+	
+	public void zoom(double factor) {
+		
+		Point center = new Point(worldViewport.x + worldViewport.width / 2, worldViewport.y + worldViewport.height / 2);
+		
+		PIXELS_PER_METER_DEBUG = factor * PIXELS_PER_METER_DEBUG; 
+		
+		double newWidth = VIEW.canvas.getWidth() / PIXELS_PER_METER_DEBUG;
+		double newHeight = VIEW.canvas.getHeight() / PIXELS_PER_METER_DEBUG;
+		
+		worldViewport = new AABB(center.x - newWidth/2, center.y - newHeight/2, newWidth, newHeight);
+		
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	public void qKey() {
+	
+		switch (mode) {
+		case IDLE:
+			
+			Entity hit = pureGraphBestHitTest(cursor.getShape());
+			if (hit == null) {
+				
+				addVertexTop(new Intersection(cursor.getPoint()));
+				
+				render();
+				VIEW.repaintControlPanel();
+				VIEW.repaintCanvas();
+				
+			} else if (hit instanceof Road || hit instanceof Vertex) {
+				
+				if (hit instanceof Road) {
+					GraphPosition pos = findClosestRoadPosition(cursor.getPoint(), ((Circle)cursor.getShape()).radius);
+					
+					Entity hit2;
+					if (pos instanceof EdgePosition) {
+						hit2 = pureGraphBestHitTestCircle(new Circle(null, pos.p, ((Circle)cursor.getShape()).radius));
+					} else {
+						hit2 = ((VertexPosition)pos).v;
+					}
+					
+					if (hit2 instanceof Road) {
+						hit = splitRoadTop((RoadPosition)pos);
+						
+						assert ShapeUtils.intersectCC((Circle)cursor.getShape(), (Circle)hit.getShape());
+						
+					} else {
+						hit = hit2;
+					}
+				}
+				
+				mode = WorldMode.STRAIGHTEDGECURSOR;
+				
+				cursor = new StraightEdgeCursor((Vertex)hit);
+				
+				cursor.setPoint(lastMovedWorldPoint);
+				
+				VIEW.repaintCanvas();
+				
+			}
+			
+			break;
+			
+		case STRAIGHTEDGECURSOR:
+			
+			Point first = ((StraightEdgeCursor)cursor).first.p;
+			Point second = cursor.getPoint();
+			
+			Stroke s = new Stroke();
+			s.add(first);
+			s.add(second);
+			
+			processNewStroke(s);
+			
+			assert checkConsistency();
+			
+			render();
+			VIEW.repaintControlPanel();
+			
+			mode = WorldMode.IDLE;
+			
+			cursor = new RegularCursor();
+			
+			cursor.setPoint(lastMovedWorldPoint);
+			
+			VIEW.repaintCanvas();
+			
+			break;
+			
+		case RUNNING:
+		case PAUSED:
+		case MERGERCURSOR:
+		case FIXTURECURSOR:
+		case DRAFTING:
+			break;
+		}
+		
+	}
+	
+	public void wKey() {
+		
+		switch (mode) {
+		case IDLE:
+			
+			mode = WorldMode.FIXTURECURSOR;
+			
+			cursor = new FixtureCursor();
+			
+			cursor.setPoint(lastMovedWorldPoint);
+			
+			VIEW.repaintCanvas();
+			
+			break;
+		case FIXTURECURSOR:
+			FixtureCursor fc = (FixtureCursor)cursor;
+			Axis axis = fc.getAxis();
+			
+			if (pureGraphBestHitTest(cursor.getShape()) == null) {
+				
+				Fixture source = new Fixture(fc.getSourcePoint(), axis);
+				Fixture sink = new Fixture(fc.getSinkPoint(), axis);
+				
+				source.setType(FixtureType.SOURCE);
+				sink.setType(FixtureType.SINK);
+				
+				source.match = sink;
+				sink.match = source;
+				
+				switch (axis) {
+				case TOPBOTTOM:
+					source.setSide(Side.BOTTOM);
+					sink.setSide(Side.BOTTOM);
+					break;
+				case LEFTRIGHT:
+					source.setSide(Side.RIGHT);
+					sink.setSide(Side.RIGHT);
+					break;
+				}
+				
+				addVertexTop(source);
+				
+				addVertexTop(sink);
+				
+				mode = WorldMode.IDLE;
+				
+				cursor = new RegularCursor();
+				
+				cursor.setPoint(lastMovedWorldPoint);
+				
+				render();
+				VIEW.repaintCanvas();
+				VIEW.repaintControlPanel();
+				
+			}
+			
+			break;
+		case RUNNING:
+		case PAUSED:
+		case MERGERCURSOR:
+		case STRAIGHTEDGECURSOR:
+		case DRAFTING:
+			break;
+		}
+		
+	}
+	
+	public void gKey() {
+		
+		grid = !grid;
+		
+		render();
+		VIEW.repaintCanvas();
+		
+	}
+	
+	public void deleteKey() {
+		
+		if (hilited != null) {
+			
+			if (hilited.isUserDeleteable()) {
+				
+				if (hilited instanceof Car) {
+					Car c = (Car)hilited;
+					
+					removeCarTop(c);
+					
+				} else if (hilited instanceof Vertex) {
+					Vertex v = (Vertex)hilited;
+					
+					removeVertexTop(v);
+					
+				} else if (hilited instanceof Road) {
+					Road e = (Road)hilited;
+					
+					removeRoadTop(e);
+					
+				} else if (hilited instanceof Merger) {
+					Merger e = (Merger)hilited;
+					
+					removeMergerTop(e);
+					
+				} else if (hilited instanceof StopSign) {
+					StopSign s = (StopSign)hilited;
+					
+					removeStopSignTop(s);
+					
+				} else {
+					throw new AssertionError();
+				}
+				
+				hilited = null;
+				
+			}
+			
+		}
+		
+		render();
+		VIEW.repaintCanvas();
+		VIEW.repaintControlPanel();
+		
+	}
+	
+	public void insertKey() {
+		
+		switch (mode) {
+		case IDLE:
+			
+			if (hilited != null) {
+				
+				if (hilited instanceof StopSign) {
+					StopSign s = (StopSign)hilited;
+					
+					s.setEnabled(true);
+					
+					render();
+					VIEW.repaintCanvas();
+				}
+				
+			} else {
+				
+				mode = WorldMode.MERGERCURSOR;
+				
+				cursor = new MergerCursor();
+				
+				cursor.setPoint(lastMovedWorldPoint);
+				
+				VIEW.repaintCanvas();
+				
+			}
+			
+			break;
+		case MERGERCURSOR:
+			
+			if (completelyContains(cursor.getShape())) {
+				
+				if (pureGraphBestHitTest(cursor.getShape()) == null) {
+					
+					insertMergerTop(cursor.getPoint());
+					
+					mode = WorldMode.IDLE;
+					
+					cursor = new RegularCursor();
+					
+					cursor.setPoint(lastMovedWorldPoint);
+					
+					render();
+					VIEW.repaintCanvas();
+					VIEW.repaintControlPanel();
+					
+				}
+				
+			}
+			
+			break;
+		case RUNNING:
+		case PAUSED:
+		case FIXTURECURSOR:
+		case STRAIGHTEDGECURSOR:
+		case DRAFTING:
+			break;
+		}
+		
+	}
+	
+	public void escKey() {
+		
+		switch (mode) {
+		case MERGERCURSOR:
+		case FIXTURECURSOR:
+		case STRAIGHTEDGECURSOR:
+			
+			mode = WorldMode.IDLE;
+			
+			cursor = new RegularCursor();
+			
+			cursor.setPoint(lastMovedWorldPoint);
+			
+			VIEW.repaintCanvas();
+			
+			break;
+		case RUNNING:
+		case PAUSED:
+		case DRAFTING:
+		case IDLE:
+			break;
+		}
+		
+	}
+	
+	public void d1Key() {
+		
+		switch (mode) {
+		case IDLE:
+			
+			if (hilited != null) {
+				
+				if (hilited instanceof Road) {
+					Road r = (Road)hilited;
+					
+					r.setDirection(null, Direction.STARTTOEND);
+					
+					render();
+					VIEW.repaintCanvas();
+					
+				} else if (hilited instanceof Fixture) {
+					Fixture f = (Fixture)hilited;
+					
+					Fixture g = f.match;
+					
+					if (f.getType() != null) {
+						f.setType(f.getType().other());
+					}
+					if (g.getType() != null) {
+						g.setType(g.getType().other());
+					}
+					
+					f.setSide(f.getSide().other());
+					g.setSide(g.getSide().other());
+					
+					render();
+					VIEW.repaintCanvas();
+					
+				}
+				
+			}
+			
+			break;
+		default:
+			break;
+		}
+		
+	}
+	
+	public void d2Key() {
+		
+		switch (mode) {
+		case IDLE:
+			
+			if (hilited != null) {
+				
+				if (hilited instanceof Road) {
+					Road r = (Road)hilited;
+					
+					r.setDirection(null, Direction.ENDTOSTART);
+					
+					render();
+					VIEW.repaintCanvas();
+					
+				}
+				
+			}
+			
+			break;
+		default:
+			break;
+		}
+		
+	}
+	
+	public void d3Key() {
+		
+		switch (mode) {
+		case IDLE:
+			
+			if (hilited != null) {
+				
+				if (hilited instanceof Road) {
+					Road r = (Road)hilited;
+					
+					r.setDirection(null, null);
+				
+					render();
+					VIEW.repaintCanvas();
+					
+				}
+				
+			}
+			
+			break;
+		default:
+			break;
+		}
+		
+	}
+	
+	public void plusKey() {
+		
+		zoom(1.1);
+		
+		lastMovedWorldPoint = canvasToWorld(VIEW.canvas.lastMovedCanvasPoint);
+		
+		switch (mode) {
+		case DRAFTING:
+			assert false;
+			break;
+		case PAUSED:
+		case IDLE:
+		case RUNNING:
+			
+			Entity closest = hitTest(lastMovedWorldPoint);
+			
+			synchronized (MODEL) {
+				hilited = closest;
+			}
+			
+		case MERGERCURSOR:
+		case FIXTURECURSOR:
+		case STRAIGHTEDGECURSOR:
+			
+			if (cursor != null) {
+				if (grid) {
+					
+					Point closestGridPoint = new Point(2 * Math.round(0.5 * lastMovedWorldPoint.x), 2 * Math.round(0.5 * lastMovedWorldPoint.y));
+					cursor.setPoint(closestGridPoint);
+					
+				} else {
+					cursor.setPoint(lastMovedWorldPoint);
+				}
+			}
+			
+			render();
+			VIEW.repaintCanvas();
+			VIEW.repaintControlPanel();
+			
+			break;
+		}
+		
+	}
+	
+	public void minusKey() {
+		
+		zoom(0.9);
+		
+		lastMovedWorldPoint = canvasToWorld(VIEW.canvas.lastMovedCanvasPoint);
+		
+		switch (mode) {
+		case DRAFTING:
+			assert false;
+			break;
+		case IDLE:
+		case PAUSED:
+		case RUNNING:
+			
+			Entity closest = hitTest(lastMovedWorldPoint);
+			
+			synchronized (MODEL) {
+				hilited = closest;
+			}
+			
+		case MERGERCURSOR:
+		case FIXTURECURSOR:
+		case STRAIGHTEDGECURSOR:
+			
+			if (cursor != null) {
+				if (grid) {
+					
+					Point closestGridPoint = new Point(2 * Math.round(0.5 * lastMovedWorldPoint.x), 2 * Math.round(0.5 * lastMovedWorldPoint.y));
+					cursor.setPoint(closestGridPoint);
+					
+				} else {
+					cursor.setPoint(lastMovedWorldPoint);
+				}
+			}
+			
+			render();
+			VIEW.repaintCanvas();
+			VIEW.repaintControlPanel();
+			
+			break;
+		}
+		
+	}
+	
+	public Point canvasToWorld(Point p) {
+		return new Point(
+				p.x / PIXELS_PER_METER_DEBUG + worldViewport.x,
+				p.y / PIXELS_PER_METER_DEBUG + worldViewport.y);
+	}
+	
+//	public int metersToPixels(double m) {
+//		return (int)(Math.round(m * VIEW.PIXELS_PER_METER_DEBUG));
+//	}
+	
+	public Point previewToWorld(Point p) {
+		return new Point((worldWidth / PREVIEW_WIDTH) * p.x, (worldHeight / PREVIEW_HEIGHT) * p.y);
+	}
+	
+	public Point worldToPreview(Point p) {
+		return new Point((PREVIEW_WIDTH / worldWidth) * p.x, (PREVIEW_HEIGHT / worldHeight) * p.y);
+	}
+	
+	Point lastPressWorldPoint;
+	
+	public void pressed(InputEvent ev) {
+		
+		Point p = ev.p;
+		
+		lastPressWorldPoint = canvasToWorld(p);
+		lastDragWorldPoint = null;
+		
+	}
+	
+	Point lastDragWorldPoint;
+	
+	public void dragged(InputEvent ev) {
+		
+		Point p = ev.p;
+		
+		boolean lastDragWorldPointWasNull = (lastDragWorldPoint == null);
+		lastDragWorldPoint = canvasToWorld(p);
+		
+		cursor.setPoint(lastDragWorldPoint);
+		
+		switch (mode) {
+		case IDLE: {
+			
+			if (lastDragWorldPointWasNull) {
+				// first drag
+				draftStart(lastPressWorldPoint);
+				draftMove(lastDragWorldPoint);
+				
+				VIEW.repaintCanvas();
+				
+			} else {
+				assert false;
+			}
+			
+			break;
+		}
+		case DRAFTING:
+			
+			draftMove(lastDragWorldPoint);
+			
+			VIEW.repaintCanvas();
+			break;
+			
+		case RUNNING:
+		case PAUSED:
+		case MERGERCURSOR:
+		case FIXTURECURSOR:
+		case STRAIGHTEDGECURSOR:
+			break;
+		}
+		
+	}
+	
+	public void released(InputEvent ev) {
+		
+		switch (mode) {
+		case IDLE: {
+			
+			break;
+		}
+		case DRAFTING:
+			draftEnd();
+			
+			render();
+			VIEW.repaintCanvas();
+			VIEW.repaintControlPanel();
+			
+			break;
+		case RUNNING:
+		case PAUSED:
+		case MERGERCURSOR:
+		case FIXTURECURSOR:
+		case STRAIGHTEDGECURSOR:
+			break;
+		}
+		
+	}
+	
+	public Point lastMovedWorldPoint;
+	
+	public void moved(InputEvent ev) {
+		
+		VIEW.canvas.requestFocusInWindow();
+		
+		Point p = ev.p;
+		
+		lastMovedWorldPoint = canvasToWorld(p);
+		
+		switch (mode) {
+		case PAUSED:
+		case DRAFTING:
+			break;
+		case IDLE:
+		case RUNNING:
+			
+			Entity closest = hitTest(lastMovedWorldPoint);
+			
+			synchronized (MODEL) {
+				hilited = closest;
+			}
+			
+			if (cursor != null) {
+				if (grid) {
+					
+					Point closestGridPoint = new Point(2 * Math.round(0.5 * lastMovedWorldPoint.x), 2 * Math.round(0.5 * lastMovedWorldPoint.y));
+					cursor.setPoint(closestGridPoint);
+					
+				} else {
+					cursor.setPoint(lastMovedWorldPoint);
+				}
+			}
+			
+			VIEW.repaintCanvas();
+			break;
+			
+		case MERGERCURSOR:
+		case FIXTURECURSOR:
+		case STRAIGHTEDGECURSOR:
+			
+			hilited = null;
+			
+			if (cursor != null) {
+				if (grid) {
+					
+					Point closestGridPoint = new Point(2 * Math.round(0.5 * lastMovedWorldPoint.x), 2 * Math.round(0.5 * lastMovedWorldPoint.y));
+					cursor.setPoint(closestGridPoint);
+					
+				} else {
+					cursor.setPoint(lastMovedWorldPoint);
+				}
+			}
+			
+			VIEW.repaintCanvas();
+			break;
+		}
+		
+	}
+	
+	public void entered(InputEvent ev) {
+		
+		Point p = ev.p;
+		
+		lastMovedWorldPoint = canvasToWorld(p);
+		
+		switch (mode) {
+		case PAUSED:
+		case DRAFTING:
+		case RUNNING:
+			break;
+		case IDLE:
+		case MERGERCURSOR:
+		case FIXTURECURSOR:
+		case STRAIGHTEDGECURSOR:
+			
+			if (cursor != null) {
+				if (grid) {
+					
+					Point closestGridPoint = new Point(2 * Math.round(0.5 * lastMovedWorldPoint.x), 2 * Math.round(0.5 * lastMovedWorldPoint.y));
+					cursor.setPoint(closestGridPoint);
+					
+				} else {
+					cursor.setPoint(lastMovedWorldPoint);
+				}
+			}
+			
+			VIEW.repaintCanvas();
+			break;
+		}
+		
+	}
+	
+	public void exited(InputEvent ev) {
+		
+		switch (mode) {
+		case PAUSED:
+		case DRAFTING:
+		case RUNNING:
+			break;
+		case IDLE:
+		case MERGERCURSOR:
+		case FIXTURECURSOR:
+		case STRAIGHTEDGECURSOR:
+			
+			if (cursor != null) {
+				cursor.setPoint(null);
+			}
+			
+			VIEW.repaintCanvas();
+			break;
+		}
+		
+	}
+	
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	
@@ -599,8 +1738,8 @@ public class World implements Sweepable {
 			for (Car c : cars) {
 				boolean shouldPersist = c.postStep(t);
 				if (!shouldPersist) {
-					if (MODEL.hilited == c) {
-						MODEL.hilited = null;
+					if (hilited == c) {
+						hilited = null;
 					}
 					c.destroy();
 					toBeRemoved.add(c);
@@ -702,7 +1841,77 @@ public class World implements Sweepable {
 		return map.completelyContains(s);
 	}
 	
+	
+	
+	
+	
+	
+	
+	public void render() {
+		assert !Thread.holdsLock(MODEL);
+		
+		synchronized (VIEW) {
+			Graphics2D canvasGrassImageG2 = canvasGrassImage.createGraphics();
+			
+			canvasGrassImageG2.setColor(Color.WHITE);
+			canvasGrassImageG2.fillRect(0, 0, VIEW.canvas.getWidth(), VIEW.canvas.getHeight());
+			
+			canvasGrassImageG2.translate((int)(-worldViewport.x * PIXELS_PER_METER_DEBUG), (int)(-worldViewport.y * PIXELS_PER_METER_DEBUG));
+			
+			canvasGrassImageG2.scale(PIXELS_PER_METER_DEBUG, PIXELS_PER_METER_DEBUG);
+			
+			RenderingContext canvasGrassContext = new RenderingContext(canvasGrassImageG2, RenderingContextType.CANVAS);
+			
+			map.renderBackground(canvasGrassContext);
+			
+			canvasGrassImageG2.dispose();
+		}
+		
+		synchronized (VIEW) {
+			Graphics2D canvasGraphImageG2 = canvasGraphImage.createGraphics();
+			
+			Composite orig = canvasGraphImageG2.getComposite();
+			AlphaComposite c = AlphaComposite.getInstance(AlphaComposite.SRC, 0.0f);
+			canvasGraphImageG2.setComposite(c);
+			canvasGraphImageG2.setColor(new Color(0, 0, 0, 0));
+			canvasGraphImageG2.fillRect(0, 0, VIEW.canvas.getWidth(), VIEW.canvas.getHeight());
+			canvasGraphImageG2.setComposite(orig);
+			
+			canvasGraphImageG2.translate((int)((-worldViewport.x) * PIXELS_PER_METER_DEBUG), (int)((-worldViewport.y) * PIXELS_PER_METER_DEBUG));
+			
+			canvasGraphImageG2.scale(PIXELS_PER_METER_DEBUG, PIXELS_PER_METER_DEBUG);
+			
+			RenderingContext canvasGraphContext = new RenderingContext(canvasGraphImageG2, RenderingContextType.CANVAS);
+			
+			graph.renderBackground(canvasGraphContext);
+			
+			canvasGraphImageG2.dispose();
+		}
+		
+		Graphics2D previewImageG2 = previewImage.createGraphics();
+		
+		previewImageG2.setColor(Color.WHITE);
+		previewImageG2.fillRect(0, 0, PREVIEW_WIDTH, PREVIEW_HEIGHT);
+		
+		previewImageG2.scale(PREVIEW_WIDTH / worldWidth, PREVIEW_HEIGHT / worldHeight);
+		
+		RenderingContext previewContext = new RenderingContext(previewImageG2, RenderingContextType.PREVIEW);
+		
+		map.renderBackground(previewContext);
+		
+		graph.renderBackground(previewContext);
+		
+		previewImageG2.dispose();
+	}
+	
+	
+	
 	public void paint(RenderingContext ctxt) {
+		
+		AffineTransform origTrans = ctxt.getTransform();
+		
+		ctxt.scale(PIXELS_PER_METER_DEBUG);
+		ctxt.translate(-worldViewport.x, -worldViewport.y);
 		
 		paintBackground(ctxt);
 		
@@ -714,17 +1923,35 @@ public class World implements Sweepable {
 			aabb.draw(ctxt);
 			
 		}
+		
+		if (stroke != null) {
+			stroke.paint(ctxt);
+		}
+		
+		if (cursor != null) {
+			cursor.draw(ctxt);
+		}
+		
+		if (MODEL.FPS_DRAW) {
+			
+			ctxt.translate(worldViewport.x, worldViewport.y);
+			
+			stats.paint(ctxt);
+		}
+		
+		ctxt.setTransform(origTrans);
+		
 	}
 	
 	private void paintBackground(RenderingContext ctxt) {
 		
 		AffineTransform origTransform = ctxt.getTransform();
-		ctxt.translate(VIEW.worldViewport.x, VIEW.worldViewport.y);
+		ctxt.translate(worldViewport.x, worldViewport.y);
 		
 		synchronized (VIEW) {
 			ctxt.paintWorldImage(
-					0, 0, VIEW.canvasGrassImage, 0, 0, VIEW.canvasGrassImage.getWidth(), VIEW.canvasGrassImage.getHeight(),
-					0, 0, VIEW.canvasGrassImage.getWidth(), VIEW.canvasGrassImage.getHeight());
+					0, 0, canvasGrassImage, 0, 0, canvasGrassImage.getWidth(), canvasGrassImage.getHeight(),
+					0, 0, canvasGrassImage.getWidth(), canvasGrassImage.getHeight());
 		}
 		
 		ctxt.setTransform(origTransform);
@@ -740,12 +1967,12 @@ public class World implements Sweepable {
 		}
 		
 		origTransform = ctxt.getTransform();
-		ctxt.translate(VIEW.worldViewport.x, VIEW.worldViewport.y);
+		ctxt.translate(worldViewport.x, worldViewport.y);
 		
 		synchronized (VIEW) {
 			ctxt.paintWorldImage(
-					0, 0, VIEW.canvasGraphImage, 0, 0, VIEW.canvasGraphImage.getWidth(), VIEW.canvasGraphImage.getHeight(),
-					0, 0, VIEW.canvasGraphImage.getWidth(), VIEW.canvasGraphImage.getHeight());
+					0, 0, canvasGraphImage, 0, 0, canvasGraphImage.getWidth(), canvasGraphImage.getHeight(),
+					0, 0, canvasGraphImage.getWidth(), canvasGraphImage.getHeight());
 		}
 		
 		ctxt.setTransform(origTransform);
@@ -769,7 +1996,7 @@ public class World implements Sweepable {
 		synchronized (MODEL) {
 			carsCopy = new ArrayList<Car>(cars);
 			explosionsCopy = new ArrayList<AnimatedExplosion>(explosions);
-			hilitedCopy = MODEL.hilited;
+			hilitedCopy = hilited;
 		}
 		
 		for (Car c : carsCopy) {

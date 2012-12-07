@@ -77,8 +77,8 @@ public class AnimatedGrass {
 		ctxt.paintWorldImage(p.x - AnimatedGrass.GRASS_SIZE/2, p.y - AnimatedGrass.GRASS_SIZE/2, VIEW.sheet,
 				0,
 				0,
-				VIEW.metersToPixels(GRASS_SIZE),
-				VIEW.metersToPixels(GRASS_SIZE),
+				(int)Math.round(MODEL.world.PIXELS_PER_METER_DEBUG * GRASS_SIZE),
+				(int)Math.round(MODEL.world.PIXELS_PER_METER_DEBUG * GRASS_SIZE),
 				0, 256, 0+32, 256+32);
 		
 	}
@@ -88,8 +88,8 @@ public class AnimatedGrass {
 		ctxt.paintWorldImage(p.x - AnimatedGrass.GRASS_SIZE/2, p.y - AnimatedGrass.GRASS_SIZE/2, VIEW.sheet,
 				0,
 				0,
-				VIEW.metersToPixels(GRASS_SIZE),
-				VIEW.metersToPixels(GRASS_SIZE),
+				(int)Math.round(MODEL.world.PIXELS_PER_METER_DEBUG * GRASS_SIZE),
+				(int)Math.round(MODEL.world.PIXELS_PER_METER_DEBUG * GRASS_SIZE),
 				32, 256, 32+32, 256+32);
 		
 	}
@@ -99,8 +99,8 @@ public class AnimatedGrass {
 		ctxt.paintWorldImage(p.x - AnimatedGrass.GRASS_SIZE/2, p.y - AnimatedGrass.GRASS_SIZE/2, VIEW.sheet,
 				0,
 				0,
-				VIEW.metersToPixels(GRASS_SIZE),
-				VIEW.metersToPixels(GRASS_SIZE),
+				(int)Math.round(MODEL.world.PIXELS_PER_METER_DEBUG * GRASS_SIZE),
+				(int)Math.round(MODEL.world.PIXELS_PER_METER_DEBUG * GRASS_SIZE),
 				64, 256, 64+32, 256+32);
 		
 	}

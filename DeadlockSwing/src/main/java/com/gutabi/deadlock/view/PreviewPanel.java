@@ -1,6 +1,7 @@
 package com.gutabi.deadlock.view;
 
 import static com.gutabi.deadlock.view.DeadlockView.VIEW;
+import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -16,9 +17,9 @@ import com.gutabi.deadlock.core.Point;
 public class PreviewPanel extends JPanel {
 	
 	public PreviewPanel() {
-		setSize(new Dimension(VIEW.PREVIEW_WIDTH, VIEW.PREVIEW_HEIGHT));
-		setPreferredSize(new Dimension(VIEW.PREVIEW_WIDTH, VIEW.PREVIEW_HEIGHT));
-		setMaximumSize(new Dimension(VIEW.PREVIEW_WIDTH, VIEW.PREVIEW_HEIGHT));
+		setSize(new Dimension(MODEL.world.PREVIEW_WIDTH, MODEL.world.PREVIEW_HEIGHT));
+		setPreferredSize(new Dimension(MODEL.world.PREVIEW_WIDTH, MODEL.world.PREVIEW_HEIGHT));
+		setMaximumSize(new Dimension(MODEL.world.PREVIEW_WIDTH, MODEL.world.PREVIEW_HEIGHT));
 	}
 	
 	Point lastPressPreviewPoint;
@@ -55,9 +56,9 @@ public class PreviewPanel extends JPanel {
 			double dx = lastDragPreviewPoint.x - penDragPreviewPoint.x;
 			double dy = lastDragPreviewPoint.y - penDragPreviewPoint.y;
 			
-			VIEW.pan(new Point(dx, dy));
+			MODEL.world.pan(new Point(dx, dy));
 			
-			VIEW.renderWorldBackground();
+			MODEL.world.render();
 			VIEW.repaintCanvas();
 			VIEW.repaintControlPanel();
 			
@@ -68,13 +69,13 @@ public class PreviewPanel extends JPanel {
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		
-		if (VIEW.previewImage != null) {
+		if (MODEL.world.previewImage != null) {
 			
-			g.drawImage(VIEW.previewImage, 0, 0, null);
+			g.drawImage(MODEL.world.previewImage, 0, 0, null);
 			
-			Point prevLoc = VIEW.worldToPreview(VIEW.worldViewport.ul);
+			Point prevLoc = MODEL.world.worldToPreview(MODEL.world.worldViewport.ul);
 			
-			Point prevDim = VIEW.worldToPreview(new Point(VIEW.worldViewport.width, VIEW.worldViewport.height));
+			Point prevDim = MODEL.world.worldToPreview(new Point(MODEL.world.worldViewport.width, MODEL.world.worldViewport.height));
 			
 			g.setColor(Color.BLUE);
 			g.drawRect(

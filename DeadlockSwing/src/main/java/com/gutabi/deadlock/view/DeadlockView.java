@@ -1,14 +1,12 @@
 package com.gutabi.deadlock.view;
 
+import static com.gutabi.deadlock.DeadlockApplication.APP;
 import static com.gutabi.deadlock.controller.DeadlockController.CONTROLLER;
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 
-import java.awt.AlphaComposite;
 import java.awt.Color;
-import java.awt.Composite;
 import java.awt.Container;
 import java.awt.Graphics2D;
-import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.net.URL;
 
@@ -17,32 +15,22 @@ import javax.swing.BoxLayout;
 import javax.swing.JApplet;
 import javax.swing.JFrame;
 import javax.swing.RootPaneContainer;
-import javax.swing.SwingUtilities;
 
 import org.apache.log4j.Logger;
 
 import com.gutabi.deadlock.controller.ControlMode;
-import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.core.geom.AABB;
+import com.gutabi.deadlock.controller.KeyboardController;
+import com.gutabi.deadlock.controller.MouseController;
 
-@SuppressWarnings("static-access")
+//@SuppressWarnings("static-access")
 public class DeadlockView {
 	
 	public static DeadlockView VIEW = new DeadlockView();
-	
-	public static final int PREVIEW_WIDTH = 100;
-	public static final int PREVIEW_HEIGHT = 100;
-	
-	public URL codebase;
 	
 	public RootPaneContainer container;
 	public Canvas canvas;
 	public ControlPanel controlPanel;
 	public PreviewPanel previewPanel;
-	
-	public double PIXELS_PER_METER_DEBUG = 32.0;
-	
-	public AABB worldViewport;
 	
 	public BufferedImage sheet;
 	public BufferedImage explosionSheet;
@@ -50,47 +38,22 @@ public class DeadlockView {
 	public BufferedImage title_white;
 	public BufferedImage copyright;
 	
-	public BufferedImage quadrantGrass;
-	public BufferedImage canvasGrassImage;
-	public BufferedImage previewImage;
-	public BufferedImage canvasGraphImage;
-	
-	public BufferedImage canvasMenuImage;
-	
 	public static Color LIGHTGREEN = new Color(128, 255, 128);
 	public static Color DARKGREEN = new Color(0, 128, 0);
 	
 	public final Logger logger = Logger.getLogger(DeadlockView.class);
-	
-	public DeadlockView() {
-		;
-	}
 	
 	public void init() throws Exception {
 		
 //		assert canvas.getWidth() == CANVAS_WIDTH;
 //		assert canvas.getHeight() == CANVAS_HEIGHT;
 		
-		sheet = ImageIO.read(new URL(codebase, "media/sheet.png"));
-		explosionSheet = ImageIO.read(new URL(codebase, "media\\explosionSheet.png"));
-		titleBackground = ImageIO.read(new URL(codebase, "media\\title_background.png"));
-		title_white = ImageIO.read(new URL(codebase, "media\\title_white.png"));
-		copyright = ImageIO.read(new URL(codebase, "media\\copyright.png"));
+		sheet = ImageIO.read(new URL(APP.codebase, "media/sheet.png"));
+		explosionSheet = ImageIO.read(new URL(APP.codebase, "media\\explosionSheet.png"));
+		titleBackground = ImageIO.read(new URL(APP.codebase, "media\\title_background.png"));
+		title_white = ImageIO.read(new URL(APP.codebase, "media\\title_white.png"));
+		copyright = ImageIO.read(new URL(APP.codebase, "media\\copyright.png"));
 		
-		quadrantGrass = new BufferedImage(
-				512,
-				512,
-				BufferedImage.TYPE_INT_ARGB);
-		Graphics2D quadrantGrassG2 = VIEW.quadrantGrass.createGraphics();
-		for (int i = 0; i < metersToPixels(MODEL.QUADRANT_WIDTH)/32; i++) {
-			for (int j = 0; j < metersToPixels(MODEL.QUADRANT_HEIGHT)/32; j++) {
-				quadrantGrassG2.drawImage(VIEW.sheet,
-						32 * i, 32 * j, 32 * i + 32, 32 * j + 32,
-						0, 224, 0+32, 224+32, null);
-			}
-		}
-		
-		canvasMenuImage = new BufferedImage(800, 600, BufferedImage.TYPE_INT_RGB);
 	}
 	
 	public void setupFrame() {
@@ -122,9 +85,12 @@ public class DeadlockView {
 		canvas = new Canvas();
 		canvas.setFocusable(true);
 		
-		canvas.addMouseListener(CONTROLLER.mc);
-		canvas.addMouseMotionListener(CONTROLLER.mc);
-		canvas.addKeyListener(CONTROLLER.kc);
+		MouseController mc = new MouseController();
+		KeyboardController kc = new KeyboardController();
+		
+		canvas.addMouseListener(mc);
+		canvas.addMouseMotionListener(mc);
+		canvas.addKeyListener(kc);
 		
 		Container cp = container.getContentPane();
 //		cp.setLayout(new BoxLayout(cp, BoxLayout.X_AXIS));
@@ -146,19 +112,22 @@ public class DeadlockView {
 		canvas = new Canvas();
 		canvas.setFocusable(true);
 		
-		canvas.addMouseListener(CONTROLLER.mc);
-		canvas.addMouseMotionListener(CONTROLLER.mc);
-		canvas.addKeyListener(CONTROLLER.kc);
+		MouseController mc = new MouseController();
+		KeyboardController kc = new KeyboardController();
+		
+		canvas.addMouseListener(mc);
+		canvas.addMouseMotionListener(mc);
+		canvas.addKeyListener(kc);
 		
 		previewPanel = new PreviewPanel();
 		
-		previewPanel.addMouseListener(CONTROLLER.mc);
-		previewPanel.addMouseMotionListener(CONTROLLER.mc);
-		previewPanel.addKeyListener(CONTROLLER.kc);
+		previewPanel.addMouseListener(mc);
+		previewPanel.addMouseMotionListener(mc);
+		previewPanel.addKeyListener(kc);
 		
 		controlPanel = new ControlPanel();
 		controlPanel.init();
-		controlPanel.addKeyListener(CONTROLLER.kc);
+		controlPanel.addKeyListener(kc);
 		
 		Container cp = container.getContentPane();
 		cp.setLayout(new BoxLayout(cp, BoxLayout.X_AXIS));
@@ -181,98 +150,15 @@ public class DeadlockView {
 	}
 	
 	public void postDisplay() {
-		
 		canvas.postDisplay();
-		
-		canvasGrassImage = new BufferedImage(canvas.getWidth(), canvas.getHeight(), BufferedImage.TYPE_INT_RGB);
-		
-		canvasGraphImage = new BufferedImage(canvas.getWidth(), canvas.getHeight(), BufferedImage.TYPE_INT_ARGB);
-		
-	}
-	
-	public Point canvasToWorld(Point p) {
-		return new Point(
-				p.x / PIXELS_PER_METER_DEBUG + worldViewport.x,
-				p.y / PIXELS_PER_METER_DEBUG + worldViewport.y);
-	}
-	
-	public Point canvasToMenu(Point p) {
-		return new Point(p.x - (canvas.getWidth()/2 - 800/2), p.y - (canvas.getHeight()/2 - 600/2));
-	}
-	
-	public int metersToPixels(double m) {
-		return (int)(Math.round(m * PIXELS_PER_METER_DEBUG));
-	}
-	
-	public Point previewToWorld(Point p) {
-		return new Point((MODEL.world.worldWidth / PREVIEW_WIDTH) * p.x, (MODEL.world.worldHeight / PREVIEW_HEIGHT) * p.y);
-	}
-	
-	public Point worldToPreview(Point p) {
-		return new Point((PREVIEW_WIDTH / MODEL.world.worldWidth) * p.x, (PREVIEW_HEIGHT / MODEL.world.worldHeight) * p.y);
-	}
-	
-	public void pan(Point prevDp) {
-		Point worldDP = VIEW.previewToWorld(prevDp);
-		
-		VIEW.worldViewport = new AABB(
-				VIEW.worldViewport.x + worldDP.x,
-				VIEW.worldViewport.y + worldDP.y,
-				VIEW.worldViewport.width,
-				VIEW.worldViewport.height);
-	}
-	
-	public void zoom(double factor) {
-		
-		Point center = new Point(VIEW.worldViewport.x + VIEW.worldViewport.width / 2, VIEW.worldViewport.y + VIEW.worldViewport.height / 2);
-		
-		VIEW.PIXELS_PER_METER_DEBUG = factor * VIEW.PIXELS_PER_METER_DEBUG; 
-		
-		double newWidth = canvas.getWidth() / VIEW.PIXELS_PER_METER_DEBUG;
-		double newHeight = canvas.getHeight() / VIEW.PIXELS_PER_METER_DEBUG;
-		
-		VIEW.worldViewport = new AABB(center.x - newWidth/2, center.y - newHeight/2, newWidth, newHeight);
-		
 	}
 	
 	private void paintCanvas(RenderingContext ctxt) {
 		
 		if (CONTROLLER.mode == ControlMode.MENU) {
-			
-			AffineTransform origTrans = ctxt.getTransform();
-			
-			ctxt.translate(canvas.getWidth()/2 - 800/2, canvas.getHeight()/2 - 600/2);
-			
 			MODEL.menu.paint(ctxt);
-			
-			ctxt.setTransform(origTrans);
-			
 		} else {
-			
-			AffineTransform origTrans = ctxt.getTransform();
-			
-			ctxt.scale(PIXELS_PER_METER_DEBUG);
-			ctxt.translate(-worldViewport.x, -worldViewport.y);
-			
 			MODEL.world.paint(ctxt);
-			
-			if (MODEL.stroke != null) {
-				MODEL.stroke.paint(ctxt);
-			}
-			
-			if (MODEL.cursor != null) {
-				MODEL.cursor.draw(ctxt);
-			}
-			
-			if (MODEL.FPS_DRAW) {
-				
-				ctxt.translate(worldViewport.x, worldViewport.y);
-				
-				MODEL.stats.paint(ctxt);
-			}
-			
-			ctxt.setTransform(origTrans);
-			
 		}
 		
 	}
@@ -280,11 +166,11 @@ public class DeadlockView {
 	public void repaintCanvas() {
 		assert !Thread.holdsLock(MODEL);
 		
-		if (SwingUtilities.isEventDispatchThread()) {
-			if (CONTROLLER.mode == ControlMode.RUNNING) {
-				return;
-			}
-		}
+//		if (SwingUtilities.isEventDispatchThread()) {
+//			if (CONTROLLER.mode == ControlMode.RUNNING) {
+//				return;
+//			}
+//		}
 		
 		do {
 			
@@ -305,90 +191,7 @@ public class DeadlockView {
 	}
 	
 	public void repaintControlPanel() {
-		
-		if (CONTROLLER.mode == ControlMode.MENU) {
-			
-		} else {
-			
-			controlPanel.repaint();
-			
-		}
-		
+		controlPanel.repaint();
 	}
-	
-	public void renderWorldBackground() {
-		assert !Thread.holdsLock(MODEL);
-		
-		synchronized (VIEW) {
-			Graphics2D canvasGrassImageG2 = canvasGrassImage.createGraphics();
-			
-			canvasGrassImageG2.setColor(Color.WHITE);
-			canvasGrassImageG2.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
-			
-			canvasGrassImageG2.translate((int)(-VIEW.worldViewport.x * PIXELS_PER_METER_DEBUG), (int)(-VIEW.worldViewport.y * PIXELS_PER_METER_DEBUG));
-			
-			canvasGrassImageG2.scale(VIEW.PIXELS_PER_METER_DEBUG, VIEW.PIXELS_PER_METER_DEBUG);
-			
-			RenderingContext canvasGrassContext = new RenderingContext(canvasGrassImageG2, RenderingContextType.CANVAS);
-			
-			MODEL.world.map.renderBackground(canvasGrassContext);
-			
-			canvasGrassImageG2.dispose();
-		}
-		
-		synchronized (VIEW) {
-			Graphics2D canvasGraphImageG2 = canvasGraphImage.createGraphics();
-			
-			Composite orig = canvasGraphImageG2.getComposite();
-			AlphaComposite c = AlphaComposite.getInstance(AlphaComposite.SRC, 0.0f);
-			canvasGraphImageG2.setComposite(c);
-			canvasGraphImageG2.setColor(new Color(0, 0, 0, 0));
-			canvasGraphImageG2.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
-			canvasGraphImageG2.setComposite(orig);
-			
-			canvasGraphImageG2.translate((int)((-VIEW.worldViewport.x) * PIXELS_PER_METER_DEBUG), (int)((-VIEW.worldViewport.y) * PIXELS_PER_METER_DEBUG));
-			
-			canvasGraphImageG2.scale(VIEW.PIXELS_PER_METER_DEBUG, VIEW.PIXELS_PER_METER_DEBUG);
-			
-			RenderingContext canvasGraphContext = new RenderingContext(canvasGraphImageG2, RenderingContextType.CANVAS);
-			
-			MODEL.world.graph.renderBackground(canvasGraphContext);
-			
-			canvasGraphImageG2.dispose();
-		}
-		
-		previewImage = new BufferedImage(PREVIEW_WIDTH, PREVIEW_HEIGHT, BufferedImage.TYPE_INT_RGB);
-		
-		Graphics2D previewImageG2 = previewImage.createGraphics();
-		
-		previewImageG2.setColor(Color.WHITE);
-		previewImageG2.fillRect(0, 0, PREVIEW_WIDTH, PREVIEW_HEIGHT);
-		
-		previewImageG2.scale(PREVIEW_WIDTH / MODEL.world.worldWidth, PREVIEW_HEIGHT / MODEL.world.worldHeight);
-		
-		RenderingContext previewContext = new RenderingContext(previewImageG2, RenderingContextType.PREVIEW);
-		
-		MODEL.world.map.renderBackground(previewContext);
-		
-		MODEL.world.graph.renderBackground(previewContext);
-		
-		previewImageG2.dispose();
-	}
-	
-	public void renderMenu() {
-	
-		synchronized (VIEW) {
-			Graphics2D canvasMenuImageG2 = canvasMenuImage.createGraphics();
-			
-			RenderingContext canvasMenuContext = new RenderingContext(canvasMenuImageG2, RenderingContextType.CANVAS);
-			
-			MODEL.menu.render(canvasMenuContext);
-			
-			canvasMenuImageG2.dispose();
-		}
-		
-		
-	}
-	
 	
 }

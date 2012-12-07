@@ -8,7 +8,6 @@ import java.awt.Graphics;
 import java.awt.image.BufferStrategy;
 
 import com.gutabi.deadlock.controller.InputEvent;
-import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
 
 @SuppressWarnings("serial")
@@ -26,225 +25,95 @@ public class Canvas extends java.awt.Canvas {
 	}
 	
 	public void postDisplay() {
+		
 		createBufferStrategy(2);
 		bs = getBufferStrategy();
+		
+		switch (CONTROLLER.mode) {
+		case WORLD:
+			MODEL.world.postDisplay();
+			break;
+		case MENU:
+			break;
+		}
+		
 	}
 	
-	Point lastPressCanvasPoint;
-	long lastPressTime;
-	
-	Point lastDragCanvasPoint;
-	Point lastDragWorldPoint;
-	long lastDragTime;
+//	Point lastPressCanvasPoint;
+//	Point lastDragCanvasPoint;
 	
 	public void pressed(InputEvent ev) {
 		
 		requestFocusInWindow();
 		
-		Point p = ev.p;
-		
-		lastPressCanvasPoint = p;
-		lastPressTime = System.currentTimeMillis();
-		
-		lastDragCanvasPoint = null;
-		lastDragTime = -1;
+		switch (CONTROLLER.mode) {
+		case MENU:
+			break;
+		case WORLD:
+			MODEL.world.pressed(ev);
+			break;
+		}
 		
 	}
 	
 	public void dragged(InputEvent ev) {
 		
-		VIEW.canvas.requestFocusInWindow();
-		
-		boolean lastDragCanvasPointWasNull = (lastDragCanvasPoint == null);
-		
-		Point p = ev.p;
-		
-		lastDragCanvasPoint = p;
-		lastDragWorldPoint = VIEW.canvasToWorld(p);
-		lastDragTime = System.currentTimeMillis();
-		
-		MODEL.cursor.setPoint(lastDragWorldPoint);
+		requestFocusInWindow();
 		
 		switch (CONTROLLER.mode) {
-		case IDLE: {
-			
-			if (lastDragCanvasPointWasNull) {
-				// first drag
-				CONTROLLER.draftStart(lastPressCanvasPoint);
-				CONTROLLER.draftMove(lastDragCanvasPoint);
-				
-				VIEW.repaintCanvas();
-				
-			} else {
-				assert false;
-			}
-			
-			break;
-		}
-		case DRAFTING:
-			
-			CONTROLLER.draftMove(lastDragCanvasPoint);
-			
-			VIEW.repaintCanvas();
-			break;
-			
-		case RUNNING:
-		case PAUSED:
-		case MERGERCURSOR:
-		case FIXTURECURSOR:
-		case STRAIGHTEDGECURSOR:
 		case MENU:
-			;
+			break;
+		case WORLD:
+			MODEL.world.dragged(ev);
 			break;
 		}
 		
 	}
 	
-	long lastReleaseTime;
-	
 	public void released(InputEvent ev) {
 		
 		requestFocusInWindow();
 		
-		lastReleaseTime = System.currentTimeMillis();
-		
 		switch (CONTROLLER.mode) {
-		case IDLE: {
-			
-			if (lastReleaseTime - lastPressTime < 500 && lastDragCanvasPoint == null) {
-				// click
-				
-			}
-			
-			break;
-		}
-		case DRAFTING:
-			CONTROLLER.draftEnd();
-			
-			VIEW.renderWorldBackground();
-			VIEW.repaintCanvas();
-			VIEW.repaintControlPanel();
-			
-			break;
-		case RUNNING:
-		case PAUSED:
-		case MERGERCURSOR:
-		case FIXTURECURSOR:
-		case STRAIGHTEDGECURSOR:
 		case MENU:
-			;
+			break;
+		case WORLD:
+			MODEL.world.released(ev);
 			break;
 		}
 		
 	}
 	
 	public Point lastMovedCanvasPoint;
-	public Point lastMovedMenuPoint;
-	public Point lastMovedWorldPoint;
 	
 	public void moved(InputEvent ev) {
 		
 		VIEW.canvas.requestFocusInWindow();
 		
-		Point p = ev.p;
-		
-		lastMovedCanvasPoint = p;
+		lastMovedCanvasPoint = ev.p;
 		
 		switch (CONTROLLER.mode) {
 		case MENU:
-			
-			lastMovedMenuPoint = VIEW.canvasToMenu(lastMovedCanvasPoint);
-			
-			MODEL.menu.move(lastMovedMenuPoint);
-			
+			MODEL.menu.moved(ev);
 			break;
-		case PAUSED:
-			
-			lastMovedWorldPoint = VIEW.canvasToWorld(lastMovedCanvasPoint);
-			
-			break;
-		case DRAFTING:
-			
-			assert false;
-			lastMovedWorldPoint = VIEW.canvasToWorld(lastMovedCanvasPoint);
-			
-			break;
-		case IDLE:
-		case RUNNING:
-			
-			lastMovedWorldPoint = VIEW.canvasToWorld(lastMovedCanvasPoint);
-			
-			Entity closest = MODEL.world.hitTest(lastMovedWorldPoint);
-			
-			synchronized (MODEL) {
-				MODEL.hilited = closest;
-			}
-			
-			if (MODEL.cursor != null) {
-				if (MODEL.grid) {
-					
-					Point closestGridPoint = new Point(2 * Math.round(0.5 * lastMovedWorldPoint.x), 2 * Math.round(0.5 * lastMovedWorldPoint.y));
-					MODEL.cursor.setPoint(closestGridPoint);
-					
-				} else {
-					MODEL.cursor.setPoint(lastMovedWorldPoint);
-				}
-			}
-			
-			VIEW.repaintCanvas();
-			break;
-			
-		case MERGERCURSOR:
-		case FIXTURECURSOR:
-		case STRAIGHTEDGECURSOR:
-			
-			lastMovedWorldPoint = VIEW.canvasToWorld(lastMovedCanvasPoint);
-			
-			MODEL.hilited = null;
-			
-			if (MODEL.cursor != null) {
-				if (MODEL.grid) {
-					
-					Point closestGridPoint = new Point(2 * Math.round(0.5 * lastMovedWorldPoint.x), 2 * Math.round(0.5 * lastMovedWorldPoint.y));
-					MODEL.cursor.setPoint(closestGridPoint);
-					
-				} else {
-					MODEL.cursor.setPoint(lastMovedWorldPoint);
-				}
-			}
-			
-			VIEW.repaintCanvas();
+		case WORLD:
+			MODEL.world.moved(ev);
 			break;
 		}
 		
 	}
 	
 	Point lastClickedCanvasPoint;
-	Point lastClickedMenuPoint;
 	
 	public void clicked(InputEvent ev) {
 		
 		requestFocusInWindow();
 		
-		Point p = ev.p;
-		
-		lastClickedCanvasPoint = p;
-		
 		switch (CONTROLLER.mode) {
 		case MENU:
-			
-			lastClickedMenuPoint = VIEW.canvasToMenu(lastClickedCanvasPoint);
-			
-			MODEL.menu.click(lastClickedMenuPoint);
-			
+			MODEL.menu.clicked(ev);
 			break;
-		case PAUSED:
-		case DRAFTING:
-		case IDLE:
-		case RUNNING:			
-		case MERGERCURSOR:
-		case FIXTURECURSOR:
-		case STRAIGHTEDGECURSOR:
+		case WORLD:
 			break;
 		}
 		
@@ -252,38 +121,11 @@ public class Canvas extends java.awt.Canvas {
 	
 	public void entered(InputEvent ev) {
 		
-		Point p = ev.p;
-		
 		switch (CONTROLLER.mode) {
 		case MENU:
 			break;
-			
-		case PAUSED:
-		case DRAFTING:
-		case RUNNING:
-			
-			lastMovedWorldPoint = VIEW.canvasToWorld(p);
-			
-			break;
-		case IDLE:
-		case MERGERCURSOR:
-		case FIXTURECURSOR:
-		case STRAIGHTEDGECURSOR:
-			
-			lastMovedWorldPoint = VIEW.canvasToWorld(p);
-			
-			if (MODEL.cursor != null) {
-				if (MODEL.grid) {
-					
-					Point closestGridPoint = new Point(2 * Math.round(0.5 * lastMovedWorldPoint.x), 2 * Math.round(0.5 * lastMovedWorldPoint.y));
-					MODEL.cursor.setPoint(closestGridPoint);
-					
-				} else {
-					MODEL.cursor.setPoint(lastMovedWorldPoint);
-				}
-			}
-			
-			VIEW.repaintCanvas();
+		case WORLD:
+			MODEL.world.entered(ev);
 			break;
 		}
 		
@@ -292,21 +134,10 @@ public class Canvas extends java.awt.Canvas {
 	public void exited(InputEvent ev) {
 		
 		switch (CONTROLLER.mode) {
-		case PAUSED:
-		case DRAFTING:
-		case RUNNING:
 		case MENU:
 			break;
-		case IDLE:
-		case MERGERCURSOR:
-		case FIXTURECURSOR:
-		case STRAIGHTEDGECURSOR:
-			
-			if (MODEL.cursor != null) {
-				MODEL.cursor.setPoint(null);
-			}
-			
-			VIEW.repaintCanvas();
+		case WORLD:
+			MODEL.world.exited(ev);
 			break;
 		}
 		

@@ -44,18 +44,17 @@ public class Quadrant {
 			case CANVAS:
 				if (!MODEL.DEBUG_DRAW) {
 					
-					ctxt.paintWorldImage(c * MODEL.QUADRANT_WIDTH, r * MODEL.QUADRANT_HEIGHT, VIEW.quadrantGrass,
+					ctxt.paintWorldImage(c * MODEL.QUADRANT_WIDTH, r * MODEL.QUADRANT_HEIGHT, MODEL.world.quadrantGrass,
 							0,
 							0,
-							VIEW.metersToPixels(MODEL.QUADRANT_WIDTH),
-							VIEW.metersToPixels(MODEL.QUADRANT_HEIGHT),
+							(int)Math.round(MODEL.world.PIXELS_PER_METER_DEBUG * MODEL.QUADRANT_WIDTH),
+							(int)Math.round(MODEL.world.PIXELS_PER_METER_DEBUG * MODEL.QUADRANT_HEIGHT),
 							0,
 							0,
-							VIEW.quadrantGrass.getWidth(),
-							VIEW.quadrantGrass.getHeight());
+							MODEL.world.quadrantGrass.getWidth(),
+							MODEL.world.quadrantGrass.getHeight());
 					
 				} else {
-					
 					
 					ctxt.setColor(VIEW.DARKGREEN);
 					aabb.paint(ctxt);
@@ -69,7 +68,7 @@ public class Quadrant {
 					
 				}
 				
-				if (MODEL.grid) {
+				if (MODEL.world.grid) {
 					
 					ctxt.setColor(Color.GRAY);
 					ctxt.setWorldPixelStroke(1);

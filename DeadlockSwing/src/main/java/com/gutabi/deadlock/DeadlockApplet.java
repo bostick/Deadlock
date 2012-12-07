@@ -1,6 +1,7 @@
 
 package com.gutabi.deadlock;
 
+
 import static com.gutabi.deadlock.controller.DeadlockController.CONTROLLER;
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 import static com.gutabi.deadlock.view.DeadlockView.VIEW;
@@ -12,7 +13,9 @@ import javax.swing.UIManager;
 import org.apache.log4j.Logger;
 
 import com.gutabi.deadlock.controller.ControlMode;
-import com.gutabi.deadlock.examples.OneByOneWorld;
+import com.gutabi.deadlock.model.menu.MainMenu;
+
+import static com.gutabi.deadlock.DeadlockApplication.APP;
 
 @SuppressWarnings("serial")
 public class DeadlockApplet extends JApplet {
@@ -21,25 +24,22 @@ public class DeadlockApplet extends JApplet {
 	
 	static void createAndShowGUI(DeadlockApplet app) throws Exception {
 		
-		MODEL.init();
-		MODEL.world = new OneByOneWorld();
-		MODEL.world.init();
+		MODEL.menu = new MainMenu();
 		
-		VIEW.codebase = app.getCodeBase();
+		APP.codebase = app.getCodeBase();
 		VIEW.setupApplet(app);
 		VIEW.init();
 		
-		CONTROLLER.mode = ControlMode.IDLE;
+		CONTROLLER.mode = ControlMode.MENU;
 		
-		VIEW.renderWorldBackground();
+		MODEL.menu.render();
 		
 		app.setVisible(true);
 		VIEW.canvas.requestFocusInWindow();
 		
-		VIEW.canvas.postDisplay();
+		VIEW.postDisplay();
 		
 		VIEW.repaintCanvas();
-		VIEW.repaintControlPanel();
 	}
 	
 	public static Thread.UncaughtExceptionHandler handler = new Thread.UncaughtExceptionHandler() {

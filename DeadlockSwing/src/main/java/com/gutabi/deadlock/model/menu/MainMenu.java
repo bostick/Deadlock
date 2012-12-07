@@ -5,13 +5,15 @@ import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
 import java.awt.Color;
+import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 
 import javax.swing.JFrame;
 
 import com.gutabi.deadlock.controller.ControlMode;
-import com.gutabi.deadlock.examples.OneByOneWorld;
+import com.gutabi.deadlock.examples.FourByFourGridWorld;
 import com.gutabi.deadlock.view.RenderingContext;
+import com.gutabi.deadlock.view.RenderingContextType;
 
 //@SuppressWarnings("static-access")
 public class MainMenu extends Menu {
@@ -33,8 +35,8 @@ public class MainMenu extends Menu {
 				
 				try {
 					
-					MODEL.world = new OneByOneWorld();
-					
+//					MODEL.world = new OneByOneWorld();
+					MODEL.world = new FourByFourGridWorld();
 					MODEL.world.init();
 					
 //					VIEW.PIXELS_PER_METER_DEBUG = 12.5;
@@ -52,10 +54,11 @@ public class MainMenu extends Menu {
 					((JFrame)VIEW.container).setVisible(true);
 					VIEW.canvas.requestFocusInWindow();
 					
+					CONTROLLER.mode = ControlMode.WORLD;
+					
 					VIEW.postDisplay();
 					
-					CONTROLLER.mode = ControlMode.IDLE;
-					VIEW.renderWorldBackground();
+					MODEL.world.render();
 					
 					VIEW.repaintCanvas();
 					VIEW.repaintControlPanel();
@@ -103,52 +106,67 @@ public class MainMenu extends Menu {
 		
 	}
 	
-	public void render(RenderingContext ctxt) {
+	public void render() {
 		
-		ctxt.paintImage(0, 0, VIEW.titleBackground, 0, 0, 800, 600, 0, 0, 800, 600);
-		
-		ctxt.paintImage(800/2 - 498/2, 20, VIEW.title_white, 0, 0, 498, 90, 0, 0, 498, 90);
-		
-		ctxt.paintImage(800/2 - 432/2, 550, VIEW.copyright, 0, 0, 432, 38, 0, 0, 432, 38);
-		
-		int widest = 0;
-		int totalHeight = 0;
-		for (MenuItem item : items) {
-			item.renderLocal(ctxt);
-			if ((int)item.localAABB.width > widest) {
-				widest = (int)item.localAABB.width;
+		synchronized (VIEW) {
+			Graphics2D canvasMenuImageG2 = canvasMenuImage.createGraphics();
+			
+			RenderingContext canvasMenuContext = new RenderingContext(canvasMenuImageG2, RenderingContextType.CANVAS);
+			
+			canvasMenuContext.paintImage(0, 0, VIEW.titleBackground, 0, 0, 800, 600, 0, 0, 800, 600);
+			
+			canvasMenuContext.paintImage(800/2 - 498/2, 20, VIEW.title_white, 0, 0, 498, 90, 0, 0, 498, 90);
+			
+			canvasMenuContext.paintImage(800/2 - 432/2, 550, VIEW.copyright, 0, 0, 432, 38, 0, 0, 432, 38);
+			
+			int widest = 0;
+			int totalHeight = 0;
+			for (MenuItem item : items) {
+				item.renderLocal(canvasMenuContext);
+				if ((int)item.localAABB.width > widest) {
+					widest = (int)item.localAABB.width;
+				}
+				totalHeight += (int)item.localAABB.height;
 			}
-			totalHeight += (int)item.localAABB.height;
-		}
-		
-		AffineTransform origTransform = ctxt.getTransform();
-		
-		ctxt.translate(800/2 - widest/2, 200);
-		
-		for (MenuItem item : items) {
-			item.render(ctxt);
-			ctxt.translate(0, item.localAABB.height + 10);
-		}
-		
-		ctxt.setTransform(origTransform);
-		
-		ctxt.setColor(menuBackground);
-		ctxt.fillRect((int)(800/2 - widest/2 - 5), 200 - 5, (int)(widest + 10), totalHeight + 10 * (items.size() - 1) + 5 + 5);
-		
-		for (MenuItem item : items) {
-			item.paint(ctxt);
+			
+			AffineTransform origTransform = canvasMenuContext.getTransform();
+			
+			canvasMenuContext.translate(800/2 - widest/2, 200);
+			
+			for (MenuItem item : items) {
+				item.render(canvasMenuContext);
+				canvasMenuContext.translate(0, item.localAABB.height + 10);
+			}
+			
+			canvasMenuContext.setTransform(origTransform);
+			
+			canvasMenuContext.setColor(menuBackground);
+			canvasMenuContext.fillRect((int)(800/2 - widest/2 - 5), 200 - 5, (int)(widest + 10), totalHeight + 10 * (items.size() - 1) + 5 + 5);
+			
+			for (MenuItem item : items) {
+				item.paint(canvasMenuContext);
+			}
+			
+			canvasMenuImageG2.dispose();
 		}
 		
 	}
 	
 	public void paint(RenderingContext ctxt) {
+		
+		AffineTransform origTrans = ctxt.getTransform();
+		
+		ctxt.translate(VIEW.canvas.getWidth()/2 - 800/2, VIEW.canvas.getHeight()/2 - 600/2);
+		
 		ctxt.paintImage(
-				0, 0, VIEW.canvasMenuImage, 0, 0, VIEW.canvasMenuImage.getWidth(), VIEW.canvasMenuImage.getHeight(),
-				0, 0, VIEW.canvasMenuImage.getWidth(), VIEW.canvasMenuImage.getHeight());
+				0, 0, canvasMenuImage, 0, 0, canvasMenuImage.getWidth(), canvasMenuImage.getHeight(),
+				0, 0, canvasMenuImage.getWidth(), canvasMenuImage.getHeight());
 		
 		if (hilited != null) {
 			hilited.paintHilited(ctxt);			
 		}
+		
+		ctxt.setTransform(origTrans);
 
 	}
 	

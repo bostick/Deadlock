@@ -108,8 +108,8 @@ public class StopSign extends Entity {
 				ctxt.paintWorldImage(p.x - StopSign.STOPSIGN_SIZE/2, p.y - StopSign.STOPSIGN_SIZE/2, VIEW.sheet,
 						0,
 						0,
-						VIEW.metersToPixels(STOPSIGN_SIZE),
-						VIEW.metersToPixels(STOPSIGN_SIZE),
+						(int)Math.round(MODEL.world.PIXELS_PER_METER_DEBUG * STOPSIGN_SIZE),
+						(int)Math.round(MODEL.world.PIXELS_PER_METER_DEBUG * STOPSIGN_SIZE),
 						32, 224, 32+32, 224+32);
 				
 			}

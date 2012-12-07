@@ -103,7 +103,7 @@ public class Graph implements Sweepable {
 		
 	}
 	
-	public void computeVertexRadii() {
+	public void computeVertexRadiiX() {
 		
 		for (int i = 0; i < vertices.size(); i++) {
 			Vertex vi = vertices.get(i);

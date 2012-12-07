@@ -1,9 +1,6 @@
 package com.gutabi.deadlock.examples;
 
-import static com.gutabi.deadlock.controller.DeadlockController.CONTROLLER;
-
 import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.model.Map;
 import com.gutabi.deadlock.model.Stroke;
 import com.gutabi.deadlock.model.World;
 import com.gutabi.deadlock.model.graph.Axis;
@@ -14,19 +11,15 @@ import com.gutabi.deadlock.model.graph.Side;
 public class FourByFourGridWorld extends World {
 
 	public FourByFourGridWorld() {
-		super(4, 4);
-	}
-	
-	public void init() throws Exception {
-		
-		int[][] ini = new int[][] {
+		super(new int[][] {
 				{1, 1, 1, 1},
 				{1, 1, 1, 1},
 				{1, 1, 1, 1},
 				{1, 1, 1, 1}
-			};
-			
-		map = new Map(ini);
+			});
+	}
+	
+	public void init() {
 		
 		for (int i = 1; i < 16; i++) {
 			Fixture source = new Fixture(new Point(i * worldWidth / 16, 0), Axis.TOPBOTTOM);
@@ -58,7 +51,7 @@ public class FourByFourGridWorld extends World {
 			Stroke s = new Stroke();
 			s.add(source.p);
 			s.add(sink.p);
-			CONTROLLER.processNewStroke(s);
+			processNewStroke(s);
 			
 		}
 		
@@ -92,13 +85,9 @@ public class FourByFourGridWorld extends World {
 			Stroke s = new Stroke();
 			s.add(source.p);
 			s.add(sink.p);
-			CONTROLLER.processNewStroke(s);
+			processNewStroke(s);
 			
 		}
-		
-		super.init();
-		
-		
 		
 	}
 

@@ -1,6 +1,5 @@
-package com.gutabi.deadlock.controller;
+package com.gutabi.deadlock.model;
 
-import static com.gutabi.deadlock.controller.DeadlockController.CONTROLLER;
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
 import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
@@ -24,12 +23,12 @@ public class SimulationRunnable implements Runnable {
 		outer:
 		while (true) {
 			
-			if (CONTROLLER.mode == ControlMode.IDLE) {
+			if (MODEL.world.mode == WorldMode.IDLE) {
 				break outer;
-			} else if (CONTROLLER.mode == ControlMode.PAUSED) {
-				synchronized (MODEL.pauseLock) {
+			} else if (MODEL.world.mode == WorldMode.PAUSED) {
+				synchronized (MODEL.world.pauseLock) {
 					try {
-						MODEL.pauseLock.wait();
+						MODEL.world.pauseLock.wait();
 					} catch (InterruptedException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();

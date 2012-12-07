@@ -199,8 +199,8 @@ public abstract class Car extends Entity {
 	private Quad shape;
 	
 	static Logger logger = Logger.getLogger(Car.class);
-	static Logger pathingLogger = Logger.getLogger("com.gutabi.deadlock.model.Car.pathing");
-	static Logger eventingLogger = Logger.getLogger("com.gutabi.deadlock.model.Car.eventing");
+	static Logger pathingLogger = Logger.getLogger(logger.getName()+".pathing");
+	static Logger eventingLogger = Logger.getLogger(logger.getName()+".eventing");
 	
 	public Car(Fixture s) {
 		
@@ -1152,7 +1152,7 @@ public abstract class Car extends Entity {
 		ctxt.paintWorldImage(
 				CAR_LOCALX, CAR_LOCALY,
 				VIEW.sheet,
-				0, 0, (int)(CAR_LENGTH * VIEW.PIXELS_PER_METER_DEBUG), (int)(CAR_WIDTH * VIEW.PIXELS_PER_METER_DEBUG),
+				0, 0, (int)(CAR_LENGTH * MODEL.world.PIXELS_PER_METER_DEBUG), (int)(CAR_WIDTH * MODEL.world.PIXELS_PER_METER_DEBUG),
 				64, sheetRowStart, 64+32, sheetRowEnd);
 		
 		if (inMerger) {
@@ -1173,7 +1173,7 @@ public abstract class Car extends Entity {
 		ctxt.translate(p.x, p.y);
 		ctxt.rotate(angle);
 		
-		int brakePixels = (int)(BRAKE_SIZE * VIEW.PIXELS_PER_METER_DEBUG);
+		int brakePixels = (int)(BRAKE_SIZE * MODEL.world.PIXELS_PER_METER_DEBUG);
 		
 		ctxt.paintWorldImage(CAR_BRAKE1X, CAR_BRAKE1Y,
 				VIEW.sheet,

@@ -1,4 +1,13 @@
 
+decimate VIEW
+
+profile FourByFourGrid init
+
+
+
+
+
+
 straightedge cursor:
 allow starting in roads
 draw capsules

@@ -2,40 +2,14 @@ package com.gutabi.deadlock.controller;
 
 import static com.gutabi.deadlock.controller.DeadlockController.CONTROLLER;
 import static com.gutabi.deadlock.model.DeadlockModel.MODEL;
-import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-import com.gutabi.deadlock.core.Entity;
-import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.core.geom.Circle;
-import com.gutabi.deadlock.core.geom.ShapeUtils;
-import com.gutabi.deadlock.model.StopSign;
-import com.gutabi.deadlock.model.Stroke;
-import com.gutabi.deadlock.model.car.Car;
-import com.gutabi.deadlock.model.cursor.FixtureCursor;
-import com.gutabi.deadlock.model.cursor.MergerCursor;
-import com.gutabi.deadlock.model.cursor.RegularCursor;
-import com.gutabi.deadlock.model.cursor.StraightEdgeCursor;
-import com.gutabi.deadlock.model.graph.Axis;
-import com.gutabi.deadlock.model.graph.Direction;
-import com.gutabi.deadlock.model.graph.EdgePosition;
-import com.gutabi.deadlock.model.graph.Fixture;
-import com.gutabi.deadlock.model.graph.FixtureType;
-import com.gutabi.deadlock.model.graph.GraphPosition;
-import com.gutabi.deadlock.model.graph.Intersection;
-import com.gutabi.deadlock.model.graph.Merger;
-import com.gutabi.deadlock.model.graph.Road;
-import com.gutabi.deadlock.model.graph.RoadPosition;
-import com.gutabi.deadlock.model.graph.Side;
-import com.gutabi.deadlock.model.graph.Vertex;
-import com.gutabi.deadlock.model.graph.VertexPosition;
-
 //@SuppressWarnings("serial")
 public class KeyboardController implements KeyListener {
 	
-	public void keyPressed(KeyEvent arg0) {
+	public void keyPressed(KeyEvent e) {
 		
 	}
 
@@ -62,8 +36,6 @@ public class KeyboardController implements KeyListener {
 			plusKey();
 		} else if (e.getKeyCode() == KeyEvent.VK_MINUS) {
 			minusKey();
-		} else if (e.getKeyCode() == KeyEvent.VK_SLASH) {
-			slashKey();
 		} else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
 			downKey();
 		} else if (e.getKeyCode() == KeyEvent.VK_UP) {
@@ -78,559 +50,141 @@ public class KeyboardController implements KeyListener {
 	}
 	
 	public void qKey() {
-		
 		switch (CONTROLLER.mode) {
-		case IDLE:
-			
-			Entity hit = MODEL.world.pureGraphBestHitTest(MODEL.cursor.getShape());
-			if (hit == null) {
-				
-				MODEL.world.addVertexTop(new Intersection(MODEL.cursor.getPoint()));
-				
-				VIEW.renderWorldBackground();
-				VIEW.repaintControlPanel();
-				VIEW.repaintCanvas();
-				
-			} else if (hit instanceof Road || hit instanceof Vertex) {
-				
-				if (hit instanceof Road) {
-					GraphPosition pos = MODEL.world.findClosestRoadPosition(MODEL.cursor.getPoint(), ((Circle)MODEL.cursor.getShape()).radius);
-					
-					Entity hit2;
-					if (pos instanceof EdgePosition) {
-						hit2 = MODEL.world.pureGraphBestHitTestCircle(new Circle(null, pos.p, ((Circle)MODEL.cursor.getShape()).radius));
-					} else {
-						hit2 = ((VertexPosition)pos).v;
-					}
-					
-					if (hit2 instanceof Road) {
-						hit = MODEL.world.splitRoadTop((RoadPosition)pos);
-						
-						assert ShapeUtils.intersectCC((Circle)MODEL.cursor.getShape(), (Circle)hit.getShape());
-						
-					} else {
-						hit = hit2;
-					}
-				}
-				
-				CONTROLLER.mode = ControlMode.STRAIGHTEDGECURSOR;
-				
-				MODEL.cursor = new StraightEdgeCursor((Vertex)hit);
-				
-				MODEL.cursor.setPoint(VIEW.canvas.lastMovedWorldPoint);
-				
-				VIEW.repaintCanvas();
-				
-			}
-			
+		case WORLD:
+			MODEL.world.qKey();
 			break;
-			
-		case STRAIGHTEDGECURSOR:
-			
-			Point first = ((StraightEdgeCursor)MODEL.cursor).first.p;
-			Point second = MODEL.cursor.getPoint();
-			
-			Stroke s = new Stroke();
-			s.add(first);
-			s.add(second);
-			
-			CONTROLLER.processNewStroke(s);
-			
-			assert MODEL.world.checkConsistency();
-			
-			VIEW.renderWorldBackground();
-			VIEW.repaintControlPanel();
-			
-			CONTROLLER.mode = ControlMode.IDLE;
-			
-			MODEL.cursor = new RegularCursor();
-			
-			MODEL.cursor.setPoint(VIEW.canvas.lastMovedWorldPoint);
-			
-			VIEW.repaintCanvas();
-			
-			break;
-			
-		case RUNNING:
-		case PAUSED:
-		case MERGERCURSOR:
-		case FIXTURECURSOR:
-		case DRAFTING:
 		case MENU:
 			break;
 		}
-		
 	}
 	
 	public void wKey() {
-		
 		switch (CONTROLLER.mode) {
-		case IDLE:
-			
-			CONTROLLER.mode = ControlMode.FIXTURECURSOR;
-			
-			MODEL.cursor = new FixtureCursor();
-			
-			MODEL.cursor.setPoint(VIEW.canvas.lastMovedWorldPoint);
-			
-			VIEW.repaintCanvas();
-			
+		case WORLD:
+			MODEL.world.wKey();
 			break;
-		case FIXTURECURSOR:
-			FixtureCursor fc = (FixtureCursor)MODEL.cursor;
-			Axis axis = fc.getAxis();
-			
-			if (MODEL.world.pureGraphBestHitTest(MODEL.cursor.getShape()) == null) {
-				
-				Fixture source = new Fixture(fc.getSourcePoint(), axis);
-				Fixture sink = new Fixture(fc.getSinkPoint(), axis);
-				
-				source.setType(FixtureType.SOURCE);
-				sink.setType(FixtureType.SINK);
-				
-				source.match = sink;
-				sink.match = source;
-				
-				switch (axis) {
-				case TOPBOTTOM:
-					source.setSide(Side.BOTTOM);
-					sink.setSide(Side.BOTTOM);
-					break;
-				case LEFTRIGHT:
-					source.setSide(Side.RIGHT);
-					sink.setSide(Side.RIGHT);
-					break;
-				}
-				
-				MODEL.world.addVertexTop(source);
-				
-				MODEL.world.addVertexTop(sink);
-				
-				CONTROLLER.mode = ControlMode.IDLE;
-				
-				MODEL.cursor = new RegularCursor();
-				
-				MODEL.cursor.setPoint(VIEW.canvas.lastMovedWorldPoint);
-				
-				VIEW.renderWorldBackground();
-				VIEW.repaintCanvas();
-				VIEW.repaintControlPanel();
-				
-			}
-			
-			break;
-		case RUNNING:
-		case PAUSED:
-		case MERGERCURSOR:
-		case STRAIGHTEDGECURSOR:
-		case DRAFTING:
 		case MENU:
 			break;
 		}
-		
 	}
 	
 	public void gKey() {
-		
-		MODEL.grid = !MODEL.grid;
-		
-		VIEW.renderWorldBackground();
-		VIEW.repaintCanvas();
-		
+		switch (CONTROLLER.mode) {
+		case WORLD:
+			MODEL.world.gKey();
+			break;
+		case MENU:
+			break;
+		}
 	}
 	
 	public void deleteKey() {
-		
-		if (MODEL.hilited != null) {
-			
-			if (MODEL.hilited.isUserDeleteable()) {
-				
-				if (MODEL.hilited instanceof Car) {
-					Car c = (Car)MODEL.hilited;
-					
-					CONTROLLER.removeCarTop(c);
-					
-				} else if (MODEL.hilited instanceof Vertex) {
-					Vertex v = (Vertex)MODEL.hilited;
-					
-					CONTROLLER.removeVertexTop(v);
-					
-				} else if (MODEL.hilited instanceof Road) {
-					Road e = (Road)MODEL.hilited;
-					
-					CONTROLLER.removeRoadTop(e);
-					
-				} else if (MODEL.hilited instanceof Merger) {
-					Merger e = (Merger)MODEL.hilited;
-					
-					CONTROLLER.removeMergerTop(e);
-					
-				} else if (MODEL.hilited instanceof StopSign) {
-					StopSign s = (StopSign)MODEL.hilited;
-					
-					CONTROLLER.removeStopSignTop(s);
-					
-				} else {
-					throw new AssertionError();
-				}
-				
-				MODEL.hilited = null;
-				
-			}
-			
+		switch (CONTROLLER.mode) {
+		case WORLD:
+			MODEL.world.deleteKey();
+			break;
+		case MENU:
+			break;
 		}
-		
-		VIEW.renderWorldBackground();
-		VIEW.repaintCanvas();
-		VIEW.repaintControlPanel();
-		
 	}
 	
 	public void insertKey() {
-		
 		switch (CONTROLLER.mode) {
-		case IDLE:
-			
-			if (MODEL.hilited != null) {
-				
-				if (MODEL.hilited instanceof StopSign) {
-					StopSign s = (StopSign)MODEL.hilited;
-					
-					s.setEnabled(true);
-					
-					VIEW.renderWorldBackground();
-					VIEW.repaintCanvas();
-				}
-				
-			} else {
-				
-				CONTROLLER.mode = ControlMode.MERGERCURSOR;
-				
-				MODEL.cursor = new MergerCursor();
-				
-				MODEL.cursor.setPoint(VIEW.canvas.lastMovedWorldPoint);
-				
-				VIEW.repaintCanvas();
-				
-			}
-			
+		case WORLD:
+			MODEL.world.insertKey();
 			break;
-		case MERGERCURSOR:
-			
-			if (MODEL.world.completelyContains(MODEL.cursor.getShape())) {
-				
-				if (MODEL.world.pureGraphBestHitTest(MODEL.cursor.getShape()) == null) {
-					
-					MODEL.world.insertMergerTop(MODEL.cursor.getPoint());
-					
-					CONTROLLER.mode = ControlMode.IDLE;
-					
-					MODEL.cursor = new RegularCursor();
-					
-					MODEL.cursor.setPoint(VIEW.canvas.lastMovedWorldPoint);
-					
-					VIEW.renderWorldBackground();
-					VIEW.repaintCanvas();
-					VIEW.repaintControlPanel();
-					
-				}
-				
-			}
-			
-			break;
-		case RUNNING:
-		case PAUSED:
-		case FIXTURECURSOR:
-		case STRAIGHTEDGECURSOR:
-		case DRAFTING:
 		case MENU:
 			break;
 		}
-		
 	}
 	
 	public void escKey() {
-		
 		switch (CONTROLLER.mode) {
-		case MERGERCURSOR:
-		case FIXTURECURSOR:
-		case STRAIGHTEDGECURSOR:
-			
-			CONTROLLER.mode = ControlMode.IDLE;
-			
-			MODEL.cursor = new RegularCursor();
-			
-			MODEL.cursor.setPoint(VIEW.canvas.lastMovedWorldPoint);
-			
-			VIEW.repaintCanvas();
-			
+		case WORLD:
+			MODEL.world.escKey();
 			break;
-		case RUNNING:
-		case PAUSED:
-		case DRAFTING:
-		case IDLE:
 		case MENU:
 			break;
 		}
-		
 	}
 	
 	public void d1Key() {
-		
 		switch (CONTROLLER.mode) {
-		case IDLE:
-			
-			if (MODEL.hilited != null) {
-				
-				if (MODEL.hilited instanceof Road) {
-					Road r = (Road)MODEL.hilited;
-					
-					r.setDirection(null, Direction.STARTTOEND);
-					
-					VIEW.renderWorldBackground();
-					VIEW.repaintCanvas();
-					
-				} else if (MODEL.hilited instanceof Fixture) {
-					Fixture f = (Fixture)MODEL.hilited;
-					
-					Fixture g = f.match;
-					
-					if (f.getType() != null) {
-						f.setType(f.getType().other());
-					}
-					if (g.getType() != null) {
-						g.setType(g.getType().other());
-					}
-					
-					f.setSide(f.getSide().other());
-					g.setSide(g.getSide().other());
-					
-					VIEW.renderWorldBackground();
-					VIEW.repaintCanvas();
-					
-				}
-				
-			}
-			
+		case WORLD:
+			MODEL.world.d1Key();
 			break;
-		default:
+		case MENU:
 			break;
 		}
-		
 	}
 	
 	public void d2Key() {
-		
 		switch (CONTROLLER.mode) {
-		case IDLE:
-			
-			if (MODEL.hilited != null) {
-				
-				if (MODEL.hilited instanceof Road) {
-					Road r = (Road)MODEL.hilited;
-					
-					r.setDirection(null, Direction.ENDTOSTART);
-					
-					VIEW.renderWorldBackground();
-					VIEW.repaintCanvas();
-					
-				}
-				
-			}
-			
+		case WORLD:
+			MODEL.world.d2Key();
 			break;
-		default:
+		case MENU:
 			break;
 		}
-		
 	}
 
 	public void d3Key() {
-		
 		switch (CONTROLLER.mode) {
-		case IDLE:
-			
-			if (MODEL.hilited != null) {
-				
-				if (MODEL.hilited instanceof Road) {
-					Road r = (Road)MODEL.hilited;
-					
-					r.setDirection(null, null);
-				
-					VIEW.renderWorldBackground();
-					VIEW.repaintCanvas();
-					
-				}
-				
-			}
-			
+		case WORLD:
+			MODEL.world.d3Key();
 			break;
-		default:
+		case MENU:
 			break;
 		}
-		
 	}
 	
 	public void plusKey() {
-		
-		VIEW.zoom(1.1);
-		
-		VIEW.canvas.lastMovedWorldPoint = VIEW.canvasToWorld(VIEW.canvas.lastMovedCanvasPoint);
-		
 		switch (CONTROLLER.mode) {
-		case DRAFTING:
-			assert false;
-			break;
-		case PAUSED:
-		case IDLE:
-		case RUNNING:
-			
-			Entity closest = MODEL.world.hitTest(VIEW.canvas.lastMovedWorldPoint);
-			
-			synchronized (MODEL) {
-				MODEL.hilited = closest;
-			}
-			
-		case MERGERCURSOR:
-		case FIXTURECURSOR:
-		case STRAIGHTEDGECURSOR:
-			
-			if (MODEL.cursor != null) {
-				if (MODEL.grid) {
-					
-					Point closestGridPoint = new Point(2 * Math.round(0.5 * VIEW.canvas.lastMovedWorldPoint.x), 2 * Math.round(0.5 * VIEW.canvas.lastMovedWorldPoint.y));
-					MODEL.cursor.setPoint(closestGridPoint);
-					
-				} else {
-					MODEL.cursor.setPoint(VIEW.canvas.lastMovedWorldPoint);
-				}
-			}
-			
-			VIEW.renderWorldBackground();
-			VIEW.repaintCanvas();
-			VIEW.repaintControlPanel();
-			
+		case WORLD:
+			MODEL.world.plusKey();
 			break;
 		case MENU:
 			break;
 		}
-		
 	}
 	
 	public void minusKey() {
-		
-		VIEW.zoom(0.9);
-		
-		VIEW.canvas.lastMovedWorldPoint = VIEW.canvasToWorld(VIEW.canvas.lastMovedCanvasPoint);
-		
 		switch (CONTROLLER.mode) {
-		case DRAFTING:
-			assert false;
-			break;
-		case IDLE:
-		case PAUSED:
-		case RUNNING:
-			
-			Entity closest = MODEL.world.hitTest(VIEW.canvas.lastMovedWorldPoint);
-			
-			synchronized (MODEL) {
-				MODEL.hilited = closest;
-			}
-			
-		case MERGERCURSOR:
-		case FIXTURECURSOR:
-		case STRAIGHTEDGECURSOR:
-			
-			if (MODEL.cursor != null) {
-				if (MODEL.grid) {
-					
-					Point closestGridPoint = new Point(2 * Math.round(0.5 * VIEW.canvas.lastMovedWorldPoint.x), 2 * Math.round(0.5 * VIEW.canvas.lastMovedWorldPoint.y));
-					MODEL.cursor.setPoint(closestGridPoint);
-					
-				} else {
-					MODEL.cursor.setPoint(VIEW.canvas.lastMovedWorldPoint);
-				}
-			}
-			
-			VIEW.renderWorldBackground();
-			VIEW.repaintCanvas();
-			VIEW.repaintControlPanel();
-			
+		case WORLD:
+			MODEL.world.minusKey();
 			break;
 		case MENU:
 			break;
 		}
-		
 	}
-	
-	public void slashKey() {
-		
-	}
-	
 	
 	public void downKey() {
-		
 		switch (CONTROLLER.mode) {
-		case MENU:
-			
-			MODEL.menu.downKey();
-			
+		case WORLD:
 			break;
-		case DRAFTING:
-		case IDLE:
-		case PAUSED:
-		case RUNNING:
-		case MERGERCURSOR:
-		case FIXTURECURSOR:
-		case STRAIGHTEDGECURSOR:
+		case MENU:
+			MODEL.menu.downKey();
 			break;
 		}
-		
 	}
 
 	public void upKey() {
-		
 		switch (CONTROLLER.mode) {
-		case MENU:
-			
-			MODEL.menu.upKey();
-			
+		case WORLD:
 			break;
-		case DRAFTING:
-		case IDLE:
-		case PAUSED:
-		case RUNNING:
-		case MERGERCURSOR:
-		case FIXTURECURSOR:
-		case STRAIGHTEDGECURSOR:
+		case MENU:
+			MODEL.menu.upKey();
 			break;
 		}
-		
 	}
 	
 	public void enterKey() {
-		
 		switch (CONTROLLER.mode) {
-		case MENU:
-			
-			if (MODEL.menu.hilited == null) {
-				
-			} else {
-				
-				MODEL.menu.hilited.action();
-				
-			}
-			
-			VIEW.repaintCanvas();
-			
+		case WORLD:
 			break;
-		case DRAFTING:
-		case IDLE:
-		case PAUSED:
-		case RUNNING:
-		case MERGERCURSOR:
-		case FIXTURECURSOR:
-		case STRAIGHTEDGECURSOR:
+		case MENU:
+			MODEL.menu.enterKey();
 			break;
 		}
 		
