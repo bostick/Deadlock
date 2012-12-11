@@ -58,25 +58,20 @@ public class MainMenu extends Menu {
 					VIEW.repaintCanvas();
 					VIEW.repaintControlPanel();
 					
-					Stroke s = new Stroke();
-					s.add(new Point(1, 1));
-					s.add(new Point(10, 10));
-					s.add(new Point(10, 2));
-					s.add(new Point(2, 10));
-					s.add(new Point(-6, 18));
-					s.add(new Point(0, 18));
-					s.add(new Point(6, 18));
-					s.add(new Point(0, 14));
-					s.add(new Point(-6, 10));
-					
-					s.finish();
-					
-					APP.world.processNewStroke(s);
-					
-					APP.world.render();
-					
-					VIEW.repaintCanvas();
-					VIEW.repaintControlPanel();
+//					Stroke s = new Stroke();
+//					s.add(new Point(0, 0));
+//					s.add(new Point(16, 16));
+//					s.add(new Point(0, 16));
+//					s.add(new Point(16, 0));
+//					
+//					s.finish();
+//					
+//					APP.world.processNewStroke(s);
+//					
+//					APP.world.render();
+//					
+//					VIEW.repaintCanvas();
+//					VIEW.repaintControlPanel();
 					
 				} catch (Exception e) {
 					// TODO Auto-generated catch block

@@ -409,138 +409,7 @@ public class World implements Sweepable {
 //			}
 //		}
 		
-		List<SweepEvent> selfEvents = s.selfEvents();
-		
-		/*
-		 * go through and create vertices where stroke intersects with self
-		 */
-		for (int i = 0; i < selfEvents.size(); i++) {
-			
-			SweepEvent e = selfEvents.get(i);
-			
-			if (e.type == SweepEventType.ENTERSTROKE || e.type == SweepEventType.EXITSTROKE) {
-				
-				CapsuleSequence sub = s.seq.subsequence(e.index);
-				
-				CapsuleSequencePosition pos = null;
-				
-				double nextEventCombo;
-				if (e.type == SweepEventType.ENTERSTROKE) {
-					if (i < selfEvents.size()-1) {
-						nextEventCombo = selfEvents.get(i+1).combo;
-					} else {
-						nextEventCombo = Double.POSITIVE_INFINITY;
-					}
-				} else {
-					if (i >= 1) {
-						nextEventCombo = selfEvents.get(i-1).combo;
-					} else {
-						nextEventCombo = Double.NEGATIVE_INFINITY;
-					}
-				}
-				
-				/*
-				 * find better place to split by checking for intersection with stroke
-				 */
-				Circle a;
-				Circle b;
-				int j = e.index;
-				if (e.type == SweepEventType.ENTERSTROKE) {
-					a = e.circle;
-					if (DMath.lessThan(nextEventCombo, j+1)) {
-						/*
-						 * next event is before next stroke point, so use the event circle
-						 */
-						b = selfEvents.get(i+1).circle;
-					} else {
-						b = s.getCircle(j+1);
-					}
-				} else {
-					if (DMath.greaterThan(nextEventCombo, j)) {
-						a = selfEvents.get(i-1).circle;
-					} else {
-						a = s.getCircle(j);
-					}
-					b = e.circle;
-				}
-				
-				while (true) {
-					
-//					hit = strokeBestHitTestCapsule(new Capsule(null, a, b, -1));
-					
-					CapsuleSequencePosition skeletonIntersection = sub.findSkeletonIntersection(a.center, b.center);
-					
-					if (skeletonIntersection != null) {
-						
-						/*
-						 * FIXME:
-						 * 
-						 * the 0.3 is a hack, because an intersection won't always be touching the event
-						 * 
-						 * here:
-						 * 
-						 * Graphics[{capsule[#, r] & /@ 
-   Partition[{{5.5, 5.5}, {10, 10}, {10, 2}, {6.5, 6.5}, {2, 10}}, 2, 
-    1], Blue, Point[{6.5, 6.5}], Point[{7.375, 5.375}], 
-  Circle[{7.375, 5.375}, r]}]
-  
-  							figure out exactly what to do here
-						 */
-						double dist = Point.distance(skeletonIntersection.p, e.p);
-						if (DMath.lessThanEquals(dist, Stroke.STROKE_RADIUS + Stroke.STROKE_RADIUS + 0.2)) {
-							
-							pos = skeletonIntersection;
-							
-							logger.debug("found intersection");
-							
-							break;
-						}
-					}
-					
-					j += (e.type == SweepEventType.ENTERSTROKE) ? 1 : -1;
-					
-					if (!((e.type == SweepEventType.ENTERSTROKE) ? j < Math.min(nextEventCombo, s.size()-1) : j >= Math.max(nextEventCombo, 0))) {
-						break;
-					}
-					
-					a = s.getCircle(j);
-					b = s.getCircle(j+1);
-					
-				}
-				
-				if (pos == null) {
-					logger.debug("pos was null");
-					pos = sub.findClosestStrokePosition(e.p, e.circle.radius);
-				}
-				
-				assert pos != null;
-				
-				Entity hit = pureGraphBestHitTestCircle(new Circle(null, pos.p, e.circle.radius));
-				
-				if (hit == null) {
-					
-					logger.debug("create");
-					Intersection v = new Intersection(pos.p);
-					addVertexTop(v);
-					
-//					assert ShapeUtils.intersectCC(e.circle, v.getShape());
-					
-					e.setVertex(v);
-					
-				} else {
-					
-					e.setVertex((Vertex)hit);
-					
-				}
-				
-			} else {
-				assert false;
-			}
-			
-			assert e.getVertex() != null;
-		}
-		
-		List<SweepEvent> events = s.events();
+		List<SweepEvent> events = s.events(true);
 		
 		/*
 		 * go through and find any merger events and fixture events
@@ -560,8 +429,8 @@ public class World implements Sweepable {
 			if (i < events.size()-1) {
 				SweepEvent f = events.get(i+1);
 				if (e.type == SweepEventType.EXITVERTEX && f.type == SweepEventType.ENTERVERTEX) {
-					Vertex ev = (Vertex)e.shape.parent;
-					Vertex fv = (Vertex)f.shape.parent;
+					Vertex ev = (Vertex)e.still.parent;
+					Vertex fv = (Vertex)f.still.parent;
 					if (ev.m != null && ev.m == fv.m) {
 						/*
 						 * FIXME: this currently disallows connecting vertices in a merger, even outside the merger
@@ -588,14 +457,14 @@ public class World implements Sweepable {
 				Intersection v = new Intersection(e.p);
 				addVertexTop(v);
 				
-				e.setVertex(v);
+//				e.setVertex(v);
 				
 			} else if (e.type == SweepEventType.ENTERROADCAPSULE || e.type == SweepEventType.EXITROADCAPSULE) {
 				
 				Entity hit = pureGraphBestHitTestCircle(e.circle);
 				
 				if (hit instanceof Vertex) {
-					e.setVertex((Vertex)hit);
+//					e.setVertex((Vertex)hit);
 					continue;
 				}
 				
@@ -621,7 +490,12 @@ public class World implements Sweepable {
 				 */
 				Circle a;
 				Circle b;
-				int j = e.index;
+				/*
+				 * e could be like 6.9999999999, and we don't want b to be the next index, 7, which is the same point
+				 * so do some massaging here
+				 */
+				double eCombo = e.combo;
+				int j = (int)Math.floor(eCombo);
 				if (e.type == SweepEventType.ENTERROADCAPSULE) {
 					a = e.circle;
 					if (DMath.lessThan(nextEventCombo, j+1)) {
@@ -659,14 +533,21 @@ public class World implements Sweepable {
 							/*
 							 * FIXME: see stroke section
 							 */
-							if (DMath.lessThanEquals(Point.distance(skeletonIntersection.p, e.p), Stroke.STROKE_RADIUS + Stroke.STROKE_RADIUS + 0.2)) {
-								
-								pos = skeletonIntersection;
-								
-								logger.debug("found intersection");
-								
-								break;
-							}
+//							if (DMath.lessThanEquals(Point.distance(skeletonIntersection.p, e.p), Stroke.STROKE_RADIUS + Stroke.STROKE_RADIUS + 0.2)) {
+//								
+//								pos = skeletonIntersection;
+//								
+//								logger.debug("found intersection");
+//								
+//								break;
+//							}
+							
+							pos = skeletonIntersection;
+							
+							logger.debug("found intersection");
+							
+							break;
+							
 						}
 						
 					}
@@ -693,6 +574,7 @@ public class World implements Sweepable {
 				if (pos instanceof EdgePosition) {
 					hit2 = pureGraphBestHitTestCircle(new Circle(null, pos.p, e.circle.radius));
 				} else {
+					assert false;
 					hit2 = ((VertexPosition)pos).v;
 				}
 				
@@ -701,20 +583,174 @@ public class World implements Sweepable {
 					
 					assert ShapeUtils.intersectCC(e.circle, v.getShape());
 					
-					e.setVertex(v);
+//					e.setVertex(v);
 				} else {
-					e.setVertex((Vertex)hit2);
+//					e.setVertex((Vertex)hit2);
 				}
 				
-			} else if (e.type == SweepEventType.ENTERVERTEX) {
-				e.setVertex((Vertex)e.shape.parent);
-			} else if (e.type == SweepEventType.EXITVERTEX) {
-				e.setVertex((Vertex)e.shape.parent);
+			} else if (e.type == SweepEventType.ENTERVERTEX || e.type == SweepEventType.EXITVERTEX) {
+//				e.setVertex((Vertex)e.shape.parent);
+			} else if (e.type == SweepEventType.ENTERSTROKE || e.type == SweepEventType.EXITSTROKE) {
+				
+				CapsuleSequence sub = s.seq.subsequence(e.index);
+				
+				CapsuleSequencePosition pos = null;
+				
+				double nextEventCombo;
+				if (e.type == SweepEventType.ENTERSTROKE) {
+					if (i < events.size()-1) {
+						nextEventCombo = events.get(i+1).combo;
+					} else {
+						nextEventCombo = Double.POSITIVE_INFINITY;
+					}
+				} else {
+					if (i >= 1) {
+						nextEventCombo = events.get(i-1).combo;
+					} else {
+						nextEventCombo = Double.NEGATIVE_INFINITY;
+					}
+				}
+				
+				/*
+				 * find better place to split by checking for intersection with stroke
+				 */
+				Circle a;
+				Circle b;
+				
+				/*
+				 * e could be like 6.9999999999, and we don't want b to be the next index, 7, which is the same point
+				 * so do some massaging here
+				 */
+				double eCombo = e.combo;
+				int j = (int)Math.floor(eCombo);
+				
+				if (e.type == SweepEventType.ENTERSTROKE) {
+					a = e.circle;
+					if (DMath.lessThan(nextEventCombo, j+1)) {
+						/*
+						 * next event is before next stroke point, so use the event circle
+						 */
+						b = events.get(i+1).circle;
+					} else {
+						b = s.getCircle(j+1);
+					}
+				} else {
+					if (DMath.greaterThan(nextEventCombo, j)) {
+						a = events.get(i-1).circle;
+					} else {
+						a = s.getCircle(j);
+					}
+					b = e.circle;
+				}
+				
+				while (true) {
+					
+//					hit = strokeBestHitTestCapsule(new Capsule(null, a, b, -1));
+					
+					CapsuleSequencePosition skeletonIntersection = sub.findSkeletonIntersection(a.center, b.center);
+					
+					if (skeletonIntersection != null) {
+						
+						/*
+						 * FIXME:
+						 * 
+						 * the 0.3 is a hack, because an intersection won't always be touching the event
+						 * 
+						 * here:
+						 * 
+						 * Graphics[{capsule[#, r] & /@ 
+   Partition[{{5.5, 5.5}, {10, 10}, {10, 2}, {6.5, 6.5}, {2, 10}}, 2, 
+    1], Blue, Point[{6.5, 6.5}], Point[{7.375, 5.375}], 
+  Circle[{7.375, 5.375}, r]}]
+  
+  							figure out exactly what to do here
+						 */
+//						double dist = Point.distance(skeletonIntersection.p, e.p);
+//						if (DMath.lessThanEquals(dist, Stroke.STROKE_RADIUS + Stroke.STROKE_RADIUS + 0.2)) {
+//							
+//							pos = skeletonIntersection;
+//							
+//							logger.debug("found intersection");
+//							
+//							break;
+//						}
+						pos = skeletonIntersection;
+						
+						logger.debug("found intersection");
+						
+						break;
+					}
+					
+					j += (e.type == SweepEventType.ENTERSTROKE) ? 1 : -1;
+					
+					if (!((e.type == SweepEventType.ENTERSTROKE) ? j < Math.min(nextEventCombo, s.size()-1) : j >= Math.max(nextEventCombo, 0))) {
+						break;
+					}
+					
+					a = s.getCircle(j);
+					b = s.getCircle(j+1);
+					
+				}
+				
+				if (pos == null) {
+					logger.debug("pos was null");
+//					pos = sub.findClosestGraphPosition(e.p, e.circle.radius);
+//					pos = sub.findClosestStrokePosition(e.p, e.circle.radius);
+					
+//					Capsule stillCapsule = (Capsule)e.still;
+//					Point stillA = stillCapsule.a;
+//					Point stillB = stillCapsule.b;
+//					
+//					Point.p
+					
+					pos = new CapsuleSequencePosition(s.seq, e.index, e.param);
+					
+				}
+				
+				assert pos != null;
+				
+				Entity hit = pureGraphBestHitTestCircle(new Circle(null, pos.p, e.circle.radius));
+				
+				if (hit == null) {
+					
+					logger.debug("create");
+					Intersection v = new Intersection(pos.p);
+					addVertexTop(v);
+					
+//					assert ShapeUtils.intersectCC(e.circle, v.getShape());
+					
+//					e.setVertex(v);
+					
+				} else {
+					
+//					e.setVertex((Vertex)hit);
+					
+				}
+				
 			} else {
 				assert false;
 			}
 			
-			assert e.getVertex() != null;
+//			assert e.getVertex() != null;
+		}
+		
+		/*
+		 * run events again to pick up any new vertices from now having vertices around
+		 * 
+		 * should only be connecting vertices here
+		 * 
+		 */
+		events = s.events(false);
+		for (int i = 0; i < events.size(); i++) {
+			
+			SweepEvent e = events.get(i);
+			
+			if (e.type == SweepEventType.ENTERVERTEX || e.type == SweepEventType.EXITVERTEX) {
+				e.setVertex((Vertex)e.still.parent);
+			} else {
+				assert false;
+			}
+			
 		}
 		
 		/*
@@ -761,21 +797,27 @@ public class World implements Sweepable {
 //			}
 			
 			List<Point> roadPts = new ArrayList<Point>();
-			roadPts.add(e0.p);
+			roadPts.add(v0.p);
 			for (int j = e0.index+1; j < e1.index; j++) {
 				roadPts.add(s.get(j));
 			}
 			if (e1.index >= e0.index+1) {
-				roadPts.add(s.get(e1.index));
 				if (!DMath.equals(e1.param, 0.0)) {
-					roadPts.add(e1.p);
+					roadPts.add(s.get(e1.index));
+					roadPts.add(v1.p);
+				} else {
+					roadPts.add(v1.p);
 				}
 			} else {
 				assert e1.index == e0.index;
-				roadPts.add(e1.p);
+				roadPts.add(v1.p);
 			}
 			
 			createRoadTop(v0, v1, roadPts);
+			
+//			if (i == 0) {
+//				return;
+//			}
 		}
 		
 	}

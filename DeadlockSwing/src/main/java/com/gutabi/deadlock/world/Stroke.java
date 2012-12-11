@@ -76,164 +76,201 @@ public class Stroke {
 		finished = true;
 	}
 	
-	private int vertexCount;
-	private int roadCapsuleCount;
-	private int mergerCount;
-	private int strokeCapsuleCount;
-	List<SweepEvent> vertexEvents;
+//	private int vertexCount;
+//	private int roadCapsuleCount;
+//	private int mergerCount;
+//	private int strokeCapsuleCount;
 	
-	public List<SweepEvent> selfEvents() {
+	public List<SweepEvent> events(boolean sweepSelf) {
 		assert finished;
 		
-//		vertexCount = 0;
-//		roadCapsuleCount = 0;
-//		mergerCount = 0;
-		strokeCapsuleCount = 0;
-		vertexEvents = new ArrayList<SweepEvent>();
-		
-//		Circle start = seq.getStart();
-//		
-//		List<SweepEvent> events = APP.world.sweepStart(start);
-//		
-//		Collections.sort(events, SweepEvent.COMPARATOR);
-//		
-//		for (SweepEvent e : events) {
-//			startSorted(e);
-//		}
-		
-//		if ((vertexCount + roadCapsuleCount + mergerCount + strokeCapsuleCount) == 0) {
-//			logger.debug("start in nothing");
-//			vertexEvents.add(new SweepEvent(null, null, start, 0, 0.0));
-//		} else {
-//			logger.debug("start counts: " + vertexCount + " " + roadCapsuleCount + " " + mergerCount + " " + strokeCapsuleCount);
-//		}
-		
-//		List<Capsule> curStrokeCapsules = new ArrayList<Capsule>();
-//		Capsule prevCapsule = null;
-		
-		for (int i = 0; i < seq.capsuleCount(); i++) {
-			
-			Capsule cap = seq.getCapsule(i);
-			
-			List<SweepEvent> events = new ArrayList<SweepEvent>();
-			
-			if (i == 0) {
-				
-//				prevCapsule = cap;
-				
-			} else {
-				
-				CapsuleSequence sub = seq.subsequence(i);
-				
-				List<SweepEvent> subStartEvents = sub.sweepStart(cap.ac);
-				List<SweepEvent> subEvents = sub.sweep(cap);
-				
-				Collections.sort(subEvents, SweepEvent.COMPARATOR);
-				
-				List<SweepEvent> toKeep = new ArrayList<SweepEvent>();
-				Capsule eventCapsule;
-				for (SweepEvent e : subEvents) {
-					switch (e.type) {
-					case ENTERSTROKE:
-						eventCapsule = ((Capsule)e.shape);
-						
-						toKeep.add(e);
-						
-						break;
-					case EXITSTROKE:
-						eventCapsule = ((Capsule)e.shape);
-						
-						boolean atStart = false;
-						for (SweepEvent se : subStartEvents) {
-							if (se.shape == eventCapsule) {
-								atStart = true;
-								break;
-							}
-						}
-						if (!atStart) {
-							toKeep.add(e);
-						}
-						
-						break;
-					case ENTERMERGER:
-					case ENTERROADCAPSULE:
-					case ENTERVERTEX:
-					case EXITMERGER:
-					case EXITROADCAPSULE:
-					case EXITVERTEX:
-						assert false;
-						break;
-					}
-				}
-				
-//				prevCapsule = cap;
-				
-				events.addAll(toKeep);
-				
-//				String.class.getName();
-				
-			}
-			
-			Collections.sort(events, SweepEvent.COMPARATOR);
-			
-			for (SweepEvent e : events) {
-				eventSorted(e);
-			}
-		}
-		
-//		if ((vertexCount + roadCapsuleCount + mergerCount + strokeCapsuleCount) == 0) {
-//			logger.debug("end in nothing");
-//			vertexEvents.add(new SweepEvent(null, null, cs.get(cs.size()-1), cs.size()-1, 0.0));
-//		}
-		
-		return vertexEvents;
-	}
-	
-	public List<SweepEvent> events() {
-		assert finished;
-		
-		vertexCount = 0;
-		roadCapsuleCount = 0;
-		mergerCount = 0;
-//		strokeCapsuleCount = 0;
-		vertexEvents = new ArrayList<SweepEvent>();
+		int vertexCount = 0;
+		int roadCapsuleCount = 0;
+		int mergerCount = 0;
+		int strokeCapsuleCount = 0;
+		List<SweepEvent> vertexEvents = new ArrayList<SweepEvent>();
 		
 		Circle start = seq.getStart();
 		
-		List<SweepEvent> events = APP.world.sweepStart(start);
+		List<SweepEvent> startEvents = APP.world.sweepStart(start);
 		
-		Collections.sort(events, SweepEvent.COMPARATOR);
+		Collections.sort(startEvents, SweepEvent.COMPARATOR);
 		
-		for (SweepEvent e : events) {
-			startSorted(e);
+		for (SweepEvent e : startEvents) {
+			boolean keep = false;
+			switch (e.type) {
+			case ENTERROADCAPSULE:
+				roadCapsuleCount++;
+				if (roadCapsuleCount == 1) {
+					keep = true;
+				}
+				break;
+			case ENTERVERTEX:
+				vertexCount++;
+				if (vertexCount == 1) {
+					keep = true;
+				}
+				break;
+			case ENTERMERGER:
+				mergerCount++;
+				if (mergerCount == 1) {
+					keep = true;
+				}
+				break;
+			case ENTERSTROKE:
+			case EXITMERGER:
+			case EXITROADCAPSULE:
+			case EXITSTROKE:
+			case EXITVERTEX:
+				assert false;
+				break;
+			}
+			if (keep) {
+				vertexEvents.add(e);
+			}
 		}
 		
-		if ((vertexCount + roadCapsuleCount + mergerCount) == 0) {
+		if ((vertexCount + roadCapsuleCount + mergerCount + strokeCapsuleCount) == 0) {
 			logger.debug("start in nothing");
 			vertexEvents.add(new SweepEvent(null, null, start, 0, 0.0));
+//			assert false;
 		} else {
-			logger.debug("start counts: " + vertexCount + " " + roadCapsuleCount + " " + mergerCount);
+//			logger.debug("start counts: " + vertexCount + " " + roadCapsuleCount + " " + mergerCount);
 		}
 		
-//		List<Capsule> curStrokeCapsules = new ArrayList<Capsule>();
+		List<Capsule> strokeEnteredCapsules = new ArrayList<Capsule>();
 //		Capsule prevCapsule = null;
 		
 		for (int i = 0; i < seq.capsuleCount(); i++) {
 			
 			Capsule cap = seq.getCapsule(i);
 			
-			events = APP.world.sweep(cap);
+			List<SweepEvent> events = APP.world.sweep(cap);
+			
+			if (sweepSelf) {
+				
+				if (i == 0) {
+					
+				} else {
+					
+					CapsuleSequence sub = seq.subsequence(i);
+					
+					List<SweepEvent> subStartEvents = sub.sweepStart(cap.ac);
+					List<SweepEvent> subEvents = sub.sweep(cap);
+					
+					Collections.sort(subEvents, SweepEvent.COMPARATOR);
+					
+					List<SweepEvent> toKeep = new ArrayList<SweepEvent>();
+					Capsule eventCapsule;
+					for (SweepEvent e : subEvents) {
+						switch (e.type) {
+						case ENTERSTROKE:
+							eventCapsule = ((Capsule)e.still);
+							
+							strokeEnteredCapsules.add(eventCapsule);
+							toKeep.add(e);
+							
+							break;
+						case EXITSTROKE:
+							eventCapsule = ((Capsule)e.still);
+							
+							boolean atStart = false;
+							for (SweepEvent se : subStartEvents) {
+								if (se.still == eventCapsule) {
+									atStart = true;
+									break;
+								}
+							}
+							if (strokeEnteredCapsules.contains(eventCapsule) || !atStart) {
+								toKeep.add(e);
+							}
+							
+							break;
+						case ENTERMERGER:
+						case ENTERROADCAPSULE:
+						case ENTERVERTEX:
+						case EXITMERGER:
+						case EXITROADCAPSULE:
+						case EXITVERTEX:
+							assert false;
+							break;
+						}
+					}
+					
+					events.addAll(toKeep);
+					
+				}
+				
+			}
 			
 			Collections.sort(events, SweepEvent.COMPARATOR);
 			
 			for (SweepEvent e : events) {
-				eventSorted(e);
+				boolean keep = false;
+				switch (e.type) {
+				case ENTERVERTEX:
+					vertexCount++;
+					if (vertexCount == 1) {
+						keep = true;
+					}
+					break;
+				case EXITVERTEX:
+					vertexCount--;
+					assert vertexCount >= 0;
+					if (vertexCount == 0) {
+						keep = true;
+					}
+					break;
+				case ENTERROADCAPSULE:
+					roadCapsuleCount++;
+					if (roadCapsuleCount == 1) {
+						keep = true;
+					}
+					break;
+				case EXITROADCAPSULE:
+					roadCapsuleCount--;
+					assert roadCapsuleCount >= 0;
+					if (roadCapsuleCount == 0) {
+						keep = true;
+					}
+					break;
+				case ENTERMERGER:
+					mergerCount++;
+					if (mergerCount == 1) {
+						keep = true;
+					}
+					break;
+				case EXITMERGER:
+					mergerCount--;
+					assert mergerCount >= 0;
+					if (mergerCount == 0) {
+						keep = true;
+					}
+					break;
+				case ENTERSTROKE:
+					strokeCapsuleCount++;
+					if (strokeCapsuleCount == 1) {
+						keep = true;
+					}
+					break;
+				case EXITSTROKE:
+					strokeCapsuleCount--;
+					assert strokeCapsuleCount >= 0;
+					if (strokeCapsuleCount == 0) {
+						keep = true;
+					}
+					break;
+				}
+				if (keep) {
+					vertexEvents.add(e);
+				}
 			}
 		}
 		
-		if ((vertexCount + roadCapsuleCount + mergerCount) == 0) {
+		if ((vertexCount + roadCapsuleCount + mergerCount + strokeCapsuleCount) == 0) {
 			logger.debug("end in nothing");
 			vertexEvents.add(new SweepEvent(null, null, cs.get(cs.size()-1), cs.size()-1, 0.0));
+//			assert false;
 		}
 		
 		
@@ -255,29 +292,29 @@ public class Stroke {
 		 * and also remove the matching capsule event
 		 */
 		
-		boolean insideCircle = false;
-		boolean lookingForExitCapsule = false;
-		boolean lookingForExitQuad = false;
+		boolean insideVertex = false;
+		boolean lookingForExitRoadCapsule = false;
+		boolean lookingForExitMerger = false;
 		for (int i = 0; i < vertexEvents.size(); i++) {
 			SweepEvent e = vertexEvents.get(i);
-			if (!insideCircle) {
+			if (!insideVertex) {
 				if (e.type == SweepEventType.ENTERVERTEX) {
-					insideCircle = true;
+					insideVertex = true;
 					adj.add(e);
 				} else if (e.type == SweepEventType.EXITVERTEX) {
 					assert false;
 				} else {
-					if (!lookingForExitCapsule && !lookingForExitQuad) {
+					if (!lookingForExitRoadCapsule && !lookingForExitMerger) {
 						adj.add(e);
 					} else {
-						if (lookingForExitCapsule) {
+						if (lookingForExitRoadCapsule) {
 							if (e.type == SweepEventType.EXITROADCAPSULE) {
-								lookingForExitCapsule = false;
+								lookingForExitRoadCapsule = false;
 							}
 						}
-						if (lookingForExitQuad) {
+						if (lookingForExitMerger) {
 							if (e.type == SweepEventType.EXITMERGER) {
-								lookingForExitQuad = false;
+								lookingForExitMerger = false;
 							}
 						}
 					}
@@ -286,18 +323,18 @@ public class Stroke {
 				if (e.type == SweepEventType.ENTERVERTEX) {
 					assert false;
 				} else if (e.type == SweepEventType.EXITVERTEX) {
-					insideCircle = false;
+					insideVertex = false;
 					adj.add(e);
 				} else if (e.type == SweepEventType.ENTERROADCAPSULE) {
-					lookingForExitCapsule = true;
+					lookingForExitRoadCapsule = true;
 				} else if (e.type == SweepEventType.EXITROADCAPSULE) {
-					assert lookingForExitCapsule;
-					lookingForExitCapsule = false;
+					assert lookingForExitRoadCapsule;
+					lookingForExitRoadCapsule = false;
 				} else if (e.type == SweepEventType.ENTERMERGER) {
-					lookingForExitQuad = true;
+					lookingForExitMerger = true;
 				} else if (e.type == SweepEventType.EXITMERGER) {
-					assert lookingForExitQuad;
-					lookingForExitQuad = false;
+					assert lookingForExitMerger;
+					lookingForExitMerger = false;
 				} else {
 					/*
 					 * finish implementing
@@ -325,100 +362,151 @@ public class Stroke {
 		return adj;
 	}
 	
-	private void startSorted(SweepEvent e) {
-		if (logger.isDebugEnabled()) {
-			logger.debug("startSorted: " + e + " " + e.shape + " " + e.index + " " + e.param);
-		}
-		switch (e.type) {
-		case ENTERROADCAPSULE:
-			roadCapsuleCount++;
-			if (roadCapsuleCount == 1) {
-				vertexEvents.add(e);
-			}
-			break;
-		case ENTERVERTEX:
-			vertexCount++;
-			if (vertexCount == 1) {
-				vertexEvents.add(e);
-			}
-			break;
-		case ENTERMERGER:
-			mergerCount++;
-			if (mergerCount == 1) {
-				vertexEvents.add(e);
-			}
-			break;
-			
-		case ENTERSTROKE:
-		case EXITMERGER:
-		case EXITROADCAPSULE:
-		case EXITSTROKE:
-		case EXITVERTEX:
-			assert false;
-			break;
-		}
-	}
+//	public List<SweepEvent> startEndEventsX() {
+//		assert finished;
+//		
+//		vertexCount = 0;
+//		roadCapsuleCount = 0;
+//		mergerCount = 0;
+////		strokeCapsuleCount = 0;
+//		List<SweepEvent> vertexEvents = new ArrayList<SweepEvent>();
+//		
+//		Circle start = seq.getStart();
+//		
+//		APP.world.sweepStart(start);
+//		
+//		if ((vertexCount + roadCapsuleCount + mergerCount) == 0) {
+//			logger.debug("start in nothing");
+//			vertexEvents.add(new SweepEvent(null, null, start, 0, 0.0));
+//		} else {
+//			logger.debug("start counts: " + vertexCount + " " + roadCapsuleCount + " " + mergerCount);
+//		}
+//		
+////		List<Capsule> curStrokeCapsules = new ArrayList<Capsule>();
+////		Capsule prevCapsule = null;
+//		
+//		for (int i = 0; i < seq.capsuleCount(); i++) {
+//			
+//			Capsule cap = seq.getCapsule(i);
+//			
+//			APP.world.sweep(cap);
+//			
+////			Collections.sort(events, SweepEvent.COMPARATOR);
+////			
+////			for (SweepEvent e : events) {
+////				boolean keep = eventSorted(e);
+////				if (keep) {
+////					vertexEvents.add(e);
+////				}
+////			}
+//		}
+//		
+//		if ((vertexCount + roadCapsuleCount + mergerCount) == 0) {
+//			logger.debug("end in nothing");
+//			vertexEvents.add(new SweepEvent(null, null, cs.get(cs.size()-1), cs.size()-1, 0.0));
+//		}
+//		
+//		return vertexEvents;
+//	}
 	
-	private void eventSorted(SweepEvent e) {
-		if (logger.isDebugEnabled()) {
-			logger.debug("eventSorted: " + e + " " + e.shape + " " + e.index + " " + e.param);
-		}
-		switch (e.type) {
-		case ENTERVERTEX:
-			vertexCount++;
-			if (vertexCount == 1) {
-				vertexEvents.add(e);
-			}
-			break;
-		case EXITVERTEX:
-			vertexCount--;
-			assert vertexCount >= 0;
-			if (vertexCount == 0) {
-				vertexEvents.add(e);
-			}
-			break;
-		case ENTERROADCAPSULE:
-			roadCapsuleCount++;
-			if (roadCapsuleCount == 1) {
-				vertexEvents.add(e);
-			}
-			break;
-		case EXITROADCAPSULE:
-			roadCapsuleCount--;
-			assert roadCapsuleCount >= 0;
-			if (roadCapsuleCount == 0) {
-				vertexEvents.add(e);
-			}
-			break;
-		case ENTERMERGER:
-			mergerCount++;
-			if (mergerCount == 1) {
-				vertexEvents.add(e);
-			}
-			break;
-		case EXITMERGER:
-			mergerCount--;
-			assert mergerCount >= 0;
-			if (mergerCount == 0) {
-				vertexEvents.add(e);
-			}
-			break;
-			
-		case ENTERSTROKE:
-			strokeCapsuleCount++;
-			if (strokeCapsuleCount == 1) {
-				vertexEvents.add(e);
-			}
-			break;
-		case EXITSTROKE:
-			strokeCapsuleCount--;
-			assert strokeCapsuleCount >= 0;
-			if (strokeCapsuleCount == 0) {
-				vertexEvents.add(e);
-			}
-			break;
-		}
-	}
+//	private boolean startSorted(SweepEvent e) {
+//		if (logger.isDebugEnabled()) {
+//			logger.debug("startSorted: " + e + " " + e.shape + " " + e.index + " " + e.param);
+//		}
+//		switch (e.type) {
+//		case ENTERROADCAPSULE:
+//			roadCapsuleCount++;
+//			if (roadCapsuleCount == 1) {
+////				vertexEvents.add(e);
+//				return true;
+//			}
+//			break;
+//		case ENTERVERTEX:
+//			vertexCount++;
+//			if (vertexCount == 1) {
+////				vertexEvents.add(e);
+//				return true;
+//			}
+//			break;
+//		case ENTERMERGER:
+//			mergerCount++;
+//			if (mergerCount == 1) {
+////				vertexEvents.add(e);
+//				return true;
+//			}
+//			break;
+//		case ENTERSTROKE:
+//		case EXITMERGER:
+//		case EXITROADCAPSULE:
+//		case EXITSTROKE:
+//		case EXITVERTEX:
+//			assert false;
+//			break;
+//		}
+//		return false;
+//	}
+	
+//	private boolean eventSorted(SweepEvent e) {
+//		if (logger.isDebugEnabled()) {
+//			logger.debug("eventSorted: " + e + " " + e.shape + " " + e.index + " " + e.param);
+//		}
+//		switch (e.type) {
+//		case ENTERVERTEX:
+//			vertexCount++;
+//			if (vertexCount == 1) {
+//				return true;
+//			}
+//			break;
+//		case EXITVERTEX:
+//			vertexCount--;
+//			assert vertexCount >= 0;
+//			if (vertexCount == 0) {
+//				return true;
+//			}
+//			break;
+//		case ENTERROADCAPSULE:
+//			roadCapsuleCount++;
+//			if (roadCapsuleCount == 1) {
+//				return true;
+//			}
+//			break;
+//		case EXITROADCAPSULE:
+//			roadCapsuleCount--;
+//			assert roadCapsuleCount >= 0;
+//			if (roadCapsuleCount == 0) {
+//				return true;
+//			}
+//			break;
+//		case ENTERMERGER:
+//			mergerCount++;
+//			if (mergerCount == 1) {
+//				return true;
+//			}
+//			break;
+//		case EXITMERGER:
+//			mergerCount--;
+//			assert mergerCount >= 0;
+//			if (mergerCount == 0) {
+//				return true;
+//			}
+//			break;
+//			
+//		case ENTERSTROKE:
+//			strokeCapsuleCount++;
+//			if (strokeCapsuleCount == 1) {
+//				return true;
+//			}
+//			break;
+//		case EXITSTROKE:
+//			strokeCapsuleCount--;
+//			assert strokeCapsuleCount >= 0;
+//			if (strokeCapsuleCount == 0) {
+//				return true;
+//			}
+//			break;
+//		}
+//		return false;
+//	}
 	
 	
 	private void computeAABB() {

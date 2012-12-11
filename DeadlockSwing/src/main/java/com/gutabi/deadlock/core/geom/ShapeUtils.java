@@ -205,7 +205,9 @@ public class ShapeUtils {
 	}
 	
 	public static boolean intersectCC(Circle c0, Circle c1) {
-		return DMath.lessThanEquals(Point.distance(c0.center, c1.center), c0.radius + c1.radius);
+		double dist = Point.distance(c0.center, c1.center);
+		double radii = c0.radius + c1.radius;
+		return DMath.lessThanEquals(dist, radii);
 	}
 	
 	public static boolean intersectCQ(Circle c0, Quad q1) {

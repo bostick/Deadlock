@@ -524,6 +524,7 @@ public class Point {
 		double newY = -p.x;
 		
 		double len = Math.hypot(newX, newY);
+		assert !DMath.equals(len, 0.0);
 		double invLen = 1 / len;
 		return new Point(newX * invLen, newY * invLen);
 	}

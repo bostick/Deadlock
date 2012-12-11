@@ -9,9 +9,9 @@ import com.gutabi.deadlock.world.graph.Vertex;
 public class SweepEvent {
 	
 	public final SweepEventType type;
-	public final SweepableShape shape;
+	public final SweepableShape still;
 	
-	public final SweeperShape sweeper;
+	public final SweeperShape moving;
 	
 	public final int index;
 	public final double param;
@@ -23,23 +23,23 @@ public class SweepEvent {
 	
 	private Vertex v;
 	
-	public SweepEvent(SweepEventType type, SweepableShape shape, SweeperShape sweeper, int index, double param) {
+	public SweepEvent(SweepEventType type, SweepableShape still, SweeperShape moving, int index, double param) {
 		this.type = type;
-		this.shape = shape;
-		this.sweeper = sweeper;
+		this.still = still;
+		this.moving = moving;
 		this.index = index;
 		this.param = param;
 		
 		this.combo = index+param;
 		
-		p = sweeper.getPoint(param);
-		circle = new Circle(null, p, sweeper.getRadius());
+		p = moving.getPoint(param);
+		circle = new Circle(null, p, moving.getRadius());
 		
-		if (shape != null) {
+		if (still != null) {
 			/*
 			 * TODO: be more specific and test if bordering
 			 */
-			assert ShapeUtils.intersect(shape, circle);
+			assert ShapeUtils.intersect(still, circle);
 		}
 		
 	}

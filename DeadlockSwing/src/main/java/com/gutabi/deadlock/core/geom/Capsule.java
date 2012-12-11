@@ -32,7 +32,7 @@ public class Capsule extends SweepableShape implements SweeperShape {
 	/*
 	 * normal
 	 */
-	private final Point n;
+//	private final Point n;
 	
 	private final Point aUp;
 	private final Point aDown;
@@ -66,23 +66,41 @@ public class Capsule extends SweepableShape implements SweeperShape {
 			throw new IllegalArgumentException("radii not equal");
 		}
 		
-		Point diff = new Point(b.x - a.x, b.y - a.y);
-		n = Point.ccw90AndNormalize(diff);
-		Point nd = Point.cw90AndNormalize(diff);
-		
-		Point u = n.multiply(r);
-		Point d = nd.multiply(r);
-		aUp = a.plus(u);
-		aDown = a.plus(d);
-		bUp = b.plus(u);
-		bDown = b.plus(d);
-		
-		middle = new Quad(parent, aUp, bUp, bDown, aDown);
-		
-		debugNormalLine = new Line(a.x, a.y, a.x+n.x, a.y+n.y);
-		debugSkeletonLine = new Line(a.x, a.y, b.x, b.y);
-		
-		aabb = AABB.union(ac.getAABB(), bc.getAABB());
+		if (!a.equals(b)) {
+			
+			Point diff = new Point(b.x - a.x, b.y - a.y);
+			Point n = Point.ccw90AndNormalize(diff);
+			Point nd = Point.cw90AndNormalize(diff);
+			
+			Point u = n.multiply(r);
+			Point d = nd.multiply(r);
+			aUp = a.plus(u);
+			aDown = a.plus(d);
+			bUp = b.plus(u);
+			bDown = b.plus(d);
+			
+			middle = new Quad(parent, aUp, bUp, bDown, aDown);
+			
+			debugNormalLine = new Line(a.x, a.y, a.x+n.x, a.y+n.y);
+			debugSkeletonLine = new Line(a.x, a.y, b.x, b.y);
+			
+			aabb = AABB.union(ac.getAABB(), bc.getAABB());
+			
+		} else {
+			
+			aUp = null;
+			aDown = null;
+			bUp = null;
+			bDown = null;
+			
+			middle = null;
+			
+			debugNormalLine = null;
+			debugSkeletonLine = new Line(a.x, a.y, b.x, b.y);
+			
+			aabb = AABB.union(ac.getAABB(), bc.getAABB());
+			
+		}
 		
 	}
 	
@@ -389,7 +407,9 @@ public class Capsule extends SweepableShape implements SweeperShape {
 	
 	public void draw(RenderingContext ctxt) {
 		ac.draw(ctxt);
-		middle.draw(ctxt);
+		if (middle != null) {
+			middle.draw(ctxt);
+		}
 		bc.draw(ctxt);
 	}
 	

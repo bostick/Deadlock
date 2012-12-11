@@ -14,6 +14,8 @@ public class CapsuleSequence extends SweepableShape {
 	
 	public final List<Capsule> caps;
 	
+	public final int capsuleCount;
+	
 	public final double radius;
 	
 	public final AABB aabb;
@@ -23,6 +25,8 @@ public class CapsuleSequence extends SweepableShape {
 	public CapsuleSequence(Object parent, List<Capsule> caps) {
 		super(parent);
 		this.caps = caps;
+		
+		capsuleCount = caps.size();
 		
 		for (int i = 0; i < caps.size()-1; i++) {
 			Capsule a = caps.get(i);
@@ -60,11 +64,11 @@ public class CapsuleSequence extends SweepableShape {
 //	}
 	
 	public int capsuleCount() {
-		return caps.size();
+		return capsuleCount;
 	}
 	
 	public int pointCount() {
-		return caps.size()+1;
+		return capsuleCount+1;
 	}
 	
 	public Circle getStart() {
@@ -111,10 +115,24 @@ public class CapsuleSequence extends SweepableShape {
 			List<SweepEvent> capsuleEvents = c.sweep(s);
 			
 			for (SweepEvent e : capsuleEvents) {
-				if (DMath.lessThan(e.param, 1.0) || i == caps.size()-1) {
+				if (DMath.lessThan(e.param, 1.0)) {
+					
 					events.add(e);
+					
+				} else {
+					assert DMath.equals(e.param, 1.0);
+					if (i < caps.size()-1) {
+						
+//						events.add(new SweepEvent(e.type, e.shape, caps.get(e.index+1), e.index+1, 0.0));
+						events.add(e);
+						
+					} else {
+						events.add(e);
+					}
 				}
+				
 			}
+//			events.addAll(capsuleEvents);
 			
 		}
 		
