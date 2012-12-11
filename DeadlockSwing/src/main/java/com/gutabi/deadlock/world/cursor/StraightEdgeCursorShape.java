@@ -27,7 +27,7 @@ public class StraightEdgeCursorShape extends Shape {
 		this.first = new Circle(null, first, Vertex.INIT_VERTEX_RADIUS);
 		this.pCircle = new Circle(null, p, Vertex.INIT_VERTEX_RADIUS);
 		
-		this.cap = new Capsule(null, this.first, pCircle);
+		this.cap = new Capsule(null, this.first, pCircle, -1);
 		
 		aabb = cap.aabb;
 		

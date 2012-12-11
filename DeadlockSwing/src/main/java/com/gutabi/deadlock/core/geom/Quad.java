@@ -1,7 +1,9 @@
 package com.gutabi.deadlock.core.geom;
 
 import java.awt.geom.GeneralPath;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Point;
@@ -185,24 +187,29 @@ public class Quad extends SweepableShape {
 		out[1] = n12Projection[1];
 	}
 	
-	public void sweepStart(Sweeper s) {
+	public List<SweepEvent> sweepStart(Circle s) {
 		
-		Capsule cap = s.getCapsule(0);
+		List<SweepEvent> events = new ArrayList<SweepEvent>();
 		
-		if (ShapeUtils.intersectCQ(cap.ac, this)) {
-			s.start(new SweepEvent(SweepEventType.enter(parent), this, s, 0, 0.0));
+//		Capsule cap = s.getCapsule(0);
+		
+		if (ShapeUtils.intersectCQ(s, this)) {
+			events.add(new SweepEvent(SweepEventType.enter(parent), this, s, 0, 0.0));
 		}
 		
+		return events;
 	}
 	
-	public void sweep(Sweeper s, int index) {
+	public List<SweepEvent> sweep(Capsule s) {
 		
-		Capsule cap = s.getCapsule(index);
-		Point c = cap.a;
-		Point d = cap.b;
+		List<SweepEvent> events = new ArrayList<SweepEvent>();
+		
+//		Capsule cap = s.getCapsule(index);
+		Point c = s.a;
+		Point d = s.b;
 		
 		boolean outside;
-		if (ShapeUtils.intersectCQ(cap.ac, this)) {
+		if (ShapeUtils.intersectCQ(s.ac, this)) {
 			outside = false;
 		} else {
 			outside = true;
@@ -212,25 +219,25 @@ public class Quad extends SweepableShape {
 		Arrays.fill(params, Double.POSITIVE_INFINITY);
 		int paramCount = 0;
 		
-		double cdParam = SweepUtils.sweepCircleLine(p0, p1, c, d, cap.r);
+		double cdParam = SweepUtils.sweepCircleLine(p0, p1, c, d, s.r);
 		if (cdParam != -1) {
 			params[paramCount] = cdParam;
 			paramCount++;
 		}
 		
-		cdParam = SweepUtils.sweepCircleLine(p1, p2, c, d, cap.r);
+		cdParam = SweepUtils.sweepCircleLine(p1, p2, c, d, s.r);
 		if (cdParam != -1) {
 			params[paramCount] = cdParam;
 			paramCount++;
 		}
 		
-		cdParam = SweepUtils.sweepCircleLine(p2, p3, c, d, cap.r);
+		cdParam = SweepUtils.sweepCircleLine(p2, p3, c, d, s.r);
 		if (cdParam != -1) {
 			params[paramCount] = cdParam;
 			paramCount++;
 		}
 		
-		cdParam = SweepUtils.sweepCircleLine(p3, p0, c, d, cap.r);
+		cdParam = SweepUtils.sweepCircleLine(p3, p0, c, d, s.r);
 		if (cdParam != -1) {
 			params[paramCount] = cdParam;
 			paramCount++;
@@ -246,17 +253,22 @@ public class Quad extends SweepableShape {
 		
 		for (int i = 0; i < paramCount; i++) {
 			double param = params[i];
-			assert DMath.greaterThanEquals(param, 0.0) && DMath.lessThanEquals(param, 1.0);
-			if (DMath.lessThan(param, 1.0) || index == s.pointCount()-1) {
+			
+			if (DMath.greaterThan(param, 0.0)) {
+				
+				assert DMath.greaterThanEquals(param, 0.0) && DMath.lessThanEquals(param, 1.0);
 				if (outside) {
-					s.event(new SweepEvent(SweepEventType.enter(parent), this, s, index, param));
+					events.add(new SweepEvent(SweepEventType.enter(parent), this, s, s.index, param));
 				} else {
-					s.event(new SweepEvent(SweepEventType.exit(parent), this, s, index, param));
+					events.add(new SweepEvent(SweepEventType.exit(parent), this, s, s.index, param));
 				}
 				outside = !outside;
+				
 			}
+			
 		}
 		
+		return events;
 	}
 	
 	public boolean containedIn(Quad q) {

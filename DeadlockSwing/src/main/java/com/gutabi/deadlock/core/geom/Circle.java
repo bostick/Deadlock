@@ -1,7 +1,9 @@
 package com.gutabi.deadlock.core.geom;
 
 import java.awt.geom.Ellipse2D;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 
@@ -10,7 +12,7 @@ import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.view.RenderingContext;
 
 //@SuppressWarnings("static-access")
-public class Circle extends SweepableShape {
+public class Circle extends SweepableShape implements SweeperShape {
 	
 	public final Point center;
 	public final double radius;
@@ -60,6 +62,10 @@ public class Circle extends SweepableShape {
 		return hash;
 	}
 	
+	public double getRadius() {
+		return radius;
+	}
+	
 	public Circle plus(Point p) {
 		return new Circle(parent, center.plus(p), radius);
 	}
@@ -79,25 +85,35 @@ public class Circle extends SweepableShape {
 		out[1] = cen+radius;
 	}
 	
-	public void sweepStart(Sweeper s) {
-		
-		Capsule cap = s.getCapsule(0);
-		
-		if (ShapeUtils.intersectCC(this, cap.ac)) {
-			SweepEvent e = new SweepEvent(SweepEventType.enter(parent), this, s, 0, 0.0);
-			s.start(e);
-		}
-		
+	public Point getPoint(double param) {
+//		assert index == 0;
+		assert DMath.equals(param, 0.0);
+		return center;
 	}
 	
-	public void sweep(Sweeper s, int index) {
+	public List<SweepEvent> sweepStart(Circle s) {
 		
-		Capsule cap = s.getCapsule(index);
-		Point c = cap.a;
-		Point d = cap.b;
+		List<SweepEvent> events = new ArrayList<SweepEvent>();
+		
+//		Capsule cap = s.getCapsule(0);
+		
+		if (ShapeUtils.intersectCC(this, s)) {
+			events.add(new SweepEvent(SweepEventType.enter(parent), this, s, 0, 0.0));
+		}
+		
+		return events;
+	}
+	
+	public List<SweepEvent> sweep(Capsule s) {
+		
+		List<SweepEvent> events = new ArrayList<SweepEvent>();
+		
+//		Capsule cap = s.getCapsule(index);
+		Point c = s.a;
+		Point d = s.b;
 		
 		boolean outside;
-		if (ShapeUtils.intersectCC(this, cap.ac)) {
+		if (ShapeUtils.intersectCC(this, s.ac)) {
 			outside = false;
 		} else {
 			outside = true;
@@ -105,27 +121,28 @@ public class Circle extends SweepableShape {
 		
 		double[] params = new double[2];
 		Arrays.fill(params, Double.POSITIVE_INFINITY);
-		int paramCount = SweepUtils.sweepCircleCircle(center, c, d, cap.r, radius, params);
+		int paramCount = SweepUtils.sweepCircleCircle(center, c, d, s.r, radius, params);
 		
 		Arrays.sort(params);
 		
-		if (paramCount == 2) {
-			String.class.getName();
-		}
-		
 		for (int i = 0; i < paramCount; i++) {
 			double param = params[i];
-			assert DMath.greaterThanEquals(param, 0.0) && DMath.lessThanEquals(param, 1.0);
-			if (DMath.lessThan(param, 1.0) || index == s.pointCount()-1) {
+			
+			if (DMath.greaterThan(param, 0.0)) {
+				
+				assert DMath.greaterThan(param, 0.0) && DMath.lessThanEquals(param, 1.0);
 				if (outside) {
-					s.event(new SweepEvent(SweepEventType.enter(parent), this, s, index, param));
+					events.add(new SweepEvent(SweepEventType.enter(parent), this, s, s.index, param));
 				} else {
-					s.event(new SweepEvent(SweepEventType.exit(parent), this, s, index, param));
+					events.add(new SweepEvent(SweepEventType.exit(parent), this, s, s.index, param));
 				}
 				outside = !outside;
+				
 			}
+			
 		}
 		
+		return events;
 	}
 	
 	public void paint(RenderingContext ctxt) {

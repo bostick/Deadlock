@@ -16,7 +16,6 @@ import com.gutabi.deadlock.core.geom.CapsuleSequence;
 import com.gutabi.deadlock.core.geom.Circle;
 import com.gutabi.deadlock.core.geom.SweepEvent;
 import com.gutabi.deadlock.core.geom.SweepEventType;
-import com.gutabi.deadlock.core.geom.Sweeper;
 import com.gutabi.deadlock.view.RenderingContext;
 import com.gutabi.deadlock.world.graph.Vertex;
 
@@ -26,6 +25,10 @@ public class Stroke {
 	public static final double STROKE_RADIUS = Vertex.INIT_VERTEX_RADIUS;
 	
 	private List<Circle> cs;
+	
+	private boolean finished;
+	public List<Capsule> caps;
+	public CapsuleSequence seq;
 	
 	static Logger logger = Logger.getLogger(Stroke.class);
 	
@@ -40,6 +43,7 @@ public class Stroke {
 	}
 	
 	public void add(Point p) {
+		assert !finished;
 		
 		cs.add(new Circle(null, p, STROKE_RADIUS));
 		
@@ -58,59 +62,117 @@ public class Stroke {
 		return cs.size();
 	}
 	
-	List<SweepEvent> events;
-	Sweeper sweeper;
-	int vertexCount;
-	int capsuleCount;
-	int mergerCount;
-	List<SweepEvent> vertexEvents;
-	
-	public List<SweepEvent> events() {
+	public void finish() {
+		assert !finished;
 		
-		vertexCount = 0;
-		capsuleCount = 0;
-		mergerCount = 0;
-		vertexEvents = new ArrayList<SweepEvent>();
-		
-		List<Capsule> caps = new ArrayList<Capsule>();
+		caps = new ArrayList<Capsule>();
 		for (int i = 0; i < cs.size()-1; i++) {
 			Circle a = cs.get(i);
 			Circle b = cs.get(i+1);
-			caps.add(new Capsule(null, a, b));
+			caps.add(new Capsule(this, a, b, i));
 		}
+		seq = new CapsuleSequence(this, caps);
 		
-		sweeper = new Sweeper(null, caps) {
-			public void start(SweepEvent e) {
-				events.add(e);
+		finished = true;
+	}
+	
+	private int vertexCount;
+	private int roadCapsuleCount;
+	private int mergerCount;
+	private int strokeCapsuleCount;
+	List<SweepEvent> vertexEvents;
+	
+	public List<SweepEvent> selfEvents() {
+		assert finished;
+		
+//		vertexCount = 0;
+//		roadCapsuleCount = 0;
+//		mergerCount = 0;
+		strokeCapsuleCount = 0;
+		vertexEvents = new ArrayList<SweepEvent>();
+		
+//		Circle start = seq.getStart();
+//		
+//		List<SweepEvent> events = APP.world.sweepStart(start);
+//		
+//		Collections.sort(events, SweepEvent.COMPARATOR);
+//		
+//		for (SweepEvent e : events) {
+//			startSorted(e);
+//		}
+		
+//		if ((vertexCount + roadCapsuleCount + mergerCount + strokeCapsuleCount) == 0) {
+//			logger.debug("start in nothing");
+//			vertexEvents.add(new SweepEvent(null, null, start, 0, 0.0));
+//		} else {
+//			logger.debug("start counts: " + vertexCount + " " + roadCapsuleCount + " " + mergerCount + " " + strokeCapsuleCount);
+//		}
+		
+//		List<Capsule> curStrokeCapsules = new ArrayList<Capsule>();
+//		Capsule prevCapsule = null;
+		
+		for (int i = 0; i < seq.capsuleCount(); i++) {
+			
+			Capsule cap = seq.getCapsule(i);
+			
+			List<SweepEvent> events = new ArrayList<SweepEvent>();
+			
+			if (i == 0) {
+				
+//				prevCapsule = cap;
+				
+			} else {
+				
+				CapsuleSequence sub = seq.subsequence(i);
+				
+				List<SweepEvent> subStartEvents = sub.sweepStart(cap.ac);
+				List<SweepEvent> subEvents = sub.sweep(cap);
+				
+				Collections.sort(subEvents, SweepEvent.COMPARATOR);
+				
+				List<SweepEvent> toKeep = new ArrayList<SweepEvent>();
+				Capsule eventCapsule;
+				for (SweepEvent e : subEvents) {
+					switch (e.type) {
+					case ENTERSTROKE:
+						eventCapsule = ((Capsule)e.shape);
+						
+						toKeep.add(e);
+						
+						break;
+					case EXITSTROKE:
+						eventCapsule = ((Capsule)e.shape);
+						
+						boolean atStart = false;
+						for (SweepEvent se : subStartEvents) {
+							if (se.shape == eventCapsule) {
+								atStart = true;
+								break;
+							}
+						}
+						if (!atStart) {
+							toKeep.add(e);
+						}
+						
+						break;
+					case ENTERMERGER:
+					case ENTERROADCAPSULE:
+					case ENTERVERTEX:
+					case EXITMERGER:
+					case EXITROADCAPSULE:
+					case EXITVERTEX:
+						assert false;
+						break;
+					}
+				}
+				
+//				prevCapsule = cap;
+				
+				events.addAll(toKeep);
+				
+//				String.class.getName();
+				
 			}
-			
-			public void event(SweepEvent e) {
-				events.add(e);
-			}
-		};
-		
-		events = new ArrayList<SweepEvent>();
-		
-		APP.world.sweepStart(sweeper);
-		
-		Collections.sort(events, SweepEvent.COMPARATOR);
-		
-		for (SweepEvent e : events) {
-			startSorted(e);
-		}
-		
-		if ((vertexCount + capsuleCount + mergerCount) == 0) {
-			logger.debug("start in nothing");
-			vertexEvents.add(new SweepEvent(null, null, sweeper, 0, 0.0));
-		} else {
-			logger.debug("end counts: " + vertexCount + " " + capsuleCount + " " + mergerCount);
-		}
-		
-		for (int i = 0; i < cs.size()-1; i++) {
-			
-			events = new ArrayList<SweepEvent>();
-			
-			APP.world.sweep(sweeper, i);
 			
 			Collections.sort(events, SweepEvent.COMPARATOR);
 			
@@ -119,9 +181,59 @@ public class Stroke {
 			}
 		}
 		
-		if ((vertexCount + capsuleCount + mergerCount) == 0) {
+//		if ((vertexCount + roadCapsuleCount + mergerCount + strokeCapsuleCount) == 0) {
+//			logger.debug("end in nothing");
+//			vertexEvents.add(new SweepEvent(null, null, cs.get(cs.size()-1), cs.size()-1, 0.0));
+//		}
+		
+		return vertexEvents;
+	}
+	
+	public List<SweepEvent> events() {
+		assert finished;
+		
+		vertexCount = 0;
+		roadCapsuleCount = 0;
+		mergerCount = 0;
+//		strokeCapsuleCount = 0;
+		vertexEvents = new ArrayList<SweepEvent>();
+		
+		Circle start = seq.getStart();
+		
+		List<SweepEvent> events = APP.world.sweepStart(start);
+		
+		Collections.sort(events, SweepEvent.COMPARATOR);
+		
+		for (SweepEvent e : events) {
+			startSorted(e);
+		}
+		
+		if ((vertexCount + roadCapsuleCount + mergerCount) == 0) {
+			logger.debug("start in nothing");
+			vertexEvents.add(new SweepEvent(null, null, start, 0, 0.0));
+		} else {
+			logger.debug("start counts: " + vertexCount + " " + roadCapsuleCount + " " + mergerCount);
+		}
+		
+//		List<Capsule> curStrokeCapsules = new ArrayList<Capsule>();
+//		Capsule prevCapsule = null;
+		
+		for (int i = 0; i < seq.capsuleCount(); i++) {
+			
+			Capsule cap = seq.getCapsule(i);
+			
+			events = APP.world.sweep(cap);
+			
+			Collections.sort(events, SweepEvent.COMPARATOR);
+			
+			for (SweepEvent e : events) {
+				eventSorted(e);
+			}
+		}
+		
+		if ((vertexCount + roadCapsuleCount + mergerCount) == 0) {
 			logger.debug("end in nothing");
-			vertexEvents.add(new SweepEvent(null, null, sweeper, cs.size()-1, 0.0));
+			vertexEvents.add(new SweepEvent(null, null, cs.get(cs.size()-1), cs.size()-1, 0.0));
 		}
 		
 		
@@ -219,8 +331,8 @@ public class Stroke {
 		}
 		switch (e.type) {
 		case ENTERROADCAPSULE:
-			capsuleCount++;
-			if (capsuleCount == 1) {
+			roadCapsuleCount++;
+			if (roadCapsuleCount == 1) {
 				vertexEvents.add(e);
 			}
 			break;
@@ -236,7 +348,12 @@ public class Stroke {
 				vertexEvents.add(e);
 			}
 			break;
-		default:
+			
+		case ENTERSTROKE:
+		case EXITMERGER:
+		case EXITROADCAPSULE:
+		case EXITSTROKE:
+		case EXITVERTEX:
 			assert false;
 			break;
 		}
@@ -261,15 +378,15 @@ public class Stroke {
 			}
 			break;
 		case ENTERROADCAPSULE:
-			capsuleCount++;
-			if (capsuleCount == 1) {
+			roadCapsuleCount++;
+			if (roadCapsuleCount == 1) {
 				vertexEvents.add(e);
 			}
 			break;
 		case EXITROADCAPSULE:
-			capsuleCount--;
-			assert capsuleCount >= 0;
-			if (capsuleCount == 0) {
+			roadCapsuleCount--;
+			assert roadCapsuleCount >= 0;
+			if (roadCapsuleCount == 0) {
 				vertexEvents.add(e);
 			}
 			break;
@@ -283,6 +400,20 @@ public class Stroke {
 			mergerCount--;
 			assert mergerCount >= 0;
 			if (mergerCount == 0) {
+				vertexEvents.add(e);
+			}
+			break;
+			
+		case ENTERSTROKE:
+			strokeCapsuleCount++;
+			if (strokeCapsuleCount == 1) {
+				vertexEvents.add(e);
+			}
+			break;
+		case EXITSTROKE:
+			strokeCapsuleCount--;
+			assert strokeCapsuleCount >= 0;
+			if (strokeCapsuleCount == 0) {
 				vertexEvents.add(e);
 			}
 			break;
@@ -321,7 +452,7 @@ public class Stroke {
 			
 			List<Capsule> caps = new ArrayList<Capsule>();
 			for (int i = 0; i < cs.size()-1; i++) {
-				caps.add(new Capsule(null, cs.get(i), cs.get(i+1)));
+				caps.add(new Capsule(null, cs.get(i), cs.get(i+1), i));
 			}
 			
 			CapsuleSequence seq = new CapsuleSequence(null, caps);

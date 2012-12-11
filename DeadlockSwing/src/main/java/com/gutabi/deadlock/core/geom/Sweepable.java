@@ -1,10 +1,12 @@
 package com.gutabi.deadlock.core.geom;
 
+import java.util.List;
+
 
 public interface Sweepable {
 	
-	void sweepStart(Sweeper s);
+	List<SweepEvent> sweepStart(Circle c);
 	
-	void sweep(Sweeper s, int index);
+	List<SweepEvent> sweep(Capsule cap);
 	
 }

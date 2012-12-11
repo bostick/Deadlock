@@ -23,6 +23,8 @@ import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.AABB;
 import com.gutabi.deadlock.core.geom.Capsule;
+import com.gutabi.deadlock.core.geom.CapsuleSequence;
+import com.gutabi.deadlock.core.geom.CapsuleSequencePosition;
 import com.gutabi.deadlock.core.geom.Circle;
 import com.gutabi.deadlock.core.geom.Quad;
 import com.gutabi.deadlock.core.geom.Shape;
@@ -30,7 +32,6 @@ import com.gutabi.deadlock.core.geom.ShapeUtils;
 import com.gutabi.deadlock.core.geom.SweepEvent;
 import com.gutabi.deadlock.core.geom.SweepEventType;
 import com.gutabi.deadlock.core.geom.Sweepable;
-import com.gutabi.deadlock.core.geom.Sweeper;
 import com.gutabi.deadlock.view.AnimatedExplosion;
 import com.gutabi.deadlock.view.AnimatedGrass;
 import com.gutabi.deadlock.view.RenderingContext;
@@ -41,6 +42,7 @@ import com.gutabi.deadlock.world.car.CarProximityEvent;
 import com.gutabi.deadlock.world.car.CarStateEnum;
 import com.gutabi.deadlock.world.car.DrivingEvent;
 import com.gutabi.deadlock.world.car.VertexArrivalEvent;
+import com.gutabi.deadlock.world.cursor.CircleCursor;
 import com.gutabi.deadlock.world.cursor.Cursor;
 import com.gutabi.deadlock.world.cursor.FixtureCursor;
 import com.gutabi.deadlock.world.cursor.MergerCursor;
@@ -379,6 +381,8 @@ public class World implements Sweepable {
 	
 	public void draftEnd() {
 		
+		stroke.finish();
+		
 		processNewStroke(stroke);
 		
 		assert checkConsistency();
@@ -404,6 +408,137 @@ public class World implements Sweepable {
 //				return;
 //			}
 //		}
+		
+		List<SweepEvent> selfEvents = s.selfEvents();
+		
+		/*
+		 * go through and create vertices where stroke intersects with self
+		 */
+		for (int i = 0; i < selfEvents.size(); i++) {
+			
+			SweepEvent e = selfEvents.get(i);
+			
+			if (e.type == SweepEventType.ENTERSTROKE || e.type == SweepEventType.EXITSTROKE) {
+				
+				CapsuleSequence sub = s.seq.subsequence(e.index);
+				
+				CapsuleSequencePosition pos = null;
+				
+				double nextEventCombo;
+				if (e.type == SweepEventType.ENTERSTROKE) {
+					if (i < selfEvents.size()-1) {
+						nextEventCombo = selfEvents.get(i+1).combo;
+					} else {
+						nextEventCombo = Double.POSITIVE_INFINITY;
+					}
+				} else {
+					if (i >= 1) {
+						nextEventCombo = selfEvents.get(i-1).combo;
+					} else {
+						nextEventCombo = Double.NEGATIVE_INFINITY;
+					}
+				}
+				
+				/*
+				 * find better place to split by checking for intersection with stroke
+				 */
+				Circle a;
+				Circle b;
+				int j = e.index;
+				if (e.type == SweepEventType.ENTERSTROKE) {
+					a = e.circle;
+					if (DMath.lessThan(nextEventCombo, j+1)) {
+						/*
+						 * next event is before next stroke point, so use the event circle
+						 */
+						b = selfEvents.get(i+1).circle;
+					} else {
+						b = s.getCircle(j+1);
+					}
+				} else {
+					if (DMath.greaterThan(nextEventCombo, j)) {
+						a = selfEvents.get(i-1).circle;
+					} else {
+						a = s.getCircle(j);
+					}
+					b = e.circle;
+				}
+				
+				while (true) {
+					
+//					hit = strokeBestHitTestCapsule(new Capsule(null, a, b, -1));
+					
+					CapsuleSequencePosition skeletonIntersection = sub.findSkeletonIntersection(a.center, b.center);
+					
+					if (skeletonIntersection != null) {
+						
+						/*
+						 * FIXME:
+						 * 
+						 * the 0.3 is a hack, because an intersection won't always be touching the event
+						 * 
+						 * here:
+						 * 
+						 * Graphics[{capsule[#, r] & /@ 
+   Partition[{{5.5, 5.5}, {10, 10}, {10, 2}, {6.5, 6.5}, {2, 10}}, 2, 
+    1], Blue, Point[{6.5, 6.5}], Point[{7.375, 5.375}], 
+  Circle[{7.375, 5.375}, r]}]
+  
+  							figure out exactly what to do here
+						 */
+						double dist = Point.distance(skeletonIntersection.p, e.p);
+						if (DMath.lessThanEquals(dist, Stroke.STROKE_RADIUS + Stroke.STROKE_RADIUS + 0.2)) {
+							
+							pos = skeletonIntersection;
+							
+							logger.debug("found intersection");
+							
+							break;
+						}
+					}
+					
+					j += (e.type == SweepEventType.ENTERSTROKE) ? 1 : -1;
+					
+					if (!((e.type == SweepEventType.ENTERSTROKE) ? j < Math.min(nextEventCombo, s.size()-1) : j >= Math.max(nextEventCombo, 0))) {
+						break;
+					}
+					
+					a = s.getCircle(j);
+					b = s.getCircle(j+1);
+					
+				}
+				
+				if (pos == null) {
+					logger.debug("pos was null");
+					pos = sub.findClosestStrokePosition(e.p, e.circle.radius);
+				}
+				
+				assert pos != null;
+				
+				Entity hit = pureGraphBestHitTestCircle(new Circle(null, pos.p, e.circle.radius));
+				
+				if (hit == null) {
+					
+					logger.debug("create");
+					Intersection v = new Intersection(pos.p);
+					addVertexTop(v);
+					
+//					assert ShapeUtils.intersectCC(e.circle, v.getShape());
+					
+					e.setVertex(v);
+					
+				} else {
+					
+					e.setVertex((Vertex)hit);
+					
+				}
+				
+			} else {
+				assert false;
+			}
+			
+			assert e.getVertex() != null;
+		}
 		
 		List<SweepEvent> events = s.events();
 		
@@ -508,7 +643,7 @@ public class World implements Sweepable {
 				
 				while (true) {
 					
-					hit = pureGraphBestHitTestCapsule(new Capsule(null, a, b));
+					hit = pureGraphBestHitTestCapsule(new Capsule(null, a, b, -1));
 					
 					if (hit == null) {
 						
@@ -521,7 +656,10 @@ public class World implements Sweepable {
 						
 						if (skeletonIntersection != null) {
 							
-							if (DMath.lessThanEquals(Point.distance(skeletonIntersection.p, e.p), Stroke.STROKE_RADIUS + Stroke.STROKE_RADIUS)) {
+							/*
+							 * FIXME: see stroke section
+							 */
+							if (DMath.lessThanEquals(Point.distance(skeletonIntersection.p, e.p), Stroke.STROKE_RADIUS + Stroke.STROKE_RADIUS + 0.2)) {
 								
 								pos = skeletonIntersection;
 								
@@ -548,6 +686,8 @@ public class World implements Sweepable {
 					logger.debug("pos was null");
 					pos = findClosestRoadPosition(e.p, e.circle.radius);
 				}
+				
+				assert pos != null;
 				
 				Entity hit2;
 				if (pos instanceof EdgePosition) {
@@ -581,6 +721,11 @@ public class World implements Sweepable {
 		 * now go through and create roads
 		 */
 		for (int i = 0; i < events.size()-1; i++) {
+			
+//			if (i == 0) {
+//				return;
+//			}
+			
 			SweepEvent e0 = events.get(i);
 			SweepEvent e1 = events.get(i+1);
 			
@@ -610,10 +755,10 @@ public class World implements Sweepable {
 			Vertex v0 = e0.getVertex();
 			Vertex v1 = e1.getVertex();
 			
-			if (v0 == v1) {
-				logger.debug("same vertex");
-				continue;
-			}
+//			if (v0 == v1) {
+//				logger.debug("same vertex");
+//				continue;
+//			}
 			
 			List<Point> roadPts = new ArrayList<Point>();
 			roadPts.add(e0.p);
@@ -725,6 +870,8 @@ public class World implements Sweepable {
 			s.add(first);
 			s.add(second);
 			
+			s.finish();
+			
 			processNewStroke(s);
 			
 			assert checkConsistency();
@@ -746,6 +893,8 @@ public class World implements Sweepable {
 		case PAUSED:
 		case MERGERCURSOR:
 		case FIXTURECURSOR:
+		case CIRCLECURSOR:
+		case CIRCLECURSOR_SET:
 		case DRAFTING:
 			break;
 		}
@@ -813,6 +962,8 @@ public class World implements Sweepable {
 		case PAUSED:
 		case MERGERCURSOR:
 		case STRAIGHTEDGECURSOR:
+		case CIRCLECURSOR:
+		case CIRCLECURSOR_SET:
 		case DRAFTING:
 			break;
 		}
@@ -931,6 +1082,8 @@ public class World implements Sweepable {
 		case PAUSED:
 		case FIXTURECURSOR:
 		case STRAIGHTEDGECURSOR:
+		case CIRCLECURSOR:
+		case CIRCLECURSOR_SET:
 		case DRAFTING:
 			break;
 		}
@@ -943,6 +1096,7 @@ public class World implements Sweepable {
 		case MERGERCURSOR:
 		case FIXTURECURSOR:
 		case STRAIGHTEDGECURSOR:
+		case CIRCLECURSOR:
 			
 			mode = WorldMode.IDLE;
 			
@@ -957,6 +1111,7 @@ public class World implements Sweepable {
 		case PAUSED:
 		case DRAFTING:
 		case IDLE:
+		case CIRCLECURSOR_SET:
 			break;
 		}
 		
@@ -1000,7 +1155,14 @@ public class World implements Sweepable {
 			}
 			
 			break;
-		default:
+		case CIRCLECURSOR:
+		case CIRCLECURSOR_SET:
+		case DRAFTING:
+		case FIXTURECURSOR:
+		case MERGERCURSOR:
+		case PAUSED:
+		case RUNNING:
+		case STRAIGHTEDGECURSOR:
 			break;
 		}
 		
@@ -1026,7 +1188,14 @@ public class World implements Sweepable {
 			}
 			
 			break;
-		default:
+		case CIRCLECURSOR:
+		case CIRCLECURSOR_SET:
+		case DRAFTING:
+		case FIXTURECURSOR:
+		case MERGERCURSOR:
+		case PAUSED:
+		case RUNNING:
+		case STRAIGHTEDGECURSOR:
 			break;
 		}
 		
@@ -1052,7 +1221,14 @@ public class World implements Sweepable {
 			}
 			
 			break;
-		default:
+		case CIRCLECURSOR:
+		case CIRCLECURSOR_SET:
+		case DRAFTING:
+		case FIXTURECURSOR:
+		case MERGERCURSOR:
+		case PAUSED:
+		case RUNNING:
+		case STRAIGHTEDGECURSOR:
 			break;
 		}
 		
@@ -1081,6 +1257,7 @@ public class World implements Sweepable {
 		case MERGERCURSOR:
 		case FIXTURECURSOR:
 		case STRAIGHTEDGECURSOR:
+		case CIRCLECURSOR:
 			
 			if (cursor != null) {
 				if (grid) {
@@ -1097,6 +1274,8 @@ public class World implements Sweepable {
 			VIEW.repaintCanvas();
 			VIEW.repaintControlPanel();
 			
+			break;
+		case CIRCLECURSOR_SET:
 			break;
 		}
 		
@@ -1125,6 +1304,7 @@ public class World implements Sweepable {
 		case MERGERCURSOR:
 		case FIXTURECURSOR:
 		case STRAIGHTEDGECURSOR:
+		case CIRCLECURSOR:
 			
 			if (cursor != null) {
 				if (grid) {
@@ -1141,6 +1321,62 @@ public class World implements Sweepable {
 			VIEW.repaintCanvas();
 			VIEW.repaintControlPanel();
 			
+			break;
+		case CIRCLECURSOR_SET:
+			break;
+		}
+		
+	}
+	
+	public void aKey() {
+		
+		switch (mode) {
+		case IDLE:
+			
+			mode = WorldMode.CIRCLECURSOR;
+			
+			cursor = new CircleCursor();
+			
+			cursor.setPoint(lastMovedWorldPoint);
+			
+			VIEW.repaintCanvas();
+			
+			break;
+		case CIRCLECURSOR:
+//			CircleCursor cc = (CircleCursor)cursor;
+			
+			mode = WorldMode.CIRCLECURSOR_SET;
+			
+//			cc.set();
+			
+			VIEW.repaintCanvas();
+			
+			break;
+		case CIRCLECURSOR_SET:
+			
+			if (pureGraphBestHitTest(cursor.getShape()) == null) {
+				
+//				d;
+				
+				mode = WorldMode.IDLE;
+				
+				cursor = new RegularCursor();
+				
+				cursor.setPoint(lastMovedWorldPoint);
+				
+				render();
+				VIEW.repaintCanvas();
+				VIEW.repaintControlPanel();
+				
+			}
+			
+			break;
+		case RUNNING:
+		case PAUSED:
+		case MERGERCURSOR:
+		case STRAIGHTEDGECURSOR:
+		case FIXTURECURSOR:
+		case DRAFTING:
 			break;
 		}
 		
@@ -1214,6 +1450,8 @@ public class World implements Sweepable {
 		case MERGERCURSOR:
 		case FIXTURECURSOR:
 		case STRAIGHTEDGECURSOR:
+		case CIRCLECURSOR:
+		case CIRCLECURSOR_SET:
 			break;
 		}
 		
@@ -1239,6 +1477,8 @@ public class World implements Sweepable {
 		case MERGERCURSOR:
 		case FIXTURECURSOR:
 		case STRAIGHTEDGECURSOR:
+		case CIRCLECURSOR:
+		case CIRCLECURSOR_SET:
 			break;
 		}
 		
@@ -1284,6 +1524,7 @@ public class World implements Sweepable {
 		case MERGERCURSOR:
 		case FIXTURECURSOR:
 		case STRAIGHTEDGECURSOR:
+		case CIRCLECURSOR:
 			
 			hilited = null;
 			
@@ -1299,6 +1540,8 @@ public class World implements Sweepable {
 			}
 			
 			VIEW.repaintCanvas();
+			break;
+		case CIRCLECURSOR_SET:
 			break;
 		}
 		
@@ -1319,6 +1562,7 @@ public class World implements Sweepable {
 		case MERGERCURSOR:
 		case FIXTURECURSOR:
 		case STRAIGHTEDGECURSOR:
+		case CIRCLECURSOR:
 			
 			if (cursor != null) {
 				if (grid) {
@@ -1332,6 +1576,8 @@ public class World implements Sweepable {
 			}
 			
 			VIEW.repaintCanvas();
+			break;
+		case CIRCLECURSOR_SET:
 			break;
 		}
 		
@@ -1348,12 +1594,15 @@ public class World implements Sweepable {
 		case MERGERCURSOR:
 		case FIXTURECURSOR:
 		case STRAIGHTEDGECURSOR:
+		case CIRCLECURSOR:
 			
 			if (cursor != null) {
 				cursor.setPoint(null);
 			}
 			
 			VIEW.repaintCanvas();
+			break;
+		case CIRCLECURSOR_SET:
 			break;
 		}
 		
@@ -1398,12 +1647,12 @@ public class World implements Sweepable {
 	
 	
 	
-	public void sweepStart(Sweeper s) {
-		graph.sweepStart(s);
+	public List<SweepEvent> sweepStart(Circle c) {
+		return graph.sweepStart(c);
 	}
 	
-	public void sweep(Sweeper s, int index) {
-		graph.sweep(s, index);
+	public List<SweepEvent> sweep(Capsule s) {
+		return graph.sweep(s);
 	}
 	
 	

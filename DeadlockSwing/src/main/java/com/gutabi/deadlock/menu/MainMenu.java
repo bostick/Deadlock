@@ -11,9 +11,13 @@ import java.awt.geom.AffineTransform;
 import javax.swing.JFrame;
 
 import com.gutabi.deadlock.controller.ControlMode;
+import com.gutabi.deadlock.core.Point;
+import com.gutabi.deadlock.core.geom.AABB;
 import com.gutabi.deadlock.examples.FourByFourGridWorld;
+import com.gutabi.deadlock.examples.OneByOneWorld;
 import com.gutabi.deadlock.view.RenderingContext;
 import com.gutabi.deadlock.view.RenderingContextType;
+import com.gutabi.deadlock.world.Stroke;
 
 //@SuppressWarnings("static-access")
 public class MainMenu extends Menu {
@@ -30,22 +34,74 @@ public class MainMenu extends Menu {
 		puzzleMenuItem.active = false;
 		add(puzzleMenuItem);
 		
-		MenuItem sandboxMenuItem = new MenuItem("Sandbox Mode") {
+		MenuItem oneMenuItem = new MenuItem("1x1") {
 			public void action() {
 				
 				try {
 					
-//					MODEL.world = new OneByOneWorld();
+					APP.world = new OneByOneWorld();
+					APP.world.init();
+					
+					VIEW.teardownCanvas(VIEW.container);
+					
+					VIEW.setupCanvasAndControlPanel(VIEW.container);
+					
+					((JFrame)VIEW.container).setVisible(true);
+					VIEW.canvas.requestFocusInWindow();
+					
+					CONTROLLER.mode = ControlMode.WORLD;
+					
+					VIEW.postDisplay();
+					
+					APP.world.render();
+					
+					VIEW.repaintCanvas();
+					VIEW.repaintControlPanel();
+					
+					Stroke s = new Stroke();
+					s.add(new Point(1, 1));
+					s.add(new Point(10, 10));
+					s.add(new Point(10, 2));
+					s.add(new Point(2, 10));
+					s.add(new Point(-6, 18));
+					s.add(new Point(0, 18));
+					s.add(new Point(6, 18));
+					s.add(new Point(0, 14));
+					s.add(new Point(-6, 10));
+					
+					s.finish();
+					
+					APP.world.processNewStroke(s);
+					
+					APP.world.render();
+					
+					VIEW.repaintCanvas();
+					VIEW.repaintControlPanel();
+					
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+			}
+		};
+		add(oneMenuItem);
+		
+		MenuItem fourMenuItem = new MenuItem("4x4 Grid") {
+			public void action() {
+				
+				try {
+					
 					APP.world = new FourByFourGridWorld();
 					APP.world.init();
 					
-//					VIEW.PIXELS_PER_METER_DEBUG = 12.5;
-//					
-//					VIEW.worldViewport = new AABB(
-//							-(VIEW.CANVAS_WIDTH / VIEW.PIXELS_PER_METER_DEBUG) / 2 + MODEL.world.worldWidth/2 ,
-//							-(VIEW.CANVAS_HEIGHT / VIEW.PIXELS_PER_METER_DEBUG) / 2 + MODEL.world.worldHeight/2,
-//							VIEW.CANVAS_WIDTH / VIEW.PIXELS_PER_METER_DEBUG,
-//							VIEW.CANVAS_HEIGHT / VIEW.PIXELS_PER_METER_DEBUG);
+					APP.world.PIXELS_PER_METER_DEBUG = 12.5;
+					
+					APP.world.worldViewport = new AABB(
+							-(VIEW.canvas.getWidth() / APP.world.PIXELS_PER_METER_DEBUG) / 2 + APP.world.worldWidth/2 ,
+							-(VIEW.canvas.getHeight() / APP.world.PIXELS_PER_METER_DEBUG) / 2 + APP.world.worldHeight/2,
+							VIEW.canvas.getWidth() / APP.world.PIXELS_PER_METER_DEBUG,
+							VIEW.canvas.getHeight() / APP.world.PIXELS_PER_METER_DEBUG);
 					
 					VIEW.teardownCanvas(VIEW.container);
 					
@@ -71,7 +127,7 @@ public class MainMenu extends Menu {
 				
 			}
 		};
-		add(sandboxMenuItem);
+		add(fourMenuItem);
 		
 		MenuItem editorMenuItem = new MenuItem("Map Editor...") {
 			public void action() {

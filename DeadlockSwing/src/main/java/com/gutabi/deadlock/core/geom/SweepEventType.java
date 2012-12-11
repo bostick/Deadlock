@@ -1,5 +1,6 @@
 package com.gutabi.deadlock.core.geom;
 
+import com.gutabi.deadlock.world.Stroke;
 import com.gutabi.deadlock.world.graph.Merger;
 import com.gutabi.deadlock.world.graph.Road;
 import com.gutabi.deadlock.world.graph.Vertex;
@@ -13,7 +14,10 @@ public enum SweepEventType {
 	EXITVERTEX,
 	
 	ENTERMERGER,
-	EXITMERGER;
+	EXITMERGER,
+	
+	ENTERSTROKE,
+	EXITSTROKE;
 	
 	public static SweepEventType enter(Object parent) {
 		if (parent instanceof Vertex) {
@@ -22,6 +26,8 @@ public enum SweepEventType {
 			return SweepEventType.ENTERROADCAPSULE;
 		} else if (parent instanceof Merger) {
 			return SweepEventType.ENTERMERGER;
+		} else if (parent instanceof Stroke) {
+			return SweepEventType.ENTERSTROKE;
 		} else {
 			assert false;
 			return null;
@@ -35,6 +41,8 @@ public enum SweepEventType {
 			return SweepEventType.EXITROADCAPSULE;
 		} else if (parent instanceof Merger) {
 			return SweepEventType.EXITMERGER;
+		} else if (parent instanceof Stroke) {
+			return SweepEventType.EXITSTROKE;
 		} else {
 			assert false;
 			return null;

@@ -22,8 +22,8 @@ import com.gutabi.deadlock.core.geom.Circle;
 import com.gutabi.deadlock.core.geom.Quad;
 import com.gutabi.deadlock.core.geom.Shape;
 import com.gutabi.deadlock.core.geom.ShapeUtils;
+import com.gutabi.deadlock.core.geom.SweepEvent;
 import com.gutabi.deadlock.core.geom.Sweepable;
-import com.gutabi.deadlock.core.geom.Sweeper;
 import com.gutabi.deadlock.view.RenderingContext;
 import com.gutabi.deadlock.view.RenderingContextType;
 
@@ -348,24 +348,32 @@ public class Graph implements Sweepable {
 	
 	
 	
-	public void sweepStart(Sweeper s) {
+	public List<SweepEvent> sweepStart(Circle c) {
+		
+		List<SweepEvent> events = new ArrayList<SweepEvent>();
 		
 		for (Vertex v : vertices) {
-			v.getShape().sweepStart(s);
+			events.addAll(v.getShape().sweepStart(c));
 		}
 		for (Edge e : edges) {
-			e.getShape().sweepStart(s);
+			events.addAll(e.getShape().sweepStart(c));
 		}
 		
+		return events;
 	}
 	
-	public void sweep(Sweeper s, int index) {
+	public List<SweepEvent> sweep(Capsule s) {
+		
+		List<SweepEvent> events = new ArrayList<SweepEvent>();
+		
 		for (Vertex v : vertices) {
-			v.getShape().sweep(s, index);
+			events.addAll(v.getShape().sweep(s));
 		}
 		for (Edge e : edges) {
-			e.getShape().sweep(s, index);
+			events.addAll(e.getShape().sweep(s));
 		}
+		
+		return events;
 	}
 	
 	

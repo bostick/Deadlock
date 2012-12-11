@@ -51,13 +51,13 @@ public class CapsuleSequence extends SweepableShape {
 		}
 	}
 	
-	public Point getPoint(int index, double param) {
-		if (DMath.equals(param, 0.0)) {
-			return getPoint(index);
-		} else {
-			return Point.point(getPoint(index), getPoint(index+1), param);
-		}
-	}
+//	public Point getPoint(int index, double param) {
+//		if (DMath.equals(param, 0.0)) {
+//			return getPoint(index);
+//		} else {
+//			return Point.point(getPoint(index), getPoint(index+1), param);
+//		}
+//	}
 	
 	public int capsuleCount() {
 		return caps.size();
@@ -65,6 +65,17 @@ public class CapsuleSequence extends SweepableShape {
 	
 	public int pointCount() {
 		return caps.size()+1;
+	}
+	
+	public Circle getStart() {
+		return caps.get(0).ac;
+	}
+	
+	/**
+	 * @param index (exclusive)
+	 */
+	public CapsuleSequence subsequence(int index) {
+		return new CapsuleSequence(parent, caps.subList(0, index));
 	}
 	
 	public AABB getAABB() {
@@ -79,16 +90,35 @@ public class CapsuleSequence extends SweepableShape {
 		return new CapsuleSequence(parent, newCaps);
 	}
 	
-	public void sweepStart(Sweeper s) {
+	public List<SweepEvent> sweepStart(Circle s) {
+		
+		List<SweepEvent> events = new ArrayList<SweepEvent>();
+		
 		for (Capsule c : caps) {
-			c.sweepStart(s);
+			events.addAll(c.sweepStart(s));
 		}
+		
+		return events;
 	}
 	
-	public void sweep(Sweeper s, int index) {
-		for (Capsule c : caps) {
-			c.sweep(s, index);
+	public List<SweepEvent> sweep(Capsule s) {
+		
+		List<SweepEvent> events = new ArrayList<SweepEvent>();
+		
+		for (int i = 0; i < caps.size(); i++) {
+			Capsule c = caps.get(i);
+			
+			List<SweepEvent> capsuleEvents = c.sweep(s);
+			
+			for (SweepEvent e : capsuleEvents) {
+				if (DMath.lessThan(e.param, 1.0) || i == caps.size()-1) {
+					events.add(e);
+				}
+			}
+			
 		}
+		
+		return events;
 	}
 	
 	public boolean hitTest(Point p) {
@@ -98,6 +128,83 @@ public class CapsuleSequence extends SweepableShape {
 			}
 		}
 		return false;
+	}
+	
+	public CapsuleSequencePosition findSkeletonIntersection(Point c, Point d) {
+		for (int i = 0; i < capsuleCount(); i ++) {
+			Capsule cap = getCapsule(i);
+			double abParam = cap.findSkeletonIntersection(c, d);
+			if (abParam != -1) {
+				if (DMath.equals(abParam, 1.0) && i < capsuleCount()-1) {
+					return new CapsuleSequencePosition(this, i+1, 0.0);
+				} else {
+					return new CapsuleSequencePosition(this, i, abParam);
+				}
+			}
+		}
+		return null;
+	}
+	
+	public CapsuleSequencePosition findClosestStrokePosition(Point p, double r) {
+		int bestIndex = -1;
+		double bestParam = -1;
+		Point bestPoint = null;
+		double bestDist = Double.POSITIVE_INFINITY;
+		
+		for (int i = 0; i < capsuleCount(); i++) {
+			Capsule c = getCapsule(i);
+			double closest = closestParam(p, c);
+			Point ep = Point.point(c.a, c.b, closest);
+			double dist = Point.distance(p, ep);
+			if (DMath.lessThanEquals(dist, radius + r)) {
+				if (bestPoint == null) {
+					bestIndex = i;
+					bestParam = closest;
+					bestPoint = ep;
+					bestDist = dist;
+				} else if (dist < bestDist) {
+					bestIndex = i;
+					bestParam = closest;
+					bestPoint = ep;
+					bestDist = dist;
+				}
+			}
+		}
+		
+		if (bestPoint != null) {
+			if (bestParam == 1.0) {
+				if (bestIndex == capsuleCount()-1) {
+					return new CapsuleSequencePosition(this, bestIndex, 1.0);
+				} else {
+					return new CapsuleSequencePosition(this, bestIndex+1, 0.0);
+				}
+			} else {
+				return new CapsuleSequencePosition(this, bestIndex, bestParam);
+			}
+		} else {
+			return null;
+		}
+	}
+	
+	/**
+	 * find closest position on <c, d> to the point b
+	 */
+	private double closestParam(Point p, Capsule c) {
+		if (p.equals(c.a)) {
+			return 0.0;
+		}
+		if (p.equals(c.b)) {
+			return 1.0;
+		}
+
+		double u = Point.u(c.a, p, c.b);
+		if (DMath.lessThanEquals(u, 0.0)) {
+			return 0.0;
+		} else if (DMath.greaterThanEquals(u, 1.0)) {
+			return 1.0;
+		} else {
+			return u;
+		}
 	}
 	
 	public void paint(RenderingContext ctxt) {

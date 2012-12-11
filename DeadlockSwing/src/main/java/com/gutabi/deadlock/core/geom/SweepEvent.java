@@ -10,7 +10,9 @@ public class SweepEvent {
 	
 	public final SweepEventType type;
 	public final SweepableShape shape;
-	public final Sweeper sweeper;
+	
+	public final SweeperShape sweeper;
+	
 	public final int index;
 	public final double param;
 	
@@ -21,7 +23,7 @@ public class SweepEvent {
 	
 	private Vertex v;
 	
-	public SweepEvent(SweepEventType type, SweepableShape shape, Sweeper sweeper, int index, double param) {
+	public SweepEvent(SweepEventType type, SweepableShape shape, SweeperShape sweeper, int index, double param) {
 		this.type = type;
 		this.shape = shape;
 		this.sweeper = sweeper;
@@ -30,8 +32,8 @@ public class SweepEvent {
 		
 		this.combo = index+param;
 		
-		p = sweeper.getPoint(index, param);
-		circle = new Circle(sweeper, p, sweeper.radius);
+		p = sweeper.getPoint(param);
+		circle = new Circle(null, p, sweeper.getRadius());
 		
 		if (shape != null) {
 			/*

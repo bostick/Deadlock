@@ -1,12 +1,14 @@
 
-decimate VIEW
+TODAY:
 
-profile FourByFourGrid init
+remove Road-capsule code, use CapsuleSequence code
 
+draw a loop
+stand-alone loop
 
+self-intersecting stroke
 
-
-
+IMMEDIATELY:
 
 straightedge cursor:
 allow starting in roads
@@ -24,59 +26,8 @@ saving to files
 reading from files
 
 
+add skids
 
-
-
-
-
-
-shutter mode:
-require a button press to advance next timestep
-
-debug shutter mode:
-somehow display all entities, points, etc. that were queried that time step
-help with tracking down unecessary work being done
-
-
-
-
-capture the flag:
-2 players, 4 players
-auto-generated map:
-big center area, randomly generated branches, all 4 branches symmetrical
-fog of war
-can lay down roads, but only a car driving by will illuminate surroudning area
-get points for having cars get sinked
-
-cannot delete roads
-
-crashing
-
-
-
-
-
-unlockers
-vertices a and b are linked.
-leaving b unlocks a and lets cars enter a
-for one-way roads
-normally an intersection is it's own unlocker
-
-vertex can also be unlocked by a timer
-
-a sink can be a source's unlocker
-
-
-
-
-
-
-
-TODAY:
-
-add flow meter to sinks
-
-IMMEDIATELY:
 
 for CarProximityEvents:
 broadcast from moving car to other cars.
@@ -104,6 +55,8 @@ what is the capacity of the entire world?
 what is the flow of each source/sink?
 
 SOON:
+
+add flow meter to sinks
 
 CarProximityEvent with crashed cars
 
@@ -135,13 +88,6 @@ resizing window
 
 remember user actions, useful for undo, redo
 
-
-draw a loop
-stand-alone loop
-
-self-intersecting stroke
-
-
 debugging:
 reversing from a crash
 slowing down / speeding up simulation
@@ -169,6 +115,10 @@ spline/curve editor
 
 
 DONE:
+
+decimate VIEW
+
+profile FourByFourGrid init
 
 delete merger connected to roads:
 vertices stay behind

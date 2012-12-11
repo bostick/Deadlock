@@ -1,12 +1,16 @@
 package com.gutabi.deadlock.core.graph;
 
-import static com.gutabi.deadlock.DeadlockModel.APP;
+import static com.gutabi.deadlock.DeadlockApplication.APP;
 import static com.gutabi.deadlock.controller.DeadlockController.CONTROLLER;
 import static com.gutabi.deadlock.swing.TestDragging.testWorldDragged;
 import static com.gutabi.deadlock.swing.TestDragging.testWorldPressed;
 import static com.gutabi.deadlock.swing.TestDragging.testWorldReleased;
 import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 import static org.junit.Assert.assertTrue;
+
+import java.net.URL;
+
+import javax.swing.JFrame;
 
 import org.junit.After;
 import org.junit.Before;
@@ -22,24 +26,24 @@ public class TestSweeping {
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 		
-		APP.init();
 		APP.world = new World();
 		APP.world.init();
 		
+		APP.codebase = new URL("file:.");
+		
+		VIEW.setupFrame();
 		VIEW.init();
 		
-		CONTROLLER.init();
+		CONTROLLER.mode = ControlMode.WORLD;
 		
-		CONTROLLER.mode = ControlMode.IDLE;
+		APP.world.render();
 		
-		VIEW.renderWorldBackground();
-		
-		VIEW.frame.setVisible(true);
+		((JFrame)VIEW.container).setVisible(true);
 		VIEW.canvas.requestFocusInWindow();
 		
-		VIEW.canvas.postDisplay();
+		VIEW.postDisplay();
 		
-		VIEW.repaint();
+		VIEW.repaintCanvas();
 		
 	}
 	

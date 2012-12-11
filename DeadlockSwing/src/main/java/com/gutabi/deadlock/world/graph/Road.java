@@ -509,7 +509,7 @@ public class Road extends Edge {
 		for (int i = 0; i < adj.size()-1; i++) {
 			Circle a = circs.get(i);
 			Circle b = circs.get(i+1);
-			caps.add(new Capsule(this, a, b));
+			caps.add(new Capsule(this, a, b, i));
 		}
 		
 		seq = new CapsuleSequence(this, caps);
@@ -785,9 +785,14 @@ public class Road extends Edge {
 	public void paintDecorations(RenderingContext ctxt) {
 		
 		if (ctxt.type == RenderingContextType.CANVAS) {
-			startSign.paint(ctxt);
 			
-			endSign.paint(ctxt);
+			if (!standalone) {
+				
+				startSign.paint(ctxt);
+				
+				endSign.paint(ctxt);
+				
+			}
 			
 			if (APP.DEBUG_DRAW) {
 				
