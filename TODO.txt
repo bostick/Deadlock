@@ -20,7 +20,7 @@ APP -> world -> circlecursor -> knob
 
 
 
-add quad curve cursor
+
 add cubic curve cursor
 
 map editor
@@ -119,6 +119,8 @@ spline/curve editor
 
 
 DONE:
+
+add quad curve cursor
 
 add circular road cursor
 

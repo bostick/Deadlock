@@ -21,7 +21,8 @@ public class Stats {
 	 */
 	public void paint(RenderingContext ctxt) {
 		
-		ctxt.setColor(Color.BLACK);
+		ctxt.setColor(Color.WHITE);
+		ctxt.setXORMode(Color.BLACK);
 		ctxt.setWorldPixelStroke(1);
 		
 		AffineTransform origTransform1 = ctxt.getTransform();

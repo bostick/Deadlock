@@ -43,16 +43,16 @@ public class CarEventListener implements ContactListener {
 	
 	private void beginContactCarCar(Car a, Car b, Contact c) {
 		
-		if (APP.EXPLOSIONS_DRAW) {
-			WorldManifold worldManifold = new WorldManifold();
-			c.getWorldManifold(worldManifold);
-			
-			Vec2 p = worldManifold.points[0];
-			
-			APP.world.addExplosion(new AnimatedExplosion(Point.point(p)));
-		}
-		
 		if (a.state != CarStateEnum.CRASHED || b.state != CarStateEnum.CRASHED) {
+			
+			if (APP.EXPLOSIONS_DRAW) {
+				WorldManifold worldManifold = new WorldManifold();
+				c.getWorldManifold(worldManifold);
+				
+				Vec2 p = worldManifold.points[0];
+				
+				APP.world.addExplosion(new AnimatedExplosion(Point.point(p)));
+			}
 			
 			if (a.state != CarStateEnum.CRASHED) {
 				a.crash();

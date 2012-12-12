@@ -103,9 +103,9 @@ public class Road extends Edge {
 			if ((dec & 4) == 4) {
 				
 				if ((dec & 8) == 0) {
-					direction = Direction.STARTTOEND;
+					setDirection(null, Direction.STARTTOEND);
 				} else {
-					direction = Direction.ENDTOSTART;
+					setDirection(null, Direction.ENDTOSTART);
 				}
 				
 			}

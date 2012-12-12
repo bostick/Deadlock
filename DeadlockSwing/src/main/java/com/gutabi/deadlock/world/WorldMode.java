@@ -19,4 +19,6 @@ public enum WorldMode {
 	
 	CIRCLECURSOR,
 	
+	QUADCURSOR
+	
 }

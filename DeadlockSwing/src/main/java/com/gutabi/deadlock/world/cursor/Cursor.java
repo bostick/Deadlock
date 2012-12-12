@@ -7,7 +7,7 @@ import com.gutabi.deadlock.view.RenderingContext;
 //@SuppressWarnings("static-access")
 public abstract class Cursor {
 	
-	protected Point p;
+	public Point p;
 	
 	public abstract void setPoint(Point p);
 	
@@ -16,6 +16,8 @@ public abstract class Cursor {
 	}
 	
 	public abstract Shape getShape();
+	
+	public abstract void escKey();
 	
 	public abstract void draw(RenderingContext ctxt);
 	

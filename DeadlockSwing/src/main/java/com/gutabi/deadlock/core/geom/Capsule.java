@@ -383,6 +383,11 @@ public class Capsule extends SweepableShape implements SweeperShape {
 		}
 	}
 	
+	public java.awt.Shape java2D() {
+		assert false;
+		return null;
+	}
+	
 	public void paint(RenderingContext ctxt) {
 		
 		ac.paint(ctxt);

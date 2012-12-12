@@ -15,6 +15,7 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Line2D;
 import java.awt.geom.Path2D;
+import java.awt.geom.QuadCurve2D;
 import java.awt.geom.Rectangle2D;
 
 import org.jbox2d.callbacks.DebugDraw;
@@ -161,6 +162,10 @@ public class RenderingContext extends DebugDraw {
 		g2.draw(e);
 	}
 	
+	public void draw(QuadCurve2D e) {
+		g2.draw(e);
+	}
+	
 	@Override
 	public void drawPoint(Vec2 argPoint, float argRadiusOnScreen, Color3f argColor) {
 		assert false;
@@ -206,5 +211,9 @@ public class RenderingContext extends DebugDraw {
 //	public Font getFont() {
 //		return g2.getFont();
 //	}
+	
+	public void setXORMode(Color c) {
+		g2.setXORMode(c);
+	}
 	
 }

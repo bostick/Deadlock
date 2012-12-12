@@ -201,21 +201,37 @@ public class MainMenu extends Menu {
 		
 	}
 	
-	public void paint(RenderingContext ctxt) {
+	public void repaint() {
 		
-		AffineTransform origTrans = ctxt.getTransform();
-		
-		ctxt.translate(VIEW.canvas.getWidth()/2 - 800/2, VIEW.canvas.getHeight()/2 - 600/2);
-		
-		ctxt.paintImage(
-				0, 0, canvasMenuImage, 0, 0, canvasMenuImage.getWidth(), canvasMenuImage.getHeight(),
-				0, 0, canvasMenuImage.getWidth(), canvasMenuImage.getHeight());
-		
-		if (hilited != null) {
-			hilited.paintHilited(ctxt);			
-		}
-		
-		ctxt.setTransform(origTrans);
+		do {
+			
+			do {
+				
+				Graphics2D g2 = (Graphics2D)VIEW.canvas.bs.getDrawGraphics();
+				
+				RenderingContext ctxt = new RenderingContext(g2, RenderingContextType.CANVAS);
+				
+				AffineTransform origTrans = ctxt.getTransform();
+				
+				ctxt.translate(VIEW.canvas.getWidth()/2 - 800/2, VIEW.canvas.getHeight()/2 - 600/2);
+				
+				ctxt.paintImage(
+						0, 0, canvasMenuImage, 0, 0, canvasMenuImage.getWidth(), canvasMenuImage.getHeight(),
+						0, 0, canvasMenuImage.getWidth(), canvasMenuImage.getHeight());
+				
+				if (hilited != null) {
+					hilited.paintHilited(ctxt);			
+				}
+				
+				ctxt.setTransform(origTrans);
+				
+				g2.dispose();
+				
+			} while (VIEW.canvas.bs.contentsRestored());
+			
+			VIEW.canvas.bs.show();
+			
+		} while (VIEW.canvas.bs.contentsLost());
 
 	}
 	

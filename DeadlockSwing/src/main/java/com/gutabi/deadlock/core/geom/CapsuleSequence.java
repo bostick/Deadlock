@@ -225,6 +225,13 @@ public class CapsuleSequence extends SweepableShape {
 		}
 	}
 	
+	
+	
+	public java.awt.Shape java2D() {
+		assert false;
+		return null;
+	}
+	
 	public void paint(RenderingContext ctxt) {
 		for (Capsule c : caps) {
 			c.paint(ctxt);

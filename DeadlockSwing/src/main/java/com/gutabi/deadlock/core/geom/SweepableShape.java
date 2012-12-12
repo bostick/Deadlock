@@ -8,4 +8,6 @@ public abstract class SweepableShape extends Shape implements Sweepable {
 		this.parent = parent;
 	}
 	
+	public abstract AABB getAABB();
+	
 }

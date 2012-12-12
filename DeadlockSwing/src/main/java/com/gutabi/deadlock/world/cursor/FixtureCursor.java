@@ -1,11 +1,15 @@
 package com.gutabi.deadlock.world.cursor;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
+import static com.gutabi.deadlock.view.DeadlockView.VIEW;
+
+import java.awt.Color;
 
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.Shape;
 import com.gutabi.deadlock.view.RenderingContext;
 import com.gutabi.deadlock.world.Quadrant;
+import com.gutabi.deadlock.world.WorldMode;
 import com.gutabi.deadlock.world.graph.Axis;
 
 @SuppressWarnings("static-access")
@@ -118,6 +122,18 @@ public class FixtureCursor extends Cursor {
 		return shape.worldSink.center;
 	}
 	
+	public void escKey() {
+		
+		APP.world.mode = WorldMode.IDLE;
+		
+		APP.world.cursor = new RegularCursor();
+		
+		APP.world.cursor.setPoint(APP.world.lastMovedWorldPoint);
+		
+		VIEW.repaintCanvas();
+		
+	}
+	
 	public void draw(RenderingContext ctxt) {
 		
 		if (p == null) {
@@ -127,6 +143,10 @@ public class FixtureCursor extends Cursor {
 		if (axis == null) {
 			
 		} else {
+			
+			ctxt.setColor(Color.WHITE);
+			ctxt.setXORMode(Color.BLACK);
+			ctxt.setWorldPixelStroke(1);
 			
 			shape.draw(ctxt);
 			

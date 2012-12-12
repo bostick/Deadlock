@@ -2,8 +2,6 @@ package com.gutabi.deadlock.world.cursor;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
-import java.awt.Color;
-
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.AABB;
 import com.gutabi.deadlock.core.geom.Capsule;
@@ -48,9 +46,14 @@ public class StraightEdgeCursorShape extends Shape {
 		return null;
 	}
 	
+	public java.awt.Shape java2D() {
+		assert false;
+		return null;
+	}
+	
 	public void draw(RenderingContext ctxt) {
-		ctxt.setColor(Color.GRAY);
-		ctxt.setWorldPixelStroke(1);
+//		ctxt.setColor(Color.GRAY);
+//		ctxt.setWorldPixelStroke(1);
 		
 		cap.draw(ctxt);
 		

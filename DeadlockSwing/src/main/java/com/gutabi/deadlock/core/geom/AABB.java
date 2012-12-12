@@ -215,6 +215,13 @@ public class AABB extends Shape {
 		return new AABB(x + p.x, y + p.y, width, height);
 	}
 	
+	public java.awt.Shape java2D() {
+		if (rect == null) {
+			computeRect();
+		}
+		return rect;	
+	}
+	
 	public void paint(RenderingContext ctxt) {
 		if (rect == null) {
 			computeRect();

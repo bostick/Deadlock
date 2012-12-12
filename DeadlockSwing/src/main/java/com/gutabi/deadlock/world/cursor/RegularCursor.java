@@ -35,13 +35,18 @@ public class RegularCursor extends Cursor {
 		return shape;
 	}
 	
+	public void escKey() {
+		
+	}
+	
 	public void draw(RenderingContext ctxt) {
 		
 		if (p == null) {
 			return;
 		}
 		
-		ctxt.setColor(Color.GRAY);
+		ctxt.setColor(Color.WHITE);
+		ctxt.setXORMode(Color.BLACK);
 		ctxt.setWorldPixelStroke(1);
 		
 		shape.draw(ctxt);

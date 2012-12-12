@@ -275,6 +275,13 @@ public class Quad extends SweepableShape {
 		return q.hitTest(p0) && q.hitTest(p1) && q.hitTest(p2) && q.hitTest(p3);
 	}
 	
+	public java.awt.Shape java2D() {
+		if (poly == null) {
+			computePoly();
+		}
+		return poly;
+	}
+	
 	public void paint(RenderingContext ctxt) {
 		
 		if (poly == null) {

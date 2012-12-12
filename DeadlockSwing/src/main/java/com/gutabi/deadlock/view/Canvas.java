@@ -14,7 +14,7 @@ import com.gutabi.deadlock.core.Point;
 //@SuppressWarnings({"serial", "static-access"})
 public class Canvas extends java.awt.Canvas {
 	
-	BufferStrategy bs;
+	public BufferStrategy bs;
 	
 	public Canvas() {
 		

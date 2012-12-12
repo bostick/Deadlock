@@ -145,6 +145,10 @@ public class Circle extends SweepableShape implements SweeperShape {
 		return events;
 	}
 	
+	public java.awt.Shape java2D() {
+		return ellipse;
+	}
+	
 	public void paint(RenderingContext ctxt) {
 		
 		ctxt.fill(ellipse);

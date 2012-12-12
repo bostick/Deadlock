@@ -8,7 +8,6 @@ import java.util.List;
 
 import com.gutabi.deadlock.controller.InputEvent;
 import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.view.RenderingContext;
 
 //@SuppressWarnings("static-access")
 public abstract class Menu {
@@ -146,6 +145,6 @@ public abstract class Menu {
 	
 	public abstract void render();
 	
-	public abstract void paint(RenderingContext ctxt);
+	public abstract void repaint();
 	
 }

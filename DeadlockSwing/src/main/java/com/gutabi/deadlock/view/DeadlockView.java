@@ -5,7 +5,6 @@ import static com.gutabi.deadlock.controller.DeadlockController.CONTROLLER;
 
 import java.awt.Color;
 import java.awt.Container;
-import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.net.URL;
 
@@ -152,40 +151,13 @@ public class DeadlockView {
 		canvas.postDisplay();
 	}
 	
-	private void paintCanvas(RenderingContext ctxt) {
+	public void repaintCanvas() {
 		
 		if (CONTROLLER.mode == ControlMode.MENU) {
-			APP.menu.paint(ctxt);
+			APP.menu.repaint();
 		} else {
-			APP.world.paint(ctxt);
+			APP.world.repaint();
 		}
-		
-	}
-	
-	public void repaintCanvas() {
-		assert !Thread.holdsLock(APP);
-		
-//		if (SwingUtilities.isEventDispatchThread()) {
-//			if (CONTROLLER.mode == ControlMode.RUNNING) {
-//				return;
-//			}
-//		}
-		
-		do {
-			
-			do {
-				
-				Graphics2D g2 = (Graphics2D)canvas.bs.getDrawGraphics();
-				
-				paintCanvas(new RenderingContext(g2, RenderingContextType.CANVAS));
-				
-				g2.dispose();
-				
-			} while (canvas.bs.contentsRestored());
-			
-			canvas.bs.show();
-			
-		} while (canvas.bs.contentsLost());
 		
 	}
 	

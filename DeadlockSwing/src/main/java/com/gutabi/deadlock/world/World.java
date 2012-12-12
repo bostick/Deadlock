@@ -1,7 +1,6 @@
 package com.gutabi.deadlock.world;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
-
 import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
 import java.awt.AlphaComposite;
@@ -14,6 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+
+import javax.swing.SwingUtilities;
 
 import org.apache.log4j.Logger;
 import org.jbox2d.common.Vec2;
@@ -47,6 +48,7 @@ import com.gutabi.deadlock.world.cursor.CircleCursor;
 import com.gutabi.deadlock.world.cursor.Cursor;
 import com.gutabi.deadlock.world.cursor.FixtureCursor;
 import com.gutabi.deadlock.world.cursor.MergerCursor;
+import com.gutabi.deadlock.world.cursor.QuadCursor;
 import com.gutabi.deadlock.world.cursor.RegularCursor;
 import com.gutabi.deadlock.world.cursor.StraightEdgeCursor;
 import com.gutabi.deadlock.world.graph.Axis;
@@ -453,10 +455,13 @@ public class World implements Sweepable {
 			if (e.type == null) {
 				
 				Entity hit = pureGraphBestHitTestCircle(e.circle);
-				assert hit == null;
-				logger.debug("create");
-				Intersection v = new Intersection(e.p);
-				addVertexTop(v);
+//				assert hit == null;
+				
+				if (hit == null) {
+					logger.debug("create");
+					Intersection v = new Intersection(e.p);
+					addVertexTop(v);
+				}
 				
 //				e.setVertex(v);
 				
@@ -939,6 +944,7 @@ public class World implements Sweepable {
 		case MERGERCURSOR:
 		case FIXTURECURSOR:
 		case CIRCLECURSOR:
+		case QUADCURSOR:
 		case DRAFTING:
 			break;
 		}
@@ -1007,6 +1013,7 @@ public class World implements Sweepable {
 		case MERGERCURSOR:
 		case STRAIGHTEDGECURSOR:
 		case CIRCLECURSOR:
+		case QUADCURSOR:
 		case DRAFTING:
 			break;
 		}
@@ -1126,6 +1133,7 @@ public class World implements Sweepable {
 		case FIXTURECURSOR:
 		case STRAIGHTEDGECURSOR:
 		case CIRCLECURSOR:
+		case QUADCURSOR:
 		case DRAFTING:
 			break;
 		}
@@ -1135,29 +1143,17 @@ public class World implements Sweepable {
 	public void escKey() {
 		
 		switch (mode) {
+		case IDLE:
 		case MERGERCURSOR:
 		case FIXTURECURSOR:
 		case STRAIGHTEDGECURSOR:
-			
-			mode = WorldMode.IDLE;
-			
-			cursor = new RegularCursor();
-			
-			cursor.setPoint(lastMovedWorldPoint);
-			
-			VIEW.repaintCanvas();
-			break;
-			
 		case CIRCLECURSOR:
-			
-			CircleCursor cc = (CircleCursor)cursor;
-			cc.escKey();
-			
+		case QUADCURSOR:
+			cursor.escKey();
 			break;
 		case RUNNING:
 		case PAUSED:
 		case DRAFTING:
-		case IDLE:
 			break;
 		}
 		
@@ -1208,6 +1204,7 @@ public class World implements Sweepable {
 		case PAUSED:
 		case RUNNING:
 		case STRAIGHTEDGECURSOR:
+		case QUADCURSOR:
 			break;
 		}
 		
@@ -1240,6 +1237,7 @@ public class World implements Sweepable {
 		case PAUSED:
 		case RUNNING:
 		case STRAIGHTEDGECURSOR:
+		case QUADCURSOR:
 			break;
 		}
 		
@@ -1272,6 +1270,7 @@ public class World implements Sweepable {
 		case PAUSED:
 		case RUNNING:
 		case STRAIGHTEDGECURSOR:
+		case QUADCURSOR:
 			break;
 		}
 		
@@ -1301,6 +1300,7 @@ public class World implements Sweepable {
 		case FIXTURECURSOR:
 		case STRAIGHTEDGECURSOR:
 		case CIRCLECURSOR:
+		case QUADCURSOR:
 			
 			if (cursor != null) {
 				if (grid) {
@@ -1346,6 +1346,7 @@ public class World implements Sweepable {
 		case FIXTURECURSOR:
 		case STRAIGHTEDGECURSOR:
 		case CIRCLECURSOR:
+		case QUADCURSOR:
 			
 			if (cursor != null) {
 				if (grid) {
@@ -1393,6 +1394,37 @@ public class World implements Sweepable {
 		case STRAIGHTEDGECURSOR:
 		case FIXTURECURSOR:
 		case DRAFTING:
+		case QUADCURSOR:
+			break;
+		}
+		
+	}
+	
+	public void sKey() {
+		
+		switch (mode) {
+		case IDLE:
+			mode = WorldMode.QUADCURSOR;
+			QuadCursor q = new QuadCursor();
+			q.setStart(lastMovedWorldPoint);
+			q.setPoint(lastMovedWorldPoint);
+			Point middle = q.start.plus(q.p.minus(q.start).multiply(0.5));
+			Point c = middle.plus(new Point(0, -4 * Vertex.INIT_VERTEX_RADIUS));
+			q.setControl(c);
+			cursor = q;
+			VIEW.repaintCanvas();
+			break;
+		case QUADCURSOR:
+			QuadCursor qc = (QuadCursor)cursor;
+			qc.sKey();
+			break;
+		case RUNNING:
+		case PAUSED:
+		case MERGERCURSOR:
+		case FIXTURECURSOR:
+		case CIRCLECURSOR:
+		case STRAIGHTEDGECURSOR:
+		case DRAFTING:
 			break;
 		}
 		
@@ -1433,6 +1465,11 @@ public class World implements Sweepable {
 		case PAUSED:
 		case RUNNING:
 		case STRAIGHTEDGECURSOR:
+			break;
+			
+		case QUADCURSOR:
+			QuadCursor qc = (QuadCursor)cursor;
+			qc.pressed(ev);
 			break;
 		case CIRCLECURSOR:
 			CircleCursor cc = (CircleCursor)cursor;
@@ -1483,19 +1520,20 @@ public class World implements Sweepable {
 		case MERGERCURSOR:
 		case FIXTURECURSOR:
 		case STRAIGHTEDGECURSOR:
+			break;
+		case QUADCURSOR:
+			QuadCursor qc = (QuadCursor)cursor;
+			qc.dragged(ev);
+			break;
 		case CIRCLECURSOR:
-			
 			CircleCursor cc = (CircleCursor)cursor;
-			
 			cc.dragged(ev);
-			
 			break;
 		}
 		
 	}
 	
 	public void released(InputEvent ev) {
-		
 		switch (mode) {
 		case IDLE:
 			break;
@@ -1513,12 +1551,15 @@ public class World implements Sweepable {
 		case FIXTURECURSOR:
 		case STRAIGHTEDGECURSOR:
 			break;
+		case QUADCURSOR:
+			QuadCursor qc = (QuadCursor)cursor;
+			qc.released(ev);
+			break;
 		case CIRCLECURSOR:
 			CircleCursor cc = (CircleCursor)cursor;
 			cc.released(ev);
 			break;
 		}
-		
 	}
 	
 	public Point lastMovedWorldPoint;
@@ -1575,14 +1616,15 @@ public class World implements Sweepable {
 			
 			VIEW.repaintCanvas();
 			break;
-			
+		case QUADCURSOR:
+			QuadCursor qc = (QuadCursor)cursor;
+			qc.moved(ev);
+			break;
 		case CIRCLECURSOR:
 			CircleCursor cc = (CircleCursor)cursor;
 			cc.moved(ev);
-			break;
-			
+			break;	
 		}
-		
 	}
 	
 	public void entered(InputEvent ev) {
@@ -1617,6 +1659,10 @@ public class World implements Sweepable {
 			CircleCursor cc = (CircleCursor)cursor;
 			cc.entered(ev);
 			break;
+		case QUADCURSOR:
+			QuadCursor qc = (QuadCursor)cursor;
+			qc.entered(ev);
+			break;
 		}
 		
 	}
@@ -1642,6 +1688,10 @@ public class World implements Sweepable {
 			
 			CircleCursor cc = (CircleCursor)cursor;
 			cc.exited(ev);
+			break;
+		case QUADCURSOR:
+			QuadCursor qc = (QuadCursor)cursor;
+			qc.exited(ev);
 			break;
 		}
 		
@@ -2197,40 +2247,62 @@ public class World implements Sweepable {
 	
 	
 	
-	public void paint(RenderingContext ctxt) {
+	public void repaint() {
 		
-		AffineTransform origTrans = ctxt.getTransform();
-		
-		ctxt.scale(PIXELS_PER_METER_DEBUG);
-		ctxt.translate(-worldViewport.x, -worldViewport.y);
-		
-		paintBackground(ctxt);
-		
-		paintScene(ctxt);
-			
-		if (APP.DEBUG_DRAW) {
-			ctxt.setColor(Color.BLACK);
-			ctxt.setWorldPixelStroke(1);
-			aabb.draw(ctxt);
-			
+		if (SwingUtilities.isEventDispatchThread()) {
+			if (mode == WorldMode.RUNNING) {
+				return;
+			}
 		}
 		
-		if (stroke != null) {
-			stroke.paint(ctxt);
-		}
-		
-		if (cursor != null) {
-			cursor.draw(ctxt);
-		}
-		
-		if (APP.FPS_DRAW) {
+		do {
 			
-			ctxt.translate(worldViewport.x, worldViewport.y);
+			do {
+				
+				Graphics2D g2 = (Graphics2D)VIEW.canvas.bs.getDrawGraphics();
+				
+				RenderingContext ctxt = new RenderingContext(g2, RenderingContextType.CANVAS);
+				
+				AffineTransform origTrans = ctxt.getTransform();
+				
+				ctxt.scale(PIXELS_PER_METER_DEBUG);
+				ctxt.translate(-worldViewport.x, -worldViewport.y);
+				
+				paintBackground(ctxt);
+				
+				paintScene(ctxt);
+					
+				if (APP.DEBUG_DRAW) {
+					ctxt.setColor(Color.BLACK);
+					ctxt.setWorldPixelStroke(1);
+					aabb.draw(ctxt);
+					
+				}
+				
+				if (stroke != null) {
+					stroke.paint(ctxt);
+				}
+				
+				if (cursor != null) {
+					cursor.draw(ctxt);
+				}
+				
+				if (APP.FPS_DRAW) {
+					
+					ctxt.translate(worldViewport.x, worldViewport.y);
+					
+					stats.paint(ctxt);
+				}
+				
+				ctxt.setTransform(origTrans);
+				
+				g2.dispose();
+				
+			} while (VIEW.canvas.bs.contentsRestored());
 			
-			stats.paint(ctxt);
-		}
-		
-		ctxt.setTransform(origTrans);
+			VIEW.canvas.bs.show();
+			
+		} while (VIEW.canvas.bs.contentsLost());
 		
 	}
 	

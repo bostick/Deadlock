@@ -58,6 +58,7 @@ stack overflow
 
 5.
 maximize flow
+bandwidth AND lag
 
 
 
