@@ -23,7 +23,7 @@ public class SimulationRunnable implements Runnable {
 		outer:
 		while (true) {
 			
-			if (APP.world.mode == WorldMode.IDLE) {
+			if (APP.world.mode == WorldMode.REGULAR) {
 				break outer;
 			} else if (APP.world.mode == WorldMode.PAUSED) {
 				synchronized (APP.world.pauseLock) {

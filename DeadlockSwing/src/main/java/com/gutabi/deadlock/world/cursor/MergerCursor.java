@@ -11,7 +11,7 @@ import com.gutabi.deadlock.view.RenderingContext;
 import com.gutabi.deadlock.world.WorldMode;
 
 //@SuppressWarnings("static-access")
-public class MergerCursor extends Cursor {
+public class MergerCursor extends CursorBase {
 	
 	MergerCursorShape shape;
 	
@@ -32,7 +32,7 @@ public class MergerCursor extends Cursor {
 	
 	public void escKey() {
 		
-		APP.world.mode = WorldMode.IDLE;
+		APP.world.mode = WorldMode.REGULAR;
 		
 		APP.world.cursor = new RegularCursor();
 		
@@ -40,6 +40,28 @@ public class MergerCursor extends Cursor {
 		
 		VIEW.repaintCanvas();
 		
+	}
+	
+	public void insertKey() {
+		if (APP.world.completelyContains(shape)) {
+			
+			if (APP.world.pureGraphBestHitTest(shape) == null) {
+				
+				APP.world.insertMergerTop(p);
+				
+				APP.world.mode = WorldMode.REGULAR;
+				
+				APP.world.cursor = new RegularCursor();
+				
+				APP.world.cursor.setPoint(APP.world.lastMovedWorldPoint);
+				
+				APP.world.render();
+				VIEW.repaintCanvas();
+				VIEW.repaintControlPanel();
+				
+			}
+			
+		}
 	}
 	
 	public void draw(RenderingContext ctxt) {

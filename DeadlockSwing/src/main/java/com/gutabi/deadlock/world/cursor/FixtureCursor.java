@@ -11,9 +11,12 @@ import com.gutabi.deadlock.view.RenderingContext;
 import com.gutabi.deadlock.world.Quadrant;
 import com.gutabi.deadlock.world.WorldMode;
 import com.gutabi.deadlock.world.graph.Axis;
+import com.gutabi.deadlock.world.graph.Fixture;
+import com.gutabi.deadlock.world.graph.FixtureType;
+import com.gutabi.deadlock.world.graph.Side;
 
 @SuppressWarnings("static-access")
-public class FixtureCursor extends Cursor {
+public class FixtureCursor extends CursorBase {
 	
 	Quadrant currentQuadrant;
 	Quadrant top;
@@ -124,7 +127,7 @@ public class FixtureCursor extends Cursor {
 	
 	public void escKey() {
 		
-		APP.world.mode = WorldMode.IDLE;
+		APP.world.mode = WorldMode.REGULAR;
 		
 		APP.world.cursor = new RegularCursor();
 		
@@ -132,6 +135,45 @@ public class FixtureCursor extends Cursor {
 		
 		VIEW.repaintCanvas();
 		
+	}
+	
+	public void wKey() {
+		
+		if (APP.world.pureGraphBestHitTest(shape) == null) {
+			
+			Fixture source = new Fixture(getSourcePoint(), axis);
+			Fixture sink = new Fixture(getSinkPoint(), axis);
+			
+			source.setType(FixtureType.SOURCE);
+			sink.setType(FixtureType.SINK);
+			
+			source.match = sink;
+			sink.match = source;
+			
+			switch (axis) {
+			case TOPBOTTOM:
+				source.setSide(Side.BOTTOM);
+				sink.setSide(Side.BOTTOM);
+				break;
+			case LEFTRIGHT:
+				source.setSide(Side.RIGHT);
+				sink.setSide(Side.RIGHT);
+				break;
+			}
+			
+			APP.world.addVertexTop(source);
+			
+			APP.world.addVertexTop(sink);
+			
+			APP.world.mode = WorldMode.REGULAR;
+			APP.world.cursor = new RegularCursor();
+			APP.world.cursor.setPoint(APP.world.lastMovedWorldPoint);
+			
+			APP.world.render();
+			VIEW.repaintCanvas();
+			VIEW.repaintControlPanel();
+			
+		}
 	}
 	
 	public void draw(RenderingContext ctxt) {

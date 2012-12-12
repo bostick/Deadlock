@@ -11,6 +11,7 @@ import com.gutabi.deadlock.core.geom.AABB;
 import com.gutabi.deadlock.core.geom.Capsule;
 import com.gutabi.deadlock.core.geom.CapsuleSequence;
 import com.gutabi.deadlock.core.geom.Circle;
+import com.gutabi.deadlock.core.geom.Line;
 import com.gutabi.deadlock.core.geom.QuadCurve;
 import com.gutabi.deadlock.core.geom.Shape;
 import com.gutabi.deadlock.core.geom.ShapeUtils;
@@ -20,12 +21,17 @@ import com.gutabi.deadlock.world.graph.Vertex;
 @SuppressWarnings("static-access")
 public class QuadCursorShape extends Shape {
 	
-	public final Circle start;
+	public final Point start;
+	public final Circle startCircle; 
+	public final Point end;
+	public final Point c;
 //	public final Circle pCircle;
 //	public final Line line;
 //	public final Capsule cap;
 	
 	public final QuadCurve q;
+	public final Line tan0;
+	public final Line tan1;
 	
 	public final List<Point> skeleton;
 //	public final Polyline skeletonShape;
@@ -35,12 +41,18 @@ public class QuadCursorShape extends Shape {
 	
 	public QuadCursorShape(Point start, Point c, Point end) {
 		
-		this.start = new Circle(null, start, Vertex.INIT_VERTEX_RADIUS);
+		this.start = start;
+		startCircle = new Circle(null, start, Vertex.INIT_VERTEX_RADIUS);
+		this.end = end;
+		this.c = c;
+		
 //		this.pCircle = new Circle(null, end, Vertex.INIT_VERTEX_RADIUS);
 		
 //		this.cap = new Capsule(null, this.first, pCircle, -1);
 		
 		q = new QuadCurve(start, c, end);
+		tan0 = new Line(c, start);
+		tan1 = new Line(c, end);
 		
 		skeleton = ShapeUtils.skeleton(q);
 //		skeletonShape = new Polyline(skeleton);
@@ -86,10 +98,22 @@ public class QuadCursorShape extends Shape {
 //		ctxt.setColor(Color.GRAY);
 //		ctxt.setWorldPixelStroke(1);
 		
-		skeletonSeq.draw(ctxt);
-		
-		ctxt.setColor(Color.ORANGE);
-		q.draw(ctxt);
+		if (!start.equals(end)) {
+			skeletonSeq.draw(ctxt);
+			
+			ctxt.setColor(Color.ORANGE);
+			q.draw(ctxt);
+			tan0.draw(ctxt);
+			tan1.draw(ctxt);
+		} else {
+			/*
+			 * the overlapping causes XOR mode to draw nothing, so handle it here
+			 */
+			startCircle.draw(ctxt);
+			
+			ctxt.setColor(Color.ORANGE);
+			tan0.draw(ctxt);
+		}
 		
 		if (APP.DEBUG_DRAW) {
 			

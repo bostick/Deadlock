@@ -44,26 +44,16 @@ import com.gutabi.deadlock.world.car.CarProximityEvent;
 import com.gutabi.deadlock.world.car.CarStateEnum;
 import com.gutabi.deadlock.world.car.DrivingEvent;
 import com.gutabi.deadlock.world.car.VertexArrivalEvent;
-import com.gutabi.deadlock.world.cursor.CircleCursor;
 import com.gutabi.deadlock.world.cursor.Cursor;
-import com.gutabi.deadlock.world.cursor.FixtureCursor;
-import com.gutabi.deadlock.world.cursor.MergerCursor;
-import com.gutabi.deadlock.world.cursor.QuadCursor;
 import com.gutabi.deadlock.world.cursor.RegularCursor;
-import com.gutabi.deadlock.world.cursor.StraightEdgeCursor;
-import com.gutabi.deadlock.world.graph.Axis;
-import com.gutabi.deadlock.world.graph.Direction;
 import com.gutabi.deadlock.world.graph.Edge;
 import com.gutabi.deadlock.world.graph.EdgePosition;
-import com.gutabi.deadlock.world.graph.Fixture;
-import com.gutabi.deadlock.world.graph.FixtureType;
 import com.gutabi.deadlock.world.graph.Graph;
 import com.gutabi.deadlock.world.graph.GraphPosition;
 import com.gutabi.deadlock.world.graph.Intersection;
 import com.gutabi.deadlock.world.graph.Merger;
 import com.gutabi.deadlock.world.graph.Road;
 import com.gutabi.deadlock.world.graph.RoadPosition;
-import com.gutabi.deadlock.world.graph.Side;
 import com.gutabi.deadlock.world.graph.StopSign;
 import com.gutabi.deadlock.world.graph.Vertex;
 import com.gutabi.deadlock.world.graph.VertexPosition;
@@ -92,7 +82,7 @@ public class World implements Sweepable {
 	
 	public Stats stats;
 	
-	public boolean grid;
+//	public boolean grid;
 	
 	public BufferedImage quadrantGrass;
 	public BufferedImage canvasGrassImage;
@@ -141,6 +131,7 @@ public class World implements Sweepable {
 		int quadrantRows = ini.length;
 		
 		map = new Map(ini);
+//		map.computeGridSpacing();
 		
 		worldWidth = quadrantCols * APP.QUADRANT_WIDTH;
 		
@@ -167,7 +158,7 @@ public class World implements Sweepable {
 		}
 		
 		
-		mode = WorldMode.IDLE;
+		mode = WorldMode.REGULAR;
 		
 		cursor = new RegularCursor();
 		
@@ -348,7 +339,7 @@ public class World implements Sweepable {
 	
 	public void stopRunning() {
 		
-		mode = WorldMode.IDLE;
+		mode = WorldMode.REGULAR;
 		
 	}
 	
@@ -364,38 +355,6 @@ public class World implements Sweepable {
 		synchronized (pauseLock) {
 			pauseLock.notifyAll();
 		}
-	}
-	
-	public void draftStart(Point p) {
-		
-		mode = WorldMode.DRAFTING;
-		
-		hilited = null;
-		
-		stroke = new Stroke();
-		stroke.add(p);
-			
-	}
-	
-	public void draftMove(Point p) {
-
-		stroke.add(p);
-	}
-	
-	public void draftEnd() {
-		
-		stroke.finish();
-		
-		processNewStroke(stroke);
-		
-		assert checkConsistency();
-		
-		debugStroke2 = debugStroke;
-		debugStroke = stroke;
-		stroke = null;
-		
-		mode = WorldMode.IDLE;
-		
 	}
 	
 	public void processNewStroke(Stroke s) {
@@ -862,171 +821,43 @@ public class World implements Sweepable {
 	
 	
 	public void qKey() {
-	
 		switch (mode) {
-		case IDLE:
-			
-			Entity hit = pureGraphBestHitTest(cursor.getShape());
-			if (hit == null) {
-				
-				Intersection i = new Intersection(cursor.getPoint());
-				
-				addVertexTop(i);
-				
-				render();
-				VIEW.repaintControlPanel();
-				VIEW.repaintCanvas();
-				
-			} else if (hit instanceof Road || hit instanceof Vertex) {
-				
-				if (hit instanceof Road) {
-					GraphPosition pos = findClosestRoadPosition(cursor.getPoint(), ((Circle)cursor.getShape()).radius);
-					
-					Entity hit2;
-					if (pos instanceof EdgePosition) {
-						hit2 = pureGraphBestHitTestCircle(new Circle(null, pos.p, ((Circle)cursor.getShape()).radius));
-					} else {
-						hit2 = ((VertexPosition)pos).v;
-					}
-					
-					if (hit2 instanceof Road) {
-						hit = splitRoadTop((RoadPosition)pos);
-						
-						assert ShapeUtils.intersectCC((Circle)cursor.getShape(), (Circle)hit.getShape());
-						
-					} else {
-						hit = hit2;
-					}
-				}
-				
-				mode = WorldMode.STRAIGHTEDGECURSOR;
-				
-				cursor = new StraightEdgeCursor((Vertex)hit);
-				
-				cursor.setPoint(lastMovedWorldPoint);
-				
-				VIEW.repaintCanvas();
-				
-			}
-			
-			break;
-			
-		case STRAIGHTEDGECURSOR:
-			
-			Point first = ((StraightEdgeCursor)cursor).first.p;
-			Point second = cursor.getPoint();
-			
-			Stroke s = new Stroke();
-			s.add(first);
-			s.add(second);
-			
-			s.finish();
-			
-			processNewStroke(s);
-			
-			assert checkConsistency();
-			
-			render();
-			VIEW.repaintControlPanel();
-			
-			mode = WorldMode.IDLE;
-			
-			cursor = new RegularCursor();
-			
-			cursor.setPoint(lastMovedWorldPoint);
-			
-			VIEW.repaintCanvas();
-			
-			break;
-			
 		case RUNNING:
 		case PAUSED:
+			break;
+		case REGULAR:
+		case STRAIGHTEDGECURSOR:
 		case MERGERCURSOR:
 		case FIXTURECURSOR:
 		case CIRCLECURSOR:
 		case QUADCURSOR:
-		case DRAFTING:
+			cursor.qKey();
 			break;
 		}
-		
 	}
 	
 	public void wKey() {
-		
 		switch (mode) {
-		case IDLE:
-			
-			mode = WorldMode.FIXTURECURSOR;
-			
-			cursor = new FixtureCursor();
-			
-			cursor.setPoint(lastMovedWorldPoint);
-			
-			VIEW.repaintCanvas();
-			
-			break;
-		case FIXTURECURSOR:
-			FixtureCursor fc = (FixtureCursor)cursor;
-			Axis axis = fc.getAxis();
-			
-			if (pureGraphBestHitTest(cursor.getShape()) == null) {
-				
-				Fixture source = new Fixture(fc.getSourcePoint(), axis);
-				Fixture sink = new Fixture(fc.getSinkPoint(), axis);
-				
-				source.setType(FixtureType.SOURCE);
-				sink.setType(FixtureType.SINK);
-				
-				source.match = sink;
-				sink.match = source;
-				
-				switch (axis) {
-				case TOPBOTTOM:
-					source.setSide(Side.BOTTOM);
-					sink.setSide(Side.BOTTOM);
-					break;
-				case LEFTRIGHT:
-					source.setSide(Side.RIGHT);
-					sink.setSide(Side.RIGHT);
-					break;
-				}
-				
-				addVertexTop(source);
-				
-				addVertexTop(sink);
-				
-				mode = WorldMode.IDLE;
-				
-				cursor = new RegularCursor();
-				
-				cursor.setPoint(lastMovedWorldPoint);
-				
-				render();
-				VIEW.repaintCanvas();
-				VIEW.repaintControlPanel();
-				
-			}
-			
-			break;
 		case RUNNING:
 		case PAUSED:
+			break;
+		case REGULAR:
+		case FIXTURECURSOR:
 		case MERGERCURSOR:
 		case STRAIGHTEDGECURSOR:
 		case CIRCLECURSOR:
 		case QUADCURSOR:
-		case DRAFTING:
+			cursor.wKey();
 			break;
 		}
-		
 	}
 	
 	public void gKey() {
 		
-		grid = !grid;
+		map.toggleGrid();
 		
 		render();
 		VIEW.repaintCanvas();
-		
 	}
 	
 	public void deleteKey() {
@@ -1077,73 +908,27 @@ public class World implements Sweepable {
 	}
 	
 	public void insertKey() {
-		
 		switch (mode) {
-		case IDLE:
-			
-			if (hilited != null) {
-				
-				if (hilited instanceof StopSign) {
-					StopSign s = (StopSign)hilited;
-					
-					s.setEnabled(true);
-					
-					render();
-					VIEW.repaintCanvas();
-				}
-				
-			} else {
-				
-				mode = WorldMode.MERGERCURSOR;
-				
-				cursor = new MergerCursor();
-				
-				cursor.setPoint(lastMovedWorldPoint);
-				
-				VIEW.repaintCanvas();
-				
-			}
-			
-			break;
-		case MERGERCURSOR:
-			
-			if (completelyContains(cursor.getShape())) {
-				
-				if (pureGraphBestHitTest(cursor.getShape()) == null) {
-					
-					insertMergerTop(cursor.getPoint());
-					
-					mode = WorldMode.IDLE;
-					
-					cursor = new RegularCursor();
-					
-					cursor.setPoint(lastMovedWorldPoint);
-					
-					render();
-					VIEW.repaintCanvas();
-					VIEW.repaintControlPanel();
-					
-				}
-				
-			}
-			
-			break;
 		case RUNNING:
 		case PAUSED:
+			break;
+		case REGULAR:
+		case MERGERCURSOR:
 		case FIXTURECURSOR:
 		case STRAIGHTEDGECURSOR:
 		case CIRCLECURSOR:
 		case QUADCURSOR:
-		case DRAFTING:
+			cursor.insertKey();
 			break;
 		}
-		
 	}
 	
 	public void escKey() {
-		
 		switch (mode) {
-		case IDLE:
+		case RUNNING:
+		case PAUSED:
+			break;
+		case REGULAR:
 		case MERGERCURSOR:
 		case FIXTURECURSOR:
 		case STRAIGHTEDGECURSOR:
@@ -1151,172 +936,74 @@ public class World implements Sweepable {
 		case QUADCURSOR:
 			cursor.escKey();
 			break;
-		case RUNNING:
-		case PAUSED:
-		case DRAFTING:
-			break;
 		}
-		
 	}
 	
 	public void d1Key() {
-		
 		switch (mode) {
-		case IDLE:
-			
-			if (hilited != null) {
-				
-				if (hilited instanceof Road) {
-					Road r = (Road)hilited;
-					
-					r.setDirection(null, Direction.STARTTOEND);
-					
-					render();
-					VIEW.repaintCanvas();
-					
-				} else if (hilited instanceof Fixture) {
-					Fixture f = (Fixture)hilited;
-					
-					Fixture g = f.match;
-					
-					if (f.getType() != null) {
-						f.setType(f.getType().other());
-					}
-					if (g.getType() != null) {
-						g.setType(g.getType().other());
-					}
-					
-					f.setSide(f.getSide().other());
-					g.setSide(g.getSide().other());
-					
-					render();
-					VIEW.repaintCanvas();
-					
-				}
-				
-			}
-			
-			break;
-		case CIRCLECURSOR:
-		case DRAFTING:
-		case FIXTURECURSOR:
-		case MERGERCURSOR:
 		case PAUSED:
 		case RUNNING:
+			break;
+		case REGULAR:
+		case CIRCLECURSOR:
+		case FIXTURECURSOR:
+		case MERGERCURSOR:
 		case STRAIGHTEDGECURSOR:
 		case QUADCURSOR:
+			cursor.d1Key();
 			break;
 		}
-		
 	}
 	
 	public void d2Key() {
-		
 		switch (mode) {
-		case IDLE:
-			
-			if (hilited != null) {
-				
-				if (hilited instanceof Road) {
-					Road r = (Road)hilited;
-					
-					r.setDirection(null, Direction.ENDTOSTART);
-					
-					render();
-					VIEW.repaintCanvas();
-					
-				}
-				
-			}
-			
-			break;
-		case CIRCLECURSOR:
-		case DRAFTING:
-		case FIXTURECURSOR:
-		case MERGERCURSOR:
 		case PAUSED:
 		case RUNNING:
+			break;
+		case REGULAR:
+		case CIRCLECURSOR:
+		case FIXTURECURSOR:
+		case MERGERCURSOR:
 		case STRAIGHTEDGECURSOR:
 		case QUADCURSOR:
+			cursor.d2Key();
 			break;
 		}
-		
 	}
 	
 	public void d3Key() {
-		
 		switch (mode) {
-		case IDLE:
-			
-			if (hilited != null) {
-				
-				if (hilited instanceof Road) {
-					Road r = (Road)hilited;
-					
-					r.setDirection(null, null);
-				
-					render();
-					VIEW.repaintCanvas();
-					
-				}
-				
-			}
-			
-			break;
-		case CIRCLECURSOR:
-		case DRAFTING:
-		case FIXTURECURSOR:
-		case MERGERCURSOR:
 		case PAUSED:
 		case RUNNING:
+			break;
+		case REGULAR:
+		case CIRCLECURSOR:
+		case FIXTURECURSOR:
+		case MERGERCURSOR:
 		case STRAIGHTEDGECURSOR:
 		case QUADCURSOR:
+			cursor.d3Key();
 			break;
 		}
-		
 	}
 	
 	public void plusKey() {
 		
 		zoom(1.1);
 		
-		lastMovedWorldPoint = canvasToWorld(VIEW.canvas.lastMovedCanvasPoint);
+		lastMovedOrDraggedWorldPoint = canvasToWorld(VIEW.canvas.lastMovedOrDraggedCanvasPoint);
 		
 		switch (mode) {
-		case DRAFTING:
-			assert false;
-			break;
 		case PAUSED:
-		case IDLE:
 		case RUNNING:
-			
-			Entity closest = hitTest(lastMovedWorldPoint);
-			
-			synchronized (APP) {
-				hilited = closest;
-			}
-			
+			break;
+		case REGULAR:
 		case MERGERCURSOR:
 		case FIXTURECURSOR:
 		case STRAIGHTEDGECURSOR:
 		case CIRCLECURSOR:
 		case QUADCURSOR:
-			
-			if (cursor != null) {
-				if (grid) {
-					
-					Point closestGridPoint = new Point(2 * Math.round(0.5 * lastMovedWorldPoint.x), 2 * Math.round(0.5 * lastMovedWorldPoint.y));
-					cursor.setPoint(closestGridPoint);
-					
-				} else {
-					cursor.setPoint(lastMovedWorldPoint);
-				}
-			}
-			
-			render();
-			VIEW.repaintCanvas();
-			VIEW.repaintControlPanel();
-			
+			cursor.plusKey();
 			break;
 		}
 		
@@ -1326,108 +1013,54 @@ public class World implements Sweepable {
 		
 		zoom(0.9);
 		
-		lastMovedWorldPoint = canvasToWorld(VIEW.canvas.lastMovedCanvasPoint);
+		lastMovedOrDraggedWorldPoint = canvasToWorld(VIEW.canvas.lastMovedOrDraggedCanvasPoint);
 		
 		switch (mode) {
-		case DRAFTING:
-			assert false;
-			break;
-		case IDLE:
 		case PAUSED:
 		case RUNNING:
-			
-			Entity closest = hitTest(lastMovedWorldPoint);
-			
-			synchronized (APP) {
-				hilited = closest;
-			}
-			
+			break;
+		case REGULAR:
 		case MERGERCURSOR:
 		case FIXTURECURSOR:
 		case STRAIGHTEDGECURSOR:
 		case CIRCLECURSOR:
 		case QUADCURSOR:
-			
-			if (cursor != null) {
-				if (grid) {
-					
-					Point closestGridPoint = new Point(2 * Math.round(0.5 * lastMovedWorldPoint.x), 2 * Math.round(0.5 * lastMovedWorldPoint.y));
-					cursor.setPoint(closestGridPoint);
-					
-				} else {
-					cursor.setPoint(lastMovedWorldPoint);
-				}
-			}
-			
-			render();
-			VIEW.repaintCanvas();
-			VIEW.repaintControlPanel();
-			
+			cursor.minusKey();
 			break;
 		}
 		
 	}
 	
 	public void aKey() {
-		
 		switch (mode) {
-		case IDLE:
-			
-			mode = WorldMode.CIRCLECURSOR;
-			
-			cursor = new CircleCursor();
-			
-			cursor.setPoint(lastMovedWorldPoint);
-			
-			VIEW.repaintCanvas();
-			
-			break;
-		case CIRCLECURSOR:
-			CircleCursor cc = (CircleCursor)cursor;
-			
-			cc.aKey();
-			
-			break;
 		case RUNNING:
 		case PAUSED:
+			break;
+		case REGULAR:
+		case CIRCLECURSOR:
 		case MERGERCURSOR:
 		case STRAIGHTEDGECURSOR:
 		case FIXTURECURSOR:
-		case DRAFTING:
 		case QUADCURSOR:
+			cursor.aKey();
 			break;
 		}
-		
 	}
 	
 	public void sKey() {
-		
 		switch (mode) {
-		case IDLE:
-			mode = WorldMode.QUADCURSOR;
-			QuadCursor q = new QuadCursor();
-			q.setStart(lastMovedWorldPoint);
-			q.setPoint(lastMovedWorldPoint);
-			Point middle = q.start.plus(q.p.minus(q.start).multiply(0.5));
-			Point c = middle.plus(new Point(0, -4 * Vertex.INIT_VERTEX_RADIUS));
-			q.setControl(c);
-			cursor = q;
-			VIEW.repaintCanvas();
-			break;
-		case QUADCURSOR:
-			QuadCursor qc = (QuadCursor)cursor;
-			qc.sKey();
-			break;
 		case RUNNING:
 		case PAUSED:
+			break;
+		case REGULAR:
+		case QUADCURSOR:
 		case MERGERCURSOR:
 		case FIXTURECURSOR:
 		case CIRCLECURSOR:
 		case STRAIGHTEDGECURSOR:
-		case DRAFTING:
+			cursor.sKey();
 			break;
 		}
-		
 	}
 	
 	public Point canvasToWorld(Point p) {
@@ -1448,86 +1081,58 @@ public class World implements Sweepable {
 		return new Point((PREVIEW_WIDTH / worldWidth) * p.x, (PREVIEW_HEIGHT / worldHeight) * p.y);
 	}
 	
-	Point lastPressWorldPoint;
+	public Point lastPressedWorldPoint;
 	
 	public void pressed(InputEvent ev) {
 		
 		Point p = ev.p;
 		
-		lastPressWorldPoint = canvasToWorld(p);
-		lastDragWorldPoint = null;
+		lastPressedWorldPoint = canvasToWorld(p);
+		lastDraggedWorldPoint = null;
 		
-		switch (mode) {
-		case DRAFTING:
-		case FIXTURECURSOR:
-		case IDLE:
-		case MERGERCURSOR:
-		case PAUSED:
-		case RUNNING:
-		case STRAIGHTEDGECURSOR:
-			break;
-			
-		case QUADCURSOR:
-			QuadCursor qc = (QuadCursor)cursor;
-			qc.pressed(ev);
-			break;
-		case CIRCLECURSOR:
-			CircleCursor cc = (CircleCursor)cursor;
-			cc.pressed(ev);
-			break;
-		}
+//		switch (mode) {
+//		case DRAFTING:
+//		case FIXTURECURSOR:
+//		case IDLE:
+//		case MERGERCURSOR:
+//		case PAUSED:
+//		case RUNNING:
+//		case STRAIGHTEDGECURSOR:
+//			break;
+//		case QUADCURSOR:
+//			QuadCursor qc = (QuadCursor)cursor;
+//			qc.pressed(ev);
+//			break;
+//		case CIRCLECURSOR:
+//			CircleCursor cc = (CircleCursor)cursor;
+//			cc.pressed(ev);
+//			break;
+//		}
 		
 	}
 	
-	Point lastDragWorldPoint;
+	public Point lastDraggedWorldPoint;
+	public boolean lastDraggedWorldPointWasNull;
 	
 	public void dragged(InputEvent ev) {
 		
 		Point p = ev.p;
 		
-		boolean lastDragWorldPointWasNull = (lastDragWorldPoint == null);
-		lastDragWorldPoint = canvasToWorld(p);
+		lastDraggedWorldPointWasNull = (lastDraggedWorldPoint == null);
+		lastDraggedWorldPoint = canvasToWorld(p);
+		lastMovedOrDraggedWorldPoint = lastDraggedWorldPoint;
 		
 		switch (mode) {
-		case IDLE: {
-			
-			cursor.setPoint(lastDragWorldPoint);
-			
-			if (lastDragWorldPointWasNull) {
-				// first drag
-				draftStart(lastPressWorldPoint);
-				draftMove(lastDragWorldPoint);
-				
-				VIEW.repaintCanvas();
-				
-			} else {
-				assert false;
-			}
-			
-			break;
-		}
-		case DRAFTING:
-			
-			cursor.setPoint(lastDragWorldPoint);
-			
-			draftMove(lastDragWorldPoint);
-			
-			VIEW.repaintCanvas();
-			break;
-			
 		case RUNNING:
 		case PAUSED:
+			break;
+		case REGULAR:
 		case MERGERCURSOR:
 		case FIXTURECURSOR:
 		case STRAIGHTEDGECURSOR:
-			break;
 		case QUADCURSOR:
-			QuadCursor qc = (QuadCursor)cursor;
-			qc.dragged(ev);
-			break;
 		case CIRCLECURSOR:
-			CircleCursor cc = (CircleCursor)cursor;
-			cc.dragged(ev);
+			cursor.dragged(ev);
 			break;
 		}
 		
@@ -1535,34 +1140,22 @@ public class World implements Sweepable {
 	
 	public void released(InputEvent ev) {
 		switch (mode) {
-		case IDLE:
-			break;
-		case DRAFTING:
-			draftEnd();
-			
-			render();
-			VIEW.repaintCanvas();
-			VIEW.repaintControlPanel();
-			
-			break;
 		case RUNNING:
 		case PAUSED:
+			break;
+		case REGULAR:
 		case MERGERCURSOR:
 		case FIXTURECURSOR:
 		case STRAIGHTEDGECURSOR:
-			break;
 		case QUADCURSOR:
-			QuadCursor qc = (QuadCursor)cursor;
-			qc.released(ev);
-			break;
 		case CIRCLECURSOR:
-			CircleCursor cc = (CircleCursor)cursor;
-			cc.released(ev);
+			cursor.released(ev);
 			break;
 		}
 	}
 	
 	public Point lastMovedWorldPoint;
+	public Point lastMovedOrDraggedWorldPoint;
 	
 	public void moved(InputEvent ev) {
 		
@@ -1571,130 +1164,78 @@ public class World implements Sweepable {
 		Point p = ev.p;
 		
 		lastMovedWorldPoint = canvasToWorld(p);
+		lastMovedOrDraggedWorldPoint = lastMovedWorldPoint;
 		
 		switch (mode) {
-		case PAUSED:
-		case DRAFTING:
-			break;
-		case IDLE:
 		case RUNNING:
-			
-			Entity closest = hitTest(lastMovedWorldPoint);
-			
-			synchronized (APP) {
-				hilited = closest;
-			}
-			
-			if (cursor != null) {
-				if (grid) {
-					
-					Point closestGridPoint = new Point(2 * Math.round(0.5 * lastMovedWorldPoint.x), 2 * Math.round(0.5 * lastMovedWorldPoint.y));
-					cursor.setPoint(closestGridPoint);
-					
-				} else {
-					cursor.setPoint(lastMovedWorldPoint);
-				}
-			}
-			
-			VIEW.repaintCanvas();
+		case PAUSED:
 			break;
-			
+		case REGULAR:			
 		case MERGERCURSOR:
 		case FIXTURECURSOR:
 		case STRAIGHTEDGECURSOR:
-			
-			hilited = null;
-			
-			if (grid) {
-				
-				Point closestGridPoint = new Point(2 * Math.round(0.5 * lastMovedWorldPoint.x), 2 * Math.round(0.5 * lastMovedWorldPoint.y));
-				cursor.setPoint(closestGridPoint);
-				
-			} else {
-				cursor.setPoint(lastMovedWorldPoint);
-			}
-			
-			VIEW.repaintCanvas();
-			break;
 		case QUADCURSOR:
-			QuadCursor qc = (QuadCursor)cursor;
-			qc.moved(ev);
-			break;
 		case CIRCLECURSOR:
-			CircleCursor cc = (CircleCursor)cursor;
-			cc.moved(ev);
+			cursor.moved(ev);
 			break;	
 		}
 	}
 	
-	public void entered(InputEvent ev) {
-		
-		Point p = ev.p;
-		
-		lastMovedWorldPoint = canvasToWorld(p);
-		
-		switch (mode) {
-		case PAUSED:
-		case DRAFTING:
-		case RUNNING:
-			break;
-		case IDLE:
-		case MERGERCURSOR:
-		case FIXTURECURSOR:
-		case STRAIGHTEDGECURSOR:
-			
-			if (grid) {
-				
-				Point closestGridPoint = new Point(2 * Math.round(0.5 * lastMovedWorldPoint.x), 2 * Math.round(0.5 * lastMovedWorldPoint.y));
-				cursor.setPoint(closestGridPoint);
-				
-			} else {
-				cursor.setPoint(lastMovedWorldPoint);
-			}
-			
-			VIEW.repaintCanvas();
-			break;
-			
-		case CIRCLECURSOR:
-			CircleCursor cc = (CircleCursor)cursor;
-			cc.entered(ev);
-			break;
-		case QUADCURSOR:
-			QuadCursor qc = (QuadCursor)cursor;
-			qc.entered(ev);
-			break;
-		}
-		
-	}
+//	public void entered(InputEvent ev) {
+//		
+//		Point p = ev.p;
+//		
+//		lastMovedWorldPoint = canvasToWorld(p);
+//		
+//		switch (mode) {
+//		case PAUSED:
+//		case DRAFTING:
+//		case RUNNING:
+//			break;
+//		case IDLE:
+//		case MERGERCURSOR:
+//		case FIXTURECURSOR:
+//		case STRAIGHTEDGECURSOR:
+//			
+//			if (grid) {
+//				
+//				Point closestGridPoint = new Point(2 * Math.round(0.5 * lastMovedWorldPoint.x), 2 * Math.round(0.5 * lastMovedWorldPoint.y));
+//				cursor.setPoint(closestGridPoint);
+//				
+//			} else {
+//				cursor.setPoint(lastMovedWorldPoint);
+//			}
+//			
+//			VIEW.repaintCanvas();
+//			break;
+//			
+//		case CIRCLECURSOR:
+//			CircleCursor cc = (CircleCursor)cursor;
+//			cc.entered(ev);
+//			break;
+//		case QUADCURSOR:
+//			QuadCursor qc = (QuadCursor)cursor;
+//			qc.entered(ev);
+//			break;
+//		}
+//		
+//	}
 	
 	public void exited(InputEvent ev) {
 		
 		switch (mode) {
-		case PAUSED:
-		case DRAFTING:
 		case RUNNING:
+		case PAUSED:
 			break;
-		case IDLE:
+		case REGULAR:
 		case MERGERCURSOR:
 		case FIXTURECURSOR:
 		case STRAIGHTEDGECURSOR:
-			
-			cursor.setPoint(null);
-			
-			VIEW.repaintCanvas();
-			break;
-			
 		case CIRCLECURSOR:
-			
-			CircleCursor cc = (CircleCursor)cursor;
-			cc.exited(ev);
-			break;
 		case QUADCURSOR:
-			QuadCursor qc = (QuadCursor)cursor;
-			qc.exited(ev);
+			cursor.exited(ev);
 			break;
 		}
-		
 	}
 	
 

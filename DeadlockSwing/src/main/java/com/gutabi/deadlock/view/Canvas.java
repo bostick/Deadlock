@@ -60,6 +60,8 @@ public class Canvas extends java.awt.Canvas {
 		
 		requestFocusInWindow();
 		
+		lastMovedOrDraggedCanvasPoint = ev.p;
+		
 		switch (CONTROLLER.mode) {
 		case MENU:
 			break;
@@ -85,12 +87,14 @@ public class Canvas extends java.awt.Canvas {
 	}
 	
 	public Point lastMovedCanvasPoint;
+	public Point lastMovedOrDraggedCanvasPoint;
 	
 	public void moved(InputEvent ev) {
 		
 		VIEW.canvas.requestFocusInWindow();
 		
 		lastMovedCanvasPoint = ev.p;
+		lastMovedOrDraggedCanvasPoint = lastMovedCanvasPoint;
 		
 		switch (CONTROLLER.mode) {
 		case MENU:
@@ -119,17 +123,17 @@ public class Canvas extends java.awt.Canvas {
 		
 	}
 	
-	public void entered(InputEvent ev) {
-		
-		switch (CONTROLLER.mode) {
-		case MENU:
-			break;
-		case WORLD:
-			APP.world.entered(ev);
-			break;
-		}
-		
-	}
+//	public void entered(InputEvent ev) {
+//		
+//		switch (CONTROLLER.mode) {
+//		case MENU:
+//			break;
+//		case WORLD:
+//			APP.world.entered(ev);
+//			break;
+//		}
+//		
+//	}
 	
 	public void exited(InputEvent ev) {
 		

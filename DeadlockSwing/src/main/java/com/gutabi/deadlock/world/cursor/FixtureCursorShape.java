@@ -32,12 +32,12 @@ public class FixtureCursorShape extends Shape {
 		case LEFTRIGHT:
 			worldSource = new Circle(null, new Point(source.x - APP.QUADRANT_WIDTH/2, p.y), Vertex.INIT_VERTEX_RADIUS);
 			worldSink = new Circle(null, new Point(sink.x + APP.QUADRANT_WIDTH/2, p.y), Vertex.INIT_VERTEX_RADIUS);
-			line = new Line(worldSource.center.x, p.y, worldSink.center.x, p.y);
+			line = new Line(new Point(worldSource.center.x, p.y), new Point(worldSink.center.x, p.y));
 			break;
 		case TOPBOTTOM:
 			worldSource = new Circle(null, new Point(p.x, source.y - APP.QUADRANT_HEIGHT/2), Vertex.INIT_VERTEX_RADIUS);
 			worldSink = new Circle(null, new Point(p.x, sink.y + APP.QUADRANT_HEIGHT/2), Vertex.INIT_VERTEX_RADIUS);
-			line = new Line(p.x, worldSource.center.y, p.x, worldSink.center.y);
+			line = new Line(new Point(p.x, worldSource.center.y), new Point(p.x, worldSink.center.y));
 			break;
 		default:
 			assert false;

@@ -15,7 +15,7 @@ import com.gutabi.deadlock.world.Stroke;
 import com.gutabi.deadlock.world.WorldMode;
 import com.gutabi.deadlock.world.graph.Vertex;
 
-public class QuadCursor extends Cursor {
+public class QuadCursor extends CursorBase {
 	
 	enum QuadCursorMode {
 		FREE,
@@ -99,6 +99,26 @@ public class QuadCursor extends Cursor {
 		shape = new QuadCursorShape(start, c, p);	
 	}
 	
+	public void escKey() {
+		switch (mode) {
+		case FREE:
+			APP.world.mode = WorldMode.REGULAR;
+			APP.world.cursor = new RegularCursor();
+			APP.world.cursor.setPoint(APP.world.lastMovedOrDraggedWorldPoint);
+			VIEW.repaintCanvas();
+			break;
+		case SET:
+			mode = QuadCursorMode.FREE;
+			VIEW.repaintCanvas();
+			break;
+		case START:
+		case CONTROL:
+		case END:
+			assert false;
+			break;
+		}
+	}
+	
 	public void sKey() {
 		switch (mode) {
 		case FREE:
@@ -116,11 +136,11 @@ public class QuadCursor extends Cursor {
 			
 			APP.world.processNewStroke(s);
 			
-			APP.world.mode = WorldMode.IDLE;
+			APP.world.mode = WorldMode.REGULAR;
 			
 			APP.world.cursor = new RegularCursor();
 			
-			APP.world.cursor.setPoint(APP.world.lastMovedWorldPoint);
+			APP.world.cursor.setPoint(APP.world.lastMovedOrDraggedWorldPoint);
 			
 			APP.world.render();
 			VIEW.repaintCanvas();
@@ -133,37 +153,6 @@ public class QuadCursor extends Cursor {
 			assert false;
 			break;
 		}
-	}
-	
-	public void escKey() {
-		switch (mode) {
-		case FREE:
-			APP.world.mode = WorldMode.IDLE;
-			APP.world.cursor = new RegularCursor();
-			APP.world.cursor.setPoint(APP.world.lastMovedWorldPoint);
-			VIEW.repaintCanvas();
-			break;
-		case SET:
-			mode = QuadCursorMode.FREE;
-			VIEW.repaintCanvas();
-			break;
-		case START:
-		case CONTROL:
-		case END:
-			assert false;
-			break;
-		}
-	}
-	
-	Point lastPressCursorPoint;
-	
-	public void pressed(InputEvent ev) {
-		
-		Point p = ev.p;
-		
-		lastPressCursorPoint = APP.world.canvasToWorld(p);
-		lastDragCursorPoint = null;
-		
 	}
 	
 	public void released(InputEvent ev) {
@@ -181,54 +170,55 @@ public class QuadCursor extends Cursor {
 		}
 	}
 	
-	Point lastDragCursorPoint;
+//	Point lastDragCursorPoint;
 	Point origStartKnobCenter;
 	Point origControlKnobCenter;
 	Point origEndKnobCenter;
 	
 	public void dragged(InputEvent ev) {
-		Point p = ev.p;
+//		Point p = ev.p;
 		
-		boolean lastDragCursorPointWasNull = (lastDragCursorPoint == null);
-		lastDragCursorPoint = APP.world.canvasToWorld(p);
+//		boolean lastDragCursorPointWasNull = (lastDragCursorPoint == null);
+//		lastDragCursorPoint = APP.world.canvasToWorld(p);
+//		lastMovedOrDraggedCursorPoint = lastDragCursorPoint;
 		
 		switch (mode) {
 		case FREE:
-			setPoint(lastDragCursorPoint);
+			setPoint(APP.world.lastDraggedWorldPoint);
 			break;
 		case SET:
 			
-			if (lastDragCursorPointWasNull) {
+			if (APP.world.lastDraggedWorldPointWasNull) {
 				
 				AABB startKnob = startKnob();
 				AABB controlKnob = controlKnob();
 				AABB endKnob = endKnob();
 				
-				if (startKnob.hitTest(lastPressCursorPoint)) {
+				if (startKnob.hitTest(APP.world.lastPressedWorldPoint)) {
 					
 					mode = QuadCursorMode.START;
 					
-					Point diff = new Point(lastDragCursorPoint.x - lastPressCursorPoint.x, lastDragCursorPoint.y - lastPressCursorPoint.y);
+					Point diff = new Point(APP.world.lastDraggedWorldPoint.x - APP.world.lastPressedWorldPoint.x, APP.world.lastDraggedWorldPoint.y - APP.world.lastPressedWorldPoint.y);
 					
 					origStartKnobCenter = startKnob.center;
 					
 					setStartKnob(origStartKnobCenter.plus(diff));
 					
-				} else if (controlKnob.hitTest(lastPressCursorPoint)) {
+				} else if (controlKnob.hitTest(APP.world.lastPressedWorldPoint)) {
 					
 					mode = QuadCursorMode.CONTROL;
 					
-					Point diff = new Point(lastDragCursorPoint.x - lastPressCursorPoint.x, lastDragCursorPoint.y - lastPressCursorPoint.y);
+					Point diff = new Point(APP.world.lastDraggedWorldPoint.x - APP.world.lastPressedWorldPoint.x, APP.world.lastDraggedWorldPoint.y - APP.world.lastPressedWorldPoint.y);
 					
 					origControlKnobCenter = controlKnob.center;
 					
 					setControlKnob(origControlKnobCenter.plus(diff));
 					
-				} else if (endKnob.hitTest(lastPressCursorPoint)) {
+				} else if (endKnob.hitTest(APP.world.lastPressedWorldPoint)) {
 					
 					mode = QuadCursorMode.END;
 					
-					Point diff = new Point(lastDragCursorPoint.x - lastPressCursorPoint.x, lastDragCursorPoint.y - lastPressCursorPoint.y);
+					Point diff = new Point(APP.world.lastDraggedWorldPoint.x - APP.world.lastPressedWorldPoint.x, APP.world.lastDraggedWorldPoint.y - APP.world.lastPressedWorldPoint.y);
 					
 					origEndKnobCenter = endKnob.center;
 					
@@ -242,19 +232,19 @@ public class QuadCursor extends Cursor {
 			
 			break;
 		case START: {
-			Point diff = new Point(lastDragCursorPoint.x - lastPressCursorPoint.x, lastDragCursorPoint.y - lastPressCursorPoint.y);
+			Point diff = new Point(APP.world.lastDraggedWorldPoint.x - APP.world.lastPressedWorldPoint.x, APP.world.lastDraggedWorldPoint.y - APP.world.lastPressedWorldPoint.y);
 			setStartKnob(origStartKnobCenter.plus(diff));
 			VIEW.repaintCanvas();
 			break;
 		}
 		case CONTROL: {
-			Point diff = new Point(lastDragCursorPoint.x - lastPressCursorPoint.x, lastDragCursorPoint.y - lastPressCursorPoint.y);
+			Point diff = new Point(APP.world.lastDraggedWorldPoint.x - APP.world.lastPressedWorldPoint.x, APP.world.lastDraggedWorldPoint.y - APP.world.lastPressedWorldPoint.y);
 			setControlKnob(origControlKnobCenter.plus(diff));
 			VIEW.repaintCanvas();
 			break;
 		}
 		case END: {
-			Point diff = new Point(lastDragCursorPoint.x - lastPressCursorPoint.x, lastDragCursorPoint.y - lastPressCursorPoint.y);
+			Point diff = new Point(APP.world.lastDraggedWorldPoint.x - APP.world.lastPressedWorldPoint.x, APP.world.lastDraggedWorldPoint.y - APP.world.lastPressedWorldPoint.y);
 			setEndKnob(origEndKnobCenter.plus(diff));
 			VIEW.repaintCanvas();
 			break;
@@ -262,76 +252,8 @@ public class QuadCursor extends Cursor {
 		}
 	}
 	
-	Point lastMovedCursorPoint;
-	
-	public void moved(InputEvent ev) {
-		Point p = ev.p;
-		
-		lastMovedCursorPoint = APP.world.canvasToWorld(p);
-		
-		switch (mode) {
-		case FREE:
-			if (APP.world.grid) {
-				
-				Point closestGridPoint = new Point(2 * Math.round(0.5 * APP.world.lastMovedWorldPoint.x), 2 * Math.round(0.5 * APP.world.lastMovedWorldPoint.y));
-				setPoint(closestGridPoint);
-				
-			} else {
-				setPoint(lastMovedCursorPoint);
-			}
-			
-			VIEW.repaintCanvas();
-			break;
-		case SET:
-		case START:
-		case CONTROL:
-		case END:
-			break;
-		}
-	}
-	
-	public void entered(InputEvent ev) {
-		
-		Point p = ev.p;
-		
-		lastMovedCursorPoint = APP.world.canvasToWorld(p);
-		
-		switch (mode) {
-		case FREE:
-			if (APP.world.grid) {
-				
-				Point closestGridPoint = new Point(2 * Math.round(0.5 * APP.world.lastMovedWorldPoint.x), 2 * Math.round(0.5 * APP.world.lastMovedWorldPoint.y));
-				setPoint(closestGridPoint);
-				
-			} else {
-				setPoint(lastMovedCursorPoint);
-			}
-			
-			VIEW.repaintCanvas();
-			break;
-		case SET:
-		case START:
-		case CONTROL:
-		case END:
-			break;
-		}
-	}
-	
-	public void exited(InputEvent ev) {
-		
-		switch (mode) {
-		case FREE:
-			setPoint(null);
-			
-			VIEW.repaintCanvas();
-			break;
-		case SET:
-		case START:
-		case CONTROL:
-		case END:
-			break;
-		}
-	}
+//	Point lastMovedCursorPoint;
+//	Point lastMovedOrDraggedCursorPoint;
 	
 	public void draw(RenderingContext ctxt) {
 		
@@ -340,11 +262,9 @@ public class QuadCursor extends Cursor {
 		}
 		
 		ctxt.setColor(Color.WHITE);
+		ctxt.setXORMode(Color.BLACK);
 		ctxt.setWorldPixelStroke(1);
 		
-//		shape.start.draw(ctxt);
-		
-		ctxt.setXORMode(Color.BLACK);
 		shape.draw(ctxt);
 		
 		switch (mode) {

@@ -2,14 +2,15 @@ package com.gutabi.deadlock.world;
 
 public enum WorldMode {
 	
-	IDLE,
+//	IDLE,
 	
-	DRAFTING,
+//	DRAFTING,
 	
 	RUNNING,
 	
 	PAUSED,
 	
+	REGULAR,
 	
 	MERGERCURSOR,
 	

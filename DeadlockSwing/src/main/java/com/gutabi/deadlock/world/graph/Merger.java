@@ -74,8 +74,8 @@ public class Merger extends Edge {
 		
 		computeLengths();
 		
-		debugSkeletonTopBottomLine = new Line(top.shape.center.x, top.shape.center.y, bottom.shape.center.x, bottom.shape.center.y);
-		debugSkeletonLeftRightLine = new Line(left.shape.center.x, left.shape.center.y, right.shape.center.x, right.shape.center.y);
+		debugSkeletonTopBottomLine = new Line(top.shape.center, bottom.shape.center);
+		debugSkeletonLeftRightLine = new Line(left.shape.center, right.shape.center);
 		
 	}
 	

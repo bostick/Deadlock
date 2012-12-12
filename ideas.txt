@@ -40,3 +40,26 @@ a sink can be a source's unlocker
 
 
 
+code organization:
+find common interface for World and Menu, "thing that has focus"
+inside World, different cursors can have focus
+
+try to remove as many switch statements as possible
+
+going from special cursor back to normal: like returning
+
+CircleCursor should not know anything about World
+
+try to remove as many references to APP.world and APP.menu as possible
+
+
+focus hierarchy for keyboard and mouse:
+APP -> world -> circlecursor -> knob
+APP -> menu -> menuitem
+
+returning:
+from special cursor to RegularCursor
+how best to transfer that?
+manage other things like hilited
+
+

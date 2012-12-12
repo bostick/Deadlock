@@ -81,8 +81,8 @@ public class Capsule extends SweepableShape implements SweeperShape {
 			
 			middle = new Quad(parent, aUp, bUp, bDown, aDown);
 			
-			debugNormalLine = new Line(a.x, a.y, a.x+n.x, a.y+n.y);
-			debugSkeletonLine = new Line(a.x, a.y, b.x, b.y);
+			debugNormalLine = new Line(a, a.plus(n));
+			debugSkeletonLine = new Line(a, b);
 			
 			aabb = AABB.union(ac.getAABB(), bc.getAABB());
 			
@@ -96,7 +96,7 @@ public class Capsule extends SweepableShape implements SweeperShape {
 			middle = null;
 			
 			debugNormalLine = null;
-			debugSkeletonLine = new Line(a.x, a.y, b.x, b.y);
+			debugSkeletonLine = new Line(a, b);
 			
 			aabb = AABB.union(ac.getAABB(), bc.getAABB());
 			

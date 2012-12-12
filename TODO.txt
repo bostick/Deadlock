@@ -1,27 +1,38 @@
 
 IMMEDIATELY:
 
-code organization:
-find common interface for World and Menu, "thing that has focus"
-inside World, different cursors can have focus
 
-try to remove as many switch statements as possible
-
-going from special cursor back to normal: like returning
-
-CircleCursor should not know anything about World
-
-try to remove as many references to APP.world and APP.menu as possible
+actually, make sure grid looks good
+it doubles or halves
 
 
-focus hierarchy:
-APP -> world -> circlecursor -> knob
 
 
+objectify grid
+zooming in makes grid change
+keep grid squares about 64 pixels
+48 - 80 pixels
+
+
+
+
+
+
+
+
+
+only on grid within active quadrants
+
+with grid on, switching to other cursors snaps to grid
+
+for knobs (circle, quad, cubic):
+gridify
 
 
 
 add cubic curve cursor
+
+
 
 map editor
 
@@ -31,6 +42,8 @@ reading from files
 
 
 add skids
+
+animated grass
 
 
 for CarProximityEvents:
@@ -49,9 +62,6 @@ if they are not overlapping, then they are just close together and the capsule s
 start work on menu
 start work on popup menu
 
-only on grid within active quadrants
-
-with grid on, switching to other cursors snaps to grid
 
 add countdowns/monitors:
 which car will be coming next from which source?

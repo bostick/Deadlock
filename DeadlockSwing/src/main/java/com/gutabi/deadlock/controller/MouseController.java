@@ -44,95 +44,61 @@ public class MouseController implements MouseListener, MouseMotionListener {
 	}
 	
 	public void pressed(InputEvent ev) {
-		
 		Component c = ev.c;
-		
 		if (c == VIEW.canvas) {
-			
 			VIEW.canvas.pressed(ev);
-			
 		} else if (c == VIEW.previewPanel) {
-			
 			VIEW.previewPanel.pressed(ev);
-			
 		}
-		
 	}
 	
 	public void dragged(InputEvent ev) {
-		
 		Component c = ev.c;
-		
 		if (c == VIEW.canvas) {
-			
 			VIEW.canvas.dragged(ev);
-			
 		} else if (c == VIEW.previewPanel) {
-			
 			VIEW.previewPanel.dragged(ev);
-			
 		}
-		
 	}
 	
 	public void released(InputEvent ev) {
-		
 		Component c = ev.c;
-		
 		if (c == VIEW.canvas) {
-			
 			VIEW.canvas.released(ev);
-			
 		}
-		
 	}
 	
 	public void moved(InputEvent ev) {
-		
 		Component c = ev.c;
-		
 		if (c == VIEW.canvas) {
-			
 			VIEW.canvas.moved(ev);
-			
 		}
-		
 	}
 	
 	public void clicked(InputEvent ev) {
-		
 		Component c = ev.c;
-		
 		if (c == VIEW.canvas) {
-			
 			VIEW.canvas.clicked(ev);
-			
 		}
-		
 	}
 	
 	public void entered(InputEvent ev) {
 		
-		Component c = ev.c;
-		
-		if (c == VIEW.canvas) {
-			
-			VIEW.canvas.entered(ev);
-			
-		}
+//		Component c = ev.c;
+//		
+//		if (c == VIEW.canvas) {
+//			
+//			VIEW.canvas.entered(ev);
+//			
+//		}
 		
 	}
 	
 	public void exited(InputEvent ev) {
-		
 		Component c = ev.c;
-		
 		if (c == VIEW.canvas) {
-			
 			VIEW.canvas.exited(ev);
-			
 		}
-		
 	}
 
 }

@@ -8,16 +8,16 @@ import java.awt.Color;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.Shape;
 import com.gutabi.deadlock.view.RenderingContext;
+import com.gutabi.deadlock.world.Stroke;
 import com.gutabi.deadlock.world.WorldMode;
-import com.gutabi.deadlock.world.graph.Vertex;
 
-public class StraightEdgeCursor extends Cursor {
+public class StraightEdgeCursor extends CursorBase {
 	
-	public final Vertex first;
+	public final Point first;
 	
 	StraightEdgeCursorShape shape;
 	
-	public StraightEdgeCursor(Vertex first) {
+	public StraightEdgeCursor(Point first) {
 		this.first = first;
 	}
 	
@@ -25,7 +25,7 @@ public class StraightEdgeCursor extends Cursor {
 		this.p = p;
 		
 		if (p != null) {
-			shape = new StraightEdgeCursorShape(first.p, p);
+			shape = new StraightEdgeCursorShape(first, p);
 		} else {
 			shape = null;
 		}
@@ -38,7 +38,7 @@ public class StraightEdgeCursor extends Cursor {
 	
 	public void escKey() {
 		
-		APP.world.mode = WorldMode.IDLE;
+		APP.world.mode = WorldMode.REGULAR;
 		
 		APP.world.cursor = new RegularCursor();
 		
@@ -46,6 +46,24 @@ public class StraightEdgeCursor extends Cursor {
 		
 		VIEW.repaintCanvas();
 		
+	}
+	
+	public void qKey() {
+		
+		Stroke s = new Stroke();
+		s.add(first);
+		s.add(p);
+		s.finish();
+		APP.world.processNewStroke(s);
+		assert APP.world.checkConsistency();
+		
+		APP.world.render();
+		VIEW.repaintControlPanel();
+		
+		APP.world.mode = WorldMode.REGULAR;
+		APP.world.cursor = new RegularCursor();
+		APP.world.cursor.setPoint(APP.world.lastMovedOrDraggedWorldPoint);
+		VIEW.repaintCanvas();
 	}
 	
 	public void draw(RenderingContext ctxt) {
