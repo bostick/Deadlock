@@ -308,6 +308,7 @@ public class RegularCursor extends CursorBase {
 		APP.world.debugStroke = APP.world.stroke;
 		APP.world.stroke = null;
 		
+		mode = RegularCursorMode.FREE;
 		APP.world.mode = WorldMode.REGULAR;
 		
 	}

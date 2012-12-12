@@ -109,6 +109,7 @@ public class QuadCursor extends CursorBase {
 			break;
 		case SET:
 			mode = QuadCursorMode.FREE;
+			APP.world.map.setCursorPoint(this, APP.world.lastMovedOrDraggedWorldPoint);
 			VIEW.repaintCanvas();
 			break;
 		case START:
@@ -151,6 +152,20 @@ public class QuadCursor extends CursorBase {
 		case CONTROL:
 		case END:
 			assert false;
+			break;
+		}
+	}
+	
+	public void moved(InputEvent ev) {
+		switch (mode) {
+		case FREE:
+			APP.world.map.setCursorPoint(this, APP.world.lastMovedOrDraggedWorldPoint);
+			VIEW.repaintCanvas();
+			break;
+		case SET:
+		case START:
+		case CONTROL:
+		case END:
 			break;
 		}
 	}

@@ -5,6 +5,7 @@ import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
 import java.awt.Color;
 
+import com.gutabi.deadlock.controller.InputEvent;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.Shape;
 import com.gutabi.deadlock.view.RenderingContext;
@@ -62,6 +63,11 @@ public class MergerCursor extends CursorBase {
 			}
 			
 		}
+	}
+	
+	public void moved(InputEvent ev) {
+		APP.world.map.setCursorPoint(this, APP.world.lastMovedOrDraggedWorldPoint);
+		VIEW.repaintCanvas();
 	}
 	
 	public void draw(RenderingContext ctxt) {

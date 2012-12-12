@@ -1,4 +1,13 @@
 
+mowing down grass, mowing down buildings
+
+
+on menu screen:
+have car drive into menu item when hilited (to show how game works)
+
+have simple world going in background, with crashes (to show how game works)
+
+
 shutter mode:
 require a button press to advance next timestep
 

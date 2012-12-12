@@ -64,7 +64,7 @@ bandwidth AND lag
 
 6.
 minimize roads
-
+minimize mowing down grass, trees, buildings
 
 
 

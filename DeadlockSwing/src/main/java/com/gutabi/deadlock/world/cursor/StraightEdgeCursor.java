@@ -5,6 +5,7 @@ import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
 import java.awt.Color;
 
+import com.gutabi.deadlock.controller.InputEvent;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.Shape;
 import com.gutabi.deadlock.view.RenderingContext;
@@ -63,6 +64,11 @@ public class StraightEdgeCursor extends CursorBase {
 		APP.world.mode = WorldMode.REGULAR;
 		APP.world.cursor = new RegularCursor();
 		APP.world.cursor.setPoint(APP.world.lastMovedOrDraggedWorldPoint);
+		VIEW.repaintCanvas();
+	}
+	
+	public void moved(InputEvent ev) {
+		APP.world.map.setCursorPoint(this, APP.world.lastMovedOrDraggedWorldPoint);
 		VIEW.repaintCanvas();
 	}
 	

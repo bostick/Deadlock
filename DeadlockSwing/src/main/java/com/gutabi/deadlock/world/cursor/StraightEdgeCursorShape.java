@@ -13,7 +13,7 @@ import com.gutabi.deadlock.world.graph.Vertex;
 @SuppressWarnings("static-access")
 public class StraightEdgeCursorShape extends Shape {
 	
-	public final Circle first;
+	public final Circle firstCircle;
 	public final Circle pCircle;
 //	public final Line line;
 	public final Capsule cap;
@@ -22,29 +22,29 @@ public class StraightEdgeCursorShape extends Shape {
 	
 	public StraightEdgeCursorShape(Point first, Point p) {
 		
-		this.first = new Circle(null, first, Vertex.INIT_VERTEX_RADIUS);
+		this.firstCircle = new Circle(null, first, Vertex.INIT_VERTEX_RADIUS);
 		this.pCircle = new Circle(null, p, Vertex.INIT_VERTEX_RADIUS);
 		
-		this.cap = new Capsule(null, this.first, pCircle, -1);
+		this.cap = new Capsule(null, firstCircle, pCircle, -1);
 		
 		aabb = cap.aabb;
 		
 	}
 	
-	public boolean hitTest(Point p) {
-		assert false;
-		return false;
-	}
-	
-	public Shape plus(Point p) {
-		assert false;
-		return null;
-	}
-	
-	public AABB getAABB() {
-		assert false;
-		return null;
-	}
+//	public boolean hitTest(Point p) {
+//		assert false;
+//		return false;
+//	}
+//	
+//	public Shape plus(Point p) {
+//		assert false;
+//		return null;
+//	}
+//	
+//	public AABB getAABB() {
+//		assert false;
+//		return null;
+//	}
 	
 	public java.awt.Shape java2D() {
 		assert false;
@@ -55,7 +55,14 @@ public class StraightEdgeCursorShape extends Shape {
 //		ctxt.setColor(Color.GRAY);
 //		ctxt.setWorldPixelStroke(1);
 		
-		cap.draw(ctxt);
+		if (!firstCircle.center.equals(pCircle.center)) {
+			cap.draw(ctxt);
+		} else {
+			/*
+			 * the overlapping causes XOR mode to draw nothing, so handle it here
+			 */
+			firstCircle.draw(ctxt);
+		}
 		
 		if (APP.DEBUG_DRAW) {
 			
