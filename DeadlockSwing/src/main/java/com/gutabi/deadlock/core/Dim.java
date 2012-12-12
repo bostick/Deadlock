@@ -23,4 +23,8 @@ public class Dim {
 		}
 	}
 	
+	public Dim multiply(double scale) {
+		return new Dim(width * scale, height * scale);
+	}
+	
 }

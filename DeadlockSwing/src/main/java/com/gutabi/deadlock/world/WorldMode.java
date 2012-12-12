@@ -18,6 +18,5 @@ public enum WorldMode {
 	STRAIGHTEDGECURSOR,
 	
 	CIRCLECURSOR,
-	CIRCLECURSOR_SET
 	
 }

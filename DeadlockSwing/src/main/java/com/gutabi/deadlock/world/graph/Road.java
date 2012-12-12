@@ -16,6 +16,7 @@ import com.gutabi.deadlock.core.Matrix;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.Capsule;
 import com.gutabi.deadlock.core.geom.CapsuleSequence;
+import com.gutabi.deadlock.core.geom.CapsuleSequencePosition;
 import com.gutabi.deadlock.core.geom.Circle;
 import com.gutabi.deadlock.core.geom.Shape;
 import com.gutabi.deadlock.core.geom.ShapeUtils;
@@ -357,79 +358,95 @@ public class Road extends Edge {
 	}
 	
 	public GraphPosition findSkeletonIntersection(Point c, Point d) {
-		for (int i = 0; i < seq.capsuleCount(); i ++) {
-			Capsule cap = seq.getCapsule(i);
-			double abParam = cap.findSkeletonIntersection(c, d);
-			if (abParam != -1) {
-				if (DMath.equals(abParam, 1.0) && i < seq.capsuleCount()-1) {
-					return new RoadPosition(this, i+1, 0.0);
-				} else {
-					return new RoadPosition(this, i, abParam);
-				}
+//		for (int i = 0; i < seq.capsuleCount(); i ++) {
+//			Capsule cap = seq.getCapsule(i);
+//			double abParam = cap.findSkeletonIntersection(c, d);
+//			if (abParam != -1) {
+//				if (DMath.equals(abParam, 1.0) && i < seq.capsuleCount()-1) {
+//					return new RoadPosition(this, i+1, 0.0);
+//				} else {
+//					return new RoadPosition(this, i, abParam);
+//				}
+//			}
+//		}
+//		return null;
+		CapsuleSequencePosition pos = seq.findSkeletonIntersection(c, d);
+		if (pos != null) {
+			return new RoadPosition(this, pos.index, pos.param);
+		}
+		return null;
+	}
+	
+	public RoadPosition findClosestRoadPosition(Point p, double r) {
+
+//		int bestIndex = -1;
+//		double bestParam = -1;
+//		Point bestPoint = null;
+//
+//		for (int i = 0; i < seq.capsuleCount(); i++) {
+//			Capsule c = seq.getCapsule(i);
+//			double closest = closestParam(p, c);
+//			Point ep = Point.point(c.a, c.b, closest);
+//			double dist = Point.distance(p, ep);
+//			if (DMath.lessThanEquals(dist, Road.ROAD_RADIUS + r)) {
+//				if (bestPoint == null) {
+//					bestIndex = i;
+//					bestParam = closest;
+//					bestPoint = ep;
+//				} else if (Point.distance(p, ep) < Point.distance(p, bestPoint)) {
+//					bestIndex = i;
+//					bestParam = closest;
+//					bestPoint = ep;
+//				}
+//			}
+//		}
+//
+//		if (bestPoint != null) {
+//			if (bestParam == 1.0) {
+//				if (bestIndex == seq.capsuleCount()-1) {
+//					return null;
+//				} else {
+//					return new RoadPosition(this, bestIndex+1, 0.0);
+//				}
+//			} else {
+//				return new RoadPosition(this, bestIndex, bestParam);
+//			}
+//		} else {
+//			return null;
+//		}
+		
+		
+		CapsuleSequencePosition pos = seq.findClosestStrokePosition(p, r);
+		if (pos != null) {
+			if (DMath.equals(pos.param, 1.0) && pos.index == seq.capsuleCount-1) {
+				return null;
+			} else {
+				return new RoadPosition(this, pos.index, pos.param);
 			}
 		}
 		return null;
 	}
 	
-	public RoadPosition findClosestRoadPosition(Point p, double radius) {
-
-		int bestIndex = -1;
-		double bestParam = -1;
-		Point bestPoint = null;
-
-		for (int i = 0; i < seq.capsuleCount(); i++) {
-			Capsule c = seq.getCapsule(i);
-			double closest = closestParam(p, c);
-			Point ep = Point.point(c.a, c.b, closest);
-			double dist = Point.distance(p, ep);
-			if (DMath.lessThanEquals(dist, radius + Road.ROAD_RADIUS)) {
-				if (bestPoint == null) {
-					bestIndex = i;
-					bestParam = closest;
-					bestPoint = ep;
-				} else if (Point.distance(p, ep) < Point.distance(p, bestPoint)) {
-					bestIndex = i;
-					bestParam = closest;
-					bestPoint = ep;
-				}
-			}
-		}
-
-		if (bestPoint != null) {
-			if (bestParam == 1.0) {
-				if (bestIndex == seq.capsuleCount()-1) {
-					return null;
-				} else {
-					return new RoadPosition(this, bestIndex+1, 0.0);
-				}
-			} else {
-				return new RoadPosition(this, bestIndex, bestParam);
-			}
-		} else {
-			return null;
-		}
-	}
-	
 	/**
 	 * find closest position on <c, d> to the point b
 	 */
-	private double closestParam(Point p, Capsule c) {
-		if (p.equals(c.a)) {
-			return 0.0;
-		}
-		if (p.equals(c.b)) {
-			return 1.0;
-		}
-
-		double u = Point.u(c.a, p, c.b);
-		if (DMath.lessThanEquals(u, 0.0)) {
-			return 0.0;
-		} else if (DMath.greaterThanEquals(u, 1.0)) {
-			return 1.0;
-		} else {
-			return u;
-		}
-	}
+//	private double closestParam(Point p, Capsule c) {
+//		if (p.equals(c.a)) {
+//			return 0.0;
+//		}
+//		if (p.equals(c.b)) {
+//			return 1.0;
+//		}
+//
+//		double u = Point.u(c.a, p, c.b);
+//		if (DMath.lessThanEquals(u, 0.0)) {
+//			return 0.0;
+//		} else if (DMath.greaterThanEquals(u, 1.0)) {
+//			return 1.0;
+//		} else {
+//			return u;
+//		}
+//	}
 	
 	
 	

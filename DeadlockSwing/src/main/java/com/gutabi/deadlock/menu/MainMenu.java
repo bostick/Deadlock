@@ -11,13 +11,11 @@ import java.awt.geom.AffineTransform;
 import javax.swing.JFrame;
 
 import com.gutabi.deadlock.controller.ControlMode;
-import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.AABB;
 import com.gutabi.deadlock.examples.FourByFourGridWorld;
 import com.gutabi.deadlock.examples.OneByOneWorld;
 import com.gutabi.deadlock.view.RenderingContext;
 import com.gutabi.deadlock.view.RenderingContextType;
-import com.gutabi.deadlock.world.Stroke;
 
 //@SuppressWarnings("static-access")
 public class MainMenu extends Menu {

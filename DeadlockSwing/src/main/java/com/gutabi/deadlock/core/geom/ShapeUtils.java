@@ -2,6 +2,7 @@ package com.gutabi.deadlock.core.geom;
 
 import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Point;
+import com.gutabi.deadlock.world.cursor.CircleCursorShape;
 import com.gutabi.deadlock.world.cursor.FixtureCursorShape;
 import com.gutabi.deadlock.world.cursor.MergerCursorShape;
 import com.gutabi.deadlock.world.cursor.StraightEdgeCursorShape;
@@ -41,6 +42,8 @@ public class ShapeUtils {
 				return intersect(s1, s0);
 			} else if (s1 instanceof Circle) {
 				return intersectCC((Circle)s0, (Circle)s1);
+			} else if (s1 instanceof CircleCursorShape) {
+				return intersect(s1, s0);
 			} else if (s1 instanceof FixtureCursorShape) {
 				return intersect(s1, s0);
 			} else if (s1 instanceof MergerCursorShape) {
@@ -50,7 +53,17 @@ public class ShapeUtils {
 			} else if (s1 instanceof StraightEdgeCursorShape) {
 				return intersect(s1, s0);
 			}
-		} else if (s0 instanceof FixtureCursorShape) {
+		}
+//		else if (s0 instanceof CircleCursorShape) {
+//			CircleCursorShape c0 = (CircleCursorShape)s0;
+//			
+//			if (intersect(c0.c1, s1)) {
+//				return true;
+//			}
+//			return false;
+//			
+//		}
+		else if (s0 instanceof FixtureCursorShape) {
 			FixtureCursorShape fc0 = (FixtureCursorShape)s0;
 			
 			if (intersect(fc0.worldSource, s1)) {

@@ -1,6 +1,7 @@
 package com.gutabi.deadlock.world;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
+
 import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
 import java.awt.AlphaComposite;
@@ -574,7 +575,7 @@ public class World implements Sweepable {
 				if (pos instanceof EdgePosition) {
 					hit2 = pureGraphBestHitTestCircle(new Circle(null, pos.p, e.circle.radius));
 				} else {
-					assert false;
+//					assert false;
 					hit2 = ((VertexPosition)pos).v;
 				}
 				
@@ -863,7 +864,9 @@ public class World implements Sweepable {
 			Entity hit = pureGraphBestHitTest(cursor.getShape());
 			if (hit == null) {
 				
-				addVertexTop(new Intersection(cursor.getPoint()));
+				Intersection i = new Intersection(cursor.getPoint());
+				
+				addVertexTop(i);
 				
 				render();
 				VIEW.repaintControlPanel();
@@ -936,7 +939,6 @@ public class World implements Sweepable {
 		case MERGERCURSOR:
 		case FIXTURECURSOR:
 		case CIRCLECURSOR:
-		case CIRCLECURSOR_SET:
 		case DRAFTING:
 			break;
 		}
@@ -1005,7 +1007,6 @@ public class World implements Sweepable {
 		case MERGERCURSOR:
 		case STRAIGHTEDGECURSOR:
 		case CIRCLECURSOR:
-		case CIRCLECURSOR_SET:
 		case DRAFTING:
 			break;
 		}
@@ -1125,7 +1126,6 @@ public class World implements Sweepable {
 		case FIXTURECURSOR:
 		case STRAIGHTEDGECURSOR:
 		case CIRCLECURSOR:
-		case CIRCLECURSOR_SET:
 		case DRAFTING:
 			break;
 		}
@@ -1138,7 +1138,6 @@ public class World implements Sweepable {
 		case MERGERCURSOR:
 		case FIXTURECURSOR:
 		case STRAIGHTEDGECURSOR:
-		case CIRCLECURSOR:
 			
 			mode = WorldMode.IDLE;
 			
@@ -1147,13 +1146,18 @@ public class World implements Sweepable {
 			cursor.setPoint(lastMovedWorldPoint);
 			
 			VIEW.repaintCanvas();
+			break;
+			
+		case CIRCLECURSOR:
+			
+			CircleCursor cc = (CircleCursor)cursor;
+			cc.escKey();
 			
 			break;
 		case RUNNING:
 		case PAUSED:
 		case DRAFTING:
 		case IDLE:
-		case CIRCLECURSOR_SET:
 			break;
 		}
 		
@@ -1198,7 +1202,6 @@ public class World implements Sweepable {
 			
 			break;
 		case CIRCLECURSOR:
-		case CIRCLECURSOR_SET:
 		case DRAFTING:
 		case FIXTURECURSOR:
 		case MERGERCURSOR:
@@ -1231,7 +1234,6 @@ public class World implements Sweepable {
 			
 			break;
 		case CIRCLECURSOR:
-		case CIRCLECURSOR_SET:
 		case DRAFTING:
 		case FIXTURECURSOR:
 		case MERGERCURSOR:
@@ -1264,7 +1266,6 @@ public class World implements Sweepable {
 			
 			break;
 		case CIRCLECURSOR:
-		case CIRCLECURSOR_SET:
 		case DRAFTING:
 		case FIXTURECURSOR:
 		case MERGERCURSOR:
@@ -1317,8 +1318,6 @@ public class World implements Sweepable {
 			VIEW.repaintControlPanel();
 			
 			break;
-		case CIRCLECURSOR_SET:
-			break;
 		}
 		
 	}
@@ -1364,8 +1363,6 @@ public class World implements Sweepable {
 			VIEW.repaintControlPanel();
 			
 			break;
-		case CIRCLECURSOR_SET:
-			break;
 		}
 		
 	}
@@ -1385,32 +1382,9 @@ public class World implements Sweepable {
 			
 			break;
 		case CIRCLECURSOR:
-//			CircleCursor cc = (CircleCursor)cursor;
+			CircleCursor cc = (CircleCursor)cursor;
 			
-			mode = WorldMode.CIRCLECURSOR_SET;
-			
-//			cc.set();
-			
-			VIEW.repaintCanvas();
-			
-			break;
-		case CIRCLECURSOR_SET:
-			
-			if (pureGraphBestHitTest(cursor.getShape()) == null) {
-				
-//				d;
-				
-				mode = WorldMode.IDLE;
-				
-				cursor = new RegularCursor();
-				
-				cursor.setPoint(lastMovedWorldPoint);
-				
-				render();
-				VIEW.repaintCanvas();
-				VIEW.repaintControlPanel();
-				
-			}
+			cc.aKey();
 			
 			break;
 		case RUNNING:
@@ -1451,6 +1425,21 @@ public class World implements Sweepable {
 		lastPressWorldPoint = canvasToWorld(p);
 		lastDragWorldPoint = null;
 		
+		switch (mode) {
+		case DRAFTING:
+		case FIXTURECURSOR:
+		case IDLE:
+		case MERGERCURSOR:
+		case PAUSED:
+		case RUNNING:
+		case STRAIGHTEDGECURSOR:
+			break;
+		case CIRCLECURSOR:
+			CircleCursor cc = (CircleCursor)cursor;
+			cc.pressed(ev);
+			break;
+		}
+		
 	}
 	
 	Point lastDragWorldPoint;
@@ -1462,10 +1451,10 @@ public class World implements Sweepable {
 		boolean lastDragWorldPointWasNull = (lastDragWorldPoint == null);
 		lastDragWorldPoint = canvasToWorld(p);
 		
-		cursor.setPoint(lastDragWorldPoint);
-		
 		switch (mode) {
 		case IDLE: {
+			
+			cursor.setPoint(lastDragWorldPoint);
 			
 			if (lastDragWorldPointWasNull) {
 				// first drag
@@ -1482,6 +1471,8 @@ public class World implements Sweepable {
 		}
 		case DRAFTING:
 			
+			cursor.setPoint(lastDragWorldPoint);
+			
 			draftMove(lastDragWorldPoint);
 			
 			VIEW.repaintCanvas();
@@ -1493,7 +1484,11 @@ public class World implements Sweepable {
 		case FIXTURECURSOR:
 		case STRAIGHTEDGECURSOR:
 		case CIRCLECURSOR:
-		case CIRCLECURSOR_SET:
+			
+			CircleCursor cc = (CircleCursor)cursor;
+			
+			cc.dragged(ev);
+			
 			break;
 		}
 		
@@ -1502,10 +1497,8 @@ public class World implements Sweepable {
 	public void released(InputEvent ev) {
 		
 		switch (mode) {
-		case IDLE: {
-			
+		case IDLE:
 			break;
-		}
 		case DRAFTING:
 			draftEnd();
 			
@@ -1519,8 +1512,10 @@ public class World implements Sweepable {
 		case MERGERCURSOR:
 		case FIXTURECURSOR:
 		case STRAIGHTEDGECURSOR:
+			break;
 		case CIRCLECURSOR:
-		case CIRCLECURSOR_SET:
+			CircleCursor cc = (CircleCursor)cursor;
+			cc.released(ev);
 			break;
 		}
 		
@@ -1566,25 +1561,26 @@ public class World implements Sweepable {
 		case MERGERCURSOR:
 		case FIXTURECURSOR:
 		case STRAIGHTEDGECURSOR:
-		case CIRCLECURSOR:
 			
 			hilited = null;
 			
-			if (cursor != null) {
-				if (grid) {
-					
-					Point closestGridPoint = new Point(2 * Math.round(0.5 * lastMovedWorldPoint.x), 2 * Math.round(0.5 * lastMovedWorldPoint.y));
-					cursor.setPoint(closestGridPoint);
-					
-				} else {
-					cursor.setPoint(lastMovedWorldPoint);
-				}
+			if (grid) {
+				
+				Point closestGridPoint = new Point(2 * Math.round(0.5 * lastMovedWorldPoint.x), 2 * Math.round(0.5 * lastMovedWorldPoint.y));
+				cursor.setPoint(closestGridPoint);
+				
+			} else {
+				cursor.setPoint(lastMovedWorldPoint);
 			}
 			
 			VIEW.repaintCanvas();
 			break;
-		case CIRCLECURSOR_SET:
+			
+		case CIRCLECURSOR:
+			CircleCursor cc = (CircleCursor)cursor;
+			cc.moved(ev);
 			break;
+			
 		}
 		
 	}
@@ -1604,22 +1600,22 @@ public class World implements Sweepable {
 		case MERGERCURSOR:
 		case FIXTURECURSOR:
 		case STRAIGHTEDGECURSOR:
-		case CIRCLECURSOR:
 			
-			if (cursor != null) {
-				if (grid) {
-					
-					Point closestGridPoint = new Point(2 * Math.round(0.5 * lastMovedWorldPoint.x), 2 * Math.round(0.5 * lastMovedWorldPoint.y));
-					cursor.setPoint(closestGridPoint);
-					
-				} else {
-					cursor.setPoint(lastMovedWorldPoint);
-				}
+			if (grid) {
+				
+				Point closestGridPoint = new Point(2 * Math.round(0.5 * lastMovedWorldPoint.x), 2 * Math.round(0.5 * lastMovedWorldPoint.y));
+				cursor.setPoint(closestGridPoint);
+				
+			} else {
+				cursor.setPoint(lastMovedWorldPoint);
 			}
 			
 			VIEW.repaintCanvas();
 			break;
-		case CIRCLECURSOR_SET:
+			
+		case CIRCLECURSOR:
+			CircleCursor cc = (CircleCursor)cursor;
+			cc.entered(ev);
 			break;
 		}
 		
@@ -1636,15 +1632,16 @@ public class World implements Sweepable {
 		case MERGERCURSOR:
 		case FIXTURECURSOR:
 		case STRAIGHTEDGECURSOR:
-		case CIRCLECURSOR:
 			
-			if (cursor != null) {
-				cursor.setPoint(null);
-			}
+			cursor.setPoint(null);
 			
 			VIEW.repaintCanvas();
 			break;
-		case CIRCLECURSOR_SET:
+			
+		case CIRCLECURSOR:
+			
+			CircleCursor cc = (CircleCursor)cursor;
+			cc.exited(ev);
 			break;
 		}
 		

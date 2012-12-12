@@ -1,20 +1,24 @@
 
-TODAY:
-
-remove Road-capsule code, use CapsuleSequence code
-
-draw a loop
-stand-alone loop
-
-self-intersecting stroke
-
 IMMEDIATELY:
 
-straightedge cursor:
-allow starting in roads
-draw capsules
+code organization:
+find common interface for World and Menu, "thing that has focus"
+inside World, different cursors can have focus
 
-add circular road cursor
+try to remove as many switch statements as possible
+
+going from special cursor back to normal: like returning
+
+CircleCursor should not know anything about World
+
+try to remove as many references to APP.world and APP.menu as possible
+
+
+focus hierarchy:
+APP -> world -> circlecursor -> knob
+
+
+
 
 add quad curve cursor
 add cubic curve cursor
@@ -115,6 +119,22 @@ spline/curve editor
 
 
 DONE:
+
+add circular road cursor
+
+straightedge cursor:
+allow starting in roads
+draw capsules
+
+remove Road-capsule code, use CapsuleSequence code
+
+fix stopsigns in loops
+
+draw a loop
+stand-alone loop
+
+self-intersecting stroke
+
 
 decimate VIEW
 

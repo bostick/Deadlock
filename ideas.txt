@@ -34,3 +34,9 @@ normally an intersection is it's own unlocker
 vertex can also be unlocked by a timer
 
 a sink can be a source's unlocker
+
+
+
+
+
+
