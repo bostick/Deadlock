@@ -10,7 +10,6 @@ import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.Shape;
 import com.gutabi.deadlock.view.RenderingContext;
 import com.gutabi.deadlock.world.Quadrant;
-import com.gutabi.deadlock.world.WorldMode;
 import com.gutabi.deadlock.world.graph.Axis;
 import com.gutabi.deadlock.world.graph.Fixture;
 import com.gutabi.deadlock.world.graph.FixtureType;
@@ -128,8 +127,6 @@ public class FixtureCursor extends CursorBase {
 	
 	public void escKey() {
 		
-		APP.world.mode = WorldMode.REGULAR;
-		
 		APP.world.cursor = new RegularCursor();
 		
 		APP.world.cursor.setPoint(APP.world.lastMovedWorldPoint);
@@ -166,11 +163,10 @@ public class FixtureCursor extends CursorBase {
 			
 			APP.world.addVertexTop(sink);
 			
-			APP.world.mode = WorldMode.REGULAR;
 			APP.world.cursor = new RegularCursor();
 			APP.world.cursor.setPoint(APP.world.lastMovedWorldPoint);
 			
-			APP.world.render();
+			APP.render();
 			VIEW.repaintCanvas();
 			VIEW.repaintControlPanel();
 			

@@ -225,7 +225,7 @@ public class ControlPanel extends JPanel implements ActionListener {
 			
 			APP.DEBUG_DRAW = state;
 			
-			APP.world.render();
+			APP.render();
 			VIEW.repaintCanvas();
 			
 		} else if (e.getActionCommand().equals("fpsDraw")) {
@@ -234,7 +234,7 @@ public class ControlPanel extends JPanel implements ActionListener {
 			
 			APP.FPS_DRAW = state;
 			
-			APP.world.render();
+			APP.render();
 			VIEW.repaintCanvas();
 			
 		} else if (e.getActionCommand().equals("stopSignDraw")) {
@@ -243,7 +243,7 @@ public class ControlPanel extends JPanel implements ActionListener {
 			
 			APP.STOPSIGN_DRAW = state;
 			
-			APP.world.render();
+			APP.render();
 			VIEW.repaintCanvas();
 			
 		} else if (e.getActionCommand().equals("carTextureDraw")) {

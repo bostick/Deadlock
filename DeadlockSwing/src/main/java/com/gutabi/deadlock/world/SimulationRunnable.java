@@ -5,6 +5,8 @@ import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
 import org.apache.log4j.Logger;
 
+import com.gutabi.deadlock.world.World.WorldMode;
+
 @SuppressWarnings("static-access")
 public class SimulationRunnable implements Runnable {
 	
@@ -23,7 +25,7 @@ public class SimulationRunnable implements Runnable {
 		outer:
 		while (true) {
 			
-			if (APP.world.mode == WorldMode.REGULAR) {
+			if (APP.world.mode == WorldMode.EDITING) {
 				break outer;
 			} else if (APP.world.mode == WorldMode.PAUSED) {
 				synchronized (APP.world.pauseLock) {

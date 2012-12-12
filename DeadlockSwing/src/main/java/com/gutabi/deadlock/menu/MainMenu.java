@@ -38,7 +38,8 @@ public class MainMenu extends Menu {
 				try {
 					
 					APP.world = new OneByOneWorld();
-					APP.world.init();
+					
+					APP.init();
 					
 					VIEW.teardownCanvas(VIEW.container);
 					
@@ -51,7 +52,7 @@ public class MainMenu extends Menu {
 					
 					VIEW.postDisplay();
 					
-					APP.world.render();
+					APP.render();
 					
 					VIEW.repaintCanvas();
 					VIEW.repaintControlPanel();
@@ -86,7 +87,8 @@ public class MainMenu extends Menu {
 				try {
 					
 					APP.world = new FourByFourGridWorld();
-					APP.world.init();
+					
+					APP.init();
 					
 					APP.world.PIXELS_PER_METER_DEBUG = 12.5;
 					
@@ -107,7 +109,7 @@ public class MainMenu extends Menu {
 					
 					VIEW.postDisplay();
 					
-					APP.world.render();
+					APP.render();
 					
 					VIEW.repaintCanvas();
 					VIEW.repaintControlPanel();

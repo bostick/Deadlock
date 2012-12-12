@@ -12,7 +12,6 @@ import com.gutabi.deadlock.core.geom.Circle;
 import com.gutabi.deadlock.core.geom.Shape;
 import com.gutabi.deadlock.view.RenderingContext;
 import com.gutabi.deadlock.world.Stroke;
-import com.gutabi.deadlock.world.WorldMode;
 import com.gutabi.deadlock.world.graph.Direction;
 import com.gutabi.deadlock.world.graph.Fixture;
 import com.gutabi.deadlock.world.graph.Road;
@@ -23,15 +22,17 @@ import com.gutabi.deadlock.world.graph.Vertex;
 public class RegularCursor extends CursorBase {
 	
 	enum RegularCursorMode {
-		
 		FREE,
 		DRAFTING
-		
 	}
 	
 	RegularCursorMode mode;
 	
 	Circle shape;
+	
+	Stroke stroke;
+	Stroke debugStroke;
+	Stroke debugStroke2;
 	
 	public RegularCursor() {
 		mode = RegularCursorMode.FREE;
@@ -60,7 +61,7 @@ public class RegularCursor extends CursorBase {
 				
 				r.setDirection(null, Direction.STARTTOEND);
 				
-				APP.world.render();
+				APP.render();
 				VIEW.repaintCanvas();
 				
 			} else if (APP.world.hilited instanceof Fixture) {
@@ -78,7 +79,7 @@ public class RegularCursor extends CursorBase {
 				f.setSide(f.getSide().other());
 				g.setSide(g.getSide().other());
 				
-				APP.world.render();
+				APP.render();
 				VIEW.repaintCanvas();
 				
 			}
@@ -94,7 +95,7 @@ public class RegularCursor extends CursorBase {
 				
 				r.setDirection(null, Direction.ENDTOSTART);
 				
-				APP.world.render();
+				APP.render();
 				VIEW.repaintCanvas();
 				
 			}
@@ -110,7 +111,7 @@ public class RegularCursor extends CursorBase {
 				
 				r.setDirection(null, null);
 			
-				APP.world.render();
+				APP.render();
 				VIEW.repaintCanvas();
 				
 			}
@@ -120,21 +121,18 @@ public class RegularCursor extends CursorBase {
 
 	
 	public void qKey() {
-		APP.world.mode = WorldMode.STRAIGHTEDGECURSOR;
 		APP.world.cursor = new StraightEdgeCursor(APP.world.lastMovedOrDraggedWorldPoint);
 		APP.world.cursor.setPoint(APP.world.lastMovedWorldPoint);
 		VIEW.repaintCanvas();
 	}
 	
 	public void wKey() {
-		APP.world.mode = WorldMode.FIXTURECURSOR;
 		APP.world.cursor = new FixtureCursor();
 		APP.world.cursor.setPoint(APP.world.lastMovedWorldPoint);
 		VIEW.repaintCanvas();
 	}
 	
 	public void aKey() {
-		APP.world.mode = WorldMode.CIRCLECURSOR;
 		
 		APP.world.hilited = null;
 		
@@ -146,7 +144,6 @@ public class RegularCursor extends CursorBase {
 	}
 	
 	public void sKey() {
-		APP.world.mode = WorldMode.QUADCURSOR;
 		QuadCursor q = new QuadCursor();
 		q.setStart(APP.world.lastMovedWorldPoint);
 		q.setPoint(APP.world.lastMovedWorldPoint);
@@ -165,13 +162,11 @@ public class RegularCursor extends CursorBase {
 				
 				s.setEnabled(true);
 				
-				APP.world.render();
+				APP.render();
 				VIEW.repaintCanvas();
 			}
 			
 		} else {
-			
-			APP.world.mode = WorldMode.MERGERCURSOR;
 			
 			APP.world.hilited = null;
 			
@@ -195,7 +190,7 @@ public class RegularCursor extends CursorBase {
 		
 		APP.world.map.setCursorPoint(this, APP.world.lastMovedOrDraggedWorldPoint);
 		
-		APP.world.render();
+		APP.render();
 		VIEW.repaintCanvas();
 		VIEW.repaintControlPanel();
 	}
@@ -211,7 +206,7 @@ public class RegularCursor extends CursorBase {
 		
 		APP.world.map.setCursorPoint(APP.world.cursor, APP.world.lastMovedOrDraggedWorldPoint);
 		
-		APP.world.render();
+		APP.render();
 		VIEW.repaintCanvas();
 		VIEW.repaintControlPanel();
 	}
@@ -268,7 +263,7 @@ public class RegularCursor extends CursorBase {
 		case DRAFTING:
 			draftEnd();
 			
-			APP.world.render();
+			APP.render();
 			VIEW.repaintCanvas();
 			VIEW.repaintControlPanel();
 			break;
@@ -286,30 +281,29 @@ public class RegularCursor extends CursorBase {
 		
 		APP.world.hilited = null;
 		
-		APP.world.stroke = new Stroke();
-		APP.world.stroke.add(p);
+		stroke = new Stroke();
+		stroke.add(p);
 			
 	}
 	
 	public void draftMove(Point p) {
 
-		APP.world.stroke.add(p);
+		stroke.add(p);
 	}
 	
 	public void draftEnd() {
 		
-		APP.world.stroke.finish();
+		stroke.finish();
 		
-		APP.world.processNewStroke(APP.world.stroke);
+		stroke.processNewStroke();
 		
 		assert APP.world.checkConsistency();
 		
-		APP.world.debugStroke2 = APP.world.debugStroke;
-		APP.world.debugStroke = APP.world.stroke;
-		APP.world.stroke = null;
+		debugStroke2 = debugStroke;
+		debugStroke = stroke;
+		stroke = null;
 		
 		mode = RegularCursorMode.FREE;
-		APP.world.mode = WorldMode.REGULAR;
 		
 	}
 	
@@ -317,6 +311,10 @@ public class RegularCursor extends CursorBase {
 		
 		if (p == null) {
 			return;
+		}
+		
+		if (stroke != null) {
+			stroke.paint(ctxt);
 		}
 		
 		ctxt.setColor(Color.WHITE);

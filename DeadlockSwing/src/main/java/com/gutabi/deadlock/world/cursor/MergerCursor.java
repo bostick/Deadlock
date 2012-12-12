@@ -9,7 +9,6 @@ import com.gutabi.deadlock.controller.InputEvent;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.Shape;
 import com.gutabi.deadlock.view.RenderingContext;
-import com.gutabi.deadlock.world.WorldMode;
 
 //@SuppressWarnings("static-access")
 public class MergerCursor extends CursorBase {
@@ -33,8 +32,6 @@ public class MergerCursor extends CursorBase {
 	
 	public void escKey() {
 		
-		APP.world.mode = WorldMode.REGULAR;
-		
 		APP.world.cursor = new RegularCursor();
 		
 		APP.world.cursor.setPoint(APP.world.lastMovedWorldPoint);
@@ -50,13 +47,11 @@ public class MergerCursor extends CursorBase {
 				
 				APP.world.insertMergerTop(p);
 				
-				APP.world.mode = WorldMode.REGULAR;
-				
 				APP.world.cursor = new RegularCursor();
 				
 				APP.world.cursor.setPoint(APP.world.lastMovedWorldPoint);
 				
-				APP.world.render();
+				APP.render();
 				VIEW.repaintCanvas();
 				VIEW.repaintControlPanel();
 				

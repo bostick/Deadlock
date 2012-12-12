@@ -1,9 +1,10 @@
-package com.gutabi.deadlock.view;
+package com.gutabi.deadlock.world.sprites;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
 import com.gutabi.deadlock.core.Point;
+import com.gutabi.deadlock.view.RenderingContext;
 
 //@SuppressWarnings("static-access")
 public class AnimatedExplosion {

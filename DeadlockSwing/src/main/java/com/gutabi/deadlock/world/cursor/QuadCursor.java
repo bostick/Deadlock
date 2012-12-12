@@ -12,7 +12,6 @@ import com.gutabi.deadlock.core.geom.AABB;
 import com.gutabi.deadlock.core.geom.Shape;
 import com.gutabi.deadlock.view.RenderingContext;
 import com.gutabi.deadlock.world.Stroke;
-import com.gutabi.deadlock.world.WorldMode;
 import com.gutabi.deadlock.world.graph.Vertex;
 
 public class QuadCursor extends CursorBase {
@@ -102,7 +101,6 @@ public class QuadCursor extends CursorBase {
 	public void escKey() {
 		switch (mode) {
 		case FREE:
-			APP.world.mode = WorldMode.REGULAR;
 			APP.world.cursor = new RegularCursor();
 			APP.world.cursor.setPoint(APP.world.lastMovedOrDraggedWorldPoint);
 			VIEW.repaintCanvas();
@@ -135,15 +133,13 @@ public class QuadCursor extends CursorBase {
 			}
 			s.finish();
 			
-			APP.world.processNewStroke(s);
-			
-			APP.world.mode = WorldMode.REGULAR;
+			s.processNewStroke();
 			
 			APP.world.cursor = new RegularCursor();
 			
 			APP.world.cursor.setPoint(APP.world.lastMovedOrDraggedWorldPoint);
 			
-			APP.world.render();
+			APP.render();
 			VIEW.repaintCanvas();
 			VIEW.repaintControlPanel();
 			

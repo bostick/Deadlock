@@ -19,7 +19,7 @@ public class FourByFourGridWorld extends World {
 			});
 	}
 	
-	public void init() {
+	public void init() throws Exception {
 		
 		for (int i = 1; i < 16; i++) {
 			Fixture source = new Fixture(new Point(i * worldWidth / 16, 0), Axis.TOPBOTTOM);
@@ -51,7 +51,7 @@ public class FourByFourGridWorld extends World {
 			Stroke s = new Stroke();
 			s.add(source.p);
 			s.add(sink.p);
-			processNewStroke(s);
+			s.processNewStroke();
 			
 		}
 		
@@ -85,9 +85,11 @@ public class FourByFourGridWorld extends World {
 			Stroke s = new Stroke();
 			s.add(source.p);
 			s.add(sink.p);
-			processNewStroke(s);
+			s.processNewStroke();
 			
 		}
+		
+		super.init();
 		
 	}
 

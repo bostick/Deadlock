@@ -12,7 +12,7 @@ import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.contacts.Contact;
 
 import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.view.AnimatedExplosion;
+import com.gutabi.deadlock.world.sprites.AnimatedExplosion;
 
 @SuppressWarnings("static-access")
 public class CarEventListener implements ContactListener {

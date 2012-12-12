@@ -10,7 +10,6 @@ import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.Shape;
 import com.gutabi.deadlock.view.RenderingContext;
 import com.gutabi.deadlock.world.Stroke;
-import com.gutabi.deadlock.world.WorldMode;
 
 public class StraightEdgeCursor extends CursorBase {
 	
@@ -39,8 +38,6 @@ public class StraightEdgeCursor extends CursorBase {
 	
 	public void escKey() {
 		
-		APP.world.mode = WorldMode.REGULAR;
-		
 		APP.world.cursor = new RegularCursor();
 		
 		APP.world.cursor.setPoint(APP.world.lastMovedWorldPoint);
@@ -55,13 +52,12 @@ public class StraightEdgeCursor extends CursorBase {
 		s.add(first);
 		s.add(p);
 		s.finish();
-		APP.world.processNewStroke(s);
+		s.processNewStroke();
 		assert APP.world.checkConsistency();
 		
-		APP.world.render();
+		APP.render();
 		VIEW.repaintControlPanel();
 		
-		APP.world.mode = WorldMode.REGULAR;
 		APP.world.cursor = new RegularCursor();
 		APP.world.cursor.setPoint(APP.world.lastMovedOrDraggedWorldPoint);
 		VIEW.repaintCanvas();

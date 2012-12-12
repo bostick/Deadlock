@@ -16,50 +16,42 @@ import java.util.Set;
 
 import javax.swing.SwingUtilities;
 
-import org.apache.log4j.Logger;
 import org.jbox2d.common.Vec2;
 
 import com.gutabi.deadlock.controller.InputEvent;
-import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.AABB;
 import com.gutabi.deadlock.core.geom.Capsule;
-import com.gutabi.deadlock.core.geom.CapsuleSequence;
-import com.gutabi.deadlock.core.geom.CapsuleSequencePosition;
 import com.gutabi.deadlock.core.geom.Circle;
 import com.gutabi.deadlock.core.geom.Quad;
 import com.gutabi.deadlock.core.geom.Shape;
-import com.gutabi.deadlock.core.geom.ShapeUtils;
 import com.gutabi.deadlock.core.geom.SweepEvent;
-import com.gutabi.deadlock.core.geom.SweepEventType;
 import com.gutabi.deadlock.core.geom.Sweepable;
-import com.gutabi.deadlock.view.AnimatedExplosion;
-import com.gutabi.deadlock.view.AnimatedGrass;
 import com.gutabi.deadlock.view.RenderingContext;
 import com.gutabi.deadlock.view.RenderingContextType;
 import com.gutabi.deadlock.world.car.Car;
 import com.gutabi.deadlock.world.car.CarEventListener;
-import com.gutabi.deadlock.world.car.CarProximityEvent;
-import com.gutabi.deadlock.world.car.CarStateEnum;
-import com.gutabi.deadlock.world.car.DrivingEvent;
-import com.gutabi.deadlock.world.car.VertexArrivalEvent;
 import com.gutabi.deadlock.world.cursor.Cursor;
 import com.gutabi.deadlock.world.cursor.RegularCursor;
 import com.gutabi.deadlock.world.graph.Edge;
-import com.gutabi.deadlock.world.graph.EdgePosition;
 import com.gutabi.deadlock.world.graph.Graph;
-import com.gutabi.deadlock.world.graph.GraphPosition;
-import com.gutabi.deadlock.world.graph.Intersection;
 import com.gutabi.deadlock.world.graph.Merger;
 import com.gutabi.deadlock.world.graph.Road;
 import com.gutabi.deadlock.world.graph.RoadPosition;
 import com.gutabi.deadlock.world.graph.StopSign;
 import com.gutabi.deadlock.world.graph.Vertex;
-import com.gutabi.deadlock.world.graph.VertexPosition;
+import com.gutabi.deadlock.world.sprites.AnimatedExplosion;
+import com.gutabi.deadlock.world.sprites.AnimatedGrass;
 
 @SuppressWarnings("static-access")
 public class World implements Sweepable {
+	
+	enum WorldMode {
+		EDITING,
+		RUNNING,
+		PAUSED,
+	}
 	
 	public final double worldWidth;
 	public final double worldHeight;
@@ -71,10 +63,6 @@ public class World implements Sweepable {
 	public WorldMode mode;
 	
 	public Cursor cursor;
-	public Stroke stroke;
-	
-	public Stroke debugStroke;
-	public Stroke debugStroke2;
 	
 	public Entity hilited;
 	
@@ -82,15 +70,9 @@ public class World implements Sweepable {
 	
 	public Stats stats;
 	
-//	public boolean grid;
-	
 	public BufferedImage quadrantGrass;
 	public BufferedImage canvasGrassImage;
 	public BufferedImage canvasGraphImage;
-	public BufferedImage previewImage;
-	
-	public static final int PREVIEW_WIDTH = 100;
-	public static final int PREVIEW_HEIGHT = 100;
 	
 	/*
 	 * distance that center of a car has to be from center of a sink in order to be sinked
@@ -112,7 +94,7 @@ public class World implements Sweepable {
 	
 	public Graph graph = new Graph();
 	
-	public List<Car> cars = new ArrayList<Car>();
+	public CarMap carMap = new CarMap();
 	
 	private List<AnimatedExplosion> explosions = new ArrayList<AnimatedExplosion>();
 	
@@ -123,7 +105,7 @@ public class World implements Sweepable {
 	
 	public AABB aabb;
 	
-	private static Logger logger = Logger.getLogger(World.class);
+//	private static Logger logger = Logger.getLogger(World.class);
 	
 	public World(int[][] ini) {
 		
@@ -158,7 +140,7 @@ public class World implements Sweepable {
 		}
 		
 		
-		mode = WorldMode.REGULAR;
+		mode = WorldMode.EDITING;
 		
 		cursor = new RegularCursor();
 		
@@ -237,8 +219,6 @@ public class World implements Sweepable {
 		
 		canvasGraphImage = new BufferedImage(VIEW.canvas.getWidth(), VIEW.canvas.getHeight(), BufferedImage.TYPE_INT_ARGB);
 		
-		previewImage = new BufferedImage(PREVIEW_WIDTH, PREVIEW_HEIGHT, BufferedImage.TYPE_INT_RGB);
-		
 	}
 	
 	
@@ -310,7 +290,7 @@ public class World implements Sweepable {
 		c.destroy();
 		
 		synchronized (APP) {
-			cars.remove(c);
+			carMap.remove(c);
 		}
 		
 		postRunningTop();
@@ -339,7 +319,7 @@ public class World implements Sweepable {
 	
 	public void stopRunning() {
 		
-		mode = WorldMode.REGULAR;
+		mode = WorldMode.EDITING;
 		
 	}
 	
@@ -355,446 +335,6 @@ public class World implements Sweepable {
 		synchronized (pauseLock) {
 			pauseLock.notifyAll();
 		}
-	}
-	
-	public void processNewStroke(Stroke s) {
-		
-		/*
-		 * TODO:
-		 * fix this and turn on
-		 * a stroke that starts/ends on a fixture may technically be outside of the quadrant, but it should still count
-		 */
-//		for (int i = 0; i < s.size()-1; i++) {
-//			Capsule cap = new Capsule(null, s.getCircle(i), s.getCircle(i+1));
-//			if (!completelyContains(cap)) {
-//				return;
-//			}
-//		}
-		
-		List<SweepEvent> events = s.events(true);
-		
-		/*
-		 * go through and find any merger events and fixture events
-		 */
-		for (int i = 0; i < events.size(); i++) {
-			SweepEvent e = events.get(i);
-			if (e.type == SweepEventType.ENTERMERGER) {
-				return;
-			}
-//			if (e.type == SweepEventType.ENTERVERTEX) {
-//				Vertex v = (Vertex)e.shape.parent;
-//				if (v instanceof Fixture && (v.roads.size() + (v.m!=null?1:0)) > 0) {
-//					assert ((v.roads.size() + (v.m!=null?1:0))) == 1;
-//					return;
-//				}
-//			}
-			if (i < events.size()-1) {
-				SweepEvent f = events.get(i+1);
-				if (e.type == SweepEventType.EXITVERTEX && f.type == SweepEventType.ENTERVERTEX) {
-					Vertex ev = (Vertex)e.still.parent;
-					Vertex fv = (Vertex)f.still.parent;
-					if (ev.m != null && ev.m == fv.m) {
-						/*
-						 * FIXME: this currently disallows connecting vertices in a merger, even outside the merger
-						 * fix this so that it's only a road within the merger that is disallowed
-						 */
-						return;
-					}
-				}
-			}
-		}
-		
-		/*
-		 * go through and create or split where needed to make sure vertices are present
-		 */
-		for (int i = 0; i < events.size(); i++) {
-			
-			SweepEvent e = events.get(i);
-			
-			if (e.type == null) {
-				
-				Entity hit = pureGraphBestHitTestCircle(e.circle);
-//				assert hit == null;
-				
-				if (hit == null) {
-					logger.debug("create");
-					Intersection v = new Intersection(e.p);
-					addVertexTop(v);
-				}
-				
-//				e.setVertex(v);
-				
-			} else if (e.type == SweepEventType.ENTERROADCAPSULE || e.type == SweepEventType.EXITROADCAPSULE) {
-				
-				Entity hit = pureGraphBestHitTestCircle(e.circle);
-				
-				if (hit instanceof Vertex) {
-//					e.setVertex((Vertex)hit);
-					continue;
-				}
-				
-				GraphPosition pos = null;
-				
-				double nextEventCombo;
-				if (e.type == SweepEventType.ENTERROADCAPSULE) {
-					if (i < events.size()-1) {
-						nextEventCombo = events.get(i+1).combo;
-					} else {
-						nextEventCombo = Double.POSITIVE_INFINITY;
-					}
-				} else {
-					if (i >= 1) {
-						nextEventCombo = events.get(i-1).combo;
-					} else {
-						nextEventCombo = Double.NEGATIVE_INFINITY;
-					}
-				}
-				
-				/*
-				 * find better place to split by checking for intersection with road
-				 */
-				Circle a;
-				Circle b;
-				/*
-				 * e could be like 6.9999999999, and we don't want b to be the next index, 7, which is the same point
-				 * so do some massaging here
-				 */
-				double eCombo = e.combo;
-				int j = (int)Math.floor(eCombo);
-				if (e.type == SweepEventType.ENTERROADCAPSULE) {
-					a = e.circle;
-					if (DMath.lessThan(nextEventCombo, j+1)) {
-						/*
-						 * next event is before next stroke point, so use the event circle
-						 */
-						b = events.get(i+1).circle;
-					} else {
-						b = s.getCircle(j+1);
-					}
-				} else {
-					if (DMath.greaterThan(nextEventCombo, j)) {
-						a = events.get(i-1).circle;
-					} else {
-						a = s.getCircle(j);
-					}
-					b = e.circle;
-				}
-				
-				while (true) {
-					
-					hit = pureGraphBestHitTestCapsule(new Capsule(null, a, b, -1));
-					
-					if (hit == null) {
-						
-					} else if (hit instanceof Vertex) {
-						pos = new VertexPosition((Vertex)hit);
-						break;
-					} else {
-						
-						RoadPosition skeletonIntersection = (RoadPosition)((Road)hit).findSkeletonIntersection(a.center, b.center);
-						
-						if (skeletonIntersection != null) {
-							
-							/*
-							 * FIXME: see stroke section
-							 */
-//							if (DMath.lessThanEquals(Point.distance(skeletonIntersection.p, e.p), Stroke.STROKE_RADIUS + Stroke.STROKE_RADIUS + 0.2)) {
-//								
-//								pos = skeletonIntersection;
-//								
-//								logger.debug("found intersection");
-//								
-//								break;
-//							}
-							
-							pos = skeletonIntersection;
-							
-							logger.debug("found intersection");
-							
-							break;
-							
-						}
-						
-					}
-					
-					j += (e.type == SweepEventType.ENTERROADCAPSULE) ? 1 : -1;
-					
-					if (!((e.type == SweepEventType.ENTERROADCAPSULE) ? j < Math.min(nextEventCombo, s.size()-1) : j >= Math.max(nextEventCombo, 0))) {
-						break;
-					}
-					
-					a = s.getCircle(j);
-					b = s.getCircle(j+1);
-					
-				}
-				
-				if (pos == null) {
-					logger.debug("pos was null");
-					pos = findClosestRoadPosition(e.p, e.circle.radius);
-				}
-				
-				assert pos != null;
-				
-				Entity hit2;
-				if (pos instanceof EdgePosition) {
-					hit2 = pureGraphBestHitTestCircle(new Circle(null, pos.p, e.circle.radius));
-				} else {
-//					assert false;
-					hit2 = ((VertexPosition)pos).v;
-				}
-				
-				if (hit2 instanceof Road) {
-					Vertex v = splitRoadTop((RoadPosition)pos);
-					
-					assert ShapeUtils.intersectCC(e.circle, v.getShape());
-					
-//					e.setVertex(v);
-				} else {
-//					e.setVertex((Vertex)hit2);
-				}
-				
-			} else if (e.type == SweepEventType.ENTERVERTEX || e.type == SweepEventType.EXITVERTEX) {
-//				e.setVertex((Vertex)e.shape.parent);
-			} else if (e.type == SweepEventType.ENTERSTROKE || e.type == SweepEventType.EXITSTROKE) {
-				
-				CapsuleSequence sub = s.seq.subsequence(e.index);
-				
-				CapsuleSequencePosition pos = null;
-				
-				double nextEventCombo;
-				if (e.type == SweepEventType.ENTERSTROKE) {
-					if (i < events.size()-1) {
-						nextEventCombo = events.get(i+1).combo;
-					} else {
-						nextEventCombo = Double.POSITIVE_INFINITY;
-					}
-				} else {
-					if (i >= 1) {
-						nextEventCombo = events.get(i-1).combo;
-					} else {
-						nextEventCombo = Double.NEGATIVE_INFINITY;
-					}
-				}
-				
-				/*
-				 * find better place to split by checking for intersection with stroke
-				 */
-				Circle a;
-				Circle b;
-				
-				/*
-				 * e could be like 6.9999999999, and we don't want b to be the next index, 7, which is the same point
-				 * so do some massaging here
-				 */
-				double eCombo = e.combo;
-				int j = (int)Math.floor(eCombo);
-				
-				if (e.type == SweepEventType.ENTERSTROKE) {
-					a = e.circle;
-					if (DMath.lessThan(nextEventCombo, j+1)) {
-						/*
-						 * next event is before next stroke point, so use the event circle
-						 */
-						b = events.get(i+1).circle;
-					} else {
-						b = s.getCircle(j+1);
-					}
-				} else {
-					if (DMath.greaterThan(nextEventCombo, j)) {
-						a = events.get(i-1).circle;
-					} else {
-						a = s.getCircle(j);
-					}
-					b = e.circle;
-				}
-				
-				while (true) {
-					
-//					hit = strokeBestHitTestCapsule(new Capsule(null, a, b, -1));
-					
-					CapsuleSequencePosition skeletonIntersection = sub.findSkeletonIntersection(a.center, b.center);
-					
-					if (skeletonIntersection != null) {
-						
-						/*
-						 * FIXME:
-						 * 
-						 * the 0.3 is a hack, because an intersection won't always be touching the event
-						 * 
-						 * here:
-						 * 
-						 * Graphics[{capsule[#, r] & /@ 
-   Partition[{{5.5, 5.5}, {10, 10}, {10, 2}, {6.5, 6.5}, {2, 10}}, 2, 
-    1], Blue, Point[{6.5, 6.5}], Point[{7.375, 5.375}], 
-  Circle[{7.375, 5.375}, r]}]
-  
-  							figure out exactly what to do here
-						 */
-//						double dist = Point.distance(skeletonIntersection.p, e.p);
-//						if (DMath.lessThanEquals(dist, Stroke.STROKE_RADIUS + Stroke.STROKE_RADIUS + 0.2)) {
-//							
-//							pos = skeletonIntersection;
-//							
-//							logger.debug("found intersection");
-//							
-//							break;
-//						}
-						pos = skeletonIntersection;
-						
-						logger.debug("found intersection");
-						
-						break;
-					}
-					
-					j += (e.type == SweepEventType.ENTERSTROKE) ? 1 : -1;
-					
-					if (!((e.type == SweepEventType.ENTERSTROKE) ? j < Math.min(nextEventCombo, s.size()-1) : j >= Math.max(nextEventCombo, 0))) {
-						break;
-					}
-					
-					a = s.getCircle(j);
-					b = s.getCircle(j+1);
-					
-				}
-				
-				if (pos == null) {
-					logger.debug("pos was null");
-//					pos = sub.findClosestGraphPosition(e.p, e.circle.radius);
-//					pos = sub.findClosestStrokePosition(e.p, e.circle.radius);
-					
-//					Capsule stillCapsule = (Capsule)e.still;
-//					Point stillA = stillCapsule.a;
-//					Point stillB = stillCapsule.b;
-//					
-//					Point.p
-					
-					pos = new CapsuleSequencePosition(s.seq, e.index, e.param);
-					
-				}
-				
-				assert pos != null;
-				
-				Entity hit = pureGraphBestHitTestCircle(new Circle(null, pos.p, e.circle.radius));
-				
-				if (hit == null) {
-					
-					logger.debug("create");
-					Intersection v = new Intersection(pos.p);
-					addVertexTop(v);
-					
-//					assert ShapeUtils.intersectCC(e.circle, v.getShape());
-					
-//					e.setVertex(v);
-					
-				} else {
-					
-//					e.setVertex((Vertex)hit);
-					
-				}
-				
-			} else {
-				assert false;
-			}
-			
-//			assert e.getVertex() != null;
-		}
-		
-		/*
-		 * run events again to pick up any new vertices from now having vertices around
-		 * 
-		 * should only be connecting vertices here
-		 * 
-		 */
-		events = s.events(false);
-		for (int i = 0; i < events.size(); i++) {
-			
-			SweepEvent e = events.get(i);
-			
-			if (e.type == SweepEventType.ENTERVERTEX || e.type == SweepEventType.EXITVERTEX) {
-				e.setVertex((Vertex)e.still.parent);
-			} else {
-				assert false;
-			}
-			
-		}
-		
-		/*
-		 * now go through and create roads
-		 */
-		for (int i = 0; i < events.size()-1; i++) {
-			
-//			if (i == 0) {
-//				return;
-//			}
-			
-			SweepEvent e0 = events.get(i);
-			SweepEvent e1 = events.get(i+1);
-			
-			if (e0.type == SweepEventType.ENTERVERTEX && e1.type == SweepEventType.EXITVERTEX) {
-				
-				logger.debug("skipping");
-				i = i+1;
-				if (i == events.size()-1) {
-					break;
-				}
-				e0 = events.get(i);
-				e1 = events.get(i+1);
-				
-			} else if (e0.type == SweepEventType.ENTERROADCAPSULE && e1.type == SweepEventType.EXITROADCAPSULE) {
-				
-				logger.debug("skipping");
-				
-				i = i+1;
-				if (i == events.size()-1) {
-					break;
-				}
-				e0 = events.get(i);
-				e1 = events.get(i+1);
-				
-			}
-			
-			Vertex v0 = e0.getVertex();
-			Vertex v1 = e1.getVertex();
-			
-//			if (v0 == v1) {
-//				logger.debug("same vertex");
-//				continue;
-//			}
-			
-			List<Point> roadPts = new ArrayList<Point>();
-			roadPts.add(v0.p);
-			for (int j = e0.index+1; j < e1.index; j++) {
-				roadPts.add(s.get(j));
-			}
-			if (e1.index >= e0.index+1) {
-				if (!DMath.equals(e1.param, 0.0)) {
-					roadPts.add(s.get(e1.index));
-					roadPts.add(v1.p);
-				} else {
-					roadPts.add(v1.p);
-				}
-			} else {
-				assert e1.index == e0.index;
-				roadPts.add(v1.p);
-			}
-			
-			createRoadTop(v0, v1, roadPts);
-			
-//			if (i == 0) {
-//				return;
-//			}
-		}
-		
-	}
-	
-	public void pan(Point prevDp) {
-		Point worldDP = previewToWorld(prevDp);
-		
-		worldViewport = new AABB(
-				worldViewport.x + worldDP.x,
-				worldViewport.y + worldDP.y,
-				worldViewport.width,
-				worldViewport.height);
 	}
 	
 	public void zoom(double factor) {
@@ -825,12 +365,7 @@ public class World implements Sweepable {
 		case RUNNING:
 		case PAUSED:
 			break;
-		case REGULAR:
-		case STRAIGHTEDGECURSOR:
-		case MERGERCURSOR:
-		case FIXTURECURSOR:
-		case CIRCLECURSOR:
-		case QUADCURSOR:
+		case EDITING:
 			cursor.qKey();
 			break;
 		}
@@ -841,12 +376,7 @@ public class World implements Sweepable {
 		case RUNNING:
 		case PAUSED:
 			break;
-		case REGULAR:
-		case FIXTURECURSOR:
-		case MERGERCURSOR:
-		case STRAIGHTEDGECURSOR:
-		case CIRCLECURSOR:
-		case QUADCURSOR:
+		case EDITING:
 			cursor.wKey();
 			break;
 		}
@@ -856,7 +386,7 @@ public class World implements Sweepable {
 		
 		map.toggleGrid();
 		
-		render();
+		APP.render();
 		VIEW.repaintCanvas();
 	}
 	
@@ -901,7 +431,7 @@ public class World implements Sweepable {
 			
 		}
 		
-		render();
+		APP.render();
 		VIEW.repaintCanvas();
 		VIEW.repaintControlPanel();
 		
@@ -912,12 +442,7 @@ public class World implements Sweepable {
 		case RUNNING:
 		case PAUSED:
 			break;
-		case REGULAR:
-		case MERGERCURSOR:
-		case FIXTURECURSOR:
-		case STRAIGHTEDGECURSOR:
-		case CIRCLECURSOR:
-		case QUADCURSOR:
+		case EDITING:
 			cursor.insertKey();
 			break;
 		}
@@ -928,12 +453,7 @@ public class World implements Sweepable {
 		case RUNNING:
 		case PAUSED:
 			break;
-		case REGULAR:
-		case MERGERCURSOR:
-		case FIXTURECURSOR:
-		case STRAIGHTEDGECURSOR:
-		case CIRCLECURSOR:
-		case QUADCURSOR:
+		case EDITING:
 			cursor.escKey();
 			break;
 		}
@@ -944,12 +464,7 @@ public class World implements Sweepable {
 		case PAUSED:
 		case RUNNING:
 			break;
-		case REGULAR:
-		case CIRCLECURSOR:
-		case FIXTURECURSOR:
-		case MERGERCURSOR:
-		case STRAIGHTEDGECURSOR:
-		case QUADCURSOR:
+		case EDITING:
 			cursor.d1Key();
 			break;
 		}
@@ -960,12 +475,7 @@ public class World implements Sweepable {
 		case PAUSED:
 		case RUNNING:
 			break;
-		case REGULAR:
-		case CIRCLECURSOR:
-		case FIXTURECURSOR:
-		case MERGERCURSOR:
-		case STRAIGHTEDGECURSOR:
-		case QUADCURSOR:
+		case EDITING:
 			cursor.d2Key();
 			break;
 		}
@@ -976,12 +486,7 @@ public class World implements Sweepable {
 		case PAUSED:
 		case RUNNING:
 			break;
-		case REGULAR:
-		case CIRCLECURSOR:
-		case FIXTURECURSOR:
-		case MERGERCURSOR:
-		case STRAIGHTEDGECURSOR:
-		case QUADCURSOR:
+		case EDITING:
 			cursor.d3Key();
 			break;
 		}
@@ -997,12 +502,7 @@ public class World implements Sweepable {
 		case PAUSED:
 		case RUNNING:
 			break;
-		case REGULAR:
-		case MERGERCURSOR:
-		case FIXTURECURSOR:
-		case STRAIGHTEDGECURSOR:
-		case CIRCLECURSOR:
-		case QUADCURSOR:
+		case EDITING:
 			cursor.plusKey();
 			break;
 		}
@@ -1019,12 +519,7 @@ public class World implements Sweepable {
 		case PAUSED:
 		case RUNNING:
 			break;
-		case REGULAR:
-		case MERGERCURSOR:
-		case FIXTURECURSOR:
-		case STRAIGHTEDGECURSOR:
-		case CIRCLECURSOR:
-		case QUADCURSOR:
+		case EDITING:
 			cursor.minusKey();
 			break;
 		}
@@ -1036,12 +531,7 @@ public class World implements Sweepable {
 		case RUNNING:
 		case PAUSED:
 			break;
-		case REGULAR:
-		case CIRCLECURSOR:
-		case MERGERCURSOR:
-		case STRAIGHTEDGECURSOR:
-		case FIXTURECURSOR:
-		case QUADCURSOR:
+		case EDITING:
 			cursor.aKey();
 			break;
 		}
@@ -1052,12 +542,7 @@ public class World implements Sweepable {
 		case RUNNING:
 		case PAUSED:
 			break;
-		case REGULAR:
-		case QUADCURSOR:
-		case MERGERCURSOR:
-		case FIXTURECURSOR:
-		case CIRCLECURSOR:
-		case STRAIGHTEDGECURSOR:
+		case EDITING:
 			cursor.sKey();
 			break;
 		}
@@ -1072,14 +557,6 @@ public class World implements Sweepable {
 //	public int metersToPixels(double m) {
 //		return (int)(Math.round(m * VIEW.PIXELS_PER_METER_DEBUG));
 //	}
-	
-	public Point previewToWorld(Point p) {
-		return new Point((worldWidth / PREVIEW_WIDTH) * p.x, (worldHeight / PREVIEW_HEIGHT) * p.y);
-	}
-	
-	public Point worldToPreview(Point p) {
-		return new Point((PREVIEW_WIDTH / worldWidth) * p.x, (PREVIEW_HEIGHT / worldHeight) * p.y);
-	}
 	
 	public Point lastPressedWorldPoint;
 	
@@ -1126,12 +603,7 @@ public class World implements Sweepable {
 		case RUNNING:
 		case PAUSED:
 			break;
-		case REGULAR:
-		case MERGERCURSOR:
-		case FIXTURECURSOR:
-		case STRAIGHTEDGECURSOR:
-		case QUADCURSOR:
-		case CIRCLECURSOR:
+		case EDITING:
 			cursor.dragged(ev);
 			break;
 		}
@@ -1143,12 +615,7 @@ public class World implements Sweepable {
 		case RUNNING:
 		case PAUSED:
 			break;
-		case REGULAR:
-		case MERGERCURSOR:
-		case FIXTURECURSOR:
-		case STRAIGHTEDGECURSOR:
-		case QUADCURSOR:
-		case CIRCLECURSOR:
+		case EDITING:
 			cursor.released(ev);
 			break;
 		}
@@ -1170,12 +637,7 @@ public class World implements Sweepable {
 		case RUNNING:
 		case PAUSED:
 			break;
-		case REGULAR:			
-		case MERGERCURSOR:
-		case FIXTURECURSOR:
-		case STRAIGHTEDGECURSOR:
-		case QUADCURSOR:
-		case CIRCLECURSOR:
+		case EDITING:
 			cursor.moved(ev);
 			break;	
 		}
@@ -1227,12 +689,7 @@ public class World implements Sweepable {
 		case RUNNING:
 		case PAUSED:
 			break;
-		case REGULAR:
-		case MERGERCURSOR:
-		case FIXTURECURSOR:
-		case STRAIGHTEDGECURSOR:
-		case CIRCLECURSOR:
-		case QUADCURSOR:
+		case EDITING:
 			cursor.exited(ev);
 			break;
 		}
@@ -1353,10 +810,7 @@ public class World implements Sweepable {
 		graph.postStop();
 		
 		synchronized (APP) {
-			for (Car c : cars) {
-				c.destroy();
-			}
-			cars.clear();
+			carMap.postStop();
 			
 			explosions.clear();
 			
@@ -1396,130 +850,7 @@ public class World implements Sweepable {
 		
 		graph.preStep(t);
 		
-		for (Car c : cars) {
-			c.preStep(t);
-		}
-		
-		/*
-		 * find deadlock cycles
-		 */
-		carLoop:
-		for (int i = 0; i < cars.size(); i++) {
-			Car ci = cars.get(i);
-			
-			switch (ci.state) {
-			case DRIVING:
-			case BRAKING:
-			case SINKED:
-				
-				Car to = findDeadlockCause(ci);
-				Car h = findDeadlockCause(findDeadlockCause(ci));
-				
-				while (true) {
-					if (to == null || h == null) {
-						continue carLoop;
-					}
-					if (to.deadlocked || h.deadlocked) {
-						continue carLoop;
-					}
-					if (to == h) {
-						break;
-					}
-					to = findDeadlockCause(to);
-					h = findDeadlockCause(findDeadlockCause(h));
-				}
-				
-				to = ci;
-				while (true) {
-					if (to == h) {
-						break;
-					}
-					to = findDeadlockCause(to);
-					h = findDeadlockCause(h);
-				}
-				
-				h = findDeadlockCause(to);
-				
-				assert h.stoppedTime != -1;
-				assert h.state == CarStateEnum.BRAKING;
-				h.deadlocked = true;
-				
-				while (true) {
-					if (to == h) {
-						break;
-					}
-					h = findDeadlockCause(h);
-					
-					assert h.stoppedTime != -1;
-					assert h.state == CarStateEnum.BRAKING;
-					h.deadlocked = true;
-				}
-				
-				break;
-			case CRASHED:
-			case SKIDDED:
-				
-				if (ci.stoppedTime != -1) {
-					ci.deadlocked = true;
-				}
-				
-				break;
-			}
-		}
-		
-		/*
-		 * 
-		 */
-		for (int i = 0; i < cars.size(); i++) {
-			Car ci = cars.get(i);
-			
-			if (!ci.deadlocked) {
-				DrivingEvent e = findDeadlockEvent(ci);
-				
-				if (e == null) {
-					continue;
-				}
-				
-				if (e instanceof CarProximityEvent) {
-					
-					Car cause = ((CarProximityEvent)e).otherCar;
-					if (cause != null &&
-							cause.deadlocked) {
-						
-						if (cause.stoppedTime <= ci.stoppedTime || (t - ci.stoppedTime > Car.COMPLETE_STOP_WAIT_TIME)) {
-							
-							assert ci.stoppedTime != -1;
-							assert ci.state == CarStateEnum.BRAKING;
-							ci.deadlocked = true;
-							
-						}
-						
-					}
-					
-				} else if (e instanceof VertexArrivalEvent) {
-					
-					Car cause = ((VertexArrivalEvent)e).v.carQueue.get(0);
-					
-					if (cause != ci) {
-						
-						if (cause != null &&
-								cause.deadlocked) {
-							
-							assert ci.stoppedTime != -1;
-							assert ci.state == CarStateEnum.BRAKING;
-							ci.deadlocked = true;
-							
-						}
-						
-					}
-					
-				} else {
-					assert false;
-				}
-				
-			}
-			
-		}
+		carMap.preStep(t);
 		
 		for (AnimatedExplosion x : explosions) {
 			x.preStep(t);
@@ -1527,108 +858,18 @@ public class World implements Sweepable {
 		
 	}
 	
-	private DrivingEvent findDeadlockEvent(Car c) {
-		if (c == null) {
-			return null;
-		}
-		
-		if (c.curVertexArrivalEvent != null) {
-			
-			Vertex v = c.curVertexArrivalEvent.v;
-			
-			assert v.carQueue.contains(c);
-			
-			Car leavingCar = v.carQueue.get(0);
-			
-			if (leavingCar != c) {
-				if (c.stoppedTime != -1 &&
-						leavingCar.stoppedTime != -1
-						) {
-					
-					return c.curVertexArrivalEvent;
-					
-				}
-			}
-			
-		}
-		
-		if (c.curCarProximityEvent != null) {
-			Car next = c.curCarProximityEvent.otherCar;
-			
-			if (c.stoppedTime != -1 &&
-					next.stoppedTime != -1
-					) {
-				return c.curCarProximityEvent;
-			}
-		}
-		
-		return null;
-	}
-	
-	private Car findDeadlockCause(Car c) {
-		if (c == null) {
-			return null;
-		}
-		
-		if (c.curCarProximityEvent != null) {
-			Car next = c.curCarProximityEvent.otherCar;
-			
-			if (c.stoppedTime != -1 &&
-					next.stoppedTime != -1
-					) {
-				return next;
-			}
-		}
-		
-		if (c.curVertexArrivalEvent != null) {
-			
-			Vertex v = c.curVertexArrivalEvent.v;
-			
-			assert v.carQueue.contains(c);
-			
-			Car leavingCar = v.carQueue.get(0);
-			
-			if (leavingCar != c) {
-				if (c.stoppedTime != -1 &&
-						leavingCar.stoppedTime != -1
-						) {
-					
-					return leavingCar;
-					
-				}
-			}
-			
-		}
-		
-		return null;
-	}
-	
-	
 	
 	
 	
 	public void addCar(Car c) {
-		cars.add(c);
+		carMap.addCar(c);
 	}
 	
 	private void postStep() {
 		
-		List<Car> toBeRemoved = new ArrayList<Car>();
-		
 		synchronized (APP) {
 			
-			for (Car c : cars) {
-				boolean shouldPersist = c.postStep(t);
-				if (!shouldPersist) {
-					if (hilited == c) {
-						hilited = null;
-					}
-					c.destroy();
-					toBeRemoved.add(c);
-				}
-			}
-		
-			cars.removeAll(toBeRemoved);
+			carMap.postStep(t);
 			
 			List<AnimatedExplosion> exToBeRemoved = new ArrayList<AnimatedExplosion>();
 			
@@ -1686,13 +927,8 @@ public class World implements Sweepable {
 	
 	public Car carHitTest(Point p) {
 		synchronized (APP) {
-			for (Car c : cars) {
-				if (c.hitTest(p) != null) {
-					return c;
-				}
-			}
+			return carMap.carHitTest(p);
 		}
-		return null;
 	}
 	
 	public Entity graphHitTest(Point p) {
@@ -1770,20 +1006,7 @@ public class World implements Sweepable {
 			canvasGraphImageG2.dispose();
 		}
 		
-		Graphics2D previewImageG2 = previewImage.createGraphics();
-		
-		previewImageG2.setColor(Color.WHITE);
-		previewImageG2.fillRect(0, 0, PREVIEW_WIDTH, PREVIEW_HEIGHT);
-		
-		previewImageG2.scale(PREVIEW_WIDTH / worldWidth, PREVIEW_HEIGHT / worldHeight);
-		
-		RenderingContext previewContext = new RenderingContext(previewImageG2, RenderingContextType.PREVIEW);
-		
-		map.renderBackground(previewContext);
-		
-		graph.renderBackground(previewContext);
-		
-		previewImageG2.dispose();
+//		preview.render();
 	}
 	
 	
@@ -1818,10 +1041,6 @@ public class World implements Sweepable {
 					ctxt.setWorldPixelStroke(1);
 					aabb.draw(ctxt);
 					
-				}
-				
-				if (stroke != null) {
-					stroke.paint(ctxt);
 				}
 				
 				if (cursor != null) {
@@ -1894,17 +1113,15 @@ public class World implements Sweepable {
 			b2dWorld.drawDebugData();
 		}
 		
-		List<Car> carsCopy;
 		List<AnimatedExplosion> explosionsCopy;
 		Entity hilitedCopy;
 		synchronized (APP) {
-			carsCopy = new ArrayList<Car>(cars);
 			explosionsCopy = new ArrayList<AnimatedExplosion>(explosions);
 			hilitedCopy = hilited;
 		}
 		
-		for (Car c : carsCopy) {
-			c.paint(ctxt);
+		synchronized (APP) {
+			carMap.paint(ctxt);
 		}
 		
 		for (AnimatedExplosion x : explosionsCopy) {
@@ -1935,7 +1152,7 @@ public class World implements Sweepable {
 		
 		ctxt.translate(0, 1);
 		
-		ctxt.paintWorldString(0, 0, 1.0, "car count: " + cars.size());
+		ctxt.paintWorldString(0, 0, 1.0, "car count: " + carMap.size());
 		
 		ctxt.translate(0, 1);
 		

@@ -3,6 +3,7 @@ package com.gutabi.deadlock;
 import java.net.URL;
 
 import com.gutabi.deadlock.menu.Menu;
+import com.gutabi.deadlock.world.Preview;
 import com.gutabi.deadlock.world.World;
 
 public class DeadlockApplication {
@@ -29,6 +30,18 @@ public class DeadlockApplication {
 	
 	public World world;
 	
+	public Preview preview = new Preview();
+	
 	public static DeadlockApplication APP = new DeadlockApplication();
+	
+	public void init() throws Exception {
+		world.init();
+		preview.init();
+	}
+	
+	public void render() {
+		world.render();
+		preview.render();
+	}
 	
 }
