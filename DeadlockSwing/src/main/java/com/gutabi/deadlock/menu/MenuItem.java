@@ -14,6 +14,7 @@ import com.gutabi.deadlock.view.RenderingContext;
 //@SuppressWarnings("static-access")
 public abstract class MenuItem {
 	
+	public final Menu parent;
 	public final String text;
 	
 	public MenuItem up;
@@ -33,7 +34,8 @@ public abstract class MenuItem {
 	
 	static private Font f = new Font("Visitor TT1 BRK", Font.PLAIN, 48);
 	
-	public MenuItem(String text) {
+	public MenuItem(Menu parent, String text) {
+		this.parent = parent;
 		this.text = text;
 	}
 	
@@ -62,7 +64,7 @@ public abstract class MenuItem {
 		
 		ul = new Point(x, y);
 		
-		aabb = new AABB(x, y, localAABB.width, localAABB.height);
+		aabb = new AABB(x, y, Math.max(localAABB.width, parent.widest), localAABB.height);
 		
 		baseline = new Point(x - localAABB.x, y - localAABB.y);
 		

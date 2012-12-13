@@ -9,7 +9,7 @@ import com.gutabi.deadlock.core.geom.ShapeUtils;
 import com.gutabi.deadlock.view.RenderingContext;
 
 @SuppressWarnings("static-access")
-public class Map {
+public class QuadrantMap {
 	
 	public final int quadrantCols;
 	public final int quadrantRows;
@@ -18,7 +18,7 @@ public class Map {
 	
 	public final AABB aabb;
 	
-	public Map(int[][] ini) {
+	public QuadrantMap(int[][] ini) {
 		
 		quadrants = initQuadrants(ini);
 		

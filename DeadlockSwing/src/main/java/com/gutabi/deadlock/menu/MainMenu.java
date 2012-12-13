@@ -25,7 +25,14 @@ public class MainMenu extends Menu {
 	
 	public MainMenu() {
 		
-		MenuItem puzzleMenuItem = new MenuItem("Puzzle Mode") {
+		MenuItem dialogMenuItem = new MenuItem(MainMenu.this,  "Dialog A...") {
+			public void action() {
+				
+			}
+		};
+		add(dialogMenuItem);
+		
+		MenuItem puzzleMenuItem = new MenuItem(MainMenu.this,  "Puzzle Mode") {
 			public void action() {
 				
 			}
@@ -33,7 +40,7 @@ public class MainMenu extends Menu {
 		puzzleMenuItem.active = false;
 		add(puzzleMenuItem);
 		
-		MenuItem oneMenuItem = new MenuItem("1x1") {
+		MenuItem oneMenuItem = new MenuItem(MainMenu.this,"1x1") {
 			public void action() {
 				
 				try {
@@ -67,22 +74,10 @@ public class MainMenu extends Menu {
 		};
 		add(oneMenuItem);
 		
-		MenuItem fourMenuItem = new MenuItem("4x4 Grid") {
+		MenuItem fourMenuItem = new MenuItem(MainMenu.this, "4x4 Grid") {
 			public void action() {
 				
 				try {
-					
-					APP.world = new FourByFourGridWorld();
-					
-					APP.init();
-					
-					APP.world.PIXELS_PER_METER_DEBUG = 12.5;
-					
-					APP.world.worldViewport = new AABB(
-							-(VIEW.canvas.getWidth() / APP.world.PIXELS_PER_METER_DEBUG) / 2 + APP.world.worldWidth/2 ,
-							-(VIEW.canvas.getHeight() / APP.world.PIXELS_PER_METER_DEBUG) / 2 + APP.world.worldHeight/2,
-							VIEW.canvas.getWidth() / APP.world.PIXELS_PER_METER_DEBUG,
-							VIEW.canvas.getHeight() / APP.world.PIXELS_PER_METER_DEBUG);
 					
 					VIEW.teardownCanvas(VIEW.container);
 					
@@ -93,12 +88,57 @@ public class MainMenu extends Menu {
 					
 					CONTROLLER.mode = ControlMode.WORLD;
 					
+					APP.world = new FourByFourGridWorld();
+					
+					APP.init();
+					
+					APP.world.PIXELS_PER_METER_DEBUG = 12.5;
+
+					APP.world.worldViewport = new AABB(
+							-(VIEW.canvas.getWidth() / APP.world.PIXELS_PER_METER_DEBUG) / 2 + APP.world.worldWidth/2 ,
+							-(VIEW.canvas.getHeight() / APP.world.PIXELS_PER_METER_DEBUG) / 2 + APP.world.worldHeight/2,
+							VIEW.canvas.getWidth() / APP.world.PIXELS_PER_METER_DEBUG,
+							VIEW.canvas.getHeight() / APP.world.PIXELS_PER_METER_DEBUG);
+					
 					VIEW.postDisplay();
 					
 					APP.render();
 					
 					VIEW.repaintCanvas();
 					VIEW.repaintControlPanel();
+					
+					
+					
+					
+					
+					
+//					APP.world = new FourByFourGridWorld();
+//					
+//					APP.init();
+//					
+//					APP.world.PIXELS_PER_METER_DEBUG = 12.5;
+//					
+//					APP.world.worldViewport = new AABB(
+//							-(VIEW.canvas.getWidth() / APP.world.PIXELS_PER_METER_DEBUG) / 2 + APP.world.worldWidth/2 ,
+//							-(VIEW.canvas.getHeight() / APP.world.PIXELS_PER_METER_DEBUG) / 2 + APP.world.worldHeight/2,
+//							VIEW.canvas.getWidth() / APP.world.PIXELS_PER_METER_DEBUG,
+//							VIEW.canvas.getHeight() / APP.world.PIXELS_PER_METER_DEBUG);
+//					
+//					VIEW.teardownCanvas(VIEW.container);
+//					
+//					VIEW.setupCanvasAndControlPanel(VIEW.container);
+//					
+//					((JFrame)VIEW.container).setVisible(true);
+//					VIEW.canvas.requestFocusInWindow();
+//					
+//					CONTROLLER.mode = ControlMode.WORLD;
+//					
+//					VIEW.postDisplay();
+//					
+//					APP.render();
+//					
+//					VIEW.repaintCanvas();
+//					VIEW.repaintControlPanel();
 					
 					
 				} catch (Exception e) {
@@ -110,7 +150,7 @@ public class MainMenu extends Menu {
 		};
 		add(fourMenuItem);
 		
-		MenuItem aMenuItem = new MenuItem("World A") {
+		MenuItem aMenuItem = new MenuItem(MainMenu.this, "World A") {
 			public void action() {
 				
 				try {
@@ -144,15 +184,15 @@ public class MainMenu extends Menu {
 		};
 		add(aMenuItem);
 		
-		MenuItem editorMenuItem = new MenuItem("Map Editor...") {
+		MenuItem quadrantEditorMenuItem = new MenuItem(MainMenu.this, "Quadrant Editor...") {
 			public void action() {
 				
 			}
 		};
 //		editorMenuItem.active = false;
-		add(editorMenuItem);
+		add(quadrantEditorMenuItem);
 		
-		MenuItem loadMenuItem = new MenuItem("Load...") {
+		MenuItem loadMenuItem = new MenuItem(MainMenu.this, "Load...") {
 			public void action() {
 				
 			}
@@ -160,7 +200,7 @@ public class MainMenu extends Menu {
 		loadMenuItem.active = false;
 		add(loadMenuItem);
 		
-		MenuItem captureMenuItem = new MenuItem("Capture the Flag") {
+		MenuItem captureMenuItem = new MenuItem(MainMenu.this, "Capture the Flag") {
 			public void action() {
 				
 			}
@@ -168,7 +208,7 @@ public class MainMenu extends Menu {
 		captureMenuItem.active = false;
 		add(captureMenuItem);
 		
-		MenuItem quitMenuItem = new MenuItem("Quit") {
+		MenuItem quitMenuItem = new MenuItem(MainMenu.this, "Quit") {
 			public void action() {
 				System.exit(0);
 			}
@@ -190,7 +230,6 @@ public class MainMenu extends Menu {
 			
 			canvasMenuContext.paintImage(800/2 - 432/2, 550, VIEW.copyright, 0, 0, 432, 38, 0, 0, 432, 38);
 			
-			int widest = 0;
 			int totalHeight = 0;
 			for (MenuItem item : items) {
 				item.renderLocal(canvasMenuContext);
@@ -202,7 +241,7 @@ public class MainMenu extends Menu {
 			
 			AffineTransform origTransform = canvasMenuContext.getTransform();
 			
-			canvasMenuContext.translate(800/2 - widest/2, 200);
+			canvasMenuContext.translate(800/2 - widest/2, 150);
 			
 			for (MenuItem item : items) {
 				item.render(canvasMenuContext);
@@ -212,7 +251,7 @@ public class MainMenu extends Menu {
 			canvasMenuContext.setTransform(origTransform);
 			
 			canvasMenuContext.setColor(menuBackground);
-			canvasMenuContext.fillRect((int)(800/2 - widest/2 - 5), 200 - 5, (int)(widest + 10), totalHeight + 10 * (items.size() - 1) + 5 + 5);
+			canvasMenuContext.fillRect((int)(800/2 - widest/2 - 5), 150 - 5, (int)(widest + 10), totalHeight + 10 * (items.size() - 1) + 5 + 5);
 			
 			for (MenuItem item : items) {
 				item.paint(canvasMenuContext);

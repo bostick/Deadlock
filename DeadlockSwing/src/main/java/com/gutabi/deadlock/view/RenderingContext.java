@@ -117,11 +117,25 @@ public class RenderingContext extends DebugDraw {
 		g2.setTransform(origTransform);
 	}
 	
+//	public void paintImage(double x, double y, Image img, int dx1, int dy1, int dx2, int dy2, int sx1, int sy1, int sx2, int sy2) {
+//		AffineTransform origTransform = g2.getTransform();
+//		g2.translate(x, y);
+//		g2.drawImage(img, dx1, dy1, dx2, dy2, sx1, sy1, sx2, sy2, null);
+//		g2.setTransform(origTransform);
+//	}
+	
 	public void paintImage(double x, double y, Image img, int dx1, int dy1, int dx2, int dy2, int sx1, int sy1, int sx2, int sy2) {
 		AffineTransform origTransform = g2.getTransform();
 		g2.translate(x, y);
 		g2.drawImage(img, dx1, dy1, dx2, dy2, sx1, sy1, sx2, sy2, null);
 		g2.setTransform(origTransform);
+	}
+	
+	public void paintImage(int x, int y, Image img, int dx1, int dy1, int dx2, int dy2, int sx1, int sy1, int sx2, int sy2) {
+//		AffineTransform origTransform = g2.getTransform();
+//		g2.translate(x, y);
+		g2.drawImage(img, dx1 + x, dy1 + y, dx2 + x, dy2 + y, sx1, sy1, sx2, sy2, null);
+//		g2.setTransform(origTransform);
 	}
 	
 	public void draw(java.awt.Shape s) {

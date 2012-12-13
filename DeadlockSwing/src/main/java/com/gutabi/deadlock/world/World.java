@@ -80,7 +80,7 @@ public class World implements Sweepable {
 	 */
 	public double t;
 	
-	public Map map;
+	public QuadrantMap map;
 	
 	AnimatedGrass animatedGrass1;
 	AnimatedGrass animatedGrass2;
@@ -105,7 +105,7 @@ public class World implements Sweepable {
 		int quadrantCols = ini[0].length;
 		int quadrantRows = ini.length;
 		
-		map = new Map(ini);
+		map = new QuadrantMap(ini);
 		
 		worldWidth = quadrantCols * APP.QUADRANT_WIDTH;
 		
@@ -925,10 +925,12 @@ public class World implements Sweepable {
 				ctxt.scale(PIXELS_PER_METER_DEBUG);
 				ctxt.translate(-worldViewport.x, -worldViewport.y);
 				
-				paintBackground(ctxt);
+				paintGrass(ctxt);
+				paintGraph(ctxt);
+//				paintSkidmarks(ctxt);
 				
 				paintScene(ctxt);
-					
+				
 				if (APP.DEBUG_DRAW) {
 					ctxt.setColor(Color.BLACK);
 					ctxt.setWorldPixelStroke(1);
@@ -959,16 +961,16 @@ public class World implements Sweepable {
 		
 	}
 	
-	private void paintBackground(RenderingContext ctxt) {
+	private void paintGrass(RenderingContext ctxt) {
 		
 		AffineTransform origTransform = ctxt.getTransform();
 		ctxt.translate(worldViewport.x, worldViewport.y);
 		
-		synchronized (VIEW) {
-			ctxt.paintWorldImage(
-					0, 0, canvasGrassImage, 0, 0, canvasGrassImage.getWidth(), canvasGrassImage.getHeight(),
-					0, 0, canvasGrassImage.getWidth(), canvasGrassImage.getHeight());
-		}
+		ctxt.paintWorldImage(
+				0, 0,
+				canvasGrassImage,
+				0, 0, canvasGrassImage.getWidth(), canvasGrassImage.getHeight(),
+				0, 0, canvasGrassImage.getWidth(), canvasGrassImage.getHeight());
 		
 		ctxt.setTransform(origTransform);
 		
@@ -982,18 +984,23 @@ public class World implements Sweepable {
 			animatedGrass3.paint(ctxt);
 		}
 		
+//		drawSkidMarks(g2);
+		
+	}
+	
+	private void paintGraph(RenderingContext ctxt) {
+		
+		AffineTransform origTransform = ctxt.getTransform();
 		origTransform = ctxt.getTransform();
 		ctxt.translate(worldViewport.x, worldViewport.y);
 		
-		synchronized (VIEW) {
-			ctxt.paintWorldImage(
-					0, 0, canvasGraphImage, 0, 0, canvasGraphImage.getWidth(), canvasGraphImage.getHeight(),
-					0, 0, canvasGraphImage.getWidth(), canvasGraphImage.getHeight());
-		}
+		ctxt.paintWorldImage(
+				0, 0,
+				canvasGraphImage,
+				0, 0, canvasGraphImage.getWidth(), canvasGraphImage.getHeight(),
+				0, 0, canvasGraphImage.getWidth(), canvasGraphImage.getHeight());
 		
 		ctxt.setTransform(origTransform);
-		
-//		drawSkidMarks(g2);
 		
 	}
 	

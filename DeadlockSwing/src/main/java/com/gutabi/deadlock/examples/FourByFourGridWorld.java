@@ -51,6 +51,7 @@ public class FourByFourGridWorld extends World {
 			Stroke s = new Stroke();
 			s.add(source.p);
 			s.add(sink.p);
+			s.finish();
 			s.processNewStroke();
 			
 		}
@@ -85,6 +86,7 @@ public class FourByFourGridWorld extends World {
 			Stroke s = new Stroke();
 			s.add(source.p);
 			s.add(sink.p);
+			s.finish();
 			s.processNewStroke();
 			
 		}

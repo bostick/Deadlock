@@ -17,6 +17,8 @@ public abstract class Menu {
 	public MenuItem hilited;
 	public MenuItem firstMenuItem;
 	
+	double widest;
+	
 	public BufferedImage canvasMenuImage;
 	
 	public Menu() {
@@ -123,6 +125,8 @@ public abstract class Menu {
 		MenuItem hit = hitTest(lastMovedMenuPoint);
 		if (hit != null && hit.active) {
 			hilited = hit;
+		} else {
+			hilited = null;
 		}
 		
 		VIEW.repaintCanvas();
