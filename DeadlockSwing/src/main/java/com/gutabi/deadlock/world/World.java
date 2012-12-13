@@ -891,11 +891,6 @@ public class World implements Sweepable {
 			
 			graph.renderBackground(canvasGraphContext);
 			
-//			if (APP.DEBUG_DRAW) {
-//				canvasGraphContext.setColor(Color.BLUE);
-//				new Circle(null, worldViewport.center, Vertex.INIT_VERTEX_RADIUS).paint(canvasGraphContext);
-//			}
-			
 			canvasGraphImageG2.dispose();
 			
 		}

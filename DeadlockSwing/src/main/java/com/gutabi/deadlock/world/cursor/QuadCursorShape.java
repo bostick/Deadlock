@@ -25,16 +25,12 @@ public class QuadCursorShape extends Shape {
 	public final Circle startCircle; 
 	public final Point end;
 	public final Point c;
-//	public final Circle pCircle;
-//	public final Line line;
-//	public final Capsule cap;
 	
 	public final QuadCurve q;
 	public final Line tan0;
 	public final Line tan1;
 	
 	public final List<Point> skeleton;
-//	public final Polyline skeletonShape;
 	public final CapsuleSequence skeletonSeq;
 	
 	private final AABB aabb;
@@ -46,16 +42,11 @@ public class QuadCursorShape extends Shape {
 		this.end = end;
 		this.c = c;
 		
-//		this.pCircle = new Circle(null, end, Vertex.INIT_VERTEX_RADIUS);
-		
-//		this.cap = new Capsule(null, this.first, pCircle, -1);
-		
 		q = new QuadCurve(start, c, end);
 		tan0 = new Line(c, start);
 		tan1 = new Line(c, end);
 		
 		skeleton = ShapeUtils.skeleton(q);
-//		skeletonShape = new Polyline(skeleton);
 		
 		List<Circle> cs = new ArrayList<Circle>();
 		for (Point p : skeleton) {
@@ -74,29 +65,12 @@ public class QuadCursorShape extends Shape {
 		
 	}
 	
-//	public boolean hitTest(Point p) {
-//		assert false;
-//		return false;
-//	}
-//	
-//	public Shape plus(Point p) {
-//		assert false;
-//		return null;
-//	}
-//	
-//	public AABB getAABB() {
-//		assert false;
-//		return null;
-//	}
-	
 	public java.awt.Shape java2D() {
 		assert false;
 		return null;
 	}
 	
 	public void draw(RenderingContext ctxt) {
-//		ctxt.setColor(Color.GRAY);
-//		ctxt.setWorldPixelStroke(1);
 		
 		if (!start.equals(end)) {
 			skeletonSeq.draw(ctxt);

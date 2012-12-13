@@ -5,6 +5,4 @@ public enum Axis {
 	TOPBOTTOM,
 	LEFTRIGHT,
 	
-//	NONE;
-	
 }

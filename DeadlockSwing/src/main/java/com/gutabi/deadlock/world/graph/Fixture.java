@@ -38,12 +38,7 @@ public final class Fixture extends Vertex {
 	
 	public int outstandingCars;
 	
-	
-	
-//	private org.jbox2d.collision.AABB b2dAABB;
 	private ProgressMeter progress;
-	
-	
 	
 	static int carIDCounter;
 	
@@ -57,15 +52,9 @@ public final class Fixture extends Vertex {
 		this.type = type;
 		
 		if (type == FixtureType.SOURCE) {
-			
-//			b2dAABB = new org.jbox2d.collision.AABB(shape.aabb.ul.vec2(), shape.aabb.br.vec2());
 			progress = new ProgressMeter(p.x - r - 1.5, p.y - r, 2, 0.5);
-			
 		} else {
-			
-//			b2dAABB = null;
 			progress = null;
-			
 		}
 		
 	}
@@ -88,15 +77,6 @@ public final class Fixture extends Vertex {
 	
 	public final boolean isUserDeleteable() {
 		return false;
-	}
-	
-	public void computeRadius(double maximumRadius) {
-		super.computeRadius(maximumRadius);
-		if (type == FixtureType.SOURCE) {
-			
-//			b2dAABB = new org.jbox2d.collision.AABB(shape.aabb.ul.vec2(), shape.aabb.br.vec2());
-			
-		}
 	}
 	
 	public void preStart() {

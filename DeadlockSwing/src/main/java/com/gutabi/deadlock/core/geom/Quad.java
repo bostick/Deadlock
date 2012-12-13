@@ -191,8 +191,6 @@ public class Quad extends SweepableShape {
 		
 		List<SweepEvent> events = new ArrayList<SweepEvent>();
 		
-//		Capsule cap = s.getCapsule(0);
-		
 		if (ShapeUtils.intersectCQ(s, this)) {
 			events.add(new SweepEvent(SweepEventType.enter(parent), this, s, 0, 0.0));
 		}
@@ -204,7 +202,6 @@ public class Quad extends SweepableShape {
 		
 		List<SweepEvent> events = new ArrayList<SweepEvent>();
 		
-//		Capsule cap = s.getCapsule(index);
 		Point c = s.a;
 		Point d = s.b;
 		

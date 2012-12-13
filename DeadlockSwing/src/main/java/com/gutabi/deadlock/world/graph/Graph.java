@@ -142,7 +142,6 @@ public class Graph implements Sweepable {
 	
 	public Set<Vertex> createRoadTop(Vertex start, Vertex end, List<Point> pts) {
 		
-//		createRoad(start, end, pts, (start.m==null&&start.supportsStopSigns()&&(!start.roads.isEmpty() || start.stopSignWithFirstRoad())?1:0)+(end.m==null&&end.supportsStopSigns()&&(!end.roads.isEmpty() || end.stopSignWithFirstRoad())?2:0));
 		createRoad(start, end, pts, (start.m==null&&start.supportsStopSigns()?1:0)+(end.m==null&&end.supportsStopSigns()?2:0));
 		
 		Set<Vertex> affected = new HashSet<Vertex>();

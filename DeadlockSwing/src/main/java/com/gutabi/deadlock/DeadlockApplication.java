@@ -24,8 +24,6 @@ public class DeadlockApplication {
 	public static boolean EXPLOSIONS_DRAW = true;
 	public static boolean DEBUG_DRAW = false;
 	
-//	public static final DeadlockModel APP = new DeadlockModel();
-	
 	public Menu menu;
 	
 	public World world;

@@ -11,12 +11,6 @@ public class CarProximityEvent extends DrivingEvent {
 	public CarProximityEvent(Car c, Car otherCar) {
 		this.c = c;
 		this.otherCar = otherCar;
-		
-//		if (otherCar.curDrivingEvent != null && (otherCar.curDrivingEvent instanceof CarProximityEvent && ((CarProximityEvent)otherCar.curDrivingEvent).otherCar == c)) {
-//			c.deadlocked = true;
-//			otherCar.deadlocked = true;
-//		}
-		
 	}
 	
 	public String toString() {

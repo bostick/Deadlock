@@ -268,7 +268,6 @@ public class Stroke {
 				if (pos instanceof EdgePosition) {
 					hit2 = APP.world.pureGraphBestHitTestCircle(new Circle(null, pos.p, e.circle.radius));
 				} else {
-//					assert false;
 					hit2 = ((VertexPosition)pos).v;
 				}
 				
@@ -277,13 +276,12 @@ public class Stroke {
 					
 					assert ShapeUtils.intersectCC(e.circle, v.getShape());
 					
-//					e.setVertex(v);
 				} else {
-//					e.setVertex((Vertex)hit2);
+					
 				}
 				
 			} else if (e.type == SweepEventType.ENTERVERTEX || e.type == SweepEventType.EXITVERTEX) {
-//				e.setVertex((Vertex)e.shape.parent);
+				
 			} else if (e.type == SweepEventType.ENTERSTROKE || e.type == SweepEventType.EXITSTROKE) {
 				
 				CapsuleSequence sub = seq.subsequence(e.index);
@@ -339,8 +337,6 @@ public class Stroke {
 				
 				while (true) {
 					
-//					hit = strokeBestHitTestCapsule(new Capsule(null, a, b, -1));
-					
 					CapsuleSequencePosition skeletonIntersection = sub.findSkeletonIntersection(a.center, b.center);
 					
 					if (skeletonIntersection != null) {
@@ -388,14 +384,6 @@ public class Stroke {
 				
 				if (pos == null) {
 					logger.debug("pos was null");
-//					pos = sub.findClosestGraphPosition(e.p, e.circle.radius);
-//					pos = sub.findClosestStrokePosition(e.p, e.circle.radius);
-					
-//					Capsule stillCapsule = (Capsule)e.still;
-//					Point stillA = stillCapsule.a;
-//					Point stillB = stillCapsule.b;
-//					
-//					Point.p
 					
 					pos = new CapsuleSequencePosition(seq, e.index, e.param);
 					
@@ -411,13 +399,7 @@ public class Stroke {
 					Intersection v = new Intersection(pos.p);
 					APP.world.addVertexTop(v);
 					
-//					assert ShapeUtils.intersectCC(e.circle, v.getShape());
-					
-//					e.setVertex(v);
-					
 				} else {
-					
-//					e.setVertex((Vertex)hit);
 					
 				}
 				
@@ -425,7 +407,6 @@ public class Stroke {
 				assert false;
 			}
 			
-//			assert e.getVertex() != null;
 		}
 		
 		/*
@@ -451,10 +432,6 @@ public class Stroke {
 		 * now go through and create roads
 		 */
 		for (int i = 0; i < events.size()-1; i++) {
-			
-//			if (i == 0) {
-//				return;
-//			}
 			
 			SweepEvent e0 = events.get(i);
 			SweepEvent e1 = events.get(i+1);
@@ -508,18 +485,9 @@ public class Stroke {
 			}
 			
 			APP.world.createRoadTop(v0, v1, roadPts);
-			
-//			if (i == 0) {
-//				return;
-//			}
 		}
 		
 	}
-	
-//	private int vertexCount;
-//	private int roadCapsuleCount;
-//	private int mergerCount;
-//	private int strokeCapsuleCount;
 	
 	private List<SweepEvent> events(boolean sweepSelf) {
 		assert finished;
@@ -573,13 +541,11 @@ public class Stroke {
 		if ((vertexCount + roadCapsuleCount + mergerCount + strokeCapsuleCount) == 0) {
 			logger.debug("start in nothing");
 			vertexEvents.add(new SweepEvent(null, null, start, 0, 0.0));
-//			assert false;
 		} else {
 //			logger.debug("start counts: " + vertexCount + " " + roadCapsuleCount + " " + mergerCount);
 		}
 		
 		List<Capsule> strokeEnteredCapsules = new ArrayList<Capsule>();
-//		Capsule prevCapsule = null;
 		
 		for (int i = 0; i < seq.capsuleCount(); i++) {
 			
@@ -710,9 +676,7 @@ public class Stroke {
 		if ((vertexCount + roadCapsuleCount + mergerCount + strokeCapsuleCount) == 0) {
 			logger.debug("end in nothing");
 			vertexEvents.add(new SweepEvent(null, null, cs.get(cs.size()-1), cs.size()-1, 0.0));
-//			assert false;
 		}
-		
 		
 		List<SweepEvent> adj = new ArrayList<SweepEvent>();
 		

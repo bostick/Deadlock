@@ -92,15 +92,6 @@ public class QuadrantMap {
 		return quadrants[row][col];
 	}
 	
-//	public void setCursorPoint(Cursor c, Point lastPoint) {
-//		Quadrant q = findQuadrant(lastPoint);
-//		if (q != null) {
-//			q.setCursorPoint(c, lastPoint);
-//		} else {
-//			c.setPoint(lastPoint);
-//		}
-//	}
-	
 	public Point getPoint(Point p) {
 		Quadrant q = findQuadrant(p);
 		if (q != null) {

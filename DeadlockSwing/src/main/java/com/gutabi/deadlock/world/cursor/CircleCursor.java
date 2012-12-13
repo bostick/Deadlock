@@ -202,8 +202,6 @@ public class CircleCursor extends CursorBase {
 		}
 	}
 	
-//	Point lastPressCursorPoint;
-	
 	public void released(InputEvent ev) {
 		switch (mode) {
 		case FREE:
@@ -216,10 +214,7 @@ public class CircleCursor extends CursorBase {
 		}
 	}
 	
-//	Point lastDragCursorPoint;
 	Point origKnobCenter;
-	
-//	Point lastMovedCursorPoint;
 	
 	public void draw(RenderingContext ctxt) {
 		

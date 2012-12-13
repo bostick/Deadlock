@@ -36,24 +36,6 @@ public class CircleCursorShape extends Shape {
 		
 	}
 	
-//	@Override
-//	public Shape plus(Point p) {
-//		// TODO Auto-generated method stub
-//		return null;
-//	}
-//
-//	@Override
-//	public boolean hitTest(Point p) {
-//		// TODO Auto-generated method stub
-//		return false;
-//	}
-//
-//	@Override
-//	public AABB getAABB() {
-//		// TODO Auto-generated method stub
-//		return null;
-//	}
-	
 	public java.awt.Shape java2D() {
 		assert false;
 		return null;
@@ -62,9 +44,6 @@ public class CircleCursorShape extends Shape {
 	public void draw(RenderingContext ctxt) {
 		c0.draw(ctxt);
 		c1.draw(ctxt);
-		
-//		ctxt.setColor(Color.BLUE);
-//		skeletonShape.draw(ctxt);
 	}
 
 }

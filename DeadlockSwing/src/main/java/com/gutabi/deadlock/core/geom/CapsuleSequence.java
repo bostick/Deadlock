@@ -55,14 +55,6 @@ public class CapsuleSequence extends SweepableShape {
 		}
 	}
 	
-//	public Point getPoint(int index, double param) {
-//		if (DMath.equals(param, 0.0)) {
-//			return getPoint(index);
-//		} else {
-//			return Point.point(getPoint(index), getPoint(index+1), param);
-//		}
-//	}
-	
 	public int capsuleCount() {
 		return capsuleCount;
 	}
@@ -123,7 +115,6 @@ public class CapsuleSequence extends SweepableShape {
 					assert DMath.equals(e.param, 1.0);
 					if (i < caps.size()-1) {
 						
-//						events.add(new SweepEvent(e.type, e.shape, caps.get(e.index+1), e.index+1, 0.0));
 						events.add(e);
 						
 					} else {
@@ -132,7 +123,6 @@ public class CapsuleSequence extends SweepableShape {
 				}
 				
 			}
-//			events.addAll(capsuleEvents);
 			
 		}
 		

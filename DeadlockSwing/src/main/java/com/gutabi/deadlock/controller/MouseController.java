@@ -84,14 +84,6 @@ public class MouseController implements MouseListener, MouseMotionListener {
 	
 	public void entered(InputEvent ev) {
 		
-//		Component c = ev.c;
-//		
-//		if (c == VIEW.canvas) {
-//			
-//			VIEW.canvas.entered(ev);
-//			
-//		}
-		
 	}
 	
 	public void exited(InputEvent ev) {

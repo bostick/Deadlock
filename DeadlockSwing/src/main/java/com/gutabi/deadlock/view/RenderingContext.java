@@ -11,10 +11,7 @@ import java.awt.Stroke;
 import java.awt.font.FontRenderContext;
 import java.awt.font.TextLayout;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Ellipse2D;
-import java.awt.geom.GeneralPath;
 import java.awt.geom.Line2D;
-import java.awt.geom.Rectangle2D;
 
 import org.jbox2d.callbacks.DebugDraw;
 import org.jbox2d.common.Color3f;
@@ -117,13 +114,6 @@ public class RenderingContext extends DebugDraw {
 		g2.setTransform(origTransform);
 	}
 	
-//	public void paintImage(double x, double y, Image img, int dx1, int dy1, int dx2, int dy2, int sx1, int sy1, int sx2, int sy2) {
-//		AffineTransform origTransform = g2.getTransform();
-//		g2.translate(x, y);
-//		g2.drawImage(img, dx1, dy1, dx2, dy2, sx1, sy1, sx2, sy2, null);
-//		g2.setTransform(origTransform);
-//	}
-	
 	public void paintImage(double x, double y, Image img, int dx1, int dy1, int dx2, int dy2, int sx1, int sy1, int sx2, int sy2) {
 		AffineTransform origTransform = g2.getTransform();
 		g2.translate(x, y);
@@ -132,77 +122,37 @@ public class RenderingContext extends DebugDraw {
 	}
 	
 	public void paintImage(int x, int y, Image img, int dx1, int dy1, int dx2, int dy2, int sx1, int sy1, int sx2, int sy2) {
-//		AffineTransform origTransform = g2.getTransform();
-//		g2.translate(x, y);
 		g2.drawImage(img, dx1 + x, dy1 + y, dx2 + x, dy2 + y, sx1, sy1, sx2, sy2, null);
-//		g2.setTransform(origTransform);
 	}
 	
 	public void draw(java.awt.Shape s) {
 		g2.draw(s);
 	}
 	
-//	public void draw(Line2D line) {
-//		g2.draw(line);
-//	}
+	public void fill(java.awt.Shape s) {
+		g2.fill(s);
+	}
 	
 	public void fillRect(int x, int y, int width, int height) {
 		g2.fillRect(x, y, width, height);
 	}
 	
-	public void fill(Ellipse2D e) {
-		g2.fill(e);
-	}
-	
-//	public void draw(Ellipse2D e) {
-//		g2.draw(e);
-//	}
-	
-	public void fill(GeneralPath e) {
-		g2.fill(e);
-	}
-	
-//	public void draw(GeneralPath e) {
-//		g2.draw(e);
-//	}
-	
-	public void fill(Rectangle2D e) {
-		g2.fill(e);
-	}
-	
-//	public void draw(Rectangle2D e) {
-//		g2.draw(e);
-//	}
-	
-//	public void draw(Path2D e) {
-//		g2.draw(e);
-//	}
-	
-//	public void draw(QuadCurve2D e) {
-//		g2.draw(e);
-//	}
-	
-	@Override
 	public void drawPoint(Vec2 argPoint, float argRadiusOnScreen, Color3f argColor) {
 		assert false;
 	}
 
-	@Override
 	public void drawSolidPolygon(Vec2[] vertices, int vertexCount, Color3f color) {
 		assert false;
 	}
 
-	@Override
 	public void drawCircle(Vec2 center, float radius, Color3f color) {
 		assert false;
 	}
 
-	@Override
 	public void drawSolidCircle(Vec2 center, float radius, Vec2 axis, Color3f color) {
 		assert false;
 	}
 
-	@Override
 	public void drawSegment(Vec2 p1, Vec2 p2, Color3f color) {
 		g2.setColor(Color.WHITE);
 		setWorldPixelStroke(1);
@@ -210,23 +160,17 @@ public class RenderingContext extends DebugDraw {
 		g2.draw(line);
 	}
 	
-	@Override
 	public void drawTransform(Transform xf) {
 		assert false;
 	}
 
-	@Override
 	public void drawString(float x, float y, String s, Color3f color) {
-//		assert false;
+		
 	}
 	
 	public void draw(TextLayout layout, double baselineX, double baselineY) {
 		layout.draw(g2, (float)baselineX, (float)baselineY);
 	}
-	
-//	public Font getFont() {
-//		return g2.getFont();
-//	}
 	
 	public void setXORMode(Color c) {
 		g2.setXORMode(c);

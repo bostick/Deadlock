@@ -58,10 +58,6 @@ public class Capsule extends SweepableShape implements SweeperShape {
 		this.b = bc.center;
 		this.r = ac.radius;
 		
-//		if (a.equals(b)) {
-//			throw new IllegalArgumentException("a equals b");
-//		}
-		
 		if (!DMath.equals(ac.radius, bc.radius)) {
 			throw new IllegalArgumentException("radii not equal");
 		}
@@ -151,8 +147,6 @@ public class Capsule extends SweepableShape implements SweeperShape {
 		
 		List<SweepEvent> events = new ArrayList<SweepEvent>();
 		
-//		Capsule firstCap = s.getCapsule(0);
-		
 		if (ShapeUtils.intersectCCap(c, this)) {
 			events.add(new SweepEvent(SweepEventType.enter(parent), this, c, 0, 0.0));
 		}
@@ -164,7 +158,6 @@ public class Capsule extends SweepableShape implements SweeperShape {
 		
 		List<SweepEvent> events = new ArrayList<SweepEvent>();
 		
-//		Capsule cap = s.getCapsule(index);
 		Point c = cap.a;
 		Point d = cap.b;
 		

@@ -110,39 +110,6 @@ public class QuadCursor extends CursorBase {
 		return shape;
 	}
 	
-//	public AABB startKnob() {
-//		double pixel = 1/APP.world.PIXELS_PER_METER_DEBUG;
-//		AABB rect = new AABB(start.x + -2 * pixel, start.y + -2 * pixel, 5 * pixel, 5 * pixel);
-//		return rect;
-//	}
-//	
-//	public AABB controlKnob() {
-//		double pixel = 1/APP.world.PIXELS_PER_METER_DEBUG;
-//		AABB rect = new AABB(c.x + -2 * pixel, c.y + -2 * pixel, 5 * pixel, 5 * pixel);
-//		return rect;
-//	}
-//	
-//	public AABB endKnob() {
-//		double pixel = 1/APP.world.PIXELS_PER_METER_DEBUG;
-//		AABB rect = new AABB(p.x + -2 * pixel, p.y + -2 * pixel, 5 * pixel, 5 * pixel);
-//		return rect;
-//	}
-	
-//	public void setStartKnob(Point startCenter) {
-//		start = startCenter;
-//		shape = new QuadCursorShape(start, c, p);	
-//	}
-//	
-//	public void setControlKnob(Point controlCenter) {
-//		c = controlCenter;
-//		shape = new QuadCursorShape(start, c, p);	
-//	}
-//	
-//	public void setEndKnob(Point endCenter) {
-//		p = endCenter;
-//		shape = new QuadCursorShape(start, c, p);	
-//	}
-	
 	public void escKey() {
 		switch (mode) {
 		case FREE:
@@ -218,17 +185,9 @@ public class QuadCursor extends CursorBase {
 		}
 	}
 	
-//	Point lastDragCursorPoint;
 	Point origKnobCenter;
-//	Point origControlKnobCenter;
-//	Point origEndKnobCenter;
 	
 	public void dragged(InputEvent ev) {
-//		Point p = ev.p;
-		
-//		boolean lastDragCursorPointWasNull = (lastDragCursorPoint == null);
-//		lastDragCursorPoint = APP.world.canvasToWorld(p);
-//		lastMovedOrDraggedCursorPoint = lastDragCursorPoint;
 		
 		switch (mode) {
 		case FREE:
@@ -264,9 +223,6 @@ public class QuadCursor extends CursorBase {
 			break;
 		}
 	}
-	
-//	Point lastMovedCursorPoint;
-//	Point lastMovedOrDraggedCursorPoint;
 	
 	public void draw(RenderingContext ctxt) {
 		

@@ -18,10 +18,6 @@ public class Canvas extends java.awt.Canvas {
 	
 	public Canvas() {
 		
-//		setSize(new Dimension(VIEW.CANVAS_WIDTH, VIEW.CANVAS_HEIGHT));
-//		setPreferredSize(new Dimension(VIEW.CANVAS_WIDTH, VIEW.CANVAS_HEIGHT));
-//		setMaximumSize(new Dimension(VIEW.CANVAS_WIDTH, VIEW.CANVAS_HEIGHT));
-		
 	}
 	
 	public void postDisplay() {
@@ -38,9 +34,6 @@ public class Canvas extends java.awt.Canvas {
 		}
 		
 	}
-	
-//	Point lastPressCanvasPoint;
-//	Point lastDragCanvasPoint;
 	
 	public void pressed(InputEvent ev) {
 		
@@ -122,18 +115,6 @@ public class Canvas extends java.awt.Canvas {
 		}
 		
 	}
-	
-//	public void entered(InputEvent ev) {
-//		
-//		switch (CONTROLLER.mode) {
-//		case MENU:
-//			break;
-//		case WORLD:
-//			APP.world.entered(ev);
-//			break;
-//		}
-//		
-//	}
 	
 	public void exited(InputEvent ev) {
 		

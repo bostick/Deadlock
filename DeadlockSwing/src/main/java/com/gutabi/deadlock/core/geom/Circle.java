@@ -86,7 +86,6 @@ public class Circle extends SweepableShape implements SweeperShape {
 	}
 	
 	public Point getPoint(double param) {
-//		assert index == 0;
 		assert DMath.equals(param, 0.0);
 		return center;
 	}
@@ -94,8 +93,6 @@ public class Circle extends SweepableShape implements SweeperShape {
 	public List<SweepEvent> sweepStart(Circle s) {
 		
 		List<SweepEvent> events = new ArrayList<SweepEvent>();
-		
-//		Capsule cap = s.getCapsule(0);
 		
 		if (ShapeUtils.intersectCC(this, s)) {
 			events.add(new SweepEvent(SweepEventType.enter(parent), this, s, 0, 0.0));
@@ -108,7 +105,6 @@ public class Circle extends SweepableShape implements SweeperShape {
 		
 		List<SweepEvent> events = new ArrayList<SweepEvent>();
 		
-//		Capsule cap = s.getCapsule(index);
 		Point c = s.a;
 		Point d = s.b;
 		

@@ -15,7 +15,6 @@ public class StraightEdgeCursorShape extends Shape {
 	
 	public final Circle firstCircle;
 	public final Circle pCircle;
-//	public final Line line;
 	public final Capsule cap;
 	
 	private final AABB aabb;
@@ -31,29 +30,12 @@ public class StraightEdgeCursorShape extends Shape {
 		
 	}
 	
-//	public boolean hitTest(Point p) {
-//		assert false;
-//		return false;
-//	}
-//	
-//	public Shape plus(Point p) {
-//		assert false;
-//		return null;
-//	}
-//	
-//	public AABB getAABB() {
-//		assert false;
-//		return null;
-//	}
-	
 	public java.awt.Shape java2D() {
 		assert false;
 		return null;
 	}
 	
 	public void draw(RenderingContext ctxt) {
-//		ctxt.setColor(Color.GRAY);
-//		ctxt.setWorldPixelStroke(1);
 		
 		if (!firstCircle.center.equals(pCircle.center)) {
 			cap.draw(ctxt);

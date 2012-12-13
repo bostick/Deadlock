@@ -186,11 +186,6 @@ public abstract class Car extends Entity {
 	Point prevWorldPoint0;
 	Point prevWorldPoint3;
 	
-	/*
-	 * 
-	 */
-	//public DrivingEvent curDrivingEvent;
-//	List<DrivingEvent> eventQueue = new ArrayList<DrivingEvent>();
 	public VertexArrivalEvent curVertexArrivalEvent;
 	public CarProximityEvent curCarProximityEvent;
 	List<VertexEvent> vertexDepartureQueue = new ArrayList<VertexEvent>();
@@ -403,10 +398,6 @@ public abstract class Car extends Entity {
 		case SINKED:
 		case SKIDDED:
 		case CRASHED:
-//			overallPos = null;
-			
-//			hit = MODEL.world.pureGraphBestHitTestQuad(this.shape);
-			
 			break;
 		}
 		
@@ -451,9 +442,6 @@ public abstract class Car extends Entity {
 		state = CarStateEnum.CRASHED;
 		
 		overallPos = null;
-//		goalPoint = null;
-		
-//		source.outstandingCars--;
 		
 		overallPath.currentCars.remove(this);
 		for (GraphPositionPath path : overallPath.sharedEdgesMap.keySet()) {
@@ -464,8 +452,6 @@ public abstract class Car extends Entity {
 		deadlocked = false;
 		decelTime = -1;
 		
-//		curDrivingEvent = null;
-//		eventQueue.clear();
 		curVertexArrivalEvent = null;
 		curCarProximityEvent = null;
 		
@@ -528,20 +514,11 @@ public abstract class Car extends Entity {
 				curCarProximityEvent = findNewCarProximityEvent();
 			}
 			
-//			CarProximityEvent newCarProximityEvent = findNewCarProximityEvent();
-//			if (newCarProximityEvent != null && !eventQueue.contains(newCarProximityEvent)) {
-//				eventQueue.add(newCarProximityEvent);
-//			}
-			
 			if (stoppedTime == -1 && curVertexArrivalEvent == null) {
 				curVertexArrivalEvent = findNewVertexArrivalEvent();
-//				/*
-//				 * since stopped, we know cannot have a new vertex arrival event
-//				 */
-//				VertexArrivalEvent newVertexArrivalEvent = findNewVertexArrivalEvent();
-//				if (newVertexArrivalEvent != null && !eventQueue.contains(newVertexArrivalEvent)) {
-//					eventQueue.add(newVertexArrivalEvent);
-//				}
+				/*
+				 * since stopped, we know cannot have a new vertex arrival event
+				 */
 			}
 			
 			if (curCarProximityEvent != null) {
@@ -560,7 +537,6 @@ public abstract class Car extends Entity {
 			
 			if (curCarProximityEvent == null && curVertexArrivalEvent == null) {
 				
-//				assert state == CarStateEnum.BRAKING;
 				state = CarStateEnum.DRIVING;
 				
 				stoppedTime = -1;
@@ -650,7 +626,6 @@ public abstract class Car extends Entity {
 			if (decelTime == -1) {
 				// start braking
 				
-//				assert state == CarStateEnum.DRIVING;
 				state = CarStateEnum.BRAKING;
 				
 			} else {
@@ -665,17 +640,7 @@ public abstract class Car extends Entity {
 					}
 					
 					if (otherPosition == null || DMath.greaterThan(overallPos.distanceTo(otherPosition), carProximityLookahead)) {
-						
-						// start driving
-						
-//						curDrivingEvent = null;
-//						eventQueue.remove(e);
-//						if (eventingLogger.isDebugEnabled()) {
-//							eventingLogger.debug("t: " + t + " car " + this + ": " + curDrivingEvent);
-//						}
-						
 						return false;
-						
 					}
 					
 				}
@@ -686,29 +651,8 @@ public abstract class Car extends Entity {
 			
 			if (((VertexArrivalEvent)e).sign.isEnabled()) {
 				if (decelTime == -1) {
-					// start braking
-					
-//					assert state == CarStateEnum.DRIVING;
-					state = CarStateEnum.BRAKING;
-					
+					state = CarStateEnum.BRAKING;					
 				} else if (stoppedTime != -1 && t > stoppedTime + COMPLETE_STOP_WAIT_TIME && ((VertexArrivalEvent)e).v.carQueue.get(0) == this) {
-					// start driving
-					
-//					curDrivingEvent = null;
-//					eventQueue.remove(curDrivingEvent);
-//					if (eventingLogger.isDebugEnabled()) {
-//						eventingLogger.debug("t: " + t + " car " + this + ": " + curDrivingEvent);
-//					}
-					
-//					if (empty) {
-//						assert state == CarStateEnum.BRAKING;
-//						state = CarStateEnum.DRIVING;
-//						
-//						stoppedTime = -1;
-//						deadlocked = false;
-//						decelTime = -1;
-//					}
-					
 					return false;
 					
 				}
@@ -721,13 +665,6 @@ public abstract class Car extends Entity {
 				 * 
 				 * all that matters now is to be driving
 				 */
-				
-//				curDrivingEvent = null;
-//				eventQueue.remove(e);
-//				if (eventingLogger.isDebugEnabled()) {
-//					eventingLogger.debug("t: " + t + " car " + this + ": " + curDrivingEvent);
-//				}
-				
 				return false;
 				
 			}
@@ -787,10 +724,6 @@ public abstract class Car extends Entity {
 	}
 	
 	private void updateFriction() {
-		
-//		if (stoppedTime != -1) {
-//			return;
-//		}
 		
 		Vec2 cancelingImpulse = vel.mul(-1).mul(mass);
 		
@@ -995,7 +928,6 @@ public abstract class Car extends Entity {
 		case CRASHED:
 		case SKIDDED:
 			computeDynamicPropertiesAlways();
-//			computeDynamicPropertiesMoving();
 			
 			if (stoppedTime == -1) {
 				
@@ -1023,8 +955,6 @@ public abstract class Car extends Entity {
 					computeDynamicPropertiesMoving();
 					
 				}
-				
-				//computeDynamicPropertiesMoving();
 				
 			}
 			

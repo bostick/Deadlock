@@ -31,8 +31,6 @@ public class ProgressMeter {
 	}
 	
 	public void setProgress(double p) {
-//		assert p >= 0.0;
-//		assert p <= 1.0;
 		
 		this.p = p;
 		

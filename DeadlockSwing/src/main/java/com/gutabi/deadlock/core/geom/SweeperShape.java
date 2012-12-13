@@ -8,6 +8,4 @@ public interface SweeperShape {
 	
 	double getRadius();
 	
-//	int getIndex();
-	
 }

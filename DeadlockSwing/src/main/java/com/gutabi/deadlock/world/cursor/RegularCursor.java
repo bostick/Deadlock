@@ -158,9 +158,6 @@ public class RegularCursor extends CursorBase {
 		CubicCursor c = new CubicCursor();
 		c.setStart(APP.world.getPoint(APP.world.lastMovedOrDraggedWorldPoint));
 		c.setPoint(APP.world.getPoint(APP.world.lastMovedOrDraggedWorldPoint));
-//		Point middle = c.start.plus(c.p.minus(c.start).multiply(0.5));
-//		Point control = middle.plus(new Point(0, -4 * Vertex.INIT_VERTEX_RADIUS));
-//		c.setControl(control);
 		APP.world.cursor = c;
 		VIEW.repaintCanvas();
 	}

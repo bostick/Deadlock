@@ -42,16 +42,11 @@ public class DeadlockView {
 	public final Logger logger = Logger.getLogger(DeadlockView.class);
 	
 	public void init() throws Exception {
-		
-//		assert canvas.getWidth() == CANVAS_WIDTH;
-//		assert canvas.getHeight() == CANVAS_HEIGHT;
-		
 		sheet = ImageIO.read(new URL(APP.codebase, "media/sheet.png"));
 		explosionSheet = ImageIO.read(new URL(APP.codebase, "media\\explosionSheet.png"));
 		titleBackground = ImageIO.read(new URL(APP.codebase, "media\\title_background.png"));
 		title_white = ImageIO.read(new URL(APP.codebase, "media\\title_white.png"));
 		copyright = ImageIO.read(new URL(APP.codebase, "media\\copyright.png"));
-		
 	}
 	
 	public void setupFrame() {
@@ -91,9 +86,7 @@ public class DeadlockView {
 		canvas.addKeyListener(kc);
 		
 		Container cp = container.getContentPane();
-//		cp.setLayout(new BoxLayout(cp, BoxLayout.X_AXIS));
 		cp.add(canvas);
-		
 	}
 	
 	public void teardownCanvas(RootPaneContainer container) {
@@ -102,7 +95,6 @@ public class DeadlockView {
 		cp.remove(canvas);
 		
 		canvas = null;
-		
 	}
 	
 	public void setupCanvasAndControlPanel(RootPaneContainer container) {
@@ -131,7 +123,6 @@ public class DeadlockView {
 		cp.setLayout(new BoxLayout(cp, BoxLayout.X_AXIS));
 		cp.add(canvas);
 		cp.add(controlPanel);
-		
 	}
 	
 	public void teardownCanvasAndControlPanel(RootPaneContainer container) {

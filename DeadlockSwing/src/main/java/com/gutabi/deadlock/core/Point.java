@@ -220,15 +220,12 @@ public class Point {
 			throw new IllegalArgumentException();
 		}
 		
-//		Point c = point(start, end, param);
 		double cx = start.x + param * (end.x - start.x);
 		double cy = start.y + param * (end.y - start.y);
 		
 		double rad = Math.atan2(end.y - start.y, end.x - start.x);
 		double x = Math.cos(rad) * dist + cx;
 		double y = Math.sin(rad) * dist + cy;
-		
-//		Point m = new Point(x, y);
 		
 		assert DMath.equals(distance(cx, cy, x, y), dist);
 		

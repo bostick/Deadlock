@@ -107,40 +107,6 @@ public class MainMenu extends Menu {
 					VIEW.repaintCanvas();
 					VIEW.repaintControlPanel();
 					
-					
-					
-					
-					
-					
-//					APP.world = new FourByFourGridWorld();
-//					
-//					APP.init();
-//					
-//					APP.world.PIXELS_PER_METER_DEBUG = 12.5;
-//					
-//					APP.world.worldViewport = new AABB(
-//							-(VIEW.canvas.getWidth() / APP.world.PIXELS_PER_METER_DEBUG) / 2 + APP.world.worldWidth/2 ,
-//							-(VIEW.canvas.getHeight() / APP.world.PIXELS_PER_METER_DEBUG) / 2 + APP.world.worldHeight/2,
-//							VIEW.canvas.getWidth() / APP.world.PIXELS_PER_METER_DEBUG,
-//							VIEW.canvas.getHeight() / APP.world.PIXELS_PER_METER_DEBUG);
-//					
-//					VIEW.teardownCanvas(VIEW.container);
-//					
-//					VIEW.setupCanvasAndControlPanel(VIEW.container);
-//					
-//					((JFrame)VIEW.container).setVisible(true);
-//					VIEW.canvas.requestFocusInWindow();
-//					
-//					CONTROLLER.mode = ControlMode.WORLD;
-//					
-//					VIEW.postDisplay();
-//					
-//					APP.render();
-//					
-//					VIEW.repaintCanvas();
-//					VIEW.repaintControlPanel();
-					
-					
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -189,7 +155,6 @@ public class MainMenu extends Menu {
 				
 			}
 		};
-//		editorMenuItem.active = false;
 		add(quadrantEditorMenuItem);
 		
 		MenuItem loadMenuItem = new MenuItem(MainMenu.this, "Load...") {
