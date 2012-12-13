@@ -5,7 +5,10 @@ import static com.gutabi.deadlock.DeadlockApplication.APP;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jbox2d.callbacks.QueryCallback;
+
 import com.gutabi.deadlock.core.Point;
+import com.gutabi.deadlock.core.geom.AABB;
 import com.gutabi.deadlock.view.RenderingContext;
 import com.gutabi.deadlock.world.car.Car;
 import com.gutabi.deadlock.world.car.CarProximityEvent;
@@ -37,6 +40,22 @@ public class CarMap {
 			}
 		}
 		return null;
+	}
+	
+	public boolean intersect(AABB aabb) {
+		
+		org.jbox2d.collision.AABB b2dAABB = new org.jbox2d.collision.AABB(aabb.ul.vec2(), aabb.br.vec2());
+		
+		final boolean[] intersecting = new boolean[1];
+		
+		APP.world.b2dWorld.queryAABB(new QueryCallback() {
+			public boolean reportFixture(org.jbox2d.dynamics.Fixture fixture) {
+				intersecting[0] = true;
+				return false;
+			}
+		}, b2dAABB);
+		
+		return intersecting[0];
 	}
 	
 	public void paint(RenderingContext ctxt) {

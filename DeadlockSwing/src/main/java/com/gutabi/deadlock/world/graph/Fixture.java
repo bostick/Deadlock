@@ -8,8 +8,6 @@ import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jbox2d.callbacks.QueryCallback;
-
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.view.ProgressMeter;
 import com.gutabi.deadlock.view.RenderingContext;
@@ -42,7 +40,7 @@ public final class Fixture extends Vertex {
 	
 	
 	
-	private org.jbox2d.collision.AABB b2dAABB;
+//	private org.jbox2d.collision.AABB b2dAABB;
 	private ProgressMeter progress;
 	
 	
@@ -60,12 +58,12 @@ public final class Fixture extends Vertex {
 		
 		if (type == FixtureType.SOURCE) {
 			
-			b2dAABB = new org.jbox2d.collision.AABB(shape.aabb.ul.vec2(), shape.aabb.br.vec2());
+//			b2dAABB = new org.jbox2d.collision.AABB(shape.aabb.ul.vec2(), shape.aabb.br.vec2());
 			progress = new ProgressMeter(p.x - r - 1.5, p.y - r, 2, 0.5);
 			
 		} else {
 			
-			b2dAABB = null;
+//			b2dAABB = null;
 			progress = null;
 			
 		}
@@ -96,7 +94,7 @@ public final class Fixture extends Vertex {
 		super.computeRadius(maximumRadius);
 		if (type == FixtureType.SOURCE) {
 			
-			b2dAABB = new org.jbox2d.collision.AABB(shape.aabb.ul.vec2(), shape.aabb.br.vec2());
+//			b2dAABB = new org.jbox2d.collision.AABB(shape.aabb.ul.vec2(), shape.aabb.br.vec2());
 			
 		}
 	}
@@ -188,17 +186,7 @@ public final class Fixture extends Vertex {
 			outstandingCars++;
 		}
 		
-	}
-	
-	
-	private boolean overlapping;
-	
-	private QueryCallback qc = new QueryCallback() {
-		public boolean reportFixture(org.jbox2d.dynamics.Fixture fixture) {
-			overlapping = true;
-			return false;
-		}
-	};
+	} 
 	
 	private boolean active(double t) {
 		
@@ -219,9 +207,9 @@ public final class Fixture extends Vertex {
 			return false;
 		}
 		
-		overlapping = false;
-		APP.world.b2dWorld.queryAABB(qc, b2dAABB);
-		if (overlapping) {
+		boolean carIntersecting = APP.world.carMap.intersect(shape.aabb);
+		
+		if (carIntersecting) {
 			return false;
 		}
 		
