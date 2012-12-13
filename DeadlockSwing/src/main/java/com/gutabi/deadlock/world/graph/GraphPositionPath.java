@@ -18,6 +18,7 @@ import com.gutabi.deadlock.core.geom.CapsuleSequence;
 import com.gutabi.deadlock.core.geom.Quad;
 import com.gutabi.deadlock.core.geom.ShapeUtils;
 import com.gutabi.deadlock.world.car.Car;
+import com.gutabi.deadlock.world.car.Driver;
 import com.gutabi.deadlock.world.car.VertexArrivalEvent;
 
 @SuppressWarnings("static-access")
@@ -42,7 +43,7 @@ public class GraphPositionPath {
 	
 	private List<GraphPositionPathPosition> borderPositions;
 	
-	public final List<Car> currentCars = new ArrayList<Car>();
+	public final List<Driver> currentDrivers = new ArrayList<Driver>();
 	
 	/**
 	 * given another path, what is the set of shared edges?
@@ -231,11 +232,11 @@ public class GraphPositionPath {
 	/**
 	 * return list of events starting from position pos, and going distance dist
 	 */
-	public VertexArrivalEvent vertexArrivalTest(Car c, double dist) {
+	public VertexArrivalEvent vertexArrivalTest(Driver d, double dist) {
 		
 		for (GraphPositionPathPosition p : borderPositions) {
-			if (p.combo >= c.overallPos.combo && DMath.lessThanEquals(c.overallPos.distanceTo(p), dist)) {
-				return new VertexArrivalEvent(c, p);
+			if (p.combo >= d.overallPos.combo && DMath.lessThanEquals(d.overallPos.distanceTo(p), dist)) {
+				return new VertexArrivalEvent(d, p);
 			}
 		}
 		
@@ -381,34 +382,34 @@ public class GraphPositionPath {
 		return new GraphPositionPathPosition(this, closestIndex, closestParam);
 	}
 	
-	private Map<Car, GraphPositionPathPosition> hitMap = new HashMap<Car, GraphPositionPathPosition>();
+	private Map<Driver, GraphPositionPathPosition> hitMap = new HashMap<Driver, GraphPositionPathPosition>();
 	
 	public void precomputeHitTestData() {
 		
-		Map<Car, GraphPositionPathPosition> n = precomputeHitTestDataNew();
+		Map<Driver, GraphPositionPathPosition> n = precomputeHitTestDataNew();
 		
 		hitMap = n;
 		
 	}
 	
-	private Map<Car, GraphPositionPathPosition> precomputeHitTestDataNew() {
+	private Map<Driver, GraphPositionPathPosition> precomputeHitTestDataNew() {
 		
-		Map<Car, GraphPositionPathPosition> map = new HashMap<Car, GraphPositionPathPosition>();
+		Map<Driver, GraphPositionPathPosition> map = new HashMap<Driver, GraphPositionPathPosition>();
 		
-		carLoop:
-		for (Car c : currentCars) {
+		driverLoop:
+		for (Driver d : currentDrivers) {
 			
-			if (c.overallPath.equals(this) && !hasLoop) {
+			if (d.overallPath.equals(this) && !hasLoop) {
 				
-				map.put(c, c.overallPos);
+				map.put(d, d.overallPos);
 				continue;
 				
 			}
 			
-			Set<Edge> sharedEdges = sharedEdgesMap.get(c.overallPath);
+			Set<Edge> sharedEdges = sharedEdgesMap.get(d.overallPath);
 			assert !sharedEdges.isEmpty();
 			
-			GraphPosition gp = c.overallPos.getGraphPosition();
+			GraphPosition gp = d.overallPos.getGraphPosition();
 			
 			if (gp instanceof VertexPosition) {
 				VertexPosition vp = (VertexPosition)gp;
@@ -417,12 +418,12 @@ public class GraphPositionPath {
 					
 					int vi = verticesMap.get(vp.v);
 					
-					assert !map.containsValue(c);
-					map.put(c, new GraphPositionPathPosition(this, vi, 0.0));
+					assert !map.containsValue(d);
+					map.put(d, new GraphPositionPathPosition(this, vi, 0.0));
 					
 				}
 				
-				continue carLoop;
+				continue driverLoop;
 				
 			} else {
 				EdgePosition ep = (EdgePosition)gp;
@@ -437,8 +438,8 @@ public class GraphPositionPath {
 					
 					if (e.getReferenceVertex(ep.axis) == v) {
 						
-						assert !map.containsValue(c);
-						map.put(c, new GraphPositionPathPosition(this, ei + ep.getIndex(), ep.getParam()));
+						assert !map.containsValue(d);
+						map.put(d, new GraphPositionPathPosition(this, ei + ep.getIndex(), ep.getParam()));
 						
 						
 					} else {
@@ -449,14 +450,14 @@ public class GraphPositionPath {
 						int newIndex = (int)Math.floor(newCombo);
 						double newParam = newCombo - newIndex;
 						
-						assert !map.containsValue(c);
-						map.put(c, new GraphPositionPathPosition(this, ei + newIndex, newParam));
+						assert !map.containsValue(d);
+						map.put(d, new GraphPositionPathPosition(this, ei + newIndex, newParam));
 						
 					}
 					
 				}
 				
-				continue carLoop;
+				continue driverLoop;
 				
 			}
 		}
@@ -469,13 +470,13 @@ public class GraphPositionPath {
 	}
 	
 	/**
-	 * returns a sorted list of car proximity events
+	 * returns a sorted list of driver proximity events
 	 */
-	public Car carProximityTest(GraphPositionPathPosition center, double dist) {
+	public Driver driverProximityTest(GraphPositionPathPosition center, double dist) {
 		
-		for (Entry<Car, GraphPositionPathPosition> entry : hitMap.entrySet()) {
+		for (Entry<Driver, GraphPositionPathPosition> entry : hitMap.entrySet()) {
 			GraphPositionPathPosition otherCarCenter = entry.getValue();
-			Car c = entry.getKey();
+			Driver d = entry.getKey();
 			if (otherCarCenter.equals(center)) {
 				continue;
 			}
@@ -484,8 +485,8 @@ public class GraphPositionPath {
 			}
 			double centerCenterDist = center.distanceTo(otherCarCenter);
 			if (DMath.lessThanEquals(centerCenterDist, dist)) {
-				assert !c.overallPos.equals(center);
-				return c;
+				assert !d.overallPos.equals(center);
+				return d;
 			}
 		}
 		

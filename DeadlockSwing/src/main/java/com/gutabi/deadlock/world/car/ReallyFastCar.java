@@ -3,7 +3,6 @@ package com.gutabi.deadlock.world.car;
 import org.apache.log4j.Logger;
 
 import com.gutabi.deadlock.world.graph.Fixture;
-import com.gutabi.deadlock.world.graph.GraphPositionPath;
 
 //@SuppressWarnings("static-access")
 public class ReallyFastCar extends Car {
@@ -20,17 +19,6 @@ public class ReallyFastCar extends Car {
 	
 	public double getMaxSpeed() {
 		return speed;
-	}
-	
-	protected void computePath() {
-		
-		overallPath = source.getShortestPathToMatch();
-		
-		overallPath.currentCars.add(this);
-		for (GraphPositionPath path : overallPath.sharedEdgesMap.keySet()) {
-			path.currentCars.add(this);
-		}
-		
 	}
 	
 }

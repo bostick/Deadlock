@@ -3,7 +3,6 @@ package com.gutabi.deadlock.world.car;
 import org.apache.log4j.Logger;
 
 import com.gutabi.deadlock.world.graph.Fixture;
-import com.gutabi.deadlock.world.graph.GraphPositionPath;
 
 //@SuppressWarnings("static-access")
 public class RandomCar extends Car {
@@ -22,31 +21,32 @@ public class RandomCar extends Car {
 		return speed;
 	}
 	
-	protected void computePath() {
-		
-		overallPath = source.getRandomPathToMatch();
-		
-		overallPath.currentCars.add(this);
-		for (GraphPositionPath path : overallPath.sharedEdgesMap.keySet()) {
-			path.currentCars.add(this);
-		}
-		
-	}
+//	protected void computePath() {
+//		
+//		overallPath = source.getRandomPathToMatch();
+//		
+//		overallPath.currentCars.add(this);
+//		for (GraphPositionPath path : overallPath.sharedEdgesMap.keySet()) {
+//			path.currentCars.add(this);
+//		}
+//		
+//	}
 	
-	public void preStep(double t) {
-		
-		overallPath.precomputeHitTestData();
-		
-		super.preStep(t);
-		
-	}
+//	public void preStep(double t) {
+//		
+//		overallPath.precomputeHitTestData();
+//		
+//		super.preStep(t);
+//		
+//	}
 	
-	public boolean postStep(double t) {
-		
-		boolean res = super.postStep(t);
-		
-		overallPath.clearHitTestData();
-		
-		return res;
-	}
+//	public boolean postStep(double t) {
+//		
+//		boolean res = super.postStep(t);
+//		
+//		overallPath.clearHitTestData();
+//		
+//		return res;
+//	}
+	
 }

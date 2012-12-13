@@ -28,7 +28,6 @@ import com.gutabi.deadlock.core.geom.Quad;
 import com.gutabi.deadlock.core.geom.Shape;
 import com.gutabi.deadlock.view.RenderingContext;
 import com.gutabi.deadlock.world.graph.Fixture;
-import com.gutabi.deadlock.world.graph.GraphPositionPath;
 import com.gutabi.deadlock.world.graph.GraphPositionPathPosition;
 import com.gutabi.deadlock.world.graph.Merger;
 
@@ -148,9 +147,7 @@ public abstract class Car extends Entity {
 	
 	public Fixture source;
 	
-	public GraphPositionPath overallPath;
-	
-	public GraphPositionPathPosition overallPos;
+	public final Driver driver;
 	
 	public int id;
 	
@@ -208,6 +205,8 @@ public abstract class Car extends Entity {
 		
 		source = s;
 		
+		driver = new Driver(this);
+		
 		color = Color.BLUE;
 		hiliteColor = Color.BLUE;
 		
@@ -224,21 +223,18 @@ public abstract class Car extends Entity {
 		return Integer.toString(id);
 	}
 	
-	protected abstract void computePath();
-	
 	private void computeStartingProperties() {
 		
 		logger.debug("spawn");
 		
-		computePath();
+		driver.computeStartingProperties();
 		
-		overallPos = overallPath.startingPos;
-		startPoint = overallPos.p;
+		startPoint = driver.overallPos.p;
 		
-		vertexDepartureQueue.add(new VertexSpawnEvent(overallPos));
+		vertexDepartureQueue.add(new VertexSpawnEvent(driver.overallPos));
 		source.carQueue.add(this);
 		
-		GraphPositionPathPosition next = overallPos.travel(getMaxSpeed() * APP.dt);
+		GraphPositionPathPosition next = driver.overallPos.travel(getMaxSpeed() * APP.dt);
 		
 		Point nextDTGoalPoint = next.p;
 		
@@ -365,9 +361,9 @@ public abstract class Car extends Entity {
 		case DRIVING:
 		case BRAKING:
 			
-			overallPos = overallPath.findClosestGraphPositionPathPosition(p, overallPos);
+			driver.computeDynamicPropertiesMoving();
 			
-			Entity hit = overallPath.pureGraphBestHitTestQuad(this.shape, overallPos);
+			Entity hit = driver.overallPath.pureGraphBestHitTestQuad(this.shape, driver.overallPos);
 			
 			boolean wasInMerger = inMerger;
 			if (hit == null) {
@@ -403,15 +399,6 @@ public abstract class Car extends Entity {
 		
 	}
 	
-	private void reportDynamicProperties() {
-		
-		if (logger.isDebugEnabled()) {
-			logger.debug(id + " vel: " + vel);
-		}
-		
-	}
-	
-	
 	public void destroy() {
 		b2dCleanup();
 	}
@@ -441,12 +428,7 @@ public abstract class Car extends Entity {
 		
 		state = CarStateEnum.CRASHED;
 		
-		overallPos = null;
-		
-		overallPath.currentCars.remove(this);
-		for (GraphPositionPath path : overallPath.sharedEdgesMap.keySet()) {
-			path.currentCars.remove(this);
-		}
+		driver.clear();
 		
 		stoppedTime = -1;
 		deadlocked = false;
@@ -557,7 +539,7 @@ public abstract class Car extends Entity {
 		switch (state) {
 		case DRIVING:
 			
-			GraphPositionPathPosition next = overallPos.travel(Math.min(steeringLookaheadDistance, overallPos.lengthToEndOfPath));
+			GraphPositionPathPosition next = driver.overallPos.travel(Math.min(steeringLookaheadDistance, driver.overallPos.lengthToEndOfPath));
 			
 			goalPoint = next.p;
 			
@@ -591,9 +573,9 @@ public abstract class Car extends Entity {
 	}
 	
 	private CarProximityEvent findNewCarProximityEvent() {
-		Car carProx = overallPath.carProximityTest(overallPos, Math.min(carProximityLookahead, overallPos.lengthToEndOfPath));
-		if (carProx != null) {
-			return new CarProximityEvent(this, carProx);
+		Driver driverProx = driver.overallPath.driverProximityTest(driver.overallPos, Math.min(carProximityLookahead, driver.overallPos.lengthToEndOfPath));
+		if (driverProx != null) {
+			return new CarProximityEvent(this, driverProx.c);
 		} else {
 			return null;
 		}
@@ -601,7 +583,7 @@ public abstract class Car extends Entity {
 	
 	private VertexArrivalEvent findNewVertexArrivalEvent() {
 		
-		VertexArrivalEvent vertexArr = overallPath.vertexArrivalTest(this, Math.min(vertexArrivalLookahead, overallPos.lengthToEndOfPath));
+		VertexArrivalEvent vertexArr = driver.overallPath.vertexArrivalTest(driver, Math.min(vertexArrivalLookahead, driver.overallPos.lengthToEndOfPath));
 		if (vertexArr != null) {
 			
 			if (!vertexDepartureQueue.contains(vertexArr)) {
@@ -635,11 +617,11 @@ public abstract class Car extends Entity {
 				if (stoppedTime != -1 && t > stoppedTime + COMPLETE_STOP_WAIT_TIME) {
 					
 					GraphPositionPathPosition otherPosition = null;
-					if (otherCar.overallPos != null) {
-						otherPosition = overallPath.hitTest(otherCar, overallPos);
+					if (otherCar.driver.overallPos != null) {
+						otherPosition = driver.overallPath.hitTest(otherCar, driver.overallPos);
 					}
 					
-					if (otherPosition == null || DMath.greaterThan(overallPos.distanceTo(otherPosition), carProximityLookahead)) {
+					if (otherPosition == null || DMath.greaterThan(driver.overallPos.distanceTo(otherPosition), carProximityLookahead)) {
 						return false;
 					}
 					
@@ -682,7 +664,7 @@ public abstract class Car extends Entity {
 			
 			List<VertexEvent> toRemove = new ArrayList<VertexEvent>();
 			for (VertexEvent e : vertexDepartureQueue) {
-				if (overallPos == null) {
+				if (driver.overallPos == null) {
 					/*
 					 * crashed or skidded
 					 */
@@ -700,7 +682,7 @@ public abstract class Car extends Entity {
 					
 					toRemove.add(e);
 					
-				} else if (overallPos.combo >= e.carPastExitPosition.combo) {
+				} else if (driver.overallPos.combo >= e.carPastExitPosition.combo) {
 					/*
 					 * driving past exit of intersection, so cleanup
 					 */
@@ -868,9 +850,7 @@ public abstract class Car extends Entity {
 			computeDynamicPropertiesAlways();
 			computeDynamicPropertiesMoving();
 			
-			reportDynamicProperties();
-			
-			Fixture s = (Fixture)overallPath.end.entity;
+			Fixture s = (Fixture)driver.overallPath.end.entity;
 			boolean sinked = false;
 			if (Point.distance(p, s.p) < SINK_EPSILON) {
 				sinked = true;
@@ -880,14 +860,9 @@ public abstract class Car extends Entity {
 				
 				logger.debug("sink");
 				
-				overallPos = null;
+				driver.clear();
 				
 				cleanupVertexDepartureQueue();
-				
-				overallPath.currentCars.remove(this);
-				for (GraphPositionPath path : overallPath.sharedEdgesMap.keySet()) {
-					path.currentCars.remove(this);
-				}
 				
 				s.match.outstandingCars--;
 				state = CarStateEnum.SINKED;
@@ -921,8 +896,6 @@ public abstract class Car extends Entity {
 				//computeDynamicPropertiesMoving();
 				
 			}
-			
-			reportDynamicProperties();
 			
 			break;
 		case CRASHED:

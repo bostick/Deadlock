@@ -10,15 +10,15 @@ import com.gutabi.deadlock.world.graph.StopSign;
  */
 public class VertexArrivalEvent extends VertexEvent {
 	
-	public final Car c;
+	public final Driver d;
 	public final GraphPositionPathPosition entrancePosition;
 	public final StopSign sign;
 	
 	private int hash;
 	
-	public VertexArrivalEvent(Car c, GraphPositionPathPosition entrancePosition) {
+	public VertexArrivalEvent(Driver d, GraphPositionPathPosition entrancePosition) {
 		super(entrancePosition.nextBound());
-		this.c = c;
+		this.d = d;
 		this.entrancePosition = entrancePosition;
 		
 		sign = ((RoadPosition)entrancePosition.getGraphPosition()).sign;
@@ -26,13 +26,13 @@ public class VertexArrivalEvent extends VertexEvent {
 	}
 	
 	public String toString() {
-		return "VertexArrivalEvent[car = " + c + ", v = " + v + "]";
+		return "VertexArrivalEvent[driver = " + d + ", v = " + v + "]";
 	}
 	
 	public int hashCode() {
 		if (hash == 0) {
 			int h = 17;
-			h = 37 * h + c.hashCode();
+			h = 37 * h + d.hashCode();
 			h = 37 * h + entrancePosition.hashCode();
 			hash = h;
 		}
