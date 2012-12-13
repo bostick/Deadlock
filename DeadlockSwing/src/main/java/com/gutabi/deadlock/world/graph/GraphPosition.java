@@ -10,14 +10,12 @@ public abstract class GraphPosition {
 	
 	public final Point p;
 	public final Entity entity;
-//	public final Axis axis;
 	
 	static Logger logger = Logger.getLogger(GraphPosition.class);
 	
 	public GraphPosition(Point p, Entity e) {
 		this.p = p;
 		this.entity = e;
-//		this.axis = a;
 	}
 	
 	public abstract boolean isBound();

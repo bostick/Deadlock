@@ -30,9 +30,6 @@ public class GraphPositionPathPosition {
 		this.path = path;
 		this.index = index;
 		this.param = param;
-//		this.gpos = gpos;
-		
-//		assert path.getGraphPosition(index, param).equals(gpos);
 		
 		combo = index+param;
 		
@@ -92,21 +89,6 @@ public class GraphPositionPathPosition {
 	}
 	
 	private void computeGraphPosition() {
-//		public GraphPosition getGraphPosition(int pathIndex, double pathParam) {
-//		
-//		GraphPosition p1 = poss.get(pathIndex);
-//		
-//		if (DMath.equals(pathParam, 0.0)) {
-//			return p1;
-//		}
-//		
-//		GraphPosition p2 = poss.get(pathIndex+1);
-//		
-//		double dist = Point.distance(p1.p, p2.p);
-//		
-//		return p1.travelToNeighbor(p2, dist * pathParam);
-		
-//	}
 		
 		GraphPosition p1 = path.get(index);
 		if (DMath.equals(param, 0.0)) {
@@ -148,7 +130,6 @@ public class GraphPositionPathPosition {
 		
 		double traveled = 0.0;
 		
-//		GraphPositionPathPosition curPos = this;
 		int curIndex = index;
 		GraphPosition curPosition = getGraphPosition();
 		double curLengthToStartOfPath = lengthToStartOfPath;
@@ -177,8 +158,6 @@ public class GraphPositionPathPosition {
 				/*
 				 * traveled + distanceToNextVertexPosition > dist
 				 */
-				 
-//				GraphPositionPathPosition nextBound;
 				
 				while (true) {
 					

@@ -125,15 +125,6 @@ public class GraphPositionPath {
 		hasLoop = tmp;
 		assert !hasLoop;
 		
-//		AABB acc = null;
-//		for (int i = 0; i < poss.size(); i++) {
-//			GraphPosition p = poss.get(i);
-//			acc = AABB.union(acc, p.entity.getShape().getAABB());
-//		}
-//		aabb = acc;
-		
-		
-		
 		borderPositions = new ArrayList<GraphPositionPathPosition>();
 		
 		for (int i = 0; i < poss.size(); i++) {
@@ -270,34 +261,8 @@ public class GraphPositionPath {
 		
 		double closestDistance = Double.POSITIVE_INFINITY;
 		
-//		if (min.equals(max)) {
-//			return min;
-//		}
-//		if (min.index == max.index) {
-//			
-//			double u;
-//			u = Point.u(min.floor().gpos.p, p, max.ceiling().gpos.p);
-//			if (u < min.param) {
-//				u = min.param;
-//			}
-//			if (u > max.param) {
-//				u = max.param;
-//			}
-//			
-//			closestIndex = min.index;
-//			closestParam = u;
-//			
-//			Point pOnPath = Point.point(min.floor().gpos.p, max.ceiling().gpos.p, u);
-//			double dist = Point.distance(p, pOnPath);
-//			closestDistance = dist;
-//			
-//			GraphPositionPathPosition closest = new GraphPositionPathPosition(this, closestIndex, closestParam, getGraphPosition(closestIndex, closestParam));
-//			return closest;
-//		}
-		
 		GraphPositionPathPosition a = min;
 		GraphPositionPathPosition minCeiling = min.ceiling();
-//		GraphPositionPathPosition maxFloor = max.floor();
 		GraphPositionPathPosition b;
 		if (!minCeiling.equals(min)) {
 			b = minCeiling;
@@ -409,238 +374,26 @@ public class GraphPositionPath {
 			
 			a = b;
 		}
-//		if (!maxFloor.equals(max)) {
-//			b = max;
-//			
-//			GraphPositionPathPosition bCeil = b.ceiling();
-//			
-//			double u = Point.u(a.gpos.p, p, bCeil.gpos.p);
-//			if (u > b.param) {
-//				u = b.param;
-//			}
-//			if (u < 0.0) {
-//				u = 0.0;
-//			}
-//			
-//			Point pOnPath = Point.point(a.gpos.p, bCeil.gpos.p, u);
-//			double dist = Point.distance(p, pOnPath);
-//			if (dist < closestDistance) {
-//				closestIndex = a.index;
-//				closestParam = u;
-//				
-//				closestDistance = dist;
-//			}
-//			
-//		}
 		
 		assert closestIndex != -1;
 		assert closestParam != -1;
 		
-//		while still getting closer, keep going
-//		when start getting farther, stop and use closest 
-		
-//		GraphPositionPathPosition closest = new GraphPositionPathPosition(this, closestIndex, closestParam, getGraphPosition(closestIndex, closestParam));
-		
 		return new GraphPositionPathPosition(this, closestIndex, closestParam);
 	}
-	
-	/**
-	 * 
-	 */
-//	private GraphPosition getGraphPosition(int pathIndex, double pathParam) {
-//		
-//		GraphPosition p1 = poss.get(pathIndex);
-//		
-//		if (DMath.equals(pathParam, 0.0)) {
-//			return p1;
-//		}
-//		
-//		GraphPosition p2 = poss.get(pathIndex+1);
-//		
-//		double dist = Point.distance(p1.p, p2.p);
-//		
-//		return p1.travelToNeighbor(p2, dist * pathParam);
-//	}
-	
 	
 	private Map<Car, GraphPositionPathPosition> hitMap = new HashMap<Car, GraphPositionPathPosition>();
 	
 	public void precomputeHitTestData() {
 		
-//		Map<Car, GraphPositionPathPosition> o = precomputeHitTestDataOld();
-		
 		Map<Car, GraphPositionPathPosition> n = precomputeHitTestDataNew();
-		
-//		if (!o.equals(n)) {
-//			assert false;
-//		}
 		
 		hitMap = n;
 		
 	}
 	
-//	private Map<Car, GraphPositionPathPosition> precomputeHitTestDataOld() {
-//		
-////		assert hitMap.isEmpty();
-//		Map<Car, GraphPositionPathPosition> map = new HashMap<Car, GraphPositionPathPosition>();
-//		
-//		carLoop:
-//		for (Car c : currentCars) {
-//			
-//			if (c.overallPath.equals(this) && !hasLoop) {
-//				
-//				map.put(c, c.overallPos);
-//				continue;
-//				
-//			}
-//			
-//			Set<Edge> sharedEdges = sharedEdgesMap.get(c.overallPath);
-//			assert !sharedEdges.isEmpty();
-//			
-//			GraphPosition gp = c.overallPos.getGraphPosition();
-//			
-//			if (poss.get(0) instanceof VertexPosition) {
-//				if (gp.entity == ((VertexPosition)poss.get(0)).v) {
-//					assert !map.containsValue(c);
-//					map.put(c, new GraphPositionPathPosition(this, 0, 0.0));
-//					continue carLoop;
-//				}
-//			}
-//			
-//			for (int i = 0; i < poss.size()-1; i++) {
-//				GraphPosition a = poss.get(i);
-//				GraphPosition b = poss.get(i+1);
-//				
-//				double combo;
-//				double aCombo;
-//				double bCombo;
-//				if (a instanceof VertexPosition) {
-//					if (b instanceof VertexPosition) {
-//						assert false;
-//						aCombo = -1;
-//						bCombo = -1;
-//						combo = ((EdgePosition)gp).getCombo();
-//					} else {
-//						
-//						Edge e = (Edge)((EdgePosition)b).entity;
-//						
-//						if (gp.entity != e) {
-//							continue;
-//						}
-//						if (gp instanceof EdgePosition && ((EdgePosition)gp).axis != ((EdgePosition)b).axis) {
-//							continue;
-//						}
-//						
-//						
-//						combo = ((EdgePosition)gp).getCombo();
-//						
-//						if (((VertexPosition)a).v == ((Edge)b.entity).getReferenceVertex(((EdgePosition)b).axis)) {
-//							aCombo = 0.0;
-//							bCombo = ((EdgePosition)b).getCombo();
-//							if (!(DMath.lessThanEquals(aCombo, combo) && DMath.lessThanEquals(combo, bCombo))) {
-//								continue;
-//							}
-//						} else {
-//							assert ((VertexPosition)a).v == ((Edge)b.entity).getOtherVertex(((EdgePosition)b).axis);
-//							aCombo = (e.pointCount()-1)+0.0;
-//							bCombo = ((EdgePosition)b).getCombo();
-//							if (!(DMath.greaterThanEquals(aCombo, combo) && DMath.greaterThanEquals(combo, bCombo))) {
-//								continue;
-//							}
-//						}
-//					}
-//					
-//				} else {
-//					if (b instanceof VertexPosition) {
-//						
-//						if (gp.entity == ((VertexPosition)b).v) {
-//							assert !map.containsValue(c);
-//							map.put(c, new GraphPositionPathPosition(this, i+1, 0.0));
-//							continue carLoop;
-//						}
-//						
-//						Edge e = (Edge)((EdgePosition)a).entity;
-//						
-//						if (gp.entity != e) {
-//							continue;
-//						}
-//						if (gp instanceof EdgePosition && ((EdgePosition)gp).axis != ((EdgePosition)a).axis) {
-//							continue;
-//						}
-//						
-//						combo = ((EdgePosition)gp).getCombo();
-//						
-//						if (((VertexPosition)b).v == ((Edge)a.entity).getReferenceVertex(((EdgePosition)a).axis)) {
-//							aCombo = ((EdgePosition)a).getCombo();
-//							bCombo = 0.0;
-//							if (!(DMath.greaterThanEquals(aCombo, combo) && DMath.greaterThanEquals(combo, bCombo))) {
-//								continue;
-//							}
-//						} else {
-//							assert ((VertexPosition)b).v == ((Edge)a.entity).getOtherVertex(((EdgePosition)a).axis);
-//							aCombo = ((EdgePosition)a).getCombo();
-//							bCombo = (e.pointCount()-1)+0.0;
-//							if (!(DMath.lessThanEquals(aCombo, combo) && DMath.lessThanEquals(combo, bCombo))) {
-//								continue;
-//							}
-//						}
-//						
-//					} else {
-//						
-//						Edge e = (Edge)((EdgePosition)a).entity;
-//						assert e == b.entity;
-//						assert ((EdgePosition)a).axis == ((EdgePosition)b).axis;
-//						
-//						if (gp.entity != e) {
-//							continue;
-//						}
-//						if (gp instanceof EdgePosition && ((EdgePosition)gp).axis != ((EdgePosition)a).axis) {
-//							continue;
-//						}
-//						
-//						combo = ((EdgePosition)gp).getCombo();
-//						
-//						aCombo = ((EdgePosition)a).getCombo();
-//						bCombo = ((EdgePosition)b).getCombo();
-//						if (DMath.lessThan(aCombo, bCombo)) {
-//							if (!(DMath.lessThanEquals(aCombo, combo) && DMath.lessThanEquals(combo, bCombo))) {
-//								continue;
-//							}
-//						} else {
-//							if (!(DMath.greaterThanEquals(aCombo, combo) && DMath.greaterThanEquals(combo, bCombo))) {
-//								continue;
-//							}
-//						}
-//						
-//					}
-//				}
-//				
-//				double abCombo = (combo - aCombo) / (bCombo - aCombo);
-//				assert DMath.lessThanEquals(0.0, abCombo) && DMath.lessThanEquals(abCombo, 1.0);
-//				
-//				int gpppIndex = (int)Math.floor(i + abCombo);
-//				double gpppParam = (i + abCombo)-gpppIndex;
-//				
-//				assert !map.containsValue(c);
-//				map.put(c, new GraphPositionPathPosition(this, gpppIndex, gpppParam));
-//				continue carLoop;
-//				
-//			}
-//			
-//			
-//			
-//			
-//		}
-//		
-//		return map;
-//		
-//	}
-	
 	private Map<Car, GraphPositionPathPosition> precomputeHitTestDataNew() {
 		
 		Map<Car, GraphPositionPathPosition> map = new HashMap<Car, GraphPositionPathPosition>();
-		
-//		assert hitMap.isEmpty();
 		
 		carLoop:
 		for (Car c : currentCars) {
@@ -761,14 +514,6 @@ public class GraphPositionPath {
 		}
 		
 		return null;
-		
-//		for (Entry<Car, GraphPositionPathPosition> entry : hitMap.entrySet()) {
-//			GraphPositionPathPosition gppp = entry.getValue();
-//			if (gppp.getGraphPosition().equals(gp)) {
-//				
-//			}
-//		}
-//		return null;
 	}
 	
 	public Entity pureGraphBestHitTestQuad(Quad q, GraphPositionPathPosition min) {

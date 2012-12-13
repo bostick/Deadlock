@@ -51,11 +51,6 @@ public class Merger extends Edge {
 		left.match = right;
 		right.match = left;
 		
-//		top.type = FixtureType.SINK;
-//		bottom.type = FixtureType.SOURCE;
-//		left.type = FixtureType.SINK;
-//		right.type = FixtureType.SOURCE;
-		
 		top.setSide(Side.BOTTOM);
 		bottom.setSide(Side.BOTTOM);
 		left.setSide(Side.RIGHT);
