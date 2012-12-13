@@ -14,6 +14,7 @@ import com.gutabi.deadlock.controller.ControlMode;
 import com.gutabi.deadlock.core.geom.AABB;
 import com.gutabi.deadlock.examples.FourByFourGridWorld;
 import com.gutabi.deadlock.examples.OneByOneWorld;
+import com.gutabi.deadlock.examples.WorldA;
 import com.gutabi.deadlock.view.RenderingContext;
 import com.gutabi.deadlock.view.RenderingContextType;
 
@@ -37,10 +38,6 @@ public class MainMenu extends Menu {
 				
 				try {
 					
-					APP.world = new OneByOneWorld();
-					
-					APP.init();
-					
 					VIEW.teardownCanvas(VIEW.container);
 					
 					VIEW.setupCanvasAndControlPanel(VIEW.container);
@@ -50,27 +47,16 @@ public class MainMenu extends Menu {
 					
 					CONTROLLER.mode = ControlMode.WORLD;
 					
+					APP.world = new OneByOneWorld();
+					
+					APP.init();
+					
 					VIEW.postDisplay();
 					
 					APP.render();
 					
 					VIEW.repaintCanvas();
 					VIEW.repaintControlPanel();
-					
-//					Stroke s = new Stroke();
-//					s.add(new Point(0, 0));
-//					s.add(new Point(16, 16));
-//					s.add(new Point(0, 16));
-//					s.add(new Point(16, 0));
-//					
-//					s.finish();
-//					
-//					APP.world.processNewStroke(s);
-//					
-//					APP.world.render();
-//					
-//					VIEW.repaintCanvas();
-//					VIEW.repaintControlPanel();
 					
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
@@ -123,6 +109,40 @@ public class MainMenu extends Menu {
 			}
 		};
 		add(fourMenuItem);
+		
+		MenuItem aMenuItem = new MenuItem("World A") {
+			public void action() {
+				
+				try {
+					
+					APP.world = new WorldA();
+					
+					APP.init();
+					
+					VIEW.teardownCanvas(VIEW.container);
+					
+					VIEW.setupCanvasAndControlPanel(VIEW.container);
+					
+					((JFrame)VIEW.container).setVisible(true);
+					VIEW.canvas.requestFocusInWindow();
+					
+					CONTROLLER.mode = ControlMode.WORLD;
+					
+					VIEW.postDisplay();
+					
+					APP.render();
+					
+					VIEW.repaintCanvas();
+					VIEW.repaintControlPanel();
+					
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+			}
+		};
+		add(aMenuItem);
 		
 		MenuItem editorMenuItem = new MenuItem("Map Editor...") {
 			public void action() {

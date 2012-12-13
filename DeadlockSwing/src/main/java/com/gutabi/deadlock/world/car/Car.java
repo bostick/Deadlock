@@ -58,6 +58,11 @@ public abstract class Car extends Entity {
 	
 	public static final double COMPLETE_STOP_WAIT_TIME = 0.5;
 	
+	/*
+	 * distance that center of a car has to be from center of a sink in order to be sinked
+	 */
+	public static final double SINK_EPSILON = 0.5f;
+	
 	protected int sheetRowStart;
 	protected int sheetRowEnd;
 	
@@ -934,7 +939,7 @@ public abstract class Car extends Entity {
 			
 			Fixture s = (Fixture)overallPath.end.entity;
 			boolean sinked = false;
-			if (Point.distance(p, s.p) < APP.world.SINK_EPSILON) {
+			if (Point.distance(p, s.p) < SINK_EPSILON) {
 				sinked = true;
 			}
 			

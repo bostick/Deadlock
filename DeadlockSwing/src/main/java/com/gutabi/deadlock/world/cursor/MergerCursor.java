@@ -22,8 +22,7 @@ public class MergerCursor extends CursorBase {
 			shape = new MergerCursorShape(p);
 		} else {
 			shape = null;
-		}
-		
+		}	
 	}
 	
 	public Shape getShape() {
@@ -34,10 +33,9 @@ public class MergerCursor extends CursorBase {
 		
 		APP.world.cursor = new RegularCursor();
 		
-		APP.world.cursor.setPoint(APP.world.lastMovedWorldPoint);
+		APP.world.cursor.setPoint(APP.world.getPoint(APP.world.lastMovedOrDraggedWorldPoint));
 		
 		VIEW.repaintCanvas();
-		
 	}
 	
 	public void insertKey() {
@@ -61,7 +59,7 @@ public class MergerCursor extends CursorBase {
 	}
 	
 	public void moved(InputEvent ev) {
-		APP.world.map.setCursorPoint(this, APP.world.lastMovedOrDraggedWorldPoint);
+		APP.world.cursor.setPoint(APP.world.getPoint(APP.world.lastMovedOrDraggedWorldPoint));
 		VIEW.repaintCanvas();
 	}
 	

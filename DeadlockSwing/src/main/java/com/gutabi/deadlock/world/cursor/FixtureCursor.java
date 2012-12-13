@@ -33,7 +33,6 @@ public class FixtureCursor extends CursorBase {
 	
 	public FixtureCursor() {
 		
-//		axis = Axis.NONE;
 	}
 	
 	public void setPoint(Point p) {
@@ -118,21 +117,20 @@ public class FixtureCursor extends CursorBase {
 	}
 	
 	public Point getSourcePoint() {
-		return shape.worldSource.center;
+		return shape.worldSource;
 	}
 	
 	public Point getSinkPoint() {
-		return shape.worldSink.center;
+		return shape.worldSink;
 	}
 	
 	public void escKey() {
 		
 		APP.world.cursor = new RegularCursor();
 		
-		APP.world.cursor.setPoint(APP.world.lastMovedWorldPoint);
+		APP.world.cursor.setPoint(APP.world.getPoint(APP.world.lastMovedOrDraggedWorldPoint));
 		
 		VIEW.repaintCanvas();
-		
 	}
 	
 	public void wKey() {
@@ -174,7 +172,7 @@ public class FixtureCursor extends CursorBase {
 	}
 	
 	public void moved(InputEvent ev) {
-		APP.world.map.setCursorPoint(this, APP.world.lastMovedOrDraggedWorldPoint);
+		APP.world.cursor.setPoint(APP.world.getPoint(APP.world.lastMovedOrDraggedWorldPoint));
 		VIEW.repaintCanvas();
 	}
 	

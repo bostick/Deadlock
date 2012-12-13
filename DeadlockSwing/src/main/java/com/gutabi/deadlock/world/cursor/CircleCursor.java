@@ -10,7 +10,6 @@ import com.gutabi.deadlock.controller.InputEvent;
 import com.gutabi.deadlock.core.Dim;
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.core.geom.AABB;
 import com.gutabi.deadlock.core.geom.Shape;
 import com.gutabi.deadlock.view.RenderingContext;
 import com.gutabi.deadlock.world.Stroke;
@@ -19,12 +18,9 @@ import com.gutabi.deadlock.world.graph.Vertex;
 public class CircleCursor extends CursorBase {
 	
 	enum CircleCursorMode {
-		
 		FREE,
 		SET,
-		UL,
-		BR
-		
+		KNOB,
 	}
 	
 	CircleCursorMode mode;
@@ -32,10 +28,44 @@ public class CircleCursor extends CursorBase {
 	double yRadius;
 	CircleCursorShape shape;
 	
+	final Knob ulKnob;
+	final Knob brKnob;
+	
+	Knob knob;
+	
 	public CircleCursor() {
 		mode = CircleCursorMode.FREE;
 		yRadius = Vertex.INIT_VERTEX_RADIUS;
 		xRadius = Vertex.INIT_VERTEX_RADIUS;
+		
+		ulKnob = new Knob() {
+			public void drag(Point p) {
+				
+				Point newPoint = APP.world.getPoint(p);
+				
+				Dim offset = shape.c1.aabb.dim.multiply(0.5);
+				
+				Point newPoint2 = new Point(newPoint.x + offset.width, newPoint.y + offset.height);
+				
+				CircleCursor.this.setPoint(newPoint2);
+			}
+		};
+		
+		brKnob = new Knob() {
+			public void drag(Point p) {
+				
+				Point newPoint = APP.world.getPoint(p);
+				
+				Point diff = new Point(newPoint.x - this.p.x, newPoint.y - this.p.y);
+				
+				xRadius += diff.x/2;
+				yRadius += diff.y/2;
+				
+				Point newPoint1 = CircleCursor.this.p.plus(diff.multiply(0.5));
+				
+				CircleCursor.this.setPoint(newPoint1);
+			}
+		};
 	}
 	
 	public void setPoint(Point p) {
@@ -43,24 +73,23 @@ public class CircleCursor extends CursorBase {
 		
 		if (p != null) {
 			shape = new CircleCursorShape(p, xRadius, yRadius);
+			ulKnob.setPoint(shape.c1.aabb.ul);
+			brKnob.setPoint(shape.c1.aabb.br);
 		} else {
 			shape = null;
-		}
-		
+		}	
 	}
 	
 	public void setXRadius(double r) {
 		this.xRadius = r;
 		
 		shape = new CircleCursorShape(p, xRadius, yRadius);
-		
 	}
 	
 	public void setYRadius(double r) {
 		this.yRadius = r;
 		
 		shape = new CircleCursorShape(p, xRadius, yRadius);
-		
 	}
 	
 	public Shape getShape() {
@@ -71,55 +100,19 @@ public class CircleCursor extends CursorBase {
 		return shape.c1.aabb.br;
 	}
 	
-	public AABB ulKnob() {
-		double pixel = 1/APP.world.PIXELS_PER_METER_DEBUG;
-		AABB rect = new AABB(shape.c1.aabb.ul.x + -2 * pixel, shape.c1.aabb.ul.y + -2 * pixel, 5 * pixel, 5 * pixel);
-		return rect;
-	}
-	
-	public void setULKnob(Point ulCenter) {
-		
-		Dim offset = shape.c1.aabb.dim.multiply(0.5);
-		
-		Point newPoint = new Point(ulCenter.x + offset.width, ulCenter.y + offset.height);
-		
-		setPoint(newPoint);
-		
-	}
-	
-	public void setBRKnob(Point brCenter) {
-		
-		AABB brKnob = brKnob();
-		
-		Point diff = new Point(brCenter.x - brKnob.center.x, brCenter.y - brKnob.center.y);
-		
-		xRadius += diff.x/2;
-		yRadius += diff.y/2;
-		p = p.plus(diff.multiply(0.5));
-		
-		shape = new CircleCursorShape(p, xRadius, yRadius);
-		
-	}
-	
-	public AABB brKnob() {
-		double pixel = 1/APP.world.PIXELS_PER_METER_DEBUG;
-		AABB rect = new AABB(shape.c1.aabb.br.x + -2 * pixel, shape.c1.aabb.br.y + -2 * pixel, 5 * pixel, 5 * pixel);
-		return rect;
-	}
-	
 	public void escKey() {
 		switch (mode) {
 		case FREE:
 			APP.world.cursor = new RegularCursor();
-			APP.world.cursor.setPoint(APP.world.lastMovedOrDraggedWorldPoint);
+			APP.world.cursor.setPoint(APP.world.getPoint(APP.world.lastMovedOrDraggedWorldPoint));
 			VIEW.repaintCanvas();
 			break;
 		case SET:
 			mode = CircleCursorMode.FREE;
+			APP.world.cursor.setPoint(APP.world.getPoint(APP.world.lastMovedOrDraggedWorldPoint));
 			VIEW.repaintCanvas();
 			break;
-		case UL:
-		case BR:
+		case KNOB:
 			assert false;
 			break;
 		}
@@ -151,8 +144,7 @@ public class CircleCursor extends CursorBase {
 			VIEW.repaintControlPanel();
 			
 			break;
-		case UL:
-		case BR:
+		case KNOB:
 			break;
 		}
 	}
@@ -166,80 +158,47 @@ public class CircleCursor extends CursorBase {
 				APP.world.hilited = closest;
 			}
 			
-			APP.world.map.setCursorPoint(this, APP.world.lastMovedOrDraggedWorldPoint);
+			APP.world.cursor.setPoint(APP.world.getPoint(APP.world.lastMovedOrDraggedWorldPoint));
 			
 			VIEW.repaintCanvas();
 			break;
 		case SET:
-		case UL:
-		case BR:
+		case KNOB:
 			break;
 		}
 	}
 	
 	public void dragged(InputEvent ev) {
 		
-//		Point p = ev.p;
-//		
-//		boolean lastDragCursorPointWasNull = (lastDragCursorPoint == null);
-//		lastDragCursorPoint = APP.world.canvasToWorld(p);
-		
 		switch (mode) {
 		case FREE:
 			setPoint(APP.world.lastDraggedWorldPoint);
 			break;
 		case SET:
-			
-			if (APP.world.lastDraggedWorldPointWasNull) {
-				
-				AABB ulKnob = ulKnob();
-				AABB brKnob = brKnob();
-				
-				if (ulKnob.hitTest(APP.world.lastPressedWorldPoint)) {
-					
-					mode = CircleCursorMode.UL;
-					
-					Point diff = new Point(APP.world.lastDraggedWorldPoint.x - APP.world.lastPressedWorldPoint.x, APP.world.lastDraggedWorldPoint.y - APP.world.lastPressedWorldPoint.y);
-					
-					origULKnobCenter = ulKnob.center;
-					
-					setULKnob(origULKnobCenter.plus(diff));
-					
-				} else if (brKnob.hitTest(APP.world.lastPressedWorldPoint)) {
-					
-					mode = CircleCursorMode.BR;
-					
-					Point diff = new Point(APP.world.lastDraggedWorldPoint.x - APP.world.lastPressedWorldPoint.x, APP.world.lastDraggedWorldPoint.y - APP.world.lastPressedWorldPoint.y);
-					
-					origBRKnobCenter = brKnob.center;
-					
-					setBRKnob(origBRKnobCenter.plus(diff));
-					
-				}
-				
-				VIEW.repaintCanvas();
-				
+			if (!APP.world.lastDraggedWorldPointWasNull) {
+				break;
 			}
-			
-			break;
-		case UL: {
+			if (!(ulKnob.hitTest(APP.world.lastPressedWorldPoint) ||
+					brKnob.hitTest(APP.world.lastPressedWorldPoint))) {
+				break;
+			}
+			if (ulKnob.hitTest(APP.world.lastPressedWorldPoint)) {
+				mode = CircleCursorMode.KNOB;
+				knob = ulKnob;
+				origKnobCenter = knob.p;
+			} else if (brKnob.hitTest(APP.world.lastPressedWorldPoint)) {
+				mode = CircleCursorMode.KNOB;
+				knob = brKnob;
+				origKnobCenter = knob.p;
+			}
+		case KNOB:
 			
 			Point diff = new Point(APP.world.lastDraggedWorldPoint.x - APP.world.lastPressedWorldPoint.x, APP.world.lastDraggedWorldPoint.y - APP.world.lastPressedWorldPoint.y);
 			
-			setULKnob(origULKnobCenter.plus(diff));
+			knob.drag(origKnobCenter.plus(diff));
 			
 			VIEW.repaintCanvas();
 			break;
-		}
-		case BR: {
-			
-			Point diff = new Point(APP.world.lastDraggedWorldPoint.x - APP.world.lastPressedWorldPoint.x, APP.world.lastDraggedWorldPoint.y - APP.world.lastPressedWorldPoint.y);
-			
-			setBRKnob(origBRKnobCenter.plus(diff));
-			
-			VIEW.repaintCanvas();
-			break;
-		}
 		}
 	}
 	
@@ -250,8 +209,7 @@ public class CircleCursor extends CursorBase {
 		case FREE:
 		case SET:
 			break;
-		case UL:
-		case BR:	
+		case KNOB:	
 			mode = CircleCursorMode.SET;
 			VIEW.repaintCanvas();
 			break;
@@ -259,8 +217,7 @@ public class CircleCursor extends CursorBase {
 	}
 	
 //	Point lastDragCursorPoint;
-	Point origULKnobCenter;
-	Point origBRKnobCenter;
+	Point origKnobCenter;
 	
 //	Point lastMovedCursorPoint;
 	
@@ -280,15 +237,9 @@ public class CircleCursor extends CursorBase {
 		case FREE:
 			break;
 		case SET:
-		case UL:
-		case BR:
-			AABB ulKnob = ulKnob();
-			AABB brKnob = brKnob();
-			
+		case KNOB:
 			ulKnob.draw(ctxt);
-			
 			brKnob.draw(ctxt);
-			
 			break;
 		}
 		

@@ -1,39 +1,6 @@
 
 IMMEDIATELY:
 
-
-actually, make sure grid looks good
-it doubles or halves
-
-
-
-
-objectify grid
-zooming in makes grid change
-keep grid squares about 64 pixels
-48 - 80 pixels
-
-
-
-
-
-
-
-
-
-only on grid within active quadrants
-
-with grid on, switching to other cursors snaps to grid
-
-for knobs (circle, quad, cubic):
-gridify
-
-
-
-add cubic curve cursor
-
-
-
 map editor
 
 scripting:
@@ -129,6 +96,24 @@ spline/curve editor
 
 
 DONE:
+
+add cubic curve cursor
+
+for knobs (circle, quad, cubic):
+gridify
+
+
+objectify grid
+zooming in makes grid change
+keep grid squares about 64 pixels
+48 - 80 pixels
+
+
+only on grid within active quadrants
+
+with grid on, switching to other cursors snaps to grid
+and vice versa
+
 
 add quad curve cursor
 

@@ -26,6 +26,8 @@ public abstract class Cursor {
 	
 	public abstract void sKey();
 	
+	public abstract void dKey();
+	
 	public abstract void insertKey();
 	
 	public abstract void d1Key();

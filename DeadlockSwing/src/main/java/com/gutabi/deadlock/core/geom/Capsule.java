@@ -418,6 +418,20 @@ public class Capsule extends SweepableShape implements SweeperShape {
 		bc.draw(ctxt);
 	}
 	
+	public void drawA(RenderingContext ctxt) {
+		ac.draw(ctxt);
+	}
+	
+	public void drawB(RenderingContext ctxt) {
+		bc.draw(ctxt);
+	}
+	
+	public void drawMiddle(RenderingContext ctxt) {
+		if (middle != null) {
+			middle.draw(ctxt);
+		}
+	}
+	
 	public void drawSkeleton(RenderingContext ctxt) {
 		
 		debugSkeletonLine.draw(ctxt);

@@ -20,6 +20,10 @@ public abstract class CursorBase extends Cursor {
 		
 	}
 
+	public void dKey() {
+		
+	}
+	
 	public void insertKey() {
 		
 	}

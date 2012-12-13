@@ -9,7 +9,6 @@ import java.awt.Composite;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
@@ -74,11 +73,6 @@ public class World implements Sweepable {
 	public BufferedImage canvasGrassImage;
 	public BufferedImage canvasGraphImage;
 	
-	/*
-	 * distance that center of a car has to be from center of a sink in order to be sinked
-	 */
-	public static final double SINK_EPSILON = 0.5f;
-	
 	public static Random RANDOM = new Random(1);
 	
 	/*
@@ -96,12 +90,11 @@ public class World implements Sweepable {
 	
 	public CarMap carMap = new CarMap();
 	
-	private List<AnimatedExplosion> explosions = new ArrayList<AnimatedExplosion>();
+	public ExplosionMap explosionMap = new ExplosionMap();
 	
 //	private List<Point> skidMarks = new ArrayList<Point>();
 	
 	public org.jbox2d.dynamics.World b2dWorld;
-	private CarEventListener listener;
 	
 	public AABB aabb;
 	
@@ -113,18 +106,19 @@ public class World implements Sweepable {
 		int quadrantRows = ini.length;
 		
 		map = new Map(ini);
-//		map.computeGridSpacing();
 		
 		worldWidth = quadrantCols * APP.QUADRANT_WIDTH;
 		
 		worldHeight = quadrantRows * APP.QUADRANT_HEIGHT;
 		
-		worldViewport = new AABB(
-				-(VIEW.canvas.getWidth() / PIXELS_PER_METER_DEBUG) / 2 + worldWidth/2 ,
-				-(VIEW.canvas.getHeight() / PIXELS_PER_METER_DEBUG) / 2 + worldHeight/2,
-				VIEW.canvas.getWidth() / PIXELS_PER_METER_DEBUG,
-				VIEW.canvas.getHeight() / PIXELS_PER_METER_DEBUG);
+		int canvasWidth = VIEW.canvas.getWidth();
+		int canvasHeight = VIEW.canvas.getHeight();
 		
+		worldViewport = new AABB(
+				-(canvasWidth / PIXELS_PER_METER_DEBUG) / 2 + worldWidth/2 ,
+				-(canvasHeight / PIXELS_PER_METER_DEBUG) / 2 + worldHeight/2,
+				canvasWidth / PIXELS_PER_METER_DEBUG,
+				canvasHeight / PIXELS_PER_METER_DEBUG);
 		
 		quadrantGrass = new BufferedImage(
 				512,
@@ -137,8 +131,7 @@ public class World implements Sweepable {
 						32 * i, 32 * j, 32 * i + 32, 32 * j + 32,
 						0, 224, 0+32, 224+32, null);
 			}
-		}
-		
+		}	
 		
 		mode = WorldMode.EDITING;
 		
@@ -147,8 +140,7 @@ public class World implements Sweepable {
 		stats = new Stats();
 		
 		b2dWorld = new org.jbox2d.dynamics.World(new Vec2(0.0f, 0.0f), true);
-		listener = new CarEventListener();
-		b2dWorld.setContactListener(listener);
+		b2dWorld.setContactListener(new CarEventListener());
 		
 		computeAABB();
 		
@@ -222,6 +214,10 @@ public class World implements Sweepable {
 	}
 	
 	
+	
+	public Point getPoint(Point p) {
+		return map.getPoint(p);
+	}
 	
 	public Quadrant findQuadrant(Point p) {
 		return map.findQuadrant(p);
@@ -303,10 +299,9 @@ public class World implements Sweepable {
 		
 	}
 	
-	
-	
-	
-	
+	public void addExplosion(AnimatedExplosion x) {
+		explosionMap.add(x);
+	}
 	
 	public void startRunning() {
 		
@@ -339,26 +334,17 @@ public class World implements Sweepable {
 	
 	public void zoom(double factor) {
 		
-		Point center = new Point(worldViewport.x + worldViewport.width / 2, worldViewport.y + worldViewport.height / 2);
-		
 		PIXELS_PER_METER_DEBUG = factor * PIXELS_PER_METER_DEBUG; 
 		
-		double newWidth = VIEW.canvas.getWidth() / PIXELS_PER_METER_DEBUG;
-		double newHeight = VIEW.canvas.getHeight() / PIXELS_PER_METER_DEBUG;
+		int canvasWidth = VIEW.canvas.getWidth();
+		int canvasHeight = VIEW.canvas.getHeight();
 		
-		worldViewport = new AABB(center.x - newWidth/2, center.y - newHeight/2, newWidth, newHeight);
+		double newWidth =  canvasWidth / PIXELS_PER_METER_DEBUG;
+		double newHeight = canvasHeight / PIXELS_PER_METER_DEBUG;
+		
+		worldViewport = new AABB(worldViewport.center.x - newWidth/2, worldViewport.center.y - newHeight/2, newWidth, newHeight);
 		
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	
 	public void qKey() {
 		switch (mode) {
@@ -385,6 +371,8 @@ public class World implements Sweepable {
 	public void gKey() {
 		
 		map.toggleGrid();
+		
+		cursor.setPoint(map.getPoint(lastMovedOrDraggedWorldPoint));
 		
 		APP.render();
 		VIEW.repaintCanvas();
@@ -548,15 +536,22 @@ public class World implements Sweepable {
 		}
 	}
 	
+	public void dKey() {
+		switch (mode) {
+		case RUNNING:
+		case PAUSED:
+			break;
+		case EDITING:
+			cursor.dKey();
+			break;
+		}
+	}
+	
 	public Point canvasToWorld(Point p) {
 		return new Point(
 				p.x / PIXELS_PER_METER_DEBUG + worldViewport.x,
 				p.y / PIXELS_PER_METER_DEBUG + worldViewport.y);
 	}
-	
-//	public int metersToPixels(double m) {
-//		return (int)(Math.round(m * VIEW.PIXELS_PER_METER_DEBUG));
-//	}
 	
 	public Point lastPressedWorldPoint;
 	
@@ -566,25 +561,6 @@ public class World implements Sweepable {
 		
 		lastPressedWorldPoint = canvasToWorld(p);
 		lastDraggedWorldPoint = null;
-		
-//		switch (mode) {
-//		case DRAFTING:
-//		case FIXTURECURSOR:
-//		case IDLE:
-//		case MERGERCURSOR:
-//		case PAUSED:
-//		case RUNNING:
-//		case STRAIGHTEDGECURSOR:
-//			break;
-//		case QUADCURSOR:
-//			QuadCursor qc = (QuadCursor)cursor;
-//			qc.pressed(ev);
-//			break;
-//		case CIRCLECURSOR:
-//			CircleCursor cc = (CircleCursor)cursor;
-//			cc.pressed(ev);
-//			break;
-//		}
 		
 	}
 	
@@ -643,46 +619,6 @@ public class World implements Sweepable {
 		}
 	}
 	
-//	public void entered(InputEvent ev) {
-//		
-//		Point p = ev.p;
-//		
-//		lastMovedWorldPoint = canvasToWorld(p);
-//		
-//		switch (mode) {
-//		case PAUSED:
-//		case DRAFTING:
-//		case RUNNING:
-//			break;
-//		case IDLE:
-//		case MERGERCURSOR:
-//		case FIXTURECURSOR:
-//		case STRAIGHTEDGECURSOR:
-//			
-//			if (grid) {
-//				
-//				Point closestGridPoint = new Point(2 * Math.round(0.5 * lastMovedWorldPoint.x), 2 * Math.round(0.5 * lastMovedWorldPoint.y));
-//				cursor.setPoint(closestGridPoint);
-//				
-//			} else {
-//				cursor.setPoint(lastMovedWorldPoint);
-//			}
-//			
-//			VIEW.repaintCanvas();
-//			break;
-//			
-//		case CIRCLECURSOR:
-//			CircleCursor cc = (CircleCursor)cursor;
-//			cc.entered(ev);
-//			break;
-//		case QUADCURSOR:
-//			QuadCursor qc = (QuadCursor)cursor;
-//			qc.entered(ev);
-//			break;
-//		}
-//		
-//	}
-	
 	public void exited(InputEvent ev) {
 		
 		switch (mode) {
@@ -694,43 +630,6 @@ public class World implements Sweepable {
 			break;
 		}
 	}
-	
-
-
-
-
-
-
-
-
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	public void addExplosion(AnimatedExplosion x) {
-		
-		if (explosions.size() == 100) {
-			
-			explosions.remove(0);
-			
-		} else {
-			assert explosions.size() < 100;
-		}
-		
-		explosions.add(x);
-		
-		assert explosions.size() <= 100;
-	}
-	
-	
-	
-	
 	
 	
 	
@@ -812,7 +711,7 @@ public class World implements Sweepable {
 		synchronized (APP) {
 			carMap.postStop();
 			
-			explosions.clear();
+			explosionMap.postStop();
 			
 		}
 		
@@ -852,9 +751,7 @@ public class World implements Sweepable {
 		
 		carMap.preStep(t);
 		
-		for (AnimatedExplosion x : explosions) {
-			x.preStep(t);
-		}
+		explosionMap.preStep(t);
 		
 	}
 	
@@ -871,16 +768,7 @@ public class World implements Sweepable {
 			
 			carMap.postStep(t);
 			
-			List<AnimatedExplosion> exToBeRemoved = new ArrayList<AnimatedExplosion>();
-			
-			for (AnimatedExplosion e : explosions) {
-				boolean shouldPersist = e.postStep(t);
-				if (!shouldPersist) {
-					exToBeRemoved.add(e);
-				}
-			}
-			
-			explosions.removeAll(exToBeRemoved);
+			explosionMap.postStep(t);
 			
 		}
 		
@@ -1003,10 +891,15 @@ public class World implements Sweepable {
 			
 			graph.renderBackground(canvasGraphContext);
 			
+//			if (APP.DEBUG_DRAW) {
+//				canvasGraphContext.setColor(Color.BLUE);
+//				new Circle(null, worldViewport.center, Vertex.INIT_VERTEX_RADIUS).paint(canvasGraphContext);
+//			}
+			
 			canvasGraphImageG2.dispose();
+			
 		}
 		
-//		preview.render();
 	}
 	
 	
@@ -1113,19 +1006,14 @@ public class World implements Sweepable {
 			b2dWorld.drawDebugData();
 		}
 		
-		List<AnimatedExplosion> explosionsCopy;
 		Entity hilitedCopy;
 		synchronized (APP) {
-			explosionsCopy = new ArrayList<AnimatedExplosion>(explosions);
 			hilitedCopy = hilited;
 		}
 		
 		synchronized (APP) {
 			carMap.paint(ctxt);
-		}
-		
-		for (AnimatedExplosion x : explosionsCopy) {
-			x.paint(ctxt);
+			explosionMap.paint(ctxt);
 		}
 		
 		if (hilitedCopy != null) {
@@ -1156,7 +1044,7 @@ public class World implements Sweepable {
 		
 		ctxt.translate(0, 1);
 		
-		ctxt.paintWorldString(0, 0, 1.0, "splosions count: " + explosions.size());
+		ctxt.paintWorldString(0, 0, 1.0, "splosions count: " + explosionMap.size());
 		
 		ctxt.translate(0, 1);
 		

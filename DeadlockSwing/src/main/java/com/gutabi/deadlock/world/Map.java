@@ -7,7 +7,6 @@ import com.gutabi.deadlock.core.geom.AABB;
 import com.gutabi.deadlock.core.geom.Shape;
 import com.gutabi.deadlock.core.geom.ShapeUtils;
 import com.gutabi.deadlock.view.RenderingContext;
-import com.gutabi.deadlock.world.cursor.Cursor;
 
 @SuppressWarnings("static-access")
 public class Map {
@@ -16,8 +15,6 @@ public class Map {
 	public final int quadrantRows;
 	
 	private Quadrant[][] quadrants;
-	
-//	private boolean grid;
 	
 	public final AABB aabb;
 	
@@ -93,6 +90,24 @@ public class Map {
 			return null;
 		}
 		return quadrants[row][col];
+	}
+	
+//	public void setCursorPoint(Cursor c, Point lastPoint) {
+//		Quadrant q = findQuadrant(lastPoint);
+//		if (q != null) {
+//			q.setCursorPoint(c, lastPoint);
+//		} else {
+//			c.setPoint(lastPoint);
+//		}
+//	}
+	
+	public Point getPoint(Point p) {
+		Quadrant q = findQuadrant(p);
+		if (q != null) {
+			return q.getPoint(p);
+		} else {
+			return p;
+		}
 	}
 	
 	public Quadrant upFixPoint(Quadrant q) {
@@ -188,15 +203,6 @@ public class Map {
 				Quadrant q = quadrants[i][j];
 				q.computeGridSpacing();
 			}
-		}
-	}
-	
-	public void setCursorPoint(Cursor c, Point lastPoint) {
-		Quadrant q = findQuadrant(lastPoint);
-		if (q != null) {
-			q.setCursorPoint(c, lastPoint);
-		} else {
-			c.setPoint(lastPoint);
 		}
 	}
 	

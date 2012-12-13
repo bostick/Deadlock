@@ -48,9 +48,11 @@ public class ShapeUtils {
 				return intersectCC((Circle)s0, (Circle)s1);
 			} else if (s1 instanceof CircleCursorShape) {
 				return intersect(s1, s0);
-			} else if (s1 instanceof FixtureCursorShape) {
+			}
+			else if (s1 instanceof FixtureCursorShape) {
 				return intersect(s1, s0);
-			} else if (s1 instanceof MergerCursorShape) {
+			}
+			else if (s1 instanceof MergerCursorShape) {
 				return intersect(s1, s0);
 			} else if (s1 instanceof Quad) {
 				return intersectCQ((Circle)s0, (Quad)s1);
@@ -70,15 +72,16 @@ public class ShapeUtils {
 		else if (s0 instanceof FixtureCursorShape) {
 			FixtureCursorShape fc0 = (FixtureCursorShape)s0;
 			
-			if (intersect(fc0.worldSource, s1)) {
+			if (intersect(fc0.worldSourceCircle, s1)) {
 				return true;
 			}
-			if (intersect(fc0.worldSink, s1)) {
+			if (intersect(fc0.worldSinkCircle, s1)) {
 				return true;
 			}
 			return false;
 			
-		} else if (s0 instanceof MergerCursorShape) {
+		}
+		else if (s0 instanceof MergerCursorShape) {
 			MergerCursorShape mc0 = (MergerCursorShape)s0;
 			
 			if (intersect(mc0.worldQ, s1)) {
@@ -105,9 +108,11 @@ public class ShapeUtils {
 				return intersect(s1, s0);
 			} else if (s1 instanceof Circle) {
 				return intersectCQ((Circle)s1, (Quad)s0);
-			} else if (s1 instanceof FixtureCursorShape) {
+			}
+			else if (s1 instanceof FixtureCursorShape) {
 				return intersect(s1, s0);
-			} else if (s1 instanceof MergerCursorShape) {
+			}
+			else if (s1 instanceof MergerCursorShape) {
 				return intersect(s1, s0);
 			} else if (s1 instanceof Quad) {
 				return intersectQQ((Quad)s0, (Quad)s1);

@@ -46,6 +46,8 @@ public class KeyboardController implements KeyListener {
 			aKey();
 		} else if (e.getKeyCode() == KeyEvent.VK_S) {
 			sKey();
+		} else if (e.getKeyCode() == KeyEvent.VK_D) {
+			dKey();
 		}
 	}
 
@@ -209,6 +211,17 @@ public class KeyboardController implements KeyListener {
 		switch (CONTROLLER.mode) {
 		case WORLD:
 			APP.world.sKey();
+			break;
+		case MENU:
+			break;
+		}
+		
+	}
+	
+	public void dKey() {
+		switch (CONTROLLER.mode) {
+		case WORLD:
+			APP.world.dKey();
 			break;
 		case MENU:
 			break;

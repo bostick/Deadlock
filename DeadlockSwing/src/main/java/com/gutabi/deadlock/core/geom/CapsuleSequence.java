@@ -240,8 +240,10 @@ public class CapsuleSequence extends SweepableShape {
 	
 	public void draw(RenderingContext ctxt) {
 		for (Capsule c : caps) {
-			c.draw(ctxt);
+			c.drawA(ctxt);
+			c.drawMiddle(ctxt);
 		}
+		caps.get(caps.size()-1).drawB(ctxt);
 	}
 	
 	public void drawSkeleton(RenderingContext ctxt) {

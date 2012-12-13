@@ -10,7 +10,6 @@ import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.AABB;
 import com.gutabi.deadlock.core.geom.Line;
 import com.gutabi.deadlock.view.RenderingContext;
-import com.gutabi.deadlock.world.cursor.Cursor;
 
 @SuppressWarnings("static-access")
 public class Quadrant {
@@ -49,28 +48,32 @@ public class Quadrant {
 	public void computeGridSpacing() {
 		
 		double curGridSpacingPixels =  gridSpacing * APP.world.PIXELS_PER_METER_DEBUG;
-		while (curGridSpacingPixels > 80) {
-			gridSpacing -= 0.1;
+		while (curGridSpacingPixels > 64+16) {
+			gridSpacing *= 0.5;
 			curGridSpacingPixels =  gridSpacing * APP.world.PIXELS_PER_METER_DEBUG;
 		}
-		while (curGridSpacingPixels < 48) {
-			gridSpacing += 0.1;
+		while (curGridSpacingPixels < 64-16) {
+			gridSpacing *= 2.0;
 			curGridSpacingPixels =  gridSpacing * APP.world.PIXELS_PER_METER_DEBUG;
 		}
 	}
 	
-	public void setCursorPoint(Cursor c, Point lastPoint) {
-		if (grid) {
+	public Point getPoint(Point p) {
+		if (active) {
 			
-			Point closestGridPoint = new Point(gridSpacing * Math.round(lastPoint.x / gridSpacing), gridSpacing * Math.round(lastPoint.y / gridSpacing));
-			if (aabb.hitTest(closestGridPoint)) {
-				c.setPoint(closestGridPoint);
+			if (grid) {
+				Point closestGridPoint = new Point(gridSpacing * Math.round(p.x / gridSpacing), gridSpacing * Math.round(p.y / gridSpacing));
+				if (aabb.hitTest(closestGridPoint)) {
+					return closestGridPoint;
+				} else {
+					return p;
+				}	
 			} else {
-				c.setPoint(lastPoint);
+				return p;
 			}
 			
 		} else {
-			c.setPoint(lastPoint);
+			return p;
 		}
 	}
 	

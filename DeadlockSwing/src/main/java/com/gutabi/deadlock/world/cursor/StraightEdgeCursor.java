@@ -40,10 +40,9 @@ public class StraightEdgeCursor extends CursorBase {
 		
 		APP.world.cursor = new RegularCursor();
 		
-		APP.world.cursor.setPoint(APP.world.lastMovedWorldPoint);
+		APP.world.cursor.setPoint(APP.world.getPoint(APP.world.lastMovedOrDraggedWorldPoint));
 		
 		VIEW.repaintCanvas();
-		
 	}
 	
 	public void qKey() {
@@ -64,7 +63,7 @@ public class StraightEdgeCursor extends CursorBase {
 	}
 	
 	public void moved(InputEvent ev) {
-		APP.world.map.setCursorPoint(this, APP.world.lastMovedOrDraggedWorldPoint);
+		APP.world.cursor.setPoint(APP.world.getPoint(APP.world.lastMovedOrDraggedWorldPoint));
 		VIEW.repaintCanvas();
 	}
 	

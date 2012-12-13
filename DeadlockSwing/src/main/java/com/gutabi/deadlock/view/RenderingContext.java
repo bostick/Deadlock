@@ -14,8 +14,6 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Line2D;
-import java.awt.geom.Path2D;
-import java.awt.geom.QuadCurve2D;
 import java.awt.geom.Rectangle2D;
 
 import org.jbox2d.callbacks.DebugDraw;
@@ -126,9 +124,13 @@ public class RenderingContext extends DebugDraw {
 		g2.setTransform(origTransform);
 	}
 	
-	public void draw(Line2D line) {
-		g2.draw(line);
+	public void draw(java.awt.Shape s) {
+		g2.draw(s);
 	}
+	
+//	public void draw(Line2D line) {
+//		g2.draw(line);
+//	}
 	
 	public void fillRect(int x, int y, int width, int height) {
 		g2.fillRect(x, y, width, height);
@@ -138,33 +140,33 @@ public class RenderingContext extends DebugDraw {
 		g2.fill(e);
 	}
 	
-	public void draw(Ellipse2D e) {
-		g2.draw(e);
-	}
+//	public void draw(Ellipse2D e) {
+//		g2.draw(e);
+//	}
 	
 	public void fill(GeneralPath e) {
 		g2.fill(e);
 	}
 	
-	public void draw(GeneralPath e) {
-		g2.draw(e);
-	}
+//	public void draw(GeneralPath e) {
+//		g2.draw(e);
+//	}
 	
 	public void fill(Rectangle2D e) {
 		g2.fill(e);
 	}
 	
-	public void draw(Rectangle2D e) {
-		g2.draw(e);
-	}
+//	public void draw(Rectangle2D e) {
+//		g2.draw(e);
+//	}
 	
-	public void draw(Path2D e) {
-		g2.draw(e);
-	}
+//	public void draw(Path2D e) {
+//		g2.draw(e);
+//	}
 	
-	public void draw(QuadCurve2D e) {
-		g2.draw(e);
-	}
+//	public void draw(QuadCurve2D e) {
+//		g2.draw(e);
+//	}
 	
 	@Override
 	public void drawPoint(Vec2 argPoint, float argRadiusOnScreen, Color3f argColor) {

@@ -122,13 +122,13 @@ public class RegularCursor extends CursorBase {
 	
 	public void qKey() {
 		APP.world.cursor = new StraightEdgeCursor(APP.world.lastMovedOrDraggedWorldPoint);
-		APP.world.cursor.setPoint(APP.world.lastMovedWorldPoint);
+		APP.world.cursor.setPoint(APP.world.getPoint(APP.world.lastMovedOrDraggedWorldPoint));
 		VIEW.repaintCanvas();
 	}
 	
 	public void wKey() {
 		APP.world.cursor = new FixtureCursor();
-		APP.world.cursor.setPoint(APP.world.lastMovedWorldPoint);
+		APP.world.cursor.setPoint(APP.world.getPoint(APP.world.lastMovedOrDraggedWorldPoint));
 		VIEW.repaintCanvas();
 	}
 	
@@ -138,19 +138,30 @@ public class RegularCursor extends CursorBase {
 		
 		APP.world.cursor = new CircleCursor();
 		
-		APP.world.cursor.setPoint(APP.world.lastMovedWorldPoint);
+		APP.world.cursor.setPoint(APP.world.getPoint(APP.world.lastMovedOrDraggedWorldPoint));
 		
 		VIEW.repaintCanvas();
 	}
 	
 	public void sKey() {
 		QuadCursor q = new QuadCursor();
-		q.setStart(APP.world.lastMovedWorldPoint);
-		q.setPoint(APP.world.lastMovedWorldPoint);
-		Point middle = q.start.plus(q.p.minus(q.start).multiply(0.5));
-		Point c = middle.plus(new Point(0, -4 * Vertex.INIT_VERTEX_RADIUS));
-		q.setControl(c);
+		q.setStart(APP.world.getPoint(APP.world.lastMovedOrDraggedWorldPoint));
+		q.setPoint(APP.world.getPoint(APP.world.lastMovedOrDraggedWorldPoint));
+//		Point middle = q.start.plus(q.p.minus(q.start).multiply(0.5));
+//		Point c = middle.plus(new Point(0, -4 * Vertex.INIT_VERTEX_RADIUS));
+//		q.setControl(c);
 		APP.world.cursor = q;
+		VIEW.repaintCanvas();
+	}
+	
+	public void dKey() {
+		CubicCursor c = new CubicCursor();
+		c.setStart(APP.world.getPoint(APP.world.lastMovedOrDraggedWorldPoint));
+		c.setPoint(APP.world.getPoint(APP.world.lastMovedOrDraggedWorldPoint));
+//		Point middle = c.start.plus(c.p.minus(c.start).multiply(0.5));
+//		Point control = middle.plus(new Point(0, -4 * Vertex.INIT_VERTEX_RADIUS));
+//		c.setControl(control);
+		APP.world.cursor = c;
 		VIEW.repaintCanvas();
 	}
 	
@@ -172,10 +183,9 @@ public class RegularCursor extends CursorBase {
 			
 			APP.world.cursor = new MergerCursor();
 			
-			APP.world.cursor.setPoint(APP.world.lastMovedOrDraggedWorldPoint);
+			APP.world.cursor.setPoint(APP.world.getPoint(APP.world.lastMovedOrDraggedWorldPoint));
 			
 			VIEW.repaintCanvas();
-			
 		}
 	}
 	
@@ -188,7 +198,7 @@ public class RegularCursor extends CursorBase {
 		
 		APP.world.map.computeGridSpacing();
 		
-		APP.world.map.setCursorPoint(this, APP.world.lastMovedOrDraggedWorldPoint);
+		APP.world.cursor.setPoint(APP.world.getPoint(APP.world.lastMovedOrDraggedWorldPoint));
 		
 		APP.render();
 		VIEW.repaintCanvas();
@@ -204,7 +214,7 @@ public class RegularCursor extends CursorBase {
 		
 		APP.world.map.computeGridSpacing();
 		
-		APP.world.map.setCursorPoint(APP.world.cursor, APP.world.lastMovedOrDraggedWorldPoint);
+		APP.world.cursor.setPoint(APP.world.getPoint(APP.world.lastMovedOrDraggedWorldPoint));
 		
 		APP.render();
 		VIEW.repaintCanvas();
@@ -220,7 +230,7 @@ public class RegularCursor extends CursorBase {
 				APP.world.hilited = closest;
 			}
 			
-			APP.world.map.setCursorPoint(this, APP.world.lastMovedOrDraggedWorldPoint);
+			APP.world.cursor.setPoint(APP.world.getPoint(APP.world.lastMovedOrDraggedWorldPoint));
 			
 			VIEW.repaintCanvas();
 			break;
