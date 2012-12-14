@@ -34,7 +34,7 @@ public class QuadrantEditor extends ScreenBase {
 			
 			APP.screen.render();
 			
-			repaint();
+			APP.screen.repaint();
 			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

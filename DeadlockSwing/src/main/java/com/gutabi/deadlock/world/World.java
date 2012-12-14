@@ -25,8 +25,6 @@ import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.AABB;
 import com.gutabi.deadlock.core.geom.Capsule;
 import com.gutabi.deadlock.core.geom.Circle;
-import com.gutabi.deadlock.core.geom.Quad;
-import com.gutabi.deadlock.core.geom.Shape;
 import com.gutabi.deadlock.core.geom.SweepEvent;
 import com.gutabi.deadlock.core.geom.Sweepable;
 import com.gutabi.deadlock.view.Canvas;
@@ -38,8 +36,8 @@ import com.gutabi.deadlock.world.car.Car;
 import com.gutabi.deadlock.world.car.CarEventListener;
 import com.gutabi.deadlock.world.cursor.Cursor;
 import com.gutabi.deadlock.world.cursor.RegularCursor;
-import com.gutabi.deadlock.world.graph.Edge;
 import com.gutabi.deadlock.world.graph.Graph;
+import com.gutabi.deadlock.world.graph.GraphPositionPathFactory;
 import com.gutabi.deadlock.world.graph.Merger;
 import com.gutabi.deadlock.world.graph.Road;
 import com.gutabi.deadlock.world.graph.RoadPosition;
@@ -93,9 +91,11 @@ public class World extends ScreenBase implements Sweepable {
 	AnimatedGrass animatedGrass2;
 	AnimatedGrass animatedGrass3;
 	
-	public Graph graph = new Graph();
+	public Graph graph;
 	
 	public CarMap carMap;
+	
+	public GraphPositionPathFactory pathFactory;
 	
 	public ExplosionMap explosionMap = new ExplosionMap();
 	
@@ -118,15 +118,6 @@ public class World extends ScreenBase implements Sweepable {
 		
 		worldHeight = quadrantRows * APP.QUADRANT_HEIGHT;
 		
-		int canvasWidth = VIEW.canvas.getWidth();
-		int canvasHeight = VIEW.canvas.getHeight();
-		
-		worldViewport = new AABB(
-				-(canvasWidth / PIXELS_PER_METER_DEBUG) / 2 + worldWidth/2 ,
-				-(canvasHeight / PIXELS_PER_METER_DEBUG) / 2 + worldHeight/2,
-				canvasWidth / PIXELS_PER_METER_DEBUG,
-				canvasHeight / PIXELS_PER_METER_DEBUG);
-		
 		quadrantGrass = new BufferedImage(
 				512,
 				512,
@@ -142,13 +133,17 @@ public class World extends ScreenBase implements Sweepable {
 		
 		mode = WorldMode.EDITING;
 		
-		cursor = new RegularCursor();
+		cursor = new RegularCursor(this);
 		
 		preview = new Preview(this);
 		
 		stats = new Stats(this);
 		
+		graph = new Graph(this);
+		
 		carMap = new CarMap(this);
+		
+		pathFactory = new GraphPositionPathFactory(this);
 		
 		b2dWorld = new org.jbox2d.dynamics.World(new Vec2(0.0f, 0.0f), true);
 		b2dWorld.setContactListener(new CarEventListener(this));
@@ -213,43 +208,24 @@ public class World extends ScreenBase implements Sweepable {
 	}
 	
 	public void init() throws Exception {
+		preview.init();
+	}
+	
+	public void canvasPostDisplay() {	
+		
+		int canvasWidth = VIEW.canvas.getWidth();
+		int canvasHeight = VIEW.canvas.getHeight();
+		
+		canvasGrassImage = new BufferedImage(canvasWidth, canvasHeight, BufferedImage.TYPE_INT_RGB);
+		canvasGraphImage = new BufferedImage(canvasWidth, canvasHeight, BufferedImage.TYPE_INT_ARGB);
+		
+		worldViewport = new AABB(
+				-(canvasWidth / PIXELS_PER_METER_DEBUG) / 2 + worldWidth/2 ,
+				-(canvasHeight / PIXELS_PER_METER_DEBUG) / 2 + worldHeight/2,
+				canvasWidth / PIXELS_PER_METER_DEBUG,
+				canvasHeight / PIXELS_PER_METER_DEBUG);
 		
 	}
-	
-	public void canvasPostDisplay() {
-		
-		canvasGrassImage = new BufferedImage(VIEW.canvas.getWidth(), VIEW.canvas.getHeight(), BufferedImage.TYPE_INT_RGB);
-		
-		canvasGraphImage = new BufferedImage(VIEW.canvas.getWidth(), VIEW.canvas.getHeight(), BufferedImage.TYPE_INT_ARGB);
-		
-	}
-	
-	
-	
-	public Point getPoint(Point p) {
-		return quadrantMap.getPoint(p);
-	}
-	
-	public Quadrant findQuadrant(Point p) {
-		return quadrantMap.findQuadrant(p);
-	}
-	
-	public Quadrant upFixPoint(Quadrant q) {
-		return quadrantMap.upFixPoint(q);
-	}
-	
-	public Quadrant leftFixPoint(Quadrant q) {
-		return quadrantMap.leftFixPoint(q);
-	}
-	
-	public Quadrant rightFixPoint(Quadrant q) {
-		return quadrantMap.rightFixPoint(q);
-	}
-	
-	public Quadrant downFixPoint(Quadrant q) {
-		return quadrantMap.downFixPoint(q);
-	}
-	
 	
 	
 	public void addVertexTop(Vertex v) {
@@ -365,13 +341,6 @@ public class World extends ScreenBase implements Sweepable {
 		return graph.sweep(s);
 	}
 	
-	
-	
-	
-	
-	
-	
-	
 	private void postIdleTop(Set<Vertex> affected) {
 		
 		graph.computeVertexRadii(affected);
@@ -398,8 +367,6 @@ public class World extends ScreenBase implements Sweepable {
 	public AABB getAABB() {
 		return aabb;
 	}
-	
-	
 	
 	/*
 	 * run before game loop start
@@ -442,8 +409,6 @@ public class World extends ScreenBase implements Sweepable {
 //		skidMarks.clear();
 	}
 	
-	
-	
 	int velocityIterations = 6;
 	int positionIterations = 2;
 	
@@ -479,9 +444,6 @@ public class World extends ScreenBase implements Sweepable {
 		
 	}
 	
-	
-	
-	
 	public void addCar(Car c) {
 		carMap.addCar(c);
 	}
@@ -510,66 +472,22 @@ public class World extends ScreenBase implements Sweepable {
 //		skidMarks.add(b);
 //	}
 	
-	/**
-	 * the next choice to make
-	 */
-	public Vertex shortestPathChoice(Vertex start, Vertex end) {
-		return graph.shortestPathChoice(start, end);
-	}
-	
-	public Vertex randomPathChoice(Edge prev, Vertex start, Vertex end) {
-		return graph.randomPathChoice(prev, start, end);
-	}
-	
-	public double distanceBetweenVertices(Vertex start, Vertex end) {
-		return graph.distanceBetweenVertices(start, end);
-	}
-	
 	public Entity hitTest(Point p) {
-		Car c = carHitTest(p);
+		Car c;
+		synchronized (APP) {
+			c = carMap.carHitTest(p);
+		}
 		if (c != null) {
 			return c;
 		}
-		Entity h = graphHitTest(p);
+		Entity h = graph.graphHitTest(p);
 		if (h != null) {
 			return h;
 		}
 		return null;
-	}
+	}	
 	
-	public Car carHitTest(Point p) {
-		synchronized (APP) {
-			return carMap.carHitTest(p);
-		}
-	}
 	
-	public Entity graphHitTest(Point p) {
-		return graph.graphHitTest(p);
-	}
-	
-	public Entity pureGraphBestHitTest(Shape s) {
-		return graph.pureGraphBestHitTest(s);
-	}
-	
-	public Entity pureGraphBestHitTestQuad(Quad q) {
-		return graph.pureGraphBestHitTestQuad(q);
-	}
-	
-	public Entity pureGraphBestHitTestCircle(Circle c) {
-		return graph.pureGraphBestHitTestCircle(c);
-	}
-	
-	public Entity pureGraphBestHitTestCapsule(Capsule c) {
-		return graph.pureGraphBestHitTestCapsule(c);
-	}
-	
-	public RoadPosition findClosestRoadPosition(Point p, double radius) {
-		return graph.findClosestRoadPosition(p, radius);
-	}
-	
-	public boolean completelyContains(Shape s) {
-		return quadrantMap.completelyContains(s);
-	}
 	
 	public void qKey() {
 		switch (mode) {
@@ -709,15 +627,18 @@ public class World extends ScreenBase implements Sweepable {
 		
 		lastMovedOrDraggedWorldPoint = canvasToWorld(VIEW.canvas.lastMovedOrDraggedCanvasPoint);
 		
-		switch (mode) {
-		case PAUSED:
-		case RUNNING:
-			break;
-		case EDITING:
-			cursor.plusKey();
-			break;
+		Entity closest = hitTest(lastMovedOrDraggedWorldPoint);
+		
+		synchronized (APP) {
+			hilited = closest;
 		}
 		
+		quadrantMap.computeGridSpacing();
+		
+		cursor.setPoint(quadrantMap.getPoint(lastMovedOrDraggedWorldPoint));
+		
+		render();
+		repaint();
 	}
 	
 	public void minusKey() {
@@ -726,15 +647,18 @@ public class World extends ScreenBase implements Sweepable {
 		
 		lastMovedOrDraggedWorldPoint = canvasToWorld(VIEW.canvas.lastMovedOrDraggedCanvasPoint);
 		
-		switch (mode) {
-		case PAUSED:
-		case RUNNING:
-			break;
-		case EDITING:
-			cursor.minusKey();
-			break;
+		Entity closest = hitTest(lastMovedOrDraggedWorldPoint);
+		
+		synchronized (APP) {
+			hilited = closest;
 		}
 		
+		quadrantMap.computeGridSpacing();
+		
+		cursor.setPoint(quadrantMap.getPoint(lastMovedOrDraggedWorldPoint));
+		
+		render();
+		repaint();
 	}
 	
 	public void aKey() {

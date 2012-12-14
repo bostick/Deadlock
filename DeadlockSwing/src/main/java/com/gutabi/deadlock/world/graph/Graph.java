@@ -26,9 +26,12 @@ import com.gutabi.deadlock.core.geom.SweepEvent;
 import com.gutabi.deadlock.core.geom.Sweepable;
 import com.gutabi.deadlock.view.RenderingContext;
 import com.gutabi.deadlock.view.RenderingContextType;
+import com.gutabi.deadlock.world.World;
 
 @SuppressWarnings("static-access")
 public class Graph implements Sweepable {
+	
+	public final World world;
 	
 	public final List<Vertex> vertices = new ArrayList<Vertex>();
 	public final List<Edge> edges = new ArrayList<Edge>();
@@ -38,6 +41,10 @@ public class Graph implements Sweepable {
 	private AABB aabb;
 	
 	private static final Logger logger = Logger.getLogger(Graph.class);
+	
+	public Graph(World world) {
+		this.world = world;
+	}
 	
 	public void preStart() {
 		
@@ -303,7 +310,7 @@ public class Graph implements Sweepable {
 	 */
 	private Road createRoad(Vertex start, Vertex end, List<Point> pts, int dec) {
 		assert pts.size() >= 2;
-		Road e = new Road(start, end, pts, dec);
+		Road e = new Road(world, start, end, pts, dec);
 		edges.add(e);
 		refreshEdgeIDs();
 		
@@ -311,7 +318,7 @@ public class Graph implements Sweepable {
 	}
 	
 	private Merger createMerger(Point p) {
-		Merger m = new Merger(p);
+		Merger m = new Merger(world, p);
 		
 		edges.add(m);
 		refreshEdgeIDs();
@@ -545,7 +552,7 @@ public class Graph implements Sweepable {
 		Vertex v;
 		Edge e;
 		
-		int r = APP.world.RANDOM.nextInt(n);
+		int r = world.RANDOM.nextInt(n);
 		
 		e = edges.get(r);
 		
@@ -785,7 +792,7 @@ public class Graph implements Sweepable {
 		assert param >= 0.0;
 		assert param < 1.0;
 		
-		Intersection v = new Intersection(p);
+		Intersection v = new Intersection(world, p);
 		addVertex(v);
 		
 		Vertex eStart = r.start;
@@ -1113,11 +1120,11 @@ public class Graph implements Sweepable {
 		
 		AffineTransform origTransform = ctxt.getTransform();
 		
-		ctxt.paintWorldString(0, 0, 1.0, "vertex count: " + vertices.size());
+		ctxt.paintString(0, 0, 1.0 / world.PIXELS_PER_METER_DEBUG, "vertex count: " + vertices.size());
 		
 		ctxt.translate(0, 1);
 		
-		ctxt.paintWorldString(0, 0, 1.0, "edge count: " + edges.size());
+		ctxt.paintString(0, 0, 1.0 / world.PIXELS_PER_METER_DEBUG, "edge count: " + edges.size());
 		
 		ctxt.setTransform(origTransform);
 	}

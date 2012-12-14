@@ -1,7 +1,6 @@
 package com.gutabi.deadlock.world.cursor;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
-import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
 import java.awt.Color;
 import java.util.List;
@@ -41,10 +40,10 @@ public class CircleCursor extends CursorBase {
 		yRadius = Vertex.INIT_VERTEX_RADIUS;
 		xRadius = Vertex.INIT_VERTEX_RADIUS;
 		
-		ulKnob = new Knob() {
+		ulKnob = new Knob(world) {
 			public void drag(Point p) {
 				
-				Point newPoint = world.getPoint(p);
+				Point newPoint = world.quadrantMap.getPoint(p);
 				
 				Dim offset = shape.c1.aabb.dim.multiply(0.5);
 				
@@ -54,10 +53,10 @@ public class CircleCursor extends CursorBase {
 			}
 		};
 		
-		brKnob = new Knob() {
+		brKnob = new Knob(world) {
 			public void drag(Point p) {
 				
-				Point newPoint = world.getPoint(p);
+				Point newPoint = world.quadrantMap.getPoint(p);
 				
 				Point diff = new Point(newPoint.x - this.p.x, newPoint.y - this.p.y);
 				
@@ -106,13 +105,13 @@ public class CircleCursor extends CursorBase {
 	public void escKey() {
 		switch (mode) {
 		case FREE:
-			world.cursor = new RegularCursor();
-			world.cursor.setPoint(world.getPoint(world.lastMovedOrDraggedWorldPoint));
+			world.cursor = new RegularCursor(world);
+			world.cursor.setPoint(world.quadrantMap.getPoint(world.lastMovedOrDraggedWorldPoint));
 			world.repaint();
 			break;
 		case SET:
 			mode = CircleCursorMode.FREE;
-			world.cursor.setPoint(world.getPoint(world.lastMovedOrDraggedWorldPoint));
+			world.cursor.setPoint(world.quadrantMap.getPoint(world.lastMovedOrDraggedWorldPoint));
 			world.repaint();
 			break;
 		case KNOB:
@@ -138,7 +137,7 @@ public class CircleCursor extends CursorBase {
 			
 			s.processNewStroke();
 			
-			world.cursor = new RegularCursor();
+			world.cursor = new RegularCursor(world);
 			
 			world.cursor.setPoint(world.lastMovedWorldPoint);
 			
@@ -159,7 +158,7 @@ public class CircleCursor extends CursorBase {
 				world.hilited = closest;
 			}
 			
-			world.cursor.setPoint(world.getPoint(world.lastMovedOrDraggedWorldPoint));
+			world.cursor.setPoint(world.quadrantMap.getPoint(world.lastMovedOrDraggedWorldPoint));
 			
 			world.repaint();
 			break;
@@ -173,32 +172,32 @@ public class CircleCursor extends CursorBase {
 		
 		switch (mode) {
 		case FREE:
-			setPoint(APP.world.lastDraggedWorldPoint);
+			setPoint(world.lastDraggedWorldPoint);
 			break;
 		case SET:
-			if (!APP.world.lastDraggedWorldPointWasNull) {
+			if (!world.lastDraggedWorldPointWasNull) {
 				break;
 			}
-			if (!(ulKnob.hitTest(APP.world.lastPressedWorldPoint) ||
-					brKnob.hitTest(APP.world.lastPressedWorldPoint))) {
+			if (!(ulKnob.hitTest(world.lastPressedWorldPoint) ||
+					brKnob.hitTest(world.lastPressedWorldPoint))) {
 				break;
 			}
-			if (ulKnob.hitTest(APP.world.lastPressedWorldPoint)) {
+			if (ulKnob.hitTest(world.lastPressedWorldPoint)) {
 				mode = CircleCursorMode.KNOB;
 				knob = ulKnob;
 				origKnobCenter = knob.p;
-			} else if (brKnob.hitTest(APP.world.lastPressedWorldPoint)) {
+			} else if (brKnob.hitTest(world.lastPressedWorldPoint)) {
 				mode = CircleCursorMode.KNOB;
 				knob = brKnob;
 				origKnobCenter = knob.p;
 			}
 		case KNOB:
 			
-			Point diff = new Point(APP.world.lastDraggedWorldPoint.x - APP.world.lastPressedWorldPoint.x, APP.world.lastDraggedWorldPoint.y - APP.world.lastPressedWorldPoint.y);
+			Point diff = new Point(world.lastDraggedWorldPoint.x - world.lastPressedWorldPoint.x, world.lastDraggedWorldPoint.y - world.lastPressedWorldPoint.y);
 			
 			knob.drag(origKnobCenter.plus(diff));
 			
-			VIEW.repaint();
+			world.repaint();
 			break;
 		}
 	}
@@ -210,14 +209,14 @@ public class CircleCursor extends CursorBase {
 			break;
 		case KNOB:	
 			mode = CircleCursorMode.SET;
-			VIEW.repaint();
+			world.repaint();
 			break;
 		}
 	}
 	
 	public void exited(InputEvent ev) {
-		APP.world.cursor.setPoint(null);
-		VIEW.repaint();
+		world.cursor.setPoint(null);
+		world.repaint();
 	}
 	
 	Point origKnobCenter;
@@ -230,7 +229,7 @@ public class CircleCursor extends CursorBase {
 		
 		ctxt.setColor(Color.WHITE);
 		ctxt.setXORMode(Color.BLACK);
-		ctxt.setWorldPixelStroke(1);
+		ctxt.setPixelStroke(1);
 		
 		shape.draw(ctxt);
 		

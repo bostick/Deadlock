@@ -60,16 +60,15 @@ public class MainMenu extends Menu {
 					
 					VIEW.teardownCanvas(VIEW.container);
 					
-					VIEW.setupCanvasAndControlPanel(VIEW.container);
-					
-					((JFrame)VIEW.container).setVisible(true);
-					VIEW.canvas.requestFocusInWindow();
-					
 					APP.screen = new OneByOneWorld();
 					
 					APP.screen.init();
 					
-					VIEW.postDisplay();
+					VIEW.setupCanvasAndControlPanel(VIEW.container);
+					((JFrame)VIEW.container).setVisible(true);
+					VIEW.canvas.requestFocusInWindow();
+					
+					VIEW.canvas.canvasPostDisplay();
 					
 					APP.screen.render();
 					
@@ -91,16 +90,16 @@ public class MainMenu extends Menu {
 					
 					VIEW.teardownCanvas(VIEW.container);
 					
+					APP.screen = new FourByFourGridWorld();
+					
+					APP.screen.init();
+					
 					VIEW.setupCanvasAndControlPanel(VIEW.container);
 					
 					((JFrame)VIEW.container).setVisible(true);
 					VIEW.canvas.requestFocusInWindow();
 					
-					APP.screen = new FourByFourGridWorld();
-					
-					APP.screen.init();
-					
-					VIEW.postDisplay();
+					VIEW.canvas.canvasPostDisplay();
 					
 					APP.screen.render();
 					
@@ -131,7 +130,7 @@ public class MainMenu extends Menu {
 					((JFrame)VIEW.container).setVisible(true);
 					VIEW.canvas.requestFocusInWindow();
 					
-					VIEW.postDisplay();
+					VIEW.canvas.canvasPostDisplay();
 					
 					APP.screen.render();
 					

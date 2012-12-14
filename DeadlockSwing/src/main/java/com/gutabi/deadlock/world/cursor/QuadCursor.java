@@ -1,8 +1,5 @@
 package com.gutabi.deadlock.world.cursor;
 
-import static com.gutabi.deadlock.DeadlockApplication.APP;
-import static com.gutabi.deadlock.view.DeadlockView.VIEW;
-
 import java.awt.Color;
 import java.util.List;
 
@@ -11,6 +8,7 @@ import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.Shape;
 import com.gutabi.deadlock.view.RenderingContext;
 import com.gutabi.deadlock.world.Stroke;
+import com.gutabi.deadlock.world.World;
 import com.gutabi.deadlock.world.graph.Vertex;
 
 public class QuadCursor extends CursorBase {
@@ -34,26 +32,28 @@ public class QuadCursor extends CursorBase {
 	
 	Knob knob;
 	
-	public QuadCursor() {
+	public QuadCursor(final World world) {
+		super(world);
+		
 		mode = QuadCursorMode.FREE;
 		
-		startKnob = new Knob() {
+		startKnob = new Knob(world) {
 			public void drag(Point p) {
-				Point newPoint = APP.world.getPoint(p);
+				Point newPoint = world.quadrantMap.getPoint(p);
 				QuadCursor.this.setStart(newPoint);
 			}
 		};
 		
-		controlKnob = new Knob() {
+		controlKnob = new Knob(world) {
 			public void drag(Point p) {
-				Point newPoint = APP.world.getPoint(p);
+				Point newPoint = world.quadrantMap.getPoint(p);
 				QuadCursor.this.setControl(newPoint);
 			}
 		};
 		
-		endKnob = new Knob() {
+		endKnob = new Knob(world) {
 			public void drag(Point p) {
-				Point newPoint = APP.world.getPoint(p);
+				Point newPoint = world.quadrantMap.getPoint(p);
 				QuadCursor.this.setEnd(newPoint);
 			}
 		};
@@ -113,14 +113,14 @@ public class QuadCursor extends CursorBase {
 	public void escKey() {
 		switch (mode) {
 		case FREE:
-			APP.world.cursor = new RegularCursor();
-			APP.world.cursor.setPoint(APP.world.getPoint(APP.world.lastMovedOrDraggedWorldPoint));
-			VIEW.repaint();
+			world.cursor = new RegularCursor(world);
+			world.cursor.setPoint(world.quadrantMap.getPoint(world.lastMovedOrDraggedWorldPoint));
+			world.repaint();
 			break;
 		case SET:
 			mode = QuadCursorMode.FREE;
-			APP.world.cursor.setPoint(APP.world.getPoint(APP.world.lastMovedOrDraggedWorldPoint));
-			VIEW.repaint();
+			world.cursor.setPoint(world.quadrantMap.getPoint(world.lastMovedOrDraggedWorldPoint));
+			world.repaint();
 			break;
 		case KNOB:
 			assert false;
@@ -132,12 +132,12 @@ public class QuadCursor extends CursorBase {
 		switch (mode) {
 		case FREE:
 			mode = QuadCursorMode.SET;
-			VIEW.repaint();
+			world.repaint();
 			break;
 		case SET:
 			
 			List<Point> pts = shape.skeleton;
-			Stroke s = new Stroke();
+			Stroke s = new Stroke(world);
 			for (Point p : pts) {
 				s.add(p);
 			}
@@ -145,12 +145,12 @@ public class QuadCursor extends CursorBase {
 			
 			s.processNewStroke();
 			
-			APP.world.cursor = new RegularCursor();
+			world.cursor = new RegularCursor(world);
 			
-			APP.world.cursor.setPoint(APP.world.lastMovedOrDraggedWorldPoint);
+			world.cursor.setPoint(world.lastMovedOrDraggedWorldPoint);
 			
-			APP.render();
-			VIEW.repaint();
+			world.render();
+			world.repaint();
 			break;
 		case KNOB:
 			assert false;
@@ -161,8 +161,8 @@ public class QuadCursor extends CursorBase {
 	public void moved(InputEvent ev) {
 		switch (mode) {
 		case FREE:
-			APP.world.cursor.setPoint(APP.world.getPoint(APP.world.lastMovedOrDraggedWorldPoint));
-			VIEW.repaint();
+			world.cursor.setPoint(world.quadrantMap.getPoint(world.lastMovedOrDraggedWorldPoint));
+			world.repaint();
 			break;
 		case SET:
 		case KNOB:
@@ -178,7 +178,7 @@ public class QuadCursor extends CursorBase {
 			break;
 		case KNOB:
 			mode = QuadCursorMode.SET;
-			VIEW.repaint();
+			world.repaint();
 			break;
 		}
 	}
@@ -189,42 +189,42 @@ public class QuadCursor extends CursorBase {
 		
 		switch (mode) {
 		case FREE:
-			setPoint(APP.world.lastDraggedWorldPoint);
+			setPoint(world.lastDraggedWorldPoint);
 			break;
 		case SET:
-			if (!APP.world.lastDraggedWorldPointWasNull) {
+			if (!world.lastDraggedWorldPointWasNull) {
 				break;
 			}
-			if (!(startKnob.hitTest(APP.world.lastPressedWorldPoint) ||
-					controlKnob.hitTest(APP.world.lastPressedWorldPoint) ||
-					endKnob.hitTest(APP.world.lastPressedWorldPoint))) {
+			if (!(startKnob.hitTest(world.lastPressedWorldPoint) ||
+					controlKnob.hitTest(world.lastPressedWorldPoint) ||
+					endKnob.hitTest(world.lastPressedWorldPoint))) {
 				break;
 			}
 			
-			if (startKnob.hitTest(APP.world.lastPressedWorldPoint)) {
+			if (startKnob.hitTest(world.lastPressedWorldPoint)) {
 				mode = QuadCursorMode.KNOB;
 				knob = startKnob;
 				origKnobCenter = knob.p;
-			} else if (controlKnob.hitTest(APP.world.lastPressedWorldPoint)) {
+			} else if (controlKnob.hitTest(world.lastPressedWorldPoint)) {
 				mode = QuadCursorMode.KNOB;
 				knob = controlKnob;
 				origKnobCenter = knob.p;
-			} else if (endKnob.hitTest(APP.world.lastPressedWorldPoint)) {
+			} else if (endKnob.hitTest(world.lastPressedWorldPoint)) {
 				mode = QuadCursorMode.KNOB;
 				knob = endKnob;
 				origKnobCenter = knob.p;
 			}
 		case KNOB:
-			Point diff = new Point(APP.world.lastDraggedWorldPoint.x - APP.world.lastPressedWorldPoint.x, APP.world.lastDraggedWorldPoint.y - APP.world.lastPressedWorldPoint.y);
+			Point diff = new Point(world.lastDraggedWorldPoint.x - world.lastPressedWorldPoint.x, world.lastDraggedWorldPoint.y - world.lastPressedWorldPoint.y);
 			knob.drag(origKnobCenter.plus(diff));
-			VIEW.repaint();
+			world.repaint();
 			break;
 		}
 	}
 	
 	public void exited(InputEvent ev) {
-		APP.world.cursor.setPoint(null);
-		VIEW.repaint();
+		world.cursor.setPoint(null);
+		world.repaint();
 	}
 	
 	public void draw(RenderingContext ctxt) {
@@ -235,7 +235,7 @@ public class QuadCursor extends CursorBase {
 		
 		ctxt.setColor(Color.WHITE);
 		ctxt.setXORMode(Color.BLACK);
-		ctxt.setWorldPixelStroke(1);
+		ctxt.setPixelStroke(1);
 		
 		shape.draw(ctxt);
 		

@@ -13,6 +13,7 @@ import com.gutabi.deadlock.view.RenderingContext;
 import com.gutabi.deadlock.world.car.Car;
 import com.gutabi.deadlock.world.car.CarProximityEvent;
 import com.gutabi.deadlock.world.car.CarStateEnum;
+import com.gutabi.deadlock.world.car.Driver;
 import com.gutabi.deadlock.world.car.DrivingEvent;
 import com.gutabi.deadlock.world.car.VertexArrivalEvent;
 import com.gutabi.deadlock.world.graph.Vertex;
@@ -121,15 +122,15 @@ public class CarMap {
 		 */
 		carLoop:
 		for (int i = 0; i < cars.size(); i++) {
-			Car ci = cars.get(i);
+			Driver di = cars.get(i).driver;
 			
-			switch (ci.state) {
+			switch (di.c.state) {
 			case DRIVING:
 			case BRAKING:
 			case SINKED:
 				
-				Car to = findDeadlockCause(ci);
-				Car h = findDeadlockCause(findDeadlockCause(ci));
+				Driver to = findDeadlockCause(di);
+				Driver h = findDeadlockCause(findDeadlockCause(di));
 				
 				while (true) {
 					if (to == null || h == null) {
@@ -145,7 +146,7 @@ public class CarMap {
 					h = findDeadlockCause(findDeadlockCause(h));
 				}
 				
-				to = ci;
+				to = di;
 				while (true) {
 					if (to == h) {
 						break;
@@ -157,7 +158,7 @@ public class CarMap {
 				h = findDeadlockCause(to);
 				
 				assert h.stoppedTime != -1;
-				assert h.state == CarStateEnum.BRAKING;
+				assert h.c.state == CarStateEnum.BRAKING;
 				h.deadlocked = true;
 				
 				while (true) {
@@ -167,7 +168,7 @@ public class CarMap {
 					h = findDeadlockCause(h);
 					
 					assert h.stoppedTime != -1;
-					assert h.state == CarStateEnum.BRAKING;
+					assert h.c.state == CarStateEnum.BRAKING;
 					h.deadlocked = true;
 				}
 				
@@ -175,8 +176,8 @@ public class CarMap {
 			case CRASHED:
 			case SKIDDED:
 				
-				if (ci.stoppedTime != -1) {
-					ci.deadlocked = true;
+				if (di.stoppedTime != -1) {
+					di.deadlocked = true;
 				}
 				
 				break;
@@ -187,10 +188,10 @@ public class CarMap {
 		 * 
 		 */
 		for (int i = 0; i < cars.size(); i++) {
-			Car ci = cars.get(i);
+			Driver di = cars.get(i).driver;
 			
-			if (!ci.deadlocked) {
-				DrivingEvent e = findDeadlockEvent(ci);
+			if (!di.deadlocked) {
+				DrivingEvent e = findDeadlockEvent(di);
 				
 				if (e == null) {
 					continue;
@@ -198,15 +199,15 @@ public class CarMap {
 				
 				if (e instanceof CarProximityEvent) {
 					
-					Car cause = ((CarProximityEvent)e).otherCar;
+					Driver cause = ((CarProximityEvent)e).otherDriver;
 					if (cause != null &&
 							cause.deadlocked) {
 						
-						if (cause.stoppedTime <= ci.stoppedTime || (t - ci.stoppedTime > Car.COMPLETE_STOP_WAIT_TIME)) {
+						if (cause.stoppedTime <= di.stoppedTime || (t - di.stoppedTime > Driver.COMPLETE_STOP_WAIT_TIME)) {
 							
-							assert ci.stoppedTime != -1;
-							assert ci.state == CarStateEnum.BRAKING;
-							ci.deadlocked = true;
+							assert di.stoppedTime != -1;
+							assert di.c.state == CarStateEnum.BRAKING;
+							di.deadlocked = true;
 							
 						}
 						
@@ -214,16 +215,16 @@ public class CarMap {
 					
 				} else if (e instanceof VertexArrivalEvent) {
 					
-					Car cause = ((VertexArrivalEvent)e).v.carQueue.get(0);
+					Driver cause = ((VertexArrivalEvent)e).v.driverQueue.get(0);
 					
-					if (cause != ci) {
+					if (cause != di) {
 						
 						if (cause != null &&
 								cause.deadlocked) {
 							
-							assert ci.stoppedTime != -1;
-							assert ci.state == CarStateEnum.BRAKING;
-							ci.deadlocked = true;
+							assert di.stoppedTime != -1;
+							assert di.c.state == CarStateEnum.BRAKING;
+							di.deadlocked = true;
 							
 						}
 						
@@ -239,73 +240,73 @@ public class CarMap {
 		
 	}
 	
-	private DrivingEvent findDeadlockEvent(Car c) {
-		if (c == null) {
+	private DrivingEvent findDeadlockEvent(Driver d) {
+		if (d == null) {
 			return null;
 		}
 		
-		if (c.curVertexArrivalEvent != null) {
+		if (d.curVertexArrivalEvent != null) {
 			
-			Vertex v = c.curVertexArrivalEvent.v;
+			Vertex v = d.curVertexArrivalEvent.v;
 			
-			assert v.carQueue.contains(c);
+			assert v.driverQueue.contains(d);
 			
-			Car leavingCar = v.carQueue.get(0);
+			Driver leavingDriver = v.driverQueue.get(0);
 			
-			if (leavingCar != c) {
-				if (c.stoppedTime != -1 &&
-						leavingCar.stoppedTime != -1
+			if (leavingDriver != d) {
+				if (d.stoppedTime != -1 &&
+						leavingDriver.stoppedTime != -1
 						) {
 					
-					return c.curVertexArrivalEvent;
+					return d.curVertexArrivalEvent;
 					
 				}
 			}
 			
 		}
 		
-		if (c.curCarProximityEvent != null) {
-			Car next = c.curCarProximityEvent.otherCar;
+		if (d.curCarProximityEvent != null) {
+			Driver next = d.curCarProximityEvent.otherDriver;
 			
-			if (c.stoppedTime != -1 &&
+			if (d.stoppedTime != -1 &&
 					next.stoppedTime != -1
 					) {
-				return c.curCarProximityEvent;
+				return d.curCarProximityEvent;
 			}
 		}
 		
 		return null;
 	}
 	
-	private Car findDeadlockCause(Car c) {
-		if (c == null) {
+	private Driver findDeadlockCause(Driver d) {
+		if (d == null) {
 			return null;
 		}
 		
-		if (c.curCarProximityEvent != null) {
-			Car next = c.curCarProximityEvent.otherCar;
+		if (d.curCarProximityEvent != null) {
+			Driver next = d.curCarProximityEvent.otherDriver;
 			
-			if (c.stoppedTime != -1 &&
+			if (d.stoppedTime != -1 &&
 					next.stoppedTime != -1
 					) {
 				return next;
 			}
 		}
 		
-		if (c.curVertexArrivalEvent != null) {
+		if (d.curVertexArrivalEvent != null) {
 			
-			Vertex v = c.curVertexArrivalEvent.v;
+			Vertex v = d.curVertexArrivalEvent.v;
 			
-			assert v.carQueue.contains(c);
+			assert v.driverQueue.contains(d);
 			
-			Car leavingCar = v.carQueue.get(0);
+			Driver leavingDriver = v.driverQueue.get(0);
 			
-			if (leavingCar != c) {
-				if (c.stoppedTime != -1 &&
-						leavingCar.stoppedTime != -1
+			if (leavingDriver != d) {
+				if (d.stoppedTime != -1 &&
+						leavingDriver.stoppedTime != -1
 						) {
 					
-					return leavingCar;
+					return leavingDriver;
 					
 				}
 			}

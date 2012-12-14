@@ -11,6 +11,7 @@ import java.util.List;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.view.ProgressMeter;
 import com.gutabi.deadlock.view.RenderingContext;
+import com.gutabi.deadlock.world.World;
 import com.gutabi.deadlock.world.car.Car;
 import com.gutabi.deadlock.world.car.FastCar;
 import com.gutabi.deadlock.world.car.NormalCar;
@@ -42,8 +43,8 @@ public final class Fixture extends Vertex {
 	
 	static int carIDCounter;
 	
-	public Fixture(Point p, Axis a) {
-		super(p);
+	public Fixture(World world, Point p, Axis a) {
+		super(world, p);
 		this.a = a;
 		hiliteColor = new Color(0, 255, 255);
 	}
@@ -86,7 +87,7 @@ public final class Fixture extends Vertex {
 			List<Vertex> poss = new ArrayList<Vertex>();
 			poss.add(this);
 			poss.add(match);
-			shortestPathToMatch = GraphPositionPath.createShortestPathFromSkeleton(poss);
+			shortestPathToMatch = world.pathFactory.createShortestPathFromSkeleton(poss);
 			
 			lastSpawnTime = -1;
 			outstandingCars = 0;
@@ -96,7 +97,7 @@ public final class Fixture extends Vertex {
 	
 	public void postStop() {
 		
-		carQueue.clear();
+		driverQueue.clear();
 		
 		if (type == FixtureType.SOURCE) {
 			
@@ -146,7 +147,7 @@ public final class Fixture extends Vertex {
 		List<Vertex> poss = new ArrayList<Vertex>();
 		poss.add(this);
 		poss.add(match);
-		GraphPositionPath path = GraphPositionPath.createRandomPathFromSkeleton(poss);
+		GraphPositionPath path = world.pathFactory.createRandomPathFromSkeleton(poss);
 		return path;
 	}
 	
@@ -160,7 +161,7 @@ public final class Fixture extends Vertex {
 			c.id = carIDCounter;
 			carIDCounter++;
 			synchronized (APP) {
-				APP.world.addCar(c);
+				world.addCar(c);
 			}
 			lastSpawnTime = t;
 			outstandingCars++;
@@ -170,7 +171,7 @@ public final class Fixture extends Vertex {
 	
 	private boolean active(double t) {
 		
-		double d = APP.world.distanceBetweenVertices(this, match);
+		double d = world.graph.distanceBetweenVertices(this, match);
 		
 		if (d == Double.POSITIVE_INFINITY) {
 			return false;
@@ -183,11 +184,11 @@ public final class Fixture extends Vertex {
 			return false;
 		}
 		
-		if (!carQueue.isEmpty()) {
+		if (!driverQueue.isEmpty()) {
 			return false;
 		}
 		
-		boolean carIntersecting = APP.world.carMap.intersect(shape.aabb);
+		boolean carIntersecting = world.carMap.intersect(shape.aabb);
 		
 		if (carIntersecting) {
 			return false;
@@ -222,18 +223,18 @@ public final class Fixture extends Vertex {
 			return null;
 		}
 		
-		int r = APP.world.RANDOM.nextInt(l.size());
+		int r = world.RANDOM.nextInt(l.size());
 		
 		Class c = l.get(r);
 		
 		if (c == NormalCar.class) {
-			return new NormalCar(this);
+			return new NormalCar(world, this);
 		} else if (c == FastCar.class) {
-			return new FastCar(this);
+			return new FastCar(world, this);
 		} else if (c == RandomCar.class) {
-			return new RandomCar(this);
+			return new RandomCar(world, this);
 		} else if (c == ReallyFastCar.class) {
-			return new ReallyFastCar(this);
+			return new ReallyFastCar(world, this);
 		} else {
 			throw new AssertionError();
 		}
@@ -265,11 +266,10 @@ public final class Fixture extends Vertex {
 					break;
 				}
 				
-				ctxt.paintWorldImage(-r, -r, VIEW.sheet,
-						0,
-						0,
-						2 * (int)Math.round(APP.world.PIXELS_PER_METER_DEBUG * r),
-						2 * (int)Math.round(APP.world.PIXELS_PER_METER_DEBUG * r),
+				ctxt.paintImage(
+						-r, -r, 1/world.PIXELS_PER_METER_DEBUG,
+						VIEW.sheet,
+						0, 0, 2 * (int)Math.round(world.PIXELS_PER_METER_DEBUG * r), 2 * (int)Math.round(world.PIXELS_PER_METER_DEBUG * r),
 						96, 224, 96+32, 224+32);
 				
 				ctxt.setTransform(origTransform);
@@ -280,7 +280,7 @@ public final class Fixture extends Vertex {
 				shape.paint(ctxt);
 				
 				ctxt.setColor(Color.BLACK);
-				ctxt.setWorldPixelStroke(1);
+				ctxt.setPixelStroke(1);
 				shape.getAABB().draw(ctxt);
 				
 			}

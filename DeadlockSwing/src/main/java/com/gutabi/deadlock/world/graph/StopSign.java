@@ -9,12 +9,14 @@ import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.Circle;
 import com.gutabi.deadlock.view.RenderingContext;
+import com.gutabi.deadlock.world.World;
 
 @SuppressWarnings("static-access")
 public class StopSign extends Entity {
 	
 	public static final double STOPSIGN_SIZE = 0.5;
 	
+	public final World world;
 	public final Road e;
 	public final Vertex v;
 	
@@ -26,7 +28,8 @@ public class StopSign extends Entity {
 	
 	private Circle shape;
 	
-	public StopSign(Road e, int dir) {
+	public StopSign(World world, Road e, int dir) {
+		this.world = world;
 		this.e = e;
 		this.dir = dir;
 		
@@ -103,13 +106,11 @@ public class StopSign extends Entity {
 			
 			if (enabled) {
 				
-				ctxt.paintWorldImage(p.x - StopSign.STOPSIGN_SIZE/2, p.y - StopSign.STOPSIGN_SIZE/2, VIEW.sheet,
-						0,
-						0,
-						(int)Math.round(APP.world.PIXELS_PER_METER_DEBUG * STOPSIGN_SIZE),
-						(int)Math.round(APP.world.PIXELS_PER_METER_DEBUG * STOPSIGN_SIZE),
+				ctxt.paintImage(
+						p.x - StopSign.STOPSIGN_SIZE/2, p.y - StopSign.STOPSIGN_SIZE/2, 1/world.PIXELS_PER_METER_DEBUG,
+						VIEW.sheet,
+						0, 0, (int)Math.round(world.PIXELS_PER_METER_DEBUG * STOPSIGN_SIZE), (int)Math.round(world.PIXELS_PER_METER_DEBUG * STOPSIGN_SIZE),
 						32, 224, 32+32, 224+32);
-				
 			}
 			
 			if (APP.DEBUG_DRAW) {
@@ -127,7 +128,7 @@ public class StopSign extends Entity {
 			ctxt.setColor(Color.RED);
 			shape.paint(ctxt);
 		} else {
-			ctxt.setWorldPixelStroke(1);
+			ctxt.setPixelStroke(1);
 			ctxt.setColor(Color.WHITE);
 			shape.draw(ctxt);
 		}

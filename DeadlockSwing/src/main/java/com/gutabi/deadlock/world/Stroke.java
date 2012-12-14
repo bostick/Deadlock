@@ -145,12 +145,12 @@ public class Stroke {
 			
 			if (e.type == null) {
 				
-				Entity hit = world.pureGraphBestHitTestCircle(e.circle);
+				Entity hit = world.graph.pureGraphBestHitTestCircle(e.circle);
 //				assert hit == null;
 				
 				if (hit == null) {
 					logger.debug("create");
-					Intersection v = new Intersection(e.p);
+					Intersection v = new Intersection(world, e.p);
 					world.addVertexTop(v);
 				}
 				
@@ -158,7 +158,7 @@ public class Stroke {
 				
 			} else if (e.type == SweepEventType.ENTERROADCAPSULE || e.type == SweepEventType.EXITROADCAPSULE) {
 				
-				Entity hit = world.pureGraphBestHitTestCircle(e.circle);
+				Entity hit = world.graph.pureGraphBestHitTestCircle(e.circle);
 				
 				if (hit instanceof Vertex) {
 //					e.setVertex((Vertex)hit);
@@ -214,7 +214,7 @@ public class Stroke {
 				
 				while (true) {
 					
-					hit = world.pureGraphBestHitTestCapsule(new Capsule(null, a, b, -1));
+					hit = world.graph.pureGraphBestHitTestCapsule(new Capsule(null, a, b, -1));
 					
 					if (hit == null) {
 						
@@ -262,14 +262,14 @@ public class Stroke {
 				
 				if (pos == null) {
 					logger.debug("pos was null");
-					pos = world.findClosestRoadPosition(e.p, e.circle.radius);
+					pos = world.graph.findClosestRoadPosition(e.p, e.circle.radius);
 				}
 				
 				assert pos != null;
 				
 				Entity hit2;
 				if (pos instanceof EdgePosition) {
-					hit2 = world.pureGraphBestHitTestCircle(new Circle(null, pos.p, e.circle.radius));
+					hit2 = world.graph.pureGraphBestHitTestCircle(new Circle(null, pos.p, e.circle.radius));
 				} else {
 					hit2 = ((VertexPosition)pos).v;
 				}
@@ -394,12 +394,12 @@ public class Stroke {
 				
 				assert pos != null;
 				
-				Entity hit = world.pureGraphBestHitTestCircle(new Circle(null, pos.p, e.circle.radius));
+				Entity hit = world.graph.pureGraphBestHitTestCircle(new Circle(null, pos.p, e.circle.radius));
 				
 				if (hit == null) {
 					
 					logger.debug("create");
-					Intersection v = new Intersection(pos.p);
+					Intersection v = new Intersection(world, pos.p);
 					world.addVertexTop(v);
 					
 				} else {

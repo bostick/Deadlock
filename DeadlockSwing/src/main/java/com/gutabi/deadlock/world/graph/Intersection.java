@@ -7,12 +7,13 @@ import java.awt.Color;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.view.RenderingContext;
 import com.gutabi.deadlock.view.RenderingContextType;
+import com.gutabi.deadlock.world.World;
 
 @SuppressWarnings("static-access")
 public class Intersection extends Vertex {
 	
-	public Intersection(Point p) {
-		super(p);
+	public Intersection(World world, Point p) {
+		super(world, p);
 	}
 	
 	public boolean isUserDeleteable() {
@@ -28,7 +29,7 @@ public class Intersection extends Vertex {
 	}
 	
 	public void postStop() {
-		carQueue.clear();
+		driverQueue.clear();
 	}
 	
 	public void preStep(double t) {
@@ -62,7 +63,7 @@ public class Intersection extends Vertex {
 	public void paintHilite(RenderingContext ctxt) {
 		
 		ctxt.setColor(Color.WHITE);
-		ctxt.setWorldPixelStroke(1);
+		ctxt.setPixelStroke(1);
 		
 		shape.draw(ctxt);
 		

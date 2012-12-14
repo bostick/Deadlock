@@ -20,19 +20,8 @@ public class DeadlockApplication {
 	public static boolean EXPLOSIONS_DRAW = true;
 	public static boolean DEBUG_DRAW = false;
 	
-//	public Menu menu;
-//	public QuadrantEditor quadrantEditor;
-//	public World world;
 	public Screen screen;
 	
 	public static DeadlockApplication APP = new DeadlockApplication();
-	
-//	public void init() throws Exception {
-//		screen.init();
-//	}
-//	
-//	public void render() {
-//		screen.render();
-//	}
 	
 }

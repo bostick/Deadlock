@@ -136,8 +136,8 @@ public class DeadlockView {
 		
 	}
 	
-	public void postDisplay() {
-		canvas.postDisplay();
-	}
+//	public void postDisplay() {
+//		canvas.postDisplay();
+//	}
 	
 }

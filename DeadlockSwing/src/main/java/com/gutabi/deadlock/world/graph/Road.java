@@ -23,6 +23,7 @@ import com.gutabi.deadlock.core.geom.ShapeUtils;
 import com.gutabi.deadlock.core.geom.Triangle;
 import com.gutabi.deadlock.view.RenderingContext;
 import com.gutabi.deadlock.view.RenderingContextType;
+import com.gutabi.deadlock.world.World;
 
 @SuppressWarnings("static-access")
 public class Road extends Edge {
@@ -31,6 +32,7 @@ public class Road extends Edge {
 	
 	public static final double borderPointRadius = 0.2;
 	
+	public final World world;
 	public final Vertex start;
 	public final Vertex end;
 	public final List<Point> raw;
@@ -65,10 +67,11 @@ public class Road extends Edge {
 	
 	static Logger logger = Logger.getLogger(Road.class);
 	
-	public Road(Vertex start, Vertex end, List<Point> raw, int dec) {
+	public Road(World world, Vertex start, Vertex end, List<Point> raw, int dec) {
 		
 		assert !raw.isEmpty();
 		
+		this.world = world;
 		this.start = start;
 		this.end = end;
 		this.raw = raw;
@@ -87,8 +90,8 @@ public class Road extends Edge {
 			start.roads.add(this);
 			end.roads.add(this);
 			
-			startSign = new StopSign(this, 0);
-			endSign = new StopSign(this, 1);
+			startSign = new StopSign(world, this, 0);
+			endSign = new StopSign(world, this, 1);
 			
 			if ((dec & 1) == 1) {
 				startSign.setEnabled(true);
@@ -654,7 +657,7 @@ public class Road extends Edge {
 		if (ctxt.type == RenderingContextType.CANVAS) {
 			if (APP.DEBUG_DRAW) {
 				ctxt.setColor(Color.BLACK);
-				ctxt.setWorldPixelStroke(1);
+				ctxt.setPixelStroke(1);
 				shape.getAABB().draw(ctxt);	
 			}
 		}
@@ -666,7 +669,7 @@ public class Road extends Edge {
 	 */
 	public void paintHilite(RenderingContext ctxt) {
 		ctxt.setColor(hiliteColor);
-		ctxt.setWorldPixelStroke(1);
+		ctxt.setPixelStroke(1);
 		drawPath(ctxt);
 	}
 	

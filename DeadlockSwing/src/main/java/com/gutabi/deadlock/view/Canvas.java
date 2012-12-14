@@ -20,7 +20,7 @@ public class Canvas extends java.awt.Canvas {
 		
 	}
 	
-	public void postDisplay() {
+	public void canvasPostDisplay() {
 		
 		createBufferStrategy(2);
 		bs = getBufferStrategy();

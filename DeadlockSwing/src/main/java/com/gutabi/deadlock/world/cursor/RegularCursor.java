@@ -5,13 +5,17 @@ import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
 import java.awt.Color;
 
+import javax.swing.JFrame;
+
 import com.gutabi.deadlock.controller.InputEvent;
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.Circle;
 import com.gutabi.deadlock.core.geom.Shape;
+import com.gutabi.deadlock.menu.MainMenu;
 import com.gutabi.deadlock.view.RenderingContext;
 import com.gutabi.deadlock.world.Stroke;
+import com.gutabi.deadlock.world.World;
 import com.gutabi.deadlock.world.graph.Direction;
 import com.gutabi.deadlock.world.graph.Fixture;
 import com.gutabi.deadlock.world.graph.Road;
@@ -34,7 +38,9 @@ public class RegularCursor extends CursorBase {
 	Stroke debugStroke;
 	Stroke debugStroke2;
 	
-	public RegularCursor() {
+	public RegularCursor(World world) {
+		super(world);
+		
 		mode = RegularCursorMode.FREE;
 	}
 	
@@ -53,19 +59,47 @@ public class RegularCursor extends CursorBase {
 		return shape;
 	}
 	
-	public void d1Key() {
-		if (APP.world.hilited != null) {
+	
+	public void escKey() {
+		
+		try {
 			
-			if (APP.world.hilited instanceof Road) {
-				Road r = (Road)APP.world.hilited;
+			VIEW.teardownCanvasAndControlPanel(VIEW.container);
+			
+			APP.screen = new MainMenu();
+			
+			APP.screen.init();
+			
+			VIEW.setupCanvas(VIEW.container);
+			((JFrame)VIEW.container).setVisible(true);
+			VIEW.canvas.requestFocusInWindow();
+			
+			VIEW.canvas.canvasPostDisplay();
+			
+			APP.screen.render();
+			
+			APP.screen.repaint();
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	
+	public void d1Key() {
+		if (world.hilited != null) {
+			
+			if (world.hilited instanceof Road) {
+				Road r = (Road)world.hilited;
 				
 				r.setDirection(null, Direction.STARTTOEND);
 				
-				APP.render();
-				VIEW.repaint();
+				world.render();
+				world.repaint();
 				
-			} else if (APP.world.hilited instanceof Fixture) {
-				Fixture f = (Fixture)APP.world.hilited;
+			} else if (world.hilited instanceof Fixture) {
+				Fixture f = (Fixture)world.hilited;
 				
 				Fixture g = f.match;
 				
@@ -79,8 +113,8 @@ public class RegularCursor extends CursorBase {
 				f.setSide(f.getSide().other());
 				g.setSide(g.getSide().other());
 				
-				APP.render();
-				VIEW.repaint();
+				world.render();
+				world.repaint();
 				
 			}
 			
@@ -88,15 +122,15 @@ public class RegularCursor extends CursorBase {
 	}
 	
 	public void d2Key() {
-		if (APP.world.hilited != null) {
+		if (world.hilited != null) {
 			
-			if (APP.world.hilited instanceof Road) {
-				Road r = (Road)APP.world.hilited;
+			if (world.hilited instanceof Road) {
+				Road r = (Road)world.hilited;
 				
 				r.setDirection(null, Direction.ENDTOSTART);
 				
-				APP.render();
-				VIEW.repaint();
+				world.render();
+				world.repaint();
 				
 			}
 			
@@ -104,15 +138,15 @@ public class RegularCursor extends CursorBase {
 	}
 	
 	public void d3Key() {
-		if (APP.world.hilited != null) {
+		if (world.hilited != null) {
 			
-			if (APP.world.hilited instanceof Road) {
-				Road r = (Road)APP.world.hilited;
+			if (world.hilited instanceof Road) {
+				Road r = (Road)world.hilited;
 				
 				r.setDirection(null, null);
 			
-				APP.render();
-				VIEW.repaint();
+				world.render();
+				world.repaint();
 				
 			}
 			
@@ -121,110 +155,82 @@ public class RegularCursor extends CursorBase {
 
 	
 	public void qKey() {
-		APP.world.cursor = new StraightEdgeCursor(APP.world.lastMovedOrDraggedWorldPoint);
-		APP.world.cursor.setPoint(APP.world.getPoint(APP.world.lastMovedOrDraggedWorldPoint));
-		VIEW.repaint();
+		StraightEdgeCursor c = new StraightEdgeCursor(world);
+		c.setStart(world.quadrantMap.getPoint(world.lastMovedOrDraggedWorldPoint));
+		c.setPoint(world.quadrantMap.getPoint(world.lastMovedOrDraggedWorldPoint));
+		world.cursor = c;
+		world.repaint();
 	}
 	
 	public void wKey() {
-		APP.world.cursor = new FixtureCursor();
-		APP.world.cursor.setPoint(APP.world.getPoint(APP.world.lastMovedOrDraggedWorldPoint));
-		VIEW.repaint();
+		world.cursor = new FixtureCursor(world);
+		world.cursor.setPoint(world.quadrantMap.getPoint(world.lastMovedOrDraggedWorldPoint));
+		world.repaint();
 	}
 	
 	public void aKey() {
 		
-		APP.world.hilited = null;
+		world.hilited = null;
 		
-		APP.world.cursor = new CircleCursor();
+		world.cursor = new CircleCursor(world);
 		
-		APP.world.cursor.setPoint(APP.world.getPoint(APP.world.lastMovedOrDraggedWorldPoint));
+		world.cursor.setPoint(world.quadrantMap.getPoint(world.lastMovedOrDraggedWorldPoint));
 		
-		VIEW.repaint();
+		world.repaint();
 	}
 	
 	public void sKey() {
-		QuadCursor q = new QuadCursor();
-		q.setStart(APP.world.getPoint(APP.world.lastMovedOrDraggedWorldPoint));
-		q.setPoint(APP.world.getPoint(APP.world.lastMovedOrDraggedWorldPoint));
-		APP.world.cursor = q;
-		VIEW.repaint();
+		QuadCursor q = new QuadCursor(world);
+		q.setStart(world.quadrantMap.getPoint(world.lastMovedOrDraggedWorldPoint));
+		q.setPoint(world.quadrantMap.getPoint(world.lastMovedOrDraggedWorldPoint));
+		world.cursor = q;
+		world.repaint();
 	}
 	
 	public void dKey() {
-		CubicCursor c = new CubicCursor();
-		c.setStart(APP.world.getPoint(APP.world.lastMovedOrDraggedWorldPoint));
-		c.setPoint(APP.world.getPoint(APP.world.lastMovedOrDraggedWorldPoint));
-		APP.world.cursor = c;
-		VIEW.repaint();
+		CubicCursor c = new CubicCursor(world);
+		c.setStart(world.quadrantMap.getPoint(world.lastMovedOrDraggedWorldPoint));
+		c.setPoint(world.quadrantMap.getPoint(world.lastMovedOrDraggedWorldPoint));
+		world.cursor = c;
+		world.repaint();
 	}
 	
 	public void insertKey() {
-		if (APP.world.hilited != null) {
+		if (world.hilited != null) {
 			
-			if (APP.world.hilited instanceof StopSign) {
-				StopSign s = (StopSign)APP.world.hilited;
+			if (world.hilited instanceof StopSign) {
+				StopSign s = (StopSign)world.hilited;
 				
 				s.setEnabled(true);
 				
-				APP.render();
-				VIEW.repaint();
+				world.render();
+				world.repaint();
 			}
 			
 		} else {
 			
-			APP.world.hilited = null;
+			world.hilited = null;
 			
-			APP.world.cursor = new MergerCursor();
+			world.cursor = new MergerCursor(world);
 			
-			APP.world.cursor.setPoint(APP.world.getPoint(APP.world.lastMovedOrDraggedWorldPoint));
+			world.cursor.setPoint(world.quadrantMap.getPoint(world.lastMovedOrDraggedWorldPoint));
 			
-			VIEW.repaint();
+			world.repaint();
 		}
-	}
-	
-	public void plusKey() {
-		Entity closest = APP.world.hitTest(APP.world.lastMovedOrDraggedWorldPoint);
-		
-		synchronized (APP) {
-			APP.world.hilited = closest;
-		}
-		
-		APP.world.map.computeGridSpacing();
-		
-		APP.world.cursor.setPoint(APP.world.getPoint(APP.world.lastMovedOrDraggedWorldPoint));
-		
-		APP.render();
-		VIEW.repaint();
-	}
-	
-	public void minusKey() {
-		Entity closest = APP.world.hitTest(APP.world.lastMovedOrDraggedWorldPoint);
-		
-		synchronized (APP) {
-			APP.world.hilited = closest;
-		}
-		
-		APP.world.map.computeGridSpacing();
-		
-		APP.world.cursor.setPoint(APP.world.getPoint(APP.world.lastMovedOrDraggedWorldPoint));
-		
-		APP.render();
-		VIEW.repaint();
 	}
 	
 	public void moved(InputEvent ev) {
 		switch (mode) {
 		case FREE:
-			Entity closest = APP.world.hitTest(APP.world.lastMovedOrDraggedWorldPoint);
+			Entity closest = world.hitTest(world.lastMovedOrDraggedWorldPoint);
 			
 			synchronized (APP) {
-				APP.world.hilited = closest;
+				world.hilited = closest;
 			}
 			
-			APP.world.cursor.setPoint(APP.world.getPoint(APP.world.lastMovedOrDraggedWorldPoint));
+			world.cursor.setPoint(world.quadrantMap.getPoint(world.lastMovedOrDraggedWorldPoint));
 			
-			VIEW.repaint();
+			world.repaint();
 			break;
 		case DRAFTING:
 			assert false;
@@ -235,25 +241,25 @@ public class RegularCursor extends CursorBase {
 	public void dragged(InputEvent ev) {
 		switch (mode) {
 		case FREE:
-			APP.world.cursor.setPoint(APP.world.lastDraggedWorldPoint);
+			world.cursor.setPoint(world.lastDraggedWorldPoint);
 			
-			if (APP.world.lastDraggedWorldPointWasNull) {
+			if (world.lastDraggedWorldPointWasNull) {
 				// first drag
-				draftStart(APP.world.lastPressedWorldPoint);
-				draftMove(APP.world.lastDraggedWorldPoint);
+				draftStart(world.lastPressedWorldPoint);
+				draftMove(world.lastDraggedWorldPoint);
 				
-				VIEW.repaint();
+				world.repaint();
 				
 			} else {
 				assert false;
 			}
 			break;
 		case DRAFTING:
-			APP.world.cursor.setPoint(APP.world.lastDraggedWorldPoint);
+			world.cursor.setPoint(world.lastDraggedWorldPoint);
 			
-			draftMove(APP.world.lastDraggedWorldPoint);
+			draftMove(world.lastDraggedWorldPoint);
 			
-			VIEW.repaint();
+			world.repaint();
 			break;
 		}
 	}
@@ -265,24 +271,24 @@ public class RegularCursor extends CursorBase {
 		case DRAFTING:
 			draftEnd();
 			
-			APP.render();
-			VIEW.repaint();
+			world.render();
+			world.repaint();
 			break;
 		}
 	}
 	
 	public void exited(InputEvent ev) {
-		APP.world.cursor.setPoint(null);
-		VIEW.repaint();
+		world.cursor.setPoint(null);
+		world.repaint();
 	}
 	
 	public void draftStart(Point p) {
 		
 		mode = RegularCursorMode.DRAFTING;
 		
-		APP.world.hilited = null;
+		world.hilited = null;
 		
-		stroke = new Stroke();
+		stroke = new Stroke(world);
 		stroke.add(p);
 			
 	}
@@ -298,7 +304,7 @@ public class RegularCursor extends CursorBase {
 		
 		stroke.processNewStroke();
 		
-		assert APP.world.checkConsistency();
+		assert world.checkConsistency();
 		
 		debugStroke2 = debugStroke;
 		debugStroke = stroke;
@@ -320,7 +326,7 @@ public class RegularCursor extends CursorBase {
 		
 		ctxt.setColor(Color.WHITE);
 		ctxt.setXORMode(Color.BLACK);
-		ctxt.setWorldPixelStroke(1);
+		ctxt.setPixelStroke(1);
 		
 		shape.draw(ctxt);
 		

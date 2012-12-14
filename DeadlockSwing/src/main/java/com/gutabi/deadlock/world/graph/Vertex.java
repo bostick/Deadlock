@@ -11,13 +11,15 @@ import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.Circle;
 import com.gutabi.deadlock.view.RenderingContext;
-import com.gutabi.deadlock.world.car.Car;
+import com.gutabi.deadlock.world.World;
+import com.gutabi.deadlock.world.car.Driver;
 
 //@SuppressWarnings("static-access")
 public abstract class Vertex extends Entity {
 	
 	public static final double INIT_VERTEX_RADIUS = Math.sqrt(2 * Road.ROAD_RADIUS * Road.ROAD_RADIUS);
 	
+	public final World world;
 	public final Point p;
 	
 	public final List<Road> roads = new ArrayList<Road>();
@@ -27,7 +29,7 @@ public abstract class Vertex extends Entity {
 	
 	protected double r;
 	
-	public final List<Car> carQueue = new ArrayList<Car>();
+	public final List<Driver> driverQueue = new ArrayList<Driver>();
 	
 	protected Color hiliteColor;
 	
@@ -37,8 +39,9 @@ public abstract class Vertex extends Entity {
 	
 	static Logger logger = Logger.getLogger(Vertex.class);
 	
-	public Vertex(Point p) {
+	public Vertex(World world, Point p) {
 		
+		this.world = world;
 		this.p = p;
 		
 		r = INIT_VERTEX_RADIUS;
@@ -239,7 +242,7 @@ public abstract class Vertex extends Entity {
 		
 		ctxt.setColor(Color.WHITE);
 		
-		ctxt.paintWorldString(p.x-r, p.y, 1.0, id + " " + carQueue.size());
+		ctxt.paintString(p.x-r, p.y, 1.0 / world.PIXELS_PER_METER_DEBUG, id + " " + driverQueue.size());
 	}
 	
 	public void check() {

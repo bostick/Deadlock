@@ -23,10 +23,11 @@ public class FourByFourGridWorld extends World {
 	}
 	
 	public void init() throws Exception {
+		super.init();
 		
 		for (int i = 1; i < 16; i++) {
-			Fixture source = new Fixture(new Point(i * worldWidth / 16, 0), Axis.TOPBOTTOM);
-			Fixture sink = new Fixture(new Point(i * worldWidth / 16, worldHeight), Axis.TOPBOTTOM);
+			Fixture source = new Fixture(this, new Point(i * worldWidth / 16, 0), Axis.TOPBOTTOM);
+			Fixture sink = new Fixture(this, new Point(i * worldWidth / 16, worldHeight), Axis.TOPBOTTOM);
 			source.match = sink;
 			sink.match = source;
 			
@@ -60,8 +61,8 @@ public class FourByFourGridWorld extends World {
 		}
 		
 		for (int i = 1; i < 16; i++) {
-			Fixture source = new Fixture(new Point(0, i * worldHeight / 16), Axis.LEFTRIGHT);
-			Fixture sink = new Fixture(new Point(worldWidth, i * worldHeight / 16), Axis.LEFTRIGHT);
+			Fixture source = new Fixture(this, new Point(0, i * worldHeight / 16), Axis.LEFTRIGHT);
+			Fixture sink = new Fixture(this, new Point(worldWidth, i * worldHeight / 16), Axis.LEFTRIGHT);
 			source.match = sink;
 			sink.match = source;
 			
@@ -95,7 +96,12 @@ public class FourByFourGridWorld extends World {
 		}
 		
 		PIXELS_PER_METER_DEBUG = 12.5;
-
+		
+	}
+	
+	public void canvasPostDisplay() {
+		super.canvasPostDisplay();
+		
 		worldViewport = new AABB(
 				-(VIEW.canvas.getWidth() / PIXELS_PER_METER_DEBUG) / 2 + worldWidth/2 ,
 				-(VIEW.canvas.getHeight() / PIXELS_PER_METER_DEBUG) / 2 + worldHeight/2,
@@ -103,5 +109,5 @@ public class FourByFourGridWorld extends World {
 				VIEW.canvas.getHeight() / PIXELS_PER_METER_DEBUG);
 		
 	}
-
+	
 }

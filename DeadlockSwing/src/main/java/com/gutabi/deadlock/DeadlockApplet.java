@@ -33,7 +33,7 @@ public class DeadlockApplet extends JApplet {
 		((JFrame)VIEW.container).setVisible(true);
 		VIEW.canvas.requestFocusInWindow();
 		
-		VIEW.postDisplay();
+		APP.screen.canvasPostDisplay();
 		
 		APP.screen.repaint();
 	}

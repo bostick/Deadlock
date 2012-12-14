@@ -1,26 +1,26 @@
 package com.gutabi.deadlock.world.sprites;
 
-import static com.gutabi.deadlock.DeadlockApplication.APP;
 import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.view.RenderingContext;
+import com.gutabi.deadlock.world.World;
 
 @SuppressWarnings("static-access")
 public class AnimatedGrass {
 	
 	public static double GRASS_SIZE = 1.0;
 	
+	public final World world;
 	Point p;
 	int lastFrame;
 	double lastTime;
 	double phase;
 	
-	public AnimatedGrass(Point p) {
+	public AnimatedGrass(World world, Point p) {
+		this.world = world;
 		this.p = p;
-		
-		phase = APP.world.RANDOM.nextDouble();
-		
+		phase = world.RANDOM.nextDouble();
 	}
 	
 	public void preStart() {
@@ -74,35 +74,26 @@ public class AnimatedGrass {
 	}
 	
 	private void paint0(RenderingContext ctxt) {
-		
-		ctxt.paintWorldImage(p.x - AnimatedGrass.GRASS_SIZE/2, p.y - AnimatedGrass.GRASS_SIZE/2, VIEW.sheet,
-				0,
-				0,
-				(int)Math.round(APP.world.PIXELS_PER_METER_DEBUG * GRASS_SIZE),
-				(int)Math.round(APP.world.PIXELS_PER_METER_DEBUG * GRASS_SIZE),
-				0, 256, 0+32, 256+32);
-		
+		ctxt.paintImage(
+				p.x - AnimatedGrass.GRASS_SIZE/2, p.y - AnimatedGrass.GRASS_SIZE/2, 1/world.PIXELS_PER_METER_DEBUG,
+				VIEW.sheet,
+				0, 0, (int)Math.round(world.PIXELS_PER_METER_DEBUG * GRASS_SIZE), (int)Math.round(world.PIXELS_PER_METER_DEBUG * GRASS_SIZE),
+				0, 256, 0+32, 256+32);	
 	}
 	
 	private void paint1(RenderingContext ctxt) {
-		
-		ctxt.paintWorldImage(p.x - AnimatedGrass.GRASS_SIZE/2, p.y - AnimatedGrass.GRASS_SIZE/2, VIEW.sheet,
-				0,
-				0,
-				(int)Math.round(APP.world.PIXELS_PER_METER_DEBUG * GRASS_SIZE),
-				(int)Math.round(APP.world.PIXELS_PER_METER_DEBUG * GRASS_SIZE),
-				32, 256, 32+32, 256+32);
-		
+		ctxt.paintImage(
+				p.x - AnimatedGrass.GRASS_SIZE/2, p.y - AnimatedGrass.GRASS_SIZE/2, 1/world.PIXELS_PER_METER_DEBUG,
+				VIEW.sheet,
+				0, 0, (int)Math.round(world.PIXELS_PER_METER_DEBUG * GRASS_SIZE), (int)Math.round(world.PIXELS_PER_METER_DEBUG * GRASS_SIZE),
+				32, 256, 32+32, 256+32);	
 	}
 	
 	private void paint2(RenderingContext ctxt) {
-		
-		ctxt.paintWorldImage(p.x - AnimatedGrass.GRASS_SIZE/2, p.y - AnimatedGrass.GRASS_SIZE/2, VIEW.sheet,
-				0,
-				0,
-				(int)Math.round(APP.world.PIXELS_PER_METER_DEBUG * GRASS_SIZE),
-				(int)Math.round(APP.world.PIXELS_PER_METER_DEBUG * GRASS_SIZE),
-				64, 256, 64+32, 256+32);
-		
+		ctxt.paintImage(
+				p.x - AnimatedGrass.GRASS_SIZE/2, p.y - AnimatedGrass.GRASS_SIZE/2, 1/world.PIXELS_PER_METER_DEBUG,
+				VIEW.sheet,
+				0, 0, (int)Math.round(world.PIXELS_PER_METER_DEBUG * GRASS_SIZE), (int)Math.round(world.PIXELS_PER_METER_DEBUG * GRASS_SIZE),
+				64, 256, 64+32, 256+32);	
 	}
 }

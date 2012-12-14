@@ -11,12 +11,15 @@ import com.gutabi.deadlock.core.geom.Quad;
 import com.gutabi.deadlock.core.geom.Shape;
 import com.gutabi.deadlock.core.geom.SweepableShape;
 import com.gutabi.deadlock.view.RenderingContext;
+import com.gutabi.deadlock.world.World;
 
 @SuppressWarnings("static-access")
 public class Merger extends Edge {
 	
 	public static final double MERGER_WIDTH = 5.0;
 	public static final double MERGER_HEIGHT = 5.0;
+	
+	public final World world;
 	
 	public final Point ul;
 	
@@ -36,14 +39,15 @@ public class Merger extends Edge {
 	private final Line debugSkeletonTopBottomLine;
 	private final Line debugSkeletonLeftRightLine;
 	
-	public Merger(Point center) {
+	public Merger(World world, Point center) {
+		this.world = world;
 		
 		this.ul = center.plus(new Point(-MERGER_WIDTH/2,  -MERGER_HEIGHT/2));
 		
-		top = new Fixture(new Point(ul.x + MERGER_WIDTH/2, ul.y), Axis.TOPBOTTOM);
-		left = new Fixture(new Point(ul.x, ul.y + MERGER_HEIGHT/2), Axis.LEFTRIGHT);
-		right = new Fixture(new Point(ul.x + MERGER_WIDTH, ul.y + MERGER_HEIGHT/2), Axis.LEFTRIGHT);
-		bottom = new Fixture(new Point(ul.x + MERGER_WIDTH/2, ul.y+MERGER_HEIGHT), Axis.TOPBOTTOM);
+		top = new Fixture(world, new Point(ul.x + MERGER_WIDTH/2, ul.y), Axis.TOPBOTTOM);
+		left = new Fixture(world, new Point(ul.x, ul.y + MERGER_HEIGHT/2), Axis.LEFTRIGHT);
+		right = new Fixture(world, new Point(ul.x + MERGER_WIDTH, ul.y + MERGER_HEIGHT/2), Axis.LEFTRIGHT);
+		bottom = new Fixture(world, new Point(ul.x + MERGER_WIDTH/2, ul.y+MERGER_HEIGHT), Axis.TOPBOTTOM);
 		
 		top.match = bottom;
 		bottom.match = top;
@@ -281,7 +285,7 @@ public class Merger extends Edge {
 			} else {
 				
 				ctxt.setColor(Color.GRAY);
-				ctxt.setWorldPixelStroke(1);
+				ctxt.setPixelStroke(1);
 				shape.draw(ctxt);
 				
 				paintSkeleton(ctxt);
@@ -297,7 +301,7 @@ public class Merger extends Edge {
 	}
 	
 	public void paintHilite(RenderingContext ctxt) {
-		ctxt.setWorldPixelStroke(1);
+		ctxt.setPixelStroke(1);
 		ctxt.setColor(Color.GRAY);
 		shape.draw(ctxt);
 	}
@@ -305,7 +309,7 @@ public class Merger extends Edge {
 	void paintSkeleton(RenderingContext ctxt) {
 		
 		ctxt.setColor(Color.BLACK);
-		ctxt.setWorldPixelStroke(1);
+		ctxt.setPixelStroke(1);
 		debugSkeletonTopBottomLine.draw(ctxt);
 		
 		debugSkeletonLeftRightLine.draw(ctxt);

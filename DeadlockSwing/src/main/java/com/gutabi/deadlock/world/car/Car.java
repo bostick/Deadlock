@@ -7,8 +7,6 @@ import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Composite;
 import java.awt.geom.AffineTransform;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.jbox2d.collision.shapes.PolygonShape;
@@ -54,9 +52,6 @@ public abstract class Car extends Entity {
 	
 	public static final int brakeRowStart = 288;
 	public static final int brakeRowEnd = brakeRowStart + 8;
-	
-	
-	public static final double COMPLETE_STOP_WAIT_TIME = 0.5;
 	
 	/*
 	 * distance that center of a car has to be from center of a sink in order to be sinked
@@ -113,8 +108,7 @@ public abstract class Car extends Entity {
 	
 	
 	double steeringLookaheadDistance = CAR_LENGTH * 0.5;
-	double carProximityLookahead = 0.5 * CAR_LENGTH + 0.5 * CAR_LENGTH + getMaxSpeed() * APP.dt + 0.8 * CAR_LENGTH;
-	double vertexArrivalLookahead = CAR_LENGTH * 0.5;
+	
 	/*
 	 * turning radius
 	 * 3 car lengths for 180 deg = 3 meters for 3.14 radians
@@ -140,7 +134,6 @@ public abstract class Car extends Entity {
 
 	
 	public CarStateEnum state;
-	public boolean deadlocked;
 	
 	
 	public double startingTime;
@@ -185,11 +178,6 @@ public abstract class Car extends Entity {
 	Point prevWorldPoint0;
 	Point prevWorldPoint3;
 	
-	public VertexArrivalEvent curVertexArrivalEvent;
-	public CarProximityEvent curCarProximityEvent;
-	List<VertexEvent> vertexDepartureQueue = new ArrayList<VertexEvent>();
-	double decelTime = -1;
-	public double stoppedTime = -1;
 	Point goalPoint;
 	
 	protected Color color;
@@ -233,9 +221,6 @@ public abstract class Car extends Entity {
 		driver.computeStartingProperties();
 		
 		startPoint = driver.overallPos.p;
-		
-		vertexDepartureQueue.add(new VertexSpawnEvent(driver.overallPos));
-		source.carQueue.add(this);
 		
 		GraphPositionPathPosition next = driver.overallPos.travel(getMaxSpeed() * APP.dt);
 		
@@ -428,20 +413,8 @@ public abstract class Car extends Entity {
 	}
 	
 	public void crash() {
-		
 		state = CarStateEnum.CRASHED;
-		
 		driver.clear();
-		
-		stoppedTime = -1;
-		deadlocked = false;
-		decelTime = -1;
-		
-		curVertexArrivalEvent = null;
-		curCarProximityEvent = null;
-		
-		cleanupVertexDepartureQueue();
-		
 	}
 	
 //	private void skid() {
@@ -494,43 +467,7 @@ public abstract class Car extends Entity {
 		switch (state) {
 		case DRIVING: 
 		case BRAKING: {
-			
-			if (curCarProximityEvent == null) {
-				curCarProximityEvent = findNewCarProximityEvent();
-			}
-			
-			if (stoppedTime == -1 && curVertexArrivalEvent == null) {
-				curVertexArrivalEvent = findNewVertexArrivalEvent();
-				/*
-				 * since stopped, we know cannot have a new vertex arrival event
-				 */
-			}
-			
-			if (curCarProximityEvent != null) {
-				boolean persist = handleDrivingEvent(curCarProximityEvent, t);
-				if (!persist) {
-					curCarProximityEvent = null;
-				}
-			}
-			
-			if (curVertexArrivalEvent != null) {
-				boolean persist = handleDrivingEvent(curVertexArrivalEvent, t);
-				if (!persist) {
-					curVertexArrivalEvent = null;
-				}
-			}
-			
-			if (curCarProximityEvent == null && curVertexArrivalEvent == null) {
-				
-				state = CarStateEnum.DRIVING;
-				
-				stoppedTime = -1;
-				deadlocked = false;
-				decelTime = -1;
-			}
-			
-			cleanupVertexDepartureQueue();
-			
+			driver.preStep(t);
 			break;
 		}
 		case CRASHED:
@@ -573,139 +510,6 @@ public abstract class Car extends Entity {
 			break;
 			
 		}
-	}
-	
-	private CarProximityEvent findNewCarProximityEvent() {
-		Driver driverProx = driver.overallPath.driverProximityTest(driver.overallPos, Math.min(carProximityLookahead, driver.overallPos.lengthToEndOfPath));
-		if (driverProx != null) {
-			return new CarProximityEvent(this, driverProx.c);
-		} else {
-			return null;
-		}
-	}
-	
-	private VertexArrivalEvent findNewVertexArrivalEvent() {
-		
-		VertexArrivalEvent vertexArr = driver.overallPath.vertexArrivalTest(driver, Math.min(vertexArrivalLookahead, driver.overallPos.lengthToEndOfPath));
-		if (vertexArr != null) {
-			
-			if (!vertexDepartureQueue.contains(vertexArr)) {
-				vertexDepartureQueue.add(vertexArr);
-				
-				assert !vertexArr.v.carQueue.contains(this);
-				vertexArr.v.carQueue.add(this);
-				
-				return vertexArr;
-			}
-			
-		}
-		
-		return null;
-		
-	}
-	
-	private boolean handleDrivingEvent(DrivingEvent e, double t) {
-		
-		if (e instanceof CarProximityEvent) {
-			
-			if (decelTime == -1) {
-				// start braking
-				
-				state = CarStateEnum.BRAKING;
-				
-			} else {
-				
-				Car otherCar = ((CarProximityEvent) e).otherCar;
-				
-				if (stoppedTime != -1 && t > stoppedTime + COMPLETE_STOP_WAIT_TIME) {
-					
-					GraphPositionPathPosition otherPosition = null;
-					if (otherCar.driver.overallPos != null) {
-						otherPosition = driver.overallPath.hitTest(otherCar, driver.overallPos);
-					}
-					
-					if (otherPosition == null || DMath.greaterThan(driver.overallPos.distanceTo(otherPosition), carProximityLookahead)) {
-						return false;
-					}
-					
-				}
-				
-			}
-			
-		} else if (e instanceof VertexArrivalEvent) {
-			
-			if (((VertexArrivalEvent)e).sign.isEnabled()) {
-				if (decelTime == -1) {
-					state = CarStateEnum.BRAKING;					
-				} else if (stoppedTime != -1 && t > stoppedTime + COMPLETE_STOP_WAIT_TIME && ((VertexArrivalEvent)e).v.carQueue.get(0) == this) {
-					return false;
-					
-				}
-			} else {
-				
-				/*
-				 * could have simply been passing through, so never braking
-				 * or could have ben already had CarProximityEvent, it went away and was masking a VertexArrivalevent, so immediately go to that
-				 * so already braking without a stop sign
-				 * 
-				 * all that matters now is to be driving
-				 */
-				return false;
-				
-			}
-			
-		} else {
-			assert false;
-		}
-		
-		return true;
-	}
-	
-	private void cleanupVertexDepartureQueue() {
-		
-		if (!vertexDepartureQueue.isEmpty()) {
-			
-			List<VertexEvent> toRemove = new ArrayList<VertexEvent>();
-			for (VertexEvent e : vertexDepartureQueue) {
-				if (driver.overallPos == null) {
-					/*
-					 * crashed or skidded
-					 */
-					
-					e.v.carQueue.remove(this);
-					
-					toRemove.add(e);
-					
-				} else if (e.carPastExitPosition == null) {
-					/*
-					 * at sink
-					 */
-					
-					e.v.carQueue.remove(this);
-					
-					toRemove.add(e);
-					
-				} else if (driver.overallPos.combo >= e.carPastExitPosition.combo) {
-					/*
-					 * driving past exit of intersection, so cleanup
-					 */
-					
-					/*
-					 * sign may not be enabled, so this car may be further up in queue
-					 */
-					//assert e.v.carQueue.indexOf(this) == 0;
-					
-					e.v.carQueue.remove(this);
-					
-					toRemove.add(e);
-					
-				}
-			}
-			for (VertexEvent e : toRemove) {
-				vertexDepartureQueue.remove(e);
-			}
-		}
-		
 	}
 	
 	private void updateFriction() {
@@ -807,14 +611,14 @@ public abstract class Car extends Entity {
 	
 	private void updateBrake(double t) {
 		
-		if (decelTime == -1) {
+		if (driver.decelTime == -1) {
 			
 //			logger.debug("decel");
 			
-			decelTime = t;
+			driver.decelTime = t;
 		}
 		
-		if (stoppedTime != -1) {
+		if (driver.stoppedTime != -1) {
 			return;
 		}
 		
@@ -865,8 +669,6 @@ public abstract class Car extends Entity {
 				
 				driver.clear();
 				
-				cleanupVertexDepartureQueue();
-				
 				s.match.outstandingCars--;
 				state = CarStateEnum.SINKED;
 				
@@ -878,14 +680,14 @@ public abstract class Car extends Entity {
 			
 			computeDynamicPropertiesAlways();
 			
-			if (stoppedTime == -1) {
+			if (driver.stoppedTime == -1) {
 				
 				if (DMath.equals(vel.lengthSquared(), 0.0)) {
 					
 					if (logger.isDebugEnabled()) {
 						logger.debug("stopped: " + t);
 					}
-					stoppedTime = t;
+					driver.stoppedTime = t;
 					
 				}
 				
@@ -905,14 +707,14 @@ public abstract class Car extends Entity {
 		case SKIDDED:
 			computeDynamicPropertiesAlways();
 			
-			if (stoppedTime == -1) {
+			if (driver.stoppedTime == -1) {
 				
 				if (DMath.equals(vel.lengthSquared(), 0.0)) {
 					
 					if (logger.isDebugEnabled()) {
 						logger.debug("stopped: " + t);
 					}
-					stoppedTime = t;
+					driver.stoppedTime = t;
 					
 				}
 				
@@ -925,8 +727,8 @@ public abstract class Car extends Entity {
 				
 				if (!DMath.equals(vel.lengthSquared(), 0.0)) {
 					
-					stoppedTime = -1;
-					deadlocked = false;
+					driver.stoppedTime = -1;
+					driver.deadlocked = false;
 					
 					computeDynamicPropertiesMoving();
 					
@@ -934,7 +736,7 @@ public abstract class Car extends Entity {
 				
 			}
 			
-			if (!world.completelyContains(shape)) {
+			if (!world.quadrantMap.completelyContains(shape)) {
 				return false;
 			}
 			
@@ -963,7 +765,7 @@ public abstract class Car extends Entity {
 			if (APP.CARTEXTURE_DRAW) {
 				paintImage(ctxt);
 			} else {
-				if (!deadlocked) {
+				if (!driver.deadlocked) {
 					ctxt.setColor(Color.BLUE);
 					paintRect(ctxt);
 				} else {
@@ -1012,7 +814,7 @@ public abstract class Car extends Entity {
 			if (APP.CARTEXTURE_DRAW) {
 				paintImage(ctxt);
 			} else {
-				if (!deadlocked) {
+				if (!driver.deadlocked) {
 					ctxt.setColor(Color.ORANGE);
 					paintRect(ctxt);
 				} else {

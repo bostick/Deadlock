@@ -1,8 +1,5 @@
 package com.gutabi.deadlock.world.cursor;
 
-import static com.gutabi.deadlock.DeadlockApplication.APP;
-import static com.gutabi.deadlock.view.DeadlockView.VIEW;
-
 import java.awt.Color;
 
 import com.gutabi.deadlock.controller.InputEvent;
@@ -10,26 +7,77 @@ import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.Shape;
 import com.gutabi.deadlock.view.RenderingContext;
 import com.gutabi.deadlock.world.Stroke;
+import com.gutabi.deadlock.world.World;
 
 public class StraightEdgeCursor extends CursorBase {
 	
-	public final Point first;
+	enum StraightEdgeCursorMode {
+		FREE,
+		SET,
+		KNOB,
+	}
+	
+	StraightEdgeCursorMode mode;
+	
+	public Point start;
 	
 	StraightEdgeCursorShape shape;
 	
-	public StraightEdgeCursor(Point first) {
-		this.first = first;
+	final Knob startKnob;
+	final Knob endKnob;
+	
+	Knob knob;
+	
+	public StraightEdgeCursor(World world) {
+		super(world);
+		
+		mode = StraightEdgeCursorMode.FREE;
+		
+		startKnob = new Knob(world) {
+			public void drag(Point p) {
+				Point newPoint = world.quadrantMap.getPoint(p);
+				StraightEdgeCursor.this.setStart(newPoint);
+			}
+		};
+		
+		endKnob = new Knob(world) {
+			public void drag(Point p) {
+				Point newPoint = world.quadrantMap.getPoint(p);
+				StraightEdgeCursor.this.setEnd(newPoint);
+			}
+		};
+		
 	}
 	
 	public void setPoint(Point p) {
 		this.p = p;
 		
 		if (p != null) {
-			shape = new StraightEdgeCursorShape(first, p);
+			shape = new StraightEdgeCursorShape(start, p);
+			startKnob.setPoint(start);
+			endKnob.setPoint(p);
 		} else {
 			shape = null;
 		}
 		
+	}
+	
+	public void setStart(Point start) {
+		this.start = start;
+		if (start != null && p != null) {
+			shape = new StraightEdgeCursorShape(start, p);
+			startKnob.setPoint(start);
+			endKnob.setPoint(p);
+		}
+	}
+	
+	public void setEnd(Point p) {
+		this.p = p;
+		if (start != null && p != null) {
+			shape = new StraightEdgeCursorShape(start, p);
+			startKnob.setPoint(start);
+			endKnob.setPoint(p);
+		}
 	}
 	
 	public Shape getShape() {
@@ -37,38 +85,113 @@ public class StraightEdgeCursor extends CursorBase {
 	}
 	
 	public void escKey() {
-		
-		APP.world.cursor = new RegularCursor();
-		
-		APP.world.cursor.setPoint(APP.world.getPoint(APP.world.lastMovedOrDraggedWorldPoint));
-		
-		VIEW.repaint();
+		switch (mode) {
+		case FREE:
+			world.cursor = new RegularCursor(world);
+			world.cursor.setPoint(world.quadrantMap.getPoint(world.lastMovedOrDraggedWorldPoint));
+			world.repaint();
+			break;
+		case SET:
+			mode = StraightEdgeCursorMode.FREE;
+			world.cursor.setPoint(world.quadrantMap.getPoint(world.lastMovedOrDraggedWorldPoint));
+			world.repaint();
+			break;
+		case KNOB:
+			assert false;
+			break;
+		}
 	}
 	
 	public void qKey() {
-		
-		Stroke s = new Stroke();
-		s.add(first);
-		s.add(p);
-		s.finish();
-		s.processNewStroke();
-		assert APP.world.checkConsistency();
-		
-		APP.render();
-		
-		APP.world.cursor = new RegularCursor();
-		APP.world.cursor.setPoint(APP.world.lastMovedOrDraggedWorldPoint);
-		VIEW.repaint();
+		switch (mode) {
+		case FREE:
+			mode = StraightEdgeCursorMode.SET;
+			world.repaint();
+			break;
+		case SET:
+			
+			Stroke s = new Stroke(world);
+			s.add(start);
+			s.add(p);
+			s.finish();
+			
+			s.processNewStroke();
+			
+			world.cursor = new RegularCursor(world);
+			
+			world.cursor.setPoint(world.lastMovedOrDraggedWorldPoint);
+			
+			world.render();
+			world.repaint();
+			break;
+		case KNOB:
+			assert false;
+			break;
+		}
 	}
 	
 	public void moved(InputEvent ev) {
-		APP.world.cursor.setPoint(APP.world.getPoint(APP.world.lastMovedOrDraggedWorldPoint));
-		VIEW.repaint();
+		switch (mode) {
+		case FREE:
+			world.cursor.setPoint(world.quadrantMap.getPoint(world.lastMovedOrDraggedWorldPoint));
+			world.repaint();
+			break;
+		case SET:
+		case KNOB:
+			break;
+		}
+	}
+	
+	public void released(InputEvent ev) {
+		switch (mode) {
+		case FREE:
+			break;
+		case SET:
+			break;
+		case KNOB:
+			mode = StraightEdgeCursorMode.SET;
+			world.repaint();
+			break;
+		}
+	}
+	
+	Point origKnobCenter;
+	
+	public void dragged(InputEvent ev) {
+		
+		switch (mode) {
+		case FREE:
+			setPoint(world.lastDraggedWorldPoint);
+			break;
+		case SET:
+			if (!world.lastDraggedWorldPointWasNull) {
+				break;
+			}
+			if (!(startKnob.hitTest(world.lastPressedWorldPoint) ||
+					endKnob.hitTest(world.lastPressedWorldPoint))) {
+				break;
+			}
+			
+			if (startKnob.hitTest(world.lastPressedWorldPoint)) {
+				mode = StraightEdgeCursorMode.KNOB;
+				knob = startKnob;
+				origKnobCenter = knob.p;
+			} else if (endKnob.hitTest(world.lastPressedWorldPoint)) {
+				mode = StraightEdgeCursorMode.KNOB;
+				knob = endKnob;
+				origKnobCenter = knob.p;
+			}
+		case KNOB:
+			Point diff = new Point(world.lastDraggedWorldPoint.x - world.lastPressedWorldPoint.x, world.lastDraggedWorldPoint.y - world.lastPressedWorldPoint.y);
+			knob.drag(origKnobCenter.plus(diff));
+			world.repaint();
+			break;
+		}
 	}
 	
 	public void exited(InputEvent ev) {
-		APP.world.cursor.setPoint(null);
-		VIEW.repaint();
+		world.cursor.setPoint(null);
+		world.repaint();
 	}
 	
 	public void draw(RenderingContext ctxt) {
@@ -79,9 +202,19 @@ public class StraightEdgeCursor extends CursorBase {
 		
 		ctxt.setColor(Color.WHITE);
 		ctxt.setXORMode(Color.BLACK);
-		ctxt.setWorldPixelStroke(1);
+		ctxt.setPixelStroke(1);
 		
 		shape.draw(ctxt);
+		
+		switch (mode) {
+		case FREE:
+			break;
+		case SET:
+		case KNOB:
+			startKnob.draw(ctxt);
+			endKnob.draw(ctxt);
+			break;
+		}
 		
 	}
 }

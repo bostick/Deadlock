@@ -29,12 +29,12 @@ static Logger logger = Logger.getLogger("deadlock");
 		VIEW.setupFrame();
 		VIEW.init();
 		
-		APP.screen.render();
-		
 		((JFrame)VIEW.container).setVisible(true);
 		VIEW.canvas.requestFocusInWindow();
 		
-		VIEW.postDisplay();
+		VIEW.canvas.canvasPostDisplay();
+		
+		APP.screen.render();
 		
 		APP.screen.repaint();
 	}

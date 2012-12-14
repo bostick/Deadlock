@@ -1,10 +1,10 @@
 package com.gutabi.deadlock.world.sprites;
 
-import static com.gutabi.deadlock.DeadlockApplication.APP;
 import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.view.RenderingContext;
+import com.gutabi.deadlock.world.World;
 
 //@SuppressWarnings("static-access")
 public class AnimatedExplosion {
@@ -12,11 +12,13 @@ public class AnimatedExplosion {
 	public static final double explosionWidth = 2.21875;
 	public static final double explosionHeight = 3.125;
 	
+	public final World world;
 	Point p;
 	int lastFrame;
 	double lastTime;
 	
-	public AnimatedExplosion(Point p) {
+	public AnimatedExplosion(World world, Point p) {
+		this.world = world;
 		this.p = p;
 	}
 	
@@ -58,11 +60,10 @@ public class AnimatedExplosion {
 	
 	private void paint(RenderingContext ctxt, int index) {
 		
-		ctxt.paintWorldImage(p.x - explosionWidth/2, p.y - explosionHeight/2, VIEW.explosionSheet,
-				0,
-				0,
-				(int)Math.round(APP.world.PIXELS_PER_METER_DEBUG * explosionWidth),
-				(int)Math.round(APP.world.PIXELS_PER_METER_DEBUG * explosionHeight),
+		ctxt.paintImage(
+				p.x - explosionWidth/2, p.y - explosionHeight/2, 1/world.PIXELS_PER_METER_DEBUG,
+				VIEW.explosionSheet,
+				0, 0, (int)Math.round(world.PIXELS_PER_METER_DEBUG * explosionWidth), (int)Math.round(world.PIXELS_PER_METER_DEBUG * explosionHeight),
 				71 * index, 0, 71 * index + 71, 100);
 		
 	}

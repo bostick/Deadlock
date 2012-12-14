@@ -1,19 +1,21 @@
 package com.gutabi.deadlock.world.cursor;
 
-import static com.gutabi.deadlock.DeadlockApplication.APP;
-import static com.gutabi.deadlock.view.DeadlockView.VIEW;
-
 import java.awt.Color;
 
 import com.gutabi.deadlock.controller.InputEvent;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.Shape;
 import com.gutabi.deadlock.view.RenderingContext;
+import com.gutabi.deadlock.world.World;
 
 //@SuppressWarnings("static-access")
 public class MergerCursor extends CursorBase {
 	
 	MergerCursorShape shape;
+	
+	public MergerCursor(World world) {
+		super(world);
+	}
 	
 	public void setPoint(Point p) {
 		this.p = p;
@@ -31,39 +33,39 @@ public class MergerCursor extends CursorBase {
 	
 	public void escKey() {
 		
-		APP.world.cursor = new RegularCursor();
+		world.cursor = new RegularCursor(world);
 		
-		APP.world.cursor.setPoint(APP.world.getPoint(APP.world.lastMovedOrDraggedWorldPoint));
+		world.cursor.setPoint(world.quadrantMap.getPoint(world.lastMovedOrDraggedWorldPoint));
 		
-		VIEW.repaint();
+		world.repaint();
 	}
 	
 	public void insertKey() {
-		if (APP.world.completelyContains(shape)) {
+		if (world.quadrantMap.completelyContains(shape)) {
 			
-			if (APP.world.pureGraphBestHitTest(shape) == null) {
+			if (world.graph.pureGraphBestHitTest(shape) == null) {
 				
-				APP.world.insertMergerTop(p);
+				world.insertMergerTop(p);
 				
-				APP.world.cursor = new RegularCursor();
+				world.cursor = new RegularCursor(world);
 				
-				APP.world.cursor.setPoint(APP.world.lastMovedWorldPoint);
+				world.cursor.setPoint(world.lastMovedWorldPoint);
 				
-				APP.render();
-				VIEW.repaint();
+				world.render();
+				world.repaint();
 			}
 			
 		}
 	}
 	
 	public void moved(InputEvent ev) {
-		APP.world.cursor.setPoint(APP.world.getPoint(APP.world.lastMovedOrDraggedWorldPoint));
-		VIEW.repaint();
+		world.cursor.setPoint(world.quadrantMap.getPoint(world.lastMovedOrDraggedWorldPoint));
+		world.repaint();
 	}
 	
 	public void exited(InputEvent ev) {
-		APP.world.cursor.setPoint(null);
-		VIEW.repaint();
+		world.cursor.setPoint(null);
+		world.repaint();
 	}
 	
 	public void draw(RenderingContext ctxt) {
@@ -74,7 +76,7 @@ public class MergerCursor extends CursorBase {
 		
 		ctxt.setColor(Color.WHITE);
 		ctxt.setXORMode(Color.BLACK);
-		ctxt.setWorldPixelStroke(1);
+		ctxt.setPixelStroke(1);
 		
 		shape.draw(ctxt);
 		

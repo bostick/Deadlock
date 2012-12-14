@@ -2,7 +2,6 @@
 FOR ALPHA 1:
 
 quadrant editor
-different screens
 
 scripting:
 saving to files
@@ -90,6 +89,8 @@ scripting, saving, editing, etc.
 
 
 LONGTERM:
+
+different screens
 
 rework the deadend detection, precompute it, combine code with cycle detection?
 
