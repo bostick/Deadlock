@@ -9,6 +9,8 @@ public class DeadlockApplication {
 	public static final double QUADRANT_WIDTH = 16.0;
 	public static final double QUADRANT_HEIGHT = QUADRANT_WIDTH;
 	
+	public double PIXELS_PER_METER = 1.0;
+	
 	/**
 	 * move physics forward by dt seconds
 	 */

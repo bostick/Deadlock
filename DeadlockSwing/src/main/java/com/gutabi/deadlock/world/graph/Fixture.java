@@ -267,9 +267,9 @@ public final class Fixture extends Vertex {
 				}
 				
 				ctxt.paintImage(
-						-r, -r, 1/world.PIXELS_PER_METER_DEBUG,
+						-r, -r, 1/APP.PIXELS_PER_METER,
 						VIEW.sheet,
-						0, 0, 2 * (int)Math.round(world.PIXELS_PER_METER_DEBUG * r), 2 * (int)Math.round(world.PIXELS_PER_METER_DEBUG * r),
+						0, 0, 2 * (int)Math.round(APP.PIXELS_PER_METER * r), 2 * (int)Math.round(APP.PIXELS_PER_METER * r),
 						96, 224, 96+32, 224+32);
 				
 				ctxt.setTransform(origTransform);

@@ -66,8 +66,8 @@ public class RegularCursor extends CursorBase {
 			
 			VIEW.teardownCanvasAndControlPanel(VIEW.container);
 			
+			APP.PIXELS_PER_METER = 1.0;
 			APP.screen = new MainMenu();
-			
 			APP.screen.init();
 			
 			VIEW.setupCanvas(VIEW.container);
@@ -77,7 +77,6 @@ public class RegularCursor extends CursorBase {
 			VIEW.canvas.canvasPostDisplay();
 			
 			APP.screen.render();
-			
 			APP.screen.repaint();
 			
 		} catch (Exception e) {

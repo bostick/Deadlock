@@ -107,9 +107,9 @@ public class StopSign extends Entity {
 			if (enabled) {
 				
 				ctxt.paintImage(
-						p.x - StopSign.STOPSIGN_SIZE/2, p.y - StopSign.STOPSIGN_SIZE/2, 1/world.PIXELS_PER_METER_DEBUG,
+						p.x - StopSign.STOPSIGN_SIZE/2, p.y - StopSign.STOPSIGN_SIZE/2, 1/APP.PIXELS_PER_METER,
 						VIEW.sheet,
-						0, 0, (int)Math.round(world.PIXELS_PER_METER_DEBUG * STOPSIGN_SIZE), (int)Math.round(world.PIXELS_PER_METER_DEBUG * STOPSIGN_SIZE),
+						0, 0, (int)Math.round(APP.PIXELS_PER_METER * STOPSIGN_SIZE), (int)Math.round(APP.PIXELS_PER_METER * STOPSIGN_SIZE),
 						32, 224, 32+32, 224+32);
 			}
 			

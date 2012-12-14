@@ -35,7 +35,6 @@ static Logger logger = Logger.getLogger("deadlock");
 		VIEW.canvas.canvasPostDisplay();
 		
 		APP.screen.render();
-		
 		APP.screen.repaint();
 	}
 	

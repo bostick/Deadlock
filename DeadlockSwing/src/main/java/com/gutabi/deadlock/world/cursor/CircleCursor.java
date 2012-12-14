@@ -215,8 +215,14 @@ public class CircleCursor extends CursorBase {
 	}
 	
 	public void exited(InputEvent ev) {
-		world.cursor.setPoint(null);
-		world.repaint();
+		switch (mode) {
+		case FREE:
+			break;
+		case SET:
+			break;
+		case KNOB:
+			break;
+		}
 	}
 	
 	Point origKnobCenter;

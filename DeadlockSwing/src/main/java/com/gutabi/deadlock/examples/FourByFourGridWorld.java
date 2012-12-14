@@ -10,6 +10,7 @@ import com.gutabi.deadlock.world.graph.Axis;
 import com.gutabi.deadlock.world.graph.Fixture;
 import com.gutabi.deadlock.world.graph.FixtureType;
 import com.gutabi.deadlock.world.graph.Side;
+import static com.gutabi.deadlock.DeadlockApplication.APP;
 
 public class FourByFourGridWorld extends World {
 
@@ -95,7 +96,7 @@ public class FourByFourGridWorld extends World {
 			
 		}
 		
-		PIXELS_PER_METER_DEBUG = 12.5;
+		APP.PIXELS_PER_METER = 12.5;
 		
 	}
 	
@@ -103,10 +104,10 @@ public class FourByFourGridWorld extends World {
 		super.canvasPostDisplay();
 		
 		worldViewport = new AABB(
-				-(VIEW.canvas.getWidth() / PIXELS_PER_METER_DEBUG) / 2 + worldWidth/2 ,
-				-(VIEW.canvas.getHeight() / PIXELS_PER_METER_DEBUG) / 2 + worldHeight/2,
-				VIEW.canvas.getWidth() / PIXELS_PER_METER_DEBUG,
-				VIEW.canvas.getHeight() / PIXELS_PER_METER_DEBUG);
+				-(VIEW.canvas.getWidth() / APP.PIXELS_PER_METER) / 2 + worldWidth/2 ,
+				-(VIEW.canvas.getHeight() / APP.PIXELS_PER_METER) / 2 + worldHeight/2,
+				VIEW.canvas.getWidth() / APP.PIXELS_PER_METER,
+				VIEW.canvas.getHeight() / APP.PIXELS_PER_METER);
 		
 	}
 	

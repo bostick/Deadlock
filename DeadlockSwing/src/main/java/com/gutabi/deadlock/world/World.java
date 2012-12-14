@@ -58,8 +58,6 @@ public class World extends ScreenBase implements Sweepable {
 	public final double worldWidth;
 	public final double worldHeight;
 	
-	public double PIXELS_PER_METER_DEBUG = 32.0;
-	
 	public AABB worldViewport;
 	
 	public WorldMode mode;
@@ -123,8 +121,8 @@ public class World extends ScreenBase implements Sweepable {
 				512,
 				BufferedImage.TYPE_INT_ARGB);
 		Graphics2D quadrantGrassG2 = quadrantGrass.createGraphics();
-		for (int i = 0; i < (int)Math.round(PIXELS_PER_METER_DEBUG * APP.QUADRANT_WIDTH)/32; i++) {
-			for (int j = 0; j < (int)Math.round(PIXELS_PER_METER_DEBUG * APP.QUADRANT_HEIGHT)/32; j++) {
+		for (int i = 0; i < (int)Math.round(APP.PIXELS_PER_METER * APP.QUADRANT_WIDTH)/32; i++) {
+			for (int j = 0; j < (int)Math.round(APP.PIXELS_PER_METER * APP.QUADRANT_HEIGHT)/32; j++) {
 				quadrantGrassG2.drawImage(VIEW.sheet,
 						32 * i, 32 * j, 32 * i + 32, 32 * j + 32,
 						0, 224, 0+32, 224+32, null);
@@ -220,10 +218,10 @@ public class World extends ScreenBase implements Sweepable {
 		canvasGraphImage = new BufferedImage(canvasWidth, canvasHeight, BufferedImage.TYPE_INT_ARGB);
 		
 		worldViewport = new AABB(
-				-(canvasWidth / PIXELS_PER_METER_DEBUG) / 2 + worldWidth/2 ,
-				-(canvasHeight / PIXELS_PER_METER_DEBUG) / 2 + worldHeight/2,
-				canvasWidth / PIXELS_PER_METER_DEBUG,
-				canvasHeight / PIXELS_PER_METER_DEBUG);
+				-(canvasWidth / APP.PIXELS_PER_METER) / 2 + worldWidth/2 ,
+				-(canvasHeight / APP.PIXELS_PER_METER) / 2 + worldHeight/2,
+				canvasWidth / APP.PIXELS_PER_METER,
+				canvasHeight / APP.PIXELS_PER_METER);
 		
 	}
 	
@@ -321,13 +319,13 @@ public class World extends ScreenBase implements Sweepable {
 	
 	public void zoom(double factor) {
 		
-		PIXELS_PER_METER_DEBUG = factor * PIXELS_PER_METER_DEBUG; 
+		APP.PIXELS_PER_METER = factor * APP.PIXELS_PER_METER; 
 		
 		int canvasWidth = VIEW.canvas.getWidth();
 		int canvasHeight = VIEW.canvas.getHeight();
 		
-		double newWidth =  canvasWidth / PIXELS_PER_METER_DEBUG;
-		double newHeight = canvasHeight / PIXELS_PER_METER_DEBUG;
+		double newWidth =  canvasWidth / APP.PIXELS_PER_METER;
+		double newHeight = canvasHeight / APP.PIXELS_PER_METER;
 		
 		worldViewport = new AABB(worldViewport.center.x - newWidth/2, worldViewport.center.y - newHeight/2, newWidth, newHeight);
 		
@@ -696,8 +694,8 @@ public class World extends ScreenBase implements Sweepable {
 	
 	public Point canvasToWorld(Point p) {
 		return new Point(
-				p.x / PIXELS_PER_METER_DEBUG + worldViewport.x,
-				p.y / PIXELS_PER_METER_DEBUG + worldViewport.y);
+				p.x / APP.PIXELS_PER_METER + worldViewport.x,
+				p.y / APP.PIXELS_PER_METER + worldViewport.y);
 	}
 	
 	public Point lastPressedWorldPoint;
@@ -879,9 +877,9 @@ public class World extends ScreenBase implements Sweepable {
 			canvasGrassImageG2.setColor(Color.WHITE);
 			canvasGrassImageG2.fillRect(0, 0, VIEW.canvas.getWidth(), VIEW.canvas.getHeight());
 			
-			canvasGrassImageG2.translate((int)(-worldViewport.x * PIXELS_PER_METER_DEBUG), (int)(-worldViewport.y * PIXELS_PER_METER_DEBUG));
+			canvasGrassImageG2.translate((int)(-worldViewport.x * APP.PIXELS_PER_METER), (int)(-worldViewport.y * APP.PIXELS_PER_METER));
 			
-			canvasGrassImageG2.scale(PIXELS_PER_METER_DEBUG, PIXELS_PER_METER_DEBUG);
+			canvasGrassImageG2.scale(APP.PIXELS_PER_METER, APP.PIXELS_PER_METER);
 			
 			RenderingContext canvasGrassContext = new RenderingContext(canvasGrassImageG2, RenderingContextType.CANVAS);
 			
@@ -900,9 +898,9 @@ public class World extends ScreenBase implements Sweepable {
 			canvasGraphImageG2.fillRect(0, 0, VIEW.canvas.getWidth(), VIEW.canvas.getHeight());
 			canvasGraphImageG2.setComposite(orig);
 			
-			canvasGraphImageG2.translate((int)((-worldViewport.x) * PIXELS_PER_METER_DEBUG), (int)((-worldViewport.y) * PIXELS_PER_METER_DEBUG));
+			canvasGraphImageG2.translate((int)((-worldViewport.x) * APP.PIXELS_PER_METER), (int)((-worldViewport.y) * APP.PIXELS_PER_METER));
 			
-			canvasGraphImageG2.scale(PIXELS_PER_METER_DEBUG, PIXELS_PER_METER_DEBUG);
+			canvasGraphImageG2.scale(APP.PIXELS_PER_METER, APP.PIXELS_PER_METER);
 			
 			RenderingContext canvasGraphContext = new RenderingContext(canvasGraphImageG2, RenderingContextType.CANVAS);
 			
@@ -934,7 +932,7 @@ public class World extends ScreenBase implements Sweepable {
 				
 				AffineTransform origTrans = ctxt.getTransform();
 				
-				ctxt.scale(PIXELS_PER_METER_DEBUG);
+				ctxt.scale(APP.PIXELS_PER_METER);
 				ctxt.translate(-worldViewport.x, -worldViewport.y);
 				
 				paintGrass(ctxt);
@@ -979,7 +977,7 @@ public class World extends ScreenBase implements Sweepable {
 		ctxt.translate(worldViewport.x, worldViewport.y);
 		
 		ctxt.paintImage(
-				0, 0, 1 / PIXELS_PER_METER_DEBUG,
+				0, 0, 1 / APP.PIXELS_PER_METER,
 				canvasGrassImage,
 				0, 0, canvasGrassImage.getWidth(), canvasGrassImage.getHeight(),
 				0, 0, canvasGrassImage.getWidth(), canvasGrassImage.getHeight());
@@ -1007,7 +1005,7 @@ public class World extends ScreenBase implements Sweepable {
 		ctxt.translate(worldViewport.x, worldViewport.y);
 		
 		ctxt.paintImage(
-				0, 0, 1 / PIXELS_PER_METER_DEBUG,
+				0, 0, 1 / APP.PIXELS_PER_METER,
 				canvasGraphImage,
 				0, 0, canvasGraphImage.getWidth(), canvasGraphImage.getHeight(),
 				0, 0, canvasGraphImage.getWidth(), canvasGraphImage.getHeight());
@@ -1046,19 +1044,19 @@ public class World extends ScreenBase implements Sweepable {
 		
 		AffineTransform origTransform = ctxt.getTransform();
 		
-		ctxt.paintString(0, 0, 1 / PIXELS_PER_METER_DEBUG, "time: " + t);
+		ctxt.paintString(0, 0, 1 / APP.PIXELS_PER_METER, "time: " + t);
 		
 		ctxt.translate(0, 1);
 		
-		ctxt.paintString(0, 0, 1 / PIXELS_PER_METER_DEBUG, "body count: " + b2dWorld.getBodyCount());
+		ctxt.paintString(0, 0, 1 / APP.PIXELS_PER_METER, "body count: " + b2dWorld.getBodyCount());
 		
 		ctxt.translate(0, 1);
 		
-		ctxt.paintString(0, 0, 1 / PIXELS_PER_METER_DEBUG, "car count: " + carMap.size());
+		ctxt.paintString(0, 0, 1 / APP.PIXELS_PER_METER, "car count: " + carMap.size());
 		
 		ctxt.translate(0, 1);
 		
-		ctxt.paintString(0, 0, 1 / PIXELS_PER_METER_DEBUG, "splosions count: " + explosionMap.size());
+		ctxt.paintString(0, 0, 1 / APP.PIXELS_PER_METER, "splosions count: " + explosionMap.size());
 		
 		ctxt.translate(0, 1);
 		

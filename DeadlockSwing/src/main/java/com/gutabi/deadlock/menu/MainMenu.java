@@ -30,8 +30,8 @@ public class MainMenu extends Menu {
 				
 				try {
 					
+					APP.PIXELS_PER_METER = 1.0;
 					APP.screen = new QuadrantEditor();
-					
 					APP.screen.init();
 					
 					APP.screen.repaint();
@@ -60,8 +60,8 @@ public class MainMenu extends Menu {
 					
 					VIEW.teardownCanvas(VIEW.container);
 					
+					APP.PIXELS_PER_METER = 32.0;
 					APP.screen = new OneByOneWorld();
-					
 					APP.screen.init();
 					
 					VIEW.setupCanvasAndControlPanel(VIEW.container);
@@ -71,7 +71,6 @@ public class MainMenu extends Menu {
 					VIEW.canvas.canvasPostDisplay();
 					
 					APP.screen.render();
-					
 					APP.screen.repaint();
 					
 				} catch (Exception e) {
@@ -90,8 +89,8 @@ public class MainMenu extends Menu {
 					
 					VIEW.teardownCanvas(VIEW.container);
 					
+					APP.PIXELS_PER_METER = 32.0;
 					APP.screen = new FourByFourGridWorld();
-					
 					APP.screen.init();
 					
 					VIEW.setupCanvasAndControlPanel(VIEW.container);
@@ -102,7 +101,6 @@ public class MainMenu extends Menu {
 					VIEW.canvas.canvasPostDisplay();
 					
 					APP.screen.render();
-					
 					APP.screen.repaint();
 					
 				} catch (Exception e) {
@@ -119,8 +117,8 @@ public class MainMenu extends Menu {
 				
 				try {
 					
+					APP.PIXELS_PER_METER = 32.0;
 					APP.screen = new WorldA();
-					
 					APP.screen.init();
 					
 					VIEW.teardownCanvas(VIEW.container);
@@ -133,7 +131,6 @@ public class MainMenu extends Menu {
 					VIEW.canvas.canvasPostDisplay();
 					
 					APP.screen.render();
-					
 					APP.screen.repaint();
 					
 				} catch (Exception e) {

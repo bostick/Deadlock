@@ -49,14 +49,14 @@ public class Quadrant {
 	
 	public void computeGridSpacing() {
 		
-		double curGridSpacingPixels =  gridSpacing * world.PIXELS_PER_METER_DEBUG;
+		double curGridSpacingPixels =  gridSpacing * APP.PIXELS_PER_METER;
 		while (curGridSpacingPixels > 64+16) {
 			gridSpacing *= 0.5;
-			curGridSpacingPixels =  gridSpacing * world.PIXELS_PER_METER_DEBUG;
+			curGridSpacingPixels =  gridSpacing * APP.PIXELS_PER_METER;
 		}
 		while (curGridSpacingPixels < 64-16) {
 			gridSpacing *= 2.0;
-			curGridSpacingPixels =  gridSpacing * world.PIXELS_PER_METER_DEBUG;
+			curGridSpacingPixels =  gridSpacing * APP.PIXELS_PER_METER;
 		}
 	}
 	
@@ -88,11 +88,11 @@ public class Quadrant {
 				if (!APP.DEBUG_DRAW) {
 					
 					ctxt.paintImage(
-							c * APP.QUADRANT_WIDTH, r * APP.QUADRANT_HEIGHT, 1 / world.PIXELS_PER_METER_DEBUG,
+							c * APP.QUADRANT_WIDTH, r * APP.QUADRANT_HEIGHT, 1 / APP.PIXELS_PER_METER,
 							world.quadrantGrass,
 							0, 0,
-							(int)Math.round(world.PIXELS_PER_METER_DEBUG * APP.QUADRANT_WIDTH),
-							(int)Math.round(world.PIXELS_PER_METER_DEBUG * APP.QUADRANT_HEIGHT),
+							(int)Math.round(APP.PIXELS_PER_METER * APP.QUADRANT_WIDTH),
+							(int)Math.round(APP.PIXELS_PER_METER * APP.QUADRANT_HEIGHT),
 							0, 0,
 							world.quadrantGrass.getWidth(),
 							world.quadrantGrass.getHeight());
@@ -107,7 +107,7 @@ public class Quadrant {
 					aabb.draw(ctxt);
 					
 					ctxt.setColor(Color.BLACK);
-					ctxt.paintString(c * APP.QUADRANT_WIDTH, r * APP.QUADRANT_HEIGHT + 1, 1.0 / world.PIXELS_PER_METER_DEBUG, c + " " + r);
+					ctxt.paintString(c * APP.QUADRANT_WIDTH, r * APP.QUADRANT_HEIGHT + 1, 1.0 / APP.PIXELS_PER_METER, c + " " + r);
 					
 				}
 				

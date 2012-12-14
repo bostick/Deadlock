@@ -28,12 +28,11 @@ public class QuadrantEditor extends ScreenBase {
 		
 		try {
 			
+			APP.PIXELS_PER_METER = 1.0;
 			APP.screen = new MainMenu();
-			
 			APP.screen.init();
 			
 			APP.screen.render();
-			
 			APP.screen.repaint();
 			
 		} catch (Exception e) {
@@ -61,8 +60,7 @@ public class QuadrantEditor extends ScreenBase {
 				
 				ctxt.translate(VIEW.canvas.getWidth()/2 - 800/2, VIEW.canvas.getHeight()/2 - 600/2);
 				
-				ctxt.setColor(Color.BLUE);
-				ctxt.fillRect(0, 0, 800, 600);
+				paintEditor(ctxt);
 				
 				ctxt.setTransform(origTrans);
 				
@@ -74,6 +72,13 @@ public class QuadrantEditor extends ScreenBase {
 			
 		} while (VIEW.canvas.bs.contentsLost());
 
+	}
+	
+	private void paintEditor(RenderingContext ctxt) {
+		
+		ctxt.setColor(Color.BLUE);
+		ctxt.fillRect(0, 0, 800, 600);
+		
 	}
 	
 	public void paint(PaintEvent ev) {

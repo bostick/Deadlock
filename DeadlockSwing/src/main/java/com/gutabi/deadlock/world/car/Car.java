@@ -863,9 +863,9 @@ public abstract class Car extends Entity {
 		ctxt.rotate(angle);
 		
 		ctxt.paintImage(
-				CAR_LOCALX, CAR_LOCALY, 1/world.PIXELS_PER_METER_DEBUG,
+				CAR_LOCALX, CAR_LOCALY, 1/APP.PIXELS_PER_METER,
 				VIEW.sheet,
-				0, 0, (int)(CAR_LENGTH * world.PIXELS_PER_METER_DEBUG), (int)(CAR_WIDTH * world.PIXELS_PER_METER_DEBUG),
+				0, 0, (int)(CAR_LENGTH * APP.PIXELS_PER_METER), (int)(CAR_WIDTH * APP.PIXELS_PER_METER),
 				64, sheetRowStart, 64+32, sheetRowEnd);
 		
 		if (inMerger) {
@@ -886,16 +886,16 @@ public abstract class Car extends Entity {
 		ctxt.translate(p.x, p.y);
 		ctxt.rotate(angle);
 		
-		int brakePixels = (int)(BRAKE_SIZE * world.PIXELS_PER_METER_DEBUG);
+		int brakePixels = (int)(BRAKE_SIZE * APP.PIXELS_PER_METER);
 		
 		ctxt.paintImage(
-				CAR_BRAKE1X, CAR_BRAKE1Y, 1/world.PIXELS_PER_METER_DEBUG,
+				CAR_BRAKE1X, CAR_BRAKE1Y, 1/APP.PIXELS_PER_METER,
 				VIEW.sheet,
 				0, 0, brakePixels, brakePixels,
 				0, brakeRowStart, 0+8, brakeRowEnd);
 		
 		ctxt.paintImage(
-				CAR_BRAKE2X, CAR_BRAKE2Y, 1/world.PIXELS_PER_METER_DEBUG,
+				CAR_BRAKE2X, CAR_BRAKE2Y, 1/APP.PIXELS_PER_METER,
 				VIEW.sheet,
 				0, 0, brakePixels, brakePixels,
 				0, brakeRowStart, 0+8, brakeRowEnd);
@@ -911,7 +911,7 @@ public abstract class Car extends Entity {
 		ctxt.translate(p.x, p.y);
 		
 		ctxt.setColor(Color.WHITE);
-		ctxt.paintString(CAR_LOCALX, 0.0, 2.0 / world.PIXELS_PER_METER_DEBUG, Integer.toString(id));
+		ctxt.paintString(CAR_LOCALX, 0.0, 2.0 / APP.PIXELS_PER_METER, Integer.toString(id));
 		
 		ctxt.setTransform(origTransform);
 	}
