@@ -53,13 +53,12 @@ public class PreviewPanel extends JPanel {
 		lastDragPreviewPoint = p;
 		lastDragTime = System.currentTimeMillis();
 		
-		APP.preview.dragged(ev);
-		
+		APP.screen.dragged(ev);
 	}
 	
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		APP.preview.paint((Graphics2D)g);
+		APP.screen.paint(new PaintEvent(this, new RenderingContext((Graphics2D)g, RenderingContextType.PREVIEW)));
 	}
 
 }

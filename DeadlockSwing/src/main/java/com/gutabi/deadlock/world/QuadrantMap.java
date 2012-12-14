@@ -11,6 +11,8 @@ import com.gutabi.deadlock.view.RenderingContext;
 @SuppressWarnings("static-access")
 public class QuadrantMap {
 	
+	public final World world;
+	
 	public final int quadrantCols;
 	public final int quadrantRows;
 	
@@ -18,7 +20,8 @@ public class QuadrantMap {
 	
 	public final AABB aabb;
 	
-	public QuadrantMap(int[][] ini) {
+	public QuadrantMap(World world, int[][] ini) {
+		this.world = world;
 		
 		quadrants = initQuadrants(ini);
 		
@@ -40,9 +43,9 @@ public class QuadrantMap {
 			for (int j = 0; j < rows; j++) {
 				Quadrant q;
 				if (ini[j][i] == 1) {
-					q = new Quadrant(j, i, true);
+					q = new Quadrant(world, j, i, true);
 				} else {
-					q = new Quadrant(j, i, false);
+					q = new Quadrant(world, j, i, false);
 				}
 				newQuads[j][i] = q;
 				

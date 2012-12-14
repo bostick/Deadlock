@@ -1,9 +1,14 @@
 package com.gutabi.deadlock.world.cursor;
 
 import com.gutabi.deadlock.controller.InputEvent;
+import com.gutabi.deadlock.world.World;
 
 public abstract class CursorBase extends Cursor {
-
+	
+	public CursorBase(World world) {
+		super(world);
+	}
+	
 	public void qKey() {
 		
 	}

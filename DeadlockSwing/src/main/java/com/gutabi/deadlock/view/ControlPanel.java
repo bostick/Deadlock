@@ -1,12 +1,9 @@
 package com.gutabi.deadlock.view;
 
-
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -18,7 +15,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 @SuppressWarnings({"serial", "static-access"})
-public class ControlPanel extends JPanel implements ActionListener {
+public class ControlPanel extends JPanel {
 	
 	public JCheckBox normalCarButton;
 	public JCheckBox fastCarButton;
@@ -84,10 +81,10 @@ public class ControlPanel extends JPanel implements ActionListener {
 		
 		startButton = new JButton("Start");
 		startButton.setActionCommand("start");
-		startButton.addActionListener(this);
+		startButton.addActionListener(APP.screen);
 		stopButton = new JButton("Stop");
 		stopButton.setActionCommand("stop");
-		stopButton.addActionListener(this);
+		stopButton.addActionListener(APP.screen);
 		stopButton.setEnabled(false);
 		hBox = Box.createHorizontalBox();
 		hBox.add(startButton);
@@ -104,7 +101,7 @@ public class ControlPanel extends JPanel implements ActionListener {
 		fpsCheckBox = new JCheckBox("fps draw");
 		fpsCheckBox.setSelected(APP.FPS_DRAW);
 		fpsCheckBox.setActionCommand("fpsDraw");
-		fpsCheckBox.addActionListener(this);
+		fpsCheckBox.addActionListener(APP.screen);
 		hBox = Box.createHorizontalBox();
 		hBox.add(fpsCheckBox);
 		hBox.add(Box.createHorizontalGlue());
@@ -113,7 +110,7 @@ public class ControlPanel extends JPanel implements ActionListener {
 		stopSignCheckBox = new JCheckBox("draw stop signs");
 		stopSignCheckBox.setSelected(APP.STOPSIGN_DRAW);
 		stopSignCheckBox.setActionCommand("stopSignDraw");
-		stopSignCheckBox.addActionListener(this);
+		stopSignCheckBox.addActionListener(APP.screen);
 		hBox = Box.createHorizontalBox();
 		hBox.add(stopSignCheckBox);
 		hBox.add(Box.createHorizontalGlue());
@@ -122,7 +119,7 @@ public class ControlPanel extends JPanel implements ActionListener {
 		carTextureCheckBox = new JCheckBox("draw car textures");
 		carTextureCheckBox.setSelected(APP.CARTEXTURE_DRAW);
 		carTextureCheckBox.setActionCommand("carTextureDraw");
-		carTextureCheckBox.addActionListener(this);
+		carTextureCheckBox.addActionListener(APP.screen);
 		hBox = Box.createHorizontalBox();
 		hBox.add(carTextureCheckBox);
 		hBox.add(Box.createHorizontalGlue());
@@ -131,7 +128,7 @@ public class ControlPanel extends JPanel implements ActionListener {
 		explosionsCheckBox = new JCheckBox("draw explosions");
 		explosionsCheckBox.setSelected(APP.EXPLOSIONS_DRAW);
 		explosionsCheckBox.setActionCommand("explosionsDraw");
-		explosionsCheckBox.addActionListener(this);
+		explosionsCheckBox.addActionListener(APP.screen);
 		hBox = Box.createHorizontalBox();
 		hBox.add(explosionsCheckBox);
 		hBox.add(Box.createHorizontalGlue());
@@ -140,7 +137,7 @@ public class ControlPanel extends JPanel implements ActionListener {
 		debugCheckBox = new JCheckBox("debug draw");
 		debugCheckBox.setSelected(APP.DEBUG_DRAW);
 		debugCheckBox.setActionCommand("debugDraw");
-		debugCheckBox.addActionListener(this);
+		debugCheckBox.addActionListener(APP.screen);
 		hBox = Box.createHorizontalBox();
 		hBox.add(debugCheckBox);
 		hBox.add(Box.createHorizontalGlue());
@@ -150,7 +147,7 @@ public class ControlPanel extends JPanel implements ActionListener {
 		dtField.setText(Double.toString(APP.dt));
 		dtField.setMaximumSize(new Dimension(10000, 100));
 		dtField.setActionCommand("dt");
-		dtField.addActionListener(this);
+		dtField.addActionListener(APP.screen);
 		hBox = Box.createHorizontalBox();
 		hBox.add(new JLabel("dt"));
 		hBox.add(dtField);
@@ -170,95 +167,6 @@ public class ControlPanel extends JPanel implements ActionListener {
 		verticalBox.add(Box.createRigidArea(new Dimension(0, 30)));
 		
 		add(verticalBox);
-	}
-	
-	public void actionPerformed(ActionEvent e) {
-		if (e.getActionCommand().equals("start")) {
-			
-			VIEW.controlPanel.startButton.setText("Pause");
-			VIEW.controlPanel.startButton.setActionCommand("pause");
-			
-			VIEW.controlPanel.stopButton.setEnabled(true);
-			
-			APP.world.startRunning();
-			
-		} else if (e.getActionCommand().equals("stop")) {
-			
-			VIEW.controlPanel.startButton.setText("Start");
-			VIEW.controlPanel.startButton.setActionCommand("start");
-			
-			VIEW.controlPanel.stopButton.setEnabled(false);
-			
-			APP.world.stopRunning();
-			
-		} else if (e.getActionCommand().equals("pause")) {
-			
-			VIEW.controlPanel.startButton.setText("Unpause");
-			VIEW.controlPanel.startButton.setActionCommand("unpause");
-			
-			APP.world.pauseRunning();
-			
-		} else if (e.getActionCommand().equals("unpause")) {
-			
-			VIEW.controlPanel.startButton.setText("Pause");
-			VIEW.controlPanel.startButton.setActionCommand("pause");
-			
-			APP.world.unpauseRunning();
-			
-		} else if (e.getActionCommand().equals("dt")) {
-			
-			String text = VIEW.controlPanel.dtField.getText();
-			try {
-				double dt = Double.parseDouble(text);
-				APP.dt = dt;
-			} catch (NumberFormatException ex) {
-				
-			}
-			
-		} else if (e.getActionCommand().equals("debugDraw")) {
-			
-			boolean state = VIEW.controlPanel.debugCheckBox.isSelected();
-			
-			APP.DEBUG_DRAW = state;
-			
-			APP.render();
-			VIEW.repaint();
-			
-		} else if (e.getActionCommand().equals("fpsDraw")) {
-			
-			boolean state = VIEW.controlPanel.fpsCheckBox.isSelected();
-			
-			APP.FPS_DRAW = state;
-			
-			APP.render();
-			VIEW.repaint();
-			
-		} else if (e.getActionCommand().equals("stopSignDraw")) {
-			
-			boolean state = VIEW.controlPanel.stopSignCheckBox.isSelected();
-			
-			APP.STOPSIGN_DRAW = state;
-			
-			APP.render();
-			VIEW.repaint();
-			
-		} else if (e.getActionCommand().equals("carTextureDraw")) {
-			
-			boolean state = VIEW.controlPanel.carTextureCheckBox.isSelected();
-			
-			APP.CARTEXTURE_DRAW = state;
-			
-			VIEW.repaint();
-			
-		} else if (e.getActionCommand().equals("explosionsDraw")) {
-			
-			boolean state = VIEW.controlPanel.explosionsCheckBox.isSelected();
-			
-			APP.EXPLOSIONS_DRAW = state;
-			
-			VIEW.repaint();
-			
-		}
 	}
 	
 }

@@ -4,11 +4,18 @@ import com.gutabi.deadlock.controller.InputEvent;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.Shape;
 import com.gutabi.deadlock.view.RenderingContext;
+import com.gutabi.deadlock.world.World;
 
 //@SuppressWarnings("static-access")
 public abstract class Cursor {
 	
+	public final World world;
+	
 	public Point p;
+	
+	public Cursor(World world) {
+		this.world = world;
+	}
 	
 	public abstract void setPoint(Point p);
 	

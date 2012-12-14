@@ -1,7 +1,6 @@
 package com.gutabi.deadlock.view;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
-import static com.gutabi.deadlock.controller.DeadlockController.CONTROLLER;
 
 import java.awt.Color;
 import java.awt.Container;
@@ -139,20 +138,6 @@ public class DeadlockView {
 	
 	public void postDisplay() {
 		canvas.postDisplay();
-	}
-	
-	public void repaint() {
-		switch (CONTROLLER.mode) {
-		case MENU:
-			APP.menu.repaint();
-			break;
-		case QUADRANTEDITOR:
-			break;
-		case WORLD:
-			APP.world.repaint();
-			controlPanel.repaint();
-			break;
-		}
 	}
 	
 }

@@ -1,6 +1,9 @@
 package com.gutabi.deadlock.examples;
 
+import static com.gutabi.deadlock.view.DeadlockView.VIEW;
+
 import com.gutabi.deadlock.core.Point;
+import com.gutabi.deadlock.core.geom.AABB;
 import com.gutabi.deadlock.world.Stroke;
 import com.gutabi.deadlock.world.World;
 import com.gutabi.deadlock.world.graph.Axis;
@@ -48,7 +51,7 @@ public class FourByFourGridWorld extends World {
 			graph.addVertexTop(source);
 			graph.addVertexTop(sink);
 			
-			Stroke s = new Stroke();
+			Stroke s = new Stroke(this);
 			s.add(source.p);
 			s.add(sink.p);
 			s.finish();
@@ -83,7 +86,7 @@ public class FourByFourGridWorld extends World {
 			graph.addVertexTop(source);
 			graph.addVertexTop(sink);
 			
-			Stroke s = new Stroke();
+			Stroke s = new Stroke(this);
 			s.add(source.p);
 			s.add(sink.p);
 			s.finish();
@@ -91,7 +94,13 @@ public class FourByFourGridWorld extends World {
 			
 		}
 		
-		super.init();
+		PIXELS_PER_METER_DEBUG = 12.5;
+
+		worldViewport = new AABB(
+				-(VIEW.canvas.getWidth() / PIXELS_PER_METER_DEBUG) / 2 + worldWidth/2 ,
+				-(VIEW.canvas.getHeight() / PIXELS_PER_METER_DEBUG) / 2 + worldHeight/2,
+				VIEW.canvas.getWidth() / PIXELS_PER_METER_DEBUG,
+				VIEW.canvas.getHeight() / PIXELS_PER_METER_DEBUG);
 		
 	}
 

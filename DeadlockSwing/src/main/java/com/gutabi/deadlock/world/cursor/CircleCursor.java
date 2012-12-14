@@ -13,6 +13,7 @@ import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.Shape;
 import com.gutabi.deadlock.view.RenderingContext;
 import com.gutabi.deadlock.world.Stroke;
+import com.gutabi.deadlock.world.World;
 import com.gutabi.deadlock.world.graph.Vertex;
 
 public class CircleCursor extends CursorBase {
@@ -33,7 +34,9 @@ public class CircleCursor extends CursorBase {
 	
 	Knob knob;
 	
-	public CircleCursor() {
+	public CircleCursor(final World world) {
+		super(world);
+		
 		mode = CircleCursorMode.FREE;
 		yRadius = Vertex.INIT_VERTEX_RADIUS;
 		xRadius = Vertex.INIT_VERTEX_RADIUS;
@@ -41,7 +44,7 @@ public class CircleCursor extends CursorBase {
 		ulKnob = new Knob() {
 			public void drag(Point p) {
 				
-				Point newPoint = APP.world.getPoint(p);
+				Point newPoint = world.getPoint(p);
 				
 				Dim offset = shape.c1.aabb.dim.multiply(0.5);
 				
@@ -54,7 +57,7 @@ public class CircleCursor extends CursorBase {
 		brKnob = new Knob() {
 			public void drag(Point p) {
 				
-				Point newPoint = APP.world.getPoint(p);
+				Point newPoint = world.getPoint(p);
 				
 				Point diff = new Point(newPoint.x - this.p.x, newPoint.y - this.p.y);
 				
@@ -103,14 +106,14 @@ public class CircleCursor extends CursorBase {
 	public void escKey() {
 		switch (mode) {
 		case FREE:
-			APP.world.cursor = new RegularCursor();
-			APP.world.cursor.setPoint(APP.world.getPoint(APP.world.lastMovedOrDraggedWorldPoint));
-			VIEW.repaint();
+			world.cursor = new RegularCursor();
+			world.cursor.setPoint(world.getPoint(world.lastMovedOrDraggedWorldPoint));
+			world.repaint();
 			break;
 		case SET:
 			mode = CircleCursorMode.FREE;
-			APP.world.cursor.setPoint(APP.world.getPoint(APP.world.lastMovedOrDraggedWorldPoint));
-			VIEW.repaint();
+			world.cursor.setPoint(world.getPoint(world.lastMovedOrDraggedWorldPoint));
+			world.repaint();
 			break;
 		case KNOB:
 			assert false;
@@ -122,12 +125,12 @@ public class CircleCursor extends CursorBase {
 		switch (mode) {
 		case FREE:
 			mode = CircleCursorMode.SET;
-			VIEW.repaint();
+			world.repaint();
 			break;
 		case SET:
 			
 			List<Point> pts = shape.skeleton;
-			Stroke s = new Stroke();
+			Stroke s = new Stroke(world);
 			for (Point p : pts) {
 				s.add(p);
 			}
@@ -135,12 +138,12 @@ public class CircleCursor extends CursorBase {
 			
 			s.processNewStroke();
 			
-			APP.world.cursor = new RegularCursor();
+			world.cursor = new RegularCursor();
 			
-			APP.world.cursor.setPoint(APP.world.lastMovedWorldPoint);
+			world.cursor.setPoint(world.lastMovedWorldPoint);
 			
-			APP.render();
-			VIEW.repaint();
+			world.render();
+			world.repaint();
 			break;
 		case KNOB:
 			break;
@@ -150,15 +153,15 @@ public class CircleCursor extends CursorBase {
 	public void moved(InputEvent ev) {
 		switch (mode) {
 		case FREE:
-			Entity closest = APP.world.hitTest(APP.world.lastMovedOrDraggedWorldPoint);
+			Entity closest = world.hitTest(world.lastMovedOrDraggedWorldPoint);
 			
 			synchronized (APP) {
-				APP.world.hilited = closest;
+				world.hilited = closest;
 			}
 			
-			APP.world.cursor.setPoint(APP.world.getPoint(APP.world.lastMovedOrDraggedWorldPoint));
+			world.cursor.setPoint(world.getPoint(world.lastMovedOrDraggedWorldPoint));
 			
-			VIEW.repaint();
+			world.repaint();
 			break;
 		case SET:
 		case KNOB:

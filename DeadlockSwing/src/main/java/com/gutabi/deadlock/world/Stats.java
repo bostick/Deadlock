@@ -1,7 +1,5 @@
 package com.gutabi.deadlock.world;
 
-import static com.gutabi.deadlock.DeadlockApplication.APP;
-
 import java.awt.Color;
 import java.awt.geom.AffineTransform;
 
@@ -10,10 +8,16 @@ import com.gutabi.deadlock.view.RenderingContext;
 //@SuppressWarnings("static-access")
 public class Stats {
 	
+	World world;
+	
 	long lastTime;
 	long curTime;
 	int frameCount;
 	int fps;
+	
+	public Stats(World world) {
+		this.world = world;
+	}
 	
 	/**
 	 * 
@@ -23,7 +27,7 @@ public class Stats {
 		
 		ctxt.setColor(Color.WHITE);
 		ctxt.setXORMode(Color.BLACK);
-		ctxt.setWorldPixelStroke(1);
+		ctxt.setPixelStroke(1);
 		
 		AffineTransform origTransform1 = ctxt.getTransform();
 		
@@ -39,11 +43,11 @@ public class Stats {
 			lastTime = curTime;
 		}
 		
-		ctxt.paintWorldString(0, 0, 1.0, "FPS: " + fps);
+		ctxt.paintString(0, 0, 1.0 / world.PIXELS_PER_METER_DEBUG, "FPS: " + fps);
 		
 		ctxt.translate(0, 1);
 		
-		APP.world.paintStats(ctxt);
+		world.paintStats(ctxt);
 		
 		ctxt.setTransform(origTransform1);
 	}

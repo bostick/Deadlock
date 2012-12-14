@@ -392,7 +392,7 @@ public class Capsule extends SweepableShape implements SweeperShape {
 				
 				Color c = ctxt.getColor();
 				ctxt.setColor(Color.BLUE);
-				ctxt.setWorldPixelStroke(1);
+				ctxt.setPixelStroke(1);
 				
 				debugNormalLine.draw(ctxt);
 				

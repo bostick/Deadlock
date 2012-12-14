@@ -17,9 +17,16 @@ import com.gutabi.deadlock.world.car.DrivingEvent;
 import com.gutabi.deadlock.world.car.VertexArrivalEvent;
 import com.gutabi.deadlock.world.graph.Vertex;
 
+@SuppressWarnings("static-access")
 public class CarMap {
 	
+	public final World world;
+	
 	private List<Car> cars = new ArrayList<Car>();
+	
+	public CarMap(World world) {
+		this.world = world;
+	}
 	
 	public void addCar(Car c) {
 		cars.add(c);
@@ -48,7 +55,7 @@ public class CarMap {
 		
 		final boolean[] intersecting = new boolean[1];
 		
-		APP.world.b2dWorld.queryAABB(new QueryCallback() {
+		world.b2dWorld.queryAABB(new QueryCallback() {
 			public boolean reportFixture(org.jbox2d.dynamics.Fixture fixture) {
 				intersecting[0] = true;
 				return false;
@@ -59,6 +66,13 @@ public class CarMap {
 	}
 	
 	public void paint(RenderingContext ctxt) {
+		
+		if (APP.DEBUG_DRAW) {
+			ctxt.setPixelStroke(1);
+			world.b2dWorld.setDebugDraw(ctxt);
+			world.b2dWorld.drawDebugData();
+		}
+		
 		for (Car c : cars) {
 			c.paint(ctxt);
 		}
@@ -88,8 +102,8 @@ public class CarMap {
 		for (Car c : cars) {
 			boolean shouldPersist = c.postStep(t);
 			if (!shouldPersist) {
-				if (APP.world.hilited == c) {
-					APP.world.hilited = null;
+				if (world.hilited == c) {
+					world.hilited = null;
 				}
 				c.destroy();
 				toBeRemoved.add(c);

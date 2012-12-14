@@ -7,6 +7,7 @@ import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Composite;
 import java.awt.Graphics2D;
+import java.awt.event.ActionEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.util.List;
@@ -17,6 +18,7 @@ import javax.swing.SwingUtilities;
 
 import org.jbox2d.common.Vec2;
 
+import com.gutabi.deadlock.ScreenBase;
 import com.gutabi.deadlock.controller.InputEvent;
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
@@ -27,6 +29,9 @@ import com.gutabi.deadlock.core.geom.Quad;
 import com.gutabi.deadlock.core.geom.Shape;
 import com.gutabi.deadlock.core.geom.SweepEvent;
 import com.gutabi.deadlock.core.geom.Sweepable;
+import com.gutabi.deadlock.view.Canvas;
+import com.gutabi.deadlock.view.PaintEvent;
+import com.gutabi.deadlock.view.PreviewPanel;
 import com.gutabi.deadlock.view.RenderingContext;
 import com.gutabi.deadlock.view.RenderingContextType;
 import com.gutabi.deadlock.world.car.Car;
@@ -44,7 +49,7 @@ import com.gutabi.deadlock.world.sprites.AnimatedExplosion;
 import com.gutabi.deadlock.world.sprites.AnimatedGrass;
 
 @SuppressWarnings("static-access")
-public class World implements Sweepable {
+public class World extends ScreenBase implements Sweepable {
 	
 	enum WorldMode {
 		EDITING,
@@ -60,6 +65,8 @@ public class World implements Sweepable {
 	public AABB worldViewport;
 	
 	public WorldMode mode;
+	
+	public Preview preview;
 	
 	public Cursor cursor;
 	
@@ -80,7 +87,7 @@ public class World implements Sweepable {
 	 */
 	public double t;
 	
-	public QuadrantMap map;
+	public QuadrantMap quadrantMap;
 	
 	AnimatedGrass animatedGrass1;
 	AnimatedGrass animatedGrass2;
@@ -88,7 +95,7 @@ public class World implements Sweepable {
 	
 	public Graph graph = new Graph();
 	
-	public CarMap carMap = new CarMap();
+	public CarMap carMap;
 	
 	public ExplosionMap explosionMap = new ExplosionMap();
 	
@@ -105,7 +112,7 @@ public class World implements Sweepable {
 		int quadrantCols = ini[0].length;
 		int quadrantRows = ini.length;
 		
-		map = new QuadrantMap(ini);
+		quadrantMap = new QuadrantMap(this, ini);
 		
 		worldWidth = quadrantCols * APP.QUADRANT_WIDTH;
 		
@@ -137,10 +144,14 @@ public class World implements Sweepable {
 		
 		cursor = new RegularCursor();
 		
-		stats = new Stats();
+		preview = new Preview(this);
+		
+		stats = new Stats(this);
+		
+		carMap = new CarMap(this);
 		
 		b2dWorld = new org.jbox2d.dynamics.World(new Vec2(0.0f, 0.0f), true);
-		b2dWorld.setContactListener(new CarEventListener());
+		b2dWorld.setContactListener(new CarEventListener(this));
 		
 		computeAABB();
 		
@@ -205,7 +216,7 @@ public class World implements Sweepable {
 		
 	}
 	
-	public void postDisplay() {
+	public void canvasPostDisplay() {
 		
 		canvasGrassImage = new BufferedImage(VIEW.canvas.getWidth(), VIEW.canvas.getHeight(), BufferedImage.TYPE_INT_RGB);
 		
@@ -216,27 +227,27 @@ public class World implements Sweepable {
 	
 	
 	public Point getPoint(Point p) {
-		return map.getPoint(p);
+		return quadrantMap.getPoint(p);
 	}
 	
 	public Quadrant findQuadrant(Point p) {
-		return map.findQuadrant(p);
+		return quadrantMap.findQuadrant(p);
 	}
 	
 	public Quadrant upFixPoint(Quadrant q) {
-		return map.upFixPoint(q);
+		return quadrantMap.upFixPoint(q);
 	}
 	
 	public Quadrant leftFixPoint(Quadrant q) {
-		return map.leftFixPoint(q);
+		return quadrantMap.leftFixPoint(q);
 	}
 	
 	public Quadrant rightFixPoint(Quadrant q) {
-		return map.rightFixPoint(q);
+		return quadrantMap.rightFixPoint(q);
 	}
 	
 	public Quadrant downFixPoint(Quadrant q) {
-		return map.downFixPoint(q);
+		return quadrantMap.downFixPoint(q);
 	}
 	
 	
@@ -307,7 +318,7 @@ public class World implements Sweepable {
 		
 		mode = WorldMode.RUNNING;
 		
-		Thread t = new Thread(new SimulationRunnable());
+		Thread t = new Thread(new SimulationRunnable(this));
 		t.start();
 		
 	}
@@ -346,291 +357,6 @@ public class World implements Sweepable {
 		
 	}
 	
-	public void qKey() {
-		switch (mode) {
-		case RUNNING:
-		case PAUSED:
-			break;
-		case EDITING:
-			cursor.qKey();
-			break;
-		}
-	}
-	
-	public void wKey() {
-		switch (mode) {
-		case RUNNING:
-		case PAUSED:
-			break;
-		case EDITING:
-			cursor.wKey();
-			break;
-		}
-	}
-	
-	public void gKey() {
-		
-		map.toggleGrid();
-		
-		cursor.setPoint(map.getPoint(lastMovedOrDraggedWorldPoint));
-		
-		APP.render();
-		VIEW.repaint();
-	}
-	
-	public void deleteKey() {
-		
-		if (hilited != null) {
-			
-			if (hilited.isUserDeleteable()) {
-				
-				if (hilited instanceof Car) {
-					Car c = (Car)hilited;
-					
-					removeCarTop(c);
-					
-				} else if (hilited instanceof Vertex) {
-					Vertex v = (Vertex)hilited;
-					
-					removeVertexTop(v);
-					
-				} else if (hilited instanceof Road) {
-					Road e = (Road)hilited;
-					
-					removeRoadTop(e);
-					
-				} else if (hilited instanceof Merger) {
-					Merger e = (Merger)hilited;
-					
-					removeMergerTop(e);
-					
-				} else if (hilited instanceof StopSign) {
-					StopSign s = (StopSign)hilited;
-					
-					removeStopSignTop(s);
-					
-				} else {
-					throw new AssertionError();
-				}
-				
-				hilited = null;
-				
-			}
-			
-		}
-		
-		APP.render();
-		VIEW.repaint();
-	}
-	
-	public void insertKey() {
-		switch (mode) {
-		case RUNNING:
-		case PAUSED:
-			break;
-		case EDITING:
-			cursor.insertKey();
-			break;
-		}
-	}
-	
-	public void escKey() {
-		switch (mode) {
-		case RUNNING:
-		case PAUSED:
-			break;
-		case EDITING:
-			cursor.escKey();
-			break;
-		}
-	}
-	
-	public void d1Key() {
-		switch (mode) {
-		case PAUSED:
-		case RUNNING:
-			break;
-		case EDITING:
-			cursor.d1Key();
-			break;
-		}
-	}
-	
-	public void d2Key() {
-		switch (mode) {
-		case PAUSED:
-		case RUNNING:
-			break;
-		case EDITING:
-			cursor.d2Key();
-			break;
-		}
-	}
-	
-	public void d3Key() {
-		switch (mode) {
-		case PAUSED:
-		case RUNNING:
-			break;
-		case EDITING:
-			cursor.d3Key();
-			break;
-		}
-	}
-	
-	public void plusKey() {
-		
-		zoom(1.1);
-		
-		lastMovedOrDraggedWorldPoint = canvasToWorld(VIEW.canvas.lastMovedOrDraggedCanvasPoint);
-		
-		switch (mode) {
-		case PAUSED:
-		case RUNNING:
-			break;
-		case EDITING:
-			cursor.plusKey();
-			break;
-		}
-		
-	}
-	
-	public void minusKey() {
-		
-		zoom(0.9);
-		
-		lastMovedOrDraggedWorldPoint = canvasToWorld(VIEW.canvas.lastMovedOrDraggedCanvasPoint);
-		
-		switch (mode) {
-		case PAUSED:
-		case RUNNING:
-			break;
-		case EDITING:
-			cursor.minusKey();
-			break;
-		}
-		
-	}
-	
-	public void aKey() {
-		switch (mode) {
-		case RUNNING:
-		case PAUSED:
-			break;
-		case EDITING:
-			cursor.aKey();
-			break;
-		}
-	}
-	
-	public void sKey() {
-		switch (mode) {
-		case RUNNING:
-		case PAUSED:
-			break;
-		case EDITING:
-			cursor.sKey();
-			break;
-		}
-	}
-	
-	public void dKey() {
-		switch (mode) {
-		case RUNNING:
-		case PAUSED:
-			break;
-		case EDITING:
-			cursor.dKey();
-			break;
-		}
-	}
-	
-	public Point canvasToWorld(Point p) {
-		return new Point(
-				p.x / PIXELS_PER_METER_DEBUG + worldViewport.x,
-				p.y / PIXELS_PER_METER_DEBUG + worldViewport.y);
-	}
-	
-	public Point lastPressedWorldPoint;
-	
-	public void pressed(InputEvent ev) {
-		
-		Point p = ev.p;
-		
-		lastPressedWorldPoint = canvasToWorld(p);
-		lastDraggedWorldPoint = null;
-		
-	}
-	
-	public Point lastDraggedWorldPoint;
-	public boolean lastDraggedWorldPointWasNull;
-	
-	public void dragged(InputEvent ev) {
-		
-		Point p = ev.p;
-		
-		lastDraggedWorldPointWasNull = (lastDraggedWorldPoint == null);
-		lastDraggedWorldPoint = canvasToWorld(p);
-		lastMovedOrDraggedWorldPoint = lastDraggedWorldPoint;
-		
-		switch (mode) {
-		case RUNNING:
-		case PAUSED:
-			break;
-		case EDITING:
-			cursor.dragged(ev);
-			break;
-		}
-		
-	}
-	
-	public void released(InputEvent ev) {
-		switch (mode) {
-		case RUNNING:
-		case PAUSED:
-			break;
-		case EDITING:
-			cursor.released(ev);
-			break;
-		}
-	}
-	
-	public Point lastMovedWorldPoint;
-	public Point lastMovedOrDraggedWorldPoint;
-	
-	public void moved(InputEvent ev) {
-		
-		VIEW.canvas.requestFocusInWindow();
-		
-		Point p = ev.p;
-		
-		lastMovedWorldPoint = canvasToWorld(p);
-		lastMovedOrDraggedWorldPoint = lastMovedWorldPoint;
-		
-		switch (mode) {
-		case RUNNING:
-		case PAUSED:
-			break;
-		case EDITING:
-			cursor.moved(ev);
-			break;	
-		}
-	}
-	
-	public void exited(InputEvent ev) {
-		
-		switch (mode) {
-		case RUNNING:
-		case PAUSED:
-			break;
-		case EDITING:
-			cursor.exited(ev);
-			break;
-		}
-	}
-	
-	
-	
 	public List<SweepEvent> sweepStart(Circle c) {
 		return graph.sweepStart(c);
 	}
@@ -665,7 +391,7 @@ public class World implements Sweepable {
 	}
 	
 	private void computeAABB() {
-		aabb = map.aabb;
+		aabb = quadrantMap.aabb;
 		aabb = AABB.union(aabb, graph.getAABB());
 	}
 	
@@ -842,14 +568,383 @@ public class World implements Sweepable {
 	}
 	
 	public boolean completelyContains(Shape s) {
-		return map.completelyContains(s);
+		return quadrantMap.completelyContains(s);
 	}
 	
+	public void qKey() {
+		switch (mode) {
+		case RUNNING:
+		case PAUSED:
+			break;
+		case EDITING:
+			cursor.qKey();
+			break;
+		}
+	}
 	
+	public void wKey() {
+		switch (mode) {
+		case RUNNING:
+		case PAUSED:
+			break;
+		case EDITING:
+			cursor.wKey();
+			break;
+		}
+	}
 	
+	public void gKey() {
+		
+		quadrantMap.toggleGrid();
+		
+		cursor.setPoint(quadrantMap.getPoint(lastMovedOrDraggedWorldPoint));
+		
+		render();
+		repaint();
+	}
 	
+	public void deleteKey() {
+		
+		if (hilited != null) {
+			
+			if (hilited.isUserDeleteable()) {
+				
+				if (hilited instanceof Car) {
+					Car c = (Car)hilited;
+					
+					removeCarTop(c);
+					
+				} else if (hilited instanceof Vertex) {
+					Vertex v = (Vertex)hilited;
+					
+					removeVertexTop(v);
+					
+				} else if (hilited instanceof Road) {
+					Road e = (Road)hilited;
+					
+					removeRoadTop(e);
+					
+				} else if (hilited instanceof Merger) {
+					Merger e = (Merger)hilited;
+					
+					removeMergerTop(e);
+					
+				} else if (hilited instanceof StopSign) {
+					StopSign s = (StopSign)hilited;
+					
+					removeStopSignTop(s);
+					
+				} else {
+					throw new AssertionError();
+				}
+				
+				hilited = null;
+				
+			}
+			
+		}
+		
+		render();
+		repaint();
+	}
 	
+	public void insertKey() {
+		switch (mode) {
+		case RUNNING:
+		case PAUSED:
+			break;
+		case EDITING:
+			cursor.insertKey();
+			break;
+		}
+	}
 	
+	public void escKey() {
+		switch (mode) {
+		case RUNNING:
+		case PAUSED:
+			break;
+		case EDITING:
+			cursor.escKey();
+			break;
+		}
+	}
+	
+	public void d1Key() {
+		switch (mode) {
+		case PAUSED:
+		case RUNNING:
+			break;
+		case EDITING:
+			cursor.d1Key();
+			break;
+		}
+	}
+	
+	public void d2Key() {
+		switch (mode) {
+		case PAUSED:
+		case RUNNING:
+			break;
+		case EDITING:
+			cursor.d2Key();
+			break;
+		}
+	}
+	
+	public void d3Key() {
+		switch (mode) {
+		case PAUSED:
+		case RUNNING:
+			break;
+		case EDITING:
+			cursor.d3Key();
+			break;
+		}
+	}
+	
+	public void plusKey() {
+		
+		zoom(1.1);
+		
+		lastMovedOrDraggedWorldPoint = canvasToWorld(VIEW.canvas.lastMovedOrDraggedCanvasPoint);
+		
+		switch (mode) {
+		case PAUSED:
+		case RUNNING:
+			break;
+		case EDITING:
+			cursor.plusKey();
+			break;
+		}
+		
+	}
+	
+	public void minusKey() {
+		
+		zoom(0.9);
+		
+		lastMovedOrDraggedWorldPoint = canvasToWorld(VIEW.canvas.lastMovedOrDraggedCanvasPoint);
+		
+		switch (mode) {
+		case PAUSED:
+		case RUNNING:
+			break;
+		case EDITING:
+			cursor.minusKey();
+			break;
+		}
+		
+	}
+	
+	public void aKey() {
+		switch (mode) {
+		case RUNNING:
+		case PAUSED:
+			break;
+		case EDITING:
+			cursor.aKey();
+			break;
+		}
+	}
+	
+	public void sKey() {
+		switch (mode) {
+		case RUNNING:
+		case PAUSED:
+			break;
+		case EDITING:
+			cursor.sKey();
+			break;
+		}
+	}
+	
+	public void dKey() {
+		switch (mode) {
+		case RUNNING:
+		case PAUSED:
+			break;
+		case EDITING:
+			cursor.dKey();
+			break;
+		}
+	}
+	
+	public Point canvasToWorld(Point p) {
+		return new Point(
+				p.x / PIXELS_PER_METER_DEBUG + worldViewport.x,
+				p.y / PIXELS_PER_METER_DEBUG + worldViewport.y);
+	}
+	
+	public Point lastPressedWorldPoint;
+	
+	public void pressed(InputEvent ev) {
+		
+		Point p = ev.p;
+		
+		lastPressedWorldPoint = canvasToWorld(p);
+		lastDraggedWorldPoint = null;
+		
+	}
+	
+	public Point lastDraggedWorldPoint;
+	public boolean lastDraggedWorldPointWasNull;
+	
+	public void dragged(InputEvent ev) {
+		
+		if (ev.c instanceof Canvas) {
+			Point p = ev.p;
+			
+			lastDraggedWorldPointWasNull = (lastDraggedWorldPoint == null);
+			lastDraggedWorldPoint = canvasToWorld(p);
+			lastMovedOrDraggedWorldPoint = lastDraggedWorldPoint;
+			
+			switch (mode) {
+			case RUNNING:
+			case PAUSED:
+				break;
+			case EDITING:
+				cursor.dragged(ev);
+				break;
+			}
+		} else if (ev.c instanceof PreviewPanel) {
+			preview.dragged(ev);
+		}
+		
+	}
+	
+	public void released(InputEvent ev) {
+		switch (mode) {
+		case RUNNING:
+		case PAUSED:
+			break;
+		case EDITING:
+			cursor.released(ev);
+			break;
+		}
+	}
+	
+	public Point lastMovedWorldPoint;
+	public Point lastMovedOrDraggedWorldPoint;
+	
+	public void moved(InputEvent ev) {
+		
+		VIEW.canvas.requestFocusInWindow();
+		
+		Point p = ev.p;
+		
+		lastMovedWorldPoint = canvasToWorld(p);
+		lastMovedOrDraggedWorldPoint = lastMovedWorldPoint;
+		
+		switch (mode) {
+		case RUNNING:
+		case PAUSED:
+			break;
+		case EDITING:
+			cursor.moved(ev);
+			break;	
+		}
+	}
+	
+	public void exited(InputEvent ev) {
+		
+		switch (mode) {
+		case RUNNING:
+		case PAUSED:
+			break;
+		case EDITING:
+			cursor.exited(ev);
+			break;
+		}
+	}
+	
+	public void actionPerformed(ActionEvent e) {
+		if (e.getActionCommand().equals("start")) {
+			
+			VIEW.controlPanel.startButton.setText("Pause");
+			VIEW.controlPanel.startButton.setActionCommand("pause");
+			
+			VIEW.controlPanel.stopButton.setEnabled(true);
+			
+			startRunning();
+			
+		} else if (e.getActionCommand().equals("stop")) {
+			
+			VIEW.controlPanel.startButton.setText("Start");
+			VIEW.controlPanel.startButton.setActionCommand("start");
+			
+			VIEW.controlPanel.stopButton.setEnabled(false);
+			
+			stopRunning();
+			
+		} else if (e.getActionCommand().equals("pause")) {
+			
+			VIEW.controlPanel.startButton.setText("Unpause");
+			VIEW.controlPanel.startButton.setActionCommand("unpause");
+			
+			pauseRunning();
+			
+		} else if (e.getActionCommand().equals("unpause")) {
+			
+			VIEW.controlPanel.startButton.setText("Pause");
+			VIEW.controlPanel.startButton.setActionCommand("pause");
+			
+			unpauseRunning();
+			
+		} else if (e.getActionCommand().equals("dt")) {
+			
+			String text = VIEW.controlPanel.dtField.getText();
+			try {
+				double dt = Double.parseDouble(text);
+				APP.dt = dt;
+			} catch (NumberFormatException ex) {
+				
+			}
+			
+		} else if (e.getActionCommand().equals("debugDraw")) {
+			
+			boolean state = VIEW.controlPanel.debugCheckBox.isSelected();
+			
+			APP.DEBUG_DRAW = state;
+			
+			render();
+			repaint();
+			
+		} else if (e.getActionCommand().equals("fpsDraw")) {
+			
+			boolean state = VIEW.controlPanel.fpsCheckBox.isSelected();
+			
+			APP.FPS_DRAW = state;
+			
+			render();
+			repaint();
+			
+		} else if (e.getActionCommand().equals("stopSignDraw")) {
+			
+			boolean state = VIEW.controlPanel.stopSignCheckBox.isSelected();
+			
+			APP.STOPSIGN_DRAW = state;
+			
+			render();
+			repaint();
+			
+		} else if (e.getActionCommand().equals("carTextureDraw")) {
+			
+			boolean state = VIEW.controlPanel.carTextureCheckBox.isSelected();
+			
+			APP.CARTEXTURE_DRAW = state;
+			
+			repaint();
+			
+		} else if (e.getActionCommand().equals("explosionsDraw")) {
+			
+			boolean state = VIEW.controlPanel.explosionsCheckBox.isSelected();
+			
+			APP.EXPLOSIONS_DRAW = state;
+			
+			repaint();
+		}
+	}
 	
 	public void render() {
 		assert !Thread.holdsLock(APP);
@@ -866,7 +961,7 @@ public class World implements Sweepable {
 			
 			RenderingContext canvasGrassContext = new RenderingContext(canvasGrassImageG2, RenderingContextType.CANVAS);
 			
-			map.renderBackground(canvasGrassContext);
+			quadrantMap.renderBackground(canvasGrassContext);
 			
 			canvasGrassImageG2.dispose();
 		}
@@ -893,9 +988,9 @@ public class World implements Sweepable {
 			
 		}
 		
+		preview.render();
+		
 	}
-	
-	
 	
 	public void repaint() {
 		
@@ -926,7 +1021,7 @@ public class World implements Sweepable {
 				
 				if (APP.DEBUG_DRAW) {
 					ctxt.setColor(Color.BLACK);
-					ctxt.setWorldPixelStroke(1);
+					ctxt.setPixelStroke(1);
 					aabb.draw(ctxt);
 					
 				}
@@ -950,6 +1045,8 @@ public class World implements Sweepable {
 			
 		} while (VIEW.canvas.bs.contentsLost());
 		
+		VIEW.controlPanel.repaint();
+		
 	}
 	
 	private void paintGrass(RenderingContext ctxt) {
@@ -957,8 +1054,8 @@ public class World implements Sweepable {
 		AffineTransform origTransform = ctxt.getTransform();
 		ctxt.translate(worldViewport.x, worldViewport.y);
 		
-		ctxt.paintWorldImage(
-				0, 0,
+		ctxt.paintImage(
+				0, 0, 1 / PIXELS_PER_METER_DEBUG,
 				canvasGrassImage,
 				0, 0, canvasGrassImage.getWidth(), canvasGrassImage.getHeight(),
 				0, 0, canvasGrassImage.getWidth(), canvasGrassImage.getHeight());
@@ -985,8 +1082,8 @@ public class World implements Sweepable {
 		origTransform = ctxt.getTransform();
 		ctxt.translate(worldViewport.x, worldViewport.y);
 		
-		ctxt.paintWorldImage(
-				0, 0,
+		ctxt.paintImage(
+				0, 0, 1 / PIXELS_PER_METER_DEBUG,
 				canvasGraphImage,
 				0, 0, canvasGraphImage.getWidth(), canvasGraphImage.getHeight(),
 				0, 0, canvasGraphImage.getWidth(), canvasGraphImage.getHeight());
@@ -998,11 +1095,6 @@ public class World implements Sweepable {
 	private void paintScene(RenderingContext ctxt) {
 		
 		graph.paintScene(ctxt);
-		
-		if (APP.DEBUG_DRAW) {
-			b2dWorld.setDebugDraw(ctxt);
-			b2dWorld.drawDebugData();
-		}
 		
 		Entity hilitedCopy;
 		synchronized (APP) {
@@ -1030,19 +1122,19 @@ public class World implements Sweepable {
 		
 		AffineTransform origTransform = ctxt.getTransform();
 		
-		ctxt.paintWorldString(0, 0, 1.0, "time: " + t);
+		ctxt.paintString(0, 0, 1 / PIXELS_PER_METER_DEBUG, "time: " + t);
 		
 		ctxt.translate(0, 1);
 		
-		ctxt.paintWorldString(0, 0, 1.0, "body count: " + b2dWorld.getBodyCount());
+		ctxt.paintString(0, 0, 1 / PIXELS_PER_METER_DEBUG, "body count: " + b2dWorld.getBodyCount());
 		
 		ctxt.translate(0, 1);
 		
-		ctxt.paintWorldString(0, 0, 1.0, "car count: " + carMap.size());
+		ctxt.paintString(0, 0, 1 / PIXELS_PER_METER_DEBUG, "car count: " + carMap.size());
 		
 		ctxt.translate(0, 1);
 		
-		ctxt.paintWorldString(0, 0, 1.0, "splosions count: " + explosionMap.size());
+		ctxt.paintString(0, 0, 1 / PIXELS_PER_METER_DEBUG, "splosions count: " + explosionMap.size());
 		
 		ctxt.translate(0, 1);
 		
@@ -1052,6 +1144,13 @@ public class World implements Sweepable {
 		
 	}
 	
+	public void paint(PaintEvent ev) {
+		if (ev.c instanceof Canvas) {
+			VIEW.canvas.bs.show();
+		} else if (ev.c instanceof PreviewPanel) {
+			preview.paint(ev.ctxt);
+		}
+	}
 	
 //	static java.awt.Stroke skidMarkStroke = new BasicStroke(2.5f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
 	

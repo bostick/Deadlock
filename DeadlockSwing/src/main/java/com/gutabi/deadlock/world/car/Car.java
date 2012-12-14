@@ -27,6 +27,7 @@ import com.gutabi.deadlock.core.geom.Geom;
 import com.gutabi.deadlock.core.geom.Quad;
 import com.gutabi.deadlock.core.geom.Shape;
 import com.gutabi.deadlock.view.RenderingContext;
+import com.gutabi.deadlock.world.World;
 import com.gutabi.deadlock.world.graph.Fixture;
 import com.gutabi.deadlock.world.graph.GraphPositionPathPosition;
 import com.gutabi.deadlock.world.graph.Merger;
@@ -145,6 +146,7 @@ public abstract class Car extends Entity {
 	public double startingTime;
 	public double crashingTime;
 	
+	public World world;
 	public Fixture source;
 	
 	public final Driver driver;
@@ -199,11 +201,12 @@ public abstract class Car extends Entity {
 	static Logger pathingLogger = Logger.getLogger(logger.getName()+".pathing");
 	static Logger eventingLogger = Logger.getLogger(logger.getName()+".eventing");
 	
-	public Car(Fixture s) {
+	public Car(World world, Fixture s) {
+		
+		this.world = world;
+		this.source = s;
 		
 		state = CarStateEnum.DRIVING;
-		
-		source = s;
 		
 		driver = new Driver(this);
 		
@@ -275,7 +278,7 @@ public abstract class Car extends Entity {
 		bodyDef.allowSleep = true;
 		bodyDef.awake = true;
 		
-		b2dBody = APP.world.b2dWorld.createBody(bodyDef);
+		b2dBody = world.b2dWorld.createBody(bodyDef);
 		b2dBody.setUserData(this);
 		
 		b2dShape = new PolygonShape();
@@ -405,7 +408,7 @@ public abstract class Car extends Entity {
 	
 	private void b2dCleanup() {
 		b2dBody.destroyFixture(b2dFixture);
-		APP.world.b2dWorld.destroyBody(b2dBody);
+		world.b2dWorld.destroyBody(b2dBody);
 	}
 	
 	public final Entity hitTest(Point p) {
@@ -931,7 +934,7 @@ public abstract class Car extends Entity {
 				
 			}
 			
-			if (!APP.world.completelyContains(shape)) {
+			if (!world.completelyContains(shape)) {
 				return false;
 			}
 			
@@ -974,7 +977,7 @@ public abstract class Car extends Entity {
 			if (APP.DEBUG_DRAW) {
 				
 				ctxt.setColor(Color.BLACK);
-				ctxt.setWorldPixelStroke(1);
+				ctxt.setPixelStroke(1);
 				shape.getAABB().draw(ctxt);
 				
 				paintID(ctxt);
@@ -995,7 +998,7 @@ public abstract class Car extends Entity {
 			if (APP.DEBUG_DRAW) {
 				
 				ctxt.setColor(Color.BLACK);
-				ctxt.setWorldPixelStroke(1);
+				ctxt.setPixelStroke(1);
 				shape.getAABB().draw(ctxt);
 				
 				paintID(ctxt);
@@ -1021,7 +1024,7 @@ public abstract class Car extends Entity {
 			if (APP.DEBUG_DRAW) {
 				
 				ctxt.setColor(Color.BLACK);
-				ctxt.setWorldPixelStroke(1);
+				ctxt.setPixelStroke(1);
 				shape.getAABB().draw(ctxt);
 				
 				paintID(ctxt);
@@ -1057,10 +1060,10 @@ public abstract class Car extends Entity {
 		ctxt.translate(p.x, p.y);
 		ctxt.rotate(angle);
 		
-		ctxt.paintWorldImage(
-				CAR_LOCALX, CAR_LOCALY,
+		ctxt.paintImage(
+				CAR_LOCALX, CAR_LOCALY, 1/world.PIXELS_PER_METER_DEBUG,
 				VIEW.sheet,
-				0, 0, (int)(CAR_LENGTH * APP.world.PIXELS_PER_METER_DEBUG), (int)(CAR_WIDTH * APP.world.PIXELS_PER_METER_DEBUG),
+				0, 0, (int)(CAR_LENGTH * world.PIXELS_PER_METER_DEBUG), (int)(CAR_WIDTH * world.PIXELS_PER_METER_DEBUG),
 				64, sheetRowStart, 64+32, sheetRowEnd);
 		
 		if (inMerger) {
@@ -1081,21 +1084,18 @@ public abstract class Car extends Entity {
 		ctxt.translate(p.x, p.y);
 		ctxt.rotate(angle);
 		
-		int brakePixels = (int)(BRAKE_SIZE * APP.world.PIXELS_PER_METER_DEBUG);
+		int brakePixels = (int)(BRAKE_SIZE * world.PIXELS_PER_METER_DEBUG);
 		
-		ctxt.paintWorldImage(CAR_BRAKE1X, CAR_BRAKE1Y,
+		ctxt.paintImage(
+				CAR_BRAKE1X, CAR_BRAKE1Y, 1/world.PIXELS_PER_METER_DEBUG,
 				VIEW.sheet,
-				0,
-				0,
-				brakePixels,
-				brakePixels,
+				0, 0, brakePixels, brakePixels,
 				0, brakeRowStart, 0+8, brakeRowEnd);
 		
-		ctxt.paintWorldImage(CAR_BRAKE2X, CAR_BRAKE2Y, VIEW.sheet,
-				0,
-				0,
-				brakePixels,
-				brakePixels,
+		ctxt.paintImage(
+				CAR_BRAKE2X, CAR_BRAKE2Y, 1/world.PIXELS_PER_METER_DEBUG,
+				VIEW.sheet,
+				0, 0, brakePixels, brakePixels,
 				0, brakeRowStart, 0+8, brakeRowEnd);
 		
 		ctxt.setTransform(origTransform);
@@ -1109,7 +1109,7 @@ public abstract class Car extends Entity {
 		ctxt.translate(p.x, p.y);
 		
 		ctxt.setColor(Color.WHITE);
-		ctxt.paintWorldString(CAR_LOCALX, 0.0, 2.0, Integer.toString(id));
+		ctxt.paintString(CAR_LOCALX, 0.0, 2.0 / world.PIXELS_PER_METER_DEBUG, Integer.toString(id));
 		
 		ctxt.setTransform(origTransform);
 	}

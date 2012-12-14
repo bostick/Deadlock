@@ -1,7 +1,6 @@
 package com.gutabi.deadlock.controller;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
-import static com.gutabi.deadlock.controller.DeadlockController.CONTROLLER;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -56,211 +55,71 @@ public class KeyboardController implements KeyListener {
 	}
 	
 	public void qKey() {
-		switch (CONTROLLER.mode) {
-		case WORLD:
-			APP.world.qKey();
-			break;
-		case MENU:
-			break;
-		case QUADRANTEDITOR:
-			break;
-		}
+		APP.screen.qKey();
 	}
 	
 	public void wKey() {
-		switch (CONTROLLER.mode) {
-		case WORLD:
-			APP.world.wKey();
-			break;
-		case MENU:
-			break;
-		case QUADRANTEDITOR:
-			break;
-		}
+		APP.screen.wKey();
 	}
 	
 	public void gKey() {
-		switch (CONTROLLER.mode) {
-		case WORLD:
-			APP.world.gKey();
-			break;
-		case MENU:
-			break;
-		case QUADRANTEDITOR:
-			break;
-		}
+		APP.screen.gKey();
 	}
 	
 	public void deleteKey() {
-		switch (CONTROLLER.mode) {
-		case WORLD:
-			APP.world.deleteKey();
-			break;
-		case MENU:
-			break;
-		case QUADRANTEDITOR:
-			break;
-		}
+		APP.screen.deleteKey();
 	}
 	
 	public void insertKey() {
-		switch (CONTROLLER.mode) {
-		case WORLD:
-			APP.world.insertKey();
-			break;
-		case MENU:
-			break;
-		case QUADRANTEDITOR:
-			break;
-		}
+		APP.screen.insertKey();
 	}
 	
 	public void escKey() {
-		switch (CONTROLLER.mode) {
-		case WORLD:
-			APP.world.escKey();
-			break;
-		case MENU:
-			break;
-		case QUADRANTEDITOR:
-			break;
-		}
+		APP.screen.escKey();
 	}
 	
 	public void d1Key() {
-		switch (CONTROLLER.mode) {
-		case WORLD:
-			APP.world.d1Key();
-			break;
-		case MENU:
-			break;
-		case QUADRANTEDITOR:
-			break;
-		}
+		APP.screen.d1Key();
 	}
 	
 	public void d2Key() {
-		switch (CONTROLLER.mode) {
-		case WORLD:
-			APP.world.d2Key();
-			break;
-		case MENU:
-			break;
-		case QUADRANTEDITOR:
-			break;
-		}
+		APP.screen.d2Key();
 	}
-
+	
 	public void d3Key() {
-		switch (CONTROLLER.mode) {
-		case WORLD:
-			APP.world.d3Key();
-			break;
-		case MENU:
-			break;
-		case QUADRANTEDITOR:
-			break;
-		}
+		APP.screen.d3Key();
 	}
 	
 	public void plusKey() {
-		switch (CONTROLLER.mode) {
-		case WORLD:
-			APP.world.plusKey();
-			break;
-		case MENU:
-			break;
-		case QUADRANTEDITOR:
-			break;
-		}
+		APP.screen.plusKey();
 	}
 	
 	public void minusKey() {
-		switch (CONTROLLER.mode) {
-		case WORLD:
-			APP.world.minusKey();
-			break;
-		case MENU:
-			break;
-		case QUADRANTEDITOR:
-			break;
-		}
+		APP.screen.minusKey();
 	}
 	
 	public void downKey() {
-		switch (CONTROLLER.mode) {
-		case WORLD:
-			break;
-		case MENU:
-			APP.menu.downKey();
-			break;
-		case QUADRANTEDITOR:
-			break;
-		}
+		APP.screen.downKey();
 	}
 
 	public void upKey() {
-		switch (CONTROLLER.mode) {
-		case WORLD:
-			break;
-		case MENU:
-			APP.menu.upKey();
-			break;
-		case QUADRANTEDITOR:
-			break;
-		}
+		APP.screen.upKey();
 	}
 	
 	public void enterKey() {
-		switch (CONTROLLER.mode) {
-		case WORLD:
-			break;
-		case MENU:
-			APP.menu.enterKey();
-			break;
-		case QUADRANTEDITOR:
-			break;
-		}
-		
+		APP.screen.enterKey();
 	}
 	
 	public void aKey() {
-		switch (CONTROLLER.mode) {
-		case WORLD:
-			APP.world.aKey();
-			break;
-		case MENU:
-			break;
-		case QUADRANTEDITOR:
-			break;
-		}
-		
+		APP.screen.aKey();
 	}
 	
 	public void sKey() {
-		switch (CONTROLLER.mode) {
-		case WORLD:
-			APP.world.sKey();
-			break;
-		case MENU:
-			break;
-		case QUADRANTEDITOR:
-			break;
-		}
-		
+		APP.screen.sKey();
 	}
 	
 	public void dKey() {
-		switch (CONTROLLER.mode) {
-		case WORLD:
-			APP.world.dKey();
-			break;
-		case MENU:
-			break;
-		case QUADRANTEDITOR:
-			break;
-		}
-		
+		APP.screen.dKey();
 	}
 	
 }

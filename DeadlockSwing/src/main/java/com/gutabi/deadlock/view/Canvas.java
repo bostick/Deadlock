@@ -1,10 +1,10 @@
 package com.gutabi.deadlock.view;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
-import static com.gutabi.deadlock.controller.DeadlockController.CONTROLLER;
 import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.image.BufferStrategy;
 
 import com.gutabi.deadlock.controller.InputEvent;
@@ -25,31 +25,14 @@ public class Canvas extends java.awt.Canvas {
 		createBufferStrategy(2);
 		bs = getBufferStrategy();
 		
-		switch (CONTROLLER.mode) {
-		case MENU:
-			break;
-		case QUADRANTEDITOR:
-			break;
-		case WORLD:
-			APP.world.postDisplay();
-			break;
-		}
+		APP.screen.canvasPostDisplay();
 	}
 	
 	public void pressed(InputEvent ev) {
 		
 		requestFocusInWindow();
 		
-		switch (CONTROLLER.mode) {
-		case MENU:
-			break;
-		case QUADRANTEDITOR:
-			break;
-		case WORLD:
-			APP.world.pressed(ev);
-			break;
-		}
-		
+		APP.screen.pressed(ev);
 	}
 	
 	public void dragged(InputEvent ev) {
@@ -58,32 +41,14 @@ public class Canvas extends java.awt.Canvas {
 		
 		lastMovedOrDraggedCanvasPoint = ev.p;
 		
-		switch (CONTROLLER.mode) {
-		case MENU:
-			break;
-		case QUADRANTEDITOR:
-			break;
-		case WORLD:
-			APP.world.dragged(ev);
-			break;
-		}
-		
+		APP.screen.dragged(ev);
 	}
 	
 	public void released(InputEvent ev) {
 		
 		requestFocusInWindow();
 		
-		switch (CONTROLLER.mode) {
-		case MENU:
-			break;
-		case QUADRANTEDITOR:
-			break;
-		case WORLD:
-			APP.world.released(ev);
-			break;
-		}
-		
+		APP.screen.released(ev);
 	}
 	
 	public Point lastMovedCanvasPoint;
@@ -96,17 +61,7 @@ public class Canvas extends java.awt.Canvas {
 		lastMovedCanvasPoint = ev.p;
 		lastMovedOrDraggedCanvasPoint = lastMovedCanvasPoint;
 		
-		switch (CONTROLLER.mode) {
-		case MENU:
-			APP.menu.moved(ev);
-			break;
-		case QUADRANTEDITOR:
-			break;
-		case WORLD:
-			APP.world.moved(ev);
-			break;
-		}
-		
+		APP.screen.moved(ev);
 	}
 	
 	Point lastClickedCanvasPoint;
@@ -115,34 +70,15 @@ public class Canvas extends java.awt.Canvas {
 		
 		requestFocusInWindow();
 		
-		switch (CONTROLLER.mode) {
-		case MENU:
-			APP.menu.clicked(ev);
-			break;
-		case QUADRANTEDITOR:
-			break;
-		case WORLD:
-			break;
-		}
-		
+		APP.screen.clicked(ev);
 	}
 	
 	public void exited(InputEvent ev) {
-		
-		switch (CONTROLLER.mode) {
-		case MENU:
-			break;
-		case QUADRANTEDITOR:
-			break;
-		case WORLD:
-			APP.world.exited(ev);
-			break;
-		}
-		
+		APP.screen.exited(ev);
 	}
 	
 	public void paint(Graphics g) {
-		bs.show();
+		APP.screen.paint(new PaintEvent(this, new RenderingContext((Graphics2D)g, RenderingContextType.CANVAS)));
 	}
 	
 }

@@ -2,6 +2,7 @@ package com.gutabi.deadlock.world.car;
 
 import org.apache.log4j.Logger;
 
+import com.gutabi.deadlock.world.World;
 import com.gutabi.deadlock.world.graph.Fixture;
 
 //@SuppressWarnings("static-access")
@@ -11,8 +12,8 @@ public class ReallyFastCar extends Car {
 	
 	static Logger logger = Logger.getLogger(RandomCar.class);
 	
-	public ReallyFastCar(Fixture s) {
-		super(s);
+	public ReallyFastCar(World w, Fixture s) {
+		super(w, s);
 		sheetRowStart = 64;
 		sheetRowEnd = sheetRowStart + 16;
 	}

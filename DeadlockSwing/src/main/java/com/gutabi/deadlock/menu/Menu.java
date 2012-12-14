@@ -6,11 +6,12 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.gutabi.deadlock.ScreenBase;
 import com.gutabi.deadlock.controller.InputEvent;
 import com.gutabi.deadlock.core.Point;
 
 //@SuppressWarnings("static-access")
-public abstract class Menu {
+public abstract class Menu extends ScreenBase {
 	
 	protected List<MenuItem> items = new ArrayList<MenuItem>();
 	
@@ -76,7 +77,7 @@ public abstract class Menu {
 			hilited = hilited.down;
 		}
 		
-		VIEW.repaint();
+		repaint();
 	}
 	
 	public void upKey() {
@@ -95,7 +96,7 @@ public abstract class Menu {
 			hilited = hilited.up;
 		}
 		
-		VIEW.repaint();
+		repaint();
 	}
 	
 	public void enterKey() {
@@ -127,7 +128,7 @@ public abstract class Menu {
 			hilited = null;
 		}
 		
-		VIEW.repaint();
+		repaint();
 	}
 	
 	Point lastClickedMenuPoint;
@@ -143,9 +144,5 @@ public abstract class Menu {
 		}
 		
 	}
-	
-	public abstract void render();
-	
-	public abstract void repaint();
 	
 }

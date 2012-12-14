@@ -1,9 +1,6 @@
 package com.gutabi.deadlock.view;
 
-public enum RenderingContextType {
-
+public enum RenderingContextType { 
 	CANVAS,
-	
 	PREVIEW
-	
 }

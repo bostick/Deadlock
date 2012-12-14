@@ -1,7 +1,6 @@
 package com.gutabi.deadlock.menu;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
-import static com.gutabi.deadlock.controller.DeadlockController.CONTROLLER;
 import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
 import java.awt.Color;
@@ -10,11 +9,12 @@ import java.awt.geom.AffineTransform;
 
 import javax.swing.JFrame;
 
-import com.gutabi.deadlock.controller.DeadlockController.ControlMode;
-import com.gutabi.deadlock.core.geom.AABB;
 import com.gutabi.deadlock.examples.FourByFourGridWorld;
 import com.gutabi.deadlock.examples.OneByOneWorld;
 import com.gutabi.deadlock.examples.WorldA;
+import com.gutabi.deadlock.quadranteditor.QuadrantEditor;
+import com.gutabi.deadlock.view.Canvas;
+import com.gutabi.deadlock.view.PaintEvent;
 import com.gutabi.deadlock.view.RenderingContext;
 import com.gutabi.deadlock.view.RenderingContextType;
 
@@ -30,13 +30,11 @@ public class MainMenu extends Menu {
 				
 				try {
 					
-					CONTROLLER.mode = ControlMode.QUADRANTEDITOR;
+					APP.screen = new QuadrantEditor();
 					
-//					APP.world = new OneByOneWorld();
+					APP.screen.init();
 					
-					APP.init();
-					
-					VIEW.repaint();
+					APP.screen.repaint();
 					
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
@@ -67,17 +65,15 @@ public class MainMenu extends Menu {
 					((JFrame)VIEW.container).setVisible(true);
 					VIEW.canvas.requestFocusInWindow();
 					
-					CONTROLLER.mode = ControlMode.WORLD;
+					APP.screen = new OneByOneWorld();
 					
-					APP.world = new OneByOneWorld();
-					
-					APP.init();
+					APP.screen.init();
 					
 					VIEW.postDisplay();
 					
-					APP.render();
+					APP.screen.render();
 					
-					VIEW.repaint();
+					APP.screen.repaint();
 					
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
@@ -100,25 +96,15 @@ public class MainMenu extends Menu {
 					((JFrame)VIEW.container).setVisible(true);
 					VIEW.canvas.requestFocusInWindow();
 					
-					CONTROLLER.mode = ControlMode.WORLD;
+					APP.screen = new FourByFourGridWorld();
 					
-					APP.world = new FourByFourGridWorld();
-					
-					APP.init();
-					
-					APP.world.PIXELS_PER_METER_DEBUG = 12.5;
-
-					APP.world.worldViewport = new AABB(
-							-(VIEW.canvas.getWidth() / APP.world.PIXELS_PER_METER_DEBUG) / 2 + APP.world.worldWidth/2 ,
-							-(VIEW.canvas.getHeight() / APP.world.PIXELS_PER_METER_DEBUG) / 2 + APP.world.worldHeight/2,
-							VIEW.canvas.getWidth() / APP.world.PIXELS_PER_METER_DEBUG,
-							VIEW.canvas.getHeight() / APP.world.PIXELS_PER_METER_DEBUG);
+					APP.screen.init();
 					
 					VIEW.postDisplay();
 					
-					APP.render();
+					APP.screen.render();
 					
-					VIEW.repaint();
+					APP.screen.repaint();
 					
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
@@ -134,9 +120,9 @@ public class MainMenu extends Menu {
 				
 				try {
 					
-					APP.world = new WorldA();
+					APP.screen = new WorldA();
 					
-					APP.init();
+					APP.screen.init();
 					
 					VIEW.teardownCanvas(VIEW.container);
 					
@@ -145,13 +131,11 @@ public class MainMenu extends Menu {
 					((JFrame)VIEW.container).setVisible(true);
 					VIEW.canvas.requestFocusInWindow();
 					
-					CONTROLLER.mode = ControlMode.WORLD;
-					
 					VIEW.postDisplay();
 					
-					APP.render();
+					APP.screen.render();
 					
-					VIEW.repaint();
+					APP.screen.repaint();
 					
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
@@ -191,6 +175,14 @@ public class MainMenu extends Menu {
 			}
 		};
 		add(quitMenuItem);
+		
+	}
+	
+	public void init() {
+		
+	}
+	
+	public void canvasPostDisplay() {
 		
 	}
 	
@@ -271,6 +263,12 @@ public class MainMenu extends Menu {
 			
 		} while (VIEW.canvas.bs.contentsLost());
 
+	}
+	
+	public void paint(PaintEvent ev) {
+		if (ev.c instanceof Canvas) {
+			VIEW.canvas.bs.show();
+		}
 	}
 	
 }

@@ -34,6 +34,8 @@ public class Stroke {
 	
 	public static final double STROKE_RADIUS = Vertex.INIT_VERTEX_RADIUS;
 	
+	public final World world;
+	
 	private List<Circle> cs;
 	
 	private boolean finished;
@@ -42,7 +44,8 @@ public class Stroke {
 	
 	static Logger logger = Logger.getLogger(Stroke.class);
 	
-	public Stroke() {
+	public Stroke(World world) {
+		this.world = world;
 		cs = new ArrayList<Circle>();
 	}
 	
@@ -142,20 +145,20 @@ public class Stroke {
 			
 			if (e.type == null) {
 				
-				Entity hit = APP.world.pureGraphBestHitTestCircle(e.circle);
+				Entity hit = world.pureGraphBestHitTestCircle(e.circle);
 //				assert hit == null;
 				
 				if (hit == null) {
 					logger.debug("create");
 					Intersection v = new Intersection(e.p);
-					APP.world.addVertexTop(v);
+					world.addVertexTop(v);
 				}
 				
 //				e.setVertex(v);
 				
 			} else if (e.type == SweepEventType.ENTERROADCAPSULE || e.type == SweepEventType.EXITROADCAPSULE) {
 				
-				Entity hit = APP.world.pureGraphBestHitTestCircle(e.circle);
+				Entity hit = world.pureGraphBestHitTestCircle(e.circle);
 				
 				if (hit instanceof Vertex) {
 //					e.setVertex((Vertex)hit);
@@ -211,7 +214,7 @@ public class Stroke {
 				
 				while (true) {
 					
-					hit = APP.world.pureGraphBestHitTestCapsule(new Capsule(null, a, b, -1));
+					hit = world.pureGraphBestHitTestCapsule(new Capsule(null, a, b, -1));
 					
 					if (hit == null) {
 						
@@ -259,20 +262,20 @@ public class Stroke {
 				
 				if (pos == null) {
 					logger.debug("pos was null");
-					pos = APP.world.findClosestRoadPosition(e.p, e.circle.radius);
+					pos = world.findClosestRoadPosition(e.p, e.circle.radius);
 				}
 				
 				assert pos != null;
 				
 				Entity hit2;
 				if (pos instanceof EdgePosition) {
-					hit2 = APP.world.pureGraphBestHitTestCircle(new Circle(null, pos.p, e.circle.radius));
+					hit2 = world.pureGraphBestHitTestCircle(new Circle(null, pos.p, e.circle.radius));
 				} else {
 					hit2 = ((VertexPosition)pos).v;
 				}
 				
 				if (hit2 instanceof Road) {
-					Vertex v = APP.world.splitRoadTop((RoadPosition)pos);
+					Vertex v = world.splitRoadTop((RoadPosition)pos);
 					
 					assert ShapeUtils.intersectCC(e.circle, v.getShape());
 					
@@ -391,13 +394,13 @@ public class Stroke {
 				
 				assert pos != null;
 				
-				Entity hit = APP.world.pureGraphBestHitTestCircle(new Circle(null, pos.p, e.circle.radius));
+				Entity hit = world.pureGraphBestHitTestCircle(new Circle(null, pos.p, e.circle.radius));
 				
 				if (hit == null) {
 					
 					logger.debug("create");
 					Intersection v = new Intersection(pos.p);
-					APP.world.addVertexTop(v);
+					world.addVertexTop(v);
 					
 				} else {
 					
@@ -484,7 +487,7 @@ public class Stroke {
 				roadPts.add(v1.p);
 			}
 			
-			APP.world.createRoadTop(v0, v1, roadPts);
+			world.createRoadTop(v0, v1, roadPts);
 		}
 		
 	}
@@ -500,7 +503,7 @@ public class Stroke {
 		
 		Circle start = seq.getStart();
 		
-		List<SweepEvent> startEvents = APP.world.sweepStart(start);
+		List<SweepEvent> startEvents = world.sweepStart(start);
 		
 		Collections.sort(startEvents, SweepEvent.COMPARATOR);
 		
@@ -551,7 +554,7 @@ public class Stroke {
 			
 			Capsule cap = seq.getCapsule(i);
 			
-			List<SweepEvent> events = APP.world.sweep(cap);
+			List<SweepEvent> events = world.sweep(cap);
 			
 			if (sweepSelf) {
 				
@@ -778,7 +781,7 @@ public class Stroke {
 	
 	public void paint(RenderingContext ctxt) {
 		
-		ctxt.setWorldPixelStroke(1);
+		ctxt.setPixelStroke(1);
 		paintStroke(ctxt);
 		
 		if (APP.DEBUG_DRAW) {

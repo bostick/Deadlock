@@ -1,7 +1,5 @@
 package com.gutabi.deadlock.view;
 
-import static com.gutabi.deadlock.DeadlockApplication.APP;
-
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Composite;
@@ -54,12 +52,13 @@ public class RenderingContext extends DebugDraw {
 		g2.setStroke(s);
 	}
 	
-	public void setWorldPixelStroke(int pix) {
-		g2.setStroke(new BasicStroke((float)(pix / APP.world.PIXELS_PER_METER_DEBUG), BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER));
-	}
+//	public void setWorldPixelStroke(int pix) {
+//		g2.setStroke(new BasicStroke((float)(pix / APP.world.PIXELS_PER_METER_DEBUG), BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER));
+//	}
 	
 	public void setPixelStroke(int pix) {
-		g2.setStroke(new BasicStroke((float)(pix), BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER));
+		double s = g2.getTransform().getScaleX();
+		g2.setStroke(new BasicStroke((float)(pix / s), BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER));
 	}
 	
 	public AffineTransform getTransform() {
@@ -98,25 +97,34 @@ public class RenderingContext extends DebugDraw {
 //		g2.setFont(f);
 //	}
 	
-	public void paintWorldString(double x, double y, double s, String str) {
+//	public void paintWorldString(double x, double y, double s, String str) {
+//		AffineTransform origTransform = g2.getTransform();
+//		g2.translate(x, y);
+//		g2.scale(s / APP.world.PIXELS_PER_METER_DEBUG, s / APP.world.PIXELS_PER_METER_DEBUG);
+//		g2.drawString(str, 0, 0);
+//		g2.setTransform(origTransform);
+//	}
+	
+	public void paintString(double x, double y, double s, String str) {
 		AffineTransform origTransform = g2.getTransform();
 		g2.translate(x, y);
-		g2.scale(s / APP.world.PIXELS_PER_METER_DEBUG, s / APP.world.PIXELS_PER_METER_DEBUG);
+		g2.scale(s, s);
 		g2.drawString(str, 0, 0);
 		g2.setTransform(origTransform);
 	}
 	
-	public void paintWorldImage(double x, double y, Image img, int dx1, int dy1, int dx2, int dy2, int sx1, int sy1, int sx2, int sy2) {
-		AffineTransform origTransform = g2.getTransform();
-		g2.translate(x, y);
-		g2.scale(1 / APP.world.PIXELS_PER_METER_DEBUG, 1 / APP.world.PIXELS_PER_METER_DEBUG);
-		g2.drawImage(img, dx1, dy1, dx2, dy2, sx1, sy1, sx2, sy2, null);
-		g2.setTransform(origTransform);
-	}
+//	public void paintWorldImage(double x, double y, Image img, int dx1, int dy1, int dx2, int dy2, int sx1, int sy1, int sx2, int sy2) {
+//		AffineTransform origTransform = g2.getTransform();
+//		g2.translate(x, y);
+//		g2.scale(1 / APP.world.PIXELS_PER_METER_DEBUG, 1 / APP.world.PIXELS_PER_METER_DEBUG);
+//		g2.drawImage(img, dx1, dy1, dx2, dy2, sx1, sy1, sx2, sy2, null);
+//		g2.setTransform(origTransform);
+//	}
 	
-	public void paintImage(double x, double y, Image img, int dx1, int dy1, int dx2, int dy2, int sx1, int sy1, int sx2, int sy2) {
+	public void paintImage(double x, double y, double s, Image img, int dx1, int dy1, int dx2, int dy2, int sx1, int sy1, int sx2, int sy2) {
 		AffineTransform origTransform = g2.getTransform();
 		g2.translate(x, y);
+		g2.scale(s, s);
 		g2.drawImage(img, dx1, dy1, dx2, dy2, sx1, sy1, sx2, sy2, null);
 		g2.setTransform(origTransform);
 	}
@@ -152,10 +160,9 @@ public class RenderingContext extends DebugDraw {
 	public void drawSolidCircle(Vec2 center, float radius, Vec2 axis, Color3f color) {
 		assert false;
 	}
-
+	
 	public void drawSegment(Vec2 p1, Vec2 p2, Color3f color) {
 		g2.setColor(Color.WHITE);
-		setWorldPixelStroke(1);
 		Line2D line = new Line2D.Double(p1.x, p1.y, p2.x, p2.y);
 		g2.draw(line);
 	}
