@@ -10,7 +10,7 @@ import java.awt.geom.AffineTransform;
 
 import javax.swing.JFrame;
 
-import com.gutabi.deadlock.controller.ControlMode;
+import com.gutabi.deadlock.controller.DeadlockController.ControlMode;
 import com.gutabi.deadlock.core.geom.AABB;
 import com.gutabi.deadlock.examples.FourByFourGridWorld;
 import com.gutabi.deadlock.examples.OneByOneWorld;
@@ -27,6 +27,21 @@ public class MainMenu extends Menu {
 		
 		MenuItem dialogMenuItem = new MenuItem(MainMenu.this,  "Dialog A...") {
 			public void action() {
+				
+				try {
+					
+					CONTROLLER.mode = ControlMode.QUADRANTEDITOR;
+					
+//					APP.world = new OneByOneWorld();
+					
+					APP.init();
+					
+					VIEW.repaint();
+					
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				
 			}
 		};
@@ -62,8 +77,7 @@ public class MainMenu extends Menu {
 					
 					APP.render();
 					
-					VIEW.repaintCanvas();
-					VIEW.repaintControlPanel();
+					VIEW.repaint();
 					
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
@@ -104,8 +118,7 @@ public class MainMenu extends Menu {
 					
 					APP.render();
 					
-					VIEW.repaintCanvas();
-					VIEW.repaintControlPanel();
+					VIEW.repaint();
 					
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
@@ -138,8 +151,7 @@ public class MainMenu extends Menu {
 					
 					APP.render();
 					
-					VIEW.repaintCanvas();
-					VIEW.repaintControlPanel();
+					VIEW.repaint();
 					
 				} catch (Exception e) {
 					// TODO Auto-generated catch block

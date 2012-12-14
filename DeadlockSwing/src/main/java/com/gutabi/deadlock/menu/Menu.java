@@ -76,8 +76,7 @@ public abstract class Menu {
 			hilited = hilited.down;
 		}
 		
-		VIEW.repaintCanvas();
-		
+		VIEW.repaint();
 	}
 	
 	public void upKey() {
@@ -96,8 +95,7 @@ public abstract class Menu {
 			hilited = hilited.up;
 		}
 		
-		VIEW.repaintCanvas();
-		
+		VIEW.repaint();
 	}
 	
 	public void enterKey() {
@@ -129,8 +127,7 @@ public abstract class Menu {
 			hilited = null;
 		}
 		
-		VIEW.repaintCanvas();
-		
+		VIEW.repaint();
 	}
 	
 	Point lastClickedMenuPoint;

@@ -62,7 +62,7 @@ public class RegularCursor extends CursorBase {
 				r.setDirection(null, Direction.STARTTOEND);
 				
 				APP.render();
-				VIEW.repaintCanvas();
+				VIEW.repaint();
 				
 			} else if (APP.world.hilited instanceof Fixture) {
 				Fixture f = (Fixture)APP.world.hilited;
@@ -80,7 +80,7 @@ public class RegularCursor extends CursorBase {
 				g.setSide(g.getSide().other());
 				
 				APP.render();
-				VIEW.repaintCanvas();
+				VIEW.repaint();
 				
 			}
 			
@@ -96,7 +96,7 @@ public class RegularCursor extends CursorBase {
 				r.setDirection(null, Direction.ENDTOSTART);
 				
 				APP.render();
-				VIEW.repaintCanvas();
+				VIEW.repaint();
 				
 			}
 			
@@ -112,7 +112,7 @@ public class RegularCursor extends CursorBase {
 				r.setDirection(null, null);
 			
 				APP.render();
-				VIEW.repaintCanvas();
+				VIEW.repaint();
 				
 			}
 			
@@ -123,13 +123,13 @@ public class RegularCursor extends CursorBase {
 	public void qKey() {
 		APP.world.cursor = new StraightEdgeCursor(APP.world.lastMovedOrDraggedWorldPoint);
 		APP.world.cursor.setPoint(APP.world.getPoint(APP.world.lastMovedOrDraggedWorldPoint));
-		VIEW.repaintCanvas();
+		VIEW.repaint();
 	}
 	
 	public void wKey() {
 		APP.world.cursor = new FixtureCursor();
 		APP.world.cursor.setPoint(APP.world.getPoint(APP.world.lastMovedOrDraggedWorldPoint));
-		VIEW.repaintCanvas();
+		VIEW.repaint();
 	}
 	
 	public void aKey() {
@@ -140,18 +140,15 @@ public class RegularCursor extends CursorBase {
 		
 		APP.world.cursor.setPoint(APP.world.getPoint(APP.world.lastMovedOrDraggedWorldPoint));
 		
-		VIEW.repaintCanvas();
+		VIEW.repaint();
 	}
 	
 	public void sKey() {
 		QuadCursor q = new QuadCursor();
 		q.setStart(APP.world.getPoint(APP.world.lastMovedOrDraggedWorldPoint));
 		q.setPoint(APP.world.getPoint(APP.world.lastMovedOrDraggedWorldPoint));
-//		Point middle = q.start.plus(q.p.minus(q.start).multiply(0.5));
-//		Point c = middle.plus(new Point(0, -4 * Vertex.INIT_VERTEX_RADIUS));
-//		q.setControl(c);
 		APP.world.cursor = q;
-		VIEW.repaintCanvas();
+		VIEW.repaint();
 	}
 	
 	public void dKey() {
@@ -159,7 +156,7 @@ public class RegularCursor extends CursorBase {
 		c.setStart(APP.world.getPoint(APP.world.lastMovedOrDraggedWorldPoint));
 		c.setPoint(APP.world.getPoint(APP.world.lastMovedOrDraggedWorldPoint));
 		APP.world.cursor = c;
-		VIEW.repaintCanvas();
+		VIEW.repaint();
 	}
 	
 	public void insertKey() {
@@ -171,7 +168,7 @@ public class RegularCursor extends CursorBase {
 				s.setEnabled(true);
 				
 				APP.render();
-				VIEW.repaintCanvas();
+				VIEW.repaint();
 			}
 			
 		} else {
@@ -182,7 +179,7 @@ public class RegularCursor extends CursorBase {
 			
 			APP.world.cursor.setPoint(APP.world.getPoint(APP.world.lastMovedOrDraggedWorldPoint));
 			
-			VIEW.repaintCanvas();
+			VIEW.repaint();
 		}
 	}
 	
@@ -198,8 +195,7 @@ public class RegularCursor extends CursorBase {
 		APP.world.cursor.setPoint(APP.world.getPoint(APP.world.lastMovedOrDraggedWorldPoint));
 		
 		APP.render();
-		VIEW.repaintCanvas();
-		VIEW.repaintControlPanel();
+		VIEW.repaint();
 	}
 	
 	public void minusKey() {
@@ -214,8 +210,7 @@ public class RegularCursor extends CursorBase {
 		APP.world.cursor.setPoint(APP.world.getPoint(APP.world.lastMovedOrDraggedWorldPoint));
 		
 		APP.render();
-		VIEW.repaintCanvas();
-		VIEW.repaintControlPanel();
+		VIEW.repaint();
 	}
 	
 	public void moved(InputEvent ev) {
@@ -229,7 +224,7 @@ public class RegularCursor extends CursorBase {
 			
 			APP.world.cursor.setPoint(APP.world.getPoint(APP.world.lastMovedOrDraggedWorldPoint));
 			
-			VIEW.repaintCanvas();
+			VIEW.repaint();
 			break;
 		case DRAFTING:
 			assert false;
@@ -247,7 +242,7 @@ public class RegularCursor extends CursorBase {
 				draftStart(APP.world.lastPressedWorldPoint);
 				draftMove(APP.world.lastDraggedWorldPoint);
 				
-				VIEW.repaintCanvas();
+				VIEW.repaint();
 				
 			} else {
 				assert false;
@@ -258,7 +253,7 @@ public class RegularCursor extends CursorBase {
 			
 			draftMove(APP.world.lastDraggedWorldPoint);
 			
-			VIEW.repaintCanvas();
+			VIEW.repaint();
 			break;
 		}
 	}
@@ -271,15 +266,14 @@ public class RegularCursor extends CursorBase {
 			draftEnd();
 			
 			APP.render();
-			VIEW.repaintCanvas();
-			VIEW.repaintControlPanel();
+			VIEW.repaint();
 			break;
 		}
 	}
 	
-	public void exited() {
+	public void exited(InputEvent ev) {
 		APP.world.cursor.setPoint(null);
-		VIEW.repaintCanvas();
+		VIEW.repaint();
 	}
 	
 	public void draftStart(Point p) {

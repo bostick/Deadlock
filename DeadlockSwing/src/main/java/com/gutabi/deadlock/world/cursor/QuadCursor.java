@@ -115,12 +115,12 @@ public class QuadCursor extends CursorBase {
 		case FREE:
 			APP.world.cursor = new RegularCursor();
 			APP.world.cursor.setPoint(APP.world.getPoint(APP.world.lastMovedOrDraggedWorldPoint));
-			VIEW.repaintCanvas();
+			VIEW.repaint();
 			break;
 		case SET:
 			mode = QuadCursorMode.FREE;
 			APP.world.cursor.setPoint(APP.world.getPoint(APP.world.lastMovedOrDraggedWorldPoint));
-			VIEW.repaintCanvas();
+			VIEW.repaint();
 			break;
 		case KNOB:
 			assert false;
@@ -132,7 +132,7 @@ public class QuadCursor extends CursorBase {
 		switch (mode) {
 		case FREE:
 			mode = QuadCursorMode.SET;
-			VIEW.repaintCanvas();
+			VIEW.repaint();
 			break;
 		case SET:
 			
@@ -150,9 +150,7 @@ public class QuadCursor extends CursorBase {
 			APP.world.cursor.setPoint(APP.world.lastMovedOrDraggedWorldPoint);
 			
 			APP.render();
-			VIEW.repaintCanvas();
-			VIEW.repaintControlPanel();
-			
+			VIEW.repaint();
 			break;
 		case KNOB:
 			assert false;
@@ -164,7 +162,7 @@ public class QuadCursor extends CursorBase {
 		switch (mode) {
 		case FREE:
 			APP.world.cursor.setPoint(APP.world.getPoint(APP.world.lastMovedOrDraggedWorldPoint));
-			VIEW.repaintCanvas();
+			VIEW.repaint();
 			break;
 		case SET:
 		case KNOB:
@@ -180,7 +178,7 @@ public class QuadCursor extends CursorBase {
 			break;
 		case KNOB:
 			mode = QuadCursorMode.SET;
-			VIEW.repaintCanvas();
+			VIEW.repaint();
 			break;
 		}
 	}
@@ -219,9 +217,14 @@ public class QuadCursor extends CursorBase {
 		case KNOB:
 			Point diff = new Point(APP.world.lastDraggedWorldPoint.x - APP.world.lastPressedWorldPoint.x, APP.world.lastDraggedWorldPoint.y - APP.world.lastPressedWorldPoint.y);
 			knob.drag(origKnobCenter.plus(diff));
-			VIEW.repaintCanvas();
+			VIEW.repaint();
 			break;
 		}
+	}
+	
+	public void exited(InputEvent ev) {
+		APP.world.cursor.setPoint(null);
+		VIEW.repaint();
 	}
 	
 	public void draw(RenderingContext ctxt) {

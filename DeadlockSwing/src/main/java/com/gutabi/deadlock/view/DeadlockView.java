@@ -16,7 +16,6 @@ import javax.swing.RootPaneContainer;
 
 import org.apache.log4j.Logger;
 
-import com.gutabi.deadlock.controller.ControlMode;
 import com.gutabi.deadlock.controller.KeyboardController;
 import com.gutabi.deadlock.controller.MouseController;
 
@@ -142,18 +141,18 @@ public class DeadlockView {
 		canvas.postDisplay();
 	}
 	
-	public void repaintCanvas() {
-		
-		if (CONTROLLER.mode == ControlMode.MENU) {
+	public void repaint() {
+		switch (CONTROLLER.mode) {
+		case MENU:
 			APP.menu.repaint();
-		} else {
+			break;
+		case QUADRANTEDITOR:
+			break;
+		case WORLD:
 			APP.world.repaint();
+			controlPanel.repaint();
+			break;
 		}
-		
-	}
-	
-	public void repaintControlPanel() {
-		controlPanel.repaint();
 	}
 	
 }

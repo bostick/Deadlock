@@ -2,11 +2,9 @@ package com.gutabi.deadlock.view;
 
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
-import static com.gutabi.deadlock.controller.DeadlockController.CONTROLLER;
 import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
 import java.awt.Dimension;
-import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -18,8 +16,6 @@ import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-
-import com.gutabi.deadlock.controller.ControlMode;
 
 @SuppressWarnings({"serial", "static-access"})
 public class ControlPanel extends JPanel implements ActionListener {
@@ -226,7 +222,7 @@ public class ControlPanel extends JPanel implements ActionListener {
 			APP.DEBUG_DRAW = state;
 			
 			APP.render();
-			VIEW.repaintCanvas();
+			VIEW.repaint();
 			
 		} else if (e.getActionCommand().equals("fpsDraw")) {
 			
@@ -235,7 +231,7 @@ public class ControlPanel extends JPanel implements ActionListener {
 			APP.FPS_DRAW = state;
 			
 			APP.render();
-			VIEW.repaintCanvas();
+			VIEW.repaint();
 			
 		} else if (e.getActionCommand().equals("stopSignDraw")) {
 			
@@ -244,7 +240,7 @@ public class ControlPanel extends JPanel implements ActionListener {
 			APP.STOPSIGN_DRAW = state;
 			
 			APP.render();
-			VIEW.repaintCanvas();
+			VIEW.repaint();
 			
 		} else if (e.getActionCommand().equals("carTextureDraw")) {
 			
@@ -252,7 +248,7 @@ public class ControlPanel extends JPanel implements ActionListener {
 			
 			APP.CARTEXTURE_DRAW = state;
 			
-			VIEW.repaintCanvas();
+			VIEW.repaint();
 			
 		} else if (e.getActionCommand().equals("explosionsDraw")) {
 			
@@ -260,20 +256,9 @@ public class ControlPanel extends JPanel implements ActionListener {
 			
 			APP.EXPLOSIONS_DRAW = state;
 			
-			VIEW.repaintCanvas();
+			VIEW.repaint();
 			
 		}
 	}
 	
-	public void paint(Graphics g) {
-		
-		if (CONTROLLER.mode == ControlMode.MENU) {
-			
-		} else {
-			
-			super.paint(g);
-			
-		}
-		
-	}
 }

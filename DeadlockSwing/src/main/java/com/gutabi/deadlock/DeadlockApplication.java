@@ -1,5 +1,6 @@
 package com.gutabi.deadlock;
 
+import static com.gutabi.deadlock.controller.DeadlockController.CONTROLLER;
 import java.net.URL;
 
 import com.gutabi.deadlock.menu.Menu;
@@ -33,13 +34,29 @@ public class DeadlockApplication {
 	public static DeadlockApplication APP = new DeadlockApplication();
 	
 	public void init() throws Exception {
-		world.init();
-		preview.init();
+		switch (CONTROLLER.mode) {
+		case MENU:
+			break;
+		case QUADRANTEDITOR:
+			break;
+		case WORLD:
+			world.init();
+			preview.init();
+			break;
+		}
 	}
 	
 	public void render() {
-		world.render();
-		preview.render();
+		switch (CONTROLLER.mode) {
+		case MENU:
+			break;
+		case QUADRANTEDITOR:
+			break;
+		case WORLD:
+			world.render();
+			preview.render();
+			break;
+		}
 	}
 	
 }

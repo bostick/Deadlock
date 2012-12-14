@@ -35,7 +35,7 @@ public class MergerCursor extends CursorBase {
 		
 		APP.world.cursor.setPoint(APP.world.getPoint(APP.world.lastMovedOrDraggedWorldPoint));
 		
-		VIEW.repaintCanvas();
+		VIEW.repaint();
 	}
 	
 	public void insertKey() {
@@ -50,9 +50,7 @@ public class MergerCursor extends CursorBase {
 				APP.world.cursor.setPoint(APP.world.lastMovedWorldPoint);
 				
 				APP.render();
-				VIEW.repaintCanvas();
-				VIEW.repaintControlPanel();
-				
+				VIEW.repaint();
 			}
 			
 		}
@@ -60,7 +58,12 @@ public class MergerCursor extends CursorBase {
 	
 	public void moved(InputEvent ev) {
 		APP.world.cursor.setPoint(APP.world.getPoint(APP.world.lastMovedOrDraggedWorldPoint));
-		VIEW.repaintCanvas();
+		VIEW.repaint();
+	}
+	
+	public void exited(InputEvent ev) {
+		APP.world.cursor.setPoint(null);
+		VIEW.repaint();
 	}
 	
 	public void draw(RenderingContext ctxt) {

@@ -1,19 +1,30 @@
 
-IMMEDIATELY:
+FOR ALPHA 1:
 
-map editor
+quadrant editor
+different screens
 
 scripting:
 saving to files
 reading from files
 
-
 add real physics
-
 add skids
 
 animated grass
 
+demos
+
+profile demos
+
+building
+generate .dls files for demos
+applet working
+
+SOON:
+
+undo/redo
+user actions
 
 for CarProximityEvents:
 broadcast from moving car to other cars.
@@ -28,16 +39,13 @@ when there is something like [ENTERVERTEX, ENTERROADCAPSULE, EXITVERTEX, EXITROA
 then test whether the vertex and capsule are overlapping
 if they are not overlapping, then they are just close together and the capsule should not be ignored (this leads to overlapping roads BAD!)
 
-start work on menu
-start work on popup menu
-
 
 add countdowns/monitors:
 which car will be coming next from which source?
 what is the capacity of the entire world?
 what is the flow of each source/sink?
 
-SOON:
+
 
 add flow meter to sinks
 

@@ -26,13 +26,14 @@ public class Canvas extends java.awt.Canvas {
 		bs = getBufferStrategy();
 		
 		switch (CONTROLLER.mode) {
+		case MENU:
+			break;
+		case QUADRANTEDITOR:
+			break;
 		case WORLD:
 			APP.world.postDisplay();
 			break;
-		case MENU:
-			break;
 		}
-		
 	}
 	
 	public void pressed(InputEvent ev) {
@@ -41,6 +42,8 @@ public class Canvas extends java.awt.Canvas {
 		
 		switch (CONTROLLER.mode) {
 		case MENU:
+			break;
+		case QUADRANTEDITOR:
 			break;
 		case WORLD:
 			APP.world.pressed(ev);
@@ -58,6 +61,8 @@ public class Canvas extends java.awt.Canvas {
 		switch (CONTROLLER.mode) {
 		case MENU:
 			break;
+		case QUADRANTEDITOR:
+			break;
 		case WORLD:
 			APP.world.dragged(ev);
 			break;
@@ -71,6 +76,8 @@ public class Canvas extends java.awt.Canvas {
 		
 		switch (CONTROLLER.mode) {
 		case MENU:
+			break;
+		case QUADRANTEDITOR:
 			break;
 		case WORLD:
 			APP.world.released(ev);
@@ -93,6 +100,8 @@ public class Canvas extends java.awt.Canvas {
 		case MENU:
 			APP.menu.moved(ev);
 			break;
+		case QUADRANTEDITOR:
+			break;
 		case WORLD:
 			APP.world.moved(ev);
 			break;
@@ -110,6 +119,8 @@ public class Canvas extends java.awt.Canvas {
 		case MENU:
 			APP.menu.clicked(ev);
 			break;
+		case QUADRANTEDITOR:
+			break;
 		case WORLD:
 			break;
 		}
@@ -120,6 +131,8 @@ public class Canvas extends java.awt.Canvas {
 		
 		switch (CONTROLLER.mode) {
 		case MENU:
+			break;
+		case QUADRANTEDITOR:
 			break;
 		case WORLD:
 			APP.world.exited(ev);

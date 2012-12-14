@@ -33,9 +33,7 @@ public class Preview {
 			pan(new Point(dx, dy));
 			
 			APP.render();
-			VIEW.repaintCanvas();
-			VIEW.repaintControlPanel();
-			
+			VIEW.repaint();
 		}
 	}
 	

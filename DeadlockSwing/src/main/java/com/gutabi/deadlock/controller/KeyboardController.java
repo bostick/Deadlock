@@ -62,6 +62,8 @@ public class KeyboardController implements KeyListener {
 			break;
 		case MENU:
 			break;
+		case QUADRANTEDITOR:
+			break;
 		}
 	}
 	
@@ -71,6 +73,8 @@ public class KeyboardController implements KeyListener {
 			APP.world.wKey();
 			break;
 		case MENU:
+			break;
+		case QUADRANTEDITOR:
 			break;
 		}
 	}
@@ -82,6 +86,8 @@ public class KeyboardController implements KeyListener {
 			break;
 		case MENU:
 			break;
+		case QUADRANTEDITOR:
+			break;
 		}
 	}
 	
@@ -91,6 +97,8 @@ public class KeyboardController implements KeyListener {
 			APP.world.deleteKey();
 			break;
 		case MENU:
+			break;
+		case QUADRANTEDITOR:
 			break;
 		}
 	}
@@ -102,6 +110,8 @@ public class KeyboardController implements KeyListener {
 			break;
 		case MENU:
 			break;
+		case QUADRANTEDITOR:
+			break;
 		}
 	}
 	
@@ -111,6 +121,8 @@ public class KeyboardController implements KeyListener {
 			APP.world.escKey();
 			break;
 		case MENU:
+			break;
+		case QUADRANTEDITOR:
 			break;
 		}
 	}
@@ -122,6 +134,8 @@ public class KeyboardController implements KeyListener {
 			break;
 		case MENU:
 			break;
+		case QUADRANTEDITOR:
+			break;
 		}
 	}
 	
@@ -131,6 +145,8 @@ public class KeyboardController implements KeyListener {
 			APP.world.d2Key();
 			break;
 		case MENU:
+			break;
+		case QUADRANTEDITOR:
 			break;
 		}
 	}
@@ -142,6 +158,8 @@ public class KeyboardController implements KeyListener {
 			break;
 		case MENU:
 			break;
+		case QUADRANTEDITOR:
+			break;
 		}
 	}
 	
@@ -151,6 +169,8 @@ public class KeyboardController implements KeyListener {
 			APP.world.plusKey();
 			break;
 		case MENU:
+			break;
+		case QUADRANTEDITOR:
 			break;
 		}
 	}
@@ -162,6 +182,8 @@ public class KeyboardController implements KeyListener {
 			break;
 		case MENU:
 			break;
+		case QUADRANTEDITOR:
+			break;
 		}
 	}
 	
@@ -171,6 +193,8 @@ public class KeyboardController implements KeyListener {
 			break;
 		case MENU:
 			APP.menu.downKey();
+			break;
+		case QUADRANTEDITOR:
 			break;
 		}
 	}
@@ -182,6 +206,8 @@ public class KeyboardController implements KeyListener {
 		case MENU:
 			APP.menu.upKey();
 			break;
+		case QUADRANTEDITOR:
+			break;
 		}
 	}
 	
@@ -191,6 +217,8 @@ public class KeyboardController implements KeyListener {
 			break;
 		case MENU:
 			APP.menu.enterKey();
+			break;
+		case QUADRANTEDITOR:
 			break;
 		}
 		
@@ -203,6 +231,8 @@ public class KeyboardController implements KeyListener {
 			break;
 		case MENU:
 			break;
+		case QUADRANTEDITOR:
+			break;
 		}
 		
 	}
@@ -214,6 +244,8 @@ public class KeyboardController implements KeyListener {
 			break;
 		case MENU:
 			break;
+		case QUADRANTEDITOR:
+			break;
 		}
 		
 	}
@@ -224,6 +256,8 @@ public class KeyboardController implements KeyListener {
 			APP.world.dKey();
 			break;
 		case MENU:
+			break;
+		case QUADRANTEDITOR:
 			break;
 		}
 		

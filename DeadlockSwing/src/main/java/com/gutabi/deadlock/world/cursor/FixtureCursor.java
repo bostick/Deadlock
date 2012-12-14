@@ -130,7 +130,7 @@ public class FixtureCursor extends CursorBase {
 		
 		APP.world.cursor.setPoint(APP.world.getPoint(APP.world.lastMovedOrDraggedWorldPoint));
 		
-		VIEW.repaintCanvas();
+		VIEW.repaint();
 	}
 	
 	public void wKey() {
@@ -165,15 +165,18 @@ public class FixtureCursor extends CursorBase {
 			APP.world.cursor.setPoint(APP.world.lastMovedWorldPoint);
 			
 			APP.render();
-			VIEW.repaintCanvas();
-			VIEW.repaintControlPanel();
-			
+			VIEW.repaint();		
 		}
 	}
 	
 	public void moved(InputEvent ev) {
 		APP.world.cursor.setPoint(APP.world.getPoint(APP.world.lastMovedOrDraggedWorldPoint));
-		VIEW.repaintCanvas();
+		VIEW.repaint();
+	}
+	
+	public void exited(InputEvent ev) {
+		APP.world.cursor.setPoint(null);
+		VIEW.repaint();
 	}
 	
 	public void draw(RenderingContext ctxt) {

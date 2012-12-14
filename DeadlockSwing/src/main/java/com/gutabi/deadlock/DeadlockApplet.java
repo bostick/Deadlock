@@ -7,12 +7,13 @@ import static com.gutabi.deadlock.controller.DeadlockController.CONTROLLER;
 import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
 import javax.swing.JApplet;
+import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
 import org.apache.log4j.Logger;
 
-import com.gutabi.deadlock.controller.ControlMode;
+import com.gutabi.deadlock.controller.DeadlockController.ControlMode;
 import com.gutabi.deadlock.menu.MainMenu;
 
 @SuppressWarnings("serial")
@@ -22,22 +23,24 @@ public class DeadlockApplet extends JApplet {
 	
 	static void createAndShowGUI(DeadlockApplet app) throws Exception {
 		
-		APP.menu = new MainMenu();
-		
 		APP.codebase = app.getCodeBase();
-		VIEW.setupApplet(app);
-		VIEW.init();
 		
 		CONTROLLER.mode = ControlMode.MENU;
+		APP.menu = new MainMenu();
+		
+		APP.init();
+		
+		VIEW.setupFrame();
+		VIEW.init();
 		
 		APP.menu.render();
 		
-		app.setVisible(true);
+		((JFrame)VIEW.container).setVisible(true);
 		VIEW.canvas.requestFocusInWindow();
 		
 		VIEW.postDisplay();
 		
-		VIEW.repaintCanvas();
+		VIEW.repaint();
 	}
 	
 	public static Thread.UncaughtExceptionHandler handler = new Thread.UncaughtExceptionHandler() {

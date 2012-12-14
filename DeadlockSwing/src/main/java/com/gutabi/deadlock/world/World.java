@@ -375,7 +375,7 @@ public class World implements Sweepable {
 		cursor.setPoint(map.getPoint(lastMovedOrDraggedWorldPoint));
 		
 		APP.render();
-		VIEW.repaintCanvas();
+		VIEW.repaint();
 	}
 	
 	public void deleteKey() {
@@ -420,9 +420,7 @@ public class World implements Sweepable {
 		}
 		
 		APP.render();
-		VIEW.repaintCanvas();
-		VIEW.repaintControlPanel();
-		
+		VIEW.repaint();
 	}
 	
 	public void insertKey() {
@@ -933,9 +931,7 @@ public class World implements Sweepable {
 					
 				}
 				
-				if (cursor != null) {
-					cursor.draw(ctxt);
-				}
+				cursor.draw(ctxt);
 				
 				if (APP.FPS_DRAW) {
 					

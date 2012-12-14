@@ -13,7 +13,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 
 import org.apache.log4j.Logger;
 
-import com.gutabi.deadlock.controller.ControlMode;
+import com.gutabi.deadlock.controller.DeadlockController.ControlMode;
 import com.gutabi.deadlock.menu.MainMenu;
 
 public class DeadlockMain  {
@@ -22,14 +22,15 @@ static Logger logger = Logger.getLogger("deadlock");
 	
 	static void createAndShowGUI() throws Exception {
 		
+		APP.codebase = new URL("file:.");
+		
+		CONTROLLER.mode = ControlMode.MENU;
 		APP.menu = new MainMenu();
 		
-		APP.codebase = new URL("file:.");
+		APP.init();
 		
 		VIEW.setupFrame();
 		VIEW.init();
-		
-		CONTROLLER.mode = ControlMode.MENU;
 		
 		APP.menu.render();
 		
@@ -38,7 +39,7 @@ static Logger logger = Logger.getLogger("deadlock");
 		
 		VIEW.postDisplay();
 		
-		VIEW.repaintCanvas();
+		VIEW.repaint();
 	}
 	
 	public static Thread.UncaughtExceptionHandler handler = new Thread.UncaughtExceptionHandler() {

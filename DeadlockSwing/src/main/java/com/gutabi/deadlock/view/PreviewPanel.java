@@ -59,9 +59,7 @@ public class PreviewPanel extends JPanel {
 	
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		
 		APP.preview.paint((Graphics2D)g);
-		
 	}
 
 }
