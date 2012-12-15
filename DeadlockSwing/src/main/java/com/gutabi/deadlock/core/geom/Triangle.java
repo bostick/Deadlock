@@ -20,9 +20,7 @@ public class Triangle {
 	}
 	
 	public void paint(RenderingContext ctxt) {
-		
 		ctxt.fill(tri);
-		
 	}
 	
 }

@@ -200,12 +200,10 @@ public class World extends ScreenBase implements Sweepable {
 		
 		quadrantGrass = new BufferedImage(quadrantWidthPixels, quadrantHeightPixels, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D quadrantGrassG2 = quadrantGrass.createGraphics();
-//		quadrantGrassG2.setColor(Color.BLUE);
-//		quadrantGrassG2.fillRect(0, 0, 512, 512);
 		int maxCols = quadrantWidthPixels/32;
 		int maxRows = quadrantHeightPixels/32;
-		for (int i = 0; i < maxCols; i++) {
-			for (int j = 0; j < maxRows; j++) {
+		for (int i = 0; i <= maxCols; i++) {
+			for (int j = 0; j <= maxRows; j++) {
 				quadrantGrassG2.drawImage(VIEW.sheet,
 						32 * i, 32 * j, 32 * i + 32, 32 * j + 32,
 						0, 224, 0+32, 224+32, null);
@@ -327,14 +325,10 @@ public class World extends ScreenBase implements Sweepable {
 		
 		APP.PIXELS_PER_METER = factor * APP.PIXELS_PER_METER; 
 		
-//		int canvasWidth = VIEW.canvas.getWidth();
-//		int canvasHeight = VIEW.canvas.getHeight();
-		
 		double newWidth =  canvasWidth / APP.PIXELS_PER_METER;
 		double newHeight = canvasHeight / APP.PIXELS_PER_METER;
 		
 		worldViewport = new AABB(worldViewport.center.x - newWidth/2, worldViewport.center.y - newHeight/2, newWidth, newHeight);
-		
 	}
 	
 	public List<SweepEvent> sweepStart(Circle c) {
@@ -702,6 +696,24 @@ public class World extends ScreenBase implements Sweepable {
 		return new Point(
 				p.x / APP.PIXELS_PER_METER + worldViewport.x,
 				p.y / APP.PIXELS_PER_METER + worldViewport.y);
+	}
+	
+	public AABB canvasToWorld(AABB aabb) {
+		Point ul = canvasToWorld(aabb.ul);
+		Point br = canvasToWorld(aabb.br);
+		return new AABB(ul.x, ul.y, br.x - ul.x, br.y - ul.y);
+	}
+	
+	public Point worldToCanvas(Point p) {
+		return new Point(
+				(p.x - worldViewport.x) * APP.PIXELS_PER_METER,
+				(p.y - worldViewport.y) * APP.PIXELS_PER_METER);
+	}
+	
+	public AABB worldToCanvas(AABB aabb) {
+		Point ul = worldToCanvas(aabb.ul);
+		Point br = worldToCanvas(aabb.br);
+		return new AABB(ul.x, ul.y, br.x - ul.x, br.y - ul.y);
 	}
 	
 	public Point lastPressedWorldPoint;
