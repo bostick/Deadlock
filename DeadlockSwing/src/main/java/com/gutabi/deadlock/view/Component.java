@@ -1,25 +1,30 @@
-package com.gutabi.deadlock;
+package com.gutabi.deadlock.view;
 
-import java.awt.event.ActionListener;
 
-import com.gutabi.deadlock.core.Dim;
-import com.gutabi.deadlock.view.InputEvent;
-import com.gutabi.deadlock.view.PaintEvent;
-
-public abstract class Screen implements ActionListener {
+public abstract class Component {
 	
-	public abstract void init() throws Exception;
+	public abstract int getWidth();
 	
-	public abstract void canvasPostDisplay(Dim dim);
+	public abstract int getHeight();
 	
-	public abstract void render();
-	
-	public abstract void repaint();
-	
-	public abstract void paint(PaintEvent ev);
+	public abstract java.awt.Component java();
 	
 	
 	
+	
+	public abstract void pressed(InputEvent e);
+	
+	public abstract void released(InputEvent e);
+	
+	public abstract void dragged(InputEvent e);
+	
+	public abstract void moved(InputEvent e);
+	
+	public abstract void clicked(InputEvent e);
+	
+	public abstract void entered(InputEvent e);
+	
+	public abstract void exited(InputEvent e);
 	
 	
 	public abstract void qKey(InputEvent ev);
@@ -55,17 +60,4 @@ public abstract class Screen implements ActionListener {
 	public abstract void sKey(InputEvent ev);
 	
 	public abstract void dKey(InputEvent ev);
-	
-	public abstract void pressed(InputEvent ev);
-	
-	public abstract void moved(InputEvent ev);
-	
-	public abstract void dragged(InputEvent ev);
-	
-	public abstract void released(InputEvent ev);
-	
-	public abstract void clicked(InputEvent ev);
-	
-	public abstract void exited(InputEvent ev);
-	
 }

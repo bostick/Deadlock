@@ -2,9 +2,9 @@ package com.gutabi.deadlock.world.cursor;
 
 import java.awt.Color;
 
-import com.gutabi.deadlock.controller.InputEvent;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.Shape;
+import com.gutabi.deadlock.view.InputEvent;
 import com.gutabi.deadlock.view.RenderingContext;
 import com.gutabi.deadlock.world.World;
 
@@ -31,7 +31,7 @@ public class MergerCursor extends CursorBase {
 		return shape;
 	}
 	
-	public void escKey() {
+	public void escKey(InputEvent ev) {
 		
 		world.cursor = new RegularCursor(world);
 		
@@ -40,7 +40,7 @@ public class MergerCursor extends CursorBase {
 		world.repaint();
 	}
 	
-	public void insertKey() {
+	public void insertKey(InputEvent ev) {
 		if (world.quadrantMap.completelyContains(shape)) {
 			
 			if (world.graph.pureGraphBestHitTest(shape) == null) {

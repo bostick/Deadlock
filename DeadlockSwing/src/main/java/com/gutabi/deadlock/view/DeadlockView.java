@@ -15,16 +15,16 @@ import javax.swing.RootPaneContainer;
 
 import org.apache.log4j.Logger;
 
-import com.gutabi.deadlock.controller.KeyboardController;
-import com.gutabi.deadlock.controller.MouseController;
-
 //@SuppressWarnings("static-access")
 public class DeadlockView {
 	
 	public static DeadlockView VIEW = new DeadlockView();
 	
 	public RootPaneContainer container;
+	
+	public Canvas oldCanvas;
 	public Canvas canvas;
+	
 	public ControlPanel controlPanel;
 	public PreviewPanel previewPanel;
 	
@@ -74,52 +74,32 @@ public class DeadlockView {
 	public void setupCanvas(RootPaneContainer container) {
 		
 		canvas = new Canvas();
-		canvas.setFocusable(true);
-		
-		MouseController mc = new MouseController();
-		KeyboardController kc = new KeyboardController();
-		
-		canvas.addMouseListener(mc);
-		canvas.addMouseMotionListener(mc);
-		canvas.addKeyListener(kc);
 		
 		Container cp = container.getContentPane();
-		cp.add(canvas);
+		cp.add(canvas.java());
 	}
 	
 	public void teardownCanvas(RootPaneContainer container) {
 		
 		Container cp = container.getContentPane();
-		cp.remove(canvas);
+		cp.remove(canvas.java());
 		
+		oldCanvas = canvas;
 		canvas = null;
 	}
 	
 	public void setupCanvasAndControlPanel(RootPaneContainer container) {
 		
 		canvas = new Canvas();
-		canvas.setFocusable(true);
-		
-		MouseController mc = new MouseController();
-		KeyboardController kc = new KeyboardController();
-		
-		canvas.addMouseListener(mc);
-		canvas.addMouseMotionListener(mc);
-		canvas.addKeyListener(kc);
 		
 		previewPanel = new PreviewPanel();
 		
-		previewPanel.addMouseListener(mc);
-		previewPanel.addMouseMotionListener(mc);
-		previewPanel.addKeyListener(kc);
-		
 		controlPanel = new ControlPanel();
 		controlPanel.init();
-		controlPanel.addKeyListener(kc);
 		
 		Container cp = container.getContentPane();
 		cp.setLayout(new BoxLayout(cp, BoxLayout.X_AXIS));
-		cp.add(canvas);
+		cp.add(canvas.java());
 		cp.add(controlPanel);
 	}
 	
@@ -127,17 +107,14 @@ public class DeadlockView {
 		
 		Container cp = container.getContentPane();
 		
-		cp.remove(canvas);
+		cp.remove(canvas.java());
 		cp.remove(controlPanel);
 		
+		oldCanvas = canvas;
 		canvas = null;
 		previewPanel = null;
 		controlPanel = null;
 		
 	}
-	
-//	public void postDisplay() {
-//		canvas.postDisplay();
-//	}
 	
 }

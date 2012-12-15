@@ -287,9 +287,10 @@ public final class Fixture extends Vertex {
 			break;
 		case PREVIEW:
 			ctxt.setColor(VIEW.LIGHTGREEN);
-			
 			shape.paint(ctxt);
 			break;
+//		case QUADRANTEDITOR:
+//			break;
 		}
 		
 	}

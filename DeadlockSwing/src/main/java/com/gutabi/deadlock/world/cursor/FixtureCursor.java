@@ -4,9 +4,9 @@ import static com.gutabi.deadlock.DeadlockApplication.APP;
 
 import java.awt.Color;
 
-import com.gutabi.deadlock.controller.InputEvent;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.Shape;
+import com.gutabi.deadlock.view.InputEvent;
 import com.gutabi.deadlock.view.RenderingContext;
 import com.gutabi.deadlock.world.Quadrant;
 import com.gutabi.deadlock.world.World;
@@ -124,7 +124,7 @@ public class FixtureCursor extends CursorBase {
 		return shape.worldSink;
 	}
 	
-	public void escKey() {
+	public void escKey(InputEvent ev) {
 		
 		world.cursor = new RegularCursor(world);
 		
@@ -133,7 +133,7 @@ public class FixtureCursor extends CursorBase {
 		world.repaint();
 	}
 	
-	public void wKey() {
+	public void wKey(InputEvent ev) {
 		
 		if (world.graph.pureGraphBestHitTest(shape) == null) {
 			

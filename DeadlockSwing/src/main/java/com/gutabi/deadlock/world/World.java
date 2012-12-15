@@ -19,7 +19,7 @@ import javax.swing.SwingUtilities;
 import org.jbox2d.common.Vec2;
 
 import com.gutabi.deadlock.ScreenBase;
-import com.gutabi.deadlock.controller.InputEvent;
+import com.gutabi.deadlock.core.Dim;
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.AABB;
@@ -27,9 +27,8 @@ import com.gutabi.deadlock.core.geom.Capsule;
 import com.gutabi.deadlock.core.geom.Circle;
 import com.gutabi.deadlock.core.geom.SweepEvent;
 import com.gutabi.deadlock.core.geom.Sweepable;
-import com.gutabi.deadlock.view.Canvas;
+import com.gutabi.deadlock.view.InputEvent;
 import com.gutabi.deadlock.view.PaintEvent;
-import com.gutabi.deadlock.view.PreviewPanel;
 import com.gutabi.deadlock.view.RenderingContext;
 import com.gutabi.deadlock.view.RenderingContextType;
 import com.gutabi.deadlock.world.car.Car;
@@ -73,6 +72,8 @@ public class World extends ScreenBase implements Sweepable {
 	public Stats stats;
 	
 	public BufferedImage quadrantGrass;
+	int canvasWidth;
+	int canvasHeight;
 	public BufferedImage canvasGrassImage;
 	public BufferedImage canvasGraphImage;
 	
@@ -115,19 +116,6 @@ public class World extends ScreenBase implements Sweepable {
 		worldWidth = quadrantCols * APP.QUADRANT_WIDTH;
 		
 		worldHeight = quadrantRows * APP.QUADRANT_HEIGHT;
-		
-		quadrantGrass = new BufferedImage(
-				512,
-				512,
-				BufferedImage.TYPE_INT_ARGB);
-		Graphics2D quadrantGrassG2 = quadrantGrass.createGraphics();
-		for (int i = 0; i < (int)Math.round(APP.PIXELS_PER_METER * APP.QUADRANT_WIDTH)/32; i++) {
-			for (int j = 0; j < (int)Math.round(APP.PIXELS_PER_METER * APP.QUADRANT_HEIGHT)/32; j++) {
-				quadrantGrassG2.drawImage(VIEW.sheet,
-						32 * i, 32 * j, 32 * i + 32, 32 * j + 32,
-						0, 224, 0+32, 224+32, null);
-			}
-		}	
 		
 		mode = WorldMode.EDITING;
 		
@@ -206,15 +194,33 @@ public class World extends ScreenBase implements Sweepable {
 	}
 	
 	public void init() throws Exception {
+		
+		int quadrantWidthPixels = (int)Math.round(APP.PIXELS_PER_METER * APP.QUADRANT_WIDTH);
+		int quadrantHeightPixels = (int)Math.round(APP.PIXELS_PER_METER * APP.QUADRANT_HEIGHT);
+		
+		quadrantGrass = new BufferedImage(quadrantWidthPixels, quadrantHeightPixels, BufferedImage.TYPE_INT_ARGB);
+		Graphics2D quadrantGrassG2 = quadrantGrass.createGraphics();
+//		quadrantGrassG2.setColor(Color.BLUE);
+//		quadrantGrassG2.fillRect(0, 0, 512, 512);
+		int maxCols = quadrantWidthPixels/32;
+		int maxRows = quadrantHeightPixels/32;
+		for (int i = 0; i < maxCols; i++) {
+			for (int j = 0; j < maxRows; j++) {
+				quadrantGrassG2.drawImage(VIEW.sheet,
+						32 * i, 32 * j, 32 * i + 32, 32 * j + 32,
+						0, 224, 0+32, 224+32, null);
+			}
+		}
+		
 		preview.init();
 	}
 	
-	public void canvasPostDisplay() {	
+	public void canvasPostDisplay(Dim dim) {	
 		
-		int canvasWidth = VIEW.canvas.getWidth();
-		int canvasHeight = VIEW.canvas.getHeight();
+		canvasWidth = (int)dim.width;
+		canvasHeight = (int)dim.height;
 		
-		canvasGrassImage = new BufferedImage(canvasWidth, canvasHeight, BufferedImage.TYPE_INT_RGB);
+		canvasGrassImage = new BufferedImage(canvasWidth, canvasHeight, BufferedImage.TYPE_INT_ARGB);
 		canvasGraphImage = new BufferedImage(canvasWidth, canvasHeight, BufferedImage.TYPE_INT_ARGB);
 		
 		worldViewport = new AABB(
@@ -321,8 +327,8 @@ public class World extends ScreenBase implements Sweepable {
 		
 		APP.PIXELS_PER_METER = factor * APP.PIXELS_PER_METER; 
 		
-		int canvasWidth = VIEW.canvas.getWidth();
-		int canvasHeight = VIEW.canvas.getHeight();
+//		int canvasWidth = VIEW.canvas.getWidth();
+//		int canvasHeight = VIEW.canvas.getHeight();
 		
 		double newWidth =  canvasWidth / APP.PIXELS_PER_METER;
 		double newHeight = canvasHeight / APP.PIXELS_PER_METER;
@@ -487,29 +493,29 @@ public class World extends ScreenBase implements Sweepable {
 	
 	
 	
-	public void qKey() {
+	public void qKey(InputEvent ev) {
 		switch (mode) {
 		case RUNNING:
 		case PAUSED:
 			break;
 		case EDITING:
-			cursor.qKey();
+			cursor.qKey(ev);
 			break;
 		}
 	}
 	
-	public void wKey() {
+	public void wKey(InputEvent ev) {
 		switch (mode) {
 		case RUNNING:
 		case PAUSED:
 			break;
 		case EDITING:
-			cursor.wKey();
+			cursor.wKey(ev);
 			break;
 		}
 	}
 	
-	public void gKey() {
+	public void gKey(InputEvent ev) {
 		
 		quadrantMap.toggleGrid();
 		
@@ -519,7 +525,7 @@ public class World extends ScreenBase implements Sweepable {
 		repaint();
 	}
 	
-	public void deleteKey() {
+	public void deleteKey(InputEvent ev) {
 		
 		if (hilited != null) {
 			
@@ -564,62 +570,62 @@ public class World extends ScreenBase implements Sweepable {
 		repaint();
 	}
 	
-	public void insertKey() {
+	public void insertKey(InputEvent ev) {
 		switch (mode) {
 		case RUNNING:
 		case PAUSED:
 			break;
 		case EDITING:
-			cursor.insertKey();
+			cursor.insertKey(ev);
 			break;
 		}
 	}
 	
-	public void escKey() {
+	public void escKey(InputEvent ev) {
 		switch (mode) {
 		case RUNNING:
 		case PAUSED:
 			break;
 		case EDITING:
-			cursor.escKey();
+			cursor.escKey(ev);
 			break;
 		}
 	}
 	
-	public void d1Key() {
+	public void d1Key(InputEvent ev) {
 		switch (mode) {
 		case PAUSED:
 		case RUNNING:
 			break;
 		case EDITING:
-			cursor.d1Key();
+			cursor.d1Key(ev);
 			break;
 		}
 	}
 	
-	public void d2Key() {
+	public void d2Key(InputEvent ev) {
 		switch (mode) {
 		case PAUSED:
 		case RUNNING:
 			break;
 		case EDITING:
-			cursor.d2Key();
+			cursor.d2Key(ev);
 			break;
 		}
 	}
 	
-	public void d3Key() {
+	public void d3Key(InputEvent ev) {
 		switch (mode) {
 		case PAUSED:
 		case RUNNING:
 			break;
 		case EDITING:
-			cursor.d3Key();
+			cursor.d3Key(ev);
 			break;
 		}
 	}
 	
-	public void plusKey() {
+	public void plusKey(InputEvent ev) {
 		
 		zoom(1.1);
 		
@@ -639,7 +645,7 @@ public class World extends ScreenBase implements Sweepable {
 		repaint();
 	}
 	
-	public void minusKey() {
+	public void minusKey(InputEvent ev) {
 		
 		zoom(0.9);
 		
@@ -659,35 +665,35 @@ public class World extends ScreenBase implements Sweepable {
 		repaint();
 	}
 	
-	public void aKey() {
+	public void aKey(InputEvent ev) {
 		switch (mode) {
 		case RUNNING:
 		case PAUSED:
 			break;
 		case EDITING:
-			cursor.aKey();
+			cursor.aKey(ev);
 			break;
 		}
 	}
 	
-	public void sKey() {
+	public void sKey(InputEvent ev) {
 		switch (mode) {
 		case RUNNING:
 		case PAUSED:
 			break;
 		case EDITING:
-			cursor.sKey();
+			cursor.sKey(ev);
 			break;
 		}
 	}
 	
-	public void dKey() {
+	public void dKey(InputEvent ev) {
 		switch (mode) {
 		case RUNNING:
 		case PAUSED:
 			break;
 		case EDITING:
-			cursor.dKey();
+			cursor.dKey(ev);
 			break;
 		}
 	}
@@ -702,10 +708,14 @@ public class World extends ScreenBase implements Sweepable {
 	
 	public void pressed(InputEvent ev) {
 		
-		Point p = ev.p;
-		
-		lastPressedWorldPoint = canvasToWorld(p);
-		lastDraggedWorldPoint = null;
+		if (ev.c == VIEW.canvas) {
+			Point p = ev.p;
+			
+			lastPressedWorldPoint = canvasToWorld(p);
+			lastDraggedWorldPoint = null;
+		} else {
+			assert false;
+		}
 		
 	}
 	
@@ -714,7 +724,7 @@ public class World extends ScreenBase implements Sweepable {
 	
 	public void dragged(InputEvent ev) {
 		
-		if (ev.c instanceof Canvas) {
+		if (ev.c == VIEW.canvas) {
 			Point p = ev.p;
 			
 			lastDraggedWorldPointWasNull = (lastDraggedWorldPoint == null);
@@ -729,21 +739,29 @@ public class World extends ScreenBase implements Sweepable {
 				cursor.dragged(ev);
 				break;
 			}
-		} else if (ev.c instanceof PreviewPanel) {
+		} else if (ev.c == VIEW.previewPanel) {
 			preview.dragged(ev);
+		} else {
+			assert false;
 		}
 		
 	}
 	
 	public void released(InputEvent ev) {
-		switch (mode) {
-		case RUNNING:
-		case PAUSED:
-			break;
-		case EDITING:
-			cursor.released(ev);
-			break;
+		
+		if (ev.c == VIEW.canvas) {
+			switch (mode) {
+			case RUNNING:
+			case PAUSED:
+				break;
+			case EDITING:
+				cursor.released(ev);
+				break;
+			}
+		} else {
+			assert false;
 		}
+		
 	}
 	
 	public Point lastMovedWorldPoint;
@@ -751,33 +769,53 @@ public class World extends ScreenBase implements Sweepable {
 	
 	public void moved(InputEvent ev) {
 		
-		VIEW.canvas.requestFocusInWindow();
-		
-		Point p = ev.p;
-		
-		lastMovedWorldPoint = canvasToWorld(p);
-		lastMovedOrDraggedWorldPoint = lastMovedWorldPoint;
-		
-		switch (mode) {
-		case RUNNING:
-		case PAUSED:
-			break;
-		case EDITING:
-			cursor.moved(ev);
-			break;	
+		if (ev.c == VIEW.canvas) {
+			
+			VIEW.canvas.requestFocusInWindow();
+			
+			Point p = ev.p;
+			
+			lastMovedWorldPoint = canvasToWorld(p);
+			lastMovedOrDraggedWorldPoint = lastMovedWorldPoint;
+			
+			switch (mode) {
+			case RUNNING:
+			case PAUSED:
+				break;
+			case EDITING:
+				cursor.moved(ev);
+				break;	
+			}
+			
+		} else {
+			assert false;
 		}
 	}
 	
 	public void exited(InputEvent ev) {
 		
-		switch (mode) {
-		case RUNNING:
-		case PAUSED:
-			break;
-		case EDITING:
-			cursor.exited(ev);
-			break;
+		if (ev.c == VIEW.canvas) {
+			switch (mode) {
+			case RUNNING:
+			case PAUSED:
+				break;
+			case EDITING:
+				cursor.exited(ev);
+				break;
+			}
+		} else if (ev.c == VIEW.oldCanvas) {
+			switch (mode) {
+			case RUNNING:
+			case PAUSED:
+				break;
+			case EDITING:
+				cursor.exited(ev);
+				break;
+			}
+		} else {
+			assert false;
 		}
+		
 	}
 	
 	public void actionPerformed(ActionEvent e) {
@@ -868,14 +906,22 @@ public class World extends ScreenBase implements Sweepable {
 		}
 	}
 	
+	/**
+	 * screen method
+	 */
 	public void render() {
+		renderCanvas();
+		preview.render();
+	}
+	
+	public void renderCanvas() {
 		assert !Thread.holdsLock(APP);
 		
 		synchronized (VIEW) {
 			Graphics2D canvasGrassImageG2 = canvasGrassImage.createGraphics();
 			
 			canvasGrassImageG2.setColor(Color.WHITE);
-			canvasGrassImageG2.fillRect(0, 0, VIEW.canvas.getWidth(), VIEW.canvas.getHeight());
+			canvasGrassImageG2.fillRect(0, 0, canvasWidth, canvasHeight);
 			
 			canvasGrassImageG2.translate((int)(-worldViewport.x * APP.PIXELS_PER_METER), (int)(-worldViewport.y * APP.PIXELS_PER_METER));
 			
@@ -895,7 +941,7 @@ public class World extends ScreenBase implements Sweepable {
 			AlphaComposite c = AlphaComposite.getInstance(AlphaComposite.SRC, 0.0f);
 			canvasGraphImageG2.setComposite(c);
 			canvasGraphImageG2.setColor(new Color(0, 0, 0, 0));
-			canvasGraphImageG2.fillRect(0, 0, VIEW.canvas.getWidth(), VIEW.canvas.getHeight());
+			canvasGraphImageG2.fillRect(0, 0, canvasWidth, canvasHeight);
 			canvasGraphImageG2.setComposite(orig);
 			
 			canvasGraphImageG2.translate((int)((-worldViewport.x) * APP.PIXELS_PER_METER), (int)((-worldViewport.y) * APP.PIXELS_PER_METER));
@@ -909,11 +955,12 @@ public class World extends ScreenBase implements Sweepable {
 			canvasGraphImageG2.dispose();
 			
 		}
-		
-		preview.render();
-		
 	}
 	
+	
+	/**
+	 * screen method
+	 */
 	public void repaint() {
 		
 		if (SwingUtilities.isEventDispatchThread()) {
@@ -935,27 +982,7 @@ public class World extends ScreenBase implements Sweepable {
 				ctxt.scale(APP.PIXELS_PER_METER);
 				ctxt.translate(-worldViewport.x, -worldViewport.y);
 				
-				paintGrass(ctxt);
-				paintGraph(ctxt);
-//				paintSkidmarks(ctxt);
-				
-				paintScene(ctxt);
-				
-				if (APP.DEBUG_DRAW) {
-					ctxt.setColor(Color.BLACK);
-					ctxt.setPixelStroke(1);
-					aabb.draw(ctxt);
-					
-				}
-				
-				cursor.draw(ctxt);
-				
-				if (APP.FPS_DRAW) {
-					
-					ctxt.translate(worldViewport.x, worldViewport.y);
-					
-					stats.paint(ctxt);
-				}
+				paintWorld(ctxt);
 				
 				ctxt.setTransform(origTrans);
 				
@@ -968,6 +995,43 @@ public class World extends ScreenBase implements Sweepable {
 		} while (VIEW.canvas.bs.contentsLost());
 		
 		VIEW.controlPanel.repaint();
+		
+	}
+	
+	public void paintWorld(RenderingContext ctxt) {
+		
+		switch (ctxt.type) {
+		case CANVAS:
+			paintGrass(ctxt);
+			paintGraph(ctxt);
+//			paintSkidmarks(ctxt);
+			
+			paintScene(ctxt);
+			
+			if (APP.DEBUG_DRAW) {
+				ctxt.setColor(Color.BLACK);
+				ctxt.setPixelStroke(1);
+				aabb.draw(ctxt);
+			}
+			
+			cursor.draw(ctxt);
+			
+			if (APP.FPS_DRAW) {
+				
+				ctxt.translate(worldViewport.x, worldViewport.y);
+				
+				stats.paint(ctxt);
+			}
+			break;
+		case PREVIEW:
+			paintGrass(ctxt);
+			paintGraph(ctxt);
+			break;
+//		case QUADRANTEDITOR:
+//			paintGrass(ctxt);
+//			paintGraph(ctxt);
+//			break;
+		}
 		
 	}
 	
@@ -1067,10 +1131,12 @@ public class World extends ScreenBase implements Sweepable {
 	}
 	
 	public void paint(PaintEvent ev) {
-		if (ev.c instanceof Canvas) {
+		if (ev.c == VIEW.canvas) {
 			VIEW.canvas.bs.show();
-		} else if (ev.c instanceof PreviewPanel) {
+		} else if (ev.c == VIEW.previewPanel) {
 			preview.paint(ev.ctxt);
+		} else {
+			assert false;
 		}
 	}
 	

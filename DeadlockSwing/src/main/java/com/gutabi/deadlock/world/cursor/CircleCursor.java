@@ -5,11 +5,11 @@ import static com.gutabi.deadlock.DeadlockApplication.APP;
 import java.awt.Color;
 import java.util.List;
 
-import com.gutabi.deadlock.controller.InputEvent;
 import com.gutabi.deadlock.core.Dim;
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.Shape;
+import com.gutabi.deadlock.view.InputEvent;
 import com.gutabi.deadlock.view.RenderingContext;
 import com.gutabi.deadlock.world.Stroke;
 import com.gutabi.deadlock.world.World;
@@ -102,7 +102,7 @@ public class CircleCursor extends CursorBase {
 		return shape.c1.aabb.br;
 	}
 	
-	public void escKey() {
+	public void escKey(InputEvent ev) {
 		switch (mode) {
 		case FREE:
 			world.cursor = new RegularCursor(world);
@@ -120,7 +120,7 @@ public class CircleCursor extends CursorBase {
 		}
 	}
 	
-	public void aKey() {
+	public void aKey(InputEvent ev) {
 		switch (mode) {
 		case FREE:
 			mode = CircleCursorMode.SET;

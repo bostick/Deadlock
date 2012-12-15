@@ -14,7 +14,7 @@ import com.gutabi.deadlock.view.RenderingContext;
 //@SuppressWarnings("static-access")
 public abstract class MenuItem {
 	
-	public final Menu parent;
+	public final MainMenu parent;
 	public final String text;
 	
 	public MenuItem up;
@@ -34,7 +34,7 @@ public abstract class MenuItem {
 	
 	static private Font f = new Font("Visitor TT1 BRK", Font.PLAIN, 48);
 	
-	public MenuItem(Menu parent, String text) {
+	public MenuItem(MainMenu parent, String text) {
 		this.parent = parent;
 		this.text = text;
 	}

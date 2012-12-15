@@ -1,6 +1,6 @@
 package com.gutabi.deadlock.world.cursor;
 
-import com.gutabi.deadlock.controller.InputEvent;
+import com.gutabi.deadlock.view.InputEvent;
 import com.gutabi.deadlock.world.World;
 
 public abstract class CursorBase extends Cursor {
@@ -9,51 +9,51 @@ public abstract class CursorBase extends Cursor {
 		super(world);
 	}
 	
-	public void qKey() {
+	public void qKey(InputEvent ev) {
 		
 	}
 
-	public void wKey() {
+	public void wKey(InputEvent ev) {
 		
 	}
 
-	public void aKey() {
+	public void aKey(InputEvent ev) {
 		
 	}
 
-	public void sKey() {
+	public void sKey(InputEvent ev) {
 		
 	}
 
-	public void dKey() {
+	public void dKey(InputEvent ev) {
 		
 	}
 	
-	public void insertKey() {
+	public void insertKey(InputEvent ev) {
 		
 	}
 
-	public void d1Key() {
+	public void d1Key(InputEvent ev) {
 		
 	}
 
-	public void d2Key() {
+	public void d2Key(InputEvent ev) {
 		
 	}
 
-	public void d3Key() {
+	public void d3Key(InputEvent ev) {
 		
 	}
 
-	public void plusKey() {
+	public void plusKey(InputEvent ev) {
 		
 	}
 
-	public void minusKey() {
+	public void minusKey(InputEvent ev) {
 		
 	}
 
-	public void escKey() {
+	public void escKey(InputEvent ev) {
 		
 	}
 

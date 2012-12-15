@@ -296,6 +296,8 @@ public class Merger extends Edge {
 			ctxt.setColor(Color.GRAY);
 			shape.paint(ctxt);
 			break;
+//		case QUADRANTEDITOR:
+//			break;
 		}
 		
 	}

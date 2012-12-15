@@ -1,4 +1,4 @@
-package com.gutabi.deadlock.examples;
+package com.gutabi.deadlock.world.examples;
 
 import com.gutabi.deadlock.world.World;
 

@@ -8,23 +8,36 @@ import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 
 import com.gutabi.deadlock.ScreenBase;
+import com.gutabi.deadlock.core.Dim;
 import com.gutabi.deadlock.menu.MainMenu;
-import com.gutabi.deadlock.view.Canvas;
+import com.gutabi.deadlock.view.InputEvent;
 import com.gutabi.deadlock.view.PaintEvent;
 import com.gutabi.deadlock.view.RenderingContext;
 import com.gutabi.deadlock.view.RenderingContextType;
+import com.gutabi.deadlock.world.World;
 
 public class QuadrantEditor extends ScreenBase {
 	
-	public void init() {
+	public static final int EDITOR_WIDTH = 800;
+	public static final int EDITOR_HEIGHT = 600;
+	
+	World world;
+	
+	public QuadrantEditor() {
+		
+		world = new WorldA();
+		world.canvasPostDisplay(new Dim(480, 480));
+	}
+	
+	public void init() throws Exception {
+		world.init();
+	}
+	
+	public void canvasPostDisplay(Dim d) {
 		
 	}
 	
-	public void canvasPostDisplay() {
-		
-	}
-	
-	public void escKey() {
+	public void escKey(InputEvent ev) {
 		
 		try {
 			
@@ -44,6 +57,8 @@ public class QuadrantEditor extends ScreenBase {
 	
 	public void render() {
 		
+		world.renderCanvas();
+		
 	}
 	
 	public void repaint() {
@@ -58,7 +73,7 @@ public class QuadrantEditor extends ScreenBase {
 				
 				AffineTransform origTrans = ctxt.getTransform();
 				
-				ctxt.translate(VIEW.canvas.getWidth()/2 - 800/2, VIEW.canvas.getHeight()/2 - 600/2);
+				ctxt.translate(VIEW.canvas.getWidth()/2 - EDITOR_WIDTH/2, VIEW.canvas.getHeight()/2 - EDITOR_HEIGHT/2);
 				
 				paintEditor(ctxt);
 				
@@ -77,13 +92,36 @@ public class QuadrantEditor extends ScreenBase {
 	private void paintEditor(RenderingContext ctxt) {
 		
 		ctxt.setColor(Color.BLUE);
-		ctxt.fillRect(0, 0, 800, 600);
+		ctxt.fillRect(0, 0, EDITOR_WIDTH, EDITOR_HEIGHT);
 		
+		int redWidth = 3 * EDITOR_WIDTH / 4;
+		int redHeight = 3 * EDITOR_HEIGHT / 4;
+		
+		ctxt.setColor(Color.RED);
+		ctxt.fillRect(0, 0, redWidth, redHeight);
+		
+		ctxt.setColor(Color.GRAY);
+		ctxt.fillRect(0, 3 * EDITOR_HEIGHT / 4, 3 * EDITOR_WIDTH / 4, EDITOR_HEIGHT / 4);
+		
+		ctxt.setColor(Color.GRAY);
+		ctxt.fillRect(3 * EDITOR_WIDTH / 4, 0, EDITOR_WIDTH / 4, 3 * EDITOR_HEIGHT / 4);
+		
+		ctxt.setColor(Color.WHITE);
+		ctxt.fillRect(3 * EDITOR_WIDTH / 4, 3 * EDITOR_HEIGHT / 4, EDITOR_WIDTH / 4, EDITOR_HEIGHT / 4);
+		
+		AffineTransform origTrans = ctxt.getTransform();
+//		ctxt.translate(redWidth / 2 - 480/2, redHeight/2 - 480/2);
+		ctxt.scale(APP.PIXELS_PER_METER);
+		ctxt.translate(-world.worldViewport.x, -world.worldViewport.y);
+		world.paintWorld(ctxt);
+		ctxt.setTransform(origTrans);
 	}
 	
 	public void paint(PaintEvent ev) {
-		if (ev.c instanceof Canvas) {
+		if (ev.c == VIEW.canvas) {
 			VIEW.canvas.bs.show();
+		} else {
+			assert false;
 		}
 	}
 	

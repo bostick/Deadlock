@@ -1,7 +1,5 @@
 package com.gutabi.deadlock.view;
 
-import java.awt.Component;
-
 public class PaintEvent {
 	
 	public final Component c;

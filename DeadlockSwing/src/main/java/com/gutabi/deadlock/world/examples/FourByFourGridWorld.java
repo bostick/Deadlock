@@ -1,7 +1,9 @@
-package com.gutabi.deadlock.examples;
+package com.gutabi.deadlock.world.examples;
 
+import static com.gutabi.deadlock.DeadlockApplication.APP;
 import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
+import com.gutabi.deadlock.core.Dim;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.AABB;
 import com.gutabi.deadlock.world.Stroke;
@@ -10,7 +12,6 @@ import com.gutabi.deadlock.world.graph.Axis;
 import com.gutabi.deadlock.world.graph.Fixture;
 import com.gutabi.deadlock.world.graph.FixtureType;
 import com.gutabi.deadlock.world.graph.Side;
-import static com.gutabi.deadlock.DeadlockApplication.APP;
 
 public class FourByFourGridWorld extends World {
 
@@ -100,8 +101,8 @@ public class FourByFourGridWorld extends World {
 		
 	}
 	
-	public void canvasPostDisplay() {
-		super.canvasPostDisplay();
+	public void canvasPostDisplay(Dim d) {
+		super.canvasPostDisplay(d);
 		
 		worldViewport = new AABB(
 				-(VIEW.canvas.getWidth() / APP.PIXELS_PER_METER) / 2 + worldWidth/2 ,

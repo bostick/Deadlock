@@ -7,12 +7,12 @@ import java.awt.Color;
 
 import javax.swing.JFrame;
 
-import com.gutabi.deadlock.controller.InputEvent;
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.Circle;
 import com.gutabi.deadlock.core.geom.Shape;
 import com.gutabi.deadlock.menu.MainMenu;
+import com.gutabi.deadlock.view.InputEvent;
 import com.gutabi.deadlock.view.RenderingContext;
 import com.gutabi.deadlock.world.Stroke;
 import com.gutabi.deadlock.world.World;
@@ -60,7 +60,7 @@ public class RegularCursor extends CursorBase {
 	}
 	
 	
-	public void escKey() {
+	public void escKey(InputEvent ev) {
 		
 		try {
 			
@@ -86,7 +86,7 @@ public class RegularCursor extends CursorBase {
 		
 	}
 	
-	public void d1Key() {
+	public void d1Key(InputEvent ev) {
 		if (world.hilited != null) {
 			
 			if (world.hilited instanceof Road) {
@@ -120,7 +120,7 @@ public class RegularCursor extends CursorBase {
 		}
 	}
 	
-	public void d2Key() {
+	public void d2Key(InputEvent ev) {
 		if (world.hilited != null) {
 			
 			if (world.hilited instanceof Road) {
@@ -136,7 +136,7 @@ public class RegularCursor extends CursorBase {
 		}
 	}
 	
-	public void d3Key() {
+	public void d3Key(InputEvent ev) {
 		if (world.hilited != null) {
 			
 			if (world.hilited instanceof Road) {
@@ -153,7 +153,7 @@ public class RegularCursor extends CursorBase {
 	}
 
 	
-	public void qKey() {
+	public void qKey(InputEvent ev) {
 		StraightEdgeCursor c = new StraightEdgeCursor(world);
 		c.setStart(world.quadrantMap.getPoint(world.lastMovedOrDraggedWorldPoint));
 		c.setPoint(world.quadrantMap.getPoint(world.lastMovedOrDraggedWorldPoint));
@@ -161,13 +161,13 @@ public class RegularCursor extends CursorBase {
 		world.repaint();
 	}
 	
-	public void wKey() {
+	public void wKey(InputEvent ev) {
 		world.cursor = new FixtureCursor(world);
 		world.cursor.setPoint(world.quadrantMap.getPoint(world.lastMovedOrDraggedWorldPoint));
 		world.repaint();
 	}
 	
-	public void aKey() {
+	public void aKey(InputEvent ev) {
 		
 		world.hilited = null;
 		
@@ -178,7 +178,7 @@ public class RegularCursor extends CursorBase {
 		world.repaint();
 	}
 	
-	public void sKey() {
+	public void sKey(InputEvent ev) {
 		QuadCursor q = new QuadCursor(world);
 		q.setStart(world.quadrantMap.getPoint(world.lastMovedOrDraggedWorldPoint));
 		q.setPoint(world.quadrantMap.getPoint(world.lastMovedOrDraggedWorldPoint));
@@ -186,7 +186,7 @@ public class RegularCursor extends CursorBase {
 		world.repaint();
 	}
 	
-	public void dKey() {
+	public void dKey(InputEvent ev) {
 		CubicCursor c = new CubicCursor(world);
 		c.setStart(world.quadrantMap.getPoint(world.lastMovedOrDraggedWorldPoint));
 		c.setPoint(world.quadrantMap.getPoint(world.lastMovedOrDraggedWorldPoint));
@@ -194,7 +194,7 @@ public class RegularCursor extends CursorBase {
 		world.repaint();
 	}
 	
-	public void insertKey() {
+	public void insertKey(InputEvent ev) {
 		if (world.hilited != null) {
 			
 			if (world.hilited instanceof StopSign) {
