@@ -108,6 +108,8 @@ spline/curve editor
 
 DONE:
 
+fix seams in quadrant map for world and editor
+
 add cubic curve cursor
 
 for knobs (circle, quad, cubic):

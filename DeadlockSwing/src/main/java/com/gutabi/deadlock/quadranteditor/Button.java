@@ -10,13 +10,15 @@ public abstract class Button {
 	
 	public final AABB aabb;
 	
-	public Button(int x, int y, int width, int height) {
+	public Button(double x, double y, double width, double height) {
 		aabb = new AABB(x, y, width, height);
 	}
 	
 	public boolean hitTest(Point p) {
 		return aabb.hitTest(p);
 	}
+	
+	public abstract void action();
 	
 	public abstract void paint(RenderingContext ctxt);
 //	public void paint(RenderingContext ctxt) {

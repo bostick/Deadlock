@@ -2,6 +2,7 @@ package com.gutabi.deadlock.world;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
+import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.AABB;
 import com.gutabi.deadlock.core.geom.Shape;
@@ -84,15 +85,21 @@ public class QuadrantMap {
 	}
 	
 	public Quadrant findQuadrant(Point p) {
-		int col = (int)Math.floor(p.x / APP.QUADRANT_WIDTH);
-		int row = (int)Math.floor(p.y / APP.QUADRANT_HEIGHT);
-		if (col < 0 || col > quadrantCols-1) {
+		
+		if (DMath.greaterThanEquals(p.x / APP.QUADRANT_WIDTH, 0.0) &&
+				DMath.greaterThanEquals(p.y / APP.QUADRANT_HEIGHT, 0.0) &&
+				DMath.lessThanEquals(p.x / APP.QUADRANT_WIDTH, quadrantCols) &&
+				DMath.lessThanEquals(p.y / APP.QUADRANT_HEIGHT, quadrantRows)) {
+			
+			int col = DMath.lessThan(p.x / APP.QUADRANT_WIDTH, quadrantCols) ? (int)Math.floor(p.x / APP.QUADRANT_WIDTH) : quadrantCols-1;
+			int row = DMath.lessThan(p.y / APP.QUADRANT_HEIGHT, quadrantRows) ? (int)Math.floor(p.y / APP.QUADRANT_HEIGHT) : quadrantRows-1;
+			return quadrants[row][col];
+			
+		} else {
+			
 			return null;
+			
 		}
-		if (row < 0 || row > quadrantRows-1) {
-			return null;
-		}
-		return quadrants[row][col];
 	}
 	
 	public Point getPoint(Point p) {
@@ -201,9 +208,9 @@ public class QuadrantMap {
 	}
 	
 	public void renderBackground(RenderingContext ctxt) {
-		for (int i = 0; i < quadrantCols; i++) {
-			for (int j = 0; j < quadrantRows; j++) {
-				Quadrant q = quadrants[j][i];
+		for (int i = 0; i < quadrantRows; i++) {
+			for (int j = 0; j < quadrantCols; j++) {
+				Quadrant q = quadrants[i][j];
 				q.paint(ctxt);
 			}
 		}

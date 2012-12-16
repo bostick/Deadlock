@@ -185,7 +185,7 @@ public class Canvas extends Component {
 	}
 	
 	public void entered(InputEvent ev) {
-//		APP.screen.entered(ev);
+		
 	}
 	
 	public void exited(InputEvent ev) {

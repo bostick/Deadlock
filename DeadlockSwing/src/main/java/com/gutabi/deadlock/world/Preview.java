@@ -4,6 +4,7 @@ import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
 import com.gutabi.deadlock.core.Point;
@@ -43,11 +44,21 @@ public class Preview {
 	}
 	
 	public Point previewToWorld(Point p) {
-		return new Point((world.worldWidth / PREVIEW_WIDTH) * p.x, (world.worldHeight / PREVIEW_HEIGHT) * p.y);
+		
+		double pixelsPerMeterWidth = PREVIEW_WIDTH / world.worldWidth;
+		double pixelsPerMeterHeight = PREVIEW_HEIGHT / world.worldHeight;
+		double s = Math.min(pixelsPerMeterWidth, pixelsPerMeterHeight);
+		
+		return new Point((1/s) * p.x, (1/s) * p.y);
 	}
 	
 	public Point worldToPreview(Point p) {
-		return new Point((PREVIEW_WIDTH / world.worldWidth) * p.x, (PREVIEW_HEIGHT / world.worldHeight) * p.y);
+		
+		double pixelsPerMeterWidth = PREVIEW_WIDTH / world.worldWidth;
+		double pixelsPerMeterHeight = PREVIEW_HEIGHT / world.worldHeight;
+		double s = Math.min(pixelsPerMeterWidth, pixelsPerMeterHeight);
+		
+		return new Point((s) * p.x, (s) * p.y);
 	}
 	
 	public void pan(Point prevDp) {
@@ -64,16 +75,25 @@ public class Preview {
 		
 		Graphics2D previewImageG2 = previewImage.createGraphics();
 		
-		previewImageG2.setColor(Color.WHITE);
+		RenderingContext previewContext = new RenderingContext(previewImageG2, RenderingContextType.PREVIEW);
+		
+		previewImageG2.setColor(Color.LIGHT_GRAY);
 		previewImageG2.fillRect(0, 0, PREVIEW_WIDTH, PREVIEW_HEIGHT);
 		
-		previewImageG2.scale(PREVIEW_WIDTH / world.worldWidth, PREVIEW_HEIGHT / world.worldHeight);
+		double pixelsPerMeterWidth = PREVIEW_WIDTH / world.worldWidth;
+		double pixelsPerMeterHeight = PREVIEW_HEIGHT / world.worldHeight;
+		double s = Math.min(pixelsPerMeterWidth, pixelsPerMeterHeight);
 		
-		RenderingContext previewContext = new RenderingContext(previewImageG2, RenderingContextType.PREVIEW);
+		AffineTransform origTrans = previewContext.getTransform();
+		previewContext.translate(PREVIEW_WIDTH/2 - (s * world.worldWidth / 2), PREVIEW_HEIGHT/2 - (s * world.worldHeight / 2));
+		
+		previewImageG2.scale(s, s);
 		
 		world.quadrantMap.renderBackground(previewContext);
 		
 		world.graph.renderBackground(previewContext);
+		
+		previewContext.setTransform(origTrans);
 		
 		previewImageG2.dispose();
 		
@@ -83,10 +103,11 @@ public class Preview {
 		
 		if (previewImage != null) {
 			
-//			g2.drawImage(previewImage, 0, 0, null);
-			ctxt.paintImage(0, 0, previewImage,
-					0, 0, previewImage.getWidth(), previewImage.getHeight(),
-					0, 0, previewImage.getWidth(), previewImage.getHeight());
+			ctxt.paintImage(
+					0, 0,
+					previewImage,
+					0, 0, PREVIEW_WIDTH, PREVIEW_HEIGHT,
+					0, 0, PREVIEW_WIDTH, PREVIEW_HEIGHT);
 			
 			Point prevLoc = worldToPreview(world.worldViewport.ul);
 			
@@ -94,11 +115,17 @@ public class Preview {
 			
 			AABB prev = new AABB(prevLoc.x, prevLoc.y, prevDim.x, prevDim.y);
 			
-//			g2.setColor(Color.BLUE);
-//			g2.drawRect((int)prevLoc.x, (int)prevLoc.y, (int)prevDim.x, (int)prevDim.y);
+			double pixelsPerMeterWidth = PREVIEW_WIDTH / world.worldWidth;
+			double pixelsPerMeterHeight = PREVIEW_HEIGHT / world.worldHeight;
+			double s = Math.min(pixelsPerMeterWidth, pixelsPerMeterHeight);
+			
+			AffineTransform origTrans = ctxt.getTransform();
+			ctxt.translate(PREVIEW_WIDTH/2 - (s * world.worldWidth / 2), PREVIEW_HEIGHT/2 - (s * world.worldHeight / 2));
 			
 			ctxt.setColor(Color.BLUE);
 			prev.draw(ctxt);
+			
+			ctxt.setTransform(origTrans);
 			
 		}
 		

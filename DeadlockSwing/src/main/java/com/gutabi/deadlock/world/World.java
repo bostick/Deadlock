@@ -72,8 +72,8 @@ public class World extends ScreenBase implements Sweepable {
 	public Stats stats;
 	
 	public BufferedImage quadrantGrass;
-	int canvasWidth;
-	int canvasHeight;
+	public int canvasWidth;
+	public int canvasHeight;
 	public BufferedImage canvasGrassImage;
 	public BufferedImage canvasGraphImage;
 	
@@ -108,8 +108,11 @@ public class World extends ScreenBase implements Sweepable {
 	
 	public World(int[][] ini) {
 		
-		int quadrantCols = ini[0].length;
+		assert ini.length > 0;
+		assert ini[0].length > 0;
+		
 		int quadrantRows = ini.length;
+		int quadrantCols = ini[0].length;
 		
 		quadrantMap = new QuadrantMap(this, ini);
 		
@@ -195,17 +198,19 @@ public class World extends ScreenBase implements Sweepable {
 	
 	public void init() throws Exception {
 		
-		int quadrantWidthPixels = (int)Math.round(APP.PIXELS_PER_METER * APP.QUADRANT_WIDTH);
-		int quadrantHeightPixels = (int)Math.round(APP.PIXELS_PER_METER * APP.QUADRANT_HEIGHT);
+		int quadrantWidthPixels = (int)Math.ceil(APP.PIXELS_PER_METER * APP.QUADRANT_WIDTH);
+		int quadrantHeightPixels = (int)Math.ceil(APP.PIXELS_PER_METER * APP.QUADRANT_HEIGHT);
 		
 		quadrantGrass = new BufferedImage(quadrantWidthPixels, quadrantHeightPixels, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D quadrantGrassG2 = quadrantGrass.createGraphics();
-		int maxCols = quadrantWidthPixels/32;
-		int maxRows = quadrantHeightPixels/32;
-		for (int i = 0; i <= maxCols; i++) {
-			for (int j = 0; j <= maxRows; j++) {
-				quadrantGrassG2.drawImage(VIEW.sheet,
-						32 * i, 32 * j, 32 * i + 32, 32 * j + 32,
+		
+		int maxCols = (int)Math.ceil(quadrantWidthPixels/32.0);
+		int maxRows = (int)Math.ceil(quadrantHeightPixels/32.0);
+		for (int i = 0; i < maxRows; i++) {
+			for (int j = 0; j < maxCols; j++) {
+				quadrantGrassG2.drawImage(
+						VIEW.sheet,
+						32 * j, 32 * i, 32 * j + 32, 32 * i + 32,
 						0, 224, 0+32, 224+32, null);
 			}
 		}
@@ -226,6 +231,12 @@ public class World extends ScreenBase implements Sweepable {
 				-(canvasHeight / APP.PIXELS_PER_METER) / 2 + worldHeight/2,
 				canvasWidth / APP.PIXELS_PER_METER,
 				canvasHeight / APP.PIXELS_PER_METER);
+		
+//		worldViewport = new AABB(
+//				-16,
+//				-16,
+//				canvasWidth / APP.PIXELS_PER_METER,
+//				canvasHeight / APP.PIXELS_PER_METER);
 		
 	}
 	
@@ -625,15 +636,19 @@ public class World extends ScreenBase implements Sweepable {
 		
 		lastMovedOrDraggedWorldPoint = canvasToWorld(VIEW.canvas.lastMovedOrDraggedCanvasPoint);
 		
-		Entity closest = hitTest(lastMovedOrDraggedWorldPoint);
-		
-		synchronized (APP) {
-			hilited = closest;
+		switch (mode) {
+		case RUNNING:
+		case PAUSED:
+			break;
+		case EDITING:
+			Entity closest = hitTest(lastMovedOrDraggedWorldPoint);
+			synchronized (APP) {
+				hilited = closest;
+			}
+			quadrantMap.computeGridSpacing();
+			cursor.setPoint(quadrantMap.getPoint(lastMovedOrDraggedWorldPoint));
+			break;
 		}
-		
-		quadrantMap.computeGridSpacing();
-		
-		cursor.setPoint(quadrantMap.getPoint(lastMovedOrDraggedWorldPoint));
 		
 		render();
 		repaint();
@@ -645,15 +660,19 @@ public class World extends ScreenBase implements Sweepable {
 		
 		lastMovedOrDraggedWorldPoint = canvasToWorld(VIEW.canvas.lastMovedOrDraggedCanvasPoint);
 		
-		Entity closest = hitTest(lastMovedOrDraggedWorldPoint);
-		
-		synchronized (APP) {
-			hilited = closest;
+		switch (mode) {
+		case RUNNING:
+		case PAUSED:
+			break;
+		case EDITING:
+			Entity closest = hitTest(lastMovedOrDraggedWorldPoint);
+			synchronized (APP) {
+				hilited = closest;
+			}
+			quadrantMap.computeGridSpacing();
+			cursor.setPoint(quadrantMap.getPoint(lastMovedOrDraggedWorldPoint));
+			break;
 		}
-		
-		quadrantMap.computeGridSpacing();
-		
-		cursor.setPoint(quadrantMap.getPoint(lastMovedOrDraggedWorldPoint));
 		
 		render();
 		repaint();
@@ -932,7 +951,7 @@ public class World extends ScreenBase implements Sweepable {
 		synchronized (VIEW) {
 			Graphics2D canvasGrassImageG2 = canvasGrassImage.createGraphics();
 			
-			canvasGrassImageG2.setColor(Color.WHITE);
+			canvasGrassImageG2.setColor(Color.LIGHT_GRAY);
 			canvasGrassImageG2.fillRect(0, 0, canvasWidth, canvasHeight);
 			
 			canvasGrassImageG2.translate((int)(-worldViewport.x * APP.PIXELS_PER_METER), (int)(-worldViewport.y * APP.PIXELS_PER_METER));
@@ -994,7 +1013,9 @@ public class World extends ScreenBase implements Sweepable {
 				ctxt.scale(APP.PIXELS_PER_METER);
 				ctxt.translate(-worldViewport.x, -worldViewport.y);
 				
-				paintWorld(ctxt);
+				synchronized (VIEW) {
+					paintWorld(ctxt);
+				}
 				
 				ctxt.setTransform(origTrans);
 				

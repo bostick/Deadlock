@@ -81,18 +81,18 @@ public class Quadrant {
 	
 	public void paint(RenderingContext ctxt) {
 		
-		if (active) {
-			
-			switch (ctxt.type) {
-			case CANVAS:
+		switch (ctxt.type) {
+		case CANVAS:
+			if (active) {
+				
 				if (!APP.DEBUG_DRAW) {
 					
 					ctxt.paintImage(
 							c * APP.QUADRANT_WIDTH, r * APP.QUADRANT_HEIGHT, 1 / APP.PIXELS_PER_METER,
 							world.quadrantGrass,
 							0, 0,
-							(int)Math.round(APP.PIXELS_PER_METER * APP.QUADRANT_WIDTH),
-							(int)Math.round(APP.PIXELS_PER_METER * APP.QUADRANT_HEIGHT),
+							(int)Math.ceil(APP.PIXELS_PER_METER * APP.QUADRANT_WIDTH),
+							(int)Math.ceil(APP.PIXELS_PER_METER * APP.QUADRANT_HEIGHT),
 							0, 0,
 							world.quadrantGrass.getWidth(),
 							world.quadrantGrass.getHeight());
@@ -130,14 +130,23 @@ public class Quadrant {
 					}
 					
 				}
-				break;
-			case PREVIEW:
+				
+			} else {
+				ctxt.setColor(Color.WHITE);
+				aabb.paint(ctxt);
+			}
+			break;
+		case PREVIEW:
+			if (active) {
 				ctxt.setColor(VIEW.DARKGREEN);
 				aabb.paint(ctxt);
-				break;
+			} else {
+				ctxt.setColor(Color.WHITE);
+				aabb.paint(ctxt);
 			}
-			
+			break;
 		}
+		
 	}
 	
 }

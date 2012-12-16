@@ -8,11 +8,12 @@ import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
+import javax.swing.JFrame;
+
 import com.gutabi.deadlock.ScreenBase;
 import com.gutabi.deadlock.core.Dim;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.AABB;
-import com.gutabi.deadlock.core.geom.Triangle;
 import com.gutabi.deadlock.menu.MainMenu;
 import com.gutabi.deadlock.view.InputEvent;
 import com.gutabi.deadlock.view.PaintEvent;
@@ -21,15 +22,13 @@ import com.gutabi.deadlock.view.RenderingContextType;
 import com.gutabi.deadlock.world.Quadrant;
 import com.gutabi.deadlock.world.World;
 
+//@SuppressWarnings("static-access")
 public class QuadrantEditor extends ScreenBase {
 	
 	public static final int EDITOR_WIDTH = 800;
 	public static final int EDITOR_HEIGHT = 600;
 	
-	int redWidth = 3 * EDITOR_WIDTH / 4;
-	int redHeight = 3 * EDITOR_HEIGHT / 4;
-	
-	AABB worldCanvasAABB = new AABB(redWidth / 2 - 350/2, redHeight / 2 - 350/2, 350, 350);
+	AABB worldCanvasAABB = new AABB(50, 50, 350, 350);
 	
 	int quadrantRows;
 	int quadrantCols;
@@ -37,90 +36,361 @@ public class QuadrantEditor extends ScreenBase {
 	BufferedImage quadrantGrass;
 	
 	World world;
-//	Button[][] quads;
 	
 	Button removeCol;
 	Button addCol;
 	Button removeRow;
 	Button addRow;
-	Button create;
+	Button removeBoth;
+	Button addBoth;
+	Button go;
 	
 	AABB hilited;
 	
+	int[][] ini;
+	
 	public QuadrantEditor() {
 		
-		world = new WorldA();
+		ini = new int[][] {
+				{1, 1, 1},
+				{1, 1, 0},
+				{0, 1, 0}
+			};
 		
-		APP.PIXELS_PER_METER = (1.0 * worldCanvasAABB.width) / world.worldWidth;
+		world = new World(ini);
 		
-		world.canvasPostDisplay(new Dim(worldCanvasAABB.width, worldCanvasAABB.height));
+		double pixelsPerMeterWidth = worldCanvasAABB.width / world.worldWidth;
+		double pixelxPerMeterHeight = worldCanvasAABB.height / world.worldHeight;
+		APP.PIXELS_PER_METER = Math.min(pixelsPerMeterWidth, pixelxPerMeterHeight);
+		world.canvasPostDisplay(new Dim(world.worldWidth * APP.PIXELS_PER_METER, world.worldHeight * APP.PIXELS_PER_METER));
+		world.worldViewport = new AABB(0, 0, world.worldWidth, world.worldHeight);
 		
-		final int bottomX = 0;
-		final int bottomY = 3 * EDITOR_HEIGHT / 4;
-		final int bottomWidth = 3 * EDITOR_WIDTH / 4;
-		final int bottomHeight = EDITOR_HEIGHT / 4;
+		try {
+			world.init();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
-		removeRow = new Button(bottomX + bottomWidth/2 - 50/2, bottomY + bottomHeight/2 - 50/2 - 50/2, 50, 50) {
-			Triangle tri = new Triangle(new Point(10, 35), new Point(40, 35), new Point(25, 15));
+		removeRow = new Button(worldCanvasAABB.center.x - 50/2, worldCanvasAABB.brY + 40 - 50/2, 50, 50) {
+			
+			public void action() {
+				
+				int[][] old = ini;
+				
+				ini = new int[old.length-1][old[0].length];
+				
+				for (int i = 0; i < ini.length; i++) {
+					for (int j = 0; j < ini[0].length; j++) {
+						ini[i][j] = old[i][j];
+					}
+				}
+				
+				world = new World(ini);
+				
+				double pixelsPerMeterWidth = worldCanvasAABB.width / world.worldWidth;
+				double pixelxPerMeterHeight = worldCanvasAABB.height / world.worldHeight;
+				APP.PIXELS_PER_METER = Math.min(pixelsPerMeterWidth, pixelxPerMeterHeight);
+				world.canvasPostDisplay(new Dim(world.worldWidth * APP.PIXELS_PER_METER, world.worldHeight * APP.PIXELS_PER_METER));
+				world.worldViewport = new AABB(0, 0, world.worldWidth, world.worldHeight);
+				
+				try {
+					world.init();
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				render();
+				repaint();
+				
+			}
+			
 			public void paint(RenderingContext ctxt) {
-				ctxt.setColor(Color.BLUE);
+				
 				AffineTransform origTransform = ctxt.getTransform();
-				ctxt.translate(bottomX + bottomWidth/2 - 50/2, bottomY + bottomHeight/2 - 50/2 - 50/2);
-				tri.paint(ctxt);
+				ctxt.translate(aabb.ul.x, aabb.ul.y);
+				ctxt.translate(aabb.width/2, aabb.height/2);
+				ctxt.rotate(3 * Math.PI / 2);
+				ctxt.translate(-aabb.width/2, -aabb.height/2);
+				ctxt.paintImage(0, 0, VIEW.sheet, 0, 0, 50, 50, 128, 224, 160, 256);
 				ctxt.setTransform(origTransform);
+				
 				ctxt.setColor(Color.BLACK);
 				aabb.draw(ctxt);
 			}
 		};
-		addRow = new Button(bottomX + bottomWidth/2 - 50/2, bottomY + bottomHeight/2 - 50/2 - 50/2 + 50, 50, 50) {
-			Triangle tri = new Triangle(new Point(10, 15), new Point(40, 15), new Point(25, 35));
+		addRow = new Button(worldCanvasAABB.center.x - 50/2, worldCanvasAABB.brY + 40 - 50/2 + 50, 50, 50) {
+			
+			public void action() {
+				
+				int[][] old = ini;
+				
+				ini = new int[old.length+1][old[0].length];
+				
+				for (int i = 0; i < old.length; i++) {
+					for (int j = 0; j < old[0].length; j++) {
+						ini[i][j] = old[i][j];
+					}
+				}
+				
+				world = new World(ini);
+				
+				double pixelsPerMeterWidth = worldCanvasAABB.width / world.worldWidth;
+				double pixelxPerMeterHeight = worldCanvasAABB.height / world.worldHeight;
+				APP.PIXELS_PER_METER = Math.min(pixelsPerMeterWidth, pixelxPerMeterHeight);
+				world.canvasPostDisplay(new Dim(world.worldWidth * APP.PIXELS_PER_METER, world.worldHeight * APP.PIXELS_PER_METER));
+				world.worldViewport = new AABB(0, 0, world.worldWidth, world.worldHeight);
+				
+				try {
+					world.init();
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				render();
+				repaint();
+				
+			}
+			
 			public void paint(RenderingContext ctxt) {
-				ctxt.setColor(Color.BLUE);
+				
 				AffineTransform origTransform = ctxt.getTransform();
-				ctxt.translate(bottomX + bottomWidth/2 - 50/2, bottomY + bottomHeight/2 - 50/2 - 50/2 + 50);
-				tri.paint(ctxt);
+				ctxt.translate(aabb.ul.x, aabb.ul.y);
+				ctxt.translate(aabb.width/2, aabb.height/2);
+				ctxt.rotate(1 * Math.PI / 2);
+				ctxt.translate(-aabb.width/2, -aabb.height/2);
+				ctxt.paintImage(0, 0, VIEW.sheet, 0, 0, 50, 50, 128, 224, 160, 256);
 				ctxt.setTransform(origTransform);
+				
 				ctxt.setColor(Color.BLACK);
 				aabb.draw(ctxt);
 			}
 		};
 		
-		final int rightX = 3 * EDITOR_WIDTH / 4;
-		final int rightY = 0;
-		final int rightWidth = EDITOR_WIDTH / 4;
-		final int rightHeight = 3 * EDITOR_HEIGHT / 4;
-		
-		removeCol = new Button(rightX + rightWidth/2 - 50/2 - 50/2, rightY + rightHeight/2 - 50/2, 50, 50) {
-			Triangle tri = new Triangle(new Point(15, 25), new Point(35, 10), new Point(35, 40));
+		removeCol = new Button(worldCanvasAABB.brX + 40 - 50/2, worldCanvasAABB.center.y - 50/2, 50, 50) {
+			
+			public void action() {
+				
+				int[][] old = ini;
+				
+				ini = new int[old.length][old[0].length-1];
+				
+				for (int i = 0; i < ini.length; i++) {
+					for (int j = 0; j < ini[0].length; j++) {
+						ini[i][j] = old[i][j];
+					}
+				}
+				
+				world = new World(ini);
+				
+				double pixelsPerMeterWidth = worldCanvasAABB.width / world.worldWidth;
+				double pixelxPerMeterHeight = worldCanvasAABB.height / world.worldHeight;
+				APP.PIXELS_PER_METER = Math.min(pixelsPerMeterWidth, pixelxPerMeterHeight);
+				world.canvasPostDisplay(new Dim(world.worldWidth * APP.PIXELS_PER_METER, world.worldHeight * APP.PIXELS_PER_METER));
+				world.worldViewport = new AABB(0, 0, world.worldWidth, world.worldHeight);
+				
+				try {
+					world.init();
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				render();
+				repaint();
+				
+			}
+			
 			public void paint(RenderingContext ctxt) {
-				ctxt.setColor(Color.BLUE);
+				
 				AffineTransform origTransform = ctxt.getTransform();
-				ctxt.translate(rightX + rightWidth/2 - 50/2 - 50/2, rightY + rightHeight/2 - 50/2);
-				tri.paint(ctxt);
+				ctxt.translate(aabb.ul.x, aabb.ul.y);
+				ctxt.translate(aabb.width/2, aabb.height/2);
+				ctxt.rotate(Math.PI);
+				ctxt.translate(-aabb.width/2, -aabb.height/2);
+				ctxt.paintImage(0, 0, VIEW.sheet, 0, 0, 50, 50, 128, 224, 160, 256);
 				ctxt.setTransform(origTransform);
+				
 				ctxt.setColor(Color.BLACK);
 				aabb.draw(ctxt);
 			}
 		};
-		addCol = new Button(rightX + rightWidth/2 - 50/2 - 50/2 + 50, rightY + rightHeight/2 - 50/2, 50, 50) {
-			Triangle tri = new Triangle(new Point(35, 25), new Point(15, 10), new Point(15, 40));
+		addCol = new Button(worldCanvasAABB.brX + 40 - 50/2 + 50, worldCanvasAABB.center.y - 50/2, 50, 50) {
+			
+			public void action() {
+				
+				int[][] old = ini;
+				
+				ini = new int[old.length][old[0].length+1];
+				
+				for (int i = 0; i < old.length; i++) {
+					for (int j = 0; j < old[0].length; j++) {
+						ini[i][j] = old[i][j];
+					}
+				}
+				
+				world = new World(ini);
+				
+				double pixelsPerMeterWidth = worldCanvasAABB.width / world.worldWidth;
+				double pixelxPerMeterHeight = worldCanvasAABB.height / world.worldHeight;
+				APP.PIXELS_PER_METER = Math.min(pixelsPerMeterWidth, pixelxPerMeterHeight);
+				world.canvasPostDisplay(new Dim(world.worldWidth * APP.PIXELS_PER_METER, world.worldHeight * APP.PIXELS_PER_METER));
+				world.worldViewport = new AABB(0, 0, world.worldWidth, world.worldHeight);
+				
+				try {
+					world.init();
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				render();
+				repaint();
+				
+			}
+			
 			public void paint(RenderingContext ctxt) {
-				ctxt.setColor(Color.BLUE);
+				
 				AffineTransform origTransform = ctxt.getTransform();
-				ctxt.translate(rightX + rightWidth/2 - 50/2 - 50/2 + 50, rightY + rightHeight/2 - 50/2);
-				tri.paint(ctxt);
+				ctxt.translate(aabb.ul.x, aabb.ul.y);
+				ctxt.translate(aabb.width/2, aabb.height/2);
+				ctxt.rotate(0 * Math.PI);
+				ctxt.translate(-aabb.width/2, -aabb.height/2);
+				ctxt.paintImage(0, 0, VIEW.sheet, 0, 0, 50, 50, 128, 224, 160, 256);
 				ctxt.setTransform(origTransform);
+				
+				ctxt.setColor(Color.BLACK);
+				aabb.draw(ctxt);
+				
+			}
+		};
+		
+		removeBoth = new Button(worldCanvasAABB.brX + 40 - 50/2, worldCanvasAABB.brY + 40 - 50/2, 50, 50) {
+			
+			public void action() {
+				
+				int[][] old = ini;
+				
+				ini = new int[old.length-1][old[0].length-1];
+				
+				for (int i = 0; i < ini.length; i++) {
+					for (int j = 0; j < ini[0].length; j++) {
+						ini[i][j] = old[i][j];
+					}
+				}
+				
+				world = new World(ini);
+				
+				double pixelsPerMeterWidth = worldCanvasAABB.width / world.worldWidth;
+				double pixelxPerMeterHeight = worldCanvasAABB.height / world.worldHeight;
+				APP.PIXELS_PER_METER = Math.min(pixelsPerMeterWidth, pixelxPerMeterHeight);
+				world.canvasPostDisplay(new Dim(world.worldWidth * APP.PIXELS_PER_METER, world.worldHeight * APP.PIXELS_PER_METER));
+				world.worldViewport = new AABB(0, 0, world.worldWidth, world.worldHeight);
+				
+				try {
+					world.init();
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				render();
+				repaint();
+				
+			}
+			
+			public void paint(RenderingContext ctxt) {
+				
+				AffineTransform origTransform = ctxt.getTransform();
+				ctxt.translate(aabb.ul.x, aabb.ul.y);
+				ctxt.translate(aabb.width/2, aabb.height/2);
+				ctxt.rotate(5 * Math.PI / 4);
+				ctxt.translate(-aabb.width/2, -aabb.height/2);
+				ctxt.paintImage(0, 0, VIEW.sheet, 0, 0, 50, 50, 128, 224, 160, 256);
+				ctxt.setTransform(origTransform);
+				
 				ctxt.setColor(Color.BLACK);
 				aabb.draw(ctxt);
 			}
 		};
 		
-		int cornerX = 3 * EDITOR_WIDTH / 4;
-		int cornerY = 3 * EDITOR_HEIGHT / 4;
-		int cornerWidth = EDITOR_WIDTH / 4;
-		int cornerHeight = EDITOR_HEIGHT / 4;
+		addBoth = new Button(worldCanvasAABB.brX + 40 - 50/2 + 50, worldCanvasAABB.brY + 40 - 50/2 + 50, 50, 50) {
+			
+			public void action() {
+				
+				int[][] old = ini;
+				
+				ini = new int[old.length+1][old[0].length+1];
+				
+				for (int i = 0; i < old.length; i++) {
+					for (int j = 0; j < old[0].length; j++) {
+						ini[i][j] = old[i][j];
+					}
+				}
+				
+				world = new World(ini);
+				
+				double pixelsPerMeterWidth = worldCanvasAABB.width / world.worldWidth;
+				double pixelxPerMeterHeight = worldCanvasAABB.height / world.worldHeight;
+				APP.PIXELS_PER_METER = Math.min(pixelsPerMeterWidth, pixelxPerMeterHeight);
+				world.canvasPostDisplay(new Dim(world.worldWidth * APP.PIXELS_PER_METER, world.worldHeight * APP.PIXELS_PER_METER));
+				world.worldViewport = new AABB(0, 0, world.worldWidth, world.worldHeight);
+				
+				try {
+					world.init();
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				render();
+				repaint();
+				
+			}
+			
+			public void paint(RenderingContext ctxt) {
+				
+				AffineTransform origTransform = ctxt.getTransform();
+				ctxt.translate(aabb.ul.x, aabb.ul.y);
+				ctxt.translate(aabb.width/2, aabb.height/2);
+				ctxt.rotate(Math.PI / 4);
+				ctxt.translate(-aabb.width/2, -aabb.height/2);
+				ctxt.paintImage(0, 0, VIEW.sheet, 0, 0, 50, 50, 128, 224, 160, 256);
+				ctxt.setTransform(origTransform);
+				
+				ctxt.setColor(Color.BLACK);
+				aabb.draw(ctxt);
+			}
+		};
 		
-		create = new Button(cornerX + cornerWidth/2 - 50/2, cornerY + cornerHeight/2 - 50/2, 50, 50) {
+		go = new Button(700, 500, 50, 50) {
+			
+			public void action() {
+				
+				VIEW.teardownCanvas(VIEW.container);
+				
+				APP.PIXELS_PER_METER = 32.0;
+				APP.screen = new World(ini);
+				try {
+					APP.screen.init();
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				VIEW.setupCanvasAndControlPanel(VIEW.container);
+				((JFrame)VIEW.container).setVisible(true);
+				VIEW.canvas.requestFocusInWindow();
+				
+				VIEW.canvas.canvasPostDisplay();
+				
+				APP.screen.render();
+				APP.screen.repaint();
+				
+			}
+			
 			public void paint(RenderingContext ctxt) {
 				ctxt.setColor(Color.BLACK);
 				aabb.draw(ctxt);
@@ -130,7 +400,7 @@ public class QuadrantEditor extends ScreenBase {
 	}
 	
 	public void init() throws Exception {
-		world.init();
+		
 	}
 	
 	public void canvasPostDisplay(Dim d) {
@@ -154,8 +424,14 @@ public class QuadrantEditor extends ScreenBase {
 		if (addRow.hitTest(p)) {
 			return addRow;
 		}
-		if (create.hitTest(p)) {
-			return create;
+		if (removeBoth.hitTest(p)) {
+			return removeBoth;
+		}
+		if (addBoth.hitTest(p)) {
+			return addBoth;
+		}
+		if (go.hitTest(p)) {
+			return go;
 		}
 		return null;
 	}
@@ -194,13 +470,17 @@ public class QuadrantEditor extends ScreenBase {
 			/*
 			 * editor -> world canvas
 			 */
-			Point pWorldCanvas = lastMovedOrDraggedEditorPoint.minus(worldCanvasAABB.ul);
+			Point pWorldCanvas = lastMovedOrDraggedEditorPoint.minus(new Point(worldCanvasAABB.center.x - world.canvasWidth/2, worldCanvasAABB.center.y - world.canvasHeight/2));
 			
 			Point pWorld = world.canvasToWorld(pWorldCanvas);
 			
 			Quadrant q = world.quadrantMap.findQuadrant(pWorld);
 			
-			hilited = world.worldToCanvas(q.aabb).plus(worldCanvasAABB.ul);
+			if (q != null) {
+				hilited = world.worldToCanvas(q.aabb).plus(new Point(worldCanvasAABB.center.x - world.canvasWidth/2, worldCanvasAABB.center.y - world.canvasHeight/2));
+			} else {
+				hilited = null;
+			}
 			
 		} else {
 			
@@ -210,6 +490,63 @@ public class QuadrantEditor extends ScreenBase {
 				hilited = closest.aabb;
 			} else {
 				hilited = null;
+			}
+			
+		}
+		
+		repaint();
+	}
+	
+	public void clicked(InputEvent ev) {
+		
+		Point p = ev.p;
+		
+		lastMovedEditorPoint = canvasToEditor(p);
+		lastMovedOrDraggedEditorPoint = lastMovedEditorPoint;
+		
+		if (worldCanvasAABB.hitTest(lastMovedOrDraggedEditorPoint)) {
+			
+			/*
+			 * editor -> world canvas
+			 */
+			Point pWorldCanvas = lastMovedOrDraggedEditorPoint.minus(new Point(worldCanvasAABB.center.x - world.canvasWidth/2, worldCanvasAABB.center.y - world.canvasHeight/2));
+			
+			Point pWorld = world.canvasToWorld(pWorldCanvas);
+			
+			Quadrant q = world.quadrantMap.findQuadrant(pWorld);
+			
+			if (q != null) {
+				
+				ini[q.r][q.c] = (q.active?0:1);
+				
+				world = new World(ini);
+				
+				double pixelsPerMeterWidth = worldCanvasAABB.width / world.worldWidth;
+				double pixelsPerMeterHeight = worldCanvasAABB.height / world.worldHeight;
+				APP.PIXELS_PER_METER = Math.min(pixelsPerMeterWidth, pixelsPerMeterHeight);
+				world.canvasPostDisplay(new Dim(world.worldWidth * APP.PIXELS_PER_METER, world.worldHeight * APP.PIXELS_PER_METER));
+				world.worldViewport = new AABB(0, 0, world.worldWidth, world.worldHeight);
+				
+				try {
+					world.init();
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				render();
+				repaint();
+				
+			} else {
+				
+			}
+			
+		} else {
+			
+			Button b = hitTest(lastMovedOrDraggedEditorPoint);
+			
+			if (b != null) {
+				b.action();
 			}
 			
 		}
@@ -254,8 +591,11 @@ public class QuadrantEditor extends ScreenBase {
 		ctxt.setColor(Color.GRAY);
 		ctxt.fillRect(0, 0, EDITOR_WIDTH, EDITOR_HEIGHT);
 		
+		ctxt.setColor(Color.LIGHT_GRAY);
+		worldCanvasAABB.paint(ctxt);
+		
 		AffineTransform origTrans = ctxt.getTransform();
-		ctxt.translate(worldCanvasAABB.x, worldCanvasAABB.y);
+		ctxt.translate(worldCanvasAABB.center.x - world.canvasWidth/2, worldCanvasAABB.center.y - world.canvasHeight/2);
 		ctxt.scale(APP.PIXELS_PER_METER);
 		ctxt.translate(-world.worldViewport.x, -world.worldViewport.y);
 		world.paintWorld(ctxt);
@@ -265,16 +605,14 @@ public class QuadrantEditor extends ScreenBase {
 		addCol.paint(ctxt);
 		removeRow.paint(ctxt);
 		addRow.paint(ctxt);
-		create.paint(ctxt);
+		removeBoth.paint(ctxt);
+		addBoth.paint(ctxt);
+		go.paint(ctxt);
 		
 		if (hilited != null) {
 			ctxt.setColor(Color.RED);
 			hilited.draw(ctxt);
 		}
-		
-//		if (lastMovedOrDraggedEditorPoint != null) {
-//			new Circle(null, lastMovedOrDraggedEditorPoint, 5).paint(ctxt);
-//		}
 		
 	}
 	
