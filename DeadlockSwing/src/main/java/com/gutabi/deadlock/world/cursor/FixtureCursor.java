@@ -1,7 +1,5 @@
 package com.gutabi.deadlock.world.cursor;
 
-import static com.gutabi.deadlock.DeadlockApplication.APP;
-
 import java.awt.Color;
 
 import com.gutabi.deadlock.core.Point;
@@ -9,13 +7,14 @@ import com.gutabi.deadlock.core.geom.Shape;
 import com.gutabi.deadlock.view.InputEvent;
 import com.gutabi.deadlock.view.RenderingContext;
 import com.gutabi.deadlock.world.Quadrant;
+import com.gutabi.deadlock.world.World;
 import com.gutabi.deadlock.world.WorldScreen;
 import com.gutabi.deadlock.world.graph.Axis;
 import com.gutabi.deadlock.world.graph.Fixture;
 import com.gutabi.deadlock.world.graph.FixtureType;
 import com.gutabi.deadlock.world.graph.Side;
 
-@SuppressWarnings("static-access")
+//@SuppressWarnings("static-access")
 public class FixtureCursor extends CursorBase {
 	
 	Quadrant currentQuadrant;
@@ -65,10 +64,10 @@ public class FixtureCursor extends CursorBase {
 			right = screen.world.quadrantMap.rightFixPoint(currentQuadrant);
 			Point rightCenter = right.center();
 			
-			double distToTop = Math.abs(p.y - (topCenter.y - APP.QUADRANT_HEIGHT/2));
-			double distToBottom = Math.abs(p.y - (bottomCenter.y + APP.QUADRANT_HEIGHT/2));
-			double distToLeft = Math.abs(p.x - (leftCenter.x - APP.QUADRANT_WIDTH/2));
-			double distToRight = Math.abs(p.x - (rightCenter.x + APP.QUADRANT_WIDTH/2));
+			double distToTop = Math.abs(p.y - (topCenter.y - World.QUADRANT_HEIGHT/2));
+			double distToBottom = Math.abs(p.y - (bottomCenter.y + World.QUADRANT_HEIGHT/2));
+			double distToLeft = Math.abs(p.x - (leftCenter.x - World.QUADRANT_WIDTH/2));
+			double distToRight = Math.abs(p.x - (rightCenter.x + World.QUADRANT_WIDTH/2));
 			
 			distToTopOrBottom = Math.min(distToTop, distToBottom);
 			

@@ -1,7 +1,5 @@
 package com.gutabi.deadlock.world;
 
-import static com.gutabi.deadlock.DeadlockApplication.APP;
-
 import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.AABB;
@@ -9,7 +7,7 @@ import com.gutabi.deadlock.core.geom.Shape;
 import com.gutabi.deadlock.core.geom.ShapeUtils;
 import com.gutabi.deadlock.view.RenderingContext;
 
-@SuppressWarnings("static-access")
+//@SuppressWarnings("static-access")
 public class QuadrantMap {
 	
 	public final World world;
@@ -29,7 +27,7 @@ public class QuadrantMap {
 		quadrantCols = quadrants[0].length;
 		quadrantRows = quadrants.length;
 		
-		aabb = new AABB(0, 0, quadrantCols * APP.QUADRANT_WIDTH, quadrantRows * APP.QUADRANT_HEIGHT);
+		aabb = new AABB(0, 0, quadrantCols * World.QUADRANT_WIDTH, quadrantRows * World.QUADRANT_HEIGHT);
 		
 	}
 	
@@ -86,13 +84,13 @@ public class QuadrantMap {
 	
 	public Quadrant findQuadrant(Point p) {
 		
-		if (DMath.greaterThanEquals(p.x / APP.QUADRANT_WIDTH, 0.0) &&
-				DMath.greaterThanEquals(p.y / APP.QUADRANT_HEIGHT, 0.0) &&
-				DMath.lessThanEquals(p.x / APP.QUADRANT_WIDTH, quadrantCols) &&
-				DMath.lessThanEquals(p.y / APP.QUADRANT_HEIGHT, quadrantRows)) {
+		if (DMath.greaterThanEquals(p.x / World.QUADRANT_WIDTH, 0.0) &&
+				DMath.greaterThanEquals(p.y / World.QUADRANT_HEIGHT, 0.0) &&
+				DMath.lessThanEquals(p.x / World.QUADRANT_WIDTH, quadrantCols) &&
+				DMath.lessThanEquals(p.y / World.QUADRANT_HEIGHT, quadrantRows)) {
 			
-			int col = DMath.lessThan(p.x / APP.QUADRANT_WIDTH, quadrantCols) ? (int)Math.floor(p.x / APP.QUADRANT_WIDTH) : quadrantCols-1;
-			int row = DMath.lessThan(p.y / APP.QUADRANT_HEIGHT, quadrantRows) ? (int)Math.floor(p.y / APP.QUADRANT_HEIGHT) : quadrantRows-1;
+			int col = DMath.lessThan(p.x / World.QUADRANT_WIDTH, quadrantCols) ? (int)Math.floor(p.x / World.QUADRANT_WIDTH) : quadrantCols-1;
+			int row = DMath.lessThan(p.y / World.QUADRANT_HEIGHT, quadrantRows) ? (int)Math.floor(p.y / World.QUADRANT_HEIGHT) : quadrantRows-1;
 			return quadrants[row][col];
 			
 		} else {

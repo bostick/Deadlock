@@ -40,6 +40,9 @@ import com.gutabi.deadlock.world.sprites.AnimatedGrass;
 @SuppressWarnings("static-access")
 public class World implements Sweepable {
 	
+	public static final double QUADRANT_WIDTH = 16.0;
+	public static final double QUADRANT_HEIGHT = QUADRANT_WIDTH;
+	
 	public final double worldWidth;
 	public final double worldHeight;
 	
@@ -93,9 +96,9 @@ public class World implements Sweepable {
 		
 		quadrantMap = new QuadrantMap(this, ini);
 		
-		worldWidth = quadrantCols * APP.QUADRANT_WIDTH;
+		worldWidth = quadrantCols * QUADRANT_WIDTH;
 		
-		worldHeight = quadrantRows * APP.QUADRANT_HEIGHT;
+		worldHeight = quadrantRows * QUADRANT_HEIGHT;
 		
 		graph = new Graph(this);
 		
@@ -108,67 +111,12 @@ public class World implements Sweepable {
 		
 		computeAABB();
 		
-//		animatedGrass1 = new AnimatedGrass(new Point(worldWidth/4, worldHeight/4));
-		
-//		animatedGrass2 = new AnimatedGrass(new Point(3*WORLD_WIDTH/4, 2*WORLD_HEIGHT/4));
-//		animatedGrass3 = new AnimatedGrass(new Point(WORLD_WIDTH/4, 3*WORLD_HEIGHT/4));
-//		
-//		WorldSource a = new WorldSource(new Point(WORLD_WIDTH/4, 0), Axis.TOPBOTTOM);
-//		WorldSource b = new WorldSource(new Point(2*WORLD_WIDTH/4, 0), Axis.TOPBOTTOM);
-//		WorldSource t1 = new WorldSource(new Point(3*WORLD_WIDTH/4, 0), Axis.TOPBOTTOM);
-//		
-//		WorldSource c = new WorldSource(new Point(0, WORLD_HEIGHT/4), Axis.LEFTRIGHT);
-//		WorldSource d = new WorldSource(new Point(0, 2*WORLD_HEIGHT/4), Axis.LEFTRIGHT);
-//		WorldSource t2 = new WorldSource(new Point(0, 3*WORLD_HEIGHT/4), Axis.LEFTRIGHT);
-//		
-//		WorldSink e = new WorldSink(new Point(WORLD_WIDTH/4, WORLD_HEIGHT), Axis.TOPBOTTOM);
-//		WorldSink f = new WorldSink(new Point(2*WORLD_WIDTH/4, WORLD_HEIGHT), Axis.TOPBOTTOM);
-//		WorldSink t3 = new WorldSink(new Point(3*WORLD_WIDTH/4, WORLD_HEIGHT), Axis.TOPBOTTOM);
-//		
-//		WorldSink g = new WorldSink(new Point(WORLD_WIDTH, WORLD_HEIGHT/4), Axis.LEFTRIGHT);
-//		WorldSink h = new WorldSink(new Point(WORLD_WIDTH, 2*WORLD_HEIGHT/4), Axis.LEFTRIGHT);
-//		WorldSink t4 = new WorldSink(new Point(WORLD_WIDTH, 3*WORLD_HEIGHT/4), Axis.LEFTRIGHT);
-//		
-//		a.matchingSink = e;
-//		e.matchingSource = a;
-//		
-//		b.matchingSink = f;
-//		f.matchingSource = b;
-//		
-//		t1.matchingSink = t3;
-//		t3.matchingSource = t1;
-//		
-//		c.matchingSink = g;
-//		g.matchingSource = c;
-//		
-//		d.matchingSink = h;
-//		h.matchingSource = d;
-//		
-//		t2.matchingSink = t4;
-//		t4.matchingSource = t2;
-//		
-//		graph.addVertexTop(a);
-//		graph.addVertexTop(b);
-//		graph.addVertexTop(t1);
-//		
-//		graph.addVertexTop(c);
-//		graph.addVertexTop(d);
-//		graph.addVertexTop(t2);
-//		
-//		graph.addVertexTop(e);
-//		graph.addVertexTop(f);
-//		graph.addVertexTop(t3);
-//		
-//		graph.addVertexTop(g);
-//		graph.addVertexTop(h);
-//		graph.addVertexTop(t4);
-		
 	}
 	
 	public void init() {
 		
-		int quadrantWidthPixels = (int)Math.ceil(pixelsPerMeter * APP.QUADRANT_WIDTH);
-		int quadrantHeightPixels = (int)Math.ceil(pixelsPerMeter * APP.QUADRANT_HEIGHT);
+		int quadrantWidthPixels = (int)Math.ceil(pixelsPerMeter * QUADRANT_WIDTH);
+		int quadrantHeightPixels = (int)Math.ceil(pixelsPerMeter * QUADRANT_HEIGHT);
 		
 		quadrantGrass = new BufferedImage(quadrantWidthPixels, quadrantHeightPixels, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D quadrantGrassG2 = quadrantGrass.createGraphics();
@@ -188,8 +136,8 @@ public class World implements Sweepable {
 	
 	public void canvasPostDisplay(Dim dim) {
 		
-		int canvasWidth = (int)dim.width;
-		int canvasHeight = (int)dim.height;
+		canvasWidth = (int)dim.width;
+		canvasHeight = (int)dim.height;
 		
 		canvasGrassImage = new BufferedImage(canvasWidth, canvasHeight, BufferedImage.TYPE_INT_ARGB);
 		canvasGraphImage = new BufferedImage(canvasWidth, canvasHeight, BufferedImage.TYPE_INT_ARGB);

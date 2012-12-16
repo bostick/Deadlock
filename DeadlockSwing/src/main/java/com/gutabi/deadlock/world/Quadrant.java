@@ -34,11 +34,11 @@ public class Quadrant {
 		this.c = c;
 		this.active = active;
 		
-		aabb = new AABB(c * APP.QUADRANT_WIDTH, r * APP.QUADRANT_HEIGHT, APP.QUADRANT_WIDTH, APP.QUADRANT_HEIGHT);
+		aabb = new AABB(c * World.QUADRANT_WIDTH, r * World.QUADRANT_HEIGHT, World.QUADRANT_WIDTH, World.QUADRANT_HEIGHT);
 	}
 	
 	public Point center() {
-		return new Point(c * APP.QUADRANT_WIDTH + APP.QUADRANT_WIDTH/2, r * APP.QUADRANT_HEIGHT + APP.QUADRANT_HEIGHT/2);
+		return new Point(c * World.QUADRANT_WIDTH + World.QUADRANT_WIDTH/2, r * World.QUADRANT_HEIGHT + World.QUADRANT_HEIGHT/2);
 	}
 	
 	public void toggleGrid() {
@@ -88,11 +88,11 @@ public class Quadrant {
 				if (!APP.DEBUG_DRAW) {
 					
 					ctxt.paintImage(
-							c * APP.QUADRANT_WIDTH, r * APP.QUADRANT_HEIGHT, 1 / world.pixelsPerMeter,
+							c * World.QUADRANT_WIDTH, r * World.QUADRANT_HEIGHT, 1 / world.pixelsPerMeter,
 							world.quadrantGrass,
 							0, 0,
-							(int)Math.ceil(world.pixelsPerMeter * APP.QUADRANT_WIDTH),
-							(int)Math.ceil(world.pixelsPerMeter * APP.QUADRANT_HEIGHT),
+							(int)Math.ceil(world.pixelsPerMeter * World.QUADRANT_WIDTH),
+							(int)Math.ceil(world.pixelsPerMeter * World.QUADRANT_HEIGHT),
 							0, 0,
 							world.quadrantGrass.getWidth(),
 							world.quadrantGrass.getHeight());
@@ -107,7 +107,7 @@ public class Quadrant {
 					aabb.draw(ctxt);
 					
 					ctxt.setColor(Color.BLACK);
-					ctxt.paintString(c * APP.QUADRANT_WIDTH, r * APP.QUADRANT_HEIGHT + 1, 1.0 / world.pixelsPerMeter, c + " " + r);
+					ctxt.paintString(c * World.QUADRANT_WIDTH, r * World.QUADRANT_HEIGHT + 1, 1.0 / world.pixelsPerMeter, c + " " + r);
 					
 				}
 				
@@ -116,15 +116,15 @@ public class Quadrant {
 					ctxt.setColor(Color.GRAY);
 					ctxt.setPixelStroke(1);
 					
-					for (double k = 0.0; DMath.lessThanEquals(k, APP.QUADRANT_HEIGHT); k+=gridSpacing) {
-						Point p0 = new Point(c * APP.QUADRANT_WIDTH + 0, r * APP.QUADRANT_HEIGHT + k);
-						Point p1 = new Point(c * APP.QUADRANT_WIDTH + APP.QUADRANT_WIDTH, r * APP.QUADRANT_HEIGHT + k);
+					for (double k = 0.0; DMath.lessThanEquals(k, World.QUADRANT_HEIGHT); k+=gridSpacing) {
+						Point p0 = new Point(c * World.QUADRANT_WIDTH + 0, r * World.QUADRANT_HEIGHT + k);
+						Point p1 = new Point(c * World.QUADRANT_WIDTH + World.QUADRANT_WIDTH, r * World.QUADRANT_HEIGHT + k);
 						Line line = new Line(p0, p1);
 						line.draw(ctxt);
 					}
-					for (double k = 0.0; DMath.lessThanEquals(k, APP.QUADRANT_WIDTH); k+=gridSpacing) {
-						Point p0 = new Point(c * APP.QUADRANT_WIDTH + k, r * APP.QUADRANT_HEIGHT + 0);
-						Point p1 = new Point(c * APP.QUADRANT_WIDTH + k, r * APP.QUADRANT_HEIGHT + APP.QUADRANT_HEIGHT);
+					for (double k = 0.0; DMath.lessThanEquals(k, World.QUADRANT_WIDTH); k+=gridSpacing) {
+						Point p0 = new Point(c * World.QUADRANT_WIDTH + k, r * World.QUADRANT_HEIGHT + 0);
+						Point p1 = new Point(c * World.QUADRANT_WIDTH + k, r * World.QUADRANT_HEIGHT + World.QUADRANT_HEIGHT);
 						Line line = new Line(p0, p1);
 						line.draw(ctxt);
 					}

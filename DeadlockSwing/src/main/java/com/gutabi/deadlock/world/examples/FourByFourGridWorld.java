@@ -1,10 +1,6 @@
 package com.gutabi.deadlock.world.examples;
 
-import static com.gutabi.deadlock.view.DeadlockView.VIEW;
-
-import com.gutabi.deadlock.core.Dim;
 import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.core.geom.AABB;
 import com.gutabi.deadlock.world.Stroke;
 import com.gutabi.deadlock.world.World;
 import com.gutabi.deadlock.world.graph.Axis;
@@ -97,17 +93,6 @@ public class FourByFourGridWorld extends World {
 		}
 		
 		pixelsPerMeter = 12.5;
-		
-	}
-	
-	public void canvasPostDisplay(Dim d) {
-		super.canvasPostDisplay(d);
-		
-		worldViewport = new AABB(
-				-(VIEW.canvas.getWidth() / pixelsPerMeter) / 2 + worldWidth/2 ,
-				-(VIEW.canvas.getHeight() / pixelsPerMeter) / 2 + worldHeight/2,
-				VIEW.canvas.getWidth() / pixelsPerMeter,
-				VIEW.canvas.getHeight() / pixelsPerMeter);
 		
 	}
 	

@@ -6,9 +6,6 @@ public class DeadlockApplication {
 	
 	public URL codebase;
 	
-	public static final double QUADRANT_WIDTH = 16.0;
-	public static final double QUADRANT_HEIGHT = QUADRANT_WIDTH;
-	
 	/**
 	 * move physics forward by dt seconds
 	 */
