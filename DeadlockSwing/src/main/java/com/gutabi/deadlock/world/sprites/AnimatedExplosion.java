@@ -1,6 +1,5 @@
 package com.gutabi.deadlock.world.sprites;
 
-import static com.gutabi.deadlock.DeadlockApplication.APP;
 import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
 import com.gutabi.deadlock.core.Point;
@@ -62,9 +61,9 @@ public class AnimatedExplosion {
 	private void paint(RenderingContext ctxt, int index) {
 		
 		ctxt.paintImage(
-				p.x - explosionWidth/2, p.y - explosionHeight/2, 1/APP.PIXELS_PER_METER,
+				p.x - explosionWidth/2, p.y - explosionHeight/2, 1/world.pixelsPerMeter,
 				VIEW.explosionSheet,
-				0, 0, (int)Math.round(APP.PIXELS_PER_METER * explosionWidth), (int)Math.round(APP.PIXELS_PER_METER * explosionHeight),
+				0, 0, (int)Math.round(world.pixelsPerMeter * explosionWidth), (int)Math.round(world.pixelsPerMeter * explosionHeight),
 				71 * index, 0, 71 * index + 71, 100);
 		
 	}

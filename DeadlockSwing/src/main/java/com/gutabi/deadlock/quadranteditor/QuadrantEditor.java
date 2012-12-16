@@ -21,6 +21,7 @@ import com.gutabi.deadlock.view.RenderingContext;
 import com.gutabi.deadlock.view.RenderingContextType;
 import com.gutabi.deadlock.world.Quadrant;
 import com.gutabi.deadlock.world.World;
+import com.gutabi.deadlock.world.WorldScreen;
 
 //@SuppressWarnings("static-access")
 public class QuadrantEditor extends ScreenBase {
@@ -61,16 +62,12 @@ public class QuadrantEditor extends ScreenBase {
 		
 		double pixelsPerMeterWidth = worldCanvasAABB.width / world.worldWidth;
 		double pixelxPerMeterHeight = worldCanvasAABB.height / world.worldHeight;
-		APP.PIXELS_PER_METER = Math.min(pixelsPerMeterWidth, pixelxPerMeterHeight);
-		world.canvasPostDisplay(new Dim(world.worldWidth * APP.PIXELS_PER_METER, world.worldHeight * APP.PIXELS_PER_METER));
+		world.pixelsPerMeter = Math.min(pixelsPerMeterWidth, pixelxPerMeterHeight);
+		
+		world.canvasPostDisplay(new Dim(world.worldWidth * world.pixelsPerMeter, world.worldHeight * world.pixelsPerMeter));
 		world.worldViewport = new AABB(0, 0, world.worldWidth, world.worldHeight);
 		
-		try {
-			world.init();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		world.init();
 		
 		removeRow = new Button(worldCanvasAABB.center.x - 50/2, worldCanvasAABB.brY + 40 - 50/2, 50, 50) {
 			
@@ -90,16 +87,12 @@ public class QuadrantEditor extends ScreenBase {
 				
 				double pixelsPerMeterWidth = worldCanvasAABB.width / world.worldWidth;
 				double pixelxPerMeterHeight = worldCanvasAABB.height / world.worldHeight;
-				APP.PIXELS_PER_METER = Math.min(pixelsPerMeterWidth, pixelxPerMeterHeight);
-				world.canvasPostDisplay(new Dim(world.worldWidth * APP.PIXELS_PER_METER, world.worldHeight * APP.PIXELS_PER_METER));
+				world.pixelsPerMeter = Math.min(pixelsPerMeterWidth, pixelxPerMeterHeight);
+				
+				world.canvasPostDisplay(new Dim(world.worldWidth * world.pixelsPerMeter, world.worldHeight * world.pixelsPerMeter));
 				world.worldViewport = new AABB(0, 0, world.worldWidth, world.worldHeight);
 				
-				try {
-					world.init();
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				world.init();
 				
 				render();
 				repaint();
@@ -138,16 +131,12 @@ public class QuadrantEditor extends ScreenBase {
 				
 				double pixelsPerMeterWidth = worldCanvasAABB.width / world.worldWidth;
 				double pixelxPerMeterHeight = worldCanvasAABB.height / world.worldHeight;
-				APP.PIXELS_PER_METER = Math.min(pixelsPerMeterWidth, pixelxPerMeterHeight);
-				world.canvasPostDisplay(new Dim(world.worldWidth * APP.PIXELS_PER_METER, world.worldHeight * APP.PIXELS_PER_METER));
+				world.pixelsPerMeter = Math.min(pixelsPerMeterWidth, pixelxPerMeterHeight);
+				
+				world.canvasPostDisplay(new Dim(world.worldWidth * world.pixelsPerMeter, world.worldHeight * world.pixelsPerMeter));
 				world.worldViewport = new AABB(0, 0, world.worldWidth, world.worldHeight);
 				
-				try {
-					world.init();
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				world.init();
 				
 				render();
 				repaint();
@@ -187,16 +176,12 @@ public class QuadrantEditor extends ScreenBase {
 				
 				double pixelsPerMeterWidth = worldCanvasAABB.width / world.worldWidth;
 				double pixelxPerMeterHeight = worldCanvasAABB.height / world.worldHeight;
-				APP.PIXELS_PER_METER = Math.min(pixelsPerMeterWidth, pixelxPerMeterHeight);
-				world.canvasPostDisplay(new Dim(world.worldWidth * APP.PIXELS_PER_METER, world.worldHeight * APP.PIXELS_PER_METER));
+				world.pixelsPerMeter = Math.min(pixelsPerMeterWidth, pixelxPerMeterHeight);
+				
+				world.canvasPostDisplay(new Dim(world.worldWidth * world.pixelsPerMeter, world.worldHeight * world.pixelsPerMeter));
 				world.worldViewport = new AABB(0, 0, world.worldWidth, world.worldHeight);
 				
-				try {
-					world.init();
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				world.init();
 				
 				render();
 				repaint();
@@ -235,16 +220,12 @@ public class QuadrantEditor extends ScreenBase {
 				
 				double pixelsPerMeterWidth = worldCanvasAABB.width / world.worldWidth;
 				double pixelxPerMeterHeight = worldCanvasAABB.height / world.worldHeight;
-				APP.PIXELS_PER_METER = Math.min(pixelsPerMeterWidth, pixelxPerMeterHeight);
-				world.canvasPostDisplay(new Dim(world.worldWidth * APP.PIXELS_PER_METER, world.worldHeight * APP.PIXELS_PER_METER));
+				world.pixelsPerMeter = Math.min(pixelsPerMeterWidth, pixelxPerMeterHeight);
+				
+				world.canvasPostDisplay(new Dim(world.worldWidth * world.pixelsPerMeter, world.worldHeight * world.pixelsPerMeter));
 				world.worldViewport = new AABB(0, 0, world.worldWidth, world.worldHeight);
 				
-				try {
-					world.init();
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				world.init();
 				
 				render();
 				repaint();
@@ -285,16 +266,12 @@ public class QuadrantEditor extends ScreenBase {
 				
 				double pixelsPerMeterWidth = worldCanvasAABB.width / world.worldWidth;
 				double pixelxPerMeterHeight = worldCanvasAABB.height / world.worldHeight;
-				APP.PIXELS_PER_METER = Math.min(pixelsPerMeterWidth, pixelxPerMeterHeight);
-				world.canvasPostDisplay(new Dim(world.worldWidth * APP.PIXELS_PER_METER, world.worldHeight * APP.PIXELS_PER_METER));
+				world.pixelsPerMeter = Math.min(pixelsPerMeterWidth, pixelxPerMeterHeight);
+				
+				world.canvasPostDisplay(new Dim(world.worldWidth * world.pixelsPerMeter, world.worldHeight * world.pixelsPerMeter));
 				world.worldViewport = new AABB(0, 0, world.worldWidth, world.worldHeight);
 				
-				try {
-					world.init();
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				world.init();
 				
 				render();
 				repaint();
@@ -334,16 +311,12 @@ public class QuadrantEditor extends ScreenBase {
 				
 				double pixelsPerMeterWidth = worldCanvasAABB.width / world.worldWidth;
 				double pixelxPerMeterHeight = worldCanvasAABB.height / world.worldHeight;
-				APP.PIXELS_PER_METER = Math.min(pixelsPerMeterWidth, pixelxPerMeterHeight);
-				world.canvasPostDisplay(new Dim(world.worldWidth * APP.PIXELS_PER_METER, world.worldHeight * APP.PIXELS_PER_METER));
+				world.pixelsPerMeter = Math.min(pixelsPerMeterWidth, pixelxPerMeterHeight);
+				
+				world.canvasPostDisplay(new Dim(world.worldWidth * world.pixelsPerMeter, world.worldHeight * world.pixelsPerMeter));
 				world.worldViewport = new AABB(0, 0, world.worldWidth, world.worldHeight);
 				
-				try {
-					world.init();
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				world.init();
 				
 				render();
 				repaint();
@@ -371,18 +344,14 @@ public class QuadrantEditor extends ScreenBase {
 				
 				VIEW.teardownCanvas(VIEW.container);
 				
-				APP.PIXELS_PER_METER = 32.0;
-				APP.screen = new World(ini);
-				try {
-					APP.screen.init();
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				WorldScreen s = new WorldScreen();
+				s.world = new World(ini);
+				s.init();
+				
+				APP.screen = s;
 				
 				VIEW.setupCanvasAndControlPanel(VIEW.container);
 				((JFrame)VIEW.container).setVisible(true);
-				VIEW.canvas.requestFocusInWindow();
 				
 				VIEW.canvas.canvasPostDisplay();
 				
@@ -399,7 +368,7 @@ public class QuadrantEditor extends ScreenBase {
 		
 	}
 	
-	public void init() throws Exception {
+	public void init() {
 		
 	}
 	
@@ -438,19 +407,11 @@ public class QuadrantEditor extends ScreenBase {
 	
 	public void escKey(InputEvent ev) {
 		
-		try {
-			
-			APP.PIXELS_PER_METER = 1.0;
-			APP.screen = new MainMenu();
-			APP.screen.init();
-			
-			APP.screen.render();
-			APP.screen.repaint();
-			
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		APP.screen = new MainMenu();
+		APP.screen.init();
+		
+		APP.screen.render();
+		APP.screen.repaint();
 		
 	}
 	
@@ -523,16 +484,12 @@ public class QuadrantEditor extends ScreenBase {
 				
 				double pixelsPerMeterWidth = worldCanvasAABB.width / world.worldWidth;
 				double pixelsPerMeterHeight = worldCanvasAABB.height / world.worldHeight;
-				APP.PIXELS_PER_METER = Math.min(pixelsPerMeterWidth, pixelsPerMeterHeight);
-				world.canvasPostDisplay(new Dim(world.worldWidth * APP.PIXELS_PER_METER, world.worldHeight * APP.PIXELS_PER_METER));
+				world.pixelsPerMeter = Math.min(pixelsPerMeterWidth, pixelsPerMeterHeight);
+				
+				world.canvasPostDisplay(new Dim(world.worldWidth * world.pixelsPerMeter, world.worldHeight * world.pixelsPerMeter));
 				world.worldViewport = new AABB(0, 0, world.worldWidth, world.worldHeight);
 				
-				try {
-					world.init();
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				world.init();
 				
 				render();
 				repaint();
@@ -596,7 +553,7 @@ public class QuadrantEditor extends ScreenBase {
 		
 		AffineTransform origTrans = ctxt.getTransform();
 		ctxt.translate(worldCanvasAABB.center.x - world.canvasWidth/2, worldCanvasAABB.center.y - world.canvasHeight/2);
-		ctxt.scale(APP.PIXELS_PER_METER);
+		ctxt.scale(world.pixelsPerMeter);
 		ctxt.translate(-world.worldViewport.x, -world.worldViewport.y);
 		world.paintWorld(ctxt);
 		ctxt.setTransform(origTrans);

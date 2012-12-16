@@ -1,7 +1,5 @@
 package com.gutabi.deadlock.world.cursor;
 
-import static com.gutabi.deadlock.DeadlockApplication.APP;
-
 import java.awt.Color;
 
 import com.gutabi.deadlock.core.Point;
@@ -24,7 +22,7 @@ public abstract class Knob {
 	}
 	
 	private AABB aabb() {
-		double pixel = 1/APP.PIXELS_PER_METER;
+		double pixel = 1/world.pixelsPerMeter;
 		return new AABB(p.x + -3 * pixel, p.y + -3 * pixel, 7 * pixel, 7 * pixel);
 	}
 	

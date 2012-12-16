@@ -1,7 +1,5 @@
 package com.gutabi.deadlock.world.graph;
 
-import static com.gutabi.deadlock.DeadlockApplication.APP;
-
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
@@ -244,7 +242,7 @@ public abstract class Vertex extends Entity {
 		
 		ctxt.setColor(Color.WHITE);
 		
-		ctxt.paintString(p.x-r, p.y, 1.0 / APP.PIXELS_PER_METER, id + " " + driverQueue.size());
+		ctxt.paintString(p.x-r, p.y, 1.0 / world.pixelsPerMeter, id + " " + driverQueue.size());
 	}
 	
 	public void check() {

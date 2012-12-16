@@ -8,7 +8,7 @@ import com.gutabi.deadlock.core.geom.Shape;
 import com.gutabi.deadlock.view.InputEvent;
 import com.gutabi.deadlock.view.RenderingContext;
 import com.gutabi.deadlock.world.Stroke;
-import com.gutabi.deadlock.world.World;
+import com.gutabi.deadlock.world.WorldScreen;
 import com.gutabi.deadlock.world.graph.Vertex;
 
 public class QuadCursor extends CursorBase {
@@ -32,26 +32,26 @@ public class QuadCursor extends CursorBase {
 	
 	Knob knob;
 	
-	public QuadCursor(final World world) {
-		super(world);
+	public QuadCursor(final WorldScreen screen) {
+		super(screen);
 		
 		mode = QuadCursorMode.FREE;
 		
-		startKnob = new Knob(world) {
+		startKnob = new Knob(screen.world) {
 			public void drag(Point p) {
 				Point newPoint = world.quadrantMap.getPoint(p);
 				QuadCursor.this.setStart(newPoint);
 			}
 		};
 		
-		controlKnob = new Knob(world) {
+		controlKnob = new Knob(screen.world) {
 			public void drag(Point p) {
 				Point newPoint = world.quadrantMap.getPoint(p);
 				QuadCursor.this.setControl(newPoint);
 			}
 		};
 		
-		endKnob = new Knob(world) {
+		endKnob = new Knob(screen.world) {
 			public void drag(Point p) {
 				Point newPoint = world.quadrantMap.getPoint(p);
 				QuadCursor.this.setEnd(newPoint);
@@ -113,14 +113,14 @@ public class QuadCursor extends CursorBase {
 	public void escKey(InputEvent ev) {
 		switch (mode) {
 		case FREE:
-			world.cursor = new RegularCursor(world);
-			world.cursor.setPoint(world.quadrantMap.getPoint(world.lastMovedOrDraggedWorldPoint));
-			world.repaint();
+			screen.cursor = new RegularCursor(screen);
+			screen.cursor.setPoint(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
+			screen.repaint();
 			break;
 		case SET:
 			mode = QuadCursorMode.FREE;
-			world.cursor.setPoint(world.quadrantMap.getPoint(world.lastMovedOrDraggedWorldPoint));
-			world.repaint();
+			screen.cursor.setPoint(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
+			screen.repaint();
 			break;
 		case KNOB:
 			assert false;
@@ -132,12 +132,12 @@ public class QuadCursor extends CursorBase {
 		switch (mode) {
 		case FREE:
 			mode = QuadCursorMode.SET;
-			world.repaint();
+			screen.repaint();
 			break;
 		case SET:
 			
 			List<Point> pts = shape.skeleton;
-			Stroke s = new Stroke(world);
+			Stroke s = new Stroke(screen.world);
 			for (Point p : pts) {
 				s.add(p);
 			}
@@ -145,12 +145,12 @@ public class QuadCursor extends CursorBase {
 			
 			s.processNewStroke();
 			
-			world.cursor = new RegularCursor(world);
+			screen.cursor = new RegularCursor(screen);
 			
-			world.cursor.setPoint(world.lastMovedOrDraggedWorldPoint);
+			screen.cursor.setPoint(screen.lastMovedOrDraggedWorldPoint);
 			
-			world.render();
-			world.repaint();
+			screen.render();
+			screen.repaint();
 			break;
 		case KNOB:
 			assert false;
@@ -161,8 +161,8 @@ public class QuadCursor extends CursorBase {
 	public void moved(InputEvent ev) {
 		switch (mode) {
 		case FREE:
-			world.cursor.setPoint(world.quadrantMap.getPoint(world.lastMovedOrDraggedWorldPoint));
-			world.repaint();
+			screen.cursor.setPoint(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
+			screen.repaint();
 			break;
 		case SET:
 		case KNOB:
@@ -178,7 +178,7 @@ public class QuadCursor extends CursorBase {
 			break;
 		case KNOB:
 			mode = QuadCursorMode.SET;
-			world.repaint();
+			screen.repaint();
 			break;
 		}
 	}
@@ -189,35 +189,35 @@ public class QuadCursor extends CursorBase {
 		
 		switch (mode) {
 		case FREE:
-			setPoint(world.lastDraggedWorldPoint);
+			setPoint(screen.lastDraggedWorldPoint);
 			break;
 		case SET:
-			if (!world.lastDraggedWorldPointWasNull) {
+			if (!screen.lastDraggedWorldPointWasNull) {
 				break;
 			}
-			if (!(startKnob.hitTest(world.lastPressedWorldPoint) ||
-					controlKnob.hitTest(world.lastPressedWorldPoint) ||
-					endKnob.hitTest(world.lastPressedWorldPoint))) {
+			if (!(startKnob.hitTest(screen.lastPressedWorldPoint) ||
+					controlKnob.hitTest(screen.lastPressedWorldPoint) ||
+					endKnob.hitTest(screen.lastPressedWorldPoint))) {
 				break;
 			}
 			
-			if (startKnob.hitTest(world.lastPressedWorldPoint)) {
+			if (startKnob.hitTest(screen.lastPressedWorldPoint)) {
 				mode = QuadCursorMode.KNOB;
 				knob = startKnob;
 				origKnobCenter = knob.p;
-			} else if (controlKnob.hitTest(world.lastPressedWorldPoint)) {
+			} else if (controlKnob.hitTest(screen.lastPressedWorldPoint)) {
 				mode = QuadCursorMode.KNOB;
 				knob = controlKnob;
 				origKnobCenter = knob.p;
-			} else if (endKnob.hitTest(world.lastPressedWorldPoint)) {
+			} else if (endKnob.hitTest(screen.lastPressedWorldPoint)) {
 				mode = QuadCursorMode.KNOB;
 				knob = endKnob;
 				origKnobCenter = knob.p;
 			}
 		case KNOB:
-			Point diff = new Point(world.lastDraggedWorldPoint.x - world.lastPressedWorldPoint.x, world.lastDraggedWorldPoint.y - world.lastPressedWorldPoint.y);
+			Point diff = new Point(screen.lastDraggedWorldPoint.x - screen.lastPressedWorldPoint.x, screen.lastDraggedWorldPoint.y - screen.lastPressedWorldPoint.y);
 			knob.drag(origKnobCenter.plus(diff));
-			world.repaint();
+			screen.repaint();
 			break;
 		}
 	}

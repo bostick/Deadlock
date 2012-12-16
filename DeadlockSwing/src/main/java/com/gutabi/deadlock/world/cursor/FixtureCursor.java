@@ -9,7 +9,7 @@ import com.gutabi.deadlock.core.geom.Shape;
 import com.gutabi.deadlock.view.InputEvent;
 import com.gutabi.deadlock.view.RenderingContext;
 import com.gutabi.deadlock.world.Quadrant;
-import com.gutabi.deadlock.world.World;
+import com.gutabi.deadlock.world.WorldScreen;
 import com.gutabi.deadlock.world.graph.Axis;
 import com.gutabi.deadlock.world.graph.Fixture;
 import com.gutabi.deadlock.world.graph.FixtureType;
@@ -31,15 +31,15 @@ public class FixtureCursor extends CursorBase {
 	
 	private FixtureCursorShape shape;
 	
-	public FixtureCursor(World world) {
-		super(world);
+	public FixtureCursor(WorldScreen screen) {
+		super(screen);
 	}
 	
 	public void setPoint(Point p) {
 		this.p = p;
 		
 		if (p != null) {
-			currentQuadrant = world.quadrantMap.findQuadrant(p);
+			currentQuadrant = screen.world.quadrantMap.findQuadrant(p);
 			
 			if (currentQuadrant == null) {
 				shape = null;
@@ -53,16 +53,16 @@ public class FixtureCursor extends CursorBase {
 				return;
 			}
 			
-			top = world.quadrantMap.upFixPoint(currentQuadrant);
+			top = screen.world.quadrantMap.upFixPoint(currentQuadrant);
 			Point topCenter = top.center();
 			
-			bottom = world.quadrantMap.downFixPoint(currentQuadrant);
+			bottom = screen.world.quadrantMap.downFixPoint(currentQuadrant);
 			Point bottomCenter = bottom.center();
 			
-			left = world.quadrantMap.leftFixPoint(currentQuadrant);
+			left = screen.world.quadrantMap.leftFixPoint(currentQuadrant);
 			Point leftCenter = left.center();
 			
-			right = world.quadrantMap.rightFixPoint(currentQuadrant);
+			right = screen.world.quadrantMap.rightFixPoint(currentQuadrant);
 			Point rightCenter = right.center();
 			
 			double distToTop = Math.abs(p.y - (topCenter.y - APP.QUADRANT_HEIGHT/2));
@@ -126,19 +126,19 @@ public class FixtureCursor extends CursorBase {
 	
 	public void escKey(InputEvent ev) {
 		
-		world.cursor = new RegularCursor(world);
+		screen.cursor = new RegularCursor(screen);
 		
-		world.cursor.setPoint(world.quadrantMap.getPoint(world.lastMovedOrDraggedWorldPoint));
+		screen.cursor.setPoint(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
 		
-		world.repaint();
+		screen.repaint();
 	}
 	
 	public void wKey(InputEvent ev) {
 		
-		if (world.graph.pureGraphBestHitTest(shape) == null) {
+		if (screen.world.graph.pureGraphBestHitTest(shape) == null) {
 			
-			Fixture source = new Fixture(world, getSourcePoint(), axis);
-			Fixture sink = new Fixture(world, getSinkPoint(), axis);
+			Fixture source = new Fixture(screen.world, getSourcePoint(), axis);
+			Fixture sink = new Fixture(screen.world, getSinkPoint(), axis);
 			
 			source.setType(FixtureType.SOURCE);
 			sink.setType(FixtureType.SINK);
@@ -157,26 +157,26 @@ public class FixtureCursor extends CursorBase {
 				break;
 			}
 			
-			world.addVertexTop(source);
+			screen.world.addVertexTop(source);
 			
-			world.addVertexTop(sink);
+			screen.world.addVertexTop(sink);
 			
-			world.cursor = new RegularCursor(world);
-			world.cursor.setPoint(world.lastMovedWorldPoint);
+			screen.cursor = new RegularCursor(screen);
+			screen.cursor.setPoint(screen.lastMovedWorldPoint);
 			
-			world.render();
-			world.repaint();		
+			screen.render();
+			screen.repaint();		
 		}
 	}
 	
 	public void moved(InputEvent ev) {
-		world.cursor.setPoint(world.quadrantMap.getPoint(world.lastMovedOrDraggedWorldPoint));
-		world.repaint();
+		screen.cursor.setPoint(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
+		screen.repaint();
 	}
 	
 	public void exited(InputEvent ev) {
-		world.cursor.setPoint(null);
-		world.repaint();
+		screen.cursor.setPoint(null);
+		screen.repaint();
 	}
 	
 	public void draw(RenderingContext ctxt) {

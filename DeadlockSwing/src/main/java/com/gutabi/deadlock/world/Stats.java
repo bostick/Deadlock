@@ -1,7 +1,5 @@
 package com.gutabi.deadlock.world;
 
-import static com.gutabi.deadlock.DeadlockApplication.APP;
-
 import java.awt.Color;
 import java.awt.geom.AffineTransform;
 
@@ -45,7 +43,7 @@ public class Stats {
 			lastTime = curTime;
 		}
 		
-		ctxt.paintString(0, 0, 1.0 / APP.PIXELS_PER_METER, "FPS: " + fps);
+		ctxt.paintString(0, 0, 1.0 / world.pixelsPerMeter, "FPS: " + fps);
 		
 		ctxt.translate(0, 1);
 		

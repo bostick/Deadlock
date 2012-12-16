@@ -33,7 +33,7 @@ public class PreviewPanel extends ComponentBase {
 		c.setSize(new Dimension(Preview.PREVIEW_WIDTH, Preview.PREVIEW_HEIGHT));
 		c.setPreferredSize(new Dimension(Preview.PREVIEW_WIDTH, Preview.PREVIEW_HEIGHT));
 		c.setMaximumSize(new Dimension(Preview.PREVIEW_WIDTH, Preview.PREVIEW_HEIGHT));
-		c.setFocusable(true);
+		
 		JavaListener jl = new JavaListener();
 		c.addMouseListener(jl);
 		c.addMouseMotionListener(jl);
@@ -139,8 +139,6 @@ public class PreviewPanel extends ComponentBase {
 	
 	public void pressed(InputEvent ev) {
 		
-		c.requestFocusInWindow();
-		
 		Point p = ev.p;
 		
 		lastPressPreviewPoint = p;
@@ -153,8 +151,6 @@ public class PreviewPanel extends ComponentBase {
 	
 	public void dragged(InputEvent ev) {
 		
-		c.requestFocusInWindow();
-		
 		Point p = ev.p;
 		
 		penDragPreviewPoint = lastDragPreviewPoint;
@@ -162,74 +158,6 @@ public class PreviewPanel extends ComponentBase {
 		lastDragTime = System.currentTimeMillis();
 		
 		APP.screen.dragged(ev);
-	}
-	
-	public void qKey(InputEvent ev) {
-		APP.screen.qKey(ev);
-	}
-	
-	public void wKey(InputEvent ev) {
-		APP.screen.wKey(ev);
-	}
-	
-	public void gKey(InputEvent ev) {
-		APP.screen.gKey(ev);
-	}
-	
-	public void deleteKey(InputEvent ev) {
-		APP.screen.deleteKey(ev);
-	}
-	
-	public void insertKey(InputEvent ev) {
-		APP.screen.insertKey(ev);
-	}
-	
-	public void escKey(InputEvent ev) {
-		APP.screen.escKey(ev);
-	}
-	
-	public void d1Key(InputEvent ev) {
-		APP.screen.d1Key(ev);
-	}
-	
-	public void d2Key(InputEvent ev) {
-		APP.screen.d2Key(ev);
-	}
-	
-	public void d3Key(InputEvent ev) {
-		APP.screen.d3Key(ev);
-	}
-	
-	public void plusKey(InputEvent ev) {
-		APP.screen.plusKey(ev);
-	}
-	
-	public void minusKey(InputEvent ev) {
-		APP.screen.minusKey(ev);
-	}
-	
-	public void downKey(InputEvent ev) {
-		APP.screen.downKey(ev);
-	}
-
-	public void upKey(InputEvent ev) {
-		APP.screen.upKey(ev);
-	}
-	
-	public void enterKey(InputEvent ev) {
-		APP.screen.enterKey(ev);
-	}
-	
-	public void aKey(InputEvent ev) {
-		APP.screen.aKey(ev);
-	}
-	
-	public void sKey(InputEvent ev) {
-		APP.screen.sKey(ev);
-	}
-	
-	public void dKey(InputEvent ev) {
-		APP.screen.dKey(ev);
 	}
 
 }

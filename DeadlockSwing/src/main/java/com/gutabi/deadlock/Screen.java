@@ -8,7 +8,7 @@ import com.gutabi.deadlock.view.PaintEvent;
 
 public abstract class Screen implements ActionListener {
 	
-	public abstract void init() throws Exception;
+	public abstract void init();
 	
 	public abstract void canvasPostDisplay(Dim dim);
 	
@@ -55,6 +55,9 @@ public abstract class Screen implements ActionListener {
 	public abstract void sKey(InputEvent ev);
 	
 	public abstract void dKey(InputEvent ev);
+	
+	public abstract void ctrlSKey(InputEvent ev);
+	
 	
 	public abstract void pressed(InputEvent ev);
 	

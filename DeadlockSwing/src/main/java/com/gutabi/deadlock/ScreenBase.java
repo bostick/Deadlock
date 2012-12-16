@@ -75,6 +75,11 @@ public abstract class ScreenBase extends Screen {
 		
 	}
 	
+	public void ctrlSKey(InputEvent ev) {
+		
+	}
+	
+	
 	public void pressed(InputEvent ev) {
 		
 	}

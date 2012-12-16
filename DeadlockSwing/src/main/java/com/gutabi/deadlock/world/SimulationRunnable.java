@@ -4,17 +4,17 @@ import static com.gutabi.deadlock.DeadlockApplication.APP;
 
 import org.apache.log4j.Logger;
 
-import com.gutabi.deadlock.world.World.WorldMode;
+import com.gutabi.deadlock.world.WorldScreen.WorldScreenMode;
 
 @SuppressWarnings("static-access")
 public class SimulationRunnable implements Runnable {
 	
-	World world;
+	WorldScreen screen;
 	
 	static Logger logger = Logger.getLogger(SimulationRunnable.class);
 	
-	public SimulationRunnable(World world) {
-		this.world = world;
+	public SimulationRunnable(WorldScreen screen) {
+		this.screen = screen;
 	}
 	
 	public void run() {
@@ -25,17 +25,17 @@ public class SimulationRunnable implements Runnable {
 		long currentTimeMillis = System.currentTimeMillis();
 		long newTimeMillis = System.currentTimeMillis();
 		
-		world.preStart();
+		screen.world.preStart();
 		
 		outer:
 		while (true) {
 			
-			if (world.mode == WorldMode.EDITING) {
+			if (screen.mode == WorldScreenMode.EDITING) {
 				break outer;
-			} else if (world.mode == WorldMode.PAUSED) {
-				synchronized (world.pauseLock) {
+			} else if (screen.mode == WorldScreenMode.PAUSED) {
+				synchronized (screen.pauseLock) {
 					try {
-						world.pauseLock.wait();
+						screen.pauseLock.wait();
 					} catch (InterruptedException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -62,20 +62,19 @@ public class SimulationRunnable implements Runnable {
 			
 			while (accumulator >= APP.dt) {
 				
-				world.integrate(t);
+				screen.world.integrate(t);
 				
 				accumulator -= APP.dt;
 				t += APP.dt;
 			}
 			
-			world.repaint();
+			screen.repaint();
 			
 		} // outer
 		
-		world.postStop();
+		screen.world.postStop();
 		
-		world.repaint();
-		
+		screen.repaint();
 	}
 	
 }

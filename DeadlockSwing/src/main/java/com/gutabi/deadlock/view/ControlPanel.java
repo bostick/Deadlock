@@ -52,6 +52,7 @@ public class ControlPanel extends JPanel {
 		verticalBox.add(hBox);
 		
 		normalCarButton = new JCheckBox("Normal Cars");
+		normalCarButton.setFocusable(false);
 		normalCarButton.setSelected(true);
 		hBox = Box.createHorizontalBox();
 		hBox.add(normalCarButton);
@@ -59,6 +60,7 @@ public class ControlPanel extends JPanel {
 		verticalBox.add(hBox);
 		
 		fastCarButton = new JCheckBox("Fast Cars");
+		fastCarButton.setFocusable(false);
 		fastCarButton.setSelected(true);
 		hBox = Box.createHorizontalBox();
 		hBox.add(fastCarButton);
@@ -73,6 +75,7 @@ public class ControlPanel extends JPanel {
 //		verticalBox.add(hBox);
 		
 		reallyFastCarButton = new JCheckBox("Really Fast Cars");
+		reallyFastCarButton.setFocusable(false);
 		reallyFastCarButton.setSelected(true);
 		hBox = Box.createHorizontalBox();
 		hBox.add(reallyFastCarButton);
@@ -80,12 +83,16 @@ public class ControlPanel extends JPanel {
 		verticalBox.add(hBox);
 		
 		startButton = new JButton("Start");
+		startButton.setFocusable(false);
 		startButton.setActionCommand("start");
 		startButton.addActionListener(APP.screen);
+		
 		stopButton = new JButton("Stop");
+		stopButton.setFocusable(false);
 		stopButton.setActionCommand("stop");
 		stopButton.addActionListener(APP.screen);
 		stopButton.setEnabled(false);
+		
 		hBox = Box.createHorizontalBox();
 		hBox.add(startButton);
 		hBox.add(stopButton);
@@ -99,6 +106,7 @@ public class ControlPanel extends JPanel {
 		verticalBox.add(hBox);
 		
 		fpsCheckBox = new JCheckBox("fps draw");
+		fpsCheckBox.setFocusable(false);
 		fpsCheckBox.setSelected(APP.FPS_DRAW);
 		fpsCheckBox.setActionCommand("fpsDraw");
 		fpsCheckBox.addActionListener(APP.screen);
@@ -108,6 +116,7 @@ public class ControlPanel extends JPanel {
 		verticalBox.add(hBox);
 		
 		stopSignCheckBox = new JCheckBox("draw stop signs");
+		stopSignCheckBox.setFocusable(false);
 		stopSignCheckBox.setSelected(APP.STOPSIGN_DRAW);
 		stopSignCheckBox.setActionCommand("stopSignDraw");
 		stopSignCheckBox.addActionListener(APP.screen);
@@ -117,6 +126,7 @@ public class ControlPanel extends JPanel {
 		verticalBox.add(hBox);
 		
 		carTextureCheckBox = new JCheckBox("draw car textures");
+		carTextureCheckBox.setFocusable(false);
 		carTextureCheckBox.setSelected(APP.CARTEXTURE_DRAW);
 		carTextureCheckBox.setActionCommand("carTextureDraw");
 		carTextureCheckBox.addActionListener(APP.screen);
@@ -126,6 +136,7 @@ public class ControlPanel extends JPanel {
 		verticalBox.add(hBox);
 		
 		explosionsCheckBox = new JCheckBox("draw explosions");
+		explosionsCheckBox.setFocusable(false);
 		explosionsCheckBox.setSelected(APP.EXPLOSIONS_DRAW);
 		explosionsCheckBox.setActionCommand("explosionsDraw");
 		explosionsCheckBox.addActionListener(APP.screen);
@@ -135,6 +146,7 @@ public class ControlPanel extends JPanel {
 		verticalBox.add(hBox);
 		
 		debugCheckBox = new JCheckBox("debug draw");
+		debugCheckBox.setFocusable(false);
 		debugCheckBox.setSelected(APP.DEBUG_DRAW);
 		debugCheckBox.setActionCommand("debugDraw");
 		debugCheckBox.addActionListener(APP.screen);
@@ -144,6 +156,7 @@ public class ControlPanel extends JPanel {
 		verticalBox.add(hBox);
 		
 		dtField = new JTextField();
+		dtField.setFocusable(false);
 		dtField.setText(Double.toString(APP.dt));
 		dtField.setMaximumSize(new Dimension(10000, 100));
 		dtField.setActionCommand("dt");

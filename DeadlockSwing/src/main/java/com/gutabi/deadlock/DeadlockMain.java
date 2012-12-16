@@ -30,7 +30,6 @@ static Logger logger = Logger.getLogger("deadlock");
 		VIEW.init();
 		
 		((JFrame)VIEW.container).setVisible(true);
-		VIEW.canvas.requestFocusInWindow();
 		
 		VIEW.canvas.canvasPostDisplay();
 		

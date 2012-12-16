@@ -1,6 +1,5 @@
 package com.gutabi.deadlock.world.examples;
 
-import static com.gutabi.deadlock.DeadlockApplication.APP;
 import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
 import com.gutabi.deadlock.core.Dim;
@@ -24,7 +23,7 @@ public class FourByFourGridWorld extends World {
 			});
 	}
 	
-	public void init() throws Exception {
+	public void init() {
 		super.init();
 		
 		for (int i = 1; i < 16; i++) {
@@ -97,7 +96,7 @@ public class FourByFourGridWorld extends World {
 			
 		}
 		
-		APP.PIXELS_PER_METER = 12.5;
+		pixelsPerMeter = 12.5;
 		
 	}
 	
@@ -105,10 +104,10 @@ public class FourByFourGridWorld extends World {
 		super.canvasPostDisplay(d);
 		
 		worldViewport = new AABB(
-				-(VIEW.canvas.getWidth() / APP.PIXELS_PER_METER) / 2 + worldWidth/2 ,
-				-(VIEW.canvas.getHeight() / APP.PIXELS_PER_METER) / 2 + worldHeight/2,
-				VIEW.canvas.getWidth() / APP.PIXELS_PER_METER,
-				VIEW.canvas.getHeight() / APP.PIXELS_PER_METER);
+				-(VIEW.canvas.getWidth() / pixelsPerMeter) / 2 + worldWidth/2 ,
+				-(VIEW.canvas.getHeight() / pixelsPerMeter) / 2 + worldHeight/2,
+				VIEW.canvas.getWidth() / pixelsPerMeter,
+				VIEW.canvas.getHeight() / pixelsPerMeter);
 		
 	}
 	

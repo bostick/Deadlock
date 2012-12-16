@@ -424,6 +424,7 @@ public class Stroke {
 			SweepEvent e = events.get(i);
 			
 			if (e.type == SweepEventType.ENTERVERTEX || e.type == SweepEventType.EXITVERTEX) {
+				assert e.still.parent != null;
 				e.setVertex((Vertex)e.still.parent);
 			} else {
 				assert false;

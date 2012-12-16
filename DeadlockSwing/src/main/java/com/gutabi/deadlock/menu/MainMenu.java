@@ -22,6 +22,7 @@ import com.gutabi.deadlock.view.InputEvent;
 import com.gutabi.deadlock.view.PaintEvent;
 import com.gutabi.deadlock.view.RenderingContext;
 import com.gutabi.deadlock.view.RenderingContextType;
+import com.gutabi.deadlock.world.WorldScreen;
 import com.gutabi.deadlock.world.examples.FourByFourGridWorld;
 import com.gutabi.deadlock.world.examples.OneByOneWorld;
 import com.gutabi.deadlock.world.examples.WorldA;
@@ -49,27 +50,21 @@ public class MainMenu extends ScreenBase {
 		MenuItem oneMenuItem = new MenuItem(MainMenu.this,"1x1 Demo") {
 			public void action() {
 				
-				try {
-					
-					VIEW.teardownCanvas(VIEW.container);
-					
-					APP.PIXELS_PER_METER = 32.0;
-					APP.screen = new OneByOneWorld();
-					APP.screen.init();
-					
-					VIEW.setupCanvasAndControlPanel(VIEW.container);
-					((JFrame)VIEW.container).setVisible(true);
-					VIEW.canvas.requestFocusInWindow();
-					
-					VIEW.canvas.canvasPostDisplay();
-					
-					APP.screen.render();
-					APP.screen.repaint();
-					
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				VIEW.teardownCanvas(VIEW.container);
+				
+				WorldScreen s = new WorldScreen();
+				s.world = new OneByOneWorld();
+				s.init();
+				
+				APP.screen = s;
+				
+				VIEW.setupCanvasAndControlPanel(VIEW.container);
+				((JFrame)VIEW.container).setVisible(true);
+				
+				VIEW.canvas.canvasPostDisplay();
+				
+				APP.screen.render();
+				APP.screen.repaint();
 				
 			}
 		};
@@ -78,28 +73,21 @@ public class MainMenu extends ScreenBase {
 		MenuItem fourMenuItem = new MenuItem(MainMenu.this, "4x4 Grid Demo") {
 			public void action() {
 				
-				try {
-					
-					VIEW.teardownCanvas(VIEW.container);
-					
-					APP.PIXELS_PER_METER = 32.0;
-					APP.screen = new FourByFourGridWorld();
-					APP.screen.init();
-					
-					VIEW.setupCanvasAndControlPanel(VIEW.container);
-					
-					((JFrame)VIEW.container).setVisible(true);
-					VIEW.canvas.requestFocusInWindow();
-					
-					VIEW.canvas.canvasPostDisplay();
-					
-					APP.screen.render();
-					APP.screen.repaint();
-					
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				VIEW.teardownCanvas(VIEW.container);
+				
+				WorldScreen s = new WorldScreen();
+				s.world = new FourByFourGridWorld();
+				s.init();
+				
+				APP.screen = s;
+				
+				VIEW.setupCanvasAndControlPanel(VIEW.container);
+				((JFrame)VIEW.container).setVisible(true);
+				
+				VIEW.canvas.canvasPostDisplay();
+				
+				APP.screen.render();
+				APP.screen.repaint();
 				
 			}
 		};
@@ -108,28 +96,22 @@ public class MainMenu extends ScreenBase {
 		MenuItem aMenuItem = new MenuItem(MainMenu.this, "World A Demo") {
 			public void action() {
 				
-				try {
-					
-					APP.PIXELS_PER_METER = 32.0;
-					APP.screen = new WorldA();
-					APP.screen.init();
-					
-					VIEW.teardownCanvas(VIEW.container);
-					
-					VIEW.setupCanvasAndControlPanel(VIEW.container);
-					
-					((JFrame)VIEW.container).setVisible(true);
-					VIEW.canvas.requestFocusInWindow();
-					
-					VIEW.canvas.canvasPostDisplay();
-					
-					APP.screen.render();
-					APP.screen.repaint();
-					
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				VIEW.teardownCanvas(VIEW.container);
+				
+				WorldScreen s = new WorldScreen();
+				s.world = new WorldA();
+				s.init();
+				
+				APP.screen = s;
+				
+				VIEW.setupCanvasAndControlPanel(VIEW.container);
+				
+				((JFrame)VIEW.container).setVisible(true);
+				
+				VIEW.canvas.canvasPostDisplay();
+				
+				APP.screen.render();
+				APP.screen.repaint();
 				
 			}
 		};
@@ -138,19 +120,11 @@ public class MainMenu extends ScreenBase {
 		MenuItem dialogMenuItem = new MenuItem(MainMenu.this,  "Quadrant Editor...") {
 			public void action() {
 				
-				try {
-					
-					APP.PIXELS_PER_METER = 1.0;
-					APP.screen = new QuadrantEditor();
-					APP.screen.init();
-					
-					APP.screen.render();
-					APP.screen.repaint();
-					
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				APP.screen = new QuadrantEditor();
+				APP.screen.init();
+				
+				APP.screen.render();
+				APP.screen.repaint();
 				
 			}
 		};
@@ -283,8 +257,6 @@ public class MainMenu extends ScreenBase {
 	public Point lastMovedMenuPoint;
 	
 	public void moved(InputEvent ev) {
-		
-		VIEW.canvas.requestFocusInWindow();
 		
 		Point p = ev.p;
 		

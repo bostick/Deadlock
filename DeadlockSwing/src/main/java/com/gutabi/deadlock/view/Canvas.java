@@ -34,7 +34,6 @@ public class Canvas extends Component {
 				APP.screen.paint(new PaintEvent(Canvas.this, new RenderingContext((Graphics2D)g, RenderingContextType.CANVAS)));
 			}
 		};
-		c.setFocusable(true);
 		JavaListener jl = new JavaListener();
 		c.addMouseListener(jl);
 		c.addMouseMotionListener(jl);
@@ -79,7 +78,15 @@ public class Canvas extends Component {
 			} else if (ev.getKeyCode() == KeyEvent.VK_A) {
 				aKey(new InputEvent(Canvas.this, null));
 			} else if (ev.getKeyCode() == KeyEvent.VK_S) {
-				sKey(new InputEvent(Canvas.this, null));
+				
+				int mods = ev.getModifiersEx();
+				
+				if ((mods & KeyEvent.CTRL_DOWN_MASK) == KeyEvent.CTRL_DOWN_MASK) {
+					ctrlSKey(new InputEvent(Canvas.this, null));
+				} else {
+					sKey(new InputEvent(Canvas.this, null));
+				}
+				
 			} else if (ev.getKeyCode() == KeyEvent.VK_D) {
 				dKey(new InputEvent(Canvas.this, null));
 			}
@@ -133,6 +140,8 @@ public class Canvas extends Component {
 	
 	public void canvasPostDisplay() {
 		
+		c.requestFocusInWindow();
+		
 		c.createBufferStrategy(2);
 		bs = c.getBufferStrategy();
 		
@@ -140,15 +149,10 @@ public class Canvas extends Component {
 	}
 	
 	public void pressed(InputEvent ev) {
-		
-		c.requestFocusInWindow();
-		
 		APP.screen.pressed(ev);
 	}
 	
 	public void dragged(InputEvent ev) {
-		
-		c.requestFocusInWindow();
 		
 		lastMovedOrDraggedCanvasPoint = ev.p;
 		
@@ -157,8 +161,6 @@ public class Canvas extends Component {
 	
 	public void released(InputEvent ev) {
 		
-		c.requestFocusInWindow();
-		
 		APP.screen.released(ev);
 	}
 	
@@ -166,8 +168,6 @@ public class Canvas extends Component {
 	public Point lastMovedOrDraggedCanvasPoint;
 	
 	public void moved(InputEvent ev) {
-		
-		c.requestFocusInWindow();
 		
 		lastMovedCanvasPoint = ev.p;
 		lastMovedOrDraggedCanvasPoint = lastMovedCanvasPoint;
@@ -179,8 +179,6 @@ public class Canvas extends Component {
 	
 	public void clicked(InputEvent ev) {
 		
-		c.requestFocusInWindow();
-		
 		APP.screen.clicked(ev);
 	}
 	
@@ -190,10 +188,6 @@ public class Canvas extends Component {
 	
 	public void exited(InputEvent ev) {
 		APP.screen.exited(ev);
-	}
-	
-	public void requestFocusInWindow() {
-		c.requestFocusInWindow();
 	}
 	
 	public void qKey(InputEvent ev) {
@@ -258,6 +252,10 @@ public class Canvas extends Component {
 	
 	public void sKey(InputEvent ev) {
 		APP.screen.sKey(ev);
+	}
+	
+	public void ctrlSKey(InputEvent ev) {
+		APP.screen.ctrlSKey(ev);
 	}
 	
 	public void dKey(InputEvent ev) {

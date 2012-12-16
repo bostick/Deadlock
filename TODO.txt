@@ -1,8 +1,6 @@
 
 FOR ALPHA 1:
 
-quadrant editor
-
 scripting:
 saving to files
 reading from files
@@ -83,9 +81,6 @@ reversing from a crash
 slowing down / speeding up simulation
 
 
-add Level
-scripting, saving, editing, etc.
-
 
 
 LONGTERM:
@@ -102,11 +97,14 @@ switch to opengl
 or at least add it
 
 cleanup user input
+
+DONE:
+
 lines and curves for roads
 spline/curve editor
 
 
-DONE:
+quadrant editor
 
 fix seams in quadrant map for world and editor
 

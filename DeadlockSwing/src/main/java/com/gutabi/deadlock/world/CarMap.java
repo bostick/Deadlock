@@ -103,9 +103,6 @@ public class CarMap {
 		for (Car c : cars) {
 			boolean shouldPersist = c.postStep(t);
 			if (!shouldPersist) {
-				if (world.hilited == c) {
-					world.hilited = null;
-				}
 				c.destroy();
 				toBeRemoved.add(c);
 			}
