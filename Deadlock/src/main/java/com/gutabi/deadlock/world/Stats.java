@@ -8,21 +8,17 @@ import com.gutabi.deadlock.view.RenderingContext;
 //@SuppressWarnings("static-access")
 public class Stats {
 	
-	World world;
+	WorldScreen screen;
 	
 	long lastTime;
 	long curTime;
 	int frameCount;
 	int fps;
 	
-	public Stats(World world) {
-		this.world = world;
+	public Stats(WorldScreen screen) {
+		this.screen = screen;
 	}
 	
-	/**
-	 * 
-	 * @param g2
-	 */
 	public void paint(RenderingContext ctxt) {
 		
 		ctxt.setColor(Color.WHITE);
@@ -47,7 +43,7 @@ public class Stats {
 		
 		ctxt.translate(0, 1);
 		
-		world.paintStats(ctxt);
+		screen.world.paintStats(ctxt);
 		
 		ctxt.setTransform(origTransform1);
 	}

@@ -7,7 +7,6 @@ import java.awt.geom.AffineTransform;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
-import java.util.Random;
 
 import org.jbox2d.common.Vec2;
 
@@ -19,8 +18,6 @@ import com.gutabi.deadlock.view.RenderingContext;
 import com.gutabi.deadlock.world.car.Car;
 import com.gutabi.deadlock.world.car.CarEventListener;
 import com.gutabi.deadlock.world.graph.Graph;
-import com.gutabi.deadlock.world.graph.GraphPositionPathFactory;
-import com.gutabi.deadlock.world.sprites.AnimatedGrass;
 
 //@SuppressWarnings("static-access")
 public class World {
@@ -35,17 +32,14 @@ public class World {
 	
 	public double pixelsPerMeter = 32.0;
 	
-	public static Random RANDOM = new Random(1);
-	
 	public double t;
 	
-	AnimatedGrass animatedGrass1;
-	AnimatedGrass animatedGrass2;
-	AnimatedGrass animatedGrass3;
+//	AnimatedGrassMap
+//	AnimatedGrass animatedGrass1;
+//	AnimatedGrass animatedGrass2;
+//	AnimatedGrass animatedGrass3;
 	
 	public CarMap carMap;
-	
-	public GraphPositionPathFactory pathFactory;
 	
 	public ExplosionMap explosionMap = new ExplosionMap();
 	
@@ -60,8 +54,6 @@ public class World {
 		graph = new Graph(this);
 		
 		carMap = new CarMap(this);
-		
-		pathFactory = new GraphPositionPathFactory(this);
 		
 		b2dWorld = new org.jbox2d.dynamics.World(new Vec2(0.0f, 0.0f), true);
 		b2dWorld.setContactListener(new CarEventListener(this));
@@ -100,15 +92,15 @@ public class World {
 //		renderSkidMarksIncremental();
 //		skidMarks = new ArrayList<Point>();
 		
-		if (animatedGrass1 != null) {
-			animatedGrass1.preStart();
-		}
-		if (animatedGrass2 != null) {
-			animatedGrass2.preStart();
-		}
-		if (animatedGrass3 != null) {
-			animatedGrass3.preStart();
-		}
+//		if (animatedGrass1 != null) {
+//			animatedGrass1.preStart();
+//		}
+//		if (animatedGrass2 != null) {
+//			animatedGrass2.preStart();
+//		}
+//		if (animatedGrass3 != null) {
+//			animatedGrass3.preStart();
+//		}
 		
 		graph.preStart();
 		
@@ -149,15 +141,15 @@ public class World {
 	
 	private void preStep() {
 		
-		if (animatedGrass1 != null) {
-			animatedGrass1.preStep(t);
-		}
-		if (animatedGrass2 != null) {
-			animatedGrass2.preStep(t);
-		}
-		if (animatedGrass3 != null) {
-			animatedGrass3.preStep(t);
-		}
+//		if (animatedGrass1 != null) {
+//			animatedGrass1.preStep(t);
+//		}
+//		if (animatedGrass2 != null) {
+//			animatedGrass2.preStep(t);
+//		}
+//		if (animatedGrass3 != null) {
+//			animatedGrass3.preStep(t);
+//		}
 		
 		graph.preStep(t);
 		
@@ -325,15 +317,15 @@ public class World {
 		case CANVAS:
 			quadrantMap.paint(ctxt);
 			
-			if (animatedGrass1 != null) {
-				animatedGrass1.paint(ctxt);
-			}
-			if (animatedGrass2 != null) {
-				animatedGrass2.paint(ctxt);
-			}
-			if (animatedGrass3 != null) {
-				animatedGrass3.paint(ctxt);
-			}
+//			if (animatedGrass1 != null) {
+//				animatedGrass1.paint(ctxt);
+//			}
+//			if (animatedGrass2 != null) {
+//				animatedGrass2.paint(ctxt);
+//			}
+//			if (animatedGrass3 != null) {
+//				animatedGrass3.paint(ctxt);
+//			}
 			
 			graph.paint(ctxt);
 //			paintSkidmarks(ctxt);

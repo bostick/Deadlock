@@ -1,18 +1,19 @@
 package com.gutabi.deadlock.world.graph;
 
+import static com.gutabi.deadlock.DeadlockApplication.APP;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import com.gutabi.deadlock.core.DMath;
-import com.gutabi.deadlock.world.World;
 
-@SuppressWarnings("static-access")
+//@SuppressWarnings("static-access")
 public class GraphPositionPathFactory {
 	
-	public final World world;
+	public final Graph graph;
 	
-	public GraphPositionPathFactory(World world) {
-		this.world = world;
+	public GraphPositionPathFactory(Graph graph) {
+		this.graph = graph;
 	}
 	
 	public GraphPositionPath createShortestPathFromSkeleton(List<Vertex> origPoss) {
@@ -20,7 +21,7 @@ public class GraphPositionPathFactory {
 		for (int i = 0; i < origPoss.size()-1; i++) {
 			Vertex a = origPoss.get(i);
 			Vertex b = origPoss.get(i+1);
-			if (world.graph.distanceBetweenVertices(a, b) == Double.POSITIVE_INFINITY) {
+			if (graph.distanceBetweenVertices(a, b) == Double.POSITIVE_INFINITY) {
 				return null;
 			}
 		}
@@ -42,7 +43,7 @@ public class GraphPositionPathFactory {
 		for (int i = 0; i < origPoss.size()-1; i++) {
 			Vertex a = origPoss.get(i);
 			Vertex b = origPoss.get(i+1);
-			if (world.graph.distanceBetweenVertices(a, b) == Double.POSITIVE_INFINITY) {
+			if (graph.distanceBetweenVertices(a, b) == Double.POSITIVE_INFINITY) {
 				return null;
 			}
 		}
@@ -75,7 +76,7 @@ public class GraphPositionPathFactory {
 			
 			if (edges.isEmpty()) {
 				
-				Vertex choice = world.graph.shortestPathChoice(a.v, b.v);
+				Vertex choice = graph.shortestPathChoice(a.v, b.v);
 				
 				if (choice == null) {
 					
@@ -158,7 +159,7 @@ public class GraphPositionPathFactory {
 			}
 		}
 		
-		Vertex choice = world.graph.randomPathChoice(prev, a.v, b.v);
+		Vertex choice = graph.randomPathChoice(prev, a.v, b.v);
 		VertexPosition choicePos = new VertexPosition(choice);
 		
 		List<Edge> edges = new ArrayList<Edge>();
@@ -210,11 +211,11 @@ public class GraphPositionPathFactory {
 		
 		edges.removeAll(toRemove);
 		
-		int n = world.RANDOM.nextInt(edges.size());
+		int n = APP.RANDOM.nextInt(edges.size());
 		Edge e = edges.get(n);
 		int dir;
 		if (a.v == choicePos.v) {
-			dir = world.RANDOM.nextInt(2);
+			dir = APP.RANDOM.nextInt(2);
 		} else {
 			dir = 2;
 		}

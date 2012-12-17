@@ -1,12 +1,13 @@
 package com.gutabi.deadlock.world.sprites;
 
+import static com.gutabi.deadlock.DeadlockApplication.APP;
 import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.view.RenderingContext;
 import com.gutabi.deadlock.world.World;
 
-@SuppressWarnings("static-access")
+//@SuppressWarnings("static-access")
 public class AnimatedGrass {
 	
 	public static double GRASS_SIZE = 1.0;
@@ -20,7 +21,7 @@ public class AnimatedGrass {
 	public AnimatedGrass(World world, Point p) {
 		this.world = world;
 		this.p = p;
-		phase = world.RANDOM.nextDouble();
+		phase = APP.RANDOM.nextDouble();
 	}
 	
 	public void preStart() {

@@ -80,7 +80,7 @@ public final class Fixture extends Vertex {
 			List<Vertex> poss = new ArrayList<Vertex>();
 			poss.add(this);
 			poss.add(match);
-			shortestPathToMatch = world.pathFactory.createShortestPathFromSkeleton(poss);
+			shortestPathToMatch = world.graph.pathFactory.createShortestPathFromSkeleton(poss);
 			
 			lastSpawnTime = -1;
 			outstandingCars = 0;
@@ -140,7 +140,7 @@ public final class Fixture extends Vertex {
 		List<Vertex> poss = new ArrayList<Vertex>();
 		poss.add(this);
 		poss.add(match);
-		GraphPositionPath path = world.pathFactory.createRandomPathFromSkeleton(poss);
+		GraphPositionPath path = world.graph.pathFactory.createRandomPathFromSkeleton(poss);
 		return path;
 	}
 	
@@ -216,7 +216,7 @@ public final class Fixture extends Vertex {
 			return null;
 		}
 		
-		int r = world.RANDOM.nextInt(l.size());
+		int r = APP.RANDOM.nextInt(l.size());
 		
 		Class c = l.get(r);
 		

@@ -68,7 +68,7 @@ public class WorldScreen extends ScreenBase {
 		
 		preview = new Preview(this);
 		
-		stats = new Stats(world);
+		stats = new Stats(this);
 		
 	}
 	

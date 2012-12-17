@@ -33,7 +33,7 @@ import com.gutabi.deadlock.view.RenderingContext;
 import com.gutabi.deadlock.view.RenderingContextType;
 import com.gutabi.deadlock.world.World;
 
-@SuppressWarnings("static-access")
+//@SuppressWarnings("static-access")
 public class Graph implements Sweepable {
 	
 	public final World world;
@@ -43,6 +43,8 @@ public class Graph implements Sweepable {
 	public final List<Vertex> vertices = new ArrayList<Vertex>();
 	public final List<Edge> edges = new ArrayList<Edge>();
 	
+	public GraphPositionPathFactory pathFactory;
+	
 	public final List<GraphPositionPath> paths = new ArrayList<GraphPositionPath>();
 	
 	private AABB aabb;
@@ -51,6 +53,9 @@ public class Graph implements Sweepable {
 	
 	public Graph(World world) {
 		this.world = world;
+		
+		pathFactory = new GraphPositionPathFactory(this);
+		
 	}
 	
 	public void canvasPostDisplay() {
@@ -579,7 +584,7 @@ public class Graph implements Sweepable {
 		Vertex v;
 		Edge e;
 		
-		int r = world.RANDOM.nextInt(n);
+		int r = APP.RANDOM.nextInt(n);
 		
 		e = edges.get(r);
 		

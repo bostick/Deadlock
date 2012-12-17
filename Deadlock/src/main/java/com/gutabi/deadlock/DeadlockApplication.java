@@ -1,6 +1,7 @@
 package com.gutabi.deadlock;
 
 import java.net.URL;
+import java.util.Random;
 
 public class DeadlockApplication {
 	
@@ -16,6 +17,8 @@ public class DeadlockApplication {
 	public boolean CARTEXTURE_DRAW = true;
 	public boolean EXPLOSIONS_DRAW = true;
 	public boolean DEBUG_DRAW = false;
+	
+	public Random RANDOM = new Random(1);
 	
 	public Screen screen;
 	
