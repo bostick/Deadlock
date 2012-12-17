@@ -1,6 +1,8 @@
 package com.gutabi.deadlock.world.cursor;
 
 import java.awt.Color;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.Shape;
@@ -13,6 +15,7 @@ import com.gutabi.deadlock.world.graph.Axis;
 import com.gutabi.deadlock.world.graph.Fixture;
 import com.gutabi.deadlock.world.graph.FixtureType;
 import com.gutabi.deadlock.world.graph.Side;
+import com.gutabi.deadlock.world.graph.Vertex;
 
 //@SuppressWarnings("static-access")
 public class FixtureCursor extends CursorBase {
@@ -156,9 +159,12 @@ public class FixtureCursor extends CursorBase {
 				break;
 			}
 			
-			screen.world.addVertexTop(source);
-			
-			screen.world.addVertexTop(sink);
+			Set<Vertex> affected = new HashSet<Vertex>();
+			Set<Vertex> res = screen.world.graph.addVertexTop(source);
+			affected.addAll(res);
+			res = screen.world.graph.addVertexTop(sink);
+			affected.addAll(res);
+			screen.world.graph.computeVertexRadii(affected);
 			
 			screen.cursor = new RegularCursor(screen);
 			screen.cursor.setPoint(screen.lastMovedWorldPoint);

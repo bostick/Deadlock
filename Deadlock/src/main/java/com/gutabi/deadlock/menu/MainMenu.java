@@ -53,8 +53,7 @@ public class MainMenu extends ScreenBase {
 				VIEW.teardownCanvas(VIEW.container);
 				
 				WorldScreen s = new WorldScreen();
-				s.world = new OneByOneWorld();
-				s.init();
+				s.world = OneByOneWorld.createOneByOneWorld();
 				
 				APP.screen = s;
 				
@@ -76,8 +75,7 @@ public class MainMenu extends ScreenBase {
 				VIEW.teardownCanvas(VIEW.container);
 				
 				WorldScreen s = new WorldScreen();
-				s.world = new FourByFourGridWorld();
-				s.init();
+				s.world = FourByFourGridWorld.createFourByFourGridWorld();
 				
 				APP.screen = s;
 				
@@ -99,8 +97,7 @@ public class MainMenu extends ScreenBase {
 				VIEW.teardownCanvas(VIEW.container);
 				
 				WorldScreen s = new WorldScreen();
-				s.world = new WorldA();
-				s.init();
+				s.world = WorldA.createWorldA();
 				
 				APP.screen = s;
 				
@@ -121,7 +118,6 @@ public class MainMenu extends ScreenBase {
 			public void action() {
 				
 				APP.screen = new QuadrantEditor();
-				APP.screen.init();
 				
 				APP.screen.render();
 				APP.screen.repaint();
@@ -160,10 +156,6 @@ public class MainMenu extends ScreenBase {
 			}
 		};
 		add(quitMenuItem);
-		
-	}
-	
-	public void init() {
 		
 	}
 	

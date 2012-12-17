@@ -1,12 +1,14 @@
 package com.gutabi.deadlock.world.cursor;
 
 import java.awt.Color;
+import java.util.Set;
 
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.Shape;
 import com.gutabi.deadlock.view.InputEvent;
 import com.gutabi.deadlock.view.RenderingContext;
 import com.gutabi.deadlock.world.WorldScreen;
+import com.gutabi.deadlock.world.graph.Vertex;
 
 //@SuppressWarnings("static-access")
 public class MergerCursor extends CursorBase {
@@ -45,7 +47,8 @@ public class MergerCursor extends CursorBase {
 			
 			if (screen.world.graph.pureGraphIntersect(shape) == null) {
 				
-				screen.world.insertMergerTop(p);
+				Set<Vertex> affected = screen.world.graph.insertMergerTop(p);
+				screen.world.graph.computeVertexRadii(affected);
 				
 				screen.cursor = new RegularCursor(screen);
 				

@@ -6,6 +6,10 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.Scanner;
 
 import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Point;
@@ -14,7 +18,6 @@ import com.gutabi.deadlock.core.geom.Shape;
 import com.gutabi.deadlock.core.geom.ShapeUtils;
 import com.gutabi.deadlock.view.RenderingContext;
 import com.gutabi.deadlock.view.RenderingContextType;
-import com.gutabi.deadlock.world.graph.Graph;
 
 //@SuppressWarnings("static-access")
 public class QuadrantMap {
@@ -24,9 +27,13 @@ public class QuadrantMap {
 	
 	public final World world;
 	
+	public final double worldWidth;
+	public final double worldHeight;
+	
 	public final int quadrantCols;
 	public final int quadrantRows;
 	
+	public final int[][] ini;
 	private Quadrant[][] quadrants;
 	
 	public BufferedImage quadrantGrass;
@@ -35,6 +42,7 @@ public class QuadrantMap {
 	public final AABB aabb;
 	
 	public QuadrantMap(World world, int[][] ini) {
+		this.ini = ini;
 		this.world = world;
 		
 		quadrants = initQuadrants(ini);
@@ -42,8 +50,10 @@ public class QuadrantMap {
 		quadrantCols = quadrants[0].length;
 		quadrantRows = quadrants.length;
 		
-		aabb = new AABB(0, 0, quadrantCols * QUADRANT_WIDTH, quadrantRows * QUADRANT_HEIGHT);
+		worldWidth = quadrantCols * QuadrantMap.QUADRANT_WIDTH;
+		worldHeight = quadrantRows * QuadrantMap.QUADRANT_HEIGHT;
 		
+		aabb = new AABB(0, 0, quadrantCols * QUADRANT_WIDTH, quadrantRows * QUADRANT_HEIGHT);
 	}
 	
 	private Quadrant[][] initQuadrants(int[][] ini) {
@@ -97,7 +107,7 @@ public class QuadrantMap {
 		return newQuads;
 	}
 	
-	public void init() {
+	public void canvasPostDisplay() {
 		
 		int quadrantWidthPixels = (int)Math.ceil(world.pixelsPerMeter * QUADRANT_WIDTH);
 		int quadrantHeightPixels = (int)Math.ceil(world.pixelsPerMeter * QUADRANT_HEIGHT);
@@ -115,10 +125,6 @@ public class QuadrantMap {
 						0, 224, 0+32, 224+32, null);
 			}
 		}
-		
-	}
-	
-	public void canvasPostDisplay() {
 		
 		canvasGrassImage = new BufferedImage(world.canvasWidth, world.canvasHeight, BufferedImage.TYPE_INT_ARGB);
 		
@@ -269,7 +275,35 @@ public class QuadrantMap {
 	}
 	
 	public static QuadrantMap fromFileString(String s) {
+		BufferedReader r = new BufferedReader(new StringReader(s));
 		
+		try {
+			String l = r.readLine();
+			assert l.equals("start quadrantMap");
+			
+			Scanner scanner = new Scanner(l);
+			int rows = scanner.nextInt();
+			int cols = scanner.nextInt();
+			
+			int[][] ini = new int[rows][cols];
+			
+			for (int i = 0; i < rows; i++) {
+				l = r.readLine();
+				scanner = new Scanner(l);
+				for (int j = 0; j < cols; j++) {
+					ini[i][j] = scanner.nextInt();
+				}
+			}
+			
+			l = r.readLine();
+			assert l.equals("end quadrantMap");
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return null;
 	}
 	
 	public void renderCanvas() {

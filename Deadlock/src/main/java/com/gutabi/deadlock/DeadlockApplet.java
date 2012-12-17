@@ -23,8 +23,6 @@ public class DeadlockApplet extends JApplet {
 		
 		APP.screen = new MainMenu();
 		
-		APP.screen.init();
-		
 		VIEW.setupFrame();
 		VIEW.init();
 		

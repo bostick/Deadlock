@@ -1,6 +1,7 @@
 package com.gutabi.deadlock.world.cursor;
 
 import java.awt.Color;
+import java.util.Set;
 
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.Shape;
@@ -8,6 +9,7 @@ import com.gutabi.deadlock.view.InputEvent;
 import com.gutabi.deadlock.view.RenderingContext;
 import com.gutabi.deadlock.world.Stroke;
 import com.gutabi.deadlock.world.WorldScreen;
+import com.gutabi.deadlock.world.graph.Vertex;
 
 public class StraightEdgeCursor extends CursorBase {
 	
@@ -110,12 +112,13 @@ public class StraightEdgeCursor extends CursorBase {
 			break;
 		case SET:
 			
-			Stroke s = new Stroke(screen.world);
+			Stroke s = new Stroke(screen.world.graph);
 			s.add(start);
 			s.add(p);
 			s.finish();
 			
-			s.processNewStroke();
+			Set<Vertex> affected = s.processNewStroke();
+			screen.world.graph.computeVertexRadii(affected);
 			
 			screen.cursor = new RegularCursor(screen);
 			

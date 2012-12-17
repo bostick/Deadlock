@@ -26,7 +26,7 @@ public class Preview {
 		this.screen = screen;
 	}
 	
-	public void init() {
+	public void canvasPostDisplay() {
 		previewImage = new BufferedImage(PREVIEW_WIDTH, PREVIEW_HEIGHT, BufferedImage.TYPE_INT_RGB);
 	}
 	
@@ -45,8 +45,8 @@ public class Preview {
 	
 	public Point previewToWorld(Point p) {
 		
-		double pixelsPerMeterWidth = PREVIEW_WIDTH / screen.world.worldWidth;
-		double pixelsPerMeterHeight = PREVIEW_HEIGHT / screen.world.worldHeight;
+		double pixelsPerMeterWidth = PREVIEW_WIDTH / screen.world.quadrantMap.worldWidth;
+		double pixelsPerMeterHeight = PREVIEW_HEIGHT / screen.world.quadrantMap.worldHeight;
 		double s = Math.min(pixelsPerMeterWidth, pixelsPerMeterHeight);
 		
 		return new Point((1/s) * p.x, (1/s) * p.y);
@@ -54,8 +54,8 @@ public class Preview {
 	
 	public Point worldToPreview(Point p) {
 		
-		double pixelsPerMeterWidth = PREVIEW_WIDTH / screen.world.worldWidth;
-		double pixelsPerMeterHeight = PREVIEW_HEIGHT / screen.world.worldHeight;
+		double pixelsPerMeterWidth = PREVIEW_WIDTH / screen.world.quadrantMap.worldWidth;
+		double pixelsPerMeterHeight = PREVIEW_HEIGHT / screen.world.quadrantMap.worldHeight;
 		double s = Math.min(pixelsPerMeterWidth, pixelsPerMeterHeight);
 		
 		return new Point((s) * p.x, (s) * p.y);
@@ -80,12 +80,12 @@ public class Preview {
 		previewImageG2.setColor(Color.LIGHT_GRAY);
 		previewImageG2.fillRect(0, 0, PREVIEW_WIDTH, PREVIEW_HEIGHT);
 		
-		double pixelsPerMeterWidth = PREVIEW_WIDTH / screen.world.worldWidth;
-		double pixelsPerMeterHeight = PREVIEW_HEIGHT / screen.world.worldHeight;
+		double pixelsPerMeterWidth = PREVIEW_WIDTH / screen.world.quadrantMap.worldWidth;
+		double pixelsPerMeterHeight = PREVIEW_HEIGHT / screen.world.quadrantMap.worldHeight;
 		double s = Math.min(pixelsPerMeterWidth, pixelsPerMeterHeight);
 		
 		AffineTransform origTrans = previewContext.getTransform();
-		previewContext.translate(PREVIEW_WIDTH/2 - (s * screen.world.worldWidth / 2), PREVIEW_HEIGHT/2 - (s * screen.world.worldHeight / 2));
+		previewContext.translate(PREVIEW_WIDTH/2 - (s * screen.world.quadrantMap.worldWidth / 2), PREVIEW_HEIGHT/2 - (s * screen.world.quadrantMap.worldHeight / 2));
 		
 		previewImageG2.scale(s, s);
 		
@@ -115,12 +115,12 @@ public class Preview {
 			
 			AABB prev = new AABB(prevLoc.x, prevLoc.y, prevDim.x, prevDim.y);
 			
-			double pixelsPerMeterWidth = PREVIEW_WIDTH / screen.world.worldWidth;
-			double pixelsPerMeterHeight = PREVIEW_HEIGHT / screen.world.worldHeight;
+			double pixelsPerMeterWidth = PREVIEW_WIDTH / screen.world.quadrantMap.worldWidth;
+			double pixelsPerMeterHeight = PREVIEW_HEIGHT / screen.world.quadrantMap.worldHeight;
 			double s = Math.min(pixelsPerMeterWidth, pixelsPerMeterHeight);
 			
 			AffineTransform origTrans = ctxt.getTransform();
-			ctxt.translate(PREVIEW_WIDTH/2 - (s * screen.world.worldWidth / 2), PREVIEW_HEIGHT/2 - (s * screen.world.worldHeight / 2));
+			ctxt.translate(PREVIEW_WIDTH/2 - (s * screen.world.quadrantMap.worldWidth / 2), PREVIEW_HEIGHT/2 - (s * screen.world.quadrantMap.worldHeight / 2));
 			
 			ctxt.setColor(Color.BLUE);
 			prev.draw(ctxt);

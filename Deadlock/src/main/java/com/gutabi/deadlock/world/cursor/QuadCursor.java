@@ -2,6 +2,7 @@ package com.gutabi.deadlock.world.cursor;
 
 import java.awt.Color;
 import java.util.List;
+import java.util.Set;
 
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.Shape;
@@ -137,13 +138,14 @@ public class QuadCursor extends CursorBase {
 		case SET:
 			
 			List<Point> pts = shape.skeleton;
-			Stroke s = new Stroke(screen.world);
+			Stroke s = new Stroke(screen.world.graph);
 			for (Point p : pts) {
 				s.add(p);
 			}
 			s.finish();
 			
-			s.processNewStroke();
+			Set<Vertex> affected = s.processNewStroke();
+			screen.world.graph.computeVertexRadii(affected);
 			
 			screen.cursor = new RegularCursor(screen);
 			

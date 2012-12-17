@@ -5,7 +5,9 @@ import static com.gutabi.deadlock.DeadlockApplication.APP;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 
@@ -22,6 +24,7 @@ import com.gutabi.deadlock.core.geom.SweepEvent;
 import com.gutabi.deadlock.core.geom.SweepEventType;
 import com.gutabi.deadlock.view.RenderingContext;
 import com.gutabi.deadlock.world.graph.EdgePosition;
+import com.gutabi.deadlock.world.graph.Graph;
 import com.gutabi.deadlock.world.graph.GraphPosition;
 import com.gutabi.deadlock.world.graph.Intersection;
 import com.gutabi.deadlock.world.graph.Road;
@@ -34,7 +37,7 @@ public class Stroke {
 	
 	public static final double STROKE_RADIUS = Vertex.INIT_VERTEX_RADIUS;
 	
-	public final World world;
+	public final Graph graph;
 	
 	private List<Circle> cs;
 	
@@ -44,8 +47,8 @@ public class Stroke {
 	
 	static Logger logger = Logger.getLogger(Stroke.class);
 	
-	public Stroke(World world) {
-		this.world = world;
+	public Stroke(Graph graph) {
+		this.graph = graph;
 		cs = new ArrayList<Circle>();
 	}
 	
@@ -89,7 +92,9 @@ public class Stroke {
 		finished = true;
 	}
 	
-	public void processNewStroke() {
+	public Set<Vertex> processNewStroke() {
+		
+		Set<Vertex> affected = new HashSet<Vertex>();
 		
 		/*
 		 * TODO:
@@ -111,7 +116,7 @@ public class Stroke {
 		for (int i = 0; i < events.size(); i++) {
 			SweepEvent e = events.get(i);
 			if (e.type == SweepEventType.ENTERMERGER) {
-				return;
+				return affected;
 			}
 //			if (e.type == SweepEventType.ENTERVERTEX) {
 //				Vertex v = (Vertex)e.shape.parent;
@@ -130,7 +135,7 @@ public class Stroke {
 						 * FIXME: this currently disallows connecting vertices in a merger, even outside the merger
 						 * fix this so that it's only a road within the merger that is disallowed
 						 */
-						return;
+						return affected;
 					}
 				}
 			}
@@ -145,20 +150,21 @@ public class Stroke {
 			
 			if (e.type == null) {
 				
-				Entity hit = world.graph.pureGraphIntersectCircle(e.circle);
+				Entity hit = graph.pureGraphIntersectCircle(e.circle);
 //				assert hit == null;
 				
 				if (hit == null) {
 					logger.debug("create");
-					Intersection v = new Intersection(world, e.p);
-					world.addVertexTop(v);
+					Intersection v = graph.createIntersection(e.p);
+					Set<Vertex> res = graph.addVertexTop(v);
+					affected.addAll(res);
 				}
 				
 //				e.setVertex(v);
 				
 			} else if (e.type == SweepEventType.ENTERROADCAPSULE || e.type == SweepEventType.EXITROADCAPSULE) {
 				
-				Entity hit = world.graph.pureGraphIntersectCircle(e.circle);
+				Entity hit = graph.pureGraphIntersectCircle(e.circle);
 				
 				if (hit instanceof Vertex) {
 //					e.setVertex((Vertex)hit);
@@ -214,7 +220,7 @@ public class Stroke {
 				
 				while (true) {
 					
-					hit = world.graph.pureGraphIntersectCapsule(new Capsule(null, a, b, -1));
+					hit = graph.pureGraphIntersectCapsule(new Capsule(null, a, b, -1));
 					
 					if (hit == null) {
 						
@@ -262,20 +268,20 @@ public class Stroke {
 				
 				if (pos == null) {
 					logger.debug("pos was null");
-					pos = world.graph.findClosestRoadPosition(e.p, e.circle.radius);
+					pos = graph.findClosestRoadPosition(e.p, e.circle.radius);
 				}
 				
 				assert pos != null;
 				
 				Entity hit2;
 				if (pos instanceof EdgePosition) {
-					hit2 = world.graph.pureGraphIntersectCircle(new Circle(null, pos.p, e.circle.radius));
+					hit2 = graph.pureGraphIntersectCircle(new Circle(null, pos.p, e.circle.radius));
 				} else {
 					hit2 = ((VertexPosition)pos).v;
 				}
 				
 				if (hit2 instanceof Road) {
-					Vertex v = world.splitRoadTop((RoadPosition)pos);
+					Vertex v = graph.split((RoadPosition)pos);
 					
 					assert ShapeUtils.intersectCC(e.circle, v.getShape());
 					
@@ -394,13 +400,14 @@ public class Stroke {
 				
 				assert pos != null;
 				
-				Entity hit = world.graph.pureGraphIntersectCircle(new Circle(null, pos.p, e.circle.radius));
+				Entity hit = graph.pureGraphIntersectCircle(new Circle(null, pos.p, e.circle.radius));
 				
 				if (hit == null) {
 					
 					logger.debug("create");
-					Intersection v = new Intersection(world, pos.p);
-					world.addVertexTop(v);
+					Intersection v = graph.createIntersection(pos.p);
+					Set<Vertex> res = graph.addVertexTop(v);
+					affected.addAll(res);
 					
 				} else {
 					
@@ -488,9 +495,11 @@ public class Stroke {
 				roadPts.add(v1.p);
 			}
 			
-			world.createRoadTop(v0, v1, roadPts);
+			Set<Vertex> res = graph.createRoadTop(v0, v1, roadPts);
+			affected.addAll(res);
 		}
 		
+		return affected;
 	}
 	
 	private List<SweepEvent> events(boolean sweepSelf) {
@@ -504,7 +513,7 @@ public class Stroke {
 		
 		Circle start = seq.getStart();
 		
-		List<SweepEvent> startEvents = world.sweepStart(start);
+		List<SweepEvent> startEvents = graph.sweepStart(start);
 		
 		Collections.sort(startEvents, SweepEvent.COMPARATOR);
 		
@@ -555,7 +564,7 @@ public class Stroke {
 			
 			Capsule cap = seq.getCapsule(i);
 			
-			List<SweepEvent> events = world.sweep(cap);
+			List<SweepEvent> events = graph.sweep(cap);
 			
 			if (sweepSelf) {
 				

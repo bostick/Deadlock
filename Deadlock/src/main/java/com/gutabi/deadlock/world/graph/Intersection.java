@@ -55,7 +55,7 @@ public class Intersection extends Vertex {
 	}
 	
 	public static Intersection fromFileString(String s) {
-		
+		return null;
 	}
 	
 	public void paint(RenderingContext ctxt) {

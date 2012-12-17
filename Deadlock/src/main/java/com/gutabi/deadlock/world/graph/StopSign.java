@@ -115,7 +115,7 @@ public class StopSign extends Entity {
 	}
 	
 	public static StopSign fromFileString(String s) {
-		
+		return null;
 	}
 	
 	public void paint(RenderingContext ctxt) {

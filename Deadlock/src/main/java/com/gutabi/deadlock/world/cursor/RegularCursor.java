@@ -4,6 +4,7 @@ import static com.gutabi.deadlock.DeadlockApplication.APP;
 import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
 import java.awt.Color;
+import java.util.Set;
 
 import javax.swing.JFrame;
 
@@ -65,7 +66,6 @@ public class RegularCursor extends CursorBase {
 		VIEW.teardownCanvasAndControlPanel(VIEW.container);
 		
 		APP.screen = new MainMenu();
-		APP.screen.init();
 		
 		VIEW.setupCanvas(VIEW.container);
 		((JFrame)VIEW.container).setVisible(true);
@@ -278,7 +278,7 @@ public class RegularCursor extends CursorBase {
 		
 		screen.hilited = null;
 		
-		stroke = new Stroke(screen.world);
+		stroke = new Stroke(screen.world.graph);
 		stroke.add(p);
 			
 	}
@@ -292,7 +292,8 @@ public class RegularCursor extends CursorBase {
 		
 		stroke.finish();
 		
-		stroke.processNewStroke();
+		Set<Vertex> affected = stroke.processNewStroke();
+		screen.world.graph.computeVertexRadii(affected);
 		
 		assert screen.world.checkConsistency();
 		

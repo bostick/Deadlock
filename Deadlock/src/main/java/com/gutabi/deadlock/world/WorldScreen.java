@@ -10,6 +10,7 @@ import java.awt.geom.AffineTransform;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Set;
 
 import javax.swing.JFileChooser;
 import javax.swing.SwingUtilities;
@@ -71,17 +72,9 @@ public class WorldScreen extends ScreenBase {
 		
 	}
 	
-	public void init() {
-		
-		world.init();
-		
-		preview.init();
-	}
-	
-	public void canvasPostDisplay(Dim dim) {	
-		
+	public void canvasPostDisplay(Dim dim) {
 		world.canvasPostDisplay(dim);
-		
+		preview.canvasPostDisplay();
 	}
 	
 	public void startRunning() {
@@ -156,27 +149,30 @@ public class WorldScreen extends ScreenBase {
 				if (hilited instanceof Car) {
 					Car c = (Car)hilited;
 					
-					world.removeCarTop(c);
+					world.carMap.destroyCar(c);
 					
 				} else if (hilited instanceof Vertex) {
 					Vertex v = (Vertex)hilited;
 					
-					world.removeVertexTop(v);
+					Set<Vertex> affected = world.graph.removeVertexTop(v);
+					world.graph.computeVertexRadii(affected);
 					
 				} else if (hilited instanceof Road) {
 					Road e = (Road)hilited;
 					
-					world.removeRoadTop(e);
+					Set<Vertex> affected = world.graph.removeRoadTop(e);
+					world.graph.computeVertexRadii(affected);
 					
 				} else if (hilited instanceof Merger) {
 					Merger e = (Merger)hilited;
 					
-					world.removeMergerTop(e);
+					Set<Vertex> affected = world.graph.removeMergerTop(e);
+					world.graph.computeVertexRadii(affected);
 					
 				} else if (hilited instanceof StopSign) {
 					StopSign s = (StopSign)hilited;
 					
-					world.removeStopSignTop(s);
+					s.r.removeStopSignTop(s);
 					
 				} else {
 					throw new AssertionError();

@@ -3,11 +3,11 @@ package com.gutabi.deadlock.world;
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
-import java.awt.Color;
 import java.awt.geom.AffineTransform;
-import java.util.List;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.StringReader;
 import java.util.Random;
-import java.util.Set;
 
 import org.jbox2d.common.Vec2;
 
@@ -15,28 +15,18 @@ import com.gutabi.deadlock.core.Dim;
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.AABB;
-import com.gutabi.deadlock.core.geom.Capsule;
-import com.gutabi.deadlock.core.geom.Circle;
-import com.gutabi.deadlock.core.geom.SweepEvent;
-import com.gutabi.deadlock.core.geom.Sweepable;
 import com.gutabi.deadlock.view.RenderingContext;
 import com.gutabi.deadlock.world.car.Car;
 import com.gutabi.deadlock.world.car.CarEventListener;
 import com.gutabi.deadlock.world.graph.Graph;
 import com.gutabi.deadlock.world.graph.GraphPositionPathFactory;
-import com.gutabi.deadlock.world.graph.Merger;
-import com.gutabi.deadlock.world.graph.Road;
-import com.gutabi.deadlock.world.graph.RoadPosition;
-import com.gutabi.deadlock.world.graph.StopSign;
-import com.gutabi.deadlock.world.graph.Vertex;
-import com.gutabi.deadlock.world.sprites.AnimatedExplosion;
 import com.gutabi.deadlock.world.sprites.AnimatedGrass;
 
 @SuppressWarnings("static-access")
-public class World implements Sweepable {
+public class World {
 	
-	public final double worldWidth;
-	public final double worldHeight;
+	public QuadrantMap quadrantMap;
+	public Graph graph;
 	
 	public AABB worldViewport;
 	
@@ -47,18 +37,11 @@ public class World implements Sweepable {
 	
 	public static Random RANDOM = new Random(1);
 	
-	/*
-	 * simulation state
-	 */
 	public double t;
-	
-	public QuadrantMap quadrantMap;
 	
 	AnimatedGrass animatedGrass1;
 	AnimatedGrass animatedGrass2;
 	AnimatedGrass animatedGrass3;
-	
-	public Graph graph;
 	
 	public CarMap carMap;
 	
@@ -70,23 +53,11 @@ public class World implements Sweepable {
 	
 	public org.jbox2d.dynamics.World b2dWorld;
 	
-	public AABB aabb;
+//	public AABB aabb;
 	
 //	private static Logger logger = Logger.getLogger(World.class);
 	
-	public World(int[][] ini) {
-		
-		assert ini.length > 0;
-		assert ini[0].length > 0;
-		
-		int quadrantRows = ini.length;
-		int quadrantCols = ini[0].length;
-		
-		quadrantMap = new QuadrantMap(this, ini);
-		
-		worldWidth = quadrantCols * QuadrantMap.QUADRANT_WIDTH;
-		
-		worldHeight = quadrantRows * QuadrantMap.QUADRANT_HEIGHT;
+	public World() {
 		
 		graph = new Graph(this);
 		
@@ -97,14 +68,19 @@ public class World implements Sweepable {
 		b2dWorld = new org.jbox2d.dynamics.World(new Vec2(0.0f, 0.0f), true);
 		b2dWorld.setContactListener(new CarEventListener(this));
 		
-		computeAABB();
+//		computeAABB();
 		
 	}
 	
-	public void init() {
+	public static World createWorld(int[][] ini) {
 		
-		quadrantMap.init();
+		World w = new World();
 		
+		QuadrantMap qm = new QuadrantMap(w, ini);
+		
+		w.quadrantMap = qm;
+		
+		return w;
 	}
 	
 	public void canvasPostDisplay(Dim dim) {
@@ -116,108 +92,108 @@ public class World implements Sweepable {
 		graph.canvasPostDisplay();
 		
 		worldViewport = new AABB(
-				-(canvasWidth / pixelsPerMeter) / 2 + worldWidth/2 ,
-				-(canvasHeight / pixelsPerMeter) / 2 + worldHeight/2,
+				-(canvasWidth / pixelsPerMeter) / 2 + quadrantMap.worldWidth/2 ,
+				-(canvasHeight / pixelsPerMeter) / 2 + quadrantMap.worldHeight/2,
 				canvasWidth / pixelsPerMeter,
 				canvasHeight / pixelsPerMeter);
 	}
 	
-	public void addVertexTop(Vertex v) {
-		Set<Vertex> affected = graph.addVertexTop(v);
-		
-		postIdleTop(affected);
-	}
+//	public void addVertexTop(Vertex v) {
+//		Set<Vertex> affected = graph.addVertexTop(v);
+//		
+//		postIdleTop(affected);
+//	}
+//	
+//	public void createRoadTop(Vertex start, Vertex end, List<Point> pts) {
+//		Set<Vertex> affected = graph.createRoadTop(start, end, pts);
+//		
+//		postDraftingTop(affected);
+//		
+////		assert checkConsistency();
+//	}
+//	
+//	public Vertex splitRoadTop(RoadPosition pos) {
+//		return graph.split(pos);
+//	}
+//	
+//	public void removeVertexTop(Vertex v) {
+//		Set<Vertex> affected = graph.removeVertexTop(v);
+//		
+//		postIdleTop(affected);
+//	}
+//	
+//	public void removeRoadTop(Road e) {
+//		Set<Vertex> affected = graph.removeRoadTop(e);
+//		
+//		postIdleTop(affected);
+//	}
+//	
+//	public void removeMergerTop(Merger m) {
+//		Set<Vertex> affected = graph.removeMergerTop(m);
+//		
+//		postIdleTop(affected);
+//	}
+//	
+//	public void removeStopSignTop(StopSign s) {
+//		s.r.removeStopSignTop(s);
+//	}
+//	
+//	public void removeCarTop(Car c) {
+//		
+//		c.destroy();
+//		
+//		synchronized (APP) {
+//			carMap.remove(c);
+//		}
+//		
+//		postRunningTop();
+//	}
+//	
+//	public void insertMergerTop(Point p) {
+//		Set<Vertex> affected = graph.insertMergerTop(p);
+//		
+//		postIdleTop(affected);
+//		
+//	}
+//	
+//	public void addExplosion(AnimatedExplosion x) {
+//		explosionMap.add(x);
+//	}
+//	
+//	public List<SweepEvent> sweepStart(Circle c) {
+//		return graph.sweepStart(c);
+//	}
+//	
+//	public List<SweepEvent> sweep(Capsule s) {
+//		return graph.sweep(s);
+//	}
+//	
+//	private void postIdleTop(Set<Vertex> affected) {
+//		
+//		graph.computeVertexRadii(affected);
+//		
+//		computeAABB();
+//	}
+//	
+//	public void postDraftingTop(Set<Vertex> affected) {
+//		
+//		graph.computeVertexRadii(affected);
+//		
+//		computeAABB();
+//	}
+//	
+//	private void postRunningTop() {
+//		;
+//	}
 	
-	public void createRoadTop(Vertex start, Vertex end, List<Point> pts) {
-		Set<Vertex> affected = graph.createRoadTop(start, end, pts);
-		
-		postDraftingTop(affected);
-		
-//		assert checkConsistency();
-	}
+//	private void computeAABB() {
+//		aabb = quadrantMap.aabb;
+//		aabb = AABB.union(aabb, graph.getAABB());
+//	}
 	
-	public Vertex splitRoadTop(RoadPosition pos) {
-		return graph.split(pos);
-	}
-	
-	public void removeVertexTop(Vertex v) {
-		Set<Vertex> affected = graph.removeVertexTop(v);
-		
-		postIdleTop(affected);
-	}
-	
-	public void removeRoadTop(Road e) {
-		Set<Vertex> affected = graph.removeRoadTop(e);
-		
-		postIdleTop(affected);
-	}
-	
-	public void removeMergerTop(Merger m) {
-		Set<Vertex> affected = graph.removeMergerTop(m);
-		
-		postIdleTop(affected);
-	}
-	
-	public void removeStopSignTop(StopSign s) {
-		s.r.removeStopSignTop(s);
-	}
-	
-	public void removeCarTop(Car c) {
-		
-		c.destroy();
-		
-		synchronized (APP) {
-			carMap.remove(c);
-		}
-		
-		postRunningTop();
-	}
-	
-	public void insertMergerTop(Point p) {
-		Set<Vertex> affected = graph.insertMergerTop(p);
-		
-		postIdleTop(affected);
-		
-	}
-	
-	public void addExplosion(AnimatedExplosion x) {
-		explosionMap.add(x);
-	}
-	
-	public List<SweepEvent> sweepStart(Circle c) {
-		return graph.sweepStart(c);
-	}
-	
-	public List<SweepEvent> sweep(Capsule s) {
-		return graph.sweep(s);
-	}
-	
-	private void postIdleTop(Set<Vertex> affected) {
-		
-		graph.computeVertexRadii(affected);
-		
-		computeAABB();
-	}
-	
-	public void postDraftingTop(Set<Vertex> affected) {
-		
-		graph.computeVertexRadii(affected);
-		
-		computeAABB();
-	}
-	
-	private void postRunningTop() {
-		;
-	}
-	
-	private void computeAABB() {
-		aabb = quadrantMap.aabb;
-		aabb = AABB.union(aabb, graph.getAABB());
-	}
-	
-	public AABB getAABB() {
-		return aabb;
-	}
+//	public AABB getAABB() {
+//		return aabb;
+//	}
 	
 	/*
 	 * run before game loop start
@@ -354,7 +330,53 @@ public class World implements Sweepable {
 	}
 	
 	public static World fromFileString(String s) {
+		BufferedReader r = new BufferedReader(new StringReader(s));
 		
+		StringBuilder quadrantMapStringBuilder = null;
+		StringBuilder graphStringBuilder = null;
+		
+		try {
+			String l = r.readLine();
+			assert l.equals("version 1");
+			
+			l = r.readLine();
+			assert l.equals("start world");
+			
+			quadrantMapStringBuilder = new StringBuilder();
+			
+			while (true) {
+				l = r.readLine();
+				quadrantMapStringBuilder.append(l+"\n");
+				if (l.equals("end quadrantMap")) {
+					break;
+				}
+			}
+			
+			graphStringBuilder = new StringBuilder();
+			
+			while (true) {
+				l = r.readLine();
+				graphStringBuilder.append(l+"\n");
+				if (l.equals("end graph")) {
+					break;
+				}
+			}
+			
+			l = r.readLine();
+			assert l.equals("end world");
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		QuadrantMap qm = QuadrantMap.fromFileString(quadrantMapStringBuilder.toString());
+		Graph g = Graph.fromFileString(graphStringBuilder.toString());
+		
+		World w = new World();
+		w.quadrantMap = qm;
+		w.graph = g;
+		return w;
 	}
 	
 	public void zoom(double factor) {
@@ -433,11 +455,11 @@ public class World implements Sweepable {
 				
 			}
 			
-			if (APP.DEBUG_DRAW) {
-				ctxt.setColor(Color.BLACK);
-				ctxt.setPixelStroke(1);
-				aabb.draw(ctxt);
-			}
+//			if (APP.DEBUG_DRAW) {
+//				ctxt.setColor(Color.BLACK);
+//				ctxt.setPixelStroke(1);
+//				aabb.draw(ctxt);
+//			}
 			
 			break;
 		case PREVIEW:

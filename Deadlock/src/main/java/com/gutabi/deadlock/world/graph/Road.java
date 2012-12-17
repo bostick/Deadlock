@@ -643,7 +643,7 @@ public class Road extends Edge {
 	}
 	
 	public static Road fromFileString(String s) {
-		
+		return null;
 	}
 	
 	

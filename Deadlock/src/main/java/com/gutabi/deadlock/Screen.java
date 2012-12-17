@@ -8,8 +8,6 @@ import com.gutabi.deadlock.view.PaintEvent;
 
 public abstract class Screen implements ActionListener {
 	
-	public abstract void init();
-	
 	public abstract void canvasPostDisplay(Dim dim);
 	
 	public abstract void render();

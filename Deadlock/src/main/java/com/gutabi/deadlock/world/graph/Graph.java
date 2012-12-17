@@ -153,6 +153,10 @@ public class Graph implements Sweepable {
 		return affected;
 	}
 	
+	public Intersection createIntersection(Point p) {
+		return new Intersection(world, p);
+	}
+	
 	public Set<Vertex> createRoadTop(Vertex start, Vertex end, List<Point> pts) {
 		
 		createRoad(start, end, pts, (start.m==null&&start.supportsStopSigns()?1:0)+(end.m==null&&end.supportsStopSigns()?2:0));
@@ -177,7 +181,7 @@ public class Graph implements Sweepable {
 	
 	public Set<Vertex> insertMergerTop(Point p) {
 		
-		Merger m = createMerger(p);
+		Merger m = createMergerAndFixtures(p);
 		
 		Set<Vertex> affected = new HashSet<Vertex>();
 		affected.add(m.top);
@@ -342,8 +346,8 @@ public class Graph implements Sweepable {
 		return r;
 	}
 	
-	private Merger createMerger(Point p) {
-		Merger m = new Merger(world, p);
+	private Merger createMergerAndFixtures(Point p) {
+		Merger m = Merger.createMergerAndFixtures(world, p);
 		
 		edges.add(m);
 		refreshEdgeIDs();
@@ -1137,7 +1141,7 @@ public class Graph implements Sweepable {
 	}
 	
 	public static Graph fromFileString(String s) {
-		
+		return null;
 	}
 	
 	public void renderCanvas() {

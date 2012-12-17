@@ -253,7 +253,7 @@ public final class Fixture extends Vertex {
 	}
 	
 	public static Fixture fromFileString(String s) {
-		
+		return null;
 	}
 	
 	public void paint(RenderingContext ctxt) {

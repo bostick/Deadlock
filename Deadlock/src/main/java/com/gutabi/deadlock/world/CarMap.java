@@ -33,7 +33,10 @@ public class CarMap {
 		cars.add(c);
 	}
 	
-	public void remove(Car c) {
+	public void destroyCar(Car c) {
+		
+		c.destroy();
+		
 		cars.remove(c);
 	}
 	

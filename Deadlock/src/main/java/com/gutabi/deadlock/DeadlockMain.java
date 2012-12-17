@@ -16,15 +16,13 @@ import com.gutabi.deadlock.menu.MainMenu;
 
 public class DeadlockMain  {
 	
-static Logger logger = Logger.getLogger("deadlock");
+	static Logger logger = Logger.getLogger("deadlock");
 	
 	static void createAndShowGUI() throws Exception {
 		
 		APP.codebase = new URL("file:.");
 		
 		APP.screen = new MainMenu();
-		
-		APP.screen.init();
 		
 		VIEW.setupFrame();
 		VIEW.init();

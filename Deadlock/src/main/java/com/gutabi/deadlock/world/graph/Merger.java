@@ -20,6 +20,7 @@ public class Merger extends Edge {
 	public static final double MERGER_HEIGHT = 5.0;
 	
 	public final Point ul;
+	public final Point center;
 	
 	public final Fixture top;
 	public final Fixture left;
@@ -40,26 +41,16 @@ public class Merger extends Edge {
 	private final Line debugSkeletonLeftRightLine;
 	
 	
-	public Merger(World world, Point center) {
+	public Merger(World world, Point center, Fixture top, Fixture left, Fixture right, Fixture bottom) {
 		this.world = world;
+		this.center = center;
 		
 		this.ul = center.plus(new Point(-MERGER_WIDTH/2,  -MERGER_HEIGHT/2));
 		
-		top = new Fixture(world, new Point(ul.x + MERGER_WIDTH/2, ul.y), Axis.TOPBOTTOM);
-		left = new Fixture(world, new Point(ul.x, ul.y + MERGER_HEIGHT/2), Axis.LEFTRIGHT);
-		right = new Fixture(world, new Point(ul.x + MERGER_WIDTH, ul.y + MERGER_HEIGHT/2), Axis.LEFTRIGHT);
-		bottom = new Fixture(world, new Point(ul.x + MERGER_WIDTH/2, ul.y+MERGER_HEIGHT), Axis.TOPBOTTOM);
-		
-		top.match = bottom;
-		bottom.match = top;
-		
-		left.match = right;
-		right.match = left;
-		
-		top.setSide(Side.BOTTOM);
-		bottom.setSide(Side.BOTTOM);
-		left.setSide(Side.RIGHT);
-		right.setSide(Side.RIGHT);
+		this.top = top;
+		this.left = left;
+		this.right = right;
+		this.bottom = bottom;
 		
 		Point p0 = ul;
 		Point p1 = new Point(ul.x + MERGER_WIDTH, ul.y);
@@ -76,7 +67,29 @@ public class Merger extends Edge {
 		
 		debugSkeletonTopBottomLine = new Line(top.shape.center, bottom.shape.center);
 		debugSkeletonLeftRightLine = new Line(left.shape.center, right.shape.center);
+	}
+	
+	public static Merger createMergerAndFixtures(World world, Point center) {
 		
+		Point ul = center.plus(new Point(-MERGER_WIDTH/2,  -MERGER_HEIGHT/2));
+		
+		Fixture top = new Fixture(world, new Point(ul.x + MERGER_WIDTH/2, ul.y), Axis.TOPBOTTOM);
+		Fixture left = new Fixture(world, new Point(ul.x, ul.y + MERGER_HEIGHT/2), Axis.LEFTRIGHT);
+		Fixture right = new Fixture(world, new Point(ul.x + MERGER_WIDTH, ul.y + MERGER_HEIGHT/2), Axis.LEFTRIGHT);
+		Fixture bottom = new Fixture(world, new Point(ul.x + MERGER_WIDTH/2, ul.y+MERGER_HEIGHT), Axis.TOPBOTTOM);
+		
+		top.match = bottom;
+		bottom.match = top;
+		
+		left.match = right;
+		right.match = left;
+		
+		top.setSide(Side.BOTTOM);
+		bottom.setSide(Side.BOTTOM);
+		left.setSide(Side.RIGHT);
+		right.setSide(Side.RIGHT);
+		
+		return new Merger(world, center, top, left, right, bottom);
 	}
 	
 	public void destroy() {
@@ -280,7 +293,7 @@ public class Merger extends Edge {
 		
 		s.append("id " + id + "\n");
 		
-		s.append("ul " + ul.toString() + "\n");
+		s.append("center " + center + "\n");
 		s.append("top " + top.id + "\n");
 		s.append("left " + left.id + "\n");
 		s.append("right " + right.id + "\n");
@@ -295,7 +308,7 @@ public class Merger extends Edge {
 	}
 	
 	public static Merger fromFileString(String s) {
-		
+		return null;
 	}
 	
 	public void paint(RenderingContext ctxt) {
