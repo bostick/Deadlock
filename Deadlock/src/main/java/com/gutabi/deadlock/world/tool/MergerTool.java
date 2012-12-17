@@ -1,4 +1,4 @@
-package com.gutabi.deadlock.world.cursor;
+package com.gutabi.deadlock.world.tool;
 
 import java.awt.Color;
 import java.util.Set;
@@ -11,11 +11,11 @@ import com.gutabi.deadlock.world.WorldScreen;
 import com.gutabi.deadlock.world.graph.Vertex;
 
 //@SuppressWarnings("static-access")
-public class MergerCursor extends CursorBase {
+public class MergerTool extends ToolBase {
 	
-	MergerCursorShape shape;
+	MergerToolShape shape;
 	
-	public MergerCursor(WorldScreen screen) {
+	public MergerTool(WorldScreen screen) {
 		super(screen);
 	}
 	
@@ -23,7 +23,7 @@ public class MergerCursor extends CursorBase {
 		this.p = p;
 		
 		if (p != null) {
-			shape = new MergerCursorShape(p);
+			shape = new MergerToolShape(p);
 		} else {
 			shape = null;
 		}	
@@ -35,9 +35,9 @@ public class MergerCursor extends CursorBase {
 	
 	public void escKey(InputEvent ev) {
 		
-		screen.cursor = new RegularCursor(screen);
+		screen.tool = new RegularTool(screen);
 		
-		screen.cursor.setPoint(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
+		screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
 		
 		screen.repaint();
 	}
@@ -50,9 +50,9 @@ public class MergerCursor extends CursorBase {
 				Set<Vertex> affected = screen.world.graph.insertMergerTop(p);
 				screen.world.graph.computeVertexRadii(affected);
 				
-				screen.cursor = new RegularCursor(screen);
+				screen.tool = new RegularTool(screen);
 				
-				screen.cursor.setPoint(screen.lastMovedWorldPoint);
+				screen.tool.setPoint(screen.lastMovedWorldPoint);
 				
 				screen.render();
 				screen.repaint();
@@ -62,12 +62,12 @@ public class MergerCursor extends CursorBase {
 	}
 	
 	public void moved(InputEvent ev) {
-		screen.cursor.setPoint(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
+		screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
 		screen.repaint();
 	}
 	
 	public void exited(InputEvent ev) {
-		screen.cursor.setPoint(null);
+		screen.tool.setPoint(null);
 		screen.repaint();
 	}
 	

@@ -1,4 +1,4 @@
-package com.gutabi.deadlock.world.cursor;
+package com.gutabi.deadlock.world.tool;
 
 
 import java.util.List;
@@ -11,7 +11,7 @@ import com.gutabi.deadlock.core.geom.ShapeUtils;
 import com.gutabi.deadlock.view.RenderingContext;
 import com.gutabi.deadlock.world.graph.Vertex;
 
-public class CircleCursorShape extends Shape {
+public class CircleToolShape extends Shape {
 	
 	public final Point p;
 	public final double xRadius;
@@ -23,7 +23,7 @@ public class CircleCursorShape extends Shape {
 	public final List<Point> skeleton;
 	public final Polyline skeletonShape;
 	
-	public CircleCursorShape(Point p, double xRadius, double yRadius) {
+	public CircleToolShape(Point p, double xRadius, double yRadius) {
 		this.p = p;
 		this.xRadius = xRadius;
 		this.yRadius = yRadius;

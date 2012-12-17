@@ -1,4 +1,4 @@
-package com.gutabi.deadlock.world.cursor;
+package com.gutabi.deadlock.world.tool;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 import static com.gutabi.deadlock.view.DeadlockView.VIEW;
@@ -24,14 +24,14 @@ import com.gutabi.deadlock.world.graph.StopSign;
 import com.gutabi.deadlock.world.graph.Vertex;
 
 //@SuppressWarnings("static-access")
-public class RegularCursor extends CursorBase {
+public class RegularTool extends ToolBase {
 	
-	enum RegularCursorMode {
+	enum RegularToolMode {
 		FREE,
 		DRAFTING
 	}
 	
-	RegularCursorMode mode;
+	RegularToolMode mode;
 	
 	Circle shape;
 	
@@ -39,10 +39,10 @@ public class RegularCursor extends CursorBase {
 	Stroke debugStroke;
 	Stroke debugStroke2;
 	
-	public RegularCursor(WorldScreen screen) {
+	public RegularTool(WorldScreen screen) {
 		super(screen);
 		
-		mode = RegularCursorMode.FREE;
+		mode = RegularToolMode.FREE;
 	}
 	
 	public void setPoint(Point p) {
@@ -145,16 +145,16 @@ public class RegularCursor extends CursorBase {
 
 	
 	public void qKey(InputEvent ev) {
-		StraightEdgeCursor c = new StraightEdgeCursor(screen);
+		StraightEdgeTool c = new StraightEdgeTool(screen);
 		c.setStart(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
 		c.setPoint(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
-		screen.cursor = c;
+		screen.tool = c;
 		screen.repaint();
 	}
 	
 	public void wKey(InputEvent ev) {
-		screen.cursor = new FixtureCursor(screen);
-		screen.cursor.setPoint(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
+		screen.tool = new FixtureTool(screen);
+		screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
 		screen.repaint();
 	}
 	
@@ -162,26 +162,26 @@ public class RegularCursor extends CursorBase {
 		
 		screen.hilited = null;
 		
-		screen.cursor = new CircleCursor(screen);
+		screen.tool = new CircleTool(screen);
 		
-		screen.cursor.setPoint(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
+		screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
 		
 		screen.repaint();
 	}
 	
 	public void sKey(InputEvent ev) {
-		QuadCursor q = new QuadCursor(screen);
+		QuadTool q = new QuadTool(screen);
 		q.setStart(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
 		q.setPoint(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
-		screen.cursor = q;
+		screen.tool = q;
 		screen.repaint();
 	}
 	
 	public void dKey(InputEvent ev) {
-		CubicCursor c = new CubicCursor(screen);
+		CubicTools c = new CubicTools(screen);
 		c.setStart(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
 		c.setPoint(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
-		screen.cursor = c;
+		screen.tool = c;
 		screen.repaint();
 	}
 	
@@ -201,9 +201,9 @@ public class RegularCursor extends CursorBase {
 			
 			screen.hilited = null;
 			
-			screen.cursor = new MergerCursor(screen);
+			screen.tool = new MergerTool(screen);
 			
-			screen.cursor.setPoint(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
+			screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
 			
 			screen.repaint();
 		}
@@ -218,7 +218,7 @@ public class RegularCursor extends CursorBase {
 				screen.hilited = closest;
 			}
 			
-			screen.cursor.setPoint(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
+			screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
 			
 			screen.repaint();
 			break;
@@ -231,7 +231,7 @@ public class RegularCursor extends CursorBase {
 	public void dragged(InputEvent ev) {
 		switch (mode) {
 		case FREE:
-			screen.cursor.setPoint(screen.lastDraggedWorldPoint);
+			screen.tool.setPoint(screen.lastDraggedWorldPoint);
 			
 			if (screen.lastDraggedWorldPointWasNull) {
 				// first drag
@@ -245,7 +245,7 @@ public class RegularCursor extends CursorBase {
 			}
 			break;
 		case DRAFTING:
-			screen.cursor.setPoint(screen.lastDraggedWorldPoint);
+			screen.tool.setPoint(screen.lastDraggedWorldPoint);
 			
 			draftMove(screen.lastDraggedWorldPoint);
 			
@@ -268,13 +268,13 @@ public class RegularCursor extends CursorBase {
 	}
 	
 	public void exited(InputEvent ev) {
-		screen.cursor.setPoint(null);
+		screen.tool.setPoint(null);
 		screen.repaint();
 	}
 	
 	public void draftStart(Point p) {
 		
-		mode = RegularCursorMode.DRAFTING;
+		mode = RegularToolMode.DRAFTING;
 		
 		screen.hilited = null;
 		
@@ -301,7 +301,7 @@ public class RegularCursor extends CursorBase {
 		debugStroke = stroke;
 		stroke = null;
 		
-		mode = RegularCursorMode.FREE;
+		mode = RegularToolMode.FREE;
 		
 	}
 	

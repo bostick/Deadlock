@@ -1,4 +1,4 @@
-package com.gutabi.deadlock.world.cursor;
+package com.gutabi.deadlock.world.tool;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
@@ -16,28 +16,28 @@ import com.gutabi.deadlock.world.Stroke;
 import com.gutabi.deadlock.world.WorldScreen;
 import com.gutabi.deadlock.world.graph.Vertex;
 
-public class CircleCursor extends CursorBase {
+public class CircleTool extends ToolBase {
 	
-	enum CircleCursorMode {
+	enum CircleToolMode {
 		FREE,
 		SET,
 		KNOB,
 	}
 	
-	CircleCursorMode mode;
+	CircleToolMode mode;
 	double xRadius;
 	double yRadius;
-	CircleCursorShape shape;
+	CircleToolShape shape;
 	
 	final Knob ulKnob;
 	final Knob brKnob;
 	
 	Knob knob;
 	
-	public CircleCursor(final WorldScreen screen) {
+	public CircleTool(final WorldScreen screen) {
 		super(screen);
 		
-		mode = CircleCursorMode.FREE;
+		mode = CircleToolMode.FREE;
 		yRadius = Vertex.INIT_VERTEX_RADIUS;
 		xRadius = Vertex.INIT_VERTEX_RADIUS;
 		
@@ -50,7 +50,7 @@ public class CircleCursor extends CursorBase {
 				
 				Point newPoint2 = new Point(newPoint.x + offset.width, newPoint.y + offset.height);
 				
-				CircleCursor.this.setPoint(newPoint2);
+				CircleTool.this.setPoint(newPoint2);
 			}
 		};
 		
@@ -64,9 +64,9 @@ public class CircleCursor extends CursorBase {
 				xRadius += diff.x/2;
 				yRadius += diff.y/2;
 				
-				Point newPoint1 = CircleCursor.this.p.plus(diff.multiply(0.5));
+				Point newPoint1 = CircleTool.this.p.plus(diff.multiply(0.5));
 				
-				CircleCursor.this.setPoint(newPoint1);
+				CircleTool.this.setPoint(newPoint1);
 			}
 		};
 	}
@@ -75,7 +75,7 @@ public class CircleCursor extends CursorBase {
 		this.p = p;
 		
 		if (p != null) {
-			shape = new CircleCursorShape(p, xRadius, yRadius);
+			shape = new CircleToolShape(p, xRadius, yRadius);
 			ulKnob.setPoint(shape.c1.aabb.ul);
 			brKnob.setPoint(shape.c1.aabb.br);
 		} else {
@@ -86,13 +86,13 @@ public class CircleCursor extends CursorBase {
 	public void setXRadius(double r) {
 		this.xRadius = r;
 		
-		shape = new CircleCursorShape(p, xRadius, yRadius);
+		shape = new CircleToolShape(p, xRadius, yRadius);
 	}
 	
 	public void setYRadius(double r) {
 		this.yRadius = r;
 		
-		shape = new CircleCursorShape(p, xRadius, yRadius);
+		shape = new CircleToolShape(p, xRadius, yRadius);
 	}
 	
 	public Shape getShape() {
@@ -106,13 +106,13 @@ public class CircleCursor extends CursorBase {
 	public void escKey(InputEvent ev) {
 		switch (mode) {
 		case FREE:
-			screen.cursor = new RegularCursor(screen);
-			screen.cursor.setPoint(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
+			screen.tool = new RegularTool(screen);
+			screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
 			screen.repaint();
 			break;
 		case SET:
-			mode = CircleCursorMode.FREE;
-			screen.cursor.setPoint(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
+			mode = CircleToolMode.FREE;
+			screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
 			screen.repaint();
 			break;
 		case KNOB:
@@ -124,7 +124,7 @@ public class CircleCursor extends CursorBase {
 	public void aKey(InputEvent ev) {
 		switch (mode) {
 		case FREE:
-			mode = CircleCursorMode.SET;
+			mode = CircleToolMode.SET;
 			screen.repaint();
 			break;
 		case SET:
@@ -139,9 +139,9 @@ public class CircleCursor extends CursorBase {
 			Set<Vertex> affected = s.processNewStroke();
 			screen.world.graph.computeVertexRadii(affected);
 			
-			screen.cursor = new RegularCursor(screen);
+			screen.tool = new RegularTool(screen);
 			
-			screen.cursor.setPoint(screen.lastMovedWorldPoint);
+			screen.tool.setPoint(screen.lastMovedWorldPoint);
 			
 			screen.render();
 			screen.repaint();
@@ -160,7 +160,7 @@ public class CircleCursor extends CursorBase {
 				screen.hilited = closest;
 			}
 			
-			screen.cursor.setPoint(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
+			screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
 			
 			screen.repaint();
 			break;
@@ -185,11 +185,11 @@ public class CircleCursor extends CursorBase {
 				break;
 			}
 			if (ulKnob.hitTest(screen.lastPressedWorldPoint)) {
-				mode = CircleCursorMode.KNOB;
+				mode = CircleToolMode.KNOB;
 				knob = ulKnob;
 				origKnobCenter = knob.p;
 			} else if (brKnob.hitTest(screen.lastPressedWorldPoint)) {
-				mode = CircleCursorMode.KNOB;
+				mode = CircleToolMode.KNOB;
 				knob = brKnob;
 				origKnobCenter = knob.p;
 			}
@@ -210,7 +210,7 @@ public class CircleCursor extends CursorBase {
 		case SET:
 			break;
 		case KNOB:	
-			mode = CircleCursorMode.SET;
+			mode = CircleToolMode.SET;
 			screen.repaint();
 			break;
 		}

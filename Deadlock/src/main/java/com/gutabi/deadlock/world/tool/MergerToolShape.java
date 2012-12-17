@@ -1,4 +1,4 @@
-package com.gutabi.deadlock.world.cursor;
+package com.gutabi.deadlock.world.tool;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
@@ -12,7 +12,7 @@ import com.gutabi.deadlock.world.graph.Merger;
 import com.gutabi.deadlock.world.graph.Vertex;
 
 @SuppressWarnings("static-access")
-public class MergerCursorShape extends Shape {
+public class MergerToolShape extends Shape {
 	
 	private Point ul;
 	private Point p0;
@@ -35,7 +35,7 @@ public class MergerCursorShape extends Shape {
 	
 	private AABB aabb;
 	
-	public MergerCursorShape(Point p) {
+	public MergerToolShape(Point p) {
 		
 		worldQ = new Quad(null, p0.plus(p), p1.plus(p), p2.plus(p), p3.plus(p));
 		

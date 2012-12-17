@@ -6,10 +6,10 @@ import java.util.List;
 
 import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.world.cursor.CircleCursorShape;
-import com.gutabi.deadlock.world.cursor.FixtureCursorShape;
-import com.gutabi.deadlock.world.cursor.MergerCursorShape;
-import com.gutabi.deadlock.world.cursor.StraightEdgeCursorShape;
+import com.gutabi.deadlock.world.tool.CircleToolShape;
+import com.gutabi.deadlock.world.tool.FixtureToolShape;
+import com.gutabi.deadlock.world.tool.MergerToolShape;
+import com.gutabi.deadlock.world.tool.StraightEdgeToolShape;
 
 public class ShapeUtils {
 	
@@ -46,17 +46,17 @@ public class ShapeUtils {
 				return intersect(s1, s0);
 			} else if (s1 instanceof Circle) {
 				return intersectCC((Circle)s0, (Circle)s1);
-			} else if (s1 instanceof CircleCursorShape) {
+			} else if (s1 instanceof CircleToolShape) {
 				return intersect(s1, s0);
 			}
-			else if (s1 instanceof FixtureCursorShape) {
+			else if (s1 instanceof FixtureToolShape) {
 				return intersect(s1, s0);
 			}
-			else if (s1 instanceof MergerCursorShape) {
+			else if (s1 instanceof MergerToolShape) {
 				return intersect(s1, s0);
 			} else if (s1 instanceof Quad) {
 				return intersectCQ((Circle)s0, (Quad)s1);
-			} else if (s1 instanceof StraightEdgeCursorShape) {
+			} else if (s1 instanceof StraightEdgeToolShape) {
 				return intersect(s1, s0);
 			}
 		}
@@ -69,8 +69,8 @@ public class ShapeUtils {
 //			return false;
 //			
 //		}
-		else if (s0 instanceof FixtureCursorShape) {
-			FixtureCursorShape fc0 = (FixtureCursorShape)s0;
+		else if (s0 instanceof FixtureToolShape) {
+			FixtureToolShape fc0 = (FixtureToolShape)s0;
 			
 			if (intersect(fc0.worldSourceCircle, s1)) {
 				return true;
@@ -81,8 +81,8 @@ public class ShapeUtils {
 			return false;
 			
 		}
-		else if (s0 instanceof MergerCursorShape) {
-			MergerCursorShape mc0 = (MergerCursorShape)s0;
+		else if (s0 instanceof MergerToolShape) {
+			MergerToolShape mc0 = (MergerToolShape)s0;
 			
 			if (intersect(mc0.worldQ, s1)) {
 				return true;
@@ -109,18 +109,18 @@ public class ShapeUtils {
 			} else if (s1 instanceof Circle) {
 				return intersectCQ((Circle)s1, (Quad)s0);
 			}
-			else if (s1 instanceof FixtureCursorShape) {
+			else if (s1 instanceof FixtureToolShape) {
 				return intersect(s1, s0);
 			}
-			else if (s1 instanceof MergerCursorShape) {
+			else if (s1 instanceof MergerToolShape) {
 				return intersect(s1, s0);
 			} else if (s1 instanceof Quad) {
 				return intersectQQ((Quad)s0, (Quad)s1);
-			} else if (s1 instanceof StraightEdgeCursorShape) {
+			} else if (s1 instanceof StraightEdgeToolShape) {
 				return intersect(s1, s0);
 			}
-		} else if (s0 instanceof StraightEdgeCursorShape) {
-			StraightEdgeCursorShape sec0 = (StraightEdgeCursorShape)s0;
+		} else if (s0 instanceof StraightEdgeToolShape) {
+			StraightEdgeToolShape sec0 = (StraightEdgeToolShape)s0;
 			
 			if (intersect(sec0.pCircle, s1)) {
 				return true;

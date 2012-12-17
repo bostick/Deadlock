@@ -1,4 +1,4 @@
-package com.gutabi.deadlock.world.cursor;
+package com.gutabi.deadlock.world.tool;
 
 import java.awt.Color;
 import java.util.Set;
@@ -11,41 +11,41 @@ import com.gutabi.deadlock.world.Stroke;
 import com.gutabi.deadlock.world.WorldScreen;
 import com.gutabi.deadlock.world.graph.Vertex;
 
-public class StraightEdgeCursor extends CursorBase {
+public class StraightEdgeTool extends ToolBase {
 	
-	enum StraightEdgeCursorMode {
+	enum StraightEdgeToolMode {
 		FREE,
 		SET,
 		KNOB,
 	}
 	
-	StraightEdgeCursorMode mode;
+	StraightEdgeToolMode mode;
 	
 	public Point start;
 	
-	StraightEdgeCursorShape shape;
+	StraightEdgeToolShape shape;
 	
 	final Knob startKnob;
 	final Knob endKnob;
 	
 	Knob knob;
 	
-	public StraightEdgeCursor(WorldScreen screen) {
+	public StraightEdgeTool(WorldScreen screen) {
 		super(screen);
 		
-		mode = StraightEdgeCursorMode.FREE;
+		mode = StraightEdgeToolMode.FREE;
 		
 		startKnob = new Knob(screen.world) {
 			public void drag(Point p) {
 				Point newPoint = world.quadrantMap.getPoint(p);
-				StraightEdgeCursor.this.setStart(newPoint);
+				StraightEdgeTool.this.setStart(newPoint);
 			}
 		};
 		
 		endKnob = new Knob(screen.world) {
 			public void drag(Point p) {
 				Point newPoint = world.quadrantMap.getPoint(p);
-				StraightEdgeCursor.this.setEnd(newPoint);
+				StraightEdgeTool.this.setEnd(newPoint);
 			}
 		};
 		
@@ -55,7 +55,7 @@ public class StraightEdgeCursor extends CursorBase {
 		this.p = p;
 		
 		if (p != null) {
-			shape = new StraightEdgeCursorShape(start, p);
+			shape = new StraightEdgeToolShape(start, p);
 			startKnob.setPoint(start);
 			endKnob.setPoint(p);
 		} else {
@@ -67,7 +67,7 @@ public class StraightEdgeCursor extends CursorBase {
 	public void setStart(Point start) {
 		this.start = start;
 		if (start != null && p != null) {
-			shape = new StraightEdgeCursorShape(start, p);
+			shape = new StraightEdgeToolShape(start, p);
 			startKnob.setPoint(start);
 			endKnob.setPoint(p);
 		}
@@ -76,7 +76,7 @@ public class StraightEdgeCursor extends CursorBase {
 	public void setEnd(Point p) {
 		this.p = p;
 		if (start != null && p != null) {
-			shape = new StraightEdgeCursorShape(start, p);
+			shape = new StraightEdgeToolShape(start, p);
 			startKnob.setPoint(start);
 			endKnob.setPoint(p);
 		}
@@ -89,13 +89,13 @@ public class StraightEdgeCursor extends CursorBase {
 	public void escKey(InputEvent ev) {
 		switch (mode) {
 		case FREE:
-			screen.cursor = new RegularCursor(screen);
-			screen.cursor.setPoint(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
+			screen.tool = new RegularTool(screen);
+			screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
 			screen.repaint();
 			break;
 		case SET:
-			mode = StraightEdgeCursorMode.FREE;
-			screen.cursor.setPoint(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
+			mode = StraightEdgeToolMode.FREE;
+			screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
 			screen.repaint();
 			break;
 		case KNOB:
@@ -107,7 +107,7 @@ public class StraightEdgeCursor extends CursorBase {
 	public void qKey(InputEvent ev) {
 		switch (mode) {
 		case FREE:
-			mode = StraightEdgeCursorMode.SET;
+			mode = StraightEdgeToolMode.SET;
 			screen.repaint();
 			break;
 		case SET:
@@ -120,9 +120,9 @@ public class StraightEdgeCursor extends CursorBase {
 			Set<Vertex> affected = s.processNewStroke();
 			screen.world.graph.computeVertexRadii(affected);
 			
-			screen.cursor = new RegularCursor(screen);
+			screen.tool = new RegularTool(screen);
 			
-			screen.cursor.setPoint(screen.lastMovedOrDraggedWorldPoint);
+			screen.tool.setPoint(screen.lastMovedOrDraggedWorldPoint);
 			
 			screen.render();
 			screen.repaint();
@@ -136,7 +136,7 @@ public class StraightEdgeCursor extends CursorBase {
 	public void moved(InputEvent ev) {
 		switch (mode) {
 		case FREE:
-			screen.cursor.setPoint(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
+			screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
 			screen.repaint();
 			break;
 		case SET:
@@ -152,7 +152,7 @@ public class StraightEdgeCursor extends CursorBase {
 		case SET:
 			break;
 		case KNOB:
-			mode = StraightEdgeCursorMode.SET;
+			mode = StraightEdgeToolMode.SET;
 			screen.repaint();
 			break;
 		}
@@ -176,11 +176,11 @@ public class StraightEdgeCursor extends CursorBase {
 			}
 			
 			if (startKnob.hitTest(screen.lastPressedWorldPoint)) {
-				mode = StraightEdgeCursorMode.KNOB;
+				mode = StraightEdgeToolMode.KNOB;
 				knob = startKnob;
 				origKnobCenter = knob.p;
 			} else if (endKnob.hitTest(screen.lastPressedWorldPoint)) {
-				mode = StraightEdgeCursorMode.KNOB;
+				mode = StraightEdgeToolMode.KNOB;
 				knob = endKnob;
 				origKnobCenter = knob.p;
 			}

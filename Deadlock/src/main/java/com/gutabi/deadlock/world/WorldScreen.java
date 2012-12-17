@@ -25,12 +25,12 @@ import com.gutabi.deadlock.view.PaintEvent;
 import com.gutabi.deadlock.view.RenderingContext;
 import com.gutabi.deadlock.view.RenderingContextType;
 import com.gutabi.deadlock.world.car.Car;
-import com.gutabi.deadlock.world.cursor.Cursor;
-import com.gutabi.deadlock.world.cursor.RegularCursor;
 import com.gutabi.deadlock.world.graph.Merger;
 import com.gutabi.deadlock.world.graph.Road;
 import com.gutabi.deadlock.world.graph.StopSign;
 import com.gutabi.deadlock.world.graph.Vertex;
+import com.gutabi.deadlock.world.tool.Tool;
+import com.gutabi.deadlock.world.tool.RegularTool;
 
 @SuppressWarnings("static-access")
 public class WorldScreen extends ScreenBase {
@@ -46,7 +46,7 @@ public class WorldScreen extends ScreenBase {
 	
 	public Preview preview;
 	
-	public Cursor cursor;
+	public Tool tool;
 	
 	public Entity hilited;
 	
@@ -64,7 +64,7 @@ public class WorldScreen extends ScreenBase {
 		
 		mode = WorldScreenMode.EDITING;
 		
-		cursor = new RegularCursor(this);
+		tool = new RegularTool(this);
 		
 		preview = new Preview(this);
 		
@@ -113,7 +113,7 @@ public class WorldScreen extends ScreenBase {
 		case DIALOG:
 			break;
 		case EDITING:
-			cursor.qKey(ev);
+			tool.qKey(ev);
 			break;
 		}
 	}
@@ -125,7 +125,7 @@ public class WorldScreen extends ScreenBase {
 		case DIALOG:
 			break;
 		case EDITING:
-			cursor.wKey(ev);
+			tool.wKey(ev);
 			break;
 		}
 	}
@@ -134,7 +134,7 @@ public class WorldScreen extends ScreenBase {
 		
 		world.quadrantMap.toggleGrid();
 		
-		cursor.setPoint(world.quadrantMap.getPoint(lastMovedOrDraggedWorldPoint));
+		tool.setPoint(world.quadrantMap.getPoint(lastMovedOrDraggedWorldPoint));
 		
 		render();
 		repaint();
@@ -195,7 +195,7 @@ public class WorldScreen extends ScreenBase {
 		case DIALOG:
 			break;
 		case EDITING:
-			cursor.insertKey(ev);
+			tool.insertKey(ev);
 			break;
 		}
 	}
@@ -206,7 +206,7 @@ public class WorldScreen extends ScreenBase {
 		case PAUSED:
 			break;
 		case EDITING:
-			cursor.escKey(ev);
+			tool.escKey(ev);
 			break;
 		case DIALOG:
 			
@@ -223,7 +223,7 @@ public class WorldScreen extends ScreenBase {
 		case DIALOG:
 			break;
 		case EDITING:
-			cursor.d1Key(ev);
+			tool.d1Key(ev);
 			break;
 		}
 	}
@@ -235,7 +235,7 @@ public class WorldScreen extends ScreenBase {
 		case DIALOG:
 			break;
 		case EDITING:
-			cursor.d2Key(ev);
+			tool.d2Key(ev);
 			break;
 		}
 	}
@@ -247,7 +247,7 @@ public class WorldScreen extends ScreenBase {
 		case DIALOG:
 			break;
 		case EDITING:
-			cursor.d3Key(ev);
+			tool.d3Key(ev);
 			break;
 		}
 	}
@@ -272,7 +272,7 @@ public class WorldScreen extends ScreenBase {
 				hilited = closest;
 			}
 			world.quadrantMap.computeGridSpacing();
-			cursor.setPoint(world.quadrantMap.getPoint(lastMovedOrDraggedWorldPoint));
+			tool.setPoint(world.quadrantMap.getPoint(lastMovedOrDraggedWorldPoint));
 			break;
 		}
 		
@@ -300,7 +300,7 @@ public class WorldScreen extends ScreenBase {
 				hilited = closest;
 			}
 			world.quadrantMap.computeGridSpacing();
-			cursor.setPoint(world.quadrantMap.getPoint(lastMovedOrDraggedWorldPoint));
+			tool.setPoint(world.quadrantMap.getPoint(lastMovedOrDraggedWorldPoint));
 			break;
 		}
 		
@@ -315,7 +315,7 @@ public class WorldScreen extends ScreenBase {
 		case DIALOG:
 			break;
 		case EDITING:
-			cursor.aKey(ev);
+			tool.aKey(ev);
 			break;
 		}
 	}
@@ -327,7 +327,7 @@ public class WorldScreen extends ScreenBase {
 		case DIALOG:
 			break;
 		case EDITING:
-			cursor.sKey(ev);
+			tool.sKey(ev);
 			break;
 		}
 	}
@@ -391,7 +391,7 @@ public class WorldScreen extends ScreenBase {
 		case DIALOG:
 			break;
 		case EDITING:
-			cursor.dKey(ev);
+			tool.dKey(ev);
 			break;
 		}
 	}
@@ -408,7 +408,7 @@ public class WorldScreen extends ScreenBase {
 			
 			break;
 		case EDITING:
-			cursor.dKey(ev);
+			tool.dKey(ev);
 			break;
 		}
 		
@@ -454,7 +454,7 @@ public class WorldScreen extends ScreenBase {
 				lastDraggedWorldPointWasNull = (lastDraggedWorldPoint == null);
 				lastDraggedWorldPoint = world.canvasToWorld(p);
 				lastMovedOrDraggedWorldPoint = lastDraggedWorldPoint;
-				cursor.dragged(ev);
+				tool.dragged(ev);
 				break;
 			}
 			}
@@ -475,7 +475,7 @@ public class WorldScreen extends ScreenBase {
 			case DIALOG:
 				break;
 			case EDITING:
-				cursor.released(ev);
+				tool.released(ev);
 				break;
 			}
 		} else {
@@ -507,7 +507,7 @@ public class WorldScreen extends ScreenBase {
 				
 				lastMovedWorldPoint = world.canvasToWorld(p);
 				lastMovedOrDraggedWorldPoint = lastMovedWorldPoint;
-				cursor.moved(ev);
+				tool.moved(ev);
 				break;
 			}
 			}
@@ -526,7 +526,7 @@ public class WorldScreen extends ScreenBase {
 			case DIALOG:
 				break;
 			case EDITING:
-				cursor.exited(ev);
+				tool.exited(ev);
 				break;
 			}
 		} else if (ev.c == VIEW.oldCanvas) {
@@ -536,7 +536,7 @@ public class WorldScreen extends ScreenBase {
 			case DIALOG:
 				break;
 			case EDITING:
-				cursor.exited(ev);
+				tool.exited(ev);
 				break;
 			}
 		} else {
@@ -702,7 +702,7 @@ public class WorldScreen extends ScreenBase {
 				hilitedCopy.paintHilite(ctxt);
 			}
 			
-			cursor.draw(ctxt);
+			tool.draw(ctxt);
 			
 			if (APP.FPS_DRAW) {
 				

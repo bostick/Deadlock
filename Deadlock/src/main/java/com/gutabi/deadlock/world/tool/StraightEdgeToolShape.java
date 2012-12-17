@@ -1,4 +1,4 @@
-package com.gutabi.deadlock.world.cursor;
+package com.gutabi.deadlock.world.tool;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
@@ -11,7 +11,7 @@ import com.gutabi.deadlock.view.RenderingContext;
 import com.gutabi.deadlock.world.graph.Vertex;
 
 @SuppressWarnings("static-access")
-public class StraightEdgeCursorShape extends Shape {
+public class StraightEdgeToolShape extends Shape {
 	
 	public final Circle firstCircle;
 	public final Circle pCircle;
@@ -19,7 +19,7 @@ public class StraightEdgeCursorShape extends Shape {
 	
 	private final AABB aabb;
 	
-	public StraightEdgeCursorShape(Point first, Point p) {
+	public StraightEdgeToolShape(Point first, Point p) {
 		
 		this.firstCircle = new Circle(null, first, Vertex.INIT_VERTEX_RADIUS);
 		this.pCircle = new Circle(null, p, Vertex.INIT_VERTEX_RADIUS);

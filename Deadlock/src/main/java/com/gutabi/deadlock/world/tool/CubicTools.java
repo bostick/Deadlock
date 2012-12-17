@@ -1,4 +1,4 @@
-package com.gutabi.deadlock.world.cursor;
+package com.gutabi.deadlock.world.tool;
 
 import java.awt.Color;
 import java.util.List;
@@ -12,50 +12,59 @@ import com.gutabi.deadlock.world.Stroke;
 import com.gutabi.deadlock.world.WorldScreen;
 import com.gutabi.deadlock.world.graph.Vertex;
 
-public class QuadCursor extends CursorBase {
+public class CubicTools extends ToolBase {
 	
-	enum QuadCursorMode {
+	enum CubicToolMode {
 		FREE,
 		SET,
 		KNOB,
 	}
 	
-	QuadCursorMode mode;
+	CubicToolMode mode;
 	
 	public Point start;
-	public Point c;
+	public Point c0;
+	public Point c1;
 	
-	QuadCursorShape shape;
+	CubicToolsShape shape;
 	
 	final Knob startKnob;
-	final Knob controlKnob;
+	final Knob control0Knob;
+	final Knob control1Knob;
 	final Knob endKnob;
 	
 	Knob knob;
 	
-	public QuadCursor(final WorldScreen screen) {
+	public CubicTools(final WorldScreen screen) {
 		super(screen);
 		
-		mode = QuadCursorMode.FREE;
+		mode = CubicToolMode.FREE;
 		
 		startKnob = new Knob(screen.world) {
 			public void drag(Point p) {
 				Point newPoint = world.quadrantMap.getPoint(p);
-				QuadCursor.this.setStart(newPoint);
+				CubicTools.this.setStart(newPoint);
 			}
 		};
 		
-		controlKnob = new Knob(screen.world) {
+		control0Knob = new Knob(screen.world) {
 			public void drag(Point p) {
 				Point newPoint = world.quadrantMap.getPoint(p);
-				QuadCursor.this.setControl(newPoint);
+				CubicTools.this.setControl0(newPoint);
+			}
+		};
+		
+		control1Knob = new Knob(screen.world) {
+			public void drag(Point p) {
+				Point newPoint = world.quadrantMap.getPoint(p);
+				CubicTools.this.setControl1(newPoint);
 			}
 		};
 		
 		endKnob = new Knob(screen.world) {
 			public void drag(Point p) {
 				Point newPoint = world.quadrantMap.getPoint(p);
-				QuadCursor.this.setEnd(newPoint);
+				CubicTools.this.setEnd(newPoint);
 			}
 		};
 		
@@ -66,10 +75,12 @@ public class QuadCursor extends CursorBase {
 		
 		if (p != null) {
 			Point middle = start.plus(p.minus(start).multiply(0.5));
-			c = middle.plus(new Point(0, -4 * Vertex.INIT_VERTEX_RADIUS));
-			shape = new QuadCursorShape(start, c, p);
+			c0 = middle.plus(new Point(0, -4 * Vertex.INIT_VERTEX_RADIUS));
+			c1 = middle.plus(new Point(0, 4 * Vertex.INIT_VERTEX_RADIUS));
+			shape = new CubicToolsShape(start, c0, c1, p);
 			startKnob.setPoint(start);
-			controlKnob.setPoint(c);
+			control0Knob.setPoint(c0);
+			control1Knob.setPoint(c1);
 			endKnob.setPoint(p);
 		} else {
 			shape = null;
@@ -79,30 +90,44 @@ public class QuadCursor extends CursorBase {
 	
 	public void setStart(Point start) {
 		this.start = start;
-		if (start != null && p != null && c != null) {
-			shape = new QuadCursorShape(start, c, p);
+		if (start != null && p != null && c0 != null && c1 != null) {
+			shape = new CubicToolsShape(start, c0, c1, p);
 			startKnob.setPoint(start);
-			controlKnob.setPoint(c);
+			control0Knob.setPoint(c0);
+			control1Knob.setPoint(c1);
 			endKnob.setPoint(p);
 		}
 	}
 	
-	public void setControl(Point c) {
-		this.c = c;
-		if (start != null && p != null && c != null) {
-			shape = new QuadCursorShape(start, c, p);
+	public void setControl0(Point c) {
+		this.c0 = c;
+		if (start != null && p != null && c0 != null && c1 != null) {
+			shape = new CubicToolsShape(start, c0, c1, p);
 			startKnob.setPoint(start);
-			controlKnob.setPoint(c);
+			control0Knob.setPoint(c0);
+			control1Knob.setPoint(c1);
+			endKnob.setPoint(p);
+		}
+	}
+	
+	public void setControl1(Point c) {
+		this.c1 = c;
+		if (start != null && p != null && c0 != null && c1 != null) {
+			shape = new CubicToolsShape(start, c0, c1, p);
+			startKnob.setPoint(start);
+			control0Knob.setPoint(c0);
+			control1Knob.setPoint(c1);
 			endKnob.setPoint(p);
 		}
 	}
 	
 	public void setEnd(Point p) {
 		this.p = p;
-		if (start != null && p != null && c != null) {
-			shape = new QuadCursorShape(start, c, p);
+		if (start != null && p != null && c0 != null && c1 != null) {
+			shape = new CubicToolsShape(start, c0, c1, p);
 			startKnob.setPoint(start);
-			controlKnob.setPoint(c);
+			control0Knob.setPoint(c0);
+			control1Knob.setPoint(c1);
 			endKnob.setPoint(p);
 		}
 	}
@@ -114,13 +139,13 @@ public class QuadCursor extends CursorBase {
 	public void escKey(InputEvent ev) {
 		switch (mode) {
 		case FREE:
-			screen.cursor = new RegularCursor(screen);
-			screen.cursor.setPoint(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
+			screen.tool = new RegularTool(screen);
+			screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
 			screen.repaint();
 			break;
 		case SET:
-			mode = QuadCursorMode.FREE;
-			screen.cursor.setPoint(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
+			mode = CubicToolMode.FREE;
+			screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
 			screen.repaint();
 			break;
 		case KNOB:
@@ -129,10 +154,10 @@ public class QuadCursor extends CursorBase {
 		}
 	}
 	
-	public void sKey(InputEvent ev) {
+	public void dKey(InputEvent ev) {
 		switch (mode) {
 		case FREE:
-			mode = QuadCursorMode.SET;
+			mode = CubicToolMode.SET;
 			screen.repaint();
 			break;
 		case SET:
@@ -147,9 +172,9 @@ public class QuadCursor extends CursorBase {
 			Set<Vertex> affected = s.processNewStroke();
 			screen.world.graph.computeVertexRadii(affected);
 			
-			screen.cursor = new RegularCursor(screen);
+			screen.tool = new RegularTool(screen);
 			
-			screen.cursor.setPoint(screen.lastMovedOrDraggedWorldPoint);
+			screen.tool.setPoint(screen.lastMovedOrDraggedWorldPoint);
 			
 			screen.render();
 			screen.repaint();
@@ -163,24 +188,11 @@ public class QuadCursor extends CursorBase {
 	public void moved(InputEvent ev) {
 		switch (mode) {
 		case FREE:
-			screen.cursor.setPoint(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
+			screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
 			screen.repaint();
 			break;
 		case SET:
 		case KNOB:
-			break;
-		}
-	}
-	
-	public void released(InputEvent ev) {
-		switch (mode) {
-		case FREE:
-			break;
-		case SET:
-			break;
-		case KNOB:
-			mode = QuadCursorMode.SET;
-			screen.repaint();
 			break;
 		}
 	}
@@ -198,27 +210,45 @@ public class QuadCursor extends CursorBase {
 				break;
 			}
 			if (!(startKnob.hitTest(screen.lastPressedWorldPoint) ||
-					controlKnob.hitTest(screen.lastPressedWorldPoint) ||
+					control0Knob.hitTest(screen.lastPressedWorldPoint) ||
+					control1Knob.hitTest(screen.lastPressedWorldPoint) ||
 					endKnob.hitTest(screen.lastPressedWorldPoint))) {
 				break;
 			}
 			
 			if (startKnob.hitTest(screen.lastPressedWorldPoint)) {
-				mode = QuadCursorMode.KNOB;
+				mode = CubicToolMode.KNOB;
 				knob = startKnob;
 				origKnobCenter = knob.p;
-			} else if (controlKnob.hitTest(screen.lastPressedWorldPoint)) {
-				mode = QuadCursorMode.KNOB;
-				knob = controlKnob;
+			} else if (control0Knob.hitTest(screen.lastPressedWorldPoint)) {
+				mode = CubicToolMode.KNOB;
+				knob = control0Knob;
+				origKnobCenter = knob.p;
+			} else if (control1Knob.hitTest(screen.lastPressedWorldPoint)) {
+				mode = CubicToolMode.KNOB;
+				knob = control1Knob;
 				origKnobCenter = knob.p;
 			} else if (endKnob.hitTest(screen.lastPressedWorldPoint)) {
-				mode = QuadCursorMode.KNOB;
+				mode = CubicToolMode.KNOB;
 				knob = endKnob;
 				origKnobCenter = knob.p;
 			}
 		case KNOB:
 			Point diff = new Point(screen.lastDraggedWorldPoint.x - screen.lastPressedWorldPoint.x, screen.lastDraggedWorldPoint.y - screen.lastPressedWorldPoint.y);
 			knob.drag(origKnobCenter.plus(diff));
+			screen.repaint();
+			break;
+		}
+	}
+	
+	public void released(InputEvent ev) {
+		switch (mode) {
+		case FREE:
+			break;
+		case SET:
+			break;
+		case KNOB:
+			mode = CubicToolMode.SET;
 			screen.repaint();
 			break;
 		}
@@ -253,7 +283,8 @@ public class QuadCursor extends CursorBase {
 		case SET:
 		case KNOB:
 			startKnob.draw(ctxt);
-			controlKnob.draw(ctxt);
+			control0Knob.draw(ctxt);
+			control1Knob.draw(ctxt);
 			endKnob.draw(ctxt);
 			break;
 		}

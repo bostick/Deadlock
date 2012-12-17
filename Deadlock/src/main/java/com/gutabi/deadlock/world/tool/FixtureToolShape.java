@@ -1,4 +1,4 @@
-package com.gutabi.deadlock.world.cursor;
+package com.gutabi.deadlock.world.tool;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
@@ -13,7 +13,7 @@ import com.gutabi.deadlock.world.graph.Axis;
 import com.gutabi.deadlock.world.graph.Vertex;
 
 @SuppressWarnings("static-access")
-public class FixtureCursorShape extends Shape {
+public class FixtureToolShape extends Shape {
 	
 	public final Point p;
 	public final Axis axis;
@@ -26,7 +26,7 @@ public class FixtureCursorShape extends Shape {
 	
 	public final AABB aabb;
 	
-	public FixtureCursorShape(Point p, Point source, Point sink, Axis axis) {
+	public FixtureToolShape(Point p, Point source, Point sink, Axis axis) {
 		
 		this.p = p;
 		this.axis = axis;

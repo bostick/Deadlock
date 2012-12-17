@@ -1,4 +1,4 @@
-package com.gutabi.deadlock.world.cursor;
+package com.gutabi.deadlock.world.tool;
 
 import java.awt.Color;
 import java.util.HashSet;
@@ -18,7 +18,7 @@ import com.gutabi.deadlock.world.graph.Side;
 import com.gutabi.deadlock.world.graph.Vertex;
 
 //@SuppressWarnings("static-access")
-public class FixtureCursor extends CursorBase {
+public class FixtureTool extends ToolBase {
 	
 	Quadrant currentQuadrant;
 	Quadrant top;
@@ -31,9 +31,9 @@ public class FixtureCursor extends CursorBase {
 	
 	private Axis axis;
 	
-	private FixtureCursorShape shape;
+	private FixtureToolShape shape;
 	
-	public FixtureCursor(WorldScreen screen) {
+	public FixtureTool(WorldScreen screen) {
 		super(screen);
 	}
 	
@@ -84,10 +84,10 @@ public class FixtureCursor extends CursorBase {
 			
 			switch (axis) {
 			case LEFTRIGHT:
-				shape = new FixtureCursorShape(p, leftCenter, rightCenter, axis);
+				shape = new FixtureToolShape(p, leftCenter, rightCenter, axis);
 				break;
 			case TOPBOTTOM:
-				shape = new FixtureCursorShape(p, topCenter, bottomCenter, axis);
+				shape = new FixtureToolShape(p, topCenter, bottomCenter, axis);
 				break;
 			default:
 				assert false;
@@ -128,9 +128,9 @@ public class FixtureCursor extends CursorBase {
 	
 	public void escKey(InputEvent ev) {
 		
-		screen.cursor = new RegularCursor(screen);
+		screen.tool = new RegularTool(screen);
 		
-		screen.cursor.setPoint(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
+		screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
 		
 		screen.repaint();
 	}
@@ -166,8 +166,8 @@ public class FixtureCursor extends CursorBase {
 			affected.addAll(res);
 			screen.world.graph.computeVertexRadii(affected);
 			
-			screen.cursor = new RegularCursor(screen);
-			screen.cursor.setPoint(screen.lastMovedWorldPoint);
+			screen.tool = new RegularTool(screen);
+			screen.tool.setPoint(screen.lastMovedWorldPoint);
 			
 			screen.render();
 			screen.repaint();		
@@ -175,12 +175,12 @@ public class FixtureCursor extends CursorBase {
 	}
 	
 	public void moved(InputEvent ev) {
-		screen.cursor.setPoint(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
+		screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
 		screen.repaint();
 	}
 	
 	public void exited(InputEvent ev) {
-		screen.cursor.setPoint(null);
+		screen.tool.setPoint(null);
 		screen.repaint();
 	}
 	

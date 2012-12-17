@@ -1,11 +1,11 @@
-package com.gutabi.deadlock.world.cursor;
+package com.gutabi.deadlock.world.tool;
 
 import com.gutabi.deadlock.view.InputEvent;
 import com.gutabi.deadlock.world.WorldScreen;
 
-public abstract class CursorBase extends Cursor {
+public abstract class ToolBase extends Tool {
 	
-	public CursorBase(WorldScreen screen) {
+	public ToolBase(WorldScreen screen) {
 		super(screen);
 	}
 	

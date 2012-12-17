@@ -1,4 +1,4 @@
-package com.gutabi.deadlock.world.cursor;
+package com.gutabi.deadlock.world.tool;
 
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.Shape;
@@ -7,13 +7,13 @@ import com.gutabi.deadlock.view.RenderingContext;
 import com.gutabi.deadlock.world.WorldScreen;
 
 //@SuppressWarnings("static-access")
-public abstract class Cursor {
+public abstract class Tool {
 	
 	public final WorldScreen screen;
 	
 	public Point p;
 	
-	public Cursor(WorldScreen screen) {
+	public Tool(WorldScreen screen) {
 		this.screen = screen;
 	}
 	
