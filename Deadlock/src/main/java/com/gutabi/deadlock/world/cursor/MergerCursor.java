@@ -43,7 +43,7 @@ public class MergerCursor extends CursorBase {
 	public void insertKey(InputEvent ev) {
 		if (screen.world.quadrantMap.completelyContains(shape)) {
 			
-			if (screen.world.graph.pureGraphBestHitTest(shape) == null) {
+			if (screen.world.graph.pureGraphIntersect(shape) == null) {
 				
 				screen.world.insertMergerTop(p);
 				

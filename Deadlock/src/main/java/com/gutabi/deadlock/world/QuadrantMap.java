@@ -1,14 +1,26 @@
 package com.gutabi.deadlock.world;
 
+import static com.gutabi.deadlock.view.DeadlockView.VIEW;
+
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
+
 import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.AABB;
 import com.gutabi.deadlock.core.geom.Shape;
 import com.gutabi.deadlock.core.geom.ShapeUtils;
 import com.gutabi.deadlock.view.RenderingContext;
+import com.gutabi.deadlock.view.RenderingContextType;
+import com.gutabi.deadlock.world.graph.Graph;
 
 //@SuppressWarnings("static-access")
 public class QuadrantMap {
+	
+	public static final double QUADRANT_WIDTH = 16.0;
+	public static final double QUADRANT_HEIGHT = QUADRANT_WIDTH;
 	
 	public final World world;
 	
@@ -16,6 +28,9 @@ public class QuadrantMap {
 	public final int quadrantRows;
 	
 	private Quadrant[][] quadrants;
+	
+	public BufferedImage quadrantGrass;
+	public BufferedImage canvasGrassImage;
 	
 	public final AABB aabb;
 	
@@ -27,7 +42,7 @@ public class QuadrantMap {
 		quadrantCols = quadrants[0].length;
 		quadrantRows = quadrants.length;
 		
-		aabb = new AABB(0, 0, quadrantCols * World.QUADRANT_WIDTH, quadrantRows * World.QUADRANT_HEIGHT);
+		aabb = new AABB(0, 0, quadrantCols * QUADRANT_WIDTH, quadrantRows * QUADRANT_HEIGHT);
 		
 	}
 	
@@ -42,9 +57,9 @@ public class QuadrantMap {
 			for (int j = 0; j < rows; j++) {
 				Quadrant q;
 				if (ini[j][i] == 1) {
-					q = new Quadrant(world, j, i, true);
+					q = new Quadrant(world, this, j, i, true);
 				} else {
-					q = new Quadrant(world, j, i, false);
+					q = new Quadrant(world, this, j, i, false);
 				}
 				newQuads[j][i] = q;
 				
@@ -82,15 +97,42 @@ public class QuadrantMap {
 		return newQuads;
 	}
 	
+	public void init() {
+		
+		int quadrantWidthPixels = (int)Math.ceil(world.pixelsPerMeter * QUADRANT_WIDTH);
+		int quadrantHeightPixels = (int)Math.ceil(world.pixelsPerMeter * QUADRANT_HEIGHT);
+		
+		quadrantGrass = new BufferedImage(quadrantWidthPixels, quadrantHeightPixels, BufferedImage.TYPE_INT_ARGB);
+		Graphics2D quadrantGrassG2 = quadrantGrass.createGraphics();
+		
+		int maxCols = (int)Math.ceil(quadrantWidthPixels/32.0);
+		int maxRows = (int)Math.ceil(quadrantHeightPixels/32.0);
+		for (int i = 0; i < maxRows; i++) {
+			for (int j = 0; j < maxCols; j++) {
+				quadrantGrassG2.drawImage(
+						VIEW.sheet,
+						32 * j, 32 * i, 32 * j + 32, 32 * i + 32,
+						0, 224, 0+32, 224+32, null);
+			}
+		}
+		
+	}
+	
+	public void canvasPostDisplay() {
+		
+		canvasGrassImage = new BufferedImage(world.canvasWidth, world.canvasHeight, BufferedImage.TYPE_INT_ARGB);
+		
+	}
+	
 	public Quadrant findQuadrant(Point p) {
 		
-		if (DMath.greaterThanEquals(p.x / World.QUADRANT_WIDTH, 0.0) &&
-				DMath.greaterThanEquals(p.y / World.QUADRANT_HEIGHT, 0.0) &&
-				DMath.lessThanEquals(p.x / World.QUADRANT_WIDTH, quadrantCols) &&
-				DMath.lessThanEquals(p.y / World.QUADRANT_HEIGHT, quadrantRows)) {
+		if (DMath.greaterThanEquals(p.x / QUADRANT_WIDTH, 0.0) &&
+				DMath.greaterThanEquals(p.y / QUADRANT_HEIGHT, 0.0) &&
+				DMath.lessThanEquals(p.x / QUADRANT_WIDTH, quadrantCols) &&
+				DMath.lessThanEquals(p.y / QUADRANT_HEIGHT, quadrantRows)) {
 			
-			int col = DMath.lessThan(p.x / World.QUADRANT_WIDTH, quadrantCols) ? (int)Math.floor(p.x / World.QUADRANT_WIDTH) : quadrantCols-1;
-			int row = DMath.lessThan(p.y / World.QUADRANT_HEIGHT, quadrantRows) ? (int)Math.floor(p.y / World.QUADRANT_HEIGHT) : quadrantRows-1;
+			int col = DMath.lessThan(p.x / QUADRANT_WIDTH, quadrantCols) ? (int)Math.floor(p.x / QUADRANT_WIDTH) : quadrantCols-1;
+			int row = DMath.lessThan(p.y / QUADRANT_HEIGHT, quadrantRows) ? (int)Math.floor(p.y / QUADRANT_HEIGHT) : quadrantRows-1;
 			return quadrants[row][col];
 			
 		} else {
@@ -205,13 +247,72 @@ public class QuadrantMap {
 		}
 	}
 	
-	public void renderBackground(RenderingContext ctxt) {
+	public String toFileString() {
+		StringBuilder s = new StringBuilder();
+		
+		s.append("start quadrantMap\n");
+		
+		s.append(quadrantRows + " " + quadrantCols + "\n");
+		
+		for (int i = 0; i < quadrantRows; i++) {
+			for (int j = 0; j < quadrantCols; j++) {
+				Quadrant q = quadrants[i][j];
+				s.append(q.toFileString());
+				s.append(" ");
+			}
+			s.append("\n");
+		}
+		
+		s.append("end quadrantMap\n");
+		
+		return s.toString();
+	}
+	
+	public static QuadrantMap fromFileString(String s) {
+		
+	}
+	
+	public void renderCanvas() {
+		
+		Graphics2D canvasGrassImageG2 = canvasGrassImage.createGraphics();
+		
+		canvasGrassImageG2.setColor(Color.LIGHT_GRAY);
+		canvasGrassImageG2.fillRect(0, 0, world.canvasWidth, world.canvasHeight);
+		
+		canvasGrassImageG2.translate((int)(-world.worldViewport.x * world.pixelsPerMeter), (int)(-world.worldViewport.y * world.pixelsPerMeter));
+		
+		canvasGrassImageG2.scale(world.pixelsPerMeter, world.pixelsPerMeter);
+		
+		RenderingContext canvasGrassContext = new RenderingContext(canvasGrassImageG2, RenderingContextType.CANVAS);
+		
+		render(canvasGrassContext);
+		
+		canvasGrassImageG2.dispose();
+		
+	}
+	
+	public void render(RenderingContext ctxt) {
 		for (int i = 0; i < quadrantRows; i++) {
 			for (int j = 0; j < quadrantCols; j++) {
 				Quadrant q = quadrants[i][j];
 				q.paint(ctxt);
 			}
 		}
+	}
+	
+	public void paint(RenderingContext ctxt) {
+		
+		AffineTransform origTransform = ctxt.getTransform();
+		ctxt.translate(world.worldViewport.x, world.worldViewport.y);
+		
+		ctxt.paintImage(
+				0, 0, 1 / world.pixelsPerMeter,
+				canvasGrassImage,
+				0, 0, canvasGrassImage.getWidth(), canvasGrassImage.getHeight(),
+				0, 0, canvasGrassImage.getWidth(), canvasGrassImage.getHeight());
+		
+		ctxt.setTransform(origTransform);
+		
 	}
 	
 }

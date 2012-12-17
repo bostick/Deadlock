@@ -7,13 +7,18 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.geom.AffineTransform;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 
+import javax.swing.JFileChooser;
 import javax.swing.SwingUtilities;
 
 import com.gutabi.deadlock.ScreenBase;
 import com.gutabi.deadlock.core.Dim;
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
+import com.gutabi.deadlock.view.DLSFileChooser;
 import com.gutabi.deadlock.view.InputEvent;
 import com.gutabi.deadlock.view.PaintEvent;
 import com.gutabi.deadlock.view.RenderingContext;
@@ -33,6 +38,7 @@ public class WorldScreen extends ScreenBase {
 		EDITING,
 		RUNNING,
 		PAUSED,
+		DIALOG
 	}
 	
 	public World world;
@@ -48,6 +54,8 @@ public class WorldScreen extends ScreenBase {
 	public final Object pauseLock = new Object();
 	
 	public Stats stats;
+	
+	DLSFileChooser fc;
 	
 	
 	
@@ -109,6 +117,7 @@ public class WorldScreen extends ScreenBase {
 		switch (mode) {
 		case RUNNING:
 		case PAUSED:
+		case DIALOG:
 			break;
 		case EDITING:
 			cursor.qKey(ev);
@@ -120,6 +129,7 @@ public class WorldScreen extends ScreenBase {
 		switch (mode) {
 		case RUNNING:
 		case PAUSED:
+		case DIALOG:
 			break;
 		case EDITING:
 			cursor.wKey(ev);
@@ -186,6 +196,7 @@ public class WorldScreen extends ScreenBase {
 		switch (mode) {
 		case RUNNING:
 		case PAUSED:
+		case DIALOG:
 			break;
 		case EDITING:
 			cursor.insertKey(ev);
@@ -201,6 +212,11 @@ public class WorldScreen extends ScreenBase {
 		case EDITING:
 			cursor.escKey(ev);
 			break;
+		case DIALOG:
+			
+//			mode = WorldScreenMode.EDITING;
+			
+			break;
 		}
 	}
 	
@@ -208,6 +224,7 @@ public class WorldScreen extends ScreenBase {
 		switch (mode) {
 		case PAUSED:
 		case RUNNING:
+		case DIALOG:
 			break;
 		case EDITING:
 			cursor.d1Key(ev);
@@ -219,6 +236,7 @@ public class WorldScreen extends ScreenBase {
 		switch (mode) {
 		case PAUSED:
 		case RUNNING:
+		case DIALOG:
 			break;
 		case EDITING:
 			cursor.d2Key(ev);
@@ -230,6 +248,7 @@ public class WorldScreen extends ScreenBase {
 		switch (mode) {
 		case PAUSED:
 		case RUNNING:
+		case DIALOG:
 			break;
 		case EDITING:
 			cursor.d3Key(ev);
@@ -239,15 +258,19 @@ public class WorldScreen extends ScreenBase {
 	
 	public void plusKey(InputEvent ev) {
 		
-		world.zoom(1.1);
-		
-		lastMovedOrDraggedWorldPoint = world.canvasToWorld(VIEW.canvas.lastMovedOrDraggedCanvasPoint);
-		
 		switch (mode) {
 		case RUNNING:
 		case PAUSED:
+			world.zoom(1.1);
+			
+			lastMovedOrDraggedWorldPoint = world.canvasToWorld(VIEW.canvas.lastMovedOrDraggedCanvasPoint);
+			break;
+		case DIALOG:
 			break;
 		case EDITING:
+			world.zoom(1.1);
+			
+			lastMovedOrDraggedWorldPoint = world.canvasToWorld(VIEW.canvas.lastMovedOrDraggedCanvasPoint);
 			Entity closest = world.hitTest(lastMovedOrDraggedWorldPoint);
 			synchronized (APP) {
 				hilited = closest;
@@ -263,15 +286,19 @@ public class WorldScreen extends ScreenBase {
 	
 	public void minusKey(InputEvent ev) {
 		
-		world.zoom(0.9);
-		
-		lastMovedOrDraggedWorldPoint = world.canvasToWorld(VIEW.canvas.lastMovedOrDraggedCanvasPoint);
-		
 		switch (mode) {
 		case RUNNING:
 		case PAUSED:
+			world.zoom(0.9);
+			
+			lastMovedOrDraggedWorldPoint = world.canvasToWorld(VIEW.canvas.lastMovedOrDraggedCanvasPoint);
+			break;
+		case DIALOG:
 			break;
 		case EDITING:
+			world.zoom(0.9);
+			
+			lastMovedOrDraggedWorldPoint = world.canvasToWorld(VIEW.canvas.lastMovedOrDraggedCanvasPoint);
 			Entity closest = world.hitTest(lastMovedOrDraggedWorldPoint);
 			synchronized (APP) {
 				hilited = closest;
@@ -289,6 +316,7 @@ public class WorldScreen extends ScreenBase {
 		switch (mode) {
 		case RUNNING:
 		case PAUSED:
+		case DIALOG:
 			break;
 		case EDITING:
 			cursor.aKey(ev);
@@ -300,9 +328,62 @@ public class WorldScreen extends ScreenBase {
 		switch (mode) {
 		case RUNNING:
 		case PAUSED:
+		case DIALOG:
 			break;
 		case EDITING:
 			cursor.sKey(ev);
+			break;
+		}
+	}
+	
+	public void ctrlSKey(InputEvent ev) {
+		switch (mode) {
+		case RUNNING:
+		case PAUSED:
+		case DIALOG:
+			break;
+		case EDITING:
+			
+			mode = WorldScreenMode.DIALOG;
+			
+			VIEW.canvas.disableKeyListener();
+			
+			fc = new DLSFileChooser();
+			int res = fc.showDialog(VIEW.canvas.java(), "Hi");
+			
+			if (res == JFileChooser.APPROVE_OPTION) {
+				
+				try {
+					
+					File f = fc.getSelectedFile();
+					
+					if (!f.exists()) {
+						f.createNewFile();
+					}
+					
+					FileWriter w = new FileWriter(f);
+					
+					w.write(world.toFileString());
+					
+					w.close();
+					
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				VIEW.canvas.enableKeyListener();
+				
+				mode = WorldScreenMode.EDITING;
+				
+			} else {
+				
+				VIEW.canvas.enableKeyListener();
+				
+				mode = WorldScreenMode.EDITING;
+				
+			}
+			
 			break;
 		}
 	}
@@ -311,11 +392,30 @@ public class WorldScreen extends ScreenBase {
 		switch (mode) {
 		case RUNNING:
 		case PAUSED:
+		case DIALOG:
 			break;
 		case EDITING:
 			cursor.dKey(ev);
 			break;
 		}
+	}
+	
+	public void enterKey(InputEvent ev) {
+		
+		switch (mode) {
+		case RUNNING:
+		case PAUSED:
+			break;
+		case DIALOG:
+			
+//			mode = WorldScreenMode.EDITING;
+			
+			break;
+		case EDITING:
+			cursor.dKey(ev);
+			break;
+		}
+		
 	}
 	
 	public Point lastPressedWorldPoint;
@@ -339,19 +439,28 @@ public class WorldScreen extends ScreenBase {
 	public void dragged(InputEvent ev) {
 		
 		if (ev.c == VIEW.canvas) {
-			Point p = ev.p;
-			
-			lastDraggedWorldPointWasNull = (lastDraggedWorldPoint == null);
-			lastDraggedWorldPoint = world.canvasToWorld(p);
-			lastMovedOrDraggedWorldPoint = lastDraggedWorldPoint;
 			
 			switch (mode) {
 			case RUNNING:
-			case PAUSED:
+			case PAUSED: {
+				Point p = ev.p;
+				
+				lastDraggedWorldPointWasNull = (lastDraggedWorldPoint == null);
+				lastDraggedWorldPoint = world.canvasToWorld(p);
+				lastMovedOrDraggedWorldPoint = lastDraggedWorldPoint;
 				break;
-			case EDITING:
+			}
+			case DIALOG:
+				break;
+			case EDITING: {
+				Point p = ev.p;
+				
+				lastDraggedWorldPointWasNull = (lastDraggedWorldPoint == null);
+				lastDraggedWorldPoint = world.canvasToWorld(p);
+				lastMovedOrDraggedWorldPoint = lastDraggedWorldPoint;
 				cursor.dragged(ev);
 				break;
+			}
 			}
 		} else if (ev.c == VIEW.previewPanel) {
 			preview.dragged(ev);
@@ -367,6 +476,7 @@ public class WorldScreen extends ScreenBase {
 			switch (mode) {
 			case RUNNING:
 			case PAUSED:
+			case DIALOG:
 				break;
 			case EDITING:
 				cursor.released(ev);
@@ -385,18 +495,25 @@ public class WorldScreen extends ScreenBase {
 		
 		if (ev.c == VIEW.canvas) {
 			
-			Point p = ev.p;
-			
-			lastMovedWorldPoint = world.canvasToWorld(p);
-			lastMovedOrDraggedWorldPoint = lastMovedWorldPoint;
-			
 			switch (mode) {
 			case RUNNING:
-			case PAUSED:
+			case PAUSED: {
+				Point p = ev.p;
+				
+				lastMovedWorldPoint = world.canvasToWorld(p);
+				lastMovedOrDraggedWorldPoint = lastMovedWorldPoint;
 				break;
-			case EDITING:
+			}
+			case DIALOG:
+				break;
+			case EDITING: {
+				Point p = ev.p;
+				
+				lastMovedWorldPoint = world.canvasToWorld(p);
+				lastMovedOrDraggedWorldPoint = lastMovedWorldPoint;
 				cursor.moved(ev);
-				break;	
+				break;
+			}
 			}
 			
 		} else {
@@ -410,6 +527,7 @@ public class WorldScreen extends ScreenBase {
 			switch (mode) {
 			case RUNNING:
 			case PAUSED:
+			case DIALOG:
 				break;
 			case EDITING:
 				cursor.exited(ev);
@@ -419,6 +537,7 @@ public class WorldScreen extends ScreenBase {
 			switch (mode) {
 			case RUNNING:
 			case PAUSED:
+			case DIALOG:
 				break;
 			case EDITING:
 				cursor.exited(ev);

@@ -21,10 +21,6 @@ import com.gutabi.deadlock.world.car.ReallyFastCar;
 @SuppressWarnings("static-access")
 public final class Fixture extends Vertex {
 	
-	/*
-	 * spawn cars every SPAWN_FREQUENCY seconds
-	 * -1 means no spawning
-	 */
 	public static double SPAWN_FREQUENCY_SECONDS = 1.0;
 	
 	public final Axis a;
@@ -34,11 +30,8 @@ public final class Fixture extends Vertex {
 	public Fixture match;
 	
 	public GraphPositionPath shortestPathToMatch;
-	
 	public double lastSpawnTime;
-	
 	public int outstandingCars;
-	
 	private ProgressMeter progress;
 	
 	static int carIDCounter;
@@ -241,6 +234,28 @@ public final class Fixture extends Vertex {
 		
 	}
 	
+	public String toFileString() {
+		StringBuilder s = new StringBuilder();
+		
+		s.append("start fixture\n");
+		
+		s.append("id " + id + "\n");
+		
+		s.append("point " + p.toString() + "\n");
+		s.append("axis " + a + "\n");
+		s.append("side " + this.s + "\n");
+		s.append("type " + type + "\n");
+		s.append("match " + match.id + "\n");
+		
+		s.append("end fixture\n");
+		
+		return s.toString();
+	}
+	
+	public static Fixture fromFileString(String s) {
+		
+	}
+	
 	public void paint(RenderingContext ctxt) {
 		
 		switch (ctxt.type) {
@@ -289,8 +304,6 @@ public final class Fixture extends Vertex {
 			ctxt.setColor(VIEW.LIGHTGREEN);
 			shape.paint(ctxt);
 			break;
-//		case QUADRANTEDITOR:
-//			break;
 		}
 		
 	}

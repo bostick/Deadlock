@@ -19,8 +19,6 @@ public class Merger extends Edge {
 	public static final double MERGER_WIDTH = 5.0;
 	public static final double MERGER_HEIGHT = 5.0;
 	
-	public final World world;
-	
 	public final Point ul;
 	
 	public final Fixture top;
@@ -28,16 +26,19 @@ public class Merger extends Edge {
 	public final Fixture right;
 	public final Fixture bottom;
 	
-	private double[] cumulativeLengthsFromTop;
-	private double[] cumulativeLengthsFromLeft;
-	
 	private Direction leftRightDir;
 	private Direction topBottomDir;
+	
+	public final World world;
+	
+	private double[] cumulativeLengthsFromTop;
+	private double[] cumulativeLengthsFromLeft;
 	
 	private Quad shape;
 	
 	private final Line debugSkeletonTopBottomLine;
 	private final Line debugSkeletonLeftRightLine;
+	
 	
 	public Merger(World world, Point center) {
 		this.world = world;
@@ -197,7 +198,7 @@ public class Merger extends Edge {
 		return null;
 	}
 	
-	public Entity decorationsBestHitTest(Shape s) {
+	public Entity decorationsIntersect(Shape s) {
 		return null;
 	}
 	
@@ -272,6 +273,31 @@ public class Merger extends Edge {
 		}
 	}
 	
+	public String toFileString() {
+		StringBuilder s = new StringBuilder();
+		
+		s.append("start merger\n");
+		
+		s.append("id " + id + "\n");
+		
+		s.append("ul " + ul.toString() + "\n");
+		s.append("top " + top.id + "\n");
+		s.append("left " + left.id + "\n");
+		s.append("right " + right.id + "\n");
+		s.append("bottom " + bottom.id + "\n");
+		
+		s.append("leftRightDirection " + leftRightDir + "\n");
+		s.append("topBottomDirection " + topBottomDir + "\n");
+		
+		s.append("end merger\n");
+		
+		return s.toString();
+	}
+	
+	public static Merger fromFileString(String s) {
+		
+	}
+	
 	public void paint(RenderingContext ctxt) {
 		
 		switch (ctxt.type) {
@@ -296,8 +322,6 @@ public class Merger extends Edge {
 			ctxt.setColor(Color.GRAY);
 			shape.paint(ctxt);
 			break;
-//		case QUADRANTEDITOR:
-//			break;
 		}
 		
 	}

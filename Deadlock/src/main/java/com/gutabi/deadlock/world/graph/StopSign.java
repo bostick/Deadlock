@@ -17,26 +17,26 @@ public class StopSign extends Entity {
 	public static final double STOPSIGN_SIZE = 0.5;
 	
 	public final World world;
-	public final Road e;
+	public final Road r;
 	public final Vertex v;
 	
 	int dir;
 	Point p;
-	double r = 0.5 * STOPSIGN_SIZE;
+	double radius = 0.5 * STOPSIGN_SIZE;
 	
 	private boolean enabled;
 	
 	private Circle shape;
 	
-	public StopSign(World world, Road e, int dir) {
+	public StopSign(World world, Road r, int dir) {
 		this.world = world;
-		this.e = e;
+		this.r = r;
 		this.dir = dir;
 		
 		if (dir == 0) {
-			v = e.start;
+			v = r.start;
 		} else {
-			v = e.end;
+			v = r.end;
 		} 
 		
 		enabled = false;
@@ -92,13 +92,31 @@ public class StopSign extends Entity {
 	public void computePoint() {
 		
 		if (dir == 0) {
-			p = e.getStartBorderPoint();
+			p = r.getStartBorderPoint();
 		} else {
-			p = e.getEndBorderPoint();
+			p = r.getEndBorderPoint();
 		}
 		
-		shape = new Circle(this, p, r);
-	}	
+		shape = new Circle(this, p, radius);
+	}
+	
+	public String toFileString() {
+		StringBuilder s = new StringBuilder();
+		
+		s.append("start sign\n");
+		
+		s.append("road " + r.id);
+		s.append("direction " + dir);
+		s.append("enabled " + enabled);
+		
+		s.append("end sign\n");
+		
+		return s.toString();
+	}
+	
+	public static StopSign fromFileString(String s) {
+		
+	}
 	
 	public void paint(RenderingContext ctxt) {
 		

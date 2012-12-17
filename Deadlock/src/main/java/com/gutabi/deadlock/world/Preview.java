@@ -89,9 +89,9 @@ public class Preview {
 		
 		previewImageG2.scale(s, s);
 		
-		screen.world.quadrantMap.renderBackground(previewContext);
+		screen.world.quadrantMap.render(previewContext);
 		
-		screen.world.graph.renderBackground(previewContext);
+		screen.world.graph.render(previewContext);
 		
 		previewContext.setTransform(origTrans);
 		

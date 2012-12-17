@@ -24,6 +24,8 @@ public class Canvas extends Component {
 	
 	private java.awt.Canvas c;
 	
+	private JavaListener jl;
+	
 	static Logger logger = Logger.getLogger(Canvas.class);
 	
 	public Canvas() {
@@ -34,10 +36,18 @@ public class Canvas extends Component {
 				APP.screen.paint(new PaintEvent(Canvas.this, new RenderingContext((Graphics2D)g, RenderingContextType.CANVAS)));
 			}
 		};
-		JavaListener jl = new JavaListener();
+		jl = new JavaListener();
 		c.addMouseListener(jl);
 		c.addMouseMotionListener(jl);
 		c.addKeyListener(jl);
+	}
+	
+	public void enableKeyListener() {
+		c.addKeyListener(jl);
+	}
+	
+	public void disableKeyListener() {
+		c.removeKeyListener(jl);
 	}
 	
 	class JavaListener implements KeyListener, MouseListener, MouseMotionListener {

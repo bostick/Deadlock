@@ -351,7 +351,7 @@ public abstract class Car extends Entity {
 			
 			driver.computeDynamicPropertiesMoving();
 			
-			Entity hit = driver.overallPath.pureGraphBestHitTestQuad(this.shape, driver.overallPos);
+			Entity hit = driver.overallPath.pureGraphIntersectQuad(this.shape, driver.overallPos);
 			
 			boolean wasInMerger = inMerger;
 			if (hit == null) {

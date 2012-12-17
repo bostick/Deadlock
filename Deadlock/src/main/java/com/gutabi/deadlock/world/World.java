@@ -3,12 +3,8 @@ package com.gutabi.deadlock.world;
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
-import java.awt.AlphaComposite;
 import java.awt.Color;
-import java.awt.Composite;
-import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
-import java.awt.image.BufferedImage;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
@@ -24,7 +20,6 @@ import com.gutabi.deadlock.core.geom.Circle;
 import com.gutabi.deadlock.core.geom.SweepEvent;
 import com.gutabi.deadlock.core.geom.Sweepable;
 import com.gutabi.deadlock.view.RenderingContext;
-import com.gutabi.deadlock.view.RenderingContextType;
 import com.gutabi.deadlock.world.car.Car;
 import com.gutabi.deadlock.world.car.CarEventListener;
 import com.gutabi.deadlock.world.graph.Graph;
@@ -39,9 +34,6 @@ import com.gutabi.deadlock.world.sprites.AnimatedGrass;
 
 @SuppressWarnings("static-access")
 public class World implements Sweepable {
-	
-	public static final double QUADRANT_WIDTH = 16.0;
-	public static final double QUADRANT_HEIGHT = QUADRANT_WIDTH;
 	
 	public final double worldWidth;
 	public final double worldHeight;
@@ -59,10 +51,6 @@ public class World implements Sweepable {
 	 * simulation state
 	 */
 	public double t;
-	
-	public BufferedImage quadrantGrass;
-	public BufferedImage canvasGrassImage;
-	public BufferedImage canvasGraphImage;
 	
 	public QuadrantMap quadrantMap;
 	
@@ -96,9 +84,9 @@ public class World implements Sweepable {
 		
 		quadrantMap = new QuadrantMap(this, ini);
 		
-		worldWidth = quadrantCols * QUADRANT_WIDTH;
+		worldWidth = quadrantCols * QuadrantMap.QUADRANT_WIDTH;
 		
-		worldHeight = quadrantRows * QUADRANT_HEIGHT;
+		worldHeight = quadrantRows * QuadrantMap.QUADRANT_HEIGHT;
 		
 		graph = new Graph(this);
 		
@@ -115,22 +103,7 @@ public class World implements Sweepable {
 	
 	public void init() {
 		
-		int quadrantWidthPixels = (int)Math.ceil(pixelsPerMeter * QUADRANT_WIDTH);
-		int quadrantHeightPixels = (int)Math.ceil(pixelsPerMeter * QUADRANT_HEIGHT);
-		
-		quadrantGrass = new BufferedImage(quadrantWidthPixels, quadrantHeightPixels, BufferedImage.TYPE_INT_ARGB);
-		Graphics2D quadrantGrassG2 = quadrantGrass.createGraphics();
-		
-		int maxCols = (int)Math.ceil(quadrantWidthPixels/32.0);
-		int maxRows = (int)Math.ceil(quadrantHeightPixels/32.0);
-		for (int i = 0; i < maxRows; i++) {
-			for (int j = 0; j < maxCols; j++) {
-				quadrantGrassG2.drawImage(
-						VIEW.sheet,
-						32 * j, 32 * i, 32 * j + 32, 32 * i + 32,
-						0, 224, 0+32, 224+32, null);
-			}
-		}
+		quadrantMap.init();
 		
 	}
 	
@@ -139,8 +112,8 @@ public class World implements Sweepable {
 		canvasWidth = (int)dim.width;
 		canvasHeight = (int)dim.height;
 		
-		canvasGrassImage = new BufferedImage(canvasWidth, canvasHeight, BufferedImage.TYPE_INT_ARGB);
-		canvasGraphImage = new BufferedImage(canvasWidth, canvasHeight, BufferedImage.TYPE_INT_ARGB);
+		quadrantMap.canvasPostDisplay();
+		graph.canvasPostDisplay();
 		
 		worldViewport = new AABB(
 				-(canvasWidth / pixelsPerMeter) / 2 + worldWidth/2 ,
@@ -186,7 +159,7 @@ public class World implements Sweepable {
 	}
 	
 	public void removeStopSignTop(StopSign s) {
-		s.e.removeStopSignTop(s);
+		s.r.removeStopSignTop(s);
 	}
 	
 	public void removeCarTop(Car c) {
@@ -365,6 +338,25 @@ public class World implements Sweepable {
 		return null;
 	}
 	
+	public String toFileString() {
+		StringBuilder s = new StringBuilder();
+		
+		s.append("version 1\n");
+		
+		s.append("start world\n");
+		
+		s.append(quadrantMap.toFileString());
+		s.append(graph.toFileString());
+		
+		s.append("end world\n");
+		
+		return s.toString();
+	}
+	
+	public static World fromFileString(String s) {
+		
+	}
+	
 	public void zoom(double factor) {
 		
 		pixelsPerMeter = factor * pixelsPerMeter; 
@@ -403,54 +395,43 @@ public class World implements Sweepable {
 		assert !Thread.holdsLock(APP);
 		
 		synchronized (VIEW) {
-			Graphics2D canvasGrassImageG2 = canvasGrassImage.createGraphics();
-			
-			canvasGrassImageG2.setColor(Color.LIGHT_GRAY);
-			canvasGrassImageG2.fillRect(0, 0, canvasWidth, canvasHeight);
-			
-			canvasGrassImageG2.translate((int)(-worldViewport.x * pixelsPerMeter), (int)(-worldViewport.y * pixelsPerMeter));
-			
-			canvasGrassImageG2.scale(pixelsPerMeter, pixelsPerMeter);
-			
-			RenderingContext canvasGrassContext = new RenderingContext(canvasGrassImageG2, RenderingContextType.CANVAS);
-			
-			quadrantMap.renderBackground(canvasGrassContext);
-			
-			canvasGrassImageG2.dispose();
+			quadrantMap.renderCanvas();
+			graph.renderCanvas();
 		}
 		
-		synchronized (VIEW) {
-			Graphics2D canvasGraphImageG2 = canvasGraphImage.createGraphics();
-			
-			Composite orig = canvasGraphImageG2.getComposite();
-			AlphaComposite c = AlphaComposite.getInstance(AlphaComposite.SRC, 0.0f);
-			canvasGraphImageG2.setComposite(c);
-			canvasGraphImageG2.setColor(new Color(0, 0, 0, 0));
-			canvasGraphImageG2.fillRect(0, 0, canvasWidth, canvasHeight);
-			canvasGraphImageG2.setComposite(orig);
-			
-			canvasGraphImageG2.translate((int)((-worldViewport.x) * pixelsPerMeter), (int)((-worldViewport.y) * pixelsPerMeter));
-			
-			canvasGraphImageG2.scale(pixelsPerMeter, pixelsPerMeter);
-			
-			RenderingContext canvasGraphContext = new RenderingContext(canvasGraphImageG2, RenderingContextType.CANVAS);
-			
-			graph.renderBackground(canvasGraphContext);
-			
-			canvasGraphImageG2.dispose();
-			
-		}
 	}
 	
 	public void paintWorld(RenderingContext ctxt) {
 		
 		switch (ctxt.type) {
 		case CANVAS:
-			paintGrass(ctxt);
-			paintGraph(ctxt);
+			quadrantMap.paint(ctxt);
+			
+			if (animatedGrass1 != null) {
+				animatedGrass1.paint(ctxt);
+			}
+			if (animatedGrass2 != null) {
+				animatedGrass2.paint(ctxt);
+			}
+			if (animatedGrass3 != null) {
+				animatedGrass3.paint(ctxt);
+			}
+			
+			graph.paint(ctxt);
 //			paintSkidmarks(ctxt);
 			
-			paintScene(ctxt);
+			graph.paintScene(ctxt);
+			
+			synchronized (APP) {
+				carMap.paint(ctxt);
+				explosionMap.paint(ctxt);
+			}
+			
+			if (APP.DEBUG_DRAW) {
+				
+				graph.paintIDs(ctxt);
+				
+			}
 			
 			if (APP.DEBUG_DRAW) {
 				ctxt.setColor(Color.BLACK);
@@ -460,69 +441,9 @@ public class World implements Sweepable {
 			
 			break;
 		case PREVIEW:
-			paintGrass(ctxt);
-			paintGraph(ctxt);
+			quadrantMap.paint(ctxt);
+			graph.paint(ctxt);
 			break;
-		}
-		
-	}
-	
-	private void paintGrass(RenderingContext ctxt) {
-		
-		AffineTransform origTransform = ctxt.getTransform();
-		ctxt.translate(worldViewport.x, worldViewport.y);
-		
-		ctxt.paintImage(
-				0, 0, 1 / pixelsPerMeter,
-				canvasGrassImage,
-				0, 0, canvasGrassImage.getWidth(), canvasGrassImage.getHeight(),
-				0, 0, canvasGrassImage.getWidth(), canvasGrassImage.getHeight());
-		
-		ctxt.setTransform(origTransform);
-		
-		if (animatedGrass1 != null) {
-			animatedGrass1.paint(ctxt);
-		}
-		if (animatedGrass2 != null) {
-			animatedGrass2.paint(ctxt);
-		}
-		if (animatedGrass3 != null) {
-			animatedGrass3.paint(ctxt);
-		}
-		
-//		drawSkidMarks(g2);
-		
-	}
-	
-	private void paintGraph(RenderingContext ctxt) {
-		
-		AffineTransform origTransform = ctxt.getTransform();
-		origTransform = ctxt.getTransform();
-		ctxt.translate(worldViewport.x, worldViewport.y);
-		
-		ctxt.paintImage(
-				0, 0, 1 / pixelsPerMeter,
-				canvasGraphImage,
-				0, 0, canvasGraphImage.getWidth(), canvasGraphImage.getHeight(),
-				0, 0, canvasGraphImage.getWidth(), canvasGraphImage.getHeight());
-		
-		ctxt.setTransform(origTransform);
-		
-	}
-	
-	private void paintScene(RenderingContext ctxt) {
-		
-		graph.paintScene(ctxt);
-		
-		synchronized (APP) {
-			carMap.paint(ctxt);
-			explosionMap.paint(ctxt);
-		}
-		
-		if (APP.DEBUG_DRAW) {
-			
-			graph.paintIDs(ctxt);
-			
 		}
 		
 	}

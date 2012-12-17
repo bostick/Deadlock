@@ -2,7 +2,12 @@ package com.gutabi.deadlock.world.graph;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
+import java.awt.AlphaComposite;
+import java.awt.Color;
+import java.awt.Composite;
+import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -33,6 +38,8 @@ public class Graph implements Sweepable {
 	
 	public final World world;
 	
+	public BufferedImage canvasGraphImage;
+	
 	public final List<Vertex> vertices = new ArrayList<Vertex>();
 	public final List<Edge> edges = new ArrayList<Edge>();
 	
@@ -44,6 +51,10 @@ public class Graph implements Sweepable {
 	
 	public Graph(World world) {
 		this.world = world;
+	}
+	
+	public void canvasPostDisplay() {
+		canvasGraphImage = new BufferedImage(world.canvasWidth, world.canvasHeight, BufferedImage.TYPE_INT_ARGB);
 	}
 	
 	public void preStart() {
@@ -81,7 +92,6 @@ public class Graph implements Sweepable {
 				
 			}
 		}
-		
 	}
 	
 	public void postStop() {
@@ -91,7 +101,6 @@ public class Graph implements Sweepable {
 		}
 		
 		paths.clear();
-		
 	}
 	
 	public void preStep(double t) {
@@ -99,7 +108,6 @@ public class Graph implements Sweepable {
 		for (Vertex v : vertices) {
 			v.preStep(t);
 		}
-		
 	}
 	
 	public void postStep(double t) {
@@ -107,7 +115,6 @@ public class Graph implements Sweepable {
 		for (Vertex v : vertices) {
 			v.postStep(t);
 		}
-		
 	}
 	
 	public void computeVertexRadii(Set<Vertex> affected) {
@@ -128,7 +135,6 @@ public class Graph implements Sweepable {
 		}
 		
 		computeAABB();
-		
 	}
 	
 	public AABB getAABB() {
@@ -310,11 +316,30 @@ public class Graph implements Sweepable {
 	 */
 	private Road createRoad(Vertex start, Vertex end, List<Point> pts, int dec) {
 		assert pts.size() >= 2;
-		Road e = new Road(world, start, end, pts, dec);
-		edges.add(e);
+		Road r = new Road(world, start, end, pts);
+		
+		if ((dec & 1) == 1) {
+			r.startSign.setEnabled(true);
+		}
+		
+		if ((dec & 2) == 2) {
+			r.endSign.setEnabled(true);
+		}
+		
+		if ((dec & 4) == 4) {
+			
+			if ((dec & 8) == 0) {
+				r.setDirection(null, Direction.STARTTOEND);
+			} else {
+				r.setDirection(null, Direction.ENDTOSTART);
+			}
+			
+		}
+		
+		edges.add(r);
 		refreshEdgeIDs();
 		
-		return e;
+		return r;
 	}
 	
 	private Merger createMerger(Point p) {
@@ -382,8 +407,6 @@ public class Graph implements Sweepable {
 		
 		return events;
 	}
-	
-	
 	
 	
 	
@@ -677,7 +700,7 @@ public class Graph implements Sweepable {
 		return null;
 	}
 	
-	public Entity pureGraphBestHitTest(Shape s) {
+	public Entity pureGraphIntersect(Shape s) {
 		for (Vertex v : vertices) {
 			if (ShapeUtils.intersect(v.getShape(), s)) {
 				return v;
@@ -691,7 +714,7 @@ public class Graph implements Sweepable {
 		return null;
 	}
 	
-	public Entity pureGraphBestHitTestQuad(Quad q) {
+	public Entity pureGraphIntersectQuad(Quad q) {
 		for (Vertex v : vertices) {
 			if (ShapeUtils.intersectCQ(v.getShape(), q)) {
 				return v;
@@ -711,7 +734,7 @@ public class Graph implements Sweepable {
 		return null;
 	}
 	
-	public Entity pureGraphBestHitTestCircle(Circle c) {
+	public Entity pureGraphIntersectCircle(Circle c) {
 		for (Vertex v : vertices) {
 			if (ShapeUtils.intersectCC(v.getShape(), c)) {
 				return v;
@@ -731,7 +754,7 @@ public class Graph implements Sweepable {
 		return null;
 	}
 	
-	public Entity pureGraphBestHitTestCapsule(Capsule c) {
+	public Entity pureGraphIntersectCapsule(Capsule c) {
 		for (Vertex v : vertices) {
 			if (ShapeUtils.intersectCCap(v.getShape(), c)) {
 				return v;
@@ -1091,9 +1114,56 @@ public class Graph implements Sweepable {
 		}
 	}
 	
+	public String toFileString() {
+		StringBuilder s = new StringBuilder();
+		
+		s.append("start graph\n");
+		
+		s.append("vertices " + vertices.size() + "\n");
+		
+		s.append("edges " + edges.size() + "\n");
+		
+		for (Vertex v : vertices) {
+			s.append(v.toFileString());
+		}
+		
+		for (Edge e : edges) {
+			s.append(e.toFileString());
+		}
+		
+		s.append("end graph\n");
+		
+		return s.toString();
+	}
 	
+	public static Graph fromFileString(String s) {
+		
+	}
 	
-	public void renderBackground(RenderingContext ctxt) {
+	public void renderCanvas() {
+		
+		Graphics2D canvasGraphImageG2 = canvasGraphImage.createGraphics();
+		
+		Composite orig = canvasGraphImageG2.getComposite();
+		AlphaComposite c = AlphaComposite.getInstance(AlphaComposite.SRC, 0.0f);
+		canvasGraphImageG2.setComposite(c);
+		canvasGraphImageG2.setColor(new Color(0, 0, 0, 0));
+		canvasGraphImageG2.fillRect(0, 0, world.canvasWidth, world.canvasHeight);
+		canvasGraphImageG2.setComposite(orig);
+		
+		canvasGraphImageG2.translate((int)((-world.worldViewport.x) * world.pixelsPerMeter), (int)((-world.worldViewport.y) * world.pixelsPerMeter));
+		
+		canvasGraphImageG2.scale(world.pixelsPerMeter, world.pixelsPerMeter);
+		
+		RenderingContext canvasGraphContext = new RenderingContext(canvasGraphImageG2, RenderingContextType.CANVAS);
+		
+		render(canvasGraphContext);
+		
+		canvasGraphImageG2.dispose();
+		
+	}
+	
+	public void render(RenderingContext ctxt) {
 		
 		List<Edge> edgesCopy;
 		List<Vertex> verticesCopy;
@@ -1113,6 +1183,22 @@ public class Graph implements Sweepable {
 		for (Edge e : edgesCopy) {
 			e.paintDecorations(ctxt);
 		}
+		
+	}
+	
+	public void paint(RenderingContext ctxt) {
+		
+		AffineTransform origTransform = ctxt.getTransform();
+		origTransform = ctxt.getTransform();
+		ctxt.translate(world.worldViewport.x, world.worldViewport.y);
+		
+		ctxt.paintImage(
+				0, 0, 1 / world.pixelsPerMeter,
+				canvasGraphImage,
+				0, 0, canvasGraphImage.getWidth(), canvasGraphImage.getHeight(),
+				0, 0, canvasGraphImage.getWidth(), canvasGraphImage.getHeight());
+		
+		ctxt.setTransform(origTransform);
 		
 	}
 	

@@ -38,9 +38,10 @@ public abstract class Edge extends Entity {
 	
 	public abstract Entity decorationsHitTest(Point p);
 	
-	public abstract Entity decorationsBestHitTest(Shape e);
+	public abstract Entity decorationsIntersect(Shape e);
 	
 	
+	public abstract String toFileString();
 	
 	public abstract void paintBorders(RenderingContext ctxt);
 	

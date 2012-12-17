@@ -470,7 +470,7 @@ public class GraphPositionPath {
 		return null;
 	}
 	
-	public Entity pureGraphBestHitTestQuad(Quad q, GraphPositionPathPosition min) {
+	public Entity pureGraphIntersectQuad(Quad q, GraphPositionPathPosition min) {
 		
 		for (Entry<Vertex, Integer> ent : verticesMap.entrySet()) {
 			int i = ent.getValue();

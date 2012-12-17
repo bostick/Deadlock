@@ -40,6 +40,24 @@ public class Intersection extends Vertex {
 		return true;
 	}
 	
+	public String toFileString() {
+		StringBuilder s = new StringBuilder();
+		
+		s.append("start intersection \n");
+		
+		s.append("id " + id + "\n");
+		
+		s.append("point " + p.toString() + "\n");
+		
+		s.append("end intersection\n");
+		
+		return s.toString();
+	}
+	
+	public static Intersection fromFileString(String s) {
+		
+	}
+	
 	public void paint(RenderingContext ctxt) {
 		
 		ctxt.setColor(Color.GRAY);

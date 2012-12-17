@@ -7,7 +7,7 @@ import com.gutabi.deadlock.core.geom.Shape;
 import com.gutabi.deadlock.view.InputEvent;
 import com.gutabi.deadlock.view.RenderingContext;
 import com.gutabi.deadlock.world.Quadrant;
-import com.gutabi.deadlock.world.World;
+import com.gutabi.deadlock.world.QuadrantMap;
 import com.gutabi.deadlock.world.WorldScreen;
 import com.gutabi.deadlock.world.graph.Axis;
 import com.gutabi.deadlock.world.graph.Fixture;
@@ -64,10 +64,10 @@ public class FixtureCursor extends CursorBase {
 			right = screen.world.quadrantMap.rightFixPoint(currentQuadrant);
 			Point rightCenter = right.center();
 			
-			double distToTop = Math.abs(p.y - (topCenter.y - World.QUADRANT_HEIGHT/2));
-			double distToBottom = Math.abs(p.y - (bottomCenter.y + World.QUADRANT_HEIGHT/2));
-			double distToLeft = Math.abs(p.x - (leftCenter.x - World.QUADRANT_WIDTH/2));
-			double distToRight = Math.abs(p.x - (rightCenter.x + World.QUADRANT_WIDTH/2));
+			double distToTop = Math.abs(p.y - (topCenter.y - QuadrantMap.QUADRANT_HEIGHT/2));
+			double distToBottom = Math.abs(p.y - (bottomCenter.y + QuadrantMap.QUADRANT_HEIGHT/2));
+			double distToLeft = Math.abs(p.x - (leftCenter.x - QuadrantMap.QUADRANT_WIDTH/2));
+			double distToRight = Math.abs(p.x - (rightCenter.x + QuadrantMap.QUADRANT_WIDTH/2));
 			
 			distToTopOrBottom = Math.min(distToTop, distToBottom);
 			
@@ -134,7 +134,7 @@ public class FixtureCursor extends CursorBase {
 	
 	public void wKey(InputEvent ev) {
 		
-		if (screen.world.graph.pureGraphBestHitTest(shape) == null) {
+		if (screen.world.graph.pureGraphIntersect(shape) == null) {
 			
 			Fixture source = new Fixture(screen.world, getSourcePoint(), axis);
 			Fixture sink = new Fixture(screen.world, getSinkPoint(), axis);

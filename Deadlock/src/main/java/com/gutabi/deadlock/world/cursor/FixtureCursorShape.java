@@ -8,7 +8,7 @@ import com.gutabi.deadlock.core.geom.Capsule;
 import com.gutabi.deadlock.core.geom.Circle;
 import com.gutabi.deadlock.core.geom.Shape;
 import com.gutabi.deadlock.view.RenderingContext;
-import com.gutabi.deadlock.world.World;
+import com.gutabi.deadlock.world.QuadrantMap;
 import com.gutabi.deadlock.world.graph.Axis;
 import com.gutabi.deadlock.world.graph.Vertex;
 
@@ -33,12 +33,12 @@ public class FixtureCursorShape extends Shape {
 		
 		switch (axis) {
 		case LEFTRIGHT:
-			worldSource = new Point(source.x - World.QUADRANT_WIDTH/2, p.y);
-			worldSink = new Point(sink.x + World.QUADRANT_WIDTH/2, p.y);
+			worldSource = new Point(source.x - QuadrantMap.QUADRANT_WIDTH/2, p.y);
+			worldSink = new Point(sink.x + QuadrantMap.QUADRANT_WIDTH/2, p.y);
 			break;
 		case TOPBOTTOM:
-			worldSource = new Point(p.x, source.y - World.QUADRANT_HEIGHT/2);
-			worldSink = new Point(p.x, sink.y + World.QUADRANT_HEIGHT/2);
+			worldSource = new Point(p.x, source.y - QuadrantMap.QUADRANT_HEIGHT/2);
+			worldSink = new Point(p.x, sink.y + QuadrantMap.QUADRANT_HEIGHT/2);
 			break;
 		}
 		

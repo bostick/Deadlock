@@ -32,14 +32,15 @@ public class Road extends Edge {
 	
 	public static final double borderPointRadius = 0.2;
 	
-	public final World world;
+	
 	public final Vertex start;
 	public final Vertex end;
 	public final List<Point> raw;
-	public final int dec;
 	
+	private Direction direction;
+	
+	public final World world;
 	private CapsuleSequence seq;
-	
 	private Circle startBorderPoint;
 	private Circle endBorderPoint;
 	private int startBorderIndex;
@@ -54,11 +55,6 @@ public class Road extends Edge {
 	public final StopSign startSign;
 	public final StopSign endSign;
 	
-	protected Color color;
-	protected Color hiliteColor;
-	
-	private Direction direction;
-	
 	private int hash;
 	
 	private CapsuleSequence shape;
@@ -67,7 +63,7 @@ public class Road extends Edge {
 	
 	static Logger logger = Logger.getLogger(Road.class);
 	
-	public Road(World world, Vertex start, Vertex end, List<Point> raw, int dec) {
+	public Road(World world, Vertex start, Vertex end, List<Point> raw) {
 		
 		assert !raw.isEmpty();
 		
@@ -75,13 +71,9 @@ public class Road extends Edge {
 		this.start = start;
 		this.end = end;
 		this.raw = raw;
-		this.dec = dec;
 		
 		loop = (start == end);
 		standalone = (loop) ? start == null : false;
-		
-		color = Color.GRAY;
-		hiliteColor = new Color(0xff ^ 0x88, 0xff ^ 0x88, 0xff ^ 0x88, 0xff);
 		
 		computeProperties();
 		
@@ -92,24 +84,6 @@ public class Road extends Edge {
 			
 			startSign = new StopSign(world, this, 0);
 			endSign = new StopSign(world, this, 1);
-			
-			if ((dec & 1) == 1) {
-				startSign.setEnabled(true);
-			}
-			
-			if ((dec & 2) == 2) {
-				endSign.setEnabled(true);
-			}
-			
-			if ((dec & 4) == 4) {
-				
-				if ((dec & 8) == 0) {
-					setDirection(null, Direction.STARTTOEND);
-				} else {
-					setDirection(null, Direction.ENDTOSTART);
-				}
-				
-			}
 			
 		} else {
 			startSign = null;
@@ -135,7 +109,6 @@ public class Road extends Edge {
 				h = 37 * h + end.hashCode();
 			}
 			h = 37 * h + raw.hashCode();
-			h = 37 * h + dec;
 			hash = h;
 		}
 		return hash;
@@ -340,7 +313,7 @@ public class Road extends Edge {
 		return null;
 	}
 	
-	public Entity decorationsBestHitTest(Shape s) {
+	public Entity decorationsIntersect(Shape s) {
 		
 		if (startSign != null) {
 			if (ShapeUtils.intersect(startSign.getShape(), s)) {
@@ -647,9 +620,33 @@ public class Road extends Edge {
 		
 	}
 	
-	/**
-	 * @param g2 in world coords
-	 */
+	public String toFileString() {
+		
+		StringBuilder s = new StringBuilder();
+		
+		s.append("start road\n");
+		
+		s.append("id " + id + "\n");
+		
+		s.append("start " + start.id + "\n");
+		s.append("end " + end.id + "\n");
+		
+		s.append("start points\n");
+		s.append(raw + "\n");
+		s.append("end points\n");
+		
+		s.append("direction " + direction + "\n");
+		
+		s.append("end road\n");
+		
+		return s.toString();
+	}
+	
+	public static Road fromFileString(String s) {
+		
+	}
+	
+	
 	public void paint(RenderingContext ctxt) {
 		
 		paintPath(ctxt);
@@ -664,21 +661,20 @@ public class Road extends Edge {
 		
 	}
 	
-	/**
-	 * @param g2 in world coords
-	 */
+	
+	static Color hiliteColor = new Color(0xff ^ 0x88, 0xff ^ 0x88, 0xff ^ 0x88, 0xff);
+	
 	public void paintHilite(RenderingContext ctxt) {
 		ctxt.setColor(hiliteColor);
 		ctxt.setPixelStroke(1);
 		drawPath(ctxt);
 	}
 	
-	
 	static java.awt.Stroke directionStroke = new BasicStroke(0.1f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
 	
 	private void paintPath(RenderingContext ctxt) {
 		
-		ctxt.setColor(color);
+		ctxt.setColor(Color.GRAY);
 		
 		seq.paint(ctxt);
 		
@@ -701,28 +697,20 @@ public class Road extends Edge {
 		seq.draw(ctxt);
 	}
 	
-	/**
-	 * @param g2 in pixels
-	 */
 	private void paintSkeleton(RenderingContext ctxt) {
 		
 		ctxt.setColor(Color.BLACK);
 		
-		seq.drawSkeleton(ctxt);
-		
+		seq.drawSkeleton(ctxt);	
 	}
 	
-	/**
-	 * @param g2 in world coords
-	 */
 	public void paintBorders(RenderingContext ctxt) {
 		
 		ctxt.setColor(Color.GREEN);
 		startBorderPoint.paint(ctxt);
 		
 		ctxt.setColor(Color.RED);
-		endBorderPoint.paint(ctxt);
-		
+		endBorderPoint.paint(ctxt);	
 	}
 	
 	public void paintDecorations(RenderingContext ctxt) {

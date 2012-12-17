@@ -145,7 +145,7 @@ public class Stroke {
 			
 			if (e.type == null) {
 				
-				Entity hit = world.graph.pureGraphBestHitTestCircle(e.circle);
+				Entity hit = world.graph.pureGraphIntersectCircle(e.circle);
 //				assert hit == null;
 				
 				if (hit == null) {
@@ -158,7 +158,7 @@ public class Stroke {
 				
 			} else if (e.type == SweepEventType.ENTERROADCAPSULE || e.type == SweepEventType.EXITROADCAPSULE) {
 				
-				Entity hit = world.graph.pureGraphBestHitTestCircle(e.circle);
+				Entity hit = world.graph.pureGraphIntersectCircle(e.circle);
 				
 				if (hit instanceof Vertex) {
 //					e.setVertex((Vertex)hit);
@@ -214,7 +214,7 @@ public class Stroke {
 				
 				while (true) {
 					
-					hit = world.graph.pureGraphBestHitTestCapsule(new Capsule(null, a, b, -1));
+					hit = world.graph.pureGraphIntersectCapsule(new Capsule(null, a, b, -1));
 					
 					if (hit == null) {
 						
@@ -269,7 +269,7 @@ public class Stroke {
 				
 				Entity hit2;
 				if (pos instanceof EdgePosition) {
-					hit2 = world.graph.pureGraphBestHitTestCircle(new Circle(null, pos.p, e.circle.radius));
+					hit2 = world.graph.pureGraphIntersectCircle(new Circle(null, pos.p, e.circle.radius));
 				} else {
 					hit2 = ((VertexPosition)pos).v;
 				}
@@ -394,7 +394,7 @@ public class Stroke {
 				
 				assert pos != null;
 				
-				Entity hit = world.graph.pureGraphBestHitTestCircle(new Circle(null, pos.p, e.circle.radius));
+				Entity hit = world.graph.pureGraphIntersectCircle(new Circle(null, pos.p, e.circle.radius));
 				
 				if (hit == null) {
 					
