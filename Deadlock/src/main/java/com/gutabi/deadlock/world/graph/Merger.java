@@ -13,7 +13,7 @@ import com.gutabi.deadlock.core.geom.SweepableShape;
 import com.gutabi.deadlock.view.RenderingContext;
 import com.gutabi.deadlock.world.World;
 
-@SuppressWarnings("static-access")
+//@SuppressWarnings("static-access")
 public class Merger extends Edge {
 	
 	public static final double MERGER_WIDTH = 5.0;

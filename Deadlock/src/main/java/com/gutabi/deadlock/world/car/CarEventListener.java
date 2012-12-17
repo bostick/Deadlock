@@ -15,7 +15,7 @@ import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.world.World;
 import com.gutabi.deadlock.world.sprites.AnimatedExplosion;
 
-@SuppressWarnings("static-access")
+//@SuppressWarnings("static-access")
 public class CarEventListener implements ContactListener {
 	
 	public final World world;

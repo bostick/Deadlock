@@ -97,40 +97,32 @@ public class RenderingContext extends DebugDraw {
 //		g2.setFont(f);
 //	}
 	
-//	public void paintWorldString(double x, double y, double s, String str) {
-//		AffineTransform origTransform = g2.getTransform();
-//		g2.translate(x, y);
-//		g2.scale(s / APP.world.PIXELS_PER_METER_DEBUG, s / APP.world.PIXELS_PER_METER_DEBUG);
-//		g2.drawString(str, 0, 0);
-//		g2.setTransform(origTransform);
-//	}
-	
 	public void paintString(double x, double y, double s, String str) {
 		AffineTransform origTransform = g2.getTransform();
+		
+		double sx = origTransform.getScaleX();
+		double sy = origTransform.getScaleY();
+		
 		g2.translate(x, y);
+		g2.scale(1 / sx, 1 / sy);
 		g2.scale(s, s);
 		g2.drawString(str, 0, 0);
 		g2.setTransform(origTransform);
 	}
 	
-//	public void paintWorldImage(double x, double y, Image img, int dx1, int dy1, int dx2, int dy2, int sx1, int sy1, int sx2, int sy2) {
-//		AffineTransform origTransform = g2.getTransform();
-//		g2.translate(x, y);
-//		g2.scale(1 / APP.world.PIXELS_PER_METER_DEBUG, 1 / APP.world.PIXELS_PER_METER_DEBUG);
-//		g2.drawImage(img, dx1, dy1, dx2, dy2, sx1, sy1, sx2, sy2, null);
-//		g2.setTransform(origTransform);
-//	}
-	
-	public void paintImage(double x, double y, double s, Image img, int dx1, int dy1, int dx2, int dy2, int sx1, int sy1, int sx2, int sy2) {
+	public void paintImage(double x, double y, Image img, double dx1, double dy1, double dx2, double dy2, int sx1, int sy1, int sx2, int sy2) {
 		AffineTransform origTransform = g2.getTransform();
+		
+		double sx = origTransform.getScaleX();
+		double sy = origTransform.getScaleY();
+		
 		g2.translate(x, y);
-		g2.scale(s, s);
-		g2.drawImage(img, dx1, dy1, dx2, dy2, sx1, sy1, sx2, sy2, null);
+		g2.scale(1 / sx, 1 / sy);
+		g2.drawImage(
+				img,
+				(int)Math.ceil(dx1 * sx), (int)Math.ceil(dy1 * sy), (int)Math.ceil(dx2 * sx), (int)Math.ceil(dy2 * sy),
+				sx1, sy1, sx2, sy2, null);
 		g2.setTransform(origTransform);
-	}
-	
-	public void paintImage(int x, int y, Image img, int dx1, int dy1, int dx2, int dy2, int sx1, int sy1, int sx2, int sy2) {
-		g2.drawImage(img, dx1 + x, dy1 + y, dx2 + x, dy2 + y, sx1, sy1, sx2, sy2, null);
 	}
 	
 	public void draw(java.awt.Shape s) {

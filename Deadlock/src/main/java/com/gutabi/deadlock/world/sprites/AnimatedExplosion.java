@@ -61,9 +61,9 @@ public class AnimatedExplosion {
 	private void paint(RenderingContext ctxt, int index) {
 		
 		ctxt.paintImage(
-				p.x - explosionWidth/2, p.y - explosionHeight/2, 1/world.pixelsPerMeter,
+				p.x - explosionWidth/2, p.y - explosionHeight/2,
 				VIEW.explosionSheet,
-				0, 0, (int)Math.round(world.pixelsPerMeter * explosionWidth), (int)Math.round(world.pixelsPerMeter * explosionHeight),
+				0, 0, explosionWidth, explosionHeight,
 				71 * index, 0, 71 * index + 71, 100);
 		
 	}

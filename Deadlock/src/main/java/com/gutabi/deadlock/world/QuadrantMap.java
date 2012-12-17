@@ -4,7 +4,6 @@ import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -67,9 +66,9 @@ public class QuadrantMap {
 			for (int j = 0; j < rows; j++) {
 				Quadrant q;
 				if (ini[j][i] == 1) {
-					q = new Quadrant(world, this, j, i, true);
+					q = new Quadrant(this, j, i, true);
 				} else {
-					q = new Quadrant(world, this, j, i, false);
+					q = new Quadrant(this, j, i, false);
 				}
 				newQuads[j][i] = q;
 				
@@ -248,7 +247,7 @@ public class QuadrantMap {
 		for (int i = 0; i < quadrantRows; i++) {
 			for (int j = 0; j < quadrantCols; j++) {
 				Quadrant q = quadrants[i][j];
-				q.computeGridSpacing();
+				q.computeGridSpacing(world.pixelsPerMeter);
 			}
 		}
 	}
@@ -277,6 +276,8 @@ public class QuadrantMap {
 	public static QuadrantMap fromFileString(String s) {
 		BufferedReader r = new BufferedReader(new StringReader(s));
 		
+		int[][] ini = null;
+		
 		try {
 			String l = r.readLine();
 			assert l.equals("start quadrantMap");
@@ -285,7 +286,7 @@ public class QuadrantMap {
 			int rows = scanner.nextInt();
 			int cols = scanner.nextInt();
 			
-			int[][] ini = new int[rows][cols];
+			ini = new int[rows][cols];
 			
 			for (int i = 0; i < rows; i++) {
 				l = r.readLine();
@@ -303,6 +304,7 @@ public class QuadrantMap {
 			e.printStackTrace();
 		}
 		
+//		QuadrantMap qm = new QuadrantMap(ini);
 		return null;
 	}
 	
@@ -313,16 +315,14 @@ public class QuadrantMap {
 		canvasGrassImageG2.setColor(Color.LIGHT_GRAY);
 		canvasGrassImageG2.fillRect(0, 0, world.canvasWidth, world.canvasHeight);
 		
-		canvasGrassImageG2.translate((int)(-world.worldViewport.x * world.pixelsPerMeter), (int)(-world.worldViewport.y * world.pixelsPerMeter));
-		
 		canvasGrassImageG2.scale(world.pixelsPerMeter, world.pixelsPerMeter);
+		canvasGrassImageG2.translate(-world.worldViewport.x, -world.worldViewport.y);
 		
 		RenderingContext canvasGrassContext = new RenderingContext(canvasGrassImageG2, RenderingContextType.CANVAS);
 		
 		render(canvasGrassContext);
 		
 		canvasGrassImageG2.dispose();
-		
 	}
 	
 	public void render(RenderingContext ctxt) {
@@ -336,16 +336,16 @@ public class QuadrantMap {
 	
 	public void paint(RenderingContext ctxt) {
 		
-		AffineTransform origTransform = ctxt.getTransform();
-		ctxt.translate(world.worldViewport.x, world.worldViewport.y);
+//		AffineTransform origTransform = ctxt.getTransform();
+//		ctxt.translate(world.worldViewport.x, world.worldViewport.y);
 		
 		ctxt.paintImage(
-				0, 0, 1 / world.pixelsPerMeter,
+				world.worldViewport.x, world.worldViewport.y,
 				canvasGrassImage,
-				0, 0, canvasGrassImage.getWidth(), canvasGrassImage.getHeight(),
+				0, 0, world.worldViewport.width, world.worldViewport.height,
 				0, 0, canvasGrassImage.getWidth(), canvasGrassImage.getHeight());
 		
-		ctxt.setTransform(origTransform);
+//		ctxt.setTransform(origTransform);
 		
 	}
 	

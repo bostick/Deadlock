@@ -22,7 +22,7 @@ import com.gutabi.deadlock.world.graph.Graph;
 import com.gutabi.deadlock.world.graph.GraphPositionPathFactory;
 import com.gutabi.deadlock.world.sprites.AnimatedGrass;
 
-@SuppressWarnings("static-access")
+//@SuppressWarnings("static-access")
 public class World {
 	
 	public QuadrantMap quadrantMap;
@@ -49,11 +49,9 @@ public class World {
 	
 	public ExplosionMap explosionMap = new ExplosionMap();
 	
-//	private List<Point> skidMarks = new ArrayList<Point>();
+//	private SkidMarkMap skidMarks = new ArrayList<Point>();
 	
 	public org.jbox2d.dynamics.World b2dWorld;
-	
-//	public AABB aabb;
 	
 //	private static Logger logger = Logger.getLogger(World.class);
 	
@@ -67,8 +65,6 @@ public class World {
 		
 		b2dWorld = new org.jbox2d.dynamics.World(new Vec2(0.0f, 0.0f), true);
 		b2dWorld.setContactListener(new CarEventListener(this));
-		
-//		computeAABB();
 		
 	}
 	
@@ -98,106 +94,6 @@ public class World {
 				canvasHeight / pixelsPerMeter);
 	}
 	
-//	public void addVertexTop(Vertex v) {
-//		Set<Vertex> affected = graph.addVertexTop(v);
-//		
-//		postIdleTop(affected);
-//	}
-//	
-//	public void createRoadTop(Vertex start, Vertex end, List<Point> pts) {
-//		Set<Vertex> affected = graph.createRoadTop(start, end, pts);
-//		
-//		postDraftingTop(affected);
-//		
-////		assert checkConsistency();
-//	}
-//	
-//	public Vertex splitRoadTop(RoadPosition pos) {
-//		return graph.split(pos);
-//	}
-//	
-//	public void removeVertexTop(Vertex v) {
-//		Set<Vertex> affected = graph.removeVertexTop(v);
-//		
-//		postIdleTop(affected);
-//	}
-//	
-//	public void removeRoadTop(Road e) {
-//		Set<Vertex> affected = graph.removeRoadTop(e);
-//		
-//		postIdleTop(affected);
-//	}
-//	
-//	public void removeMergerTop(Merger m) {
-//		Set<Vertex> affected = graph.removeMergerTop(m);
-//		
-//		postIdleTop(affected);
-//	}
-//	
-//	public void removeStopSignTop(StopSign s) {
-//		s.r.removeStopSignTop(s);
-//	}
-//	
-//	public void removeCarTop(Car c) {
-//		
-//		c.destroy();
-//		
-//		synchronized (APP) {
-//			carMap.remove(c);
-//		}
-//		
-//		postRunningTop();
-//	}
-//	
-//	public void insertMergerTop(Point p) {
-//		Set<Vertex> affected = graph.insertMergerTop(p);
-//		
-//		postIdleTop(affected);
-//		
-//	}
-//	
-//	public void addExplosion(AnimatedExplosion x) {
-//		explosionMap.add(x);
-//	}
-//	
-//	public List<SweepEvent> sweepStart(Circle c) {
-//		return graph.sweepStart(c);
-//	}
-//	
-//	public List<SweepEvent> sweep(Capsule s) {
-//		return graph.sweep(s);
-//	}
-//	
-//	private void postIdleTop(Set<Vertex> affected) {
-//		
-//		graph.computeVertexRadii(affected);
-//		
-//		computeAABB();
-//	}
-//	
-//	public void postDraftingTop(Set<Vertex> affected) {
-//		
-//		graph.computeVertexRadii(affected);
-//		
-//		computeAABB();
-//	}
-//	
-//	private void postRunningTop() {
-//		;
-//	}
-	
-//	private void computeAABB() {
-//		aabb = quadrantMap.aabb;
-//		aabb = AABB.union(aabb, graph.getAABB());
-//	}
-	
-//	public AABB getAABB() {
-//		return aabb;
-//	}
-	
-	/*
-	 * run before game loop start
-	 */
 	public void preStart() {
 		
 //		renderSkidMarksFresh();
@@ -455,12 +351,6 @@ public class World {
 				
 			}
 			
-//			if (APP.DEBUG_DRAW) {
-//				ctxt.setColor(Color.BLACK);
-//				ctxt.setPixelStroke(1);
-//				aabb.draw(ctxt);
-//			}
-			
 			break;
 		case PREVIEW:
 			quadrantMap.paint(ctxt);
@@ -474,19 +364,19 @@ public class World {
 		
 		AffineTransform origTransform = ctxt.getTransform();
 		
-		ctxt.paintString(0, 0, 1 / pixelsPerMeter, "time: " + t);
+		ctxt.paintString(0, 0, 1, "time: " + t);
 		
 		ctxt.translate(0, 1);
 		
-		ctxt.paintString(0, 0, 1 / pixelsPerMeter, "body count: " + b2dWorld.getBodyCount());
+		ctxt.paintString(0, 0, 1, "body count: " + b2dWorld.getBodyCount());
 		
 		ctxt.translate(0, 1);
 		
-		ctxt.paintString(0, 0, 1 / pixelsPerMeter, "car count: " + carMap.size());
+		ctxt.paintString(0, 0, 1, "car count: " + carMap.size());
 		
 		ctxt.translate(0, 1);
 		
-		ctxt.paintString(0, 0, 1 / pixelsPerMeter, "splosions count: " + explosionMap.size());
+		ctxt.paintString(0, 0, 1, "splosions count: " + explosionMap.size());
 		
 		ctxt.translate(0, 1);
 		

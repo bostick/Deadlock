@@ -12,7 +12,7 @@ import com.gutabi.deadlock.world.QuadrantMap;
 import com.gutabi.deadlock.world.graph.Axis;
 import com.gutabi.deadlock.world.graph.Vertex;
 
-@SuppressWarnings("static-access")
+//@SuppressWarnings("static-access")
 public class FixtureToolShape extends Shape {
 	
 	public final Point p;

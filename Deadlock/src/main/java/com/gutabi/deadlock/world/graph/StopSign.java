@@ -11,7 +11,7 @@ import com.gutabi.deadlock.core.geom.Circle;
 import com.gutabi.deadlock.view.RenderingContext;
 import com.gutabi.deadlock.world.World;
 
-@SuppressWarnings("static-access")
+//@SuppressWarnings("static-access")
 public class StopSign extends Entity {
 	
 	public static final double STOPSIGN_SIZE = 0.5;
@@ -125,9 +125,9 @@ public class StopSign extends Entity {
 			if (enabled) {
 				
 				ctxt.paintImage(
-						p.x - StopSign.STOPSIGN_SIZE/2, p.y - StopSign.STOPSIGN_SIZE/2, 1/world.pixelsPerMeter,
+						p.x - StopSign.STOPSIGN_SIZE/2, p.y - StopSign.STOPSIGN_SIZE/2,
 						VIEW.sheet,
-						0, 0, (int)Math.round(world.pixelsPerMeter * STOPSIGN_SIZE), (int)Math.round(world.pixelsPerMeter * STOPSIGN_SIZE),
+						0, 0, STOPSIGN_SIZE, STOPSIGN_SIZE,
 						32, 224, 32+32, 224+32);
 			}
 			

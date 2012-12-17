@@ -18,7 +18,7 @@ import com.gutabi.deadlock.world.car.DrivingEvent;
 import com.gutabi.deadlock.world.car.VertexArrivalEvent;
 import com.gutabi.deadlock.world.graph.Vertex;
 
-@SuppressWarnings("static-access")
+//@SuppressWarnings("static-access")
 public class CarMap {
 	
 	public final World world;

@@ -75,25 +75,25 @@ public class AnimatedGrass {
 	
 	private void paint0(RenderingContext ctxt) {
 		ctxt.paintImage(
-				p.x - AnimatedGrass.GRASS_SIZE/2, p.y - AnimatedGrass.GRASS_SIZE/2, 1/world.pixelsPerMeter,
+				p.x - AnimatedGrass.GRASS_SIZE/2, p.y - AnimatedGrass.GRASS_SIZE/2,
 				VIEW.sheet,
-				0, 0, (int)Math.round(world.pixelsPerMeter * GRASS_SIZE), (int)Math.round(world.pixelsPerMeter * GRASS_SIZE),
+				0, 0, GRASS_SIZE, GRASS_SIZE,
 				0, 256, 0+32, 256+32);	
 	}
 	
 	private void paint1(RenderingContext ctxt) {
 		ctxt.paintImage(
-				p.x - AnimatedGrass.GRASS_SIZE/2, p.y - AnimatedGrass.GRASS_SIZE/2, 1/world.pixelsPerMeter,
+				p.x - AnimatedGrass.GRASS_SIZE/2, p.y - AnimatedGrass.GRASS_SIZE/2,
 				VIEW.sheet,
-				0, 0, (int)Math.round(world.pixelsPerMeter * GRASS_SIZE), (int)Math.round(world.pixelsPerMeter * GRASS_SIZE),
+				0, 0, GRASS_SIZE, GRASS_SIZE,
 				32, 256, 32+32, 256+32);	
 	}
 	
 	private void paint2(RenderingContext ctxt) {
 		ctxt.paintImage(
-				p.x - AnimatedGrass.GRASS_SIZE/2, p.y - AnimatedGrass.GRASS_SIZE/2, 1/world.pixelsPerMeter,
+				p.x - AnimatedGrass.GRASS_SIZE/2, p.y - AnimatedGrass.GRASS_SIZE/2,
 				VIEW.sheet,
-				0, 0, (int)Math.round(world.pixelsPerMeter * GRASS_SIZE), (int)Math.round(world.pixelsPerMeter * GRASS_SIZE),
+				0, 0, GRASS_SIZE, GRASS_SIZE,
 				64, 256, 64+32, 256+32);	
 	}
 }

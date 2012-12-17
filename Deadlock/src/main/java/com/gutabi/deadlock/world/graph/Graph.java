@@ -1155,9 +1155,8 @@ public class Graph implements Sweepable {
 		canvasGraphImageG2.fillRect(0, 0, world.canvasWidth, world.canvasHeight);
 		canvasGraphImageG2.setComposite(orig);
 		
-		canvasGraphImageG2.translate((int)((-world.worldViewport.x) * world.pixelsPerMeter), (int)((-world.worldViewport.y) * world.pixelsPerMeter));
-		
 		canvasGraphImageG2.scale(world.pixelsPerMeter, world.pixelsPerMeter);
+		canvasGraphImageG2.translate(-world.worldViewport.x, -world.worldViewport.y);
 		
 		RenderingContext canvasGraphContext = new RenderingContext(canvasGraphImageG2, RenderingContextType.CANVAS);
 		
@@ -1192,17 +1191,13 @@ public class Graph implements Sweepable {
 	
 	public void paint(RenderingContext ctxt) {
 		
-		AffineTransform origTransform = ctxt.getTransform();
-		origTransform = ctxt.getTransform();
-		ctxt.translate(world.worldViewport.x, world.worldViewport.y);
-		
 		ctxt.paintImage(
-				0, 0, 1 / world.pixelsPerMeter,
+				world.worldViewport.x, world.worldViewport.y,
 				canvasGraphImage,
-				0, 0, canvasGraphImage.getWidth(), canvasGraphImage.getHeight(),
+				0, 0, world.worldViewport.width, world.worldViewport.height,
 				0, 0, canvasGraphImage.getWidth(), canvasGraphImage.getHeight());
 		
-		ctxt.setTransform(origTransform);
+//		ctxt.setTransform(origTransform);
 		
 	}
 	
@@ -1210,11 +1205,11 @@ public class Graph implements Sweepable {
 		
 		AffineTransform origTransform = ctxt.getTransform();
 		
-		ctxt.paintString(0, 0, 1.0 / world.pixelsPerMeter, "vertex count: " + vertices.size());
+		ctxt.paintString(0, 0, 1.0, "vertex count: " + vertices.size());
 		
 		ctxt.translate(0, 1);
 		
-		ctxt.paintString(0, 0, 1.0 / world.pixelsPerMeter, "edge count: " + edges.size());
+		ctxt.paintString(0, 0, 1.0, "edge count: " + edges.size());
 		
 		ctxt.setTransform(origTransform);
 	}

@@ -32,7 +32,7 @@ import com.gutabi.deadlock.world.graph.Vertex;
 import com.gutabi.deadlock.world.tool.Tool;
 import com.gutabi.deadlock.world.tool.RegularTool;
 
-@SuppressWarnings("static-access")
+//@SuppressWarnings("static-access")
 public class WorldScreen extends ScreenBase {
 	
 	enum WorldScreenMode {

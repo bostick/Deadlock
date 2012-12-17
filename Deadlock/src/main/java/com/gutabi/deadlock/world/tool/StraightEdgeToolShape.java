@@ -10,7 +10,7 @@ import com.gutabi.deadlock.core.geom.Shape;
 import com.gutabi.deadlock.view.RenderingContext;
 import com.gutabi.deadlock.world.graph.Vertex;
 
-@SuppressWarnings("static-access")
+//@SuppressWarnings("static-access")
 public class StraightEdgeToolShape extends Shape {
 	
 	public final Circle firstCircle;

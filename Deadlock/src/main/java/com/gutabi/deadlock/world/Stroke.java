@@ -32,7 +32,7 @@ import com.gutabi.deadlock.world.graph.RoadPosition;
 import com.gutabi.deadlock.world.graph.Vertex;
 import com.gutabi.deadlock.world.graph.VertexPosition;
 
-@SuppressWarnings("static-access")
+//@SuppressWarnings("static-access")
 public class Stroke {
 	
 	public static final double STROKE_RADIUS = Vertex.INIT_VERTEX_RADIUS;

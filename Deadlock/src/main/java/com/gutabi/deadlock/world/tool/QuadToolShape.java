@@ -18,7 +18,7 @@ import com.gutabi.deadlock.core.geom.ShapeUtils;
 import com.gutabi.deadlock.view.RenderingContext;
 import com.gutabi.deadlock.world.graph.Vertex;
 
-@SuppressWarnings("static-access")
+//@SuppressWarnings("static-access")
 public class QuadToolShape extends Shape {
 	
 	public final Point start;

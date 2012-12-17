@@ -9,13 +9,13 @@ public class DeadlockApplication {
 	/**
 	 * move physics forward by dt seconds
 	 */
-	public static double dt = 0.01;
+	public double dt = 0.01;
 	
-	public static boolean FPS_DRAW = false;
-	public static boolean STOPSIGN_DRAW = true;
-	public static boolean CARTEXTURE_DRAW = true;
-	public static boolean EXPLOSIONS_DRAW = true;
-	public static boolean DEBUG_DRAW = false;
+	public boolean FPS_DRAW = false;
+	public boolean STOPSIGN_DRAW = true;
+	public boolean CARTEXTURE_DRAW = true;
+	public boolean EXPLOSIONS_DRAW = true;
+	public boolean DEBUG_DRAW = false;
 	
 	public Screen screen;
 	

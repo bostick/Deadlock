@@ -9,7 +9,7 @@ import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.world.graph.GraphPositionPath;
 import com.gutabi.deadlock.world.graph.GraphPositionPathPosition;
 
-@SuppressWarnings("static-access")
+//@SuppressWarnings("static-access")
 public class Driver {
 	
 	public static final double COMPLETE_STOP_WAIT_TIME = 0.5;

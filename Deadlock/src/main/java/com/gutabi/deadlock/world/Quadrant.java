@@ -14,7 +14,7 @@ import com.gutabi.deadlock.view.RenderingContext;
 @SuppressWarnings("static-access")
 public class Quadrant {
 	
-	public final World world;
+//	public final World world;
 	public final QuadrantMap map;
 	public final int r;
 	public final int c;
@@ -29,8 +29,8 @@ public class Quadrant {
 	
 	public final AABB aabb;
 	
-	public Quadrant(World world, QuadrantMap map, int r, int c, boolean active) {
-		this.world = world;
+	public Quadrant(QuadrantMap map, int r, int c, boolean active) {
+//		this.world = world;
 		this.map = map;
 		this.r = r;
 		this.c = c;
@@ -49,16 +49,16 @@ public class Quadrant {
 	
 	private double gridSpacing = 2.0;
 	
-	public void computeGridSpacing() {
+	public void computeGridSpacing(double pixelsPerMeter) {
 		
-		double curGridSpacingPixels =  gridSpacing * world.pixelsPerMeter;
+		double curGridSpacingPixels =  gridSpacing * pixelsPerMeter;
 		while (curGridSpacingPixels > 64+16) {
 			gridSpacing *= 0.5;
-			curGridSpacingPixels =  gridSpacing * world.pixelsPerMeter;
+			curGridSpacingPixels =  gridSpacing * pixelsPerMeter;
 		}
 		while (curGridSpacingPixels < 64-16) {
 			gridSpacing *= 2.0;
-			curGridSpacingPixels =  gridSpacing * world.pixelsPerMeter;
+			curGridSpacingPixels =  gridSpacing * pixelsPerMeter;
 		}
 	}
 	
@@ -97,15 +97,20 @@ public class Quadrant {
 				
 				if (!APP.DEBUG_DRAW) {
 					
+//					ctxt.paintImage(
+//							c * QuadrantMap.QUADRANT_WIDTH, r * QuadrantMap.QUADRANT_HEIGHT, 1 / world.pixelsPerMeter,
+//							map.quadrantGrass,
+//							0, 0,
+//							(int)Math.ceil(world.pixelsPerMeter * QuadrantMap.QUADRANT_WIDTH),
+//							(int)Math.ceil(world.pixelsPerMeter * QuadrantMap.QUADRANT_HEIGHT),
+//							0, 0,
+//							map.quadrantGrass.getWidth(),
+//							map.quadrantGrass.getHeight());
 					ctxt.paintImage(
-							c * QuadrantMap.QUADRANT_WIDTH, r * QuadrantMap.QUADRANT_HEIGHT, 1 / world.pixelsPerMeter,
+							c * QuadrantMap.QUADRANT_WIDTH, r * QuadrantMap.QUADRANT_HEIGHT,
 							map.quadrantGrass,
-							0, 0,
-							(int)Math.ceil(world.pixelsPerMeter * QuadrantMap.QUADRANT_WIDTH),
-							(int)Math.ceil(world.pixelsPerMeter * QuadrantMap.QUADRANT_HEIGHT),
-							0, 0,
-							map.quadrantGrass.getWidth(),
-							map.quadrantGrass.getHeight());
+							0, 0, QuadrantMap.QUADRANT_WIDTH, QuadrantMap.QUADRANT_HEIGHT,
+							0, 0, map.quadrantGrass.getWidth(), map.quadrantGrass.getHeight());
 					
 				} else {
 					
@@ -117,7 +122,7 @@ public class Quadrant {
 					aabb.draw(ctxt);
 					
 					ctxt.setColor(Color.BLACK);
-					ctxt.paintString(c * QuadrantMap.QUADRANT_WIDTH, r * QuadrantMap.QUADRANT_HEIGHT + 1, 1.0 / world.pixelsPerMeter, c + " " + r);
+					ctxt.paintString(c * QuadrantMap.QUADRANT_WIDTH, r * QuadrantMap.QUADRANT_HEIGHT + 1, 1.0, c + " " + r);
 					
 				}
 				

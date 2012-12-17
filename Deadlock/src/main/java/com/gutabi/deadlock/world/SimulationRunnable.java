@@ -6,7 +6,7 @@ import org.apache.log4j.Logger;
 
 import com.gutabi.deadlock.world.WorldScreen.WorldScreenMode;
 
-@SuppressWarnings("static-access")
+//@SuppressWarnings("static-access")
 public class SimulationRunnable implements Runnable {
 	
 	WorldScreen screen;

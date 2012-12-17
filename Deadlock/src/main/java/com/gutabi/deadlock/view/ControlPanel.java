@@ -14,7 +14,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-@SuppressWarnings({"serial", "static-access"})
+//@SuppressWarnings({"serial", "static-access"})
+@SuppressWarnings({"serial"})
 public class ControlPanel extends JPanel {
 	
 	public JCheckBox normalCarButton;

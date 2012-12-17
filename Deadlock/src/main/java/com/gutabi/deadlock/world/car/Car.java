@@ -30,7 +30,7 @@ import com.gutabi.deadlock.world.graph.Fixture;
 import com.gutabi.deadlock.world.graph.GraphPositionPathPosition;
 import com.gutabi.deadlock.world.graph.Merger;
 
-@SuppressWarnings("static-access")
+//@SuppressWarnings("static-access")
 public abstract class Car extends Entity {
 	
 	public static final double CAR_LENGTH = 1.0;
@@ -863,9 +863,9 @@ public abstract class Car extends Entity {
 		ctxt.rotate(angle);
 		
 		ctxt.paintImage(
-				CAR_LOCALX, CAR_LOCALY, 1/world.pixelsPerMeter,
+				CAR_LOCALX, CAR_LOCALY,
 				VIEW.sheet,
-				0, 0, (int)(CAR_LENGTH * world.pixelsPerMeter), (int)(CAR_WIDTH * world.pixelsPerMeter),
+				0, 0, CAR_LENGTH, CAR_WIDTH,
 				64, sheetRowStart, 64+32, sheetRowEnd);
 		
 		if (inMerger) {
@@ -886,18 +886,18 @@ public abstract class Car extends Entity {
 		ctxt.translate(p.x, p.y);
 		ctxt.rotate(angle);
 		
-		int brakePixels = (int)(BRAKE_SIZE * world.pixelsPerMeter);
+//		int brakePixels = (int)(BRAKE_SIZE * world.pixelsPerMeter);
 		
 		ctxt.paintImage(
-				CAR_BRAKE1X, CAR_BRAKE1Y, 1/world.pixelsPerMeter,
+				CAR_BRAKE1X, CAR_BRAKE1Y,
 				VIEW.sheet,
-				0, 0, brakePixels, brakePixels,
+				0, 0, BRAKE_SIZE, BRAKE_SIZE,
 				0, brakeRowStart, 0+8, brakeRowEnd);
 		
 		ctxt.paintImage(
-				CAR_BRAKE2X, CAR_BRAKE2Y, 1/world.pixelsPerMeter,
+				CAR_BRAKE2X, CAR_BRAKE2Y,
 				VIEW.sheet,
-				0, 0, brakePixels, brakePixels,
+				0, 0, BRAKE_SIZE, BRAKE_SIZE,
 				0, brakeRowStart, 0+8, brakeRowEnd);
 		
 		ctxt.setTransform(origTransform);
@@ -911,7 +911,7 @@ public abstract class Car extends Entity {
 		ctxt.translate(p.x, p.y);
 		
 		ctxt.setColor(Color.WHITE);
-		ctxt.paintString(CAR_LOCALX, 0.0, 2.0 / world.pixelsPerMeter, Integer.toString(id));
+		ctxt.paintString(CAR_LOCALX, 0.0, 2.0, Integer.toString(id));
 		
 		ctxt.setTransform(origTransform);
 	}

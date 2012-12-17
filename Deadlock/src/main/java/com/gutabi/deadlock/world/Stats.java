@@ -43,7 +43,7 @@ public class Stats {
 			lastTime = curTime;
 		}
 		
-		ctxt.paintString(0, 0, 1.0 / world.pixelsPerMeter, "FPS: " + fps);
+		ctxt.paintString(0, 0, 1.0, "FPS: " + fps);
 		
 		ctxt.translate(0, 1);
 		

@@ -15,7 +15,7 @@ import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.view.RenderingContext;
 import com.gutabi.deadlock.view.RenderingContextType;
 
-@SuppressWarnings("static-access")
+//@SuppressWarnings("static-access")
 public class Capsule extends SweepableShape implements SweeperShape {
 	
 	public final Circle ac;
@@ -28,11 +28,6 @@ public class Capsule extends SweepableShape implements SweeperShape {
 	public final Point a;
 	public final Point b;
 	public final double r;
-	
-	/*
-	 * normal
-	 */
-//	private final Point n;
 	
 	private final Point aUp;
 	private final Point aDown;
