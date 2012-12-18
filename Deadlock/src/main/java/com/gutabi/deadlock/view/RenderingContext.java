@@ -93,6 +93,10 @@ public class RenderingContext extends DebugDraw {
 		g2.rotate(a);
 	}
 	
+	public void rotate(double a, double x, double y) {
+		g2.rotate(a, x, y);
+	}
+	
 //	public void setFont(Font f) {
 //		g2.setFont(f);
 //	}

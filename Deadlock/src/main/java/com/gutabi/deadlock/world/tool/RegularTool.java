@@ -70,8 +70,7 @@ public class RegularTool extends ToolBase {
 		VIEW.setupCanvas(VIEW.container);
 		((JFrame)VIEW.container).setVisible(true);
 		
-		VIEW.canvas.canvasPostDisplay();
-		
+		APP.screen.postDisplay();
 		APP.screen.render();
 		APP.screen.repaint();
 		

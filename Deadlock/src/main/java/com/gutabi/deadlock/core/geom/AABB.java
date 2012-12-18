@@ -215,6 +215,10 @@ public class AABB extends Shape {
 		return new AABB(x + p.x, y + p.y, width, height);
 	}
 	
+	public AABB minus(Point p) {
+		return new AABB(x - p.x, y - p.y, width, height);
+	}
+	
 	public java.awt.Shape java2D() {
 		if (rect == null) {
 			computeRect();

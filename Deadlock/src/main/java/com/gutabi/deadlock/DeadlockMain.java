@@ -29,8 +29,7 @@ public class DeadlockMain  {
 		
 		((JFrame)VIEW.container).setVisible(true);
 		
-		VIEW.canvas.canvasPostDisplay();
-		
+		APP.screen.postDisplay();
 		APP.screen.render();
 		APP.screen.repaint();
 	}

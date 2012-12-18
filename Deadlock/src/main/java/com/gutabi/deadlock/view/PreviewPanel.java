@@ -13,12 +13,15 @@ import java.awt.event.MouseMotionListener;
 
 import javax.swing.JPanel;
 
+import com.gutabi.deadlock.core.Dim;
 import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.world.Preview;
 
 //@SuppressWarnings({"serial", "static-access"})
 @SuppressWarnings({"serial"})
 public class PreviewPanel extends ComponentBase {
+	
+	public static final int PREVIEW_WIDTH = 100;
+	public static final int PREVIEW_HEIGHT = 100;
 	
 	private JPanel c;
 	
@@ -30,9 +33,9 @@ public class PreviewPanel extends ComponentBase {
 				APP.screen.paint(new PaintEvent(PreviewPanel.this, new RenderingContext((Graphics2D)g, RenderingContextType.PREVIEW)));
 			}
 		};
-		c.setSize(new Dimension(Preview.PREVIEW_WIDTH, Preview.PREVIEW_HEIGHT));
-		c.setPreferredSize(new Dimension(Preview.PREVIEW_WIDTH, Preview.PREVIEW_HEIGHT));
-		c.setMaximumSize(new Dimension(Preview.PREVIEW_WIDTH, Preview.PREVIEW_HEIGHT));
+		c.setSize(new Dimension(PREVIEW_WIDTH, PREVIEW_HEIGHT));
+		c.setPreferredSize(new Dimension(PREVIEW_WIDTH, PREVIEW_HEIGHT));
+		c.setMaximumSize(new Dimension(PREVIEW_WIDTH, PREVIEW_HEIGHT));
 		
 		JavaListener jl = new JavaListener();
 		c.addMouseListener(jl);
@@ -129,6 +132,12 @@ public class PreviewPanel extends ComponentBase {
 	
 	public java.awt.Component java() {
 		return c;
+	}
+	
+	public Dim postDisplay() {
+		
+//		APP.screen.previewPostDisplay(new Dim(getWidth(), getHeight()));
+		return new Dim(getWidth(), getHeight());
 	}
 	
 	public Point lastPressPreviewPoint;

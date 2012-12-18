@@ -99,15 +99,16 @@ public class QuadrantEditor extends ScreenBase {
 				
 				AffineTransform origTransform = ctxt.getTransform();
 				ctxt.translate(aabb.ul.x, aabb.ul.y);
-				ctxt.translate(aabb.width/2, aabb.height/2);
-				ctxt.rotate(3 * Math.PI / 2);
-				ctxt.translate(-aabb.width/2, -aabb.height/2);
+				ctxt.rotate(6 * Math.PI / 4, aabb.width/2, aabb.height/2);
+				
 				ctxt.paintImage(0, 0, VIEW.sheet, 0, 0, 50, 50, 128, 224, 160, 256);
+				
 				ctxt.setTransform(origTransform);
 				
 				ctxt.setColor(Color.BLACK);
 				aabb.draw(ctxt);
 			}
+			
 		};
 		addRow = new Button(worldCanvasAABB.center.x - 50/2, worldCanvasAABB.brY + 40 - 50/2 + 50, 50, 50) {
 			
@@ -141,9 +142,7 @@ public class QuadrantEditor extends ScreenBase {
 				
 				AffineTransform origTransform = ctxt.getTransform();
 				ctxt.translate(aabb.ul.x, aabb.ul.y);
-				ctxt.translate(aabb.width/2, aabb.height/2);
-				ctxt.rotate(1 * Math.PI / 2);
-				ctxt.translate(-aabb.width/2, -aabb.height/2);
+				ctxt.rotate(2 * Math.PI / 4, aabb.width/2, aabb.height/2);
 				ctxt.paintImage(0, 0, VIEW.sheet, 0, 0, 50, 50, 128, 224, 160, 256);
 				ctxt.setTransform(origTransform);
 				
@@ -184,9 +183,7 @@ public class QuadrantEditor extends ScreenBase {
 				
 				AffineTransform origTransform = ctxt.getTransform();
 				ctxt.translate(aabb.ul.x, aabb.ul.y);
-				ctxt.translate(aabb.width/2, aabb.height/2);
-				ctxt.rotate(Math.PI);
-				ctxt.translate(-aabb.width/2, -aabb.height/2);
+				ctxt.rotate(4 * Math.PI / 4, aabb.width/2, aabb.height/2);
 				ctxt.paintImage(0, 0, VIEW.sheet, 0, 0, 50, 50, 128, 224, 160, 256);
 				ctxt.setTransform(origTransform);
 				
@@ -226,9 +223,7 @@ public class QuadrantEditor extends ScreenBase {
 				
 				AffineTransform origTransform = ctxt.getTransform();
 				ctxt.translate(aabb.ul.x, aabb.ul.y);
-				ctxt.translate(aabb.width/2, aabb.height/2);
-				ctxt.rotate(0 * Math.PI);
-				ctxt.translate(-aabb.width/2, -aabb.height/2);
+				ctxt.rotate(0 * Math.PI / 4, aabb.width/2, aabb.height/2);
 				ctxt.paintImage(0, 0, VIEW.sheet, 0, 0, 50, 50, 128, 224, 160, 256);
 				ctxt.setTransform(origTransform);
 				
@@ -270,9 +265,7 @@ public class QuadrantEditor extends ScreenBase {
 				
 				AffineTransform origTransform = ctxt.getTransform();
 				ctxt.translate(aabb.ul.x, aabb.ul.y);
-				ctxt.translate(aabb.width/2, aabb.height/2);
-				ctxt.rotate(5 * Math.PI / 4);
-				ctxt.translate(-aabb.width/2, -aabb.height/2);
+				ctxt.rotate(5 * Math.PI / 4, aabb.width/2, aabb.height/2);
 				ctxt.paintImage(0, 0, VIEW.sheet, 0, 0, 50, 50, 128, 224, 160, 256);
 				ctxt.setTransform(origTransform);
 				
@@ -313,10 +306,10 @@ public class QuadrantEditor extends ScreenBase {
 				
 				AffineTransform origTransform = ctxt.getTransform();
 				ctxt.translate(aabb.ul.x, aabb.ul.y);
-				ctxt.translate(aabb.width/2, aabb.height/2);
-				ctxt.rotate(Math.PI / 4);
-				ctxt.translate(-aabb.width/2, -aabb.height/2);
+				ctxt.rotate(1 * Math.PI / 4, aabb.width/2, aabb.height/2);
+				
 				ctxt.paintImage(0, 0, VIEW.sheet, 0, 0, 50, 50, 128, 224, 160, 256);
+				
 				ctxt.setTransform(origTransform);
 				
 				ctxt.setColor(Color.BLACK);
@@ -338,8 +331,7 @@ public class QuadrantEditor extends ScreenBase {
 				VIEW.setupCanvasAndControlPanel(VIEW.container);
 				((JFrame)VIEW.container).setVisible(true);
 				
-				VIEW.canvas.canvasPostDisplay();
-				
+				APP.screen.postDisplay();
 				APP.screen.render();
 				APP.screen.repaint();
 				
@@ -353,7 +345,9 @@ public class QuadrantEditor extends ScreenBase {
 		
 	}
 	
-	public void canvasPostDisplay(Dim d) {
+	public void postDisplay() {
+		
+		VIEW.canvas.postDisplay();
 		
 	}
 	
@@ -536,10 +530,10 @@ public class QuadrantEditor extends ScreenBase {
 		world.paintWorld(ctxt);
 		ctxt.setTransform(origTrans);
 		
-		removeCol.paint(ctxt);
-		addCol.paint(ctxt);
 		removeRow.paint(ctxt);
 		addRow.paint(ctxt);
+		removeCol.paint(ctxt);
+		addCol.paint(ctxt);
 		removeBoth.paint(ctxt);
 		addBoth.paint(ctxt);
 		go.paint(ctxt);

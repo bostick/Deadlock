@@ -1,6 +1,11 @@
 
 FOR ALPHA 1:
 
+fix problems with scaling and rotating images
+see quadrant editor: add/remove rows
+see 4x4 top/bottom fixtures
+
+
 scripting:
 saving to files
 reading from files

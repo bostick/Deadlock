@@ -15,7 +15,6 @@ import javax.swing.JFrame;
 import org.apache.log4j.Logger;
 
 import com.gutabi.deadlock.ScreenBase;
-import com.gutabi.deadlock.core.Dim;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.quadranteditor.QuadrantEditor;
 import com.gutabi.deadlock.view.InputEvent;
@@ -60,8 +59,7 @@ public class MainMenu extends ScreenBase {
 				VIEW.setupCanvasAndControlPanel(VIEW.container);
 				((JFrame)VIEW.container).setVisible(true);
 				
-				VIEW.canvas.canvasPostDisplay();
-				
+				APP.screen.postDisplay();
 				APP.screen.render();
 				APP.screen.repaint();
 				
@@ -82,8 +80,7 @@ public class MainMenu extends ScreenBase {
 				VIEW.setupCanvasAndControlPanel(VIEW.container);
 				((JFrame)VIEW.container).setVisible(true);
 				
-				VIEW.canvas.canvasPostDisplay();
-				
+				APP.screen.postDisplay();
 				APP.screen.render();
 				APP.screen.repaint();
 				
@@ -105,8 +102,7 @@ public class MainMenu extends ScreenBase {
 				
 				((JFrame)VIEW.container).setVisible(true);
 				
-				VIEW.canvas.canvasPostDisplay();
-				
+				APP.screen.postDisplay();
 				APP.screen.render();
 				APP.screen.repaint();
 				
@@ -159,7 +155,9 @@ public class MainMenu extends ScreenBase {
 		
 	}
 	
-	public void canvasPostDisplay(Dim d) {
+	public void postDisplay() {
+		
+		VIEW.canvas.postDisplay();
 		
 	}
 	
@@ -328,7 +326,7 @@ public class MainMenu extends ScreenBase {
 				
 				ctxt.translate(VIEW.canvas.getWidth()/2 - MENU_WIDTH/2, VIEW.canvas.getHeight()/2 - MENU_HEIGHT/2);
 				
-				ctxt.paintImage(0, 0, VIEW.titleBackground, 0, 0, MENU_WIDTH, 600, 0, 0, MENU_WIDTH, MENU_HEIGHT);
+				ctxt.paintImage(0, 0, VIEW.titleBackground, 0, 0, MENU_WIDTH, MENU_HEIGHT, 0, 0, MENU_WIDTH, MENU_HEIGHT);
 				
 				ctxt.paintImage(MENU_WIDTH/2 - 498/2, 20, VIEW.title_white, 0, 0, 498, 90, 0, 0, 498, 90);
 				

@@ -148,14 +148,15 @@ public class Canvas extends Component {
 		return c;
 	}
 	
-	public void canvasPostDisplay() {
+	public Dim postDisplay() {
 		
 		c.requestFocusInWindow();
 		
 		c.createBufferStrategy(2);
 		bs = c.getBufferStrategy();
 		
-		APP.screen.canvasPostDisplay(new Dim(getWidth(), getHeight()));
+//		APP.screen.canvasPostDisplay(new Dim(getWidth(), getHeight()));
+		return new Dim(getWidth(), getHeight());
 	}
 	
 	public void pressed(InputEvent ev) {

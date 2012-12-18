@@ -136,8 +136,8 @@ public class QuadrantMap {
 				DMath.lessThanEquals(p.x / QUADRANT_WIDTH, quadrantCols) &&
 				DMath.lessThanEquals(p.y / QUADRANT_HEIGHT, quadrantRows)) {
 			
-			int col = DMath.lessThan(p.x / QUADRANT_WIDTH, quadrantCols) ? (int)Math.floor(p.x / QUADRANT_WIDTH) : quadrantCols-1;
-			int row = DMath.lessThan(p.y / QUADRANT_HEIGHT, quadrantRows) ? (int)Math.floor(p.y / QUADRANT_HEIGHT) : quadrantRows-1;
+			int col = DMath.lessThan(p.x / QUADRANT_WIDTH, quadrantCols) ? (DMath.equals(p.x / QUADRANT_WIDTH, 0.0) ? 0 : (int)Math.floor(p.x / QUADRANT_WIDTH)) : quadrantCols-1;
+			int row = DMath.lessThan(p.y / QUADRANT_HEIGHT, quadrantRows) ? (DMath.equals(p.y / QUADRANT_HEIGHT, 0.0) ? 0 : (int)Math.floor(p.y / QUADRANT_HEIGHT)) : quadrantRows-1;
 			return quadrants[row][col];
 			
 		} else {

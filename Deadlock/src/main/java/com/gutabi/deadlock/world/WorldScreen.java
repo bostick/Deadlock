@@ -72,10 +72,16 @@ public class WorldScreen extends ScreenBase {
 		
 	}
 	
-	public void canvasPostDisplay(Dim dim) {
-		world.canvasPostDisplay(dim);
-		preview.canvasPostDisplay();
+	public void postDisplay() {
+		
+		Dim canvasDim = VIEW.canvas.postDisplay();
+		Dim previewDim = VIEW.previewPanel.postDisplay();
+		
+		world.canvasPostDisplay(canvasDim);
+		preview.previewPostDisplay(previewDim);
 	}
+	
+	
 	
 	public void startRunning() {
 		

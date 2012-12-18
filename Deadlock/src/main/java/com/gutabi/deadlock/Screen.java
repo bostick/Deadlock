@@ -2,13 +2,12 @@ package com.gutabi.deadlock;
 
 import java.awt.event.ActionListener;
 
-import com.gutabi.deadlock.core.Dim;
 import com.gutabi.deadlock.view.InputEvent;
 import com.gutabi.deadlock.view.PaintEvent;
 
 public abstract class Screen implements ActionListener {
 	
-	public abstract void canvasPostDisplay(Dim dim);
+	public abstract void postDisplay();
 	
 	public abstract void render();
 	
