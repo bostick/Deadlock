@@ -751,7 +751,7 @@ public class WorldScreen extends ScreenBase {
 		switch (ctxt.type) {
 		case CANVAS: {
 			
-			world.paintWorldImages(ctxt);
+			world.paintWorldBackground(ctxt);
 			
 			
 			
@@ -786,7 +786,7 @@ public class WorldScreen extends ScreenBase {
 		}
 		case PREVIEW: {
 			
-			world.paintWorldImages(ctxt);
+			world.paintWorldBackground(ctxt);
 			
 			
 			

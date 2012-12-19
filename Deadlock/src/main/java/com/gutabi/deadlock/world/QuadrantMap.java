@@ -2,7 +2,6 @@ package com.gutabi.deadlock.world;
 
 import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
@@ -16,7 +15,6 @@ import com.gutabi.deadlock.core.geom.AABB;
 import com.gutabi.deadlock.core.geom.Shape;
 import com.gutabi.deadlock.core.geom.ShapeUtils;
 import com.gutabi.deadlock.view.RenderingContext;
-import com.gutabi.deadlock.view.RenderingContextType;
 
 //@SuppressWarnings("static-access")
 public class QuadrantMap {
@@ -37,7 +35,6 @@ public class QuadrantMap {
 	private Quadrant[][] quadrants;
 	
 	public BufferedImage quadrantGrass;
-	public BufferedImage canvasGrassImage;
 	
 	public final AABB aabb;
 	
@@ -127,7 +124,7 @@ public class QuadrantMap {
 			}
 		}
 		
-		canvasGrassImage = new BufferedImage(cam.canvasWidth, cam.canvasHeight, BufferedImage.TYPE_INT_RGB);
+//		canvasGrassImage = new BufferedImage(cam.canvasWidth, cam.canvasHeight, BufferedImage.TYPE_INT_RGB);
 		
 	}
 	
@@ -311,22 +308,22 @@ public class QuadrantMap {
 		return qm;
 	}
 	
-	public void renderCanvas() {
-		
-		Graphics2D canvasGrassImageG2 = canvasGrassImage.createGraphics();
-		
-		canvasGrassImageG2.setColor(Color.LIGHT_GRAY);
-		canvasGrassImageG2.fillRect(0, 0, cam.canvasWidth, cam.canvasHeight);
-		
-		canvasGrassImageG2.scale(cam.pixelsPerMeter, cam.pixelsPerMeter);
-		canvasGrassImageG2.translate(-cam.worldViewport.x, -cam.worldViewport.y);
-		
-		RenderingContext canvasGrassContext = new RenderingContext(canvasGrassImageG2, RenderingContextType.CANVAS);
-		
-		render(canvasGrassContext);
-		
-		canvasGrassImageG2.dispose();
-	}
+//	public void renderCanvas() {
+//		
+//		Graphics2D canvasGrassImageG2 = canvasGrassImage.createGraphics();
+//		
+//		canvasGrassImageG2.setColor(Color.LIGHT_GRAY);
+//		canvasGrassImageG2.fillRect(0, 0, cam.canvasWidth, cam.canvasHeight);
+//		
+//		canvasGrassImageG2.scale(cam.pixelsPerMeter, cam.pixelsPerMeter);
+//		canvasGrassImageG2.translate(-cam.worldViewport.x, -cam.worldViewport.y);
+//		
+//		RenderingContext canvasGrassContext = new RenderingContext(canvasGrassImageG2, RenderingContextType.CANVAS);
+//		
+//		render(canvasGrassContext);
+//		
+//		canvasGrassImageG2.dispose();
+//	}
 	
 	public void render(RenderingContext ctxt) {
 		for (int i = 0; i < quadrantRows; i++) {
@@ -337,20 +334,13 @@ public class QuadrantMap {
 		}
 	}
 	
-	public void paintImage(RenderingContext ctxt) {
-		
-//		AffineTransform origTransform = ctxt.getTransform();
-//		ctxt.translate(cam.worldViewport.x, cam.worldViewport.y);
-		
-		ctxt.paintImage(
-				canvasGrassImage,
-				0, 0, cam.canvasWidth, cam.canvasHeight,
-				0, 0, cam.canvasWidth, cam.canvasHeight);
-		
-//		ctxt.paintImage(img, dx1, dy1, dx2, dy2, sx1, sy1, sx2, sy2)
-		
-//		ctxt.setTransform(origTransform);
-		
-	}
+//	public void paintImage(RenderingContext ctxt) {
+//		
+//		ctxt.paintImage(
+//				canvasGrassImage,
+//				0, 0, cam.canvasWidth, cam.canvasHeight,
+//				0, 0, cam.canvasWidth, cam.canvasHeight);
+//		
+//	}
 	
 }

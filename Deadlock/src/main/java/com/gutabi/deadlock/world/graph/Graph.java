@@ -2,12 +2,7 @@ package com.gutabi.deadlock.world.graph;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
-import java.awt.AlphaComposite;
-import java.awt.Color;
-import java.awt.Composite;
-import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
-import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
@@ -44,8 +39,6 @@ public class Graph implements Sweepable {
 	WorldCamera cam;
 	World world;
 	
-	public BufferedImage canvasGraphImage;
-	
 	public final List<Vertex> vertices = new ArrayList<Vertex>();
 	public final List<Edge> edges = new ArrayList<Edge>();
 	
@@ -65,9 +58,9 @@ public class Graph implements Sweepable {
 		
 	}
 	
-	public void canvasPostDisplay() {
-		canvasGraphImage = new BufferedImage(cam.canvasWidth, cam.canvasHeight, BufferedImage.TYPE_INT_ARGB);
-	}
+//	public void canvasPostDisplay() {
+//		canvasGraphImage = new BufferedImage(cam.canvasWidth, cam.canvasHeight, BufferedImage.TYPE_INT_ARGB);
+//	}
 	
 	public void preStart() {
 		
@@ -1269,27 +1262,27 @@ public class Graph implements Sweepable {
 		return g;
 	}
 	
-	public void renderCanvas() {
-		
-		Graphics2D canvasGraphImageG2 = canvasGraphImage.createGraphics();
-		
-		Composite orig = canvasGraphImageG2.getComposite();
-		AlphaComposite c = AlphaComposite.getInstance(AlphaComposite.SRC, 0.0f);
-		canvasGraphImageG2.setComposite(c);
-		canvasGraphImageG2.setColor(new Color(0, 0, 0, 0));
-		canvasGraphImageG2.fillRect(0, 0, cam.canvasWidth, cam.canvasHeight);
-		canvasGraphImageG2.setComposite(orig);
-		
-		canvasGraphImageG2.scale(cam.pixelsPerMeter, cam.pixelsPerMeter);
-		canvasGraphImageG2.translate(-cam.worldViewport.x, -cam.worldViewport.y);
-		
-		RenderingContext canvasGraphContext = new RenderingContext(canvasGraphImageG2, RenderingContextType.CANVAS);
-		
-		render(canvasGraphContext);
-		
-		canvasGraphImageG2.dispose();
-		
-	}
+//	public void renderCanvas(BufferedImage img) {
+//		
+//		Graphics2D canvasGraphImageG2 = canvasGraphImage.createGraphics();
+//		
+//		Composite orig = canvasGraphImageG2.getComposite();
+//		AlphaComposite c = AlphaComposite.getInstance(AlphaComposite.SRC, 0.0f);
+//		canvasGraphImageG2.setComposite(c);
+//		canvasGraphImageG2.setColor(new Color(0, 0, 0, 0));
+//		canvasGraphImageG2.fillRect(0, 0, cam.canvasWidth, cam.canvasHeight);
+//		canvasGraphImageG2.setComposite(orig);
+//		
+//		canvasGraphImageG2.scale(cam.pixelsPerMeter, cam.pixelsPerMeter);
+//		canvasGraphImageG2.translate(-cam.worldViewport.x, -cam.worldViewport.y);
+//		
+//		RenderingContext canvasGraphContext = new RenderingContext(canvasGraphImageG2, RenderingContextType.CANVAS);
+//		
+//		render(canvasGraphContext);
+//		
+//		canvasGraphImageG2.dispose();
+//		
+//	}
 	
 	public void render(RenderingContext ctxt) {
 		
@@ -1314,20 +1307,14 @@ public class Graph implements Sweepable {
 		
 	}
 	
-	public void paintImage(RenderingContext ctxt) {
-		
-//		AffineTransform origTransform = ctxt.getTransform();
-		
-//		ctxt.translate(cam.worldViewport.x, cam.worldViewport.y);
-		
-		ctxt.paintImage(
-				canvasGraphImage,
-				0, 0, cam.canvasWidth, cam.canvasHeight,
-				0, 0, cam.canvasWidth, cam.canvasHeight);
-		
-//		ctxt.setTransform(origTransform);
-		
-	}
+//	public void paintImage(RenderingContext ctxt) {
+//		
+//		ctxt.paintImage(
+//				canvasGraphImage,
+//				0, 0, cam.canvasWidth, cam.canvasHeight,
+//				0, 0, cam.canvasWidth, cam.canvasHeight);
+//		
+//	}
 	
 	public void paintStats(RenderingContext ctxt) {
 		

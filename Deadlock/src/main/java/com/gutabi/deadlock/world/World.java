@@ -3,7 +3,10 @@ package com.gutabi.deadlock.world;
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
+import java.awt.Color;
+import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
@@ -15,6 +18,7 @@ import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.AABB;
 import com.gutabi.deadlock.view.RenderingContext;
+import com.gutabi.deadlock.view.RenderingContextType;
 import com.gutabi.deadlock.world.car.Car;
 import com.gutabi.deadlock.world.car.CarEventListener;
 import com.gutabi.deadlock.world.graph.Graph;
@@ -32,6 +36,11 @@ public class World {
 //	AnimatedGrass animatedGrass1;
 //	AnimatedGrass animatedGrass2;
 //	AnimatedGrass animatedGrass3;
+	
+//	public BufferedImage canvasGrassImage;
+//	public BufferedImage canvasGraphImage;
+	public BufferedImage background;
+	
 	
 	public CarMap carMap;
 	
@@ -72,7 +81,9 @@ public class World {
 		cam.canvasHeight = (int)dim.height;
 		
 		quadrantMap.canvasPostDisplay();
-		graph.canvasPostDisplay();
+//		graph.canvasPostDisplay();
+		
+		background = new BufferedImage(cam.canvasWidth, cam.canvasHeight, BufferedImage.TYPE_INT_RGB);
 		
 		cam.worldViewport = new AABB(
 				-(cam.canvasWidth / cam.pixelsPerMeter) / 2 + quadrantMap.worldWidth/2 ,
@@ -302,27 +313,31 @@ public class World {
 		assert !Thread.holdsLock(APP);
 		
 		synchronized (VIEW) {
-			quadrantMap.renderCanvas();
-			graph.renderCanvas();
+			
+			Graphics2D backgroundG2 = background.createGraphics();
+			
+			backgroundG2.setColor(Color.LIGHT_GRAY);
+			backgroundG2.fillRect(0, 0, cam.canvasWidth, cam.canvasHeight);
+			
+			backgroundG2.scale(cam.pixelsPerMeter, cam.pixelsPerMeter);
+			backgroundG2.translate(-cam.worldViewport.x, -cam.worldViewport.y);
+			
+			RenderingContext backgroundCtxt = new RenderingContext(backgroundG2, RenderingContextType.CANVAS);
+			
+			quadrantMap.render(backgroundCtxt);
+			graph.render(backgroundCtxt);
+			
+			backgroundG2.dispose();
+			
 		}
 		
 	}
 	
-	public void paintWorldImages(RenderingContext ctxt) {
-		
-		switch (ctxt.type) {
-		case CANVAS:
-			quadrantMap.paintImage(ctxt);
-			
-			graph.paintImage(ctxt);
-			
-			break;
-		case PREVIEW:
-			quadrantMap.paintImage(ctxt);
-			graph.paintImage(ctxt);
-			break;
-		}
-		
+	public void paintWorldBackground(RenderingContext ctxt) {
+		ctxt.paintImage(
+				background,
+				0, 0, cam.canvasWidth, cam.canvasHeight,
+				0, 0, cam.canvasWidth, cam.canvasHeight);
 	}
 	
 	public void paintWorldScene(RenderingContext ctxt) {
