@@ -341,7 +341,7 @@ public class QuadrantEditor extends ScreenBase {
 				VIEW.teardownCanvas(VIEW.container);
 				
 				WorldScreen s = new WorldScreen();
-				s.world = World.createWorld(worldCam, ini);
+				s.world = World.createWorld(s.cam, ini);
 				
 				APP.screen = s;
 				

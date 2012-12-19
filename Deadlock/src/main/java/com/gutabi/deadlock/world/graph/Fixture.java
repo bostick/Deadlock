@@ -24,6 +24,7 @@ public final class Fixture extends Vertex {
 	
 	public static double SPAWN_FREQUENCY_SECONDS = 1.0;
 	
+	public World world;
 	public final Axis a;
 	
 	private Side s;
@@ -37,8 +38,9 @@ public final class Fixture extends Vertex {
 	
 	static int carIDCounter;
 	
-	public Fixture(WorldCamera cam, World world, Point p, Axis a) {
-		super(cam, world, p);
+	public Fixture(WorldCamera cam, World w, Point p, Axis a) {
+		super(cam, p);
+		this.world = w;
 		this.a = a;
 		hiliteColor = new Color(0, 255, 255);
 	}
@@ -155,7 +157,7 @@ public final class Fixture extends Vertex {
 			c.id = carIDCounter;
 			carIDCounter++;
 			synchronized (APP) {
-				world.addCar(c);
+				world.carMap.addCar(c);
 			}
 			lastSpawnTime = t;
 			outstandingCars++;

@@ -8,6 +8,9 @@ import java.awt.Composite;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -38,7 +41,7 @@ import com.gutabi.deadlock.world.WorldCamera;
 public class Graph implements Sweepable {
 	
 	WorldCamera cam;
-	public final World world;
+	World world;
 	
 	public BufferedImage canvasGraphImage;
 	
@@ -162,7 +165,7 @@ public class Graph implements Sweepable {
 	}
 	
 	public Intersection createIntersection(Point p) {
-		return new Intersection(cam, world, p);
+		return new Intersection(cam, p);
 	}
 	
 	public Set<Vertex> createRoadTop(Vertex start, Vertex end, List<Point> pts) {
@@ -827,7 +830,7 @@ public class Graph implements Sweepable {
 		assert param >= 0.0;
 		assert param < 1.0;
 		
-		Intersection v = new Intersection(cam, world, p);
+		Intersection v = new Intersection(cam, p);
 		addVertex(v);
 		
 		Vertex eStart = r.start;
@@ -1148,8 +1151,25 @@ public class Graph implements Sweepable {
 		return s.toString();
 	}
 	
-	public static Graph fromFileString(String s) {
-		return null;
+	public static Graph fromFileString(WorldCamera cam, World world, String s) {
+		BufferedReader r = new BufferedReader(new StringReader(s));
+		
+		try {
+			String l = r.readLine();
+			assert l.equals("start graph");
+			
+			
+			
+			l = r.readLine();
+			assert l.equals("end graph");
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		Graph g = new Graph(cam, world);
+		return g;
 	}
 	
 	public void renderCanvas() {

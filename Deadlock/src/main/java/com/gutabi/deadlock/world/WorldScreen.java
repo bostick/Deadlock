@@ -10,6 +10,7 @@ import java.awt.geom.AffineTransform;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Scanner;
 import java.util.Set;
 
 import javax.swing.JFileChooser;
@@ -29,8 +30,8 @@ import com.gutabi.deadlock.world.graph.Merger;
 import com.gutabi.deadlock.world.graph.Road;
 import com.gutabi.deadlock.world.graph.StopSign;
 import com.gutabi.deadlock.world.graph.Vertex;
-import com.gutabi.deadlock.world.tool.Tool;
 import com.gutabi.deadlock.world.tool.RegularTool;
+import com.gutabi.deadlock.world.tool.Tool;
 
 //@SuppressWarnings("static-access")
 public class WorldScreen extends ScreenBase {
@@ -353,7 +354,7 @@ public class WorldScreen extends ScreenBase {
 			VIEW.canvas.disableKeyListener();
 			
 			fc = new DLSFileChooser();
-			int res = fc.showDialog(VIEW.canvas.java(), "Hi");
+			int res = fc.showDialog(VIEW.canvas.java(), "Save");
 			
 			if (res == JFileChooser.APPROVE_OPTION) {
 				
@@ -379,6 +380,60 @@ public class WorldScreen extends ScreenBase {
 				VIEW.canvas.enableKeyListener();
 				
 				mode = WorldScreenMode.EDITING;
+				
+			} else {
+				
+				VIEW.canvas.enableKeyListener();
+				
+				mode = WorldScreenMode.EDITING;
+				
+			}
+			
+			break;
+		}
+	}
+	
+	public void ctrlOKey(InputEvent ev) {
+		switch (mode) {
+		case RUNNING:
+		case PAUSED:
+		case DIALOG:
+			break;
+		case EDITING:
+			
+			mode = WorldScreenMode.DIALOG;
+			
+			VIEW.canvas.disableKeyListener();
+			
+			fc = new DLSFileChooser();
+			int res = fc.showDialog(VIEW.canvas.java(), "Open");
+			
+			if (res == JFileChooser.APPROVE_OPTION) {
+				
+				String fileString = null;
+				
+				try {
+					
+					File f = fc.getSelectedFile();
+					
+					Scanner s = new Scanner(f);
+					fileString = s.useDelimiter("\\A").next();
+					
+					s.close();
+					
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				world = World.fromFileString(cam, fileString);
+				
+				VIEW.canvas.enableKeyListener();
+				
+				mode = WorldScreenMode.EDITING;
+				
+				render();
+				repaint();
 				
 			} else {
 				

@@ -79,7 +79,12 @@ public abstract class ScreenBase extends Screen {
 		
 	}
 	
-	
+	public void ctrlOKey(InputEvent ev) {
+		
+	}
+
+
+
 	public void pressed(InputEvent ev) {
 		
 	}

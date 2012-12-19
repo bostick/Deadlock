@@ -40,28 +40,28 @@ public class CubicTools extends ToolBase {
 		
 		mode = CubicToolMode.FREE;
 		
-		startKnob = new Knob(screen.world) {
+		startKnob = new Knob(screen.cam, screen.world) {
 			public void drag(Point p) {
 				Point newPoint = world.quadrantMap.getPoint(p);
 				CubicTools.this.setStart(newPoint);
 			}
 		};
 		
-		control0Knob = new Knob(screen.world) {
+		control0Knob = new Knob(screen.cam, screen.world) {
 			public void drag(Point p) {
 				Point newPoint = world.quadrantMap.getPoint(p);
 				CubicTools.this.setControl0(newPoint);
 			}
 		};
 		
-		control1Knob = new Knob(screen.world) {
+		control1Knob = new Knob(screen.cam, screen.world) {
 			public void drag(Point p) {
 				Point newPoint = world.quadrantMap.getPoint(p);
 				CubicTools.this.setControl1(newPoint);
 			}
 		};
 		
-		endKnob = new Knob(screen.world) {
+		endKnob = new Knob(screen.cam, screen.world) {
 			public void drag(Point p) {
 				Point newPoint = world.quadrantMap.getPoint(p);
 				CubicTools.this.setEnd(newPoint);

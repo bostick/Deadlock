@@ -38,21 +38,21 @@ public class QuadTool extends ToolBase {
 		
 		mode = QuadToolMode.FREE;
 		
-		startKnob = new Knob(screen.world) {
+		startKnob = new Knob(screen.cam, screen.world) {
 			public void drag(Point p) {
 				Point newPoint = world.quadrantMap.getPoint(p);
 				QuadTool.this.setStart(newPoint);
 			}
 		};
 		
-		controlKnob = new Knob(screen.world) {
+		controlKnob = new Knob(screen.cam, screen.world) {
 			public void drag(Point p) {
 				Point newPoint = world.quadrantMap.getPoint(p);
 				QuadTool.this.setControl(newPoint);
 			}
 		};
 		
-		endKnob = new Knob(screen.world) {
+		endKnob = new Knob(screen.cam, screen.world) {
 			public void drag(Point p) {
 				Point newPoint = world.quadrantMap.getPoint(p);
 				QuadTool.this.setEnd(newPoint);

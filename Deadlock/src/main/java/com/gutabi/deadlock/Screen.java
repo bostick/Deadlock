@@ -55,6 +55,9 @@ public abstract class Screen implements ActionListener {
 	
 	public abstract void ctrlSKey(InputEvent ev);
 	
+	public abstract void ctrlOKey(InputEvent ev);
+	
+	
 	
 	public abstract void pressed(InputEvent ev);
 	

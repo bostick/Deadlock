@@ -13,7 +13,6 @@ import com.gutabi.deadlock.core.geom.SweepableShape;
 import com.gutabi.deadlock.view.RenderingContext;
 import com.gutabi.deadlock.world.World;
 import com.gutabi.deadlock.world.WorldCamera;
-import com.gutabi.deadlock.world.WorldScreen;
 
 //@SuppressWarnings("static-access")
 public class Merger extends Edge {
@@ -21,7 +20,7 @@ public class Merger extends Edge {
 	public static final double MERGER_WIDTH = 5.0;
 	public static final double MERGER_HEIGHT = 5.0;
 	
-	WorldScreen screen;
+	WorldCamera cam;
 	
 	public final Point ul;
 	public final Point center;
@@ -34,7 +33,7 @@ public class Merger extends Edge {
 	private Direction leftRightDir;
 	private Direction topBottomDir;
 	
-	public final World world;
+//	public final World world;
 	
 	private double[] cumulativeLengthsFromTop;
 	private double[] cumulativeLengthsFromLeft;
@@ -45,8 +44,9 @@ public class Merger extends Edge {
 	private final Line debugSkeletonLeftRightLine;
 	
 	
-	public Merger(World world, Point center, Fixture top, Fixture left, Fixture right, Fixture bottom) {
-		this.world = world;
+	public Merger(WorldCamera cam, Point center, Fixture top, Fixture left, Fixture right, Fixture bottom) {
+		this.cam = cam;
+//		this.world = world;
 		this.center = center;
 		
 		this.ul = center.plus(new Point(-MERGER_WIDTH/2,  -MERGER_HEIGHT/2));
@@ -93,7 +93,7 @@ public class Merger extends Edge {
 		left.setSide(Side.RIGHT);
 		right.setSide(Side.RIGHT);
 		
-		return new Merger(world, center, top, left, right, bottom);
+		return new Merger(cam, center, top, left, right, bottom);
 	}
 	
 	public void destroy() {
@@ -328,7 +328,7 @@ public class Merger extends Edge {
 			} else {
 				
 				ctxt.setColor(Color.GRAY);
-				ctxt.setPixelStroke(screen.cam.pixelsPerMeter, 1);
+				ctxt.setPixelStroke(cam.pixelsPerMeter, 1);
 				shape.draw(ctxt);
 				
 				paintSkeleton(ctxt);
@@ -344,7 +344,7 @@ public class Merger extends Edge {
 	}
 	
 	public void paintHilite(RenderingContext ctxt) {
-		ctxt.setPixelStroke(screen.cam.pixelsPerMeter, 1);
+		ctxt.setPixelStroke(cam.pixelsPerMeter, 1);
 		ctxt.setColor(Color.GRAY);
 		shape.draw(ctxt);
 	}
@@ -352,7 +352,7 @@ public class Merger extends Edge {
 	void paintSkeleton(RenderingContext ctxt) {
 		
 		ctxt.setColor(Color.BLACK);
-		ctxt.setPixelStroke(screen.cam.pixelsPerMeter, 1);
+		ctxt.setPixelStroke(cam.pixelsPerMeter, 1);
 		debugSkeletonTopBottomLine.draw(ctxt);
 		
 		debugSkeletonLeftRightLine.draw(ctxt);

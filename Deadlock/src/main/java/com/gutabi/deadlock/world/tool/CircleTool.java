@@ -41,7 +41,7 @@ public class CircleTool extends ToolBase {
 		yRadius = Vertex.INIT_VERTEX_RADIUS;
 		xRadius = Vertex.INIT_VERTEX_RADIUS;
 		
-		ulKnob = new Knob(screen.world) {
+		ulKnob = new Knob(screen.cam, screen.world) {
 			public void drag(Point p) {
 				
 				Point newPoint = world.quadrantMap.getPoint(p);
@@ -54,7 +54,7 @@ public class CircleTool extends ToolBase {
 			}
 		};
 		
-		brKnob = new Knob(screen.world) {
+		brKnob = new Knob(screen.cam, screen.world) {
 			public void drag(Point p) {
 				
 				Point newPoint = world.quadrantMap.getPoint(p);

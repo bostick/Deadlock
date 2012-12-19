@@ -276,7 +276,7 @@ public class QuadrantMap {
 		return s.toString();
 	}
 	
-	public static QuadrantMap fromFileString(String s) {
+	public static QuadrantMap fromFileString(WorldCamera cam, String s) {
 		BufferedReader r = new BufferedReader(new StringReader(s));
 		
 		int[][] ini = null;
@@ -285,6 +285,7 @@ public class QuadrantMap {
 			String l = r.readLine();
 			assert l.equals("start quadrantMap");
 			
+			l = r.readLine();
 			Scanner scanner = new Scanner(l);
 			int rows = scanner.nextInt();
 			int cols = scanner.nextInt();
@@ -307,8 +308,8 @@ public class QuadrantMap {
 			e.printStackTrace();
 		}
 		
-//		QuadrantMap qm = new QuadrantMap(ini);
-		return null;
+		QuadrantMap qm = new QuadrantMap(cam, ini);
+		return qm;
 	}
 	
 	public void renderCanvas() {

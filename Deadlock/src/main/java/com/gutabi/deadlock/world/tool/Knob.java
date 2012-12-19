@@ -6,16 +6,17 @@ import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.AABB;
 import com.gutabi.deadlock.view.RenderingContext;
 import com.gutabi.deadlock.world.World;
-import com.gutabi.deadlock.world.WorldScreen;
+import com.gutabi.deadlock.world.WorldCamera;
 
 public abstract class Knob {
 	
-	WorldScreen screen;
+	WorldCamera cam;
 	public final World world;
 	
 	Point p;
 	
-	public Knob(World world) {
+	public Knob(WorldCamera cam, World world) {
+		this.cam = cam;
 		this.world = world;
 	}
 	
@@ -24,7 +25,7 @@ public abstract class Knob {
 	}
 	
 	private AABB aabb() {
-		double pixel = 1/screen.cam.pixelsPerMeter;
+		double pixel = 1/cam.pixelsPerMeter;
 		return new AABB(p.x + -3 * pixel, p.y + -3 * pixel, 7 * pixel, 7 * pixel);
 	}
 	
@@ -37,7 +38,7 @@ public abstract class Knob {
 	public void draw(RenderingContext ctxt) {
 		ctxt.setColor(Color.ORANGE);
 		ctxt.setXORMode(Color.BLACK);
-		ctxt.setPixelStroke(screen.cam.pixelsPerMeter, 1);
+		ctxt.setPixelStroke(cam.pixelsPerMeter, 1);
 		aabb().paint(ctxt);
 	}
 	

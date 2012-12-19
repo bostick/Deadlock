@@ -154,9 +154,9 @@ public class World {
 		
 	}
 	
-	public void addCar(Car c) {
-		carMap.addCar(c);
-	}
+//	public void addCar(Car c) {
+//		carMap.addCar(c);
+//	}
 	
 	private void postStep() {
 		
@@ -253,12 +253,14 @@ public class World {
 			e.printStackTrace();
 		}
 		
-		QuadrantMap qm = QuadrantMap.fromFileString(quadrantMapStringBuilder.toString());
-		Graph g = Graph.fromFileString(graphStringBuilder.toString());
-		
 		World w = new World(cam);
+		
+		QuadrantMap qm = QuadrantMap.fromFileString(cam, quadrantMapStringBuilder.toString());
+		Graph g = Graph.fromFileString(cam, w, graphStringBuilder.toString());
+		
 		w.quadrantMap = qm;
 		w.graph = g;
+		
 		return w;
 	}
 	

@@ -99,6 +99,14 @@ public class Canvas extends Component {
 				
 			} else if (ev.getKeyCode() == KeyEvent.VK_D) {
 				dKey(new InputEvent(Canvas.this, null));
+			} else if (ev.getKeyCode() == KeyEvent.VK_O) {
+				
+				int mods = ev.getModifiersEx();
+				
+				if ((mods & KeyEvent.CTRL_DOWN_MASK) == KeyEvent.CTRL_DOWN_MASK) {
+					ctrlOKey(new InputEvent(Canvas.this, null));
+				}
+				
 			}
 		}
 
@@ -272,4 +280,9 @@ public class Canvas extends Component {
 	public void dKey(InputEvent ev) {
 		APP.screen.dKey(ev);
 	}
+	
+	public void ctrlOKey(InputEvent ev) {
+		APP.screen.ctrlOKey(ev);
+	}
+	
 }
