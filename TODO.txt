@@ -1,14 +1,14 @@
 
 FOR ALPHA 1:
 
+profile painting problems
+
 add real physics
 add skids
 
 animated grass
 
 demos
-
-profile demos
 
 building
 generate .dls files for demos

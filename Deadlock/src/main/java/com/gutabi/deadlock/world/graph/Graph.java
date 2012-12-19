@@ -1314,18 +1314,18 @@ public class Graph implements Sweepable {
 		
 	}
 	
-	public void paint(RenderingContext ctxt) {
+	public void paintImage(RenderingContext ctxt) {
 		
-		AffineTransform origTransform = ctxt.getTransform();
+//		AffineTransform origTransform = ctxt.getTransform();
 		
-		ctxt.translate(cam.worldViewport.x, cam.worldViewport.y);
+//		ctxt.translate(cam.worldViewport.x, cam.worldViewport.y);
+		
 		ctxt.paintImage(
-				cam.pixelsPerMeter,
 				canvasGraphImage,
-				0, 0, cam.worldViewport.width, cam.worldViewport.height,
-				0, 0, canvasGraphImage.getWidth(), canvasGraphImage.getHeight());
+				0, 0, cam.canvasWidth, cam.canvasHeight,
+				0, 0, cam.canvasWidth, cam.canvasHeight);
 		
-		ctxt.setTransform(origTransform);
+//		ctxt.setTransform(origTransform);
 		
 	}
 	

@@ -4,7 +4,6 @@ import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -114,7 +113,7 @@ public class QuadrantMap {
 		int quadrantWidthPixels = (int)Math.ceil(cam.pixelsPerMeter * QUADRANT_WIDTH);
 		int quadrantHeightPixels = (int)Math.ceil(cam.pixelsPerMeter * QUADRANT_HEIGHT);
 		
-		quadrantGrass = new BufferedImage(quadrantWidthPixels, quadrantHeightPixels, BufferedImage.TYPE_INT_ARGB);
+		quadrantGrass = new BufferedImage(quadrantWidthPixels, quadrantHeightPixels, BufferedImage.TYPE_INT_RGB);
 		Graphics2D quadrantGrassG2 = quadrantGrass.createGraphics();
 		
 		int maxCols = (int)Math.ceil(quadrantWidthPixels/32.0);
@@ -128,7 +127,7 @@ public class QuadrantMap {
 			}
 		}
 		
-		canvasGrassImage = new BufferedImage(cam.canvasWidth, cam.canvasHeight, BufferedImage.TYPE_INT_ARGB);
+		canvasGrassImage = new BufferedImage(cam.canvasWidth, cam.canvasHeight, BufferedImage.TYPE_INT_RGB);
 		
 	}
 	
@@ -338,18 +337,19 @@ public class QuadrantMap {
 		}
 	}
 	
-	public void paint(RenderingContext ctxt) {
+	public void paintImage(RenderingContext ctxt) {
 		
-		AffineTransform origTransform = ctxt.getTransform();
-		ctxt.translate(cam.worldViewport.x, cam.worldViewport.y);
+//		AffineTransform origTransform = ctxt.getTransform();
+//		ctxt.translate(cam.worldViewport.x, cam.worldViewport.y);
 		
 		ctxt.paintImage(
-				cam.pixelsPerMeter,
 				canvasGrassImage,
-				0, 0, cam.worldViewport.width, cam.worldViewport.height,
-				0, 0, canvasGrassImage.getWidth(), canvasGrassImage.getHeight());
+				0, 0, cam.canvasWidth, cam.canvasHeight,
+				0, 0, cam.canvasWidth, cam.canvasHeight);
 		
-		ctxt.setTransform(origTransform);
+//		ctxt.paintImage(img, dx1, dy1, dx2, dy2, sx1, sy1, sx2, sy2)
+		
+//		ctxt.setTransform(origTransform);
 		
 	}
 	

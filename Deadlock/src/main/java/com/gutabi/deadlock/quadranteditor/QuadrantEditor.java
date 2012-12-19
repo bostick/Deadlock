@@ -542,9 +542,13 @@ public class QuadrantEditor extends ScreenBase {
 		
 		AffineTransform origTrans = ctxt.getTransform();
 		ctxt.translate(worldCanvasAABB.center.x - worldCam.canvasWidth/2, worldCanvasAABB.center.y - worldCam.canvasHeight/2);
+		
+		
+		world.paintWorldImages(ctxt);
+		
 		ctxt.scale(worldCam.pixelsPerMeter);
 		ctxt.translate(-worldCam.worldViewport.x, -worldCam.worldViewport.y);
-		world.paintWorld(ctxt);
+		world.paintWorldScene(ctxt);
 		ctxt.setTransform(origTrans);
 		
 		removeRow.paint(ctxt);

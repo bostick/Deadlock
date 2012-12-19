@@ -728,16 +728,10 @@ public class WorldScreen extends ScreenBase {
 				
 				RenderingContext ctxt = new RenderingContext(g2, RenderingContextType.CANVAS);
 				
-				AffineTransform origTrans = ctxt.getTransform();
-				
-				ctxt.scale(cam.pixelsPerMeter);
-				ctxt.translate(-cam.worldViewport.x, -cam.worldViewport.y);
-				
 				synchronized (VIEW) {
 					paintWorldScreen(ctxt);
 				}
-				
-				ctxt.setTransform(origTrans);
+//				paintWorldScreen(ctxt);
 				
 				g2.dispose();
 				
@@ -747,6 +741,7 @@ public class WorldScreen extends ScreenBase {
 			
 		} while (VIEW.canvas.bs.contentsLost());
 		
+//		VIEW.controlPanel.repaint();
 		VIEW.controlPanel.repaint();
 		
 	}
@@ -754,8 +749,18 @@ public class WorldScreen extends ScreenBase {
 	public void paintWorldScreen(RenderingContext ctxt) {
 		
 		switch (ctxt.type) {
-		case CANVAS:
-			world.paintWorld(ctxt);
+		case CANVAS: {
+			
+			world.paintWorldImages(ctxt);
+			
+			
+			
+			AffineTransform origTrans = ctxt.getTransform();
+			
+			ctxt.scale(cam.pixelsPerMeter);
+			ctxt.translate(-cam.worldViewport.x, -cam.worldViewport.y);
+			
+			world.paintWorldScene(ctxt);
 			
 			Entity hilitedCopy;
 			synchronized (APP) {
@@ -774,10 +779,28 @@ public class WorldScreen extends ScreenBase {
 				
 				stats.paint(ctxt);
 			}
+			
+			ctxt.setTransform(origTrans);
+			
 			break;
-		case PREVIEW:
-			world.paintWorld(ctxt);
+		}
+		case PREVIEW: {
+			
+			world.paintWorldImages(ctxt);
+			
+			
+			
+			AffineTransform origTrans = ctxt.getTransform();
+			
+			ctxt.scale(cam.pixelsPerMeter);
+			ctxt.translate(-cam.worldViewport.x, -cam.worldViewport.y);
+			
+			world.paintWorldScene(ctxt);
+			
+			ctxt.setTransform(origTrans);
+			
 			break;
+		}
 		}
 		
 	}

@@ -308,23 +308,39 @@ public class World {
 		
 	}
 	
-	public void paintWorld(RenderingContext ctxt) {
+	public void paintWorldImages(RenderingContext ctxt) {
 		
 		switch (ctxt.type) {
 		case CANVAS:
-			quadrantMap.paint(ctxt);
+			quadrantMap.paintImage(ctxt);
+			
+			graph.paintImage(ctxt);
+			
+			break;
+		case PREVIEW:
+			quadrantMap.paintImage(ctxt);
+			graph.paintImage(ctxt);
+			break;
+		}
+		
+	}
+	
+	public void paintWorldScene(RenderingContext ctxt) {
+		
+		switch (ctxt.type) {
+		case CANVAS:
 			
 //			if (animatedGrass1 != null) {
-//				animatedGrass1.paint(ctxt);
-//			}
-//			if (animatedGrass2 != null) {
-//				animatedGrass2.paint(ctxt);
-//			}
-//			if (animatedGrass3 != null) {
-//				animatedGrass3.paint(ctxt);
-//			}
+//			animatedGrass1.paint(ctxt);
+//		}
+//		if (animatedGrass2 != null) {
+//			animatedGrass2.paint(ctxt);
+//		}
+//		if (animatedGrass3 != null) {
+//			animatedGrass3.paint(ctxt);
+//		}
 			
-			graph.paint(ctxt);
+			
 //			paintSkidmarks(ctxt);
 			
 			graph.paintScene(ctxt);
@@ -342,8 +358,6 @@ public class World {
 			
 			break;
 		case PREVIEW:
-			quadrantMap.paint(ctxt);
-			graph.paint(ctxt);
 			break;
 		}
 		
