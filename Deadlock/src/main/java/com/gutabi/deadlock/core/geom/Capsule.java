@@ -14,9 +14,12 @@ import com.gutabi.deadlock.core.OverlappingException;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.view.RenderingContext;
 import com.gutabi.deadlock.view.RenderingContextType;
+import com.gutabi.deadlock.world.World;
 
 //@SuppressWarnings("static-access")
 public class Capsule extends SweepableShape implements SweeperShape {
+	
+	public final World world;
 	
 	public final Circle ac;
 	public final Circle bc;
@@ -43,8 +46,9 @@ public class Capsule extends SweepableShape implements SweeperShape {
 	
 	static Logger logger = Logger.getLogger(Capsule.class);
 	
-	public Capsule(Object parent, Circle ac, Circle bc, int index) {
+	public Capsule(World world, Object parent, Circle ac, Circle bc, int index) {
 		super(parent);
+		this.world = world;
 		this.ac = ac;
 		this.bc = bc;
 		this.index = index;
@@ -114,7 +118,7 @@ public class Capsule extends SweepableShape implements SweeperShape {
 	}
 	
 	public Capsule plus(Point p) {
-		return new Capsule(parent, new Circle(parent, a.plus(p), ac.radius), new Circle(parent, b.plus(p), bc.radius), -1);
+		return new Capsule(world, parent, new Circle(parent, a.plus(p), ac.radius), new Circle(parent, b.plus(p), bc.radius), -1);
 	}
 	
 	public boolean hitTest(Point p) {
@@ -387,7 +391,7 @@ public class Capsule extends SweepableShape implements SweeperShape {
 				
 				Color c = ctxt.getColor();
 				ctxt.setColor(Color.BLUE);
-				ctxt.setPixelStroke(1);
+				ctxt.setPixelStroke(world.cam.pixelsPerMeter, 1);
 				
 				debugNormalLine.draw(ctxt);
 				

@@ -79,7 +79,7 @@ public class MergerTool extends ToolBase {
 		
 		ctxt.setColor(Color.WHITE);
 		ctxt.setXORMode(Color.BLACK);
-		ctxt.setPixelStroke(1);
+		ctxt.setPixelStroke(screen.world.cam.pixelsPerMeter, 1);
 		
 		shape.draw(ctxt);
 		

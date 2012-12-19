@@ -4,6 +4,7 @@ import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -66,9 +67,9 @@ public class QuadrantMap {
 			for (int j = 0; j < rows; j++) {
 				Quadrant q;
 				if (ini[j][i] == 1) {
-					q = new Quadrant(this, j, i, true);
+					q = new Quadrant(world, this, j, i, true);
 				} else {
-					q = new Quadrant(this, j, i, false);
+					q = new Quadrant(world, this, j, i, false);
 				}
 				newQuads[j][i] = q;
 				
@@ -336,16 +337,16 @@ public class QuadrantMap {
 	
 	public void paint(RenderingContext ctxt) {
 		
-//		AffineTransform origTransform = ctxt.getTransform();
-//		ctxt.translate(world.worldViewport.x, world.worldViewport.y);
+		AffineTransform origTransform = ctxt.getTransform();
+		ctxt.translate(world.cam.worldViewport.x, world.cam.worldViewport.y);
 		
 		ctxt.paintImage(
-				world.cam.worldViewport.x, world.cam.worldViewport.y,
+				world.cam.pixelsPerMeter,
 				canvasGrassImage,
 				0, 0, world.cam.worldViewport.width, world.cam.worldViewport.height,
 				0, 0, canvasGrassImage.getWidth(), canvasGrassImage.getHeight());
 		
-//		ctxt.setTransform(origTransform);
+		ctxt.setTransform(origTransform);
 		
 	}
 	

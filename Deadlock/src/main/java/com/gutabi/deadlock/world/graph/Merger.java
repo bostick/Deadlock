@@ -324,7 +324,7 @@ public class Merger extends Edge {
 			} else {
 				
 				ctxt.setColor(Color.GRAY);
-				ctxt.setPixelStroke(1);
+				ctxt.setPixelStroke(world.cam.pixelsPerMeter, 1);
 				shape.draw(ctxt);
 				
 				paintSkeleton(ctxt);
@@ -340,7 +340,7 @@ public class Merger extends Edge {
 	}
 	
 	public void paintHilite(RenderingContext ctxt) {
-		ctxt.setPixelStroke(1);
+		ctxt.setPixelStroke(world.cam.pixelsPerMeter, 1);
 		ctxt.setColor(Color.GRAY);
 		shape.draw(ctxt);
 	}
@@ -348,7 +348,7 @@ public class Merger extends Edge {
 	void paintSkeleton(RenderingContext ctxt) {
 		
 		ctxt.setColor(Color.BLACK);
-		ctxt.setPixelStroke(1);
+		ctxt.setPixelStroke(world.cam.pixelsPerMeter, 1);
 		debugSkeletonTopBottomLine.draw(ctxt);
 		
 		debugSkeletonLeftRightLine.draw(ctxt);

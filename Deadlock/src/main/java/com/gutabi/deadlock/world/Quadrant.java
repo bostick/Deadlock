@@ -4,6 +4,7 @@ import static com.gutabi.deadlock.DeadlockApplication.APP;
 import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
 import java.awt.Color;
+import java.awt.geom.AffineTransform;
 
 import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Point;
@@ -14,7 +15,7 @@ import com.gutabi.deadlock.view.RenderingContext;
 @SuppressWarnings("static-access")
 public class Quadrant {
 	
-//	public final World world;
+	public final World world;
 	public final QuadrantMap map;
 	public final int r;
 	public final int c;
@@ -29,8 +30,8 @@ public class Quadrant {
 	
 	public final AABB aabb;
 	
-	public Quadrant(QuadrantMap map, int r, int c, boolean active) {
-//		this.world = world;
+	public Quadrant(World world, QuadrantMap map, int r, int c, boolean active) {
+		this.world = world;
 		this.map = map;
 		this.r = r;
 		this.c = c;
@@ -97,20 +98,16 @@ public class Quadrant {
 				
 				if (!APP.DEBUG_DRAW) {
 					
-//					ctxt.paintImage(
-//							c * QuadrantMap.QUADRANT_WIDTH, r * QuadrantMap.QUADRANT_HEIGHT, 1 / world.pixelsPerMeter,
-//							map.quadrantGrass,
-//							0, 0,
-//							(int)Math.ceil(world.pixelsPerMeter * QuadrantMap.QUADRANT_WIDTH),
-//							(int)Math.ceil(world.pixelsPerMeter * QuadrantMap.QUADRANT_HEIGHT),
-//							0, 0,
-//							map.quadrantGrass.getWidth(),
-//							map.quadrantGrass.getHeight());
+					AffineTransform origTransform = ctxt.getTransform();
+					
+					ctxt.translate(c * QuadrantMap.QUADRANT_WIDTH, r * QuadrantMap.QUADRANT_HEIGHT);
 					ctxt.paintImage(
-							c * QuadrantMap.QUADRANT_WIDTH, r * QuadrantMap.QUADRANT_HEIGHT,
+							world.cam.pixelsPerMeter,
 							map.quadrantGrass,
 							0, 0, QuadrantMap.QUADRANT_WIDTH, QuadrantMap.QUADRANT_HEIGHT,
 							0, 0, map.quadrantGrass.getWidth(), map.quadrantGrass.getHeight());
+					
+					ctxt.setTransform(origTransform);
 					
 				} else {
 					
@@ -118,18 +115,18 @@ public class Quadrant {
 					aabb.paint(ctxt);
 					
 					ctxt.setColor(Color.BLACK);
-					ctxt.setPixelStroke(1);
+					ctxt.setPixelStroke(world.cam.pixelsPerMeter, 1);
 					aabb.draw(ctxt);
 					
 					ctxt.setColor(Color.BLACK);
-					ctxt.paintString(c * QuadrantMap.QUADRANT_WIDTH, r * QuadrantMap.QUADRANT_HEIGHT + 1, 1.0, c + " " + r);
+					ctxt.paintString(world.cam.pixelsPerMeter, c * QuadrantMap.QUADRANT_WIDTH, r * QuadrantMap.QUADRANT_HEIGHT + 1, 1.0, c + " " + r);
 					
 				}
 				
 				if (grid) {
 					
 					ctxt.setColor(Color.GRAY);
-					ctxt.setPixelStroke(1);
+					ctxt.setPixelStroke(world.cam.pixelsPerMeter, 1);
 					
 					for (double k = 0.0; DMath.lessThanEquals(k, QuadrantMap.QUADRANT_HEIGHT); k+=gridSpacing) {
 						Point p0 = new Point(c * QuadrantMap.QUADRANT_WIDTH + 0, r * QuadrantMap.QUADRANT_HEIGHT + k);

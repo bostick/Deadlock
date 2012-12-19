@@ -8,6 +8,7 @@ import com.gutabi.deadlock.core.geom.Capsule;
 import com.gutabi.deadlock.core.geom.Circle;
 import com.gutabi.deadlock.core.geom.Shape;
 import com.gutabi.deadlock.view.RenderingContext;
+import com.gutabi.deadlock.world.World;
 import com.gutabi.deadlock.world.graph.Vertex;
 
 //@SuppressWarnings("static-access")
@@ -19,12 +20,12 @@ public class StraightEdgeToolShape extends Shape {
 	
 	private final AABB aabb;
 	
-	public StraightEdgeToolShape(Point first, Point p) {
+	public StraightEdgeToolShape(World world, Point first, Point p) {
 		
 		this.firstCircle = new Circle(null, first, Vertex.INIT_VERTEX_RADIUS);
 		this.pCircle = new Circle(null, p, Vertex.INIT_VERTEX_RADIUS);
 		
-		this.cap = new Capsule(null, firstCircle, pCircle, -1);
+		this.cap = new Capsule(world, null, firstCircle, pCircle, -1);
 		
 		aabb = cap.aabb;
 		

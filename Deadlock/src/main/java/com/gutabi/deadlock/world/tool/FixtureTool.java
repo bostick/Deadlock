@@ -84,10 +84,10 @@ public class FixtureTool extends ToolBase {
 			
 			switch (axis) {
 			case LEFTRIGHT:
-				shape = new FixtureToolShape(p, leftCenter, rightCenter, axis);
+				shape = new FixtureToolShape(screen.world, p, leftCenter, rightCenter, axis);
 				break;
 			case TOPBOTTOM:
-				shape = new FixtureToolShape(p, topCenter, bottomCenter, axis);
+				shape = new FixtureToolShape(screen.world, p, topCenter, bottomCenter, axis);
 				break;
 			default:
 				assert false;
@@ -196,7 +196,7 @@ public class FixtureTool extends ToolBase {
 			
 			ctxt.setColor(Color.WHITE);
 			ctxt.setXORMode(Color.BLACK);
-			ctxt.setPixelStroke(1);
+			ctxt.setPixelStroke(screen.world.cam.pixelsPerMeter, 1);
 			
 			shape.draw(ctxt);
 			

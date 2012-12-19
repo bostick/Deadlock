@@ -425,7 +425,7 @@ public class Road extends Edge {
 		for (int i = 0; i < adj.size()-1; i++) {
 			Circle a = circs.get(i);
 			Circle b = circs.get(i+1);
-			caps.add(new Capsule(this, a, b, i));
+			caps.add(new Capsule(world, this, a, b, i));
 		}
 		
 		seq = new CapsuleSequence(this, caps);
@@ -654,7 +654,7 @@ public class Road extends Edge {
 		if (ctxt.type == RenderingContextType.CANVAS) {
 			if (APP.DEBUG_DRAW) {
 				ctxt.setColor(Color.BLACK);
-				ctxt.setPixelStroke(1);
+				ctxt.setPixelStroke(world.cam.pixelsPerMeter, 1);
 				shape.getAABB().draw(ctxt);	
 			}
 		}
@@ -666,7 +666,7 @@ public class Road extends Edge {
 	
 	public void paintHilite(RenderingContext ctxt) {
 		ctxt.setColor(hiliteColor);
-		ctxt.setPixelStroke(1);
+		ctxt.setPixelStroke(world.cam.pixelsPerMeter, 1);
 		drawPath(ctxt);
 	}
 	

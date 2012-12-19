@@ -81,7 +81,7 @@ public abstract class MenuItem {
 	
 	public void paintHilited(RenderingContext ctxt) {
 		ctxt.setColor(Color.RED);
-		ctxt.setPixelStroke(1);
+		ctxt.setPixelStroke(1.0, 1);
 		aabb.draw(ctxt);
 	}
 	

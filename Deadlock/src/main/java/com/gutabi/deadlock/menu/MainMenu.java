@@ -326,11 +326,19 @@ public class MainMenu extends ScreenBase {
 				
 				ctxt.translate(VIEW.canvas.getWidth()/2 - MENU_WIDTH/2, VIEW.canvas.getHeight()/2 - MENU_HEIGHT/2);
 				
-				ctxt.paintImage(0, 0, VIEW.titleBackground, 0, 0, MENU_WIDTH, MENU_HEIGHT, 0, 0, MENU_WIDTH, MENU_HEIGHT);
+				AffineTransform menuTrans = ctxt.getTransform();
 				
-				ctxt.paintImage(MENU_WIDTH/2 - 498/2, 20, VIEW.title_white, 0, 0, 498, 90, 0, 0, 498, 90);
+				ctxt.paintImage(1.0, VIEW.titleBackground, 0, 0, MENU_WIDTH, MENU_HEIGHT, 0, 0, MENU_WIDTH, MENU_HEIGHT);
 				
-				ctxt.paintImage(MENU_WIDTH/2 - 432/2, 550, VIEW.copyright, 0, 0, 432, 38, 0, 0, 432, 38);
+				ctxt.translate(MENU_WIDTH/2 - 498/2, 20);
+				ctxt.paintImage(1.0, VIEW.title_white, 0, 0, 498, 90, 0, 0, 498, 90);
+				
+				ctxt.setTransform(menuTrans);
+				
+				ctxt.translate(MENU_WIDTH/2 - 432/2, 550);
+				ctxt.paintImage(1.0, VIEW.copyright, 0, 0, 432, 38, 0, 0, 432, 38);
+				
+				ctxt.setTransform(menuTrans);
 				
 				ctxt.setColor(menuBackground);
 				ctxt.fillRect((int)(MENU_WIDTH/2 - widest/2 - 5), 150 - 5, (int)(widest + 10), totalHeight + 10 * (items.size() - 1) + 5 + 5);

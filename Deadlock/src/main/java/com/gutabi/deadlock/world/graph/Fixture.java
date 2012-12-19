@@ -46,7 +46,7 @@ public final class Fixture extends Vertex {
 		this.type = type;
 		
 		if (type == FixtureType.SOURCE) {
-			progress = new ProgressMeter(p.x - r - 1.5, p.y - r, 2, 0.5);
+			progress = new ProgressMeter(world, p.x - r - 1.5, p.y - r, 2, 0.5);
 		} else {
 			progress = null;
 		}
@@ -281,8 +281,9 @@ public final class Fixture extends Vertex {
 					break;
 				}
 				
+				ctxt.translate(-r, -r);
 				ctxt.paintImage(
-						-r, -r,
+						world.cam.pixelsPerMeter,
 						VIEW.sheet,
 						0, 0, 2 * r, 2 * r,
 						96, 224, 96+32, 224+32);
@@ -295,7 +296,7 @@ public final class Fixture extends Vertex {
 				shape.paint(ctxt);
 				
 				ctxt.setColor(Color.BLACK);
-				ctxt.setPixelStroke(1);
+				ctxt.setPixelStroke(world.cam.pixelsPerMeter, 1);
 				shape.getAABB().draw(ctxt);
 				
 			}

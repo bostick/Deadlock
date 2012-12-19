@@ -3,9 +3,11 @@ package com.gutabi.deadlock.view;
 import java.awt.Color;
 
 import com.gutabi.deadlock.core.geom.AABB;
+import com.gutabi.deadlock.world.World;
 
 public class ProgressMeter {
 	
+	public final World world;
 	public final double x;
 	public final double y;
 	public final double width;
@@ -17,8 +19,8 @@ public class ProgressMeter {
 	
 	private double p;
 	
-	public ProgressMeter(double x, double y, double width, double height) {
-		
+	public ProgressMeter(World world, double x, double y, double width, double height) {
+		this.world = world;
 		this.x = x;
 		this.y = y;
 		this.width = width;
@@ -40,7 +42,7 @@ public class ProgressMeter {
 	
 	public void paint(RenderingContext ctxt) {
 		ctxt.setColor(Color.BLACK);
-		ctxt.setPixelStroke(1);
+		ctxt.setPixelStroke(world.cam.pixelsPerMeter, 1);
 		aabb.draw(ctxt);
 		if (p >= 0.0) {
 			if (p <= 1.0) {

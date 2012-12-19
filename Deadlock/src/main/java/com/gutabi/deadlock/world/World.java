@@ -351,19 +351,19 @@ public class World {
 		
 		AffineTransform origTransform = ctxt.getTransform();
 		
-		ctxt.paintString(0, 0, 1, "time: " + t);
+		ctxt.paintString(cam.pixelsPerMeter, 0, 0, 1, "time: " + t);
 		
 		ctxt.translate(0, 1);
 		
-		ctxt.paintString(0, 0, 1, "body count: " + b2dWorld.getBodyCount());
+		ctxt.paintString(cam.pixelsPerMeter, 0, 0, 1, "body count: " + b2dWorld.getBodyCount());
 		
 		ctxt.translate(0, 1);
 		
-		ctxt.paintString(0, 0, 1, "car count: " + carMap.size());
+		ctxt.paintString(cam.pixelsPerMeter, 0, 0, 1, "car count: " + carMap.size());
 		
 		ctxt.translate(0, 1);
 		
-		ctxt.paintString(0, 0, 1, "splosions count: " + explosionMap.size());
+		ctxt.paintString(cam.pixelsPerMeter, 0, 0, 1, "splosions count: " + explosionMap.size());
 		
 		ctxt.translate(0, 1);
 		

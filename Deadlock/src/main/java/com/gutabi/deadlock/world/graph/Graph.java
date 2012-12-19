@@ -1196,13 +1196,16 @@ public class Graph implements Sweepable {
 	
 	public void paint(RenderingContext ctxt) {
 		
+		AffineTransform origTransform = ctxt.getTransform();
+		
+		ctxt.translate(world.cam.worldViewport.x, world.cam.worldViewport.y);
 		ctxt.paintImage(
-				world.cam.worldViewport.x, world.cam.worldViewport.y,
+				world.cam.pixelsPerMeter,
 				canvasGraphImage,
 				0, 0, world.cam.worldViewport.width, world.cam.worldViewport.height,
 				0, 0, canvasGraphImage.getWidth(), canvasGraphImage.getHeight());
 		
-//		ctxt.setTransform(origTransform);
+		ctxt.setTransform(origTransform);
 		
 	}
 	
@@ -1210,11 +1213,11 @@ public class Graph implements Sweepable {
 		
 		AffineTransform origTransform = ctxt.getTransform();
 		
-		ctxt.paintString(0, 0, 1.0, "vertex count: " + vertices.size());
+		ctxt.paintString(world.cam.pixelsPerMeter, 0, 0, 1.0, "vertex count: " + vertices.size());
 		
 		ctxt.translate(0, 1);
 		
-		ctxt.paintString(0, 0, 1.0, "edge count: " + edges.size());
+		ctxt.paintString(world.cam.pixelsPerMeter, 0, 0, 1.0, "edge count: " + edges.size());
 		
 		ctxt.setTransform(origTransform);
 	}

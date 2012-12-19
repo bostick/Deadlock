@@ -779,7 +779,7 @@ public abstract class Car extends Entity {
 			if (APP.DEBUG_DRAW) {
 				
 				ctxt.setColor(Color.BLACK);
-				ctxt.setPixelStroke(1);
+				ctxt.setPixelStroke(world.cam.pixelsPerMeter, 1);
 				shape.getAABB().draw(ctxt);
 				
 				paintID(ctxt);
@@ -800,7 +800,7 @@ public abstract class Car extends Entity {
 			if (APP.DEBUG_DRAW) {
 				
 				ctxt.setColor(Color.BLACK);
-				ctxt.setPixelStroke(1);
+				ctxt.setPixelStroke(world.cam.pixelsPerMeter, 1);
 				shape.getAABB().draw(ctxt);
 				
 				paintID(ctxt);
@@ -826,7 +826,7 @@ public abstract class Car extends Entity {
 			if (APP.DEBUG_DRAW) {
 				
 				ctxt.setColor(Color.BLACK);
-				ctxt.setPixelStroke(1);
+				ctxt.setPixelStroke(world.cam.pixelsPerMeter, 1);
 				shape.getAABB().draw(ctxt);
 				
 				paintID(ctxt);
@@ -861,9 +861,10 @@ public abstract class Car extends Entity {
 		
 		ctxt.translate(p.x, p.y);
 		ctxt.rotate(angle);
+		ctxt.translate(CAR_LOCALX, CAR_LOCALY);
 		
 		ctxt.paintImage(
-				CAR_LOCALX, CAR_LOCALY,
+				world.cam.pixelsPerMeter,
 				VIEW.sheet,
 				0, 0, CAR_LENGTH, CAR_WIDTH,
 				64, sheetRowStart, 64+32, sheetRowEnd);
@@ -886,16 +887,20 @@ public abstract class Car extends Entity {
 		ctxt.translate(p.x, p.y);
 		ctxt.rotate(angle);
 		
-//		int brakePixels = (int)(BRAKE_SIZE * world.pixelsPerMeter);
+		AffineTransform brakeTransform = ctxt.getTransform();
 		
+		ctxt.translate(CAR_BRAKE1X, CAR_BRAKE1Y);
 		ctxt.paintImage(
-				CAR_BRAKE1X, CAR_BRAKE1Y,
+				world.cam.pixelsPerMeter,
 				VIEW.sheet,
 				0, 0, BRAKE_SIZE, BRAKE_SIZE,
 				0, brakeRowStart, 0+8, brakeRowEnd);
 		
+		ctxt.setTransform(brakeTransform);
+		
+		ctxt.translate(CAR_BRAKE2X, CAR_BRAKE2Y);
 		ctxt.paintImage(
-				CAR_BRAKE2X, CAR_BRAKE2Y,
+				world.cam.pixelsPerMeter,
 				VIEW.sheet,
 				0, 0, BRAKE_SIZE, BRAKE_SIZE,
 				0, brakeRowStart, 0+8, brakeRowEnd);
@@ -911,7 +916,7 @@ public abstract class Car extends Entity {
 		ctxt.translate(p.x, p.y);
 		
 		ctxt.setColor(Color.WHITE);
-		ctxt.paintString(CAR_LOCALX, 0.0, 2.0, Integer.toString(id));
+		ctxt.paintString(world.cam.pixelsPerMeter, CAR_LOCALX, 0.0, 2.0, Integer.toString(id));
 		
 		ctxt.setTransform(origTransform);
 	}

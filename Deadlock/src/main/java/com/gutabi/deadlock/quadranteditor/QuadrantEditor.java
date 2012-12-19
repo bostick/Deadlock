@@ -98,10 +98,11 @@ public class QuadrantEditor extends ScreenBase {
 			public void paint(RenderingContext ctxt) {
 				
 				AffineTransform origTransform = ctxt.getTransform();
+				
 				ctxt.translate(aabb.ul.x, aabb.ul.y);
 				ctxt.rotate(6 * Math.PI / 4, aabb.width/2, aabb.height/2);
 				
-				ctxt.paintImage(0, 0, VIEW.sheet, 0, 0, 50, 50, 128, 224, 160, 256);
+				ctxt.paintImage(1.0, VIEW.sheet, 0, 0, 50, 50, 128, 224, 160, 256);
 				
 				ctxt.setTransform(origTransform);
 				
@@ -141,9 +142,12 @@ public class QuadrantEditor extends ScreenBase {
 			public void paint(RenderingContext ctxt) {
 				
 				AffineTransform origTransform = ctxt.getTransform();
+				
 				ctxt.translate(aabb.ul.x, aabb.ul.y);
 				ctxt.rotate(2 * Math.PI / 4, aabb.width/2, aabb.height/2);
-				ctxt.paintImage(0, 0, VIEW.sheet, 0, 0, 50, 50, 128, 224, 160, 256);
+				
+				ctxt.paintImage(1.0, VIEW.sheet, 0, 0, 50, 50, 128, 224, 160, 256);
+				
 				ctxt.setTransform(origTransform);
 				
 				ctxt.setColor(Color.BLACK);
@@ -182,9 +186,12 @@ public class QuadrantEditor extends ScreenBase {
 			public void paint(RenderingContext ctxt) {
 				
 				AffineTransform origTransform = ctxt.getTransform();
+				
 				ctxt.translate(aabb.ul.x, aabb.ul.y);
 				ctxt.rotate(4 * Math.PI / 4, aabb.width/2, aabb.height/2);
-				ctxt.paintImage(0, 0, VIEW.sheet, 0, 0, 50, 50, 128, 224, 160, 256);
+				
+				ctxt.paintImage(1.0, VIEW.sheet, 0, 0, 50, 50, 128, 224, 160, 256);
+				
 				ctxt.setTransform(origTransform);
 				
 				ctxt.setColor(Color.BLACK);
@@ -222,9 +229,12 @@ public class QuadrantEditor extends ScreenBase {
 			public void paint(RenderingContext ctxt) {
 				
 				AffineTransform origTransform = ctxt.getTransform();
+				
 				ctxt.translate(aabb.ul.x, aabb.ul.y);
 				ctxt.rotate(0 * Math.PI / 4, aabb.width/2, aabb.height/2);
-				ctxt.paintImage(0, 0, VIEW.sheet, 0, 0, 50, 50, 128, 224, 160, 256);
+				
+				ctxt.paintImage(1.0, VIEW.sheet, 0, 0, 50, 50, 128, 224, 160, 256);
+				
 				ctxt.setTransform(origTransform);
 				
 				ctxt.setColor(Color.BLACK);
@@ -264,9 +274,12 @@ public class QuadrantEditor extends ScreenBase {
 			public void paint(RenderingContext ctxt) {
 				
 				AffineTransform origTransform = ctxt.getTransform();
+				
 				ctxt.translate(aabb.ul.x, aabb.ul.y);
 				ctxt.rotate(5 * Math.PI / 4, aabb.width/2, aabb.height/2);
-				ctxt.paintImage(0, 0, VIEW.sheet, 0, 0, 50, 50, 128, 224, 160, 256);
+				
+				ctxt.paintImage(1.0, VIEW.sheet, 0, 0, 50, 50, 128, 224, 160, 256);
+				
 				ctxt.setTransform(origTransform);
 				
 				ctxt.setColor(Color.BLACK);
@@ -305,10 +318,11 @@ public class QuadrantEditor extends ScreenBase {
 			public void paint(RenderingContext ctxt) {
 				
 				AffineTransform origTransform = ctxt.getTransform();
+				
 				ctxt.translate(aabb.ul.x, aabb.ul.y);
 				ctxt.rotate(1 * Math.PI / 4, aabb.width/2, aabb.height/2);
 				
-				ctxt.paintImage(0, 0, VIEW.sheet, 0, 0, 50, 50, 128, 224, 160, 256);
+				ctxt.paintImage(1.0, VIEW.sheet, 0, 0, 50, 50, 128, 224, 160, 256);
 				
 				ctxt.setTransform(origTransform);
 				

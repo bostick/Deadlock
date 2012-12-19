@@ -67,7 +67,7 @@ public class QuadTool extends ToolBase {
 		if (p != null) {
 			Point middle = start.plus(p.minus(start).multiply(0.5));
 			c = middle.plus(new Point(0, -4 * Vertex.INIT_VERTEX_RADIUS));
-			shape = new QuadToolShape(start, c, p);
+			shape = new QuadToolShape(screen.world, start, c, p);
 			startKnob.setPoint(start);
 			controlKnob.setPoint(c);
 			endKnob.setPoint(p);
@@ -80,7 +80,7 @@ public class QuadTool extends ToolBase {
 	public void setStart(Point start) {
 		this.start = start;
 		if (start != null && p != null && c != null) {
-			shape = new QuadToolShape(start, c, p);
+			shape = new QuadToolShape(screen.world, start, c, p);
 			startKnob.setPoint(start);
 			controlKnob.setPoint(c);
 			endKnob.setPoint(p);
@@ -90,7 +90,7 @@ public class QuadTool extends ToolBase {
 	public void setControl(Point c) {
 		this.c = c;
 		if (start != null && p != null && c != null) {
-			shape = new QuadToolShape(start, c, p);
+			shape = new QuadToolShape(screen.world, start, c, p);
 			startKnob.setPoint(start);
 			controlKnob.setPoint(c);
 			endKnob.setPoint(p);
@@ -100,7 +100,7 @@ public class QuadTool extends ToolBase {
 	public void setEnd(Point p) {
 		this.p = p;
 		if (start != null && p != null && c != null) {
-			shape = new QuadToolShape(start, c, p);
+			shape = new QuadToolShape(screen.world, start, c, p);
 			startKnob.setPoint(start);
 			controlKnob.setPoint(c);
 			endKnob.setPoint(p);
@@ -138,7 +138,7 @@ public class QuadTool extends ToolBase {
 		case SET:
 			
 			List<Point> pts = shape.skeleton;
-			Stroke s = new Stroke(screen.world.graph);
+			Stroke s = new Stroke(screen.world, screen.world.graph);
 			for (Point p : pts) {
 				s.add(p);
 			}
@@ -243,7 +243,7 @@ public class QuadTool extends ToolBase {
 		
 		ctxt.setColor(Color.WHITE);
 		ctxt.setXORMode(Color.BLACK);
-		ctxt.setPixelStroke(1);
+		ctxt.setPixelStroke(screen.world.cam.pixelsPerMeter, 1);
 		
 		shape.draw(ctxt);
 		

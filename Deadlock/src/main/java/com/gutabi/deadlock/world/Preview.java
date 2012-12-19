@@ -109,7 +109,7 @@ public class Preview {
 		if (previewImage != null) {
 			
 			ctxt.paintImage(
-					0, 0,
+					1.0,
 					previewImage,
 					0, 0, cam.previewWidth, cam.previewHeight,
 					0, 0, cam.previewWidth, cam.previewHeight);

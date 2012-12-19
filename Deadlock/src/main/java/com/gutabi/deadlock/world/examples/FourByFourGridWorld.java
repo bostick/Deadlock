@@ -70,7 +70,7 @@ public class FourByFourGridWorld extends World {
 			res = g.addVertexTop(sink);
 			affected.addAll(res);
 			
-			Stroke s = new Stroke(g);
+			Stroke s = new Stroke(w, g);
 			s.add(source.p);
 			s.add(sink.p);
 			s.finish();
@@ -110,7 +110,7 @@ public class FourByFourGridWorld extends World {
 			res = g.addVertexTop(sink);
 			affected.addAll(res);
 			
-			Stroke s = new Stroke(g);
+			Stroke s = new Stroke(w, g);
 			s.add(source.p);
 			s.add(sink.p);
 			s.finish();

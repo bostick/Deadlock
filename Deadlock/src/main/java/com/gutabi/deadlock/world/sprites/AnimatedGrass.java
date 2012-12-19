@@ -3,6 +3,8 @@ package com.gutabi.deadlock.world.sprites;
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
+import java.awt.geom.AffineTransform;
+
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.view.RenderingContext;
 import com.gutabi.deadlock.world.World;
@@ -75,26 +77,47 @@ public class AnimatedGrass {
 	}
 	
 	private void paint0(RenderingContext ctxt) {
+		
+		AffineTransform origTransform = ctxt.getTransform();
+		
+		ctxt.translate(p.x - AnimatedGrass.GRASS_SIZE/2, p.y - AnimatedGrass.GRASS_SIZE/2);
 		ctxt.paintImage(
-				p.x - AnimatedGrass.GRASS_SIZE/2, p.y - AnimatedGrass.GRASS_SIZE/2,
+				world.cam.pixelsPerMeter,
 				VIEW.sheet,
 				0, 0, GRASS_SIZE, GRASS_SIZE,
 				0, 256, 0+32, 256+32);	
+		
+		ctxt.setTransform(origTransform);
+		
 	}
 	
 	private void paint1(RenderingContext ctxt) {
+		
+		AffineTransform origTransform = ctxt.getTransform();
+		
+		ctxt.translate(p.x - AnimatedGrass.GRASS_SIZE/2, p.y - AnimatedGrass.GRASS_SIZE/2);
 		ctxt.paintImage(
-				p.x - AnimatedGrass.GRASS_SIZE/2, p.y - AnimatedGrass.GRASS_SIZE/2,
+				world.cam.pixelsPerMeter,
 				VIEW.sheet,
 				0, 0, GRASS_SIZE, GRASS_SIZE,
-				32, 256, 32+32, 256+32);	
+				32, 256, 32+32, 256+32);
+		
+		ctxt.setTransform(origTransform);
+		
 	}
 	
 	private void paint2(RenderingContext ctxt) {
+		
+		AffineTransform origTransform = ctxt.getTransform();
+		
+		ctxt.translate(p.x - AnimatedGrass.GRASS_SIZE/2, p.y - AnimatedGrass.GRASS_SIZE/2);
 		ctxt.paintImage(
-				p.x - AnimatedGrass.GRASS_SIZE/2, p.y - AnimatedGrass.GRASS_SIZE/2,
+				world.cam.pixelsPerMeter,
 				VIEW.sheet,
 				0, 0, GRASS_SIZE, GRASS_SIZE,
-				64, 256, 64+32, 256+32);	
+				64, 256, 64+32, 256+32);
+		
+		ctxt.setTransform(origTransform);
+		
 	}
 }

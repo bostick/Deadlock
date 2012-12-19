@@ -52,13 +52,8 @@ public class RenderingContext extends DebugDraw {
 		g2.setStroke(s);
 	}
 	
-//	public void setWorldPixelStroke(int pix) {
-//		g2.setStroke(new BasicStroke((float)(pix / APP.world.PIXELS_PER_METER_DEBUG), BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER));
-//	}
-	
-	public void setPixelStroke(int pix) {
-		double s = g2.getTransform().getScaleX();
-		g2.setStroke(new BasicStroke((float)(pix / s), BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER));
+	public void setPixelStroke(double origS, int pix) {
+		g2.setStroke(new BasicStroke((float)(pix / origS), BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER));
 	}
 	
 	public AffineTransform getTransform() {
@@ -97,35 +92,26 @@ public class RenderingContext extends DebugDraw {
 		g2.rotate(a, x, y);
 	}
 	
-//	public void setFont(Font f) {
-//		g2.setFont(f);
-//	}
-	
-	public void paintString(double x, double y, double s, String str) {
+	public void paintString(double origS, double x, double y, double s, String str) {
 		AffineTransform origTransform = g2.getTransform();
 		
-		double sx = origTransform.getScaleX();
-		double sy = origTransform.getScaleY();
-		
 		g2.translate(x, y);
-		g2.scale(1 / sx, 1 / sy);
+		g2.scale(1 / origS, 1 / origS);
 		g2.scale(s, s);
 		g2.drawString(str, 0, 0);
+		
 		g2.setTransform(origTransform);
 	}
 	
-	public void paintImage(double x, double y, Image img, double dx1, double dy1, double dx2, double dy2, int sx1, int sy1, int sx2, int sy2) {
+	public void paintImage(double origS, Image img, double dx1, double dy1, double dx2, double dy2, int sx1, int sy1, int sx2, int sy2) {
 		AffineTransform origTransform = g2.getTransform();
 		
-		double sx = origTransform.getScaleX();
-		double sy = origTransform.getScaleY();
-		
-		g2.translate(x, y);
-		g2.scale(1 / sx, 1 / sy);
+		g2.scale(1 / origS, 1 / origS);
 		g2.drawImage(
 				img,
-				(int)Math.ceil(dx1 * sx), (int)Math.ceil(dy1 * sy), (int)Math.ceil(dx2 * sx), (int)Math.ceil(dy2 * sy),
+				(int)Math.ceil(dx1 * origS), (int)Math.ceil(dy1 * origS), (int)Math.ceil(dx2 * origS), (int)Math.ceil(dy2 * origS),
 				sx1, sy1, sx2, sy2, null);
+		
 		g2.setTransform(origTransform);
 	}
 	
