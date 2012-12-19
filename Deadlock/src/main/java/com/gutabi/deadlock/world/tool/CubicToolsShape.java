@@ -17,11 +17,13 @@ import com.gutabi.deadlock.core.geom.Shape;
 import com.gutabi.deadlock.core.geom.ShapeUtils;
 import com.gutabi.deadlock.view.RenderingContext;
 import com.gutabi.deadlock.world.World;
+import com.gutabi.deadlock.world.WorldCamera;
 import com.gutabi.deadlock.world.graph.Vertex;
 
 //@SuppressWarnings("static-access")
 public class CubicToolsShape extends Shape {
 	
+	WorldCamera cam;
 	public final World world;
 	public final Point start;
 	public final Circle startCircle; 
@@ -38,7 +40,7 @@ public class CubicToolsShape extends Shape {
 	
 	private final AABB aabb;
 	
-	public CubicToolsShape(World world, Point start, Point c0, Point c1, Point end) {
+	public CubicToolsShape(WorldCamera cam, World world, Point start, Point c0, Point c1, Point end) {
 		
 		this.world = world;
 		this.start = start;
@@ -61,7 +63,7 @@ public class CubicToolsShape extends Shape {
 		for (int i = 0; i < cs.size()-1; i++) {
 			Circle a = cs.get(i);
 			Circle b = cs.get(i+1);
-			caps.add(new Capsule(world, null, a, b, -1));
+			caps.add(new Capsule(cam, null, a, b, -1));
 		}
 		
 		skeletonSeq = new CapsuleSequence(null, caps);

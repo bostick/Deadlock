@@ -34,7 +34,7 @@ public class CircleTool extends ToolBase {
 	
 	Knob knob;
 	
-	public CircleTool(final WorldScreen screen) {
+	public CircleTool(WorldScreen screen) {
 		super(screen);
 		
 		mode = CircleToolMode.FREE;
@@ -130,7 +130,7 @@ public class CircleTool extends ToolBase {
 		case SET:
 			
 			List<Point> pts = shape.skeleton;
-			Stroke s = new Stroke(screen.world, screen.world.graph);
+			Stroke s = new Stroke(screen.cam, screen.world, screen.world.graph);
 			for (Point p : pts) {
 				s.add(p);
 			}
@@ -237,7 +237,7 @@ public class CircleTool extends ToolBase {
 		
 		ctxt.setColor(Color.WHITE);
 		ctxt.setXORMode(Color.BLACK);
-		ctxt.setPixelStroke(screen.world.cam.pixelsPerMeter, 1);
+		ctxt.setPixelStroke(screen.cam.pixelsPerMeter, 1);
 		
 		shape.draw(ctxt);
 		

@@ -77,7 +77,7 @@ public class CubicTools extends ToolBase {
 			Point middle = start.plus(p.minus(start).multiply(0.5));
 			c0 = middle.plus(new Point(0, -4 * Vertex.INIT_VERTEX_RADIUS));
 			c1 = middle.plus(new Point(0, 4 * Vertex.INIT_VERTEX_RADIUS));
-			shape = new CubicToolsShape(screen.world, start, c0, c1, p);
+			shape = new CubicToolsShape(screen.cam, screen.world, start, c0, c1, p);
 			startKnob.setPoint(start);
 			control0Knob.setPoint(c0);
 			control1Knob.setPoint(c1);
@@ -91,7 +91,7 @@ public class CubicTools extends ToolBase {
 	public void setStart(Point start) {
 		this.start = start;
 		if (start != null && p != null && c0 != null && c1 != null) {
-			shape = new CubicToolsShape(screen.world, start, c0, c1, p);
+			shape = new CubicToolsShape(screen.cam, screen.world, start, c0, c1, p);
 			startKnob.setPoint(start);
 			control0Knob.setPoint(c0);
 			control1Knob.setPoint(c1);
@@ -102,7 +102,7 @@ public class CubicTools extends ToolBase {
 	public void setControl0(Point c) {
 		this.c0 = c;
 		if (start != null && p != null && c0 != null && c1 != null) {
-			shape = new CubicToolsShape(screen.world, start, c0, c1, p);
+			shape = new CubicToolsShape(screen.cam, screen.world, start, c0, c1, p);
 			startKnob.setPoint(start);
 			control0Knob.setPoint(c0);
 			control1Knob.setPoint(c1);
@@ -113,7 +113,7 @@ public class CubicTools extends ToolBase {
 	public void setControl1(Point c) {
 		this.c1 = c;
 		if (start != null && p != null && c0 != null && c1 != null) {
-			shape = new CubicToolsShape(screen.world, start, c0, c1, p);
+			shape = new CubicToolsShape(screen.cam, screen.world, start, c0, c1, p);
 			startKnob.setPoint(start);
 			control0Knob.setPoint(c0);
 			control1Knob.setPoint(c1);
@@ -124,7 +124,7 @@ public class CubicTools extends ToolBase {
 	public void setEnd(Point p) {
 		this.p = p;
 		if (start != null && p != null && c0 != null && c1 != null) {
-			shape = new CubicToolsShape(screen.world, start, c0, c1, p);
+			shape = new CubicToolsShape(screen.cam, screen.world, start, c0, c1, p);
 			startKnob.setPoint(start);
 			control0Knob.setPoint(c0);
 			control1Knob.setPoint(c1);
@@ -163,7 +163,7 @@ public class CubicTools extends ToolBase {
 		case SET:
 			
 			List<Point> pts = shape.skeleton;
-			Stroke s = new Stroke(screen.world, screen.world.graph);
+			Stroke s = new Stroke(screen.cam, screen.world, screen.world.graph);
 			for (Point p : pts) {
 				s.add(p);
 			}
@@ -273,7 +273,7 @@ public class CubicTools extends ToolBase {
 		
 		ctxt.setColor(Color.WHITE);
 		ctxt.setXORMode(Color.BLACK);
-		ctxt.setPixelStroke(screen.world.cam.pixelsPerMeter, 1);
+		ctxt.setPixelStroke(screen.cam.pixelsPerMeter, 1);
 		
 		shape.draw(ctxt);
 		

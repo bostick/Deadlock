@@ -13,16 +13,19 @@ import org.jbox2d.dynamics.contacts.Contact;
 
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.world.World;
+import com.gutabi.deadlock.world.WorldCamera;
 import com.gutabi.deadlock.world.sprites.AnimatedExplosion;
 
 //@SuppressWarnings("static-access")
 public class CarEventListener implements ContactListener {
 	
-	public final World world;
+	WorldCamera cam;
+	World world;
 	
 	static Logger logger = Logger.getLogger(CarEventListener.class);
 	
-	public CarEventListener(World world) {
+	public CarEventListener(WorldCamera cam, World world) {
+		this.cam = cam;
 		this.world = world;
 	}
 	
@@ -58,7 +61,7 @@ public class CarEventListener implements ContactListener {
 				
 				Vec2 p = worldManifold.points[0];
 				
-				world.explosionMap.add(new AnimatedExplosion(world, Point.point(p)));
+				world.explosionMap.add(new AnimatedExplosion(cam, Point.point(p)));
 			}
 			
 			if (a.state != CarStateEnum.CRASHED) {

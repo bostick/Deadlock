@@ -32,10 +32,12 @@ import com.gutabi.deadlock.core.geom.Sweepable;
 import com.gutabi.deadlock.view.RenderingContext;
 import com.gutabi.deadlock.view.RenderingContextType;
 import com.gutabi.deadlock.world.World;
+import com.gutabi.deadlock.world.WorldCamera;
 
 //@SuppressWarnings("static-access")
 public class Graph implements Sweepable {
 	
+	WorldCamera cam;
 	public final World world;
 	
 	public BufferedImage canvasGraphImage;
@@ -51,7 +53,8 @@ public class Graph implements Sweepable {
 	
 	private static final Logger logger = Logger.getLogger(Graph.class);
 	
-	public Graph(World world) {
+	public Graph(WorldCamera cam, World world) {
+		this.cam = cam;
 		this.world = world;
 		
 		pathFactory = new GraphPositionPathFactory(this);
@@ -59,7 +62,7 @@ public class Graph implements Sweepable {
 	}
 	
 	public void canvasPostDisplay() {
-		canvasGraphImage = new BufferedImage(world.cam.canvasWidth, world.cam.canvasHeight, BufferedImage.TYPE_INT_ARGB);
+		canvasGraphImage = new BufferedImage(cam.canvasWidth, cam.canvasHeight, BufferedImage.TYPE_INT_ARGB);
 	}
 	
 	public void preStart() {
@@ -159,7 +162,7 @@ public class Graph implements Sweepable {
 	}
 	
 	public Intersection createIntersection(Point p) {
-		return new Intersection(world, p);
+		return new Intersection(cam, world, p);
 	}
 	
 	public Set<Vertex> createRoadTop(Vertex start, Vertex end, List<Point> pts) {
@@ -325,7 +328,7 @@ public class Graph implements Sweepable {
 	 */
 	private Road createRoad(Vertex start, Vertex end, List<Point> pts, int dec) {
 		assert pts.size() >= 2;
-		Road r = new Road(world, start, end, pts);
+		Road r = new Road(cam, start, end, pts);
 		
 		if ((dec & 1) == 1) {
 			r.startSign.setEnabled(true);
@@ -352,7 +355,7 @@ public class Graph implements Sweepable {
 	}
 	
 	private Merger createMergerAndFixtures(Point p) {
-		Merger m = Merger.createMergerAndFixtures(world, p);
+		Merger m = Merger.createMergerAndFixtures(cam, world, p);
 		
 		edges.add(m);
 		refreshEdgeIDs();
@@ -824,7 +827,7 @@ public class Graph implements Sweepable {
 		assert param >= 0.0;
 		assert param < 1.0;
 		
-		Intersection v = new Intersection(world, p);
+		Intersection v = new Intersection(cam, world, p);
 		addVertex(v);
 		
 		Vertex eStart = r.start;
@@ -1157,11 +1160,11 @@ public class Graph implements Sweepable {
 		AlphaComposite c = AlphaComposite.getInstance(AlphaComposite.SRC, 0.0f);
 		canvasGraphImageG2.setComposite(c);
 		canvasGraphImageG2.setColor(new Color(0, 0, 0, 0));
-		canvasGraphImageG2.fillRect(0, 0, world.cam.canvasWidth, world.cam.canvasHeight);
+		canvasGraphImageG2.fillRect(0, 0, cam.canvasWidth, cam.canvasHeight);
 		canvasGraphImageG2.setComposite(orig);
 		
-		canvasGraphImageG2.scale(world.cam.pixelsPerMeter, world.cam.pixelsPerMeter);
-		canvasGraphImageG2.translate(-world.cam.worldViewport.x, -world.cam.worldViewport.y);
+		canvasGraphImageG2.scale(cam.pixelsPerMeter, cam.pixelsPerMeter);
+		canvasGraphImageG2.translate(-cam.worldViewport.x, -cam.worldViewport.y);
 		
 		RenderingContext canvasGraphContext = new RenderingContext(canvasGraphImageG2, RenderingContextType.CANVAS);
 		
@@ -1198,11 +1201,11 @@ public class Graph implements Sweepable {
 		
 		AffineTransform origTransform = ctxt.getTransform();
 		
-		ctxt.translate(world.cam.worldViewport.x, world.cam.worldViewport.y);
+		ctxt.translate(cam.worldViewport.x, cam.worldViewport.y);
 		ctxt.paintImage(
-				world.cam.pixelsPerMeter,
+				cam.pixelsPerMeter,
 				canvasGraphImage,
-				0, 0, world.cam.worldViewport.width, world.cam.worldViewport.height,
+				0, 0, cam.worldViewport.width, cam.worldViewport.height,
 				0, 0, canvasGraphImage.getWidth(), canvasGraphImage.getHeight());
 		
 		ctxt.setTransform(origTransform);
@@ -1213,11 +1216,11 @@ public class Graph implements Sweepable {
 		
 		AffineTransform origTransform = ctxt.getTransform();
 		
-		ctxt.paintString(world.cam.pixelsPerMeter, 0, 0, 1.0, "vertex count: " + vertices.size());
+		ctxt.paintString(cam.pixelsPerMeter, 0, 0, 1.0, "vertex count: " + vertices.size());
 		
 		ctxt.translate(0, 1);
 		
-		ctxt.paintString(world.cam.pixelsPerMeter, 0, 0, 1.0, "edge count: " + edges.size());
+		ctxt.paintString(cam.pixelsPerMeter, 0, 0, 1.0, "edge count: " + edges.size());
 		
 		ctxt.setTransform(origTransform);
 	}

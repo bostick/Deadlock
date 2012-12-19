@@ -42,6 +42,8 @@ public class WorldScreen extends ScreenBase {
 		DIALOG
 	}
 	
+	public WorldCamera cam = new WorldCamera();
+	
 	public World world;
 	
 	public Preview preview;
@@ -672,8 +674,8 @@ public class WorldScreen extends ScreenBase {
 				
 				AffineTransform origTrans = ctxt.getTransform();
 				
-				ctxt.scale(world.cam.pixelsPerMeter);
-				ctxt.translate(-world.cam.worldViewport.x, -world.cam.worldViewport.y);
+				ctxt.scale(cam.pixelsPerMeter);
+				ctxt.translate(-cam.worldViewport.x, -cam.worldViewport.y);
 				
 				synchronized (VIEW) {
 					paintWorldScreen(ctxt);
@@ -712,7 +714,7 @@ public class WorldScreen extends ScreenBase {
 			
 			if (APP.FPS_DRAW) {
 				
-				ctxt.translate(world.cam.worldViewport.x, world.cam.worldViewport.y);
+				ctxt.translate(cam.worldViewport.x, cam.worldViewport.y);
 				
 				stats.paint(ctxt);
 			}

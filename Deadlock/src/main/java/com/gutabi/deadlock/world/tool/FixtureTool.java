@@ -84,10 +84,10 @@ public class FixtureTool extends ToolBase {
 			
 			switch (axis) {
 			case LEFTRIGHT:
-				shape = new FixtureToolShape(screen.world, p, leftCenter, rightCenter, axis);
+				shape = new FixtureToolShape(screen.cam, p, leftCenter, rightCenter, axis);
 				break;
 			case TOPBOTTOM:
-				shape = new FixtureToolShape(screen.world, p, topCenter, bottomCenter, axis);
+				shape = new FixtureToolShape(screen.cam, p, topCenter, bottomCenter, axis);
 				break;
 			default:
 				assert false;
@@ -139,8 +139,8 @@ public class FixtureTool extends ToolBase {
 		
 		if (screen.world.graph.pureGraphIntersect(shape) == null) {
 			
-			Fixture source = new Fixture(screen.world, getSourcePoint(), axis);
-			Fixture sink = new Fixture(screen.world, getSinkPoint(), axis);
+			Fixture source = new Fixture(screen.cam, screen.world, getSourcePoint(), axis);
+			Fixture sink = new Fixture(screen.cam, screen.world, getSinkPoint(), axis);
 			
 			source.setType(FixtureType.SOURCE);
 			sink.setType(FixtureType.SINK);
@@ -196,7 +196,7 @@ public class FixtureTool extends ToolBase {
 			
 			ctxt.setColor(Color.WHITE);
 			ctxt.setXORMode(Color.BLACK);
-			ctxt.setPixelStroke(screen.world.cam.pixelsPerMeter, 1);
+			ctxt.setPixelStroke(screen.cam.pixelsPerMeter, 1);
 			
 			shape.draw(ctxt);
 			

@@ -6,7 +6,7 @@ import java.awt.geom.AffineTransform;
 
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.view.RenderingContext;
-import com.gutabi.deadlock.world.World;
+import com.gutabi.deadlock.world.WorldCamera;
 
 //@SuppressWarnings("static-access")
 public class AnimatedExplosion {
@@ -14,13 +14,14 @@ public class AnimatedExplosion {
 	public static final double explosionWidth = 2.21875;
 	public static final double explosionHeight = 3.125;
 	
-	public final World world;
+	WorldCamera cam;
+//	public final World world;
 	Point p;
 	int lastFrame;
 	double lastTime;
 	
-	public AnimatedExplosion(World world, Point p) {
-		this.world = world;
+	public AnimatedExplosion(WorldCamera cam, Point p) {
+		this.cam = cam;
 		this.p = p;
 	}
 	
@@ -66,7 +67,7 @@ public class AnimatedExplosion {
 		
 		ctxt.translate(p.x - explosionWidth/2, p.y - explosionHeight/2);
 		ctxt.paintImage(
-				world.cam.pixelsPerMeter,
+				cam.pixelsPerMeter,
 				VIEW.explosionSheet,
 				0, 0, explosionWidth, explosionHeight,
 				71 * index, 0, 71 * index + 71, 100);

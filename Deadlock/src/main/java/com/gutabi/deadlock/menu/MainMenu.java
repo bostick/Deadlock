@@ -52,7 +52,7 @@ public class MainMenu extends ScreenBase {
 				VIEW.teardownCanvas(VIEW.container);
 				
 				WorldScreen s = new WorldScreen();
-				s.world = OneByOneWorld.createOneByOneWorld();
+				s.world = OneByOneWorld.createOneByOneWorld(s.cam);
 				
 				APP.screen = s;
 				
@@ -73,7 +73,7 @@ public class MainMenu extends ScreenBase {
 				VIEW.teardownCanvas(VIEW.container);
 				
 				WorldScreen s = new WorldScreen();
-				s.world = FourByFourGridWorld.createFourByFourGridWorld();
+				s.world = FourByFourGridWorld.createFourByFourGridWorld(s.cam);
 				
 				APP.screen = s;
 				
@@ -94,7 +94,7 @@ public class MainMenu extends ScreenBase {
 				VIEW.teardownCanvas(VIEW.container);
 				
 				WorldScreen s = new WorldScreen();
-				s.world = WorldA.createWorldA();
+				s.world = WorldA.createWorldA(s.cam);
 				
 				APP.screen = s;
 				

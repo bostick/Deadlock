@@ -9,12 +9,14 @@ import com.gutabi.deadlock.core.geom.Circle;
 import com.gutabi.deadlock.core.geom.Shape;
 import com.gutabi.deadlock.view.RenderingContext;
 import com.gutabi.deadlock.world.QuadrantMap;
-import com.gutabi.deadlock.world.World;
+import com.gutabi.deadlock.world.WorldCamera;
 import com.gutabi.deadlock.world.graph.Axis;
 import com.gutabi.deadlock.world.graph.Vertex;
 
 //@SuppressWarnings("static-access")
 public class FixtureToolShape extends Shape {
+	
+	WorldCamera cam;
 	
 	public final Point p;
 	public final Axis axis;
@@ -27,7 +29,7 @@ public class FixtureToolShape extends Shape {
 	
 	public final AABB aabb;
 	
-	public FixtureToolShape(World world, Point p, Point source, Point sink, Axis axis) {
+	public FixtureToolShape(WorldCamera cam, Point p, Point source, Point sink, Axis axis) {
 		
 		this.p = p;
 		this.axis = axis;
@@ -45,7 +47,7 @@ public class FixtureToolShape extends Shape {
 		
 		worldSourceCircle = new Circle(null, worldSource, Vertex.INIT_VERTEX_RADIUS);
 		worldSinkCircle = new Circle(null, worldSink, Vertex.INIT_VERTEX_RADIUS);
-		cap = new Capsule(world, null, worldSourceCircle, worldSinkCircle, -1);
+		cap = new Capsule(cam, null, worldSourceCircle, worldSinkCircle, -1);
 		
 		aabb = cap.aabb;
 	}

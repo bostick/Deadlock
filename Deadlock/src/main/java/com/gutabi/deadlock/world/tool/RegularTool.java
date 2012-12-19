@@ -277,7 +277,7 @@ public class RegularTool extends ToolBase {
 		
 		screen.hilited = null;
 		
-		stroke = new Stroke(screen.world, screen.world.graph);
+		stroke = new Stroke(screen.cam, screen.world, screen.world.graph);
 		stroke.add(p);
 			
 	}
@@ -316,7 +316,7 @@ public class RegularTool extends ToolBase {
 		
 		ctxt.setColor(Color.WHITE);
 		ctxt.setXORMode(Color.BLACK);
-		ctxt.setPixelStroke(screen.world.cam.pixelsPerMeter, 1);
+		ctxt.setPixelStroke(screen.cam.pixelsPerMeter, 1);
 		
 		shape.draw(ctxt);
 		

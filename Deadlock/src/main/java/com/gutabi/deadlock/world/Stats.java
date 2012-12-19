@@ -23,7 +23,7 @@ public class Stats {
 		
 		ctxt.setColor(Color.WHITE);
 		ctxt.setXORMode(Color.BLACK);
-		ctxt.setPixelStroke(screen.world.cam.pixelsPerMeter, 1);
+		ctxt.setPixelStroke(screen.cam.pixelsPerMeter, 1);
 		
 		AffineTransform origTransform1 = ctxt.getTransform();
 		
@@ -39,7 +39,7 @@ public class Stats {
 			lastTime = curTime;
 		}
 		
-		ctxt.paintString(screen.world.cam.pixelsPerMeter, 0, 0, 1.0, "FPS: " + fps);
+		ctxt.paintString(screen.cam.pixelsPerMeter, 0, 0, 1.0, "FPS: " + fps);
 		
 		ctxt.translate(0, 1);
 		

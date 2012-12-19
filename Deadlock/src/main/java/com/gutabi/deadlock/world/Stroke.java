@@ -37,7 +37,8 @@ public class Stroke {
 	
 	public static final double STROKE_RADIUS = Vertex.INIT_VERTEX_RADIUS;
 	
-	public final World world;
+	WorldCamera cam;
+//	public final World world;
 	public final Graph graph;
 	
 	private List<Circle> cs;
@@ -48,8 +49,9 @@ public class Stroke {
 	
 	static Logger logger = Logger.getLogger(Stroke.class);
 	
-	public Stroke(World world, Graph graph) {
-		this.world = world;
+	public Stroke(WorldCamera cam, World world, Graph graph) {
+//		this.world = world;
+		this.cam = cam;
 		this.graph = graph;
 		cs = new ArrayList<Circle>();
 	}
@@ -87,7 +89,7 @@ public class Stroke {
 		for (int i = 0; i < cs.size()-1; i++) {
 			Circle a = cs.get(i);
 			Circle b = cs.get(i+1);
-			caps.add(new Capsule(world, this, a, b, i));
+			caps.add(new Capsule(cam, this, a, b, i));
 		}
 		seq = new CapsuleSequence(this, caps);
 		
@@ -222,7 +224,7 @@ public class Stroke {
 				
 				while (true) {
 					
-					hit = graph.pureGraphIntersectCapsule(new Capsule(world, null, a, b, -1));
+					hit = graph.pureGraphIntersectCapsule(new Capsule(cam, null, a, b, -1));
 					
 					if (hit == null) {
 						
@@ -793,7 +795,7 @@ public class Stroke {
 	
 	public void paint(RenderingContext ctxt) {
 		
-		ctxt.setPixelStroke(world.cam.pixelsPerMeter, 1);
+		ctxt.setPixelStroke(cam.pixelsPerMeter, 1);
 		paintStroke(ctxt);
 		
 		if (APP.DEBUG_DRAW) {
@@ -812,7 +814,7 @@ public class Stroke {
 			
 			List<Capsule> caps = new ArrayList<Capsule>();
 			for (int i = 0; i < cs.size()-1; i++) {
-				caps.add(new Capsule(world, null, cs.get(i), cs.get(i+1), i));
+				caps.add(new Capsule(cam, null, cs.get(i), cs.get(i+1), i));
 			}
 			
 			CapsuleSequence seq = new CapsuleSequence(null, caps);

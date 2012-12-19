@@ -23,7 +23,7 @@ import com.gutabi.deadlock.core.geom.ShapeUtils;
 import com.gutabi.deadlock.core.geom.Triangle;
 import com.gutabi.deadlock.view.RenderingContext;
 import com.gutabi.deadlock.view.RenderingContextType;
-import com.gutabi.deadlock.world.World;
+import com.gutabi.deadlock.world.WorldCamera;
 
 //@SuppressWarnings("static-access")
 public class Road extends Edge {
@@ -32,14 +32,14 @@ public class Road extends Edge {
 	
 	public static final double borderPointRadius = 0.2;
 	
-	
+	WorldCamera cam;
 	public final Vertex start;
 	public final Vertex end;
 	public final List<Point> raw;
 	
 	private Direction direction;
 	
-	public final World world;
+//	public final World world;
 	private CapsuleSequence seq;
 	private Circle startBorderPoint;
 	private Circle endBorderPoint;
@@ -63,11 +63,11 @@ public class Road extends Edge {
 	
 	static Logger logger = Logger.getLogger(Road.class);
 	
-	public Road(World world, Vertex start, Vertex end, List<Point> raw) {
+	public Road(WorldCamera cam, Vertex start, Vertex end, List<Point> raw) {
 		
 		assert !raw.isEmpty();
 		
-		this.world = world;
+		this.cam = cam;
 		this.start = start;
 		this.end = end;
 		this.raw = raw;
@@ -82,8 +82,8 @@ public class Road extends Edge {
 			start.roads.add(this);
 			end.roads.add(this);
 			
-			startSign = new StopSign(world, this, 0);
-			endSign = new StopSign(world, this, 1);
+			startSign = new StopSign(cam, this, 0);
+			endSign = new StopSign(cam, this, 1);
 			
 		} else {
 			startSign = null;
@@ -425,7 +425,7 @@ public class Road extends Edge {
 		for (int i = 0; i < adj.size()-1; i++) {
 			Circle a = circs.get(i);
 			Circle b = circs.get(i+1);
-			caps.add(new Capsule(world, this, a, b, i));
+			caps.add(new Capsule(cam, this, a, b, i));
 		}
 		
 		seq = new CapsuleSequence(this, caps);
@@ -654,7 +654,7 @@ public class Road extends Edge {
 		if (ctxt.type == RenderingContextType.CANVAS) {
 			if (APP.DEBUG_DRAW) {
 				ctxt.setColor(Color.BLACK);
-				ctxt.setPixelStroke(world.cam.pixelsPerMeter, 1);
+				ctxt.setPixelStroke(cam.pixelsPerMeter, 1);
 				shape.getAABB().draw(ctxt);	
 			}
 		}
@@ -666,7 +666,7 @@ public class Road extends Edge {
 	
 	public void paintHilite(RenderingContext ctxt) {
 		ctxt.setColor(hiliteColor);
-		ctxt.setPixelStroke(world.cam.pixelsPerMeter, 1);
+		ctxt.setPixelStroke(cam.pixelsPerMeter, 1);
 		drawPath(ctxt);
 	}
 	

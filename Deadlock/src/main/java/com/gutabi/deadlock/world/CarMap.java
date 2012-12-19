@@ -21,11 +21,13 @@ import com.gutabi.deadlock.world.graph.Vertex;
 //@SuppressWarnings("static-access")
 public class CarMap {
 	
+	public final WorldCamera cam;
 	public final World world;
 	
 	private List<Car> cars = new ArrayList<Car>();
 	
-	public CarMap(World world) {
+	public CarMap(WorldCamera cam, World world) {
+		this.cam = cam;
 		this.world = world;
 	}
 	
@@ -72,7 +74,7 @@ public class CarMap {
 	public void paint(RenderingContext ctxt) {
 		
 		if (APP.DEBUG_DRAW) {
-			ctxt.setPixelStroke(world.cam.pixelsPerMeter, 1);
+			ctxt.setPixelStroke(cam.pixelsPerMeter, 1);
 			world.b2dWorld.setDebugDraw(ctxt);
 			world.b2dWorld.drawDebugData();
 		}

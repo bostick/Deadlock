@@ -22,10 +22,9 @@ import com.gutabi.deadlock.world.graph.Graph;
 //@SuppressWarnings("static-access")
 public class World {
 	
+	WorldCamera cam;
 	public QuadrantMap quadrantMap;
 	public Graph graph;
-	
-	public WorldCamera cam = new WorldCamera();
 	
 	public double t;
 	
@@ -44,22 +43,23 @@ public class World {
 	
 //	private static Logger logger = Logger.getLogger(World.class);
 	
-	public World() {
+	public World(WorldCamera cam) {
+		this.cam = cam;
 		
-		graph = new Graph(this);
+		graph = new Graph(cam, this);
 		
-		carMap = new CarMap(this);
+		carMap = new CarMap(cam, this);
 		
 		b2dWorld = new org.jbox2d.dynamics.World(new Vec2(0.0f, 0.0f), true);
-		b2dWorld.setContactListener(new CarEventListener(this));
+		b2dWorld.setContactListener(new CarEventListener(cam, this));
 		
 	}
 	
-	public static World createWorld(int[][] ini) {
+	public static World createWorld(WorldCamera cam, int[][] ini) {
 		
-		World w = new World();
+		World w = new World(cam);
 		
-		QuadrantMap qm = new QuadrantMap(w, ini);
+		QuadrantMap qm = new QuadrantMap(cam, ini);
 		
 		w.quadrantMap = qm;
 		
@@ -212,7 +212,7 @@ public class World {
 		return s.toString();
 	}
 	
-	public static World fromFileString(String s) {
+	public static World fromFileString(WorldCamera cam, String s) {
 		BufferedReader r = new BufferedReader(new StringReader(s));
 		
 		StringBuilder quadrantMapStringBuilder = null;
@@ -256,7 +256,7 @@ public class World {
 		QuadrantMap qm = QuadrantMap.fromFileString(quadrantMapStringBuilder.toString());
 		Graph g = Graph.fromFileString(graphStringBuilder.toString());
 		
-		World w = new World();
+		World w = new World(cam);
 		w.quadrantMap = qm;
 		w.graph = g;
 		return w;

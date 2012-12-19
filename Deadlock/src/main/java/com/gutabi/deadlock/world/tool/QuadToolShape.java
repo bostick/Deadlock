@@ -16,7 +16,7 @@ import com.gutabi.deadlock.core.geom.QuadCurve;
 import com.gutabi.deadlock.core.geom.Shape;
 import com.gutabi.deadlock.core.geom.ShapeUtils;
 import com.gutabi.deadlock.view.RenderingContext;
-import com.gutabi.deadlock.world.World;
+import com.gutabi.deadlock.world.WorldScreen;
 import com.gutabi.deadlock.world.graph.Vertex;
 
 //@SuppressWarnings("static-access")
@@ -36,7 +36,7 @@ public class QuadToolShape extends Shape {
 	
 	private final AABB aabb;
 	
-	public QuadToolShape(World world, Point start, Point c, Point end) {
+	public QuadToolShape(WorldScreen screen, Point start, Point c, Point end) {
 		
 		this.start = start;
 		startCircle = new Circle(null, start, Vertex.INIT_VERTEX_RADIUS);
@@ -57,7 +57,7 @@ public class QuadToolShape extends Shape {
 		for (int i = 0; i < cs.size()-1; i++) {
 			Circle a = cs.get(i);
 			Circle b = cs.get(i+1);
-			caps.add(new Capsule(world, null, a, b, -1));
+			caps.add(new Capsule(screen.cam, null, a, b, -1));
 		}
 		
 		skeletonSeq = new CapsuleSequence(null, caps);

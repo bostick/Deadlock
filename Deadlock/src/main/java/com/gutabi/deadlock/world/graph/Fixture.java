@@ -12,6 +12,7 @@ import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.view.ProgressMeter;
 import com.gutabi.deadlock.view.RenderingContext;
 import com.gutabi.deadlock.world.World;
+import com.gutabi.deadlock.world.WorldCamera;
 import com.gutabi.deadlock.world.car.Car;
 import com.gutabi.deadlock.world.car.FastCar;
 import com.gutabi.deadlock.world.car.NormalCar;
@@ -36,8 +37,8 @@ public final class Fixture extends Vertex {
 	
 	static int carIDCounter;
 	
-	public Fixture(World world, Point p, Axis a) {
-		super(world, p);
+	public Fixture(WorldCamera cam, World world, Point p, Axis a) {
+		super(cam, world, p);
 		this.a = a;
 		hiliteColor = new Color(0, 255, 255);
 	}
@@ -46,7 +47,7 @@ public final class Fixture extends Vertex {
 		this.type = type;
 		
 		if (type == FixtureType.SOURCE) {
-			progress = new ProgressMeter(world, p.x - r - 1.5, p.y - r, 2, 0.5);
+			progress = new ProgressMeter(cam, p.x - r - 1.5, p.y - r, 2, 0.5);
 		} else {
 			progress = null;
 		}
@@ -221,13 +222,13 @@ public final class Fixture extends Vertex {
 		Class c = l.get(r);
 		
 		if (c == NormalCar.class) {
-			return new NormalCar(world, this);
+			return new NormalCar(cam, world, this);
 		} else if (c == FastCar.class) {
-			return new FastCar(world, this);
+			return new FastCar(cam, world, this);
 		} else if (c == RandomCar.class) {
-			return new RandomCar(world, this);
+			return new RandomCar(cam, world, this);
 		} else if (c == ReallyFastCar.class) {
-			return new ReallyFastCar(world, this);
+			return new ReallyFastCar(cam, world, this);
 		} else {
 			throw new AssertionError();
 		}
@@ -283,7 +284,7 @@ public final class Fixture extends Vertex {
 				
 				ctxt.translate(-r, -r);
 				ctxt.paintImage(
-						world.cam.pixelsPerMeter,
+						cam.pixelsPerMeter,
 						VIEW.sheet,
 						0, 0, 2 * r, 2 * r,
 						96, 224, 96+32, 224+32);
@@ -296,7 +297,7 @@ public final class Fixture extends Vertex {
 				shape.paint(ctxt);
 				
 				ctxt.setColor(Color.BLACK);
-				ctxt.setPixelStroke(world.cam.pixelsPerMeter, 1);
+				ctxt.setPixelStroke(cam.pixelsPerMeter, 1);
 				shape.getAABB().draw(ctxt);
 				
 			}

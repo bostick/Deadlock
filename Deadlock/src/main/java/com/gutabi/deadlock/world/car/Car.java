@@ -26,6 +26,7 @@ import com.gutabi.deadlock.core.geom.Quad;
 import com.gutabi.deadlock.core.geom.Shape;
 import com.gutabi.deadlock.view.RenderingContext;
 import com.gutabi.deadlock.world.World;
+import com.gutabi.deadlock.world.WorldCamera;
 import com.gutabi.deadlock.world.graph.Fixture;
 import com.gutabi.deadlock.world.graph.GraphPositionPathPosition;
 import com.gutabi.deadlock.world.graph.Merger;
@@ -139,6 +140,7 @@ public abstract class Car extends Entity {
 	public double startingTime;
 	public double crashingTime;
 	
+	WorldCamera cam;
 	public World world;
 	public Fixture source;
 	
@@ -189,8 +191,9 @@ public abstract class Car extends Entity {
 	static Logger pathingLogger = Logger.getLogger(logger.getName()+".pathing");
 	static Logger eventingLogger = Logger.getLogger(logger.getName()+".eventing");
 	
-	public Car(World world, Fixture s) {
+	public Car(WorldCamera cam, World world, Fixture s) {
 		
+		this.cam = cam;
 		this.world = world;
 		this.source = s;
 		
@@ -779,7 +782,7 @@ public abstract class Car extends Entity {
 			if (APP.DEBUG_DRAW) {
 				
 				ctxt.setColor(Color.BLACK);
-				ctxt.setPixelStroke(world.cam.pixelsPerMeter, 1);
+				ctxt.setPixelStroke(cam.pixelsPerMeter, 1);
 				shape.getAABB().draw(ctxt);
 				
 				paintID(ctxt);
@@ -800,7 +803,7 @@ public abstract class Car extends Entity {
 			if (APP.DEBUG_DRAW) {
 				
 				ctxt.setColor(Color.BLACK);
-				ctxt.setPixelStroke(world.cam.pixelsPerMeter, 1);
+				ctxt.setPixelStroke(cam.pixelsPerMeter, 1);
 				shape.getAABB().draw(ctxt);
 				
 				paintID(ctxt);
@@ -826,7 +829,7 @@ public abstract class Car extends Entity {
 			if (APP.DEBUG_DRAW) {
 				
 				ctxt.setColor(Color.BLACK);
-				ctxt.setPixelStroke(world.cam.pixelsPerMeter, 1);
+				ctxt.setPixelStroke(cam.pixelsPerMeter, 1);
 				shape.getAABB().draw(ctxt);
 				
 				paintID(ctxt);
@@ -864,7 +867,7 @@ public abstract class Car extends Entity {
 		ctxt.translate(CAR_LOCALX, CAR_LOCALY);
 		
 		ctxt.paintImage(
-				world.cam.pixelsPerMeter,
+				cam.pixelsPerMeter,
 				VIEW.sheet,
 				0, 0, CAR_LENGTH, CAR_WIDTH,
 				64, sheetRowStart, 64+32, sheetRowEnd);
@@ -891,7 +894,7 @@ public abstract class Car extends Entity {
 		
 		ctxt.translate(CAR_BRAKE1X, CAR_BRAKE1Y);
 		ctxt.paintImage(
-				world.cam.pixelsPerMeter,
+				cam.pixelsPerMeter,
 				VIEW.sheet,
 				0, 0, BRAKE_SIZE, BRAKE_SIZE,
 				0, brakeRowStart, 0+8, brakeRowEnd);
@@ -900,7 +903,7 @@ public abstract class Car extends Entity {
 		
 		ctxt.translate(CAR_BRAKE2X, CAR_BRAKE2Y);
 		ctxt.paintImage(
-				world.cam.pixelsPerMeter,
+				cam.pixelsPerMeter,
 				VIEW.sheet,
 				0, 0, BRAKE_SIZE, BRAKE_SIZE,
 				0, brakeRowStart, 0+8, brakeRowEnd);
@@ -916,7 +919,7 @@ public abstract class Car extends Entity {
 		ctxt.translate(p.x, p.y);
 		
 		ctxt.setColor(Color.WHITE);
-		ctxt.paintString(world.cam.pixelsPerMeter, CAR_LOCALX, 0.0, 2.0, Integer.toString(id));
+		ctxt.paintString(cam.pixelsPerMeter, CAR_LOCALX, 0.0, 2.0, Integer.toString(id));
 		
 		ctxt.setTransform(origTransform);
 	}

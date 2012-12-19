@@ -8,12 +8,13 @@ import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.view.RenderingContext;
 import com.gutabi.deadlock.view.RenderingContextType;
 import com.gutabi.deadlock.world.World;
+import com.gutabi.deadlock.world.WorldCamera;
 
 //@SuppressWarnings("static-access")
 public class Intersection extends Vertex {
 	
-	public Intersection(World world, Point p) {
-		super(world, p);
+	public Intersection(WorldCamera cam, World world, Point p) {
+		super(cam, world, p);
 	}
 	
 	public boolean isUserDeleteable() {
@@ -81,7 +82,7 @@ public class Intersection extends Vertex {
 	public void paintHilite(RenderingContext ctxt) {
 		
 		ctxt.setColor(Color.WHITE);
-		ctxt.setPixelStroke(world.cam.pixelsPerMeter, 1);
+		ctxt.setPixelStroke(cam.pixelsPerMeter, 1);
 		
 		shape.draw(ctxt);
 		

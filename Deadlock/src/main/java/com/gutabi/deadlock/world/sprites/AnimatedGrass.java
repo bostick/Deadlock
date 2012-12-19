@@ -7,21 +7,22 @@ import java.awt.geom.AffineTransform;
 
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.view.RenderingContext;
-import com.gutabi.deadlock.world.World;
+import com.gutabi.deadlock.world.WorldCamera;
 
 //@SuppressWarnings("static-access")
 public class AnimatedGrass {
 	
 	public static double GRASS_SIZE = 1.0;
 	
-	public final World world;
+	WorldCamera cam;
+//	public final World world;
 	Point p;
 	int lastFrame;
 	double lastTime;
 	double phase;
 	
-	public AnimatedGrass(World world, Point p) {
-		this.world = world;
+	public AnimatedGrass(WorldCamera cam, Point p) {
+		this.cam = cam;
 		this.p = p;
 		phase = APP.RANDOM.nextDouble();
 	}
@@ -82,7 +83,7 @@ public class AnimatedGrass {
 		
 		ctxt.translate(p.x - AnimatedGrass.GRASS_SIZE/2, p.y - AnimatedGrass.GRASS_SIZE/2);
 		ctxt.paintImage(
-				world.cam.pixelsPerMeter,
+				cam.pixelsPerMeter,
 				VIEW.sheet,
 				0, 0, GRASS_SIZE, GRASS_SIZE,
 				0, 256, 0+32, 256+32);	
@@ -97,7 +98,7 @@ public class AnimatedGrass {
 		
 		ctxt.translate(p.x - AnimatedGrass.GRASS_SIZE/2, p.y - AnimatedGrass.GRASS_SIZE/2);
 		ctxt.paintImage(
-				world.cam.pixelsPerMeter,
+				cam.pixelsPerMeter,
 				VIEW.sheet,
 				0, 0, GRASS_SIZE, GRASS_SIZE,
 				32, 256, 32+32, 256+32);
@@ -112,7 +113,7 @@ public class AnimatedGrass {
 		
 		ctxt.translate(p.x - AnimatedGrass.GRASS_SIZE/2, p.y - AnimatedGrass.GRASS_SIZE/2);
 		ctxt.paintImage(
-				world.cam.pixelsPerMeter,
+				cam.pixelsPerMeter,
 				VIEW.sheet,
 				0, 0, GRASS_SIZE, GRASS_SIZE,
 				64, 256, 64+32, 256+32);

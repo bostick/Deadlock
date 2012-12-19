@@ -25,7 +25,8 @@ public class QuadrantMap {
 	public static final double QUADRANT_WIDTH = 16.0;
 	public static final double QUADRANT_HEIGHT = QUADRANT_WIDTH;
 	
-	public final World world;
+	WorldCamera cam;
+//	public final World world;
 	
 	public final double worldWidth;
 	public final double worldHeight;
@@ -41,9 +42,10 @@ public class QuadrantMap {
 	
 	public final AABB aabb;
 	
-	public QuadrantMap(World world, int[][] ini) {
+	public QuadrantMap(WorldCamera cam, int[][] ini) {
+		this.cam = cam;
 		this.ini = ini;
-		this.world = world;
+//		this.world = world;
 		
 		quadrants = initQuadrants(ini);
 		
@@ -67,9 +69,9 @@ public class QuadrantMap {
 			for (int j = 0; j < rows; j++) {
 				Quadrant q;
 				if (ini[j][i] == 1) {
-					q = new Quadrant(world, this, j, i, true);
+					q = new Quadrant(cam, this, j, i, true);
 				} else {
-					q = new Quadrant(world, this, j, i, false);
+					q = new Quadrant(cam, this, j, i, false);
 				}
 				newQuads[j][i] = q;
 				
@@ -109,8 +111,8 @@ public class QuadrantMap {
 	
 	public void canvasPostDisplay() {
 		
-		int quadrantWidthPixels = (int)Math.ceil(world.cam.pixelsPerMeter * QUADRANT_WIDTH);
-		int quadrantHeightPixels = (int)Math.ceil(world.cam.pixelsPerMeter * QUADRANT_HEIGHT);
+		int quadrantWidthPixels = (int)Math.ceil(cam.pixelsPerMeter * QUADRANT_WIDTH);
+		int quadrantHeightPixels = (int)Math.ceil(cam.pixelsPerMeter * QUADRANT_HEIGHT);
 		
 		quadrantGrass = new BufferedImage(quadrantWidthPixels, quadrantHeightPixels, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D quadrantGrassG2 = quadrantGrass.createGraphics();
@@ -126,7 +128,7 @@ public class QuadrantMap {
 			}
 		}
 		
-		canvasGrassImage = new BufferedImage(world.cam.canvasWidth, world.cam.canvasHeight, BufferedImage.TYPE_INT_ARGB);
+		canvasGrassImage = new BufferedImage(cam.canvasWidth, cam.canvasHeight, BufferedImage.TYPE_INT_ARGB);
 		
 	}
 	
@@ -248,7 +250,7 @@ public class QuadrantMap {
 		for (int i = 0; i < quadrantRows; i++) {
 			for (int j = 0; j < quadrantCols; j++) {
 				Quadrant q = quadrants[i][j];
-				q.computeGridSpacing(world.cam.pixelsPerMeter);
+				q.computeGridSpacing(cam.pixelsPerMeter);
 			}
 		}
 	}
@@ -314,10 +316,10 @@ public class QuadrantMap {
 		Graphics2D canvasGrassImageG2 = canvasGrassImage.createGraphics();
 		
 		canvasGrassImageG2.setColor(Color.LIGHT_GRAY);
-		canvasGrassImageG2.fillRect(0, 0, world.cam.canvasWidth, world.cam.canvasHeight);
+		canvasGrassImageG2.fillRect(0, 0, cam.canvasWidth, cam.canvasHeight);
 		
-		canvasGrassImageG2.scale(world.cam.pixelsPerMeter, world.cam.pixelsPerMeter);
-		canvasGrassImageG2.translate(-world.cam.worldViewport.x, -world.cam.worldViewport.y);
+		canvasGrassImageG2.scale(cam.pixelsPerMeter, cam.pixelsPerMeter);
+		canvasGrassImageG2.translate(-cam.worldViewport.x, -cam.worldViewport.y);
 		
 		RenderingContext canvasGrassContext = new RenderingContext(canvasGrassImageG2, RenderingContextType.CANVAS);
 		
@@ -338,12 +340,12 @@ public class QuadrantMap {
 	public void paint(RenderingContext ctxt) {
 		
 		AffineTransform origTransform = ctxt.getTransform();
-		ctxt.translate(world.cam.worldViewport.x, world.cam.worldViewport.y);
+		ctxt.translate(cam.worldViewport.x, cam.worldViewport.y);
 		
 		ctxt.paintImage(
-				world.cam.pixelsPerMeter,
+				cam.pixelsPerMeter,
 				canvasGrassImage,
-				0, 0, world.cam.worldViewport.width, world.cam.worldViewport.height,
+				0, 0, cam.worldViewport.width, cam.worldViewport.height,
 				0, 0, canvasGrassImage.getWidth(), canvasGrassImage.getHeight());
 		
 		ctxt.setTransform(origTransform);
