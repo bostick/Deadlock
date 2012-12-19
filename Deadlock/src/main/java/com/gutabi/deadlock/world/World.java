@@ -25,12 +25,7 @@ public class World {
 	public QuadrantMap quadrantMap;
 	public Graph graph;
 	
-	public AABB worldViewport;
-	
-	public int canvasWidth;
-	public int canvasHeight;
-	
-	public double pixelsPerMeter = 32.0;
+	public WorldCamera cam = new WorldCamera();
 	
 	public double t;
 	
@@ -73,17 +68,17 @@ public class World {
 	
 	public void canvasPostDisplay(Dim dim) {
 		
-		canvasWidth = (int)dim.width;
-		canvasHeight = (int)dim.height;
+		cam.canvasWidth = (int)dim.width;
+		cam.canvasHeight = (int)dim.height;
 		
 		quadrantMap.canvasPostDisplay();
 		graph.canvasPostDisplay();
 		
-		worldViewport = new AABB(
-				-(canvasWidth / pixelsPerMeter) / 2 + quadrantMap.worldWidth/2 ,
-				-(canvasHeight / pixelsPerMeter) / 2 + quadrantMap.worldHeight/2,
-				canvasWidth / pixelsPerMeter,
-				canvasHeight / pixelsPerMeter);
+		cam.worldViewport = new AABB(
+				-(cam.canvasWidth / cam.pixelsPerMeter) / 2 + quadrantMap.worldWidth/2 ,
+				-(cam.canvasHeight / cam.pixelsPerMeter) / 2 + quadrantMap.worldHeight/2,
+				cam.canvasWidth / cam.pixelsPerMeter,
+				cam.canvasHeight / cam.pixelsPerMeter);
 	}
 	
 	public void preStart() {
@@ -269,18 +264,18 @@ public class World {
 	
 	public void zoom(double factor) {
 		
-		pixelsPerMeter = factor * pixelsPerMeter; 
+		cam.pixelsPerMeter = factor * cam.pixelsPerMeter; 
 		
-		double newWidth =  canvasWidth / pixelsPerMeter;
-		double newHeight = canvasHeight / pixelsPerMeter;
+		double newWidth =  cam.canvasWidth / cam.pixelsPerMeter;
+		double newHeight = cam.canvasHeight / cam.pixelsPerMeter;
 		
-		worldViewport = new AABB(worldViewport.center.x - newWidth/2, worldViewport.center.y - newHeight/2, newWidth, newHeight);
+		cam.worldViewport = new AABB(cam.worldViewport.center.x - newWidth/2, cam.worldViewport.center.y - newHeight/2, newWidth, newHeight);
 	}
 	
 	public Point canvasToWorld(Point p) {
 		return new Point(
-				p.x / pixelsPerMeter + worldViewport.x,
-				p.y / pixelsPerMeter + worldViewport.y);
+				p.x / cam.pixelsPerMeter + cam.worldViewport.x,
+				p.y / cam.pixelsPerMeter + cam.worldViewport.y);
 	}
 	
 	public AABB canvasToWorld(AABB aabb) {
@@ -291,8 +286,8 @@ public class World {
 	
 	public Point worldToCanvas(Point p) {
 		return new Point(
-				(p.x - worldViewport.x) * pixelsPerMeter,
-				(p.y - worldViewport.y) * pixelsPerMeter);
+				(p.x - cam.worldViewport.x) * cam.pixelsPerMeter,
+				(p.y - cam.worldViewport.y) * cam.pixelsPerMeter);
 	}
 	
 	public AABB worldToCanvas(AABB aabb) {

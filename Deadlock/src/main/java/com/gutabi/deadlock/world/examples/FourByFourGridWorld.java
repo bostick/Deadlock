@@ -31,7 +31,7 @@ public class FourByFourGridWorld extends World {
 		
 		FourByFourGridWorld w = new FourByFourGridWorld();
 		
-		w.pixelsPerMeter = 12.5;
+		w.cam.pixelsPerMeter = 12.5;
 		
 		QuadrantMap qm = new QuadrantMap(w, ini);
 		

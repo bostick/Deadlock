@@ -108,8 +108,8 @@ public class QuadrantMap {
 	
 	public void canvasPostDisplay() {
 		
-		int quadrantWidthPixels = (int)Math.ceil(world.pixelsPerMeter * QUADRANT_WIDTH);
-		int quadrantHeightPixels = (int)Math.ceil(world.pixelsPerMeter * QUADRANT_HEIGHT);
+		int quadrantWidthPixels = (int)Math.ceil(world.cam.pixelsPerMeter * QUADRANT_WIDTH);
+		int quadrantHeightPixels = (int)Math.ceil(world.cam.pixelsPerMeter * QUADRANT_HEIGHT);
 		
 		quadrantGrass = new BufferedImage(quadrantWidthPixels, quadrantHeightPixels, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D quadrantGrassG2 = quadrantGrass.createGraphics();
@@ -125,7 +125,7 @@ public class QuadrantMap {
 			}
 		}
 		
-		canvasGrassImage = new BufferedImage(world.canvasWidth, world.canvasHeight, BufferedImage.TYPE_INT_ARGB);
+		canvasGrassImage = new BufferedImage(world.cam.canvasWidth, world.cam.canvasHeight, BufferedImage.TYPE_INT_ARGB);
 		
 	}
 	
@@ -247,7 +247,7 @@ public class QuadrantMap {
 		for (int i = 0; i < quadrantRows; i++) {
 			for (int j = 0; j < quadrantCols; j++) {
 				Quadrant q = quadrants[i][j];
-				q.computeGridSpacing(world.pixelsPerMeter);
+				q.computeGridSpacing(world.cam.pixelsPerMeter);
 			}
 		}
 	}
@@ -313,10 +313,10 @@ public class QuadrantMap {
 		Graphics2D canvasGrassImageG2 = canvasGrassImage.createGraphics();
 		
 		canvasGrassImageG2.setColor(Color.LIGHT_GRAY);
-		canvasGrassImageG2.fillRect(0, 0, world.canvasWidth, world.canvasHeight);
+		canvasGrassImageG2.fillRect(0, 0, world.cam.canvasWidth, world.cam.canvasHeight);
 		
-		canvasGrassImageG2.scale(world.pixelsPerMeter, world.pixelsPerMeter);
-		canvasGrassImageG2.translate(-world.worldViewport.x, -world.worldViewport.y);
+		canvasGrassImageG2.scale(world.cam.pixelsPerMeter, world.cam.pixelsPerMeter);
+		canvasGrassImageG2.translate(-world.cam.worldViewport.x, -world.cam.worldViewport.y);
 		
 		RenderingContext canvasGrassContext = new RenderingContext(canvasGrassImageG2, RenderingContextType.CANVAS);
 		
@@ -340,9 +340,9 @@ public class QuadrantMap {
 //		ctxt.translate(world.worldViewport.x, world.worldViewport.y);
 		
 		ctxt.paintImage(
-				world.worldViewport.x, world.worldViewport.y,
+				world.cam.worldViewport.x, world.cam.worldViewport.y,
 				canvasGrassImage,
-				0, 0, world.worldViewport.width, world.worldViewport.height,
+				0, 0, world.cam.worldViewport.width, world.cam.worldViewport.height,
 				0, 0, canvasGrassImage.getWidth(), canvasGrassImage.getHeight());
 		
 //		ctxt.setTransform(origTransform);

@@ -22,7 +22,7 @@ public abstract class Knob {
 	}
 	
 	private AABB aabb() {
-		double pixel = 1/world.pixelsPerMeter;
+		double pixel = 1/world.cam.pixelsPerMeter;
 		return new AABB(p.x + -3 * pixel, p.y + -3 * pixel, 7 * pixel, 7 * pixel);
 	}
 	

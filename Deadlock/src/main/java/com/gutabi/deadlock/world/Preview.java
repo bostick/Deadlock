@@ -18,8 +18,7 @@ public class Preview {
 	
 	public final WorldScreen screen;
 	
-	public int previewWidth;
-	public int previewHeight;
+	public PreviewCamera cam = new PreviewCamera();
 	
 	public BufferedImage previewImage;
 	
@@ -29,10 +28,10 @@ public class Preview {
 	
 	public void previewPostDisplay(Dim dim) {
 		
-		previewWidth = (int)dim.width;
-		previewHeight = (int)dim.height;
+		cam.previewWidth = (int)dim.width;
+		cam.previewHeight = (int)dim.height;
 		
-		previewImage = new BufferedImage(previewWidth, previewHeight, BufferedImage.TYPE_INT_RGB);
+		previewImage = new BufferedImage(cam.previewWidth, cam.previewHeight, BufferedImage.TYPE_INT_RGB);
 		
 	}
 	
@@ -51,8 +50,8 @@ public class Preview {
 	
 	public Point previewToWorld(Point p) {
 		
-		double pixelsPerMeterWidth = previewWidth / screen.world.quadrantMap.worldWidth;
-		double pixelsPerMeterHeight = previewHeight / screen.world.quadrantMap.worldHeight;
+		double pixelsPerMeterWidth = cam.previewWidth / screen.world.quadrantMap.worldWidth;
+		double pixelsPerMeterHeight = cam.previewHeight / screen.world.quadrantMap.worldHeight;
 		double s = Math.min(pixelsPerMeterWidth, pixelsPerMeterHeight);
 		
 		return new Point((1/s) * p.x, (1/s) * p.y);
@@ -60,8 +59,8 @@ public class Preview {
 	
 	public Point worldToPreview(Point p) {
 		
-		double pixelsPerMeterWidth = previewWidth / screen.world.quadrantMap.worldWidth;
-		double pixelsPerMeterHeight = previewHeight / screen.world.quadrantMap.worldHeight;
+		double pixelsPerMeterWidth = cam.previewWidth / screen.world.quadrantMap.worldWidth;
+		double pixelsPerMeterHeight = cam.previewHeight / screen.world.quadrantMap.worldHeight;
 		double s = Math.min(pixelsPerMeterWidth, pixelsPerMeterHeight);
 		
 		return new Point((s) * p.x, (s) * p.y);
@@ -70,11 +69,11 @@ public class Preview {
 	public void pan(Point prevDp) {
 		Point worldDP = previewToWorld(prevDp);
 		
-		screen.world.worldViewport = new AABB(
-				screen.world.worldViewport.x + worldDP.x,
-				screen.world.worldViewport.y + worldDP.y,
-				screen.world.worldViewport.width,
-				screen.world.worldViewport.height);
+		screen.world.cam.worldViewport = new AABB(
+				screen.world.cam.worldViewport.x + worldDP.x,
+				screen.world.cam.worldViewport.y + worldDP.y,
+				screen.world.cam.worldViewport.width,
+				screen.world.cam.worldViewport.height);
 	}
 	
 	public void render() {
@@ -84,14 +83,14 @@ public class Preview {
 		RenderingContext previewContext = new RenderingContext(previewImageG2, RenderingContextType.PREVIEW);
 		
 		previewImageG2.setColor(Color.LIGHT_GRAY);
-		previewImageG2.fillRect(0, 0, previewWidth, previewHeight);
+		previewImageG2.fillRect(0, 0, cam.previewWidth, cam.previewHeight);
 		
-		double pixelsPerMeterWidth = previewWidth / screen.world.quadrantMap.worldWidth;
-		double pixelsPerMeterHeight = previewHeight / screen.world.quadrantMap.worldHeight;
+		double pixelsPerMeterWidth = cam.previewWidth / screen.world.quadrantMap.worldWidth;
+		double pixelsPerMeterHeight = cam.previewHeight / screen.world.quadrantMap.worldHeight;
 		double s = Math.min(pixelsPerMeterWidth, pixelsPerMeterHeight);
 		
 		AffineTransform origTrans = previewContext.getTransform();
-		previewContext.translate(previewWidth/2 - (s * screen.world.quadrantMap.worldWidth / 2), previewHeight/2 - (s * screen.world.quadrantMap.worldHeight / 2));
+		previewContext.translate(cam.previewWidth/2 - (s * screen.world.quadrantMap.worldWidth / 2), cam.previewHeight/2 - (s * screen.world.quadrantMap.worldHeight / 2));
 		
 		previewImageG2.scale(s, s);
 		
@@ -112,21 +111,21 @@ public class Preview {
 			ctxt.paintImage(
 					0, 0,
 					previewImage,
-					0, 0, previewWidth, previewHeight,
-					0, 0, previewWidth, previewHeight);
+					0, 0, cam.previewWidth, cam.previewHeight,
+					0, 0, cam.previewWidth, cam.previewHeight);
 			
-			Point prevLoc = worldToPreview(screen.world.worldViewport.ul);
+			Point prevLoc = worldToPreview(screen.world.cam.worldViewport.ul);
 			
-			Point prevDim = worldToPreview(new Point(screen.world.worldViewport.width,screen. world.worldViewport.height));
+			Point prevDim = worldToPreview(new Point(screen.world.cam.worldViewport.width,screen. world.cam.worldViewport.height));
 			
 			AABB prev = new AABB(prevLoc.x, prevLoc.y, prevDim.x, prevDim.y);
 			
-			double pixelsPerMeterWidth = previewWidth / screen.world.quadrantMap.worldWidth;
-			double pixelsPerMeterHeight = previewHeight / screen.world.quadrantMap.worldHeight;
+			double pixelsPerMeterWidth = cam.previewWidth / screen.world.quadrantMap.worldWidth;
+			double pixelsPerMeterHeight = cam.previewHeight / screen.world.quadrantMap.worldHeight;
 			double s = Math.min(pixelsPerMeterWidth, pixelsPerMeterHeight);
 			
 			AffineTransform origTrans = ctxt.getTransform();
-			ctxt.translate(previewWidth/2 - (s * screen.world.quadrantMap.worldWidth / 2), previewHeight/2 - (s * screen.world.quadrantMap.worldHeight / 2));
+			ctxt.translate(cam.previewWidth/2 - (s * screen.world.quadrantMap.worldWidth / 2), cam.previewHeight/2 - (s * screen.world.quadrantMap.worldHeight / 2));
 			
 			ctxt.setColor(Color.BLUE);
 			prev.draw(ctxt);

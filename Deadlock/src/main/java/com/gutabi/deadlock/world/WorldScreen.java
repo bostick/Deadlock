@@ -672,8 +672,8 @@ public class WorldScreen extends ScreenBase {
 				
 				AffineTransform origTrans = ctxt.getTransform();
 				
-				ctxt.scale(world.pixelsPerMeter);
-				ctxt.translate(-world.worldViewport.x, -world.worldViewport.y);
+				ctxt.scale(world.cam.pixelsPerMeter);
+				ctxt.translate(-world.cam.worldViewport.x, -world.cam.worldViewport.y);
 				
 				synchronized (VIEW) {
 					paintWorldScreen(ctxt);
@@ -712,7 +712,7 @@ public class WorldScreen extends ScreenBase {
 			
 			if (APP.FPS_DRAW) {
 				
-				ctxt.translate(world.worldViewport.x, world.worldViewport.y);
+				ctxt.translate(world.cam.worldViewport.x, world.cam.worldViewport.y);
 				
 				stats.paint(ctxt);
 			}

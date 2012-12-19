@@ -59,7 +59,7 @@ public class Graph implements Sweepable {
 	}
 	
 	public void canvasPostDisplay() {
-		canvasGraphImage = new BufferedImage(world.canvasWidth, world.canvasHeight, BufferedImage.TYPE_INT_ARGB);
+		canvasGraphImage = new BufferedImage(world.cam.canvasWidth, world.cam.canvasHeight, BufferedImage.TYPE_INT_ARGB);
 	}
 	
 	public void preStart() {
@@ -1157,11 +1157,11 @@ public class Graph implements Sweepable {
 		AlphaComposite c = AlphaComposite.getInstance(AlphaComposite.SRC, 0.0f);
 		canvasGraphImageG2.setComposite(c);
 		canvasGraphImageG2.setColor(new Color(0, 0, 0, 0));
-		canvasGraphImageG2.fillRect(0, 0, world.canvasWidth, world.canvasHeight);
+		canvasGraphImageG2.fillRect(0, 0, world.cam.canvasWidth, world.cam.canvasHeight);
 		canvasGraphImageG2.setComposite(orig);
 		
-		canvasGraphImageG2.scale(world.pixelsPerMeter, world.pixelsPerMeter);
-		canvasGraphImageG2.translate(-world.worldViewport.x, -world.worldViewport.y);
+		canvasGraphImageG2.scale(world.cam.pixelsPerMeter, world.cam.pixelsPerMeter);
+		canvasGraphImageG2.translate(-world.cam.worldViewport.x, -world.cam.worldViewport.y);
 		
 		RenderingContext canvasGraphContext = new RenderingContext(canvasGraphImageG2, RenderingContextType.CANVAS);
 		
@@ -1197,9 +1197,9 @@ public class Graph implements Sweepable {
 	public void paint(RenderingContext ctxt) {
 		
 		ctxt.paintImage(
-				world.worldViewport.x, world.worldViewport.y,
+				world.cam.worldViewport.x, world.cam.worldViewport.y,
 				canvasGraphImage,
-				0, 0, world.worldViewport.width, world.worldViewport.height,
+				0, 0, world.cam.worldViewport.width, world.cam.worldViewport.height,
 				0, 0, canvasGraphImage.getWidth(), canvasGraphImage.getHeight());
 		
 //		ctxt.setTransform(origTransform);
