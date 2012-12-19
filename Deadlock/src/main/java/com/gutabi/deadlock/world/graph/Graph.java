@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Scanner;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -1154,21 +1155,117 @@ public class Graph implements Sweepable {
 	public static Graph fromFileString(WorldCamera cam, World world, String s) {
 		BufferedReader r = new BufferedReader(new StringReader(s));
 		
+		Vertex[] vs = null;
+		
+		Edge[] es = null;
+		
 		try {
 			String l = r.readLine();
 			assert l.equals("start graph");
 			
-			
+			l = r.readLine();
+			Scanner sc = new Scanner(l);
+			String tok = sc.next();
+			assert tok.equals("vertices");
+			int vCount = sc.nextInt();
 			
 			l = r.readLine();
-			assert l.equals("end graph");
+			sc = new Scanner(l);
+			tok = sc.next();
+			assert tok.equals("edges");
+			int eCount = sc.nextInt();
+			
+			vs = new Vertex[vCount];
+			
+			es = new Edge[eCount];
+			
+			while (true) {
+				l = r.readLine();
+				
+				StringBuilder builder;
+				
+				if (l.equals("end graph")) {
+					break;
+				} else if (l.equals("start fixture")) {
+					
+					builder = new StringBuilder();
+					builder.append(l+"\n");
+					while (true) {
+						l = r.readLine();
+						builder.append(l+"\n");
+						if (l.equals("end fixture")) {
+							break;
+						}
+					}
+					
+					Fixture f = Fixture.fromFileString(cam, world, builder.toString());
+					
+					vs[f.id] = f;
+					
+				} else if (l.equals("start intersection")) {
+					
+					builder = new StringBuilder();
+					builder.append(l+"\n");
+					while (true) {
+						l = r.readLine();
+						builder.append(l+"\n");
+						if (l.equals("end intersection")) {
+							break;
+						}
+					}
+					
+					Intersection i = Intersection.fromFileString(cam, builder.toString());
+					
+					vs[i.id] = i;
+					
+				} else if (l.equals("start road")) {
+					
+					builder = new StringBuilder();
+					builder.append(l+"\n");
+					while (true) {
+						l = r.readLine();
+						builder.append(l+"\n");
+						if (l.equals("end road")) {
+							break;
+						}
+					}
+					
+					Road rd = Road.fromFileString(cam, vs, builder.toString());
+					
+					es[rd.id] = rd;
+					
+				} else {
+					assert false;
+					break;
+				}
+				
+			}
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
+		for (Vertex v : vs) {
+			if (v instanceof Fixture) {
+				Fixture vf = (Fixture)v;
+				vf.match = (Fixture)vs[vf.matchID];
+			}
+		}
+		
 		Graph g = new Graph(cam, world);
+		
+		for (Vertex v : vs) {
+			g.vertices.add(v);
+		}
+		for (Edge e : es) {
+			g.edges.add(e);
+		}
+		
+		
+		g.refreshVertexIDs();
+		g.refreshEdgeIDs();
+		
 		return g;
 	}
 	

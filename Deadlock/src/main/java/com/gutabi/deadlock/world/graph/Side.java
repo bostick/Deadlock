@@ -24,4 +24,18 @@ public enum Side {
 		return null;
 	}
 	
+	public static Side fromFileString(String s) {
+		if (s.equals("TOP")) {
+			return Side.TOP;
+		} else if (s.equals("LEFT")) {
+			return Side.LEFT;
+		} else if (s.equals("RIGHT")) {
+			return Side.RIGHT;
+		} else if (s.equals("BOTTOM")) {
+			return Side.BOTTOM;
+		}
+		assert false;
+		return null;
+	}
+	
 }

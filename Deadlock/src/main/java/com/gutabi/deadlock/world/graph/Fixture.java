@@ -5,8 +5,12 @@ import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
 import java.awt.Color;
 import java.awt.geom.AffineTransform;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.view.ProgressMeter;
@@ -29,6 +33,8 @@ public final class Fixture extends Vertex {
 	
 	private Side s;
 	private FixtureType type;
+	
+	public int matchID;
 	public Fixture match;
 	
 	public GraphPositionPath shortestPathToMatch;
@@ -40,6 +46,10 @@ public final class Fixture extends Vertex {
 	
 	public Fixture(WorldCamera cam, World w, Point p, Axis a) {
 		super(cam, p);
+		
+		assert p != null;
+		assert a != null;
+		
 		this.world = w;
 		this.a = a;
 		hiliteColor = new Color(0, 255, 255);
@@ -244,7 +254,7 @@ public final class Fixture extends Vertex {
 		
 		s.append("id " + id + "\n");
 		
-		s.append("point " + p.toString() + "\n");
+		s.append("point " + p.toFileString() + "\n");
 		s.append("axis " + a + "\n");
 		s.append("side " + this.s + "\n");
 		s.append("type " + type + "\n");
@@ -255,8 +265,78 @@ public final class Fixture extends Vertex {
 		return s.toString();
 	}
 	
-	public static Fixture fromFileString(String s) {
-		return null;
+	public static Fixture fromFileString(WorldCamera cam, World world, String s) {
+		BufferedReader r = new BufferedReader(new StringReader(s));
+		
+		Point p = null;
+		Axis a = null;
+		int id = -1;
+		Side side = null;
+		FixtureType type = null;
+		int match = -1;
+		
+		try {
+			String l = r.readLine();
+			assert l.equals("start fixture");
+			
+			l = r.readLine();
+			Scanner sc = new Scanner(l);
+			String tok = sc.next();
+			assert tok.equals("id");
+			id = sc.nextInt();
+			
+			l = r.readLine();
+			sc = new Scanner(l);
+			tok = sc.next();
+			assert tok.equals("point");
+			
+			String rest = sc.useDelimiter("\\A").next();
+			
+			p = Point.fromFileString(rest);
+			
+			l = r.readLine();
+			sc = new Scanner(l);
+			tok = sc.next();
+			assert tok.equals("axis");
+			rest = sc.next();
+			a = Axis.fromFileString(rest);
+			
+			l = r.readLine();
+			sc = new Scanner(l);
+			tok = sc.next();
+			assert tok.equals("side");
+			rest = sc.next();
+			side = Side.fromFileString(rest);
+			
+			l = r.readLine();
+			sc = new Scanner(l);
+			tok = sc.next();
+			assert tok.equals("type");
+			rest = sc.next();
+			type = FixtureType.fromFileString(rest);
+			
+			l = r.readLine();
+			sc = new Scanner(l);
+			tok = sc.next();
+			assert tok.equals("match");
+			match = sc.nextInt();
+			
+			l = r.readLine();
+			assert l.equals("end fixture");
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		Fixture f = new Fixture(cam, world, p, a);
+		
+		f.id = id;
+		f.matchID = match;
+		f.s = side;
+		f.setType(type);
+		
+		return f;
 	}
 	
 	public void paint(RenderingContext ctxt) {

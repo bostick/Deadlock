@@ -3,6 +3,10 @@ package com.gutabi.deadlock.world.graph;
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
 import java.awt.Color;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.Scanner;
 
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.view.RenderingContext;
@@ -43,19 +47,55 @@ public class Intersection extends Vertex {
 	public String toFileString() {
 		StringBuilder s = new StringBuilder();
 		
-		s.append("start intersection \n");
+		s.append("start intersection\n");
 		
 		s.append("id " + id + "\n");
 		
-		s.append("point " + p.toString() + "\n");
+		s.append("point " + p.toFileString() + "\n");
 		
 		s.append("end intersection\n");
 		
 		return s.toString();
 	}
 	
-	public static Intersection fromFileString(String s) {
-		return null;
+	public static Intersection fromFileString(WorldCamera cam, String s) {
+		BufferedReader r = new BufferedReader(new StringReader(s));
+		
+		Point p = null;
+		int id = -1;
+		
+		try {
+			String l = r.readLine();
+			assert l.equals("start intersection");
+			
+			l = r.readLine();
+			Scanner sc = new Scanner(l);
+			String tok = sc.next();
+			assert tok.equals("id");
+			id = sc.nextInt();
+			
+			l = r.readLine();
+			sc = new Scanner(l);
+			tok = sc.next();
+			assert tok.equals("point");
+			
+			String rest = sc.useDelimiter("\\A").next();
+			
+			p = Point.fromFileString(rest);
+			
+			l = r.readLine();
+			assert l.equals("end intersection");
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		Intersection i = new Intersection(cam, p);
+		
+		i.id = id;
+		
+		return i;
 	}
 	
 	public void paint(RenderingContext ctxt) {

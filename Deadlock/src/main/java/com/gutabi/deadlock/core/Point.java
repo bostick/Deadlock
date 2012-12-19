@@ -1,6 +1,8 @@
 package com.gutabi.deadlock.core;
 
 import java.awt.geom.Point2D;
+import java.util.Scanner;
+import java.util.regex.MatchResult;
 
 import org.jbox2d.common.Vec2;
 
@@ -45,6 +47,19 @@ public class Point {
 		return "<" + x + ", " + y + ">";
 	} 
 	
+	public String toFileString() {
+		return "<" + x + ", " + y + ">";
+	}
+	
+	public static Point fromFileString(String s) {
+		Scanner sc = new Scanner(s);
+		sc.findInLine("<(\\d+\\.\\d+), (\\d+\\.\\d+)>");
+		MatchResult result = sc.match();
+		String x = result.group(1);
+		String y = result.group(2);
+		sc.close();
+		return new Point(Double.parseDouble(x), Double.parseDouble(y));
+	}
 	
 	
 	

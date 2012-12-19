@@ -4,8 +4,12 @@ import static com.gutabi.deadlock.DeadlockApplication.APP;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 import org.apache.log4j.Logger;
 
@@ -632,18 +636,116 @@ public class Road extends Edge {
 		s.append("end " + end.id + "\n");
 		
 		s.append("start points\n");
-		s.append(raw + "\n");
+		for (Point p : raw) {
+			s.append(p.toFileString() + "\n");
+		}
 		s.append("end points\n");
 		
 		s.append("direction " + direction + "\n");
+		s.append("startSign " + startSign.isEnabled() + "\n");
+		s.append("endSign " + endSign.isEnabled() + "\n");
 		
 		s.append("end road\n");
 		
 		return s.toString();
 	}
 	
-	public static Road fromFileString(String s) {
-		return null;
+	public static Road fromFileString(WorldCamera cam, Vertex[] vs, String s) {
+		BufferedReader r = new BufferedReader(new StringReader(s));
+		
+		int id = -1;
+//		int start = 0;
+//		int end = 0;
+		Vertex start = null;
+		Vertex end = null;
+		List<Point> pts = new ArrayList<Point>();
+		Direction d = null;
+		boolean startSignEnabled = false;
+		boolean endSignEnabled = false;
+		
+		
+		try {
+			String l = r.readLine();
+			assert l.equals("start road");
+			
+			l = r.readLine();
+			Scanner sc = new Scanner(l);
+			String tok = sc.next();
+			assert tok.equals("id");
+			id = sc.nextInt();
+			
+			l = r.readLine();
+			sc = new Scanner(l);
+			tok = sc.next();
+			assert tok.equals("start");
+			int startID = sc.nextInt();
+			start = vs[startID];
+			assert start != null;
+			
+			l = r.readLine();
+			sc = new Scanner(l);
+			tok = sc.next();
+			assert tok.equals("end");
+			int endID = sc.nextInt();
+			end = vs[endID];
+			assert end != null;
+			
+			l = r.readLine();
+			assert l.equals("start points");
+			
+			while (true) {
+				
+				l = r.readLine();
+				
+				if (l.equals("end points")) {
+					break;
+				} else {
+					
+					Point p = Point.fromFileString(l);
+					pts.add(p);
+					
+				}
+				
+			}
+			
+			l = r.readLine();
+			sc = new Scanner(l);
+			tok = sc.next();
+			assert tok.equals("direction");
+			String rest = sc.next();
+			d = Direction.fromFileString(rest);
+			
+			l = r.readLine();
+			sc = new Scanner(l);
+			tok = sc.next();
+			assert tok.equals("startSign");
+			startSignEnabled = sc.nextBoolean();
+			
+			l = r.readLine();
+			sc = new Scanner(l);
+			tok = sc.next();
+			assert tok.equals("endSign");
+			endSignEnabled = sc.nextBoolean();
+			
+			l = r.readLine();
+			assert l.equals("end road");
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		Road rd = new Road(cam, start, end, pts);
+		
+		rd.id = id;
+		rd.direction = d;
+		if (startSignEnabled) {
+			rd.startSign.setEnabled(true);
+		}
+		if (endSignEnabled) {
+			rd.endSign.setEnabled(true);
+		}
+		return rd;
 	}
 	
 	

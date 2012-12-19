@@ -1,15 +1,6 @@
 
 FOR ALPHA 1:
 
-fix problems with scaling and rotating images
-see quadrant editor: add/remove rows
-see 4x4 top/bottom fixtures
-
-
-scripting:
-saving to files
-reading from files
-
 add real physics
 add skids
 
@@ -104,6 +95,10 @@ or at least add it
 cleanup user input
 
 DONE:
+
+scripting:
+saving to files
+reading from files
 
 lines and curves for roads
 spline/curve editor

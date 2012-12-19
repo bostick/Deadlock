@@ -432,6 +432,7 @@ public class WorldScreen extends ScreenBase {
 				
 				mode = WorldScreenMode.EDITING;
 				
+				postDisplay();
 				render();
 				repaint();
 				
