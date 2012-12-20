@@ -37,105 +37,14 @@ public abstract class Car extends Entity {
 	public static final double CAR_LENGTH = 1.0;
 	public static final double CAR_WIDTH = 0.5;
 	
-	public static final double CAR_LOCALX = -CAR_LENGTH / 2;
-	public static final double CAR_LOCALY = -CAR_WIDTH / 2;
-	
-	public static final double BRAKE_SIZE = 0.25;
-	public static final double BRAKE_LOCALX = -BRAKE_SIZE / 2;
-	public static final double BRAKE_LOCALY = -BRAKE_SIZE / 2;
-	
-	public static final double CAR_BRAKE1X = CAR_LOCALX + BRAKE_LOCALX;
-	public static final double CAR_BRAKE1Y = CAR_LOCALY + CAR_WIDTH/4 + BRAKE_LOCALY;
-	
-	public static final double CAR_BRAKE2X = CAR_LOCALX + BRAKE_LOCALX;
-	public static final double CAR_BRAKE2Y = CAR_LOCALY + 3 * CAR_WIDTH/4 + BRAKE_LOCALY;
-	
-	
-	public static final int brakeRowStart = 288;
-	public static final int brakeRowEnd = brakeRowStart + 8;
-	
 	/*
 	 * distance that center of a car has to be from center of a sink in order to be sinked
 	 */
 	public static final double SINK_EPSILON = 0.5f;
 	
-	protected int sheetRowStart;
-	protected int sheetRowEnd;
-	
 	public abstract double getMaxSpeed();
 	
-	
-	
-//	double steeringLookaheadDistance = CAR_LENGTH * 1.5;
-//	double carProximityLookahead = 0.5 * CAR_LENGTH + 0.5 * CAR_LENGTH + getMaxSpeed() * MODEL.dt + 0.4;
-//	double vertexArrivalLookahead = CAR_LENGTH * 0.5 + CAR_LENGTH + getMaxSpeed() * MODEL.dt + 0.4;
-//	/*
-//	 * turning radius
-//	 * 3 car lengths for 180 deg = 3 meters for 3.14 radians
-//	 */
-//	private double maxRadsPerMeter = Double.POSITIVE_INFINITY;
-//	private double maxAcceleration = getMaxSpeed() / 3.0;
-//	private double maxDeceleration = -getMaxSpeed() / 3.0;
-//	private double frictionForwardImpulseCoefficient = 0.0;
-//	private double frictionLateralImpulseCoefficient = 0.0;
-//	private double frictionAngularImpulseCoefficient = 0.0;
-//	private double driveForwardImpulseCoefficient = 1.0;
-//	private double driveLateralImpulseCoefficient = 1.0;
-//	private double brakeForwardImpulseCoefficient = 1.0;
-//	private double brakeLateralImpulseCoefficient = 1.0;
-//	private double turnAngularImpulseCoefficient = 1.0;
-	
-	
-	
-	
-//	double steeringLookaheadDistance = CAR_LENGTH * 0.5;
-//	double carProximityLookahead = 0.5 * CAR_LENGTH + 0.5 * CAR_LENGTH + getMaxSpeed() * MODEL.dt + 0.8 * CAR_LENGTH;
-//	double vertexArrivalLookahead = CAR_LENGTH * 0.5;
-//	/*
-//	 * turning radius
-//	 * 3 car lengths for 180 deg = 3 meters for 3.14 radians
-//	 */
-//	private double maxRadsPerMeter = Double.POSITIVE_INFINITY;
-//	private double maxAcceleration = Double.POSITIVE_INFINITY;
-//	private double maxDeceleration = Double.NEGATIVE_INFINITY;
-//	private double frictionForwardImpulseCoefficient = 0.0;
-//	private double frictionLateralImpulseCoefficient = 0.0;
-//	private double frictionAngularImpulseCoefficient = 0.0;
-//	private double driveForwardImpulseCoefficient = 1.0;
-//	private double driveLateralImpulseCoefficient = 1.0;
-//	private double brakeForwardImpulseCoefficient = 1.0;
-//	private double brakeLateralImpulseCoefficient = 1.0;
-//	private double turnAngularImpulseCoefficient = 1.0;
-	
-	
-	double steeringLookaheadDistance = CAR_LENGTH * 0.5;
-	
-	/*
-	 * turning radius
-	 * 3 car lengths for 180 deg = 3 meters for 3.14 radians
-	 */
-	private double maxRadsPerMeter = Double.POSITIVE_INFINITY;
-	private double maxAcceleration = Double.POSITIVE_INFINITY;
-//	private double maxDeceleration = Double.NEGATIVE_INFINITY;
-	private double frictionForwardImpulseCoefficient = 0.01;
-	private double frictionLateralImpulseCoefficient = 0.04;
-	private double frictionAngularImpulseCoefficient = 0.02;
-	private double driveForwardImpulseCoefficient = 1.0;
-	private double driveLateralImpulseCoefficient = 1.0;
-	private double brakeForwardImpulseCoefficient = 1.0;
-	private double brakeLateralImpulseCoefficient = 1.0;
-	private double turnAngularImpulseCoefficient = 1.0;
-	
-	
-	
-	
-	
-	
-	
-
-	
 	public CarStateEnum state;
-	
 	
 	public double startingTime;
 	public double crashingTime;
@@ -145,6 +54,7 @@ public abstract class Car extends Entity {
 	public Fixture source;
 	
 	public final Driver driver;
+	public Engine engine;
 	
 	public int id;
 	
@@ -159,7 +69,6 @@ public abstract class Car extends Entity {
 	protected Body b2dBody;
 	protected PolygonShape b2dShape;
 	protected org.jbox2d.dynamics.Fixture b2dFixture;
-	protected boolean b2dInited;
 	
 	/*
 	 * dynamic properties
@@ -180,11 +89,6 @@ public abstract class Car extends Entity {
 	Point prevWorldPoint0;
 	Point prevWorldPoint3;
 	
-	Point goalPoint;
-	
-	protected Color color;
-	protected Color hiliteColor;
-	
 	private Quad shape;
 	
 	static Logger logger = Logger.getLogger(Car.class);
@@ -200,9 +104,7 @@ public abstract class Car extends Entity {
 		state = CarStateEnum.DRIVING;
 		
 		driver = new Driver(this);
-		
-		color = Color.BLUE;
-		hiliteColor = Color.BLUE;
+		engine = new Engine(this);
 		
 		Point p0 = new Point(-CAR_LENGTH / 2, -CAR_LENGTH / 4);
 		Point p1 = new Point(CAR_LENGTH / 2, -CAR_LENGTH / 4);
@@ -469,184 +371,16 @@ public abstract class Car extends Entity {
 		
 		switch (state) {
 		case DRIVING: 
-		case BRAKING: {
+		case BRAKING:
 			driver.preStep(t);
 			break;
-		}
 		case CRASHED:
 		case SKIDDED:
 		case SINKED:
 			break;
 		}
 		
-		switch (state) {
-		case DRIVING:
-			
-			GraphPositionPathPosition next = driver.overallPos.travel(Math.min(steeringLookaheadDistance, driver.overallPos.lengthToEndOfPath));
-			
-			goalPoint = next.p;
-			
-			updateFriction();
-			updateDrive(t);
-			break;
-			
-		case BRAKING:
-			goalPoint = null;
-			
-			updateFriction();
-			updateBrake(t);
-			break;
-			
-		case CRASHED:
-			
-			updateFriction();
-			break;
-			
-		case SKIDDED:
-			
-			updateFriction();
-			break;
-			
-		case SINKED:
-			
-			updateFriction();
-			break;
-			
-		}
-	}
-	
-	private void updateFriction() {
-		
-		Vec2 cancelingImpulse = vel.mul(-1).mul(mass);
-		
-		if (cancelingImpulse.lengthSquared() == 0.0f) {
-			return;
-		}
-		
-		float cancelingForwardImpulse = (float)(frictionForwardImpulseCoefficient * Vec2.dot(currentRightNormal, cancelingImpulse));
-		float cancelingLateralImpulse = (float)(frictionLateralImpulseCoefficient * Vec2.dot(currentUpNormal, cancelingImpulse));
-		
-		b2dBody.applyLinearImpulse(currentRightNormal.mul(cancelingForwardImpulse), b2dBody.getWorldCenter());
-		b2dBody.applyLinearImpulse(currentUpNormal.mul(cancelingLateralImpulse), b2dBody.getWorldCenter());
-		
-		float cancelingAngImpulse = (float)(frictionAngularImpulseCoefficient * momentOfInertia * -angularVel);
-		
-		b2dBody.applyAngularImpulse(cancelingAngImpulse);
-	}
-	
-	private void updateDrive(double t) {
-		
-		double goalForwardVel = (float)getMaxSpeed();
-		
-		double dv;
-		if (goalForwardVel > forwardSpeed) {
-			dv = goalForwardVel - forwardSpeed;
-		} else {
-			dv = 0.0f;
-		}
-		if (dv < 0) {
-			assert false;
-		}
-		if (dv > maxAcceleration * APP.dt) {
-			dv = maxAcceleration * APP.dt;
-		}
-		
-//		logger.debug("acc for driving: " + acc);
-		
-		float forwardImpulse = (float)(driveForwardImpulseCoefficient * mass * dv);
-		
-		b2dBody.applyLinearImpulse(currentRightNormal.mul(forwardImpulse), b2dBody.getWorldCenter());
-		
-		Vec2 cancelingImpulse = vel.mul(-1).mul(mass);
-		float driveLateralImpulse = (float)(driveLateralImpulseCoefficient * Vec2.dot(currentUpNormal, cancelingImpulse));
-		
-		b2dBody.applyLinearImpulse(currentUpNormal.mul(driveLateralImpulse), b2dBody.getWorldCenter());
-		
-		
-		
-		Point dp = new Point(goalPoint.x-p.x, goalPoint.y-p.y);
-		
-		double goalAngle = Math.atan2(dp.y, dp.x);
-		
-//		if (logger.isDebugEnabled()) {
-//			logger.debug("updateTurn: goalAngle: " + goalAngle);
-//		}
-		
-		double dw = ((float)goalAngle) - angle;
-		
-		while (dw > Math.PI) {
-			dw -= 2*Math.PI;
-		}
-		while (dw < -Math.PI) {
-			dw += 2*Math.PI;
-		}
-		
-		/*
-		 * turning radius
-		 */
-		
-		double actualDistance = Math.abs(forwardSpeed * APP.dt);
-		double maxRads = maxRadsPerMeter * actualDistance;
-		double negMaxRads = -maxRads;
-		if (dw > maxRads) {
-			dw = maxRads;
-		} else if (dw < negMaxRads) {
-			dw = negMaxRads;
-		}
-		
-//		if (dw > 0.52) {
-//			String.class.getName();
-//		} else if (dw < -0.52) {
-//			String.class.getName();
-//		}
-		
-//		if (logger.isDebugEnabled()) {
-//			logger.debug("updateTurn: dw: " + dw);
-//		}
-		
-		float goalAngVel = (float)(dw / APP.dt);
-		
-		float angImpulse = (float)(turnAngularImpulseCoefficient * momentOfInertia * (goalAngVel - angularVel));
-		
-		b2dBody.applyAngularImpulse(angImpulse);
-		
-	}
-	
-	private void updateBrake(double t) {
-		
-		if (driver.decelTime == -1) {
-			
-//			logger.debug("decel");
-			
-			driver.decelTime = t;
-		}
-		
-		if (driver.stoppedTime != -1) {
-			return;
-		}
-		
-		//logger.debug("acc for braking: " + -forwardVel.length());
-		
-		Vec2 cancelingVel = vel.mul(-1);
-		double cancelingRightVel = Vec2.dot(cancelingVel, currentRightNormal);
-		double cancelingUpVel = Vec2.dot(cancelingVel, currentUpNormal);
-		
-//		if (logger.isDebugEnabled()) {
-//			logger.debug("braking dv: " + dv);
-//		}
-		
-		float rightBrakeImpulse = (float)(brakeForwardImpulseCoefficient * cancelingRightVel * mass);
-		float upBrakeImpulse = (float)(brakeLateralImpulseCoefficient * cancelingUpVel * mass);
-		
-		b2dBody.applyLinearImpulse(currentRightNormal.mul(rightBrakeImpulse), pVec2);
-		b2dBody.applyLinearImpulse(currentUpNormal.mul(upBrakeImpulse), pVec2);
-		
-		
-		double goalAngVel = 0.0;
-		
-		float angImpulse = (float)(turnAngularImpulseCoefficient * momentOfInertia * (goalAngVel - angularVel));
-		
-		b2dBody.applyAngularImpulse(angImpulse);
+		engine.preStep(t);
 	}
 	
 	/**
@@ -844,13 +578,32 @@ public abstract class Car extends Entity {
 	 * @param g2 in world coords
 	 */
 	public void paintHilite(RenderingContext ctxt) {
-		ctxt.setColor(hiliteColor);
+		ctxt.setColor(Color.BLUE);
 		paintRect(ctxt);
 	}
 	
 	
 	static Composite aComp = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f);
 	static Composite normalComp = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f);
+	
+	public static final double CAR_LOCALX = -CAR_LENGTH / 2;
+	public static final double CAR_LOCALY = -CAR_WIDTH / 2;
+	
+	public static final double BRAKE_SIZE = 0.25;
+	public static final double BRAKE_LOCALX = -BRAKE_SIZE / 2;
+	public static final double BRAKE_LOCALY = -BRAKE_SIZE / 2;
+	
+	public static final double CAR_BRAKE1X = CAR_LOCALX + BRAKE_LOCALX;
+	public static final double CAR_BRAKE1Y = CAR_LOCALY + CAR_WIDTH/4 + BRAKE_LOCALY;
+	
+	public static final double CAR_BRAKE2X = CAR_LOCALX + BRAKE_LOCALX;
+	public static final double CAR_BRAKE2Y = CAR_LOCALY + 3 * CAR_WIDTH/4 + BRAKE_LOCALY;
+	
+	public static final int brakeRowStart = 288;
+	public static final int brakeRowEnd = brakeRowStart + 8;
+	
+	protected int sheetRowStart;
+	protected int sheetRowEnd;
 	
 	protected void paintImage(RenderingContext ctxt) {
 		

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.gutabi.deadlock.core.DMath;
+import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.world.graph.GraphPositionPath;
 import com.gutabi.deadlock.world.graph.GraphPositionPathPosition;
 
@@ -17,7 +18,7 @@ public class Driver {
 	double carProximityLookahead;
 	double vertexArrivalLookahead;
 	
-	
+	double steeringLookaheadDistance = Car.CAR_LENGTH * 0.5;
 	
 	public final Car c;
 	
@@ -33,6 +34,8 @@ public class Driver {
 	double decelTime = -1;
 	public double stoppedTime = -1;
 	public boolean deadlocked;
+	
+	Point goalPoint;
 	
 	public Driver(Car c) {
 		this.c = c;
@@ -124,6 +127,21 @@ public class Driver {
 		
 		cleanupVertexDepartureQueue();
 		
+		switch (c.state) {
+		case DRIVING:
+			GraphPositionPathPosition next = overallPos.travel(Math.min(steeringLookaheadDistance, overallPos.lengthToEndOfPath));
+			goalPoint = next.p;
+			break;
+		case BRAKING:
+			goalPoint = null;
+			break;
+		case CRASHED:
+			break;
+		case SKIDDED:
+			break;
+		case SINKED:
+			break;
+		}
 	}
 	
 	private CarProximityEvent findNewCarProximityEvent() {
