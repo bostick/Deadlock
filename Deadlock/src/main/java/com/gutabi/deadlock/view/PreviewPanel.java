@@ -27,10 +27,14 @@ public class PreviewPanel extends ComponentBase {
 	
 	public PreviewPanel() {
 		
+		final RenderingContext ctxt = new RenderingContext(RenderingContextType.PREVIEW);
+		
 		c = new JPanel() {
 			public void paintComponent(Graphics g) {
 				super.paintComponent(g);
-				APP.screen.paint(new PaintEvent(PreviewPanel.this, new RenderingContext((Graphics2D)g, RenderingContextType.PREVIEW)));
+				ctxt.g2 = (Graphics2D)g;
+				APP.screen.paint(new PaintEvent(PreviewPanel.this, ctxt));
+//				prev.paint(ctxt);
 			}
 		};
 		c.setSize(new Dimension(PREVIEW_WIDTH, PREVIEW_HEIGHT));
@@ -168,5 +172,9 @@ public class PreviewPanel extends ComponentBase {
 		
 		APP.screen.dragged(ev);
 	}
-
+	
+	public void repaint() {
+		c.repaint();
+	}
+	
 }

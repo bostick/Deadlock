@@ -3,7 +3,6 @@ package com.gutabi.deadlock.world;
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.geom.AffineTransform;
@@ -146,7 +145,7 @@ public class WorldScreen extends ScreenBase {
 		tool.setPoint(world.quadrantMap.getPoint(lastMovedOrDraggedWorldPoint));
 		
 		render();
-		repaint();
+		repaintCanvas();
 	}
 	
 	public void deleteKey(InputEvent ev) {
@@ -194,7 +193,8 @@ public class WorldScreen extends ScreenBase {
 		}
 		
 		render();
-		repaint();
+		repaintCanvas();
+		repaintControlPanel();
 	}
 	
 	public void insertKey(InputEvent ev) {
@@ -286,7 +286,8 @@ public class WorldScreen extends ScreenBase {
 		}
 		
 		render();
-		repaint();
+		repaintCanvas();
+		repaintControlPanel();
 	}
 	
 	public void minusKey(InputEvent ev) {
@@ -314,7 +315,8 @@ public class WorldScreen extends ScreenBase {
 		}
 		
 		render();
-		repaint();
+		repaintCanvas();
+		repaintControlPanel();
 	}
 	
 	public void aKey(InputEvent ev) {
@@ -434,7 +436,8 @@ public class WorldScreen extends ScreenBase {
 				
 				postDisplay();
 				render();
-				repaint();
+				repaintCanvas();
+				repaintControlPanel();
 				
 			} else {
 				
@@ -659,7 +662,8 @@ public class WorldScreen extends ScreenBase {
 			APP.DEBUG_DRAW = state;
 			
 			render();
-			repaint();
+			repaintCanvas();
+			repaintControlPanel();
 			
 		} else if (e.getActionCommand().equals("fpsDraw")) {
 			
@@ -668,7 +672,8 @@ public class WorldScreen extends ScreenBase {
 			APP.FPS_DRAW = state;
 			
 			render();
-			repaint();
+			repaintCanvas();
+			repaintControlPanel();
 			
 		} else if (e.getActionCommand().equals("stopSignDraw")) {
 			
@@ -677,7 +682,8 @@ public class WorldScreen extends ScreenBase {
 			APP.STOPSIGN_DRAW = state;
 			
 			render();
-			repaint();
+			repaintCanvas();
+			repaintControlPanel();
 			
 		} else if (e.getActionCommand().equals("carTextureDraw")) {
 			
@@ -685,7 +691,8 @@ public class WorldScreen extends ScreenBase {
 			
 			APP.CARTEXTURE_DRAW = state;
 			
-			repaint();
+			repaintCanvas();
+			repaintControlPanel();
 			
 		} else if (e.getActionCommand().equals("explosionsDraw")) {
 			
@@ -693,7 +700,8 @@ public class WorldScreen extends ScreenBase {
 			
 			APP.EXPLOSIONS_DRAW = state;
 			
-			repaint();
+			repaintCanvas();
+			repaintControlPanel();
 		}
 	}
 	
@@ -706,10 +714,12 @@ public class WorldScreen extends ScreenBase {
 	}
 	
 	
+	RenderingContext ctxt = new RenderingContext(RenderingContextType.CANVAS);
+	
 	/**
 	 * screen method
 	 */
-	public void repaint() {
+	public void repaintCanvas() {
 		
 		if (SwingUtilities.isEventDispatchThread()) {
 			if (mode == WorldScreenMode.RUNNING) {
@@ -723,15 +733,14 @@ public class WorldScreen extends ScreenBase {
 				
 				Graphics2D g2 = (Graphics2D)VIEW.canvas.bs.getDrawGraphics();
 				
-				g2.setColor(Color.LIGHT_GRAY);
-				g2.fillRect(0, 0, VIEW.canvas.getWidth(), VIEW.canvas.getHeight());
+//				g2.setColor(Color.DARK_GRAY);
+//				g2.fillRect(0, 0, cam.canvasWidth, cam.canvasHeight);
 				
-				RenderingContext ctxt = new RenderingContext(g2, RenderingContextType.CANVAS);
+				ctxt.g2 = g2;
 				
-				synchronized (VIEW) {
-					paintWorldScreen(ctxt);
-				}
-//				paintWorldScreen(ctxt);
+				//synchronized (VIEW) {
+				paintWorldScreen(ctxt);
+				//}
 				
 				g2.dispose();
 				
@@ -741,9 +750,6 @@ public class WorldScreen extends ScreenBase {
 			
 		} while (VIEW.canvas.bs.contentsLost());
 		
-//		VIEW.controlPanel.repaint();
-		VIEW.controlPanel.repaint();
-		
 	}
 	
 	public void paintWorldScreen(RenderingContext ctxt) {
@@ -752,8 +758,6 @@ public class WorldScreen extends ScreenBase {
 		case CANVAS: {
 			
 			world.paintWorldBackground(ctxt);
-			
-			
 			
 			AffineTransform origTrans = ctxt.getTransform();
 			
@@ -805,9 +809,14 @@ public class WorldScreen extends ScreenBase {
 		
 	}
 	
+	public void repaintControlPanel() {
+		VIEW.controlPanel.repaint();
+	}
+	
 	public void paint(PaintEvent ev) {
 		if (ev.c == VIEW.canvas) {
-			VIEW.canvas.bs.show();
+//			VIEW.canvas.bs.show();
+			assert false;
 		} else if (ev.c == VIEW.previewPanel) {
 			preview.paint(ev.ctxt);
 		} else {

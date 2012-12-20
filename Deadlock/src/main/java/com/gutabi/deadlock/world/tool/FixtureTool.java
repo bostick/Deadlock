@@ -132,7 +132,7 @@ public class FixtureTool extends ToolBase {
 		
 		screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
 		
-		screen.repaint();
+		screen.repaintCanvas();
 	}
 	
 	public void wKey(InputEvent ev) {
@@ -170,18 +170,19 @@ public class FixtureTool extends ToolBase {
 			screen.tool.setPoint(screen.lastMovedWorldPoint);
 			
 			screen.render();
-			screen.repaint();		
+			screen.repaintCanvas();
+			screen.repaintControlPanel();
 		}
 	}
 	
 	public void moved(InputEvent ev) {
 		screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
-		screen.repaint();
+		screen.repaintCanvas();
 	}
 	
 	public void exited(InputEvent ev) {
 		screen.tool.setPoint(null);
-		screen.repaint();
+		screen.repaintCanvas();
 	}
 	
 	public void draw(RenderingContext ctxt) {

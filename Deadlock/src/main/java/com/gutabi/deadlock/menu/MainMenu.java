@@ -61,7 +61,9 @@ public class MainMenu extends ScreenBase {
 				
 				APP.screen.postDisplay();
 				APP.screen.render();
-				APP.screen.repaint();
+//				APP.screen.repaint();
+				VIEW.canvas.repaint();
+//				VIEW.previewPanel.repaint();
 				
 			}
 		};
@@ -82,7 +84,9 @@ public class MainMenu extends ScreenBase {
 				
 				APP.screen.postDisplay();
 				APP.screen.render();
-				APP.screen.repaint();
+//				APP.screen.repaint();
+				VIEW.canvas.repaint();
+				VIEW.previewPanel.repaint();
 				
 			}
 		};
@@ -104,7 +108,9 @@ public class MainMenu extends ScreenBase {
 				
 				APP.screen.postDisplay();
 				APP.screen.render();
-				APP.screen.repaint();
+//				APP.screen.repaint();
+				VIEW.canvas.repaint();
+				VIEW.previewPanel.repaint();
 				
 			}
 		};
@@ -116,8 +122,9 @@ public class MainMenu extends ScreenBase {
 				APP.screen = new QuadrantEditor();
 				
 				APP.screen.render();
-				APP.screen.repaint();
-				
+//				APP.screen.repaint();
+				VIEW.canvas.repaint();
+//				VIEW.previewPanel.repaint();
 			}
 		};
 		add(dialogMenuItem);
@@ -210,7 +217,7 @@ public class MainMenu extends ScreenBase {
 			hilited = hilited.down;
 		}
 		
-		repaint();
+		repaintCanvas();
 	}
 	
 	public void upKey(InputEvent ev) {
@@ -229,7 +236,7 @@ public class MainMenu extends ScreenBase {
 			hilited = hilited.up;
 		}
 		
-		repaint();
+		repaintCanvas();
 	}
 	
 	public void enterKey(InputEvent ev) {
@@ -259,7 +266,7 @@ public class MainMenu extends ScreenBase {
 			hilited = null;
 		}
 		
-		repaint();
+		repaintCanvas();
 	}
 	
 	Point lastClickedMenuPoint;
@@ -285,7 +292,8 @@ public class MainMenu extends ScreenBase {
 			
 			Graphics2D canvasMenuImageG2 = canvasMenuImage.createGraphics();
 			
-			RenderingContext canvasMenuContext = new RenderingContext(canvasMenuImageG2, RenderingContextType.CANVAS);
+			RenderingContext canvasMenuContext = new RenderingContext(RenderingContextType.CANVAS);
+			canvasMenuContext.g2 = canvasMenuImageG2;
 			
 			for (MenuItem item : items) {
 				item.renderLocal(canvasMenuContext);
@@ -311,7 +319,7 @@ public class MainMenu extends ScreenBase {
 		
 	}
 	
-	public void repaint() {
+	public void repaintCanvas() {
 		logger.debug("repaint");
 		
 		do {
@@ -320,7 +328,8 @@ public class MainMenu extends ScreenBase {
 				
 				Graphics2D g2 = (Graphics2D)VIEW.canvas.bs.getDrawGraphics();
 				
-				RenderingContext ctxt = new RenderingContext(g2, RenderingContextType.CANVAS);
+				RenderingContext ctxt = new RenderingContext(RenderingContextType.CANVAS);
+				ctxt.g2 = g2;
 				
 				AffineTransform origTrans = ctxt.getTransform();
 				
@@ -364,13 +373,7 @@ public class MainMenu extends ScreenBase {
 	}
 	
 	public void paint(PaintEvent ev) {
-		logger.debug("paint");
-		
-		if (ev.c == VIEW.canvas) {
-			VIEW.canvas.bs.show();
-		} else {
-			assert false;
-		}
+		assert false;
 	}
 	
 }

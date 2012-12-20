@@ -31,7 +31,9 @@ public class DeadlockMain  {
 		
 		APP.screen.postDisplay();
 		APP.screen.render();
-		APP.screen.repaint();
+//		APP.screen.repaint();
+		VIEW.canvas.repaint();
+//		VIEW.previewPanel.repaint();
 	}
 	
 	public static Thread.UncaughtExceptionHandler handler = new Thread.UncaughtExceptionHandler() {

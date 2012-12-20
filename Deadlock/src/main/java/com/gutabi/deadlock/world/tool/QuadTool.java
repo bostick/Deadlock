@@ -116,12 +116,12 @@ public class QuadTool extends ToolBase {
 		case FREE:
 			screen.tool = new RegularTool(screen);
 			screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
-			screen.repaint();
+			screen.repaintCanvas();
 			break;
 		case SET:
 			mode = QuadToolMode.FREE;
 			screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
-			screen.repaint();
+			screen.repaintCanvas();
 			break;
 		case KNOB:
 			assert false;
@@ -133,7 +133,7 @@ public class QuadTool extends ToolBase {
 		switch (mode) {
 		case FREE:
 			mode = QuadToolMode.SET;
-			screen.repaint();
+			screen.repaintCanvas();
 			break;
 		case SET:
 			
@@ -152,7 +152,8 @@ public class QuadTool extends ToolBase {
 			screen.tool.setPoint(screen.lastMovedOrDraggedWorldPoint);
 			
 			screen.render();
-			screen.repaint();
+			screen.repaintCanvas();
+			screen.repaintControlPanel();
 			break;
 		case KNOB:
 			assert false;
@@ -164,7 +165,7 @@ public class QuadTool extends ToolBase {
 		switch (mode) {
 		case FREE:
 			screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
-			screen.repaint();
+			screen.repaintCanvas();
 			break;
 		case SET:
 		case KNOB:
@@ -180,7 +181,7 @@ public class QuadTool extends ToolBase {
 			break;
 		case KNOB:
 			mode = QuadToolMode.SET;
-			screen.repaint();
+			screen.repaintCanvas();
 			break;
 		}
 	}
@@ -219,7 +220,7 @@ public class QuadTool extends ToolBase {
 		case KNOB:
 			Point diff = new Point(screen.lastDraggedWorldPoint.x - screen.lastPressedWorldPoint.x, screen.lastDraggedWorldPoint.y - screen.lastPressedWorldPoint.y);
 			knob.drag(origKnobCenter.plus(diff));
-			screen.repaint();
+			screen.repaintCanvas();
 			break;
 		}
 	}

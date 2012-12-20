@@ -108,12 +108,12 @@ public class CircleTool extends ToolBase {
 		case FREE:
 			screen.tool = new RegularTool(screen);
 			screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
-			screen.repaint();
+			screen.repaintCanvas();
 			break;
 		case SET:
 			mode = CircleToolMode.FREE;
 			screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
-			screen.repaint();
+			screen.repaintCanvas();
 			break;
 		case KNOB:
 			assert false;
@@ -125,7 +125,7 @@ public class CircleTool extends ToolBase {
 		switch (mode) {
 		case FREE:
 			mode = CircleToolMode.SET;
-			screen.repaint();
+			screen.repaintCanvas();
 			break;
 		case SET:
 			
@@ -144,7 +144,8 @@ public class CircleTool extends ToolBase {
 			screen.tool.setPoint(screen.lastMovedWorldPoint);
 			
 			screen.render();
-			screen.repaint();
+			screen.repaintCanvas();
+			screen.repaintControlPanel();
 			break;
 		case KNOB:
 			break;
@@ -162,7 +163,7 @@ public class CircleTool extends ToolBase {
 			
 			screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
 			
-			screen.repaint();
+			screen.repaintCanvas();
 			break;
 		case SET:
 		case KNOB:
@@ -199,7 +200,7 @@ public class CircleTool extends ToolBase {
 			
 			knob.drag(origKnobCenter.plus(diff));
 			
-			screen.repaint();
+			screen.repaintCanvas();
 			break;
 		}
 	}
@@ -211,7 +212,7 @@ public class CircleTool extends ToolBase {
 			break;
 		case KNOB:	
 			mode = CircleToolMode.SET;
-			screen.repaint();
+			screen.repaintCanvas();
 			break;
 		}
 	}

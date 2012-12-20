@@ -68,13 +68,13 @@ public class SimulationRunnable implements Runnable {
 				t += APP.dt;
 			}
 			
-			screen.repaint();
+			screen.repaintCanvas();
 			
 		} // outer
 		
 		screen.world.postStop();
 		
-		screen.repaint();
+		screen.repaintCanvas();
 	}
 	
 }

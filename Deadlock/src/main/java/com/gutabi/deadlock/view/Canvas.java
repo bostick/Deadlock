@@ -3,7 +3,6 @@ package com.gutabi.deadlock.view;
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -30,10 +29,14 @@ public class Canvas extends Component {
 	
 	public Canvas() {
 		
+//		final RenderingContext ctxt = new RenderingContext(RenderingContextType.CANVAS);
+		
 		c = new java.awt.Canvas() {
 			public void paint(Graphics g) {
-				logger.debug("paint");
-				APP.screen.paint(new PaintEvent(Canvas.this, new RenderingContext((Graphics2D)g, RenderingContextType.CANVAS)));
+//				logger.debug("paint");
+//				ctxt.g2 = (Graphics2D)g;
+//				APP.screen.paint(new PaintEvent(Canvas.this, ctxt));
+				bs.show();
 			}
 		};
 		jl = new JavaListener();
@@ -283,6 +286,12 @@ public class Canvas extends Component {
 	
 	public void ctrlOKey(InputEvent ev) {
 		APP.screen.ctrlOKey(ev);
+	}
+	
+	
+	
+	public void repaint() {
+		c.repaint();
 	}
 	
 }

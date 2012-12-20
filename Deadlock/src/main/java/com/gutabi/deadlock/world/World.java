@@ -39,7 +39,7 @@ public class World {
 	
 //	public BufferedImage canvasGrassImage;
 //	public BufferedImage canvasGraphImage;
-	public BufferedImage background;
+	private BufferedImage background;
 	
 	
 	public CarMap carMap;
@@ -316,13 +316,14 @@ public class World {
 			
 			Graphics2D backgroundG2 = background.createGraphics();
 			
-			backgroundG2.setColor(Color.LIGHT_GRAY);
+			backgroundG2.setColor(Color.DARK_GRAY);
 			backgroundG2.fillRect(0, 0, cam.canvasWidth, cam.canvasHeight);
 			
 			backgroundG2.scale(cam.pixelsPerMeter, cam.pixelsPerMeter);
 			backgroundG2.translate(-cam.worldViewport.x, -cam.worldViewport.y);
 			
-			RenderingContext backgroundCtxt = new RenderingContext(backgroundG2, RenderingContextType.CANVAS);
+			RenderingContext backgroundCtxt = new RenderingContext(RenderingContextType.CANVAS);
+			backgroundCtxt.g2 = backgroundG2;
 			
 			quadrantMap.render(backgroundCtxt);
 			graph.render(backgroundCtxt);
@@ -334,10 +335,14 @@ public class World {
 	}
 	
 	public void paintWorldBackground(RenderingContext ctxt) {
-		ctxt.paintImage(
-				background,
-				0, 0, cam.canvasWidth, cam.canvasHeight,
-				0, 0, cam.canvasWidth, cam.canvasHeight);
+		
+//		synchronized (VIEW) {
+			ctxt.paintImage(
+					background,
+					0, 0, cam.canvasWidth, cam.canvasHeight,
+					0, 0, cam.canvasWidth, cam.canvasHeight);
+//		}
+		
 	}
 	
 	public void paintWorldScene(RenderingContext ctxt) {

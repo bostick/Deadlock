@@ -94,7 +94,7 @@ public class QuadrantEditor extends ScreenBase {
 				worldCam.worldViewport = new AABB(0, 0, world.quadrantMap.worldWidth, world.quadrantMap.worldHeight);
 				
 				render();
-				repaint();
+				repaintCanvas();
 				
 			}
 			
@@ -138,7 +138,7 @@ public class QuadrantEditor extends ScreenBase {
 				worldCam.worldViewport = new AABB(0, 0, world.quadrantMap.worldWidth, world.quadrantMap.worldHeight);
 				
 				render();
-				repaint();
+				repaintCanvas();
 				
 			}
 			
@@ -182,7 +182,7 @@ public class QuadrantEditor extends ScreenBase {
 				worldCam.worldViewport = new AABB(0, 0, world.quadrantMap.worldWidth, world.quadrantMap.worldHeight);
 				
 				render();
-				repaint();
+				repaintCanvas();
 				
 			}
 			
@@ -225,7 +225,7 @@ public class QuadrantEditor extends ScreenBase {
 				worldCam.worldViewport = new AABB(0, 0, world.quadrantMap.worldWidth, world.quadrantMap.worldHeight);
 				
 				render();
-				repaint();
+				repaintCanvas();
 				
 			}
 			
@@ -270,7 +270,7 @@ public class QuadrantEditor extends ScreenBase {
 				worldCam.worldViewport = new AABB(0, 0, world.quadrantMap.worldWidth, world.quadrantMap.worldHeight);
 				
 				render();
-				repaint();
+				repaintCanvas();
 				
 			}
 			
@@ -314,7 +314,7 @@ public class QuadrantEditor extends ScreenBase {
 				worldCam.worldViewport = new AABB(0, 0, world.quadrantMap.worldWidth, world.quadrantMap.worldHeight);
 				
 				render();
-				repaint();
+				repaintCanvas();
 				
 			}
 			
@@ -350,7 +350,9 @@ public class QuadrantEditor extends ScreenBase {
 				
 				APP.screen.postDisplay();
 				APP.screen.render();
-				APP.screen.repaint();
+//				APP.screen.repaint();
+				VIEW.canvas.repaint();
+				VIEW.previewPanel.repaint();
 				
 			}
 			
@@ -402,7 +404,9 @@ public class QuadrantEditor extends ScreenBase {
 		APP.screen = new MainMenu();
 		
 		APP.screen.render();
-		APP.screen.repaint();
+//		APP.screen.repaint();
+		VIEW.canvas.repaint();
+//		VIEW.previewPanel.repaint();
 		
 	}
 	
@@ -446,7 +450,7 @@ public class QuadrantEditor extends ScreenBase {
 			
 		}
 		
-		repaint();
+		repaintCanvas();
 	}
 	
 	public void clicked(InputEvent ev) {
@@ -481,7 +485,7 @@ public class QuadrantEditor extends ScreenBase {
 				worldCam.worldViewport = new AABB(0, 0, world.quadrantMap.worldWidth, world.quadrantMap.worldHeight);
 				
 				render();
-				repaint();
+				repaintCanvas();
 				
 			} else {
 				
@@ -497,14 +501,14 @@ public class QuadrantEditor extends ScreenBase {
 			
 		}
 		
-		repaint();
+		repaintCanvas();
 	}
 	
 	public void render() {
 		world.renderCanvas();
 	}
 	
-	public void repaint() {
+	public void repaintCanvas() {
 		
 		do {
 			
@@ -512,7 +516,8 @@ public class QuadrantEditor extends ScreenBase {
 				
 				Graphics2D g2 = (Graphics2D)VIEW.canvas.bs.getDrawGraphics();
 				
-				RenderingContext ctxt = new RenderingContext(g2, RenderingContextType.CANVAS);
+				RenderingContext ctxt = new RenderingContext(RenderingContextType.CANVAS);
+				ctxt.g2 = g2;
 				
 				AffineTransform origTrans = ctxt.getTransform();
 				
@@ -567,11 +572,7 @@ public class QuadrantEditor extends ScreenBase {
 	}
 	
 	public void paint(PaintEvent ev) {
-		if (ev.c == VIEW.canvas) {
-			VIEW.canvas.bs.show();
-		} else {
-			assert false;
-		}
+		assert false;
 	}
 	
 }

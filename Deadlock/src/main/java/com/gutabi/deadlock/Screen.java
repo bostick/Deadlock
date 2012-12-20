@@ -11,7 +11,7 @@ public abstract class Screen implements ActionListener {
 	
 	public abstract void render();
 	
-	public abstract void repaint();
+//	public abstract void repaint();
 	
 	public abstract void paint(PaintEvent ev);
 	

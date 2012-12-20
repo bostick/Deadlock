@@ -44,7 +44,10 @@ public class Preview {
 			pan(new Point(dx, dy));
 			
 			screen.render();
-			screen.repaint();
+			screen.repaintCanvas();
+			screen.repaintControlPanel();
+			
+			VIEW.previewPanel.repaint();
 		}
 	}
 	
@@ -80,7 +83,8 @@ public class Preview {
 		
 		Graphics2D previewImageG2 = previewImage.createGraphics();
 		
-		RenderingContext previewContext = new RenderingContext(previewImageG2, RenderingContextType.PREVIEW);
+		RenderingContext previewContext = new RenderingContext(RenderingContextType.PREVIEW);
+		previewContext.g2 = previewImageG2;
 		
 		previewImageG2.setColor(Color.LIGHT_GRAY);
 		previewImageG2.fillRect(0, 0, previewCam.previewWidth, previewCam.previewHeight);

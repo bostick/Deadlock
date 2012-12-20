@@ -72,7 +72,9 @@ public class RegularTool extends ToolBase {
 		
 		APP.screen.postDisplay();
 		APP.screen.render();
-		APP.screen.repaint();
+//		APP.screen.repaint();
+		VIEW.canvas.repaint();
+//		VIEW.previewPanel.repaint();
 		
 	}
 	
@@ -85,7 +87,8 @@ public class RegularTool extends ToolBase {
 				r.setDirection(null, Direction.STARTTOEND);
 				
 				screen.render();
-				screen.repaint();
+				screen.repaintCanvas();
+//				repaintControlPanel();
 				
 			} else if (screen.hilited instanceof Fixture) {
 				Fixture f = (Fixture)screen.hilited;
@@ -103,7 +106,7 @@ public class RegularTool extends ToolBase {
 				g.setSide(g.getSide().other());
 				
 				screen.render();
-				screen.repaint();
+				screen.repaintCanvas();
 				
 			}
 			
@@ -119,7 +122,7 @@ public class RegularTool extends ToolBase {
 				r.setDirection(null, Direction.ENDTOSTART);
 				
 				screen.render();
-				screen.repaint();
+				screen.repaintCanvas();
 				
 			}
 			
@@ -135,7 +138,7 @@ public class RegularTool extends ToolBase {
 				r.setDirection(null, null);
 			
 				screen.render();
-				screen.repaint();
+				screen.repaintCanvas();
 				
 			}
 			
@@ -148,13 +151,13 @@ public class RegularTool extends ToolBase {
 		c.setStart(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
 		c.setPoint(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
 		screen.tool = c;
-		screen.repaint();
+		screen.repaintCanvas();
 	}
 	
 	public void wKey(InputEvent ev) {
 		screen.tool = new FixtureTool(screen);
 		screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
-		screen.repaint();
+		screen.repaintCanvas();
 	}
 	
 	public void aKey(InputEvent ev) {
@@ -165,7 +168,7 @@ public class RegularTool extends ToolBase {
 		
 		screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
 		
-		screen.repaint();
+		screen.repaintCanvas();
 	}
 	
 	public void sKey(InputEvent ev) {
@@ -173,7 +176,7 @@ public class RegularTool extends ToolBase {
 		q.setStart(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
 		q.setPoint(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
 		screen.tool = q;
-		screen.repaint();
+		screen.repaintCanvas();
 	}
 	
 	public void dKey(InputEvent ev) {
@@ -181,7 +184,7 @@ public class RegularTool extends ToolBase {
 		c.setStart(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
 		c.setPoint(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
 		screen.tool = c;
-		screen.repaint();
+		screen.repaintCanvas();
 	}
 	
 	public void insertKey(InputEvent ev) {
@@ -193,7 +196,7 @@ public class RegularTool extends ToolBase {
 				s.setEnabled(true);
 				
 				screen.render();
-				screen.repaint();
+				screen.repaintCanvas();
 			}
 			
 		} else {
@@ -204,7 +207,7 @@ public class RegularTool extends ToolBase {
 			
 			screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
 			
-			screen.repaint();
+			screen.repaintCanvas();
 		}
 	}
 	
@@ -219,7 +222,7 @@ public class RegularTool extends ToolBase {
 			
 			screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
 			
-			screen.repaint();
+			screen.repaintCanvas();
 			break;
 		case DRAFTING:
 			assert false;
@@ -237,7 +240,7 @@ public class RegularTool extends ToolBase {
 				draftStart(screen.lastPressedWorldPoint);
 				draftMove(screen.lastDraggedWorldPoint);
 				
-				screen.repaint();
+				screen.repaintCanvas();
 				
 			} else {
 				assert false;
@@ -248,7 +251,8 @@ public class RegularTool extends ToolBase {
 			
 			draftMove(screen.lastDraggedWorldPoint);
 			
-			screen.repaint();
+			screen.repaintCanvas();
+			VIEW.previewPanel.repaint();
 			break;
 		}
 	}
@@ -261,14 +265,15 @@ public class RegularTool extends ToolBase {
 			draftEnd();
 			
 			screen.render();
-			screen.repaint();
+			screen.repaintCanvas();
+			screen.repaintControlPanel();
 			break;
 		}
 	}
 	
 	public void exited(InputEvent ev) {
 		screen.tool.setPoint(null);
-		screen.repaint();
+		screen.repaintCanvas();
 	}
 	
 	public void draftStart(Point p) {

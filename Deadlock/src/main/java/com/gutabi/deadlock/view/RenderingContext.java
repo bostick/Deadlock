@@ -20,13 +20,14 @@ import org.jbox2d.common.Vec2;
 //@SuppressWarnings("static-access")
 public class RenderingContext extends DebugDraw {
 	
-	private final Graphics2D g2;
+	public Graphics2D g2;
+	
 	public final RenderingContextType type;
 	
-	public RenderingContext(Graphics2D g2, RenderingContextType type) {
+	public RenderingContext(RenderingContextType type) {
 		super(new OBBViewportTransform());
 		
-		this.g2 = g2;
+//		this.g2 = g2;
 		this.type = type;
 		
 		m_drawFlags = DebugDraw.e_dynamicTreeBit;
