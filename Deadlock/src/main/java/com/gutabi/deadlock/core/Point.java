@@ -360,17 +360,21 @@ public class Point {
 	}
 	
 	/**
-	 * distance of b from the segment <c, d>
+	 * distance of b from the segment &lt;c, d>
 	 */
 	public static double distance(Point b, Point c, Point d) {
-		double u = u(c, b, d);
-		if (u < 0.0) {
+		if (c.equals(d)) {
 			return distance(b, c);
-		} else if (u > 1.0) {
-			return distance(b, d);
 		} else {
-			Point p = Point.point(c, d, u);
-			return distance(b, p);
+			double u = u(c, b, d);
+			if (u < 0.0) {
+				return distance(b, c);
+			} else if (u > 1.0) {
+				return distance(b, d);
+			} else {
+				Point p = Point.point(c, d, u);
+				return distance(b, p);
+			}
 		}
 	}
 	

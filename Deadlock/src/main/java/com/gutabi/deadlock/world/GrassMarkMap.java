@@ -9,16 +9,16 @@ import com.gutabi.deadlock.core.geom.Capsule;
 import com.gutabi.deadlock.core.geom.Circle;
 import com.gutabi.deadlock.view.RenderingContext;
 
-public class RoadMarkMap {
+public class GrassMarkMap {
 	
 	WorldCamera cam;
 	List<Capsule> marks = new ArrayList<Capsule>();
 	
-	public RoadMarkMap(WorldCamera cam) {
+	public GrassMarkMap(WorldCamera cam) {
 		this.cam = cam;
 	}
 	
-	public void addRoadMark(Point p0, Point p1) {
+	public void addGrassMark(Point p0, Point p1) {
 		
 		Capsule test = new Capsule(cam, null, new Circle(null, p0, 0.0), new Circle(null, p1, 0.0), -1);
 		
@@ -34,7 +34,7 @@ public class RoadMarkMap {
 			assert marks.size() < 100;
 		}
 		
-		marks.add(new Capsule(cam, null, new Circle(null, p0, 0.05), new Circle(null, p1, 0.05), -1));
+		marks.add(new Capsule(cam, null, new Circle(null, p0, 0.1), new Circle(null, p1, 0.1), -1));
 	}
 	
 	public void postStop() {
@@ -43,9 +43,12 @@ public class RoadMarkMap {
 		
 	}
 	
+	
+	static Color brown = new Color(150, 75, 0);
+	
 	public void paintScene(RenderingContext ctxt) {
 		
-		ctxt.setColor(Color.BLACK);
+		ctxt.setColor(brown);
 		
 		for (Capsule cap : marks) {
 			cap.paint(ctxt);

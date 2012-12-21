@@ -389,6 +389,17 @@ public class Capsule extends SweepableShape implements SweeperShape, CompoundSha
 		return false;
 	}
 	
+	public static boolean contains(Capsule c0, Capsule c1) {
+		
+		if (DMath.greaterThan(c1.r, c0.r)) {
+			return false;
+		}
+		
+		double dist = Math.min(Point.distance(c1.a, c0.a, c0.b), Point.distance(c1.b, c0.a, c0.b));
+		
+		return DMath.lessThanEquals(dist, c0.r - c1.r);
+	}
+	
 	public java.awt.Shape java2D() {
 		assert false;
 		return null;
@@ -397,7 +408,9 @@ public class Capsule extends SweepableShape implements SweeperShape, CompoundSha
 	public void paint(RenderingContext ctxt) {
 		
 		ac.paint(ctxt);
-		middle.paint(ctxt);
+		if (middle != null) {
+			middle.paint(ctxt);
+		}
 		bc.paint(ctxt);
 		
 		if (ctxt.type == RenderingContextType.CANVAS) {

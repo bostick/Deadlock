@@ -48,6 +48,7 @@ public class World {
 	
 //	private SkidMarkMap skidMarks = new ArrayList<Point>();
 	public RoadMarkMap roadMarkMap;
+	public GrassMarkMap grassMarkMap;
 	
 	public org.jbox2d.dynamics.World b2dWorld;
 	
@@ -61,6 +62,7 @@ public class World {
 		carMap = new CarMap(cam, this);
 		
 		roadMarkMap = new RoadMarkMap(cam);
+		grassMarkMap = new GrassMarkMap(cam);
 		
 		b2dWorld = new org.jbox2d.dynamics.World(new Vec2(0.0f, 0.0f), true);
 		b2dWorld.setContactListener(new CarEventListener(cam, this));
@@ -131,6 +133,8 @@ public class World {
 		}
 		
 //		skidMarks.clear();
+		roadMarkMap.postStop();
+		grassMarkMap.postStop();
 	}
 	
 	int velocityIterations = 6;
@@ -364,7 +368,9 @@ public class World {
 //		}
 			
 			
-//			paintSkidmarks(ctxt);
+//			paintRoadMarks(ctxt);
+			roadMarkMap.paintScene(ctxt);
+			grassMarkMap.paintScene(ctxt);
 			
 			graph.paintScene(ctxt);
 			

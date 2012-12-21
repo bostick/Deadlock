@@ -352,7 +352,7 @@ public class QuadrantEditor extends ScreenBase {
 				APP.screen.render();
 //				APP.screen.repaint();
 				VIEW.canvas.repaint();
-				VIEW.previewPanel.repaint();
+				VIEW.controlPanel.repaint();
 				
 			}
 			

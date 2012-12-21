@@ -64,6 +64,7 @@ public class MainMenu extends ScreenBase {
 //				APP.screen.repaint();
 				VIEW.canvas.repaint();
 //				VIEW.previewPanel.repaint();
+				VIEW.controlPanel.repaint();
 				
 			}
 		};
@@ -86,7 +87,7 @@ public class MainMenu extends ScreenBase {
 				APP.screen.render();
 //				APP.screen.repaint();
 				VIEW.canvas.repaint();
-				VIEW.previewPanel.repaint();
+				VIEW.controlPanel.repaint();
 				
 			}
 		};
@@ -110,7 +111,8 @@ public class MainMenu extends ScreenBase {
 				APP.screen.render();
 //				APP.screen.repaint();
 				VIEW.canvas.repaint();
-				VIEW.previewPanel.repaint();
+//				VIEW.previewPanel.repaint();
+				VIEW.controlPanel.repaint();
 				
 			}
 		};
@@ -119,8 +121,14 @@ public class MainMenu extends ScreenBase {
 		MenuItem dialogMenuItem = new MenuItem(MainMenu.this,  "Quadrant Editor...") {
 			public void action() {
 				
+				VIEW.teardownCanvas(VIEW.container);
+				
 				APP.screen = new QuadrantEditor();
 				
+				VIEW.setupCanvas(VIEW.container);
+				((JFrame)VIEW.container).setVisible(true);
+				
+				APP.screen.postDisplay();
 				APP.screen.render();
 //				APP.screen.repaint();
 				VIEW.canvas.repaint();

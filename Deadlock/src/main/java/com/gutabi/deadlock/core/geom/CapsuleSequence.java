@@ -226,6 +226,10 @@ public class CapsuleSequence extends SweepableShape implements CompoundShape {
 		
 	}
 	
+	public boolean contains(Shape s) {
+		assert false;
+		return false;
+	}
 	
 	public java.awt.Shape java2D() {
 		assert false;

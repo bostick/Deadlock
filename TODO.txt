@@ -1,4 +1,18 @@
 
+for containment testing:
+
+simple shapes:
+for all axes, is any shape1 projection completely contained in the shape0 projection? do the ranges completely overlap
+
+compound shapes:
+for all axes,
+take all projections and union together for entire compound shape, test if ranges overlap
+
+
+
+
+
+
 FOR ALPHA 1:
 
 add real physics
@@ -21,6 +35,11 @@ unrolling turf animation for adding road
 
 
 SOON:
+
+remove parent from SweepableShapes
+
+remove index from Capsule
+
 
 undo/redo
 user actions

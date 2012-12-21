@@ -213,8 +213,8 @@ public abstract class Car extends Entity {
 	
 	private void computeDynamicPropertiesMoving() {
 		
-//		prevWorldPoint0 = worldQuad.p0;
-//		prevWorldPoint3 = worldQuad.p3;
+		prevWorldPoint0 = shape.p0;
+		prevWorldPoint3 = shape.p3;
 		
 		pVec2 = b2dBody.getPosition();
 		p = new Point(pVec2.x, pVec2.y);
@@ -411,6 +411,46 @@ public abstract class Car extends Entity {
 			
 			break;
 		case CRASHED:
+			
+			computeDynamicPropertiesAlways();
+			
+			if (driver.stoppedTime == -1) {
+				
+				if (DMath.equals(vel.lengthSquared(), 0.0)) {
+					
+					if (logger.isDebugEnabled()) {
+						logger.debug("stopped: " + t);
+					}
+					driver.stoppedTime = t;
+					
+				}
+				
+//				MODEL.world.addSkidMarks(prevWorldPoint0, worldQuad.p0);
+//				MODEL.world.addSkidMarks(prevWorldPoint3, worldQuad.p3);
+//				world.grassMarkMap.addGrassMark(prevWorldPoint0, shape.p0);
+//				world.grassMarkMap.addGrassMark(prevWorldPoint3, shape.p3);
+				
+				computeDynamicPropertiesMoving();
+				
+			} else {
+				
+				if (!DMath.equals(vel.lengthSquared(), 0.0)) {
+					
+					driver.stoppedTime = -1;
+					driver.deadlocked = false;
+					
+					computeDynamicPropertiesMoving();
+					
+				}
+				
+			}
+			
+			if (!world.quadrantMap.completelyContains(shape)) {
+				return false;
+			}
+			
+			break;
+			
 		case SKIDDED:
 			computeDynamicPropertiesAlways();
 			
@@ -427,6 +467,8 @@ public abstract class Car extends Entity {
 				
 //				MODEL.world.addSkidMarks(prevWorldPoint0, worldQuad.p0);
 //				MODEL.world.addSkidMarks(prevWorldPoint3, worldQuad.p3);
+				world.grassMarkMap.addGrassMark(prevWorldPoint0, shape.p0);
+				world.grassMarkMap.addGrassMark(prevWorldPoint3, shape.p3);
 				
 				computeDynamicPropertiesMoving();
 				
