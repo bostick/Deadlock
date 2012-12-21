@@ -13,7 +13,7 @@ import com.gutabi.deadlock.world.WorldCamera;
 import com.gutabi.deadlock.world.graph.Vertex;
 
 //@SuppressWarnings("static-access")
-public class StraightEdgeToolShape extends Shape {
+public class StraightEdgeToolShape implements Shape {
 	
 	public final Circle firstCircle;
 	public final Circle pCircle;

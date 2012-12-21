@@ -1,8 +1,8 @@
 package com.gutabi.deadlock.core.geom;
 
 
-public abstract class Shape {
+public interface Shape {
 	
-	public abstract java.awt.Shape java2D();
+	java.awt.Shape java2D();
 	
 }

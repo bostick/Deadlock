@@ -268,8 +268,12 @@ public class Quad extends SweepableShape {
 		return events;
 	}
 	
-	public boolean containedIn(Quad q) {
-		return q.hitTest(p0) && q.hitTest(p1) && q.hitTest(p2) && q.hitTest(p3);
+//	public boolean containedIn(Quad q) {
+//		return q.hitTest(p0) && q.hitTest(p1) && q.hitTest(p2) && q.hitTest(p3);
+//	}
+	
+	public boolean completelyContains(Quad q) {
+		return hitTest(q.p0) && hitTest(q.p1) && hitTest(q.p2) && hitTest(q.p3);
 	}
 	
 	public java.awt.Shape java2D() {

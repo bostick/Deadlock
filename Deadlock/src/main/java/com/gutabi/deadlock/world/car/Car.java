@@ -83,7 +83,7 @@ public abstract class Car extends Entity {
 	float angle;
 	float angularVel;
 	double[][] carTransArr;
-//	boolean atleastPartiallyOnRoad;
+	boolean atleastPartiallyOnRoad;
 	boolean inMerger;
 	
 	Point prevWorldPoint0;
@@ -150,11 +150,11 @@ public abstract class Car extends Entity {
 		shape = Geom.localToWorld(localQuad, carTransArr, p);
 		
 		
-		Vec2 v = dp.vec2();
-		v.normalize();
-		v.mulLocal((float)getMaxSpeed());
+//		Vec2 v = dp.vec2();
+//		v.normalize();
+//		v.mulLocal((float)getMaxSpeed());
 		
-		b2dBody.setLinearVelocity(v);
+//		b2dBody.setLinearVelocity(v);
 		
 		computeDynamicPropertiesAlways();
 		computeDynamicPropertiesMoving();
@@ -260,20 +260,20 @@ public abstract class Car extends Entity {
 			
 			boolean wasInMerger = inMerger;
 			if (hit == null) {
-//				atleastPartiallyOnRoad = false;
+				atleastPartiallyOnRoad = false;
 				inMerger = false;
 			} else {
-//				atleastPartiallyOnRoad = true;
-				if (hit instanceof Merger && ((Quad)shape).containedIn((Quad)hit.getShape())) {
+				atleastPartiallyOnRoad = true;
+				if (hit instanceof Merger && ((Quad)hit.getShape()).completelyContains(shape)) {
 					inMerger = true;
 				} else {
 					inMerger = false;
 				}
 			}
 			
-//			if (!atleastPartiallyOnRoad) {
-//				skid();
-//			}
+			if (!atleastPartiallyOnRoad) {
+				skid();
+			}
 			
 			if (inMerger == !wasInMerger) {
 				if (inMerger) {
@@ -322,42 +322,10 @@ public abstract class Car extends Entity {
 		driver.clear();
 	}
 	
-//	private void skid() {
-//		
-//		state = CarStateEnum.SKIDDED;
-//		
-////		overallPos = null;
-////		goalPoint = null;
-//		
-////		source.outstandingCars--;
-//		
-//		if (curDrivingEvent == null) {
-//			
-//		} else if (curDrivingEvent instanceof VertexArrivalEvent) {
-//			
-//			if (((VertexArrivalEvent)curDrivingEvent).sign.isEnabled()) {
-//				stoppedTime = -1;
-//				decelTime = -1;
-//			}
-//			
-//			((VertexArrivalEvent)curDrivingEvent).v.carQueue.remove(this);
-//			
-//			curDrivingEvent = null;
-//			
-//		} else if (curDrivingEvent instanceof CarProximityEvent) {
-//			
-//			stoppedTime = -1;
-//			decelTime = -1;
-//			
-//			curDrivingEvent = null;
-//			
-//		} else {
-//			assert false;
-//		}
-//		
-//		cleanupVertexDepartureQueue();
-//		
-//	}
+	public void skid() {
+		state = CarStateEnum.SKIDDED;
+		driver.clear();
+	}
 	
 	public void preStart() {
 		;
@@ -430,6 +398,8 @@ public abstract class Car extends Entity {
 				
 //				MODEL.world.addSkidMarks(prevWorldPoint0, worldQuad.p0);
 //				MODEL.world.addSkidMarks(prevWorldPoint3, worldQuad.p3);
+				world.roadMarkMap.addRoadMark(prevWorldPoint0, shape.p0);
+				world.roadMarkMap.addRoadMark(prevWorldPoint3, shape.p3);
 				
 				computeDynamicPropertiesMoving();
 				
@@ -546,6 +516,25 @@ public abstract class Car extends Entity {
 			break;
 			
 		case SKIDDED:
+			
+			if (APP.CARTEXTURE_DRAW) {
+				paintImage(ctxt);
+			} else {
+				ctxt.setColor(Color.GREEN);
+				paintRect(ctxt);
+			}
+			
+			if (APP.DEBUG_DRAW) {
+				
+				ctxt.setColor(Color.BLACK);
+				ctxt.setPixelStroke(cam.pixelsPerMeter, 1);
+				shape.getAABB().draw(ctxt);
+				
+				paintID(ctxt);
+				
+			}
+			break;
+			
 		case CRASHED:
 			
 			if (APP.CARTEXTURE_DRAW) {

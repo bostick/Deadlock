@@ -6,127 +6,35 @@ import java.util.List;
 
 import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.world.tool.CircleToolShape;
-import com.gutabi.deadlock.world.tool.FixtureToolShape;
-import com.gutabi.deadlock.world.tool.MergerToolShape;
-import com.gutabi.deadlock.world.tool.StraightEdgeToolShape;
 
 public class ShapeUtils {
 	
 	public static boolean intersect(Shape s0, Shape s1) {
 		
-		if (s0 instanceof Capsule) {
-			Capsule c0 = (Capsule)s0;
+		if (s0 instanceof CompoundShape) {
 			
-			if (intersect(c0.ac, s1)) {
-				return true;
-			}
-			if (intersect(c0.bc, s1)) {
-				return true;
-			}
-			if (intersect(c0.middle, s1)) {
-				return true;
-			}
-			return false;
+			return ((CompoundShape)s0).intersect(s1);
 			
-		} else if (s0 instanceof CapsuleSequence) {
-			CapsuleSequence cs0 = (CapsuleSequence)s0;
+		} else if (s1 instanceof CompoundShape) {
 			
-			for (Capsule c : cs0.caps) {
-				if (ShapeUtils.intersect(c, s1)) {
-					return true;
-				}
-			}
-			return false;
+			return ((CompoundShape)s1).intersect(s0);
 			
 		} else if (s0 instanceof Circle) {
 			if (s1 instanceof AABB) {
 				return intersectAC((AABB)s1, (Circle)s0);
-			} else if (s1 instanceof Capsule) {
-				return intersect(s1, s0);
 			} else if (s1 instanceof Circle) {
 				return intersectCC((Circle)s0, (Circle)s1);
-			} else if (s1 instanceof CircleToolShape) {
-				return intersect(s1, s0);
-			}
-			else if (s1 instanceof FixtureToolShape) {
-				return intersect(s1, s0);
-			}
-			else if (s1 instanceof MergerToolShape) {
-				return intersect(s1, s0);
 			} else if (s1 instanceof Quad) {
 				return intersectCQ((Circle)s0, (Quad)s1);
-			} else if (s1 instanceof StraightEdgeToolShape) {
-				return intersect(s1, s0);
 			}
-		}
-//		else if (s0 instanceof CircleCursorShape) {
-//			CircleCursorShape c0 = (CircleCursorShape)s0;
-//			
-//			if (intersect(c0.c1, s1)) {
-//				return true;
-//			}
-//			return false;
-//			
-//		}
-		else if (s0 instanceof FixtureToolShape) {
-			FixtureToolShape fc0 = (FixtureToolShape)s0;
-			
-			if (intersect(fc0.worldSourceCircle, s1)) {
-				return true;
-			}
-			if (intersect(fc0.worldSinkCircle, s1)) {
-				return true;
-			}
-			return false;
-			
-		}
-		else if (s0 instanceof MergerToolShape) {
-			MergerToolShape mc0 = (MergerToolShape)s0;
-			
-			if (intersect(mc0.worldQ, s1)) {
-				return true;
-			}
-			if (intersect(mc0.worldTop, s1)) {
-				return true;
-			}
-			if (intersect(mc0.worldLeft, s1)) {
-				return true;
-			}
-			if (intersect(mc0.worldRight, s1)) {
-				return true;
-			}
-			if (intersect(mc0.worldBottom, s1)) {
-				return true;
-			}
-			return false;
-			
 		} else if (s0 instanceof Quad) {
 			if (s1 instanceof AABB) {
 				return intersectAQ((AABB)s1, (Quad)s0);
-			} else if (s1 instanceof Capsule) {
-				return intersect(s1, s0);
 			} else if (s1 instanceof Circle) {
 				return intersectCQ((Circle)s1, (Quad)s0);
-			}
-			else if (s1 instanceof FixtureToolShape) {
-				return intersect(s1, s0);
-			}
-			else if (s1 instanceof MergerToolShape) {
-				return intersect(s1, s0);
 			} else if (s1 instanceof Quad) {
 				return intersectQQ((Quad)s0, (Quad)s1);
-			} else if (s1 instanceof StraightEdgeToolShape) {
-				return intersect(s1, s0);
 			}
-		} else if (s0 instanceof StraightEdgeToolShape) {
-			StraightEdgeToolShape sec0 = (StraightEdgeToolShape)s0;
-			
-			if (intersect(sec0.pCircle, s1)) {
-				return true;
-			}
-			return false;
-			
 		}
 		
 		assert false;
@@ -284,86 +192,86 @@ public class ShapeUtils {
 		return true;
 	}
 	
-	public static boolean intersectCCap(Circle c0, Capsule c1) {
-		if (intersectCC(c1.ac, c0)) {
-			return true;
-		}
-		if (intersectCC(c1.bc, c0)) {
-			return true;
-		}
-		if (intersectCQ(c0, c1.middle)) {
-			return true;
-		}
-		return false;
-	}
-	
-	public static boolean intersectCCapSeq(Circle c0, CapsuleSequence cs1) {
-		
-		if (!intersectAA(c0.aabb, cs1.aabb)) {
-			return false;
-		}
-		
-		for (Capsule c : cs1.caps) {
-			if (ShapeUtils.intersectCCap(c0, c)) {
-				return true;
-			}
-		}
-		return false;
-	}
-	
-	public static boolean intersectCapCap(Capsule c0, Capsule c1) {
-		if (intersectCCap(c0.ac, c1)) {
-			return true;
-		}
-		if (intersectCCap(c0.bc, c1)) {
-			return true;
-		}
-		if (intersectCapQ(c1, c0.middle)) {
-			return true;
-		}
-		return false;
-	}
-	
-	public static boolean intersectCapQ(Capsule c0, Quad q1) {
-		if (intersectCQ(c0.ac, q1)) {
-			return true;
-		}
-		if (intersectCQ(c0.bc, q1)) {
-			return true;
-		}
-		if (intersectQQ(q1, c0.middle)) {
-			return true;
-		}
-		return false;
-	}
-	
-	public static boolean intersectCapCapSeq(Capsule c0, CapsuleSequence cs1) {
-		
-		if (!intersectAA(c0.aabb, cs1.aabb)) {
-			return false;
-		}
-		
-		for (Capsule c : cs1.caps) {
-			if (ShapeUtils.intersectCapCap(c0, c)) {
-				return true;
-			}
-		}
-		return false;
-	}
-	
-	public static boolean intersectCapSeqQ(CapsuleSequence cs0, Quad q1) {
-		
-		if (!intersectAA(cs0.aabb, q1.aabb)) {
-			return false;
-		}
-		
-		for (Capsule c : cs0.caps) {
-			if (ShapeUtils.intersectCapQ(c, q1)) {
-				return true;
-			}
-		}
-		return false;
-	}
+//	public static boolean intersectCCap(Circle c0, Capsule c1) {
+//		if (intersectCC(c1.ac, c0)) {
+//			return true;
+//		}
+//		if (intersectCC(c1.bc, c0)) {
+//			return true;
+//		}
+//		if (intersectCQ(c0, c1.middle)) {
+//			return true;
+//		}
+//		return false;
+//	}
+//	
+//	public static boolean intersectCCapSeq(Circle c0, CapsuleSequence cs1) {
+//		
+//		if (!intersectAA(c0.aabb, cs1.aabb)) {
+//			return false;
+//		}
+//		
+//		for (Capsule c : cs1.caps) {
+//			if (ShapeUtils.intersectCCap(c0, c)) {
+//				return true;
+//			}
+//		}
+//		return false;
+//	}
+//	
+//	public static boolean intersectCapCap(Capsule c0, Capsule c1) {
+//		if (intersectCCap(c0.ac, c1)) {
+//			return true;
+//		}
+//		if (intersectCCap(c0.bc, c1)) {
+//			return true;
+//		}
+//		if (intersectCapQ(c1, c0.middle)) {
+//			return true;
+//		}
+//		return false;
+//	}
+//	
+//	public static boolean intersectCapQ(Capsule c0, Quad q1) {
+//		if (intersectCQ(c0.ac, q1)) {
+//			return true;
+//		}
+//		if (intersectCQ(c0.bc, q1)) {
+//			return true;
+//		}
+//		if (intersectQQ(q1, c0.middle)) {
+//			return true;
+//		}
+//		return false;
+//	}
+//	
+//	public static boolean intersectCapCapSeq(Capsule c0, CapsuleSequence cs1) {
+//		
+//		if (!intersectAA(c0.aabb, cs1.aabb)) {
+//			return false;
+//		}
+//		
+//		for (Capsule c : cs1.caps) {
+//			if (ShapeUtils.intersectCapCap(c0, c)) {
+//				return true;
+//			}
+//		}
+//		return false;
+//	}
+//	
+//	public static boolean intersectCapSeqQ(CapsuleSequence cs0, Quad q1) {
+//		
+//		if (!intersectAA(cs0.aabb, q1.aabb)) {
+//			return false;
+//		}
+//		
+//		for (Capsule c : cs0.caps) {
+//			if (ShapeUtils.intersectCapQ(c, q1)) {
+//				return true;
+//			}
+//		}
+//		return false;
+//	}
 	
 	public static boolean intersectQQ(Quad q0, Quad q1) {
 		

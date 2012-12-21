@@ -6,7 +6,9 @@ import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.AABB;
 import com.gutabi.deadlock.core.geom.Capsule;
 import com.gutabi.deadlock.core.geom.Circle;
+import com.gutabi.deadlock.core.geom.CompoundShape;
 import com.gutabi.deadlock.core.geom.Shape;
+import com.gutabi.deadlock.core.geom.ShapeUtils;
 import com.gutabi.deadlock.view.RenderingContext;
 import com.gutabi.deadlock.world.QuadrantMap;
 import com.gutabi.deadlock.world.WorldCamera;
@@ -14,7 +16,7 @@ import com.gutabi.deadlock.world.graph.Axis;
 import com.gutabi.deadlock.world.graph.Vertex;
 
 //@SuppressWarnings("static-access")
-public class FixtureToolShape extends Shape {
+public class FixtureToolShape implements CompoundShape {
 	
 	WorldCamera cam;
 	
@@ -54,6 +56,18 @@ public class FixtureToolShape extends Shape {
 
 	public AABB getAABB() {
 		return aabb;
+	}
+	
+	public boolean intersect(Shape s) {
+		
+		if (ShapeUtils.intersect(worldSourceCircle, s)) {
+			return true;
+		}
+		if (ShapeUtils.intersect(worldSinkCircle, s)) {
+			return true;
+		}
+		return false;
+		
 	}
 	
 	public java.awt.Shape java2D() {

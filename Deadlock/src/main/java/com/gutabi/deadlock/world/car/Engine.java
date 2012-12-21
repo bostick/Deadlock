@@ -80,15 +80,15 @@ public class Engine {
 	 * turning radius
 	 * 3 car lengths for 180 deg = 3 meters for 3.14 radians
 	 */
-	private double maxRadsPerMeter = Double.POSITIVE_INFINITY;
+	private double maxRadsPerMeter = 1.0;
 	private double maxAcceleration = Double.POSITIVE_INFINITY;
 //	private double maxDeceleration = Double.NEGATIVE_INFINITY;
 	private double frictionForwardImpulseCoefficient = 0.01;
 	private double frictionLateralImpulseCoefficient = 0.04;
 	private double frictionAngularImpulseCoefficient = 0.02;
-	private double driveForwardImpulseCoefficient = 1.0;
+	private double driveForwardImpulseCoefficient = 0.02;
 	private double driveLateralImpulseCoefficient = 1.0;
-	private double brakeForwardImpulseCoefficient = 1.0;
+	private double brakeForwardImpulseCoefficient = 0.05;
 	private double brakeLateralImpulseCoefficient = 1.0;
 	private double turnAngularImpulseCoefficient = 1.0;
 	
@@ -164,11 +164,11 @@ public class Engine {
 		
 		double actualDistance = Math.abs(c.forwardSpeed * APP.dt);
 		double maxRads = maxRadsPerMeter * actualDistance;
-		double negMaxRads = -maxRads;
+//		double negMaxRads = -maxRads;
 		if (dw > maxRads) {
 			dw = maxRads;
-		} else if (dw < negMaxRads) {
-			dw = negMaxRads;
+		} else if (dw < -maxRads) {
+			dw = -maxRads;
 		}
 		
 //		if (dw > 0.52) {

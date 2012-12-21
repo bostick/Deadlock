@@ -47,6 +47,7 @@ public class World {
 	public ExplosionMap explosionMap = new ExplosionMap();
 	
 //	private SkidMarkMap skidMarks = new ArrayList<Point>();
+	public RoadMarkMap roadMarkMap;
 	
 	public org.jbox2d.dynamics.World b2dWorld;
 	
@@ -58,6 +59,8 @@ public class World {
 		graph = new Graph(cam, this);
 		
 		carMap = new CarMap(cam, this);
+		
+		roadMarkMap = new RoadMarkMap(cam);
 		
 		b2dWorld = new org.jbox2d.dynamics.World(new Vec2(0.0f, 0.0f), true);
 		b2dWorld.setContactListener(new CarEventListener(cam, this));

@@ -210,8 +210,8 @@ public class GraphPositionPath {
 	 */
 	public GraphPositionPathPosition findClosestGraphPositionPathPosition(Point p, GraphPositionPathPosition min) {
 		
-		int closestIndex = -1;
-		double closestParam = -1;
+		int closestIndex = min.index;
+		double closestParam = min.param;
 		
 		double closestDistance = Double.POSITIVE_INFINITY;
 		
@@ -329,8 +329,8 @@ public class GraphPositionPath {
 			a = b;
 		}
 		
-		assert closestIndex != -1;
-		assert closestParam != -1;
+//		assert closestIndex != -1;
+//		assert closestParam != -1.0;
 		
 		return new GraphPositionPathPosition(this, closestIndex, closestParam);
 	}
@@ -484,7 +484,7 @@ public class GraphPositionPath {
 			Edge e = ent.getKey();
 			if (i + e.pointCount() >= min.combo) {
 				if (e instanceof Road) {
-					if (ShapeUtils.intersectCapSeqQ((CapsuleSequence)e.getShape(), q)) {
+					if (((CapsuleSequence)e.getShape()).intersect(q)) {
 						return e;
 					}
 				} else {

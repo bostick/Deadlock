@@ -26,7 +26,7 @@ import com.gutabi.deadlock.world.car.ReallyFastCar;
 @SuppressWarnings("static-access")
 public final class Fixture extends Vertex {
 	
-	public static double SPAWN_FREQUENCY_SECONDS = 1.0;
+	public static double SPAWN_FREQUENCY_SECONDS = 1.5;
 	
 	public World world;
 	public final Axis a;

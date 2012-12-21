@@ -5,14 +5,16 @@ import static com.gutabi.deadlock.DeadlockApplication.APP;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.AABB;
 import com.gutabi.deadlock.core.geom.Circle;
+import com.gutabi.deadlock.core.geom.CompoundShape;
 import com.gutabi.deadlock.core.geom.Quad;
 import com.gutabi.deadlock.core.geom.Shape;
+import com.gutabi.deadlock.core.geom.ShapeUtils;
 import com.gutabi.deadlock.view.RenderingContext;
 import com.gutabi.deadlock.world.graph.Merger;
 import com.gutabi.deadlock.world.graph.Vertex;
 
 //@SuppressWarnings("static-access")
-public class MergerToolShape extends Shape {
+public class MergerToolShape implements CompoundShape {
 	
 	private Point ul;
 	private Point p0;
@@ -64,6 +66,27 @@ public class MergerToolShape extends Shape {
 	public Shape plus(Point p) {
 		assert false;
 		return null;
+	}
+	
+	public boolean intersect(Shape s) {
+		
+		if (ShapeUtils.intersect(worldQ, s)) {
+			return true;
+		}
+		if (ShapeUtils.intersect(worldTop, s)) {
+			return true;
+		}
+		if (ShapeUtils.intersect(worldLeft, s)) {
+			return true;
+		}
+		if (ShapeUtils.intersect(worldRight, s)) {
+			return true;
+		}
+		if (ShapeUtils.intersect(worldBottom, s)) {
+			return true;
+		}
+		return false;
+		
 	}
 	
 	public java.awt.Shape java2D() {

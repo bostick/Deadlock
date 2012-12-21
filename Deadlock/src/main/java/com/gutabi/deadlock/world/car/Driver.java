@@ -1,7 +1,5 @@
 package com.gutabi.deadlock.world.car;
 
-import static com.gutabi.deadlock.DeadlockApplication.APP;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,7 +11,7 @@ import com.gutabi.deadlock.world.graph.GraphPositionPathPosition;
 //@SuppressWarnings("static-access")
 public class Driver {
 	
-	public static final double COMPLETE_STOP_WAIT_TIME = 0.5;
+	public static final double COMPLETE_STOP_WAIT_TIME = 0.0;
 	
 	double carProximityLookahead;
 	double vertexArrivalLookahead;
@@ -40,8 +38,25 @@ public class Driver {
 	public Driver(Car c) {
 		this.c = c;
 		
-		carProximityLookahead = 0.5 * Car.CAR_LENGTH + 0.5 * Car.CAR_LENGTH + c.getMaxSpeed() * APP.dt + 0.8 * Car.CAR_LENGTH;
-		vertexArrivalLookahead = Car.CAR_LENGTH * 0.5;
+		if (c.getMaxSpeed() == 2.5) {
+			carProximityLookahead = 2.0;
+		} else if (c.getMaxSpeed() == 5.0) {
+			carProximityLookahead = 2.0;
+		} else if (c.getMaxSpeed() == 10.0) {
+			carProximityLookahead = 2.25;
+		} else {
+			assert false;
+		}
+		
+		if (c.getMaxSpeed() == 2.5) {
+			vertexArrivalLookahead = 0.95;
+		} else if (c.getMaxSpeed() == 5.0) {
+			vertexArrivalLookahead = 1.30;
+		} else if (c.getMaxSpeed() == 10.0) {
+			vertexArrivalLookahead = 2.00;
+		} else {
+			assert false;
+		}
 		
 	}
 	

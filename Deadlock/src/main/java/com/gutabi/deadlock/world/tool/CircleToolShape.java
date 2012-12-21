@@ -11,7 +11,7 @@ import com.gutabi.deadlock.core.geom.ShapeUtils;
 import com.gutabi.deadlock.view.RenderingContext;
 import com.gutabi.deadlock.world.graph.Vertex;
 
-public class CircleToolShape extends Shape {
+public class CircleToolShape implements Shape {
 	
 	public final Point p;
 	public final double xRadius;

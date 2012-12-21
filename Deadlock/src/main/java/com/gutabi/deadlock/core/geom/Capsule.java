@@ -17,7 +17,7 @@ import com.gutabi.deadlock.view.RenderingContextType;
 import com.gutabi.deadlock.world.WorldCamera;
 
 //@SuppressWarnings("static-access")
-public class Capsule extends SweepableShape implements SweeperShape {
+public class Capsule extends SweepableShape implements SweeperShape, CompoundShape {
 	
 //	public final WorldScreen screen;
 	WorldCamera cam;
@@ -147,7 +147,7 @@ public class Capsule extends SweepableShape implements SweeperShape {
 		
 		List<SweepEvent> events = new ArrayList<SweepEvent>();
 		
-		if (ShapeUtils.intersectCCap(c, this)) {
+		if (intersect(c)) {
 			events.add(new SweepEvent(SweepEventType.enter(parent), this, c, 0, 0.0));
 		}
 		
@@ -162,7 +162,7 @@ public class Capsule extends SweepableShape implements SweeperShape {
 		Point d = cap.b;
 		
 		boolean outside;
-		if (ShapeUtils.intersectCCap(cap.ac, this)) {
+		if (intersect(cap.ac)) {
 			outside = false;
 		} else {
 			outside = true;
@@ -374,6 +374,19 @@ public class Capsule extends SweepableShape implements SweeperShape {
 			assert false;
 			return -1;
 		}
+	}
+	
+	public boolean intersect(Shape s) {
+		if (ShapeUtils.intersect(ac, s)) {
+			return true;
+		}
+		if (ShapeUtils.intersect(bc, s)) {
+			return true;
+		}
+		if (ShapeUtils.intersect(middle, s)) {
+			return true;
+		}
+		return false;
 	}
 	
 	public java.awt.Shape java2D() {

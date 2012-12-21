@@ -731,7 +731,7 @@ public class Graph implements Sweepable {
 		}
 		for (Edge ed : edges) {
 			if (ed instanceof Road) {
-				if (ShapeUtils.intersectCapSeqQ((CapsuleSequence)ed.getShape(), q)) {
+				if (((CapsuleSequence)ed.getShape()).intersect(q)) {
 					return ed;
 				}
 			} else {
@@ -751,7 +751,7 @@ public class Graph implements Sweepable {
 		}
 		for (Edge ed : edges) {
 			if (ed instanceof Road) {
-				if (ShapeUtils.intersectCCapSeq(c, (CapsuleSequence)ed.getShape())) {
+				if (((CapsuleSequence)ed.getShape()).intersect(c)) {
 					return ed;
 				}
 			} else {
@@ -765,17 +765,19 @@ public class Graph implements Sweepable {
 	
 	public Entity pureGraphIntersectCapsule(Capsule c) {
 		for (Vertex v : vertices) {
-			if (ShapeUtils.intersectCCap(v.getShape(), c)) {
+			if (((Capsule)c).intersect(v.shape)) {
 				return v;
 			}
 		}
 		for (Edge ed : edges) {
 			if (ed instanceof Road) {
-				if (ShapeUtils.intersectCapCapSeq(c, (CapsuleSequence)ed.getShape())) {
+				
+				if (((CapsuleSequence)ed.getShape()).intersect(c)) {
 					return ed;
 				}
+				
 			} else {
-				if (ShapeUtils.intersectCapQ(c, (Quad)ed.getShape())) {
+				if (((Capsule)c).intersect(ed.getShape())) {
 					return ed;
 				}
 			}
@@ -1442,7 +1444,7 @@ public class Graph implements Sweepable {
 						for (int j = 1; j < f.capsuleCount()-1; j++) {
 							Capsule fs = f.getCapsule(j);
 							
-							if (ShapeUtils.intersectCapCap(es, fs)) {
+							if (es.intersect(fs)) {
 								assert false;
 							}
 						}

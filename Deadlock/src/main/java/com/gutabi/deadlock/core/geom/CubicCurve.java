@@ -6,7 +6,7 @@ import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.view.RenderingContext;
 
 //@SuppressWarnings("static-access")
-public class CubicCurve extends Shape {
+public class CubicCurve implements Shape {
 	
 	private final CubicCurve2D c;
 	

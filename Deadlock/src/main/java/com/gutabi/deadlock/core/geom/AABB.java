@@ -8,7 +8,7 @@ import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.view.RenderingContext;
 
 //@SuppressWarnings("static-access")
-public class AABB extends Shape {
+public class AABB implements Shape {
 	
 	public final Point ul;
 	public final Dim dim;

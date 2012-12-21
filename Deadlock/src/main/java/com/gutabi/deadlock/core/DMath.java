@@ -84,15 +84,37 @@ public class DMath {
 		
 		if (a < b) {
 			if (c < d) {
-				return lessThanEquals(a, d) && lessThanEquals(c , b);
+				return lessThanEquals(a, d) && lessThanEquals(c, b);
 			} else {
-				return lessThanEquals(a, c) && lessThanEquals(d , b);
+				return lessThanEquals(a, c) && lessThanEquals(d, b);
 			}
 		} else {
 			if (c < d) {
-				return lessThanEquals(b, d) && lessThanEquals(c , a);
+				return lessThanEquals(b, d) && lessThanEquals(c, a);
 			} else {
-				return lessThanEquals(b, c) && lessThanEquals(d , a);
+				return lessThanEquals(b, c) && lessThanEquals(d, a);
+			}
+		}
+	}
+	
+	public static boolean rangeContains(double[] r0, double[] r1) {
+		
+		double a = r0[0];
+		double b = r0[1];
+		double c = r1[0];
+		double d = r1[1];
+		
+		if (a < b) {
+			if (c < d) {
+				return lessThanEquals(a, c) && lessThanEquals(d, b);
+			} else {
+				return lessThanEquals(a, d) && lessThanEquals(c, b);
+			}
+		} else {
+			if (c < d) {
+				return lessThanEquals(b, c) && lessThanEquals(d, a);
+			} else {
+				return lessThanEquals(b, d) && lessThanEquals(c, a);
 			}
 		}
 	}

@@ -8,7 +8,7 @@ import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.view.RenderingContext;
 
 //@SuppressWarnings("static-access")
-public class Ellipse extends Shape {
+public class Ellipse implements Shape {
 	
 	public final Point center;
 	public final double xRadius;

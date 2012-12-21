@@ -20,7 +20,7 @@ import com.gutabi.deadlock.world.WorldScreen;
 import com.gutabi.deadlock.world.graph.Vertex;
 
 //@SuppressWarnings("static-access")
-public class QuadToolShape extends Shape {
+public class QuadToolShape implements Shape {
 	
 	public final Point start;
 	public final Circle startCircle; 

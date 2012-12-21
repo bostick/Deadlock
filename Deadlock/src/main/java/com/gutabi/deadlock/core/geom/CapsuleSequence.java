@@ -10,7 +10,7 @@ import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.view.RenderingContext;
 
 //@SuppressWarnings("static-access")
-public class CapsuleSequence extends SweepableShape {
+public class CapsuleSequence extends SweepableShape implements CompoundShape {
 	
 	public final List<Capsule> caps;
 	
@@ -215,6 +215,16 @@ public class CapsuleSequence extends SweepableShape {
 		}
 	}
 	
+	public boolean intersect(Shape s) {
+		
+		for (Capsule c : caps) {
+			if (ShapeUtils.intersect(c, s)) {
+				return true;
+			}
+		}
+		return false;
+		
+	}
 	
 	
 	public java.awt.Shape java2D() {
