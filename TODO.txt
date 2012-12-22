@@ -1,13 +1,7 @@
 
-FOR ALPHA 1:
-
-building
+FOR ALPHA 2:
 
 applet working
-
-
-
-FOR ALPHA 2:
 
 screen for selecting saved games, demos, etc.
 store 100x100 preview inside of .dls for easy previewing in file browsers
@@ -15,8 +9,6 @@ generate .dls files for demos
 
 
 unrolling turf animation for adding road
-
-
 
 
 SOON:
@@ -103,6 +95,8 @@ or at least add it
 cleanup user input
 
 DONE:
+
+building
 
 add real physics
 add skids

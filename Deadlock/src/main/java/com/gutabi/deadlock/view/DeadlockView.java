@@ -7,7 +7,6 @@ import java.awt.Container;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
-import java.net.URL;
 
 import javax.imageio.ImageIO;
 import javax.swing.BoxLayout;
@@ -42,11 +41,16 @@ public class DeadlockView {
 	public final Logger logger = Logger.getLogger(DeadlockView.class);
 	
 	public void init() throws Exception {
-		sheet = ImageIO.read(new URL(APP.codebase, "media/sheet.png"));
-		explosionSheet = ImageIO.read(new URL(APP.codebase, "media\\explosionSheet.png"));
-		titleBackground = ImageIO.read(new URL(APP.codebase, "media\\title_background.png"));
-		title_white = ImageIO.read(new URL(APP.codebase, "media\\title_white.png"));
-		copyright = ImageIO.read(new URL(APP.codebase, "media\\copyright.png"));
+//		sheet = ImageIO.read(new URL(APP.codebase, "img/sheet.png"));
+//		explosionSheet = ImageIO.read(new URL(APP.codebase, "img/explosionSheet.png"));
+//		titleBackground = ImageIO.read(new URL(APP.codebase, "img/title_background.png"));
+//		title_white = ImageIO.read(new URL(APP.codebase, "img/title_white.png"));
+//		copyright = ImageIO.read(new URL(APP.codebase, "img/copyright.png"));
+		sheet = ImageIO.read(DeadlockView.class.getResource("/img/sheet.png"));
+		explosionSheet = ImageIO.read(DeadlockView.class.getResource("/img/explosionSheet.png"));
+		titleBackground = ImageIO.read(DeadlockView.class.getResource("/img/title_background.png"));
+		title_white = ImageIO.read(DeadlockView.class.getResource("/img/title_white.png"));
+		copyright = ImageIO.read(DeadlockView.class.getResource("/img/copyright.png"));
 	}
 	
 	public void setupFrame() {
