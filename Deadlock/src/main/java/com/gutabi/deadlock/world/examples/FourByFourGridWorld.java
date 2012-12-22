@@ -40,6 +40,8 @@ public class FourByFourGridWorld extends World {
 		
 		Graph g = new Graph(cam, w);
 		
+		w.graph = g;
+		
 		Set<Vertex> affected = new HashSet<Vertex>();
 		
 		for (int i = 1; i < 16; i++) {
@@ -66,9 +68,9 @@ public class FourByFourGridWorld extends World {
 				
 			}
 			
-			Set<Vertex> res = g.addVertexTop(source);
+			Set<Vertex> res = w.addFixture(source);
 			affected.addAll(res);
-			res = g.addVertexTop(sink);
+			res = w.addFixture(sink);
 			affected.addAll(res);
 			
 			Stroke s = new Stroke(cam, w);
@@ -106,9 +108,9 @@ public class FourByFourGridWorld extends World {
 				
 			}
 			
-			Set<Vertex> res = g.addVertexTop(source);
+			Set<Vertex> res = w.addFixture(source);
 			affected.addAll(res);
-			res = g.addVertexTop(sink);
+			res = w.addFixture(sink);
 			affected.addAll(res);
 			
 			Stroke s = new Stroke(cam, w);
@@ -121,8 +123,6 @@ public class FourByFourGridWorld extends World {
 			g.computeVertexRadii(affected);
 			
 		}
-		
-		w.graph = g;
 		
 		return w;
 	}
