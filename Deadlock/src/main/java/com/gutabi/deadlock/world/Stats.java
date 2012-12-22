@@ -22,7 +22,7 @@ public class Stats {
 	public void paint(RenderingContext ctxt) {
 		
 		ctxt.setColor(Color.WHITE);
-		ctxt.setXORMode(Color.BLACK);
+		ctxt.setXORMode(Color.DARK_GRAY);
 		ctxt.setPixelStroke(screen.cam.pixelsPerMeter, 1);
 		
 		AffineTransform origTransform1 = ctxt.getTransform();

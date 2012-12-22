@@ -24,4 +24,16 @@ public class DeadlockApplication {
 	
 	public static DeadlockApplication APP = new DeadlockApplication();
 	
+	public void exit() {
+		
+		 try {
+			 String pidstr = java.lang.management.ManagementFactory.getRuntimeMXBean().getName();
+		      String pid[] = pidstr.split("@");
+		      Runtime.getRuntime().exec("taskkill /F /PID " + pid[0]).waitFor();
+			  }
+			  catch (Exception e) {
+			  }
+		
+	}
+	
 }

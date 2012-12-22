@@ -32,21 +32,12 @@ public class World {
 	
 	public double t;
 	
-//	AnimatedGrassMap
-//	AnimatedGrass animatedGrass1;
-//	AnimatedGrass animatedGrass2;
-//	AnimatedGrass animatedGrass3;
-	
-//	public BufferedImage canvasGrassImage;
-//	public BufferedImage canvasGraphImage;
 	private BufferedImage background;
-	
 	
 	public CarMap carMap;
 	
 	public ExplosionMap explosionMap = new ExplosionMap();
 	
-//	private SkidMarkMap skidMarks = new ArrayList<Point>();
 	public RoadMarkMap roadMarkMap;
 	public GrassMarkMap grassMarkMap;
 	
@@ -66,7 +57,6 @@ public class World {
 		
 		b2dWorld = new org.jbox2d.dynamics.World(new Vec2(0.0f, 0.0f), true);
 		b2dWorld.setContactListener(new CarEventListener(cam, this));
-		
 	}
 	
 	public static World createWorld(WorldCamera cam, int[][] ini) {
@@ -86,7 +76,6 @@ public class World {
 		cam.canvasHeight = (int)dim.height;
 		
 		quadrantMap.canvasPostDisplay();
-//		graph.canvasPostDisplay();
 		
 		background = new BufferedImage(cam.canvasWidth, cam.canvasHeight, BufferedImage.TYPE_INT_RGB);
 		
@@ -99,19 +88,7 @@ public class World {
 	
 	public void preStart() {
 		
-//		renderSkidMarksFresh();
-//		renderSkidMarksIncremental();
-//		skidMarks = new ArrayList<Point>();
-		
-//		if (animatedGrass1 != null) {
-//			animatedGrass1.preStart();
-//		}
-//		if (animatedGrass2 != null) {
-//			animatedGrass2.preStart();
-//		}
-//		if (animatedGrass3 != null) {
-//			animatedGrass3.preStart();
-//		}
+		quadrantMap.preStart();
 		
 		graph.preStart();
 		
@@ -132,7 +109,6 @@ public class World {
 			
 		}
 		
-//		skidMarks.clear();
 		roadMarkMap.postStop();
 		grassMarkMap.postStop();
 	}
@@ -154,15 +130,7 @@ public class World {
 	
 	private void preStep() {
 		
-//		if (animatedGrass1 != null) {
-//			animatedGrass1.preStep(t);
-//		}
-//		if (animatedGrass2 != null) {
-//			animatedGrass2.preStep(t);
-//		}
-//		if (animatedGrass3 != null) {
-//			animatedGrass3.preStep(t);
-//		}
+		quadrantMap.preStep(t);
 		
 		graph.preStep(t);
 		
@@ -171,10 +139,6 @@ public class World {
 		explosionMap.preStep(t);
 		
 	}
-	
-//	public void addCar(Car c) {
-//		carMap.addCar(c);
-//	}
 	
 	private void postStep() {
 		
@@ -186,19 +150,9 @@ public class World {
 			
 		}
 		
-//		if (!skidMarks.isEmpty()) {
-////			renderSkidMarksIncremental();
-//			skidMarks.clear();
-//		}
-		
 		graph.postStep(t);
 		
 	}
-	
-//	public void addSkidMarks(Point a, Point b) {
-//		skidMarks.add(a);
-//		skidMarks.add(b);
-//	}
 	
 	public Entity hitTest(Point p) {
 		Car c;
@@ -357,20 +311,10 @@ public class World {
 		switch (ctxt.type) {
 		case CANVAS:
 			
-//			if (animatedGrass1 != null) {
-//			animatedGrass1.paint(ctxt);
-//		}
-//		if (animatedGrass2 != null) {
-//			animatedGrass2.paint(ctxt);
-//		}
-//		if (animatedGrass3 != null) {
-//			animatedGrass3.paint(ctxt);
-//		}
-			
-			
-//			paintRoadMarks(ctxt);
 			roadMarkMap.paintScene(ctxt);
 			grassMarkMap.paintScene(ctxt);
+			
+			quadrantMap.paintScene(ctxt);
 			
 			graph.paintScene(ctxt);
 			

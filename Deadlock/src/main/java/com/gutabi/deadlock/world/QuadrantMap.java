@@ -23,7 +23,6 @@ public class QuadrantMap {
 	public static final double QUADRANT_HEIGHT = QUADRANT_WIDTH;
 	
 	WorldCamera cam;
-//	public final World world;
 	
 	public final double worldWidth;
 	public final double worldHeight;
@@ -36,12 +35,13 @@ public class QuadrantMap {
 	
 	public BufferedImage quadrantGrass;
 	
+	public GrassMap grassMap = new GrassMap();
+	
 	public final AABB aabb;
 	
 	public QuadrantMap(WorldCamera cam, int[][] ini) {
 		this.cam = cam;
 		this.ini = ini;
-//		this.world = world;
 		
 		quadrants = initQuadrants(ini);
 		
@@ -123,8 +123,6 @@ public class QuadrantMap {
 						0, 224, 0+32, 224+32, null);
 			}
 		}
-		
-//		canvasGrassImage = new BufferedImage(cam.canvasWidth, cam.canvasHeight, BufferedImage.TYPE_INT_RGB);
 		
 	}
 	
@@ -251,6 +249,14 @@ public class QuadrantMap {
 		}
 	}
 	
+	public void preStart() {
+		grassMap.preStart();
+	}
+	
+	public void preStep(double t) {
+		grassMap.preStep(t);
+	}
+	
 	public String toFileString() {
 		StringBuilder s = new StringBuilder();
 		
@@ -308,23 +314,6 @@ public class QuadrantMap {
 		return qm;
 	}
 	
-//	public void renderCanvas() {
-//		
-//		Graphics2D canvasGrassImageG2 = canvasGrassImage.createGraphics();
-//		
-//		canvasGrassImageG2.setColor(Color.LIGHT_GRAY);
-//		canvasGrassImageG2.fillRect(0, 0, cam.canvasWidth, cam.canvasHeight);
-//		
-//		canvasGrassImageG2.scale(cam.pixelsPerMeter, cam.pixelsPerMeter);
-//		canvasGrassImageG2.translate(-cam.worldViewport.x, -cam.worldViewport.y);
-//		
-//		RenderingContext canvasGrassContext = new RenderingContext(canvasGrassImageG2, RenderingContextType.CANVAS);
-//		
-//		render(canvasGrassContext);
-//		
-//		canvasGrassImageG2.dispose();
-//	}
-	
 	public void render(RenderingContext ctxt) {
 		for (int i = 0; i < quadrantRows; i++) {
 			for (int j = 0; j < quadrantCols; j++) {
@@ -334,13 +323,8 @@ public class QuadrantMap {
 		}
 	}
 	
-//	public void paintImage(RenderingContext ctxt) {
-//		
-//		ctxt.paintImage(
-//				canvasGrassImage,
-//				0, 0, cam.canvasWidth, cam.canvasHeight,
-//				0, 0, cam.canvasWidth, cam.canvasHeight);
-//		
-//	}
+	public void paintScene(RenderingContext ctxt) {
+		grassMap.paintScene(ctxt);
+	}
 	
 }

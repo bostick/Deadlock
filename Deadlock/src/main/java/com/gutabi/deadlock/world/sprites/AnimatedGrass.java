@@ -20,11 +20,14 @@ public class AnimatedGrass {
 	int lastFrame;
 	double lastTime;
 	double phase;
+	int startFrame;
 	
 	public AnimatedGrass(WorldCamera cam, Point p) {
 		this.cam = cam;
 		this.p = p;
 		phase = APP.RANDOM.nextDouble();
+		startFrame = APP.RANDOM.nextInt(4);
+		lastFrame = startFrame;
 	}
 	
 	public void preStart() {
@@ -37,7 +40,7 @@ public class AnimatedGrass {
 		if (lastTime == -1) {
 			
 			lastTime = t + phase;
-			lastFrame = 0;
+			lastFrame = startFrame;
 			
 		} else if ((t - lastTime) > 1.0) {
 			

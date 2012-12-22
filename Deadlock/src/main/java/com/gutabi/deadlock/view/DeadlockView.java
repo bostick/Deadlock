@@ -4,6 +4,8 @@ import static com.gutabi.deadlock.DeadlockApplication.APP;
 
 import java.awt.Color;
 import java.awt.Container;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.net.URL;
 
@@ -53,7 +55,13 @@ public class DeadlockView {
 		
 		newFrame = new JFrame("Deadlock Viewer");
 		
-		newFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		newFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		
+		newFrame.addWindowListener(new WindowAdapter() {
+		    public void windowClosing(WindowEvent e) {
+		        APP.exit();
+		    }
+		});
 		
 		setupCanvas(newFrame);
 		
@@ -86,6 +94,24 @@ public class DeadlockView {
 		
 		oldCanvas = canvas;
 		canvas = null;
+	}
+	
+	public void setupControlPanel(RootPaneContainer container) {
+		
+//		canvas = new Canvas();
+		
+		previewPanel = new PreviewPanel();
+		
+		controlPanel = new ControlPanel();
+		controlPanel.init();
+		
+		Container cp = container.getContentPane();
+//		cp.setLayout(new BoxLayout(cp, BoxLayout.X_AXIS));
+//		cp.add(canvas.java());
+		cp.add(controlPanel);
+		
+		cp.validate();
+		
 	}
 	
 	public void setupCanvasAndControlPanel(RootPaneContainer container) {

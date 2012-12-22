@@ -290,8 +290,8 @@ public class Canvas extends Component {
 	
 	
 	
-	public void repaint() {
-		c.repaint();
-	}
+//	public void repaint() {
+//		c.repaint();
+//	}
 	
 }

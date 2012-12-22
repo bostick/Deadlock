@@ -65,15 +65,16 @@ public class RegularTool extends ToolBase {
 		
 		VIEW.teardownCanvasAndControlPanel(VIEW.container);
 		
-		APP.screen = new MainMenu();
+		MainMenu s = new MainMenu();
+		APP.screen = s;
 		
 		VIEW.setupCanvas(VIEW.container);
 		((JFrame)VIEW.container).setVisible(true);
 		
-		APP.screen.postDisplay();
-		APP.screen.render();
+		s.postDisplay();
+		s.render();
 //		APP.screen.repaint();
-		VIEW.canvas.repaint();
+		s.repaintCanvas();
 //		VIEW.previewPanel.repaint();
 		
 	}

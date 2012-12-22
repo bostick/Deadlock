@@ -351,7 +351,8 @@ public class QuadrantEditor extends ScreenBase {
 				APP.screen.postDisplay();
 				APP.screen.render();
 //				APP.screen.repaint();
-				VIEW.canvas.repaint();
+//				VIEW.canvas.repaint();
+				s.repaintCanvas();
 				VIEW.controlPanel.repaint();
 				
 			}
@@ -401,11 +402,13 @@ public class QuadrantEditor extends ScreenBase {
 	
 	public void escKey(InputEvent ev) {
 		
-		APP.screen = new MainMenu();
+		MainMenu s = new MainMenu();
+		APP.screen = s;
 		
-		APP.screen.render();
+		s.render();
 //		APP.screen.repaint();
-		VIEW.canvas.repaint();
+//		VIEW.canvas.repaint();
+		s.repaintCanvas();
 //		VIEW.previewPanel.repaint();
 		
 	}

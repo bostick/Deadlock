@@ -26,6 +26,6 @@ public abstract class Component {
 	
 	public abstract void exited(InputEvent e);
 	
-	public abstract void repaint();
+//	public abstract void repaint();
 	
 }

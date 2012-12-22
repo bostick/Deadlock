@@ -15,6 +15,7 @@ import javax.swing.JFrame;
 import org.apache.log4j.Logger;
 
 import com.gutabi.deadlock.ScreenBase;
+import com.gutabi.deadlock.core.Dim;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.quadranteditor.QuadrantEditor;
 import com.gutabi.deadlock.view.InputEvent;
@@ -31,6 +32,9 @@ public class MainMenu extends ScreenBase {
 	
 	public static final int MENU_WIDTH = 800;
 	public static final int MENU_HEIGHT = 600;
+	
+	int canvasWidth;
+	int canvasHeight;
 	
 	static Color menuBackground = new Color(0x88, 0x88, 0x88);
 	
@@ -62,10 +66,10 @@ public class MainMenu extends ScreenBase {
 				APP.screen.postDisplay();
 				APP.screen.render();
 //				APP.screen.repaint();
-				VIEW.canvas.repaint();
+				s.repaintCanvas();
 //				VIEW.previewPanel.repaint();
 				VIEW.controlPanel.repaint();
-				
+//				VIEW.container.getContentPane().repaint();
 			}
 		};
 		add(oneMenuItem);
@@ -86,7 +90,8 @@ public class MainMenu extends ScreenBase {
 				APP.screen.postDisplay();
 				APP.screen.render();
 //				APP.screen.repaint();
-				VIEW.canvas.repaint();
+//				VIEW.canvas.repaint();
+				s.repaintCanvas();
 				VIEW.controlPanel.repaint();
 				
 			}
@@ -110,7 +115,8 @@ public class MainMenu extends ScreenBase {
 				APP.screen.postDisplay();
 				APP.screen.render();
 //				APP.screen.repaint();
-				VIEW.canvas.repaint();
+//				VIEW.canvas.repaint();
+				s.repaintCanvas();
 //				VIEW.previewPanel.repaint();
 				VIEW.controlPanel.repaint();
 				
@@ -123,7 +129,8 @@ public class MainMenu extends ScreenBase {
 				
 				VIEW.teardownCanvas(VIEW.container);
 				
-				APP.screen = new QuadrantEditor();
+				QuadrantEditor s = new QuadrantEditor();
+				APP.screen = s;
 				
 				VIEW.setupCanvas(VIEW.container);
 				((JFrame)VIEW.container).setVisible(true);
@@ -131,7 +138,8 @@ public class MainMenu extends ScreenBase {
 				APP.screen.postDisplay();
 				APP.screen.render();
 //				APP.screen.repaint();
-				VIEW.canvas.repaint();
+//				VIEW.canvas.repaint();
+				s.repaintCanvas();
 //				VIEW.previewPanel.repaint();
 			}
 		};
@@ -163,7 +171,9 @@ public class MainMenu extends ScreenBase {
 		
 		MenuItem quitMenuItem = new MenuItem(MainMenu.this, "Quit") {
 			public void action() {
-				System.exit(0);
+				
+				APP.exit();
+				
 			}
 		};
 		add(quitMenuItem);
@@ -172,7 +182,9 @@ public class MainMenu extends ScreenBase {
 	
 	public void postDisplay() {
 		
-		VIEW.canvas.postDisplay();
+		Dim canvasDim = VIEW.canvas.postDisplay();
+		canvasWidth = (int)canvasDim.width;
+		canvasHeight = (int)canvasDim.height;
 		
 	}
 	
@@ -335,6 +347,9 @@ public class MainMenu extends ScreenBase {
 			do {
 				
 				Graphics2D g2 = (Graphics2D)VIEW.canvas.bs.getDrawGraphics();
+				
+				g2.setColor(Color.DARK_GRAY);
+				g2.fillRect(0, 0, canvasWidth, canvasHeight);
 				
 				RenderingContext ctxt = new RenderingContext(RenderingContextType.CANVAS);
 				ctxt.g2 = g2;

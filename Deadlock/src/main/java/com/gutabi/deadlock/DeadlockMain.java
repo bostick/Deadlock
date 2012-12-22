@@ -22,17 +22,19 @@ public class DeadlockMain  {
 		
 		APP.codebase = new URL("file:.");
 		
-		APP.screen = new MainMenu();
+		MainMenu s = new MainMenu();
+		APP.screen = s;
 		
 		VIEW.setupFrame();
 		VIEW.init();
 		
 		((JFrame)VIEW.container).setVisible(true);
 		
-		APP.screen.postDisplay();
-		APP.screen.render();
+		s.postDisplay();
+		s.render();
 //		APP.screen.repaint();
-		VIEW.canvas.repaint();
+//		VIEW.canvas.repaint();
+		s.repaintCanvas();
 //		VIEW.previewPanel.repaint();
 	}
 	
