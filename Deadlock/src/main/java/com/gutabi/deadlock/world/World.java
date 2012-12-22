@@ -26,6 +26,7 @@ import com.gutabi.deadlock.world.car.CarEventListener;
 import com.gutabi.deadlock.world.graph.Fixture;
 import com.gutabi.deadlock.world.graph.Graph;
 import com.gutabi.deadlock.world.graph.Intersection;
+import com.gutabi.deadlock.world.graph.Merger;
 import com.gutabi.deadlock.world.graph.Road;
 import com.gutabi.deadlock.world.graph.RoadPosition;
 import com.gutabi.deadlock.world.graph.Vertex;
@@ -208,6 +209,20 @@ public class World {
 		quadrantMap.grassMap.mowGrass(r.getShape());
 		
 		return graph.createRoadTop(r);
+	}
+	
+	public Set<Vertex> createMerger(Point p) {
+		
+//		Merger m = graph.createMergerAndFixtures(p);
+		Merger m = Merger.createMergerAndFixtures(cam, this, p);
+		
+		quadrantMap.grassMap.mowGrass(m.getShape());
+		quadrantMap.grassMap.mowGrass(m.top.getShape());
+		quadrantMap.grassMap.mowGrass(m.left.getShape());
+		quadrantMap.grassMap.mowGrass(m.right.getShape());
+		quadrantMap.grassMap.mowGrass(m.bottom.getShape());
+		
+		return graph.insertMergerTop(m);
 	}
 	
 	public String toFileString() {

@@ -47,7 +47,7 @@ public class MergerTool extends ToolBase {
 			
 			if (screen.world.graph.pureGraphIntersect(shape) == null) {
 				
-				Set<Vertex> affected = screen.world.graph.insertMergerTop(p);
+				Set<Vertex> affected = screen.world.createMerger(p);
 				screen.world.graph.computeVertexRadii(affected);
 				
 				screen.tool = new RegularTool(screen);

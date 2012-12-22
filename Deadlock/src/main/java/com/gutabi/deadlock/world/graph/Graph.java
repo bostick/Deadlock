@@ -154,10 +154,6 @@ public class Graph implements Sweepable {
 		return affected;
 	}
 	
-//	public Intersection createIntersection(Point p) {
-//		return new Intersection(cam, p);
-//	}
-	
 	public Set<Vertex> createRoadTop(Road r) {
 		
 		createRoad(r, (r.start.m==null&&r.start.supportsStopSigns()?1:0)+(r.end.m==null&&r.end.supportsStopSigns()?2:0));
@@ -180,9 +176,18 @@ public class Graph implements Sweepable {
 		return affected;
 	}
 	
-	public Set<Vertex> insertMergerTop(Point p) {
+	public Set<Vertex> insertMergerTop(Merger m) {
 		
-		Merger m = createMergerAndFixtures(p);
+		edges.add(m);
+		refreshEdgeIDs();
+		
+		vertices.add(m.top);
+		vertices.add(m.left);
+		
+		vertices.add(m.right);
+		vertices.add(m.bottom);
+		
+		refreshVertexIDs();
 		
 		Set<Vertex> affected = new HashSet<Vertex>();
 		affected.add(m.top);
@@ -347,22 +352,11 @@ public class Graph implements Sweepable {
 //		return r;
 	}
 	
-	private Merger createMergerAndFixtures(Point p) {
-		Merger m = Merger.createMergerAndFixtures(cam, world, p);
-		
-		edges.add(m);
-		refreshEdgeIDs();
-		
-		vertices.add(m.top);
-		vertices.add(m.left);
-		
-		vertices.add(m.right);
-		vertices.add(m.bottom);
-		
-		refreshVertexIDs();
-		
-		return m;
-	}
+//	public Merger createMergerAndFixtures(Point p) {
+//		
+//		
+//		return m;
+//	}
 	
 	private void destroyVertex(Vertex v) {
 		vertices.remove(v);
