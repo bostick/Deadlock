@@ -99,6 +99,11 @@ public class QuadrantMap {
 					q.right = rightQuad;
 				}
 				
+				if (j < quadrantRows-1 && i < quadrantCols-1) {
+					Quadrant rightDownQuad = newQuads[j+1][i+1];
+					q.rightDown = rightDownQuad;
+				}
+				
 			}
 		}
 		

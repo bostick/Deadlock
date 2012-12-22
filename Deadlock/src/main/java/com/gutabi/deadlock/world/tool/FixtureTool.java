@@ -160,9 +160,9 @@ public class FixtureTool extends ToolBase {
 			}
 			
 			Set<Vertex> affected = new HashSet<Vertex>();
-			Set<Vertex> res = screen.world.graph.addVertexTop(source);
+			Set<Vertex> res = screen.world.addFixture(source);
 			affected.addAll(res);
-			res = screen.world.graph.addVertexTop(sink);
+			res = screen.world.addFixture(sink);
 			affected.addAll(res);
 			screen.world.graph.computeVertexRadii(affected);
 			

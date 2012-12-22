@@ -470,9 +470,6 @@ public class WorldScreen extends ScreenBase {
 		case PAUSED:
 			break;
 		case DIALOG:
-			
-//			mode = WorldScreenMode.EDITING;
-			
 			break;
 		case EDITING:
 			tool.dKey(ev);

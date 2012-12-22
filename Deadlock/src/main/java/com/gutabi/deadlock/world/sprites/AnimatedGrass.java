@@ -6,6 +6,7 @@ import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 import java.awt.geom.AffineTransform;
 
 import com.gutabi.deadlock.core.Point;
+import com.gutabi.deadlock.core.geom.AABB;
 import com.gutabi.deadlock.view.RenderingContext;
 import com.gutabi.deadlock.world.WorldCamera;
 
@@ -22,12 +23,16 @@ public class AnimatedGrass {
 	double phase;
 	int startFrame;
 	
+	public AABB aabb;
+	
 	public AnimatedGrass(WorldCamera cam, Point p) {
 		this.cam = cam;
 		this.p = p;
 		phase = APP.RANDOM.nextDouble();
 		startFrame = APP.RANDOM.nextInt(4);
 		lastFrame = startFrame;
+		
+		aabb = new AABB(p.x - GRASS_SIZE/2, p.y - GRASS_SIZE/2, GRASS_SIZE, GRASS_SIZE);
 	}
 	
 	public void preStart() {

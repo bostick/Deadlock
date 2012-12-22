@@ -19,6 +19,14 @@ public class ShapeUtils {
 			
 			return ((CompoundShape)s1).intersect(s0);
 			
+		} else if (s0 instanceof AABB) {
+			if (s1 instanceof AABB) {
+				return intersectAA((AABB)s1, (AABB)s0);
+			} else if (s1 instanceof Circle) {
+				return intersectAC((AABB)s0, (Circle)s1);
+			} else if (s1 instanceof Quad) {
+				return intersectAQ((AABB)s0, (Quad)s1);
+			}
 		} else if (s0 instanceof Circle) {
 			if (s1 instanceof AABB) {
 				return intersectAC((AABB)s1, (Circle)s0);

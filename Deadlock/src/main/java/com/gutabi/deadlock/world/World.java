@@ -10,6 +10,8 @@ import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.List;
+import java.util.Set;
 
 import org.jbox2d.common.Vec2;
 
@@ -21,7 +23,12 @@ import com.gutabi.deadlock.view.RenderingContext;
 import com.gutabi.deadlock.view.RenderingContextType;
 import com.gutabi.deadlock.world.car.Car;
 import com.gutabi.deadlock.world.car.CarEventListener;
+import com.gutabi.deadlock.world.graph.Fixture;
 import com.gutabi.deadlock.world.graph.Graph;
+import com.gutabi.deadlock.world.graph.Intersection;
+import com.gutabi.deadlock.world.graph.Road;
+import com.gutabi.deadlock.world.graph.RoadPosition;
+import com.gutabi.deadlock.world.graph.Vertex;
 
 //@SuppressWarnings("static-access")
 public class World {
@@ -167,6 +174,40 @@ public class World {
 			return h;
 		}
 		return null;
+	}
+	
+	public Set<Vertex> addFixture(Fixture f) {
+		
+		quadrantMap.grassMap.mowGrass(f.getShape());
+		
+		return graph.addVertexTop(f);
+	}
+	
+	public Set<Vertex> createIntersection(Point p) {
+		
+		Intersection i = new Intersection(cam, p);
+		
+		quadrantMap.grassMap.mowGrass(i.getShape());
+		
+		return graph.addVertexTop(i);
+	}
+	
+	public Intersection splitRoad(RoadPosition pos) {
+		
+		Intersection i = graph.split(pos);
+		
+		quadrantMap.grassMap.mowGrass(i.getShape());
+		
+		return i;
+	}
+	
+	public Set<Vertex> createRoad(Vertex v0, Vertex v1, List<Point> roadPts) {
+		
+		Road r = new Road(cam, v0, v1, roadPts);
+		
+		quadrantMap.grassMap.mowGrass(r.getShape());
+		
+		return graph.createRoadTop(r);
 	}
 	
 	public String toFileString() {

@@ -3,6 +3,8 @@ package com.gutabi.deadlock.world;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.gutabi.deadlock.core.geom.Shape;
+import com.gutabi.deadlock.core.geom.ShapeUtils;
 import com.gutabi.deadlock.view.RenderingContext;
 import com.gutabi.deadlock.world.sprites.AnimatedGrass;
 
@@ -12,6 +14,19 @@ public class GrassMap {
 	
 	public void addGrass(AnimatedGrass g) {
 		grass.add(g);
+	}
+	
+	public void mowGrass(Shape s) {
+		
+		List<AnimatedGrass> toRemove = new ArrayList<AnimatedGrass>();
+		for (AnimatedGrass g : grass) {
+			if (ShapeUtils.intersect(g.aabb, s)) {
+				toRemove.add(g);
+			}
+		}
+		
+		grass.removeAll(toRemove);
+		
 	}
 	
 	public void preStart() {

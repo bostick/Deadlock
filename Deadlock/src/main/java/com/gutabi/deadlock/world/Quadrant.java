@@ -26,6 +26,7 @@ public class Quadrant {
 	public Quadrant left;
 	public Quadrant right;
 	public Quadrant down;
+	public Quadrant rightDown;
 	
 	public boolean grid;
 	
@@ -43,6 +44,19 @@ public class Quadrant {
 				for (int j = 0; j < 16; j+=4) {
 					map.grassMap.addGrass(new AnimatedGrass(cam, new Point(c * QuadrantMap.QUADRANT_WIDTH + i, r * QuadrantMap.QUADRANT_HEIGHT + j)));
 				}
+			}
+			if (right == null || !right.active) {
+				for (int i = 0; i < 16; i+=4) {
+					map.grassMap.addGrass(new AnimatedGrass(cam, new Point(c * QuadrantMap.QUADRANT_WIDTH + 16, r * QuadrantMap.QUADRANT_HEIGHT + i)));
+				}
+			}
+			if (down == null || !down.active) {
+				for (int i = 0; i < 16; i+=4) {
+					map.grassMap.addGrass(new AnimatedGrass(cam, new Point(c * QuadrantMap.QUADRANT_WIDTH + i, r * QuadrantMap.QUADRANT_HEIGHT + 16)));
+				}
+			}
+			if (rightDown == null || !rightDown.active) {
+				map.grassMap.addGrass(new AnimatedGrass(cam, new Point(c * QuadrantMap.QUADRANT_WIDTH + 16, r * QuadrantMap.QUADRANT_HEIGHT + 16)));
 			}
 		}
 		

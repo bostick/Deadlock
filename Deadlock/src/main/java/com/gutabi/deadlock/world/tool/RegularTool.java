@@ -73,9 +73,7 @@ public class RegularTool extends ToolBase {
 		
 		s.postDisplay();
 		s.render();
-//		APP.screen.repaint();
 		s.repaintCanvas();
-//		VIEW.previewPanel.repaint();
 		
 	}
 	
@@ -89,7 +87,6 @@ public class RegularTool extends ToolBase {
 				
 				screen.render();
 				screen.repaintCanvas();
-//				repaintControlPanel();
 				
 			} else if (screen.hilited instanceof Fixture) {
 				Fixture f = (Fixture)screen.hilited;
@@ -283,7 +280,7 @@ public class RegularTool extends ToolBase {
 		
 		screen.hilited = null;
 		
-		stroke = new Stroke(screen.cam, screen.world, screen.world.graph);
+		stroke = new Stroke(screen.cam, screen.world);
 		stroke.add(p);
 			
 	}

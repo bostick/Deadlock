@@ -58,10 +58,6 @@ public class Graph implements Sweepable {
 		
 	}
 	
-//	public void canvasPostDisplay() {
-//		canvasGraphImage = new BufferedImage(cam.canvasWidth, cam.canvasHeight, BufferedImage.TYPE_INT_ARGB);
-//	}
-	
 	public void preStart() {
 		
 		initializeMatrices();
@@ -158,25 +154,25 @@ public class Graph implements Sweepable {
 		return affected;
 	}
 	
-	public Intersection createIntersection(Point p) {
-		return new Intersection(cam, p);
-	}
+//	public Intersection createIntersection(Point p) {
+//		return new Intersection(cam, p);
+//	}
 	
-	public Set<Vertex> createRoadTop(Vertex start, Vertex end, List<Point> pts) {
+	public Set<Vertex> createRoadTop(Road r) {
 		
-		createRoad(start, end, pts, (start.m==null&&start.supportsStopSigns()?1:0)+(end.m==null&&end.supportsStopSigns()?2:0));
+		createRoad(r, (r.start.m==null&&r.start.supportsStopSigns()?1:0)+(r.end.m==null&&r.end.supportsStopSigns()?2:0));
 		
 		Set<Vertex> affected = new HashSet<Vertex>();
 		
 		boolean persist;
-		persist = automaticMergeOrDestroy(start);
+		persist = automaticMergeOrDestroy(r.start);
 		if (persist) {
-			affected.add(start);
+			affected.add(r.start);
 		}
 		
-		persist = automaticMergeOrDestroy(end);
+		persist = automaticMergeOrDestroy(r.end);
 		if (persist) {
-			affected.add(end);
+			affected.add(r.end);
 		}
 		
 		computeAABB();
@@ -323,9 +319,9 @@ public class Graph implements Sweepable {
 	 * bit 0 set = add start stop sign
 	 * bit 1 set = add end stop sign
 	 */
-	private Road createRoad(Vertex start, Vertex end, List<Point> pts, int dec) {
-		assert pts.size() >= 2;
-		Road r = new Road(cam, start, end, pts);
+	private void createRoad(Road r, int dec) {
+//		assert pts.size() >= 2;
+//		Road r = new Road(cam, start, end, pts);
 		
 		if ((dec & 1) == 1) {
 			r.startSign.setEnabled(true);
@@ -348,7 +344,7 @@ public class Graph implements Sweepable {
 		edges.add(r);
 		refreshEdgeIDs();
 		
-		return r;
+//		return r;
 	}
 	
 	private Merger createMergerAndFixtures(Point p) {
@@ -849,7 +845,7 @@ public class Graph implements Sweepable {
 			/*
 			 * 3 so that both stop signs are introduced
 			 */
-			createRoad(v, v, pts, 3);
+			createRoad(new Road(cam, v, v, pts), 3);
 			
 			destroyRoad(r);
 			
@@ -878,7 +874,7 @@ public class Graph implements Sweepable {
 			directionMask = 0;
 		}
 		
-		createRoad(eStart, v, f1Pts, (r.startSign.isEnabled()?1:0)+2+directionMask);
+		createRoad(new Road(cam, eStart, v, f1Pts), (r.startSign.isEnabled()?1:0)+2+directionMask);
 		
 		List<Point> f2Pts = new ArrayList<Point>();
 		
@@ -887,7 +883,7 @@ public class Graph implements Sweepable {
 			f2Pts.add(r.getPoint(i));
 		}
 		
-		createRoad(v, eEnd, f2Pts, 1+(r.endSign.isEnabled()?2:0)+directionMask);
+		createRoad(new Road(cam, v, eEnd, f2Pts), 1+(r.endSign.isEnabled()?2:0)+directionMask);
 		
 		destroyRoad(r);
 		
@@ -1019,7 +1015,7 @@ public class Graph implements Sweepable {
 				pts.add(e1.getPoint(i));
 			}
 			
-			createRoad(null, null, pts, 0);
+			createRoad(new Road(cam, null, null, pts), 0);
 			
 			destroyRoad(e1);
 			
@@ -1056,7 +1052,7 @@ public class Graph implements Sweepable {
 					pts.add(e2.getPoint(i));
 				}
 				
-				createRoad(e1End, e2End, pts, (e1.endSign.isEnabled()?1:0) + (e2.endSign.isEnabled()?2:0)+directionMask);
+				createRoad(new Road(cam, e1End, e2End, pts), (e1.endSign.isEnabled()?1:0) + (e2.endSign.isEnabled()?2:0)+directionMask);
 				
 				destroyRoad(e1);
 				destroyRoad(e2);
@@ -1075,7 +1071,7 @@ public class Graph implements Sweepable {
 					pts.add(e2.getPoint(i));
 				}
 				
-				createRoad(e1End, e2Start, pts, (e1.endSign.isEnabled()?1:0) + (e2.startSign.isEnabled()?2:0)+directionMask); 
+				createRoad(new Road(cam, e1End, e2Start, pts), (e1.endSign.isEnabled()?1:0) + (e2.startSign.isEnabled()?2:0)+directionMask); 
 				
 				destroyRoad(e1);
 				destroyRoad(e2);
@@ -1094,7 +1090,7 @@ public class Graph implements Sweepable {
 					pts.add(e2.getPoint(i));
 				}
 				
-				createRoad(e1Start, e2End, pts, (e1.startSign.isEnabled()?1:0) + (e2.endSign.isEnabled()?2:0)+directionMask);
+				createRoad(new Road(cam, e1Start, e2End, pts), (e1.startSign.isEnabled()?1:0) + (e2.endSign.isEnabled()?2:0)+directionMask);
 				
 				destroyRoad(e1);
 				destroyRoad(e2);
@@ -1113,7 +1109,7 @@ public class Graph implements Sweepable {
 					pts.add(e2.getPoint(i));
 				}
 				
-				createRoad(e1Start, e2Start, pts, (e1.startSign.isEnabled()?1:0) + (e2.startSign.isEnabled()?2:0)+directionMask);
+				createRoad(new Road(cam, e1Start, e2Start, pts), (e1.startSign.isEnabled()?1:0) + (e2.startSign.isEnabled()?2:0)+directionMask);
 				
 				destroyRoad(e1);
 				destroyRoad(e2);

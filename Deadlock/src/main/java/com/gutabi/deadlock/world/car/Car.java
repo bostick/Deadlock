@@ -425,10 +425,7 @@ public abstract class Car extends Entity {
 					
 				}
 				
-//				MODEL.world.addSkidMarks(prevWorldPoint0, worldQuad.p0);
-//				MODEL.world.addSkidMarks(prevWorldPoint3, worldQuad.p3);
-//				world.grassMarkMap.addGrassMark(prevWorldPoint0, shape.p0);
-//				world.grassMarkMap.addGrassMark(prevWorldPoint3, shape.p3);
+				world.quadrantMap.grassMap.mowGrass(shape);
 				
 				computeDynamicPropertiesMoving();
 				
@@ -465,8 +462,8 @@ public abstract class Car extends Entity {
 					
 				}
 				
-//				MODEL.world.addSkidMarks(prevWorldPoint0, worldQuad.p0);
-//				MODEL.world.addSkidMarks(prevWorldPoint3, worldQuad.p3);
+				world.quadrantMap.grassMap.mowGrass(shape);
+				
 				world.grassMarkMap.addGrassMark(prevWorldPoint0, shape.p0);
 				world.grassMarkMap.addGrassMark(prevWorldPoint3, shape.p3);
 				
