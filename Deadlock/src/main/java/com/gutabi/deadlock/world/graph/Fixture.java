@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Scanner;
 
 import com.gutabi.deadlock.core.Point;
+import com.gutabi.deadlock.view.ControlPanel;
 import com.gutabi.deadlock.view.ProgressMeter;
 import com.gutabi.deadlock.view.RenderingContext;
 import com.gutabi.deadlock.world.World;
@@ -23,13 +24,15 @@ import com.gutabi.deadlock.world.car.NormalCar;
 import com.gutabi.deadlock.world.car.RandomCar;
 import com.gutabi.deadlock.world.car.ReallyFastCar;
 
-@SuppressWarnings("static-access")
+//@SuppressWarnings("static-access")
 public final class Fixture extends Vertex {
 	
 	public static double SPAWN_FREQUENCY_SECONDS = 1.5;
 	
 	public World world;
 	public final Axis a;
+	
+	ControlPanel cp;
 	
 	private Side s;
 	private FixtureType type;
@@ -44,15 +47,15 @@ public final class Fixture extends Vertex {
 	
 	static int carIDCounter;
 	
-	public Fixture(WorldCamera cam, World w, Point p, Axis a) {
+	public Fixture(WorldCamera cam, World w, ControlPanel cp, Point p, Axis a) {
 		super(cam, p);
 		
 		assert p != null;
 		assert a != null;
 		
 		this.world = w;
+		this.cp = cp;
 		this.a = a;
-		hiliteColor = new Color(0, 255, 255);
 	}
 	
 	public void setType(FixtureType type) {
@@ -206,10 +209,10 @@ public final class Fixture extends Vertex {
 	@SuppressWarnings({"rawtypes"})
 	private Car createNewCar() {
 		
-		boolean normal = VIEW.controlPanel.normalCarButton.isSelected();
-		boolean fast = VIEW.controlPanel.fastCarButton.isSelected();
+		boolean normal = cp.normalCarButton.isSelected();
+		boolean fast = cp.fastCarButton.isSelected();
 //		boolean random = VIEW.controlPanel.randomCarButton.isSelected();
-		boolean really = VIEW.controlPanel.reallyFastCarButton.isSelected();
+		boolean really = cp.reallyFastCarButton.isSelected();
 		
 		List<Class> l = new ArrayList<Class>();
 		if (normal) {
@@ -265,7 +268,7 @@ public final class Fixture extends Vertex {
 		return s.toString();
 	}
 	
-	public static Fixture fromFileString(WorldCamera cam, World world, String s) {
+	public static Fixture fromFileString(WorldCamera cam, World world, ControlPanel cp, String s) {
 		BufferedReader r = new BufferedReader(new StringReader(s));
 		
 		Point p = null;
@@ -329,7 +332,7 @@ public final class Fixture extends Vertex {
 			e.printStackTrace();
 		}
 		
-		Fixture f = new Fixture(cam, world, p, a);
+		Fixture f = new Fixture(cam, world, cp, p, a);
 		
 		f.id = id;
 		f.matchID = match;
@@ -390,6 +393,11 @@ public final class Fixture extends Vertex {
 			break;
 		}
 		
+	}
+	
+	public void paintHilite(RenderingContext ctxt) {
+		ctxt.setColor(VIEW.fixtureHiliteColor);
+		shape.paint(ctxt);
 	}
 	
 	public void paintScene(RenderingContext ctxt) {

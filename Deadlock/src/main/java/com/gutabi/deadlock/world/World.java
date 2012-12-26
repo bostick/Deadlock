@@ -19,6 +19,7 @@ import com.gutabi.deadlock.core.Dim;
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.AABB;
+import com.gutabi.deadlock.view.ControlPanel;
 import com.gutabi.deadlock.view.RenderingContext;
 import com.gutabi.deadlock.view.RenderingContextType;
 import com.gutabi.deadlock.world.car.Car;
@@ -35,6 +36,8 @@ import com.gutabi.deadlock.world.graph.Vertex;
 public class World {
 	
 	WorldCamera cam;
+	ControlPanel cp;
+	
 	public QuadrantMap quadrantMap;
 	public Graph graph;
 	
@@ -53,8 +56,9 @@ public class World {
 	
 //	private static Logger logger = Logger.getLogger(World.class);
 	
-	public World(WorldCamera cam) {
+	public World(WorldCamera cam, ControlPanel cp) {
 		this.cam = cam;
+		this.cp = cp;
 		
 		graph = new Graph(cam, this);
 		
@@ -67,9 +71,9 @@ public class World {
 		b2dWorld.setContactListener(new CarEventListener(cam, this));
 	}
 	
-	public static World createWorld(WorldCamera cam, int[][] ini) {
+	public static World createWorld(WorldCamera cam, ControlPanel cp, int[][] ini) {
 		
-		World w = new World(cam);
+		World w = new World(cam, cp);
 		
 		QuadrantMap qm = new QuadrantMap(cam, ini);
 		
@@ -214,7 +218,7 @@ public class World {
 	public Set<Vertex> createMerger(Point p) {
 		
 //		Merger m = graph.createMergerAndFixtures(p);
-		Merger m = Merger.createMergerAndFixtures(cam, this, p);
+		Merger m = Merger.createMergerAndFixtures(cam, this, cp, p);
 		
 		quadrantMap.grassMap.mowGrass(m.getShape());
 		quadrantMap.grassMap.mowGrass(m.top.getShape());
@@ -240,7 +244,7 @@ public class World {
 		return s.toString();
 	}
 	
-	public static World fromFileString(WorldCamera cam, String s) {
+	public static World fromFileString(WorldCamera cam, ControlPanel cp, String s) {
 		BufferedReader r = new BufferedReader(new StringReader(s));
 		
 		StringBuilder quadrantMapStringBuilder = null;
@@ -281,10 +285,10 @@ public class World {
 			e.printStackTrace();
 		}
 		
-		World w = new World(cam);
+		World w = new World(cam, cp);
 		
 		QuadrantMap qm = QuadrantMap.fromFileString(cam, quadrantMapStringBuilder.toString());
-		Graph g = Graph.fromFileString(cam, w, graphStringBuilder.toString());
+		Graph g = Graph.fromFileString(cam, w, cp, graphStringBuilder.toString());
 		
 		w.quadrantMap = qm;
 		w.graph = g;

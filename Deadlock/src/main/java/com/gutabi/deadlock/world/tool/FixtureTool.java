@@ -139,8 +139,8 @@ public class FixtureTool extends ToolBase {
 		
 		if (screen.world.graph.pureGraphIntersect(shape) == null) {
 			
-			Fixture source = new Fixture(screen.cam, screen.world, getSourcePoint(), axis);
-			Fixture sink = new Fixture(screen.cam, screen.world, getSinkPoint(), axis);
+			Fixture source = new Fixture(screen.cam, screen.world, screen.controlPanel, getSourcePoint(), axis);
+			Fixture sink = new Fixture(screen.cam, screen.world, screen.controlPanel, getSinkPoint(), axis);
 			
 			source.setType(FixtureType.SOURCE);
 			sink.setType(FixtureType.SINK);

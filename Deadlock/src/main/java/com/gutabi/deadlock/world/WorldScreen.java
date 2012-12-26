@@ -1,8 +1,8 @@
 package com.gutabi.deadlock.world;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
-import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
+import java.awt.Container;
 import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.geom.AffineTransform;
@@ -12,13 +12,17 @@ import java.io.IOException;
 import java.util.Scanner;
 import java.util.Set;
 
+import javax.swing.BoxLayout;
 import javax.swing.JFileChooser;
+import javax.swing.RootPaneContainer;
 import javax.swing.SwingUtilities;
 
 import com.gutabi.deadlock.ScreenBase;
 import com.gutabi.deadlock.core.Dim;
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
+import com.gutabi.deadlock.view.Canvas;
+import com.gutabi.deadlock.view.ControlPanel;
 import com.gutabi.deadlock.view.DLSFileChooser;
 import com.gutabi.deadlock.view.InputEvent;
 import com.gutabi.deadlock.view.PaintEvent;
@@ -43,6 +47,11 @@ public class WorldScreen extends ScreenBase {
 	}
 	
 	public WorldCamera cam = new WorldCamera();
+	
+	public Canvas oldCanvas;
+	public Canvas canvas;
+	
+	public ControlPanel controlPanel;
 	
 	public World world;
 	
@@ -74,10 +83,36 @@ public class WorldScreen extends ScreenBase {
 		
 	}
 	
+	public void setup(RootPaneContainer container) {
+		
+		canvas = new Canvas();
+		
+		controlPanel = new ControlPanel();
+		controlPanel.init();
+		
+		Container cp = container.getContentPane();
+		cp.setLayout(new BoxLayout(cp, BoxLayout.X_AXIS));
+		cp.add(canvas.java());
+		cp.add(controlPanel);
+	}
+	
+	public void teardown(RootPaneContainer container) {
+		
+		Container cp = container.getContentPane();
+		
+		cp.remove(canvas.java());
+		cp.remove(controlPanel);
+		
+		oldCanvas = canvas;
+		canvas = null;
+		controlPanel = null;
+		
+	}
+	
 	public void postDisplay() {
 		
-		Dim canvasDim = VIEW.canvas.postDisplay();
-		Dim previewDim = VIEW.previewPanel.postDisplay();
+		Dim canvasDim = canvas.postDisplay();
+		Dim previewDim = controlPanel.previewPanel.postDisplay();
 		
 		world.canvasPostDisplay(canvasDim);
 		preview.previewPostDisplay(previewDim);
@@ -268,14 +303,14 @@ public class WorldScreen extends ScreenBase {
 		case PAUSED:
 			world.zoom(1.1);
 			
-			lastMovedOrDraggedWorldPoint = world.canvasToWorld(VIEW.canvas.lastMovedOrDraggedCanvasPoint);
+			lastMovedOrDraggedWorldPoint = world.canvasToWorld(canvas.lastMovedOrDraggedCanvasPoint);
 			break;
 		case DIALOG:
 			break;
 		case EDITING:
 			world.zoom(1.1);
 			
-			lastMovedOrDraggedWorldPoint = world.canvasToWorld(VIEW.canvas.lastMovedOrDraggedCanvasPoint);
+			lastMovedOrDraggedWorldPoint = world.canvasToWorld(canvas.lastMovedOrDraggedCanvasPoint);
 			Entity closest = world.hitTest(lastMovedOrDraggedWorldPoint);
 			synchronized (APP) {
 				hilited = closest;
@@ -297,14 +332,14 @@ public class WorldScreen extends ScreenBase {
 		case PAUSED:
 			world.zoom(0.9);
 			
-			lastMovedOrDraggedWorldPoint = world.canvasToWorld(VIEW.canvas.lastMovedOrDraggedCanvasPoint);
+			lastMovedOrDraggedWorldPoint = world.canvasToWorld(canvas.lastMovedOrDraggedCanvasPoint);
 			break;
 		case DIALOG:
 			break;
 		case EDITING:
 			world.zoom(0.9);
 			
-			lastMovedOrDraggedWorldPoint = world.canvasToWorld(VIEW.canvas.lastMovedOrDraggedCanvasPoint);
+			lastMovedOrDraggedWorldPoint = world.canvasToWorld(canvas.lastMovedOrDraggedCanvasPoint);
 			Entity closest = world.hitTest(lastMovedOrDraggedWorldPoint);
 			synchronized (APP) {
 				hilited = closest;
@@ -353,10 +388,10 @@ public class WorldScreen extends ScreenBase {
 			
 			mode = WorldScreenMode.DIALOG;
 			
-			VIEW.canvas.disableKeyListener();
+			canvas.disableKeyListener();
 			
 			fc = new DLSFileChooser();
-			int res = fc.showDialog(VIEW.canvas.java(), "Save");
+			int res = fc.showDialog(canvas.java(), "Save");
 			
 			if (res == JFileChooser.APPROVE_OPTION) {
 				
@@ -379,13 +414,13 @@ public class WorldScreen extends ScreenBase {
 					e.printStackTrace();
 				}
 				
-				VIEW.canvas.enableKeyListener();
+				canvas.enableKeyListener();
 				
 				mode = WorldScreenMode.EDITING;
 				
 			} else {
 				
-				VIEW.canvas.enableKeyListener();
+				canvas.enableKeyListener();
 				
 				mode = WorldScreenMode.EDITING;
 				
@@ -405,10 +440,10 @@ public class WorldScreen extends ScreenBase {
 			
 			mode = WorldScreenMode.DIALOG;
 			
-			VIEW.canvas.disableKeyListener();
+			canvas.disableKeyListener();
 			
 			fc = new DLSFileChooser();
-			int res = fc.showDialog(VIEW.canvas.java(), "Open");
+			int res = fc.showDialog(canvas.java(), "Open");
 			
 			if (res == JFileChooser.APPROVE_OPTION) {
 				
@@ -428,9 +463,9 @@ public class WorldScreen extends ScreenBase {
 					e.printStackTrace();
 				}
 				
-				world = World.fromFileString(cam, fileString);
+				world = World.fromFileString(cam, controlPanel, fileString);
 				
-				VIEW.canvas.enableKeyListener();
+				canvas.enableKeyListener();
 				
 				mode = WorldScreenMode.EDITING;
 				
@@ -441,7 +476,7 @@ public class WorldScreen extends ScreenBase {
 				
 			} else {
 				
-				VIEW.canvas.enableKeyListener();
+				canvas.enableKeyListener();
 				
 				mode = WorldScreenMode.EDITING;
 				
@@ -482,7 +517,7 @@ public class WorldScreen extends ScreenBase {
 	
 	public void pressed(InputEvent ev) {
 		
-		if (ev.c == VIEW.canvas) {
+		if (ev.c == canvas) {
 			Point p = ev.p;
 			
 			lastPressedWorldPoint = world.canvasToWorld(p);
@@ -498,7 +533,7 @@ public class WorldScreen extends ScreenBase {
 	
 	public void dragged(InputEvent ev) {
 		
-		if (ev.c == VIEW.canvas) {
+		if (ev.c == canvas) {
 			
 			switch (mode) {
 			case RUNNING:
@@ -522,7 +557,7 @@ public class WorldScreen extends ScreenBase {
 				break;
 			}
 			}
-		} else if (ev.c == VIEW.previewPanel) {
+		} else if (ev.c == controlPanel.previewPanel) {
 			preview.dragged(ev);
 		} else {
 			assert false;
@@ -532,7 +567,7 @@ public class WorldScreen extends ScreenBase {
 	
 	public void released(InputEvent ev) {
 		
-		if (ev.c == VIEW.canvas) {
+		if (ev.c == canvas) {
 			switch (mode) {
 			case RUNNING:
 			case PAUSED:
@@ -553,7 +588,7 @@ public class WorldScreen extends ScreenBase {
 	
 	public void moved(InputEvent ev) {
 		
-		if (ev.c == VIEW.canvas) {
+		if (ev.c == canvas) {
 			
 			switch (mode) {
 			case RUNNING:
@@ -583,7 +618,7 @@ public class WorldScreen extends ScreenBase {
 	
 	public void exited(InputEvent ev) {
 		
-		if (ev.c == VIEW.canvas) {
+		if (ev.c == canvas) {
 			switch (mode) {
 			case RUNNING:
 			case PAUSED:
@@ -593,7 +628,7 @@ public class WorldScreen extends ScreenBase {
 				tool.exited(ev);
 				break;
 			}
-		} else if (ev.c == VIEW.oldCanvas) {
+		} else if (ev.c == oldCanvas) {
 			switch (mode) {
 			case RUNNING:
 			case PAUSED:
@@ -612,39 +647,39 @@ public class WorldScreen extends ScreenBase {
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("start")) {
 			
-			VIEW.controlPanel.startButton.setText("Pause");
-			VIEW.controlPanel.startButton.setActionCommand("pause");
+			controlPanel.startButton.setText("Pause");
+			controlPanel.startButton.setActionCommand("pause");
 			
-			VIEW.controlPanel.stopButton.setEnabled(true);
+			controlPanel.stopButton.setEnabled(true);
 			
 			startRunning();
 			
 		} else if (e.getActionCommand().equals("stop")) {
 			
-			VIEW.controlPanel.startButton.setText("Start");
-			VIEW.controlPanel.startButton.setActionCommand("start");
+			controlPanel.startButton.setText("Start");
+			controlPanel.startButton.setActionCommand("start");
 			
-			VIEW.controlPanel.stopButton.setEnabled(false);
+			controlPanel.stopButton.setEnabled(false);
 			
 			stopRunning();
 			
 		} else if (e.getActionCommand().equals("pause")) {
 			
-			VIEW.controlPanel.startButton.setText("Unpause");
-			VIEW.controlPanel.startButton.setActionCommand("unpause");
+			controlPanel.startButton.setText("Unpause");
+			controlPanel.startButton.setActionCommand("unpause");
 			
 			pauseRunning();
 			
 		} else if (e.getActionCommand().equals("unpause")) {
 			
-			VIEW.controlPanel.startButton.setText("Pause");
-			VIEW.controlPanel.startButton.setActionCommand("pause");
+			controlPanel.startButton.setText("Pause");
+			controlPanel.startButton.setActionCommand("pause");
 			
 			unpauseRunning();
 			
 		} else if (e.getActionCommand().equals("dt")) {
 			
-			String text = VIEW.controlPanel.dtField.getText();
+			String text = controlPanel.dtField.getText();
 			try {
 				double dt = Double.parseDouble(text);
 				APP.dt = dt;
@@ -654,7 +689,7 @@ public class WorldScreen extends ScreenBase {
 			
 		} else if (e.getActionCommand().equals("debugDraw")) {
 			
-			boolean state = VIEW.controlPanel.debugCheckBox.isSelected();
+			boolean state = controlPanel.debugCheckBox.isSelected();
 			
 			APP.DEBUG_DRAW = state;
 			
@@ -664,7 +699,7 @@ public class WorldScreen extends ScreenBase {
 			
 		} else if (e.getActionCommand().equals("fpsDraw")) {
 			
-			boolean state = VIEW.controlPanel.fpsCheckBox.isSelected();
+			boolean state = controlPanel.fpsCheckBox.isSelected();
 			
 			APP.FPS_DRAW = state;
 			
@@ -674,7 +709,7 @@ public class WorldScreen extends ScreenBase {
 			
 		} else if (e.getActionCommand().equals("stopSignDraw")) {
 			
-			boolean state = VIEW.controlPanel.stopSignCheckBox.isSelected();
+			boolean state = controlPanel.stopSignCheckBox.isSelected();
 			
 			APP.STOPSIGN_DRAW = state;
 			
@@ -684,7 +719,7 @@ public class WorldScreen extends ScreenBase {
 			
 		} else if (e.getActionCommand().equals("carTextureDraw")) {
 			
-			boolean state = VIEW.controlPanel.carTextureCheckBox.isSelected();
+			boolean state = controlPanel.carTextureCheckBox.isSelected();
 			
 			APP.CARTEXTURE_DRAW = state;
 			
@@ -693,7 +728,7 @@ public class WorldScreen extends ScreenBase {
 			
 		} else if (e.getActionCommand().equals("explosionsDraw")) {
 			
-			boolean state = VIEW.controlPanel.explosionsCheckBox.isSelected();
+			boolean state = controlPanel.explosionsCheckBox.isSelected();
 			
 			APP.EXPLOSIONS_DRAW = state;
 			
@@ -728,7 +763,7 @@ public class WorldScreen extends ScreenBase {
 			
 			do {
 				
-				Graphics2D g2 = (Graphics2D)VIEW.canvas.bs.getDrawGraphics();
+				Graphics2D g2 = (Graphics2D)canvas.bs.getDrawGraphics();
 				
 //				g2.setColor(Color.DARK_GRAY);
 //				g2.fillRect(0, 0, cam.canvasWidth, cam.canvasHeight);
@@ -741,11 +776,11 @@ public class WorldScreen extends ScreenBase {
 				
 				g2.dispose();
 				
-			} while (VIEW.canvas.bs.contentsRestored());
+			} while (canvas.bs.contentsRestored());
 			
-			VIEW.canvas.bs.show();
+			canvas.bs.show();
 			
-		} while (VIEW.canvas.bs.contentsLost());
+		} while (canvas.bs.contentsLost());
 		
 	}
 	
@@ -807,14 +842,14 @@ public class WorldScreen extends ScreenBase {
 	}
 	
 	public void repaintControlPanel() {
-		VIEW.controlPanel.repaint();
+		controlPanel.repaint();
 	}
 	
 	public void paint(PaintEvent ev) {
-		if (ev.c == VIEW.canvas) {
+		if (ev.c == canvas) {
 //			VIEW.canvas.bs.show();
 			assert false;
-		} else if (ev.c == VIEW.previewPanel) {
+		} else if (ev.c == controlPanel.previewPanel) {
 			preview.paint(ev.ctxt);
 		} else {
 			assert false;

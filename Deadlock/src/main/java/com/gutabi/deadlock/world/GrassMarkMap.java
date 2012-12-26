@@ -1,6 +1,7 @@
 package com.gutabi.deadlock.world;
 
-import java.awt.Color;
+import static com.gutabi.deadlock.view.DeadlockView.VIEW;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,12 +44,9 @@ public class GrassMarkMap {
 		
 	}
 	
-	
-	static Color brown = new Color(150, 75, 0);
-	
 	public void paintScene(RenderingContext ctxt) {
 		
-		ctxt.setColor(brown);
+		ctxt.setColor(VIEW.brown);
 		
 		for (Capsule cap : marks) {
 			cap.paint(ctxt);

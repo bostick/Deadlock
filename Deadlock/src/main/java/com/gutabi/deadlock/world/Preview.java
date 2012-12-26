@@ -1,7 +1,5 @@
 package com.gutabi.deadlock.world;
 
-import static com.gutabi.deadlock.view.DeadlockView.VIEW;
-
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
@@ -36,10 +34,10 @@ public class Preview {
 	}
 	
 	public void dragged(InputEvent ev) {
-		if (VIEW.previewPanel.penDragPreviewPoint != null) {
+		if (screen.controlPanel.previewPanel.penDragPreviewPoint != null) {
 			
-			double dx = VIEW.previewPanel.lastDragPreviewPoint.x - VIEW.previewPanel.penDragPreviewPoint.x;
-			double dy = VIEW.previewPanel.lastDragPreviewPoint.y - VIEW.previewPanel.penDragPreviewPoint.y;
+			double dx = screen.controlPanel.previewPanel.lastDragPreviewPoint.x - screen.controlPanel.previewPanel.penDragPreviewPoint.x;
+			double dy = screen.controlPanel.previewPanel.lastDragPreviewPoint.y - screen.controlPanel.previewPanel.penDragPreviewPoint.y;
 			
 			pan(new Point(dx, dy));
 			
@@ -47,7 +45,7 @@ public class Preview {
 			screen.repaintCanvas();
 			screen.repaintControlPanel();
 			
-			VIEW.previewPanel.repaint();
+			screen.controlPanel.previewPanel.repaint();
 		}
 	}
 	

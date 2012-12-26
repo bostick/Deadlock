@@ -219,28 +219,16 @@ public abstract class Car extends Entity {
 		pVec2 = b2dBody.getPosition();
 		p = new Point(pVec2.x, pVec2.y);
 		
-//		if (logger.isDebugEnabled()) {
-//			logger.debug("p: " + p);
-//		}
-		
 		currentRightNormal = b2dBody.getWorldVector(right);
 		currentUpNormal = b2dBody.getWorldVector(up);
 		
 		angle = b2dBody.getAngle();
 		assert !Double.isNaN(angle);
 		
-//		if (logger.isDebugEnabled()) {
-//			logger.debug("angle: " + angle);
-//		}
-		
 		angularVel = b2dBody.getAngularVelocity();
 		
 		forwardVel = currentRightNormal.mul(Vec2.dot(currentRightNormal, vel));
 		forwardSpeed = Vec2.dot(vel, currentRightNormal);
-		
-//		if (logger.isDebugEnabled()) {
-//			logger.debug("forwardSpeed: " + forwardSpeed);
-//		}
 		
 		Mat22 r = b2dBody.getTransform().R;
 		carTransArr[0][0] = r.col1.x;
@@ -396,8 +384,6 @@ public abstract class Car extends Entity {
 					
 				}
 				
-//				MODEL.world.addSkidMarks(prevWorldPoint0, worldQuad.p0);
-//				MODEL.world.addSkidMarks(prevWorldPoint3, worldQuad.p3);
 				world.roadMarkMap.addRoadMark(prevWorldPoint0, shape.p0);
 				world.roadMarkMap.addRoadMark(prevWorldPoint3, shape.p3);
 				
@@ -497,12 +483,6 @@ public abstract class Car extends Entity {
 		return true;	
 	}
 	
-	
-	static Color redOrange = new Color(255, 67, 0);
-	
-	/**
-	 * @param g2 in world coords
-	 */
 	public void paint(RenderingContext ctxt) {
 		
 		switch (state) {
@@ -583,7 +563,7 @@ public abstract class Car extends Entity {
 					ctxt.setColor(Color.ORANGE);
 					paintRect(ctxt);
 				} else {
-					ctxt.setColor(redOrange);
+					ctxt.setColor(VIEW.redOrange);
 					paintRect(ctxt);
 				}
 			}

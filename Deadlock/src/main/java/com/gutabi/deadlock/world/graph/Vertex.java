@@ -32,8 +32,6 @@ public abstract class Vertex extends Entity {
 	
 	public final List<Driver> driverQueue = new ArrayList<Driver>();
 	
-	protected Color hiliteColor;
-	
 	protected Circle shape;
 	
 	private int hash;
@@ -234,11 +232,6 @@ public abstract class Vertex extends Entity {
 	public abstract void paint(RenderingContext ctxt);
 	
 	public abstract void paintScene(RenderingContext ctxt);
-	
-	public void paintHilite(RenderingContext ctxt) {
-		ctxt.setColor(hiliteColor);
-		shape.paint(ctxt);
-	}
 	
 	public void paintID(RenderingContext ctxt) {
 		

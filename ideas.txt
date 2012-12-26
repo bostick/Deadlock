@@ -1,3 +1,12 @@
+cars are always spawning
+editing and running are the same, must add roads as cars are going around
+
+
+control queue of cars for each source
+specify finite number of cars
+specify infinite number of cars
+
+
 
 delorean
 88 mph

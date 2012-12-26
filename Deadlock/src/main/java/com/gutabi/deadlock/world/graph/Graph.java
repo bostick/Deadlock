@@ -28,6 +28,7 @@ import com.gutabi.deadlock.core.geom.Shape;
 import com.gutabi.deadlock.core.geom.ShapeUtils;
 import com.gutabi.deadlock.core.geom.SweepEvent;
 import com.gutabi.deadlock.core.geom.Sweepable;
+import com.gutabi.deadlock.view.ControlPanel;
 import com.gutabi.deadlock.view.RenderingContext;
 import com.gutabi.deadlock.view.RenderingContextType;
 import com.gutabi.deadlock.world.World;
@@ -1137,7 +1138,7 @@ public class Graph implements Sweepable {
 		return s.toString();
 	}
 	
-	public static Graph fromFileString(WorldCamera cam, World world, String s) {
+	public static Graph fromFileString(WorldCamera cam, World world, ControlPanel cp, String s) {
 		BufferedReader r = new BufferedReader(new StringReader(s));
 		
 		Vertex[] vs = null;
@@ -1183,7 +1184,7 @@ public class Graph implements Sweepable {
 						}
 					}
 					
-					Fixture f = Fixture.fromFileString(cam, world, builder.toString());
+					Fixture f = Fixture.fromFileString(cam, world, cp, builder.toString());
 					
 					vs[f.id] = f;
 					

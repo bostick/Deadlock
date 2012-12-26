@@ -10,6 +10,7 @@ import com.gutabi.deadlock.core.geom.Line;
 import com.gutabi.deadlock.core.geom.Quad;
 import com.gutabi.deadlock.core.geom.Shape;
 import com.gutabi.deadlock.core.geom.SweepableShape;
+import com.gutabi.deadlock.view.ControlPanel;
 import com.gutabi.deadlock.view.RenderingContext;
 import com.gutabi.deadlock.world.World;
 import com.gutabi.deadlock.world.WorldCamera;
@@ -73,14 +74,14 @@ public class Merger extends Edge {
 		debugSkeletonLeftRightLine = new Line(left.shape.center, right.shape.center);
 	}
 	
-	public static Merger createMergerAndFixtures(WorldCamera cam, World world, Point center) {
+	public static Merger createMergerAndFixtures(WorldCamera cam, World world, ControlPanel cp, Point center) {
 		
 		Point ul = center.plus(new Point(-MERGER_WIDTH/2,  -MERGER_HEIGHT/2));
 		
-		Fixture top = new Fixture(cam, world, new Point(ul.x + MERGER_WIDTH/2, ul.y), Axis.TOPBOTTOM);
-		Fixture left = new Fixture(cam, world, new Point(ul.x, ul.y + MERGER_HEIGHT/2), Axis.LEFTRIGHT);
-		Fixture right = new Fixture(cam, world, new Point(ul.x + MERGER_WIDTH, ul.y + MERGER_HEIGHT/2), Axis.LEFTRIGHT);
-		Fixture bottom = new Fixture(cam, world, new Point(ul.x + MERGER_WIDTH/2, ul.y+MERGER_HEIGHT), Axis.TOPBOTTOM);
+		Fixture top = new Fixture(cam, world, cp, new Point(ul.x + MERGER_WIDTH/2, ul.y), Axis.TOPBOTTOM);
+		Fixture left = new Fixture(cam, world, cp, new Point(ul.x, ul.y + MERGER_HEIGHT/2), Axis.LEFTRIGHT);
+		Fixture right = new Fixture(cam, world, cp, new Point(ul.x + MERGER_WIDTH, ul.y + MERGER_HEIGHT/2), Axis.LEFTRIGHT);
+		Fixture bottom = new Fixture(cam, world, cp, new Point(ul.x + MERGER_WIDTH/2, ul.y+MERGER_HEIGHT), Axis.TOPBOTTOM);
 		
 		top.match = bottom;
 		bottom.match = top;

@@ -4,17 +4,20 @@ import static com.gutabi.deadlock.DeadlockApplication.APP;
 import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
 import java.awt.Color;
+import java.awt.Container;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
 import javax.swing.JFrame;
+import javax.swing.RootPaneContainer;
 
 import com.gutabi.deadlock.ScreenBase;
 import com.gutabi.deadlock.core.Dim;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.AABB;
 import com.gutabi.deadlock.menu.MainMenu;
+import com.gutabi.deadlock.view.Canvas;
 import com.gutabi.deadlock.view.InputEvent;
 import com.gutabi.deadlock.view.PaintEvent;
 import com.gutabi.deadlock.view.RenderingContext;
@@ -29,6 +32,8 @@ public class QuadrantEditor extends ScreenBase {
 	
 	public static final int EDITOR_WIDTH = 800;
 	public static final int EDITOR_HEIGHT = 600;
+	
+	public Canvas canvas;
 	
 	AABB worldCanvasAABB = new AABB(50, 50, 350, 350);
 	
@@ -61,7 +66,7 @@ public class QuadrantEditor extends ScreenBase {
 				{0, 1, 0}
 			};
 		
-		world = World.createWorld(worldCam, ini);
+		world = World.createWorld(worldCam, null, ini);
 		
 		double pixelsPerMeterWidth = worldCanvasAABB.width / world.quadrantMap.worldWidth;
 		double pixelxPerMeterHeight = worldCanvasAABB.height / world.quadrantMap.worldHeight;
@@ -84,7 +89,7 @@ public class QuadrantEditor extends ScreenBase {
 					}
 				}
 				
-				world = World.createWorld(worldCam, ini);
+				world = World.createWorld(worldCam, null, ini);
 				
 				double pixelsPerMeterWidth = worldCanvasAABB.width / world.quadrantMap.worldWidth;
 				double pixelxPerMeterHeight = worldCanvasAABB.height / world.quadrantMap.worldHeight;
@@ -128,7 +133,7 @@ public class QuadrantEditor extends ScreenBase {
 					}
 				}
 				
-				world = World.createWorld(worldCam, ini);
+				world = World.createWorld(worldCam, null, ini);
 				
 				double pixelsPerMeterWidth = worldCanvasAABB.width / world.quadrantMap.worldWidth;
 				double pixelxPerMeterHeight = worldCanvasAABB.height / world.quadrantMap.worldHeight;
@@ -172,7 +177,7 @@ public class QuadrantEditor extends ScreenBase {
 					}
 				}
 				
-				world = World.createWorld(worldCam, ini);
+				world = World.createWorld(worldCam, null, ini);
 				
 				double pixelsPerMeterWidth = worldCanvasAABB.width / world.quadrantMap.worldWidth;
 				double pixelxPerMeterHeight = worldCanvasAABB.height / world.quadrantMap.worldHeight;
@@ -215,7 +220,7 @@ public class QuadrantEditor extends ScreenBase {
 					}
 				}
 				
-				world = World.createWorld(worldCam, ini);
+				world = World.createWorld(worldCam, null, ini);
 				
 				double pixelsPerMeterWidth = worldCanvasAABB.width / world.quadrantMap.worldWidth;
 				double pixelxPerMeterHeight = worldCanvasAABB.height / world.quadrantMap.worldHeight;
@@ -260,7 +265,7 @@ public class QuadrantEditor extends ScreenBase {
 					}
 				}
 				
-				world = World.createWorld(worldCam, ini);
+				world = World.createWorld(worldCam, null, ini);
 				
 				double pixelsPerMeterWidth = worldCanvasAABB.width / world.quadrantMap.worldWidth;
 				double pixelxPerMeterHeight = worldCanvasAABB.height / world.quadrantMap.worldHeight;
@@ -304,7 +309,7 @@ public class QuadrantEditor extends ScreenBase {
 					}
 				}
 				
-				world = World.createWorld(worldCam, ini);
+				world = World.createWorld(worldCam, null, ini);
 				
 				double pixelsPerMeterWidth = worldCanvasAABB.width / world.quadrantMap.worldWidth;
 				double pixelxPerMeterHeight = worldCanvasAABB.height / world.quadrantMap.worldHeight;
@@ -338,14 +343,14 @@ public class QuadrantEditor extends ScreenBase {
 			
 			public void action() {
 				
-				VIEW.teardownCanvas(VIEW.container);
+				teardown(VIEW.container);
 				
 				WorldScreen s = new WorldScreen();
-				s.world = World.createWorld(s.cam, ini);
+				s.world = World.createWorld(s.cam, s.controlPanel, ini);
 				
 				APP.screen = s;
 				
-				VIEW.setupCanvasAndControlPanel(VIEW.container);
+				s.setup(VIEW.container);
 				((JFrame)VIEW.container).setVisible(true);
 				
 				APP.screen.postDisplay();
@@ -353,7 +358,7 @@ public class QuadrantEditor extends ScreenBase {
 //				APP.screen.repaint();
 //				VIEW.canvas.repaint();
 				s.repaintCanvas();
-				VIEW.controlPanel.repaint();
+				s.controlPanel.repaint();
 				
 			}
 			
@@ -365,14 +370,30 @@ public class QuadrantEditor extends ScreenBase {
 		
 	}
 	
+	public void setup(RootPaneContainer container) {
+		
+		canvas = new Canvas();
+		
+		Container cp = container.getContentPane();
+		cp.add(canvas.java());
+	}
+	
+	public void teardown(RootPaneContainer container) {
+		
+		Container cp = container.getContentPane();
+		cp.remove(canvas.java());
+		
+		canvas = null;
+	}
+	
 	public void postDisplay() {
 		
-		VIEW.canvas.postDisplay();
+		canvas.postDisplay();
 		
 	}
 	
 	public Point canvasToEditor(Point p) {
-		return new Point(p.x - (VIEW.canvas.getWidth()/2 - EDITOR_WIDTH/2), p.y - (VIEW.canvas.getHeight()/2 - EDITOR_HEIGHT/2));
+		return new Point(p.x - (canvas.getWidth()/2 - EDITOR_WIDTH/2), p.y - (canvas.getHeight()/2 - EDITOR_HEIGHT/2));
 	}
 	
 	public Button hitTest(Point p) {
@@ -478,7 +499,7 @@ public class QuadrantEditor extends ScreenBase {
 				
 				ini[q.r][q.c] = (q.active?0:1);
 				
-				world = World.createWorld(worldCam, ini);
+				world = World.createWorld(worldCam, null, ini);
 				
 				double pixelsPerMeterWidth = worldCanvasAABB.width / world.quadrantMap.worldWidth;
 				double pixelsPerMeterHeight = worldCanvasAABB.height / world.quadrantMap.worldHeight;
@@ -517,14 +538,14 @@ public class QuadrantEditor extends ScreenBase {
 			
 			do {
 				
-				Graphics2D g2 = (Graphics2D)VIEW.canvas.bs.getDrawGraphics();
+				Graphics2D g2 = (Graphics2D)canvas.bs.getDrawGraphics();
 				
 				RenderingContext ctxt = new RenderingContext(RenderingContextType.CANVAS);
 				ctxt.g2 = g2;
 				
 				AffineTransform origTrans = ctxt.getTransform();
 				
-				ctxt.translate(VIEW.canvas.getWidth()/2 - EDITOR_WIDTH/2, VIEW.canvas.getHeight()/2 - EDITOR_HEIGHT/2);
+				ctxt.translate(canvas.getWidth()/2 - EDITOR_WIDTH/2, canvas.getHeight()/2 - EDITOR_HEIGHT/2);
 				
 				paintEditor(ctxt);
 				
@@ -532,11 +553,11 @@ public class QuadrantEditor extends ScreenBase {
 				
 				g2.dispose();
 				
-			} while (VIEW.canvas.bs.contentsRestored());
+			} while (canvas.bs.contentsRestored());
 			
-			VIEW.canvas.bs.show();
+			canvas.bs.show();
 			
-		} while (VIEW.canvas.bs.contentsLost());
+		} while (canvas.bs.contentsLost());
 
 	}
 	

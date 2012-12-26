@@ -4,8 +4,7 @@ import java.awt.event.ActionEvent;
 
 import com.gutabi.deadlock.view.InputEvent;
 
-
-public abstract class ScreenBase extends Screen {
+public abstract class ScreenBase implements Screen {
 	
 	public void qKey(InputEvent ev) {
 		

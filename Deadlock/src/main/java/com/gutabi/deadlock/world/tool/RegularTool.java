@@ -63,12 +63,12 @@ public class RegularTool extends ToolBase {
 	
 	public void escKey(InputEvent ev) {
 		
-		VIEW.teardownCanvasAndControlPanel(VIEW.container);
+		screen.teardown(VIEW.container);
 		
 		MainMenu s = new MainMenu();
 		APP.screen = s;
 		
-		VIEW.setupCanvas(VIEW.container);
+		s.setup(VIEW.container);
 		((JFrame)VIEW.container).setVisible(true);
 		
 		s.postDisplay();
@@ -250,7 +250,7 @@ public class RegularTool extends ToolBase {
 			draftMove(screen.lastDraggedWorldPoint);
 			
 			screen.repaintCanvas();
-			VIEW.previewPanel.repaint();
+			screen.controlPanel.previewPanel.repaint();
 			break;
 		}
 	}

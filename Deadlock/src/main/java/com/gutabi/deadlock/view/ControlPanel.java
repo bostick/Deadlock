@@ -1,7 +1,6 @@
 package com.gutabi.deadlock.view;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
-import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
 import java.awt.Dimension;
 
@@ -17,6 +16,8 @@ import javax.swing.JTextField;
 //@SuppressWarnings({"serial", "static-access"})
 @SuppressWarnings({"serial"})
 public class ControlPanel extends JPanel {
+	
+	public PreviewPanel previewPanel;
 	
 	public JCheckBox normalCarButton;
 	public JCheckBox fastCarButton;
@@ -170,10 +171,12 @@ public class ControlPanel extends JPanel {
 		
 		verticalBox.add(Box.createVerticalGlue());
 		
+		previewPanel = new PreviewPanel();
+		
 		Box previewBox = Box.createHorizontalBox();
 		//buttonBox.add(Box.createHorizontalGlue());
 		previewBox.add(Box.createHorizontalGlue());
-		previewBox.add(VIEW.previewPanel.java());
+		previewBox.add(previewPanel.java());
 		//buttonBox.add(Box.createHorizontalGlue());
 		previewBox.add(Box.createHorizontalGlue());
 		verticalBox.add(previewBox);

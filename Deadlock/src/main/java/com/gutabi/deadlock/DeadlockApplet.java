@@ -25,6 +25,7 @@ public class DeadlockApplet extends JApplet {
 		APP.screen = s;
 		
 		VIEW.setupFrame();
+		APP.screen.setup(app);
 		VIEW.init();
 		
 		((JFrame)VIEW.container).setVisible(true);

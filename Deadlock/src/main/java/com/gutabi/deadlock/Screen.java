@@ -2,73 +2,81 @@ package com.gutabi.deadlock;
 
 import java.awt.event.ActionListener;
 
+import javax.swing.RootPaneContainer;
+
 import com.gutabi.deadlock.view.InputEvent;
 import com.gutabi.deadlock.view.PaintEvent;
 
-public abstract class Screen implements ActionListener {
+public interface Screen extends ActionListener {
 	
-	public abstract void postDisplay();
+	void setup(RootPaneContainer container);
 	
-	public abstract void render();
+	void teardown(RootPaneContainer container);
 	
-//	public abstract void repaint();
-	
-	public abstract void paint(PaintEvent ev);
-	
-	
+//	void setupCanvasAndControlPanel(RootPaneContainer container);
+//	
+//	void teardownCanvasAndControlPanel(RootPaneContainer container);
 	
 	
 	
-	public abstract void qKey(InputEvent ev);
+	void postDisplay();
 	
-	public abstract void wKey(InputEvent ev);
+	void render();
 	
-	public abstract void gKey(InputEvent ev);
+	void paint(PaintEvent ev);
 	
-	public abstract void deleteKey(InputEvent ev);
 	
-	public abstract void insertKey(InputEvent ev);
 	
-	public abstract void escKey(InputEvent ev);
+	void qKey(InputEvent ev);
 	
-	public abstract void d1Key(InputEvent ev);
+	void wKey(InputEvent ev);
 	
-	public abstract void d2Key(InputEvent ev);
+	void gKey(InputEvent ev);
 	
-	public abstract void d3Key(InputEvent ev);
+	void deleteKey(InputEvent ev);
 	
-	public abstract void plusKey(InputEvent ev);
+	void insertKey(InputEvent ev);
 	
-	public abstract void minusKey(InputEvent ev);
+	void escKey(InputEvent ev);
 	
-	public abstract void downKey(InputEvent ev);
+	void d1Key(InputEvent ev);
+	
+	void d2Key(InputEvent ev);
+	
+	void d3Key(InputEvent ev);
+	
+	void plusKey(InputEvent ev);
+	
+	void minusKey(InputEvent ev);
+	
+	void downKey(InputEvent ev);
 
-	public abstract void upKey(InputEvent ev);
+	void upKey(InputEvent ev);
 	
-	public abstract void enterKey(InputEvent ev);
+	void enterKey(InputEvent ev);
 	
-	public abstract void aKey(InputEvent ev);
+	void aKey(InputEvent ev);
 	
-	public abstract void sKey(InputEvent ev);
+	void sKey(InputEvent ev);
 	
-	public abstract void dKey(InputEvent ev);
+	void dKey(InputEvent ev);
 	
-	public abstract void ctrlSKey(InputEvent ev);
+	void ctrlSKey(InputEvent ev);
 	
-	public abstract void ctrlOKey(InputEvent ev);
+	void ctrlOKey(InputEvent ev);
 	
 	
 	
-	public abstract void pressed(InputEvent ev);
+	void pressed(InputEvent ev);
 	
-	public abstract void moved(InputEvent ev);
+	void moved(InputEvent ev);
 	
-	public abstract void dragged(InputEvent ev);
+	void dragged(InputEvent ev);
 	
-	public abstract void released(InputEvent ev);
+	void released(InputEvent ev);
 	
-	public abstract void clicked(InputEvent ev);
+	void clicked(InputEvent ev);
 	
-	public abstract void exited(InputEvent ev);
+	void exited(InputEvent ev);
 	
 }

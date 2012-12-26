@@ -4,6 +4,7 @@ import static com.gutabi.deadlock.DeadlockApplication.APP;
 import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
 import java.awt.Color;
+import java.awt.Container;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
@@ -11,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JFrame;
+import javax.swing.RootPaneContainer;
 
 import org.apache.log4j.Logger;
 
@@ -18,6 +20,7 @@ import com.gutabi.deadlock.ScreenBase;
 import com.gutabi.deadlock.core.Dim;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.quadranteditor.QuadrantEditor;
+import com.gutabi.deadlock.view.Canvas;
 import com.gutabi.deadlock.view.InputEvent;
 import com.gutabi.deadlock.view.PaintEvent;
 import com.gutabi.deadlock.view.RenderingContext;
@@ -33,10 +36,10 @@ public class MainMenu extends ScreenBase {
 	public static final int MENU_WIDTH = 800;
 	public static final int MENU_HEIGHT = 600;
 	
+	public Canvas canvas;
+	
 	int canvasWidth;
 	int canvasHeight;
-	
-	static Color menuBackground = new Color(0x88, 0x88, 0x88);
 	
 	protected List<MenuItem> items = new ArrayList<MenuItem>();
 	
@@ -53,14 +56,14 @@ public class MainMenu extends ScreenBase {
 		MenuItem oneMenuItem = new MenuItem(MainMenu.this,"1x1 Demo") {
 			public void action() {
 				
-				VIEW.teardownCanvas(VIEW.container);
+				teardown(VIEW.container);
 				
 				WorldScreen s = new WorldScreen();
-				s.world = OneByOneWorld.createOneByOneWorld(s.cam);
+				s.world = OneByOneWorld.createOneByOneWorld(s.cam, s.controlPanel);
 				
 				APP.screen = s;
 				
-				VIEW.setupCanvasAndControlPanel(VIEW.container);
+				s.setup(VIEW.container);
 				((JFrame)VIEW.container).setVisible(true);
 				
 				APP.screen.postDisplay();
@@ -68,7 +71,7 @@ public class MainMenu extends ScreenBase {
 //				APP.screen.repaint();
 				s.repaintCanvas();
 //				VIEW.previewPanel.repaint();
-				VIEW.controlPanel.repaint();
+				s.controlPanel.repaint();
 //				VIEW.container.getContentPane().repaint();
 			}
 		};
@@ -77,14 +80,14 @@ public class MainMenu extends ScreenBase {
 		MenuItem fourMenuItem = new MenuItem(MainMenu.this, "4x4 Grid Demo") {
 			public void action() {
 				
-				VIEW.teardownCanvas(VIEW.container);
+				teardown(VIEW.container);
 				
 				WorldScreen s = new WorldScreen();
-				s.world = FourByFourGridWorld.createFourByFourGridWorld(s.cam);
+				s.world = FourByFourGridWorld.createFourByFourGridWorld(s.cam, s.controlPanel);
 				
 				APP.screen = s;
 				
-				VIEW.setupCanvasAndControlPanel(VIEW.container);
+				s.setup(VIEW.container);
 				((JFrame)VIEW.container).setVisible(true);
 				
 				APP.screen.postDisplay();
@@ -92,7 +95,7 @@ public class MainMenu extends ScreenBase {
 //				APP.screen.repaint();
 //				VIEW.canvas.repaint();
 				s.repaintCanvas();
-				VIEW.controlPanel.repaint();
+				s.controlPanel.repaint();
 				
 			}
 		};
@@ -101,14 +104,14 @@ public class MainMenu extends ScreenBase {
 		MenuItem aMenuItem = new MenuItem(MainMenu.this, "World A Demo") {
 			public void action() {
 				
-				VIEW.teardownCanvas(VIEW.container);
+				teardown(VIEW.container);
 				
 				WorldScreen s = new WorldScreen();
-				s.world = WorldA.createWorldA(s.cam);
+				s.world = WorldA.createWorldA(s.cam, s.controlPanel);
 				
 				APP.screen = s;
 				
-				VIEW.setupCanvasAndControlPanel(VIEW.container);
+				s.setup(VIEW.container);
 				
 				((JFrame)VIEW.container).setVisible(true);
 				
@@ -118,7 +121,7 @@ public class MainMenu extends ScreenBase {
 //				VIEW.canvas.repaint();
 				s.repaintCanvas();
 //				VIEW.previewPanel.repaint();
-				VIEW.controlPanel.repaint();
+				s.controlPanel.repaint();
 				
 			}
 		};
@@ -127,12 +130,12 @@ public class MainMenu extends ScreenBase {
 		MenuItem dialogMenuItem = new MenuItem(MainMenu.this,  "Quadrant Editor...") {
 			public void action() {
 				
-				VIEW.teardownCanvas(VIEW.container);
+				teardown(VIEW.container);
 				
 				QuadrantEditor s = new QuadrantEditor();
 				APP.screen = s;
 				
-				VIEW.setupCanvas(VIEW.container);
+				s.setup(VIEW.container);
 				((JFrame)VIEW.container).setVisible(true);
 				
 				APP.screen.postDisplay();
@@ -180,9 +183,25 @@ public class MainMenu extends ScreenBase {
 		
 	}
 	
+	public void setup(RootPaneContainer container) {
+		
+		canvas = new Canvas();
+		
+		Container cp = container.getContentPane();
+		cp.add(canvas.java());
+	}
+	
+	public void teardown(RootPaneContainer container) {
+		
+		Container cp = container.getContentPane();
+		cp.remove(canvas.java());
+		
+		canvas = null;
+	}
+	
 	public void postDisplay() {
 		
-		Dim canvasDim = VIEW.canvas.postDisplay();
+		Dim canvasDim = canvas.postDisplay();
 		canvasWidth = (int)canvasDim.width;
 		canvasHeight = (int)canvasDim.height;
 		
@@ -268,7 +287,7 @@ public class MainMenu extends ScreenBase {
 	}
 	
 	public Point canvasToMenu(Point p) {
-		return new Point(p.x - (VIEW.canvas.getWidth()/2 - MENU_WIDTH/2), p.y - (VIEW.canvas.getHeight()/2 - MENU_HEIGHT/2));
+		return new Point(p.x - (canvas.getWidth()/2 - MENU_WIDTH/2), p.y - (canvas.getHeight()/2 - MENU_HEIGHT/2));
 	}
 	
 	public Point lastMovedMenuPoint;
@@ -346,7 +365,7 @@ public class MainMenu extends ScreenBase {
 			
 			do {
 				
-				Graphics2D g2 = (Graphics2D)VIEW.canvas.bs.getDrawGraphics();
+				Graphics2D g2 = (Graphics2D)canvas.bs.getDrawGraphics();
 				
 				g2.setColor(Color.DARK_GRAY);
 				g2.fillRect(0, 0, canvasWidth, canvasHeight);
@@ -356,7 +375,7 @@ public class MainMenu extends ScreenBase {
 				
 				AffineTransform origTrans = ctxt.getTransform();
 				
-				ctxt.translate(VIEW.canvas.getWidth()/2 - MENU_WIDTH/2, VIEW.canvas.getHeight()/2 - MENU_HEIGHT/2);
+				ctxt.translate(canvas.getWidth()/2 - MENU_WIDTH/2, canvas.getHeight()/2 - MENU_HEIGHT/2);
 				
 				AffineTransform menuTrans = ctxt.getTransform();
 				
@@ -372,7 +391,7 @@ public class MainMenu extends ScreenBase {
 				
 				ctxt.setTransform(menuTrans);
 				
-				ctxt.setColor(menuBackground);
+				ctxt.setColor(VIEW.menuBackground);
 				ctxt.fillRect((int)(MENU_WIDTH/2 - widest/2 - 5), 150 - 5, (int)(widest + 10), totalHeight + 10 * (items.size() - 1) + 5 + 5);
 				
 				for (MenuItem item : items) {
@@ -387,11 +406,11 @@ public class MainMenu extends ScreenBase {
 				
 				g2.dispose();
 				
-			} while (VIEW.canvas.bs.contentsRestored());
+			} while (canvas.bs.contentsRestored());
 			
-			VIEW.canvas.bs.show();
+			canvas.bs.show();
 			
-		} while (VIEW.canvas.bs.contentsLost());
+		} while (canvas.bs.contentsLost());
 
 	}
 	

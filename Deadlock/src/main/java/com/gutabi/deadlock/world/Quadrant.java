@@ -13,7 +13,7 @@ import com.gutabi.deadlock.core.geom.Line;
 import com.gutabi.deadlock.view.RenderingContext;
 import com.gutabi.deadlock.world.sprites.AnimatedGrass;
 
-@SuppressWarnings("static-access")
+//@SuppressWarnings("static-access")
 public class Quadrant {
 	
 	public final WorldCamera cam;
@@ -39,6 +39,10 @@ public class Quadrant {
 		this.c = c;
 		this.active = active;
 		
+		aabb = new AABB(c * QuadrantMap.QUADRANT_WIDTH, r * QuadrantMap.QUADRANT_HEIGHT, QuadrantMap.QUADRANT_WIDTH, QuadrantMap.QUADRANT_HEIGHT);
+	}
+	
+	public void init() {
 		if (active) {
 			for (int i = 0; i < 16; i+=4) {
 				for (int j = 0; j < 16; j+=4) {
@@ -59,8 +63,6 @@ public class Quadrant {
 				map.grassMap.addGrass(new AnimatedGrass(cam, new Point(c * QuadrantMap.QUADRANT_WIDTH + 16, r * QuadrantMap.QUADRANT_HEIGHT + 16)));
 			}
 		}
-		
-		aabb = new AABB(c * QuadrantMap.QUADRANT_WIDTH, r * QuadrantMap.QUADRANT_HEIGHT, QuadrantMap.QUADRANT_WIDTH, QuadrantMap.QUADRANT_HEIGHT);
 	}
 	
 	public Point center() {

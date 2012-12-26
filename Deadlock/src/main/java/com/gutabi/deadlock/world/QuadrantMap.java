@@ -107,6 +107,13 @@ public class QuadrantMap {
 			}
 		}
 		
+		for (int i = 0; i < rows; i++) {
+			for (int j = 0; j < cols; j++) {
+				Quadrant q = newQuads[i][j];
+				q.init();
+			}
+		}
+		
 		return newQuads;
 	}
 	

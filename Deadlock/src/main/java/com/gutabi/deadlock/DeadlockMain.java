@@ -26,6 +26,7 @@ public class DeadlockMain  {
 		APP.screen = s;
 		
 		VIEW.setupFrame();
+		APP.screen.setup(VIEW.container);
 		VIEW.init();
 		
 		((JFrame)VIEW.container).setVisible(true);
