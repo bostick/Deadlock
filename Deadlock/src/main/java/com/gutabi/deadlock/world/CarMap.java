@@ -1,7 +1,5 @@
 package com.gutabi.deadlock.world;
 
-import static com.gutabi.deadlock.DeadlockApplication.APP;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,13 +19,13 @@ import com.gutabi.deadlock.world.graph.Vertex;
 //@SuppressWarnings("static-access")
 public class CarMap {
 	
-	public final WorldCamera cam;
+//	public final WorldCamera cam;
 	public final World world;
 	
 	private List<Car> cars = new ArrayList<Car>();
 	
-	public CarMap(WorldCamera cam, World world) {
-		this.cam = cam;
+	public CarMap(World world) {
+//		this.cam = cam;
 		this.world = world;
 	}
 	
@@ -73,15 +71,25 @@ public class CarMap {
 	
 	public void paint(RenderingContext ctxt) {
 		
-		if (APP.DEBUG_DRAW) {
-			ctxt.setPixelStroke(cam.pixelsPerMeter, 1);
+		if (ctxt.DEBUG_DRAW) {
+			ctxt.setPixelStroke(1);
 			world.b2dWorld.setDebugDraw(ctxt);
 			world.b2dWorld.drawDebugData();
 		}
 		
-		for (Car c : cars) {
-			c.paint(ctxt);
+		switch (ctxt.type) {
+		case CANVAS:
+			for (Car c : cars) {
+				c.paint(ctxt);
+			}
+			break;
+		case PREVIEW:
+			for (Car c : cars) {
+				c.paint(ctxt);
+			}
+			break;
 		}
+		
 	}
 	
 	public void postStop() {

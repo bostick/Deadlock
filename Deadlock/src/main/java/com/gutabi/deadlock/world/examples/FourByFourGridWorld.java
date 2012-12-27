@@ -4,11 +4,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.view.ControlPanel;
 import com.gutabi.deadlock.world.QuadrantMap;
 import com.gutabi.deadlock.world.Stroke;
 import com.gutabi.deadlock.world.World;
-import com.gutabi.deadlock.world.WorldCamera;
+import com.gutabi.deadlock.world.WorldScreen;
 import com.gutabi.deadlock.world.graph.Axis;
 import com.gutabi.deadlock.world.graph.Fixture;
 import com.gutabi.deadlock.world.graph.FixtureType;
@@ -18,11 +17,11 @@ import com.gutabi.deadlock.world.graph.Vertex;
 
 public class FourByFourGridWorld extends World {
 	
-	private FourByFourGridWorld(WorldCamera cam, ControlPanel cp) {
-		super(cam, cp);
+	private FourByFourGridWorld(WorldScreen screen) {
+		super(screen);
 	}
 	
-	public static FourByFourGridWorld createFourByFourGridWorld(WorldCamera cam, ControlPanel cp) {
+	public static FourByFourGridWorld createFourByFourGridWorld(WorldScreen screen) {
 		
 		int[][] ini = new int[][] {
 				{1, 1, 1, 1},
@@ -31,23 +30,23 @@ public class FourByFourGridWorld extends World {
 				{1, 1, 1, 1}
 			};
 		
-		FourByFourGridWorld w = new FourByFourGridWorld(cam, cp);
+		FourByFourGridWorld w = new FourByFourGridWorld(screen);
 		
-		cam.pixelsPerMeter = 12.5;
+		screen.cam.pixelsPerMeter = 12.5;
 		
-		QuadrantMap qm = new QuadrantMap(cam, ini);
+		QuadrantMap qm = new QuadrantMap(ini);
 		
 		w.quadrantMap = qm;
 		
-		Graph g = new Graph(cam, w);
+		Graph g = new Graph(w);
 		
 		w.graph = g;
 		
 		Set<Vertex> affected = new HashSet<Vertex>();
 		
 		for (int i = 1; i < 16; i++) {
-			Fixture source = new Fixture(cam, w, cp, new Point(i * qm.worldWidth / 16, 0), Axis.TOPBOTTOM);
-			Fixture sink = new Fixture(cam, w, cp, new Point(i * qm.worldWidth / 16, qm.worldHeight), Axis.TOPBOTTOM);
+			Fixture source = new Fixture(w, screen.controlPanel, new Point(i * qm.worldWidth / 16, 0), Axis.TOPBOTTOM);
+			Fixture sink = new Fixture(w, screen.controlPanel, new Point(i * qm.worldWidth / 16, qm.worldHeight), Axis.TOPBOTTOM);
 			source.match = sink;
 			sink.match = source;
 			
@@ -74,7 +73,7 @@ public class FourByFourGridWorld extends World {
 			res = w.addFixture(sink);
 			affected.addAll(res);
 			
-			Stroke s = new Stroke(cam, w);
+			Stroke s = new Stroke(screen);
 			s.add(source.p);
 			s.add(sink.p);
 			s.finish();
@@ -86,8 +85,8 @@ public class FourByFourGridWorld extends World {
 		}
 		
 		for (int i = 1; i < 16; i++) {
-			Fixture source = new Fixture(cam, w, cp, new Point(0, i * qm.worldHeight / 16), Axis.LEFTRIGHT);
-			Fixture sink = new Fixture(cam, w, cp, new Point(qm.worldWidth, i * qm.worldHeight / 16), Axis.LEFTRIGHT);
+			Fixture source = new Fixture(w, screen.controlPanel, new Point(0, i * qm.worldHeight / 16), Axis.LEFTRIGHT);
+			Fixture sink = new Fixture(w, screen.controlPanel, new Point(qm.worldWidth, i * qm.worldHeight / 16), Axis.LEFTRIGHT);
 			source.match = sink;
 			sink.match = source;
 			
@@ -114,7 +113,7 @@ public class FourByFourGridWorld extends World {
 			res = w.addFixture(sink);
 			affected.addAll(res);
 			
-			Stroke s = new Stroke(cam, w);
+			Stroke s = new Stroke(screen);
 			s.add(source.p);
 			s.add(sink.p);
 			s.finish();

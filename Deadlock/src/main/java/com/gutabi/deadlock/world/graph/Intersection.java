@@ -1,7 +1,5 @@
 package com.gutabi.deadlock.world.graph;
 
-import static com.gutabi.deadlock.DeadlockApplication.APP;
-
 import java.awt.Color;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -10,14 +8,12 @@ import java.util.Scanner;
 
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.view.RenderingContext;
-import com.gutabi.deadlock.view.RenderingContextType;
-import com.gutabi.deadlock.world.WorldCamera;
 
 //@SuppressWarnings("static-access")
 public class Intersection extends Vertex {
 	
-	public Intersection(WorldCamera cam, Point p) {
-		super(cam, p);
+	public Intersection(Point p) {
+		super(p);
 	}
 	
 	public boolean isUserDeleteable() {
@@ -58,7 +54,7 @@ public class Intersection extends Vertex {
 		return s.toString();
 	}
 	
-	public static Intersection fromFileString(WorldCamera cam, String s) {
+	public static Intersection fromFileString(String s) {
 		BufferedReader r = new BufferedReader(new StringReader(s));
 		
 		Point p = null;
@@ -91,7 +87,7 @@ public class Intersection extends Vertex {
 			e.printStackTrace();
 		}
 		
-		Intersection i = new Intersection(cam, p);
+		Intersection i = new Intersection(p);
 		
 		i.id = id;
 		
@@ -100,16 +96,22 @@ public class Intersection extends Vertex {
 	
 	public void paint(RenderingContext ctxt) {
 		
-		ctxt.setColor(Color.GRAY);
-		
-		shape.paint(ctxt);
-		
-		if (ctxt.type == RenderingContextType.CANVAS) {
-			if (APP.DEBUG_DRAW) {
-				
+		switch (ctxt.type) {
+		case CANVAS:
+			ctxt.setColor(Color.GRAY);
+			
+			shape.paint(ctxt);
+			
+			if (ctxt.DEBUG_DRAW) {
 				shape.getAABB().draw(ctxt);
-				
 			}
+			
+			break;
+		case PREVIEW:
+			ctxt.setColor(Color.GRAY);
+			
+			shape.paint(ctxt);
+			break;
 		}
 		
 	}
@@ -121,7 +123,7 @@ public class Intersection extends Vertex {
 	public void paintHilite(RenderingContext ctxt) {
 		
 		ctxt.setColor(Color.WHITE);
-		ctxt.setPixelStroke(cam.pixelsPerMeter, 1);
+		ctxt.setPixelStroke(1);
 		
 		shape.draw(ctxt);
 		

@@ -1,7 +1,5 @@
 package com.gutabi.deadlock.world.graph;
 
-import static com.gutabi.deadlock.DeadlockApplication.APP;
-
 import java.awt.Color;
 
 import com.gutabi.deadlock.core.Entity;
@@ -10,10 +8,9 @@ import com.gutabi.deadlock.core.geom.Line;
 import com.gutabi.deadlock.core.geom.Quad;
 import com.gutabi.deadlock.core.geom.Shape;
 import com.gutabi.deadlock.core.geom.SweepableShape;
-import com.gutabi.deadlock.view.ControlPanel;
 import com.gutabi.deadlock.view.RenderingContext;
+import com.gutabi.deadlock.world.ControlPanel;
 import com.gutabi.deadlock.world.World;
-import com.gutabi.deadlock.world.WorldCamera;
 
 //@SuppressWarnings("static-access")
 public class Merger extends Edge {
@@ -21,7 +18,7 @@ public class Merger extends Edge {
 	public static final double MERGER_WIDTH = 5.0;
 	public static final double MERGER_HEIGHT = 5.0;
 	
-	WorldCamera cam;
+//	WorldCamera cam;
 	
 	public final Point ul;
 	public final Point center;
@@ -45,8 +42,8 @@ public class Merger extends Edge {
 	private final Line debugSkeletonLeftRightLine;
 	
 	
-	public Merger(WorldCamera cam, Point center, Fixture top, Fixture left, Fixture right, Fixture bottom) {
-		this.cam = cam;
+	public Merger(Point center, Fixture top, Fixture left, Fixture right, Fixture bottom) {
+//		this.cam = cam;
 //		this.world = world;
 		this.center = center;
 		
@@ -74,14 +71,14 @@ public class Merger extends Edge {
 		debugSkeletonLeftRightLine = new Line(left.shape.center, right.shape.center);
 	}
 	
-	public static Merger createMergerAndFixtures(WorldCamera cam, World world, ControlPanel cp, Point center) {
+	public static Merger createMergerAndFixtures(World world, ControlPanel cp, Point center) {
 		
 		Point ul = center.plus(new Point(-MERGER_WIDTH/2,  -MERGER_HEIGHT/2));
 		
-		Fixture top = new Fixture(cam, world, cp, new Point(ul.x + MERGER_WIDTH/2, ul.y), Axis.TOPBOTTOM);
-		Fixture left = new Fixture(cam, world, cp, new Point(ul.x, ul.y + MERGER_HEIGHT/2), Axis.LEFTRIGHT);
-		Fixture right = new Fixture(cam, world, cp, new Point(ul.x + MERGER_WIDTH, ul.y + MERGER_HEIGHT/2), Axis.LEFTRIGHT);
-		Fixture bottom = new Fixture(cam, world, cp, new Point(ul.x + MERGER_WIDTH/2, ul.y+MERGER_HEIGHT), Axis.TOPBOTTOM);
+		Fixture top = new Fixture(world, cp, new Point(ul.x + MERGER_WIDTH/2, ul.y), Axis.TOPBOTTOM);
+		Fixture left = new Fixture(world, cp, new Point(ul.x, ul.y + MERGER_HEIGHT/2), Axis.LEFTRIGHT);
+		Fixture right = new Fixture(world, cp, new Point(ul.x + MERGER_WIDTH, ul.y + MERGER_HEIGHT/2), Axis.LEFTRIGHT);
+		Fixture bottom = new Fixture(world, cp, new Point(ul.x + MERGER_WIDTH/2, ul.y+MERGER_HEIGHT), Axis.TOPBOTTOM);
 		
 		top.match = bottom;
 		bottom.match = top;
@@ -94,7 +91,7 @@ public class Merger extends Edge {
 		left.setSide(Side.RIGHT);
 		right.setSide(Side.RIGHT);
 		
-		return new Merger(cam, center, top, left, right, bottom);
+		return new Merger(center, top, left, right, bottom);
 	}
 	
 	public void destroy() {
@@ -320,21 +317,14 @@ public class Merger extends Edge {
 		
 		switch (ctxt.type) {
 		case CANVAS:
-			if (!APP.DEBUG_DRAW) {
-				
-				ctxt.setColor(Color.GRAY);
-				
-				shape.paint(ctxt);
-				
-			} else {
-				
-				ctxt.setColor(Color.GRAY);
-				ctxt.setPixelStroke(cam.pixelsPerMeter, 1);
-				shape.draw(ctxt);
-				
+			ctxt.setColor(Color.GRAY);
+			
+			shape.paint(ctxt);
+			
+			if (ctxt.DEBUG_DRAW) {
 				paintSkeleton(ctxt);
-				
 			}
+			
 			break;
 		case PREVIEW:
 			ctxt.setColor(Color.GRAY);
@@ -345,7 +335,7 @@ public class Merger extends Edge {
 	}
 	
 	public void paintHilite(RenderingContext ctxt) {
-		ctxt.setPixelStroke(cam.pixelsPerMeter, 1);
+		ctxt.setPixelStroke(1);
 		ctxt.setColor(Color.GRAY);
 		shape.draw(ctxt);
 	}
@@ -353,7 +343,7 @@ public class Merger extends Edge {
 	void paintSkeleton(RenderingContext ctxt) {
 		
 		ctxt.setColor(Color.BLACK);
-		ctxt.setPixelStroke(cam.pixelsPerMeter, 1);
+		ctxt.setPixelStroke(1);
 		debugSkeletonTopBottomLine.draw(ctxt);
 		
 		debugSkeletonLeftRightLine.draw(ctxt);

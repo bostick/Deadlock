@@ -1,6 +1,5 @@
 package com.gutabi.deadlock.world.car;
 
-import static com.gutabi.deadlock.DeadlockApplication.APP;
 import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
 import java.awt.AlphaComposite;
@@ -26,7 +25,6 @@ import com.gutabi.deadlock.core.geom.Quad;
 import com.gutabi.deadlock.core.geom.Shape;
 import com.gutabi.deadlock.view.RenderingContext;
 import com.gutabi.deadlock.world.World;
-import com.gutabi.deadlock.world.WorldCamera;
 import com.gutabi.deadlock.world.graph.Fixture;
 import com.gutabi.deadlock.world.graph.GraphPositionPathPosition;
 import com.gutabi.deadlock.world.graph.Merger;
@@ -49,7 +47,7 @@ public abstract class Car extends Entity {
 	public double startingTime;
 	public double crashingTime;
 	
-	WorldCamera cam;
+//	WorldCamera cam;
 	public World world;
 	public Fixture source;
 	
@@ -95,16 +93,16 @@ public abstract class Car extends Entity {
 	static Logger pathingLogger = Logger.getLogger(logger.getName()+".pathing");
 	static Logger eventingLogger = Logger.getLogger(logger.getName()+".eventing");
 	
-	public Car(WorldCamera cam, World world, Fixture s) {
+	public Car(World world, Fixture s) {
 		
-		this.cam = cam;
+//		this.cam = cam;
 		this.world = world;
 		this.source = s;
 		
 		state = CarStateEnum.DRIVING;
 		
 		driver = new Driver(this);
-		engine = new Engine(this);
+		engine = new Engine(world, this);
 		
 		Point p0 = new Point(-CAR_LENGTH / 2, -CAR_LENGTH / 4);
 		Point p1 = new Point(CAR_LENGTH / 2, -CAR_LENGTH / 4);
@@ -127,7 +125,7 @@ public abstract class Car extends Entity {
 		
 		startPoint = driver.overallPos.p;
 		
-		GraphPositionPathPosition next = driver.overallPos.travel(getMaxSpeed() * APP.dt);
+		GraphPositionPathPosition next = driver.overallPos.travel(getMaxSpeed() * world.dt);
 		
 		Point nextDTGoalPoint = next.p;
 		
@@ -485,98 +483,76 @@ public abstract class Car extends Entity {
 	
 	public void paint(RenderingContext ctxt) {
 		
-		switch (state) {
-		case BRAKING:
-			
-			if (APP.CARTEXTURE_DRAW) {
-				paintImage(ctxt);
-			} else {
-				if (!driver.deadlocked) {
+		switch (ctxt.type) {
+		case CANVAS:
+			switch (state) {
+			case BRAKING:
+				
+				if (ctxt.CARTEXTURE_DRAW) {
+					paintImage(ctxt);
+				} else {
+					if (!driver.deadlocked) {
+						ctxt.setColor(Color.BLUE);
+						paintRect(ctxt);
+					} else {
+						ctxt.setColor(Color.RED);
+						paintRect(ctxt);
+					}
+				}
+				
+				paintBrakes(ctxt);
+				
+				break;
+			case DRIVING:
+			case SINKED:
+				
+				if (ctxt.CARTEXTURE_DRAW) {
+					paintImage(ctxt);
+				} else {
 					ctxt.setColor(Color.BLUE);
 					paintRect(ctxt);
+				}
+				
+				break;
+				
+			case SKIDDED:
+				
+				if (ctxt.CARTEXTURE_DRAW) {
+					paintImage(ctxt);
 				} else {
-					ctxt.setColor(Color.RED);
+					ctxt.setColor(Color.GREEN);
 					paintRect(ctxt);
 				}
-			}
-			
-			paintBrakes(ctxt);
-			
-			if (APP.DEBUG_DRAW) {
 				
-				ctxt.setColor(Color.BLACK);
-				ctxt.setPixelStroke(cam.pixelsPerMeter, 1);
-				shape.getAABB().draw(ctxt);
+				break;
 				
-				paintID(ctxt);
+			case CRASHED:
 				
-			}
-			
-			break;
-		case DRIVING:
-		case SINKED:
-			
-			if (APP.CARTEXTURE_DRAW) {
-				paintImage(ctxt);
-			} else {
-				ctxt.setColor(Color.BLUE);
-				paintRect(ctxt);
-			}
-			
-			if (APP.DEBUG_DRAW) {
-				
-				ctxt.setColor(Color.BLACK);
-				ctxt.setPixelStroke(cam.pixelsPerMeter, 1);
-				shape.getAABB().draw(ctxt);
-				
-				paintID(ctxt);
-				
-			}
-			break;
-			
-		case SKIDDED:
-			
-			if (APP.CARTEXTURE_DRAW) {
-				paintImage(ctxt);
-			} else {
-				ctxt.setColor(Color.GREEN);
-				paintRect(ctxt);
-			}
-			
-			if (APP.DEBUG_DRAW) {
-				
-				ctxt.setColor(Color.BLACK);
-				ctxt.setPixelStroke(cam.pixelsPerMeter, 1);
-				shape.getAABB().draw(ctxt);
-				
-				paintID(ctxt);
-				
-			}
-			break;
-			
-		case CRASHED:
-			
-			if (APP.CARTEXTURE_DRAW) {
-				paintImage(ctxt);
-			} else {
-				if (!driver.deadlocked) {
-					ctxt.setColor(Color.ORANGE);
-					paintRect(ctxt);
+				if (ctxt.CARTEXTURE_DRAW) {
+					paintImage(ctxt);
 				} else {
-					ctxt.setColor(VIEW.redOrange);
-					paintRect(ctxt);
+					if (!driver.deadlocked) {
+						ctxt.setColor(Color.ORANGE);
+						paintRect(ctxt);
+					} else {
+						ctxt.setColor(VIEW.redOrange);
+						paintRect(ctxt);
+					}
 				}
+				
+				break;
 			}
 			
-			if (APP.DEBUG_DRAW) {
-				
+			if (ctxt.DEBUG_DRAW) {
 				ctxt.setColor(Color.BLACK);
-				ctxt.setPixelStroke(cam.pixelsPerMeter, 1);
+				ctxt.setPixelStroke(1);
 				shape.getAABB().draw(ctxt);
 				
 				paintID(ctxt);
-				
 			}
+			
+			break;
+		case PREVIEW:
 			break;
 		}
 		
@@ -627,9 +603,7 @@ public abstract class Car extends Entity {
 		ctxt.rotate(angle);
 		ctxt.translate(CAR_LOCALX, CAR_LOCALY);
 		
-		ctxt.paintImage(
-				cam.pixelsPerMeter,
-				VIEW.sheet,
+		ctxt.paintImage(VIEW.sheet,
 				0, 0, CAR_LENGTH, CAR_WIDTH,
 				64, sheetRowStart, 64+32, sheetRowEnd);
 		
@@ -654,18 +628,14 @@ public abstract class Car extends Entity {
 		AffineTransform brakeTransform = ctxt.getTransform();
 		
 		ctxt.translate(CAR_BRAKE1X, CAR_BRAKE1Y);
-		ctxt.paintImage(
-				cam.pixelsPerMeter,
-				VIEW.sheet,
+		ctxt.paintImage(VIEW.sheet,
 				0, 0, BRAKE_SIZE, BRAKE_SIZE,
 				0, brakeRowStart, 0+8, brakeRowEnd);
 		
 		ctxt.setTransform(brakeTransform);
 		
 		ctxt.translate(CAR_BRAKE2X, CAR_BRAKE2Y);
-		ctxt.paintImage(
-				cam.pixelsPerMeter,
-				VIEW.sheet,
+		ctxt.paintImage(VIEW.sheet,
 				0, 0, BRAKE_SIZE, BRAKE_SIZE,
 				0, brakeRowStart, 0+8, brakeRowEnd);
 		
@@ -680,7 +650,7 @@ public abstract class Car extends Entity {
 		ctxt.translate(p.x, p.y);
 		
 		ctxt.setColor(Color.WHITE);
-		ctxt.paintString(cam.pixelsPerMeter, CAR_LOCALX, 0.0, 2.0, Integer.toString(id));
+		ctxt.paintString(CAR_LOCALX, 0.0, 2.0, Integer.toString(id));
 		
 		ctxt.setTransform(origTransform);
 	}

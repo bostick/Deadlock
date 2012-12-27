@@ -23,13 +23,13 @@ public class DeadlockMain  {
 		APP.codebase = new URL("file:.");
 		
 		MainMenu s = new MainMenu();
-		APP.screen = s;
+//		APP.screen = s;
 		
-		VIEW.setupFrame();
-		APP.screen.setup(VIEW.container);
+		APP.setupFrame();
+		s.setup(APP.container);
 		VIEW.init();
 		
-		((JFrame)VIEW.container).setVisible(true);
+		((JFrame)APP.container).setVisible(true);
 		
 		s.postDisplay();
 		s.render();

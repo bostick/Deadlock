@@ -28,16 +28,14 @@ import com.gutabi.deadlock.core.geom.Shape;
 import com.gutabi.deadlock.core.geom.ShapeUtils;
 import com.gutabi.deadlock.core.geom.SweepEvent;
 import com.gutabi.deadlock.core.geom.Sweepable;
-import com.gutabi.deadlock.view.ControlPanel;
 import com.gutabi.deadlock.view.RenderingContext;
-import com.gutabi.deadlock.view.RenderingContextType;
+import com.gutabi.deadlock.world.ControlPanel;
 import com.gutabi.deadlock.world.World;
-import com.gutabi.deadlock.world.WorldCamera;
 
 //@SuppressWarnings("static-access")
 public class Graph implements Sweepable {
 	
-	WorldCamera cam;
+//	WorldScreen screen;
 	World world;
 	
 	public final List<Vertex> vertices = new ArrayList<Vertex>();
@@ -51,8 +49,8 @@ public class Graph implements Sweepable {
 	
 	private static final Logger logger = Logger.getLogger(Graph.class);
 	
-	public Graph(WorldCamera cam, World world) {
-		this.cam = cam;
+	public Graph(World world) {
+//		this.screen = screen;
 		this.world = world;
 		
 		pathFactory = new GraphPositionPathFactory(this);
@@ -817,7 +815,7 @@ public class Graph implements Sweepable {
 		assert param >= 0.0;
 		assert param < 1.0;
 		
-		Intersection v = new Intersection(cam, p);
+		Intersection v = new Intersection(p);
 		addVertex(v);
 		
 		Vertex eStart = r.start;
@@ -840,7 +838,7 @@ public class Graph implements Sweepable {
 			/*
 			 * 3 so that both stop signs are introduced
 			 */
-			createRoad(new Road(cam, v, v, pts), 3);
+			createRoad(new Road(v, v, pts), 3);
 			
 			destroyRoad(r);
 			
@@ -869,7 +867,7 @@ public class Graph implements Sweepable {
 			directionMask = 0;
 		}
 		
-		createRoad(new Road(cam, eStart, v, f1Pts), (r.startSign.isEnabled()?1:0)+2+directionMask);
+		createRoad(new Road(eStart, v, f1Pts), (r.startSign.isEnabled()?1:0)+2+directionMask);
 		
 		List<Point> f2Pts = new ArrayList<Point>();
 		
@@ -878,7 +876,7 @@ public class Graph implements Sweepable {
 			f2Pts.add(r.getPoint(i));
 		}
 		
-		createRoad(new Road(cam, v, eEnd, f2Pts), 1+(r.endSign.isEnabled()?2:0)+directionMask);
+		createRoad(new Road(v, eEnd, f2Pts), 1+(r.endSign.isEnabled()?2:0)+directionMask);
 		
 		destroyRoad(r);
 		
@@ -1010,7 +1008,7 @@ public class Graph implements Sweepable {
 				pts.add(e1.getPoint(i));
 			}
 			
-			createRoad(new Road(cam, null, null, pts), 0);
+			createRoad(new Road(null, null, pts), 0);
 			
 			destroyRoad(e1);
 			
@@ -1047,7 +1045,7 @@ public class Graph implements Sweepable {
 					pts.add(e2.getPoint(i));
 				}
 				
-				createRoad(new Road(cam, e1End, e2End, pts), (e1.endSign.isEnabled()?1:0) + (e2.endSign.isEnabled()?2:0)+directionMask);
+				createRoad(new Road(e1End, e2End, pts), (e1.endSign.isEnabled()?1:0) + (e2.endSign.isEnabled()?2:0)+directionMask);
 				
 				destroyRoad(e1);
 				destroyRoad(e2);
@@ -1066,7 +1064,7 @@ public class Graph implements Sweepable {
 					pts.add(e2.getPoint(i));
 				}
 				
-				createRoad(new Road(cam, e1End, e2Start, pts), (e1.endSign.isEnabled()?1:0) + (e2.startSign.isEnabled()?2:0)+directionMask); 
+				createRoad(new Road(e1End, e2Start, pts), (e1.endSign.isEnabled()?1:0) + (e2.startSign.isEnabled()?2:0)+directionMask); 
 				
 				destroyRoad(e1);
 				destroyRoad(e2);
@@ -1085,7 +1083,7 @@ public class Graph implements Sweepable {
 					pts.add(e2.getPoint(i));
 				}
 				
-				createRoad(new Road(cam, e1Start, e2End, pts), (e1.startSign.isEnabled()?1:0) + (e2.endSign.isEnabled()?2:0)+directionMask);
+				createRoad(new Road(e1Start, e2End, pts), (e1.startSign.isEnabled()?1:0) + (e2.endSign.isEnabled()?2:0)+directionMask);
 				
 				destroyRoad(e1);
 				destroyRoad(e2);
@@ -1104,7 +1102,7 @@ public class Graph implements Sweepable {
 					pts.add(e2.getPoint(i));
 				}
 				
-				createRoad(new Road(cam, e1Start, e2Start, pts), (e1.startSign.isEnabled()?1:0) + (e2.startSign.isEnabled()?2:0)+directionMask);
+				createRoad(new Road(e1Start, e2Start, pts), (e1.startSign.isEnabled()?1:0) + (e2.startSign.isEnabled()?2:0)+directionMask);
 				
 				destroyRoad(e1);
 				destroyRoad(e2);
@@ -1138,7 +1136,7 @@ public class Graph implements Sweepable {
 		return s.toString();
 	}
 	
-	public static Graph fromFileString(WorldCamera cam, World world, ControlPanel cp, String s) {
+	public static Graph fromFileString(World world, ControlPanel cp, String s) {
 		BufferedReader r = new BufferedReader(new StringReader(s));
 		
 		Vertex[] vs = null;
@@ -1184,7 +1182,7 @@ public class Graph implements Sweepable {
 						}
 					}
 					
-					Fixture f = Fixture.fromFileString(cam, world, cp, builder.toString());
+					Fixture f = Fixture.fromFileString(world, cp, builder.toString());
 					
 					vs[f.id] = f;
 					
@@ -1200,7 +1198,7 @@ public class Graph implements Sweepable {
 						}
 					}
 					
-					Intersection i = Intersection.fromFileString(cam, builder.toString());
+					Intersection i = Intersection.fromFileString(builder.toString());
 					
 					vs[i.id] = i;
 					
@@ -1216,7 +1214,7 @@ public class Graph implements Sweepable {
 						}
 					}
 					
-					Road rd = Road.fromFileString(cam, vs, builder.toString());
+					Road rd = Road.fromFileString(vs, builder.toString());
 					
 					es[rd.id] = rd;
 					
@@ -1239,7 +1237,7 @@ public class Graph implements Sweepable {
 			}
 		}
 		
-		Graph g = new Graph(cam, world);
+		Graph g = new Graph(world);
 		
 		for (Vertex v : vs) {
 			g.vertices.add(v);
@@ -1313,38 +1311,28 @@ public class Graph implements Sweepable {
 		
 		AffineTransform origTransform = ctxt.getTransform();
 		
-		ctxt.paintString(cam.pixelsPerMeter, 0, 0, 1.0, "vertex count: " + vertices.size());
+		ctxt.paintString(0, 0, 1.0, "vertex count: " + vertices.size());
 		
 		ctxt.translate(0, 1);
 		
-		ctxt.paintString(cam.pixelsPerMeter, 0, 0, 1.0, "edge count: " + edges.size());
+		ctxt.paintString(0, 0, 1.0, "edge count: " + edges.size());
 		
 		ctxt.setTransform(origTransform);
 	}
 	
 	public void paintScene(RenderingContext ctxt) {
 		
-		if (ctxt.type == RenderingContextType.CANVAS) {
-			if (!APP.DEBUG_DRAW) {
-				
-				List<Vertex> verticesCopy;
-				synchronized (APP) {
-					verticesCopy = new ArrayList<Vertex>(vertices);
-				}
-				for (Vertex v : verticesCopy) {
-					v.paintScene(ctxt);
-				}
-				
-			} else {
-				
-				List<Vertex> verticesCopy;
-				synchronized (APP) {
-					verticesCopy = new ArrayList<Vertex>(vertices);
-				}
-				for (Vertex v : verticesCopy) {
-					v.paintScene(ctxt);
-				}
-				
+		switch (ctxt.type) {
+		case CANVAS:
+			List<Vertex> verticesCopy;
+			synchronized (APP) {
+				verticesCopy = new ArrayList<Vertex>(vertices);
+			}
+			for (Vertex v : verticesCopy) {
+				v.paintScene(ctxt);
+			}
+			
+			if (ctxt.DEBUG_DRAW) {
 				List<Edge> edgesCopy;
 				synchronized (APP) {
 					edgesCopy = new ArrayList<Edge>(edges);
@@ -1353,8 +1341,11 @@ public class Graph implements Sweepable {
 				for (Edge e : edgesCopy) {
 					e.paintBorders(ctxt);
 				}
-				
 			}
+			
+			break;
+		case PREVIEW:
+			break;
 		}
 		
 	}

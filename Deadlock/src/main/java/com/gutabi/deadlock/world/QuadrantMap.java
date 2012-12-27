@@ -22,7 +22,7 @@ public class QuadrantMap {
 	public static final double QUADRANT_WIDTH = 16.0;
 	public static final double QUADRANT_HEIGHT = QUADRANT_WIDTH;
 	
-	WorldCamera cam;
+//	WorldCamera cam;
 	
 	public final double worldWidth;
 	public final double worldHeight;
@@ -39,8 +39,8 @@ public class QuadrantMap {
 	
 	public final AABB aabb;
 	
-	public QuadrantMap(WorldCamera cam, int[][] ini) {
-		this.cam = cam;
+	public QuadrantMap(int[][] ini) {
+//		this.cam = cam;
 		this.ini = ini;
 		
 		quadrants = initQuadrants(ini);
@@ -65,9 +65,9 @@ public class QuadrantMap {
 			for (int j = 0; j < rows; j++) {
 				Quadrant q;
 				if (ini[j][i] == 1) {
-					q = new Quadrant(cam, this, j, i, true);
+					q = new Quadrant(this, j, i, true);
 				} else {
-					q = new Quadrant(cam, this, j, i, false);
+					q = new Quadrant(this, j, i, false);
 				}
 				newQuads[j][i] = q;
 				
@@ -256,7 +256,7 @@ public class QuadrantMap {
 		for (int i = 0; i < quadrantRows; i++) {
 			for (int j = 0; j < quadrantCols; j++) {
 				Quadrant q = quadrants[i][j];
-				q.computeGridSpacing(cam.pixelsPerMeter);
+				q.computeGridSpacing();
 			}
 		}
 	}
@@ -322,7 +322,7 @@ public class QuadrantMap {
 			e.printStackTrace();
 		}
 		
-		QuadrantMap qm = new QuadrantMap(cam, ini);
+		QuadrantMap qm = new QuadrantMap(ini);
 		return qm;
 	}
 	

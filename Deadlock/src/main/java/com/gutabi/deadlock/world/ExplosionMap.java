@@ -52,8 +52,10 @@ public class ExplosionMap {
 	}
 	
 	public void paint(RenderingContext ctxt) {
-		for (AnimatedExplosion x : explosions) {
-			x.paint(ctxt);
+		if (ctxt.EXPLOSIONS_DRAW) {
+			for (AnimatedExplosion x : explosions) {
+				x.paint(ctxt);
+			}
 		}
 	}
 	

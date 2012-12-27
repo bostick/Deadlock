@@ -12,16 +12,16 @@ import com.gutabi.deadlock.view.RenderingContext;
 
 public class GrassMarkMap {
 	
-	WorldCamera cam;
+//	WorldCamera cam;
 	List<Capsule> marks = new ArrayList<Capsule>();
 	
-	public GrassMarkMap(WorldCamera cam) {
-		this.cam = cam;
+	public GrassMarkMap() {
+//		this.cam = cam;
 	}
 	
 	public void addGrassMark(Point p0, Point p1) {
 		
-		Capsule test = new Capsule(cam, null, new Circle(null, p0, 0.0), new Circle(null, p1, 0.0), -1);
+		Capsule test = new Capsule(null, new Circle(null, p0, 0.0), new Circle(null, p1, 0.0), -1);
 		
 		for (Capsule cap : marks) {
 			if (Capsule.contains(cap, test)) {
@@ -35,7 +35,7 @@ public class GrassMarkMap {
 			assert marks.size() < 100;
 		}
 		
-		marks.add(new Capsule(cam, null, new Circle(null, p0, 0.1), new Circle(null, p1, 0.1), -1));
+		marks.add(new Capsule(null, new Circle(null, p0, 0.1), new Circle(null, p1, 0.1), -1));
 	}
 	
 	public void postStop() {

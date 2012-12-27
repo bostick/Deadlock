@@ -7,7 +7,6 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Stroke;
 import java.awt.font.FontRenderContext;
-import java.awt.font.TextLayout;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Line2D;
 
@@ -17,12 +16,22 @@ import org.jbox2d.common.OBBViewportTransform;
 import org.jbox2d.common.Transform;
 import org.jbox2d.common.Vec2;
 
+import com.gutabi.deadlock.world.WorldCamera;
+
 //@SuppressWarnings("static-access")
 public class RenderingContext extends DebugDraw {
 	
 	public Graphics2D g2;
 	
 	public final RenderingContextType type;
+	
+	public WorldCamera cam;
+	
+	public boolean FPS_DRAW = false;
+	public boolean STOPSIGN_DRAW = true;
+	public boolean CARTEXTURE_DRAW = true;
+	public boolean EXPLOSIONS_DRAW = true;
+	public boolean DEBUG_DRAW = false;
 	
 	public RenderingContext(RenderingContextType type) {
 		super(new OBBViewportTransform());
@@ -53,8 +62,8 @@ public class RenderingContext extends DebugDraw {
 		g2.setStroke(s);
 	}
 	
-	public void setPixelStroke(double origS, int pix) {
-		g2.setStroke(new BasicStroke((float)(pix / origS), BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER));
+	public void setPixelStroke(int pix) {
+		g2.setStroke(new BasicStroke((float)(pix / cam.pixelsPerMeter), BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER));
 	}
 	
 	public AffineTransform getTransform() {
@@ -93,24 +102,24 @@ public class RenderingContext extends DebugDraw {
 		g2.rotate(a, x, y);
 	}
 	
-	public void paintString(double origS, double x, double y, double s, String str) {
+	public void paintString(double x, double y, double s, String str) {
 		AffineTransform origTransform = g2.getTransform();
 		
 		g2.translate(x, y);
-		g2.scale(1 / origS, 1 / origS);
+		g2.scale(1 / cam.pixelsPerMeter, 1 / cam.pixelsPerMeter);
 		g2.scale(s, s);
 		g2.drawString(str, 0, 0);
 		
 		g2.setTransform(origTransform);
 	}
 	
-	public void paintImage(double origS, Image img, double dx1, double dy1, double dx2, double dy2, int sx1, int sy1, int sx2, int sy2) {
+	public void paintImage(Image img, double dx1, double dy1, double dx2, double dy2, int sx1, int sy1, int sx2, int sy2) {
 		AffineTransform origTransform = g2.getTransform();
 		
-		g2.scale(1 / origS, 1 / origS);
+		g2.scale(1 / cam.pixelsPerMeter, 1 / cam.pixelsPerMeter);
 		paintImage(
 				img,
-				(int)Math.ceil(dx1 * origS), (int)Math.ceil(dy1 * origS), (int)Math.ceil(dx2 * origS), (int)Math.ceil(dy2 * origS),
+				(int)Math.ceil(dx1 * cam.pixelsPerMeter), (int)Math.ceil(dy1 * cam.pixelsPerMeter), (int)Math.ceil(dx2 * cam.pixelsPerMeter), (int)Math.ceil(dy2 * cam.pixelsPerMeter),
 				sx1, sy1, sx2, sy2);
 		
 		g2.setTransform(origTransform);
@@ -160,10 +169,6 @@ public class RenderingContext extends DebugDraw {
 
 	public void drawString(float x, float y, String s, Color3f color) {
 		
-	}
-	
-	public void draw(TextLayout layout, double baselineX, double baselineY) {
-		layout.draw(g2, (float)baselineX, (float)baselineY);
 	}
 	
 	public void setXORMode(Color c) {

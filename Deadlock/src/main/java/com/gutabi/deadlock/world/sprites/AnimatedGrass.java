@@ -8,15 +8,14 @@ import java.awt.geom.AffineTransform;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.AABB;
 import com.gutabi.deadlock.view.RenderingContext;
-import com.gutabi.deadlock.world.WorldCamera;
 
 //@SuppressWarnings("static-access")
 public class AnimatedGrass {
 	
 	public static double GRASS_SIZE = 1.0;
 	
-	WorldCamera cam;
-//	public final World world;
+//	WorldCamera cam;
+//	World world;
 	Point p;
 	int lastFrame;
 	double lastTime;
@@ -25,8 +24,8 @@ public class AnimatedGrass {
 	
 	public AABB aabb;
 	
-	public AnimatedGrass(WorldCamera cam, Point p) {
-		this.cam = cam;
+	public AnimatedGrass(Point p) {
+//		this.world = world;
 		this.p = p;
 		phase = APP.RANDOM.nextDouble();
 		startFrame = APP.RANDOM.nextInt(4);
@@ -90,9 +89,7 @@ public class AnimatedGrass {
 		AffineTransform origTransform = ctxt.getTransform();
 		
 		ctxt.translate(p.x - AnimatedGrass.GRASS_SIZE/2, p.y - AnimatedGrass.GRASS_SIZE/2);
-		ctxt.paintImage(
-				cam.pixelsPerMeter,
-				VIEW.sheet,
+		ctxt.paintImage(VIEW.sheet,
 				0, 0, GRASS_SIZE, GRASS_SIZE,
 				0, 256, 0+32, 256+32);	
 		
@@ -105,9 +102,7 @@ public class AnimatedGrass {
 		AffineTransform origTransform = ctxt.getTransform();
 		
 		ctxt.translate(p.x - AnimatedGrass.GRASS_SIZE/2, p.y - AnimatedGrass.GRASS_SIZE/2);
-		ctxt.paintImage(
-				cam.pixelsPerMeter,
-				VIEW.sheet,
+		ctxt.paintImage(VIEW.sheet,
 				0, 0, GRASS_SIZE, GRASS_SIZE,
 				32, 256, 32+32, 256+32);
 		
@@ -120,9 +115,7 @@ public class AnimatedGrass {
 		AffineTransform origTransform = ctxt.getTransform();
 		
 		ctxt.translate(p.x - AnimatedGrass.GRASS_SIZE/2, p.y - AnimatedGrass.GRASS_SIZE/2);
-		ctxt.paintImage(
-				cam.pixelsPerMeter,
-				VIEW.sheet,
+		ctxt.paintImage(VIEW.sheet,
 				0, 0, GRASS_SIZE, GRASS_SIZE,
 				64, 256, 64+32, 256+32);
 		

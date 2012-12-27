@@ -14,7 +14,7 @@ import com.gutabi.deadlock.view.RenderingContextType;
 
 public class Preview {
 	
-	public final WorldScreen screen;
+	public WorldScreen screen;
 	
 	public PreviewCamera previewCam = new PreviewCamera();
 	
@@ -34,6 +34,7 @@ public class Preview {
 	}
 	
 	public void dragged(InputEvent ev) {
+		
 		if (screen.controlPanel.previewPanel.penDragPreviewPoint != null) {
 			
 			double dx = screen.controlPanel.previewPanel.lastDragPreviewPoint.x - screen.controlPanel.previewPanel.penDragPreviewPoint.x;
@@ -110,9 +111,7 @@ public class Preview {
 		
 		if (previewImage != null) {
 			
-			ctxt.paintImage(
-					1.0,
-					previewImage,
+			ctxt.paintImage(previewImage,
 					0, 0, previewCam.previewWidth, previewCam.previewHeight,
 					0, 0, previewCam.previewWidth, previewCam.previewHeight);
 			

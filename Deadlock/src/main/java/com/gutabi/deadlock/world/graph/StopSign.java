@@ -1,6 +1,5 @@
 package com.gutabi.deadlock.world.graph;
 
-import static com.gutabi.deadlock.DeadlockApplication.APP;
 import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
 import java.awt.Color;
@@ -10,14 +9,13 @@ import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.Circle;
 import com.gutabi.deadlock.view.RenderingContext;
-import com.gutabi.deadlock.world.WorldCamera;
 
 //@SuppressWarnings("static-access")
 public class StopSign extends Entity {
 	
 	public static final double STOPSIGN_SIZE = 0.5;
 	
-	WorldCamera cam;
+//	WorldCamera cam;
 //	public final World world;
 	public final Road r;
 	public final Vertex v;
@@ -30,8 +28,8 @@ public class StopSign extends Entity {
 	
 	private Circle shape;
 	
-	public StopSign(WorldCamera cam, Road r, int dir) {
-		this.cam = cam;
+	public StopSign(Road r, int dir) {
+//		this.cam = cam;
 		this.r = r;
 		this.dir = dir;
 		
@@ -122,27 +120,30 @@ public class StopSign extends Entity {
 	
 	public void paint(RenderingContext ctxt) {
 		
-		if (APP.STOPSIGN_DRAW) {
+		if (ctxt.STOPSIGN_DRAW) {
 			
-			if (enabled) {
+			switch (ctxt.type) {
+			case CANVAS:
+				if (enabled) {
+					
+					AffineTransform origTransform = ctxt.getTransform();
+					
+					ctxt.translate(p.x - StopSign.STOPSIGN_SIZE/2, p.y - StopSign.STOPSIGN_SIZE/2);
+					ctxt.paintImage(VIEW.sheet,
+							0, 0, STOPSIGN_SIZE, STOPSIGN_SIZE,
+							32, 224, 32+32, 224+32);
+					
+					ctxt.setTransform(origTransform);
+					
+					if (ctxt.DEBUG_DRAW) {
+						shape.getAABB().draw(ctxt);
+					}
+					
+				}
 				
-				AffineTransform origTransform = ctxt.getTransform();
-				
-				ctxt.translate(p.x - StopSign.STOPSIGN_SIZE/2, p.y - StopSign.STOPSIGN_SIZE/2);
-				ctxt.paintImage(
-						cam.pixelsPerMeter,
-						VIEW.sheet,
-						0, 0, STOPSIGN_SIZE, STOPSIGN_SIZE,
-						32, 224, 32+32, 224+32);
-				
-				ctxt.setTransform(origTransform);
-				
-			}
-			
-			if (APP.DEBUG_DRAW) {
-				
-				shape.getAABB().draw(ctxt);
-				
+				break;
+			case PREVIEW:
+				break;
 			}
 			
 		}
@@ -154,7 +155,7 @@ public class StopSign extends Entity {
 			ctxt.setColor(Color.RED);
 			shape.paint(ctxt);
 		} else {
-			ctxt.setPixelStroke(cam.pixelsPerMeter, 1);
+			ctxt.setPixelStroke(1);
 			ctxt.setColor(Color.WHITE);
 			shape.draw(ctxt);
 		}

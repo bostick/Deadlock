@@ -1,6 +1,6 @@
 package com.gutabi.deadlock.world.graph;
 
-import static com.gutabi.deadlock.DeadlockApplication.APP;
+import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -27,7 +27,6 @@ import com.gutabi.deadlock.core.geom.ShapeUtils;
 import com.gutabi.deadlock.core.geom.Triangle;
 import com.gutabi.deadlock.view.RenderingContext;
 import com.gutabi.deadlock.view.RenderingContextType;
-import com.gutabi.deadlock.world.WorldCamera;
 
 //@SuppressWarnings("static-access")
 public class Road extends Edge {
@@ -36,7 +35,7 @@ public class Road extends Edge {
 	
 	public static final double borderPointRadius = 0.2;
 	
-	WorldCamera cam;
+//	WorldCamera cam;
 	public final Vertex start;
 	public final Vertex end;
 	public final List<Point> raw;
@@ -67,11 +66,11 @@ public class Road extends Edge {
 	
 	static Logger logger = Logger.getLogger(Road.class);
 	
-	public Road(WorldCamera cam, Vertex start, Vertex end, List<Point> raw) {
+	public Road(Vertex start, Vertex end, List<Point> raw) {
 		
 		assert !raw.isEmpty();
 		
-		this.cam = cam;
+//		this.cam = cam;
 		this.start = start;
 		this.end = end;
 		this.raw = raw;
@@ -86,8 +85,8 @@ public class Road extends Edge {
 			start.roads.add(this);
 			end.roads.add(this);
 			
-			startSign = new StopSign(cam, this, 0);
-			endSign = new StopSign(cam, this, 1);
+			startSign = new StopSign(this, 0);
+			endSign = new StopSign(this, 1);
 			
 		} else {
 			startSign = null;
@@ -429,7 +428,7 @@ public class Road extends Edge {
 		for (int i = 0; i < adj.size()-1; i++) {
 			Circle a = circs.get(i);
 			Circle b = circs.get(i+1);
-			caps.add(new Capsule(cam, this, a, b, i));
+			caps.add(new Capsule(this, a, b, i));
 		}
 		
 		seq = new CapsuleSequence(this, caps);
@@ -650,7 +649,7 @@ public class Road extends Edge {
 		return s.toString();
 	}
 	
-	public static Road fromFileString(WorldCamera cam, Vertex[] vs, String s) {
+	public static Road fromFileString(Vertex[] vs, String s) {
 		BufferedReader r = new BufferedReader(new StringReader(s));
 		
 		int id = -1;
@@ -735,7 +734,7 @@ public class Road extends Edge {
 			e.printStackTrace();
 		}
 		
-		Road rd = new Road(cam, start, end, pts);
+		Road rd = new Road(start, end, pts);
 		
 		rd.id = id;
 		rd.direction = d;
@@ -751,24 +750,27 @@ public class Road extends Edge {
 	
 	public void paint(RenderingContext ctxt) {
 		
-		paintPath(ctxt);
-		
-		if (ctxt.type == RenderingContextType.CANVAS) {
-			if (APP.DEBUG_DRAW) {
+		switch (ctxt.type) {
+		case CANVAS:
+			paintPath(ctxt);
+			
+			if (ctxt.DEBUG_DRAW) {
 				ctxt.setColor(Color.BLACK);
-				ctxt.setPixelStroke(cam.pixelsPerMeter, 1);
-				shape.getAABB().draw(ctxt);	
+				ctxt.setPixelStroke(1);
+				shape.getAABB().draw(ctxt);
 			}
+			
+			break;
+		case PREVIEW:
+			paintPath(ctxt);
+			break;
 		}
 		
 	}
 	
-	
-	static Color hiliteColor = new Color(0xff ^ 0x88, 0xff ^ 0x88, 0xff ^ 0x88, 0xff);
-	
 	public void paintHilite(RenderingContext ctxt) {
-		ctxt.setColor(hiliteColor);
-		ctxt.setPixelStroke(cam.pixelsPerMeter, 1);
+		ctxt.setColor(VIEW.roadHiliteColor);
+		ctxt.setPixelStroke(1);
 		drawPath(ctxt);
 	}
 	
@@ -817,21 +819,18 @@ public class Road extends Edge {
 	
 	public void paintDecorations(RenderingContext ctxt) {
 		
-		if (ctxt.type == RenderingContextType.CANVAS) {
+		switch (ctxt.type) {
+		case CANVAS:
+			startSign.paint(ctxt);
 			
-			if (!standalone) {
-				
-				startSign.paint(ctxt);
-				
-				endSign.paint(ctxt);
-				
-			}
+			endSign.paint(ctxt);
 			
-			if (APP.DEBUG_DRAW) {
-				
+			if (ctxt.DEBUG_DRAW) {
 				paintSkeleton(ctxt);
-				
 			}
+			break;
+		case PREVIEW:
+			break;
 		}
 		
 	}

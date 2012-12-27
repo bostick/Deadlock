@@ -38,7 +38,7 @@ public abstract class Knob {
 	public void draw(RenderingContext ctxt) {
 		ctxt.setColor(Color.ORANGE);
 		ctxt.setXORMode(Color.BLACK);
-		ctxt.setPixelStroke(cam.pixelsPerMeter, 1);
+		ctxt.setPixelStroke(1);
 		aabb().paint(ctxt);
 	}
 	

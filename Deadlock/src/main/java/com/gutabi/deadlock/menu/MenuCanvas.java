@@ -1,6 +1,4 @@
-package com.gutabi.deadlock.view;
-
-import static com.gutabi.deadlock.DeadlockApplication.APP;
+package com.gutabi.deadlock.menu;
 
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
@@ -14,10 +12,13 @@ import org.apache.log4j.Logger;
 
 import com.gutabi.deadlock.core.Dim;
 import com.gutabi.deadlock.core.Point;
+import com.gutabi.deadlock.view.ComponentBase;
+import com.gutabi.deadlock.view.InputEvent;
 
 @SuppressWarnings("serial")
-//@SuppressWarnings({"serial", "static-access"})
-public class Canvas extends Component {
+public class MenuCanvas extends ComponentBase {
+	
+	MainMenu screen;
 	
 	public BufferStrategy bs;
 	
@@ -25,17 +26,13 @@ public class Canvas extends Component {
 	
 	private JavaListener jl;
 	
-	static Logger logger = Logger.getLogger(Canvas.class);
+	static Logger logger = Logger.getLogger(MenuCanvas.class);
 	
-	public Canvas() {
-		
-//		final RenderingContext ctxt = new RenderingContext(RenderingContextType.CANVAS);
+	public MenuCanvas(MainMenu screen) {
+		this.screen = screen;
 		
 		c = new java.awt.Canvas() {
 			public void paint(Graphics g) {
-//				logger.debug("paint");
-//				ctxt.g2 = (Graphics2D)g;
-//				APP.screen.paint(new PaintEvent(Canvas.this, ctxt));
 				bs.show();
 			}
 		};
@@ -61,53 +58,53 @@ public class Canvas extends Component {
 
 		public void keyReleased(KeyEvent ev) {
 			if (ev.getKeyCode() == KeyEvent.VK_INSERT) {
-				insertKey(new InputEvent(Canvas.this, null));
+				insertKey(new InputEvent(MenuCanvas.this, null));
 			} else if (ev.getKeyCode() == KeyEvent.VK_DELETE) {
-				deleteKey(new InputEvent(Canvas.this, null));
+				deleteKey(new InputEvent(MenuCanvas.this, null));
 			} else if (ev.getKeyCode() == KeyEvent.VK_ESCAPE) {
-				escKey(new InputEvent(Canvas.this, null));
+				escKey(new InputEvent(MenuCanvas.this, null));
 			} else if (ev.getKeyCode() == KeyEvent.VK_Q) {
-				qKey(new InputEvent(Canvas.this, null));
+				qKey(new InputEvent(MenuCanvas.this, null));
 			} else if (ev.getKeyCode() == KeyEvent.VK_W) {
-				wKey(new InputEvent(Canvas.this, null));
+				wKey(new InputEvent(MenuCanvas.this, null));
 			} else if (ev.getKeyCode() == KeyEvent.VK_G) {
-				gKey(new InputEvent(Canvas.this, null));
+				gKey(new InputEvent(MenuCanvas.this, null));
 			} else if (ev.getKeyCode() == KeyEvent.VK_1) {
-				d1Key(new InputEvent(Canvas.this, null));
+				d1Key(new InputEvent(MenuCanvas.this, null));
 			} else if (ev.getKeyCode() == KeyEvent.VK_2) {
-				d2Key(new InputEvent(Canvas.this, null));
+				d2Key(new InputEvent(MenuCanvas.this, null));
 			} else if (ev.getKeyCode() == KeyEvent.VK_3) {
-				d3Key(new InputEvent(Canvas.this, null));
+				d3Key(new InputEvent(MenuCanvas.this, null));
 			} else if (ev.getKeyCode() == KeyEvent.VK_PLUS || ev.getKeyCode() == KeyEvent.VK_EQUALS) {
-				plusKey(new InputEvent(Canvas.this, null));
+				plusKey(new InputEvent(MenuCanvas.this, null));
 			} else if (ev.getKeyCode() == KeyEvent.VK_MINUS) {
-				minusKey(new InputEvent(Canvas.this, null));
+				minusKey(new InputEvent(MenuCanvas.this, null));
 			} else if (ev.getKeyCode() == KeyEvent.VK_DOWN) {
-				downKey(new InputEvent(Canvas.this, null));
+				downKey(new InputEvent(MenuCanvas.this, null));
 			} else if (ev.getKeyCode() == KeyEvent.VK_UP) {
-				upKey(new InputEvent(Canvas.this, null));
+				upKey(new InputEvent(MenuCanvas.this, null));
 			} else if (ev.getKeyCode() == KeyEvent.VK_ENTER) {
-				enterKey(new InputEvent(Canvas.this, null));
+				enterKey(new InputEvent(MenuCanvas.this, null));
 			} else if (ev.getKeyCode() == KeyEvent.VK_A) {
-				aKey(new InputEvent(Canvas.this, null));
+				aKey(new InputEvent(MenuCanvas.this, null));
 			} else if (ev.getKeyCode() == KeyEvent.VK_S) {
 				
 				int mods = ev.getModifiersEx();
 				
 				if ((mods & KeyEvent.CTRL_DOWN_MASK) == KeyEvent.CTRL_DOWN_MASK) {
-					ctrlSKey(new InputEvent(Canvas.this, null));
+					ctrlSKey(new InputEvent(MenuCanvas.this, null));
 				} else {
-					sKey(new InputEvent(Canvas.this, null));
+					sKey(new InputEvent(MenuCanvas.this, null));
 				}
 				
 			} else if (ev.getKeyCode() == KeyEvent.VK_D) {
-				dKey(new InputEvent(Canvas.this, null));
+				dKey(new InputEvent(MenuCanvas.this, null));
 			} else if (ev.getKeyCode() == KeyEvent.VK_O) {
 				
 				int mods = ev.getModifiersEx();
 				
 				if ((mods & KeyEvent.CTRL_DOWN_MASK) == KeyEvent.CTRL_DOWN_MASK) {
-					ctrlOKey(new InputEvent(Canvas.this, null));
+					ctrlOKey(new InputEvent(MenuCanvas.this, null));
 				}
 				
 			}
@@ -118,31 +115,31 @@ public class Canvas extends Component {
 		}
 		
 		public void mousePressed(MouseEvent ev) {
-			pressed(new InputEvent(Canvas.this, new Point(ev.getX(), ev.getY())));
+			pressed(new InputEvent(MenuCanvas.this, new Point(ev.getX(), ev.getY())));
 		}
 
 		public void mouseReleased(MouseEvent ev) {
-			released(new InputEvent(Canvas.this, new Point(ev.getX(), ev.getY())));
+			released(new InputEvent(MenuCanvas.this, new Point(ev.getX(), ev.getY())));
 		}
 		
 		public void mouseDragged(MouseEvent ev) {
-			dragged(new InputEvent(Canvas.this, new Point(ev.getX(), ev.getY())));
+			dragged(new InputEvent(MenuCanvas.this, new Point(ev.getX(), ev.getY())));
 		}
 
 		public void mouseMoved(MouseEvent ev) {
-			moved(new InputEvent(Canvas.this, new Point(ev.getX(), ev.getY())));
+			moved(new InputEvent(MenuCanvas.this, new Point(ev.getX(), ev.getY())));
 		}
 
 		public void mouseClicked(MouseEvent ev) {
-			clicked(new InputEvent(Canvas.this, new Point(ev.getX(), ev.getY())));
+			clicked(new InputEvent(MenuCanvas.this, new Point(ev.getX(), ev.getY())));
 		}
 
 		public void mouseEntered(MouseEvent ev) {
-			entered(new InputEvent(Canvas.this, new Point(ev.getX(), ev.getY())));
+			entered(new InputEvent(MenuCanvas.this, new Point(ev.getX(), ev.getY())));
 		}
 
 		public void mouseExited(MouseEvent ev) {
-			exited(new InputEvent(Canvas.this, new Point(ev.getX(), ev.getY())));
+			exited(new InputEvent(MenuCanvas.this, new Point(ev.getX(), ev.getY())));
 		}
 		
 	}
@@ -166,24 +163,23 @@ public class Canvas extends Component {
 		c.createBufferStrategy(2);
 		bs = c.getBufferStrategy();
 		
-//		APP.screen.canvasPostDisplay(new Dim(getWidth(), getHeight()));
 		return new Dim(getWidth(), getHeight());
 	}
 	
 	public void pressed(InputEvent ev) {
-		APP.screen.pressed(ev);
+		screen.pressed(ev);
 	}
 	
 	public void dragged(InputEvent ev) {
 		
 		lastMovedOrDraggedCanvasPoint = ev.p;
 		
-		APP.screen.dragged(ev);
+		screen.dragged(ev);
 	}
 	
 	public void released(InputEvent ev) {
 		
-		APP.screen.released(ev);
+		screen.released(ev);
 	}
 	
 	public Point lastMovedCanvasPoint;
@@ -194,14 +190,14 @@ public class Canvas extends Component {
 		lastMovedCanvasPoint = ev.p;
 		lastMovedOrDraggedCanvasPoint = lastMovedCanvasPoint;
 		
-		APP.screen.moved(ev);
+		screen.moved(ev);
 	}
 	
 	Point lastClickedCanvasPoint;
 	
 	public void clicked(InputEvent ev) {
 		
-		APP.screen.clicked(ev);
+		screen.clicked(ev);
 	}
 	
 	public void entered(InputEvent ev) {
@@ -209,89 +205,83 @@ public class Canvas extends Component {
 	}
 	
 	public void exited(InputEvent ev) {
-		APP.screen.exited(ev);
+		screen.exited(ev);
 	}
 	
 	public void qKey(InputEvent ev) {
-		APP.screen.qKey(ev);
+		screen.qKey(ev);
 	}
 	
 	public void wKey(InputEvent ev) {
-		APP.screen.wKey(ev);
+		screen.wKey(ev);
 	}
 	
 	public void gKey(InputEvent ev) {
-		APP.screen.gKey(ev);
+		screen.gKey(ev);
 	}
 	
 	public void deleteKey(InputEvent ev) {
-		APP.screen.deleteKey(ev);
+		screen.deleteKey(ev);
 	}
 	
 	public void insertKey(InputEvent ev) {
-		APP.screen.insertKey(ev);
+		screen.insertKey(ev);
 	}
 	
 	public void escKey(InputEvent ev) {
-		APP.screen.escKey(ev);
+		screen.escKey(ev);
 	}
 	
 	public void d1Key(InputEvent ev) {
-		APP.screen.d1Key(ev);
+		screen.d1Key(ev);
 	}
 	
 	public void d2Key(InputEvent ev) {
-		APP.screen.d2Key(ev);
+		screen.d2Key(ev);
 	}
 	
 	public void d3Key(InputEvent ev) {
-		APP.screen.d3Key(ev);
+		screen.d3Key(ev);
 	}
 	
 	public void plusKey(InputEvent ev) {
-		APP.screen.plusKey(ev);
+		screen.plusKey(ev);
 	}
 	
 	public void minusKey(InputEvent ev) {
-		APP.screen.minusKey(ev);
+		screen.minusKey(ev);
 	}
 	
 	public void downKey(InputEvent ev) {
-		APP.screen.downKey(ev);
+		screen.downKey(ev);
 	}
 
 	public void upKey(InputEvent ev) {
-		APP.screen.upKey(ev);
+		screen.upKey(ev);
 	}
 	
 	public void enterKey(InputEvent ev) {
-		APP.screen.enterKey(ev);
+		screen.enterKey(ev);
 	}
 	
 	public void aKey(InputEvent ev) {
-		APP.screen.aKey(ev);
+		screen.aKey(ev);
 	}
 	
 	public void sKey(InputEvent ev) {
-		APP.screen.sKey(ev);
+		screen.sKey(ev);
 	}
 	
 	public void ctrlSKey(InputEvent ev) {
-		APP.screen.ctrlSKey(ev);
+		screen.ctrlSKey(ev);
 	}
 	
 	public void dKey(InputEvent ev) {
-		APP.screen.dKey(ev);
+		screen.dKey(ev);
 	}
 	
 	public void ctrlOKey(InputEvent ev) {
-		APP.screen.ctrlOKey(ev);
+		screen.ctrlOKey(ev);
 	}
-	
-	
-	
-//	public void repaint() {
-//		c.repaint();
-//	}
 	
 }

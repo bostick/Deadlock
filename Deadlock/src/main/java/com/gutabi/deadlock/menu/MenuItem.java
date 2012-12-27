@@ -2,14 +2,18 @@ package com.gutabi.deadlock.menu;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Graphics2D;
 import java.awt.font.FontRenderContext;
 import java.awt.font.TextLayout;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.AABB;
 import com.gutabi.deadlock.view.RenderingContext;
+
+import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
 //@SuppressWarnings("static-access")
 public abstract class MenuItem {
@@ -23,6 +27,7 @@ public abstract class MenuItem {
 	public MenuItem down;
 	
 	private TextLayout layout;
+	private BufferedImage img;
 	
 	public AABB localAABB;
 	public Point baseline;
@@ -66,22 +71,28 @@ public abstract class MenuItem {
 		
 		aabb = new AABB(x, y, Math.max(localAABB.width, parent.widest), localAABB.height);
 		
-		baseline = new Point(x - localAABB.x, y - localAABB.y);
+		baseline = new Point(-localAABB.x, -localAABB.y);
 		
+		img = new BufferedImage((int)aabb.width, (int)aabb.height, BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g2 = img.createGraphics();
+		g2.setColor(VIEW.menuBackground);
+		g2.fillRect(0, 0, img.getWidth(), img.getHeight());
+		if (active) {
+			g2.setColor(Color.WHITE);
+		} else {
+			g2.setColor(Color.GRAY);
+		}
+		layout.draw(g2, (float)baseline.x, (float)baseline.y);
+		g2.dispose();
 	}
 	
 	public void paint(RenderingContext ctxt) {
-		if (active) {
-			ctxt.setColor(Color.WHITE);
-		} else {
-			ctxt.setColor(Color.GRAY);
-		}
-		ctxt.draw(layout, baseline.x, baseline.y);
+		ctxt.paintImage(img, aabb.x, aabb.y, aabb.x + aabb.width, aabb.y + aabb.height, 0, 0, img.getWidth(), img.getHeight());
 	}
 	
 	public void paintHilited(RenderingContext ctxt) {
 		ctxt.setColor(Color.RED);
-		ctxt.setPixelStroke(1.0, 1);
+		ctxt.setPixelStroke(1);
 		aabb.draw(ctxt);
 	}
 	

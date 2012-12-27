@@ -1,7 +1,6 @@
 package com.gutabi.deadlock.world.tool;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
-import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
 import java.awt.Color;
 import java.util.Set;
@@ -63,13 +62,13 @@ public class RegularTool extends ToolBase {
 	
 	public void escKey(InputEvent ev) {
 		
-		screen.teardown(VIEW.container);
+		screen.teardown(APP.container);
 		
 		MainMenu s = new MainMenu();
-		APP.screen = s;
+//		APP.screen = s;
 		
-		s.setup(VIEW.container);
-		((JFrame)VIEW.container).setVisible(true);
+		s.setup(APP.container);
+		((JFrame)APP.container).setVisible(true);
 		
 		s.postDisplay();
 		s.render();
@@ -280,7 +279,7 @@ public class RegularTool extends ToolBase {
 		
 		screen.hilited = null;
 		
-		stroke = new Stroke(screen.cam, screen.world);
+		stroke = new Stroke(screen);
 		stroke.add(p);
 			
 	}
@@ -319,7 +318,7 @@ public class RegularTool extends ToolBase {
 		
 		ctxt.setColor(Color.WHITE);
 		ctxt.setXORMode(Color.BLACK);
-		ctxt.setPixelStroke(screen.cam.pixelsPerMeter, 1);
+		ctxt.setPixelStroke(1);
 		
 		shape.draw(ctxt);
 		

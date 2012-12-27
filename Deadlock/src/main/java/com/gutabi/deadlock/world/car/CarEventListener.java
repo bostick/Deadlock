@@ -1,7 +1,5 @@
 package com.gutabi.deadlock.world.car;
 
-import static com.gutabi.deadlock.DeadlockApplication.APP;
-
 import org.apache.log4j.Logger;
 import org.jbox2d.callbacks.ContactImpulse;
 import org.jbox2d.callbacks.ContactListener;
@@ -13,19 +11,18 @@ import org.jbox2d.dynamics.contacts.Contact;
 
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.world.World;
-import com.gutabi.deadlock.world.WorldCamera;
 import com.gutabi.deadlock.world.sprites.AnimatedExplosion;
 
 //@SuppressWarnings("static-access")
 public class CarEventListener implements ContactListener {
 	
-	WorldCamera cam;
+//	WorldCamera cam;
 	World world;
 	
 	static Logger logger = Logger.getLogger(CarEventListener.class);
 	
-	public CarEventListener(WorldCamera cam, World world) {
-		this.cam = cam;
+	public CarEventListener(World world) {
+//		this.cam = cam;
 		this.world = world;
 	}
 	
@@ -55,14 +52,12 @@ public class CarEventListener implements ContactListener {
 		
 		if (a.state != CarStateEnum.CRASHED || b.state != CarStateEnum.CRASHED) {
 			
-			if (APP.EXPLOSIONS_DRAW) {
-				WorldManifold worldManifold = new WorldManifold();
-				c.getWorldManifold(worldManifold);
-				
-				Vec2 p = worldManifold.points[0];
-				
-				world.explosionMap.add(new AnimatedExplosion(cam, Point.point(p)));
-			}
+			WorldManifold worldManifold = new WorldManifold();
+			c.getWorldManifold(worldManifold);
+			
+			Vec2 p = worldManifold.points[0];
+			
+			world.explosionMap.add(new AnimatedExplosion(Point.point(p)));
 			
 			if (a.state != CarStateEnum.CRASHED) {
 				a.crash();

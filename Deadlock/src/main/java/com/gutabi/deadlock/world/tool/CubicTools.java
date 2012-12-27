@@ -163,7 +163,7 @@ public class CubicTools extends ToolBase {
 		case SET:
 			
 			List<Point> pts = shape.skeleton;
-			Stroke s = new Stroke(screen.cam, screen.world);
+			Stroke s = new Stroke(screen);
 			for (Point p : pts) {
 				s.add(p);
 			}
@@ -274,7 +274,7 @@ public class CubicTools extends ToolBase {
 		
 		ctxt.setColor(Color.WHITE);
 		ctxt.setXORMode(Color.BLACK);
-		ctxt.setPixelStroke(screen.cam.pixelsPerMeter, 1);
+		ctxt.setPixelStroke(1);
 		
 		shape.draw(ctxt);
 		

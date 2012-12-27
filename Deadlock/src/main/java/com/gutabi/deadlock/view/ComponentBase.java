@@ -1,6 +1,6 @@
 package com.gutabi.deadlock.view;
 
-public abstract class ComponentBase extends Component {
+public abstract class ComponentBase implements Component {
 
 	public void pressed(InputEvent e) {
 		

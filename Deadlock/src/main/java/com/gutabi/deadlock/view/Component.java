@@ -1,31 +1,25 @@
 package com.gutabi.deadlock.view;
 
-
-public abstract class Component {
+public interface Component {
 	
-	public abstract int getWidth();
+	int getWidth();
 	
-	public abstract int getHeight();
+	int getHeight();
 	
-	public abstract java.awt.Component java();
+	java.awt.Component java();
 	
+	void pressed(InputEvent e);
 	
+	void released(InputEvent e);
 	
+	void dragged(InputEvent e);
 	
-	public abstract void pressed(InputEvent e);
+	void moved(InputEvent e);
 	
-	public abstract void released(InputEvent e);
+	void clicked(InputEvent e);
 	
-	public abstract void dragged(InputEvent e);
+	void entered(InputEvent e);
 	
-	public abstract void moved(InputEvent e);
-	
-	public abstract void clicked(InputEvent e);
-	
-	public abstract void entered(InputEvent e);
-	
-	public abstract void exited(InputEvent e);
-	
-//	public abstract void repaint();
+	void exited(InputEvent e);
 	
 }

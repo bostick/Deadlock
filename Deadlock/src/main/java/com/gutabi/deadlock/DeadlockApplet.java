@@ -22,13 +22,13 @@ public class DeadlockApplet extends JApplet {
 		APP.codebase = app.getCodeBase();
 		
 		MainMenu s = new MainMenu();
-		APP.screen = s;
+//		APP.screen = s;
 		
-		VIEW.setupFrame();
-		APP.screen.setup(app);
+		APP.setupFrame();
+		s.setup(app);
 		VIEW.init();
 		
-		((JFrame)VIEW.container).setVisible(true);
+		((JFrame)APP.container).setVisible(true);
 		
 		s.postDisplay();
 		s.render();

@@ -112,7 +112,7 @@ public class StraightEdgeTool extends ToolBase {
 			break;
 		case SET:
 			
-			Stroke s = new Stroke(screen.cam, screen.world);
+			Stroke s = new Stroke(screen);
 			s.add(start);
 			s.add(p);
 			s.finish();
@@ -212,7 +212,7 @@ public class StraightEdgeTool extends ToolBase {
 		
 		ctxt.setColor(Color.WHITE);
 		ctxt.setXORMode(Color.BLACK);
-		ctxt.setPixelStroke(screen.cam.pixelsPerMeter, 1);
+		ctxt.setPixelStroke(1);
 		
 		shape.draw(ctxt);
 		

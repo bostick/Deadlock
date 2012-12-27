@@ -22,7 +22,6 @@ import com.gutabi.deadlock.core.Dim;
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.view.Canvas;
-import com.gutabi.deadlock.view.ControlPanel;
 import com.gutabi.deadlock.view.DLSFileChooser;
 import com.gutabi.deadlock.view.InputEvent;
 import com.gutabi.deadlock.view.PaintEvent;
@@ -45,6 +44,14 @@ public class WorldScreen extends ScreenBase {
 		PAUSED,
 		DIALOG
 	}
+	
+//	public boolean FPS_DRAW = false;
+//	public boolean STOPSIGN_DRAW = true;
+//	public boolean CARTEXTURE_DRAW = true;
+//	public boolean EXPLOSIONS_DRAW = true;
+//	public boolean DEBUG_DRAW = false;
+	
+	
 	
 	public WorldCamera cam = new WorldCamera();
 	
@@ -87,13 +94,13 @@ public class WorldScreen extends ScreenBase {
 		
 		canvas = new Canvas();
 		
-		controlPanel = new ControlPanel();
+		controlPanel = new ControlPanel(this);
 		controlPanel.init();
 		
 		Container cp = container.getContentPane();
 		cp.setLayout(new BoxLayout(cp, BoxLayout.X_AXIS));
 		cp.add(canvas.java());
-		cp.add(controlPanel);
+		cp.add(controlPanel.java());
 	}
 	
 	public void teardown(RootPaneContainer container) {
@@ -101,7 +108,7 @@ public class WorldScreen extends ScreenBase {
 		Container cp = container.getContentPane();
 		
 		cp.remove(canvas.java());
-		cp.remove(controlPanel);
+		cp.remove(controlPanel.java());
 		
 		oldCanvas = canvas;
 		canvas = null;
@@ -463,7 +470,7 @@ public class WorldScreen extends ScreenBase {
 					e.printStackTrace();
 				}
 				
-				world = World.fromFileString(cam, controlPanel, fileString);
+				world = World.fromFileString(this, fileString);
 				
 				canvas.enableKeyListener();
 				
@@ -682,7 +689,7 @@ public class WorldScreen extends ScreenBase {
 			String text = controlPanel.dtField.getText();
 			try {
 				double dt = Double.parseDouble(text);
-				APP.dt = dt;
+				world.dt = dt;
 			} catch (NumberFormatException ex) {
 				
 			}
@@ -809,7 +816,7 @@ public class WorldScreen extends ScreenBase {
 			
 			tool.draw(ctxt);
 			
-			if (APP.FPS_DRAW) {
+			if (ctxt.FPS_DRAW) {
 				
 				ctxt.translate(cam.worldViewport.x, cam.worldViewport.y);
 				

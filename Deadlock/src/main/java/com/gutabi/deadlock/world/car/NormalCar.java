@@ -3,7 +3,6 @@ package com.gutabi.deadlock.world.car;
 import org.apache.log4j.Logger;
 
 import com.gutabi.deadlock.world.World;
-import com.gutabi.deadlock.world.WorldCamera;
 import com.gutabi.deadlock.world.graph.Fixture;
 
 //@SuppressWarnings("static-access")
@@ -13,8 +12,8 @@ public class NormalCar extends Car {
 	
 	static Logger logger = Logger.getLogger(NormalCar.class);
 	
-	public NormalCar(WorldCamera cam, World w, Fixture s) {
-		super(cam, w, s);
+	public NormalCar(World w, Fixture s) {
+		super(w, s);
 		sheetRowStart = 0;
 		sheetRowEnd = sheetRowStart + 16;
 	}

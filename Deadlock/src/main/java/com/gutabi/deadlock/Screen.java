@@ -13,10 +13,6 @@ public interface Screen extends ActionListener {
 	
 	void teardown(RootPaneContainer container);
 	
-//	void setupCanvasAndControlPanel(RootPaneContainer container);
-//	
-//	void teardownCanvasAndControlPanel(RootPaneContainer container);
-	
 	
 	
 	void postDisplay();

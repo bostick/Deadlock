@@ -56,23 +56,23 @@ public class MainMenu extends ScreenBase {
 		MenuItem oneMenuItem = new MenuItem(MainMenu.this,"1x1 Demo") {
 			public void action() {
 				
-				teardown(VIEW.container);
+				teardown(APP.container);
 				
 				WorldScreen s = new WorldScreen();
-				s.world = OneByOneWorld.createOneByOneWorld(s.cam, s.controlPanel);
+				s.world = OneByOneWorld.createOneByOneWorld(s);
 				
-				APP.screen = s;
+//				APP.screen = s;
 				
-				s.setup(VIEW.container);
-				((JFrame)VIEW.container).setVisible(true);
+				s.setup(APP.container);
+				((JFrame)APP.container).setVisible(true);
 				
-				APP.screen.postDisplay();
-				APP.screen.render();
+				s.postDisplay();
+				s.render();
 //				APP.screen.repaint();
 				s.repaintCanvas();
 //				VIEW.previewPanel.repaint();
 				s.controlPanel.repaint();
-//				VIEW.container.getContentPane().repaint();
+//				APP.container.getContentPane().repaint();
 			}
 		};
 		add(oneMenuItem);
@@ -80,18 +80,18 @@ public class MainMenu extends ScreenBase {
 		MenuItem fourMenuItem = new MenuItem(MainMenu.this, "4x4 Grid Demo") {
 			public void action() {
 				
-				teardown(VIEW.container);
+				teardown(APP.container);
 				
 				WorldScreen s = new WorldScreen();
-				s.world = FourByFourGridWorld.createFourByFourGridWorld(s.cam, s.controlPanel);
+				s.world = FourByFourGridWorld.createFourByFourGridWorld(s);
 				
-				APP.screen = s;
+//				APP.screen = s;
 				
-				s.setup(VIEW.container);
-				((JFrame)VIEW.container).setVisible(true);
+				s.setup(APP.container);
+				((JFrame)APP.container).setVisible(true);
 				
-				APP.screen.postDisplay();
-				APP.screen.render();
+				s.postDisplay();
+				s.render();
 //				APP.screen.repaint();
 //				VIEW.canvas.repaint();
 				s.repaintCanvas();
@@ -104,19 +104,19 @@ public class MainMenu extends ScreenBase {
 		MenuItem aMenuItem = new MenuItem(MainMenu.this, "World A Demo") {
 			public void action() {
 				
-				teardown(VIEW.container);
+				teardown(APP.container);
 				
 				WorldScreen s = new WorldScreen();
-				s.world = WorldA.createWorldA(s.cam, s.controlPanel);
+				s.world = WorldA.createWorldA(s);
 				
-				APP.screen = s;
+//				APP.screen = s;
 				
-				s.setup(VIEW.container);
+				s.setup(APP.container);
 				
-				((JFrame)VIEW.container).setVisible(true);
+				((JFrame)APP.container).setVisible(true);
 				
-				APP.screen.postDisplay();
-				APP.screen.render();
+				s.postDisplay();
+				s.render();
 //				APP.screen.repaint();
 //				VIEW.canvas.repaint();
 				s.repaintCanvas();
@@ -130,16 +130,16 @@ public class MainMenu extends ScreenBase {
 		MenuItem dialogMenuItem = new MenuItem(MainMenu.this,  "Quadrant Editor...") {
 			public void action() {
 				
-				teardown(VIEW.container);
+				teardown(APP.container);
 				
 				QuadrantEditor s = new QuadrantEditor();
-				APP.screen = s;
+//				APP.screen = s;
 				
-				s.setup(VIEW.container);
-				((JFrame)VIEW.container).setVisible(true);
+				s.setup(APP.container);
+				((JFrame)APP.container).setVisible(true);
 				
-				APP.screen.postDisplay();
-				APP.screen.render();
+				s.postDisplay();
+				s.render();
 //				APP.screen.repaint();
 //				VIEW.canvas.repaint();
 				s.repaintCanvas();
@@ -379,15 +379,15 @@ public class MainMenu extends ScreenBase {
 				
 				AffineTransform menuTrans = ctxt.getTransform();
 				
-				ctxt.paintImage(1.0, VIEW.titleBackground, 0, 0, MENU_WIDTH, MENU_HEIGHT, 0, 0, MENU_WIDTH, MENU_HEIGHT);
+				ctxt.paintImage(VIEW.titleBackground, 0, 0, MENU_WIDTH, MENU_HEIGHT, 0, 0, MENU_WIDTH, MENU_HEIGHT);
 				
 				ctxt.translate(MENU_WIDTH/2 - 498/2, 20);
-				ctxt.paintImage(1.0, VIEW.title_white, 0, 0, 498, 90, 0, 0, 498, 90);
+				ctxt.paintImage(VIEW.title_white, 0, 0, 498, 90, 0, 0, 498, 90);
 				
 				ctxt.setTransform(menuTrans);
 				
 				ctxt.translate(MENU_WIDTH/2 - 432/2, 550);
-				ctxt.paintImage(1.0, VIEW.copyright, 0, 0, 432, 38, 0, 0, 432, 38);
+				ctxt.paintImage(VIEW.copyright, 0, 0, 432, 38, 0, 0, 432, 38);
 				
 				ctxt.setTransform(menuTrans);
 				

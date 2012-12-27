@@ -1,16 +1,17 @@
 package com.gutabi.deadlock.world.car;
 
-import static com.gutabi.deadlock.DeadlockApplication.APP;
-
 import org.jbox2d.common.Vec2;
 
 import com.gutabi.deadlock.core.Point;
+import com.gutabi.deadlock.world.World;
 
 public class Engine {
 	
+	World world;
 	Car c;
 	
-	public Engine(Car c) {
+	public Engine(World world, Car c) {
+		this.world = world;
 		this.c = c;
 	}
 	
@@ -124,8 +125,8 @@ public class Engine {
 		if (dv < 0) {
 			assert false;
 		}
-		if (dv > maxAcceleration * APP.dt) {
-			dv = maxAcceleration * APP.dt;
+		if (dv > maxAcceleration * world.dt) {
+			dv = maxAcceleration * world.dt;
 		}
 		
 //		logger.debug("acc for driving: " + acc);
@@ -162,7 +163,7 @@ public class Engine {
 		 * turning radius
 		 */
 		
-		double actualDistance = Math.abs(c.forwardSpeed * APP.dt);
+		double actualDistance = Math.abs(c.forwardSpeed * world.dt);
 		double maxRads = maxRadsPerMeter * actualDistance;
 //		double negMaxRads = -maxRads;
 		if (dw > maxRads) {
@@ -181,7 +182,7 @@ public class Engine {
 //			logger.debug("updateTurn: dw: " + dw);
 //		}
 		
-		float goalAngVel = (float)(dw / APP.dt);
+		float goalAngVel = (float)(dw / world.dt);
 		
 		float angImpulse = (float)(turnAngularImpulseCoefficient * c.momentOfInertia * (goalAngVel - c.angularVel));
 		

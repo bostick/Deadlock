@@ -1,7 +1,5 @@
 package com.gutabi.deadlock.world;
 
-import static com.gutabi.deadlock.DeadlockApplication.APP;
-
 import org.apache.log4j.Logger;
 
 import com.gutabi.deadlock.world.WorldScreen.WorldScreenMode;
@@ -54,18 +52,18 @@ public class SimulationRunnable implements Runnable {
 			/*
 			 * this max value is a heuristic
 			 */
-			if (frameTimeSeconds > 1 * APP.dt) {
-				frameTimeSeconds = 1 * APP.dt;
+			if (frameTimeSeconds > 1 * screen.world.dt) {
+				frameTimeSeconds = 1 * screen.world.dt;
 			}
 			
 			accumulator += frameTimeSeconds;
 			
-			while (accumulator >= APP.dt) {
+			while (accumulator >= screen.world.dt) {
 				
 				screen.world.integrate(t);
 				
-				accumulator -= APP.dt;
-				t += APP.dt;
+				accumulator -= screen.world.dt;
+				t += screen.world.dt;
 			}
 			
 			screen.repaintCanvas();

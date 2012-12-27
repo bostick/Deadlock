@@ -139,8 +139,8 @@ public class FixtureTool extends ToolBase {
 		
 		if (screen.world.graph.pureGraphIntersect(shape) == null) {
 			
-			Fixture source = new Fixture(screen.cam, screen.world, screen.controlPanel, getSourcePoint(), axis);
-			Fixture sink = new Fixture(screen.cam, screen.world, screen.controlPanel, getSinkPoint(), axis);
+			Fixture source = new Fixture(screen.world, screen.controlPanel, getSourcePoint(), axis);
+			Fixture sink = new Fixture(screen.world, screen.controlPanel, getSinkPoint(), axis);
 			
 			source.setType(FixtureType.SOURCE);
 			sink.setType(FixtureType.SINK);
@@ -197,7 +197,7 @@ public class FixtureTool extends ToolBase {
 			
 			ctxt.setColor(Color.WHITE);
 			ctxt.setXORMode(Color.BLACK);
-			ctxt.setPixelStroke(screen.cam.pixelsPerMeter, 1);
+			ctxt.setPixelStroke(1);
 			
 			shape.draw(ctxt);
 			

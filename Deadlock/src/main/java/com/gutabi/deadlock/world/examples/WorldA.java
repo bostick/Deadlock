@@ -1,17 +1,16 @@
 package com.gutabi.deadlock.world.examples;
 
-import com.gutabi.deadlock.view.ControlPanel;
 import com.gutabi.deadlock.world.QuadrantMap;
 import com.gutabi.deadlock.world.World;
-import com.gutabi.deadlock.world.WorldCamera;
+import com.gutabi.deadlock.world.WorldScreen;
 
 public class WorldA extends World {
 	
-	private WorldA(WorldCamera cam, ControlPanel cp) {
-		super(cam, cp);
+	private WorldA(WorldScreen screen) {
+		super(screen);
 	}
 	
-	public static WorldA createWorldA(WorldCamera cam, ControlPanel cp) {
+	public static WorldA createWorldA(WorldScreen screen) {
 		
 		int[][] ini = new int[][] {
 				{1, 1, 1},
@@ -19,9 +18,9 @@ public class WorldA extends World {
 				{0, 1, 0}
 			};
 		
-		WorldA w = new WorldA(cam, cp);
+		WorldA w = new WorldA(screen);
 		
-		QuadrantMap qm = new QuadrantMap(cam, ini);
+		QuadrantMap qm = new QuadrantMap(ini);
 		
 		w.quadrantMap = qm;
 		

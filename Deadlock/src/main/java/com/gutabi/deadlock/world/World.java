@@ -19,7 +19,6 @@ import com.gutabi.deadlock.core.Dim;
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.AABB;
-import com.gutabi.deadlock.view.ControlPanel;
 import com.gutabi.deadlock.view.RenderingContext;
 import com.gutabi.deadlock.view.RenderingContextType;
 import com.gutabi.deadlock.world.car.Car;
@@ -35,11 +34,16 @@ import com.gutabi.deadlock.world.graph.Vertex;
 //@SuppressWarnings("static-access")
 public class World {
 	
-	WorldCamera cam;
-	ControlPanel cp;
+	WorldScreen screen;
+//	ControlPanel cp;
 	
 	public QuadrantMap quadrantMap;
 	public Graph graph;
+	
+	/**
+	 * move physics forward by dt seconds
+	 */
+	public double dt = 0.01;
 	
 	public double t;
 	
@@ -56,26 +60,25 @@ public class World {
 	
 //	private static Logger logger = Logger.getLogger(World.class);
 	
-	public World(WorldCamera cam, ControlPanel cp) {
-		this.cam = cam;
-		this.cp = cp;
+	public World(WorldScreen screen) {
+		this.screen = screen;
 		
-		graph = new Graph(cam, this);
+		graph = new Graph(this);
 		
-		carMap = new CarMap(cam, this);
+		carMap = new CarMap(this);
 		
-		roadMarkMap = new RoadMarkMap(cam);
-		grassMarkMap = new GrassMarkMap(cam);
+		roadMarkMap = new RoadMarkMap();
+		grassMarkMap = new GrassMarkMap();
 		
 		b2dWorld = new org.jbox2d.dynamics.World(new Vec2(0.0f, 0.0f), true);
-		b2dWorld.setContactListener(new CarEventListener(cam, this));
+		b2dWorld.setContactListener(new CarEventListener(this));
 	}
 	
-	public static World createWorld(WorldCamera cam, ControlPanel cp, int[][] ini) {
+	public static World createWorld(WorldScreen screen, int[][] ini) {
 		
-		World w = new World(cam, cp);
+		World w = new World(screen);
 		
-		QuadrantMap qm = new QuadrantMap(cam, ini);
+		QuadrantMap qm = new QuadrantMap(ini);
 		
 		w.quadrantMap = qm;
 		
@@ -84,18 +87,18 @@ public class World {
 	
 	public void canvasPostDisplay(Dim dim) {
 		
-		cam.canvasWidth = (int)dim.width;
-		cam.canvasHeight = (int)dim.height;
+		screen.cam.canvasWidth = (int)dim.width;
+		screen.cam.canvasHeight = (int)dim.height;
 		
 		quadrantMap.canvasPostDisplay();
 		
-		background = new BufferedImage(cam.canvasWidth, cam.canvasHeight, BufferedImage.TYPE_INT_RGB);
+		background = new BufferedImage(screen.cam.canvasWidth, screen.cam.canvasHeight, BufferedImage.TYPE_INT_RGB);
 		
-		cam.worldViewport = new AABB(
-				-(cam.canvasWidth / cam.pixelsPerMeter) / 2 + quadrantMap.worldWidth/2 ,
-				-(cam.canvasHeight / cam.pixelsPerMeter) / 2 + quadrantMap.worldHeight/2,
-				cam.canvasWidth / cam.pixelsPerMeter,
-				cam.canvasHeight / cam.pixelsPerMeter);
+		screen.cam.worldViewport = new AABB(
+				-(screen.cam.canvasWidth / screen.cam.pixelsPerMeter) / 2 + quadrantMap.worldWidth/2 ,
+				-(screen.cam.canvasHeight / screen.cam.pixelsPerMeter) / 2 + quadrantMap.worldHeight/2,
+				screen.cam.canvasWidth / screen.cam.pixelsPerMeter,
+				screen.cam.canvasHeight / screen.cam.pixelsPerMeter);
 	}
 	
 	public void preStart() {
@@ -134,7 +137,7 @@ public class World {
 		
 		preStep();
 		
-		b2dWorld.step((float)APP.dt, velocityIterations, positionIterations);
+		b2dWorld.step((float)dt, velocityIterations, positionIterations);
 		
 		postStep();
 		
@@ -190,7 +193,7 @@ public class World {
 	
 	public Set<Vertex> createIntersection(Point p) {
 		
-		Intersection i = new Intersection(cam, p);
+		Intersection i = new Intersection(p);
 		
 		quadrantMap.grassMap.mowGrass(i.getShape());
 		
@@ -208,7 +211,7 @@ public class World {
 	
 	public Set<Vertex> createRoad(Vertex v0, Vertex v1, List<Point> roadPts) {
 		
-		Road r = new Road(cam, v0, v1, roadPts);
+		Road r = new Road(v0, v1, roadPts);
 		
 		quadrantMap.grassMap.mowGrass(r.getShape());
 		
@@ -218,7 +221,7 @@ public class World {
 	public Set<Vertex> createMerger(Point p) {
 		
 //		Merger m = graph.createMergerAndFixtures(p);
-		Merger m = Merger.createMergerAndFixtures(cam, this, cp, p);
+		Merger m = Merger.createMergerAndFixtures(this, screen.controlPanel, p);
 		
 		quadrantMap.grassMap.mowGrass(m.getShape());
 		quadrantMap.grassMap.mowGrass(m.top.getShape());
@@ -244,7 +247,7 @@ public class World {
 		return s.toString();
 	}
 	
-	public static World fromFileString(WorldCamera cam, ControlPanel cp, String s) {
+	public static World fromFileString(WorldScreen screen, String s) {
 		BufferedReader r = new BufferedReader(new StringReader(s));
 		
 		StringBuilder quadrantMapStringBuilder = null;
@@ -285,10 +288,10 @@ public class World {
 			e.printStackTrace();
 		}
 		
-		World w = new World(cam, cp);
+		World w = new World(screen);
 		
-		QuadrantMap qm = QuadrantMap.fromFileString(cam, quadrantMapStringBuilder.toString());
-		Graph g = Graph.fromFileString(cam, w, cp, graphStringBuilder.toString());
+		QuadrantMap qm = QuadrantMap.fromFileString(screen.cam, quadrantMapStringBuilder.toString());
+		Graph g = Graph.fromFileString(w, screen.controlPanel, graphStringBuilder.toString());
 		
 		w.quadrantMap = qm;
 		w.graph = g;
@@ -298,18 +301,18 @@ public class World {
 	
 	public void zoom(double factor) {
 		
-		cam.pixelsPerMeter = factor * cam.pixelsPerMeter; 
+		screen.cam.pixelsPerMeter = factor * screen.cam.pixelsPerMeter; 
 		
-		double newWidth =  cam.canvasWidth / cam.pixelsPerMeter;
-		double newHeight = cam.canvasHeight / cam.pixelsPerMeter;
+		double newWidth =  screen.cam.canvasWidth / screen.cam.pixelsPerMeter;
+		double newHeight = screen.cam.canvasHeight / screen.cam.pixelsPerMeter;
 		
-		cam.worldViewport = new AABB(cam.worldViewport.center.x - newWidth/2, cam.worldViewport.center.y - newHeight/2, newWidth, newHeight);
+		screen.cam.worldViewport = new AABB(screen.cam.worldViewport.center.x - newWidth/2, screen.cam.worldViewport.center.y - newHeight/2, newWidth, newHeight);
 	}
 	
 	public Point canvasToWorld(Point p) {
 		return new Point(
-				p.x / cam.pixelsPerMeter + cam.worldViewport.x,
-				p.y / cam.pixelsPerMeter + cam.worldViewport.y);
+				p.x / screen.cam.pixelsPerMeter + screen.cam.worldViewport.x,
+				p.y / screen.cam.pixelsPerMeter + screen.cam.worldViewport.y);
 	}
 	
 	public AABB canvasToWorld(AABB aabb) {
@@ -320,8 +323,8 @@ public class World {
 	
 	public Point worldToCanvas(Point p) {
 		return new Point(
-				(p.x - cam.worldViewport.x) * cam.pixelsPerMeter,
-				(p.y - cam.worldViewport.y) * cam.pixelsPerMeter);
+				(p.x - screen.cam.worldViewport.x) * screen.cam.pixelsPerMeter,
+				(p.y - screen.cam.worldViewport.y) * screen.cam.pixelsPerMeter);
 	}
 	
 	public AABB worldToCanvas(AABB aabb) {
@@ -338,10 +341,10 @@ public class World {
 			Graphics2D backgroundG2 = background.createGraphics();
 			
 			backgroundG2.setColor(Color.DARK_GRAY);
-			backgroundG2.fillRect(0, 0, cam.canvasWidth, cam.canvasHeight);
+			backgroundG2.fillRect(0, 0, screen.cam.canvasWidth, screen.cam.canvasHeight);
 			
-			backgroundG2.scale(cam.pixelsPerMeter, cam.pixelsPerMeter);
-			backgroundG2.translate(-cam.worldViewport.x, -cam.worldViewport.y);
+			backgroundG2.scale(screen.cam.pixelsPerMeter, screen.cam.pixelsPerMeter);
+			backgroundG2.translate(-screen.cam.worldViewport.x, -screen.cam.worldViewport.y);
 			
 			RenderingContext backgroundCtxt = new RenderingContext(RenderingContextType.CANVAS);
 			backgroundCtxt.g2 = backgroundG2;
@@ -360,8 +363,8 @@ public class World {
 //		synchronized (VIEW) {
 			ctxt.paintImage(
 					background,
-					0, 0, cam.canvasWidth, cam.canvasHeight,
-					0, 0, cam.canvasWidth, cam.canvasHeight);
+					0, 0, screen.cam.canvasWidth, screen.cam.canvasHeight,
+					0, 0, screen.cam.canvasWidth, screen.cam.canvasHeight);
 //		}
 		
 	}
@@ -383,10 +386,8 @@ public class World {
 				explosionMap.paint(ctxt);
 			}
 			
-			if (APP.DEBUG_DRAW) {
-				
+			if (ctxt.DEBUG_DRAW) {
 				graph.paintIDs(ctxt);
-				
 			}
 			
 			break;
@@ -400,19 +401,19 @@ public class World {
 		
 		AffineTransform origTransform = ctxt.getTransform();
 		
-		ctxt.paintString(cam.pixelsPerMeter, 0, 0, 1, "time: " + t);
+		ctxt.paintString(0, 0, 1, "time: " + t);
 		
 		ctxt.translate(0, 1);
 		
-		ctxt.paintString(cam.pixelsPerMeter, 0, 0, 1, "body count: " + b2dWorld.getBodyCount());
+		ctxt.paintString(0, 0, 1, "body count: " + b2dWorld.getBodyCount());
 		
 		ctxt.translate(0, 1);
 		
-		ctxt.paintString(cam.pixelsPerMeter, 0, 0, 1, "car count: " + carMap.size());
+		ctxt.paintString(0, 0, 1, "car count: " + carMap.size());
 		
 		ctxt.translate(0, 1);
 		
-		ctxt.paintString(cam.pixelsPerMeter, 0, 0, 1, "splosions count: " + explosionMap.size());
+		ctxt.paintString(0, 0, 1, "splosions count: " + explosionMap.size());
 		
 		ctxt.translate(0, 1);
 		

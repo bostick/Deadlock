@@ -1,25 +1,24 @@
 package com.gutabi.deadlock.world.examples;
 
-import com.gutabi.deadlock.view.ControlPanel;
 import com.gutabi.deadlock.world.QuadrantMap;
 import com.gutabi.deadlock.world.World;
-import com.gutabi.deadlock.world.WorldCamera;
+import com.gutabi.deadlock.world.WorldScreen;
 
 public class OneByOneWorld extends World {
 
-	private OneByOneWorld(WorldCamera cam, ControlPanel cp) {
-		super(cam, cp);
+	private OneByOneWorld(WorldScreen screen) {
+		super(screen);
 	}
 	
-	public static OneByOneWorld createOneByOneWorld(WorldCamera cam, ControlPanel cp) {
+	public static OneByOneWorld createOneByOneWorld(WorldScreen screen) {
 		
 		int[][] ini = new int[][] {
 				{1}
 			};
 		
-		OneByOneWorld w = new OneByOneWorld(cam, cp);
+		OneByOneWorld w = new OneByOneWorld(screen);
 		
-		QuadrantMap qm = new QuadrantMap(cam, ini);
+		QuadrantMap qm = new QuadrantMap(ini);
 		
 		w.quadrantMap = qm;
 		

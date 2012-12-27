@@ -1,7 +1,5 @@
 package com.gutabi.deadlock.core.geom;
 
-import static com.gutabi.deadlock.DeadlockApplication.APP;
-
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,14 +11,12 @@ import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.OverlappingException;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.view.RenderingContext;
-import com.gutabi.deadlock.view.RenderingContextType;
-import com.gutabi.deadlock.world.WorldCamera;
 
 //@SuppressWarnings("static-access")
 public class Capsule extends SweepableShape implements SweeperShape, CompoundShape {
 	
 //	public final WorldScreen screen;
-	WorldCamera cam;
+//	WorldCamera cam;
 	
 	public final Circle ac;
 	public final Circle bc;
@@ -47,7 +43,7 @@ public class Capsule extends SweepableShape implements SweeperShape, CompoundSha
 	
 	static Logger logger = Logger.getLogger(Capsule.class);
 	
-	public Capsule(WorldCamera cam, Object parent, Circle ac, Circle bc, int index) {
+	public Capsule(Object parent, Circle ac, Circle bc, int index) {
 		super(parent);
 //		this.screen = screen;
 		this.ac = ac;
@@ -119,7 +115,7 @@ public class Capsule extends SweepableShape implements SweeperShape, CompoundSha
 	}
 	
 	public Capsule plus(Point p) {
-		return new Capsule(cam, parent, new Circle(parent, a.plus(p), ac.radius), new Circle(parent, b.plus(p), bc.radius), -1);
+		return new Capsule(parent, new Circle(parent, a.plus(p), ac.radius), new Circle(parent, b.plus(p), bc.radius), -1);
 	}
 	
 	public boolean hitTest(Point p) {
@@ -407,26 +403,26 @@ public class Capsule extends SweepableShape implements SweeperShape, CompoundSha
 	
 	public void paint(RenderingContext ctxt) {
 		
-		ac.paint(ctxt);
-		if (middle != null) {
-			middle.paint(ctxt);
-		}
-		bc.paint(ctxt);
-		
-		if (ctxt.type == RenderingContextType.CANVAS) {
-			if (APP.DEBUG_DRAW) {
-				
-				Color c = ctxt.getColor();
-				ctxt.setColor(Color.BLUE);
-				ctxt.setPixelStroke(cam.pixelsPerMeter, 1);
-				
-				debugNormalLine.draw(ctxt);
-				
-				ctxt.setColor(c);
-				
+		switch (ctxt.type) {
+		case CANVAS:
+		case PREVIEW:
+			ac.paint(ctxt);
+			if (middle != null) {
+				middle.paint(ctxt);
 			}
+			bc.paint(ctxt);
+			break;
 		}
 		
+		if (ctxt.DEBUG_DRAW) {
+			Color c = ctxt.getColor();
+			ctxt.setColor(Color.BLUE);
+			ctxt.setPixelStroke(1);
+			
+			debugNormalLine.draw(ctxt);
+			
+			ctxt.setColor(c);
+		}
 	}
 	
 	public void draw(RenderingContext ctxt) {

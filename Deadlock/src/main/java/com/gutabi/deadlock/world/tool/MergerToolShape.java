@@ -1,7 +1,5 @@
 package com.gutabi.deadlock.world.tool;
 
-import static com.gutabi.deadlock.DeadlockApplication.APP;
-
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.AABB;
 import com.gutabi.deadlock.core.geom.Circle;
@@ -103,11 +101,6 @@ public class MergerToolShape implements CompoundShape {
 		worldRight.draw(ctxt);
 		worldBottom.draw(ctxt);
 		
-		if (APP.DEBUG_DRAW) {
-			
-			aabb.paint(ctxt);
-			
-		}
 	}
 	
 	public void paint(RenderingContext ctxt) {

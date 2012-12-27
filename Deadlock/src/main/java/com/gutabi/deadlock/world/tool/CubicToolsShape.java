@@ -1,13 +1,10 @@
 package com.gutabi.deadlock.world.tool;
 
-import static com.gutabi.deadlock.DeadlockApplication.APP;
-
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.core.geom.AABB;
 import com.gutabi.deadlock.core.geom.Capsule;
 import com.gutabi.deadlock.core.geom.CapsuleSequence;
 import com.gutabi.deadlock.core.geom.Circle;
@@ -38,7 +35,7 @@ public class CubicToolsShape implements Shape {
 	public final List<Point> skeleton;
 	public final CapsuleSequence skeletonSeq;
 	
-	private final AABB aabb;
+//	private final AABB aabb;
 	
 	public CubicToolsShape(WorldCamera cam, World world, Point start, Point c0, Point c1, Point end) {
 		
@@ -63,12 +60,12 @@ public class CubicToolsShape implements Shape {
 		for (int i = 0; i < cs.size()-1; i++) {
 			Circle a = cs.get(i);
 			Circle b = cs.get(i+1);
-			caps.add(new Capsule(cam, null, a, b, -1));
+			caps.add(new Capsule(null, a, b, -1));
 		}
 		
 		skeletonSeq = new CapsuleSequence(null, caps);
 		
-		aabb = skeletonSeq.aabb;
+//		aabb = skeletonSeq.aabb;
 		
 	}
 	
@@ -86,11 +83,5 @@ public class CubicToolsShape implements Shape {
 		tan0.draw(ctxt);
 		tan1.draw(ctxt);
 		
-		if (APP.DEBUG_DRAW) {
-			
-			ctxt.setColor(Color.BLACK);
-			aabb.draw(ctxt);
-			
-		}
 	}
 }

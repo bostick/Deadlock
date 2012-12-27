@@ -1,6 +1,4 @@
-package com.gutabi.deadlock.view;
-
-import static com.gutabi.deadlock.DeadlockApplication.APP;
+package com.gutabi.deadlock.world;
 
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -15,6 +13,11 @@ import javax.swing.JPanel;
 
 import com.gutabi.deadlock.core.Dim;
 import com.gutabi.deadlock.core.Point;
+import com.gutabi.deadlock.view.ComponentBase;
+import com.gutabi.deadlock.view.InputEvent;
+import com.gutabi.deadlock.view.PaintEvent;
+import com.gutabi.deadlock.view.RenderingContext;
+import com.gutabi.deadlock.view.RenderingContextType;
 
 //@SuppressWarnings({"serial", "static-access"})
 @SuppressWarnings({"serial"})
@@ -23,9 +26,12 @@ public class PreviewPanel extends ComponentBase {
 	public static final int PREVIEW_WIDTH = 100;
 	public static final int PREVIEW_HEIGHT = 100;
 	
+	WorldScreen screen;
+	
 	private JPanel c;
 	
-	public PreviewPanel() {
+	public PreviewPanel(final WorldScreen screen) {
+		this.screen = screen;
 		
 		final RenderingContext ctxt = new RenderingContext(RenderingContextType.PREVIEW);
 		
@@ -33,7 +39,7 @@ public class PreviewPanel extends ComponentBase {
 			public void paintComponent(Graphics g) {
 				super.paintComponent(g);
 				ctxt.g2 = (Graphics2D)g;
-				APP.screen.paint(new PaintEvent(PreviewPanel.this, ctxt));
+				screen.paint(new PaintEvent(PreviewPanel.this, ctxt));
 //				prev.paint(ctxt);
 			}
 		};
@@ -170,7 +176,7 @@ public class PreviewPanel extends ComponentBase {
 		lastDragPreviewPoint = p;
 		lastDragTime = System.currentTimeMillis();
 		
-		APP.screen.dragged(ev);
+		screen.dragged(ev);
 	}
 	
 	public void repaint() {

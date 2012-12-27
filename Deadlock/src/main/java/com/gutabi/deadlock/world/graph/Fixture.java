@@ -13,11 +13,10 @@ import java.util.List;
 import java.util.Scanner;
 
 import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.view.ControlPanel;
-import com.gutabi.deadlock.view.ProgressMeter;
 import com.gutabi.deadlock.view.RenderingContext;
+import com.gutabi.deadlock.world.ControlPanel;
+import com.gutabi.deadlock.world.ProgressMeter;
 import com.gutabi.deadlock.world.World;
-import com.gutabi.deadlock.world.WorldCamera;
 import com.gutabi.deadlock.world.car.Car;
 import com.gutabi.deadlock.world.car.FastCar;
 import com.gutabi.deadlock.world.car.NormalCar;
@@ -47,8 +46,8 @@ public final class Fixture extends Vertex {
 	
 	static int carIDCounter;
 	
-	public Fixture(WorldCamera cam, World w, ControlPanel cp, Point p, Axis a) {
-		super(cam, p);
+	public Fixture(World w, ControlPanel cp, Point p, Axis a) {
+		super(p);
 		
 		assert p != null;
 		assert a != null;
@@ -62,7 +61,7 @@ public final class Fixture extends Vertex {
 		this.type = type;
 		
 		if (type == FixtureType.SOURCE) {
-			progress = new ProgressMeter(cam, p.x - r - 1.5, p.y - r, 2, 0.5);
+			progress = new ProgressMeter(p.x - r - 1.5, p.y - r, 2.0, 0.5);
 		} else {
 			progress = null;
 		}
@@ -212,7 +211,7 @@ public final class Fixture extends Vertex {
 		boolean normal = cp.normalCarButton.isSelected();
 		boolean fast = cp.fastCarButton.isSelected();
 //		boolean random = VIEW.controlPanel.randomCarButton.isSelected();
-		boolean really = cp.reallyFastCarButton.isSelected();
+		boolean really = cp.reallyCarButton.isSelected();
 		
 		List<Class> l = new ArrayList<Class>();
 		if (normal) {
@@ -237,13 +236,13 @@ public final class Fixture extends Vertex {
 		Class c = l.get(r);
 		
 		if (c == NormalCar.class) {
-			return new NormalCar(cam, world, this);
+			return new NormalCar(world, this);
 		} else if (c == FastCar.class) {
-			return new FastCar(cam, world, this);
+			return new FastCar(world, this);
 		} else if (c == RandomCar.class) {
-			return new RandomCar(cam, world, this);
+			return new RandomCar(world, this);
 		} else if (c == ReallyFastCar.class) {
-			return new ReallyFastCar(cam, world, this);
+			return new ReallyFastCar(world, this);
 		} else {
 			throw new AssertionError();
 		}
@@ -268,7 +267,7 @@ public final class Fixture extends Vertex {
 		return s.toString();
 	}
 	
-	public static Fixture fromFileString(WorldCamera cam, World world, ControlPanel cp, String s) {
+	public static Fixture fromFileString(World world, ControlPanel cp, String s) {
 		BufferedReader r = new BufferedReader(new StringReader(s));
 		
 		Point p = null;
@@ -332,7 +331,7 @@ public final class Fixture extends Vertex {
 			e.printStackTrace();
 		}
 		
-		Fixture f = new Fixture(cam, world, cp, p, a);
+		Fixture f = new Fixture(world, cp, p, a);
 		
 		f.id = id;
 		f.matchID = match;
@@ -346,7 +345,8 @@ public final class Fixture extends Vertex {
 		
 		switch (ctxt.type) {
 		case CANVAS:
-			if (!APP.DEBUG_DRAW) {
+			
+			if (!ctxt.DEBUG_DRAW) {
 				
 				AffineTransform origTransform = ctxt.getTransform();
 				
@@ -368,24 +368,21 @@ public final class Fixture extends Vertex {
 				}
 				
 				ctxt.translate(-r, -r);
-				ctxt.paintImage(
-						cam.pixelsPerMeter,
-						VIEW.sheet,
+				ctxt.paintImage(VIEW.sheet,
 						0, 0, 2 * r, 2 * r,
 						96, 224, 96+32, 224+32);
 				
 				ctxt.setTransform(origTransform);
 				
 			} else {
-				
 				ctxt.setColor(VIEW.LIGHTGREEN);
 				shape.paint(ctxt);
 				
 				ctxt.setColor(Color.BLACK);
-				ctxt.setPixelStroke(cam.pixelsPerMeter, 1);
+				ctxt.setPixelStroke(1);
 				shape.getAABB().draw(ctxt);
-				
 			}
+			
 			break;
 		case PREVIEW:
 			ctxt.setColor(VIEW.LIGHTGREEN);
