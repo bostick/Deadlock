@@ -24,7 +24,6 @@ public class DeadlockMain  {
 		APP.codebase = new URL("file:.");
 		
 		MainMenu s = new MainMenu();
-//		APP.screen = s;
 		
 		APP.setupFrame();
 		s.setup(APP.container);
@@ -33,10 +32,7 @@ public class DeadlockMain  {
 		
 		s.postDisplay();
 		s.render();
-//		APP.screen.repaint();
-//		VIEW.canvas.repaint();
 		s.repaintCanvas();
-//		VIEW.previewPanel.repaint();
 	}
 	
 	public static Thread.UncaughtExceptionHandler handler = new Thread.UncaughtExceptionHandler() {

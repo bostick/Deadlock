@@ -1,6 +1,5 @@
 package com.gutabi.deadlock.world.cars;
 
-
 public class CarProximityEvent extends DrivingEvent {
 	
 	public final Driver d;

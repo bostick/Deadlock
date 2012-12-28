@@ -18,7 +18,6 @@ import com.gutabi.deadlock.core.geom.ShapeUtils;
 import com.gutabi.deadlock.world.cars.Driver;
 import com.gutabi.deadlock.world.cars.VertexArrivalEvent;
 
-//@SuppressWarnings("static-access")
 public class GraphPositionPath {
 	
 	private final List<GraphPosition> poss;

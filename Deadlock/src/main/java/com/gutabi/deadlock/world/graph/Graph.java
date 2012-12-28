@@ -32,10 +32,8 @@ import com.gutabi.deadlock.ui.RenderingContext;
 import com.gutabi.deadlock.world.ControlPanel;
 import com.gutabi.deadlock.world.World;
 
-//@SuppressWarnings("static-access")
 public class Graph implements Sweepable {
 	
-//	WorldScreen screen;
 	World world;
 	
 	public final List<Vertex> vertices = new ArrayList<Vertex>();
@@ -50,7 +48,6 @@ public class Graph implements Sweepable {
 	private static final Logger logger = Logger.getLogger(Graph.class);
 	
 	public Graph(World world) {
-//		this.screen = screen;
 		this.world = world;
 		
 		pathFactory = new GraphPositionPathFactory(this);
@@ -324,8 +321,6 @@ public class Graph implements Sweepable {
 	 * bit 1 set = add end stop sign
 	 */
 	private void createRoad(Road r, int dec) {
-//		assert pts.size() >= 2;
-//		Road r = new Road(cam, start, end, pts);
 		
 		if ((dec & 1) == 1) {
 			r.startSign.setEnabled(true);
@@ -348,14 +343,7 @@ public class Graph implements Sweepable {
 		edges.add(r);
 		refreshEdgeIDs();
 		
-//		return r;
 	}
-	
-//	public Merger createMergerAndFixtures(Point p) {
-//		
-//		
-//		return m;
-//	}
 	
 	private void destroyVertex(Vertex v) {
 		vertices.remove(v);
@@ -1253,28 +1241,6 @@ public class Graph implements Sweepable {
 		return g;
 	}
 	
-//	public void renderCanvas(BufferedImage img) {
-//		
-//		Graphics2D canvasGraphImageG2 = canvasGraphImage.createGraphics();
-//		
-//		Composite orig = canvasGraphImageG2.getComposite();
-//		AlphaComposite c = AlphaComposite.getInstance(AlphaComposite.SRC, 0.0f);
-//		canvasGraphImageG2.setComposite(c);
-//		canvasGraphImageG2.setColor(new Color(0, 0, 0, 0));
-//		canvasGraphImageG2.fillRect(0, 0, cam.canvasWidth, cam.canvasHeight);
-//		canvasGraphImageG2.setComposite(orig);
-//		
-//		canvasGraphImageG2.scale(cam.pixelsPerMeter, cam.pixelsPerMeter);
-//		canvasGraphImageG2.translate(-cam.worldViewport.x, -cam.worldViewport.y);
-//		
-//		RenderingContext canvasGraphContext = new RenderingContext(canvasGraphImageG2, RenderingContextType.CANVAS);
-//		
-//		render(canvasGraphContext);
-//		
-//		canvasGraphImageG2.dispose();
-//		
-//	}
-	
 	public void render(RenderingContext ctxt) {
 		
 		List<Edge> edgesCopy;
@@ -1297,15 +1263,6 @@ public class Graph implements Sweepable {
 		}
 		
 	}
-	
-//	public void paintImage(RenderingContext ctxt) {
-//		
-//		ctxt.paintImage(
-//				canvasGraphImage,
-//				0, 0, cam.canvasWidth, cam.canvasHeight,
-//				0, 0, cam.canvasWidth, cam.canvasHeight);
-//		
-//	}
 	
 	public void paintStats(RenderingContext ctxt) {
 		

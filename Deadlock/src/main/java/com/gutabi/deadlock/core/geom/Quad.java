@@ -9,7 +9,6 @@ import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.ui.RenderingContext;
 
-//@SuppressWarnings("static-access")
 public class Quad extends SweepableShape {
 	
 	public final Point p0;
@@ -267,10 +266,6 @@ public class Quad extends SweepableShape {
 		
 		return events;
 	}
-	
-//	public boolean containedIn(Quad q) {
-//		return q.hitTest(p0) && q.hitTest(p1) && q.hitTest(p2) && q.hitTest(p3);
-//	}
 	
 	public boolean completelyContains(Quad q) {
 		return hitTest(q.p0) && hitTest(q.p1) && hitTest(q.p2) && hitTest(q.p3);

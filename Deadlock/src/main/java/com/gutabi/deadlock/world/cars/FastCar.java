@@ -5,7 +5,6 @@ import org.apache.log4j.Logger;
 import com.gutabi.deadlock.world.World;
 import com.gutabi.deadlock.world.graph.Fixture;
 
-//@SuppressWarnings("static-access")
 public class FastCar extends Car {
 	
 	private final double speed = 5.0;

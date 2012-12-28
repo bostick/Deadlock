@@ -12,11 +12,7 @@ import com.gutabi.deadlock.core.OverlappingException;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.ui.RenderingContext;
 
-//@SuppressWarnings("static-access")
 public class Capsule extends SweepableShape implements SweeperShape, CompoundShape {
-	
-//	public final WorldScreen screen;
-//	WorldCamera cam;
 	
 	public final Circle ac;
 	public final Circle bc;
@@ -45,7 +41,6 @@ public class Capsule extends SweepableShape implements SweeperShape, CompoundSha
 	
 	public Capsule(Object parent, Circle ac, Circle bc, int index) {
 		super(parent);
-//		this.screen = screen;
 		this.ac = ac;
 		this.bc = bc;
 		this.index = index;

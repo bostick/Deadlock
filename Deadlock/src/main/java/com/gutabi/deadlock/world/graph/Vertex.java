@@ -13,13 +13,10 @@ import com.gutabi.deadlock.core.geom.Circle;
 import com.gutabi.deadlock.ui.RenderingContext;
 import com.gutabi.deadlock.world.cars.Driver;
 
-//@SuppressWarnings("static-access")
 public abstract class Vertex extends Entity {
 	
 	public static final double INIT_VERTEX_RADIUS = Math.sqrt(2 * Road.ROAD_RADIUS * Road.ROAD_RADIUS);
 	
-//	WorldCamera cam;
-//	public final World world;
 	public final Point p;
 	
 	public final List<Road> roads = new ArrayList<Road>();
@@ -38,8 +35,6 @@ public abstract class Vertex extends Entity {
 	static Logger logger = Logger.getLogger(Vertex.class);
 	
 	public Vertex(Point p) {
-//		this.cam = cam;
-//		this.world = world;
 		this.p = p;
 		
 		r = INIT_VERTEX_RADIUS;

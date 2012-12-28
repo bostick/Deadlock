@@ -41,8 +41,6 @@ public class DeadlockApplication {
 	
 	public Color roadHiliteColor = new Color(0xff ^ 0x88, 0xff ^ 0x88, 0xff ^ 0x88, 0xff);
 	
-//	public Screen screen;
-	
 	public static DeadlockApplication APP = new DeadlockApplication();
 	
 	public void init() throws Exception {

@@ -12,11 +12,10 @@ import com.gutabi.deadlock.ui.RenderingContext;
 
 public class GrassMarkMap {
 	
-//	WorldCamera cam;
 	List<Capsule> marks = new ArrayList<Capsule>();
 	
 	public GrassMarkMap() {
-//		this.cam = cam;
+		
 	}
 	
 	public void addGrassMark(Point p0, Point p1) {

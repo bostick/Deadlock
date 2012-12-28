@@ -29,7 +29,6 @@ import com.gutabi.deadlock.world.examples.FourByFourGridWorld;
 import com.gutabi.deadlock.world.examples.OneByOneWorld;
 import com.gutabi.deadlock.world.examples.WorldA;
 
-//@SuppressWarnings("static-access")
 public class MainMenu extends ScreenBase {
 	
 	public static final int MENU_WIDTH = 800;
@@ -60,18 +59,13 @@ public class MainMenu extends ScreenBase {
 				WorldScreen s = new WorldScreen();
 				s.world = OneByOneWorld.createOneByOneWorld(s);
 				
-//				APP.screen = s;
-				
 				s.setup(APP.container);
 				((JFrame)APP.container).setVisible(true);
 				
 				s.postDisplay();
 				s.render();
-//				APP.screen.repaint();
 				s.repaintCanvas();
-//				VIEW.previewPanel.repaint();
 				s.controlPanel.repaint();
-//				APP.container.getContentPane().repaint();
 			}
 		};
 		add(oneMenuItem);
@@ -84,15 +78,11 @@ public class MainMenu extends ScreenBase {
 				WorldScreen s = new WorldScreen();
 				s.world = FourByFourGridWorld.createFourByFourGridWorld(s);
 				
-//				APP.screen = s;
-				
 				s.setup(APP.container);
 				((JFrame)APP.container).setVisible(true);
 				
 				s.postDisplay();
 				s.render();
-//				APP.screen.repaint();
-//				VIEW.canvas.repaint();
 				s.repaintCanvas();
 				s.controlPanel.repaint();
 				
@@ -108,18 +98,13 @@ public class MainMenu extends ScreenBase {
 				WorldScreen s = new WorldScreen();
 				s.world = WorldA.createWorldA(s);
 				
-//				APP.screen = s;
-				
 				s.setup(APP.container);
 				
 				((JFrame)APP.container).setVisible(true);
 				
 				s.postDisplay();
 				s.render();
-//				APP.screen.repaint();
-//				VIEW.canvas.repaint();
 				s.repaintCanvas();
-//				VIEW.previewPanel.repaint();
 				s.controlPanel.repaint();
 				
 			}
@@ -132,17 +117,13 @@ public class MainMenu extends ScreenBase {
 				teardown(APP.container);
 				
 				QuadrantEditor s = new QuadrantEditor();
-//				APP.screen = s;
 				
 				s.setup(APP.container);
 				((JFrame)APP.container).setVisible(true);
 				
 				s.postDisplay();
 				s.render();
-//				APP.screen.repaint();
-//				VIEW.canvas.repaint();
 				s.repaintCanvas();
-//				VIEW.previewPanel.repaint();
 			}
 		};
 		add(dialogMenuItem);
@@ -338,7 +319,6 @@ public class MainMenu extends ScreenBase {
 			Graphics2D canvasMenuImageG2 = canvasMenuImage.createGraphics();
 			
 			for (MenuItem item : items) {
-//				item.renderLocal();
 				if ((int)item.localAABB.width > widest) {
 					widest = (int)item.localAABB.width;
 				}
@@ -378,7 +358,6 @@ public class MainMenu extends ScreenBase {
 				
 				RenderingContext ctxt = new RenderingContext(RenderingContextType.CANVAS);
 				ctxt.g2 = g2;
-//				ctxt.cam = this.w
 				
 				AffineTransform origTrans = ctxt.getTransform();
 				

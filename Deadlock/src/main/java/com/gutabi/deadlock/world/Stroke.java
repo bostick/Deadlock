@@ -28,15 +28,11 @@ import com.gutabi.deadlock.world.graph.RoadPosition;
 import com.gutabi.deadlock.world.graph.Vertex;
 import com.gutabi.deadlock.world.graph.VertexPosition;
 
-//@SuppressWarnings("static-access")
 public class Stroke {
 	
 	public static final double STROKE_RADIUS = Vertex.INIT_VERTEX_RADIUS;
 	
 	WorldScreen screen;
-//	WorldCamera cam;
-//	public World world;
-//	public final Graph graph;
 	
 	private List<Circle> cs;
 	
@@ -48,7 +44,6 @@ public class Stroke {
 	
 	public Stroke(WorldScreen screen) {
 		this.screen = screen;
-//		this.graph = graph;
 		cs = new ArrayList<Circle>();
 	}
 	

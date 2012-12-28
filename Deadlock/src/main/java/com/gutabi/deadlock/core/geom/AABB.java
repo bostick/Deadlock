@@ -7,7 +7,6 @@ import com.gutabi.deadlock.core.Dim;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.ui.RenderingContext;
 
-//@SuppressWarnings("static-access")
 public class AABB implements Shape {
 	
 	public final Point ul;

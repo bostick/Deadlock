@@ -9,7 +9,6 @@ import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.ui.RenderingContext;
 
-//@SuppressWarnings("static-access")
 public class CapsuleSequence extends SweepableShape implements CompoundShape {
 	
 	public final List<Capsule> caps;

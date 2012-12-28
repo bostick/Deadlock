@@ -11,7 +11,6 @@ import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.ui.RenderingContext;
 
-//@SuppressWarnings("static-access")
 public class Circle extends SweepableShape implements SweeperShape {
 	
 	public final Point center;

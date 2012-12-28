@@ -8,7 +8,6 @@ import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.world.graph.GraphPositionPath;
 import com.gutabi.deadlock.world.graph.GraphPositionPathPosition;
 
-//@SuppressWarnings("static-access")
 public class Driver {
 	
 	public static final double COMPLETE_STOP_WAIT_TIME = 0.0;

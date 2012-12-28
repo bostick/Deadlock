@@ -5,7 +5,6 @@ import java.awt.geom.Line2D;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.ui.RenderingContext;
 
-//@SuppressWarnings("static-access")
 public class Line {
 	
 	private final Line2D line;

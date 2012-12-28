@@ -6,7 +6,6 @@ import java.util.List;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.ui.RenderingContext;
 
-//@SuppressWarnings("static-access")
 public class Polyline {
 	
 	private final Path2D path;

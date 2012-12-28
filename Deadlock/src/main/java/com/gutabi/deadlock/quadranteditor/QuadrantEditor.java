@@ -25,7 +25,6 @@ import com.gutabi.deadlock.world.Quadrant;
 import com.gutabi.deadlock.world.World;
 import com.gutabi.deadlock.world.WorldScreen;
 
-//@SuppressWarnings("static-access")
 public class QuadrantEditor extends ScreenBase {
 	
 	public static final int EDITOR_WIDTH = 800;
@@ -345,18 +344,13 @@ public class QuadrantEditor extends ScreenBase {
 				
 				teardown(APP.container);
 				
-//				WorldScreen s = new WorldScreen();
 				worldScreen.world = World.createWorld(worldScreen, ini);
-				
-//				APP.screen = s;
 				
 				worldScreen.setup(APP.container);
 				((JFrame)APP.container).setVisible(true);
 				
 				worldScreen.postDisplay();
 				worldScreen.render();
-//				APP.screen.repaint();
-//				VIEW.canvas.repaint();
 				worldScreen.repaintCanvas();
 				worldScreen.controlPanel.repaint();
 				
@@ -432,17 +426,13 @@ public class QuadrantEditor extends ScreenBase {
 		teardown(APP.container);
 		
 		MainMenu s = new MainMenu();
-//		APP.screen = s;
 		
 		s.setup(APP.container);
 		((JFrame)APP.container).setVisible(true);
 		s.postDisplay();
 		
 		s.render();
-//		APP.screen.repaint();
-//		VIEW.canvas.repaint();
 		s.repaintCanvas();
-//		VIEW.previewPanel.repaint();
 		
 	}
 	
@@ -537,7 +527,6 @@ public class QuadrantEditor extends ScreenBase {
 			
 		}
 		
-//		repaintCanvas();
 	}
 	
 	public void render() {

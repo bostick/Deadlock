@@ -21,9 +21,5 @@ public abstract class Button {
 	public abstract void action();
 	
 	public abstract void paint(RenderingContext ctxt);
-//	public void paint(RenderingContext ctxt) {
-//		ctxt.setColor(Color.BLUE);
-//		aabb.paint(ctxt);
-//	}
 	
 }

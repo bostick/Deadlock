@@ -12,13 +12,10 @@ import com.gutabi.deadlock.ui.RenderingContext;
 import com.gutabi.deadlock.world.ControlPanel;
 import com.gutabi.deadlock.world.World;
 
-//@SuppressWarnings("static-access")
 public class Merger extends Edge {
 	
 	public static final double MERGER_WIDTH = 5.0;
 	public static final double MERGER_HEIGHT = 5.0;
-	
-//	WorldCamera cam;
 	
 	public final Point ul;
 	public final Point center;
@@ -31,8 +28,6 @@ public class Merger extends Edge {
 	private Direction leftRightDir;
 	private Direction topBottomDir;
 	
-//	public final World world;
-	
 	private double[] cumulativeLengthsFromTop;
 	private double[] cumulativeLengthsFromLeft;
 	
@@ -43,8 +38,6 @@ public class Merger extends Edge {
 	
 	
 	public Merger(Point center, Fixture top, Fixture left, Fixture right, Fixture bottom) {
-//		this.cam = cam;
-//		this.world = world;
 		this.center = center;
 		
 		this.ul = center.plus(new Point(-MERGER_WIDTH/2,  -MERGER_HEIGHT/2));

@@ -13,7 +13,6 @@ import com.gutabi.deadlock.world.WorldCamera;
 import com.gutabi.deadlock.world.graph.Axis;
 import com.gutabi.deadlock.world.graph.Vertex;
 
-//@SuppressWarnings("static-access")
 public class FixtureToolShape implements CompoundShape {
 	
 	WorldCamera cam;

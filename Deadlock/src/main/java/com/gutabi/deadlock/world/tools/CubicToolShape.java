@@ -17,7 +17,6 @@ import com.gutabi.deadlock.world.World;
 import com.gutabi.deadlock.world.WorldCamera;
 import com.gutabi.deadlock.world.graph.Vertex;
 
-//@SuppressWarnings("static-access")
 public class CubicToolShape implements Shape {
 	
 	WorldCamera cam;

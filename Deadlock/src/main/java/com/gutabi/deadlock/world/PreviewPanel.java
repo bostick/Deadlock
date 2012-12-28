@@ -19,7 +19,6 @@ import com.gutabi.deadlock.ui.PaintEvent;
 import com.gutabi.deadlock.ui.RenderingContext;
 import com.gutabi.deadlock.ui.RenderingContextType;
 
-//@SuppressWarnings({"serial", "static-access"})
 @SuppressWarnings({"serial"})
 public class PreviewPanel extends ComponentBase {
 	
@@ -40,7 +39,6 @@ public class PreviewPanel extends ComponentBase {
 				super.paintComponent(g);
 				ctxt.g2 = (Graphics2D)g;
 				screen.paint(new PaintEvent(PreviewPanel.this, ctxt));
-//				prev.paint(ctxt);
 			}
 		};
 		c.setSize(new Dimension(PREVIEW_WIDTH, PREVIEW_HEIGHT));
@@ -145,8 +143,6 @@ public class PreviewPanel extends ComponentBase {
 	}
 	
 	public Dim postDisplay() {
-		
-//		APP.screen.previewPostDisplay(new Dim(getWidth(), getHeight()));
 		return new Dim(getWidth(), getHeight());
 	}
 	

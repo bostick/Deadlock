@@ -13,8 +13,6 @@ public abstract class VertexEvent extends DrivingEvent {
 	public VertexEvent(GraphPositionPathPosition vertexPosition) {
 		this.vertexPosition = vertexPosition;
 		
-//		assert vertexPosition.gpos instanceof VertexPosition;
-		
 		v = ((VertexPosition)vertexPosition.getGraphPosition()).v;
 		
 		if (!vertexPosition.isEndOfPath()) {

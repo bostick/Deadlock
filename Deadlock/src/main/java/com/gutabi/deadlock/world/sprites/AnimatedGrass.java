@@ -8,13 +8,10 @@ import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.AABB;
 import com.gutabi.deadlock.ui.RenderingContext;
 
-//@SuppressWarnings("static-access")
 public class AnimatedGrass {
 	
 	public static double GRASS_SIZE = 1.0;
 	
-//	WorldCamera cam;
-//	World world;
 	Point p;
 	int lastFrame;
 	double lastTime;
@@ -24,7 +21,6 @@ public class AnimatedGrass {
 	public AABB aabb;
 	
 	public AnimatedGrass(Point p) {
-//		this.world = world;
 		this.p = p;
 		phase = APP.RANDOM.nextDouble();
 		startFrame = APP.RANDOM.nextInt(4);

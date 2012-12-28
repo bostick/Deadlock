@@ -16,7 +16,6 @@ import com.gutabi.deadlock.ui.RenderingContext;
 import com.gutabi.deadlock.world.WorldScreen;
 import com.gutabi.deadlock.world.graph.Vertex;
 
-//@SuppressWarnings("static-access")
 public class QuadToolShape implements Shape {
 	
 	public final Point start;

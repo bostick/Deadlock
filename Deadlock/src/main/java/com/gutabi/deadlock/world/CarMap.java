@@ -16,16 +16,13 @@ import com.gutabi.deadlock.world.cars.DrivingEvent;
 import com.gutabi.deadlock.world.cars.VertexArrivalEvent;
 import com.gutabi.deadlock.world.graph.Vertex;
 
-//@SuppressWarnings("static-access")
 public class CarMap {
 	
-//	public final WorldCamera cam;
 	public final World world;
 	
 	private List<Car> cars = new ArrayList<Car>();
 	
 	public CarMap(World world) {
-//		this.cam = cam;
 		this.world = world;
 	}
 	

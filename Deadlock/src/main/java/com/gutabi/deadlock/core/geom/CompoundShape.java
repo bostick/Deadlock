@@ -4,6 +4,4 @@ public interface CompoundShape extends Shape {
 	
 	boolean intersect(Shape s);
 	
-//	boolean contains(Shape s);
-	
 }

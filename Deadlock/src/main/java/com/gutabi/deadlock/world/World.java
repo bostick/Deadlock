@@ -30,11 +30,9 @@ import com.gutabi.deadlock.world.graph.Road;
 import com.gutabi.deadlock.world.graph.RoadPosition;
 import com.gutabi.deadlock.world.graph.Vertex;
 
-//@SuppressWarnings("static-access")
 public class World {
 	
 	WorldScreen screen;
-//	ControlPanel cp;
 	
 	public QuadrantMap quadrantMap;
 	public Graph graph;
@@ -219,7 +217,6 @@ public class World {
 	
 	public Set<Vertex> createMerger(Point p) {
 		
-//		Merger m = graph.createMergerAndFixtures(p);
 		Merger m = Merger.createMergerAndFixtures(this, screen.controlPanel, p);
 		
 		quadrantMap.grassMap.mowGrass(m.getShape());

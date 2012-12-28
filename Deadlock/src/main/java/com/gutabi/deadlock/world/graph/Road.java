@@ -28,21 +28,18 @@ import com.gutabi.deadlock.core.geom.Triangle;
 import com.gutabi.deadlock.ui.RenderingContext;
 import com.gutabi.deadlock.ui.RenderingContextType;
 
-//@SuppressWarnings("static-access")
 public class Road extends Edge {
 	
 	public static final double ROAD_RADIUS = 0.5;
 	
 	public static final double borderPointRadius = 0.2;
 	
-//	WorldCamera cam;
 	public final Vertex start;
 	public final Vertex end;
 	public final List<Point> raw;
 	
 	private Direction direction;
 	
-//	public final World world;
 	private CapsuleSequence seq;
 	private Circle startBorderPoint;
 	private Circle endBorderPoint;
@@ -70,7 +67,6 @@ public class Road extends Edge {
 		
 		assert !raw.isEmpty();
 		
-//		this.cam = cam;
 		this.start = start;
 		this.end = end;
 		this.raw = raw;

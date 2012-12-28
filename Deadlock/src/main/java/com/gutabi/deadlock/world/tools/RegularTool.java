@@ -22,7 +22,6 @@ import com.gutabi.deadlock.world.graph.Road;
 import com.gutabi.deadlock.world.graph.StopSign;
 import com.gutabi.deadlock.world.graph.Vertex;
 
-//@SuppressWarnings("static-access")
 public class RegularTool extends ToolBase {
 	
 	enum RegularToolMode {

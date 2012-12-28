@@ -6,6 +6,6 @@ public enum RenderingContextType {
 	PREVIEW,
 //	QUADRANTEDITOR
 	
-	CONTROLPANEL
+//	CONTROLPANEL
 	
 }

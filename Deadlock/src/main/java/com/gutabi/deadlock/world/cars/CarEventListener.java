@@ -13,16 +13,13 @@ import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.world.World;
 import com.gutabi.deadlock.world.sprites.AnimatedExplosion;
 
-//@SuppressWarnings("static-access")
 public class CarEventListener implements ContactListener {
 	
-//	WorldCamera cam;
 	World world;
 	
 	static Logger logger = Logger.getLogger(CarEventListener.class);
 	
 	public CarEventListener(World world) {
-//		this.cam = cam;
 		this.world = world;
 	}
 	

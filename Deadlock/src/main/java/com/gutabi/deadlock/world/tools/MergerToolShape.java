@@ -11,7 +11,6 @@ import com.gutabi.deadlock.ui.RenderingContext;
 import com.gutabi.deadlock.world.graph.Merger;
 import com.gutabi.deadlock.world.graph.Vertex;
 
-//@SuppressWarnings("static-access")
 public class MergerToolShape implements CompoundShape {
 	
 	private Point ul;

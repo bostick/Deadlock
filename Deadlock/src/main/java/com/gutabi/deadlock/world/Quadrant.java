@@ -12,10 +12,8 @@ import com.gutabi.deadlock.core.geom.Line;
 import com.gutabi.deadlock.ui.RenderingContext;
 import com.gutabi.deadlock.world.sprites.AnimatedGrass;
 
-//@SuppressWarnings("static-access")
 public class Quadrant {
 	
-//	public final WorldCamera cam;
 	public final QuadrantMap map;
 	public final int r;
 	public final int c;
@@ -32,7 +30,6 @@ public class Quadrant {
 	public final AABB aabb;
 	
 	public Quadrant(QuadrantMap map, int r, int c, boolean active) {
-//		this.cam = cam;
 		this.map = map;
 		this.r = r;
 		this.c = c;

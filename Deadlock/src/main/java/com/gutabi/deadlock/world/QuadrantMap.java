@@ -16,13 +16,10 @@ import com.gutabi.deadlock.core.geom.Shape;
 import com.gutabi.deadlock.core.geom.ShapeUtils;
 import com.gutabi.deadlock.ui.RenderingContext;
 
-//@SuppressWarnings("static-access")
 public class QuadrantMap {
 	
 	public static final double QUADRANT_WIDTH = 16.0;
 	public static final double QUADRANT_HEIGHT = QUADRANT_WIDTH;
-	
-//	WorldCamera cam;
 	
 	public final double worldWidth;
 	public final double worldHeight;
@@ -41,7 +38,6 @@ public class QuadrantMap {
 	public final AABB aabb;
 	
 	public QuadrantMap(World world, int[][] ini) {
-//		this.cam = cam;
 		this.world = world;
 		this.ini = ini;
 		

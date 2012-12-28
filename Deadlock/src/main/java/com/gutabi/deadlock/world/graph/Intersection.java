@@ -9,7 +9,6 @@ import java.util.Scanner;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.ui.RenderingContext;
 
-//@SuppressWarnings("static-access")
 public class Intersection extends Vertex {
 	
 	public Intersection(Point p) {

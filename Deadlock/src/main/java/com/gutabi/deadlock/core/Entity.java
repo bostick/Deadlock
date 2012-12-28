@@ -3,7 +3,6 @@ package com.gutabi.deadlock.core;
 import com.gutabi.deadlock.core.geom.Shape;
 import com.gutabi.deadlock.ui.RenderingContext;
 
-//@SuppressWarnings("static-access")
 public abstract class Entity {
 	
 	public abstract Shape getShape();

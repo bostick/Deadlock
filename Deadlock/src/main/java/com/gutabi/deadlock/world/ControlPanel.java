@@ -14,7 +14,6 @@ import javax.swing.JTextField;
 import com.gutabi.deadlock.ui.ComponentBase;
 import com.gutabi.deadlock.ui.Label;
 import com.gutabi.deadlock.ui.RenderingContext;
-import com.gutabi.deadlock.ui.RenderingContextType;
 
 public class ControlPanel extends ComponentBase {
 	
@@ -51,7 +50,7 @@ public class ControlPanel extends ComponentBase {
 			public void paintComponent(Graphics g) {
 				super.paintComponent(g);
 				
-				RenderingContext ctxt = new RenderingContext(RenderingContextType.CONTROLPANEL);
+				RenderingContext ctxt = new RenderingContext(null);
 				ctxt.g2 = (Graphics2D)g;
 				
 				simulationInitLab.paint(ctxt);

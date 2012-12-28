@@ -23,7 +23,6 @@ public class DeadlockApplet extends JApplet {
 		APP.codebase = app.getCodeBase();
 		
 		MainMenu s = new MainMenu();
-//		APP.screen = s;
 		
 		APP.setupFrame();
 		s.setup(app);
@@ -32,9 +31,7 @@ public class DeadlockApplet extends JApplet {
 		
 		s.postDisplay();
 		s.render();
-//		APP.screen.repaint();
 		s.repaintCanvas();
-//		VIEW.previewPanel.repaint();
 	}
 	
 	public static Thread.UncaughtExceptionHandler handler = new Thread.UncaughtExceptionHandler() {

@@ -34,7 +34,6 @@ public class WorldCanvas extends ComponentBase {
 		
 		c = new java.awt.Canvas() {
 			public void paint(Graphics g) {
-//				bs.show();
 				screen.repaintCanvas();
 			}
 		};

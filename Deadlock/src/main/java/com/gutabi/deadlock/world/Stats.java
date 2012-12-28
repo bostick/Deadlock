@@ -5,7 +5,6 @@ import java.awt.geom.AffineTransform;
 
 import com.gutabi.deadlock.ui.RenderingContext;
 
-//@SuppressWarnings("static-access")
 public class Stats {
 	
 	WorldScreen screen;

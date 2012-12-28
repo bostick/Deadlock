@@ -17,7 +17,6 @@ import com.gutabi.deadlock.world.graph.FixtureType;
 import com.gutabi.deadlock.world.graph.Side;
 import com.gutabi.deadlock.world.graph.Vertex;
 
-//@SuppressWarnings("static-access")
 public class FixtureTool extends ToolBase {
 	
 	Quadrant currentQuadrant;

@@ -34,7 +34,6 @@ import com.gutabi.deadlock.world.graph.Vertex;
 import com.gutabi.deadlock.world.tools.RegularTool;
 import com.gutabi.deadlock.world.tools.Tool;
 
-//@SuppressWarnings("static-access")
 public class WorldScreen extends ScreenBase {
 	
 	enum WorldScreenMode {
@@ -647,7 +646,6 @@ public class WorldScreen extends ScreenBase {
 			case DIALOG:
 				break;
 			case EDITING:
-//				tool.exited(ev);
 				break;
 			}
 		} else {
@@ -777,9 +775,6 @@ public class WorldScreen extends ScreenBase {
 				
 				Graphics2D g2 = (Graphics2D)canvas.bs.getDrawGraphics();
 				
-//				g2.setColor(Color.DARK_GRAY);
-//				g2.fillRect(0, 0, cam.canvasWidth, cam.canvasHeight);
-				
 				ctxt.g2 = g2;
 				ctxt.cam = cam;
 				ctxt.FPS_DRAW = FPS_DRAW;
@@ -861,7 +856,6 @@ public class WorldScreen extends ScreenBase {
 	
 	public void paint(PaintEvent ev) {
 		if (ev.c == canvas) {
-//			VIEW.canvas.bs.show();
 			assert false;
 		} else if (ev.c == controlPanel.previewPanel) {
 			preview.paint(ev.ctxt);

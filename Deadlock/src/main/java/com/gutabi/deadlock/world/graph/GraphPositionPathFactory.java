@@ -7,7 +7,6 @@ import java.util.List;
 
 import com.gutabi.deadlock.core.DMath;
 
-//@SuppressWarnings("static-access")
 public class GraphPositionPathFactory {
 	
 	public final Graph graph;

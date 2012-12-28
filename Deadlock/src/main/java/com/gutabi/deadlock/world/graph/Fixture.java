@@ -22,7 +22,6 @@ import com.gutabi.deadlock.world.cars.NormalCar;
 import com.gutabi.deadlock.world.cars.RandomCar;
 import com.gutabi.deadlock.world.cars.ReallyFastCar;
 
-//@SuppressWarnings("static-access")
 public final class Fixture extends Vertex {
 	
 	public static double SPAWN_FREQUENCY_SECONDS = 1.5;
@@ -163,7 +162,6 @@ public final class Fixture extends Vertex {
 		Car c = createNewCar();
 		
 		if (c != null) {
-//			assert c.hitTest(p, r);
 			c.startingTime = t;
 			c.id = carIDCounter;
 			carIDCounter++;

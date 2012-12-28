@@ -18,7 +18,6 @@ import org.jbox2d.common.Vec2;
 
 import com.gutabi.deadlock.world.WorldCamera;
 
-//@SuppressWarnings("static-access")
 public class RenderingContext extends DebugDraw {
 	
 	public Graphics2D g2;
@@ -36,7 +35,6 @@ public class RenderingContext extends DebugDraw {
 	public RenderingContext(RenderingContextType type) {
 		super(new OBBViewportTransform());
 		
-//		this.g2 = g2;
 		this.type = type;
 		
 		m_drawFlags = DebugDraw.e_dynamicTreeBit;

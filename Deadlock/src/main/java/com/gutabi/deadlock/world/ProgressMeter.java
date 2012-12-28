@@ -7,7 +7,6 @@ import com.gutabi.deadlock.ui.RenderingContext;
 
 public class ProgressMeter {
 	
-//	public final WorldCamera cam;
 	public final double x;
 	public final double y;
 	public final double width;
@@ -20,7 +19,6 @@ public class ProgressMeter {
 	private double p;
 	
 	public ProgressMeter(double x, double y, double width, double height) {
-//		this.cam = cam;
 		this.x = x;
 		this.y = y;
 		this.width = width;

@@ -6,7 +6,6 @@ import com.gutabi.deadlock.ui.InputEvent;
 import com.gutabi.deadlock.ui.RenderingContext;
 import com.gutabi.deadlock.world.WorldScreen;
 
-//@SuppressWarnings("static-access")
 public abstract class Tool {
 	
 	public final WorldScreen screen;

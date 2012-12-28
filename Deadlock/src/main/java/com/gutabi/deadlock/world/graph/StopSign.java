@@ -10,13 +10,10 @@ import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.Circle;
 import com.gutabi.deadlock.ui.RenderingContext;
 
-//@SuppressWarnings("static-access")
 public class StopSign extends Entity {
 	
 	public static final double STOPSIGN_SIZE = 0.5;
 	
-//	WorldCamera cam;
-//	public final World world;
 	public final Road r;
 	public final Vertex v;
 	
@@ -29,7 +26,6 @@ public class StopSign extends Entity {
 	private Circle shape;
 	
 	public StopSign(Road r, int dir) {
-//		this.cam = cam;
 		this.r = r;
 		this.dir = dir;
 		

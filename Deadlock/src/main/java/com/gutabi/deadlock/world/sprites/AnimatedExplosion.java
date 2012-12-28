@@ -7,20 +7,16 @@ import java.awt.geom.AffineTransform;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.ui.RenderingContext;
 
-//@SuppressWarnings("static-access")
 public class AnimatedExplosion {
 	
 	public static final double explosionWidth = 2.21875;
 	public static final double explosionHeight = 3.125;
 	
-//	WorldCamera cam;
-//	public final World world;
 	Point p;
 	int lastFrame;
 	double lastTime;
 	
 	public AnimatedExplosion(Point p) {
-//		this.cam = cam;
 		this.p = p;
 	}
 	

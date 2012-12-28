@@ -29,7 +29,6 @@ import com.gutabi.deadlock.world.graph.Fixture;
 import com.gutabi.deadlock.world.graph.GraphPositionPathPosition;
 import com.gutabi.deadlock.world.graph.Merger;
 
-//@SuppressWarnings("static-access")
 public abstract class Car extends Entity {
 	
 	public static final double CAR_LENGTH = 1.0;
@@ -47,7 +46,6 @@ public abstract class Car extends Entity {
 	public double startingTime;
 	public double crashingTime;
 	
-//	WorldCamera cam;
 	public World world;
 	public Fixture source;
 	
@@ -95,7 +93,6 @@ public abstract class Car extends Entity {
 	
 	public Car(World world, Fixture s) {
 		
-//		this.cam = cam;
 		this.world = world;
 		this.source = s;
 		

@@ -1,6 +1,5 @@
 package com.gutabi.deadlock.world.tools;
 
-
 import java.util.List;
 
 import com.gutabi.deadlock.core.Point;

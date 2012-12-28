@@ -10,11 +10,10 @@ import com.gutabi.deadlock.ui.RenderingContext;
 
 public class RoadMarkMap {
 	
-//	WorldCamera cam;
 	List<Capsule> marks = new ArrayList<Capsule>();
 	
 	public RoadMarkMap() {
-//		this.cam = cam;
+		
 	}
 	
 	public void addRoadMark(Point p0, Point p1) {
