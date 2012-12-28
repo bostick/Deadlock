@@ -1,5 +1,6 @@
 package com.gutabi.deadlock.world;
 
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -28,14 +29,20 @@ public class WorldCanvas extends ComponentBase {
 	
 	static Logger logger = Logger.getLogger(WorldCanvas.class);
 	
-	public WorldCanvas(WorldScreen screen) {
+	public WorldCanvas(final WorldScreen screen) {
 		this.screen = screen;
 		
 		c = new java.awt.Canvas() {
 			public void paint(Graphics g) {
-				bs.show();
+//				bs.show();
+				screen.repaintCanvas();
 			}
 		};
+		
+		c.setSize(new Dimension(1384, 822));
+		c.setPreferredSize(new Dimension(1384, 822));
+		c.setMaximumSize(new Dimension(1384, 822));
+		
 		jl = new JavaListener();
 		c.addMouseListener(jl);
 		c.addMouseMotionListener(jl);

@@ -18,7 +18,7 @@ import com.gutabi.deadlock.world.WorldCamera;
 import com.gutabi.deadlock.world.graph.Vertex;
 
 //@SuppressWarnings("static-access")
-public class CubicToolsShape implements Shape {
+public class CubicToolShape implements Shape {
 	
 	WorldCamera cam;
 	public final World world;
@@ -37,7 +37,7 @@ public class CubicToolsShape implements Shape {
 	
 //	private final AABB aabb;
 	
-	public CubicToolsShape(WorldCamera cam, World world, Point start, Point c0, Point c1, Point end) {
+	public CubicToolShape(WorldCamera cam, World world, Point start, Point c0, Point c1, Point end) {
 		
 		this.world = world;
 		this.start = start;

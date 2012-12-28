@@ -1,5 +1,6 @@
 package com.gutabi.deadlock.quadranteditor;
 
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -28,14 +29,20 @@ public class QuadrantEditorCanvas extends ComponentBase {
 	
 	static Logger logger = Logger.getLogger(QuadrantEditorCanvas.class);
 	
-	public QuadrantEditorCanvas(QuadrantEditor screen) {
+	public QuadrantEditorCanvas(final QuadrantEditor screen) {
 		this.screen = screen;
 		
 		c = new java.awt.Canvas() {
 			public void paint(Graphics g) {
-				bs.show();
+//				bs.show();d
+				screen.repaintCanvas();
 			}
 		};
+		
+		c.setSize(new Dimension(1584, 822));
+		c.setPreferredSize(new Dimension(1584, 822));
+		c.setMaximumSize(new Dimension(1584, 822));
+		
 		jl = new JavaListener();
 		c.addMouseListener(jl);
 		c.addMouseMotionListener(jl);

@@ -63,9 +63,9 @@ public class RegularTool extends ToolBase {
 	public void escKey(InputEvent ev) {
 		
 		screen.teardown(APP.container);
+		APP.container.getContentPane().repaint();
 		
 		MainMenu s = new MainMenu();
-//		APP.screen = s;
 		
 		s.setup(APP.container);
 		((JFrame)APP.container).setVisible(true);
@@ -177,7 +177,7 @@ public class RegularTool extends ToolBase {
 	}
 	
 	public void dKey(InputEvent ev) {
-		CubicTools c = new CubicTools(screen);
+		CubicTool c = new CubicTool(screen);
 		c.setStart(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
 		c.setPoint(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
 		screen.tool = c;

@@ -11,8 +11,6 @@ import javax.swing.JTextField;
 
 import com.gutabi.deadlock.ui.ComponentBase;
 
-//@SuppressWarnings({"serial", "static-access"})
-//@SuppressWarnings({"serial"})
 public class ControlPanel extends ComponentBase {
 	
 	JPanel panel;
@@ -46,6 +44,7 @@ public class ControlPanel extends ComponentBase {
 		panel.setSize(new Dimension(200, 822));
 		panel.setPreferredSize(new Dimension(200, 822));
 		panel.setMaximumSize(new Dimension(200, 822));
+		
 	}
 	
 	public int getWidth() {
@@ -155,50 +154,73 @@ public class ControlPanel extends ComponentBase {
 		
 		
 		
-		JLabel statelab = new JLabel("Simulation State:");
-		statelab.setFont(new Font("Visitor TT1 BRK", Font.PLAIN, 16));
+		JLabel stateLab = new JLabel("Simulation State:");
+		stateLab.setFont(new Font("Visitor TT1 BRK", Font.PLAIN, 16));
 		
-		panel.add(statelab);
+		panel.add(stateLab);
 		
-		size = statelab.getPreferredSize();
-		statelab.setBounds(5, 160, size.width, size.height);
+		size = stateLab.getPreferredSize();
+		stateLab.setBounds(5, 160, size.width, size.height);
 		
 		fpsCheckBox = new JCheckBox();
 		fpsCheckBox.setFocusable(false);
-//		fpsCheckBox.setSelected(screen.FPS_DRAW);
+		fpsCheckBox.setSelected(screen.FPS_DRAW);
 		fpsCheckBox.setActionCommand("fpsDraw");
 		fpsCheckBox.addActionListener(screen);
 		
+		panel.add(fpsCheckBox);
+		
+		size = fpsCheckBox.getPreferredSize();
+		fpsCheckBox.setBounds(5, 160 + stateLab.getHeight() + 5, size.width, size.height);
+		
+		JLabel fpsLab = new JLabel("FPS");
+		fpsLab.setFont(new Font("Visitor TT1 BRK", Font.PLAIN, 16));
+		
+		panel.add(fpsLab);
+		
+		size = fpsLab.getPreferredSize();
+		fpsLab.setBounds(5 + fpsCheckBox.getWidth() + 5, 160 + stateLab.getHeight() + 5, size.width, size.height);
 		
 		
-//		hBox = Box.createHorizontalBox();
-//		hBox.add(fpsCheckBox);
-//		hBox.add(new Label("draw fps").java());
-//		hBox.add(Box.createHorizontalGlue());
-//		verticalBox.add(hBox);
-//		
-//		stopSignCheckBox = new JCheckBox();
-//		stopSignCheckBox.setFocusable(false);
-//		stopSignCheckBox.setSelected(APP.STOPSIGN_DRAW);
-//		stopSignCheckBox.setActionCommand("stopSignDraw");
-//		stopSignCheckBox.addActionListener(APP.screen);
-//		hBox = Box.createHorizontalBox();
-//		hBox.add(stopSignCheckBox);
-//		hBox.add(new Label("draw stop signs").java());
-//		hBox.add(Box.createHorizontalGlue());
-//		verticalBox.add(hBox);
-//		
-//		carTextureCheckBox = new JCheckBox();
-//		carTextureCheckBox.setFocusable(false);
-//		carTextureCheckBox.setSelected(APP.CARTEXTURE_DRAW);
-//		carTextureCheckBox.setActionCommand("carTextureDraw");
-//		carTextureCheckBox.addActionListener(APP.screen);
-//		hBox = Box.createHorizontalBox();
-//		hBox.add(carTextureCheckBox);
-//		hBox.add(new Label("draw car textures").java());
-//		hBox.add(Box.createHorizontalGlue());
-//		verticalBox.add(hBox);
-//		
+		stopSignCheckBox = new JCheckBox();
+		stopSignCheckBox.setFocusable(false);
+		stopSignCheckBox.setSelected(screen.STOPSIGN_DRAW);
+		stopSignCheckBox.setActionCommand("stopSignDraw");
+		stopSignCheckBox.addActionListener(screen);
+		
+		panel.add(stopSignCheckBox);
+		
+		size = stopSignCheckBox.getPreferredSize();
+		stopSignCheckBox.setBounds(5, 160 + stateLab.getHeight() + 5 + fpsCheckBox.getHeight() + 5, size.width, size.height);
+		
+		JLabel stopSignLab = new JLabel("Stop Signs");
+		stopSignLab.setFont(new Font("Visitor TT1 BRK", Font.PLAIN, 16));
+		
+		panel.add(stopSignLab);
+		
+		size = stopSignLab.getPreferredSize();
+		stopSignLab.setBounds(5 + stopSignCheckBox.getWidth() + 5, 160 + stateLab.getHeight() + 5 + fpsCheckBox.getHeight() + 5, size.width, size.height);
+		
+		carTextureCheckBox = new JCheckBox();
+		carTextureCheckBox.setFocusable(false);
+		carTextureCheckBox.setSelected(screen.CARTEXTURE_DRAW);
+		carTextureCheckBox.setActionCommand("carTextureDraw");
+		carTextureCheckBox.addActionListener(screen);
+		
+		panel.add(carTextureCheckBox);
+		
+		size = carTextureCheckBox.getPreferredSize();
+		carTextureCheckBox.setBounds(5, 160 + stateLab.getHeight() + 5 + fpsCheckBox.getHeight() + 5 + stopSignCheckBox.getHeight() + 5, size.width, size.height);
+		
+		JLabel carTextureLab = new JLabel("Car Textures");
+		carTextureLab.setFont(new Font("Visitor TT1 BRK", Font.PLAIN, 16));
+		
+		panel.add(carTextureLab);
+		
+		size = carTextureLab.getPreferredSize();
+		carTextureLab.setBounds(5 + carTextureCheckBox.getWidth() + 5, 160 + stateLab.getHeight() + 5 + fpsCheckBox.getHeight() + 5 + stopSignCheckBox.getHeight() + 5, size.width, size.height);
+
+		
 //		explosionsCheckBox = new JCheckBox();
 //		explosionsCheckBox.setFocusable(false);
 //		explosionsCheckBox.setSelected(APP.EXPLOSIONS_DRAW);
@@ -235,8 +257,14 @@ public class ControlPanel extends ComponentBase {
 //		
 //		verticalBox.add(Box.createVerticalGlue());
 //		
-//		previewPanel = new PreviewPanel();
-//		
+		previewPanel = new PreviewPanel(screen);
+		
+		panel.add(previewPanel.java());
+		
+		size = previewPanel.java().getPreferredSize();
+		previewPanel.java().setBounds(5, 400, size.width, size.height);
+//		previewPanel.java().validate();
+		
 //		Box previewBox = Box.createHorizontalBox();
 //		previewBox.add(Box.createHorizontalGlue());
 //		previewBox.add(previewPanel.java());

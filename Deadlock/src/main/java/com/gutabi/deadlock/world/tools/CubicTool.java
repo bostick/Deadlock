@@ -12,7 +12,7 @@ import com.gutabi.deadlock.world.Stroke;
 import com.gutabi.deadlock.world.WorldScreen;
 import com.gutabi.deadlock.world.graph.Vertex;
 
-public class CubicTools extends ToolBase {
+public class CubicTool extends ToolBase {
 	
 	enum CubicToolMode {
 		FREE,
@@ -26,7 +26,7 @@ public class CubicTools extends ToolBase {
 	public Point c0;
 	public Point c1;
 	
-	CubicToolsShape shape;
+	CubicToolShape shape;
 	
 	final Knob startKnob;
 	final Knob control0Knob;
@@ -35,7 +35,7 @@ public class CubicTools extends ToolBase {
 	
 	Knob knob;
 	
-	public CubicTools(final WorldScreen screen) {
+	public CubicTool(final WorldScreen screen) {
 		super(screen);
 		
 		mode = CubicToolMode.FREE;
@@ -43,28 +43,28 @@ public class CubicTools extends ToolBase {
 		startKnob = new Knob(screen.cam, screen.world) {
 			public void drag(Point p) {
 				Point newPoint = world.quadrantMap.getPoint(p);
-				CubicTools.this.setStart(newPoint);
+				CubicTool.this.setStart(newPoint);
 			}
 		};
 		
 		control0Knob = new Knob(screen.cam, screen.world) {
 			public void drag(Point p) {
 				Point newPoint = world.quadrantMap.getPoint(p);
-				CubicTools.this.setControl0(newPoint);
+				CubicTool.this.setControl0(newPoint);
 			}
 		};
 		
 		control1Knob = new Knob(screen.cam, screen.world) {
 			public void drag(Point p) {
 				Point newPoint = world.quadrantMap.getPoint(p);
-				CubicTools.this.setControl1(newPoint);
+				CubicTool.this.setControl1(newPoint);
 			}
 		};
 		
 		endKnob = new Knob(screen.cam, screen.world) {
 			public void drag(Point p) {
 				Point newPoint = world.quadrantMap.getPoint(p);
-				CubicTools.this.setEnd(newPoint);
+				CubicTool.this.setEnd(newPoint);
 			}
 		};
 		
@@ -77,7 +77,7 @@ public class CubicTools extends ToolBase {
 			Point middle = start.plus(p.minus(start).multiply(0.5));
 			c0 = middle.plus(new Point(0, -4 * Vertex.INIT_VERTEX_RADIUS));
 			c1 = middle.plus(new Point(0, 4 * Vertex.INIT_VERTEX_RADIUS));
-			shape = new CubicToolsShape(screen.cam, screen.world, start, c0, c1, p);
+			shape = new CubicToolShape(screen.cam, screen.world, start, c0, c1, p);
 			startKnob.setPoint(start);
 			control0Knob.setPoint(c0);
 			control1Knob.setPoint(c1);
@@ -91,7 +91,7 @@ public class CubicTools extends ToolBase {
 	public void setStart(Point start) {
 		this.start = start;
 		if (start != null && p != null && c0 != null && c1 != null) {
-			shape = new CubicToolsShape(screen.cam, screen.world, start, c0, c1, p);
+			shape = new CubicToolShape(screen.cam, screen.world, start, c0, c1, p);
 			startKnob.setPoint(start);
 			control0Knob.setPoint(c0);
 			control1Knob.setPoint(c1);
@@ -102,7 +102,7 @@ public class CubicTools extends ToolBase {
 	public void setControl0(Point c) {
 		this.c0 = c;
 		if (start != null && p != null && c0 != null && c1 != null) {
-			shape = new CubicToolsShape(screen.cam, screen.world, start, c0, c1, p);
+			shape = new CubicToolShape(screen.cam, screen.world, start, c0, c1, p);
 			startKnob.setPoint(start);
 			control0Knob.setPoint(c0);
 			control1Knob.setPoint(c1);
@@ -113,7 +113,7 @@ public class CubicTools extends ToolBase {
 	public void setControl1(Point c) {
 		this.c1 = c;
 		if (start != null && p != null && c0 != null && c1 != null) {
-			shape = new CubicToolsShape(screen.cam, screen.world, start, c0, c1, p);
+			shape = new CubicToolShape(screen.cam, screen.world, start, c0, c1, p);
 			startKnob.setPoint(start);
 			control0Knob.setPoint(c0);
 			control1Knob.setPoint(c1);
@@ -124,7 +124,7 @@ public class CubicTools extends ToolBase {
 	public void setEnd(Point p) {
 		this.p = p;
 		if (start != null && p != null && c0 != null && c1 != null) {
-			shape = new CubicToolsShape(screen.cam, screen.world, start, c0, c1, p);
+			shape = new CubicToolShape(screen.cam, screen.world, start, c0, c1, p);
 			startKnob.setPoint(start);
 			control0Knob.setPoint(c0);
 			control1Knob.setPoint(c1);
@@ -200,6 +200,7 @@ public class CubicTools extends ToolBase {
 	
 	Point origKnobCenter;
 	
+	@SuppressWarnings("fallthrough")
 	public void dragged(InputEvent ev) {
 		
 		switch (mode) {

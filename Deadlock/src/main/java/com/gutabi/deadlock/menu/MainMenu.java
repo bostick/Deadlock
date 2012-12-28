@@ -4,6 +4,7 @@ import static com.gutabi.deadlock.DeadlockApplication.APP;
 
 import java.awt.Color;
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
@@ -179,14 +180,21 @@ public class MainMenu extends ScreenBase {
 		};
 		add(quitMenuItem);
 		
+		canvas = new MenuCanvas(this);
+		
 	}
 	
 	public void setup(RootPaneContainer container) {
 		
-		canvas = new MenuCanvas(this);
-		
 		Container cp = container.getContentPane();
+		
+		cp.setLayout(null);
+		
 		cp.add(canvas.java());
+		
+		Dimension size = canvas.java().getSize();
+		canvas.java().setBounds(0, 0, size.width, size.height);
+		
 	}
 	
 	public void teardown(RootPaneContainer container) {

@@ -35,7 +35,7 @@ public class PreviewPanel extends ComponentBase {
 		
 		final RenderingContext ctxt = new RenderingContext(RenderingContextType.PREVIEW);
 		
-		c = new JPanel() {
+		c = new JPanel(null) {
 			public void paintComponent(Graphics g) {
 				super.paintComponent(g);
 				ctxt.g2 = (Graphics2D)g;

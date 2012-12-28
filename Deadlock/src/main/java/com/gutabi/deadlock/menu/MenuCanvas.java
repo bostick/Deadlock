@@ -1,5 +1,6 @@
 package com.gutabi.deadlock.menu;
 
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -28,12 +29,13 @@ public class MenuCanvas extends ComponentBase {
 	
 	static Logger logger = Logger.getLogger(MenuCanvas.class);
 	
-	public MenuCanvas(MainMenu screen) {
+	public MenuCanvas(final MainMenu screen) {
 		this.screen = screen;
 		
 		c = new java.awt.Canvas() {
 			public void paint(Graphics g) {
-				bs.show();
+//				bs.show();d
+				screen.repaintCanvas();
 			}
 		};
 		jl = new JavaListener();
@@ -162,6 +164,10 @@ public class MenuCanvas extends ComponentBase {
 		
 		c.createBufferStrategy(2);
 		bs = c.getBufferStrategy();
+		
+		c.setSize(new Dimension(1584, 822));
+		c.setPreferredSize(new Dimension(1584, 822));
+		c.setMaximumSize(new Dimension(1584, 822));
 		
 		return new Dim(getWidth(), getHeight());
 	}

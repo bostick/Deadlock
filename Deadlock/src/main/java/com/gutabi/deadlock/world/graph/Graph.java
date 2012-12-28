@@ -754,7 +754,7 @@ public class Graph implements Sweepable {
 	
 	public Entity pureGraphIntersectCapsule(Capsule c) {
 		for (Vertex v : vertices) {
-			if (((Capsule)c).intersect(v.shape)) {
+			if (c.intersect(v.shape)) {
 				return v;
 			}
 		}
@@ -766,7 +766,7 @@ public class Graph implements Sweepable {
 				}
 				
 			} else {
-				if (((Capsule)c).intersect(ed.getShape())) {
+				if (c.intersect(ed.getShape())) {
 					return ed;
 				}
 			}

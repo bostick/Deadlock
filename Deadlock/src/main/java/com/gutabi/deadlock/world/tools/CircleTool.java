@@ -171,6 +171,7 @@ public class CircleTool extends ToolBase {
 		}
 	}
 	
+	@SuppressWarnings("fallthrough")
 	public void dragged(InputEvent ev) {
 		
 		switch (mode) {

@@ -180,7 +180,7 @@ public abstract class Car extends Entity {
 //				new Vec2((float)p2.getX(), (float)p2.getY()),
 //				new Vec2((float)p3.getX(), (float)p3.getY()),
 //				new Vec2((float)p4.getX(), (float)p4.getY())}, 4);
-		((PolygonShape)b2dShape).setAsBox((float)(CAR_LENGTH / 2), (float)(CAR_LENGTH / 4));
+		b2dShape.setAsBox((float)(CAR_LENGTH / 2), (float)(CAR_LENGTH / 4));
 		
 		FixtureDef fixtureDef = new FixtureDef();
 		fixtureDef.shape = b2dShape;

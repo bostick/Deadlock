@@ -3,6 +3,7 @@ package com.gutabi.deadlock.world;
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.geom.AffineTransform;
@@ -12,7 +13,6 @@ import java.io.IOException;
 import java.util.Scanner;
 import java.util.Set;
 
-import javax.swing.BoxLayout;
 import javax.swing.JFileChooser;
 import javax.swing.RootPaneContainer;
 import javax.swing.SwingUtilities;
@@ -87,19 +87,28 @@ public class WorldScreen extends ScreenBase {
 		
 		stats = new Stats(this);
 		
-	}
-	
-	public void setup(RootPaneContainer container) {
-		
 		canvas = new WorldCanvas(this);
 		
 		controlPanel = new ControlPanel(this);
 		controlPanel.init();
 		
+	}
+	
+	public void setup(RootPaneContainer container) {
+		
 		Container cp = container.getContentPane();
-		cp.setLayout(new BoxLayout(cp, BoxLayout.X_AXIS));
+		cp.setLayout(null);
+		
 		cp.add(canvas.java());
+		
+		Dimension size = canvas.java().getSize();
+		canvas.java().setBounds(0, 0, size.width, size.height);
+		
 		cp.add(controlPanel.java());
+		
+		size = controlPanel.java().getSize();
+		controlPanel.java().setBounds(0 + canvas.java().getWidth(), 0, size.width, size.height);
+		
 	}
 	
 	public void teardown(RootPaneContainer container) {
@@ -259,9 +268,6 @@ public class WorldScreen extends ScreenBase {
 			tool.escKey(ev);
 			break;
 		case DIALOG:
-			
-//			mode = WorldScreenMode.EDITING;
-			
 			break;
 		}
 	}
@@ -776,6 +782,7 @@ public class WorldScreen extends ScreenBase {
 				
 				ctxt.g2 = g2;
 				ctxt.cam = cam;
+				ctxt.FPS_DRAW = FPS_DRAW;
 				
 				//synchronized (VIEW) {
 				paintWorldScreen(ctxt);
