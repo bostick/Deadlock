@@ -19,7 +19,6 @@ import com.gutabi.deadlock.core.geom.AABB;
 import com.gutabi.deadlock.menu.MainMenu;
 import com.gutabi.deadlock.ui.Button;
 import com.gutabi.deadlock.ui.InputEvent;
-import com.gutabi.deadlock.ui.PaintEvent;
 import com.gutabi.deadlock.ui.RenderingContext;
 import com.gutabi.deadlock.ui.RenderingContextType;
 import com.gutabi.deadlock.world.Quadrant;
@@ -600,10 +599,6 @@ public class QuadrantEditor extends ScreenBase {
 			hilited.draw(ctxt);
 		}
 		
-	}
-	
-	public void paint(PaintEvent ev) {
-		assert false;
 	}
 	
 }

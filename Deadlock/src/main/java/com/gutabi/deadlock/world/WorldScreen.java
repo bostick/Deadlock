@@ -22,7 +22,6 @@ import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.ui.DLSFileChooser;
 import com.gutabi.deadlock.ui.InputEvent;
-import com.gutabi.deadlock.ui.PaintEvent;
 import com.gutabi.deadlock.ui.RenderingContext;
 import com.gutabi.deadlock.ui.RenderingContextType;
 import com.gutabi.deadlock.world.cars.Car;
@@ -62,7 +61,7 @@ public class WorldScreen extends ScreenBase {
 	
 	public World world;
 	
-	public Preview preview;
+//	public Preview preview;
 	
 	public Tool tool;
 	
@@ -84,7 +83,7 @@ public class WorldScreen extends ScreenBase {
 		
 		tool = new RegularTool(this);
 		
-		preview = new Preview(this);
+//		preview = new Preview(this);
 		
 		stats = new Stats(this);
 		
@@ -128,10 +127,10 @@ public class WorldScreen extends ScreenBase {
 	public void postDisplay() {
 		
 		Dim canvasDim = canvas.postDisplay();
-		Dim previewDim = controlPanel.previewPanel.postDisplay();
+		
+//		preview.postDisplay();
 		
 		world.canvasPostDisplay(canvasDim);
-		preview.previewPostDisplay(previewDim);
 	}
 	
 	
@@ -570,9 +569,11 @@ public class WorldScreen extends ScreenBase {
 				break;
 			}
 			}
-		} else if (ev.c == controlPanel.previewPanel) {
-			preview.dragged(ev);
-		} else {
+		}
+//		else if (ev.c == controlPanel.preview) {
+//			controlPanel.preview.dragged(ev);
+//		}
+		else {
 			assert false;
 		}
 		
@@ -656,12 +657,9 @@ public class WorldScreen extends ScreenBase {
 		
 	}
 	
-	/**
-	 * screen method
-	 */
 	public void render() {
 		world.renderCanvas();
-		preview.render();
+		controlPanel.preview.render();
 	}
 	
 	
@@ -763,14 +761,14 @@ public class WorldScreen extends ScreenBase {
 		controlPanel.repaint();
 	}
 	
-	public void paint(PaintEvent ev) {
-		if (ev.c == canvas) {
-			assert false;
-		} else if (ev.c == controlPanel.previewPanel) {
-			preview.paint(ev.ctxt);
-		} else {
-			assert false;
-		}
-	}
+//	public void paint(PaintEvent ev) {
+//		if (ev.c == canvas) {
+//			assert false;
+//		} else if (ev.c == controlPanel.previewPanel) {
+//			preview.paint(ev.ctxt);
+//		} else {
+//			assert false;
+//		}
+//	}
 
 }

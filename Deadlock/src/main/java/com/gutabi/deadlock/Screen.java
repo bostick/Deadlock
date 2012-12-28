@@ -3,7 +3,6 @@ package com.gutabi.deadlock;
 import javax.swing.RootPaneContainer;
 
 import com.gutabi.deadlock.ui.InputEvent;
-import com.gutabi.deadlock.ui.PaintEvent;
 
 public interface Screen {
 	
@@ -17,7 +16,7 @@ public interface Screen {
 	
 	void render();
 	
-	void paint(PaintEvent ev);
+//	void paint(PaintEvent ev);
 	
 	
 	

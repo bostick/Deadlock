@@ -6,7 +6,7 @@ public interface Component {
 	
 	int getHeight();
 	
-	java.awt.Component java();
+//	java.awt.Component java();
 	
 	void pressed(InputEvent e);
 	

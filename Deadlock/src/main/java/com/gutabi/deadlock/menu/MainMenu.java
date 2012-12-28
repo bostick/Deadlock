@@ -21,7 +21,6 @@ import com.gutabi.deadlock.core.Dim;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.quadranteditor.QuadrantEditor;
 import com.gutabi.deadlock.ui.InputEvent;
-import com.gutabi.deadlock.ui.PaintEvent;
 import com.gutabi.deadlock.ui.RenderingContext;
 import com.gutabi.deadlock.ui.RenderingContextType;
 import com.gutabi.deadlock.world.WorldScreen;
@@ -398,10 +397,6 @@ public class MainMenu extends ScreenBase {
 			
 		} while (canvas.bs.contentsLost());
 
-	}
-	
-	public void paint(PaintEvent ev) {
-		assert false;
 	}
 	
 }

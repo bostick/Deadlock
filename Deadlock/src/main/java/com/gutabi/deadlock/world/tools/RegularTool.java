@@ -248,7 +248,8 @@ public class RegularTool extends ToolBase {
 			draftMove(screen.lastDraggedWorldPoint);
 			
 			screen.repaintCanvas();
-			screen.controlPanel.previewPanel.repaint();
+			screen.controlPanel.repaint();
+//			screen.controlPanel.previewPanel.repaint();
 			break;
 		}
 	}

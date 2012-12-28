@@ -24,7 +24,6 @@ public class WorldCanvas extends ComponentBase {
 	public BufferStrategy bs;
 	
 	private java.awt.Canvas c;
-	
 	private JavaListener jl;
 	
 	static Logger logger = Logger.getLogger(WorldCanvas.class);

@@ -5,7 +5,6 @@ import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
-import com.gutabi.deadlock.core.Dim;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.AABB;
 import com.gutabi.deadlock.ui.InputEvent;
@@ -20,34 +19,70 @@ public class Preview {
 	
 	public BufferedImage previewImage;
 	
+	AABB aabb = new AABB(0, 0, 100, 100);
+	
 	public Preview(WorldScreen screen) {
 		this.screen = screen;
-	}
-	
-	public void previewPostDisplay(Dim dim) {
 		
-		previewCam.previewWidth = (int)dim.width;
-		previewCam.previewHeight = (int)dim.height;
+		previewCam.previewWidth = 100;
+		previewCam.previewHeight = 100;
 		
 		previewImage = new BufferedImage(previewCam.previewWidth, previewCam.previewHeight, BufferedImage.TYPE_INT_RGB);
+	}
+	
+	public void setLocation(double x, double y) {
+		aabb = new AABB(x, y, aabb.width, aabb.height);
+	}
+	
+	public boolean hitTest(Point p) {
+		if (aabb.hitTest(p)) {
+			return true;
+		}
+		return false;
+	}
+	
+	public Point lastPressPreviewPoint;
+	public Point lastDragPreviewPoint;
+	public Point penDragPreviewPoint;
+	long lastPressTime;
+	long lastDragTime;
+	
+	public void pressed(InputEvent ev) {
+		
+		Point p = ev.p;
+		
+		lastPressPreviewPoint = p;
+		lastPressTime = System.currentTimeMillis();
+		
+		lastDragPreviewPoint = null;
+		lastDragTime = -1;
 		
 	}
 	
 	public void dragged(InputEvent ev) {
 		
-		if (screen.controlPanel.previewPanel.penDragPreviewPoint != null) {
+		Point p = ev.p;
+		
+		penDragPreviewPoint = lastDragPreviewPoint;
+		lastDragPreviewPoint = p;
+		lastDragTime = System.currentTimeMillis();
+		
+		if (penDragPreviewPoint != null) {
 			
-			double dx = screen.controlPanel.previewPanel.lastDragPreviewPoint.x - screen.controlPanel.previewPanel.penDragPreviewPoint.x;
-			double dy = screen.controlPanel.previewPanel.lastDragPreviewPoint.y - screen.controlPanel.previewPanel.penDragPreviewPoint.y;
+			double dx = lastDragPreviewPoint.x - penDragPreviewPoint.x;
+			double dy = lastDragPreviewPoint.y - penDragPreviewPoint.y;
 			
 			pan(new Point(dx, dy));
 			
 			screen.render();
 			screen.repaintCanvas();
 			screen.repaintControlPanel();
-			
-			screen.controlPanel.previewPanel.repaint();
+//			screen.controlPanel.previewPanel.repaint();
 		}
+	}
+	
+	public Point controlPanelToPreview(Point p) {
+		return new Point(p.x - aabb.x, p.y - aabb.y);
 	}
 	
 	public Point previewToWorld(Point p) {
@@ -111,8 +146,12 @@ public class Preview {
 		
 		if (previewImage != null) {
 			
+			AffineTransform origTrans = ctxt.getTransform();
+			
+			ctxt.translate(aabb.x, aabb.y);
+			
 			ctxt.paintImage(previewImage,
-					0, 0, previewCam.previewWidth, previewCam.previewHeight,
+					0, 0, (int)aabb.width, (int)aabb.height,
 					0, 0, previewCam.previewWidth, previewCam.previewHeight);
 			
 			Point prevLoc = worldToPreview(screen.cam.worldViewport.ul);
@@ -125,8 +164,9 @@ public class Preview {
 			double pixelsPerMeterHeight = previewCam.previewHeight / screen.world.quadrantMap.worldHeight;
 			double s = Math.min(pixelsPerMeterWidth, pixelsPerMeterHeight);
 			
-			AffineTransform origTrans = ctxt.getTransform();
-			ctxt.translate(previewCam.previewWidth/2 - (s * screen.world.quadrantMap.worldWidth / 2), previewCam.previewHeight/2 - (s * screen.world.quadrantMap.worldHeight / 2));
+			ctxt.translate(
+					previewCam.previewWidth/2 - (s * screen.world.quadrantMap.worldWidth / 2),
+					previewCam.previewHeight/2 - (s * screen.world.quadrantMap.worldHeight / 2));
 			
 			ctxt.setColor(Color.BLUE);
 			prev.draw(ctxt);

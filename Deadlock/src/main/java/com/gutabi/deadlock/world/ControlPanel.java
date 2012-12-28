@@ -8,8 +8,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
-import javax.swing.JPanel;
-
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.ui.Button;
 import com.gutabi.deadlock.ui.Checkbox;
@@ -20,7 +18,7 @@ import com.gutabi.deadlock.ui.RenderingContext;
 
 public class ControlPanel extends ComponentBase {
 	
-	JPanel panel;
+	private java.awt.Canvas c;
 	private JavaListener jl;
 	
 	WorldScreen screen;
@@ -50,17 +48,16 @@ public class ControlPanel extends ComponentBase {
 	public Checkbox explosionsCheckBox;
 	public Checkbox debugCheckBox;
 	
-	public PreviewPanel previewPanel;
+	public Preview preview;
 	
 	@SuppressWarnings("serial")
 	public ControlPanel(WorldScreen screen) {
 		
 		this.screen = screen;
 		
-		this.panel = new JPanel() {
-			@Override
-			public void paintComponent(Graphics g) {
-				super.paintComponent(g);
+		this.c = new java.awt.Canvas() {
+			public void paint(Graphics g) {
+				super.paint(g);
 				
 				RenderingContext ctxt = new RenderingContext(null);
 				ctxt.g2 = (Graphics2D)g;
@@ -90,16 +87,18 @@ public class ControlPanel extends ComponentBase {
 				carTextureCheckBox.paint(ctxt);
 				explosionsCheckBox.paint(ctxt);
 				debugCheckBox.paint(ctxt);
+				
+				preview.paint(ctxt);
 			}
 		};
 		
-		panel.setSize(new Dimension(200, 822));
-		panel.setPreferredSize(new Dimension(200, 822));
-		panel.setMaximumSize(new Dimension(200, 822));
+		c.setSize(new Dimension(200, 822));
+		c.setPreferredSize(new Dimension(200, 822));
+		c.setMaximumSize(new Dimension(200, 822));
 		
 		jl = new JavaListener();
-		panel.addMouseListener(jl);
-		panel.addMouseMotionListener(jl);
+		c.addMouseListener(jl);
+		c.addMouseMotionListener(jl);
 	}
 	
 	class JavaListener implements MouseListener, MouseMotionListener {
@@ -135,22 +134,20 @@ public class ControlPanel extends ComponentBase {
 	}
 	
 	public int getWidth() {
-		return panel.getWidth();
+		return c.getWidth();
 	}
 	
 	public int getHeight() {
-		return panel.getHeight();
+		return c.getHeight();
 	}
 	
 	public java.awt.Component java() {
-		return panel;
+		return c;
 	}
 	
 	public void init() {
 		
-		previewPanel = new PreviewPanel(screen);
-		
-		panel.setLayout(null);
+//		c.setLayout(null);
 		
 		simulationInitLab = new Label("Simulation Init:");
 		simulationInitLab.font = new Font("Visitor TT1 BRK", Font.PLAIN, 16);
@@ -392,14 +389,8 @@ public class ControlPanel extends ComponentBase {
 		debugLab.setLocation(5 + debugCheckBox.getWidth() + 5, 160 + stateLab.getHeight() + 5 + fpsCheckBox.getHeight() + 5 + stopSignCheckBox.getHeight() + 5 + carTextureCheckBox.getHeight() + 5 + explosionsCheckBox.getHeight() + 5);
 		debugLab.render();
 		
-		
-		previewPanel = new PreviewPanel(screen);
-		
-		panel.add(previewPanel.java());
-		
-		Dimension size = previewPanel.java().getPreferredSize();
-		previewPanel.java().setBounds(5, 400, size.width, size.height);
-		
+		preview = new Preview(screen);
+		preview.setLocation(5, 400);
 	}
 	
 	public void clicked(InputEvent ev) {
@@ -428,8 +419,48 @@ public class ControlPanel extends ComponentBase {
 		
 	}
 	
+	
+	public Point lastPressedControlPanelPoint;
+	
+	public void pressed(InputEvent ev) {
+		
+		if (preview.hitTest(ev.p)) {
+			Point p = ev.p;
+			
+			lastPressedControlPanelPoint = p;
+			lastDraggedControlPanelPoint = null;
+			
+			preview.pressed(new InputEvent(null, preview.controlPanelToPreview(p)));
+			
+		} else {
+			
+		}
+		
+	}
+	
+	public Point lastDraggedControlPanelPoint;
+	public boolean lastDraggedControlPanelPointWasNull;
+	
+	public void dragged(InputEvent ev) {
+		
+		if (lastPressedControlPanelPoint != null && preview.hitTest(lastPressedControlPanelPoint)) {
+			
+			Point p = ev.p;
+			
+			preview.dragged(new InputEvent(null, preview.controlPanelToPreview(p)));
+			
+		}
+//		else if (ev.c == controlPanel.preview) {
+//			controlPanel.preview.dragged(ev);
+//		}
+		else {
+			assert false;
+		}
+		
+	}
+	
 	public void repaint() {
-		panel.repaint();
+		c.repaint();
 	}
 	
 }
