@@ -3,7 +3,7 @@ package com.gutabi.deadlock.world;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.gutabi.deadlock.view.RenderingContext;
+import com.gutabi.deadlock.ui.RenderingContext;
 import com.gutabi.deadlock.world.sprites.AnimatedExplosion;
 
 public class ExplosionMap {

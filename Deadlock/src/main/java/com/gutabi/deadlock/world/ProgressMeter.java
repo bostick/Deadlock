@@ -3,7 +3,7 @@ package com.gutabi.deadlock.world;
 import java.awt.Color;
 
 import com.gutabi.deadlock.core.geom.AABB;
-import com.gutabi.deadlock.view.RenderingContext;
+import com.gutabi.deadlock.ui.RenderingContext;
 
 public class ProgressMeter {
 	

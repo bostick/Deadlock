@@ -3,7 +3,7 @@ package com.gutabi.deadlock.world;
 import java.awt.Color;
 import java.awt.geom.AffineTransform;
 
-import com.gutabi.deadlock.view.RenderingContext;
+import com.gutabi.deadlock.ui.RenderingContext;
 
 //@SuppressWarnings("static-access")
 public class Stats {

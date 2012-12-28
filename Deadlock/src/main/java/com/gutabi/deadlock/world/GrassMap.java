@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.gutabi.deadlock.core.geom.Shape;
 import com.gutabi.deadlock.core.geom.ShapeUtils;
-import com.gutabi.deadlock.view.RenderingContext;
+import com.gutabi.deadlock.ui.RenderingContext;
 import com.gutabi.deadlock.world.sprites.AnimatedGrass;
 
 public class GrassMap {

@@ -1,7 +1,6 @@
 package com.gutabi.deadlock.menu;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
-import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
 import java.awt.Color;
 import java.awt.Container;
@@ -20,10 +19,10 @@ import com.gutabi.deadlock.ScreenBase;
 import com.gutabi.deadlock.core.Dim;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.quadranteditor.QuadrantEditor;
-import com.gutabi.deadlock.view.InputEvent;
-import com.gutabi.deadlock.view.PaintEvent;
-import com.gutabi.deadlock.view.RenderingContext;
-import com.gutabi.deadlock.view.RenderingContextType;
+import com.gutabi.deadlock.ui.InputEvent;
+import com.gutabi.deadlock.ui.PaintEvent;
+import com.gutabi.deadlock.ui.RenderingContext;
+import com.gutabi.deadlock.ui.RenderingContextType;
 import com.gutabi.deadlock.world.WorldScreen;
 import com.gutabi.deadlock.world.examples.FourByFourGridWorld;
 import com.gutabi.deadlock.world.examples.OneByOneWorld;
@@ -324,7 +323,7 @@ public class MainMenu extends ScreenBase {
 	public void render() {
 		logger.debug("render");
 		
-		synchronized (VIEW) {
+		synchronized (APP) {
 			
 			BufferedImage canvasMenuImage = new BufferedImage(MENU_WIDTH, MENU_HEIGHT, BufferedImage.TYPE_INT_RGB);
 			
@@ -379,19 +378,19 @@ public class MainMenu extends ScreenBase {
 				
 				AffineTransform menuTrans = ctxt.getTransform();
 				
-				ctxt.paintImage(VIEW.titleBackground, 0, 0, MENU_WIDTH, MENU_HEIGHT, 0, 0, MENU_WIDTH, MENU_HEIGHT);
+				ctxt.paintImage(APP.titleBackground, 0, 0, MENU_WIDTH, MENU_HEIGHT, 0, 0, MENU_WIDTH, MENU_HEIGHT);
 				
 				ctxt.translate(MENU_WIDTH/2 - 498/2, 20);
-				ctxt.paintImage(VIEW.title_white, 0, 0, 498, 90, 0, 0, 498, 90);
+				ctxt.paintImage(APP.title_white, 0, 0, 498, 90, 0, 0, 498, 90);
 				
 				ctxt.setTransform(menuTrans);
 				
 				ctxt.translate(MENU_WIDTH/2 - 432/2, 550);
-				ctxt.paintImage(VIEW.copyright, 0, 0, 432, 38, 0, 0, 432, 38);
+				ctxt.paintImage(APP.copyright, 0, 0, 432, 38, 0, 0, 432, 38);
 				
 				ctxt.setTransform(menuTrans);
 				
-				ctxt.setColor(VIEW.menuBackground);
+				ctxt.setColor(APP.menuBackground);
 				ctxt.fillRect((int)(MENU_WIDTH/2 - widest/2 - 5), 150 - 5, (int)(widest + 10), totalHeight + 10 * (items.size() - 1) + 5 + 5);
 				
 				for (MenuItem item : items) {

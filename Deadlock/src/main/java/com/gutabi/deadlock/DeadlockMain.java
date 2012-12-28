@@ -1,7 +1,6 @@
 package com.gutabi.deadlock;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
-import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
 import java.net.URL;
 
@@ -20,6 +19,8 @@ public class DeadlockMain  {
 	
 	static void createAndShowGUI() throws Exception {
 		
+		APP.init();
+		
 		APP.codebase = new URL("file:.");
 		
 		MainMenu s = new MainMenu();
@@ -27,7 +28,6 @@ public class DeadlockMain  {
 		
 		APP.setupFrame();
 		s.setup(APP.container);
-		VIEW.init();
 		
 		((JFrame)APP.container).setVisible(true);
 		

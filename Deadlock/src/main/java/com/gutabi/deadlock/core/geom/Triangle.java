@@ -3,7 +3,7 @@ package com.gutabi.deadlock.core.geom;
 import java.awt.geom.GeneralPath;
 
 import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.view.RenderingContext;
+import com.gutabi.deadlock.ui.RenderingContext;
 
 public class Triangle {
 	

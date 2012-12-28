@@ -1,13 +1,12 @@
 package com.gutabi.deadlock.world.sprites;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
-import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
 import java.awt.geom.AffineTransform;
 
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.AABB;
-import com.gutabi.deadlock.view.RenderingContext;
+import com.gutabi.deadlock.ui.RenderingContext;
 
 //@SuppressWarnings("static-access")
 public class AnimatedGrass {
@@ -89,7 +88,7 @@ public class AnimatedGrass {
 		AffineTransform origTransform = ctxt.getTransform();
 		
 		ctxt.translate(p.x - AnimatedGrass.GRASS_SIZE/2, p.y - AnimatedGrass.GRASS_SIZE/2);
-		ctxt.paintImage(VIEW.sheet,
+		ctxt.paintImage(APP.sheet,
 				0, 0, GRASS_SIZE, GRASS_SIZE,
 				0, 256, 0+32, 256+32);	
 		
@@ -102,7 +101,7 @@ public class AnimatedGrass {
 		AffineTransform origTransform = ctxt.getTransform();
 		
 		ctxt.translate(p.x - AnimatedGrass.GRASS_SIZE/2, p.y - AnimatedGrass.GRASS_SIZE/2);
-		ctxt.paintImage(VIEW.sheet,
+		ctxt.paintImage(APP.sheet,
 				0, 0, GRASS_SIZE, GRASS_SIZE,
 				32, 256, 32+32, 256+32);
 		
@@ -115,7 +114,7 @@ public class AnimatedGrass {
 		AffineTransform origTransform = ctxt.getTransform();
 		
 		ctxt.translate(p.x - AnimatedGrass.GRASS_SIZE/2, p.y - AnimatedGrass.GRASS_SIZE/2);
-		ctxt.paintImage(VIEW.sheet,
+		ctxt.paintImage(APP.sheet,
 				0, 0, GRASS_SIZE, GRASS_SIZE,
 				64, 256, 64+32, 256+32);
 		

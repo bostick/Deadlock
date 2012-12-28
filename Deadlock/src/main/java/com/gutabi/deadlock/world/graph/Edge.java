@@ -4,7 +4,7 @@ import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.Shape;
 import com.gutabi.deadlock.core.geom.SweepableShape;
-import com.gutabi.deadlock.view.RenderingContext;
+import com.gutabi.deadlock.ui.RenderingContext;
 
 public abstract class Edge extends Entity {
 	

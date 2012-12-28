@@ -1,6 +1,6 @@
 package com.gutabi.deadlock.world.graph;
 
-import static com.gutabi.deadlock.view.DeadlockView.VIEW;
+import static com.gutabi.deadlock.DeadlockApplication.APP;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -25,8 +25,8 @@ import com.gutabi.deadlock.core.geom.Circle;
 import com.gutabi.deadlock.core.geom.Shape;
 import com.gutabi.deadlock.core.geom.ShapeUtils;
 import com.gutabi.deadlock.core.geom.Triangle;
-import com.gutabi.deadlock.view.RenderingContext;
-import com.gutabi.deadlock.view.RenderingContextType;
+import com.gutabi.deadlock.ui.RenderingContext;
+import com.gutabi.deadlock.ui.RenderingContextType;
 
 //@SuppressWarnings("static-access")
 public class Road extends Edge {
@@ -769,7 +769,7 @@ public class Road extends Edge {
 	}
 	
 	public void paintHilite(RenderingContext ctxt) {
-		ctxt.setColor(VIEW.roadHiliteColor);
+		ctxt.setColor(APP.roadHiliteColor);
 		ctxt.setPixelStroke(1.0);
 		drawPath(ctxt);
 	}

@@ -1,5 +1,7 @@
 package com.gutabi.deadlock.menu;
 
+import static com.gutabi.deadlock.DeadlockApplication.APP;
+
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
@@ -11,9 +13,7 @@ import java.awt.image.BufferedImage;
 
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.AABB;
-import com.gutabi.deadlock.view.RenderingContext;
-
-import static com.gutabi.deadlock.view.DeadlockView.VIEW;
+import com.gutabi.deadlock.ui.RenderingContext;
 
 //@SuppressWarnings("static-access")
 public abstract class MenuItem {
@@ -75,7 +75,7 @@ public abstract class MenuItem {
 		
 		img = new BufferedImage((int)aabb.width, (int)aabb.height, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g2 = img.createGraphics();
-		g2.setColor(VIEW.menuBackground);
+		g2.setColor(APP.menuBackground);
 		g2.fillRect(0, 0, img.getWidth(), img.getHeight());
 		if (active) {
 			g2.setColor(Color.WHITE);

@@ -13,11 +13,11 @@ import javax.swing.JPanel;
 
 import com.gutabi.deadlock.core.Dim;
 import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.view.ComponentBase;
-import com.gutabi.deadlock.view.InputEvent;
-import com.gutabi.deadlock.view.PaintEvent;
-import com.gutabi.deadlock.view.RenderingContext;
-import com.gutabi.deadlock.view.RenderingContextType;
+import com.gutabi.deadlock.ui.ComponentBase;
+import com.gutabi.deadlock.ui.InputEvent;
+import com.gutabi.deadlock.ui.PaintEvent;
+import com.gutabi.deadlock.ui.RenderingContext;
+import com.gutabi.deadlock.ui.RenderingContextType;
 
 //@SuppressWarnings({"serial", "static-access"})
 @SuppressWarnings({"serial"})

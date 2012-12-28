@@ -10,8 +10,8 @@ import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.Circle;
-import com.gutabi.deadlock.view.RenderingContext;
-import com.gutabi.deadlock.world.car.Driver;
+import com.gutabi.deadlock.ui.RenderingContext;
+import com.gutabi.deadlock.world.cars.Driver;
 
 //@SuppressWarnings("static-access")
 public abstract class Vertex extends Entity {

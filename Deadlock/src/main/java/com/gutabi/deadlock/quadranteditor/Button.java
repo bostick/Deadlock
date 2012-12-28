@@ -2,7 +2,7 @@ package com.gutabi.deadlock.quadranteditor;
 
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.AABB;
-import com.gutabi.deadlock.view.RenderingContext;
+import com.gutabi.deadlock.ui.RenderingContext;
 
 public abstract class Button {
 	

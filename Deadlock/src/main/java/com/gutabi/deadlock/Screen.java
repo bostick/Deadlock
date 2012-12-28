@@ -4,8 +4,8 @@ import java.awt.event.ActionListener;
 
 import javax.swing.RootPaneContainer;
 
-import com.gutabi.deadlock.view.InputEvent;
-import com.gutabi.deadlock.view.PaintEvent;
+import com.gutabi.deadlock.ui.InputEvent;
+import com.gutabi.deadlock.ui.PaintEvent;
 
 public interface Screen extends ActionListener {
 	

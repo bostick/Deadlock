@@ -20,7 +20,7 @@ import com.gutabi.deadlock.core.geom.Circle;
 import com.gutabi.deadlock.core.geom.ShapeUtils;
 import com.gutabi.deadlock.core.geom.SweepEvent;
 import com.gutabi.deadlock.core.geom.SweepEventType;
-import com.gutabi.deadlock.view.RenderingContext;
+import com.gutabi.deadlock.ui.RenderingContext;
 import com.gutabi.deadlock.world.graph.EdgePosition;
 import com.gutabi.deadlock.world.graph.GraphPosition;
 import com.gutabi.deadlock.world.graph.Road;

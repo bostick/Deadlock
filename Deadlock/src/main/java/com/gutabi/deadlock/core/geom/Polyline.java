@@ -4,7 +4,7 @@ import java.awt.geom.Path2D;
 import java.util.List;
 
 import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.view.RenderingContext;
+import com.gutabi.deadlock.ui.RenderingContext;
 
 //@SuppressWarnings("static-access")
 public class Polyline {

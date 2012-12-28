@@ -5,7 +5,7 @@ import java.awt.geom.Ellipse2D;
 import org.apache.log4j.Logger;
 
 import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.view.RenderingContext;
+import com.gutabi.deadlock.ui.RenderingContext;
 
 //@SuppressWarnings("static-access")
 public class Ellipse implements Shape {

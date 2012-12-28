@@ -7,13 +7,13 @@ import org.jbox2d.callbacks.QueryCallback;
 
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.AABB;
-import com.gutabi.deadlock.view.RenderingContext;
-import com.gutabi.deadlock.world.car.Car;
-import com.gutabi.deadlock.world.car.CarProximityEvent;
-import com.gutabi.deadlock.world.car.CarStateEnum;
-import com.gutabi.deadlock.world.car.Driver;
-import com.gutabi.deadlock.world.car.DrivingEvent;
-import com.gutabi.deadlock.world.car.VertexArrivalEvent;
+import com.gutabi.deadlock.ui.RenderingContext;
+import com.gutabi.deadlock.world.cars.Car;
+import com.gutabi.deadlock.world.cars.CarProximityEvent;
+import com.gutabi.deadlock.world.cars.CarStateEnum;
+import com.gutabi.deadlock.world.cars.Driver;
+import com.gutabi.deadlock.world.cars.DrivingEvent;
+import com.gutabi.deadlock.world.cars.VertexArrivalEvent;
 import com.gutabi.deadlock.world.graph.Vertex;
 
 //@SuppressWarnings("static-access")

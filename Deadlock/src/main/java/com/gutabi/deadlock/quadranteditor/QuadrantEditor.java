@@ -1,7 +1,6 @@
 package com.gutabi.deadlock.quadranteditor;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
-import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
 import java.awt.Color;
 import java.awt.Container;
@@ -17,10 +16,10 @@ import com.gutabi.deadlock.core.Dim;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.AABB;
 import com.gutabi.deadlock.menu.MainMenu;
-import com.gutabi.deadlock.view.InputEvent;
-import com.gutabi.deadlock.view.PaintEvent;
-import com.gutabi.deadlock.view.RenderingContext;
-import com.gutabi.deadlock.view.RenderingContextType;
+import com.gutabi.deadlock.ui.InputEvent;
+import com.gutabi.deadlock.ui.PaintEvent;
+import com.gutabi.deadlock.ui.RenderingContext;
+import com.gutabi.deadlock.ui.RenderingContextType;
 import com.gutabi.deadlock.world.Quadrant;
 import com.gutabi.deadlock.world.World;
 import com.gutabi.deadlock.world.WorldScreen;
@@ -110,7 +109,7 @@ public class QuadrantEditor extends ScreenBase {
 				ctxt.translate(aabb.ul.x, aabb.ul.y);
 				ctxt.rotate(6 * Math.PI / 4, aabb.width/2, aabb.height/2);
 				
-				ctxt.paintImage(VIEW.sheet, 0, 0, 50, 50, 128, 224, 160, 256);
+				ctxt.paintImage(APP.sheet, 0, 0, 50, 50, 128, 224, 160, 256);
 				
 				ctxt.setTransform(origTransform);
 				
@@ -154,7 +153,7 @@ public class QuadrantEditor extends ScreenBase {
 				ctxt.translate(aabb.ul.x, aabb.ul.y);
 				ctxt.rotate(2 * Math.PI / 4, aabb.width/2, aabb.height/2);
 				
-				ctxt.paintImage(VIEW.sheet, 0, 0, 50, 50, 128, 224, 160, 256);
+				ctxt.paintImage(APP.sheet, 0, 0, 50, 50, 128, 224, 160, 256);
 				
 				ctxt.setTransform(origTransform);
 				
@@ -198,7 +197,7 @@ public class QuadrantEditor extends ScreenBase {
 				ctxt.translate(aabb.ul.x, aabb.ul.y);
 				ctxt.rotate(4 * Math.PI / 4, aabb.width/2, aabb.height/2);
 				
-				ctxt.paintImage(VIEW.sheet, 0, 0, 50, 50, 128, 224, 160, 256);
+				ctxt.paintImage(APP.sheet, 0, 0, 50, 50, 128, 224, 160, 256);
 				
 				ctxt.setTransform(origTransform);
 				
@@ -241,7 +240,7 @@ public class QuadrantEditor extends ScreenBase {
 				ctxt.translate(aabb.ul.x, aabb.ul.y);
 				ctxt.rotate(0 * Math.PI / 4, aabb.width/2, aabb.height/2);
 				
-				ctxt.paintImage(VIEW.sheet, 0, 0, 50, 50, 128, 224, 160, 256);
+				ctxt.paintImage(APP.sheet, 0, 0, 50, 50, 128, 224, 160, 256);
 				
 				ctxt.setTransform(origTransform);
 				
@@ -286,7 +285,7 @@ public class QuadrantEditor extends ScreenBase {
 				ctxt.translate(aabb.ul.x, aabb.ul.y);
 				ctxt.rotate(5 * Math.PI / 4, aabb.width/2, aabb.height/2);
 				
-				ctxt.paintImage(VIEW.sheet, 0, 0, 50, 50, 128, 224, 160, 256);
+				ctxt.paintImage(APP.sheet, 0, 0, 50, 50, 128, 224, 160, 256);
 				
 				ctxt.setTransform(origTransform);
 				
@@ -330,7 +329,7 @@ public class QuadrantEditor extends ScreenBase {
 				ctxt.translate(aabb.ul.x, aabb.ul.y);
 				ctxt.rotate(1 * Math.PI / 4, aabb.width/2, aabb.height/2);
 				
-				ctxt.paintImage(VIEW.sheet, 0, 0, 50, 50, 128, 224, 160, 256);
+				ctxt.paintImage(APP.sheet, 0, 0, 50, 50, 128, 224, 160, 256);
 				
 				ctxt.setTransform(origTransform);
 				

@@ -21,18 +21,18 @@ import com.gutabi.deadlock.ScreenBase;
 import com.gutabi.deadlock.core.Dim;
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.view.DLSFileChooser;
-import com.gutabi.deadlock.view.InputEvent;
-import com.gutabi.deadlock.view.PaintEvent;
-import com.gutabi.deadlock.view.RenderingContext;
-import com.gutabi.deadlock.view.RenderingContextType;
-import com.gutabi.deadlock.world.car.Car;
+import com.gutabi.deadlock.ui.DLSFileChooser;
+import com.gutabi.deadlock.ui.InputEvent;
+import com.gutabi.deadlock.ui.PaintEvent;
+import com.gutabi.deadlock.ui.RenderingContext;
+import com.gutabi.deadlock.ui.RenderingContextType;
+import com.gutabi.deadlock.world.cars.Car;
 import com.gutabi.deadlock.world.graph.Merger;
 import com.gutabi.deadlock.world.graph.Road;
 import com.gutabi.deadlock.world.graph.StopSign;
 import com.gutabi.deadlock.world.graph.Vertex;
-import com.gutabi.deadlock.world.tool.RegularTool;
-import com.gutabi.deadlock.world.tool.Tool;
+import com.gutabi.deadlock.world.tools.RegularTool;
+import com.gutabi.deadlock.world.tools.Tool;
 
 //@SuppressWarnings("static-access")
 public class WorldScreen extends ScreenBase {

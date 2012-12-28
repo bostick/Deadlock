@@ -1,7 +1,6 @@
 package com.gutabi.deadlock.world.graph;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
-import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
 import java.awt.Color;
 import java.awt.geom.AffineTransform;
@@ -13,15 +12,15 @@ import java.util.List;
 import java.util.Scanner;
 
 import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.view.RenderingContext;
+import com.gutabi.deadlock.ui.RenderingContext;
 import com.gutabi.deadlock.world.ControlPanel;
 import com.gutabi.deadlock.world.ProgressMeter;
 import com.gutabi.deadlock.world.World;
-import com.gutabi.deadlock.world.car.Car;
-import com.gutabi.deadlock.world.car.FastCar;
-import com.gutabi.deadlock.world.car.NormalCar;
-import com.gutabi.deadlock.world.car.RandomCar;
-import com.gutabi.deadlock.world.car.ReallyFastCar;
+import com.gutabi.deadlock.world.cars.Car;
+import com.gutabi.deadlock.world.cars.FastCar;
+import com.gutabi.deadlock.world.cars.NormalCar;
+import com.gutabi.deadlock.world.cars.RandomCar;
+import com.gutabi.deadlock.world.cars.ReallyFastCar;
 
 //@SuppressWarnings("static-access")
 public final class Fixture extends Vertex {
@@ -368,14 +367,14 @@ public final class Fixture extends Vertex {
 				}
 				
 				ctxt.translate(-r, -r);
-				ctxt.paintImage(VIEW.sheet,
+				ctxt.paintImage(APP.sheet,
 						0, 0, 2 * r, 2 * r,
 						96, 224, 96+32, 224+32);
 				
 				ctxt.setTransform(origTransform);
 				
 			} else {
-				ctxt.setColor(VIEW.LIGHTGREEN);
+				ctxt.setColor(APP.LIGHTGREEN);
 				shape.paint(ctxt);
 				
 				ctxt.setColor(Color.BLACK);
@@ -385,7 +384,7 @@ public final class Fixture extends Vertex {
 			
 			break;
 		case PREVIEW:
-			ctxt.setColor(VIEW.LIGHTGREEN);
+			ctxt.setColor(APP.LIGHTGREEN);
 			shape.paint(ctxt);
 			break;
 		}
@@ -393,7 +392,7 @@ public final class Fixture extends Vertex {
 	}
 	
 	public void paintHilite(RenderingContext ctxt) {
-		ctxt.setColor(VIEW.fixtureHiliteColor);
+		ctxt.setColor(APP.fixtureHiliteColor);
 		shape.paint(ctxt);
 	}
 	

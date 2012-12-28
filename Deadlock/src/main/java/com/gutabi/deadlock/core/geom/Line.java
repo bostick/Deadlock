@@ -3,7 +3,7 @@ package com.gutabi.deadlock.core.geom;
 import java.awt.geom.Line2D;
 
 import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.view.RenderingContext;
+import com.gutabi.deadlock.ui.RenderingContext;
 
 //@SuppressWarnings("static-access")
 public class Line {

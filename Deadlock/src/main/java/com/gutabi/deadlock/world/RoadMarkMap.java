@@ -6,7 +6,7 @@ import java.util.List;
 
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.Capsule;
-import com.gutabi.deadlock.view.RenderingContext;
+import com.gutabi.deadlock.ui.RenderingContext;
 
 public class RoadMarkMap {
 	

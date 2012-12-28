@@ -7,7 +7,7 @@ import java.util.List;
 
 import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.view.RenderingContext;
+import com.gutabi.deadlock.ui.RenderingContext;
 
 //@SuppressWarnings("static-access")
 public class Quad extends SweepableShape {

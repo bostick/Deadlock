@@ -2,7 +2,7 @@ package com.gutabi.deadlock;
 
 import java.awt.event.ActionEvent;
 
-import com.gutabi.deadlock.view.InputEvent;
+import com.gutabi.deadlock.ui.InputEvent;
 
 public abstract class ScreenBase implements Screen {
 	

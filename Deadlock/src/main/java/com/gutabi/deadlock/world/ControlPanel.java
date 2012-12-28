@@ -9,7 +9,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import com.gutabi.deadlock.view.ComponentBase;
+import com.gutabi.deadlock.ui.ComponentBase;
 
 //@SuppressWarnings({"serial", "static-access"})
 //@SuppressWarnings({"serial"})

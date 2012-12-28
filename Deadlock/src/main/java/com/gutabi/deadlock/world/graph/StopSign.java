@@ -1,6 +1,6 @@
 package com.gutabi.deadlock.world.graph;
 
-import static com.gutabi.deadlock.view.DeadlockView.VIEW;
+import static com.gutabi.deadlock.DeadlockApplication.APP;
 
 import java.awt.Color;
 import java.awt.geom.AffineTransform;
@@ -8,7 +8,7 @@ import java.awt.geom.AffineTransform;
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.Circle;
-import com.gutabi.deadlock.view.RenderingContext;
+import com.gutabi.deadlock.ui.RenderingContext;
 
 //@SuppressWarnings("static-access")
 public class StopSign extends Entity {
@@ -129,7 +129,7 @@ public class StopSign extends Entity {
 					AffineTransform origTransform = ctxt.getTransform();
 					
 					ctxt.translate(p.x - StopSign.STOPSIGN_SIZE/2, p.y - StopSign.STOPSIGN_SIZE/2);
-					ctxt.paintImage(VIEW.sheet,
+					ctxt.paintImage(APP.sheet,
 							0, 0, STOPSIGN_SIZE, STOPSIGN_SIZE,
 							32, 224, 32+32, 224+32);
 					

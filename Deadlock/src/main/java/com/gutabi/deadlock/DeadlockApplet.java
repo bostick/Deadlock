@@ -1,7 +1,6 @@
 package com.gutabi.deadlock;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
-import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
 import javax.swing.JApplet;
 import javax.swing.JFrame;
@@ -19,6 +18,8 @@ public class DeadlockApplet extends JApplet {
 	
 	static void createAndShowGUI(DeadlockApplet app) throws Exception {
 		
+		APP.init();
+		
 		APP.codebase = app.getCodeBase();
 		
 		MainMenu s = new MainMenu();
@@ -26,7 +27,6 @@ public class DeadlockApplet extends JApplet {
 		
 		APP.setupFrame();
 		s.setup(app);
-		VIEW.init();
 		
 		((JFrame)APP.container).setVisible(true);
 		

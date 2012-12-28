@@ -1,6 +1,6 @@
 package com.gutabi.deadlock.world;
 
-import static com.gutabi.deadlock.view.DeadlockView.VIEW;
+import static com.gutabi.deadlock.DeadlockApplication.APP;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
@@ -14,7 +14,7 @@ import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.AABB;
 import com.gutabi.deadlock.core.geom.Shape;
 import com.gutabi.deadlock.core.geom.ShapeUtils;
-import com.gutabi.deadlock.view.RenderingContext;
+import com.gutabi.deadlock.ui.RenderingContext;
 
 //@SuppressWarnings("static-access")
 public class QuadrantMap {
@@ -131,8 +131,7 @@ public class QuadrantMap {
 		int maxRows = (int)Math.ceil(quadrantHeightPixels/32.0);
 		for (int i = 0; i < maxRows; i++) {
 			for (int j = 0; j < maxCols; j++) {
-				quadrantGrassG2.drawImage(
-						VIEW.sheet,
+				quadrantGrassG2.drawImage(APP.sheet,
 						32 * j, 32 * i, 32 * j + 32, 32 * i + 32,
 						0, 224, 0+32, 224+32, null);
 			}

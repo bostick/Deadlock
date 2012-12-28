@@ -1,7 +1,6 @@
 package com.gutabi.deadlock.world;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
-import static com.gutabi.deadlock.view.DeadlockView.VIEW;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -19,10 +18,10 @@ import com.gutabi.deadlock.core.Dim;
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.AABB;
-import com.gutabi.deadlock.view.RenderingContext;
-import com.gutabi.deadlock.view.RenderingContextType;
-import com.gutabi.deadlock.world.car.Car;
-import com.gutabi.deadlock.world.car.CarEventListener;
+import com.gutabi.deadlock.ui.RenderingContext;
+import com.gutabi.deadlock.ui.RenderingContextType;
+import com.gutabi.deadlock.world.cars.Car;
+import com.gutabi.deadlock.world.cars.CarEventListener;
 import com.gutabi.deadlock.world.graph.Fixture;
 import com.gutabi.deadlock.world.graph.Graph;
 import com.gutabi.deadlock.world.graph.Intersection;
@@ -336,7 +335,7 @@ public class World {
 	public void renderCanvas() {
 		assert !Thread.holdsLock(APP);
 		
-		synchronized (VIEW) {
+		synchronized (APP) {
 			
 			Graphics2D backgroundG2 = background.createGraphics();
 			

@@ -12,8 +12,8 @@ import org.apache.log4j.Logger;
 
 import com.gutabi.deadlock.core.Dim;
 import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.view.ComponentBase;
-import com.gutabi.deadlock.view.InputEvent;
+import com.gutabi.deadlock.ui.ComponentBase;
+import com.gutabi.deadlock.ui.InputEvent;
 
 @SuppressWarnings("serial")
 public class WorldCanvas extends ComponentBase {

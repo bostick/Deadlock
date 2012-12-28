@@ -7,7 +7,7 @@ import java.io.StringReader;
 import java.util.Scanner;
 
 import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.view.RenderingContext;
+import com.gutabi.deadlock.ui.RenderingContext;
 
 //@SuppressWarnings("static-access")
 public class Intersection extends Vertex {

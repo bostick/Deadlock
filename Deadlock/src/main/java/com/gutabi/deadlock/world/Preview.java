@@ -8,9 +8,9 @@ import java.awt.image.BufferedImage;
 import com.gutabi.deadlock.core.Dim;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.AABB;
-import com.gutabi.deadlock.view.InputEvent;
-import com.gutabi.deadlock.view.RenderingContext;
-import com.gutabi.deadlock.view.RenderingContextType;
+import com.gutabi.deadlock.ui.InputEvent;
+import com.gutabi.deadlock.ui.RenderingContext;
+import com.gutabi.deadlock.ui.RenderingContextType;
 
 public class Preview {
 	

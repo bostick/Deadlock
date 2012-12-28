@@ -28,7 +28,7 @@ import com.gutabi.deadlock.core.geom.Shape;
 import com.gutabi.deadlock.core.geom.ShapeUtils;
 import com.gutabi.deadlock.core.geom.SweepEvent;
 import com.gutabi.deadlock.core.geom.Sweepable;
-import com.gutabi.deadlock.view.RenderingContext;
+import com.gutabi.deadlock.ui.RenderingContext;
 import com.gutabi.deadlock.world.ControlPanel;
 import com.gutabi.deadlock.world.World;
 

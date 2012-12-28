@@ -1,11 +1,11 @@
 package com.gutabi.deadlock.world.sprites;
 
-import static com.gutabi.deadlock.view.DeadlockView.VIEW;
+import static com.gutabi.deadlock.DeadlockApplication.APP;
 
 import java.awt.geom.AffineTransform;
 
 import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.view.RenderingContext;
+import com.gutabi.deadlock.ui.RenderingContext;
 
 //@SuppressWarnings("static-access")
 public class AnimatedExplosion {
@@ -65,7 +65,7 @@ public class AnimatedExplosion {
 		AffineTransform origTransform = ctxt.getTransform();
 		
 		ctxt.translate(p.x - explosionWidth/2, p.y - explosionHeight/2);
-		ctxt.paintImage(VIEW.explosionSheet,
+		ctxt.paintImage(APP.explosionSheet,
 				0, 0, explosionWidth, explosionHeight,
 				71 * index, 0, 71 * index + 71, 100);
 		
