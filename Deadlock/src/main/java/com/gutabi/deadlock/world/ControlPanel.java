@@ -2,6 +2,8 @@ package com.gutabi.deadlock.world;
 
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -10,6 +12,9 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import com.gutabi.deadlock.ui.ComponentBase;
+import com.gutabi.deadlock.ui.Label;
+import com.gutabi.deadlock.ui.RenderingContext;
+import com.gutabi.deadlock.ui.RenderingContextType;
 
 public class ControlPanel extends ComponentBase {
 	
@@ -17,8 +22,7 @@ public class ControlPanel extends ComponentBase {
 	
 	WorldScreen screen;
 	
-	public PreviewPanel previewPanel;
-	public Object o;
+	Label simulationInitLab;
 	
 	public JCheckBox normalCarButton;
 	public JCheckBox fastCarButton;
@@ -35,11 +39,25 @@ public class ControlPanel extends ComponentBase {
 	public JCheckBox debugCheckBox;
 	public JTextField dtField;
 	
+	public PreviewPanel previewPanel;
+	
+	@SuppressWarnings("serial")
 	public ControlPanel(WorldScreen screen) {
 		
 		this.screen = screen;
 		
-		this.panel = new JPanel();
+		this.panel = new JPanel() {
+			@Override
+			public void paintComponent(Graphics g) {
+				super.paintComponent(g);
+				
+				RenderingContext ctxt = new RenderingContext(RenderingContextType.CONTROLPANEL);
+				ctxt.g2 = (Graphics2D)g;
+				
+				simulationInitLab.paint(ctxt);
+				
+			}
+		};
 		
 		panel.setSize(new Dimension(200, 822));
 		panel.setPreferredSize(new Dimension(200, 822));
@@ -65,13 +83,14 @@ public class ControlPanel extends ComponentBase {
 		
 		panel.setLayout(null);
 		
-		JLabel simulationInitLab = new JLabel("Simulation Init:");
+		simulationInitLab = new Label("Simulation Init:");
 		simulationInitLab.setFont(new Font("Visitor TT1 BRK", Font.PLAIN, 16));
+		simulationInitLab.renderLocal();
 		
-		panel.add(simulationInitLab);
+		simulationInitLab.setLocation(5, 5);
+		simulationInitLab.render();
 		
-		Dimension size = simulationInitLab.getPreferredSize();
-		simulationInitLab.setBounds(5, 5, size.width, size.height);
+//		panel.add(simulationInitLab);
 		
 		normalCarButton = new JCheckBox();
 		normalCarButton.setFocusable(false);
@@ -79,7 +98,7 @@ public class ControlPanel extends ComponentBase {
 		
 		panel.add(normalCarButton);
 		
-		size = normalCarButton.getPreferredSize();
+		Dimension size = normalCarButton.getPreferredSize();
 		normalCarButton.setBounds(5, 5 + simulationInitLab.getHeight() + 5, size.width, size.height);
 		
 		JLabel normalCarsLab = new JLabel("Normal Cars");
@@ -277,9 +296,7 @@ public class ControlPanel extends ComponentBase {
 	}
 	
 	public void repaint() {
-		
 		panel.repaint();
-		
 	}
 	
 }

@@ -5,4 +5,7 @@ public enum RenderingContextType {
 //	DEBUG,
 	PREVIEW,
 //	QUADRANTEDITOR
+	
+	CONTROLPANEL
+	
 }

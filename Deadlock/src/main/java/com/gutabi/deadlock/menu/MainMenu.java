@@ -337,16 +337,16 @@ public class MainMenu extends ScreenBase {
 			
 			Graphics2D canvasMenuImageG2 = canvasMenuImage.createGraphics();
 			
-			RenderingContext canvasMenuContext = new RenderingContext(RenderingContextType.CANVAS);
-			canvasMenuContext.g2 = canvasMenuImageG2;
-			
 			for (MenuItem item : items) {
-				item.renderLocal(canvasMenuContext);
+//				item.renderLocal();
 				if ((int)item.localAABB.width > widest) {
 					widest = (int)item.localAABB.width;
 				}
 				totalHeight += (int)item.localAABB.height;
 			}
+			
+			RenderingContext canvasMenuContext = new RenderingContext(RenderingContextType.CANVAS);
+			canvasMenuContext.g2 = canvasMenuImageG2;
 			
 			AffineTransform origTransform = canvasMenuContext.getTransform();
 			
