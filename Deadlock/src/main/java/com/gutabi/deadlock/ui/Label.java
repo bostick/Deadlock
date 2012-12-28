@@ -13,10 +13,10 @@ import com.gutabi.deadlock.core.geom.AABB;
 
 public class Label {
 	
-	String text;
+	public String text;
 	
-	Font f;
-	Color c = Color.BLACK;
+	public Font font;
+	public Color color = Color.BLACK;
 	
 	TextLayout layout;
 	Point ul;
@@ -29,13 +29,13 @@ public class Label {
 		this.text = text;
 	}
 	
-	public void setFont(Font f) {
-		this.f = f;
-	}
-	
-	public void setColor(Color c) {
-		this.c = c;
-	}
+//	public void setFont(Font f) {
+//		this.f = f;
+//	}
+//	
+//	public void setColor(Color c) {
+//		this.c = c;
+//	}
 	
 	public void setLocation(double x, double y) {
 		ul = new Point(x, y);
@@ -56,7 +56,7 @@ public class Label {
 	public void renderLocal() {
 //		FontRenderContext frc = new FontRenderContext(null, RenderingHints.VALUE_TEXT_ANTIALIAS_DEFAULT, RenderingHints.VALUE_FRACTIONALMETRICS_DEFAULT);
 		FontRenderContext frc = new FontRenderContext(null, false, false);
-		layout = new TextLayout(text, f, frc);
+		layout = new TextLayout(text, font, frc);
 		Rectangle2D bounds = layout.getBounds();
 		localAABB = new AABB(bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight());
 	}
@@ -69,7 +69,7 @@ public class Label {
 		
 		img = new BufferedImage((int)aabb.width, (int)aabb.height, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g2 = img.createGraphics();
-		g2.setColor(c);
+		g2.setColor(color);
 		layout.draw(g2, (float)baseline.x, (float)baseline.y);
 		g2.dispose();
 	}

@@ -4,39 +4,51 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 
+import com.gutabi.deadlock.core.Point;
+import com.gutabi.deadlock.ui.Button;
+import com.gutabi.deadlock.ui.Checkbox;
 import com.gutabi.deadlock.ui.ComponentBase;
+import com.gutabi.deadlock.ui.InputEvent;
 import com.gutabi.deadlock.ui.Label;
 import com.gutabi.deadlock.ui.RenderingContext;
 
 public class ControlPanel extends ComponentBase {
 	
 	JPanel panel;
+	private JavaListener jl;
 	
 	WorldScreen screen;
 	
 	Label simulationInitLab;
+	Label normalCarsLab;
+	Label fastCarLab;
+	Label reallyCarLab;
+	Label stateLab;
+	Label fpsLab;
+	Label stopSignLab;
+	Label carTextureLab;
+	Label explosionsLab;
+	Label debugLab;
 	
-	public JCheckBox normalCarButton;
-	public JCheckBox fastCarButton;
+	public Checkbox normalCarButton;
+	public Checkbox fastCarButton;
 //	public JCheckBox randomCarButton;
-	public JCheckBox reallyCarButton;
+	public Checkbox reallyCarButton;
 	
-	public JButton startButton;
-	public JButton stopButton;
+	public Button startButton;
+	public Button stopButton;
 	
-	public JCheckBox fpsCheckBox;
-	public JCheckBox stopSignCheckBox;
-	public JCheckBox carTextureCheckBox;
-	public JCheckBox explosionsCheckBox;
-	public JCheckBox debugCheckBox;
-	public JTextField dtField;
+	public Checkbox fpsCheckBox;
+	public Checkbox stopSignCheckBox;
+	public Checkbox carTextureCheckBox;
+	public Checkbox explosionsCheckBox;
+	public Checkbox debugCheckBox;
 	
 	public PreviewPanel previewPanel;
 	
@@ -55,12 +67,70 @@ public class ControlPanel extends ComponentBase {
 				
 				simulationInitLab.paint(ctxt);
 				
+				normalCarsLab.paint(ctxt);
+				
+				fastCarLab.paint(ctxt);
+				reallyCarLab.paint(ctxt);
+				stateLab.paint(ctxt);
+				fpsLab.paint(ctxt);
+				stopSignLab.paint(ctxt);
+				carTextureLab.paint(ctxt);
+				explosionsLab.paint(ctxt);
+				debugLab.paint(ctxt);
+				
+				normalCarButton.paint(ctxt);
+				fastCarButton.paint(ctxt);
+				reallyCarButton.paint(ctxt);
+				
+				startButton.paint(ctxt);
+				stopButton.paint(ctxt);
+				
+				fpsCheckBox.paint(ctxt);
+				stopSignCheckBox.paint(ctxt);
+				carTextureCheckBox.paint(ctxt);
+				explosionsCheckBox.paint(ctxt);
+				debugCheckBox.paint(ctxt);
 			}
 		};
 		
 		panel.setSize(new Dimension(200, 822));
 		panel.setPreferredSize(new Dimension(200, 822));
 		panel.setMaximumSize(new Dimension(200, 822));
+		
+		jl = new JavaListener();
+		panel.addMouseListener(jl);
+		panel.addMouseMotionListener(jl);
+	}
+	
+	class JavaListener implements MouseListener, MouseMotionListener {
+		
+		public void mousePressed(MouseEvent ev) {
+			pressed(new InputEvent(ControlPanel.this, new Point(ev.getX(), ev.getY())));
+		}
+
+		public void mouseReleased(MouseEvent ev) {
+			released(new InputEvent(ControlPanel.this, new Point(ev.getX(), ev.getY())));
+		}
+		
+		public void mouseDragged(MouseEvent ev) {
+			dragged(new InputEvent(ControlPanel.this, new Point(ev.getX(), ev.getY())));
+		}
+
+		public void mouseMoved(MouseEvent ev) {
+			moved(new InputEvent(ControlPanel.this, new Point(ev.getX(), ev.getY())));
+		}
+
+		public void mouseClicked(MouseEvent ev) {
+			clicked(new InputEvent(ControlPanel.this, new Point(ev.getX(), ev.getY())));
+		}
+
+		public void mouseEntered(MouseEvent ev) {
+			entered(new InputEvent(ControlPanel.this, new Point(ev.getX(), ev.getY())));
+		}
+
+		public void mouseExited(MouseEvent ev) {
+			exited(new InputEvent(ControlPanel.this, new Point(ev.getX(), ev.getY())));
+		}
 		
 	}
 	
@@ -83,215 +153,279 @@ public class ControlPanel extends ComponentBase {
 		panel.setLayout(null);
 		
 		simulationInitLab = new Label("Simulation Init:");
-		simulationInitLab.setFont(new Font("Visitor TT1 BRK", Font.PLAIN, 16));
+		simulationInitLab.font = new Font("Visitor TT1 BRK", Font.PLAIN, 16);
 		simulationInitLab.renderLocal();
-		
 		simulationInitLab.setLocation(5, 5);
 		simulationInitLab.render();
 		
-//		panel.add(simulationInitLab);
 		
-		normalCarButton = new JCheckBox();
-		normalCarButton.setFocusable(false);
-		normalCarButton.setSelected(true);
+		normalCarButton = new Checkbox() {
+			public void action() {
+				selected = !selected;
+				render();
+				ControlPanel.this.repaint();
+			}
+		};
+		normalCarButton.selected = true;
+		normalCarButton.setLocation(5, 5 + simulationInitLab.getHeight() + 5);
+		normalCarButton.render();
 		
-		panel.add(normalCarButton);
+		normalCarsLab = new Label("Normal Cars");
+		normalCarsLab.font = new Font("Visitor TT1 BRK", Font.PLAIN, 16);
+		normalCarsLab.renderLocal();
 		
-		Dimension size = normalCarButton.getPreferredSize();
-		normalCarButton.setBounds(5, 5 + simulationInitLab.getHeight() + 5, size.width, size.height);
-		
-		JLabel normalCarsLab = new JLabel("Normal Cars");
-		normalCarsLab.setFont(new Font("Visitor TT1 BRK", Font.PLAIN, 16));
-		
-		panel.add(normalCarsLab);
-		
-		size = normalCarsLab.getPreferredSize();
-		normalCarsLab.setBounds(5 + normalCarButton.getWidth() + 5, 5 + simulationInitLab.getHeight() + 5, size.width, size.height);
-		
-		
-		
-		fastCarButton = new JCheckBox();
-		fastCarButton.setFocusable(false);
-		fastCarButton.setSelected(true);
-		
-		panel.add(fastCarButton);
-		
-		size = fastCarButton.getPreferredSize();
-		fastCarButton.setBounds(5, 5 + simulationInitLab.getHeight() + 5 + normalCarButton.getHeight() + 5, size.width, size.height);
-		
-		JLabel fastCarLab = new JLabel("Fast Cars");
-		fastCarLab.setFont(new Font("Visitor TT1 BRK", Font.PLAIN, 16));
-		
-		panel.add(fastCarLab);
-		
-		size = fastCarLab.getPreferredSize();
-		fastCarLab.setBounds(5 + fastCarButton.getWidth() + 5, 5 + simulationInitLab.getHeight() + 5 + normalCarButton.getHeight() + 5, size.width, size.height);
+		normalCarsLab.setLocation(5 + normalCarButton.getWidth() + 5, 5 + simulationInitLab.getHeight() + 5);
+		normalCarsLab.render();
 		
 		
-		
-		reallyCarButton = new JCheckBox();
-		reallyCarButton.setFocusable(false);
-		reallyCarButton.setSelected(true);
-		
-		panel.add(reallyCarButton);
-		
-		size = reallyCarButton.getPreferredSize();
-		reallyCarButton.setBounds(5, 5 + simulationInitLab.getHeight() + 5 + normalCarButton.getHeight() + 5 + fastCarButton.getHeight() + 5, size.width, size.height);
-		
-		JLabel reallyCarLab = new JLabel("Really Fast Cars");
-		reallyCarLab.setFont(new Font("Visitor TT1 BRK", Font.PLAIN, 16));
-		
-		panel.add(reallyCarLab);
-		
-		size = reallyCarLab.getPreferredSize();
-		reallyCarLab.setBounds(5 + reallyCarButton.getWidth() + 5, 5 + simulationInitLab.getHeight() + 5 + normalCarButton.getHeight() + 5 + fastCarButton.getHeight() + 5, size.width, size.height);
+		fastCarButton = new Checkbox() {
+			public void action() {
+				selected = !selected;
+				render();
+				ControlPanel.this.repaint();
+			}
+		};
+		fastCarButton.selected = true;
+		fastCarButton.setLocation(5, 5 + simulationInitLab.getHeight() + 5 + normalCarButton.getHeight() + 5);
+		fastCarButton.render();
 		
 		
-		
-		startButton = new JButton("Start");
-		startButton.setFocusable(false);
-		startButton.setActionCommand("start");
-		startButton.addActionListener(screen);
-		
-		panel.add(startButton);
-		
-		size = startButton.getPreferredSize();
-		startButton.setBounds(5, 120, size.width, size.height);
-		
-		stopButton = new JButton("Stop");
-		stopButton.setFocusable(false);
-		stopButton.setActionCommand("stop");
-		stopButton.addActionListener(screen);
-		stopButton.setEnabled(false);
-		
-		panel.add(stopButton);
-		
-		size = stopButton.getPreferredSize();
-		stopButton.setBounds(5 + startButton.getWidth() + 5, 120, size.width, size.height);
+		fastCarLab = new Label("Fast Cars");
+		fastCarLab.font = new Font("Visitor TT1 BRK", Font.PLAIN, 16);
+		fastCarLab.renderLocal();
+		fastCarLab.setLocation(5 + fastCarButton.getWidth() + 5, 5 + simulationInitLab.getHeight() + 5 + normalCarButton.getHeight() + 5);
+		fastCarLab.render();
 		
 		
+		reallyCarButton = new Checkbox() {
+			public void action() {
+				selected = !selected;
+				render();
+				ControlPanel.this.repaint();
+			}
+		};
+		reallyCarButton.selected = true;
+		reallyCarButton.setLocation(5, 5 + simulationInitLab.getHeight() + 5 + normalCarButton.getHeight() + 5 + fastCarButton.getHeight() + 5);
+		reallyCarButton.render();
+		
+		reallyCarLab = new Label("Really Fast Cars");
+		reallyCarLab.font = new Font("Visitor TT1 BRK", Font.PLAIN, 16);
+		reallyCarLab.renderLocal();
+		reallyCarLab.setLocation(5 + reallyCarButton.getWidth() + 5, 5 + simulationInitLab.getHeight() + 5 + normalCarButton.getHeight() + 5 + fastCarButton.getHeight() + 5);
+		reallyCarLab.render();
 		
 		
-		JLabel stateLab = new JLabel("Simulation State:");
-		stateLab.setFont(new Font("Visitor TT1 BRK", Font.PLAIN, 16));
+		startButton = new Button() {
+			public void action() {
+				
+				if (command.equals("start")) {
+					lab.text = "Pause";
+					command = "pause";
+					
+					stopButton.enabled = true;
+					
+					screen.startRunning();
+				} else if (command.equals("pause")) {
+					lab.text = "Unpause";
+					command = "unpause";
+					
+					screen.pauseRunning();
+				} else if (command.equals("unpause")) {
+					lab.text = "Pause";
+					command = "pause";
+					
+					screen.unpauseRunning();
+				}
+				
+				render();
+				stopButton.render();
+				ControlPanel.this.repaint();
+			}
+		};
+		startButton.lab = new Label("Start");
+		startButton.lab.font = new Font("Visitor TT1 BRK", Font.PLAIN, 32);
+		startButton.command = "start";
+		startButton.setLocation(5, 120);
+		startButton.render();
 		
-		panel.add(stateLab);
+		stopButton = new Button() {
+			public void action() {
+				
+				if (command.equals("stop")) {
+					startButton.lab.text = "Start";
+					startButton.command = "start";
+					
+					enabled = false;
+					
+					screen.stopRunning();
+				}
+				
+				render();
+				startButton.render();
+				ControlPanel.this.repaint();
+			}
+		};
+		stopButton.lab = new Label("Stop");
+		stopButton.lab.font = new Font("Visitor TT1 BRK", Font.PLAIN, 32);
+		stopButton.command = "stop";
+		stopButton.enabled = false;
+		stopButton.setLocation(5 + startButton.aabb.width + 5, 120);
+		stopButton.render();
 		
-		size = stateLab.getPreferredSize();
-		stateLab.setBounds(5, 160, size.width, size.height);
 		
-		fpsCheckBox = new JCheckBox();
-		fpsCheckBox.setFocusable(false);
-		fpsCheckBox.setSelected(screen.FPS_DRAW);
-		fpsCheckBox.setActionCommand("fpsDraw");
-		fpsCheckBox.addActionListener(screen);
-		
-		panel.add(fpsCheckBox);
-		
-		size = fpsCheckBox.getPreferredSize();
-		fpsCheckBox.setBounds(5, 160 + stateLab.getHeight() + 5, size.width, size.height);
-		
-		JLabel fpsLab = new JLabel("FPS");
-		fpsLab.setFont(new Font("Visitor TT1 BRK", Font.PLAIN, 16));
-		
-		panel.add(fpsLab);
-		
-		size = fpsLab.getPreferredSize();
-		fpsLab.setBounds(5 + fpsCheckBox.getWidth() + 5, 160 + stateLab.getHeight() + 5, size.width, size.height);
+		stateLab = new Label("Simulation State:");
+		stateLab.font = new Font("Visitor TT1 BRK", Font.PLAIN, 16);
+		stateLab.renderLocal();
+		stateLab.setLocation(5, 160);
+		stateLab.render();
 		
 		
-		stopSignCheckBox = new JCheckBox();
-		stopSignCheckBox.setFocusable(false);
-		stopSignCheckBox.setSelected(screen.STOPSIGN_DRAW);
-		stopSignCheckBox.setActionCommand("stopSignDraw");
-		stopSignCheckBox.addActionListener(screen);
+		fpsCheckBox = new Checkbox() {
+			public void action() {
+				selected = !selected;
+				render();
+				ControlPanel.this.repaint();
+				
+				screen.FPS_DRAW = selected;
+				
+				screen.render();
+				screen.repaintCanvas();
+			}
+		};
+		fpsCheckBox.selected = screen.FPS_DRAW;
+		fpsCheckBox.setLocation(5, 160 + stateLab.getHeight() + 5);
+		fpsCheckBox.render();
 		
-		panel.add(stopSignCheckBox);
+		fpsLab = new Label("FPS");
+		fpsLab.font = new Font("Visitor TT1 BRK", Font.PLAIN, 16);
+		fpsLab.renderLocal();
+		fpsLab.setLocation(5 + fpsCheckBox.getWidth() + 5, 160 + stateLab.getHeight() + 5);
+		fpsLab.render();
 		
-		size = stopSignCheckBox.getPreferredSize();
-		stopSignCheckBox.setBounds(5, 160 + stateLab.getHeight() + 5 + fpsCheckBox.getHeight() + 5, size.width, size.height);
 		
-		JLabel stopSignLab = new JLabel("Stop Signs");
-		stopSignLab.setFont(new Font("Visitor TT1 BRK", Font.PLAIN, 16));
+		stopSignCheckBox = new Checkbox() {
+			public void action() {
+				selected = !selected;
+				render();
+				ControlPanel.this.repaint();
+				
+				screen.STOPSIGN_DRAW = selected;
+				
+				screen.render();
+				screen.repaintCanvas();
+			}
+		};
+		stopSignCheckBox.selected = screen.STOPSIGN_DRAW;
+		stopSignCheckBox.setLocation(5, 160 + stateLab.getHeight() + 5 + fpsCheckBox.getHeight() + 5);
+		stopSignCheckBox.render();
 		
-		panel.add(stopSignLab);
+		stopSignLab = new Label("Stop Signs");
+		stopSignLab.font = new Font("Visitor TT1 BRK", Font.PLAIN, 16);
+		stopSignLab.renderLocal();
+		stopSignLab.setLocation(5 + stopSignCheckBox.getWidth() + 5, 160 + stateLab.getHeight() + 5 + fpsCheckBox.getHeight() + 5);
+		stopSignLab.render();
 		
-		size = stopSignLab.getPreferredSize();
-		stopSignLab.setBounds(5 + stopSignCheckBox.getWidth() + 5, 160 + stateLab.getHeight() + 5 + fpsCheckBox.getHeight() + 5, size.width, size.height);
 		
-		carTextureCheckBox = new JCheckBox();
-		carTextureCheckBox.setFocusable(false);
-		carTextureCheckBox.setSelected(screen.CARTEXTURE_DRAW);
-		carTextureCheckBox.setActionCommand("carTextureDraw");
-		carTextureCheckBox.addActionListener(screen);
+		carTextureCheckBox = new Checkbox() {
+			public void action() {
+				selected = !selected;
+				render();
+				ControlPanel.this.repaint();
+				
+				screen.CARTEXTURE_DRAW = selected;
+				
+				screen.repaintCanvas();
+			}
+		};
+		carTextureCheckBox.selected = screen.CARTEXTURE_DRAW;
+		carTextureCheckBox.setLocation(5, 160 + stateLab.getHeight() + 5 + fpsCheckBox.getHeight() + 5 + stopSignCheckBox.getHeight() + 5);
+		carTextureCheckBox.render();
 		
-		panel.add(carTextureCheckBox);
+		carTextureLab = new Label("Car Textures");
+		carTextureLab.font = new Font("Visitor TT1 BRK", Font.PLAIN, 16);
+		carTextureLab.renderLocal();
+		carTextureLab.setLocation(5 + carTextureCheckBox.getWidth() + 5, 160 + stateLab.getHeight() + 5 + fpsCheckBox.getHeight() + 5 + stopSignCheckBox.getHeight() + 5);
+		carTextureLab.render();
 		
-		size = carTextureCheckBox.getPreferredSize();
-		carTextureCheckBox.setBounds(5, 160 + stateLab.getHeight() + 5 + fpsCheckBox.getHeight() + 5 + stopSignCheckBox.getHeight() + 5, size.width, size.height);
 		
-		JLabel carTextureLab = new JLabel("Car Textures");
-		carTextureLab.setFont(new Font("Visitor TT1 BRK", Font.PLAIN, 16));
+		explosionsCheckBox = new Checkbox() {
+			public void action() {
+				selected = !selected;
+				render();
+				ControlPanel.this.repaint();
+				
+				screen.EXPLOSIONS_DRAW = selected;
+				
+				screen.repaintCanvas();
+			}
+		};
+		explosionsCheckBox.selected = screen.EXPLOSIONS_DRAW;
+		explosionsCheckBox.setLocation(5, 160 + stateLab.getHeight() + 5 + fpsCheckBox.getHeight() + 5 + stopSignCheckBox.getHeight() + 5 + carTextureCheckBox.getHeight() + 5);
+		explosionsCheckBox.render();
 		
-		panel.add(carTextureLab);
+		explosionsLab = new Label("Explosions");
+		explosionsLab.font = new Font("Visitor TT1 BRK", Font.PLAIN, 16);
+		explosionsLab.renderLocal();
+		explosionsLab.setLocation(5 + explosionsCheckBox.getWidth() + 5, 160 + stateLab.getHeight() + 5 + fpsCheckBox.getHeight() + 5 + stopSignCheckBox.getHeight() + 5 + carTextureCheckBox.getHeight() + 5);
+		explosionsLab.render();
 		
-		size = carTextureLab.getPreferredSize();
-		carTextureLab.setBounds(5 + carTextureCheckBox.getWidth() + 5, 160 + stateLab.getHeight() + 5 + fpsCheckBox.getHeight() + 5 + stopSignCheckBox.getHeight() + 5, size.width, size.height);
-
 		
-//		explosionsCheckBox = new JCheckBox();
-//		explosionsCheckBox.setFocusable(false);
-//		explosionsCheckBox.setSelected(APP.EXPLOSIONS_DRAW);
-//		explosionsCheckBox.setActionCommand("explosionsDraw");
-//		explosionsCheckBox.addActionListener(APP.screen);
-//		hBox = Box.createHorizontalBox();
-//		hBox.add(explosionsCheckBox);
-//		hBox.add(new Label("draw explosions").java());
-//		hBox.add(Box.createHorizontalGlue());
-//		verticalBox.add(hBox);
-//		
-//		debugCheckBox = new JCheckBox();
-//		debugCheckBox.setFocusable(false);
-//		debugCheckBox.setSelected(APP.DEBUG_DRAW);
-//		debugCheckBox.setActionCommand("debugDraw");
-//		debugCheckBox.addActionListener(APP.screen);
-//		hBox = Box.createHorizontalBox();
-//		hBox.add(debugCheckBox);
-//		hBox.add(new Label("draw debug").java());
-//		hBox.add(Box.createHorizontalGlue());
-//		verticalBox.add(hBox);
-//		
-//		dtField = new JTextField();
-//		dtField.setFocusable(false);
-//		dtField.setText(Double.toString(APP.dt));
-//		dtField.setMaximumSize(new Dimension(10000, 100));
-//		dtField.setActionCommand("dt");
-//		dtField.addActionListener(APP.screen);
-//		hBox = Box.createHorizontalBox();
-//		hBox.add(dtField);
-//		hBox.add(new Label("dt").java());
-//		hBox.add(Box.createHorizontalGlue());
-//		verticalBox.add(hBox);
-//		
-//		verticalBox.add(Box.createVerticalGlue());
-//		
+		debugCheckBox = new Checkbox() {
+			public void action() {
+				selected = !selected;
+				render();
+				ControlPanel.this.repaint();
+				
+				screen.DEBUG_DRAW = selected;
+				
+				screen.render();
+				screen.repaintCanvas();
+			}
+		};
+		debugCheckBox.selected = screen.DEBUG_DRAW;
+		debugCheckBox.setLocation(5, 160 + stateLab.getHeight() + 5 + fpsCheckBox.getHeight() + 5 + stopSignCheckBox.getHeight() + 5 + carTextureCheckBox.getHeight() + 5 + explosionsCheckBox.getHeight() + 5);
+		debugCheckBox.render();
+		
+		debugLab = new Label("debug");
+		debugLab.font = new Font("Visitor TT1 BRK", Font.PLAIN, 16);
+		debugLab.renderLocal();
+		debugLab.setLocation(5 + debugCheckBox.getWidth() + 5, 160 + stateLab.getHeight() + 5 + fpsCheckBox.getHeight() + 5 + stopSignCheckBox.getHeight() + 5 + carTextureCheckBox.getHeight() + 5 + explosionsCheckBox.getHeight() + 5);
+		debugLab.render();
+		
+		
 		previewPanel = new PreviewPanel(screen);
 		
 		panel.add(previewPanel.java());
 		
-		size = previewPanel.java().getPreferredSize();
+		Dimension size = previewPanel.java().getPreferredSize();
 		previewPanel.java().setBounds(5, 400, size.width, size.height);
-//		previewPanel.java().validate();
 		
-//		Box previewBox = Box.createHorizontalBox();
-//		previewBox.add(Box.createHorizontalGlue());
-//		previewBox.add(previewPanel.java());
-//		previewBox.add(Box.createHorizontalGlue());
-//		verticalBox.add(previewBox);
-//		
-//		verticalBox.add(Box.createRigidArea(new Dimension(0, 30)));
-//		
-//		add(verticalBox);
+	}
+	
+	public void clicked(InputEvent ev) {
+		
+		if (normalCarButton.hitTest(ev.p)) {
+			normalCarButton.action();
+		} else if (fastCarButton.hitTest(ev.p)) {
+			fastCarButton.action();
+		} else if (reallyCarButton.hitTest(ev.p)) {
+			reallyCarButton.action();
+		} else if (fpsCheckBox.hitTest(ev.p)) {
+			fpsCheckBox.action();
+		} else if (stopSignCheckBox.hitTest(ev.p)) {
+			stopSignCheckBox.action();
+		} else if (carTextureCheckBox.hitTest(ev.p)) {
+			carTextureCheckBox.action();
+		} else if (explosionsCheckBox.hitTest(ev.p)) {
+			explosionsCheckBox.action();
+		} else if (debugCheckBox.hitTest(ev.p)) {
+			debugCheckBox.action();
+		} else if (startButton.hitTest(ev.p)) {
+			startButton.action();
+		} else if (stopButton.hitTest(ev.p)) {
+			stopButton.action();
+		}
+		
 	}
 	
 	public void repaint() {

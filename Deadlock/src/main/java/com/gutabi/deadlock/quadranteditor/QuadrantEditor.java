@@ -17,6 +17,7 @@ import com.gutabi.deadlock.core.Dim;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.AABB;
 import com.gutabi.deadlock.menu.MainMenu;
+import com.gutabi.deadlock.ui.Button;
 import com.gutabi.deadlock.ui.InputEvent;
 import com.gutabi.deadlock.ui.PaintEvent;
 import com.gutabi.deadlock.ui.RenderingContext;
@@ -74,7 +75,7 @@ public class QuadrantEditor extends ScreenBase {
 		world.canvasPostDisplay(new Dim(world.quadrantMap.worldWidth * worldScreen.cam.pixelsPerMeter, world.quadrantMap.worldHeight * worldScreen.cam.pixelsPerMeter));
 		worldScreen.cam.worldViewport = new AABB(0, 0, world.quadrantMap.worldWidth, world.quadrantMap.worldHeight);
 		
-		removeRow = new Button(worldCanvasAABB.center.x - 50/2, worldCanvasAABB.brY + 40 - 50/2, 50, 50) {
+		removeRow = new Button() {
 			
 			public void action() {
 				
@@ -97,16 +98,15 @@ public class QuadrantEditor extends ScreenBase {
 				world.canvasPostDisplay(new Dim(world.quadrantMap.worldWidth * worldScreen.cam.pixelsPerMeter, world.quadrantMap.worldHeight * worldScreen.cam.pixelsPerMeter));
 				worldScreen.cam.worldViewport = new AABB(0, 0, world.quadrantMap.worldWidth, world.quadrantMap.worldHeight);
 				
-				render();
-				repaintCanvas();
-				
+				QuadrantEditor.this.render();
+				QuadrantEditor.this.repaintCanvas();
 			}
 			
 			public void paint(RenderingContext ctxt) {
 				
 				AffineTransform origTransform = ctxt.getTransform();
 				
-				ctxt.translate(aabb.ul.x, aabb.ul.y);
+				ctxt.translate(aabb.x, aabb.y);
 				ctxt.rotate(6 * Math.PI / 4, aabb.width/2, aabb.height/2);
 				
 				ctxt.paintImage(APP.sheet, 0, 0, 50, 50, 128, 224, 160, 256);
@@ -118,7 +118,10 @@ public class QuadrantEditor extends ScreenBase {
 			}
 			
 		};
-		addRow = new Button(worldCanvasAABB.center.x - 50/2, worldCanvasAABB.brY + 40 - 50/2 + 50, 50, 50) {
+		removeRow.setBounds(worldCanvasAABB.center.x - 50/2, worldCanvasAABB.brY + 40 - 50/2, 50, 50);
+		
+		
+		addRow = new Button() {
 			
 			public void action() {
 				
@@ -141,9 +144,8 @@ public class QuadrantEditor extends ScreenBase {
 				world.canvasPostDisplay(new Dim(world.quadrantMap.worldWidth * worldScreen.cam.pixelsPerMeter, world.quadrantMap.worldHeight * worldScreen.cam.pixelsPerMeter));
 				worldScreen.cam.worldViewport = new AABB(0, 0, world.quadrantMap.worldWidth, world.quadrantMap.worldHeight);
 				
-				render();
-				repaintCanvas();
-				
+				QuadrantEditor.this.render();
+				QuadrantEditor.this.repaintCanvas();
 			}
 			
 			public void paint(RenderingContext ctxt) {
@@ -161,8 +163,10 @@ public class QuadrantEditor extends ScreenBase {
 				aabb.draw(ctxt);
 			}
 		};
+		addRow.setBounds(worldCanvasAABB.center.x - 50/2, worldCanvasAABB.brY + 40 - 50/2 + 50, 50, 50);
 		
-		removeCol = new Button(worldCanvasAABB.brX + 40 - 50/2, worldCanvasAABB.center.y - 50/2, 50, 50) {
+		
+		removeCol = new Button() {
 			
 			public void action() {
 				
@@ -185,9 +189,8 @@ public class QuadrantEditor extends ScreenBase {
 				world.canvasPostDisplay(new Dim(world.quadrantMap.worldWidth * worldScreen.cam.pixelsPerMeter, world.quadrantMap.worldHeight * worldScreen.cam.pixelsPerMeter));
 				worldScreen.cam.worldViewport = new AABB(0, 0, world.quadrantMap.worldWidth, world.quadrantMap.worldHeight);
 				
-				render();
-				repaintCanvas();
-				
+				QuadrantEditor.this.render();
+				QuadrantEditor.this.repaintCanvas();
 			}
 			
 			public void paint(RenderingContext ctxt) {
@@ -205,7 +208,9 @@ public class QuadrantEditor extends ScreenBase {
 				aabb.draw(ctxt);
 			}
 		};
-		addCol = new Button(worldCanvasAABB.brX + 40 - 50/2 + 50, worldCanvasAABB.center.y - 50/2, 50, 50) {
+		removeCol.setBounds(worldCanvasAABB.brX + 40 - 50/2, worldCanvasAABB.center.y - 50/2, 50, 50);
+		
+		addCol = new Button() {
 			
 			public void action() {
 				
@@ -228,9 +233,8 @@ public class QuadrantEditor extends ScreenBase {
 				world.canvasPostDisplay(new Dim(world.quadrantMap.worldWidth * worldScreen.cam.pixelsPerMeter, world.quadrantMap.worldHeight * worldScreen.cam.pixelsPerMeter));
 				worldScreen.cam.worldViewport = new AABB(0, 0, world.quadrantMap.worldWidth, world.quadrantMap.worldHeight);
 				
-				render();
-				repaintCanvas();
-				
+				QuadrantEditor.this.render();
+				QuadrantEditor.this.repaintCanvas();
 			}
 			
 			public void paint(RenderingContext ctxt) {
@@ -249,8 +253,9 @@ public class QuadrantEditor extends ScreenBase {
 				
 			}
 		};
+		addCol.setBounds(worldCanvasAABB.brX + 40 - 50/2 + 50, worldCanvasAABB.center.y - 50/2, 50, 50);
 		
-		removeBoth = new Button(worldCanvasAABB.brX + 40 - 50/2, worldCanvasAABB.brY + 40 - 50/2, 50, 50) {
+		removeBoth = new Button() {
 			
 			public void action() {
 				
@@ -273,9 +278,8 @@ public class QuadrantEditor extends ScreenBase {
 				world.canvasPostDisplay(new Dim(world.quadrantMap.worldWidth * worldScreen.cam.pixelsPerMeter, world.quadrantMap.worldHeight * worldScreen.cam.pixelsPerMeter));
 				worldScreen.cam.worldViewport = new AABB(0, 0, world.quadrantMap.worldWidth, world.quadrantMap.worldHeight);
 				
-				render();
-				repaintCanvas();
-				
+				QuadrantEditor.this.render();
+				QuadrantEditor.this.repaintCanvas();
 			}
 			
 			public void paint(RenderingContext ctxt) {
@@ -293,8 +297,9 @@ public class QuadrantEditor extends ScreenBase {
 				aabb.draw(ctxt);
 			}
 		};
+		removeBoth.setBounds(worldCanvasAABB.brX + 40 - 50/2, worldCanvasAABB.brY + 40 - 50/2, 50, 50);
 		
-		addBoth = new Button(worldCanvasAABB.brX + 40 - 50/2 + 50, worldCanvasAABB.brY + 40 - 50/2 + 50, 50, 50) {
+		addBoth = new Button() {
 			
 			public void action() {
 				
@@ -317,9 +322,8 @@ public class QuadrantEditor extends ScreenBase {
 				world.canvasPostDisplay(new Dim(world.quadrantMap.worldWidth * worldScreen.cam.pixelsPerMeter, world.quadrantMap.worldHeight * worldScreen.cam.pixelsPerMeter));
 				worldScreen.cam.worldViewport = new AABB(0, 0, world.quadrantMap.worldWidth, world.quadrantMap.worldHeight);
 				
-				render();
-				repaintCanvas();
-				
+				QuadrantEditor.this.render();
+				QuadrantEditor.this.repaintCanvas();
 			}
 			
 			public void paint(RenderingContext ctxt) {
@@ -337,8 +341,9 @@ public class QuadrantEditor extends ScreenBase {
 				aabb.draw(ctxt);
 			}
 		};
+		addBoth.setBounds(worldCanvasAABB.brX + 40 - 50/2 + 50, worldCanvasAABB.brY + 40 - 50/2 + 50, 50, 50);
 		
-		go = new Button(700, 500, 50, 50) {
+		go = new Button() {
 			
 			public void action() {
 				
@@ -353,7 +358,6 @@ public class QuadrantEditor extends ScreenBase {
 				worldScreen.render();
 				worldScreen.repaintCanvas();
 				worldScreen.controlPanel.repaint();
-				
 			}
 			
 			public void paint(RenderingContext ctxt) {
@@ -361,6 +365,7 @@ public class QuadrantEditor extends ScreenBase {
 				aabb.draw(ctxt);
 			}
 		};
+		go.setBounds(700, 500, 50, 50);
 		
 		canvas = new QuadrantEditorCanvas(this);
 		

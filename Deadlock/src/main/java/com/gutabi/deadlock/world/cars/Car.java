@@ -122,7 +122,7 @@ public abstract class Car extends Entity {
 		
 		startPoint = driver.overallPos.p;
 		
-		GraphPositionPathPosition next = driver.overallPos.travel(getMaxSpeed() * world.dt);
+		GraphPositionPathPosition next = driver.overallPos.travel(getMaxSpeed() * world.screen.DT);
 		
 		Point nextDTGoalPoint = next.p;
 		

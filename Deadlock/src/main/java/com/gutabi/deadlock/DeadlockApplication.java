@@ -79,6 +79,15 @@ public class DeadlockApplication {
 	
 	public void exit() {
 		
+//		System.exit(0);
+		
+		/*
+		 * for some reason, the switch to using OpenGL has caused the java process to completely peg the CPU when it exits
+		 * there is 1 thread running in the process, inside ftime64 doing something
+		 * 
+		 * so take extreme measures
+		 */
+		
 		 try {
 			 String pidstr = java.lang.management.ManagementFactory.getRuntimeMXBean().getName();
 		      String pid[] = pidstr.split("@");

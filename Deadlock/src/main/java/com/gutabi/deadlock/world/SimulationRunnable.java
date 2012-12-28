@@ -51,18 +51,18 @@ public class SimulationRunnable implements Runnable {
 			/*
 			 * this max value is a heuristic
 			 */
-			if (frameTimeSeconds > 1 * screen.world.dt) {
-				frameTimeSeconds = 1 * screen.world.dt;
+			if (frameTimeSeconds > 1 * screen.DT) {
+				frameTimeSeconds = 1 * screen.DT;
 			}
 			
 			accumulator += frameTimeSeconds;
 			
-			while (accumulator >= screen.world.dt) {
+			while (accumulator >= screen.DT) {
 				
 				screen.world.integrate(t);
 				
-				accumulator -= screen.world.dt;
-				t += screen.world.dt;
+				accumulator -= screen.DT;
+				t += screen.DT;
 			}
 			
 			screen.repaintCanvas();

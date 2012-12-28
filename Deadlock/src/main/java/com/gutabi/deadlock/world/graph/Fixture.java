@@ -205,10 +205,10 @@ public final class Fixture extends Vertex {
 	@SuppressWarnings({"rawtypes"})
 	private Car createNewCar() {
 		
-		boolean normal = cp.normalCarButton.isSelected();
-		boolean fast = cp.fastCarButton.isSelected();
+		boolean normal = cp.normalCarButton.selected;
+		boolean fast = cp.fastCarButton.selected;
 //		boolean random = VIEW.controlPanel.randomCarButton.isSelected();
-		boolean really = cp.reallyCarButton.isSelected();
+		boolean really = cp.reallyCarButton.selected;
 		
 		List<Class> l = new ArrayList<Class>();
 		if (normal) {

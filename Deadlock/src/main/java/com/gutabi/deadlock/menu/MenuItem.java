@@ -32,7 +32,7 @@ public abstract class MenuItem {
 	public MenuItem(MainMenu menu, String text) {
 		this.menu = menu;
 		lab = new Label(text);
-		lab.setFont(f);
+		lab.font = f;
 		lab.renderLocal();
 		localAABB = lab.localAABB;
 	}
@@ -57,9 +57,9 @@ public abstract class MenuItem {
 		lab.setDimension(menu.widest, localAABB.height);
 		
 		if (active) {
-			lab.setColor(Color.WHITE);
+			lab.color = Color.WHITE;
 		} else {
-			lab.setColor(Color.GRAY);
+			lab.color = Color.GRAY;
 		}
 		
 		lab.render();

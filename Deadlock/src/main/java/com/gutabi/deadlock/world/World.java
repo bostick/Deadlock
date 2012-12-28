@@ -32,15 +32,10 @@ import com.gutabi.deadlock.world.graph.Vertex;
 
 public class World {
 	
-	WorldScreen screen;
+	public WorldScreen screen;
 	
 	public QuadrantMap quadrantMap;
 	public Graph graph;
-	
-	/**
-	 * move physics forward by dt seconds
-	 */
-	public double dt = 0.01;
 	
 	public double t;
 	
@@ -134,7 +129,7 @@ public class World {
 		
 		preStep();
 		
-		b2dWorld.step((float)dt, velocityIterations, positionIterations);
+		b2dWorld.step((float)screen.DT, velocityIterations, positionIterations);
 		
 		postStep();
 		

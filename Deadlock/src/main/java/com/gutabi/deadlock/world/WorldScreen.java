@@ -5,7 +5,6 @@ import static com.gutabi.deadlock.DeadlockApplication.APP;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
-import java.awt.event.ActionEvent;
 import java.awt.geom.AffineTransform;
 import java.io.File;
 import java.io.FileWriter;
@@ -49,7 +48,10 @@ public class WorldScreen extends ScreenBase {
 	public boolean EXPLOSIONS_DRAW = true;
 	public boolean DEBUG_DRAW = false;
 	
-	
+	/**
+	 * move physics forward by dt seconds
+	 */
+	public double DT = 0.01;
 	
 	public WorldCamera cam = new WorldCamera();
 	
@@ -652,99 +654,6 @@ public class WorldScreen extends ScreenBase {
 			assert false;
 		}
 		
-	}
-	
-	public void actionPerformed(ActionEvent e) {
-		if (e.getActionCommand().equals("start")) {
-			
-			controlPanel.startButton.setText("Pause");
-			controlPanel.startButton.setActionCommand("pause");
-			
-			controlPanel.stopButton.setEnabled(true);
-			
-			startRunning();
-			
-		} else if (e.getActionCommand().equals("stop")) {
-			
-			controlPanel.startButton.setText("Start");
-			controlPanel.startButton.setActionCommand("start");
-			
-			controlPanel.stopButton.setEnabled(false);
-			
-			stopRunning();
-			
-		} else if (e.getActionCommand().equals("pause")) {
-			
-			controlPanel.startButton.setText("Unpause");
-			controlPanel.startButton.setActionCommand("unpause");
-			
-			pauseRunning();
-			
-		} else if (e.getActionCommand().equals("unpause")) {
-			
-			controlPanel.startButton.setText("Pause");
-			controlPanel.startButton.setActionCommand("pause");
-			
-			unpauseRunning();
-			
-		} else if (e.getActionCommand().equals("dt")) {
-			
-			String text = controlPanel.dtField.getText();
-			try {
-				double dt = Double.parseDouble(text);
-				world.dt = dt;
-			} catch (NumberFormatException ex) {
-				
-			}
-			
-		} else if (e.getActionCommand().equals("debugDraw")) {
-			
-			boolean state = controlPanel.debugCheckBox.isSelected();
-			
-			DEBUG_DRAW = state;
-			
-			render();
-			repaintCanvas();
-			repaintControlPanel();
-			
-		} else if (e.getActionCommand().equals("fpsDraw")) {
-			
-			boolean state = controlPanel.fpsCheckBox.isSelected();
-			
-			FPS_DRAW = state;
-			
-			render();
-			repaintCanvas();
-			repaintControlPanel();
-			
-		} else if (e.getActionCommand().equals("stopSignDraw")) {
-			
-			boolean state = controlPanel.stopSignCheckBox.isSelected();
-			
-			STOPSIGN_DRAW = state;
-			
-			render();
-			repaintCanvas();
-			repaintControlPanel();
-			
-		} else if (e.getActionCommand().equals("carTextureDraw")) {
-			
-			boolean state = controlPanel.carTextureCheckBox.isSelected();
-			
-			CARTEXTURE_DRAW = state;
-			
-			repaintCanvas();
-			repaintControlPanel();
-			
-		} else if (e.getActionCommand().equals("explosionsDraw")) {
-			
-			boolean state = controlPanel.explosionsCheckBox.isSelected();
-			
-			EXPLOSIONS_DRAW = state;
-			
-			repaintCanvas();
-			repaintControlPanel();
-		}
 	}
 	
 	/**

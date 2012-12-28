@@ -1,7 +1,5 @@
 package com.gutabi.deadlock;
 
-import java.awt.event.ActionEvent;
-
 import com.gutabi.deadlock.ui.InputEvent;
 
 public abstract class ScreenBase implements Screen {
@@ -105,10 +103,6 @@ public abstract class ScreenBase implements Screen {
 	}
 	
 	public void exited(InputEvent ev) {
-		
-	}
-
-	public void actionPerformed(ActionEvent ev) {
 		
 	}
 	

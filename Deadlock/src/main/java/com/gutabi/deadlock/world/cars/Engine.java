@@ -125,8 +125,8 @@ public class Engine {
 		if (dv < 0) {
 			assert false;
 		}
-		if (dv > maxAcceleration * world.dt) {
-			dv = maxAcceleration * world.dt;
+		if (dv > maxAcceleration * world.screen.DT) {
+			dv = maxAcceleration * world.screen.DT;
 		}
 		
 //		logger.debug("acc for driving: " + acc);
@@ -163,7 +163,7 @@ public class Engine {
 		 * turning radius
 		 */
 		
-		double actualDistance = Math.abs(c.forwardSpeed * world.dt);
+		double actualDistance = Math.abs(c.forwardSpeed * world.screen.DT);
 		double maxRads = maxRadsPerMeter * actualDistance;
 //		double negMaxRads = -maxRads;
 		if (dw > maxRads) {
@@ -182,7 +182,7 @@ public class Engine {
 //			logger.debug("updateTurn: dw: " + dw);
 //		}
 		
-		float goalAngVel = (float)(dw / world.dt);
+		float goalAngVel = (float)(dw / world.screen.DT);
 		
 		float angImpulse = (float)(turnAngularImpulseCoefficient * c.momentOfInertia * (goalAngVel - c.angularVel));
 		

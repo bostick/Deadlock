@@ -1,13 +1,11 @@
 package com.gutabi.deadlock;
 
-import java.awt.event.ActionListener;
-
 import javax.swing.RootPaneContainer;
 
 import com.gutabi.deadlock.ui.InputEvent;
 import com.gutabi.deadlock.ui.PaintEvent;
 
-public interface Screen extends ActionListener {
+public interface Screen {
 	
 	void setup(RootPaneContainer container);
 	
