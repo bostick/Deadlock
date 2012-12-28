@@ -263,7 +263,7 @@ public class RegularTool extends ToolBase {
 			
 			screen.render();
 			screen.repaintCanvas();
-			screen.repaintControlPanel();
+			screen.controlPanel.repaint();
 			break;
 		}
 	}

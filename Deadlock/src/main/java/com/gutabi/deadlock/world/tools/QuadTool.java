@@ -153,7 +153,7 @@ public class QuadTool extends ToolBase {
 			
 			screen.render();
 			screen.repaintCanvas();
-			screen.repaintControlPanel();
+			screen.controlPanel.repaint();
 			break;
 		case KNOB:
 			assert false;

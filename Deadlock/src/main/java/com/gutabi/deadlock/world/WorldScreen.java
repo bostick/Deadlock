@@ -61,8 +61,6 @@ public class WorldScreen extends ScreenBase {
 	
 	public World world;
 	
-//	public Preview preview;
-	
 	public Tool tool;
 	
 	public Entity hilited;
@@ -82,8 +80,6 @@ public class WorldScreen extends ScreenBase {
 		mode = WorldScreenMode.EDITING;
 		
 		tool = new RegularTool(this);
-		
-//		preview = new Preview(this);
 		
 		stats = new Stats(this);
 		
@@ -128,9 +124,8 @@ public class WorldScreen extends ScreenBase {
 		
 		Dim canvasDim = canvas.postDisplay();
 		
-//		preview.postDisplay();
-		
 		world.canvasPostDisplay(canvasDim);
+//		canvas.postDisplay();
 	}
 	
 	
@@ -244,7 +239,7 @@ public class WorldScreen extends ScreenBase {
 		
 		render();
 		repaintCanvas();
-		repaintControlPanel();
+		controlPanel.repaint();
 	}
 	
 	public void insertKey(InputEvent ev) {
@@ -334,7 +329,7 @@ public class WorldScreen extends ScreenBase {
 		
 		render();
 		repaintCanvas();
-		repaintControlPanel();
+		controlPanel.repaint();
 	}
 	
 	public void minusKey(InputEvent ev) {
@@ -363,7 +358,7 @@ public class WorldScreen extends ScreenBase {
 		
 		render();
 		repaintCanvas();
-		repaintControlPanel();
+		controlPanel.repaint();
 	}
 	
 	public void aKey(InputEvent ev) {
@@ -484,7 +479,7 @@ public class WorldScreen extends ScreenBase {
 				postDisplay();
 				render();
 				repaintCanvas();
-				repaintControlPanel();
+				controlPanel.repaint();
 				
 			} else {
 				
@@ -569,11 +564,7 @@ public class WorldScreen extends ScreenBase {
 				break;
 			}
 			}
-		}
-//		else if (ev.c == controlPanel.preview) {
-//			controlPanel.preview.dragged(ev);
-//		}
-		else {
+		} else {
 			assert false;
 		}
 		
@@ -658,7 +649,8 @@ public class WorldScreen extends ScreenBase {
 	}
 	
 	public void render() {
-		world.renderCanvas();
+//		world.renderCanvas();
+		canvas.render();
 		controlPanel.preview.render();
 	}
 	
@@ -705,7 +697,7 @@ public class WorldScreen extends ScreenBase {
 		switch (ctxt.type) {
 		case CANVAS: {
 			
-			world.paintWorldBackground(ctxt);
+			canvas.paint(ctxt);
 			
 			AffineTransform origTrans = ctxt.getTransform();
 			
@@ -738,9 +730,7 @@ public class WorldScreen extends ScreenBase {
 		}
 		case PREVIEW: {
 			
-			world.paintWorldBackground(ctxt);
-			
-			
+			controlPanel.preview.paint(ctxt);
 			
 			AffineTransform origTrans = ctxt.getTransform();
 			
@@ -756,19 +746,5 @@ public class WorldScreen extends ScreenBase {
 		}
 		
 	}
-	
-	public void repaintControlPanel() {
-		controlPanel.repaint();
-	}
-	
-//	public void paint(PaintEvent ev) {
-//		if (ev.c == canvas) {
-//			assert false;
-//		} else if (ev.c == controlPanel.previewPanel) {
-//			preview.paint(ev.ctxt);
-//		} else {
-//			assert false;
-//		}
-//	}
 
 }

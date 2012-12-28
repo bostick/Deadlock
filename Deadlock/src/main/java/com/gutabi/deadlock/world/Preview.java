@@ -76,7 +76,7 @@ public class Preview {
 			
 			screen.render();
 			screen.repaintCanvas();
-			screen.repaintControlPanel();
+			screen.controlPanel.repaint();
 //			screen.controlPanel.previewPanel.repaint();
 		}
 	}

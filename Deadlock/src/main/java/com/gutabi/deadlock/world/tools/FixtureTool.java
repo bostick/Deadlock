@@ -170,7 +170,7 @@ public class FixtureTool extends ToolBase {
 			
 			screen.render();
 			screen.repaintCanvas();
-			screen.repaintControlPanel();
+			screen.controlPanel.repaint();
 		}
 	}
 	

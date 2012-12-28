@@ -2,10 +2,7 @@ package com.gutabi.deadlock.world;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
-import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
@@ -19,7 +16,6 @@ import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.AABB;
 import com.gutabi.deadlock.ui.RenderingContext;
-import com.gutabi.deadlock.ui.RenderingContextType;
 import com.gutabi.deadlock.world.cars.Car;
 import com.gutabi.deadlock.world.cars.CarEventListener;
 import com.gutabi.deadlock.world.graph.Fixture;
@@ -38,8 +34,6 @@ public class World {
 	public Graph graph;
 	
 	public double t;
-	
-	private BufferedImage background;
 	
 	public CarMap carMap;
 	
@@ -83,8 +77,6 @@ public class World {
 		screen.cam.canvasHeight = (int)dim.height;
 		
 		quadrantMap.canvasPostDisplay();
-		
-		background = new BufferedImage(screen.cam.canvasWidth, screen.cam.canvasHeight, BufferedImage.TYPE_INT_RGB);
 		
 		screen.cam.worldViewport = new AABB(
 				-(screen.cam.canvasWidth / screen.cam.pixelsPerMeter) / 2 + quadrantMap.worldWidth/2 ,
@@ -322,43 +314,6 @@ public class World {
 		Point ul = worldToCanvas(aabb.ul);
 		Point br = worldToCanvas(aabb.br);
 		return new AABB(ul.x, ul.y, br.x - ul.x, br.y - ul.y);
-	}
-	
-	public void renderCanvas() {
-		assert !Thread.holdsLock(APP);
-		
-		synchronized (APP) {
-			
-			Graphics2D backgroundG2 = background.createGraphics();
-			
-			backgroundG2.setColor(Color.DARK_GRAY);
-			backgroundG2.fillRect(0, 0, screen.cam.canvasWidth, screen.cam.canvasHeight);
-			
-			backgroundG2.scale(screen.cam.pixelsPerMeter, screen.cam.pixelsPerMeter);
-			backgroundG2.translate(-screen.cam.worldViewport.x, -screen.cam.worldViewport.y);
-			
-			RenderingContext backgroundCtxt = new RenderingContext(RenderingContextType.CANVAS);
-			backgroundCtxt.g2 = backgroundG2;
-			backgroundCtxt.cam = screen.cam;
-			
-			quadrantMap.render(backgroundCtxt);
-			graph.render(backgroundCtxt);
-			
-			backgroundG2.dispose();
-			
-		}
-		
-	}
-	
-	public void paintWorldBackground(RenderingContext ctxt) {
-		
-//		synchronized (VIEW) {
-			ctxt.paintImage(
-					background,
-					0, 0, screen.cam.canvasWidth, screen.cam.canvasHeight,
-					0, 0, screen.cam.canvasWidth, screen.cam.canvasHeight);
-//		}
-		
 	}
 	
 	public void paintWorldScene(RenderingContext ctxt) {

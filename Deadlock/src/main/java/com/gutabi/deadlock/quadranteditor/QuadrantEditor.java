@@ -534,7 +534,7 @@ public class QuadrantEditor extends ScreenBase {
 	}
 	
 	public void render() {
-		world.renderCanvas();
+		worldScreen.canvas.render();
 	}
 	
 	public void repaintCanvas() {
@@ -579,7 +579,7 @@ public class QuadrantEditor extends ScreenBase {
 		ctxt.translate(worldCanvasAABB.center.x - worldScreen.cam.canvasWidth/2, worldCanvasAABB.center.y - worldScreen.cam.canvasHeight/2);
 		
 		
-		world.paintWorldBackground(ctxt);
+		worldScreen.canvas.paint(ctxt);
 		
 		ctxt.scale(worldScreen.cam.pixelsPerMeter);
 		ctxt.translate(-worldScreen.cam.worldViewport.x, -worldScreen.cam.worldViewport.y);

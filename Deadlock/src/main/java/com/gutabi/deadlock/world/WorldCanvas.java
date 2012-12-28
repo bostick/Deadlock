@@ -1,13 +1,18 @@
 package com.gutabi.deadlock.world;
 
+import static com.gutabi.deadlock.DeadlockApplication.APP;
+
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferStrategy;
+import java.awt.image.BufferedImage;
 
 import org.apache.log4j.Logger;
 
@@ -15,11 +20,15 @@ import com.gutabi.deadlock.core.Dim;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.ui.ComponentBase;
 import com.gutabi.deadlock.ui.InputEvent;
+import com.gutabi.deadlock.ui.RenderingContext;
+import com.gutabi.deadlock.ui.RenderingContextType;
 
 @SuppressWarnings("serial")
 public class WorldCanvas extends ComponentBase {
 	
 	WorldScreen screen;
+	
+	private BufferedImage background;
 	
 	public BufferStrategy bs;
 	
@@ -168,6 +177,8 @@ public class WorldCanvas extends ComponentBase {
 		c.createBufferStrategy(2);
 		bs = c.getBufferStrategy();
 		
+		background = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_RGB);
+		
 		return new Dim(getWidth(), getHeight());
 	}
 	
@@ -289,4 +300,41 @@ public class WorldCanvas extends ComponentBase {
 		screen.ctrlOKey(ev);
 	}
 	
+	public void render() {
+		assert !Thread.holdsLock(APP);
+		
+		synchronized (APP) {
+			
+			Graphics2D backgroundG2 = background.createGraphics();
+			
+			backgroundG2.setColor(Color.DARK_GRAY);
+			backgroundG2.fillRect(0, 0, screen.cam.canvasWidth, screen.cam.canvasHeight);
+			
+			backgroundG2.scale(screen.cam.pixelsPerMeter, screen.cam.pixelsPerMeter);
+			backgroundG2.translate(-screen.cam.worldViewport.x, -screen.cam.worldViewport.y);
+			
+			RenderingContext backgroundCtxt = new RenderingContext(RenderingContextType.CANVAS);
+			backgroundCtxt.g2 = backgroundG2;
+			backgroundCtxt.cam = screen.cam;
+			
+			screen.world.quadrantMap.render(backgroundCtxt);
+			screen.world.graph.render(backgroundCtxt);
+			
+			backgroundG2.dispose();
+			
+		}
+		
+	}
+	
+	public void paint(RenderingContext ctxt) {
+		
+//		synchronized (VIEW) {
+			ctxt.paintImage(
+					background,
+					0, 0, screen.cam.canvasWidth, screen.cam.canvasHeight,
+					0, 0, screen.cam.canvasWidth, screen.cam.canvasHeight);
+//		}
+		
+	}
+
 }
