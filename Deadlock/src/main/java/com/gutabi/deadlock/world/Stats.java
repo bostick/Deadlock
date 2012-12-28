@@ -23,7 +23,7 @@ public class Stats {
 		
 		ctxt.setColor(Color.WHITE);
 		ctxt.setXORMode(Color.DARK_GRAY);
-		ctxt.setPixelStroke(1);
+		ctxt.setPixelStroke(1.0);
 		
 		AffineTransform origTransform1 = ctxt.getTransform();
 		

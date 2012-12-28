@@ -18,7 +18,7 @@ public class OneByOneWorld extends World {
 		
 		OneByOneWorld w = new OneByOneWorld(screen);
 		
-		QuadrantMap qm = new QuadrantMap(ini);
+		QuadrantMap qm = new QuadrantMap(w, ini);
 		
 		w.quadrantMap = qm;
 		

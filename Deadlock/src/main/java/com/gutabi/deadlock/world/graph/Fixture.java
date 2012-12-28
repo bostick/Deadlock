@@ -379,7 +379,7 @@ public final class Fixture extends Vertex {
 				shape.paint(ctxt);
 				
 				ctxt.setColor(Color.BLACK);
-				ctxt.setPixelStroke(1);
+				ctxt.setPixelStroke(1.0);
 				shape.getAABB().draw(ctxt);
 			}
 			

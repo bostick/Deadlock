@@ -20,7 +20,7 @@ public class WorldA extends World {
 		
 		WorldA w = new WorldA(screen);
 		
-		QuadrantMap qm = new QuadrantMap(ini);
+		QuadrantMap qm = new QuadrantMap(w, ini);
 		
 		w.quadrantMap = qm;
 		

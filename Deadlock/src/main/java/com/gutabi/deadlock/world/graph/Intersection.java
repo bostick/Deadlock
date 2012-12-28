@@ -123,7 +123,7 @@ public class Intersection extends Vertex {
 	public void paintHilite(RenderingContext ctxt) {
 		
 		ctxt.setColor(Color.WHITE);
-		ctxt.setPixelStroke(1);
+		ctxt.setPixelStroke(1.0);
 		
 		shape.draw(ctxt);
 		

@@ -20,7 +20,6 @@ import com.gutabi.deadlock.ScreenBase;
 import com.gutabi.deadlock.core.Dim;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.quadranteditor.QuadrantEditor;
-import com.gutabi.deadlock.view.Canvas;
 import com.gutabi.deadlock.view.InputEvent;
 import com.gutabi.deadlock.view.PaintEvent;
 import com.gutabi.deadlock.view.RenderingContext;
@@ -36,7 +35,7 @@ public class MainMenu extends ScreenBase {
 	public static final int MENU_WIDTH = 800;
 	public static final int MENU_HEIGHT = 600;
 	
-	public Canvas canvas;
+	public MenuCanvas canvas;
 	
 	int canvasWidth;
 	int canvasHeight;
@@ -185,7 +184,7 @@ public class MainMenu extends ScreenBase {
 	
 	public void setup(RootPaneContainer container) {
 		
-		canvas = new Canvas();
+		canvas = new MenuCanvas(this);
 		
 		Container cp = container.getContentPane();
 		cp.add(canvas.java());
@@ -372,6 +371,7 @@ public class MainMenu extends ScreenBase {
 				
 				RenderingContext ctxt = new RenderingContext(RenderingContextType.CANVAS);
 				ctxt.g2 = g2;
+//				ctxt.cam = this.w
 				
 				AffineTransform origTrans = ctxt.getTransform();
 				

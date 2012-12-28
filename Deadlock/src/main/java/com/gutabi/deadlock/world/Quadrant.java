@@ -76,14 +76,14 @@ public class Quadrant {
 	
 	public void computeGridSpacing() {
 		
-		double curGridSpacingPixels =  gridSpacing * pixelsPerMeter;
+		double curGridSpacingPixels =  gridSpacing * map.world.screen.cam.pixelsPerMeter;
 		while (curGridSpacingPixels > 64+16) {
 			gridSpacing *= 0.5;
-			curGridSpacingPixels =  gridSpacing * pixelsPerMeter;
+			curGridSpacingPixels =  gridSpacing * map.world.screen.cam.pixelsPerMeter;
 		}
 		while (curGridSpacingPixels < 64-16) {
 			gridSpacing *= 2.0;
-			curGridSpacingPixels =  gridSpacing * pixelsPerMeter;
+			curGridSpacingPixels =  gridSpacing * map.world.screen.cam.pixelsPerMeter;
 		}
 	}
 	
@@ -134,7 +134,7 @@ public class Quadrant {
 					aabb.paint(ctxt);
 					
 					ctxt.setColor(Color.BLACK);
-					ctxt.setPixelStroke(1);
+					ctxt.setPixelStroke(1.0);
 					aabb.draw(ctxt);
 					
 					ctxt.setColor(Color.BLACK);
@@ -144,7 +144,7 @@ public class Quadrant {
 				if (grid) {
 					
 					ctxt.setColor(Color.GRAY);
-					ctxt.setPixelStroke(1);
+					ctxt.setPixelStroke(1.0);
 					
 					for (double k = 0.0; DMath.lessThanEquals(k, QuadrantMap.QUADRANT_HEIGHT); k+=gridSpacing) {
 						Point p0 = new Point(c * QuadrantMap.QUADRANT_WIDTH + 0, r * QuadrantMap.QUADRANT_HEIGHT + k);

@@ -30,6 +30,7 @@ public class QuadrantMap {
 	public final int quadrantCols;
 	public final int quadrantRows;
 	
+	World world;
 	public final int[][] ini;
 	private Quadrant[][] quadrants;
 	
@@ -39,8 +40,9 @@ public class QuadrantMap {
 	
 	public final AABB aabb;
 	
-	public QuadrantMap(int[][] ini) {
+	public QuadrantMap(World world, int[][] ini) {
 //		this.cam = cam;
+		this.world = world;
 		this.ini = ini;
 		
 		quadrants = initQuadrants(ini);
@@ -119,8 +121,8 @@ public class QuadrantMap {
 	
 	public void canvasPostDisplay() {
 		
-		int quadrantWidthPixels = (int)Math.ceil(cam.pixelsPerMeter * QUADRANT_WIDTH);
-		int quadrantHeightPixels = (int)Math.ceil(cam.pixelsPerMeter * QUADRANT_HEIGHT);
+		int quadrantWidthPixels = (int)Math.ceil(world.screen.cam.pixelsPerMeter * QUADRANT_WIDTH);
+		int quadrantHeightPixels = (int)Math.ceil(world.screen.cam.pixelsPerMeter * QUADRANT_HEIGHT);
 		
 		quadrantGrass = new BufferedImage(quadrantWidthPixels, quadrantHeightPixels, BufferedImage.TYPE_INT_RGB);
 		Graphics2D quadrantGrassG2 = quadrantGrass.createGraphics();
@@ -290,7 +292,7 @@ public class QuadrantMap {
 		return s.toString();
 	}
 	
-	public static QuadrantMap fromFileString(WorldCamera cam, String s) {
+	public static QuadrantMap fromFileString(World world, String s) {
 		BufferedReader r = new BufferedReader(new StringReader(s));
 		
 		int[][] ini = null;
@@ -322,7 +324,7 @@ public class QuadrantMap {
 			e.printStackTrace();
 		}
 		
-		QuadrantMap qm = new QuadrantMap(ini);
+		QuadrantMap qm = new QuadrantMap(world, ini);
 		return qm;
 	}
 	

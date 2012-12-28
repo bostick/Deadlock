@@ -72,7 +72,7 @@ public class CarMap {
 	public void paint(RenderingContext ctxt) {
 		
 		if (ctxt.DEBUG_DRAW) {
-			ctxt.setPixelStroke(1);
+			ctxt.setPixelStroke(1.0);
 			world.b2dWorld.setDebugDraw(ctxt);
 			world.b2dWorld.drawDebugData();
 		}

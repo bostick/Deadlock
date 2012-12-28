@@ -63,6 +63,10 @@ public class RenderingContext extends DebugDraw {
 	}
 	
 	public void setPixelStroke(int pix) {
+		g2.setStroke(new BasicStroke(pix, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER));
+	}
+	
+	public void setPixelStroke(double pix) {
 		g2.setStroke(new BasicStroke((float)(pix / cam.pixelsPerMeter), BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER));
 	}
 	
@@ -117,8 +121,7 @@ public class RenderingContext extends DebugDraw {
 		AffineTransform origTransform = g2.getTransform();
 		
 		g2.scale(1 / cam.pixelsPerMeter, 1 / cam.pixelsPerMeter);
-		paintImage(
-				img,
+		paintImage(img,
 				(int)Math.ceil(dx1 * cam.pixelsPerMeter), (int)Math.ceil(dy1 * cam.pixelsPerMeter), (int)Math.ceil(dx2 * cam.pixelsPerMeter), (int)Math.ceil(dy2 * cam.pixelsPerMeter),
 				sx1, sy1, sx2, sy2);
 		

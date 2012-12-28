@@ -78,7 +78,7 @@ public class World {
 		
 		World w = new World(screen);
 		
-		QuadrantMap qm = new QuadrantMap(ini);
+		QuadrantMap qm = new QuadrantMap(w, ini);
 		
 		w.quadrantMap = qm;
 		
@@ -290,7 +290,7 @@ public class World {
 		
 		World w = new World(screen);
 		
-		QuadrantMap qm = QuadrantMap.fromFileString(screen.cam, quadrantMapStringBuilder.toString());
+		QuadrantMap qm = QuadrantMap.fromFileString(w, quadrantMapStringBuilder.toString());
 		Graph g = Graph.fromFileString(w, screen.controlPanel, graphStringBuilder.toString());
 		
 		w.quadrantMap = qm;
@@ -348,6 +348,7 @@ public class World {
 			
 			RenderingContext backgroundCtxt = new RenderingContext(RenderingContextType.CANVAS);
 			backgroundCtxt.g2 = backgroundG2;
+			backgroundCtxt.cam = screen.cam;
 			
 			quadrantMap.render(backgroundCtxt);
 			graph.render(backgroundCtxt);

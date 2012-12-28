@@ -21,7 +21,6 @@ import com.gutabi.deadlock.ScreenBase;
 import com.gutabi.deadlock.core.Dim;
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.view.Canvas;
 import com.gutabi.deadlock.view.DLSFileChooser;
 import com.gutabi.deadlock.view.InputEvent;
 import com.gutabi.deadlock.view.PaintEvent;
@@ -45,18 +44,18 @@ public class WorldScreen extends ScreenBase {
 		DIALOG
 	}
 	
-//	public boolean FPS_DRAW = false;
-//	public boolean STOPSIGN_DRAW = true;
-//	public boolean CARTEXTURE_DRAW = true;
-//	public boolean EXPLOSIONS_DRAW = true;
-//	public boolean DEBUG_DRAW = false;
+	public boolean FPS_DRAW = false;
+	public boolean STOPSIGN_DRAW = true;
+	public boolean CARTEXTURE_DRAW = true;
+	public boolean EXPLOSIONS_DRAW = true;
+	public boolean DEBUG_DRAW = false;
 	
 	
 	
 	public WorldCamera cam = new WorldCamera();
 	
-	public Canvas oldCanvas;
-	public Canvas canvas;
+	public WorldCanvas oldCanvas;
+	public WorldCanvas canvas;
 	
 	public ControlPanel controlPanel;
 	
@@ -92,7 +91,7 @@ public class WorldScreen extends ScreenBase {
 	
 	public void setup(RootPaneContainer container) {
 		
-		canvas = new Canvas();
+		canvas = new WorldCanvas(this);
 		
 		controlPanel = new ControlPanel(this);
 		controlPanel.init();
@@ -642,7 +641,7 @@ public class WorldScreen extends ScreenBase {
 			case DIALOG:
 				break;
 			case EDITING:
-				tool.exited(ev);
+//				tool.exited(ev);
 				break;
 			}
 		} else {
@@ -698,7 +697,7 @@ public class WorldScreen extends ScreenBase {
 			
 			boolean state = controlPanel.debugCheckBox.isSelected();
 			
-			APP.DEBUG_DRAW = state;
+			DEBUG_DRAW = state;
 			
 			render();
 			repaintCanvas();
@@ -708,7 +707,7 @@ public class WorldScreen extends ScreenBase {
 			
 			boolean state = controlPanel.fpsCheckBox.isSelected();
 			
-			APP.FPS_DRAW = state;
+			FPS_DRAW = state;
 			
 			render();
 			repaintCanvas();
@@ -718,7 +717,7 @@ public class WorldScreen extends ScreenBase {
 			
 			boolean state = controlPanel.stopSignCheckBox.isSelected();
 			
-			APP.STOPSIGN_DRAW = state;
+			STOPSIGN_DRAW = state;
 			
 			render();
 			repaintCanvas();
@@ -728,7 +727,7 @@ public class WorldScreen extends ScreenBase {
 			
 			boolean state = controlPanel.carTextureCheckBox.isSelected();
 			
-			APP.CARTEXTURE_DRAW = state;
+			CARTEXTURE_DRAW = state;
 			
 			repaintCanvas();
 			repaintControlPanel();
@@ -737,7 +736,7 @@ public class WorldScreen extends ScreenBase {
 			
 			boolean state = controlPanel.explosionsCheckBox.isSelected();
 			
-			APP.EXPLOSIONS_DRAW = state;
+			EXPLOSIONS_DRAW = state;
 			
 			repaintCanvas();
 			repaintControlPanel();
@@ -776,6 +775,7 @@ public class WorldScreen extends ScreenBase {
 //				g2.fillRect(0, 0, cam.canvasWidth, cam.canvasHeight);
 				
 				ctxt.g2 = g2;
+				ctxt.cam = cam;
 				
 				//synchronized (VIEW) {
 				paintWorldScreen(ctxt);

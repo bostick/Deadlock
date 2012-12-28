@@ -15,7 +15,7 @@
 	<property name="javaTgtVersion" value="1.6"/>
 	
 	<property name="srcDir" location="../src/main/java"/>
-	<property name="iconDir" location="../../DeadlockArtwork"/>
+	<property name="iconDir" location="../../DeadlockArtwork/build/bin/img"/>
 	<property name="buildDir" location="../build"/>
 	<property name="distDir" location="${buildDir}/dist/Deadlock"/>
 	
@@ -29,6 +29,8 @@
 	
 	<target name="build">
 		
+	    <subant buildpath="../../DeadlockArtwork/scripts" target="build" />
+	    
 		<delete dir="${buildDir}" />
 		<mkdir dir="${buildDir}" />
 		<mkdir dir="${buildDir}/bin" />

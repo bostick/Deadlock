@@ -64,8 +64,8 @@ public abstract class MenuItem {
 		
 		AffineTransform trans = ctxt.getTransform();
 		
-		double x = trans.getTranslateX();
-		double y = trans.getTranslateY();
+		int x = (int)trans.getTranslateX();
+		int y = (int)trans.getTranslateY();
 		
 		ul = new Point(x, y);
 		
@@ -87,7 +87,7 @@ public abstract class MenuItem {
 	}
 	
 	public void paint(RenderingContext ctxt) {
-		ctxt.paintImage(img, aabb.x, aabb.y, aabb.x + aabb.width, aabb.y + aabb.height, 0, 0, img.getWidth(), img.getHeight());
+		ctxt.paintImage(img, (int)aabb.x, (int)aabb.y, (int)(aabb.x + aabb.width), (int)(aabb.y + aabb.height), 0, 0, img.getWidth(), img.getHeight());
 	}
 	
 	public void paintHilited(RenderingContext ctxt) {

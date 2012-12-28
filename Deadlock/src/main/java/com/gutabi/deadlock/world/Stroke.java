@@ -791,11 +791,11 @@ public class Stroke {
 		
 		switch (ctxt.type) {
 		case CANVAS:
-			ctxt.setPixelStroke(1);
+			ctxt.setPixelStroke(1.0);
 			paintStroke(ctxt);
 			break;
 		case PREVIEW:
-			ctxt.setPixelStroke(1);
+			ctxt.setPixelStroke(1.0);
 			paintStroke(ctxt);
 			break;
 		}

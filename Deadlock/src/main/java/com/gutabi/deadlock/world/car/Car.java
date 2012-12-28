@@ -545,7 +545,7 @@ public abstract class Car extends Entity {
 			
 			if (ctxt.DEBUG_DRAW) {
 				ctxt.setColor(Color.BLACK);
-				ctxt.setPixelStroke(1);
+				ctxt.setPixelStroke(1.0);
 				shape.getAABB().draw(ctxt);
 				
 				paintID(ctxt);

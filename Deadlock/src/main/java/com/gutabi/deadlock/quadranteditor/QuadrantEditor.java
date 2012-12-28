@@ -17,7 +17,6 @@ import com.gutabi.deadlock.core.Dim;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.AABB;
 import com.gutabi.deadlock.menu.MainMenu;
-import com.gutabi.deadlock.view.Canvas;
 import com.gutabi.deadlock.view.InputEvent;
 import com.gutabi.deadlock.view.PaintEvent;
 import com.gutabi.deadlock.view.RenderingContext;
@@ -32,7 +31,7 @@ public class QuadrantEditor extends ScreenBase {
 	public static final int EDITOR_WIDTH = 800;
 	public static final int EDITOR_HEIGHT = 600;
 	
-	public Canvas canvas;
+	public QuadrantEditorCanvas canvas;
 	
 	AABB worldCanvasAABB = new AABB(50, 50, 350, 350);
 	
@@ -64,6 +63,8 @@ public class QuadrantEditor extends ScreenBase {
 				{1, 1, 0},
 				{0, 1, 0}
 			};
+		
+		worldScreen = new WorldScreen();
 		
 		world = World.createWorld(worldScreen, ini);
 		
@@ -371,7 +372,7 @@ public class QuadrantEditor extends ScreenBase {
 	
 	public void setup(RootPaneContainer container) {
 		
-		canvas = new Canvas();
+		canvas = new QuadrantEditorCanvas(this);
 		
 		Container cp = container.getContentPane();
 		cp.add(canvas.java());
@@ -547,6 +548,7 @@ public class QuadrantEditor extends ScreenBase {
 				
 				RenderingContext ctxt = new RenderingContext(RenderingContextType.CANVAS);
 				ctxt.g2 = g2;
+				ctxt.cam = worldScreen.cam;
 				
 				AffineTransform origTrans = ctxt.getTransform();
 				

@@ -197,7 +197,7 @@ public class FixtureTool extends ToolBase {
 			
 			ctxt.setColor(Color.WHITE);
 			ctxt.setXORMode(Color.BLACK);
-			ctxt.setPixelStroke(1);
+			ctxt.setPixelStroke(1.0);
 			
 			shape.draw(ctxt);
 			
