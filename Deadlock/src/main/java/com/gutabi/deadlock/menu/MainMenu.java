@@ -51,12 +51,15 @@ public class MainMenu extends ScreenBase {
 				
 				WorldScreen s = new WorldScreen();
 				s.world = OneByOneWorld.createOneByOneWorld(s);
+				s.init();
 				
 				s.setup(APP.container);
 				((JFrame)APP.container).setVisible(true);
 				
 				s.postDisplay();
-				s.render();
+				
+				s.world.render_canvas();
+				s.world.render_preview();
 				s.canvas.repaint();
 				s.controlPanel.repaint();
 			}
@@ -70,12 +73,15 @@ public class MainMenu extends ScreenBase {
 				
 				WorldScreen s = new WorldScreen();
 				s.world = FourByFourGridWorld.createFourByFourGridWorld(s);
+				s.init();
 				
 				s.setup(APP.container);
 				((JFrame)APP.container).setVisible(true);
 				
 				s.postDisplay();
-				s.render();
+				
+				s.world.render_canvas();
+				s.world.render_preview();
 				s.canvas.repaint();
 				s.controlPanel.repaint();
 				
@@ -90,13 +96,16 @@ public class MainMenu extends ScreenBase {
 				
 				WorldScreen s = new WorldScreen();
 				s.world = WorldA.createWorldA(s);
+				s.init();
 				
 				s.setup(APP.container);
 				
 				((JFrame)APP.container).setVisible(true);
 				
 				s.postDisplay();
-				s.render();
+				
+				s.world.render_canvas();
+				s.world.render_preview();
 				s.canvas.repaint();
 				s.controlPanel.repaint();
 				
@@ -115,7 +124,7 @@ public class MainMenu extends ScreenBase {
 				((JFrame)APP.container).setVisible(true);
 				
 				s.postDisplay();
-				s.worldScreen.canvas.render_canvas();
+				s.worldScreen.world.render_canvas();
 				s.canvas.repaint();
 			}
 		};

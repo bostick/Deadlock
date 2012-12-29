@@ -2,7 +2,6 @@ package com.gutabi.deadlock.world;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -11,14 +10,15 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferStrategy;
-import java.awt.image.BufferedImage;
 
 import javax.swing.SwingUtilities;
 
 import org.apache.log4j.Logger;
 
 import com.gutabi.deadlock.core.Dim;
+import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.ui.ComponentBase;
 import com.gutabi.deadlock.ui.InputEvent;
@@ -29,8 +29,6 @@ import com.gutabi.deadlock.world.WorldScreen.WorldScreenMode;
 public class WorldCanvas extends ComponentBase {
 	
 	WorldScreen screen;
-	
-	private BufferedImage background;
 	
 	private BufferStrategy bs;
 	
@@ -179,8 +177,6 @@ public class WorldCanvas extends ComponentBase {
 		c.createBufferStrategy(2);
 		bs = c.getBufferStrategy();
 		
-		background = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_RGB);
-		
 		return new Dim(getWidth(), getHeight());
 	}
 	
@@ -302,59 +298,6 @@ public class WorldCanvas extends ComponentBase {
 		screen.ctrlOKey(ev);
 	}
 	
-	public void render_canvas() {
-		assert !Thread.holdsLock(APP);
-		
-		synchronized (APP) {
-			
-			Graphics2D backgroundG2 = background.createGraphics();
-			
-			backgroundG2.setColor(Color.DARK_GRAY);
-			backgroundG2.fillRect(0, 0, screen.cam.canvasWidth, screen.cam.canvasHeight);
-			
-			backgroundG2.scale(screen.cam.pixelsPerMeter, screen.cam.pixelsPerMeter);
-			backgroundG2.translate(-screen.cam.worldViewport.x, -screen.cam.worldViewport.y);
-			
-			RenderingContext backgroundCtxt = new RenderingContext();
-			backgroundCtxt.g2 = backgroundG2;
-			backgroundCtxt.cam = screen.cam;
-			
-			screen.world.quadrantMap.render_canvas(backgroundCtxt);
-			screen.world.graph.render_canvas(backgroundCtxt);
-			
-			backgroundG2.dispose();
-			
-		}
-		
-	}
-	
-	public void render_preview() {
-		assert !Thread.holdsLock(APP);
-		
-		synchronized (APP) {
-			
-			Graphics2D backgroundG2 = background.createGraphics();
-			
-			backgroundG2.setColor(Color.DARK_GRAY);
-			backgroundG2.fillRect(0, 0, screen.cam.canvasWidth, screen.cam.canvasHeight);
-			
-			backgroundG2.scale(screen.cam.pixelsPerMeter, screen.cam.pixelsPerMeter);
-			backgroundG2.translate(-screen.cam.worldViewport.x, -screen.cam.worldViewport.y);
-			
-			RenderingContext backgroundCtxt = new RenderingContext();
-			backgroundCtxt.g2 = backgroundG2;
-			backgroundCtxt.cam = screen.cam;
-			
-			screen.world.quadrantMap.render_preview(backgroundCtxt);
-			screen.world.graph.render_preview(backgroundCtxt);
-			
-			backgroundG2.dispose();
-			
-		}
-		
-	}
-	
-	
 	
 	RenderingContext ctxt = new RenderingContext();
 	
@@ -377,7 +320,7 @@ public class WorldCanvas extends ComponentBase {
 				ctxt.FPS_DRAW = screen.FPS_DRAW;
 				
 				//synchronized (VIEW) {
-				screen.paintWorldScreen_canvas(ctxt);
+				paint_canvas(ctxt);
 				//}
 				
 				g2.dispose();
@@ -390,14 +333,34 @@ public class WorldCanvas extends ComponentBase {
 		
 	}
 	
-	public void paint(RenderingContext ctxt) {
+	private void paint_canvas(RenderingContext ctxt) {
 		
-//		synchronized (VIEW) {
-			ctxt.paintImage(
-					background,
-					0, 0, screen.cam.canvasWidth, screen.cam.canvasHeight,
-					0, 0, screen.cam.canvasWidth, screen.cam.canvasHeight);
-//		}
+		screen.world.paint_canvas(ctxt);
+		
+		AffineTransform origTrans = ctxt.getTransform();
+		
+		ctxt.scale(ctxt.cam.pixelsPerMeter);
+		ctxt.translate(-ctxt.cam.worldViewport.x, -ctxt.cam.worldViewport.y);
+		
+		Entity hilitedCopy;
+		synchronized (APP) {
+			hilitedCopy = screen.hilited;
+		}
+		
+		if (hilitedCopy != null) {
+			hilitedCopy.paintHilite(ctxt);
+		}
+		
+		screen.tool.draw(ctxt);
+		
+		if (ctxt.FPS_DRAW) {
+			
+			ctxt.translate(ctxt.cam.worldViewport.x, ctxt.cam.worldViewport.y);
+			
+			screen.stats.paint(ctxt);
+		}
+		
+		ctxt.setTransform(origTrans);
 		
 	}
 

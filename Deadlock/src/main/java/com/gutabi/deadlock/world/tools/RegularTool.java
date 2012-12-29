@@ -82,7 +82,7 @@ public class RegularTool extends ToolBase {
 				
 				r.setDirection(null, Direction.STARTTOEND);
 				
-				screen.render();
+				screen.world.render_canvas();
 				screen.canvas.repaint();
 				
 			} else if (screen.hilited instanceof Fixture) {
@@ -100,7 +100,7 @@ public class RegularTool extends ToolBase {
 				f.setSide(f.getSide().other());
 				g.setSide(g.getSide().other());
 				
-				screen.render();
+				screen.world.render_canvas();
 				screen.canvas.repaint();
 				
 			}
@@ -116,7 +116,7 @@ public class RegularTool extends ToolBase {
 				
 				r.setDirection(null, Direction.ENDTOSTART);
 				
-				screen.render();
+				screen.world.render_canvas();
 				screen.canvas.repaint();
 				
 			}
@@ -132,7 +132,7 @@ public class RegularTool extends ToolBase {
 				
 				r.setDirection(null, null);
 			
-				screen.render();
+				screen.world.render_canvas();
 				screen.canvas.repaint();
 				
 			}
@@ -190,7 +190,7 @@ public class RegularTool extends ToolBase {
 				
 				s.setEnabled(true);
 				
-				screen.render();
+				screen.world.render_canvas();
 				screen.canvas.repaint();
 			}
 			
@@ -260,7 +260,8 @@ public class RegularTool extends ToolBase {
 		case DRAFTING:
 			draftEnd();
 			
-			screen.render();
+			screen.world.render_canvas();
+			screen.world.render_preview();
 			screen.canvas.repaint();
 			screen.controlPanel.repaint();
 			break;

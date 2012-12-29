@@ -143,7 +143,8 @@ public class CircleTool extends ToolBase {
 			
 			screen.tool.setPoint(screen.lastMovedWorldPoint);
 			
-			screen.render();
+			screen.world.render_canvas();
+			screen.world.render_preview();
 			screen.canvas.repaint();
 			screen.controlPanel.repaint();
 			break;

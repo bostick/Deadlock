@@ -168,7 +168,8 @@ public class FixtureTool extends ToolBase {
 			screen.tool = new RegularTool(screen);
 			screen.tool.setPoint(screen.lastMovedWorldPoint);
 			
-			screen.render();
+			screen.world.render_canvas();
+			screen.world.render_preview();
 			screen.canvas.repaint();
 			screen.controlPanel.repaint();
 		}

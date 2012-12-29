@@ -117,8 +117,8 @@ public class QuadrantMap {
 	
 	public void canvasPostDisplay() {
 		
-		int quadrantWidthPixels = (int)Math.ceil(world.screen.cam.pixelsPerMeter * QUADRANT_WIDTH);
-		int quadrantHeightPixels = (int)Math.ceil(world.screen.cam.pixelsPerMeter * QUADRANT_HEIGHT);
+		int quadrantWidthPixels = (int)Math.ceil(world.screen.cam.origPixelsPerMeter * QUADRANT_WIDTH);
+		int quadrantHeightPixels = (int)Math.ceil(world.screen.cam.origPixelsPerMeter * QUADRANT_HEIGHT);
 		
 		quadrantGrass = new BufferedImage(quadrantWidthPixels, quadrantHeightPixels, BufferedImage.TYPE_INT_RGB);
 		Graphics2D quadrantGrassG2 = quadrantGrass.createGraphics();

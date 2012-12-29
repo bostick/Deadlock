@@ -53,7 +53,8 @@ public class MergerTool extends ToolBase {
 				
 				screen.tool.setPoint(screen.lastMovedWorldPoint);
 				
-				screen.render();
+				screen.world.render_canvas();
+				screen.world.render_preview();
 				screen.canvas.repaint();
 				screen.controlPanel.repaint();
 			}

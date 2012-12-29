@@ -2,7 +2,10 @@ package com.gutabi.deadlock.world;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
+import java.awt.Color;
+import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
@@ -29,6 +32,11 @@ import com.gutabi.deadlock.world.graph.Vertex;
 public class World {
 	
 	public WorldScreen screen;
+	
+	private BufferedImage background;
+	private BufferedImage previewImage;
+	
+	AABB previewAABB = new AABB(0, 0, 100, 100);
 	
 	public QuadrantMap quadrantMap;
 	public Graph graph;
@@ -76,6 +84,12 @@ public class World {
 		screen.cam.canvasWidth = (int)dim.width;
 		screen.cam.canvasHeight = (int)dim.height;
 		
+		screen.previewWidth = 100;
+		screen.previewHeight = 100;
+		
+		background = new BufferedImage(screen.cam.canvasWidth, screen.cam.canvasHeight, BufferedImage.TYPE_INT_RGB);
+		previewImage = new BufferedImage(screen.previewWidth, screen.previewHeight, BufferedImage.TYPE_INT_RGB);
+		
 		quadrantMap.canvasPostDisplay();
 		
 		screen.cam.worldViewport = new AABB(
@@ -83,6 +97,10 @@ public class World {
 				-(screen.cam.canvasHeight / screen.cam.pixelsPerMeter) / 2 + quadrantMap.worldHeight/2,
 				screen.cam.canvasWidth / screen.cam.pixelsPerMeter,
 				screen.cam.canvasHeight / screen.cam.pixelsPerMeter);
+	}
+	
+	public void setPreviewLocation(double x, double y) {
+		previewAABB = new AABB(x, y, previewAABB.width, previewAABB.height);
 	}
 	
 	public void preStart() {
@@ -166,6 +184,13 @@ public class World {
 			return h;
 		}
 		return null;
+	}
+	
+	public boolean previewHitTest(Point p) {
+		if (previewAABB.hitTest(p)) {
+			return true;
+		}
+		return false;
 	}
 	
 	public Set<Vertex> addFixture(Fixture f) {
@@ -316,7 +341,95 @@ public class World {
 		return new AABB(ul.x, ul.y, br.x - ul.x, br.y - ul.y);
 	}
 	
-	public void paintWorldScene(RenderingContext ctxt) {
+	public Point previewToWorld(Point p) {
+		
+		double pixelsPerMeterWidth = screen.previewWidth / screen.world.quadrantMap.worldWidth;
+		double pixelsPerMeterHeight = screen.previewHeight / screen.world.quadrantMap.worldHeight;
+		double s = Math.min(pixelsPerMeterWidth, pixelsPerMeterHeight);
+		
+		return new Point((1/s) * p.x, (1/s) * p.y);
+	}
+	
+	public Point worldToPreview(Point p) {
+		
+		double pixelsPerMeterWidth = screen.previewWidth / screen.world.quadrantMap.worldWidth;
+		double pixelsPerMeterHeight = screen.previewHeight / screen.world.quadrantMap.worldHeight;
+		double s = Math.min(pixelsPerMeterWidth, pixelsPerMeterHeight);
+		
+		return new Point((s) * p.x, (s) * p.y);
+	}
+	
+	public void previewPan(Point prevDp) {
+		Point worldDP = previewToWorld(prevDp);
+		
+		screen.cam.worldViewport = new AABB(
+				screen.cam.worldViewport.x + worldDP.x,
+				screen.cam.worldViewport.y + worldDP.y,
+				screen.cam.worldViewport.width,
+				screen.cam.worldViewport.height);
+	}
+	
+	public void render_canvas() {
+		
+		Graphics2D backgroundG2 = background.createGraphics();
+		
+		backgroundG2.setColor(Color.DARK_GRAY);
+		backgroundG2.fillRect(0, 0, screen.cam.canvasWidth, screen.cam.canvasHeight);
+		
+		backgroundG2.scale(screen.cam.pixelsPerMeter, screen.cam.pixelsPerMeter);
+		backgroundG2.translate(-screen.cam.worldViewport.x, -screen.cam.worldViewport.y);
+		
+		RenderingContext backgroundCtxt = new RenderingContext();
+		backgroundCtxt.g2 = backgroundG2;
+		backgroundCtxt.cam = screen.cam;
+		
+		quadrantMap.render_canvas(backgroundCtxt);
+		graph.render_canvas(backgroundCtxt);
+		
+		backgroundG2.dispose();
+		
+	}
+	
+	public void render_preview() {
+		
+		Graphics2D previewImageG2 = previewImage.createGraphics();
+		
+		RenderingContext previewContext = new RenderingContext();
+		previewContext.g2 = previewImageG2;
+		
+		previewImageG2.setColor(Color.LIGHT_GRAY);
+		previewImageG2.fillRect(0, 0, screen.previewWidth, screen.previewHeight);
+		
+		double pixelsPerMeterWidth = screen.previewWidth / screen.world.quadrantMap.worldWidth;
+		double pixelsPerMeterHeight = screen.previewHeight / screen.world.quadrantMap.worldHeight;
+		double s = Math.min(pixelsPerMeterWidth, pixelsPerMeterHeight);
+		
+		AffineTransform origTrans = previewContext.getTransform();
+		previewContext.translate(screen.previewWidth/2 - (s * screen.world.quadrantMap.worldWidth / 2), screen.previewHeight/2 - (s * screen.world.quadrantMap.worldHeight / 2));
+		
+		previewImageG2.scale(s, s);
+		
+		screen.world.quadrantMap.render_preview(previewContext);
+		
+		screen.world.graph.render_preview(previewContext);
+		
+		previewContext.setTransform(origTrans);
+		
+		previewImageG2.dispose();
+		
+	}
+	
+	public void paint_canvas(RenderingContext ctxt) {
+		
+		ctxt.paintImage(
+				background,
+				0, 0, screen.cam.canvasWidth, screen.cam.canvasHeight,
+				0, 0, screen.cam.canvasWidth, screen.cam.canvasHeight);
+		
+		AffineTransform origTrans = ctxt.getTransform();
+		
+		ctxt.scale(ctxt.cam.pixelsPerMeter);
+		ctxt.translate(-ctxt.cam.worldViewport.x, -ctxt.cam.worldViewport.y);
 		
 		roadMarkMap.paintScene(ctxt);
 		grassMarkMap.paintScene(ctxt);
@@ -333,6 +446,39 @@ public class World {
 		if (ctxt.DEBUG_DRAW) {
 			graph.paintIDs(ctxt);
 		}
+		
+		ctxt.setTransform(origTrans);
+		
+	}
+	
+	public void paint_preview(RenderingContext ctxt) {
+		
+		AffineTransform origTrans = ctxt.getTransform();
+		
+		ctxt.translate(previewAABB.x, previewAABB.y);
+		
+		ctxt.paintImage(previewImage,
+				0, 0, (int)previewAABB.width, (int)previewAABB.height,
+				0, 0, screen.previewWidth, screen.previewHeight);
+		
+		Point prevLoc = worldToPreview(screen.cam.worldViewport.ul);
+		
+		Point prevDim = worldToPreview(new Point(screen.cam.worldViewport.width, screen.cam.worldViewport.height));
+		
+		AABB prev = new AABB(prevLoc.x, prevLoc.y, prevDim.x, prevDim.y);
+		
+		double pixelsPerMeterWidth = screen.previewWidth / screen.world.quadrantMap.worldWidth;
+		double pixelsPerMeterHeight = screen.previewHeight / screen.world.quadrantMap.worldHeight;
+		double s = Math.min(pixelsPerMeterWidth, pixelsPerMeterHeight);
+		
+		ctxt.translate(
+				screen.previewWidth/2 - (s * screen.world.quadrantMap.worldWidth / 2),
+				screen.previewHeight/2 - (s * screen.world.quadrantMap.worldHeight / 2));
+		
+		ctxt.setColor(Color.BLUE);
+		prev.draw(ctxt);
+		
+		ctxt.setTransform(origTrans);
 		
 	}
 	

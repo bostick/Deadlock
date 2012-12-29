@@ -39,8 +39,6 @@ public class QuadrantEditor extends ScreenBase {
 	
 	BufferedImage quadrantGrass;
 	
-	World world;
-	
 	Button removeCol;
 	Button addCol;
 	Button removeRow;
@@ -62,15 +60,16 @@ public class QuadrantEditor extends ScreenBase {
 			};
 		
 		worldScreen = new WorldScreen();
+		worldScreen.world = World.createWorld(worldScreen, ini);
 		
-		world = World.createWorld(worldScreen, ini);
+//		worldScreen.postDisplay();
 		
-		double pixelsPerMeterWidth = worldCanvasAABB.width / world.quadrantMap.worldWidth;
-		double pixelxPerMeterHeight = worldCanvasAABB.height / world.quadrantMap.worldHeight;
+		double pixelsPerMeterWidth = worldCanvasAABB.width / worldScreen.world.quadrantMap.worldWidth;
+		double pixelxPerMeterHeight = worldCanvasAABB.height / worldScreen.world.quadrantMap.worldHeight;
 		worldScreen.cam.pixelsPerMeter = Math.min(pixelsPerMeterWidth, pixelxPerMeterHeight);
 		
-		world.canvasPostDisplay(new Dim(world.quadrantMap.worldWidth * worldScreen.cam.pixelsPerMeter, world.quadrantMap.worldHeight * worldScreen.cam.pixelsPerMeter));
-		worldScreen.cam.worldViewport = new AABB(0, 0, world.quadrantMap.worldWidth, world.quadrantMap.worldHeight);
+		worldScreen.world.canvasPostDisplay(new Dim(worldScreen.world.quadrantMap.worldWidth * worldScreen.cam.pixelsPerMeter, worldScreen.world.quadrantMap.worldHeight * worldScreen.cam.pixelsPerMeter));
+		worldScreen.cam.worldViewport = new AABB(0, 0, worldScreen.world.quadrantMap.worldWidth, worldScreen.world.quadrantMap.worldHeight);
 		
 		removeRow = new Button() {
 			
@@ -86,16 +85,16 @@ public class QuadrantEditor extends ScreenBase {
 					}
 				}
 				
-				world = World.createWorld(worldScreen, ini);
+				worldScreen.world = World.createWorld(worldScreen, ini);
 				
-				double pixelsPerMeterWidth = worldCanvasAABB.width / world.quadrantMap.worldWidth;
-				double pixelxPerMeterHeight = worldCanvasAABB.height / world.quadrantMap.worldHeight;
+				double pixelsPerMeterWidth = worldCanvasAABB.width / worldScreen.world.quadrantMap.worldWidth;
+				double pixelxPerMeterHeight = worldCanvasAABB.height / worldScreen.world.quadrantMap.worldHeight;
 				worldScreen.cam.pixelsPerMeter = Math.min(pixelsPerMeterWidth, pixelxPerMeterHeight);
 				
-				world.canvasPostDisplay(new Dim(world.quadrantMap.worldWidth * worldScreen.cam.pixelsPerMeter, world.quadrantMap.worldHeight * worldScreen.cam.pixelsPerMeter));
-				worldScreen.cam.worldViewport = new AABB(0, 0, world.quadrantMap.worldWidth, world.quadrantMap.worldHeight);
+				worldScreen.world.canvasPostDisplay(new Dim(worldScreen.world.quadrantMap.worldWidth * worldScreen.cam.pixelsPerMeter, worldScreen.world.quadrantMap.worldHeight * worldScreen.cam.pixelsPerMeter));
+				worldScreen.cam.worldViewport = new AABB(0, 0, worldScreen.world.quadrantMap.worldWidth, worldScreen.world.quadrantMap.worldHeight);
 				
-				QuadrantEditor.this.worldScreen.canvas.render_canvas();
+				QuadrantEditor.this.worldScreen.world.render_canvas();
 				QuadrantEditor.this.canvas.repaint();
 			}
 			
@@ -132,16 +131,16 @@ public class QuadrantEditor extends ScreenBase {
 					}
 				}
 				
-				world = World.createWorld(worldScreen, ini);
+				worldScreen.world = World.createWorld(worldScreen, ini);
 				
-				double pixelsPerMeterWidth = worldCanvasAABB.width / world.quadrantMap.worldWidth;
-				double pixelxPerMeterHeight = worldCanvasAABB.height / world.quadrantMap.worldHeight;
+				double pixelsPerMeterWidth = worldCanvasAABB.width / worldScreen.world.quadrantMap.worldWidth;
+				double pixelxPerMeterHeight = worldCanvasAABB.height / worldScreen.world.quadrantMap.worldHeight;
 				worldScreen.cam.pixelsPerMeter = Math.min(pixelsPerMeterWidth, pixelxPerMeterHeight);
 				
-				world.canvasPostDisplay(new Dim(world.quadrantMap.worldWidth * worldScreen.cam.pixelsPerMeter, world.quadrantMap.worldHeight * worldScreen.cam.pixelsPerMeter));
-				worldScreen.cam.worldViewport = new AABB(0, 0, world.quadrantMap.worldWidth, world.quadrantMap.worldHeight);
+				worldScreen.world.canvasPostDisplay(new Dim(worldScreen.world.quadrantMap.worldWidth * worldScreen.cam.pixelsPerMeter, worldScreen.world.quadrantMap.worldHeight * worldScreen.cam.pixelsPerMeter));
+				worldScreen.cam.worldViewport = new AABB(0, 0, worldScreen.world.quadrantMap.worldWidth, worldScreen.world.quadrantMap.worldHeight);
 				
-				QuadrantEditor.this.worldScreen.canvas.render_canvas();
+				QuadrantEditor.this.worldScreen.world.render_canvas();
 				QuadrantEditor.this.canvas.repaint();
 			}
 			
@@ -177,16 +176,16 @@ public class QuadrantEditor extends ScreenBase {
 					}
 				}
 				
-				world = World.createWorld(worldScreen, ini);
+				worldScreen.world = World.createWorld(worldScreen, ini);
 				
-				double pixelsPerMeterWidth = worldCanvasAABB.width / world.quadrantMap.worldWidth;
-				double pixelxPerMeterHeight = worldCanvasAABB.height / world.quadrantMap.worldHeight;
+				double pixelsPerMeterWidth = worldCanvasAABB.width / worldScreen.world.quadrantMap.worldWidth;
+				double pixelxPerMeterHeight = worldCanvasAABB.height / worldScreen.world.quadrantMap.worldHeight;
 				worldScreen.cam.pixelsPerMeter = Math.min(pixelsPerMeterWidth, pixelxPerMeterHeight);
 				
-				world.canvasPostDisplay(new Dim(world.quadrantMap.worldWidth * worldScreen.cam.pixelsPerMeter, world.quadrantMap.worldHeight * worldScreen.cam.pixelsPerMeter));
-				worldScreen.cam.worldViewport = new AABB(0, 0, world.quadrantMap.worldWidth, world.quadrantMap.worldHeight);
+				worldScreen.world.canvasPostDisplay(new Dim(worldScreen.world.quadrantMap.worldWidth * worldScreen.cam.pixelsPerMeter, worldScreen.world.quadrantMap.worldHeight * worldScreen.cam.pixelsPerMeter));
+				worldScreen.cam.worldViewport = new AABB(0, 0, worldScreen.world.quadrantMap.worldWidth, worldScreen.world.quadrantMap.worldHeight);
 				
-				QuadrantEditor.this.worldScreen.canvas.render_canvas();
+				QuadrantEditor.this.worldScreen.world.render_canvas();
 				QuadrantEditor.this.canvas.repaint();
 			}
 			
@@ -221,16 +220,16 @@ public class QuadrantEditor extends ScreenBase {
 					}
 				}
 				
-				world = World.createWorld(worldScreen, ini);
+				worldScreen.world = World.createWorld(worldScreen, ini);
 				
-				double pixelsPerMeterWidth = worldCanvasAABB.width / world.quadrantMap.worldWidth;
-				double pixelxPerMeterHeight = worldCanvasAABB.height / world.quadrantMap.worldHeight;
+				double pixelsPerMeterWidth = worldCanvasAABB.width / worldScreen.world.quadrantMap.worldWidth;
+				double pixelxPerMeterHeight = worldCanvasAABB.height / worldScreen.world.quadrantMap.worldHeight;
 				worldScreen.cam.pixelsPerMeter = Math.min(pixelsPerMeterWidth, pixelxPerMeterHeight);
 				
-				world.canvasPostDisplay(new Dim(world.quadrantMap.worldWidth * worldScreen.cam.pixelsPerMeter, world.quadrantMap.worldHeight * worldScreen.cam.pixelsPerMeter));
-				worldScreen.cam.worldViewport = new AABB(0, 0, world.quadrantMap.worldWidth, world.quadrantMap.worldHeight);
+				worldScreen.world.canvasPostDisplay(new Dim(worldScreen.world.quadrantMap.worldWidth * worldScreen.cam.pixelsPerMeter, worldScreen.world.quadrantMap.worldHeight * worldScreen.cam.pixelsPerMeter));
+				worldScreen.cam.worldViewport = new AABB(0, 0, worldScreen.world.quadrantMap.worldWidth, worldScreen.world.quadrantMap.worldHeight);
 				
-				QuadrantEditor.this.worldScreen.canvas.render_canvas();
+				QuadrantEditor.this.worldScreen.world.render_canvas();
 				QuadrantEditor.this.canvas.repaint();
 			}
 			
@@ -266,16 +265,16 @@ public class QuadrantEditor extends ScreenBase {
 					}
 				}
 				
-				world = World.createWorld(worldScreen, ini);
+				worldScreen.world = World.createWorld(worldScreen, ini);
 				
-				double pixelsPerMeterWidth = worldCanvasAABB.width / world.quadrantMap.worldWidth;
-				double pixelxPerMeterHeight = worldCanvasAABB.height / world.quadrantMap.worldHeight;
+				double pixelsPerMeterWidth = worldCanvasAABB.width / worldScreen.world.quadrantMap.worldWidth;
+				double pixelxPerMeterHeight = worldCanvasAABB.height / worldScreen.world.quadrantMap.worldHeight;
 				worldScreen.cam.pixelsPerMeter = Math.min(pixelsPerMeterWidth, pixelxPerMeterHeight);
 				
-				world.canvasPostDisplay(new Dim(world.quadrantMap.worldWidth * worldScreen.cam.pixelsPerMeter, world.quadrantMap.worldHeight * worldScreen.cam.pixelsPerMeter));
-				worldScreen.cam.worldViewport = new AABB(0, 0, world.quadrantMap.worldWidth, world.quadrantMap.worldHeight);
+				worldScreen.world.canvasPostDisplay(new Dim(worldScreen.world.quadrantMap.worldWidth * worldScreen.cam.pixelsPerMeter, worldScreen.world.quadrantMap.worldHeight * worldScreen.cam.pixelsPerMeter));
+				worldScreen.cam.worldViewport = new AABB(0, 0, worldScreen.world.quadrantMap.worldWidth, worldScreen.world.quadrantMap.worldHeight);
 				
-				QuadrantEditor.this.worldScreen.canvas.render_canvas();
+				QuadrantEditor.this.worldScreen.world.render_canvas();
 				QuadrantEditor.this.canvas.repaint();
 			}
 			
@@ -310,16 +309,16 @@ public class QuadrantEditor extends ScreenBase {
 					}
 				}
 				
-				world = World.createWorld(worldScreen, ini);
+				worldScreen.world = World.createWorld(worldScreen, ini);
 				
-				double pixelsPerMeterWidth = worldCanvasAABB.width / world.quadrantMap.worldWidth;
-				double pixelxPerMeterHeight = worldCanvasAABB.height / world.quadrantMap.worldHeight;
+				double pixelsPerMeterWidth = worldCanvasAABB.width / worldScreen.world.quadrantMap.worldWidth;
+				double pixelxPerMeterHeight = worldCanvasAABB.height / worldScreen.world.quadrantMap.worldHeight;
 				worldScreen.cam.pixelsPerMeter = Math.min(pixelsPerMeterWidth, pixelxPerMeterHeight);
 				
-				world.canvasPostDisplay(new Dim(world.quadrantMap.worldWidth * worldScreen.cam.pixelsPerMeter, world.quadrantMap.worldHeight * worldScreen.cam.pixelsPerMeter));
-				worldScreen.cam.worldViewport = new AABB(0, 0, world.quadrantMap.worldWidth, world.quadrantMap.worldHeight);
+				worldScreen.world.canvasPostDisplay(new Dim(worldScreen.world.quadrantMap.worldWidth * worldScreen.cam.pixelsPerMeter, worldScreen.world.quadrantMap.worldHeight * worldScreen.cam.pixelsPerMeter));
+				worldScreen.cam.worldViewport = new AABB(0, 0, worldScreen.world.quadrantMap.worldWidth, worldScreen.world.quadrantMap.worldHeight);
 				
-				QuadrantEditor.this.worldScreen.canvas.render_canvas();
+				QuadrantEditor.this.worldScreen.world.render_canvas();
 				QuadrantEditor.this.canvas.repaint();
 			}
 			
@@ -347,12 +346,15 @@ public class QuadrantEditor extends ScreenBase {
 				teardown(APP.container);
 				
 				worldScreen.world = World.createWorld(worldScreen, ini);
+				worldScreen.init();
 				
 				worldScreen.setup(APP.container);
 				((JFrame)APP.container).setVisible(true);
 				
 				worldScreen.postDisplay();
-				worldScreen.render();
+				
+				worldScreen.world.render_canvas();
+				worldScreen.world.render_preview();
 				worldScreen.canvas.repaint();
 				worldScreen.controlPanel.repaint();
 			}
@@ -456,12 +458,12 @@ public class QuadrantEditor extends ScreenBase {
 			 */
 			Point pWorldCanvas = lastMovedOrDraggedEditorPoint.minus(new Point(worldCanvasAABB.center.x - worldScreen.cam.canvasWidth/2, worldCanvasAABB.center.y - worldScreen.cam.canvasHeight/2));
 			
-			Point pWorld = world.canvasToWorld(pWorldCanvas);
+			Point pWorld = worldScreen.world.canvasToWorld(pWorldCanvas);
 			
-			Quadrant q = world.quadrantMap.findQuadrant(pWorld);
+			Quadrant q = worldScreen.world.quadrantMap.findQuadrant(pWorld);
 			
 			if (q != null) {
-				hilited = world.worldToCanvas(q.aabb).plus(new Point(worldCanvasAABB.center.x - worldScreen.cam.canvasWidth/2, worldCanvasAABB.center.y - worldScreen.cam.canvasHeight/2));
+				hilited = worldScreen.world.worldToCanvas(q.aabb).plus(new Point(worldCanvasAABB.center.x - worldScreen.cam.canvasWidth/2, worldCanvasAABB.center.y - worldScreen.cam.canvasHeight/2));
 			} else {
 				hilited = null;
 			}
@@ -495,24 +497,25 @@ public class QuadrantEditor extends ScreenBase {
 			 */
 			Point pWorldCanvas = lastMovedOrDraggedEditorPoint.minus(new Point(worldCanvasAABB.center.x - worldScreen.cam.canvasWidth/2, worldCanvasAABB.center.y - worldScreen.cam.canvasHeight/2));
 			
-			Point pWorld = world.canvasToWorld(pWorldCanvas);
+			Point pWorld = worldScreen.world.canvasToWorld(pWorldCanvas);
 			
-			Quadrant q = world.quadrantMap.findQuadrant(pWorld);
+			Quadrant q = worldScreen.world.quadrantMap.findQuadrant(pWorld);
 			
 			if (q != null) {
 				
 				ini[q.r][q.c] = (q.active?0:1);
 				
-				world = World.createWorld(worldScreen, ini);
+				worldScreen.world = World.createWorld(worldScreen, ini);
 				
-				double pixelsPerMeterWidth = worldCanvasAABB.width / world.quadrantMap.worldWidth;
-				double pixelsPerMeterHeight = worldCanvasAABB.height / world.quadrantMap.worldHeight;
+				double pixelsPerMeterWidth = worldCanvasAABB.width / worldScreen.world.quadrantMap.worldWidth;
+				double pixelsPerMeterHeight = worldCanvasAABB.height / worldScreen.world.quadrantMap.worldHeight;
 				worldScreen.cam.pixelsPerMeter = Math.min(pixelsPerMeterWidth, pixelsPerMeterHeight);
 				
-				world.canvasPostDisplay(new Dim(world.quadrantMap.worldWidth * worldScreen.cam.pixelsPerMeter, world.quadrantMap.worldHeight * worldScreen.cam.pixelsPerMeter));
-				worldScreen.cam.worldViewport = new AABB(0, 0, world.quadrantMap.worldWidth, world.quadrantMap.worldHeight);
+				worldScreen.world.canvasPostDisplay(new Dim(worldScreen.world.quadrantMap.worldWidth * worldScreen.cam.pixelsPerMeter, worldScreen.world.quadrantMap.worldHeight * worldScreen.cam.pixelsPerMeter));
+				worldScreen.cam.worldViewport = new AABB(0, 0, worldScreen.world.quadrantMap.worldWidth, worldScreen.world.quadrantMap.worldHeight);
 				
-				worldScreen.canvas.render_canvas();
+				worldScreen.world.render_canvas();
+				
 				canvas.repaint();
 				
 			} else {
@@ -531,10 +534,6 @@ public class QuadrantEditor extends ScreenBase {
 		
 	}
 	
-//	public void render() {
-//		worldScreen.canvas.render();
-//	}
-	
 	public void paintEditor(RenderingContext ctxt) {
 		
 		ctxt.setColor(Color.GRAY);
@@ -546,11 +545,8 @@ public class QuadrantEditor extends ScreenBase {
 		AffineTransform origTrans = ctxt.getTransform();
 		ctxt.translate(worldCanvasAABB.center.x - worldScreen.cam.canvasWidth/2, worldCanvasAABB.center.y - worldScreen.cam.canvasHeight/2);
 		
-		worldScreen.canvas.paint(ctxt);
+		worldScreen.world.paint_canvas(ctxt);
 		
-		ctxt.scale(worldScreen.cam.pixelsPerMeter);
-		ctxt.translate(-worldScreen.cam.worldViewport.x, -worldScreen.cam.worldViewport.y);
-		world.paintWorldScene(ctxt);
 		ctxt.setTransform(origTrans);
 		
 		removeRow.paint(ctxt);

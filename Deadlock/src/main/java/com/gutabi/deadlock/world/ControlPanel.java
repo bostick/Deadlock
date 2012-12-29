@@ -48,10 +48,8 @@ public class ControlPanel extends ComponentBase {
 	public Checkbox explosionsCheckBox;
 	public Checkbox debugCheckBox;
 	
-	public Preview preview;
-	
 	@SuppressWarnings("serial")
-	public ControlPanel(WorldScreen screen) {
+	public ControlPanel(final WorldScreen screen) {
 		
 		this.screen = screen;
 		
@@ -88,13 +86,16 @@ public class ControlPanel extends ComponentBase {
 				explosionsCheckBox.paint(ctxt);
 				debugCheckBox.paint(ctxt);
 				
-				preview.paint(ctxt);
+				screen.world.paint_preview(ctxt);
+				
 			}
 		};
 		
 		c.setSize(new Dimension(200, 822));
 		c.setPreferredSize(new Dimension(200, 822));
 		c.setMaximumSize(new Dimension(200, 822));
+		
+		c.setFocusable(false);
 		
 		jl = new JavaListener();
 		c.addMouseListener(jl);
@@ -146,8 +147,6 @@ public class ControlPanel extends ComponentBase {
 	}
 	
 	public void init() {
-		
-//		c.setLayout(null);
 		
 		simulationInitLab = new Label("Simulation Init:");
 		simulationInitLab.font = new Font("Visitor TT1 BRK", Font.PLAIN, 16);
@@ -285,7 +284,8 @@ public class ControlPanel extends ComponentBase {
 				
 				screen.FPS_DRAW = selected;
 				
-				screen.render();
+				screen.world.render_canvas();
+				screen.world.render_preview();
 				screen.canvas.repaint();
 			}
 		};
@@ -308,7 +308,8 @@ public class ControlPanel extends ComponentBase {
 				
 				screen.STOPSIGN_DRAW = selected;
 				
-				screen.render();
+				screen.world.render_canvas();
+				screen.world.render_preview();
 				screen.canvas.repaint();
 			}
 		};
@@ -375,7 +376,8 @@ public class ControlPanel extends ComponentBase {
 				
 				screen.DEBUG_DRAW = selected;
 				
-				screen.render();
+				screen.world.render_canvas();
+				screen.world.render_preview();
 				screen.canvas.repaint();
 			}
 		};
@@ -389,8 +391,7 @@ public class ControlPanel extends ComponentBase {
 		debugLab.setLocation(5 + debugCheckBox.getWidth() + 5, 160 + stateLab.getHeight() + 5 + fpsCheckBox.getHeight() + 5 + stopSignCheckBox.getHeight() + 5 + carTextureCheckBox.getHeight() + 5 + explosionsCheckBox.getHeight() + 5);
 		debugLab.render();
 		
-		preview = new Preview(screen);
-		preview.setLocation(5, 400);
+		screen.world.setPreviewLocation(5, 400);
 	}
 	
 	public void clicked(InputEvent ev) {
@@ -420,17 +421,32 @@ public class ControlPanel extends ComponentBase {
 	}
 	
 	
+	public Point controlPanelToPreview(Point p) {
+		return new Point(p.x - screen.world.previewAABB.x, p.y - screen.world.previewAABB.y);
+	}
+	
 	public Point lastPressedControlPanelPoint;
+	
+	public Point lastPressPreviewPoint;
+	public Point lastDragPreviewPoint;
+	public Point penDragPreviewPoint;
+	long lastPressTime;
+	long lastDragTime;
 	
 	public void pressed(InputEvent ev) {
 		
-		if (preview.hitTest(ev.p)) {
-			Point p = ev.p;
+		Point p = ev.p;
+		
+		if (screen.world.previewHitTest(p)) {
 			
 			lastPressedControlPanelPoint = p;
 			lastDraggedControlPanelPoint = null;
 			
-			preview.pressed(new InputEvent(null, preview.controlPanelToPreview(p)));
+			lastPressPreviewPoint = controlPanelToPreview(p);
+			lastPressTime = System.currentTimeMillis();
+			
+			lastDragPreviewPoint = null;
+			lastDragTime = -1;
 			
 		} else {
 			
@@ -439,22 +455,30 @@ public class ControlPanel extends ComponentBase {
 	}
 	
 	public Point lastDraggedControlPanelPoint;
-	public boolean lastDraggedControlPanelPointWasNull;
 	
 	public void dragged(InputEvent ev) {
 		
-		if (lastPressedControlPanelPoint != null && preview.hitTest(lastPressedControlPanelPoint)) {
+		Point p = ev.p;
+		
+		if (screen.world.previewHitTest(p) && lastPressedControlPanelPoint != null && screen.world.previewHitTest(lastPressedControlPanelPoint)) {
 			
-			Point p = ev.p;
+			penDragPreviewPoint = lastDragPreviewPoint;
+			lastDragPreviewPoint = controlPanelToPreview(p);
+			lastDragTime = System.currentTimeMillis();
 			
-			preview.dragged(new InputEvent(null, preview.controlPanelToPreview(p)));
+			if (penDragPreviewPoint != null) {
+				
+				double dx = lastDragPreviewPoint.x - penDragPreviewPoint.x;
+				double dy = lastDragPreviewPoint.y - penDragPreviewPoint.y;
+				
+				screen.world.previewPan(new Point(dx, dy));
+				
+				screen.world.render_canvas();
+				screen.world.render_preview();
+				screen.canvas.repaint();
+				screen.controlPanel.repaint();
+			}
 			
-		}
-//		else if (ev.c == controlPanel.preview) {
-//			controlPanel.preview.dragged(ev);
-//		}
-		else {
-			assert false;
 		}
 		
 	}

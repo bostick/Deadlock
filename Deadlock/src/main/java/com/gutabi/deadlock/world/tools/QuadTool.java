@@ -151,7 +151,8 @@ public class QuadTool extends ToolBase {
 			
 			screen.tool.setPoint(screen.lastMovedOrDraggedWorldPoint);
 			
-			screen.render();
+			screen.world.render_canvas();
+			screen.world.render_preview();
 			screen.canvas.repaint();
 			screen.controlPanel.repaint();
 			break;

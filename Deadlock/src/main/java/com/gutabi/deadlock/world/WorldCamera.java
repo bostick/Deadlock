@@ -9,6 +9,7 @@ public class WorldCamera {
 	public int canvasWidth;
 	public int canvasHeight;
 	
+	public double origPixelsPerMeter = 32.0;
 	public double pixelsPerMeter = 32.0;
 	
 }

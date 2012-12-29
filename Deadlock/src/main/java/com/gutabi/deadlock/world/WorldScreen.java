@@ -4,7 +4,6 @@ import static com.gutabi.deadlock.DeadlockApplication.APP;
 
 import java.awt.Container;
 import java.awt.Dimension;
-import java.awt.geom.AffineTransform;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -20,7 +19,6 @@ import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.ui.DLSFileChooser;
 import com.gutabi.deadlock.ui.InputEvent;
-import com.gutabi.deadlock.ui.RenderingContext;
 import com.gutabi.deadlock.world.cars.Car;
 import com.gutabi.deadlock.world.graph.Merger;
 import com.gutabi.deadlock.world.graph.Road;
@@ -50,6 +48,8 @@ public class WorldScreen extends ScreenBase {
 	public double DT = 0.01;
 	
 	public WorldCamera cam = new WorldCamera();
+	public int previewWidth;
+	public int previewHeight;
 	
 	public WorldCanvas oldCanvas;
 	public WorldCanvas canvas;
@@ -83,8 +83,11 @@ public class WorldScreen extends ScreenBase {
 		canvas = new WorldCanvas(this);
 		
 		controlPanel = new ControlPanel(this);
-		controlPanel.init();
 		
+	}
+	
+	public void init() {
+		controlPanel.init();
 	}
 	
 	public void setup(RootPaneContainer container) {
@@ -122,7 +125,6 @@ public class WorldScreen extends ScreenBase {
 		Dim canvasDim = canvas.postDisplay();
 		
 		world.canvasPostDisplay(canvasDim);
-//		canvas.postDisplay();
 	}
 	
 	
@@ -186,7 +188,8 @@ public class WorldScreen extends ScreenBase {
 		
 		tool.setPoint(world.quadrantMap.getPoint(lastMovedOrDraggedWorldPoint));
 		
-		render();
+		world.render_canvas();
+		world.render_preview();
 		canvas.repaint();
 	}
 	
@@ -234,7 +237,8 @@ public class WorldScreen extends ScreenBase {
 			
 		}
 		
-		render();
+		world.render_canvas();
+		world.render_preview();
 		canvas.repaint();
 		controlPanel.repaint();
 	}
@@ -324,7 +328,8 @@ public class WorldScreen extends ScreenBase {
 			break;
 		}
 		
-		render();
+		world.render_canvas();
+		world.render_preview();
 		canvas.repaint();
 		controlPanel.repaint();
 	}
@@ -353,7 +358,8 @@ public class WorldScreen extends ScreenBase {
 			break;
 		}
 		
-		render();
+		world.render_canvas();
+		world.render_preview();
 		canvas.repaint();
 		controlPanel.repaint();
 	}
@@ -474,7 +480,9 @@ public class WorldScreen extends ScreenBase {
 				mode = WorldScreenMode.EDITING;
 				
 				postDisplay();
-				render();
+				
+				world.render_canvas();
+				world.render_preview();
 				canvas.repaint();
 				controlPanel.repaint();
 				
@@ -642,59 +650,6 @@ public class WorldScreen extends ScreenBase {
 		} else {
 			assert false;
 		}
-		
-	}
-	
-	public void render() {
-		canvas.render_canvas();
-		controlPanel.preview.render_preview();
-	}
-	
-	public void paintWorldScreen_canvas(RenderingContext ctxt) {
-		
-		canvas.paint(ctxt);
-		
-		AffineTransform origTrans = ctxt.getTransform();
-		
-		ctxt.scale(cam.pixelsPerMeter);
-		ctxt.translate(-cam.worldViewport.x, -cam.worldViewport.y);
-		
-		world.paintWorldScene(ctxt);
-		
-		Entity hilitedCopy;
-		synchronized (APP) {
-			hilitedCopy = hilited;
-		}
-		
-		if (hilitedCopy != null) {
-			hilitedCopy.paintHilite(ctxt);
-		}
-		
-		tool.draw(ctxt);
-		
-		if (ctxt.FPS_DRAW) {
-			
-			ctxt.translate(cam.worldViewport.x, cam.worldViewport.y);
-			
-			stats.paint(ctxt);
-		}
-		
-		ctxt.setTransform(origTrans);
-		
-	}
-	
-	public void paintWorldScreen_preview(RenderingContext ctxt) {
-		
-		controlPanel.preview.paint(ctxt);
-		
-		AffineTransform origTrans = ctxt.getTransform();
-		
-		ctxt.scale(cam.pixelsPerMeter);
-		ctxt.translate(-cam.worldViewport.x, -cam.worldViewport.y);
-		
-		world.paintWorldScene(ctxt);
-		
-		ctxt.setTransform(origTrans);
 		
 	}
 
