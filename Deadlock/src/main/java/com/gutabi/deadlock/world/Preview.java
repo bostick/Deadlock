@@ -75,7 +75,7 @@ public class Preview {
 			pan(new Point(dx, dy));
 			
 			screen.render();
-			screen.repaintCanvas();
+			screen.canvas.repaint();
 			screen.controlPanel.repaint();
 //			screen.controlPanel.previewPanel.repaint();
 		}

@@ -2,12 +2,8 @@ package com.gutabi.deadlock.menu;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
-import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
-import java.awt.Graphics2D;
-import java.awt.geom.AffineTransform;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,8 +17,6 @@ import com.gutabi.deadlock.core.Dim;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.quadranteditor.QuadrantEditor;
 import com.gutabi.deadlock.ui.InputEvent;
-import com.gutabi.deadlock.ui.RenderingContext;
-import com.gutabi.deadlock.ui.RenderingContextType;
 import com.gutabi.deadlock.world.WorldScreen;
 import com.gutabi.deadlock.world.examples.FourByFourGridWorld;
 import com.gutabi.deadlock.world.examples.OneByOneWorld;
@@ -30,8 +24,8 @@ import com.gutabi.deadlock.world.examples.WorldA;
 
 public class MainMenu extends ScreenBase {
 	
-	public static final int MENU_WIDTH = 800;
-	public static final int MENU_HEIGHT = 600;
+	public final int MENU_WIDTH = 800;
+	public final int MENU_HEIGHT = 600;
 	
 	public MenuCanvas canvas;
 	
@@ -63,7 +57,7 @@ public class MainMenu extends ScreenBase {
 				
 				s.postDisplay();
 				s.render();
-				s.repaintCanvas();
+				s.canvas.repaint();
 				s.controlPanel.repaint();
 			}
 		};
@@ -82,7 +76,7 @@ public class MainMenu extends ScreenBase {
 				
 				s.postDisplay();
 				s.render();
-				s.repaintCanvas();
+				s.canvas.repaint();
 				s.controlPanel.repaint();
 				
 			}
@@ -103,7 +97,7 @@ public class MainMenu extends ScreenBase {
 				
 				s.postDisplay();
 				s.render();
-				s.repaintCanvas();
+				s.canvas.repaint();
 				s.controlPanel.repaint();
 				
 			}
@@ -121,8 +115,8 @@ public class MainMenu extends ScreenBase {
 				((JFrame)APP.container).setVisible(true);
 				
 				s.postDisplay();
-				s.render();
-				s.repaintCanvas();
+				s.worldScreen.canvas.render();
+				s.canvas.repaint();
 			}
 		};
 		add(dialogMenuItem);
@@ -242,7 +236,7 @@ public class MainMenu extends ScreenBase {
 			hilited = hilited.down;
 		}
 		
-		repaintCanvas();
+		canvas.repaint();
 	}
 	
 	public void upKey(InputEvent ev) {
@@ -261,7 +255,7 @@ public class MainMenu extends ScreenBase {
 			hilited = hilited.up;
 		}
 		
-		repaintCanvas();
+		canvas.repaint();
 	}
 	
 	public void enterKey(InputEvent ev) {
@@ -291,7 +285,7 @@ public class MainMenu extends ScreenBase {
 			hilited = null;
 		}
 		
-		repaintCanvas();
+		canvas.repaint();
 	}
 	
 	Point lastClickedMenuPoint;
@@ -306,97 +300,6 @@ public class MainMenu extends ScreenBase {
 			item.action();
 		}
 		
-	}
-	
-	public void render() {
-		logger.debug("render");
-		
-		synchronized (APP) {
-			
-			BufferedImage canvasMenuImage = new BufferedImage(MENU_WIDTH, MENU_HEIGHT, BufferedImage.TYPE_INT_RGB);
-			
-			Graphics2D canvasMenuImageG2 = canvasMenuImage.createGraphics();
-			
-			for (MenuItem item : items) {
-				if ((int)item.localAABB.width > widest) {
-					widest = (int)item.localAABB.width;
-				}
-				totalHeight += (int)item.localAABB.height;
-			}
-			
-			RenderingContext canvasMenuContext = new RenderingContext(RenderingContextType.CANVAS);
-			canvasMenuContext.g2 = canvasMenuImageG2;
-			
-			AffineTransform origTransform = canvasMenuContext.getTransform();
-			
-			canvasMenuContext.translate(MENU_WIDTH/2 - widest/2, 150);
-			
-			for (MenuItem item : items) {
-				item.render(canvasMenuContext);
-				canvasMenuContext.translate(0, item.localAABB.height + 10);
-			}
-			
-			canvasMenuContext.setTransform(origTransform);
-			
-			canvasMenuImageG2.dispose();
-		}
-		
-	}
-	
-	public void repaintCanvas() {
-		logger.debug("repaint");
-		
-		do {
-			
-			do {
-				
-				Graphics2D g2 = (Graphics2D)canvas.bs.getDrawGraphics();
-				
-				g2.setColor(Color.DARK_GRAY);
-				g2.fillRect(0, 0, canvasWidth, canvasHeight);
-				
-				RenderingContext ctxt = new RenderingContext(RenderingContextType.CANVAS);
-				ctxt.g2 = g2;
-				
-				AffineTransform origTrans = ctxt.getTransform();
-				
-				ctxt.translate(canvas.getWidth()/2 - MENU_WIDTH/2, canvas.getHeight()/2 - MENU_HEIGHT/2);
-				
-				AffineTransform menuTrans = ctxt.getTransform();
-				
-				ctxt.paintImage(APP.titleBackground, 0, 0, MENU_WIDTH, MENU_HEIGHT, 0, 0, MENU_WIDTH, MENU_HEIGHT);
-				
-				ctxt.translate(MENU_WIDTH/2 - 498/2, 20);
-				ctxt.paintImage(APP.title_white, 0, 0, 498, 90, 0, 0, 498, 90);
-				
-				ctxt.setTransform(menuTrans);
-				
-				ctxt.translate(MENU_WIDTH/2 - 432/2, 550);
-				ctxt.paintImage(APP.copyright, 0, 0, 432, 38, 0, 0, 432, 38);
-				
-				ctxt.setTransform(menuTrans);
-				
-				ctxt.setColor(APP.menuBackground);
-				ctxt.fillRect((int)(MENU_WIDTH/2 - widest/2 - 5), 150 - 5, (int)(widest + 10), totalHeight + 10 * (items.size() - 1) + 5 + 5);
-				
-				for (MenuItem item : items) {
-					item.paint(ctxt);
-				}
-				
-				if (hilited != null) {
-					hilited.paintHilited(ctxt);			
-				}
-				
-				ctxt.setTransform(origTrans);
-				
-				g2.dispose();
-				
-			} while (canvas.bs.contentsRestored());
-			
-			canvas.bs.show();
-			
-		} while (canvas.bs.contentsLost());
-
 	}
 	
 }

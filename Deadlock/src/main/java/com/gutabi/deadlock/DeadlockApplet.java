@@ -30,8 +30,8 @@ public class DeadlockApplet extends JApplet {
 		((JFrame)APP.container).setVisible(true);
 		
 		s.postDisplay();
-		s.render();
-		s.repaintCanvas();
+		s.canvas.render();
+		s.canvas.repaint();
 	}
 	
 	public static Thread.UncaughtExceptionHandler handler = new Thread.UncaughtExceptionHandler() {

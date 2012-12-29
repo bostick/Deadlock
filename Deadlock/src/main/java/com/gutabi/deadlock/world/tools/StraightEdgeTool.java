@@ -91,12 +91,12 @@ public class StraightEdgeTool extends ToolBase {
 		case FREE:
 			screen.tool = new RegularTool(screen);
 			screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
-			screen.repaintCanvas();
+			screen.canvas.repaint();
 			break;
 		case SET:
 			mode = StraightEdgeToolMode.FREE;
 			screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
-			screen.repaintCanvas();
+			screen.canvas.repaint();
 			break;
 		case KNOB:
 			assert false;
@@ -108,7 +108,7 @@ public class StraightEdgeTool extends ToolBase {
 		switch (mode) {
 		case FREE:
 			mode = StraightEdgeToolMode.SET;
-			screen.repaintCanvas();
+			screen.canvas.repaint();
 			break;
 		case SET:
 			
@@ -125,7 +125,7 @@ public class StraightEdgeTool extends ToolBase {
 			screen.tool.setPoint(screen.lastMovedOrDraggedWorldPoint);
 			
 			screen.render();
-			screen.repaintCanvas();
+			screen.canvas.repaint();
 			screen.controlPanel.repaint();
 			break;
 		case KNOB:
@@ -138,7 +138,7 @@ public class StraightEdgeTool extends ToolBase {
 		switch (mode) {
 		case FREE:
 			screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
-			screen.repaintCanvas();
+			screen.canvas.repaint();
 			break;
 		case SET:
 		case KNOB:
@@ -154,7 +154,7 @@ public class StraightEdgeTool extends ToolBase {
 			break;
 		case KNOB:
 			mode = StraightEdgeToolMode.SET;
-			screen.repaintCanvas();
+			screen.canvas.repaint();
 			break;
 		}
 	}
@@ -189,7 +189,7 @@ public class StraightEdgeTool extends ToolBase {
 		case KNOB:
 			Point diff = new Point(screen.lastDraggedWorldPoint.x - screen.lastPressedWorldPoint.x, screen.lastDraggedWorldPoint.y - screen.lastPressedWorldPoint.y);
 			knob.drag(origKnobCenter.plus(diff));
-			screen.repaintCanvas();
+			screen.canvas.repaint();
 			break;
 		}
 	}

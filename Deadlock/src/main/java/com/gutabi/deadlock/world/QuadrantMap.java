@@ -300,6 +300,7 @@ public class QuadrantMap {
 			Scanner scanner = new Scanner(l);
 			int rows = scanner.nextInt();
 			int cols = scanner.nextInt();
+			scanner.close();
 			
 			ini = new int[rows][cols];
 			
@@ -309,6 +310,7 @@ public class QuadrantMap {
 				for (int j = 0; j < cols; j++) {
 					ini[i][j] = scanner.nextInt();
 				}
+				scanner.close();
 			}
 			
 			l = r.readLine();

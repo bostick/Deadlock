@@ -286,7 +286,7 @@ public class ControlPanel extends ComponentBase {
 				screen.FPS_DRAW = selected;
 				
 				screen.render();
-				screen.repaintCanvas();
+				screen.canvas.repaint();
 			}
 		};
 		fpsCheckBox.selected = screen.FPS_DRAW;
@@ -309,7 +309,7 @@ public class ControlPanel extends ComponentBase {
 				screen.STOPSIGN_DRAW = selected;
 				
 				screen.render();
-				screen.repaintCanvas();
+				screen.canvas.repaint();
 			}
 		};
 		stopSignCheckBox.selected = screen.STOPSIGN_DRAW;
@@ -331,7 +331,7 @@ public class ControlPanel extends ComponentBase {
 				
 				screen.CARTEXTURE_DRAW = selected;
 				
-				screen.repaintCanvas();
+				screen.canvas.repaint();
 			}
 		};
 		carTextureCheckBox.selected = screen.CARTEXTURE_DRAW;
@@ -353,7 +353,7 @@ public class ControlPanel extends ComponentBase {
 				
 				screen.EXPLOSIONS_DRAW = selected;
 				
-				screen.repaintCanvas();
+				screen.canvas.repaint();
 			}
 		};
 		explosionsCheckBox.selected = screen.EXPLOSIONS_DRAW;
@@ -376,7 +376,7 @@ public class ControlPanel extends ComponentBase {
 				screen.DEBUG_DRAW = selected;
 				
 				screen.render();
-				screen.repaintCanvas();
+				screen.canvas.repaint();
 			}
 		};
 		debugCheckBox.selected = screen.DEBUG_DRAW;

@@ -283,6 +283,7 @@ public final class Fixture extends Vertex {
 			String tok = sc.next();
 			assert tok.equals("id");
 			id = sc.nextInt();
+			sc.close();
 			
 			l = r.readLine();
 			sc = new Scanner(l);
@@ -290,6 +291,7 @@ public final class Fixture extends Vertex {
 			assert tok.equals("point");
 			
 			String rest = sc.useDelimiter("\\A").next();
+			sc.close();
 			
 			p = Point.fromFileString(rest);
 			
@@ -299,6 +301,7 @@ public final class Fixture extends Vertex {
 			assert tok.equals("axis");
 			rest = sc.next();
 			a = Axis.fromFileString(rest);
+			sc.close();
 			
 			l = r.readLine();
 			sc = new Scanner(l);
@@ -306,6 +309,7 @@ public final class Fixture extends Vertex {
 			assert tok.equals("side");
 			rest = sc.next();
 			side = Side.fromFileString(rest);
+			sc.close();
 			
 			l = r.readLine();
 			sc = new Scanner(l);
@@ -313,12 +317,14 @@ public final class Fixture extends Vertex {
 			assert tok.equals("type");
 			rest = sc.next();
 			type = FixtureType.fromFileString(rest);
+			sc.close();
 			
 			l = r.readLine();
 			sc = new Scanner(l);
 			tok = sc.next();
 			assert tok.equals("match");
 			match = sc.nextInt();
+			sc.close();
 			
 			l = r.readLine();
 			assert l.equals("end fixture");

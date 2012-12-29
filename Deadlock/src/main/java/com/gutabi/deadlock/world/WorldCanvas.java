@@ -14,6 +14,8 @@ import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 
+import javax.swing.SwingUtilities;
+
 import org.apache.log4j.Logger;
 
 import com.gutabi.deadlock.core.Dim;
@@ -22,6 +24,7 @@ import com.gutabi.deadlock.ui.ComponentBase;
 import com.gutabi.deadlock.ui.InputEvent;
 import com.gutabi.deadlock.ui.RenderingContext;
 import com.gutabi.deadlock.ui.RenderingContextType;
+import com.gutabi.deadlock.world.WorldScreen.WorldScreenMode;
 
 @SuppressWarnings("serial")
 public class WorldCanvas extends ComponentBase {
@@ -30,7 +33,7 @@ public class WorldCanvas extends ComponentBase {
 	
 	private BufferedImage background;
 	
-	public BufferStrategy bs;
+	private BufferStrategy bs;
 	
 	private java.awt.Canvas c;
 	private JavaListener jl;
@@ -42,7 +45,7 @@ public class WorldCanvas extends ComponentBase {
 		
 		c = new java.awt.Canvas() {
 			public void paint(Graphics g) {
-				screen.repaintCanvas();
+				WorldCanvas.this.repaint();
 			}
 		};
 		
@@ -323,6 +326,40 @@ public class WorldCanvas extends ComponentBase {
 			backgroundG2.dispose();
 			
 		}
+		
+	}
+	
+	RenderingContext ctxt = new RenderingContext(RenderingContextType.CANVAS);
+	
+	public void repaint() {
+		
+		if (SwingUtilities.isEventDispatchThread()) {
+			if (screen.mode == WorldScreenMode.RUNNING) {
+				return;
+			}
+		}
+		
+		do {
+			
+			do {
+				
+				Graphics2D g2 = (Graphics2D)bs.getDrawGraphics();
+				
+				ctxt.g2 = g2;
+				ctxt.cam = screen.cam;
+				ctxt.FPS_DRAW = screen.FPS_DRAW;
+				
+				//synchronized (VIEW) {
+				screen.paintWorldScreen(ctxt);
+				//}
+				
+				g2.dispose();
+				
+			} while (bs.contentsRestored());
+			
+			bs.show();
+			
+		} while (bs.contentsLost());
 		
 	}
 	

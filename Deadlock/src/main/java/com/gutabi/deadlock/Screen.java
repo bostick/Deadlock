@@ -11,15 +11,6 @@ public interface Screen {
 	void teardown(RootPaneContainer container);
 	
 	
-	
-	void postDisplay();
-	
-	void render();
-	
-//	void paint(PaintEvent ev);
-	
-	
-	
 	void qKey(InputEvent ev);
 	
 	void wKey(InputEvent ev);

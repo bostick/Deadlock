@@ -668,6 +668,7 @@ public class Road extends Edge {
 			String tok = sc.next();
 			assert tok.equals("id");
 			id = sc.nextInt();
+			sc.close();
 			
 			l = r.readLine();
 			sc = new Scanner(l);
@@ -676,6 +677,7 @@ public class Road extends Edge {
 			int startID = sc.nextInt();
 			start = vs[startID];
 			assert start != null;
+			sc.close();
 			
 			l = r.readLine();
 			sc = new Scanner(l);
@@ -684,6 +686,7 @@ public class Road extends Edge {
 			int endID = sc.nextInt();
 			end = vs[endID];
 			assert end != null;
+			sc.close();
 			
 			l = r.readLine();
 			assert l.equals("start points");
@@ -709,18 +712,21 @@ public class Road extends Edge {
 			assert tok.equals("direction");
 			String rest = sc.next();
 			d = Direction.fromFileString(rest);
+			sc.close();
 			
 			l = r.readLine();
 			sc = new Scanner(l);
 			tok = sc.next();
 			assert tok.equals("startSign");
 			startSignEnabled = sc.nextBoolean();
+			sc.close();
 			
 			l = r.readLine();
 			sc = new Scanner(l);
 			tok = sc.next();
 			assert tok.equals("endSign");
 			endSignEnabled = sc.nextBoolean();
+			sc.close();
 			
 			l = r.readLine();
 			assert l.equals("end road");

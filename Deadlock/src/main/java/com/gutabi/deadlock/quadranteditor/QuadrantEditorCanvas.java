@@ -2,11 +2,13 @@ package com.gutabi.deadlock.quadranteditor;
 
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferStrategy;
 
 import org.apache.log4j.Logger;
@@ -15,13 +17,15 @@ import com.gutabi.deadlock.core.Dim;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.ui.ComponentBase;
 import com.gutabi.deadlock.ui.InputEvent;
+import com.gutabi.deadlock.ui.RenderingContext;
+import com.gutabi.deadlock.ui.RenderingContextType;
 
 @SuppressWarnings("serial")
 public class QuadrantEditorCanvas extends ComponentBase {
 	
 	QuadrantEditor screen;
 	
-	public BufferStrategy bs;
+	private BufferStrategy bs;
 	
 	private java.awt.Canvas c;
 	
@@ -34,7 +38,7 @@ public class QuadrantEditorCanvas extends ComponentBase {
 		
 		c = new java.awt.Canvas() {
 			public void paint(Graphics g) {
-				screen.repaintCanvas();
+				QuadrantEditorCanvas.this.repaint();
 			}
 		};
 		
@@ -290,4 +294,34 @@ public class QuadrantEditorCanvas extends ComponentBase {
 		screen.ctrlOKey(ev);
 	}
 	
+	public void repaint() {
+		
+		do {
+			
+			do {
+				
+				Graphics2D g2 = (Graphics2D)bs.getDrawGraphics();
+				
+				RenderingContext ctxt = new RenderingContext(RenderingContextType.CANVAS);
+				ctxt.g2 = g2;
+				ctxt.cam = screen.worldScreen.cam;
+				
+				AffineTransform origTrans = ctxt.getTransform();
+				
+				ctxt.translate(getWidth()/2 - screen.EDITOR_WIDTH/2, getHeight()/2 - screen.EDITOR_HEIGHT/2);
+				
+				screen.paintEditor(ctxt);
+				
+				ctxt.setTransform(origTrans);
+				
+				g2.dispose();
+				
+			} while (bs.contentsRestored());
+			
+			bs.show();
+			
+		} while (bs.contentsLost());
+
+	}
+
 }

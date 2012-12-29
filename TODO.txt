@@ -1,7 +1,7 @@
 
-repaint screens
-
-move canvas, controlpanel and methods to various screens
+tools:
+list total number of lines of code
+list all imports
 
 remove control panel
 remove uses of awt windowing crap
@@ -107,6 +107,8 @@ or at least add it
 cleanup user input
 
 DONE:
+
+move canvas, controlpanel and methods to various screens
 
 fix overlapping grass
 

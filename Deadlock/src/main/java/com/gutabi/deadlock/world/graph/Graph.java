@@ -1140,12 +1140,14 @@ public class Graph implements Sweepable {
 			String tok = sc.next();
 			assert tok.equals("vertices");
 			int vCount = sc.nextInt();
+			sc.close();
 			
 			l = r.readLine();
 			sc = new Scanner(l);
 			tok = sc.next();
 			assert tok.equals("edges");
 			int eCount = sc.nextInt();
+			sc.close();
 			
 			vs = new Vertex[vCount];
 			

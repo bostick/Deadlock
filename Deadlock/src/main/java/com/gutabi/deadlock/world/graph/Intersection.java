@@ -68,6 +68,7 @@ public class Intersection extends Vertex {
 			String tok = sc.next();
 			assert tok.equals("id");
 			id = sc.nextInt();
+			sc.close();
 			
 			l = r.readLine();
 			sc = new Scanner(l);
@@ -75,6 +76,7 @@ public class Intersection extends Vertex {
 			assert tok.equals("point");
 			
 			String rest = sc.useDelimiter("\\A").next();
+			sc.close();
 			
 			p = Point.fromFileString(rest);
 			

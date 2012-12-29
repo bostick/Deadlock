@@ -31,8 +31,8 @@ public class DeadlockMain  {
 		((JFrame)APP.container).setVisible(true);
 		
 		s.postDisplay();
-		s.render();
-		s.repaintCanvas();
+		s.canvas.render();
+		s.canvas.repaint();
 	}
 	
 	public static Thread.UncaughtExceptionHandler handler = new Thread.UncaughtExceptionHandler() {

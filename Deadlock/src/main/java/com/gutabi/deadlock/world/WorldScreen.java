@@ -4,7 +4,6 @@ import static com.gutabi.deadlock.DeadlockApplication.APP;
 
 import java.awt.Container;
 import java.awt.Dimension;
-import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.io.File;
 import java.io.FileWriter;
@@ -14,7 +13,6 @@ import java.util.Set;
 
 import javax.swing.JFileChooser;
 import javax.swing.RootPaneContainer;
-import javax.swing.SwingUtilities;
 
 import com.gutabi.deadlock.ScreenBase;
 import com.gutabi.deadlock.core.Dim;
@@ -23,7 +21,6 @@ import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.ui.DLSFileChooser;
 import com.gutabi.deadlock.ui.InputEvent;
 import com.gutabi.deadlock.ui.RenderingContext;
-import com.gutabi.deadlock.ui.RenderingContextType;
 import com.gutabi.deadlock.world.cars.Car;
 import com.gutabi.deadlock.world.graph.Merger;
 import com.gutabi.deadlock.world.graph.Road;
@@ -190,7 +187,7 @@ public class WorldScreen extends ScreenBase {
 		tool.setPoint(world.quadrantMap.getPoint(lastMovedOrDraggedWorldPoint));
 		
 		render();
-		repaintCanvas();
+		canvas.repaint();
 	}
 	
 	public void deleteKey(InputEvent ev) {
@@ -238,7 +235,7 @@ public class WorldScreen extends ScreenBase {
 		}
 		
 		render();
-		repaintCanvas();
+		canvas.repaint();
 		controlPanel.repaint();
 	}
 	
@@ -328,7 +325,7 @@ public class WorldScreen extends ScreenBase {
 		}
 		
 		render();
-		repaintCanvas();
+		canvas.repaint();
 		controlPanel.repaint();
 	}
 	
@@ -357,7 +354,7 @@ public class WorldScreen extends ScreenBase {
 		}
 		
 		render();
-		repaintCanvas();
+		canvas.repaint();
 		controlPanel.repaint();
 	}
 	
@@ -478,7 +475,7 @@ public class WorldScreen extends ScreenBase {
 				
 				postDisplay();
 				render();
-				repaintCanvas();
+				canvas.repaint();
 				controlPanel.repaint();
 				
 			} else {
@@ -649,47 +646,8 @@ public class WorldScreen extends ScreenBase {
 	}
 	
 	public void render() {
-//		world.renderCanvas();
 		canvas.render();
 		controlPanel.preview.render();
-	}
-	
-	
-	RenderingContext ctxt = new RenderingContext(RenderingContextType.CANVAS);
-	
-	/**
-	 * screen method
-	 */
-	public void repaintCanvas() {
-		
-		if (SwingUtilities.isEventDispatchThread()) {
-			if (mode == WorldScreenMode.RUNNING) {
-				return;
-			}
-		}
-		
-		do {
-			
-			do {
-				
-				Graphics2D g2 = (Graphics2D)canvas.bs.getDrawGraphics();
-				
-				ctxt.g2 = g2;
-				ctxt.cam = cam;
-				ctxt.FPS_DRAW = FPS_DRAW;
-				
-				//synchronized (VIEW) {
-				paintWorldScreen(ctxt);
-				//}
-				
-				g2.dispose();
-				
-			} while (canvas.bs.contentsRestored());
-			
-			canvas.bs.show();
-			
-		} while (canvas.bs.contentsLost());
-		
 	}
 	
 	public void paintWorldScreen(RenderingContext ctxt) {
