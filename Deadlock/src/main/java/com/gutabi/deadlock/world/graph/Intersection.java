@@ -95,25 +95,23 @@ public class Intersection extends Vertex {
 		return i;
 	}
 	
-	public void paint(RenderingContext ctxt) {
+	public void paint_canvas(RenderingContext ctxt) {
 		
-		switch (ctxt.type) {
-		case CANVAS:
-			ctxt.setColor(Color.GRAY);
-			
-			shape.paint(ctxt);
-			
-			if (ctxt.DEBUG_DRAW) {
-				shape.getAABB().draw(ctxt);
-			}
-			
-			break;
-		case PREVIEW:
-			ctxt.setColor(Color.GRAY);
-			
-			shape.paint(ctxt);
-			break;
+		ctxt.setColor(Color.GRAY);
+		
+		shape.paint(ctxt);
+		
+		if (ctxt.DEBUG_DRAW) {
+			shape.getAABB().draw(ctxt);
 		}
+		
+	}
+	
+	public void paint_preview(RenderingContext ctxt) {
+		
+		ctxt.setColor(Color.GRAY);
+		
+		shape.paint(ctxt);
 		
 	}
 	

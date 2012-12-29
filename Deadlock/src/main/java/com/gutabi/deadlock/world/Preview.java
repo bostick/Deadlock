@@ -9,7 +9,6 @@ import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.AABB;
 import com.gutabi.deadlock.ui.InputEvent;
 import com.gutabi.deadlock.ui.RenderingContext;
-import com.gutabi.deadlock.ui.RenderingContextType;
 
 public class Preview {
 	
@@ -113,11 +112,11 @@ public class Preview {
 				screen.cam.worldViewport.height);
 	}
 	
-	public void render() {
+	public void render_preview() {
 		
 		Graphics2D previewImageG2 = previewImage.createGraphics();
 		
-		RenderingContext previewContext = new RenderingContext(RenderingContextType.PREVIEW);
+		RenderingContext previewContext = new RenderingContext();
 		previewContext.g2 = previewImageG2;
 		
 		previewImageG2.setColor(Color.LIGHT_GRAY);
@@ -132,9 +131,9 @@ public class Preview {
 		
 		previewImageG2.scale(s, s);
 		
-		screen.world.quadrantMap.render(previewContext);
+		screen.world.quadrantMap.render_preview(previewContext);
 		
-		screen.world.graph.render(previewContext);
+		screen.world.graph.render_preview(previewContext);
 		
 		previewContext.setTransform(origTrans);
 		

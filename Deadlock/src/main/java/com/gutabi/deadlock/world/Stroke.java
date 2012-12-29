@@ -784,16 +784,8 @@ public class Stroke {
 	
 	public void paint(RenderingContext ctxt) {
 		
-		switch (ctxt.type) {
-		case CANVAS:
-			ctxt.setPixelStroke(1.0);
-			paintStroke(ctxt);
-			break;
-		case PREVIEW:
-			ctxt.setPixelStroke(1.0);
-			paintStroke(ctxt);
-			break;
-		}
+		ctxt.setPixelStroke(1.0);
+		paintStroke(ctxt);
 		
 	}
 	

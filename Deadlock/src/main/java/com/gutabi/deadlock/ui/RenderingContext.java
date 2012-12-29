@@ -22,8 +22,6 @@ public class RenderingContext extends DebugDraw {
 	
 	public Graphics2D g2;
 	
-	public final RenderingContextType type;
-	
 	public WorldCamera cam;
 	
 	public boolean FPS_DRAW = false;
@@ -32,10 +30,8 @@ public class RenderingContext extends DebugDraw {
 	public boolean EXPLOSIONS_DRAW = true;
 	public boolean DEBUG_DRAW = false;
 	
-	public RenderingContext(RenderingContextType type) {
+	public RenderingContext() {
 		super(new OBBViewportTransform());
-		
-		this.type = type;
 		
 		m_drawFlags = DebugDraw.e_dynamicTreeBit;
 	}

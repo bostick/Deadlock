@@ -23,7 +23,6 @@ import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.ui.ComponentBase;
 import com.gutabi.deadlock.ui.InputEvent;
 import com.gutabi.deadlock.ui.RenderingContext;
-import com.gutabi.deadlock.ui.RenderingContextType;
 import com.gutabi.deadlock.world.WorldScreen.WorldScreenMode;
 
 @SuppressWarnings("serial")
@@ -303,7 +302,7 @@ public class WorldCanvas extends ComponentBase {
 		screen.ctrlOKey(ev);
 	}
 	
-	public void render() {
+	public void render_canvas() {
 		assert !Thread.holdsLock(APP);
 		
 		synchronized (APP) {
@@ -316,12 +315,12 @@ public class WorldCanvas extends ComponentBase {
 			backgroundG2.scale(screen.cam.pixelsPerMeter, screen.cam.pixelsPerMeter);
 			backgroundG2.translate(-screen.cam.worldViewport.x, -screen.cam.worldViewport.y);
 			
-			RenderingContext backgroundCtxt = new RenderingContext(RenderingContextType.CANVAS);
+			RenderingContext backgroundCtxt = new RenderingContext();
 			backgroundCtxt.g2 = backgroundG2;
 			backgroundCtxt.cam = screen.cam;
 			
-			screen.world.quadrantMap.render(backgroundCtxt);
-			screen.world.graph.render(backgroundCtxt);
+			screen.world.quadrantMap.render_canvas(backgroundCtxt);
+			screen.world.graph.render_canvas(backgroundCtxt);
 			
 			backgroundG2.dispose();
 			
@@ -329,7 +328,35 @@ public class WorldCanvas extends ComponentBase {
 		
 	}
 	
-	RenderingContext ctxt = new RenderingContext(RenderingContextType.CANVAS);
+	public void render_preview() {
+		assert !Thread.holdsLock(APP);
+		
+		synchronized (APP) {
+			
+			Graphics2D backgroundG2 = background.createGraphics();
+			
+			backgroundG2.setColor(Color.DARK_GRAY);
+			backgroundG2.fillRect(0, 0, screen.cam.canvasWidth, screen.cam.canvasHeight);
+			
+			backgroundG2.scale(screen.cam.pixelsPerMeter, screen.cam.pixelsPerMeter);
+			backgroundG2.translate(-screen.cam.worldViewport.x, -screen.cam.worldViewport.y);
+			
+			RenderingContext backgroundCtxt = new RenderingContext();
+			backgroundCtxt.g2 = backgroundG2;
+			backgroundCtxt.cam = screen.cam;
+			
+			screen.world.quadrantMap.render_preview(backgroundCtxt);
+			screen.world.graph.render_preview(backgroundCtxt);
+			
+			backgroundG2.dispose();
+			
+		}
+		
+	}
+	
+	
+	
+	RenderingContext ctxt = new RenderingContext();
 	
 	public void repaint() {
 		
@@ -350,7 +377,7 @@ public class WorldCanvas extends ComponentBase {
 				ctxt.FPS_DRAW = screen.FPS_DRAW;
 				
 				//synchronized (VIEW) {
-				screen.paintWorldScreen(ctxt);
+				screen.paintWorldScreen_canvas(ctxt);
 				//}
 				
 				g2.dispose();

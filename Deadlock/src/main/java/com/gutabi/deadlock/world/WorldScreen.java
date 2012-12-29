@@ -646,62 +646,55 @@ public class WorldScreen extends ScreenBase {
 	}
 	
 	public void render() {
-		canvas.render();
-		controlPanel.preview.render();
+		canvas.render_canvas();
+		controlPanel.preview.render_preview();
 	}
 	
-	public void paintWorldScreen(RenderingContext ctxt) {
+	public void paintWorldScreen_canvas(RenderingContext ctxt) {
 		
-		switch (ctxt.type) {
-		case CANVAS: {
-			
-			canvas.paint(ctxt);
-			
-			AffineTransform origTrans = ctxt.getTransform();
-			
-			ctxt.scale(cam.pixelsPerMeter);
-			ctxt.translate(-cam.worldViewport.x, -cam.worldViewport.y);
-			
-			world.paintWorldScene(ctxt);
-			
-			Entity hilitedCopy;
-			synchronized (APP) {
-				hilitedCopy = hilited;
-			}
-			
-			if (hilitedCopy != null) {
-				hilitedCopy.paintHilite(ctxt);
-			}
-			
-			tool.draw(ctxt);
-			
-			if (ctxt.FPS_DRAW) {
-				
-				ctxt.translate(cam.worldViewport.x, cam.worldViewport.y);
-				
-				stats.paint(ctxt);
-			}
-			
-			ctxt.setTransform(origTrans);
-			
-			break;
+		canvas.paint(ctxt);
+		
+		AffineTransform origTrans = ctxt.getTransform();
+		
+		ctxt.scale(cam.pixelsPerMeter);
+		ctxt.translate(-cam.worldViewport.x, -cam.worldViewport.y);
+		
+		world.paintWorldScene(ctxt);
+		
+		Entity hilitedCopy;
+		synchronized (APP) {
+			hilitedCopy = hilited;
 		}
-		case PREVIEW: {
-			
-			controlPanel.preview.paint(ctxt);
-			
-			AffineTransform origTrans = ctxt.getTransform();
-			
-			ctxt.scale(cam.pixelsPerMeter);
-			ctxt.translate(-cam.worldViewport.x, -cam.worldViewport.y);
-			
-			world.paintWorldScene(ctxt);
-			
-			ctxt.setTransform(origTrans);
-			
-			break;
+		
+		if (hilitedCopy != null) {
+			hilitedCopy.paintHilite(ctxt);
 		}
+		
+		tool.draw(ctxt);
+		
+		if (ctxt.FPS_DRAW) {
+			
+			ctxt.translate(cam.worldViewport.x, cam.worldViewport.y);
+			
+			stats.paint(ctxt);
 		}
+		
+		ctxt.setTransform(origTrans);
+		
+	}
+	
+	public void paintWorldScreen_preview(RenderingContext ctxt) {
+		
+		controlPanel.preview.paint(ctxt);
+		
+		AffineTransform origTrans = ctxt.getTransform();
+		
+		ctxt.scale(cam.pixelsPerMeter);
+		ctxt.translate(-cam.worldViewport.x, -cam.worldViewport.y);
+		
+		world.paintWorldScene(ctxt);
+		
+		ctxt.setTransform(origTrans);
 		
 	}
 

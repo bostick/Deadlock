@@ -325,11 +325,20 @@ public class QuadrantMap {
 		return qm;
 	}
 	
-	public void render(RenderingContext ctxt) {
+	public void render_canvas(RenderingContext ctxt) {
 		for (int i = 0; i < quadrantRows; i++) {
 			for (int j = 0; j < quadrantCols; j++) {
 				Quadrant q = quadrants[i][j];
-				q.paint(ctxt);
+				q.paint_canvas(ctxt);
+			}
+		}
+	}
+	
+	public void render_preview(RenderingContext ctxt) {
+		for (int i = 0; i < quadrantRows; i++) {
+			for (int j = 0; j < quadrantCols; j++) {
+				Quadrant q = quadrants[i][j];
+				q.paint_preview(ctxt);
 			}
 		}
 	}

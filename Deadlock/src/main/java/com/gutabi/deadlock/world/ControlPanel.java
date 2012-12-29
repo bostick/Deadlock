@@ -59,7 +59,7 @@ public class ControlPanel extends ComponentBase {
 			public void paint(Graphics g) {
 				super.paint(g);
 				
-				RenderingContext ctxt = new RenderingContext(null);
+				RenderingContext ctxt = new RenderingContext();
 				ctxt.g2 = (Graphics2D)g;
 				
 				simulationInitLab.paint(ctxt);

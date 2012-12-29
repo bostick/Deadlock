@@ -22,7 +22,6 @@ import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.ui.ComponentBase;
 import com.gutabi.deadlock.ui.InputEvent;
 import com.gutabi.deadlock.ui.RenderingContext;
-import com.gutabi.deadlock.ui.RenderingContextType;
 
 @SuppressWarnings("serial")
 public class MenuCanvas extends ComponentBase {
@@ -313,7 +312,7 @@ public class MenuCanvas extends ComponentBase {
 				screen.totalHeight += (int)item.localAABB.height;
 			}
 			
-			RenderingContext canvasMenuContext = new RenderingContext(RenderingContextType.CANVAS);
+			RenderingContext canvasMenuContext = new RenderingContext();
 			canvasMenuContext.g2 = canvasMenuImageG2;
 			
 			AffineTransform origTransform = canvasMenuContext.getTransform();
@@ -343,7 +342,7 @@ public class MenuCanvas extends ComponentBase {
 				g2.setColor(Color.DARK_GRAY);
 				g2.fillRect(0, 0, screen.canvasWidth, screen.canvasHeight);
 				
-				RenderingContext ctxt = new RenderingContext(RenderingContextType.CANVAS);
+				RenderingContext ctxt = new RenderingContext();
 				ctxt.g2 = g2;
 				
 				AffineTransform origTrans = ctxt.getTransform();

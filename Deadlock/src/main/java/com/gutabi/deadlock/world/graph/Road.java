@@ -26,7 +26,6 @@ import com.gutabi.deadlock.core.geom.Shape;
 import com.gutabi.deadlock.core.geom.ShapeUtils;
 import com.gutabi.deadlock.core.geom.Triangle;
 import com.gutabi.deadlock.ui.RenderingContext;
-import com.gutabi.deadlock.ui.RenderingContextType;
 
 public class Road extends Edge {
 	
@@ -750,23 +749,21 @@ public class Road extends Edge {
 	}
 	
 	
-	public void paint(RenderingContext ctxt) {
+	public void paint_canvas(RenderingContext ctxt) {
 		
-		switch (ctxt.type) {
-		case CANVAS:
-			paintPath(ctxt);
-			
-			if (ctxt.DEBUG_DRAW) {
-				ctxt.setColor(Color.BLACK);
-				ctxt.setPixelStroke(1.0);
-				shape.getAABB().draw(ctxt);
-			}
-			
-			break;
-		case PREVIEW:
-			paintPath(ctxt);
-			break;
+		paintPath_canvas(ctxt);
+		
+		if (ctxt.DEBUG_DRAW) {
+			ctxt.setColor(Color.BLACK);
+			ctxt.setPixelStroke(1.0);
+			shape.getAABB().draw(ctxt);
 		}
+		
+	}
+	
+	public void paint_preview(RenderingContext ctxt) {
+		
+		paintPath_preview(ctxt);
 		
 	}
 	
@@ -778,24 +775,30 @@ public class Road extends Edge {
 	
 	static java.awt.Stroke directionStroke = new BasicStroke(0.1f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
 	
-	private void paintPath(RenderingContext ctxt) {
+	private void paintPath_canvas(RenderingContext ctxt) {
 		
 		ctxt.setColor(Color.GRAY);
 		
 		seq.paint(ctxt);
 		
-		if (ctxt.type == RenderingContextType.CANVAS) {
-			if (direction != null) {
-				
-				ctxt.setStroke(directionStroke);
-				ctxt.setColor(Color.LIGHT_GRAY);
-				
-				seq.drawSkeleton(ctxt);
-				
-				arrowPointer.paint(ctxt);
-				
-			}
+		if (direction != null) {
+			
+			ctxt.setStroke(directionStroke);
+			ctxt.setColor(Color.LIGHT_GRAY);
+			
+			seq.drawSkeleton(ctxt);
+			
+			arrowPointer.paint(ctxt);
+			
 		}
+		
+	}
+	
+	private void paintPath_preview(RenderingContext ctxt) {
+		
+		ctxt.setColor(Color.GRAY);
+		
+		seq.paint(ctxt);
 		
 	}
 	
@@ -821,18 +824,12 @@ public class Road extends Edge {
 	
 	public void paintDecorations(RenderingContext ctxt) {
 		
-		switch (ctxt.type) {
-		case CANVAS:
-			startSign.paint(ctxt);
-			
-			endSign.paint(ctxt);
-			
-			if (ctxt.DEBUG_DRAW) {
-				paintSkeleton(ctxt);
-			}
-			break;
-		case PREVIEW:
-			break;
+		startSign.paint(ctxt);
+		
+		endSign.paint(ctxt);
+		
+		if (ctxt.DEBUG_DRAW) {
+			paintSkeleton(ctxt);
 		}
 		
 	}

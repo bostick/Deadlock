@@ -18,7 +18,6 @@ import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.ui.ComponentBase;
 import com.gutabi.deadlock.ui.InputEvent;
 import com.gutabi.deadlock.ui.RenderingContext;
-import com.gutabi.deadlock.ui.RenderingContextType;
 
 @SuppressWarnings("serial")
 public class QuadrantEditorCanvas extends ComponentBase {
@@ -302,7 +301,7 @@ public class QuadrantEditorCanvas extends ComponentBase {
 				
 				Graphics2D g2 = (Graphics2D)bs.getDrawGraphics();
 				
-				RenderingContext ctxt = new RenderingContext(RenderingContextType.CANVAS);
+				RenderingContext ctxt = new RenderingContext();
 				ctxt.g2 = g2;
 				ctxt.cam = screen.worldScreen.cam;
 				

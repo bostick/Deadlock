@@ -74,17 +74,8 @@ public class CarMap {
 			world.b2dWorld.drawDebugData();
 		}
 		
-		switch (ctxt.type) {
-		case CANVAS:
-			for (Car c : cars) {
-				c.paint(ctxt);
-			}
-			break;
-		case PREVIEW:
-			for (Car c : cars) {
-				c.paint(ctxt);
-			}
-			break;
+		for (Car c : cars) {
+			c.paint(ctxt);
 		}
 		
 	}

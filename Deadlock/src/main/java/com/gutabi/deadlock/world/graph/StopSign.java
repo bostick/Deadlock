@@ -118,28 +118,21 @@ public class StopSign extends Entity {
 		
 		if (ctxt.STOPSIGN_DRAW) {
 			
-			switch (ctxt.type) {
-			case CANVAS:
-				if (enabled) {
-					
-					AffineTransform origTransform = ctxt.getTransform();
-					
-					ctxt.translate(p.x - StopSign.STOPSIGN_SIZE/2, p.y - StopSign.STOPSIGN_SIZE/2);
-					ctxt.paintImage(APP.sheet,
-							0, 0, STOPSIGN_SIZE, STOPSIGN_SIZE,
-							32, 224, 32+32, 224+32);
-					
-					ctxt.setTransform(origTransform);
-					
-					if (ctxt.DEBUG_DRAW) {
-						shape.getAABB().draw(ctxt);
-					}
-					
+			if (enabled) {
+				
+				AffineTransform origTransform = ctxt.getTransform();
+				
+				ctxt.translate(p.x - StopSign.STOPSIGN_SIZE/2, p.y - StopSign.STOPSIGN_SIZE/2);
+				ctxt.paintImage(APP.sheet,
+						0, 0, STOPSIGN_SIZE, STOPSIGN_SIZE,
+						32, 224, 32+32, 224+32);
+				
+				ctxt.setTransform(origTransform);
+				
+				if (ctxt.DEBUG_DRAW) {
+					shape.getAABB().draw(ctxt);
 				}
 				
-				break;
-			case PREVIEW:
-				break;
 			}
 			
 		}

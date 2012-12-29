@@ -1,7 +1,7 @@
 
-tools:
-list total number of lines of code
-list all imports
+remove CANVAS vs PREVIEW
+
+temporarily remove BufferStrategy
 
 remove control panel
 remove uses of awt windowing crap
@@ -107,6 +107,10 @@ or at least add it
 cleanup user input
 
 DONE:
+
+tools:
+list total number of lines of code
+list all imports
 
 move canvas, controlpanel and methods to various screens
 

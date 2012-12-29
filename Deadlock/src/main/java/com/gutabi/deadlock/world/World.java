@@ -318,28 +318,20 @@ public class World {
 	
 	public void paintWorldScene(RenderingContext ctxt) {
 		
-		switch (ctxt.type) {
-		case CANVAS:
-			
-			roadMarkMap.paintScene(ctxt);
-			grassMarkMap.paintScene(ctxt);
-			
-			quadrantMap.paintScene(ctxt);
-			
-			graph.paintScene(ctxt);
-			
-			synchronized (APP) {
-				carMap.paint(ctxt);
-				explosionMap.paint(ctxt);
-			}
-			
-			if (ctxt.DEBUG_DRAW) {
-				graph.paintIDs(ctxt);
-			}
-			
-			break;
-		case PREVIEW:
-			break;
+		roadMarkMap.paintScene(ctxt);
+		grassMarkMap.paintScene(ctxt);
+		
+		quadrantMap.paintScene(ctxt);
+		
+		graph.paintScene(ctxt);
+		
+		synchronized (APP) {
+			carMap.paint(ctxt);
+			explosionMap.paint(ctxt);
+		}
+		
+		if (ctxt.DEBUG_DRAW) {
+			graph.paintIDs(ctxt);
 		}
 		
 	}

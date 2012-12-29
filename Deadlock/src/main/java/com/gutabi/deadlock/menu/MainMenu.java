@@ -115,7 +115,7 @@ public class MainMenu extends ScreenBase {
 				((JFrame)APP.container).setVisible(true);
 				
 				s.postDisplay();
-				s.worldScreen.canvas.render();
+				s.worldScreen.canvas.render_canvas();
 				s.canvas.repaint();
 			}
 		};

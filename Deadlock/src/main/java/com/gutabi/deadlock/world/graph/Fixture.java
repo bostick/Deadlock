@@ -344,54 +344,51 @@ public final class Fixture extends Vertex {
 		return f;
 	}
 	
-	public void paint(RenderingContext ctxt) {
+	public void paint_canvas(RenderingContext ctxt) {
 		
-		switch (ctxt.type) {
-		case CANVAS:
+		if (!ctxt.DEBUG_DRAW) {
 			
-			if (!ctxt.DEBUG_DRAW) {
-				
-				AffineTransform origTransform = ctxt.getTransform();
-				
-				ctxt.translate(p.x, p.y);
-				
-				switch (s) {
-				case TOP:
-					ctxt.rotate(3 * Math.PI / 2);
-					break;
-				case LEFT:
-					ctxt.rotate(Math.PI);
-					break;
-				case RIGHT:
-					ctxt.rotate(0.0);
-					break;
-				case BOTTOM:
-					ctxt.rotate(Math.PI / 2);
-					break;
-				}
-				
-				ctxt.translate(-r, -r);
-				ctxt.paintImage(APP.sheet,
-						0, 0, 2 * r, 2 * r,
-						96, 224, 96+32, 224+32);
-				
-				ctxt.setTransform(origTransform);
-				
-			} else {
-				ctxt.setColor(APP.LIGHTGREEN);
-				shape.paint(ctxt);
-				
-				ctxt.setColor(Color.BLACK);
-				ctxt.setPixelStroke(1.0);
-				shape.getAABB().draw(ctxt);
+			AffineTransform origTransform = ctxt.getTransform();
+			
+			ctxt.translate(p.x, p.y);
+			
+			switch (s) {
+			case TOP:
+				ctxt.rotate(3 * Math.PI / 2);
+				break;
+			case LEFT:
+				ctxt.rotate(Math.PI);
+				break;
+			case RIGHT:
+				ctxt.rotate(0.0);
+				break;
+			case BOTTOM:
+				ctxt.rotate(Math.PI / 2);
+				break;
 			}
 			
-			break;
-		case PREVIEW:
+			ctxt.translate(-r, -r);
+			ctxt.paintImage(APP.sheet,
+					0, 0, 2 * r, 2 * r,
+					96, 224, 96+32, 224+32);
+			
+			ctxt.setTransform(origTransform);
+			
+		} else {
 			ctxt.setColor(APP.LIGHTGREEN);
 			shape.paint(ctxt);
-			break;
+			
+			ctxt.setColor(Color.BLACK);
+			ctxt.setPixelStroke(1.0);
+			shape.getAABB().draw(ctxt);
 		}
+		
+	}
+	
+	public void paint_preview(RenderingContext ctxt) {
+		
+		ctxt.setColor(APP.LIGHTGREEN);
+		shape.paint(ctxt);
 		
 	}
 	

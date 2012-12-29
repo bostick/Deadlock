@@ -223,7 +223,9 @@ public abstract class Vertex extends Entity {
 
 	public abstract String toFileString();
 	
-	public abstract void paint(RenderingContext ctxt);
+	public abstract void paint_canvas(RenderingContext ctxt);
+	
+	public abstract void paint_preview(RenderingContext ctxt);
 	
 	public abstract void paintScene(RenderingContext ctxt);
 	

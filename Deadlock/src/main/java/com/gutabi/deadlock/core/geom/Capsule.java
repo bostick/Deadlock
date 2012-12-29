@@ -398,16 +398,11 @@ public class Capsule extends SweepableShape implements SweeperShape, CompoundSha
 	
 	public void paint(RenderingContext ctxt) {
 		
-		switch (ctxt.type) {
-		case CANVAS:
-		case PREVIEW:
-			ac.paint(ctxt);
-			if (middle != null) {
-				middle.paint(ctxt);
-			}
-			bc.paint(ctxt);
-			break;
+		ac.paint(ctxt);
+		if (middle != null) {
+			middle.paint(ctxt);
 		}
+		bc.paint(ctxt);
 		
 		if (ctxt.DEBUG_DRAW) {
 			Color c = ctxt.getColor();

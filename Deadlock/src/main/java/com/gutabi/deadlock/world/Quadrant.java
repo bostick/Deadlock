@@ -111,69 +111,67 @@ public class Quadrant {
 		}
 	}
 	
-	public void paint(RenderingContext ctxt) {
+	public void paint_canvas(RenderingContext ctxt) {
 		
-		switch (ctxt.type) {
-		case CANVAS:
-			if (active) {
+		if (active) {
+			
+			if (!ctxt.DEBUG_DRAW) {
+				AffineTransform origTransform = ctxt.getTransform();
 				
-				if (!ctxt.DEBUG_DRAW) {
-					AffineTransform origTransform = ctxt.getTransform();
-					
-					ctxt.translate(c * QuadrantMap.QUADRANT_WIDTH, r * QuadrantMap.QUADRANT_HEIGHT);
-					ctxt.paintImage(map.quadrantGrass,
-							0, 0, QuadrantMap.QUADRANT_WIDTH, QuadrantMap.QUADRANT_HEIGHT,
-							0, 0, map.quadrantGrass.getWidth(), map.quadrantGrass.getHeight());
-					
-					ctxt.setTransform(origTransform);
-				} else {
-					ctxt.setColor(APP.DARKGREEN);
-					aabb.paint(ctxt);
-					
-					ctxt.setColor(Color.BLACK);
-					ctxt.setPixelStroke(1.0);
-					aabb.draw(ctxt);
-					
-					ctxt.setColor(Color.BLACK);
-					ctxt.paintString(c * QuadrantMap.QUADRANT_WIDTH, r * QuadrantMap.QUADRANT_HEIGHT + 1, 1.0, c + " " + r);
-				}
+				ctxt.translate(c * QuadrantMap.QUADRANT_WIDTH, r * QuadrantMap.QUADRANT_HEIGHT);
+				ctxt.paintImage(map.quadrantGrass,
+						0, 0, QuadrantMap.QUADRANT_WIDTH, QuadrantMap.QUADRANT_HEIGHT,
+						0, 0, map.quadrantGrass.getWidth(), map.quadrantGrass.getHeight());
 				
-				if (grid) {
-					
-					ctxt.setColor(Color.GRAY);
-					ctxt.setPixelStroke(1.0);
-					
-					for (double k = 0.0; DMath.lessThanEquals(k, QuadrantMap.QUADRANT_HEIGHT); k+=gridSpacing) {
-						Point p0 = new Point(c * QuadrantMap.QUADRANT_WIDTH + 0, r * QuadrantMap.QUADRANT_HEIGHT + k);
-						Point p1 = new Point(c * QuadrantMap.QUADRANT_WIDTH + QuadrantMap.QUADRANT_WIDTH, r * QuadrantMap.QUADRANT_HEIGHT + k);
-						Line line = new Line(p0, p1);
-						line.draw(ctxt);
-					}
-					for (double k = 0.0; DMath.lessThanEquals(k, QuadrantMap.QUADRANT_WIDTH); k+=gridSpacing) {
-						Point p0 = new Point(c * QuadrantMap.QUADRANT_WIDTH + k, r * QuadrantMap.QUADRANT_HEIGHT + 0);
-						Point p1 = new Point(c * QuadrantMap.QUADRANT_WIDTH + k, r * QuadrantMap.QUADRANT_HEIGHT + QuadrantMap.QUADRANT_HEIGHT);
-						Line line = new Line(p0, p1);
-						line.draw(ctxt);
-					}
-					
-				}
-				
+				ctxt.setTransform(origTransform);
 			} else {
-				ctxt.setColor(Color.DARK_GRAY);
-				aabb.paint(ctxt);
-			}
-			break;
-		case PREVIEW:
-			if (active) {
 				ctxt.setColor(APP.DARKGREEN);
 				aabb.paint(ctxt);
-			} else {
-				ctxt.setColor(Color.DARK_GRAY);
-				aabb.paint(ctxt);
+				
+				ctxt.setColor(Color.BLACK);
+				ctxt.setPixelStroke(1.0);
+				aabb.draw(ctxt);
+				
+				ctxt.setColor(Color.BLACK);
+				ctxt.paintString(c * QuadrantMap.QUADRANT_WIDTH, r * QuadrantMap.QUADRANT_HEIGHT + 1, 1.0, c + " " + r);
 			}
-			break;
+			
+			if (grid) {
+				
+				ctxt.setColor(Color.GRAY);
+				ctxt.setPixelStroke(1.0);
+				
+				for (double k = 0.0; DMath.lessThanEquals(k, QuadrantMap.QUADRANT_HEIGHT); k+=gridSpacing) {
+					Point p0 = new Point(c * QuadrantMap.QUADRANT_WIDTH + 0, r * QuadrantMap.QUADRANT_HEIGHT + k);
+					Point p1 = new Point(c * QuadrantMap.QUADRANT_WIDTH + QuadrantMap.QUADRANT_WIDTH, r * QuadrantMap.QUADRANT_HEIGHT + k);
+					Line line = new Line(p0, p1);
+					line.draw(ctxt);
+				}
+				for (double k = 0.0; DMath.lessThanEquals(k, QuadrantMap.QUADRANT_WIDTH); k+=gridSpacing) {
+					Point p0 = new Point(c * QuadrantMap.QUADRANT_WIDTH + k, r * QuadrantMap.QUADRANT_HEIGHT + 0);
+					Point p1 = new Point(c * QuadrantMap.QUADRANT_WIDTH + k, r * QuadrantMap.QUADRANT_HEIGHT + QuadrantMap.QUADRANT_HEIGHT);
+					Line line = new Line(p0, p1);
+					line.draw(ctxt);
+				}
+				
+			}
+			
+		} else {
+			ctxt.setColor(Color.DARK_GRAY);
+			aabb.paint(ctxt);
 		}
 		
 	}
 	
+	public void paint_preview(RenderingContext ctxt) {
+		
+		if (active) {
+			ctxt.setColor(APP.DARKGREEN);
+			aabb.paint(ctxt);
+		} else {
+			ctxt.setColor(Color.DARK_GRAY);
+			aabb.paint(ctxt);
+		}
+		
+	}
 }

@@ -306,24 +306,22 @@ public class Merger extends Edge {
 		return null;
 	}
 	
-	public void paint(RenderingContext ctxt) {
+	public void paint_canvas(RenderingContext ctxt) {
 		
-		switch (ctxt.type) {
-		case CANVAS:
-			ctxt.setColor(Color.GRAY);
-			
-			shape.paint(ctxt);
-			
-			if (ctxt.DEBUG_DRAW) {
-				paintSkeleton(ctxt);
-			}
-			
-			break;
-		case PREVIEW:
-			ctxt.setColor(Color.GRAY);
-			shape.paint(ctxt);
-			break;
+		ctxt.setColor(Color.GRAY);
+		
+		shape.paint(ctxt);
+		
+		if (ctxt.DEBUG_DRAW) {
+			paintSkeleton(ctxt);
 		}
+		
+	}
+	
+	public void paint_preview(RenderingContext ctxt) {
+		
+		ctxt.setColor(Color.GRAY);
+		shape.paint(ctxt);
 		
 	}
 	

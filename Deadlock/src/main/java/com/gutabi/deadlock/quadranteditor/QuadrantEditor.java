@@ -95,7 +95,7 @@ public class QuadrantEditor extends ScreenBase {
 				world.canvasPostDisplay(new Dim(world.quadrantMap.worldWidth * worldScreen.cam.pixelsPerMeter, world.quadrantMap.worldHeight * worldScreen.cam.pixelsPerMeter));
 				worldScreen.cam.worldViewport = new AABB(0, 0, world.quadrantMap.worldWidth, world.quadrantMap.worldHeight);
 				
-				QuadrantEditor.this.worldScreen.canvas.render();
+				QuadrantEditor.this.worldScreen.canvas.render_canvas();
 				QuadrantEditor.this.canvas.repaint();
 			}
 			
@@ -141,7 +141,7 @@ public class QuadrantEditor extends ScreenBase {
 				world.canvasPostDisplay(new Dim(world.quadrantMap.worldWidth * worldScreen.cam.pixelsPerMeter, world.quadrantMap.worldHeight * worldScreen.cam.pixelsPerMeter));
 				worldScreen.cam.worldViewport = new AABB(0, 0, world.quadrantMap.worldWidth, world.quadrantMap.worldHeight);
 				
-				QuadrantEditor.this.worldScreen.canvas.render();
+				QuadrantEditor.this.worldScreen.canvas.render_canvas();
 				QuadrantEditor.this.canvas.repaint();
 			}
 			
@@ -186,7 +186,7 @@ public class QuadrantEditor extends ScreenBase {
 				world.canvasPostDisplay(new Dim(world.quadrantMap.worldWidth * worldScreen.cam.pixelsPerMeter, world.quadrantMap.worldHeight * worldScreen.cam.pixelsPerMeter));
 				worldScreen.cam.worldViewport = new AABB(0, 0, world.quadrantMap.worldWidth, world.quadrantMap.worldHeight);
 				
-				QuadrantEditor.this.worldScreen.canvas.render();
+				QuadrantEditor.this.worldScreen.canvas.render_canvas();
 				QuadrantEditor.this.canvas.repaint();
 			}
 			
@@ -230,7 +230,7 @@ public class QuadrantEditor extends ScreenBase {
 				world.canvasPostDisplay(new Dim(world.quadrantMap.worldWidth * worldScreen.cam.pixelsPerMeter, world.quadrantMap.worldHeight * worldScreen.cam.pixelsPerMeter));
 				worldScreen.cam.worldViewport = new AABB(0, 0, world.quadrantMap.worldWidth, world.quadrantMap.worldHeight);
 				
-				QuadrantEditor.this.worldScreen.canvas.render();
+				QuadrantEditor.this.worldScreen.canvas.render_canvas();
 				QuadrantEditor.this.canvas.repaint();
 			}
 			
@@ -275,7 +275,7 @@ public class QuadrantEditor extends ScreenBase {
 				world.canvasPostDisplay(new Dim(world.quadrantMap.worldWidth * worldScreen.cam.pixelsPerMeter, world.quadrantMap.worldHeight * worldScreen.cam.pixelsPerMeter));
 				worldScreen.cam.worldViewport = new AABB(0, 0, world.quadrantMap.worldWidth, world.quadrantMap.worldHeight);
 				
-				QuadrantEditor.this.worldScreen.canvas.render();
+				QuadrantEditor.this.worldScreen.canvas.render_canvas();
 				QuadrantEditor.this.canvas.repaint();
 			}
 			
@@ -319,7 +319,7 @@ public class QuadrantEditor extends ScreenBase {
 				world.canvasPostDisplay(new Dim(world.quadrantMap.worldWidth * worldScreen.cam.pixelsPerMeter, world.quadrantMap.worldHeight * worldScreen.cam.pixelsPerMeter));
 				worldScreen.cam.worldViewport = new AABB(0, 0, world.quadrantMap.worldWidth, world.quadrantMap.worldHeight);
 				
-				QuadrantEditor.this.worldScreen.canvas.render();
+				QuadrantEditor.this.worldScreen.canvas.render_canvas();
 				QuadrantEditor.this.canvas.repaint();
 			}
 			
@@ -512,7 +512,7 @@ public class QuadrantEditor extends ScreenBase {
 				world.canvasPostDisplay(new Dim(world.quadrantMap.worldWidth * worldScreen.cam.pixelsPerMeter, world.quadrantMap.worldHeight * worldScreen.cam.pixelsPerMeter));
 				worldScreen.cam.worldViewport = new AABB(0, 0, world.quadrantMap.worldWidth, world.quadrantMap.worldHeight);
 				
-				worldScreen.canvas.render();
+				worldScreen.canvas.render_canvas();
 				canvas.repaint();
 				
 			} else {

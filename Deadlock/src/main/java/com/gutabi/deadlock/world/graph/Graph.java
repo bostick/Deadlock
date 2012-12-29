@@ -1243,7 +1243,7 @@ public class Graph implements Sweepable {
 		return g;
 	}
 	
-	public void render(RenderingContext ctxt) {
+	public void render_canvas(RenderingContext ctxt) {
 		
 		List<Edge> edgesCopy;
 		List<Vertex> verticesCopy;
@@ -1253,15 +1253,34 @@ public class Graph implements Sweepable {
 		}
 		
 		for (Edge e : edgesCopy) {
-			e.paint(ctxt);
+			e.paint_canvas(ctxt);
 		}
 		
 		for (Vertex v : verticesCopy) {
-			v.paint(ctxt);
+			v.paint_canvas(ctxt);
 		}
 		
 		for (Edge e : edgesCopy) {
 			e.paintDecorations(ctxt);
+		}
+		
+	}
+	
+	public void render_preview(RenderingContext ctxt) {
+		
+		List<Edge> edgesCopy;
+		List<Vertex> verticesCopy;
+		synchronized (APP) {
+			edgesCopy = new ArrayList<Edge>(edges);
+			verticesCopy = new ArrayList<Vertex>(vertices);
+		}
+		
+		for (Edge e : edgesCopy) {
+			e.paint_preview(ctxt);
+		}
+		
+		for (Vertex v : verticesCopy) {
+			v.paint_preview(ctxt);
 		}
 		
 	}
@@ -1281,30 +1300,23 @@ public class Graph implements Sweepable {
 	
 	public void paintScene(RenderingContext ctxt) {
 		
-		switch (ctxt.type) {
-		case CANVAS:
-			List<Vertex> verticesCopy;
+		List<Vertex> verticesCopy;
+		synchronized (APP) {
+			verticesCopy = new ArrayList<Vertex>(vertices);
+		}
+		for (Vertex v : verticesCopy) {
+			v.paintScene(ctxt);
+		}
+		
+		if (ctxt.DEBUG_DRAW) {
+			List<Edge> edgesCopy;
 			synchronized (APP) {
-				verticesCopy = new ArrayList<Vertex>(vertices);
-			}
-			for (Vertex v : verticesCopy) {
-				v.paintScene(ctxt);
+				edgesCopy = new ArrayList<Edge>(edges);
 			}
 			
-			if (ctxt.DEBUG_DRAW) {
-				List<Edge> edgesCopy;
-				synchronized (APP) {
-					edgesCopy = new ArrayList<Edge>(edges);
-				}
-				
-				for (Edge e : edgesCopy) {
-					e.paintBorders(ctxt);
-				}
+			for (Edge e : edgesCopy) {
+				e.paintBorders(ctxt);
 			}
-			
-			break;
-		case PREVIEW:
-			break;
 		}
 		
 	}

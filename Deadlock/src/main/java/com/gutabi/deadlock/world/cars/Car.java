@@ -480,77 +480,70 @@ public abstract class Car extends Entity {
 	
 	public void paint(RenderingContext ctxt) {
 		
-		switch (ctxt.type) {
-		case CANVAS:
-			switch (state) {
-			case BRAKING:
-				
-				if (ctxt.CARTEXTURE_DRAW) {
-					paintImage(ctxt);
-				} else {
-					if (!driver.deadlocked) {
-						ctxt.setColor(Color.BLUE);
-						paintRect(ctxt);
-					} else {
-						ctxt.setColor(Color.RED);
-						paintRect(ctxt);
-					}
-				}
-				
-				paintBrakes(ctxt);
-				
-				break;
-			case DRIVING:
-			case SINKED:
-				
-				if (ctxt.CARTEXTURE_DRAW) {
-					paintImage(ctxt);
-				} else {
+		switch (state) {
+		case BRAKING:
+			
+			if (ctxt.CARTEXTURE_DRAW) {
+				paintImage(ctxt);
+			} else {
+				if (!driver.deadlocked) {
 					ctxt.setColor(Color.BLUE);
 					paintRect(ctxt);
-				}
-				
-				break;
-				
-			case SKIDDED:
-				
-				if (ctxt.CARTEXTURE_DRAW) {
-					paintImage(ctxt);
 				} else {
-					ctxt.setColor(Color.GREEN);
+					ctxt.setColor(Color.RED);
 					paintRect(ctxt);
 				}
-				
-				break;
-				
-			case CRASHED:
-				
-				if (ctxt.CARTEXTURE_DRAW) {
-					paintImage(ctxt);
+			}
+			
+			paintBrakes(ctxt);
+			
+			break;
+		case DRIVING:
+		case SINKED:
+			
+			if (ctxt.CARTEXTURE_DRAW) {
+				paintImage(ctxt);
+			} else {
+				ctxt.setColor(Color.BLUE);
+				paintRect(ctxt);
+			}
+			
+			break;
+			
+		case SKIDDED:
+			
+			if (ctxt.CARTEXTURE_DRAW) {
+				paintImage(ctxt);
+			} else {
+				ctxt.setColor(Color.GREEN);
+				paintRect(ctxt);
+			}
+			
+			break;
+			
+		case CRASHED:
+			
+			if (ctxt.CARTEXTURE_DRAW) {
+				paintImage(ctxt);
+			} else {
+				if (!driver.deadlocked) {
+					ctxt.setColor(Color.ORANGE);
+					paintRect(ctxt);
 				} else {
-					if (!driver.deadlocked) {
-						ctxt.setColor(Color.ORANGE);
-						paintRect(ctxt);
-					} else {
-						ctxt.setColor(APP.redOrange);
-						paintRect(ctxt);
-					}
+					ctxt.setColor(APP.redOrange);
+					paintRect(ctxt);
 				}
-				
-				break;
-			}
-			
-			if (ctxt.DEBUG_DRAW) {
-				ctxt.setColor(Color.BLACK);
-				ctxt.setPixelStroke(1.0);
-				shape.getAABB().draw(ctxt);
-				
-				paintID(ctxt);
 			}
 			
 			break;
-		case PREVIEW:
-			break;
+		}
+		
+		if (ctxt.DEBUG_DRAW) {
+			ctxt.setColor(Color.BLACK);
+			ctxt.setPixelStroke(1.0);
+			shape.getAABB().draw(ctxt);
+			
+			paintID(ctxt);
 		}
 		
 	}
