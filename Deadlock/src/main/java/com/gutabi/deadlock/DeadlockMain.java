@@ -32,7 +32,7 @@ public class DeadlockMain  {
 		
 		s.postDisplay();
 		s.canvas.render();
-		s.canvas.repaint();
+		s.contentPane.repaint();
 	}
 	
 	public static Thread.UncaughtExceptionHandler handler = new Thread.UncaughtExceptionHandler() {

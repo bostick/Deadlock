@@ -11,43 +11,43 @@ public interface Screen {
 	void teardown(RootPaneContainer container);
 	
 	
-	void qKey(InputEvent ev);
+	void qKey();
 	
-	void wKey(InputEvent ev);
+	void wKey();
 	
-	void gKey(InputEvent ev);
+	void gKey();
 	
-	void deleteKey(InputEvent ev);
+	void deleteKey();
 	
-	void insertKey(InputEvent ev);
+	void insertKey();
 	
-	void escKey(InputEvent ev);
+	void escKey();
 	
-	void d1Key(InputEvent ev);
+	void d1Key();
 	
-	void d2Key(InputEvent ev);
+	void d2Key();
 	
-	void d3Key(InputEvent ev);
+	void d3Key();
 	
-	void plusKey(InputEvent ev);
+	void plusKey();
 	
-	void minusKey(InputEvent ev);
+	void minusKey();
 	
-	void downKey(InputEvent ev);
+	void downKey();
 
-	void upKey(InputEvent ev);
+	void upKey();
 	
-	void enterKey(InputEvent ev);
+	void enterKey();
 	
-	void aKey(InputEvent ev);
+	void aKey();
 	
-	void sKey(InputEvent ev);
+	void sKey();
 	
-	void dKey(InputEvent ev);
+	void dKey();
 	
-	void ctrlSKey(InputEvent ev);
+	void ctrlSKey();
 	
-	void ctrlOKey(InputEvent ev);
+	void ctrlOKey();
 	
 	
 	

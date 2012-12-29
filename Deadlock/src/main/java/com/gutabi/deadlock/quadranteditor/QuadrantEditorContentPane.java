@@ -1,71 +1,29 @@
-package com.gutabi.deadlock.world;
+package com.gutabi.deadlock.quadranteditor;
 
-import static com.gutabi.deadlock.DeadlockApplication.APP;
-
-import java.awt.Dimension;
+import java.awt.Container;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.awt.geom.AffineTransform;
 
-import org.apache.log4j.Logger;
-
-import com.gutabi.deadlock.core.Dim;
-import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.core.geom.AABB;
-import com.gutabi.deadlock.ui.ComponentBase;
 import com.gutabi.deadlock.ui.InputEvent;
-import com.gutabi.deadlock.ui.RenderingContext;
 
-//@SuppressWarnings("serial")
-public class WorldCanvas extends ComponentBase {
+public class QuadrantEditorContentPane extends Container {
 	
-	WorldScreen screen;
-	
-//	private BufferStrategy bs;
-	
-	private java.awt.Canvas c;
-	
-	AABB aabb = new AABB(0, 0, 0, 0);
+	QuadrantEditor screen;
 	
 	private JavaListener jl;
 	
-	static Logger logger = Logger.getLogger(WorldCanvas.class);
-	
-	public WorldCanvas(final WorldScreen screen) {
+	public QuadrantEditorContentPane(QuadrantEditor screen) {
 		this.screen = screen;
 		
-		c = new java.awt.Canvas() {
-			public void paint(Graphics g) {
-				super.paint(g);
-				
-				RenderingContext ctxt = new RenderingContext((Graphics2D)g);
-				
-				WorldCanvas.this.paint(ctxt);
-			}
-		};
-		
-		c.setSize(new Dimension(1384, 822));
-		c.setPreferredSize(new Dimension(1384, 822));
-		c.setMaximumSize(new Dimension(1384, 822));
-		
 		jl = new JavaListener();
-		c.addMouseListener(jl);
-		c.addMouseMotionListener(jl);
-		c.addKeyListener(jl);
-	}
-	
-	public void enableKeyListener() {
-		c.addKeyListener(jl);
-	}
-	
-	public void disableKeyListener() {
-		c.removeKeyListener(jl);
+		addMouseListener(jl);
+		addMouseMotionListener(jl);
+		addKeyListener(jl);
 	}
 	
 	class JavaListener implements KeyListener, MouseListener, MouseMotionListener {
@@ -162,30 +120,12 @@ public class WorldCanvas extends ComponentBase {
 		
 	}
 	
-	public void setLocation(double x, double y) {
-		aabb = new AABB(x, y, aabb.width, aabb.height);
+	public void enableKeyListener() {
+		addKeyListener(jl);
 	}
 	
-	public int getWidth() {
-		return c.getWidth();
-	}
-	
-	public int getHeight() {
-		return c.getHeight();
-	}
-	
-	public java.awt.Canvas java() {
-		return c;
-	}
-	
-	public Dim postDisplay() {
-		
-		c.requestFocusInWindow();
-		
-//		c.createBufferStrategy(2);
-//		bs = c.getBufferStrategy();
-		
-		return new Dim(getWidth(), getHeight());
+	public void disableKeyListener() {
+		removeKeyListener(jl);
 	}
 	
 	public void pressed(InputEvent ev) {
@@ -306,73 +246,8 @@ public class WorldCanvas extends ComponentBase {
 		screen.ctrlOKey();
 	}
 	
-	public void repaint() {
-		c.repaint();
-	}
-	
-//	public void repaint() {
-//		
-//		if (SwingUtilities.isEventDispatchThread()) {
-//			if (screen.mode == WorldScreenMode.RUNNING) {
-//				return;
-//			}
-//		}
-//		
-//		do {
-//			
-//			do {
-//				
-//				RenderingContext ctxt = new RenderingContext((Graphics2D)bs.getDrawGraphics());
-//				ctxt.cam = screen.cam;
-//				ctxt.FPS_DRAW = screen.FPS_DRAW;
-//				
-//				//synchronized (VIEW) {
-//				paint_canvas(ctxt);
-//				//}
-//				
-//				ctxt.dispose();
-//				
-//			} while (bs.contentsRestored());
-//			
-//			bs.show();
-//			
-//		} while (bs.contentsLost());
-//		
-//	}
-	
-	void paint(RenderingContext ctxt) {
-		
-		ctxt.cam = screen.cam;
-		
-		AffineTransform origTrans = ctxt.getTransform();
-		
-		ctxt.translate(aabb.x, aabb.y);
-		
-		screen.world.paint_canvas(ctxt);
-		
-		ctxt.scale(ctxt.cam.pixelsPerMeter);
-		ctxt.translate(-ctxt.cam.worldViewport.x, -ctxt.cam.worldViewport.y);
-		
-		Entity hilitedCopy;
-		synchronized (APP) {
-			hilitedCopy = screen.hilited;
-		}
-		
-		if (hilitedCopy != null) {
-			hilitedCopy.paintHilite(ctxt);
-		}
-		
-		screen.tool.draw(ctxt);
-		
-		if (ctxt.FPS_DRAW) {
-			
-			ctxt.translate(ctxt.cam.worldViewport.x, ctxt.cam.worldViewport.y);
-			
-			screen.stats.paint(ctxt);
-		}
-		
-		ctxt.setTransform(origTrans);
+	public void paint(Graphics g) {
 		
 	}
-
+	
 }

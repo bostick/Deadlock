@@ -2,8 +2,6 @@ package com.gutabi.deadlock.menu;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
-import java.awt.Container;
-import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,6 +25,7 @@ public class MainMenu extends ScreenBase {
 	public final int MENU_WIDTH = 800;
 	public final int MENU_HEIGHT = 600;
 	
+	public MainMenuContentPane contentPane;
 	public MenuCanvas canvas;
 	
 	int canvasWidth;
@@ -125,7 +124,7 @@ public class MainMenu extends ScreenBase {
 				
 				s.postDisplay();
 				s.worldScreen.world.render_canvas();
-				s.canvas.repaint();
+				s.contentPane.repaint();
 			}
 		};
 		add(dialogMenuItem);
@@ -163,29 +162,36 @@ public class MainMenu extends ScreenBase {
 		};
 		add(quitMenuItem);
 		
-		canvas = new MenuCanvas(this);
-		
 	}
 	
 	public void setup(RootPaneContainer container) {
 		
-		Container cp = container.getContentPane();
+//		Container cp = container.getContentPane();
 		
-		cp.setLayout(null);
+//		cp.setLayout(null);
 		
-		cp.add(canvas.java());
+//		cp.add(canvas.java());
 		
-		Dimension size = canvas.java().getSize();
-		canvas.java().setBounds(0, 0, size.width, size.height);
+//		Dimension size = canvas.java().getSize();
+//		canvas.java().setBounds(0, 0, size.width, size.height);
 		
+		contentPane = new MainMenuContentPane(this);
+		
+		canvas = new MenuCanvas(this);
+		canvas.setLocation(0, 0);
+		
+		container.setContentPane(contentPane);
+//		contentPane.requestFocus();
 	}
 	
 	public void teardown(RootPaneContainer container) {
 		
-		Container cp = container.getContentPane();
-		cp.remove(canvas.java());
+//		Container cp = container.getContentPane();
+//		cp.remove(canvas.java());
 		
-		canvas = null;
+//		contentPane = null;
+		
+//		canvas = null;
 	}
 	
 	public void postDisplay() {
@@ -194,6 +200,7 @@ public class MainMenu extends ScreenBase {
 		canvasWidth = (int)canvasDim.width;
 		canvasHeight = (int)canvasDim.height;
 		
+		contentPane.requestFocus();
 	}
 	
 	public void add(MenuItem item) {
@@ -229,7 +236,7 @@ public class MainMenu extends ScreenBase {
 		return null;
 	}
 	
-	public void downKey(InputEvent ev) {
+	public void downKey() {
 		
 		if (hilited == null) {
 			
@@ -245,10 +252,10 @@ public class MainMenu extends ScreenBase {
 			hilited = hilited.down;
 		}
 		
-		canvas.repaint();
+		contentPane.repaint();
 	}
 	
-	public void upKey(InputEvent ev) {
+	public void upKey() {
 		
 		if (hilited == null) {
 			
@@ -264,10 +271,10 @@ public class MainMenu extends ScreenBase {
 			hilited = hilited.up;
 		}
 		
-		canvas.repaint();
+		contentPane.repaint();
 	}
 	
-	public void enterKey(InputEvent ev) {
+	public void enterKey() {
 		
 		if (hilited != null && hilited.active) {
 			hilited.action();
@@ -276,7 +283,7 @@ public class MainMenu extends ScreenBase {
 	}
 	
 	public Point canvasToMenu(Point p) {
-		return new Point(p.x - (canvas.getWidth()/2 - MENU_WIDTH/2), p.y - (canvas.getHeight()/2 - MENU_HEIGHT/2));
+		return new Point(p.x - (canvasWidth/2 - MENU_WIDTH/2), p.y - (canvasHeight/2 - MENU_HEIGHT/2));
 	}
 	
 	public Point lastMovedMenuPoint;
@@ -294,7 +301,7 @@ public class MainMenu extends ScreenBase {
 			hilited = null;
 		}
 		
-		canvas.repaint();
+		contentPane.repaint();
 	}
 	
 	Point lastClickedMenuPoint;

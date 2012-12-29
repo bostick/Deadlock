@@ -20,7 +20,7 @@ import com.gutabi.deadlock.world.WorldCamera;
 
 public class RenderingContext extends DebugDraw {
 	
-	public Graphics2D g2;
+	public final Graphics2D g2;
 	
 	public WorldCamera cam;
 	
@@ -30,8 +30,10 @@ public class RenderingContext extends DebugDraw {
 	public boolean EXPLOSIONS_DRAW = true;
 	public boolean DEBUG_DRAW = false;
 	
-	public RenderingContext() {
+	public RenderingContext(Graphics2D g2) {
 		super(new OBBViewportTransform());
+		
+		this.g2 = g2;
 		
 		m_drawFlags = DebugDraw.e_dynamicTreeBit;
 	}
@@ -170,6 +172,10 @@ public class RenderingContext extends DebugDraw {
 	
 	public void setXORMode(Color c) {
 		g2.setXORMode(c);
+	}
+	
+	public void dispose() {
+		g2.dispose();
 	}
 	
 }

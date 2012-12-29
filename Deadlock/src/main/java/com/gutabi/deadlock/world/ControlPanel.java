@@ -57,8 +57,7 @@ public class ControlPanel extends ComponentBase {
 			public void paint(Graphics g) {
 				super.paint(g);
 				
-				RenderingContext ctxt = new RenderingContext();
-				ctxt.g2 = (Graphics2D)g;
+				RenderingContext ctxt = new RenderingContext((Graphics2D)g);
 				
 				simulationInitLab.paint(ctxt);
 				
@@ -105,31 +104,31 @@ public class ControlPanel extends ComponentBase {
 	class JavaListener implements MouseListener, MouseMotionListener {
 		
 		public void mousePressed(MouseEvent ev) {
-			pressed(new InputEvent(ControlPanel.this, new Point(ev.getX(), ev.getY())));
+			pressed(new InputEvent(new Point(ev.getX(), ev.getY())));
 		}
 
 		public void mouseReleased(MouseEvent ev) {
-			released(new InputEvent(ControlPanel.this, new Point(ev.getX(), ev.getY())));
+			released(new InputEvent(new Point(ev.getX(), ev.getY())));
 		}
 		
 		public void mouseDragged(MouseEvent ev) {
-			dragged(new InputEvent(ControlPanel.this, new Point(ev.getX(), ev.getY())));
+			dragged(new InputEvent(new Point(ev.getX(), ev.getY())));
 		}
 
 		public void mouseMoved(MouseEvent ev) {
-			moved(new InputEvent(ControlPanel.this, new Point(ev.getX(), ev.getY())));
+			moved(new InputEvent(new Point(ev.getX(), ev.getY())));
 		}
 
 		public void mouseClicked(MouseEvent ev) {
-			clicked(new InputEvent(ControlPanel.this, new Point(ev.getX(), ev.getY())));
+			clicked(new InputEvent(new Point(ev.getX(), ev.getY())));
 		}
 
 		public void mouseEntered(MouseEvent ev) {
-			entered(new InputEvent(ControlPanel.this, new Point(ev.getX(), ev.getY())));
+			entered(new InputEvent(new Point(ev.getX(), ev.getY())));
 		}
 
 		public void mouseExited(MouseEvent ev) {
-			exited(new InputEvent(ControlPanel.this, new Point(ev.getX(), ev.getY())));
+			exited(new InputEvent(new Point(ev.getX(), ev.getY())));
 		}
 		
 	}
@@ -285,7 +284,6 @@ public class ControlPanel extends ComponentBase {
 				screen.FPS_DRAW = selected;
 				
 				screen.world.render_canvas();
-				screen.world.render_preview();
 				screen.canvas.repaint();
 			}
 		};
@@ -309,7 +307,6 @@ public class ControlPanel extends ComponentBase {
 				screen.STOPSIGN_DRAW = selected;
 				
 				screen.world.render_canvas();
-				screen.world.render_preview();
 				screen.canvas.repaint();
 			}
 		};
@@ -377,7 +374,6 @@ public class ControlPanel extends ComponentBase {
 				screen.DEBUG_DRAW = selected;
 				
 				screen.world.render_canvas();
-				screen.world.render_preview();
 				screen.canvas.repaint();
 			}
 		};

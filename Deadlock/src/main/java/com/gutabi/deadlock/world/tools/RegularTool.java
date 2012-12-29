@@ -71,7 +71,7 @@ public class RegularTool extends ToolBase {
 		
 		s.postDisplay();
 		s.canvas.render();
-		s.canvas.repaint();
+		s.contentPane.repaint();
 	}
 	
 	public void d1Key(InputEvent ev) {

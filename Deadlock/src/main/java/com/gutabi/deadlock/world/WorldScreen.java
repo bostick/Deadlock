@@ -51,9 +51,9 @@ public class WorldScreen extends ScreenBase {
 	public int previewWidth;
 	public int previewHeight;
 	
-	public WorldCanvas oldCanvas;
+	WorldScreenContentPane contentPane;
 	public WorldCanvas canvas;
-	
+//	public WorldCanvas oldCanvas;
 	public ControlPanel controlPanel;
 	
 	public World world;
@@ -114,7 +114,7 @@ public class WorldScreen extends ScreenBase {
 		cp.remove(canvas.java());
 		cp.remove(controlPanel.java());
 		
-		oldCanvas = canvas;
+//		oldCanvas = canvas;
 		canvas = null;
 		controlPanel = null;
 		
@@ -529,14 +529,10 @@ public class WorldScreen extends ScreenBase {
 	
 	public void pressed(InputEvent ev) {
 		
-		if (ev.c == canvas) {
-			Point p = ev.p;
-			
-			lastPressedWorldPoint = world.canvasToWorld(p);
-			lastDraggedWorldPoint = null;
-		} else {
-			assert false;
-		}
+		Point p = ev.p;
+		
+		lastPressedWorldPoint = world.canvasToWorld(p);
+		lastDraggedWorldPoint = null;
 		
 	}
 	
@@ -545,50 +541,41 @@ public class WorldScreen extends ScreenBase {
 	
 	public void dragged(InputEvent ev) {
 		
-		if (ev.c == canvas) {
+		switch (mode) {
+		case RUNNING:
+		case PAUSED: {
+			Point p = ev.p;
 			
-			switch (mode) {
-			case RUNNING:
-			case PAUSED: {
-				Point p = ev.p;
-				
-				lastDraggedWorldPointWasNull = (lastDraggedWorldPoint == null);
-				lastDraggedWorldPoint = world.canvasToWorld(p);
-				lastMovedOrDraggedWorldPoint = lastDraggedWorldPoint;
-				break;
-			}
-			case DIALOG:
-				break;
-			case EDITING: {
-				Point p = ev.p;
-				
-				lastDraggedWorldPointWasNull = (lastDraggedWorldPoint == null);
-				lastDraggedWorldPoint = world.canvasToWorld(p);
-				lastMovedOrDraggedWorldPoint = lastDraggedWorldPoint;
-				tool.dragged(ev);
-				break;
-			}
-			}
-		} else {
-			assert false;
+			lastDraggedWorldPointWasNull = (lastDraggedWorldPoint == null);
+			lastDraggedWorldPoint = world.canvasToWorld(p);
+			lastMovedOrDraggedWorldPoint = lastDraggedWorldPoint;
+			break;
+		}
+		case DIALOG:
+			break;
+		case EDITING: {
+			Point p = ev.p;
+			
+			lastDraggedWorldPointWasNull = (lastDraggedWorldPoint == null);
+			lastDraggedWorldPoint = world.canvasToWorld(p);
+			lastMovedOrDraggedWorldPoint = lastDraggedWorldPoint;
+			tool.dragged(ev);
+			break;
+		}
 		}
 		
 	}
 	
 	public void released(InputEvent ev) {
 		
-		if (ev.c == canvas) {
-			switch (mode) {
-			case RUNNING:
-			case PAUSED:
-			case DIALOG:
-				break;
-			case EDITING:
-				tool.released(ev);
-				break;
-			}
-		} else {
-			assert false;
+		switch (mode) {
+		case RUNNING:
+		case PAUSED:
+		case DIALOG:
+			break;
+		case EDITING:
+			tool.released(ev);
+			break;
 		}
 		
 	}
@@ -598,57 +585,38 @@ public class WorldScreen extends ScreenBase {
 	
 	public void moved(InputEvent ev) {
 		
-		if (ev.c == canvas) {
+		switch (mode) {
+		case RUNNING:
+		case PAUSED: {
+			Point p = ev.p;
 			
-			switch (mode) {
-			case RUNNING:
-			case PAUSED: {
-				Point p = ev.p;
-				
-				lastMovedWorldPoint = world.canvasToWorld(p);
-				lastMovedOrDraggedWorldPoint = lastMovedWorldPoint;
-				break;
-			}
-			case DIALOG:
-				break;
-			case EDITING: {
-				Point p = ev.p;
-				
-				lastMovedWorldPoint = world.canvasToWorld(p);
-				lastMovedOrDraggedWorldPoint = lastMovedWorldPoint;
-				tool.moved(ev);
-				break;
-			}
-			}
+			lastMovedWorldPoint = world.canvasToWorld(p);
+			lastMovedOrDraggedWorldPoint = lastMovedWorldPoint;
+			break;
+		}
+		case DIALOG:
+			break;
+		case EDITING: {
+			Point p = ev.p;
 			
-		} else {
-			assert false;
+			lastMovedWorldPoint = world.canvasToWorld(p);
+			lastMovedOrDraggedWorldPoint = lastMovedWorldPoint;
+			tool.moved(ev);
+			break;
+		}
 		}
 	}
 	
 	public void exited(InputEvent ev) {
 		
-		if (ev.c == canvas) {
-			switch (mode) {
-			case RUNNING:
-			case PAUSED:
-			case DIALOG:
-				break;
-			case EDITING:
-				tool.exited(ev);
-				break;
-			}
-		} else if (ev.c == oldCanvas) {
-			switch (mode) {
-			case RUNNING:
-			case PAUSED:
-			case DIALOG:
-				break;
-			case EDITING:
-				break;
-			}
-		} else {
-			assert false;
+		switch (mode) {
+		case RUNNING:
+		case PAUSED:
+		case DIALOG:
+			break;
+		case EDITING:
+			tool.exited(ev);
+			break;
 		}
 		
 	}

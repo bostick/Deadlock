@@ -16,6 +16,8 @@ import com.gutabi.deadlock.core.Dim;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.AABB;
 import com.gutabi.deadlock.menu.MainMenu;
+import com.gutabi.deadlock.menu.MainMenuContentPane;
+import com.gutabi.deadlock.menu.MenuCanvas;
 import com.gutabi.deadlock.ui.Button;
 import com.gutabi.deadlock.ui.InputEvent;
 import com.gutabi.deadlock.ui.RenderingContext;
@@ -28,6 +30,7 @@ public class QuadrantEditor extends ScreenBase {
 	public final int EDITOR_WIDTH = 800;
 	public final int EDITOR_HEIGHT = 600;
 	
+	public QuadrantEditorContentPane contentPane;
 	public QuadrantEditorCanvas canvas;
 	
 	AABB worldCanvasAABB = new AABB(50, 50, 350, 350);
@@ -95,7 +98,7 @@ public class QuadrantEditor extends ScreenBase {
 				worldScreen.cam.worldViewport = new AABB(0, 0, worldScreen.world.quadrantMap.worldWidth, worldScreen.world.quadrantMap.worldHeight);
 				
 				QuadrantEditor.this.worldScreen.world.render_canvas();
-				QuadrantEditor.this.canvas.repaint();
+				QuadrantEditor.this.contentPane.repaint();
 			}
 			
 			public void paint(RenderingContext ctxt) {
@@ -141,7 +144,7 @@ public class QuadrantEditor extends ScreenBase {
 				worldScreen.cam.worldViewport = new AABB(0, 0, worldScreen.world.quadrantMap.worldWidth, worldScreen.world.quadrantMap.worldHeight);
 				
 				QuadrantEditor.this.worldScreen.world.render_canvas();
-				QuadrantEditor.this.canvas.repaint();
+				QuadrantEditor.this.contentPane.repaint();
 			}
 			
 			public void paint(RenderingContext ctxt) {
@@ -186,7 +189,7 @@ public class QuadrantEditor extends ScreenBase {
 				worldScreen.cam.worldViewport = new AABB(0, 0, worldScreen.world.quadrantMap.worldWidth, worldScreen.world.quadrantMap.worldHeight);
 				
 				QuadrantEditor.this.worldScreen.world.render_canvas();
-				QuadrantEditor.this.canvas.repaint();
+				QuadrantEditor.this.contentPane.repaint();
 			}
 			
 			public void paint(RenderingContext ctxt) {
@@ -230,7 +233,7 @@ public class QuadrantEditor extends ScreenBase {
 				worldScreen.cam.worldViewport = new AABB(0, 0, worldScreen.world.quadrantMap.worldWidth, worldScreen.world.quadrantMap.worldHeight);
 				
 				QuadrantEditor.this.worldScreen.world.render_canvas();
-				QuadrantEditor.this.canvas.repaint();
+				QuadrantEditor.this.contentPane.repaint();
 			}
 			
 			public void paint(RenderingContext ctxt) {
@@ -275,7 +278,7 @@ public class QuadrantEditor extends ScreenBase {
 				worldScreen.cam.worldViewport = new AABB(0, 0, worldScreen.world.quadrantMap.worldWidth, worldScreen.world.quadrantMap.worldHeight);
 				
 				QuadrantEditor.this.worldScreen.world.render_canvas();
-				QuadrantEditor.this.canvas.repaint();
+				QuadrantEditor.this.contentPane.repaint();
 			}
 			
 			public void paint(RenderingContext ctxt) {
@@ -319,7 +322,7 @@ public class QuadrantEditor extends ScreenBase {
 				worldScreen.cam.worldViewport = new AABB(0, 0, worldScreen.world.quadrantMap.worldWidth, worldScreen.world.quadrantMap.worldHeight);
 				
 				QuadrantEditor.this.worldScreen.world.render_canvas();
-				QuadrantEditor.this.canvas.repaint();
+				QuadrantEditor.this.contentPane.repaint();
 			}
 			
 			public void paint(RenderingContext ctxt) {
@@ -366,29 +369,36 @@ public class QuadrantEditor extends ScreenBase {
 		};
 		go.setBounds(700, 500, 50, 50);
 		
-		canvas = new QuadrantEditorCanvas(this);
+//		canvas = new QuadrantEditorCanvas(this);
 		
 	}
 	
 	public void setup(RootPaneContainer container) {
 		
-		Container cp = container.getContentPane();
+//		Container cp = container.getContentPane();
+//		
+//		cp.setLayout(null);
+//		
+//		cp.add(canvas.java());
+//		
+//		Dimension size = canvas.java().getSize();
+//		canvas.java().setBounds(0, 0, size.width, size.height);
 		
-		cp.setLayout(null);
+		contentPane = new QuadrantEditorContentPane(this);
 		
-		cp.add(canvas.java());
+		canvas = new QuadrantEditorCanvas(this);
+		canvas.setLocation(0, 0);
 		
-		Dimension size = canvas.java().getSize();
-		canvas.java().setBounds(0, 0, size.width, size.height);
+		container.setContentPane(contentPane);
 		
 	}
 	
 	public void teardown(RootPaneContainer container) {
 		
-		Container cp = container.getContentPane();
-		cp.remove(canvas.java());
-		
-		canvas = null;
+//		Container cp = container.getContentPane();
+//		cp.remove(canvas.java());
+//		
+//		canvas = null;
 	}
 	
 	public void postDisplay() {
@@ -437,7 +447,7 @@ public class QuadrantEditor extends ScreenBase {
 		s.postDisplay();
 		
 		s.canvas.render();
-		s.canvas.repaint();
+		s.contentPane.repaint();
 	}
 	
 	
@@ -480,7 +490,7 @@ public class QuadrantEditor extends ScreenBase {
 			
 		}
 		
-		canvas.repaint();
+		contentPane.repaint();
 	}
 	
 	public void clicked(InputEvent ev) {
@@ -516,7 +526,7 @@ public class QuadrantEditor extends ScreenBase {
 				
 				worldScreen.world.render_canvas();
 				
-				canvas.repaint();
+				contentPane.repaint();
 				
 			} else {
 				

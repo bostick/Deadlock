@@ -379,8 +379,7 @@ public class World {
 		backgroundG2.scale(screen.cam.pixelsPerMeter, screen.cam.pixelsPerMeter);
 		backgroundG2.translate(-screen.cam.worldViewport.x, -screen.cam.worldViewport.y);
 		
-		RenderingContext backgroundCtxt = new RenderingContext();
-		backgroundCtxt.g2 = backgroundG2;
+		RenderingContext backgroundCtxt = new RenderingContext(backgroundG2);
 		backgroundCtxt.cam = screen.cam;
 		
 		quadrantMap.render_canvas(backgroundCtxt);
@@ -394,8 +393,7 @@ public class World {
 		
 		Graphics2D previewImageG2 = previewImage.createGraphics();
 		
-		RenderingContext previewContext = new RenderingContext();
-		previewContext.g2 = previewImageG2;
+		RenderingContext previewContext = new RenderingContext(previewImageG2);
 		
 		previewImageG2.setColor(Color.LIGHT_GRAY);
 		previewImageG2.fillRect(0, 0, screen.previewWidth, screen.previewHeight);

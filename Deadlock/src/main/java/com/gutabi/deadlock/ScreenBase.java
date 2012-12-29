@@ -4,79 +4,79 @@ import com.gutabi.deadlock.ui.InputEvent;
 
 public abstract class ScreenBase implements Screen {
 	
-	public void qKey(InputEvent ev) {
+	public void qKey() {
 		
 	}
 	
-	public void wKey(InputEvent ev) {
+	public void wKey() {
 		
 	}
 	
-	public void gKey(InputEvent ev) {
+	public void gKey() {
 		
 	}
 	
-	public void deleteKey(InputEvent ev) {
+	public void deleteKey() {
 		
 	}
 	
-	public void insertKey(InputEvent ev) {
+	public void insertKey() {
 		
 	}
 	
-	public void escKey(InputEvent ev) {
+	public void escKey() {
 		
 	}
 	
-	public void d1Key(InputEvent ev) {
+	public void d1Key() {
 		
 	}
 	
-	public void d2Key(InputEvent ev) {
+	public void d2Key() {
 		
 	}
 	
-	public void d3Key(InputEvent ev) {
+	public void d3Key() {
 		
 	}
 	
-	public void plusKey(InputEvent ev) {
+	public void plusKey() {
 		
 	}
 	
-	public void minusKey(InputEvent ev) {
+	public void minusKey() {
 		
 	}
 	
-	public void downKey(InputEvent ev) {
+	public void downKey() {
 		
 	}
 
-	public void upKey(InputEvent ev) {
+	public void upKey() {
 		
 	}
 	
-	public void enterKey(InputEvent ev) {
+	public void enterKey() {
 		
 	}
 	
-	public void aKey(InputEvent ev) {
+	public void aKey() {
 		
 	}
 	
-	public void sKey(InputEvent ev) {
+	public void sKey() {
 		
 	}
 	
-	public void dKey(InputEvent ev) {
+	public void dKey() {
 		
 	}
 	
-	public void ctrlSKey(InputEvent ev) {
+	public void ctrlSKey() {
 		
 	}
 	
-	public void ctrlOKey(InputEvent ev) {
+	public void ctrlOKey() {
 		
 	}
 
