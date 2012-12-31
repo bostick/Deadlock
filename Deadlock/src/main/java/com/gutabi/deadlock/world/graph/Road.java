@@ -749,9 +749,9 @@ public class Road extends Edge {
 	}
 	
 	
-	public void paint_canvas(RenderingContext ctxt) {
+	public void paint_panel(RenderingContext ctxt) {
 		
-		paintPath_canvas(ctxt);
+		paintPath_panel(ctxt);
 		
 		if (APP.DEBUG_DRAW) {
 			ctxt.setColor(Color.BLACK);
@@ -775,7 +775,7 @@ public class Road extends Edge {
 	
 	static java.awt.Stroke directionStroke = new BasicStroke(0.1f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
 	
-	private void paintPath_canvas(RenderingContext ctxt) {
+	private void paintPath_panel(RenderingContext ctxt) {
 		
 		ctxt.setColor(Color.GRAY);
 		

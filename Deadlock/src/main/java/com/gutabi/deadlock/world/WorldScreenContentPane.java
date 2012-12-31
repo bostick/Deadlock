@@ -7,7 +7,7 @@ import com.gutabi.deadlock.ui.ContentPane;
 @SuppressWarnings("serial")
 public class WorldScreenContentPane extends ContentPane {
 	
-	public WorldCanvas canvas;
+	public WorldPanel worldPanel;
 	public ControlPanel controlPanel;
 	
 	static Logger logger = Logger.getLogger(WorldScreenContentPane.class);
@@ -15,15 +15,15 @@ public class WorldScreenContentPane extends ContentPane {
 	public WorldScreenContentPane(WorldScreen screen) {
 		super(screen);
 		
-		canvas = new WorldCanvas(screen) {{
+		worldPanel = new WorldPanel(screen) {{
 			setLocation(0, 0);
 		}};
 		
 		controlPanel = new ControlPanel(screen) {{
-			setLocation(0 + canvas.aabb.width, 0);
+			setLocation(0 + worldPanel.aabb.width, 0);
 		}};
 		
-		children.add(canvas);
+		children.add(worldPanel);
 		children.add(controlPanel);
 	}
 	

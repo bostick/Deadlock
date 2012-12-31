@@ -33,6 +33,8 @@ public class MainMenu extends ScreenBase {
 	
 	public MainMenu() {
 		
+		contentPane = new MainMenuContentPane(this);
+		
 		MenuItem oneMenuItem = new MenuItem(MainMenu.this,"1x1 Demo") {
 			public void action() {
 				
@@ -44,7 +46,7 @@ public class MainMenu extends ScreenBase {
 				
 				s.postDisplay();
 				
-				s.world.render_canvas();
+				s.world.render_worldPanel();
 				s.world.render_preview();
 				s.contentPane.repaint();
 			}
@@ -62,7 +64,7 @@ public class MainMenu extends ScreenBase {
 				
 				s.postDisplay();
 				
-				s.world.render_canvas();
+				s.world.render_worldPanel();
 				s.world.render_preview();
 				s.contentPane.repaint();	
 			}
@@ -81,7 +83,7 @@ public class MainMenu extends ScreenBase {
 				
 				s.postDisplay();
 				
-				s.world.render_canvas();
+				s.world.render_worldPanel();
 				s.world.render_preview();
 				s.contentPane.repaint();
 			}
@@ -97,7 +99,7 @@ public class MainMenu extends ScreenBase {
 				((JFrame)APP.container).setVisible(true);
 				
 				s.postDisplay();
-				s.contentPane.canvas.worldScreen.world.render_canvas();
+				s.contentPane.panel.worldScreen.world.render_worldPanel();
 				s.contentPane.repaint();
 			}
 		};
@@ -139,8 +141,6 @@ public class MainMenu extends ScreenBase {
 	}
 	
 	public void setup(RootPaneContainer container) {
-		
-		contentPane = new MainMenuContentPane(this);
 		
 		contentPane.setLayout(null);
 		

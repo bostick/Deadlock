@@ -12,6 +12,7 @@ public class ReportLineCounts {
 	
 	static int emptyLines = 0;
 	static int nonEmptyLines = 0;
+	static int files = 0;
 	
 	public static void main(String[] args) throws IOException {
 		
@@ -21,8 +22,9 @@ public class ReportLineCounts {
 		
 		Files.walkFileTree(start, visitor);
 		
-		System.out.println(nonEmptyLines);
-		System.out.println(emptyLines);
+		System.out.println("non-empty lines: " + nonEmptyLines);
+		System.out.println("empty lines: " + emptyLines);
+		System.out.println("files: " + files);
 		
 	}
 	
@@ -37,6 +39,8 @@ public class ReportLineCounts {
 		public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
 			
 			BufferedReader reader = Files.newBufferedReader(file, StandardCharsets.UTF_8);
+			
+			files++;
 			
 			while (true) {
 				String line = reader.readLine();

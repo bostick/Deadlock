@@ -24,11 +24,11 @@ public class QuadrantEditor extends ScreenBase {
 	
 	public QuadrantEditor() {
 		
+		contentPane = new QuadrantEditorContentPane(this);
+		
 	}
 	
 	public void setup(RootPaneContainer container) {
-		
-		contentPane = new QuadrantEditorContentPane(this);
 		
 		contentPane.setLayout(null);
 		
@@ -51,7 +51,7 @@ public class QuadrantEditor extends ScreenBase {
 		((JFrame)APP.container).setVisible(true);
 		s.postDisplay();
 		
-		s.contentPane.canvas.render();
+		s.contentPane.panel.render();
 		s.contentPane.repaint();
 	}
 	

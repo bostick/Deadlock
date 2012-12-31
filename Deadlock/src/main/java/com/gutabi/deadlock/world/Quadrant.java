@@ -111,7 +111,7 @@ public class Quadrant {
 		}
 	}
 	
-	public void paint_canvas(RenderingContext ctxt) {
+	public void paint_panel(RenderingContext ctxt) {
 		
 		if (active) {
 			

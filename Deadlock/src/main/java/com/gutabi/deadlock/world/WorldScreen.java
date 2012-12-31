@@ -39,8 +39,6 @@ public class WorldScreen extends ScreenBase {
 	public double DT = 0.01;
 	
 	public WorldCamera cam = new WorldCamera();
-	public int previewWidth;
-	public int previewHeight;
 	
 	public WorldScreenContentPane contentPane;
 	
@@ -62,6 +60,8 @@ public class WorldScreen extends ScreenBase {
 	
 	public WorldScreen() {
 		
+		contentPane = new WorldScreenContentPane(this);
+		
 		mode = WorldScreenMode.EDITING;
 		
 		tool = new RegularTool(this);
@@ -71,8 +71,6 @@ public class WorldScreen extends ScreenBase {
 	}
 	
 	public void setup(RootPaneContainer container) {
-		
-		contentPane = new WorldScreenContentPane(this);
 		
 		contentPane.setLayout(null);
 		
@@ -145,9 +143,9 @@ public class WorldScreen extends ScreenBase {
 		
 		world.quadrantMap.toggleGrid();
 		
-		tool.setPoint(world.quadrantMap.getPoint(contentPane.canvas.lastMovedOrDraggedWorldPoint));
+		tool.setPoint(world.quadrantMap.getPoint(contentPane.worldPanel.lastMovedOrDraggedWorldPoint));
 		
-		world.render_canvas();
+		world.render_worldPanel();
 		world.render_preview();
 		contentPane.repaint();
 	}
@@ -196,7 +194,7 @@ public class WorldScreen extends ScreenBase {
 			
 		}
 		
-		world.render_canvas();
+		world.render_worldPanel();
 		world.render_preview();
 		contentPane.repaint();
 	}
@@ -269,24 +267,24 @@ public class WorldScreen extends ScreenBase {
 		case PAUSED:
 			world.zoom(1.1);
 			
-			contentPane.canvas.lastMovedOrDraggedWorldPoint = canvasToWorld(contentPane.canvas.lastMovedOrDraggedCanvasPoint);
+			contentPane.worldPanel.lastMovedOrDraggedWorldPoint = contentPane.worldPanel.panelToWorld(contentPane.worldPanel.lastMovedOrDraggedPanelPoint);
 			break;
 		case DIALOG:
 			break;
 		case EDITING:
 			world.zoom(1.1);
 			
-			contentPane.canvas.lastMovedOrDraggedWorldPoint = canvasToWorld(contentPane.canvas.lastMovedOrDraggedCanvasPoint);
-			Entity closest = world.hitTest(contentPane.canvas.lastMovedOrDraggedWorldPoint);
+			contentPane.worldPanel.lastMovedOrDraggedWorldPoint = contentPane.worldPanel.panelToWorld(contentPane.worldPanel.lastMovedOrDraggedPanelPoint);
+			Entity closest = world.hitTest(contentPane.worldPanel.lastMovedOrDraggedWorldPoint);
 			synchronized (APP) {
 				hilited = closest;
 			}
 			world.quadrantMap.computeGridSpacing();
-			tool.setPoint(world.quadrantMap.getPoint(contentPane.canvas.lastMovedOrDraggedWorldPoint));
+			tool.setPoint(world.quadrantMap.getPoint(contentPane.worldPanel.lastMovedOrDraggedWorldPoint));
 			break;
 		}
 		
-		world.render_canvas();
+		world.render_worldPanel();
 		world.render_preview();
 		contentPane.repaint();
 	}
@@ -298,24 +296,24 @@ public class WorldScreen extends ScreenBase {
 		case PAUSED:
 			world.zoom(0.9);
 			
-			contentPane.canvas.lastMovedOrDraggedWorldPoint = canvasToWorld(contentPane.canvas.lastMovedOrDraggedCanvasPoint);
+			contentPane.worldPanel.lastMovedOrDraggedWorldPoint = contentPane.worldPanel.panelToWorld(contentPane.worldPanel.lastMovedOrDraggedPanelPoint);
 			break;
 		case DIALOG:
 			break;
 		case EDITING:
 			world.zoom(0.9);
 			
-			contentPane.canvas.lastMovedOrDraggedWorldPoint = canvasToWorld(contentPane.canvas.lastMovedOrDraggedCanvasPoint);
-			Entity closest = world.hitTest(contentPane.canvas.lastMovedOrDraggedWorldPoint);
+			contentPane.worldPanel.lastMovedOrDraggedWorldPoint = contentPane.worldPanel.panelToWorld(contentPane.worldPanel.lastMovedOrDraggedPanelPoint);
+			Entity closest = world.hitTest(contentPane.worldPanel.lastMovedOrDraggedWorldPoint);
 			synchronized (APP) {
 				hilited = closest;
 			}
 			world.quadrantMap.computeGridSpacing();
-			tool.setPoint(world.quadrantMap.getPoint(contentPane.canvas.lastMovedOrDraggedWorldPoint));
+			tool.setPoint(world.quadrantMap.getPoint(contentPane.worldPanel.lastMovedOrDraggedWorldPoint));
 			break;
 		}
 		
-		world.render_canvas();
+		world.render_worldPanel();
 		world.render_preview();
 		contentPane.repaint();
 	}
@@ -437,7 +435,7 @@ public class WorldScreen extends ScreenBase {
 				
 				postDisplay();
 				
-				world.render_canvas();
+				world.render_worldPanel();
 				world.render_preview();
 				contentPane.repaint();
 				
@@ -478,54 +476,6 @@ public class WorldScreen extends ScreenBase {
 			break;
 		}
 		
-	}
-	
-	
-	
-	public Point canvasToWorld(Point p) {
-		return new Point(
-				p.x / cam.pixelsPerMeter + cam.worldViewport.x,
-				p.y / cam.pixelsPerMeter + cam.worldViewport.y);
-	}
-	
-	public AABB canvasToWorld(AABB aabb) {
-		Point ul = canvasToWorld(aabb.ul);
-		Point br = canvasToWorld(aabb.br);
-		return new AABB(ul.x, ul.y, br.x - ul.x, br.y - ul.y);
-	}
-	
-	public Point worldToCanvas(Point p) {
-		return new Point(
-				(p.x - cam.worldViewport.x) * cam.pixelsPerMeter,
-				(p.y - cam.worldViewport.y) * cam.pixelsPerMeter);
-	}
-	
-	public AABB worldToCanvas(AABB aabb) {
-		Point ul = worldToCanvas(aabb.ul);
-		Point br = worldToCanvas(aabb.br);
-		return new AABB(ul.x, ul.y, br.x - ul.x, br.y - ul.y);
-	}
-	
-	public Point previewToWorld(Point p) {
-		
-		double pixelsPerMeterWidth = previewWidth / world.quadrantMap.worldWidth;
-		double pixelsPerMeterHeight = previewHeight / world.quadrantMap.worldHeight;
-		double s = Math.min(pixelsPerMeterWidth, pixelsPerMeterHeight);
-		
-		return new Point((1/s) * p.x, (1/s) * p.y);
-	}
-	
-	public Point worldToPreview(Point p) {
-		
-		double pixelsPerMeterWidth = previewWidth / world.quadrantMap.worldWidth;
-		double pixelsPerMeterHeight = previewHeight / world.quadrantMap.worldHeight;
-		double s = Math.min(pixelsPerMeterWidth, pixelsPerMeterHeight);
-		
-		return new Point((s) * p.x, (s) * p.y);
-	}
-	
-	public Point controlPanelToPreview(Point p) {
-		return new Point(p.x - contentPane.controlPanel.previewAABB.x, p.y - contentPane.controlPanel.previewAABB.y);
 	}
 	
 }

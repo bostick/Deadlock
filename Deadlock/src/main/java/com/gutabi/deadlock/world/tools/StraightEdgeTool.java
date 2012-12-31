@@ -90,12 +90,12 @@ public class StraightEdgeTool extends ToolBase {
 		switch (mode) {
 		case FREE:
 			screen.tool = new RegularTool(screen);
-			screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.contentPane.canvas.lastMovedOrDraggedWorldPoint));
+			screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.contentPane.worldPanel.lastMovedOrDraggedWorldPoint));
 			screen.contentPane.repaint();
 			break;
 		case SET:
 			mode = StraightEdgeToolMode.FREE;
-			screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.contentPane.canvas.lastMovedOrDraggedWorldPoint));
+			screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.contentPane.worldPanel.lastMovedOrDraggedWorldPoint));
 			screen.contentPane.repaint();
 			break;
 		case KNOB:
@@ -122,9 +122,9 @@ public class StraightEdgeTool extends ToolBase {
 			
 			screen.tool = new RegularTool(screen);
 			
-			screen.tool.setPoint(screen.contentPane.canvas.lastMovedOrDraggedWorldPoint);
+			screen.tool.setPoint(screen.contentPane.worldPanel.lastMovedOrDraggedWorldPoint);
 			
-			screen.world.render_canvas();
+			screen.world.render_worldPanel();
 			screen.world.render_preview();
 			screen.contentPane.repaint();
 //			screen.controlPanel.repaint();
@@ -138,7 +138,7 @@ public class StraightEdgeTool extends ToolBase {
 	public void moved(InputEvent ev) {
 		switch (mode) {
 		case FREE:
-			screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.contentPane.canvas.lastMovedOrDraggedWorldPoint));
+			screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.contentPane.worldPanel.lastMovedOrDraggedWorldPoint));
 			screen.contentPane.repaint();
 			break;
 		case SET:
@@ -167,28 +167,28 @@ public class StraightEdgeTool extends ToolBase {
 		
 		switch (mode) {
 		case FREE:
-			setPoint(screen.contentPane.canvas.lastDraggedWorldPoint);
+			setPoint(screen.contentPane.worldPanel.lastDraggedWorldPoint);
 			break;
 		case SET:
-			if (!screen.contentPane.canvas.lastDraggedWorldPointWasNull) {
+			if (!screen.contentPane.worldPanel.lastDraggedWorldPointWasNull) {
 				break;
 			}
-			if (!(startKnob.hitTest(screen.contentPane.canvas.lastPressedWorldPoint) ||
-					endKnob.hitTest(screen.contentPane.canvas.lastPressedWorldPoint))) {
+			if (!(startKnob.hitTest(screen.contentPane.worldPanel.lastPressedWorldPoint) ||
+					endKnob.hitTest(screen.contentPane.worldPanel.lastPressedWorldPoint))) {
 				break;
 			}
 			
-			if (startKnob.hitTest(screen.contentPane.canvas.lastPressedWorldPoint)) {
+			if (startKnob.hitTest(screen.contentPane.worldPanel.lastPressedWorldPoint)) {
 				mode = StraightEdgeToolMode.KNOB;
 				knob = startKnob;
 				origKnobCenter = knob.p;
-			} else if (endKnob.hitTest(screen.contentPane.canvas.lastPressedWorldPoint)) {
+			} else if (endKnob.hitTest(screen.contentPane.worldPanel.lastPressedWorldPoint)) {
 				mode = StraightEdgeToolMode.KNOB;
 				knob = endKnob;
 				origKnobCenter = knob.p;
 			}
 		case KNOB:
-			Point diff = new Point(screen.contentPane.canvas.lastDraggedWorldPoint.x - screen.contentPane.canvas.lastPressedWorldPoint.x, screen.contentPane.canvas.lastDraggedWorldPoint.y - screen.contentPane.canvas.lastPressedWorldPoint.y);
+			Point diff = new Point(screen.contentPane.worldPanel.lastDraggedWorldPoint.x - screen.contentPane.worldPanel.lastPressedWorldPoint.x, screen.contentPane.worldPanel.lastDraggedWorldPoint.y - screen.contentPane.worldPanel.lastPressedWorldPoint.y);
 			knob.drag(origKnobCenter.plus(diff));
 			screen.contentPane.repaint();
 			break;

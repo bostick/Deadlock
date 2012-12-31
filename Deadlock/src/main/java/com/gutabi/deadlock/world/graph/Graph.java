@@ -1243,7 +1243,7 @@ public class Graph implements Sweepable {
 		return g;
 	}
 	
-	public void render_canvas(RenderingContext ctxt) {
+	public void render_panel(RenderingContext ctxt) {
 		
 		List<Edge> edgesCopy;
 		List<Vertex> verticesCopy;
@@ -1253,11 +1253,11 @@ public class Graph implements Sweepable {
 		}
 		
 		for (Edge e : edgesCopy) {
-			e.paint_canvas(ctxt);
+			e.paint_panel(ctxt);
 		}
 		
 		for (Vertex v : verticesCopy) {
-			v.paint_canvas(ctxt);
+			v.paint_panel(ctxt);
 		}
 		
 		for (Edge e : edgesCopy) {

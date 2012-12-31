@@ -45,7 +45,7 @@ public abstract class Edge extends Entity {
 	
 	public abstract void paintBorders(RenderingContext ctxt);
 	
-	public abstract void paint_canvas(RenderingContext ctxt);
+	public abstract void paint_panel(RenderingContext ctxt);
 	
 	public abstract void paint_preview(RenderingContext ctxt);
 	

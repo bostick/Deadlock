@@ -194,7 +194,7 @@ public class ControlPanel extends PanelBase {
 				
 				APP.FPS_DRAW = selected;
 				
-				screen.world.render_canvas();
+				screen.world.render_worldPanel();
 				screen.contentPane.repaint();
 			}
 		};
@@ -217,7 +217,7 @@ public class ControlPanel extends PanelBase {
 				
 				APP.STOPSIGN_DRAW = selected;
 				
-				screen.world.render_canvas();
+				screen.world.render_worldPanel();
 				screen.contentPane.repaint();
 			}
 		};
@@ -284,7 +284,7 @@ public class ControlPanel extends PanelBase {
 				
 				APP.DEBUG_DRAW = selected;
 				
-				screen.world.render_canvas();
+				screen.world.render_worldPanel();
 				screen.contentPane.repaint();
 			}
 		};
@@ -305,6 +305,29 @@ public class ControlPanel extends PanelBase {
 	
 	public void postDisplay() {
 		
+		screen.world.previewPostDisplay();
+	}
+	
+	public Point previewToWorld(Point p) {
+		
+		double pixelsPerMeterWidth = previewAABB.width / screen.world.quadrantMap.worldWidth;
+		double pixelsPerMeterHeight = previewAABB.height / screen.world.quadrantMap.worldHeight;
+		double s = Math.min(pixelsPerMeterWidth, pixelsPerMeterHeight);
+		
+		return new Point((1/s) * p.x, (1/s) * p.y);
+	}
+	
+	public Point worldToPreview(Point p) {
+		
+		double pixelsPerMeterWidth = previewAABB.width / screen.world.quadrantMap.worldWidth;
+		double pixelsPerMeterHeight = previewAABB.height / screen.world.quadrantMap.worldHeight;
+		double s = Math.min(pixelsPerMeterWidth, pixelsPerMeterHeight);
+		
+		return new Point((s) * p.x, (s) * p.y);
+	}
+	
+	public Point controlPanelToPreview(Point p) {
+		return new Point(p.x - previewAABB.x, p.y - previewAABB.y);
 	}
 	
 	public Point lastPressedControlPanelPoint;
@@ -350,7 +373,7 @@ public class ControlPanel extends PanelBase {
 			lastPressedControlPanelPoint = p;
 			lastDraggedControlPanelPoint = null;
 			
-			lastPressPreviewPoint = screen.controlPanelToPreview(p);
+			lastPressPreviewPoint = controlPanelToPreview(p);
 			
 			lastDragPreviewPoint = null;
 			
@@ -367,7 +390,7 @@ public class ControlPanel extends PanelBase {
 		if (previewAABB.hitTest(p) && lastPressedControlPanelPoint != null && previewAABB.hitTest(lastPressedControlPanelPoint)) {
 			
 			penDragPreviewPoint = lastDragPreviewPoint;
-			lastDragPreviewPoint = screen.controlPanelToPreview(p);
+			lastDragPreviewPoint = controlPanelToPreview(p);
 			
 			if (penDragPreviewPoint != null) {
 				
@@ -376,7 +399,7 @@ public class ControlPanel extends PanelBase {
 				
 				screen.world.previewPan(new Point(dx, dy));
 				
-				screen.world.render_canvas();
+				screen.world.render_worldPanel();
 				screen.world.render_preview();
 				screen.contentPane.repaint();
 			}
@@ -430,21 +453,21 @@ public class ControlPanel extends PanelBase {
 		
 		ctxt.paintImage(screen.world.previewImage,
 				0, 0, (int)previewAABB.width, (int)previewAABB.height,
-				0, 0, screen.previewWidth, screen.previewHeight);
+				0, 0, (int)previewAABB.width, (int)previewAABB.height);
 		
-		Point prevLoc = screen.worldToPreview(screen.cam.worldViewport.ul);
+		Point prevLoc = worldToPreview(screen.cam.worldViewport.ul);
 		
-		Point prevDim = screen.worldToPreview(new Point(screen.cam.worldViewport.width, screen.cam.worldViewport.height));
+		Point prevDim = worldToPreview(new Point(screen.cam.worldViewport.width, screen.cam.worldViewport.height));
 		
 		AABB prev = new AABB(prevLoc.x, prevLoc.y, prevDim.x, prevDim.y);
 		
-		double pixelsPerMeterWidth = screen.previewWidth / screen.world.quadrantMap.worldWidth;
-		double pixelsPerMeterHeight = screen.previewHeight / screen.world.quadrantMap.worldHeight;
+		double pixelsPerMeterWidth = previewAABB.width / screen.world.quadrantMap.worldWidth;
+		double pixelsPerMeterHeight = previewAABB.height / screen.world.quadrantMap.worldHeight;
 		double s = Math.min(pixelsPerMeterWidth, pixelsPerMeterHeight);
 		
 		ctxt.translate(
-				screen.previewWidth/2 - (s * screen.world.quadrantMap.worldWidth / 2),
-				screen.previewHeight/2 - (s * screen.world.quadrantMap.worldHeight / 2));
+				previewAABB.width/2 - (s * screen.world.quadrantMap.worldWidth / 2),
+				previewAABB.height/2 - (s * screen.world.quadrantMap.worldHeight / 2));
 		
 		ctxt.setColor(Color.BLUE);
 		prev.draw(ctxt);

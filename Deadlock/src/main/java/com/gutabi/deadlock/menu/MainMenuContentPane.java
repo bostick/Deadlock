@@ -5,16 +5,16 @@ import com.gutabi.deadlock.ui.ContentPane;
 @SuppressWarnings("serial")
 public class MainMenuContentPane extends ContentPane {
 	
-	public MenuCanvas canvas;
+	public MenuPanel panel;
 	
 	public MainMenuContentPane(MainMenu screen) {
 		super(screen);
 		
-		canvas = new MenuCanvas(screen) {{
+		panel = new MenuPanel(screen) {{
 			setLocation(0, 0);
 		}};
 		
-		children.add(canvas);
+		children.add(panel);
 		
 	}
 	

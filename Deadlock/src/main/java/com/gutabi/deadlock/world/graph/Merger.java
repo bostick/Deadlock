@@ -307,7 +307,7 @@ public class Merger extends Edge {
 		return null;
 	}
 	
-	public void paint_canvas(RenderingContext ctxt) {
+	public void paint_panel(RenderingContext ctxt) {
 		
 		ctxt.setColor(Color.GRAY);
 		

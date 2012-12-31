@@ -15,16 +15,16 @@ import com.gutabi.deadlock.ui.InputEvent;
 import com.gutabi.deadlock.ui.PanelBase;
 import com.gutabi.deadlock.ui.RenderingContext;
 
-public class MenuCanvas extends PanelBase {
+public class MenuPanel extends PanelBase {
 	
 	public final int MENU_WIDTH = 800;
 	public final int MENU_HEIGHT = 600;
 	
 	MainMenu screen;
 	
-	static Logger logger = Logger.getLogger(MenuCanvas.class);
+	static Logger logger = Logger.getLogger(MenuPanel.class);
 	
-	public MenuCanvas(final MainMenu screen) {
+	public MenuPanel(final MainMenu screen) {
 		this.screen = screen;
 		
 		aabb = new AABB(aabb.x, aabb.y, 1584, 822);
@@ -38,14 +38,14 @@ public class MenuCanvas extends PanelBase {
 		
 	}
 	
-	public Point lastMovedCanvasPoint;
-	public Point lastMovedOrDraggedCanvasPoint;
+	public Point lastMovedPanelPoint;
+	public Point lastMovedOrDraggedPanelPoint;
 	public Point lastMovedMenuPoint;
-	Point lastClickedCanvasPoint;
+	Point lastClickedPanelPoint;
 	
 	Point lastClickedMenuPoint;
 	
-	public Point canvasToMenu(Point p) {
+	public Point panelToMenu(Point p) {
 		return new Point(p.x - (aabb.width/2 - MENU_WIDTH/2), p.y - (aabb.height/2 - MENU_HEIGHT/2));
 	}
 	
@@ -62,12 +62,12 @@ public class MenuCanvas extends PanelBase {
 	
 	public void moved(InputEvent ev) {
 		
-		lastMovedCanvasPoint = ev.p;
-		lastMovedOrDraggedCanvasPoint = lastMovedCanvasPoint;
+		lastMovedPanelPoint = ev.p;
+		lastMovedOrDraggedPanelPoint = lastMovedPanelPoint;
 		
 		Point p = ev.p;
 		
-		lastMovedMenuPoint = canvasToMenu(p);
+		lastMovedMenuPoint = panelToMenu(p);
 		
 		MenuItem hit = hitTest(lastMovedMenuPoint);
 		if (hit != null && hit.active) {
@@ -81,7 +81,7 @@ public class MenuCanvas extends PanelBase {
 	
 	public void clicked(InputEvent ev) {
 		
-		lastClickedMenuPoint = canvasToMenu(ev.p);
+		lastClickedMenuPoint = panelToMenu(ev.p);
 		
 		MenuItem item = hitTest(lastClickedMenuPoint);
 		
@@ -92,13 +92,8 @@ public class MenuCanvas extends PanelBase {
 	}
 	
 	public void render() {
-//		logger.debug("render");
 		
 		synchronized (APP) {
-			
-			BufferedImage canvasMenuImage = new BufferedImage(MENU_WIDTH, MENU_HEIGHT, BufferedImage.TYPE_INT_RGB);
-			
-			Graphics2D canvasMenuImageG2 = canvasMenuImage.createGraphics();
 			
 			for (MenuItem item : screen.items) {
 				if ((int)item.localAABB.width > screen.widest) {
@@ -107,20 +102,24 @@ public class MenuCanvas extends PanelBase {
 				screen.totalHeight += (int)item.localAABB.height;
 			}
 			
-			RenderingContext canvasMenuContext = new RenderingContext(canvasMenuImageG2);
+			BufferedImage tmpImg = new BufferedImage(MENU_WIDTH, MENU_HEIGHT, BufferedImage.TYPE_INT_RGB);
 			
-			AffineTransform origTransform = canvasMenuContext.getTransform();
+			Graphics2D tmpG2 = tmpImg.createGraphics();
 			
-			canvasMenuContext.translate(MENU_WIDTH/2 - screen.widest/2, 150);
+			RenderingContext tmpCtxt = new RenderingContext(tmpG2);
+			
+			AffineTransform origTransform = tmpCtxt.getTransform();
+			
+			tmpCtxt.translate(MENU_WIDTH/2 - screen.widest/2, 150);
 			
 			for (MenuItem item : screen.items) {
-				item.render(canvasMenuContext);
-				canvasMenuContext.translate(0, item.localAABB.height + 10);
+				item.render(tmpCtxt);
+				tmpCtxt.translate(0, item.localAABB.height + 10);
 			}
 			
-			canvasMenuContext.setTransform(origTransform);
+			tmpCtxt.setTransform(origTransform);
 			
-			canvasMenuImageG2.dispose();
+			tmpG2.dispose();
 		}
 		
 	}

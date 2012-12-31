@@ -115,7 +115,7 @@ public class QuadrantMap {
 		return newQuads;
 	}
 	
-	public void canvasPostDisplay() {
+	public void panelPostDisplay() {
 		
 		int quadrantWidthPixels = (int)Math.ceil(world.screen.cam.origPixelsPerMeter * QUADRANT_WIDTH);
 		int quadrantHeightPixels = (int)Math.ceil(world.screen.cam.origPixelsPerMeter * QUADRANT_HEIGHT);
@@ -325,11 +325,11 @@ public class QuadrantMap {
 		return qm;
 	}
 	
-	public void render_canvas(RenderingContext ctxt) {
+	public void render_panel(RenderingContext ctxt) {
 		for (int i = 0; i < quadrantRows; i++) {
 			for (int j = 0; j < quadrantCols; j++) {
 				Quadrant q = quadrants[i][j];
-				q.paint_canvas(ctxt);
+				q.paint_panel(ctxt);
 			}
 		}
 	}

@@ -6,7 +6,6 @@ import java.awt.geom.AffineTransform;
 
 import org.apache.log4j.Logger;
 
-import com.gutabi.deadlock.core.Dim;
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.AABB;
@@ -14,13 +13,13 @@ import com.gutabi.deadlock.ui.InputEvent;
 import com.gutabi.deadlock.ui.PanelBase;
 import com.gutabi.deadlock.ui.RenderingContext;
 
-public class WorldCanvas extends PanelBase {
+public class WorldPanel extends PanelBase {
 	
 	WorldScreen screen;
 	
-	static Logger logger = Logger.getLogger(WorldCanvas.class);
+	static Logger logger = Logger.getLogger(WorldPanel.class);
 	
-	public WorldCanvas(final WorldScreen screen) {
+	public WorldPanel(final WorldScreen screen) {
 		this.screen = screen;
 		
 		aabb = new AABB(aabb.x, aabb.y, 1384, 822);
@@ -32,12 +31,42 @@ public class WorldCanvas extends PanelBase {
 	
 	public void postDisplay() {
 		
-		screen.world.canvasPostDisplay(new Dim(aabb.width, aabb.height));
+		screen.cam.panelWidth = (int)aabb.width;
+		screen.cam.panelHeight = (int)aabb.height;
+		
+		screen.world.panelPostDisplay();
 	}
 	
-	public Point lastMovedCanvasPoint;
-	public Point lastMovedOrDraggedCanvasPoint;
-	Point lastClickedCanvasPoint;
+	
+	public Point panelToWorld(Point p) {
+		return new Point(
+				p.x / screen.cam.pixelsPerMeter + screen.cam.worldViewport.x,
+				p.y / screen.cam.pixelsPerMeter + screen.cam.worldViewport.y);
+	}
+	
+	public AABB panelToWorld(AABB aabb) {
+		Point ul = panelToWorld(aabb.ul);
+		Point br = panelToWorld(aabb.br);
+		return new AABB(ul.x, ul.y, br.x - ul.x, br.y - ul.y);
+	}
+	
+	public Point worldToPanel(Point p) {
+		return new Point(
+				(p.x - screen.cam.worldViewport.x) * screen.cam.pixelsPerMeter,
+				(p.y - screen.cam.worldViewport.y) * screen.cam.pixelsPerMeter);
+	}
+	
+	public AABB worldToPanel(AABB aabb) {
+		Point ul = worldToPanel(aabb.ul);
+		Point br = worldToPanel(aabb.br);
+		return new AABB(ul.x, ul.y, br.x - ul.x, br.y - ul.y);
+	}
+	
+	
+	
+	public Point lastMovedPanelPoint;
+	public Point lastMovedOrDraggedPanelPoint;
+	Point lastClickedPanelPoint;
 	
 	public Point lastPressedWorldPoint;
 	
@@ -53,14 +82,14 @@ public class WorldCanvas extends PanelBase {
 		
 		Point p = ev.p;
 		
-		lastPressedWorldPoint = screen.canvasToWorld(p);
+		lastPressedWorldPoint = panelToWorld(p);
 		lastDraggedWorldPoint = null;
 		
 	}
 	
 	public void dragged(InputEvent ev) {
 		
-		lastMovedOrDraggedCanvasPoint = ev.p;
+		lastMovedOrDraggedPanelPoint = ev.p;
 		
 		switch (screen.mode) {
 		case RUNNING:
@@ -68,7 +97,7 @@ public class WorldCanvas extends PanelBase {
 			Point p = ev.p;
 			
 			lastDraggedWorldPointWasNull = (lastDraggedWorldPoint == null);
-			lastDraggedWorldPoint = screen.canvasToWorld(p);
+			lastDraggedWorldPoint = panelToWorld(p);
 			lastMovedOrDraggedWorldPoint = lastDraggedWorldPoint;
 			break;
 		}
@@ -78,7 +107,7 @@ public class WorldCanvas extends PanelBase {
 			Point p = ev.p;
 			
 			lastDraggedWorldPointWasNull = (lastDraggedWorldPoint == null);
-			lastDraggedWorldPoint = screen.canvasToWorld(p);
+			lastDraggedWorldPoint = panelToWorld(p);
 			lastMovedOrDraggedWorldPoint = lastDraggedWorldPoint;
 			screen.tool.dragged(ev);
 			break;
@@ -103,15 +132,15 @@ public class WorldCanvas extends PanelBase {
 	
 	public void moved(InputEvent ev) {
 		
-		lastMovedCanvasPoint = ev.p;
-		lastMovedOrDraggedCanvasPoint = lastMovedCanvasPoint;
+		lastMovedPanelPoint = ev.p;
+		lastMovedOrDraggedPanelPoint = lastMovedPanelPoint;
 		
 		switch (screen.mode) {
 		case RUNNING:
 		case PAUSED: {
 			Point p = ev.p;
 			
-			lastMovedWorldPoint = screen.canvasToWorld(p);
+			lastMovedWorldPoint = panelToWorld(p);
 			lastMovedOrDraggedWorldPoint = lastMovedWorldPoint;
 			break;
 		}
@@ -120,7 +149,7 @@ public class WorldCanvas extends PanelBase {
 		case EDITING: {
 			Point p = ev.p;
 			
-			lastMovedWorldPoint = screen.canvasToWorld(p);
+			lastMovedWorldPoint = panelToWorld(p);
 			lastMovedOrDraggedWorldPoint = lastMovedWorldPoint;
 			screen.tool.moved(ev);
 			break;
@@ -150,7 +179,7 @@ public class WorldCanvas extends PanelBase {
 		
 		ctxt.translate(aabb.x, aabb.y);
 		
-		screen.world.paint_canvas(ctxt);
+		screen.world.paint_panel(ctxt);
 		
 		ctxt.scale(ctxt.cam.pixelsPerMeter);
 		ctxt.translate(-ctxt.cam.worldViewport.x, -ctxt.cam.worldViewport.y);

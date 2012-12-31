@@ -14,7 +14,6 @@ import java.util.Set;
 
 import org.jbox2d.common.Vec2;
 
-import com.gutabi.deadlock.core.Dim;
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.AABB;
@@ -77,24 +76,23 @@ public class World {
 		return w;
 	}
 	
-	public void canvasPostDisplay(Dim dim) {
+	public void panelPostDisplay() {
 		
-		screen.cam.canvasWidth = (int)dim.width;
-		screen.cam.canvasHeight = (int)dim.height;
+		background = new BufferedImage(screen.cam.panelWidth, screen.cam.panelHeight, BufferedImage.TYPE_INT_RGB);
 		
-		screen.previewWidth = 100;
-		screen.previewHeight = 100;
-		
-		background = new BufferedImage(screen.cam.canvasWidth, screen.cam.canvasHeight, BufferedImage.TYPE_INT_RGB);
-		previewImage = new BufferedImage(screen.previewWidth, screen.previewHeight, BufferedImage.TYPE_INT_RGB);
-		
-		quadrantMap.canvasPostDisplay();
+		quadrantMap.panelPostDisplay();
 		
 		screen.cam.worldViewport = new AABB(
-				-(screen.cam.canvasWidth / screen.cam.pixelsPerMeter) / 2 + quadrantMap.worldWidth/2 ,
-				-(screen.cam.canvasHeight / screen.cam.pixelsPerMeter) / 2 + quadrantMap.worldHeight/2,
-				screen.cam.canvasWidth / screen.cam.pixelsPerMeter,
-				screen.cam.canvasHeight / screen.cam.pixelsPerMeter);
+				-(screen.cam.panelWidth / screen.cam.pixelsPerMeter) / 2 + quadrantMap.worldWidth/2 ,
+				-(screen.cam.panelHeight / screen.cam.pixelsPerMeter) / 2 + quadrantMap.worldHeight/2,
+				screen.cam.panelWidth / screen.cam.pixelsPerMeter,
+				screen.cam.panelHeight / screen.cam.pixelsPerMeter);
+	}
+	
+	public void previewPostDisplay() {
+		
+		previewImage = new BufferedImage((int)screen.contentPane.controlPanel.previewAABB.width, (int)screen.contentPane.controlPanel.previewAABB.height, BufferedImage.TYPE_INT_RGB);
+		
 	}
 	
 	public void preStart() {
@@ -298,14 +296,14 @@ public class World {
 		
 		screen.cam.pixelsPerMeter = factor * screen.cam.pixelsPerMeter; 
 		
-		double newWidth =  screen.cam.canvasWidth / screen.cam.pixelsPerMeter;
-		double newHeight = screen.cam.canvasHeight / screen.cam.pixelsPerMeter;
+		double newWidth =  screen.cam.panelWidth / screen.cam.pixelsPerMeter;
+		double newHeight = screen.cam.panelHeight / screen.cam.pixelsPerMeter;
 		
 		screen.cam.worldViewport = new AABB(screen.cam.worldViewport.center.x - newWidth/2, screen.cam.worldViewport.center.y - newHeight/2, newWidth, newHeight);
 	}
 	
 	public void previewPan(Point prevDp) {
-		Point worldDP = screen.previewToWorld(prevDp);
+		Point worldDP = screen.contentPane.controlPanel.previewToWorld(prevDp);
 		
 		screen.cam.worldViewport = new AABB(
 				screen.cam.worldViewport.x + worldDP.x,
@@ -314,12 +312,12 @@ public class World {
 				screen.cam.worldViewport.height);
 	}
 	
-	public void render_canvas() {
+	public void render_worldPanel() {
 		
 		Graphics2D backgroundG2 = background.createGraphics();
 		
-		backgroundG2.setColor(Color.DARK_GRAY);
-		backgroundG2.fillRect(0, 0, screen.cam.canvasWidth, screen.cam.canvasHeight);
+		backgroundG2.setColor(Color.LIGHT_GRAY);
+		backgroundG2.fillRect(0, 0, screen.cam.panelWidth, screen.cam.panelHeight);
 		
 		backgroundG2.scale(screen.cam.pixelsPerMeter, screen.cam.pixelsPerMeter);
 		backgroundG2.translate(-screen.cam.worldViewport.x, -screen.cam.worldViewport.y);
@@ -327,8 +325,8 @@ public class World {
 		RenderingContext backgroundCtxt = new RenderingContext(backgroundG2);
 		backgroundCtxt.cam = screen.cam;
 		
-		quadrantMap.render_canvas(backgroundCtxt);
-		graph.render_canvas(backgroundCtxt);
+		quadrantMap.render_panel(backgroundCtxt);
+		graph.render_panel(backgroundCtxt);
 		
 		backgroundG2.dispose();
 		
@@ -341,14 +339,14 @@ public class World {
 		RenderingContext previewContext = new RenderingContext(previewImageG2);
 		
 		previewImageG2.setColor(Color.LIGHT_GRAY);
-		previewImageG2.fillRect(0, 0, screen.previewWidth, screen.previewHeight);
+		previewImageG2.fillRect(0, 0, (int)screen.contentPane.controlPanel.previewAABB.width, (int)screen.contentPane.controlPanel.previewAABB.height);
 		
-		double pixelsPerMeterWidth = screen.previewWidth / screen.world.quadrantMap.worldWidth;
-		double pixelsPerMeterHeight = screen.previewHeight / screen.world.quadrantMap.worldHeight;
+		double pixelsPerMeterWidth = screen.contentPane.controlPanel.previewAABB.width / screen.world.quadrantMap.worldWidth;
+		double pixelsPerMeterHeight = screen.contentPane.controlPanel.previewAABB.height / screen.world.quadrantMap.worldHeight;
 		double s = Math.min(pixelsPerMeterWidth, pixelsPerMeterHeight);
 		
 		AffineTransform origTrans = previewContext.getTransform();
-		previewContext.translate(screen.previewWidth/2 - (s * screen.world.quadrantMap.worldWidth / 2), screen.previewHeight/2 - (s * screen.world.quadrantMap.worldHeight / 2));
+		previewContext.translate(screen.contentPane.controlPanel.previewAABB.width/2 - (s * screen.world.quadrantMap.worldWidth / 2), screen.contentPane.controlPanel.previewAABB.height/2 - (s * screen.world.quadrantMap.worldHeight / 2));
 		
 		previewImageG2.scale(s, s);
 		
@@ -362,12 +360,12 @@ public class World {
 		
 	}
 	
-	public void paint_canvas(RenderingContext ctxt) {
+	public void paint_panel(RenderingContext ctxt) {
 		
 		ctxt.paintImage(
 				background,
-				0, 0, screen.cam.canvasWidth, screen.cam.canvasHeight,
-				0, 0, screen.cam.canvasWidth, screen.cam.canvasHeight);
+				0, 0, screen.cam.panelWidth, screen.cam.panelHeight,
+				0, 0, screen.cam.panelWidth, screen.cam.panelHeight);
 		
 		AffineTransform origTrans = ctxt.getTransform();
 		

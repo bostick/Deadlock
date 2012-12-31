@@ -1,6 +1,8 @@
 
 
 re-add BufferStrategy
+add repaint logic, only repaint needed areas
+profile cpu time
 
 
 

@@ -335,7 +335,7 @@ public final class Fixture extends Vertex {
 		return f;
 	}
 	
-	public void paint_canvas(RenderingContext ctxt) {
+	public void paint_panel(RenderingContext ctxt) {
 		
 		if (!APP.DEBUG_DRAW) {
 			
