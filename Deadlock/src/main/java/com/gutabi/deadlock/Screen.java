@@ -2,8 +2,6 @@ package com.gutabi.deadlock;
 
 import javax.swing.RootPaneContainer;
 
-import com.gutabi.deadlock.ui.InputEvent;
-
 public interface Screen {
 	
 	void setup(RootPaneContainer container);

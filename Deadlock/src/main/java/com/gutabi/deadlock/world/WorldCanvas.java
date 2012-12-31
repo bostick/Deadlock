@@ -11,69 +11,28 @@ import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.AABB;
 import com.gutabi.deadlock.ui.InputEvent;
+import com.gutabi.deadlock.ui.PanelBase;
 import com.gutabi.deadlock.ui.RenderingContext;
 
-//@SuppressWarnings("serial")
-public class WorldCanvas {
+public class WorldCanvas extends PanelBase {
 	
 	WorldScreen screen;
-	
-//	private BufferStrategy bs;
-	
-//	private java.awt.Canvas c;
-	
-	AABB aabb = new AABB(0, 0, 0, 0);
-	
-//	private JavaListener jl;
 	
 	static Logger logger = Logger.getLogger(WorldCanvas.class);
 	
 	public WorldCanvas(final WorldScreen screen) {
 		this.screen = screen;
 		
-//		c = new java.awt.Canvas() {
-//			public void paint(Graphics g) {
-//				super.paint(g);
-//				
-//				RenderingContext ctxt = new RenderingContext((Graphics2D)g);
-//				
-//				WorldCanvas.this.paint(ctxt);
-//			}
-//		};
-		
-//		c.setSize(new Dimension(1384, 822));
-//		c.setPreferredSize(new Dimension(1384, 822));
-//		c.setMaximumSize(new Dimension(1384, 822));
-		
 		aabb = new AABB(aabb.x, aabb.y, 1384, 822);
-		
-//		c.setFocusable(false);
 	}
 	
 	public void setLocation(double x, double y) {
 		aabb = new AABB(x, y, aabb.width, aabb.height);
 	}
 	
-//	public int getWidth() {
-//		return c.getWidth();
-//	}
-//	
-//	public int getHeight() {
-//		return c.getHeight();
-//	}
-//	
-//	public java.awt.Canvas java() {
-//		return c;
-//	}
-	
-	public Dim postDisplay() {
+	public void postDisplay() {
 		
-//		c.requestFocusInWindow();
-		
-//		c.createBufferStrategy(2);
-//		bs = c.getBufferStrategy();
-		
-		return new Dim(aabb.width, aabb.height);
+		screen.world.canvasPostDisplay(new Dim(aabb.width, aabb.height));
 	}
 	
 	public Point lastMovedCanvasPoint;
@@ -90,7 +49,7 @@ public class WorldCanvas {
 	public Point lastMovedWorldPoint;
 	public Point lastMovedOrDraggedWorldPoint;
 	
-	public void pressed_canvas(InputEvent ev) {
+	public void pressed(InputEvent ev) {
 		
 		Point p = ev.p;
 		
@@ -99,7 +58,7 @@ public class WorldCanvas {
 		
 	}
 	
-	public void dragged_canvas(InputEvent ev) {
+	public void dragged(InputEvent ev) {
 		
 		lastMovedOrDraggedCanvasPoint = ev.p;
 		
@@ -128,7 +87,7 @@ public class WorldCanvas {
 		
 	}
 	
-	public void released_canvas(InputEvent ev) {
+	public void released(InputEvent ev) {
 		
 		switch (screen.mode) {
 		case RUNNING:
@@ -142,7 +101,7 @@ public class WorldCanvas {
 		
 	}
 	
-	public void moved_canvas(InputEvent ev) {
+	public void moved(InputEvent ev) {
 		
 		lastMovedCanvasPoint = ev.p;
 		lastMovedOrDraggedCanvasPoint = lastMovedCanvasPoint;
@@ -169,7 +128,7 @@ public class WorldCanvas {
 		}
 	}
 	
-	public void exited_canvas(InputEvent ev) {
+	public void exited(InputEvent ev) {
 		
 		switch (screen.mode) {
 		case RUNNING:
@@ -182,61 +141,6 @@ public class WorldCanvas {
 		}
 		
 	}
-	
-//	public void pressed_canvas(InputEvent ev) {
-//		screen.pressed_canvas(ev);
-//	}
-//	
-//	public void dragged_canvas(InputEvent ev) {
-//		screen.dragged_canvas(ev);
-//	}
-//	
-//	public void released_canvas(InputEvent ev) {
-//		
-//		screen.released_canvas(ev);
-//	}
-//	
-//	public void moved_canvas(InputEvent ev) {
-//		screen.moved_canvas(ev);
-//	}
-//	
-//	public void exited_canvas(InputEvent ev) {
-//		screen.exited_canvas(ev);
-//	}
-	
-//	public void repaint() {
-//		c.repaint();
-//	}
-	
-//	public void repaint() {
-//		
-//		if (SwingUtilities.isEventDispatchThread()) {
-//			if (screen.mode == WorldScreenMode.RUNNING) {
-//				return;
-//			}
-//		}
-//		
-//		do {
-//			
-//			do {
-//				
-//				RenderingContext ctxt = new RenderingContext((Graphics2D)bs.getDrawGraphics());
-//				ctxt.cam = screen.cam;
-//				ctxt.FPS_DRAW = screen.FPS_DRAW;
-//				
-//				//synchronized (VIEW) {
-//				paint_canvas(ctxt);
-//				//}
-//				
-//				ctxt.dispose();
-//				
-//			} while (bs.contentsRestored());
-//			
-//			bs.show();
-//			
-//		} while (bs.contentsLost());
-//		
-//	}
 	
 	public void paint(RenderingContext ctxt) {
 		

@@ -14,25 +14,20 @@ import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.AABB;
 import com.gutabi.deadlock.ui.Button;
 import com.gutabi.deadlock.ui.InputEvent;
+import com.gutabi.deadlock.ui.PanelBase;
 import com.gutabi.deadlock.ui.RenderingContext;
 import com.gutabi.deadlock.world.Quadrant;
 import com.gutabi.deadlock.world.World;
 import com.gutabi.deadlock.world.WorldScreen;
 
 //@SuppressWarnings("serial")
-public class QuadrantEditorCanvas {
+public class QuadrantEditorCanvas extends PanelBase {
 	
 	public final int EDITOR_WIDTH = 800;
 	public final int EDITOR_HEIGHT = 600;
 	
 	QuadrantEditor screen;
 	public WorldScreen worldScreen;
-	
-//	private BufferStrategy bs;
-	
-//	private java.awt.Canvas c;
-	
-	AABB aabb = new AABB(0, 0, 0, 0);
 	
 	AABB worldCanvasAABB = new AABB(50, 50, 350, 350);
 	
@@ -52,24 +47,7 @@ public class QuadrantEditorCanvas {
 	public QuadrantEditorCanvas(final QuadrantEditor screen) {
 		this.screen = screen;
 		
-//		c = new java.awt.Canvas() {
-//			public void paint(Graphics g) {
-//				super.paint(g);
-//				
-//				RenderingContext ctxt = new RenderingContext((Graphics2D)g);
-//				
-//				QuadrantEditorCanvas.this.paint(ctxt);
-//			}
-//		};
-//		
-//		c.setSize(new Dimension(1584, 822));
-//		c.setPreferredSize(new Dimension(1584, 822));
-//		c.setMaximumSize(new Dimension(1584, 822));
-//		c.setFocusable(false);
-		
 		aabb = new AABB(aabb.x, aabb.y, 1584, 822);
-		
-		
 		
 		ini = new int[][] {
 				{1, 1, 1},
@@ -79,8 +57,6 @@ public class QuadrantEditorCanvas {
 		
 		worldScreen = new WorldScreen();
 		worldScreen.world = World.createWorld(worldScreen, ini);
-		
-//		worldScreen.postDisplay();
 		
 		double pixelsPerMeterWidth = worldCanvasAABB.width / worldScreen.world.quadrantMap.worldWidth;
 		double pixelxPerMeterHeight = worldCanvasAABB.height / worldScreen.world.quadrantMap.worldHeight;
@@ -373,7 +349,6 @@ public class QuadrantEditorCanvas {
 				worldScreen.world.render_canvas();
 				worldScreen.world.render_preview();
 				worldScreen.contentPane.repaint();
-//				worldScreen.controlPanel.repaint();
 			}
 			
 			public void paint(RenderingContext ctxt) {
@@ -388,31 +363,9 @@ public class QuadrantEditorCanvas {
 		aabb = new AABB(x, y, aabb.width, aabb.height);
 	}
 	
-//	public int getWidth() {
-//		return c.getWidth();
-//	}
-//	
-//	public int getHeight() {
-//		return c.getHeight();
-//	}
-//	
-//	public java.awt.Canvas java() {
-//		return c;
-//	}
-	
-	public Dim postDisplay() {
+	public void postDisplay() {
 		
-//		c.requestFocusInWindow();
-		
-//		c.createBufferStrategy(2);
-//		bs = c.getBufferStrategy();
-		
-		return new Dim(aabb.width, aabb.height);
 	}
-	
-//	public void repaint() {
-//		c.repaint();
-//	}
 	
 	public Point lastMovedCanvasPoint;
 	public Point lastMovedOrDraggedCanvasPoint;
@@ -576,34 +529,5 @@ public class QuadrantEditorCanvas {
 		ctxt.setTransform(origTrans);
 		
 	}
-	
-//	public void repaint() {
-//		
-//		do {
-//			
-//			do {
-//				
-//				Graphics2D g2 = (Graphics2D)bs.getDrawGraphics();
-//				
-//				RenderingContext ctxt = new RenderingContext(g2);
-//				ctxt.cam = screen.worldScreen.cam;
-//				
-//				AffineTransform origTrans = ctxt.getTransform();
-//				
-//				ctxt.translate(getWidth()/2 - screen.EDITOR_WIDTH/2, getHeight()/2 - screen.EDITOR_HEIGHT/2);
-//				
-//				screen.paintEditor(ctxt);
-//				
-//				ctxt.setTransform(origTrans);
-//				
-//				g2.dispose();
-//				
-//			} while (bs.contentsRestored());
-//			
-//			bs.show();
-//			
-//		} while (bs.contentsLost());
-//
-//	}
 
 }

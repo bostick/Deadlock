@@ -180,13 +180,6 @@ public class World {
 		return null;
 	}
 	
-//	public boolean previewHitTest(Point p) {
-//		if (previewAABB.hitTest(p)) {
-//			return true;
-//		}
-//		return false;
-//	}
-	
 	public Set<Vertex> addFixture(Fixture f) {
 		
 		quadrantMap.grassMap.mowGrass(f.getShape());

@@ -24,12 +24,6 @@ public class RenderingContext extends DebugDraw {
 	
 	public WorldCamera cam;
 	
-//	public boolean FPS_DRAW = false;
-//	public boolean STOPSIGN_DRAW = true;
-//	public boolean CARTEXTURE_DRAW = true;
-//	public boolean EXPLOSIONS_DRAW = true;
-//	public boolean DEBUG_DRAW = false;
-	
 	public RenderingContext(Graphics2D g2) {
 		super(new OBBViewportTransform());
 		

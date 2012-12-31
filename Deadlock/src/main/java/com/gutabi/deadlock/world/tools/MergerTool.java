@@ -56,7 +56,6 @@ public class MergerTool extends ToolBase {
 				screen.world.render_canvas();
 				screen.world.render_preview();
 				screen.contentPane.repaint();
-//				screen.controlPanel.repaint();
 			}
 			
 		}

@@ -1,6 +1,5 @@
 package com.gutabi.deadlock;
 
-import com.gutabi.deadlock.ui.InputEvent;
 
 public abstract class ScreenBase implements Screen {
 	

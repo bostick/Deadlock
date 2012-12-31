@@ -13,7 +13,6 @@ import java.util.Scanner;
 
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.ui.RenderingContext;
-import com.gutabi.deadlock.world.ControlPanel;
 import com.gutabi.deadlock.world.ProgressMeter;
 import com.gutabi.deadlock.world.World;
 import com.gutabi.deadlock.world.cars.Car;
@@ -28,8 +27,6 @@ public final class Fixture extends Vertex {
 	
 	public World world;
 	public final Axis a;
-	
-//	ControlPanel cp;
 	
 	private Side s;
 	private FixtureType type;
@@ -51,7 +48,6 @@ public final class Fixture extends Vertex {
 		assert a != null;
 		
 		this.world = w;
-//		this.cp = cp;
 		this.a = a;
 	}
 	
@@ -204,11 +200,6 @@ public final class Fixture extends Vertex {
 	
 	@SuppressWarnings({"rawtypes"})
 	private Car createNewCar() {
-		
-//		boolean normal = APP.NORMALCAR;
-//		boolean fast = cp.fastCarButton.selected;
-////		boolean random = VIEW.controlPanel.randomCarButton.isSelected();
-//		boolean really = cp.reallyCarButton.selected;
 		
 		List<Class> l = new ArrayList<Class>();
 		if (APP.NORMALCAR) {

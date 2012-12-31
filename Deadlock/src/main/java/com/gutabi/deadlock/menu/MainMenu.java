@@ -11,7 +11,6 @@ import javax.swing.RootPaneContainer;
 import org.apache.log4j.Logger;
 
 import com.gutabi.deadlock.ScreenBase;
-import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.quadranteditor.QuadrantEditor;
 import com.gutabi.deadlock.world.WorldScreen;
 import com.gutabi.deadlock.world.examples.FourByFourGridWorld;
@@ -220,10 +219,6 @@ public class MainMenu extends ScreenBase {
 			hilited.action();
 		}
 		
-	}
-	
-	public Point contentPaneToCanvas(Point p) {
-		return new Point(p.x - 0, p.y - 0);
 	}
 	
 }

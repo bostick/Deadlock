@@ -2,7 +2,6 @@ package com.gutabi.deadlock.world;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
-import java.awt.Dimension;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -13,12 +12,10 @@ import javax.swing.JFileChooser;
 import javax.swing.RootPaneContainer;
 
 import com.gutabi.deadlock.ScreenBase;
-import com.gutabi.deadlock.core.Dim;
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.AABB;
 import com.gutabi.deadlock.ui.DLSFileChooser;
-import com.gutabi.deadlock.ui.InputEvent;
 import com.gutabi.deadlock.world.cars.Car;
 import com.gutabi.deadlock.world.graph.Merger;
 import com.gutabi.deadlock.world.graph.Road;
@@ -202,7 +199,6 @@ public class WorldScreen extends ScreenBase {
 		world.render_canvas();
 		world.render_preview();
 		contentPane.repaint();
-//		controlPanel.repaint();
 	}
 	
 	public void insertKey() {
@@ -293,7 +289,6 @@ public class WorldScreen extends ScreenBase {
 		world.render_canvas();
 		world.render_preview();
 		contentPane.repaint();
-//		controlPanel.repaint();
 	}
 	
 	public void minusKey() {
@@ -323,8 +318,6 @@ public class WorldScreen extends ScreenBase {
 		world.render_canvas();
 		world.render_preview();
 		contentPane.repaint();
-//		this.canvas.repaint();
-//		controlPanel.repaint();
 	}
 	
 	public void aKey() {
@@ -447,7 +440,6 @@ public class WorldScreen extends ScreenBase {
 				world.render_canvas();
 				world.render_preview();
 				contentPane.repaint();
-//				controlPanel.repaint();
 				
 			} else {
 				
@@ -535,29 +527,5 @@ public class WorldScreen extends ScreenBase {
 	public Point controlPanelToPreview(Point p) {
 		return new Point(p.x - contentPane.controlPanel.previewAABB.x, p.y - contentPane.controlPanel.previewAABB.y);
 	}
-	
-	public Point contentPaneToCanvas(double x, double y) {
-		return new Point(x - 0, y - 0);
-	}
-	
-	public Point contentPaneToControlPanel(double x, double y) {
-		return new Point(x - contentPane.controlPanel.aabb.x, y - contentPane.controlPanel.aabb.y);
-	}
-	
-//	public boolean canvasHitTest(double x, double y) {
-////		AABB canvasAABB = new AABB(0, 0, canvas.aabb.width, canvas.);
-//		if (contentPane.canvas.aabb.hitTest(new Point(x, y))) {
-//			return true;
-//		}
-//		return false;
-//	}
-//	
-//	public boolean controlPanelHitTest(double x, double y) {
-////		AABB controlPanelAABB = new AABB(canvas.java().getWidth(), 0, controlPanel.java().getWidth(), controlPanel.java().getHeight());
-//		if (contentPane.controlPanel.aabb.hitTest(new Point(x, y))) {
-//			return true;
-//		}
-//		return false;
-//	}
 	
 }

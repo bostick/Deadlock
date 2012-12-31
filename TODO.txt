@@ -1,14 +1,4 @@
 
-add List to ContentPanes to hold Canvas, ControlPanel etc.
-
-move mouse stuff to Canvas, ControlPanel
-move keyboard stuff to ContentPane
-
-nothing in Screen about mouse or keyboard
-
-consolidate Screen, ContentPane, etc. code
-
-
 
 re-add BufferStrategy
 

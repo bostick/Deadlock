@@ -29,14 +29,6 @@ public class Label {
 		this.text = text;
 	}
 	
-//	public void setFont(Font f) {
-//		this.f = f;
-//	}
-//	
-//	public void setColor(Color c) {
-//		this.c = c;
-//	}
-	
 	public void setLocation(double x, double y) {
 		ul = new Point(x, y);
 	}

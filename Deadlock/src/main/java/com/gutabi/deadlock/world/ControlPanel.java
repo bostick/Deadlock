@@ -3,10 +3,7 @@ package com.gutabi.deadlock.world;
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 
 import com.gutabi.deadlock.core.Point;
@@ -15,14 +12,10 @@ import com.gutabi.deadlock.ui.Button;
 import com.gutabi.deadlock.ui.Checkbox;
 import com.gutabi.deadlock.ui.InputEvent;
 import com.gutabi.deadlock.ui.Label;
+import com.gutabi.deadlock.ui.PanelBase;
 import com.gutabi.deadlock.ui.RenderingContext;
 
-public class ControlPanel {
-	
-//	private java.awt.Canvas c;
-//	private JavaListener jl;
-	
-	AABB aabb = new AABB(0, 0, 0, 0);
+public class ControlPanel extends PanelBase {
 	
 	AABB previewAABB = new AABB(5, 400, 100, 100);
 	
@@ -56,23 +49,6 @@ public class ControlPanel {
 	public ControlPanel(final WorldScreen screen) {
 		
 		this.screen = screen;
-		
-//		this.c = new java.awt.Canvas() {
-//			public void paint(Graphics g) {
-//				super.paint(g);
-//				
-//				RenderingContext ctxt = new RenderingContext((Graphics2D)g);
-//				
-//				ControlPanel.this.paint(ctxt);
-//				
-//			}
-//		};
-//		
-//		c.setSize(new Dimension(200, 822));
-//		c.setPreferredSize(new Dimension(200, 822));
-//		c.setMaximumSize(new Dimension(200, 822));
-		
-//		c.setFocusable(false);
 		
 		aabb = new AABB(aabb.x, aabb.y, 200, 822);
 		
@@ -327,19 +303,19 @@ public class ControlPanel {
 		aabb = new AABB(x, y, aabb.width, aabb.height);
 	}
 	
+	public void postDisplay() {
+		
+	}
+	
 	public Point lastPressedControlPanelPoint;
 	
 	public Point lastPressPreviewPoint;
 	public Point lastDragPreviewPoint;
 	public Point penDragPreviewPoint;
-//	long lastPressTime;
-//	long lastDragTime;
 	public Point lastDraggedControlPanelPoint;
 	
 	
-	
-	
-	public void clicked_controlpanel(InputEvent ev) {
+	public void clicked(InputEvent ev) {
 		
 		if (normalCarButton.hitTest(ev.p)) {
 			normalCarButton.action();
@@ -365,7 +341,7 @@ public class ControlPanel {
 		
 	}
 	
-	public void pressed_controlpanel(InputEvent ev) {
+	public void pressed(InputEvent ev) {
 		
 		Point p = ev.p;
 		
@@ -375,10 +351,8 @@ public class ControlPanel {
 			lastDraggedControlPanelPoint = null;
 			
 			lastPressPreviewPoint = screen.controlPanelToPreview(p);
-//			lastPressTime = System.currentTimeMillis();
 			
 			lastDragPreviewPoint = null;
-//			lastDragTime = -1;
 			
 		} else {
 			
@@ -386,7 +360,7 @@ public class ControlPanel {
 		
 	}
 	
-	public void dragged_controlpanel(InputEvent ev) {
+	public void dragged(InputEvent ev) {
 		
 		Point p = ev.p;
 		
@@ -394,7 +368,6 @@ public class ControlPanel {
 			
 			penDragPreviewPoint = lastDragPreviewPoint;
 			lastDragPreviewPoint = screen.controlPanelToPreview(p);
-//			lastDragTime = System.currentTimeMillis();
 			
 			if (penDragPreviewPoint != null) {
 				
@@ -406,32 +379,11 @@ public class ControlPanel {
 				screen.world.render_canvas();
 				screen.world.render_preview();
 				screen.contentPane.repaint();
-//				controlPanel.repaint();
 			}
 			
 		}
 		
 	}
-	
-//	public int getWidth() {
-//		return c.getWidth();
-//	}
-//	
-//	public int getHeight() {
-//		return c.getHeight();
-//	}
-//	
-//	public java.awt.Component java() {
-//		return c;
-//	}
-//	
-//	public void repaint() {
-//		c.repaint();
-//	}
-	
-//	public void setPreviewLocation(double x, double y) {
-//		previewAABB = new AABB(x, y, previewAABB.width, previewAABB.height);
-//	}
 	
 	public void paint(RenderingContext ctxt) {
 		

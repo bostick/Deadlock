@@ -824,9 +824,13 @@ public class Road extends Edge {
 	
 	public void paintDecorations(RenderingContext ctxt) {
 		
-		startSign.paint(ctxt);
+		if (startSign != null) {
+			startSign.paint(ctxt);
+		}
 		
-		endSign.paint(ctxt);
+		if (endSign != null) {
+			endSign.paint(ctxt);
+		}
 		
 		if (APP.DEBUG_DRAW) {
 			paintSkeleton(ctxt);

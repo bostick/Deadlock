@@ -146,7 +146,6 @@ public class CircleTool extends ToolBase {
 			screen.world.render_canvas();
 			screen.world.render_preview();
 			screen.contentPane.repaint();
-//			screen.controlPanel.repaint();
 			break;
 		case KNOB:
 			break;
