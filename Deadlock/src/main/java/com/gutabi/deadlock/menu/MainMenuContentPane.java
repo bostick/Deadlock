@@ -13,6 +13,7 @@ import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.ui.InputEvent;
 import com.gutabi.deadlock.ui.RenderingContext;
 
+//@SuppressWarnings("serial")
 public class MainMenuContentPane extends Container {
 	
 	MainMenu screen;
@@ -35,56 +36,12 @@ public class MainMenuContentPane extends Container {
 		}
 
 		public void keyReleased(KeyEvent ev) {
-			if (ev.getKeyCode() == KeyEvent.VK_INSERT) {
-				insertKey();
-			} else if (ev.getKeyCode() == KeyEvent.VK_DELETE) {
-				deleteKey();
-			} else if (ev.getKeyCode() == KeyEvent.VK_ESCAPE) {
-				escKey();
-			} else if (ev.getKeyCode() == KeyEvent.VK_Q) {
-				qKey();
-			} else if (ev.getKeyCode() == KeyEvent.VK_W) {
-				wKey();
-			} else if (ev.getKeyCode() == KeyEvent.VK_G) {
-				gKey();
-			} else if (ev.getKeyCode() == KeyEvent.VK_1) {
-				d1Key();
-			} else if (ev.getKeyCode() == KeyEvent.VK_2) {
-				d2Key();
-			} else if (ev.getKeyCode() == KeyEvent.VK_3) {
-				d3Key();
-			} else if (ev.getKeyCode() == KeyEvent.VK_PLUS || ev.getKeyCode() == KeyEvent.VK_EQUALS) {
-				plusKey();
-			} else if (ev.getKeyCode() == KeyEvent.VK_MINUS) {
-				minusKey();
-			} else if (ev.getKeyCode() == KeyEvent.VK_DOWN) {
-				downKey();
+			if (ev.getKeyCode() == KeyEvent.VK_DOWN) {
+				screen.downKey();
 			} else if (ev.getKeyCode() == KeyEvent.VK_UP) {
-				upKey();
+				screen.upKey();
 			} else if (ev.getKeyCode() == KeyEvent.VK_ENTER) {
-				enterKey();
-			} else if (ev.getKeyCode() == KeyEvent.VK_A) {
-				aKey();
-			} else if (ev.getKeyCode() == KeyEvent.VK_S) {
-				
-				int mods = ev.getModifiersEx();
-				
-				if ((mods & KeyEvent.CTRL_DOWN_MASK) == KeyEvent.CTRL_DOWN_MASK) {
-					ctrlSKey();
-				} else {
-					sKey();
-				}
-				
-			} else if (ev.getKeyCode() == KeyEvent.VK_D) {
-				dKey();
-			} else if (ev.getKeyCode() == KeyEvent.VK_O) {
-				
-				int mods = ev.getModifiersEx();
-				
-				if ((mods & KeyEvent.CTRL_DOWN_MASK) == KeyEvent.CTRL_DOWN_MASK) {
-					ctrlOKey();
-				}
-				
+				screen.enterKey();
 			}
 		}
 
@@ -93,31 +50,31 @@ public class MainMenuContentPane extends Container {
 		}
 		
 		public void mousePressed(MouseEvent ev) {
-			pressed(new InputEvent(new Point(ev.getX(), ev.getY())));
+			
 		}
 
 		public void mouseReleased(MouseEvent ev) {
-			released(new InputEvent(new Point(ev.getX(), ev.getY())));
+			
 		}
 		
 		public void mouseDragged(MouseEvent ev) {
-			dragged(new InputEvent(new Point(ev.getX(), ev.getY())));
+			
 		}
 
 		public void mouseMoved(MouseEvent ev) {
-			moved(new InputEvent(new Point(ev.getX(), ev.getY())));
+			screen.moved(new InputEvent(new Point(ev.getX(), ev.getY())));
 		}
 
 		public void mouseClicked(MouseEvent ev) {
-			clicked(new InputEvent(new Point(ev.getX(), ev.getY())));
+			screen.clicked(new InputEvent(new Point(ev.getX(), ev.getY())));
 		}
 
 		public void mouseEntered(MouseEvent ev) {
-			entered(new InputEvent(new Point(ev.getX(), ev.getY())));
+			
 		}
 
 		public void mouseExited(MouseEvent ev) {
-			exited(new InputEvent(new Point(ev.getX(), ev.getY())));
+			
 		}
 		
 	}
@@ -128,124 +85,6 @@ public class MainMenuContentPane extends Container {
 	
 	public void disableKeyListener() {
 		removeKeyListener(jl);
-	}
-	
-	public void pressed(InputEvent ev) {
-		screen.pressed(ev);
-	}
-	
-	public void dragged(InputEvent ev) {
-		
-		lastMovedOrDraggedCanvasPoint = ev.p;
-		
-		screen.dragged(ev);
-	}
-	
-	public void released(InputEvent ev) {
-		
-		screen.released(ev);
-	}
-	
-	public Point lastMovedCanvasPoint;
-	public Point lastMovedOrDraggedCanvasPoint;
-	
-	public void moved(InputEvent ev) {
-		
-		lastMovedCanvasPoint = ev.p;
-		lastMovedOrDraggedCanvasPoint = lastMovedCanvasPoint;
-		
-		screen.moved(ev);
-	}
-	
-	Point lastClickedCanvasPoint;
-	
-	public void clicked(InputEvent ev) {
-		
-		screen.clicked(ev);
-	}
-	
-	public void entered(InputEvent ev) {
-		
-	}
-	
-	public void exited(InputEvent ev) {
-		screen.exited(ev);
-	}
-	
-	public void qKey() {
-		screen.qKey();
-	}
-	
-	public void wKey() {
-		screen.wKey();
-	}
-	
-	public void gKey() {
-		screen.gKey();
-	}
-	
-	public void deleteKey() {
-		screen.deleteKey();
-	}
-	
-	public void insertKey() {
-		screen.insertKey();
-	}
-	
-	public void escKey() {
-		screen.escKey();
-	}
-	
-	public void d1Key() {
-		screen.d1Key();
-	}
-	
-	public void d2Key() {
-		screen.d2Key();
-	}
-	
-	public void d3Key() {
-		screen.d3Key();
-	}
-	
-	public void plusKey() {
-		screen.plusKey();
-	}
-	
-	public void minusKey() {
-		screen.minusKey();
-	}
-	
-	public void downKey() {
-		screen.downKey();
-	}
-
-	public void upKey() {
-		screen.upKey();
-	}
-	
-	public void enterKey() {
-		screen.enterKey();
-	}
-	
-	public void aKey() {
-		screen.aKey();
-	}
-	
-	public void sKey() {
-		screen.sKey();
-	}
-	
-	public void ctrlSKey() {
-		screen.ctrlSKey();
-	}
-	
-	public void dKey() {
-		screen.dKey();
-	}
-	
-	public void ctrlOKey() {
-		screen.ctrlOKey();
 	}
 	
 	public void paint(Graphics g) {

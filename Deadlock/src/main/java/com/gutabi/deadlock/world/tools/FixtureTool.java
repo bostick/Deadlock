@@ -125,16 +125,16 @@ public class FixtureTool extends ToolBase {
 		return shape.worldSink;
 	}
 	
-	public void escKey(InputEvent ev) {
+	public void escKey() {
 		
 		screen.tool = new RegularTool(screen);
 		
 		screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
 		
-		screen.canvas.repaint();
+		screen.contentPane.repaint();
 	}
 	
-	public void wKey(InputEvent ev) {
+	public void wKey() {
 		
 		if (screen.world.graph.pureGraphIntersect(shape) == null) {
 			
@@ -170,19 +170,19 @@ public class FixtureTool extends ToolBase {
 			
 			screen.world.render_canvas();
 			screen.world.render_preview();
-			screen.canvas.repaint();
-			screen.controlPanel.repaint();
+			screen.contentPane.repaint();
+//			screen.controlPanel.repaint();
 		}
 	}
 	
 	public void moved(InputEvent ev) {
 		screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
-		screen.canvas.repaint();
+		screen.contentPane.repaint();
 	}
 	
 	public void exited(InputEvent ev) {
 		screen.tool.setPoint(null);
-		screen.canvas.repaint();
+		screen.contentPane.repaint();
 	}
 	
 	public void draw(RenderingContext ctxt) {
@@ -201,6 +201,7 @@ public class FixtureTool extends ToolBase {
 			
 			shape.draw(ctxt);
 			
+			ctxt.setPaintMode();
 		}
 		
 	}

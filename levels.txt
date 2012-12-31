@@ -1,4 +1,17 @@
 
+interesting low-level computational topics
+gates
+
+
+interesting high-level computational topics
+concurrency
+
+
+interesting traffic topics
+braess's paradox
+
+
+
 
 country side:
 grass

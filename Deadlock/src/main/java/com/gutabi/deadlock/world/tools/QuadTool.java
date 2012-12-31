@@ -111,17 +111,17 @@ public class QuadTool extends ToolBase {
 		return shape;
 	}
 	
-	public void escKey(InputEvent ev) {
+	public void escKey() {
 		switch (mode) {
 		case FREE:
 			screen.tool = new RegularTool(screen);
 			screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
-			screen.canvas.repaint();
+			screen.contentPane.repaint();
 			break;
 		case SET:
 			mode = QuadToolMode.FREE;
 			screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
-			screen.canvas.repaint();
+			screen.contentPane.repaint();
 			break;
 		case KNOB:
 			assert false;
@@ -129,11 +129,11 @@ public class QuadTool extends ToolBase {
 		}
 	}
 	
-	public void sKey(InputEvent ev) {
+	public void sKey() {
 		switch (mode) {
 		case FREE:
 			mode = QuadToolMode.SET;
-			screen.canvas.repaint();
+			screen.contentPane.repaint();
 			break;
 		case SET:
 			
@@ -153,8 +153,8 @@ public class QuadTool extends ToolBase {
 			
 			screen.world.render_canvas();
 			screen.world.render_preview();
-			screen.canvas.repaint();
-			screen.controlPanel.repaint();
+			screen.contentPane.repaint();
+//			screen.controlPanel.repaint();
 			break;
 		case KNOB:
 			assert false;
@@ -166,7 +166,7 @@ public class QuadTool extends ToolBase {
 		switch (mode) {
 		case FREE:
 			screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
-			screen.canvas.repaint();
+			screen.contentPane.repaint();
 			break;
 		case SET:
 		case KNOB:
@@ -182,7 +182,7 @@ public class QuadTool extends ToolBase {
 			break;
 		case KNOB:
 			mode = QuadToolMode.SET;
-			screen.canvas.repaint();
+			screen.contentPane.repaint();
 			break;
 		}
 	}
@@ -222,7 +222,7 @@ public class QuadTool extends ToolBase {
 		case KNOB:
 			Point diff = new Point(screen.lastDraggedWorldPoint.x - screen.lastPressedWorldPoint.x, screen.lastDraggedWorldPoint.y - screen.lastPressedWorldPoint.y);
 			knob.drag(origKnobCenter.plus(diff));
-			screen.canvas.repaint();
+			screen.contentPane.repaint();
 			break;
 		}
 	}
@@ -261,5 +261,6 @@ public class QuadTool extends ToolBase {
 			break;
 		}
 		
+		ctxt.setPaintMode();
 	}
 }

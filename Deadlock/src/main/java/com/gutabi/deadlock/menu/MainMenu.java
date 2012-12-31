@@ -2,6 +2,7 @@ package com.gutabi.deadlock.menu;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
+import java.awt.Container;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,8 +29,8 @@ public class MainMenu extends ScreenBase {
 	public MainMenuContentPane contentPane;
 	public MenuCanvas canvas;
 	
-	int canvasWidth;
-	int canvasHeight;
+//	int canvasWidth;
+//	int canvasHeight;
 	
 	protected List<MenuItem> items = new ArrayList<MenuItem>();
 	
@@ -50,7 +51,6 @@ public class MainMenu extends ScreenBase {
 				
 				WorldScreen s = new WorldScreen();
 				s.world = OneByOneWorld.createOneByOneWorld(s);
-				s.init();
 				
 				s.setup(APP.container);
 				((JFrame)APP.container).setVisible(true);
@@ -59,8 +59,8 @@ public class MainMenu extends ScreenBase {
 				
 				s.world.render_canvas();
 				s.world.render_preview();
-				s.canvas.repaint();
-				s.controlPanel.repaint();
+				s.contentPane.repaint();
+//				s.controlPanel.repaint();
 			}
 		};
 		add(oneMenuItem);
@@ -72,7 +72,6 @@ public class MainMenu extends ScreenBase {
 				
 				WorldScreen s = new WorldScreen();
 				s.world = FourByFourGridWorld.createFourByFourGridWorld(s);
-				s.init();
 				
 				s.setup(APP.container);
 				((JFrame)APP.container).setVisible(true);
@@ -81,8 +80,8 @@ public class MainMenu extends ScreenBase {
 				
 				s.world.render_canvas();
 				s.world.render_preview();
-				s.canvas.repaint();
-				s.controlPanel.repaint();
+				s.contentPane.repaint();
+//				s.controlPanel.repaint();
 				
 			}
 		};
@@ -95,7 +94,6 @@ public class MainMenu extends ScreenBase {
 				
 				WorldScreen s = new WorldScreen();
 				s.world = WorldA.createWorldA(s);
-				s.init();
 				
 				s.setup(APP.container);
 				
@@ -105,8 +103,8 @@ public class MainMenu extends ScreenBase {
 				
 				s.world.render_canvas();
 				s.world.render_preview();
-				s.canvas.repaint();
-				s.controlPanel.repaint();
+				s.contentPane.repaint();
+//				s.controlPanel.repaint();
 				
 			}
 		};
@@ -170,18 +168,28 @@ public class MainMenu extends ScreenBase {
 		
 //		cp.setLayout(null);
 		
-//		cp.add(canvas.java());
-		
 //		Dimension size = canvas.java().getSize();
 //		canvas.java().setBounds(0, 0, size.width, size.height);
 		
 		contentPane = new MainMenuContentPane(this);
 		
+		contentPane.setLayout(null);
+		
 		canvas = new MenuCanvas(this);
 		canvas.setLocation(0, 0);
 		
+//		cp.add(contentPane);
+//		contentPane.setLocation(0, 0);
 		container.setContentPane(contentPane);
 //		contentPane.requestFocus();
+		contentPane.setFocusable(true);
+		
+//		logger.debug("focus: " + ((JFrame)container).getFocusOwner());
+		
+//		contentPane.requestFocus();
+		contentPane.requestFocusInWindow();
+		
+//		logger.debug("focus: " + ((JFrame)container).getFocusOwner());
 	}
 	
 	public void teardown(RootPaneContainer container) {
@@ -197,10 +205,10 @@ public class MainMenu extends ScreenBase {
 	public void postDisplay() {
 		
 		Dim canvasDim = canvas.postDisplay();
-		canvasWidth = (int)canvasDim.width;
-		canvasHeight = (int)canvasDim.height;
+//		canvasWidth = (int)canvasDim.width;
+//		canvasHeight = (int)canvasDim.height;
 		
-		contentPane.requestFocus();
+//		contentPane.requestFocus();
 	}
 	
 	public void add(MenuItem item) {
@@ -283,12 +291,18 @@ public class MainMenu extends ScreenBase {
 	}
 	
 	public Point canvasToMenu(Point p) {
-		return new Point(p.x - (canvasWidth/2 - MENU_WIDTH/2), p.y - (canvasHeight/2 - MENU_HEIGHT/2));
+		return new Point(p.x - (canvas.aabb.width/2 - MENU_WIDTH/2), p.y - (canvas.aabb.height/2 - MENU_HEIGHT/2));
 	}
 	
+	public Point lastMovedCanvasPoint;
+	public Point lastMovedOrDraggedCanvasPoint;
 	public Point lastMovedMenuPoint;
+	Point lastClickedCanvasPoint;
 	
 	public void moved(InputEvent ev) {
+		
+		lastMovedCanvasPoint = ev.p;
+		lastMovedOrDraggedCanvasPoint = lastMovedCanvasPoint;
 		
 		Point p = ev.p;
 		

@@ -3,8 +3,6 @@ package com.gutabi.deadlock.quadranteditor;
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
 import java.awt.Color;
-import java.awt.Container;
-import java.awt.Dimension;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
@@ -16,8 +14,6 @@ import com.gutabi.deadlock.core.Dim;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.AABB;
 import com.gutabi.deadlock.menu.MainMenu;
-import com.gutabi.deadlock.menu.MainMenuContentPane;
-import com.gutabi.deadlock.menu.MenuCanvas;
 import com.gutabi.deadlock.ui.Button;
 import com.gutabi.deadlock.ui.InputEvent;
 import com.gutabi.deadlock.ui.RenderingContext;
@@ -349,7 +345,6 @@ public class QuadrantEditor extends ScreenBase {
 				teardown(APP.container);
 				
 				worldScreen.world = World.createWorld(worldScreen, ini);
-				worldScreen.init();
 				
 				worldScreen.setup(APP.container);
 				((JFrame)APP.container).setVisible(true);
@@ -358,8 +353,8 @@ public class QuadrantEditor extends ScreenBase {
 				
 				worldScreen.world.render_canvas();
 				worldScreen.world.render_preview();
-				worldScreen.canvas.repaint();
-				worldScreen.controlPanel.repaint();
+				worldScreen.contentPane.repaint();
+//				worldScreen.controlPanel.repaint();
 			}
 			
 			public void paint(RenderingContext ctxt) {
@@ -386,11 +381,13 @@ public class QuadrantEditor extends ScreenBase {
 		
 		contentPane = new QuadrantEditorContentPane(this);
 		
+		contentPane.setLayout(null);
+		
 		canvas = new QuadrantEditorCanvas(this);
 		canvas.setLocation(0, 0);
 		
 		container.setContentPane(contentPane);
-		
+		contentPane.setFocusable(true);
 	}
 	
 	public void teardown(RootPaneContainer container) {
@@ -408,7 +405,7 @@ public class QuadrantEditor extends ScreenBase {
 	}
 	
 	public Point canvasToEditor(Point p) {
-		return new Point(p.x - (canvas.getWidth()/2 - EDITOR_WIDTH/2), p.y - (canvas.getHeight()/2 - EDITOR_HEIGHT/2));
+		return new Point(p.x - (canvas.aabb.width/2 - EDITOR_WIDTH/2), p.y - (canvas.aabb.height/2 - EDITOR_HEIGHT/2));
 	}
 	
 	public Button hitTest(Point p) {
@@ -436,7 +433,7 @@ public class QuadrantEditor extends ScreenBase {
 		return null;
 	}
 	
-	public void escKey(InputEvent ev) {
+	public void escKey() {
 		
 		teardown(APP.container);
 		
@@ -451,10 +448,16 @@ public class QuadrantEditor extends ScreenBase {
 	}
 	
 	
+	public Point lastMovedCanvasPoint;
+	public Point lastMovedOrDraggedCanvasPoint;
+	Point lastClickedCanvasPoint;
 	Point lastMovedEditorPoint;
 	Point lastMovedOrDraggedEditorPoint;
 	
 	public void moved(InputEvent ev) {
+		
+		lastMovedCanvasPoint = ev.p;
+		lastMovedOrDraggedCanvasPoint = lastMovedCanvasPoint;
 		
 		Point p = ev.p;
 		
@@ -468,12 +471,12 @@ public class QuadrantEditor extends ScreenBase {
 			 */
 			Point pWorldCanvas = lastMovedOrDraggedEditorPoint.minus(new Point(worldCanvasAABB.center.x - worldScreen.cam.canvasWidth/2, worldCanvasAABB.center.y - worldScreen.cam.canvasHeight/2));
 			
-			Point pWorld = worldScreen.world.canvasToWorld(pWorldCanvas);
+			Point pWorld = worldScreen.canvasToWorld(pWorldCanvas);
 			
 			Quadrant q = worldScreen.world.quadrantMap.findQuadrant(pWorld);
 			
 			if (q != null) {
-				hilited = worldScreen.world.worldToCanvas(q.aabb).plus(new Point(worldCanvasAABB.center.x - worldScreen.cam.canvasWidth/2, worldCanvasAABB.center.y - worldScreen.cam.canvasHeight/2));
+				hilited = worldScreen.worldToCanvas(q.aabb).plus(new Point(worldCanvasAABB.center.x - worldScreen.cam.canvasWidth/2, worldCanvasAABB.center.y - worldScreen.cam.canvasHeight/2));
 			} else {
 				hilited = null;
 			}
@@ -507,7 +510,7 @@ public class QuadrantEditor extends ScreenBase {
 			 */
 			Point pWorldCanvas = lastMovedOrDraggedEditorPoint.minus(new Point(worldCanvasAABB.center.x - worldScreen.cam.canvasWidth/2, worldCanvasAABB.center.y - worldScreen.cam.canvasHeight/2));
 			
-			Point pWorld = worldScreen.world.canvasToWorld(pWorldCanvas);
+			Point pWorld = worldScreen.canvasToWorld(pWorldCanvas);
 			
 			Quadrant q = worldScreen.world.quadrantMap.findQuadrant(pWorld);
 			

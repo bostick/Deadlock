@@ -1,4 +1,7 @@
 
+for WorldScreen:
+differenetiate between canvas mouse methods and preview mouse methods
+
 temporarily remove BufferStrategy
 
 remove control panel

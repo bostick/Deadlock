@@ -59,7 +59,7 @@ public class RegularTool extends ToolBase {
 	}
 	
 	
-	public void escKey(InputEvent ev) {
+	public void escKey() {
 		
 		screen.teardown(APP.container);
 		APP.container.getContentPane().repaint();
@@ -74,7 +74,7 @@ public class RegularTool extends ToolBase {
 		s.contentPane.repaint();
 	}
 	
-	public void d1Key(InputEvent ev) {
+	public void d1Key() {
 		if (screen.hilited != null) {
 			
 			if (screen.hilited instanceof Road) {
@@ -83,7 +83,7 @@ public class RegularTool extends ToolBase {
 				r.setDirection(null, Direction.STARTTOEND);
 				
 				screen.world.render_canvas();
-				screen.canvas.repaint();
+				screen.contentPane.repaint();
 				
 			} else if (screen.hilited instanceof Fixture) {
 				Fixture f = (Fixture)screen.hilited;
@@ -101,14 +101,14 @@ public class RegularTool extends ToolBase {
 				g.setSide(g.getSide().other());
 				
 				screen.world.render_canvas();
-				screen.canvas.repaint();
+				screen.contentPane.repaint();
 				
 			}
 			
 		}
 	}
 	
-	public void d2Key(InputEvent ev) {
+	public void d2Key() {
 		if (screen.hilited != null) {
 			
 			if (screen.hilited instanceof Road) {
@@ -117,14 +117,14 @@ public class RegularTool extends ToolBase {
 				r.setDirection(null, Direction.ENDTOSTART);
 				
 				screen.world.render_canvas();
-				screen.canvas.repaint();
+				screen.contentPane.repaint();
 				
 			}
 			
 		}
 	}
 	
-	public void d3Key(InputEvent ev) {
+	public void d3Key() {
 		if (screen.hilited != null) {
 			
 			if (screen.hilited instanceof Road) {
@@ -133,7 +133,7 @@ public class RegularTool extends ToolBase {
 				r.setDirection(null, null);
 			
 				screen.world.render_canvas();
-				screen.canvas.repaint();
+				screen.contentPane.repaint();
 				
 			}
 			
@@ -141,21 +141,21 @@ public class RegularTool extends ToolBase {
 	}
 
 	
-	public void qKey(InputEvent ev) {
+	public void qKey() {
 		StraightEdgeTool c = new StraightEdgeTool(screen);
 		c.setStart(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
 		c.setPoint(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
 		screen.tool = c;
-		screen.canvas.repaint();
+		screen.contentPane.repaint();
 	}
 	
-	public void wKey(InputEvent ev) {
+	public void wKey() {
 		screen.tool = new FixtureTool(screen);
 		screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
-		screen.canvas.repaint();
+		screen.contentPane.repaint();
 	}
 	
-	public void aKey(InputEvent ev) {
+	public void aKey() {
 		
 		screen.hilited = null;
 		
@@ -163,26 +163,26 @@ public class RegularTool extends ToolBase {
 		
 		screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
 		
-		screen.canvas.repaint();
+		screen.contentPane.repaint();
 	}
 	
-	public void sKey(InputEvent ev) {
+	public void sKey() {
 		QuadTool q = new QuadTool(screen);
 		q.setStart(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
 		q.setPoint(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
 		screen.tool = q;
-		screen.canvas.repaint();
+		screen.contentPane.repaint();
 	}
 	
-	public void dKey(InputEvent ev) {
+	public void dKey() {
 		CubicTool c = new CubicTool(screen);
 		c.setStart(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
 		c.setPoint(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
 		screen.tool = c;
-		screen.canvas.repaint();
+		screen.contentPane.repaint();
 	}
 	
-	public void insertKey(InputEvent ev) {
+	public void insertKey() {
 		if (screen.hilited != null) {
 			
 			if (screen.hilited instanceof StopSign) {
@@ -191,7 +191,7 @@ public class RegularTool extends ToolBase {
 				s.setEnabled(true);
 				
 				screen.world.render_canvas();
-				screen.canvas.repaint();
+				screen.contentPane.repaint();
 			}
 			
 		} else {
@@ -202,7 +202,7 @@ public class RegularTool extends ToolBase {
 			
 			screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
 			
-			screen.canvas.repaint();
+			screen.contentPane.repaint();
 		}
 	}
 	
@@ -217,7 +217,7 @@ public class RegularTool extends ToolBase {
 			
 			screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
 			
-			screen.canvas.repaint();
+			screen.contentPane.repaint();
 			break;
 		case DRAFTING:
 			assert false;
@@ -235,7 +235,7 @@ public class RegularTool extends ToolBase {
 				draftStart(screen.lastPressedWorldPoint);
 				draftMove(screen.lastDraggedWorldPoint);
 				
-				screen.canvas.repaint();
+				screen.contentPane.repaint();
 				
 			} else {
 				assert false;
@@ -246,8 +246,8 @@ public class RegularTool extends ToolBase {
 			
 			draftMove(screen.lastDraggedWorldPoint);
 			
-			screen.canvas.repaint();
-			screen.controlPanel.repaint();
+			screen.contentPane.repaint();
+//			screen.controlPanel.repaint();
 //			screen.controlPanel.previewPanel.repaint();
 			break;
 		}
@@ -262,15 +262,15 @@ public class RegularTool extends ToolBase {
 			
 			screen.world.render_canvas();
 			screen.world.render_preview();
-			screen.canvas.repaint();
-			screen.controlPanel.repaint();
+			screen.contentPane.repaint();
+//			screen.controlPanel.repaint();
 			break;
 		}
 	}
 	
 	public void exited(InputEvent ev) {
 		screen.tool.setPoint(null);
-		screen.canvas.repaint();
+		screen.contentPane.repaint();
 	}
 	
 	public void draftStart(Point p) {
@@ -322,6 +322,7 @@ public class RegularTool extends ToolBase {
 		
 		shape.draw(ctxt);
 		
+		ctxt.setPaintMode();
 	}
 	
 }

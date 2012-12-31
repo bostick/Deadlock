@@ -32,16 +32,16 @@ public class MergerTool extends ToolBase {
 		return shape;
 	}
 	
-	public void escKey(InputEvent ev) {
+	public void escKey() {
 		
 		screen.tool = new RegularTool(screen);
 		
 		screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
 		
-		screen.canvas.repaint();
+		screen.contentPane.repaint();
 	}
 	
-	public void insertKey(InputEvent ev) {
+	public void insertKey() {
 		if (screen.world.quadrantMap.completelyContains(shape)) {
 			
 			if (screen.world.graph.pureGraphIntersect(shape) == null) {
@@ -55,8 +55,8 @@ public class MergerTool extends ToolBase {
 				
 				screen.world.render_canvas();
 				screen.world.render_preview();
-				screen.canvas.repaint();
-				screen.controlPanel.repaint();
+				screen.contentPane.repaint();
+//				screen.controlPanel.repaint();
 			}
 			
 		}
@@ -64,12 +64,12 @@ public class MergerTool extends ToolBase {
 	
 	public void moved(InputEvent ev) {
 		screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
-		screen.canvas.repaint();
+		screen.contentPane.repaint();
 	}
 	
 	public void exited(InputEvent ev) {
 		screen.tool.setPoint(null);
-		screen.canvas.repaint();
+		screen.contentPane.repaint();
 	}
 	
 	public void draw(RenderingContext ctxt) {
@@ -84,6 +84,7 @@ public class MergerTool extends ToolBase {
 		
 		shape.draw(ctxt);
 		
+		ctxt.setPaintMode();
 	}
 
 }

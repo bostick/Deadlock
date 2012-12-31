@@ -4,22 +4,20 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
+import java.awt.geom.AffineTransform;
 
-import com.gutabi.deadlock.core.Point;
+import com.gutabi.deadlock.core.geom.AABB;
 import com.gutabi.deadlock.ui.Button;
 import com.gutabi.deadlock.ui.Checkbox;
-import com.gutabi.deadlock.ui.ComponentBase;
-import com.gutabi.deadlock.ui.InputEvent;
 import com.gutabi.deadlock.ui.Label;
 import com.gutabi.deadlock.ui.RenderingContext;
 
-public class ControlPanel extends ComponentBase {
+public class ControlPanel {
 	
-	private java.awt.Canvas c;
-	private JavaListener jl;
+//	private java.awt.Canvas c;
+//	private JavaListener jl;
+	
+	AABB aabb = new AABB(0, 0, 0, 0);
 	
 	WorldScreen screen;
 	
@@ -48,104 +46,28 @@ public class ControlPanel extends ComponentBase {
 	public Checkbox explosionsCheckBox;
 	public Checkbox debugCheckBox;
 	
-	@SuppressWarnings("serial")
 	public ControlPanel(final WorldScreen screen) {
 		
 		this.screen = screen;
 		
-		this.c = new java.awt.Canvas() {
-			public void paint(Graphics g) {
-				super.paint(g);
-				
-				RenderingContext ctxt = new RenderingContext((Graphics2D)g);
-				
-				simulationInitLab.paint(ctxt);
-				
-				normalCarsLab.paint(ctxt);
-				
-				fastCarLab.paint(ctxt);
-				reallyCarLab.paint(ctxt);
-				stateLab.paint(ctxt);
-				fpsLab.paint(ctxt);
-				stopSignLab.paint(ctxt);
-				carTextureLab.paint(ctxt);
-				explosionsLab.paint(ctxt);
-				debugLab.paint(ctxt);
-				
-				normalCarButton.paint(ctxt);
-				fastCarButton.paint(ctxt);
-				reallyCarButton.paint(ctxt);
-				
-				startButton.paint(ctxt);
-				stopButton.paint(ctxt);
-				
-				fpsCheckBox.paint(ctxt);
-				stopSignCheckBox.paint(ctxt);
-				carTextureCheckBox.paint(ctxt);
-				explosionsCheckBox.paint(ctxt);
-				debugCheckBox.paint(ctxt);
-				
-				screen.world.paint_preview(ctxt);
-				
-			}
-		};
+//		this.c = new java.awt.Canvas() {
+//			public void paint(Graphics g) {
+//				super.paint(g);
+//				
+//				RenderingContext ctxt = new RenderingContext((Graphics2D)g);
+//				
+//				ControlPanel.this.paint(ctxt);
+//				
+//			}
+//		};
+//		
+//		c.setSize(new Dimension(200, 822));
+//		c.setPreferredSize(new Dimension(200, 822));
+//		c.setMaximumSize(new Dimension(200, 822));
 		
-		c.setSize(new Dimension(200, 822));
-		c.setPreferredSize(new Dimension(200, 822));
-		c.setMaximumSize(new Dimension(200, 822));
+//		c.setFocusable(false);
 		
-		c.setFocusable(false);
-		
-		jl = new JavaListener();
-		c.addMouseListener(jl);
-		c.addMouseMotionListener(jl);
-	}
-	
-	class JavaListener implements MouseListener, MouseMotionListener {
-		
-		public void mousePressed(MouseEvent ev) {
-			pressed(new InputEvent(new Point(ev.getX(), ev.getY())));
-		}
-
-		public void mouseReleased(MouseEvent ev) {
-			released(new InputEvent(new Point(ev.getX(), ev.getY())));
-		}
-		
-		public void mouseDragged(MouseEvent ev) {
-			dragged(new InputEvent(new Point(ev.getX(), ev.getY())));
-		}
-
-		public void mouseMoved(MouseEvent ev) {
-			moved(new InputEvent(new Point(ev.getX(), ev.getY())));
-		}
-
-		public void mouseClicked(MouseEvent ev) {
-			clicked(new InputEvent(new Point(ev.getX(), ev.getY())));
-		}
-
-		public void mouseEntered(MouseEvent ev) {
-			entered(new InputEvent(new Point(ev.getX(), ev.getY())));
-		}
-
-		public void mouseExited(MouseEvent ev) {
-			exited(new InputEvent(new Point(ev.getX(), ev.getY())));
-		}
-		
-	}
-	
-	public int getWidth() {
-		return c.getWidth();
-	}
-	
-	public int getHeight() {
-		return c.getHeight();
-	}
-	
-	public java.awt.Component java() {
-		return c;
-	}
-	
-	public void init() {
+		aabb = new AABB(aabb.x, aabb.y, 200, 822);
 		
 		simulationInitLab = new Label("Simulation Init:");
 		simulationInitLab.font = new Font("Visitor TT1 BRK", Font.PLAIN, 16);
@@ -158,7 +80,7 @@ public class ControlPanel extends ComponentBase {
 			public void action() {
 				selected = !selected;
 				render();
-				ControlPanel.this.repaint();
+				screen.contentPane.repaint();
 			}
 		};
 		normalCarButton.selected = true;
@@ -177,7 +99,7 @@ public class ControlPanel extends ComponentBase {
 			public void action() {
 				selected = !selected;
 				render();
-				ControlPanel.this.repaint();
+				screen.contentPane.repaint();
 			}
 		};
 		fastCarButton.selected = true;
@@ -196,7 +118,7 @@ public class ControlPanel extends ComponentBase {
 			public void action() {
 				selected = !selected;
 				render();
-				ControlPanel.this.repaint();
+				screen.contentPane.repaint();
 			}
 		};
 		reallyCarButton.selected = true;
@@ -234,7 +156,7 @@ public class ControlPanel extends ComponentBase {
 				
 				render();
 				stopButton.render();
-				ControlPanel.this.repaint();
+				screen.contentPane.repaint();
 			}
 		};
 		startButton.lab = new Label("Start");
@@ -257,7 +179,7 @@ public class ControlPanel extends ComponentBase {
 				
 				render();
 				startButton.render();
-				ControlPanel.this.repaint();
+				screen.contentPane.repaint();
 			}
 		};
 		stopButton.lab = new Label("Stop");
@@ -279,12 +201,12 @@ public class ControlPanel extends ComponentBase {
 			public void action() {
 				selected = !selected;
 				render();
-				ControlPanel.this.repaint();
+				screen.contentPane.repaint();
 				
 				screen.FPS_DRAW = selected;
 				
 				screen.world.render_canvas();
-				screen.canvas.repaint();
+				screen.contentPane.repaint();
 			}
 		};
 		fpsCheckBox.selected = screen.FPS_DRAW;
@@ -302,12 +224,12 @@ public class ControlPanel extends ComponentBase {
 			public void action() {
 				selected = !selected;
 				render();
-				ControlPanel.this.repaint();
+				screen.contentPane.repaint();
 				
 				screen.STOPSIGN_DRAW = selected;
 				
 				screen.world.render_canvas();
-				screen.canvas.repaint();
+				screen.contentPane.repaint();
 			}
 		};
 		stopSignCheckBox.selected = screen.STOPSIGN_DRAW;
@@ -325,11 +247,11 @@ public class ControlPanel extends ComponentBase {
 			public void action() {
 				selected = !selected;
 				render();
-				ControlPanel.this.repaint();
+				screen.contentPane.repaint();
 				
 				screen.CARTEXTURE_DRAW = selected;
 				
-				screen.canvas.repaint();
+				screen.contentPane.repaint();
 			}
 		};
 		carTextureCheckBox.selected = screen.CARTEXTURE_DRAW;
@@ -347,11 +269,11 @@ public class ControlPanel extends ComponentBase {
 			public void action() {
 				selected = !selected;
 				render();
-				ControlPanel.this.repaint();
+				screen.contentPane.repaint();
 				
 				screen.EXPLOSIONS_DRAW = selected;
 				
-				screen.canvas.repaint();
+				screen.contentPane.repaint();
 			}
 		};
 		explosionsCheckBox.selected = screen.EXPLOSIONS_DRAW;
@@ -369,12 +291,12 @@ public class ControlPanel extends ComponentBase {
 			public void action() {
 				selected = !selected;
 				render();
-				ControlPanel.this.repaint();
+				screen.contentPane.repaint();
 				
 				screen.DEBUG_DRAW = selected;
 				
 				screen.world.render_canvas();
-				screen.canvas.repaint();
+				screen.contentPane.repaint();
 			}
 		};
 		debugCheckBox.selected = screen.DEBUG_DRAW;
@@ -386,101 +308,63 @@ public class ControlPanel extends ComponentBase {
 		debugLab.renderLocal();
 		debugLab.setLocation(5 + debugCheckBox.getWidth() + 5, 160 + stateLab.getHeight() + 5 + fpsCheckBox.getHeight() + 5 + stopSignCheckBox.getHeight() + 5 + carTextureCheckBox.getHeight() + 5 + explosionsCheckBox.getHeight() + 5);
 		debugLab.render();
-		
-		screen.world.setPreviewLocation(5, 400);
 	}
 	
-	public void clicked(InputEvent ev) {
-		
-		if (normalCarButton.hitTest(ev.p)) {
-			normalCarButton.action();
-		} else if (fastCarButton.hitTest(ev.p)) {
-			fastCarButton.action();
-		} else if (reallyCarButton.hitTest(ev.p)) {
-			reallyCarButton.action();
-		} else if (fpsCheckBox.hitTest(ev.p)) {
-			fpsCheckBox.action();
-		} else if (stopSignCheckBox.hitTest(ev.p)) {
-			stopSignCheckBox.action();
-		} else if (carTextureCheckBox.hitTest(ev.p)) {
-			carTextureCheckBox.action();
-		} else if (explosionsCheckBox.hitTest(ev.p)) {
-			explosionsCheckBox.action();
-		} else if (debugCheckBox.hitTest(ev.p)) {
-			debugCheckBox.action();
-		} else if (startButton.hitTest(ev.p)) {
-			startButton.action();
-		} else if (stopButton.hitTest(ev.p)) {
-			stopButton.action();
-		}
-		
+	public void setLocation(double x, double y) {
+		aabb = new AABB(x, y, aabb.width, aabb.height);
 	}
 	
+//	public int getWidth() {
+//		return c.getWidth();
+//	}
+//	
+//	public int getHeight() {
+//		return c.getHeight();
+//	}
+//	
+//	public java.awt.Component java() {
+//		return c;
+//	}
+//	
+//	public void repaint() {
+//		c.repaint();
+//	}
 	
-	public Point controlPanelToPreview(Point p) {
-		return new Point(p.x - screen.world.previewAABB.x, p.y - screen.world.previewAABB.y);
-	}
-	
-	public Point lastPressedControlPanelPoint;
-	
-	public Point lastPressPreviewPoint;
-	public Point lastDragPreviewPoint;
-	public Point penDragPreviewPoint;
-	long lastPressTime;
-	long lastDragTime;
-	
-	public void pressed(InputEvent ev) {
+	public void paint(RenderingContext ctxt) {
 		
-		Point p = ev.p;
+		AffineTransform origTransform = ctxt.getTransform();
 		
-		if (screen.world.previewHitTest(p)) {
-			
-			lastPressedControlPanelPoint = p;
-			lastDraggedControlPanelPoint = null;
-			
-			lastPressPreviewPoint = controlPanelToPreview(p);
-			lastPressTime = System.currentTimeMillis();
-			
-			lastDragPreviewPoint = null;
-			lastDragTime = -1;
-			
-		} else {
-			
-		}
+		ctxt.translate(aabb.x, aabb.y);
 		
-	}
-	
-	public Point lastDraggedControlPanelPoint;
-	
-	public void dragged(InputEvent ev) {
+		simulationInitLab.paint(ctxt);
 		
-		Point p = ev.p;
+		normalCarsLab.paint(ctxt);
 		
-		if (screen.world.previewHitTest(p) && lastPressedControlPanelPoint != null && screen.world.previewHitTest(lastPressedControlPanelPoint)) {
-			
-			penDragPreviewPoint = lastDragPreviewPoint;
-			lastDragPreviewPoint = controlPanelToPreview(p);
-			lastDragTime = System.currentTimeMillis();
-			
-			if (penDragPreviewPoint != null) {
-				
-				double dx = lastDragPreviewPoint.x - penDragPreviewPoint.x;
-				double dy = lastDragPreviewPoint.y - penDragPreviewPoint.y;
-				
-				screen.world.previewPan(new Point(dx, dy));
-				
-				screen.world.render_canvas();
-				screen.world.render_preview();
-				screen.canvas.repaint();
-				screen.controlPanel.repaint();
-			}
-			
-		}
+		fastCarLab.paint(ctxt);
+		reallyCarLab.paint(ctxt);
+		stateLab.paint(ctxt);
+		fpsLab.paint(ctxt);
+		stopSignLab.paint(ctxt);
+		carTextureLab.paint(ctxt);
+		explosionsLab.paint(ctxt);
+		debugLab.paint(ctxt);
 		
-	}
-	
-	public void repaint() {
-		c.repaint();
+		normalCarButton.paint(ctxt);
+		fastCarButton.paint(ctxt);
+		reallyCarButton.paint(ctxt);
+		
+		startButton.paint(ctxt);
+		stopButton.paint(ctxt);
+		
+		fpsCheckBox.paint(ctxt);
+		stopSignCheckBox.paint(ctxt);
+		carTextureCheckBox.paint(ctxt);
+		explosionsCheckBox.paint(ctxt);
+		debugCheckBox.paint(ctxt);
+		
+		screen.world.paint_preview(ctxt);
+		
+		ctxt.setTransform(origTransform);
 	}
 	
 }

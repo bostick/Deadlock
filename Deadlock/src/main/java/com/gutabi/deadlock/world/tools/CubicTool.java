@@ -136,17 +136,17 @@ public class CubicTool extends ToolBase {
 		return shape;
 	}
 	
-	public void escKey(InputEvent ev) {
+	public void escKey() {
 		switch (mode) {
 		case FREE:
 			screen.tool = new RegularTool(screen);
 			screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
-			screen.canvas.repaint();
+			screen.contentPane.repaint();
 			break;
 		case SET:
 			mode = CubicToolMode.FREE;
 			screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
-			screen.canvas.repaint();
+			screen.contentPane.repaint();
 			break;
 		case KNOB:
 			assert false;
@@ -154,11 +154,11 @@ public class CubicTool extends ToolBase {
 		}
 	}
 	
-	public void dKey(InputEvent ev) {
+	public void dKey() {
 		switch (mode) {
 		case FREE:
 			mode = CubicToolMode.SET;
-			screen.canvas.repaint();
+			screen.contentPane.repaint();
 			break;
 		case SET:
 			
@@ -178,8 +178,8 @@ public class CubicTool extends ToolBase {
 			
 			screen.world.render_canvas();
 			screen.world.render_preview();
-			screen.canvas.repaint();
-			screen.controlPanel.repaint();
+			screen.contentPane.repaint();
+//			screen.controlPanel.repaint();
 			break;
 		case KNOB:
 			assert false;
@@ -191,7 +191,7 @@ public class CubicTool extends ToolBase {
 		switch (mode) {
 		case FREE:
 			screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
-			screen.canvas.repaint();
+			screen.contentPane.repaint();
 			break;
 		case SET:
 		case KNOB:
@@ -239,7 +239,7 @@ public class CubicTool extends ToolBase {
 		case KNOB:
 			Point diff = new Point(screen.lastDraggedWorldPoint.x - screen.lastPressedWorldPoint.x, screen.lastDraggedWorldPoint.y - screen.lastPressedWorldPoint.y);
 			knob.drag(origKnobCenter.plus(diff));
-			screen.canvas.repaint();
+			screen.contentPane.repaint();
 			break;
 		}
 	}
@@ -252,7 +252,7 @@ public class CubicTool extends ToolBase {
 			break;
 		case KNOB:
 			mode = CubicToolMode.SET;
-			screen.canvas.repaint();
+			screen.contentPane.repaint();
 			break;
 		}
 	}
@@ -292,5 +292,6 @@ public class CubicTool extends ToolBase {
 			break;
 		}
 		
+		ctxt.setPaintMode();
 	}
 }

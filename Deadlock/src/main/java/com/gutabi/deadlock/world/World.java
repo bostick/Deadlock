@@ -36,7 +36,7 @@ public class World {
 	private BufferedImage background;
 	private BufferedImage previewImage;
 	
-	AABB previewAABB = new AABB(0, 0, 100, 100);
+	AABB previewAABB = new AABB(5, 400, 100, 100);
 	
 	public QuadrantMap quadrantMap;
 	public Graph graph;
@@ -317,50 +317,8 @@ public class World {
 		screen.cam.worldViewport = new AABB(screen.cam.worldViewport.center.x - newWidth/2, screen.cam.worldViewport.center.y - newHeight/2, newWidth, newHeight);
 	}
 	
-	public Point canvasToWorld(Point p) {
-		return new Point(
-				p.x / screen.cam.pixelsPerMeter + screen.cam.worldViewport.x,
-				p.y / screen.cam.pixelsPerMeter + screen.cam.worldViewport.y);
-	}
-	
-	public AABB canvasToWorld(AABB aabb) {
-		Point ul = canvasToWorld(aabb.ul);
-		Point br = canvasToWorld(aabb.br);
-		return new AABB(ul.x, ul.y, br.x - ul.x, br.y - ul.y);
-	}
-	
-	public Point worldToCanvas(Point p) {
-		return new Point(
-				(p.x - screen.cam.worldViewport.x) * screen.cam.pixelsPerMeter,
-				(p.y - screen.cam.worldViewport.y) * screen.cam.pixelsPerMeter);
-	}
-	
-	public AABB worldToCanvas(AABB aabb) {
-		Point ul = worldToCanvas(aabb.ul);
-		Point br = worldToCanvas(aabb.br);
-		return new AABB(ul.x, ul.y, br.x - ul.x, br.y - ul.y);
-	}
-	
-	public Point previewToWorld(Point p) {
-		
-		double pixelsPerMeterWidth = screen.previewWidth / screen.world.quadrantMap.worldWidth;
-		double pixelsPerMeterHeight = screen.previewHeight / screen.world.quadrantMap.worldHeight;
-		double s = Math.min(pixelsPerMeterWidth, pixelsPerMeterHeight);
-		
-		return new Point((1/s) * p.x, (1/s) * p.y);
-	}
-	
-	public Point worldToPreview(Point p) {
-		
-		double pixelsPerMeterWidth = screen.previewWidth / screen.world.quadrantMap.worldWidth;
-		double pixelsPerMeterHeight = screen.previewHeight / screen.world.quadrantMap.worldHeight;
-		double s = Math.min(pixelsPerMeterWidth, pixelsPerMeterHeight);
-		
-		return new Point((s) * p.x, (s) * p.y);
-	}
-	
 	public void previewPan(Point prevDp) {
-		Point worldDP = previewToWorld(prevDp);
+		Point worldDP = screen.previewToWorld(prevDp);
 		
 		screen.cam.worldViewport = new AABB(
 				screen.cam.worldViewport.x + worldDP.x,
@@ -459,9 +417,9 @@ public class World {
 				0, 0, (int)previewAABB.width, (int)previewAABB.height,
 				0, 0, screen.previewWidth, screen.previewHeight);
 		
-		Point prevLoc = worldToPreview(screen.cam.worldViewport.ul);
+		Point prevLoc = screen.worldToPreview(screen.cam.worldViewport.ul);
 		
-		Point prevDim = worldToPreview(new Point(screen.cam.worldViewport.width, screen.cam.worldViewport.height));
+		Point prevDim = screen.worldToPreview(new Point(screen.cam.worldViewport.width, screen.cam.worldViewport.height));
 		
 		AABB prev = new AABB(prevLoc.x, prevLoc.y, prevDim.x, prevDim.y);
 		

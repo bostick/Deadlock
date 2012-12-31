@@ -39,7 +39,10 @@ public abstract class Knob {
 		ctxt.setColor(Color.ORANGE);
 		ctxt.setXORMode(Color.BLACK);
 		ctxt.setPixelStroke(1.0);
+		
 		aabb().paint(ctxt);
+		
+		ctxt.setPaintMode();
 	}
 	
 }

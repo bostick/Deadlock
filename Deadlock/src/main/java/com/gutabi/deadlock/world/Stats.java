@@ -44,7 +44,10 @@ public class Stats {
 		
 		screen.world.paintStats(ctxt);
 		
+		ctxt.setPaintMode();
+		
 		ctxt.setTransform(origTransform1);
+		
 	}
 	
 }

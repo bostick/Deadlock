@@ -1,7 +1,6 @@
 package com.gutabi.deadlock.ui;
 
 import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.ui.Component;
 
 public class InputEvent {
 	

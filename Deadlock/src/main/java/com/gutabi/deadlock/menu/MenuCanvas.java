@@ -16,12 +16,12 @@ import com.gutabi.deadlock.ui.RenderingContext;
 //@SuppressWarnings("serial")
 public class MenuCanvas {
 	
-	int width = 1584;
-	int height = 822;
+//	int width = 1584;
+//	int height = 822;
 	
 	MainMenu screen;
 	
-	AABB aabb = new AABB(0, 0, 0, 0);
+	AABB aabb = new AABB(0, 0, 1584, 822);
 	
 //	private BufferStrategy bs;
 	
@@ -73,7 +73,7 @@ public class MenuCanvas {
 //		c.setMaximumSize(new Dimension(1584, 822));
 		
 //		return new Dim(getWidth(), getHeight());
-		return new Dim(width, height);
+		return new Dim(aabb.width, aabb.height);
 	}
 	
 	public void render() {
@@ -121,9 +121,9 @@ public class MenuCanvas {
 		ctxt.translate(aabb.x, aabb.y);
 		
 		ctxt.setColor(Color.DARK_GRAY);
-		ctxt.fillRect(0, 0, screen.canvasWidth, screen.canvasHeight);
+		ctxt.fillRect(0, 0, (int)aabb.width, (int)aabb.height);
 		
-		ctxt.translate(width/2 - screen.MENU_WIDTH/2, height/2 - screen.MENU_HEIGHT/2);
+		ctxt.translate(aabb.width/2 - screen.MENU_WIDTH/2, aabb.height/2 - screen.MENU_HEIGHT/2);
 		
 		AffineTransform menuTrans = ctxt.getTransform();
 		

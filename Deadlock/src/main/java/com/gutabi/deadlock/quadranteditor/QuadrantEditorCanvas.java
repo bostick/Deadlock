@@ -1,25 +1,21 @@
 package com.gutabi.deadlock.quadranteditor;
 
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 
 import org.apache.log4j.Logger;
 
 import com.gutabi.deadlock.core.Dim;
 import com.gutabi.deadlock.core.geom.AABB;
-import com.gutabi.deadlock.ui.ComponentBase;
 import com.gutabi.deadlock.ui.RenderingContext;
 
 //@SuppressWarnings("serial")
-public class QuadrantEditorCanvas extends ComponentBase {
+public class QuadrantEditorCanvas {
 	
 	QuadrantEditor screen;
 	
 //	private BufferStrategy bs;
 	
-	private java.awt.Canvas c;
+//	private java.awt.Canvas c;
 	
 	AABB aabb = new AABB(0, 0, 0, 0);
 	
@@ -28,19 +24,22 @@ public class QuadrantEditorCanvas extends ComponentBase {
 	public QuadrantEditorCanvas(final QuadrantEditor screen) {
 		this.screen = screen;
 		
-		c = new java.awt.Canvas() {
-			public void paint(Graphics g) {
-				super.paint(g);
-				
-				RenderingContext ctxt = new RenderingContext((Graphics2D)g);
-				
-				QuadrantEditorCanvas.this.paint(ctxt);
-			}
-		};
+//		c = new java.awt.Canvas() {
+//			public void paint(Graphics g) {
+//				super.paint(g);
+//				
+//				RenderingContext ctxt = new RenderingContext((Graphics2D)g);
+//				
+//				QuadrantEditorCanvas.this.paint(ctxt);
+//			}
+//		};
+//		
+//		c.setSize(new Dimension(1584, 822));
+//		c.setPreferredSize(new Dimension(1584, 822));
+//		c.setMaximumSize(new Dimension(1584, 822));
+//		c.setFocusable(false);
 		
-		c.setSize(new Dimension(1584, 822));
-		c.setPreferredSize(new Dimension(1584, 822));
-		c.setMaximumSize(new Dimension(1584, 822));
+		aabb = new AABB(aabb.x, aabb.y, 1584, 822);
 		
 	}
 	
@@ -48,26 +47,26 @@ public class QuadrantEditorCanvas extends ComponentBase {
 		aabb = new AABB(x, y, aabb.width, aabb.height);
 	}
 	
-	public int getWidth() {
-		return c.getWidth();
-	}
-	
-	public int getHeight() {
-		return c.getHeight();
-	}
-	
-	public java.awt.Canvas java() {
-		return c;
-	}
+//	public int getWidth() {
+//		return c.getWidth();
+//	}
+//	
+//	public int getHeight() {
+//		return c.getHeight();
+//	}
+//	
+//	public java.awt.Canvas java() {
+//		return c;
+//	}
 	
 	public Dim postDisplay() {
 		
-		c.requestFocusInWindow();
+//		c.requestFocusInWindow();
 		
 //		c.createBufferStrategy(2);
 //		bs = c.getBufferStrategy();
 		
-		return new Dim(getWidth(), getHeight());
+		return new Dim(aabb.width, aabb.height);
 	}
 	
 //	public void repaint() {
@@ -82,7 +81,7 @@ public class QuadrantEditorCanvas extends ComponentBase {
 		
 		ctxt.translate(aabb.x, aabb.y);
 		
-		ctxt.translate(getWidth()/2 - screen.EDITOR_WIDTH/2, getHeight()/2 - screen.EDITOR_HEIGHT/2);
+		ctxt.translate(aabb.width/2 - screen.EDITOR_WIDTH/2, aabb.height/2 - screen.EDITOR_HEIGHT/2);
 		
 		screen.paintEditor(ctxt);
 		

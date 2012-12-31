@@ -174,6 +174,10 @@ public class RenderingContext extends DebugDraw {
 		g2.setXORMode(c);
 	}
 	
+	public void setPaintMode() {
+		g2.setPaintMode();
+	}
+	
 	public void dispose() {
 		g2.dispose();
 	}

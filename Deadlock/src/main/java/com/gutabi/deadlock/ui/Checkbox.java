@@ -52,6 +52,7 @@ public abstract class Checkbox {
 	
 	public void paint(RenderingContext ctxt) {
 		lab.paint(ctxt);
+		ctxt.setColor(Color.BLACK);
 		lab.aabb.draw(ctxt);
 	}
 	

@@ -54,6 +54,7 @@ public abstract class Button {
 	public void paint(RenderingContext ctxt) {
 		if (lab != null) {
 			lab.paint(ctxt);
+			ctxt.setColor(Color.BLACK);
 			lab.aabb.draw(ctxt);
 		}
 	}

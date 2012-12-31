@@ -103,17 +103,17 @@ public class CircleTool extends ToolBase {
 		return shape.c1.aabb.br;
 	}
 	
-	public void escKey(InputEvent ev) {
+	public void escKey() {
 		switch (mode) {
 		case FREE:
 			screen.tool = new RegularTool(screen);
 			screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
-			screen.canvas.repaint();
+			screen.contentPane.repaint();
 			break;
 		case SET:
 			mode = CircleToolMode.FREE;
 			screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
-			screen.canvas.repaint();
+			screen.contentPane.repaint();
 			break;
 		case KNOB:
 			assert false;
@@ -121,11 +121,11 @@ public class CircleTool extends ToolBase {
 		}
 	}
 	
-	public void aKey(InputEvent ev) {
+	public void aKey() {
 		switch (mode) {
 		case FREE:
 			mode = CircleToolMode.SET;
-			screen.canvas.repaint();
+			screen.contentPane.repaint();
 			break;
 		case SET:
 			
@@ -145,8 +145,8 @@ public class CircleTool extends ToolBase {
 			
 			screen.world.render_canvas();
 			screen.world.render_preview();
-			screen.canvas.repaint();
-			screen.controlPanel.repaint();
+			screen.contentPane.repaint();
+//			screen.controlPanel.repaint();
 			break;
 		case KNOB:
 			break;
@@ -164,7 +164,7 @@ public class CircleTool extends ToolBase {
 			
 			screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
 			
-			screen.canvas.repaint();
+			screen.contentPane.repaint();
 			break;
 		case SET:
 		case KNOB:
@@ -202,7 +202,7 @@ public class CircleTool extends ToolBase {
 			
 			knob.drag(origKnobCenter.plus(diff));
 			
-			screen.canvas.repaint();
+			screen.contentPane.repaint();
 			break;
 		}
 	}
@@ -214,7 +214,7 @@ public class CircleTool extends ToolBase {
 			break;
 		case KNOB:	
 			mode = CircleToolMode.SET;
-			screen.canvas.repaint();
+			screen.contentPane.repaint();
 			break;
 		}
 	}
@@ -254,6 +254,7 @@ public class CircleTool extends ToolBase {
 			break;
 		}
 		
+		ctxt.setPaintMode();
 	}
 
 }
