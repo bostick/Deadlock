@@ -33,7 +33,7 @@ public class DeadlockMain  {
 //		logger.debug("focus: " + ((JFrame)APP.container).getFocusOwner());
 		
 		s.postDisplay();
-		s.canvas.render();
+		s.contentPane.canvas.render();
 		s.contentPane.repaint();
 	}
 	

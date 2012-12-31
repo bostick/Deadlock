@@ -20,6 +20,20 @@ public class DeadlockApplication {
 	
 	public RootPaneContainer container;
 	
+	
+	
+	
+	public boolean NORMALCAR = true;
+	public boolean FASTCAR = true;
+	public boolean REALLYCAR = true;
+	
+	public boolean FPS_DRAW = false;
+	public boolean STOPSIGN_DRAW = true;
+	public boolean CARTEXTURE_DRAW = true;
+	public boolean EXPLOSIONS_DRAW = true;
+	public boolean DEBUG_DRAW = false;
+	
+	
 	public Random RANDOM = new Random(1);
 	
 	public BufferedImage sheet;

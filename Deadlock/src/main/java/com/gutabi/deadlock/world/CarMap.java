@@ -1,5 +1,6 @@
 package com.gutabi.deadlock.world;
 
+import static com.gutabi.deadlock.DeadlockApplication.APP;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -68,7 +69,7 @@ public class CarMap {
 	
 	public void paint(RenderingContext ctxt) {
 		
-		if (ctxt.DEBUG_DRAW) {
+		if (APP.DEBUG_DRAW) {
 			ctxt.setPixelStroke(1.0);
 			world.b2dWorld.setDebugDraw(ctxt);
 			world.b2dWorld.drawDebugData();

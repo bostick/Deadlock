@@ -107,12 +107,12 @@ public class CircleTool extends ToolBase {
 		switch (mode) {
 		case FREE:
 			screen.tool = new RegularTool(screen);
-			screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
+			screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.contentPane.canvas.lastMovedOrDraggedWorldPoint));
 			screen.contentPane.repaint();
 			break;
 		case SET:
 			mode = CircleToolMode.FREE;
-			screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
+			screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.contentPane.canvas.lastMovedOrDraggedWorldPoint));
 			screen.contentPane.repaint();
 			break;
 		case KNOB:
@@ -141,7 +141,7 @@ public class CircleTool extends ToolBase {
 			
 			screen.tool = new RegularTool(screen);
 			
-			screen.tool.setPoint(screen.lastMovedWorldPoint);
+			screen.tool.setPoint(screen.contentPane.canvas.lastMovedWorldPoint);
 			
 			screen.world.render_canvas();
 			screen.world.render_preview();
@@ -156,13 +156,13 @@ public class CircleTool extends ToolBase {
 	public void moved(InputEvent ev) {
 		switch (mode) {
 		case FREE:
-			Entity closest = screen.world.hitTest(screen.lastMovedOrDraggedWorldPoint);
+			Entity closest = screen.world.hitTest(screen.contentPane.canvas.lastMovedOrDraggedWorldPoint);
 			
 			synchronized (APP) {
 				screen.hilited = closest;
 			}
 			
-			screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
+			screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.contentPane.canvas.lastMovedOrDraggedWorldPoint));
 			
 			screen.contentPane.repaint();
 			break;
@@ -177,28 +177,28 @@ public class CircleTool extends ToolBase {
 		
 		switch (mode) {
 		case FREE:
-			setPoint(screen.lastDraggedWorldPoint);
+			setPoint(screen.contentPane.canvas.lastDraggedWorldPoint);
 			break;
 		case SET:
-			if (!screen.lastDraggedWorldPointWasNull) {
+			if (!screen.contentPane.canvas.lastDraggedWorldPointWasNull) {
 				break;
 			}
-			if (!(ulKnob.hitTest(screen.lastPressedWorldPoint) ||
-					brKnob.hitTest(screen.lastPressedWorldPoint))) {
+			if (!(ulKnob.hitTest(screen.contentPane.canvas.lastPressedWorldPoint) ||
+					brKnob.hitTest(screen.contentPane.canvas.lastPressedWorldPoint))) {
 				break;
 			}
-			if (ulKnob.hitTest(screen.lastPressedWorldPoint)) {
+			if (ulKnob.hitTest(screen.contentPane.canvas.lastPressedWorldPoint)) {
 				mode = CircleToolMode.KNOB;
 				knob = ulKnob;
 				origKnobCenter = knob.p;
-			} else if (brKnob.hitTest(screen.lastPressedWorldPoint)) {
+			} else if (brKnob.hitTest(screen.contentPane.canvas.lastPressedWorldPoint)) {
 				mode = CircleToolMode.KNOB;
 				knob = brKnob;
 				origKnobCenter = knob.p;
 			}
 		case KNOB:
 			
-			Point diff = new Point(screen.lastDraggedWorldPoint.x - screen.lastPressedWorldPoint.x, screen.lastDraggedWorldPoint.y - screen.lastPressedWorldPoint.y);
+			Point diff = new Point(screen.contentPane.canvas.lastDraggedWorldPoint.x - screen.contentPane.canvas.lastPressedWorldPoint.x, screen.contentPane.canvas.lastDraggedWorldPoint.y - screen.contentPane.canvas.lastPressedWorldPoint.y);
 			
 			knob.drag(origKnobCenter.plus(diff));
 			

@@ -1172,7 +1172,7 @@ public class Graph implements Sweepable {
 						}
 					}
 					
-					Fixture f = Fixture.fromFileString(world, cp, builder.toString());
+					Fixture f = Fixture.fromFileString(world, builder.toString());
 					
 					vs[f.id] = f;
 					
@@ -1308,7 +1308,7 @@ public class Graph implements Sweepable {
 			v.paintScene(ctxt);
 		}
 		
-		if (ctxt.DEBUG_DRAW) {
+		if (APP.DEBUG_DRAW) {
 			List<Edge> edgesCopy;
 			synchronized (APP) {
 				edgesCopy = new ArrayList<Edge>(edges);

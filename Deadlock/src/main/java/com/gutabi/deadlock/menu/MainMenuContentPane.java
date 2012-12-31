@@ -18,10 +18,15 @@ public class MainMenuContentPane extends Container {
 	
 	MainMenu screen;
 	
+	public MenuCanvas canvas;
+	
 	private JavaListener jl;
 	
 	public MainMenuContentPane(MainMenu screen) {
 		this.screen = screen;
+		
+		canvas = new MenuCanvas(screen);
+		canvas.setLocation(0, 0);
 		
 		jl = new JavaListener();
 		addMouseListener(jl);
@@ -62,11 +67,17 @@ public class MainMenuContentPane extends Container {
 		}
 
 		public void mouseMoved(MouseEvent ev) {
-			screen.moved(new InputEvent(new Point(ev.getX(), ev.getY())));
+			Point p = new Point(ev.getX(), ev.getY());
+			if (canvas.aabb.hitTest(p)) {
+				canvas.moved(new InputEvent(screen.contentPaneToCanvas(p)));
+			}
 		}
 
 		public void mouseClicked(MouseEvent ev) {
-			screen.clicked(new InputEvent(new Point(ev.getX(), ev.getY())));
+			Point p = new Point(ev.getX(), ev.getY());
+			if (canvas.aabb.hitTest(p)) {
+				canvas.clicked(new InputEvent(screen.contentPaneToCanvas(p)));
+			}
 		}
 
 		public void mouseEntered(MouseEvent ev) {
@@ -87,12 +98,16 @@ public class MainMenuContentPane extends Container {
 		removeKeyListener(jl);
 	}
 	
+	public void postDisplay() {
+		canvas.postDisplay();
+	}
+	
 	public void paint(Graphics g) {
 		super.paint(g);
 		
 		RenderingContext ctxt = new RenderingContext((Graphics2D)g);
 		
-		screen.canvas.paint(ctxt);
+		canvas.paint(ctxt);
 		
 	}
 }

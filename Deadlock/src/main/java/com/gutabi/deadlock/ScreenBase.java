@@ -79,31 +79,5 @@ public abstract class ScreenBase implements Screen {
 	public void ctrlOKey() {
 		
 	}
-
-
-
-	public void pressed(InputEvent ev) {
-		
-	}
-	
-	public void released(InputEvent ev) {
-		
-	}
-	
-	public void clicked(InputEvent ev) {
-		
-	}
-	
-	public void moved(InputEvent ev) {
-		
-	}
-	
-	public void dragged(InputEvent ev) {
-		
-	}
-	
-	public void exited(InputEvent ev) {
-		
-	}
 	
 }

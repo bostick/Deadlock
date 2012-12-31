@@ -1,14 +1,19 @@
 package com.gutabi.deadlock.world;
 
+import static com.gutabi.deadlock.DeadlockApplication.APP;
+
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 
+import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.AABB;
 import com.gutabi.deadlock.ui.Button;
 import com.gutabi.deadlock.ui.Checkbox;
+import com.gutabi.deadlock.ui.InputEvent;
 import com.gutabi.deadlock.ui.Label;
 import com.gutabi.deadlock.ui.RenderingContext;
 
@@ -18,6 +23,8 @@ public class ControlPanel {
 //	private JavaListener jl;
 	
 	AABB aabb = new AABB(0, 0, 0, 0);
+	
+	AABB previewAABB = new AABB(5, 400, 100, 100);
 	
 	WorldScreen screen;
 	
@@ -81,9 +88,11 @@ public class ControlPanel {
 				selected = !selected;
 				render();
 				screen.contentPane.repaint();
+				
+				APP.NORMALCAR = selected;
 			}
 		};
-		normalCarButton.selected = true;
+		normalCarButton.selected = APP.NORMALCAR;
 		normalCarButton.setLocation(5, 5 + simulationInitLab.getHeight() + 5);
 		normalCarButton.render();
 		
@@ -100,9 +109,11 @@ public class ControlPanel {
 				selected = !selected;
 				render();
 				screen.contentPane.repaint();
+				
+				APP.FASTCAR = selected;
 			}
 		};
-		fastCarButton.selected = true;
+		fastCarButton.selected = APP.FASTCAR;
 		fastCarButton.setLocation(5, 5 + simulationInitLab.getHeight() + 5 + normalCarButton.getHeight() + 5);
 		fastCarButton.render();
 		
@@ -119,9 +130,11 @@ public class ControlPanel {
 				selected = !selected;
 				render();
 				screen.contentPane.repaint();
+				
+				APP.REALLYCAR = selected;
 			}
 		};
-		reallyCarButton.selected = true;
+		reallyCarButton.selected = APP.REALLYCAR;
 		reallyCarButton.setLocation(5, 5 + simulationInitLab.getHeight() + 5 + normalCarButton.getHeight() + 5 + fastCarButton.getHeight() + 5);
 		reallyCarButton.render();
 		
@@ -203,13 +216,13 @@ public class ControlPanel {
 				render();
 				screen.contentPane.repaint();
 				
-				screen.FPS_DRAW = selected;
+				APP.FPS_DRAW = selected;
 				
 				screen.world.render_canvas();
 				screen.contentPane.repaint();
 			}
 		};
-		fpsCheckBox.selected = screen.FPS_DRAW;
+		fpsCheckBox.selected = APP.FPS_DRAW;
 		fpsCheckBox.setLocation(5, 160 + stateLab.getHeight() + 5);
 		fpsCheckBox.render();
 		
@@ -226,13 +239,13 @@ public class ControlPanel {
 				render();
 				screen.contentPane.repaint();
 				
-				screen.STOPSIGN_DRAW = selected;
+				APP.STOPSIGN_DRAW = selected;
 				
 				screen.world.render_canvas();
 				screen.contentPane.repaint();
 			}
 		};
-		stopSignCheckBox.selected = screen.STOPSIGN_DRAW;
+		stopSignCheckBox.selected = APP.STOPSIGN_DRAW;
 		stopSignCheckBox.setLocation(5, 160 + stateLab.getHeight() + 5 + fpsCheckBox.getHeight() + 5);
 		stopSignCheckBox.render();
 		
@@ -249,12 +262,12 @@ public class ControlPanel {
 				render();
 				screen.contentPane.repaint();
 				
-				screen.CARTEXTURE_DRAW = selected;
+				APP.CARTEXTURE_DRAW = selected;
 				
 				screen.contentPane.repaint();
 			}
 		};
-		carTextureCheckBox.selected = screen.CARTEXTURE_DRAW;
+		carTextureCheckBox.selected = APP.CARTEXTURE_DRAW;
 		carTextureCheckBox.setLocation(5, 160 + stateLab.getHeight() + 5 + fpsCheckBox.getHeight() + 5 + stopSignCheckBox.getHeight() + 5);
 		carTextureCheckBox.render();
 		
@@ -271,12 +284,12 @@ public class ControlPanel {
 				render();
 				screen.contentPane.repaint();
 				
-				screen.EXPLOSIONS_DRAW = selected;
+				APP.EXPLOSIONS_DRAW = selected;
 				
 				screen.contentPane.repaint();
 			}
 		};
-		explosionsCheckBox.selected = screen.EXPLOSIONS_DRAW;
+		explosionsCheckBox.selected = APP.EXPLOSIONS_DRAW;
 		explosionsCheckBox.setLocation(5, 160 + stateLab.getHeight() + 5 + fpsCheckBox.getHeight() + 5 + stopSignCheckBox.getHeight() + 5 + carTextureCheckBox.getHeight() + 5);
 		explosionsCheckBox.render();
 		
@@ -293,13 +306,13 @@ public class ControlPanel {
 				render();
 				screen.contentPane.repaint();
 				
-				screen.DEBUG_DRAW = selected;
+				APP.DEBUG_DRAW = selected;
 				
 				screen.world.render_canvas();
 				screen.contentPane.repaint();
 			}
 		};
-		debugCheckBox.selected = screen.DEBUG_DRAW;
+		debugCheckBox.selected = APP.DEBUG_DRAW;
 		debugCheckBox.setLocation(5, 160 + stateLab.getHeight() + 5 + fpsCheckBox.getHeight() + 5 + stopSignCheckBox.getHeight() + 5 + carTextureCheckBox.getHeight() + 5 + explosionsCheckBox.getHeight() + 5);
 		debugCheckBox.render();
 		
@@ -312,6 +325,92 @@ public class ControlPanel {
 	
 	public void setLocation(double x, double y) {
 		aabb = new AABB(x, y, aabb.width, aabb.height);
+	}
+	
+	public Point lastPressedControlPanelPoint;
+	
+	public Point lastPressPreviewPoint;
+	public Point lastDragPreviewPoint;
+	public Point penDragPreviewPoint;
+//	long lastPressTime;
+//	long lastDragTime;
+	public Point lastDraggedControlPanelPoint;
+	
+	
+	
+	
+	public void clicked_controlpanel(InputEvent ev) {
+		
+		if (normalCarButton.hitTest(ev.p)) {
+			normalCarButton.action();
+		} else if (fastCarButton.hitTest(ev.p)) {
+			fastCarButton.action();
+		} else if (reallyCarButton.hitTest(ev.p)) {
+			reallyCarButton.action();
+		} else if (fpsCheckBox.hitTest(ev.p)) {
+			fpsCheckBox.action();
+		} else if (stopSignCheckBox.hitTest(ev.p)) {
+			stopSignCheckBox.action();
+		} else if (carTextureCheckBox.hitTest(ev.p)) {
+			carTextureCheckBox.action();
+		} else if (explosionsCheckBox.hitTest(ev.p)) {
+			explosionsCheckBox.action();
+		} else if (debugCheckBox.hitTest(ev.p)) {
+			debugCheckBox.action();
+		} else if (startButton.hitTest(ev.p)) {
+			startButton.action();
+		} else if (stopButton.hitTest(ev.p)) {
+			stopButton.action();
+		}
+		
+	}
+	
+	public void pressed_controlpanel(InputEvent ev) {
+		
+		Point p = ev.p;
+		
+		if (previewAABB.hitTest(p)) {
+			
+			lastPressedControlPanelPoint = p;
+			lastDraggedControlPanelPoint = null;
+			
+			lastPressPreviewPoint = screen.controlPanelToPreview(p);
+//			lastPressTime = System.currentTimeMillis();
+			
+			lastDragPreviewPoint = null;
+//			lastDragTime = -1;
+			
+		} else {
+			
+		}
+		
+	}
+	
+	public void dragged_controlpanel(InputEvent ev) {
+		
+		Point p = ev.p;
+		
+		if (previewAABB.hitTest(p) && lastPressedControlPanelPoint != null && previewAABB.hitTest(lastPressedControlPanelPoint)) {
+			
+			penDragPreviewPoint = lastDragPreviewPoint;
+			lastDragPreviewPoint = screen.controlPanelToPreview(p);
+//			lastDragTime = System.currentTimeMillis();
+			
+			if (penDragPreviewPoint != null) {
+				
+				double dx = lastDragPreviewPoint.x - penDragPreviewPoint.x;
+				double dy = lastDragPreviewPoint.y - penDragPreviewPoint.y;
+				
+				screen.world.previewPan(new Point(dx, dy));
+				
+				screen.world.render_canvas();
+				screen.world.render_preview();
+				screen.contentPane.repaint();
+//				controlPanel.repaint();
+			}
+			
+		}
+		
 	}
 	
 //	public int getWidth() {
@@ -328,6 +427,10 @@ public class ControlPanel {
 //	
 //	public void repaint() {
 //		c.repaint();
+//	}
+	
+//	public void setPreviewLocation(double x, double y) {
+//		previewAABB = new AABB(x, y, previewAABB.width, previewAABB.height);
 //	}
 	
 	public void paint(RenderingContext ctxt) {
@@ -362,9 +465,39 @@ public class ControlPanel {
 		explosionsCheckBox.paint(ctxt);
 		debugCheckBox.paint(ctxt);
 		
-		screen.world.paint_preview(ctxt);
+		paint_preview(ctxt);
 		
 		ctxt.setTransform(origTransform);
 	}
 	
+	public void paint_preview(RenderingContext ctxt) {
+		
+		AffineTransform origTrans = ctxt.getTransform();
+		
+		ctxt.translate(previewAABB.x, previewAABB.y);
+		
+		ctxt.paintImage(screen.world.previewImage,
+				0, 0, (int)previewAABB.width, (int)previewAABB.height,
+				0, 0, screen.previewWidth, screen.previewHeight);
+		
+		Point prevLoc = screen.worldToPreview(screen.cam.worldViewport.ul);
+		
+		Point prevDim = screen.worldToPreview(new Point(screen.cam.worldViewport.width, screen.cam.worldViewport.height));
+		
+		AABB prev = new AABB(prevLoc.x, prevLoc.y, prevDim.x, prevDim.y);
+		
+		double pixelsPerMeterWidth = screen.previewWidth / screen.world.quadrantMap.worldWidth;
+		double pixelsPerMeterHeight = screen.previewHeight / screen.world.quadrantMap.worldHeight;
+		double s = Math.min(pixelsPerMeterWidth, pixelsPerMeterHeight);
+		
+		ctxt.translate(
+				screen.previewWidth/2 - (s * screen.world.quadrantMap.worldWidth / 2),
+				screen.previewHeight/2 - (s * screen.world.quadrantMap.worldHeight / 2));
+		
+		ctxt.setColor(Color.BLUE);
+		prev.draw(ctxt);
+		
+		ctxt.setTransform(origTrans);
+		
+	}
 }

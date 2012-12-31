@@ -1,5 +1,6 @@
 package com.gutabi.deadlock.world;
 
+import static com.gutabi.deadlock.DeadlockApplication.APP;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,7 +53,7 @@ public class ExplosionMap {
 	}
 	
 	public void paint(RenderingContext ctxt) {
-		if (ctxt.EXPLOSIONS_DRAW) {
+		if (APP.EXPLOSIONS_DRAW) {
 			for (AnimatedExplosion x : explosions) {
 				x.paint(ctxt);
 			}

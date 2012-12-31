@@ -12,16 +12,22 @@ import java.awt.event.MouseMotionListener;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.ui.InputEvent;
 import com.gutabi.deadlock.ui.RenderingContext;
+import com.gutabi.deadlock.world.WorldScreen;
 
 @SuppressWarnings("serial")
 public class QuadrantEditorContentPane extends Container {
 	
 	QuadrantEditor screen;
 	
+	public QuadrantEditorCanvas canvas;
+	
 	private JavaListener jl;
 	
 	public QuadrantEditorContentPane(QuadrantEditor screen) {
 		this.screen = screen;
+		
+		canvas = new QuadrantEditorCanvas(screen);
+		canvas.setLocation(0, 0);
 		
 		jl = new JavaListener();
 		addMouseListener(jl);
@@ -56,11 +62,17 @@ public class QuadrantEditorContentPane extends Container {
 		}
 
 		public void mouseMoved(MouseEvent ev) {
-			
+			Point p = new Point(ev.getX(), ev.getY());
+			if (canvas.aabb.hitTest(p)) {
+				canvas.moved(new InputEvent(screen.contentPaneToCanvas(p)));
+			}
 		}
 
 		public void mouseClicked(MouseEvent ev) {
-			screen.clicked(new InputEvent(new Point(ev.getX(), ev.getY())));
+			Point p = new Point(ev.getX(), ev.getY());
+			if (canvas.aabb.hitTest(p)) {
+				canvas.clicked(new InputEvent(screen.contentPaneToCanvas(p)));
+			}
 		}
 
 		public void mouseEntered(MouseEvent ev) {
@@ -81,13 +93,19 @@ public class QuadrantEditorContentPane extends Container {
 		removeKeyListener(jl);
 	}
 	
+	public void postDisplay() {
+		
+		canvas.postDisplay();
+		
+	}
+	
 	public void paint(Graphics g) {
 		
 		super.paint(g);
 		
 		RenderingContext ctxt = new RenderingContext((Graphics2D)g);
 		
-		screen.canvas.paint(ctxt);
+		canvas.paint(ctxt);
 		
 	}
 	

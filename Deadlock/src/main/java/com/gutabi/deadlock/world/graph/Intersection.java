@@ -1,5 +1,7 @@
 package com.gutabi.deadlock.world.graph;
 
+import static com.gutabi.deadlock.DeadlockApplication.APP;
+
 import java.awt.Color;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -101,7 +103,7 @@ public class Intersection extends Vertex {
 		
 		shape.paint(ctxt);
 		
-		if (ctxt.DEBUG_DRAW) {
+		if (APP.DEBUG_DRAW) {
 			shape.getAABB().draw(ctxt);
 		}
 		

@@ -115,7 +115,7 @@ public class Quadrant {
 		
 		if (active) {
 			
-			if (!ctxt.DEBUG_DRAW) {
+			if (!APP.DEBUG_DRAW) {
 				AffineTransform origTransform = ctxt.getTransform();
 				
 				ctxt.translate(c * QuadrantMap.QUADRANT_WIDTH, r * QuadrantMap.QUADRANT_HEIGHT);

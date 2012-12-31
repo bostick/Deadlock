@@ -129,7 +129,7 @@ public class FixtureTool extends ToolBase {
 		
 		screen.tool = new RegularTool(screen);
 		
-		screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
+		screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.contentPane.canvas.lastMovedOrDraggedWorldPoint));
 		
 		screen.contentPane.repaint();
 	}
@@ -138,8 +138,8 @@ public class FixtureTool extends ToolBase {
 		
 		if (screen.world.graph.pureGraphIntersect(shape) == null) {
 			
-			Fixture source = new Fixture(screen.world, screen.controlPanel, getSourcePoint(), axis);
-			Fixture sink = new Fixture(screen.world, screen.controlPanel, getSinkPoint(), axis);
+			Fixture source = new Fixture(screen.world, getSourcePoint(), axis);
+			Fixture sink = new Fixture(screen.world, getSinkPoint(), axis);
 			
 			source.setType(FixtureType.SOURCE);
 			sink.setType(FixtureType.SINK);
@@ -166,7 +166,7 @@ public class FixtureTool extends ToolBase {
 			screen.world.graph.computeVertexRadii(affected);
 			
 			screen.tool = new RegularTool(screen);
-			screen.tool.setPoint(screen.lastMovedWorldPoint);
+			screen.tool.setPoint(screen.contentPane.canvas.lastMovedWorldPoint);
 			
 			screen.world.render_canvas();
 			screen.world.render_preview();
@@ -176,7 +176,7 @@ public class FixtureTool extends ToolBase {
 	}
 	
 	public void moved(InputEvent ev) {
-		screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
+		screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.contentPane.canvas.lastMovedOrDraggedWorldPoint));
 		screen.contentPane.repaint();
 	}
 	

@@ -2,12 +2,6 @@ package com.gutabi.deadlock.world;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
 import java.awt.geom.AffineTransform;
 
 import org.apache.log4j.Logger;
@@ -80,6 +74,113 @@ public class WorldCanvas {
 //		bs = c.getBufferStrategy();
 		
 		return new Dim(aabb.width, aabb.height);
+	}
+	
+	public Point lastMovedCanvasPoint;
+	public Point lastMovedOrDraggedCanvasPoint;
+	Point lastClickedCanvasPoint;
+	
+	public Point lastPressedWorldPoint;
+	
+	public Point lastDraggedWorldPoint;
+	public boolean lastDraggedWorldPointWasNull;
+	
+	
+	
+	public Point lastMovedWorldPoint;
+	public Point lastMovedOrDraggedWorldPoint;
+	
+	public void pressed_canvas(InputEvent ev) {
+		
+		Point p = ev.p;
+		
+		lastPressedWorldPoint = screen.canvasToWorld(p);
+		lastDraggedWorldPoint = null;
+		
+	}
+	
+	public void dragged_canvas(InputEvent ev) {
+		
+		lastMovedOrDraggedCanvasPoint = ev.p;
+		
+		switch (screen.mode) {
+		case RUNNING:
+		case PAUSED: {
+			Point p = ev.p;
+			
+			lastDraggedWorldPointWasNull = (lastDraggedWorldPoint == null);
+			lastDraggedWorldPoint = screen.canvasToWorld(p);
+			lastMovedOrDraggedWorldPoint = lastDraggedWorldPoint;
+			break;
+		}
+		case DIALOG:
+			break;
+		case EDITING: {
+			Point p = ev.p;
+			
+			lastDraggedWorldPointWasNull = (lastDraggedWorldPoint == null);
+			lastDraggedWorldPoint = screen.canvasToWorld(p);
+			lastMovedOrDraggedWorldPoint = lastDraggedWorldPoint;
+			screen.tool.dragged(ev);
+			break;
+		}
+		}
+		
+	}
+	
+	public void released_canvas(InputEvent ev) {
+		
+		switch (screen.mode) {
+		case RUNNING:
+		case PAUSED:
+		case DIALOG:
+			break;
+		case EDITING:
+			screen.tool.released(ev);
+			break;
+		}
+		
+	}
+	
+	public void moved_canvas(InputEvent ev) {
+		
+		lastMovedCanvasPoint = ev.p;
+		lastMovedOrDraggedCanvasPoint = lastMovedCanvasPoint;
+		
+		switch (screen.mode) {
+		case RUNNING:
+		case PAUSED: {
+			Point p = ev.p;
+			
+			lastMovedWorldPoint = screen.canvasToWorld(p);
+			lastMovedOrDraggedWorldPoint = lastMovedWorldPoint;
+			break;
+		}
+		case DIALOG:
+			break;
+		case EDITING: {
+			Point p = ev.p;
+			
+			lastMovedWorldPoint = screen.canvasToWorld(p);
+			lastMovedOrDraggedWorldPoint = lastMovedWorldPoint;
+			screen.tool.moved(ev);
+			break;
+		}
+		}
+	}
+	
+	public void exited_canvas(InputEvent ev) {
+		
+		switch (screen.mode) {
+		case RUNNING:
+		case PAUSED:
+		case DIALOG:
+			break;
+		case EDITING:
+			screen.tool.exited(ev);
+			break;
+		}
+		
 	}
 	
 //	public void pressed_canvas(InputEvent ev) {
@@ -161,7 +262,7 @@ public class WorldCanvas {
 		
 		screen.tool.draw(ctxt);
 		
-		if (ctxt.FPS_DRAW) {
+		if (APP.FPS_DRAW) {
 			
 			ctxt.translate(ctxt.cam.worldViewport.x, ctxt.cam.worldViewport.y);
 			

@@ -29,7 +29,7 @@ public final class Fixture extends Vertex {
 	public World world;
 	public final Axis a;
 	
-	ControlPanel cp;
+//	ControlPanel cp;
 	
 	private Side s;
 	private FixtureType type;
@@ -44,14 +44,14 @@ public final class Fixture extends Vertex {
 	
 	static int carIDCounter;
 	
-	public Fixture(World w, ControlPanel cp, Point p, Axis a) {
+	public Fixture(World w, Point p, Axis a) {
 		super(p);
 		
 		assert p != null;
 		assert a != null;
 		
 		this.world = w;
-		this.cp = cp;
+//		this.cp = cp;
 		this.a = a;
 	}
 	
@@ -205,22 +205,22 @@ public final class Fixture extends Vertex {
 	@SuppressWarnings({"rawtypes"})
 	private Car createNewCar() {
 		
-		boolean normal = cp.normalCarButton.selected;
-		boolean fast = cp.fastCarButton.selected;
-//		boolean random = VIEW.controlPanel.randomCarButton.isSelected();
-		boolean really = cp.reallyCarButton.selected;
+//		boolean normal = APP.NORMALCAR;
+//		boolean fast = cp.fastCarButton.selected;
+////		boolean random = VIEW.controlPanel.randomCarButton.isSelected();
+//		boolean really = cp.reallyCarButton.selected;
 		
 		List<Class> l = new ArrayList<Class>();
-		if (normal) {
+		if (APP.NORMALCAR) {
 			l.add(NormalCar.class);
 		}
-		if (fast) {
+		if (APP.FASTCAR) {
 			l.add(FastCar.class);
 		}
 //		if (random) {
 //			l.add(RandomCar.class);
 //		}
-		if (really) {
+		if (APP.REALLYCAR) {
 			l.add(ReallyFastCar.class);
 		}
 		
@@ -264,7 +264,7 @@ public final class Fixture extends Vertex {
 		return s.toString();
 	}
 	
-	public static Fixture fromFileString(World world, ControlPanel cp, String s) {
+	public static Fixture fromFileString(World world, String s) {
 		BufferedReader r = new BufferedReader(new StringReader(s));
 		
 		Point p = null;
@@ -334,7 +334,7 @@ public final class Fixture extends Vertex {
 			e.printStackTrace();
 		}
 		
-		Fixture f = new Fixture(world, cp, p, a);
+		Fixture f = new Fixture(world, p, a);
 		
 		f.id = id;
 		f.matchID = match;
@@ -346,7 +346,7 @@ public final class Fixture extends Vertex {
 	
 	public void paint_canvas(RenderingContext ctxt) {
 		
-		if (!ctxt.DEBUG_DRAW) {
+		if (!APP.DEBUG_DRAW) {
 			
 			AffineTransform origTransform = ctxt.getTransform();
 			

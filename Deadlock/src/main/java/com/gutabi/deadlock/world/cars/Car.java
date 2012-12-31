@@ -483,7 +483,7 @@ public abstract class Car extends Entity {
 		switch (state) {
 		case BRAKING:
 			
-			if (ctxt.CARTEXTURE_DRAW) {
+			if (APP.CARTEXTURE_DRAW) {
 				paintImage(ctxt);
 			} else {
 				if (!driver.deadlocked) {
@@ -501,7 +501,7 @@ public abstract class Car extends Entity {
 		case DRIVING:
 		case SINKED:
 			
-			if (ctxt.CARTEXTURE_DRAW) {
+			if (APP.CARTEXTURE_DRAW) {
 				paintImage(ctxt);
 			} else {
 				ctxt.setColor(Color.BLUE);
@@ -512,7 +512,7 @@ public abstract class Car extends Entity {
 			
 		case SKIDDED:
 			
-			if (ctxt.CARTEXTURE_DRAW) {
+			if (APP.CARTEXTURE_DRAW) {
 				paintImage(ctxt);
 			} else {
 				ctxt.setColor(Color.GREEN);
@@ -523,7 +523,7 @@ public abstract class Car extends Entity {
 			
 		case CRASHED:
 			
-			if (ctxt.CARTEXTURE_DRAW) {
+			if (APP.CARTEXTURE_DRAW) {
 				paintImage(ctxt);
 			} else {
 				if (!driver.deadlocked) {
@@ -538,7 +538,7 @@ public abstract class Car extends Entity {
 			break;
 		}
 		
-		if (ctxt.DEBUG_DRAW) {
+		if (APP.DEBUG_DRAW) {
 			ctxt.setColor(Color.BLACK);
 			ctxt.setPixelStroke(1.0);
 			shape.getAABB().draw(ctxt);

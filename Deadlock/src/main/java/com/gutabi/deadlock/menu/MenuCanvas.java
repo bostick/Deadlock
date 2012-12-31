@@ -10,11 +10,16 @@ import java.awt.image.BufferedImage;
 import org.apache.log4j.Logger;
 
 import com.gutabi.deadlock.core.Dim;
+import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.AABB;
+import com.gutabi.deadlock.ui.InputEvent;
 import com.gutabi.deadlock.ui.RenderingContext;
 
 //@SuppressWarnings("serial")
 public class MenuCanvas {
+	
+	public final int MENU_WIDTH = 800;
+	public final int MENU_HEIGHT = 600;
 	
 //	int width = 1584;
 //	int height = 822;
@@ -76,12 +81,65 @@ public class MenuCanvas {
 		return new Dim(aabb.width, aabb.height);
 	}
 	
+	public Point lastMovedCanvasPoint;
+	public Point lastMovedOrDraggedCanvasPoint;
+	public Point lastMovedMenuPoint;
+	Point lastClickedCanvasPoint;
+	
+	Point lastClickedMenuPoint;
+	
+	public Point canvasToMenu(Point p) {
+		return new Point(p.x - (aabb.width/2 - MENU_WIDTH/2), p.y - (aabb.height/2 - MENU_HEIGHT/2));
+	}
+	
+	public MenuItem hitTest(Point p) {
+		
+		for (MenuItem item : screen.items) {
+			if (item.hitTest(p)) {
+				return item;
+			}
+		}
+		
+		return null;
+	}
+	
+	public void moved(InputEvent ev) {
+		
+		lastMovedCanvasPoint = ev.p;
+		lastMovedOrDraggedCanvasPoint = lastMovedCanvasPoint;
+		
+		Point p = ev.p;
+		
+		lastMovedMenuPoint = canvasToMenu(p);
+		
+		MenuItem hit = hitTest(lastMovedMenuPoint);
+		if (hit != null && hit.active) {
+			screen.hilited = hit;
+		} else {
+			screen.hilited = null;
+		}
+		
+		screen.contentPane.repaint();
+	}
+	
+	public void clicked(InputEvent ev) {
+		
+		lastClickedMenuPoint = canvasToMenu(ev.p);
+		
+		MenuItem item = hitTest(lastClickedMenuPoint);
+		
+		if (item != null && item.active) {
+			item.action();
+		}
+		
+	}
+	
 	public void render() {
 //		logger.debug("render");
 		
 		synchronized (APP) {
 			
-			BufferedImage canvasMenuImage = new BufferedImage(screen.MENU_WIDTH, screen.MENU_HEIGHT, BufferedImage.TYPE_INT_RGB);
+			BufferedImage canvasMenuImage = new BufferedImage(MENU_WIDTH, MENU_HEIGHT, BufferedImage.TYPE_INT_RGB);
 			
 			Graphics2D canvasMenuImageG2 = canvasMenuImage.createGraphics();
 			
@@ -96,7 +154,7 @@ public class MenuCanvas {
 			
 			AffineTransform origTransform = canvasMenuContext.getTransform();
 			
-			canvasMenuContext.translate(screen.MENU_WIDTH/2 - screen.widest/2, 150);
+			canvasMenuContext.translate(MENU_WIDTH/2 - screen.widest/2, 150);
 			
 			for (MenuItem item : screen.items) {
 				item.render(canvasMenuContext);
@@ -123,24 +181,24 @@ public class MenuCanvas {
 		ctxt.setColor(Color.DARK_GRAY);
 		ctxt.fillRect(0, 0, (int)aabb.width, (int)aabb.height);
 		
-		ctxt.translate(aabb.width/2 - screen.MENU_WIDTH/2, aabb.height/2 - screen.MENU_HEIGHT/2);
+		ctxt.translate(aabb.width/2 - MENU_WIDTH/2, aabb.height/2 - MENU_HEIGHT/2);
 		
 		AffineTransform menuTrans = ctxt.getTransform();
 		
-		ctxt.paintImage(APP.titleBackground, 0, 0, screen.MENU_WIDTH, screen.MENU_HEIGHT, 0, 0, screen.MENU_WIDTH, screen.MENU_HEIGHT);
+		ctxt.paintImage(APP.titleBackground, 0, 0, MENU_WIDTH, MENU_HEIGHT, 0, 0, MENU_WIDTH, MENU_HEIGHT);
 		
-		ctxt.translate(screen.MENU_WIDTH/2 - 498/2, 20);
+		ctxt.translate(MENU_WIDTH/2 - 498/2, 20);
 		ctxt.paintImage(APP.title_white, 0, 0, 498, 90, 0, 0, 498, 90);
 		
 		ctxt.setTransform(menuTrans);
 		
-		ctxt.translate(screen.MENU_WIDTH/2 - 432/2, 550);
+		ctxt.translate(MENU_WIDTH/2 - 432/2, 550);
 		ctxt.paintImage(APP.copyright, 0, 0, 432, 38, 0, 0, 432, 38);
 		
 		ctxt.setTransform(menuTrans);
 		
 		ctxt.setColor(APP.menuBackground);
-		ctxt.fillRect((int)(screen.MENU_WIDTH/2 - screen.widest/2 - 5), 150 - 5, (int)(screen.widest + 10), screen.totalHeight + 10 * (screen.items.size() - 1) + 5 + 5);
+		ctxt.fillRect((int)(MENU_WIDTH/2 - screen.widest/2 - 5), 150 - 5, (int)(screen.widest + 10), screen.totalHeight + 10 * (screen.items.size() - 1) + 5 + 5);
 		
 		for (MenuItem item : screen.items) {
 			item.paint(ctxt);

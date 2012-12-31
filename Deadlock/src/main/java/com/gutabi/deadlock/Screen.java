@@ -8,8 +8,6 @@ public interface Screen {
 	
 	void setup(RootPaneContainer container);
 	
-	void teardown(RootPaneContainer container);
-	
 	
 	void qKey();
 	
@@ -48,19 +46,5 @@ public interface Screen {
 	void ctrlSKey();
 	
 	void ctrlOKey();
-	
-	
-	
-	void pressed(InputEvent ev);
-	
-	void moved(InputEvent ev);
-	
-	void dragged(InputEvent ev);
-	
-	void released(InputEvent ev);
-	
-	void clicked(InputEvent ev);
-	
-	void exited(InputEvent ev);
 	
 }

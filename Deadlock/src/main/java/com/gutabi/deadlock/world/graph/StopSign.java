@@ -116,7 +116,7 @@ public class StopSign extends Entity {
 	
 	public void paint(RenderingContext ctxt) {
 		
-		if (ctxt.STOPSIGN_DRAW) {
+		if (APP.STOPSIGN_DRAW) {
 			
 			if (enabled) {
 				
@@ -129,7 +129,7 @@ public class StopSign extends Entity {
 				
 				ctxt.setTransform(origTransform);
 				
-				if (ctxt.DEBUG_DRAW) {
+				if (APP.DEBUG_DRAW) {
 					shape.getAABB().draw(ctxt);
 				}
 				

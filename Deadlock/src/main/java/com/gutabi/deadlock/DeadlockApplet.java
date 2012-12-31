@@ -30,7 +30,7 @@ public class DeadlockApplet extends JApplet {
 		((JFrame)APP.container).setVisible(true);
 		
 		s.postDisplay();
-		s.canvas.render();
+		s.contentPane.canvas.render();
 		s.contentPane.repaint();
 	}
 	

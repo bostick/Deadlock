@@ -1,5 +1,6 @@
 package com.gutabi.deadlock.core.geom;
 
+import static com.gutabi.deadlock.DeadlockApplication.APP;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -404,7 +405,7 @@ public class Capsule extends SweepableShape implements SweeperShape, CompoundSha
 		}
 		bc.paint(ctxt);
 		
-		if (ctxt.DEBUG_DRAW) {
+		if (APP.DEBUG_DRAW) {
 			Color c = ctxt.getColor();
 			ctxt.setColor(Color.BLUE);
 			ctxt.setPixelStroke(1.0);

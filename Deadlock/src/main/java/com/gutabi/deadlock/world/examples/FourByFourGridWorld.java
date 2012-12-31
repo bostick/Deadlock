@@ -47,8 +47,8 @@ public class FourByFourGridWorld extends World {
 		Set<Vertex> affected = new HashSet<Vertex>();
 		
 		for (int i = 1; i < 16; i++) {
-			Fixture source = new Fixture(w, screen.controlPanel, new Point(i * qm.worldWidth / 16, 0), Axis.TOPBOTTOM);
-			Fixture sink = new Fixture(w, screen.controlPanel, new Point(i * qm.worldWidth / 16, qm.worldHeight), Axis.TOPBOTTOM);
+			Fixture source = new Fixture(w, new Point(i * qm.worldWidth / 16, 0), Axis.TOPBOTTOM);
+			Fixture sink = new Fixture(w, new Point(i * qm.worldWidth / 16, qm.worldHeight), Axis.TOPBOTTOM);
 			source.match = sink;
 			sink.match = source;
 			
@@ -87,8 +87,8 @@ public class FourByFourGridWorld extends World {
 		}
 		
 		for (int i = 1; i < 16; i++) {
-			Fixture source = new Fixture(w, screen.controlPanel, new Point(0, i * qm.worldHeight / 16), Axis.LEFTRIGHT);
-			Fixture sink = new Fixture(w, screen.controlPanel, new Point(qm.worldWidth, i * qm.worldHeight / 16), Axis.LEFTRIGHT);
+			Fixture source = new Fixture(w, new Point(0, i * qm.worldHeight / 16), Axis.LEFTRIGHT);
+			Fixture sink = new Fixture(w, new Point(qm.worldWidth, i * qm.worldHeight / 16), Axis.LEFTRIGHT);
 			source.match = sink;
 			sink.match = source;
 			

@@ -140,12 +140,12 @@ public class CubicTool extends ToolBase {
 		switch (mode) {
 		case FREE:
 			screen.tool = new RegularTool(screen);
-			screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
+			screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.contentPane.canvas.lastMovedOrDraggedWorldPoint));
 			screen.contentPane.repaint();
 			break;
 		case SET:
 			mode = CubicToolMode.FREE;
-			screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
+			screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.contentPane.canvas.lastMovedOrDraggedWorldPoint));
 			screen.contentPane.repaint();
 			break;
 		case KNOB:
@@ -174,7 +174,7 @@ public class CubicTool extends ToolBase {
 			
 			screen.tool = new RegularTool(screen);
 			
-			screen.tool.setPoint(screen.lastMovedOrDraggedWorldPoint);
+			screen.tool.setPoint(screen.contentPane.canvas.lastMovedOrDraggedWorldPoint);
 			
 			screen.world.render_canvas();
 			screen.world.render_preview();
@@ -190,7 +190,7 @@ public class CubicTool extends ToolBase {
 	public void moved(InputEvent ev) {
 		switch (mode) {
 		case FREE:
-			screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
+			screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.contentPane.canvas.lastMovedOrDraggedWorldPoint));
 			screen.contentPane.repaint();
 			break;
 		case SET:
@@ -206,38 +206,38 @@ public class CubicTool extends ToolBase {
 		
 		switch (mode) {
 		case FREE:
-			setPoint(screen.lastDraggedWorldPoint);
+			setPoint(screen.contentPane.canvas.lastDraggedWorldPoint);
 			break;
 		case SET:
-			if (!screen.lastDraggedWorldPointWasNull) {
+			if (!screen.contentPane.canvas.lastDraggedWorldPointWasNull) {
 				break;
 			}
-			if (!(startKnob.hitTest(screen.lastPressedWorldPoint) ||
-					control0Knob.hitTest(screen.lastPressedWorldPoint) ||
-					control1Knob.hitTest(screen.lastPressedWorldPoint) ||
-					endKnob.hitTest(screen.lastPressedWorldPoint))) {
+			if (!(startKnob.hitTest(screen.contentPane.canvas.lastPressedWorldPoint) ||
+					control0Knob.hitTest(screen.contentPane.canvas.lastPressedWorldPoint) ||
+					control1Knob.hitTest(screen.contentPane.canvas.lastPressedWorldPoint) ||
+					endKnob.hitTest(screen.contentPane.canvas.lastPressedWorldPoint))) {
 				break;
 			}
 			
-			if (startKnob.hitTest(screen.lastPressedWorldPoint)) {
+			if (startKnob.hitTest(screen.contentPane.canvas.lastPressedWorldPoint)) {
 				mode = CubicToolMode.KNOB;
 				knob = startKnob;
 				origKnobCenter = knob.p;
-			} else if (control0Knob.hitTest(screen.lastPressedWorldPoint)) {
+			} else if (control0Knob.hitTest(screen.contentPane.canvas.lastPressedWorldPoint)) {
 				mode = CubicToolMode.KNOB;
 				knob = control0Knob;
 				origKnobCenter = knob.p;
-			} else if (control1Knob.hitTest(screen.lastPressedWorldPoint)) {
+			} else if (control1Knob.hitTest(screen.contentPane.canvas.lastPressedWorldPoint)) {
 				mode = CubicToolMode.KNOB;
 				knob = control1Knob;
 				origKnobCenter = knob.p;
-			} else if (endKnob.hitTest(screen.lastPressedWorldPoint)) {
+			} else if (endKnob.hitTest(screen.contentPane.canvas.lastPressedWorldPoint)) {
 				mode = CubicToolMode.KNOB;
 				knob = endKnob;
 				origKnobCenter = knob.p;
 			}
 		case KNOB:
-			Point diff = new Point(screen.lastDraggedWorldPoint.x - screen.lastPressedWorldPoint.x, screen.lastDraggedWorldPoint.y - screen.lastPressedWorldPoint.y);
+			Point diff = new Point(screen.contentPane.canvas.lastDraggedWorldPoint.x - screen.contentPane.canvas.lastPressedWorldPoint.x, screen.contentPane.canvas.lastDraggedWorldPoint.y - screen.contentPane.canvas.lastPressedWorldPoint.y);
 			knob.drag(origKnobCenter.plus(diff));
 			screen.contentPane.repaint();
 			break;

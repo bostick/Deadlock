@@ -61,7 +61,6 @@ public class RegularTool extends ToolBase {
 	
 	public void escKey() {
 		
-		screen.teardown(APP.container);
 		APP.container.getContentPane().repaint();
 		
 		MainMenu s = new MainMenu();
@@ -70,7 +69,7 @@ public class RegularTool extends ToolBase {
 		((JFrame)APP.container).setVisible(true);
 		
 		s.postDisplay();
-		s.canvas.render();
+		s.contentPane.canvas.render();
 		s.contentPane.repaint();
 	}
 	
@@ -143,15 +142,15 @@ public class RegularTool extends ToolBase {
 	
 	public void qKey() {
 		StraightEdgeTool c = new StraightEdgeTool(screen);
-		c.setStart(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
-		c.setPoint(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
+		c.setStart(screen.world.quadrantMap.getPoint(screen.contentPane.canvas.lastMovedOrDraggedWorldPoint));
+		c.setPoint(screen.world.quadrantMap.getPoint(screen.contentPane.canvas.lastMovedOrDraggedWorldPoint));
 		screen.tool = c;
 		screen.contentPane.repaint();
 	}
 	
 	public void wKey() {
 		screen.tool = new FixtureTool(screen);
-		screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
+		screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.contentPane.canvas.lastMovedOrDraggedWorldPoint));
 		screen.contentPane.repaint();
 	}
 	
@@ -161,23 +160,23 @@ public class RegularTool extends ToolBase {
 		
 		screen.tool = new CircleTool(screen);
 		
-		screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
+		screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.contentPane.canvas.lastMovedOrDraggedWorldPoint));
 		
 		screen.contentPane.repaint();
 	}
 	
 	public void sKey() {
 		QuadTool q = new QuadTool(screen);
-		q.setStart(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
-		q.setPoint(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
+		q.setStart(screen.world.quadrantMap.getPoint(screen.contentPane.canvas.lastMovedOrDraggedWorldPoint));
+		q.setPoint(screen.world.quadrantMap.getPoint(screen.contentPane.canvas.lastMovedOrDraggedWorldPoint));
 		screen.tool = q;
 		screen.contentPane.repaint();
 	}
 	
 	public void dKey() {
 		CubicTool c = new CubicTool(screen);
-		c.setStart(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
-		c.setPoint(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
+		c.setStart(screen.world.quadrantMap.getPoint(screen.contentPane.canvas.lastMovedOrDraggedWorldPoint));
+		c.setPoint(screen.world.quadrantMap.getPoint(screen.contentPane.canvas.lastMovedOrDraggedWorldPoint));
 		screen.tool = c;
 		screen.contentPane.repaint();
 	}
@@ -200,7 +199,7 @@ public class RegularTool extends ToolBase {
 			
 			screen.tool = new MergerTool(screen);
 			
-			screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
+			screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.contentPane.canvas.lastMovedOrDraggedWorldPoint));
 			
 			screen.contentPane.repaint();
 		}
@@ -209,13 +208,13 @@ public class RegularTool extends ToolBase {
 	public void moved(InputEvent ev) {
 		switch (mode) {
 		case FREE:
-			Entity closest = screen.world.hitTest(screen.lastMovedOrDraggedWorldPoint);
+			Entity closest = screen.world.hitTest(screen.contentPane.canvas.lastMovedOrDraggedWorldPoint);
 			
 			synchronized (APP) {
 				screen.hilited = closest;
 			}
 			
-			screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
+			screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.contentPane.canvas.lastMovedOrDraggedWorldPoint));
 			
 			screen.contentPane.repaint();
 			break;
@@ -228,12 +227,12 @@ public class RegularTool extends ToolBase {
 	public void dragged(InputEvent ev) {
 		switch (mode) {
 		case FREE:
-			screen.tool.setPoint(screen.lastDraggedWorldPoint);
+			screen.tool.setPoint(screen.contentPane.canvas.lastDraggedWorldPoint);
 			
-			if (screen.lastDraggedWorldPointWasNull) {
+			if (screen.contentPane.canvas.lastDraggedWorldPointWasNull) {
 				// first drag
-				draftStart(screen.lastPressedWorldPoint);
-				draftMove(screen.lastDraggedWorldPoint);
+				draftStart(screen.contentPane.canvas.lastPressedWorldPoint);
+				draftMove(screen.contentPane.canvas.lastDraggedWorldPoint);
 				
 				screen.contentPane.repaint();
 				
@@ -242,9 +241,9 @@ public class RegularTool extends ToolBase {
 			}
 			break;
 		case DRAFTING:
-			screen.tool.setPoint(screen.lastDraggedWorldPoint);
+			screen.tool.setPoint(screen.contentPane.canvas.lastDraggedWorldPoint);
 			
-			draftMove(screen.lastDraggedWorldPoint);
+			draftMove(screen.contentPane.canvas.lastDraggedWorldPoint);
 			
 			screen.contentPane.repaint();
 //			screen.controlPanel.repaint();

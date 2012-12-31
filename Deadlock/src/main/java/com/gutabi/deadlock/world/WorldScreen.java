@@ -36,12 +36,6 @@ public class WorldScreen extends ScreenBase {
 		DIALOG
 	}
 	
-	public boolean FPS_DRAW = false;
-	public boolean STOPSIGN_DRAW = true;
-	public boolean CARTEXTURE_DRAW = true;
-	public boolean EXPLOSIONS_DRAW = true;
-	public boolean DEBUG_DRAW = false;
-	
 	/**
 	 * move physics forward by dt seconds
 	 */
@@ -52,9 +46,6 @@ public class WorldScreen extends ScreenBase {
 	public int previewHeight;
 	
 	public WorldScreenContentPane contentPane;
-	public WorldCanvas canvas;
-//	public WorldCanvas oldCanvas;
-	public ControlPanel controlPanel;
 	
 	public World world;
 	
@@ -84,48 +75,18 @@ public class WorldScreen extends ScreenBase {
 	
 	public void setup(RootPaneContainer container) {
 		
-//		Container cp = container.getContentPane();
 		contentPane = new WorldScreenContentPane(this);
-		
-		canvas = new WorldCanvas(this);
-		
-		controlPanel = new ControlPanel(this);
 		
 		contentPane.setLayout(null);
 		
-//		contentPane.add(canvas.java());
-		
-//		Dimension size = canvas.java().getSize();
-		canvas.setLocation(0, 0);
-		
-//		contentPane.add(controlPanel.java());
-		
-//		size = controlPanel.java().getSize();
-//		controlPanel.java().setBounds(0 + canvas.java().getWidth(), 0, size.width, size.height);
-		controlPanel.setLocation(0 + canvas.aabb.width, 0);
-		
 		container.setContentPane(contentPane);
 		contentPane.setFocusable(true);
-	}
-	
-	public void teardown(RootPaneContainer container) {
-		
-//		Container cp = container.getContentPane();
-//		
-//		cp.remove(canvas.java());
-//		cp.remove(controlPanel.java());
-//		
-////		oldCanvas = canvas;
-//		canvas = null;
-//		controlPanel = null;
-		
+		contentPane.requestFocusInWindow();
 	}
 	
 	public void postDisplay() {
 		
-		Dim canvasDim = canvas.postDisplay();
-		
-		world.canvasPostDisplay(canvasDim);
+		contentPane.postDisplay();
 	}
 	
 	
@@ -187,7 +148,7 @@ public class WorldScreen extends ScreenBase {
 		
 		world.quadrantMap.toggleGrid();
 		
-		tool.setPoint(world.quadrantMap.getPoint(lastMovedOrDraggedWorldPoint));
+		tool.setPoint(world.quadrantMap.getPoint(contentPane.canvas.lastMovedOrDraggedWorldPoint));
 		
 		world.render_canvas();
 		world.render_preview();
@@ -312,20 +273,20 @@ public class WorldScreen extends ScreenBase {
 		case PAUSED:
 			world.zoom(1.1);
 			
-			lastMovedOrDraggedWorldPoint = canvasToWorld(lastMovedOrDraggedCanvasPoint);
+			contentPane.canvas.lastMovedOrDraggedWorldPoint = canvasToWorld(contentPane.canvas.lastMovedOrDraggedCanvasPoint);
 			break;
 		case DIALOG:
 			break;
 		case EDITING:
 			world.zoom(1.1);
 			
-			lastMovedOrDraggedWorldPoint = canvasToWorld(lastMovedOrDraggedCanvasPoint);
-			Entity closest = world.hitTest(lastMovedOrDraggedWorldPoint);
+			contentPane.canvas.lastMovedOrDraggedWorldPoint = canvasToWorld(contentPane.canvas.lastMovedOrDraggedCanvasPoint);
+			Entity closest = world.hitTest(contentPane.canvas.lastMovedOrDraggedWorldPoint);
 			synchronized (APP) {
 				hilited = closest;
 			}
 			world.quadrantMap.computeGridSpacing();
-			tool.setPoint(world.quadrantMap.getPoint(lastMovedOrDraggedWorldPoint));
+			tool.setPoint(world.quadrantMap.getPoint(contentPane.canvas.lastMovedOrDraggedWorldPoint));
 			break;
 		}
 		
@@ -342,20 +303,20 @@ public class WorldScreen extends ScreenBase {
 		case PAUSED:
 			world.zoom(0.9);
 			
-			lastMovedOrDraggedWorldPoint = canvasToWorld(lastMovedOrDraggedCanvasPoint);
+			contentPane.canvas.lastMovedOrDraggedWorldPoint = canvasToWorld(contentPane.canvas.lastMovedOrDraggedCanvasPoint);
 			break;
 		case DIALOG:
 			break;
 		case EDITING:
 			world.zoom(0.9);
 			
-			lastMovedOrDraggedWorldPoint = canvasToWorld(lastMovedOrDraggedCanvasPoint);
-			Entity closest = world.hitTest(lastMovedOrDraggedWorldPoint);
+			contentPane.canvas.lastMovedOrDraggedWorldPoint = canvasToWorld(contentPane.canvas.lastMovedOrDraggedCanvasPoint);
+			Entity closest = world.hitTest(contentPane.canvas.lastMovedOrDraggedWorldPoint);
 			synchronized (APP) {
 				hilited = closest;
 			}
 			world.quadrantMap.computeGridSpacing();
-			tool.setPoint(world.quadrantMap.getPoint(lastMovedOrDraggedWorldPoint));
+			tool.setPoint(world.quadrantMap.getPoint(contentPane.canvas.lastMovedOrDraggedWorldPoint));
 			break;
 		}
 		
@@ -572,7 +533,7 @@ public class WorldScreen extends ScreenBase {
 	}
 	
 	public Point controlPanelToPreview(Point p) {
-		return new Point(p.x - world.previewAABB.x, p.y - world.previewAABB.y);
+		return new Point(p.x - contentPane.controlPanel.previewAABB.x, p.y - contentPane.controlPanel.previewAABB.y);
 	}
 	
 	public Point contentPaneToCanvas(double x, double y) {
@@ -580,213 +541,23 @@ public class WorldScreen extends ScreenBase {
 	}
 	
 	public Point contentPaneToControlPanel(double x, double y) {
-		return new Point(x - controlPanel.aabb.x, y - controlPanel.aabb.y);
+		return new Point(x - contentPane.controlPanel.aabb.x, y - contentPane.controlPanel.aabb.y);
 	}
 	
-	public boolean canvasHitTest(double x, double y) {
-//		AABB canvasAABB = new AABB(0, 0, canvas.aabb.width, canvas.);
-		if (canvas.aabb.hitTest(new Point(x, y))) {
-			return true;
-		}
-		return false;
-	}
-	
-	public boolean controlPanelHitTest(double x, double y) {
-//		AABB controlPanelAABB = new AABB(canvas.java().getWidth(), 0, controlPanel.java().getWidth(), controlPanel.java().getHeight());
-		if (controlPanel.aabb.hitTest(new Point(x, y))) {
-			return true;
-		}
-		return false;
-	}
-	
-	public Point lastMovedCanvasPoint;
-	public Point lastMovedOrDraggedCanvasPoint;
-	Point lastClickedCanvasPoint;
-	
-	
-	public Point lastPressedControlPanelPoint;
-	
-	public Point lastPressPreviewPoint;
-	public Point lastDragPreviewPoint;
-	public Point penDragPreviewPoint;
-	long lastPressTime;
-	long lastDragTime;
-	public Point lastDraggedControlPanelPoint;
-	
-	public Point lastPressedWorldPoint;
-	
-	public void pressed_canvas(InputEvent ev) {
-		
-		Point p = ev.p;
-		
-		lastPressedWorldPoint = canvasToWorld(p);
-		lastDraggedWorldPoint = null;
-		
-	}
-	
-	public Point lastDraggedWorldPoint;
-	public boolean lastDraggedWorldPointWasNull;
-	
-	public void dragged_canvas(InputEvent ev) {
-		
-		lastMovedOrDraggedCanvasPoint = ev.p;
-		
-		switch (mode) {
-		case RUNNING:
-		case PAUSED: {
-			Point p = ev.p;
-			
-			lastDraggedWorldPointWasNull = (lastDraggedWorldPoint == null);
-			lastDraggedWorldPoint = canvasToWorld(p);
-			lastMovedOrDraggedWorldPoint = lastDraggedWorldPoint;
-			break;
-		}
-		case DIALOG:
-			break;
-		case EDITING: {
-			Point p = ev.p;
-			
-			lastDraggedWorldPointWasNull = (lastDraggedWorldPoint == null);
-			lastDraggedWorldPoint = canvasToWorld(p);
-			lastMovedOrDraggedWorldPoint = lastDraggedWorldPoint;
-			tool.dragged(ev);
-			break;
-		}
-		}
-		
-	}
-	
-	public void released_canvas(InputEvent ev) {
-		
-		switch (mode) {
-		case RUNNING:
-		case PAUSED:
-		case DIALOG:
-			break;
-		case EDITING:
-			tool.released(ev);
-			break;
-		}
-		
-	}
-	
-	public Point lastMovedWorldPoint;
-	public Point lastMovedOrDraggedWorldPoint;
-	
-	public void moved_canvas(InputEvent ev) {
-		
-		lastMovedCanvasPoint = ev.p;
-		lastMovedOrDraggedCanvasPoint = lastMovedCanvasPoint;
-		
-		switch (mode) {
-		case RUNNING:
-		case PAUSED: {
-			Point p = ev.p;
-			
-			lastMovedWorldPoint = canvasToWorld(p);
-			lastMovedOrDraggedWorldPoint = lastMovedWorldPoint;
-			break;
-		}
-		case DIALOG:
-			break;
-		case EDITING: {
-			Point p = ev.p;
-			
-			lastMovedWorldPoint = canvasToWorld(p);
-			lastMovedOrDraggedWorldPoint = lastMovedWorldPoint;
-			tool.moved(ev);
-			break;
-		}
-		}
-	}
-	
-	public void exited_canvas(InputEvent ev) {
-		
-		switch (mode) {
-		case RUNNING:
-		case PAUSED:
-		case DIALOG:
-			break;
-		case EDITING:
-			tool.exited(ev);
-			break;
-		}
-		
-	}
-	
-	
-	public void clicked_controlpanel(InputEvent ev) {
-		
-		if (controlPanel.normalCarButton.hitTest(ev.p)) {
-			controlPanel.normalCarButton.action();
-		} else if (controlPanel.fastCarButton.hitTest(ev.p)) {
-			controlPanel.fastCarButton.action();
-		} else if (controlPanel.reallyCarButton.hitTest(ev.p)) {
-			controlPanel.reallyCarButton.action();
-		} else if (controlPanel.fpsCheckBox.hitTest(ev.p)) {
-			controlPanel.fpsCheckBox.action();
-		} else if (controlPanel.stopSignCheckBox.hitTest(ev.p)) {
-			controlPanel.stopSignCheckBox.action();
-		} else if (controlPanel.carTextureCheckBox.hitTest(ev.p)) {
-			controlPanel.carTextureCheckBox.action();
-		} else if (controlPanel.explosionsCheckBox.hitTest(ev.p)) {
-			controlPanel.explosionsCheckBox.action();
-		} else if (controlPanel.debugCheckBox.hitTest(ev.p)) {
-			controlPanel.debugCheckBox.action();
-		} else if (controlPanel.startButton.hitTest(ev.p)) {
-			controlPanel.startButton.action();
-		} else if (controlPanel.stopButton.hitTest(ev.p)) {
-			controlPanel.stopButton.action();
-		}
-		
-	}
-	
-	public void pressed_controlpanel(InputEvent ev) {
-		
-		Point p = ev.p;
-		
-		if (world.previewHitTest(p)) {
-			
-			lastPressedControlPanelPoint = p;
-			lastDraggedControlPanelPoint = null;
-			
-			lastPressPreviewPoint = controlPanelToPreview(p);
-			lastPressTime = System.currentTimeMillis();
-			
-			lastDragPreviewPoint = null;
-			lastDragTime = -1;
-			
-		} else {
-			
-		}
-		
-	}
-	
-	public void dragged_controlpanel(InputEvent ev) {
-		
-		Point p = ev.p;
-		
-		if (world.previewHitTest(p) && lastPressedControlPanelPoint != null && world.previewHitTest(lastPressedControlPanelPoint)) {
-			
-			penDragPreviewPoint = lastDragPreviewPoint;
-			lastDragPreviewPoint = controlPanelToPreview(p);
-			lastDragTime = System.currentTimeMillis();
-			
-			if (penDragPreviewPoint != null) {
-				
-				double dx = lastDragPreviewPoint.x - penDragPreviewPoint.x;
-				double dy = lastDragPreviewPoint.y - penDragPreviewPoint.y;
-				
-				world.previewPan(new Point(dx, dy));
-				
-				world.render_canvas();
-				world.render_preview();
-				contentPane.repaint();
-//				controlPanel.repaint();
-			}
-			
-		}
-		
-	}
+//	public boolean canvasHitTest(double x, double y) {
+////		AABB canvasAABB = new AABB(0, 0, canvas.aabb.width, canvas.);
+//		if (contentPane.canvas.aabb.hitTest(new Point(x, y))) {
+//			return true;
+//		}
+//		return false;
+//	}
+//	
+//	public boolean controlPanelHitTest(double x, double y) {
+////		AABB controlPanelAABB = new AABB(canvas.java().getWidth(), 0, controlPanel.java().getWidth(), controlPanel.java().getHeight());
+//		if (contentPane.controlPanel.aabb.hitTest(new Point(x, y))) {
+//			return true;
+//		}
+//		return false;
+//	}
 	
 }

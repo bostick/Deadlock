@@ -753,7 +753,7 @@ public class Road extends Edge {
 		
 		paintPath_canvas(ctxt);
 		
-		if (ctxt.DEBUG_DRAW) {
+		if (APP.DEBUG_DRAW) {
 			ctxt.setColor(Color.BLACK);
 			ctxt.setPixelStroke(1.0);
 			shape.getAABB().draw(ctxt);
@@ -828,7 +828,7 @@ public class Road extends Edge {
 		
 		endSign.paint(ctxt);
 		
-		if (ctxt.DEBUG_DRAW) {
+		if (APP.DEBUG_DRAW) {
 			paintSkeleton(ctxt);
 		}
 		

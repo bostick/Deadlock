@@ -36,7 +36,7 @@ public class MergerTool extends ToolBase {
 		
 		screen.tool = new RegularTool(screen);
 		
-		screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
+		screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.contentPane.canvas.lastMovedOrDraggedWorldPoint));
 		
 		screen.contentPane.repaint();
 	}
@@ -51,7 +51,7 @@ public class MergerTool extends ToolBase {
 				
 				screen.tool = new RegularTool(screen);
 				
-				screen.tool.setPoint(screen.lastMovedWorldPoint);
+				screen.tool.setPoint(screen.contentPane.canvas.lastMovedWorldPoint);
 				
 				screen.world.render_canvas();
 				screen.world.render_preview();
@@ -63,7 +63,7 @@ public class MergerTool extends ToolBase {
 	}
 	
 	public void moved(InputEvent ev) {
-		screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.lastMovedOrDraggedWorldPoint));
+		screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.contentPane.canvas.lastMovedOrDraggedWorldPoint));
 		screen.contentPane.repaint();
 	}
 	

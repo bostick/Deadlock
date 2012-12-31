@@ -1,5 +1,6 @@
 package com.gutabi.deadlock.world.graph;
 
+import static com.gutabi.deadlock.DeadlockApplication.APP;
 import java.awt.Color;
 
 import com.gutabi.deadlock.core.Entity;
@@ -68,10 +69,10 @@ public class Merger extends Edge {
 		
 		Point ul = center.plus(new Point(-MERGER_WIDTH/2,  -MERGER_HEIGHT/2));
 		
-		Fixture top = new Fixture(world, cp, new Point(ul.x + MERGER_WIDTH/2, ul.y), Axis.TOPBOTTOM);
-		Fixture left = new Fixture(world, cp, new Point(ul.x, ul.y + MERGER_HEIGHT/2), Axis.LEFTRIGHT);
-		Fixture right = new Fixture(world, cp, new Point(ul.x + MERGER_WIDTH, ul.y + MERGER_HEIGHT/2), Axis.LEFTRIGHT);
-		Fixture bottom = new Fixture(world, cp, new Point(ul.x + MERGER_WIDTH/2, ul.y+MERGER_HEIGHT), Axis.TOPBOTTOM);
+		Fixture top = new Fixture(world, new Point(ul.x + MERGER_WIDTH/2, ul.y), Axis.TOPBOTTOM);
+		Fixture left = new Fixture(world, new Point(ul.x, ul.y + MERGER_HEIGHT/2), Axis.LEFTRIGHT);
+		Fixture right = new Fixture(world, new Point(ul.x + MERGER_WIDTH, ul.y + MERGER_HEIGHT/2), Axis.LEFTRIGHT);
+		Fixture bottom = new Fixture(world, new Point(ul.x + MERGER_WIDTH/2, ul.y+MERGER_HEIGHT), Axis.TOPBOTTOM);
 		
 		top.match = bottom;
 		bottom.match = top;
@@ -312,7 +313,7 @@ public class Merger extends Edge {
 		
 		shape.paint(ctxt);
 		
-		if (ctxt.DEBUG_DRAW) {
+		if (APP.DEBUG_DRAW) {
 			paintSkeleton(ctxt);
 		}
 		

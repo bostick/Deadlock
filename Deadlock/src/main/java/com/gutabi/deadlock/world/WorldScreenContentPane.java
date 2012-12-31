@@ -11,6 +11,7 @@ import java.awt.event.MouseMotionListener;
 
 import org.apache.log4j.Logger;
 
+import com.gutabi.deadlock.core.Dim;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.ui.InputEvent;
 import com.gutabi.deadlock.ui.RenderingContext;
@@ -20,12 +21,22 @@ public class WorldScreenContentPane extends Container {
 	
 	WorldScreen screen;
 	
+	public WorldCanvas canvas;
+//	public WorldCanvas oldCanvas;
+	public ControlPanel controlPanel;
+	
 	private JavaListener jl;
 	
 	static Logger logger = Logger.getLogger(WorldScreenContentPane.class);
 	
 	public WorldScreenContentPane(WorldScreen screen) {
 		this.screen = screen;
+		
+		canvas = new WorldCanvas(screen);
+		canvas.setLocation(0, 0);
+		
+		controlPanel = new ControlPanel(screen);
+		controlPanel.setLocation(0 + canvas.aabb.width, 0);
 		
 		jl = new JavaListener();
 		addKeyListener(jl);
@@ -36,43 +47,43 @@ public class WorldScreenContentPane extends Container {
 	class JavaListener implements KeyListener, MouseListener, MouseMotionListener {
 		
 		public void mousePressed(MouseEvent ev) {
-			if (screen.canvasHitTest(ev.getX(), ev.getY())) {
-				screen.pressed_canvas(new InputEvent(screen.contentPaneToCanvas(ev.getX(), ev.getY())));
-			} else if (screen.controlPanelHitTest(ev.getX(), ev.getY())) {
-				screen.pressed_controlpanel(new InputEvent(screen.contentPaneToControlPanel(ev.getX(), ev.getY())));
+			if (canvas.aabb.hitTest(new Point(ev.getX(), ev.getY()))) {
+				canvas.pressed_canvas(new InputEvent(screen.contentPaneToCanvas(ev.getX(), ev.getY())));
+			} else if (controlPanel.aabb.hitTest(new Point(ev.getX(), ev.getY()))) {
+				controlPanel.pressed_controlpanel(new InputEvent(screen.contentPaneToControlPanel(ev.getX(), ev.getY())));
 			}
 		}
 
 		public void mouseReleased(MouseEvent ev) {
-			if (screen.canvasHitTest(ev.getX(), ev.getY())) {
-				screen.released_canvas(new InputEvent(screen.contentPaneToCanvas(ev.getX(), ev.getY())));
-			} else if (screen.controlPanelHitTest(ev.getX(), ev.getY())) {
+			if (canvas.aabb.hitTest(new Point(ev.getX(), ev.getY()))) {
+				canvas.released_canvas(new InputEvent(screen.contentPaneToCanvas(ev.getX(), ev.getY())));
+			} else if (controlPanel.aabb.hitTest(new Point(ev.getX(), ev.getY()))) {
 				
 			}
 		}
 		
 		public void mouseDragged(MouseEvent ev) {
-			if (screen.canvasHitTest(ev.getX(), ev.getY())) {
-				screen.dragged_canvas(new InputEvent(screen.contentPaneToCanvas(ev.getX(), ev.getY())));
-			} else if (screen.controlPanelHitTest(ev.getX(), ev.getY())) {
-				screen.dragged_controlpanel(new InputEvent(screen.contentPaneToControlPanel(ev.getX(), ev.getY())));
+			if (canvas.aabb.hitTest(new Point(ev.getX(), ev.getY()))) {
+				canvas.dragged_canvas(new InputEvent(screen.contentPaneToCanvas(ev.getX(), ev.getY())));
+			} else if (controlPanel.aabb.hitTest(new Point(ev.getX(), ev.getY()))) {
+				controlPanel.dragged_controlpanel(new InputEvent(screen.contentPaneToControlPanel(ev.getX(), ev.getY())));
 			}
 		}
 
 		public void mouseMoved(MouseEvent ev) {
 //			logger.debug("moved " + ev.getPoint());
-			if (screen.canvasHitTest(ev.getX(), ev.getY())) {
-				screen.moved_canvas(new InputEvent(screen.contentPaneToCanvas(ev.getX(), ev.getY())));
-			} else if (screen.controlPanelHitTest(ev.getX(), ev.getY())) {
+			if (canvas.aabb.hitTest(new Point(ev.getX(), ev.getY()))) {
+				canvas.moved_canvas(new InputEvent(screen.contentPaneToCanvas(ev.getX(), ev.getY())));
+			} else if (controlPanel.aabb.hitTest(new Point(ev.getX(), ev.getY()))) {
 				
 			}
 		}
 
 		public void mouseClicked(MouseEvent ev) {
-			if (screen.canvasHitTest(ev.getX(), ev.getY())) {
-				String.class.getName();
-			} else if (screen.controlPanelHitTest(ev.getX(), ev.getY())) {
-				screen.clicked_controlpanel(new InputEvent(screen.contentPaneToControlPanel(ev.getX(), ev.getY())));
+			if (canvas.aabb.hitTest(new Point(ev.getX(), ev.getY()))) {
+				
+			} else if (controlPanel.aabb.hitTest(new Point(ev.getX(), ev.getY()))) {
+				controlPanel.clicked_controlpanel(new InputEvent(screen.contentPaneToControlPanel(ev.getX(), ev.getY())));
 			}
 		}
 
@@ -81,9 +92,9 @@ public class WorldScreenContentPane extends Container {
 		}
 
 		public void mouseExited(MouseEvent ev) {
-			if (screen.canvasHitTest(ev.getX(), ev.getY())) {
-				screen.exited_canvas(new InputEvent(screen.contentPaneToCanvas(ev.getX(), ev.getY())));
-			} else if (screen.controlPanelHitTest(ev.getX(), ev.getY())) {
+			if (canvas.aabb.hitTest(new Point(ev.getX(), ev.getY()))) {
+				canvas.exited_canvas(new InputEvent(screen.contentPaneToCanvas(ev.getX(), ev.getY())));
+			} else if (controlPanel.aabb.hitTest(new Point(ev.getX(), ev.getY()))) {
 				
 			}
 		}
@@ -158,6 +169,14 @@ public class WorldScreenContentPane extends Container {
 	
 	public void disableKeyListener() {
 		removeKeyListener(jl);
+	}
+	
+	public void postDisplay() {
+		
+		Dim canvasDim = canvas.postDisplay();
+		
+		screen.world.canvasPostDisplay(canvasDim);
+		
 	}
 	
 	public void qKey() {
@@ -240,10 +259,11 @@ public class WorldScreenContentPane extends Container {
 		super.paint(g);
 		
 		RenderingContext ctxt = new RenderingContext((Graphics2D)g);
+//		ctxt.FPS_DRAW = APP.
 		
-		screen.canvas.paint(ctxt);
+		canvas.paint(ctxt);
 		
-		screen.controlPanel.paint(ctxt);
+		controlPanel.paint(ctxt);
 		
 	}
 }

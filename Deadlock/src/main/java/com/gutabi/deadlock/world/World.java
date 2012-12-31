@@ -34,9 +34,7 @@ public class World {
 	public WorldScreen screen;
 	
 	private BufferedImage background;
-	private BufferedImage previewImage;
-	
-	AABB previewAABB = new AABB(5, 400, 100, 100);
+	BufferedImage previewImage;
 	
 	public QuadrantMap quadrantMap;
 	public Graph graph;
@@ -97,10 +95,6 @@ public class World {
 				-(screen.cam.canvasHeight / screen.cam.pixelsPerMeter) / 2 + quadrantMap.worldHeight/2,
 				screen.cam.canvasWidth / screen.cam.pixelsPerMeter,
 				screen.cam.canvasHeight / screen.cam.pixelsPerMeter);
-	}
-	
-	public void setPreviewLocation(double x, double y) {
-		previewAABB = new AABB(x, y, previewAABB.width, previewAABB.height);
 	}
 	
 	public void preStart() {
@@ -186,12 +180,12 @@ public class World {
 		return null;
 	}
 	
-	public boolean previewHitTest(Point p) {
-		if (previewAABB.hitTest(p)) {
-			return true;
-		}
-		return false;
-	}
+//	public boolean previewHitTest(Point p) {
+//		if (previewAABB.hitTest(p)) {
+//			return true;
+//		}
+//		return false;
+//	}
 	
 	public Set<Vertex> addFixture(Fixture f) {
 		
@@ -229,7 +223,7 @@ public class World {
 	
 	public Set<Vertex> createMerger(Point p) {
 		
-		Merger m = Merger.createMergerAndFixtures(this, screen.controlPanel, p);
+		Merger m = Merger.createMergerAndFixtures(this, screen.contentPane.controlPanel, p);
 		
 		quadrantMap.grassMap.mowGrass(m.getShape());
 		quadrantMap.grassMap.mowGrass(m.top.getShape());
@@ -299,7 +293,7 @@ public class World {
 		World w = new World(screen);
 		
 		QuadrantMap qm = QuadrantMap.fromFileString(w, quadrantMapStringBuilder.toString());
-		Graph g = Graph.fromFileString(w, screen.controlPanel, graphStringBuilder.toString());
+		Graph g = Graph.fromFileString(w, screen.contentPane.controlPanel, graphStringBuilder.toString());
 		
 		w.quadrantMap = qm;
 		w.graph = g;
@@ -399,40 +393,9 @@ public class World {
 			explosionMap.paint(ctxt);
 		}
 		
-		if (ctxt.DEBUG_DRAW) {
+		if (APP.DEBUG_DRAW) {
 			graph.paintIDs(ctxt);
 		}
-		
-		ctxt.setTransform(origTrans);
-		
-	}
-	
-	public void paint_preview(RenderingContext ctxt) {
-		
-		AffineTransform origTrans = ctxt.getTransform();
-		
-		ctxt.translate(previewAABB.x, previewAABB.y);
-		
-		ctxt.paintImage(previewImage,
-				0, 0, (int)previewAABB.width, (int)previewAABB.height,
-				0, 0, screen.previewWidth, screen.previewHeight);
-		
-		Point prevLoc = screen.worldToPreview(screen.cam.worldViewport.ul);
-		
-		Point prevDim = screen.worldToPreview(new Point(screen.cam.worldViewport.width, screen.cam.worldViewport.height));
-		
-		AABB prev = new AABB(prevLoc.x, prevLoc.y, prevDim.x, prevDim.y);
-		
-		double pixelsPerMeterWidth = screen.previewWidth / screen.world.quadrantMap.worldWidth;
-		double pixelsPerMeterHeight = screen.previewHeight / screen.world.quadrantMap.worldHeight;
-		double s = Math.min(pixelsPerMeterWidth, pixelsPerMeterHeight);
-		
-		ctxt.translate(
-				screen.previewWidth/2 - (s * screen.world.quadrantMap.worldWidth / 2),
-				screen.previewHeight/2 - (s * screen.world.quadrantMap.worldHeight / 2));
-		
-		ctxt.setColor(Color.BLUE);
-		prev.draw(ctxt);
 		
 		ctxt.setTransform(origTrans);
 		
