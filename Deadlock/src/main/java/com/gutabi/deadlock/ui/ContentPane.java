@@ -13,13 +13,10 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import com.gutabi.deadlock.Screen;
 import com.gutabi.deadlock.core.Point;
 
 @SuppressWarnings("serial")
 public class ContentPane extends Container {
-	
-	Screen screen;
 	
 	protected List<Panel> children = new ArrayList<Panel>();
 	
@@ -27,8 +24,7 @@ public class ContentPane extends Container {
 	
 	static Logger logger = Logger.getLogger(ContentPane.class);
 	
-	public ContentPane(Screen screen) {
-		this.screen = screen;
+	public ContentPane() {
 		
 		jl = new JavaListener();
 		addKeyListener(jl);
@@ -108,53 +104,53 @@ public class ContentPane extends Container {
 
 		public void keyReleased(KeyEvent ev) {
 			if (ev.getKeyCode() == KeyEvent.VK_INSERT) {
-				screen.insertKey();
+				insertKey();
 			} else if (ev.getKeyCode() == KeyEvent.VK_DELETE) {
-				screen.deleteKey();
+				deleteKey();
 			} else if (ev.getKeyCode() == KeyEvent.VK_ESCAPE) {
-				screen.escKey();
+				escKey();
 			} else if (ev.getKeyCode() == KeyEvent.VK_Q) {
-				screen.qKey();
+				qKey();
 			} else if (ev.getKeyCode() == KeyEvent.VK_W) {
-				screen.wKey();
+				wKey();
 			} else if (ev.getKeyCode() == KeyEvent.VK_G) {
-				screen.gKey();
+				gKey();
 			} else if (ev.getKeyCode() == KeyEvent.VK_1) {
-				screen.d1Key();
+				d1Key();
 			} else if (ev.getKeyCode() == KeyEvent.VK_2) {
-				screen.d2Key();
+				d2Key();
 			} else if (ev.getKeyCode() == KeyEvent.VK_3) {
-				screen.d3Key();
+				d3Key();
 			} else if (ev.getKeyCode() == KeyEvent.VK_PLUS || ev.getKeyCode() == KeyEvent.VK_EQUALS) {
-				screen.plusKey();
+				plusKey();
 			} else if (ev.getKeyCode() == KeyEvent.VK_MINUS) {
-				screen.minusKey();
+				minusKey();
 			} else if (ev.getKeyCode() == KeyEvent.VK_DOWN) {
-				screen.downKey();
+				downKey();
 			} else if (ev.getKeyCode() == KeyEvent.VK_UP) {
-				screen.upKey();
+				upKey();
 			} else if (ev.getKeyCode() == KeyEvent.VK_ENTER) {
-				screen.enterKey();
+				enterKey();
 			} else if (ev.getKeyCode() == KeyEvent.VK_A) {
-				screen.aKey();
+				aKey();
 			} else if (ev.getKeyCode() == KeyEvent.VK_S) {
 				
 				int mods = ev.getModifiersEx();
 				
 				if ((mods & KeyEvent.CTRL_DOWN_MASK) == KeyEvent.CTRL_DOWN_MASK) {
-					screen.ctrlSKey();
+					ctrlSKey();
 				} else {
-					screen.sKey();
+					sKey();
 				}
 				
 			} else if (ev.getKeyCode() == KeyEvent.VK_D) {
-				screen.dKey();
+				dKey();
 			} else if (ev.getKeyCode() == KeyEvent.VK_O) {
 				
 				int mods = ev.getModifiersEx();
 				
 				if ((mods & KeyEvent.CTRL_DOWN_MASK) == KeyEvent.CTRL_DOWN_MASK) {
-					screen.ctrlOKey();
+					ctrlOKey();
 				}
 				
 			}
@@ -170,6 +166,101 @@ public class ContentPane extends Container {
 		addKeyListener(jl);
 	}
 	
+	public void ctrlOKey() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void dKey() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void upKey() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void enterKey() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void aKey() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void sKey() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void ctrlSKey() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void downKey() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void minusKey() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void plusKey() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void d3Key() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void d2Key() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void d1Key() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void gKey() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void wKey() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void qKey() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void escKey() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void deleteKey() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void insertKey() {
+		// TODO Auto-generated method stub
+		
+	}
+
 	public void disableKeyListener() {
 		removeKeyListener(jl);
 	}

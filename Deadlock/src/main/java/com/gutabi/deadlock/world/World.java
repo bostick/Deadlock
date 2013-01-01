@@ -78,15 +78,15 @@ public class World {
 	
 	public void panelPostDisplay() {
 		
-		background = new BufferedImage(screen.cam.panelWidth, screen.cam.panelHeight, BufferedImage.TYPE_INT_RGB);
+		background = new BufferedImage((int)screen.contentPane.worldPanel.aabb.width, (int)screen.contentPane.worldPanel.aabb.height, BufferedImage.TYPE_INT_RGB);
 		
 		quadrantMap.panelPostDisplay();
 		
-		screen.cam.worldViewport = new AABB(
-				-(screen.cam.panelWidth / screen.cam.pixelsPerMeter) / 2 + quadrantMap.worldWidth/2 ,
-				-(screen.cam.panelHeight / screen.cam.pixelsPerMeter) / 2 + quadrantMap.worldHeight/2,
-				screen.cam.panelWidth / screen.cam.pixelsPerMeter,
-				screen.cam.panelHeight / screen.cam.pixelsPerMeter);
+		screen.worldViewport = new AABB(
+				-(screen.contentPane.worldPanel.aabb.width / screen.pixelsPerMeter) / 2 + quadrantMap.worldWidth/2 ,
+				-(screen.contentPane.worldPanel.aabb.height / screen.pixelsPerMeter) / 2 + quadrantMap.worldHeight/2,
+				screen.contentPane.worldPanel.aabb.width / screen.pixelsPerMeter,
+				screen.contentPane.worldPanel.aabb.height / screen.pixelsPerMeter);
 	}
 	
 	public void previewPostDisplay() {
@@ -294,22 +294,22 @@ public class World {
 	
 	public void zoom(double factor) {
 		
-		screen.cam.pixelsPerMeter = factor * screen.cam.pixelsPerMeter; 
+		screen.pixelsPerMeter = factor * screen.pixelsPerMeter; 
 		
-		double newWidth =  screen.cam.panelWidth / screen.cam.pixelsPerMeter;
-		double newHeight = screen.cam.panelHeight / screen.cam.pixelsPerMeter;
+		double newWidth =  screen.contentPane.worldPanel.aabb.width / screen.pixelsPerMeter;
+		double newHeight = screen.contentPane.worldPanel.aabb.height / screen.pixelsPerMeter;
 		
-		screen.cam.worldViewport = new AABB(screen.cam.worldViewport.center.x - newWidth/2, screen.cam.worldViewport.center.y - newHeight/2, newWidth, newHeight);
+		screen.worldViewport = new AABB(screen.worldViewport.center.x - newWidth/2, screen.worldViewport.center.y - newHeight/2, newWidth, newHeight);
 	}
 	
 	public void previewPan(Point prevDp) {
 		Point worldDP = screen.contentPane.controlPanel.previewToWorld(prevDp);
 		
-		screen.cam.worldViewport = new AABB(
-				screen.cam.worldViewport.x + worldDP.x,
-				screen.cam.worldViewport.y + worldDP.y,
-				screen.cam.worldViewport.width,
-				screen.cam.worldViewport.height);
+		screen.worldViewport = new AABB(
+				screen.worldViewport.x + worldDP.x,
+				screen.worldViewport.y + worldDP.y,
+				screen.worldViewport.width,
+				screen.worldViewport.height);
 	}
 	
 	public void render_worldPanel() {
@@ -317,13 +317,13 @@ public class World {
 		Graphics2D backgroundG2 = background.createGraphics();
 		
 		backgroundG2.setColor(Color.LIGHT_GRAY);
-		backgroundG2.fillRect(0, 0, screen.cam.panelWidth, screen.cam.panelHeight);
+		backgroundG2.fillRect(0, 0, (int)screen.contentPane.worldPanel.aabb.width, (int)screen.contentPane.worldPanel.aabb.height);
 		
-		backgroundG2.scale(screen.cam.pixelsPerMeter, screen.cam.pixelsPerMeter);
-		backgroundG2.translate(-screen.cam.worldViewport.x, -screen.cam.worldViewport.y);
+		backgroundG2.scale(screen.pixelsPerMeter, screen.pixelsPerMeter);
+		backgroundG2.translate(-screen.worldViewport.x, -screen.worldViewport.y);
 		
 		RenderingContext backgroundCtxt = new RenderingContext(backgroundG2);
-		backgroundCtxt.cam = screen.cam;
+		backgroundCtxt.screen = screen;
 		
 		quadrantMap.render_panel(backgroundCtxt);
 		graph.render_panel(backgroundCtxt);
@@ -364,13 +364,13 @@ public class World {
 		
 		ctxt.paintImage(
 				background,
-				0, 0, screen.cam.panelWidth, screen.cam.panelHeight,
-				0, 0, screen.cam.panelWidth, screen.cam.panelHeight);
+				0, 0, screen.contentPane.worldPanel.aabb.width, screen.contentPane.worldPanel.aabb.height,
+				0, 0, background.getWidth(), background.getHeight());
 		
 		AffineTransform origTrans = ctxt.getTransform();
 		
-		ctxt.scale(ctxt.cam.pixelsPerMeter);
-		ctxt.translate(-ctxt.cam.worldViewport.x, -ctxt.cam.worldViewport.y);
+		ctxt.scale(ctxt.screen.pixelsPerMeter);
+		ctxt.translate(-ctxt.screen.worldViewport.x, -ctxt.screen.worldViewport.y);
 		
 		roadMarkMap.paintScene(ctxt);
 		grassMarkMap.paintScene(ctxt);

@@ -83,10 +83,10 @@ public class FixtureTool extends ToolBase {
 			
 			switch (axis) {
 			case LEFTRIGHT:
-				shape = new FixtureToolShape(screen.cam, p, leftCenter, rightCenter, axis);
+				shape = new FixtureToolShape(p, leftCenter, rightCenter, axis);
 				break;
 			case TOPBOTTOM:
-				shape = new FixtureToolShape(screen.cam, p, topCenter, bottomCenter, axis);
+				shape = new FixtureToolShape(p, topCenter, bottomCenter, axis);
 				break;
 			default:
 				assert false;

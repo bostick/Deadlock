@@ -455,9 +455,9 @@ public class ControlPanel extends PanelBase {
 				0, 0, (int)previewAABB.width, (int)previewAABB.height,
 				0, 0, (int)previewAABB.width, (int)previewAABB.height);
 		
-		Point prevLoc = worldToPreview(screen.cam.worldViewport.ul);
+		Point prevLoc = worldToPreview(screen.worldViewport.ul);
 		
-		Point prevDim = worldToPreview(new Point(screen.cam.worldViewport.width, screen.cam.worldViewport.height));
+		Point prevDim = worldToPreview(new Point(screen.worldViewport.width, screen.worldViewport.height));
 		
 		AABB prev = new AABB(prevLoc.x, prevLoc.y, prevDim.x, prevDim.y);
 		

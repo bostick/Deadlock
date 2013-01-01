@@ -10,14 +10,14 @@ import javax.swing.RootPaneContainer;
 
 import org.apache.log4j.Logger;
 
-import com.gutabi.deadlock.ScreenBase;
+import com.gutabi.deadlock.Screen;
 import com.gutabi.deadlock.quadranteditor.QuadrantEditor;
 import com.gutabi.deadlock.world.WorldScreen;
 import com.gutabi.deadlock.world.examples.FourByFourGridWorld;
 import com.gutabi.deadlock.world.examples.OneByOneWorld;
 import com.gutabi.deadlock.world.examples.WorldA;
 
-public class MainMenu extends ScreenBase {
+public class MainMenu extends Screen {
 	
 	public MainMenuContentPane contentPane;
 	
@@ -172,52 +172,6 @@ public class MainMenu extends ScreenBase {
 		item.down = first;
 		
 		first.up = item;
-		
-	}
-	
-	public void downKey() {
-		
-		if (hilited == null) {
-			
-			hilited = firstMenuItem;
-			
-		} else {
-			
-			hilited = hilited.down;
-			
-		}
-		
-		while (!hilited.active) {
-			hilited = hilited.down;
-		}
-		
-		contentPane.repaint();
-	}
-	
-	public void upKey() {
-		
-		if (hilited == null) {
-			
-			hilited = firstMenuItem;
-			
-		} else {
-			
-			hilited = hilited.up;
-			
-		}
-		
-		while (!hilited.active) {
-			hilited = hilited.up;
-		}
-		
-		contentPane.repaint();
-	}
-	
-	public void enterKey() {
-		
-		if (hilited != null && hilited.active) {
-			hilited.action();
-		}
 		
 	}
 	

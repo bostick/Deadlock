@@ -35,14 +35,14 @@ public class StraightEdgeTool extends ToolBase {
 		
 		mode = StraightEdgeToolMode.FREE;
 		
-		startKnob = new Knob(screen.cam, screen.world) {
+		startKnob = new Knob(screen, screen.world) {
 			public void drag(Point p) {
 				Point newPoint = world.quadrantMap.getPoint(p);
 				StraightEdgeTool.this.setStart(newPoint);
 			}
 		};
 		
-		endKnob = new Knob(screen.cam, screen.world) {
+		endKnob = new Knob(screen, screen.world) {
 			public void drag(Point p) {
 				Point newPoint = world.quadrantMap.getPoint(p);
 				StraightEdgeTool.this.setEnd(newPoint);
@@ -55,7 +55,7 @@ public class StraightEdgeTool extends ToolBase {
 		this.p = p;
 		
 		if (p != null) {
-			shape = new StraightEdgeToolShape(screen.cam, screen.world, start, p);
+			shape = new StraightEdgeToolShape(screen.world, start, p);
 			startKnob.setPoint(start);
 			endKnob.setPoint(p);
 		} else {
@@ -67,7 +67,7 @@ public class StraightEdgeTool extends ToolBase {
 	public void setStart(Point start) {
 		this.start = start;
 		if (start != null && p != null) {
-			shape = new StraightEdgeToolShape(screen.cam, screen.world, start, p);
+			shape = new StraightEdgeToolShape(screen.world, start, p);
 			startKnob.setPoint(start);
 			endKnob.setPoint(p);
 		}
@@ -76,7 +76,7 @@ public class StraightEdgeTool extends ToolBase {
 	public void setEnd(Point p) {
 		this.p = p;
 		if (start != null && p != null) {
-			shape = new StraightEdgeToolShape(screen.cam, screen.world, start, p);
+			shape = new StraightEdgeToolShape(screen.world, start, p);
 			startKnob.setPoint(start);
 			endKnob.setPoint(p);
 		}

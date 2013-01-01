@@ -6,7 +6,6 @@ import com.gutabi.deadlock.core.geom.Circle;
 import com.gutabi.deadlock.core.geom.Shape;
 import com.gutabi.deadlock.ui.RenderingContext;
 import com.gutabi.deadlock.world.World;
-import com.gutabi.deadlock.world.WorldCamera;
 import com.gutabi.deadlock.world.graph.Vertex;
 
 public class StraightEdgeToolShape implements Shape {
@@ -17,7 +16,7 @@ public class StraightEdgeToolShape implements Shape {
 	
 //	private final AABB aabb;
 	
-	public StraightEdgeToolShape(WorldCamera cam, World world, Point first, Point p) {
+	public StraightEdgeToolShape(World world, Point first, Point p) {
 		
 		this.firstCircle = new Circle(null, first, Vertex.INIT_VERTEX_RADIUS);
 		this.pCircle = new Circle(null, p, Vertex.INIT_VERTEX_RADIUS);

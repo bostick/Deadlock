@@ -16,13 +16,15 @@ import org.jbox2d.common.OBBViewportTransform;
 import org.jbox2d.common.Transform;
 import org.jbox2d.common.Vec2;
 
-import com.gutabi.deadlock.world.WorldCamera;
+import com.gutabi.deadlock.Screen;
+import com.gutabi.deadlock.core.Point;
 
 public class RenderingContext extends DebugDraw {
 	
 	public final Graphics2D g2;
 	
-	public WorldCamera cam;
+//	public WorldCamera cam;
+	public Screen screen;
 	
 	public RenderingContext(Graphics2D g2) {
 		super(new OBBViewportTransform());
@@ -57,7 +59,7 @@ public class RenderingContext extends DebugDraw {
 	}
 	
 	public void setPixelStroke(double pix) {
-		g2.setStroke(new BasicStroke((float)(pix / cam.pixelsPerMeter), BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER));
+		g2.setStroke(new BasicStroke((float)(pix / screen.pixelsPerMeter), BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER));
 	}
 	
 	public AffineTransform getTransform() {
@@ -70,6 +72,10 @@ public class RenderingContext extends DebugDraw {
 	
 	public void translate(double tx, double ty) {
 		g2.translate(tx, ty);
+	}
+	
+	public void translate(Point p) {
+		g2.translate(p.x, p.y);
 	}
 	
 	public void translate(int tx, int ty) {
@@ -100,7 +106,7 @@ public class RenderingContext extends DebugDraw {
 		AffineTransform origTransform = g2.getTransform();
 		
 		g2.translate(x, y);
-		g2.scale(1 / cam.pixelsPerMeter, 1 / cam.pixelsPerMeter);
+		g2.scale(1 / screen.pixelsPerMeter, 1 / screen.pixelsPerMeter);
 		g2.scale(s, s);
 		g2.drawString(str, 0, 0);
 		
@@ -110,9 +116,9 @@ public class RenderingContext extends DebugDraw {
 	public void paintImage(Image img, double dx1, double dy1, double dx2, double dy2, int sx1, int sy1, int sx2, int sy2) {
 		AffineTransform origTransform = g2.getTransform();
 		
-		g2.scale(1 / cam.pixelsPerMeter, 1 / cam.pixelsPerMeter);
+		g2.scale(1 / screen.pixelsPerMeter, 1 / screen.pixelsPerMeter);
 		paintImage(img,
-				(int)Math.ceil(dx1 * cam.pixelsPerMeter), (int)Math.ceil(dy1 * cam.pixelsPerMeter), (int)Math.ceil(dx2 * cam.pixelsPerMeter), (int)Math.ceil(dy2 * cam.pixelsPerMeter),
+				(int)Math.ceil(dx1 * screen.pixelsPerMeter), (int)Math.ceil(dy1 * screen.pixelsPerMeter), (int)Math.ceil(dx2 * screen.pixelsPerMeter), (int)Math.ceil(dy2 * screen.pixelsPerMeter),
 				sx1, sy1, sx2, sy2);
 		
 		g2.setTransform(origTransform);

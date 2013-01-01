@@ -9,13 +9,10 @@ import com.gutabi.deadlock.core.geom.Shape;
 import com.gutabi.deadlock.core.geom.ShapeUtils;
 import com.gutabi.deadlock.ui.RenderingContext;
 import com.gutabi.deadlock.world.QuadrantMap;
-import com.gutabi.deadlock.world.WorldCamera;
 import com.gutabi.deadlock.world.graph.Axis;
 import com.gutabi.deadlock.world.graph.Vertex;
 
 public class FixtureToolShape implements CompoundShape {
-	
-	WorldCamera cam;
 	
 	public final Point p;
 	public final Axis axis;
@@ -28,7 +25,7 @@ public class FixtureToolShape implements CompoundShape {
 	
 	public final AABB aabb;
 	
-	public FixtureToolShape(WorldCamera cam, Point p, Point source, Point sink, Axis axis) {
+	public FixtureToolShape(Point p, Point source, Point sink, Axis axis) {
 		
 		this.p = p;
 		this.axis = axis;

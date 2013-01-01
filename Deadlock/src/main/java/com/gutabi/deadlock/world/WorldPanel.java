@@ -31,8 +31,8 @@ public class WorldPanel extends PanelBase {
 	
 	public void postDisplay() {
 		
-		screen.cam.panelWidth = (int)aabb.width;
-		screen.cam.panelHeight = (int)aabb.height;
+//		screen.cam.panelWidth = (int)aabb.width;
+//		screen.cam.panelHeight = (int)aabb.height;
 		
 		screen.world.panelPostDisplay();
 	}
@@ -40,8 +40,8 @@ public class WorldPanel extends PanelBase {
 	
 	public Point panelToWorld(Point p) {
 		return new Point(
-				p.x / screen.cam.pixelsPerMeter + screen.cam.worldViewport.x,
-				p.y / screen.cam.pixelsPerMeter + screen.cam.worldViewport.y);
+				p.x / screen.pixelsPerMeter + screen.worldViewport.x,
+				p.y / screen.pixelsPerMeter + screen.worldViewport.y);
 	}
 	
 	public AABB panelToWorld(AABB aabb) {
@@ -52,8 +52,8 @@ public class WorldPanel extends PanelBase {
 	
 	public Point worldToPanel(Point p) {
 		return new Point(
-				(p.x - screen.cam.worldViewport.x) * screen.cam.pixelsPerMeter,
-				(p.y - screen.cam.worldViewport.y) * screen.cam.pixelsPerMeter);
+				(p.x - screen.worldViewport.x) * screen.pixelsPerMeter,
+				(p.y - screen.worldViewport.y) * screen.pixelsPerMeter);
 	}
 	
 	public AABB worldToPanel(AABB aabb) {
@@ -173,7 +173,7 @@ public class WorldPanel extends PanelBase {
 	
 	public void paint(RenderingContext ctxt) {
 		
-		ctxt.cam = screen.cam;
+		ctxt.screen = screen;
 		
 		AffineTransform origTrans = ctxt.getTransform();
 		
@@ -181,8 +181,8 @@ public class WorldPanel extends PanelBase {
 		
 		screen.world.paint_panel(ctxt);
 		
-		ctxt.scale(ctxt.cam.pixelsPerMeter);
-		ctxt.translate(-ctxt.cam.worldViewport.x, -ctxt.cam.worldViewport.y);
+		ctxt.scale(ctxt.screen.pixelsPerMeter);
+		ctxt.translate(-ctxt.screen.worldViewport.x, -ctxt.screen.worldViewport.y);
 		
 		Entity hilitedCopy;
 		synchronized (APP) {
@@ -197,7 +197,7 @@ public class WorldPanel extends PanelBase {
 		
 		if (APP.FPS_DRAW) {
 			
-			ctxt.translate(ctxt.cam.worldViewport.x, ctxt.cam.worldViewport.y);
+			ctxt.translate(ctxt.screen.worldViewport.x, ctxt.screen.worldViewport.y);
 			
 			screen.stats.paint(ctxt);
 		}

@@ -2,47 +2,14 @@ package com.gutabi.deadlock;
 
 import javax.swing.RootPaneContainer;
 
-public interface Screen {
-	
-	void setup(RootPaneContainer container);
-	
-	
-	void qKey();
-	
-	void wKey();
-	
-	void gKey();
-	
-	void deleteKey();
-	
-	void insertKey();
-	
-	void escKey();
-	
-	void d1Key();
-	
-	void d2Key();
-	
-	void d3Key();
-	
-	void plusKey();
-	
-	void minusKey();
-	
-	void downKey();
+import com.gutabi.deadlock.core.geom.AABB;
 
-	void upKey();
+public abstract class Screen {
 	
-	void enterKey();
+	public double origPixelsPerMeter = 32.0;
+	public double pixelsPerMeter = 32.0;
+	public AABB worldViewport;
 	
-	void aKey();
-	
-	void sKey();
-	
-	void dKey();
-	
-	void ctrlSKey();
-	
-	void ctrlOKey();
+	public abstract void setup(RootPaneContainer container);
 	
 }

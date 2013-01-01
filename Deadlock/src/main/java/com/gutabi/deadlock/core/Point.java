@@ -556,6 +556,10 @@ public class Point {
 		return new Point(x - b.x, y - b.y);
 	}
 	
+	public Point minus(Dim d) {
+		return new Point(x - d.width, y - d.height);
+	}
+	
 	public Point minusAndNormalize(Point b) {
 		
 		double newX = x - b.x;

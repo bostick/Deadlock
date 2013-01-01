@@ -40,28 +40,28 @@ public class CubicTool extends ToolBase {
 		
 		mode = CubicToolMode.FREE;
 		
-		startKnob = new Knob(screen.cam, screen.world) {
+		startKnob = new Knob(screen, screen.world) {
 			public void drag(Point p) {
 				Point newPoint = world.quadrantMap.getPoint(p);
 				CubicTool.this.setStart(newPoint);
 			}
 		};
 		
-		control0Knob = new Knob(screen.cam, screen.world) {
+		control0Knob = new Knob(screen, screen.world) {
 			public void drag(Point p) {
 				Point newPoint = world.quadrantMap.getPoint(p);
 				CubicTool.this.setControl0(newPoint);
 			}
 		};
 		
-		control1Knob = new Knob(screen.cam, screen.world) {
+		control1Knob = new Knob(screen, screen.world) {
 			public void drag(Point p) {
 				Point newPoint = world.quadrantMap.getPoint(p);
 				CubicTool.this.setControl1(newPoint);
 			}
 		};
 		
-		endKnob = new Knob(screen.cam, screen.world) {
+		endKnob = new Knob(screen, screen.world) {
 			public void drag(Point p) {
 				Point newPoint = world.quadrantMap.getPoint(p);
 				CubicTool.this.setEnd(newPoint);
@@ -77,7 +77,7 @@ public class CubicTool extends ToolBase {
 			Point middle = start.plus(p.minus(start).multiply(0.5));
 			c0 = middle.plus(new Point(0, -4 * Vertex.INIT_VERTEX_RADIUS));
 			c1 = middle.plus(new Point(0, 4 * Vertex.INIT_VERTEX_RADIUS));
-			shape = new CubicToolShape(screen.cam, screen.world, start, c0, c1, p);
+			shape = new CubicToolShape(screen.world, start, c0, c1, p);
 			startKnob.setPoint(start);
 			control0Knob.setPoint(c0);
 			control1Knob.setPoint(c1);
@@ -91,7 +91,7 @@ public class CubicTool extends ToolBase {
 	public void setStart(Point start) {
 		this.start = start;
 		if (start != null && p != null && c0 != null && c1 != null) {
-			shape = new CubicToolShape(screen.cam, screen.world, start, c0, c1, p);
+			shape = new CubicToolShape(screen.world, start, c0, c1, p);
 			startKnob.setPoint(start);
 			control0Knob.setPoint(c0);
 			control1Knob.setPoint(c1);
@@ -102,7 +102,7 @@ public class CubicTool extends ToolBase {
 	public void setControl0(Point c) {
 		this.c0 = c;
 		if (start != null && p != null && c0 != null && c1 != null) {
-			shape = new CubicToolShape(screen.cam, screen.world, start, c0, c1, p);
+			shape = new CubicToolShape(screen.world, start, c0, c1, p);
 			startKnob.setPoint(start);
 			control0Knob.setPoint(c0);
 			control1Knob.setPoint(c1);
@@ -113,7 +113,7 @@ public class CubicTool extends ToolBase {
 	public void setControl1(Point c) {
 		this.c1 = c;
 		if (start != null && p != null && c0 != null && c1 != null) {
-			shape = new CubicToolShape(screen.cam, screen.world, start, c0, c1, p);
+			shape = new CubicToolShape(screen.world, start, c0, c1, p);
 			startKnob.setPoint(start);
 			control0Knob.setPoint(c0);
 			control1Knob.setPoint(c1);
@@ -124,7 +124,7 @@ public class CubicTool extends ToolBase {
 	public void setEnd(Point p) {
 		this.p = p;
 		if (start != null && p != null && c0 != null && c1 != null) {
-			shape = new CubicToolShape(screen.cam, screen.world, start, c0, c1, p);
+			shape = new CubicToolShape(screen.world, start, c0, c1, p);
 			startKnob.setPoint(start);
 			control0Knob.setPoint(c0);
 			control1Knob.setPoint(c1);

@@ -14,12 +14,10 @@ import com.gutabi.deadlock.core.geom.Shape;
 import com.gutabi.deadlock.core.geom.ShapeUtils;
 import com.gutabi.deadlock.ui.RenderingContext;
 import com.gutabi.deadlock.world.World;
-import com.gutabi.deadlock.world.WorldCamera;
 import com.gutabi.deadlock.world.graph.Vertex;
 
 public class CubicToolShape implements Shape {
-	
-	WorldCamera cam;
+
 	public final World world;
 	public final Point start;
 	public final Circle startCircle; 
@@ -36,7 +34,7 @@ public class CubicToolShape implements Shape {
 	
 //	private final AABB aabb;
 	
-	public CubicToolShape(WorldCamera cam, World world, Point start, Point c0, Point c1, Point end) {
+	public CubicToolShape(World world, Point start, Point c0, Point c1, Point end) {
 		
 		this.world = world;
 		this.start = start;

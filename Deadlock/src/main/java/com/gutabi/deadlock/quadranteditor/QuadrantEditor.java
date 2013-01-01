@@ -1,17 +1,13 @@
 package com.gutabi.deadlock.quadranteditor;
 
-import static com.gutabi.deadlock.DeadlockApplication.APP;
-
 import java.awt.image.BufferedImage;
 
-import javax.swing.JFrame;
 import javax.swing.RootPaneContainer;
 
-import com.gutabi.deadlock.ScreenBase;
+import com.gutabi.deadlock.Screen;
 import com.gutabi.deadlock.core.geom.AABB;
-import com.gutabi.deadlock.menu.MainMenu;
 
-public class QuadrantEditor extends ScreenBase {
+public class QuadrantEditor extends Screen {
 	
 	public QuadrantEditorContentPane contentPane;
 	
@@ -41,18 +37,6 @@ public class QuadrantEditor extends ScreenBase {
 		
 		contentPane.postDisplay();
 		
-	}
-	
-	public void escKey() {
-		
-		MainMenu s = new MainMenu();
-		
-		s.setup(APP.container);
-		((JFrame)APP.container).setVisible(true);
-		s.postDisplay();
-		
-		s.contentPane.panel.render();
-		s.contentPane.repaint();
 	}
 	
 }

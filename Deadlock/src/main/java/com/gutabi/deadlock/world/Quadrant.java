@@ -73,14 +73,14 @@ public class Quadrant {
 	
 	public void computeGridSpacing() {
 		
-		double curGridSpacingPixels =  gridSpacing * map.world.screen.cam.pixelsPerMeter;
+		double curGridSpacingPixels =  gridSpacing * map.world.screen.pixelsPerMeter;
 		while (curGridSpacingPixels > 64+16) {
 			gridSpacing *= 0.5;
-			curGridSpacingPixels =  gridSpacing * map.world.screen.cam.pixelsPerMeter;
+			curGridSpacingPixels =  gridSpacing * map.world.screen.pixelsPerMeter;
 		}
 		while (curGridSpacingPixels < 64-16) {
 			gridSpacing *= 2.0;
-			curGridSpacingPixels =  gridSpacing * map.world.screen.cam.pixelsPerMeter;
+			curGridSpacingPixels =  gridSpacing * map.world.screen.pixelsPerMeter;
 		}
 	}
 	
