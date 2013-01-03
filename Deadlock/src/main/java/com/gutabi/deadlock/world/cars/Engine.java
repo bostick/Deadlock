@@ -30,6 +30,8 @@ public class Engine {
 		case SKIDDED:
 		case SINKED:
 			break;
+		case EDITING:
+			break;
 		}
 		
 	}

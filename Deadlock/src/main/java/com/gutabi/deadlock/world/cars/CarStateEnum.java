@@ -9,6 +9,9 @@ public enum CarStateEnum {
 	
 	SKIDDED,
 	
-	SINKED
+	SINKED,
+	
+	
+	EDITING
 	
 }

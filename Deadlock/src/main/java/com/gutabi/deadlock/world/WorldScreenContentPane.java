@@ -75,7 +75,7 @@ public class WorldScreenContentPane extends ContentPane {
 		
 		screen.world.quadrantMap.toggleGrid();
 		
-		screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.contentPane.worldPanel.lastMovedOrDraggedWorldPoint));
+		screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.world.lastMovedOrDraggedWorldPoint));
 		
 		screen.world.render_worldPanel();
 		screen.world.render_preview();
@@ -200,7 +200,7 @@ public class WorldScreenContentPane extends ContentPane {
 			screen.world.zoom(1.1);
 			
 			if (screen.contentPane.worldPanel.lastMovedOrDraggedPanelPoint != null) {
-				screen.contentPane.worldPanel.lastMovedOrDraggedWorldPoint = screen.contentPane.worldPanel.panelToWorld(screen.contentPane.worldPanel.lastMovedOrDraggedPanelPoint);
+				screen.world.lastMovedOrDraggedWorldPoint = screen.contentPane.worldPanel.panelToWorld(screen.contentPane.worldPanel.lastMovedOrDraggedPanelPoint);
 			}
 			break;
 		case DIALOG:
@@ -209,14 +209,14 @@ public class WorldScreenContentPane extends ContentPane {
 			screen.world.zoom(1.1);
 			
 			if (screen.contentPane.worldPanel.lastMovedOrDraggedPanelPoint != null) {
-				screen.contentPane.worldPanel.lastMovedOrDraggedWorldPoint = screen.contentPane.worldPanel.panelToWorld(screen.contentPane.worldPanel.lastMovedOrDraggedPanelPoint);
+				screen.world.lastMovedOrDraggedWorldPoint = screen.contentPane.worldPanel.panelToWorld(screen.contentPane.worldPanel.lastMovedOrDraggedPanelPoint);
 			}
-			Entity closest = screen.world.hitTest(screen.contentPane.worldPanel.lastMovedOrDraggedWorldPoint);
+			Entity closest = screen.world.hitTest(screen.world.lastMovedOrDraggedWorldPoint);
 			synchronized (APP) {
 				screen.hilited = closest;
 			}
 			screen.world.quadrantMap.computeGridSpacing();
-			screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.contentPane.worldPanel.lastMovedOrDraggedWorldPoint));
+			screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.world.lastMovedOrDraggedWorldPoint));
 			break;
 		}
 		
@@ -233,7 +233,7 @@ public class WorldScreenContentPane extends ContentPane {
 			screen.world.zoom(0.9);
 			
 			if (screen.contentPane.worldPanel.lastMovedOrDraggedPanelPoint != null) {
-				screen.contentPane.worldPanel.lastMovedOrDraggedWorldPoint = screen.contentPane.worldPanel.panelToWorld(screen.contentPane.worldPanel.lastMovedOrDraggedPanelPoint);
+				screen.world.lastMovedOrDraggedWorldPoint = screen.contentPane.worldPanel.panelToWorld(screen.contentPane.worldPanel.lastMovedOrDraggedPanelPoint);
 			}
 			break;
 		case DIALOG:
@@ -242,14 +242,14 @@ public class WorldScreenContentPane extends ContentPane {
 			screen.world.zoom(0.9);
 			
 			if (screen.contentPane.worldPanel.lastMovedOrDraggedPanelPoint != null) {
-				screen.contentPane.worldPanel.lastMovedOrDraggedWorldPoint = screen.contentPane.worldPanel.panelToWorld(screen.contentPane.worldPanel.lastMovedOrDraggedPanelPoint);
+				screen.world.lastMovedOrDraggedWorldPoint = screen.contentPane.worldPanel.panelToWorld(screen.contentPane.worldPanel.lastMovedOrDraggedPanelPoint);
 			}
-			Entity closest = screen.world.hitTest(screen.contentPane.worldPanel.lastMovedOrDraggedWorldPoint);
+			Entity closest = screen.world.hitTest(screen.world.lastMovedOrDraggedWorldPoint);
 			synchronized (APP) {
 				screen.hilited = closest;
 			}
 			screen.world.quadrantMap.computeGridSpacing();
-			screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.contentPane.worldPanel.lastMovedOrDraggedWorldPoint));
+			screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.world.lastMovedOrDraggedWorldPoint));
 			break;
 		}
 		

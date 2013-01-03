@@ -273,6 +273,8 @@ public class Car extends Entity {
 		case SKIDDED:
 		case CRASHED:
 			break;
+		case EDITING:
+			break;
 		}
 		
 	}
@@ -330,6 +332,8 @@ public class Car extends Entity {
 		case CRASHED:
 		case SKIDDED:
 		case SINKED:
+			break;
+		case EDITING:
 			break;
 		}
 		
@@ -475,6 +479,9 @@ public class Car extends Entity {
 			assert false;
 			
 			break;
+			
+		case EDITING:
+			break;
 		}
 		
 		return true;	
@@ -482,62 +489,57 @@ public class Car extends Entity {
 	
 	public void paint(RenderingContext ctxt) {
 		
-		switch (state) {
-		case BRAKING:
-			
-			if (APP.CARTEXTURE_DRAW) {
-				paintImage(ctxt);
-			} else {
-				if (!driver.deadlocked) {
+		if (APP.CARTEXTURE_DRAW) {
+			paintImage(ctxt);
+		} else {
+			if (!driver.deadlocked) {
+				switch (state) {
+				case BRAKING:
 					ctxt.setColor(Color.BLUE);
-					paintRect(ctxt);
-				} else {
-					ctxt.setColor(Color.RED);
-					paintRect(ctxt);
-				}
-			}
-			
-			paintBrakes(ctxt);
-			
-			break;
-		case DRIVING:
-		case SINKED:
-			
-			if (APP.CARTEXTURE_DRAW) {
-				paintImage(ctxt);
-			} else {
-				ctxt.setColor(Color.BLUE);
-				paintRect(ctxt);
-			}
-			
-			break;
-			
-		case SKIDDED:
-			
-			if (APP.CARTEXTURE_DRAW) {
-				paintImage(ctxt);
-			} else {
-				ctxt.setColor(Color.GREEN);
-				paintRect(ctxt);
-			}
-			
-			break;
-			
-		case CRASHED:
-			
-			if (APP.CARTEXTURE_DRAW) {
-				paintImage(ctxt);
-			} else {
-				if (!driver.deadlocked) {
+					break;
+				case CRASHED:
 					ctxt.setColor(Color.ORANGE);
-					paintRect(ctxt);
-				} else {
+					break;
+				case DRIVING:
+					ctxt.setColor(Color.BLUE);
+					break;
+				case EDITING:
+					ctxt.setColor(Color.BLUE);
+					break;
+				case SINKED:
+					ctxt.setColor(Color.BLUE);
+					break;
+				case SKIDDED:
+					ctxt.setColor(Color.GREEN);
+					break;
+				}
+			} else {
+				switch (state) {
+				case BRAKING:
+					ctxt.setColor(Color.RED);
+					break;
+				case CRASHED:
 					ctxt.setColor(APP.redOrange);
-					paintRect(ctxt);
+					break;
+				case DRIVING:
+					ctxt.setColor(Color.RED);
+					break;
+				case EDITING:
+					ctxt.setColor(Color.RED);
+					break;
+				case SINKED:
+					ctxt.setColor(Color.RED);
+					break;
+				case SKIDDED:
+					ctxt.setColor(Color.RED);
+					break;
 				}
 			}
-			
-			break;
+			paintRect(ctxt);
+		}
+		
+		if (state == CarStateEnum.BRAKING) {
+			paintBrakes(ctxt);
 		}
 		
 		if (APP.DEBUG_DRAW) {
@@ -550,9 +552,6 @@ public class Car extends Entity {
 		
 	}
 	
-	/**
-	 * @param g2 in world coords
-	 */
 	public void paintHilite(RenderingContext ctxt) {
 		ctxt.setColor(Color.BLUE);
 		paintRect(ctxt);

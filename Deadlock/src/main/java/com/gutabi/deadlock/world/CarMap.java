@@ -184,6 +184,8 @@ public class CarMap {
 				}
 				
 				break;
+			case EDITING:
+				break;
 			}
 		}
 		

@@ -68,22 +68,11 @@ public class WorldPanel extends PanelBase {
 	public Point lastMovedOrDraggedPanelPoint;
 	Point lastClickedPanelPoint;
 	
-	public Point lastPressedWorldPoint;
-	
-	public Point lastDraggedWorldPoint;
-	public boolean lastDraggedWorldPointWasNull;
-	
-	
-	
-	public Point lastMovedWorldPoint;
-	public Point lastMovedOrDraggedWorldPoint;
-	
 	public void pressed(InputEvent ev) {
 		
-		Point p = ev.p;
+		Point p = panelToWorld(ev.p);
 		
-		lastPressedWorldPoint = panelToWorld(p);
-		lastDraggedWorldPoint = null;
+		screen.world.pressed(new InputEvent(p));
 		
 	}
 	
@@ -94,21 +83,18 @@ public class WorldPanel extends PanelBase {
 		switch (screen.mode) {
 		case RUNNING:
 		case PAUSED: {
-			Point p = ev.p;
+			Point p = panelToWorld(ev.p);
 			
-			lastDraggedWorldPointWasNull = (lastDraggedWorldPoint == null);
-			lastDraggedWorldPoint = panelToWorld(p);
-			lastMovedOrDraggedWorldPoint = lastDraggedWorldPoint;
+			screen.world.dragged(new InputEvent(p));
 			break;
 		}
 		case DIALOG:
 			break;
 		case EDITING: {
-			Point p = ev.p;
 			
-			lastDraggedWorldPointWasNull = (lastDraggedWorldPoint == null);
-			lastDraggedWorldPoint = panelToWorld(p);
-			lastMovedOrDraggedWorldPoint = lastDraggedWorldPoint;
+			Point p = panelToWorld(ev.p);
+			
+			screen.world.dragged(new InputEvent(p));
 			screen.tool.dragged(ev);
 			break;
 		}
@@ -138,20 +124,36 @@ public class WorldPanel extends PanelBase {
 		switch (screen.mode) {
 		case RUNNING:
 		case PAUSED: {
-			Point p = ev.p;
+			Point p = panelToWorld(ev.p);
 			
-			lastMovedWorldPoint = panelToWorld(p);
-			lastMovedOrDraggedWorldPoint = lastMovedWorldPoint;
+			screen.world.moved(new InputEvent(p));
 			break;
 		}
 		case DIALOG:
 			break;
 		case EDITING: {
-			Point p = ev.p;
+			Point p = panelToWorld(ev.p);
 			
-			lastMovedWorldPoint = panelToWorld(p);
-			lastMovedOrDraggedWorldPoint = lastMovedWorldPoint;
+			screen.world.moved(new InputEvent(p));
 			screen.tool.moved(ev);
+			break;
+		}
+		}
+	}
+	
+	public void clicked(InputEvent ev) {
+		
+		switch (screen.mode) {
+		case RUNNING:
+		case PAUSED: {
+			Point p = panelToWorld(ev.p);
+			
+			screen.world.clicked(new InputEvent(p));
+			break;
+		}
+		case DIALOG:
+			break;
+		case EDITING: {
 			break;
 		}
 		}

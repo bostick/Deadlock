@@ -17,9 +17,11 @@ import org.jbox2d.common.Vec2;
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.AABB;
+import com.gutabi.deadlock.ui.InputEvent;
 import com.gutabi.deadlock.ui.RenderingContext;
 import com.gutabi.deadlock.world.cars.Car;
 import com.gutabi.deadlock.world.cars.CarEventListener;
+import com.gutabi.deadlock.world.cars.CarStateEnum;
 import com.gutabi.deadlock.world.graph.Fixture;
 import com.gutabi.deadlock.world.graph.Graph;
 import com.gutabi.deadlock.world.graph.Intersection;
@@ -152,6 +154,17 @@ public class World {
 	private void postStep() {
 		
 		synchronized (APP) {
+			
+			if (lastClickedWorldPoint != null) {
+				
+				Car clicked = carMap.carHitTest(lastClickedWorldPoint);
+				if (clicked != null) {
+					
+					clicked.state = CarStateEnum.EDITING;
+				}
+				
+				lastClickedWorldPoint = null;
+			}
 			
 			carMap.postStep(t);
 			
@@ -311,6 +324,45 @@ public class World {
 				screen.worldViewport.width,
 				screen.worldViewport.height);
 	}
+	
+	
+	public Point lastPressedWorldPoint;
+	public Point lastDraggedWorldPoint;
+	public boolean lastDraggedWorldPointWasNull;
+	public Point lastMovedWorldPoint;
+	public Point lastMovedOrDraggedWorldPoint;
+	public Point lastClickedWorldPoint;
+	
+	
+	public void pressed(InputEvent ev) {
+		
+		lastPressedWorldPoint = ev.p;
+		lastDraggedWorldPoint = null;
+		
+	}
+	
+	public void dragged(InputEvent ev) {
+		
+		lastDraggedWorldPointWasNull = (lastDraggedWorldPoint == null);
+		lastDraggedWorldPoint = ev.p;
+		lastMovedOrDraggedWorldPoint = lastDraggedWorldPoint;
+		
+	}
+	
+	public void moved(InputEvent ev) {
+		
+		lastMovedWorldPoint = ev.p;
+		lastMovedOrDraggedWorldPoint = lastMovedWorldPoint;
+		
+	}
+	
+	public void clicked(InputEvent ev) {
+		
+		lastClickedWorldPoint = ev.p;
+		
+	}
+	
+	
 	
 	public void render_worldPanel() {
 		

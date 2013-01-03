@@ -134,6 +134,8 @@ public class Driver {
 			break;
 		case SINKED:
 			break;
+		case EDITING:
+			break;
 		}
 	}
 	
