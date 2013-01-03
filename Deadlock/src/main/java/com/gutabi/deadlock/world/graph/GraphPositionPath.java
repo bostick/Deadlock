@@ -421,14 +421,11 @@ public class GraphPositionPath {
 		hitMap.clear();
 	}
 	
-	/**
-	 * returns a sorted list of driver proximity events
-	 */
 	public Driver driverProximityTest(GraphPositionPathPosition center, double dist) {
 		
 		for (Entry<Driver, GraphPositionPathPosition> entry : hitMap.entrySet()) {
-			GraphPositionPathPosition otherCarCenter = entry.getValue();
 			Driver d = entry.getKey();
+			GraphPositionPathPosition otherCarCenter = entry.getValue();
 			if (otherCarCenter.equals(center)) {
 				continue;
 			}
@@ -436,7 +433,8 @@ public class GraphPositionPath {
 				continue;
 			}
 			double centerCenterDist = center.distanceTo(otherCarCenter);
-			if (DMath.lessThanEquals(centerCenterDist, dist)) {
+			double centerBackDist = centerCenterDist - d.c.CAR_LENGTH/2;
+			if (DMath.lessThanEquals(centerBackDist, dist)) {
 				assert !d.overallPos.equals(center);
 				return d;
 			}

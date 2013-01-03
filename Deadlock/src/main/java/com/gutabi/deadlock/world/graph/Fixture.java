@@ -20,6 +20,7 @@ import com.gutabi.deadlock.world.cars.FastCar;
 import com.gutabi.deadlock.world.cars.NormalCar;
 import com.gutabi.deadlock.world.cars.RandomCar;
 import com.gutabi.deadlock.world.cars.ReallyFastCar;
+import com.gutabi.deadlock.world.cars.Truck;
 
 public final class Fixture extends Vertex {
 	
@@ -153,9 +154,34 @@ public final class Fixture extends Vertex {
 		return path;
 	}
 	
+	
+	Car waitingCar;
+	
 	private void spawnNewCar(double t) {
 		
-		Car c = createNewCar();
+		Car c;
+		if (waitingCar == null) {
+			c = createNewCar();
+		} else {
+			c = waitingCar;
+		}
+		
+		boolean intersecting = world.carMap.intersect(c.shape.aabb);
+		
+		if (intersecting) {
+			
+			waitingCar = c;
+			
+			return;
+		}
+		
+		waitingCar = null;
+		
+		c.b2dInit();
+		c.computeDynamicPropertiesAlways();
+		c.computeDynamicPropertiesMoving();
+		
+		driverQueue.add(c.driver);
 		
 		if (c != null) {
 			c.startingTime = t;
@@ -214,6 +240,10 @@ public final class Fixture extends Vertex {
 		if (APP.REALLYCAR) {
 			l.add(ReallyFastCar.class);
 		}
+		if (APP.TRUCK) {
+			l.add(Truck.class);
+		}
+		
 		
 		if (l.isEmpty()) {
 			return null;
@@ -231,6 +261,8 @@ public final class Fixture extends Vertex {
 			return new RandomCar(world, this);
 		} else if (c == ReallyFastCar.class) {
 			return new ReallyFastCar(world, this);
+		} else if (c == Truck.class) {
+			return new Truck(world, this);
 		} else {
 			throw new AssertionError();
 		}
@@ -361,7 +393,7 @@ public final class Fixture extends Vertex {
 			ctxt.translate(-r, -r);
 			ctxt.paintImage(APP.sheet,
 					0, 0, 2 * r, 2 * r,
-					96, 224, 96+32, 224+32);
+					96, APP.spriteSectionRow+0, 96+32, APP.spriteSectionRow+0+32);
 			
 			ctxt.setTransform(origTransform);
 			

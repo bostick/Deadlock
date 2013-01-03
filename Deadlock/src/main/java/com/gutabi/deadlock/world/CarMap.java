@@ -1,9 +1,11 @@
 package com.gutabi.deadlock.world;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
+
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.jbox2d.callbacks.QueryCallback;
 
 import com.gutabi.deadlock.core.Point;
@@ -22,6 +24,8 @@ public class CarMap {
 	public final World world;
 	
 	private List<Car> cars = new ArrayList<Car>();
+	
+	static Logger logger = Logger.getLogger(CarMap.class);
 	
 	public CarMap(World world) {
 		this.world = world;

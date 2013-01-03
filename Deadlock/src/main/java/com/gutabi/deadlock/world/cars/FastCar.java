@@ -13,8 +13,16 @@ public class FastCar extends Car {
 	
 	public FastCar(World w, Fixture s) {
 		super(w, s);
+		sheetColStart = 0;
+		sheetColEnd = sheetColStart + 64;
 		sheetRowStart = 32;
-		sheetRowEnd = sheetRowStart + 16;
+		sheetRowEnd = sheetRowStart + 32;
+		
+		CAR_LENGTH = 1.0;
+		CAR_WIDTH = 0.5;
+		
+		computeCtorProperties();
+		computeStartingProperties();
 	}
 	
 	public double getMaxSpeed() {

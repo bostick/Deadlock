@@ -60,10 +60,7 @@ public class QuadrantEditorPanel extends PanelBase {
 		worldScreen.pixelsPerMeter = Math.min(pixelsPerMeterWidth, pixelxPerMeterHeight);
 		
 		worldScreen.worldViewport = new AABB(0, 0, worldScreen.world.quadrantMap.worldWidth, worldScreen.world.quadrantMap.worldHeight);
-//		worldScreen.cam.panelWidth = (int)(worldScreen.world.quadrantMap.worldWidth * worldScreen.cam.pixelsPerMeter);
-//		worldScreen.cam.panelHeight = (int)(worldScreen.world.quadrantMap.worldHeight * worldScreen.cam.pixelsPerMeter);
 		worldScreen.world.panelPostDisplay();
-		
 		
 		removeRow = new Button() {
 			
@@ -85,10 +82,7 @@ public class QuadrantEditorPanel extends PanelBase {
 				double pixelxPerMeterHeight = worldScreen.contentPane.worldPanel.aabb.height / worldScreen.world.quadrantMap.worldHeight;
 				worldScreen.pixelsPerMeter = Math.min(pixelsPerMeterWidth, pixelxPerMeterHeight);
 				
-//				worldScreen.world.canvasPostDisplay(new Dim(worldScreen.world.quadrantMap.worldWidth * worldScreen.cam.pixelsPerMeter, worldScreen.world.quadrantMap.worldHeight * worldScreen.cam.pixelsPerMeter));
 				worldScreen.worldViewport = new AABB(0, 0, worldScreen.world.quadrantMap.worldWidth, worldScreen.world.quadrantMap.worldHeight);
-//				worldScreen.cam.panelWidth = (int)(worldScreen.world.quadrantMap.worldWidth * worldScreen.cam.pixelsPerMeter);
-//				worldScreen.cam.panelHeight = (int)(worldScreen.world.quadrantMap.worldHeight * worldScreen.cam.pixelsPerMeter);
 				worldScreen.world.panelPostDisplay();
 				
 				worldScreen.world.render_worldPanel();
@@ -102,7 +96,9 @@ public class QuadrantEditorPanel extends PanelBase {
 				ctxt.translate(aabb.x, aabb.y);
 				ctxt.rotate(6 * Math.PI / 4, aabb.width/2, aabb.height/2);
 				
-				ctxt.paintImage(APP.sheet, 0, 0, 50, 50, 128, 224, 160, 256);
+				ctxt.paintImage(APP.sheet,
+						0, 0, 50, 50,
+						128, APP.spriteSectionRow+0, 160, APP.spriteSectionRow+0+32);
 				
 				ctxt.setTransform(origTransform);
 				
@@ -134,10 +130,7 @@ public class QuadrantEditorPanel extends PanelBase {
 				double pixelxPerMeterHeight = worldScreen.contentPane.worldPanel.aabb.height / worldScreen.world.quadrantMap.worldHeight;
 				worldScreen.pixelsPerMeter = Math.min(pixelsPerMeterWidth, pixelxPerMeterHeight);
 				
-//				worldScreen.world.canvasPostDisplay(new Dim(worldScreen.world.quadrantMap.worldWidth * worldScreen.cam.pixelsPerMeter, worldScreen.world.quadrantMap.worldHeight * worldScreen.cam.pixelsPerMeter));
 				worldScreen.worldViewport = new AABB(0, 0, worldScreen.world.quadrantMap.worldWidth, worldScreen.world.quadrantMap.worldHeight);
-//				worldScreen.cam.panelWidth = (int)(worldScreen.world.quadrantMap.worldWidth * worldScreen.cam.pixelsPerMeter);
-//				worldScreen.cam.panelHeight = (int)(worldScreen.world.quadrantMap.worldHeight * worldScreen.cam.pixelsPerMeter);
 				worldScreen.world.panelPostDisplay();
 				
 				worldScreen.world.render_worldPanel();
@@ -152,7 +145,9 @@ public class QuadrantEditorPanel extends PanelBase {
 				ctxt.translate(aabb.ul.x, aabb.ul.y);
 				ctxt.rotate(2 * Math.PI / 4, aabb.width/2, aabb.height/2);
 				
-				ctxt.paintImage(APP.sheet, 0, 0, 50, 50, 128, 224, 160, 256);
+				ctxt.paintImage(APP.sheet,
+						0, 0, 50, 50,
+						128, APP.spriteSectionRow+0, 160, APP.spriteSectionRow+0+32);
 				
 				ctxt.setTransform(origTransform);
 				
@@ -183,10 +178,7 @@ public class QuadrantEditorPanel extends PanelBase {
 				double pixelxPerMeterHeight = worldScreen.contentPane.worldPanel.aabb.height / worldScreen.world.quadrantMap.worldHeight;
 				worldScreen.pixelsPerMeter = Math.min(pixelsPerMeterWidth, pixelxPerMeterHeight);
 				
-//				worldScreen.world.canvasPostDisplay(new Dim(worldScreen.world.quadrantMap.worldWidth * worldScreen.cam.pixelsPerMeter, worldScreen.world.quadrantMap.worldHeight * worldScreen.cam.pixelsPerMeter));
 				worldScreen.worldViewport = new AABB(0, 0, worldScreen.world.quadrantMap.worldWidth, worldScreen.world.quadrantMap.worldHeight);
-//				worldScreen.cam.panelWidth = (int)(worldScreen.world.quadrantMap.worldWidth * worldScreen.cam.pixelsPerMeter);
-//				worldScreen.cam.panelHeight = (int)(worldScreen.world.quadrantMap.worldHeight * worldScreen.cam.pixelsPerMeter);
 				worldScreen.world.panelPostDisplay();
 				
 				worldScreen.world.render_worldPanel();
@@ -200,7 +192,9 @@ public class QuadrantEditorPanel extends PanelBase {
 				ctxt.translate(aabb.ul.x, aabb.ul.y);
 				ctxt.rotate(4 * Math.PI / 4, aabb.width/2, aabb.height/2);
 				
-				ctxt.paintImage(APP.sheet, 0, 0, 50, 50, 128, 224, 160, 256);
+				ctxt.paintImage(APP.sheet,
+						0, 0, 50, 50,
+						128, APP.spriteSectionRow+0, 160, APP.spriteSectionRow+0+32);
 				
 				ctxt.setTransform(origTransform);
 				
@@ -230,10 +224,7 @@ public class QuadrantEditorPanel extends PanelBase {
 				double pixelxPerMeterHeight = worldScreen.contentPane.worldPanel.aabb.height / worldScreen.world.quadrantMap.worldHeight;
 				worldScreen.pixelsPerMeter = Math.min(pixelsPerMeterWidth, pixelxPerMeterHeight);
 				
-//				worldScreen.world.canvasPostDisplay(new Dim(worldScreen.world.quadrantMap.worldWidth * worldScreen.cam.pixelsPerMeter, worldScreen.world.quadrantMap.worldHeight * worldScreen.cam.pixelsPerMeter));
 				worldScreen.worldViewport = new AABB(0, 0, worldScreen.world.quadrantMap.worldWidth, worldScreen.world.quadrantMap.worldHeight);
-//				worldScreen.cam.panelWidth = (int)(worldScreen.world.quadrantMap.worldWidth * worldScreen.cam.pixelsPerMeter);
-//				worldScreen.cam.panelHeight = (int)(worldScreen.world.quadrantMap.worldHeight * worldScreen.cam.pixelsPerMeter);
 				worldScreen.world.panelPostDisplay();
 				
 				worldScreen.world.render_worldPanel();
@@ -247,7 +238,9 @@ public class QuadrantEditorPanel extends PanelBase {
 				ctxt.translate(aabb.ul.x, aabb.ul.y);
 				ctxt.rotate(0 * Math.PI / 4, aabb.width/2, aabb.height/2);
 				
-				ctxt.paintImage(APP.sheet, 0, 0, 50, 50, 128, 224, 160, 256);
+				ctxt.paintImage(APP.sheet,
+						0, 0, 50, 50,
+						128, APP.spriteSectionRow+0, 160, APP.spriteSectionRow+0+32);
 				
 				ctxt.setTransform(origTransform);
 				
@@ -278,10 +271,7 @@ public class QuadrantEditorPanel extends PanelBase {
 				double pixelxPerMeterHeight = worldScreen.contentPane.worldPanel.aabb.height / worldScreen.world.quadrantMap.worldHeight;
 				worldScreen.pixelsPerMeter = Math.min(pixelsPerMeterWidth, pixelxPerMeterHeight);
 				
-//				worldScreen.world.canvasPostDisplay(new Dim(worldScreen.world.quadrantMap.worldWidth * worldScreen.cam.pixelsPerMeter, worldScreen.world.quadrantMap.worldHeight * worldScreen.cam.pixelsPerMeter));
 				worldScreen.worldViewport = new AABB(0, 0, worldScreen.world.quadrantMap.worldWidth, worldScreen.world.quadrantMap.worldHeight);
-//				worldScreen.cam.panelWidth = (int)(worldScreen.world.quadrantMap.worldWidth * worldScreen.cam.pixelsPerMeter);
-//				worldScreen.cam.panelHeight = (int)(worldScreen.world.quadrantMap.worldHeight * worldScreen.cam.pixelsPerMeter);
 				worldScreen.world.panelPostDisplay();
 				
 				worldScreen.world.render_worldPanel();
@@ -295,7 +285,9 @@ public class QuadrantEditorPanel extends PanelBase {
 				ctxt.translate(aabb.ul.x, aabb.ul.y);
 				ctxt.rotate(5 * Math.PI / 4, aabb.width/2, aabb.height/2);
 				
-				ctxt.paintImage(APP.sheet, 0, 0, 50, 50, 128, 224, 160, 256);
+				ctxt.paintImage(APP.sheet,
+						0, 0, 50, 50,
+						128, APP.spriteSectionRow+0, 160, APP.spriteSectionRow+0+32);
 				
 				ctxt.setTransform(origTransform);
 				
@@ -325,10 +317,7 @@ public class QuadrantEditorPanel extends PanelBase {
 				double pixelxPerMeterHeight = worldScreen.contentPane.worldPanel.aabb.height / worldScreen.world.quadrantMap.worldHeight;
 				worldScreen.pixelsPerMeter = Math.min(pixelsPerMeterWidth, pixelxPerMeterHeight);
 				
-//				worldScreen.world.canvasPostDisplay(new Dim(worldScreen.world.quadrantMap.worldWidth * worldScreen.cam.pixelsPerMeter, worldScreen.world.quadrantMap.worldHeight * worldScreen.cam.pixelsPerMeter));
 				worldScreen.worldViewport = new AABB(0, 0, worldScreen.world.quadrantMap.worldWidth, worldScreen.world.quadrantMap.worldHeight);
-//				worldScreen.cam.panelWidth = (int)(worldScreen.world.quadrantMap.worldWidth * worldScreen.cam.pixelsPerMeter);
-//				worldScreen.cam.panelHeight = (int)(worldScreen.world.quadrantMap.worldHeight * worldScreen.cam.pixelsPerMeter);
 				worldScreen.world.panelPostDisplay();
 				
 				worldScreen.world.render_worldPanel();
@@ -342,7 +331,9 @@ public class QuadrantEditorPanel extends PanelBase {
 				ctxt.translate(aabb.ul.x, aabb.ul.y);
 				ctxt.rotate(1 * Math.PI / 4, aabb.width/2, aabb.height/2);
 				
-				ctxt.paintImage(APP.sheet, 0, 0, 50, 50, 128, 224, 160, 256);
+				ctxt.paintImage(APP.sheet,
+						0, 0, 50, 50,
+						128, APP.spriteSectionRow+0, 160, APP.spriteSectionRow+0+32);
 				
 				ctxt.setTransform(origTransform);
 				
@@ -479,10 +470,7 @@ public class QuadrantEditorPanel extends PanelBase {
 				double pixelsPerMeterHeight = worldScreen.contentPane.worldPanel.aabb.height / worldScreen.world.quadrantMap.worldHeight;
 				worldScreen.pixelsPerMeter = Math.min(pixelsPerMeterWidth, pixelsPerMeterHeight);
 				
-//				worldScreen.world.canvasPostDisplay(new Dim(worldScreen.world.quadrantMap.worldWidth * worldScreen.cam.pixelsPerMeter, worldScreen.world.quadrantMap.worldHeight * worldScreen.cam.pixelsPerMeter));
 				worldScreen.worldViewport = new AABB(0, 0, worldScreen.world.quadrantMap.worldWidth, worldScreen.world.quadrantMap.worldHeight);
-//				worldScreen.cam.panelWidth = (int)(worldScreen.world.quadrantMap.worldWidth * worldScreen.cam.pixelsPerMeter);
-//				worldScreen.cam.panelHeight = (int)(worldScreen.world.quadrantMap.worldHeight * worldScreen.cam.pixelsPerMeter);
 				worldScreen.world.panelPostDisplay();
 				
 				worldScreen.world.render_worldPanel();

@@ -25,6 +25,7 @@ public class ControlPanel extends PanelBase {
 	Label normalCarsLab;
 	Label fastCarLab;
 	Label reallyCarLab;
+	Label truckLab;
 	Label stateLab;
 	Label fpsLab;
 	Label stopSignLab;
@@ -36,6 +37,7 @@ public class ControlPanel extends PanelBase {
 	public Checkbox fastCarButton;
 //	public JCheckBox randomCarButton;
 	public Checkbox reallyCarButton;
+	public Checkbox truckButton;
 	
 	public Button startButton;
 	public Button stopButton;
@@ -121,6 +123,25 @@ public class ControlPanel extends PanelBase {
 		reallyCarLab.render();
 		
 		
+		truckButton = new Checkbox() {
+			public void action() {
+				selected = !selected;
+				render();
+				screen.contentPane.repaint();
+				
+				APP.TRUCK = selected;
+			}
+		};
+		truckButton.selected = APP.TRUCK;
+		truckButton.setLocation(5, 5 + simulationInitLab.getHeight() + 5 + normalCarButton.getHeight() + 5 + fastCarButton.getHeight() + 5 + reallyCarButton.getHeight() + 5);
+		truckButton.render();
+		
+		truckLab = new Label("Trucks");
+		truckLab.font = new Font("Visitor TT1 BRK", Font.PLAIN, 16);
+		truckLab.renderLocal();
+		truckLab.setLocation(5 + reallyCarButton.getWidth() + 5, 5 + simulationInitLab.getHeight() + 5 + normalCarButton.getHeight() + 5 + fastCarButton.getHeight() + 5 + reallyCarButton.getHeight() + 5);
+		truckLab.render();
+		
 		startButton = new Button() {
 			public void action() {
 				
@@ -151,7 +172,7 @@ public class ControlPanel extends PanelBase {
 		startButton.lab = new Label("Start");
 		startButton.lab.font = new Font("Visitor TT1 BRK", Font.PLAIN, 32);
 		startButton.command = "start";
-		startButton.setLocation(5, 120);
+		startButton.setLocation(5, 140);
 		startButton.render();
 		
 		stopButton = new Button() {
@@ -175,14 +196,14 @@ public class ControlPanel extends PanelBase {
 		stopButton.lab.font = new Font("Visitor TT1 BRK", Font.PLAIN, 32);
 		stopButton.command = "stop";
 		stopButton.enabled = false;
-		stopButton.setLocation(5 + startButton.aabb.width + 5, 120);
+		stopButton.setLocation(5 + startButton.aabb.width + 5, startButton.aabb.y + stopButton.aabb.height);
 		stopButton.render();
 		
 		
 		stateLab = new Label("Simulation State:");
 		stateLab.font = new Font("Visitor TT1 BRK", Font.PLAIN, 16);
 		stateLab.renderLocal();
-		stateLab.setLocation(5, 160);
+		stateLab.setLocation(5, 180);
 		stateLab.render();
 		
 		
@@ -199,13 +220,13 @@ public class ControlPanel extends PanelBase {
 			}
 		};
 		fpsCheckBox.selected = APP.FPS_DRAW;
-		fpsCheckBox.setLocation(5, 160 + stateLab.getHeight() + 5);
+		fpsCheckBox.setLocation(5, stateLab.aabb.y + stateLab.getHeight() + 5);
 		fpsCheckBox.render();
 		
 		fpsLab = new Label("FPS");
 		fpsLab.font = new Font("Visitor TT1 BRK", Font.PLAIN, 16);
 		fpsLab.renderLocal();
-		fpsLab.setLocation(5 + fpsCheckBox.getWidth() + 5, 160 + stateLab.getHeight() + 5);
+		fpsLab.setLocation(5 + fpsCheckBox.getWidth() + 5, stateLab.aabb.y + stateLab.getHeight() + 5);
 		fpsLab.render();
 		
 		
@@ -222,13 +243,13 @@ public class ControlPanel extends PanelBase {
 			}
 		};
 		stopSignCheckBox.selected = APP.STOPSIGN_DRAW;
-		stopSignCheckBox.setLocation(5, 160 + stateLab.getHeight() + 5 + fpsCheckBox.getHeight() + 5);
+		stopSignCheckBox.setLocation(5, stateLab.aabb.y + stateLab.getHeight() + 5 + fpsCheckBox.getHeight() + 5);
 		stopSignCheckBox.render();
 		
 		stopSignLab = new Label("Stop Signs");
 		stopSignLab.font = new Font("Visitor TT1 BRK", Font.PLAIN, 16);
 		stopSignLab.renderLocal();
-		stopSignLab.setLocation(5 + stopSignCheckBox.getWidth() + 5, 160 + stateLab.getHeight() + 5 + fpsCheckBox.getHeight() + 5);
+		stopSignLab.setLocation(5 + stopSignCheckBox.getWidth() + 5, stateLab.aabb.y + stateLab.getHeight() + 5 + fpsCheckBox.getHeight() + 5);
 		stopSignLab.render();
 		
 		
@@ -244,13 +265,13 @@ public class ControlPanel extends PanelBase {
 			}
 		};
 		carTextureCheckBox.selected = APP.CARTEXTURE_DRAW;
-		carTextureCheckBox.setLocation(5, 160 + stateLab.getHeight() + 5 + fpsCheckBox.getHeight() + 5 + stopSignCheckBox.getHeight() + 5);
+		carTextureCheckBox.setLocation(5, stateLab.aabb.y + stateLab.getHeight() + 5 + fpsCheckBox.getHeight() + 5 + stopSignCheckBox.getHeight() + 5);
 		carTextureCheckBox.render();
 		
 		carTextureLab = new Label("Car Textures");
 		carTextureLab.font = new Font("Visitor TT1 BRK", Font.PLAIN, 16);
 		carTextureLab.renderLocal();
-		carTextureLab.setLocation(5 + carTextureCheckBox.getWidth() + 5, 160 + stateLab.getHeight() + 5 + fpsCheckBox.getHeight() + 5 + stopSignCheckBox.getHeight() + 5);
+		carTextureLab.setLocation(5 + carTextureCheckBox.getWidth() + 5, stateLab.aabb.y + stateLab.getHeight() + 5 + fpsCheckBox.getHeight() + 5 + stopSignCheckBox.getHeight() + 5);
 		carTextureLab.render();
 		
 		
@@ -266,13 +287,13 @@ public class ControlPanel extends PanelBase {
 			}
 		};
 		explosionsCheckBox.selected = APP.EXPLOSIONS_DRAW;
-		explosionsCheckBox.setLocation(5, 160 + stateLab.getHeight() + 5 + fpsCheckBox.getHeight() + 5 + stopSignCheckBox.getHeight() + 5 + carTextureCheckBox.getHeight() + 5);
+		explosionsCheckBox.setLocation(5, stateLab.aabb.y + stateLab.getHeight() + 5 + fpsCheckBox.getHeight() + 5 + stopSignCheckBox.getHeight() + 5 + carTextureCheckBox.getHeight() + 5);
 		explosionsCheckBox.render();
 		
 		explosionsLab = new Label("Explosions");
 		explosionsLab.font = new Font("Visitor TT1 BRK", Font.PLAIN, 16);
 		explosionsLab.renderLocal();
-		explosionsLab.setLocation(5 + explosionsCheckBox.getWidth() + 5, 160 + stateLab.getHeight() + 5 + fpsCheckBox.getHeight() + 5 + stopSignCheckBox.getHeight() + 5 + carTextureCheckBox.getHeight() + 5);
+		explosionsLab.setLocation(5 + explosionsCheckBox.getWidth() + 5, stateLab.aabb.y + stateLab.getHeight() + 5 + fpsCheckBox.getHeight() + 5 + stopSignCheckBox.getHeight() + 5 + carTextureCheckBox.getHeight() + 5);
 		explosionsLab.render();
 		
 		
@@ -289,13 +310,13 @@ public class ControlPanel extends PanelBase {
 			}
 		};
 		debugCheckBox.selected = APP.DEBUG_DRAW;
-		debugCheckBox.setLocation(5, 160 + stateLab.getHeight() + 5 + fpsCheckBox.getHeight() + 5 + stopSignCheckBox.getHeight() + 5 + carTextureCheckBox.getHeight() + 5 + explosionsCheckBox.getHeight() + 5);
+		debugCheckBox.setLocation(5, stateLab.aabb.y + stateLab.getHeight() + 5 + fpsCheckBox.getHeight() + 5 + stopSignCheckBox.getHeight() + 5 + carTextureCheckBox.getHeight() + 5 + explosionsCheckBox.getHeight() + 5);
 		debugCheckBox.render();
 		
 		debugLab = new Label("debug");
 		debugLab.font = new Font("Visitor TT1 BRK", Font.PLAIN, 16);
 		debugLab.renderLocal();
-		debugLab.setLocation(5 + debugCheckBox.getWidth() + 5, 160 + stateLab.getHeight() + 5 + fpsCheckBox.getHeight() + 5 + stopSignCheckBox.getHeight() + 5 + carTextureCheckBox.getHeight() + 5 + explosionsCheckBox.getHeight() + 5);
+		debugLab.setLocation(5 + debugCheckBox.getWidth() + 5, stateLab.aabb.y + stateLab.getHeight() + 5 + fpsCheckBox.getHeight() + 5 + stopSignCheckBox.getHeight() + 5 + carTextureCheckBox.getHeight() + 5 + explosionsCheckBox.getHeight() + 5);
 		debugLab.render();
 	}
 	
@@ -346,6 +367,8 @@ public class ControlPanel extends PanelBase {
 			fastCarButton.action();
 		} else if (reallyCarButton.hitTest(ev.p)) {
 			reallyCarButton.action();
+		} else if (truckButton.hitTest(ev.p)) {
+			truckButton.action();
 		} else if (fpsCheckBox.hitTest(ev.p)) {
 			fpsCheckBox.action();
 		} else if (stopSignCheckBox.hitTest(ev.p)) {
@@ -417,9 +440,10 @@ public class ControlPanel extends PanelBase {
 		simulationInitLab.paint(ctxt);
 		
 		normalCarsLab.paint(ctxt);
-		
 		fastCarLab.paint(ctxt);
 		reallyCarLab.paint(ctxt);
+		truckLab.paint(ctxt);
+		
 		stateLab.paint(ctxt);
 		fpsLab.paint(ctxt);
 		stopSignLab.paint(ctxt);
@@ -430,6 +454,7 @@ public class ControlPanel extends PanelBase {
 		normalCarButton.paint(ctxt);
 		fastCarButton.paint(ctxt);
 		reallyCarButton.paint(ctxt);
+		truckButton.paint(ctxt);
 		
 		startButton.paint(ctxt);
 		stopButton.paint(ctxt);

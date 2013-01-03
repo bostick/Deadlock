@@ -197,7 +197,7 @@ public class WorldPanel extends PanelBase {
 		
 		if (APP.FPS_DRAW) {
 			
-			ctxt.translate(ctxt.screen.worldViewport.x, ctxt.screen.worldViewport.y);
+//			ctxt.translate(ctxt.screen.worldViewport.x, ctxt.screen.worldViewport.y);
 			
 			screen.stats.paint(ctxt);
 		}

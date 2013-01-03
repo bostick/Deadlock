@@ -129,7 +129,7 @@ public class QuadrantMap {
 			for (int j = 0; j < maxCols; j++) {
 				quadrantGrassG2.drawImage(APP.sheet,
 						32 * j, 32 * i, 32 * j + 32, 32 * i + 32,
-						0, 224, 0+32, 224+32, null);
+						0, APP.spriteSectionRow+0, 0+32, APP.spriteSectionRow+0+32, null);
 			}
 		}
 		

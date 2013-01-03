@@ -26,6 +26,7 @@ public class DeadlockApplication {
 	public boolean NORMALCAR = true;
 	public boolean FASTCAR = true;
 	public boolean REALLYCAR = true;
+	public boolean TRUCK = true;
 	
 	public boolean FPS_DRAW = false;
 	public boolean STOPSIGN_DRAW = true;
@@ -37,6 +38,9 @@ public class DeadlockApplication {
 	public Random RANDOM = new Random(1);
 	
 	public BufferedImage sheet;
+	public int carSectionRow = 0;
+	public int spriteSectionRow = 480;
+	
 	public BufferedImage explosionSheet;
 	public BufferedImage titleBackground;
 	public BufferedImage title_white;

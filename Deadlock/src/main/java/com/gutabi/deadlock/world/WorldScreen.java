@@ -64,6 +64,7 @@ public class WorldScreen extends Screen {
 	public void postDisplay() {
 		
 		contentPane.postDisplay();
+		
 	}
 	
 	

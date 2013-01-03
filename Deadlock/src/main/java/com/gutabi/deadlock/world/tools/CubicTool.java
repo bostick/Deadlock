@@ -256,17 +256,6 @@ public class CubicTool extends ToolBase {
 		}
 	}
 	
-	public void exited(InputEvent ev) {
-		switch (mode) {
-		case FREE:
-			break;
-		case SET:
-			break;
-		case KNOB:
-			break;
-		}
-	}
-	
 	public void draw(RenderingContext ctxt) {
 		
 		if (p == null) {

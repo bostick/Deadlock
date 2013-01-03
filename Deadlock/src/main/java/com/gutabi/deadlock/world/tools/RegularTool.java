@@ -264,11 +264,6 @@ public class RegularTool extends ToolBase {
 		}
 	}
 	
-	public void exited(InputEvent ev) {
-		screen.tool.setPoint(null);
-		screen.contentPane.repaint();
-	}
-	
 	public void draftStart(Point p) {
 		
 		mode = RegularToolMode.DRAFTING;

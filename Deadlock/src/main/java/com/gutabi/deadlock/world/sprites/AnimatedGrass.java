@@ -86,7 +86,7 @@ public class AnimatedGrass {
 		ctxt.translate(p.x - AnimatedGrass.GRASS_SIZE/2, p.y - AnimatedGrass.GRASS_SIZE/2);
 		ctxt.paintImage(APP.sheet,
 				0, 0, GRASS_SIZE, GRASS_SIZE,
-				0, 256, 0+32, 256+32);	
+				0, APP.spriteSectionRow+32, 0+32, APP.spriteSectionRow+32+32);	
 		
 		ctxt.setTransform(origTransform);
 		
@@ -99,7 +99,7 @@ public class AnimatedGrass {
 		ctxt.translate(p.x - AnimatedGrass.GRASS_SIZE/2, p.y - AnimatedGrass.GRASS_SIZE/2);
 		ctxt.paintImage(APP.sheet,
 				0, 0, GRASS_SIZE, GRASS_SIZE,
-				32, 256, 32+32, 256+32);
+				0, APP.spriteSectionRow+32, 0+32, APP.spriteSectionRow+32+32);
 		
 		ctxt.setTransform(origTransform);
 		
@@ -112,7 +112,7 @@ public class AnimatedGrass {
 		ctxt.translate(p.x - AnimatedGrass.GRASS_SIZE/2, p.y - AnimatedGrass.GRASS_SIZE/2);
 		ctxt.paintImage(APP.sheet,
 				0, 0, GRASS_SIZE, GRASS_SIZE,
-				64, 256, 64+32, 256+32);
+				0, APP.spriteSectionRow+32, 0+32, APP.spriteSectionRow+32+32);
 		
 		ctxt.setTransform(origTransform);
 		

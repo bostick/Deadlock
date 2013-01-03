@@ -37,4 +37,9 @@ public class Geom {
 		Point w3 = Matrix.times(m, q.p3).plus(t);
 		return new Quad(q.parent, w0, w1, w2, w3);
 	}
+	
+	public static double[][] rotationMatrix(double a) {
+		return new double[][]{ {Math.cos(a), -Math.sin(a)}, {Math.sin(a), Math.cos(a)} };
+	}
+	
 }

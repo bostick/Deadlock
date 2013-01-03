@@ -218,17 +218,6 @@ public class CircleTool extends ToolBase {
 		}
 	}
 	
-	public void exited(InputEvent ev) {
-		switch (mode) {
-		case FREE:
-			break;
-		case SET:
-			break;
-		case KNOB:
-			break;
-		}
-	}
-	
 	Point origKnobCenter;
 	
 	public void draw(RenderingContext ctxt) {

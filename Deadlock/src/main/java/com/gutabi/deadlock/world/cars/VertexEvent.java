@@ -16,7 +16,7 @@ public abstract class VertexEvent extends DrivingEvent {
 		v = ((VertexPosition)vertexPosition.getGraphPosition()).v;
 		
 		if (!vertexPosition.isEndOfPath()) {
-			carPastExitPosition = vertexPosition.nextBound().travel(Car.CAR_LENGTH/2);
+			carPastExitPosition = vertexPosition.nextBound();
 		} else {
 			carPastExitPosition = null;
 		}

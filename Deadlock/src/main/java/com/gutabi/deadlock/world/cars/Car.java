@@ -31,8 +31,8 @@ import com.gutabi.deadlock.world.graph.Merger;
 
 public abstract class Car extends Entity {
 	
-	public static final double CAR_LENGTH = 1.0;
-	public static final double CAR_WIDTH = 0.5;
+	public double CAR_LENGTH = -1;
+	public double CAR_WIDTH = -1;
 	
 	/*
 	 * distance that center of a car has to be from center of a sink in order to be sinked
@@ -64,7 +64,7 @@ public abstract class Car extends Entity {
 	Quad localQuad;
 	protected Body b2dBody;
 	protected PolygonShape b2dShape;
-	protected org.jbox2d.dynamics.Fixture b2dFixture;
+	public org.jbox2d.dynamics.Fixture b2dFixture;
 	
 	/*
 	 * dynamic properties
@@ -78,14 +78,14 @@ public abstract class Car extends Entity {
 	double forwardSpeed;
 	float angle;
 	float angularVel;
-	double[][] carTransArr;
+	double[][] carTransArr = new double[2][2];
 	boolean atleastPartiallyOnRoad;
 	boolean inMerger;
 	
 	Point prevWorldPoint0;
 	Point prevWorldPoint3;
 	
-	private Quad shape;
+	public Quad shape;
 	
 	static Logger logger = Logger.getLogger(Car.class);
 	static Logger pathingLogger = Logger.getLogger(logger.getName()+".pathing");
@@ -100,23 +100,33 @@ public abstract class Car extends Entity {
 		
 		driver = new Driver(this);
 		engine = new Engine(world, this);
+	}
+	
+	public void computeCtorProperties() {
 		
-		Point p0 = new Point(-CAR_LENGTH / 2, -CAR_LENGTH / 4);
-		Point p1 = new Point(CAR_LENGTH / 2, -CAR_LENGTH / 4);
-		Point p2 = new Point(CAR_LENGTH / 2, CAR_LENGTH / 4);
-		Point p3 = new Point(-CAR_LENGTH / 2, CAR_LENGTH / 4);
+		Point p0 = new Point(-CAR_LENGTH / 2, -CAR_WIDTH / 2);
+		Point p1 = new Point(CAR_LENGTH / 2, -CAR_WIDTH / 2);
+		Point p2 = new Point(CAR_LENGTH / 2, CAR_WIDTH / 2);
+		Point p3 = new Point(-CAR_LENGTH / 2, CAR_WIDTH / 2);
 		localQuad = new Quad(this, p0, p1, p2, p3);
 		
-		computeStartingProperties();
-	}
-	
-	public String toString() {
-		return Integer.toString(id);
-	}
-	
-	private void computeStartingProperties() {
+		CAR_LOCALX = -CAR_LENGTH / 2;
+		CAR_LOCALY = -CAR_WIDTH / 2;
 		
-		logger.debug("spawn");
+		BRAKE_SIZE = 0.25;
+		BRAKE_LOCALX = -BRAKE_SIZE / 2;
+		BRAKE_LOCALY = -BRAKE_SIZE / 2;
+		
+		CAR_BRAKE1X = CAR_LOCALX + BRAKE_LOCALX;
+		CAR_BRAKE1Y = CAR_LOCALY + CAR_WIDTH/4 + BRAKE_LOCALY;
+		
+		CAR_BRAKE2X = CAR_LOCALX + BRAKE_LOCALX;
+		CAR_BRAKE2Y = CAR_LOCALY + 3 * CAR_WIDTH/4 + BRAKE_LOCALY;
+	}
+	
+	protected void computeStartingProperties() {
+		
+//		logger.debug("spawn");
 		
 		driver.computeStartingProperties();
 		
@@ -130,20 +140,13 @@ public abstract class Car extends Entity {
 		
 		startHeading = Math.atan2(dp.y, dp.x);
 		
-		b2dInit();
 		
+		p = source.p;
+		double[][] mat = Geom.rotationMatrix(startHeading);
 		
-		pVec2 = b2dBody.getPosition();
-		p = new Point(pVec2.x, pVec2.y);
-		Mat22 r = b2dBody.getTransform().R;
-		carTransArr = new double[2][2];
-		carTransArr[0][0] = r.col1.x;
-		carTransArr[0][1] = r.col2.x;
-		carTransArr[1][0] = r.col1.y;
-		carTransArr[1][1] = r.col2.y;
+		shape = Geom.localToWorld(localQuad, mat, p);
 		
-		shape = Geom.localToWorld(localQuad, carTransArr, p);
-		
+//		b2dInit();
 		
 //		Vec2 v = dp.vec2();
 //		v.normalize();
@@ -151,11 +154,11 @@ public abstract class Car extends Entity {
 		
 //		b2dBody.setLinearVelocity(v);
 		
-		computeDynamicPropertiesAlways();
-		computeDynamicPropertiesMoving();
+//		computeDynamicPropertiesAlways();
+//		computeDynamicPropertiesMoving();
 	}
 	
-	private void b2dInit() {
+	public void b2dInit() {
 		BodyDef bodyDef = new BodyDef();
 		bodyDef.type = BodyType.DYNAMIC;
 		bodyDef.position.set((float)startPoint.x, (float)startPoint.y);
@@ -177,7 +180,7 @@ public abstract class Car extends Entity {
 //				new Vec2((float)p2.getX(), (float)p2.getY()),
 //				new Vec2((float)p3.getX(), (float)p3.getY()),
 //				new Vec2((float)p4.getX(), (float)p4.getY())}, 4);
-		b2dShape.setAsBox((float)(CAR_LENGTH / 2), (float)(CAR_LENGTH / 4));
+		b2dShape.setAsBox((float)(CAR_LENGTH / 2), (float)(CAR_WIDTH / 2));
 		
 		FixtureDef fixtureDef = new FixtureDef();
 		fixtureDef.shape = b2dShape;
@@ -187,7 +190,6 @@ public abstract class Car extends Entity {
 		
 		mass = b2dBody.getMass();
 		momentOfInertia = b2dBody.getInertia();
-		
 	}
 	
 	
@@ -202,11 +204,11 @@ public abstract class Car extends Entity {
 		mergingCarFilter.maskBits = 0;
 	}
 	
-	private void computeDynamicPropertiesAlways() {
+	public void computeDynamicPropertiesAlways() {
 		vel = b2dBody.getLinearVelocity();
 	}
 	
-	private void computeDynamicPropertiesMoving() {
+	public void computeDynamicPropertiesMoving() {
 		
 		prevWorldPoint0 = shape.p0;
 		prevWorldPoint3 = shape.p3;
@@ -560,22 +562,25 @@ public abstract class Car extends Entity {
 	static Composite aComp = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f);
 	static Composite normalComp = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f);
 	
-	public static final double CAR_LOCALX = -CAR_LENGTH / 2;
-	public static final double CAR_LOCALY = -CAR_WIDTH / 2;
+	public double CAR_LOCALX;
+	public double CAR_LOCALY;
 	
-	public static final double BRAKE_SIZE = 0.25;
-	public static final double BRAKE_LOCALX = -BRAKE_SIZE / 2;
-	public static final double BRAKE_LOCALY = -BRAKE_SIZE / 2;
+	public double BRAKE_SIZE;
+	public double BRAKE_LOCALX;
+	public double BRAKE_LOCALY;
 	
-	public static final double CAR_BRAKE1X = CAR_LOCALX + BRAKE_LOCALX;
-	public static final double CAR_BRAKE1Y = CAR_LOCALY + CAR_WIDTH/4 + BRAKE_LOCALY;
+	public double CAR_BRAKE1X;
+	public double CAR_BRAKE1Y;
 	
-	public static final double CAR_BRAKE2X = CAR_LOCALX + BRAKE_LOCALX;
-	public static final double CAR_BRAKE2Y = CAR_LOCALY + 3 * CAR_WIDTH/4 + BRAKE_LOCALY;
+	public double CAR_BRAKE2X;
+	public double CAR_BRAKE2Y;
 	
-	public static final int brakeRowStart = 288;
+	
+	public static final int brakeRowStart = APP.spriteSectionRow+64;
 	public static final int brakeRowEnd = brakeRowStart + 8;
 	
+	protected int sheetColStart;
+	protected int sheetColEnd;
 	protected int sheetRowStart;
 	protected int sheetRowEnd;
 	
@@ -595,7 +600,7 @@ public abstract class Car extends Entity {
 		
 		ctxt.paintImage(APP.sheet,
 				0, 0, CAR_LENGTH, CAR_WIDTH,
-				64, sheetRowStart, 64+32, sheetRowEnd);
+				sheetColStart, sheetRowStart, sheetColEnd, sheetRowEnd);
 		
 		if (inMerger) {
 			ctxt.setComposite(origComposite);

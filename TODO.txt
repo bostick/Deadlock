@@ -1,14 +1,5 @@
 
 
-re-add BufferStrategy
-add repaint logic, only repaint needed areas
-profile cpu time
-
-
-
-test track screen
-tweak road friction, car speed, car friction, etc
-monitor car speed
 
 FOR ALPHA 2:
 
@@ -23,6 +14,23 @@ unrolling turf animation for adding road
 
 
 SOON:
+
+handle exiting for tools
+
+when world is created, make sure tool is drawn, don't wait for a move
+
+
+re-add BufferStrategy
+add repaint logic, only repaint needed areas
+profile cpu time
+
+
+
+test track screen
+tweak road friction, car speed, car friction, etc
+monitor car speed
+
+
 
 remove parent from SweepableShapes
 

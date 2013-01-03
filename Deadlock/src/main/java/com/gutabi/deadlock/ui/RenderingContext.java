@@ -23,7 +23,6 @@ public class RenderingContext extends DebugDraw {
 	
 	public final Graphics2D g2;
 	
-//	public WorldCamera cam;
 	public Screen screen;
 	
 	public RenderingContext(Graphics2D g2) {

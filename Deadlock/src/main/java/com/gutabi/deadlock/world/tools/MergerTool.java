@@ -66,11 +66,6 @@ public class MergerTool extends ToolBase {
 		screen.contentPane.repaint();
 	}
 	
-	public void exited(InputEvent ev) {
-		screen.tool.setPoint(null);
-		screen.contentPane.repaint();
-	}
-	
 	public void draw(RenderingContext ctxt) {
 	
 		if (p == null) {

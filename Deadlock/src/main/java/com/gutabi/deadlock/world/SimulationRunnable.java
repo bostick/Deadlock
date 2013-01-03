@@ -65,7 +65,11 @@ public class SimulationRunnable implements Runnable {
 				t += screen.DT;
 			}
 			
-			screen.contentPane.repaint();
+			screen.contentPane.repaint(
+					(int)screen.contentPane.worldPanel.aabb.x,
+					(int)screen.contentPane.worldPanel.aabb.y,
+					(int)screen.contentPane.worldPanel.aabb.width,
+					(int)screen.contentPane.worldPanel.aabb.height);
 			
 		} // outer
 		

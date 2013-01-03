@@ -15,7 +15,7 @@ public class Driver {
 	double carProximityLookahead;
 	double vertexArrivalLookahead;
 	
-	double steeringLookaheadDistance = Car.CAR_LENGTH * 0.5;
+//	double steeringLookaheadDistance = Car.CAR_LENGTH * 0.5;
 	
 	public final Car c;
 	
@@ -66,7 +66,6 @@ public class Driver {
 		overallPos = overallPath.startingPos;
 		
 		vertexDepartureQueue.add(new VertexSpawnEvent(overallPos));
-		c.source.driverQueue.add(this);
 	}
 	
 	private void computePath() {
@@ -143,6 +142,7 @@ public class Driver {
 		
 		switch (c.state) {
 		case DRIVING:
+			double steeringLookaheadDistance = c.CAR_LENGTH * 0.5;
 			GraphPositionPathPosition next = overallPos.travel(Math.min(steeringLookaheadDistance, overallPos.lengthToEndOfPath));
 			goalPoint = next.p;
 			break;
@@ -268,7 +268,7 @@ public class Driver {
 					
 					toRemove.add(e);
 					
-				} else if (overallPos.combo >= e.carPastExitPosition.combo) {
+				} else if (overallPos.combo >= e.carPastExitPosition.travel(c.CAR_LENGTH/2).combo) {
 					/*
 					 * driving past exit of intersection, so cleanup
 					 */
