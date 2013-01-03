@@ -114,11 +114,11 @@ public class Engine {
 	
 	private void updateDrive(double t) {
 		
-		double goalForwardVel = (float)c.getMaxSpeed();
+//		double goalForwardVel = (float)c.getMaxSp;
 		
 		double dv;
-		if (goalForwardVel > c.forwardSpeed) {
-			dv = goalForwardVel - c.forwardSpeed;
+		if (c.maxSpeed > c.forwardSpeed) {
+			dv = c.maxSpeed - c.forwardSpeed;
 		} else {
 			dv = 0.0f;
 		}

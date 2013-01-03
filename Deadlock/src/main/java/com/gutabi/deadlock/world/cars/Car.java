@@ -29,17 +29,17 @@ import com.gutabi.deadlock.world.graph.Fixture;
 import com.gutabi.deadlock.world.graph.GraphPositionPathPosition;
 import com.gutabi.deadlock.world.graph.Merger;
 
-public abstract class Car extends Entity {
+public class Car extends Entity {
 	
 	public double CAR_LENGTH = -1;
 	public double CAR_WIDTH = -1;
+	
+	public double maxSpeed = -1;
 	
 	/*
 	 * distance that center of a car has to be from center of a sink in order to be sinked
 	 */
 	public static final double SINK_EPSILON = 0.5f;
-	
-	public abstract double getMaxSpeed();
 	
 	public CarStateEnum state;
 	
@@ -124,7 +124,7 @@ public abstract class Car extends Entity {
 		CAR_BRAKE2Y = CAR_LOCALY + 3 * CAR_WIDTH/4 + BRAKE_LOCALY;
 	}
 	
-	protected void computeStartingProperties() {
+	public void computeStartingProperties() {
 		
 //		logger.debug("spawn");
 		
@@ -132,7 +132,7 @@ public abstract class Car extends Entity {
 		
 		startPoint = driver.overallPos.p;
 		
-		GraphPositionPathPosition next = driver.overallPos.travel(getMaxSpeed() * world.screen.DT);
+		GraphPositionPathPosition next = driver.overallPos.travel(maxSpeed * world.screen.DT);
 		
 		Point nextDTGoalPoint = next.p;
 		
@@ -579,10 +579,10 @@ public abstract class Car extends Entity {
 //	public static final int brakeRowStart = APP.spriteSectionRow+64;
 //	public static final int brakeRowEnd = brakeRowStart + 8;
 	
-	protected int sheetColStart;
-	protected int sheetColEnd;
-	protected int sheetRowStart;
-	protected int sheetRowEnd;
+	public int sheetColStart;
+	public int sheetColEnd;
+	public int sheetRowStart;
+	public int sheetRowEnd;
 	
 	protected void paintImage(RenderingContext ctxt) {
 		

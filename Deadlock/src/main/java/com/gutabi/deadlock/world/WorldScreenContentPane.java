@@ -199,14 +199,18 @@ public class WorldScreenContentPane extends ContentPane {
 		case PAUSED:
 			screen.world.zoom(1.1);
 			
-			screen.contentPane.worldPanel.lastMovedOrDraggedWorldPoint = screen.contentPane.worldPanel.panelToWorld(screen.contentPane.worldPanel.lastMovedOrDraggedPanelPoint);
+			if (screen.contentPane.worldPanel.lastMovedOrDraggedPanelPoint != null) {
+				screen.contentPane.worldPanel.lastMovedOrDraggedWorldPoint = screen.contentPane.worldPanel.panelToWorld(screen.contentPane.worldPanel.lastMovedOrDraggedPanelPoint);
+			}
 			break;
 		case DIALOG:
 			break;
 		case EDITING:
 			screen.world.zoom(1.1);
 			
-			screen.contentPane.worldPanel.lastMovedOrDraggedWorldPoint = screen.contentPane.worldPanel.panelToWorld(screen.contentPane.worldPanel.lastMovedOrDraggedPanelPoint);
+			if (screen.contentPane.worldPanel.lastMovedOrDraggedPanelPoint != null) {
+				screen.contentPane.worldPanel.lastMovedOrDraggedWorldPoint = screen.contentPane.worldPanel.panelToWorld(screen.contentPane.worldPanel.lastMovedOrDraggedPanelPoint);
+			}
 			Entity closest = screen.world.hitTest(screen.contentPane.worldPanel.lastMovedOrDraggedWorldPoint);
 			synchronized (APP) {
 				screen.hilited = closest;
@@ -228,14 +232,18 @@ public class WorldScreenContentPane extends ContentPane {
 		case PAUSED:
 			screen.world.zoom(0.9);
 			
-			screen.contentPane.worldPanel.lastMovedOrDraggedWorldPoint = screen.contentPane.worldPanel.panelToWorld(screen.contentPane.worldPanel.lastMovedOrDraggedPanelPoint);
+			if (screen.contentPane.worldPanel.lastMovedOrDraggedPanelPoint != null) {
+				screen.contentPane.worldPanel.lastMovedOrDraggedWorldPoint = screen.contentPane.worldPanel.panelToWorld(screen.contentPane.worldPanel.lastMovedOrDraggedPanelPoint);
+			}
 			break;
 		case DIALOG:
 			break;
 		case EDITING:
 			screen.world.zoom(0.9);
 			
-			screen.contentPane.worldPanel.lastMovedOrDraggedWorldPoint = screen.contentPane.worldPanel.panelToWorld(screen.contentPane.worldPanel.lastMovedOrDraggedPanelPoint);
+			if (screen.contentPane.worldPanel.lastMovedOrDraggedPanelPoint != null) {
+				screen.contentPane.worldPanel.lastMovedOrDraggedWorldPoint = screen.contentPane.worldPanel.panelToWorld(screen.contentPane.worldPanel.lastMovedOrDraggedPanelPoint);
+			}
 			Entity closest = screen.world.hitTest(screen.contentPane.worldPanel.lastMovedOrDraggedWorldPoint);
 			synchronized (APP) {
 				screen.hilited = closest;

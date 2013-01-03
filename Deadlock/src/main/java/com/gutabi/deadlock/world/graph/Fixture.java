@@ -16,11 +16,6 @@ import com.gutabi.deadlock.ui.RenderingContext;
 import com.gutabi.deadlock.world.ProgressMeter;
 import com.gutabi.deadlock.world.World;
 import com.gutabi.deadlock.world.cars.Car;
-import com.gutabi.deadlock.world.cars.FastCar;
-import com.gutabi.deadlock.world.cars.NormalCar;
-import com.gutabi.deadlock.world.cars.RandomCar;
-import com.gutabi.deadlock.world.cars.ReallyFastCar;
-import com.gutabi.deadlock.world.cars.Truck;
 
 public final class Fixture extends Vertex {
 	
@@ -224,49 +219,172 @@ public final class Fixture extends Vertex {
 		return true;
 	}
 	
-	@SuppressWarnings({"rawtypes"})
 	private Car createNewCar() {
 		
-		List<Class> l = new ArrayList<Class>();
-		if (APP.NORMALCAR) {
-			l.add(NormalCar.class);
-		}
-		if (APP.FASTCAR) {
-			l.add(FastCar.class);
-		}
-//		if (random) {
-//			l.add(RandomCar.class);
+//		List<Class> l = new ArrayList<Class>();
+//		if (APP.NORMALCAR) {
+//			l.add(NormalCar.class);
 //		}
-		if (APP.REALLYCAR) {
-			l.add(ReallyFastCar.class);
+//		if (APP.FASTCAR) {
+//			l.add(FastCar.class);
+//		}
+////		if (random) {
+////			l.add(RandomCar.class);
+////		}
+//		if (APP.REALLYCAR) {
+//			l.add(ReallyFastCar.class);
+//		}
+//		if (APP.TRUCK) {
+//			l.add(Truck.class);
+//		}
+//		
+//		
+//		if (l.isEmpty()) {
+//			return null;
+//		}
+		
+		int r = APP.RANDOM.nextInt(12);
+		
+		Car c = new Car(world, this);
+		
+//		r = 11;
+		switch (r) {
+		case 0:
+			c.sheetColStart = 0;
+			c.sheetColEnd = c.sheetColStart + 64;
+			c.sheetRowStart = 0;
+			c.sheetRowEnd = c.sheetRowStart + 32;
+			c.CAR_LENGTH = 1.0;
+			c.CAR_WIDTH = 0.5;
+			break;
+		case 1:
+			c.sheetColStart = 0;
+			c.sheetColEnd = c.sheetColStart + 64;
+			c.sheetRowStart = 32;
+			c.sheetRowEnd = c.sheetRowStart + 32;
+			c.CAR_LENGTH = 1.0;
+			c.CAR_WIDTH = 0.5;
+			break;
+		case 2:
+			c.sheetColStart = 0;
+			c.sheetColEnd = c.sheetColStart + 64;
+			c.sheetRowStart = 64;
+			c.sheetRowEnd = c.sheetRowStart + 32;
+			c.CAR_LENGTH = 1.0;
+			c.CAR_WIDTH = 0.5;
+			break;
+		case 3:
+			c.sheetColStart = 0;
+			c.sheetColEnd = c.sheetColStart + 128;
+			c.sheetRowStart = 96;
+			c.sheetRowEnd = c.sheetRowStart + 64;
+			c.CAR_LENGTH = 4.0;
+			c.CAR_WIDTH = 2.0;
+			break;
+		case 4:
+			c.sheetColStart = 0;
+			c.sheetColEnd = c.sheetColStart + 64;
+			c.sheetRowStart = 160;
+			c.sheetRowEnd = c.sheetRowStart + 32;
+			c.CAR_LENGTH = 2.0;
+			c.CAR_WIDTH = 1.0;
+			break;
+		case 5:
+			c.sheetColStart = 0;
+			c.sheetColEnd = c.sheetColStart + 96;
+			c.sheetRowStart = 192;
+			c.sheetRowEnd = c.sheetRowStart + 32;
+			c.CAR_LENGTH = 3.0;
+			c.CAR_WIDTH = 1.0;
+			break;
+		case 6:
+			c.sheetColStart = 0;
+			c.sheetColEnd = c.sheetColStart + 96;
+			c.sheetRowStart = 224;
+			c.sheetRowEnd = c.sheetRowStart + 32;
+			c.CAR_LENGTH = 3.0;
+			c.CAR_WIDTH = 1.0;
+			break;
+		case 7:
+			c.sheetColStart = 0;
+			c.sheetColEnd = c.sheetColStart + 64;
+			c.sheetRowStart = 256;
+			c.sheetRowEnd = c.sheetRowStart + 32;
+			c.CAR_LENGTH = 2.0;
+			c.CAR_WIDTH = 1.0;
+			break;
+		case 8:
+			c.sheetColStart = 0;
+			c.sheetColEnd = c.sheetColStart + 96;
+			c.sheetRowStart = 288;
+			c.sheetRowEnd = c.sheetRowStart + 32;
+			c.CAR_LENGTH = 3.0;
+			c.CAR_WIDTH = 1.0;
+			break;
+		case 9:
+			c.sheetColStart = 0;
+			c.sheetColEnd = c.sheetColStart + 64;
+			c.sheetRowStart = 320;
+			c.sheetRowEnd = c.sheetRowStart + 32;
+			c.CAR_LENGTH = 2.0;
+			c.CAR_WIDTH = 1.0;
+			break;
+		case 10:
+			c.sheetColStart = 0;
+			c.sheetColEnd = c.sheetColStart + 96;
+			c.sheetRowStart = 352;
+			c.sheetRowEnd = c.sheetRowStart + 32;
+			c.CAR_LENGTH = 3.0;
+			c.CAR_WIDTH = 1.0;
+			break;
+		case 11:
+			c.sheetColStart = 0;
+			c.sheetColEnd = c.sheetColStart + 64;
+			c.sheetRowStart = 384;
+			c.sheetRowEnd = c.sheetRowStart + 32;
+			c.CAR_LENGTH = 2.0;
+			c.CAR_WIDTH = 1.0;
+			break;
 		}
-		if (APP.TRUCK) {
-			l.add(Truck.class);
+		
+		r = APP.RANDOM.nextInt(3);
+		
+		switch (r) {
+		case 0:
+			c.maxSpeed = 2.5;
+			break;
+		case 1:
+			c.maxSpeed = 5.0;
+			break;
+		case 2:
+			c.maxSpeed = 10.0;
+			break;
 		}
 		
-		
-		if (l.isEmpty()) {
-			return null;
-		}
-		
-		int r = APP.RANDOM.nextInt(l.size());
-		
-		Class c = l.get(r);
-		
-		if (c == NormalCar.class) {
-			return new NormalCar(world, this);
-		} else if (c == FastCar.class) {
-			return new FastCar(world, this);
-		} else if (c == RandomCar.class) {
-			return new RandomCar(world, this);
-		} else if (c == ReallyFastCar.class) {
-			return new ReallyFastCar(world, this);
-		} else if (c == Truck.class) {
-			return new Truck(world, this);
+		if (c.maxSpeed == 2.5) {
+			c.driver.carProximityLookahead = 2.0;
+		} else if (c.maxSpeed == 5.0) {
+			c.driver.carProximityLookahead = 2.0;
+		} else if (c.maxSpeed == 10.0) {
+			c.driver.carProximityLookahead = 2.25;
 		} else {
-			throw new AssertionError();
+			assert false;
 		}
 		
+		if (c.maxSpeed == 2.5) {
+			c.driver.vertexArrivalLookahead = 0.95;
+		} else if (c.maxSpeed == 5.0) {
+			c.driver.vertexArrivalLookahead = 1.30;
+		} else if (c.maxSpeed == 10.0) {
+			c.driver.vertexArrivalLookahead = 2.00;
+		} else {
+			assert false;
+		}
+		
+		c.computeCtorProperties();
+		c.computeStartingProperties();
+		
+		return c;
 	}
 	
 	public String toFileString() {

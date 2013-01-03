@@ -12,8 +12,8 @@ public class Driver {
 	
 	public static final double COMPLETE_STOP_WAIT_TIME = 0.0;
 	
-	double carProximityLookahead;
-	double vertexArrivalLookahead;
+	public double carProximityLookahead;
+	public double vertexArrivalLookahead;
 	
 //	double steeringLookaheadDistance = Car.CAR_LENGTH * 0.5;
 	
@@ -36,27 +36,6 @@ public class Driver {
 	
 	public Driver(Car c) {
 		this.c = c;
-		
-		if (c.getMaxSpeed() == 2.5) {
-			carProximityLookahead = 2.0;
-		} else if (c.getMaxSpeed() == 5.0) {
-			carProximityLookahead = 2.0;
-		} else if (c.getMaxSpeed() == 10.0) {
-			carProximityLookahead = 2.25;
-		} else {
-			assert false;
-		}
-		
-		if (c.getMaxSpeed() == 2.5) {
-			vertexArrivalLookahead = 0.95;
-		} else if (c.getMaxSpeed() == 5.0) {
-			vertexArrivalLookahead = 1.30;
-		} else if (c.getMaxSpeed() == 10.0) {
-			vertexArrivalLookahead = 2.00;
-		} else {
-			assert false;
-		}
-		
 	}
 	
 	public void computeStartingProperties() {
