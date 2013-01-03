@@ -127,9 +127,9 @@ public class QuadrantMap {
 		int maxRows = (int)Math.ceil(quadrantHeightPixels/32.0);
 		for (int i = 0; i < maxRows; i++) {
 			for (int j = 0; j < maxCols; j++) {
-				quadrantGrassG2.drawImage(APP.sheet,
+				quadrantGrassG2.drawImage(APP.spriteSheet,
 						32 * j, 32 * i, 32 * j + 32, 32 * i + 32,
-						0, APP.spriteSectionRow+0, 0+32, APP.spriteSectionRow+0+32, null);
+						0, 0, 0+32, 0+32, null);
 			}
 		}
 		

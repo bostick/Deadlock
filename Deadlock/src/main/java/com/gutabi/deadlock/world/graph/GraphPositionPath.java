@@ -181,13 +181,11 @@ public class GraphPositionPath {
 	}
 	
 	
-	/**
-	 * return list of events starting from position pos, and going distance dist
-	 */
 	public VertexArrivalEvent vertexArrivalTest(Driver d, double dist) {
 		
 		for (GraphPositionPathPosition p : borderPositions) {
-			if (p.combo >= d.overallPos.combo && DMath.lessThanEquals(d.overallPos.distanceTo(p), dist)) {
+			GraphPositionPathPosition front = d.overallPos.travel(Math.min(d.c.CAR_LENGTH/2, d.overallPos.lengthToEndOfPath));
+			if (p.combo >= front.combo && DMath.lessThanEquals(front.distanceTo(p), dist)) {
 				return new VertexArrivalEvent(d, p);
 			}
 		}

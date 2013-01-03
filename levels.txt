@@ -1,6 +1,7 @@
 
 interesting low-level computational topics
 gates
+billiard-ball computer model
 
 
 interesting high-level computational topics

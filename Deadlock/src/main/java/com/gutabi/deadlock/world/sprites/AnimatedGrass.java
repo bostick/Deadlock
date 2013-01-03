@@ -84,9 +84,9 @@ public class AnimatedGrass {
 		AffineTransform origTransform = ctxt.getTransform();
 		
 		ctxt.translate(p.x - AnimatedGrass.GRASS_SIZE/2, p.y - AnimatedGrass.GRASS_SIZE/2);
-		ctxt.paintImage(APP.sheet,
+		ctxt.paintImage(APP.spriteSheet,
 				0, 0, GRASS_SIZE, GRASS_SIZE,
-				0, APP.spriteSectionRow+32, 0+32, APP.spriteSectionRow+32+32);	
+				0, 32, 0+32, 32+32);	
 		
 		ctxt.setTransform(origTransform);
 		
@@ -97,9 +97,9 @@ public class AnimatedGrass {
 		AffineTransform origTransform = ctxt.getTransform();
 		
 		ctxt.translate(p.x - AnimatedGrass.GRASS_SIZE/2, p.y - AnimatedGrass.GRASS_SIZE/2);
-		ctxt.paintImage(APP.sheet,
+		ctxt.paintImage(APP.spriteSheet,
 				0, 0, GRASS_SIZE, GRASS_SIZE,
-				0, APP.spriteSectionRow+32, 0+32, APP.spriteSectionRow+32+32);
+				0, 32, 0+32, 32+32);
 		
 		ctxt.setTransform(origTransform);
 		
@@ -110,9 +110,9 @@ public class AnimatedGrass {
 		AffineTransform origTransform = ctxt.getTransform();
 		
 		ctxt.translate(p.x - AnimatedGrass.GRASS_SIZE/2, p.y - AnimatedGrass.GRASS_SIZE/2);
-		ctxt.paintImage(APP.sheet,
+		ctxt.paintImage(APP.spriteSheet,
 				0, 0, GRASS_SIZE, GRASS_SIZE,
-				0, APP.spriteSectionRow+32, 0+32, APP.spriteSectionRow+32+32);
+				0, 32, 0+32, 32+32);
 		
 		ctxt.setTransform(origTransform);
 		

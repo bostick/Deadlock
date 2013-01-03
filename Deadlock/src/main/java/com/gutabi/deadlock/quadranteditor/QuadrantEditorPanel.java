@@ -96,9 +96,9 @@ public class QuadrantEditorPanel extends PanelBase {
 				ctxt.translate(aabb.x, aabb.y);
 				ctxt.rotate(6 * Math.PI / 4, aabb.width/2, aabb.height/2);
 				
-				ctxt.paintImage(APP.sheet,
+				ctxt.paintImage(APP.spriteSheet,
 						0, 0, 50, 50,
-						128, APP.spriteSectionRow+0, 160, APP.spriteSectionRow+0+32);
+						128, 0, 160, 0+32);
 				
 				ctxt.setTransform(origTransform);
 				
@@ -145,9 +145,9 @@ public class QuadrantEditorPanel extends PanelBase {
 				ctxt.translate(aabb.ul.x, aabb.ul.y);
 				ctxt.rotate(2 * Math.PI / 4, aabb.width/2, aabb.height/2);
 				
-				ctxt.paintImage(APP.sheet,
+				ctxt.paintImage(APP.spriteSheet,
 						0, 0, 50, 50,
-						128, APP.spriteSectionRow+0, 160, APP.spriteSectionRow+0+32);
+						128, 0, 160, 0+32);
 				
 				ctxt.setTransform(origTransform);
 				
@@ -192,9 +192,9 @@ public class QuadrantEditorPanel extends PanelBase {
 				ctxt.translate(aabb.ul.x, aabb.ul.y);
 				ctxt.rotate(4 * Math.PI / 4, aabb.width/2, aabb.height/2);
 				
-				ctxt.paintImage(APP.sheet,
+				ctxt.paintImage(APP.spriteSheet,
 						0, 0, 50, 50,
-						128, APP.spriteSectionRow+0, 160, APP.spriteSectionRow+0+32);
+						128, 0, 160, 0+32);
 				
 				ctxt.setTransform(origTransform);
 				
@@ -238,9 +238,9 @@ public class QuadrantEditorPanel extends PanelBase {
 				ctxt.translate(aabb.ul.x, aabb.ul.y);
 				ctxt.rotate(0 * Math.PI / 4, aabb.width/2, aabb.height/2);
 				
-				ctxt.paintImage(APP.sheet,
+				ctxt.paintImage(APP.spriteSheet,
 						0, 0, 50, 50,
-						128, APP.spriteSectionRow+0, 160, APP.spriteSectionRow+0+32);
+						128, 0, 160, 0+32);
 				
 				ctxt.setTransform(origTransform);
 				
@@ -285,9 +285,9 @@ public class QuadrantEditorPanel extends PanelBase {
 				ctxt.translate(aabb.ul.x, aabb.ul.y);
 				ctxt.rotate(5 * Math.PI / 4, aabb.width/2, aabb.height/2);
 				
-				ctxt.paintImage(APP.sheet,
+				ctxt.paintImage(APP.spriteSheet,
 						0, 0, 50, 50,
-						128, APP.spriteSectionRow+0, 160, APP.spriteSectionRow+0+32);
+						128, 0, 160, 0+32);
 				
 				ctxt.setTransform(origTransform);
 				
@@ -331,9 +331,9 @@ public class QuadrantEditorPanel extends PanelBase {
 				ctxt.translate(aabb.ul.x, aabb.ul.y);
 				ctxt.rotate(1 * Math.PI / 4, aabb.width/2, aabb.height/2);
 				
-				ctxt.paintImage(APP.sheet,
+				ctxt.paintImage(APP.spriteSheet,
 						0, 0, 50, 50,
-						128, APP.spriteSectionRow+0, 160, APP.spriteSectionRow+0+32);
+						128, 0, 160, 0+32);
 				
 				ctxt.setTransform(origTransform);
 				

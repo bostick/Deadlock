@@ -123,9 +123,9 @@ public class StopSign extends Entity {
 				AffineTransform origTransform = ctxt.getTransform();
 				
 				ctxt.translate(p.x - StopSign.STOPSIGN_SIZE/2, p.y - StopSign.STOPSIGN_SIZE/2);
-				ctxt.paintImage(APP.sheet,
+				ctxt.paintImage(APP.spriteSheet,
 						0, 0, STOPSIGN_SIZE, STOPSIGN_SIZE,
-						32, APP.spriteSectionRow+0, 32+32, APP.spriteSectionRow+0+32);
+						32, 0, 32+32, 0+32);
 				
 				ctxt.setTransform(origTransform);
 				

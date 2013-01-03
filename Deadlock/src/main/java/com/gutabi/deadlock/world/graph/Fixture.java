@@ -391,9 +391,9 @@ public final class Fixture extends Vertex {
 			}
 			
 			ctxt.translate(-r, -r);
-			ctxt.paintImage(APP.sheet,
+			ctxt.paintImage(APP.spriteSheet,
 					0, 0, 2 * r, 2 * r,
-					96, APP.spriteSectionRow+0, 96+32, APP.spriteSectionRow+0+32);
+					96, 0, 96+32, 0+32);
 			
 			ctxt.setTransform(origTransform);
 			

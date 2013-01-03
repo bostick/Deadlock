@@ -37,9 +37,10 @@ public class DeadlockApplication {
 	
 	public Random RANDOM = new Random(1);
 	
-	public BufferedImage sheet;
-	public int carSectionRow = 0;
-	public int spriteSectionRow = 480;
+	public BufferedImage carSheet;
+	public BufferedImage spriteSheet;
+//	public int carSectionRow = 0;
+//	public int spriteSectionRow = 480;
 	
 	public BufferedImage explosionSheet;
 	public BufferedImage titleBackground;
@@ -62,7 +63,8 @@ public class DeadlockApplication {
 	public static DeadlockApplication APP = new DeadlockApplication();
 	
 	public void init() throws Exception {
-		sheet = ImageIO.read(DeadlockApplication.class.getResource("/img/sheet.png"));
+		carSheet = ImageIO.read(DeadlockApplication.class.getResource("/img/carSheet.png"));
+		spriteSheet = ImageIO.read(DeadlockApplication.class.getResource("/img/spriteSheet.png"));
 		explosionSheet = ImageIO.read(DeadlockApplication.class.getResource("/img/explosionSheet.png"));
 		titleBackground = ImageIO.read(DeadlockApplication.class.getResource("/img/title_background.png"));
 		title_white = ImageIO.read(DeadlockApplication.class.getResource("/img/title_white.png"));
