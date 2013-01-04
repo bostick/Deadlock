@@ -12,6 +12,7 @@ import com.gutabi.deadlock.world.cars.Car;
 import com.gutabi.deadlock.world.graph.Edge;
 import com.gutabi.deadlock.world.graph.Road;
 import com.gutabi.deadlock.world.graph.RoadPosition;
+import com.gutabi.deadlock.world.graph.Vertex;
 
 public class CarTool extends ToolBase {
 	
@@ -73,27 +74,40 @@ public class CarTool extends ToolBase {
 			Point diff = ev.p.minus(screen.world.lastPressedWorldPoint);
 			
 			Point carP = car.toolOrigP.plus(diff);
-			double carAngle = car.toolOrigAngle;
+			double carAngle = car.toolAngle;
 			
 			switch (car.origState) {
 			case DRIVING:
 			case BRAKING:
 				
-				RoadPosition closest = null;
-				for (Edge e : screen.world.graph.edges) {
+				RoadPosition closestRoad = null;
+				for (Edge e : car.driver.overallPath.edgesMap.keySet()) {
 					if (e instanceof Road) {
 						Road r = (Road)e;
 						RoadPosition pos = r.findClosestRoadPosition(carP, Double.POSITIVE_INFINITY);
-						if (pos != null && (closest == null || Point.distance(pos.p, carP) < Point.distance(closest.p, carP))) {
-							closest = pos;
+						if (pos != null && (closestRoad == null || Point.distance(pos.p, carP) < Point.distance(closestRoad.p, carP))) {
+							closestRoad = pos;
 						}
+					} else {
+						assert false;
 					}
 				}
 				
-				if (closest != null) {
-					carP = closest.p;
+				if (closestRoad != null) {
+					carP = closestRoad.p;
 					
-					carAngle = closest.angle;
+					carAngle = closestRoad.angle;
+					
+				} else {
+					
+					Vertex closestVertex = null;
+					for (Vertex v : car.driver.overallPath.verticesMap.keySet()) {
+						if (closestVertex == null || Point.distance(v.p, carP) < Point.distance(closestVertex.p, carP)) {
+							closestVertex = v;
+						}
+					}
+					
+					carP = closestVertex.p;
 					
 				}
 				
@@ -142,16 +156,10 @@ public class CarTool extends ToolBase {
 	
 	public void draw(RenderingContext ctxt) {
 		
-//		if (closest != null) {
-//			ctxt.setColor(Color.BLUE);
-//			new Circle(null, closest.p, 0.3).paint(ctxt);
-//			
-//		}
-		
 		if (!car.destroyed) {
 			
 			ctxt.setColor(Color.BLUE);
-			ctxt.setPixelStroke(2.0);
+			ctxt.setStrokeWidth(0.0);
 			car.toolShape.draw(ctxt);
 			
 		}

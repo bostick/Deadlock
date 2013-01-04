@@ -16,14 +16,11 @@ import org.jbox2d.common.OBBViewportTransform;
 import org.jbox2d.common.Transform;
 import org.jbox2d.common.Vec2;
 
-import com.gutabi.deadlock.Screen;
 import com.gutabi.deadlock.core.Point;
 
 public class RenderingContext extends DebugDraw {
 	
 	public final Graphics2D g2;
-	
-	public Screen screen;
 	
 	public RenderingContext(Graphics2D g2) {
 		super(new OBBViewportTransform());
@@ -53,12 +50,8 @@ public class RenderingContext extends DebugDraw {
 		g2.setStroke(s);
 	}
 	
-	public void setPixelStroke(int pix) {
-		g2.setStroke(new BasicStroke(pix, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER));
-	}
-	
-	public void setPixelStroke(double pix) {
-		g2.setStroke(new BasicStroke((float)(pix / screen.pixelsPerMeter), BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER));
+	public void setStrokeWidth(double width) {
+		g2.setStroke(new BasicStroke((float)width, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER));
 	}
 	
 	public AffineTransform getTransform() {
@@ -105,19 +98,18 @@ public class RenderingContext extends DebugDraw {
 		AffineTransform origTransform = g2.getTransform();
 		
 		g2.translate(x, y);
-		g2.scale(1 / screen.pixelsPerMeter, 1 / screen.pixelsPerMeter);
 		g2.scale(s, s);
 		g2.drawString(str, 0, 0);
 		
 		g2.setTransform(origTransform);
 	}
 	
-	public void paintImage(Image img, double dx1, double dy1, double dx2, double dy2, int sx1, int sy1, int sx2, int sy2) {
+	public void paintImage(Image img, double orig, double dx1, double dy1, double dx2, double dy2, int sx1, int sy1, int sx2, int sy2) {
 		AffineTransform origTransform = g2.getTransform();
 		
-		g2.scale(1 / screen.pixelsPerMeter, 1 / screen.pixelsPerMeter);
+		g2.scale(1 / orig, 1 / orig);
 		paintImage(img,
-				(int)Math.ceil(dx1 * screen.pixelsPerMeter), (int)Math.ceil(dy1 * screen.pixelsPerMeter), (int)Math.ceil(dx2 * screen.pixelsPerMeter), (int)Math.ceil(dy2 * screen.pixelsPerMeter),
+				(int)Math.ceil(dx1 * orig), (int)Math.ceil(dy1 * orig), (int)Math.ceil(dx2 * orig), (int)Math.ceil(dy2 * orig),
 				sx1, sy1, sx2, sy2);
 		
 		g2.setTransform(origTransform);

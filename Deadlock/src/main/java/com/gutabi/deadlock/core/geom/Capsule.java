@@ -408,7 +408,7 @@ public class Capsule extends SweepableShape implements SweeperShape, CompoundSha
 		if (APP.DEBUG_DRAW) {
 			Color c = ctxt.getColor();
 			ctxt.setColor(Color.BLUE);
-			ctxt.setPixelStroke(1.0);
+			ctxt.setStrokeWidth(0.0);
 			
 			debugNormalLine.draw(ctxt);
 			

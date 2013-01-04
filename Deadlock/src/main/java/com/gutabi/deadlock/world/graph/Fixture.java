@@ -21,7 +21,6 @@ public final class Fixture extends Vertex {
 	
 	public static double SPAWN_FREQUENCY_SECONDS = 1500.5;
 	
-	public World world;
 	public final Axis a;
 	
 	private Side s;
@@ -38,7 +37,7 @@ public final class Fixture extends Vertex {
 	static int carIDCounter;
 	
 	public Fixture(World w, Point p, Axis a) {
-		super(p);
+		super(w, p);
 		
 		assert p != null;
 		assert a != null;
@@ -508,7 +507,7 @@ public final class Fixture extends Vertex {
 			}
 			
 			ctxt.translate(-r, -r);
-			ctxt.paintImage(APP.spriteSheet,
+			ctxt.paintImage(APP.spriteSheet, world.screen.pixelsPerMeter,
 					0, 0, 2 * r, 2 * r,
 					96, 0, 96+32, 0+32);
 			
@@ -519,7 +518,7 @@ public final class Fixture extends Vertex {
 			shape.paint(ctxt);
 			
 			ctxt.setColor(Color.BLACK);
-			ctxt.setPixelStroke(1.0);
+			ctxt.setStrokeWidth(0.0);
 			shape.getAABB().draw(ctxt);
 		}
 		

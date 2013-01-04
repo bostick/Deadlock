@@ -233,7 +233,7 @@ public class QuadTool extends ToolBase {
 		
 		ctxt.setColor(Color.WHITE);
 		ctxt.setXORMode(Color.BLACK);
-		ctxt.setPixelStroke(1.0);
+		ctxt.setStrokeWidth(0.0);
 		
 		shape.draw(ctxt);
 		

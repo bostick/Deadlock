@@ -25,8 +25,6 @@ public class CarMap {
 	
 	private List<Car> cars = new ArrayList<Car>();
 	
-//	public Car pressedCar;
-	
 	static Logger logger = Logger.getLogger(CarMap.class);
 	
 	public CarMap(World world) {
@@ -76,7 +74,7 @@ public class CarMap {
 	public void paint(RenderingContext ctxt) {
 		
 		if (APP.DEBUG_DRAW) {
-			ctxt.setPixelStroke(1.0);
+			ctxt.setStrokeWidth(0.0);
 			world.b2dWorld.setDebugDraw(ctxt);
 			world.b2dWorld.drawDebugData();
 		}

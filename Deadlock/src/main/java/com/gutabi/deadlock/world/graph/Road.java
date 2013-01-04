@@ -26,6 +26,7 @@ import com.gutabi.deadlock.core.geom.Shape;
 import com.gutabi.deadlock.core.geom.ShapeUtils;
 import com.gutabi.deadlock.core.geom.Triangle;
 import com.gutabi.deadlock.ui.RenderingContext;
+import com.gutabi.deadlock.world.World;
 
 public class Road extends Edge {
 	
@@ -33,6 +34,7 @@ public class Road extends Edge {
 	
 	public static final double borderPointRadius = 0.2;
 	
+	public World world;
 	public final Vertex start;
 	public final Vertex end;
 	public final List<Point> raw;
@@ -62,10 +64,11 @@ public class Road extends Edge {
 	
 	static Logger logger = Logger.getLogger(Road.class);
 	
-	public Road(Vertex start, Vertex end, List<Point> raw) {
+	public Road(World world, Vertex start, Vertex end, List<Point> raw) {
 		
 		assert !raw.isEmpty();
 		
+		this.world = world;
 		this.start = start;
 		this.end = end;
 		this.raw = raw;
@@ -646,7 +649,7 @@ public class Road extends Edge {
 		return s.toString();
 	}
 	
-	public static Road fromFileString(Vertex[] vs, String s) {
+	public static Road fromFileString(World world, Vertex[] vs, String s) {
 		BufferedReader r = new BufferedReader(new StringReader(s));
 		
 		int id = -1;
@@ -737,7 +740,7 @@ public class Road extends Edge {
 			e.printStackTrace();
 		}
 		
-		Road rd = new Road(start, end, pts);
+		Road rd = new Road(world, start, end, pts);
 		
 		rd.id = id;
 		rd.direction = d;
@@ -757,7 +760,7 @@ public class Road extends Edge {
 		
 		if (APP.DEBUG_DRAW) {
 			ctxt.setColor(Color.BLACK);
-			ctxt.setPixelStroke(1.0);
+			ctxt.setStrokeWidth(0.0);
 			shape.getAABB().draw(ctxt);
 		}
 		
@@ -771,7 +774,7 @@ public class Road extends Edge {
 	
 	public void paintHilite(RenderingContext ctxt) {
 		ctxt.setColor(APP.roadHiliteColor);
-		ctxt.setPixelStroke(1.0);
+		ctxt.setStrokeWidth(0.0);
 		drawPath(ctxt);
 	}
 	

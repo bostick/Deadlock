@@ -3,6 +3,7 @@ package com.gutabi.deadlock.world;
 import javax.swing.RootPaneContainer;
 
 import com.gutabi.deadlock.Screen;
+import com.gutabi.deadlock.core.geom.AABB;
 import com.gutabi.deadlock.ui.DLSFileChooser;
 import com.gutabi.deadlock.world.tools.RegularTool;
 import com.gutabi.deadlock.world.tools.Tool;
@@ -15,6 +16,10 @@ public class WorldScreen extends Screen {
 		PAUSED,
 		DIALOG
 	}
+	
+	public double origPixelsPerMeter = 32.0;
+	public double pixelsPerMeter = 32.0;
+	public AABB worldViewport;
 	
 	/**
 	 * move physics forward by dt seconds

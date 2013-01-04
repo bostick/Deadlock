@@ -54,7 +54,7 @@ public class CarEventListener implements ContactListener {
 			
 			Vec2 p = worldManifold.points[0];
 			
-			world.explosionMap.add(new AnimatedExplosion(Point.point(p)));
+			world.explosionMap.add(new AnimatedExplosion(world, Point.point(p)));
 			
 			if (a.state != CarStateEnum.CRASHED) {
 				a.crash();

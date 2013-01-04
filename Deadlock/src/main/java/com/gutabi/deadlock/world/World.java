@@ -92,7 +92,9 @@ public class World {
 	
 	public void previewPostDisplay() {
 		
-		previewImage = new BufferedImage((int)screen.contentPane.controlPanel.previewAABB.width, (int)screen.contentPane.controlPanel.previewAABB.height, BufferedImage.TYPE_INT_RGB);
+		previewImage = new BufferedImage(
+				(int)screen.contentPane.controlPanel.previewAABB.width,
+				(int)screen.contentPane.controlPanel.previewAABB.height, BufferedImage.TYPE_INT_RGB);
 		
 	}
 	
@@ -188,7 +190,7 @@ public class World {
 	
 	public Set<Vertex> createIntersection(Point p) {
 		
-		Intersection i = new Intersection(p);
+		Intersection i = new Intersection(this, p);
 		
 		quadrantMap.grassMap.mowGrass(i.getShape());
 		
@@ -206,7 +208,7 @@ public class World {
 	
 	public Set<Vertex> createRoad(Vertex v0, Vertex v1, List<Point> roadPts) {
 		
-		Road r = new Road(v0, v1, roadPts);
+		Road r = new Road(this, v0, v1, roadPts);
 		
 		quadrantMap.grassMap.mowGrass(r.getShape());
 		
@@ -372,7 +374,7 @@ public class World {
 		backgroundG2.translate(-screen.worldViewport.x, -screen.worldViewport.y);
 		
 		RenderingContext backgroundCtxt = new RenderingContext(backgroundG2);
-		backgroundCtxt.screen = screen;
+//		backgroundCtxt.screen = screen;
 		
 		quadrantMap.render_panel(backgroundCtxt);
 		graph.render_panel(backgroundCtxt);
@@ -384,26 +386,29 @@ public class World {
 		
 		Graphics2D previewImageG2 = previewImage.createGraphics();
 		
-		RenderingContext previewContext = new RenderingContext(previewImageG2);
-//		previewContext.screen = 
+		boolean oldDebug = APP.DEBUG_DRAW;
+		APP.DEBUG_DRAW = false;
+		
+		RenderingContext ctxt = new RenderingContext(previewImageG2); 
 		
 		previewImageG2.setColor(Color.LIGHT_GRAY);
-		previewImageG2.fillRect(0, 0, (int)screen.contentPane.controlPanel.previewAABB.width, (int)screen.contentPane.controlPanel.previewAABB.height);
+		previewImageG2.fillRect(
+				0, 0, (int)screen.contentPane.controlPanel.previewAABB.width, (int)screen.contentPane.controlPanel.previewAABB.height);
 		
-		double pixelsPerMeterWidth = screen.contentPane.controlPanel.previewAABB.width / screen.world.quadrantMap.worldWidth;
-		double pixelsPerMeterHeight = screen.contentPane.controlPanel.previewAABB.height / screen.world.quadrantMap.worldHeight;
-		double s = Math.min(pixelsPerMeterWidth, pixelsPerMeterHeight);
+		AffineTransform origTrans = ctxt.getTransform();
+		ctxt.translate(
+				screen.contentPane.controlPanel.previewAABB.width/2 - (screen.contentPane.controlPanel.previewPixelsPerMeter * screen.world.quadrantMap.worldWidth / 2),
+				screen.contentPane.controlPanel.previewAABB.height/2 - (screen.contentPane.controlPanel.previewPixelsPerMeter * screen.world.quadrantMap.worldHeight / 2));
 		
-		AffineTransform origTrans = previewContext.getTransform();
-		previewContext.translate(screen.contentPane.controlPanel.previewAABB.width/2 - (s * screen.world.quadrantMap.worldWidth / 2), screen.contentPane.controlPanel.previewAABB.height/2 - (s * screen.world.quadrantMap.worldHeight / 2));
+		previewImageG2.scale(screen.contentPane.controlPanel.previewPixelsPerMeter, screen.contentPane.controlPanel.previewPixelsPerMeter);
 		
-		previewImageG2.scale(s, s);
+		screen.world.quadrantMap.render_preview(ctxt);
 		
-		screen.world.quadrantMap.render_preview(previewContext);
+		screen.world.graph.render_preview(ctxt);
 		
-		screen.world.graph.render_preview(previewContext);
+		ctxt.setTransform(origTrans);
 		
-		previewContext.setTransform(origTrans);
+		APP.DEBUG_DRAW = oldDebug;
 		
 		previewImageG2.dispose();
 	}
@@ -412,13 +417,13 @@ public class World {
 		
 		ctxt.paintImage(
 				background,
-				0, 0, screen.contentPane.worldPanel.aabb.width, screen.contentPane.worldPanel.aabb.height,
+				0, 0, (int)screen.contentPane.worldPanel.aabb.width, (int)screen.contentPane.worldPanel.aabb.height,
 				0, 0, background.getWidth(), background.getHeight());
 		
 		AffineTransform origTrans = ctxt.getTransform();
 		
-		ctxt.scale(ctxt.screen.pixelsPerMeter);
-		ctxt.translate(-ctxt.screen.worldViewport.x, -ctxt.screen.worldViewport.y);
+		ctxt.scale(screen.pixelsPerMeter);
+		ctxt.translate(-screen.worldViewport.x, -screen.worldViewport.y);
 		
 		synchronized (APP) {
 			
@@ -445,19 +450,19 @@ public class World {
 		
 		AffineTransform origTransform = ctxt.getTransform();
 		
-		ctxt.paintString(0, 0, 1, "time: " + t);
+		ctxt.paintString(0, 0, 1.0/screen.pixelsPerMeter, "time: " + t);
 		
 		ctxt.translate(0, 1);
 		
-		ctxt.paintString(0, 0, 1, "body count: " + b2dWorld.getBodyCount());
+		ctxt.paintString(0, 0, 1.0/screen.pixelsPerMeter, "body count: " + b2dWorld.getBodyCount());
 		
 		ctxt.translate(0, 1);
 		
-		ctxt.paintString(0, 0, 1, "car count: " + carMap.size());
+		ctxt.paintString(0, 0, 1.0/screen.pixelsPerMeter, "car count: " + carMap.size());
 		
 		ctxt.translate(0, 1);
 		
-		ctxt.paintString(0, 0, 1, "splosions count: " + explosionMap.size());
+		ctxt.paintString(0, 0, 1.0/screen.pixelsPerMeter, "splosions count: " + explosionMap.size());
 		
 		ctxt.translate(0, 1);
 		

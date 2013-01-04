@@ -18,6 +18,7 @@ import com.gutabi.deadlock.ui.RenderingContext;
 public class ControlPanel extends PanelBase {
 	
 	AABB previewAABB = new AABB(5, 400, 100, 100);
+	double previewPixelsPerMeter;
 	
 	WorldScreen screen;
 	
@@ -326,25 +327,21 @@ public class ControlPanel extends PanelBase {
 	
 	public void postDisplay() {
 		
+		double pixelsPerMeterWidth = previewAABB.width / screen.world.quadrantMap.worldWidth;
+		double pixelsPerMeterHeight = previewAABB.height / screen.world.quadrantMap.worldHeight;
+		previewPixelsPerMeter = Math.min(pixelsPerMeterWidth, pixelsPerMeterHeight);
+		
 		screen.world.previewPostDisplay();
 	}
 	
 	public Point previewToWorld(Point p) {
 		
-		double pixelsPerMeterWidth = previewAABB.width / screen.world.quadrantMap.worldWidth;
-		double pixelsPerMeterHeight = previewAABB.height / screen.world.quadrantMap.worldHeight;
-		double s = Math.min(pixelsPerMeterWidth, pixelsPerMeterHeight);
-		
-		return new Point((1/s) * p.x, (1/s) * p.y);
+		return new Point((1/previewPixelsPerMeter) * p.x, (1/previewPixelsPerMeter) * p.y);
 	}
 	
 	public Point worldToPreview(Point p) {
 		
-		double pixelsPerMeterWidth = previewAABB.width / screen.world.quadrantMap.worldWidth;
-		double pixelsPerMeterHeight = previewAABB.height / screen.world.quadrantMap.worldHeight;
-		double s = Math.min(pixelsPerMeterWidth, pixelsPerMeterHeight);
-		
-		return new Point((s) * p.x, (s) * p.y);
+		return new Point((previewPixelsPerMeter) * p.x, (previewPixelsPerMeter) * p.y);
 	}
 	
 	public Point controlPanelToPreview(Point p) {
@@ -486,13 +483,9 @@ public class ControlPanel extends PanelBase {
 		
 		AABB prev = new AABB(prevLoc.x, prevLoc.y, prevDim.x, prevDim.y);
 		
-		double pixelsPerMeterWidth = previewAABB.width / screen.world.quadrantMap.worldWidth;
-		double pixelsPerMeterHeight = previewAABB.height / screen.world.quadrantMap.worldHeight;
-		double s = Math.min(pixelsPerMeterWidth, pixelsPerMeterHeight);
-		
 		ctxt.translate(
-				previewAABB.width/2 - (s * screen.world.quadrantMap.worldWidth / 2),
-				previewAABB.height/2 - (s * screen.world.quadrantMap.worldHeight / 2));
+				previewAABB.width/2 - (previewPixelsPerMeter * screen.world.quadrantMap.worldWidth / 2),
+				previewAABB.height/2 - (previewPixelsPerMeter * screen.world.quadrantMap.worldHeight / 2));
 		
 		ctxt.setColor(Color.BLUE);
 		prev.draw(ctxt);

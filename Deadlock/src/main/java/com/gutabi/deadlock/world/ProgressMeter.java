@@ -40,7 +40,7 @@ public class ProgressMeter {
 	
 	public void paint(RenderingContext ctxt) {
 		ctxt.setColor(Color.BLACK);
-		ctxt.setPixelStroke(1.0);
+		ctxt.setStrokeWidth(0.0);
 		aabb.draw(ctxt);
 		if (p >= 0.0) {
 			if (p <= 1.0) {

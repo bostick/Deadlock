@@ -6,17 +6,20 @@ import java.awt.geom.AffineTransform;
 
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.ui.RenderingContext;
+import com.gutabi.deadlock.world.World;
 
 public class AnimatedExplosion {
 	
 	public static final double explosionWidth = 2.21875;
 	public static final double explosionHeight = 3.125;
 	
+	World world;
 	Point p;
 	int lastFrame;
 	double lastTime;
 	
-	public AnimatedExplosion(Point p) {
+	public AnimatedExplosion(World world, Point p) {
+		this.world = world;
 		this.p = p;
 	}
 	
@@ -61,7 +64,7 @@ public class AnimatedExplosion {
 		AffineTransform origTransform = ctxt.getTransform();
 		
 		ctxt.translate(p.x - explosionWidth/2, p.y - explosionHeight/2);
-		ctxt.paintImage(APP.explosionSheet,
+		ctxt.paintImage(APP.explosionSheet, world.screen.pixelsPerMeter,
 				0, 0, explosionWidth, explosionHeight,
 				71 * index, 0, 71 * index + 71, 100);
 		

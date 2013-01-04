@@ -784,7 +784,7 @@ public class Stroke {
 	
 	public void paint(RenderingContext ctxt) {
 		
-		ctxt.setPixelStroke(1.0);
+		ctxt.setStrokeWidth(0.0);
 		paintStroke(ctxt);
 		
 	}

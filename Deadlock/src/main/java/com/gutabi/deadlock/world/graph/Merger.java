@@ -327,7 +327,7 @@ public class Merger extends Edge {
 	}
 	
 	public void paintHilite(RenderingContext ctxt) {
-		ctxt.setPixelStroke(1.0);
+		ctxt.setStrokeWidth(0.0);
 		ctxt.setColor(Color.GRAY);
 		shape.draw(ctxt);
 	}
@@ -335,7 +335,7 @@ public class Merger extends Edge {
 	void paintSkeleton(RenderingContext ctxt) {
 		
 		ctxt.setColor(Color.BLACK);
-		ctxt.setPixelStroke(1.0);
+		ctxt.setStrokeWidth(0.0);
 		debugSkeletonTopBottomLine.draw(ctxt);
 		
 		debugSkeletonLeftRightLine.draw(ctxt);

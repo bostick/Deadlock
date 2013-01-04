@@ -601,7 +601,7 @@ public class Car extends Entity {
 			}
 			
 			ctxt.setColor(Color.BLACK);
-			ctxt.setPixelStroke(1.0);
+			ctxt.setStrokeWidth(0.0);
 			shape.getAABB().draw(ctxt);
 			
 			paintID(ctxt);
@@ -656,7 +656,7 @@ public class Car extends Entity {
 			ctxt.rotate(angle);
 			ctxt.translate(CAR_LOCALX, CAR_LOCALY);
 			
-			ctxt.paintImage(APP.carSheet,
+			ctxt.paintImage(APP.carSheet, world.screen.pixelsPerMeter,
 					0, 0, CAR_LENGTH, CAR_WIDTH,
 					sheetColStart, sheetRowStart, sheetColEnd, sheetRowEnd);
 			
@@ -679,7 +679,7 @@ public class Car extends Entity {
 			ctxt.rotate(toolAngle);
 			ctxt.translate(CAR_LOCALX, CAR_LOCALY);
 			
-			ctxt.paintImage(APP.carSheet,
+			ctxt.paintImage(APP.carSheet, world.screen.pixelsPerMeter,
 					0, 0, CAR_LENGTH, CAR_WIDTH,
 					sheetColStart, sheetRowStart, sheetColEnd, sheetRowEnd);
 			
@@ -710,14 +710,14 @@ public class Car extends Entity {
 		AffineTransform brakeTransform = ctxt.getTransform();
 		
 		ctxt.translate(CAR_BRAKE1X, CAR_BRAKE1Y);
-		ctxt.paintImage(APP.spriteSheet,
+		ctxt.paintImage(APP.spriteSheet, world.screen.pixelsPerMeter,
 				0, 0, BRAKE_SIZE, BRAKE_SIZE,
 				0, 64, 0+8, 64+8);
 		
 		ctxt.setTransform(brakeTransform);
 		
 		ctxt.translate(CAR_BRAKE2X, CAR_BRAKE2Y);
-		ctxt.paintImage(APP.spriteSheet,
+		ctxt.paintImage(APP.spriteSheet, world.screen.pixelsPerMeter,
 				0, 0, BRAKE_SIZE, BRAKE_SIZE,
 				0, 64, 0+8, 64+8);
 		
@@ -732,7 +732,7 @@ public class Car extends Entity {
 		ctxt.translate(p.x, p.y);
 		
 		ctxt.setColor(Color.WHITE);
-		ctxt.paintString(CAR_LOCALX, 0.0, 2.0, Integer.toString(id));
+		ctxt.paintString(CAR_LOCALX, 0.0, 2.0/world.screen.pixelsPerMeter, Integer.toString(id));
 		
 		ctxt.setTransform(origTransform);
 	}

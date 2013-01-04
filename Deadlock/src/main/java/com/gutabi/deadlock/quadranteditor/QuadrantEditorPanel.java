@@ -505,7 +505,7 @@ public class QuadrantEditorPanel extends PanelBase {
 	
 	public void paint(RenderingContext ctxt) {
 	
-		ctxt.screen = worldScreen;
+//		ctxt.screen = worldScreen;
 		
 		AffineTransform origTrans = ctxt.getTransform();
 		

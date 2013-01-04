@@ -10,11 +10,12 @@ import java.util.Scanner;
 
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.ui.RenderingContext;
+import com.gutabi.deadlock.world.World;
 
 public class Intersection extends Vertex {
 	
-	public Intersection(Point p) {
-		super(p);
+	public Intersection(World world, Point p) {
+		super(world, p);
 	}
 	
 	public boolean isUserDeleteable() {
@@ -55,7 +56,7 @@ public class Intersection extends Vertex {
 		return s.toString();
 	}
 	
-	public static Intersection fromFileString(String s) {
+	public static Intersection fromFileString(World world, String s) {
 		BufferedReader r = new BufferedReader(new StringReader(s));
 		
 		Point p = null;
@@ -90,7 +91,7 @@ public class Intersection extends Vertex {
 			e.printStackTrace();
 		}
 		
-		Intersection i = new Intersection(p);
+		Intersection i = new Intersection(world, p);
 		
 		i.id = id;
 		
@@ -124,7 +125,7 @@ public class Intersection extends Vertex {
 	public void paintHilite(RenderingContext ctxt) {
 		
 		ctxt.setColor(Color.WHITE);
-		ctxt.setPixelStroke(1.0);
+		ctxt.setStrokeWidth(0.0);
 		
 		shape.draw(ctxt);
 		
