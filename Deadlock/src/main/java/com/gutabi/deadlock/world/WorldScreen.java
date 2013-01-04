@@ -70,8 +70,6 @@ public class WorldScreen extends Screen {
 		
 		mode = WorldScreenMode.RUNNING;
 		
-		tool = new RegularTool(this);
-		
 		Thread t = new Thread(new SimulationRunnable(this));
 		t.start();
 		
@@ -80,6 +78,8 @@ public class WorldScreen extends Screen {
 	public void stopRunning() {
 		
 		mode = WorldScreenMode.EDITING;
+		
+		tool = new RegularTool(this);
 		
 	}
 	

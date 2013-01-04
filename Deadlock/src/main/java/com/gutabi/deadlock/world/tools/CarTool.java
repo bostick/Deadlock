@@ -2,8 +2,6 @@ package com.gutabi.deadlock.world.tools;
 
 import java.awt.Color;
 
-import org.jbox2d.common.Mat22;
-
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.Geom;
 import com.gutabi.deadlock.core.geom.Shape;
@@ -11,42 +9,36 @@ import com.gutabi.deadlock.ui.InputEvent;
 import com.gutabi.deadlock.ui.RenderingContext;
 import com.gutabi.deadlock.world.WorldScreen;
 import com.gutabi.deadlock.world.cars.Car;
+import com.gutabi.deadlock.world.graph.Edge;
+import com.gutabi.deadlock.world.graph.Road;
 import com.gutabi.deadlock.world.graph.RoadPosition;
 
 public class CarTool extends ToolBase {
 	
 	private Car car;
-	Point origCarP;
-	
-//	Line line;
-	RoadPosition closest;
 	
 	public CarTool(WorldScreen screen) {
 		super(screen);
 	}
 	
 	public void setPoint(Point p) {
-		this.p = p;
 		
-//		closest = null;
-//		for (Edge e : screen.world.graph.edges) {
-//			if (e instanceof Road) {
-//				Road r = (Road)e;
-//				RoadPosition pos = r.findClosestRoadPosition(p, Double.POSITIVE_INFINITY);
-//				if (pos != null && (closest == null || Point.distance(pos.p, p) < Point.distance(closest.p, p))) {
-//					closest = pos;
-//				}
-//			}
-//		}
-		
-//		if (closest != null) {
-//			line = new Line(p, closest.p);
-//		}
 	}
 	
 	public void setCar(Car c) {
 		this.car = c;
-		this.origCarP = car.p;
+		car.origState = c.state;
+//		car.origP = car.p;
+//		car.origAngle = car.angle;
+//		car.origShape = c.shape;
+		
+		car.toolP = car.p;
+		car.toolAngle = car.angle;
+		car.toolShape = car.shape;
+		
+		car.toolOrigP = car.p;
+		car.toolOrigAngle = car.angle;
+		car.toolOrigShape = car.shape;
 		
 		car.beginEditing = true;
 	}
@@ -67,42 +59,86 @@ public class CarTool extends ToolBase {
 	
 	public void pressed(InputEvent ev) {
 		
-		origCarP = car.p;
+		if (car.toolShape.hitTest(screen.world.lastPressedWorldPoint)) {
+			car.toolOrigP = car.toolP;
+			car.toolOrigShape = car.toolShape;
+		}
 		
 	}
 	
 	public void dragged(InputEvent ev) {
 		
-		Point diff = ev.p.minus(screen.world.lastPressedWorldPoint);
-		
-		Point carP = origCarP.plus(diff);
-		
-//		closest = null;
-//		for (Edge e : screen.world.graph.edges) {
-//			if (e instanceof Road) {
-//				Road r = (Road)e;
-//				RoadPosition pos = r.findClosestRoadPosition(ev.p, Double.POSITIVE_INFINITY);
-//				if (pos != null && (closest == null || Point.distance(pos.p, ev.p) < Point.distance(closest.p, ev.p))) {
-//					closest = pos;
-//				}
-//			}
-//		}
-		
-		car.p = carP;
-//		Mat22 r = car.b2dBody.getTransform().R;
-//		car.carTransArr[0][0] = r.col1.x;
-//		car.carTransArr[0][1] = r.col2.x;
-//		car.carTransArr[1][0] = r.col1.y;
-//		car.carTransArr[1][1] = r.col2.y;
-		car.shape = Geom.localToWorld(car.localQuad, car.carTransArr, car.p);
-		
-		screen.contentPane.repaint();
+		if (car.toolOrigShape.hitTest(screen.world.lastPressedWorldPoint)) {
+			
+			Point diff = ev.p.minus(screen.world.lastPressedWorldPoint);
+			
+			Point carP = car.toolOrigP.plus(diff);
+			double carAngle = car.toolOrigAngle;
+			
+			switch (car.origState) {
+			case DRIVING:
+			case BRAKING:
+				
+				RoadPosition closest = null;
+				for (Edge e : screen.world.graph.edges) {
+					if (e instanceof Road) {
+						Road r = (Road)e;
+						RoadPosition pos = r.findClosestRoadPosition(carP, Double.POSITIVE_INFINITY);
+						if (pos != null && (closest == null || Point.distance(pos.p, carP) < Point.distance(closest.p, carP))) {
+							closest = pos;
+						}
+					}
+				}
+				
+				if (closest != null) {
+					carP = closest.p;
+					
+					carAngle = closest.angle;
+					
+				}
+				
+				break;
+			case CRASHED:
+				break;
+			case SINKED:
+				break;
+			case SKIDDED:
+				break;
+			case EDITING:
+				assert false;
+				break;
+			}
+			
+			car.toolP = carP;
+			car.toolAngle = carAngle;
+			double[][] mat = Geom.rotationMatrix(car.toolAngle);
+			car.toolShape = Geom.localToWorld(car.localQuad, mat, car.toolP);
+			
+			screen.contentPane.repaint();
+			
+		}
 		
 	}
 	
 //	public void moved(InputEvent ev) {
 //		
 //	}
+	
+	public void clicked(InputEvent ev) {
+		
+		if (car.toolShape.hitTest(screen.world.lastPressedWorldPoint)) {
+			
+			car.endEditing = true;
+			
+			screen.tool = new RegularTool(screen);
+			
+			screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.world.lastMovedOrDraggedWorldPoint));
+			
+			screen.contentPane.repaint();
+			
+		}
+		
+	}
 	
 	public void draw(RenderingContext ctxt) {
 		
@@ -116,7 +152,7 @@ public class CarTool extends ToolBase {
 			
 			ctxt.setColor(Color.BLUE);
 			ctxt.setPixelStroke(2.0);
-			car.shape.draw(ctxt);
+			car.toolShape.draw(ctxt);
 			
 		}
 	}

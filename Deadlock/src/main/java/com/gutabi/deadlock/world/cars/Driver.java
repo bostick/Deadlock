@@ -59,7 +59,7 @@ public class Driver {
 	}
 	
 	public void computeDynamicPropertiesMoving() {
-		overallPos = overallPath.findClosestGraphPositionPathPosition(c.p, overallPos);
+		overallPos = overallPath.findClosestGraphPositionPathPosition(c.p, overallPos, true);
 	}
 	
 	public void clear() {

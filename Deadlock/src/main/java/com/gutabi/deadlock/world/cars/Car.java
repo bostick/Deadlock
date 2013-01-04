@@ -20,6 +20,7 @@ import org.jbox2d.dynamics.FixtureDef;
 import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
+import com.gutabi.deadlock.core.geom.Circle;
 import com.gutabi.deadlock.core.geom.Geom;
 import com.gutabi.deadlock.core.geom.Quad;
 import com.gutabi.deadlock.core.geom.Shape;
@@ -76,7 +77,7 @@ public class Car extends Entity {
 	Vec2 vel;
 	Vec2 forwardVel;
 	double forwardSpeed;
-	float angle;
+	public double angle;
 	float angularVel;
 	public double[][] carTransArr = new double[2][2];
 	boolean atleastPartiallyOnRoad;
@@ -88,6 +89,14 @@ public class Car extends Entity {
 	public Quad shape;
 	
 	public boolean beginEditing;
+	public boolean endEditing;
+	public CarStateEnum origState;
+	public Point toolOrigP;
+	public double toolOrigAngle;
+	public Quad toolOrigShape;
+	public Point toolP;
+	public double toolAngle;
+	public Quad toolShape;
 	public boolean destroyed;
 	
 	static Logger logger = Logger.getLogger(Car.class);
@@ -353,9 +362,30 @@ public class Car extends Entity {
 			
 			state = CarStateEnum.EDITING;
 			
+			b2dBody.setLinearVelocity(new Vec2(0.0f, 0.0f));
+			b2dBody.setAngularVelocity(0.0f);
+			
 			beginEditing = false;
 			
 			return true;
+		}
+		
+		/*
+		 * do endEditing here also, instead of in preStep()
+		 * 
+		 * changing a car's overallPos in preStep is bad because GraphPositionPath hitTest data has already been precomputed for that step
+		 * (and the order that graph, cars, etc. call preStep() shouldn't matter)
+		 */
+		if (endEditing) {
+			
+			state = origState;
+			
+			b2dBody.setTransform(toolP.vec2(), (float)toolAngle);
+			
+			driver.overallPos = driver.overallPath.findClosestGraphPositionPathPosition(toolP, driver.overallPath.startingPos, false);
+			
+			endEditing = false;
+//			return true;
 		}
 		
 		switch (state) {
@@ -464,8 +494,10 @@ public class Car extends Entity {
 				
 				world.quadrantMap.grassMap.mowGrass(shape);
 				
-				world.grassMarkMap.addGrassMark(prevWorldPoint0, shape.p0);
-				world.grassMarkMap.addGrassMark(prevWorldPoint3, shape.p3);
+				synchronized (APP) {
+					world.grassMarkMap.addGrassMark(prevWorldPoint0, shape.p0);
+					world.grassMarkMap.addGrassMark(prevWorldPoint3, shape.p3);
+				}
 				
 				computeDynamicPropertiesMoving();
 				
@@ -557,6 +589,17 @@ public class Car extends Entity {
 		}
 		
 		if (APP.DEBUG_DRAW) {
+			
+			if (driver.overallPos != null) {
+				ctxt.setColor(APP.DARKGREEN);
+				new Circle(null, driver.overallPos.p, 0.2).paint(ctxt);
+			}
+			
+			if (driver.goalPoint != null) {
+				ctxt.setColor(Color.GREEN);
+				new Circle(null, driver.goalPoint, 0.2).paint(ctxt);
+			}
+			
 			ctxt.setColor(Color.BLACK);
 			ctxt.setPixelStroke(1.0);
 			shape.getAABB().draw(ctxt);
@@ -599,31 +642,62 @@ public class Car extends Entity {
 	
 	protected void paintImage(RenderingContext ctxt) {
 		
-		AffineTransform origTransform = ctxt.getTransform();
-		
-		Composite origComposite = null;
-		if (inMerger) {
-			origComposite = ctxt.getComposite();
-			ctxt.setComposite(aComp);
+		if (state != CarStateEnum.EDITING) {
+			
+			AffineTransform origTransform = ctxt.getTransform();
+			
+			Composite origComposite = null;
+			if (inMerger) {
+				origComposite = ctxt.getComposite();
+				ctxt.setComposite(aComp);
+			}
+			
+			ctxt.translate(p.x, p.y);
+			ctxt.rotate(angle);
+			ctxt.translate(CAR_LOCALX, CAR_LOCALY);
+			
+			ctxt.paintImage(APP.carSheet,
+					0, 0, CAR_LENGTH, CAR_WIDTH,
+					sheetColStart, sheetRowStart, sheetColEnd, sheetRowEnd);
+			
+			if (inMerger) {
+				ctxt.setComposite(origComposite);
+			}
+			ctxt.setTransform(origTransform);
+			
+		} else {
+			
+			AffineTransform origTransform = ctxt.getTransform();
+			
+			Composite origComposite = null;
+			if (inMerger) {
+				origComposite = ctxt.getComposite();
+				ctxt.setComposite(aComp);
+			}
+			
+			ctxt.translate(toolP.x, toolP.y);
+			ctxt.rotate(toolAngle);
+			ctxt.translate(CAR_LOCALX, CAR_LOCALY);
+			
+			ctxt.paintImage(APP.carSheet,
+					0, 0, CAR_LENGTH, CAR_WIDTH,
+					sheetColStart, sheetRowStart, sheetColEnd, sheetRowEnd);
+			
+			if (inMerger) {
+				ctxt.setComposite(origComposite);
+			}
+			ctxt.setTransform(origTransform);
+			
 		}
-		
-		ctxt.translate(p.x, p.y);
-		ctxt.rotate(angle);
-		ctxt.translate(CAR_LOCALX, CAR_LOCALY);
-		
-		ctxt.paintImage(APP.carSheet,
-				0, 0, CAR_LENGTH, CAR_WIDTH,
-				sheetColStart, sheetRowStart, sheetColEnd, sheetRowEnd);
-		
-		if (inMerger) {
-			ctxt.setComposite(origComposite);
-		}
-		ctxt.setTransform(origTransform);
 		
 	}
 	
 	private void paintRect(RenderingContext ctxt) {
-		shape.paint(ctxt);
+		if (state != CarStateEnum.EDITING) {
+			shape.paint(ctxt);
+		} else {
+			toolShape.paint(ctxt);
+		}
 	}
 	
 	private void paintBrakes(RenderingContext ctxt) {

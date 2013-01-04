@@ -11,6 +11,8 @@ public class RoadPosition extends EdgePosition {
 	public final double param;
 	public final double combo;
 	
+	public final double angle;
+	
 	public final boolean bound;
 	
 	public final double lengthToStartOfRoad;
@@ -38,6 +40,9 @@ public class RoadPosition extends EdgePosition {
 		this.param = param;
 		
 		this.combo = index + param;
+		
+		Point diff = r.getPoint(index+1).minus(r.getPoint(index));
+		angle = Math.atan2(diff.y, diff.x);
 		
 		if (DMath.equals(param, 0.0)) {
 			bound = true;

@@ -196,16 +196,9 @@ public class GraphPositionPath {
 	/**
 	 * finds closest position in a graphpositionpath to p
 	 * 
-	 * takes loops in the gpp into account, uses pos as a reference
-	 * where there would be ambiguities about which graphpositions to use (because of looping), use the one closest to pos in the gpp
-	 * 
-	 * also, make sure it is at least pos, no back tracking in allowed
-	 * 
-	 * and since we are only allowing positions further in the path from pos, then at the very least, we will always return the end of the path
-	 * never need to return null or anything
-	 * 
+	 * returns once a local minimum is found
 	 */
-	public GraphPositionPathPosition findClosestGraphPositionPathPosition(Point p, GraphPositionPathPosition min) {
+	public GraphPositionPathPosition findClosestGraphPositionPathPosition(Point p, GraphPositionPathPosition min, boolean returnOnLocalMinimum) {
 		
 		int closestIndex = min.index;
 		double closestParam = min.param;
@@ -244,7 +237,7 @@ public class GraphPositionPath {
 						
 //						logger.debug("closestDistance: " + closestDistance);
 						
-					} else {
+					} else if (returnOnLocalMinimum) {
 						return new GraphPositionPathPosition(this, closestIndex, closestParam);
 					}
 					
@@ -262,7 +255,7 @@ public class GraphPositionPath {
 					
 //					logger.debug("closestDistance: " + closestDistance);
 					
-				} else {
+				} else if (returnOnLocalMinimum) {
 					return new GraphPositionPathPosition(this, closestIndex, closestParam);
 				}
 			}
@@ -303,7 +296,7 @@ public class GraphPositionPath {
 						
 //						logger.debug("closestDistance: " + closestDistance);
 						
-					} else {
+					} else if (returnOnLocalMinimum) {
 						return new GraphPositionPathPosition(this, closestIndex, closestParam);
 					}
 				}
@@ -318,7 +311,7 @@ public class GraphPositionPath {
 					
 //					logger.debug("closestDistance: " + closestDistance);
 					
-				} else {
+				} else if (returnOnLocalMinimum) {
 					return new GraphPositionPathPosition(this, closestIndex, closestParam);
 				}
 			}

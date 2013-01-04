@@ -110,17 +110,18 @@ public class World {
 	 */
 	public void postStop() {
 		
-		graph.postStop();
-		
 		synchronized (APP) {
+			
+			graph.postStop();
+			
 			carMap.postStop();
 			
 			explosionMap.postStop();
 			
+			roadMarkMap.postStop();
+			grassMarkMap.postStop();
 		}
 		
-		roadMarkMap.postStop();
-		grassMarkMap.postStop();
 	}
 	
 	int velocityIterations = 6;
@@ -158,9 +159,8 @@ public class World {
 			
 			explosionMap.postStep(t);
 			
+			graph.postStep(t);
 		}
-		
-		graph.postStep(t);
 		
 	}
 	
@@ -385,6 +385,7 @@ public class World {
 		Graphics2D previewImageG2 = previewImage.createGraphics();
 		
 		RenderingContext previewContext = new RenderingContext(previewImageG2);
+//		previewContext.screen = 
 		
 		previewImageG2.setColor(Color.LIGHT_GRAY);
 		previewImageG2.fillRect(0, 0, (int)screen.contentPane.controlPanel.previewAABB.width, (int)screen.contentPane.controlPanel.previewAABB.height);
@@ -419,14 +420,15 @@ public class World {
 		ctxt.scale(ctxt.screen.pixelsPerMeter);
 		ctxt.translate(-ctxt.screen.worldViewport.x, -ctxt.screen.worldViewport.y);
 		
-		roadMarkMap.paintScene(ctxt);
-		grassMarkMap.paintScene(ctxt);
-		
-		quadrantMap.paintScene(ctxt);
-		
-		graph.paintScene(ctxt);
-		
 		synchronized (APP) {
+			
+			roadMarkMap.paintScene(ctxt);
+			grassMarkMap.paintScene(ctxt);
+			
+			quadrantMap.paintScene(ctxt);
+			
+			graph.paintScene(ctxt);
+			
 			carMap.paint(ctxt);
 			explosionMap.paint(ctxt);
 		}
