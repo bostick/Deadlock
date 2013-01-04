@@ -342,6 +342,8 @@ public class Road extends Edge {
 		if (pos != null) {
 			if (DMath.equals(pos.param, 1.0) && pos.index == seq.capsuleCount-1) {
 				return null;
+			} else if (pos.index == 0 && DMath.equals(pos.param, 0.0)) {
+				return null;
 			} else {
 				return new RoadPosition(this, pos.index, pos.param);
 			}

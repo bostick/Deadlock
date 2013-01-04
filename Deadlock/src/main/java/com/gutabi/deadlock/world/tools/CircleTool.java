@@ -1,13 +1,10 @@
 package com.gutabi.deadlock.world.tools;
 
-import static com.gutabi.deadlock.DeadlockApplication.APP;
-
 import java.awt.Color;
 import java.util.List;
 import java.util.Set;
 
 import com.gutabi.deadlock.core.Dim;
-import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.Shape;
 import com.gutabi.deadlock.ui.InputEvent;
@@ -155,11 +152,6 @@ public class CircleTool extends ToolBase {
 	public void moved(InputEvent ev) {
 		switch (mode) {
 		case FREE:
-			Entity closest = screen.world.hitTest(screen.world.lastMovedOrDraggedWorldPoint);
-			
-			synchronized (APP) {
-				screen.hilited = closest;
-			}
 			
 			screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.world.lastMovedOrDraggedWorldPoint));
 			
@@ -171,7 +163,6 @@ public class CircleTool extends ToolBase {
 		}
 	}
 	
-	@SuppressWarnings("fallthrough")
 	public void dragged(InputEvent ev) {
 		
 		switch (mode) {

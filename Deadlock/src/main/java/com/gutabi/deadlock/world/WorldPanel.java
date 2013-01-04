@@ -6,7 +6,6 @@ import java.awt.geom.AffineTransform;
 
 import org.apache.log4j.Logger;
 
-import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.AABB;
 import com.gutabi.deadlock.ui.InputEvent;
@@ -70,32 +69,44 @@ public class WorldPanel extends PanelBase {
 	
 	public void pressed(InputEvent ev) {
 		
-		Point p = panelToWorld(ev.p);
-		
-		screen.world.pressed(new InputEvent(p));
+		switch (screen.mode) {
+		case DIALOG:
+			break;
+		case PAUSED:
+		case RUNNING:
+		case EDITING:
+			Point p = panelToWorld(ev.p);
+			
+			screen.world.pressed(new InputEvent(p));
+			screen.tool.pressed(new InputEvent(p));
+			
+			break;
+		}
 		
 	}
 	
 	public void dragged(InputEvent ev) {
 		
-		lastMovedOrDraggedPanelPoint = ev.p;
-		
 		switch (screen.mode) {
 		case RUNNING:
 		case PAUSED: {
+			lastMovedOrDraggedPanelPoint = ev.p;
+			
 			Point p = panelToWorld(ev.p);
 			
 			screen.world.dragged(new InputEvent(p));
+			screen.tool.dragged(new InputEvent(p));
 			break;
 		}
 		case DIALOG:
 			break;
 		case EDITING: {
+			lastMovedOrDraggedPanelPoint = ev.p;
 			
 			Point p = panelToWorld(ev.p);
 			
 			screen.world.dragged(new InputEvent(p));
-			screen.tool.dragged(ev);
+			screen.tool.dragged(new InputEvent(p));
 			break;
 		}
 		}
@@ -127,6 +138,7 @@ public class WorldPanel extends PanelBase {
 			Point p = panelToWorld(ev.p);
 			
 			screen.world.moved(new InputEvent(p));
+			screen.tool.moved(new InputEvent(p));
 			break;
 		}
 		case DIALOG:
@@ -135,7 +147,7 @@ public class WorldPanel extends PanelBase {
 			Point p = panelToWorld(ev.p);
 			
 			screen.world.moved(new InputEvent(p));
-			screen.tool.moved(ev);
+			screen.tool.moved(new InputEvent(p));
 			break;
 		}
 		}
@@ -149,29 +161,34 @@ public class WorldPanel extends PanelBase {
 			Point p = panelToWorld(ev.p);
 			
 			screen.world.clicked(new InputEvent(p));
+			screen.tool.clicked(new InputEvent(p));
 			break;
 		}
 		case DIALOG:
 			break;
 		case EDITING: {
+			Point p = panelToWorld(ev.p);
+			
+			screen.world.clicked(new InputEvent(p));
+			screen.tool.clicked(new InputEvent(p));
 			break;
 		}
 		}
 	}
 	
-	public void exited(InputEvent ev) {
-		
-		switch (screen.mode) {
-		case RUNNING:
-		case PAUSED:
-		case DIALOG:
-			break;
-		case EDITING:
-			screen.tool.exited(ev);
-			break;
-		}
-		
-	}
+//	public void exited(InputEvent ev) {
+//		
+//		switch (screen.mode) {
+//		case RUNNING:
+//		case PAUSED:
+//		case DIALOG:
+//			break;
+//		case EDITING:
+//			screen.tool.exited(ev);
+//			break;
+//		}
+//		
+//	}
 	
 	public void paint(RenderingContext ctxt) {
 		
@@ -185,15 +202,6 @@ public class WorldPanel extends PanelBase {
 		
 		ctxt.scale(ctxt.screen.pixelsPerMeter);
 		ctxt.translate(-ctxt.screen.worldViewport.x, -ctxt.screen.worldViewport.y);
-		
-		Entity hilitedCopy;
-		synchronized (APP) {
-			hilitedCopy = screen.hilited;
-		}
-		
-		if (hilitedCopy != null) {
-			hilitedCopy.paintHilite(ctxt);
-		}
 		
 		screen.tool.draw(ctxt);
 		

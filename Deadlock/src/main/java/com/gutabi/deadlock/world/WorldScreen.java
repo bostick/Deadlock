@@ -3,14 +3,13 @@ package com.gutabi.deadlock.world;
 import javax.swing.RootPaneContainer;
 
 import com.gutabi.deadlock.Screen;
-import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.ui.DLSFileChooser;
 import com.gutabi.deadlock.world.tools.RegularTool;
 import com.gutabi.deadlock.world.tools.Tool;
 
 public class WorldScreen extends Screen {
 	
-	enum WorldScreenMode {
+	public enum WorldScreenMode {
 		EDITING,
 		RUNNING,
 		PAUSED,
@@ -28,15 +27,13 @@ public class WorldScreen extends Screen {
 	
 	public Tool tool;
 	
-	public Entity hilited;
-	
 	public WorldScreenMode mode;
 	
 	public final Object pauseLock = new Object();
 	
 	public Stats stats;
 	
-	DLSFileChooser fc;
+	public DLSFileChooser fc;
 	
 	
 	
@@ -72,6 +69,8 @@ public class WorldScreen extends Screen {
 	public void startRunning() {
 		
 		mode = WorldScreenMode.RUNNING;
+		
+		tool = new RegularTool(this);
 		
 		Thread t = new Thread(new SimulationRunnable(this));
 		t.start();

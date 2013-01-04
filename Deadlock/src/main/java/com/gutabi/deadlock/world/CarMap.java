@@ -25,6 +25,8 @@ public class CarMap {
 	
 	private List<Car> cars = new ArrayList<Car>();
 	
+//	public Car pressedCar;
+	
 	static Logger logger = Logger.getLogger(CarMap.class);
 	
 	public CarMap(World world) {

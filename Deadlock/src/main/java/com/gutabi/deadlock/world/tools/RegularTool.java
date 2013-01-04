@@ -16,8 +16,10 @@ import com.gutabi.deadlock.ui.InputEvent;
 import com.gutabi.deadlock.ui.RenderingContext;
 import com.gutabi.deadlock.world.Stroke;
 import com.gutabi.deadlock.world.WorldScreen;
+import com.gutabi.deadlock.world.cars.Car;
 import com.gutabi.deadlock.world.graph.Direction;
 import com.gutabi.deadlock.world.graph.Fixture;
+import com.gutabi.deadlock.world.graph.Merger;
 import com.gutabi.deadlock.world.graph.Road;
 import com.gutabi.deadlock.world.graph.StopSign;
 import com.gutabi.deadlock.world.graph.Vertex;
@@ -30,6 +32,8 @@ public class RegularTool extends ToolBase {
 	}
 	
 	RegularToolMode mode;
+	
+	public Entity hilited;
 	
 	Circle shape;
 	
@@ -74,18 +78,18 @@ public class RegularTool extends ToolBase {
 	}
 	
 	public void d1Key() {
-		if (screen.hilited != null) {
+		if (hilited != null) {
 			
-			if (screen.hilited instanceof Road) {
-				Road r = (Road)screen.hilited;
+			if (hilited instanceof Road) {
+				Road r = (Road)hilited;
 				
 				r.setDirection(null, Direction.STARTTOEND);
 				
 				screen.world.render_worldPanel();
 				screen.contentPane.repaint();
 				
-			} else if (screen.hilited instanceof Fixture) {
-				Fixture f = (Fixture)screen.hilited;
+			} else if (hilited instanceof Fixture) {
+				Fixture f = (Fixture)hilited;
 				
 				Fixture g = f.match;
 				
@@ -108,10 +112,10 @@ public class RegularTool extends ToolBase {
 	}
 	
 	public void d2Key() {
-		if (screen.hilited != null) {
+		if (hilited != null) {
 			
-			if (screen.hilited instanceof Road) {
-				Road r = (Road)screen.hilited;
+			if (hilited instanceof Road) {
+				Road r = (Road)hilited;
 				
 				r.setDirection(null, Direction.ENDTOSTART);
 				
@@ -124,10 +128,10 @@ public class RegularTool extends ToolBase {
 	}
 	
 	public void d3Key() {
-		if (screen.hilited != null) {
+		if (hilited != null) {
 			
-			if (screen.hilited instanceof Road) {
-				Road r = (Road)screen.hilited;
+			if (hilited instanceof Road) {
+				Road r = (Road)hilited;
 				
 				r.setDirection(null, null);
 			
@@ -156,7 +160,7 @@ public class RegularTool extends ToolBase {
 	
 	public void aKey() {
 		
-		screen.hilited = null;
+		hilited = null;
 		
 		screen.tool = new CircleTool(screen);
 		
@@ -181,11 +185,18 @@ public class RegularTool extends ToolBase {
 		screen.contentPane.repaint();
 	}
 	
+//	public void fKey() {
+//		CarTool t = new CarTool(screen);
+//		t.setPoint(screen.world.quadrantMap.getPoint(screen.world.lastMovedOrDraggedWorldPoint));
+//		screen.tool = t;
+//		screen.contentPane.repaint();
+//	}
+	
 	public void insertKey() {
-		if (screen.hilited != null) {
+		if (hilited != null) {
 			
-			if (screen.hilited instanceof StopSign) {
-				StopSign s = (StopSign)screen.hilited;
+			if (hilited instanceof StopSign) {
+				StopSign s = (StopSign)hilited;
 				
 				s.setEnabled(true);
 				
@@ -195,7 +206,7 @@ public class RegularTool extends ToolBase {
 			
 		} else {
 			
-			screen.hilited = null;
+			hilited = null;
 			
 			screen.tool = new MergerTool(screen);
 			
@@ -205,13 +216,62 @@ public class RegularTool extends ToolBase {
 		}
 	}
 	
+	public void deleteKey() {
+		
+		if (hilited != null) {
+			
+			if (hilited.isUserDeleteable()) {
+				
+				if (hilited instanceof Car) {
+					Car c = (Car)hilited;
+					
+					screen.world.carMap.destroyCar(c);
+					
+				} else if (hilited instanceof Vertex) {
+					Vertex v = (Vertex)hilited;
+					
+					Set<Vertex> affected = screen.world.graph.removeVertexTop(v);
+					screen.world.graph.computeVertexRadii(affected);
+					
+				} else if (hilited instanceof Road) {
+					Road e = (Road)hilited;
+					
+					Set<Vertex> affected = screen.world.graph.removeRoadTop(e);
+					screen.world.graph.computeVertexRadii(affected);
+					
+				} else if (hilited instanceof Merger) {
+					Merger e = (Merger)hilited;
+					
+					Set<Vertex> affected = screen.world.graph.removeMergerTop(e);
+					screen.world.graph.computeVertexRadii(affected);
+					
+				} else if (hilited instanceof StopSign) {
+					StopSign s = (StopSign)hilited;
+					
+					s.r.removeStopSignTop(s);
+					
+				} else {
+					throw new AssertionError();
+				}
+				
+				hilited = null;
+				
+			}
+			
+		}
+		
+		screen.world.render_worldPanel();
+		screen.world.render_preview();
+		screen.contentPane.repaint();
+	}
+	
 	public void moved(InputEvent ev) {
 		switch (mode) {
 		case FREE:
 			Entity closest = screen.world.hitTest(screen.world.lastMovedOrDraggedWorldPoint);
 			
 			synchronized (APP) {
-				screen.hilited = closest;
+				hilited = closest;
 			}
 			
 			screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.world.lastMovedOrDraggedWorldPoint));
@@ -264,11 +324,34 @@ public class RegularTool extends ToolBase {
 		}
 	}
 	
+	public void clicked(InputEvent ev) {
+		
+		switch (mode) {
+		case FREE:
+			
+			Car clicked = screen.world.carMap.carHitTest(ev.p);
+			if (clicked != null) {
+				
+				CarTool t = new CarTool(screen);
+				t.setCar(clicked);
+//				t.setPoint(screen.world.quadrantMap.getPoint(screen.world.lastMovedOrDraggedWorldPoint));
+				screen.tool = t;
+				screen.contentPane.repaint();
+				
+			}
+			
+			break;
+		case DRAFTING:
+			break;
+		}
+		
+	}
+	
 	public void draftStart(Point p) {
 		
 		mode = RegularToolMode.DRAFTING;
 		
-		screen.hilited = null;
+		hilited = null;
 		
 		stroke = new Stroke(screen);
 		stroke.add(p);
@@ -301,6 +384,13 @@ public class RegularTool extends ToolBase {
 		
 		if (p == null) {
 			return;
+		}
+		
+		Entity hilitedCopy;
+		hilitedCopy = hilited;
+		
+		if (hilitedCopy != null) {
+			hilitedCopy.paintHilite(ctxt);
 		}
 		
 		if (stroke != null) {

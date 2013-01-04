@@ -21,7 +21,6 @@ import com.gutabi.deadlock.ui.InputEvent;
 import com.gutabi.deadlock.ui.RenderingContext;
 import com.gutabi.deadlock.world.cars.Car;
 import com.gutabi.deadlock.world.cars.CarEventListener;
-import com.gutabi.deadlock.world.cars.CarStateEnum;
 import com.gutabi.deadlock.world.graph.Fixture;
 import com.gutabi.deadlock.world.graph.Graph;
 import com.gutabi.deadlock.world.graph.Intersection;
@@ -154,17 +153,6 @@ public class World {
 	private void postStep() {
 		
 		synchronized (APP) {
-			
-			if (lastClickedWorldPoint != null) {
-				
-				Car clicked = carMap.carHitTest(lastClickedWorldPoint);
-				if (clicked != null) {
-					
-					clicked.state = CarStateEnum.EDITING;
-				}
-				
-				lastClickedWorldPoint = null;
-			}
 			
 			carMap.postStep(t);
 			
@@ -331,13 +319,20 @@ public class World {
 	public boolean lastDraggedWorldPointWasNull;
 	public Point lastMovedWorldPoint;
 	public Point lastMovedOrDraggedWorldPoint;
-	public Point lastClickedWorldPoint;
+//	public Point lastClickedWorldPoint;
 	
 	
 	public void pressed(InputEvent ev) {
 		
 		lastPressedWorldPoint = ev.p;
 		lastDraggedWorldPoint = null;
+		
+//		Car c = carMap.carHitTest(lastPressedWorldPoint);
+//		if (c != null) {
+//			carMap.pressedCar = c;
+//		}
+		
+		
 		
 	}
 	
@@ -353,13 +348,15 @@ public class World {
 		
 		lastMovedWorldPoint = ev.p;
 		lastMovedOrDraggedWorldPoint = lastMovedWorldPoint;
+//		lastMovedOrDraggedWorldPoint = lastDraggedWorldPoint;
 		
 	}
 	
 	public void clicked(InputEvent ev) {
 		
-		lastClickedWorldPoint = ev.p;
+//		lastClickedWorldPoint = ev.p;
 		
+//		line
 	}
 	
 	
@@ -381,7 +378,6 @@ public class World {
 		graph.render_panel(backgroundCtxt);
 		
 		backgroundG2.dispose();
-		
 	}
 	
 	public void render_preview() {
@@ -409,7 +405,6 @@ public class World {
 		previewContext.setTransform(origTrans);
 		
 		previewImageG2.dispose();
-		
 	}
 	
 	public void paint_panel(RenderingContext ctxt) {

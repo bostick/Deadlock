@@ -61,15 +61,15 @@ public class Car extends Entity {
 	float mass;
 	float momentOfInertia;
 	
-	Quad localQuad;
-	protected Body b2dBody;
+	public Quad localQuad;
+	public Body b2dBody;
 	protected PolygonShape b2dShape;
 	public org.jbox2d.dynamics.Fixture b2dFixture;
 	
 	/*
 	 * dynamic properties
 	 */
-	Point p;
+	public Point p;
 	Vec2 pVec2;
 	Vec2 currentRightNormal;
 	Vec2 currentUpNormal;
@@ -78,7 +78,7 @@ public class Car extends Entity {
 	double forwardSpeed;
 	float angle;
 	float angularVel;
-	double[][] carTransArr = new double[2][2];
+	public double[][] carTransArr = new double[2][2];
 	boolean atleastPartiallyOnRoad;
 	boolean inMerger;
 	
@@ -86,6 +86,9 @@ public class Car extends Entity {
 	Point prevWorldPoint3;
 	
 	public Quad shape;
+	
+	public boolean beginEditing;
+	public boolean destroyed;
 	
 	static Logger logger = Logger.getLogger(Car.class);
 	static Logger pathingLogger = Logger.getLogger(logger.getName()+".pathing");
@@ -281,6 +284,7 @@ public class Car extends Entity {
 	
 	public void destroy() {
 		b2dCleanup();
+		destroyed = true;
 	}
 	
 	private void b2dCleanup() {
@@ -345,6 +349,15 @@ public class Car extends Entity {
 	 */
 	public boolean postStep(double t) {
 		
+		if (beginEditing) {
+			
+			state = CarStateEnum.EDITING;
+			
+			beginEditing = false;
+			
+			return true;
+		}
+		
 		switch (state) {
 		case DRIVING: {
 			
@@ -368,7 +381,7 @@ public class Car extends Entity {
 				
 				return false;
 			}
-			break;
+			return true;
 		}
 		case BRAKING:
 			
@@ -396,7 +409,7 @@ public class Car extends Entity {
 				
 			}
 			
-			break;
+			return true;
 		case CRASHED:
 			
 			computeDynamicPropertiesAlways();
@@ -433,9 +446,9 @@ public class Car extends Entity {
 				return false;
 			}
 			
-			break;
-			
+			return true;
 		case SKIDDED:
+			
 			computeDynamicPropertiesAlways();
 			
 			if (driver.stoppedTime == -1) {
@@ -473,18 +486,19 @@ public class Car extends Entity {
 				return false;
 			}
 			
-			break;
+			return true;
 		case SINKED:
 			
 			assert false;
 			
-			break;
-			
+			return true;
 		case EDITING:
-			break;
-		}
-		
-		return true;	
+			return true;
+			
+		default:
+			assert false;
+			return true;
+		}	
 	}
 	
 	public void paint(RenderingContext ctxt) {

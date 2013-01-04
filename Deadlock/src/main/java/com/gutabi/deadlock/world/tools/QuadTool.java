@@ -188,7 +188,6 @@ public class QuadTool extends ToolBase {
 	
 	Point origKnobCenter;
 	
-	@SuppressWarnings("fallthrough")
 	public void dragged(InputEvent ev) {
 		
 		switch (mode) {

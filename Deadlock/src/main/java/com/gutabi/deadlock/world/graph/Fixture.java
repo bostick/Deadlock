@@ -19,7 +19,7 @@ import com.gutabi.deadlock.world.cars.Car;
 
 public final class Fixture extends Vertex {
 	
-	public static double SPAWN_FREQUENCY_SECONDS = 1.5;
+	public static double SPAWN_FREQUENCY_SECONDS = 1500.5;
 	
 	public World world;
 	public final Axis a;
@@ -247,7 +247,6 @@ public final class Fixture extends Vertex {
 		
 		Car c = new Car(world, this);
 		
-//		r = 11;
 		switch (r) {
 		case 0:
 			c.sheetColStart = 0;

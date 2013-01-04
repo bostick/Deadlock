@@ -34,6 +34,10 @@ public abstract class Tool {
 	
 	public abstract void dKey();
 	
+	public abstract void fKey();
+	
+	public abstract void gKey();
+	
 	public abstract void insertKey();
 	
 	public abstract void d1Key();
@@ -45,13 +49,31 @@ public abstract class Tool {
 	
 	public abstract void escKey();
 	
+	public abstract void deleteKey();
+	
+	public abstract void ctrlSKey();
+	
+	public abstract void ctrlOKey();
+	
+	public abstract void enterKey();
+	
+	
+	
+	
+	
+	public abstract void pressed(InputEvent ev);
+	
+	public abstract void released(InputEvent ev);
+	
 	public abstract void dragged(InputEvent ev);
 	
 	public abstract void moved(InputEvent ev);
 	
-	public abstract void released(InputEvent ev);
+	public abstract void clicked(InputEvent ev);
 	
-	public abstract void exited(InputEvent ev);
+//	public abstract void exited(InputEvent ev);
+	
+	
 	
 	public abstract void draw(RenderingContext ctxt);
 	
