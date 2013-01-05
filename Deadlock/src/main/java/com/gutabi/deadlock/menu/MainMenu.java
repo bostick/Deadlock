@@ -15,6 +15,7 @@ import com.gutabi.deadlock.quadranteditor.QuadrantEditor;
 import com.gutabi.deadlock.world.WorldScreen;
 import com.gutabi.deadlock.world.examples.FourByFourGridWorld;
 import com.gutabi.deadlock.world.examples.OneByOneWorld;
+import com.gutabi.deadlock.world.examples.RushHourWorld;
 import com.gutabi.deadlock.world.examples.WorldA;
 
 public class MainMenu extends Screen {
@@ -89,6 +90,25 @@ public class MainMenu extends Screen {
 			}
 		};
 		add(aMenuItem);
+		
+		MenuItem rMenuItem = new MenuItem(MainMenu.this, "Rush Hour") {
+			public void action() {
+				
+				WorldScreen s = new WorldScreen();
+				s.world = RushHourWorld.createRushHourWorld(s);
+				
+				s.setup(APP.container);
+				
+				((JFrame)APP.container).setVisible(true);
+				
+				s.postDisplay();
+				
+				s.world.render_worldPanel();
+				s.world.render_preview();
+				s.contentPane.repaint();
+			}
+		};
+		add(rMenuItem);
 		
 		MenuItem dialogMenuItem = new MenuItem(MainMenu.this,  "Quadrant Editor...") {
 			public void action() {

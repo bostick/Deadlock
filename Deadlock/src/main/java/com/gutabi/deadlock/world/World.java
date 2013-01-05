@@ -27,6 +27,7 @@ import com.gutabi.deadlock.world.graph.Intersection;
 import com.gutabi.deadlock.world.graph.Merger;
 import com.gutabi.deadlock.world.graph.Road;
 import com.gutabi.deadlock.world.graph.RoadPosition;
+import com.gutabi.deadlock.world.graph.RushHourBoard;
 import com.gutabi.deadlock.world.graph.Vertex;
 
 public class World {
@@ -227,6 +228,17 @@ public class World {
 		
 		return graph.insertMergerTop(m);
 	}
+	
+	public void createRushHourBoard(Point p) {
+		
+		RushHourBoard b = new RushHourBoard(this, p);
+		
+		quadrantMap.grassMap.mowGrass(b.aabb);
+		
+		graph.insertRushHourBoardTop(b);
+	}
+	
+	
 	
 	public String toFileString() {
 		StringBuilder s = new StringBuilder();

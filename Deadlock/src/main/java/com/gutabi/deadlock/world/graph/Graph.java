@@ -39,6 +39,8 @@ public class Graph implements Sweepable {
 	public final List<Vertex> vertices = new ArrayList<Vertex>();
 	public final List<Edge> edges = new ArrayList<Edge>();
 	
+	public final List<RushHourBoard> rushes = new ArrayList<RushHourBoard>();
+	
 	public GraphPositionPathFactory pathFactory;
 	
 	public final List<GraphPositionPath> paths = new ArrayList<GraphPositionPath>();
@@ -195,6 +197,17 @@ public class Graph implements Sweepable {
 		
 		return affected;
 	}
+	
+	public void insertRushHourBoardTop(RushHourBoard b) {
+		
+		rushes.add(b);
+		
+	}
+
+
+	
+	
+	
 	
 	public Set<Vertex> removeVertexTop(Vertex v) {
 		
@@ -1246,14 +1259,20 @@ public class Graph implements Sweepable {
 	public void render_panel(RenderingContext ctxt) {
 		
 		List<Edge> edgesCopy;
+		List<RushHourBoard> rushesCopy;
 		List<Vertex> verticesCopy;
 		synchronized (APP) {
 			edgesCopy = new ArrayList<Edge>(edges);
+			rushesCopy = new ArrayList<RushHourBoard>(rushes);
 			verticesCopy = new ArrayList<Vertex>(vertices);
 		}
 		
 		for (Edge e : edgesCopy) {
 			e.paint_panel(ctxt);
+		}
+		
+		for (RushHourBoard b : rushesCopy) {
+			b.paint_panel(ctxt);
 		}
 		
 		for (Vertex v : verticesCopy) {
@@ -1269,14 +1288,20 @@ public class Graph implements Sweepable {
 	public void render_preview(RenderingContext ctxt) {
 		
 		List<Edge> edgesCopy;
+		List<RushHourBoard> rushesCopy;
 		List<Vertex> verticesCopy;
 		synchronized (APP) {
 			edgesCopy = new ArrayList<Edge>(edges);
+			rushesCopy = new ArrayList<RushHourBoard>(rushes);
 			verticesCopy = new ArrayList<Vertex>(vertices);
 		}
 		
 		for (Edge e : edgesCopy) {
 			e.paint_preview(ctxt);
+		}
+		
+		for (RushHourBoard b : rushesCopy) {
+			b.paint_preview(ctxt);
 		}
 		
 		for (Vertex v : verticesCopy) {
