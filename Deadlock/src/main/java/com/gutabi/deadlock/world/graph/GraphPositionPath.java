@@ -97,7 +97,7 @@ public class GraphPositionPath {
 					}
 				}
 				verticesMap.put(v, i);
-			} else {
+			} else if (pos instanceof EdgePosition) {
 				/*
 				 * work to determine list of edges
 				 */

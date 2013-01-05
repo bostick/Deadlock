@@ -38,8 +38,11 @@ public class Geom {
 		return new Quad(q.parent, w0, w1, w2, w3);
 	}
 	
-	public static double[][] rotationMatrix(double a) {
-		return new double[][]{ {Math.cos(a), -Math.sin(a)}, {Math.sin(a), Math.cos(a)} };
+	public static void rotationMatrix(double a, double[][] out) {
+		out[0][0] = Math.cos(a);
+		out[0][1] = -Math.sin(a);
+		out[1][0] = Math.sin(a);
+		out[1][1] = Math.cos(a);
 	}
 	
 }

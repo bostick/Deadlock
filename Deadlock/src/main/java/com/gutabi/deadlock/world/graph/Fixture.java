@@ -84,7 +84,7 @@ public final class Fixture extends Vertex {
 			List<Vertex> poss = new ArrayList<Vertex>();
 			poss.add(this);
 			poss.add(match);
-			shortestPathToMatch = world.graph.pathFactory.createShortestPathFromSkeleton(poss);
+			shortestPathToMatch = world.graph.pathFactory.createShortestVertexPath(poss);
 			
 			lastSpawnTime = -1;
 			outstandingCars = 0;
@@ -144,7 +144,7 @@ public final class Fixture extends Vertex {
 		List<Vertex> poss = new ArrayList<Vertex>();
 		poss.add(this);
 		poss.add(match);
-		GraphPositionPath path = world.graph.pathFactory.createRandomPathFromSkeleton(poss);
+		GraphPositionPath path = world.graph.pathFactory.createRandomVertexPath(poss);
 		return path;
 	}
 	
@@ -220,130 +220,9 @@ public final class Fixture extends Vertex {
 	
 	private Car createNewCar() {
 		
-//		List<Class> l = new ArrayList<Class>();
-//		if (APP.NORMALCAR) {
-//			l.add(NormalCar.class);
-//		}
-//		if (APP.FASTCAR) {
-//			l.add(FastCar.class);
-//		}
-////		if (random) {
-////			l.add(RandomCar.class);
-////		}
-//		if (APP.REALLYCAR) {
-//			l.add(ReallyFastCar.class);
-//		}
-//		if (APP.TRUCK) {
-//			l.add(Truck.class);
-//		}
-//		
-//		
-//		if (l.isEmpty()) {
-//			return null;
-//		}
-		
 		int r = APP.RANDOM.nextInt(12);
 		
-		Car c = new Car(world, this);
-		
-		switch (r) {
-		case 0:
-			c.sheetColStart = 0;
-			c.sheetColEnd = c.sheetColStart + 64;
-			c.sheetRowStart = 0;
-			c.sheetRowEnd = c.sheetRowStart + 32;
-			c.CAR_LENGTH = 1.0;
-			c.CAR_WIDTH = 0.5;
-			break;
-		case 1:
-			c.sheetColStart = 0;
-			c.sheetColEnd = c.sheetColStart + 64;
-			c.sheetRowStart = 32;
-			c.sheetRowEnd = c.sheetRowStart + 32;
-			c.CAR_LENGTH = 1.0;
-			c.CAR_WIDTH = 0.5;
-			break;
-		case 2:
-			c.sheetColStart = 0;
-			c.sheetColEnd = c.sheetColStart + 64;
-			c.sheetRowStart = 64;
-			c.sheetRowEnd = c.sheetRowStart + 32;
-			c.CAR_LENGTH = 1.0;
-			c.CAR_WIDTH = 0.5;
-			break;
-		case 3:
-			c.sheetColStart = 0;
-			c.sheetColEnd = c.sheetColStart + 128;
-			c.sheetRowStart = 96;
-			c.sheetRowEnd = c.sheetRowStart + 64;
-			c.CAR_LENGTH = 4.0;
-			c.CAR_WIDTH = 2.0;
-			break;
-		case 4:
-			c.sheetColStart = 0;
-			c.sheetColEnd = c.sheetColStart + 64;
-			c.sheetRowStart = 160;
-			c.sheetRowEnd = c.sheetRowStart + 32;
-			c.CAR_LENGTH = 2.0;
-			c.CAR_WIDTH = 1.0;
-			break;
-		case 5:
-			c.sheetColStart = 0;
-			c.sheetColEnd = c.sheetColStart + 96;
-			c.sheetRowStart = 192;
-			c.sheetRowEnd = c.sheetRowStart + 32;
-			c.CAR_LENGTH = 3.0;
-			c.CAR_WIDTH = 1.0;
-			break;
-		case 6:
-			c.sheetColStart = 0;
-			c.sheetColEnd = c.sheetColStart + 96;
-			c.sheetRowStart = 224;
-			c.sheetRowEnd = c.sheetRowStart + 32;
-			c.CAR_LENGTH = 3.0;
-			c.CAR_WIDTH = 1.0;
-			break;
-		case 7:
-			c.sheetColStart = 0;
-			c.sheetColEnd = c.sheetColStart + 64;
-			c.sheetRowStart = 256;
-			c.sheetRowEnd = c.sheetRowStart + 32;
-			c.CAR_LENGTH = 2.0;
-			c.CAR_WIDTH = 1.0;
-			break;
-		case 8:
-			c.sheetColStart = 0;
-			c.sheetColEnd = c.sheetColStart + 96;
-			c.sheetRowStart = 288;
-			c.sheetRowEnd = c.sheetRowStart + 32;
-			c.CAR_LENGTH = 3.0;
-			c.CAR_WIDTH = 1.0;
-			break;
-		case 9:
-			c.sheetColStart = 0;
-			c.sheetColEnd = c.sheetColStart + 64;
-			c.sheetRowStart = 320;
-			c.sheetRowEnd = c.sheetRowStart + 32;
-			c.CAR_LENGTH = 2.0;
-			c.CAR_WIDTH = 1.0;
-			break;
-		case 10:
-			c.sheetColStart = 0;
-			c.sheetColEnd = c.sheetColStart + 96;
-			c.sheetRowStart = 352;
-			c.sheetRowEnd = c.sheetRowStart + 32;
-			c.CAR_LENGTH = 3.0;
-			c.CAR_WIDTH = 1.0;
-			break;
-		case 11:
-			c.sheetColStart = 0;
-			c.sheetColEnd = c.sheetColStart + 64;
-			c.sheetRowStart = 384;
-			c.sheetRowEnd = c.sheetRowStart + 32;
-			c.CAR_LENGTH = 2.0;
-			c.CAR_WIDTH = 1.0;
-			break;
-		}
+		Car c = Car.createCar(world, this, r);
 		
 		r = APP.RANDOM.nextInt(3);
 		

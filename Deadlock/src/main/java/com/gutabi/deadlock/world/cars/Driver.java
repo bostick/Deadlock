@@ -42,20 +42,18 @@ public class Driver {
 		
 		computePath();
 		
-		overallPos = overallPath.startingPos;
-		
-		vertexDepartureQueue.add(new VertexSpawnEvent(overallPos));
-	}
-	
-	private void computePath() {
-		
-		overallPath = c.source.getShortestPathToMatch();
-		
 		overallPath.currentDrivers.add(this);
 		for (GraphPositionPath path : overallPath.sharedEdgesMap.keySet()) {
 			path.currentDrivers.add(this);
 		}
 		
+		overallPos = overallPath.startingPos;
+		
+		vertexDepartureQueue.add(new VertexSpawnEvent(overallPos));
+	}
+	
+	public void computePath() {
+		overallPath = c.source.getShortestPathToMatch();
 	}
 	
 	public void computeDynamicPropertiesMoving() {
@@ -135,6 +133,8 @@ public class Driver {
 		case SINKED:
 			break;
 		case EDITING:
+			break;
+		case IDLE:
 			break;
 		}
 	}

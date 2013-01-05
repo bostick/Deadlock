@@ -2,17 +2,18 @@ package com.gutabi.deadlock.world.graph;
 
 import java.awt.Color;
 
+import com.gutabi.deadlock.core.Entity;
 import com.gutabi.deadlock.core.Point;
 import com.gutabi.deadlock.core.geom.AABB;
 import com.gutabi.deadlock.ui.RenderingContext;
 import com.gutabi.deadlock.world.World;
 
-public class RushHourBoard {
+public class RushHourBoard extends Entity {
 	
 	World world;
 	Point p;
 	
-	RushHourStud[][] studs = new RushHourStud[6][6];
+	public RushHourStud[][] studs = new RushHourStud[6][6];
 	
 	public AABB aabb;
 	
@@ -20,16 +21,51 @@ public class RushHourBoard {
 		this.world = world;
 		this.p = p;
 		
-		aabb = new AABB(p.x - 3, p.y - 3, 6, 6);
+		aabb = new AABB(p.x - 3 * RushHourStud.SIZE, p.y - 3 * RushHourStud.SIZE, 6 * RushHourStud.SIZE,  6 * RushHourStud.SIZE);
 		
 		for (int i = 0; i < 6; i++) {
 			for (int j = 0; j < 6; j++) {
 				
-				studs[i][j] = new RushHourStud(world, new AABB(aabb.ul.x + j, aabb.ul.y + i, 1, 1));
+				studs[i][j] = new RushHourStud(world, this, i, j);
 				
 			}
 		}
 		
+	}
+	
+	public void preStart() {
+		
+	}
+	
+	public void postStop() {
+		
+	}
+	
+	public void preStep(double t) {
+		
+	}
+	
+	public boolean postStep(double t) {
+		return true;
+	}
+	
+	public Point point(double row, double col) {
+		return aabb.ul.plus(new Point(col * RushHourStud.SIZE, row * RushHourStud.SIZE));
+	}
+	
+	public RushHourBoard hitTest(Point p) {
+		if (aabb.hitTest(p)) {
+			return this;
+		}
+		return null;
+	}
+	
+	public AABB getShape() {
+		return aabb;
+	}
+	
+	public boolean isUserDeleteable() {
+		return true;
 	}
 	
 	public void paint_panel(RenderingContext ctxt) {
@@ -49,6 +85,10 @@ public class RushHourBoard {
 		
 		ctxt.setColor(Color.GRAY);
 		aabb.paint(ctxt);
+		
+	}
+	
+	public void paintHilite(RenderingContext ctxt) {
 		
 	}
 

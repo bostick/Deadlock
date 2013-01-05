@@ -229,13 +229,15 @@ public class World {
 		return graph.insertMergerTop(m);
 	}
 	
-	public void createRushHourBoard(Point p) {
+	public RushHourBoard createRushHourBoard(Point p) {
 		
 		RushHourBoard b = new RushHourBoard(this, p);
 		
 		quadrantMap.grassMap.mowGrass(b.aabb);
 		
 		graph.insertRushHourBoardTop(b);
+		
+		return b;
 	}
 	
 	

@@ -17,20 +17,23 @@ public class Engine {
 	
 	public void preStep(double t) {
 		
-		updateFriction();
-		
 		switch (c.state) {
 		case DRIVING:
+			updateFriction();
 			updateDrive(t);
 			break;
 		case BRAKING:
+			updateFriction();
 			updateBrake(t);
 			break;
 		case CRASHED:
 		case SKIDDED:
 		case SINKED:
+			updateFriction();
 			break;
 		case EDITING:
+			break;
+		case IDLE:
 			break;
 		}
 		

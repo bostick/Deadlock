@@ -15,7 +15,7 @@ public class GraphPositionPathFactory {
 		this.graph = graph;
 	}
 	
-	public GraphPositionPath createShortestPathFromSkeleton(List<Vertex> origPoss) {
+	public GraphPositionPath createShortestVertexPath(List<Vertex> origPoss) {
 		
 		for (int i = 0; i < origPoss.size()-1; i++) {
 			Vertex a = origPoss.get(i);
@@ -31,13 +31,13 @@ public class GraphPositionPathFactory {
 		for (int i = 0; i < origPoss.size()-1; i++) {
 			VertexPosition a = new VertexPosition(origPoss.get(i));
 			VertexPosition b = new VertexPosition(origPoss.get(i+1));
-			calculateShortestPath(poss, a, b);
+			calculateShortestVertexPath(poss, a, b);
 		}
 		
 		return new GraphPositionPath(poss);
 	}
 	
-	public GraphPositionPath createRandomPathFromSkeleton(List<Vertex> origPoss) {
+	public GraphPositionPath createRandomVertexPath(List<Vertex> origPoss) {
 		
 		for (int i = 0; i < origPoss.size()-1; i++) {
 			Vertex a = origPoss.get(i);
@@ -53,18 +53,33 @@ public class GraphPositionPathFactory {
 		for (int i = 0; i < origPoss.size()-1; i++) {
 			VertexPosition a = new VertexPosition(origPoss.get(i));
 			VertexPosition b = new VertexPosition(origPoss.get(i+1));
-			calculateRandomPath(poss, a, b);
+			calculateRandomVertexPath(poss, a, b);
 		}
 		
 		return new GraphPositionPath(poss);
 	}
+	
+//	public GraphPositionPath createShortestStudPath(List<RushHourStud> origPoss) {
+//		
+//		List<GraphPosition> poss = new ArrayList<GraphPosition>();
+//		
+//		RushHourStud s0 = origPoss.get(0);
+//		poss.add(new RushHourBoardPosition(s0.board, s0.row, s0.col));
+//		for (int i = 0; i < origPoss.size()-1; i++) {
+//			RushHourStud a = origPoss.get(i);
+//			RushHourStud b = origPoss.get(i+1);
+//			calculateShortestStudPath(poss, new RushHourBoardPosition(a.board, a.row, a.col), new RushHourBoardPosition(b.board, b.row, b.col));
+//		}
+//		
+//		return new GraphPositionPath(poss);
+//	}
 	
 	/**
 	 * Position a has already been added
 	 * 
 	 * add all Positions up to b, inclusive
 	 */
-	private void calculateShortestPath(List<GraphPosition> acc, VertexPosition a, VertexPosition b) {
+	private void calculateShortestVertexPath(List<GraphPosition> acc, VertexPosition a, VertexPosition b) {
 		
 		if (a.equals(b)) {
 			
@@ -83,8 +98,8 @@ public class GraphPositionPathFactory {
 					
 				} else {
 					
-					calculateShortestPath(acc, a, new VertexPosition(choice));
-					calculateShortestPath(acc, new VertexPosition(choice), b);
+					calculateShortestVertexPath(acc, a, new VertexPosition(choice));
+					calculateShortestVertexPath(acc, new VertexPosition(choice), b);
 					
 				}
 				
@@ -142,7 +157,7 @@ public class GraphPositionPathFactory {
 	 * 
 	 * add all Positions up to b, inclusive
 	 */
-	private void calculateRandomPath(List<GraphPosition> acc, VertexPosition a, VertexPosition b) {
+	private void calculateRandomVertexPath(List<GraphPosition> acc, VertexPosition a, VertexPosition b) {
 		
 		if (a.equals(b)) {
 			return;
@@ -220,7 +235,7 @@ public class GraphPositionPathFactory {
 		}
 		fillin(acc, a, choicePos, e, dir);
 		
-		calculateRandomPath(acc, choicePos, b);
+		calculateRandomVertexPath(acc, choicePos, b);
 		
 	}
 	

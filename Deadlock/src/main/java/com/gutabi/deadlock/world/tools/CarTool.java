@@ -3,16 +3,16 @@ package com.gutabi.deadlock.world.tools;
 import java.awt.Color;
 
 import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.core.geom.Geom;
 import com.gutabi.deadlock.core.geom.Shape;
 import com.gutabi.deadlock.ui.InputEvent;
 import com.gutabi.deadlock.ui.RenderingContext;
 import com.gutabi.deadlock.world.WorldScreen;
 import com.gutabi.deadlock.world.cars.Car;
-import com.gutabi.deadlock.world.graph.Edge;
-import com.gutabi.deadlock.world.graph.Road;
+import com.gutabi.deadlock.world.graph.GraphPosition;
+import com.gutabi.deadlock.world.graph.GraphPositionPathPosition;
 import com.gutabi.deadlock.world.graph.RoadPosition;
-import com.gutabi.deadlock.world.graph.Vertex;
+import com.gutabi.deadlock.world.graph.RushHourBoardPosition;
+import com.gutabi.deadlock.world.graph.VertexPosition;
 
 public class CarTool extends ToolBase {
 	
@@ -29,9 +29,6 @@ public class CarTool extends ToolBase {
 	public void setCar(Car c) {
 		this.car = c;
 		car.origState = c.state;
-//		car.origP = car.p;
-//		car.origAngle = car.angle;
-//		car.origShape = c.shape;
 		
 		car.toolP = car.p;
 		car.toolAngle = car.angle;
@@ -77,38 +74,29 @@ public class CarTool extends ToolBase {
 			double carAngle = car.toolAngle;
 			
 			switch (car.origState) {
+			case IDLE:
 			case DRIVING:
 			case BRAKING:
 				
-				RoadPosition closestRoad = null;
-				for (Edge e : car.driver.overallPath.edgesMap.keySet()) {
-					if (e instanceof Road) {
-						Road r = (Road)e;
-						RoadPosition pos = r.findClosestRoadPosition(carP, Double.POSITIVE_INFINITY);
-						if (pos != null && (closestRoad == null || Point.distance(pos.p, carP) < Point.distance(closestRoad.p, carP))) {
-							closestRoad = pos;
-						}
-					} else {
-						assert false;
-					}
-				}
+				GraphPositionPathPosition pathPos = car.driver.overallPath.findClosestGraphPositionPathPosition(carP, car.driver.overallPath.startingPos, false);
+				GraphPosition gpos = pathPos.getGraphPosition();
 				
-				if (closestRoad != null) {
-					carP = closestRoad.p;
+				if (gpos instanceof RoadPosition) {
 					
-					carAngle = closestRoad.angle;
+					carP = gpos.p;
+					
+					carAngle = ((RoadPosition)gpos).angle;
+					
+				} else if (gpos instanceof VertexPosition) {
+					
+					carP = gpos.p;
+					
+				} else if (gpos instanceof RushHourBoardPosition) {
+					
+					carP = gpos.p;
 					
 				} else {
-					
-					Vertex closestVertex = null;
-					for (Vertex v : car.driver.overallPath.verticesMap.keySet()) {
-						if (closestVertex == null || Point.distance(v.p, carP) < Point.distance(closestVertex.p, carP)) {
-							closestVertex = v;
-						}
-					}
-					
-					carP = closestVertex.p;
-					
+					assert false;
 				}
 				
 				break;
@@ -123,10 +111,7 @@ public class CarTool extends ToolBase {
 				break;
 			}
 			
-			car.toolP = carP;
-			car.toolAngle = carAngle;
-			double[][] mat = Geom.rotationMatrix(car.toolAngle);
-			car.toolShape = Geom.localToWorld(car.localQuad, mat, car.toolP);
+			car.setToolTransform(carP, carAngle);
 			
 			screen.contentPane.repaint();
 			

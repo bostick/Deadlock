@@ -50,15 +50,13 @@ public class Car extends Entity {
 	public World world;
 	public Fixture source;
 	
-	public final Driver driver;
+	public Driver driver;
 	public Engine engine;
 	
 	public int id;
 	
 	public static int carCounter;
 	
-	Point startPoint;
-	double startHeading;
 	float mass;
 	float momentOfInertia;
 	
@@ -67,26 +65,29 @@ public class Car extends Entity {
 	protected PolygonShape b2dShape;
 	public org.jbox2d.dynamics.Fixture b2dFixture;
 	
+	
+	public Point p;
+	public double angle;
+	private double[][] carTransArr = new double[2][2];
+	public Quad shape;
+	
+	
+	
 	/*
 	 * dynamic properties
 	 */
-	public Point p;
 	Vec2 pVec2;
 	Vec2 currentRightNormal;
 	Vec2 currentUpNormal;
 	Vec2 vel;
 	Vec2 forwardVel;
 	double forwardSpeed;
-	public double angle;
 	float angularVel;
-	public double[][] carTransArr = new double[2][2];
 	boolean atleastPartiallyOnRoad;
 	boolean inMerger;
 	
 	Point prevWorldPoint0;
 	Point prevWorldPoint3;
-	
-	public Quad shape;
 	
 	public boolean beginEditing;
 	public boolean endEditing;
@@ -96,7 +97,9 @@ public class Car extends Entity {
 	public Quad toolOrigShape;
 	public Point toolP;
 	public double toolAngle;
+	public double[][] carToolTransArr = new double[2][2];
 	public Quad toolShape;
+	
 	public boolean destroyed;
 	
 	static Logger logger = Logger.getLogger(Car.class);
@@ -112,6 +115,112 @@ public class Car extends Entity {
 		
 		driver = new Driver(this);
 		engine = new Engine(world, this);
+	}
+	
+	public static Car createCar(World world, Fixture f, int r) {
+		
+		Car c = new Car(world, f);
+		
+		switch (r) {
+		case 0:
+			c.sheetColStart = 0;
+			c.sheetColEnd = c.sheetColStart + 64;
+			c.sheetRowStart = 0;
+			c.sheetRowEnd = c.sheetRowStart + 32;
+			c.CAR_LENGTH = 1.0;
+			c.CAR_WIDTH = 0.5;
+			break;
+		case 1:
+			c.sheetColStart = 0;
+			c.sheetColEnd = c.sheetColStart + 64;
+			c.sheetRowStart = 32;
+			c.sheetRowEnd = c.sheetRowStart + 32;
+			c.CAR_LENGTH = 1.0;
+			c.CAR_WIDTH = 0.5;
+			break;
+		case 2:
+			c.sheetColStart = 0;
+			c.sheetColEnd = c.sheetColStart + 64;
+			c.sheetRowStart = 64;
+			c.sheetRowEnd = c.sheetRowStart + 32;
+			c.CAR_LENGTH = 1.0;
+			c.CAR_WIDTH = 0.5;
+			break;
+		case 3:
+			c.sheetColStart = 0;
+			c.sheetColEnd = c.sheetColStart + 128;
+			c.sheetRowStart = 96;
+			c.sheetRowEnd = c.sheetRowStart + 64;
+			c.CAR_LENGTH = 4.0;
+			c.CAR_WIDTH = 2.0;
+			break;
+		case 4:
+			c.sheetColStart = 0;
+			c.sheetColEnd = c.sheetColStart + 64;
+			c.sheetRowStart = 160;
+			c.sheetRowEnd = c.sheetRowStart + 32;
+			c.CAR_LENGTH = 2.0;
+			c.CAR_WIDTH = 1.0;
+			break;
+		case 5:
+			c.sheetColStart = 0;
+			c.sheetColEnd = c.sheetColStart + 96;
+			c.sheetRowStart = 192;
+			c.sheetRowEnd = c.sheetRowStart + 32;
+			c.CAR_LENGTH = 3.0;
+			c.CAR_WIDTH = 1.0;
+			break;
+		case 6:
+			c.sheetColStart = 0;
+			c.sheetColEnd = c.sheetColStart + 96;
+			c.sheetRowStart = 224;
+			c.sheetRowEnd = c.sheetRowStart + 32;
+			c.CAR_LENGTH = 3.0;
+			c.CAR_WIDTH = 1.0;
+			break;
+		case 7:
+			c.sheetColStart = 0;
+			c.sheetColEnd = c.sheetColStart + 64;
+			c.sheetRowStart = 256;
+			c.sheetRowEnd = c.sheetRowStart + 32;
+			c.CAR_LENGTH = 2.0;
+			c.CAR_WIDTH = 1.0;
+			break;
+		case 8:
+			c.sheetColStart = 0;
+			c.sheetColEnd = c.sheetColStart + 96;
+			c.sheetRowStart = 288;
+			c.sheetRowEnd = c.sheetRowStart + 32;
+			c.CAR_LENGTH = 3.0;
+			c.CAR_WIDTH = 1.0;
+			break;
+		case 9:
+			c.sheetColStart = 0;
+			c.sheetColEnd = c.sheetColStart + 64;
+			c.sheetRowStart = 320;
+			c.sheetRowEnd = c.sheetRowStart + 32;
+			c.CAR_LENGTH = 2.0;
+			c.CAR_WIDTH = 1.0;
+			break;
+		case 10:
+			c.sheetColStart = 0;
+			c.sheetColEnd = c.sheetColStart + 96;
+			c.sheetRowStart = 352;
+			c.sheetRowEnd = c.sheetRowStart + 32;
+			c.CAR_LENGTH = 3.0;
+			c.CAR_WIDTH = 1.0;
+			break;
+		case 11:
+			c.sheetColStart = 0;
+			c.sheetColEnd = c.sheetColStart + 64;
+			c.sheetRowStart = 384;
+			c.sheetRowEnd = c.sheetRowStart + 32;
+			c.CAR_LENGTH = 2.0;
+			c.CAR_WIDTH = 1.0;
+			break;
+		}
+		
+		return c;
 	}
 	
 	public void computeCtorProperties() {
@@ -138,43 +247,40 @@ public class Car extends Entity {
 	
 	public void computeStartingProperties() {
 		
-//		logger.debug("spawn");
-		
 		driver.computeStartingProperties();
 		
-		startPoint = driver.overallPos.p;
+		p = driver.overallPos.p;
 		
-		GraphPositionPathPosition next = driver.overallPos.travel(maxSpeed * world.screen.DT);
+		GraphPositionPathPosition next = driver.overallPos.nextBound();
 		
 		Point nextDTGoalPoint = next.p;
 		
-		Point dp = new Point(nextDTGoalPoint.x-startPoint.x, nextDTGoalPoint.y-startPoint.y);
+		Point dp = new Point(nextDTGoalPoint.x-p.x, nextDTGoalPoint.y-p.y);
 		
-		startHeading = Math.atan2(dp.y, dp.x);
+		angle = Math.atan2(dp.y, dp.x);
 		
-		
-		p = source.p;
-		double[][] mat = Geom.rotationMatrix(startHeading);
-		
-		shape = Geom.localToWorld(localQuad, mat, p);
-		
-//		b2dInit();
-		
-//		Vec2 v = dp.vec2();
-//		v.normalize();
-//		v.mulLocal((float)getMaxSpeed());
-		
-//		b2dBody.setLinearVelocity(v);
-		
-//		computeDynamicPropertiesAlways();
-//		computeDynamicPropertiesMoving();
+		setTransform(p, angle);
+	}
+	
+	public void setTransform(Point p, double angle) {
+		this.p = p;
+		this.angle = angle;
+		Geom.rotationMatrix(angle, carTransArr);
+		shape = Geom.localToWorld(localQuad, carTransArr, p);
+	}
+	
+	public void setToolTransform(Point p, double angle) {
+		this.toolP = p;
+		this.toolAngle = angle;
+		Geom.rotationMatrix(angle, carToolTransArr);
+		toolShape = Geom.localToWorld(localQuad, carToolTransArr, p);
 	}
 	
 	public void b2dInit() {
 		BodyDef bodyDef = new BodyDef();
 		bodyDef.type = BodyType.DYNAMIC;
-		bodyDef.position.set((float)startPoint.x, (float)startPoint.y);
-		bodyDef.angle = (float)startHeading;
+		bodyDef.position.set((float)p.x, (float)p.y);
+		bodyDef.angle = (float)angle;
 		bodyDef.allowSleep = true;
 		bodyDef.awake = true;
 		
@@ -287,12 +393,26 @@ public class Car extends Entity {
 			break;
 		case EDITING:
 			break;
+		case IDLE:
+			assert false;
+			break;
 		}
 		
 	}
 	
 	public void destroy() {
-		b2dCleanup();
+		switch (state) {
+		case BRAKING:
+		case CRASHED:
+		case DRIVING:
+		case EDITING:
+		case SINKED:
+		case SKIDDED:
+			b2dCleanup();
+			break;
+		case IDLE:
+			break;
+		}
 		destroyed = true;
 	}
 	
@@ -348,6 +468,8 @@ public class Car extends Entity {
 			break;
 		case EDITING:
 			break;
+		case IDLE:
+			break;
 		}
 		
 		engine.preStep(t);
@@ -360,12 +482,30 @@ public class Car extends Entity {
 		
 		if (beginEditing) {
 			
-			state = CarStateEnum.EDITING;
-			
-			b2dBody.setLinearVelocity(new Vec2(0.0f, 0.0f));
-			b2dBody.setAngularVelocity(0.0f);
-			
-			beginEditing = false;
+			switch (state) {
+			case BRAKING:
+			case CRASHED:
+			case DRIVING:
+			case EDITING:
+			case SINKED:
+			case SKIDDED:
+				
+				state = CarStateEnum.EDITING;
+				
+				b2dBody.setLinearVelocity(new Vec2(0.0f, 0.0f));
+				b2dBody.setAngularVelocity(0.0f);
+				
+				beginEditing = false;
+				
+				break;
+			case IDLE:
+				
+				state = CarStateEnum.EDITING;
+				
+				beginEditing = false;
+				
+				break;
+			}
 			
 			return true;
 		}
@@ -378,14 +518,36 @@ public class Car extends Entity {
 		 */
 		if (endEditing) {
 			
-			state = origState;
+			switch (origState) {
+			case BRAKING:
+			case CRASHED:
+			case DRIVING:
+			case EDITING:
+			case SINKED:
+			case SKIDDED:
+				
+				state = origState;
+				
+				b2dBody.setTransform(toolP.vec2(), (float)toolAngle);
+				
+				driver.overallPos = driver.overallPath.findClosestGraphPositionPathPosition(toolP, driver.overallPath.startingPos, false);
+				
+				endEditing = false;
+				
+				break;
+			case IDLE:
+				
+				state = origState;
+				
+				setTransform(toolP, toolAngle);
+				
+				driver.overallPos = driver.overallPath.findClosestGraphPositionPathPosition(toolP, driver.overallPath.startingPos, false);
+				
+				endEditing = false;
+				
+				break;
+			}
 			
-			b2dBody.setTransform(toolP.vec2(), (float)toolAngle);
-			
-			driver.overallPos = driver.overallPath.findClosestGraphPositionPathPosition(toolP, driver.overallPath.startingPos, false);
-			
-			endEditing = false;
-//			return true;
 		}
 		
 		switch (state) {
@@ -527,10 +689,11 @@ public class Car extends Entity {
 		case EDITING:
 			return true;
 			
-		default:
-			assert false;
+		case IDLE:
 			return true;
-		}	
+		}
+		
+		return true;
 	}
 	
 	public void paint(RenderingContext ctxt) {
@@ -558,6 +721,9 @@ public class Car extends Entity {
 				case SKIDDED:
 					ctxt.setColor(Color.GREEN);
 					break;
+				case IDLE:
+					ctxt.setColor(Color.BLUE);
+					break;
 				}
 			} else {
 				switch (state) {
@@ -577,6 +743,9 @@ public class Car extends Entity {
 					ctxt.setColor(Color.RED);
 					break;
 				case SKIDDED:
+					ctxt.setColor(Color.RED);
+					break;
+				case IDLE:
 					ctxt.setColor(Color.RED);
 					break;
 				}

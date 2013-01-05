@@ -1,5 +1,6 @@
 package com.gutabi.deadlock.world.graph;
 
+import com.gutabi.deadlock.core.DMath;
 import com.gutabi.deadlock.core.Entity;
 
 public class VertexPosition extends GraphPosition {
@@ -43,6 +44,34 @@ public class VertexPosition extends GraphPosition {
 			VertexPosition b = (VertexPosition)o;
 			return (v == b.v);
 		}
+	}
+	
+	public GraphPosition travelToNeighbor(GraphPosition p, double distance) {
+		
+		if (DMath.equals(distance, 0.0)) {
+			return this;
+		}
+		
+		assert !equals(p);
+		assert p.isBound();
+		
+		if (p instanceof VertexPosition) {
+			assert false;
+			return null;
+		} else {
+			EdgePosition pe = (EdgePosition)p;
+			
+			if (v == ((Edge)pe.entity).getReferenceVertex(pe.axis)) {
+				
+				return ((Edge)pe.entity).travelFromReferenceVertex(pe.axis, distance);
+				
+			} else {
+				assert v == ((Edge)pe.entity).getOtherVertex(pe.axis);
+				
+				return ((Edge)pe.entity).travelFromOtherVertex(pe.axis, distance);
+			}
+		}
+		
 	}
 
 }
