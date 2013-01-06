@@ -102,7 +102,7 @@ public class AnimatedGrass {
 		ctxt.translate(p.x - AnimatedGrass.GRASS_SIZE/2, p.y - AnimatedGrass.GRASS_SIZE/2);
 		ctxt.paintImage(APP.spriteSheet, world.screen.pixelsPerMeter,
 				0, 0, GRASS_SIZE, GRASS_SIZE,
-				0, 32, 0+32, 32+32);
+				32, 32, 32+32, 32+32);
 		
 		ctxt.setTransform(origTransform);
 		
@@ -115,7 +115,7 @@ public class AnimatedGrass {
 		ctxt.translate(p.x - AnimatedGrass.GRASS_SIZE/2, p.y - AnimatedGrass.GRASS_SIZE/2);
 		ctxt.paintImage(APP.spriteSheet, world.screen.pixelsPerMeter,
 				0, 0, GRASS_SIZE, GRASS_SIZE,
-				0, 32, 0+32, 32+32);
+				64, 32, 64+32, 32+32);
 		
 		ctxt.setTransform(origTransform);
 		

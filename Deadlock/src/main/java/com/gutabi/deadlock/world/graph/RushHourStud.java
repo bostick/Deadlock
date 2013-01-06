@@ -16,7 +16,7 @@ public class RushHourStud {
 	int row;
 	int col;
 	
-	AABB aabb;
+	public AABB aabb;
 	
 	public RushHourStud(World world, RushHourBoard board, int row, int col) {
 		this.world = world;

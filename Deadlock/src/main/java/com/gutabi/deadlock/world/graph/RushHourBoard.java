@@ -14,6 +14,8 @@ public class RushHourBoard extends Entity {
 	Point p;
 	
 	public RushHourStud[][] studs = new RushHourStud[6][6];
+	public RushHourStud exit0;
+	public RushHourStud exit1;
 	
 	public AABB aabb;
 	
@@ -25,11 +27,11 @@ public class RushHourBoard extends Entity {
 		
 		for (int i = 0; i < 6; i++) {
 			for (int j = 0; j < 6; j++) {
-				
-				studs[i][j] = new RushHourStud(world, this, i, j);
-				
+				studs[i][j] = new RushHourStud(world, this, i, j);		
 			}
 		}
+		exit0 = new RushHourStud(world, this, 2, 6);
+		exit1 = new RushHourStud(world, this, 2, 7);
 		
 	}
 	
@@ -78,6 +80,8 @@ public class RushHourBoard extends Entity {
 				studs[i][j].paint(ctxt);
 			}
 		}
+		exit0.paint(ctxt);
+		exit1.paint(ctxt);
 		
 	}
 	

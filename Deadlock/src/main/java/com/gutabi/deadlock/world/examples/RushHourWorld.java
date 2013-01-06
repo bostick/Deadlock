@@ -108,6 +108,227 @@ public class RushHourWorld extends World {
 		w.carMap.addCar(c1);
 		
 		
+		
+		Car c2 = Car.createCar(w, null, 6);
+		c2.state = CarStateEnum.IDLE;
+		c2.driver = new Driver(c2) {
+			public void computeStartingProperties() { 
+				
+				overallPath = new GraphPositionPath(new ArrayList<GraphPosition>() {{
+					add(new RushHourBoardPosition(b, 0, 0));
+					add(new RushHourBoardPosition(b, 1, 0));
+					add(new RushHourBoardPosition(b, 2, 0));
+					add(new RushHourBoardPosition(b, 3, 0));
+//					add(new RushHourBoardPosition(b, 4, 0));
+//					add(new RushHourBoardPosition(b, 5, 0));
+					}});
+				
+				overallPos = new GraphPositionPathPosition(overallPath, 1, 0.0);
+				
+			}
+			public Point gpppPointToCenter(Point gppp) {
+				return gppp.plus(new Point(0.5 * RushHourStud.SIZE, 1.5 * RushHourStud.SIZE));
+			}
+			public Point centerToGPPPPoint(Point center) {
+				return center.minus(new Point(0.5 * RushHourStud.SIZE, 1.5 * RushHourStud.SIZE));
+			}
+		};
+		c2.computeCtorProperties();
+		c2.computeCtorProperties();
+		c2.driver.computeStartingProperties();
+		c2.p = c2.driver.gpppPointToCenter(c2.driver.overallPos.p);
+		c2.angle = 1.5 * Math.PI;
+		c2.setTransform(c2.p, c2.angle);
+		
+		w.carMap.addCar(c2);
+		
+		
+		
+		
+		Car c3 = Car.createCar(w, null, 7);
+		c3.state = CarStateEnum.IDLE;
+		c3.driver = new Driver(c3) {
+			public void computeStartingProperties() { 
+				
+				overallPath = new GraphPositionPath(new ArrayList<GraphPosition>() {{
+//					add(new RushHourBoardPosition(b, 2, 0));
+					add(new RushHourBoardPosition(b, 2, 1));
+					add(new RushHourBoardPosition(b, 2, 2));
+					add(new RushHourBoardPosition(b, 2, 3));
+					add(new RushHourBoardPosition(b, 2, 4));
+					add(new RushHourBoardPosition(b, 2, 5));
+					add(new RushHourBoardPosition(b, 2, 6));
+					add(new RushHourBoardPosition(b, 2, 7));
+					}});
+				
+				overallPos = new GraphPositionPathPosition(overallPath, 1, 0.0);
+				
+			}
+			public Point gpppPointToCenter(Point gppp) {
+				return gppp.plus(new Point(0.0 * RushHourStud.SIZE, 0.5 * RushHourStud.SIZE));
+			}
+			public Point centerToGPPPPoint(Point center) {
+				return center.minus(new Point(0.0 * RushHourStud.SIZE, 0.5 * RushHourStud.SIZE));
+			}
+		};
+		c3.computeCtorProperties();
+		c3.computeCtorProperties();
+		c3.driver.computeStartingProperties();
+		c3.p = c3.driver.gpppPointToCenter(c3.driver.overallPos.p);
+		c3.angle = 0.0 * Math.PI;
+		c3.setTransform(c3.p, c3.angle);
+		
+		w.carMap.addCar(c3);
+		
+		
+		
+		
+		
+		Car c4 = Car.createCar(w, null, 8);
+		c4.state = CarStateEnum.IDLE;
+		c4.driver = new Driver(c4) {
+			public void computeStartingProperties() { 
+				
+				overallPath = new GraphPositionPath(new ArrayList<GraphPosition>() {{
+					add(new RushHourBoardPosition(b, 0, 3));
+					add(new RushHourBoardPosition(b, 1, 3));
+					add(new RushHourBoardPosition(b, 2, 3));
+					add(new RushHourBoardPosition(b, 3, 3));
+//					add(new RushHourBoardPosition(b, 4, 3));
+//					add(new RushHourBoardPosition(b, 5, 3));
+					}});
+				
+				overallPos = new GraphPositionPathPosition(overallPath, 1, 0.0);
+				
+			}
+			public Point gpppPointToCenter(Point gppp) {
+				return gppp.plus(new Point(0.5 * RushHourStud.SIZE, 1.5 * RushHourStud.SIZE));
+			}
+			public Point centerToGPPPPoint(Point center) {
+				return center.minus(new Point(0.5 * RushHourStud.SIZE, 1.5 * RushHourStud.SIZE));
+			}
+		};
+		c4.computeCtorProperties();
+		c4.computeCtorProperties();
+		c4.driver.computeStartingProperties();
+		c4.p = c4.driver.gpppPointToCenter(c4.driver.overallPos.p);
+		c4.angle = 1.5 * Math.PI;
+		c4.setTransform(c4.p, c4.angle);
+		
+		w.carMap.addCar(c4);
+		
+		
+		
+		
+		
+		
+		Car c5 = Car.createCar(w, null, 9);
+		c5.state = CarStateEnum.IDLE;
+		c5.driver = new Driver(c5) {
+			public void computeStartingProperties() { 
+				
+				overallPath = new GraphPositionPath(new ArrayList<GraphPosition>() {{
+					add(new RushHourBoardPosition(b, 0, 0));
+					add(new RushHourBoardPosition(b, 1, 0));
+					add(new RushHourBoardPosition(b, 2, 0));
+					add(new RushHourBoardPosition(b, 3, 0));
+					add(new RushHourBoardPosition(b, 4, 0));
+//					add(new RushHourBoardPosition(b, 5, 0));
+					}});
+				
+				overallPos = new GraphPositionPathPosition(overallPath, 4, 0.0);
+				
+			}
+			public Point gpppPointToCenter(Point gppp) {
+				return gppp.plus(new Point(0.5 * RushHourStud.SIZE, 1.0 * RushHourStud.SIZE));
+			}
+			public Point centerToGPPPPoint(Point center) {
+				return center.minus(new Point(0.5 * RushHourStud.SIZE, 1.0 * RushHourStud.SIZE));
+			}
+		};
+		c5.computeCtorProperties();
+		c5.computeCtorProperties();
+		c5.driver.computeStartingProperties();
+		c5.p = c5.driver.gpppPointToCenter(c5.driver.overallPos.p);
+		c5.angle = 1.5 * Math.PI;
+		c5.setTransform(c5.p, c5.angle);
+		
+		w.carMap.addCar(c5);
+		
+		
+		
+		
+		
+		
+		Car c6 = Car.createCar(w, null, 11);
+		c6.state = CarStateEnum.IDLE;
+		c6.driver = new Driver(c6) {
+			public void computeStartingProperties() { 
+				
+				overallPath = new GraphPositionPath(new ArrayList<GraphPosition>() {{
+					add(new RushHourBoardPosition(b, 4, 0));
+					add(new RushHourBoardPosition(b, 4, 1));
+					add(new RushHourBoardPosition(b, 4, 2));
+					add(new RushHourBoardPosition(b, 4, 3));
+					add(new RushHourBoardPosition(b, 4, 4));
+//					add(new RushHourBoardPosition(b, 4, 5));
+					}});
+				
+				overallPos = new GraphPositionPathPosition(overallPath, 4, 0.0);
+				
+			}
+			public Point gpppPointToCenter(Point gppp) {
+				return gppp.plus(new Point(1.0 * RushHourStud.SIZE, 0.5 * RushHourStud.SIZE));
+			}
+			public Point centerToGPPPPoint(Point center) {
+				return center.minus(new Point(1.0 * RushHourStud.SIZE, 0.5 * RushHourStud.SIZE));
+			}
+		};
+		c6.computeCtorProperties();
+		c6.computeCtorProperties();
+		c6.driver.computeStartingProperties();
+		c6.p = c6.driver.gpppPointToCenter(c6.driver.overallPos.p);
+		c6.angle = 1.0 * Math.PI;
+		c6.setTransform(c6.p, c6.angle);
+		
+		w.carMap.addCar(c6);
+		
+		
+		
+		Car c7 = Car.createCar(w, null, 10);
+		c7.state = CarStateEnum.IDLE;
+		c7.driver = new Driver(c7) {
+			public void computeStartingProperties() { 
+				
+				overallPath = new GraphPositionPath(new ArrayList<GraphPosition>() {{
+					add(new RushHourBoardPosition(b, 5, 0));
+					add(new RushHourBoardPosition(b, 5, 1));
+					add(new RushHourBoardPosition(b, 5, 2));
+					add(new RushHourBoardPosition(b, 5, 3));
+//					add(new RushHourBoardPosition(b, 5, 4));
+//					add(new RushHourBoardPosition(b, 5, 5));
+					}});
+				
+				overallPos = new GraphPositionPathPosition(overallPath, 2, 0.0);
+				
+			}
+			public Point gpppPointToCenter(Point gppp) {
+				return gppp.plus(new Point(1.5 * RushHourStud.SIZE, 0.5 * RushHourStud.SIZE));
+			}
+			public Point centerToGPPPPoint(Point center) {
+				return center.minus(new Point(1.5 * RushHourStud.SIZE, 0.5 * RushHourStud.SIZE));
+			}
+		};
+		c7.computeCtorProperties();
+		c7.computeCtorProperties();
+		c7.driver.computeStartingProperties();
+		c7.p = c7.driver.gpppPointToCenter(c7.driver.overallPos.p);
+		c7.angle = 1.0 * Math.PI;
+		c7.setTransform(c7.p, c7.angle);
+		
+		w.carMap.addCar(c7);
+		
+		
 		return w;
 	}
 	

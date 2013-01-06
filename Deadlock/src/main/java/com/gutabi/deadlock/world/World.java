@@ -234,6 +234,8 @@ public class World {
 		RushHourBoard b = new RushHourBoard(this, p);
 		
 		quadrantMap.grassMap.mowGrass(b.aabb);
+		quadrantMap.grassMap.mowGrass(b.exit0.aabb);
+		quadrantMap.grassMap.mowGrass(b.exit1.aabb);
 		
 		graph.insertRushHourBoardTop(b);
 		
