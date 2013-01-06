@@ -118,6 +118,7 @@ public class WorldPanel extends PanelBase {
 		switch (screen.mode) {
 		case RUNNING:
 		case PAUSED:
+			screen.tool.released(ev);
 		case DIALOG:
 			break;
 		case EDITING:

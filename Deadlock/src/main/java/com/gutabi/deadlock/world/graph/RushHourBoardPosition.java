@@ -4,8 +4,8 @@ import com.gutabi.deadlock.core.DMath;
 
 public class RushHourBoardPosition extends GraphPosition {
 	
-	double rowCombo;
-	double colCombo;
+	public double rowCombo;
+	public double colCombo;
 	
 	int rowIndex;
 	int colIndex;

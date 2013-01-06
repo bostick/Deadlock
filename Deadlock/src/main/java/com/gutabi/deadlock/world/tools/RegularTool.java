@@ -324,28 +324,28 @@ public class RegularTool extends ToolBase {
 		}
 	}
 	
-	public void clicked(InputEvent ev) {
-		
-		switch (mode) {
-		case FREE:
-			
-			Car clicked = screen.world.carMap.carHitTest(ev.p);
-			if (clicked != null) {
-				
-				CarTool t = new CarTool(screen);
-				t.setCar(clicked);
-//				t.setPoint(screen.world.quadrantMap.getPoint(screen.world.lastMovedOrDraggedWorldPoint));
-				screen.tool = t;
-				screen.contentPane.repaint();
-				
-			}
-			
-			break;
-		case DRAFTING:
-			break;
-		}
-		
-	}
+//	public void clicked(InputEvent ev) {
+//		
+//		switch (mode) {
+//		case FREE:
+//			
+//			Car clicked = screen.world.carMap.carHitTest(ev.p);
+//			if (clicked != null) {
+//				
+//				CarTool t = new CarTool(screen);
+//				t.setCar(clicked);
+////				t.setPoint(screen.world.quadrantMap.getPoint(screen.world.lastMovedOrDraggedWorldPoint));
+//				screen.tool = t;
+//				screen.contentPane.repaint();
+//				
+//			}
+//			
+//			break;
+//		case DRAFTING:
+//			break;
+//		}
+//		
+//	}
 	
 	public void draftStart(Point p) {
 		

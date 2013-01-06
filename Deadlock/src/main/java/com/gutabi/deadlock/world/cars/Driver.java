@@ -57,7 +57,15 @@ public class Driver {
 	}
 	
 	public void computeDynamicPropertiesMoving() {
-		overallPos = overallPath.findClosestGraphPositionPathPosition(c.p, overallPos, true);
+		overallPos = overallPath.findClosestGraphPositionPathPosition(centerToGPPPPoint(c.p), overallPos, true);
+	}
+	
+	public Point gpppPointToCenter(Point p) {
+		return p;
+	}
+	
+	public Point centerToGPPPPoint(Point p) {
+		return p;
 	}
 	
 	public void clear() {

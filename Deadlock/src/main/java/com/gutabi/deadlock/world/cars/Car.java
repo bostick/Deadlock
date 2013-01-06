@@ -249,11 +249,11 @@ public class Car extends Entity {
 		
 		driver.computeStartingProperties();
 		
-		p = driver.overallPos.p;
+		p = driver.gpppPointToCenter(driver.overallPos.p);
 		
 		GraphPositionPathPosition next = driver.overallPos.nextBound();
 		
-		Point nextDTGoalPoint = next.p;
+		Point nextDTGoalPoint = driver.gpppPointToCenter(next.p);
 		
 		Point dp = new Point(nextDTGoalPoint.x-p.x, nextDTGoalPoint.y-p.y);
 		
@@ -530,7 +530,7 @@ public class Car extends Entity {
 				
 				b2dBody.setTransform(toolP.vec2(), (float)toolAngle);
 				
-				driver.overallPos = driver.overallPath.findClosestGraphPositionPathPosition(toolP, driver.overallPath.startingPos, false);
+				driver.overallPos = driver.overallPath.findClosestGraphPositionPathPosition(driver.centerToGPPPPoint(toolP), driver.overallPath.startingPos, false);
 				
 				endEditing = false;
 				
@@ -541,7 +541,7 @@ public class Car extends Entity {
 				
 				setTransform(toolP, toolAngle);
 				
-				driver.overallPos = driver.overallPath.findClosestGraphPositionPathPosition(toolP, driver.overallPath.startingPos, false);
+				driver.overallPos = driver.overallPath.findClosestGraphPositionPathPosition(driver.centerToGPPPPoint(toolP), driver.overallPath.startingPos, false);
 				
 				endEditing = false;
 				

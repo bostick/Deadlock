@@ -17,6 +17,7 @@ import com.gutabi.deadlock.world.examples.FourByFourGridWorld;
 import com.gutabi.deadlock.world.examples.OneByOneWorld;
 import com.gutabi.deadlock.world.examples.RushHourWorld;
 import com.gutabi.deadlock.world.examples.WorldA;
+import com.gutabi.deadlock.world.tools.CarTool;
 
 public class MainMenu extends Screen {
 	
@@ -95,6 +96,7 @@ public class MainMenu extends Screen {
 			public void action() {
 				
 				WorldScreen s = new WorldScreen();
+				s.tool = new CarTool(s);
 				s.world = RushHourWorld.createRushHourWorld(s);
 				
 				s.setup(APP.container);
@@ -106,6 +108,8 @@ public class MainMenu extends Screen {
 				s.world.render_worldPanel();
 				s.world.render_preview();
 				s.contentPane.repaint();
+				
+				s.contentPane.controlPanel.startButton.action();
 			}
 		};
 		add(rMenuItem);
