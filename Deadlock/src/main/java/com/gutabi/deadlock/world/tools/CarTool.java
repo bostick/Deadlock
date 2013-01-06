@@ -1,7 +1,10 @@
 package com.gutabi.deadlock.world.tools;
 
 import com.gutabi.deadlock.core.Point;
+import com.gutabi.deadlock.core.geom.Geom;
+import com.gutabi.deadlock.core.geom.Quad;
 import com.gutabi.deadlock.core.geom.Shape;
+import com.gutabi.deadlock.core.geom.ShapeUtils;
 import com.gutabi.deadlock.ui.InputEvent;
 import com.gutabi.deadlock.ui.RenderingContext;
 import com.gutabi.deadlock.world.WorldScreen;
@@ -77,7 +80,8 @@ public class CarTool extends ToolBase {
 			
 			Point diff = ev.p.minus(screen.world.lastPressedWorldPoint);
 			
-			Point carP = car.toolOrigP.plus(diff);
+			Point carPTmp = car.toolOrigP.plus(diff);
+			Point carP = null;
 			double carAngle = car.toolAngle;
 			
 			switch (car.origState) {
@@ -85,7 +89,7 @@ public class CarTool extends ToolBase {
 			case DRIVING:
 			case BRAKING:
 				
-				GraphPositionPathPosition pathPos = car.driver.overallPath.findClosestGraphPositionPathPosition(car.driver.centerToGPPPPoint(carP), car.driver.overallPath.startingPos, false);
+				GraphPositionPathPosition pathPos = car.driver.overallPath.findClosestGraphPositionPathPosition(car.driver.centerToGPPPPoint(carPTmp), car.driver.overallPath.startingPos, false);
 				GraphPosition gpos = pathPos.getGraphPosition();
 				
 				if (gpos instanceof RoadPosition) {
@@ -104,7 +108,27 @@ public class CarTool extends ToolBase {
 					
 					RushHourBoardPosition rounded = new RushHourBoardPosition((RushHourBoard)rpos.entity, Math.round(rpos.rowCombo), Math.round(rpos.colCombo));
 					
-					carP = car.driver.gpppPointToCenter(rounded.p);
+					Point test = car.driver.gpppPointToCenter(rounded.p);
+					
+					double[][] testTransArr = new double[2][2];
+					Geom.rotationMatrix(carAngle, testTransArr);
+					Quad testQuad = Geom.localToWorld(car.localQuad, testTransArr, test);
+					
+					boolean collide = false;
+					for (Car c : screen.world.carMap.cars) {
+						if (c == car) {
+							continue;
+						}
+						if (ShapeUtils.intersectAreaQQ(testQuad, c.shape)) {
+							collide = true;
+							break;
+						}
+					}
+					if (!collide) {
+						carP = test;
+					} else {
+						carP = car.toolOrigP;
+					}
 					
 				} else {
 					assert false;

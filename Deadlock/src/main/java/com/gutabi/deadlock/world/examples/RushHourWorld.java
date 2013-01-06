@@ -39,7 +39,22 @@ public class RushHourWorld extends World {
 		
 		w.graph = g;
 		
+		char[][] rushHourIni = new char[][] {
+				{'0', '0', ' ', ' ', ' ', '1'},
+				{'2', ' ', ' ', '4', ' ', '1'},
+				{'2', '3', '3', '4', ' ', '1'},
+				{'2', ' ', ' ', '4', ' ', ' '},
+				{'5', ' ', ' ', ' ', '6', '6'},
+				{'5', ' ', '7', '7', '7', ' '},
+		};
+		
 		final RushHourBoard b = w.createRushHourBoard(new Point(8, 8));
+		
+		for (int i = 0; i < 1; i++) {
+			if (i == 0) {
+				
+			}
+		}
 		
 		Car c0 = Car.createCar(w, null, 4);
 		c0.state = CarStateEnum.IDLE;
@@ -47,22 +62,22 @@ public class RushHourWorld extends World {
 			public void computeStartingProperties() { 
 				
 				overallPath = new GraphPositionPath(new ArrayList<GraphPosition>() {{
-//					add(new RushHourBoardPosition(b, 0, 0));
+					add(new RushHourBoardPosition(b, 0, 0));
 					add(new RushHourBoardPosition(b, 0, 1));
 					add(new RushHourBoardPosition(b, 0, 2));
 					add(new RushHourBoardPosition(b, 0, 3));
 					add(new RushHourBoardPosition(b, 0, 4));
-					add(new RushHourBoardPosition(b, 0, 5));
+//					add(new RushHourBoardPosition(b, 0, 5));
 					}});
 				
-				overallPos = overallPath.startingPos;
+				overallPos = new GraphPositionPathPosition(overallPath, 0, 0.0);
 				
 			}
 			public Point gpppPointToCenter(Point gppp) {
-				return gppp.plus(new Point(0, 0.5 * RushHourStud.SIZE));
+				return gppp.plus(new Point(1.0 * RushHourStud.SIZE, 0.5 * RushHourStud.SIZE));
 			}
 			public Point centerToGPPPPoint(Point center) {
-				return center.minus(new Point(0, 0.5 * RushHourStud.SIZE));
+				return center.minus(new Point(1.0 * RushHourStud.SIZE, 0.5 * RushHourStud.SIZE));
 			}
 		};
 		c0.computeCtorProperties();

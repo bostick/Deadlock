@@ -23,7 +23,7 @@ public class CarMap {
 	
 	public final World world;
 	
-	private List<Car> cars = new ArrayList<Car>();
+	public List<Car> cars = new ArrayList<Car>();
 	
 	static Logger logger = Logger.getLogger(CarMap.class);
 	

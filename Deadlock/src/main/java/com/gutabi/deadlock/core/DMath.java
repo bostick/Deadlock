@@ -97,6 +97,28 @@ public class DMath {
 		}
 	}
 	
+	public static boolean rangesOverlapArea(double[] r0, double[] r1) {
+		
+		double a = r0[0];
+		double b = r0[1];
+		double c = r1[0];
+		double d = r1[1];
+		
+		if (a < b) {
+			if (c < d) {
+				return lessThan(a, d) && lessThan(c, b);
+			} else {
+				return lessThan(a, c) && lessThan(d, b);
+			}
+		} else {
+			if (c < d) {
+				return lessThan(b, d) && lessThan(c, a);
+			} else {
+				return lessThan(b, c) && lessThan(d, a);
+			}
+		}
+	}
+	
 	public static boolean rangeContains(double[] r0, double[] r1) {
 		
 		double a = r0[0];

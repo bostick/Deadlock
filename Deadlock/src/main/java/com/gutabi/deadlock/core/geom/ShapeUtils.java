@@ -235,6 +235,47 @@ public class ShapeUtils {
 		return true;
 	}
 	
+	/**
+	 * 
+	 * intersectsQQ counts both area intersects and degenerate edge intersects
+	 * this only counts area intersects (where there is actual area overlapping)
+	 */
+	public static boolean intersectAreaQQ(Quad q0, Quad q1) {
+		
+		if (!intersectAA(q0.aabb, q1.aabb)) {
+			return false;
+		}
+		
+		double[] q0Projection = new double[2];
+		double[] q1Projection = new double[2];
+		
+		q0.projectN01(q0Projection);
+		q1.project(q0.getN01(), q1Projection);
+		if (!DMath.rangesOverlapArea(q0Projection, q1Projection)) {
+			return false;
+		}
+		
+		q0.projectN12(q0Projection);
+		q1.project(q0.getN12(), q1Projection);
+		if (!DMath.rangesOverlapArea(q0Projection, q1Projection)) {
+			return false;
+		}
+		
+		q0.project(q1.getN01(), q0Projection);
+		q1.projectN01(q1Projection);
+		if (!DMath.rangesOverlapArea(q0Projection, q1Projection)) {
+			return false;
+		}
+		
+		q0.project(q1.getN12(), q0Projection);
+		q1.projectN12(q1Projection);
+		if (!DMath.rangesOverlapArea(q0Projection, q1Projection)) {
+			return false;
+		}
+		
+		return true;
+	}
+	
 	public static List<Point> skeleton(Shape s) {
 		
 		PathIterator pi = s.java2D().getPathIterator(null, 0.05);

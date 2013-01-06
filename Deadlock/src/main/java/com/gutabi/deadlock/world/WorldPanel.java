@@ -193,8 +193,6 @@ public class WorldPanel extends PanelBase {
 	
 	public void paint(RenderingContext ctxt) {
 		
-//		ctxt.screen = screen;
-		
 		AffineTransform origTrans = ctxt.getTransform();
 		
 		ctxt.translate(aabb.x, aabb.y);
