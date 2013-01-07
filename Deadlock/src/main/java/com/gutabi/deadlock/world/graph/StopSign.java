@@ -5,10 +5,12 @@ import static com.gutabi.deadlock.DeadlockApplication.APP;
 import java.awt.Color;
 import java.awt.geom.AffineTransform;
 
-import com.gutabi.deadlock.core.Entity;
-import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.core.geom.Circle;
-import com.gutabi.deadlock.ui.RenderingContext;
+import com.gutabi.deadlock.Entity;
+import com.gutabi.deadlock.math.Point;
+import com.gutabi.deadlock.math.geom.Circle;
+import com.gutabi.deadlock.ui.paint.Cap;
+import com.gutabi.deadlock.ui.paint.Join;
+import com.gutabi.deadlock.ui.paint.RenderingContext;
 
 public class StopSign extends Entity {
 	
@@ -144,7 +146,7 @@ public class StopSign extends Entity {
 			ctxt.setColor(Color.RED);
 			shape.paint(ctxt);
 		} else {
-			ctxt.setStrokeWidth(0.0);
+			ctxt.setStroke(0.0, Cap.SQUARE, Join.MITER);
 			ctxt.setColor(Color.WHITE);
 			shape.draw(ctxt);
 		}

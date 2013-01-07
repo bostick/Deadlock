@@ -9,18 +9,20 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 
-import com.gutabi.deadlock.core.DMath;
-import com.gutabi.deadlock.core.Entity;
-import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.core.geom.AABB;
-import com.gutabi.deadlock.core.geom.Capsule;
-import com.gutabi.deadlock.core.geom.CapsuleSequence;
-import com.gutabi.deadlock.core.geom.CapsuleSequencePosition;
-import com.gutabi.deadlock.core.geom.Circle;
-import com.gutabi.deadlock.core.geom.ShapeUtils;
-import com.gutabi.deadlock.core.geom.SweepEvent;
-import com.gutabi.deadlock.core.geom.SweepEventType;
-import com.gutabi.deadlock.ui.RenderingContext;
+import com.gutabi.deadlock.Entity;
+import com.gutabi.deadlock.math.DMath;
+import com.gutabi.deadlock.math.Point;
+import com.gutabi.deadlock.math.geom.AABB;
+import com.gutabi.deadlock.math.geom.Capsule;
+import com.gutabi.deadlock.math.geom.CapsuleSequence;
+import com.gutabi.deadlock.math.geom.CapsuleSequencePosition;
+import com.gutabi.deadlock.math.geom.Circle;
+import com.gutabi.deadlock.math.geom.ShapeUtils;
+import com.gutabi.deadlock.math.geom.SweepEvent;
+import com.gutabi.deadlock.math.geom.SweepEventType;
+import com.gutabi.deadlock.ui.paint.Cap;
+import com.gutabi.deadlock.ui.paint.Join;
+import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.world.graph.EdgePosition;
 import com.gutabi.deadlock.world.graph.GraphPosition;
 import com.gutabi.deadlock.world.graph.Road;
@@ -784,7 +786,7 @@ public class Stroke {
 	
 	public void paint(RenderingContext ctxt) {
 		
-		ctxt.setStrokeWidth(0.0);
+		ctxt.setStroke(0.0, Cap.SQUARE, Join.MITER);
 		paintStroke(ctxt);
 		
 	}

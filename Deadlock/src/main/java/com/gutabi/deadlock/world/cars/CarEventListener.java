@@ -1,5 +1,6 @@
 package com.gutabi.deadlock.world.cars;
 
+
 import org.apache.log4j.Logger;
 import org.jbox2d.callbacks.ContactImpulse;
 import org.jbox2d.callbacks.ContactListener;
@@ -9,7 +10,7 @@ import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.contacts.Contact;
 
-import com.gutabi.deadlock.core.Point;
+import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.world.World;
 import com.gutabi.deadlock.world.sprites.AnimatedExplosion;
 

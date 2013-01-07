@@ -1,7 +1,8 @@
 package com.gutabi.deadlock.world.graph;
 
-import com.gutabi.deadlock.core.DMath;
-import com.gutabi.deadlock.core.Entity;
+
+import com.gutabi.deadlock.Entity;
+import com.gutabi.deadlock.math.DMath;
 
 public class VertexPosition extends GraphPosition {
 	

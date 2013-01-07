@@ -1,8 +1,9 @@
 package com.gutabi.deadlock.ui;
 
+import static com.gutabi.deadlock.DeadlockApplication.APP;
+
 import java.awt.Container;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -13,7 +14,8 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import com.gutabi.deadlock.core.Point;
+import com.gutabi.deadlock.math.Point;
+import com.gutabi.deadlock.ui.paint.RenderingContext;
 
 @SuppressWarnings("serial")
 public class ContentPane extends Container implements KeyListener, MouseListener, MouseMotionListener {
@@ -291,7 +293,7 @@ public class ContentPane extends Container implements KeyListener, MouseListener
 	public void paint(Graphics g) {
 		super.paint(g);
 		
-		RenderingContext ctxt = new RenderingContext((Graphics2D)g);
+		RenderingContext ctxt = APP.platform.createRenderingContext(g);
 		
 		for (Panel child : children) {
 			child.paint(ctxt);

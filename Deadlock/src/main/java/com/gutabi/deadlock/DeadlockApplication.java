@@ -20,6 +20,9 @@ public class DeadlockApplication {
 	
 	public RootPaneContainer container;
 	
+	public Platform platform;
+	
+	
 	
 	
 	

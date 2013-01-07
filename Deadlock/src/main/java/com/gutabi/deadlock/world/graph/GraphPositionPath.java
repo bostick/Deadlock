@@ -7,14 +7,15 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+
 import org.apache.log4j.Logger;
 
-import com.gutabi.deadlock.core.DMath;
-import com.gutabi.deadlock.core.Entity;
-import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.core.geom.CapsuleSequence;
-import com.gutabi.deadlock.core.geom.Quad;
-import com.gutabi.deadlock.core.geom.ShapeUtils;
+import com.gutabi.deadlock.Entity;
+import com.gutabi.deadlock.math.DMath;
+import com.gutabi.deadlock.math.Point;
+import com.gutabi.deadlock.math.geom.CapsuleSequence;
+import com.gutabi.deadlock.math.geom.Quad;
+import com.gutabi.deadlock.math.geom.ShapeUtils;
 import com.gutabi.deadlock.world.cars.Driver;
 import com.gutabi.deadlock.world.cars.VertexArrivalEvent;
 

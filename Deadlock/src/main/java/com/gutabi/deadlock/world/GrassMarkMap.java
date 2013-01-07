@@ -5,10 +5,11 @@ import static com.gutabi.deadlock.DeadlockApplication.APP;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.core.geom.Capsule;
-import com.gutabi.deadlock.core.geom.Circle;
-import com.gutabi.deadlock.ui.RenderingContext;
+
+import com.gutabi.deadlock.math.Point;
+import com.gutabi.deadlock.math.geom.Capsule;
+import com.gutabi.deadlock.math.geom.Circle;
+import com.gutabi.deadlock.ui.paint.RenderingContext;
 
 public class GrassMarkMap {
 	

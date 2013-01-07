@@ -12,13 +12,14 @@ import java.io.StringReader;
 import java.util.List;
 import java.util.Set;
 
+
 import org.jbox2d.common.Vec2;
 
-import com.gutabi.deadlock.core.Entity;
-import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.core.geom.AABB;
+import com.gutabi.deadlock.Entity;
+import com.gutabi.deadlock.math.Point;
+import com.gutabi.deadlock.math.geom.AABB;
 import com.gutabi.deadlock.ui.InputEvent;
-import com.gutabi.deadlock.ui.RenderingContext;
+import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.world.cars.Car;
 import com.gutabi.deadlock.world.cars.CarEventListener;
 import com.gutabi.deadlock.world.graph.Fixture;
@@ -389,7 +390,7 @@ public class World {
 		backgroundG2.scale(screen.pixelsPerMeter, screen.pixelsPerMeter);
 		backgroundG2.translate(-screen.worldViewport.x, -screen.worldViewport.y);
 		
-		RenderingContext backgroundCtxt = new RenderingContext(backgroundG2);
+		RenderingContext backgroundCtxt = APP.platform.createRenderingContext(backgroundG2);
 //		backgroundCtxt.screen = screen;
 		
 		quadrantMap.render_panel(backgroundCtxt);
@@ -405,7 +406,7 @@ public class World {
 		boolean oldDebug = APP.DEBUG_DRAW;
 		APP.DEBUG_DRAW = false;
 		
-		RenderingContext ctxt = new RenderingContext(previewImageG2); 
+		RenderingContext ctxt = APP.platform.createRenderingContext(previewImageG2); 
 		
 		previewImageG2.setColor(Color.LIGHT_GRAY);
 		previewImageG2.fillRect(

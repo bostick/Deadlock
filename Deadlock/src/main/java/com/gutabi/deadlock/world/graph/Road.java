@@ -2,7 +2,6 @@ package com.gutabi.deadlock.world.graph;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
-import java.awt.BasicStroke;
 import java.awt.Color;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -13,19 +12,21 @@ import java.util.Scanner;
 
 import org.apache.log4j.Logger;
 
-import com.gutabi.deadlock.core.ColinearException;
-import com.gutabi.deadlock.core.DMath;
-import com.gutabi.deadlock.core.Entity;
-import com.gutabi.deadlock.core.Matrix;
-import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.core.geom.Capsule;
-import com.gutabi.deadlock.core.geom.CapsuleSequence;
-import com.gutabi.deadlock.core.geom.CapsuleSequencePosition;
-import com.gutabi.deadlock.core.geom.Circle;
-import com.gutabi.deadlock.core.geom.Shape;
-import com.gutabi.deadlock.core.geom.ShapeUtils;
-import com.gutabi.deadlock.core.geom.Triangle;
-import com.gutabi.deadlock.ui.RenderingContext;
+import com.gutabi.deadlock.Entity;
+import com.gutabi.deadlock.math.ColinearException;
+import com.gutabi.deadlock.math.DMath;
+import com.gutabi.deadlock.math.Matrix;
+import com.gutabi.deadlock.math.Point;
+import com.gutabi.deadlock.math.geom.Capsule;
+import com.gutabi.deadlock.math.geom.CapsuleSequence;
+import com.gutabi.deadlock.math.geom.CapsuleSequencePosition;
+import com.gutabi.deadlock.math.geom.Circle;
+import com.gutabi.deadlock.math.geom.Shape;
+import com.gutabi.deadlock.math.geom.ShapeUtils;
+import com.gutabi.deadlock.math.geom.Triangle;
+import com.gutabi.deadlock.ui.paint.Cap;
+import com.gutabi.deadlock.ui.paint.Join;
+import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.world.World;
 
 public class Road extends Edge {
@@ -760,7 +761,7 @@ public class Road extends Edge {
 		
 		if (APP.DEBUG_DRAW) {
 			ctxt.setColor(Color.BLACK);
-			ctxt.setStrokeWidth(0.0);
+			ctxt.setStroke(0.0, Cap.SQUARE, Join.MITER);
 			shape.getAABB().draw(ctxt);
 		}
 		
@@ -774,11 +775,9 @@ public class Road extends Edge {
 	
 	public void paintHilite(RenderingContext ctxt) {
 		ctxt.setColor(APP.roadHiliteColor);
-		ctxt.setStrokeWidth(0.0);
+		ctxt.setStroke(0.0, Cap.SQUARE, Join.MITER);
 		drawPath(ctxt);
 	}
-	
-	static java.awt.Stroke directionStroke = new BasicStroke(0.1f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
 	
 	private void paintPath_panel(RenderingContext ctxt) {
 		
@@ -788,7 +787,7 @@ public class Road extends Edge {
 		
 		if (direction != null) {
 			
-			ctxt.setStroke(directionStroke);
+			ctxt.setStroke(0.1, Cap.ROUND, Join.ROUND);
 			ctxt.setColor(Color.LIGHT_GRAY);
 			
 			seq.drawSkeleton(ctxt);

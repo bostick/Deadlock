@@ -3,8 +3,9 @@ package com.gutabi.deadlock.world.cars;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.gutabi.deadlock.core.DMath;
-import com.gutabi.deadlock.core.Point;
+
+import com.gutabi.deadlock.math.DMath;
+import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.world.graph.GraphPositionPath;
 import com.gutabi.deadlock.world.graph.GraphPositionPathPosition;
 

@@ -4,8 +4,9 @@ import static com.gutabi.deadlock.DeadlockApplication.APP;
 
 import java.awt.geom.AffineTransform;
 
-import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.ui.RenderingContext;
+
+import com.gutabi.deadlock.math.Point;
+import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.world.World;
 
 public class AnimatedExplosion {

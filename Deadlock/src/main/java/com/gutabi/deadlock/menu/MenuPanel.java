@@ -7,13 +7,14 @@ import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
+
 import org.apache.log4j.Logger;
 
-import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.core.geom.AABB;
+import com.gutabi.deadlock.math.Point;
+import com.gutabi.deadlock.math.geom.AABB;
 import com.gutabi.deadlock.ui.InputEvent;
 import com.gutabi.deadlock.ui.PanelBase;
-import com.gutabi.deadlock.ui.RenderingContext;
+import com.gutabi.deadlock.ui.paint.RenderingContext;
 
 public class MenuPanel extends PanelBase {
 	
@@ -106,7 +107,7 @@ public class MenuPanel extends PanelBase {
 			
 			Graphics2D tmpG2 = tmpImg.createGraphics();
 			
-			RenderingContext tmpCtxt = new RenderingContext(tmpG2);
+			RenderingContext tmpCtxt = APP.platform.createRenderingContext(tmpG2);
 			
 			AffineTransform origTransform = tmpCtxt.getTransform();
 			

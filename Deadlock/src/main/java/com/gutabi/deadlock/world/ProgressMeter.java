@@ -2,8 +2,10 @@ package com.gutabi.deadlock.world;
 
 import java.awt.Color;
 
-import com.gutabi.deadlock.core.geom.AABB;
-import com.gutabi.deadlock.ui.RenderingContext;
+import com.gutabi.deadlock.math.geom.AABB;
+import com.gutabi.deadlock.ui.paint.Cap;
+import com.gutabi.deadlock.ui.paint.Join;
+import com.gutabi.deadlock.ui.paint.RenderingContext;
 
 public class ProgressMeter {
 	
@@ -40,7 +42,7 @@ public class ProgressMeter {
 	
 	public void paint(RenderingContext ctxt) {
 		ctxt.setColor(Color.BLACK);
-		ctxt.setStrokeWidth(0.0);
+		ctxt.setStroke(0.0, Cap.SQUARE, Join.MITER);
 		aabb.draw(ctxt);
 		if (p >= 0.0) {
 			if (p <= 1.0) {

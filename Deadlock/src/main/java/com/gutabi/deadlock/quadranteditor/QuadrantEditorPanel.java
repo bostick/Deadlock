@@ -7,14 +7,15 @@ import java.awt.geom.AffineTransform;
 
 import javax.swing.JFrame;
 
+
 import org.apache.log4j.Logger;
 
-import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.core.geom.AABB;
+import com.gutabi.deadlock.math.Point;
+import com.gutabi.deadlock.math.geom.AABB;
 import com.gutabi.deadlock.ui.Button;
 import com.gutabi.deadlock.ui.InputEvent;
 import com.gutabi.deadlock.ui.PanelBase;
-import com.gutabi.deadlock.ui.RenderingContext;
+import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.world.Quadrant;
 import com.gutabi.deadlock.world.World;
 import com.gutabi.deadlock.world.WorldScreen;

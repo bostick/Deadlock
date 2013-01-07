@@ -4,7 +4,7 @@ import static com.gutabi.deadlock.DeadlockApplication.APP;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.gutabi.deadlock.ui.RenderingContext;
+import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.world.sprites.AnimatedExplosion;
 
 public class ExplosionMap {

@@ -2,9 +2,7 @@ package com.gutabi.deadlock.world.cars;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
-import java.awt.AlphaComposite;
 import java.awt.Color;
-import java.awt.Composite;
 import java.awt.geom.AffineTransform;
 
 import org.apache.log4j.Logger;
@@ -17,14 +15,17 @@ import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.Filter;
 import org.jbox2d.dynamics.FixtureDef;
 
-import com.gutabi.deadlock.core.DMath;
-import com.gutabi.deadlock.core.Entity;
-import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.core.geom.Circle;
-import com.gutabi.deadlock.core.geom.Geom;
-import com.gutabi.deadlock.core.geom.Quad;
-import com.gutabi.deadlock.core.geom.Shape;
-import com.gutabi.deadlock.ui.RenderingContext;
+import com.gutabi.deadlock.Entity;
+import com.gutabi.deadlock.math.DMath;
+import com.gutabi.deadlock.math.Point;
+import com.gutabi.deadlock.math.geom.Circle;
+import com.gutabi.deadlock.math.geom.Geom;
+import com.gutabi.deadlock.math.geom.Quad;
+import com.gutabi.deadlock.math.geom.Shape;
+import com.gutabi.deadlock.ui.Composite;
+import com.gutabi.deadlock.ui.paint.Cap;
+import com.gutabi.deadlock.ui.paint.Join;
+import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.world.World;
 import com.gutabi.deadlock.world.graph.Fixture;
 import com.gutabi.deadlock.world.graph.GraphPositionPathPosition;
@@ -673,7 +674,7 @@ public class Car extends Entity {
 			}
 			
 			ctxt.setColor(Color.BLACK);
-			ctxt.setStrokeWidth(0.0);
+			ctxt.setStroke(0.0, Cap.SQUARE, Join.MITER);
 			shape.getAABB().draw(ctxt);
 			
 			paintID(ctxt);
@@ -685,10 +686,6 @@ public class Car extends Entity {
 		ctxt.setColor(Color.BLUE);
 		paintRect(ctxt);
 	}
-	
-	
-	static Composite aComp = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f);
-	static Composite normalComp = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f);
 	
 	public double CAR_LOCALX;
 	public double CAR_LOCALY;
@@ -711,11 +708,9 @@ public class Car extends Entity {
 	protected void paintImage(RenderingContext ctxt) {
 			
 		AffineTransform origTransform = ctxt.getTransform();
-		
-		Composite origComposite = null;
+		Composite origComposite = ctxt.getComposite();
 		if (inMerger) {
-			origComposite = ctxt.getComposite();
-			ctxt.setComposite(aComp);
+			ctxt.setComposite(ctxt.getTransparentComposite());
 		}
 		
 		ctxt.translate(p.x, p.y);
@@ -726,9 +721,7 @@ public class Car extends Entity {
 				0, 0, CAR_LENGTH, CAR_WIDTH,
 				sheetColStart, sheetRowStart, sheetColEnd, sheetRowEnd);
 		
-		if (inMerger) {
-			ctxt.setComposite(origComposite);
-		}
+		ctxt.setComposite(origComposite);
 		ctxt.setTransform(origTransform);
 		
 	}

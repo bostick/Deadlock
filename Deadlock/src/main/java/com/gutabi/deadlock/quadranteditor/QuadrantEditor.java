@@ -5,7 +5,7 @@ import java.awt.image.BufferedImage;
 import javax.swing.RootPaneContainer;
 
 import com.gutabi.deadlock.Screen;
-import com.gutabi.deadlock.core.geom.AABB;
+import com.gutabi.deadlock.math.geom.AABB;
 
 public class QuadrantEditor extends Screen {
 	

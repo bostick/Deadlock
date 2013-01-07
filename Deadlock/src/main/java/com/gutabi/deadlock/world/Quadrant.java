@@ -5,11 +5,13 @@ import static com.gutabi.deadlock.DeadlockApplication.APP;
 import java.awt.Color;
 import java.awt.geom.AffineTransform;
 
-import com.gutabi.deadlock.core.DMath;
-import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.core.geom.AABB;
-import com.gutabi.deadlock.core.geom.Line;
-import com.gutabi.deadlock.ui.RenderingContext;
+import com.gutabi.deadlock.math.DMath;
+import com.gutabi.deadlock.math.Point;
+import com.gutabi.deadlock.math.geom.AABB;
+import com.gutabi.deadlock.math.geom.Line;
+import com.gutabi.deadlock.ui.paint.Cap;
+import com.gutabi.deadlock.ui.paint.Join;
+import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.world.sprites.AnimatedGrass;
 
 public class Quadrant {
@@ -129,7 +131,7 @@ public class Quadrant {
 				aabb.paint(ctxt);
 				
 				ctxt.setColor(Color.BLACK);
-				ctxt.setStrokeWidth(0.0);
+				ctxt.setStroke(0.0, Cap.SQUARE, Join.MITER);
 				aabb.draw(ctxt);
 				
 				ctxt.setColor(Color.BLACK);
@@ -139,7 +141,7 @@ public class Quadrant {
 			if (grid) {
 				
 				ctxt.setColor(Color.GRAY);
-				ctxt.setStrokeWidth(0.0);
+				ctxt.setStroke(0.0, Cap.SQUARE, Join.MITER);
 				
 				for (double k = 0.0; DMath.lessThanEquals(k, QuadrantMap.QUADRANT_HEIGHT); k+=gridSpacing) {
 					Point p0 = new Point(c * QuadrantMap.QUADRANT_WIDTH + 0, r * QuadrantMap.QUADRANT_HEIGHT + k);

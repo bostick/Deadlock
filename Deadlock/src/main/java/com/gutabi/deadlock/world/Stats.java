@@ -3,7 +3,9 @@ package com.gutabi.deadlock.world;
 import java.awt.Color;
 import java.awt.geom.AffineTransform;
 
-import com.gutabi.deadlock.ui.RenderingContext;
+import com.gutabi.deadlock.ui.paint.Cap;
+import com.gutabi.deadlock.ui.paint.Join;
+import com.gutabi.deadlock.ui.paint.RenderingContext;
 
 public class Stats {
 	
@@ -22,7 +24,7 @@ public class Stats {
 		
 		ctxt.setColor(Color.WHITE);
 		ctxt.setXORMode(Color.DARK_GRAY);
-		ctxt.setStrokeWidth(0.0);
+		ctxt.setStroke(0.0, Cap.SQUARE, Join.MITER);
 		
 		AffineTransform origTransform1 = ctxt.getTransform();
 		

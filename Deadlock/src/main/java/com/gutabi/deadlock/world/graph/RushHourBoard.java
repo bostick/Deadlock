@@ -2,10 +2,11 @@ package com.gutabi.deadlock.world.graph;
 
 import java.awt.Color;
 
-import com.gutabi.deadlock.core.Entity;
-import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.core.geom.AABB;
-import com.gutabi.deadlock.ui.RenderingContext;
+
+import com.gutabi.deadlock.Entity;
+import com.gutabi.deadlock.math.Point;
+import com.gutabi.deadlock.math.geom.AABB;
+import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.world.World;
 
 public class RushHourBoard extends Entity {

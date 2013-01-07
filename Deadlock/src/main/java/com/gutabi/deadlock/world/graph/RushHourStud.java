@@ -2,8 +2,8 @@ package com.gutabi.deadlock.world.graph;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
-import com.gutabi.deadlock.core.geom.AABB;
-import com.gutabi.deadlock.ui.RenderingContext;
+import com.gutabi.deadlock.math.geom.AABB;
+import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.world.World;
 
 public class RushHourStud {

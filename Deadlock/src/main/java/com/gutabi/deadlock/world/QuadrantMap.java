@@ -9,12 +9,13 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.Scanner;
 
-import com.gutabi.deadlock.core.DMath;
-import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.core.geom.AABB;
-import com.gutabi.deadlock.core.geom.Shape;
-import com.gutabi.deadlock.core.geom.ShapeUtils;
-import com.gutabi.deadlock.ui.RenderingContext;
+
+import com.gutabi.deadlock.math.DMath;
+import com.gutabi.deadlock.math.Point;
+import com.gutabi.deadlock.math.geom.AABB;
+import com.gutabi.deadlock.math.geom.Shape;
+import com.gutabi.deadlock.math.geom.ShapeUtils;
+import com.gutabi.deadlock.ui.paint.RenderingContext;
 
 public class QuadrantMap {
 	

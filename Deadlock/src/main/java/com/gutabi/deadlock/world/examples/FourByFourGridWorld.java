@@ -3,7 +3,8 @@ package com.gutabi.deadlock.world.examples;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.gutabi.deadlock.core.Point;
+
+import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.world.QuadrantMap;
 import com.gutabi.deadlock.world.Stroke;
 import com.gutabi.deadlock.world.World;

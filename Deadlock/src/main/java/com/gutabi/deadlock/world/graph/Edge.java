@@ -1,10 +1,11 @@
 package com.gutabi.deadlock.world.graph;
 
-import com.gutabi.deadlock.core.Entity;
-import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.core.geom.Shape;
-import com.gutabi.deadlock.core.geom.SweepableShape;
-import com.gutabi.deadlock.ui.RenderingContext;
+
+import com.gutabi.deadlock.Entity;
+import com.gutabi.deadlock.math.Point;
+import com.gutabi.deadlock.math.geom.Shape;
+import com.gutabi.deadlock.math.geom.SweepableShape;
+import com.gutabi.deadlock.ui.paint.RenderingContext;
 
 public abstract class Edge extends Entity {
 	

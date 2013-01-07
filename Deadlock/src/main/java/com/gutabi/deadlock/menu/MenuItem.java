@@ -4,10 +4,12 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.geom.AffineTransform;
 
-import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.core.geom.AABB;
+import com.gutabi.deadlock.math.Point;
+import com.gutabi.deadlock.math.geom.AABB;
 import com.gutabi.deadlock.ui.Label;
-import com.gutabi.deadlock.ui.RenderingContext;
+import com.gutabi.deadlock.ui.paint.Cap;
+import com.gutabi.deadlock.ui.paint.Join;
+import com.gutabi.deadlock.ui.paint.RenderingContext;
 
 public abstract class MenuItem {
 	
@@ -72,7 +74,7 @@ public abstract class MenuItem {
 	
 	public void paintHilited(RenderingContext ctxt) {
 		ctxt.setColor(Color.RED);
-		ctxt.setStrokeWidth(0.0);
+		ctxt.setStroke(0.0, Cap.SQUARE, Join.MITER);
 		aabb.draw(ctxt);
 	}
 	

@@ -6,14 +6,15 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.geom.AffineTransform;
 
-import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.core.geom.AABB;
+
+import com.gutabi.deadlock.math.Point;
+import com.gutabi.deadlock.math.geom.AABB;
 import com.gutabi.deadlock.ui.Button;
 import com.gutabi.deadlock.ui.Checkbox;
 import com.gutabi.deadlock.ui.InputEvent;
 import com.gutabi.deadlock.ui.Label;
 import com.gutabi.deadlock.ui.PanelBase;
-import com.gutabi.deadlock.ui.RenderingContext;
+import com.gutabi.deadlock.ui.paint.RenderingContext;
 
 public class ControlPanel extends PanelBase {
 	

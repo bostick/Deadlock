@@ -19,7 +19,7 @@ public class ListImports {
 	
 	public static void main(String[] args) throws IOException {
 		
-		Path start = FileSystems.getDefault().getPath("src", "main", "java");
+		Path start = FileSystems.getDefault().getPath("..", "Deadlock", "src", "main", "java");
 		
 		ImportReporter visitor = new ImportReporter();
 		

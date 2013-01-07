@@ -11,8 +11,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.ui.RenderingContext;
+import com.gutabi.deadlock.math.Point;
+import com.gutabi.deadlock.ui.paint.Cap;
+import com.gutabi.deadlock.ui.paint.Join;
+import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.world.ProgressMeter;
 import com.gutabi.deadlock.world.World;
 import com.gutabi.deadlock.world.cars.Car;
@@ -397,7 +399,7 @@ public final class Fixture extends Vertex {
 			shape.paint(ctxt);
 			
 			ctxt.setColor(Color.BLACK);
-			ctxt.setStrokeWidth(0.0);
+			ctxt.setStroke(0.0, Cap.SQUARE, Join.MITER);
 			shape.getAABB().draw(ctxt);
 		}
 		

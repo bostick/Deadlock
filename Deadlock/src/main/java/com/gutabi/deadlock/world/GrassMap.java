@@ -3,9 +3,9 @@ package com.gutabi.deadlock.world;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.gutabi.deadlock.core.geom.Shape;
-import com.gutabi.deadlock.core.geom.ShapeUtils;
-import com.gutabi.deadlock.ui.RenderingContext;
+import com.gutabi.deadlock.math.geom.Shape;
+import com.gutabi.deadlock.math.geom.ShapeUtils;
+import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.world.sprites.AnimatedGrass;
 
 public class GrassMap {

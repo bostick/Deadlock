@@ -3,7 +3,10 @@ package com.gutabi.deadlock.ui;
 import java.awt.Color;
 import java.awt.Font;
 
-import com.gutabi.deadlock.core.Point;
+import com.gutabi.deadlock.math.Point;
+import com.gutabi.deadlock.ui.paint.RenderingContext;
+
+
 
 public abstract class Checkbox {
 	

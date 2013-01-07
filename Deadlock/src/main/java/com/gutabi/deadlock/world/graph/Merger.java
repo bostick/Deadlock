@@ -1,15 +1,18 @@
 package com.gutabi.deadlock.world.graph;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
+
 import java.awt.Color;
 
-import com.gutabi.deadlock.core.Entity;
-import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.core.geom.Line;
-import com.gutabi.deadlock.core.geom.Quad;
-import com.gutabi.deadlock.core.geom.Shape;
-import com.gutabi.deadlock.core.geom.SweepableShape;
-import com.gutabi.deadlock.ui.RenderingContext;
+import com.gutabi.deadlock.Entity;
+import com.gutabi.deadlock.math.Point;
+import com.gutabi.deadlock.math.geom.Line;
+import com.gutabi.deadlock.math.geom.Quad;
+import com.gutabi.deadlock.math.geom.Shape;
+import com.gutabi.deadlock.math.geom.SweepableShape;
+import com.gutabi.deadlock.ui.paint.Cap;
+import com.gutabi.deadlock.ui.paint.Join;
+import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.world.ControlPanel;
 import com.gutabi.deadlock.world.World;
 
@@ -327,7 +330,7 @@ public class Merger extends Edge {
 	}
 	
 	public void paintHilite(RenderingContext ctxt) {
-		ctxt.setStrokeWidth(0.0);
+		ctxt.setStroke(0.0, Cap.SQUARE, Join.MITER);
 		ctxt.setColor(Color.GRAY);
 		shape.draw(ctxt);
 	}
@@ -335,7 +338,7 @@ public class Merger extends Edge {
 	void paintSkeleton(RenderingContext ctxt) {
 		
 		ctxt.setColor(Color.BLACK);
-		ctxt.setStrokeWidth(0.0);
+		ctxt.setStroke(0.0, Cap.SQUARE, Join.MITER);
 		debugSkeletonTopBottomLine.draw(ctxt);
 		
 		debugSkeletonLeftRightLine.draw(ctxt);

@@ -5,7 +5,9 @@ import static com.gutabi.deadlock.DeadlockApplication.APP;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.gutabi.deadlock.core.DMath;
+import com.gutabi.deadlock.math.DMath;
+
+
 
 public class GraphPositionPathFactory {
 	

@@ -1,13 +1,14 @@
 package com.gutabi.deadlock.world.tools;
 
-import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.core.geom.AABB;
-import com.gutabi.deadlock.core.geom.Capsule;
-import com.gutabi.deadlock.core.geom.Circle;
-import com.gutabi.deadlock.core.geom.CompoundShape;
-import com.gutabi.deadlock.core.geom.Shape;
-import com.gutabi.deadlock.core.geom.ShapeUtils;
-import com.gutabi.deadlock.ui.RenderingContext;
+
+import com.gutabi.deadlock.math.Point;
+import com.gutabi.deadlock.math.geom.AABB;
+import com.gutabi.deadlock.math.geom.Capsule;
+import com.gutabi.deadlock.math.geom.Circle;
+import com.gutabi.deadlock.math.geom.CompoundShape;
+import com.gutabi.deadlock.math.geom.Shape;
+import com.gutabi.deadlock.math.geom.ShapeUtils;
+import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.world.QuadrantMap;
 import com.gutabi.deadlock.world.graph.Axis;
 import com.gutabi.deadlock.world.graph.Vertex;

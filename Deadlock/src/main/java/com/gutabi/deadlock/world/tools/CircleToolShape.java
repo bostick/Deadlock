@@ -2,12 +2,13 @@ package com.gutabi.deadlock.world.tools;
 
 import java.util.List;
 
-import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.core.geom.Ellipse;
-import com.gutabi.deadlock.core.geom.Polyline;
-import com.gutabi.deadlock.core.geom.Shape;
-import com.gutabi.deadlock.core.geom.ShapeUtils;
-import com.gutabi.deadlock.ui.RenderingContext;
+
+import com.gutabi.deadlock.math.Point;
+import com.gutabi.deadlock.math.geom.Ellipse;
+import com.gutabi.deadlock.math.geom.Polyline;
+import com.gutabi.deadlock.math.geom.Shape;
+import com.gutabi.deadlock.math.geom.ShapeUtils;
+import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.world.graph.Vertex;
 
 public class CircleToolShape implements Shape {

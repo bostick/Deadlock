@@ -8,8 +8,10 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.Scanner;
 
-import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.ui.RenderingContext;
+import com.gutabi.deadlock.math.Point;
+import com.gutabi.deadlock.ui.paint.Cap;
+import com.gutabi.deadlock.ui.paint.Join;
+import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.world.World;
 
 public class Intersection extends Vertex {
@@ -125,7 +127,7 @@ public class Intersection extends Vertex {
 	public void paintHilite(RenderingContext ctxt) {
 		
 		ctxt.setColor(Color.WHITE);
-		ctxt.setStrokeWidth(0.0);
+		ctxt.setStroke(0.0, Cap.SQUARE, Join.MITER);
 		
 		shape.draw(ctxt);
 		

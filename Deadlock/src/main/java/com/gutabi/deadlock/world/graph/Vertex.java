@@ -4,13 +4,14 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
+
 import org.apache.log4j.Logger;
 
-import com.gutabi.deadlock.core.DMath;
-import com.gutabi.deadlock.core.Entity;
-import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.core.geom.Circle;
-import com.gutabi.deadlock.ui.RenderingContext;
+import com.gutabi.deadlock.Entity;
+import com.gutabi.deadlock.math.DMath;
+import com.gutabi.deadlock.math.Point;
+import com.gutabi.deadlock.math.geom.Circle;
+import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.world.World;
 import com.gutabi.deadlock.world.cars.Driver;
 

@@ -1,12 +1,13 @@
 package com.gutabi.deadlock.world.tools;
 
-import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.core.geom.Geom;
-import com.gutabi.deadlock.core.geom.Quad;
-import com.gutabi.deadlock.core.geom.Shape;
-import com.gutabi.deadlock.core.geom.ShapeUtils;
+
+import com.gutabi.deadlock.math.Point;
+import com.gutabi.deadlock.math.geom.Geom;
+import com.gutabi.deadlock.math.geom.Quad;
+import com.gutabi.deadlock.math.geom.Shape;
+import com.gutabi.deadlock.math.geom.ShapeUtils;
 import com.gutabi.deadlock.ui.InputEvent;
-import com.gutabi.deadlock.ui.RenderingContext;
+import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.world.WorldScreen;
 import com.gutabi.deadlock.world.cars.Car;
 import com.gutabi.deadlock.world.graph.GraphPosition;

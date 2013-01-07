@@ -2,7 +2,8 @@ package com.gutabi.deadlock.world.examples;
 
 import java.util.ArrayList;
 
-import com.gutabi.deadlock.core.Point;
+
+import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.world.QuadrantMap;
 import com.gutabi.deadlock.world.World;
 import com.gutabi.deadlock.world.WorldScreen;
@@ -23,6 +24,7 @@ public class RushHourWorld extends World {
 		super(screen);
 	}
 	
+	@SuppressWarnings("serial")
 	public static RushHourWorld createRushHourWorld(WorldScreen screen) {
 		
 		int[][] ini = new int[][] {
@@ -39,14 +41,14 @@ public class RushHourWorld extends World {
 		
 		w.graph = g;
 		
-		char[][] rushHourIni = new char[][] {
-				{'0', '0', ' ', ' ', ' ', '1'},
-				{'2', ' ', ' ', '4', ' ', '1'},
-				{'2', '3', '3', '4', ' ', '1'},
-				{'2', ' ', ' ', '4', ' ', ' '},
-				{'5', ' ', ' ', ' ', '6', '6'},
-				{'5', ' ', '7', '7', '7', ' '},
-		};
+//		char[][] rushHourIni = new char[][] {
+//				{'0', '0', ' ', ' ', ' ', '1'},
+//				{'2', ' ', ' ', '4', ' ', '1'},
+//				{'2', '3', '3', '4', ' ', '1'},
+//				{'2', ' ', ' ', '4', ' ', ' '},
+//				{'5', ' ', ' ', ' ', '6', '6'},
+//				{'5', ' ', '7', '7', '7', ' '},
+//		};
 		
 		final RushHourBoard b = w.createRushHourBoard(new Point(8, 8));
 		

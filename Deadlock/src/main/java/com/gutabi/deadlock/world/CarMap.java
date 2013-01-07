@@ -8,9 +8,11 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.jbox2d.callbacks.QueryCallback;
 
-import com.gutabi.deadlock.core.Point;
-import com.gutabi.deadlock.core.geom.AABB;
-import com.gutabi.deadlock.ui.RenderingContext;
+import com.gutabi.deadlock.math.Point;
+import com.gutabi.deadlock.math.geom.AABB;
+import com.gutabi.deadlock.ui.paint.Cap;
+import com.gutabi.deadlock.ui.paint.Join;
+import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.world.cars.Car;
 import com.gutabi.deadlock.world.cars.CarProximityEvent;
 import com.gutabi.deadlock.world.cars.CarStateEnum;
@@ -74,7 +76,7 @@ public class CarMap {
 	public void paint(RenderingContext ctxt) {
 		
 		if (APP.DEBUG_DRAW) {
-			ctxt.setStrokeWidth(0.0);
+			ctxt.setStroke(0.0, Cap.SQUARE, Join.MITER);
 			world.b2dWorld.setDebugDraw(ctxt);
 			world.b2dWorld.drawDebugData();
 		}
