@@ -1,7 +1,5 @@
 package com.gutabi.deadlock.world;
 
-import javax.swing.RootPaneContainer;
-
 import com.gutabi.deadlock.Screen;
 import com.gutabi.deadlock.math.geom.AABB;
 import com.gutabi.deadlock.ui.DLSFileChooser;
@@ -52,15 +50,6 @@ public class WorldScreen extends Screen {
 		
 		stats = new Stats(this);
 		
-	}
-	
-	public void setup(RootPaneContainer container) {
-		
-		contentPane.setLayout(null);
-		
-		container.setContentPane(contentPane);
-		contentPane.setFocusable(true);
-		contentPane.requestFocusInWindow();
 	}
 	
 	public void postDisplay() {

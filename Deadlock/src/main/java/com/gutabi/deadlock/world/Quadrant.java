@@ -2,7 +2,6 @@ package com.gutabi.deadlock.world;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
-import java.awt.Color;
 import java.awt.geom.AffineTransform;
 
 import com.gutabi.deadlock.math.DMath;
@@ -10,6 +9,7 @@ import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.math.geom.AABB;
 import com.gutabi.deadlock.math.geom.Line;
 import com.gutabi.deadlock.ui.paint.Cap;
+import com.gutabi.deadlock.ui.paint.Color;
 import com.gutabi.deadlock.ui.paint.Join;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.world.sprites.AnimatedGrass;
@@ -127,7 +127,7 @@ public class Quadrant {
 				
 				ctxt.setTransform(origTransform);
 			} else {
-				ctxt.setColor(APP.DARKGREEN);
+				ctxt.setColor(Color.DARKGREEN);
 				aabb.paint(ctxt);
 				
 				ctxt.setColor(Color.BLACK);
@@ -168,7 +168,7 @@ public class Quadrant {
 	public void paint_preview(RenderingContext ctxt) {
 		
 		if (active) {
-			ctxt.setColor(APP.DARKGREEN);
+			ctxt.setColor(Color.DARKGREEN);
 			aabb.paint(ctxt);
 		} else {
 			ctxt.setColor(Color.DARK_GRAY);

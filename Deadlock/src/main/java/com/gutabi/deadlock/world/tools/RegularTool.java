@@ -2,7 +2,6 @@ package com.gutabi.deadlock.world.tools;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
-import java.awt.Color;
 import java.util.Set;
 
 import javax.swing.JFrame;
@@ -14,6 +13,7 @@ import com.gutabi.deadlock.math.geom.Shape;
 import com.gutabi.deadlock.menu.MainMenu;
 import com.gutabi.deadlock.ui.InputEvent;
 import com.gutabi.deadlock.ui.paint.Cap;
+import com.gutabi.deadlock.ui.paint.Color;
 import com.gutabi.deadlock.ui.paint.Join;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.world.Stroke;
@@ -71,7 +71,7 @@ public class RegularTool extends ToolBase {
 		
 		MainMenu s = new MainMenu();
 		
-		s.setup(APP.container);
+		APP.platform.setupScreen(APP.container, s.contentPane);
 		((JFrame)APP.container).setVisible(true);
 		
 		s.postDisplay();

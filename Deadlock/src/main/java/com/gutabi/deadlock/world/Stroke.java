@@ -1,6 +1,5 @@
 package com.gutabi.deadlock.world;
 
-import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -21,6 +20,7 @@ import com.gutabi.deadlock.math.geom.ShapeUtils;
 import com.gutabi.deadlock.math.geom.SweepEvent;
 import com.gutabi.deadlock.math.geom.SweepEventType;
 import com.gutabi.deadlock.ui.paint.Cap;
+import com.gutabi.deadlock.ui.paint.Color;
 import com.gutabi.deadlock.ui.paint.Join;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.world.graph.EdgePosition;

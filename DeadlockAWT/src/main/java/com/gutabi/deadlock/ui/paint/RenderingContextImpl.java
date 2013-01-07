@@ -2,9 +2,10 @@ package com.gutabi.deadlock.ui.paint;
 
 import java.awt.BasicStroke;
 import java.awt.Graphics2D;
+import java.awt.font.TextLayout;
 
+import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.Composite;
-import com.gutabi.deadlock.ui.paint.RenderingContext;
 
 public class RenderingContextImpl extends RenderingContext {
 	
@@ -58,4 +59,28 @@ public class RenderingContextImpl extends RenderingContext {
 		g2.setStroke(new BasicStroke((float)width, c, j));
 	}
 	
+	
+	
+	public void setColor(Color c) {
+		java.awt.Color c2 = new java.awt.Color(c.r, c.g, c.b, c.a);
+		g2.setColor(c2);
+	}
+	
+	public Color getColor() {
+		java.awt.Color c = g2.getColor();
+		return new Color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha());
+	}
+	
+	public void setXORMode(Color c) {
+		java.awt.Color c2 = new java.awt.Color(c.r, c.g, c.b, c.a);
+		g2.setXORMode(c2);
+	}
+	
+	public void setPaintMode() {
+		g2.setPaintMode();
+	}
+	
+	public void draw(TextLayout layout, Point baseline) {
+		layout.draw(g2, (float)baseline.x, (float)baseline.y);
+	}
 }

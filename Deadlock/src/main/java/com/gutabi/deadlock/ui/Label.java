@@ -1,6 +1,7 @@
 package com.gutabi.deadlock.ui;
 
-import java.awt.Color;
+import static com.gutabi.deadlock.DeadlockApplication.APP;
+
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.font.FontRenderContext;
@@ -8,9 +9,9 @@ import java.awt.font.TextLayout;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
-
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.math.geom.AABB;
+import com.gutabi.deadlock.ui.paint.Color;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 
 public class Label {
@@ -62,9 +63,13 @@ public class Label {
 		Point baseline = new Point(-localAABB.x, -localAABB.y);
 		
 		img = new BufferedImage((int)aabb.width, (int)aabb.height, BufferedImage.TYPE_INT_ARGB);
+		
 		Graphics2D g2 = img.createGraphics();
-		g2.setColor(color);
-		layout.draw(g2, (float)baseline.x, (float)baseline.y);
+		RenderingContext ctxt = APP.platform.createRenderingContext(g2);
+		
+		ctxt.setColor(color);
+		ctxt.draw(layout, baseline);
+		
 		g2.dispose();
 	}
 	

@@ -2,11 +2,9 @@ package com.gutabi.deadlock.menu;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
-
 
 import org.apache.log4j.Logger;
 
@@ -14,6 +12,7 @@ import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.math.geom.AABB;
 import com.gutabi.deadlock.ui.InputEvent;
 import com.gutabi.deadlock.ui.PanelBase;
+import com.gutabi.deadlock.ui.paint.Color;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 
 public class MenuPanel extends PanelBase {
@@ -150,7 +149,7 @@ public class MenuPanel extends PanelBase {
 		
 		ctxt.setTransform(menuTrans);
 		
-		ctxt.setColor(APP.menuBackground);
+		ctxt.setColor(Color.menuBackground);
 		ctxt.fillRect((int)(MENU_WIDTH/2 - screen.widest/2 - 5), 150 - 5, (int)(screen.widest + 10), screen.totalHeight + 10 * (screen.items.size() - 1) + 5 + 5);
 		
 		for (MenuItem item : screen.items) {

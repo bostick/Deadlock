@@ -2,7 +2,6 @@ package com.gutabi.deadlock.world.cars;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
-import java.awt.Color;
 import java.awt.geom.AffineTransform;
 
 import org.apache.log4j.Logger;
@@ -24,6 +23,7 @@ import com.gutabi.deadlock.math.geom.Quad;
 import com.gutabi.deadlock.math.geom.Shape;
 import com.gutabi.deadlock.ui.Composite;
 import com.gutabi.deadlock.ui.paint.Cap;
+import com.gutabi.deadlock.ui.paint.Color;
 import com.gutabi.deadlock.ui.paint.Join;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.world.World;
@@ -638,7 +638,7 @@ public class Car extends Entity {
 					ctxt.setColor(Color.RED);
 					break;
 				case CRASHED:
-					ctxt.setColor(APP.redOrange);
+					ctxt.setColor(Color.redOrange);
 					break;
 				case DRIVING:
 					ctxt.setColor(Color.RED);
@@ -664,7 +664,7 @@ public class Car extends Entity {
 		if (APP.DEBUG_DRAW) {
 			
 			if (driver.overallPos != null) {
-				ctxt.setColor(APP.DARKGREEN);
+				ctxt.setColor(Color.DARKGREEN);
 				new Circle(null, driver.overallPos.p, 0.2).paint(ctxt);
 			}
 			

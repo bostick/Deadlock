@@ -1,9 +1,9 @@
 package com.gutabi.deadlock.ui.paint;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.font.FontRenderContext;
+import java.awt.font.TextLayout;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Line2D;
 
@@ -37,19 +37,23 @@ public abstract class RenderingContext extends DebugDraw {
 	
 	public abstract void setStroke(double width, Cap cap, Join join);
 	
+	public abstract Color getColor();
+	
+	public abstract void setColor(Color c);
+	
+	public abstract void setXORMode(Color c);
+	
+	public abstract void setPaintMode();
+	
+	public abstract void draw(TextLayout layout, Point baseline);
+	
+	
+	
 	
 	
 	
 	public FontRenderContext getFontRenderContext() {
 		return g2.getFontRenderContext();
-	}
-	
-	public Color getColor() {
-		return g2.getColor();
-	}
-	
-	public void setColor(Color c) {
-		g2.setColor(c);
 	}
 	
 	public AffineTransform getTransform() {
@@ -138,7 +142,7 @@ public abstract class RenderingContext extends DebugDraw {
 	}
 	
 	public void drawSegment(Vec2 p1, Vec2 p2, Color3f color) {
-		g2.setColor(Color.WHITE);
+		setColor(Color.WHITE);
 		Line2D line = new Line2D.Double(p1.x, p1.y, p2.x, p2.y);
 		g2.draw(line);
 	}
@@ -149,14 +153,6 @@ public abstract class RenderingContext extends DebugDraw {
 
 	public void drawString(float x, float y, String s, Color3f color) {
 		
-	}
-	
-	public void setXORMode(Color c) {
-		g2.setXORMode(c);
-	}
-	
-	public void setPaintMode() {
-		g2.setPaintMode();
 	}
 	
 	public void dispose() {

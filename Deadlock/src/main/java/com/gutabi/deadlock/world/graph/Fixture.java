@@ -2,7 +2,6 @@ package com.gutabi.deadlock.world.graph;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
-import java.awt.Color;
 import java.awt.geom.AffineTransform;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -13,6 +12,7 @@ import java.util.Scanner;
 
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.paint.Cap;
+import com.gutabi.deadlock.ui.paint.Color;
 import com.gutabi.deadlock.ui.paint.Join;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.world.ProgressMeter;
@@ -395,7 +395,7 @@ public final class Fixture extends Vertex {
 			ctxt.setTransform(origTransform);
 			
 		} else {
-			ctxt.setColor(APP.LIGHTGREEN);
+			ctxt.setColor(Color.LIGHTGREEN);
 			shape.paint(ctxt);
 			
 			ctxt.setColor(Color.BLACK);
@@ -407,13 +407,13 @@ public final class Fixture extends Vertex {
 	
 	public void paint_preview(RenderingContext ctxt) {
 		
-		ctxt.setColor(APP.LIGHTGREEN);
+		ctxt.setColor(Color.LIGHTGREEN);
 		shape.paint(ctxt);
 		
 	}
 	
 	public void paintHilite(RenderingContext ctxt) {
-		ctxt.setColor(APP.fixtureHiliteColor);
+		ctxt.setColor(Color.fixtureHiliteColor);
 		shape.paint(ctxt);
 	}
 	

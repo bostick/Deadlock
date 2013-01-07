@@ -1,12 +1,11 @@
 package com.gutabi.deadlock.world;
 
-import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
-
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.math.geom.Capsule;
+import com.gutabi.deadlock.ui.paint.Color;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 
 public class RoadMarkMap {

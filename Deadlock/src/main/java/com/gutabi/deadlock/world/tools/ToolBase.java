@@ -1,17 +1,7 @@
 package com.gutabi.deadlock.world.tools;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.Scanner;
-
-import javax.swing.JFileChooser;
-
-import com.gutabi.deadlock.ui.DLSFileChooser;
 import com.gutabi.deadlock.ui.InputEvent;
-import com.gutabi.deadlock.world.World;
 import com.gutabi.deadlock.world.WorldScreen;
-import com.gutabi.deadlock.world.WorldScreen.WorldScreenMode;
 
 public abstract class ToolBase extends Tool {
 	
@@ -73,7 +63,7 @@ public abstract class ToolBase extends Tool {
 		
 		screen.world.zoom(1.1);
 		
-		screen.contentPane.moved(screen.contentPane.lastMovedContentPanePoint);
+//		screen.contentPane.moved(screen.contentPane.getLastMovedContentPanePoint());
 		
 		screen.world.quadrantMap.computeGridSpacing();
 		
@@ -87,7 +77,7 @@ public abstract class ToolBase extends Tool {
 		
 		screen.world.zoom(0.9);
 		
-		screen.contentPane.moved(screen.contentPane.lastMovedContentPanePoint);
+//		screen.contentPane.moved(screen.contentPane.getLastMovedContentPanePoint());
 		
 		screen.world.quadrantMap.computeGridSpacing();
 		
@@ -107,94 +97,94 @@ public abstract class ToolBase extends Tool {
 	
 	public void ctrlSKey() {
 		
-		screen.mode = WorldScreenMode.DIALOG;
-		
-		screen.contentPane.disableKeyListener();
-		
-		screen.fc = new DLSFileChooser();
-		int res = screen.fc.showDialog(screen.contentPane, "Save");
-		
-		if (res == JFileChooser.APPROVE_OPTION) {
-			
-			try {
-				
-				File f = screen.fc.getSelectedFile();
-				
-				if (!f.exists()) {
-					f.createNewFile();
-				}
-				
-				FileWriter w = new FileWriter(f);
-				
-				w.write(screen.world.toFileString());
-				
-				w.close();
-				
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-			screen.contentPane.enableKeyListener();
-			
-			screen.mode = WorldScreenMode.EDITING;
-			
-		} else {
-			
-			screen.contentPane.enableKeyListener();
-			
-			screen.mode = WorldScreenMode.EDITING;
-			
-		}
+//		screen.mode = WorldScreenMode.DIALOG;
+//		
+//		screen.contentPane.disableKeyListener();
+//		
+//		screen.fc = new DLSFileChooser();
+//		int res = screen.fc.showDialog(screen.contentPane, "Save");
+//		
+//		if (res == JFileChooser.APPROVE_OPTION) {
+//			
+//			try {
+//				
+//				File f = screen.fc.getSelectedFile();
+//				
+//				if (!f.exists()) {
+//					f.createNewFile();
+//				}
+//				
+//				FileWriter w = new FileWriter(f);
+//				
+//				w.write(screen.world.toFileString());
+//				
+//				w.close();
+//				
+//			} catch (IOException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//			
+//			screen.contentPane.enableKeyListener();
+//			
+//			screen.mode = WorldScreenMode.EDITING;
+//			
+//		} else {
+//			
+//			screen.contentPane.enableKeyListener();
+//			
+//			screen.mode = WorldScreenMode.EDITING;
+//			
+//		}
 		
 	}
 	
 	public void ctrlOKey() {
 		
-		screen.mode = WorldScreenMode.DIALOG;
-		
-		screen.contentPane.disableKeyListener();
-		
-		screen.fc = new DLSFileChooser();
-		int res = screen.fc.showDialog(screen.contentPane, "Open");
-		
-		if (res == JFileChooser.APPROVE_OPTION) {
-			
-			String fileString = null;
-			
-			try {
-				
-				File f = screen.fc.getSelectedFile();
-				
-				Scanner s = new Scanner(f);
-				fileString = s.useDelimiter("\\A").next();
-				
-				s.close();
-				
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-			screen.world = World.fromFileString(screen, fileString);
-			
-			screen.contentPane.enableKeyListener();
-			
-			screen.mode = WorldScreenMode.EDITING;
-			
-			screen.contentPane.postDisplay();
-			
-			screen.world.render_worldPanel();
-			screen.world.render_preview();
-			screen.contentPane.repaint();
-			
-		} else {
-			
-			screen.contentPane.enableKeyListener();
-			
-			screen.mode = WorldScreenMode.EDITING;
-			
-		}
+//		screen.mode = WorldScreenMode.DIALOG;
+//		
+//		screen.contentPane.disableKeyListener();
+//		
+//		screen.fc = new DLSFileChooser();
+//		int res = screen.fc.showDialog(screen.contentPane, "Open");
+//		
+//		if (res == JFileChooser.APPROVE_OPTION) {
+//			
+//			String fileString = null;
+//			
+//			try {
+//				
+//				File f = screen.fc.getSelectedFile();
+//				
+//				Scanner s = new Scanner(f);
+//				fileString = s.useDelimiter("\\A").next();
+//				
+//				s.close();
+//				
+//			} catch (IOException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//			
+//			screen.world = World.fromFileString(screen, fileString);
+//			
+//			screen.contentPane.enableKeyListener();
+//			
+//			screen.mode = WorldScreenMode.EDITING;
+//			
+//			screen.contentPane.postDisplay();
+//			
+//			screen.world.render_worldPanel();
+//			screen.world.render_preview();
+//			screen.contentPane.repaint();
+//			
+//		} else {
+//			
+//			screen.contentPane.enableKeyListener();
+//			
+//			screen.mode = WorldScreenMode.EDITING;
+//			
+//		}
 		
 	}
 	

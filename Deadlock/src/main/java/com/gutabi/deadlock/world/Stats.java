@@ -1,9 +1,9 @@
 package com.gutabi.deadlock.world;
 
-import java.awt.Color;
 import java.awt.geom.AffineTransform;
 
 import com.gutabi.deadlock.ui.paint.Cap;
+import com.gutabi.deadlock.ui.paint.Color;
 import com.gutabi.deadlock.ui.paint.Join;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 

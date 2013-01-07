@@ -1,12 +1,19 @@
 package com.gutabi.deadlock.world;
 
+import static com.gutabi.deadlock.DeadlockApplication.APP;
+
+import java.util.List;
+
 import org.apache.log4j.Logger;
 
+import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.ContentPane;
+import com.gutabi.deadlock.ui.Panel;
 
-@SuppressWarnings("serial")
-public class WorldScreenContentPane extends ContentPane {
+//@SuppressWarnings("serial")
+public class WorldScreenContentPane implements ContentPane {
 	
+	public ContentPane cp;
 	public WorldScreen screen;
 	
 	public WorldPanel worldPanel;
@@ -15,6 +22,7 @@ public class WorldScreenContentPane extends ContentPane {
 	static Logger logger = Logger.getLogger(WorldScreenContentPane.class);
 	
 	public WorldScreenContentPane(WorldScreen screen) {
+		this.cp = APP.platform.createContentPane(this);
 		this.screen = screen;
 		
 		worldPanel = new WorldPanel(screen) {{
@@ -25,8 +33,8 @@ public class WorldScreenContentPane extends ContentPane {
 			setLocation(0 + worldPanel.aabb.width, 0);
 		}};
 		
-		children.add(worldPanel);
-		children.add(controlPanel);
+		cp.getChildren().add(worldPanel);
+		cp.getChildren().add(controlPanel);
 	}
 	
 	public void qKey() {
@@ -101,4 +109,44 @@ public class WorldScreenContentPane extends ContentPane {
 		screen.tool.enterKey();
 	}
 	
+	public void repaint() {
+		cp.repaint();
+	}
+
+	@Override
+	public List<Panel> getChildren() {
+		return cp.getChildren();
+	}
+
+	@Override
+	public Point getLastMovedContentPanePoint() {
+		return cp.getLastMovedContentPanePoint();
+	}
+
+	@Override
+	public void enableKeyListener() {
+		cp.enableKeyListener();
+	}
+
+	@Override
+	public void disableKeyListener() {
+		cp.disableKeyListener();
+	}
+
+	@Override
+	public void upKey() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void downKey() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void postDisplay() {
+		cp.postDisplay();
+	}
 }

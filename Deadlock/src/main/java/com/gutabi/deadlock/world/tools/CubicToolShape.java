@@ -1,9 +1,7 @@
 package com.gutabi.deadlock.world.tools;
 
-import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
-
 
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.math.geom.Capsule;
@@ -13,6 +11,7 @@ import com.gutabi.deadlock.math.geom.CubicCurve;
 import com.gutabi.deadlock.math.geom.Line;
 import com.gutabi.deadlock.math.geom.Shape;
 import com.gutabi.deadlock.math.geom.ShapeUtils;
+import com.gutabi.deadlock.ui.paint.Color;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.world.World;
 import com.gutabi.deadlock.world.graph.Vertex;

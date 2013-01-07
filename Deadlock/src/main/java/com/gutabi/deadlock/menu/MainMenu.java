@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JFrame;
-import javax.swing.RootPaneContainer;
 
 import org.apache.log4j.Logger;
 
@@ -43,7 +42,7 @@ public class MainMenu extends Screen {
 				WorldScreen s = new WorldScreen();
 				s.world = OneByOneWorld.createOneByOneWorld(s);
 				
-				s.setup(APP.container);
+				APP.platform.setupScreen(APP.container, s.contentPane.cp);
 				((JFrame)APP.container).setVisible(true);
 				
 				s.postDisplay();
@@ -61,7 +60,7 @@ public class MainMenu extends Screen {
 				WorldScreen s = new WorldScreen();
 				s.world = FourByFourGridWorld.createFourByFourGridWorld(s);
 				
-				s.setup(APP.container);
+				APP.platform.setupScreen(APP.container, s.contentPane);
 				((JFrame)APP.container).setVisible(true);
 				
 				s.postDisplay();
@@ -79,8 +78,7 @@ public class MainMenu extends Screen {
 				WorldScreen s = new WorldScreen();
 				s.world = WorldA.createWorldA(s);
 				
-				s.setup(APP.container);
-				
+				APP.platform.setupScreen(APP.container, s.contentPane);
 				((JFrame)APP.container).setVisible(true);
 				
 				s.postDisplay();
@@ -99,8 +97,7 @@ public class MainMenu extends Screen {
 				s.tool = new CarTool(s);
 				s.world = RushHourWorld.createRushHourWorld(s);
 				
-				s.setup(APP.container);
-				
+				APP.platform.setupScreen(APP.container, s.contentPane);
 				((JFrame)APP.container).setVisible(true);
 				
 				s.postDisplay();
@@ -117,7 +114,7 @@ public class MainMenu extends Screen {
 				
 				QuadrantEditor s = new QuadrantEditor();
 				
-				s.setup(APP.container);
+				APP.platform.setupScreen(APP.container, s.contentPane);
 				((JFrame)APP.container).setVisible(true);
 				
 				s.postDisplay();
@@ -160,15 +157,6 @@ public class MainMenu extends Screen {
 		};
 		add(quitMenuItem);
 		
-	}
-	
-	public void setup(RootPaneContainer container) {
-		
-		contentPane.setLayout(null);
-		
-		container.setContentPane(contentPane);
-		contentPane.setFocusable(true);
-		contentPane.requestFocusInWindow();
 	}
 	
 	public void postDisplay() {

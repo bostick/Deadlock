@@ -2,11 +2,9 @@ package com.gutabi.deadlock.quadranteditor;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
-import java.awt.Color;
 import java.awt.geom.AffineTransform;
 
 import javax.swing.JFrame;
-
 
 import org.apache.log4j.Logger;
 
@@ -15,6 +13,7 @@ import com.gutabi.deadlock.math.geom.AABB;
 import com.gutabi.deadlock.ui.Button;
 import com.gutabi.deadlock.ui.InputEvent;
 import com.gutabi.deadlock.ui.PanelBase;
+import com.gutabi.deadlock.ui.paint.Color;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.world.Quadrant;
 import com.gutabi.deadlock.world.World;
@@ -351,7 +350,7 @@ public class QuadrantEditorPanel extends PanelBase {
 				WorldScreen s = new WorldScreen();
 				s.world = World.createWorld(s, ini);
 				
-				s.setup(APP.container);
+				APP.platform.setupScreen(APP.container, s.contentPane);
 				((JFrame)APP.container).setVisible(true);
 				
 				s.postDisplay();

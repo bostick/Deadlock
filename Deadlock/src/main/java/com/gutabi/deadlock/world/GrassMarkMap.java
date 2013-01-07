@@ -1,14 +1,12 @@
 package com.gutabi.deadlock.world;
 
-import static com.gutabi.deadlock.DeadlockApplication.APP;
-
 import java.util.ArrayList;
 import java.util.List;
-
 
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.math.geom.Capsule;
 import com.gutabi.deadlock.math.geom.Circle;
+import com.gutabi.deadlock.ui.paint.Color;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 
 public class GrassMarkMap {
@@ -46,7 +44,7 @@ public class GrassMarkMap {
 	
 	public void paintScene(RenderingContext ctxt) {
 		
-		ctxt.setColor(APP.brown);
+		ctxt.setColor(Color.brown);
 		
 		for (Capsule cap : marks) {
 			cap.paint(ctxt);

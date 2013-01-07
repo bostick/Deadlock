@@ -1,6 +1,5 @@
 package com.gutabi.deadlock.world.tools;
 
-import java.awt.Color;
 import java.util.List;
 import java.util.Set;
 
@@ -8,6 +7,7 @@ import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.math.geom.Shape;
 import com.gutabi.deadlock.ui.InputEvent;
 import com.gutabi.deadlock.ui.paint.Cap;
+import com.gutabi.deadlock.ui.paint.Color;
 import com.gutabi.deadlock.ui.paint.Join;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.world.Stroke;

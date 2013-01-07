@@ -27,7 +27,7 @@ public class DeadlockMain  {
 		MainMenu s = new MainMenu();
 		
 		APP.setupFrame();
-		s.setup(APP.container);
+		APP.platform.setupScreen(APP.container, s.contentPane.cp);
 		
 		((JFrame)APP.container).setVisible(true);
 		

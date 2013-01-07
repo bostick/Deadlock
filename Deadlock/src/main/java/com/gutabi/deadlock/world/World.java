@@ -2,7 +2,6 @@ package com.gutabi.deadlock.world;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
@@ -12,13 +11,13 @@ import java.io.StringReader;
 import java.util.List;
 import java.util.Set;
 
-
 import org.jbox2d.common.Vec2;
 
 import com.gutabi.deadlock.Entity;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.math.geom.AABB;
 import com.gutabi.deadlock.ui.InputEvent;
+import com.gutabi.deadlock.ui.paint.Color;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.world.cars.Car;
 import com.gutabi.deadlock.world.cars.CarEventListener;
@@ -384,14 +383,12 @@ public class World {
 		
 		Graphics2D backgroundG2 = background.createGraphics();
 		
-		backgroundG2.setColor(Color.LIGHT_GRAY);
-		backgroundG2.fillRect(0, 0, (int)screen.contentPane.worldPanel.aabb.width, (int)screen.contentPane.worldPanel.aabb.height);
-		
-		backgroundG2.scale(screen.pixelsPerMeter, screen.pixelsPerMeter);
-		backgroundG2.translate(-screen.worldViewport.x, -screen.worldViewport.y);
-		
 		RenderingContext backgroundCtxt = APP.platform.createRenderingContext(backgroundG2);
-//		backgroundCtxt.screen = screen;
+		backgroundCtxt.setColor(Color.LIGHT_GRAY);
+		backgroundCtxt.fillRect(0, 0, (int)screen.contentPane.worldPanel.aabb.width, (int)screen.contentPane.worldPanel.aabb.height);
+		
+		backgroundCtxt.scale(screen.pixelsPerMeter);
+		backgroundCtxt.translate(-screen.worldViewport.x, -screen.worldViewport.y);
 		
 		quadrantMap.render_panel(backgroundCtxt);
 		graph.render_panel(backgroundCtxt);
@@ -402,14 +399,13 @@ public class World {
 	public void render_preview() {
 		
 		Graphics2D previewImageG2 = previewImage.createGraphics();
+		RenderingContext ctxt = APP.platform.createRenderingContext(previewImageG2);
 		
 		boolean oldDebug = APP.DEBUG_DRAW;
-		APP.DEBUG_DRAW = false;
+		APP.DEBUG_DRAW = false; 
 		
-		RenderingContext ctxt = APP.platform.createRenderingContext(previewImageG2); 
-		
-		previewImageG2.setColor(Color.LIGHT_GRAY);
-		previewImageG2.fillRect(
+		ctxt.setColor(Color.LIGHT_GRAY);
+		ctxt.fillRect(
 				0, 0, (int)screen.contentPane.controlPanel.previewAABB.width, (int)screen.contentPane.controlPanel.previewAABB.height);
 		
 		AffineTransform origTrans = ctxt.getTransform();

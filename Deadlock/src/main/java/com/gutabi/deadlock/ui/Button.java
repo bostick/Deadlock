@@ -1,10 +1,8 @@
 package com.gutabi.deadlock.ui;
 
-import java.awt.Color;
-
-
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.math.geom.AABB;
+import com.gutabi.deadlock.ui.paint.Color;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 
 public abstract class Button {
