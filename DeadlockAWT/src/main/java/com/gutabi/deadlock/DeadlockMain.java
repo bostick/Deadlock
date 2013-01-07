@@ -2,6 +2,8 @@ package com.gutabi.deadlock;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.net.URL;
 
 import javax.swing.JFrame;
@@ -12,6 +14,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 import org.apache.log4j.Logger;
 
 import com.gutabi.deadlock.menu.MainMenu;
+import com.gutabi.deadlock.ui.WindowInfo;
 
 public class DeadlockMain  {
 	
@@ -26,7 +29,22 @@ public class DeadlockMain  {
 		
 		MainMenu s = new MainMenu();
 		
-		APP.setupFrame();
+		JFrame newFrame;
+		newFrame = new JFrame("Deadlock Viewer");
+		newFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		newFrame.addWindowListener(new WindowAdapter() {
+		    public void windowClosing(WindowEvent e) {
+		        APP.exit();
+		    }
+		});
+		
+		newFrame.setSize((int)(WindowInfo.windowDim().width), (int)(WindowInfo.windowDim().height));
+		newFrame.setLocation((int)(WindowInfo.windowLoc().x), (int)(WindowInfo.windowLoc().y));
+		
+		APP.container = newFrame;
+		
+		
+		
 		APP.platform.setupScreen(APP.container, s.contentPane.cp);
 		
 		((JFrame)APP.container).setVisible(true);
@@ -34,6 +52,11 @@ public class DeadlockMain  {
 		s.postDisplay();
 		s.contentPane.panel.render();
 		s.contentPane.repaint();
+	}
+	
+	public void setupFrame() {
+		
+		
 	}
 	
 	public static Thread.UncaughtExceptionHandler handler = new Thread.UncaughtExceptionHandler() {

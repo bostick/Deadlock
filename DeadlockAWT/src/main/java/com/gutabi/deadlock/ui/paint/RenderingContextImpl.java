@@ -1,10 +1,9 @@
 package com.gutabi.deadlock.ui.paint;
 
 import java.awt.BasicStroke;
+import java.awt.Font;
 import java.awt.Graphics2D;
-import java.awt.font.TextLayout;
 
-import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.Composite;
 
 public class RenderingContextImpl extends RenderingContext {
@@ -80,7 +79,21 @@ public class RenderingContextImpl extends RenderingContext {
 		g2.setPaintMode();
 	}
 	
-	public void draw(TextLayout layout, Point baseline) {
-		layout.draw(g2, (float)baseline.x, (float)baseline.y);
+//	public void draw(TextLayout layout, Point baseline) {
+//		layout.draw(g2, (float)baseline.x, (float)baseline.y);
+//	}
+	
+	public void setFont(String name, FontStyle style, int size) {
+		
+		int s = -1;
+		switch (style) {
+		case PLAIN:
+			s = Font.PLAIN;
+			break;
+		}
+		
+		Font f = new Font(name, s, size);
+		g2.setFont(f);
 	}
+	
 }

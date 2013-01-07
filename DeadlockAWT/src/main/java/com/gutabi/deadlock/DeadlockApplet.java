@@ -10,6 +10,7 @@ import javax.swing.UIManager;
 import org.apache.log4j.Logger;
 
 import com.gutabi.deadlock.menu.MainMenu;
+import com.gutabi.deadlock.ui.WindowInfo;
 
 @SuppressWarnings("serial")
 public class DeadlockApplet extends JApplet {
@@ -24,8 +25,8 @@ public class DeadlockApplet extends JApplet {
 		
 		MainMenu s = new MainMenu();
 		
-		APP.setupFrame();
-		s.setup(app);
+		app.setSize((int)(WindowInfo.windowDim().width), (int)(WindowInfo.windowDim().height));
+		app.setLocation((int)(WindowInfo.windowLoc().x), (int)(WindowInfo.windowLoc().y));
 		
 		((JFrame)APP.container).setVisible(true);
 		

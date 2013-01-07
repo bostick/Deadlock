@@ -1,9 +1,8 @@
 package com.gutabi.deadlock.ui;
 
-import java.awt.Font;
-
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.paint.Color;
+import com.gutabi.deadlock.ui.paint.FontStyle;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 
 
@@ -14,11 +13,12 @@ public abstract class Checkbox {
 	
 	public boolean selected = false;
 	
-	static private Font f = new Font("Visitor TT1 BRK", Font.PLAIN, 48);
-	
 	public Checkbox() {
 		lab = new Label(null);
-		lab.font = f;
+		
+		lab.fontName = "Visitor TT1 BRK";
+		lab.fontStyle = FontStyle.PLAIN;
+		lab.fontSize = 48;
 	}
 	
 	public void setLocation(double x, double y) {

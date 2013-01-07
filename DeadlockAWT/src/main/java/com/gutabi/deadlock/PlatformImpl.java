@@ -6,6 +6,8 @@ import javax.swing.RootPaneContainer;
 
 import com.gutabi.deadlock.ui.ContentPane;
 import com.gutabi.deadlock.ui.ContentPaneImpl;
+import com.gutabi.deadlock.ui.paint.FontEngine;
+import com.gutabi.deadlock.ui.paint.FontEngineImpl;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.ui.paint.RenderingContextImpl;
 
@@ -36,6 +38,10 @@ public class PlatformImpl extends Platform {
 		content.j.setFocusable(true);
 		content.j.requestFocusInWindow();
 		
+	}
+
+	public FontEngine createFontEngine() {
+		return new FontEngineImpl();
 	}
 	
 }

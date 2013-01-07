@@ -2,8 +2,6 @@ package com.gutabi.deadlock.ui.paint;
 
 import java.awt.Graphics2D;
 import java.awt.Image;
-import java.awt.font.FontRenderContext;
-import java.awt.font.TextLayout;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Line2D;
 
@@ -45,16 +43,17 @@ public abstract class RenderingContext extends DebugDraw {
 	
 	public abstract void setPaintMode();
 	
-	public abstract void draw(TextLayout layout, Point baseline);
+//	public abstract void draw(TextLayout layout, Point baseline);
+	
+	public abstract void setFont(String name, FontStyle style, int size);
 	
 	
 	
 	
 	
-	
-	public FontRenderContext getFontRenderContext() {
-		return g2.getFontRenderContext();
-	}
+//	public FontRenderContext getFontRenderContext() {
+//		return g2.getFontRenderContext();
+//	}
 	
 	public AffineTransform getTransform() {
 		return g2.getTransform();

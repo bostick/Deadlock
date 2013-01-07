@@ -2,26 +2,26 @@ package com.gutabi.deadlock.ui;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
-import java.awt.Font;
 import java.awt.Graphics2D;
-import java.awt.font.FontRenderContext;
-import java.awt.font.TextLayout;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.math.geom.AABB;
 import com.gutabi.deadlock.ui.paint.Color;
+import com.gutabi.deadlock.ui.paint.FontEngine;
+import com.gutabi.deadlock.ui.paint.FontStyle;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 
 public class Label {
 	
 	public String text;
 	
-	public Font font;
+	public String fontName;
+	public FontStyle fontStyle;
+	public int fontSize;
+	
 	public Color color = Color.BLACK;
 	
-	TextLayout layout;
 	Point ul;
 	public AABB localAABB;
 	public AABB aabb;
@@ -49,11 +49,8 @@ public class Label {
 	}
 	
 	public void renderLocal() {
-//		FontRenderContext frc = new FontRenderContext(null, RenderingHints.VALUE_TEXT_ANTIALIAS_DEFAULT, RenderingHints.VALUE_FRACTIONALMETRICS_DEFAULT);
-		FontRenderContext frc = new FontRenderContext(null, false, false);
-		layout = new TextLayout(text, font, frc);
-		Rectangle2D bounds = layout.getBounds();
-		localAABB = new AABB(bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight());
+		FontEngine engine = APP.platform.createFontEngine();
+		localAABB = engine.bounds(text, fontName, fontStyle, fontSize);
 	}
 	
 	public void render() {
@@ -68,7 +65,9 @@ public class Label {
 		RenderingContext ctxt = APP.platform.createRenderingContext(g2);
 		
 		ctxt.setColor(color);
-		ctxt.draw(layout, baseline);
+		
+		ctxt.setFont(fontName, fontStyle, fontSize);
+		ctxt.paintString(baseline.x, baseline.y, 1.0, text);
 		
 		g2.dispose();
 	}

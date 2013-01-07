@@ -9,8 +9,6 @@ import java.awt.Toolkit;
 import com.gutabi.deadlock.math.Dim;
 import com.gutabi.deadlock.math.Point;
 
-
-
 public class WindowInfo {
 	
 	private static Insets screenInsets;
