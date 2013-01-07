@@ -31,8 +31,6 @@ public class Engine {
 		case SINKED:
 			updateFriction();
 			break;
-		case EDITING:
-			break;
 		case IDLE:
 			break;
 		}

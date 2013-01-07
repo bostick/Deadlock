@@ -89,16 +89,9 @@ public class Car extends Entity {
 	Point prevWorldPoint0;
 	Point prevWorldPoint3;
 	
-	public boolean beginEditing;
-	public boolean endEditing;
-	public CarStateEnum origState;
 	public Point toolOrigP;
 	public double toolOrigAngle;
 	public Quad toolOrigShape;
-	public Point toolP;
-	public double toolAngle;
-	public double[][] carToolTransArr = new double[2][2];
-	public Quad toolShape;
 	
 	public boolean destroyed;
 	
@@ -269,13 +262,6 @@ public class Car extends Entity {
 		shape = Geom.localToWorld(localQuad, carTransArr, p);
 	}
 	
-	public void setToolTransform(Point p, double angle) {
-		this.toolP = p;
-		this.toolAngle = angle;
-		Geom.rotationMatrix(angle, carToolTransArr);
-		toolShape = Geom.localToWorld(localQuad, carToolTransArr, p);
-	}
-	
 	public void b2dInit() {
 		BodyDef bodyDef = new BodyDef();
 		bodyDef.type = BodyType.DYNAMIC;
@@ -391,8 +377,6 @@ public class Car extends Entity {
 		case SKIDDED:
 		case CRASHED:
 			break;
-		case EDITING:
-			break;
 		case IDLE:
 			assert false;
 			break;
@@ -405,7 +389,6 @@ public class Car extends Entity {
 		case BRAKING:
 		case CRASHED:
 		case DRIVING:
-		case EDITING:
 		case SINKED:
 		case SKIDDED:
 			b2dCleanup();
@@ -466,8 +449,6 @@ public class Car extends Entity {
 		case SKIDDED:
 		case SINKED:
 			break;
-		case EDITING:
-			break;
 		case IDLE:
 			break;
 		}
@@ -479,76 +460,6 @@ public class Car extends Entity {
 	 * return true if car should persist after time step
 	 */
 	public boolean postStep(double t) {
-		
-		if (beginEditing) {
-			
-			switch (state) {
-			case BRAKING:
-			case CRASHED:
-			case DRIVING:
-			case EDITING:
-			case SINKED:
-			case SKIDDED:
-				
-				state = CarStateEnum.EDITING;
-				
-				b2dBody.setLinearVelocity(new Vec2(0.0f, 0.0f));
-				b2dBody.setAngularVelocity(0.0f);
-				
-				beginEditing = false;
-				
-				break;
-			case IDLE:
-				
-				state = CarStateEnum.EDITING;
-				
-				beginEditing = false;
-				
-				break;
-			}
-			
-			return true;
-		}
-		
-		/*
-		 * do endEditing here also, instead of in preStep()
-		 * 
-		 * changing a car's overallPos in preStep is bad because GraphPositionPath hitTest data has already been precomputed for that step
-		 * (and the order that graph, cars, etc. call preStep() shouldn't matter)
-		 */
-		if (endEditing) {
-			
-			switch (origState) {
-			case BRAKING:
-			case CRASHED:
-			case DRIVING:
-			case EDITING:
-			case SINKED:
-			case SKIDDED:
-				
-				state = origState;
-				
-				b2dBody.setTransform(toolP.vec2(), (float)toolAngle);
-				
-				driver.overallPos = driver.overallPath.findClosestGraphPositionPathPosition(driver.centerToGPPPPoint(toolP), driver.overallPath.startingPos, false);
-				
-				endEditing = false;
-				
-				break;
-			case IDLE:
-				
-				state = origState;
-				
-				setTransform(toolP, toolAngle);
-				
-				driver.overallPos = driver.overallPath.findClosestGraphPositionPathPosition(driver.centerToGPPPPoint(toolP), driver.overallPath.startingPos, false);
-				
-				endEditing = false;
-				
-				break;
-			}
-			
-		}
 		
 		switch (state) {
 		case DRIVING: {
@@ -686,8 +597,6 @@ public class Car extends Entity {
 			assert false;
 			
 			return true;
-		case EDITING:
-			return true;
 			
 		case IDLE:
 			return true;
@@ -712,9 +621,6 @@ public class Car extends Entity {
 				case DRIVING:
 					ctxt.setColor(Color.BLUE);
 					break;
-				case EDITING:
-					ctxt.setColor(Color.BLUE);
-					break;
 				case SINKED:
 					ctxt.setColor(Color.BLUE);
 					break;
@@ -734,9 +640,6 @@ public class Car extends Entity {
 					ctxt.setColor(APP.redOrange);
 					break;
 				case DRIVING:
-					ctxt.setColor(Color.RED);
-					break;
-				case EDITING:
 					ctxt.setColor(Color.RED);
 					break;
 				case SINKED:
@@ -800,73 +703,38 @@ public class Car extends Entity {
 	public double CAR_BRAKE2X;
 	public double CAR_BRAKE2Y;
 	
-	
-//	public static final int brakeRowStart = APP.spriteSectionRow+64;
-//	public static final int brakeRowEnd = brakeRowStart + 8;
-	
 	public int sheetColStart;
 	public int sheetColEnd;
 	public int sheetRowStart;
 	public int sheetRowEnd;
 	
 	protected void paintImage(RenderingContext ctxt) {
+			
+		AffineTransform origTransform = ctxt.getTransform();
 		
-		if (state != CarStateEnum.EDITING) {
-			
-			AffineTransform origTransform = ctxt.getTransform();
-			
-			Composite origComposite = null;
-			if (inMerger) {
-				origComposite = ctxt.getComposite();
-				ctxt.setComposite(aComp);
-			}
-			
-			ctxt.translate(p.x, p.y);
-			ctxt.rotate(angle);
-			ctxt.translate(CAR_LOCALX, CAR_LOCALY);
-			
-			ctxt.paintImage(APP.carSheet, world.screen.pixelsPerMeter,
-					0, 0, CAR_LENGTH, CAR_WIDTH,
-					sheetColStart, sheetRowStart, sheetColEnd, sheetRowEnd);
-			
-			if (inMerger) {
-				ctxt.setComposite(origComposite);
-			}
-			ctxt.setTransform(origTransform);
-			
-		} else {
-			
-			AffineTransform origTransform = ctxt.getTransform();
-			
-			Composite origComposite = null;
-			if (inMerger) {
-				origComposite = ctxt.getComposite();
-				ctxt.setComposite(aComp);
-			}
-			
-			ctxt.translate(toolP.x, toolP.y);
-			ctxt.rotate(toolAngle);
-			ctxt.translate(CAR_LOCALX, CAR_LOCALY);
-			
-			ctxt.paintImage(APP.carSheet, world.screen.pixelsPerMeter,
-					0, 0, CAR_LENGTH, CAR_WIDTH,
-					sheetColStart, sheetRowStart, sheetColEnd, sheetRowEnd);
-			
-			if (inMerger) {
-				ctxt.setComposite(origComposite);
-			}
-			ctxt.setTransform(origTransform);
-			
+		Composite origComposite = null;
+		if (inMerger) {
+			origComposite = ctxt.getComposite();
+			ctxt.setComposite(aComp);
 		}
+		
+		ctxt.translate(p.x, p.y);
+		ctxt.rotate(angle);
+		ctxt.translate(CAR_LOCALX, CAR_LOCALY);
+		
+		ctxt.paintImage(APP.carSheet, world.screen.pixelsPerMeter,
+				0, 0, CAR_LENGTH, CAR_WIDTH,
+				sheetColStart, sheetRowStart, sheetColEnd, sheetRowEnd);
+		
+		if (inMerger) {
+			ctxt.setComposite(origComposite);
+		}
+		ctxt.setTransform(origTransform);
 		
 	}
 	
 	private void paintRect(RenderingContext ctxt) {
-		if (state != CarStateEnum.EDITING) {
-			shape.paint(ctxt);
-		} else {
-			toolShape.paint(ctxt);
-		}
+		shape.paint(ctxt);
 	}
 	
 	private void paintBrakes(RenderingContext ctxt) {

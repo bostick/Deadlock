@@ -28,23 +28,9 @@ public class CarTool extends ToolBase {
 		
 	}
 	
-//	public void setCar(Car c) {
-//		
-//	}
-	
 	public Shape getShape() {
 		return null;
 	}
-	
-	
-//	public void escKey() {
-//		
-//		screen.tool = new RegularTool(screen);
-//		
-//		screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.world.lastMovedOrDraggedWorldPoint));
-//		
-//		screen.contentPane.repaint();
-//	}
 	
 	public void pressed(InputEvent ev) {
 		
@@ -52,17 +38,10 @@ public class CarTool extends ToolBase {
 		if (pressed != null) {
 			
 			this.car = pressed;
-			car.origState = pressed.state;
-			
-			car.toolP = car.p;
-			car.toolAngle = car.angle;
-			car.toolShape = car.shape;
 			
 			car.toolOrigP = car.p;
 			car.toolOrigAngle = car.angle;
 			car.toolOrigShape = car.shape;
-			
-			car.beginEditing = true;
 			
 		}
 		
@@ -70,8 +49,11 @@ public class CarTool extends ToolBase {
 	
 	public void released(InputEvent ev) {
 		
-		car.endEditing = true;
+		car.driver.overallPos = car.driver.overallPath.findClosestGraphPositionPathPosition(car.driver.centerToGPPPPoint(car.p), car.driver.overallPath.startingPos, false);
+		
 		car = null;
+		
+		screen.contentPane.repaint();
 	}
 	
 	public void dragged(InputEvent ev) {
@@ -82,9 +64,9 @@ public class CarTool extends ToolBase {
 			
 			Point carPTmp = car.toolOrigP.plus(diff);
 			Point carP = null;
-			double carAngle = car.toolAngle;
+			double carAngle = car.angle;
 			
-			switch (car.origState) {
+			switch (car.state) {
 			case IDLE:
 			case DRIVING:
 			case BRAKING:
@@ -141,48 +123,17 @@ public class CarTool extends ToolBase {
 				break;
 			case SKIDDED:
 				break;
-			case EDITING:
-				assert false;
-				break;
 			}
 			
-			car.setToolTransform(carP, carAngle);
+			car.setTransform(carP, carAngle);
 			
 			screen.contentPane.repaint();
-			
 		}
 		
 	}
 	
-//	public void moved(InputEvent ev) {
-//		
-//	}
-	
-//	public void clicked(InputEvent ev) {
-//		
-//		if (car.toolShape.hitTest(screen.world.lastPressedWorldPoint)) {
-//			
-//			car.endEditing = true;
-//			
-//			screen.tool = new RegularTool(screen);
-//			
-//			screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.world.lastMovedOrDraggedWorldPoint));
-//			
-//			screen.contentPane.repaint();
-//			
-//		}
-//		
-//	}
-	
 	public void draw(RenderingContext ctxt) {
 		
-//		if (!car.destroyed) {
-//			
-//			ctxt.setColor(Color.BLUE);
-//			ctxt.setStrokeWidth(0.0);
-//			car.toolShape.draw(ctxt);
-//			
-//		}
 	}
 	
 }

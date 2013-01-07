@@ -108,8 +108,6 @@ public class MainMenu extends Screen {
 				s.world.render_worldPanel();
 				s.world.render_preview();
 				s.contentPane.repaint();
-				
-				s.contentPane.controlPanel.startButton.action();
 			}
 		};
 		add(rMenuItem);

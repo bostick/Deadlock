@@ -12,7 +12,4 @@ public enum CarStateEnum {
 	
 	SINKED,
 	
-	
-	EDITING
-	
 }
