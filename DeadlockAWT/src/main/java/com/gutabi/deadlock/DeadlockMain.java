@@ -22,7 +22,8 @@ public class DeadlockMain  {
 	
 	static void createAndShowGUI() throws Exception {
 		
-		APP.platform = new PlatformImpl();
+		PlatformImpl platform = new PlatformImpl();
+		APP.platform = platform;
 		APP.init();
 		
 		APP.codebase = new URL("file:.");
@@ -41,13 +42,13 @@ public class DeadlockMain  {
 		newFrame.setSize((int)(WindowInfo.windowDim().width), (int)(WindowInfo.windowDim().height));
 		newFrame.setLocation((int)(WindowInfo.windowLoc().x), (int)(WindowInfo.windowLoc().y));
 		
-		APP.container = newFrame;
+		platform.container = newFrame;
 		
 		
 		
-		APP.platform.setupScreen(APP.container, s.contentPane.cp);
+		APP.platform.setupScreen(s.contentPane.cp);
 		
-		((JFrame)APP.container).setVisible(true);
+		newFrame.setVisible(true);
 		
 		s.postDisplay();
 		s.contentPane.panel.render();

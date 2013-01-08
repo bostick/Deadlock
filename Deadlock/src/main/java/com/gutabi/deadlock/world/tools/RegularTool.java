@@ -4,8 +4,6 @@ import static com.gutabi.deadlock.DeadlockApplication.APP;
 
 import java.util.Set;
 
-import javax.swing.JFrame;
-
 import com.gutabi.deadlock.Entity;
 import com.gutabi.deadlock.geom.Circle;
 import com.gutabi.deadlock.geom.Shape;
@@ -67,12 +65,9 @@ public class RegularTool extends ToolBase {
 	
 	public void escKey() {
 		
-		APP.container.getContentPane().repaint();
-		
 		MainMenu s = new MainMenu();
 		
-		APP.platform.setupScreen(APP.container, s.contentPane);
-		((JFrame)APP.container).setVisible(true);
+		APP.platform.setupScreen(s.contentPane.cp);
 		
 		s.postDisplay();
 		s.contentPane.panel.render();

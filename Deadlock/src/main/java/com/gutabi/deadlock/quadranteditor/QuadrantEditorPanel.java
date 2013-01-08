@@ -2,8 +2,6 @@ package com.gutabi.deadlock.quadranteditor;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
-import javax.swing.JFrame;
-
 import org.apache.log4j.Logger;
 
 import com.gutabi.deadlock.math.Point;
@@ -348,8 +346,7 @@ public class QuadrantEditorPanel extends PanelBase {
 				WorldScreen s = new WorldScreen();
 				s.world = World.createWorld(s, ini);
 				
-				APP.platform.setupScreen(APP.container, s.contentPane);
-				((JFrame)APP.container).setVisible(true);
+				APP.platform.setupScreen(s.contentPane);
 				
 				s.postDisplay();
 				

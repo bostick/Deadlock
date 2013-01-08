@@ -3,7 +3,6 @@ package com.gutabi.deadlock;
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
 import javax.swing.JApplet;
-import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
@@ -28,7 +27,7 @@ public class DeadlockApplet extends JApplet {
 		app.setSize((int)(WindowInfo.windowDim().width), (int)(WindowInfo.windowDim().height));
 		app.setLocation((int)(WindowInfo.windowLoc().x), (int)(WindowInfo.windowLoc().y));
 		
-		((JFrame)APP.container).setVisible(true);
+//		((JFrame)APP.container).setVisible(true);
 		
 		s.postDisplay();
 		s.contentPane.panel.render();

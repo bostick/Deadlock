@@ -3,16 +3,12 @@ package com.gutabi.deadlock;
 import java.net.URL;
 import java.util.Random;
 
-import javax.swing.RootPaneContainer;
-
 import com.gutabi.deadlock.ui.Image;
 import com.gutabi.deadlock.ui.ImageEngine;
 
 public class DeadlockApplication {
 	
 	public URL codebase;
-	
-	public RootPaneContainer container;
 	
 	public Platform platform;
 	

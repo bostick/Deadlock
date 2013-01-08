@@ -4,8 +4,6 @@ import static com.gutabi.deadlock.DeadlockApplication.APP;
 
 import java.util.List;
 
-import javax.swing.JFrame;
-
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.menu.MainMenu;
 import com.gutabi.deadlock.ui.ContentPane;
@@ -34,8 +32,8 @@ public class QuadrantEditorContentPane implements ContentPane {
 		
 		MainMenu s = new MainMenu();
 		
-		APP.platform.setupScreen(APP.container, s.contentPane);
-		((JFrame)APP.container).setVisible(true);
+		APP.platform.setupScreen(s.contentPane);
+		
 		s.postDisplay();
 		
 		s.contentPane.panel.render();

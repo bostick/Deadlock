@@ -5,8 +5,6 @@ import static com.gutabi.deadlock.DeadlockApplication.APP;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.JFrame;
-
 import org.apache.log4j.Logger;
 
 import com.gutabi.deadlock.quadranteditor.QuadrantEditor;
@@ -41,8 +39,7 @@ public class MainMenu {
 				WorldScreen s = new WorldScreen();
 				s.world = OneByOneWorld.createOneByOneWorld(s);
 				
-				APP.platform.setupScreen(APP.container, s.contentPane.cp);
-				((JFrame)APP.container).setVisible(true);
+				APP.platform.setupScreen(s.contentPane.cp);
 				
 				s.postDisplay();
 				
@@ -59,8 +56,7 @@ public class MainMenu {
 				WorldScreen s = new WorldScreen();
 				s.world = FourByFourGridWorld.createFourByFourGridWorld(s);
 				
-				APP.platform.setupScreen(APP.container, s.contentPane);
-				((JFrame)APP.container).setVisible(true);
+				APP.platform.setupScreen(s.contentPane);
 				
 				s.postDisplay();
 				
@@ -77,8 +73,7 @@ public class MainMenu {
 				WorldScreen s = new WorldScreen();
 				s.world = WorldA.createWorldA(s);
 				
-				APP.platform.setupScreen(APP.container, s.contentPane);
-				((JFrame)APP.container).setVisible(true);
+				APP.platform.setupScreen(s.contentPane);
 				
 				s.postDisplay();
 				
@@ -96,8 +91,7 @@ public class MainMenu {
 				s.tool = new CarTool(s);
 				s.world = RushHourWorld.createRushHourWorld(s);
 				
-				APP.platform.setupScreen(APP.container, s.contentPane);
-				((JFrame)APP.container).setVisible(true);
+				APP.platform.setupScreen(s.contentPane);
 				
 				s.postDisplay();
 				
@@ -113,10 +107,10 @@ public class MainMenu {
 				
 				QuadrantEditor s = new QuadrantEditor();
 				
-				APP.platform.setupScreen(APP.container, s.contentPane);
-				((JFrame)APP.container).setVisible(true);
+				APP.platform.setupScreen(s.contentPane);
 				
 				s.postDisplay();
+				
 				s.contentPane.panel.worldScreen.world.render_worldPanel();
 				s.contentPane.repaint();
 			}

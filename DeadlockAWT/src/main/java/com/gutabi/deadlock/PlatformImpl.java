@@ -2,6 +2,7 @@ package com.gutabi.deadlock;
 
 import java.awt.Graphics2D;
 
+import javax.swing.JFrame;
 import javax.swing.RootPaneContainer;
 
 import com.gutabi.deadlock.geom.ShapeEngine;
@@ -17,7 +18,9 @@ import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.ui.paint.RenderingContextImpl;
 
 public class PlatformImpl extends Platform {
-
+	
+	public RootPaneContainer container;
+	
 	public RenderingContext createRenderingContext(Object... args) {
 		
 		if (args[0] instanceof Graphics2D) {
@@ -44,8 +47,8 @@ public class PlatformImpl extends Platform {
 	
 	public void setupScreen(Object... args) {
 		
-		RootPaneContainer container = (RootPaneContainer)args[0];
-		ContentPaneImpl content = (ContentPaneImpl)args[1];
+//		RootPaneContainer container = (RootPaneContainer)args[0];
+		ContentPaneImpl content = (ContentPaneImpl)args[0];
 		
 		content.j.setLayout(null);
 		
@@ -53,6 +56,9 @@ public class PlatformImpl extends Platform {
 		content.j.setFocusable(true);
 		content.j.requestFocusInWindow();
 		
+		if (container instanceof JFrame) {
+			((JFrame)container).setVisible(true);
+		}
 	}
 
 	public FontEngine createFontEngine(Object... args) {
