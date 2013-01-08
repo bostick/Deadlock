@@ -7,7 +7,6 @@ import org.apache.log4j.Logger;
 
 import com.gutabi.deadlock.math.Point;
 
-//@SuppressWarnings("serial")
 public abstract class ContentPaneBase implements ContentPane {
 	
 	protected List<Panel> children = new ArrayList<Panel>();
@@ -124,7 +123,5 @@ public abstract class ContentPaneBase implements ContentPane {
 	}
 	
 	public abstract void repaint();
-	
-//	public abstract void paint(Graphics g);
 	
 }

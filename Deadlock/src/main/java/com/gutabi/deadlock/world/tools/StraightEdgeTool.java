@@ -129,7 +129,6 @@ public class StraightEdgeTool extends ToolBase {
 			screen.world.render_worldPanel();
 			screen.world.render_preview();
 			screen.contentPane.repaint();
-//			screen.controlPanel.repaint();
 			break;
 		case KNOB:
 			assert false;

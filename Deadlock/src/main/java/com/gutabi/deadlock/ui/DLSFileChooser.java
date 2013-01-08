@@ -1,6 +1,5 @@
 package com.gutabi.deadlock.ui;
 
-
 //@SuppressWarnings("serial")
 public class DLSFileChooser { //extends JFileChooser {
 	

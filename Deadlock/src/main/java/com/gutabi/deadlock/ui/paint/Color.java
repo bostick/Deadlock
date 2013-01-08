@@ -1,6 +1,5 @@
 package com.gutabi.deadlock.ui.paint;
 
-
 public class Color {
 	
 	public static final Color RED = new Color(255, 0, 0, 255);
@@ -25,10 +24,6 @@ public class Color {
 	public static final Color fixtureHiliteColor = new Color(0, 255, 255, 255);
 	
 	public static final Color roadHiliteColor = new Color(0xff ^ 0x88, 0xff ^ 0x88, 0xff ^ 0x88, 0xff);
-	
-	
-	
-	
 	
 	public final int r;
 	public final int g;

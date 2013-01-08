@@ -182,13 +182,6 @@ public class RegularTool extends ToolBase {
 		screen.contentPane.repaint();
 	}
 	
-//	public void fKey() {
-//		CarTool t = new CarTool(screen);
-//		t.setPoint(screen.world.quadrantMap.getPoint(screen.world.lastMovedOrDraggedWorldPoint));
-//		screen.tool = t;
-//		screen.contentPane.repaint();
-//	}
-	
 	public void insertKey() {
 		if (hilited != null) {
 			
@@ -320,29 +313,6 @@ public class RegularTool extends ToolBase {
 			break;
 		}
 	}
-	
-//	public void clicked(InputEvent ev) {
-//		
-//		switch (mode) {
-//		case FREE:
-//			
-//			Car clicked = screen.world.carMap.carHitTest(ev.p);
-//			if (clicked != null) {
-//				
-//				CarTool t = new CarTool(screen);
-//				t.setCar(clicked);
-////				t.setPoint(screen.world.quadrantMap.getPoint(screen.world.lastMovedOrDraggedWorldPoint));
-//				screen.tool = t;
-//				screen.contentPane.repaint();
-//				
-//			}
-//			
-//			break;
-//		case DRAFTING:
-//			break;
-//		}
-//		
-//	}
 	
 	public void draftStart(Point p) {
 		

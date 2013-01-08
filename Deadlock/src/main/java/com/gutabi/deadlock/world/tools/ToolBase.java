@@ -192,12 +192,6 @@ public abstract class ToolBase extends Tool {
 		
 	}
 	
-	
-	
-	
-	
-	
-	
 	public void pressed(InputEvent ev) {
 		
 	}
@@ -217,9 +211,5 @@ public abstract class ToolBase extends Tool {
 	public void clicked(InputEvent ev) {
 		
 	}
-	
-//	public void exited(InputEvent ev) {
-//		
-//	}
 
 }

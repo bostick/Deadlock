@@ -15,7 +15,6 @@ import com.gutabi.deadlock.world.Quadrant;
 import com.gutabi.deadlock.world.World;
 import com.gutabi.deadlock.world.WorldScreen;
 
-//@SuppressWarnings("serial")
 public class QuadrantEditorPanel extends PanelBase {
 	
 	public final int EDITOR_WIDTH = 800;
@@ -499,8 +498,6 @@ public class QuadrantEditorPanel extends PanelBase {
 	}
 	
 	public void paint(RenderingContext ctxt) {
-	
-//		ctxt.screen = worldScreen;
 		
 		AffineTransform origTrans = ctxt.getTransform();
 		

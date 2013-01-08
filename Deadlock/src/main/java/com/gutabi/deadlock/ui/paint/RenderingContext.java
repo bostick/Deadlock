@@ -11,7 +11,6 @@ import com.gutabi.deadlock.ui.AffineTransform;
 import com.gutabi.deadlock.ui.Composite;
 import com.gutabi.deadlock.ui.Image;
 
-
 public abstract class RenderingContext extends DebugDraw {
 	
 	public RenderingContext() {

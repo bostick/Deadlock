@@ -8,7 +8,6 @@ import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.ContentPane;
 import com.gutabi.deadlock.ui.Panel;
 
-//@SuppressWarnings("serial")
 public class MainMenuContentPane implements ContentPane {
 	
 	public ContentPane cp;

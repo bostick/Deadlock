@@ -5,8 +5,6 @@ import com.gutabi.deadlock.ui.paint.Color;
 import com.gutabi.deadlock.ui.paint.FontStyle;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 
-
-
 public abstract class Checkbox {
 	
 	Label lab;

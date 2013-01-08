@@ -22,12 +22,4 @@ public abstract class PanelBase extends Panel {
 		
 	}
 	
-//	public void entered(InputEvent ev) {
-//		
-//	}
-//	
-//	public void exited(InputEvent ev) {
-//		
-//	}
-	
 }

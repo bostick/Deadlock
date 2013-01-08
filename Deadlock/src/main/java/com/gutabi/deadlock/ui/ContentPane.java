@@ -4,7 +4,6 @@ import java.util.List;
 
 import com.gutabi.deadlock.math.Point;
 
-//@SuppressWarnings("serial")
 public interface ContentPane {
 
 	public List<Panel> getChildren();

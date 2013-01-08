@@ -19,10 +19,6 @@ public abstract class Panel {
 	
 	public abstract void clicked(InputEvent ev);
 	
-//	public abstract void entered(InputEvent ev);
-	
-//	public abstract void exited(InputEvent ev);
-	
 	public abstract void postDisplay();
 	
 	public abstract void paint(RenderingContext ctxt);

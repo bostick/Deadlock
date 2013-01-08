@@ -10,7 +10,6 @@ import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.ContentPane;
 import com.gutabi.deadlock.ui.Panel;
 
-//@SuppressWarnings("serial")
 public class WorldScreenContentPane implements ContentPane {
 	
 	public ContentPane cp;
@@ -113,39 +112,30 @@ public class WorldScreenContentPane implements ContentPane {
 		cp.repaint();
 	}
 
-	@Override
 	public List<Panel> getChildren() {
 		return cp.getChildren();
 	}
 
-	@Override
 	public Point getLastMovedContentPanePoint() {
 		return cp.getLastMovedContentPanePoint();
 	}
 
-	@Override
 	public void enableKeyListener() {
 		cp.enableKeyListener();
 	}
 
-	@Override
 	public void disableKeyListener() {
 		cp.disableKeyListener();
 	}
 
-	@Override
 	public void upKey() {
-		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
 	public void downKey() {
-		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
 	public void postDisplay() {
 		cp.postDisplay();
 	}

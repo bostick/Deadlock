@@ -1,6 +1,5 @@
 package com.gutabi.deadlock.world.cars;
 
-
 import org.apache.log4j.Logger;
 import org.jbox2d.callbacks.ContactImpulse;
 import org.jbox2d.callbacks.ContactListener;

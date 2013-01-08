@@ -1,6 +1,5 @@
 package com.gutabi.deadlock.world.graph;
 
-
 import org.apache.log4j.Logger;
 
 import com.gutabi.deadlock.Entity;

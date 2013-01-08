@@ -91,7 +91,7 @@ public class MainMenu {
 				s.tool = new CarTool(s);
 				s.world = RushHourWorld.createRushHourWorld(s);
 				
-				APP.platform.setupScreen(s.contentPane);
+				APP.platform.setupScreen(s.contentPane.cp);
 				
 				s.postDisplay();
 				

@@ -1,6 +1,5 @@
 package com.gutabi.deadlock.world.tools;
 
-
 import com.gutabi.deadlock.geom.Geom;
 import com.gutabi.deadlock.geom.Quad;
 import com.gutabi.deadlock.geom.Shape;

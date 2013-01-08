@@ -1,6 +1,5 @@
 package com.gutabi.deadlock.world.cars;
 
-
 import org.jbox2d.common.Vec2;
 
 import com.gutabi.deadlock.math.Point;

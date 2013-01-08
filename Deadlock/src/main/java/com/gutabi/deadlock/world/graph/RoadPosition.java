@@ -1,6 +1,5 @@
 package com.gutabi.deadlock.world.graph;
 
-
 import com.gutabi.deadlock.Entity;
 import com.gutabi.deadlock.math.DMath;
 import com.gutabi.deadlock.math.Point;

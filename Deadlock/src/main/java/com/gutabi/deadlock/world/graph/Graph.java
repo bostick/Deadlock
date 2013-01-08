@@ -202,11 +202,7 @@ public class Graph implements Sweepable {
 		
 		rushes.add(b);
 		
-	}
-
-
-	
-	
+	}	
 	
 	
 	public Set<Vertex> removeVertexTop(Vertex v) {

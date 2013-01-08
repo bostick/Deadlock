@@ -1,6 +1,5 @@
 package com.gutabi.deadlock.world.graph;
 
-
 import com.gutabi.deadlock.Entity;
 import com.gutabi.deadlock.geom.Shape;
 import com.gutabi.deadlock.geom.SweepableShape;

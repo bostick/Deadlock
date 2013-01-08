@@ -7,8 +7,6 @@ import java.util.List;
 
 import com.gutabi.deadlock.math.DMath;
 
-
-
 public class GraphPositionPathFactory {
 	
 	public final Graph graph;
@@ -60,21 +58,6 @@ public class GraphPositionPathFactory {
 		
 		return new GraphPositionPath(poss);
 	}
-	
-//	public GraphPositionPath createShortestStudPath(List<RushHourStud> origPoss) {
-//		
-//		List<GraphPosition> poss = new ArrayList<GraphPosition>();
-//		
-//		RushHourStud s0 = origPoss.get(0);
-//		poss.add(new RushHourBoardPosition(s0.board, s0.row, s0.col));
-//		for (int i = 0; i < origPoss.size()-1; i++) {
-//			RushHourStud a = origPoss.get(i);
-//			RushHourStud b = origPoss.get(i+1);
-//			calculateShortestStudPath(poss, new RushHourBoardPosition(a.board, a.row, a.col), new RushHourBoardPosition(b.board, b.row, b.col));
-//		}
-//		
-//		return new GraphPositionPath(poss);
-//	}
 	
 	/**
 	 * Position a has already been added

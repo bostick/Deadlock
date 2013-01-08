@@ -29,9 +29,6 @@ public class WorldPanel extends PanelBase {
 	
 	public void postDisplay() {
 		
-//		screen.cam.panelWidth = (int)aabb.width;
-//		screen.cam.panelHeight = (int)aabb.height;
-		
 		screen.world.panelPostDisplay();
 	}
 	
@@ -175,20 +172,6 @@ public class WorldPanel extends PanelBase {
 		}
 		}
 	}
-	
-//	public void exited(InputEvent ev) {
-//		
-//		switch (screen.mode) {
-//		case RUNNING:
-//		case PAUSED:
-//		case DIALOG:
-//			break;
-//		case EDITING:
-//			screen.tool.exited(ev);
-//			break;
-//		}
-//		
-//	}
 	
 	public void paint(RenderingContext ctxt) {
 		

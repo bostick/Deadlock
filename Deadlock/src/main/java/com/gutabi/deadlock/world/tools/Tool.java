@@ -1,6 +1,5 @@
 package com.gutabi.deadlock.world.tools;
 
-
 import com.gutabi.deadlock.geom.Shape;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.InputEvent;
@@ -59,9 +58,6 @@ public abstract class Tool {
 	public abstract void enterKey();
 	
 	
-	
-	
-	
 	public abstract void pressed(InputEvent ev);
 	
 	public abstract void released(InputEvent ev);
@@ -70,10 +66,7 @@ public abstract class Tool {
 	
 	public abstract void moved(InputEvent ev);
 	
-	public abstract void clicked(InputEvent ev);
-	
-//	public abstract void exited(InputEvent ev);
-	
+	public abstract void clicked(InputEvent ev);	
 	
 	
 	public abstract void draw(RenderingContext ctxt);

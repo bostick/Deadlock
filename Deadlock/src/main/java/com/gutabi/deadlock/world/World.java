@@ -337,20 +337,12 @@ public class World {
 	public boolean lastDraggedWorldPointWasNull;
 	public Point lastMovedWorldPoint;
 	public Point lastMovedOrDraggedWorldPoint;
-//	public Point lastClickedWorldPoint;
 	
 	
 	public void pressed(InputEvent ev) {
 		
 		lastPressedWorldPoint = ev.p;
 		lastDraggedWorldPoint = null;
-		
-//		Car c = carMap.carHitTest(lastPressedWorldPoint);
-//		if (c != null) {
-//			carMap.pressedCar = c;
-//		}
-		
-		
 		
 	}
 	
@@ -366,17 +358,12 @@ public class World {
 		
 		lastMovedWorldPoint = ev.p;
 		lastMovedOrDraggedWorldPoint = lastMovedWorldPoint;
-//		lastMovedOrDraggedWorldPoint = lastDraggedWorldPoint;
 		
 	}
 	
 	public void clicked(InputEvent ev) {
 		
-//		lastClickedWorldPoint = ev.p;
-		
-//		line
 	}
-	
 	
 	
 	public void render_worldPanel() {
