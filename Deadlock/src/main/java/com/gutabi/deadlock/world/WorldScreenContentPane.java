@@ -4,8 +4,6 @@ import static com.gutabi.deadlock.DeadlockApplication.APP;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
-
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.ContentPane;
 import com.gutabi.deadlock.ui.Panel;
@@ -18,7 +16,7 @@ public class WorldScreenContentPane implements ContentPane {
 	public WorldPanel worldPanel;
 	public ControlPanel controlPanel;
 	
-	static Logger logger = Logger.getLogger(WorldScreenContentPane.class);
+//	static Logger logger = Logger.getLogger(WorldScreenContentPane.class);
 	
 	public WorldScreenContentPane(WorldScreen screen) {
 		this.cp = APP.platform.createContentPane(this);
@@ -120,13 +118,13 @@ public class WorldScreenContentPane implements ContentPane {
 		return cp.getLastMovedContentPanePoint();
 	}
 
-	public void enableKeyListener() {
-		cp.enableKeyListener();
-	}
-
-	public void disableKeyListener() {
-		cp.disableKeyListener();
-	}
+//	public void enableKeyListener() {
+//		cp.enableKeyListener();
+//	}
+//
+//	public void disableKeyListener() {
+//		cp.disableKeyListener();
+//	}
 
 	public void upKey() {
 		

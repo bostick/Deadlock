@@ -146,13 +146,13 @@ public class MainMenuContentPane implements ContentPane {
 		
 	}
 	
-	public void enableKeyListener() {
-		cp.enableKeyListener();
-	}
-	
-	public void disableKeyListener() {
-		cp.enableKeyListener();
-	}
+//	public void enableKeyListener() {
+//		cp.enableKeyListener();
+//	}
+//	
+//	public void disableKeyListener() {
+//		cp.enableKeyListener();
+//	}
 	
 	public void postDisplay() {
 		cp.postDisplay();

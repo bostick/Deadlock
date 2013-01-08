@@ -51,13 +51,13 @@ public class QuadrantEditorContentPane implements ContentPane {
 		return cp.getLastMovedContentPanePoint();
 	}
 
-	public void enableKeyListener() {
-		cp.enableKeyListener();
-	}
-
-	public void disableKeyListener() {
-		cp.disableKeyListener();
-	}
+//	public void enableKeyListener() {
+//		cp.enableKeyListener();
+//	}
+//
+//	public void disableKeyListener() {
+//		cp.disableKeyListener();
+//	}
 
 	public void ctrlOKey() {
 		// TODO Auto-generated method stub

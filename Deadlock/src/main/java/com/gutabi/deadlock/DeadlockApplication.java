@@ -1,6 +1,5 @@
 package com.gutabi.deadlock;
 
-import java.net.URL;
 import java.util.Random;
 
 import com.gutabi.deadlock.ui.Image;
@@ -8,7 +7,7 @@ import com.gutabi.deadlock.ui.ImageEngine;
 
 public class DeadlockApplication {
 	
-	public URL codebase;
+//	public URL codebase;
 	
 	public Platform platform;
 	
@@ -39,9 +38,9 @@ public class DeadlockApplication {
 		
 		ImageEngine engine = platform.createImageEngine();
 		
-		carSheet = engine.readImage(DeadlockApplication.class.getResource("/img/carSheet.png"));
-		spriteSheet = engine.readImage(DeadlockApplication.class.getResource("/img/spriteSheet.png"));
-		explosionSheet = engine.readImage(DeadlockApplication.class.getResource("/img/explosionSheet.png"));
+		carSheet = engine.readImage(DeadlockApplication.class.getResource("/img/carsheet.png"));
+		spriteSheet = engine.readImage(DeadlockApplication.class.getResource("/img/spritesheet.png"));
+		explosionSheet = engine.readImage(DeadlockApplication.class.getResource("/img/explosionsheet.png"));
 		titleBackground = engine.readImage(DeadlockApplication.class.getResource("/img/title_background.png"));
 		title_white = engine.readImage(DeadlockApplication.class.getResource("/img/title_white.png"));
 		copyright = engine.readImage(DeadlockApplication.class.getResource("/img/copyright.png"));
@@ -58,13 +57,7 @@ public class DeadlockApplication {
 		 * so take extreme measures
 		 */
 		
-		 try {
-			 String pidstr = java.lang.management.ManagementFactory.getRuntimeMXBean().getName();
-		      String pid[] = pidstr.split("@");
-		      Runtime.getRuntime().exec("taskkill /F /PID " + pid[0]).waitFor();
-			  }
-			  catch (Exception e) {
-			  }
+		 platform.exit();
 		
 	}
 	

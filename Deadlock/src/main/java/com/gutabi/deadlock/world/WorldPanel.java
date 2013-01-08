@@ -2,8 +2,6 @@ package com.gutabi.deadlock.world;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
-import org.apache.log4j.Logger;
-
 import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.AffineTransform;
@@ -15,7 +13,7 @@ public class WorldPanel extends PanelBase {
 	
 	WorldScreen screen;
 	
-	static Logger logger = Logger.getLogger(WorldPanel.class);
+//	static Logger logger = Logger.getLogger(WorldPanel.class);
 	
 	public WorldPanel(final WorldScreen screen) {
 		this.screen = screen;

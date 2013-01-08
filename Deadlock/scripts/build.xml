@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 
-<project name="Deadlock" default="build" basedir=".">
+<project name="DeadlockAWT" default="build" basedir=".">
 	
 	<property name="version.major" value="0"/>
 	<property name="version.minor" value="1"/>
@@ -54,16 +54,10 @@
 		<copy tofile="${buildDir}/copied/lib/${slf4jApiJar}" file="../lib/${slf4jApiJar}"/>
 		<copy tofile="${buildDir}/copied/lib/${slf4jSimpleJar}" file="../lib/${slf4jSimpleJar}"/>
 		
-		<copy todir="${buildDir}/copied/classes">
-			<fileset dir="../classes">
-				<include name="**/*.*"/>
-			</fileset>
-		</copy>
-		
 		<copy tofile="${buildDir}/bin/img/copyright.png" file="${iconDir}/copyright.png"/>
-		<copy tofile="${buildDir}/bin/img/explosionSheet.png" file="${iconDir}/explosionSheet.png"/>
-		<copy tofile="${buildDir}/bin/img/carSheet.png" file="${iconDir}/carSheet.png"/>
-		<copy tofile="${buildDir}/bin/img/spriteSheet.png" file="${iconDir}/spriteSheet.png"/>
+		<copy tofile="${buildDir}/bin/img/explosionsheet.png" file="${iconDir}/explosionsheet.png"/>
+		<copy tofile="${buildDir}/bin/img/carsheet.png" file="${iconDir}/carsheet.png"/>
+		<copy tofile="${buildDir}/bin/img/spritesheet.png" file="${iconDir}/spritesheet.png"/>
 		<copy tofile="${buildDir}/bin/img/title_background.png" file="${iconDir}/title_background.png"/>
 		<copy tofile="${buildDir}/bin/img/title_white.png" file="${iconDir}/title_white.png"/>
 		
@@ -97,12 +91,6 @@
 		<copy todir="${distDir}/lib">
 			<fileset dir="${buildDir}/copied/lib">
 				<include name="*.jar"/>
-			</fileset>
-		</copy>
-		
-		<copy todir="${distDir}/classes">
-			<fileset dir="../classes">
-				<include name="**/*.*"/>
 			</fileset>
 		</copy>
 

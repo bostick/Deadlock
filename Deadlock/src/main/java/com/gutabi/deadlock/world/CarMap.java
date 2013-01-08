@@ -5,7 +5,6 @@ import static com.gutabi.deadlock.DeadlockApplication.APP;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
 import org.jbox2d.callbacks.QueryCallback;
 
 import com.gutabi.deadlock.geom.AABB;
@@ -27,7 +26,7 @@ public class CarMap {
 	
 	public List<Car> cars = new ArrayList<Car>();
 	
-	static Logger logger = Logger.getLogger(CarMap.class);
+//	static Logger logger = Logger.getLogger(CarMap.class);
 	
 	public CarMap(World world) {
 		this.world = world;

@@ -4,7 +4,6 @@ import static com.gutabi.deadlock.DeadlockApplication.APP;
 
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.net.URL;
 
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
@@ -26,8 +25,6 @@ public class DeadlockMain  {
 		APP.platform = platform;
 		APP.init();
 		
-		APP.codebase = new URL("file:.");
-		
 		MainMenu s = new MainMenu();
 		
 		JFrame newFrame;
@@ -44,11 +41,7 @@ public class DeadlockMain  {
 		
 		platform.container = newFrame;
 		
-		
-		
 		APP.platform.setupScreen(s.contentPane.cp);
-		
-		newFrame.setVisible(true);
 		
 		s.postDisplay();
 		s.contentPane.panel.render();

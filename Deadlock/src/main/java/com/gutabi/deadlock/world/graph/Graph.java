@@ -12,8 +12,6 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
-
 import com.gutabi.deadlock.Entity;
 import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.geom.Capsule;
@@ -47,7 +45,7 @@ public class Graph implements Sweepable {
 	
 	private AABB aabb;
 	
-	private static final Logger logger = Logger.getLogger(Graph.class);
+//	private static final Logger logger = Logger.getLogger(Graph.class);
 	
 	public Graph(World world) {
 		this.world = world;
@@ -407,9 +405,9 @@ public class Graph implements Sweepable {
 	
 	private void computeAABB() {
 		
-		if (logger.isDebugEnabled()) {
-			logger.debug("aabb before: " + aabb);
-		}
+//		if (logger.isDebugEnabled()) {
+//			logger.debug("aabb before: " + aabb);
+//		}
 		
 		aabb = null;
 		
@@ -420,9 +418,9 @@ public class Graph implements Sweepable {
 			aabb = AABB.union(aabb, e.getShape().getAABB());
 		}
 		
-		if (logger.isDebugEnabled()) {
-			logger.debug("aabb after: " + aabb);
-		}
+//		if (logger.isDebugEnabled()) {
+//			logger.debug("aabb after: " + aabb);
+//		}
 		
 	}
 	

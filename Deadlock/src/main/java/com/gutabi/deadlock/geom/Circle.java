@@ -6,8 +6,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.log4j.Logger;
-
 import com.gutabi.deadlock.math.DMath;
 import com.gutabi.deadlock.math.Point;
 
@@ -20,7 +18,7 @@ public abstract class Circle extends SweepableShape implements SweeperShape {
 	
 	private int hash;
 	
-	static Logger logger = Logger.getLogger(Circle.class);
+//	static Logger logger = Logger.getLogger(Circle.class);
 	
 	public Circle(Object parent, Point center, double radius) {
 		super(parent);

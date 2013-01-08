@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+
+<project name="DeadlockAndroid" default="build" basedir=".">
+	
+	<property name="iconDir" location="../../DeadlockArtwork/build/bin/img"/>
+	<property name="drawableDir" location="../res/drawable-hdpi"/>
+	
+	<target name="build">
+	    
+	    <subant buildpath="../../DeadlockArtwork/scripts" target="build" />
+		
+		<copy tofile="${drawableDir}/copyright.png" file="${iconDir}/copyright.png"/>
+		<copy tofile="${drawableDir}/explosionsheet.png" file="${iconDir}/explosionsheet.png"/>
+		<copy tofile="${drawableDir}/carsheet.png" file="${iconDir}/carsheet.png"/>
+		<copy tofile="${drawableDir}/spritesheet.png" file="${iconDir}/spritesheet.png"/>
+		<copy tofile="${drawableDir}/title_background.png" file="${iconDir}/title_background.png"/>
+		<copy tofile="${drawableDir}/title_white.png" file="${iconDir}/title_white.png"/>
+		
+	</target>
+
+</project>

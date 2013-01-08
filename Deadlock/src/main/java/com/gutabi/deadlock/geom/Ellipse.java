@@ -4,8 +4,6 @@ import static com.gutabi.deadlock.DeadlockApplication.APP;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
-
 import com.gutabi.deadlock.math.Point;
 
 public abstract class Ellipse implements Shape {
@@ -16,7 +14,7 @@ public abstract class Ellipse implements Shape {
 	
 	public final AABB aabb;
 	
-	static Logger logger = Logger.getLogger(Circle.class);
+//	static Logger logger = Logger.getLogger(Circle.class);
 	
 	public Ellipse(Point center, double xRadius, double yRadius) {
 		this.center = center;

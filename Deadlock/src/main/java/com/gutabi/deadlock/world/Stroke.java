@@ -1,13 +1,12 @@
 package com.gutabi.deadlock.world;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import org.apache.log4j.Logger;
 
 import com.gutabi.deadlock.Entity;
 import com.gutabi.deadlock.geom.AABB;
@@ -43,7 +42,7 @@ public class Stroke {
 	public List<Capsule> caps;
 	public CapsuleSequence seq;
 	
-	static Logger logger = Logger.getLogger(Stroke.class);
+//	static Logger logger = Logger.getLogger(Stroke.class);
 	
 	public Stroke(WorldScreen screen) {
 		this.screen = screen;
@@ -152,7 +151,7 @@ public class Stroke {
 //				assert hit == null;
 				
 				if (hit == null) {
-					logger.debug("create");
+//					logger.debug("create");
 					Set<Vertex> res = screen.world.createIntersection(e.p);
 					affected.addAll(res);
 				}
@@ -244,7 +243,7 @@ public class Stroke {
 							
 							pos = skeletonIntersection;
 							
-							logger.debug("found intersection");
+//							logger.debug("found intersection");
 							
 							break;
 							
@@ -264,7 +263,7 @@ public class Stroke {
 				}
 				
 				if (pos == null) {
-					logger.debug("pos was null");
+//					logger.debug("pos was null");
 					pos = screen.world.graph.findClosestRoadPosition(e.p, e.circle.radius);
 				}
 				
@@ -372,7 +371,7 @@ public class Stroke {
 //						}
 						pos = skeletonIntersection;
 						
-						logger.debug("found intersection");
+//						logger.debug("found intersection");
 						
 						break;
 					}
@@ -389,7 +388,7 @@ public class Stroke {
 				}
 				
 				if (pos == null) {
-					logger.debug("pos was null");
+//					logger.debug("pos was null");
 					
 					pos = new CapsuleSequencePosition(seq, e.index, e.param);
 					
@@ -401,7 +400,7 @@ public class Stroke {
 				
 				if (hit == null) {
 					
-					logger.debug("create");
+//					logger.debug("create");
 					Set<Vertex> res = screen.world.createIntersection(pos.p);
 					affected.addAll(res);
 					
@@ -445,7 +444,7 @@ public class Stroke {
 			
 			if (e0.type == SweepEventType.ENTERVERTEX && e1.type == SweepEventType.EXITVERTEX) {
 				
-				logger.debug("skipping");
+//				logger.debug("skipping");
 				i = i+1;
 				if (i == events.size()-1) {
 					break;
@@ -455,7 +454,7 @@ public class Stroke {
 				
 			} else if (e0.type == SweepEventType.ENTERROADCAPSULE && e1.type == SweepEventType.EXITROADCAPSULE) {
 				
-				logger.debug("skipping");
+//				logger.debug("skipping");
 				
 				i = i+1;
 				if (i == events.size()-1) {
@@ -548,7 +547,7 @@ public class Stroke {
 		}
 		
 		if ((vertexCount + roadCapsuleCount + mergerCount + strokeCapsuleCount) == 0) {
-			logger.debug("start in nothing");
+//			logger.debug("start in nothing");
 			vertexEvents.add(new SweepEvent(null, null, start, 0, 0.0));
 		} else {
 //			logger.debug("start counts: " + vertexCount + " " + roadCapsuleCount + " " + mergerCount);
@@ -683,7 +682,7 @@ public class Stroke {
 		}
 		
 		if ((vertexCount + roadCapsuleCount + mergerCount + strokeCapsuleCount) == 0) {
-			logger.debug("end in nothing");
+//			logger.debug("end in nothing");
 			vertexEvents.add(new SweepEvent(null, null, cs.get(cs.size()-1), cs.size()-1, 0.0));
 		}
 		
@@ -767,10 +766,10 @@ public class Stroke {
 		 * figure out FSM that is actually accurate
 		 */
 		
-		if (logger.isDebugEnabled()) {
-			logger.debug("vertexEvents:");
-			logger.debug(adj);
-		}
+//		if (logger.isDebugEnabled()) {
+//			logger.debug("vertexEvents:");
+//			logger.debug(adj);
+//		}
 		
 		return adj;
 	}

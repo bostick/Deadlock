@@ -2,7 +2,6 @@ package com.gutabi.deadlock.world.cars;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
-import org.apache.log4j.Logger;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.common.Mat22;
 import org.jbox2d.common.Vec2;
@@ -94,9 +93,9 @@ public class Car extends Entity {
 	
 	public boolean destroyed;
 	
-	static Logger logger = Logger.getLogger(Car.class);
-	static Logger pathingLogger = Logger.getLogger(logger.getName()+".pathing");
-	static Logger eventingLogger = Logger.getLogger(logger.getName()+".eventing");
+//	static Logger logger = Logger.getLogger(Car.class);
+//	static Logger pathingLogger = Logger.getLogger(logger.getName()+".pathing");
+//	static Logger eventingLogger = Logger.getLogger(logger.getName()+".eventing");
 	
 	public Car(World world, Fixture s) {
 		
@@ -474,7 +473,7 @@ public class Car extends Entity {
 			
 			if (sinked) {
 				
-				logger.debug("sink");
+//				logger.debug("sink");
 				
 				driver.clear();
 				
@@ -493,9 +492,9 @@ public class Car extends Entity {
 				
 				if (DMath.equals(vel.lengthSquared(), 0.0)) {
 					
-					if (logger.isDebugEnabled()) {
-						logger.debug("stopped: " + t);
-					}
+//					if (logger.isDebugEnabled()) {
+//						logger.debug("stopped: " + t);
+//					}
 					driver.stoppedTime = t;
 					
 				}
@@ -520,9 +519,9 @@ public class Car extends Entity {
 				
 				if (DMath.equals(vel.lengthSquared(), 0.0)) {
 					
-					if (logger.isDebugEnabled()) {
-						logger.debug("stopped: " + t);
-					}
+//					if (logger.isDebugEnabled()) {
+//						logger.debug("stopped: " + t);
+//					}
 					driver.stoppedTime = t;
 					
 				}
@@ -557,9 +556,9 @@ public class Car extends Entity {
 				
 				if (DMath.equals(vel.lengthSquared(), 0.0)) {
 					
-					if (logger.isDebugEnabled()) {
-						logger.debug("stopped: " + t);
-					}
+//					if (logger.isDebugEnabled()) {
+//						logger.debug("stopped: " + t);
+//					}
 					driver.stoppedTime = t;
 					
 				}

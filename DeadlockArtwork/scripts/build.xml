@@ -12,9 +12,9 @@
 		<mkdir dir="${buildDir}/bin" />
 		
 		<copy tofile="${buildDir}/bin/img/copyright.png" file="${iconDir}/copyright.png"/>
-		<copy tofile="${buildDir}/bin/img/explosionSheet.png" file="${iconDir}/explosionSheet.png"/>
-		<copy tofile="${buildDir}/bin/img/carSheet.png" file="${iconDir}/carSheet.png"/>
-		<copy tofile="${buildDir}/bin/img/spriteSheet.png" file="${iconDir}/spriteSheet.png"/>
+		<copy tofile="${buildDir}/bin/img/explosionsheet.png" file="${iconDir}/explosionsheet.png"/>
+		<copy tofile="${buildDir}/bin/img/carsheet.png" file="${iconDir}/carsheet.png"/>
+		<copy tofile="${buildDir}/bin/img/spritesheet.png" file="${iconDir}/spritesheet.png"/>
 		<copy tofile="${buildDir}/bin/img/title_background.png" file="${iconDir}/title_background.png"/>
 		<copy tofile="${buildDir}/bin/img/title_white.png" file="${iconDir}/title_white.png"/>
 		<copy tofile="${buildDir}/bin/img/icon256x256.ico" file="${iconDir}/icon256x256.ico"/>

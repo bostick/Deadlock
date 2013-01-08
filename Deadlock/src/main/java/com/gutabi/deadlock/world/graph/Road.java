@@ -9,8 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-import org.apache.log4j.Logger;
-
 import com.gutabi.deadlock.Entity;
 import com.gutabi.deadlock.geom.Capsule;
 import com.gutabi.deadlock.geom.CapsuleSequence;
@@ -63,7 +61,7 @@ public class Road extends Edge {
 	
 	private Triangle arrowPointer;
 	
-	static Logger logger = Logger.getLogger(Road.class);
+//	static Logger logger = Logger.getLogger(Road.class);
 	
 	public Road(World world, Vertex start, Vertex end, List<Point> raw) {
 		

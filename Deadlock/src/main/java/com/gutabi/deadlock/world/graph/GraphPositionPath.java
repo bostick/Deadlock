@@ -7,9 +7,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-
-import org.apache.log4j.Logger;
-
 import com.gutabi.deadlock.Entity;
 import com.gutabi.deadlock.geom.CapsuleSequence;
 import com.gutabi.deadlock.geom.Quad;
@@ -51,7 +48,7 @@ public class GraphPositionPath {
 	
 	private int hash;
 	
-	static Logger logger = Logger.getLogger(GraphPositionPath.class);
+//	static Logger logger = Logger.getLogger(GraphPositionPath.class);
 	
 	public GraphPositionPath(List<GraphPosition> poss) {
 		

@@ -59,6 +59,7 @@ public class PlatformImpl extends Platform {
 		if (container instanceof JFrame) {
 			((JFrame)container).setVisible(true);
 		}
+		
 	}
 
 	public FontEngine createFontEngine(Object... args) {
@@ -73,4 +74,15 @@ public class PlatformImpl extends Platform {
 		return new ShapeEngineImpl();
 	}
 	
+	public void exit() {
+		
+		try {
+			 String pidstr = java.lang.management.ManagementFactory.getRuntimeMXBean().getName();
+		      String pid[] = pidstr.split("@");
+		      Runtime.getRuntime().exec("taskkill /F /PID " + pid[0]).waitFor();
+			  }
+			  catch (Exception e) {
+			  }
+		
+	}
 }

@@ -65,11 +65,6 @@ public class FixtureToolShape implements CompoundShape {
 		
 	}
 	
-	public java.awt.Shape java2D() {
-		assert false;
-		return null;
-	}
-	
 	public void draw(RenderingContext ctxt) {
 		cap.draw(ctxt);
 	}

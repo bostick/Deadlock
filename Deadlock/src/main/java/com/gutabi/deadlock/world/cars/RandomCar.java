@@ -1,7 +1,5 @@
 package com.gutabi.deadlock.world.cars;
 
-import org.apache.log4j.Logger;
-
 import com.gutabi.deadlock.world.World;
 import com.gutabi.deadlock.world.graph.Fixture;
 
@@ -9,7 +7,7 @@ public class RandomCar extends Car {
 	
 	private final double speed = 2.0;
 	
-	static Logger logger = Logger.getLogger(RandomCar.class);
+//	static Logger logger = Logger.getLogger(RandomCar.class);
 	
 	public RandomCar(World w, Fixture s) {
 		super(w, s);

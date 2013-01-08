@@ -6,8 +6,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.log4j.Logger;
-
 import com.gutabi.deadlock.math.DMath;
 import com.gutabi.deadlock.math.OverlappingException;
 import com.gutabi.deadlock.math.Point;
@@ -41,7 +39,7 @@ public class Capsule extends SweepableShape implements SweeperShape, CompoundSha
 	
 	private int hash;
 	
-	static Logger logger = Logger.getLogger(Capsule.class);
+//	static Logger logger = Logger.getLogger(Capsule.class);
 	
 	public Capsule(Object parent, Circle ac, Circle bc, int index) {
 		super(parent);
@@ -194,7 +192,7 @@ public class Capsule extends SweepableShape implements SweeperShape, CompoundSha
 					ShapeEngine e = APP.platform.createShapeEngine();
 					assert ShapeUtils.intersectCC(ac, e.createCircle(null, p, cap.r));
 					
-					logger.debug("a cap");
+//					logger.debug("a cap");
 					
 					boolean present = false;
 					for (int j = 0; j < paramCount; j++) {
@@ -231,7 +229,7 @@ public class Capsule extends SweepableShape implements SweeperShape, CompoundSha
 				
 				if (DMath.greaterThanEquals(abParam, 0.0) && DMath.lessThanEquals(abParam, 1.0)) {
 					
-					logger.debug("top side");
+//					logger.debug("top side");
 					
 					boolean present = false;
 					for (int j = 0; j < paramCount; j++) {
@@ -274,7 +272,7 @@ public class Capsule extends SweepableShape implements SweeperShape, CompoundSha
 					ShapeEngine e = APP.platform.createShapeEngine();
 					assert ShapeUtils.intersectCC(bc, e.createCircle(null, p, cap.r));
 					
-					logger.debug("b cap");
+//					logger.debug("b cap");
 					
 					boolean present = false;
 					for (int j = 0; j < paramCount; j++) {
@@ -311,7 +309,7 @@ public class Capsule extends SweepableShape implements SweeperShape, CompoundSha
 				
 				if (DMath.greaterThanEquals(abParam, 0.0) && DMath.lessThanEquals(abParam, 1.0)) {
 					
-					logger.debug("bottom side");
+//					logger.debug("bottom side");
 					
 					boolean present = false;
 					for (int j = 0; j < paramCount; j++) {
@@ -396,11 +394,6 @@ public class Capsule extends SweepableShape implements SweeperShape, CompoundSha
 		double dist = Math.min(Point.distance(c1.a, c0.a, c0.b), Point.distance(c1.b, c0.a, c0.b));
 		
 		return DMath.lessThanEquals(dist, c0.r - c1.r);
-	}
-	
-	public java.awt.Shape java2D() {
-		assert false;
-		return null;
 	}
 	
 	public void paint(RenderingContext ctxt) {

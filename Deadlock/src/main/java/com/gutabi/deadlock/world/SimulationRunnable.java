@@ -1,14 +1,12 @@
 package com.gutabi.deadlock.world;
 
-import org.apache.log4j.Logger;
-
 import com.gutabi.deadlock.world.WorldScreen.WorldScreenMode;
 
 public class SimulationRunnable implements Runnable {
 	
 	WorldScreen screen;
 	
-	static Logger logger = Logger.getLogger(SimulationRunnable.class);
+//	static Logger logger = Logger.getLogger(SimulationRunnable.class);
 	
 	public SimulationRunnable(WorldScreen screen) {
 		this.screen = screen;

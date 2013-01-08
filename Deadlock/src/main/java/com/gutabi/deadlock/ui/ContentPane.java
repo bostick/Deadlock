@@ -10,9 +10,9 @@ public interface ContentPane {
 	
 	public Point getLastMovedContentPanePoint();
 	
-	public abstract void enableKeyListener();
+//	public abstract void enableKeyListener();
 	
-	public abstract void disableKeyListener();
+//	public abstract void disableKeyListener();
 	
 	public void ctrlOKey();
 

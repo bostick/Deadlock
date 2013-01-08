@@ -2,8 +2,6 @@ package com.gutabi.deadlock.menu;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
-import org.apache.log4j.Logger;
-
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.AffineTransform;
 import com.gutabi.deadlock.ui.Image;
@@ -19,7 +17,7 @@ public class MenuPanel extends PanelBase {
 	
 	MainMenu screen;
 	
-	static Logger logger = Logger.getLogger(MenuPanel.class);
+//	static Logger logger = Logger.getLogger(MenuPanel.class);
 	
 	public MenuPanel(final MainMenu screen) {
 		this.screen = screen;

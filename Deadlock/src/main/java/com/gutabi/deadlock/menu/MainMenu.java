@@ -5,8 +5,6 @@ import static com.gutabi.deadlock.DeadlockApplication.APP;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
-
 import com.gutabi.deadlock.quadranteditor.QuadrantEditor;
 import com.gutabi.deadlock.world.WorldScreen;
 import com.gutabi.deadlock.world.examples.FourByFourGridWorld;
@@ -27,7 +25,7 @@ public class MainMenu {
 	double widest;
 	int totalHeight;
 	
-	static Logger logger = Logger.getLogger(MainMenu.class);
+//	static Logger logger = Logger.getLogger(MainMenu.class);
 	
 	public MainMenu() {
 		

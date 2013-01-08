@@ -1,10 +1,9 @@
 package com.gutabi.deadlock.world.graph;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import org.apache.log4j.Logger;
 
 import com.gutabi.deadlock.Entity;
 import com.gutabi.deadlock.geom.Circle;
@@ -35,7 +34,7 @@ public abstract class Vertex extends Entity {
 	
 	private int hash;
 	
-	static Logger logger = Logger.getLogger(Vertex.class);
+//	static Logger logger = Logger.getLogger(Vertex.class);
 	
 	public Vertex(World world, Point p) {
 		this.world = world;
@@ -96,9 +95,9 @@ public abstract class Vertex extends Entity {
 	
 	public void computeRadius(double maximumRadius) {
 		
-		if (logger.isDebugEnabled()) {
-			logger.debug("aabb before: " + shape.getAABB());
-		}
+//		if (logger.isDebugEnabled()) {
+//			logger.debug("aabb before: " + shape.getAABB());
+//		}
 		
 		r = INIT_VERTEX_RADIUS;
 		shape = APP.platform.createShapeEngine().createCircle(this, p, r);
@@ -186,9 +185,9 @@ public abstract class Vertex extends Entity {
 			e.computeProperties();
 		}
 		
-		if (logger.isDebugEnabled()) {
-			logger.debug("aabb after: " + shape.getAABB());
-		}
+//		if (logger.isDebugEnabled()) {
+//			logger.debug("aabb after: " + shape.getAABB());
+//		}
 		
 	}
 	

@@ -20,7 +20,7 @@ public class DeadlockApplet extends JApplet {
 		
 		APP.init();
 		
-		APP.codebase = app.getCodeBase();
+//		APP.codebase = app.getCodeBase();
 		
 		MainMenu s = new MainMenu();
 		

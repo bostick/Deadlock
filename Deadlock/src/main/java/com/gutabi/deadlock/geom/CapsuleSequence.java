@@ -3,9 +3,6 @@ package com.gutabi.deadlock.geom;
 import java.util.ArrayList;
 import java.util.List;
 
-
-import org.apache.log4j.Logger;
-
 import com.gutabi.deadlock.math.DMath;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
@@ -20,7 +17,7 @@ public class CapsuleSequence extends SweepableShape implements CompoundShape {
 	
 	public final AABB aabb;
 	
-	static Logger logger = Logger.getLogger(CapsuleSequence.class);
+//	static Logger logger = Logger.getLogger(CapsuleSequence.class);
 	
 	public CapsuleSequence(Object parent, List<Capsule> caps) {
 		super(parent);
@@ -229,11 +226,6 @@ public class CapsuleSequence extends SweepableShape implements CompoundShape {
 	public boolean contains(Shape s) {
 		assert false;
 		return false;
-	}
-	
-	public java.awt.Shape java2D() {
-		assert false;
-		return null;
 	}
 	
 	public void paint(RenderingContext ctxt) {

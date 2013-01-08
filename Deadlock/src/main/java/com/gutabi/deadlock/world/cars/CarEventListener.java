@@ -1,6 +1,5 @@
 package com.gutabi.deadlock.world.cars;
 
-import org.apache.log4j.Logger;
 import org.jbox2d.callbacks.ContactImpulse;
 import org.jbox2d.callbacks.ContactListener;
 import org.jbox2d.collision.Manifold;
@@ -17,7 +16,7 @@ public class CarEventListener implements ContactListener {
 	
 	World world;
 	
-	static Logger logger = Logger.getLogger(CarEventListener.class);
+//	static Logger logger = Logger.getLogger(CarEventListener.class);
 	
 	public CarEventListener(World world) {
 		this.world = world;

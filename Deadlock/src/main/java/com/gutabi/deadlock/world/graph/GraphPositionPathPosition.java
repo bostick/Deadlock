@@ -1,7 +1,5 @@
 package com.gutabi.deadlock.world.graph;
 
-import org.apache.log4j.Logger;
-
 import com.gutabi.deadlock.math.DMath;
 import com.gutabi.deadlock.math.Point;
 
@@ -23,7 +21,7 @@ public class GraphPositionPathPosition {
 	
 	private int hash;
 	
-	static Logger logger = Logger.getLogger(GraphPositionPathPosition.class);
+//	static Logger logger = Logger.getLogger(GraphPositionPathPosition.class);
 	
 	public GraphPositionPathPosition(GraphPositionPath path, int index, double param) {
 		

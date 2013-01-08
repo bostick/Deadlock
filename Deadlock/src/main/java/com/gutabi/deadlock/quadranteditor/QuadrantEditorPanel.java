@@ -2,8 +2,6 @@ package com.gutabi.deadlock.quadranteditor;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
-import org.apache.log4j.Logger;
-
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.AffineTransform;
 import com.gutabi.deadlock.ui.Button;
@@ -33,7 +31,7 @@ public class QuadrantEditorPanel extends PanelBase {
 	Button addBoth;
 	Button go;
 	
-	static Logger logger = Logger.getLogger(QuadrantEditorPanel.class);
+//	static Logger logger = Logger.getLogger(QuadrantEditorPanel.class);
 	
 	public QuadrantEditorPanel(final QuadrantEditor screen) {
 		this.screen = screen;

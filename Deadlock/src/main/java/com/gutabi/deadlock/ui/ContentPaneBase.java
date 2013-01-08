@@ -3,15 +3,13 @@ package com.gutabi.deadlock.ui;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
-
 import com.gutabi.deadlock.math.Point;
 
 public abstract class ContentPaneBase implements ContentPane {
 	
 	protected List<Panel> children = new ArrayList<Panel>();
 	
-	static Logger logger = Logger.getLogger(ContentPane.class);
+//	static Logger logger = Logger.getLogger(ContentPane.class);
 	
 	public ContentPaneBase() {
 		
@@ -30,9 +28,9 @@ public abstract class ContentPaneBase implements ContentPane {
 		this.lastMovedContentPanePoint = p;
 	}
 	
-	public abstract void enableKeyListener();
-	
-	public abstract void disableKeyListener();
+//	public abstract void enableKeyListener();
+//	
+//	public abstract void disableKeyListener();
 	
 	public void ctrlOKey() {
 		;
