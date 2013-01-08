@@ -6,7 +6,7 @@ import java.util.List;
 
 import com.gutabi.deadlock.math.Point;
 
-public class ShapeUtils {
+public class AWTShapeUtils {
 	
 	public static List<Point> skeleton(java.awt.Shape s) {
 		

@@ -1,5 +1,6 @@
 package com.gutabi.deadlock.world;
 
+import static com.gutabi.deadlock.DeadlockApplication.APP;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -58,7 +59,7 @@ public class Stroke {
 	public void add(Point p) {
 		assert !finished;
 		
-		cs.add(new Circle(null, p, STROKE_RADIUS));
+		cs.add(APP.platform.createShapeEngine().createCircle(null, p, STROKE_RADIUS));
 		
 		computeAABB();
 	}
@@ -271,7 +272,7 @@ public class Stroke {
 				
 				Entity hit2;
 				if (pos instanceof EdgePosition) {
-					hit2 = screen.world.graph.pureGraphIntersectCircle(new Circle(null, pos.p, e.circle.radius));
+					hit2 = screen.world.graph.pureGraphIntersectCircle(APP.platform.createShapeEngine().createCircle(null, pos.p, e.circle.radius));
 				} else {
 					hit2 = ((VertexPosition)pos).v;
 				}
@@ -396,7 +397,7 @@ public class Stroke {
 				
 				assert pos != null;
 				
-				Entity hit = screen.world.graph.pureGraphIntersectCircle(new Circle(null, pos.p, e.circle.radius));
+				Entity hit = screen.world.graph.pureGraphIntersectCircle(APP.platform.createShapeEngine().createCircle(null, pos.p, e.circle.radius));
 				
 				if (hit == null) {
 					

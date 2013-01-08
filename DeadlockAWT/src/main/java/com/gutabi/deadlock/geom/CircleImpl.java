@@ -18,16 +18,14 @@ public class CircleImpl extends Circle {
 	}
 	
 	public List<Point> skeleton() {
-		return ShapeUtils.skeleton(ellipse);
+		return AWTShapeUtils.skeleton(ellipse);
 	}
 
-	@Override
 	public void paint(RenderingContext ctxt) {
 		RenderingContextImpl c = (RenderingContextImpl)ctxt;
 		c.g2.fill(ellipse);
 	}
 
-	@Override
 	public void draw(RenderingContext ctxt) {
 		RenderingContextImpl c = (RenderingContextImpl)ctxt;
 		c.g2.draw(ellipse);

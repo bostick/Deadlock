@@ -53,7 +53,7 @@ public class RegularTool extends ToolBase {
 		this.p = p;
 		
 		if (p != null) {
-			shape = new Circle(null, p, Vertex.INIT_VERTEX_RADIUS);
+			shape = APP.platform.createShapeEngine().createCircle(null, p, Vertex.INIT_VERTEX_RADIUS);
 		} else {
 			shape = null;
 		}

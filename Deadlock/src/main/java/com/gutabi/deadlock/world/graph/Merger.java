@@ -54,7 +54,7 @@ public class Merger extends Edge {
 		Point p1 = new Point(ul.x + MERGER_WIDTH, ul.y);
 		Point p2 = new Point(ul.x + MERGER_WIDTH, ul.y + MERGER_HEIGHT);
 		Point p3 = new Point(ul.x, ul.y + MERGER_HEIGHT);
-		shape = new Quad(this, p0, p1, p2, p3);
+		shape = APP.platform.createShapeEngine().createQuad(this, p0, p1, p2, p3);
 		
 		top.m = this;
 		left.m = this;
@@ -63,8 +63,8 @@ public class Merger extends Edge {
 		
 		computeLengths();
 		
-		debugSkeletonTopBottomLine = new Line(top.shape.center, bottom.shape.center);
-		debugSkeletonLeftRightLine = new Line(left.shape.center, right.shape.center);
+		debugSkeletonTopBottomLine = APP.platform.createShapeEngine().createLine(top.shape.center, bottom.shape.center);
+		debugSkeletonLeftRightLine = APP.platform.createShapeEngine().createLine(left.shape.center, right.shape.center);
 	}
 	
 	public static Merger createMergerAndFixtures(World world, ControlPanel cp, Point center) {

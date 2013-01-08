@@ -1,6 +1,6 @@
 package com.gutabi.deadlock.world.tools;
 
-
+import static com.gutabi.deadlock.DeadlockApplication.APP;
 import com.gutabi.deadlock.geom.Capsule;
 import com.gutabi.deadlock.geom.Circle;
 import com.gutabi.deadlock.geom.Shape;
@@ -19,17 +19,12 @@ public class StraightEdgeToolShape implements Shape {
 	
 	public StraightEdgeToolShape(World world, Point first, Point p) {
 		
-		this.firstCircle = new Circle(null, first, Vertex.INIT_VERTEX_RADIUS);
-		this.pCircle = new Circle(null, p, Vertex.INIT_VERTEX_RADIUS);
+		this.firstCircle = APP.platform.createShapeEngine().createCircle(null, first, Vertex.INIT_VERTEX_RADIUS);
+		this.pCircle = APP.platform.createShapeEngine().createCircle(null, p, Vertex.INIT_VERTEX_RADIUS);
 		
 		this.cap = new Capsule(null, firstCircle, pCircle, -1);
 		
 //		aabb = cap.aabb;
-	}
-	
-	public java.awt.Shape java2D() {
-		assert false;
-		return null;
 	}
 	
 	public void draw(RenderingContext ctxt) {
@@ -44,4 +39,9 @@ public class StraightEdgeToolShape implements Shape {
 		}
 		
 	}
+	
+	public void paint(RenderingContext ctxt) {
+		assert false;
+	}
+	
 }

@@ -1,6 +1,6 @@
 package com.gutabi.deadlock.world.tools;
 
-
+import static com.gutabi.deadlock.DeadlockApplication.APP;
 import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.geom.Capsule;
 import com.gutabi.deadlock.geom.Circle;
@@ -42,8 +42,8 @@ public class FixtureToolShape implements CompoundShape {
 			break;
 		}
 		
-		worldSourceCircle = new Circle(null, worldSource, Vertex.INIT_VERTEX_RADIUS);
-		worldSinkCircle = new Circle(null, worldSink, Vertex.INIT_VERTEX_RADIUS);
+		worldSourceCircle = APP.platform.createShapeEngine().createCircle(null, worldSource, Vertex.INIT_VERTEX_RADIUS);
+		worldSinkCircle = APP.platform.createShapeEngine().createCircle(null, worldSink, Vertex.INIT_VERTEX_RADIUS);
 		cap = new Capsule(null, worldSourceCircle, worldSinkCircle, -1);
 		
 		aabb = cap.aabb;
@@ -71,9 +71,11 @@ public class FixtureToolShape implements CompoundShape {
 	}
 	
 	public void draw(RenderingContext ctxt) {
-		
 		cap.draw(ctxt);
-		
-	} 
+	}
+	
+	public void paint(RenderingContext ctxt) {
+		assert false;
+	}
 	
 }

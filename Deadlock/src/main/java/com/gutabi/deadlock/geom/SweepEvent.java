@@ -1,5 +1,6 @@
 package com.gutabi.deadlock.geom;
 
+import static com.gutabi.deadlock.DeadlockApplication.APP;
 import java.util.Comparator;
 
 
@@ -34,7 +35,7 @@ public class SweepEvent {
 		this.combo = index+param;
 		
 		p = moving.getPoint(param);
-		circle = new Circle(null, p, moving.getRadius());
+		circle = APP.platform.createShapeEngine().createCircle(null, p, moving.getRadius());
 		
 		if (still != null) {
 			/*

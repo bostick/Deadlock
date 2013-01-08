@@ -94,7 +94,7 @@ public class StopSign extends Entity {
 			p = r.getEndBorderPoint();
 		}
 		
-		shape = new Circle(this, p, radius);
+		shape = APP.platform.createShapeEngine().createCircle(this, p, radius);
 	}
 	
 	public String toFileString() {

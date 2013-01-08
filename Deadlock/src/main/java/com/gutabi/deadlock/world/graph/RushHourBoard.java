@@ -1,5 +1,6 @@
 package com.gutabi.deadlock.world.graph;
 
+import static com.gutabi.deadlock.DeadlockApplication.APP;
 import com.gutabi.deadlock.Entity;
 import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.math.Point;
@@ -22,7 +23,7 @@ public class RushHourBoard extends Entity {
 		this.world = world;
 		this.p = p;
 		
-		aabb = new AABB(p.x - 3 * RushHourStud.SIZE, p.y - 3 * RushHourStud.SIZE, 6 * RushHourStud.SIZE,  6 * RushHourStud.SIZE);
+		aabb =APP.platform.createShapeEngine().createAABB(p.x - 3 * RushHourStud.SIZE, p.y - 3 * RushHourStud.SIZE, 6 * RushHourStud.SIZE,  6 * RushHourStud.SIZE);
 		
 		for (int i = 0; i < 6; i++) {
 			for (int j = 0; j < 6; j++) {

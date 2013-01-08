@@ -11,7 +11,6 @@ import java.util.Set;
 import org.jbox2d.common.Vec2;
 
 import com.gutabi.deadlock.Entity;
-import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.AffineTransform;
 import com.gutabi.deadlock.ui.Image;
@@ -85,7 +84,7 @@ public class World {
 		
 		quadrantMap.panelPostDisplay();
 		
-		screen.worldViewport = new AABB(
+		screen.worldViewport = APP.platform.createShapeEngine().createAABB(
 				-(screen.contentPane.worldPanel.aabb.width / screen.pixelsPerMeter) / 2 + quadrantMap.worldWidth/2 ,
 				-(screen.contentPane.worldPanel.aabb.height / screen.pixelsPerMeter) / 2 + quadrantMap.worldHeight/2,
 				screen.contentPane.worldPanel.aabb.width / screen.pixelsPerMeter,
@@ -319,13 +318,13 @@ public class World {
 		double newWidth =  screen.contentPane.worldPanel.aabb.width / screen.pixelsPerMeter;
 		double newHeight = screen.contentPane.worldPanel.aabb.height / screen.pixelsPerMeter;
 		
-		screen.worldViewport = new AABB(screen.worldViewport.center.x - newWidth/2, screen.worldViewport.center.y - newHeight/2, newWidth, newHeight);
+		screen.worldViewport = APP.platform.createShapeEngine().createAABB(screen.worldViewport.center.x - newWidth/2, screen.worldViewport.center.y - newHeight/2, newWidth, newHeight);
 	}
 	
 	public void previewPan(Point prevDp) {
 		Point worldDP = screen.contentPane.controlPanel.previewToWorld(prevDp);
 		
-		screen.worldViewport = new AABB(
+		screen.worldViewport = APP.platform.createShapeEngine().createAABB(
 				screen.worldViewport.x + worldDP.x,
 				screen.worldViewport.y + worldDP.y,
 				screen.worldViewport.width,

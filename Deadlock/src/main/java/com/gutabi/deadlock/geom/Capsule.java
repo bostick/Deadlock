@@ -70,10 +70,10 @@ public class Capsule extends SweepableShape implements SweeperShape, CompoundSha
 			bUp = b.plus(u);
 			bDown = b.plus(d);
 			
-			middle = new Quad(parent, aUp, bUp, bDown, aDown);
+			middle = APP.platform.createShapeEngine().createQuad(parent, aUp, bUp, bDown, aDown);
 			
-			debugNormalLine = new Line(a, a.plus(n));
-			debugSkeletonLine = new Line(a, b);
+			debugNormalLine = APP.platform.createShapeEngine().createLine(a, a.plus(n));
+			debugSkeletonLine = APP.platform.createShapeEngine().createLine(a, b);
 			
 			aabb = AABB.union(ac.getAABB(), bc.getAABB());
 			
@@ -87,7 +87,7 @@ public class Capsule extends SweepableShape implements SweeperShape, CompoundSha
 			middle = null;
 			
 			debugNormalLine = null;
-			debugSkeletonLine = new Line(a, b);
+			debugSkeletonLine = APP.platform.createShapeEngine().createLine(a, b);
 			
 			aabb = AABB.union(ac.getAABB(), bc.getAABB());
 			

@@ -1,5 +1,7 @@
 package com.gutabi.deadlock.geom;
 
+import static com.gutabi.deadlock.DeadlockApplication.APP;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -8,7 +10,6 @@ import org.apache.log4j.Logger;
 
 import com.gutabi.deadlock.math.DMath;
 import com.gutabi.deadlock.math.Point;
-import com.gutabi.deadlock.ui.paint.RenderingContext;
 
 public abstract class Circle extends SweepableShape implements SweeperShape {
 	
@@ -26,7 +27,7 @@ public abstract class Circle extends SweepableShape implements SweeperShape {
 		this.center = center;
 		this.radius = radius;
 		
-		aabb = new AABB(center.x - radius, center.y - radius, 2*radius, 2*radius);
+		aabb = APP.platform.createShapeEngine().createAABB(center.x - radius, center.y - radius, 2*radius, 2*radius);
 	}
 	
 	public boolean equals(Object o) {
@@ -61,7 +62,7 @@ public abstract class Circle extends SweepableShape implements SweeperShape {
 	}
 	
 	public Circle plus(Point p) {
-		return new Circle(parent, center.plus(p), radius);
+		return APP.platform.createShapeEngine().createCircle(parent, center.plus(p), radius);
 	}
 	
 	public boolean hitTest(Point p) {

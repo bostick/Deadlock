@@ -1,16 +1,15 @@
 package com.gutabi.deadlock.geom;
 
-import java.awt.geom.GeneralPath;
+import static com.gutabi.deadlock.DeadlockApplication.APP;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-
 import com.gutabi.deadlock.math.DMath;
 import com.gutabi.deadlock.math.Point;
-import com.gutabi.deadlock.ui.paint.RenderingContext;
 
-public class Quad extends SweepableShape {
+public abstract class Quad extends SweepableShape {
 	
 	public final Point p0;
 	public final Point p1;
@@ -39,7 +38,7 @@ public class Quad extends SweepableShape {
 		double brX = Math.max(Math.max(p0.x, p1.x), Math.max(p2.x, p3.x));
 		double brY = Math.max(Math.max(p0.y, p1.y), Math.max(p2.y, p3.y));
 		
-		aabb = new AABB(ulX, ulY, (brX - ulX), (brY - ulY));
+		aabb = APP.platform.createShapeEngine().createAABB(ulX, ulY, (brX - ulX), (brY - ulY));
 	}
 	
 	public int hashCode() {
@@ -91,15 +90,6 @@ public class Quad extends SweepableShape {
 		n12 = Point.ccw90AndNormalize(edge);
 	}
 	
-	private void computePoly() {
-		poly = new GeneralPath();
-		poly.moveTo(p0.x, p0.y);
-		poly.lineTo(p1.x, p1.y);
-		poly.lineTo(p2.x, p2.y);
-		poly.lineTo(p3.x, p3.y);
-		poly.closePath();
-	}
-	
 	public Point getN01() {
 		if (n01 == null) {
 			computeN01();
@@ -115,7 +105,7 @@ public class Quad extends SweepableShape {
 	}
 	
 	public Quad plus(Point p) {
-		return new Quad(parent, p0.plus(p), p1.plus(p), p2.plus(p), p3.plus(p));
+		return APP.platform.createShapeEngine().createQuad(parent, p0.plus(p), p1.plus(p), p2.plus(p), p3.plus(p));
 	}
 	
 	public boolean hitTest(Point p) {
@@ -268,33 +258,6 @@ public class Quad extends SweepableShape {
 	
 	public boolean completelyContains(Quad q) {
 		return hitTest(q.p0) && hitTest(q.p1) && hitTest(q.p2) && hitTest(q.p3);
-	}
-	
-	public java.awt.Shape java2D() {
-		if (poly == null) {
-			computePoly();
-		}
-		return poly;
-	}
-	
-	public void paint(RenderingContext ctxt) {
-		
-		if (poly == null) {
-			computePoly();
-		}
-		
-		ctxt.fill(poly);
-		
-	}
-	
-	public void draw(RenderingContext ctxt) {
-		
-		if (poly == null) {
-			computePoly();
-		}
-		
-		ctxt.draw(poly);
-		
 	}
 
 }

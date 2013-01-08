@@ -1,23 +1,11 @@
 package com.gutabi.deadlock.geom;
 
-import java.awt.geom.CubicCurve2D;
-
+import java.util.List;
 
 import com.gutabi.deadlock.math.Point;
-import com.gutabi.deadlock.ui.paint.RenderingContext;
 
-public class CubicCurve implements Shape {
+public abstract class CubicCurve implements Shape {	
 	
-	public CubicCurve(Point p0, Point c0, Point c1, Point p1) {
-		c = new CubicCurve2D.Double(p0.x, p0.y, c0.x, c0.y, c1.x, c1.x, p1.x, p1.y);
-	}
-	
-	public java.awt.Shape java2D() {
-		return c;
-	}
-	
-	public void draw(RenderingContext ctxt) {	
-		ctxt.draw(c);
-	}
+	public abstract List<Point> skeleton();
 	
 }

@@ -1,4 +1,5 @@
 
+start making Rush Hour clone
 
 
 FOR ALPHA 2:
@@ -15,7 +16,7 @@ unrolling turf animation for adding road
 
 SOON:
 
-handle exiting for tools
+handle exiting for panels and tools
 
 when world is created, make sure tool is drawn, don't wait for a move
 

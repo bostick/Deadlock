@@ -22,7 +22,7 @@ public class RushHourStud {
 		this.world = world;
 		this.board = board;
 		
-		aabb = new AABB(board.aabb.ul.x + RushHourStud.SIZE * col, board.aabb.ul.y + RushHourStud.SIZE * row, RushHourStud.SIZE, RushHourStud.SIZE);
+		aabb = APP.platform.createShapeEngine().createAABB(board.aabb.ul.x + RushHourStud.SIZE * col, board.aabb.ul.y + RushHourStud.SIZE * row, RushHourStud.SIZE, RushHourStud.SIZE);
 	}
 	
 	public void paint(RenderingContext ctxt) {

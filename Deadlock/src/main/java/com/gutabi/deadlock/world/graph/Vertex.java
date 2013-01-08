@@ -1,5 +1,6 @@
 package com.gutabi.deadlock.world.graph;
 
+import static com.gutabi.deadlock.DeadlockApplication.APP;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,7 +43,7 @@ public abstract class Vertex extends Entity {
 		
 		r = INIT_VERTEX_RADIUS;
 		
-		shape = new Circle(this, p, r);
+		shape = APP.platform.createShapeEngine().createCircle(this, p, r);
 		
 	}
 	
@@ -100,7 +101,7 @@ public abstract class Vertex extends Entity {
 		}
 		
 		r = INIT_VERTEX_RADIUS;
-		shape = new Circle(this, p, r);
+		shape = APP.platform.createShapeEngine().createCircle(this, p, r);
 		
 		for (Road e : roads) {
 			e.computeProperties();
@@ -172,7 +173,7 @@ public abstract class Vertex extends Entity {
 				break loop;
 			} else {
 				r = r + 0.1;
-				shape = new Circle(this, p, r);
+				shape = APP.platform.createShapeEngine().createCircle(this, p, r);
 			}
 			
 			for (Road e : roads) {

@@ -1,5 +1,7 @@
 package com.gutabi.deadlock.world.tools;
 
+import static com.gutabi.deadlock.DeadlockApplication.APP;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,7 +11,6 @@ import com.gutabi.deadlock.geom.Circle;
 import com.gutabi.deadlock.geom.Line;
 import com.gutabi.deadlock.geom.QuadCurve;
 import com.gutabi.deadlock.geom.Shape;
-import com.gutabi.deadlock.geom.ShapeUtils;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.paint.Color;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
@@ -35,19 +36,19 @@ public class QuadToolShape implements Shape {
 	public QuadToolShape(WorldScreen screen, Point start, Point c, Point end) {
 		
 		this.start = start;
-		startCircle = new Circle(null, start, Vertex.INIT_VERTEX_RADIUS);
+		startCircle = APP.platform.createShapeEngine().createCircle(null, start, Vertex.INIT_VERTEX_RADIUS);
 		this.end = end;
 		this.c = c;
 		
-		q = new QuadCurve(start, c, end);
-		tan0 = new Line(c, start);
-		tan1 = new Line(c, end);
+		q = APP.platform.createShapeEngine().createQuadCurve(start, c, end);
+		tan0 = APP.platform.createShapeEngine().createLine(c, start);
+		tan1 = APP.platform.createShapeEngine().createLine(c, end);
 		
-		skeleton = ShapeUtils.skeleton(q);
+		skeleton = q.skeleton();
 		
 		List<Circle> cs = new ArrayList<Circle>();
 		for (Point p : skeleton) {
-			cs.add(new Circle(null, p, Vertex.INIT_VERTEX_RADIUS));
+			cs.add(APP.platform.createShapeEngine().createCircle(null, p, Vertex.INIT_VERTEX_RADIUS));
 		}
 		List<Capsule> caps = new ArrayList<Capsule>();
 		for (int i = 0; i < cs.size()-1; i++) {
@@ -60,11 +61,6 @@ public class QuadToolShape implements Shape {
 		
 //		aabb = skeletonSeq.aabb;
 		
-	}
-	
-	public java.awt.Shape java2D() {
-		assert false;
-		return null;
 	}
 	
 	public void draw(RenderingContext ctxt) {
@@ -87,4 +83,9 @@ public class QuadToolShape implements Shape {
 		}
 		
 	}
+	
+	public void paint(RenderingContext ctxt) {
+		assert false;
+	}
+	
 }

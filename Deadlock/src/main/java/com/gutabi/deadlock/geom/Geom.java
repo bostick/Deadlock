@@ -1,5 +1,7 @@
 package com.gutabi.deadlock.geom;
 
+import static com.gutabi.deadlock.DeadlockApplication.APP;
+
 import com.gutabi.deadlock.math.DMath;
 import com.gutabi.deadlock.math.Point;
 
@@ -38,7 +40,7 @@ public class Geom {
 		Point w1 = times(m, q.p1).plus(t);
 		Point w2 = times(m, q.p2).plus(t);
 		Point w3 = times(m, q.p3).plus(t);
-		return new Quad(q.parent, w0, w1, w2, w3);
+		return APP.platform.createShapeEngine().createQuad(q.parent, w0, w1, w2, w3);
 	}
 	
 	public static void rotationMatrix(double a, double[][] out) {

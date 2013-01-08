@@ -20,11 +20,11 @@ public class WorldPanel extends PanelBase {
 	public WorldPanel(final WorldScreen screen) {
 		this.screen = screen;
 		
-		aabb = new AABB(aabb.x, aabb.y, 1384, 822);
+		aabb = APP.platform.createShapeEngine().createAABB(aabb.x, aabb.y, 1384, 822);
 	}
 	
 	public void setLocation(double x, double y) {
-		aabb = new AABB(x, y, aabb.width, aabb.height);
+		aabb = APP.platform.createShapeEngine().createAABB(x, y, aabb.width, aabb.height);
 	}
 	
 	public void postDisplay() {
@@ -45,7 +45,7 @@ public class WorldPanel extends PanelBase {
 	public AABB panelToWorld(AABB aabb) {
 		Point ul = panelToWorld(aabb.ul);
 		Point br = panelToWorld(aabb.br);
-		return new AABB(ul.x, ul.y, br.x - ul.x, br.y - ul.y);
+		return APP.platform.createShapeEngine().createAABB(ul.x, ul.y, br.x - ul.x, br.y - ul.y);
 	}
 	
 	public Point worldToPanel(Point p) {
@@ -57,7 +57,7 @@ public class WorldPanel extends PanelBase {
 	public AABB worldToPanel(AABB aabb) {
 		Point ul = worldToPanel(aabb.ul);
 		Point br = worldToPanel(aabb.br);
-		return new AABB(ul.x, ul.y, br.x - ul.x, br.y - ul.y);
+		return APP.platform.createShapeEngine().createAABB(ul.x, ul.y, br.x - ul.x, br.y - ul.y);
 	}
 	
 	

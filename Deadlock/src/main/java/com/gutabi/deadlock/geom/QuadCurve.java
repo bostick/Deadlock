@@ -1,23 +1,11 @@
 package com.gutabi.deadlock.geom;
 
-import java.awt.geom.QuadCurve2D;
-
+import java.util.List;
 
 import com.gutabi.deadlock.math.Point;
-import com.gutabi.deadlock.ui.paint.RenderingContext;
 
-public class QuadCurve implements Shape {
+public abstract class QuadCurve implements Shape {
 	
-	public QuadCurve(Point p0, Point c, Point p1) {
-		q = new QuadCurve2D.Double(p0.x, p0.y, c.x, c.y, p1.x, p1.y);
-	}
-	
-	public java.awt.Shape java2D() {
-		return q;
-	}
-	
-	public void draw(RenderingContext ctxt) {	
-		ctxt.draw(q);
-	}
+	public abstract List<Point> skeleton();
 	
 }

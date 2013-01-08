@@ -20,7 +20,7 @@ public class AABBImpl extends AABB {
 	}
 	
 	public List<Point> skeleton() {
-		return ShapeUtils.skeleton(rect);
+		return AWTShapeUtils.skeleton(rect);
 	}
 	
 	public void paint(RenderingContext ctxt) {

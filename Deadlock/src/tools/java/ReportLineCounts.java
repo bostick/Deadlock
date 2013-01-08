@@ -26,6 +26,42 @@ public class ReportLineCounts {
 		System.out.println("empty lines: " + emptyLines);
 		System.out.println("files: " + files);
 		
+		System.out.println("");
+		
+		
+		emptyLines = 0;
+		nonEmptyLines = 0;
+		files = 0;
+		
+		
+		start = FileSystems.getDefault().getPath("..", "DeadlockAWT", "src", "main", "java");
+		
+		visitor = new LineNumberReporter();
+		
+		Files.walkFileTree(start, visitor);
+		
+		System.out.println("non-empty lines: " + nonEmptyLines);
+		System.out.println("empty lines: " + emptyLines);
+		System.out.println("files: " + files);
+		
+		System.out.println("");
+		
+		
+//		//Get an instance of java compiler
+//		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+//
+//		//Get a new instance of the standard file manager implementation
+//		StandardJavaFileManager fileManager = compiler.getStandardFileManager(null, null, null);
+//		        
+//		// Get the list of java file objects, in this case we have only 
+//		// one file, TestClass.java
+//		Iterable<? extends JavaFileObject> compilationUnits1 = fileManager.getJavaFileObjects(new File("src\\main\\java\\com\\gutabi\\deadlock\\DeadlockApplication.java"));
+//		
+//		CompilationTask task = compiler.getTask(null, fileManager, null, null, null, compilationUnits1);
+//		
+//		//Perform the compilation task.
+//		task.call();
+
 	}
 	
 	static class LineNumberReporter implements FileVisitor<Path> {

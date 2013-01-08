@@ -13,7 +13,6 @@ import org.jbox2d.dynamics.Filter;
 import org.jbox2d.dynamics.FixtureDef;
 
 import com.gutabi.deadlock.Entity;
-import com.gutabi.deadlock.geom.Circle;
 import com.gutabi.deadlock.geom.Geom;
 import com.gutabi.deadlock.geom.Quad;
 import com.gutabi.deadlock.geom.Shape;
@@ -222,7 +221,7 @@ public class Car extends Entity {
 		Point p1 = new Point(CAR_LENGTH / 2, -CAR_WIDTH / 2);
 		Point p2 = new Point(CAR_LENGTH / 2, CAR_WIDTH / 2);
 		Point p3 = new Point(-CAR_LENGTH / 2, CAR_WIDTH / 2);
-		localQuad = new Quad(this, p0, p1, p2, p3);
+		localQuad = APP.platform.createShapeEngine().createQuad(this, p0, p1, p2, p3);
 		
 		CAR_LOCALX = -CAR_LENGTH / 2;
 		CAR_LOCALY = -CAR_WIDTH / 2;
@@ -664,12 +663,12 @@ public class Car extends Entity {
 			
 			if (driver.overallPos != null) {
 				ctxt.setColor(Color.DARKGREEN);
-				new Circle(null, driver.overallPos.p, 0.2).paint(ctxt);
+				APP.platform.createShapeEngine().createCircle(null, driver.overallPos.p, 0.2).paint(ctxt);
 			}
 			
 			if (driver.goalPoint != null) {
 				ctxt.setColor(Color.GREEN);
-				new Circle(null, driver.goalPoint, 0.2).paint(ctxt);
+				APP.platform.createShapeEngine().createCircle(null, driver.goalPoint, 0.2).paint(ctxt);
 			}
 			
 			ctxt.setColor(Color.BLACK);

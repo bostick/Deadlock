@@ -1,6 +1,5 @@
 package com.gutabi.deadlock.math;
 
-import java.awt.geom.Point2D;
 import java.util.Scanner;
 import java.util.regex.MatchResult;
 
@@ -69,14 +68,6 @@ public class Point {
 	
 	public static Point point(Vec2 p) {
 		return new Point(p.x, p.y);
-	}
-	
-	public Point2D point2D() {
-		return new Point2D.Double(x, y);
-	}
-	
-	public static Point point(Point2D p) {
-		return new Point(p.getX(), p.getY());
 	}
 	
 	public double distanceTo(Point p) {

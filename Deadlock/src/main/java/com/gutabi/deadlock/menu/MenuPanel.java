@@ -4,7 +4,6 @@ import static com.gutabi.deadlock.DeadlockApplication.APP;
 
 import org.apache.log4j.Logger;
 
-import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.AffineTransform;
 import com.gutabi.deadlock.ui.Image;
@@ -25,11 +24,11 @@ public class MenuPanel extends PanelBase {
 	public MenuPanel(final MainMenu screen) {
 		this.screen = screen;
 		
-		aabb = new AABB(aabb.x, aabb.y, 1584, 822);
+		aabb = APP.platform.createShapeEngine().createAABB(aabb.x, aabb.y, 1584, 822);
 	}
 	
 	public void setLocation(double x, double y) {
-		aabb = new AABB(x, y, aabb.width, aabb.height);
+		aabb = APP.platform.createShapeEngine().createAABB(x, y, aabb.width, aabb.height);
 	}
 	
 	public void postDisplay() {
