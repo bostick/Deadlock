@@ -9,7 +9,6 @@ import javax.swing.JFrame;
 
 import org.apache.log4j.Logger;
 
-import com.gutabi.deadlock.Screen;
 import com.gutabi.deadlock.quadranteditor.QuadrantEditor;
 import com.gutabi.deadlock.world.WorldScreen;
 import com.gutabi.deadlock.world.examples.FourByFourGridWorld;
@@ -18,7 +17,7 @@ import com.gutabi.deadlock.world.examples.RushHourWorld;
 import com.gutabi.deadlock.world.examples.WorldA;
 import com.gutabi.deadlock.world.tools.CarTool;
 
-public class MainMenu extends Screen {
+public class MainMenu {
 	
 	public MainMenuContentPane contentPane;
 	

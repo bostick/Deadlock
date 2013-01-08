@@ -2,14 +2,12 @@ package com.gutabi.deadlock.menu;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
-import java.awt.Graphics2D;
-import java.awt.geom.AffineTransform;
-import java.awt.image.BufferedImage;
-
 import org.apache.log4j.Logger;
 
+import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.math.Point;
-import com.gutabi.deadlock.math.geom.AABB;
+import com.gutabi.deadlock.ui.AffineTransform;
+import com.gutabi.deadlock.ui.Image;
 import com.gutabi.deadlock.ui.InputEvent;
 import com.gutabi.deadlock.ui.PanelBase;
 import com.gutabi.deadlock.ui.paint.Color;
@@ -102,24 +100,22 @@ public class MenuPanel extends PanelBase {
 				screen.totalHeight += (int)item.localAABB.height;
 			}
 			
-			BufferedImage tmpImg = new BufferedImage(MENU_WIDTH, MENU_HEIGHT, BufferedImage.TYPE_INT_RGB);
+			Image tmpImg = APP.platform.createImageEngine().createImage(MENU_WIDTH, MENU_HEIGHT);
 			
-			Graphics2D tmpG2 = tmpImg.createGraphics();
+			RenderingContext ctxt = APP.platform.createRenderingContext(tmpImg);
 			
-			RenderingContext tmpCtxt = APP.platform.createRenderingContext(tmpG2);
+			AffineTransform origTransform = ctxt.getTransform();
 			
-			AffineTransform origTransform = tmpCtxt.getTransform();
-			
-			tmpCtxt.translate(MENU_WIDTH/2 - screen.widest/2, 150);
+			ctxt.translate(MENU_WIDTH/2 - screen.widest/2, 150);
 			
 			for (MenuItem item : screen.items) {
-				item.render(tmpCtxt);
-				tmpCtxt.translate(0, item.localAABB.height + 10);
+				item.render(ctxt);
+				ctxt.translate(0, item.localAABB.height + 10);
 			}
 			
-			tmpCtxt.setTransform(origTransform);
+			ctxt.setTransform(origTransform);
 			
-			tmpG2.dispose();
+			ctxt.dispose();
 		}
 		
 	}

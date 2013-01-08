@@ -12,17 +12,17 @@ import java.util.Scanner;
 import org.apache.log4j.Logger;
 
 import com.gutabi.deadlock.Entity;
+import com.gutabi.deadlock.geom.Capsule;
+import com.gutabi.deadlock.geom.CapsuleSequence;
+import com.gutabi.deadlock.geom.CapsuleSequencePosition;
+import com.gutabi.deadlock.geom.Circle;
+import com.gutabi.deadlock.geom.Geom;
+import com.gutabi.deadlock.geom.Shape;
+import com.gutabi.deadlock.geom.ShapeUtils;
+import com.gutabi.deadlock.geom.Triangle;
 import com.gutabi.deadlock.math.ColinearException;
 import com.gutabi.deadlock.math.DMath;
-import com.gutabi.deadlock.math.Matrix;
 import com.gutabi.deadlock.math.Point;
-import com.gutabi.deadlock.math.geom.Capsule;
-import com.gutabi.deadlock.math.geom.CapsuleSequence;
-import com.gutabi.deadlock.math.geom.CapsuleSequencePosition;
-import com.gutabi.deadlock.math.geom.Circle;
-import com.gutabi.deadlock.math.geom.Shape;
-import com.gutabi.deadlock.math.geom.ShapeUtils;
-import com.gutabi.deadlock.math.geom.Triangle;
 import com.gutabi.deadlock.ui.paint.Cap;
 import com.gutabi.deadlock.ui.paint.Color;
 import com.gutabi.deadlock.ui.paint.Join;
@@ -169,9 +169,9 @@ public class Road extends Edge {
 				
 				double[][] rotMat = new double[][]{ { Math.cos(angle), -Math.sin(angle) }, { Math.sin(angle), Math.cos(angle) } };
 				
-				Point p0 = Matrix.times(rotMat, new Point(0, 0)).plus(endBorderPoint.center);
-				Point p1 = Matrix.times(rotMat, new Point(-1, 0.3)).plus(endBorderPoint.center);
-				Point p2 = Matrix.times(rotMat, new Point(-1, -0.3)).plus(endBorderPoint.center);
+				Point p0 = Geom.times(rotMat, new Point(0, 0)).plus(endBorderPoint.center);
+				Point p1 = Geom.times(rotMat, new Point(-1, 0.3)).plus(endBorderPoint.center);
+				Point p2 = Geom.times(rotMat, new Point(-1, -0.3)).plus(endBorderPoint.center);
 				
 				arrowPointer = new Triangle(p0, p1, p2);
 				
@@ -183,9 +183,9 @@ public class Road extends Edge {
 				
 				double[][] rotMat = new double[][]{ { Math.cos(angle), -Math.sin(angle) }, { Math.sin(angle), Math.cos(angle) } };
 				
-				Point p0 = Matrix.times(rotMat, new Point(0, 0)).plus(startBorderPoint.center);
-				Point p1 = Matrix.times(rotMat, new Point(1, 0.3)).plus(startBorderPoint.center);
-				Point p2 = Matrix.times(rotMat, new Point(1, -0.3)).plus(startBorderPoint.center);
+				Point p0 = Geom.times(rotMat, new Point(0, 0)).plus(startBorderPoint.center);
+				Point p1 = Geom.times(rotMat, new Point(1, 0.3)).plus(startBorderPoint.center);
+				Point p2 = Geom.times(rotMat, new Point(1, -0.3)).plus(startBorderPoint.center);
 				
 				arrowPointer = new Triangle(p0, p1, p2);
 				

@@ -5,7 +5,8 @@ import java.awt.font.FontRenderContext;
 import java.awt.font.TextLayout;
 import java.awt.geom.Rectangle2D;
 
-import com.gutabi.deadlock.math.geom.AABB;
+import com.gutabi.deadlock.geom.AABB;
+import com.gutabi.deadlock.geom.AABBImpl;
 
 public class FontEngineImpl implements FontEngine {
 	
@@ -23,7 +24,7 @@ public class FontEngineImpl implements FontEngine {
 		
 		TextLayout layout = new TextLayout(text, new Font(fontName, s, fontSize), frc);
 		Rectangle2D bounds = layout.getBounds();
-		AABB aabb = new AABB(bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight());
+		AABB aabb = new AABBImpl(bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight());
 		return aabb;
 	}
 	

@@ -1,4 +1,4 @@
-package com.gutabi.deadlock.math.geom;
+package com.gutabi.deadlock.geom;
 
 import java.awt.geom.Path2D;
 import java.util.List;
@@ -8,8 +8,6 @@ import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 
 public class Polyline {
-	
-	private final Path2D path;
 	
 	public Polyline(List<Point> pts) {
 		

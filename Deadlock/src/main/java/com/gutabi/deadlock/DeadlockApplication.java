@@ -1,11 +1,12 @@
 package com.gutabi.deadlock;
 
-import java.awt.image.BufferedImage;
 import java.net.URL;
 import java.util.Random;
 
-import javax.imageio.ImageIO;
 import javax.swing.RootPaneContainer;
+
+import com.gutabi.deadlock.ui.Image;
+import com.gutabi.deadlock.ui.ImageEngine;
 
 public class DeadlockApplication {
 	
@@ -28,23 +29,26 @@ public class DeadlockApplication {
 	
 	public Random RANDOM = new Random(1);
 	
-	public BufferedImage carSheet;
-	public BufferedImage spriteSheet;
+	public Image carSheet;
+	public Image spriteSheet;
 	
-	public BufferedImage explosionSheet;
-	public BufferedImage titleBackground;
-	public BufferedImage title_white;
-	public BufferedImage copyright;
+	public Image explosionSheet;
+	public Image titleBackground;
+	public Image title_white;
+	public Image copyright;
 	
 	public static DeadlockApplication APP = new DeadlockApplication();
 	
 	public void init() throws Exception {
-		carSheet = ImageIO.read(DeadlockApplication.class.getResource("/img/carSheet.png"));
-		spriteSheet = ImageIO.read(DeadlockApplication.class.getResource("/img/spriteSheet.png"));
-		explosionSheet = ImageIO.read(DeadlockApplication.class.getResource("/img/explosionSheet.png"));
-		titleBackground = ImageIO.read(DeadlockApplication.class.getResource("/img/title_background.png"));
-		title_white = ImageIO.read(DeadlockApplication.class.getResource("/img/title_white.png"));
-		copyright = ImageIO.read(DeadlockApplication.class.getResource("/img/copyright.png"));
+		
+		ImageEngine engine = platform.createImageEngine();
+		
+		carSheet = engine.readImage(DeadlockApplication.class.getResource("/img/carSheet.png"));
+		spriteSheet = engine.readImage(DeadlockApplication.class.getResource("/img/spriteSheet.png"));
+		explosionSheet = engine.readImage(DeadlockApplication.class.getResource("/img/explosionSheet.png"));
+		titleBackground = engine.readImage(DeadlockApplication.class.getResource("/img/title_background.png"));
+		title_white = engine.readImage(DeadlockApplication.class.getResource("/img/title_white.png"));
+		copyright = engine.readImage(DeadlockApplication.class.getResource("/img/copyright.png"));
 	}
 	
 	public void exit() {

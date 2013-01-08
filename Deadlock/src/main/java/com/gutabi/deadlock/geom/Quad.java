@@ -1,4 +1,4 @@
-package com.gutabi.deadlock.math.geom;
+package com.gutabi.deadlock.geom;
 
 import java.awt.geom.GeneralPath;
 import java.util.ArrayList;
@@ -22,8 +22,6 @@ public class Quad extends SweepableShape {
 	
 	double[] n01Projection;
 	double[] n12Projection;
-	
-	private GeneralPath poly;
 	
 	public final AABB aabb;
 	

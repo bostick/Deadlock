@@ -1,4 +1,4 @@
-package com.gutabi.deadlock.math.geom;
+package com.gutabi.deadlock.geom;
 
 import java.util.Comparator;
 

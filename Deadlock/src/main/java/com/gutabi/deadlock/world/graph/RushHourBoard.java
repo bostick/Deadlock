@@ -1,8 +1,8 @@
 package com.gutabi.deadlock.world.graph;
 
 import com.gutabi.deadlock.Entity;
+import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.math.Point;
-import com.gutabi.deadlock.math.geom.AABB;
 import com.gutabi.deadlock.ui.paint.Color;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.world.World;

@@ -1,4 +1,4 @@
-package com.gutabi.deadlock.math.geom;
+package com.gutabi.deadlock.geom;
 
 import com.gutabi.deadlock.world.Stroke;
 import com.gutabi.deadlock.world.graph.Merger;

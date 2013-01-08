@@ -2,7 +2,6 @@ package com.gutabi.deadlock.world.graph;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
-import java.awt.geom.AffineTransform;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
@@ -13,22 +12,22 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.Set;
 
-
 import org.apache.log4j.Logger;
 
 import com.gutabi.deadlock.Entity;
+import com.gutabi.deadlock.geom.AABB;
+import com.gutabi.deadlock.geom.Capsule;
+import com.gutabi.deadlock.geom.CapsuleSequence;
+import com.gutabi.deadlock.geom.Circle;
+import com.gutabi.deadlock.geom.Quad;
+import com.gutabi.deadlock.geom.Shape;
+import com.gutabi.deadlock.geom.ShapeUtils;
+import com.gutabi.deadlock.geom.SweepEvent;
+import com.gutabi.deadlock.geom.Sweepable;
 import com.gutabi.deadlock.math.DMath;
 import com.gutabi.deadlock.math.OverlappingException;
 import com.gutabi.deadlock.math.Point;
-import com.gutabi.deadlock.math.geom.AABB;
-import com.gutabi.deadlock.math.geom.Capsule;
-import com.gutabi.deadlock.math.geom.CapsuleSequence;
-import com.gutabi.deadlock.math.geom.Circle;
-import com.gutabi.deadlock.math.geom.Quad;
-import com.gutabi.deadlock.math.geom.Shape;
-import com.gutabi.deadlock.math.geom.ShapeUtils;
-import com.gutabi.deadlock.math.geom.SweepEvent;
-import com.gutabi.deadlock.math.geom.Sweepable;
+import com.gutabi.deadlock.ui.AffineTransform;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.world.ControlPanel;
 import com.gutabi.deadlock.world.World;

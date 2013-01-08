@@ -1,4 +1,4 @@
-package com.gutabi.deadlock.math.geom;
+package com.gutabi.deadlock.geom;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
@@ -114,7 +114,8 @@ public class Capsule extends SweepableShape implements SweeperShape, CompoundSha
 	}
 	
 	public Capsule plus(Point p) {
-		return new Capsule(parent, new Circle(parent, a.plus(p), ac.radius), new Circle(parent, b.plus(p), bc.radius), -1);
+		ShapeEngine e = APP.platform.createShapeEngine();
+		return new Capsule(parent, e.createCircle(parent, a.plus(p), ac.radius), e.createCircle(parent, b.plus(p), bc.radius), -1);
 	}
 	
 	public boolean hitTest(Point p) {
@@ -190,7 +191,8 @@ public class Capsule extends SweepableShape implements SweeperShape, CompoundSha
 				
 				if (DMath.lessThanEquals(abParam, 0.0)) {
 					
-					assert ShapeUtils.intersectCC(ac, new Circle(null, p, cap.r));
+					ShapeEngine e = APP.platform.createShapeEngine();
+					assert ShapeUtils.intersectCC(ac, e.createCircle(null, p, cap.r));
 					
 					logger.debug("a cap");
 					
@@ -269,7 +271,8 @@ public class Capsule extends SweepableShape implements SweeperShape, CompoundSha
 				
 				if (DMath.greaterThanEquals(abParam, 1.0)) {
 					
-					assert ShapeUtils.intersectCC(bc, new Circle(null, p, cap.r));
+					ShapeEngine e = APP.platform.createShapeEngine();
+					assert ShapeUtils.intersectCC(bc, e.createCircle(null, p, cap.r));
 					
 					logger.debug("b cap");
 					

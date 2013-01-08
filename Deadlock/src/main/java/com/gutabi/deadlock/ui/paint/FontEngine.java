@@ -1,6 +1,6 @@
 package com.gutabi.deadlock.ui.paint;
 
-import com.gutabi.deadlock.math.geom.AABB;
+import com.gutabi.deadlock.geom.AABB;
 
 public interface FontEngine {
 

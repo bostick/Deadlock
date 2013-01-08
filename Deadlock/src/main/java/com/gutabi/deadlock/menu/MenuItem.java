@@ -1,9 +1,8 @@
 package com.gutabi.deadlock.menu;
 
-import java.awt.geom.AffineTransform;
-
+import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.math.Point;
-import com.gutabi.deadlock.math.geom.AABB;
+import com.gutabi.deadlock.ui.AffineTransform;
 import com.gutabi.deadlock.ui.Label;
 import com.gutabi.deadlock.ui.paint.Cap;
 import com.gutabi.deadlock.ui.paint.Color;

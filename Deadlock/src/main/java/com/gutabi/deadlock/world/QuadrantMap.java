@@ -2,19 +2,17 @@ package com.gutabi.deadlock.world;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
-import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.Scanner;
 
-
+import com.gutabi.deadlock.geom.AABB;
+import com.gutabi.deadlock.geom.Shape;
+import com.gutabi.deadlock.geom.ShapeUtils;
 import com.gutabi.deadlock.math.DMath;
 import com.gutabi.deadlock.math.Point;
-import com.gutabi.deadlock.math.geom.AABB;
-import com.gutabi.deadlock.math.geom.Shape;
-import com.gutabi.deadlock.math.geom.ShapeUtils;
+import com.gutabi.deadlock.ui.Image;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 
 public class QuadrantMap {
@@ -32,7 +30,7 @@ public class QuadrantMap {
 	public final int[][] ini;
 	private Quadrant[][] quadrants;
 	
-	public BufferedImage quadrantGrass;
+	public Image quadrantGrass;
 	
 	public GrassMap grassMap = new GrassMap();
 	
@@ -121,19 +119,21 @@ public class QuadrantMap {
 		int quadrantWidthPixels = (int)Math.ceil(world.screen.origPixelsPerMeter * QUADRANT_WIDTH);
 		int quadrantHeightPixels = (int)Math.ceil(world.screen.origPixelsPerMeter * QUADRANT_HEIGHT);
 		
-		quadrantGrass = new BufferedImage(quadrantWidthPixels, quadrantHeightPixels, BufferedImage.TYPE_INT_RGB);
-		Graphics2D quadrantGrassG2 = quadrantGrass.createGraphics();
+		quadrantGrass = APP.platform.createImageEngine().createImage(quadrantWidthPixels, quadrantHeightPixels);
+		
+		RenderingContext ctxt = APP.platform.createRenderingContext(quadrantGrass);
 		
 		int maxCols = (int)Math.ceil(quadrantWidthPixels/32.0);
 		int maxRows = (int)Math.ceil(quadrantHeightPixels/32.0);
 		for (int i = 0; i < maxRows; i++) {
 			for (int j = 0; j < maxCols; j++) {
-				quadrantGrassG2.drawImage(APP.spriteSheet,
+				ctxt.paintImage(APP.spriteSheet,
 						32 * j, 32 * i, 32 * j + 32, 32 * i + 32,
-						0, 0, 0+32, 0+32, null);
+						0, 0, 0+32, 0+32);
 			}
 		}
 		
+		ctxt.dispose();
 	}
 	
 	public Quadrant findQuadrant(Point p) {

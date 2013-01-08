@@ -1,4 +1,4 @@
-package com.gutabi.deadlock.math.geom;
+package com.gutabi.deadlock.geom;
 
 import java.awt.geom.QuadCurve2D;
 
@@ -7,8 +7,6 @@ import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 
 public class QuadCurve implements Shape {
-	
-	private final QuadCurve2D q;
 	
 	public QuadCurve(Point p0, Point c, Point p1) {
 		q = new QuadCurve2D.Double(p0.x, p0.y, c.x, c.y, p1.x, p1.y);

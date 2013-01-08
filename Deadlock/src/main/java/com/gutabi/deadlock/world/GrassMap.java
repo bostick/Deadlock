@@ -3,8 +3,8 @@ package com.gutabi.deadlock.world;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.gutabi.deadlock.math.geom.Shape;
-import com.gutabi.deadlock.math.geom.ShapeUtils;
+import com.gutabi.deadlock.geom.Shape;
+import com.gutabi.deadlock.geom.ShapeUtils;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.world.sprites.AnimatedGrass;
 

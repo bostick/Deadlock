@@ -2,13 +2,11 @@ package com.gutabi.deadlock.world;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
-import java.awt.geom.AffineTransform;
-
-
 import org.apache.log4j.Logger;
 
+import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.math.Point;
-import com.gutabi.deadlock.math.geom.AABB;
+import com.gutabi.deadlock.ui.AffineTransform;
 import com.gutabi.deadlock.ui.InputEvent;
 import com.gutabi.deadlock.ui.PanelBase;
 import com.gutabi.deadlock.ui.paint.RenderingContext;

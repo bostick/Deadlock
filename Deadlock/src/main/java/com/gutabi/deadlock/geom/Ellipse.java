@@ -1,4 +1,4 @@
-package com.gutabi.deadlock.math.geom;
+package com.gutabi.deadlock.geom;
 
 import java.awt.geom.Ellipse2D;
 
@@ -15,8 +15,6 @@ public class Ellipse implements Shape {
 	public final double yRadius;
 	
 	public final AABB aabb;
-	
-	private final Ellipse2D ellipse;
 	
 	static Logger logger = Logger.getLogger(Circle.class);
 	

@@ -1,5 +1,9 @@
 package com.gutabi.deadlock.ui;
 
-public class AffineTransform {
-
+public interface AffineTransform {
+	
+	double getTranslateX();
+	
+	double getTranslateY();
+	
 }

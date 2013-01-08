@@ -2,8 +2,6 @@ package com.gutabi.deadlock.world.cars;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
-import java.awt.geom.AffineTransform;
-
 import org.apache.log4j.Logger;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.common.Mat22;
@@ -15,12 +13,13 @@ import org.jbox2d.dynamics.Filter;
 import org.jbox2d.dynamics.FixtureDef;
 
 import com.gutabi.deadlock.Entity;
+import com.gutabi.deadlock.geom.Circle;
+import com.gutabi.deadlock.geom.Geom;
+import com.gutabi.deadlock.geom.Quad;
+import com.gutabi.deadlock.geom.Shape;
 import com.gutabi.deadlock.math.DMath;
 import com.gutabi.deadlock.math.Point;
-import com.gutabi.deadlock.math.geom.Circle;
-import com.gutabi.deadlock.math.geom.Geom;
-import com.gutabi.deadlock.math.geom.Quad;
-import com.gutabi.deadlock.math.geom.Shape;
+import com.gutabi.deadlock.ui.AffineTransform;
 import com.gutabi.deadlock.ui.Composite;
 import com.gutabi.deadlock.ui.paint.Cap;
 import com.gutabi.deadlock.ui.paint.Color;

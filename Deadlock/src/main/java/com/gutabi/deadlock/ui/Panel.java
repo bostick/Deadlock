@@ -1,6 +1,6 @@
 package com.gutabi.deadlock.ui;
 
-import com.gutabi.deadlock.math.geom.AABB;
+import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 
 public abstract class Panel {

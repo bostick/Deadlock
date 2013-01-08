@@ -2,10 +2,8 @@ package com.gutabi.deadlock.world.sprites;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
-import java.awt.geom.AffineTransform;
-
-
 import com.gutabi.deadlock.math.Point;
+import com.gutabi.deadlock.ui.AffineTransform;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.world.World;
 

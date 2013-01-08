@@ -7,9 +7,9 @@ import java.util.Set;
 import javax.swing.JFrame;
 
 import com.gutabi.deadlock.Entity;
+import com.gutabi.deadlock.geom.Circle;
+import com.gutabi.deadlock.geom.Shape;
 import com.gutabi.deadlock.math.Point;
-import com.gutabi.deadlock.math.geom.Circle;
-import com.gutabi.deadlock.math.geom.Shape;
 import com.gutabi.deadlock.menu.MainMenu;
 import com.gutabi.deadlock.ui.InputEvent;
 import com.gutabi.deadlock.ui.paint.Cap;

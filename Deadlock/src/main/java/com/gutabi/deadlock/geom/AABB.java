@@ -1,14 +1,12 @@
-package com.gutabi.deadlock.math.geom;
+package com.gutabi.deadlock.geom;
 
-import java.awt.geom.Rectangle2D;
-
+import static com.gutabi.deadlock.DeadlockApplication.APP;
 
 import com.gutabi.deadlock.math.DMath;
 import com.gutabi.deadlock.math.Dim;
 import com.gutabi.deadlock.math.Point;
-import com.gutabi.deadlock.ui.paint.RenderingContext;
 
-public class AABB implements Shape {
+public abstract class AABB implements Shape {
 	
 	public final Point ul;
 	public final Dim dim;
@@ -33,8 +31,6 @@ public class AABB implements Shape {
 	
 	public final Point n01 = UP;
 	public final Point n12 = LEFT;
-	
-	private Rectangle2D rect;
 	
 	double[] n01Projection;
 	double[] n12Projection;
@@ -81,10 +77,6 @@ public class AABB implements Shape {
 	
 	public AABB getAABB() {
 		return this;
-	}
-	
-	private void computeRect() {
-		rect = new Rectangle2D.Double(x, y, width, height);
 	}
 	
 	public void project(Point axis, double[] out) {
@@ -208,36 +200,15 @@ public class AABB implements Shape {
 			return b;
 		}
 		
-		return new AABB(ulX, ulY, brX-ulX, brY-ulY);
+		return APP.platform.createShapeEngine().createAABB(ulX, ulY, brX-ulX, brY-ulY);
 	}
 	
 	public AABB plus(Point p) {
-		return new AABB(x + p.x, y + p.y, width, height);
+		return APP.platform.createShapeEngine().createAABB(x + p.x, y + p.y, width, height);
 	}
 	
 	public AABB minus(Point p) {
-		return new AABB(x - p.x, y - p.y, width, height);
-	}
-	
-	public java.awt.Shape java2D() {
-		if (rect == null) {
-			computeRect();
-		}
-		return rect;	
-	}
-	
-	public void paint(RenderingContext ctxt) {
-		if (rect == null) {
-			computeRect();
-		}
-		ctxt.fill(rect);	
-	}
-	
-	public void draw(RenderingContext ctxt) {
-		if (rect == null) {
-			computeRect();
-		}
-		ctxt.draw(rect);
+		return APP.platform.createShapeEngine().createAABB(x - p.x, y - p.y, width, height);
 	}
 
 }

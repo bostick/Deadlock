@@ -2,7 +2,6 @@ package com.gutabi.deadlock.world.graph;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
-import java.awt.geom.AffineTransform;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
@@ -11,6 +10,7 @@ import java.util.List;
 import java.util.Scanner;
 
 import com.gutabi.deadlock.math.Point;
+import com.gutabi.deadlock.ui.AffineTransform;
 import com.gutabi.deadlock.ui.paint.Cap;
 import com.gutabi.deadlock.ui.paint.Color;
 import com.gutabi.deadlock.ui.paint.Join;

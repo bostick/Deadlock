@@ -1,12 +1,11 @@
 package com.gutabi.deadlock.world;
 
-import com.gutabi.deadlock.Screen;
-import com.gutabi.deadlock.math.geom.AABB;
+import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.ui.DLSFileChooser;
 import com.gutabi.deadlock.world.tools.RegularTool;
 import com.gutabi.deadlock.world.tools.Tool;
 
-public class WorldScreen extends Screen {
+public class WorldScreen {
 	
 	public enum WorldScreenMode {
 		EDITING,

@@ -2,11 +2,8 @@ package com.gutabi.deadlock.ui;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
-import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
-
+import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.math.Point;
-import com.gutabi.deadlock.math.geom.AABB;
 import com.gutabi.deadlock.ui.paint.Color;
 import com.gutabi.deadlock.ui.paint.FontEngine;
 import com.gutabi.deadlock.ui.paint.FontStyle;
@@ -26,7 +23,7 @@ public class Label {
 	public AABB localAABB;
 	public AABB aabb;
 	
-	BufferedImage img;
+	Image img;
 	
 	public Label(String text) {
 		this.text = text;
@@ -59,17 +56,16 @@ public class Label {
 		
 		Point baseline = new Point(-localAABB.x, -localAABB.y);
 		
-		img = new BufferedImage((int)aabb.width, (int)aabb.height, BufferedImage.TYPE_INT_ARGB);
+		img = APP.platform.createImageEngine().createTransparentImage((int)aabb.width, (int)aabb.height);
 		
-		Graphics2D g2 = img.createGraphics();
-		RenderingContext ctxt = APP.platform.createRenderingContext(g2);
+		RenderingContext ctxt = APP.platform.createRenderingContext(img);
 		
 		ctxt.setColor(color);
 		
 		ctxt.setFont(fontName, fontStyle, fontSize);
 		ctxt.paintString(baseline.x, baseline.y, 1.0, text);
 		
-		g2.dispose();
+		ctxt.dispose();
 	}
 	
 	public void paint(RenderingContext ctxt) {

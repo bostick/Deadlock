@@ -1,10 +1,5 @@
 package com.gutabi.deadlock.ui.paint;
 
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Line2D;
-
 import org.jbox2d.callbacks.DebugDraw;
 import org.jbox2d.common.Color3f;
 import org.jbox2d.common.OBBViewportTransform;
@@ -12,17 +7,15 @@ import org.jbox2d.common.Transform;
 import org.jbox2d.common.Vec2;
 
 import com.gutabi.deadlock.math.Point;
+import com.gutabi.deadlock.ui.AffineTransform;
 import com.gutabi.deadlock.ui.Composite;
+import com.gutabi.deadlock.ui.Image;
 
 
 public abstract class RenderingContext extends DebugDraw {
 	
-	public final Graphics2D g2;
-	
-	public RenderingContext(Graphics2D g2) {
+	public RenderingContext() {
 		super(new OBBViewportTransform());
-		
-		this.g2 = g2;
 		
 		m_drawFlags = DebugDraw.e_dynamicTreeBit;
 	}
@@ -43,119 +36,46 @@ public abstract class RenderingContext extends DebugDraw {
 	
 	public abstract void setPaintMode();
 	
-//	public abstract void draw(TextLayout layout, Point baseline);
-	
 	public abstract void setFont(String name, FontStyle style, int size);
 	
+	public abstract AffineTransform getTransform();
 	
+	public abstract void scale(double s);
 	
+	public abstract void translate(double tx, double ty);
 	
+	public abstract void translate(Point p);
 	
-//	public FontRenderContext getFontRenderContext() {
-//		return g2.getFontRenderContext();
-//	}
+	public abstract void translate(int tx, int ty);
 	
-	public AffineTransform getTransform() {
-		return g2.getTransform();
-	}
+	public abstract void setTransform(AffineTransform t);
 	
-	public void scale(double s) {
-		g2.scale(s, s);
-	}
+	public abstract void rotate(double a);
 	
-	public void translate(double tx, double ty) {
-		g2.translate(tx, ty);
-	}
+	public abstract void rotate(double a, double x, double y);
 	
-	public void translate(Point p) {
-		g2.translate(p.x, p.y);
-	}
+	public abstract void paintString(double x, double y, double s, String str);
 	
-	public void translate(int tx, int ty) {
-		g2.translate(tx, ty);
-	}
+	public abstract void paintImage(Image img, double orig, double dx1, double dy1, double dx2, double dy2, int sx1, int sy1, int sx2, int sy2);
 	
-	public void setTransform(AffineTransform t) {
-		g2.setTransform(t);
-	}
+	public abstract void paintImage(Image img, int dx1, int dy1, int dx2, int dy2, int sx1, int sy1, int sx2, int sy2);
 	
-	public void rotate(double a) {
-		g2.rotate(a);
-	}
+	public abstract void fillRect(int x, int y, int width, int height);
 	
-	public void rotate(double a, double x, double y) {
-		g2.rotate(a, x, y);
-	}
-	
-	public void paintString(double x, double y, double s, String str) {
-		AffineTransform origTransform = g2.getTransform();
-		
-		g2.translate(x, y);
-		g2.scale(s, s);
-		g2.drawString(str, 0, 0);
-		
-		g2.setTransform(origTransform);
-	}
-	
-	public void paintImage(Image img, double orig, double dx1, double dy1, double dx2, double dy2, int sx1, int sy1, int sx2, int sy2) {
-		AffineTransform origTransform = g2.getTransform();
-		
-		g2.scale(1 / orig, 1 / orig);
-		paintImage(img,
-				(int)Math.ceil(dx1 * orig), (int)Math.ceil(dy1 * orig), (int)Math.ceil(dx2 * orig), (int)Math.ceil(dy2 * orig),
-				sx1, sy1, sx2, sy2);
-		
-		g2.setTransform(origTransform);
-	}
-	
-	public void paintImage(Image img, int dx1, int dy1, int dx2, int dy2, int sx1, int sy1, int sx2, int sy2) {
-		g2.drawImage(img, dx1, dy1, dx2, dy2, sx1, sy1, sx2, sy2, null);
-	}
-	
-	public void draw(java.awt.Shape s) {
-		g2.draw(s);
-	}
-	
-	public void fill(java.awt.Shape s) {
-		g2.fill(s);
-	}
-	
-	public void fillRect(int x, int y, int width, int height) {
-		g2.fillRect(x, y, width, height);
-	}
-	
-	public void drawPoint(Vec2 argPoint, float argRadiusOnScreen, Color3f argColor) {
-		assert false;
-	}
+	public abstract void drawPoint(Vec2 argPoint, float argRadiusOnScreen, Color3f argColor);
 
-	public void drawSolidPolygon(Vec2[] vertices, int vertexCount, Color3f color) {
-		assert false;
-	}
+	public abstract void drawSolidPolygon(Vec2[] vertices, int vertexCount, Color3f color);
 
-	public void drawCircle(Vec2 center, float radius, Color3f color) {
-		assert false;
-	}
+	public abstract void drawCircle(Vec2 center, float radius, Color3f color);
 
-	public void drawSolidCircle(Vec2 center, float radius, Vec2 axis, Color3f color) {
-		assert false;
-	}
+	public abstract void drawSolidCircle(Vec2 center, float radius, Vec2 axis, Color3f color);
 	
-	public void drawSegment(Vec2 p1, Vec2 p2, Color3f color) {
-		setColor(Color.WHITE);
-		Line2D line = new Line2D.Double(p1.x, p1.y, p2.x, p2.y);
-		g2.draw(line);
-	}
+	public abstract void drawSegment(Vec2 p1, Vec2 p2, Color3f color);
 	
-	public void drawTransform(Transform xf) {
-		assert false;
-	}
+	public abstract void drawTransform(Transform xf);
 
-	public void drawString(float x, float y, String s, Color3f color) {
-		
-	}
+	public abstract void drawString(float x, float y, String s, Color3f color);
 	
-	public void dispose() {
-		g2.dispose();
-	}
+	public abstract void dispose();
 	
 }

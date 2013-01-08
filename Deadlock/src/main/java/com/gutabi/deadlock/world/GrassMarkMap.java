@@ -3,9 +3,9 @@ package com.gutabi.deadlock.world;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.gutabi.deadlock.geom.Capsule;
+import com.gutabi.deadlock.geom.Circle;
 import com.gutabi.deadlock.math.Point;
-import com.gutabi.deadlock.math.geom.Capsule;
-import com.gutabi.deadlock.math.geom.Circle;
 import com.gutabi.deadlock.ui.paint.Color;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 

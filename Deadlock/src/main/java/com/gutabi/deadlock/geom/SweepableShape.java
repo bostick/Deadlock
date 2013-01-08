@@ -1,4 +1,4 @@
-package com.gutabi.deadlock.math.geom;
+package com.gutabi.deadlock.geom;
 
 public abstract class SweepableShape implements Sweepable, Shape {
 	

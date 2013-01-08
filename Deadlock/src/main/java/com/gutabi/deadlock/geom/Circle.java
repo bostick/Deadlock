@@ -1,10 +1,8 @@
-package com.gutabi.deadlock.math.geom;
+package com.gutabi.deadlock.geom;
 
-import java.awt.geom.Ellipse2D;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
 
 import org.apache.log4j.Logger;
 
@@ -12,14 +10,12 @@ import com.gutabi.deadlock.math.DMath;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 
-public class Circle extends SweepableShape implements SweeperShape {
+public abstract class Circle extends SweepableShape implements SweeperShape {
 	
 	public final Point center;
 	public final double radius;
 	
 	public final AABB aabb;
-	
-	private final Ellipse2D ellipse;
 	
 	private int hash;
 	
@@ -29,8 +25,6 @@ public class Circle extends SweepableShape implements SweeperShape {
 		super(parent);
 		this.center = center;
 		this.radius = radius;
-		
-		ellipse = new Ellipse2D.Double(center.x - radius, center.y - radius, 2*radius, 2*radius);
 		
 		aabb = new AABB(center.x - radius, center.y - radius, 2*radius, 2*radius);
 	}
@@ -141,19 +135,4 @@ public class Circle extends SweepableShape implements SweeperShape {
 		return events;
 	}
 	
-	public java.awt.Shape java2D() {
-		return ellipse;
-	}
-	
-	public void paint(RenderingContext ctxt) {
-		
-		ctxt.fill(ellipse);
-		
-	}
-	
-	public void draw(RenderingContext ctxt) {
-		
-		ctxt.draw(ellipse);
-		
-	}
 }

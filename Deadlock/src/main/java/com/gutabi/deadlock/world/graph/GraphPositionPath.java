@@ -11,11 +11,11 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 
 import com.gutabi.deadlock.Entity;
+import com.gutabi.deadlock.geom.CapsuleSequence;
+import com.gutabi.deadlock.geom.Quad;
+import com.gutabi.deadlock.geom.ShapeUtils;
 import com.gutabi.deadlock.math.DMath;
 import com.gutabi.deadlock.math.Point;
-import com.gutabi.deadlock.math.geom.CapsuleSequence;
-import com.gutabi.deadlock.math.geom.Quad;
-import com.gutabi.deadlock.math.geom.ShapeUtils;
 import com.gutabi.deadlock.world.cars.Driver;
 import com.gutabi.deadlock.world.cars.VertexArrivalEvent;
 

@@ -1,4 +1,4 @@
-package com.gutabi.deadlock.math.geom;
+package com.gutabi.deadlock.geom;
 
 import java.awt.geom.GeneralPath;
 
@@ -7,8 +7,6 @@ import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 
 public class Triangle {
-	
-	private final GeneralPath tri;
 	
 	public Triangle(Point p0, Point p1, Point p2) {
 		

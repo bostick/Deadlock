@@ -2,9 +2,6 @@ package com.gutabi.deadlock.world;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
-import java.awt.Graphics2D;
-import java.awt.geom.AffineTransform;
-import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
@@ -14,8 +11,10 @@ import java.util.Set;
 import org.jbox2d.common.Vec2;
 
 import com.gutabi.deadlock.Entity;
+import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.math.Point;
-import com.gutabi.deadlock.math.geom.AABB;
+import com.gutabi.deadlock.ui.AffineTransform;
+import com.gutabi.deadlock.ui.Image;
 import com.gutabi.deadlock.ui.InputEvent;
 import com.gutabi.deadlock.ui.paint.Color;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
@@ -34,8 +33,8 @@ public class World {
 	
 	public WorldScreen screen;
 	
-	private BufferedImage background;
-	BufferedImage previewImage;
+	private Image background;
+	Image previewImage;
 	
 	public QuadrantMap quadrantMap;
 	public Graph graph;
@@ -80,7 +79,9 @@ public class World {
 	
 	public void panelPostDisplay() {
 		
-		background = new BufferedImage((int)screen.contentPane.worldPanel.aabb.width, (int)screen.contentPane.worldPanel.aabb.height, BufferedImage.TYPE_INT_RGB);
+		background = APP.platform.createImageEngine().createImage(
+				(int)screen.contentPane.worldPanel.aabb.width,
+				(int)screen.contentPane.worldPanel.aabb.height);
 		
 		quadrantMap.panelPostDisplay();
 		
@@ -93,9 +94,9 @@ public class World {
 	
 	public void previewPostDisplay() {
 		
-		previewImage = new BufferedImage(
+		previewImage = APP.platform.createImageEngine().createImage(
 				(int)screen.contentPane.controlPanel.previewAABB.width,
-				(int)screen.contentPane.controlPanel.previewAABB.height, BufferedImage.TYPE_INT_RGB);
+				(int)screen.contentPane.controlPanel.previewAABB.height);
 		
 	}
 	
@@ -381,25 +382,23 @@ public class World {
 	
 	public void render_worldPanel() {
 		
-		Graphics2D backgroundG2 = background.createGraphics();
+		RenderingContext ctxt = APP.platform.createRenderingContext(background);
 		
-		RenderingContext backgroundCtxt = APP.platform.createRenderingContext(backgroundG2);
-		backgroundCtxt.setColor(Color.LIGHT_GRAY);
-		backgroundCtxt.fillRect(0, 0, (int)screen.contentPane.worldPanel.aabb.width, (int)screen.contentPane.worldPanel.aabb.height);
+		ctxt.setColor(Color.LIGHT_GRAY);
+		ctxt.fillRect(0, 0, (int)screen.contentPane.worldPanel.aabb.width, (int)screen.contentPane.worldPanel.aabb.height);
 		
-		backgroundCtxt.scale(screen.pixelsPerMeter);
-		backgroundCtxt.translate(-screen.worldViewport.x, -screen.worldViewport.y);
+		ctxt.scale(screen.pixelsPerMeter);
+		ctxt.translate(-screen.worldViewport.x, -screen.worldViewport.y);
 		
-		quadrantMap.render_panel(backgroundCtxt);
-		graph.render_panel(backgroundCtxt);
+		quadrantMap.render_panel(ctxt);
+		graph.render_panel(ctxt);
 		
-		backgroundG2.dispose();
+		ctxt.dispose();
 	}
 	
 	public void render_preview() {
 		
-		Graphics2D previewImageG2 = previewImage.createGraphics();
-		RenderingContext ctxt = APP.platform.createRenderingContext(previewImageG2);
+		RenderingContext ctxt = APP.platform.createRenderingContext(previewImage);
 		
 		boolean oldDebug = APP.DEBUG_DRAW;
 		APP.DEBUG_DRAW = false; 
@@ -413,7 +412,7 @@ public class World {
 				screen.contentPane.controlPanel.previewAABB.width/2 - (screen.contentPane.controlPanel.previewPixelsPerMeter * screen.world.quadrantMap.worldWidth / 2),
 				screen.contentPane.controlPanel.previewAABB.height/2 - (screen.contentPane.controlPanel.previewPixelsPerMeter * screen.world.quadrantMap.worldHeight / 2));
 		
-		previewImageG2.scale(screen.contentPane.controlPanel.previewPixelsPerMeter, screen.contentPane.controlPanel.previewPixelsPerMeter);
+		ctxt.scale(screen.contentPane.controlPanel.previewPixelsPerMeter);
 		
 		screen.world.quadrantMap.render_preview(ctxt);
 		
@@ -423,7 +422,7 @@ public class World {
 		
 		APP.DEBUG_DRAW = oldDebug;
 		
-		previewImageG2.dispose();
+		ctxt.dispose();
 	}
 	
 	public void paint_panel(RenderingContext ctxt) {

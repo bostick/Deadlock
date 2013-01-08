@@ -4,8 +4,13 @@ import java.awt.Graphics2D;
 
 import javax.swing.RootPaneContainer;
 
+import com.gutabi.deadlock.geom.ShapeEngine;
+import com.gutabi.deadlock.geom.ShapeEngineImpl;
 import com.gutabi.deadlock.ui.ContentPane;
 import com.gutabi.deadlock.ui.ContentPaneImpl;
+import com.gutabi.deadlock.ui.ImageEngine;
+import com.gutabi.deadlock.ui.ImageEngineImpl;
+import com.gutabi.deadlock.ui.ImageImpl;
 import com.gutabi.deadlock.ui.paint.FontEngine;
 import com.gutabi.deadlock.ui.paint.FontEngineImpl;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
@@ -15,9 +20,19 @@ public class PlatformImpl extends Platform {
 
 	public RenderingContext createRenderingContext(Object... args) {
 		
-		Graphics2D g2 = (Graphics2D)args[0];
+		if (args[0] instanceof Graphics2D) {
+			
+			Graphics2D g2 = (Graphics2D)args[0];
+			
+			return new RenderingContextImpl(g2);
+		} else {
+			
+			ImageImpl img = (ImageImpl)args[0];
+			Graphics2D g2 = img.img.createGraphics();
+			
+			return new RenderingContextImpl(g2); 
+		}
 		
-		return new RenderingContextImpl(g2);
 	}
 	
 	public ContentPane createContentPane(Object... args) {
@@ -40,8 +55,16 @@ public class PlatformImpl extends Platform {
 		
 	}
 
-	public FontEngine createFontEngine() {
+	public FontEngine createFontEngine(Object... args) {
 		return new FontEngineImpl();
+	}
+	
+	public ImageEngine createImageEngine(Object... args) {
+		return new ImageEngineImpl();
+	}
+	
+	public ShapeEngine createShapeEngine(Object... args) {
+		return new ShapeEngineImpl();
 	}
 	
 }

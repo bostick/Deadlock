@@ -1,18 +1,13 @@
 package com.gutabi.deadlock.quadranteditor;
 
-import java.awt.image.BufferedImage;
+import com.gutabi.deadlock.geom.AABB;
 
-import com.gutabi.deadlock.Screen;
-import com.gutabi.deadlock.math.geom.AABB;
-
-public class QuadrantEditor extends Screen {
+public class QuadrantEditor {
 	
 	public QuadrantEditorContentPane contentPane;
 	
 	int quadrantRows;
 	int quadrantCols;
-	
-	BufferedImage quadrantGrass;
 	
 	AABB hilited;
 	
