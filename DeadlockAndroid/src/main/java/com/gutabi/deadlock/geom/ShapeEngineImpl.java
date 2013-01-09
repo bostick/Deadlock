@@ -11,35 +11,35 @@ public class ShapeEngineImpl extends ShapeEngine {
 	}
 
 	public Circle createCircle(Object parent, Point center, double radius) {
-		return new CircleImpl();
+		return new CircleImpl(parent, center, radius);
 	}
 
 	public Line createLine(Point p0, Point p1) {
-		return new LineImpl();
+		return new LineImpl(p0, p1);
 	}
 
 	public Polyline createPolyline(List<Point> pts) {
-		return new PolylineImpl();
+		return new PolylineImpl(pts);
 	}
 
 	public Quad createQuad(Object parent, Point p0, Point p1, Point p2, Point p3) {
-		return new QuadImpl();
+		return new QuadImpl(parent, p0, p1, p2, p3);
 	}
 
 	public Ellipse createEllipse(Point center, double x, double y) {
-		return new EllipseImpl();
+		return new EllipseImpl(center, x, y);
 	}
 
 	public Triangle createTriangle(Point p0, Point p1, Point p2) {
-		return new TriangleImpl();
+		return new TriangleImpl(p0, p1, p2);
 	}
 
 	public QuadCurve createQuadCurve(Point start, Point c0, Point end) {
-		return new QuadCurveImpl();
+		return new QuadCurveImpl(start, c0, end);
 	}
 
 	public CubicCurve createCubicCurve(Point start, Point c0, Point c1, Point end) {
-		return new CubicCurveImpl();
+		return new CubicCurveImpl(start, c0, c1, end);
 	}
 
 }

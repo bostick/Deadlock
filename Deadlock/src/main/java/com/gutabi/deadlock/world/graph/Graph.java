@@ -25,7 +25,7 @@ import com.gutabi.deadlock.geom.Sweepable;
 import com.gutabi.deadlock.math.DMath;
 import com.gutabi.deadlock.math.OverlappingException;
 import com.gutabi.deadlock.math.Point;
-import com.gutabi.deadlock.ui.AffineTransform;
+import com.gutabi.deadlock.ui.Transform;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.world.ControlPanel;
 import com.gutabi.deadlock.world.World;
@@ -1306,7 +1306,7 @@ public class Graph implements Sweepable {
 	
 	public void paintStats(RenderingContext ctxt) {
 		
-		AffineTransform origTransform = ctxt.getTransform();
+		Transform origTransform = ctxt.getTransform();
 		
 		ctxt.paintString(0, 0, 1.0/world.screen.pixelsPerMeter, "vertex count: " + vertices.size());
 		

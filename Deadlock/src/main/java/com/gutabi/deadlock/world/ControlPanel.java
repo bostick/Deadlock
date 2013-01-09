@@ -4,7 +4,7 @@ import static com.gutabi.deadlock.DeadlockApplication.APP;
 
 import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.math.Point;
-import com.gutabi.deadlock.ui.AffineTransform;
+import com.gutabi.deadlock.ui.Transform;
 import com.gutabi.deadlock.ui.Button;
 import com.gutabi.deadlock.ui.Checkbox;
 import com.gutabi.deadlock.ui.InputEvent;
@@ -52,7 +52,7 @@ public class ControlPanel extends PanelBase {
 		
 		this.screen = screen;
 		
-		aabb = APP.platform.createShapeEngine().createAABB(aabb.x, aabb.y, 200, 822);
+		aabb = APP.platform.createShapeEngine().createAABB(aabb.x, aabb.y, APP.CONTROLPANEL_WIDTH, APP.CONTROLPANEL_HEIGHT);
 		
 		simulationInitLab = new Label("Simulation Init:");
 		simulationInitLab.fontName = "Visitor TT1 BRK";
@@ -455,7 +455,7 @@ public class ControlPanel extends PanelBase {
 	
 	public void paint(RenderingContext ctxt) {
 		
-		AffineTransform origTransform = ctxt.getTransform();
+		Transform origTransform = ctxt.getTransform();
 		
 		ctxt.translate(aabb.x, aabb.y);
 		
@@ -494,7 +494,7 @@ public class ControlPanel extends PanelBase {
 	
 	public void paint_preview(RenderingContext ctxt) {
 		
-		AffineTransform origTrans = ctxt.getTransform();
+		Transform origTrans = ctxt.getTransform();
 		
 		ctxt.translate(previewAABB.x, previewAABB.y);
 		

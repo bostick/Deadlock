@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Scanner;
 
 import com.gutabi.deadlock.math.Point;
-import com.gutabi.deadlock.ui.AffineTransform;
+import com.gutabi.deadlock.ui.Transform;
 import com.gutabi.deadlock.ui.paint.Cap;
 import com.gutabi.deadlock.ui.paint.Color;
 import com.gutabi.deadlock.ui.paint.Join;
@@ -368,7 +368,7 @@ public final class Fixture extends Vertex {
 		
 		if (!APP.DEBUG_DRAW) {
 			
-			AffineTransform origTransform = ctxt.getTransform();
+			Transform origTransform = ctxt.getTransform();
 			
 			ctxt.translate(p.x, p.y);
 			

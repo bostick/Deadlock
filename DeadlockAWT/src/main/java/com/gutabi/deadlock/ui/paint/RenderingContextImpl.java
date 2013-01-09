@@ -1,24 +1,20 @@
 package com.gutabi.deadlock.ui.paint;
 
+import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Font;
 import java.awt.Graphics2D;
-import java.awt.geom.Line2D;
 import java.awt.image.BufferedImage;
 
-import org.jbox2d.common.Color3f;
-import org.jbox2d.common.Transform;
-import org.jbox2d.common.Vec2;
-
+import com.gutabi.deadlock.math.Dim;
 import com.gutabi.deadlock.math.Point;
-import com.gutabi.deadlock.ui.AffineTransform;
-import com.gutabi.deadlock.ui.Composite;
 import com.gutabi.deadlock.ui.Image;
 import com.gutabi.deadlock.ui.ImageImpl;
+import com.gutabi.deadlock.ui.Transform;
 
 public class RenderingContextImpl extends RenderingContext {
 	
-	public static Composite aComp = new CompositeImpl(java.awt.AlphaComposite.getInstance(java.awt.AlphaComposite.SRC_OVER, 0.5f));
+//	public static Composite aComp = java.awt.AlphaComposite.getInstance(java.awt.AlphaComposite.SRC_OVER, 0.5f));
 	
 	public final Graphics2D g2;
 	
@@ -26,17 +22,26 @@ public class RenderingContextImpl extends RenderingContext {
 		this.g2 = g2;
 	}
 	
-	public Composite getComposite() {
-		Composite c = new CompositeImpl(g2.getComposite());
-		return c;
-	}
+//	public Composite getComposite() {
+//		Composite c = new CompositeImpl(g2.getComposite());
+//		return c;
+//	}
+//	
+//	public void setComposite(Composite c) {
+//		g2.setComposite(((CompositeImpl)c).c);
+//	}
+//	
+//	public Composite getTransparentComposite() {
+//		return aComp;
+//	}
 	
-	public void setComposite(Composite c) {
-		g2.setComposite(((CompositeImpl)c).c);
-	}
-	
-	public Composite getTransparentComposite() {
-		return aComp;
+	public void setAlpha(double a) {
+		
+//		Composite origComposite = g2.getComposite();
+		
+		AlphaComposite comp = java.awt.AlphaComposite.getInstance(java.awt.AlphaComposite.SRC_OVER, (float)a);
+		g2.setComposite(comp);
+		
 	}
 	
 	public void setStroke(double width, Cap cap, Join join) {
@@ -104,9 +109,9 @@ public class RenderingContextImpl extends RenderingContext {
 		g2.setFont(f);
 	}
 	
-	public AffineTransform getTransform() {
+	public Transform getTransform() {
 		
-		AffineTransform t = new AffineTransformImpl(g2.getTransform());
+		Transform t = new TransformImpl(g2.getTransform());
 		
 		return t;
 	}
@@ -123,13 +128,13 @@ public class RenderingContextImpl extends RenderingContext {
 		g2.translate(p.x, p.y);
 	}
 	
-	public void translate(int tx, int ty) {
-		g2.translate(tx, ty);
-	}
+//	public void translate(int tx, int ty) {
+//		g2.translate(tx, ty);
+//	}
 	
-	public void setTransform(AffineTransform t) {
+	public void setTransform(Transform t) {
 		
-		java.awt.geom.AffineTransform t2 = ((AffineTransformImpl)t).t;
+		java.awt.geom.AffineTransform t2 = ((TransformImpl)t).t;
 		
 		g2.setTransform(t2);
 	}
@@ -138,8 +143,12 @@ public class RenderingContextImpl extends RenderingContext {
 		g2.rotate(a);
 	}
 	
-	public void rotate(double a, double x, double y) {
-		g2.rotate(a, x, y);
+	public void rotate(double a, Point p) {
+		g2.rotate(a, p.x, p.y);
+	}
+	
+	public void rotate(double a, Dim d) {
+		g2.rotate(a, d.width, d.height);
 	}
 	
 	public void paintString(double x, double y, double s, String str) {
@@ -172,36 +181,6 @@ public class RenderingContextImpl extends RenderingContext {
 	
 	public void fillRect(int x, int y, int width, int height) {
 		g2.fillRect(x, y, width, height);
-	}
-	
-	public void drawPoint(Vec2 argPoint, float argRadiusOnScreen, Color3f argColor) {
-		assert false;
-	}
-
-	public void drawSolidPolygon(Vec2[] vertices, int vertexCount, Color3f color) {
-		assert false;
-	}
-
-	public void drawCircle(Vec2 center, float radius, Color3f color) {
-		assert false;
-	}
-
-	public void drawSolidCircle(Vec2 center, float radius, Vec2 axis, Color3f color) {
-		assert false;
-	}
-	
-	public void drawSegment(Vec2 p1, Vec2 p2, Color3f color) {
-		setColor(Color.WHITE);
-		Line2D line = new Line2D.Double(p1.x, p1.y, p2.x, p2.y);
-		g2.draw(line);
-	}
-	
-	public void drawTransform(Transform xf) {
-		assert false;
-	}
-
-	public void drawString(float x, float y, String s, Color3f color) {
-		
 	}
 	
 	public void dispose() {

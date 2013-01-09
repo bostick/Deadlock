@@ -3,7 +3,7 @@ package com.gutabi.deadlock.world.sprites;
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
 import com.gutabi.deadlock.math.Point;
-import com.gutabi.deadlock.ui.AffineTransform;
+import com.gutabi.deadlock.ui.Transform;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.world.World;
 
@@ -60,7 +60,7 @@ public class AnimatedExplosion {
 	
 	private void paint(RenderingContext ctxt, int index) {
 		
-		AffineTransform origTransform = ctxt.getTransform();
+		Transform origTransform = ctxt.getTransform();
 		
 		ctxt.translate(p.x - explosionWidth/2, p.y - explosionHeight/2);
 		ctxt.paintImage(APP.explosionSheet, world.screen.pixelsPerMeter,

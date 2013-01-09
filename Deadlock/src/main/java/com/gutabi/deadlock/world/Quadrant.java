@@ -6,7 +6,7 @@ import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.geom.Line;
 import com.gutabi.deadlock.math.DMath;
 import com.gutabi.deadlock.math.Point;
-import com.gutabi.deadlock.ui.AffineTransform;
+import com.gutabi.deadlock.ui.Transform;
 import com.gutabi.deadlock.ui.paint.Cap;
 import com.gutabi.deadlock.ui.paint.Color;
 import com.gutabi.deadlock.ui.paint.Join;
@@ -117,7 +117,7 @@ public class Quadrant {
 		if (active) {
 			
 			if (!APP.DEBUG_DRAW) {
-				AffineTransform origTransform = ctxt.getTransform();
+				Transform origTransform = ctxt.getTransform();
 				
 				ctxt.translate(c * QuadrantMap.QUADRANT_WIDTH, r * QuadrantMap.QUADRANT_HEIGHT);
 				ctxt.paintImage(map.quadrantGrass, map.world.screen.pixelsPerMeter,

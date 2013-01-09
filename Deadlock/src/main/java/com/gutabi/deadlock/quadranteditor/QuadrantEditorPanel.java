@@ -3,7 +3,7 @@ package com.gutabi.deadlock.quadranteditor;
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
 import com.gutabi.deadlock.math.Point;
-import com.gutabi.deadlock.ui.AffineTransform;
+import com.gutabi.deadlock.ui.Transform;
 import com.gutabi.deadlock.ui.Button;
 import com.gutabi.deadlock.ui.InputEvent;
 import com.gutabi.deadlock.ui.PanelBase;
@@ -36,7 +36,7 @@ public class QuadrantEditorPanel extends PanelBase {
 	public QuadrantEditorPanel(final QuadrantEditor screen) {
 		this.screen = screen;
 		
-		aabb = APP.platform.createShapeEngine().createAABB(aabb.x, aabb.y, 1584, 822);
+		aabb = APP.platform.createShapeEngine().createAABB(aabb.x, aabb.y, APP.QUADRANTEDITORPANEL_WIDTH, APP.QUADRANTEDITORPANEL_HEIGHT);
 		
 		ini = new int[][] {
 				{1, 1, 1},
@@ -84,10 +84,10 @@ public class QuadrantEditorPanel extends PanelBase {
 			
 			public void paint(RenderingContext ctxt) {
 				
-				AffineTransform origTransform = ctxt.getTransform();
+				Transform origTransform = ctxt.getTransform();
 				
 				ctxt.translate(aabb.x, aabb.y);
-				ctxt.rotate(6 * Math.PI / 4, aabb.width/2, aabb.height/2);
+				ctxt.rotate(6 * Math.PI / 4, aabb.dim.multiply(0.5));
 				
 				ctxt.paintImage(APP.spriteSheet,
 						0, 0, 50, 50,
@@ -133,10 +133,10 @@ public class QuadrantEditorPanel extends PanelBase {
 			
 			public void paint(RenderingContext ctxt) {
 				
-				AffineTransform origTransform = ctxt.getTransform();
+				Transform origTransform = ctxt.getTransform();
 				
 				ctxt.translate(aabb.ul.x, aabb.ul.y);
-				ctxt.rotate(2 * Math.PI / 4, aabb.width/2, aabb.height/2);
+				ctxt.rotate(2 * Math.PI / 4, aabb.dim.multiply(0.5));
 				
 				ctxt.paintImage(APP.spriteSheet,
 						0, 0, 50, 50,
@@ -180,10 +180,10 @@ public class QuadrantEditorPanel extends PanelBase {
 			
 			public void paint(RenderingContext ctxt) {
 				
-				AffineTransform origTransform = ctxt.getTransform();
+				Transform origTransform = ctxt.getTransform();
 				
 				ctxt.translate(aabb.ul.x, aabb.ul.y);
-				ctxt.rotate(4 * Math.PI / 4, aabb.width/2, aabb.height/2);
+				ctxt.rotate(4 * Math.PI / 4, aabb.dim.multiply(0.5));
 				
 				ctxt.paintImage(APP.spriteSheet,
 						0, 0, 50, 50,
@@ -226,10 +226,10 @@ public class QuadrantEditorPanel extends PanelBase {
 			
 			public void paint(RenderingContext ctxt) {
 				
-				AffineTransform origTransform = ctxt.getTransform();
+				Transform origTransform = ctxt.getTransform();
 				
 				ctxt.translate(aabb.ul.x, aabb.ul.y);
-				ctxt.rotate(0 * Math.PI / 4, aabb.width/2, aabb.height/2);
+				ctxt.rotate(0 * Math.PI / 4, aabb.dim.multiply(0.5));
 				
 				ctxt.paintImage(APP.spriteSheet,
 						0, 0, 50, 50,
@@ -273,10 +273,10 @@ public class QuadrantEditorPanel extends PanelBase {
 			
 			public void paint(RenderingContext ctxt) {
 				
-				AffineTransform origTransform = ctxt.getTransform();
+				Transform origTransform = ctxt.getTransform();
 				
 				ctxt.translate(aabb.ul.x, aabb.ul.y);
-				ctxt.rotate(5 * Math.PI / 4, aabb.width/2, aabb.height/2);
+				ctxt.rotate(5 * Math.PI / 4, aabb.dim.multiply(0.5));
 				
 				ctxt.paintImage(APP.spriteSheet,
 						0, 0, 50, 50,
@@ -319,10 +319,10 @@ public class QuadrantEditorPanel extends PanelBase {
 			
 			public void paint(RenderingContext ctxt) {
 				
-				AffineTransform origTransform = ctxt.getTransform();
+				Transform origTransform = ctxt.getTransform();
 				
 				ctxt.translate(aabb.ul.x, aabb.ul.y);
-				ctxt.rotate(1 * Math.PI / 4, aabb.width/2, aabb.height/2);
+				ctxt.rotate(1 * Math.PI / 4, aabb.dim.multiply(0.5));
 				
 				ctxt.paintImage(APP.spriteSheet,
 						0, 0, 50, 50,
@@ -497,7 +497,7 @@ public class QuadrantEditorPanel extends PanelBase {
 	
 	public void paint(RenderingContext ctxt) {
 		
-		AffineTransform origTrans = ctxt.getTransform();
+		Transform origTrans = ctxt.getTransform();
 		
 		ctxt.translate(aabb.x, aabb.y);
 		
@@ -509,7 +509,7 @@ public class QuadrantEditorPanel extends PanelBase {
 		ctxt.setColor(Color.LIGHT_GRAY);
 		worldScreen.contentPane.worldPanel.aabb.paint(ctxt);
 		
-		AffineTransform origTrans2 = ctxt.getTransform();
+		Transform origTrans2 = ctxt.getTransform();
 		ctxt.translate(
 				worldScreen.contentPane.worldPanel.aabb.center.minus(worldScreen.contentPane.worldPanel.aabb.dim.multiply(0.5)));
 		

@@ -12,7 +12,7 @@ import org.jbox2d.common.Vec2;
 
 import com.gutabi.deadlock.Entity;
 import com.gutabi.deadlock.math.Point;
-import com.gutabi.deadlock.ui.AffineTransform;
+import com.gutabi.deadlock.ui.Transform;
 import com.gutabi.deadlock.ui.Image;
 import com.gutabi.deadlock.ui.InputEvent;
 import com.gutabi.deadlock.ui.paint.Color;
@@ -393,7 +393,7 @@ public class World {
 		ctxt.fillRect(
 				0, 0, (int)screen.contentPane.controlPanel.previewAABB.width, (int)screen.contentPane.controlPanel.previewAABB.height);
 		
-		AffineTransform origTrans = ctxt.getTransform();
+		Transform origTrans = ctxt.getTransform();
 		ctxt.translate(
 				screen.contentPane.controlPanel.previewAABB.width/2 - (screen.contentPane.controlPanel.previewPixelsPerMeter * screen.world.quadrantMap.worldWidth / 2),
 				screen.contentPane.controlPanel.previewAABB.height/2 - (screen.contentPane.controlPanel.previewPixelsPerMeter * screen.world.quadrantMap.worldHeight / 2));
@@ -418,7 +418,7 @@ public class World {
 				0, 0, (int)screen.contentPane.worldPanel.aabb.width, (int)screen.contentPane.worldPanel.aabb.height,
 				0, 0, background.getWidth(), background.getHeight());
 		
-		AffineTransform origTrans = ctxt.getTransform();
+		Transform origTrans = ctxt.getTransform();
 		
 		ctxt.scale(screen.pixelsPerMeter);
 		ctxt.translate(-screen.worldViewport.x, -screen.worldViewport.y);
@@ -446,7 +446,7 @@ public class World {
 	
 	public void paintStats(RenderingContext ctxt) {
 		
-		AffineTransform origTransform = ctxt.getTransform();
+		Transform origTransform = ctxt.getTransform();
 		
 		ctxt.paintString(0, 0, 1.0/screen.pixelsPerMeter, "time: " + t);
 		

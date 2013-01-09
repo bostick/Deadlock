@@ -29,7 +29,7 @@ public class CircleImpl extends Circle {
 	public void draw(RenderingContext ctxt) {
 		RenderingContextImpl c = (RenderingContextImpl)ctxt;
 		
-		c.paint.setStyle(Style.FILL);
+		c.paint.setStyle(Style.STROKE);
 		c.canvas.drawPath(p, c.paint);
 	}
 	

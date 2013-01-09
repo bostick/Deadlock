@@ -4,7 +4,7 @@ import static com.gutabi.deadlock.DeadlockApplication.APP;
 
 import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.math.Point;
-import com.gutabi.deadlock.ui.AffineTransform;
+import com.gutabi.deadlock.ui.Transform;
 import com.gutabi.deadlock.ui.InputEvent;
 import com.gutabi.deadlock.ui.PanelBase;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
@@ -18,7 +18,7 @@ public class WorldPanel extends PanelBase {
 	public WorldPanel(final WorldScreen screen) {
 		this.screen = screen;
 		
-		aabb = APP.platform.createShapeEngine().createAABB(aabb.x, aabb.y, 1384, 822);
+		aabb = APP.platform.createShapeEngine().createAABB(aabb.x, aabb.y, APP.WORLDPANEL_WIDTH, APP.WORLDPANEL_HEIGHT);
 	}
 	
 	public void setLocation(double x, double y) {
@@ -173,7 +173,7 @@ public class WorldPanel extends PanelBase {
 	
 	public void paint(RenderingContext ctxt) {
 		
-		AffineTransform origTrans = ctxt.getTransform();
+		Transform origTrans = ctxt.getTransform();
 		
 		ctxt.translate(aabb.x, aabb.y);
 		

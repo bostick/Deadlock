@@ -11,6 +11,7 @@ public class TriangleImpl extends Triangle {
 	private final GeneralPath tri;
 	
 	public TriangleImpl(Point p0, Point p1, Point p2) {
+		super(p0, p1, p2);
 		
 		tri = new GeneralPath();
 		tri.moveTo(p0.x, p0.y);

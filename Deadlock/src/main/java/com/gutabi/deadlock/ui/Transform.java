@@ -1,6 +1,6 @@
 package com.gutabi.deadlock.ui;
 
-public interface AffineTransform {
+public interface Transform {
 	
 	double getTranslateX();
 	

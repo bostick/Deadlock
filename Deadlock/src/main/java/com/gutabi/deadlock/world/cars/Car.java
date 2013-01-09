@@ -17,8 +17,7 @@ import com.gutabi.deadlock.geom.Quad;
 import com.gutabi.deadlock.geom.Shape;
 import com.gutabi.deadlock.math.DMath;
 import com.gutabi.deadlock.math.Point;
-import com.gutabi.deadlock.ui.AffineTransform;
-import com.gutabi.deadlock.ui.Composite;
+import com.gutabi.deadlock.ui.Transform;
 import com.gutabi.deadlock.ui.paint.Cap;
 import com.gutabi.deadlock.ui.paint.Color;
 import com.gutabi.deadlock.ui.paint.Join;
@@ -704,10 +703,9 @@ public class Car extends Entity {
 	
 	protected void paintImage(RenderingContext ctxt) {
 			
-		AffineTransform origTransform = ctxt.getTransform();
-		Composite origComposite = ctxt.getComposite();
+		Transform origTransform = ctxt.getTransform();
 		if (inMerger) {
-			ctxt.setComposite(ctxt.getTransparentComposite());
+			ctxt.setAlpha(0.5);
 		}
 		
 		ctxt.translate(p.x, p.y);
@@ -718,7 +716,9 @@ public class Car extends Entity {
 				0, 0, CAR_LENGTH, CAR_WIDTH,
 				sheetColStart, sheetRowStart, sheetColEnd, sheetRowEnd);
 		
-		ctxt.setComposite(origComposite);
+		if (inMerger) {
+			ctxt.setAlpha(1.0);
+		}
 		ctxt.setTransform(origTransform);
 		
 	}
@@ -729,12 +729,12 @@ public class Car extends Entity {
 	
 	private void paintBrakes(RenderingContext ctxt) {
 		
-		AffineTransform origTransform = ctxt.getTransform();
+		Transform origTransform = ctxt.getTransform();
 		
 		ctxt.translate(p.x, p.y);
 		ctxt.rotate(angle);
 		
-		AffineTransform brakeTransform = ctxt.getTransform();
+		Transform brakeTransform = ctxt.getTransform();
 		
 		ctxt.translate(CAR_BRAKE1X, CAR_BRAKE1Y);
 		ctxt.paintImage(APP.spriteSheet, world.screen.pixelsPerMeter,
@@ -754,7 +754,7 @@ public class Car extends Entity {
 	
 	private void paintID(RenderingContext ctxt) {
 		
-		AffineTransform origTransform = ctxt.getTransform();
+		Transform origTransform = ctxt.getTransform();
 		
 		ctxt.translate(p.x, p.y);
 		

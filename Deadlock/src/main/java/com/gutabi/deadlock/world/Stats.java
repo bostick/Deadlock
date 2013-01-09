@@ -1,6 +1,6 @@
 package com.gutabi.deadlock.world;
 
-import com.gutabi.deadlock.ui.AffineTransform;
+import com.gutabi.deadlock.ui.Transform;
 import com.gutabi.deadlock.ui.paint.Cap;
 import com.gutabi.deadlock.ui.paint.Color;
 import com.gutabi.deadlock.ui.paint.Join;
@@ -25,7 +25,7 @@ public class Stats {
 		ctxt.setXORMode(Color.DARK_GRAY);
 		ctxt.setStroke(0.0, Cap.SQUARE, Join.MITER);
 		
-		AffineTransform origTransform1 = ctxt.getTransform();
+		Transform origTransform1 = ctxt.getTransform();
 		
 		ctxt.translate(1, 1);
 		

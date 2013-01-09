@@ -2,7 +2,7 @@ package com.gutabi.deadlock.menu;
 
 import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.math.Point;
-import com.gutabi.deadlock.ui.AffineTransform;
+import com.gutabi.deadlock.ui.Transform;
 import com.gutabi.deadlock.ui.Label;
 import com.gutabi.deadlock.ui.paint.Cap;
 import com.gutabi.deadlock.ui.paint.Color;
@@ -49,7 +49,7 @@ public abstract class MenuItem {
 	
 	public void render(RenderingContext ctxt) {
 		
-		AffineTransform trans = ctxt.getTransform();
+		Transform trans = ctxt.getTransform();
 		
 		int x = (int)trans.getTranslateX();
 		int y = (int)trans.getTranslateY();

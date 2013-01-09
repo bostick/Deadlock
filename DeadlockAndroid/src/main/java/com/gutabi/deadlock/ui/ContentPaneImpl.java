@@ -1,10 +1,14 @@
 package com.gutabi.deadlock.ui;
 
-import com.gutabi.deadlock.MainView;
+import android.view.View;
 
 public class ContentPaneImpl extends ContentPaneBase {
 	
-	MainView container;
+	View container;
+	
+	public ContentPaneImpl(View container) {
+		this.container = container;
+	}
 	
 	public void repaint() {
 		container.invalidate();

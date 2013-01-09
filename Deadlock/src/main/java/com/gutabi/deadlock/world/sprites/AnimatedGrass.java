@@ -4,7 +4,7 @@ import static com.gutabi.deadlock.DeadlockApplication.APP;
 
 import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.math.Point;
-import com.gutabi.deadlock.ui.AffineTransform;
+import com.gutabi.deadlock.ui.Transform;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.world.World;
 
@@ -83,7 +83,7 @@ public class AnimatedGrass {
 	
 	private void paint0(RenderingContext ctxt) {
 		
-		AffineTransform origTransform = ctxt.getTransform();
+		Transform origTransform = ctxt.getTransform();
 		
 		ctxt.translate(p.x - AnimatedGrass.GRASS_SIZE/2, p.y - AnimatedGrass.GRASS_SIZE/2);
 		ctxt.paintImage(APP.spriteSheet, world.screen.pixelsPerMeter,
@@ -96,7 +96,7 @@ public class AnimatedGrass {
 	
 	private void paint1(RenderingContext ctxt) {
 		
-		AffineTransform origTransform = ctxt.getTransform();
+		Transform origTransform = ctxt.getTransform();
 		
 		ctxt.translate(p.x - AnimatedGrass.GRASS_SIZE/2, p.y - AnimatedGrass.GRASS_SIZE/2);
 		ctxt.paintImage(APP.spriteSheet, world.screen.pixelsPerMeter,
@@ -109,7 +109,7 @@ public class AnimatedGrass {
 	
 	private void paint2(RenderingContext ctxt) {
 		
-		AffineTransform origTransform = ctxt.getTransform();
+		Transform origTransform = ctxt.getTransform();
 		
 		ctxt.translate(p.x - AnimatedGrass.GRASS_SIZE/2, p.y - AnimatedGrass.GRASS_SIZE/2);
 		ctxt.paintImage(APP.spriteSheet, world.screen.pixelsPerMeter,

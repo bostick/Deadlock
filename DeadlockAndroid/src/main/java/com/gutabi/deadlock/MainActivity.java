@@ -23,7 +23,7 @@ public class MainActivity extends Activity {
 		MainView v = (MainView)findViewById(R.id.deadlock);
 		
 		
-		PlatformImpl platform = new PlatformImpl(getResources());
+		PlatformImpl platform = new PlatformImpl(getResources(), v);
 		APP.platform = platform;
 		try {
 			APP.init();

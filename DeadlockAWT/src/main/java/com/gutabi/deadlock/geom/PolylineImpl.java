@@ -12,6 +12,7 @@ public class PolylineImpl extends Polyline {
 	private final Path2D path;
 	
 	public PolylineImpl(List<Point> pts) {
+		super(pts);
 		
 		path = new Path2D.Double();
 		

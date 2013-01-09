@@ -3,7 +3,7 @@ package com.gutabi.deadlock.menu;
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
 import com.gutabi.deadlock.math.Point;
-import com.gutabi.deadlock.ui.AffineTransform;
+import com.gutabi.deadlock.ui.Transform;
 import com.gutabi.deadlock.ui.Image;
 import com.gutabi.deadlock.ui.InputEvent;
 import com.gutabi.deadlock.ui.PanelBase;
@@ -11,7 +11,7 @@ import com.gutabi.deadlock.ui.paint.Color;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 
 public class MenuPanel extends PanelBase {
-	
+		
 	public final int MENU_WIDTH = 800;
 	public final int MENU_HEIGHT = 600;
 	
@@ -22,7 +22,7 @@ public class MenuPanel extends PanelBase {
 	public MenuPanel(final MainMenu screen) {
 		this.screen = screen;
 		
-		aabb = APP.platform.createShapeEngine().createAABB(aabb.x, aabb.y, 1584, 822);
+		aabb = APP.platform.createShapeEngine().createAABB(aabb.x, aabb.y, APP.MENUPANEL_WIDTH, APP.MENUPANEL_HEIGHT);
 	}
 	
 	public void setLocation(double x, double y) {
@@ -101,7 +101,7 @@ public class MenuPanel extends PanelBase {
 			
 			RenderingContext ctxt = APP.platform.createRenderingContext(tmpImg);
 			
-			AffineTransform origTransform = ctxt.getTransform();
+			Transform origTransform = ctxt.getTransform();
 			
 			ctxt.translate(MENU_WIDTH/2 - screen.widest/2, 150);
 			
@@ -119,7 +119,7 @@ public class MenuPanel extends PanelBase {
 	
 	public void paint(RenderingContext ctxt) {
 		
-		AffineTransform origTrans = ctxt.getTransform();
+		Transform origTrans = ctxt.getTransform();
 		
 		ctxt.translate(aabb.x, aabb.y);
 		
@@ -128,7 +128,7 @@ public class MenuPanel extends PanelBase {
 		
 		ctxt.translate(aabb.width/2 - MENU_WIDTH/2, aabb.height/2 - MENU_HEIGHT/2);
 		
-		AffineTransform menuTrans = ctxt.getTransform();
+		Transform menuTrans = ctxt.getTransform();
 		
 		ctxt.paintImage(APP.titleBackground, 0, 0, MENU_WIDTH, MENU_HEIGHT, 0, 0, MENU_WIDTH, MENU_HEIGHT);
 		

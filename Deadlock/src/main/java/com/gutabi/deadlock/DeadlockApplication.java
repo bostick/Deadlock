@@ -7,6 +7,22 @@ import com.gutabi.deadlock.ui.ImageEngine;
 
 public class DeadlockApplication {
 	
+//	public final int MENUPANEL_WIDTH = 1584;
+//	public final int MENUPANEL_HEIGHT = 822;
+	public final int MENUPANEL_WIDTH = 800;
+	public final int MENUPANEL_HEIGHT = 600;
+	
+	public final int QUADRANTEDITORPANEL_WIDTH = 1584;
+	public final int QUADRANTEDITORPANEL_HEIGHT = 822;
+	
+	public final int CONTROLPANEL_WIDTH = 200;
+	public final int CONTROLPANEL_HEIGHT = 822;
+	
+	public final int WORLDPANEL_WIDTH = 1384;
+	public final int WORLDPANEL_HEIGHT = 822;
+	
+	
+	
 //	public URL codebase;
 	
 	public Platform platform;
