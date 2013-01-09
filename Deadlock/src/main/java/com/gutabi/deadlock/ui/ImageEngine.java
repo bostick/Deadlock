@@ -1,10 +1,10 @@
 package com.gutabi.deadlock.ui;
 
-import java.net.URL;
+import com.gutabi.deadlock.Resource;
 
 public interface ImageEngine {
 	
-	public Image readImage(URL url) throws Exception;
+	public Image readImage(Resource res) throws Exception;
 	
 	public Image createImage(int w, int h);
 	

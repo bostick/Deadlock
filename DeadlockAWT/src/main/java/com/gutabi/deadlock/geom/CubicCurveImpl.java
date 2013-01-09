@@ -1,7 +1,6 @@
 package com.gutabi.deadlock.geom;
 
 import java.awt.geom.CubicCurve2D;
-import java.util.List;
 
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
@@ -12,11 +11,8 @@ public class CubicCurveImpl extends CubicCurve {
 	private final CubicCurve2D c;
 	
 	public CubicCurveImpl(Point p0, Point c0, Point c1, Point p1) {
-		c = new CubicCurve2D.Double(p0.x, p0.y, c0.x, c0.y, c1.x, c1.x, p1.x, p1.y);
-	}
-	
-	public List<Point> skeleton() {
-		return AWTShapeUtils.skeleton(c);
+		super(p0, c0, c1, p1);
+		c = new CubicCurve2D.Double(p0.x, p0.y, c0.x, c0.y, c1.x, c1.y, p1.x, p1.y);
 	}
 
 	public void paint(RenderingContext ctxt) {

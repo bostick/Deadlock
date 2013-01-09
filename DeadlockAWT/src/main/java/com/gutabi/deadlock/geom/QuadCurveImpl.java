@@ -1,7 +1,6 @@
 package com.gutabi.deadlock.geom;
 
 import java.awt.geom.QuadCurve2D;
-import java.util.List;
 
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
@@ -11,12 +10,9 @@ public class QuadCurveImpl extends QuadCurve {
 	
 	private final QuadCurve2D q;
 	
-	public QuadCurveImpl(Point p0, Point c, Point p1) {
-		q = new QuadCurve2D.Double(p0.x, p0.y, c.x, c.y, p1.x, p1.y);
-	}
-	
-	public List<Point> skeleton() {
-		return AWTShapeUtils.skeleton(q);
+	public QuadCurveImpl(Point p0, Point c0, Point p1) {
+		super(p0, c0, p1);
+		q = new QuadCurve2D.Double(p0.x, p0.y, c0.x, c0.y, p1.x, p1.y);
 	}
 	
 	public void paint(RenderingContext ctxt) {

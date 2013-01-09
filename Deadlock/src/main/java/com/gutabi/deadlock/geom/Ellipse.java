@@ -2,6 +2,7 @@ package com.gutabi.deadlock.geom;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.gutabi.deadlock.math.Point;
@@ -24,6 +25,15 @@ public abstract class Ellipse implements Shape {
 		aabb = APP.platform.createShapeEngine().createAABB(center.x - xRadius, center.y - yRadius, 2*xRadius, 2*yRadius);
 	}
 	
-	public abstract List<Point> skeleton();
+	public List<Point> skeleton() {
+		
+		List<Point> pts = new ArrayList<Point>();
+		for (int i = 0; i <= 32; i ++) {
+			Point p = new Point(xRadius * Math.cos(2 * Math.PI * i / 32), yRadius * Math.sin(2 * Math.PI * i / 32)).plus(center);
+			pts.add(p);
+		}
+		
+		return pts;
+	}
 	
 }

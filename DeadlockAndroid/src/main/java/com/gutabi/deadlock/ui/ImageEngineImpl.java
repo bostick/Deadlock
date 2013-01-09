@@ -1,27 +1,41 @@
 package com.gutabi.deadlock.ui;
 
-import java.net.URL;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+
+import com.gutabi.deadlock.Resource;
+import com.gutabi.deadlock.ResourceImpl;
 
 public class ImageEngineImpl implements ImageEngine {
 	
-	public Image readImage(URL url) throws Exception {
-		BufferedImage img = ImageIO.read(url);
+	Resources resources;
+	
+	public ImageEngineImpl(Resources resources) {
+		this.resources = resources;
+	}
+	
+	public Image readImage(Resource res) throws Exception {
 		
-		return new ImageImpl(img);
+		Integer id = ((ResourceImpl)res).id;
+		
+		Bitmap b = BitmapFactory.decodeResource(resources, id);
+		
+		return new ImageImpl(b);
 	}
 	
 	public Image createImage(int width, int height) {
 		
-		BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+		Bitmap b = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
 		
-		return new ImageImpl(img);
+		return new ImageImpl(b);
 	}
 	
 	public Image createTransparentImage(int width, int height) {
 		
-		BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+		Bitmap b = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
 		
-		return new ImageImpl(img);
+		return new ImageImpl(b);
 	}
 
 }

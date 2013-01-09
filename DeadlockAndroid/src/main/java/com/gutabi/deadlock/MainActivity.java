@@ -10,7 +10,6 @@ import com.gutabi.deadlock.menu.MainMenu;
 
 public class MainActivity extends Activity {
 	
-	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
@@ -24,7 +23,7 @@ public class MainActivity extends Activity {
 		MainView v = (MainView)findViewById(R.id.deadlock);
 		
 		
-		PlatformImpl platform = new PlatformImpl();
+		PlatformImpl platform = new PlatformImpl(getResources());
 		APP.platform = platform;
 		try {
 			APP.init();

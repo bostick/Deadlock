@@ -5,9 +5,15 @@ import java.net.URL;
 
 import javax.imageio.ImageIO;
 
+import com.gutabi.deadlock.Resource;
+import com.gutabi.deadlock.ResourceImpl;
+
 public class ImageEngineImpl implements ImageEngine {
 	
-	public Image readImage(URL url) throws Exception {
+	public Image readImage(Resource res) throws Exception {
+		
+		URL url = ((ResourceImpl)res).url;
+		
 		BufferedImage img = ImageIO.read(url);
 		
 		return new ImageImpl(img);

@@ -74,6 +74,10 @@ public class PlatformImpl extends Platform {
 		return new ShapeEngineImpl();
 	}
 	
+	public ResourceEngine createResourceEngine(Object... args) {
+		return new ResourceEngineImpl();
+	}
+	
 	public void exit() {
 		
 		try {

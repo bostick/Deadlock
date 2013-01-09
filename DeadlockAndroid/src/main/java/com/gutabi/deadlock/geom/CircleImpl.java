@@ -1,6 +1,8 @@
 package com.gutabi.deadlock.geom;
 
-import java.awt.geom.Ellipse2D;
+import android.graphics.Paint.Style;
+import android.graphics.Path;
+import android.graphics.Path.Direction;
 
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
@@ -8,22 +10,27 @@ import com.gutabi.deadlock.ui.paint.RenderingContextImpl;
 
 public class CircleImpl extends Circle {
 	
-	private final Ellipse2D ellipse;
+	Path p;
 	
 	public CircleImpl(Object parent, Point center, double radius) {
 		super(parent, center, radius);
 		
-		ellipse = new Ellipse2D.Double(center.x - radius, center.y - radius, 2*radius, 2*radius);
+		p = new Path();
+		p.addCircle((float)center.x, (float)center.y, (float)radius, Direction.CW);
 	}
 
 	public void paint(RenderingContext ctxt) {
 		RenderingContextImpl c = (RenderingContextImpl)ctxt;
-		c.g2.fill(ellipse);
+		
+		c.paint.setStyle(Style.FILL);
+		c.canvas.drawPath(p, c.paint);
 	}
 
 	public void draw(RenderingContext ctxt) {
 		RenderingContextImpl c = (RenderingContextImpl)ctxt;
-		c.g2.draw(ellipse);
+		
+		c.paint.setStyle(Style.FILL);
+		c.canvas.drawPath(p, c.paint);
 	}
 	
 }

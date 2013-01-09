@@ -20,6 +20,8 @@ public abstract class Platform {
 	
 	public abstract ShapeEngine createShapeEngine(Object... args);
 	
+	public abstract ResourceEngine createResourceEngine(Object... args);
+	
 	public abstract void exit();
 	
 }

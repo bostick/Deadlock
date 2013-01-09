@@ -36,14 +36,15 @@ public class DeadlockApplication {
 	
 	public void init() throws Exception {
 		
-		ImageEngine engine = platform.createImageEngine();
+		ImageEngine iEngine = platform.createImageEngine();
+		ResourceEngine rEngine = platform.createResourceEngine();
 		
-		carSheet = engine.readImage(DeadlockApplication.class.getResource("/img/carsheet.png"));
-		spriteSheet = engine.readImage(DeadlockApplication.class.getResource("/img/spritesheet.png"));
-		explosionSheet = engine.readImage(DeadlockApplication.class.getResource("/img/explosionsheet.png"));
-		titleBackground = engine.readImage(DeadlockApplication.class.getResource("/img/title_background.png"));
-		title_white = engine.readImage(DeadlockApplication.class.getResource("/img/title_white.png"));
-		copyright = engine.readImage(DeadlockApplication.class.getResource("/img/copyright.png"));
+		carSheet = iEngine.readImage(rEngine.resource("carsheet"));
+		spriteSheet = iEngine.readImage(rEngine.resource("spritesheet"));
+		explosionSheet = iEngine.readImage(rEngine.resource("explosionsheet"));
+		titleBackground = iEngine.readImage(rEngine.resource("title_background"));
+		title_white = iEngine.readImage(rEngine.resource("title_white"));
+		copyright = iEngine.readImage(rEngine.resource("copyright"));
 	}
 	
 	public void exit() {
