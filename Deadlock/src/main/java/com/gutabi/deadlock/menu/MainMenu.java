@@ -22,8 +22,11 @@ public class MainMenu {
 	public MenuItem hilited;
 	public MenuItem firstMenuItem;
 	
-	double widest;
-	int totalHeight;
+	double menuItemWidest;
+	int totalMenuItemHeight;
+	
+	public double menuWidth;
+	public double menuHeight;
 	
 //	static Logger logger = Logger.getLogger(MainMenu.class);
 	

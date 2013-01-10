@@ -15,7 +15,7 @@
 	<property name="javaTgtVersion" value="1.6"/>
 	
 	<property name="srcDir" location="../src/main/java"/>
-	<property name="iconDir" location="../../DeadlockArtwork/build/bin/img"/>
+	<property name="iconDir" location="../../DeadlockResources/build/bin/img"/>
 	<property name="buildDir" location="../build"/>
 	<property name="distDir" location="${buildDir}/dist/Deadlock"/>
 	

@@ -7,19 +7,29 @@ import com.gutabi.deadlock.ui.ImageEngine;
 
 public class DeadlockApplication {
 	
-//	public final int MENUPANEL_WIDTH = 1584;
-//	public final int MENUPANEL_HEIGHT = 822;
-	public final int MENUPANEL_WIDTH = 800;
-	public final int MENUPANEL_HEIGHT = 600;
+	public int MENUPANEL_WIDTH = -1;
+	public int MENUPANEL_HEIGHT = -1;
 	
-	public final int QUADRANTEDITORPANEL_WIDTH = 1584;
-	public final int QUADRANTEDITORPANEL_HEIGHT = 822;
+	public int QUADRANTEDITORPANEL_WIDTH = -1;
+	public int QUADRANTEDITORPANEL_HEIGHT = -1;
 	
-	public final int CONTROLPANEL_WIDTH = 200;
-	public final int CONTROLPANEL_HEIGHT = 822;
+	public int CONTROLPANEL_WIDTH = -1;
+	public int CONTROLPANEL_HEIGHT = -1;
 	
-	public final int WORLDPANEL_WIDTH = 1384;
-	public final int WORLDPANEL_HEIGHT = 822;
+	public int WORLDPANEL_WIDTH = -1;
+	public int WORLDPANEL_HEIGHT = -1;
+	
+	
+	public int MENU_WIDTH = -1;
+	public int MENU_HEIGHT = -1;
+	
+	public int TITLE_CENTER_Y = -1;
+	public int MENU_CENTER_Y = -1;
+	public int COPYRIGHT_CENTER_Y = -1;
+	
+	
+	
+	
 	
 	
 	

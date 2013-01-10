@@ -22,6 +22,32 @@ public class MainActivity extends Activity {
 		
 		MainView v = (MainView)findViewById(R.id.deadlock);
 		
+		APP.MENUPANEL_WIDTH = 480;
+		APP.MENUPANEL_HEIGHT = 800;
+		
+		APP.QUADRANTEDITORPANEL_WIDTH = 1584;
+		APP.QUADRANTEDITORPANEL_HEIGHT = 822;
+		
+		APP.CONTROLPANEL_WIDTH = 200;
+		APP.CONTROLPANEL_HEIGHT = 822;
+		
+		APP.WORLDPANEL_WIDTH = 1384;
+		APP.WORLDPANEL_HEIGHT = 822;
+		
+		
+		APP.MENU_WIDTH = 480;
+		APP.MENU_HEIGHT = 800;
+		
+		APP.TITLE_CENTER_Y = 200;
+		APP.MENU_CENTER_Y = 450;
+		APP.COPYRIGHT_CENTER_Y = 668;
+		
+		
+		
+		
+		
+		
+		
 		
 		PlatformImpl platform = new PlatformImpl(getResources(), v);
 		APP.platform = platform;

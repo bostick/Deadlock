@@ -21,6 +21,29 @@ public class DeadlockMain  {
 	
 	static void createAndShowGUI() throws Exception {
 		
+		APP.MENUPANEL_WIDTH = 1584;
+		APP.MENUPANEL_HEIGHT = 822;
+		
+		APP.QUADRANTEDITORPANEL_WIDTH = 1584;
+		APP.QUADRANTEDITORPANEL_HEIGHT = 822;
+		
+		APP.CONTROLPANEL_WIDTH = 200;
+		APP.CONTROLPANEL_HEIGHT = 822;
+		
+		APP.WORLDPANEL_WIDTH = 1384;
+		APP.WORLDPANEL_HEIGHT = 822;
+		
+		
+		APP.MENU_WIDTH = 800;
+		APP.MENU_HEIGHT = 600;
+		
+		APP.TITLE_CENTER_Y = 65;
+		APP.MENU_CENTER_Y = 300;
+		APP.COPYRIGHT_CENTER_Y = 568;
+		
+		
+		
+		
 		PlatformImpl platform = new PlatformImpl();
 		APP.platform = platform;
 		APP.init();
