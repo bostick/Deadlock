@@ -1,14 +1,15 @@
 package com.gutabi.deadlock;
 
-import java.net.URL;
 
 public class ResourceImpl implements Resource {
 	
-	public URL url;
+	public String name;
+//	public URL url;
 	
-	public ResourceImpl(Object arg) {
+	public ResourceImpl(String name) {
 		
-		this.url = (URL)arg;
+		this.name = name;
+//		this.url = (URL)arg;
 		
 	}
 	

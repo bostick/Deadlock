@@ -2,12 +2,16 @@
 
 <project name="DeadlockAndroid" default="build" basedir=".">
 	
-	<property name="iconDir" location="../../DeadlockArtwork/build/bin/img"/>
+    <property name="buildDir" location="../../DeadlockResources/build"/>
+	<property name="iconDir" location="../../DeadlockResources/build/bin/img"/>
+	
+	
 	<property name="drawableDir" location="../res/drawable-hdpi"/>
+	<property name="assetsDir" location="../assets"/>
 	
 	<target name="build">
 	    
-	    <subant buildpath="../../DeadlockArtwork/scripts" target="build" />
+	    <subant buildpath="../../DeadlockResources/scripts" target="build" />
 		
 		<copy tofile="${drawableDir}/copyright.png" file="${iconDir}/copyright.png"/>
 		<copy tofile="${drawableDir}/explosionsheet.png" file="${iconDir}/explosionsheet.png"/>
@@ -15,6 +19,9 @@
 		<copy tofile="${drawableDir}/spritesheet.png" file="${iconDir}/spritesheet.png"/>
 		<copy tofile="${drawableDir}/title_background.png" file="${iconDir}/title_background.png"/>
 		<copy tofile="${drawableDir}/title_white.png" file="${iconDir}/title_white.png"/>
+		
+		<copy tofile="${assetsDir}/fonts/visitor1.ttf" file="${buildDir}/bin/fonts/visitor1.ttf"/>
+		<copy tofile="${assetsDir}/fonts/visitor2.ttf" file="${buildDir}/bin/fonts/visitor2.ttf"/>
 		
 	</target>
 

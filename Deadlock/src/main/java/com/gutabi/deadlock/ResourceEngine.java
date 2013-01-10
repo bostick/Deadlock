@@ -2,6 +2,8 @@ package com.gutabi.deadlock;
 
 public interface ResourceEngine {
 	
-	Resource resource(String name);
+	Resource imageResource(String name);
+	
+	Resource fontResource(String name);
 	
 }

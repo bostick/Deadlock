@@ -2,14 +2,15 @@ package com.gutabi.deadlock.world;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
+import com.gutabi.deadlock.Resource;
 import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.math.Point;
-import com.gutabi.deadlock.ui.Transform;
 import com.gutabi.deadlock.ui.Button;
 import com.gutabi.deadlock.ui.Checkbox;
 import com.gutabi.deadlock.ui.InputEvent;
 import com.gutabi.deadlock.ui.Label;
 import com.gutabi.deadlock.ui.PanelBase;
+import com.gutabi.deadlock.ui.Transform;
 import com.gutabi.deadlock.ui.paint.Color;
 import com.gutabi.deadlock.ui.paint.FontStyle;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
@@ -54,8 +55,10 @@ public class ControlPanel extends PanelBase {
 		
 		aabb = APP.platform.createShapeEngine().createAABB(aabb.x, aabb.y, APP.CONTROLPANEL_WIDTH, APP.CONTROLPANEL_HEIGHT);
 		
+		Resource visitorFontFile = APP.platform.createResourceEngine().fontResource("visitor1");
+		
 		simulationInitLab = new Label("Simulation Init:");
-		simulationInitLab.fontName = "Visitor TT1 BRK";
+		simulationInitLab.fontFile = visitorFontFile;
 		simulationInitLab.fontStyle = FontStyle.PLAIN;
 		simulationInitLab.fontSize = 16;
 		simulationInitLab.renderLocal();
@@ -77,7 +80,7 @@ public class ControlPanel extends PanelBase {
 		normalCarButton.render();
 		
 		normalCarsLab = new Label("Normal Cars");
-		normalCarsLab.fontName = "Visitor TT1 BRK";
+		normalCarsLab.fontFile = visitorFontFile;
 		normalCarsLab.fontStyle = FontStyle.PLAIN;
 		normalCarsLab.fontSize = 16;
 		normalCarsLab.renderLocal();
@@ -101,7 +104,7 @@ public class ControlPanel extends PanelBase {
 		
 		
 		fastCarLab = new Label("Fast Cars");
-		fastCarLab.fontName = "Visitor TT1 BRK";
+		fastCarLab.fontFile = visitorFontFile;
 		fastCarLab.fontStyle = FontStyle.PLAIN;
 		fastCarLab.fontSize = 16;
 		fastCarLab.renderLocal();
@@ -123,7 +126,7 @@ public class ControlPanel extends PanelBase {
 		reallyCarButton.render();
 		
 		reallyCarLab = new Label("Really Fast Cars");
-		reallyCarLab.fontName = "Visitor TT1 BRK";
+		reallyCarLab.fontFile = visitorFontFile;
 		reallyCarLab.fontStyle = FontStyle.PLAIN;
 		reallyCarLab.fontSize = 16;
 		reallyCarLab.renderLocal();
@@ -145,7 +148,7 @@ public class ControlPanel extends PanelBase {
 		truckButton.render();
 		
 		truckLab = new Label("Trucks");
-		truckLab.fontName = "Visitor TT1 BRK";
+		truckLab.fontFile = visitorFontFile;
 		truckLab.fontStyle = FontStyle.PLAIN;
 		truckLab.fontSize = 16;
 		truckLab.renderLocal();
@@ -180,7 +183,7 @@ public class ControlPanel extends PanelBase {
 			}
 		};
 		startButton.lab = new Label("Start");
-		startButton.lab.fontName = "Visitor TT1 BRK";
+		startButton.lab.fontFile = visitorFontFile;
 		startButton.lab.fontStyle = FontStyle.PLAIN;
 		startButton.lab.fontSize = 16;
 		startButton.command = "start";
@@ -205,7 +208,7 @@ public class ControlPanel extends PanelBase {
 			}
 		};
 		stopButton.lab = new Label("Stop");
-		stopButton.lab.fontName = "Visitor TT1 BRK";
+		stopButton.lab.fontFile = visitorFontFile;
 		stopButton.lab.fontStyle = FontStyle.PLAIN;
 		stopButton.lab.fontSize = 16;
 		stopButton.command = "stop";
@@ -215,7 +218,7 @@ public class ControlPanel extends PanelBase {
 		
 		
 		stateLab = new Label("Simulation State:");
-		stateLab.fontName = "Visitor TT1 BRK";
+		stateLab.fontFile = visitorFontFile;
 		stateLab.fontStyle = FontStyle.PLAIN;
 		stateLab.fontSize = 16;
 		stateLab.renderLocal();
@@ -240,7 +243,7 @@ public class ControlPanel extends PanelBase {
 		fpsCheckBox.render();
 		
 		fpsLab = new Label("FPS");
-		fpsLab.fontName = "Visitor TT1 BRK";
+		fpsLab.fontFile = visitorFontFile;
 		fpsLab.fontStyle = FontStyle.PLAIN;
 		fpsLab.fontSize = 16;
 		fpsLab.renderLocal();
@@ -265,7 +268,7 @@ public class ControlPanel extends PanelBase {
 		stopSignCheckBox.render();
 		
 		stopSignLab = new Label("Stop Signs");
-		stopSignLab.fontName = "Visitor TT1 BRK";
+		stopSignLab.fontFile = visitorFontFile;
 		stopSignLab.fontStyle = FontStyle.PLAIN;
 		stopSignLab.fontSize = 16;
 		stopSignLab.renderLocal();
@@ -289,7 +292,7 @@ public class ControlPanel extends PanelBase {
 		carTextureCheckBox.render();
 		
 		carTextureLab = new Label("Car Textures");
-		carTextureLab.fontName = "Visitor TT1 BRK";
+		carTextureLab.fontFile = visitorFontFile;
 		carTextureLab.fontStyle = FontStyle.PLAIN;
 		carTextureLab.fontSize = 16;
 		carTextureLab.renderLocal();
@@ -313,7 +316,7 @@ public class ControlPanel extends PanelBase {
 		explosionsCheckBox.render();
 		
 		explosionsLab = new Label("Explosions");
-		explosionsLab.fontName = "Visitor TT1 BRK";
+		explosionsLab.fontFile = visitorFontFile;
 		explosionsLab.fontStyle = FontStyle.PLAIN;
 		explosionsLab.fontSize = 16;
 		explosionsLab.renderLocal();
@@ -338,7 +341,7 @@ public class ControlPanel extends PanelBase {
 		debugCheckBox.render();
 		
 		debugLab = new Label("debug");
-		debugLab.fontName = "Visitor TT1 BRK";
+		debugLab.fontFile = visitorFontFile;
 		debugLab.fontStyle = FontStyle.PLAIN;
 		debugLab.fontSize = 16;
 		debugLab.renderLocal();

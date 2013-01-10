@@ -9,6 +9,8 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Typeface;
 
+import com.gutabi.deadlock.Resource;
+import com.gutabi.deadlock.ResourceImpl;
 import com.gutabi.deadlock.math.Dim;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.Image;
@@ -64,7 +66,7 @@ public class RenderingContextImpl extends RenderingContext {
 		
 	}
 	
-	public void setFont(String name, FontStyle style, int size) {
+	public void setFont(Resource font, FontStyle style, int size) {
 		
 		int s = -1;
 		switch (style) {
@@ -73,9 +75,7 @@ public class RenderingContextImpl extends RenderingContext {
 			break;
 		}
 		
-		Typeface face = Typeface.create(name, s);
-		
-		paint.setTypeface(face);
+		paint.setTypeface(((ResourceImpl)font).face);
 		paint.setTextSize(size);
 	}
 	

@@ -77,7 +77,7 @@ public class PlatformImpl extends Platform {
 	}
 
 	public ResourceEngine createResourceEngine(Object... args) {
-		return new ResourceEngineImpl();
+		return new ResourceEngineImpl(resources);
 	}
 	
 }

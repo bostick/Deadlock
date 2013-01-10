@@ -1,7 +1,6 @@
 package com.gutabi.deadlock.ui;
 
 import java.awt.image.BufferedImage;
-import java.net.URL;
 
 import javax.imageio.ImageIO;
 
@@ -12,9 +11,7 @@ public class ImageEngineImpl implements ImageEngine {
 	
 	public Image readImage(Resource res) throws Exception {
 		
-		URL url = ((ResourceImpl)res).url;
-		
-		BufferedImage img = ImageIO.read(url);
+		BufferedImage img = ImageIO.read(this.getClass().getResource(((ResourceImpl)res).name));
 		
 		return new ImageImpl(img);
 	}

@@ -1,8 +1,18 @@
 package com.gutabi.deadlock;
 
-public class ResourceEngineImpl implements ResourceEngine {
+import android.content.res.AssetManager;
+import android.content.res.Resources;
+import android.graphics.Typeface;
 
-	public Resource resource(String name) {
+public class ResourceEngineImpl implements ResourceEngine {
+	
+	Resources resources;
+	
+	public ResourceEngineImpl(Resources resources) {
+		this.resources = resources;
+	}
+	
+	public Resource imageResource(String name) {
 		
 		if (name.equals("carsheet")) {
 			return new ResourceImpl(R.drawable.carsheet);
@@ -21,4 +31,14 @@ public class ResourceEngineImpl implements ResourceEngine {
 		return null;
 	}
 
+	public Resource fontResource(String name) {
+		
+		AssetManager am = resources.getAssets();
+		
+		if (name.equals("visitor1")) {
+			return new ResourceImpl(Typeface.createFromAsset(am, "fonts/" + name + ".ttf"));
+		}
+		
+		return null;
+	}
 }

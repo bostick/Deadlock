@@ -55,12 +55,12 @@ public class DeadlockApplication {
 		ImageEngine iEngine = platform.createImageEngine();
 		ResourceEngine rEngine = platform.createResourceEngine();
 		
-		carSheet = iEngine.readImage(rEngine.resource("carsheet"));
-		spriteSheet = iEngine.readImage(rEngine.resource("spritesheet"));
-		explosionSheet = iEngine.readImage(rEngine.resource("explosionsheet"));
-		titleBackground = iEngine.readImage(rEngine.resource("title_background"));
-		title_white = iEngine.readImage(rEngine.resource("title_white"));
-		copyright = iEngine.readImage(rEngine.resource("copyright"));
+		carSheet = iEngine.readImage(rEngine.imageResource("carsheet"));
+		spriteSheet = iEngine.readImage(rEngine.imageResource("spritesheet"));
+		explosionSheet = iEngine.readImage(rEngine.imageResource("explosionsheet"));
+		titleBackground = iEngine.readImage(rEngine.imageResource("title_background"));
+		title_white = iEngine.readImage(rEngine.imageResource("title_white"));
+		copyright = iEngine.readImage(rEngine.imageResource("copyright"));
 	}
 	
 	public void exit() {

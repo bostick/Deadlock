@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 
-<project name="DeadlockArtwork" default="build" basedir=".">
+<project name="DeadlockResources" default="build" basedir=".">
 	
 	<property name="iconDir" location=".."/>
 	<property name="buildDir" location="../build"/>
@@ -19,6 +19,8 @@
 		<copy tofile="${buildDir}/bin/img/title_white.png" file="${iconDir}/title_white.png"/>
 		<copy tofile="${buildDir}/bin/img/icon256x256.ico" file="${iconDir}/icon256x256.ico"/>
 		
+		<copy tofile="${buildDir}/bin/fonts/visitor1.ttf" file="${iconDir}/visitor1.ttf"/>
+		<copy tofile="${buildDir}/bin/fonts/visitor2.ttf" file="${iconDir}/visitor2.ttf"/>
 	</target>
 
 </project>

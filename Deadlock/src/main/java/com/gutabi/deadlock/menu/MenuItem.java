@@ -1,5 +1,7 @@
 package com.gutabi.deadlock.menu;
 
+import static com.gutabi.deadlock.DeadlockApplication.APP;
+
 import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.Transform;
@@ -31,7 +33,8 @@ public abstract class MenuItem {
 	public MenuItem(MainMenu menu, String text) {
 		this.menu = menu;
 		lab = new Label(text);
-		lab.fontName = "Visitor TT1 BRK";
+//		lab.fontFileName = "Visitor TT1 BRK";
+		lab.fontFile = APP.platform.createResourceEngine().fontResource("visitor1");
 		lab.fontStyle = FontStyle.PLAIN;
 		lab.fontSize = 48;
 		lab.renderLocal();

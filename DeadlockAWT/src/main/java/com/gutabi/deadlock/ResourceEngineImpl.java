@@ -1,14 +1,24 @@
 package com.gutabi.deadlock;
 
-import java.net.URL;
 
 public class ResourceEngineImpl implements ResourceEngine {
 	
-	public Resource resource(String name) {
+	public Resource imageResource(String name) {
 		
-		URL url = DeadlockApplication.class.getResource("/img/" + name + ".png");
+		String full = "/img/" + name + ".png";
 		
-		return new ResourceImpl(url);
+//		URL url = DeadlockApplication.class.getResource(full);
+		
+		return new ResourceImpl(full);
 	}
 	
+	public Resource fontResource(String name) {
+		
+		String full = "/fonts/" + name + ".ttf";
+		
+//		URL url = DeadlockApplication.class.getResource(full);
+		
+		return new ResourceImpl(full);
+	}
+
 }

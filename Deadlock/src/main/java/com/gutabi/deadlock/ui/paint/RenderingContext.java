@@ -1,17 +1,18 @@
 package com.gutabi.deadlock.ui.paint;
 
+import static com.gutabi.deadlock.DeadlockApplication.APP;
+
 import org.jbox2d.callbacks.DebugDraw;
 import org.jbox2d.common.Color3f;
 import org.jbox2d.common.OBBViewportTransform;
 import org.jbox2d.common.Vec2;
 
+import com.gutabi.deadlock.Resource;
 import com.gutabi.deadlock.geom.Line;
 import com.gutabi.deadlock.math.Dim;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.Image;
 import com.gutabi.deadlock.ui.Transform;
-
-import static com.gutabi.deadlock.DeadlockApplication.APP;
 
 public abstract class RenderingContext extends DebugDraw {
 	
@@ -37,7 +38,7 @@ public abstract class RenderingContext extends DebugDraw {
 	
 	public abstract void setPaintMode();
 	
-	public abstract void setFont(String name, FontStyle style, int size);
+	public abstract void setFont(Resource fontFile, FontStyle style, int size);
 	
 	public abstract Transform getTransform();
 	

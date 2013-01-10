@@ -29,7 +29,7 @@
 	
 	<target name="build">
 		
-	    <subant buildpath="../../DeadlockArtwork/scripts" target="build" />
+	    <subant buildpath="../../DeadlockResources/scripts" target="build" />
 	    
 		<delete dir="${buildDir}" />
 		<mkdir dir="${buildDir}" />

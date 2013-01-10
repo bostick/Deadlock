@@ -1,5 +1,7 @@
 package com.gutabi.deadlock.ui;
 
+import static com.gutabi.deadlock.DeadlockApplication.APP;
+
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.paint.Color;
 import com.gutabi.deadlock.ui.paint.FontStyle;
@@ -14,7 +16,7 @@ public abstract class Checkbox {
 	public Checkbox() {
 		lab = new Label(null);
 		
-		lab.fontName = "Visitor TT1 BRK";
+		lab.fontFile = APP.platform.createResourceEngine().fontResource("visitor1");
 		lab.fontStyle = FontStyle.PLAIN;
 		lab.fontSize = 48;
 	}

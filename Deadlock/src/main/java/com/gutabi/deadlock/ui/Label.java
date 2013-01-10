@@ -2,6 +2,7 @@ package com.gutabi.deadlock.ui;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
+import com.gutabi.deadlock.Resource;
 import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.paint.Color;
@@ -13,7 +14,7 @@ public class Label {
 	
 	public String text;
 	
-	public String fontName;
+	public Resource fontFile;
 	public FontStyle fontStyle;
 	public int fontSize;
 	
@@ -47,7 +48,7 @@ public class Label {
 	
 	public void renderLocal() {
 		FontEngine engine = APP.platform.createFontEngine();
-		localAABB = engine.bounds(text, fontName, fontStyle, fontSize);
+		localAABB = engine.bounds(text, fontFile, fontStyle, fontSize);
 	}
 	
 	public void render() {
@@ -62,7 +63,7 @@ public class Label {
 		
 		ctxt.setColor(color);
 		
-		ctxt.setFont(fontName, fontStyle, fontSize);
+		ctxt.setFont(fontFile, fontStyle, fontSize);
 		ctxt.paintString(baseline.x, baseline.y, 1.0, text);
 		
 		ctxt.dispose();

@@ -3,9 +3,14 @@ package com.gutabi.deadlock.ui.paint;
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Font;
+import java.awt.FontFormatException;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.InputStream;
 
+import com.gutabi.deadlock.Resource;
+import com.gutabi.deadlock.ResourceImpl;
 import com.gutabi.deadlock.math.Dim;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.Image;
@@ -96,17 +101,34 @@ public class RenderingContextImpl extends RenderingContext {
 		g2.setPaintMode();
 	}
 	
-	public void setFont(String name, FontStyle style, int size) {
+	public void setFont(Resource file, FontStyle style, int size) {
 		
-		int s = -1;
-		switch (style) {
-		case PLAIN:
-			s = Font.PLAIN;
-			break;
+		ResourceImpl r = (ResourceImpl)file;
+		InputStream is = this.getClass().getResourceAsStream(r.name);
+		
+	    Font ttfBase;
+		try {
+			ttfBase = Font.createFont(Font.TRUETYPE_FONT, is);
+			
+			int s = -1;
+			switch (style) {
+			case PLAIN:
+				s = Font.PLAIN;
+				break;
+			}
+			
+			Font ttfReal = ttfBase.deriveFont(s, size);
+			
+			g2.setFont(ttfReal);
+			
+		} catch (FontFormatException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		
-		Font f = new Font(name, s, size);
-		g2.setFont(f);
 	}
 	
 	public Transform getTransform() {
