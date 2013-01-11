@@ -12,6 +12,7 @@ import com.gutabi.deadlock.ui.ContentPaneImpl;
 import com.gutabi.deadlock.ui.ImageEngine;
 import com.gutabi.deadlock.ui.ImageEngineImpl;
 import com.gutabi.deadlock.ui.ImageImpl;
+import com.gutabi.deadlock.ui.KeyListener;
 import com.gutabi.deadlock.ui.paint.FontEngine;
 import com.gutabi.deadlock.ui.paint.FontEngineImpl;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
@@ -40,14 +41,13 @@ public class PlatformImpl extends Platform {
 	
 	public ContentPane createContentPane(Object... args) {
 		
-		ContentPane cp = (ContentPane)args[0];
+		KeyListener kl = (KeyListener)args[0];
 		
-		return new ContentPaneImpl(cp);
+		return new ContentPaneImpl(kl);
 	}
 	
 	public void setupScreen(Object... args) {
 		
-//		RootPaneContainer container = (RootPaneContainer)args[0];
 		ContentPaneImpl content = (ContentPaneImpl)args[0];
 		
 		content.j.setLayout(null);

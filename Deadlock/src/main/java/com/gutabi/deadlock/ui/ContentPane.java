@@ -3,59 +3,27 @@ package com.gutabi.deadlock.ui;
 import java.util.List;
 
 import com.gutabi.deadlock.math.Point;
+import com.gutabi.deadlock.ui.paint.RenderingContext;
 
-public interface ContentPane {
+public interface ContentPane extends MotionListener {
 
 	public List<Panel> getChildren();
 	
 	public Point getLastMovedContentPanePoint();
 	
-//	public abstract void enableKeyListener();
+	public abstract void pressed(InputEvent ev);
 	
-//	public abstract void disableKeyListener();
+	public abstract void released(InputEvent ev);
 	
-	public void ctrlOKey();
-
-	public void dKey();
-
-	public void upKey();
-
-	public void enterKey();
-
-	public void aKey();
-
-	public void sKey();
-
-	public void ctrlSKey();
-
-	public void downKey();
-
-	public void minusKey();
-
-	public void plusKey();
-
-	public void d3Key();
-
-	public void d2Key();
-
-	public void d1Key();
-
-	public void gKey();
-
-	public void wKey();
-
-	public void qKey();
-
-	public void escKey();
-
-	public void deleteKey();
-
-	public void insertKey();
+	public abstract void moved(InputEvent ev);
 	
-	public void fKey();
+	public abstract void dragged(InputEvent ev);
+	
+	public abstract void clicked(InputEvent ev);
 	
 	public void postDisplay();
 	
 	public void repaint();
 	
+	public void paint(RenderingContext ctxt);
 }

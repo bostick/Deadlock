@@ -5,38 +5,27 @@ import static com.gutabi.deadlock.DeadlockApplication.APP;
 import java.util.List;
 
 import com.gutabi.deadlock.math.Point;
-import com.gutabi.deadlock.menu.MainMenu;
 import com.gutabi.deadlock.ui.ContentPane;
+import com.gutabi.deadlock.ui.InputEvent;
 import com.gutabi.deadlock.ui.Panel;
+import com.gutabi.deadlock.ui.paint.RenderingContext;
 
 public class QuadrantEditorContentPane implements ContentPane {
 	
-	ContentPane cp;
+	public ContentPane cp;
 	public QuadrantEditor screen;
 	
 	public QuadrantEditorPanel panel;
 	
 	public QuadrantEditorContentPane(QuadrantEditor screen) {
 		
-		this.cp = APP.platform.createContentPane(this);
+		this.cp = APP.platform.createContentPane(screen);
 		
 		panel = new QuadrantEditorPanel(screen) {{
 			setLocation(0, 0);
 		}};
 		
 		cp.getChildren().add(panel);
-	}
-	
-	public void escKey() {
-		
-		MainMenu s = new MainMenu();
-		
-		APP.platform.setupScreen(s.contentPane);
-		
-		s.postDisplay();
-		
-		s.contentPane.panel.render();
-		s.contentPane.repaint();
 	}
 	
 	public void repaint() {
@@ -50,111 +39,38 @@ public class QuadrantEditorContentPane implements ContentPane {
 	public Point getLastMovedContentPanePoint() {
 		return cp.getLastMovedContentPanePoint();
 	}
-
-//	public void enableKeyListener() {
-//		cp.enableKeyListener();
-//	}
-//
-//	public void disableKeyListener() {
-//		cp.disableKeyListener();
-//	}
-
-	public void ctrlOKey() {
-		// TODO Auto-generated method stub
-		
+	
+	public void clicked(InputEvent ev) {
+		cp.clicked(ev);
 	}
-
-	public void dKey() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void upKey() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void enterKey() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void aKey() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void sKey() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void ctrlSKey() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void downKey() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void minusKey() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void plusKey() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void d3Key() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void d2Key() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void d1Key() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void gKey() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void wKey() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void qKey() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void deleteKey() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void insertKey() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void fKey() {
-		// TODO Auto-generated method stub
-		
-	}
-
+	
 	public void postDisplay() {
 		cp.postDisplay();
 	}
+	
+	public void paint(RenderingContext ctxt) {
+		cp.paint(ctxt);
+	}
+	
+	
+	@Override
+	public void pressed(InputEvent ev) {
+		cp.pressed(ev);
+	}
+
+	@Override
+	public void released(InputEvent ev) {
+		cp.released(ev);
+	}
+
+	@Override
+	public void moved(InputEvent ev) {
+		cp.moved(ev);
+	}
+
+	@Override
+	public void dragged(InputEvent ev) {
+		cp.dragged(ev);
+	}
+	
 }

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.gutabi.deadlock.quadranteditor.QuadrantEditor;
+import com.gutabi.deadlock.ui.KeyListener;
 import com.gutabi.deadlock.world.WorldScreen;
 import com.gutabi.deadlock.world.examples.FourByFourGridWorld;
 import com.gutabi.deadlock.world.examples.OneByOneWorld;
@@ -13,7 +14,7 @@ import com.gutabi.deadlock.world.examples.RushHourWorld;
 import com.gutabi.deadlock.world.examples.WorldA;
 import com.gutabi.deadlock.world.tools.CarTool;
 
-public class MainMenu {
+public class MainMenu implements KeyListener {
 	
 	public MainMenuContentPane contentPane;
 	
@@ -108,7 +109,7 @@ public class MainMenu {
 				
 				QuadrantEditor s = new QuadrantEditor();
 				
-				APP.platform.setupScreen(s.contentPane);
+				APP.platform.setupScreen(s.contentPane.cp);
 				
 				s.postDisplay();
 				
@@ -176,6 +177,120 @@ public class MainMenu {
 		item.down = first;
 		
 		first.up = item;
+		
+	}
+	
+	public void downKey() {
+		
+		if (hilited == null) {
+			
+			hilited = firstMenuItem;
+			
+		} else {
+			
+			hilited = hilited.down;
+			
+		}
+		
+		while (!hilited.active) {
+			hilited = hilited.down;
+		}
+		
+		contentPane.repaint();
+	}
+	
+	public void upKey() {
+		
+		if (hilited == null) {
+			
+			hilited = firstMenuItem;
+			
+		} else {
+			
+			hilited = hilited.up;
+			
+		}
+		
+		while (!hilited.active) {
+			hilited = hilited.up;
+		}
+		
+		contentPane.repaint();
+	}
+	
+	public void enterKey() {
+		
+		if (hilited != null && hilited.active) {
+			hilited.action();
+		}
+		
+	}
+	
+	public void ctrlOKey() {
+		;
+	}
+
+	public void dKey() {
+		;
+	}
+
+	public void aKey() {
+		;
+	}
+
+	public void sKey() {
+		;
+	}
+
+	public void ctrlSKey() {
+		;
+	}
+
+	public void minusKey() {
+		;
+	}
+
+	public void plusKey() {
+		;
+	}
+
+	public void d3Key() {
+		;
+	}
+
+	public void d2Key() {
+		;
+	}
+
+	public void d1Key() {
+		;
+	}
+
+	public void gKey() {
+		;
+	}
+
+	public void wKey() {
+		;
+	}
+
+	public void qKey() {
+		;
+	}
+
+	public void escKey() {
+		;
+	}
+
+	public void deleteKey() {
+		;
+	}
+
+	public void insertKey() {
+		;
+	}
+	
+	public void fKey() {
 		
 	}
 	

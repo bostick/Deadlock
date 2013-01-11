@@ -5,9 +5,11 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.util.AttributeSet;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
 
+import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.ContentPane;
-import com.gutabi.deadlock.ui.Panel;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 
 public class MainView extends android.view.View {
@@ -26,10 +28,8 @@ public class MainView extends android.view.View {
 		
 		RenderingContext ctxt = APP.platform.createRenderingContext(canvas, new Paint());
 		
-		for (Panel child : content.getChildren()) {
-			child.paint(ctxt);
-		}
+		content.paint(ctxt);
 		
 	}
-	
+
 }

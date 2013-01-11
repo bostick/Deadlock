@@ -2,10 +2,11 @@ package com.gutabi.deadlock.world;
 
 import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.ui.DLSFileChooser;
+import com.gutabi.deadlock.ui.KeyListener;
 import com.gutabi.deadlock.world.tools.RegularTool;
 import com.gutabi.deadlock.world.tools.Tool;
 
-public class WorldScreen {
+public class WorldScreen implements KeyListener {
 	
 	public enum WorldScreenMode {
 		EDITING,
@@ -89,5 +90,87 @@ public class WorldScreen {
 			pauseLock.notifyAll();
 		}
 	}
+	
+	public void upKey() {
+		
+	}
+
+	public void downKey() {
+		
+	}
+	
+	public void qKey() {
+		tool.qKey();
+	}
+	
+	public void wKey() {
+		tool.wKey();
+	}
+	
+	public void gKey() {
+		tool.gKey();
+	}
+	
+	public void deleteKey() {
+		tool.deleteKey();
+	}
+	
+	public void insertKey() {
+		tool.insertKey();
+	}
+	
+	public void escKey() {
+		tool.escKey();
+	}
+	
+	public void d1Key() {
+		tool.d1Key();
+	}
+	
+	public void d2Key() {
+		tool.d2Key();
+	}
+	
+	public void d3Key() {
+		tool.d3Key();
+	}
+	
+	public void plusKey() {
+		tool.plusKey();
+	}
+	
+	public void minusKey() {
+		tool.minusKey();
+	}
+	
+	public void aKey() {
+		tool.aKey();
+	}
+	
+	public void sKey() {
+		tool.sKey();
+	}
+	
+	public void ctrlSKey() {
+		tool.ctrlSKey();
+	}
+	
+	public void ctrlOKey() {
+		tool.ctrlOKey();
+	}
+	
+	public void dKey() {
+		tool.dKey();
+	}
+	
+	public void fKey() {
+		tool.fKey();
+	}
+	
+	public void enterKey() {
+		tool.enterKey();
+	}
+	
+	
 	
 }

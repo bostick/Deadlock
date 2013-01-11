@@ -5,29 +5,25 @@ import static com.gutabi.deadlock.DeadlockApplication.APP;
 import java.awt.Container;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
 
 import org.apache.log4j.Logger;
 
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 
-//@SuppressWarnings("serial")
-public class ContentPaneImpl extends ContentPaneBase implements KeyListener, MouseListener, MouseMotionListener {
+public class ContentPaneImpl extends ContentPaneBase implements java.awt.event.KeyListener, java.awt.event.MouseListener, java.awt.event.MouseMotionListener {
 	
-	ContentPane keyListener;
+	KeyListener kl;
 	
 	public Container j;
 	
 	static Logger logger = Logger.getLogger(ContentPaneImpl.class);
 	
 	@SuppressWarnings("serial")
-	public ContentPaneImpl(ContentPane keyListener) {
+	public ContentPaneImpl(KeyListener kl) {
 		
-		this.keyListener = keyListener;
+		this.kl = kl;
 		
 		j = new Container() {
 			public void paint(Graphics g) {
@@ -35,9 +31,7 @@ public class ContentPaneImpl extends ContentPaneBase implements KeyListener, Mou
 				
 				RenderingContext ctxt = APP.platform.createRenderingContext(g);
 				
-				for (Panel child : children) {
-					child.paint(ctxt);
-				}
+				ContentPaneImpl.this.paint(ctxt);
 				
 			}
 		};
@@ -49,57 +43,27 @@ public class ContentPaneImpl extends ContentPaneBase implements KeyListener, Mou
 	
 	public void mousePressed(MouseEvent ev) {
 		Point p = new Point(ev.getX(), ev.getY());
-		for (Panel child : children) {
-			if (child.aabb.hitTest(p)) {
-				child.pressed(new InputEvent(p.minus(child.aabb.ul)));
-				return;
-			}
-		}
+		pressed(new InputEvent(p));
 	}
 
 	public void mouseReleased(MouseEvent ev) {
 		Point p = new Point(ev.getX(), ev.getY());
-		for (Panel child : children) {
-			if (child.aabb.hitTest(p)) {
-				child.released(new InputEvent(p.minus(child.aabb.ul)));
-				return;
-			}
-		}
+		released(new InputEvent(p));
 	}
 	
 	public void mouseDragged(MouseEvent ev) {
 		Point p = new Point(ev.getX(), ev.getY());
-		for (Panel child : children) {
-			if (child.aabb.hitTest(p)) {
-				child.dragged(new InputEvent(p.minus(child.aabb.ul)));
-				return;
-			}
-		}
+		dragged(new InputEvent(p));
 	}
 	
 	public void mouseMoved(MouseEvent ev) {
 		Point p = new Point(ev.getX(), ev.getY());
-		setLastMovedContentPanePoint(p);
-		moved(p);
-	}
-	
-	public void moved(Point p) {
-		for (Panel child : children) {
-			if (child.aabb.hitTest(p)) {
-				child.moved(new InputEvent(p.minus(child.aabb.ul)));
-				return;
-			}
-		}
+		moved(new InputEvent(p));
 	}
 	
 	public void mouseClicked(MouseEvent ev) {
 		Point p = new Point(ev.getX(), ev.getY());
-		for (Panel child : children) {
-			if (child.aabb.hitTest(p)) {
-				child.clicked(new InputEvent(p.minus(child.aabb.ul)));
-				return;
-			}
-		}
+		clicked(new InputEvent(p));
 	}
 
 	public void mouseEntered(MouseEvent ev) {
@@ -116,55 +80,55 @@ public class ContentPaneImpl extends ContentPaneBase implements KeyListener, Mou
 
 	public void keyReleased(KeyEvent ev) {
 		if (ev.getKeyCode() == KeyEvent.VK_INSERT) {
-			keyListener.insertKey();
+			kl.insertKey();
 		} else if (ev.getKeyCode() == KeyEvent.VK_DELETE) {
-			keyListener.deleteKey();
+			kl.deleteKey();
 		} else if (ev.getKeyCode() == KeyEvent.VK_ESCAPE) {
-			keyListener.escKey();
+			kl.escKey();
 		} else if (ev.getKeyCode() == KeyEvent.VK_Q) {
-			keyListener.qKey();
+			kl.qKey();
 		} else if (ev.getKeyCode() == KeyEvent.VK_W) {
-			keyListener.wKey();
+			kl.wKey();
 		} else if (ev.getKeyCode() == KeyEvent.VK_G) {
-			keyListener.gKey();
+			kl.gKey();
 		} else if (ev.getKeyCode() == KeyEvent.VK_1) {
-			keyListener.d1Key();
+			kl.d1Key();
 		} else if (ev.getKeyCode() == KeyEvent.VK_2) {
-			keyListener.d2Key();
+			kl.d2Key();
 		} else if (ev.getKeyCode() == KeyEvent.VK_3) {
-			keyListener.d3Key();
+			kl.d3Key();
 		} else if (ev.getKeyCode() == KeyEvent.VK_PLUS || ev.getKeyCode() == KeyEvent.VK_EQUALS) {
-			keyListener.plusKey();
+			kl.plusKey();
 		} else if (ev.getKeyCode() == KeyEvent.VK_MINUS) {
-			keyListener.minusKey();
+			kl.minusKey();
 		} else if (ev.getKeyCode() == KeyEvent.VK_DOWN) {
-			keyListener.downKey();
+			kl.downKey();
 		} else if (ev.getKeyCode() == KeyEvent.VK_UP) {
-			keyListener.upKey();
+			kl.upKey();
 		} else if (ev.getKeyCode() == KeyEvent.VK_ENTER) {
-			keyListener.enterKey();
+			kl.enterKey();
 		} else if (ev.getKeyCode() == KeyEvent.VK_A) {
-			keyListener.aKey();
+			kl.aKey();
 		} else if (ev.getKeyCode() == KeyEvent.VK_S) {
 			
 			int mods = ev.getModifiersEx();
 			
 			if ((mods & KeyEvent.CTRL_DOWN_MASK) == KeyEvent.CTRL_DOWN_MASK) {
-				keyListener.ctrlSKey();
+				kl.ctrlSKey();
 			} else {
-				keyListener.sKey();
+				kl.sKey();
 			}
 			
 		} else if (ev.getKeyCode() == KeyEvent.VK_D) {
-			keyListener.dKey();
+			kl.dKey();
 		} else if (ev.getKeyCode() == KeyEvent.VK_F) {
-			keyListener.fKey();
+			kl.fKey();
 		} else if (ev.getKeyCode() == KeyEvent.VK_O) {
 			
 			int mods = ev.getModifiersEx();
 			
 			if ((mods & KeyEvent.CTRL_DOWN_MASK) == KeyEvent.CTRL_DOWN_MASK) {
-				keyListener.ctrlOKey();
+				kl.ctrlOKey();
 			}
 			
 		}
@@ -172,14 +136,6 @@ public class ContentPaneImpl extends ContentPaneBase implements KeyListener, Mou
 
 	public void keyTyped(KeyEvent ev) {
 		;
-	}
-	
-	public void enableKeyListener() {
-		j.addKeyListener(this);
-	}
-	
-	public void disableKeyListener() {
-		j.removeKeyListener(this);
 	}
 	
 	public void repaint() {

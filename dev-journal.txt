@@ -1,0 +1,12 @@
+Jan 11, 2013
+
+Running into this issue:
+http://stackoverflow.com/questions/13430057/eclipse-adt-version-21-plugin-fail-to-compile-working-workspace-no-targets-av
+
+so currently installing the Android SDK into a second location as a work-around
+
+
+also seeing this:
+http://code.google.com/p/android/issues/detail?id=39723
+
+

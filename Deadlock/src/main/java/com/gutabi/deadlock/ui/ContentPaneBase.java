@@ -4,8 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.gutabi.deadlock.math.Point;
+import com.gutabi.deadlock.ui.paint.RenderingContext;
 
-public abstract class ContentPaneBase implements ContentPane {
+public abstract class ContentPaneBase implements ContentPane, MotionListener {
 	
 	protected List<Panel> children = new ArrayList<Panel>();
 	
@@ -24,92 +25,63 @@ public abstract class ContentPaneBase implements ContentPane {
 		return lastMovedContentPanePoint;
 	}
 	
-	public void setLastMovedContentPanePoint(Point p) {
-		this.lastMovedContentPanePoint = p;
+//	public void setLastMovedContentPanePoint(Point p) {
+//		this.lastMovedContentPanePoint = p;
+//	}
+	
+	public void moved(InputEvent e) {
+		Point p = e.p;
+		lastMovedContentPanePoint = p;
+		for (Panel child : children) {
+			if (child.aabb.hitTest(p)) {
+				child.moved(new InputEvent(p.minus(child.aabb.ul)));
+				return;
+			}
+		}
 	}
 	
-//	public abstract void enableKeyListener();
-//	
-//	public abstract void disableKeyListener();
-	
-	public void ctrlOKey() {
-		;
-	}
-
-	public void dKey() {
-		;
-	}
-
-	public void upKey() {
-		;
-	}
-
-	public void enterKey() {
-		;
-	}
-
-	public void aKey() {
-		;
-	}
-
-	public void sKey() {
-		;
-	}
-
-	public void ctrlSKey() {
-		;
-	}
-
-	public void downKey() {
-		;
-	}
-
-	public void minusKey() {
-		;
-	}
-
-	public void plusKey() {
-		;
-	}
-
-	public void d3Key() {
-		;
-	}
-
-	public void d2Key() {
-		;
-	}
-
-	public void d1Key() {
-		;
-	}
-
-	public void gKey() {
-		;
-	}
-
-	public void wKey() {
-		;
-	}
-
-	public void qKey() {
-		;
-	}
-
-	public void escKey() {
-		;
-	}
-
-	public void deleteKey() {
-		;
-	}
-
-	public void insertKey() {
-		;
+	public void clicked(InputEvent e) {
+		Point p = e.p;
+//		lastClickedContentPanePoint = p;
+		for (Panel child : children) {
+			if (child.aabb.hitTest(p)) {
+				child.clicked(new InputEvent(p.minus(child.aabb.ul)));
+				return;
+			}
+		}
 	}
 	
-	public void fKey() {
-		
+	public void pressed(InputEvent e) {
+		Point p = e.p;
+//		lastClickedContentPanePoint = p;
+		for (Panel child : children) {
+			if (child.aabb.hitTest(p)) {
+				child.pressed(new InputEvent(p.minus(child.aabb.ul)));
+				return;
+			}
+		}
+	}
+	
+	public void released(InputEvent e) {
+		Point p = e.p;
+//		lastClickedContentPanePoint = p;
+		for (Panel child : children) {
+			if (child.aabb.hitTest(p)) {
+				child.released(new InputEvent(p.minus(child.aabb.ul)));
+				return;
+			}
+		}
+	}
+	
+	public void dragged(InputEvent e) {
+		Point p = e.p;
+//		lastClickedContentPanePoint = p;
+		for (Panel child : children) {
+			if (child.aabb.hitTest(p)) {
+				child.dragged(new InputEvent(p.minus(child.aabb.ul)));
+				return;
+			}
+		}
 	}
 	
 	public void postDisplay() {
@@ -121,5 +93,13 @@ public abstract class ContentPaneBase implements ContentPane {
 	}
 	
 	public abstract void repaint();
+	
+	public void paint(RenderingContext ctxt) {
+		
+		for (Panel child : getChildren()) {
+			child.paint(ctxt);
+		}
+		
+	}
 	
 }
