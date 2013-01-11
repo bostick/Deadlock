@@ -4,6 +4,7 @@ import static com.gutabi.deadlock.DeadlockApplication.APP;
 import android.app.Activity;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.Window;
 
 import com.gutabi.deadlock.menu.MainMenu;
@@ -70,4 +71,19 @@ public class MainActivity extends Activity {
 		
 	}
 	
+	@Override
+	public boolean onKeyUp(int keyCode, KeyEvent event) {
+	    switch (keyCode) {
+	        case KeyEvent.KEYCODE_DPAD_DOWN:
+//	        	s.contentPane.downKey();
+	            break;
+	        case KeyEvent.KEYCODE_DPAD_UP:
+//	        	content.upKey();
+	            break;
+	        case KeyEvent.KEYCODE_DPAD_CENTER:
+//	        	content.enterKey();
+	            break;
+	    }
+	    return true;
+	}
 }
