@@ -25,6 +25,7 @@ import com.gutabi.deadlock.ui.paint.Join;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.world.graph.EdgePosition;
 import com.gutabi.deadlock.world.graph.GraphPosition;
+import com.gutabi.deadlock.world.graph.Intersection;
 import com.gutabi.deadlock.world.graph.Road;
 import com.gutabi.deadlock.world.graph.RoadPosition;
 import com.gutabi.deadlock.world.graph.Vertex;
@@ -152,7 +153,8 @@ public class Stroke {
 				
 				if (hit == null) {
 //					logger.debug("create");
-					Set<Vertex> res = screen.world.createIntersection(e.p);
+					Intersection i0 = new Intersection(screen.world, e.p);
+					Set<Vertex> res = screen.world.addIntersection(i0);
 					affected.addAll(res);
 				}
 				
@@ -401,7 +403,8 @@ public class Stroke {
 				if (hit == null) {
 					
 //					logger.debug("create");
-					Set<Vertex> res = screen.world.createIntersection(pos.p);
+					Intersection i0 = new Intersection(screen.world, pos.p);
+					Set<Vertex> res = screen.world.addIntersection(i0);
 					affected.addAll(res);
 					
 				} else {

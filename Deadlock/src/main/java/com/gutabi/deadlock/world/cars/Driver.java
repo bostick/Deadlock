@@ -3,11 +3,14 @@ package com.gutabi.deadlock.world.cars;
 import java.util.ArrayList;
 import java.util.List;
 
-
 import com.gutabi.deadlock.math.DMath;
 import com.gutabi.deadlock.math.Point;
+import com.gutabi.deadlock.world.graph.EdgePosition;
+import com.gutabi.deadlock.world.graph.GraphPosition;
 import com.gutabi.deadlock.world.graph.GraphPositionPath;
 import com.gutabi.deadlock.world.graph.GraphPositionPathPosition;
+import com.gutabi.deadlock.world.graph.RushHourBoardPosition;
+import com.gutabi.deadlock.world.graph.VertexPosition;
 
 public class Driver {
 	
@@ -68,6 +71,33 @@ public class Driver {
 	public Point centerToGPPPPoint(Point p) {
 		return p;
 	}
+	
+//	public Point gpppToCenter(GraphPositionPathPosition gppp) {
+//		
+//		GraphPosition gpos = gppp.getGraphPosition();
+//		
+//		Point p = null;
+//		if (gpos instanceof VertexPosition) {
+//			
+//			p = gppp.p;
+//			
+//		} else if (gpos instanceof EdgePosition) {
+//			
+//			p = gppp.p;
+//			
+//		} else if (gpos instanceof RushHourBoardPosition) {
+//			
+//			
+//			
+//		}
+//		
+//		return p;
+//	}
+//	
+//	public GraphPositionPathPosition centerToGPPP(Point p) {
+//		
+//		return p;
+//	}
 	
 	public void clear() {
 		

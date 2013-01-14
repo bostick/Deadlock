@@ -189,9 +189,9 @@ public class World {
 		return graph.addVertexTop(f);
 	}
 	
-	public Set<Vertex> createIntersection(Point p) {
+	public Set<Vertex> addIntersection(Intersection i) {
 		
-		Intersection i = new Intersection(this, p);
+//		Intersection i = new Intersection(this, p);
 		
 		quadrantMap.grassMap.mowGrass(i.getShape());
 		

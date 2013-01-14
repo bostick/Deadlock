@@ -1,10 +1,13 @@
 package com.gutabi.deadlock.world.tools;
 
+import static com.gutabi.deadlock.DeadlockApplication.APP;
+
 import com.gutabi.deadlock.geom.Geom;
 import com.gutabi.deadlock.geom.Quad;
 import com.gutabi.deadlock.geom.Shape;
 import com.gutabi.deadlock.geom.ShapeUtils;
 import com.gutabi.deadlock.math.Point;
+import com.gutabi.deadlock.menu.MainMenu;
 import com.gutabi.deadlock.ui.InputEvent;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.world.WorldScreen;
@@ -32,6 +35,17 @@ public class CarTool extends ToolBase {
 		return null;
 	}
 	
+	public void escKey() {
+		
+		MainMenu s = new MainMenu();
+		
+		APP.platform.setupScreen(s.contentPane.cp);
+		
+		s.postDisplay();
+		s.contentPane.panel.render();
+		s.contentPane.repaint();
+	}
+	
 	public void pressed(InputEvent ev) {
 		
 		Car pressed = screen.world.carMap.carHitTest(ev.p);
@@ -49,7 +63,7 @@ public class CarTool extends ToolBase {
 	
 	public void released(InputEvent ev) {
 		
-		car.driver.overallPos = car.driver.overallPath.findClosestGraphPositionPathPosition(car.driver.centerToGPPPPoint(car.p), car.driver.overallPath.startingPos, false);
+		car.driver.overallPos = car.driver.overallPath.findClosestGraphPositionPathPosition(car.driver.centerToGPPPPoint(car.p), car.driver.overallPath.startingPos, true);
 		
 		car = null;
 		
@@ -71,7 +85,7 @@ public class CarTool extends ToolBase {
 			case DRIVING:
 			case BRAKING:
 				
-				GraphPositionPathPosition pathPos = car.driver.overallPath.findClosestGraphPositionPathPosition(car.driver.centerToGPPPPoint(carPTmp), car.driver.overallPath.startingPos, false);
+				GraphPositionPathPosition pathPos = car.driver.overallPath.findClosestGraphPositionPathPosition(car.driver.centerToGPPPPoint(carPTmp), car.driver.overallPath.startingPos, true);
 				GraphPosition gpos = pathPos.getGraphPosition();
 				
 				if (gpos instanceof RoadPosition) {

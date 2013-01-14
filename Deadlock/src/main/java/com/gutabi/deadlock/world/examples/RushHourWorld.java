@@ -1,7 +1,7 @@
 package com.gutabi.deadlock.world.examples;
 
 import java.util.ArrayList;
-
+import java.util.List;
 
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.world.QuadrantMap;
@@ -14,9 +14,11 @@ import com.gutabi.deadlock.world.graph.Graph;
 import com.gutabi.deadlock.world.graph.GraphPosition;
 import com.gutabi.deadlock.world.graph.GraphPositionPath;
 import com.gutabi.deadlock.world.graph.GraphPositionPathPosition;
+import com.gutabi.deadlock.world.graph.Intersection;
 import com.gutabi.deadlock.world.graph.RushHourBoard;
 import com.gutabi.deadlock.world.graph.RushHourBoardPosition;
 import com.gutabi.deadlock.world.graph.RushHourStud;
+import com.gutabi.deadlock.world.graph.VertexPosition;
 
 public class RushHourWorld extends World {
 	
@@ -52,6 +54,17 @@ public class RushHourWorld extends World {
 		
 		final RushHourBoard b = w.createRushHourBoard(new Point(8, 8));
 		
+		final Intersection i0 = new Intersection(w, b.a.aabb.center.minus(new Point(RushHourStud.SIZE/2, 0)));
+		w.addIntersection(i0);
+		
+		final Intersection i1 = new Intersection(w, new Point(2, 2));
+		w.addIntersection(i1);
+		
+		List<Point> pts = new ArrayList<Point>();
+		pts.add(i0.p);
+		pts.add(i1.p);
+		w.createRoad(i0, i1, pts);
+		
 		for (int i = 0; i < 1; i++) {
 			if (i == 0) {
 				
@@ -64,6 +77,9 @@ public class RushHourWorld extends World {
 			public void computeStartingProperties() { 
 				
 				overallPath = new GraphPositionPath(new ArrayList<GraphPosition>() {{
+					add(new VertexPosition(i0));
+					add(new VertexPosition(i1));
+					add(new RushHourBoardPosition(b, 0, -1));
 					add(new RushHourBoardPosition(b, 0, 0));
 					add(new RushHourBoardPosition(b, 0, 1));
 					add(new RushHourBoardPosition(b, 0, 2));
@@ -72,7 +88,7 @@ public class RushHourWorld extends World {
 //					add(new RushHourBoardPosition(b, 0, 5));
 					}});
 				
-				overallPos = new GraphPositionPathPosition(overallPath, 0, 0.0);
+				overallPos = new GraphPositionPathPosition(overallPath, 3, 0.0);
 				
 			}
 			public Point gpppPointToCenter(Point gppp) {

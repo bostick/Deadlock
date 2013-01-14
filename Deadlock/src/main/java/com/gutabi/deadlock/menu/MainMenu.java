@@ -58,7 +58,7 @@ public class MainMenu implements KeyListener {
 				WorldScreen s = new WorldScreen();
 				s.world = FourByFourGridWorld.createFourByFourGridWorld(s);
 				
-				APP.platform.setupScreen(s.contentPane);
+				APP.platform.setupScreen(s.contentPane.cp);
 				
 				s.postDisplay();
 				
@@ -75,7 +75,7 @@ public class MainMenu implements KeyListener {
 				WorldScreen s = new WorldScreen();
 				s.world = WorldA.createWorldA(s);
 				
-				APP.platform.setupScreen(s.contentPane);
+				APP.platform.setupScreen(s.contentPane.cp);
 				
 				s.postDisplay();
 				

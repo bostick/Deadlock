@@ -10,3 +10,12 @@ also seeing this:
 http://code.google.com/p/android/issues/detail?id=39723
 
 
+
+January 14, 2013
+
+Looking at working with Java AST again, just wanting to get line counts of code, comments, blank lines.
+
+Realized there is an analogy with reducing an AST to line counts, and projecting a shape onto an axis (from SAT)
+
+There is a single "axis" that an AST gets "projected onto" to get simple info about line counts
+Would "projecting onto" some other "axis" mean anything?

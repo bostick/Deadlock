@@ -58,7 +58,7 @@ public class VertexPosition extends GraphPosition {
 		if (p instanceof VertexPosition) {
 			assert false;
 			return null;
-		} else {
+		} else if (p instanceof EdgePosition) {
 			EdgePosition pe = (EdgePosition)p;
 			
 			if (v == ((Edge)pe.entity).getReferenceVertex(pe.axis)) {
@@ -70,7 +70,15 @@ public class VertexPosition extends GraphPosition {
 				
 				return ((Edge)pe.entity).travelFromOtherVertex(pe.axis, distance);
 			}
+		} else {
+			RushHourBoardPosition sp = (RushHourBoardPosition)p;
+			
+			
+			
 		}
+		
+		assert false;
+		return null;
 		
 	}
 

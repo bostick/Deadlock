@@ -67,7 +67,7 @@ public class RegularTool extends ToolBase {
 		
 		MainMenu s = new MainMenu();
 		
-		APP.platform.setupScreen(s.contentPane);
+		APP.platform.setupScreen(s.contentPane.cp);
 		
 		s.postDisplay();
 		s.contentPane.panel.render();

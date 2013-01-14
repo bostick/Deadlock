@@ -1,8 +1,38 @@
 
-start making Rush Hour clone
+work on translation between GPPP point and center of car
+
+orientation on RushHour board matters, where the "front of car" is  
+
+on RushHour board:
+gppp is ul of car front square
+
+on vertex or edge:
+gppp is car center
+
+
+
+
+
+
+moving between rushhourboard stud and vertex
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 FOR ALPHA 2:
+
+rush hour clone
 
 applet working
 

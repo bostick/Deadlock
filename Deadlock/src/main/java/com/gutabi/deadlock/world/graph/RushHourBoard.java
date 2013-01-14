@@ -17,13 +17,15 @@ public class RushHourBoard extends Entity {
 	public RushHourStud exit0;
 	public RushHourStud exit1;
 	
+	public RushHourStud a;
+	
 	public AABB aabb;
 	
 	public RushHourBoard(World world, Point p) {
 		this.world = world;
 		this.p = p;
 		
-		aabb =APP.platform.createShapeEngine().createAABB(p.x - 3 * RushHourStud.SIZE, p.y - 3 * RushHourStud.SIZE, 6 * RushHourStud.SIZE,  6 * RushHourStud.SIZE);
+		aabb = APP.platform.createShapeEngine().createAABB(p.x - 3 * RushHourStud.SIZE, p.y - 3 * RushHourStud.SIZE, 6 * RushHourStud.SIZE,  6 * RushHourStud.SIZE);
 		
 		for (int i = 0; i < 6; i++) {
 			for (int j = 0; j < 6; j++) {
@@ -33,6 +35,7 @@ public class RushHourBoard extends Entity {
 		exit0 = new RushHourStud(world, this, 2, 6);
 		exit1 = new RushHourStud(world, this, 2, 7);
 		
+		a = new RushHourStud(world, this, 0, -1);
 	}
 	
 	public void preStart() {
@@ -83,6 +86,7 @@ public class RushHourBoard extends Entity {
 		exit0.paint(ctxt);
 		exit1.paint(ctxt);
 		
+		a.paint(ctxt);
 	}
 	
 	public void paint_preview(RenderingContext ctxt) {
@@ -90,6 +94,15 @@ public class RushHourBoard extends Entity {
 		ctxt.setColor(Color.GRAY);
 		aabb.paint(ctxt);
 		
+		for (int i = 0; i < 6; i++) {
+			for (int j = 0; j < 6; j++) {
+				studs[i][j].paint(ctxt);
+			}
+		}
+		exit0.paint(ctxt);
+		exit1.paint(ctxt);
+		
+		a.paint(ctxt);
 	}
 	
 	public void paintHilite(RenderingContext ctxt) {
