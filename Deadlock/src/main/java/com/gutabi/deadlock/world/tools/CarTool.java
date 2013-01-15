@@ -102,7 +102,9 @@ public class CarTool extends ToolBase {
 					
 					RushHourBoardPosition rpos = (RushHourBoardPosition)gpos;
 					
-					RushHourBoardPosition rounded = new RushHourBoardPosition((RushHourBoard)rpos.entity, Math.round(rpos.rowCombo), Math.round(rpos.colCombo));
+					RushHourBoard b = (RushHourBoard)rpos.entity;
+					
+					RushHourBoardPosition rounded = new RushHourBoardPosition(b, Math.round(rpos.rowCombo), Math.round(rpos.colCombo));
 					
 					Point test = car.driver.gpppPointToCenter(rounded.p);
 					
@@ -111,13 +113,17 @@ public class CarTool extends ToolBase {
 					Quad testQuad = Geom.localToWorld(car.localQuad, testTransArr, test);
 					
 					boolean collide = false;
-					for (Car c : screen.world.carMap.cars) {
-						if (c == car) {
-							continue;
-						}
-						if (ShapeUtils.intersectAreaQQ(testQuad, c.shape)) {
-							collide = true;
-							break;
+					if (!ShapeUtils.containsAQ(b.aabb, testQuad)) {
+						collide = true;
+					} else {
+						for (Car c : screen.world.carMap.cars) {
+							if (c == car) {
+								continue;
+							}
+							if (ShapeUtils.intersectAreaQQ(testQuad, c.shape)) {
+								collide = true;
+								break;
+							}
 						}
 					}
 					if (!collide) {

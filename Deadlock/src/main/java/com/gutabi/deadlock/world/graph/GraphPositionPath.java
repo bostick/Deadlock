@@ -323,6 +323,95 @@ public class GraphPositionPath {
 		return new GraphPositionPathPosition(this, closestIndex, closestParam);
 	}
 	
+	public GraphPositionPathPosition findClosestGraphPositionPathPosition(GraphPosition gp) {
+		
+		GraphPositionPathPosition a = startingPos;
+		GraphPositionPathPosition minCeiling = startingPos.ceiling();
+		GraphPositionPathPosition b;
+		if (!minCeiling.equals(startingPos)) {
+			b = minCeiling;
+			
+			double u = Point.u(a.floor().p, gp.p, b.p);
+			if (DMath.lessThan(u, a.param) || DMath.greaterThan(u, 1.0)) {
+				
+			} else {
+				
+				if (DMath.equals(u, 1.0)) {
+					if (!b.isEndOfPath()) {
+						/*
+						 * the next iteration will pick this up
+						 */
+					} else {
+						/*
+						 * last iteration, deal with now
+						 */
+						if (gp.p.equals(b.p)) {
+							return new GraphPositionPathPosition(this, b.index, b.param);
+						}
+						
+					}
+				} else {
+					
+					Point pOnPath = Point.point(a.p, b.p, u);
+					if (gp.p.equals(pOnPath)) {
+						return new GraphPositionPathPosition(this, a.index, u);
+						
+					}
+					
+				}
+				
+			}
+			
+			a = b;
+		}
+		while (true) {
+			
+			if (a.isEndOfPath()) {
+				break;
+			}
+			
+			b = a.nextBound();
+			
+			double u = Point.u(a.p, gp.p, b.p);
+			if (DMath.lessThan(u, a.param) || DMath.greaterThan(u, 1.0)) {
+				
+			} else {
+				
+				if (DMath.equals(u, 1.0)) {
+					if (!b.isEndOfPath()) {
+						/*
+						 * the next iteration will pick this up
+						 */
+					} else {
+						/*
+						 * last iteration, deal with now
+						 */
+						if (gp.p.equals(b.p)) {
+							return new GraphPositionPathPosition(this, b.index, b.param);
+							
+						}
+					}
+				} else {
+					Point pOnPath = Point.point(a.p, b.p, u);
+					if (gp.p.equals(pOnPath)) {
+						return new GraphPositionPathPosition(this, a.index, u);
+						
+					}
+				}
+				
+			}
+			
+			a = b;
+		}
+		
+//		assert closestIndex != -1;
+//		assert closestParam != -1.0;
+		
+		return null;
+	}
+
+
+	
 	private Map<Driver, GraphPositionPathPosition> hitMap = new HashMap<Driver, GraphPositionPathPosition>();
 	
 	public void precomputeHitTestData() {

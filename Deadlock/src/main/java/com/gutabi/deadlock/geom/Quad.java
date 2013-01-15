@@ -255,9 +255,5 @@ public abstract class Quad extends SweepableShape {
 		
 		return events;
 	}
-	
-	public boolean completelyContains(Quad q) {
-		return hitTest(q.p0) && hitTest(q.p1) && hitTest(q.p2) && hitTest(q.p3);
-	}
 
 }

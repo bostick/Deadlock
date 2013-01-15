@@ -71,7 +71,8 @@ public class VertexPosition extends GraphPosition {
 				return ((Edge)pe.entity).travelFromOtherVertex(pe.axis, distance);
 			}
 		} else {
-			RushHourBoardPosition sp = (RushHourBoardPosition)p;
+			assert false;
+//			RushHourBoardPosition sp = (RushHourBoardPosition)p;
 			
 			
 			

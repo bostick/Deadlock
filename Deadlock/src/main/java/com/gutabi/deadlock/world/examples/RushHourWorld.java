@@ -11,14 +11,12 @@ import com.gutabi.deadlock.world.cars.Car;
 import com.gutabi.deadlock.world.cars.CarStateEnum;
 import com.gutabi.deadlock.world.cars.Driver;
 import com.gutabi.deadlock.world.graph.Graph;
-import com.gutabi.deadlock.world.graph.GraphPosition;
-import com.gutabi.deadlock.world.graph.GraphPositionPath;
-import com.gutabi.deadlock.world.graph.GraphPositionPathPosition;
+import com.gutabi.deadlock.world.graph.GraphPositionPathFactory;
 import com.gutabi.deadlock.world.graph.Intersection;
 import com.gutabi.deadlock.world.graph.RushHourBoard;
 import com.gutabi.deadlock.world.graph.RushHourBoardPosition;
 import com.gutabi.deadlock.world.graph.RushHourStud;
-import com.gutabi.deadlock.world.graph.VertexPosition;
+import com.gutabi.deadlock.world.graph.Side;
 
 public class RushHourWorld extends World {
 	
@@ -26,7 +24,6 @@ public class RushHourWorld extends World {
 		super(screen);
 	}
 	
-	@SuppressWarnings("serial")
 	public static RushHourWorld createRushHourWorld(WorldScreen screen) {
 		
 		int[][] ini = new int[][] {
@@ -44,12 +41,12 @@ public class RushHourWorld extends World {
 		w.graph = g;
 		
 //		char[][] rushHourIni = new char[][] {
-//				{'0', '0', ' ', ' ', ' ', '1'},
-//				{'2', ' ', ' ', '4', ' ', '1'},
-//				{'2', '3', '3', '4', ' ', '1'},
-//				{'2', ' ', ' ', '4', ' ', ' '},
-//				{'5', ' ', ' ', ' ', '6', '6'},
-//				{'5', ' ', '7', '7', '7', ' '},
+//				{'A', 'A', ' ', ' ', ' ', 'B'},
+//				{'C', ' ', ' ', 'D', ' ', 'B'},
+//				{'C', 'R', 'R', 'D', ' ', 'B'},
+//				{'C', ' ', ' ', 'D', ' ', ' '},
+//				{'E', ' ', ' ', ' ', 'F', 'F'},
+//				{'E', ' ', 'G', 'G', 'G', ' '},
 //		};
 		
 		final RushHourBoard b = w.createRushHourBoard(new Point(8, 8));
@@ -76,32 +73,19 @@ public class RushHourWorld extends World {
 		c0.driver = new Driver(c0) {
 			public void computeStartingProperties() { 
 				
-				overallPath = new GraphPositionPath(new ArrayList<GraphPosition>() {{
-					add(new VertexPosition(i0));
-					add(new VertexPosition(i1));
-					add(new RushHourBoardPosition(b, 0, -1));
-					add(new RushHourBoardPosition(b, 0, 0));
-					add(new RushHourBoardPosition(b, 0, 1));
-					add(new RushHourBoardPosition(b, 0, 2));
-					add(new RushHourBoardPosition(b, 0, 3));
-					add(new RushHourBoardPosition(b, 0, 4));
-//					add(new RushHourBoardPosition(b, 0, 5));
-					}});
+				RushHourBoardPosition startGP = new RushHourBoardPosition(b, 0, 0);
+				overallSide = Side.LEFT;
 				
-				overallPos = new GraphPositionPathPosition(overallPath, 3, 0.0);
+				overallPath = GraphPositionPathFactory.createRushHourBoardPath(b, startGP, overallSide);
 				
-			}
-			public Point gpppPointToCenter(Point gppp) {
-				return gppp.plus(new Point(1.0 * RushHourStud.SIZE, 0.5 * RushHourStud.SIZE));
-			}
-			public Point centerToGPPPPoint(Point center) {
-				return center.minus(new Point(1.0 * RushHourStud.SIZE, 0.5 * RushHourStud.SIZE));
+				overallPos = overallPath.findClosestGraphPositionPathPosition(startGP);
+				
 			}
 		};
 		c0.computeCtorProperties();
 		c0.driver.computeStartingProperties();
 		c0.p = c0.driver.gpppPointToCenter(c0.driver.overallPos.p);
-		c0.angle = 1.0 * Math.PI;
+		c0.angle = c0.driver.overallSide.getAngle();
 		c0.setTransform(c0.p, c0.angle);
 		
 		w.carMap.addCar(c0);
@@ -112,30 +96,20 @@ public class RushHourWorld extends World {
 		c1.driver = new Driver(c1) {
 			public void computeStartingProperties() { 
 				
-				overallPath = new GraphPositionPath(new ArrayList<GraphPosition>() {{
-					add(new RushHourBoardPosition(b, 0, 5));
-					add(new RushHourBoardPosition(b, 1, 5));
-					add(new RushHourBoardPosition(b, 2, 5));
-					add(new RushHourBoardPosition(b, 3, 5));
-//					add(new RushHourBoardPosition(b, 4, 5));
-//					add(new RushHourBoardPosition(b, 5, 5));
-					}});
+				RushHourBoardPosition startGP = new RushHourBoardPosition(b, 0, 5);
+				overallSide = Side.TOP;
 				
-				overallPos = overallPath.startingPos;
+				overallPath = GraphPositionPathFactory.createRushHourBoardPath(b, startGP, overallSide);
 				
-			}
-			public Point gpppPointToCenter(Point gppp) {
-				return gppp.plus(new Point(0.5 * RushHourStud.SIZE, 1.5 * RushHourStud.SIZE));
-			}
-			public Point centerToGPPPPoint(Point center) {
-				return center.minus(new Point(0.5 * RushHourStud.SIZE, 1.5 * RushHourStud.SIZE));
+				overallPos = overallPath.findClosestGraphPositionPathPosition(startGP);
+				
 			}
 		};
 		c1.computeCtorProperties();
 		c1.computeCtorProperties();
 		c1.driver.computeStartingProperties();
 		c1.p = c1.driver.gpppPointToCenter(c1.driver.overallPos.p);
-		c1.angle = 1.5 * Math.PI;
+		c1.angle = c1.driver.overallSide.getAngle();
 		c1.setTransform(c1.p, c1.angle);
 		
 		w.carMap.addCar(c1);
@@ -147,30 +121,20 @@ public class RushHourWorld extends World {
 		c2.driver = new Driver(c2) {
 			public void computeStartingProperties() { 
 				
-				overallPath = new GraphPositionPath(new ArrayList<GraphPosition>() {{
-					add(new RushHourBoardPosition(b, 0, 0));
-					add(new RushHourBoardPosition(b, 1, 0));
-					add(new RushHourBoardPosition(b, 2, 0));
-					add(new RushHourBoardPosition(b, 3, 0));
-//					add(new RushHourBoardPosition(b, 4, 0));
-//					add(new RushHourBoardPosition(b, 5, 0));
-					}});
+				RushHourBoardPosition startGP = new RushHourBoardPosition(b, 1, 0);
+				overallSide = Side.TOP;
 				
-				overallPos = new GraphPositionPathPosition(overallPath, 1, 0.0);
+				overallPath = GraphPositionPathFactory.createRushHourBoardPath(b, startGP, overallSide);
 				
-			}
-			public Point gpppPointToCenter(Point gppp) {
-				return gppp.plus(new Point(0.5 * RushHourStud.SIZE, 1.5 * RushHourStud.SIZE));
-			}
-			public Point centerToGPPPPoint(Point center) {
-				return center.minus(new Point(0.5 * RushHourStud.SIZE, 1.5 * RushHourStud.SIZE));
+				overallPos = overallPath.findClosestGraphPositionPathPosition(startGP);
+				
 			}
 		};
 		c2.computeCtorProperties();
 		c2.computeCtorProperties();
 		c2.driver.computeStartingProperties();
 		c2.p = c2.driver.gpppPointToCenter(c2.driver.overallPos.p);
-		c2.angle = 1.5 * Math.PI;
+		c2.angle = c2.driver.overallSide.getAngle();
 		c2.setTransform(c2.p, c2.angle);
 		
 		w.carMap.addCar(c2);
@@ -183,32 +147,21 @@ public class RushHourWorld extends World {
 		c3.driver = new Driver(c3) {
 			public void computeStartingProperties() { 
 				
-				overallPath = new GraphPositionPath(new ArrayList<GraphPosition>() {{
-//					add(new RushHourBoardPosition(b, 2, 0));
-					add(new RushHourBoardPosition(b, 2, 1));
-					add(new RushHourBoardPosition(b, 2, 2));
-					add(new RushHourBoardPosition(b, 2, 3));
-					add(new RushHourBoardPosition(b, 2, 4));
-					add(new RushHourBoardPosition(b, 2, 5));
-					add(new RushHourBoardPosition(b, 2, 6));
-					add(new RushHourBoardPosition(b, 2, 7));
-					}});
+				RushHourBoardPosition startGP = new RushHourBoardPosition(b, 2, 2);
+				overallSide = Side.RIGHT;
 				
-				overallPos = new GraphPositionPathPosition(overallPath, 1, 0.0);
+				overallPath = GraphPositionPathFactory.createRushHourBoardPath(b, startGP, overallSide);
 				
-			}
-			public Point gpppPointToCenter(Point gppp) {
-				return gppp.plus(new Point(0.0 * RushHourStud.SIZE, 0.5 * RushHourStud.SIZE));
-			}
-			public Point centerToGPPPPoint(Point center) {
-				return center.minus(new Point(0.0 * RushHourStud.SIZE, 0.5 * RushHourStud.SIZE));
+				overallPos = overallPath.findClosestGraphPositionPathPosition(startGP);
+				
+				
 			}
 		};
 		c3.computeCtorProperties();
 		c3.computeCtorProperties();
 		c3.driver.computeStartingProperties();
 		c3.p = c3.driver.gpppPointToCenter(c3.driver.overallPos.p);
-		c3.angle = 0.0 * Math.PI;
+		c3.angle = c3.driver.overallSide.getAngle();
 		c3.setTransform(c3.p, c3.angle);
 		
 		w.carMap.addCar(c3);
@@ -222,30 +175,21 @@ public class RushHourWorld extends World {
 		c4.driver = new Driver(c4) {
 			public void computeStartingProperties() { 
 				
-				overallPath = new GraphPositionPath(new ArrayList<GraphPosition>() {{
-					add(new RushHourBoardPosition(b, 0, 3));
-					add(new RushHourBoardPosition(b, 1, 3));
-					add(new RushHourBoardPosition(b, 2, 3));
-					add(new RushHourBoardPosition(b, 3, 3));
-//					add(new RushHourBoardPosition(b, 4, 3));
-//					add(new RushHourBoardPosition(b, 5, 3));
-					}});
+				RushHourBoardPosition startGP = new RushHourBoardPosition(b, 1, 3);
+				overallSide = Side.TOP;
 				
-				overallPos = new GraphPositionPathPosition(overallPath, 1, 0.0);
+				overallPath = GraphPositionPathFactory.createRushHourBoardPath(b, startGP, overallSide);
 				
-			}
-			public Point gpppPointToCenter(Point gppp) {
-				return gppp.plus(new Point(0.5 * RushHourStud.SIZE, 1.5 * RushHourStud.SIZE));
-			}
-			public Point centerToGPPPPoint(Point center) {
-				return center.minus(new Point(0.5 * RushHourStud.SIZE, 1.5 * RushHourStud.SIZE));
+				overallPos = overallPath.findClosestGraphPositionPathPosition(startGP);
+				
+				
 			}
 		};
 		c4.computeCtorProperties();
 		c4.computeCtorProperties();
 		c4.driver.computeStartingProperties();
 		c4.p = c4.driver.gpppPointToCenter(c4.driver.overallPos.p);
-		c4.angle = 1.5 * Math.PI;
+		c4.angle = c4.driver.overallSide.getAngle();
 		c4.setTransform(c4.p, c4.angle);
 		
 		w.carMap.addCar(c4);
@@ -260,30 +204,21 @@ public class RushHourWorld extends World {
 		c5.driver = new Driver(c5) {
 			public void computeStartingProperties() { 
 				
-				overallPath = new GraphPositionPath(new ArrayList<GraphPosition>() {{
-					add(new RushHourBoardPosition(b, 0, 0));
-					add(new RushHourBoardPosition(b, 1, 0));
-					add(new RushHourBoardPosition(b, 2, 0));
-					add(new RushHourBoardPosition(b, 3, 0));
-					add(new RushHourBoardPosition(b, 4, 0));
-//					add(new RushHourBoardPosition(b, 5, 0));
-					}});
+				RushHourBoardPosition startGP = new RushHourBoardPosition(b, 4, 0);
+				overallSide = Side.TOP;
 				
-				overallPos = new GraphPositionPathPosition(overallPath, 4, 0.0);
+				overallPath = GraphPositionPathFactory.createRushHourBoardPath(b, startGP, overallSide);
 				
-			}
-			public Point gpppPointToCenter(Point gppp) {
-				return gppp.plus(new Point(0.5 * RushHourStud.SIZE, 1.0 * RushHourStud.SIZE));
-			}
-			public Point centerToGPPPPoint(Point center) {
-				return center.minus(new Point(0.5 * RushHourStud.SIZE, 1.0 * RushHourStud.SIZE));
+				overallPos = overallPath.findClosestGraphPositionPathPosition(startGP);
+				
+				
 			}
 		};
 		c5.computeCtorProperties();
 		c5.computeCtorProperties();
 		c5.driver.computeStartingProperties();
 		c5.p = c5.driver.gpppPointToCenter(c5.driver.overallPos.p);
-		c5.angle = 1.5 * Math.PI;
+		c5.angle = c5.driver.overallSide.getAngle();
 		c5.setTransform(c5.p, c5.angle);
 		
 		w.carMap.addCar(c5);
@@ -298,30 +233,21 @@ public class RushHourWorld extends World {
 		c6.driver = new Driver(c6) {
 			public void computeStartingProperties() { 
 				
-				overallPath = new GraphPositionPath(new ArrayList<GraphPosition>() {{
-					add(new RushHourBoardPosition(b, 4, 0));
-					add(new RushHourBoardPosition(b, 4, 1));
-					add(new RushHourBoardPosition(b, 4, 2));
-					add(new RushHourBoardPosition(b, 4, 3));
-					add(new RushHourBoardPosition(b, 4, 4));
-//					add(new RushHourBoardPosition(b, 4, 5));
-					}});
+				RushHourBoardPosition startGP = new RushHourBoardPosition(b, 4, 4);
+				overallSide = Side.LEFT;
 				
-				overallPos = new GraphPositionPathPosition(overallPath, 4, 0.0);
+				overallPath = GraphPositionPathFactory.createRushHourBoardPath(b, startGP, overallSide);
 				
-			}
-			public Point gpppPointToCenter(Point gppp) {
-				return gppp.plus(new Point(1.0 * RushHourStud.SIZE, 0.5 * RushHourStud.SIZE));
-			}
-			public Point centerToGPPPPoint(Point center) {
-				return center.minus(new Point(1.0 * RushHourStud.SIZE, 0.5 * RushHourStud.SIZE));
+				overallPos = overallPath.findClosestGraphPositionPathPosition(startGP);
+				
+				
 			}
 		};
 		c6.computeCtorProperties();
 		c6.computeCtorProperties();
 		c6.driver.computeStartingProperties();
 		c6.p = c6.driver.gpppPointToCenter(c6.driver.overallPos.p);
-		c6.angle = 1.0 * Math.PI;
+		c6.angle = c6.driver.overallSide.getAngle();
 		c6.setTransform(c6.p, c6.angle);
 		
 		w.carMap.addCar(c6);
@@ -333,30 +259,21 @@ public class RushHourWorld extends World {
 		c7.driver = new Driver(c7) {
 			public void computeStartingProperties() { 
 				
-				overallPath = new GraphPositionPath(new ArrayList<GraphPosition>() {{
-					add(new RushHourBoardPosition(b, 5, 0));
-					add(new RushHourBoardPosition(b, 5, 1));
-					add(new RushHourBoardPosition(b, 5, 2));
-					add(new RushHourBoardPosition(b, 5, 3));
-//					add(new RushHourBoardPosition(b, 5, 4));
-//					add(new RushHourBoardPosition(b, 5, 5));
-					}});
+				RushHourBoardPosition startGP = new RushHourBoardPosition(b, 5, 2);
+				overallSide = Side.LEFT;
 				
-				overallPos = new GraphPositionPathPosition(overallPath, 2, 0.0);
+				overallPath = GraphPositionPathFactory.createRushHourBoardPath(b, startGP, overallSide);
 				
-			}
-			public Point gpppPointToCenter(Point gppp) {
-				return gppp.plus(new Point(1.5 * RushHourStud.SIZE, 0.5 * RushHourStud.SIZE));
-			}
-			public Point centerToGPPPPoint(Point center) {
-				return center.minus(new Point(1.5 * RushHourStud.SIZE, 0.5 * RushHourStud.SIZE));
+				overallPos = overallPath.findClosestGraphPositionPathPosition(startGP);
+				
+				
 			}
 		};
 		c7.computeCtorProperties();
 		c7.computeCtorProperties();
 		c7.driver.computeStartingProperties();
 		c7.p = c7.driver.gpppPointToCenter(c7.driver.overallPos.p);
-		c7.angle = 1.0 * Math.PI;
+		c7.angle = c7.driver.overallSide.getAngle();
 		c7.setTransform(c7.p, c7.angle);
 		
 		w.carMap.addCar(c7);

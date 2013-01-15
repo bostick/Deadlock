@@ -235,6 +235,8 @@ public class ShapeUtils {
 	 * 
 	 * intersectsQQ counts both area intersects and degenerate edge intersects
 	 * this only counts area intersects (where there is actual area overlapping)
+	 * 
+	 * so sharing exactly an edge here returns false
 	 */
 	public static boolean intersectAreaQQ(Quad q0, Quad q1) {
 		
@@ -266,6 +268,41 @@ public class ShapeUtils {
 		q0.project(q1.getN12(), q0Projection);
 		q1.projectN12(q1Projection);
 		if (!DMath.rangesOverlapArea(q0Projection, q1Projection)) {
+			return false;
+		}
+		
+		return true;
+	}
+	
+	public static boolean containsAQ(AABB a0, Quad q1) {
+		if (!intersectAA(a0, q1.aabb)) {
+			return false;
+		}
+		
+		double[] a0Projection = new double[2];
+		double[] q1Projection = new double[2];
+		
+		a0.projectN01(a0Projection);
+		q1.project(a0.getN01(), q1Projection);
+		if (!DMath.rangeContains(a0Projection, q1Projection)) {
+			return false;
+		}
+		
+		a0.projectN12(a0Projection);
+		q1.project(a0.getN12(), q1Projection);
+		if (!DMath.rangeContains(a0Projection, q1Projection)) {
+			return false;
+		}
+		
+		a0.project(q1.getN01(), a0Projection);
+		q1.projectN01(q1Projection);
+		if (!DMath.rangeContains(a0Projection, q1Projection)) {
+			return false;
+		}
+		
+		a0.project(q1.getN12(), a0Projection);
+		q1.projectN12(q1Projection);
+		if (!DMath.rangeContains(a0Projection, q1Projection)) {
 			return false;
 		}
 		

@@ -59,6 +59,27 @@ public class GraphPositionPathFactory {
 		return new GraphPositionPath(poss);
 	}
 	
+	public static GraphPositionPath createRushHourBoardPath(RushHourBoard b, RushHourBoardPosition start, Side side) {
+		
+		List<GraphPosition> poss = new ArrayList<GraphPosition>();
+		switch (side) {
+		case TOP:
+		case BOTTOM:
+			for (int i = 0; i < 6; i++) {
+				poss.add(new RushHourBoardPosition(b, i, start.colCombo));
+			}
+			break;
+		case LEFT:
+		case RIGHT:
+			for (int i = 0; i < 6; i++) {
+				poss.add(new RushHourBoardPosition(b, start.rowCombo, i));
+			}
+			break;
+		}
+		
+		return new GraphPositionPath(poss);
+	}
+	
 	/**
 	 * Position a has already been added
 	 * 
