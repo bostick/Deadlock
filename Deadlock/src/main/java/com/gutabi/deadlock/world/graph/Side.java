@@ -2,10 +2,10 @@ package com.gutabi.deadlock.world.graph;
 
 public enum Side {
 	
-	TOP { public Side other() { return BOTTOM; } public double getAngle() { return 0.5 * Math.PI; } },
+	TOP { public Side other() { return BOTTOM; } public double getAngle() { return 1.5 * Math.PI; } },
 	LEFT { public Side other() { return RIGHT; } public double getAngle() { return 1.0 * Math.PI; } },
 	RIGHT { public Side other() { return LEFT; } public double getAngle() { return 0.0 * Math.PI; } },
-	BOTTOM { public Side other() { return TOP; } public double getAngle() { return 1.5 * Math.PI; } };
+	BOTTOM { public Side other() { return TOP; } public double getAngle() { return 0.5 * Math.PI; } };
 	
 	public abstract Side other();
 	public abstract double getAngle();

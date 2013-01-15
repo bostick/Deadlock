@@ -135,13 +135,19 @@ public abstract class Car extends Entity {
 		
 		p = driver.gpppPointToCenter(driver.overallPos.p);
 		
-		GraphPositionPathPosition next = driver.overallPos.nextBound();
-		
-		Point nextDTGoalPoint = driver.gpppPointToCenter(next.p);
-		
-		Point dp = new Point(nextDTGoalPoint.x-p.x, nextDTGoalPoint.y-p.y);
-		
-		angle = Math.atan2(dp.y, dp.x);
+		if (driver.overallSide == null) {
+			
+			GraphPositionPathPosition next = driver.overallPos.nextBound();
+			
+			Point nextDTGoalPoint = driver.gpppPointToCenter(next.p);
+			
+			Point dp = new Point(nextDTGoalPoint.x-p.x, nextDTGoalPoint.y-p.y);
+			
+			angle = Math.atan2(dp.y, dp.x);
+			
+		} else {
+			angle = driver.overallSide.getAngle();
+		}
 		
 		setTransform(p, angle);
 	}
