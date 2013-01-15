@@ -17,6 +17,7 @@ import com.gutabi.deadlock.ui.paint.Join;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.world.ProgressMeter;
 import com.gutabi.deadlock.world.World;
+import com.gutabi.deadlock.world.cars.AutonomousCar;
 import com.gutabi.deadlock.world.cars.Car;
 
 public final class Fixture extends Vertex {
@@ -224,7 +225,7 @@ public final class Fixture extends Vertex {
 		
 		int r = APP.RANDOM.nextInt(12);
 		
-		Car c = Car.createCar(world, this, r);
+		Car c = AutonomousCar.createCar(world, this, r);
 		
 		r = APP.RANDOM.nextInt(3);
 		

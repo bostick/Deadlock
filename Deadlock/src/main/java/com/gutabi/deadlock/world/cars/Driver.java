@@ -5,12 +5,13 @@ import java.util.List;
 
 import com.gutabi.deadlock.math.DMath;
 import com.gutabi.deadlock.math.Point;
+import com.gutabi.deadlock.world.graph.GraphPosition;
 import com.gutabi.deadlock.world.graph.GraphPositionPath;
 import com.gutabi.deadlock.world.graph.GraphPositionPathPosition;
 import com.gutabi.deadlock.world.graph.RushHourStud;
 import com.gutabi.deadlock.world.graph.Side;
 
-public class Driver {
+public abstract class Driver {
 	
 	public static final double COMPLETE_STOP_WAIT_TIME = 0.0;
 	
@@ -23,6 +24,7 @@ public class Driver {
 	
 	public GraphPositionPath overallPath;
 	
+	public GraphPosition startGP;
 	public Side overallSide;
 	public GraphPositionPathPosition overallPos;
 	
@@ -41,23 +43,7 @@ public class Driver {
 		this.c = c;
 	}
 	
-	public void computeStartingProperties() {
-		
-		computePath();
-		
-		overallPath.currentDrivers.add(this);
-		for (GraphPositionPath path : overallPath.sharedEdgesMap.keySet()) {
-			path.currentDrivers.add(this);
-		}
-		
-		overallPos = overallPath.startingPos;
-		
-		vertexDepartureQueue.add(new VertexSpawnEvent(overallPos));
-	}
-	
-	public void computePath() {
-		overallPath = c.source.getShortestPathToMatch();
-	}
+	public abstract void computeStartingProperties();
 	
 	public void computeDynamicPropertiesMoving() {
 		overallPos = overallPath.findClosestGraphPositionPathPosition(centerToGPPPPoint(c.p), overallPos, true);
