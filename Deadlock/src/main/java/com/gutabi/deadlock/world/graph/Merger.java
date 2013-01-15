@@ -3,8 +3,8 @@ package com.gutabi.deadlock.world.graph;
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
 import com.gutabi.deadlock.Entity;
+import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.geom.Line;
-import com.gutabi.deadlock.geom.Quad;
 import com.gutabi.deadlock.geom.Shape;
 import com.gutabi.deadlock.geom.SweepableShape;
 import com.gutabi.deadlock.math.Point;
@@ -34,7 +34,7 @@ public class Merger extends Edge {
 	private double[] cumulativeLengthsFromTop;
 	private double[] cumulativeLengthsFromLeft;
 	
-	private Quad shape;
+	private AABB shape;
 	
 	private final Line debugSkeletonTopBottomLine;
 	private final Line debugSkeletonLeftRightLine;
@@ -50,11 +50,11 @@ public class Merger extends Edge {
 		this.right = right;
 		this.bottom = bottom;
 		
-		Point p0 = ul;
-		Point p1 = new Point(ul.x + MERGER_WIDTH, ul.y);
-		Point p2 = new Point(ul.x + MERGER_WIDTH, ul.y + MERGER_HEIGHT);
-		Point p3 = new Point(ul.x, ul.y + MERGER_HEIGHT);
-		shape = APP.platform.createShapeEngine().createQuad(this, p0, p1, p2, p3);
+//		Point p0 = ul;
+//		Point p1 = new Point(ul.x + MERGER_WIDTH, ul.y);
+//		Point p2 = new Point(ul.x + MERGER_WIDTH, ul.y + MERGER_HEIGHT);
+//		Point p3 = new Point(ul.x, ul.y + MERGER_HEIGHT);
+		shape = APP.platform.createShapeEngine().createAABB(this, ul.x, ul.y, MERGER_WIDTH, MERGER_HEIGHT);
 		
 		top.m = this;
 		left.m = this;

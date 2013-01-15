@@ -38,7 +38,7 @@ public abstract class Quad extends SweepableShape {
 		double brX = Math.max(Math.max(p0.x, p1.x), Math.max(p2.x, p3.x));
 		double brY = Math.max(Math.max(p0.y, p1.y), Math.max(p2.y, p3.y));
 		
-		aabb = APP.platform.createShapeEngine().createAABB(ulX, ulY, (brX - ulX), (brY - ulY));
+		aabb = APP.platform.createShapeEngine().createAABB(parent, ulX, ulY, (brX - ulX), (brY - ulY));
 	}
 	
 	public int hashCode() {

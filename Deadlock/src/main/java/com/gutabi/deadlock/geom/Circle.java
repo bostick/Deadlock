@@ -25,7 +25,7 @@ public abstract class Circle extends SweepableShape implements SweeperShape {
 		this.center = center;
 		this.radius = radius;
 		
-		aabb = APP.platform.createShapeEngine().createAABB(center.x - radius, center.y - radius, 2*radius, 2*radius);
+		aabb = APP.platform.createShapeEngine().createAABB(parent, center.x - radius, center.y - radius, 2*radius, 2*radius);
 	}
 	
 	public boolean equals(Object o) {

@@ -19,11 +19,11 @@ public class MenuPanel extends PanelBase {
 	public MenuPanel(final MainMenu screen) {
 		this.screen = screen;
 		
-		aabb = APP.platform.createShapeEngine().createAABB(aabb.x, aabb.y, APP.MENUPANEL_WIDTH, APP.MENUPANEL_HEIGHT);
+		aabb = APP.platform.createShapeEngine().createAABB(null, aabb.x, aabb.y, APP.MENUPANEL_WIDTH, APP.MENUPANEL_HEIGHT);
 	}
 	
 	public void setLocation(double x, double y) {
-		aabb = APP.platform.createShapeEngine().createAABB(x, y, aabb.width, aabb.height);
+		aabb = APP.platform.createShapeEngine().createAABB(null, x, y, aabb.width, aabb.height);
 	}
 	
 	public void postDisplay() {

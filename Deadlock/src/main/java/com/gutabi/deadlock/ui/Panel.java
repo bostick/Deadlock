@@ -6,7 +6,7 @@ import com.gutabi.deadlock.ui.paint.RenderingContext;
 
 public abstract class Panel {
 	
-	public AABB aabb = APP.platform.createShapeEngine().createAABB(0, 0, 0, 0);
+	public AABB aabb = APP.platform.createShapeEngine().createAABB(null, 0, 0, 0, 0);
 	
 	
 	public abstract void pressed(InputEvent ev);

@@ -738,10 +738,12 @@ public class Graph implements Sweepable {
 				if (((CapsuleSequence)ed.getShape()).intersect(c)) {
 					return ed;
 				}
-			} else {
-				if (ShapeUtils.intersectCQ(c, (Quad)ed.getShape())) {
+			} else if (ed instanceof Merger) {
+				if (ShapeUtils.intersectAC((AABB)ed.getShape(), c)) {
 					return ed;
 				}
+			} else {
+				assert false;
 			}
 		}
 		return null;

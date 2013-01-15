@@ -9,8 +9,8 @@ public class AABBImpl extends AABB {
 	
 	private Rectangle2D rect;
 	
-	public AABBImpl(double x, double y, double width, double height) {
-		super(x, y, width, height);
+	public AABBImpl(Object parent, double x, double y, double width, double height) {
+		super(parent, x, y, width, height);
 	}
 	
 	private void computeRect() {

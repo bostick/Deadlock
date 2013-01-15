@@ -25,7 +25,7 @@ public class RushHourBoard extends Entity {
 		this.world = world;
 		this.p = p;
 		
-		aabb = APP.platform.createShapeEngine().createAABB(p.x - 3 * RushHourStud.SIZE, p.y - 3 * RushHourStud.SIZE, 6 * RushHourStud.SIZE,  6 * RushHourStud.SIZE);
+		aabb = APP.platform.createShapeEngine().createAABB(this, p.x - 3 * RushHourStud.SIZE, p.y - 3 * RushHourStud.SIZE, 6 * RushHourStud.SIZE,  6 * RushHourStud.SIZE);
 		
 		for (int i = 0; i < 6; i++) {
 			for (int j = 0; j < 6; j++) {

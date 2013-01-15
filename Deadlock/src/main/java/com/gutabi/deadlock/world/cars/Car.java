@@ -12,9 +12,11 @@ import org.jbox2d.dynamics.Filter;
 import org.jbox2d.dynamics.FixtureDef;
 
 import com.gutabi.deadlock.Entity;
+import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.geom.Geom;
 import com.gutabi.deadlock.geom.Quad;
 import com.gutabi.deadlock.geom.Shape;
+import com.gutabi.deadlock.geom.ShapeUtils;
 import com.gutabi.deadlock.math.DMath;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.Transform;
@@ -350,7 +352,7 @@ public class Car extends Entity {
 				inMerger = false;
 			} else {
 				atleastPartiallyOnRoad = true;
-				if (hit instanceof Merger && ((Quad)hit.getShape()).completelyContains(shape)) {
+				if (hit instanceof Merger && ShapeUtils.containsAQ((AABB)hit.getShape(), shape)) {
 					inMerger = true;
 				} else {
 					inMerger = false;

@@ -13,18 +13,18 @@ public abstract class Button {
 	public String command;
 	public boolean enabled = true;
 	
-	public AABB aabb = APP.platform.createShapeEngine().createAABB(0, 0, 0, 0);
+	public AABB aabb = APP.platform.createShapeEngine().createAABB(null, 0, 0, 0, 0);
 	
 	public Button() {
 		
 	}
 	
 	public void setLocation(double x, double y) {
-		aabb = APP.platform.createShapeEngine().createAABB(x, y, aabb.width, aabb.height);
+		aabb = APP.platform.createShapeEngine().createAABB(null, x, y, aabb.width, aabb.height);
 	}
 	
 	public void setBounds(double x, double y, double width, double height) {
-		aabb = APP.platform.createShapeEngine().createAABB(x, y, width, height);
+		aabb = APP.platform.createShapeEngine().createAABB(null, x, y, width, height);
 	}
 	
 	public boolean hitTest(Point p) {
@@ -48,7 +48,7 @@ public abstract class Button {
 			lab.render();
 			double width = lab.getWidth();
 			double height = lab.getHeight();
-			aabb = APP.platform.createShapeEngine().createAABB(aabb.x, aabb.y, width, height);
+			aabb = APP.platform.createShapeEngine().createAABB(null, aabb.x, aabb.y, width, height);
 		}
 	}
 	
