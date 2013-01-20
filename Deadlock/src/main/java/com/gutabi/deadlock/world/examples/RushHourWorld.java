@@ -8,7 +8,6 @@ import com.gutabi.deadlock.world.cars.CarStateEnum;
 import com.gutabi.deadlock.world.cars.InteractiveCar;
 import com.gutabi.deadlock.world.cars.InteractiveDriver;
 import com.gutabi.deadlock.world.graph.Graph;
-import com.gutabi.deadlock.world.graph.GraphPositionPathFactory;
 import com.gutabi.deadlock.world.graph.RushHourBoard;
 import com.gutabi.deadlock.world.graph.RushHourBoardPosition;
 import com.gutabi.deadlock.world.graph.Side;
@@ -47,6 +46,7 @@ public class RushHourWorld extends World {
 		final RushHourBoard b = w.createRushHourBoard(new Point(8, 8));
 		
 		char[] carChars = new char[] { 'R', 'A', 'B', 'C', 'D', 'E', 'F', 'G' };
+//		char[] carChars = new char[] { 'A' };
 		int cur2Count = 0;
 		int cur3Count = 0;
 		carLoop:
@@ -138,22 +138,22 @@ public class RushHourWorld extends World {
 		case RIGHT:
 			c.driver.startGP = new RushHourBoardPosition(b, frontRow + c.CAR_WIDTH/2, frontCol + c.CAR_LENGTH/2 - 1);
 			c.angle = 0.0 * Math.PI;
-			c.driver.overallPath = GraphPositionPathFactory.createRushHourBoardPath(b, type, (RushHourBoardPosition)c.driver.startGP, Side.RIGHT);
+			c.driver.overallPath = b.getPath(Side.RIGHT, frontRow);
 			break;
 		case BOTTOM:
 			c.driver.startGP = new RushHourBoardPosition(b, frontRow + c.CAR_LENGTH/2 - 1, frontCol + c.CAR_WIDTH/2);
 			c.angle = 0.5 * Math.PI;
-			c.driver.overallPath = GraphPositionPathFactory.createRushHourBoardPath(b, type, (RushHourBoardPosition)c.driver.startGP, Side.BOTTOM);
+			c.driver.overallPath = b.getPath(Side.BOTTOM, frontCol);
 			break;
 		case LEFT:
 			c.driver.startGP = new RushHourBoardPosition(b, frontRow + c.CAR_WIDTH/2, frontCol + c.CAR_LENGTH/2);
 			c.angle = 1.0 * Math.PI;
-			c.driver.overallPath = GraphPositionPathFactory.createRushHourBoardPath(b, type, (RushHourBoardPosition)c.driver.startGP, Side.LEFT);
+			c.driver.overallPath = b.getPath(Side.LEFT, frontRow);
 			break;
 		case TOP:
 			c.driver.startGP = new RushHourBoardPosition(b, frontRow + c.CAR_LENGTH/2, frontCol + c.CAR_WIDTH/2);
 			c.angle = 1.5 * Math.PI;
-			c.driver.overallPath = GraphPositionPathFactory.createRushHourBoardPath(b, type, (RushHourBoardPosition)c.driver.startGP, Side.TOP);
+			c.driver.overallPath = b.getPath(Side.TOP, frontCol);
 			break;
 		}
 		c.computeCtorProperties();

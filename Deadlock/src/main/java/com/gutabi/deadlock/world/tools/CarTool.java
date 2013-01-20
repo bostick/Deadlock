@@ -66,6 +66,8 @@ public class CarTool extends ToolBase {
 		
 		car.driver.overallPos = car.driver.overallPath.findClosestGraphPositionPathPosition(car.p, car.driver.overallPath.startingPos, true);
 		
+//		GraphPosition gpos = car.driver.overallPos.getGraphPosition();
+		
 		car = null;
 		
 		screen.contentPane.repaint();

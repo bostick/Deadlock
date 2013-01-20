@@ -18,15 +18,12 @@ public class RushHourBoard extends Entity {
 	World world;
 	Point p;
 	
-	public RushHourStud[][] studs = new RushHourStud[6][6];
-	public RushHourStud exit0;
-	public RushHourStud exit1;
-	
+	public List<RushHourStud> studs = new ArrayList<RushHourStud>();
 	public List<AABB> neg = new ArrayList<AABB>();
 	
-	public RushHourStud a;
-	
 	public Point ul;
+	public int[] rowRange = { 0, 0 };
+	public int[] colRange = { 0, 0 };
 	public AABB aabb;
 	
 	public RushHourBoard(World world, Point p) {
@@ -35,22 +32,98 @@ public class RushHourBoard extends Entity {
 		
 		ul = new Point(p.x - 3 * RushHourStud.SIZE, p.y - 3 * RushHourStud.SIZE);
 		
-		aabb = null;
+		RushHourStud s;
 		for (int i = 0; i < 6; i++) {
 			for (int j = 0; j < 6; j++) {
-				studs[i][j] = new RushHourStud(world, this, i, j);
-				aabb = AABB.union(aabb, studs[i][j].aabb);
+				s = new RushHourStud(world, this, i, j);
+				studs.add(s);
+				if (i > rowRange[1]) {
+					rowRange[1] = i;
+				}
+				if (i < rowRange[0]) {
+					rowRange[0] = i;
+				}
+				if (j > colRange[1]) {
+					colRange[1] = j;
+				}
+				if (j < colRange[0]) {
+					colRange[0] = j;
+				}
+				aabb = AABB.union(aabb, s.aabb);
 			}
 		}
-		exit0 = new RushHourStud(world, this, 2, 6);
-		exit1 = new RushHourStud(world, this, 2, 7);
-		aabb = AABB.union(aabb, exit0.aabb);
-		aabb = AABB.union(aabb, exit1.aabb);
 		
-		neg.add(APP.platform.createShapeEngine().createAABB(this, ul.x + 6 * RushHourStud.SIZE, ul.y, 2 * RushHourStud.SIZE, 2 * RushHourStud.SIZE));
-		neg.add(APP.platform.createShapeEngine().createAABB(this, ul.x + 6 * RushHourStud.SIZE, ul.y + 3 * RushHourStud.SIZE, 2 * RushHourStud.SIZE, 3 * RushHourStud.SIZE));
+		s = new RushHourStud(world, this, 2, 6);
+		studs.add(s);
+		if (2 > rowRange[1]) {
+			rowRange[1] = 2;
+		}
+		if (2 < rowRange[0]) {
+			rowRange[0] = 2;
+		}
+		if (6 > colRange[1]) {
+			colRange[1] = 6;
+		}
+		if (6 < colRange[0]) {
+			colRange[0] = 6;
+		}
 		
-		a = new RushHourStud(world, this, 0, -1);
+		s = new RushHourStud(world, this, 2, 7);
+		studs.add(s);
+		if (2 > rowRange[1]) {
+			rowRange[1] = 2;
+		}
+		if (2 < rowRange[0]) {
+			rowRange[0] = 2;
+		}
+		if (7 > colRange[1]) {
+			colRange[1] = 7;
+		}
+		if (7 < colRange[0]) {
+			colRange[0] = 7;
+		}
+		
+		s = new RushHourStud(world, this, 0, -1);
+		studs.add(s);
+		if (0 > rowRange[1]) {
+			rowRange[1] = 0;
+		}
+		if (0 < rowRange[0]) {
+			rowRange[0] = 0;
+		}
+		if (-1 > colRange[1]) {
+			colRange[1] = -1;
+		}
+		if (-1 < colRange[0]) {
+			colRange[0] = -1;
+		}
+		
+		aabb = null;
+		for (RushHourStud ss : studs) {
+			aabb = AABB.union(aabb, ss.aabb);
+		}
+		
+		create paths
+		
+		
+		int colCount = (int)Math.round(aabb.width / RushHourStud.SIZE);
+		int rowCount = (int)Math.round(aabb.height / RushHourStud.SIZE);
+		for (int i = 0; i < rowCount; i++) {
+			jloop:
+			for (int j = 0; j < colCount; j++) {
+				AABB n = APP.platform.createShapeEngine().createAABB(this, aabb.ul.x + j * RushHourStud.SIZE, aabb.ul.y + i * RushHourStud.SIZE, RushHourStud.SIZE, RushHourStud.SIZE);
+				
+				for (RushHourStud ss : studs) {
+					if (ss.aabb.equals(n)) {
+						continue jloop;
+					}
+				}
+				
+				neg.add(n);
+			}
+		}
+		
+		
 	}
 	
 	public void preStart() {
@@ -69,26 +142,19 @@ public class RushHourBoard extends Entity {
 		return true;
 	}
 	
+	public GraphPositionPath getPath(Side s, int index) {
+		
+	}
+	
 	public Point point(double row, double col) {
 		return ul.plus(new Point(col * RushHourStud.SIZE, row * RushHourStud.SIZE));
 	}
 	
 	public RushHourBoard hitTest(Point p) {
-		for (int i = 0; i < 6; i++) {
-			for (int j = 0; j < 6; j++) {
-				if (studs[i][j].hitTest(p)) {
-					return this;
-				}
+		for (RushHourStud s : studs) {
+			if (s.hitTest(p)) {
+				return this;
 			}
-		}
-		if (exit0.hitTest(p)) {
-			return this;
-		}
-		if (exit1.hitTest(p)) {
-			return this;
-		}
-		if (a.hitTest(p)) {
-			return this;
 		}
 		return null;
 	}
@@ -108,45 +174,20 @@ public class RushHourBoard extends Entity {
 		return true;
 	}
 	
-//	public AABB getShape() {
-//		return aabb;
-//	}
-	
 	public boolean isUserDeleteable() {
 		return true;
 	}
 	
 	public void paint_panel(RenderingContext ctxt) {
-		
-//		ctxt.setColor(Color.GRAY);
-//		aabb.paint(ctxt);
-		
-		for (int i = 0; i < 6; i++) {
-			for (int j = 0; j < 6; j++) {
-				studs[i][j].paint(ctxt);
-			}
+		for (RushHourStud s : studs) {
+			s.paint(ctxt);
 		}
-		exit0.paint(ctxt);
-		exit1.paint(ctxt);
-		
-		a.paint(ctxt);
-		
 	}
 	
 	public void paint_preview(RenderingContext ctxt) {
-		
-//		ctxt.setColor(Color.GRAY);
-//		aabb.paint(ctxt);
-		
-		for (int i = 0; i < 6; i++) {
-			for (int j = 0; j < 6; j++) {
-				studs[i][j].paint(ctxt);
-			}
+		for (RushHourStud s : studs) {
+			s.paint(ctxt);
 		}
-		exit0.paint(ctxt);
-		exit1.paint(ctxt);
-		
-		a.paint(ctxt);
 	}
 	
 	public void paintHilite(RenderingContext ctxt) {

@@ -12,9 +12,9 @@ import org.jbox2d.common.Vec2;
 
 import com.gutabi.deadlock.Entity;
 import com.gutabi.deadlock.math.Point;
-import com.gutabi.deadlock.ui.Transform;
 import com.gutabi.deadlock.ui.Image;
 import com.gutabi.deadlock.ui.InputEvent;
+import com.gutabi.deadlock.ui.Transform;
 import com.gutabi.deadlock.ui.paint.Color;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.world.cars.Car;
@@ -26,6 +26,7 @@ import com.gutabi.deadlock.world.graph.Merger;
 import com.gutabi.deadlock.world.graph.Road;
 import com.gutabi.deadlock.world.graph.RoadPosition;
 import com.gutabi.deadlock.world.graph.RushHourBoard;
+import com.gutabi.deadlock.world.graph.RushHourStud;
 import com.gutabi.deadlock.world.graph.Vertex;
 
 public class World {
@@ -231,13 +232,9 @@ public class World {
 		
 		RushHourBoard b = new RushHourBoard(this, p);
 		
-		for (int i = 0; i < 6; i++) {
-			for (int j = 0; j < 6; j++) {
-				quadrantMap.grassMap.mowGrass(b.studs[i][j].aabb);
-			}
+		for (RushHourStud stud : b.studs) {
+			quadrantMap.grassMap.mowGrass(stud.aabb);
 		}
-		quadrantMap.grassMap.mowGrass(b.exit0.aabb);
-		quadrantMap.grassMap.mowGrass(b.exit1.aabb);
 		
 		graph.insertRushHourBoardTop(b);
 		
