@@ -4,9 +4,9 @@ import static com.gutabi.deadlock.DeadlockApplication.APP;
 
 import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.math.Point;
-import com.gutabi.deadlock.ui.Transform;
 import com.gutabi.deadlock.ui.InputEvent;
 import com.gutabi.deadlock.ui.PanelBase;
+import com.gutabi.deadlock.ui.Transform;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 
 public class WorldPanel extends PanelBase {

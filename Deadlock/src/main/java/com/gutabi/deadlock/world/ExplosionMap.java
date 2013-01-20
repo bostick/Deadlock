@@ -1,6 +1,7 @@
 package com.gutabi.deadlock.world;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
+
 import java.util.ArrayList;
 import java.util.List;
 

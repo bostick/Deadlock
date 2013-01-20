@@ -1,8 +1,8 @@
 package com.gutabi.deadlock.geom;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
-import java.util.Comparator;
 
+import java.util.Comparator;
 
 import com.gutabi.deadlock.math.DMath;
 import com.gutabi.deadlock.math.Point;

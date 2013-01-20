@@ -3,10 +3,10 @@ package com.gutabi.deadlock.quadranteditor;
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
 import com.gutabi.deadlock.math.Point;
-import com.gutabi.deadlock.ui.Transform;
 import com.gutabi.deadlock.ui.Button;
 import com.gutabi.deadlock.ui.InputEvent;
 import com.gutabi.deadlock.ui.PanelBase;
+import com.gutabi.deadlock.ui.Transform;
 import com.gutabi.deadlock.ui.paint.Color;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.world.Quadrant;

@@ -1,6 +1,7 @@
 package com.gutabi.deadlock.world.tools;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
+
 import com.gutabi.deadlock.geom.Capsule;
 import com.gutabi.deadlock.geom.Circle;
 import com.gutabi.deadlock.geom.Shape;
