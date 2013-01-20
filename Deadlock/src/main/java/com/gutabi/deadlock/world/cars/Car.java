@@ -103,7 +103,6 @@ public abstract class Car extends Entity {
 		
 		state = CarStateEnum.DRIVING;
 		
-//		driver = new Driver(this);
 		engine = new Engine(world, this);
 	}
 	
@@ -133,13 +132,13 @@ public abstract class Car extends Entity {
 		
 		driver.computeStartingProperties();
 		
-		p = driver.gpppPointToCenter(driver.overallPos.p);
+		p = driver.overallPos.p;
 		
 		if (driver.overallSide == null) {
 			
 			GraphPositionPathPosition next = driver.overallPos.nextBound();
 			
-			Point nextDTGoalPoint = driver.gpppPointToCenter(next.p);
+			Point nextDTGoalPoint = next.p;
 			
 			Point dp = new Point(nextDTGoalPoint.x-p.x, nextDTGoalPoint.y-p.y);
 			
@@ -250,7 +249,7 @@ public abstract class Car extends Entity {
 				inMerger = false;
 			} else {
 				atleastPartiallyOnRoad = true;
-				if (hit instanceof Merger && ShapeUtils.containsAQ((AABB)hit.getShape(), shape)) {
+				if (hit instanceof Merger && ShapeUtils.containsAQ((AABB)((Merger)hit).getShape(), shape)) {
 					inMerger = true;
 				} else {
 					inMerger = false;
@@ -442,7 +441,7 @@ public abstract class Car extends Entity {
 				
 			}
 			
-			if (!world.quadrantMap.completelyContains(shape)) {
+			if (!world.quadrantMap.contains(shape)) {
 				return false;
 			}
 			
@@ -484,7 +483,7 @@ public abstract class Car extends Entity {
 				
 			}
 			
-			if (!world.quadrantMap.completelyContains(shape)) {
+			if (!world.quadrantMap.contains(shape)) {
 				return false;
 			}
 			

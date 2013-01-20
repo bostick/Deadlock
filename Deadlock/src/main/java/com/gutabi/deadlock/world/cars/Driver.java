@@ -8,7 +8,6 @@ import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.world.graph.GraphPosition;
 import com.gutabi.deadlock.world.graph.GraphPositionPath;
 import com.gutabi.deadlock.world.graph.GraphPositionPathPosition;
-import com.gutabi.deadlock.world.graph.RushHourStud;
 import com.gutabi.deadlock.world.graph.Side;
 
 public abstract class Driver {
@@ -46,73 +45,8 @@ public abstract class Driver {
 	public abstract void computeStartingProperties();
 	
 	public void computeDynamicPropertiesMoving() {
-		overallPos = overallPath.findClosestGraphPositionPathPosition(centerToGPPPPoint(c.p), overallPos, true);
+		overallPos = overallPath.findClosestGraphPositionPathPosition(c.p, overallPos, true);
 	}
-	
-	public Point gpppPointToCenter(Point gppp) {
-		
-		if (overallSide == null) {
-			return gppp;
-		}
-		
-		switch (overallSide) {
-		case TOP:
-			return gppp.plus(new Point(c.CAR_WIDTH/2 * RushHourStud.SIZE, c.CAR_LENGTH/2 * RushHourStud.SIZE));
-		case LEFT:
-			return gppp.plus(new Point(c.CAR_LENGTH/2 * RushHourStud.SIZE, c.CAR_WIDTH/2 * RushHourStud.SIZE));
-		case RIGHT:
-			return gppp.plus(new Point((c.CAR_LENGTH/2 - 1) * RushHourStud.SIZE, c.CAR_WIDTH/2 * RushHourStud.SIZE));
-		case BOTTOM:
-			return gppp.plus(new Point(c.CAR_WIDTH/2 * RushHourStud.SIZE, (c.CAR_LENGTH/2 - 1) * RushHourStud.SIZE));
-		}
-		return null;
-	}
-	
-	public Point centerToGPPPPoint(Point center) {
-		
-		if (overallSide == null) {
-			return center;
-		}
-		
-		switch (overallSide) {
-		case TOP:
-			return center.minus(new Point(c.CAR_WIDTH/2 * RushHourStud.SIZE, c.CAR_LENGTH/2 * RushHourStud.SIZE));
-		case LEFT:
-			return center.minus(new Point(c.CAR_LENGTH/2 * RushHourStud.SIZE, c.CAR_WIDTH/2 * RushHourStud.SIZE));
-		case RIGHT:
-			return center.minus(new Point((c.CAR_LENGTH/2 - 1) * RushHourStud.SIZE, c.CAR_WIDTH/2 * RushHourStud.SIZE));
-		case BOTTOM:
-			return center.minus(new Point(c.CAR_WIDTH/2 * RushHourStud.SIZE, (c.CAR_LENGTH/2 - 1) * RushHourStud.SIZE));
-		}
-		return null;
-	}
-	
-//	public Point gpppToCenter(GraphPositionPathPosition gppp) {
-//		
-//		GraphPosition gpos = gppp.getGraphPosition();
-//		
-//		Point p = null;
-//		if (gpos instanceof VertexPosition) {
-//			
-//			p = gppp.p;
-//			
-//		} else if (gpos instanceof EdgePosition) {
-//			
-//			p = gppp.p;
-//			
-//		} else if (gpos instanceof RushHourBoardPosition) {
-//			
-//			
-//			
-//		}
-//		
-//		return p;
-//	}
-//	
-//	public GraphPositionPathPosition centerToGPPP(Point p) {
-//		
-//		return p;
-//	}
 	
 	public void clear() {
 		

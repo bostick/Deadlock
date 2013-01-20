@@ -63,7 +63,7 @@ public class CarTool extends ToolBase {
 	
 	public void released(InputEvent ev) {
 		
-		car.driver.overallPos = car.driver.overallPath.findClosestGraphPositionPathPosition(car.driver.centerToGPPPPoint(car.p), car.driver.overallPath.startingPos, true);
+		car.driver.overallPos = car.driver.overallPath.findClosestGraphPositionPathPosition(car.p, car.driver.overallPath.startingPos, true);
 		
 		car = null;
 		
@@ -76,6 +76,7 @@ public class CarTool extends ToolBase {
 			
 			Point diff = ev.p.minus(screen.world.lastPressedWorldPoint);
 			
+			
 			Point carPTmp = car.toolOrigP.plus(diff);
 			Point carP = null;
 			double carAngle = car.angle;
@@ -85,7 +86,7 @@ public class CarTool extends ToolBase {
 			case DRIVING:
 			case BRAKING:
 				
-				GraphPositionPathPosition pathPos = car.driver.overallPath.findClosestGraphPositionPathPosition(car.driver.centerToGPPPPoint(carPTmp), car.driver.overallPath.startingPos, true);
+				GraphPositionPathPosition pathPos = car.driver.overallPath.findClosestGraphPositionPathPosition(carPTmp, car.driver.overallPath.startingPos, true);
 				GraphPosition gpos = pathPos.getGraphPosition();
 				
 				if (gpos instanceof RoadPosition) {
@@ -104,16 +105,38 @@ public class CarTool extends ToolBase {
 					
 					RushHourBoard b = (RushHourBoard)rpos.entity;
 					
-					RushHourBoardPosition rounded = new RushHourBoardPosition(b, Math.round(rpos.rowCombo), Math.round(rpos.colCombo));
+					RushHourBoardPosition rounded = null;
+					switch (car.driver.overallSide) {
+					case TOP:
+						rounded = new RushHourBoardPosition(b,
+								Math.round(rpos.rowCombo - car.CAR_LENGTH/2) + car.CAR_LENGTH/2,
+								Math.round(rpos.colCombo - car.CAR_WIDTH/2) + car.CAR_WIDTH/2);
+						break;
+					case LEFT:
+						rounded = new RushHourBoardPosition(b,
+								Math.round(rpos.rowCombo - car.CAR_WIDTH/2) + car.CAR_WIDTH/2,
+								Math.round(rpos.colCombo - car.CAR_LENGTH/2) + car.CAR_LENGTH/2);
+						break;
+					case RIGHT:
+						rounded = new RushHourBoardPosition(b,
+								Math.round(rpos.rowCombo - car.CAR_WIDTH/2) + car.CAR_WIDTH/2,
+								Math.round(rpos.colCombo - car.CAR_LENGTH/2) + car.CAR_LENGTH/2);
+						break;
+					case BOTTOM:
+						rounded = new RushHourBoardPosition(b,
+								Math.round(rpos.rowCombo - car.CAR_LENGTH/2) + car.CAR_LENGTH/2,
+								Math.round(rpos.colCombo - car.CAR_WIDTH/2) + car.CAR_WIDTH/2);
+						break;
+					}
 					
-					Point test = car.driver.gpppPointToCenter(rounded.p);
+					Point test = rounded.p;
 					
 					double[][] testTransArr = new double[2][2];
 					Geom.rotationMatrix(carAngle, testTransArr);
 					Quad testQuad = Geom.localToWorld(car.localQuad, testTransArr, test);
 					
 					boolean collide = false;
-					if (!ShapeUtils.containsAQ(b.aabb, testQuad)) {
+					if (!b.contains(testQuad)) {
 						collide = true;
 					} else {
 						for (Car c : screen.world.carMap.cars) {

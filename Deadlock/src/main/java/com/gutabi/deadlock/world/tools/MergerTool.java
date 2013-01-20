@@ -44,7 +44,7 @@ public class MergerTool extends ToolBase {
 	}
 	
 	public void insertKey() {
-		if (screen.world.quadrantMap.completelyContains(shape)) {
+		if (screen.world.quadrantMap.contains(shape)) {
 			
 			if (screen.world.graph.pureGraphIntersect(shape) == null) {
 				

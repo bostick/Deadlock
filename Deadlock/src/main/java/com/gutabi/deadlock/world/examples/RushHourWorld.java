@@ -46,30 +46,7 @@ public class RushHourWorld extends World {
 		
 		final RushHourBoard b = w.createRushHourBoard(new Point(8, 8));
 		
-//		final Intersection i0 = new Intersection(w, b.a.aabb.center.minus(new Point(RushHourStud.SIZE/2, 0)));
-//		w.addIntersection(i0);
-//		
-//		final Intersection i1 = new Intersection(w, new Point(2, 2));
-//		w.addIntersection(i1);
-//		
-//		List<Point> pts = new ArrayList<Point>();
-//		pts.add(i0.p);
-//		pts.add(i1.p);
-//		w.createRoad(i0, i1, pts);
-		
-		
-		/*
-		 * scan for red car
-		 */
-		for (int i = 0; i < 6; i++) {
-			if (rushHourIni[2][i] == 'R') {
-				assert rushHourIni[2][i+1] == 'R';
-				addNewCar(w, b, 2, i+1, Side.RIGHT, CarType.RED, 0);
-				break;
-			}
-		}
-		
-		char[] carChars = new char[] { 'A', 'B', 'C', 'D', 'E', 'F', 'G' };
+		char[] carChars = new char[] { 'R', 'A', 'B', 'C', 'D', 'E', 'F', 'G' };
 		int cur2Count = 0;
 		int cur3Count = 0;
 		carLoop:
@@ -77,7 +54,10 @@ public class RushHourWorld extends World {
 			for (int i = 0; i < 6; i++) {
 				for (int j = 0; j < 6; j++) {
 					if (rushHourIni[i][j] == c) {
-						if (i+1 < 6 && rushHourIni[i+1][j] == c) {
+						if (c == 'R') {
+							addNewCar(w, b, i, j+1, Side.RIGHT, CarType.RED, 0);
+							continue carLoop;
+						} else if (i+1 < 6 && rushHourIni[i+1][j] == c) {
 							if (i+2 < 6 && rushHourIni[i+2][j] == c) {
 								addNewCar(w, b, i, j, Side.TOP, CarType.THREE, cur3Count);
 								cur3Count++;
@@ -107,7 +87,7 @@ public class RushHourWorld extends World {
 		return w;
 	}
 	
-	enum CarType {
+	public enum CarType {
 		
 		TWO, THREE, RED
 		
@@ -154,9 +134,22 @@ public class RushHourWorld extends World {
 		InteractiveCar c = InteractiveCar.createCar(w, sheetIndex);
 		c.state = CarStateEnum.IDLE;
 		c.driver = new InteractiveDriver(c);
-		c.driver.startGP = new RushHourBoardPosition(b, frontRow, frontCol);
+		switch (side) {
+		case TOP:
+			c.driver.startGP = new RushHourBoardPosition(b, frontRow + c.CAR_LENGTH/2, frontCol + c.CAR_WIDTH/2);
+			break;
+		case LEFT:
+			c.driver.startGP = new RushHourBoardPosition(b, frontRow + c.CAR_WIDTH/2, frontCol + c.CAR_LENGTH/2);
+			break;
+		case RIGHT:
+			c.driver.startGP = new RushHourBoardPosition(b, frontRow + c.CAR_WIDTH/2, frontCol + c.CAR_LENGTH/2 - 1);
+			break;
+		case BOTTOM:
+			c.driver.startGP = new RushHourBoardPosition(b, frontRow + c.CAR_LENGTH/2 - 1, frontCol + c.CAR_WIDTH/2);
+			break;
+		}
 		c.driver.overallSide = side;
-		c.driver.overallPath = GraphPositionPathFactory.createRushHourBoardPath(b, (RushHourBoardPosition)c.driver.startGP, c.driver.overallSide);
+		c.driver.overallPath = GraphPositionPathFactory.createRushHourBoardPath(b, type, (RushHourBoardPosition)c.driver.startGP, c.driver.overallSide);
 		c.computeCtorProperties();
 		c.computeStartingProperties();
 		

@@ -317,9 +317,6 @@ public class GraphPositionPath {
 			a = b;
 		}
 		
-//		assert closestIndex != -1;
-//		assert closestParam != -1.0;
-		
 		return new GraphPositionPathPosition(this, closestIndex, closestParam);
 	}
 	
@@ -403,9 +400,6 @@ public class GraphPositionPath {
 			
 			a = b;
 		}
-		
-//		assert closestIndex != -1;
-//		assert closestParam != -1.0;
 		
 		return null;
 	}
@@ -574,8 +568,8 @@ public class GraphPositionPath {
 	
 	private boolean check() {
 		for (int i = 0; i < poss.size(); i++) {
-			GraphPosition a = poss.get(i);
-			assert a.isBound();
+//			GraphPosition a = poss.get(i);
+//			assert a.isBound();
 		}
 		return true;
 	}

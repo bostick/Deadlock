@@ -191,8 +191,6 @@ public class World {
 	
 	public Set<Vertex> addIntersection(Intersection i) {
 		
-//		Intersection i = new Intersection(this, p);
-		
 		quadrantMap.grassMap.mowGrass(i.getShape());
 		
 		return graph.addVertexTop(i);
@@ -233,7 +231,11 @@ public class World {
 		
 		RushHourBoard b = new RushHourBoard(this, p);
 		
-		quadrantMap.grassMap.mowGrass(b.aabb);
+		for (int i = 0; i < 6; i++) {
+			for (int j = 0; j < 6; j++) {
+				quadrantMap.grassMap.mowGrass(b.studs[i][j].aabb);
+			}
+		}
 		quadrantMap.grassMap.mowGrass(b.exit0.aabb);
 		quadrantMap.grassMap.mowGrass(b.exit1.aabb);
 		

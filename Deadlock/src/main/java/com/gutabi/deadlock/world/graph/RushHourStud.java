@@ -3,6 +3,7 @@ package com.gutabi.deadlock.world.graph;
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
 import com.gutabi.deadlock.geom.AABB;
+import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.world.World;
 
@@ -22,7 +23,11 @@ public class RushHourStud {
 		this.world = world;
 		this.board = board;
 		
-		aabb = APP.platform.createShapeEngine().createAABB(null, board.aabb.ul.x + RushHourStud.SIZE * col, board.aabb.ul.y + RushHourStud.SIZE * row, RushHourStud.SIZE, RushHourStud.SIZE);
+		aabb = APP.platform.createShapeEngine().createAABB(null, board.ul.x + RushHourStud.SIZE * col, board.ul.y + RushHourStud.SIZE * row, RushHourStud.SIZE, RushHourStud.SIZE);
+	}
+	
+	public boolean hitTest(Point p) {
+		return aabb.hitTest(p);
 	}
 	
 	public void paint(RenderingContext ctxt) {

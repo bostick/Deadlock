@@ -45,6 +45,30 @@ public class ShapeUtils {
 		return false;
 	}
 	
+	public static boolean intersectArea(Shape s0, Shape s1) {
+		
+		if (s0 instanceof Quad) {
+			if (s1 instanceof AABB) {
+				return intersectAreaAQ((AABB)s1, (Quad)s0);
+			}
+		}
+		
+		assert false;
+		return false;
+	}
+	
+	public static boolean contains(Shape s0, Shape s1) {
+		
+		if (s0 instanceof AABB) {
+			if (s1 instanceof Quad) {
+				return containsAQ((AABB)s0, (Quad)s1);
+			}
+		}
+		
+		assert false;
+		return false;
+	}
+	
 	public static boolean intersectAA(AABB a0, AABB a1) {
 		return DMath.lessThanEquals(a0.x, a1.brX) && DMath.lessThanEquals(a1.x, a0.brX) &&
 				DMath.lessThanEquals(a0.y, a1.brY) && DMath.lessThanEquals(a1.y, a0.brY);
@@ -225,6 +249,42 @@ public class ShapeUtils {
 		q0.project(q1.getN12(), q0Projection);
 		q1.projectN12(q1Projection);
 		if (!DMath.rangesOverlap(q0Projection, q1Projection)) {
+			return false;
+		}
+		
+		return true;
+	}
+	
+	public static boolean intersectAreaAQ(AABB a0, Quad q1) {
+		
+		if (!intersectAQ(a0, q1)) {
+			return false;
+		}
+		
+		double[] a0Projection = new double[2];
+		double[] q1Projection = new double[2];
+		
+		a0.projectN01(a0Projection);
+		q1.project(a0.getN01(), q1Projection);
+		if (!DMath.rangesOverlapArea(a0Projection, q1Projection)) {
+			return false;
+		}
+		
+		a0.projectN12(a0Projection);
+		q1.project(a0.getN12(), q1Projection);
+		if (!DMath.rangesOverlapArea(a0Projection, q1Projection)) {
+			return false;
+		}
+		
+		a0.project(q1.getN01(), a0Projection);
+		q1.projectN01(q1Projection);
+		if (!DMath.rangesOverlapArea(a0Projection, q1Projection)) {
+			return false;
+		}
+		
+		a0.project(q1.getN12(), a0Projection);
+		q1.projectN12(q1Projection);
+		if (!DMath.rangesOverlapArea(a0Projection, q1Projection)) {
 			return false;
 		}
 		

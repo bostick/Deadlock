@@ -30,6 +30,10 @@ public class RushHourBoardPosition extends GraphPosition {
 		bound = DMath.equals(rowParam, 0.0) && DMath.equals(colParam, 0.0);
 	}
 	
+	public String toString() {
+		return "RushHourBoardPosition[row: " + rowCombo + ", col: " + colCombo + "]";
+	}
+	
 	public boolean isBound() {
 		return bound;
 	}
@@ -41,7 +45,6 @@ public class RushHourBoardPosition extends GraphPosition {
 		}
 		
 		assert !equals(p);
-		assert p.isBound();
 		
 		RushHourBoardPosition bp = (RushHourBoardPosition)p;
 		
@@ -50,7 +53,6 @@ public class RushHourBoardPosition extends GraphPosition {
 		double studDist = distance / RushHourStud.SIZE;
 		
 		if (bp.rowIndex == rowIndex) {
-			assert DMath.equals(rowParam, 0.0);
 			
 			if (bp.colCombo < colCombo) {
 				
@@ -70,7 +72,6 @@ public class RushHourBoardPosition extends GraphPosition {
 			
 		} else {
 			assert bp.colIndex == colIndex;
-			assert DMath.equals(colParam, 0.0);
 			
 			if (bp.rowCombo < rowCombo) {
 				

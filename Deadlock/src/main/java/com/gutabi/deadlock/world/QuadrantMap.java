@@ -215,9 +215,9 @@ public class QuadrantMap {
 		return down;
 	}
 	
-	public boolean completelyContains(Shape s) {
+	public boolean contains(Shape s) {
 		
-		if (!ShapeUtils.intersect(s, aabb)) {
+		if (!ShapeUtils.contains(aabb, s)) {
 			return false;
 		}
 		
@@ -228,7 +228,7 @@ public class QuadrantMap {
 				
 				if (!q.active) {
 					
-					if (ShapeUtils.intersect(s, q.aabb)) {
+					if (ShapeUtils.intersectArea(s, q.aabb)) {
 						return false;
 					}
 					

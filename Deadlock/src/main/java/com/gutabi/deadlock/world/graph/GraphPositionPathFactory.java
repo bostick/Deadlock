@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.gutabi.deadlock.math.DMath;
+import com.gutabi.deadlock.world.examples.RushHourWorld.CarType;
 
 public class GraphPositionPathFactory {
 	
@@ -59,7 +60,7 @@ public class GraphPositionPathFactory {
 		return new GraphPositionPath(poss);
 	}
 	
-	public static GraphPositionPath createRushHourBoardPath(RushHourBoard b, RushHourBoardPosition start, Side side) {
+	public static GraphPositionPath createRushHourBoardPath(RushHourBoard b, CarType type, RushHourBoardPosition start, Side side) {
 		
 		List<GraphPosition> poss = new ArrayList<GraphPosition>();
 		switch (side) {
@@ -73,6 +74,10 @@ public class GraphPositionPathFactory {
 		case RIGHT:
 			for (int i = 0; i < 6; i++) {
 				poss.add(new RushHourBoardPosition(b, start.rowCombo, i));
+			}
+			if (type == CarType.RED) {
+				poss.add(new RushHourBoardPosition(b, start.rowCombo, 6));
+				poss.add(new RushHourBoardPosition(b, start.rowCombo, 7));
 			}
 			break;
 		}
