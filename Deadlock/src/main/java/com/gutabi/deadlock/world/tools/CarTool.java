@@ -17,6 +17,7 @@ import com.gutabi.deadlock.world.graph.GraphPositionPathPosition;
 import com.gutabi.deadlock.world.graph.RoadPosition;
 import com.gutabi.deadlock.world.graph.RushHourBoard;
 import com.gutabi.deadlock.world.graph.RushHourBoardPosition;
+import com.gutabi.deadlock.world.graph.Side;
 import com.gutabi.deadlock.world.graph.VertexPosition;
 
 public class CarTool extends ToolBase {
@@ -106,26 +107,18 @@ public class CarTool extends ToolBase {
 					RushHourBoard b = (RushHourBoard)rpos.entity;
 					
 					RushHourBoardPosition rounded = null;
-					switch (car.driver.overallSide) {
+					switch (Side.angleToSide(car.angle)) {
 					case TOP:
+					case BOTTOM:
 						rounded = new RushHourBoardPosition(b,
 								Math.round(rpos.rowCombo - car.CAR_LENGTH/2) + car.CAR_LENGTH/2,
 								Math.round(rpos.colCombo - car.CAR_WIDTH/2) + car.CAR_WIDTH/2);
 						break;
 					case LEFT:
-						rounded = new RushHourBoardPosition(b,
-								Math.round(rpos.rowCombo - car.CAR_WIDTH/2) + car.CAR_WIDTH/2,
-								Math.round(rpos.colCombo - car.CAR_LENGTH/2) + car.CAR_LENGTH/2);
-						break;
 					case RIGHT:
 						rounded = new RushHourBoardPosition(b,
 								Math.round(rpos.rowCombo - car.CAR_WIDTH/2) + car.CAR_WIDTH/2,
 								Math.round(rpos.colCombo - car.CAR_LENGTH/2) + car.CAR_LENGTH/2);
-						break;
-					case BOTTOM:
-						rounded = new RushHourBoardPosition(b,
-								Math.round(rpos.rowCombo - car.CAR_LENGTH/2) + car.CAR_LENGTH/2,
-								Math.round(rpos.colCombo - car.CAR_WIDTH/2) + car.CAR_WIDTH/2);
 						break;
 					}
 					

@@ -8,7 +8,6 @@ import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.world.graph.GraphPosition;
 import com.gutabi.deadlock.world.graph.GraphPositionPath;
 import com.gutabi.deadlock.world.graph.GraphPositionPathPosition;
-import com.gutabi.deadlock.world.graph.Side;
 
 public abstract class Driver {
 	
@@ -24,7 +23,7 @@ public abstract class Driver {
 	public GraphPositionPath overallPath;
 	
 	public GraphPosition startGP;
-	public Side overallSide;
+//	public Side overallSide;
 	public GraphPositionPathPosition overallPos;
 	
 	public VertexArrivalEvent curVertexArrivalEvent;

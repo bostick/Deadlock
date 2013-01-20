@@ -65,7 +65,7 @@ public abstract class Car extends Entity {
 	
 	
 	public Point p;
-	public double angle;
+	public double angle = Double.NaN;
 	private double[][] carTransArr = new double[2][2];
 	public Quad shape;
 	
@@ -134,7 +134,10 @@ public abstract class Car extends Entity {
 		
 		p = driver.overallPos.p;
 		
-		if (driver.overallSide == null) {
+		/*
+		 * if angle was not initialized, do it now
+		 */
+		if (Double.isNaN(angle)) {
 			
 			GraphPositionPathPosition next = driver.overallPos.nextBound();
 			
@@ -144,8 +147,6 @@ public abstract class Car extends Entity {
 			
 			angle = Math.atan2(dp.y, dp.x);
 			
-		} else {
-			angle = driver.overallSide.getAngle();
 		}
 		
 		setTransform(p, angle);

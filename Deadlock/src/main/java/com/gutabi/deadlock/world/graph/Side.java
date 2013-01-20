@@ -1,5 +1,7 @@
 package com.gutabi.deadlock.world.graph;
 
+import com.gutabi.deadlock.math.DMath;
+
 public enum Side {
 	
 	TOP { public Side other() { return BOTTOM; } public double getAngle() { return 1.5 * Math.PI; } },
@@ -9,6 +11,20 @@ public enum Side {
 	
 	public abstract Side other();
 	public abstract double getAngle();
+	
+	public static Side angleToSide(double angle) {
+		if (DMath.equals(angle, 0.0 * Math.PI)) {
+			return RIGHT;
+		} else if (DMath.equals(angle, 0.5 * Math.PI)) {
+			return BOTTOM;
+		} else if (DMath.equals(angle, 1.0 * Math.PI)) {
+			return LEFT;
+		} else if (DMath.equals(angle, 1.5 * Math.PI)) {
+			return TOP;
+		} else {
+			return null;
+		}
+	}
 	
 	public static Side fromFileString(String s) {
 		if (s.equals("TOP")) {

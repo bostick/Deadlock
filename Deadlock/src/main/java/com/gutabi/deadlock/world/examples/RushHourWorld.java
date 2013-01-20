@@ -135,21 +135,27 @@ public class RushHourWorld extends World {
 		c.state = CarStateEnum.IDLE;
 		c.driver = new InteractiveDriver(c);
 		switch (side) {
-		case TOP:
-			c.driver.startGP = new RushHourBoardPosition(b, frontRow + c.CAR_LENGTH/2, frontCol + c.CAR_WIDTH/2);
-			break;
-		case LEFT:
-			c.driver.startGP = new RushHourBoardPosition(b, frontRow + c.CAR_WIDTH/2, frontCol + c.CAR_LENGTH/2);
-			break;
 		case RIGHT:
 			c.driver.startGP = new RushHourBoardPosition(b, frontRow + c.CAR_WIDTH/2, frontCol + c.CAR_LENGTH/2 - 1);
+			c.angle = 0.0 * Math.PI;
+			c.driver.overallPath = GraphPositionPathFactory.createRushHourBoardPath(b, type, (RushHourBoardPosition)c.driver.startGP, Side.RIGHT);
 			break;
 		case BOTTOM:
 			c.driver.startGP = new RushHourBoardPosition(b, frontRow + c.CAR_LENGTH/2 - 1, frontCol + c.CAR_WIDTH/2);
+			c.angle = 0.5 * Math.PI;
+			c.driver.overallPath = GraphPositionPathFactory.createRushHourBoardPath(b, type, (RushHourBoardPosition)c.driver.startGP, Side.BOTTOM);
+			break;
+		case LEFT:
+			c.driver.startGP = new RushHourBoardPosition(b, frontRow + c.CAR_WIDTH/2, frontCol + c.CAR_LENGTH/2);
+			c.angle = 1.0 * Math.PI;
+			c.driver.overallPath = GraphPositionPathFactory.createRushHourBoardPath(b, type, (RushHourBoardPosition)c.driver.startGP, Side.LEFT);
+			break;
+		case TOP:
+			c.driver.startGP = new RushHourBoardPosition(b, frontRow + c.CAR_LENGTH/2, frontCol + c.CAR_WIDTH/2);
+			c.angle = 1.5 * Math.PI;
+			c.driver.overallPath = GraphPositionPathFactory.createRushHourBoardPath(b, type, (RushHourBoardPosition)c.driver.startGP, Side.TOP);
 			break;
 		}
-		c.driver.overallSide = side;
-		c.driver.overallPath = GraphPositionPathFactory.createRushHourBoardPath(b, type, (RushHourBoardPosition)c.driver.startGP, c.driver.overallSide);
 		c.computeCtorProperties();
 		c.computeStartingProperties();
 		
