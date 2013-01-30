@@ -3,7 +3,9 @@ package com.gutabi.deadlock.world.graph;
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.gutabi.deadlock.Entity;
 import com.gutabi.deadlock.geom.AABB;
@@ -25,6 +27,9 @@ public class RushHourBoard extends Entity {
 	public int[] rowRange = { 0, 0 };
 	public int[] colRange = { 0, 0 };
 	public AABB aabb;
+	
+	private Map<Integer, GraphPositionPath> rowPaths = new HashMap<Integer, GraphPositionPath>();
+	private Map<Integer, GraphPositionPath> colPaths = new HashMap<Integer, GraphPositionPath>();
 	
 	public RushHourBoard(World world, Point p) {
 		this.world = world;
@@ -103,8 +108,30 @@ public class RushHourBoard extends Entity {
 			aabb = AABB.union(aabb, ss.aabb);
 		}
 		
-		create paths
-		
+		for (int i = rowRange[0]; i <= rowRange[1]; i++) {
+			List<GraphPosition> poss = new ArrayList<GraphPosition>();
+			for (int j = colRange[0]; j <= colRange[1]; j++) {
+				for (RushHourStud ss : studs) {
+					if (ss.row == i && ss.col == j) {
+						poss.add(new RushHourBoardPosition(this, i + 0.5, j));
+					}
+				}
+			}
+			GraphPositionPath path = new GraphPositionPath(poss);
+			rowPaths.put(i, path);
+		}
+		for (int i = colRange[0]; i <= colRange[1]; i++) {
+			List<GraphPosition> poss = new ArrayList<GraphPosition>();
+			for (int j = rowRange[0]; j <= rowRange[1]; j++) {
+				for (RushHourStud ss : studs) {
+					if (ss.row == j && ss.col == i) {
+						poss.add(new RushHourBoardPosition(this, j, i + 0.5));
+					}
+				}
+			}
+			GraphPositionPath path = new GraphPositionPath(poss);
+			colPaths.put(i, path);
+		}
 		
 		int colCount = (int)Math.round(aabb.width / RushHourStud.SIZE);
 		int rowCount = (int)Math.round(aabb.height / RushHourStud.SIZE);
@@ -143,7 +170,17 @@ public class RushHourBoard extends Entity {
 	}
 	
 	public GraphPositionPath getPath(Side s, int index) {
+		switch (s) {
+		case LEFT:
+		case RIGHT:
+			return rowPaths.get(index);
+		case TOP:
+		case BOTTOM:
+			return colPaths.get(index);
+		}
 		
+		assert false;
+		return null;
 	}
 	
 	public Point point(double row, double col) {
