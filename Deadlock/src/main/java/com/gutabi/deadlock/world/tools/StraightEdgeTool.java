@@ -114,7 +114,7 @@ public class StraightEdgeTool extends ToolBase {
 			break;
 		case SET:
 			
-			Stroke s = new Stroke(screen);
+			Stroke s = new Stroke(screen.world);
 			s.add(start);
 			s.add(p);
 			s.finish();

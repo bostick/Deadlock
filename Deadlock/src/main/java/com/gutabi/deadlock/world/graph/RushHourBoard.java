@@ -9,16 +9,18 @@ import java.util.Map;
 
 import com.gutabi.deadlock.Entity;
 import com.gutabi.deadlock.geom.AABB;
+import com.gutabi.deadlock.geom.CubicCurve;
 import com.gutabi.deadlock.geom.Shape;
 import com.gutabi.deadlock.geom.ShapeUtils;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
+import com.gutabi.deadlock.world.Stroke;
 import com.gutabi.deadlock.world.World;
 
 public class RushHourBoard extends Entity {
 	
 	World world;
-	Point p;
+	Point center;
 	
 	public List<RushHourStud> studs = new ArrayList<RushHourStud>();
 	public List<AABB> neg = new ArrayList<AABB>();
@@ -31,82 +33,98 @@ public class RushHourBoard extends Entity {
 	private Map<Integer, GraphPositionPath> rowPaths = new HashMap<Integer, GraphPositionPath>();
 	private Map<Integer, GraphPositionPath> colPaths = new HashMap<Integer, GraphPositionPath>();
 	
-	public RushHourBoard(World world, Point p) {
+	public RushHourBoard(World world, Point center, char[][] ini) {
 		this.world = world;
-		this.p = p;
+		this.center = center;
 		
-		ul = new Point(p.x - 3 * RushHourStud.SIZE, p.y - 3 * RushHourStud.SIZE);
+		ul = new Point(center.x - 3 * RushHourStud.SIZE, center.y - 3 * RushHourStud.SIZE);
 		
-		RushHourStud s;
-		for (int i = 0; i < 6; i++) {
-			for (int j = 0; j < 6; j++) {
-				s = new RushHourStud(world, this, i, j);
-				studs.add(s);
-				if (i > rowRange[1]) {
-					rowRange[1] = i;
+		/*
+		 * find where ul of main board is in ini
+		 */
+		
+		int originRow = 0;
+		int originCol = 0;
+		rowLoop:
+		for (int i = 0; i < ini.length; i++) {
+			for (int j = 0; j < ini[i].length; j++) {
+				char c = ini[i][j];
+				if (c == 'X') {
+					originRow = i;
+					originCol = j;
+					break rowLoop;
 				}
-				if (i < rowRange[0]) {
-					rowRange[0] = i;
-				}
-				if (j > colRange[1]) {
-					colRange[1] = j;
-				}
-				if (j < colRange[0]) {
-					colRange[0] = j;
-				}
-				aabb = AABB.union(aabb, s.aabb);
 			}
 		}
 		
-		s = new RushHourStud(world, this, 2, 6);
-		studs.add(s);
-		if (2 > rowRange[1]) {
-			rowRange[1] = 2;
-		}
-		if (2 < rowRange[0]) {
-			rowRange[0] = 2;
-		}
-		if (6 > colRange[1]) {
-			colRange[1] = 6;
-		}
-		if (6 < colRange[0]) {
-			colRange[0] = 6;
+		/*
+		 * add studs
+		 */
+		
+		List<Fixture> jFixtures = new ArrayList<Fixture>();
+		
+		RushHourStud s;
+		for (int i = 0; i < ini.length; i++) {
+			for (int j = 0; j < ini[i].length; j++) {
+				char c = ini[i][j];
+				switch (c) {
+				case ' ':
+					break;
+				case 'X':
+					s = new RushHourStud(world, this, i - originRow, j - originCol);
+					addStud(s);
+					break;
+				case 'J':
+					s = new RushHourStud(world, this, i - originRow, j - originCol);
+					addStud(s);
+					if (i < originRow) {
+						Fixture f = new Fixture(world, point(i - originRow, j - originCol + 0.5), Axis.TOPBOTTOM);
+						f.setSide(Side.BOTTOM);
+						world.addFixture(f);
+						jFixtures.add(f);
+					} else if (i >= originRow + 6) {
+						Fixture f = new Fixture(world, point(i - originRow + 1.0, j - originCol + 0.5), Axis.TOPBOTTOM);
+						f.setSide(Side.TOP);
+						world.addFixture(f);
+						jFixtures.add(f);
+					} else if (j < originCol) {
+						Fixture f = new Fixture(world, point(i - originRow + 0.5, j - originCol), Axis.LEFTRIGHT);
+						f.setSide(Side.RIGHT);
+						world.addFixture(f);
+						jFixtures.add(f);
+					} else {
+						assert j >= originCol + 6;
+						Fixture f = new Fixture(world, point(i - originRow + 0.5, j - originCol + 1.0), Axis.LEFTRIGHT);
+						f.setSide(Side.LEFT);
+						world.addFixture(f);
+						jFixtures.add(f);
+					}
+					break;
+				case 'E':
+					s = new RushHourStud(world, this, i - originRow, j - originCol);
+					addStud(s);
+					break;
+				}
+			}
 		}
 		
-		s = new RushHourStud(world, this, 2, 7);
-		studs.add(s);
-		if (2 > rowRange[1]) {
-			rowRange[1] = 2;
-		}
-		if (2 < rowRange[0]) {
-			rowRange[0] = 2;
-		}
-		if (7 > colRange[1]) {
-			colRange[1] = 7;
-		}
-		if (7 < colRange[0]) {
-			colRange[0] = 7;
-		}
+		Fixture f0 = jFixtures.get(0);
+		Fixture f1 = jFixtures.get(1);
 		
-		s = new RushHourStud(world, this, 0, -1);
-		studs.add(s);
-		if (0 > rowRange[1]) {
-			rowRange[1] = 0;
-		}
-		if (0 < rowRange[0]) {
-			rowRange[0] = 0;
-		}
-		if (-1 > colRange[1]) {
-			colRange[1] = -1;
-		}
-		if (-1 < colRange[0]) {
-			colRange[0] = -1;
-		}
+		CubicCurve c = APP.platform.createShapeEngine().createCubicCurve(f0.p, new Point(f0.p.x, f0.p.y - 15), new Point(f1.p.x - 15, f1.p.y), f1.p);
+		List<Point> pts = c.skeleton();
 		
-		aabb = null;
-		for (RushHourStud ss : studs) {
-			aabb = AABB.union(aabb, ss.aabb);
+		Stroke stroke = new Stroke(world);
+		for (Point p : pts) {
+			stroke.add(p);
 		}
+		stroke.finish();
+		
+		stroke.processNewStroke();
+		
+		/*
+		 * create paths
+		 */
 		
 		for (int i = rowRange[0]; i <= rowRange[1]; i++) {
 			List<GraphPosition> poss = new ArrayList<GraphPosition>();
@@ -133,6 +151,10 @@ public class RushHourBoard extends Entity {
 			colPaths.put(i, path);
 		}
 		
+		/*
+		 * negative space
+		 */
+		
 		int colCount = (int)Math.round(aabb.width / RushHourStud.SIZE);
 		int rowCount = (int)Math.round(aabb.height / RushHourStud.SIZE);
 		for (int i = 0; i < rowCount; i++) {
@@ -151,6 +173,23 @@ public class RushHourBoard extends Entity {
 		}
 		
 		
+	}
+	
+	private void addStud(RushHourStud s) {
+		studs.add(s);
+		if (s.row > rowRange[1]) {
+			rowRange[1] = s.row;
+		}
+		if (s.row < rowRange[0]) {
+			rowRange[0] = s.row;
+		}
+		if (s.col > colRange[1]) {
+			colRange[1] = s.col;
+		}
+		if (s.col < colRange[0]) {
+			colRange[0] = s.col;
+		}
+		aabb = AABB.union(aabb, s.aabb);
 	}
 	
 	public void preStart() {

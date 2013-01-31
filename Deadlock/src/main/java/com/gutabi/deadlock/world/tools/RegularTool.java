@@ -320,7 +320,7 @@ public class RegularTool extends ToolBase {
 		
 		hilited = null;
 		
-		stroke = new Stroke(screen);
+		stroke = new Stroke(screen.world);
 		stroke.add(p);
 			
 	}

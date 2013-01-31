@@ -17,7 +17,6 @@ import com.gutabi.deadlock.world.graph.GraphPositionPathPosition;
 import com.gutabi.deadlock.world.graph.RoadPosition;
 import com.gutabi.deadlock.world.graph.RushHourBoard;
 import com.gutabi.deadlock.world.graph.RushHourBoardPosition;
-import com.gutabi.deadlock.world.graph.Side;
 import com.gutabi.deadlock.world.graph.VertexPosition;
 
 public class CarTool extends ToolBase {
@@ -62,17 +61,22 @@ public class CarTool extends ToolBase {
 		
 	}
 	
+	/*
+	 * sets overallPos based on car.p
+	 */
 	public void released(InputEvent ev) {
 		
 		car.driver.overallPos = car.driver.overallPath.findClosestGraphPositionPathPosition(car.p, car.driver.overallPath.startingPos, true);
-		
-//		GraphPosition gpos = car.driver.overallPos.getGraphPosition();
 		
 		car = null;
 		
 		screen.contentPane.repaint();
 	}
 	
+	/*
+	 * calls car.setTransform(), setting car.p and car.angle
+	 * 
+	 */
 	public void dragged(InputEvent ev) {
 		
 		if (car.toolOrigShape.hitTest(screen.world.lastPressedWorldPoint)) {
@@ -108,23 +112,24 @@ public class CarTool extends ToolBase {
 					
 					RushHourBoard b = (RushHourBoard)rpos.entity;
 					
-					RushHourBoardPosition rounded = null;
-					switch (Side.angleToSide(car.angle)) {
-					case TOP:
-					case BOTTOM:
-						rounded = new RushHourBoardPosition(b,
-								Math.round(rpos.rowCombo - car.CAR_LENGTH/2) + car.CAR_LENGTH/2,
-								Math.round(rpos.colCombo - car.CAR_WIDTH/2) + car.CAR_WIDTH/2);
-						break;
-					case LEFT:
-					case RIGHT:
-						rounded = new RushHourBoardPosition(b,
-								Math.round(rpos.rowCombo - car.CAR_WIDTH/2) + car.CAR_WIDTH/2,
-								Math.round(rpos.colCombo - car.CAR_LENGTH/2) + car.CAR_LENGTH/2);
-						break;
-					}
-					
-					Point test = rounded.p;
+//					RushHourBoardPosition rounded = null;
+//					switch (Side.angleToSide(car.angle)) {
+//					case TOP:
+//					case BOTTOM:
+//						rounded = new RushHourBoardPosition(b,
+//								Math.round(rpos.rowCombo - car.CAR_LENGTH/2) + car.CAR_LENGTH/2,
+//								Math.round(rpos.colCombo - car.CAR_WIDTH/2) + car.CAR_WIDTH/2);
+//						break;
+//					case LEFT:
+//					case RIGHT:
+//						rounded = new RushHourBoardPosition(b,
+//								Math.round(rpos.rowCombo - car.CAR_WIDTH/2) + car.CAR_WIDTH/2,
+//								Math.round(rpos.colCombo - car.CAR_LENGTH/2) + car.CAR_LENGTH/2);
+//						break;
+//					}
+//					
+//					Point test = rounded.p;
+					Point test = rpos.p;
 					
 					double[][] testTransArr = new double[2][2];
 					Geom.rotationMatrix(carAngle, testTransArr);
@@ -144,6 +149,7 @@ public class CarTool extends ToolBase {
 							}
 						}
 					}
+					
 					if (!collide) {
 						carP = test;
 					} else {
@@ -164,6 +170,7 @@ public class CarTool extends ToolBase {
 			}
 			
 			car.setTransform(carP, carAngle);
+			car.driver.overallPos = car.driver.overallPath.findClosestGraphPositionPathPosition(car.p, car.driver.overallPath.startingPos, true);
 			
 			screen.contentPane.repaint();
 		}

@@ -34,16 +34,26 @@ public class RushHourWorld extends World {
 		
 		w.graph = g;
 		
-		char[][] rushHourIni = new char[][] {
+		char[][] boardIni = new char[][] {
+				{' ', ' ', ' ', ' ', 'J', ' ', ' ', ' ', ' '},
+				{'J', 'X', 'X', 'X', 'X', 'X', 'X', ' ', ' '},
+				{' ', 'X', 'X', 'X', 'X', 'X', 'X', ' ', ' '},
+				{' ', 'X', 'X', 'X', 'X', 'X', 'X', 'E', 'E'},
+				{' ', 'X', 'X', 'X', 'X', 'X', 'X', ' ', ' '},
+				{' ', 'X', 'X', 'X', 'X', 'X', 'X', ' ', ' '},
+				{' ', 'X', 'X', 'X', 'X', 'X', 'X', ' ', ' '}
+		};
+		
+		char[][] carIni = new char[][] {
 				{'A', 'A', ' ', ' ', ' ', 'B'},
 				{'C', ' ', ' ', 'D', ' ', 'B'},
 				{'C', 'R', 'R', 'D', ' ', 'B'},
 				{'C', ' ', ' ', 'D', ' ', ' '},
 				{'E', ' ', ' ', ' ', 'F', 'F'},
-				{'E', ' ', 'G', 'G', 'G', ' '},
+				{'E', ' ', 'G', 'G', 'G', ' '}
 		};
 		
-		final RushHourBoard b = w.createRushHourBoard(new Point(8, 8));
+		final RushHourBoard b = w.createRushHourBoard(new Point(8, 8), boardIni);
 		
 		char[] carChars = new char[] { 'R', 'A', 'B', 'C', 'D', 'E', 'F', 'G' };
 //		char[] carChars = new char[] { 'A' };
@@ -53,12 +63,12 @@ public class RushHourWorld extends World {
 		for (char c : carChars) {
 			for (int i = 0; i < 6; i++) {
 				for (int j = 0; j < 6; j++) {
-					if (rushHourIni[i][j] == c) {
+					if (carIni[i][j] == c) {
 						if (c == 'R') {
 							addNewCar(w, b, i, j+1, Side.RIGHT, CarType.RED, 0);
 							continue carLoop;
-						} else if (i+1 < 6 && rushHourIni[i+1][j] == c) {
-							if (i+2 < 6 && rushHourIni[i+2][j] == c) {
+						} else if (i+1 < 6 && carIni[i+1][j] == c) {
+							if (i+2 < 6 && carIni[i+2][j] == c) {
 								addNewCar(w, b, i, j, Side.TOP, CarType.THREE, cur3Count);
 								cur3Count++;
 								continue carLoop;
@@ -68,8 +78,8 @@ public class RushHourWorld extends World {
 								continue carLoop;
 							}
 						} else {
-							assert rushHourIni[i][j+1] == c;
-							if (j+2 < 6 && rushHourIni[i][j+2] == c) {
+							assert carIni[i][j+1] == c;
+							if (j+2 < 6 && carIni[i][j+2] == c) {
 								addNewCar(w, b, i, j, Side.LEFT, CarType.THREE, cur3Count);
 								cur3Count++;
 								continue carLoop;

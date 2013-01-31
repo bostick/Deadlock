@@ -165,7 +165,7 @@ public class CubicTool extends ToolBase {
 		case SET:
 			
 			List<Point> pts = shape.skeleton;
-			Stroke s = new Stroke(screen);
+			Stroke s = new Stroke(screen.world);
 			for (Point p : pts) {
 				s.add(p);
 			}

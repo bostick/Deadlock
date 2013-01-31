@@ -75,7 +75,7 @@ public class FourByFourGridWorld extends World {
 			res = w.addFixture(sink);
 			affected.addAll(res);
 			
-			Stroke s = new Stroke(screen);
+			Stroke s = new Stroke(w);
 			s.add(source.p);
 			s.add(sink.p);
 			s.finish();
@@ -115,7 +115,7 @@ public class FourByFourGridWorld extends World {
 			res = w.addFixture(sink);
 			affected.addAll(res);
 			
-			Stroke s = new Stroke(screen);
+			Stroke s = new Stroke(w);
 			s.add(source.p);
 			s.add(sink.p);
 			s.finish();

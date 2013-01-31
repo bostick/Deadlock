@@ -228,9 +228,9 @@ public class World {
 		return graph.insertMergerTop(m);
 	}
 	
-	public RushHourBoard createRushHourBoard(Point p) {
+	public RushHourBoard createRushHourBoard(Point p, char[][] boardIni) {
 		
-		RushHourBoard b = new RushHourBoard(this, p);
+		RushHourBoard b = new RushHourBoard(this, p, boardIni);
 		
 		for (RushHourStud stud : b.studs) {
 			quadrantMap.grassMap.mowGrass(stud.aabb);

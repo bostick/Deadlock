@@ -1,30 +1,16 @@
 
-work on translation between GPPP point and center of car
+get rid of SweepEvent.index
 
-orientation on RushHour board matters, where the "front of car" is  
+work on sweeping shapes
+allow quad as a sweeper
 
-on RushHour board:
-gppp is ul of car front square
+handle collisions when dragging
 
-on vertex or edge:
-gppp is car center
+snap onto studs when released
 
-
-
-
-
+continuous dragging of cars
 
 moving between rushhourboard stud and vertex
-
-
-
-
-
-
-
-
-
-
 
 
 

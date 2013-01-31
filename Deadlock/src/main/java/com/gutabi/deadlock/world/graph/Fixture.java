@@ -374,17 +374,17 @@ public final class Fixture extends Vertex {
 			ctxt.translate(p.x, p.y);
 			
 			switch (s) {
-			case TOP:
-				ctxt.rotate(3 * Math.PI / 2);
-				break;
-			case LEFT:
-				ctxt.rotate(Math.PI);
-				break;
 			case RIGHT:
-				ctxt.rotate(0.0);
+				ctxt.rotate(0.0 * Math.PI);
 				break;
 			case BOTTOM:
-				ctxt.rotate(Math.PI / 2);
+				ctxt.rotate(0.5 * Math.PI);
+				break;
+			case LEFT:
+				ctxt.rotate(1.0 * Math.PI);
+				break;
+			case TOP:
+				ctxt.rotate(1.5 * Math.PI);
 				break;
 			}
 			
