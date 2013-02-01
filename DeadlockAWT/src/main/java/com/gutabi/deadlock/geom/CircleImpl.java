@@ -20,7 +20,7 @@ public class CircleImpl extends Circle {
 		RenderingContextImpl c = (RenderingContextImpl)ctxt;
 		c.g2.fill(ellipse);
 	}
-
+	
 	public void draw(RenderingContext ctxt) {
 		RenderingContextImpl c = (RenderingContextImpl)ctxt;
 		c.g2.draw(ellipse);

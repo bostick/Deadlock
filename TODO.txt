@@ -51,8 +51,6 @@ monitor car speed
 
 remove parent from SweepableShapes
 
-remove index from Capsule
-
 
 undo/redo
 user actions

@@ -13,7 +13,11 @@ public class ShapeEngineImpl extends ShapeEngine {
 	public Circle createCircle(Object parent, Point center, double radius) {
 		return new CircleImpl(parent, center, radius);
 	}
-
+	
+	public Capsule createCapsule(Object parent, Circle ac, Circle bc, int index) {
+		return new CapsuleImpl(parent, ac, bc, index);
+	}
+	
 	public Line createLine(Point p0, Point p1) {
 		return new LineImpl(p0, p1);
 	}

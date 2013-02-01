@@ -45,7 +45,7 @@ public class FixtureToolShape implements CompoundShape {
 		
 		worldSourceCircle = APP.platform.createShapeEngine().createCircle(null, worldSource, Vertex.INIT_VERTEX_RADIUS);
 		worldSinkCircle = APP.platform.createShapeEngine().createCircle(null, worldSink, Vertex.INIT_VERTEX_RADIUS);
-		cap = new Capsule(null, worldSourceCircle, worldSinkCircle, -1);
+		cap = APP.platform.createShapeEngine().createCapsule(null, worldSourceCircle, worldSinkCircle, -1);
 		
 		aabb = cap.aabb;
 	}

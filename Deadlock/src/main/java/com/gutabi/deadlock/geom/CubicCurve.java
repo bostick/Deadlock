@@ -12,7 +12,7 @@ public abstract class CubicCurve implements Shape {
 	Point c1;
 	Point p1;
 	
-	public CubicCurve(Point p0, Point c0, Point c1, Point p1) {
+	protected CubicCurve(Point p0, Point c0, Point c1, Point p1) {
 		
 		this.p0 = p0;
 		this.c0 = c0;

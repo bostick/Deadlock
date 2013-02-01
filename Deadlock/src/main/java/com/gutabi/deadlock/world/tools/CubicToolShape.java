@@ -58,7 +58,7 @@ public class CubicToolShape implements Shape {
 		for (int i = 0; i < cs.size()-1; i++) {
 			Circle a = cs.get(i);
 			Circle b = cs.get(i+1);
-			caps.add(new Capsule(null, a, b, -1));
+			caps.add(APP.platform.createShapeEngine().createCapsule(null, a, b, -1));
 		}
 		
 		skeletonSeq = new CapsuleSequence(null, caps);

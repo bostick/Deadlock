@@ -8,7 +8,7 @@ public abstract class Polyline implements Shape {
 	
 	public List<Point> pts;
 	
-	public Polyline(List<Point> pts) {
+	protected Polyline(List<Point> pts) {
 		this.pts = pts;
 	}
 	

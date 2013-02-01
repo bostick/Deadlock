@@ -41,7 +41,7 @@ public class Capsule extends SweepableShape implements SweeperShape, CompoundSha
 	
 //	static Logger logger = Logger.getLogger(Capsule.class);
 	
-	public Capsule(Object parent, Circle ac, Circle bc, int index) {
+	protected Capsule(Object parent, Circle ac, Circle bc, int index) {
 		super(parent);
 		this.ac = ac;
 		this.bc = bc;

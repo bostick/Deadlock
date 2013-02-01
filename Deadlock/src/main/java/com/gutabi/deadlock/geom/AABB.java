@@ -39,7 +39,7 @@ public abstract class AABB extends SweepableShape {
 	double[] n01Projection;
 	double[] n12Projection;
 	
-	public AABB(Object parent, double x, double y, double width, double height) {
+	protected AABB(Object parent, double x, double y, double width, double height) {
 		super(parent);
 		this.x = x;
 		this.y = y;

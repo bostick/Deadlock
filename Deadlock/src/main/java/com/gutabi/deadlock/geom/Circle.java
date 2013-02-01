@@ -20,7 +20,7 @@ public abstract class Circle extends SweepableShape implements SweeperShape {
 	
 //	static Logger logger = Logger.getLogger(Circle.class);
 	
-	public Circle(Object parent, Point center, double radius) {
+	protected Circle(Object parent, Point center, double radius) {
 		super(parent);
 		this.center = center;
 		this.radius = radius;

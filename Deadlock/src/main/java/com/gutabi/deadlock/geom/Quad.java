@@ -26,7 +26,7 @@ public abstract class Quad extends SweepableShape {
 	
 	private int hash;
 	
-	public Quad(Object parent, Point p0, Point p1, Point p2, Point p3) {
+	protected Quad(Object parent, Point p0, Point p1, Point p2, Point p3) {
 		super(parent);
 		this.p0 = p0;
 		this.p1 = p1;

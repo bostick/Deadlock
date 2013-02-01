@@ -20,7 +20,11 @@ public class GrassMarkMap {
 	
 	public void addGrassMark(Point p0, Point p1) {
 		
-		Capsule test = new Capsule(null, APP.platform.createShapeEngine().createCircle(null, p0, 0.0), APP.platform.createShapeEngine().createCircle(null, p1, 0.0), -1);
+		Capsule test = APP.platform.createShapeEngine().createCapsule(
+						null,
+						APP.platform.createShapeEngine().createCircle(null, p0, 0.0),
+						APP.platform.createShapeEngine().createCircle(null, p1, 0.0),
+						-1);
 		
 		for (Capsule cap : marks) {
 			if (Capsule.contains(cap, test)) {
@@ -34,7 +38,11 @@ public class GrassMarkMap {
 			assert marks.size() < 100;
 		}
 		
-		marks.add(new Capsule(null, APP.platform.createShapeEngine().createCircle(null, p0, 0.1), APP.platform.createShapeEngine().createCircle(null, p1, 0.1), -1));
+		marks.add(APP.platform.createShapeEngine().createCapsule(
+					null,
+					APP.platform.createShapeEngine().createCircle(null, p0, 0.1),
+					APP.platform.createShapeEngine().createCircle(null, p1, 0.1),
+					-1));
 	}
 	
 	public void postStop() {

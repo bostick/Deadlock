@@ -11,7 +11,7 @@ public abstract class QuadCurve implements Shape {
 	Point c0;
 	Point p1;
 	
-	public QuadCurve(Point p0, Point c0, Point p1) {
+	protected QuadCurve(Point p0, Point c0, Point p1) {
 		this.p0 = p0;
 		this.c0 = c0;
 		this.p1 = p1;
