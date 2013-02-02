@@ -1,7 +1,6 @@
 package com.gutabi.deadlock.geom;
 
-
-public abstract class SweepableShape implements Shape, Sweepable {
+public abstract class SweepableShape implements Shape {
 	
 	public final Object parent;
 	

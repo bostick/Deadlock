@@ -2,10 +2,6 @@ package com.gutabi.deadlock.geom;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import com.gutabi.deadlock.math.DMath;
 import com.gutabi.deadlock.math.OverlappingException;
 import com.gutabi.deadlock.math.Point;
@@ -14,7 +10,7 @@ import com.gutabi.deadlock.ui.paint.Color;
 import com.gutabi.deadlock.ui.paint.Join;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 
-public class Capsule extends SweepableShape implements CompoundShape {
+public abstract class Capsule extends SweepableShape {
 	
 	public final Circle ac;
 	public final Circle bc;
@@ -27,15 +23,18 @@ public class Capsule extends SweepableShape implements CompoundShape {
 	public final Point b;
 	public final double r;
 	
-	private final Point aUp;
-	private final Point aDown;
-	private final Point bUp;
-	private final Point bDown;
+	public final Point aUp;
+	public final Point aDown;
+	public final Point bUp;
+	public final Point bDown;
 	
 	private final Line debugNormalLine;
 	private final Line debugSkeletonLine;
 	
 	public final AABB aabb;
+	
+	private Line abUp;
+	private Line baDown;
 	
 	private int hash;
 	
@@ -113,7 +112,7 @@ public class Capsule extends SweepableShape implements CompoundShape {
 	
 	public Capsule plus(Point p) {
 		ShapeEngine e = APP.platform.createShapeEngine();
-		return new Capsule(parent, e.createCircle(parent, a.plus(p), ac.radius), e.createCircle(parent, b.plus(p), bc.radius));
+		return e.createCapsule(parent, e.createCircle(parent, a.plus(p), ac.radius), e.createCircle(parent, b.plus(p), bc.radius));
 	}
 	
 	public boolean hitTest(Point p) {
@@ -137,222 +136,6 @@ public class Capsule extends SweepableShape implements CompoundShape {
 		return Point.point(a, b, param);
 	}
 	
-	public List<SweepEvent> sweepStart(CapsuleSequence s) {
-		
-		List<SweepEvent> events = new ArrayList<SweepEvent>();
-		
-		if (intersect(s.getStart())) {
-			events.add(new SweepEvent(SweepEventType.enter(parent), this, s, 0, 0.0));
-		}
-		
-		return events;
-	}
-	
-	public List<SweepEvent> sweep(CapsuleSequence s, int index) {
-		
-		List<SweepEvent> events = new ArrayList<SweepEvent>();
-		
-		Capsule cap = s.getCapsule(index);
-		
-		Point c = cap.a;
-		Point d = cap.b;
-		
-		boolean outside;
-		if (intersect(cap.ac)) {
-			outside = false;
-		} else {
-			outside = true;
-		}
-		
-		double[] params = new double[2];
-		Arrays.fill(params, Double.POSITIVE_INFINITY);
-		int paramCount = 0;
-		
-		double cdParam;
-		
-		/*
-		 * a cap
-		 */
-		
-		double[] capParams = new double[2];
-		int n = SweepUtils.sweepCircleCircle(a, c, d, cap.r, r, capParams);
-		
-		for (int i = 0; i < n; i++) {
-			
-			cdParam = capParams[i];
-			
-			if (DMath.greaterThan(cdParam, 0.0)) {
-				
-				/*
-				 * still have to test that it is beyond the end points
-				 */
-				Point p = Point.point(c, d, cdParam);
-				double abParam = Point.u(a, p, b);
-				
-				if (DMath.lessThanEquals(abParam, 0.0)) {
-					
-					ShapeEngine e = APP.platform.createShapeEngine();
-					assert ShapeUtils.intersectCC(ac, e.createCircle(null, p, cap.r));
-					
-//					logger.debug("a cap");
-					
-					boolean present = false;
-					for (int j = 0; j < paramCount; j++) {
-						if (DMath.equals(params[j], cdParam)) {
-							present = true;
-							break;
-						}
-					}
-					if (!present) {
-						params[paramCount] = cdParam;
-						paramCount++;
-					}
-				}
-				
-			}
-			
-		}
-		
-		/*
-		 * top side, left hand side of <a, b>
-		 */
-		
-		cdParam = SweepUtils.sweepCircleLine(aUp, bUp, c, d, cap.r);
-		
-		if (cdParam != -1) {
-			
-			if (DMath.greaterThan(cdParam, 0.0)) {
-				
-				/*
-				 * still have to test that it isn't beyond the end points
-				 */
-				Point p = Point.point(c, d, cdParam);
-				double abParam = Point.u(aUp, p, bUp);
-				
-				if (DMath.greaterThanEquals(abParam, 0.0) && DMath.lessThanEquals(abParam, 1.0)) {
-					
-//					logger.debug("top side");
-					
-					boolean present = false;
-					for (int j = 0; j < paramCount; j++) {
-						if (DMath.equals(params[j], cdParam)) {
-							present = true;
-							break;
-						}
-					}
-					if (!present) {
-						params[paramCount] = cdParam;
-						paramCount++;
-					}
-					
-				}
-				
-			}
-			
-		}
-		
-		/*
-		 * b cap
-		 */
-		
-		n = SweepUtils.sweepCircleCircle(b, c, d, cap.r, r, capParams);
-		
-		for (int i = 0; i < n; i++) {
-			
-			cdParam = capParams[i];
-			
-			if (DMath.greaterThan(cdParam, 0.0)) {
-				
-				/*
-				 * still have to test that it is beyond the end points
-				 */
-				Point p = Point.point(c, d, cdParam);
-				double abParam = Point.u(a, p, b);
-				
-				if (DMath.greaterThanEquals(abParam, 1.0)) {
-					
-					ShapeEngine e = APP.platform.createShapeEngine();
-					assert ShapeUtils.intersectCC(bc, e.createCircle(null, p, cap.r));
-					
-//					logger.debug("b cap");
-					
-					boolean present = false;
-					for (int j = 0; j < paramCount; j++) {
-						if (DMath.equals(params[j], cdParam)) {
-							present = true;
-							break;
-						}
-					}
-					if (!present) {
-						params[paramCount] = cdParam;
-						paramCount++;
-					}
-				}
-				
-			}
-			
-		}
-		
-		/*
-		 * bottom side
-		 */
-		
-		cdParam = SweepUtils.sweepCircleLine(bDown, aDown, c, d, cap.r);
-		
-		if (cdParam != -1) {
-			
-			if (DMath.greaterThan(cdParam, 0.0)) {
-				
-				/*
-				 * still have to test that it isn't beyond the end points
-				 */
-				Point p = Point.point(c, d, cdParam);
-				double abParam = Point.u(bDown, p, aDown);
-				
-				if (DMath.greaterThanEquals(abParam, 0.0) && DMath.lessThanEquals(abParam, 1.0)) {
-					
-//					logger.debug("bottom side");
-					
-					boolean present = false;
-					for (int j = 0; j < paramCount; j++) {
-						if (DMath.equals(params[j], cdParam)) {
-							present = true;
-							break;
-						}
-					}
-					if (!present) {
-						params[paramCount] = cdParam;
-						paramCount++;
-					}
-				}
-				
-			}
-			
-		}
-		
-		Arrays.sort(params);
-		if (paramCount == 2 && DMath.equals(params[0], params[1])) {
-			/*
-			 * hit a seam
-			 */
-			paramCount = 1;
-		}
-		
-		for (int i = 0; i < paramCount; i++) {
-			double param = params[i];
-			assert DMath.greaterThanEquals(param, 0.0) && DMath.lessThanEquals(param, 1.0);
-			
-			if (outside) {
-				events.add(new SweepEvent(SweepEventType.enter(parent), this, s, index, param));
-			} else {
-				events.add(new SweepEvent(SweepEventType.exit(parent), this, s, index, param));
-			}
-			outside = !outside;
-		}
-		
-		return events;
-	}
-	
 	public double skeletonHitTest(Point p) {
 		if (Point.intersect(p, a, b)){
 			return Point.param(p, a, b);
@@ -374,19 +157,6 @@ public class Capsule extends SweepableShape implements CompoundShape {
 		}
 	}
 	
-	public boolean intersect(Shape s) {
-		if (ShapeUtils.intersect(ac, s)) {
-			return true;
-		}
-		if (ShapeUtils.intersect(bc, s)) {
-			return true;
-		}
-		if (ShapeUtils.intersect(middle, s)) {
-			return true;
-		}
-		return false;
-	}
-	
 	public static boolean contains(Capsule c0, Capsule c1) {
 		
 		if (DMath.greaterThan(c1.r, c0.r)) {
@@ -396,6 +166,20 @@ public class Capsule extends SweepableShape implements CompoundShape {
 		double dist = Math.min(Point.distance(c1.a, c0.a, c0.b), Point.distance(c1.b, c0.a, c0.b));
 		
 		return DMath.lessThanEquals(dist, c0.r - c1.r);
+	}
+	
+	public Line getABUp() {
+		if (abUp == null) {
+			abUp = APP.platform.createShapeEngine().createLine(aUp, bUp);
+		}
+		return abUp;
+	}
+	
+	public Line getBADown() {
+		if (baDown == null) {
+			baDown = APP.platform.createShapeEngine().createLine(bDown, aDown);
+		}
+		return baDown;
 	}
 	
 	public void paint(RenderingContext ctxt) {

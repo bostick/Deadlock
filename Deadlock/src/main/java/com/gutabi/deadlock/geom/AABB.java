@@ -2,10 +2,6 @@ package com.gutabi.deadlock.geom;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import com.gutabi.deadlock.math.DMath;
 import com.gutabi.deadlock.math.Dim;
 import com.gutabi.deadlock.math.Point;
@@ -38,6 +34,11 @@ public abstract class AABB extends SweepableShape {
 	
 	double[] n01Projection;
 	double[] n12Projection;
+	
+	Line p0p1Line;
+	Line p1p2Line;
+	Line p2p3Line;
+	Line p3p0Line;
 	
 	protected AABB(Object parent, double x, double y, double width, double height) {
 		super(parent);
@@ -146,6 +147,33 @@ public abstract class AABB extends SweepableShape {
 		out[1] = n12Projection[1];
 	}
 	
+	public Line getP0P1Line() {
+		if (p0p1Line == null) {
+			p0p1Line = APP.platform.createShapeEngine().createLine(p0, p1);
+		}
+		return p0p1Line;
+	}
+	
+	public Line getP1P2Line() {
+		if (p1p2Line == null) {
+			p1p2Line = APP.platform.createShapeEngine().createLine(p1, p2);
+		}
+		return p1p2Line;
+	}
+	
+	public Line getP2P3Line() {
+		if (p2p3Line == null) {
+			p2p3Line = APP.platform.createShapeEngine().createLine(p2, p3);
+		}
+		return p2p3Line;
+	}
+	
+	public Line getP3P0Line() {
+		if (p3p0Line == null) {
+			p3p0Line = APP.platform.createShapeEngine().createLine(p3, p0);
+		}
+		return p3p0Line;
+	}
 	
 	public boolean hitTest(Point p) {
 		return DMath.lessThanEquals(x, p.x) && DMath.lessThanEquals(p.x, brX) &&
@@ -214,94 +242,6 @@ public abstract class AABB extends SweepableShape {
 	
 	public AABB minus(Point p) {
 		return APP.platform.createShapeEngine().createAABB(parent, x - p.x, y - p.y, width, height);
-	}
-	
-	
-	
-	
-	public List<SweepEvent> sweepStart(CapsuleSequence s) {
-		
-		List<SweepEvent> events = new ArrayList<SweepEvent>();
-		
-		if (ShapeUtils.intersectAC(this, s.getStart())) {
-			events.add(new SweepEvent(SweepEventType.enter(parent), this, s, 0, 0.0));
-		}
-		
-		return events;
-		
-	}
-	
-	public List<SweepEvent> sweep(CapsuleSequence s, int index) {
-		
-		List<SweepEvent> events = new ArrayList<SweepEvent>();
-		
-		Capsule cap = s.getCapsule(index);
-		
-		Point c = cap.a;
-		Point d = cap.b;
-		
-		boolean outside;
-		if (ShapeUtils.intersectAC(this, cap.ac)) {
-			outside = false;
-		} else {
-			outside = true;
-		}
-		
-		double[] params = new double[2];
-		Arrays.fill(params, Double.POSITIVE_INFINITY);
-		int paramCount = 0;
-		
-		double cdParam = SweepUtils.sweepCircleLine(p0, p1, c, d, s.radius);
-		if (cdParam != -1) {
-			params[paramCount] = cdParam;
-			paramCount++;
-		}
-		
-		cdParam = SweepUtils.sweepCircleLine(p1, p2, c, d, s.radius);
-		if (cdParam != -1) {
-			params[paramCount] = cdParam;
-			paramCount++;
-		}
-		
-		cdParam = SweepUtils.sweepCircleLine(p2, p3, c, d, s.radius);
-		if (cdParam != -1) {
-			params[paramCount] = cdParam;
-			paramCount++;
-		}
-		
-		cdParam = SweepUtils.sweepCircleLine(p3, p0, c, d, s.radius);
-		if (cdParam != -1) {
-			params[paramCount] = cdParam;
-			paramCount++;
-		}
-		
-		Arrays.sort(params);
-		if (paramCount == 2 && DMath.equals(params[0], params[1])) {
-			/*
-			 * hit a seam
-			 */
-			paramCount = 1;
-		}
-		
-		for (int i = 0; i < paramCount; i++) {
-			double param = params[i];
-			
-			if (DMath.greaterThan(param, 0.0)) {
-				
-				assert DMath.greaterThanEquals(param, 0.0) && DMath.lessThanEquals(param, 1.0);
-				if (outside) {
-					events.add(new SweepEvent(SweepEventType.enter(parent), this, s, index, param));
-				} else {
-					events.add(new SweepEvent(SweepEventType.exit(parent), this, s, index, param));
-				}
-				outside = !outside;
-				
-			}
-			
-		}
-		
-		return events;
-		
 	}
 	
 }

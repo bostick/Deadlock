@@ -1,14 +1,12 @@
 package com.gutabi.deadlock.geom;
 
-import static com.gutabi.deadlock.DeadlockApplication.APP;
-
 import java.util.Comparator;
 
 import com.gutabi.deadlock.math.DMath;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.world.graph.Vertex;
 
-public class SweepEvent {
+public abstract class SweepEvent {
 	
 	public final SweepEventType type;
 	public final SweepableShape still;
@@ -21,28 +19,19 @@ public class SweepEvent {
 	public final double combo;
 	
 	public final Point p;
-	public final Circle circle;
 	
 	private Vertex v;
 	
-	public SweepEvent(SweepEventType type, SweepableShape still, SweeperShape moving, int index, double param) {
+	protected SweepEvent(SweepEventType type, SweepableShape still, CapsuleSequence moving, int index, double param, int offset) {
 		this.type = type;
 		this.still = still;
 		this.moving = moving;
-		this.index = index;
+		this.index = index+offset;
 		this.param = param;
 		
-		this.combo = index+param;
+		this.combo = index+offset+param;
 		
 		p = moving.getPoint(index, param);
-		circle = APP.platform.createShapeEngine().createCircle(null, p, moving.getRadius());
-		
-		if (still != null) {
-			/*
-			 * TODO: be more specific and test if bordering
-			 */
-			assert ShapeUtils.intersect(still, circle);
-		}
 		
 	}
 	

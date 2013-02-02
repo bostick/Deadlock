@@ -103,49 +103,6 @@ public class CapsuleSequence extends SweepableShape implements SweeperShape, Com
 		return new CapsuleSequence(parent, newCaps);
 	}
 	
-	public List<SweepEvent> sweepStart(CapsuleSequence s) {
-		
-		List<SweepEvent> events = new ArrayList<SweepEvent>();
-		
-		for (Capsule c : caps) {
-			events.addAll(c.sweepStart(s));
-		}
-		
-		return events;
-	}
-	
-	public List<SweepEvent> sweep(CapsuleSequence s, int index) {
-		
-		List<SweepEvent> events = new ArrayList<SweepEvent>();
-		
-		for (int i = 0; i < caps.size(); i++) {
-			Capsule c = caps.get(i);
-			
-			List<SweepEvent> capsuleEvents = c.sweep(s, index);
-			
-			for (SweepEvent e : capsuleEvents) {
-				if (DMath.lessThan(e.param, 1.0)) {
-					
-					events.add(e);
-					
-				} else {
-					assert DMath.equals(e.param, 1.0);
-					if (i < caps.size()-1) {
-						
-						events.add(e);
-						
-					} else {
-						events.add(e);
-					}
-				}
-				
-			}
-			
-		}
-		
-		return events;
-	}
-	
 	public boolean hitTest(Point p) {
 		for (Capsule c : caps) {
 			if (c.hitTest(p)) {

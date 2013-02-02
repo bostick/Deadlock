@@ -13,10 +13,12 @@ import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.geom.Capsule;
 import com.gutabi.deadlock.geom.CapsuleSequence;
 import com.gutabi.deadlock.geom.CapsuleSequencePosition;
+import com.gutabi.deadlock.geom.CapsuleSequenceSweepEvent;
 import com.gutabi.deadlock.geom.Circle;
 import com.gutabi.deadlock.geom.ShapeUtils;
 import com.gutabi.deadlock.geom.SweepEvent;
 import com.gutabi.deadlock.geom.SweepEventType;
+import com.gutabi.deadlock.geom.SweepUtils;
 import com.gutabi.deadlock.math.DMath;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.paint.Cap;
@@ -144,7 +146,7 @@ public class Stroke {
 		 */
 		for (int i = 0; i < events.size(); i++) {
 			
-			SweepEvent e = events.get(i);
+			CapsuleSequenceSweepEvent e = (CapsuleSequenceSweepEvent)events.get(i);
 			
 			if (e.type == null) {
 				
@@ -203,13 +205,13 @@ public class Stroke {
 						/*
 						 * next event is before next stroke point, so use the event circle
 						 */
-						b = events.get(i+1).circle;
+						b = ((CapsuleSequenceSweepEvent)events.get(i+1)).circle;
 					} else {
 						b = getCircle(j+1);
 					}
 				} else {
 					if (DMath.greaterThan(nextEventCombo, j)) {
-						a = events.get(i-1).circle;
+						a = ((CapsuleSequenceSweepEvent)events.get(i-1)).circle;
 					} else {
 						a = getCircle(j);
 					}
@@ -329,13 +331,13 @@ public class Stroke {
 						/*
 						 * next event is before next stroke point, so use the event circle
 						 */
-						b = events.get(i+1).circle;
+						b = ((CapsuleSequenceSweepEvent)events.get(i+1)).circle;
 					} else {
 						b = getCircle(j+1);
 					}
 				} else {
 					if (DMath.greaterThan(nextEventCombo, j)) {
-						a = events.get(i-1).circle;
+						a = ((CapsuleSequenceSweepEvent)events.get(i-1)).circle;
 					} else {
 						a = getCircle(j);
 					}
@@ -511,7 +513,7 @@ public class Stroke {
 		
 //		Circle start = seq.getStart();
 		
-		List<SweepEvent> startEvents = world.graph.sweepStart(seq);
+		List<SweepEvent> startEvents = SweepUtils.sweepStartCSoverG(world.graph, seq, 0);
 		
 		Collections.sort(startEvents, SweepEvent.COMPARATOR);
 		
@@ -551,7 +553,7 @@ public class Stroke {
 		
 		if ((vertexCount + roadCapsuleCount + mergerCount + strokeCapsuleCount) == 0) {
 //			logger.debug("start in nothing");
-			vertexEvents.add(new SweepEvent(null, null, seq, 0, 0.0));
+			vertexEvents.add(new CapsuleSequenceSweepEvent(null, null, seq, 0, 0.0, 0));
 		} else {
 //			logger.debug("start counts: " + vertexCount + " " + roadCapsuleCount + " " + mergerCount);
 		}
@@ -563,7 +565,7 @@ public class Stroke {
 //			Capsule cap = seq.getCapsule(i);
 			CapsuleSequence capSeq = seq.capseq(i);
 			
-			List<SweepEvent> events = world.graph.sweep(capSeq, 0);
+			List<SweepEvent> events = SweepUtils.sweepCSoverG(world.graph, capSeq, 0, i);
 			
 			if (sweepSelf) {
 				
@@ -573,8 +575,8 @@ public class Stroke {
 					
 					CapsuleSequence sub = seq.subsequence(i);
 					
-					List<SweepEvent> subStartEvents = sub.sweepStart(capSeq);
-					List<SweepEvent> subEvents = sub.sweep(capSeq, 0);
+					List<SweepEvent> subStartEvents = SweepUtils.sweepStartCSoverCS(sub, capSeq, i);
+					List<SweepEvent> subEvents = SweepUtils.sweepCSoverCS(sub, capSeq, 0, i);
 					
 					Collections.sort(subEvents, SweepEvent.COMPARATOR);
 					
@@ -687,7 +689,7 @@ public class Stroke {
 		
 		if ((vertexCount + roadCapsuleCount + mergerCount + strokeCapsuleCount) == 0) {
 //			logger.debug("end in nothing");
-			vertexEvents.add(new SweepEvent(null, null, seq, seq.capsuleCount, 0.0));
+			vertexEvents.add(new CapsuleSequenceSweepEvent(null, null, seq, seq.capsuleCount, 0.0, 0));
 		}
 		
 		List<SweepEvent> adj = new ArrayList<SweepEvent>();

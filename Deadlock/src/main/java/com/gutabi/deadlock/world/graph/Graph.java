@@ -20,8 +20,6 @@ import com.gutabi.deadlock.geom.Circle;
 import com.gutabi.deadlock.geom.Quad;
 import com.gutabi.deadlock.geom.Shape;
 import com.gutabi.deadlock.geom.ShapeUtils;
-import com.gutabi.deadlock.geom.SweepEvent;
-import com.gutabi.deadlock.geom.Sweepable;
 import com.gutabi.deadlock.math.DMath;
 import com.gutabi.deadlock.math.OverlappingException;
 import com.gutabi.deadlock.math.Point;
@@ -30,7 +28,7 @@ import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.world.ControlPanel;
 import com.gutabi.deadlock.world.World;
 
-public class Graph implements Sweepable {
+public class Graph {
 	
 	World world;
 	
@@ -370,38 +368,6 @@ public class Graph implements Sweepable {
 		edges.remove(m);
 		refreshEdgeIDs();
 	}
-	
-	
-	
-	public List<SweepEvent> sweepStart(CapsuleSequence s) {
-		
-		List<SweepEvent> events = new ArrayList<SweepEvent>();
-		
-		for (Vertex v : vertices) {
-			events.addAll(v.getShape().sweepStart(s));
-		}
-		for (Edge e : edges) {
-			events.addAll(e.getShape().sweepStart(s));
-		}
-		
-		return events;
-	}
-	
-	public List<SweepEvent> sweep(CapsuleSequence s, int index) {
-		
-		List<SweepEvent> events = new ArrayList<SweepEvent>();
-		
-		for (Vertex v : vertices) {
-			events.addAll(v.getShape().sweep(s, index));
-		}
-		for (Edge e : edges) {
-			events.addAll(e.getShape().sweep(s, index));
-		}
-		
-		return events;
-	}
-	
-	
 	
 	private void computeAABB() {
 		
@@ -751,21 +717,13 @@ public class Graph implements Sweepable {
 	
 	public Entity pureGraphIntersectCapsule(Capsule c) {
 		for (Vertex v : vertices) {
-			if (c.intersect(v.shape)) {
+			if (ShapeUtils.intersect(c, v.getShape())) {
 				return v;
 			}
 		}
 		for (Edge ed : edges) {
-			if (ed instanceof Road) {
-				
-				if (((CapsuleSequence)ed.getShape()).intersect(c)) {
-					return ed;
-				}
-				
-			} else {
-				if (c.intersect(ed.getShape())) {
-					return ed;
-				}
+			if (ShapeUtils.intersect(c, ed.getShape())) {
+				return ed;
 			}
 		}
 		return null;
@@ -1418,7 +1376,7 @@ public class Graph implements Sweepable {
 						for (int j = 1; j < f.capsuleCount()-1; j++) {
 							Capsule fs = f.getCapsule(j);
 							
-							if (es.intersect(fs)) {
+							if (ShapeUtils.intersect(es, fs)) {
 								assert false;
 							}
 						}

@@ -1,6 +1,4 @@
 
-get rid of Capsule.index
-
 work on sweeping shapes
 allow quad as a sweeper
 

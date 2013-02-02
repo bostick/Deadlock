@@ -23,6 +23,14 @@ public class ShapeUtils {
 			} else if (s1 instanceof Quad) {
 				return intersectAQ((AABB)s0, (Quad)s1);
 			}
+		} else if (s0 instanceof Capsule) {
+			if (s1 instanceof AABB) {
+				return intersectACap((AABB)s1, (Capsule)s0);
+			} else if (s1 instanceof Capsule) {
+				return intersectCapCap((Capsule)s0, (Capsule)s1);
+			} else if (s1 instanceof Circle) {
+				return intersectCapC((Capsule)s0, (Circle)s1);
+			}
 		} else if (s0 instanceof Circle) {
 			if (s1 instanceof AABB) {
 				return intersectAC((AABB)s1, (Circle)s0);
@@ -57,6 +65,22 @@ public class ShapeUtils {
 		return false;
 	}
 	
+	public static boolean touch(Shape s0, Shape s1) {
+		
+		if (s0 instanceof Capsule) {
+			if (s1 instanceof Circle) {
+				return touchCapC((Capsule)s0, (Circle)s1);
+			}
+		} else if (s0 instanceof Circle) {
+			if (s1 instanceof Circle) {
+				return touchCC((Circle)s0, (Circle)s1);
+			}
+		}
+		
+		assert false;
+		return false;
+	}
+	
 	public static boolean contains(Shape s0, Shape s1) {
 		
 		if (s0 instanceof AABB) {
@@ -72,6 +96,20 @@ public class ShapeUtils {
 	public static boolean intersectAA(AABB a0, AABB a1) {
 		return DMath.lessThanEquals(a0.x, a1.brX) && DMath.lessThanEquals(a1.x, a0.brX) &&
 				DMath.lessThanEquals(a0.y, a1.brY) && DMath.lessThanEquals(a1.y, a0.brY);
+	}
+	
+	public static boolean intersectACap(AABB a0, Capsule c1) {
+		
+		if (intersectAC(a0, c1.ac)) {
+			return true;
+		}
+		if (intersectAC(a0, c1.bc)) {
+			return true;		
+		}
+		if (intersectAQ(a0, c1.middle)) {
+			return true;
+		}
+		return false;
 	}
 	
 	public static boolean intersectAC(AABB a0, Circle c1) {
@@ -160,6 +198,37 @@ public class ShapeUtils {
 		}
 		
 		return true;
+	}
+	
+	public static boolean intersectCapCap(Capsule c0, Capsule c1) {
+		if (intersectCapC(c1, c0.ac)) {
+			return true;
+		}
+		if (intersectCapC(c1, c0.bc)) {
+			return true;		
+		}
+		if (intersectCapQ(c1, c0.middle)) {
+			return true;
+		}
+		return false;
+	}
+	
+	public static boolean intersectCapC(Capsule c0, Circle c1) {
+		double dist = Point.distance(c1.center, c0.a, c0.b);
+		return DMath.lessThanEquals(dist, c0.r + c1.radius);
+	}
+	
+	public static boolean intersectCapQ(Capsule c0, Quad q1) {
+		if (intersectCQ(c0.ac, q1)) {
+			return true;
+		}
+		if (intersectCQ(c0.bc, q1)) {
+			return true;		
+		}
+		if (intersectQQ(c0.middle, q1)) {
+			return true;
+		}
+		return false;
 	}
 	
 	public static boolean intersectCC(Circle c0, Circle c1) {
@@ -369,4 +438,13 @@ public class ShapeUtils {
 		return true;
 	}
 	
+	public static boolean touchCapC(Capsule c0, Circle c1) {
+		double dist = Point.distance(c1.center, c0.a, c0.b);
+		return DMath.equals(dist, c0.r + c1.radius);
+	}
+	
+	public static boolean touchCC(Circle c0, Circle c1) {
+		double dist = Point.distance(c0.center, c1.center);
+		return DMath.equals(dist, c0.radius + c1.radius);
+	}
 }

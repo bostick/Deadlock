@@ -119,6 +119,28 @@ public class DMath {
 		}
 	}
 	
+	public static boolean rangesTouch(double[] r0, double[] r1) {
+		
+		double a = r0[0];
+		double b = r0[1];
+		double c = r1[0];
+		double d = r1[1];
+		
+		if (a < b) {
+			if (c < d) {
+				return equals(a, d) && equals(c, b);
+			} else {
+				return equals(a, c) && equals(d, b);
+			}
+		} else {
+			if (c < d) {
+				return equals(b, d) && equals(c, a);
+			} else {
+				return equals(b, c) && equals(d, a);
+			}
+		}
+	}
+	
 	public static boolean rangeContains(double[] r0, double[] r1) {
 		
 		double a = r0[0];

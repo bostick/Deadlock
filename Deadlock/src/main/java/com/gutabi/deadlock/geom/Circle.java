@@ -2,10 +2,6 @@ package com.gutabi.deadlock.geom;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import com.gutabi.deadlock.math.DMath;
 import com.gutabi.deadlock.math.Point;
 
@@ -81,59 +77,6 @@ public abstract class Circle extends SweepableShape {
 	public Point getPoint(double param) {
 		assert DMath.equals(param, 0.0);
 		return center;
-	}
-	
-	public List<SweepEvent> sweepStart(CapsuleSequence s) {
-		
-		List<SweepEvent> events = new ArrayList<SweepEvent>();
-		
-		if (ShapeUtils.intersectCC(this, s.getStart())) {
-			events.add(new SweepEvent(SweepEventType.enter(parent), this, s, 0, 0.0));
-		}
-		
-		return events;
-	}
-	
-	public List<SweepEvent> sweep(CapsuleSequence s, int index) {
-		
-		List<SweepEvent> events = new ArrayList<SweepEvent>();
-		
-		Capsule cap = s.getCapsule(index);
-		
-		Point c = cap.a;
-		Point d = cap.b;
-		
-		boolean outside;
-		if (ShapeUtils.intersectCC(this, cap.ac)) {
-			outside = false;
-		} else {
-			outside = true;
-		}
-		
-		double[] params = new double[2];
-		Arrays.fill(params, Double.POSITIVE_INFINITY);
-		int paramCount = SweepUtils.sweepCircleCircle(center, c, d, s.radius, radius, params);
-		
-		Arrays.sort(params);
-		
-		for (int i = 0; i < paramCount; i++) {
-			double param = params[i];
-			
-			if (DMath.greaterThan(param, 0.0)) {
-				
-				assert DMath.greaterThan(param, 0.0) && DMath.lessThanEquals(param, 1.0);
-				if (outside) {
-					events.add(new SweepEvent(SweepEventType.enter(parent), this, s, index, param));
-				} else {
-					events.add(new SweepEvent(SweepEventType.exit(parent), this, s, index, param));
-				}
-				outside = !outside;
-				
-			}
-			
-		}
-		
-		return events;
 	}
 	
 }
