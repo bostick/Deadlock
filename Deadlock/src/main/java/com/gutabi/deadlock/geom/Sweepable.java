@@ -4,8 +4,8 @@ import java.util.List;
 
 public interface Sweepable {
 	
-	List<SweepEvent> sweepStart(Circle c);
+	List<SweepEvent> sweepStart(CapsuleSequence s);
 	
-	List<SweepEvent> sweep(Capsule cap);
+	List<SweepEvent> sweep(CapsuleSequence s, int index);
 	
 }

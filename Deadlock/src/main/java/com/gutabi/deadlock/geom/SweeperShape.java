@@ -4,7 +4,7 @@ import com.gutabi.deadlock.math.Point;
 
 public interface SweeperShape {
 	
-	Point getPoint(double param);
+	Point getPoint(int index, double param);
 	
 	double getRadius();
 	

@@ -219,11 +219,11 @@ public abstract class AABB extends SweepableShape {
 	
 	
 	
-	public List<SweepEvent> sweepStart(Circle s) {
+	public List<SweepEvent> sweepStart(CapsuleSequence s) {
 		
 		List<SweepEvent> events = new ArrayList<SweepEvent>();
 		
-		if (ShapeUtils.intersectAC(this, s)) {
+		if (ShapeUtils.intersectAC(this, s.getStart())) {
 			events.add(new SweepEvent(SweepEventType.enter(parent), this, s, 0, 0.0));
 		}
 		
@@ -231,15 +231,17 @@ public abstract class AABB extends SweepableShape {
 		
 	}
 	
-	public List<SweepEvent> sweep(Capsule s) {
+	public List<SweepEvent> sweep(CapsuleSequence s, int index) {
 		
 		List<SweepEvent> events = new ArrayList<SweepEvent>();
 		
-		Point c = s.a;
-		Point d = s.b;
+		Capsule cap = s.getCapsule(index);
+		
+		Point c = cap.a;
+		Point d = cap.b;
 		
 		boolean outside;
-		if (ShapeUtils.intersectAC(this, s.ac)) {
+		if (ShapeUtils.intersectAC(this, cap.ac)) {
 			outside = false;
 		} else {
 			outside = true;
@@ -249,25 +251,25 @@ public abstract class AABB extends SweepableShape {
 		Arrays.fill(params, Double.POSITIVE_INFINITY);
 		int paramCount = 0;
 		
-		double cdParam = SweepUtils.sweepCircleLine(p0, p1, c, d, s.r);
+		double cdParam = SweepUtils.sweepCircleLine(p0, p1, c, d, s.radius);
 		if (cdParam != -1) {
 			params[paramCount] = cdParam;
 			paramCount++;
 		}
 		
-		cdParam = SweepUtils.sweepCircleLine(p1, p2, c, d, s.r);
+		cdParam = SweepUtils.sweepCircleLine(p1, p2, c, d, s.radius);
 		if (cdParam != -1) {
 			params[paramCount] = cdParam;
 			paramCount++;
 		}
 		
-		cdParam = SweepUtils.sweepCircleLine(p2, p3, c, d, s.r);
+		cdParam = SweepUtils.sweepCircleLine(p2, p3, c, d, s.radius);
 		if (cdParam != -1) {
 			params[paramCount] = cdParam;
 			paramCount++;
 		}
 		
-		cdParam = SweepUtils.sweepCircleLine(p3, p0, c, d, s.r);
+		cdParam = SweepUtils.sweepCircleLine(p3, p0, c, d, s.radius);
 		if (cdParam != -1) {
 			params[paramCount] = cdParam;
 			paramCount++;
@@ -288,9 +290,9 @@ public abstract class AABB extends SweepableShape {
 				
 				assert DMath.greaterThanEquals(param, 0.0) && DMath.lessThanEquals(param, 1.0);
 				if (outside) {
-					events.add(new SweepEvent(SweepEventType.enter(parent), this, s, s.index, param));
+					events.add(new SweepEvent(SweepEventType.enter(parent), this, s, index, param));
 				} else {
-					events.add(new SweepEvent(SweepEventType.exit(parent), this, s, s.index, param));
+					events.add(new SweepEvent(SweepEventType.exit(parent), this, s, index, param));
 				}
 				outside = !outside;
 				

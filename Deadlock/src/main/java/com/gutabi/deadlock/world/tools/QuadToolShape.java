@@ -54,7 +54,7 @@ public class QuadToolShape implements Shape {
 		for (int i = 0; i < cs.size()-1; i++) {
 			Circle a = cs.get(i);
 			Circle b = cs.get(i+1);
-			caps.add(APP.platform.createShapeEngine().createCapsule(null, a, b, -1));
+			caps.add(APP.platform.createShapeEngine().createCapsule(null, a, b));
 		}
 		
 		skeletonSeq = new CapsuleSequence(null, caps);

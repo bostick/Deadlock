@@ -1,5 +1,5 @@
 
-get rid of SweepEvent.index
+get rid of Capsule.index
 
 work on sweeping shapes
 allow quad as a sweeper

@@ -373,29 +373,29 @@ public class Graph implements Sweepable {
 	
 	
 	
-	public List<SweepEvent> sweepStart(Circle c) {
+	public List<SweepEvent> sweepStart(CapsuleSequence s) {
 		
 		List<SweepEvent> events = new ArrayList<SweepEvent>();
 		
 		for (Vertex v : vertices) {
-			events.addAll(v.getShape().sweepStart(c));
+			events.addAll(v.getShape().sweepStart(s));
 		}
 		for (Edge e : edges) {
-			events.addAll(e.getShape().sweepStart(c));
+			events.addAll(e.getShape().sweepStart(s));
 		}
 		
 		return events;
 	}
 	
-	public List<SweepEvent> sweep(Capsule s) {
+	public List<SweepEvent> sweep(CapsuleSequence s, int index) {
 		
 		List<SweepEvent> events = new ArrayList<SweepEvent>();
 		
 		for (Vertex v : vertices) {
-			events.addAll(v.getShape().sweep(s));
+			events.addAll(v.getShape().sweep(s, index));
 		}
 		for (Edge e : edges) {
-			events.addAll(e.getShape().sweep(s));
+			events.addAll(e.getShape().sweep(s, index));
 		}
 		
 		return events;

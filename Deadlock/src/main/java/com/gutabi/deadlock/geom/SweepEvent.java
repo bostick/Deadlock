@@ -34,7 +34,7 @@ public class SweepEvent {
 		
 		this.combo = index+param;
 		
-		p = moving.getPoint(param);
+		p = moving.getPoint(index, param);
 		circle = APP.platform.createShapeEngine().createCircle(null, p, moving.getRadius());
 		
 		if (still != null) {

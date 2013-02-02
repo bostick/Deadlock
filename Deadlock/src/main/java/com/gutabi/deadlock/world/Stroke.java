@@ -83,7 +83,7 @@ public class Stroke {
 		for (int i = 0; i < cs.size()-1; i++) {
 			Circle a = cs.get(i);
 			Circle b = cs.get(i+1);
-			caps.add(APP.platform.createShapeEngine().createCapsule(this, a, b, i));
+			caps.add(APP.platform.createShapeEngine().createCapsule(this, a, b));
 		}
 		seq = new CapsuleSequence(this, caps);
 		
@@ -218,7 +218,7 @@ public class Stroke {
 				
 				while (true) {
 					
-					hit = world.graph.pureGraphIntersectCapsule(APP.platform.createShapeEngine().createCapsule(null, a, b, -1));
+					hit = world.graph.pureGraphIntersectCapsule(APP.platform.createShapeEngine().createCapsule(null, a, b));
 					
 					if (hit == null) {
 						
@@ -509,9 +509,9 @@ public class Stroke {
 		int strokeCapsuleCount = 0;
 		List<SweepEvent> vertexEvents = new ArrayList<SweepEvent>();
 		
-		Circle start = seq.getStart();
+//		Circle start = seq.getStart();
 		
-		List<SweepEvent> startEvents = world.graph.sweepStart(start);
+		List<SweepEvent> startEvents = world.graph.sweepStart(seq);
 		
 		Collections.sort(startEvents, SweepEvent.COMPARATOR);
 		
@@ -551,7 +551,7 @@ public class Stroke {
 		
 		if ((vertexCount + roadCapsuleCount + mergerCount + strokeCapsuleCount) == 0) {
 //			logger.debug("start in nothing");
-			vertexEvents.add(new SweepEvent(null, null, seq.getCapsule(0), 0, 0.0));
+			vertexEvents.add(new SweepEvent(null, null, seq, 0, 0.0));
 		} else {
 //			logger.debug("start counts: " + vertexCount + " " + roadCapsuleCount + " " + mergerCount);
 		}
@@ -560,9 +560,10 @@ public class Stroke {
 		
 		for (int i = 0; i < seq.capsuleCount(); i++) {
 			
-			Capsule cap = seq.getCapsule(i);
+//			Capsule cap = seq.getCapsule(i);
+			CapsuleSequence capSeq = seq.capseq(i);
 			
-			List<SweepEvent> events = world.graph.sweep(cap);
+			List<SweepEvent> events = world.graph.sweep(capSeq, 0);
 			
 			if (sweepSelf) {
 				
@@ -572,8 +573,8 @@ public class Stroke {
 					
 					CapsuleSequence sub = seq.subsequence(i);
 					
-					List<SweepEvent> subStartEvents = sub.sweepStart(cap.ac);
-					List<SweepEvent> subEvents = sub.sweep(cap);
+					List<SweepEvent> subStartEvents = sub.sweepStart(capSeq);
+					List<SweepEvent> subEvents = sub.sweep(capSeq, 0);
 					
 					Collections.sort(subEvents, SweepEvent.COMPARATOR);
 					
@@ -686,7 +687,7 @@ public class Stroke {
 		
 		if ((vertexCount + roadCapsuleCount + mergerCount + strokeCapsuleCount) == 0) {
 //			logger.debug("end in nothing");
-			vertexEvents.add(new SweepEvent(null, null, cs.get(cs.size()-1), cs.size()-1, 0.0));
+			vertexEvents.add(new SweepEvent(null, null, seq, seq.capsuleCount, 0.0));
 		}
 		
 		List<SweepEvent> adj = new ArrayList<SweepEvent>();
@@ -802,7 +803,7 @@ public class Stroke {
 			
 			List<Capsule> caps = new ArrayList<Capsule>();
 			for (int i = 0; i < cs.size()-1; i++) {
-				caps.add(APP.platform.createShapeEngine().createCapsule(null, cs.get(i), cs.get(i+1), i));
+				caps.add(APP.platform.createShapeEngine().createCapsule(null, cs.get(i), cs.get(i+1)));
 			}
 			
 			CapsuleSequence seq = new CapsuleSequence(null, caps);

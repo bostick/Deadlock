@@ -7,7 +7,7 @@ import com.gutabi.deadlock.math.DMath;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 
-public class CapsuleSequence extends SweepableShape implements CompoundShape {
+public class CapsuleSequence extends SweepableShape implements SweeperShape, CompoundShape {
 	
 	public final List<Capsule> caps;
 	
@@ -44,11 +44,24 @@ public class CapsuleSequence extends SweepableShape implements CompoundShape {
 		return caps.get(index);
 	}
 	
+	public double getRadius() {
+		return radius;
+	}
+	
 	public Point getPoint(int index) {
 		if (index == caps.size()) {
 			return caps.get(index-1).b;
 		} else {
 			return caps.get(index).a;
+		}
+	}
+	
+	public Point getPoint(int index, double param) {
+		if (index == caps.size()) {
+			assert param == 0.0;
+			return caps.get(index-1).b;
+		} else {
+			return caps.get(index).getPoint(param);
 		}
 	}
 	
@@ -71,6 +84,13 @@ public class CapsuleSequence extends SweepableShape implements CompoundShape {
 		return new CapsuleSequence(parent, caps.subList(0, index));
 	}
 	
+	/**
+	 * single capsule
+	 */
+	public CapsuleSequence capseq(int index) {
+		return new CapsuleSequence(parent, caps.subList(index, index+1));
+	}
+	
 	public AABB getAABB() {
 		return aabb;
 	}
@@ -83,7 +103,7 @@ public class CapsuleSequence extends SweepableShape implements CompoundShape {
 		return new CapsuleSequence(parent, newCaps);
 	}
 	
-	public List<SweepEvent> sweepStart(Circle s) {
+	public List<SweepEvent> sweepStart(CapsuleSequence s) {
 		
 		List<SweepEvent> events = new ArrayList<SweepEvent>();
 		
@@ -94,14 +114,14 @@ public class CapsuleSequence extends SweepableShape implements CompoundShape {
 		return events;
 	}
 	
-	public List<SweepEvent> sweep(Capsule s) {
+	public List<SweepEvent> sweep(CapsuleSequence s, int index) {
 		
 		List<SweepEvent> events = new ArrayList<SweepEvent>();
 		
 		for (int i = 0; i < caps.size(); i++) {
 			Capsule c = caps.get(i);
 			
-			List<SweepEvent> capsuleEvents = c.sweep(s);
+			List<SweepEvent> capsuleEvents = c.sweep(s, index);
 			
 			for (SweepEvent e : capsuleEvents) {
 				if (DMath.lessThan(e.param, 1.0)) {

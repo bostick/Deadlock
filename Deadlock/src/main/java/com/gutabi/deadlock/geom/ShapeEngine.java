@@ -10,7 +10,7 @@ public abstract class ShapeEngine {
 	
 	public abstract Circle createCircle(Object parent, Point center, double radius);
 	
-	public abstract Capsule createCapsule(Object parent, Circle ac, Circle bc, int index);
+	public abstract Capsule createCapsule(Object parent, Circle ac, Circle bc);
 	
 	public abstract Line createLine(Point p0, Point p1);
 	

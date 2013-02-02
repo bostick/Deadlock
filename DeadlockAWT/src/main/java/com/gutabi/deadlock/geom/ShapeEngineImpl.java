@@ -14,8 +14,8 @@ public class ShapeEngineImpl extends ShapeEngine {
 		return new CircleImpl(parent, center, radius);
 	}
 	
-	public Capsule createCapsule(Object parent, Circle ac, Circle bc, int index) {
-		return new CapsuleImpl(parent, ac, bc, index);
+	public Capsule createCapsule(Object parent, Circle ac, Circle bc) {
+		return new CapsuleImpl(parent, ac, bc);
 	}
 	
 	public Line createLine(Point p0, Point p1) {

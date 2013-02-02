@@ -14,12 +14,12 @@ import com.gutabi.deadlock.ui.paint.Color;
 import com.gutabi.deadlock.ui.paint.Join;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 
-public class Capsule extends SweepableShape implements SweeperShape, CompoundShape {
+public class Capsule extends SweepableShape implements CompoundShape {
 	
 	public final Circle ac;
 	public final Circle bc;
 	
-	public final int index;
+//	public final int index;
 	
 	public final Quad middle;
 	
@@ -41,11 +41,11 @@ public class Capsule extends SweepableShape implements SweeperShape, CompoundSha
 	
 //	static Logger logger = Logger.getLogger(Capsule.class);
 	
-	protected Capsule(Object parent, Circle ac, Circle bc, int index) {
+	protected Capsule(Object parent, Circle ac, Circle bc) {
 		super(parent);
 		this.ac = ac;
 		this.bc = bc;
-		this.index = index;
+//		this.index = index;
 		
 		this.a = ac.center;
 		this.b = bc.center;
@@ -113,7 +113,7 @@ public class Capsule extends SweepableShape implements SweeperShape, CompoundSha
 	
 	public Capsule plus(Point p) {
 		ShapeEngine e = APP.platform.createShapeEngine();
-		return new Capsule(parent, e.createCircle(parent, a.plus(p), ac.radius), e.createCircle(parent, b.plus(p), bc.radius), -1);
+		return new Capsule(parent, e.createCircle(parent, a.plus(p), ac.radius), e.createCircle(parent, b.plus(p), bc.radius));
 	}
 	
 	public boolean hitTest(Point p) {
@@ -137,20 +137,22 @@ public class Capsule extends SweepableShape implements SweeperShape, CompoundSha
 		return Point.point(a, b, param);
 	}
 	
-	public List<SweepEvent> sweepStart(Circle c) {
+	public List<SweepEvent> sweepStart(CapsuleSequence s) {
 		
 		List<SweepEvent> events = new ArrayList<SweepEvent>();
 		
-		if (intersect(c)) {
-			events.add(new SweepEvent(SweepEventType.enter(parent), this, c, 0, 0.0));
+		if (intersect(s.getStart())) {
+			events.add(new SweepEvent(SweepEventType.enter(parent), this, s, 0, 0.0));
 		}
 		
 		return events;
 	}
 	
-	public List<SweepEvent> sweep(Capsule cap) {
+	public List<SweepEvent> sweep(CapsuleSequence s, int index) {
 		
 		List<SweepEvent> events = new ArrayList<SweepEvent>();
+		
+		Capsule cap = s.getCapsule(index);
 		
 		Point c = cap.a;
 		Point d = cap.b;
@@ -341,9 +343,9 @@ public class Capsule extends SweepableShape implements SweeperShape, CompoundSha
 			assert DMath.greaterThanEquals(param, 0.0) && DMath.lessThanEquals(param, 1.0);
 			
 			if (outside) {
-				events.add(new SweepEvent(SweepEventType.enter(parent), this, cap, cap.index, param));
+				events.add(new SweepEvent(SweepEventType.enter(parent), this, s, index, param));
 			} else {
-				events.add(new SweepEvent(SweepEventType.exit(parent), this, cap, cap.index, param));
+				events.add(new SweepEvent(SweepEventType.exit(parent), this, s, index, param));
 			}
 			outside = !outside;
 		}
