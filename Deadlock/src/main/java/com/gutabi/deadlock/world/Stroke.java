@@ -531,11 +531,7 @@ public class Stroke {
 					keep = true;
 				}
 				break;
-			case ENTERSTROKE:
-			case EXITMERGER:
-			case EXITROADCAPSULE:
-			case EXITSTROKE:
-			case EXITVERTEX:
+			default:
 				assert false;
 				break;
 			}
@@ -599,12 +595,7 @@ public class Stroke {
 							}
 							
 							break;
-						case ENTERMERGER:
-						case ENTERROADCAPSULE:
-						case ENTERVERTEX:
-						case EXITMERGER:
-						case EXITROADCAPSULE:
-						case EXITVERTEX:
+						default:
 							assert false;
 							break;
 						}
@@ -672,6 +663,8 @@ public class Stroke {
 					if (strokeCapsuleCount == 0) {
 						keep = true;
 					}
+					break;
+				default:
 					break;
 				}
 				if (keep) {

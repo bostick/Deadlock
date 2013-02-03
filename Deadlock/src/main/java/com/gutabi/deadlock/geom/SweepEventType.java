@@ -17,7 +17,13 @@ public enum SweepEventType {
 	EXITMERGER,
 	
 	ENTERSTROKE,
-	EXITSTROKE;
+	EXITSTROKE,
+	
+	ENTERBOARD,
+	EXITBOARD,
+	
+	ENTERCAR,
+	EXITCAR;
 	
 	public static SweepEventType enter(Object parent) {
 		if (parent instanceof Vertex) {
