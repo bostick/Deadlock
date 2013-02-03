@@ -17,7 +17,7 @@ import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.geom.Capsule;
 import com.gutabi.deadlock.geom.CapsuleSequence;
 import com.gutabi.deadlock.geom.Circle;
-import com.gutabi.deadlock.geom.Quad;
+import com.gutabi.deadlock.geom.OBB;
 import com.gutabi.deadlock.geom.Shape;
 import com.gutabi.deadlock.geom.ShapeUtils;
 import com.gutabi.deadlock.math.DMath;
@@ -673,9 +673,9 @@ public class Graph {
 		return null;
 	}
 	
-	public Entity pureGraphIntersectQuad(Quad q) {
+	public Entity pureGraphIntersectOBB(OBB q) {
 		for (Vertex v : vertices) {
-			if (ShapeUtils.intersectCQ(v.getShape(), q)) {
+			if (ShapeUtils.intersectCO(v.getShape(), q)) {
 				return v;
 			}
 		}
@@ -685,7 +685,7 @@ public class Graph {
 					return ed;
 				}
 			} else {
-				if (ShapeUtils.intersectQQ((Quad)ed.getShape(), q)) {
+				if (ShapeUtils.intersectOO((OBB)ed.getShape(), q)) {
 					return ed;
 				}
 			}

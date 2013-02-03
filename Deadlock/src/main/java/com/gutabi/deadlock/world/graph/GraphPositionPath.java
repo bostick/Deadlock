@@ -9,7 +9,7 @@ import java.util.Set;
 
 import com.gutabi.deadlock.Entity;
 import com.gutabi.deadlock.geom.CapsuleSequence;
-import com.gutabi.deadlock.geom.Quad;
+import com.gutabi.deadlock.geom.OBB;
 import com.gutabi.deadlock.geom.ShapeUtils;
 import com.gutabi.deadlock.math.DMath;
 import com.gutabi.deadlock.math.Point;
@@ -539,12 +539,12 @@ public class GraphPositionPath {
 		return null;
 	}
 	
-	public Entity pureGraphIntersectQuad(Quad q, GraphPositionPathPosition min) {
+	public Entity pureGraphIntersectOBB(OBB q, GraphPositionPathPosition min) {
 		
 		for (Entry<Vertex, Integer> ent : verticesMap.entrySet()) {
 			int i = ent.getValue();
 			Vertex v = ent.getKey();
-			if (i >= min.combo && ShapeUtils.intersectCQ(v.getShape(), q)) {
+			if (i >= min.combo && ShapeUtils.intersectCO(v.getShape(), q)) {
 				return v;
 			}
 		}
@@ -557,7 +557,7 @@ public class GraphPositionPath {
 						return e;
 					}
 				} else {
-					if (ShapeUtils.intersectQQ((Quad)e.getShape(), q)) {
+					if (ShapeUtils.intersectOO((OBB)e.getShape(), q)) {
 						return e;
 					}
 				}

@@ -35,12 +35,12 @@ public class Geom {
 		return times(m, l).plus(t);
 	}
 	
-	public static Quad localToWorld(Quad q, double[][] m, Point t) {
-		Point w0 = times(m, q.p0).plus(t);
-		Point w1 = times(m, q.p1).plus(t);
-		Point w2 = times(m, q.p2).plus(t);
-		Point w3 = times(m, q.p3).plus(t);
-		return APP.platform.createShapeEngine().createQuad(q.parent, w0, w1, w2, w3);
+	public static OBB localToWorld(OBB o, double[][] m, Point t) {
+		Point w0 = times(m, o.p0).plus(t);
+		Point w1 = times(m, o.p1).plus(t);
+		Point w2 = times(m, o.p2).plus(t);
+		Point w3 = times(m, o.p3).plus(t);
+		return APP.platform.createShapeEngine().createOBB(o.parent, w0, w1, w2, w3);
 	}
 	
 	public static void rotationMatrix(double a, double[][] out) {

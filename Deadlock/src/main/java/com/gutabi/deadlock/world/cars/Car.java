@@ -14,7 +14,7 @@ import org.jbox2d.dynamics.FixtureDef;
 import com.gutabi.deadlock.Entity;
 import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.geom.Geom;
-import com.gutabi.deadlock.geom.Quad;
+import com.gutabi.deadlock.geom.OBB;
 import com.gutabi.deadlock.geom.Shape;
 import com.gutabi.deadlock.geom.ShapeUtils;
 import com.gutabi.deadlock.math.DMath;
@@ -58,7 +58,7 @@ public abstract class Car extends Entity {
 	float mass;
 	float momentOfInertia;
 	
-	public Quad localQuad;
+	public OBB localOBB;
 	public Body b2dBody;
 	protected PolygonShape b2dShape;
 	public org.jbox2d.dynamics.Fixture b2dFixture;
@@ -67,7 +67,7 @@ public abstract class Car extends Entity {
 	public Point p;
 	public double angle = Double.NaN;
 	private double[][] carTransArr = new double[2][2];
-	public Quad shape;
+	public OBB shape;
 	
 	
 	
@@ -89,7 +89,7 @@ public abstract class Car extends Entity {
 	
 	public Point toolOrigP;
 	public double toolOrigAngle;
-	public Quad toolOrigShape;
+	public OBB toolOrigShape;
 	
 	public boolean destroyed;
 	
@@ -112,7 +112,7 @@ public abstract class Car extends Entity {
 		Point p1 = new Point(CAR_LENGTH / 2, -CAR_WIDTH / 2);
 		Point p2 = new Point(CAR_LENGTH / 2, CAR_WIDTH / 2);
 		Point p3 = new Point(-CAR_LENGTH / 2, CAR_WIDTH / 2);
-		localQuad = APP.platform.createShapeEngine().createQuad(this, p0, p1, p2, p3);
+		localOBB = APP.platform.createShapeEngine().createOBB(this, p0, p1, p2, p3);
 		
 		CAR_LOCALX = -CAR_LENGTH / 2;
 		CAR_LOCALY = -CAR_WIDTH / 2;
@@ -156,7 +156,7 @@ public abstract class Car extends Entity {
 		this.p = p;
 		this.angle = angle;
 		Geom.rotationMatrix(angle, carTransArr);
-		shape = Geom.localToWorld(localQuad, carTransArr, p);
+		shape = Geom.localToWorld(localOBB, carTransArr, p);
 	}
 	
 	public void b2dInit() {
@@ -234,7 +234,7 @@ public abstract class Car extends Entity {
 		carTransArr[1][0] = r.col1.y;
 		carTransArr[1][1] = r.col2.y;
 		
-		shape = Geom.localToWorld(localQuad, carTransArr, p);
+		shape = Geom.localToWorld(localOBB, carTransArr, p);
 		
 		switch (state) {
 		case DRIVING:
@@ -242,7 +242,7 @@ public abstract class Car extends Entity {
 			
 			driver.computeDynamicPropertiesMoving();
 			
-			Entity hit = driver.overallPath.pureGraphIntersectQuad(this.shape, driver.overallPos);
+			Entity hit = driver.overallPath.pureGraphIntersectOBB(this.shape, driver.overallPos);
 			
 			boolean wasInMerger = inMerger;
 			if (hit == null) {
@@ -250,7 +250,7 @@ public abstract class Car extends Entity {
 				inMerger = false;
 			} else {
 				atleastPartiallyOnRoad = true;
-				if (hit instanceof Merger && ShapeUtils.containsAQ((AABB)((Merger)hit).getShape(), shape)) {
+				if (hit instanceof Merger && ShapeUtils.containsAO((AABB)((Merger)hit).getShape(), shape)) {
 					inMerger = true;
 				} else {
 					inMerger = false;

@@ -20,8 +20,8 @@ public class ShapeUtils {
 				return intersectAA((AABB)s1, (AABB)s0);
 			} else if (s1 instanceof Circle) {
 				return intersectAC((AABB)s0, (Circle)s1);
-			} else if (s1 instanceof Quad) {
-				return intersectAQ((AABB)s0, (Quad)s1);
+			} else if (s1 instanceof OBB) {
+				return intersectAO((AABB)s0, (OBB)s1);
 			}
 		} else if (s0 instanceof Capsule) {
 			if (s1 instanceof AABB) {
@@ -36,16 +36,16 @@ public class ShapeUtils {
 				return intersectAC((AABB)s1, (Circle)s0);
 			} else if (s1 instanceof Circle) {
 				return intersectCC((Circle)s0, (Circle)s1);
-			} else if (s1 instanceof Quad) {
-				return intersectCQ((Circle)s0, (Quad)s1);
+			} else if (s1 instanceof OBB) {
+				return intersectCO((Circle)s0, (OBB)s1);
 			}
-		} else if (s0 instanceof Quad) {
+		} else if (s0 instanceof OBB) {
 			if (s1 instanceof AABB) {
-				return intersectAQ((AABB)s1, (Quad)s0);
+				return intersectAO((AABB)s1, (OBB)s0);
 			} else if (s1 instanceof Circle) {
-				return intersectCQ((Circle)s1, (Quad)s0);
-			} else if (s1 instanceof Quad) {
-				return intersectQQ((Quad)s0, (Quad)s1);
+				return intersectCO((Circle)s1, (OBB)s0);
+			} else if (s1 instanceof OBB) {
+				return intersectOO((OBB)s0, (OBB)s1);
 			}
 		}
 		
@@ -55,9 +55,9 @@ public class ShapeUtils {
 	
 	public static boolean intersectArea(Shape s0, Shape s1) {
 		
-		if (s0 instanceof Quad) {
+		if (s0 instanceof OBB) {
 			if (s1 instanceof AABB) {
-				return intersectAreaAQ((AABB)s1, (Quad)s0);
+				return intersectAreaAO((AABB)s1, (OBB)s0);
 			}
 		}
 		
@@ -84,8 +84,8 @@ public class ShapeUtils {
 	public static boolean contains(Shape s0, Shape s1) {
 		
 		if (s0 instanceof AABB) {
-			if (s1 instanceof Quad) {
-				return containsAQ((AABB)s0, (Quad)s1);
+			if (s1 instanceof OBB) {
+				return containsAO((AABB)s0, (OBB)s1);
 			}
 		}
 		
@@ -106,7 +106,7 @@ public class ShapeUtils {
 		if (intersectAC(a0, c1.bc)) {
 			return true;		
 		}
-		if (intersectAQ(a0, c1.middle)) {
+		if (intersectAO(a0, c1.middle)) {
 			return true;
 		}
 		return false;
@@ -164,7 +164,7 @@ public class ShapeUtils {
 		return true;
 	}
 	
-	public static boolean intersectAQ(AABB a0, Quad q1) {
+	public static boolean intersectAO(AABB a0, OBB q1) {
 		
 		if (!intersectAA(a0, q1.aabb)) {
 			return false;
@@ -207,7 +207,7 @@ public class ShapeUtils {
 		if (intersectCapC(c1, c0.bc)) {
 			return true;		
 		}
-		if (intersectCapQ(c1, c0.middle)) {
+		if (intersectCapO(c1, c0.middle)) {
 			return true;
 		}
 		return false;
@@ -218,14 +218,14 @@ public class ShapeUtils {
 		return DMath.lessThanEquals(dist, c0.r + c1.radius);
 	}
 	
-	public static boolean intersectCapQ(Capsule c0, Quad q1) {
-		if (intersectCQ(c0.ac, q1)) {
+	public static boolean intersectCapO(Capsule c0, OBB q1) {
+		if (intersectCO(c0.ac, q1)) {
 			return true;
 		}
-		if (intersectCQ(c0.bc, q1)) {
+		if (intersectCO(c0.bc, q1)) {
 			return true;		
 		}
-		if (intersectQQ(c0.middle, q1)) {
+		if (intersectOO(c0.middle, q1)) {
 			return true;
 		}
 		return false;
@@ -236,7 +236,7 @@ public class ShapeUtils {
 		return DMath.lessThanEquals(dist, c0.radius + c1.radius);
 	}
 	
-	public static boolean intersectCQ(Circle c0, Quad q1) {
+	public static boolean intersectCO(Circle c0, OBB q1) {
 		
 		if (!intersectAA(c0.aabb, q1.aabb)) {
 			return false;
@@ -288,7 +288,7 @@ public class ShapeUtils {
 		return true;
 	}
 	
-	public static boolean intersectQQ(Quad q0, Quad q1) {
+	public static boolean intersectOO(OBB q0, OBB q1) {
 		
 		if (!intersectAA(q0.aabb, q1.aabb)) {
 			return false;
@@ -324,9 +324,9 @@ public class ShapeUtils {
 		return true;
 	}
 	
-	public static boolean intersectAreaAQ(AABB a0, Quad q1) {
+	public static boolean intersectAreaAO(AABB a0, OBB q1) {
 		
-		if (!intersectAQ(a0, q1)) {
+		if (!intersectAO(a0, q1)) {
 			return false;
 		}
 		
@@ -367,7 +367,7 @@ public class ShapeUtils {
 	 * 
 	 * so sharing exactly an edge here returns false
 	 */
-	public static boolean intersectAreaQQ(Quad q0, Quad q1) {
+	public static boolean intersectAreaOO(OBB q0, OBB q1) {
 		
 		if (!intersectAA(q0.aabb, q1.aabb)) {
 			return false;
@@ -403,7 +403,7 @@ public class ShapeUtils {
 		return true;
 	}
 	
-	public static boolean containsAQ(AABB a0, Quad q1) {
+	public static boolean containsAO(AABB a0, OBB q1) {
 		if (!intersectAA(a0, q1.aabb)) {
 			return false;
 		}

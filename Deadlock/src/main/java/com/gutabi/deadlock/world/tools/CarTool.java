@@ -3,7 +3,7 @@ package com.gutabi.deadlock.world.tools;
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
 import com.gutabi.deadlock.geom.Geom;
-import com.gutabi.deadlock.geom.Quad;
+import com.gutabi.deadlock.geom.OBB;
 import com.gutabi.deadlock.geom.Shape;
 import com.gutabi.deadlock.geom.ShapeUtils;
 import com.gutabi.deadlock.math.Point;
@@ -133,17 +133,17 @@ public class CarTool extends ToolBase {
 					
 					double[][] testTransArr = new double[2][2];
 					Geom.rotationMatrix(carAngle, testTransArr);
-					Quad testQuad = Geom.localToWorld(car.localQuad, testTransArr, test);
+					OBB testOBB = Geom.localToWorld(car.localOBB, testTransArr, test);
 					
 					boolean collide = false;
-					if (!b.contains(testQuad)) {
+					if (!b.contains(testOBB)) {
 						collide = true;
 					} else {
 						for (Car c : screen.world.carMap.cars) {
 							if (c == car) {
 								continue;
 							}
-							if (ShapeUtils.intersectAreaQQ(testQuad, c.shape)) {
+							if (ShapeUtils.intersectAreaOO(testOBB, c.shape)) {
 								collide = true;
 								break;
 							}

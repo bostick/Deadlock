@@ -34,9 +34,6 @@ public class SweepUtils {
 		
 		Capsule cap = moving.getCapsule(index);
 		
-//		Point c = cap.a;
-//		Point d = cap.b;
-		
 		boolean outside;
 		if (ShapeUtils.intersectAC(still, cap.ac)) {
 			outside = false;
@@ -158,8 +155,6 @@ public class SweepUtils {
 					ShapeEngine e = APP.platform.createShapeEngine();
 					assert ShapeUtils.intersectCC(still.ac, e.createCircle(null, p, cap.r));
 					
-//					logger.debug("a cap");
-					
 					boolean present = false;
 					for (int j = 0; j < paramCount; j++) {
 						if (DMath.equals(params[j], cdParam)) {
@@ -194,8 +189,6 @@ public class SweepUtils {
 				double abParam = Point.u(still.aUp, p, still.bUp);
 				
 				if (DMath.greaterThanEquals(abParam, 0.0) && DMath.lessThanEquals(abParam, 1.0)) {
-					
-//					logger.debug("top side");
 					
 					boolean present = false;
 					for (int j = 0; j < paramCount; j++) {
@@ -238,8 +231,6 @@ public class SweepUtils {
 					ShapeEngine e = APP.platform.createShapeEngine();
 					assert ShapeUtils.intersectCC(still.bc, e.createCircle(null, p, cap.r));
 					
-//					logger.debug("b cap");
-					
 					boolean present = false;
 					for (int j = 0; j < paramCount; j++) {
 						if (DMath.equals(params[j], cdParam)) {
@@ -274,8 +265,6 @@ public class SweepUtils {
 				double abParam = Point.u(still.bDown, p, still.aDown);
 				
 				if (DMath.greaterThanEquals(abParam, 0.0) && DMath.lessThanEquals(abParam, 1.0)) {
-					
-//					logger.debug("bottom side");
 					
 					boolean present = false;
 					for (int j = 0; j < paramCount; j++) {
@@ -377,9 +366,6 @@ public class SweepUtils {
 		
 		Capsule cap = moving.getCapsule(index);
 		
-//		Point c = cap.a;
-//		Point d = cap.b;
-		
 		boolean outside;
 		if (ShapeUtils.intersectCC(still, cap.ac)) {
 			outside = false;
@@ -413,28 +399,25 @@ public class SweepUtils {
 		return events;
 	}
 	
-	public static List<SweepEvent> sweepStartCSoverQ(Quad still, CapsuleSequence moving, int offset) {
+	public static List<SweepEvent> sweepStartCSoverO(OBB still, CapsuleSequence moving, int offset) {
 		
 		List<SweepEvent> events = new ArrayList<SweepEvent>();
 		
-		if (ShapeUtils.intersectCQ(moving.getStart(), still)) {
+		if (ShapeUtils.intersectCO(moving.getStart(), still)) {
 			events.add(new CapsuleSequenceSweepEvent(SweepEventType.enter(still.parent), still, moving, 0, 0.0, offset));
 		}
 		
 		return events;
 	}
 	
-	public static List<SweepEvent> sweepCSoverQ(Quad still, CapsuleSequence moving, int index, int offset) {
+	public static List<SweepEvent> sweepCSoverO(OBB still, CapsuleSequence moving, int index, int offset) {
 		
 		List<SweepEvent> events = new ArrayList<SweepEvent>();
 		
 		Capsule cap = moving.getCapsule(index);
 		
-//		Point c = cap.a;
-//		Point d = cap.b;
-		
 		boolean outside;
-		if (ShapeUtils.intersectCQ(cap.ac, still)) {
+		if (ShapeUtils.intersectCO(cap.ac, still)) {
 			outside = false;
 		} else {
 			outside = true;
@@ -535,28 +518,6 @@ public class SweepUtils {
 		
 		return events;
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	
 	
 	/**

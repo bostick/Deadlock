@@ -6,11 +6,11 @@ import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.ui.paint.RenderingContextImpl;
 
-public class QuadImpl extends Quad {
+public class OBBImpl extends OBB {
 	
 	private GeneralPath poly;
 	
-	public QuadImpl(Object parent, Point p0, Point p1, Point p2, Point p3) {
+	public OBBImpl(Object parent, Point p0, Point p1, Point p2, Point p3) {
 		super(parent, p0, p1, p2, p3);
 	}
 	

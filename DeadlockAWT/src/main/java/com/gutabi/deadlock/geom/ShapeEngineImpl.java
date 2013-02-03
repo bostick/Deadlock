@@ -26,8 +26,8 @@ public class ShapeEngineImpl extends ShapeEngine {
 		return new PolylineImpl(pts);
 	}
 
-	public Quad createQuad(Object parent, Point p0, Point p1, Point p2, Point p3) {
-		return new QuadImpl(parent, p0, p1, p2, p3);
+	public OBB createOBB(Object parent, Point p0, Point p1, Point p2, Point p3) {
+		return new OBBImpl(parent, p0, p1, p2, p3);
 	}
 
 	public Ellipse createEllipse(Point center, double x, double y) {

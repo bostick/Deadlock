@@ -4,7 +4,7 @@ import static com.gutabi.deadlock.DeadlockApplication.APP;
 
 import com.gutabi.deadlock.math.Point;
 
-public abstract class Quad extends SweepableShape {
+public abstract class OBB extends SweepableShape {
 	
 	public final Point p0;
 	public final Point p1;
@@ -26,7 +26,7 @@ public abstract class Quad extends SweepableShape {
 	
 	private int hash;
 	
-	protected Quad(Object parent, Point p0, Point p1, Point p2, Point p3) {
+	protected OBB(Object parent, Point p0, Point p1, Point p2, Point p3) {
 		super(parent);
 		this.p0 = p0;
 		this.p1 = p1;
@@ -56,10 +56,10 @@ public abstract class Quad extends SweepableShape {
 	public boolean equals(Object o) {
 		if (this == o) {
 			return true;
-		} else if (!(o instanceof Quad)) {
+		} else if (!(o instanceof OBB)) {
 			return false;
 		} else {
-			Quad b = (Quad)o;
+			OBB b = (OBB)o;
 			return p0.equals(b.p0) && p1.equals(b.p1) && p2.equals(b.p2) && p3.equals(b.p3);
 		}
 	}
@@ -104,8 +104,8 @@ public abstract class Quad extends SweepableShape {
 		return n12;
 	}
 	
-	public Quad plus(Point p) {
-		return APP.platform.createShapeEngine().createQuad(parent, p0.plus(p), p1.plus(p), p2.plus(p), p3.plus(p));
+	public OBB plus(Point p) {
+		return APP.platform.createShapeEngine().createOBB(parent, p0.plus(p), p1.plus(p), p2.plus(p), p3.plus(p));
 	}
 	
 	public boolean hitTest(Point p) {

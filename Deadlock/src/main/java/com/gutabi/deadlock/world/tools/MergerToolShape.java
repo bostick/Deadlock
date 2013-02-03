@@ -5,7 +5,7 @@ import static com.gutabi.deadlock.DeadlockApplication.APP;
 import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.geom.Circle;
 import com.gutabi.deadlock.geom.CompoundShape;
-import com.gutabi.deadlock.geom.Quad;
+import com.gutabi.deadlock.geom.OBB;
 import com.gutabi.deadlock.geom.Shape;
 import com.gutabi.deadlock.geom.ShapeUtils;
 import com.gutabi.deadlock.math.Point;
@@ -32,13 +32,13 @@ public class MergerToolShape implements CompoundShape {
 	public final Circle worldLeft;
 	public final Circle worldBottom;
 	public final Circle worldRight;
-	public final Quad worldQ;
+	public final OBB worldQ;
 	
 	private AABB aabb;
 	
 	public MergerToolShape(Point p) {
 		
-		worldQ = APP.platform.createShapeEngine().createQuad(null, p0.plus(p), p1.plus(p), p2.plus(p), p3.plus(p));
+		worldQ = APP.platform.createShapeEngine().createOBB(null, p0.plus(p), p1.plus(p), p2.plus(p), p3.plus(p));
 		
 		worldTop = APP.platform.createShapeEngine().createCircle(null, new Point(ul.plus(p).x + Merger.MERGER_WIDTH/2, ul.plus(p).y), Vertex.INIT_VERTEX_RADIUS);
 		worldLeft = APP.platform.createShapeEngine().createCircle(null, new Point(ul.plus(p).x, ul.plus(p).y + Merger.MERGER_HEIGHT/2), Vertex.INIT_VERTEX_RADIUS);

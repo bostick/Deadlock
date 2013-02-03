@@ -45,8 +45,6 @@ public class Stroke {
 	public List<Capsule> caps;
 	public CapsuleSequence seq;
 	
-//	static Logger logger = Logger.getLogger(Stroke.class);
-	
 	public Stroke(World world) {
 		this.world = world;
 		cs = new ArrayList<Circle>();
@@ -449,7 +447,6 @@ public class Stroke {
 			
 			if (e0.type == SweepEventType.ENTERVERTEX && e1.type == SweepEventType.EXITVERTEX) {
 				
-//				logger.debug("skipping");
 				i = i+1;
 				if (i == events.size()-1) {
 					break;
@@ -458,8 +455,6 @@ public class Stroke {
 				e1 = events.get(i+1);
 				
 			} else if (e0.type == SweepEventType.ENTERROADCAPSULE && e1.type == SweepEventType.EXITROADCAPSULE) {
-				
-//				logger.debug("skipping");
 				
 				i = i+1;
 				if (i == events.size()-1) {
@@ -510,8 +505,6 @@ public class Stroke {
 		int mergerCount = 0;
 		int strokeCapsuleCount = 0;
 		List<SweepEvent> vertexEvents = new ArrayList<SweepEvent>();
-		
-//		Circle start = seq.getStart();
 		
 		List<SweepEvent> startEvents = SweepUtils.sweepStartCSoverG(world.graph, seq, 0);
 		
