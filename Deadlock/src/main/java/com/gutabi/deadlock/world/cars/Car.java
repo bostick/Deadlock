@@ -3,7 +3,6 @@ package com.gutabi.deadlock.world.cars;
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
 import org.jbox2d.collision.shapes.PolygonShape;
-import org.jbox2d.common.Mat22;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.BodyDef;
@@ -58,7 +57,7 @@ public abstract class Car extends Entity {
 	float mass;
 	float momentOfInertia;
 	
-	public OBB localOBB;
+	public AABB localAABB;
 	public Body b2dBody;
 	protected PolygonShape b2dShape;
 	public org.jbox2d.dynamics.Fixture b2dFixture;
@@ -66,7 +65,7 @@ public abstract class Car extends Entity {
 	
 	public Point p;
 	public double angle = Double.NaN;
-	private double[][] carTransArr = new double[2][2];
+//	private double[][] carTransArr = new double[2][2];
 	public OBB shape;
 	
 	
@@ -108,11 +107,11 @@ public abstract class Car extends Entity {
 	
 	public void computeCtorProperties() {
 		
-		Point p0 = new Point(-CAR_LENGTH / 2, -CAR_WIDTH / 2);
-		Point p1 = new Point(CAR_LENGTH / 2, -CAR_WIDTH / 2);
-		Point p2 = new Point(CAR_LENGTH / 2, CAR_WIDTH / 2);
-		Point p3 = new Point(-CAR_LENGTH / 2, CAR_WIDTH / 2);
-		localOBB = APP.platform.createShapeEngine().createOBB(this, p0, p1, p2, p3);
+//		Point p0 = new Point(-CAR_LENGTH / 2, -CAR_WIDTH / 2);
+//		Point p1 = new Point(CAR_LENGTH / 2, -CAR_WIDTH / 2);
+//		Point p2 = new Point(CAR_LENGTH / 2, CAR_WIDTH / 2);
+//		Point p3 = new Point(-CAR_LENGTH / 2, CAR_WIDTH / 2);
+		localAABB = APP.platform.createShapeEngine().createAABB(this, -CAR_LENGTH / 2, -CAR_WIDTH / 2, CAR_LENGTH, CAR_WIDTH);
 		
 		CAR_LOCALX = -CAR_LENGTH / 2;
 		CAR_LOCALY = -CAR_WIDTH / 2;
@@ -155,8 +154,8 @@ public abstract class Car extends Entity {
 	public void setTransform(Point p, double angle) {
 		this.p = p;
 		this.angle = angle;
-		Geom.rotationMatrix(angle, carTransArr);
-		shape = Geom.localToWorld(localOBB, carTransArr, p);
+//		Geom.rotationMatrix(angle, carTransArr);
+		shape = Geom.localToWorld(localAABB, angle, p);
 	}
 	
 	public void b2dInit() {
@@ -228,13 +227,14 @@ public abstract class Car extends Entity {
 		forwardVel = currentRightNormal.mul(Vec2.dot(currentRightNormal, vel));
 		forwardSpeed = Vec2.dot(vel, currentRightNormal);
 		
-		Mat22 r = b2dBody.getTransform().R;
-		carTransArr[0][0] = r.col1.x;
-		carTransArr[0][1] = r.col2.x;
-		carTransArr[1][0] = r.col1.y;
-		carTransArr[1][1] = r.col2.y;
+//		Mat22 r = b2dBody.getTransform().R;
+		double angle = b2dBody.getAngle();
+//		carTransArr[0][0] = r.col1.x;
+//		carTransArr[0][1] = r.col2.x;
+//		carTransArr[1][0] = r.col1.y;
+//		carTransArr[1][1] = r.col2.y;
 		
-		shape = Geom.localToWorld(localOBB, carTransArr, p);
+		shape = Geom.localToWorld(localAABB, angle, p);
 		
 		switch (state) {
 		case DRIVING:

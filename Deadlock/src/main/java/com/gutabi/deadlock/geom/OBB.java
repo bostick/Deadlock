@@ -6,6 +6,11 @@ import com.gutabi.deadlock.math.Point;
 
 public abstract class OBB extends SweepableShape {
 	
+	public final Point center;
+	public final double a;
+	public final double xExtant;
+	public final double yExtant;
+	
 	public final Point p0;
 	public final Point p1;
 	public final Point p2;
@@ -26,12 +31,18 @@ public abstract class OBB extends SweepableShape {
 	
 	private int hash;
 	
-	protected OBB(Object parent, Point p0, Point p1, Point p2, Point p3) {
+	protected OBB(Object parent, Point center, double a, double xExtant, double yExtant) {
 		super(parent);
-		this.p0 = p0;
-		this.p1 = p1;
-		this.p2 = p2;
-		this.p3 = p3;
+		
+		this.center = center;
+		this.a = a;
+		this.xExtant = xExtant;
+		this.yExtant = yExtant;
+		
+		this.p0 = Geom.rotate(a, new Point(-xExtant, -yExtant)).plus(center);
+		this.p1 = Geom.rotate(a, new Point(xExtant, -yExtant)).plus(center);
+		this.p2 = Geom.rotate(a, new Point(xExtant, yExtant)).plus(center);
+		this.p3 = Geom.rotate(a, new Point(-xExtant, yExtant)).plus(center);
 		
 		double ulX = Math.min(Math.min(p0.x, p1.x), Math.min(p2.x, p3.x));
 		double ulY = Math.min(Math.min(p0.y, p1.y), Math.min(p2.y, p3.y));
@@ -105,7 +116,7 @@ public abstract class OBB extends SweepableShape {
 	}
 	
 	public OBB plus(Point p) {
-		return APP.platform.createShapeEngine().createOBB(parent, p0.plus(p), p1.plus(p), p2.plus(p), p3.plus(p));
+		return APP.platform.createShapeEngine().createOBB(parent, center.plus(p), a, xExtant, yExtant);
 	}
 	
 	public boolean hitTest(Point p) {

@@ -16,7 +16,7 @@ public abstract class ShapeEngine {
 	
 	public abstract Polyline createPolyline(List<Point> pts);
 	
-	public abstract OBB createOBB(Object parent, Point p0, Point p1, Point p2, Point p3);
+	public abstract OBB createOBB(Object parent, Point center, double a, double xExtant, double yExtant);
 	
 	public abstract Ellipse createEllipse(Point center, double x, double y);
 	

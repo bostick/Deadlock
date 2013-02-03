@@ -10,8 +10,8 @@ public class OBBImpl extends OBB {
 	
 	private GeneralPath poly;
 	
-	public OBBImpl(Object parent, Point p0, Point p1, Point p2, Point p3) {
-		super(parent, p0, p1, p2, p3);
+	public OBBImpl(Object parent, Point center, double angle, double xExtant, double yExtant) {
+		super(parent, center, angle, xExtant, yExtant);
 	}
 	
 	private void computePoly() {

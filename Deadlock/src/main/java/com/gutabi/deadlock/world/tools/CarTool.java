@@ -142,15 +142,15 @@ public class CarTool extends ToolBase {
 //					OBB testOBB = Geom.localToWorld(car.localOBB, testTransArr, test);
 					
 					List<SweepEvent> events = new ArrayList<SweepEvent>();
-					events.addAll(SweepUtils.sweepStartOBBoverBoard(b, car.localOBB, carAngle, car.p));
-					events.addAll(SweepUtils.sweepOBBoverBoard(b, car.localOBB, carAngle, car.p, test));
+					events.addAll(SweepUtils.sweepStartOBBoverBoard(b, car.localAABB, carAngle, car.p));
+					events.addAll(SweepUtils.sweepOBBoverBoard(b, car.localAABB, carAngle, car.p, test));
 					
 					for (Car c : screen.world.carMap.cars) {
 						if (c == car) {
 							continue;
 						}
-						events.addAll(SweepUtils.sweepStartOBBoverOBB(c.shape, car.localOBB, carAngle, car.p));
-						events.addAll(SweepUtils.sweepOBBoverOBB(c.shape, car.localOBB, carAngle, car.p, test));
+						events.addAll(SweepUtils.sweepStartOBBoverOBB(c.shape, car.localAABB, carAngle, car.p));
+						events.addAll(SweepUtils.sweepOBBoverOBB(c.shape, car.localAABB, carAngle, car.p, test));
 					}
 					
 					if (!events.isEmpty()) {

@@ -67,7 +67,8 @@ public abstract class Capsule extends SweepableShape {
 			bUp = b.plus(u);
 			bDown = b.plus(d);
 			
-			middle = APP.platform.createShapeEngine().createOBB(parent, aUp, bUp, bDown, aDown);
+//			middle = APP.platform.createShapeEngine().createOBB(parent, aUp, bUp, bDown, aDown);
+			middle = APP.platform.createShapeEngine().createOBB(parent, Point.point(a, b, 0.5), Math.atan2(diff.y, diff.x), Point.distance(a, b)/2, r);
 			
 			debugNormalLine = APP.platform.createShapeEngine().createLine(a, a.plus(n));
 			debugSkeletonLine = APP.platform.createShapeEngine().createLine(a, b);

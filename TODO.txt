@@ -1,6 +1,8 @@
 
 Quad -> OBB
 
+remove parent from shapes
+
 work on sweeping shapes
 allow quad as a sweeper
 
@@ -46,10 +48,6 @@ profile cpu time
 test track screen
 tweak road friction, car speed, car friction, etc
 monitor car speed
-
-
-
-remove parent from SweepableShapes
 
 
 undo/redo

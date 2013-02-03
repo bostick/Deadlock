@@ -11,6 +11,10 @@ public class Geom {
 		return new Point(m[0][0] * v.x + m[0][1] * v.y, m[1][0] * v.x + m[1][1] * v.y);
 	}
 	
+	public static Point rotate(double a, Point v) {
+		return new Point(Math.cos(a) * v.x + -Math.sin(a) * v.y, Math.sin(a) * v.x + Math.cos(a) * v.y);
+	}
+	
 	/**
 	 * 
 	 * return -1 if p is to the left of <a, b>
@@ -35,12 +39,12 @@ public class Geom {
 		return times(m, l).plus(t);
 	}
 	
-	public static OBB localToWorld(OBB o, double[][] m, Point t) {
-		Point w0 = times(m, o.p0).plus(t);
-		Point w1 = times(m, o.p1).plus(t);
-		Point w2 = times(m, o.p2).plus(t);
-		Point w3 = times(m, o.p3).plus(t);
-		return APP.platform.createShapeEngine().createOBB(o.parent, w0, w1, w2, w3);
+	public static OBB localToWorld(AABB a, double angle, Point t) {
+//		Point w0 = times(m, a.p0).plus(t);
+//		Point w1 = times(m, a.p1).plus(t);
+//		Point w2 = times(m, a.p2).plus(t);
+//		Point w3 = times(m, a.p3).plus(t);
+		return APP.platform.createShapeEngine().createOBB(null, t, angle, a.width/2, a.height/2);
 	}
 	
 	public static void rotationMatrix(double a, double[][] out) {
