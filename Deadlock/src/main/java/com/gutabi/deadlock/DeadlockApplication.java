@@ -4,6 +4,7 @@ import java.util.Random;
 
 import com.gutabi.deadlock.ui.Image;
 import com.gutabi.deadlock.ui.ImageEngine;
+import com.gutabi.deadlock.world.sprites.Sheet;
 
 public class DeadlockApplication {
 	
@@ -28,11 +29,6 @@ public class DeadlockApplication {
 	public int COPYRIGHT_CENTER_Y = -1;
 	
 	
-	
-	
-	
-	
-	
 //	public URL codebase;
 	
 	public Platform platform;
@@ -50,10 +46,14 @@ public class DeadlockApplication {
 	
 	public Random RANDOM = new Random(1);
 	
-	public Image carSheet;
-	public Image spriteSheet;
+//	public Image carSheet;
+//	public Image spriteSheet;
+//	public Image explosionSheet;
+	public Sheet carSheet;
+	public Sheet spriteSheet;
+	public Sheet explosionSheet;
 	
-	public Image explosionSheet;
+	
 	public Image titleBackground;
 	public Image title_white;
 	public Image copyright;
@@ -65,9 +65,14 @@ public class DeadlockApplication {
 		ImageEngine iEngine = platform.createImageEngine();
 		ResourceEngine rEngine = platform.createResourceEngine();
 		
-		carSheet = iEngine.readImage(rEngine.imageResource("carsheet"));
-		spriteSheet = iEngine.readImage(rEngine.imageResource("spritesheet"));
-		explosionSheet = iEngine.readImage(rEngine.imageResource("explosionsheet"));
+		carSheet = new Sheet(rEngine.imageResource("carsheet"));
+		spriteSheet = new Sheet(rEngine.imageResource("spritesheet"));
+		explosionSheet = new Sheet(rEngine.imageResource("explosionsheet"));
+		
+		carSheet.load();
+		spriteSheet.load();
+		explosionSheet.load();
+		
 		titleBackground = iEngine.readImage(rEngine.imageResource("title_background"));
 		title_white = iEngine.readImage(rEngine.imageResource("title_white"));
 		copyright = iEngine.readImage(rEngine.imageResource("copyright"));

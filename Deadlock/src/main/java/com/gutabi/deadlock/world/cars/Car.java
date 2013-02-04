@@ -27,6 +27,7 @@ import com.gutabi.deadlock.world.World;
 import com.gutabi.deadlock.world.graph.Fixture;
 import com.gutabi.deadlock.world.graph.GraphPositionPathPosition;
 import com.gutabi.deadlock.world.graph.Merger;
+import com.gutabi.deadlock.world.sprites.Sheet.Sprite;
 
 public abstract class Car extends Entity {
 	
@@ -596,10 +597,11 @@ public abstract class Car extends Entity {
 	public double CAR_BRAKE2X;
 	public double CAR_BRAKE2Y;
 	
-	public int sheetColStart;
-	public int sheetColEnd;
-	public int sheetRowStart;
-	public int sheetRowEnd;
+//	public int sheetColStart;
+//	public int sheetColEnd;
+//	public int sheetRowStart;
+//	public int sheetRowEnd;
+	public Sprite sprite;
 	
 	protected void paintImage(RenderingContext ctxt) {
 			
@@ -612,9 +614,11 @@ public abstract class Car extends Entity {
 		ctxt.rotate(angle);
 		ctxt.translate(CAR_LOCALX, CAR_LOCALY);
 		
-		ctxt.paintImage(APP.carSheet, world.screen.pixelsPerMeter,
-				0, 0, CAR_LENGTH, CAR_WIDTH,
-				sheetColStart, sheetRowStart, sheetColEnd, sheetRowEnd);
+//		ctxt.paintImage(APP.carSheet, world.screen.pixelsPerMeter,
+//				0, 0, CAR_LENGTH, CAR_WIDTH,
+//				sheetColStart, sheetRowStart, sheetColEnd, sheetRowEnd);
+		
+		APP.carSheet.paint(ctxt, sprite, world.screen.pixelsPerMeter, 0, 0, CAR_LENGTH, CAR_WIDTH);
 		
 		if (inMerger) {
 			ctxt.setAlpha(1.0);
@@ -636,17 +640,21 @@ public abstract class Car extends Entity {
 		
 		Transform brakeTransform = ctxt.getTransform();
 		
-		ctxt.translate(CAR_BRAKE1X, CAR_BRAKE1Y);
-		ctxt.paintImage(APP.spriteSheet, world.screen.pixelsPerMeter,
-				0, 0, BRAKE_SIZE, BRAKE_SIZE,
-				0, 64, 0+8, 64+8);
+//		ctxt.translate(CAR_BRAKE1X, CAR_BRAKE1Y);
+//		ctxt.paintImage(APP.spriteSheet, world.screen.pixelsPerMeter,
+//				0, 0, BRAKE_SIZE, BRAKE_SIZE,
+//				0, 64, 0+8, 64+8);
+		
+		APP.spriteSheet.paint(ctxt, Sprite.BRAKE, world.screen.pixelsPerMeter, 0, 0, BRAKE_SIZE, BRAKE_SIZE);
 		
 		ctxt.setTransform(brakeTransform);
 		
-		ctxt.translate(CAR_BRAKE2X, CAR_BRAKE2Y);
-		ctxt.paintImage(APP.spriteSheet, world.screen.pixelsPerMeter,
-				0, 0, BRAKE_SIZE, BRAKE_SIZE,
-				0, 64, 0+8, 64+8);
+//		ctxt.translate(CAR_BRAKE2X, CAR_BRAKE2Y);
+//		ctxt.paintImage(APP.spriteSheet, world.screen.pixelsPerMeter,
+//				0, 0, BRAKE_SIZE, BRAKE_SIZE,
+//				0, 64, 0+8, 64+8);
+		
+		APP.spriteSheet.paint(ctxt, Sprite.BRAKE, world.screen.pixelsPerMeter, 0, 0, BRAKE_SIZE, BRAKE_SIZE);
 		
 		ctxt.setTransform(origTransform);
 		

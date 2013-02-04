@@ -7,6 +7,7 @@ import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.Transform;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.world.World;
+import com.gutabi.deadlock.world.sprites.Sheet.Sprite;
 
 public class AnimatedGrass {
 	
@@ -68,55 +69,43 @@ public class AnimatedGrass {
 	public void paint(RenderingContext ctxt) {
 		switch (lastFrame) {
 		case 0:
-			paint0(ctxt);
+			paint(ctxt, 0);
 			break;
 		case 1:
 		case 3:
-			paint1(ctxt);
+			paint(ctxt, 1);
 			break;
 		case 2:
-			paint2(ctxt);
+			paint(ctxt, 2);
 			break;
 		}
 		
 	}
 	
-	private void paint0(RenderingContext ctxt) {
+	private void paint(RenderingContext ctxt, int index) {
 		
 		Transform origTransform = ctxt.getTransform();
 		
 		ctxt.translate(p.x - AnimatedGrass.GRASS_SIZE/2, p.y - AnimatedGrass.GRASS_SIZE/2);
-		ctxt.paintImage(APP.spriteSheet, world.screen.pixelsPerMeter,
-				0, 0, GRASS_SIZE, GRASS_SIZE,
-				0, 32, 0+32, 32+32);	
+		
+//		ctxt.paintImage(APP.spriteSheet, world.screen.pixelsPerMeter,
+//				0, 0, GRASS_SIZE, GRASS_SIZE,
+//				0, 32, 0+32, 32+32);	
+		
+		switch (index) {
+		case 0:
+			APP.spriteSheet.paint(ctxt, Sprite.GRASS0, world.screen.pixelsPerMeter, 0, 0, GRASS_SIZE, GRASS_SIZE);
+			break;
+		case 1:
+			APP.spriteSheet.paint(ctxt, Sprite.GRASS1, world.screen.pixelsPerMeter, 0, 0, GRASS_SIZE, GRASS_SIZE);
+			break;
+		case 2:
+			APP.spriteSheet.paint(ctxt, Sprite.GRASS2, world.screen.pixelsPerMeter, 0, 0, GRASS_SIZE, GRASS_SIZE);
+			break;
+		}
 		
 		ctxt.setTransform(origTransform);
 		
 	}
 	
-	private void paint1(RenderingContext ctxt) {
-		
-		Transform origTransform = ctxt.getTransform();
-		
-		ctxt.translate(p.x - AnimatedGrass.GRASS_SIZE/2, p.y - AnimatedGrass.GRASS_SIZE/2);
-		ctxt.paintImage(APP.spriteSheet, world.screen.pixelsPerMeter,
-				0, 0, GRASS_SIZE, GRASS_SIZE,
-				32, 32, 32+32, 32+32);
-		
-		ctxt.setTransform(origTransform);
-		
-	}
-	
-	private void paint2(RenderingContext ctxt) {
-		
-		Transform origTransform = ctxt.getTransform();
-		
-		ctxt.translate(p.x - AnimatedGrass.GRASS_SIZE/2, p.y - AnimatedGrass.GRASS_SIZE/2);
-		ctxt.paintImage(APP.spriteSheet, world.screen.pixelsPerMeter,
-				0, 0, GRASS_SIZE, GRASS_SIZE,
-				64, 32, 64+32, 32+32);
-		
-		ctxt.setTransform(origTransform);
-		
-	}
 }
