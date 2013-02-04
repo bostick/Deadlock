@@ -15,7 +15,6 @@ import java.util.Set;
 import com.gutabi.deadlock.Entity;
 import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.geom.Capsule;
-import com.gutabi.deadlock.geom.CapsuleSequence;
 import com.gutabi.deadlock.geom.Circle;
 import com.gutabi.deadlock.geom.OBB;
 import com.gutabi.deadlock.geom.Shape;
@@ -33,8 +32,9 @@ public class Graph {
 	World world;
 	
 	public final List<Vertex> vertices = new ArrayList<Vertex>();
-	public final List<Edge> edges = new ArrayList<Edge>();
-	
+	public final List<Road> roads = new ArrayList<Road>();
+	public final List<Merger> mergers = new ArrayList<Merger>();
+//	public final List<Edge> edges = new ArrayList<Edge>();
 	public final List<RushHourBoard> rushes = new ArrayList<RushHourBoard>();
 	
 	public GraphPositionPathFactory pathFactory;
@@ -172,8 +172,8 @@ public class Graph {
 	
 	public Set<Vertex> insertMergerTop(Merger m) {
 		
-		edges.add(m);
-		refreshEdgeIDs();
+		mergers.add(m);
+		refreshMergerIDs();
 		
 		vertices.add(m.top);
 		vertices.add(m.left);
@@ -345,8 +345,8 @@ public class Graph {
 			
 		}
 		
-		edges.add(r);
-		refreshEdgeIDs();
+		roads.add(r);
+		refreshRoadIDs();
 		
 	}
 	
@@ -356,17 +356,17 @@ public class Graph {
 	}
 	
 	private void destroyRoad(Road r) {
-		assert edges.contains(r);
+		assert roads.contains(r);
 		r.destroy();
-		edges.remove(r);
-		refreshEdgeIDs();
+		roads.remove(r);
+		refreshRoadIDs();
 	}
 	
 	private void destroyMerger(Merger m) {
-		assert edges.contains(m);
+		assert mergers.contains(m);
 		m.destroy();
-		edges.remove(m);
-		refreshEdgeIDs();
+		mergers.remove(m);
+		refreshMergerIDs();
 	}
 	
 	private void computeAABB() {
@@ -380,8 +380,11 @@ public class Graph {
 		for (Vertex v : vertices) {
 			aabb = AABB.union(aabb, v.getShape().getAABB());
 		}
-		for (Edge e : edges) {
-			aabb = AABB.union(aabb, e.getShape().getAABB());
+		for (Road r : roads) {
+			aabb = AABB.union(aabb, r.getShape().getAABB());
+		}
+		for (Merger m : mergers) {
+			aabb = AABB.union(aabb, m.getShape().getAABB());
 		}
 		
 //		if (logger.isDebugEnabled()) {
@@ -638,8 +641,8 @@ public class Graph {
 	public Entity graphHitTest(Point p) {
 		assert p != null;
 		Entity hit;
-		for (Edge e : edges) {
-			hit = e.decorationsHitTest(p);
+		for (Road r : roads) {
+			hit = r.decorationsHitTest(p);
 			if (hit != null) {
 				return hit;
 			}
@@ -650,10 +653,16 @@ public class Graph {
 				return hit;
 			}
 		}
-		for (Edge e : edges) {
-			hit = e.hitTest(p);
+		for (Road r : roads) {
+			hit = r.hitTest(p);
 			if (hit != null) {
-				return e;
+				return r;
+			}
+		}
+		for (Merger m : mergers) {
+			hit = m.hitTest(p);
+			if (hit != null) {
+				return m;
 			}
 		}
 		return null;
@@ -665,9 +674,14 @@ public class Graph {
 				return v;
 			}
 		}
-		for (Edge ed : edges) {
-			if (ShapeUtils.intersect(ed.getShape(), s)) {
-				return ed;
+		for (Road r : roads) {
+			if (ShapeUtils.intersect(r.getShape(), s)) {
+				return r;
+			}
+		}
+		for (Merger m : mergers) {
+			if (ShapeUtils.intersect(m.getShape(), s)) {
+				return m;
 			}
 		}
 		return null;
@@ -679,15 +693,14 @@ public class Graph {
 				return v;
 			}
 		}
-		for (Edge ed : edges) {
-			if (ed instanceof Road) {
-				if (((CapsuleSequence)ed.getShape()).intersect(q)) {
-					return ed;
-				}
-			} else {
-				if (ShapeUtils.intersectOO((OBB)ed.getShape(), q)) {
-					return ed;
-				}
+		for (Road r : roads) {
+			if (r.getShape().intersect(q)) {
+				return r;
+			}
+		}
+		for (Merger m : mergers) {
+			if (ShapeUtils.intersectAO(m.getShape(), q)) {
+				return m;
 			}
 		}
 		return null;
@@ -699,17 +712,14 @@ public class Graph {
 				return v;
 			}
 		}
-		for (Edge ed : edges) {
-			if (ed instanceof Road) {
-				if (((CapsuleSequence)ed.getShape()).intersect(c)) {
-					return ed;
-				}
-			} else if (ed instanceof Merger) {
-				if (ShapeUtils.intersectAC((AABB)ed.getShape(), c)) {
-					return ed;
-				}
-			} else {
-				assert false;
+		for (Road r : roads) {
+			if (r.getShape().intersect(c)) {
+				return r;
+			}
+		}
+		for (Merger m : mergers) {
+			if (ShapeUtils.intersectAC(m.getShape(), c)) {
+				return m;
 			}
 		}
 		return null;
@@ -721,9 +731,14 @@ public class Graph {
 				return v;
 			}
 		}
-		for (Edge ed : edges) {
-			if (ShapeUtils.intersect(c, ed.getShape())) {
-				return ed;
+		for (Road r : roads) {
+			if (ShapeUtils.intersect(c, r.getShape())) {
+				return r;
+			}
+		}
+		for (Merger m : mergers) {
+			if (ShapeUtils.intersect(c, m.getShape())) {
+				return m;
 			}
 		}
 		return null;
@@ -735,13 +750,6 @@ public class Graph {
 	public RoadPosition findClosestRoadPosition(Point p, double radius) {
 
 		RoadPosition closest = null;
-		
-		List<Road> roads = new ArrayList<Road>();
-		for (Edge e : edges) {
-			if (e instanceof Road) {
-				roads.add((Road)e);
-			}
-		}
 		
 		for (Road r : roads) {
 			RoadPosition ep = r.findClosestRoadPosition(p, radius);
@@ -854,10 +862,18 @@ public class Graph {
 		}
 	}
 	
-	private void refreshEdgeIDs() {
+	private void refreshRoadIDs() {
 		int id = 0;
-		for (Edge e : edges) {
-			e.id = id;
+		for (Road r : roads) {
+			r.id = id;
+			id++;
+		}
+	}
+	
+	private void refreshMergerIDs() {
+		int id = 0;
+		for (Merger m : mergers) {
+			m.id = id;
 			id++;
 		}
 	}
@@ -886,8 +902,11 @@ public class Graph {
 		/*
 		 * iterate and find shorter distances via roads and mergers
 		 */
-		for (Edge e : edges) {
-			e.enterDistancesMatrix(distances);
+		for (Road r : roads) {
+			r.enterDistancesMatrix(distances);
+		}
+		for (Merger m : mergers) {
+			m.enterDistancesMatrix(distances);
 		}
 		
 		for (int k = 0; k < vertexCount; k++){
@@ -932,8 +951,8 @@ public class Graph {
 		Road e1 = v.roads.get(0);
 		Road e2 = v.roads.get(1);
 		
-		assert edges.contains(e1);
-		assert edges.contains(e2);
+		assert roads.contains(e1);
+		assert roads.contains(e2);
 		
 		Vertex e1Start = e1.start;
 		Vertex e1End = e1.end;
@@ -1075,15 +1094,17 @@ public class Graph {
 		s.append("start graph\n");
 		
 		s.append("vertices " + vertices.size() + "\n");
-		
-		s.append("edges " + edges.size() + "\n");
+		s.append("roads " + roads.size() + "\n");
+		s.append("mergers " + mergers.size() + "\n");
 		
 		for (Vertex v : vertices) {
 			s.append(v.toFileString());
 		}
-		
-		for (Edge e : edges) {
-			s.append(e.toFileString());
+		for (Road r : roads) {
+			s.append(r.toFileString());
+		}
+		for (Merger m : mergers) {
+			s.append(m.toFileString());
 		}
 		
 		s.append("end graph\n");
@@ -1095,8 +1116,8 @@ public class Graph {
 		BufferedReader r = new BufferedReader(new StringReader(s));
 		
 		Vertex[] vs = null;
-		
-		Edge[] es = null;
+		Road[] rs = null;
+		Merger[] ms = null;
 		
 		try {
 			String l = r.readLine();
@@ -1112,13 +1133,20 @@ public class Graph {
 			l = r.readLine();
 			sc = new Scanner(l);
 			tok = sc.next();
-			assert tok.equals("edges");
-			int eCount = sc.nextInt();
+			assert tok.equals("roads");
+			int rCount = sc.nextInt();
+			sc.close();
+			
+			l = r.readLine();
+			sc = new Scanner(l);
+			tok = sc.next();
+			assert tok.equals("mergers");
+			int mCount = sc.nextInt();
 			sc.close();
 			
 			vs = new Vertex[vCount];
-			
-			es = new Edge[eCount];
+			rs = new Road[rCount];
+			ms = new Merger[mCount];
 			
 			while (true) {
 				l = r.readLine();
@@ -1173,7 +1201,7 @@ public class Graph {
 					
 					Road rd = Road.fromFileString(world, vs, builder.toString());
 					
-					es[rd.id] = rd;
+					rs[rd.id] = rd;
 					
 				} else {
 					assert false;
@@ -1199,30 +1227,38 @@ public class Graph {
 		for (Vertex v : vs) {
 			g.vertices.add(v);
 		}
-		for (Edge e : es) {
-			g.edges.add(e);
+		for (Road ro : rs) {
+			g.roads.add(ro);
+		}
+		for (Merger m : ms) {
+			g.mergers.add(m);
 		}
 		
-		
 		g.refreshVertexIDs();
-		g.refreshEdgeIDs();
+		g.refreshRoadIDs();
+		g.refreshMergerIDs();
 		
 		return g;
 	}
 	
 	public void render_panel(RenderingContext ctxt) {
 		
-		List<Edge> edgesCopy;
+		List<Road> roadsCopy;
+		List<Merger> mergersCopy;
 		List<RushHourBoard> rushesCopy;
 		List<Vertex> verticesCopy;
 		synchronized (APP) {
-			edgesCopy = new ArrayList<Edge>(edges);
+			roadsCopy = new ArrayList<Road>(roads);
+			mergersCopy = new ArrayList<Merger>(mergers);
 			rushesCopy = new ArrayList<RushHourBoard>(rushes);
 			verticesCopy = new ArrayList<Vertex>(vertices);
 		}
 		
-		for (Edge e : edgesCopy) {
-			e.paint_panel(ctxt);
+		for (Road r : roadsCopy) {
+			r.paint_panel(ctxt);
+		}
+		for (Merger m : mergersCopy) {
+			m.paint_panel(ctxt);
 		}
 		
 		for (RushHourBoard b : rushesCopy) {
@@ -1233,25 +1269,30 @@ public class Graph {
 			v.paint_panel(ctxt);
 		}
 		
-		for (Edge e : edgesCopy) {
-			e.paintDecorations(ctxt);
+		for (Road r : roadsCopy) {
+			r.paintDecorations(ctxt);
 		}
 		
 	}
 	
 	public void render_preview(RenderingContext ctxt) {
 		
-		List<Edge> edgesCopy;
+		List<Road> roadsCopy;
+		List<Merger> mergersCopy;
 		List<RushHourBoard> rushesCopy;
 		List<Vertex> verticesCopy;
 		synchronized (APP) {
-			edgesCopy = new ArrayList<Edge>(edges);
+			roadsCopy = new ArrayList<Road>(roads);
+			mergersCopy = new ArrayList<Merger>(mergers);
 			rushesCopy = new ArrayList<RushHourBoard>(rushes);
 			verticesCopy = new ArrayList<Vertex>(vertices);
 		}
 		
-		for (Edge e : edgesCopy) {
-			e.paint_preview(ctxt);
+		for (Road r : roadsCopy) {
+			r.paint_preview(ctxt);
+		}
+		for (Merger m : mergersCopy) {
+			m.paint_preview(ctxt);
 		}
 		
 		for (RushHourBoard b : rushesCopy) {
@@ -1272,7 +1313,11 @@ public class Graph {
 		
 		ctxt.translate(0, 1);
 		
-		ctxt.paintString(0, 0, 1.0/world.screen.pixelsPerMeter, "edge count: " + edges.size());
+		ctxt.paintString(0, 0, 1.0/world.screen.pixelsPerMeter, "road count: " + roads.size());
+		
+		ctxt.translate(0, 1);
+		
+		ctxt.paintString(0, 0, 1.0/world.screen.pixelsPerMeter, "merger count: " + mergers.size());
 		
 		ctxt.setTransform(origTransform);
 	}
@@ -1288,13 +1333,13 @@ public class Graph {
 		}
 		
 		if (APP.DEBUG_DRAW) {
-			List<Edge> edgesCopy;
+			List<Road> roadsCopy;
 			synchronized (APP) {
-				edgesCopy = new ArrayList<Edge>(edges);
+				roadsCopy = new ArrayList<Road>(roads);
 			}
 			
-			for (Edge e : edgesCopy) {
-				e.paintBorders(ctxt);
+			for (Road r : roadsCopy) {
+				r.paintBorders(ctxt);
 			}
 		}
 		
@@ -1333,13 +1378,6 @@ public class Graph {
 					double distance = Point.distance(v.p, w.p);
 					assert DMath.greaterThan(distance, v.r + w.r);
 				}
-			}
-		}
-		
-		List<Road> roads = new ArrayList<Road>();
-		for (Edge e : edges) {
-			if (e instanceof Road) {
-				roads.add((Road)e);
 			}
 		}
 		

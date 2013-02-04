@@ -2,7 +2,6 @@ package com.gutabi.deadlock.world.graph;
 
 import com.gutabi.deadlock.Entity;
 import com.gutabi.deadlock.geom.Shape;
-import com.gutabi.deadlock.geom.SweepableShape;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 
@@ -19,7 +18,7 @@ public abstract class Edge extends Entity {
 	public abstract void setDirection(Axis a, Direction dir);
 	
 	
-	public abstract SweepableShape getShape();
+	public abstract Shape getShape();
 	
 	
 	public abstract Vertex getReferenceVertex(Axis a);

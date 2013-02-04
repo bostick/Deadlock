@@ -29,7 +29,7 @@ public abstract class Knob {
 	
 	private AABB aabb() {
 		double pixel = 1/screen.pixelsPerMeter;
-		return APP.platform.createShapeEngine().createAABB(null, p.x + -3 * pixel, p.y + -3 * pixel, 7 * pixel, 7 * pixel);
+		return APP.platform.createShapeEngine().createAABB(p.x + -3 * pixel, p.y + -3 * pixel, 7 * pixel, 7 * pixel);
 	}
 	
 	public abstract void drag(Point p);

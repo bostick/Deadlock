@@ -10,7 +10,7 @@ import com.gutabi.deadlock.ui.paint.Color;
 import com.gutabi.deadlock.ui.paint.Join;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 
-public abstract class Capsule extends SweepableShape {
+public abstract class Capsule implements Shape {
 	
 	public final Circle ac;
 	public final Circle bc;
@@ -40,8 +40,8 @@ public abstract class Capsule extends SweepableShape {
 	
 //	static Logger logger = Logger.getLogger(Capsule.class);
 	
-	protected Capsule(Object parent, Circle ac, Circle bc) {
-		super(parent);
+	protected Capsule(Circle ac, Circle bc) {
+		super();
 		this.ac = ac;
 		this.bc = bc;
 //		this.index = index;
@@ -68,7 +68,7 @@ public abstract class Capsule extends SweepableShape {
 			bDown = b.plus(d);
 			
 //			middle = APP.platform.createShapeEngine().createOBB(parent, aUp, bUp, bDown, aDown);
-			middle = APP.platform.createShapeEngine().createOBB(parent, Point.point(a, b, 0.5), Math.atan2(diff.y, diff.x), Point.distance(a, b)/2, r);
+			middle = APP.platform.createShapeEngine().createOBB(Point.point(a, b, 0.5), Math.atan2(diff.y, diff.x), Point.distance(a, b)/2, r);
 			
 			debugNormalLine = APP.platform.createShapeEngine().createLine(a, a.plus(n));
 			debugSkeletonLine = APP.platform.createShapeEngine().createLine(a, b);
@@ -113,7 +113,7 @@ public abstract class Capsule extends SweepableShape {
 	
 	public Capsule plus(Point p) {
 		ShapeEngine e = APP.platform.createShapeEngine();
-		return e.createCapsule(parent, e.createCircle(parent, a.plus(p), ac.radius), e.createCircle(parent, b.plus(p), bc.radius));
+		return e.createCapsule(e.createCircle(a.plus(p), ac.radius), e.createCircle(b.plus(p), bc.radius));
 	}
 	
 	public boolean hitTest(Point p) {

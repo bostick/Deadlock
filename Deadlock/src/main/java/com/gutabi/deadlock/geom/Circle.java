@@ -5,7 +5,7 @@ import static com.gutabi.deadlock.DeadlockApplication.APP;
 import com.gutabi.deadlock.math.DMath;
 import com.gutabi.deadlock.math.Point;
 
-public abstract class Circle extends SweepableShape {
+public abstract class Circle implements Shape {
 	
 	public final Point center;
 	public final double radius;
@@ -16,12 +16,12 @@ public abstract class Circle extends SweepableShape {
 	
 //	static Logger logger = Logger.getLogger(Circle.class);
 	
-	protected Circle(Object parent, Point center, double radius) {
-		super(parent);
+	protected Circle(Point center, double radius) {
+		super();
 		this.center = center;
 		this.radius = radius;
 		
-		aabb = APP.platform.createShapeEngine().createAABB(parent, center.x - radius, center.y - radius, 2*radius, 2*radius);
+		aabb = APP.platform.createShapeEngine().createAABB(center.x - radius, center.y - radius, 2*radius, 2*radius);
 	}
 	
 	public boolean equals(Object o) {
@@ -56,7 +56,7 @@ public abstract class Circle extends SweepableShape {
 	}
 	
 	public Circle plus(Point p) {
-		return APP.platform.createShapeEngine().createCircle(parent, center.plus(p), radius);
+		return APP.platform.createShapeEngine().createCircle(center.plus(p), radius);
 	}
 	
 	public boolean hitTest(Point p) {

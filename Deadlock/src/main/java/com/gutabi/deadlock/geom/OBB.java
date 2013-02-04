@@ -4,7 +4,7 @@ import static com.gutabi.deadlock.DeadlockApplication.APP;
 
 import com.gutabi.deadlock.math.Point;
 
-public abstract class OBB extends SweepableShape {
+public abstract class OBB implements Shape {
 	
 	public final Point center;
 	public final double a;
@@ -31,8 +31,8 @@ public abstract class OBB extends SweepableShape {
 	
 	private int hash;
 	
-	protected OBB(Object parent, Point center, double a, double xExtant, double yExtant) {
-		super(parent);
+	protected OBB(Point center, double a, double xExtant, double yExtant) {
+		super();
 		
 		this.center = center;
 		this.a = a;
@@ -49,7 +49,7 @@ public abstract class OBB extends SweepableShape {
 		double brX = Math.max(Math.max(p0.x, p1.x), Math.max(p2.x, p3.x));
 		double brY = Math.max(Math.max(p0.y, p1.y), Math.max(p2.y, p3.y));
 		
-		aabb = APP.platform.createShapeEngine().createAABB(parent, ulX, ulY, (brX - ulX), (brY - ulY));
+		aabb = APP.platform.createShapeEngine().createAABB(ulX, ulY, (brX - ulX), (brY - ulY));
 	}
 	
 	public int hashCode() {
@@ -116,7 +116,7 @@ public abstract class OBB extends SweepableShape {
 	}
 	
 	public OBB plus(Point p) {
-		return APP.platform.createShapeEngine().createOBB(parent, center.plus(p), a, xExtant, yExtant);
+		return APP.platform.createShapeEngine().createOBB(center.plus(p), a, xExtant, yExtant);
 	}
 	
 	public boolean hitTest(Point p) {

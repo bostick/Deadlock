@@ -36,7 +36,7 @@ public class Quadrant {
 		this.c = c;
 		this.active = active;
 		
-		aabb = APP.platform.createShapeEngine().createAABB(null, c * QuadrantMap.QUADRANT_WIDTH, r * QuadrantMap.QUADRANT_HEIGHT, QuadrantMap.QUADRANT_WIDTH, QuadrantMap.QUADRANT_HEIGHT);
+		aabb = APP.platform.createShapeEngine().createAABB(c * QuadrantMap.QUADRANT_WIDTH, r * QuadrantMap.QUADRANT_HEIGHT, QuadrantMap.QUADRANT_WIDTH, QuadrantMap.QUADRANT_HEIGHT);
 	}
 	
 	public void init() {

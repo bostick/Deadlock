@@ -7,7 +7,7 @@ import com.gutabi.deadlock.math.DMath;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 
-public class CapsuleSequence extends SweepableShape implements SweeperShape, CompoundShape {
+public class CapsuleSequence implements Shape, SweeperShape, CompoundShape {
 	
 	public final List<Capsule> caps;
 	
@@ -19,8 +19,8 @@ public class CapsuleSequence extends SweepableShape implements SweeperShape, Com
 	
 //	static Logger logger = Logger.getLogger(CapsuleSequence.class);
 	
-	public CapsuleSequence(Object parent, List<Capsule> caps) {
-		super(parent);
+	public CapsuleSequence(List<Capsule> caps) {
+		super();
 		this.caps = caps;
 		
 		capsuleCount = caps.size();
@@ -81,14 +81,14 @@ public class CapsuleSequence extends SweepableShape implements SweeperShape, Com
 	 * @param index (exclusive)
 	 */
 	public CapsuleSequence subsequence(int index) {
-		return new CapsuleSequence(parent, caps.subList(0, index));
+		return new CapsuleSequence(caps.subList(0, index));
 	}
 	
 	/**
 	 * single capsule
 	 */
 	public CapsuleSequence capseq(int index) {
-		return new CapsuleSequence(parent, caps.subList(index, index+1));
+		return new CapsuleSequence(caps.subList(index, index+1));
 	}
 	
 	public AABB getAABB() {
@@ -100,7 +100,7 @@ public class CapsuleSequence extends SweepableShape implements SweeperShape, Com
 		for (Capsule c : caps) {
 			newCaps.add(c.plus(p));
 		}
-		return new CapsuleSequence(parent, newCaps);
+		return new CapsuleSequence(newCaps);
 	}
 	
 	public boolean hitTest(Point p) {

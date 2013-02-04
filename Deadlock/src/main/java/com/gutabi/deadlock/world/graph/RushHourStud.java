@@ -26,7 +26,7 @@ public class RushHourStud {
 		this.row = row;
 		this.col = col;
 		
-		aabb = APP.platform.createShapeEngine().createAABB(null, board.ul.x + RushHourStud.SIZE * col, board.ul.y + RushHourStud.SIZE * row, RushHourStud.SIZE, RushHourStud.SIZE);
+		aabb = APP.platform.createShapeEngine().createAABB(board.ul.x + RushHourStud.SIZE * col, board.ul.y + RushHourStud.SIZE * row, RushHourStud.SIZE, RushHourStud.SIZE);
 	}
 	
 	public String toString() {

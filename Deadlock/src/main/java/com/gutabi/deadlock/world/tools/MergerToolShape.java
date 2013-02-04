@@ -5,7 +5,6 @@ import static com.gutabi.deadlock.DeadlockApplication.APP;
 import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.geom.Circle;
 import com.gutabi.deadlock.geom.CompoundShape;
-import com.gutabi.deadlock.geom.OBB;
 import com.gutabi.deadlock.geom.Shape;
 import com.gutabi.deadlock.geom.ShapeUtils;
 import com.gutabi.deadlock.math.Point;
@@ -16,16 +15,16 @@ import com.gutabi.deadlock.world.graph.Vertex;
 public class MergerToolShape implements CompoundShape {
 	
 	private Point ul;
-	private Point p0;
-	private Point p1;
-	private Point p2;
-	private Point p3;
+//	private Point p0;
+//	private Point p1;
+//	private Point p2;
+//	private Point p3;
 	{
 		ul = new Point(-Merger.MERGER_WIDTH/2, -Merger.MERGER_HEIGHT/2);
-		p0 = ul;
-		p1 = new Point(ul.x + Merger.MERGER_WIDTH, ul.y);
-		p2 = new Point(ul.x + Merger.MERGER_WIDTH, ul.y + Merger.MERGER_HEIGHT);
-		p3 = new Point(ul.x, ul.y + Merger.MERGER_HEIGHT);
+//		p0 = ul;
+//		p1 = new Point(ul.x + Merger.MERGER_WIDTH, ul.y);
+//		p2 = new Point(ul.x + Merger.MERGER_WIDTH, ul.y + Merger.MERGER_HEIGHT);
+//		p3 = new Point(ul.x, ul.y + Merger.MERGER_HEIGHT);
 	}
 	
 	public final Circle worldTop;
@@ -38,12 +37,12 @@ public class MergerToolShape implements CompoundShape {
 	
 	public MergerToolShape(Point p) {
 		
-		worldQ = APP.platform.createShapeEngine().createAABB(null, );
+		worldQ = APP.platform.createShapeEngine().createAABB(ul.x + p.x, ul.y + p.y, Merger.MERGER_WIDTH, Merger.MERGER_HEIGHT);
 		
-		worldTop = APP.platform.createShapeEngine().createCircle(null, new Point(ul.plus(p).x + Merger.MERGER_WIDTH/2, ul.plus(p).y), Vertex.INIT_VERTEX_RADIUS);
-		worldLeft = APP.platform.createShapeEngine().createCircle(null, new Point(ul.plus(p).x, ul.plus(p).y + Merger.MERGER_HEIGHT/2), Vertex.INIT_VERTEX_RADIUS);
-		worldRight = APP.platform.createShapeEngine().createCircle(null, new Point(ul.plus(p).x + Merger.MERGER_WIDTH, ul.plus(p).y + Merger.MERGER_HEIGHT/2), Vertex.INIT_VERTEX_RADIUS);
-		worldBottom = APP.platform.createShapeEngine().createCircle(null, new Point(ul.plus(p).x + Merger.MERGER_WIDTH/2, ul.plus(p).y+Merger.MERGER_HEIGHT), Vertex.INIT_VERTEX_RADIUS);
+		worldTop = APP.platform.createShapeEngine().createCircle(new Point(ul.plus(p).x + Merger.MERGER_WIDTH/2, ul.plus(p).y), Vertex.INIT_VERTEX_RADIUS);
+		worldLeft = APP.platform.createShapeEngine().createCircle(new Point(ul.plus(p).x, ul.plus(p).y + Merger.MERGER_HEIGHT/2), Vertex.INIT_VERTEX_RADIUS);
+		worldRight = APP.platform.createShapeEngine().createCircle(new Point(ul.plus(p).x + Merger.MERGER_WIDTH, ul.plus(p).y + Merger.MERGER_HEIGHT/2), Vertex.INIT_VERTEX_RADIUS);
+		worldBottom = APP.platform.createShapeEngine().createCircle(new Point(ul.plus(p).x + Merger.MERGER_WIDTH/2, ul.plus(p).y+Merger.MERGER_HEIGHT), Vertex.INIT_VERTEX_RADIUS);
 		
 		aabb = worldQ;
 		aabb = AABB.union(aabb, worldTop.aabb);

@@ -20,10 +20,10 @@ public class StraightEdgeToolShape implements Shape {
 	
 	public StraightEdgeToolShape(World world, Point first, Point p) {
 		
-		this.firstCircle = APP.platform.createShapeEngine().createCircle(null, first, Vertex.INIT_VERTEX_RADIUS);
-		this.pCircle = APP.platform.createShapeEngine().createCircle(null, p, Vertex.INIT_VERTEX_RADIUS);
+		this.firstCircle = APP.platform.createShapeEngine().createCircle(first, Vertex.INIT_VERTEX_RADIUS);
+		this.pCircle = APP.platform.createShapeEngine().createCircle(p, Vertex.INIT_VERTEX_RADIUS);
 		
-		this.cap = APP.platform.createShapeEngine().createCapsule(null, firstCircle, pCircle);
+		this.cap = APP.platform.createShapeEngine().createCapsule(firstCircle, pCircle);
 		
 //		aabb = cap.aabb;
 	}

@@ -6,16 +6,16 @@ import com.gutabi.deadlock.math.Point;
 
 public class ShapeEngineImpl extends ShapeEngine {
 	
-	public AABB createAABB(Object parent, double x, double y, double width, double height) {
-		return new AABBImpl(parent, x, y, width, height);
+	public AABB createAABB(double x, double y, double width, double height) {
+		return new AABBImpl(x, y, width, height);
 	}
 
-	public Circle createCircle(Object parent, Point center, double radius) {
-		return new CircleImpl(parent, center, radius);
+	public Circle createCircle(Point center, double radius) {
+		return new CircleImpl(center, radius);
 	}
 	
-	public Capsule createCapsule(Object parent, Circle ac, Circle bc) {
-		return new CapsuleImpl(parent, ac, bc);
+	public Capsule createCapsule(Circle ac, Circle bc) {
+		return new CapsuleImpl(ac, bc);
 	}
 	
 	public Line createLine(Point p0, Point p1) {
@@ -26,8 +26,8 @@ public class ShapeEngineImpl extends ShapeEngine {
 		return new PolylineImpl(pts);
 	}
 
-	public OBB createOBB(Object parent, Point center, double angle, double xExtant, double yExtant) {
-		return new OBBImpl(parent, center, angle, xExtant, yExtant);
+	public OBB createOBB(Point center, double angle, double xExtant, double yExtant) {
+		return new OBBImpl(center, angle, xExtant, yExtant);
 	}
 
 	public Ellipse createEllipse(Point center, double x, double y) {

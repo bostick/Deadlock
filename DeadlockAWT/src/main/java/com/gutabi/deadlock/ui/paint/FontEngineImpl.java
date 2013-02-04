@@ -39,7 +39,7 @@ public class FontEngineImpl implements FontEngine {
 			
 			TextLayout layout = new TextLayout(text, ttfReal, frc);
 			Rectangle2D bounds = layout.getBounds();
-			aabb = new AABBImpl(null, bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight());
+			aabb = new AABBImpl(bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight());
 			
 		} catch (FontFormatException e) {
 			// TODO Auto-generated catch block

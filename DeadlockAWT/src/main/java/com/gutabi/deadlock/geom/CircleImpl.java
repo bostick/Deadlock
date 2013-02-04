@@ -10,8 +10,8 @@ public class CircleImpl extends Circle {
 	
 	private final Ellipse2D ellipse;
 	
-	public CircleImpl(Object parent, Point center, double radius) {
-		super(parent, center, radius);
+	public CircleImpl(Point center, double radius) {
+		super(center, radius);
 		
 		ellipse = new Ellipse2D.Double(center.x - radius, center.y - radius, 2*radius, 2*radius);
 	}

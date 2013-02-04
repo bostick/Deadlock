@@ -17,7 +17,7 @@ import com.gutabi.deadlock.ui.paint.RenderingContext;
 
 public class ControlPanel extends PanelBase {
 	
-	AABB previewAABB = APP.platform.createShapeEngine().createAABB(null, 5, 400, 100, 100);
+	AABB previewAABB = APP.platform.createShapeEngine().createAABB(5, 400, 100, 100);
 	double previewPixelsPerMeter;
 	
 	WorldScreen screen;
@@ -53,7 +53,7 @@ public class ControlPanel extends PanelBase {
 		
 		this.screen = screen;
 		
-		aabb = APP.platform.createShapeEngine().createAABB(null, aabb.x, aabb.y, APP.CONTROLPANEL_WIDTH, APP.CONTROLPANEL_HEIGHT);
+		aabb = APP.platform.createShapeEngine().createAABB(aabb.x, aabb.y, APP.CONTROLPANEL_WIDTH, APP.CONTROLPANEL_HEIGHT);
 		
 		Resource visitorFontFile = APP.platform.createResourceEngine().fontResource("visitor1");
 		
@@ -350,7 +350,7 @@ public class ControlPanel extends PanelBase {
 	}
 	
 	public void setLocation(double x, double y) {
-		aabb = APP.platform.createShapeEngine().createAABB(null, x, y, aabb.width, aabb.height);
+		aabb = APP.platform.createShapeEngine().createAABB(x, y, aabb.width, aabb.height);
 	}
 	
 	public void postDisplay() {
@@ -509,7 +509,7 @@ public class ControlPanel extends PanelBase {
 		
 		Point prevDim = worldToPreview(new Point(screen.worldViewport.width, screen.worldViewport.height));
 		
-		AABB prev = APP.platform.createShapeEngine().createAABB(null, prevLoc.x, prevLoc.y, prevDim.x, prevDim.y);
+		AABB prev = APP.platform.createShapeEngine().createAABB(prevLoc.x, prevLoc.y, prevDim.x, prevDim.y);
 		
 		ctxt.translate(
 				previewAABB.width/2 - (previewPixelsPerMeter * screen.world.quadrantMap.worldWidth / 2),

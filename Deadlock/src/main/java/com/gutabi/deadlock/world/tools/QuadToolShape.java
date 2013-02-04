@@ -36,7 +36,7 @@ public class QuadToolShape implements Shape {
 	public QuadToolShape(WorldScreen screen, Point start, Point c, Point end) {
 		
 		this.start = start;
-		startCircle = APP.platform.createShapeEngine().createCircle(null, start, Vertex.INIT_VERTEX_RADIUS);
+		startCircle = APP.platform.createShapeEngine().createCircle(start, Vertex.INIT_VERTEX_RADIUS);
 		this.end = end;
 		this.c = c;
 		
@@ -48,16 +48,16 @@ public class QuadToolShape implements Shape {
 		
 		List<Circle> cs = new ArrayList<Circle>();
 		for (Point p : skeleton) {
-			cs.add(APP.platform.createShapeEngine().createCircle(null, p, Vertex.INIT_VERTEX_RADIUS));
+			cs.add(APP.platform.createShapeEngine().createCircle(p, Vertex.INIT_VERTEX_RADIUS));
 		}
 		List<Capsule> caps = new ArrayList<Capsule>();
 		for (int i = 0; i < cs.size()-1; i++) {
 			Circle a = cs.get(i);
 			Circle b = cs.get(i+1);
-			caps.add(APP.platform.createShapeEngine().createCapsule(null, a, b));
+			caps.add(APP.platform.createShapeEngine().createCapsule(a, b));
 		}
 		
-		skeletonSeq = new CapsuleSequence(null, caps);
+		skeletonSeq = new CapsuleSequence(caps);
 		
 //		aabb = skeletonSeq.aabb;
 		

@@ -9,7 +9,8 @@ import com.gutabi.deadlock.world.graph.Vertex;
 public abstract class SweepEvent {
 	
 	public final SweepEventType type;
-	public final SweepableShape still;
+	public final Object stillParent;
+	public final Shape still;
 	
 	public final SweeperShape moving;
 	
@@ -22,8 +23,9 @@ public abstract class SweepEvent {
 	
 	private Vertex v;
 	
-	protected SweepEvent(SweepEventType type, SweepableShape still, CapsuleSequence moving, int index, double param, int offset) {
+	protected SweepEvent(SweepEventType type, Object stillParent, Shape still, CapsuleSequence moving, int index, double param, int offset) {
 		this.type = type;
+		this.stillParent = stillParent;
 		this.still = still;
 		this.moving = moving;
 		this.index = index+offset;

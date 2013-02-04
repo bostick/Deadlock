@@ -42,7 +42,7 @@ public abstract class Vertex extends Entity {
 		
 		r = INIT_VERTEX_RADIUS;
 		
-		shape = APP.platform.createShapeEngine().createCircle(this, p, r);
+		shape = APP.platform.createShapeEngine().createCircle(p, r);
 		
 	}
 	
@@ -100,7 +100,7 @@ public abstract class Vertex extends Entity {
 //		}
 		
 		r = INIT_VERTEX_RADIUS;
-		shape = APP.platform.createShapeEngine().createCircle(this, p, r);
+		shape = APP.platform.createShapeEngine().createCircle(p, r);
 		
 		for (Road e : roads) {
 			e.computeProperties();
@@ -172,7 +172,7 @@ public abstract class Vertex extends Entity {
 				break loop;
 			} else {
 				r = r + 0.1;
-				shape = APP.platform.createShapeEngine().createCircle(this, p, r);
+				shape = APP.platform.createShapeEngine().createCircle(p, r);
 			}
 			
 			for (Road e : roads) {

@@ -44,7 +44,7 @@ public class Geom {
 //		Point w1 = times(m, a.p1).plus(t);
 //		Point w2 = times(m, a.p2).plus(t);
 //		Point w3 = times(m, a.p3).plus(t);
-		return APP.platform.createShapeEngine().createOBB(null, t, angle, a.width/2, a.height/2);
+		return APP.platform.createShapeEngine().createOBB(t, angle, a.width/2, a.height/2);
 	}
 	
 	public static void rotationMatrix(double a, double[][] out) {

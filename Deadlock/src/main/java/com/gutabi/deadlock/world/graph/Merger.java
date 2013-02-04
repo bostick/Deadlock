@@ -6,7 +6,6 @@ import com.gutabi.deadlock.Entity;
 import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.geom.Line;
 import com.gutabi.deadlock.geom.Shape;
-import com.gutabi.deadlock.geom.SweepableShape;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.paint.Cap;
 import com.gutabi.deadlock.ui.paint.Color;
@@ -54,7 +53,7 @@ public class Merger extends Edge {
 //		Point p1 = new Point(ul.x + MERGER_WIDTH, ul.y);
 //		Point p2 = new Point(ul.x + MERGER_WIDTH, ul.y + MERGER_HEIGHT);
 //		Point p3 = new Point(ul.x, ul.y + MERGER_HEIGHT);
-		shape = APP.platform.createShapeEngine().createAABB(this, ul.x, ul.y, MERGER_WIDTH, MERGER_HEIGHT);
+		shape = APP.platform.createShapeEngine().createAABB(ul.x, ul.y, MERGER_WIDTH, MERGER_HEIGHT);
 		
 		top.m = this;
 		left.m = this;
@@ -168,7 +167,7 @@ public class Merger extends Edge {
 		}
 	}
 	
-	public SweepableShape getShape() {
+	public AABB getShape() {
 		return shape;
 	}
 	

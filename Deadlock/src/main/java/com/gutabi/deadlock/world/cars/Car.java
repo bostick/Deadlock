@@ -111,7 +111,7 @@ public abstract class Car extends Entity {
 //		Point p1 = new Point(CAR_LENGTH / 2, -CAR_WIDTH / 2);
 //		Point p2 = new Point(CAR_LENGTH / 2, CAR_WIDTH / 2);
 //		Point p3 = new Point(-CAR_LENGTH / 2, CAR_WIDTH / 2);
-		localAABB = APP.platform.createShapeEngine().createAABB(this, -CAR_LENGTH / 2, -CAR_WIDTH / 2, CAR_LENGTH, CAR_WIDTH);
+		localAABB = APP.platform.createShapeEngine().createAABB(-CAR_LENGTH / 2, -CAR_WIDTH / 2, CAR_LENGTH, CAR_WIDTH);
 		
 		CAR_LOCALX = -CAR_LENGTH / 2;
 		CAR_LOCALY = -CAR_WIDTH / 2;
@@ -561,12 +561,12 @@ public abstract class Car extends Entity {
 			
 			if (driver.overallPos != null) {
 				ctxt.setColor(Color.DARKGREEN);
-				APP.platform.createShapeEngine().createCircle(null, driver.overallPos.p, 0.2).paint(ctxt);
+				APP.platform.createShapeEngine().createCircle(driver.overallPos.p, 0.2).paint(ctxt);
 			}
 			
 			if (driver.goalPoint != null) {
 				ctxt.setColor(Color.GREEN);
-				APP.platform.createShapeEngine().createCircle(null, driver.goalPoint, 0.2).paint(ctxt);
+				APP.platform.createShapeEngine().createCircle(driver.goalPoint, 0.2).paint(ctxt);
 			}
 			
 			ctxt.setColor(Color.BLACK);

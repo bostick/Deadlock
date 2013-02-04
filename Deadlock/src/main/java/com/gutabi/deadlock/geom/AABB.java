@@ -6,7 +6,7 @@ import com.gutabi.deadlock.math.DMath;
 import com.gutabi.deadlock.math.Dim;
 import com.gutabi.deadlock.math.Point;
 
-public abstract class AABB extends SweepableShape {
+public abstract class AABB implements Shape {
 	
 	public final Point ul;
 	public final Dim dim;
@@ -40,8 +40,8 @@ public abstract class AABB extends SweepableShape {
 	Line p2p3Line;
 	Line p3p0Line;
 	
-	protected AABB(Object parent, double x, double y, double width, double height) {
-		super(parent);
+	protected AABB(double x, double y, double width, double height) {
+		super();
 		this.x = x;
 		this.y = y;
 		this.width = width;
@@ -233,15 +233,15 @@ public abstract class AABB extends SweepableShape {
 			return b;
 		}
 		
-		return APP.platform.createShapeEngine().createAABB(null, ulX, ulY, brX-ulX, brY-ulY);
+		return APP.platform.createShapeEngine().createAABB(ulX, ulY, brX-ulX, brY-ulY);
 	}
 	
 	public AABB plus(Point p) {
-		return APP.platform.createShapeEngine().createAABB(parent, x + p.x, y + p.y, width, height);
+		return APP.platform.createShapeEngine().createAABB(x + p.x, y + p.y, width, height);
 	}
 	
 	public AABB minus(Point p) {
-		return APP.platform.createShapeEngine().createAABB(parent, x - p.x, y - p.y, width, height);
+		return APP.platform.createShapeEngine().createAABB(x - p.x, y - p.y, width, height);
 	}
 	
 }

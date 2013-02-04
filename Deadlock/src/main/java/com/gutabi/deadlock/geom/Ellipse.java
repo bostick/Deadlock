@@ -22,7 +22,7 @@ public abstract class Ellipse implements Shape {
 		this.xRadius = xRadius;
 		this.yRadius = yRadius;
 		
-		aabb = APP.platform.createShapeEngine().createAABB(null, center.x - xRadius, center.y - yRadius, 2*xRadius, 2*yRadius);
+		aabb = APP.platform.createShapeEngine().createAABB(center.x - xRadius, center.y - yRadius, 2*xRadius, 2*yRadius);
 	}
 	
 	public List<Point> skeleton() {

@@ -1,7 +1,5 @@
 
-Quad -> OBB
-
-remove parent from shapes
+add Sheet objects for sheet files, access different sprites etc
 
 work on sweeping shapes
 allow quad as a sweeper

@@ -160,7 +160,7 @@ public class RushHourBoard extends Entity {
 		for (int i = 0; i < rowCount; i++) {
 			jloop:
 			for (int j = 0; j < colCount; j++) {
-				AABB n = APP.platform.createShapeEngine().createAABB(this, aabb.ul.x + j * RushHourStud.SIZE, aabb.ul.y + i * RushHourStud.SIZE, RushHourStud.SIZE, RushHourStud.SIZE);
+				AABB n = APP.platform.createShapeEngine().createAABB(aabb.ul.x + j * RushHourStud.SIZE, aabb.ul.y + i * RushHourStud.SIZE, RushHourStud.SIZE, RushHourStud.SIZE);
 				
 				for (RushHourStud ss : studs) {
 					if (ss.aabb.equals(n)) {

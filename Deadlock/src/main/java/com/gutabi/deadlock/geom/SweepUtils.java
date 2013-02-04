@@ -8,7 +8,6 @@ import java.util.List;
 
 import com.gutabi.deadlock.math.DMath;
 import com.gutabi.deadlock.math.Point;
-import com.gutabi.deadlock.world.graph.Edge;
 import com.gutabi.deadlock.world.graph.Graph;
 import com.gutabi.deadlock.world.graph.Merger;
 import com.gutabi.deadlock.world.graph.Road;
@@ -16,19 +15,19 @@ import com.gutabi.deadlock.world.graph.Vertex;
 
 public class SweepUtils {
 	
-	public static List<SweepEvent> sweepStartCSoverA(AABB still, CapsuleSequence moving, int offset) {
+	public static List<SweepEvent> sweepStartCSoverA(Object stillParent, AABB still, CapsuleSequence moving, int offset) {
 		
 		List<SweepEvent> events = new ArrayList<SweepEvent>();
 		
 		if (ShapeUtils.intersectAC(still, moving.getStart())) {
-			events.add(new CapsuleSequenceSweepEvent(SweepEventType.enter(still), still, moving, 0, 0.0, offset));
+			events.add(new CapsuleSequenceSweepEvent(SweepEventType.enter(stillParent), stillParent, still, moving, 0, 0.0, offset));
 		}
 		
 		return events;
 		
 	}
 	
-	public static List<SweepEvent> sweepCSoverA(AABB still, CapsuleSequence moving, int index, int offset) {
+	public static List<SweepEvent> sweepCSoverA(Object stillParent, AABB still, CapsuleSequence moving, int index, int offset) {
 		
 		List<SweepEvent> events = new ArrayList<SweepEvent>();
 		
@@ -84,9 +83,9 @@ public class SweepUtils {
 				
 				assert DMath.greaterThanEquals(param, 0.0) && DMath.lessThanEquals(param, 1.0);
 				if (outside) {
-					events.add(new CapsuleSequenceSweepEvent(SweepEventType.enter(still.parent), still, moving, index, param, offset));
+					events.add(new CapsuleSequenceSweepEvent(SweepEventType.enter(stillParent), stillParent, still, moving, index, param, offset));
 				} else {
-					events.add(new CapsuleSequenceSweepEvent(SweepEventType.exit(still.parent), still, moving, index, param, offset));
+					events.add(new CapsuleSequenceSweepEvent(SweepEventType.exit(stillParent), stillParent, still, moving, index, param, offset));
 				}
 				outside = !outside;
 				
@@ -98,18 +97,18 @@ public class SweepUtils {
 		
 	}
 	
-	public static List<SweepEvent> sweepStartCSoverCap(Capsule still, CapsuleSequence moving, int offset) {
+	public static List<SweepEvent> sweepStartCSoverCap(Object stillParent, Capsule still, CapsuleSequence moving, int offset) {
 		
 		List<SweepEvent> events = new ArrayList<SweepEvent>();
 		
 		if (ShapeUtils.intersect(still, moving.getStart())) {
-			events.add(new CapsuleSequenceSweepEvent(SweepEventType.enter(still.parent), still, moving, 0, 0.0, offset));
+			events.add(new CapsuleSequenceSweepEvent(SweepEventType.enter(stillParent), stillParent, still, moving, 0, 0.0, offset));
 		}
 		
 		return events;
 	}
 	
-	public static List<SweepEvent> sweepCSoverCap(Capsule still, CapsuleSequence moving, int index, int offset) {
+	public static List<SweepEvent> sweepCSoverCap(Object stillParent, Capsule still, CapsuleSequence moving, int index, int offset) {
 		
 		List<SweepEvent> events = new ArrayList<SweepEvent>();
 		
@@ -153,7 +152,7 @@ public class SweepUtils {
 				if (DMath.lessThanEquals(abParam, 0.0)) {
 					
 					ShapeEngine e = APP.platform.createShapeEngine();
-					assert ShapeUtils.intersectCC(still.ac, e.createCircle(null, p, cap.r));
+					assert ShapeUtils.intersectCC(still.ac, e.createCircle(p, cap.r));
 					
 					boolean present = false;
 					for (int j = 0; j < paramCount; j++) {
@@ -229,7 +228,7 @@ public class SweepUtils {
 				if (DMath.greaterThanEquals(abParam, 1.0)) {
 					
 					ShapeEngine e = APP.platform.createShapeEngine();
-					assert ShapeUtils.intersectCC(still.bc, e.createCircle(null, p, cap.r));
+					assert ShapeUtils.intersectCC(still.bc, e.createCircle(p, cap.r));
 					
 					boolean present = false;
 					for (int j = 0; j < paramCount; j++) {
@@ -296,9 +295,9 @@ public class SweepUtils {
 			assert DMath.greaterThanEquals(param, 0.0) && DMath.lessThanEquals(param, 1.0);
 			
 			if (outside) {
-				events.add(new CapsuleSequenceSweepEvent(SweepEventType.enter(still.parent), still, moving, index, param, offset));
+				events.add(new CapsuleSequenceSweepEvent(SweepEventType.enter(stillParent), stillParent, still, moving, index, param, offset));
 			} else {
-				events.add(new CapsuleSequenceSweepEvent(SweepEventType.exit(still.parent), still, moving, index, param, offset));
+				events.add(new CapsuleSequenceSweepEvent(SweepEventType.exit(stillParent), stillParent, still, moving, index, param, offset));
 			}
 			outside = !outside;
 		}
@@ -306,25 +305,25 @@ public class SweepUtils {
 		return events;
 	}
 	
-	public static List<SweepEvent> sweepStartCSoverCS(CapsuleSequence still, CapsuleSequence moving, int offset) {
+	public static List<SweepEvent> sweepStartCSoverCS(Object stillParent, CapsuleSequence still, CapsuleSequence moving, int offset) {
 		
 		List<SweepEvent> events = new ArrayList<SweepEvent>();
 		
 		for (Capsule c : still.caps) {
-			events.addAll(SweepUtils.sweepStartCSoverCap(c, moving, offset));
+			events.addAll(SweepUtils.sweepStartCSoverCap(stillParent, c, moving, offset));
 		}
 		
 		return events;
 	}
 	
-	public static List<SweepEvent> sweepCSoverCS(CapsuleSequence still, CapsuleSequence moving, int index, int offset) {
+	public static List<SweepEvent> sweepCSoverCS(Object stillParent, CapsuleSequence still, CapsuleSequence moving, int index, int offset) {
 		
 		List<SweepEvent> events = new ArrayList<SweepEvent>();
 		
 		for (int i = 0; i < still.caps.size(); i++) {
 			Capsule c = still.caps.get(i);
 			
-			List<SweepEvent> capsuleEvents = SweepUtils.sweepCSoverCap(c, moving, index, offset);
+			List<SweepEvent> capsuleEvents = SweepUtils.sweepCSoverCap(stillParent, c, moving, index, offset);
 			
 			for (SweepEvent e : capsuleEvents) {
 				if (DMath.lessThan(e.param, 1.0)) {
@@ -349,18 +348,18 @@ public class SweepUtils {
 		return events;
 	}
 	
-	public static List<SweepEvent> sweepStartCSoverC(Circle still, CapsuleSequence moving, int offset) {
+	public static List<SweepEvent> sweepStartCSoverC(Object stillParent, Circle still, CapsuleSequence moving, int offset) {
 		
 		List<SweepEvent> events = new ArrayList<SweepEvent>();
 		
 		if (ShapeUtils.intersectCC(still, moving.getStart())) {
-			events.add(new CapsuleSequenceSweepEvent(SweepEventType.enter(still.parent), still, moving, 0, 0.0, offset));
+			events.add(new CapsuleSequenceSweepEvent(SweepEventType.enter(stillParent), stillParent, still, moving, 0, 0.0, offset));
 		}
 		
 		return events;
 	}
 	
-	public static List<SweepEvent> sweepCSoverC(Circle still, CapsuleSequence moving, int index, int offset) {
+	public static List<SweepEvent> sweepCSoverC(Object stillParent, Circle still, CapsuleSequence moving, int index, int offset) {
 		
 		List<SweepEvent> events = new ArrayList<SweepEvent>();
 		
@@ -386,9 +385,9 @@ public class SweepUtils {
 				
 				assert DMath.greaterThan(param, 0.0) && DMath.lessThanEquals(param, 1.0);
 				if (outside) {
-					events.add(new CapsuleSequenceSweepEvent(SweepEventType.enter(still.parent), still, moving, index, param, offset));
+					events.add(new CapsuleSequenceSweepEvent(SweepEventType.enter(stillParent), stillParent, still, moving, index, param, offset));
 				} else {
-					events.add(new CapsuleSequenceSweepEvent(SweepEventType.exit(still.parent), still, moving, index, param, offset));
+					events.add(new CapsuleSequenceSweepEvent(SweepEventType.exit(stillParent), stillParent, still, moving, index, param, offset));
 				}
 				outside = !outside;
 				
@@ -399,18 +398,18 @@ public class SweepUtils {
 		return events;
 	}
 	
-	public static List<SweepEvent> sweepStartCSoverO(OBB still, CapsuleSequence moving, int offset) {
+	public static List<SweepEvent> sweepStartCSoverO(Object stillParent, OBB still, CapsuleSequence moving, int offset) {
 		
 		List<SweepEvent> events = new ArrayList<SweepEvent>();
 		
 		if (ShapeUtils.intersectCO(moving.getStart(), still)) {
-			events.add(new CapsuleSequenceSweepEvent(SweepEventType.enter(still.parent), still, moving, 0, 0.0, offset));
+			events.add(new CapsuleSequenceSweepEvent(SweepEventType.enter(stillParent), stillParent, still, moving, 0, 0.0, offset));
 		}
 		
 		return events;
 	}
 	
-	public static List<SweepEvent> sweepCSoverO(OBB still, CapsuleSequence moving, int index, int offset) {
+	public static List<SweepEvent> sweepCSoverO(Object stillParent, OBB still, CapsuleSequence moving, int index, int offset) {
 		
 		List<SweepEvent> events = new ArrayList<SweepEvent>();
 		
@@ -466,9 +465,9 @@ public class SweepUtils {
 				
 				assert DMath.greaterThanEquals(param, 0.0) && DMath.lessThanEquals(param, 1.0);
 				if (outside) {
-					events.add(new CapsuleSequenceSweepEvent(SweepEventType.enter(still.parent), still, moving, index, param, offset));
+					events.add(new CapsuleSequenceSweepEvent(SweepEventType.enter(stillParent), stillParent, still, moving, index, param, offset));
 				} else {
-					events.add(new CapsuleSequenceSweepEvent(SweepEventType.exit(still.parent), still, moving, index, param, offset));
+					events.add(new CapsuleSequenceSweepEvent(SweepEventType.exit(stillParent), stillParent, still, moving, index, param, offset));
 				}
 				outside = !outside;
 				
@@ -484,16 +483,13 @@ public class SweepUtils {
 		List<SweepEvent> events = new ArrayList<SweepEvent>();
 		
 		for (Vertex v : still.vertices) {
-			events.addAll(SweepUtils.sweepStartCSoverC(v.getShape(), moving, offset));
+			events.addAll(SweepUtils.sweepStartCSoverC(v, v.getShape(), moving, offset));
 		}
-		for (Edge e : still.edges) {
-			if (e instanceof Road) {
-				events.addAll(SweepUtils.sweepStartCSoverCS((CapsuleSequence)e.getShape(), moving, offset));
-			} else if (e instanceof Merger) {
-				events.addAll(SweepUtils.sweepStartCSoverA((AABB)e.getShape(), moving, offset));
-			} else {
-				assert false;
-			}
+		for (Road r : still.roads) {
+			events.addAll(SweepUtils.sweepStartCSoverCS(r, r.getShape(), moving, offset));
+		}
+		for (Merger m : still.mergers) {
+			events.addAll(SweepUtils.sweepStartCSoverA(m, m.getShape(), moving, offset));
 		}
 		
 		return events;
@@ -504,16 +500,13 @@ public class SweepUtils {
 		List<SweepEvent> events = new ArrayList<SweepEvent>();
 		
 		for (Vertex v : still.vertices) {
-			events.addAll(SweepUtils.sweepCSoverC(v.getShape(), moving, index, offset));
+			events.addAll(SweepUtils.sweepCSoverC(v, v.getShape(), moving, index, offset));
 		}
-		for (Edge e : still.edges) {
-			if (e instanceof Road) {
-				events.addAll(SweepUtils.sweepCSoverCS((CapsuleSequence)e.getShape(), moving, index, offset));
-			} else if (e instanceof Merger) {
-				events.addAll(SweepUtils.sweepCSoverA((AABB)e.getShape(), moving, index, offset));
-			} else {
-				assert false;
-			}
+		for (Road r : still.roads) {
+			events.addAll(SweepUtils.sweepCSoverCS(r, r.getShape(), moving, index, offset));
+		}
+		for (Merger m : still.mergers) {
+			events.addAll(SweepUtils.sweepCSoverA(m, m.getShape(), moving, index, offset));
 		}
 		
 		return events;
@@ -568,7 +561,7 @@ public class SweepUtils {
 		 */
 		
 		double[] params = new double[2];
-		int n = sweepCircleOverCircle(APP.platform.createShapeEngine().createCircle(null, a, 0.0), moving, params);
+		int n = sweepCircleOverCircle(APP.platform.createShapeEngine().createCircle(a, 0.0), moving, params);
 		
 		double adjustedCDParam;
 //		if (n == 2) {
@@ -608,7 +601,7 @@ public class SweepUtils {
 		 * test b
 		 */
 		
-		n = sweepCircleOverCircle(APP.platform.createShapeEngine().createCircle(null, b, 0.0), moving, params);
+		n = sweepCircleOverCircle(APP.platform.createShapeEngine().createCircle(b, 0.0), moving, params);
 		
 //		if (n == 2) {
 //			/*

@@ -6,17 +6,17 @@ import com.gutabi.deadlock.math.Point;
 
 public abstract class ShapeEngine {
 	
-	public abstract AABB createAABB(Object parent, double x, double y, double width, double height);
+	public abstract AABB createAABB(double x, double y, double width, double height);
 	
-	public abstract Circle createCircle(Object parent, Point center, double radius);
+	public abstract Circle createCircle(Point center, double radius);
 	
-	public abstract Capsule createCapsule(Object parent, Circle ac, Circle bc);
+	public abstract Capsule createCapsule(Circle ac, Circle bc);
 	
 	public abstract Line createLine(Point p0, Point p1);
 	
 	public abstract Polyline createPolyline(List<Point> pts);
 	
-	public abstract OBB createOBB(Object parent, Point center, double a, double xExtant, double yExtant);
+	public abstract OBB createOBB(Point center, double a, double xExtant, double yExtant);
 	
 	public abstract Ellipse createEllipse(Point center, double x, double y);
 	
