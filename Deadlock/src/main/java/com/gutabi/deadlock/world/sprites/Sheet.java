@@ -22,7 +22,7 @@ public class Sheet {
 		CAR5 { public int xStart() { return 0; } public int yStart() { return 192; } public int xEnd() { return 0+96; } public int yEnd() { return 192+32; } },
 		CAR6 { public int xStart() { return 0; } public int yStart() { return 224; } public int xEnd() { return 0+96; } public int yEnd() { return 224+32; } },
 		CAR7 { public int xStart() { return 0; } public int yStart() { return 256; } public int xEnd() { return 0+64; } public int yEnd() { return 256+32; } },
-		CAR8 { public int xStart() { return 0; } public int yStart() { return 288; } public int xEnd() { return 0+288; } public int yEnd() { return 288+32; } },
+		CAR8 { public int xStart() { return 0; } public int yStart() { return 288; } public int xEnd() { return 0+96; } public int yEnd() { return 288+32; } },
 		CAR9 { public int xStart() { return 0; } public int yStart() { return 320; } public int xEnd() { return 0+64; } public int yEnd() { return 320+32; } },
 		CAR10 { public int xStart() { return 0; } public int yStart() { return 352; } public int xEnd() { return 0+96; } public int yEnd() { return 352+32; } },
 		CAR11 { public int xStart() { return 96; } public int yStart() { return 0; } public int xEnd() { return 96+32; } public int yEnd() { return 0+32; } },

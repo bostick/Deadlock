@@ -2,16 +2,10 @@ package com.gutabi.deadlock.world.tools;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import com.gutabi.deadlock.geom.Geom;
 import com.gutabi.deadlock.geom.OBB;
 import com.gutabi.deadlock.geom.Shape;
-import com.gutabi.deadlock.geom.SweepEvent;
-import com.gutabi.deadlock.geom.SweepEventType;
-import com.gutabi.deadlock.geom.SweepUtils;
+import com.gutabi.deadlock.geom.ShapeUtils;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.menu.MainMenu;
 import com.gutabi.deadlock.ui.InputEvent;
@@ -139,32 +133,27 @@ public class CarTool extends ToolBase {
 					
 //					double[][] testTransArr = new double[2][2];
 //					Geom.rotationMatrix(carAngle, testTransArr);
-//					OBB testOBB = Geom.localToWorld(car.localOBB, testTransArr, test);
+					OBB testOBB = Geom.localToWorld(car.localAABB, carAngle, test);
 					
-					List<SweepEvent> events = new ArrayList<SweepEvent>();
-					events.addAll(SweepUtils.sweepStartOBBoverBoard(b, car.localAABB, carAngle, car.p));
-					events.addAll(SweepUtils.sweepOBBoverBoard(b, car.localAABB, carAngle, car.p, test));
-					
-					for (Car c : screen.world.carMap.cars) {
-						if (c == car) {
-							continue;
-						}
-						events.addAll(SweepUtils.sweepStartOBBoverOBB(c.shape, car.localAABB, carAngle, car.p));
-						events.addAll(SweepUtils.sweepOBBoverOBB(c.shape, car.localAABB, carAngle, car.p, test));
-					}
-					
-					if (!events.isEmpty()) {
-						
-						Collections.sort(events, SweepEvent.COMPARATOR);
-						
-						SweepEvent e = events.get(0);
-						
-						assert e.type == SweepEventType.EXITBOARD || e.type == SweepEventType.ENTERCAR;
-						
-						carP = e.p;
-						
+					boolean collide = false;
+					if (!b.contains(testOBB)) {
+						collide = true;
 					} else {
+						for (Car c : screen.world.carMap.cars) {
+							if (c == car) {
+								continue;
+							}
+							if (ShapeUtils.intersectAreaOO(testOBB, c.shape)) {
+								collide = true;
+								break;
+							}
+						}
+					}
+					if (!collide) {
 						carP = test;
+					} else {
+//						carP = car.toolOrigP;
+						carP = car.p;
 					}
 					
 				} else {

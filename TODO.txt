@@ -5,8 +5,16 @@ get[straight edge from vertex] working
 
 get[drag start on vertex] working
 
-how to handle starting on multiple vertices?
-get [start stroke on 2 vertices] working
+how to handle multiple vertices?
+get [start stroke on 2 vertices, start stroke on 3 or more vertices] working
+get [end stroke on 2 vertices, end stroke on 3 or more vertices] working
+get [move stroke through 2 vertices, move stroke through 3 or more vertices] working
+
+handle simultaneous events in general?
+
+
+clean up Stroke any more for modularization and refactoring?
+
 
 
 

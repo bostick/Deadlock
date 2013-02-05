@@ -150,23 +150,18 @@ public class Stroke {
 			if (e.type == null) {
 				
 				Entity hit = world.graph.pureGraphIntersectCircle(e.circle);
-//				assert hit == null;
 				
 				if (hit == null) {
-//					logger.debug("create");
 					Intersection i0 = new Intersection(world, e.p);
 					Set<Vertex> res = world.addIntersection(i0);
 					affected.addAll(res);
 				}
-				
-//				e.setVertex(v);
 				
 			} else if (e.type == SweepEventType.ENTERROADCAPSULE || e.type == SweepEventType.EXITROADCAPSULE) {
 				
 				Entity hit = world.graph.pureGraphIntersectCircle(e.circle);
 				
 				if (hit instanceof Vertex) {
-//					e.setVertex((Vertex)hit);
 					continue;
 				}
 				
@@ -232,21 +227,7 @@ public class Stroke {
 						
 						if (skeletonIntersection != null) {
 							
-							/*
-							 * FIXME: see stroke section
-							 */
-//							if (DMath.lessThanEquals(Point.distance(skeletonIntersection.p, e.p), Stroke.STROKE_RADIUS + Stroke.STROKE_RADIUS + 0.2)) {
-//								
-//								pos = skeletonIntersection;
-//								
-//								logger.debug("found intersection");
-//								
-//								break;
-//							}
-							
 							pos = skeletonIntersection;
-							
-//							logger.debug("found intersection");
 							
 							break;
 							
@@ -266,7 +247,6 @@ public class Stroke {
 				}
 				
 				if (pos == null) {
-//					logger.debug("pos was null");
 					pos = world.graph.findClosestRoadPosition(e.p, e.circle.radius);
 				}
 				
@@ -349,32 +329,7 @@ public class Stroke {
 					
 					if (skeletonIntersection != null) {
 						
-						/*
-						 * FIXME:
-						 * 
-						 * the 0.3 is a hack, because an intersection won't always be touching the event
-						 * 
-						 * here:
-						 * 
-						 * Graphics[{capsule[#, r] & /@ 
-   Partition[{{5.5, 5.5}, {10, 10}, {10, 2}, {6.5, 6.5}, {2, 10}}, 2, 
-    1], Blue, Point[{6.5, 6.5}], Point[{7.375, 5.375}], 
-  Circle[{7.375, 5.375}, r]}]
-  
-  							figure out exactly what to do here
-						 */
-//						double dist = Point.distance(skeletonIntersection.p, e.p);
-//						if (DMath.lessThanEquals(dist, Stroke.STROKE_RADIUS + Stroke.STROKE_RADIUS + 0.2)) {
-//							
-//							pos = skeletonIntersection;
-//							
-//							logger.debug("found intersection");
-//							
-//							break;
-//						}
 						pos = skeletonIntersection;
-						
-//						logger.debug("found intersection");
 						
 						break;
 					}
@@ -391,7 +346,6 @@ public class Stroke {
 				}
 				
 				if (pos == null) {
-//					logger.debug("pos was null");
 					
 					pos = new CapsuleSequencePosition(seq, e.index, e.param);
 					
@@ -402,8 +356,6 @@ public class Stroke {
 				Entity hit = world.graph.pureGraphIntersectCircle(APP.platform.createShapeEngine().createCircle(pos.p, e.circle.radius));
 				
 				if (hit == null) {
-					
-//					logger.debug("create");
 					Intersection i0 = new Intersection(world, pos.p);
 					Set<Vertex> res = world.addIntersection(i0);
 					affected.addAll(res);
@@ -521,40 +473,28 @@ public class Stroke {
 		Collections.sort(startEvents, SweepEvent.COMPARATOR);
 		
 		for (SweepEvent e : startEvents) {
-			boolean keep = false;
 			switch (e.type) {
 			case ENTERROADCAPSULE:
 				roadCapsuleCount++;
-				if (roadCapsuleCount == 1) {
-					keep = true;
-				}
 				break;
 			case ENTERVERTEX:
 				vertexCount++;
-				if (vertexCount == 1) {
-					keep = true;
-				}
 				break;
 			case ENTERMERGER:
 				mergerCount++;
-				if (mergerCount == 1) {
-					keep = true;
-				}
 				break;
 			default:
 				assert false;
 				break;
 			}
-			if (keep) {
-				vertexEvents.add(e);
-			}
+			vertexEvents.add(e);
 		}
 		
 		if ((vertexCount + roadCapsuleCount + mergerCount + strokeCapsuleCount) == 0) {
 			vertexEvents.add(new CapsuleSequenceSweepEvent(null, null, null, seq, 0, 0.0, 0));
 		}
 		
-//		List<Capsule> strokeEnteredCapsules = new ArrayList<Capsule>();
+		List<Capsule> selfEnteredCaps = new ArrayList<Capsule>();
 		
 		for (int i = 0; i < seq.capsuleCount(); i++) {
 			
@@ -572,74 +512,45 @@ public class Stroke {
 			}
 			
 			if (sweepSelf) {
-				
-				events.addAll(selfEvents(i));
-				
+				events.addAll(selfEvents(i, selfEnteredCaps));
 			}
 			
 			Collections.sort(events, SweepEvent.COMPARATOR);
 			
 			for (SweepEvent e : events) {
-				boolean keep = false;
 				switch (e.type) {
 				case ENTERVERTEX:
 					vertexCount++;
-					if (vertexCount == 1) {
-						keep = true;
-					}
 					break;
 				case EXITVERTEX:
 					vertexCount--;
 					assert vertexCount >= 0;
-					if (vertexCount == 0) {
-						keep = true;
-					}
 					break;
 				case ENTERROADCAPSULE:
 					roadCapsuleCount++;
-					if (roadCapsuleCount == 1) {
-						keep = true;
-					}
 					break;
 				case EXITROADCAPSULE:
 					roadCapsuleCount--;
 					assert roadCapsuleCount >= 0;
-					if (roadCapsuleCount == 0) {
-						keep = true;
-					}
 					break;
 				case ENTERMERGER:
 					mergerCount++;
-					if (mergerCount == 1) {
-						keep = true;
-					}
 					break;
 				case EXITMERGER:
 					mergerCount--;
 					assert mergerCount >= 0;
-					if (mergerCount == 0) {
-						keep = true;
-					}
 					break;
 				case ENTERSTROKE:
 					strokeCapsuleCount++;
-					if (strokeCapsuleCount == 1) {
-						keep = true;
-					}
 					break;
 				case EXITSTROKE:
 					strokeCapsuleCount--;
 					assert strokeCapsuleCount >= 0;
-					if (strokeCapsuleCount == 0) {
-						keep = true;
-					}
 					break;
 				default:
 					break;
 				}
-				if (keep) {
-					vertexEvents.add(e);
-				}
+				vertexEvents.add(e);
 			}
 		}
 		
@@ -730,7 +641,7 @@ public class Stroke {
 		return adj;
 	} 
 	
-	private List<SweepEvent> selfEvents(int i) {
+	private List<SweepEvent> selfEvents(int i, List<Capsule> entered) {
 			
 		CapsuleSequence moving = seq.capseq(i);
 		CapsuleSequence still = seq.subsequence(i);
@@ -751,6 +662,7 @@ public class Stroke {
 			switch (e.type) {
 			case ENTERSTROKE:
 				eventCapsule = ((Capsule)e.still);
+				entered.add(eventCapsule);
 				toKeep.add(e);
 				break;
 			case EXITSTROKE:
@@ -758,8 +670,9 @@ public class Stroke {
 				/*
 				 * the moving CS (really it is only 1 capsule) may be overlapping several previous capsules when it starts
 				 * do not count exiting these as events
+				 * unless the eventcapsule really was entered earlier   
 				 */
-				if (!overlappingAtStart.contains(eventCapsule)) {
+				if (entered.contains(eventCapsule) || !overlappingAtStart.contains(eventCapsule)) {
 					toKeep.add(e);
 				}
 				break;

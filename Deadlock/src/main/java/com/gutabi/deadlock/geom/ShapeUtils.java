@@ -108,7 +108,7 @@ public class ShapeUtils {
 		if (intersectAC(a0, c1.bc)) {
 			return true;		
 		}
-		if (intersectAO(a0, c1.middle)) {
+		if (c1.middle != null && intersectAO(a0, c1.middle)) {
 			return true;
 		}
 		return false;
@@ -209,7 +209,7 @@ public class ShapeUtils {
 		if (intersectCapC(c1, c0.bc)) {
 			return true;		
 		}
-		if (intersectCapO(c1, c0.middle)) {
+		if (c0.middle != null && intersectCapO(c1, c0.middle)) {
 			return true;
 		}
 		return false;
@@ -227,7 +227,7 @@ public class ShapeUtils {
 		if (intersectCO(c0.bc, q1)) {
 			return true;		
 		}
-		if (intersectOO(c0.middle, q1)) {
+		if (c0.middle != null && intersectOO(c0.middle, q1)) {
 			return true;
 		}
 		return false;
