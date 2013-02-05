@@ -8,10 +8,6 @@ import java.util.List;
 
 import com.gutabi.deadlock.math.DMath;
 import com.gutabi.deadlock.math.Point;
-import com.gutabi.deadlock.world.graph.Graph;
-import com.gutabi.deadlock.world.graph.Merger;
-import com.gutabi.deadlock.world.graph.Road;
-import com.gutabi.deadlock.world.graph.Vertex;
 
 public class SweepUtils {
 	
@@ -478,39 +474,39 @@ public class SweepUtils {
 		return events;
 	}
 	
-	public static List<SweepEvent> sweepStartCSoverG(Graph still, CapsuleSequence moving, int offset) {
-		
-		List<SweepEvent> events = new ArrayList<SweepEvent>();
-		
-		for (Vertex v : still.vertices) {
-			events.addAll(SweepUtils.sweepStartCSoverC(v, v.getShape(), moving, offset));
-		}
-		for (Road r : still.roads) {
-			events.addAll(SweepUtils.sweepStartCSoverCS(r, r.getShape(), moving, offset));
-		}
-		for (Merger m : still.mergers) {
-			events.addAll(SweepUtils.sweepStartCSoverA(m, m.getShape(), moving, offset));
-		}
-		
-		return events;
-	}
-	
-	public static List<SweepEvent> sweepCSoverG(Graph still, CapsuleSequence moving, int index, int offset) {
-		
-		List<SweepEvent> events = new ArrayList<SweepEvent>();
-		
-		for (Vertex v : still.vertices) {
-			events.addAll(SweepUtils.sweepCSoverC(v, v.getShape(), moving, index, offset));
-		}
-		for (Road r : still.roads) {
-			events.addAll(SweepUtils.sweepCSoverCS(r, r.getShape(), moving, index, offset));
-		}
-		for (Merger m : still.mergers) {
-			events.addAll(SweepUtils.sweepCSoverA(m, m.getShape(), moving, index, offset));
-		}
-		
-		return events;
-	}
+//	public static List<SweepEvent> sweepStartCSoverG(Graph still, CapsuleSequence moving, int offset) {
+//		
+//		List<SweepEvent> events = new ArrayList<SweepEvent>();
+//		
+//		for (Vertex v : still.vertices) {
+//			events.addAll(SweepUtils.sweepStartCSoverC(v, v.getShape(), moving, offset));
+//		}
+//		for (Road r : still.roads) {
+//			events.addAll(SweepUtils.sweepStartCSoverCS(r, r.getShape(), moving, offset));
+//		}
+//		for (Merger m : still.mergers) {
+//			events.addAll(SweepUtils.sweepStartCSoverA(m, m.getShape(), moving, offset));
+//		}
+//		
+//		return events;
+//	}
+//	
+//	public static List<SweepEvent> sweepCSoverG(Graph still, CapsuleSequence moving, int index, int offset) {
+//		
+//		List<SweepEvent> events = new ArrayList<SweepEvent>();
+//		
+//		for (Vertex v : still.vertices) {
+//			events.addAll(SweepUtils.sweepCSoverC(v, v.getShape(), moving, index, offset));
+//		}
+//		for (Road r : still.roads) {
+//			events.addAll(SweepUtils.sweepCSoverCS(r, r.getShape(), moving, index, offset));
+//		}
+//		for (Merger m : still.mergers) {
+//			events.addAll(SweepUtils.sweepCSoverA(m, m.getShape(), moving, index, offset));
+//		}
+//		
+//		return events;
+//	}
 	
 	
 	/**

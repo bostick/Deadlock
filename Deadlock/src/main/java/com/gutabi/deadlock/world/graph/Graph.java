@@ -1415,7 +1415,7 @@ public class Graph {
 							Capsule fs = f.getCapsule(j);
 							
 							if (ShapeUtils.intersect(es, fs)) {
-								assert false;
+								assert false : "fix me";
 							}
 						}
 					}

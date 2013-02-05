@@ -31,7 +31,11 @@ public class CapsuleSequence implements Shape, SweeperShape, CompoundShape {
 			assert DMath.equals(a.r, b.r);
 		}
 		
-		radius = caps.get(0).r;
+		if (!caps.isEmpty()) {
+			radius = caps.get(0).r;
+		} else {
+			radius = 0.0;
+		}
 		
 		AABB aabbTmp = null;
 		for (Capsule c : caps) {

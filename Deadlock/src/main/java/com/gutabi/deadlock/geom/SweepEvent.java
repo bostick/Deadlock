@@ -56,7 +56,7 @@ public abstract class SweepEvent {
 	public static Comparator<SweepEvent> COMPARATOR = new SweepEventComparator();
 	
 	static class SweepEventComparator implements Comparator<SweepEvent> {
-
+		
 		public int compare(SweepEvent a, SweepEvent b) {
 			if (a.index == b.index) {
 				if (DMath.equals(a.param, b.param)) {
@@ -65,6 +65,8 @@ public abstract class SweepEvent {
 					} else {
 						if (a.type == SweepEventType.ENTERVERTEX && b.type == SweepEventType.ENTERROADCAPSULE) {
 							return -1;
+						} else if (a.type == SweepEventType.ENTERROADCAPSULE && b.type == SweepEventType.ENTERVERTEX) {
+							return 1;
 						} else if (a.type == SweepEventType.ENTERVERTEX && b.type == SweepEventType.ENTERMERGER) {
 							return -1;
 						} else if (a.type == SweepEventType.ENTERMERGER && b.type == SweepEventType.ENTERROADCAPSULE) {

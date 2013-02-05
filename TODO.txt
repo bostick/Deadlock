@@ -1,8 +1,27 @@
 
-add Sheet objects for sheet files, access different sprites etc
+in Stroke:
+
+get[straight edge from vertex] working
+
+get[drag start on vertex] working
+
+how to handle starting on multiple vertices?
+get [start stroke on 2 vertices] working
+
+
+
+
+unify sweeping in SweepUtils
+combine startSweep and sweep
+easy way to specify if outside at start and outside at end
+
+for sweeping math:
+project onto axis and use (overlapping ranges -> not overlapping) or (not overlapping ranges -> overlapping) as the events
+
+
 
 work on sweeping shapes
-allow quad as a sweeper
+allow obb as a sweeper
 
 handle collisions when dragging
 

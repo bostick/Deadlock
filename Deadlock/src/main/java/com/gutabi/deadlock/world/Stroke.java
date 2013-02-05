@@ -28,6 +28,7 @@ import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.world.graph.EdgePosition;
 import com.gutabi.deadlock.world.graph.GraphPosition;
 import com.gutabi.deadlock.world.graph.Intersection;
+import com.gutabi.deadlock.world.graph.Merger;
 import com.gutabi.deadlock.world.graph.Road;
 import com.gutabi.deadlock.world.graph.RoadPosition;
 import com.gutabi.deadlock.world.graph.Vertex;
@@ -506,7 +507,16 @@ public class Stroke {
 		int strokeCapsuleCount = 0;
 		List<SweepEvent> vertexEvents = new ArrayList<SweepEvent>();
 		
-		List<SweepEvent> startEvents = SweepUtils.sweepStartCSoverG(world.graph, seq, 0);
+		List<SweepEvent> startEvents = new ArrayList<SweepEvent>();
+		for (Vertex v : world.graph.vertices) {
+			startEvents.addAll(SweepUtils.sweepStartCSoverC(v, v.getShape(), seq, 0));
+		}
+		for (Road r : world.graph.roads) {
+			startEvents.addAll(SweepUtils.sweepStartCSoverCS(r, r.getShape(), seq, 0));
+		}
+		for (Merger m : world.graph.mergers) {
+			startEvents.addAll(SweepUtils.sweepStartCSoverA(m, m.getShape(), seq, 0));
+		}
 		
 		Collections.sort(startEvents, SweepEvent.COMPARATOR);
 		
@@ -541,69 +551,29 @@ public class Stroke {
 		}
 		
 		if ((vertexCount + roadCapsuleCount + mergerCount + strokeCapsuleCount) == 0) {
-//			logger.debug("start in nothing");
 			vertexEvents.add(new CapsuleSequenceSweepEvent(null, null, null, seq, 0, 0.0, 0));
-		} else {
-//			logger.debug("start counts: " + vertexCount + " " + roadCapsuleCount + " " + mergerCount);
 		}
 		
-		List<Capsule> strokeEnteredCapsules = new ArrayList<Capsule>();
+//		List<Capsule> strokeEnteredCapsules = new ArrayList<Capsule>();
 		
 		for (int i = 0; i < seq.capsuleCount(); i++) {
 			
-//			Capsule cap = seq.getCapsule(i);
 			CapsuleSequence capSeq = seq.capseq(i);
 			
-			List<SweepEvent> events = SweepUtils.sweepCSoverG(world.graph, capSeq, 0, i);
+			List<SweepEvent> events = new ArrayList<SweepEvent>();
+			for (Vertex v : world.graph.vertices) {
+				events.addAll(SweepUtils.sweepCSoverC(v, v.getShape(), capSeq, 0, i));
+			}
+			for (Road r : world.graph.roads) {
+				events.addAll(SweepUtils.sweepCSoverCS(r, r.getShape(), capSeq, 0, i));
+			}
+			for (Merger m : world.graph.mergers) {
+				events.addAll(SweepUtils.sweepCSoverA(m, m.getShape(), capSeq, 0, i));
+			}
 			
 			if (sweepSelf) {
 				
-				if (i == 0) {
-					
-				} else {
-					
-					CapsuleSequence sub = seq.subsequence(i);
-					
-					List<SweepEvent> subStartEvents = SweepUtils.sweepStartCSoverCS(this, sub, capSeq, i);
-					List<SweepEvent> subEvents = SweepUtils.sweepCSoverCS(this, sub, capSeq, 0, i);
-					
-					Collections.sort(subEvents, SweepEvent.COMPARATOR);
-					
-					List<SweepEvent> toKeep = new ArrayList<SweepEvent>();
-					Capsule eventCapsule;
-					for (SweepEvent e : subEvents) {
-						switch (e.type) {
-						case ENTERSTROKE:
-							eventCapsule = ((Capsule)e.still);
-							
-							strokeEnteredCapsules.add(eventCapsule);
-							toKeep.add(e);
-							
-							break;
-						case EXITSTROKE:
-							eventCapsule = ((Capsule)e.still);
-							
-							boolean atStart = false;
-							for (SweepEvent se : subStartEvents) {
-								if (se.still == eventCapsule) {
-									atStart = true;
-									break;
-								}
-							}
-							if (strokeEnteredCapsules.contains(eventCapsule) || !atStart) {
-								toKeep.add(e);
-							}
-							
-							break;
-						default:
-							assert false;
-							break;
-						}
-					}
-					
-					events.addAll(toKeep);
-					
-				}
+				events.addAll(selfEvents(i));
 				
 			}
 			
@@ -674,7 +644,6 @@ public class Stroke {
 		}
 		
 		if ((vertexCount + roadCapsuleCount + mergerCount + strokeCapsuleCount) == 0) {
-//			logger.debug("end in nothing");
 			vertexEvents.add(new CapsuleSequenceSweepEvent(null, null, null, seq, seq.capsuleCount, 0.0, 0));
 		}
 		
@@ -758,12 +727,49 @@ public class Stroke {
 		 * figure out FSM that is actually accurate
 		 */
 		
-//		if (logger.isDebugEnabled()) {
-//			logger.debug("vertexEvents:");
-//			logger.debug(adj);
-//		}
-		
 		return adj;
+	} 
+	
+	private List<SweepEvent> selfEvents(int i) {
+			
+		CapsuleSequence moving = seq.capseq(i);
+		CapsuleSequence still = seq.subsequence(i);
+		
+		List<SweepEvent> subStartEvents = SweepUtils.sweepStartCSoverCS(this, still, moving, i);
+		List<Capsule> overlappingAtStart = new ArrayList<Capsule>();
+		for (SweepEvent e : subStartEvents) {
+			overlappingAtStart.add((Capsule)e.still);
+		}
+		
+		List<SweepEvent> subEvents = SweepUtils.sweepCSoverCS(this, still, moving, 0, i);
+		
+		Collections.sort(subEvents, SweepEvent.COMPARATOR);
+		
+		List<SweepEvent> toKeep = new ArrayList<SweepEvent>();
+		Capsule eventCapsule;
+		for (SweepEvent e : subEvents) {
+			switch (e.type) {
+			case ENTERSTROKE:
+				eventCapsule = ((Capsule)e.still);
+				toKeep.add(e);
+				break;
+			case EXITSTROKE:
+				eventCapsule = ((Capsule)e.still);
+				/*
+				 * the moving CS (really it is only 1 capsule) may be overlapping several previous capsules when it starts
+				 * do not count exiting these as events
+				 */
+				if (!overlappingAtStart.contains(eventCapsule)) {
+					toKeep.add(e);
+				}
+				break;
+			default:
+				assert false;
+				break;
+			}
+		}
+		
+		return toKeep;
 	}
 	
 	private void computeAABB() {
