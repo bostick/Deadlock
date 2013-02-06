@@ -535,6 +535,16 @@ public class Point {
 		return new Point(newX * invLen, newY * invLen);
 	}
 	
+	/**
+	 * for coord system with <0, 0> in upper left, y extending down
+	 */
+	public static Point normalize(Point p) {
+		double len = Math.hypot(p.x, p.y);
+		assert !DMath.equals(len, 0.0);
+		double invLen = 1 / len;
+		return new Point(p.x * invLen, p.y * invLen);
+	}
+	
 	public Point multiply(double scale) {
 		return new Point(x * scale, y * scale);
 	}

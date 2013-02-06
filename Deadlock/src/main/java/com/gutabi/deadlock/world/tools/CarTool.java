@@ -17,6 +17,7 @@ import com.gutabi.deadlock.world.graph.GraphPositionPathPosition;
 import com.gutabi.deadlock.world.graph.RoadPosition;
 import com.gutabi.deadlock.world.graph.RushHourBoard;
 import com.gutabi.deadlock.world.graph.RushHourBoardPosition;
+import com.gutabi.deadlock.world.graph.Side;
 import com.gutabi.deadlock.world.graph.VertexPosition;
 
 public class CarTool extends ToolBase {
@@ -61,16 +62,63 @@ public class CarTool extends ToolBase {
 		
 	}
 	
-	/*
-	 * sets overallPos based on car.p
-	 */
 	public void released(InputEvent ev) {
 		
-		car.driver.overallPos = car.driver.overallPath.findClosestGraphPositionPathPosition(car.p, car.driver.overallPath.startingPos, true);
-		
-		car = null;
-		
-		screen.contentPane.repaint();
+		if (car.toolOrigShape.hitTest(screen.world.lastPressedWorldPoint)) {
+			
+			switch (car.state) {
+			case IDLE:
+			case DRIVING:
+			case BRAKING:
+				
+				GraphPosition gpos = car.driver.overallPos.getGraphPosition();
+				
+				if (gpos instanceof RoadPosition) {
+					
+				} else if (gpos instanceof VertexPosition) {
+					
+				} else if (gpos instanceof RushHourBoardPosition) {
+					
+					RushHourBoardPosition rpos = (RushHourBoardPosition)gpos;
+					
+					RushHourBoard b = (RushHourBoard)gpos.entity;
+					
+					RushHourBoardPosition rounded = null;
+					switch (Side.angleToSide(car.angle)) {
+					case TOP:
+					case BOTTOM:
+						rounded = new RushHourBoardPosition(b,
+								Math.round(rpos.rowCombo - car.CAR_LENGTH/2) + car.CAR_LENGTH/2,
+								Math.round(rpos.colCombo - car.CAR_WIDTH/2) + car.CAR_WIDTH/2);
+						break;
+					case LEFT:
+					case RIGHT:
+						rounded = new RushHourBoardPosition(b,
+								Math.round(rpos.rowCombo - car.CAR_WIDTH/2) + car.CAR_WIDTH/2,
+								Math.round(rpos.colCombo - car.CAR_LENGTH/2) + car.CAR_LENGTH/2);
+						break;
+					}
+					
+					car.setTransform(rounded.p, car.angle);
+					car.driver.overallPos = car.driver.overallPath.findClosestGraphPositionPathPosition(car.p, car.driver.overallPath.startingPos, false);
+					
+					screen.contentPane.repaint();
+					
+				} else {
+					assert false;
+				}
+				
+				break;
+			case CRASHED:
+				break;
+			case SINKED:
+				break;
+			case SKIDDED:
+				break;
+			}
+		}
+
+
 	}
 	
 	/*
@@ -93,7 +141,7 @@ public class CarTool extends ToolBase {
 			case DRIVING:
 			case BRAKING:
 				
-				GraphPositionPathPosition pathPos = car.driver.overallPath.findClosestGraphPositionPathPosition(carPTmp, car.driver.overallPath.startingPos, true);
+				GraphPositionPathPosition pathPos = car.driver.overallPath.findClosestGraphPositionPathPosition(carPTmp, car.driver.overallPath.startingPos, false);
 				GraphPosition gpos = pathPos.getGraphPosition();
 				
 				if (gpos instanceof RoadPosition) {
@@ -110,49 +158,9 @@ public class CarTool extends ToolBase {
 					
 					RushHourBoardPosition rpos = (RushHourBoardPosition)gpos;
 					
-					RushHourBoard b = (RushHourBoard)rpos.entity;
-					
-//					RushHourBoardPosition rounded = null;
-//					switch (Side.angleToSide(car.angle)) {
-//					case TOP:
-//					case BOTTOM:
-//						rounded = new RushHourBoardPosition(b,
-//								Math.round(rpos.rowCombo - car.CAR_LENGTH/2) + car.CAR_LENGTH/2,
-//								Math.round(rpos.colCombo - car.CAR_WIDTH/2) + car.CAR_WIDTH/2);
-//						break;
-//					case LEFT:
-//					case RIGHT:
-//						rounded = new RushHourBoardPosition(b,
-//								Math.round(rpos.rowCombo - car.CAR_WIDTH/2) + car.CAR_WIDTH/2,
-//								Math.round(rpos.colCombo - car.CAR_LENGTH/2) + car.CAR_LENGTH/2);
-//						break;
-//					}
-//					
-//					Point test = rounded.p;
-					Point test = rpos.p;
-					
-//					double[][] testTransArr = new double[2][2];
-//					Geom.rotationMatrix(carAngle, testTransArr);
-					OBB testOBB = Geom.localToWorld(car.localAABB, carAngle, test);
-					
-					boolean collide = false;
-					if (!b.contains(testOBB)) {
-						collide = true;
+					if (!collidesWithBoardOrOtherCars(car, rpos)) {
+						carP = rpos.p;
 					} else {
-						for (Car c : screen.world.carMap.cars) {
-							if (c == car) {
-								continue;
-							}
-							if (ShapeUtils.intersectAreaOO(testOBB, c.shape)) {
-								collide = true;
-								break;
-							}
-						}
-					}
-					if (!collide) {
-						carP = test;
-					} else {
-//						carP = car.toolOrigP;
 						carP = car.p;
 					}
 					
@@ -170,11 +178,34 @@ public class CarTool extends ToolBase {
 			}
 			
 			car.setTransform(carP, carAngle);
-			car.driver.overallPos = car.driver.overallPath.findClosestGraphPositionPathPosition(car.p, car.driver.overallPath.startingPos, true);
+			
+			car.driver.overallPos = car.driver.overallPath.findClosestGraphPositionPathPosition(car.p, car.driver.overallPath.startingPos, false);
 			
 			screen.contentPane.repaint();
 		}
 		
+	}
+	
+	private boolean collidesWithBoardOrOtherCars(Car car, RushHourBoardPosition rpos) {
+		
+		RushHourBoard b = (RushHourBoard)rpos.entity;
+		Point test = rpos.p;
+		
+		OBB testOBB = Geom.localToWorld(car.localAABB, car.angle, test);
+		
+		if (b.overlapsPerimeter(testOBB)) {
+			return true;
+		} else {
+			for (Car c : screen.world.carMap.cars) {
+				if (c == car) {
+					continue;
+				}
+				if (ShapeUtils.intersectAreaOO(testOBB, c.shape)) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 	
 	public void draw(RenderingContext ctxt) {

@@ -53,7 +53,7 @@ public class VertexPosition extends GraphPosition {
 		}
 		
 		assert !equals(p);
-		assert p.isBound();
+//		assert p.isBound();
 		
 		if (p instanceof VertexPosition) {
 			assert false;
@@ -70,12 +70,44 @@ public class VertexPosition extends GraphPosition {
 				
 				return ((Edge)pe.entity).travelFromOtherVertex(pe.axis, distance);
 			}
+		} else if (p instanceof RushHourBoardPosition) {
+			RushHourBoardPosition rpos = (RushHourBoardPosition)p;
+			
+			RushHourBoard b = (RushHourBoard)rpos.entity;
+			
+			double boardDistance = distance / RushHourStud.SIZE;
+			
+			RushHourBoardPosition vpos = b.position(v.p);
+			
+			if (DMath.equals(vpos.colCombo, rpos.colCombo)) {
+				
+				if (DMath.lessThan(vpos.rowCombo, rpos.rowCombo)) {
+					
+					return new RushHourBoardPosition(b, vpos.rowCombo + boardDistance, vpos.colCombo);
+					
+				} else {
+					assert DMath.greaterThan(vpos.rowCombo, rpos.rowCombo);
+					
+					return new RushHourBoardPosition(b, vpos.rowCombo - boardDistance, vpos.colCombo);
+				}
+				
+			} else {
+				assert DMath.equals(vpos.rowCombo, rpos.rowCombo);
+				
+				if (DMath.lessThan(vpos.colCombo, rpos.colCombo)) {
+					
+					return new RushHourBoardPosition(b, vpos.rowCombo, vpos.colCombo + boardDistance);
+					
+				} else {
+					assert DMath.greaterThan(vpos.colCombo, rpos.colCombo);
+					
+					return new RushHourBoardPosition(b, vpos.rowCombo, vpos.colCombo - boardDistance);
+				}
+				
+			}
+			
 		} else {
 			assert false;
-//			RushHourBoardPosition sp = (RushHourBoardPosition)p;
-			
-			
-			
 		}
 		
 		assert false;

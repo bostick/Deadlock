@@ -25,7 +25,7 @@ public class Sheet {
 		CAR8 { public int xStart() { return 0; } public int yStart() { return 288; } public int xEnd() { return 0+96; } public int yEnd() { return 288+32; } },
 		CAR9 { public int xStart() { return 0; } public int yStart() { return 320; } public int xEnd() { return 0+64; } public int yEnd() { return 320+32; } },
 		CAR10 { public int xStart() { return 0; } public int yStart() { return 352; } public int xEnd() { return 0+96; } public int yEnd() { return 352+32; } },
-		CAR11 { public int xStart() { return 96; } public int yStart() { return 0; } public int xEnd() { return 96+32; } public int yEnd() { return 0+32; } },
+		CAR11 { public int xStart() { return 0; } public int yStart() { return 384; } public int xEnd() { return 0+64; } public int yEnd() { return 384+32; } },
 		
 		FIXTUREARROW { public int xStart() { return 96; } public int yStart() { return 0; } public int xEnd() { return 96+32; } public int yEnd() { return 0+32; } },
 		

@@ -8,15 +8,15 @@ import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.world.World;
 import com.gutabi.deadlock.world.sprites.Sheet.Sprite;
 
-public class RushHourStud {
+public abstract class RushHourStud {
 	
-	public static double SIZE = 1.0;
+	public static final double SIZE = 1.0;
 	
 	World world;
 	RushHourBoard board;
 	
-	int row;
-	int col;
+	public final int row;
+	public final int col;
 	
 	public AABB aabb;
 	

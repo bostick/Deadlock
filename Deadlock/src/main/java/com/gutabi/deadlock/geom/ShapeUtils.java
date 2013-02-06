@@ -61,6 +61,10 @@ public class ShapeUtils {
 			if (s1 instanceof AABB) {
 				return intersectAreaAO((AABB)s1, (OBB)s0);
 			}
+		} else if (s0 instanceof Line) {
+			if (s1 instanceof OBB) {
+				return intersectAreaLO((Line)s0, (OBB)s1);
+			}
 		}
 		
 		assert false;
@@ -356,6 +360,32 @@ public class ShapeUtils {
 		a0.project(q1.getN12(), a0Projection);
 		q1.projectN12(q1Projection);
 		if (!DMath.rangesOverlapArea(a0Projection, q1Projection)) {
+			return false;
+		}
+		
+		return true;
+	}
+	
+	public static boolean intersectAreaLO(Line l0, OBB q1) {
+		
+		double[] l0Projection = new double[2];
+		double[] q1Projection = new double[2];
+		
+		l0.projectN01(l0Projection);
+		q1.project(l0.getN01(), q1Projection);
+		if (!DMath.rangesOverlapArea(l0Projection, q1Projection)) {
+			return false;
+		}
+		
+		l0.project(q1.getN01(), l0Projection);
+		q1.projectN01(q1Projection);
+		if (!DMath.rangesOverlapArea(l0Projection, q1Projection)) {
+			return false;
+		}
+		
+		l0.project(q1.getN12(), l0Projection);
+		q1.projectN12(q1Projection);
+		if (!DMath.rangesOverlapArea(l0Projection, q1Projection)) {
 			return false;
 		}
 		

@@ -31,7 +31,7 @@ public class RushHourBoardPosition extends GraphPosition {
 	}
 	
 	public String toString() {
-		return "RushHourBoardPosition[row: " + rowCombo + ", col: " + colCombo + "]";
+		return "[r: " + rowCombo + ", c: " + colCombo + "]";
 	}
 	
 	public boolean isBound() {

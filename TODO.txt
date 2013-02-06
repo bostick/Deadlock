@@ -19,21 +19,27 @@ clean up Stroke any more for modularization and refactoring?
 
 
 
-unify sweeping in SweepUtils
-combine startSweep and sweep
-easy way to specify if outside at start and outside at end
-
-for sweeping math:
-project onto axis and use (overlapping ranges -> not overlapping) or (not overlapping ranges -> overlapping) as the events
 
 
 
-work on sweeping shapes
-allow obb as a sweeper
 
-handle collisions when dragging
 
-snap onto studs when released
+
+get dragging to VertexPosition working
+
+
+
+work on GraphPositionPaths
+for dragging, GPP don't make a lot of sense
+they could have loops, change etc.
+do not use overallPath for dragging
+
+
+
+
+
+
+
 
 continuous dragging of cars
 

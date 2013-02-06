@@ -169,6 +169,12 @@ public class GraphPositionPath {
 		for (GraphPosition g : poss) {
 			if (g instanceof VertexPosition) {
 				s = s + g + " ";
+			} else if (g instanceof RoadPosition) {
+				
+			} else if (g instanceof MergerPosition) {
+				
+			} else if (g instanceof RushHourBoardPosition) {
+				s = s + g + " ";
 			}
 		}
 		return s;
@@ -236,7 +242,7 @@ public class GraphPositionPath {
 //						logger.debug("closestDistance: " + closestDistance);
 						
 					} else if (returnOnLocalMinimum) {
-						return new GraphPositionPathPosition(this, closestIndex, closestParam);
+						return new GraphPositionPathPosition(this, b.index, b.param);
 					}
 					
 				}
@@ -254,7 +260,7 @@ public class GraphPositionPath {
 //					logger.debug("closestDistance: " + closestDistance);
 					
 				} else if (returnOnLocalMinimum) {
-					return new GraphPositionPathPosition(this, closestIndex, closestParam);
+					return new GraphPositionPathPosition(this, a.index, u);
 				}
 			}
 			
@@ -295,7 +301,7 @@ public class GraphPositionPath {
 //						logger.debug("closestDistance: " + closestDistance);
 						
 					} else if (returnOnLocalMinimum) {
-						return new GraphPositionPathPosition(this, closestIndex, closestParam);
+						return new GraphPositionPathPosition(this, b.index, b.param);
 					}
 				}
 			} else {
@@ -310,7 +316,7 @@ public class GraphPositionPath {
 //					logger.debug("closestDistance: " + closestDistance);
 					
 				} else if (returnOnLocalMinimum) {
-					return new GraphPositionPathPosition(this, closestIndex, closestParam);
+					return new GraphPositionPathPosition(this, a.index, u);
 				}
 			}
 			
