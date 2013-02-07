@@ -13,6 +13,7 @@ import com.gutabi.deadlock.geom.OBB;
 import com.gutabi.deadlock.geom.ShapeUtils;
 import com.gutabi.deadlock.math.DMath;
 import com.gutabi.deadlock.math.Point;
+import com.gutabi.deadlock.world.cars.AutonomousDriver;
 import com.gutabi.deadlock.world.cars.Driver;
 import com.gutabi.deadlock.world.cars.VertexArrivalEvent;
 
@@ -37,7 +38,7 @@ public class GraphPositionPath {
 	
 	private List<GraphPositionPathPosition> borderPositions;
 	
-	public final List<Driver> currentDrivers = new ArrayList<Driver>();
+	public final List<AutonomousDriver> currentDrivers = new ArrayList<AutonomousDriver>();
 	
 	/**
 	 * given another path, what is the set of shared edges?
@@ -185,7 +186,7 @@ public class GraphPositionPath {
 	}
 	
 	
-	public VertexArrivalEvent vertexArrivalTest(Driver d, double dist) {
+	public VertexArrivalEvent vertexArrivalTest(AutonomousDriver d, double dist) {
 		
 		for (GraphPositionPathPosition p : borderPositions) {
 			GraphPositionPathPosition front = d.overallPos.travel(Math.min(d.c.CAR_LENGTH/2, d.overallPos.lengthToEndOfPath));
@@ -198,21 +199,26 @@ public class GraphPositionPath {
 	}
 	
 	/**
+	 * searches forward from start position
+	 * 
 	 * finds closest position in a graphpositionpath to p
 	 * 
 	 * returns once a local minimum is found
 	 */
-	public GraphPositionPathPosition findClosestGraphPositionPathPosition(Point p, GraphPositionPathPosition min, boolean returnOnLocalMinimum) {
+	public GraphPositionPathPosition forwardSearch(Point p, GraphPositionPathPosition start, boolean returnOnLocalMinimum) {
 		
-		int closestIndex = min.index;
-		double closestParam = min.param;
+		int closestIndex = start.index;
+		double closestParam = start.param;
 		
-		double closestDistance = Double.POSITIVE_INFINITY;
+		double closestDistance = Point.distance(p, start.p);
 		
-		GraphPositionPathPosition a = min;
-		GraphPositionPathPosition minCeiling = min.ceiling();
+		GraphPositionPathPosition a = start;
+		GraphPositionPathPosition minCeiling = start.ceiling();
 		GraphPositionPathPosition b;
-		if (!minCeiling.equals(min)) {
+		/*
+		 * if start is not a bound, then search from start to the next bound
+		 */
+		if (!minCeiling.equals(start)) {
 			b = minCeiling;
 			
 			double u = Point.u(a.floor().p, p, b.p);
@@ -239,8 +245,6 @@ public class GraphPositionPath {
 						
 						closestDistance = dist;
 						
-//						logger.debug("closestDistance: " + closestDistance);
-						
 					} else if (returnOnLocalMinimum) {
 						return new GraphPositionPathPosition(this, b.index, b.param);
 					}
@@ -257,8 +261,6 @@ public class GraphPositionPath {
 					
 					closestDistance = dist;
 					
-//					logger.debug("closestDistance: " + closestDistance);
-					
 				} else if (returnOnLocalMinimum) {
 					return new GraphPositionPathPosition(this, a.index, u);
 				}
@@ -266,6 +268,10 @@ public class GraphPositionPath {
 			
 			a = b;
 		}
+		assert a.isBound();
+		/*
+		 * search between bounds
+		 */
 		while (true) {
 			
 			if (a.isEndOfPath()) {
@@ -298,8 +304,6 @@ public class GraphPositionPath {
 						
 						closestDistance = dist;
 						
-//						logger.debug("closestDistance: " + closestDistance);
-						
 					} else if (returnOnLocalMinimum) {
 						return new GraphPositionPathPosition(this, b.index, b.param);
 					}
@@ -313,8 +317,6 @@ public class GraphPositionPath {
 					
 					closestDistance = dist;
 					
-//					logger.debug("closestDistance: " + closestDistance);
-					
 				} else if (returnOnLocalMinimum) {
 					return new GraphPositionPathPosition(this, a.index, u);
 				}
@@ -324,6 +326,150 @@ public class GraphPositionPath {
 		}
 		
 		return new GraphPositionPathPosition(this, closestIndex, closestParam);
+	}
+	
+	/**
+	 * searches backward from start position
+	 * 
+	 * finds closest position in a graphpositionpath to p
+	 * 
+	 * returns once a local minimum is found
+	 */
+	public GraphPositionPathPosition backwardSearch(Point p, GraphPositionPathPosition start, boolean returnOnLocalMinimum) {
+		
+		int closestIndex = start.index;
+		double closestParam = start.param;
+		
+		double closestDistance = Point.distance(p, start.p);
+		
+		GraphPositionPathPosition b = start;
+		GraphPositionPathPosition minFloor = start.floor();
+		GraphPositionPathPosition a;
+		if (!minFloor.equals(start)) {
+			a = minFloor;
+			
+			double u = Point.u(a.p, p, b.ceiling().p);
+			if (u > b.param) {
+				u = b.param;
+			}
+			if (u < 0.0) {
+				u = 0.0;
+			}
+			
+			if (DMath.equals(u, 0.0)) {
+				if (!a.isStartOfPath()) {
+					/*
+					 * the next iteration will pick this up
+					 */
+				} else {
+					/*
+					 * last iteration, deal with now
+					 */
+					double dist = Point.distance(p, a.p);
+					if (dist < closestDistance) {
+						closestIndex = a.index;
+						closestParam = a.param;
+						
+						closestDistance = dist;
+						
+					} else if (returnOnLocalMinimum) {
+						return new GraphPositionPathPosition(this, a.index, a.param);
+					}
+					
+				}
+			} else {
+				
+				Point pOnPath = Point.point(a.p, b.ceiling().p, u);
+				double dist = Point.distance(p, pOnPath);
+				
+				if (dist < closestDistance) {
+					closestIndex = a.index;
+					closestParam = u;
+					
+					closestDistance = dist;
+					
+				} else if (returnOnLocalMinimum) {
+					return new GraphPositionPathPosition(this, a.index, u);
+				}
+			}
+			
+			b = a;
+		}
+		assert b.isBound();
+		while (true) {
+			
+			if (b.isStartOfPath()) {
+				break;
+			}
+			
+			a = b.prevBound();
+			
+			double u = Point.u(a.p, p, b.p);
+			if (u < 0.0) {
+				u = 0.0;
+			}
+			if (u > 1.0) {
+				u = 1.0;
+			}
+			
+			if (DMath.equals(u, 0.0)) {
+				if (!a.isStartOfPath()) {
+					/*
+					 * the next iteration will pick this up
+					 */
+				} else {
+					/*
+					 * last iteration, deal with now
+					 */
+					double dist = Point.distance(p, a.p);
+					if (dist < closestDistance) {
+						closestIndex = a.index;
+						closestParam = a.param;
+						
+						closestDistance = dist;
+						
+					} else if (returnOnLocalMinimum) {
+						return new GraphPositionPathPosition(this, a.index, a.param);
+					}
+				}
+			} else {
+				Point pOnPath = Point.point(a.p, b.p, u);
+				double dist = Point.distance(p, pOnPath);
+				if (dist < closestDistance) {
+					closestIndex = a.index;
+					closestParam = u;
+					
+					closestDistance = dist;
+					
+				} else if (returnOnLocalMinimum) {
+					return new GraphPositionPathPosition(this, a.index, u);
+				}
+			}
+			
+			b = a;
+		}
+		
+		return new GraphPositionPathPosition(this, closestIndex, closestParam);
+	}
+	
+	/**
+	 * searches both forward and backward from start position
+	 */
+	public GraphPositionPathPosition generalSearch(Point p, GraphPositionPathPosition start) {
+		GraphPositionPathPosition forwardPos = forwardSearch(p, start, false);
+		GraphPositionPathPosition backwardPos = backwardSearch(p, start, false);
+		
+		double forwardDist = Point.distance(p, forwardPos.p);
+		double backwardDist = Point.distance(p, backwardPos.p);
+		
+//		System.out.println("general search: forwardPos: " + forwardPos + " backwardPos: " + backwardPos + " forwardDist: " + forwardDist + " backwardDist: " + backwardDist);
+		
+		if (DMath.lessThan(backwardDist, forwardDist)) {
+			return backwardPos;
+		} else {
+			return forwardPos;
+		}
+		
 	}
 	
 	public GraphPositionPathPosition findClosestGraphPositionPathPosition(GraphPosition gp) {
@@ -412,22 +558,22 @@ public class GraphPositionPath {
 
 
 	
-	private Map<Driver, GraphPositionPathPosition> hitMap = new HashMap<Driver, GraphPositionPathPosition>();
+	private Map<AutonomousDriver, GraphPositionPathPosition> hitMap = new HashMap<AutonomousDriver, GraphPositionPathPosition>();
 	
 	public void precomputeHitTestData() {
 		
-		Map<Driver, GraphPositionPathPosition> n = precomputeHitTestDataNew();
+		Map<AutonomousDriver, GraphPositionPathPosition> n = precomputeHitTestDataNew();
 		
 		hitMap = n;
 		
 	}
 	
-	private Map<Driver, GraphPositionPathPosition> precomputeHitTestDataNew() {
+	private Map<AutonomousDriver, GraphPositionPathPosition> precomputeHitTestDataNew() {
 		
-		Map<Driver, GraphPositionPathPosition> map = new HashMap<Driver, GraphPositionPathPosition>();
+		Map<AutonomousDriver, GraphPositionPathPosition> map = new HashMap<AutonomousDriver, GraphPositionPathPosition>();
 		
 		driverLoop:
-		for (Driver d : currentDrivers) {
+		for (AutonomousDriver d : currentDrivers) {
 			
 			if (d.overallPath.equals(this) && !hasLoop) {
 				
@@ -499,10 +645,10 @@ public class GraphPositionPath {
 		hitMap.clear();
 	}
 	
-	public Driver driverProximityTest(GraphPositionPathPosition center, double dist) {
+	public AutonomousDriver driverProximityTest(GraphPositionPathPosition center, double dist) {
 		
-		for (Entry<Driver, GraphPositionPathPosition> entry : hitMap.entrySet()) {
-			Driver d = entry.getKey();
+		for (Entry<AutonomousDriver, GraphPositionPathPosition> entry : hitMap.entrySet()) {
+			AutonomousDriver d = entry.getKey();
 			GraphPositionPathPosition otherCarCenter = entry.getValue();
 			if (otherCarCenter.equals(center)) {
 				continue;

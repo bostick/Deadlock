@@ -178,17 +178,39 @@ public class RushHourBoard extends Entity {
 					if (ss instanceof JointStud) {
 						JointStud jj = (JointStud)ss;
 						if (j < originCol) {
-							poss.add(new VertexPosition(jj.f));
-//							poss.add(new RushHourBoardPosition(this, i + 0.5, j));
+							Road r = jj.f.roads.get(0);
+							if (jj.f == r.start) {
+								poss.add(new VertexPosition(r.end));
+								for (int ii = r.pointCount()-2; ii >= 1; ii--) {
+									poss.add(new RoadPosition(r, ii, 0.0));
+								}
+								poss.add(new VertexPosition(r.start));
+							} else {
+								poss.add(new VertexPosition(r.start));
+								for (int ii = 1; ii <= r.pointCount()-2; ii++) {
+									poss.add(new RoadPosition(r, ii, 0.0));
+								}
+								poss.add(new VertexPosition(r.end));
+							}
 						} else if (j >= originCol + 6) {
-//							poss.add(new RushHourBoardPosition(this, i + 0.5, j));
-							poss.add(new VertexPosition(jj.f));
+							Road r = jj.f.roads.get(0);
+							if (jj.f == r.start) {
+								poss.add(new VertexPosition(r.start));
+								for (int ii = 1; ii <= r.pointCount()-2; ii++) {
+									poss.add(new RoadPosition(r, ii, 0.0));
+								}
+								poss.add(new VertexPosition(r.end));
+							} else {
+								poss.add(new VertexPosition(r.end));
+								for (int ii = r.pointCount()-2; ii >= 1; ii--) {
+									poss.add(new RoadPosition(r, ii, 0.0));
+								}
+								poss.add(new VertexPosition(r.start));
+							}
 						}
 					} else {
 						poss.add(new RushHourBoardPosition(this, i + 0.5, j));
 					}
-				} else {
-					String.class.getName();
 				}
 			}
 			if (!poss.isEmpty()) {
@@ -204,11 +226,35 @@ public class RushHourBoard extends Entity {
 					if (ss instanceof JointStud) {
 						JointStud jj = (JointStud)ss;
 						if (j < originRow) {
-							poss.add(new VertexPosition(jj.f));
-//							poss.add(new RushHourBoardPosition(this, j, i + 0.5));
+							Road r = jj.f.roads.get(0);
+							if (jj.f == r.start) {
+								poss.add(new VertexPosition(r.end));
+								for (int ii = r.pointCount()-2; ii >= 1; ii--) {
+									poss.add(new RoadPosition(r, ii, 0.0));
+								}
+								poss.add(new VertexPosition(r.start));
+							} else {
+								poss.add(new VertexPosition(r.start));
+								for (int ii = 1; ii <= r.pointCount()-2; ii++) {
+									poss.add(new RoadPosition(r, ii, 0.0));
+								}
+								poss.add(new VertexPosition(r.end));
+							}
 						} else if (j >= originRow + 6) {
-//							poss.add(new RushHourBoardPosition(this, j, i + 0.5));
-							poss.add(new VertexPosition(jj.f));
+							Road r = jj.f.roads.get(0);
+							if (jj.f == r.start) {
+								poss.add(new VertexPosition(r.start));
+								for (int ii = 1; ii <= r.pointCount()-2; ii++) {
+									poss.add(new RoadPosition(r, ii, 0.0));
+								}
+								poss.add(new VertexPosition(r.end));
+							} else {
+								poss.add(new VertexPosition(r.end));
+								for (int ii = r.pointCount()-2; ii >= 1; ii--) {
+									poss.add(new RoadPosition(r, ii, 0.0));
+								}
+								poss.add(new VertexPosition(r.start));
+							}
 						}
 					} else {
 						poss.add(new RushHourBoardPosition(this, j, i + 0.5));

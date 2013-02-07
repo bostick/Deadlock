@@ -82,6 +82,10 @@ public class GraphPositionPathPosition {
 		return bound;
 	}
 	
+	public boolean isStartOfPath() {
+		return (index == 0) && DMath.equals(param, 0.0);
+	}
+	
 	public boolean isEndOfPath() {
 		return (index == path.size-1) && DMath.equals(param, 0.0);
 	}
@@ -227,6 +231,14 @@ public class GraphPositionPathPosition {
 	public GraphPositionPathPosition nextBound() {
 		assert index < path.size-1;
 		return new GraphPositionPathPosition(path, index+1, 0.0);
+	}
+	
+	public GraphPositionPathPosition prevBound() {
+		if (DMath.equals(param, 0.0)) {
+			return new GraphPositionPathPosition(path, index-1, 0.0);
+		} else {
+			return new GraphPositionPathPosition(path, index, 0.0);
+		}
 	}
 	
 	public int nextVertexIndex(int index) {

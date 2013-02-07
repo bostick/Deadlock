@@ -12,7 +12,7 @@ import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.paint.Color;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.world.World;
-import com.gutabi.deadlock.world.cars.Driver;
+import com.gutabi.deadlock.world.cars.AutonomousDriver;
 
 public abstract class Vertex extends Entity {
 	
@@ -28,7 +28,7 @@ public abstract class Vertex extends Entity {
 	
 	protected double r;
 	
-	public final List<Driver> driverQueue = new ArrayList<Driver>();
+	public final List<AutonomousDriver> driverQueue = new ArrayList<AutonomousDriver>();
 	
 	protected Circle shape;
 	

@@ -100,7 +100,7 @@ public class CarTool extends ToolBase {
 					}
 					
 					car.setTransform(rounded.p, car.angle);
-					car.driver.overallPos = car.driver.overallPath.findClosestGraphPositionPathPosition(car.p, car.driver.overallPath.startingPos, false);
+					car.driver.overallPos = car.driver.overallPath.generalSearch(car.p, car.driver.overallPos);
 					
 					screen.contentPane.repaint();
 					
@@ -133,35 +133,48 @@ public class CarTool extends ToolBase {
 			
 			
 			Point carPTmp = car.toolOrigP.plus(diff);
-			Point carP = null;
-			double carAngle = car.angle;
+//			Point carP = null;
+//			double carAngle = car.angle;
 			
 			switch (car.state) {
 			case IDLE:
 			case DRIVING:
 			case BRAKING:
 				
-				GraphPositionPathPosition pathPos = car.driver.overallPath.findClosestGraphPositionPathPosition(carPTmp, car.driver.overallPath.startingPos, false);
-				GraphPosition gpos = pathPos.getGraphPosition();
+				GraphPositionPathPosition testPathPos = car.driver.overallPath.generalSearch(carPTmp, car.driver.overallPos);
+				GraphPosition testGpos = testPathPos.getGraphPosition();
 				
-				if (gpos instanceof RoadPosition) {
+				if (testGpos instanceof RoadPosition) {
 					
-					carP = gpos.p;
+					double newAngle = Math.atan2(testGpos.p.y - car.p.y, testGpos.p.x - car.p.x);
 					
-					carAngle = ((RoadPosition)gpos).angle;
+					car.setTransform(testGpos.p, newAngle);
 					
-				} else if (gpos instanceof VertexPosition) {
+					car.driver.overallPos = car.driver.overallPath.findClosestGraphPositionPathPosition(testGpos);
 					
-					carP = gpos.p;
+					screen.contentPane.repaint();
 					
-				} else if (gpos instanceof RushHourBoardPosition) {
+				} else if (testGpos instanceof VertexPosition) {
 					
-					RushHourBoardPosition rpos = (RushHourBoardPosition)gpos;
+					car.setTransform(testGpos.p, car.angle);
+					
+					car.driver.overallPos = car.driver.overallPath.findClosestGraphPositionPathPosition(testGpos);
+					
+					screen.contentPane.repaint();
+					
+				} else if (testGpos instanceof RushHourBoardPosition) {
+					
+					RushHourBoardPosition rpos = (RushHourBoardPosition)testGpos;
 					
 					if (!collidesWithBoardOrOtherCars(car, rpos)) {
-						carP = rpos.p;
-					} else {
-						carP = car.p;
+						
+						car.setTransform(testGpos.p, car.angle);
+						
+						car.driver.overallPos = car.driver.overallPath.findClosestGraphPositionPathPosition(testGpos);
+						
+						screen.contentPane.repaint();
+						
+						
 					}
 					
 				} else {
@@ -177,11 +190,6 @@ public class CarTool extends ToolBase {
 				break;
 			}
 			
-			car.setTransform(carP, carAngle);
-			
-			car.driver.overallPos = car.driver.overallPath.findClosestGraphPositionPathPosition(car.p, car.driver.overallPath.startingPos, false);
-			
-			screen.contentPane.repaint();
 		}
 		
 	}

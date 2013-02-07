@@ -2,12 +2,12 @@ package com.gutabi.deadlock.world.cars;
 
 public class CarProximityEvent extends DrivingEvent {
 	
-	public final Driver d;
-	public final Driver otherDriver;
+	public final AutonomousDriver d;
+	public final AutonomousDriver otherDriver;
 	
 	private int hash;
 	
-	public CarProximityEvent(Driver d, Driver otherDriver) {
+	public CarProximityEvent(AutonomousDriver d, AutonomousDriver otherDriver) {
 		this.d = d;
 		this.otherDriver = otherDriver;
 	}

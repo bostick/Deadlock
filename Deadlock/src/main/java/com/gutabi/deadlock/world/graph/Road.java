@@ -143,6 +143,10 @@ public class Road extends Edge {
 		return seq.getPoint(i);
 	}
 	
+	public Point getPoint(int i, double param) {
+		return seq.getPoint(i, param);
+	}
+	
 	public Capsule getCapsule(int i) {
 		return seq.getCapsule(i);
 	}

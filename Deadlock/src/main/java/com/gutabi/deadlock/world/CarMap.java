@@ -12,6 +12,7 @@ import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.paint.Cap;
 import com.gutabi.deadlock.ui.paint.Join;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
+import com.gutabi.deadlock.world.cars.AutonomousDriver;
 import com.gutabi.deadlock.world.cars.Car;
 import com.gutabi.deadlock.world.cars.CarProximityEvent;
 import com.gutabi.deadlock.world.cars.CarStateEnum;
@@ -133,8 +134,8 @@ public class CarMap {
 			case BRAKING:
 			case SINKED:
 				
-				Driver to = findDeadlockCause(di);
-				Driver h = findDeadlockCause(findDeadlockCause(di));
+				AutonomousDriver to = findDeadlockCause((AutonomousDriver)di);
+				AutonomousDriver h = findDeadlockCause(findDeadlockCause((AutonomousDriver)di));
 				
 				while (true) {
 					if (to == null || h == null) {
@@ -150,7 +151,7 @@ public class CarMap {
 					h = findDeadlockCause(findDeadlockCause(h));
 				}
 				
-				to = di;
+				to = (AutonomousDriver)di;
 				while (true) {
 					if (to == h) {
 						break;
@@ -180,8 +181,8 @@ public class CarMap {
 			case CRASHED:
 			case SKIDDED:
 				
-				if (di.stoppedTime != -1) {
-					di.deadlocked = true;
+				if (((AutonomousDriver)di).stoppedTime != -1) {
+					((AutonomousDriver)di).deadlocked = true;
 				}
 				
 				break;
@@ -196,57 +197,69 @@ public class CarMap {
 		for (int i = 0; i < cars.size(); i++) {
 			Driver di = cars.get(i).driver;
 			
-			if (!di.deadlocked) {
-				DrivingEvent e = findDeadlockEvent(di);
+			switch (di.c.state) {
+			case DRIVING:
+			case BRAKING:
+			case SINKED:
+			case CRASHED:
+			case SKIDDED:
 				
-				if (e == null) {
-					continue;
-				}
-				
-				if (e instanceof CarProximityEvent) {
+				if (!((AutonomousDriver)di).deadlocked) {
+					DrivingEvent e = findDeadlockEvent((AutonomousDriver)di);
 					
-					Driver cause = ((CarProximityEvent)e).otherDriver;
-					if (cause != null &&
-							cause.deadlocked) {
-						
-						if (cause.stoppedTime <= di.stoppedTime || (t - di.stoppedTime > Driver.COMPLETE_STOP_WAIT_TIME)) {
-							
-							assert di.stoppedTime != -1;
-							assert di.c.state == CarStateEnum.BRAKING;
-							di.deadlocked = true;
-							
-						}
-						
+					if (e == null) {
+						continue;
 					}
 					
-				} else if (e instanceof VertexArrivalEvent) {
-					
-					Driver cause = ((VertexArrivalEvent)e).v.driverQueue.get(0);
-					
-					if (cause != di) {
+					if (e instanceof CarProximityEvent) {
 						
+						AutonomousDriver cause = ((CarProximityEvent)e).otherDriver;
 						if (cause != null &&
 								cause.deadlocked) {
 							
-							assert di.stoppedTime != -1;
-							assert di.c.state == CarStateEnum.BRAKING;
-							di.deadlocked = true;
+							if (cause.stoppedTime <= ((AutonomousDriver)di).stoppedTime || (t - ((AutonomousDriver)di).stoppedTime > AutonomousDriver.COMPLETE_STOP_WAIT_TIME)) {
+								
+								assert ((AutonomousDriver)di).stoppedTime != -1;
+								assert di.c.state == CarStateEnum.BRAKING;
+								((AutonomousDriver)di).deadlocked = true;
+								
+							}
 							
 						}
 						
+					} else if (e instanceof VertexArrivalEvent) {
+						
+						AutonomousDriver cause = ((VertexArrivalEvent)e).v.driverQueue.get(0);
+						
+						if (cause != di) {
+							
+							if (cause != null &&
+									cause.deadlocked) {
+								
+								assert ((AutonomousDriver)di).stoppedTime != -1;
+								assert di.c.state == CarStateEnum.BRAKING;
+								((AutonomousDriver)di).deadlocked = true;
+								
+							}
+							
+						}
+						
+					} else {
+						assert false;
 					}
 					
-				} else {
-					assert false;
 				}
 				
+				break;
+			case IDLE:
+				break;
 			}
 			
 		}
 		
 	}
 	
-	private DrivingEvent findDeadlockEvent(Driver d) {
+	private DrivingEvent findDeadlockEvent(AutonomousDriver d) {
 		if (d == null) {
 			return null;
 		}
@@ -257,7 +270,7 @@ public class CarMap {
 			
 			assert v.driverQueue.contains(d);
 			
-			Driver leavingDriver = v.driverQueue.get(0);
+			AutonomousDriver leavingDriver = v.driverQueue.get(0);
 			
 			if (leavingDriver != d) {
 				if (d.stoppedTime != -1 &&
@@ -272,7 +285,7 @@ public class CarMap {
 		}
 		
 		if (d.curCarProximityEvent != null) {
-			Driver next = d.curCarProximityEvent.otherDriver;
+			AutonomousDriver next = d.curCarProximityEvent.otherDriver;
 			
 			if (d.stoppedTime != -1 &&
 					next.stoppedTime != -1
@@ -284,13 +297,13 @@ public class CarMap {
 		return null;
 	}
 	
-	private Driver findDeadlockCause(Driver d) {
+	private AutonomousDriver findDeadlockCause(AutonomousDriver d) {
 		if (d == null) {
 			return null;
 		}
 		
 		if (d.curCarProximityEvent != null) {
-			Driver next = d.curCarProximityEvent.otherDriver;
+			AutonomousDriver next = d.curCarProximityEvent.otherDriver;
 			
 			if (d.stoppedTime != -1 &&
 					next.stoppedTime != -1
@@ -305,7 +318,7 @@ public class CarMap {
 			
 			assert v.driverQueue.contains(d);
 			
-			Driver leavingDriver = v.driverQueue.get(0);
+			AutonomousDriver leavingDriver = v.driverQueue.get(0);
 			
 			if (leavingDriver != d) {
 				if (d.stoppedTime != -1 &&

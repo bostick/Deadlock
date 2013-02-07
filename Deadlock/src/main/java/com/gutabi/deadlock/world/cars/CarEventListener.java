@@ -28,10 +28,10 @@ public class CarEventListener implements ContactListener {
 		Body bodyB = contact.getFixtureB().getBody();
 		
 		if (bodyA.getUserData() instanceof Car) {
-			Car carA = (Car)bodyA.getUserData();
+			AutonomousCar carA = (AutonomousCar)bodyA.getUserData();
 			
 			if (bodyB.getUserData() instanceof Car) {
-				Car carB = (Car)bodyB.getUserData();
+				AutonomousCar carB = (AutonomousCar)bodyB.getUserData();
 				
 				beginContactCarCar(carA, carB, contact);
 				
@@ -44,7 +44,7 @@ public class CarEventListener implements ContactListener {
 		
 	}
 	
-	private void beginContactCarCar(Car a, Car b, Contact c) {
+	private void beginContactCarCar(AutonomousCar a, AutonomousCar b, Contact c) {
 		
 		if (a.state != CarStateEnum.CRASHED || b.state != CarStateEnum.CRASHED) {
 			

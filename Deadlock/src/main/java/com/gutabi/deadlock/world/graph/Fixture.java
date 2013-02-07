@@ -18,7 +18,7 @@ import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.world.ProgressMeter;
 import com.gutabi.deadlock.world.World;
 import com.gutabi.deadlock.world.cars.AutonomousCar;
-import com.gutabi.deadlock.world.cars.Car;
+import com.gutabi.deadlock.world.cars.AutonomousDriver;
 import com.gutabi.deadlock.world.sprites.Sheet.Sprite;
 
 public final class Fixture extends Vertex {
@@ -153,11 +153,11 @@ public final class Fixture extends Vertex {
 	}
 	
 	
-	Car waitingCar;
+	AutonomousCar waitingCar;
 	
 	private void spawnNewCar(double t) {
 		
-		Car c;
+		AutonomousCar c;
 		if (waitingCar == null) {
 			c = createNewCar();
 		} else {
@@ -179,7 +179,7 @@ public final class Fixture extends Vertex {
 		c.computeDynamicPropertiesAlways();
 		c.computeDynamicPropertiesMoving();
 		
-		driverQueue.add(c.driver);
+		driverQueue.add((AutonomousDriver)c.driver);
 		
 		if (c != null) {
 			c.startingTime = t;
@@ -222,11 +222,11 @@ public final class Fixture extends Vertex {
 		return true;
 	}
 	
-	private Car createNewCar() {
+	private AutonomousCar createNewCar() {
 		
 		int r = APP.RANDOM.nextInt(12);
 		
-		Car c = AutonomousCar.createCar(world, this, r);
+		AutonomousCar c = AutonomousCar.createCar(world, this, r);
 		
 		r = APP.RANDOM.nextInt(3);
 		
@@ -243,21 +243,21 @@ public final class Fixture extends Vertex {
 		}
 		
 		if (c.maxSpeed == 2.5) {
-			c.driver.carProximityLookahead = 2.0;
+			((AutonomousDriver)c.driver).carProximityLookahead = 2.0;
 		} else if (c.maxSpeed == 5.0) {
-			c.driver.carProximityLookahead = 2.0;
+			((AutonomousDriver)c.driver).carProximityLookahead = 2.0;
 		} else if (c.maxSpeed == 10.0) {
-			c.driver.carProximityLookahead = 2.25;
+			((AutonomousDriver)c.driver).carProximityLookahead = 2.25;
 		} else {
 			assert false;
 		}
 		
 		if (c.maxSpeed == 2.5) {
-			c.driver.vertexArrivalLookahead = 0.95;
+			((AutonomousDriver)c.driver).vertexArrivalLookahead = 0.95;
 		} else if (c.maxSpeed == 5.0) {
-			c.driver.vertexArrivalLookahead = 1.30;
+			((AutonomousDriver)c.driver).vertexArrivalLookahead = 1.30;
 		} else if (c.maxSpeed == 10.0) {
-			c.driver.vertexArrivalLookahead = 2.00;
+			((AutonomousDriver)c.driver).vertexArrivalLookahead = 2.00;
 		} else {
 			assert false;
 		}

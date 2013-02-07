@@ -145,7 +145,7 @@ public class Engine {
 		
 		
 		
-		Point dp = new Point(c.driver.goalPoint.x-c.p.x, c.driver.goalPoint.y-c.p.y);
+		Point dp = new Point(((AutonomousDriver)c.driver).goalPoint.x-c.p.x, ((AutonomousDriver)c.driver).goalPoint.y-c.p.y);
 		
 		double goalAngle = Math.atan2(dp.y, dp.x);
 		
@@ -195,14 +195,14 @@ public class Engine {
 	
 	private void updateBrake(double t) {
 		
-		if (c.driver.decelTime == -1) {
+		if (((AutonomousDriver)c.driver).decelTime == -1) {
 			
 //			logger.debug("decel");
 			
-			c.driver.decelTime = t;
+			((AutonomousDriver)c.driver).decelTime = t;
 		}
 		
-		if (c.driver.stoppedTime != -1) {
+		if (((AutonomousDriver)c.driver).stoppedTime != -1) {
 			return;
 		}
 		

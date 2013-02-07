@@ -144,30 +144,33 @@ public class RushHourWorld extends World {
 		InteractiveCar c = InteractiveCar.createCar(w, sheetIndex);
 		c.state = CarStateEnum.IDLE;
 		c.driver = new InteractiveDriver(c);
+		c.computeCtorProperties();
 		switch (side) {
 		case RIGHT:
 			c.driver.startGP = new RushHourBoardPosition(b, frontRow + c.CAR_WIDTH/2, frontCol + c.CAR_LENGTH/2 - 1);
-			c.angle = 0.0 * Math.PI;
+			c.setTransform(c.driver.startGP.p, 0.0 * Math.PI);
 			c.driver.overallPath = b.getPath(Side.RIGHT, frontRow);
+			c.driver.overallPos = c.driver.overallPath.findClosestGraphPositionPathPosition(c.driver.startGP);
 			break;
 		case BOTTOM:
 			c.driver.startGP = new RushHourBoardPosition(b, frontRow + c.CAR_LENGTH/2 - 1, frontCol + c.CAR_WIDTH/2);
-			c.angle = 0.5 * Math.PI;
+			c.setTransform(c.driver.startGP.p, 0.5 * Math.PI);
 			c.driver.overallPath = b.getPath(Side.BOTTOM, frontCol);
+			c.driver.overallPos = c.driver.overallPath.findClosestGraphPositionPathPosition(c.driver.startGP);
 			break;
 		case LEFT:
 			c.driver.startGP = new RushHourBoardPosition(b, frontRow + c.CAR_WIDTH/2, frontCol + c.CAR_LENGTH/2);
-			c.angle = 1.0 * Math.PI;
+			c.setTransform(c.driver.startGP.p, 1.0 * Math.PI);
 			c.driver.overallPath = b.getPath(Side.LEFT, frontRow);
+			c.driver.overallPos = c.driver.overallPath.findClosestGraphPositionPathPosition(c.driver.startGP);
 			break;
 		case TOP:
 			c.driver.startGP = new RushHourBoardPosition(b, frontRow + c.CAR_LENGTH/2, frontCol + c.CAR_WIDTH/2);
-			c.angle = 1.5 * Math.PI;
+			c.setTransform(c.driver.startGP.p, 1.5 * Math.PI);
 			c.driver.overallPath = b.getPath(Side.TOP, frontCol);
+			c.driver.overallPos = c.driver.overallPath.findClosestGraphPositionPathPosition(c.driver.startGP);
 			break;
 		}
-		c.computeCtorProperties();
-		c.computeStartingProperties();
 		
 		w.carMap.addCar(c);
 		

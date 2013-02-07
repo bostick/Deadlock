@@ -25,10 +25,6 @@ clean up Stroke any more for modularization and refactoring?
 
 
 
-get dragging to VertexPosition working
-
-
-
 work on GraphPositionPaths
 for dragging, GPP don't make a lot of sense
 they could have loops, change etc.
