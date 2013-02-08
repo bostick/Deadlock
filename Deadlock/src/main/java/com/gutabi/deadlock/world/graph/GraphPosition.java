@@ -17,6 +17,6 @@ public abstract class GraphPosition {
 	
 	public abstract boolean isBound();
 	
-	public abstract GraphPosition travelToNeighbor(GraphPosition p, double distance);
+	public abstract GraphPosition approachNeighbor(GraphPosition p, double distance);
 	
 }

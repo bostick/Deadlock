@@ -26,7 +26,7 @@ public abstract class EdgePosition extends GraphPosition {
 	
 	public abstract double getCombo();
 	
-	public GraphPosition travelToNeighbor(GraphPosition p, double distance) {
+	public GraphPosition approachNeighbor(GraphPosition p, double distance) {
 		
 		if (DMath.equals(distance, 0.0)) {
 			return this;

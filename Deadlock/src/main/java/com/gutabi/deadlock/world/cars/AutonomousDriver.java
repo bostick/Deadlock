@@ -50,7 +50,7 @@ public final class AutonomousDriver extends Driver {
 	}
 	
 	public void computeDynamicPropertiesMoving() {
-		overallPos = overallPath.forwardSearch(c.p, overallPos, true);
+		overallPos = overallPath.forwardSearch(c.center, overallPos, true);
 	}
 	
 private void cleanupVertexDepartureQueue() {

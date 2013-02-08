@@ -38,7 +38,7 @@ public class RushHourBoardPosition extends GraphPosition {
 		return bound;
 	}
 	
-	public GraphPosition travelToNeighbor(GraphPosition p, double distance) {
+	public GraphPosition approachNeighbor(GraphPosition p, double distance) {
 		
 		if (DMath.equals(distance, 0.0)) {
 			return this;
@@ -46,53 +46,93 @@ public class RushHourBoardPosition extends GraphPosition {
 		
 		assert !equals(p);
 		
-		RushHourBoardPosition bp = (RushHourBoardPosition)p;
-		
-		assert entity == bp.entity;
-		
-		double studDist = distance / RushHourStud.SIZE;
-		
-		if (DMath.equals(bp.rowCombo, rowCombo)) {
-			/*
-			 * same row
-			 */
+		if (p instanceof VertexPosition) {
 			
-			if (bp.colCombo < colCombo) {
+			Vertex v = (Vertex)p.entity;
+			RushHourBoard b = (RushHourBoard)entity;
+			
+			RushHourBoardPosition vpos = b.position(v.p);
+			
+			double boardDistance = distance / RushHourStud.SIZE;
+			
+			if (DMath.equals(vpos.colCombo, colCombo)) {
 				
-				double newCombo = colCombo - studDist;
-				assert DMath.greaterThanEquals(newCombo, bp.colCombo);
-				
-				return new RushHourBoardPosition((RushHourBoard)entity, rowCombo, newCombo);
+				if (DMath.lessThan(vpos.rowCombo, rowCombo)) {
+					
+					return new RushHourBoardPosition(b, rowCombo - boardDistance, colCombo);
+					
+				} else {
+					assert DMath.greaterThan(vpos.rowCombo, rowCombo);
+					
+					return new RushHourBoardPosition(b, rowCombo + boardDistance, colCombo);
+				}
 				
 			} else {
-				assert !DMath.equals(bp.colCombo, colCombo);
+				assert DMath.equals(vpos.rowCombo, rowCombo);
 				
-				double newCombo = colCombo + studDist;
-				assert DMath.lessThanEquals(newCombo, bp.colCombo);
+				if (DMath.lessThan(vpos.colCombo, colCombo)) {
+					
+					return new RushHourBoardPosition(b, rowCombo, colCombo - boardDistance);
+					
+				} else {
+					assert DMath.greaterThan(vpos.colCombo, colCombo);
+					
+					return new RushHourBoardPosition(b, rowCombo, colCombo + boardDistance);
+				}
 				
-				return new RushHourBoardPosition((RushHourBoard)entity, rowCombo, newCombo);
 			}
 			
 		} else {
-			assert DMath.equals(bp.colCombo, colCombo);
-			/*
-			 * same column
-			 */
 			
-			if (bp.rowCombo < rowCombo) {
+			RushHourBoardPosition bp = (RushHourBoardPosition)p;
+			
+			assert entity == bp.entity;
+			
+			double studDist = distance / RushHourStud.SIZE;
+			
+			if (DMath.equals(bp.rowCombo, rowCombo)) {
+				/*
+				 * same row
+				 */
 				
-				double newCombo = rowCombo - studDist;
-				assert DMath.greaterThanEquals(newCombo, bp.rowCombo);
-				
-				return new RushHourBoardPosition((RushHourBoard)entity, newCombo, colCombo);
+				if (bp.colCombo < colCombo) {
+					
+					double newCombo = colCombo - studDist;
+					assert DMath.greaterThanEquals(newCombo, bp.colCombo);
+					
+					return new RushHourBoardPosition((RushHourBoard)entity, rowCombo, newCombo);
+					
+				} else {
+					assert !DMath.equals(bp.colCombo, colCombo);
+					
+					double newCombo = colCombo + studDist;
+					assert DMath.lessThanEquals(newCombo, bp.colCombo);
+					
+					return new RushHourBoardPosition((RushHourBoard)entity, rowCombo, newCombo);
+				}
 				
 			} else {
-				assert !DMath.equals(bp.rowCombo, rowCombo);
+				assert DMath.equals(bp.colCombo, colCombo);
+				/*
+				 * same column
+				 */
 				
-				double newCombo = rowCombo + studDist;
-				assert DMath.lessThanEquals(newCombo, bp.rowCombo);
+				if (bp.rowCombo < rowCombo) {
+					
+					double newCombo = rowCombo - studDist;
+					assert DMath.greaterThanEquals(newCombo, bp.rowCombo);
+					
+					return new RushHourBoardPosition((RushHourBoard)entity, newCombo, colCombo);
+					
+				} else {
+					assert !DMath.equals(bp.rowCombo, rowCombo);
+					
+					double newCombo = rowCombo + studDist;
+					assert DMath.lessThanEquals(newCombo, bp.rowCombo);
+					
+					return new RushHourBoardPosition((RushHourBoard)entity, newCombo, colCombo);
+				}
 				
-				return new RushHourBoardPosition((RushHourBoard)entity, newCombo, colCombo);
 			}
 			
 		}

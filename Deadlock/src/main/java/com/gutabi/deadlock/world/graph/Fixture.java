@@ -228,9 +228,9 @@ public final class Fixture extends Vertex {
 		
 		AutonomousCar c = AutonomousCar.createCar(world, this, r);
 		
-		r = APP.RANDOM.nextInt(3);
+		int randomSpeed = APP.RANDOM.nextInt(3);
 		
-		switch (r) {
+		switch (randomSpeed) {
 		case 0:
 			c.maxSpeed = 2.5;
 			break;
@@ -262,7 +262,7 @@ public final class Fixture extends Vertex {
 			assert false;
 		}
 		
-		c.computeCtorProperties();
+//		c.computeCtorProperties();
 		c.computeStartingProperties();
 		
 		return c;

@@ -52,12 +52,13 @@ public abstract class Car extends Entity {
 	float momentOfInertia;
 	
 	public AABB localAABB;
+	public Point localFront;
 	public Body b2dBody;
 	protected PolygonShape b2dShape;
 	public org.jbox2d.dynamics.Fixture b2dFixture;
 	
 	
-	public Point p;
+	public Point center;
 	public double angle = Double.NaN;
 //	private double[][] carTransArr = new double[2][2];
 	public OBB shape;
@@ -99,7 +100,82 @@ public abstract class Car extends Entity {
 		engine = new Engine(world, this);
 	}
 	
-	public void computeCtorProperties() {
+	public void computeCtorProperties(int r) {
+		
+		switch (r) {
+		case 0:
+			sprite = Sprite.CAR0;
+			CAR_LENGTH = 1.0;
+			CAR_WIDTH = 0.5;
+			localFront = new Point(0.75 * CAR_LENGTH, 0.0);
+			break;
+		case 1:
+			sprite = Sprite.CAR1;
+			CAR_LENGTH = 1.0;
+			CAR_WIDTH = 0.5;
+			localFront = new Point(0.75 * CAR_LENGTH, 0.0);
+			break;
+		case 2:
+			sprite = Sprite.CAR2;
+			CAR_LENGTH = 1.0;
+			CAR_WIDTH = 0.5;
+			localFront = new Point(0.75 * CAR_LENGTH, 0.0);
+			break;
+		case 3:
+			sprite = Sprite.CAR3;
+			CAR_LENGTH = 4.0;
+			CAR_WIDTH = 2.0;
+			localFront = new Point(0.75 * CAR_LENGTH, 0.0);
+			break;
+		case 4:
+			sprite = Sprite.CAR4;
+			CAR_LENGTH = 2.0;
+			CAR_WIDTH = 1.0;
+			localFront = new Point(0.75 * CAR_LENGTH, 0.0);
+			break;
+		case 5:
+			sprite = Sprite.CAR5;
+			CAR_LENGTH = 3.0;
+			CAR_WIDTH = 1.0;
+			localFront = new Point(0.75 * CAR_LENGTH, 0.0);
+			break;
+		case 6:
+			sprite = Sprite.CAR6;
+			CAR_LENGTH = 3.0;
+			CAR_WIDTH = 1.0;
+			localFront = new Point(0.75 * CAR_LENGTH, 0.0);
+			break;
+		case 7:
+			sprite = Sprite.CAR7;
+			CAR_LENGTH = 2.0;
+			CAR_WIDTH = 1.0;
+			localFront = new Point(0.75 * CAR_LENGTH, 0.0);
+			break;
+		case 8:
+			sprite = Sprite.CAR8;
+			CAR_LENGTH = 3.0;
+			CAR_WIDTH = 1.0;
+			localFront = new Point(0.75 * CAR_LENGTH, 0.0);
+			break;
+		case 9:
+			sprite = Sprite.CAR9;
+			CAR_LENGTH = 2.0;
+			CAR_WIDTH = 1.0;
+			localFront = new Point(0.75 * CAR_LENGTH, 0.0);
+			break;
+		case 10:
+			sprite = Sprite.CAR10;
+			CAR_LENGTH = 3.0;
+			CAR_WIDTH = 1.0;
+			localFront = new Point(0.75 * CAR_LENGTH, 0.0);
+			break;
+		case 11:
+			sprite = Sprite.CAR11;
+			CAR_LENGTH = 2.0;
+			CAR_WIDTH = 1.0;
+			localFront = new Point(0.75 * CAR_LENGTH, 0.0);
+			break;
+		}
 		
 //		Point p0 = new Point(-CAR_LENGTH / 2, -CAR_WIDTH / 2);
 //		Point p1 = new Point(CAR_LENGTH / 2, -CAR_WIDTH / 2);
@@ -121,17 +197,17 @@ public abstract class Car extends Entity {
 		CAR_BRAKE2Y = CAR_LOCALY + 3 * CAR_WIDTH/4 + BRAKE_LOCALY;
 	}
 	
-	public void setTransform(Point p, double angle) {
-		this.p = p;
+	public void setTransform(Point center, double angle) {
+		this.center = center;
 		this.angle = angle;
 //		Geom.rotationMatrix(angle, carTransArr);
-		shape = Geom.localToWorld(localAABB, angle, p);
+		shape = Geom.localToWorld(localAABB, angle, center);
 	}
 	
 	public void b2dInit() {
 		BodyDef bodyDef = new BodyDef();
 		bodyDef.type = BodyType.DYNAMIC;
-		bodyDef.position.set((float)p.x, (float)p.y);
+		bodyDef.position.set((float)center.x, (float)center.y);
 		bodyDef.angle = (float)angle;
 		bodyDef.allowSleep = true;
 		bodyDef.awake = true;
@@ -251,7 +327,7 @@ public abstract class Car extends Entity {
 			ctxt.setAlpha(0.5);
 		}
 		
-		ctxt.translate(p.x, p.y);
+		ctxt.translate(center.x, center.y);
 		ctxt.rotate(angle);
 		ctxt.translate(CAR_LOCALX, CAR_LOCALY);
 		
@@ -276,7 +352,7 @@ public abstract class Car extends Entity {
 		
 		Transform origTransform = ctxt.getTransform();
 		
-		ctxt.translate(p.x, p.y);
+		ctxt.translate(center.x, center.y);
 		ctxt.rotate(angle);
 		
 		Transform brakeTransform = ctxt.getTransform();
@@ -305,7 +381,7 @@ public abstract class Car extends Entity {
 		
 		Transform origTransform = ctxt.getTransform();
 		
-		ctxt.translate(p.x, p.y);
+		ctxt.translate(center.x, center.y);
 		
 		ctxt.setColor(Color.WHITE);
 		ctxt.paintString(CAR_LOCALX, 0.0, 2.0/world.screen.pixelsPerMeter, Integer.toString(id));

@@ -39,6 +39,10 @@ public class Geom {
 		return times(m, l).plus(t);
 	}
 	
+	public static Point localToWorld(Point l, double angle, Point t) {
+		return rotate(angle, l).plus(t);
+	}
+	
 	public static OBB localToWorld(AABB a, double angle, Point t) {
 //		Point w0 = times(m, a.p0).plus(t);
 //		Point w1 = times(m, a.p1).plus(t);

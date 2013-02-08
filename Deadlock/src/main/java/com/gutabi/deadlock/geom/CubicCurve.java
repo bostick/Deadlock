@@ -55,7 +55,7 @@ public abstract class CubicCurve implements Shape {
 				Math.sqrt(dx2 * dx2 + dy2 * dy2) +
 				Math.sqrt(dx3 * dx3 + dy3 * dy3);
 		
-		int num_steps = (int)(len * 0.25);
+		int num_steps = (int)(2 * len * 0.25);
 		
 		List<Point> pts = new ArrayList<Point>();
 		for (int i = 0; i <= num_steps; i++) {

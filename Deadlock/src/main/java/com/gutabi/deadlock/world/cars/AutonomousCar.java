@@ -18,7 +18,6 @@ import com.gutabi.deadlock.world.World;
 import com.gutabi.deadlock.world.graph.Fixture;
 import com.gutabi.deadlock.world.graph.GraphPositionPathPosition;
 import com.gutabi.deadlock.world.graph.Merger;
-import com.gutabi.deadlock.world.sprites.Sheet.Sprite;
 
 public class AutonomousCar extends Car {
 	
@@ -35,68 +34,7 @@ public class AutonomousCar extends Car {
 		AutonomousCar c = new AutonomousCar(world, f);
 		c.driver = new AutonomousDriver(c);
 		
-		switch (r) {
-		case 0:
-			c.sprite = Sprite.CAR0;
-			c.CAR_LENGTH = 1.0;
-			c.CAR_WIDTH = 0.5;
-			break;
-		case 1:
-			c.sprite = Sprite.CAR1;
-			c.CAR_LENGTH = 1.0;
-			c.CAR_WIDTH = 0.5;
-			break;
-		case 2:
-			c.sprite = Sprite.CAR2;
-			c.CAR_LENGTH = 1.0;
-			c.CAR_WIDTH = 0.5;
-			break;
-		case 3:
-			c.sprite = Sprite.CAR3;
-			c.CAR_LENGTH = 4.0;
-			c.CAR_WIDTH = 2.0;
-			break;
-		case 4:
-			c.sprite = Sprite.CAR4;
-			c.CAR_LENGTH = 2.0;
-			c.CAR_WIDTH = 1.0;
-			break;
-		case 5:
-			c.sprite = Sprite.CAR5;
-			c.CAR_LENGTH = 3.0;
-			c.CAR_WIDTH = 1.0;
-			break;
-		case 6:
-			c.sprite = Sprite.CAR6;
-			c.CAR_LENGTH = 3.0;
-			c.CAR_WIDTH = 1.0;
-			break;
-		case 7:
-			c.sprite = Sprite.CAR7;
-			c.CAR_LENGTH = 2.0;
-			c.CAR_WIDTH = 1.0;
-			break;
-		case 8:
-			c.sprite = Sprite.CAR8;
-			c.CAR_LENGTH = 3.0;
-			c.CAR_WIDTH = 1.0;
-			break;
-		case 9:
-			c.sprite = Sprite.CAR9;
-			c.CAR_LENGTH = 2.0;
-			c.CAR_WIDTH = 1.0;
-			break;
-		case 10:
-			c.sprite = Sprite.CAR10;
-			c.CAR_LENGTH = 3.0;
-			c.CAR_WIDTH = 1.0;
-			break;
-		case 11:
-			c.sprite = Sprite.CAR11;
-			c.CAR_LENGTH = 2.0;
-			c.CAR_WIDTH = 1.0;
-			break;
-		}
+		c.computeCtorProperties(r);
 		
 		return c;
 	}
@@ -105,7 +43,7 @@ public class AutonomousCar extends Car {
 		
 		((AutonomousDriver)driver).computeStartingProperties();
 		
-		p = ((AutonomousDriver)driver).overallPos.p;
+		center = ((AutonomousDriver)driver).overallPos.p;
 		
 		/*
 		 * if angle was not initialized, do it now
@@ -116,13 +54,13 @@ public class AutonomousCar extends Car {
 			
 			Point nextDTGoalPoint = next.p;
 			
-			Point dp = new Point(nextDTGoalPoint.x-p.x, nextDTGoalPoint.y-p.y);
+			Point dp = new Point(nextDTGoalPoint.x-center.x, nextDTGoalPoint.y-center.y);
 			
 			angle = Math.atan2(dp.y, dp.x);
 			
 		}
 		
-		setTransform(p, angle);
+		setTransform(center, angle);
 	}
 	
 	public void computeDynamicPropertiesAlways() {
@@ -135,7 +73,7 @@ public class AutonomousCar extends Car {
 		prevWorldPoint3 = shape.p3;
 		
 		pVec2 = b2dBody.getPosition();
-		p = new Point(pVec2.x, pVec2.y);
+		center = new Point(pVec2.x, pVec2.y);
 		
 		currentRightNormal = b2dBody.getWorldVector(right);
 		currentUpNormal = b2dBody.getWorldVector(up);
@@ -155,7 +93,7 @@ public class AutonomousCar extends Car {
 //		carTransArr[1][0] = r.col1.y;
 //		carTransArr[1][1] = r.col2.y;
 		
-		shape = Geom.localToWorld(localAABB, angle, p);
+		shape = Geom.localToWorld(localAABB, angle, center);
 		
 		switch (state) {
 		case DRIVING:
@@ -243,7 +181,7 @@ public class AutonomousCar extends Car {
 			
 			Fixture s = (Fixture)((AutonomousDriver)driver).overallPath.end.entity;
 			boolean sinked = false;
-			if (Point.distance(p, s.p) < SINK_EPSILON) {
+			if (Point.distance(center, s.p) < SINK_EPSILON) {
 				sinked = true;
 			}
 			

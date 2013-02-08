@@ -6,6 +6,7 @@ import com.gutabi.deadlock.geom.Geom;
 import com.gutabi.deadlock.geom.OBB;
 import com.gutabi.deadlock.geom.Shape;
 import com.gutabi.deadlock.geom.ShapeUtils;
+import com.gutabi.deadlock.math.DMath;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.menu.MainMenu;
 import com.gutabi.deadlock.ui.InputEvent;
@@ -54,7 +55,7 @@ public class CarTool extends ToolBase {
 			
 			this.car = pressed;
 			
-			car.toolOrigP = car.p;
+			car.toolOrigP = car.center;
 			car.toolOrigAngle = car.angle;
 			car.toolOrigShape = car.shape;
 			
@@ -100,7 +101,7 @@ public class CarTool extends ToolBase {
 					}
 					
 					car.setTransform(rounded.p, car.angle);
-					car.driver.overallPos = car.driver.overallPath.generalSearch(car.p, car.driver.overallPos);
+					car.driver.overallPos = car.driver.overallPath.generalSearch(car.center, car.driver.overallPos);
 					
 					screen.contentPane.repaint();
 					
@@ -131,10 +132,7 @@ public class CarTool extends ToolBase {
 			
 			Point diff = ev.p.minus(screen.world.lastPressedWorldPoint);
 			
-			
 			Point carPTmp = car.toolOrigP.plus(diff);
-//			Point carP = null;
-//			double carAngle = car.angle;
 			
 			switch (car.state) {
 			case IDLE:
@@ -142,43 +140,19 @@ public class CarTool extends ToolBase {
 			case BRAKING:
 				
 				GraphPositionPathPosition testPathPos = car.driver.overallPath.generalSearch(carPTmp, car.driver.overallPos);
-				GraphPosition testGpos = testPathPos.getGraphPosition();
+//				GraphPosition testGpos = testPathPos.getGraphPosition();
 				
-				if (testGpos instanceof RoadPosition) {
+//				System.out.println(testGpos);
+				
+				if (!collidesWithBoardOrOtherCars(car, testPathPos.p)) {
 					
-					double newAngle = Math.atan2(testGpos.p.y - car.p.y, testGpos.p.x - car.p.x);
+					car.setTransform(testPathPos.p, newAngle(car, testPathPos));
 					
-					car.setTransform(testGpos.p, newAngle);
-					
-					car.driver.overallPos = car.driver.overallPath.findClosestGraphPositionPathPosition(testGpos);
-					
-					screen.contentPane.repaint();
-					
-				} else if (testGpos instanceof VertexPosition) {
-					
-					car.setTransform(testGpos.p, car.angle);
-					
-					car.driver.overallPos = car.driver.overallPath.findClosestGraphPositionPathPosition(testGpos);
+//					car.driver.overallPos = car.driver.overallPath.findClosestGraphPositionPathPosition(testGpos);
+					car.driver.overallPos = testPathPos;
 					
 					screen.contentPane.repaint();
 					
-				} else if (testGpos instanceof RushHourBoardPosition) {
-					
-					RushHourBoardPosition rpos = (RushHourBoardPosition)testGpos;
-					
-					if (!collidesWithBoardOrOtherCars(car, rpos)) {
-						
-						car.setTransform(testGpos.p, car.angle);
-						
-						car.driver.overallPos = car.driver.overallPath.findClosestGraphPositionPathPosition(testGpos);
-						
-						screen.contentPane.repaint();
-						
-						
-					}
-					
-				} else {
-					assert false;
 				}
 				
 				break;
@@ -194,25 +168,68 @@ public class CarTool extends ToolBase {
 		
 	}
 	
-	private boolean collidesWithBoardOrOtherCars(Car car, RushHourBoardPosition rpos) {
+	private double newAngle(Car car, GraphPositionPathPosition testPathPos) {
 		
-		RushHourBoard b = (RushHourBoard)rpos.entity;
-		Point test = rpos.p;
+		Point worldFront = Geom.localToWorld(car.localFront, car.angle, car.center);
+		GraphPositionPathPosition centerPathPos = car.driver.overallPath.generalSearch(car.center, car.driver.overallPos);
+		GraphPositionPathPosition frontPathPos = car.driver.overallPath.generalSearch(worldFront, car.driver.overallPos);
+		int directionInTrack;
+		if (DMath.lessThan(centerPathPos.combo, frontPathPos.combo)) {
+			directionInTrack = 1;
+		} else {
+			directionInTrack = -1;
+		}
+		
+		
+		GraphPosition testGpos = testPathPos.getGraphPosition();
+		
+		double a;
+		
+		if (testPathPos.equals(car.driver.overallPos)) {
+			a = car.angle;
+		} else if (DMath.lessThan(car.driver.overallPos.combo, testPathPos.combo)) {
+			if (directionInTrack == 1) {
+				a = Math.atan2(testGpos.p.y - car.center.y, testGpos.p.x - car.center.x);
+			} else {
+				a = Math.atan2(car.center.y - testGpos.p.y, car.center.x - testGpos.p.x);
+			}
+		} else {
+			if (directionInTrack == 1) {
+				a = Math.atan2(car.center.y - testGpos.p.y, car.center.x - testGpos.p.x);
+			} else {
+				a = Math.atan2(testGpos.p.y - car.center.y, testGpos.p.x - car.center.x);
+			}
+		}
+		
+		if (DMath.lessThan(a, 0.0)) {
+			a = a + 2 * Math.PI;
+		}
+		
+		return a;
+	}
+	
+	private boolean collidesWithBoardOrOtherCars(Car car, Point test) {
 		
 		OBB testOBB = Geom.localToWorld(car.localAABB, car.angle, test);
 		
-		if (b.overlapsPerimeter(testOBB)) {
-			return true;
-		} else {
-			for (Car c : screen.world.carMap.cars) {
-				if (c == car) {
-					continue;
-				}
-				if (ShapeUtils.intersectAreaOO(testOBB, c.shape)) {
-					return true;
-				}
+		for (RushHourBoard b : screen.world.graph.rushes) {
+			if (b.overlapsPerimeter(testOBB)) {
+				return true;
 			}
 		}
+		
+//		RushHourBoard b = (RushHourBoard)rpos.entity;
+//		Point test = rpos.p;
+		
+		for (Car c : screen.world.carMap.cars) {
+			if (c == car) {
+				continue;
+			}
+			if (ShapeUtils.intersectAreaOO(testOBB, c.shape)) {
+				return true;
+			}
+		}
+		
 		return false;
 	}
 	

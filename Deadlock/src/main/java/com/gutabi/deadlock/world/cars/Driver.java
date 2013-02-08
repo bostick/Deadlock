@@ -14,6 +14,8 @@ public abstract class Driver {
 	public GraphPositionPath overallPath;
 	public GraphPositionPathPosition overallPos;
 	
+//	public int directionInTrack;
+	
 	public Driver(Car c) {
 		this.c = c;
 	}

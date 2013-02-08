@@ -6,7 +6,6 @@ import com.gutabi.deadlock.world.World;
 import com.gutabi.deadlock.world.WorldScreen;
 import com.gutabi.deadlock.world.cars.CarStateEnum;
 import com.gutabi.deadlock.world.cars.InteractiveCar;
-import com.gutabi.deadlock.world.cars.InteractiveDriver;
 import com.gutabi.deadlock.world.graph.Graph;
 import com.gutabi.deadlock.world.graph.RushHourBoard;
 import com.gutabi.deadlock.world.graph.RushHourBoardPosition;
@@ -55,8 +54,8 @@ public class RushHourWorld extends World {
 		
 		final RushHourBoard b = w.createRushHourBoard(new Point(8, 8), boardIni);
 		
-		char[] carChars = new char[] { 'R', 'A', 'B', 'C', 'D', 'E', 'F', 'G' };
-//		char[] carChars = new char[] { 'A' };
+//		char[] carChars = new char[] { 'R', 'A', 'B', 'C', 'D', 'E', 'F', 'G' };
+		char[] carChars = new char[] { 'A', 'D' };
 		int cur2Count = 0;
 		int cur3Count = 0;
 		carLoop:
@@ -143,32 +142,35 @@ public class RushHourWorld extends World {
 		
 		InteractiveCar c = InteractiveCar.createCar(w, sheetIndex);
 		c.state = CarStateEnum.IDLE;
-		c.driver = new InteractiveDriver(c);
-		c.computeCtorProperties();
+//		c.driver = new InteractiveDriver(c);
 		switch (side) {
 		case RIGHT:
 			c.driver.startGP = new RushHourBoardPosition(b, frontRow + c.CAR_WIDTH/2, frontCol + c.CAR_LENGTH/2 - 1);
 			c.setTransform(c.driver.startGP.p, 0.0 * Math.PI);
 			c.driver.overallPath = b.getPath(Side.RIGHT, frontRow);
 			c.driver.overallPos = c.driver.overallPath.findClosestGraphPositionPathPosition(c.driver.startGP);
+//			c.driver.directionInTrack = 1;
 			break;
 		case BOTTOM:
 			c.driver.startGP = new RushHourBoardPosition(b, frontRow + c.CAR_LENGTH/2 - 1, frontCol + c.CAR_WIDTH/2);
 			c.setTransform(c.driver.startGP.p, 0.5 * Math.PI);
 			c.driver.overallPath = b.getPath(Side.BOTTOM, frontCol);
 			c.driver.overallPos = c.driver.overallPath.findClosestGraphPositionPathPosition(c.driver.startGP);
+//			c.driver.directionInTrack = 1;
 			break;
 		case LEFT:
 			c.driver.startGP = new RushHourBoardPosition(b, frontRow + c.CAR_WIDTH/2, frontCol + c.CAR_LENGTH/2);
 			c.setTransform(c.driver.startGP.p, 1.0 * Math.PI);
 			c.driver.overallPath = b.getPath(Side.LEFT, frontRow);
 			c.driver.overallPos = c.driver.overallPath.findClosestGraphPositionPathPosition(c.driver.startGP);
+//			c.driver.directionInTrack = -1;
 			break;
 		case TOP:
 			c.driver.startGP = new RushHourBoardPosition(b, frontRow + c.CAR_LENGTH/2, frontCol + c.CAR_WIDTH/2);
 			c.setTransform(c.driver.startGP.p, 1.5 * Math.PI);
 			c.driver.overallPath = b.getPath(Side.TOP, frontCol);
 			c.driver.overallPos = c.driver.overallPath.findClosestGraphPositionPathPosition(c.driver.startGP);
+//			c.driver.directionInTrack = -1;
 			break;
 		}
 		

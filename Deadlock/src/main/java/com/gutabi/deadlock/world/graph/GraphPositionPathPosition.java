@@ -100,9 +100,14 @@ public class GraphPositionPathPosition {
 		
 		GraphPosition p2 = path.get(index+1);
 		
+		if (DMath.equals(param, 1.0)) {
+			gpos = p2;
+			return;
+		}
+		
 		double dist = Point.distance(p1.p, p2.p);
 		
-		gpos = p1.travelToNeighbor(p2, dist * param);
+		gpos = p1.approachNeighbor(p2, dist * param);
 		
 	}
 	
@@ -194,7 +199,7 @@ public class GraphPositionPathPosition {
 						
 						double toTravel = dist - traveled;
 						
-						EdgePosition g = (EdgePosition)curPosition.travelToNeighbor(nextBoundGP, toTravel);
+						EdgePosition g = (EdgePosition)curPosition.approachNeighbor(nextBoundGP, toTravel);
 						
 						if (curPosition instanceof EdgePosition) {
 							EdgePosition curPosE = (EdgePosition)curPosition;

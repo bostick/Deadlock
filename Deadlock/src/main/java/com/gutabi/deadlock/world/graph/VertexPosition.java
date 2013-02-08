@@ -46,7 +46,7 @@ public class VertexPosition extends GraphPosition {
 		}
 	}
 	
-	public GraphPosition travelToNeighbor(GraphPosition p, double distance) {
+	public GraphPosition approachNeighbor(GraphPosition p, double distance) {
 		
 		if (DMath.equals(distance, 0.0)) {
 			return this;

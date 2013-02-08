@@ -145,7 +145,7 @@ public class Engine {
 		
 		
 		
-		Point dp = new Point(((AutonomousDriver)c.driver).goalPoint.x-c.p.x, ((AutonomousDriver)c.driver).goalPoint.y-c.p.y);
+		Point dp = new Point(((AutonomousDriver)c.driver).goalPoint.x-c.center.x, ((AutonomousDriver)c.driver).goalPoint.y-c.center.y);
 		
 		double goalAngle = Math.atan2(dp.y, dp.x);
 		

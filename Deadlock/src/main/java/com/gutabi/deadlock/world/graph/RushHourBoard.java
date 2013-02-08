@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import com.gutabi.deadlock.Entity;
 import com.gutabi.deadlock.geom.AABB;
@@ -85,7 +86,7 @@ public class RushHourBoard extends Entity {
 		}
 		
 		
-		List<Fixture> jFixtures = new ArrayList<Fixture>();
+		List<JointStud> jStuds = new ArrayList<JointStud>();
 		
 		for (int i = 0; i < ini.length; i++) {
 			for (int j = 0; j < ini[i].length; j++) {
@@ -101,27 +102,25 @@ public class RushHourBoard extends Entity {
 				case 'J': {
 					JointStud s = new JointStud(world, this, i - originRow, j - originCol);
 					addStud(s);
+					jStuds.add(s);
 					if (i < originRow) {
 						removePerimeterSegment(s.aabb.getP2P3Line());
 						Fixture f = new Fixture(world, point(i - originRow, j - originCol + 0.5), Axis.TOPBOTTOM);
 						f.setSide(Side.BOTTOM);
 						s.f = f;
 						world.addFixture(f);
-						jFixtures.add(f);
 					} else if (i >= originRow + 6) {
 						removePerimeterSegment(s.aabb.getP0P1Line());
 						Fixture f = new Fixture(world, point(i - originRow + 1.0, j - originCol + 0.5), Axis.TOPBOTTOM);
 						f.setSide(Side.TOP);
 						s.f = f;
 						world.addFixture(f);
-						jFixtures.add(f);
 					} else if (j < originCol) {
 						removePerimeterSegment(s.aabb.getP1P2Line());
 						Fixture f = new Fixture(world, point(i - originRow + 0.5, j - originCol), Axis.LEFTRIGHT);
 						f.setSide(Side.RIGHT);
 						s.f = f;
 						world.addFixture(f);
-						jFixtures.add(f);
 					} else {
 						assert j >= originCol + 6;
 						removePerimeterSegment(s.aabb.getP3P0Line());
@@ -129,7 +128,6 @@ public class RushHourBoard extends Entity {
 						f.setSide(Side.LEFT);
 						s.f = f;
 						world.addFixture(f);
-						jFixtures.add(f);
 					}
 					break;
 				}
@@ -152,120 +150,317 @@ public class RushHourBoard extends Entity {
 			}
 		}
 		
-		Fixture f0 = jFixtures.get(0);
-		Fixture f1 = jFixtures.get(1);
+		JointStud js0 = jStuds.get(0);
+		JointStud js1 = jStuds.get(1);
+		Fixture f0 = js0.f;
+		Fixture f1 = js1.f;
 		
-		CubicCurve c = APP.platform.createShapeEngine().createCubicCurve(f0.p, new Point(f0.p.x, f0.p.y - 15), new Point(f1.p.x - 15, f1.p.y), f1.p);
+		CubicCurve c = APP.platform.createShapeEngine().createCubicCurve(new Point(f0.p.x, f0.p.y - 5), new Point(f0.p.x, f0.p.y - 15), new Point(f1.p.x - 15, f1.p.y), new Point(f1.p.x - 5, f1.p.y));
 		List<Point> pts = c.skeleton();
 		
 		Stroke stroke = new Stroke(world);
+		stroke.add(f0.p);
 		for (Point p : pts) {
 			stroke.add(p);
 		}
+		stroke.add(f1.p);
 		stroke.finish();
 		
 		stroke.processNewStroke();
 		
 		/*
-		 * create paths
+		 * create paths 
 		 */
 		
-		for (int i = rowRange[0]; i <= rowRange[1]; i++) {
-			List<GraphPosition> poss = new ArrayList<GraphPosition>();
-			for (int j = colRange[0]; j <= colRange[1]; j++) {
-				RushHourStud ss = findStud(i, j);
-				if (ss != null) {
-					if (ss instanceof JointStud) {
-						JointStud jj = (JointStud)ss;
-						if (j < originCol) {
-							Road r = jj.f.roads.get(0);
-							if (jj.f == r.start) {
-								poss.add(new VertexPosition(r.end));
-								for (int ii = r.pointCount()-2; ii >= 1; ii--) {
-									poss.add(new RoadPosition(r, ii, 0.0));
-								}
-								poss.add(new VertexPosition(r.start));
-							} else {
-								poss.add(new VertexPosition(r.start));
-								for (int ii = 1; ii <= r.pointCount()-2; ii++) {
-									poss.add(new RoadPosition(r, ii, 0.0));
-								}
-								poss.add(new VertexPosition(r.end));
-							}
-						} else if (j >= originCol + 6) {
-							Road r = jj.f.roads.get(0);
-							if (jj.f == r.start) {
-								poss.add(new VertexPosition(r.start));
-								for (int ii = 1; ii <= r.pointCount()-2; ii++) {
-									poss.add(new RoadPosition(r, ii, 0.0));
-								}
-								poss.add(new VertexPosition(r.end));
-							} else {
-								poss.add(new VertexPosition(r.end));
-								for (int ii = r.pointCount()-2; ii >= 1; ii--) {
-									poss.add(new RoadPosition(r, ii, 0.0));
-								}
-								poss.add(new VertexPosition(r.start));
-							}
-						}
-					} else {
-						poss.add(new RushHourBoardPosition(this, i + 0.5, j));
-					}
-				}
+		
+		Map<Integer, List<RushHourBoardPosition>> rowTracks = new HashMap<Integer, List<RushHourBoardPosition>>();
+		Map<Integer, List<RushHourBoardPosition>> colTracks = new HashMap<Integer, List<RushHourBoardPosition>>();
+		
+		/*
+		 * row tracks
+		 */
+		for (int i = 0; i < 6; i++) {
+			List<RushHourBoardPosition> track = new ArrayList<RushHourBoardPosition>();
+			for (int j = 0; j < 6; j++) {
+				track.add(new RushHourBoardPosition(this, i + 0.5, j));
 			}
-			if (!poss.isEmpty()) {
-				GraphPositionPath path = new GraphPositionPath(poss);
-				rowPaths.put(i, path);
+			rowTracks.put(i, track);
+		}
+		
+		/*
+		 * col tracks
+		 */
+		for (int i = 0; i < 6; i++) {
+			List<RushHourBoardPosition> track = new ArrayList<RushHourBoardPosition>();
+			for (int j = 0; j < 6; j++) {
+				track.add(new RushHourBoardPosition(this, j, i + 0.5));
+			}
+			colTracks.put(i, track);
+		}
+		
+
+		
+		List<RushHourBoardPosition> js0Track;
+		if (js0.col < originCol) {
+			js0Track = rowTracks.remove(js0.row);
+		} else if (js0.col >= originCol + 6) {
+			js0Track = rowTracks.remove(js0.row);
+		} else if (js0.row < originRow) {
+			js0Track = colTracks.remove(js0.col);
+		} else {
+			assert js0.row >= originRow + 6;
+			js0Track = colTracks.remove(js0.col);
+		}
+		
+		List<RushHourBoardPosition> js1Track;
+		if (js1.col < originCol) {
+			js1Track = rowTracks.remove(js1.row);
+		} else if (js1.col >= originCol + 6) {
+			js1Track = rowTracks.remove(js1.row);
+		} else if (js1.row < originRow) {
+			js1Track = colTracks.remove(js1.col);
+		} else {
+			assert js1.row >= originRow + 6;
+			js1Track = colTracks.remove(js1.col);
+		}
+		
+		
+		List<GraphPosition> poss = new ArrayList<GraphPosition>();
+//		from other side of js0 track to js0
+		if (js0.col < originCol) {
+			for (int i = 5; i >= 1; i--) {
+				poss.add(js0Track.get(i));
+			}
+		} else if (js0.col >= originCol + 6) {
+			for (int i = 0; i < 5; i++) {
+				poss.add(js0Track.get(i));
+			}
+		} else if (js0.row < originRow) {
+			for (int i = 5; i >= 1; i--) {
+				poss.add(js0Track.get(i));
+			}
+		} else {
+			assert js0.row >= originRow + 6;
+			for (int i = 0; i < 5; i++) {
+				poss.add(js0Track.get(i));
 			}
 		}
-		for (int i = colRange[0]; i <= colRange[1]; i++) {
-			List<GraphPosition> poss = new ArrayList<GraphPosition>();
-			for (int j = rowRange[0]; j <= rowRange[1]; j++) {
-				RushHourStud ss = findStud(j, i);
-				if (ss != null) {
-					if (ss instanceof JointStud) {
-						JointStud jj = (JointStud)ss;
-						if (j < originRow) {
-							Road r = jj.f.roads.get(0);
-							if (jj.f == r.start) {
-								poss.add(new VertexPosition(r.end));
-								for (int ii = r.pointCount()-2; ii >= 1; ii--) {
-									poss.add(new RoadPosition(r, ii, 0.0));
-								}
-								poss.add(new VertexPosition(r.start));
-							} else {
-								poss.add(new VertexPosition(r.start));
-								for (int ii = 1; ii <= r.pointCount()-2; ii++) {
-									poss.add(new RoadPosition(r, ii, 0.0));
-								}
-								poss.add(new VertexPosition(r.end));
-							}
-						} else if (j >= originRow + 6) {
-							Road r = jj.f.roads.get(0);
-							if (jj.f == r.start) {
-								poss.add(new VertexPosition(r.start));
-								for (int ii = 1; ii <= r.pointCount()-2; ii++) {
-									poss.add(new RoadPosition(r, ii, 0.0));
-								}
-								poss.add(new VertexPosition(r.end));
-							} else {
-								poss.add(new VertexPosition(r.end));
-								for (int ii = r.pointCount()-2; ii >= 1; ii--) {
-									poss.add(new RoadPosition(r, ii, 0.0));
-								}
-								poss.add(new VertexPosition(r.start));
-							}
-						}
-					} else {
-						poss.add(new RushHourBoardPosition(this, j, i + 0.5));
-					}
-				}
+//		to vertex
+//		to road
+//		to vertex
+		Road r = js0.f.roads.get(0);
+		if (js0.f == r.start) {
+			poss.add(new VertexPosition(r.start));
+			for (int ii = 1; ii <= r.pointCount()-2; ii++) {
+				poss.add(new RoadPosition(r, ii, 0.0));
 			}
-			if (!poss.isEmpty()) {
-				GraphPositionPath path = new GraphPositionPath(poss);
-				colPaths.put(i, path);
+			poss.add(new VertexPosition(r.end));
+		} else {
+			poss.add(new VertexPosition(r.end));
+			for (int ii = r.pointCount()-2; ii >= 1; ii--) {
+				poss.add(new RoadPosition(r, ii, 0.0));
+			}
+			poss.add(new VertexPosition(r.start));
+		}
+//		to js1
+//		to other side of js1 track
+		if (js1.col < originCol) {
+			for (int i = 1; i < 6; i++) {
+				poss.add(js1Track.get(i));
+			}
+		} else if (js1.col >= originCol + 6) {
+			for (int i = 5; i >= 0; i--) {
+				poss.add(js1Track.get(i));
+			}
+		} else if (js1.row < originRow) {
+			for (int i = 1; i > 6; i++) {
+				poss.add(js1Track.get(i));
+			}
+		} else {
+			assert js1.row >= originRow + 6;
+			for (int i = 5; i >= 0; i--) {
+				poss.add(js1Track.get(i));
 			}
 		}
+		
+//		add to rowPaths and colPaths as needed
+		GraphPositionPath path = new GraphPositionPath(poss);
+		if (js0.col < originCol) {
+			rowPaths.put(js0.row, path);
+		} else if (js0.col >= originCol + 6) {
+			rowPaths.put(js0.row, path);
+		} else if (js0.row < originRow) {
+			colPaths.put(js0.col, path);
+		} else {
+			assert js0.row >= originRow + 6;
+			colPaths.put(js0.col, path);
+		}
+		
+		if (js1.col < originCol) {
+			rowPaths.put(js1.row, path);
+		} else if (js1.col >= originCol + 6) {
+			rowPaths.put(js1.row, path);
+		} else if (js1.row < originRow) {
+			colPaths.put(js1.col, path);
+		} else {
+			assert js1.row >= originRow + 6;
+			colPaths.put(js1.col, path);
+		}
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		/*
+		 * regular row tracks
+		 */
+		for (Entry<Integer, List<RushHourBoardPosition>> entry : rowTracks.entrySet()) {
+			Integer i = entry.getKey();
+			List<RushHourBoardPosition> rt = entry.getValue();
+			poss = new ArrayList<GraphPosition>();
+			for (RushHourBoardPosition pos : rt) {
+				poss.add(pos);
+			}
+			path = new GraphPositionPath(poss);
+			rowPaths.put(i, path);
+		}
+		
+		/*
+		 * regular col tracks
+		 */
+		for (Entry<Integer, List<RushHourBoardPosition>> entry : colTracks.entrySet()) {
+			Integer i = entry.getKey();
+			List<RushHourBoardPosition> ct = entry.getValue();
+			poss = new ArrayList<GraphPosition>();
+			for (RushHourBoardPosition pos : ct) {
+				poss.add(pos);
+			}
+			path = new GraphPositionPath(poss);
+			colPaths.put(i, path);
+		}
+		
+//		
+//		
+//		
+//		
+//		
+//		
+//		
+//		
+//		
+//		
+//		
+//		
+//		
+//		/*
+//		 * row paths
+//		 */
+//		for (int i = rowRange[0]; i <= rowRange[1]; i++) {
+//			List<GraphPosition> poss = new ArrayList<GraphPosition>();
+//			for (int j = colRange[0]; j <= colRange[1]; j++) {
+//				RushHourStud ss = findStud(i, j);
+//				if (ss != null) {
+//					if (ss instanceof JointStud) {
+//						JointStud jj = (JointStud)ss;
+//						if (j < originCol) {
+//							Road r = jj.f.roads.get(0);
+//							if (jj.f == r.start) {
+//								poss.add(new VertexPosition(r.end));
+//								for (int ii = r.pointCount()-2; ii >= 1; ii--) {
+//									poss.add(new RoadPosition(r, ii, 0.0));
+//								}
+//								poss.add(new VertexPosition(r.start));
+//							} else {
+//								poss.add(new VertexPosition(r.start));
+//								for (int ii = 1; ii <= r.pointCount()-2; ii++) {
+//									poss.add(new RoadPosition(r, ii, 0.0));
+//								}
+//								poss.add(new VertexPosition(r.end));
+//							}
+//						} else if (j >= originCol + 6) {
+//							Road r = jj.f.roads.get(0);
+//							if (jj.f == r.start) {
+//								poss.add(new VertexPosition(r.start));
+//								for (int ii = 1; ii <= r.pointCount()-2; ii++) {
+//									poss.add(new RoadPosition(r, ii, 0.0));
+//								}
+//								poss.add(new VertexPosition(r.end));
+//							} else {
+//								poss.add(new VertexPosition(r.end));
+//								for (int ii = r.pointCount()-2; ii >= 1; ii--) {
+//									poss.add(new RoadPosition(r, ii, 0.0));
+//								}
+//								poss.add(new VertexPosition(r.start));
+//							}
+//						}
+//					} else {
+//						poss.add(new RushHourBoardPosition(this, i + 0.5, j));
+//					}
+//				}
+//			}
+//			if (!poss.isEmpty()) {
+//				GraphPositionPath path = new GraphPositionPath(poss);
+//				rowPaths.put(i, path);
+//			}
+//		}
+//		
+//		/*
+//		 * col paths
+//		 */
+//		for (int i = colRange[0]; i <= colRange[1]; i++) {
+//			List<GraphPosition> poss = new ArrayList<GraphPosition>();
+//			for (int j = rowRange[0]; j <= rowRange[1]; j++) {
+//				RushHourStud ss = findStud(j, i);
+//				if (ss != null) {
+//					if (ss instanceof JointStud) {
+//						JointStud jj = (JointStud)ss;
+//						if (j < originRow) {
+//							Road r = jj.f.roads.get(0);
+//							if (jj.f == r.start) {
+//								poss.add(new VertexPosition(r.end));
+//								for (int ii = r.pointCount()-2; ii >= 1; ii--) {
+//									poss.add(new RoadPosition(r, ii, 0.0));
+//								}
+//								poss.add(new VertexPosition(r.start));
+//							} else {
+//								poss.add(new VertexPosition(r.start));
+//								for (int ii = 1; ii <= r.pointCount()-2; ii++) {
+//									poss.add(new RoadPosition(r, ii, 0.0));
+//								}
+//								poss.add(new VertexPosition(r.end));
+//							}
+//						} else if (j >= originRow + 6) {
+//							Road r = jj.f.roads.get(0);
+//							if (jj.f == r.start) {
+//								poss.add(new VertexPosition(r.start));
+//								for (int ii = 1; ii <= r.pointCount()-2; ii++) {
+//									poss.add(new RoadPosition(r, ii, 0.0));
+//								}
+//								poss.add(new VertexPosition(r.end));
+//							} else {
+//								poss.add(new VertexPosition(r.end));
+//								for (int ii = r.pointCount()-2; ii >= 1; ii--) {
+//									poss.add(new RoadPosition(r, ii, 0.0));
+//								}
+//								poss.add(new VertexPosition(r.start));
+//							}
+//						}
+//					} else {
+//						poss.add(new RushHourBoardPosition(this, j, i + 0.5));
+//					}
+//				}
+//			}
+//			if (!poss.isEmpty()) {
+//				GraphPositionPath path = new GraphPositionPath(poss);
+//				colPaths.put(i, path);
+//			}
+//		}
 		
 		/*
 		 * negative space
@@ -290,14 +485,14 @@ public class RushHourBoard extends Entity {
 		
 	}
 	
-	private RushHourStud findStud(int i, int j) {
-		for (RushHourStud ss : studs) {
-			if (ss.row == i && ss.col == j) {
-				return ss;
-			}
-		}
-		return null;
-	}
+//	private RushHourStud findStud(int i, int j) {
+//		for (RushHourStud ss : studs) {
+//			if (ss.row == i && ss.col == j) {
+//				return ss;
+//			}
+//		}
+//		return null;
+//	}
 	
 	private void addStud(RushHourStud s) {
 		studs.add(s);
