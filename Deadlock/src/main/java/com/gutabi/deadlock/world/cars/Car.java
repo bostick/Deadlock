@@ -146,6 +146,9 @@ public abstract class Car extends Entity {
 			localFront = new Point(0.75 * CAR_LENGTH, 0.0);
 			break;
 		case 7:
+			/*
+			 * red car
+			 */
 			sprite = Sprite.CAR7;
 			CAR_LENGTH = 2.0;
 			CAR_WIDTH = 1.0;

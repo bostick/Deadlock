@@ -1,4 +1,12 @@
 
+incorporate ExitStuds into paths
+
+if released on road or vertex, snap back to board
+
+
+
+
+
 in Stroke:
 
 get[straight edge from vertex] working
@@ -19,28 +27,7 @@ clean up Stroke any more for modularization and refactoring?
 
 
 
-
-
-
-
-
-
-work on GraphPositionPaths
-for dragging, GPP don't make a lot of sense
-they could have loops, change etc.
-do not use overallPath for dragging
-
-
-
-
-
-
-
-
-continuous dragging of cars
-
-moving between rushhourboard stud and vertex
-
+slowly work with GPPP and allowing cycles
 
 
 

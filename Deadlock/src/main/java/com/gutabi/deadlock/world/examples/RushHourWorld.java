@@ -40,22 +40,24 @@ public class RushHourWorld extends World {
 				{' ', 'X', 'X', 'X', 'X', 'X', 'X', 'E', 'E'},
 				{' ', 'X', 'X', 'X', 'X', 'X', 'X', ' ', ' '},
 				{' ', 'X', 'X', 'X', 'X', 'X', 'X', ' ', ' '},
-				{' ', 'X', 'X', 'X', 'X', 'X', 'X', ' ', ' '}
+				{' ', 'X', 'X', 'X', 'X', 'X', 'X', ' ', ' '},
+				{' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
+				{' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '}
 		};
 		
 		char[][] carIni = new char[][] {
-				{'A', 'A', ' ', ' ', ' ', 'B'},
+				{'C', 'A', 'A', 'D', ' ', 'B'},
 				{'C', ' ', ' ', 'D', ' ', 'B'},
 				{'C', 'R', 'R', 'D', ' ', 'B'},
-				{'C', ' ', ' ', 'D', ' ', ' '},
-				{'E', ' ', ' ', ' ', 'F', 'F'},
-				{'E', ' ', 'G', 'G', 'G', ' '}
+				{'E', ' ', ' ', 'G', 'G', 'G'},
+				{'E', ' ', ' ', 'F', ' ', ' '},
+				{' ', ' ', ' ', 'F', ' ', ' '}
 		};
 		
 		final RushHourBoard b = w.createRushHourBoard(new Point(8, 8), boardIni);
 		
-//		char[] carChars = new char[] { 'R', 'A', 'B', 'C', 'D', 'E', 'F', 'G' };
-		char[] carChars = new char[] { 'A', 'D' };
+		char[] carChars = new char[] { 'R', 'A', 'B', 'C', 'D', 'E', 'F', 'G' };
+//		char[] carChars = new char[] { 'A' };
 		int cur2Count = 0;
 		int cur3Count = 0;
 		carLoop:
