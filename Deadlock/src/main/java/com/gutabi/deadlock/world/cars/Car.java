@@ -105,20 +105,20 @@ public abstract class Car extends Entity {
 		switch (r) {
 		case 0:
 			sprite = Sprite.CAR0;
-			CAR_LENGTH = 1.0;
-			CAR_WIDTH = 0.5;
+			CAR_LENGTH = 2.0;
+			CAR_WIDTH = 1.0;
 			localFront = new Point(0.75 * CAR_LENGTH, 0.0);
 			break;
 		case 1:
 			sprite = Sprite.CAR1;
-			CAR_LENGTH = 1.0;
-			CAR_WIDTH = 0.5;
+			CAR_LENGTH = 2.0;
+			CAR_WIDTH = 1.0;
 			localFront = new Point(0.75 * CAR_LENGTH, 0.0);
 			break;
 		case 2:
 			sprite = Sprite.CAR2;
-			CAR_LENGTH = 1.0;
-			CAR_WIDTH = 0.5;
+			CAR_LENGTH = 2.0;
+			CAR_WIDTH = 1.0;
 			localFront = new Point(0.75 * CAR_LENGTH, 0.0);
 			break;
 		case 3:

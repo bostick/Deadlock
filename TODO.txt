@@ -1,7 +1,70 @@
 
+generalize board code
+
+multiple joints, fix
+
+joint track -> path code, deal with interections
+
+
+Stroke:
+consolidate code for looking for better intersection
+
+
+
+slowly work with GPPP and allowing cycles
+
+
+
 incorporate ExitStuds into paths
 
 if released on road or vertex, snap back to board
+if released and not completely on board, snap back
+
+
+
+
+
+
+
+
+RushHourWorld.addNewCar sheet index stuff
+move to Sheet?
+
+
+
+
+
+solver
+level generator
+
+
+
+
+
+
+
+
+minimize PNG resources for building, shipping
+minimize code, libraries for building and shipping
+
+
+refactor into capsloc, deadlock, gridlock
+
+
+menu
+interactive, drag car
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -26,8 +89,6 @@ clean up Stroke any more for modularization and refactoring?
 
 
 
-
-slowly work with GPPP and allowing cycles
 
 
 
