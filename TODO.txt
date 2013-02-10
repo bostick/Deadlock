@@ -1,20 +1,4 @@
 
-
-allow cycles for paths on boards
-
-
-incorporate ExitStuds into paths
-
-if released on road or vertex, snap back to board
-if released and not completely on board, snap back
-
-
-
-
-
-
-
-
 RushHourWorld.addNewCar sheet index stuff
 move to Sheet?
 

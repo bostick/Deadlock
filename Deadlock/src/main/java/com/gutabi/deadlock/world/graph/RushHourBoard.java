@@ -12,12 +12,18 @@ import com.gutabi.deadlock.Entity;
 import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.geom.CubicCurve;
 import com.gutabi.deadlock.geom.Line;
+import com.gutabi.deadlock.geom.OBB;
 import com.gutabi.deadlock.geom.Shape;
 import com.gutabi.deadlock.geom.ShapeUtils;
 import com.gutabi.deadlock.math.Point;
+import com.gutabi.deadlock.ui.paint.Cap;
+import com.gutabi.deadlock.ui.paint.Color;
+import com.gutabi.deadlock.ui.paint.Join;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.world.Stroke;
 import com.gutabi.deadlock.world.World;
+import com.gutabi.deadlock.world.cars.Car;
+import com.gutabi.deadlock.world.sprites.Sheet.Sprite;
 
 public class RushHourBoard extends Entity {
 	
@@ -38,11 +44,14 @@ public class RushHourBoard extends Entity {
 	
 	public Point ul;
 	public AABB aabb;
+	public AABB gridAABB;
 	
 	Map<Integer, List<RushHourBoardPosition>> rowTracks = new HashMap<Integer, List<RushHourBoardPosition>>();
 	Map<Integer, List<RushHourBoardPosition>> colTracks = new HashMap<Integer, List<RushHourBoardPosition>>();
 	private Map<Integer, GraphPositionPath> rowPaths = new HashMap<Integer, GraphPositionPath>();
 	private Map<Integer, GraphPositionPath> colPaths = new HashMap<Integer, GraphPositionPath>();
+	
+	List<ExitStud> exitStuds = new ArrayList<ExitStud>();
 	
 	public RushHourBoard(World world, Point center, char[][] ini) {
 		this.world = world;
@@ -118,6 +127,7 @@ public class RushHourBoard extends Entity {
 		}
 		
 		ul = new Point(center.x - 0.5 * colCount * RushHourStud.SIZE, center.y - 0.5 * rowCount * RushHourStud.SIZE);
+		gridAABB = APP.platform.createShapeEngine().createAABB(ul.x, ul.y, colCount * RushHourStud.SIZE, rowCount * RushHourStud.SIZE);
 		
 		/*
 		 * add perimeter and add studs
@@ -143,6 +153,7 @@ public class RushHourBoard extends Entity {
 		
 		List<JointStud> jStuds = new ArrayList<JointStud>();
 		List<JointStud> kStuds = new ArrayList<JointStud>();
+		ExitStud yStud = null;
 		
 		for (int i = 0; i < ini.length; i++) {
 			for (int j = 0; j < ini[i].length; j++) {
@@ -202,16 +213,30 @@ public class RushHourBoard extends Entity {
 				}
 				case 'Y': {
 					ExitStud s = new ExitStud(world, this, i - originRow, j - originCol);
+					yStud = s;
 					addStud(s);
+					exitStuds.add(s);
 					if (i < originRow) {
 						removePerimeterSegment(s.aabb.getP2P3Line());
+						s = new ExitStud(world, this, i - originRow - 1, j - originCol);
+						addStud(s);
+						exitStuds.add(s);
 					} else if (i >= originRow + rowCount) {
 						removePerimeterSegment(s.aabb.getP0P1Line());
+						s = new ExitStud(world, this, i - originRow + 1, j - originCol);
+						addStud(s);
+						exitStuds.add(s);
 					} else if (j < originCol) {
 						removePerimeterSegment(s.aabb.getP1P2Line());
+						s = new ExitStud(world, this, i - originRow, j - originCol - 1);
+						addStud(s);
+						exitStuds.add(s);
 					} else {
 						assert j >= originCol + colCount;
 						removePerimeterSegment(s.aabb.getP3P0Line());
+						s = new ExitStud(world, this, i - originRow, j - originCol + 1);
+						addStud(s);
+						exitStuds.add(s);
 					}
 					break;
 				}
@@ -221,8 +246,12 @@ public class RushHourBoard extends Entity {
 			}
 		}
 		
-		addRoad(jStuds);
-		addRoad(kStuds);
+		if (!jStuds.isEmpty()) {
+			addRoad(jStuds);
+		}
+		if (!kStuds.isEmpty()) {
+			addRoad(kStuds);
+		}
 		
 		/*
 		 * create paths 
@@ -233,8 +262,16 @@ public class RushHourBoard extends Entity {
 		 */
 		for (int i = 0; i < rowCount; i++) {
 			List<RushHourBoardPosition> track = new ArrayList<RushHourBoardPosition>();
+			if (yStud.col == -1 && yStud.row == i) {
+				track.add(new RushHourBoardPosition(this, i + 0.5, -2));
+				track.add(new RushHourBoardPosition(this, i + 0.5, -1));
+			}
 			for (int j = 0; j < colCount; j++) {
 				track.add(new RushHourBoardPosition(this, i + 0.5, j));
+			}
+			if (yStud.col == colCount && yStud.row == i) {
+				track.add(new RushHourBoardPosition(this, i + 0.5, colCount));
+				track.add(new RushHourBoardPosition(this, i + 0.5, colCount+1));
 			}
 			rowTracks.put(i, track);
 		}
@@ -244,8 +281,16 @@ public class RushHourBoard extends Entity {
 		 */
 		for (int i = 0; i < colCount; i++) {
 			List<RushHourBoardPosition> track = new ArrayList<RushHourBoardPosition>();
+			if (yStud.row == -1 && yStud.col == i) {
+				track.add(new RushHourBoardPosition(this, -2, i + 0.5));
+				track.add(new RushHourBoardPosition(this, -1, i + 0.5));
+			}
 			for (int j = 0; j < rowCount; j++) {
 				track.add(new RushHourBoardPosition(this, j, i + 0.5));
+			}
+			if (yStud.row == rowCount && yStud.col == i) {
+				track.add(new RushHourBoardPosition(this, rowCount, i + 0.5));
+				track.add(new RushHourBoardPosition(this, rowCount+1, i + 0.5));
 			}
 			colTracks.put(i, track);
 		}
@@ -253,8 +298,12 @@ public class RushHourBoard extends Entity {
 		/*
 		 * joint tracks -> paths
 		 */
-		jointTracksToPath(jStuds);
-		jointTracksToPath(kStuds);
+		if (!jStuds.isEmpty()) {
+			jointTracksToPath(jStuds);
+		}
+		if (!kStuds.isEmpty()) {
+			jointTracksToPath(kStuds);
+		}
 		
 		/*
 		 * regular row tracks -> paths
@@ -519,6 +568,22 @@ public class RushHourBoard extends Entity {
 		
 	}
 	
+	public boolean allowablePosition(Car c) {
+		if (ShapeUtils.containsAO(gridAABB, c.shape)) {
+			return true;
+		}
+		
+		if (c.sprite == Sprite.CAR7) {
+			for (ExitStud s : exitStuds) {
+				if (ShapeUtils.intersectAO(s.aabb, c.shape)) {
+					return true;
+				}
+			}
+		}
+		
+		return false;
+	}
+	
 	public void preStart() {
 		
 	}
@@ -583,6 +648,17 @@ public class RushHourBoard extends Entity {
 		for (RushHourStud s : studs) {
 			s.paint(ctxt);
 		}
+		
+		if (APP.DEBUG_DRAW) {
+			
+			for (Line l : perimeterSegments) {
+				ctxt.setColor(Color.RED);
+				ctxt.setStroke(0.0, Cap.SQUARE, Join.MITER);
+				l.draw(ctxt);
+			}
+			
+		}
+		
 	}
 	
 	public void paint_preview(RenderingContext ctxt) {

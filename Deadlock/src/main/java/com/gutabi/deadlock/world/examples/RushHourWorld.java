@@ -40,28 +40,28 @@ public class RushHourWorld extends World {
 		 * 'Y' - exit stud
 		 */
 		
+		char[][] boardIni = new char[][] {
+				{' ', ' ', ' ', ' ', 'J', ' ', ' ', ' ', ' '},
+				{'J', 'C', 'A', 'A', 'D', 'X', 'B', ' ', ' '},
+				{' ', 'C', 'X', 'X', 'D', 'X', 'B', ' ', ' '},
+				{' ', 'C', 'R', 'R', 'D', 'X', 'B', 'Y', ' '},
+				{' ', 'E', 'X', 'X', 'G', 'G', 'G', ' ', ' '},
+				{' ', 'E', 'X', 'X', 'F', 'X', 'X', ' ', ' '},
+				{' ', 'X', 'X', 'X', 'F', 'X', 'X', ' ', ' '},
+				{' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
+				{' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '}
+		};
 //		char[][] boardIni = new char[][] {
-//				{' ', ' ', ' ', ' ', 'J', ' ', ' ', ' ', ' '},
-//				{'J', 'C', 'A', 'A', 'D', 'X', 'B', ' ', ' '},
-//				{' ', 'C', 'X', 'X', 'D', 'X', 'B', ' ', ' '},
-//				{' ', 'C', 'R', 'R', 'D', 'X', 'B', 'Y', 'Y'},
-//				{' ', 'E', 'X', 'X', 'G', 'G', 'G', ' ', ' '},
-//				{' ', 'E', 'X', 'X', 'F', 'X', 'X', ' ', ' '},
-//				{' ', 'X', 'X', 'X', 'F', 'X', 'X', ' ', ' '},
-//				{' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
+//				{' ', 'K', ' ', ' ', 'J', ' ', ' ', ' ', ' '},
+//				{' ', 'C', 'A', 'A', 'D', 'X', ' ', ' ', ' '},
+//				{' ', 'C', 'X', 'X', 'D', 'X', ' ', ' ', ' '},
+//				{' ', 'C', 'X', 'R', 'D', 'X', ' ', ' ', ' '},
+//				{' ', 'E', 'X', 'R', 'G', 'G', 'K', ' ', ' '},
+//				{' ', 'E', 'X', 'X', 'F', 'X', ' ', ' ', ' '},
+//				{'J', 'X', 'X', 'X', 'F', 'X', ' ', ' ', ' '},
+//				{' ', ' ', ' ', 'Y', ' ', ' ', ' ', ' ', ' '},
 //				{' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '}
 //		};
-		char[][] boardIni = new char[][] {
-				{' ', 'K', ' ', ' ', 'J', ' ', ' ', ' ', ' '},
-				{' ', 'C', 'A', 'A', 'D', 'X', ' ', ' ', ' '},
-				{' ', 'C', 'X', 'X', 'D', 'X', ' ', ' ', ' '},
-				{' ', 'C', 'R', 'R', 'D', 'X', ' ', ' ', ' '},
-				{' ', 'E', 'X', 'X', 'G', 'G', 'K', ' ', ' '},
-				{' ', 'E', 'X', 'X', 'F', 'X', ' ', ' ', ' '},
-				{'J', 'X', 'X', 'X', 'F', 'X', ' ', ' ', ' '},
-				{' ', ' ', ' ', 'Y', ' ', ' ', ' ', ' ', ' '},
-				{' ', ' ', ' ', 'Y', ' ', ' ', ' ', ' ', ' '}
-		};
 		
 		final RushHourBoard b = w.createRushHourBoard(new Point(QuadrantMap.QUADRANT_WIDTH/2, QuadrantMap.QUADRANT_WIDTH/2), boardIni);
 		
@@ -75,8 +75,13 @@ public class RushHourWorld extends World {
 				for (int j = b.originCol; j < b.originCol+b.colCount; j++) {
 					if (boardIni[i][j] == c) {
 						if (c == 'R') {
-							addNewCar(w, b, i-b.originRow, j+1-b.originCol, Side.RIGHT, CarType.RED, 0);
-							continue carLoop;
+							if (i+1-b.originRow < b.rowCount && boardIni[i+1][j] == c) {
+								addNewCar(w, b, i-b.originRow, j-b.originCol, Side.TOP, CarType.RED, 0);
+								continue carLoop;
+							} else {
+								addNewCar(w, b, i-b.originRow, j-b.originCol, Side.LEFT, CarType.RED, 0);
+								continue carLoop;
+							}
 						} else if (i+1-b.originRow < b.rowCount && boardIni[i+1][j] == c) {
 							if (i+2-b.originRow < b.rowCount && boardIni[i+2][j] == c) {
 								addNewCar(w, b, i-b.originRow, j-b.originCol, Side.TOP, CarType.THREE, cur3Count);

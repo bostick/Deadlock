@@ -76,7 +76,17 @@ public class CarTool extends ToolBase {
 				
 				if (gpos instanceof RoadPosition) {
 					
+					car.setTransform(car.toolOrigP, car.toolOrigAngle);
+					car.driver.overallPos = car.driver.overallPath.generalSearch(car.center, car.driver.overallPos);
+					
+					screen.contentPane.repaint();
+					
 				} else if (gpos instanceof VertexPosition) {
+					
+					car.setTransform(car.toolOrigP, car.toolOrigAngle);
+					car.driver.overallPos = car.driver.overallPath.generalSearch(car.center, car.driver.overallPos);
+					
+					screen.contentPane.repaint();
 					
 				} else if (gpos instanceof RushHourBoardPosition) {
 					
@@ -100,10 +110,21 @@ public class CarTool extends ToolBase {
 						break;
 					}
 					
-					car.setTransform(rounded.p, car.angle);
-					car.driver.overallPos = car.driver.overallPath.generalSearch(car.center, car.driver.overallPos);
-					
-					screen.contentPane.repaint();
+					if (b.allowablePosition(car)) {
+						
+						car.setTransform(rounded.p, car.angle);
+						car.driver.overallPos = car.driver.overallPath.generalSearch(car.center, car.driver.overallPos);
+						
+						screen.contentPane.repaint();
+						
+					} else {
+						
+						car.setTransform(car.toolOrigP, car.toolOrigAngle);
+						car.driver.overallPos = car.driver.overallPath.generalSearch(car.center, car.driver.overallPos);
+						
+						screen.contentPane.repaint();
+						
+					}
 					
 				} else {
 					assert false;
