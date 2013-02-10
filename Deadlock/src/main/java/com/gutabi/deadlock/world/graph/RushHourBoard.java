@@ -39,6 +39,8 @@ public class RushHourBoard extends Entity {
 	public Point ul;
 	public AABB aabb;
 	
+	Map<Integer, List<RushHourBoardPosition>> rowTracks = new HashMap<Integer, List<RushHourBoardPosition>>();
+	Map<Integer, List<RushHourBoardPosition>> colTracks = new HashMap<Integer, List<RushHourBoardPosition>>();
 	private Map<Integer, GraphPositionPath> rowPaths = new HashMap<Integer, GraphPositionPath>();
 	private Map<Integer, GraphPositionPath> colPaths = new HashMap<Integer, GraphPositionPath>();
 	
@@ -226,10 +228,6 @@ public class RushHourBoard extends Entity {
 		 * create paths 
 		 */
 		
-		
-		Map<Integer, List<RushHourBoardPosition>> rowTracks = new HashMap<Integer, List<RushHourBoardPosition>>();
-		Map<Integer, List<RushHourBoardPosition>> colTracks = new HashMap<Integer, List<RushHourBoardPosition>>();
-		
 		/*
 		 * row tracks
 		 */
@@ -252,127 +250,14 @@ public class RushHourBoard extends Entity {
 			colTracks.put(i, track);
 		}
 		
-
-		
-//		List<RushHourBoardPosition> js0Track;
-//		if (js0.col < 0) {
-//			js0Track = rowTracks.remove(js0.row);
-//		} else if (js0.col >= colCount) {
-//			js0Track = rowTracks.remove(js0.row);
-//		} else if (js0.row < 0) {
-//			js0Track = colTracks.remove(js0.col);
-//		} else {
-//			assert js0.row >= rowCount;
-//			js0Track = colTracks.remove(js0.col);
-//		}
-//		
-//		List<RushHourBoardPosition> js1Track;
-//		if (js1.col < 0) {
-//			js1Track = rowTracks.remove(js1.row);
-//		} else if (js1.col >= colCount) {
-//			js1Track = rowTracks.remove(js1.row);
-//		} else if (js1.row < 0) {
-//			js1Track = colTracks.remove(js1.col);
-//		} else {
-//			assert js1.row >= rowCount;
-//			js1Track = colTracks.remove(js1.col);
-//		}
-//		
-//		
-//		List<GraphPosition> poss = new ArrayList<GraphPosition>();
-////		from other side of js0 track to js0
-//		if (js0.col < 0) {
-//			for (int i = colCount-1; i >= 1; i--) {
-//				poss.add(js0Track.get(i));
-//			}
-//		} else if (js0.col >= colCount) {
-//			for (int i = 0; i < colCount-1; i++) {
-//				poss.add(js0Track.get(i));
-//			}
-//		} else if (js0.row < 0) {
-//			for (int i = rowCount-1; i >= 1; i--) {
-//				poss.add(js0Track.get(i));
-//			}
-//		} else {
-//			assert js0.row >= rowCount;
-//			for (int i = 0; i < rowCount-1; i++) {
-//				poss.add(js0Track.get(i));
-//			}
-//		}
-////		to vertex
-////		to road
-////		to vertex
-//		Road r = js0.f.roads.get(0);
-//		if (js0.f == r.start) {
-//			poss.add(new VertexPosition(r.start));
-//			for (int ii = 1; ii <= r.pointCount()-2; ii++) {
-//				poss.add(new RoadPosition(r, ii, 0.0));
-//			}
-//			poss.add(new VertexPosition(r.end));
-//		} else {
-//			poss.add(new VertexPosition(r.end));
-//			for (int ii = r.pointCount()-2; ii >= 1; ii--) {
-//				poss.add(new RoadPosition(r, ii, 0.0));
-//			}
-//			poss.add(new VertexPosition(r.start));
-//		}
-////		to js1
-////		to other side of js1 track
-//		if (js1.col < 0) {
-//			for (int i = 1; i < colCount; i++) {
-//				poss.add(js1Track.get(i));
-//			}
-//		} else if (js1.col >= colCount) {
-//			for (int i = colCount-1; i >= 0; i--) {
-//				poss.add(js1Track.get(i));
-//			}
-//		} else if (js1.row < 0) {
-//			for (int i = 1; i > rowCount; i++) {
-//				poss.add(js1Track.get(i));
-//			}
-//		} else {
-//			assert js1.row >= rowCount;
-//			for (int i = rowCount-1; i >= 0; i--) {
-//				poss.add(js1Track.get(i));
-//			}
-//		}
-//		
-////		add to rowPaths and colPaths as needed
-//		GraphPositionPath path = new GraphPositionPath(poss);
-//		if (js0.col < 0) {
-//			rowPaths.put(js0.row, path);
-//		} else if (js0.col >= colCount) {
-//			rowPaths.put(js0.row, path);
-//		} else if (js0.row < 0) {
-//			colPaths.put(js0.col, path);
-//		} else {
-//			assert js0.row >= rowCount;
-//			colPaths.put(js0.col, path);
-//		}
-//		
-//		if (js1.col < 0) {
-//			rowPaths.put(js1.row, path);
-//		} else if (js1.col >= colCount) {
-//			rowPaths.put(js1.row, path);
-//		} else if (js1.row < 0) {
-//			colPaths.put(js1.col, path);
-//		} else {
-//			assert js1.row >= rowCount;
-//			colPaths.put(js1.col, path);
-//		}
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
+		/*
+		 * joint tracks -> paths
+		 */
+		jointTracksToPath(jStuds);
+		jointTracksToPath(kStuds);
 		
 		/*
-		 * regular row tracks
+		 * regular row tracks -> paths
 		 */
 		List<GraphPosition> poss;
 		GraphPositionPath path;
@@ -478,6 +363,137 @@ public class RushHourBoard extends Entity {
 		stroke.finish();
 		
 		stroke.processNewStroke();
+		
+	}
+	
+	private void jointTracksToPath(List<JointStud> joints) {
+		
+		JointStud js0 = joints.get(0);
+		JointStud js1 = joints.get(1);
+		
+		List<RushHourBoardPosition> js0Track;
+		if (js0.col < 0) {
+			js0Track = rowTracks.remove(js0.row);
+		} else if (js0.col >= colCount) {
+			js0Track = rowTracks.remove(js0.row);
+		} else if (js0.row < 0) {
+			js0Track = colTracks.remove(js0.col);
+		} else {
+			assert js0.row >= rowCount;
+			js0Track = colTracks.remove(js0.col);
+		}
+		
+		List<RushHourBoardPosition> js1Track;
+		if (js1.col < 0) {
+			js1Track = rowTracks.remove(js1.row);
+		} else if (js1.col >= colCount) {
+			js1Track = rowTracks.remove(js1.row);
+		} else if (js1.row < 0) {
+			js1Track = colTracks.remove(js1.col);
+		} else {
+			assert js1.row >= rowCount;
+			js1Track = colTracks.remove(js1.col);
+		}
+		
+		
+		List<GraphPosition> poss = new ArrayList<GraphPosition>();
+//		from other side of js0 track to js0
+		if (js0.col < 0) {
+			for (int i = colCount-1; i >= 1; i--) {
+				poss.add(js0Track.get(i));
+			}
+		} else if (js0.col >= colCount) {
+			for (int i = 0; i < colCount-1; i++) {
+				poss.add(js0Track.get(i));
+			}
+		} else if (js0.row < 0) {
+			for (int i = rowCount-1; i >= 1; i--) {
+				poss.add(js0Track.get(i));
+			}
+		} else {
+			assert js0.row >= rowCount;
+			for (int i = 0; i < rowCount-1; i++) {
+				poss.add(js0Track.get(i));
+			}
+		}
+		
+		Vertex v = js0.f;
+//		to vertex
+		poss.add(new VertexPosition(v));
+		
+		Road r = null;
+		roadLoop:
+		while (true) {
+//			to road
+//			to vertex
+			
+			r = v.bestMatchingRoad(r);
+			
+			if (v == r.start) {
+				for (int ii = 1; ii <= r.pointCount()-2; ii++) {
+					poss.add(new RoadPosition(r, ii, 0.0));
+				}
+				poss.add(new VertexPosition(r.end));
+				if (r.end == js1.f) {
+					break roadLoop;
+				}
+				v = r.end;
+			} else {
+				for (int ii = r.pointCount()-2; ii >= 1; ii--) {
+					poss.add(new RoadPosition(r, ii, 0.0));
+				}
+				poss.add(new VertexPosition(r.start));
+				if (r.start == js1.f) {
+					break roadLoop;
+				}
+				v = r.start;
+			}
+		}
+		
+//		to js1
+//		to other side of js1 track
+		if (js1.col < 0) {
+			for (int i = 1; i < colCount; i++) {
+				poss.add(js1Track.get(i));
+			}
+		} else if (js1.col >= colCount) {
+			for (int i = colCount-1; i >= 0; i--) {
+				poss.add(js1Track.get(i));
+			}
+		} else if (js1.row < 0) {
+			for (int i = 1; i > rowCount; i++) {
+				poss.add(js1Track.get(i));
+			}
+		} else {
+			assert js1.row >= rowCount;
+			for (int i = rowCount-1; i >= 0; i--) {
+				poss.add(js1Track.get(i));
+			}
+		}
+		
+//		add to rowPaths and colPaths as needed
+		GraphPositionPath path = new GraphPositionPath(poss);
+		if (js0.col < 0) {
+			rowPaths.put(js0.row, path);
+		} else if (js0.col >= colCount) {
+			rowPaths.put(js0.row, path);
+		} else if (js0.row < 0) {
+			colPaths.put(js0.col, path);
+		} else {
+			assert js0.row >= rowCount;
+			colPaths.put(js0.col, path);
+		}
+		
+		if (js1.col < 0) {
+			rowPaths.put(js1.row, path);
+		} else if (js1.col >= colCount) {
+			rowPaths.put(js1.row, path);
+		} else if (js1.row < 0) {
+			colPaths.put(js1.col, path);
+		} else {
+			assert js1.row >= rowCount;
+			colPaths.put(js1.col, path);
+		}
 		
 	}
 	

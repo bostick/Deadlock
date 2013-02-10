@@ -76,6 +76,63 @@ public abstract class Vertex extends Entity {
 		return eds;
 	}
 	
+	public Road bestMatchingRoad(Road r) {
+		assert !roads.isEmpty();
+		
+//		System.out.println("enter");
+		
+		if (r == null) {
+			assert roads.size() == 1;
+			return roads.get(0);
+		} else {
+			
+			double angle;
+			if (r.start == this) {
+				Point rp = r.getPoint(1);
+				angle = Math.atan2(rp.y - p.y, rp.x - p.x);
+			} else {
+				Point rp = r.getPoint(r.pointCount()-2);
+				angle = Math.atan2(rp.y - p.y, rp.x - p.x);
+			}
+//			System.out.println("angle: " + angle);
+			
+			Road bestRoad = null;
+			double bestAngleDiff = Double.POSITIVE_INFINITY;
+			for (Road rr : roads) {
+				if (rr == r) {
+					continue;
+				}
+				double testAngle;
+				if (rr.start == this) {
+					Point rp = rr.getPoint(1);
+					testAngle = Math.atan2(rp.y - p.y, rp.x - p.x);
+				} else {
+					Point rp = rr.getPoint(rr.pointCount()-2);
+					testAngle = Math.atan2(rp.y - p.y, rp.x - p.x);
+				}
+				
+				double testAngleDiff = testAngle - (angle + Math.PI);
+				while (testAngleDiff >= Math.PI) {
+					testAngleDiff = testAngleDiff - 2 * Math.PI;
+				}
+				while (testAngleDiff < -Math.PI) {
+					testAngleDiff = testAngleDiff + 2 * Math.PI;
+				}
+				
+				if (DMath.lessThan(Math.abs(testAngleDiff), Math.abs(bestAngleDiff))) {
+					bestAngleDiff = testAngleDiff;
+					bestRoad = rr;
+				}
+				
+//				System.out.println("testAngleDiff: " + testAngleDiff);
+			}
+			
+			assert bestRoad != null;
+			return bestRoad;
+		}
+		
+	}
+	
 	public final Entity hitTest(Point p) {
 		if (shape.hitTest(p)) {
 			return this;

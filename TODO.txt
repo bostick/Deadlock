@@ -1,18 +1,6 @@
 
-generalize board code
 
-multiple joints, fix
-
-joint track -> path code, deal with interections
-
-
-Stroke:
-consolidate code for looking for better intersection
-
-
-
-slowly work with GPPP and allowing cycles
-
+allow cycles for paths on boards
 
 
 incorporate ExitStuds into paths
@@ -202,6 +190,12 @@ or at least add it
 cleanup user input
 
 DONE:
+
+joint track -> path code, deal with interections
+
+make sweep events for Roads, not Road capsules
+
+<kind of a break>
 
 tools:
 list total number of lines of code

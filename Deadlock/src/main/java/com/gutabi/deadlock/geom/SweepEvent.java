@@ -8,7 +8,10 @@ import com.gutabi.deadlock.world.graph.Vertex;
 
 public abstract class SweepEvent {
 	
-	public final SweepEventType type;
+	/*
+	 * not final, used in changing ROADCAPSULE -> ROAD
+	 */
+	public SweepEventType type;
 	public final Object stillParent;
 	public final Shape still;
 	
@@ -35,7 +38,7 @@ public abstract class SweepEvent {
 		
 		p = moving.getPoint(index, param);
 		
-	}
+	} 
 	
 	public String toString() {
 		if (type != null) {
@@ -69,7 +72,7 @@ public abstract class SweepEvent {
 							return 1;
 						} else if (a.type == SweepEventType.ENTERVERTEX && b.type == SweepEventType.ENTERMERGER) {
 							return -1;
-						} else if (a.type == SweepEventType.ENTERMERGER && b.type == SweepEventType.ENTERROADCAPSULE) {
+						} else if (a.type == SweepEventType.ENTERMERGER && b.type == SweepEventType.ENTERROAD) {
 							return 0;
 						} else {
 							/*
