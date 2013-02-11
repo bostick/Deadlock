@@ -569,7 +569,7 @@ public class RushHourBoard extends Entity {
 			return true;
 		}
 		
-		if (c.sprite == CarSheetSprite.CAR7) {
+		if (c.sprite == CarSheetSprite.RED) {
 			for (ExitStud s : exitStuds) {
 				if (ShapeUtils.intersectAO(s.aabb, c.shape)) {
 					return true;

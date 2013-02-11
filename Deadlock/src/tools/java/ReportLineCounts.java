@@ -22,6 +22,7 @@ public class ReportLineCounts {
 		
 		Files.walkFileTree(start, visitor);
 		
+		System.out.println("Deadlock project:");
 		System.out.println("non-empty lines: " + nonEmptyLines);
 		System.out.println("empty lines: " + emptyLines);
 		System.out.println("files: " + files);
@@ -40,6 +41,7 @@ public class ReportLineCounts {
 		
 		Files.walkFileTree(start, visitor);
 		
+		System.out.println("DeadlockAWT project:");
 		System.out.println("non-empty lines: " + nonEmptyLines);
 		System.out.println("empty lines: " + emptyLines);
 		System.out.println("files: " + files);

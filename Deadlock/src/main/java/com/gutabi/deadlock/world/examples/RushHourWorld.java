@@ -10,6 +10,8 @@ import com.gutabi.deadlock.world.graph.Graph;
 import com.gutabi.deadlock.world.graph.RushHourBoard;
 import com.gutabi.deadlock.world.graph.RushHourBoardPosition;
 import com.gutabi.deadlock.world.graph.Side;
+import com.gutabi.deadlock.world.sprites.CarSheet;
+import com.gutabi.deadlock.world.sprites.CarSheet.CarType;
 
 public class RushHourWorld extends World {
 	
@@ -112,64 +114,9 @@ public class RushHourWorld extends World {
 		return w;
 	}
 	
-	public enum CarType {
-		
-		TWO, THREE, RED
-		
-	}
-	
 	private static void addNewCar(World w, RushHourBoard b, int frontRow, int frontCol, Side side, CarType type, int curTypeCount) {
 		
-		int sheetIndex = 0;
-		switch (type) {
-		case TWO:
-			switch (curTypeCount) {
-			case 0:
-				sheetIndex = 0;
-				break;
-			case 1:
-				sheetIndex = 1;
-				break;
-			case 2:
-				sheetIndex = 2;
-				break;
-			case 3:
-				sheetIndex = 4;
-				break;
-			case 4:
-				sheetIndex = 9;
-				break;
-			case 5:
-				sheetIndex = 11;
-				break;
-			default:
-				assert false;
-				break;
-			}
-			break;
-		case THREE:
-			switch (curTypeCount) {
-			case 0:
-				sheetIndex = 5;
-				break;
-			case 1:
-				sheetIndex = 6;
-				break;
-			case 2:
-				sheetIndex = 8;
-				break;
-			case 3:
-				sheetIndex = 10;
-				break;
-			default:
-				assert false;
-				break;
-			}
-			break;
-		case RED:
-			sheetIndex = 7;
-			break;
-		}
+		int sheetIndex = CarSheet.sheetIndex(type, curTypeCount);
 		
 		InteractiveCar c = InteractiveCar.createCar(w, sheetIndex);
 		c.state = CarStateEnum.IDLE;

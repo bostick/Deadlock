@@ -20,10 +20,13 @@ import com.gutabi.deadlock.ui.Transform;
 import com.gutabi.deadlock.ui.paint.Color;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.world.World;
+import com.gutabi.deadlock.world.sprites.CarSheet;
 import com.gutabi.deadlock.world.sprites.CarSheet.CarSheetSprite;
 import com.gutabi.deadlock.world.sprites.SpriteSheet.SpriteSheetSprite;
 
 public abstract class Car extends Entity {
+	
+	public static final double METERS_PER_CARLENGTH = 1.0;
 	
 	public double CAR_LENGTH = -1;
 	public double CAR_WIDTH = -1;
@@ -98,83 +101,10 @@ public abstract class Car extends Entity {
 	
 	public void computeCtorProperties(int r) {
 		
-		switch (r) {
-		case 0:
-			sprite = CarSheetSprite.CAR0;
-			CAR_LENGTH = 2.0;
-			CAR_WIDTH = 1.0;
-			localFront = new Point(0.75 * CAR_LENGTH, 0.0);
-			break;
-		case 1:
-			sprite = CarSheetSprite.CAR1;
-			CAR_LENGTH = 2.0;
-			CAR_WIDTH = 1.0;
-			localFront = new Point(0.75 * CAR_LENGTH, 0.0);
-			break;
-		case 2:
-			sprite = CarSheetSprite.CAR2;
-			CAR_LENGTH = 2.0;
-			CAR_WIDTH = 1.0;
-			localFront = new Point(0.75 * CAR_LENGTH, 0.0);
-			break;
-		case 3:
-			sprite = CarSheetSprite.CAR3;
-			CAR_LENGTH = 4.0;
-			CAR_WIDTH = 2.0;
-			localFront = new Point(0.75 * CAR_LENGTH, 0.0);
-			break;
-		case 4:
-			sprite = CarSheetSprite.CAR4;
-			CAR_LENGTH = 2.0;
-			CAR_WIDTH = 1.0;
-			localFront = new Point(0.75 * CAR_LENGTH, 0.0);
-			break;
-		case 5:
-			sprite = CarSheetSprite.CAR5;
-			CAR_LENGTH = 3.0;
-			CAR_WIDTH = 1.0;
-			localFront = new Point(0.75 * CAR_LENGTH, 0.0);
-			break;
-		case 6:
-			sprite = CarSheetSprite.CAR6;
-			CAR_LENGTH = 3.0;
-			CAR_WIDTH = 1.0;
-			localFront = new Point(0.75 * CAR_LENGTH, 0.0);
-			break;
-		case 7:
-			/*
-			 * red car
-			 */
-			sprite = CarSheetSprite.CAR7;
-			CAR_LENGTH = 2.0;
-			CAR_WIDTH = 1.0;
-			localFront = new Point(0.75 * CAR_LENGTH, 0.0);
-			break;
-		case 8:
-			sprite = CarSheetSprite.CAR8;
-			CAR_LENGTH = 3.0;
-			CAR_WIDTH = 1.0;
-			localFront = new Point(0.75 * CAR_LENGTH, 0.0);
-			break;
-		case 9:
-			sprite = CarSheetSprite.CAR9;
-			CAR_LENGTH = 2.0;
-			CAR_WIDTH = 1.0;
-			localFront = new Point(0.75 * CAR_LENGTH, 0.0);
-			break;
-		case 10:
-			sprite = CarSheetSprite.CAR10;
-			CAR_LENGTH = 3.0;
-			CAR_WIDTH = 1.0;
-			localFront = new Point(0.75 * CAR_LENGTH, 0.0);
-			break;
-		case 11:
-			sprite = CarSheetSprite.CAR11;
-			CAR_LENGTH = 2.0;
-			CAR_WIDTH = 1.0;
-			localFront = new Point(0.75 * CAR_LENGTH, 0.0);
-			break;
-		}
+		sprite = CarSheet.sprite(r);
+		CAR_LENGTH = sprite.carLength() * METERS_PER_CARLENGTH;
+		CAR_WIDTH = sprite.carWidth() * METERS_PER_CARLENGTH;
+		localFront = new Point(0.75 * CAR_LENGTH, 0.0);
 		
 		localAABB = new AABB(-CAR_LENGTH / 2, -CAR_WIDTH / 2, CAR_LENGTH, CAR_WIDTH);
 		

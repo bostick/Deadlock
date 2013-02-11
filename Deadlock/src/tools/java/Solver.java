@@ -4,9 +4,7 @@ import java.util.Map;
 import java.util.Set;
 
 import com.gutabi.deadlock.math.Point;
-import com.gutabi.deadlock.world.examples.RushHourWorld.CarType;
 import com.gutabi.deadlock.world.graph.RushHourBoard;
-import com.gutabi.deadlock.world.graph.Side;
 
 
 public class Solver {
@@ -92,7 +90,7 @@ public class Solver {
 			}
 		}
 		
-		infoMap.clear();
+		
 		
 	}
 	
