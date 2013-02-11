@@ -16,7 +16,6 @@ public class FontEngineImpl implements FontEngine {
 	
 	public AABB bounds(String text, Resource fontFile, FontStyle fontStyle, int fontSize) {
 		
-//		FontRenderContext frc = new FontRenderContext(null, RenderingHints.VALUE_TEXT_ANTIALIAS_DEFAULT, RenderingHints.VALUE_FRACTIONALMETRICS_DEFAULT);
 		FontRenderContext frc = new FontRenderContext(null, false, false);
 		
 		ResourceImpl r = (ResourceImpl)fontFile;

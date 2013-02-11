@@ -21,14 +21,6 @@ public class WindowInfo {
 		screenDim = Toolkit.getDefaultToolkit().getScreenSize();
 	}
 	
-//	public static int windowWidth() {
-//		return screenDim.width - screenInsets.left - screenInsets.right;
-//	}
-//	
-//	public static int windowHeight() {
-//		return screenDim.height - screenInsets.top - screenInsets.bottom;
-//	}
-	
 	public static Dim windowDim() {
 		return new Dim(screenDim.width - screenInsets.left - screenInsets.right, screenDim.height - screenInsets.top - screenInsets.bottom);
 	}

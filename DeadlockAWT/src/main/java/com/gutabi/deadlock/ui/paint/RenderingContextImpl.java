@@ -23,30 +23,13 @@ import com.gutabi.deadlock.ui.Transform;
 
 public class RenderingContextImpl extends RenderingContext {
 	
-//	public static Composite aComp = java.awt.AlphaComposite.getInstance(java.awt.AlphaComposite.SRC_OVER, 0.5f));
-	
 	public final Graphics2D g2;
 	
 	public RenderingContextImpl(Graphics2D g2) {
 		this.g2 = g2;
 	}
 	
-//	public Composite getComposite() {
-//		Composite c = new CompositeImpl(g2.getComposite());
-//		return c;
-//	}
-//	
-//	public void setComposite(Composite c) {
-//		g2.setComposite(((CompositeImpl)c).c);
-//	}
-//	
-//	public Composite getTransparentComposite() {
-//		return aComp;
-//	}
-	
 	public void setAlpha(double a) {
-		
-//		Composite origComposite = g2.getComposite();
 		
 		AlphaComposite comp = java.awt.AlphaComposite.getInstance(java.awt.AlphaComposite.SRC_OVER, (float)a);
 		g2.setComposite(comp);
@@ -153,10 +136,6 @@ public class RenderingContextImpl extends RenderingContext {
 	public void translate(Point p) {
 		g2.translate(p.x, p.y);
 	}
-	
-//	public void translate(int tx, int ty) {
-//		g2.translate(tx, ty);
-//	}
 	
 	public void setTransform(Transform t) {
 		
