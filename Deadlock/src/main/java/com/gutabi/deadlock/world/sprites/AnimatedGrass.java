@@ -88,10 +88,6 @@ public class AnimatedGrass {
 		
 		ctxt.translate(p.x - AnimatedGrass.GRASS_SIZE/2, p.y - AnimatedGrass.GRASS_SIZE/2);
 		
-//		ctxt.paintImage(APP.spriteSheet, world.screen.pixelsPerMeter,
-//				0, 0, GRASS_SIZE, GRASS_SIZE,
-//				0, 32, 0+32, 32+32);	
-		
 		switch (index) {
 		case 0:
 			APP.spriteSheet.paint(ctxt, SpriteSheetSprite.GRASS0, world.screen.pixelsPerMeter, 0, 0, GRASS_SIZE, GRASS_SIZE);

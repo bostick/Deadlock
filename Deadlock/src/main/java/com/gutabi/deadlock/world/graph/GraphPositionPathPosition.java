@@ -21,8 +21,6 @@ public class GraphPositionPathPosition {
 	
 	private int hash;
 	
-//	static Logger logger = Logger.getLogger(GraphPositionPathPosition.class);
-	
 	public GraphPositionPathPosition(GraphPositionPath path, int index, double param) {
 		
 		this.path = path;

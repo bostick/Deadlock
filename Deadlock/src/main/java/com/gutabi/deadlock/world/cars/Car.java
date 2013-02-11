@@ -61,7 +61,6 @@ public abstract class Car extends Entity {
 	
 	public Point center;
 	public double angle = Double.NaN;
-//	private double[][] carTransArr = new double[2][2];
 	public OBB shape;
 	
 	
@@ -87,10 +86,6 @@ public abstract class Car extends Entity {
 	public OBB toolOrigShape;
 	
 	public boolean destroyed;
-	
-//	static Logger logger = Logger.getLogger(Car.class);
-//	static Logger pathingLogger = Logger.getLogger(logger.getName()+".pathing");
-//	static Logger eventingLogger = Logger.getLogger(logger.getName()+".eventing");
 	
 	public Car(World world) {
 		
@@ -181,10 +176,6 @@ public abstract class Car extends Entity {
 			break;
 		}
 		
-//		Point p0 = new Point(-CAR_LENGTH / 2, -CAR_WIDTH / 2);
-//		Point p1 = new Point(CAR_LENGTH / 2, -CAR_WIDTH / 2);
-//		Point p2 = new Point(CAR_LENGTH / 2, CAR_WIDTH / 2);
-//		Point p3 = new Point(-CAR_LENGTH / 2, CAR_WIDTH / 2);
 		localAABB = new AABB(-CAR_LENGTH / 2, -CAR_WIDTH / 2, CAR_LENGTH, CAR_WIDTH);
 		
 		CAR_LOCALX = -CAR_LENGTH / 2;
@@ -204,7 +195,6 @@ public abstract class Car extends Entity {
 	public void setTransform(Point center, double angle) {
 		this.center = center;
 		this.angle = angle;
-//		Geom.rotationMatrix(angle, carTransArr);
 		shape = Geom.localToWorld(localAABB, angle, center);
 	}
 	
@@ -316,10 +306,6 @@ public abstract class Car extends Entity {
 	public double CAR_BRAKE2X;
 	public double CAR_BRAKE2Y;
 	
-//	public int sheetColStart;
-//	public int sheetColEnd;
-//	public int sheetRowStart;
-//	public int sheetRowEnd;
 	public CarSheetSprite sprite;
 	
 	public abstract void paint(RenderingContext ctxt);
@@ -334,10 +320,6 @@ public abstract class Car extends Entity {
 		ctxt.translate(center.x, center.y);
 		ctxt.rotate(angle);
 		ctxt.translate(CAR_LOCALX, CAR_LOCALY);
-		
-//		ctxt.paintImage(APP.carSheet, world.screen.pixelsPerMeter,
-//				0, 0, CAR_LENGTH, CAR_WIDTH,
-//				sheetColStart, sheetRowStart, sheetColEnd, sheetRowEnd);
 		
 		APP.carSheet.paint(ctxt, sprite, world.screen.pixelsPerMeter, 0, 0, CAR_LENGTH, CAR_WIDTH);
 		
@@ -361,19 +343,9 @@ public abstract class Car extends Entity {
 		
 		Transform brakeTransform = ctxt.getTransform();
 		
-//		ctxt.translate(CAR_BRAKE1X, CAR_BRAKE1Y);
-//		ctxt.paintImage(APP.spriteSheet, world.screen.pixelsPerMeter,
-//				0, 0, BRAKE_SIZE, BRAKE_SIZE,
-//				0, 64, 0+8, 64+8);
-		
 		APP.spriteSheet.paint(ctxt, SpriteSheetSprite.BRAKE, world.screen.pixelsPerMeter, 0, 0, BRAKE_SIZE, BRAKE_SIZE);
 		
 		ctxt.setTransform(brakeTransform);
-		
-//		ctxt.translate(CAR_BRAKE2X, CAR_BRAKE2Y);
-//		ctxt.paintImage(APP.spriteSheet, world.screen.pixelsPerMeter,
-//				0, 0, BRAKE_SIZE, BRAKE_SIZE,
-//				0, 64, 0+8, 64+8);
 		
 		APP.spriteSheet.paint(ctxt, SpriteSheetSprite.BRAKE, world.screen.pixelsPerMeter, 0, 0, BRAKE_SIZE, BRAKE_SIZE);
 		

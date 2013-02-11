@@ -161,15 +161,11 @@ public class CarTool extends ToolBase {
 			case BRAKING:
 				
 				GraphPositionPathPosition testPathPos = car.driver.overallPath.generalSearch(carPTmp, car.driver.overallPos);
-//				GraphPosition testGpos = testPathPos.getGraphPosition();
-				
-//				System.out.println(testGpos);
 				
 				if (!collidesWithBoardOrOtherCars(car, testPathPos.p)) {
 					
 					car.setTransform(testPathPos.p, newAngle(car, testPathPos));
 					
-//					car.driver.overallPos = car.driver.overallPath.findClosestGraphPositionPathPosition(testGpos);
 					car.driver.overallPos = testPathPos;
 					
 					screen.contentPane.repaint();
@@ -238,9 +234,6 @@ public class CarTool extends ToolBase {
 				return true;
 			}
 		}
-		
-//		RushHourBoard b = (RushHourBoard)rpos.entity;
-//		Point test = rpos.p;
 		
 		for (Car c : screen.world.carMap.cars) {
 			if (c == car) {

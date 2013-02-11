@@ -34,8 +34,6 @@ public abstract class Vertex extends Entity {
 	
 	private int hash;
 	
-//	static Logger logger = Logger.getLogger(Vertex.class);
-	
 	public Vertex(World world, Point p) {
 		this.world = world;
 		this.p = p;
@@ -79,8 +77,6 @@ public abstract class Vertex extends Entity {
 	public Road bestMatchingRoad(Road r) {
 		assert !roads.isEmpty();
 		
-//		System.out.println("enter");
-		
 		if (r == null) {
 			assert roads.size() == 1;
 			return roads.get(0);
@@ -94,7 +90,6 @@ public abstract class Vertex extends Entity {
 				Point rp = r.getPoint(r.pointCount()-2);
 				angle = Math.atan2(rp.y - p.y, rp.x - p.x);
 			}
-//			System.out.println("angle: " + angle);
 			
 			Road bestRoad = null;
 			double bestAngleDiff = Double.POSITIVE_INFINITY;
@@ -124,7 +119,6 @@ public abstract class Vertex extends Entity {
 					bestRoad = rr;
 				}
 				
-//				System.out.println("testAngleDiff: " + testAngleDiff);
 			}
 			
 			assert bestRoad != null;
@@ -151,10 +145,6 @@ public abstract class Vertex extends Entity {
 	}
 	
 	public void computeRadius(double maximumRadius) {
-		
-//		if (logger.isDebugEnabled()) {
-//			logger.debug("aabb before: " + shape.getAABB());
-//		}
 		
 		r = INIT_VERTEX_RADIUS;
 		shape = APP.platform.createShapeEngine().createCircle(p, r);
@@ -242,10 +232,6 @@ public abstract class Vertex extends Entity {
 			e.computeProperties();
 		}
 		
-//		if (logger.isDebugEnabled()) {
-//			logger.debug("aabb after: " + shape.getAABB());
-//		}
-		
 	}
 	
 	
@@ -298,15 +284,6 @@ public abstract class Vertex extends Entity {
 	
 	public void check() {
 		assert p != null;
-		
-//		int edgeCount = eds.size();
-		
-//		assert edgeCount != 0;
-		
-		/*
-		 * edgeCount cannot be 2, edges should just be merged
-		 */
-//		assert edgeCount != 2;
 		
 		int count;
 		for (Road e : roads) {

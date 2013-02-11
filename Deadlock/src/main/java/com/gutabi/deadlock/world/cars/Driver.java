@@ -9,17 +9,12 @@ public abstract class Driver {
 	public final Car c;
 	
 	public GraphPosition startGP;
-//	public Side overallSide;
 	
 	public GraphPositionPath overallPath;
 	public GraphPositionPathPosition overallPos;
 	
-//	public int directionInTrack;
-	
 	public Driver(Car c) {
 		this.c = c;
 	}
-	
-//	public abstract void computeStartingProperties();
 	
 }

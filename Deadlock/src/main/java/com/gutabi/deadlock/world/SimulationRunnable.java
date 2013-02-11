@@ -6,8 +6,6 @@ public class SimulationRunnable implements Runnable {
 	
 	WorldScreen screen;
 	
-//	static Logger logger = Logger.getLogger(SimulationRunnable.class);
-	
 	public SimulationRunnable(WorldScreen screen) {
 		this.screen = screen;
 	}

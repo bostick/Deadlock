@@ -13,8 +13,6 @@ public abstract class Ellipse implements Shape {
 	
 	public final AABB aabb;
 	
-//	static Logger logger = Logger.getLogger(Circle.class);
-	
 	protected Ellipse(Point center, double xRadius, double yRadius) {
 		this.center = center;
 		this.xRadius = xRadius;

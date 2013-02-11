@@ -53,7 +53,6 @@ public class VertexPosition extends GraphPosition {
 		}
 		
 		assert !equals(p);
-//		assert p.isBound();
 		
 		if (p instanceof VertexPosition) {
 			assert false;

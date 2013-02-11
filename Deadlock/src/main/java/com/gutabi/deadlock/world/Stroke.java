@@ -171,7 +171,6 @@ public class Stroke {
 				if (e.type == SweepEventType.ENTERROAD) {
 					if (i < events.size()-1) {
 						SweepEvent nextEvent = events.get(i+1);
-//						assert nextEvent.still == e.still;
 						nextEventCombo = nextEvent.combo;
 					} else {
 						nextEventCombo = Double.POSITIVE_INFINITY;
@@ -179,7 +178,6 @@ public class Stroke {
 				} else {
 					if (i >= 1) {
 						SweepEvent nextEvent = events.get(i-1);
-//						assert nextEvent.still == e.still;
 						nextEventCombo = nextEvent.combo;
 					} else {
 						nextEventCombo = Double.NEGATIVE_INFINITY;
@@ -290,7 +288,6 @@ public class Stroke {
 				if (e.type == SweepEventType.ENTERSTROKE) {
 					if (i < events.size()-1) {
 						SweepEvent nextEvent = events.get(i+1);
-//						assert nextEvent.still == e.still;
 						nextEventCombo = nextEvent.combo;
 					} else {
 						nextEventCombo = Double.POSITIVE_INFINITY;
@@ -298,7 +295,6 @@ public class Stroke {
 				} else {
 					if (i >= 1) {
 						SweepEvent nextEvent = events.get(i-1);
-//						assert nextEvent.still == e.still;
 						nextEventCombo = nextEvent.combo;
 					} else {
 						nextEventCombo = Double.NEGATIVE_INFINITY;

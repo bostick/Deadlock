@@ -6,13 +6,9 @@ import com.gutabi.deadlock.math.Point;
 
 public abstract class ShapeEngine {
 	
-//	public abstract AABB createAABB(double x, double y, double width, double height);
-	
 	public abstract Circle createCircle(Point center, double radius);
 	
 	public abstract Capsule createCapsule(Circle ac, Circle bc);
-	
-//	public abstract Line createLine(Point p0, Point p1);
 	
 	public abstract Polyline createPolyline(List<Point> pts);
 	

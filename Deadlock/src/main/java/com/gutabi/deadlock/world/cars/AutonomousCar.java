@@ -86,12 +86,7 @@ public class AutonomousCar extends Car {
 		forwardVel = currentRightNormal.mul(Vec2.dot(currentRightNormal, vel));
 		forwardSpeed = Vec2.dot(vel, currentRightNormal);
 		
-//		Mat22 r = b2dBody.getTransform().R;
 		double angle = b2dBody.getAngle();
-//		carTransArr[0][0] = r.col1.x;
-//		carTransArr[0][1] = r.col2.x;
-//		carTransArr[1][0] = r.col1.y;
-//		carTransArr[1][1] = r.col2.y;
 		
 		shape = Geom.localToWorld(localAABB, angle, center);
 		
@@ -187,8 +182,6 @@ public class AutonomousCar extends Car {
 			
 			if (sinked) {
 				
-//				logger.debug("sink");
-				
 				((AutonomousDriver)driver).clear();
 				
 				s.match.outstandingCars--;
@@ -206,9 +199,6 @@ public class AutonomousCar extends Car {
 				
 				if (DMath.equals(vel.lengthSquared(), 0.0)) {
 					
-//					if (logger.isDebugEnabled()) {
-//						logger.debug("stopped: " + t);
-//					}
 					((AutonomousDriver)driver).stoppedTime = t;
 					
 				}
@@ -233,9 +223,6 @@ public class AutonomousCar extends Car {
 				
 				if (DMath.equals(vel.lengthSquared(), 0.0)) {
 					
-//					if (logger.isDebugEnabled()) {
-//						logger.debug("stopped: " + t);
-//					}
 					((AutonomousDriver)driver).stoppedTime = t;
 					
 				}
@@ -270,9 +257,6 @@ public class AutonomousCar extends Car {
 				
 				if (DMath.equals(vel.lengthSquared(), 0.0)) {
 					
-//					if (logger.isDebugEnabled()) {
-//						logger.debug("stopped: " + t);
-//					}
 					((AutonomousDriver)driver).stoppedTime = t;
 					
 				}

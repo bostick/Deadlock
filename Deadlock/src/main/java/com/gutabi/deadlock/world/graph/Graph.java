@@ -34,7 +34,6 @@ public class Graph {
 	public final List<Vertex> vertices = new ArrayList<Vertex>();
 	public final List<Road> roads = new ArrayList<Road>();
 	public final List<Merger> mergers = new ArrayList<Merger>();
-//	public final List<Edge> edges = new ArrayList<Edge>();
 	public final List<RushHourBoard> rushes = new ArrayList<RushHourBoard>();
 	
 	public GraphPositionPathFactory pathFactory;
@@ -42,8 +41,6 @@ public class Graph {
 	public final List<GraphPositionPath> paths = new ArrayList<GraphPositionPath>();
 	
 	private AABB aabb;
-	
-//	private static final Logger logger = Logger.getLogger(Graph.class);
 	
 	public Graph(World world) {
 		this.world = world;
@@ -371,10 +368,6 @@ public class Graph {
 	
 	private void computeAABB() {
 		
-//		if (logger.isDebugEnabled()) {
-//			logger.debug("aabb before: " + aabb);
-//		}
-		
 		aabb = null;
 		
 		for (Vertex v : vertices) {
@@ -386,10 +379,6 @@ public class Graph {
 		for (Merger m : mergers) {
 			aabb = AABB.union(aabb, m.getShape().getAABB());
 		}
-		
-//		if (logger.isDebugEnabled()) {
-//			logger.debug("aabb after: " + aabb);
-//		}
 		
 	}
 	

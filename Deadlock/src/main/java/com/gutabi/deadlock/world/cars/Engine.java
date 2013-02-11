@@ -117,8 +117,6 @@ public class Engine {
 	
 	private void updateDrive(double t) {
 		
-//		double goalForwardVel = (float)c.getMaxSp;
-		
 		double dv;
 		if (c.maxSpeed > c.forwardSpeed) {
 			dv = c.maxSpeed - c.forwardSpeed;
@@ -131,8 +129,6 @@ public class Engine {
 		if (dv > maxAcceleration * world.screen.DT) {
 			dv = maxAcceleration * world.screen.DT;
 		}
-		
-//		logger.debug("acc for driving: " + acc);
 		
 		float forwardImpulse = (float)(driveForwardImpulseCoefficient * c.mass * dv);
 		
@@ -148,10 +144,6 @@ public class Engine {
 		Point dp = new Point(((AutonomousDriver)c.driver).goalPoint.x-c.center.x, ((AutonomousDriver)c.driver).goalPoint.y-c.center.y);
 		
 		double goalAngle = Math.atan2(dp.y, dp.x);
-		
-//		if (logger.isDebugEnabled()) {
-//			logger.debug("updateTurn: goalAngle: " + goalAngle);
-//		}
 		
 		double dw = ((float)goalAngle) - c.angle;
 		
@@ -181,10 +173,6 @@ public class Engine {
 //			String.class.getName();
 //		}
 		
-//		if (logger.isDebugEnabled()) {
-//			logger.debug("updateTurn: dw: " + dw);
-//		}
-		
 		float goalAngVel = (float)(dw / world.screen.DT);
 		
 		float angImpulse = (float)(turnAngularImpulseCoefficient * c.momentOfInertia * (goalAngVel - c.angularVel));
@@ -197,8 +185,6 @@ public class Engine {
 		
 		if (((AutonomousDriver)c.driver).decelTime == -1) {
 			
-//			logger.debug("decel");
-			
 			((AutonomousDriver)c.driver).decelTime = t;
 		}
 		
@@ -206,15 +192,9 @@ public class Engine {
 			return;
 		}
 		
-		//logger.debug("acc for braking: " + -forwardVel.length());
-		
 		Vec2 cancelingVel = c.vel.mul(-1);
 		double cancelingRightVel = Vec2.dot(cancelingVel, c.currentRightNormal);
 		double cancelingUpVel = Vec2.dot(cancelingVel, c.currentUpNormal);
-		
-//		if (logger.isDebugEnabled()) {
-//			logger.debug("braking dv: " + dv);
-//		}
 		
 		float rightBrakeImpulse = (float)(brakeForwardImpulseCoefficient * cancelingRightVel * c.mass);
 		float upBrakeImpulse = (float)(brakeLateralImpulseCoefficient * cancelingUpVel * c.mass);

@@ -262,7 +262,6 @@ public final class Fixture extends Vertex {
 			assert false;
 		}
 		
-//		c.computeCtorProperties();
 		c.computeStartingProperties();
 		
 		return c;
@@ -391,9 +390,6 @@ public final class Fixture extends Vertex {
 			
 			ctxt.translate(-r, -r);
 			
-//			ctxt.paintImage(APP.spriteSheet, world.screen.pixelsPerMeter,
-//					0, 0, 2 * r, 2 * r,
-//					96, 0, 96+32, 0+32);
 			APP.spriteSheet.paint(ctxt, SpriteSheetSprite.FIXTUREARROW, world.screen.pixelsPerMeter, 0, 0, 2 * r, 2 * r);
 			
 			ctxt.setTransform(origTransform);

@@ -14,18 +14,7 @@ import com.gutabi.deadlock.world.graph.Vertex;
 
 public class MergerToolShape implements CompoundShape {
 	
-	private Point ul;
-//	private Point p0;
-//	private Point p1;
-//	private Point p2;
-//	private Point p3;
-	{
-		ul = new Point(-Merger.MERGER_WIDTH/2, -Merger.MERGER_HEIGHT/2);
-//		p0 = ul;
-//		p1 = new Point(ul.x + Merger.MERGER_WIDTH, ul.y);
-//		p2 = new Point(ul.x + Merger.MERGER_WIDTH, ul.y + Merger.MERGER_HEIGHT);
-//		p3 = new Point(ul.x, ul.y + Merger.MERGER_HEIGHT);
-	}
+	private Point ul = new Point(-Merger.MERGER_WIDTH/2, -Merger.MERGER_HEIGHT/2);
 	
 	public final Circle worldTop;
 	public final Circle worldLeft;

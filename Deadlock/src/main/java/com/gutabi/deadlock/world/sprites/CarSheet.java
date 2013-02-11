@@ -8,7 +8,6 @@ public class CarSheet extends Sheet {
 	
 	public CarSheet() {
 		
-//		ImageEngine iEngine = APP.platform.createImageEngine();
 		ResourceEngine rEngine = APP.platform.createResourceEngine();
 		
 		res = rEngine.imageResource("carsheet");

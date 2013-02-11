@@ -561,10 +561,7 @@ public class RushHourBoard extends Entity {
 		}
 		if (toRemove != null) {
 			perimeterSegments.remove(toRemove);
-		} else {
-//			assert false;
 		}
-		
 	}
 	
 	public boolean allowablePosition(Car c) {

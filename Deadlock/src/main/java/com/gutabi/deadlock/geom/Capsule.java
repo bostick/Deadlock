@@ -15,8 +15,6 @@ public abstract class Capsule implements Shape {
 	public final Circle ac;
 	public final Circle bc;
 	
-//	public final int index;
-	
 	public final OBB middle;
 	
 	public final Point a;
@@ -38,13 +36,10 @@ public abstract class Capsule implements Shape {
 	
 	private int hash;
 	
-//	static Logger logger = Logger.getLogger(Capsule.class);
-	
 	protected Capsule(Circle ac, Circle bc) {
 		super();
 		this.ac = ac;
 		this.bc = bc;
-//		this.index = index;
 		
 		this.a = ac.center;
 		this.b = bc.center;
@@ -67,7 +62,6 @@ public abstract class Capsule implements Shape {
 			bUp = b.plus(u);
 			bDown = b.plus(d);
 			
-//			middle = APP.platform.createShapeEngine().createOBB(parent, aUp, bUp, bDown, aDown);
 			middle = APP.platform.createShapeEngine().createOBB(Point.point(a, b, 0.5), Math.atan2(diff.y, diff.x), Point.distance(a, b)/2, r);
 			
 			debugNormalLine = new Line(a, a.plus(n));

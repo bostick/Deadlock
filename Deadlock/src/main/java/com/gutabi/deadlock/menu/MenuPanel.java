@@ -15,8 +15,6 @@ public class MenuPanel extends PanelBase {
 	
 	MainMenu screen;
 	
-//	static Logger logger = Logger.getLogger(MenuPanel.class);
-	
 	public MenuPanel(final MainMenu screen) {
 		this.screen = screen;
 		

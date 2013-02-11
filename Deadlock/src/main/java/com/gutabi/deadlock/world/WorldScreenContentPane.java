@@ -18,8 +18,6 @@ public class WorldScreenContentPane implements ContentPane {
 	public WorldPanel worldPanel;
 	public ControlPanel controlPanel;
 	
-//	static Logger logger = Logger.getLogger(WorldScreenContentPane.class);
-	
 	public WorldScreenContentPane(WorldScreen screen) {
 		this.cp = APP.platform.createContentPane(screen);
 		this.screen = screen;

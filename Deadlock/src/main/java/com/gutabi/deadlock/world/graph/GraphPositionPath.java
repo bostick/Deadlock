@@ -49,8 +49,6 @@ public class GraphPositionPath {
 	
 	private int hash;
 	
-//	static Logger logger = Logger.getLogger(GraphPositionPath.class);
-	
 	public GraphPositionPath(List<GraphPosition> poss) {
 		
 		this.poss = poss;
@@ -137,7 +135,6 @@ public class GraphPositionPath {
 		
 		startingPos = new GraphPositionPathPosition(this, 0, 0.0);
 		
-		assert check();
 	}
 	
 	public boolean equals(Object o) {
@@ -716,14 +713,6 @@ public class GraphPositionPath {
 			}
 		}
 		return null;
-	}
-	
-	private boolean check() {
-		for (int i = 0; i < poss.size(); i++) {
-//			GraphPosition a = poss.get(i);
-//			assert a.isBound();
-		}
-		return true;
 	}
 	
 }

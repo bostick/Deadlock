@@ -29,8 +29,6 @@ public class MainMenu implements KeyListener {
 	public double menuWidth;
 	public double menuHeight;
 	
-//	static Logger logger = Logger.getLogger(MainMenu.class);
-	
 	public MainMenu() {
 		
 		contentPane = new MainMenuContentPane(this);

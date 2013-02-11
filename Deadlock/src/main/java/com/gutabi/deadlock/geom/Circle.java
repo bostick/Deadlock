@@ -14,8 +14,6 @@ public abstract class Circle implements Shape {
 	
 	private int hash;
 	
-//	static Logger logger = Logger.getLogger(Circle.class);
-	
 	protected Circle(Point center, double radius) {
 		super();
 		this.center = center;

@@ -51,8 +51,6 @@ public class World {
 	
 	public org.jbox2d.dynamics.World b2dWorld;
 	
-//	private static Logger logger = Logger.getLogger(World.class);
-	
 	public World(WorldScreen screen) {
 		this.screen = screen;
 		

@@ -17,8 +17,6 @@ public class CapsuleSequence implements Shape, SweeperShape, CompoundShape {
 	
 	public final AABB aabb;
 	
-//	static Logger logger = Logger.getLogger(CapsuleSequence.class);
-	
 	public CapsuleSequence(List<Capsule> caps) {
 		super();
 		this.caps = caps;

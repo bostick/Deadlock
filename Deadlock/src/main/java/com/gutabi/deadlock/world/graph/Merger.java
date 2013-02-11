@@ -49,10 +49,6 @@ public class Merger extends Edge {
 		this.right = right;
 		this.bottom = bottom;
 		
-//		Point p0 = ul;
-//		Point p1 = new Point(ul.x + MERGER_WIDTH, ul.y);
-//		Point p2 = new Point(ul.x + MERGER_WIDTH, ul.y + MERGER_HEIGHT);
-//		Point p3 = new Point(ul.x, ul.y + MERGER_HEIGHT);
 		shape = new AABB(ul.x, ul.y, MERGER_WIDTH, MERGER_HEIGHT);
 		
 		top.m = this;

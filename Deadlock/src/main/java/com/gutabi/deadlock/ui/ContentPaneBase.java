@@ -10,8 +10,6 @@ public abstract class ContentPaneBase implements ContentPane, MotionListener {
 	
 	protected List<Panel> children = new ArrayList<Panel>();
 	
-//	static Logger logger = Logger.getLogger(ContentPane.class);
-	
 	public ContentPaneBase() {
 		
 	}
@@ -24,10 +22,6 @@ public abstract class ContentPaneBase implements ContentPane, MotionListener {
 	public Point getLastMovedContentPanePoint() {
 		return lastMovedContentPanePoint;
 	}
-	
-//	public void setLastMovedContentPanePoint(Point p) {
-//		this.lastMovedContentPanePoint = p;
-//	}
 	
 	public void moved(InputEvent e) {
 		Point p = e.p;
@@ -42,7 +36,6 @@ public abstract class ContentPaneBase implements ContentPane, MotionListener {
 	
 	public void clicked(InputEvent e) {
 		Point p = e.p;
-//		lastClickedContentPanePoint = p;
 		for (Panel child : children) {
 			if (child.aabb.hitTest(p)) {
 				child.clicked(new InputEvent(p.minus(child.aabb.ul)));
@@ -53,7 +46,6 @@ public abstract class ContentPaneBase implements ContentPane, MotionListener {
 	
 	public void pressed(InputEvent e) {
 		Point p = e.p;
-//		lastClickedContentPanePoint = p;
 		for (Panel child : children) {
 			if (child.aabb.hitTest(p)) {
 				child.pressed(new InputEvent(p.minus(child.aabb.ul)));
@@ -64,7 +56,6 @@ public abstract class ContentPaneBase implements ContentPane, MotionListener {
 	
 	public void released(InputEvent e) {
 		Point p = e.p;
-//		lastClickedContentPanePoint = p;
 		for (Panel child : children) {
 			if (child.aabb.hitTest(p)) {
 				child.released(new InputEvent(p.minus(child.aabb.ul)));
@@ -75,7 +66,6 @@ public abstract class ContentPaneBase implements ContentPane, MotionListener {
 	
 	public void dragged(InputEvent e) {
 		Point p = e.p;
-//		lastClickedContentPanePoint = p;
 		for (Panel child : children) {
 			if (child.aabb.hitTest(p)) {
 				child.dragged(new InputEvent(p.minus(child.aabb.ul)));

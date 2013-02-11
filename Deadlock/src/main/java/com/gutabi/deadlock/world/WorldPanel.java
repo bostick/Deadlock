@@ -13,8 +13,6 @@ public class WorldPanel extends PanelBase {
 	
 	WorldScreen screen;
 	
-//	static Logger logger = Logger.getLogger(WorldPanel.class);
-	
 	public WorldPanel(final WorldScreen screen) {
 		this.screen = screen;
 		
@@ -185,8 +183,6 @@ public class WorldPanel extends PanelBase {
 		screen.tool.draw(ctxt);
 		
 		if (APP.FPS_DRAW) {
-			
-//			ctxt.translate(ctxt.screen.worldViewport.x, ctxt.screen.worldViewport.y);
 			
 			screen.stats.paint(ctxt);
 		}

@@ -40,7 +40,6 @@ public class AABB implements Shape {
 	Line p3p0Line;
 	
 	public AABB(double x, double y, double width, double height) {
-//		super();
 		this.x = x;
 		this.y = y;
 		this.width = width;

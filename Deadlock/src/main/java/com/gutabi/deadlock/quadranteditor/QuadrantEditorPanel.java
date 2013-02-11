@@ -33,8 +33,6 @@ public class QuadrantEditorPanel extends PanelBase {
 	Button addBoth;
 	Button go;
 	
-//	static Logger logger = Logger.getLogger(QuadrantEditorPanel.class);
-	
 	public QuadrantEditorPanel(final QuadrantEditor screen) {
 		this.screen = screen;
 		

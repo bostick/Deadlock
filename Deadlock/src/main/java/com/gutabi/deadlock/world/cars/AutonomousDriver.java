@@ -44,8 +44,6 @@ public final class AutonomousDriver extends Driver {
 		overallPos = overallPath.startingPos;
 		startGP = overallPos.getGraphPosition();
 		
-//		overallPos = overallPath.findClosestGraphPositionPathPosition(startGP);
-		
 		vertexDepartureQueue.add(new VertexSpawnEvent(overallPos));
 	}
 	
@@ -53,7 +51,7 @@ public final class AutonomousDriver extends Driver {
 		overallPos = overallPath.forwardSearch(c.center, overallPos, true);
 	}
 	
-private void cleanupVertexDepartureQueue() {
+	private void cleanupVertexDepartureQueue() {
 		
 		if (!vertexDepartureQueue.isEmpty()) {
 			
@@ -119,7 +117,7 @@ private void cleanupVertexDepartureQueue() {
 		cleanupVertexDepartureQueue();
 	}
 	
-public void preStep(double t) {
+	public void preStep(double t) {
 		
 		if (curCarProximityEvent == null) {
 			curCarProximityEvent = findNewCarProximityEvent();

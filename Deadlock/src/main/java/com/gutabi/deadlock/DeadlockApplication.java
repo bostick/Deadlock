@@ -49,9 +49,6 @@ public class DeadlockApplication {
 	
 	public Random RANDOM = new Random(1);
 	
-//	public Image carSheet;
-//	public Image spriteSheet;
-//	public Image explosionSheet;
 	public Sheet carSheet;
 	public Sheet spriteSheet;
 	public Sheet explosionSheet;

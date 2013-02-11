@@ -21,11 +21,7 @@ public abstract class RenderingContext extends DebugDraw {
 		m_drawFlags = DebugDraw.e_dynamicTreeBit;
 	}
 	
-//	public abstract double getAlpha();
-	
 	public abstract void setAlpha(double a);
-	
-//	public abstract Composite getTransparentComposite();
 	
 	public abstract void setStroke(double width, Cap cap, Join join);
 	
@@ -46,8 +42,6 @@ public abstract class RenderingContext extends DebugDraw {
 	public abstract void translate(double tx, double ty);
 	
 	public abstract void translate(Point p);
-	
-//	public abstract void translate(int tx, int ty);
 	
 	public abstract void setTransform(Transform t);
 	

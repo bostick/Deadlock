@@ -16,8 +16,6 @@ public class CarEventListener implements ContactListener {
 	
 	World world;
 	
-//	static Logger logger = Logger.getLogger(CarEventListener.class);
-	
 	public CarEventListener(World world) {
 		this.world = world;
 	}

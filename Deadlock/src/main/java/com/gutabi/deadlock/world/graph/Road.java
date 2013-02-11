@@ -61,8 +61,6 @@ public class Road extends Edge {
 	
 	private Triangle arrowPointer;
 	
-//	static Logger logger = Logger.getLogger(Road.class);
-	
 	public Road(World world, Vertex start, Vertex end, List<Point> raw) {
 		
 		assert !raw.isEmpty();

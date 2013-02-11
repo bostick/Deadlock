@@ -8,8 +8,6 @@ public abstract class GraphPosition {
 	public final Point p;
 	public final Entity entity;
 	
-//	static Logger logger = Logger.getLogger(GraphPosition.class);
-	
 	public GraphPosition(Point p, Entity e) {
 		this.p = p;
 		this.entity = e;

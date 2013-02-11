@@ -116,12 +116,6 @@ public class AnimatedExplosion {
 			break;
 		}
 		
-//		ctxt.paintImage(APP.explosionSheet, world.screen.pixelsPerMeter,
-//				0, 0, explosionWidth, explosionHeight,
-//				71 * index, 0, 71 * index + 71, 100);
-//		APP.explosionSheet.paint(ctxt, s, world.screen.pixelsPerMeter, 0, 0, explosionWidth, explosionHeight);
-		
-		
 		ctxt.setTransform(origTransform);
 		
 	}
