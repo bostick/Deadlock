@@ -1,11 +1,4 @@
 
-RushHourWorld.addNewCar sheet index stuff
-move to Sheet?
-
-
-
-
-
 solver
 level generator
 
@@ -18,6 +11,11 @@ level generator
 
 minimize PNG resources for building, shipping
 minimize code, libraries for building and shipping
+
+obfuscate code
+
+
+
 
 
 refactor into capsloc, deadlock, gridlock

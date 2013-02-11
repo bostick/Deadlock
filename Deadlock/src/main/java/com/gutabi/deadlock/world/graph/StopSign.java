@@ -10,7 +10,7 @@ import com.gutabi.deadlock.ui.paint.Cap;
 import com.gutabi.deadlock.ui.paint.Color;
 import com.gutabi.deadlock.ui.paint.Join;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
-import com.gutabi.deadlock.world.sprites.Sheet.Sprite;
+import com.gutabi.deadlock.world.sprites.SpriteSheet.SpriteSheetSprite;
 
 public class StopSign extends Entity {
 	
@@ -129,7 +129,7 @@ public class StopSign extends Entity {
 //				ctxt.paintImage(APP.spriteSheet, r.world.screen.pixelsPerMeter,
 //						0, 0, STOPSIGN_SIZE, STOPSIGN_SIZE,
 //						32, 0, 32+32, 0+32);
-				APP.spriteSheet.paint(ctxt, Sprite.STOPSIGN, r.world.screen.pixelsPerMeter, 0, 0, STOPSIGN_SIZE, STOPSIGN_SIZE);
+				APP.spriteSheet.paint(ctxt, SpriteSheetSprite.STOPSIGN, r.world.screen.pixelsPerMeter, 0, 0, STOPSIGN_SIZE, STOPSIGN_SIZE);
 				
 				ctxt.setTransform(origTransform);
 				

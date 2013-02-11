@@ -12,7 +12,6 @@ import com.gutabi.deadlock.Entity;
 import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.geom.CubicCurve;
 import com.gutabi.deadlock.geom.Line;
-import com.gutabi.deadlock.geom.OBB;
 import com.gutabi.deadlock.geom.Shape;
 import com.gutabi.deadlock.geom.ShapeUtils;
 import com.gutabi.deadlock.math.Point;
@@ -23,7 +22,7 @@ import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.world.Stroke;
 import com.gutabi.deadlock.world.World;
 import com.gutabi.deadlock.world.cars.Car;
-import com.gutabi.deadlock.world.sprites.Sheet.Sprite;
+import com.gutabi.deadlock.world.sprites.CarSheet.CarSheetSprite;
 
 public class RushHourBoard extends Entity {
 	
@@ -573,7 +572,7 @@ public class RushHourBoard extends Entity {
 			return true;
 		}
 		
-		if (c.sprite == Sprite.CAR7) {
+		if (c.sprite == CarSheetSprite.CAR7) {
 			for (ExitStud s : exitStuds) {
 				if (ShapeUtils.intersectAO(s.aabb, c.shape)) {
 					return true;

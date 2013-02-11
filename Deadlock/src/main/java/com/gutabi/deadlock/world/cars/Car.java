@@ -20,7 +20,8 @@ import com.gutabi.deadlock.ui.Transform;
 import com.gutabi.deadlock.ui.paint.Color;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.world.World;
-import com.gutabi.deadlock.world.sprites.Sheet.Sprite;
+import com.gutabi.deadlock.world.sprites.CarSheet.CarSheetSprite;
+import com.gutabi.deadlock.world.sprites.SpriteSheet.SpriteSheetSprite;
 
 public abstract class Car extends Entity {
 	
@@ -104,43 +105,43 @@ public abstract class Car extends Entity {
 		
 		switch (r) {
 		case 0:
-			sprite = Sprite.CAR0;
+			sprite = CarSheetSprite.CAR0;
 			CAR_LENGTH = 2.0;
 			CAR_WIDTH = 1.0;
 			localFront = new Point(0.75 * CAR_LENGTH, 0.0);
 			break;
 		case 1:
-			sprite = Sprite.CAR1;
+			sprite = CarSheetSprite.CAR1;
 			CAR_LENGTH = 2.0;
 			CAR_WIDTH = 1.0;
 			localFront = new Point(0.75 * CAR_LENGTH, 0.0);
 			break;
 		case 2:
-			sprite = Sprite.CAR2;
+			sprite = CarSheetSprite.CAR2;
 			CAR_LENGTH = 2.0;
 			CAR_WIDTH = 1.0;
 			localFront = new Point(0.75 * CAR_LENGTH, 0.0);
 			break;
 		case 3:
-			sprite = Sprite.CAR3;
+			sprite = CarSheetSprite.CAR3;
 			CAR_LENGTH = 4.0;
 			CAR_WIDTH = 2.0;
 			localFront = new Point(0.75 * CAR_LENGTH, 0.0);
 			break;
 		case 4:
-			sprite = Sprite.CAR4;
+			sprite = CarSheetSprite.CAR4;
 			CAR_LENGTH = 2.0;
 			CAR_WIDTH = 1.0;
 			localFront = new Point(0.75 * CAR_LENGTH, 0.0);
 			break;
 		case 5:
-			sprite = Sprite.CAR5;
+			sprite = CarSheetSprite.CAR5;
 			CAR_LENGTH = 3.0;
 			CAR_WIDTH = 1.0;
 			localFront = new Point(0.75 * CAR_LENGTH, 0.0);
 			break;
 		case 6:
-			sprite = Sprite.CAR6;
+			sprite = CarSheetSprite.CAR6;
 			CAR_LENGTH = 3.0;
 			CAR_WIDTH = 1.0;
 			localFront = new Point(0.75 * CAR_LENGTH, 0.0);
@@ -149,31 +150,31 @@ public abstract class Car extends Entity {
 			/*
 			 * red car
 			 */
-			sprite = Sprite.CAR7;
+			sprite = CarSheetSprite.CAR7;
 			CAR_LENGTH = 2.0;
 			CAR_WIDTH = 1.0;
 			localFront = new Point(0.75 * CAR_LENGTH, 0.0);
 			break;
 		case 8:
-			sprite = Sprite.CAR8;
+			sprite = CarSheetSprite.CAR8;
 			CAR_LENGTH = 3.0;
 			CAR_WIDTH = 1.0;
 			localFront = new Point(0.75 * CAR_LENGTH, 0.0);
 			break;
 		case 9:
-			sprite = Sprite.CAR9;
+			sprite = CarSheetSprite.CAR9;
 			CAR_LENGTH = 2.0;
 			CAR_WIDTH = 1.0;
 			localFront = new Point(0.75 * CAR_LENGTH, 0.0);
 			break;
 		case 10:
-			sprite = Sprite.CAR10;
+			sprite = CarSheetSprite.CAR10;
 			CAR_LENGTH = 3.0;
 			CAR_WIDTH = 1.0;
 			localFront = new Point(0.75 * CAR_LENGTH, 0.0);
 			break;
 		case 11:
-			sprite = Sprite.CAR11;
+			sprite = CarSheetSprite.CAR11;
 			CAR_LENGTH = 2.0;
 			CAR_WIDTH = 1.0;
 			localFront = new Point(0.75 * CAR_LENGTH, 0.0);
@@ -319,7 +320,7 @@ public abstract class Car extends Entity {
 //	public int sheetColEnd;
 //	public int sheetRowStart;
 //	public int sheetRowEnd;
-	public Sprite sprite;
+	public CarSheetSprite sprite;
 	
 	public abstract void paint(RenderingContext ctxt);
 	
@@ -365,7 +366,7 @@ public abstract class Car extends Entity {
 //				0, 0, BRAKE_SIZE, BRAKE_SIZE,
 //				0, 64, 0+8, 64+8);
 		
-		APP.spriteSheet.paint(ctxt, Sprite.BRAKE, world.screen.pixelsPerMeter, 0, 0, BRAKE_SIZE, BRAKE_SIZE);
+		APP.spriteSheet.paint(ctxt, SpriteSheetSprite.BRAKE, world.screen.pixelsPerMeter, 0, 0, BRAKE_SIZE, BRAKE_SIZE);
 		
 		ctxt.setTransform(brakeTransform);
 		
@@ -374,7 +375,7 @@ public abstract class Car extends Entity {
 //				0, 0, BRAKE_SIZE, BRAKE_SIZE,
 //				0, 64, 0+8, 64+8);
 		
-		APP.spriteSheet.paint(ctxt, Sprite.BRAKE, world.screen.pixelsPerMeter, 0, 0, BRAKE_SIZE, BRAKE_SIZE);
+		APP.spriteSheet.paint(ctxt, SpriteSheetSprite.BRAKE, world.screen.pixelsPerMeter, 0, 0, BRAKE_SIZE, BRAKE_SIZE);
 		
 		ctxt.setTransform(origTransform);
 		

@@ -4,7 +4,10 @@ import java.util.Random;
 
 import com.gutabi.deadlock.ui.Image;
 import com.gutabi.deadlock.ui.ImageEngine;
+import com.gutabi.deadlock.world.sprites.CarSheet;
+import com.gutabi.deadlock.world.sprites.ExplosionSheet;
 import com.gutabi.deadlock.world.sprites.Sheet;
+import com.gutabi.deadlock.world.sprites.SpriteSheet;
 
 public class DeadlockApplication {
 	
@@ -65,9 +68,9 @@ public class DeadlockApplication {
 		ImageEngine iEngine = platform.createImageEngine();
 		ResourceEngine rEngine = platform.createResourceEngine();
 		
-		carSheet = new Sheet(rEngine.imageResource("carsheet"));
-		spriteSheet = new Sheet(rEngine.imageResource("spritesheet"));
-		explosionSheet = new Sheet(rEngine.imageResource("explosionsheet"));
+		carSheet = new CarSheet();
+		spriteSheet = new SpriteSheet();
+		explosionSheet = new ExplosionSheet();
 		
 		carSheet.load();
 		spriteSheet.load();

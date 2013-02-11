@@ -6,7 +6,7 @@ import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.world.World;
-import com.gutabi.deadlock.world.sprites.Sheet.Sprite;
+import com.gutabi.deadlock.world.sprites.SpriteSheet.SpriteSheetSprite;
 
 public abstract class RushHourStud {
 	
@@ -43,7 +43,7 @@ public abstract class RushHourStud {
 //		ctxt.paintImage(APP.spriteSheet, world.screen.pixelsPerMeter,
 //				aabb.ul.x, aabb.ul.y, aabb.ul.x + aabb.width, aabb.ul.y + aabb.height,
 //				160, 0, 160+32, 0+32);
-		APP.spriteSheet.paint(ctxt, Sprite.STUD, world.screen.pixelsPerMeter, aabb.ul.x, aabb.ul.y, aabb.ul.x + aabb.width, aabb.ul.y + aabb.height);
+		APP.spriteSheet.paint(ctxt, SpriteSheetSprite.STUD, world.screen.pixelsPerMeter, aabb.ul.x, aabb.ul.y, aabb.ul.x + aabb.width, aabb.ul.y + aabb.height);
 		
 	}
 	

@@ -12,7 +12,7 @@ import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.world.Quadrant;
 import com.gutabi.deadlock.world.World;
 import com.gutabi.deadlock.world.WorldScreen;
-import com.gutabi.deadlock.world.sprites.Sheet.Sprite;
+import com.gutabi.deadlock.world.sprites.SpriteSheet.SpriteSheetSprite;
 
 public class QuadrantEditorPanel extends PanelBase {
 	
@@ -90,7 +90,7 @@ public class QuadrantEditorPanel extends PanelBase {
 				ctxt.translate(aabb.x, aabb.y);
 				ctxt.rotate(6 * Math.PI / 4, aabb.dim.multiply(0.5));
 				
-				APP.spriteSheet.paint(ctxt, Sprite.BLUEARROW, 0, 0, 50, 50);
+				APP.spriteSheet.paint(ctxt, SpriteSheetSprite.BLUEARROW, 0, 0, 50, 50);
 				
 				ctxt.setTransform(origTransform);
 				
@@ -137,7 +137,7 @@ public class QuadrantEditorPanel extends PanelBase {
 				ctxt.translate(aabb.ul.x, aabb.ul.y);
 				ctxt.rotate(2 * Math.PI / 4, aabb.dim.multiply(0.5));
 				
-				APP.spriteSheet.paint(ctxt, Sprite.BLUEARROW, 0, 0, 50, 50);
+				APP.spriteSheet.paint(ctxt, SpriteSheetSprite.BLUEARROW, 0, 0, 50, 50);
 				
 				ctxt.setTransform(origTransform);
 				
@@ -182,7 +182,7 @@ public class QuadrantEditorPanel extends PanelBase {
 				ctxt.translate(aabb.ul.x, aabb.ul.y);
 				ctxt.rotate(4 * Math.PI / 4, aabb.dim.multiply(0.5));
 				
-				APP.spriteSheet.paint(ctxt, Sprite.BLUEARROW, 0, 0, 50, 50);
+				APP.spriteSheet.paint(ctxt, SpriteSheetSprite.BLUEARROW, 0, 0, 50, 50);
 				
 				ctxt.setTransform(origTransform);
 				
@@ -226,7 +226,7 @@ public class QuadrantEditorPanel extends PanelBase {
 				ctxt.translate(aabb.ul.x, aabb.ul.y);
 				ctxt.rotate(0 * Math.PI / 4, aabb.dim.multiply(0.5));
 				
-				APP.spriteSheet.paint(ctxt, Sprite.BLUEARROW, 0, 0, 50, 50);
+				APP.spriteSheet.paint(ctxt, SpriteSheetSprite.BLUEARROW, 0, 0, 50, 50);
 				
 				ctxt.setTransform(origTransform);
 				
@@ -271,7 +271,7 @@ public class QuadrantEditorPanel extends PanelBase {
 				ctxt.translate(aabb.ul.x, aabb.ul.y);
 				ctxt.rotate(5 * Math.PI / 4, aabb.dim.multiply(0.5));
 				
-				APP.spriteSheet.paint(ctxt, Sprite.BLUEARROW, 0, 0, 50, 50);
+				APP.spriteSheet.paint(ctxt, SpriteSheetSprite.BLUEARROW, 0, 0, 50, 50);
 				
 				ctxt.setTransform(origTransform);
 				
@@ -315,7 +315,7 @@ public class QuadrantEditorPanel extends PanelBase {
 				ctxt.translate(aabb.ul.x, aabb.ul.y);
 				ctxt.rotate(1 * Math.PI / 4, aabb.dim.multiply(0.5));
 				
-				APP.spriteSheet.paint(ctxt, Sprite.BLUEARROW, 0, 0, 50, 50);
+				APP.spriteSheet.paint(ctxt, SpriteSheetSprite.BLUEARROW, 0, 0, 50, 50);
 				
 				ctxt.setTransform(origTransform);
 				

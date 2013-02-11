@@ -14,7 +14,7 @@ import com.gutabi.deadlock.math.DMath;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.Image;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
-import com.gutabi.deadlock.world.sprites.Sheet.Sprite;
+import com.gutabi.deadlock.world.sprites.SpriteSheet.SpriteSheetSprite;
 
 public class QuadrantMap {
 	
@@ -128,7 +128,7 @@ public class QuadrantMap {
 		int maxRows = (int)Math.ceil(quadrantHeightPixels/32.0);
 		for (int i = 0; i < maxRows; i++) {
 			for (int j = 0; j < maxCols; j++) {
-				APP.spriteSheet.paint(ctxt, Sprite.GRASSTILE, 32 * j, 32 * i, 32 * j + 32, 32 * i + 32);
+				APP.spriteSheet.paint(ctxt, SpriteSheetSprite.GRASSTILE, 32 * j, 32 * i, 32 * j + 32, 32 * i + 32);
 			}
 		}
 		

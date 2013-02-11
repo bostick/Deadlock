@@ -7,7 +7,7 @@ import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.Transform;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.world.World;
-import com.gutabi.deadlock.world.sprites.Sheet.Sprite;
+import com.gutabi.deadlock.world.sprites.SpriteSheet.SpriteSheetSprite;
 
 public class AnimatedGrass {
 	
@@ -94,13 +94,13 @@ public class AnimatedGrass {
 		
 		switch (index) {
 		case 0:
-			APP.spriteSheet.paint(ctxt, Sprite.GRASS0, world.screen.pixelsPerMeter, 0, 0, GRASS_SIZE, GRASS_SIZE);
+			APP.spriteSheet.paint(ctxt, SpriteSheetSprite.GRASS0, world.screen.pixelsPerMeter, 0, 0, GRASS_SIZE, GRASS_SIZE);
 			break;
 		case 1:
-			APP.spriteSheet.paint(ctxt, Sprite.GRASS1, world.screen.pixelsPerMeter, 0, 0, GRASS_SIZE, GRASS_SIZE);
+			APP.spriteSheet.paint(ctxt, SpriteSheetSprite.GRASS1, world.screen.pixelsPerMeter, 0, 0, GRASS_SIZE, GRASS_SIZE);
 			break;
 		case 2:
-			APP.spriteSheet.paint(ctxt, Sprite.GRASS2, world.screen.pixelsPerMeter, 0, 0, GRASS_SIZE, GRASS_SIZE);
+			APP.spriteSheet.paint(ctxt, SpriteSheetSprite.GRASS2, world.screen.pixelsPerMeter, 0, 0, GRASS_SIZE, GRASS_SIZE);
 			break;
 		}
 		

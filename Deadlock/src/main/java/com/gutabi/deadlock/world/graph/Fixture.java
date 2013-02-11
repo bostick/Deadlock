@@ -19,7 +19,7 @@ import com.gutabi.deadlock.world.ProgressMeter;
 import com.gutabi.deadlock.world.World;
 import com.gutabi.deadlock.world.cars.AutonomousCar;
 import com.gutabi.deadlock.world.cars.AutonomousDriver;
-import com.gutabi.deadlock.world.sprites.Sheet.Sprite;
+import com.gutabi.deadlock.world.sprites.SpriteSheet.SpriteSheetSprite;
 
 public final class Fixture extends Vertex {
 	
@@ -394,7 +394,7 @@ public final class Fixture extends Vertex {
 //			ctxt.paintImage(APP.spriteSheet, world.screen.pixelsPerMeter,
 //					0, 0, 2 * r, 2 * r,
 //					96, 0, 96+32, 0+32);
-			APP.spriteSheet.paint(ctxt, Sprite.FIXTUREARROW, world.screen.pixelsPerMeter, 0, 0, 2 * r, 2 * r);
+			APP.spriteSheet.paint(ctxt, SpriteSheetSprite.FIXTUREARROW, world.screen.pixelsPerMeter, 0, 0, 2 * r, 2 * r);
 			
 			ctxt.setTransform(origTransform);
 			
