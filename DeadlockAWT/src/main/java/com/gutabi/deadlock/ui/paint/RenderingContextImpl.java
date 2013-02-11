@@ -5,12 +5,16 @@ import java.awt.BasicStroke;
 import java.awt.Font;
 import java.awt.FontFormatException;
 import java.awt.Graphics2D;
+import java.awt.geom.Line2D;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 
 import com.gutabi.deadlock.Resource;
 import com.gutabi.deadlock.ResourceImpl;
+import com.gutabi.deadlock.geom.AABB;
+import com.gutabi.deadlock.geom.Line;
 import com.gutabi.deadlock.math.Dim;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.Image;
@@ -203,6 +207,26 @@ public class RenderingContextImpl extends RenderingContext {
 	
 	public void fillRect(int x, int y, int width, int height) {
 		g2.fillRect(x, y, width, height);
+	}
+	
+	public void drawAABB(AABB a) {
+		Rectangle2D rect = new Rectangle2D.Double(a.x, a.y, a.width, a.height);
+		g2.draw(rect);
+	}
+	
+	public void paintAABB(AABB a) {
+		Rectangle2D rect = new Rectangle2D.Double(a.x, a.y, a.width, a.height);
+		g2.fill(rect);
+	}
+	
+	public void drawLine(Line a) {
+		Line2D l = new Line2D.Double(a.p0.x, a.p0.y, a.p1.x, a.p1.y);
+		g2.draw(l);
+	}
+	
+	public void paintLine(Line a) {
+		Line2D l = new Line2D.Double(a.p0.x, a.p0.y, a.p1.x, a.p1.y);
+		g2.fill(l);
 	}
 	
 	public void dispose() {

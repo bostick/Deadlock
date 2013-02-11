@@ -185,7 +185,7 @@ public abstract class Car extends Entity {
 //		Point p1 = new Point(CAR_LENGTH / 2, -CAR_WIDTH / 2);
 //		Point p2 = new Point(CAR_LENGTH / 2, CAR_WIDTH / 2);
 //		Point p3 = new Point(-CAR_LENGTH / 2, CAR_WIDTH / 2);
-		localAABB = APP.platform.createShapeEngine().createAABB(-CAR_LENGTH / 2, -CAR_WIDTH / 2, CAR_LENGTH, CAR_WIDTH);
+		localAABB = new AABB(-CAR_LENGTH / 2, -CAR_WIDTH / 2, CAR_LENGTH, CAR_WIDTH);
 		
 		CAR_LOCALX = -CAR_LENGTH / 2;
 		CAR_LOCALY = -CAR_WIDTH / 2;

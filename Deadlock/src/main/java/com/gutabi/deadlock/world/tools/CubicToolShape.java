@@ -45,8 +45,8 @@ public class CubicToolShape implements Shape {
 		this.c1 = c1;
 		
 		c = APP.platform.createShapeEngine().createCubicCurve(start, c0, c1, end);
-		tan0 = APP.platform.createShapeEngine().createLine(c0, start);
-		tan1 = APP.platform.createShapeEngine().createLine(c1, end);
+		tan0 = new Line(c0, start);
+		tan1 = new Line(c1, end);
 		
 		skeleton = c.skeleton();
 		

@@ -11,7 +11,6 @@ import java.io.InputStream;
 import com.gutabi.deadlock.Resource;
 import com.gutabi.deadlock.ResourceImpl;
 import com.gutabi.deadlock.geom.AABB;
-import com.gutabi.deadlock.geom.AABBImpl;
 
 public class FontEngineImpl implements FontEngine {
 	
@@ -39,7 +38,7 @@ public class FontEngineImpl implements FontEngine {
 			
 			TextLayout layout = new TextLayout(text, ttfReal, frc);
 			Rectangle2D bounds = layout.getBounds();
-			aabb = new AABBImpl(bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight());
+			aabb = new AABB(bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight());
 			
 		} catch (FontFormatException e) {
 			// TODO Auto-generated catch block

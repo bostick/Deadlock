@@ -49,7 +49,7 @@ public class QuadrantMap {
 		worldWidth = quadrantCols * QuadrantMap.QUADRANT_WIDTH;
 		worldHeight = quadrantRows * QuadrantMap.QUADRANT_HEIGHT;
 		
-		aabb = APP.platform.createShapeEngine().createAABB(0, 0, quadrantCols * QUADRANT_WIDTH, quadrantRows * QUADRANT_HEIGHT);
+		aabb = new AABB(0, 0, quadrantCols * QUADRANT_WIDTH, quadrantRows * QUADRANT_HEIGHT);
 	}
 	
 	private Quadrant[][] initQuadrants(int[][] ini) {

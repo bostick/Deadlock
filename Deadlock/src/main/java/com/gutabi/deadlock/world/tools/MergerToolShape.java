@@ -37,7 +37,7 @@ public class MergerToolShape implements CompoundShape {
 	
 	public MergerToolShape(Point p) {
 		
-		worldQ = APP.platform.createShapeEngine().createAABB(ul.x + p.x, ul.y + p.y, Merger.MERGER_WIDTH, Merger.MERGER_HEIGHT);
+		worldQ = new AABB(ul.x + p.x, ul.y + p.y, Merger.MERGER_WIDTH, Merger.MERGER_HEIGHT);
 		
 		worldTop = APP.platform.createShapeEngine().createCircle(new Point(ul.plus(p).x + Merger.MERGER_WIDTH/2, ul.plus(p).y), Vertex.INIT_VERTEX_RADIUS);
 		worldLeft = APP.platform.createShapeEngine().createCircle(new Point(ul.plus(p).x, ul.plus(p).y + Merger.MERGER_HEIGHT/2), Vertex.INIT_VERTEX_RADIUS);

@@ -29,7 +29,7 @@ public class AnimatedGrass {
 		startFrame = APP.RANDOM.nextInt(4);
 		lastFrame = startFrame;
 		
-		aabb = APP.platform.createShapeEngine().createAABB(p.x - GRASS_SIZE/2, p.y - GRASS_SIZE/2, GRASS_SIZE, GRASS_SIZE);
+		aabb = new AABB(p.x - GRASS_SIZE/2, p.y - GRASS_SIZE/2, GRASS_SIZE, GRASS_SIZE);
 	}
 	
 	public void preStart() {

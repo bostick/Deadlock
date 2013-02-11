@@ -49,7 +49,7 @@ public abstract class OBB implements Shape {
 		double brX = Math.max(Math.max(p0.x, p1.x), Math.max(p2.x, p3.x));
 		double brY = Math.max(Math.max(p0.y, p1.y), Math.max(p2.y, p3.y));
 		
-		aabb = APP.platform.createShapeEngine().createAABB(ulX, ulY, (brX - ulX), (brY - ulY));
+		aabb = new AABB(ulX, ulY, (brX - ulX), (brY - ulY));
 	}
 	
 	public int hashCode() {
@@ -188,28 +188,28 @@ public abstract class OBB implements Shape {
 	
 	public Line getP0P1Line() {
 		if (p0p1Line == null) {
-			p0p1Line = APP.platform.createShapeEngine().createLine(p0, p1);
+			p0p1Line = new Line(p0, p1);
 		}
 		return p0p1Line;
 	}
 	
 	public Line getP1P2Line() {
 		if (p1p2Line == null) {
-			p1p2Line = APP.platform.createShapeEngine().createLine(p1, p2);
+			p1p2Line = new Line(p1, p2);
 		}
 		return p1p2Line;
 	}
 	
 	public Line getP2P3Line() {
 		if (p2p3Line == null) {
-			p2p3Line = APP.platform.createShapeEngine().createLine(p2, p3);
+			p2p3Line = new Line(p2, p3);
 		}
 		return p2p3Line;
 	}
 	
 	public Line getP3P0Line() {
 		if (p3p0Line == null) {
-			p3p0Line = APP.platform.createShapeEngine().createLine(p3, p0);
+			p3p0Line = new Line(p3, p0);
 		}
 		return p3p0Line;
 	}

@@ -2,6 +2,7 @@ package com.gutabi.deadlock.quadranteditor;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
+import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.Button;
 import com.gutabi.deadlock.ui.InputEvent;
@@ -37,7 +38,7 @@ public class QuadrantEditorPanel extends PanelBase {
 	public QuadrantEditorPanel(final QuadrantEditor screen) {
 		this.screen = screen;
 		
-		aabb = APP.platform.createShapeEngine().createAABB(aabb.x, aabb.y, APP.QUADRANTEDITORPANEL_WIDTH, APP.QUADRANTEDITORPANEL_HEIGHT);
+		aabb = new AABB(aabb.x, aabb.y, APP.QUADRANTEDITORPANEL_WIDTH, APP.QUADRANTEDITORPANEL_HEIGHT);
 		
 		ini = new int[][] {
 				{1, 1, 1},
@@ -47,13 +48,13 @@ public class QuadrantEditorPanel extends PanelBase {
 		
 		worldScreen = new WorldScreen();
 		worldScreen.world = World.createWorld(worldScreen, ini);
-		worldScreen.contentPane.worldPanel.aabb = APP.platform.createShapeEngine().createAABB(50, 50, 350, 350);
+		worldScreen.contentPane.worldPanel.aabb = new AABB(50, 50, 350, 350);
 		
 		double pixelsPerMeterWidth = worldScreen.contentPane.worldPanel.aabb.width / worldScreen.world.quadrantMap.worldWidth;
 		double pixelxPerMeterHeight = worldScreen.contentPane.worldPanel.aabb.height / worldScreen.world.quadrantMap.worldHeight;
 		worldScreen.pixelsPerMeter = Math.min(pixelsPerMeterWidth, pixelxPerMeterHeight);
 		
-		worldScreen.worldViewport = APP.platform.createShapeEngine().createAABB(0, 0, worldScreen.world.quadrantMap.worldWidth, worldScreen.world.quadrantMap.worldHeight);
+		worldScreen.worldViewport = new AABB(0, 0, worldScreen.world.quadrantMap.worldWidth, worldScreen.world.quadrantMap.worldHeight);
 		worldScreen.world.panelPostDisplay();
 		
 		removeRow = new Button() {
@@ -76,7 +77,7 @@ public class QuadrantEditorPanel extends PanelBase {
 				double pixelxPerMeterHeight = worldScreen.contentPane.worldPanel.aabb.height / worldScreen.world.quadrantMap.worldHeight;
 				worldScreen.pixelsPerMeter = Math.min(pixelsPerMeterWidth, pixelxPerMeterHeight);
 				
-				worldScreen.worldViewport = APP.platform.createShapeEngine().createAABB(0, 0, worldScreen.world.quadrantMap.worldWidth, worldScreen.world.quadrantMap.worldHeight);
+				worldScreen.worldViewport = new AABB(0, 0, worldScreen.world.quadrantMap.worldWidth, worldScreen.world.quadrantMap.worldHeight);
 				worldScreen.world.panelPostDisplay();
 				
 				worldScreen.world.render_worldPanel();
@@ -122,7 +123,7 @@ public class QuadrantEditorPanel extends PanelBase {
 				double pixelxPerMeterHeight = worldScreen.contentPane.worldPanel.aabb.height / worldScreen.world.quadrantMap.worldHeight;
 				worldScreen.pixelsPerMeter = Math.min(pixelsPerMeterWidth, pixelxPerMeterHeight);
 				
-				worldScreen.worldViewport = APP.platform.createShapeEngine().createAABB(0, 0, worldScreen.world.quadrantMap.worldWidth, worldScreen.world.quadrantMap.worldHeight);
+				worldScreen.worldViewport = new AABB(0, 0, worldScreen.world.quadrantMap.worldWidth, worldScreen.world.quadrantMap.worldHeight);
 				worldScreen.world.panelPostDisplay();
 				
 				worldScreen.world.render_worldPanel();
@@ -168,7 +169,7 @@ public class QuadrantEditorPanel extends PanelBase {
 				double pixelxPerMeterHeight = worldScreen.contentPane.worldPanel.aabb.height / worldScreen.world.quadrantMap.worldHeight;
 				worldScreen.pixelsPerMeter = Math.min(pixelsPerMeterWidth, pixelxPerMeterHeight);
 				
-				worldScreen.worldViewport = APP.platform.createShapeEngine().createAABB(0, 0, worldScreen.world.quadrantMap.worldWidth, worldScreen.world.quadrantMap.worldHeight);
+				worldScreen.worldViewport = new AABB(0, 0, worldScreen.world.quadrantMap.worldWidth, worldScreen.world.quadrantMap.worldHeight);
 				worldScreen.world.panelPostDisplay();
 				
 				worldScreen.world.render_worldPanel();
@@ -212,7 +213,7 @@ public class QuadrantEditorPanel extends PanelBase {
 				double pixelxPerMeterHeight = worldScreen.contentPane.worldPanel.aabb.height / worldScreen.world.quadrantMap.worldHeight;
 				worldScreen.pixelsPerMeter = Math.min(pixelsPerMeterWidth, pixelxPerMeterHeight);
 				
-				worldScreen.worldViewport = APP.platform.createShapeEngine().createAABB(0, 0, worldScreen.world.quadrantMap.worldWidth, worldScreen.world.quadrantMap.worldHeight);
+				worldScreen.worldViewport = new AABB(0, 0, worldScreen.world.quadrantMap.worldWidth, worldScreen.world.quadrantMap.worldHeight);
 				worldScreen.world.panelPostDisplay();
 				
 				worldScreen.world.render_worldPanel();
@@ -257,7 +258,7 @@ public class QuadrantEditorPanel extends PanelBase {
 				double pixelxPerMeterHeight = worldScreen.contentPane.worldPanel.aabb.height / worldScreen.world.quadrantMap.worldHeight;
 				worldScreen.pixelsPerMeter = Math.min(pixelsPerMeterWidth, pixelxPerMeterHeight);
 				
-				worldScreen.worldViewport = APP.platform.createShapeEngine().createAABB(0, 0, worldScreen.world.quadrantMap.worldWidth, worldScreen.world.quadrantMap.worldHeight);
+				worldScreen.worldViewport = new AABB(0, 0, worldScreen.world.quadrantMap.worldWidth, worldScreen.world.quadrantMap.worldHeight);
 				worldScreen.world.panelPostDisplay();
 				
 				worldScreen.world.render_worldPanel();
@@ -301,7 +302,7 @@ public class QuadrantEditorPanel extends PanelBase {
 				double pixelxPerMeterHeight = worldScreen.contentPane.worldPanel.aabb.height / worldScreen.world.quadrantMap.worldHeight;
 				worldScreen.pixelsPerMeter = Math.min(pixelsPerMeterWidth, pixelxPerMeterHeight);
 				
-				worldScreen.worldViewport = APP.platform.createShapeEngine().createAABB(0, 0, worldScreen.world.quadrantMap.worldWidth, worldScreen.world.quadrantMap.worldHeight);
+				worldScreen.worldViewport = new AABB(0, 0, worldScreen.world.quadrantMap.worldWidth, worldScreen.world.quadrantMap.worldHeight);
 				worldScreen.world.panelPostDisplay();
 				
 				worldScreen.world.render_worldPanel();
@@ -350,7 +351,7 @@ public class QuadrantEditorPanel extends PanelBase {
 	}
 	
 	public void setLocation(double x, double y) {
-		aabb = APP.platform.createShapeEngine().createAABB(x, y, aabb.width, aabb.height);
+		aabb = new AABB(x, y, aabb.width, aabb.height);
 	}
 	
 	public void postDisplay() {
@@ -451,7 +452,7 @@ public class QuadrantEditorPanel extends PanelBase {
 				double pixelsPerMeterHeight = worldScreen.contentPane.worldPanel.aabb.height / worldScreen.world.quadrantMap.worldHeight;
 				worldScreen.pixelsPerMeter = Math.min(pixelsPerMeterWidth, pixelsPerMeterHeight);
 				
-				worldScreen.worldViewport = APP.platform.createShapeEngine().createAABB(0, 0, worldScreen.world.quadrantMap.worldWidth, worldScreen.world.quadrantMap.worldHeight);
+				worldScreen.worldViewport = new AABB(0, 0, worldScreen.world.quadrantMap.worldWidth, worldScreen.world.quadrantMap.worldHeight);
 				worldScreen.world.panelPostDisplay();
 				
 				worldScreen.world.render_worldPanel();

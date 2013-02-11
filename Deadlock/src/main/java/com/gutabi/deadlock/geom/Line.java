@@ -1,8 +1,9 @@
 package com.gutabi.deadlock.geom;
 
 import com.gutabi.deadlock.math.Point;
+import com.gutabi.deadlock.ui.paint.RenderingContext;
 
-public abstract class Line implements Shape {
+public class Line implements Shape {
 	
 	public final Point p0;
 	public final Point p1;
@@ -10,7 +11,7 @@ public abstract class Line implements Shape {
 	public Point n01;
 	public double[] n01Projection;
 	
-	protected Line(Point p0, Point p1) {
+	public Line(Point p0, Point p1) {
 		this.p0 = p0;
 		this.p1 = p1;
 	}
@@ -59,5 +60,13 @@ public abstract class Line implements Shape {
 		}
 		out[0] = n01Projection[0];
 		out[1] = n01Projection[1];
+	}
+
+	public void paint(RenderingContext ctxt) {
+		ctxt.paintLine(this);
+	}
+
+	public void draw(RenderingContext ctxt) {
+		ctxt.drawLine(this);
 	}
 }

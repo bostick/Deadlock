@@ -41,8 +41,8 @@ public class QuadToolShape implements Shape {
 		this.c = c;
 		
 		q = APP.platform.createShapeEngine().createQuadCurve(start, c, end);
-		tan0 = APP.platform.createShapeEngine().createLine(c, start);
-		tan1 = APP.platform.createShapeEngine().createLine(c, end);
+		tan0 = new Line(c, start);
+		tan1 = new Line(c, end);
 		
 		skeleton = q.skeleton();
 		

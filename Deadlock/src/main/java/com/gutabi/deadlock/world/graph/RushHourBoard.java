@@ -126,7 +126,7 @@ public class RushHourBoard extends Entity {
 		}
 		
 		ul = new Point(center.x - 0.5 * colCount * RushHourStud.SIZE, center.y - 0.5 * rowCount * RushHourStud.SIZE);
-		gridAABB = APP.platform.createShapeEngine().createAABB(ul.x, ul.y, colCount * RushHourStud.SIZE, rowCount * RushHourStud.SIZE);
+		gridAABB = new AABB(ul.x, ul.y, colCount * RushHourStud.SIZE, rowCount * RushHourStud.SIZE);
 		
 		/*
 		 * add perimeter and add studs
@@ -134,19 +134,19 @@ public class RushHourBoard extends Entity {
 		
 		Point p0 = ul;
 		for (int i = 0; i < colCount; i++) {
-			perimeterSegments.add(APP.platform.createShapeEngine().createLine(p0.plus(new Point(i * RushHourStud.SIZE, 0)), p0.plus(new Point((i+1) * RushHourStud.SIZE, 0))));
+			perimeterSegments.add(new Line(p0.plus(new Point(i * RushHourStud.SIZE, 0)), p0.plus(new Point((i+1) * RushHourStud.SIZE, 0))));
 		}
 		Point p1 = ul.plus(new Point(colCount * RushHourStud.SIZE, 0));
 		for (int i = 0; i < rowCount; i++) {
-			perimeterSegments.add(APP.platform.createShapeEngine().createLine(p1.plus(new Point(0, i * RushHourStud.SIZE)), p1.plus(new Point(0, (i+1) * RushHourStud.SIZE))));
+			perimeterSegments.add(new Line(p1.plus(new Point(0, i * RushHourStud.SIZE)), p1.plus(new Point(0, (i+1) * RushHourStud.SIZE))));
 		}
 		Point p2 = ul.plus(new Point(colCount * RushHourStud.SIZE, rowCount * RushHourStud.SIZE));
 		for (int i = 0; i < colCount; i++) {
-			perimeterSegments.add(APP.platform.createShapeEngine().createLine(p2.plus(new Point(i * -RushHourStud.SIZE, 0)), p2.plus(new Point((i+1) * -RushHourStud.SIZE, 0))));
+			perimeterSegments.add(new Line(p2.plus(new Point(i * -RushHourStud.SIZE, 0)), p2.plus(new Point((i+1) * -RushHourStud.SIZE, 0))));
 		}
 		Point p3 = ul.plus(new Point(0, rowCount * RushHourStud.SIZE));
 		for (int i = 0; i < rowCount; i++) {
-			perimeterSegments.add(APP.platform.createShapeEngine().createLine(p3.plus(new Point(0, i * -RushHourStud.SIZE)), p3.plus(new Point(0, (i+1) * -RushHourStud.SIZE))));
+			perimeterSegments.add(new Line(p3.plus(new Point(0, i * -RushHourStud.SIZE)), p3.plus(new Point(0, (i+1) * -RushHourStud.SIZE))));
 		}
 		
 		
@@ -344,7 +344,7 @@ public class RushHourBoard extends Entity {
 		for (int i = 0; i < rowCount; i++) {
 			jloop:
 			for (int j = 0; j < colCount; j++) {
-				AABB n = APP.platform.createShapeEngine().createAABB(aabb.ul.x + j * RushHourStud.SIZE, aabb.ul.y + i * RushHourStud.SIZE, RushHourStud.SIZE, RushHourStud.SIZE);
+				AABB n = new AABB(aabb.ul.x + j * RushHourStud.SIZE, aabb.ul.y + i * RushHourStud.SIZE, RushHourStud.SIZE, RushHourStud.SIZE);
 				
 				for (RushHourStud ss : studs) {
 					if (ss.aabb.equals(n)) {

@@ -6,9 +6,9 @@ import com.gutabi.deadlock.math.Point;
 
 public class ShapeEngineImpl extends ShapeEngine {
 	
-	public AABB createAABB(double x, double y, double width, double height) {
-		return new AABBImpl(x, y, width, height);
-	}
+//	public AABB createAABB(double x, double y, double width, double height) {
+//		return new AABBImpl(x, y, width, height);
+//	}
 
 	public Circle createCircle(Point center, double radius) {
 		return new CircleImpl(center, radius);
@@ -18,9 +18,9 @@ public class ShapeEngineImpl extends ShapeEngine {
 		return new CapsuleImpl(ac, bc);
 	}
 	
-	public Line createLine(Point p0, Point p1) {
-		return new LineImpl(p0, p1);
-	}
+//	public Line createLine(Point p0, Point p1) {
+//		return new LineImpl(p0, p1);
+//	}
 
 	public Polyline createPolyline(List<Point> pts) {
 		return new PolylineImpl(pts);

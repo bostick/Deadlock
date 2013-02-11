@@ -1,7 +1,5 @@
 package com.gutabi.deadlock.world;
 
-import static com.gutabi.deadlock.DeadlockApplication.APP;
-
 import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.ui.paint.Cap;
 import com.gutabi.deadlock.ui.paint.Color;
@@ -27,9 +25,9 @@ public class ProgressMeter {
 		this.width = width;
 		this.height = height;
 		
-		aabb = APP.platform.createShapeEngine().createAABB(x, y, width, height);
+		aabb = new AABB(x, y, width, height);
 		
-		progressAABB = APP.platform.createShapeEngine().createAABB(x, y, 0.0, height);
+		progressAABB = new AABB(x, y, 0.0, height);
 		
 	}
 	
@@ -37,7 +35,7 @@ public class ProgressMeter {
 		
 		this.p = p;
 		
-		progressAABB = APP.platform.createShapeEngine().createAABB(x, y, Math.min(Math.max(0.0, p), 1.0) * width, height);
+		progressAABB = new AABB(x, y, Math.min(Math.max(0.0, p), 1.0) * width, height);
 		
 	}
 	

@@ -1,7 +1,5 @@
 package com.gutabi.deadlock.world.tools;
 
-import static com.gutabi.deadlock.DeadlockApplication.APP;
-
 import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.paint.Cap;
@@ -29,7 +27,7 @@ public abstract class Knob {
 	
 	private AABB aabb() {
 		double pixel = 1/screen.pixelsPerMeter;
-		return APP.platform.createShapeEngine().createAABB(p.x + -3 * pixel, p.y + -3 * pixel, 7 * pixel, 7 * pixel);
+		return new AABB(p.x + -3 * pixel, p.y + -3 * pixel, 7 * pixel, 7 * pixel);
 	}
 	
 	public abstract void drag(Point p);

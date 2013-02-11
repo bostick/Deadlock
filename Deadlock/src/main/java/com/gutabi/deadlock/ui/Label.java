@@ -35,7 +35,7 @@ public class Label {
 	}
 	
 	public void setDimension(double w, double h) {
-		localAABB = APP.platform.createShapeEngine().createAABB(localAABB.x, localAABB.y, w, h);
+		localAABB = new AABB(localAABB.x, localAABB.y, w, h);
 	}
 	
 	public int getWidth() {
@@ -53,7 +53,7 @@ public class Label {
 	
 	public void render() {
 		
-		aabb = APP.platform.createShapeEngine().createAABB(ul.x, ul.y, localAABB.width, localAABB.height);
+		aabb = new AABB(ul.x, ul.y, localAABB.width, localAABB.height);
 		
 		Point baseline = new Point(-localAABB.x, -localAABB.y);
 		

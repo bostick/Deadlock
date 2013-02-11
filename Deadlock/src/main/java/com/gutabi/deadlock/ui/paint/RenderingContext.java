@@ -1,13 +1,12 @@
 package com.gutabi.deadlock.ui.paint;
 
-import static com.gutabi.deadlock.DeadlockApplication.APP;
-
 import org.jbox2d.callbacks.DebugDraw;
 import org.jbox2d.common.Color3f;
 import org.jbox2d.common.OBBViewportTransform;
 import org.jbox2d.common.Vec2;
 
 import com.gutabi.deadlock.Resource;
+import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.geom.Line;
 import com.gutabi.deadlock.math.Dim;
 import com.gutabi.deadlock.math.Point;
@@ -68,6 +67,13 @@ public abstract class RenderingContext extends DebugDraw {
 	
 	public abstract void dispose();
 	
+	public abstract void drawAABB(AABB a);
+	
+	public abstract void paintAABB(AABB a);
+	
+	public abstract void drawLine(Line a);
+	
+	public abstract void paintLine(Line a);
 	
 	
 	
@@ -94,7 +100,7 @@ public abstract class RenderingContext extends DebugDraw {
 	
 	public void drawSegment(Vec2 p1, Vec2 p2, Color3f color) {
 		setColor(Color.WHITE);
-		Line line = APP.platform.createShapeEngine().createLine(Point.point(p1), Point.point(p2));
+		Line line = new Line(Point.point(p1), Point.point(p2));
 		line.draw(this);
 	}
 	

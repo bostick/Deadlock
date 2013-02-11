@@ -70,8 +70,8 @@ public abstract class Capsule implements Shape {
 //			middle = APP.platform.createShapeEngine().createOBB(parent, aUp, bUp, bDown, aDown);
 			middle = APP.platform.createShapeEngine().createOBB(Point.point(a, b, 0.5), Math.atan2(diff.y, diff.x), Point.distance(a, b)/2, r);
 			
-			debugNormalLine = APP.platform.createShapeEngine().createLine(a, a.plus(n));
-			debugSkeletonLine = APP.platform.createShapeEngine().createLine(a, b);
+			debugNormalLine = new Line(a, a.plus(n));
+			debugSkeletonLine = new Line(a, b);
 			
 			aabb = AABB.union(ac.getAABB(), bc.getAABB());
 			
@@ -85,7 +85,7 @@ public abstract class Capsule implements Shape {
 			middle = null;
 			
 			debugNormalLine = null;
-			debugSkeletonLine = APP.platform.createShapeEngine().createLine(a, b);
+			debugSkeletonLine = new Line(a, b);
 			
 			aabb = AABB.union(ac.getAABB(), bc.getAABB());
 			
@@ -171,14 +171,14 @@ public abstract class Capsule implements Shape {
 	
 	public Line getABUp() {
 		if (abUp == null) {
-			abUp = APP.platform.createShapeEngine().createLine(aUp, bUp);
+			abUp = new Line(aUp, bUp);
 		}
 		return abUp;
 	}
 	
 	public Line getBADown() {
 		if (baDown == null) {
-			baDown = APP.platform.createShapeEngine().createLine(bDown, aDown);
+			baDown = new Line(bDown, aDown);
 		}
 		return baDown;
 	}
