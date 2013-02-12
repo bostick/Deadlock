@@ -1,14 +1,18 @@
 
-CarLibrary
-RushHourWorld
-Car
-
-
-
-solver
 level generator
 
-
+rows
+cols
+exit
+# of 2cars
+# of 3cars
+placement of cars
+j joints?
+k joints?
+joints cannot be next to each other (vertices touch)
+matching joints must be on neighbring sides
+joints cannot be on side of exit
+loops?
 
 
 
@@ -178,6 +182,8 @@ or at least add it
 cleanup user input
 
 DONE:
+
+solver
 
 joint track -> path code, deal with interections
 
