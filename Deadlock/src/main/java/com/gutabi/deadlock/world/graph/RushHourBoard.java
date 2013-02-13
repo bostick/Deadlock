@@ -297,11 +297,44 @@ public class RushHourBoard extends Entity {
 		/*
 		 * joint tracks -> paths
 		 */
-		if (!jStuds.isEmpty()) {
-			jointTracksToPath(jStuds);
-		}
-		if (!kStuds.isEmpty()) {
-			jointTracksToPath(kStuds);
+		if (!jStuds.isEmpty() && !kStuds.isEmpty()) {
+			
+			JointStud js0 = jStuds.get(0);
+			JointStud js1 = jStuds.get(1);
+			JointStud ks0 = kStuds.get(0);
+			JointStud ks1 = kStuds.get(1);
+			
+			if (js0.row == ks0.row) {
+				assert false;
+			} else if (js0.row == ks1.row) {
+				assert false;
+			} else if (js1.row == ks0.row) {
+				assert false;
+			} else if (js1.row == ks1.row) {
+				assert false;
+			} else if (js0.col == ks0.col) {
+				assert false;
+			} else if (js0.col == ks1.col) {
+				jointTracksToPath(js1, js0, ks1, ks0);
+			} else if (js1.col == ks0.col) {
+				assert false;
+			} else if (js1.col == ks1.col) {
+				assert false;
+			} else {
+				if (!jStuds.isEmpty()) {
+					jointTracksToPath(jStuds);
+				}
+				if (!kStuds.isEmpty()) {
+					jointTracksToPath(kStuds);
+				}
+			}
+		} else {
+			if (!jStuds.isEmpty()) {
+				jointTracksToPath(jStuds);
+			}
+			if (!kStuds.isEmpty()) {
+				jointTracksToPath(kStuds);
+			}
 		}
 		
 		/*
@@ -312,13 +345,17 @@ public class RushHourBoard extends Entity {
 		
 		for (Entry<Integer, List<RushHourBoardPosition>> entry : rowTracks.entrySet()) {
 			Integer i = entry.getKey();
-			List<RushHourBoardPosition> rt = entry.getValue();
-			poss = new ArrayList<GraphPosition>();
-			for (RushHourBoardPosition pos : rt) {
-				poss.add(pos);
+			
+			if (!rowPaths.containsKey(i)) {
+				List<RushHourBoardPosition> rt = entry.getValue();
+				poss = new ArrayList<GraphPosition>();
+				for (RushHourBoardPosition pos : rt) {
+					poss.add(pos);
+				}
+				path = new GraphPositionPath(poss);
+				rowPaths.put(i, path);
 			}
-			path = new GraphPositionPath(poss);
-			rowPaths.put(i, path);
+			
 		}
 		
 		/*
@@ -326,13 +363,17 @@ public class RushHourBoard extends Entity {
 		 */
 		for (Entry<Integer, List<RushHourBoardPosition>> entry : colTracks.entrySet()) {
 			Integer i = entry.getKey();
-			List<RushHourBoardPosition> ct = entry.getValue();
-			poss = new ArrayList<GraphPosition>();
-			for (RushHourBoardPosition pos : ct) {
-				poss.add(pos);
+			
+			if (!colPaths.containsKey(i)) {
+				List<RushHourBoardPosition> ct = entry.getValue();
+				poss = new ArrayList<GraphPosition>();
+				for (RushHourBoardPosition pos : ct) {
+					poss.add(pos);
+				}
+				path = new GraphPositionPath(poss);
+				colPaths.put(i, path);
 			}
-			path = new GraphPositionPath(poss);
-			colPaths.put(i, path);
+			
 		}
 		
 		/*
@@ -416,8 +457,154 @@ public class RushHourBoard extends Entity {
 	
 	private void jointTracksToPath(List<JointStud> joints) {
 		
-		JointStud js0 = joints.get(0);
-		JointStud js1 = joints.get(1);
+		JointStud s0 = joints.get(0);
+		JointStud s1 = joints.get(1);
+		
+		List<RushHourBoardPosition> s0Track;
+		if (s0.col < 0) {
+			s0Track = rowTracks.remove(s0.row);
+		} else if (s0.col >= colCount) {
+			s0Track = rowTracks.remove(s0.row);
+		} else if (s0.row < 0) {
+			s0Track = colTracks.remove(s0.col);
+		} else {
+			assert s0.row >= rowCount;
+			s0Track = colTracks.remove(s0.col);
+		}
+		assert s0Track != null;
+		
+		List<RushHourBoardPosition> s1Track;
+		if (s1.col < 0) {
+			s1Track = rowTracks.remove(s1.row);
+		} else if (s1.col >= colCount) {
+			s1Track = rowTracks.remove(s1.row);
+		} else if (s1.row < 0) {
+			s1Track = colTracks.remove(s1.col);
+		} else {
+			assert s1.row >= rowCount;
+			s1Track = colTracks.remove(s1.col);
+		}
+		assert s1Track != null;
+		
+		List<GraphPosition> poss = new ArrayList<GraphPosition>();
+//		from other side of js0 track to js0
+		if (s0.col < 0) {
+//			d;
+			for (int i = colCount-1; i >= 1; i--) {
+				poss.add(s0Track.get(i));
+			}
+		} else if (s0.col >= colCount) {
+//			d;
+			for (int i = 0; i < colCount-1; i++) {
+				poss.add(s0Track.get(i));
+			}
+		} else if (s0.row < 0) {
+//			d;
+			for (int i = rowCount-1; i >= 1; i--) {
+				poss.add(s0Track.get(i));
+			}
+		} else {
+			assert s0.row >= rowCount;
+//			d;
+			for (int i = 0; i < rowCount-1; i++) {
+				poss.add(s0Track.get(i));
+			}
+		}
+		
+		Vertex v = s0.f;
+//		to vertex
+		poss.add(new VertexPosition(v));
+		
+		Road r = null;
+		roadLoop:
+		while (true) {
+//			to road
+//			to vertex
+			
+			r = v.bestMatchingRoad(r);
+			
+			if (v == r.start) {
+				for (int ii = 1; ii <= r.pointCount()-2; ii++) {
+					poss.add(new RoadPosition(r, ii, 0.0));
+				}
+				poss.add(new VertexPosition(r.end));
+				if (r.end == s1.f) {
+					break roadLoop;
+				}
+				v = r.end;
+			} else {
+				for (int ii = r.pointCount()-2; ii >= 1; ii--) {
+					poss.add(new RoadPosition(r, ii, 0.0));
+				}
+				poss.add(new VertexPosition(r.start));
+				if (r.start == s1.f) {
+					break roadLoop;
+				}
+				v = r.start;
+			}
+		}
+		
+//		to js1
+//		to other side of js1 track
+		if (s1.col < 0) {
+			for (int i = 1; i < colCount; i++) {
+				poss.add(s1Track.get(i));
+			}
+//			d;
+		} else if (s1.col >= colCount) {
+			for (int i = colCount-1; i >= 0; i--) {
+				poss.add(s1Track.get(i));
+			}
+//			d;
+		} else if (s1.row < 0) {
+			for (int i = 1; i < rowCount; i++) {
+				poss.add(s1Track.get(i));
+			}
+//			d;
+		} else {
+			assert s1.row >= rowCount;
+			for (int i = rowCount-1; i >= 0; i--) {
+				poss.add(s1Track.get(i));
+			}
+//			d;
+		}
+		
+//		add to rowPaths and colPaths as needed
+		GraphPositionPath path = new GraphPositionPath(poss);
+		GraphPositionPath res;
+		if (s0.col < 0) {
+			res = rowPaths.put(s0.row, path);
+			assert res == null;
+		} else if (s0.col >= colCount) {
+			res = rowPaths.put(s0.row, path);
+			assert res == null;
+		} else if (s0.row < 0) {
+			res = colPaths.put(s0.col, path);
+			assert res == null;
+		} else {
+			assert s0.row >= rowCount;
+			res = colPaths.put(s0.col, path);
+			assert res == null;
+		}
+		
+		if (s1.col < 0) {
+			res = rowPaths.put(s1.row, path);
+			assert res == null;
+		} else if (s1.col >= colCount) {
+			res = rowPaths.put(s1.row, path);
+			assert res == null;
+		} else if (s1.row < 0) {
+			res = colPaths.put(s1.col, path);
+			assert res == null;
+		} else {
+			assert s1.row >= rowCount;
+			res = colPaths.put(s1.col, path);
+			assert res == null;
+		}
+		
+	}
+	
+	private void jointTracksToPath(JointStud js0, JointStud js1, JointStud ks1, JointStud ks0) {
 		
 		List<RushHourBoardPosition> js0Track;
 		if (js0.col < 0) {
@@ -430,6 +617,7 @@ public class RushHourBoard extends Entity {
 			assert js0.row >= rowCount;
 			js0Track = colTracks.remove(js0.col);
 		}
+		assert js0Track != null;
 		
 		List<RushHourBoardPosition> js1Track;
 		if (js1.col < 0) {
@@ -442,24 +630,45 @@ public class RushHourBoard extends Entity {
 			assert js1.row >= rowCount;
 			js1Track = colTracks.remove(js1.col);
 		}
+		assert js1Track != null;
 		
+		List<RushHourBoardPosition> ks1Track = js1Track;
+		assert ks1Track != null;
+		
+		List<RushHourBoardPosition> ks0Track;
+		if (ks0.col < 0) {
+			ks0Track = rowTracks.remove(ks0.row);
+		} else if (ks0.col >= colCount) {
+			ks0Track = rowTracks.remove(ks0.row);
+		} else if (ks0.row < 0) {
+			ks0Track = colTracks.remove(ks0.col);
+		} else {
+			assert ks0.row >= rowCount;
+			ks0Track = colTracks.remove(ks0.col);
+		}
+		assert ks0Track != null;
 		
 		List<GraphPosition> poss = new ArrayList<GraphPosition>();
+		
 //		from other side of js0 track to js0
 		if (js0.col < 0) {
+//			d;
 			for (int i = colCount-1; i >= 1; i--) {
 				poss.add(js0Track.get(i));
 			}
 		} else if (js0.col >= colCount) {
+//			d;
 			for (int i = 0; i < colCount-1; i++) {
 				poss.add(js0Track.get(i));
 			}
 		} else if (js0.row < 0) {
+//			d;
 			for (int i = rowCount-1; i >= 1; i--) {
 				poss.add(js0Track.get(i));
 			}
 		} else {
 			assert js0.row >= rowCount;
+//			d;
 			for (int i = 0; i < rowCount-1; i++) {
 				poss.add(js0Track.get(i));
 			}
@@ -499,50 +708,136 @@ public class RushHourBoard extends Entity {
 		}
 		
 //		to js1
-//		to other side of js1 track
+//		to other side of js1 track (ks1)
 		if (js1.col < 0) {
-			for (int i = 1; i < colCount; i++) {
+			for (int i = 1; i < colCount-1; i++) {
 				poss.add(js1Track.get(i));
 			}
+//			d;
 		} else if (js1.col >= colCount) {
 			for (int i = colCount-1; i >= 0; i--) {
 				poss.add(js1Track.get(i));
 			}
+//			d;
 		} else if (js1.row < 0) {
-			for (int i = 1; i > rowCount; i++) {
+			for (int i = 1; i < rowCount-1; i++) {
 				poss.add(js1Track.get(i));
 			}
+//			d;
 		} else {
 			assert js1.row >= rowCount;
 			for (int i = rowCount-1; i >= 0; i--) {
 				poss.add(js1Track.get(i));
 			}
+//			d;
+		}
+		
+		v = ks1.f;
+//		to vertex
+		poss.add(new VertexPosition(v));
+		
+		r = null;
+		roadLoop:
+		while (true) {
+//			to road
+//			to vertex
+			
+			r = v.bestMatchingRoad(r);
+			
+			if (v == r.start) {
+				for (int ii = 1; ii <= r.pointCount()-2; ii++) {
+					poss.add(new RoadPosition(r, ii, 0.0));
+				}
+				poss.add(new VertexPosition(r.end));
+				if (r.end == ks0.f) {
+					break roadLoop;
+				}
+				v = r.end;
+			} else {
+				for (int ii = r.pointCount()-2; ii >= 1; ii--) {
+					poss.add(new RoadPosition(r, ii, 0.0));
+				}
+				poss.add(new VertexPosition(r.start));
+				if (r.start == ks0.f) {
+					break roadLoop;
+				}
+				v = r.start;
+			}
+		}
+		
+//		to ks0
+//		to other side of ks0 track
+		if (ks0.col < 0) {
+			for (int i = 1; i < colCount; i++) {
+				poss.add(ks0Track.get(i));
+			}
+//			d;
+		} else if (ks0.col >= colCount) {
+			for (int i = colCount-1; i >= 0; i--) {
+				poss.add(ks0Track.get(i));
+			}
+//			d;
+		} else if (ks0.row < 0) {
+			for (int i = 1; i < rowCount; i++) {
+				poss.add(ks0Track.get(i));
+			}
+//			d;
+		} else {
+			assert ks0.row >= rowCount;
+			for (int i = rowCount-1; i >= 0; i--) {
+				poss.add(ks0Track.get(i));
+			}
+//			d;
 		}
 		
 //		add to rowPaths and colPaths as needed
 		GraphPositionPath path = new GraphPositionPath(poss);
+		
+		GraphPositionPath res;
 		if (js0.col < 0) {
-			rowPaths.put(js0.row, path);
+			res = rowPaths.put(js0.row, path);
+			assert res == null;
 		} else if (js0.col >= colCount) {
-			rowPaths.put(js0.row, path);
+			res = rowPaths.put(js0.row, path);
+			assert res == null;
 		} else if (js0.row < 0) {
-			colPaths.put(js0.col, path);
+			res = colPaths.put(js0.col, path);
+			assert res == null;
 		} else {
 			assert js0.row >= rowCount;
-			colPaths.put(js0.col, path);
+			res = colPaths.put(js0.col, path);
+			assert res == null;
 		}
 		
 		if (js1.col < 0) {
-			rowPaths.put(js1.row, path);
+			res = rowPaths.put(js1.row, path);
+			assert res == null;
 		} else if (js1.col >= colCount) {
-			rowPaths.put(js1.row, path);
+			res = rowPaths.put(js1.row, path);
+			assert res == null;
 		} else if (js1.row < 0) {
-			colPaths.put(js1.col, path);
+			res = colPaths.put(js1.col, path);
+			assert res == null;
 		} else {
 			assert js1.row >= rowCount;
-			colPaths.put(js1.col, path);
+			res = colPaths.put(js1.col, path);
+			assert res == null;
 		}
 		
+		if (ks0.col < 0) {
+			res = rowPaths.put(ks0.row, path);
+			assert res == null;
+		} else if (ks0.col >= colCount) {
+			res = rowPaths.put(ks0.row, path);
+			assert res == null;
+		} else if (ks0.row < 0) {
+			res = colPaths.put(ks0.col, path);
+			assert res == null;
+		} else {
+			assert ks0.row >= rowCount;
+			res = colPaths.put(ks0.col, path);
+			assert res == null;
+		}
 	}
 	
 	private void addStud(RushHourStud s) {

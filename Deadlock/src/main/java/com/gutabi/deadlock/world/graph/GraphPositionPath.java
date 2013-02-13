@@ -168,9 +168,9 @@ public class GraphPositionPath {
 			if (g instanceof VertexPosition) {
 				s = s + g + " ";
 			} else if (g instanceof RoadPosition) {
-				
+				s = s + g + " ";
 			} else if (g instanceof MergerPosition) {
-				
+				s = s + g + " ";
 			} else if (g instanceof RushHourBoardPosition) {
 				s = s + g + " ";
 			}

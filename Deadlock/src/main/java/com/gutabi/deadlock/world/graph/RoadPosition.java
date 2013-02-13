@@ -82,10 +82,13 @@ public class RoadPosition extends EdgePosition {
 		return hash;
 	}
 	
+//	public String toString() {
+//		return r + " " + index + Double.toString(param).substring(1) + " (" + lengthToStartOfRoad + "/" + r.getTotalLength(r.start, r.end) + ")";
+//	}
 	public String toString() {
-		return r + " " + index + Double.toString(param).substring(1) + " (" + lengthToStartOfRoad + "/" + r.getTotalLength(r.start, r.end) + ")";
+		return r + " " + index + Double.toString(param).substring(1);
 	}
-	
+		
 	public boolean equals(Object o) {
 		if (this == o) {
 			return true;

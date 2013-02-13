@@ -267,7 +267,7 @@ public class Stroke {
 				}
 				
 				if (hit2 instanceof Road) {
-					Vertex v = world.splitRoad((RoadPosition)pos);
+					world.splitRoad((RoadPosition)pos);
 					
 //					assert ShapeUtils.intersectCC(e.circle, v.getShape());
 					
