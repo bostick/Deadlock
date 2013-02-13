@@ -1,6 +1,5 @@
 package solver;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,13 +29,13 @@ public class Solver {
 //			{' ', ' ', ' ', ' ', 'K', ' ', ' ', ' '}
 //	};
 	static char[][] boardIni = new char[][] {
-			{' ', ' ', ' ', ' ', 'J', ' ', ' ', ' '},
+			{' ', ' ', ' ', ' ', 'J', ' ', 'K', ' '},
 			{'J', 'C', 'A', 'A', 'D', 'X', 'B', ' '},
 			{' ', 'C', 'X', 'X', 'D', 'X', 'B', ' '},
 			{' ', 'C', 'R', 'R', 'D', 'X', 'B', 'Y'},
 			{' ', 'E', 'X', 'X', 'G', 'G', 'G', ' '},
 			{' ', 'E', 'X', 'X', 'F', 'X', 'X', ' '},
-			{' ', 'X', 'X', 'X', 'F', 'X', 'X', ' '},
+			{'K', 'X', 'X', 'X', 'F', 'X', 'X', ' '},
 			{' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
 	};
 	

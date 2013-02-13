@@ -115,7 +115,7 @@ public class CapsuleSequence implements Shape, SweeperShape, CompoundShape {
 	}
 	
 	public CapsuleSequencePosition findSkeletonIntersection(Point c, Point d) {
-		for (int i = 0; i < capsuleCount(); i ++) {
+		for (int i = 0; i < capsuleCount(); i++) {
 			Capsule cap = getCapsule(i);
 			double abParam = cap.findSkeletonIntersection(c, d);
 			if (abParam != -1) {

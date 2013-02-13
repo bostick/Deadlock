@@ -15,7 +15,6 @@ import com.gutabi.deadlock.geom.CapsuleSequence;
 import com.gutabi.deadlock.geom.CapsuleSequencePosition;
 import com.gutabi.deadlock.geom.CapsuleSequenceSweepEvent;
 import com.gutabi.deadlock.geom.Circle;
-import com.gutabi.deadlock.geom.ShapeUtils;
 import com.gutabi.deadlock.geom.SweepEvent;
 import com.gutabi.deadlock.geom.SweepEventType;
 import com.gutabi.deadlock.geom.SweepUtils;
@@ -270,7 +269,7 @@ public class Stroke {
 				if (hit2 instanceof Road) {
 					Vertex v = world.splitRoad((RoadPosition)pos);
 					
-					assert ShapeUtils.intersectCC(e.circle, v.getShape());
+//					assert ShapeUtils.intersectCC(e.circle, v.getShape());
 					
 				} else {
 					
@@ -390,9 +389,10 @@ public class Stroke {
 		/*
 		 * run events again to pick up any new vertices from now having vertices around
 		 * 
-		 * should only be connecting vertices here
+		 * even after 
 		 * 
 		 */
+		List<SweepEvent> toKeep = new ArrayList<SweepEvent>();
 		events = events(false);
 		for (int i = 0; i < events.size(); i++) {
 			
@@ -401,11 +401,17 @@ public class Stroke {
 			if (e.type == SweepEventType.ENTERVERTEX || e.type == SweepEventType.EXITVERTEX) {
 				assert e.stillParent != null;
 				e.setVertex((Vertex)e.stillParent);
+				toKeep.add(e);
 			} else {
-				assert false;
+				/*
+				 * still possible that there are ROAD events, even after roads have been split and vertices added
+				 * 
+				 */
+//				assert false;
 			}
 			
 		}
+		events = toKeep;
 		
 		/*
 		 * now go through and create roads
@@ -424,16 +430,17 @@ public class Stroke {
 				e0 = events.get(i);
 				e1 = events.get(i+1);
 				
-			} else if (e0.type == SweepEventType.ENTERROAD && e1.type == SweepEventType.EXITROAD) {
-				
-				i = i+1;
-				if (i == events.size()-1) {
-					break;
-				}
-				e0 = events.get(i);
-				e1 = events.get(i+1);
-				
 			}
+//			else if (e0.type == SweepEventType.ENTERROAD && e1.type == SweepEventType.EXITROAD) {
+//				
+//				i = i+1;
+//				if (i == events.size()-1) {
+//					break;
+//				}
+//				e0 = events.get(i);
+//				e1 = events.get(i+1);
+//				
+//			}
 			
 			Vertex v0 = e0.getVertex();
 			Vertex v1 = e1.getVertex();
