@@ -3,11 +3,10 @@ package solver;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
+import java.util.Random;
 
 import solver.Solver.Orientation;
 
@@ -16,17 +15,18 @@ public class Config {
 	public final int rowCount;
 	public final int colCount;
 	
-	private char[][] ini = new char[][] {
-			{' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
-			{' ', 'X', 'X', 'X', 'X', 'X', 'X', ' '},
-			{' ', 'X', 'X', 'X', 'X', 'X', 'X', ' '},
-			{' ', 'X', 'X', 'X', 'X', 'X', 'X', ' '},
-			{' ', 'X', 'X', 'X', 'X', 'X', 'X', ' '},
-			{' ', 'X', 'X', 'X', 'X', 'X', 'X', ' '},
-			{' ', 'X', 'X', 'X', 'X', 'X', 'X', ' '},
-			{' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '}};
+//	private char[][] ini = new char[][] {
+//			{' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
+//			{' ', 'X', 'X', 'X', 'X', 'X', 'X', ' '},
+//			{' ', 'X', 'X', 'X', 'X', 'X', 'X', ' '},
+//			{' ', 'X', 'X', 'X', 'X', 'X', 'X', ' '},
+//			{' ', 'X', 'X', 'X', 'X', 'X', 'X', ' '},
+//			{' ', 'X', 'X', 'X', 'X', 'X', 'X', ' '},
+//			{' ', 'X', 'X', 'X', 'X', 'X', 'X', ' '},
+//			{' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '}};
+	char[][] ini;
 	
-	private Map<Character, CarInfo> carMap = new HashMap<Character, CarInfo>();
+	public Map<Character, CarInfo> carMap = new HashMap<Character, CarInfo>();
 	
 	private int[] exit = new int[]{ -1, -1 };
 	
@@ -36,13 +36,46 @@ public class Config {
 	int kCount = 0;
 	private int[][] kJoints = new int[][]{ {-1, -1, -1}, {-1, -1, -1} };
 	
-	Set<Character> carChars = new HashSet<Character>();
+//	Set<Character> carChars = new HashSet<Character>();
 	
 	boolean winning;
+	
+	public Config(String boardIni, int i, int j) {
+		this(toCharMatrix(boardIni, i, j));
+	}
+	
+	static char[][] toCharMatrix(String s, int i, int j) {
+		
+		if (s.length() != i * j) {
+			throw new IllegalArgumentException();
+		}
+		
+		char[][] res = new char[i][j];
+		char[] source = s.toCharArray();
+		
+		for (int ii = 0; ii < i; ii++) {
+			for (int jj = 0; jj < j; jj++) {
+				res[ii][jj] = source[ii * i + jj];
+			}
+		}
+		
+		return res;
+	}
 	
 	public Config(char[][] boardIni) {
 		this.rowCount = boardIni.length-2;
 		this.colCount = boardIni[0].length-2;
+		
+		ini = new char[boardIni.length][boardIni[0].length];
+		for (int i = 0; i < boardIni.length; i++) {
+			for (int j = 0; j < boardIni[i].length; j++) {
+				if (i == 0 || i == boardIni.length-1 || j == 0 || j == boardIni[0].length-1) {
+					ini[i][j] = ' ';
+				} else {
+					ini[i][j] = 'X';
+				}
+			}
+		}
 		
 		for (int i = 0; i < boardIni.length; i++) {
 			for (int j = 0; j < boardIni[i].length; j++) {
@@ -56,8 +89,7 @@ public class Config {
 				case 'F':
 				case 'G':
 				case 'R':
-					if (!carChars.contains(c)) {
-						carChars.add(c);
+					if (!carMap.keySet().contains(c)) {
 						CarInfo info = new CarInfo();
 						if (i+1-1 < rowCount && boardIni[i+1][j] == c) {
 							if (i+2-1 < rowCount && boardIni[i+2][j] == c) {
@@ -85,13 +117,12 @@ public class Config {
 								info.size = 2;
 							}
 						}
-						update(c, info);
+						boolean res = insert(c, info);
+						assert res;
 					}
 					break;
 				case 'Y':
-					exit[0] = i-1;
-					exit[1] = j-1;
-					ini[i][j] = 'Y';
+					setExit(i-1, j-1);
 					break;
 				case 'J':
 					jJoints[jCount][0] = i-1;
@@ -153,41 +184,45 @@ public class Config {
 	
 	public void clear(char c) {
 		
-		CarInfo oldInfo = carMap.get(c);
-		if (oldInfo != null) {
-			switch (oldInfo.o) {
-			case LEFTRIGHT:
-				switch (oldInfo.size) {
-				case 2:
-					clear(oldInfo.row, oldInfo.col+0);
-					clear(oldInfo.row, oldInfo.col+1);
-					break;
-				case 3:
-					clear(oldInfo.row, oldInfo.col+0);
-					clear(oldInfo.row, oldInfo.col+1);
-					clear(oldInfo.row, oldInfo.col+2);
-					break;
-				}
+		CarInfo oldInfo = carMap.remove(c);
+		switch (oldInfo.o) {
+		case LEFTRIGHT:
+			switch (oldInfo.size) {
+			case 2:
+				clearIni(oldInfo.row, oldInfo.col+0);
+				clearIni(oldInfo.row, oldInfo.col+1);
 				break;
-			case UPDOWN:
-				switch (oldInfo.size) {
-				case 2:
-					clear(oldInfo.row+0, oldInfo.col);
-					clear(oldInfo.row+1, oldInfo.col);
-					break;
-				case 3:
-					clear(oldInfo.row+0, oldInfo.col);
-					clear(oldInfo.row+1, oldInfo.col);
-					clear(oldInfo.row+2, oldInfo.col);
-					break;
-				}
+			case 3:
+				clearIni(oldInfo.row, oldInfo.col+0);
+				clearIni(oldInfo.row, oldInfo.col+1);
+				clearIni(oldInfo.row, oldInfo.col+2);
 				break;
 			}
+			break;
+		case UPDOWN:
+			switch (oldInfo.size) {
+			case 2:
+				clearIni(oldInfo.row+0, oldInfo.col);
+				clearIni(oldInfo.row+1, oldInfo.col);
+				break;
+			case 3:
+				clearIni(oldInfo.row+0, oldInfo.col);
+				clearIni(oldInfo.row+1, oldInfo.col);
+				clearIni(oldInfo.row+2, oldInfo.col);
+				break;
+			}
+			break;
 		}
 		
 	}
 	
-	private void clear(int r, int c) {
+	public void setExit(int i, int j) {
+		exit[0] = i;
+		exit[1] = j;
+		ini[i+1][j+1] = 'Y';
+	}
+	
+	private void clearIni(int r, int c) {
 		if (r == exit[0] && c == exit[1]) {
 			ini[r+1][c+1] = 'Y';
 		} else {
@@ -195,9 +230,43 @@ public class Config {
 		}
 	}
 	
-	public void update(char c, CarInfo info) {
+	public boolean insert(char c, CarInfo info) {
+		
+		if (carMap.containsKey(c)) {
+			return false;
+		}
+		
+		switch (info.o) {
+		case LEFTRIGHT:
+			switch (info.size) {
+			case 2:
+				if (!free(ini[info.row+1][info.col+1])) return false;
+				if (!free(ini[info.row+1][info.col+2])) return false;
+				break;
+			case 3:
+				if (!free(ini[info.row+1][info.col+1])) return false;
+				if (!free(ini[info.row+1][info.col+2])) return false;
+				if (!free(ini[info.row+1][info.col+3])) return false;
+				break;
+			}
+			break;
+		case UPDOWN:
+			switch (info.size) {
+			case 2:
+				if (!free(ini[info.row+1][info.col+1])) return false;
+				if (!free(ini[info.row+2][info.col+1])) return false;
+				break;
+			case 3:
+				if (!free(ini[info.row+1][info.col+1])) return false;
+				if (!free(ini[info.row+2][info.col+1])) return false;
+				if (!free(ini[info.row+3][info.col+1])) return false;
+				break;
+			}
+			break;
+		}
 		
 		carMap.put(c, info);
+		
 		switch (info.o) {
 		case LEFTRIGHT:
 			switch (info.size) {
@@ -226,6 +295,11 @@ public class Config {
 			}
 			break;
 		}
+		return true;
+	}
+	
+	boolean free(char c) {
+		return c == 'X' || c == 'Y';
 	}
 	
 	public List<Config> possibleMoves() {
@@ -248,7 +322,7 @@ public class Config {
 						CarInfo newInfo = newConfig.carMap.get(c);
 						newConfig.clear(c);
 						newInfo.col--;
-						newConfig.update(c, newInfo);
+						newConfig.insert(c, newInfo);
 						moves.add(newConfig);
 					}
 					if (ini[info.row+1][info.col+2+1] == 'X') {
@@ -256,7 +330,7 @@ public class Config {
 						CarInfo newInfo = newConfig.carMap.get(c);
 						newConfig.clear(c);
 						newInfo.col++;
-						newConfig.update(c, newInfo);
+						newConfig.insert(c, newInfo);
 						moves.add(newConfig);
 					}
 					if (ini[info.row+1][info.col-1+1] == 'J') {
@@ -281,7 +355,7 @@ public class Config {
 							CarInfo newInfo = newConfig.carMap.get(c);
 							newConfig.clear(c);
 							newInfo.col--;
-							newConfig.update(c, newInfo);
+							newConfig.insert(c, newInfo);
 							newConfig.winning = true;
 							moves.add(newConfig);
 						}
@@ -290,7 +364,7 @@ public class Config {
 							CarInfo newInfo = newConfig.carMap.get(c);
 							newConfig.clear(c);
 							newInfo.col++;
-							newConfig.update(c, newInfo);
+							newConfig.insert(c, newInfo);
 							newConfig.winning = true;
 							moves.add(newConfig);
 						}
@@ -302,7 +376,7 @@ public class Config {
 						CarInfo newInfo = newConfig.carMap.get(c);
 						newConfig.clear(c);
 						newInfo.col--;
-						newConfig.update(c, newInfo);
+						newConfig.insert(c, newInfo);
 						moves.add(newConfig);
 					}
 					if (ini[info.row+1][info.col+3+1] == 'X') {
@@ -310,7 +384,7 @@ public class Config {
 						CarInfo newInfo = newConfig.carMap.get(c);
 						newConfig.clear(c);
 						newInfo.col++;
-						newConfig.update(c, newInfo);
+						newConfig.insert(c, newInfo);
 						moves.add(newConfig);
 					}
 					if (ini[info.row+1][info.col-1+1] == 'J') {
@@ -340,7 +414,7 @@ public class Config {
 						CarInfo newInfo = newConfig.carMap.get(c);
 						newConfig.clear(c);
 						newInfo.row--;
-						newConfig.update(c, newInfo);
+						newConfig.insert(c, newInfo);
 						moves.add(newConfig);
 					}
 					if (ini[info.row+2+1][info.col+1] == 'X') {
@@ -348,7 +422,7 @@ public class Config {
 						CarInfo newInfo = newConfig.carMap.get(c);
 						newConfig.clear(c);
 						newInfo.row++;
-						newConfig.update(c, newInfo);
+						newConfig.insert(c, newInfo);
 						moves.add(newConfig);
 					}
 					if (ini[info.row-1+1][info.col+1] == 'J') {
@@ -373,7 +447,7 @@ public class Config {
 							CarInfo newInfo = newConfig.carMap.get(c);
 							newConfig.clear(c);
 							newInfo.row--;
-							newConfig.update(c, newInfo);
+							newConfig.insert(c, newInfo);
 							newConfig.winning = true;
 							moves.add(newConfig);
 						}
@@ -382,7 +456,7 @@ public class Config {
 							CarInfo newInfo = newConfig.carMap.get(c);
 							newConfig.clear(c);
 							newInfo.row++;
-							newConfig.update(c, newInfo);
+							newConfig.insert(c, newInfo);
 							newConfig.winning = true;
 							moves.add(newConfig);
 						}
@@ -394,7 +468,7 @@ public class Config {
 						CarInfo newInfo = newConfig.carMap.get(c);
 						newConfig.clear(c);
 						newInfo.row--;
-						newConfig.update(c, newInfo);
+						newConfig.insert(c, newInfo);
 						moves.add(newConfig);
 					}
 					if (ini[info.row+3+1][info.col+1] == 'X') {
@@ -402,7 +476,7 @@ public class Config {
 						CarInfo newInfo = newConfig.carMap.get(c);
 						newConfig.clear(c);
 						newInfo.row++;
-						newConfig.update(c, newInfo);
+						newConfig.insert(c, newInfo);
 						moves.add(newConfig);
 					}
 					if (ini[info.row-1+1][info.col+1] == 'J') {
@@ -467,7 +541,7 @@ public class Config {
 					newInfo.row = mR+1;
 					newInfo.col = mC;
 					newInfo.o = Orientation.UPDOWN;
-					newConfig.update(c, newInfo);
+					newConfig.insert(c, newInfo);
 					moves.add(newConfig);
 				}
 				break;
@@ -479,7 +553,7 @@ public class Config {
 					newInfo.row = mR+1;
 					newInfo.col = mC;
 					newInfo.o = Orientation.UPDOWN;
-					newConfig.update(c, newInfo);
+					newConfig.insert(c, newInfo);
 					moves.add(newConfig);
 				}
 				break;
@@ -498,7 +572,7 @@ public class Config {
 					newInfo.row = mR-2;
 					newInfo.col = mC;
 					newInfo.o = Orientation.UPDOWN;
-					newConfig.update(c, newInfo);
+					newConfig.insert(c, newInfo);
 					moves.add(newConfig);
 				}
 				break;
@@ -510,7 +584,7 @@ public class Config {
 					newInfo.row = mR-3;
 					newInfo.col = mC;
 					newInfo.o = Orientation.UPDOWN;
-					newConfig.update(c, newInfo);
+					newConfig.insert(c, newInfo);
 					moves.add(newConfig);
 				}
 				break;
@@ -529,7 +603,7 @@ public class Config {
 					newInfo.row = mR;
 					newInfo.col = mC+1;
 					newInfo.o = Orientation.LEFTRIGHT;
-					newConfig.update(c, newInfo);
+					newConfig.insert(c, newInfo);
 					moves.add(newConfig);
 				}
 				break;
@@ -541,7 +615,7 @@ public class Config {
 					newInfo.row = mR;
 					newInfo.col = mC+1;
 					newInfo.o = Orientation.LEFTRIGHT;
-					newConfig.update(c, newInfo);
+					newConfig.insert(c, newInfo);
 					moves.add(newConfig);
 				}
 				break;
@@ -555,6 +629,51 @@ public class Config {
 			break;
 		}
 		
+	}
+	
+	public static Config randomConfig() {
+		
+		char[][] ini = new char[8][8];
+		for (int i = 0; i < ini.length; i++) {
+			for (int j = 0; j < ini.length; j++) {
+				if (i == 0 || i == ini.length-1 || j == 0 || j == ini[0].length-1) {
+					ini[i][j] = ' ';
+				} else {
+					ini[i][j] = 'X';
+				}
+			}
+		}
+		
+		Config c = new Config(ini);
+		
+		Random rand = new Random();
+		int exitSide = rand.nextInt(4);
+		int exitRow = -1;
+		int exitCol = -1;
+		switch (exitSide) {
+		case 0:
+			exitRow = -1;
+			exitCol = rand.nextInt(ini[0].length-2);
+			break;
+		case 1:
+			exitRow = rand.nextInt(ini.length-2);
+			exitCol = ini[0].length-2;
+			break;
+		case 2:
+			exitRow = ini.length-2;
+			exitCol = rand.nextInt(ini[0].length-2);
+			break;
+		case 3:
+			exitRow = rand.nextInt(ini[0].length-2);
+			exitCol = -1;
+			break;
+		}
+		
+		c.setExit(exitRow, exitCol);
+		
+//		int exitSide = rand.nextInt(4);
+		
+		return c;
 	}
 	
 	public String toString() {

@@ -10,6 +10,10 @@ public class CarInfo {
 	
 	private int hash;
 	
+	public CarInfo() {
+		
+	}
+	
 	public int hashCode() {
 		if (hash == 0) {
 			int h = 17;
