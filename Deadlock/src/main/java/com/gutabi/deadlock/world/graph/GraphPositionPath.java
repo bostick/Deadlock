@@ -76,29 +76,32 @@ public class GraphPositionPath {
 		
 		totalLength = l;
 		
-		
-		List<Vertex> visited = new ArrayList<Vertex>();
+		/*
+		 * a repeated vertex doesn't count as a loop
+		 * but a repeated edge does count as a loop
+		 */
+		List<EdgePosition> visited = new ArrayList<EdgePosition>();
 		boolean tmp = false;
 		for (int i = 0; i < poss.size(); i++) {
 			GraphPosition pos = poss.get(i);
 			if (pos instanceof VertexPosition) {
 				Vertex v = ((VertexPosition)pos).v;
+				verticesMap.put(v, i);
+			} else if (pos instanceof EdgePosition) {
+				Edge e = (Edge)((EdgePosition)pos).entity;
 				/*
 				 * work to determine hasLoop
 				 */
 				if (!tmp) {
-					if (visited.contains(v)) {
+					if (visited.contains((EdgePosition)pos)) {
 						tmp = true;
 					} else {
-						visited.add(v);
+						visited.add((EdgePosition)pos);
 					}
 				}
-				verticesMap.put(v, i);
-			} else if (pos instanceof EdgePosition) {
 				/*
 				 * work to determine list of edges
 				 */
-				Edge e = (Edge)((EdgePosition)pos).entity;
 				if (!edgesMap.containsKey(e)) {
 					edgesMap.put(e, i-1);
 					if (e instanceof Merger) {

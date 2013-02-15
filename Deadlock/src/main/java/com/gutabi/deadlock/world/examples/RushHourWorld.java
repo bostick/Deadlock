@@ -1,5 +1,7 @@
 package com.gutabi.deadlock.world.examples;
 
+import solver.Config;
+
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.world.QuadrantMap;
 import com.gutabi.deadlock.world.World;
@@ -42,6 +44,9 @@ public class RushHourWorld extends World {
 		 * 'Y' - exit stud
 		 */
 		
+		/*
+		 * good level
+		 */
 //		char[][] boardIni = new char[][] {
 //				{' ', ' ', ' ', ' ', 'J', ' ', ' ', ' ', ' '},
 //				{'J', 'C', 'A', 'A', 'D', 'X', 'B', ' ', ' '},
@@ -53,17 +58,52 @@ public class RushHourWorld extends World {
 //				{' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
 //				{' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '}
 //		};
+		
+		/*
+		 * test joint loop
+		 */
+//		char[][] boardIni = new char[][] {
+//				{' ', ' ', ' ', ' ', 'J', ' ', ' ', ' ', ' '},
+//				{'J', 'X', 'X', 'X', 'X', 'X', 'B', ' ', ' '},
+//				{' ', 'X', 'X', 'X', 'X', 'X', 'B', ' ', ' '},
+//				{' ', 'X', 'R', 'R', 'X', 'X', 'B', 'Y', ' '},
+//				{' ', 'E', 'X', 'X', 'X', 'X', 'X', ' ', ' '},
+//				{' ', 'E', 'X', 'X', 'F', 'X', 'X', ' ', ' '},
+//				{'K', 'X', 'X', 'X', 'F', 'X', 'X', ' ', ' '},
+//				{' ', ' ', ' ', ' ', 'K', ' ', ' ', ' ', ' '},
+//				{' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '}
+//		};
+		
+		/*
+		 * blank
+		 */
+//		char[][] boardIni = new char[][] {
+//			{' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
+//			{' ', 'X', 'X', 'X', 'X', 'X', 'X', ' '},
+//			{' ', 'X', 'X', 'X', 'X', 'X', 'X', ' '},
+//			{' ', 'X', 'X', 'X', 'X', 'X', 'X', ' '},
+//			{' ', 'X', 'X', 'X', 'X', 'X', 'X', ' '},
+//			{' ', 'X', 'X', 'X', 'X', 'X', 'X', ' '},
+//			{' ', 'X', 'X', 'X', 'X', 'X', 'X', ' '},
+//			{' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '}
+//		};
+
+		/*
+		 * blank
+		 */
 		char[][] boardIni = new char[][] {
-				{' ', ' ', ' ', ' ', 'J', ' ', ' ', ' ', ' '},
-				{'J', 'X', 'X', 'X', 'X', 'X', 'B', ' ', ' '},
-				{' ', 'X', 'X', 'X', 'X', 'X', 'B', ' ', ' '},
-				{' ', 'X', 'R', 'R', 'X', 'X', 'B', 'Y', ' '},
-				{' ', 'E', 'X', 'X', 'X', 'X', 'X', ' ', ' '},
-				{' ', 'E', 'X', 'X', 'F', 'X', 'X', ' ', ' '},
-				{'K', 'X', 'X', 'X', 'F', 'X', 'X', ' ', ' '},
-				{' ', ' ', ' ', ' ', 'K', ' ', ' ', ' ', ' '},
-				{' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '}
+			{' ', ' ', ' ', 'J', ' ', 'K', ' ', ' '},
+			{' ', 'X', 'X', 'X', 'X', 'X', 'X', ' '},
+			{' ', 'X', 'X', 'X', 'X', 'X', 'X', ' '},
+			{' ', 'X', 'X', 'X', 'X', 'X', 'X', ' '},
+			{'K', 'X', 'X', 'X', 'X', 'X', 'X', ' '},
+			{' ', 'X', 'X', 'X', 'X', 'X', 'X', ' '},
+			{'J', 'X', 'X', 'X', 'X', 'X', 'X', ' '},
+			{' ', ' ', ' ', ' ', ' ', 'Y', ' ', ' '}
 		};
+
+		
+//		char[][] boardIni = Config.randomConfig().ini;
 		
 		final RushHourBoard b = w.createRushHourBoard(new Point(QuadrantMap.QUADRANT_WIDTH/2, QuadrantMap.QUADRANT_WIDTH/2), boardIni);
 		
@@ -126,24 +166,28 @@ public class RushHourWorld extends World {
 			c.setTransform(c.driver.startGP.p, 0.0 * Math.PI);
 			c.driver.overallPath = b.getPath(Side.RIGHT, frontRow);
 			c.driver.overallPos = c.driver.overallPath.findClosestGraphPositionPathPosition(c.driver.startGP);
+			assert c.driver.overallPos != null;
 			break;
 		case BOTTOM:
 			c.driver.startGP = new RushHourBoardPosition(b, frontRow + c.CAR_LENGTH/2 - 1, frontCol + c.CAR_WIDTH/2);
 			c.setTransform(c.driver.startGP.p, 0.5 * Math.PI);
 			c.driver.overallPath = b.getPath(Side.BOTTOM, frontCol);
 			c.driver.overallPos = c.driver.overallPath.findClosestGraphPositionPathPosition(c.driver.startGP);
+			assert c.driver.overallPos != null;
 			break;
 		case LEFT:
 			c.driver.startGP = new RushHourBoardPosition(b, frontRow + c.CAR_WIDTH/2, frontCol + c.CAR_LENGTH/2);
 			c.setTransform(c.driver.startGP.p, 1.0 * Math.PI);
 			c.driver.overallPath = b.getPath(Side.LEFT, frontRow);
 			c.driver.overallPos = c.driver.overallPath.findClosestGraphPositionPathPosition(c.driver.startGP);
+			assert c.driver.overallPos != null;
 			break;
 		case TOP:
 			c.driver.startGP = new RushHourBoardPosition(b, frontRow + c.CAR_LENGTH/2, frontCol + c.CAR_WIDTH/2);
 			c.setTransform(c.driver.startGP.p, 1.5 * Math.PI);
 			c.driver.overallPath = b.getPath(Side.TOP, frontCol);
 			c.driver.overallPos = c.driver.overallPath.findClosestGraphPositionPathPosition(c.driver.startGP);
+			assert c.driver.overallPos != null;
 			break;
 		}
 		

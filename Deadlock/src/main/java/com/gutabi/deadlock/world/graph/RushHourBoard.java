@@ -217,24 +217,48 @@ public class RushHourBoard extends Entity {
 					exitStuds.add(s);
 					if (i < originRow) {
 						removePerimeterSegment(s.aabb.getP2P3Line());
+						perimeterSegments.add(s.aabb.getP1P2Line());
+						perimeterSegments.add(s.aabb.getP3P0Line());
 						s = new ExitStud(world, this, i - originRow - 1, j - originCol);
 						addStud(s);
+						perimeterSegments.add(s.aabb.getP0P1Line());
+						perimeterSegments.add(s.aabb.getP1P2Line());
+//						perimeterSegments.add(s.aabb.getP2P3Line());
+						perimeterSegments.add(s.aabb.getP3P0Line());
 						exitStuds.add(s);
 					} else if (i >= originRow + rowCount) {
 						removePerimeterSegment(s.aabb.getP0P1Line());
+						perimeterSegments.add(s.aabb.getP1P2Line());
+						perimeterSegments.add(s.aabb.getP3P0Line());
 						s = new ExitStud(world, this, i - originRow + 1, j - originCol);
 						addStud(s);
+//						perimeterSegments.add(s.aabb.getP0P1Line());
+						perimeterSegments.add(s.aabb.getP1P2Line());
+						perimeterSegments.add(s.aabb.getP2P3Line());
+						perimeterSegments.add(s.aabb.getP3P0Line());
 						exitStuds.add(s);
 					} else if (j < originCol) {
 						removePerimeterSegment(s.aabb.getP1P2Line());
+						perimeterSegments.add(s.aabb.getP0P1Line());
+						perimeterSegments.add(s.aabb.getP2P3Line());
 						s = new ExitStud(world, this, i - originRow, j - originCol - 1);
 						addStud(s);
+						perimeterSegments.add(s.aabb.getP0P1Line());
+//						perimeterSegments.add(s.aabb.getP1P2Line());
+						perimeterSegments.add(s.aabb.getP2P3Line());
+						perimeterSegments.add(s.aabb.getP3P0Line());
 						exitStuds.add(s);
 					} else {
 						assert j >= originCol + colCount;
 						removePerimeterSegment(s.aabb.getP3P0Line());
+						perimeterSegments.add(s.aabb.getP0P1Line());
+						perimeterSegments.add(s.aabb.getP2P3Line());
 						s = new ExitStud(world, this, i - originRow, j - originCol + 1);
 						addStud(s);
+						perimeterSegments.add(s.aabb.getP0P1Line());
+						perimeterSegments.add(s.aabb.getP1P2Line());
+						perimeterSegments.add(s.aabb.getP2P3Line());
+//						perimeterSegments.add(s.aabb.getP3P0Line());
 						exitStuds.add(s);
 					}
 					break;
@@ -304,28 +328,28 @@ public class RushHourBoard extends Entity {
 			JointStud ks0 = kStuds.get(0);
 			JointStud ks1 = kStuds.get(1);
 			
-			if (js0.row == ks0.row) {
-				assert false;
-			} else if (js0.row == ks1.row) {
-				assert false;
-			} else if (js1.row == ks0.row) {
-				assert false;
-			} else if (js1.row == ks1.row) {
-				assert false;
-			} else if (js0.col == ks0.col) {
-				assert false;
-			} else if (js0.col == ks1.col) {
+			if (withinRowRange(js0.row) && withinRowRange(ks0.row) && js0.row == ks0.row) {
+				jointTracksToPath(js1, js0, ks0, ks1);
+			} else if (withinRowRange(js0.row) && withinRowRange(ks1.row) && js0.row == ks1.row) {
 				jointTracksToPath(js1, js0, ks1, ks0);
-			} else if (js1.col == ks0.col) {
-				assert false;
-			} else if (js1.col == ks1.col) {
-				assert false;
+			} else if (withinRowRange(js1.row) && withinRowRange(ks0.row) && js1.row == ks0.row) {
+				jointTracksToPath(js0, js1, ks0, ks1);
+			} else if (withinRowRange(js1.row) && withinRowRange(ks1.row) && js1.row == ks1.row) {
+				jointTracksToPath(js0, js1, ks1, ks0);
+			} else if (withinColRange(js0.col) && withinColRange(ks0.col) && js0.col == ks0.col) {
+				jointTracksToPath(js1, js0, ks0, ks1);
+			} else if (withinColRange(js0.col) && withinColRange(ks1.col) && js0.col == ks1.col) {
+				jointTracksToPath(js1, js0, ks1, ks0);
+			} else if (withinColRange(js1.col) && withinColRange(ks0.col) && js1.col == ks0.col) {
+				jointTracksToPath(js0, js1, ks0, ks1);
+			} else if (withinColRange(js1.col) && withinColRange(ks1.col) && js1.col == ks1.col) {
+				jointTracksToPath(js0, js1, ks1, ks0);
 			} else {
 				if (!jStuds.isEmpty()) {
 					jointTracksToPath(jStuds);
 				}
 				if (!kStuds.isEmpty()) {
-					jointTracksToPath(kStuds);
+//					jointTracksToPath(kStuds);
 				}
 			}
 		} else {
@@ -397,6 +421,14 @@ public class RushHourBoard extends Entity {
 			}
 		}	
 		
+	}
+	
+	boolean withinRowRange(int r) {
+		return r >= 0 && r < rowCount;
+	}
+	
+	boolean withinColRange(int c) {
+		return c >= 0 && c < colCount;
 	}
 	
 	private void addRoad(List<JointStud> joints) {

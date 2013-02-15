@@ -10,17 +10,245 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       157,          7]
-NotebookDataLength[       762,         33]
-NotebookOptionsPosition[       560,         21]
-NotebookOutlinePosition[       901,         36]
-CellTagsIndexPosition[       858,         33]
+NotebookDataLength[     10111,        299]
+NotebookOptionsPosition[      8764,        249]
+NotebookOutlinePosition[      9105,        264]
+CellTagsIndexPosition[      9062,        261]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
 Notebook[{
+Cell[BoxData[
+ RowBox[{"Quit", "[", "]"}]], "Input",
+ CellChangeTimes->{{3.5697662186945877`*^9, 3.5697662197106457`*^9}}],
+
+Cell[BoxData[
+ RowBox[{"<<", "JLink`"}]], "Input",
+ CellChangeTimes->{{3.569765967071196*^9, 3.5697659684312735`*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"ReinstallJava", "[", 
+   RowBox[{
+   "CommandLine", "\[Rule]", 
+    "\"\<C:\\\\Program \
+Files\\\\Java\\\\jdk1.7.0_10\\\\bin\\\\javaw.exe\>\""}], "]"}], 
+  ";"}]], "Input",
+ CellChangeTimes->{{3.5697662019016275`*^9, 3.5697662160424366`*^9}, 
+   3.5697674318309755`*^9}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+  "AddToClassPath", "[", 
+   "\"\<C:\\\\Users\\\\brenton\\\\DeadlockWorkspace\\\\Deadlock\\\\bin\\\\\>\"\
+", "]"}], ";"}]], "Input",
+ CellChangeTimes->{{3.569766025923562*^9, 3.5697660318389006`*^9}, {
+  3.5697660693670473`*^9, 3.569766075342389*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"LoadJavaClass", "[", "\"\<solver.Config\>\"", "]"}], 
+  ";"}]], "Input",
+ CellChangeTimes->{{3.5697660160189953`*^9, 3.569766024154461*^9}, 
+   3.5697674352621717`*^9}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"LoadJavaClass", "[", "\"\<solver.Solver\>\"", "]"}], 
+  ";"}]], "Input",
+ CellChangeTimes->{{3.569767067889159*^9, 3.569767069804269*^9}, 
+   3.5697674367072544`*^9}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"start", "=", 
+   RowBox[{"solver`Config`randomConfig", "[", "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{"start", "@", 
+  RowBox[{"toString", "[", "]"}]}]}], "Input",
+ CellChangeTimes->{{3.5698423067301817`*^9, 3.5698423226380916`*^9}, {
+  3.5698553478270893`*^9, 3.569855351480299*^9}}],
+
+Cell[BoxData["\<\"        \\n RRXXXX \\n XXXXXX \\n XXXXXX \\n XXXXXX \\n \
+XXXXXX \\n XXXXXX \\n   Y    \\n\"\>"], "Output",
+ CellChangeTimes->{{3.5698550905013714`*^9, 3.569855102281045*^9}, 
+   3.56985514905072*^9, {3.5698552085481234`*^9, 3.5698552194037447`*^9}, {
+   3.5698553520353303`*^9, 3.569855360160795*^9}, {3.569855392469643*^9, 
+   3.5698554177430887`*^9}, {3.569856707127837*^9, 3.569856764817137*^9}}]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"start", "=", 
+   RowBox[{"JavaNew", "[", 
+    RowBox[{"\"\<solver.Config\>\"", ",", "\[IndentingNewLine]", 
+     RowBox[{
+     "\"\<        \>\"", "<>", "\[IndentingNewLine]", "\"\< XXXXXX \>\"", "<>",
+       "\[IndentingNewLine]", "\"\< XXXXXX \>\"", "<>", 
+      "\[IndentingNewLine]", "\"\< XXXXXX \>\"", "<>", "\[IndentingNewLine]", 
+      "\"\< RRXXXXY\>\"", "<>", "\[IndentingNewLine]", "\"\< XXXXXX \>\"", "<>",
+       "\[IndentingNewLine]", "\"\< XXXXXX \>\"", "<>", 
+      "\[IndentingNewLine]", "\"\<        \>\""}], ",", " ", "8", ",", " ", 
+     "8"}], "]"}]}], ";"}]], "Input",
+ CellChangeTimes->{{3.5698512991835203`*^9, 3.56985133169538*^9}, {
+  3.569851372920738*^9, 3.5698514325541487`*^9}, {3.5698515543901176`*^9, 
+  3.5698515717051077`*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"start", "@", 
+  RowBox[{"toString", "[", "]"}]}]], "Input",
+ CellChangeTimes->{{3.5698515945504146`*^9, 3.5698515971765647`*^9}}],
+
+Cell[BoxData["\<\"        \\nYXXXXXX \\n XXXXXX \\n XXXXXX \\n XXXXXX \\n \
+XXXXXX \\n XXXXXX \\n        \\n\"\>"], "Output",
+ CellChangeTimes->{
+  3.5698515974845824`*^9, 3.569851649101535*^9, 3.5698521604147797`*^9, {
+   3.5698550947516146`*^9, 3.5698551043521633`*^9}, 3.569855151264847*^9, {
+   3.569855211752307*^9, 3.5698552169426036`*^9}}]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"explored", "=", 
+   RowBox[{"JavaNew", "[", "\"\<java.util.HashMap\>\"", "]"}]}], 
+  ";"}]], "Input",
+ CellChangeTimes->{{3.569767331344228*^9, 3.5697673586127872`*^9}, 
+   3.5697674484799275`*^9}],
+
+Cell[BoxData[
+ RowBox[{"Solver`explore", "[", 
+  RowBox[{"start", ",", "Null", ",", "explored"}], "]"}]], "Input",
+ CellChangeTimes->{{3.5697670819039607`*^9, 3.5697670893303857`*^9}, {
+  3.569767344986008*^9, 3.569767346333085*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(", 
+   RowBox[{"start", "@", "carMap"}], ")"}], "@", 
+  RowBox[{"toString", "[", "]"}]}]], "Input",
+ CellChangeTimes->{{3.5698514913075094`*^9, 3.5698515398252845`*^9}, {
+  3.5698516082701993`*^9, 3.5698516816643972`*^9}}],
+
+Cell[BoxData["\<\"{R=solver.CarInfo@9acc2a1}\"\>"], "Output",
+ CellChangeTimes->{{3.569851492264564*^9, 3.569851540153303*^9}, {
+   3.5698515826057315`*^9, 3.5698516821604257`*^9}, 3.5698521636069627`*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Solver`shortestWinner", "[", "explored", "]"}]], "Input"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\[LeftGuillemet]", 
+   RowBox[{"JavaObject", "[", 
+    RowBox[{"solver", ".", "Config"}], "]"}], "\[RightGuillemet]"}],
+  JLink`Objects`vm2`JavaObject10591376618029057]], "Output",
+ CellChangeTimes->{3.5698521691012774`*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Solver`movesToWin", "[", "start", "]"}]], "Input",
+ CellChangeTimes->{{3.5698521740755615`*^9, 3.569852180327919*^9}}],
+
+Cell[BoxData["6"], "Output",
+ CellChangeTimes->{3.5698521807109413`*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"configs", "=", 
+  RowBox[{"Reverse", "[", 
+   RowBox[{"NestWhileList", "[", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"explored", "@", 
+       RowBox[{"get", "[", "#", "]"}]}], "&"}], ",", 
+     RowBox[{"Solver`shortestWinner", "[", "explored", "]"}], ",", 
+     RowBox[{
+      RowBox[{"#", "=!=", "Null"}], "&"}]}], "]"}], "]"}]}]], "Input",
+ CellChangeTimes->{{3.5697673675262976`*^9, 3.5697673886925077`*^9}, {
+   3.5697674537212276`*^9, 3.5697674567354*^9}, {3.56976880243937*^9, 
+   3.56976880489151*^9}, {3.569838352911036*^9, 3.5698383892641153`*^9}, {
+   3.5698384875647383`*^9, 3.569838509818011*^9}, {3.569838558553798*^9, 
+   3.5698385595338545`*^9}, {3.56983862257546*^9, 3.5698386683050756`*^9}, 
+   3.569842175628683*^9, {3.5698422282946954`*^9, 3.5698422305398235`*^9}}],
+
+Cell[BoxData[
+ RowBox[{"{", "Null", "}"}]], "Output",
+ CellChangeTimes->{3.5698421762317176`*^9, 3.5698422320029078`*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Manipulate", "[", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"configs", "[", 
+     RowBox[{"[", "i", "]"}], "]"}], "@", 
+    RowBox[{"toString", "[", "]"}]}], ",", 
+   RowBox[{"{", 
+    RowBox[{"i", ",", "1", ",", 
+     RowBox[{"Length", "[", "configs", "]"}], ",", "1"}], "}"}]}], 
+  "]"}]], "Input",
+ CellChangeTimes->{{3.569838561451964*^9, 3.569838592258726*^9}, 
+   3.569838739001119*^9, 3.569842165213087*^9}],
+
+Cell[BoxData[
+ TagBox[
+  StyleBox[
+   DynamicModuleBox[{$CellContext`i$$ = 1, Typeset`show$$ = True, 
+    Typeset`bookmarkList$$ = {}, Typeset`bookmarkMode$$ = "Menu", 
+    Typeset`animator$$, Typeset`animvar$$ = 1, Typeset`name$$ = 
+    "\"untitled\"", Typeset`specs$$ = {{
+      Hold[$CellContext`i$$], 1, 0, 1}}, Typeset`size$$ = {112., {2., 8.}}, 
+    Typeset`update$$ = 0, Typeset`initDone$$, Typeset`skipInitDone$$ = 
+    True, $CellContext`i$744$$ = 0}, 
+    DynamicBox[Manipulate`ManipulateBoxes[
+     1, StandardForm, "Variables" :> {$CellContext`i$$ = 1}, 
+      "ControllerVariables" :> {
+        Hold[$CellContext`i$$, $CellContext`i$744$$, 0]}, 
+      "OtherVariables" :> {
+       Typeset`show$$, Typeset`bookmarkList$$, Typeset`bookmarkMode$$, 
+        Typeset`animator$$, Typeset`animvar$$, Typeset`name$$, 
+        Typeset`specs$$, Typeset`size$$, Typeset`update$$, Typeset`initDone$$,
+         Typeset`skipInitDone$$}, "Body" :> 
+      Part[$CellContext`configs, $CellContext`i$$][
+        $CellContext`toString[]], 
+      "Specifications" :> {{$CellContext`i$$, 1, 0, 1}}, "Options" :> {}, 
+      "DefaultOptions" :> {}],
+     ImageSizeCache->{252., {51., 56.}},
+     SingleEvaluation->True],
+    Deinitialization:>None,
+    DynamicModuleValues:>{},
+    SynchronousInitialization->True,
+    UnsavedVariables:>{Typeset`initDone$$},
+    UntrackedVariables:>{Typeset`size$$}], "Manipulate",
+   Deployed->True,
+   StripOnInput->False],
+  Manipulate`InterpretManipulate[1]]], "Output",
+ CellChangeTimes->{{3.569838578606945*^9, 3.569838592635748*^9}, 
+   3.569838643567661*^9, 3.5698387253633394`*^9, {3.569842161869896*^9, 
+   3.5698421657721195`*^9}}]
+}, Open  ]],
+
+Cell["generator", "Section",
+ CellChangeTimes->{{3.5698410570857058`*^9, 3.5698410580937634`*^9}}]
 },
 WindowSize->{707, 637},
-WindowMargins->{{24, Automatic}, {Automatic, 30}},
+WindowMargins->{{40, Automatic}, {Automatic, 13}},
 FrontEndVersion->"9.0 for Microsoft Windows (64-bit) (June 26, 2011)",
 StyleDefinitions->"Default.nb"
 ]
@@ -35,6 +263,44 @@ CellTagsIndex->{}
 *)
 (*NotebookFileOutline
 Notebook[{
+Cell[557, 20, 122, 2, 31, "Input"],
+Cell[682, 24, 118, 2, 31, "Input"],
+Cell[803, 28, 305, 9, 31, "Input"],
+Cell[1111, 39, 286, 7, 31, "Input"],
+Cell[1400, 48, 203, 5, 31, "Input"],
+Cell[1606, 55, 201, 5, 31, "Input"],
+Cell[CellGroupData[{
+Cell[1832, 64, 330, 8, 52, "Input"],
+Cell[2165, 74, 418, 5, 183, "Output"]
+}, Open  ]],
+Cell[2598, 82, 796, 15, 192, "Input"],
+Cell[CellGroupData[{
+Cell[3419, 101, 153, 3, 31, "Input"],
+Cell[3575, 106, 346, 5, 183, "Output"]
+}, Open  ]],
+Cell[3936, 114, 232, 6, 31, "Input"],
+Cell[4171, 122, 233, 4, 31, "Input"],
+Cell[CellGroupData[{
+Cell[4429, 130, 258, 6, 31, "Input"],
+Cell[4690, 138, 205, 2, 30, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[4932, 145, 81, 1, 31, "Input"],
+Cell[5016, 148, 269, 6, 30, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[5322, 159, 142, 2, 31, "Input"],
+Cell[5467, 163, 72, 1, 30, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[5576, 169, 809, 16, 72, "Input"],
+Cell[6388, 187, 121, 2, 30, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[6546, 194, 432, 12, 31, "Input"],
+Cell[6981, 208, 1666, 35, 124, "Output"]
+}, Open  ]],
+Cell[8662, 246, 98, 1, 71, "Section"]
 }
 ]
 *)
