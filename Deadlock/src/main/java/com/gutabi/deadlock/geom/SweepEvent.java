@@ -24,7 +24,8 @@ public abstract class SweepEvent {
 	
 	public final Point p;
 	
-	private Vertex v;
+	public Vertex v;
+	public boolean inRoad;
 	
 	protected SweepEvent(SweepEventType type, Object stillParent, Shape still, CapsuleSequence moving, int index, double param, int offset) {
 		this.type = type;
@@ -42,19 +43,21 @@ public abstract class SweepEvent {
 	
 	public String toString() {
 		if (type != null) {
-			return type.toString();
+			return type + " " + stillParent;
 		} else {
 			return "null";
 		}
 	}
 	
-	public void setVertex(Vertex v) {
-		this.v = v;
-	}
+//	public void setVertex(Vertex v) {
+//		this.v = v;
+//	}
+//	
+//	public Vertex getVertex() {
+//		return v;
+//	}
 	
-	public Vertex getVertex() {
-		return v;
-	}
+	
 	
 	public static Comparator<SweepEvent> COMPARATOR = new SweepEventComparator();
 	

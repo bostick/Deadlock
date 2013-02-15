@@ -349,7 +349,7 @@ public class RushHourBoard extends Entity {
 					jointTracksToPath(jStuds);
 				}
 				if (!kStuds.isEmpty()) {
-//					jointTracksToPath(kStuds);
+					jointTracksToPath(kStuds);
 				}
 			}
 		} else {
@@ -553,7 +553,7 @@ public class RushHourBoard extends Entity {
 //			to road
 //			to vertex
 			
-			r = v.bestMatchingRoad(r);
+			r = v.bestMatchingRoad(r, s1.f.roads.get(0));
 			
 			if (v == r.start) {
 				for (int ii = 1; ii <= r.pointCount()-2; ii++) {
@@ -716,7 +716,7 @@ public class RushHourBoard extends Entity {
 //			to road
 //			to vertex
 			
-			r = v.bestMatchingRoad(r);
+			r = v.bestMatchingRoad(r, js1.f.roads.get(0));
 			
 			if (v == r.start) {
 				for (int ii = 1; ii <= r.pointCount()-2; ii++) {
@@ -774,7 +774,7 @@ public class RushHourBoard extends Entity {
 //			to road
 //			to vertex
 			
-			r = v.bestMatchingRoad(r);
+			r = v.bestMatchingRoad(r, ks0.f.roads.get(0));
 			
 			if (v == r.start) {
 				for (int ii = 1; ii <= r.pointCount()-2; ii++) {

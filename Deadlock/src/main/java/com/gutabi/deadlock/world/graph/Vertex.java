@@ -74,12 +74,15 @@ public abstract class Vertex extends Entity {
 		return eds;
 	}
 	
-	public Road bestMatchingRoad(Road r) {
+	public Road bestMatchingRoad(Road r, Road hint) {
 		assert !roads.isEmpty();
-		
 		if (r == null) {
 			assert roads.size() == 1;
 			return roads.get(0);
+		} else if (hint != null && roads.contains(hint)) {
+			
+			return hint;
+			
 		} else {
 			
 			double angle;

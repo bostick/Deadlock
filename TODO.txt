@@ -1,32 +1,5 @@
 
-fix overlapping here:
-[
-[ ,  ,  , J,  , K,  ,  ],
-[ , X, X, X, X, X, X,  ],
-[ , X, X, X, X, X, X,  ],
-[ , X, X, X, X, X, X,  ],
-[K, X, X, X, X, R, R,  ],
-[ , X, X, X, X, X, X,  ],
-[J, X, X, X, X, X, X,  ],
-[ ,  ,  ,  ,  , Y,  ,  ]]
-
-
-make sure overlapping here is fixed:
-[
-[ ,  ,  ,  , Y,  ,  ,  ],
-[J, X, X, X, X, X, X,  ],
-[ , X, X, X, X, R, R,  ],
-[K, X, X, X, X, X, X,  ],
-[ , X, X, X, X, X, X,  ],
-[ , X, X, X, X, X, X,  ],
-[ , X, X, X, X, X, X,  ],
-[ ,  , J,  ,  ,  , K,  ]]
-
-
-
-
-
-
+if dragging is too far from car, then treat as release
 
 
 level generator
