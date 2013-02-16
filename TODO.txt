@@ -1,4 +1,28 @@
 
+fix overlap problem
+screenshot
+
+
+
+
+if intersection is within VERTEX RADIUS of event, then go with intersection
+
+other wise, project from event to existing road
+
+
+
+
+
+
+
+create a level database:
+rows by cols, j?, k?, #2cars, #3cars
+
+
+
+
+
+
 if dragging is too far from car, then treat as release
 
 
@@ -16,7 +40,6 @@ joints cannot be next to each other (vertices touch)
 matching joints must be on neighbring sides
 joints cannot be on side of exit
 loops? loops are fine
-filter out j,k joints that overlap (instead of only intersecting at one point)
 
 
 
@@ -32,6 +55,11 @@ obfuscate code
 
 
 refactor into capsloc, deadlock, gridlock
+
+for other games:
+scratch-off 
+
+
 
 
 menu

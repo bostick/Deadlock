@@ -394,24 +394,30 @@ public class Stroke {
 		 */
 		List<SweepEvent> toKeep = new ArrayList<SweepEvent>();
 		events = events(false);
+		boolean inRoad = false;
 		for (int i = 0; i < events.size(); i++) {
 			
 			SweepEvent e = events.get(i);
 			
 			if (e.type == SweepEventType.ENTERVERTEX || e.type == SweepEventType.EXITVERTEX) {
 				assert e.stillParent != null;
-				e.setVertex((Vertex)e.stillParent);
+				e.v = (Vertex)e.stillParent;
+				if (inRoad) {
+					e.inRoad = true;
+				}
 				toKeep.add(e);
-			} else {
-				/*
-				 * still possible that there are ROAD events, even after roads have been split and vertices added
-				 * 
-				 */
-//				assert false;
+			} else if (e.type == SweepEventType.ENTERROAD) {
+				assert !inRoad;
+				inRoad = true;
+			} else if (e.type == SweepEventType.EXITROAD) {
+				assert inRoad;
+				inRoad = false;
 			}
 			
 		}
 		events = toKeep;
+		
+		String.class.getName();
 		
 		/*
 		 * now go through and create roads
@@ -423,27 +429,28 @@ public class Stroke {
 			
 			if (e0.type == SweepEventType.ENTERVERTEX && e1.type == SweepEventType.EXITVERTEX) {
 				
-				i = i+1;
-				if (i == events.size()-1) {
-					break;
-				}
-				e0 = events.get(i);
-				e1 = events.get(i+1);
-				
-			}
-//			else if (e0.type == SweepEventType.ENTERROAD && e1.type == SweepEventType.EXITROAD) {
-//				
 //				i = i+1;
 //				if (i == events.size()-1) {
 //					break;
 //				}
 //				e0 = events.get(i);
 //				e1 = events.get(i+1);
-//				
-//			}
+				continue;
+				
+			} else if (e0.type == SweepEventType.EXITVERTEX && e1.type == SweepEventType.ENTERVERTEX && e0.inRoad && e1.inRoad) {
+				
+//				i = i+1;
+//				if (i == events.size()-1) {
+//					break;
+//				}
+//				e0 = events.get(i);
+//				e1 = events.get(i+1);
+				continue;
+				
+			}
 			
-			Vertex v0 = e0.getVertex();
-			Vertex v1 = e1.getVertex();
+			Vertex v0 = e0.v;
+			Vertex v1 = e1.v;
 			
 //			if (v0 == v1) {
 //				logger.debug("same vertex");

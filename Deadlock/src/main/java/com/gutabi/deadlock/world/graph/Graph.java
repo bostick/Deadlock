@@ -1397,6 +1397,9 @@ public class Graph {
 					
 				} else {
 					
+					/*
+					 * ignore first and last capsules, since these are within vertices
+					 */
 					for (int i = 1; i < e.capsuleCount()-1; i++) {
 						Capsule es = e.getCapsule(i);
 						

@@ -58,38 +58,23 @@ public class Solver {
 	
 	public static void main(String[] args) {
 		
-		Config start = new Config(boardIni);
-		
 		Map<Config, Config> explored = new HashMap<Config, Config>();
-		explore(start, null, explored);
 		
-//		System.out.println(explored.size());
+		Config bestConfig = null;
+		int bestConfigMoves = -1;
 		
-		Config shortestWinner = null;
-		int shortestWinnerLength = Integer.MAX_VALUE;
-		for (Config c : explored.keySet()) {
-			if (c.winning) {
-				
-				Config d = c;
-				int length = 0;
-				while (d != null) {
-					d = explored.get(d);
-					length++;
-				}
-				
-				if (length < shortestWinnerLength) {
-					shortestWinner = c;
-					shortestWinnerLength = length;
-				}
-				
+		while (true) {
+			Config c = Config.randomConfig();
+			int m = movesToWin(c, explored);
+			
+			if (m != -1 && m > bestConfigMoves) {
+				bestConfig = c;
+				bestConfigMoves = m;
+				System.out.println("moves: " + m);
+				System.out.println(bestConfig);
+				System.out.println();
 			}
-		}
-		
-		Config d = shortestWinner;
-		System.out.println(d);
-		while (d != null) {
-			d = explored.get(d);
-			System.out.println(d);
+			
 		}
 		
 	}
@@ -120,9 +105,7 @@ public class Solver {
 		
 	}
 	
-	public static int movesToWin(Config start) {
-		
-		Map<Config, Config> explored = new HashMap<Config, Config>();
+	public static int movesToWin(Config start, Map<Config, Config> explored) {
 		
 		explore(start, null, explored);
 		
@@ -155,10 +138,18 @@ public class Solver {
 	}
 	
 	public static int distanceToStart(Config c, Map<Config, Config> explored) {
-		if (c == null) {
-			return 0;
+		int dist = 0;
+		Config d = c;
+		while (true) {
+			if (d == null) {
+				break;
+			}
+			
+			dist++;
+			d = explored.get(d);
+			
 		}
-		return distanceToStart(explored.get(c), explored) + 1;
+		return dist;
 	}
 	
 	static public void explore(Config c, Config pred, Map<Config, Config> explored) {
