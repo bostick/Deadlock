@@ -58,6 +58,7 @@ public class CarTool extends ToolBase {
 			car.toolOrigP = car.center;
 			car.toolOrigAngle = car.angle;
 			car.toolOrigShape = car.shape;
+			car.driver.toolOrigOverallPos = car.driver.overallPos;
 			
 		}
 		
@@ -76,15 +77,21 @@ public class CarTool extends ToolBase {
 				
 				if (gpos instanceof RoadPosition) {
 					
+					/*
+					 * reset
+					 */
 					car.setTransform(car.toolOrigP, car.toolOrigAngle);
-					car.driver.overallPos = car.driver.overallPath.generalSearch(car.center, car.driver.overallPos);
+					car.driver.overallPos = car.driver.toolOrigOverallPos;
 					
 					screen.contentPane.repaint();
 					
 				} else if (gpos instanceof VertexPosition) {
 					
+					/*
+					 * reset
+					 */
 					car.setTransform(car.toolOrigP, car.toolOrigAngle);
-					car.driver.overallPos = car.driver.overallPath.generalSearch(car.center, car.driver.overallPos);
+					car.driver.overallPos = car.driver.toolOrigOverallPos;
 					
 					screen.contentPane.repaint();
 					
@@ -113,14 +120,17 @@ public class CarTool extends ToolBase {
 					if (b.allowablePosition(car)) {
 						
 						car.setTransform(rounded.p, car.angle);
-						car.driver.overallPos = car.driver.overallPath.generalSearch(car.center, car.driver.overallPos);
+						car.driver.overallPos = car.driver.overallPath.generalSearch(car.center, car.driver.overallPos, car.CAR_LENGTH);
 						
 						screen.contentPane.repaint();
 						
 					} else {
 						
+						/*
+						 * reset
+						 */
 						car.setTransform(car.toolOrigP, car.toolOrigAngle);
-						car.driver.overallPos = car.driver.overallPath.generalSearch(car.center, car.driver.overallPos);
+						car.driver.overallPos = car.driver.toolOrigOverallPos;
 						
 						screen.contentPane.repaint();
 						
@@ -160,7 +170,7 @@ public class CarTool extends ToolBase {
 			case DRIVING:
 			case BRAKING:
 				
-				GraphPositionPathPosition testPathPos = car.driver.overallPath.generalSearch(carPTmp, car.driver.overallPos);
+				GraphPositionPathPosition testPathPos = car.driver.overallPath.generalSearch(carPTmp, car.driver.overallPos, car.CAR_LENGTH);
 				
 				if (!collidesWithBoardOrOtherCars(car, testPathPos.p)) {
 					
@@ -188,8 +198,8 @@ public class CarTool extends ToolBase {
 	private double newAngle(Car car, GraphPositionPathPosition testPathPos) {
 		
 		Point worldFront = Geom.localToWorld(car.localFront, car.angle, car.center);
-		GraphPositionPathPosition centerPathPos = car.driver.overallPath.generalSearch(car.center, car.driver.overallPos);
-		GraphPositionPathPosition frontPathPos = car.driver.overallPath.generalSearch(worldFront, car.driver.overallPos);
+		GraphPositionPathPosition centerPathPos = car.driver.overallPath.generalSearch(car.center, car.driver.overallPos, car.CAR_LENGTH);
+		GraphPositionPathPosition frontPathPos = car.driver.overallPath.generalSearch(worldFront, car.driver.overallPos, car.CAR_LENGTH);
 		int directionInTrack;
 		if (DMath.lessThan(centerPathPos.combo, frontPathPos.combo)) {
 			directionInTrack = 1;

@@ -119,9 +119,14 @@ public class GraphPositionPathPosition {
 	public double distanceTo(GraphPositionPathPosition p) {
 		
 		assert p.path.equals(path);
-		assert DMath.greaterThanEquals(p.combo, combo);
 		
-		return p.lengthToStartOfPath - lengthToStartOfPath;
+		if (DMath.equals(p.combo, combo)) {
+			return 0.0;
+		} else if (DMath.greaterThanEquals(p.combo, combo)) {
+			return p.lengthToStartOfPath - lengthToStartOfPath;
+		} else {
+			return lengthToStartOfPath - p.lengthToStartOfPath;
+		}
 		
 	}
 	

@@ -89,21 +89,21 @@ public class RushHourWorld extends World {
 //		};
 
 		
-		char[][] boardIni = Config.randomConfig().ini;
+//		char[][] boardIni = Config.randomConfig().ini;
 		
 		/*
 		 * blank
 		 */
-//		char[][] boardIni = new char[][] {
-//			{' ', 'Y', ' ', ' ', ' ', ' ', ' ', ' '},
-//			{' ', 'R', 'X', 'X', 'X', 'X', 'X', ' '},
-//			{' ', 'R', 'X', 'B', 'X', 'X', 'X', ' '},
-//			{'J', 'X', 'X', 'B', 'X', 'X', 'X', ' '},
-//			{' ', 'X', 'X', 'B', 'X', 'X', 'X', ' '},
-//			{' ', 'X', 'X', 'X', 'X', 'X', 'X', ' '},
-//			{' ', 'A', 'A', 'X', 'X', 'X', 'X', 'K'},
-//			{' ', ' ', 'K', ' ', ' ', ' ', 'J', ' '}
-//		};
+		char[][] boardIni = new char[][] {
+			{' ', 'Y', ' ', ' ', ' ', ' ', ' ', ' '},
+			{' ', 'R', 'X', 'X', 'X', 'X', 'X', ' '},
+			{' ', 'R', 'X', 'B', 'X', 'X', 'X', ' '},
+			{'J', 'X', 'X', 'B', 'X', 'X', 'X', ' '},
+			{' ', 'X', 'X', 'B', 'X', 'X', 'X', ' '},
+			{' ', 'X', 'X', 'X', 'X', 'X', 'X', ' '},
+			{' ', 'A', 'A', 'X', 'X', 'X', 'X', 'K'},
+			{' ', ' ', 'K', ' ', ' ', ' ', 'J', ' '}
+		};
 		
 		final RushHourBoard b = w.createRushHourBoard(new Point(QuadrantMap.QUADRANT_WIDTH/2, QuadrantMap.QUADRANT_WIDTH/2), boardIni);
 		

@@ -13,6 +13,8 @@ public abstract class Driver {
 	public GraphPositionPath overallPath;
 	public GraphPositionPathPosition overallPos;
 	
+	public GraphPositionPathPosition toolOrigOverallPos;
+	
 	public Driver(Car c) {
 		this.c = c;
 	}

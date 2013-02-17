@@ -1,4 +1,9 @@
 
+arc tool
+segment tool
+
+
+
 fix overlap problem
 screenshot
 
@@ -18,12 +23,6 @@ other wise, project from event to existing road
 create a level database:
 rows by cols, j?, k?, #2cars, #3cars
 
-
-
-
-
-
-if dragging is too far from car, then treat as release
 
 
 level generator
@@ -64,15 +63,6 @@ scratch-off
 
 menu
 interactive, drag car
-
-
-
-
-
-
-
-
-
 
 
 
