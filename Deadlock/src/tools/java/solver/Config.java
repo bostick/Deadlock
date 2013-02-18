@@ -12,6 +12,8 @@ import solver.Solver.Orientation;
 
 public class Config {
 	
+	public static Random rand = new Random();
+	
 	public final int rowCount;
 	public final int colCount;
 	
@@ -31,12 +33,17 @@ public class Config {
 	private int[] exit = new int[]{ -1, -1 };
 	
 	private int[][] jJoints = new int[][]{ {-1, -1, -1}, {-1, -1, -1} };
-	
 	private int[][] kJoints = new int[][]{ {-1, -1, -1}, {-1, -1, -1} };
+	int jCount = 0;
+	int kCount = 0;
 	
 //	Set<Character> carChars = new HashSet<Character>();
 	
-	boolean winning;
+	List<Config> possibleMoves;
+	
+//	boolean winning;
+	
+	char[] cars = new char[] { 'A', 'B', 'C', 'D', 'E', 'F', 'G' };
 	
 	public Config(String boardIni, int i, int j) {
 		this(toCharMatrix(boardIni, i, j));
@@ -64,9 +71,6 @@ public class Config {
 		this.rowCount = boardIni.length-2;
 		this.colCount = boardIni[0].length-2;
 		
-		int jCount = 0;
-		int kCount = 0;
-		
 		ini = new char[boardIni.length][boardIni[0].length];
 		for (int i = 0; i < boardIni.length; i++) {
 			for (int j = 0; j < boardIni[i].length; j++) {
@@ -80,48 +84,12 @@ public class Config {
 		
 		for (int i = 0; i < boardIni.length; i++) {
 			for (int j = 0; j < boardIni[i].length; j++) {
+				if (!((i == 0 || i == boardIni.length-1) && (j == 0 || j == boardIni[0].length-1))) {
+					continue;
+				}
 				char c = boardIni[i][j];
 				switch (c) {
-				case 'A':
-				case 'B':
-				case 'C':
-				case 'D':
-				case 'E':
-				case 'F':
-				case 'G':
 				case 'R':
-					if (!carMap.keySet().contains(c)) {
-						CarInfo info = new CarInfo();
-						if (i+1-1 < rowCount && boardIni[i+1][j] == c) {
-							if (i+2-1 < rowCount && boardIni[i+2][j] == c) {
-								info.o = Orientation.UPDOWN;
-								info.row = i-1;
-								info.col = j-1;
-								info.size = 3;
-							} else {
-								info.o = Orientation.UPDOWN;
-								info.row = i-1;
-								info.col = j-1;
-								info.size = 2;
-							}
-						} else {
-							assert boardIni[i][j+1] == c;
-							if (j+2-1 < colCount && boardIni[i][j+2] == c) {
-								info.o = Orientation.LEFTRIGHT;
-								info.row = i-1;
-								info.col = j-1;
-								info.size = 3;
-							} else {
-								info.o = Orientation.LEFTRIGHT;
-								info.row = i-1;
-								info.col = j-1;
-								info.size = 2;
-							}
-						}
-						boolean res = insert(c, info);
-						assert res;
-					}
-					break;
 				case 'Y':
 					setExit(i-1, j-1);
 					break;
@@ -161,6 +129,58 @@ public class Config {
 			}
 		}
 		
+		for (int i = 0; i < boardIni.length; i++) {
+			for (int j = 0; j < boardIni[i].length; j++) {
+				char c = boardIni[i][j];
+				switch (c) {
+				case 'A':
+				case 'B':
+				case 'C':
+				case 'D':
+				case 'E':
+				case 'F':
+				case 'G':
+				case 'R':
+					if (!carMap.keySet().contains(c)) {
+//						CarInfo info = new CarInfo();
+						Orientation o;
+						int size;
+						int row;
+						int col;
+						if (boardIni[i+1][j] == c && (i+1-1 < rowCount || (i+1-1 == exit[0] && j-1 == exit[1]))) {
+							if (boardIni[i+2][j] == c && (i+2-1 < rowCount || (i+2-1 == exit[0] && j-1 == exit[1]))) {
+								o = Orientation.UPDOWN;
+								row = i-1;
+								col = j-1;
+								size = 3;
+							} else {
+								o = Orientation.UPDOWN;
+								row = i-1;
+								col = j-1;
+								size = 2;
+							}
+						} else {
+							assert boardIni[i][j+1] == c;
+							if (boardIni[i][j+2] == c && (j+2-1 < colCount || (i-1 == exit[0] && j+2-1 == exit[1]))) {
+								o = Orientation.LEFTRIGHT;
+								row = i-1;
+								col = j-1;
+								size = 3;
+							} else {
+								o = Orientation.LEFTRIGHT;
+								row = i-1;
+								col = j-1;
+								size = 2;
+							}
+						}
+						boolean res = insert(c, o, size, row, col);
+						assert res;
+					}
+					break;
+				}
+			}
+		}
+		
 //		assert exit[0] != -1 && exit[1] != -1;
 	}
 	
@@ -184,7 +204,7 @@ public class Config {
 	}
 	
 	public Config copy() {
-		assert !winning;
+//		assert !winning;
 		char[][] newIni = new char[ini.length][ini[0].length];
 		for (int i = 0; i < newIni.length; i++) {
 			for (int j = 0; j < newIni[i].length; j++) {
@@ -195,6 +215,8 @@ public class Config {
 	}
 	
 	public void clear(char c) {
+		
+//		if R, handle winning
 		
 		CarInfo oldInfo = carMap.remove(c);
 		switch (oldInfo.o) {
@@ -234,6 +256,10 @@ public class Config {
 		ini[i+1][j+1] = 'Y';
 	}
 	
+	public boolean isWinning() {
+		return ini[exit[0]+1][exit[1]+1] == 'R';
+	}
+	
 	private void clearIni(int r, int c) {
 		if (r == exit[0] && c == exit[1]) {
 			ini[r+1][c+1] = 'Y';
@@ -242,98 +268,105 @@ public class Config {
 		}
 	}
 	
-	public boolean insert(char c, CarInfo info) {
+	public boolean insert(char c, Orientation o, int size, int row, int col) {
 		
 		if (carMap.containsKey(c)) {
 			return false;
 		}
 		
 		if (c == 'R') {
-			switch (info.o) {
+			switch (o) {
 			case LEFTRIGHT:
-				switch (info.size) {
+				switch (size) {
 				case 2:
-					if (!isXorY(ini[info.row+1][info.col+1])) return false;
-					if (!isXorY(ini[info.row+1][info.col+2])) return false;
+					if (!isXorY(ini[row+1][col+1])) return false;
+					if (!isXorY(ini[row+1][col+2])) return false;
 					break;
 				case 3:
-					if (!isXorY(ini[info.row+1][info.col+1])) return false;
-					if (!isXorY(ini[info.row+1][info.col+2])) return false;
-					if (!isXorY(ini[info.row+1][info.col+3])) return false;
+					if (!isXorY(ini[row+1][col+1])) return false;
+					if (!isXorY(ini[row+1][col+2])) return false;
+					if (!isXorY(ini[row+1][col+3])) return false;
 					break;
 				}
 				break;
 			case UPDOWN:
-				switch (info.size) {
+				switch (size) {
 				case 2:
-					if (!isXorY(ini[info.row+1][info.col+1])) return false;
-					if (!isXorY(ini[info.row+2][info.col+1])) return false;
+					if (!isXorY(ini[row+1][col+1])) return false;
+					if (!isXorY(ini[row+2][col+1])) return false;
 					break;
 				case 3:
-					if (!isXorY(ini[info.row+1][info.col+1])) return false;
-					if (!isXorY(ini[info.row+2][info.col+1])) return false;
-					if (!isXorY(ini[info.row+3][info.col+1])) return false;
+					if (!isXorY(ini[row+1][col+1])) return false;
+					if (!isXorY(ini[row+2][col+1])) return false;
+					if (!isXorY(ini[row+3][col+1])) return false;
 					break;
 				}
 				break;
 			}
 		} else {
-			switch (info.o) {
+			switch (o) {
 			case LEFTRIGHT:
-				switch (info.size) {
+				switch (size) {
 				case 2:
-					if (!isX(ini[info.row+1][info.col+1])) return false;
-					if (!isX(ini[info.row+1][info.col+2])) return false;
+					if (!isX(ini[row+1][col+1])) return false;
+					if (!isX(ini[row+1][col+2])) return false;
 					break;
 				case 3:
-					if (!isX(ini[info.row+1][info.col+1])) return false;
-					if (!isX(ini[info.row+1][info.col+2])) return false;
-					if (!isX(ini[info.row+1][info.col+3])) return false;
+					if (!isX(ini[row+1][col+1])) return false;
+					if (!isX(ini[row+1][col+2])) return false;
+					if (!isX(ini[row+1][col+3])) return false;
 					break;
 				}
 				break;
 			case UPDOWN:
-				switch (info.size) {
+				switch (size) {
 				case 2:
-					if (!isX(ini[info.row+1][info.col+1])) return false;
-					if (!isX(ini[info.row+2][info.col+1])) return false;
+					if (!isX(ini[row+1][col+1])) return false;
+					if (!isX(ini[row+2][col+1])) return false;
 					break;
 				case 3:
-					if (!isX(ini[info.row+1][info.col+1])) return false;
-					if (!isX(ini[info.row+2][info.col+1])) return false;
-					if (!isX(ini[info.row+3][info.col+1])) return false;
+					if (!isX(ini[row+1][col+1])) return false;
+					if (!isX(ini[row+2][col+1])) return false;
+					if (!isX(ini[row+3][col+1])) return false;
 					break;
 				}
 				break;
 			}
 		}
 		
+		CarInfo info = new CarInfo();
+		info.o = o;
+		info.size = size;
+		info.row = row;
+		info.col = col;
 		carMap.put(c, info);
 		
-		switch (info.o) {
+//		if R, handle winning
+		
+		switch (o) {
 		case LEFTRIGHT:
-			switch (info.size) {
+			switch (size) {
 			case 2:
-				ini[info.row+1][info.col+1] = c;
-				ini[info.row+1][info.col+2] = c;
+				ini[row+1][col+1] = c;
+				ini[row+1][col+2] = c;
 				break;
 			case 3:
-				ini[info.row+1][info.col+1] = c;
-				ini[info.row+1][info.col+2] = c;
-				ini[info.row+1][info.col+3] = c;
+				ini[row+1][col+1] = c;
+				ini[row+1][col+2] = c;
+				ini[row+1][col+3] = c;
 				break;
 			}
 			break;
 		case UPDOWN:
-			switch (info.size) {
+			switch (size) {
 			case 2:
-				ini[info.row+1][info.col+1] = c;
-				ini[info.row+2][info.col+1] = c;
+				ini[row+1][col+1] = c;
+				ini[row+2][col+1] = c;
 				break;
 			case 3:
-				ini[info.row+1][info.col+1] = c;
-				ini[info.row+2][info.col+1] = c;
-				ini[info.row+3][info.col+1] = c;
+				ini[row+1][col+1] = c;
+				ini[row+2][col+1] = c;
+				ini[row+3][col+1] = c;
 				break;
 			}
 			break;
@@ -349,10 +382,6 @@ public class Config {
 		return c == 'X' || c == 'Y';
 	}
 	
-	
-	
-	List<Config> possibleMoves;
-	
 	public List<Config> possibleMoves() {
 		if (possibleMoves == null) {
 			computePossibleMoves();
@@ -360,11 +389,11 @@ public class Config {
 		return possibleMoves;
 	}
 	
-	public void computePossibleMoves() {
+	private void computePossibleMoves() {
 		
 		List<Config> moves = new ArrayList<Config>();
 		
-		if (winning) {
+		if (isWinning()) {
 			possibleMoves = moves;
 			return;
 		}
@@ -378,18 +407,16 @@ public class Config {
 				case 2:
 					if (ini[info.row+1][info.col-1+1] == 'X') {
 						Config newConfig = copy();
-						CarInfo newInfo = newConfig.carMap.get(c);
 						newConfig.clear(c);
-						newInfo.col--;
-						newConfig.insert(c, newInfo);
+						newConfig.insert(c, info.o, info.size, info.row, info.col-1);
 						moves.add(newConfig);
 					}
 					if (ini[info.row+1][info.col+2+1] == 'X') {
 						Config newConfig = copy();
-						CarInfo newInfo = newConfig.carMap.get(c);
+//						CarInfo newInfo = newConfig.carMap.get(c);
 						newConfig.clear(c);
-						newInfo.col++;
-						newConfig.insert(c, newInfo);
+//						newInfo.col++;
+						newConfig.insert(c, info.o, info.size, info.row, info.col+1);
 						moves.add(newConfig);
 					}
 					if (ini[info.row+1][info.col-1+1] == 'J') {
@@ -411,20 +438,20 @@ public class Config {
 					if (c == 'R') {
 						if (ini[info.row+1][info.col-1+1] == 'Y') {
 							Config newConfig = copy();
-							CarInfo newInfo = newConfig.carMap.get(c);
+//							CarInfo newInfo = newConfig.carMap.get(c);
 							newConfig.clear(c);
-							newInfo.col--;
-							newConfig.insert(c, newInfo);
-							newConfig.winning = true;
+//							newInfo.col--;
+							newConfig.insert(c, info.o, info.size, info.row, info.col-1);
+//							newConfig.winning = true;
 							moves.add(newConfig);
 						}
 						if (ini[info.row+1][info.col+2+1] == 'Y') {
 							Config newConfig = copy();
-							CarInfo newInfo = newConfig.carMap.get(c);
+//							CarInfo newInfo = newConfig.carMap.get(c);
 							newConfig.clear(c);
-							newInfo.col++;
-							newConfig.insert(c, newInfo);
-							newConfig.winning = true;
+//							newInfo.col++;
+							newConfig.insert(c, info.o, info.size, info.row, info.col+1);
+//							newConfig.winning = true;
 							moves.add(newConfig);
 						}
 					}
@@ -432,18 +459,18 @@ public class Config {
 				case 3:
 					if (ini[info.row+1][info.col-1+1] == 'X') {
 						Config newConfig = copy();
-						CarInfo newInfo = newConfig.carMap.get(c);
+//						CarInfo newInfo = newConfig.carMap.get(c);
 						newConfig.clear(c);
-						newInfo.col--;
-						newConfig.insert(c, newInfo);
+//						newInfo.col--;
+						newConfig.insert(c, info.o, info.size, info.row, info.col-1);
 						moves.add(newConfig);
 					}
 					if (ini[info.row+1][info.col+3+1] == 'X') {
 						Config newConfig = copy();
-						CarInfo newInfo = newConfig.carMap.get(c);
+//						CarInfo newInfo = newConfig.carMap.get(c);
 						newConfig.clear(c);
-						newInfo.col++;
-						newConfig.insert(c, newInfo);
+//						newInfo.col++;
+						newConfig.insert(c, info.o, info.size, info.row, info.col+1);
 						moves.add(newConfig);
 					}
 					if (ini[info.row+1][info.col-1+1] == 'J') {
@@ -470,18 +497,18 @@ public class Config {
 				case 2:
 					if (ini[info.row-1+1][info.col+1] == 'X') {
 						Config newConfig = copy();
-						CarInfo newInfo = newConfig.carMap.get(c);
+//						CarInfo newInfo = newConfig.carMap.get(c);
 						newConfig.clear(c);
-						newInfo.row--;
-						newConfig.insert(c, newInfo);
+//						newInfo.row--;
+						newConfig.insert(c, info.o, info.size, info.row-1, info.col);
 						moves.add(newConfig);
 					}
 					if (ini[info.row+2+1][info.col+1] == 'X') {
 						Config newConfig = copy();
-						CarInfo newInfo = newConfig.carMap.get(c);
+//						CarInfo newInfo = newConfig.carMap.get(c);
 						newConfig.clear(c);
-						newInfo.row++;
-						newConfig.insert(c, newInfo);
+//						newInfo.row++;
+						newConfig.insert(c, info.o, info.size, info.row-1, info.col);
 						moves.add(newConfig);
 					}
 					if (ini[info.row-1+1][info.col+1] == 'J') {
@@ -503,20 +530,20 @@ public class Config {
 					if (c == 'R') {
 						if (ini[info.row-1+1][info.col+1] == 'Y') {
 							Config newConfig = copy();
-							CarInfo newInfo = newConfig.carMap.get(c);
+//							CarInfo newInfo = newConfig.carMap.get(c);
 							newConfig.clear(c);
-							newInfo.row--;
-							newConfig.insert(c, newInfo);
-							newConfig.winning = true;
+//							newInfo.row--;
+							newConfig.insert(c, info.o, info.size, info.row-1, info.col);
+//							newConfig.winning = true;
 							moves.add(newConfig);
 						}
 						if (ini[info.row+2+1][info.col+1] == 'Y') {
 							Config newConfig = copy();
-							CarInfo newInfo = newConfig.carMap.get(c);
+//							CarInfo newInfo = newConfig.carMap.get(c);
 							newConfig.clear(c);
-							newInfo.row++;
-							newConfig.insert(c, newInfo);
-							newConfig.winning = true;
+//							newInfo.row++;
+							newConfig.insert(c, info.o, info.size, info.row+1, info.col);
+//							newConfig.winning = true;
 							moves.add(newConfig);
 						}
 					}
@@ -524,18 +551,18 @@ public class Config {
 				case 3:
 					if (ini[info.row-1+1][info.col+1] == 'X') {
 						Config newConfig = copy();
-						CarInfo newInfo = newConfig.carMap.get(c);
+//						CarInfo newInfo = newConfig.carMap.get(c);
 						newConfig.clear(c);
-						newInfo.row--;
-						newConfig.insert(c, newInfo);
+//						newInfo.row--;
+						newConfig.insert(c, info.o, info.size, info.row-1, info.col);
 						moves.add(newConfig);
 					}
 					if (ini[info.row+3+1][info.col+1] == 'X') {
 						Config newConfig = copy();
-						CarInfo newInfo = newConfig.carMap.get(c);
+//						CarInfo newInfo = newConfig.carMap.get(c);
 						newConfig.clear(c);
-						newInfo.row++;
-						newConfig.insert(c, newInfo);
+//						newInfo.row++;
+						newConfig.insert(c, info.o, info.size, info.row+1, info.col);
 						moves.add(newConfig);
 					}
 					if (ini[info.row-1+1][info.col+1] == 'J') {
@@ -561,6 +588,190 @@ public class Config {
 		}
 		
 		possibleMoves = moves;
+	}
+	
+	public List<Config> possibleRedCarPlacements() {
+		
+		List<Config> placements = new ArrayList<Config>();
+		
+		for (int r = 0; r < rowCount; r++) {
+			for (int c = 0; c < colCount-1; c++) {
+				
+				if (!isWinnableRow(r)) {
+					continue;
+				}
+				
+				Config n = copy();
+				boolean res = n.insert('R', Orientation.LEFTRIGHT, 2, r, c);
+				if (res) {
+					placements.add(n);
+				}
+			}
+		}
+		
+		for (int r = 0; r < rowCount-1; r++) {
+			for (int c = 0; c < colCount; c++) {
+				
+				/*
+				 * which cols are winnable?
+				 */
+				if (!isWinnableCol(c)) {
+					continue;
+				}
+				
+				Config n = copy();
+				boolean res = n.insert('R', Orientation.UPDOWN, 2, r, c);
+				if (res) {
+					placements.add(n);
+				}
+			}
+		}
+		
+		return placements;
+	}
+	
+	public List<Config> possible2CarPlacements() {
+		
+		char car = ' ';
+		for (char d : cars) {
+			if (!carMap.containsKey(d)) {
+				car = d;
+				break;
+			}
+		}
+		assert car != ' ';
+		
+		List<Config> placements = new ArrayList<Config>();
+		
+		for (int r = 0; r < rowCount; r++) {
+			for (int c = 0; c < colCount-1; c++) {
+				Config n = copy();
+				boolean res = n.insert(car, Orientation.LEFTRIGHT, 2, r, c);
+				if (res) {
+					placements.add(n);
+				}
+			}
+		}
+		
+		for (int r = 0; r < rowCount-1; r++) {
+			for (int c = 0; c < colCount; c++) {
+				Config n = copy();
+				boolean res = n.insert('R', Orientation.UPDOWN, 2, r, c);
+				if (res) {
+					placements.add(n);
+				}
+			}
+		}
+		
+		return placements;
+	}
+	
+	public List<Config> possible3CarPlacements() {
+		
+		char car = ' ';
+		for (char d : cars) {
+			if (!carMap.containsKey(d)) {
+				car = d;
+				break;
+			}
+		}
+		assert car != ' ';
+		
+		List<Config> placements = new ArrayList<Config>();
+		
+		for (int r = 0; r < rowCount; r++) {
+			for (int c = 0; c < colCount-2; c++) {
+				Config n = copy();
+				boolean res = n.insert(car, Orientation.LEFTRIGHT, 3, r, c);
+				if (res) {
+					placements.add(n);
+				}
+			}
+		}
+		
+		for (int r = 0; r < rowCount-2; r++) {
+			for (int c = 0; c < colCount; c++) {
+				Config n = copy();
+				boolean res = n.insert('R', Orientation.UPDOWN, 3, r, c);
+				if (res) {
+					placements.add(n);
+				}
+			}
+		}
+		
+		return placements;
+	}
+	
+	/*
+	 * assuming a left-right red car, which rows are winnable?
+	 */
+	boolean isWinnableRow(int r) {
+		
+		/*
+		 * which rows are winnable?
+		 * if exit is on sides 1 or 3, then exitRow 
+		 */
+		
+		if (exit[0] == -1 || exit[0] == rowCount) {
+			// exit is side 0 or 2
+			if (ini[(rowCount-1 - exit[0])+1][exit[1]+1] == 'J') {
+				
+				int other = matchingJRow(rowCount-1 - exit[0], exit[1]);
+				return r == jJoints[other][0];
+				
+			} else {
+				
+				if (ini[(rowCount-1 - exit[0])+1][exit[1]+1] == 'K') {
+					
+					int other = matchingKRow(rowCount-1 - exit[0], exit[1]);
+					return r == kJoints[other][0];
+					
+				} else {
+					return false;
+				}
+				
+			}
+			
+		} else {
+			assert exit[1] == -1 || exit[1] == colCount;
+			// exit is side 1 or 3
+			return r == exit[0];
+		}
+		
+	}
+	
+	/*
+	 * assuming up-down car, which cols are winnable?
+	 */
+	boolean isWinnableCol(int c) {
+		
+		if (exit[1] == -1 || exit[1] == colCount) {
+			
+			if (ini[exit[0]+1][(colCount-1 - exit[1])+1] == 'J') {
+				
+				int other = matchingJRow(exit[0], colCount-1 - exit[1]);
+				return c == jJoints[other][1];
+				
+			} else {
+				
+				if (ini[exit[0]+1][(colCount-1 - exit[1])+1] == 'K') {
+					
+					int other = matchingKRow(exit[0], colCount-1 - exit[1]);
+					return c == kJoints[other][1];
+					
+				} else {
+					return false;
+				}
+				
+			}
+			
+			
+		} else {
+			assert exit[0] == -1 || exit[0] == rowCount;
+			
+			return c == exit[1];
+		}
+		
 	}
 	
 	int matchingJRow(int r, int c) {
@@ -595,24 +806,24 @@ public class Config {
 			case 2:
 				if (ini[mR+1+1][mC+1] == 'X' && ini[mR+1+2][mC+1] == 'X') {
 					Config newConfig = copy();
-					CarInfo newInfo = newConfig.carMap.get(c);
+//					CarInfo newInfo = newConfig.carMap.get(c);
 					newConfig.clear(c);
-					newInfo.row = mR+1;
-					newInfo.col = mC;
-					newInfo.o = Orientation.UPDOWN;
-					newConfig.insert(c, newInfo);
+//					newInfo.row = mR+1;
+//					newInfo.col = mC;
+//					newInfo.o = Orientation.UPDOWN;
+					newConfig.insert(c, Orientation.UPDOWN, 2, mR+1, mC);
 					moves.add(newConfig);
 				}
 				break;
 			case 3:
 				if (ini[mR+1+1][mC+1] == 'X' && ini[mR+1+2][mC+1] == 'X' && ini[mR+1+3][mC+1] == 'X') {
 					Config newConfig = copy();
-					CarInfo newInfo = newConfig.carMap.get(c);
+//					CarInfo newInfo = newConfig.carMap.get(c);
 					newConfig.clear(c);
-					newInfo.row = mR+1;
-					newInfo.col = mC;
-					newInfo.o = Orientation.UPDOWN;
-					newConfig.insert(c, newInfo);
+//					newInfo.row = mR+1;
+//					newInfo.col = mC;
+//					newInfo.o = Orientation.UPDOWN;
+					newConfig.insert(c, Orientation.UPDOWN, 3, mR+1, mC);
 					moves.add(newConfig);
 				}
 				break;
@@ -626,24 +837,24 @@ public class Config {
 			case 2:
 				if (ini[mR+1][mC-2+1] == 'X' && ini[mR+1][mC-1+1] == 'X') {
 					Config newConfig = copy();
-					CarInfo newInfo = newConfig.carMap.get(c);
+//					CarInfo newInfo = newConfig.carMap.get(c);
 					newConfig.clear(c);
-					newInfo.row = mR;
-					newInfo.col = mC-2;
-					newInfo.o = Orientation.LEFTRIGHT;
-					newConfig.insert(c, newInfo);
+//					newInfo.row = mR;
+//					newInfo.col = mC-2;
+//					newInfo.o = Orientation.LEFTRIGHT;
+					newConfig.insert(c, Orientation.LEFTRIGHT, 2, mR, mC-2);
 					moves.add(newConfig);
 				}
 				break;
 			case 3:
 				if (ini[mR+1][mC-3+1] == 'X' && ini[mR+1][mC-2+1] == 'X' && ini[mR+1][mC-1+1] == 'X') {
 					Config newConfig = copy();
-					CarInfo newInfo = newConfig.carMap.get(c);
+//					CarInfo newInfo = newConfig.carMap.get(c);
 					newConfig.clear(c);
-					newInfo.row = mR;
-					newInfo.col = mC-3;
-					newInfo.o = Orientation.LEFTRIGHT;
-					newConfig.insert(c, newInfo);
+//					newInfo.row = mR;
+//					newInfo.col = mC-3;
+//					newInfo.o = Orientation.LEFTRIGHT;
+					newConfig.insert(c, Orientation.LEFTRIGHT, 3, mR, mC-3);
 					moves.add(newConfig);
 				}
 				break;
@@ -657,24 +868,24 @@ public class Config {
 			case 2:
 				if (ini[mR-2+1][mC+1] == 'X' && ini[mR-1+1][mC+1] == 'X') {
 					Config newConfig = copy();
-					CarInfo newInfo = newConfig.carMap.get(c);
+//					CarInfo newInfo = newConfig.carMap.get(c);
 					newConfig.clear(c);
-					newInfo.row = mR-2;
-					newInfo.col = mC;
-					newInfo.o = Orientation.UPDOWN;
-					newConfig.insert(c, newInfo);
+//					newInfo.row = mR-2;
+//					newInfo.col = mC;
+//					newInfo.o = Orientation.UPDOWN;
+					newConfig.insert(c, Orientation.UPDOWN, 2, mR-2, mC);
 					moves.add(newConfig);
 				}
 				break;
 			case 3:
 				if (ini[mR-3+1][mC+1] == 'X' && ini[mR-2+1][mC+1] == 'X' && ini[mR-1+1][mC+1] == 'X') {
 					Config newConfig = copy();
-					CarInfo newInfo = newConfig.carMap.get(c);
+//					CarInfo newInfo = newConfig.carMap.get(c);
 					newConfig.clear(c);
-					newInfo.row = mR-3;
-					newInfo.col = mC;
-					newInfo.o = Orientation.UPDOWN;
-					newConfig.insert(c, newInfo);
+//					newInfo.row = mR-3;
+//					newInfo.col = mC;
+//					newInfo.o = Orientation.UPDOWN;
+					newConfig.insert(c, Orientation.UPDOWN, 3, mR-3, mC);
 					moves.add(newConfig);
 				}
 				break;
@@ -688,24 +899,24 @@ public class Config {
 			case 2:
 				if (ini[mR+1][mC+1+1] == 'X' && ini[mR+1][mC+2+1] == 'X') {
 					Config newConfig = copy();
-					CarInfo newInfo = newConfig.carMap.get(c);
+//					CarInfo newInfo = newConfig.carMap.get(c);
 					newConfig.clear(c);
-					newInfo.row = mR;
-					newInfo.col = mC+1;
-					newInfo.o = Orientation.LEFTRIGHT;
-					newConfig.insert(c, newInfo);
+//					newInfo.row = mR;
+//					newInfo.col = mC+1;
+//					newInfo.o = Orientation.LEFTRIGHT;
+					newConfig.insert(c, Orientation.LEFTRIGHT, 2, mR, mC+1);
 					moves.add(newConfig);
 				}
 				break;
 			case 3:
 				if (ini[mR+1][mC+1+1] == 'X' && ini[mR+1][mC+2+1] == 'X' && ini[mR+1][mC+3+1] == 'X') {
 					Config newConfig = copy();
-					CarInfo newInfo = newConfig.carMap.get(c);
+//					CarInfo newInfo = newConfig.carMap.get(c);
 					newConfig.clear(c);
-					newInfo.row = mR;
-					newInfo.col = mC+1;
-					newInfo.o = Orientation.LEFTRIGHT;
-					newConfig.insert(c, newInfo);
+//					newInfo.row = mR;
+//					newInfo.col = mC+1;
+//					newInfo.o = Orientation.LEFTRIGHT;
+					newConfig.insert(c, Orientation.LEFTRIGHT, 3, mR, mC+1);
 					moves.add(newConfig);
 				}
 				break;
@@ -723,32 +934,32 @@ public class Config {
 	
 	
 	
-	boolean isWinnableSet;
-	boolean isWinnable;
+//	boolean isWinnableSet;
+//	boolean isWinnable;
 	
-	public boolean isWinnable() {
-		if (!isWinnableSet) {
-			if (winning) {
-				isWinnable = true;
-				isWinnableSet = true;
-				return true;
-			}
-			List<Config> possibleMoves = possibleMoves();
-			for (Config c : possibleMoves) {
-				if (c.isWinnable()) {
-					isWinnable = true;
-					isWinnableSet = true;
-					return true;
-				}
-			}
-			isWinnable = false;
-			isWinnableSet = true;
-			return false;
-		}
-		return isWinnable;
-	}
+//	public boolean isWinnable(Map<Config, Boolean> winnableMap) {
+//		if (!isWinnableSet) {
+//			if (winning) {
+//				isWinnable = true;
+//				isWinnableSet = true;
+//				return true;
+//			}
+//			List<Config> possibleMoves = possibleMoves();
+//			for (Config c : possibleMoves) {
+//				if (c.isWinnable()) {
+//					isWinnable = true;
+//					isWinnableSet = true;
+//					return true;
+//				}
+//			}
+//			isWinnable = false;
+//			isWinnableSet = true;
+//			return false;
+//		}
+//		return isWinnable;
+//	}
 	
-	public static Config randomConfig() {
+	public static Config randomBlankConfig() {
 		
 		char[][] ini = new char[8][8];
 		for (int i = 0; i < ini.length; i++) {
@@ -763,7 +974,6 @@ public class Config {
 		
 		Config c = new Config(ini);
 		
-		Random rand = new Random();
 		int exitSide = rand.nextInt(4);
 		int exitRow = -1;
 		int exitCol = -1;
@@ -787,28 +997,6 @@ public class Config {
 		}
 		
 		c.setExit(exitRow, exitCol);
-		
-		/*
-		 * red car
-		 */
-		CarInfo redInfo = new CarInfo();
-		redInfo.size = 2;
-		int redR;
-		int redC;
-		int redOrientation = rand.nextInt(2);
-		if (redOrientation == 0) {
-			redInfo.o = Orientation.LEFTRIGHT;
-			redR = rand.nextInt(ini.length-2);
-			redC = rand.nextInt(ini[0].length-3);
-		} else {
-			redInfo.o = Orientation.UPDOWN;
-			redR = rand.nextInt(ini.length-3);
-			redC = rand.nextInt(ini[0].length-2);
-		}
-		redInfo.row = redR;
-		redInfo.col = redC;
-		c.insert('R', redInfo);
-		
 		
 		if (rand.nextBoolean()) {
 			/*
@@ -876,6 +1064,7 @@ public class Config {
 			c.jJoints[1][2] = jside1;
 			c.ini[js1R+1][js1C+1] = 'J';
 			
+			c.jCount = 2;
 			
 			if (rand.nextBoolean()) {
 				/*
@@ -1092,46 +1281,79 @@ public class Config {
 				c.kJoints[1][1] = ks1C;
 				c.kJoints[1][2] = kside1;
 				c.ini[ks1R+1][ks1C+1] = 'K';
+				
+				c.kCount = 2;
+				
 			}
-		}
-		
-//		char[] cars = new char[] { 'A', 'B', 'C', 'D', 'E', 'F', 'G'};
-		char[] cars = new char[] { 'A', 'B'};
-//		int currentCar = 0;
-		for (int currentCar = 0; currentCar < cars.length; currentCar++) {
-//			if (rand.nextBoolean()) {
-//				break;
-//			}
-//			if (currentCar == cars.length) {
-//				break;
-//			}
-			for (int i = 0; i < 1000; i++) {
-				CarInfo info = new CarInfo();
-				info.size = rand.nextInt(2)+2;
-				int row;
-				int col;
-				int o = rand.nextInt(2);
-				if (o == 0) {
-					info.o = Orientation.LEFTRIGHT;
-					row = rand.nextInt(ini.length-2);
-					col = rand.nextInt(ini[0].length-3);
-				} else {
-					info.o = Orientation.UPDOWN;
-					row = rand.nextInt(ini.length-3);
-					col = rand.nextInt(ini[0].length-2);
-				}
-				info.row = row;
-				info.col = col;
-				boolean res = c.insert(cars[currentCar], info);
-				if (res) {
-					break;
-				}
-			}
-//			currentCar++;
 		}
 		
 		return c;
 	}
+	
+//	public void insertRandomRed(Config c) {
+//		/*
+//		 * red car
+//		 */
+//		CarInfo redInfo = new CarInfo();
+//		redInfo.size = 2;
+//		int redR;
+//		int redC;
+//		int redOrientation = rand.nextInt(2);
+//		if (redOrientation == 0) {
+//			redInfo.o = Orientation.LEFTRIGHT;
+//			redR = rand.nextInt(ini.length-2);
+//			redC = rand.nextInt(ini[0].length-3);
+//		} else {
+//			redInfo.o = Orientation.UPDOWN;
+//			redR = rand.nextInt(ini.length-3);
+//			redC = rand.nextInt(ini[0].length-2);
+//		}
+//		redInfo.row = redR;
+//		redInfo.col = redC;
+//		c.insert('R', redInfo);	
+//	}
+	
+//	public void insertRandomCar(Config c) {
+////		char[] cars = new char[] { 'A', 'B', 'C', 'D', 'E', 'F', 'G'};
+//		char[] cars = new char[] { 'A', 'B'};
+////		int currentCar = 0;
+//		for (int currentCar = 0; currentCar < cars.length; currentCar++) {
+////			if (rand.nextBoolean()) {
+////				break;
+////			}
+////			if (currentCar == cars.length) {
+////				break;
+////			}
+//			for (int i = 0; i < 1000; i++) {
+//				CarInfo info = new CarInfo();
+//				info.size = rand.nextInt(2)+2;
+//				int row;
+//				int col;
+//				int o = rand.nextInt(2);
+//				if (o == 0) {
+//					info.o = Orientation.LEFTRIGHT;
+//					row = rand.nextInt(ini.length-2);
+//					col = rand.nextInt(ini[0].length-3);
+//				} else {
+//					info.o = Orientation.UPDOWN;
+//					row = rand.nextInt(ini.length-3);
+//					col = rand.nextInt(ini[0].length-2);
+//				}
+//				info.row = row;
+//				info.col = col;
+//				boolean res = c.insert(cars[currentCar], info);
+//				if (res) {
+//					break;
+//				}
+//			}
+////			currentCar++;
+//		}
+//		
+//	}
+	
+//	public boolean quickWinnableCheck() {
+//		
+//	}
 	
 	public String toString() {
 		

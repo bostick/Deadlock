@@ -58,23 +58,19 @@ public class Solver {
 	
 	public static void main(String[] args) {
 		
-		Map<Config, Config> explored = new HashMap<Config, Config>();
+		Config blank = Config.randomBlankConfig();
 		
-		Config bestConfig = null;
-		int bestConfigMoves = -1;
-		
-		while (true) {
-			Config c = Config.randomConfig();
-			int m = movesToWin(c, explored);
-			
-			if (m != -1 && m > bestConfigMoves) {
-				bestConfig = c;
-				bestConfigMoves = m;
-				System.out.println("moves: " + m);
-				System.out.println(bestConfig);
-				System.out.println();
+		int i = 0;
+		List<Config> possibleRedCarPlacements = blank.possibleRedCarPlacements();
+		for (Config c : possibleRedCarPlacements) {
+			List<Config> possible2CarPlacements = c.possible2CarPlacements();
+			for (Config d : possible2CarPlacements) {
+				List<Config> possible3CarPlacements = d.possible3CarPlacements();
+				for (Config e : possible3CarPlacements) {
+					System.out.println(i);
+					i++;
+				}
 			}
-			
 		}
 		
 	}

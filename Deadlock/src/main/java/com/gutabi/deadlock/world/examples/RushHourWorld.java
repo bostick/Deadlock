@@ -1,7 +1,5 @@
 package com.gutabi.deadlock.world.examples;
 
-import solver.Config;
-
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.world.QuadrantMap;
 import com.gutabi.deadlock.world.World;
