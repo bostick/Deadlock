@@ -1,6 +1,47 @@
 
+ini accessors
+acrossRows()
+acrossCols()
+across(int, int) -> char
+side(int, int) -> int
+
+
+
+pick some config that has both j and k and connects to Y
+
+adding red car: only add red car along winnable path (this is done)
+
+adding other cars: only add cars that interfere with red car, or that interfere with other cars
+cone of interference
+
+see what possibleMoves() returns
+
+pick better moves:
+for red car, go straight to exit if possible
+
+for other cars, some how be more intelligent?
+
+
+
+
+
+
+
+Config owns char[][] in ctor, so don't need to copy it
+
+
+
+
+
+
+
+
 arc tool
 segment tool
+change radius of stroke, drawing a tree, trunk is bigger than branches
+
+
+
 
 
 

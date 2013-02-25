@@ -39,14 +39,14 @@ public class Solver {
 //			{' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
 //	};
 	static char[][] boardIni = new char[][] {
-		{' ', ' ', ' ', ' ', 'J', ' ', ' ', ' '},
+		{' ', ' ', ' ', ' ', 'Y', ' ', ' ', ' '},
 		{' ', 'X', 'X', 'X', 'X', 'X', 'X', ' '},
 		{' ', 'X', 'X', 'X', 'X', 'X', 'X', ' '},
-		{'J', 'X', 'X', 'X', 'X', 'X', 'X', 'Y'},
 		{' ', 'X', 'X', 'X', 'X', 'X', 'X', ' '},
 		{' ', 'X', 'X', 'X', 'X', 'X', 'X', ' '},
-		{'K', 'X', 'X', 'X', 'X', 'R', 'R', ' '},
-		{' ', ' ', ' ', ' ', 'K', ' ', ' ', ' '},
+		{' ', 'X', 'X', 'X', 'X', 'X', 'X', ' '},
+		{'K', 'X', 'X', 'X', 'X', 'X', 'X', 'J'},
+		{' ', ' ', ' ', ' ', 'K', ' ', 'J', ' '},
 	};
 	
 	enum Orientation {
@@ -58,20 +58,33 @@ public class Solver {
 	
 	public static void main(String[] args) {
 		
-		Config blank = Config.randomBlankConfig();
+		int mostMoves = -1;
+		Config best = null;
 		
-		int i = 0;
+//		Config blank = Config.randomBlankConfig();
+		Config blank = new Config(boardIni);
+		
 		List<Config> possibleRedCarPlacements = blank.possibleRedCarPlacements();
 		for (Config c : possibleRedCarPlacements) {
 			List<Config> possible2CarPlacements = c.possible2CarPlacements();
 			for (Config d : possible2CarPlacements) {
 				List<Config> possible3CarPlacements = d.possible3CarPlacements();
 				for (Config e : possible3CarPlacements) {
-					System.out.println(i);
-					i++;
+					
+					Map<Config, Config> explored = new HashMap<Config, Config>();
+					
+					int mtw = movesToWin(e, explored);
+					
+					if (mtw > mostMoves) {
+						mostMoves = mtw;
+						best = e;
+					}
 				}
 			}
 		}
+		
+		String.class.getName();
+		best.copy();
 		
 	}
 	
@@ -80,7 +93,7 @@ public class Solver {
 		Config shortestWinner = null;
 		int shortestWinnerLength = Integer.MAX_VALUE;
 		for (Config c : explored.keySet()) {
-			if (c.winning) {
+			if (c.isWinning()) {
 				
 				Config d = c;
 				int length = 0;
@@ -108,12 +121,14 @@ public class Solver {
 //		Config shortestWinner = null;
 		int shortestWinnerLength = Integer.MAX_VALUE;
 		for (Config c : explored.keySet()) {
-			if (c.winning) {
+			if (c.isWinning()) {
 				
 				Config d = c;
-				int length = 0;
-				while (d != null) {
-					d = explored.get(d);
+				int length = 1;
+				while (!d.equals(start)) {
+					Config g = explored.get(d);
+					assert g != null;
+					d = g;
 					length++;
 				}
 				
