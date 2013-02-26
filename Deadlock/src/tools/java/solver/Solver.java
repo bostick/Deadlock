@@ -1,8 +1,10 @@
 package solver;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 
 public class Solver {
@@ -64,36 +66,58 @@ public class Solver {
 		/*
 		 * Config -> Config for shortest path to a winning config
 		 */
-//		Map<Config, Config> globalWinningMap = new HashMap<Config, Config>();
+		Map<Config, Config> globalExplored = new HashMap<Config, Config>();
 		
 //		Config blank = Config.randomBlankConfig();
 		Config blank = new Config(boardIni);
 		
+		char[][] testIni = new char[][] {
+				{' ', ' ', ' ', ' ', 'Y', ' ', ' ', ' '},
+				{' ', 'X', 'X', 'A', 'A', 'X', 'R', ' '},
+				{' ', 'X', 'X', 'X', 'X', 'X', 'R', ' '},
+				{' ', 'X', 'X', 'X', 'X', 'X', 'X', ' '},
+				{' ', 'X', 'X', 'X', 'X', 'B', 'X', ' '},
+				{' ', 'X', 'X', 'X', 'X', 'B', 'X', ' '},
+				{'K', 'X', 'X', 'X', 'X', 'B', 'X', 'J'},
+				{' ', ' ', ' ', ' ', 'K', ' ', 'J', ' '},
+			};
+		Config test = new Config(testIni);
+		
 		List<Config> possibleRedCarPlacements = blank.possibleRedCarPlacements();
-		for (Config c : possibleRedCarPlacements) {
+		for (int i = 0; i < possibleRedCarPlacements.size(); i++) {
+			Config c = possibleRedCarPlacements.get(i);
+			
 			List<Config> possible2CarPlacements = c.possible2CarPlacements();
-			for (Config d : possible2CarPlacements) {
+			for (int j = 0; j < possible2CarPlacements.size(); j++) {
+				Config d = possible2CarPlacements.get(j);
+				
 				List<Config> possible3CarPlacements = d.possible3CarPlacements();
-				for (Config e : possible3CarPlacements) {
+				for (int k = 0; k < possible3CarPlacements.size(); k++) {
+					Config e = possible3CarPlacements.get(k);
 					
-//					if (globalWinningMap.containsKey(e)) {
-//						
-//					} else {
+					if (e.equals(test)) {
+						String.class.getName();
+					}
+					
+					if (!globalExplored.containsKey(e)) {
 						
 						Map<Config, Config> explored = new HashMap<Config, Config>();
 						
 						explore(e, null, explored);
 						
-						int mtw = movesToWin(e, explored);
+						int mtw = movesToWin(e, explored, globalExplored);
 						
 						if (mtw > mostMoves) {
+							mostMoves = mtw;
+							best = e;
 							System.out.println(mtw);
 							System.out.println(e);
 							System.out.println();
-							mostMoves = mtw;
-							best = e;
 						}
-//					}
+						
+					} else {
+						
+					}
 					
 				}
 			}
@@ -104,36 +128,44 @@ public class Solver {
 		
 	}
 	
-	public static Config shortestWinner(Map<Config, Config> explored) {
+//	public static Config shortestWinner(Map<Config, Config> explored) {
+//		
+//		Config shortestWinner = null;
+//		int shortestWinnerLength = Integer.MAX_VALUE;
+//		for (Config c : explored.keySet()) {
+//			if (c.isWinning()) {
+//				
+//				Config d = c;
+//				int length = 0;
+//				while (d != null) {
+//					d = explored.get(d);
+//					length++;
+//				}
+//				
+//				if (length < shortestWinnerLength) {
+//					shortestWinner = c;
+//					shortestWinnerLength = length;
+//				}
+//				
+//			}
+//		}
+//		
+//		return shortestWinner;
+//		
+//	}
+	
+	/*
+	 * iterates through exploredFromStart
+	 */
+	public static int movesToWin(Config start, Map<Config, Config> exploredFromStart, Map<Config, Config> globalExplored) {
 		
 		Config shortestWinner = null;
-		int shortestWinnerLength = Integer.MAX_VALUE;
-		for (Config c : explored.keySet()) {
-			if (c.isWinning()) {
-				
-				Config d = c;
-				int length = 0;
-				while (d != null) {
-					d = explored.get(d);
-					length++;
-				}
-				
-				if (length < shortestWinnerLength) {
-					shortestWinner = c;
-					shortestWinnerLength = length;
-				}
-				
-			}
-		}
-		
-		return shortestWinner;
-		
-	}
-	
-	public static int movesToWin(Config start, Map<Config, Config> exploredFromStart) {
 		
 		int shortestWinnerLength = Integer.MAX_VALUE;
 		for (Config c : exploredFromStart.keySet()) {
+			
+			globalExplored.put(c, null);
+			
 			if (c.isWinning()) {
 				
 				Config d = c;
@@ -147,6 +179,7 @@ public class Solver {
 				
 				if (length < shortestWinnerLength) {
 					shortestWinnerLength = length;
+					shortestWinner = c;
 				}
 				
 			}
