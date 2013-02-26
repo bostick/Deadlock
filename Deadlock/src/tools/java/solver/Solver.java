@@ -61,6 +61,11 @@ public class Solver {
 		int mostMoves = -1;
 		Config best = null;
 		
+		/*
+		 * Config -> Config for shortest path to a winning config
+		 */
+//		Map<Config, Config> globalWinningMap = new HashMap<Config, Config>();
+		
 //		Config blank = Config.randomBlankConfig();
 		Config blank = new Config(boardIni);
 		
@@ -71,14 +76,25 @@ public class Solver {
 				List<Config> possible3CarPlacements = d.possible3CarPlacements();
 				for (Config e : possible3CarPlacements) {
 					
-					Map<Config, Config> explored = new HashMap<Config, Config>();
+//					if (globalWinningMap.containsKey(e)) {
+//						
+//					} else {
+						
+						Map<Config, Config> explored = new HashMap<Config, Config>();
+						
+						explore(e, null, explored);
+						
+						int mtw = movesToWin(e, explored);
+						
+						if (mtw > mostMoves) {
+							System.out.println(mtw);
+							System.out.println(e);
+							System.out.println();
+							mostMoves = mtw;
+							best = e;
+						}
+//					}
 					
-					int mtw = movesToWin(e, explored);
-					
-					if (mtw > mostMoves) {
-						mostMoves = mtw;
-						best = e;
-					}
 				}
 			}
 		}
@@ -114,26 +130,22 @@ public class Solver {
 		
 	}
 	
-	public static int movesToWin(Config start, Map<Config, Config> explored) {
+	public static int movesToWin(Config start, Map<Config, Config> exploredFromStart) {
 		
-		explore(start, null, explored);
-		
-//		Config shortestWinner = null;
 		int shortestWinnerLength = Integer.MAX_VALUE;
-		for (Config c : explored.keySet()) {
+		for (Config c : exploredFromStart.keySet()) {
 			if (c.isWinning()) {
 				
 				Config d = c;
 				int length = 1;
 				while (!d.equals(start)) {
-					Config g = explored.get(d);
+					Config g = exploredFromStart.get(d);
 					assert g != null;
 					d = g;
 					length++;
 				}
 				
 				if (length < shortestWinnerLength) {
-//					shortestWinner = c;
 					shortestWinnerLength = length;
 				}
 				
