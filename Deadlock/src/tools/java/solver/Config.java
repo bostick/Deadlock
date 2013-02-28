@@ -8,8 +8,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
 
-import solver.Solver.Orientation;
-
 public class Config {
 	
 	public static Random rand = new Random();
@@ -50,7 +48,7 @@ public class Config {
 	
 	List<Config> possibleMoves;
 	
-	char[] cars = new char[] { 'A', 'B', 'C', 'D', 'E', 'F', 'G' };
+	static char[] cars = new char[] { 'A', 'B', 'C', 'D', 'E', 'F', 'G' };
 	
 	public Config(String boardIni, int i, int j) {
 		this(toCharMatrix(boardIni, i, j));
@@ -1054,159 +1052,159 @@ public class Config {
 		
 		List<Config> moves = new ArrayList<Config>();
 		
-		if (isWinning()) {
-			possibleMoves = moves;
-			return;
-		}
+//		if (isWinning()) {
+//			possibleMoves = moves;
+//			return;
+//		}
 		
-		if (isClearPathToExit()) {
-			
-			int currentMovesToWin = numberMovesToWin();
-			Config best = null;
-			
-			CarInfo info = carMap.get('R');
-			switch (info.o) {
-			case LEFTRIGHT:
-				if (ini[info.row+1][info.col-1+1] == 'X') {
-					Config newConfig = copy();
-					newConfig.clear('R');
-					newConfig.insert('R', info.o, info.size, info.row, info.col-1);
-					
-					if (newConfig.numberMovesToWin() < currentMovesToWin) {
-						best = newConfig;
-					}
-				}
-				if (ini[info.row+1][info.col+2+1] == 'X') {
-					Config newConfig = copy();
-					newConfig.clear('R');
-					newConfig.insert('R', info.o, info.size, info.row, info.col+1);
-
-					if (newConfig.numberMovesToWin() < currentMovesToWin) {
-						best = newConfig;
-					}
-				}
-				if (ini[info.row+1][info.col-1+1] == 'J') {
-					int matchingJ = matchingJRow(info.row, info.col-1);
-					Config newConfig = tryJoint('R', jJoints, matchingJ);
-					if (newConfig != null && newConfig.numberMovesToWin() < currentMovesToWin) {
-						best = newConfig;
-					}
-				}
-				if (ini[info.row+1][info.col+2+1] == 'J') {
-					int matchingJ = matchingJRow(info.row, info.col+2);
-					Config newConfig = tryJoint('R', jJoints, matchingJ);
-					if (newConfig != null && newConfig.numberMovesToWin() < currentMovesToWin) {
-						best = newConfig;
-					}
-				}
-				if (ini[info.row+1][info.col-1+1] == 'K') {
-					int matchingK = matchingKRow(info.row, info.col-1);
-					Config newConfig = tryJoint('R', kJoints, matchingK);
-					if (newConfig != null && newConfig.numberMovesToWin() < currentMovesToWin) {
-						best = newConfig;
-					}
-				}
-				if (ini[info.row+1][info.col+2+1] == 'K') {
-					int matchingK = matchingKRow(info.row, info.col+2);
-					Config newConfig = tryJoint('R', kJoints, matchingK);
-					if (newConfig != null && newConfig.numberMovesToWin() < currentMovesToWin) {
-						best = newConfig;
-					}
-				}
-				if (ini[info.row+1][info.col-1+1] == 'Y') {
-					Config newConfig = copy();
-					newConfig.clear('R');
-					newConfig.insert('R', info.o, info.size, info.row, info.col-1);
-					
-					if (newConfig.numberMovesToWin() < currentMovesToWin) {
-						best = newConfig;
-					}
-				}
-				if (ini[info.row+1][info.col+2+1] == 'Y') {
-					Config newConfig = copy();
-					newConfig.clear('R');
-					newConfig.insert('R', info.o, info.size, info.row, info.col+1);
-					
-					if (newConfig.numberMovesToWin() < currentMovesToWin) {
-						best = newConfig;
-					}
-				}
-				break;
-			case UPDOWN:
-				if (ini[info.row-1+1][info.col+1] == 'X') {
-					Config newConfig = copy();
-					newConfig.clear('R');
-					newConfig.insert('R', info.o, info.size, info.row-1, info.col);
-					
-					if (newConfig.numberMovesToWin() < currentMovesToWin) {
-						best = newConfig;
-					}
-				}
-				if (ini[info.row+2+1][info.col+1] == 'X') {
-					Config newConfig = copy();
-					newConfig.clear('R');
-					newConfig.insert('R', info.o, info.size, info.row+1, info.col);
-					
-					if (newConfig.numberMovesToWin() < currentMovesToWin) {
-						best = newConfig;
-					}
-				}
-				if (ini[info.row-1+1][info.col+1] == 'J') {
-					int matchingJ = matchingJRow(info.row-1, info.col);
-					Config newConfig = tryJoint('R', jJoints, matchingJ);
-					if (newConfig != null && newConfig.numberMovesToWin() < currentMovesToWin) {
-						best = newConfig;
-					}
-				}
-				if (ini[info.row+2+1][info.col+1] == 'J') {
-					int matchingJ = matchingJRow(info.row+2, info.col);
-					Config newConfig = tryJoint('R', jJoints, matchingJ);
-					if (newConfig != null && newConfig.numberMovesToWin() < currentMovesToWin) {
-						best = newConfig;
-					}
-				}
-				if (ini[info.row-1+1][info.col+1] == 'K') {
-					int matchingK = matchingKRow(info.row-1, info.col);
-					Config newConfig = tryJoint('R', kJoints, matchingK);
-					if (newConfig != null && newConfig.numberMovesToWin() < currentMovesToWin) {
-						best = newConfig;
-					}
-				}
-				if (ini[info.row+2+1][info.col+1] == 'K') {
-					int matchingK = matchingKRow(info.row+2, info.col);
-					Config newConfig = tryJoint('R', kJoints, matchingK);
-					if (newConfig != null && newConfig.numberMovesToWin() < currentMovesToWin) {
-						best = newConfig;
-					}
-				}
-				if (ini[info.row-1+1][info.col+1] == 'Y') {
-					Config newConfig = copy();
-					newConfig.clear('R');
-					newConfig.insert('R', info.o, info.size, info.row-1, info.col);
-					
-					if (newConfig.numberMovesToWin() < currentMovesToWin) {
-						best = newConfig;
-					}
-				}
-				if (ini[info.row+2+1][info.col+1] == 'Y') {
-					Config newConfig = copy();
-					newConfig.clear('R');
-					newConfig.insert('R', info.o, info.size, info.row+1, info.col);
-					
-					if (newConfig.numberMovesToWin() < currentMovesToWin) {
-						best = newConfig;
-					}
-				}
-				break;
-			}
-			
-			assert best != null;
-			
-			moves.add(best);
-			
-			possibleMoves = moves;
-			return;
-		}
+//		if (isClearPathToExit()) {
+//			
+//			int currentMovesToWin = numberMovesToWin();
+//			Config best = null;
+//			
+//			CarInfo info = carMap.get('R');
+//			switch (info.o) {
+//			case LEFTRIGHT:
+//				if (ini[info.row+1][info.col-1+1] == 'X') {
+//					Config newConfig = copy();
+//					newConfig.clear('R');
+//					newConfig.insert('R', info.o, info.size, info.row, info.col-1);
+//					
+//					if (newConfig.numberMovesToWin() < currentMovesToWin) {
+//						best = newConfig;
+//					}
+//				}
+//				if (ini[info.row+1][info.col+2+1] == 'X') {
+//					Config newConfig = copy();
+//					newConfig.clear('R');
+//					newConfig.insert('R', info.o, info.size, info.row, info.col+1);
+//
+//					if (newConfig.numberMovesToWin() < currentMovesToWin) {
+//						best = newConfig;
+//					}
+//				}
+//				if (ini[info.row+1][info.col-1+1] == 'J') {
+//					int matchingJ = matchingJRow(info.row, info.col-1);
+//					Config newConfig = tryJoint('R', jJoints, matchingJ);
+//					if (newConfig != null && newConfig.numberMovesToWin() < currentMovesToWin) {
+//						best = newConfig;
+//					}
+//				}
+//				if (ini[info.row+1][info.col+2+1] == 'J') {
+//					int matchingJ = matchingJRow(info.row, info.col+2);
+//					Config newConfig = tryJoint('R', jJoints, matchingJ);
+//					if (newConfig != null && newConfig.numberMovesToWin() < currentMovesToWin) {
+//						best = newConfig;
+//					}
+//				}
+//				if (ini[info.row+1][info.col-1+1] == 'K') {
+//					int matchingK = matchingKRow(info.row, info.col-1);
+//					Config newConfig = tryJoint('R', kJoints, matchingK);
+//					if (newConfig != null && newConfig.numberMovesToWin() < currentMovesToWin) {
+//						best = newConfig;
+//					}
+//				}
+//				if (ini[info.row+1][info.col+2+1] == 'K') {
+//					int matchingK = matchingKRow(info.row, info.col+2);
+//					Config newConfig = tryJoint('R', kJoints, matchingK);
+//					if (newConfig != null && newConfig.numberMovesToWin() < currentMovesToWin) {
+//						best = newConfig;
+//					}
+//				}
+//				if (ini[info.row+1][info.col-1+1] == 'Y') {
+//					Config newConfig = copy();
+//					newConfig.clear('R');
+//					newConfig.insert('R', info.o, info.size, info.row, info.col-1);
+//					
+//					if (newConfig.numberMovesToWin() < currentMovesToWin) {
+//						best = newConfig;
+//					}
+//				}
+//				if (ini[info.row+1][info.col+2+1] == 'Y') {
+//					Config newConfig = copy();
+//					newConfig.clear('R');
+//					newConfig.insert('R', info.o, info.size, info.row, info.col+1);
+//					
+//					if (newConfig.numberMovesToWin() < currentMovesToWin) {
+//						best = newConfig;
+//					}
+//				}
+//				break;
+//			case UPDOWN:
+//				if (ini[info.row-1+1][info.col+1] == 'X') {
+//					Config newConfig = copy();
+//					newConfig.clear('R');
+//					newConfig.insert('R', info.o, info.size, info.row-1, info.col);
+//					
+//					if (newConfig.numberMovesToWin() < currentMovesToWin) {
+//						best = newConfig;
+//					}
+//				}
+//				if (ini[info.row+2+1][info.col+1] == 'X') {
+//					Config newConfig = copy();
+//					newConfig.clear('R');
+//					newConfig.insert('R', info.o, info.size, info.row+1, info.col);
+//					
+//					if (newConfig.numberMovesToWin() < currentMovesToWin) {
+//						best = newConfig;
+//					}
+//				}
+//				if (ini[info.row-1+1][info.col+1] == 'J') {
+//					int matchingJ = matchingJRow(info.row-1, info.col);
+//					Config newConfig = tryJoint('R', jJoints, matchingJ);
+//					if (newConfig != null && newConfig.numberMovesToWin() < currentMovesToWin) {
+//						best = newConfig;
+//					}
+//				}
+//				if (ini[info.row+2+1][info.col+1] == 'J') {
+//					int matchingJ = matchingJRow(info.row+2, info.col);
+//					Config newConfig = tryJoint('R', jJoints, matchingJ);
+//					if (newConfig != null && newConfig.numberMovesToWin() < currentMovesToWin) {
+//						best = newConfig;
+//					}
+//				}
+//				if (ini[info.row-1+1][info.col+1] == 'K') {
+//					int matchingK = matchingKRow(info.row-1, info.col);
+//					Config newConfig = tryJoint('R', kJoints, matchingK);
+//					if (newConfig != null && newConfig.numberMovesToWin() < currentMovesToWin) {
+//						best = newConfig;
+//					}
+//				}
+//				if (ini[info.row+2+1][info.col+1] == 'K') {
+//					int matchingK = matchingKRow(info.row+2, info.col);
+//					Config newConfig = tryJoint('R', kJoints, matchingK);
+//					if (newConfig != null && newConfig.numberMovesToWin() < currentMovesToWin) {
+//						best = newConfig;
+//					}
+//				}
+//				if (ini[info.row-1+1][info.col+1] == 'Y') {
+//					Config newConfig = copy();
+//					newConfig.clear('R');
+//					newConfig.insert('R', info.o, info.size, info.row-1, info.col);
+//					
+//					if (newConfig.numberMovesToWin() < currentMovesToWin) {
+//						best = newConfig;
+//					}
+//				}
+//				if (ini[info.row+2+1][info.col+1] == 'Y') {
+//					Config newConfig = copy();
+//					newConfig.clear('R');
+//					newConfig.insert('R', info.o, info.size, info.row+1, info.col);
+//					
+//					if (newConfig.numberMovesToWin() < currentMovesToWin) {
+//						best = newConfig;
+//					}
+//				}
+//				break;
+//			}
+//			
+//			assert best != null;
+//			
+//			moves.add(best);
+//			
+//			possibleMoves = moves;
+//			return;
+//		}
 		
 		for (Entry<Character, CarInfo> entry : carMap.entrySet()) {
 			char c = entry.getKey();
@@ -1215,40 +1213,40 @@ public class Config {
 			case LEFTRIGHT:
 				switch (info.size) {
 				case 2:
-					if (ini[info.row+1][info.col-1+1] == 'X') {
+					if ((info.col-1 >= 0) && ini[info.row+1][info.col-1+1] == 'X') {
 						Config newConfig = copy();
 						newConfig.clear(c);
 						newConfig.insert(c, info.o, info.size, info.row, info.col-1);
 						moves.add(newConfig);
 					}
-					if (ini[info.row+1][info.col+2+1] == 'X') {
+					if ((info.col+2 <= colCount-1) && ini[info.row+1][info.col+2+1] == 'X') {
 						Config newConfig = copy();
 						newConfig.clear(c);
 						newConfig.insert(c, info.o, info.size, info.row, info.col+1);
 						moves.add(newConfig);
 					}
-					if (ini[info.row+1][info.col-1+1] == 'J') {
+					if ((info.col-1 == -1) && ini[info.row+1][info.col-1+1] == 'J') {
 						int matchingJ = matchingJRow(info.row, info.col-1);
 						Config newConfig = tryJoint(c, jJoints, matchingJ);
 						if (newConfig != null) {
 							moves.add(newConfig);
 						}
 					}
-					if (ini[info.row+1][info.col+2+1] == 'J') {
+					if ((info.col+2 == colCount) && ini[info.row+1][info.col+2+1] == 'J') {
 						int matchingJ = matchingJRow(info.row, info.col+2);
 						Config newConfig = tryJoint(c, jJoints, matchingJ);
 						if (newConfig != null) {
 							moves.add(newConfig);
 						}
 					}
-					if (ini[info.row+1][info.col-1+1] == 'K') {
+					if ((info.col-1 == -1) && ini[info.row+1][info.col-1+1] == 'K') {
 						int matchingK = matchingKRow(info.row, info.col-1);
 						Config newConfig = tryJoint(c, kJoints, matchingK);
 						if (newConfig != null) {
 							moves.add(newConfig);
 						}
 					}
-					if (ini[info.row+1][info.col+2+1] == 'K') {
+					if ((info.col+2 == colCount) && ini[info.row+1][info.col+2+1] == 'K') {
 						int matchingK = matchingKRow(info.row, info.col+2);
 						Config newConfig = tryJoint(c, kJoints, matchingK);
 						if (newConfig != null) {
@@ -1256,13 +1254,13 @@ public class Config {
 						}
 					}
 					if (c == 'R') {
-						if (ini[info.row+1][info.col-1+1] == 'Y') {
+						if ((info.col-1 == -1) && ini[info.row+1][info.col-1+1] == 'Y') {
 							Config newConfig = copy();
 							newConfig.clear(c);
 							newConfig.insert(c, info.o, info.size, info.row, info.col-1);
 							moves.add(newConfig);
 						}
-						if (ini[info.row+1][info.col+2+1] == 'Y') {
+						if ((info.col+2 == colCount) && ini[info.row+1][info.col+2+1] == 'Y') {
 							Config newConfig = copy();
 							newConfig.clear(c);
 							newConfig.insert(c, info.o, info.size, info.row, info.col+1);
@@ -1271,40 +1269,40 @@ public class Config {
 					}
 					break;
 				case 3:
-					if (ini[info.row+1][info.col-1+1] == 'X') {
+					if ((info.col-1 >= 0) && ini[info.row+1][info.col-1+1] == 'X') {
 						Config newConfig = copy();
 						newConfig.clear(c);
 						newConfig.insert(c, info.o, info.size, info.row, info.col-1);
 						moves.add(newConfig);
 					}
-					if (ini[info.row+1][info.col+3+1] == 'X') {
+					if ((info.col+3 <= colCount-1) && ini[info.row+1][info.col+3+1] == 'X') {
 						Config newConfig = copy();
 						newConfig.clear(c);
 						newConfig.insert(c, info.o, info.size, info.row, info.col+1);
 						moves.add(newConfig);
 					}
-					if (ini[info.row+1][info.col-1+1] == 'J') {
+					if ((info.col-1 == -1) && ini[info.row+1][info.col-1+1] == 'J') {
 						int matchingJ = matchingJRow(info.row, info.col-1);
 						Config newConfig = tryJoint(c, jJoints, matchingJ);
 						if (newConfig != null) {
 							moves.add(newConfig);
 						}
 					}
-					if (ini[info.row+1][info.col+3+1] == 'J') {
+					if ((info.col+3 == colCount) && ini[info.row+1][info.col+3+1] == 'J') {
 						int matchingJ = matchingJRow(info.row, info.col+3);
 						Config newConfig = tryJoint(c, jJoints, matchingJ);
 						if (newConfig != null) {
 							moves.add(newConfig);
 						}
 					}
-					if (ini[info.row+1][info.col-1+1] == 'K') {
+					if ((info.col-1 == -1) && ini[info.row+1][info.col-1+1] == 'K') {
 						int matchingK = matchingKRow(info.row, info.col-1);
 						Config newConfig = tryJoint(c, kJoints, matchingK);
 						if (newConfig != null) {
 							moves.add(newConfig);
 						}
 					}
-					if (ini[info.row+1][info.col+3+1] == 'K') {
+					if ((info.col+3 == colCount) && ini[info.row+1][info.col+3+1] == 'K') {
 						int matchingK = matchingKRow(info.row, info.col+3);
 						Config newConfig = tryJoint(c, kJoints, matchingK);
 						if (newConfig != null) {
@@ -1317,40 +1315,40 @@ public class Config {
 			case UPDOWN:
 				switch (info.size) {
 				case 2:
-					if (ini[info.row-1+1][info.col+1] == 'X') {
+					if ((info.row-1 >= 0) && ini[info.row-1+1][info.col+1] == 'X') {
 						Config newConfig = copy();
 						newConfig.clear(c);
 						newConfig.insert(c, info.o, info.size, info.row-1, info.col);
 						moves.add(newConfig);
 					}
-					if (ini[info.row+2+1][info.col+1] == 'X') {
+					if ((info.row+2 <= rowCount-1) && ini[info.row+2+1][info.col+1] == 'X') {
 						Config newConfig = copy();
 						newConfig.clear(c);
 						newConfig.insert(c, info.o, info.size, info.row+1, info.col);
 						moves.add(newConfig);
 					}
-					if (ini[info.row-1+1][info.col+1] == 'J') {
+					if ((info.row-1 == -1) && ini[info.row-1+1][info.col+1] == 'J') {
 						int matchingJ = matchingJRow(info.row-1, info.col);
 						Config newConfig = tryJoint(c, jJoints, matchingJ);
 						if (newConfig != null) {
 							moves.add(newConfig);
 						}
 					}
-					if (ini[info.row+2+1][info.col+1] == 'J') {
+					if ((info.row+2 == rowCount) && ini[info.row+2+1][info.col+1] == 'J') {
 						int matchingJ = matchingJRow(info.row+2, info.col);
 						Config newConfig = tryJoint(c, jJoints, matchingJ);
 						if (newConfig != null) {
 							moves.add(newConfig);
 						}
 					}
-					if (ini[info.row-1+1][info.col+1] == 'K') {
+					if ((info.row-1 == -1) && ini[info.row-1+1][info.col+1] == 'K') {
 						int matchingK = matchingKRow(info.row-1, info.col);
 						Config newConfig = tryJoint(c, kJoints, matchingK);
 						if (newConfig != null) {
 							moves.add(newConfig);
 						}
 					}
-					if (ini[info.row+2+1][info.col+1] == 'K') {
+					if ((info.row+2 == rowCount) && ini[info.row+2+1][info.col+1] == 'K') {
 						int matchingK = matchingKRow(info.row+2, info.col);
 						Config newConfig = tryJoint(c, kJoints, matchingK);
 						if (newConfig != null) {
@@ -1358,13 +1356,13 @@ public class Config {
 						}
 					}
 					if (c == 'R') {
-						if (ini[info.row-1+1][info.col+1] == 'Y') {
+						if ((info.row-1 == -1) && ini[info.row-1+1][info.col+1] == 'Y') {
 							Config newConfig = copy();
 							newConfig.clear(c);
 							newConfig.insert(c, info.o, info.size, info.row-1, info.col);
 							moves.add(newConfig);
 						}
-						if (ini[info.row+2+1][info.col+1] == 'Y') {
+						if ((info.row+2 == rowCount) && ini[info.row+2+1][info.col+1] == 'Y') {
 							Config newConfig = copy();
 							newConfig.clear(c);
 							newConfig.insert(c, info.o, info.size, info.row+1, info.col);
@@ -1373,40 +1371,40 @@ public class Config {
 					}
 					break;
 				case 3:
-					if (ini[info.row-1+1][info.col+1] == 'X') {
+					if ((info.row-1 >= 0) && ini[info.row-1+1][info.col+1] == 'X') {
 						Config newConfig = copy();
 						newConfig.clear(c);
 						newConfig.insert(c, info.o, info.size, info.row-1, info.col);
 						moves.add(newConfig);
 					}
-					if (ini[info.row+3+1][info.col+1] == 'X') {
+					if ((info.row+3 <= rowCount-1) && ini[info.row+3+1][info.col+1] == 'X') {
 						Config newConfig = copy();
 						newConfig.clear(c);
 						newConfig.insert(c, info.o, info.size, info.row+1, info.col);
 						moves.add(newConfig);
 					}
-					if (ini[info.row-1+1][info.col+1] == 'J') {
+					if ((info.row-1 == -1) && ini[info.row-1+1][info.col+1] == 'J') {
 						int matchingJ = matchingJRow(info.row-1, info.col);
 						Config newConfig = tryJoint(c, jJoints, matchingJ);
 						if (newConfig != null) {
 							moves.add(newConfig);
 						}
 					}
-					if (ini[info.row+3+1][info.col+1] == 'J') {
+					if ((info.row+3 == rowCount) && ini[info.row+3+1][info.col+1] == 'J') {
 						int matchingJ = matchingJRow(info.row+3, info.col);
 						Config newConfig = tryJoint(c, jJoints, matchingJ);
 						if (newConfig != null) {
 							moves.add(newConfig);
 						}
 					}
-					if (ini[info.row-1+1][info.col+1] == 'K') {
+					if ((info.row-1 == -1) && ini[info.row-1+1][info.col+1] == 'K') {
 						int matchingK = matchingKRow(info.row-1, info.col);
 						Config newConfig = tryJoint(c, kJoints, matchingK);
 						if (newConfig != null) {
 							moves.add(newConfig);
 						}
 					}
-					if (ini[info.row+3+1][info.col+1] == 'K') {
+					if ((info.row+3 == rowCount) && ini[info.row+3+1][info.col+1] == 'K') {
 						int matchingK = matchingKRow(info.row+3, info.col);
 						Config newConfig = tryJoint(c, kJoints, matchingK);
 						if (newConfig != null) {
@@ -1460,6 +1458,40 @@ public class Config {
 		}
 		
 		return placements;
+	}
+	
+	public Config redCarWinningConfig() {
+		
+		int side = side(exit);
+		
+		Config n;
+		boolean res;
+		
+		switch (side) {
+		case 0:
+			n = copy();
+			res = n.insert('R', Orientation.UPDOWN, 2, exit[0], exit[1]);
+			assert res;
+			return n;
+		case 1:
+			n = copy();
+			res = n.insert('R', Orientation.LEFTRIGHT, 2, exit[0], exit[1]-1);
+			assert res;
+			return n;
+		case 2:
+			n = copy();
+			res = n.insert('R', Orientation.UPDOWN, 2, exit[0]-1, exit[1]);
+			assert res;
+			return n;
+		case 3:
+			n = copy();
+			res = n.insert('R', Orientation.LEFTRIGHT, 2, exit[0], exit[1]);
+			assert res;
+			return n;
+		}
+		
+		assert false;
+		return null;
 	}
 	
 	public List<Config> possible2CarPlacements() {

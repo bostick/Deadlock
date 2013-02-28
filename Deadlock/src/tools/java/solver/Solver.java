@@ -51,13 +51,6 @@ public class Solver {
 		{' ', ' ', ' ', ' ', 'K', ' ', 'J', ' '},
 	};
 	
-	enum Orientation {
-		UPDOWN,
-		LEFTRIGHT
-	}
-	
-	
-	
 	public static void main(String[] args) {
 		
 		int mostMoves = -1;
@@ -105,14 +98,26 @@ public class Solver {
 						
 						explore(e, null, explored);
 						
-						int mtw = movesToWin(e, explored, globalExplored);
-						
-						if (mtw > mostMoves) {
-							mostMoves = mtw;
-							best = e;
-							System.out.println(mtw);
-							System.out.println(e);
-							System.out.println();
+						for (Config f : explored.keySet()) {
+							
+							globalExplored.put(f, null);
+							
+							int mtw = movesToWin(f, explored);
+							
+							if (mtw > mostMoves) {
+								
+//								if (mtw == 19) {
+//									
+//									String.class.getName();
+//								}
+								
+								mostMoves = mtw;
+								best = e;
+								System.out.println(mtw);
+								System.out.println(e);
+								System.out.println();
+							}
+							
 						}
 						
 					} else {
@@ -157,14 +162,15 @@ public class Solver {
 	/*
 	 * iterates through exploredFromStart
 	 */
-	public static int movesToWin(Config start, Map<Config, Config> exploredFromStart, Map<Config, Config> globalExplored) {
+	public static int movesToWin(Config start, Map<Config, Config> exploredFromStart) {
 		
-		Config shortestWinner = null;
+//		Config shortestWinner = null;
 		
 		int shortestWinnerLength = Integer.MAX_VALUE;
+		forLoop:
 		for (Config c : exploredFromStart.keySet()) {
 			
-			globalExplored.put(c, null);
+//			globalExplored.put(c, null);
 			
 			if (c.isWinning()) {
 				
@@ -172,17 +178,25 @@ public class Solver {
 				int length = 1;
 				while (!d.equals(start)) {
 					Config g = exploredFromStart.get(d);
-					assert g != null;
+//					globalExplored.put(g, d);
+					
+					if (g == null) {
+						continue forLoop;
+					}
+					
 					d = g;
 					length++;
 				}
 				
 				if (length < shortestWinnerLength) {
 					shortestWinnerLength = length;
-					shortestWinner = c;
+//					shortestWinner = c;
 				}
 				
+			} else {
+				
 			}
+			
 		}
 		
 		if (shortestWinnerLength == Integer.MAX_VALUE) {

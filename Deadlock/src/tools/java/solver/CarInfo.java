@@ -1,6 +1,5 @@
 package solver;
 
-import solver.Solver.Orientation;
 
 public class CarInfo {
 	Orientation o;
