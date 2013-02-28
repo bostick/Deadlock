@@ -10,10 +10,6 @@ import java.util.Random;
 
 public class Config {
 	
-//	public Config parent;
-//	public Set<Config> children = new HashSet<Config>();
-	
-	
 	public static Random rand = new Random();
 	
 	public final int rowCount;
@@ -513,10 +509,14 @@ public class Config {
 	
 	public Config copy() {
 		char[][] newIni = new char[ini.length][ini[0].length];
+//		for (int i = 0; i < newIni.length; i++) {
+//			for (int j = 0; j < newIni[i].length; j++) {
+//				newIni[i][j] = ini[i][j];
+//			}
+//		}
+		int cols = ini[0].length;
 		for (int i = 0; i < newIni.length; i++) {
-			for (int j = 0; j < newIni[i].length; j++) {
-				newIni[i][j] = ini[i][j];
-			}
+			System.arraycopy(ini[i], 0, newIni[i], 0, cols);
 		}
 		return new Config(newIni);
 	}

@@ -1,4 +1,10 @@
 
+Config.equals()
+
+store car-less configuration for quick equality checking
+equals: car-less configs are equal, and carMaps are equal
+
+
 
 
 

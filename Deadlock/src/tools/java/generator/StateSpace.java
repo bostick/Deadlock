@@ -23,12 +23,10 @@ public class StateSpace {
 	
 	public void remove(Config key, Config val) {
 		
-//		assert key.parent == val;
 		assert childrenMap.get(val).contains(key);
 		
 		boolean res = childrenMap.get(val).remove(key);
 		assert res;
-//		key.parent = null;
 		
 	}
 	
@@ -47,17 +45,9 @@ public class StateSpace {
 		} else {
 			dist = 0;
 		}
-//		key.parent = val;
 		
 		map.put(key, val);
 		
-		
-		if (key.hashCode() == 884982332 && dist == 229) {
-			String.class.getName();
-		}
-		if (key.hashCode() == -810170180 && dist == 232) {
-			String.class.getName();
-		}
 		Integer oldDist = distMap.put(key, dist);
 		
 		if (oldDist != null) {
@@ -84,9 +74,6 @@ public class StateSpace {
 		for (Config c : children) {
 			int oldDist = distMap.get(c);
 			
-			if (c.hashCode() == -810170180 && oldDist-diff == 232) {
-				String.class.getName();
-			}
 			distMap.put(c, oldDist-diff);
 			
 			updateChildren(c, diff);
@@ -100,7 +87,6 @@ public class StateSpace {
 	
 	public Config get(Config key) {
 		Config val = map.get(key);
-//		assert key.parent == val;
 		return val;
 	}
 	
