@@ -1,17 +1,4 @@
 
-rush hour and dijkstra's algorithm
-
-
-put red car in winning position
-create all combinations of 2car and 3car with red winning
-these are all of the winning configs
-for each winning config:
-	explore
-
-
-
-
-
 
 
 

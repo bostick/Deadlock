@@ -2,6 +2,7 @@ package generator;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import solver.Config;
 
@@ -36,13 +37,13 @@ public class Generator {
 			for (int j = 0; j < possible3CarPlacements.size(); j++) {
 				Config e = possible3CarPlacements.get(j);
 				
-//				winners.add(e);
-				List<Config> possible2CarPlacements2 = e.possible2CarPlacements();
-				for (int k = 0; k < possible2CarPlacements2.size(); k++) {
-					Config f = possible2CarPlacements2.get(k);
-					
-					winners.add(f);
-				}
+				winners.add(e);
+//				List<Config> possible2CarPlacements2 = e.possible2CarPlacements();
+//				for (int k = 0; k < possible2CarPlacements2.size(); k++) {
+//					Config f = possible2CarPlacements2.get(k);
+//					
+//					winners.add(f);
+//				}
 				
 			}
 		}
@@ -55,7 +56,7 @@ public class Generator {
 				System.out.print(".");
 			}
 			Config w = winners.get(i);
-			explored.put(w, null, 0);
+			explored.put(w, null);
 //			explored.put(w, null);
 		}
 		System.out.print(" " + (System.currentTimeMillis() - t) + " millis");
@@ -121,7 +122,7 @@ public class Generator {
 		System.out.println("hardest config:");
 		System.out.println(longestConfig);
 		
-		System.out.println("total time: " + (System.currentTimeMillis() - total));
+		System.out.println("total time: " + (System.currentTimeMillis() - total) + " millis");
 	}
 	
 	static public void explore(Config c, StateSpace explored) {
@@ -134,7 +135,10 @@ public class Generator {
 			
 			if (!explored.keySet().contains(m)) {
 				
-				explored.put(m, c, distanceToStart(c, explored)+1);
+				Set<Config> children = explored.childrenMap.get(c);
+				assert children == null || !children.contains(m);
+				
+				explored.put(m, c);
 //				explored.put(m, c);
 				explore(m, explored);
 			} else {
@@ -142,29 +146,47 @@ public class Generator {
 				int cDist = distanceToStart(c, explored);
 				int currentMPredDist = distanceToStart(currentMPred, explored);
 				if (cDist < currentMPredDist) {
-					
-					explored.put(m, c, cDist+1);
+					/*
+					 * update entire entry
+					 */
+					explored.remove(m, currentMPred);
+					explored.put(m, c);
 //					explored.put(m, c);
 					explore(m, explored);
+				} else if (cDist == currentMPredDist && explored.distMap.get(m) > cDist+1) {
+					/*
+					 * just update distmap (m is already )
+					 */
+					String.class.getName();
+					
 				}
 			} 
 		}
 	}
 	
 	public static int distanceToStart(Config c, StateSpace explored) {
-		int dist = 0;
-		Config d = c;
-		while (true) {
-			if (d.isWinning()) {
-				break;
-			}
-			dist++;
-			d = explored.get(d);		
-		}
+//		int dist = 0;
+//		Config d = c;
+//		while (true) {
+//			if (d.isWinning()) {
+//				break;
+//			}
+//			dist++;
+//			Config e = explored.get(d);
+//			assert explored.childrenMap.get(e).contains(d);
+//			d = e;
+//		}
 		
 		int testDist = explored.distanceToStart(c);
-		assert testDist == dist;
+//		if (testDist != dist) {
+//			
+//			Config dd = explored.get(c);
+//			distanceToStart(dd, explored);
+//			
+//			assert false;
+//		}
 		
-		return dist; 
+//		return dist;
+		return testDist;
 	}
 }

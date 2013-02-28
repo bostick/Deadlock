@@ -10,6 +10,10 @@ import java.util.Random;
 
 public class Config {
 	
+//	public Config parent;
+//	public Set<Config> children = new HashSet<Config>();
+	
+	
 	public static Random rand = new Random();
 	
 	public final int rowCount;
@@ -1215,12 +1219,14 @@ public class Config {
 				case 2:
 					if ((info.col-1 >= 0) && ini[info.row+1][info.col-1+1] == 'X') {
 						Config newConfig = copy();
+//						newConfig.parent = this;
 						newConfig.clear(c);
 						newConfig.insert(c, info.o, info.size, info.row, info.col-1);
 						moves.add(newConfig);
 					}
 					if ((info.col+2 <= colCount-1) && ini[info.row+1][info.col+2+1] == 'X') {
 						Config newConfig = copy();
+//						newConfig.parent = this;
 						newConfig.clear(c);
 						newConfig.insert(c, info.o, info.size, info.row, info.col+1);
 						moves.add(newConfig);
@@ -1256,12 +1262,14 @@ public class Config {
 					if (c == 'R') {
 						if ((info.col-1 == -1) && ini[info.row+1][info.col-1+1] == 'Y') {
 							Config newConfig = copy();
+//							newConfig.parent = this;
 							newConfig.clear(c);
 							newConfig.insert(c, info.o, info.size, info.row, info.col-1);
 							moves.add(newConfig);
 						}
 						if ((info.col+2 == colCount) && ini[info.row+1][info.col+2+1] == 'Y') {
 							Config newConfig = copy();
+//							newConfig.parent = this;
 							newConfig.clear(c);
 							newConfig.insert(c, info.o, info.size, info.row, info.col+1);
 							moves.add(newConfig);
@@ -1271,12 +1279,14 @@ public class Config {
 				case 3:
 					if ((info.col-1 >= 0) && ini[info.row+1][info.col-1+1] == 'X') {
 						Config newConfig = copy();
+//						newConfig.parent = this;
 						newConfig.clear(c);
 						newConfig.insert(c, info.o, info.size, info.row, info.col-1);
 						moves.add(newConfig);
 					}
 					if ((info.col+3 <= colCount-1) && ini[info.row+1][info.col+3+1] == 'X') {
 						Config newConfig = copy();
+//						newConfig.parent = this;
 						newConfig.clear(c);
 						newConfig.insert(c, info.o, info.size, info.row, info.col+1);
 						moves.add(newConfig);
@@ -1317,12 +1327,14 @@ public class Config {
 				case 2:
 					if ((info.row-1 >= 0) && ini[info.row-1+1][info.col+1] == 'X') {
 						Config newConfig = copy();
+//						newConfig.parent = this;
 						newConfig.clear(c);
 						newConfig.insert(c, info.o, info.size, info.row-1, info.col);
 						moves.add(newConfig);
 					}
 					if ((info.row+2 <= rowCount-1) && ini[info.row+2+1][info.col+1] == 'X') {
 						Config newConfig = copy();
+//						newConfig.parent = this;
 						newConfig.clear(c);
 						newConfig.insert(c, info.o, info.size, info.row+1, info.col);
 						moves.add(newConfig);
@@ -1358,12 +1370,14 @@ public class Config {
 					if (c == 'R') {
 						if ((info.row-1 == -1) && ini[info.row-1+1][info.col+1] == 'Y') {
 							Config newConfig = copy();
+//							newConfig.parent = this;
 							newConfig.clear(c);
 							newConfig.insert(c, info.o, info.size, info.row-1, info.col);
 							moves.add(newConfig);
 						}
 						if ((info.row+2 == rowCount) && ini[info.row+2+1][info.col+1] == 'Y') {
 							Config newConfig = copy();
+//							newConfig.parent = this;
 							newConfig.clear(c);
 							newConfig.insert(c, info.o, info.size, info.row+1, info.col);
 							moves.add(newConfig);
@@ -1373,12 +1387,14 @@ public class Config {
 				case 3:
 					if ((info.row-1 >= 0) && ini[info.row-1+1][info.col+1] == 'X') {
 						Config newConfig = copy();
+//						newConfig.parent = this;
 						newConfig.clear(c);
 						newConfig.insert(c, info.o, info.size, info.row-1, info.col);
 						moves.add(newConfig);
 					}
 					if ((info.row+3 <= rowCount-1) && ini[info.row+3+1][info.col+1] == 'X') {
 						Config newConfig = copy();
+//						newConfig.parent = this;
 						newConfig.clear(c);
 						newConfig.insert(c, info.o, info.size, info.row+1, info.col);
 						moves.add(newConfig);

@@ -129,7 +129,7 @@ public class Solver {
 		}
 		
 		String.class.getName();
-		best.copy();
+//		best.copy();
 		
 	}
 	
