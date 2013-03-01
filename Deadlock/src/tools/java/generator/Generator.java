@@ -125,7 +125,8 @@ public class Generator {
 	
 	static public void explore(Config c, StateSpace explored) {
 		
-		List<Config> moves = c.possibleMoves();
+		List<Config> moves = c.possiblePreviousMoves();
+		
 		for (Config m : moves) {
 			if (m.isWinning()) {
 				continue;
@@ -137,7 +138,7 @@ public class Generator {
 				assert children == null || !children.contains(m);
 				
 				explored.put(m, c);
-				explore(m, explored);
+//				explore(m, explored);
 			} else {
 				Config currentMPred = explored.get(m);
 				int cDist = distanceToStart(c, explored);
@@ -148,7 +149,7 @@ public class Generator {
 					 */
 					explored.remove(m, currentMPred);
 					explored.put(m, c);
-					explore(m, explored);
+//					explore(m, explored);
 				}
 			} 
 		}

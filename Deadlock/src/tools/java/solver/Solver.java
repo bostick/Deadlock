@@ -1,10 +1,6 @@
 package solver;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 
 public class Solver {
@@ -51,87 +47,87 @@ public class Solver {
 		{' ', ' ', ' ', ' ', 'K', ' ', 'J', ' '},
 	};
 	
-	public static void main(String[] args) {
-		
-		int mostMoves = -1;
-		Config best = null;
-		
-		/*
-		 * Config -> Config for shortest path to a winning config
-		 */
-		Map<Config, Config> globalExplored = new HashMap<Config, Config>();
-		
-//		Config blank = Config.randomBlankConfig();
-		Config blank = new Config(boardIni);
-		
-		char[][] testIni = new char[][] {
-				{' ', ' ', ' ', ' ', 'Y', ' ', ' ', ' '},
-				{' ', 'X', 'X', 'A', 'A', 'X', 'R', ' '},
-				{' ', 'X', 'X', 'X', 'X', 'X', 'R', ' '},
-				{' ', 'X', 'X', 'X', 'X', 'X', 'X', ' '},
-				{' ', 'X', 'X', 'X', 'X', 'B', 'X', ' '},
-				{' ', 'X', 'X', 'X', 'X', 'B', 'X', ' '},
-				{'K', 'X', 'X', 'X', 'X', 'B', 'X', 'J'},
-				{' ', ' ', ' ', ' ', 'K', ' ', 'J', ' '},
-			};
-		Config test = new Config(testIni);
-		
-		List<Config> possibleRedCarPlacements = blank.possibleRedCarPlacements();
-		for (int i = 0; i < possibleRedCarPlacements.size(); i++) {
-			Config c = possibleRedCarPlacements.get(i);
-			
-			List<Config> possible2CarPlacements = c.possible2CarPlacements();
-			for (int j = 0; j < possible2CarPlacements.size(); j++) {
-				Config d = possible2CarPlacements.get(j);
-				
-				List<Config> possible3CarPlacements = d.possible3CarPlacements();
-				for (int k = 0; k < possible3CarPlacements.size(); k++) {
-					Config e = possible3CarPlacements.get(k);
-					
-					if (e.equals(test)) {
-						String.class.getName();
-					}
-					
-					if (!globalExplored.containsKey(e)) {
-						
-						Map<Config, Config> explored = new HashMap<Config, Config>();
-						
-						explore(e, null, explored);
-						
-						for (Config f : explored.keySet()) {
-							
-							globalExplored.put(f, null);
-							
-							int mtw = movesToWin(f, explored);
-							
-							if (mtw > mostMoves) {
-								
-//								if (mtw == 19) {
-//									
-//									String.class.getName();
-//								}
-								
-								mostMoves = mtw;
-								best = e;
-								System.out.println(mtw);
-								System.out.println(e);
-								System.out.println();
-							}
-							
-						}
-						
-					} else {
-						
-					}
-					
-				}
-			}
-		}
-		
-		String.class.getName();
-//		best.copy();
-		
-	}
+//	public static void main(String[] args) {
+//		
+//		int mostMoves = -1;
+//		Config best = null;
+//		
+//		/*
+//		 * Config -> Config for shortest path to a winning config
+//		 */
+//		Map<Config, Config> globalExplored = new HashMap<Config, Config>();
+//		
+////		Config blank = Config.randomBlankConfig();
+//		Config blank = new Config(boardIni);
+//		
+//		char[][] testIni = new char[][] {
+//				{' ', ' ', ' ', ' ', 'Y', ' ', ' ', ' '},
+//				{' ', 'X', 'X', 'A', 'A', 'X', 'R', ' '},
+//				{' ', 'X', 'X', 'X', 'X', 'X', 'R', ' '},
+//				{' ', 'X', 'X', 'X', 'X', 'X', 'X', ' '},
+//				{' ', 'X', 'X', 'X', 'X', 'B', 'X', ' '},
+//				{' ', 'X', 'X', 'X', 'X', 'B', 'X', ' '},
+//				{'K', 'X', 'X', 'X', 'X', 'B', 'X', 'J'},
+//				{' ', ' ', ' ', ' ', 'K', ' ', 'J', ' '},
+//			};
+//		Config test = new Config(testIni);
+//		
+//		List<Config> possibleRedCarPlacements = blank.possibleRedCarPlacements();
+//		for (int i = 0; i < possibleRedCarPlacements.size(); i++) {
+//			Config c = possibleRedCarPlacements.get(i);
+//			
+//			List<Config> possible2CarPlacements = c.possible2CarPlacements();
+//			for (int j = 0; j < possible2CarPlacements.size(); j++) {
+//				Config d = possible2CarPlacements.get(j);
+//				
+//				List<Config> possible3CarPlacements = d.possible3CarPlacements();
+//				for (int k = 0; k < possible3CarPlacements.size(); k++) {
+//					Config e = possible3CarPlacements.get(k);
+//					
+//					if (e.equals(test)) {
+//						String.class.getName();
+//					}
+//					
+//					if (!globalExplored.containsKey(e)) {
+//						
+//						Map<Config, Config> explored = new HashMap<Config, Config>();
+//						
+//						explore(e, null, explored);
+//						
+//						for (Config f : explored.keySet()) {
+//							
+//							globalExplored.put(f, null);
+//							
+//							int mtw = movesToWin(f, explored);
+//							
+//							if (mtw > mostMoves) {
+//								
+////								if (mtw == 19) {
+////									
+////									String.class.getName();
+////								}
+//								
+//								mostMoves = mtw;
+//								best = e;
+//								System.out.println(mtw);
+//								System.out.println(e);
+//								System.out.println();
+//							}
+//							
+//						}
+//						
+//					} else {
+//						
+//					}
+//					
+//				}
+//			}
+//		}
+//		
+//		String.class.getName();
+////		best.copy();
+//		
+//	}
 	
 //	public static Config shortestWinner(Map<Config, Config> explored) {
 //		
@@ -222,21 +218,21 @@ public class Solver {
 		return dist;
 	}
 	
-	static public void explore(Config c, Config pred, Map<Config, Config> explored) {
-		
-		explored.put(c, pred);
-		
-		List<Config> moves = c.possibleMoves();
-		for (Config m : moves) {
-			if (!explored.keySet().contains(m)) {
-				explore(m, c, explored);
-			} else {
-				Config currentMPred = explored.get(m);
-				if (distanceToStart(c, explored) < distanceToStart(currentMPred, explored)) {
-					explore(m, c, explored);
-				}
-			} 
-		}
-	}
+//	static public void explore(Config c, Config pred, Map<Config, Config> explored) {
+//		
+//		explored.put(c, pred);
+//		
+//		List<Config> moves = c.possiblePreviousMoves();
+//		for (Config m : moves) {
+//			if (!explored.keySet().contains(m)) {
+//				explore(m, c, explored);
+//			} else {
+//				Config currentMPred = explored.get(m);
+//				if (distanceToStart(c, explored) < distanceToStart(currentMPred, explored)) {
+//					explore(m, c, explored);
+//				}
+//			} 
+//		}
+//	}
 	
 }

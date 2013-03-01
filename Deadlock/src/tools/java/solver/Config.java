@@ -46,38 +46,17 @@ public class Config {
 	int kConnectedToY = -1;
 	
 	
-	List<Config> possibleMoves;
+//	List<Config> possiblePreviousMoves;
 	
 	static char[] cars = new char[] { 'A', 'B', 'C', 'D', 'E', 'F', 'G' };
-	
-	public Config(String boardIni, int i, int j) {
-		this(toCharMatrix(boardIni, i, j));
-	}
-	
-	static char[][] toCharMatrix(String s, int i, int j) {
-		
-		if (s.length() != i * j) {
-			throw new IllegalArgumentException();
-		}
-		
-		char[][] res = new char[i][j];
-		char[] source = s.toCharArray();
-		
-		for (int ii = 0; ii < i; ii++) {
-			for (int jj = 0; jj < j; jj++) {
-				res[ii][jj] = source[ii * i + jj];
-			}
-		}
-		
-		return res;
-	}
 	
 	public Config(char[][] boardIni) {
 		
 		this.rowCount = boardIni.length-2;
 		this.colCount = boardIni[0].length-2;
 		
-		ini = new char[boardIni.length][boardIni[0].length];
+//		ini = new char[boardIni.length][boardIni[0].length];
+		ini = boardIni;
 		winnableRows = new boolean[rowCount];
 		winnableCols = new boolean[colCount];
 		interferenceConeRows = new boolean[rowCount];
@@ -89,9 +68,9 @@ public class Config {
 		for (int i = 0; i < boardIni.length; i++) {
 			for (int j = 0; j < boardIni[i].length; j++) {
 				if (i == 0 || i == boardIni.length-1 || j == 0 || j == boardIni[0].length-1) {
-					ini[i][j] = ' ';
+//					ini[i][j] = ' ';
 				} else {
-					ini[i][j] = 'X';
+//					ini[i][j] = 'X';
 				}
 			}
 		}
@@ -108,7 +87,24 @@ public class Config {
 				switch (c) {
 				case 'R':
 				case 'Y':
-					setExit(i-1, j-1);
+					exit[0] = i-1;
+					exit[1] = j-1;
+					
+					int side = side(exit);
+					switch (side) {
+					case 0:
+					case 2:
+						winnableCols[j-1] = true;
+						interferenceConeCols[j-1] = true;
+						break;
+					case 1:
+					case 3:
+						winnableRows[i-1] = true;
+						interferenceConeRows[i-1] = true;
+						break;
+					}
+					
+//					ini[i][j] = 'Y';
 					break;
 				}
 			}
@@ -129,14 +125,14 @@ public class Config {
 					jJoints[jCount][1] = j-1;
 					jCount++;
 					
-					ini[i][j] = 'J';
+//					ini[i][j] = 'J';
 					break;
 				case 'K':
 					kJoints[kCount][0] = i-1;
 					kJoints[kCount][1] = j-1;
 					kCount++;
 					
-					ini[i][j] = 'K';
+//					ini[i][j] = 'K';
 					break;
 				}
 			}
@@ -289,6 +285,7 @@ public class Config {
 								size = 2;
 							}
 						}
+						clear(c, o, size, row, col);
 						boolean res = insert(c, o, size, row, col);
 						assert res;
 						
@@ -331,7 +328,7 @@ public class Config {
 							}
 						} else {
 							assert boardIni[i][j+1] == c;
-							if (boardIni[i][j+2] == c && (j+2-1 < colCount || (i-1 == exit[0] && j+2-1 == exit[1]))) {
+							if ((j+2-1 < colCount || (i-1 == exit[0] && j+2-1 == exit[1])) && boardIni[i][j+2] == c) {
 								o = Orientation.LEFTRIGHT;
 								row = i-1;
 								col = j-1;
@@ -343,6 +340,7 @@ public class Config {
 								size = 2;
 							}
 						}
+						clear(c, o, size, row, col);
 						boolean res = insert(c, o, size, row, col);
 						assert res;
 						
@@ -352,7 +350,7 @@ public class Config {
 			}
 		}
 		
-//		interference fix point
+//		ini = boardIni;
 		
 	}
 	
@@ -367,27 +365,6 @@ public class Config {
 	
 	public int hashCode() {
 		return Arrays.deepHashCode(ini);
-	}
-	
-	public void setExit(int i, int j) {
-		exit[0] = i;
-		exit[1] = j;
-		
-		int side = side(exit);
-		switch (side) {
-		case 0:
-		case 2:
-			winnableCols[j] = true;
-			interferenceConeCols[j] = true;
-			break;
-		case 1:
-		case 3:
-			winnableRows[i] = true;
-			interferenceConeRows[i] = true;
-			break;
-		}
-		
-		ini[i+1][j+1] = 'Y';
 	}
 	
 	public int side(int[] coor) {
@@ -480,21 +457,13 @@ public class Config {
 	
 	public char charAcross(int[] coor) {
 		if (coor[0] == -1) {
-//			out[0] = rowCount;
-//			out[1] = coor[1];
 			return ini[rowCount+1][coor[1]+1];
 		} else if (coor[0] == rowCount) {
-//			out[0] = 0;
-//			out[1] = coor[1];
 			return ini[-1+1][coor[1]+1];
 		} else if (coor[1] == -1) {
-//			out[0] = coor[0];
-//			out[1] = colCount;
 			return ini[coor[0]+1][colCount+1];
 		} else {
 			assert coor[1] == colCount;
-//			out[0] = coor[0];
-//			out[1] = 0;
 			return ini[coor[0]+1][-1+1];
 		}
 	}
@@ -509,11 +478,6 @@ public class Config {
 	
 	public Config copy() {
 		char[][] newIni = new char[ini.length][ini[0].length];
-//		for (int i = 0; i < newIni.length; i++) {
-//			for (int j = 0; j < newIni[i].length; j++) {
-//				newIni[i][j] = ini[i][j];
-//			}
-//		}
 		int cols = ini[0].length;
 		for (int i = 0; i < newIni.length; i++) {
 			System.arraycopy(ini[i], 0, newIni[i], 0, cols);
@@ -638,39 +602,86 @@ public class Config {
 		return false;
 	}
 	
-	public void clear(char c) {
+	public void clear(char c, Orientation o, int size, int row, int col) {
 		
-		CarInfo oldInfo = carMap.remove(c);
-		switch (oldInfo.o) {
+//		CarInfo oldInfo = carMap.remove(c);
+		carMap.remove(c);
+		
+		char old;
+		switch (o) {
 		case LEFTRIGHT:
-			switch (oldInfo.size) {
+			switch (size) {
 			case 2:
-				clear(oldInfo.row, oldInfo.col+0);
-				clear(oldInfo.row, oldInfo.col+1);
+				old = clear(row, col+0);
+				assert old == c;
+				old = clear(row, col+1);
+				assert old == c;
 				break;
 			case 3:
-				clear(oldInfo.row, oldInfo.col+0);
-				clear(oldInfo.row, oldInfo.col+1);
-				clear(oldInfo.row, oldInfo.col+2);
+				old = clear(row, col+0);
+				assert old == c;
+				old = clear(row, col+1);
+				assert old == c;
+				old = clear(row, col+2);
+				assert old == c;
 				break;
 			}
 			break;
 		case UPDOWN:
-			switch (oldInfo.size) {
+			switch (size) {
 			case 2:
-				clear(oldInfo.row+0, oldInfo.col);
-				clear(oldInfo.row+1, oldInfo.col);
+				old = clear(row+0, col);
+				assert old == c;
+				old = clear(row+1, col);
+				assert old == c;
 				break;
 			case 3:
-				clear(oldInfo.row+0, oldInfo.col);
-				clear(oldInfo.row+1, oldInfo.col);
-				clear(oldInfo.row+2, oldInfo.col);
+				old = clear(row+0, col);
+				assert old == c;
+				old = clear(row+1, col);
+				assert old == c;
+				old = clear(row+2, col);
+				assert old == c;
 				break;
 			}
 			break;
 		}
 		
 	}
+	
+//	public void clearCtor(char c) {
+//		
+////		CarInfo oldInfo = carMap.remove(c);
+//		switch (oldInfo.o) {
+//		case LEFTRIGHT:
+//			switch (oldInfo.size) {
+//			case 2:
+//				clear(oldInfo.row, oldInfo.col+0);
+//				clear(oldInfo.row, oldInfo.col+1);
+//				break;
+//			case 3:
+//				clear(oldInfo.row, oldInfo.col+0);
+//				clear(oldInfo.row, oldInfo.col+1);
+//				clear(oldInfo.row, oldInfo.col+2);
+//				break;
+//			}
+//			break;
+//		case UPDOWN:
+//			switch (oldInfo.size) {
+//			case 2:
+//				clear(oldInfo.row+0, oldInfo.col);
+//				clear(oldInfo.row+1, oldInfo.col);
+//				break;
+//			case 3:
+//				clear(oldInfo.row+0, oldInfo.col);
+//				clear(oldInfo.row+1, oldInfo.col);
+//				clear(oldInfo.row+2, oldInfo.col);
+//				break;
+//			}
+//			break;
+//		}
+//		
+//	}
 	
 	public boolean isWinning() {
 		return val(exit) == 'R';
@@ -867,12 +878,14 @@ public class Config {
 		return moves;
 	}
 	
-	private void clear(int r, int c) {
+	private char clear(int r, int c) {
+		char old = ini[r+1][c+1];
 		if (equals(r, c, exit)) {
 			ini[r+1][c+1] = 'Y';
 		} else {
 			ini[r+1][c+1] = 'X';
 		}
+		return old;
 	}
 	
 	public boolean insert(char c, Orientation o, int size, int row, int col) {
@@ -1044,15 +1057,15 @@ public class Config {
 		return c == 'X' || c == 'Y';
 	}
 	
-	public List<Config> possibleMoves() {
-		if (possibleMoves == null) {
-			computePossibleMoves();
-		}
-		assert possibleMoves != null;
-		return possibleMoves;
-	}
+//	public List<Config> possiblePreviousMoves() {
+//		if (possiblePreviousMoves == null) {
+//			computePossiblePreviousMoves();
+//		}
+//		assert possiblePreviousMoves != null;
+//		return possiblePreviousMoves;
+//	}
 	
-	private void computePossibleMoves() {
+	public List<Config> possiblePreviousMoves() {
 		
 		List<Config> moves = new ArrayList<Config>();
 		
@@ -1219,15 +1232,13 @@ public class Config {
 				case 2:
 					if ((info.col-1 >= 0) && ini[info.row+1][info.col-1+1] == 'X') {
 						Config newConfig = copy();
-//						newConfig.parent = this;
-						newConfig.clear(c);
+						newConfig.clear(c, info.o, info.size, info.row, info.col);
 						newConfig.insert(c, info.o, info.size, info.row, info.col-1);
 						moves.add(newConfig);
 					}
 					if ((info.col+2 <= colCount-1) && ini[info.row+1][info.col+2+1] == 'X') {
 						Config newConfig = copy();
-//						newConfig.parent = this;
-						newConfig.clear(c);
+						newConfig.clear(c, info.o, info.size, info.row, info.col);
 						newConfig.insert(c, info.o, info.size, info.row, info.col+1);
 						moves.add(newConfig);
 					}
@@ -1262,15 +1273,13 @@ public class Config {
 					if (c == 'R') {
 						if ((info.col-1 == -1) && ini[info.row+1][info.col-1+1] == 'Y') {
 							Config newConfig = copy();
-//							newConfig.parent = this;
-							newConfig.clear(c);
+							newConfig.clear(c, info.o, info.size, info.row, info.col);
 							newConfig.insert(c, info.o, info.size, info.row, info.col-1);
 							moves.add(newConfig);
 						}
 						if ((info.col+2 == colCount) && ini[info.row+1][info.col+2+1] == 'Y') {
 							Config newConfig = copy();
-//							newConfig.parent = this;
-							newConfig.clear(c);
+							newConfig.clear(c, info.o, info.size, info.row, info.col);
 							newConfig.insert(c, info.o, info.size, info.row, info.col+1);
 							moves.add(newConfig);
 						}
@@ -1279,15 +1288,13 @@ public class Config {
 				case 3:
 					if ((info.col-1 >= 0) && ini[info.row+1][info.col-1+1] == 'X') {
 						Config newConfig = copy();
-//						newConfig.parent = this;
-						newConfig.clear(c);
+						newConfig.clear(c, info.o, info.size, info.row, info.col);
 						newConfig.insert(c, info.o, info.size, info.row, info.col-1);
 						moves.add(newConfig);
 					}
 					if ((info.col+3 <= colCount-1) && ini[info.row+1][info.col+3+1] == 'X') {
 						Config newConfig = copy();
-//						newConfig.parent = this;
-						newConfig.clear(c);
+						newConfig.clear(c, info.o, info.size, info.row, info.col);
 						newConfig.insert(c, info.o, info.size, info.row, info.col+1);
 						moves.add(newConfig);
 					}
@@ -1327,15 +1334,13 @@ public class Config {
 				case 2:
 					if ((info.row-1 >= 0) && ini[info.row-1+1][info.col+1] == 'X') {
 						Config newConfig = copy();
-//						newConfig.parent = this;
-						newConfig.clear(c);
+						newConfig.clear(c, info.o, info.size, info.row, info.col);
 						newConfig.insert(c, info.o, info.size, info.row-1, info.col);
 						moves.add(newConfig);
 					}
 					if ((info.row+2 <= rowCount-1) && ini[info.row+2+1][info.col+1] == 'X') {
 						Config newConfig = copy();
-//						newConfig.parent = this;
-						newConfig.clear(c);
+						newConfig.clear(c, info.o, info.size, info.row, info.col);
 						newConfig.insert(c, info.o, info.size, info.row+1, info.col);
 						moves.add(newConfig);
 					}
@@ -1370,15 +1375,13 @@ public class Config {
 					if (c == 'R') {
 						if ((info.row-1 == -1) && ini[info.row-1+1][info.col+1] == 'Y') {
 							Config newConfig = copy();
-//							newConfig.parent = this;
-							newConfig.clear(c);
+							newConfig.clear(c, info.o, info.size, info.row, info.col);
 							newConfig.insert(c, info.o, info.size, info.row-1, info.col);
 							moves.add(newConfig);
 						}
 						if ((info.row+2 == rowCount) && ini[info.row+2+1][info.col+1] == 'Y') {
 							Config newConfig = copy();
-//							newConfig.parent = this;
-							newConfig.clear(c);
+							newConfig.clear(c, info.o, info.size, info.row, info.col);
 							newConfig.insert(c, info.o, info.size, info.row+1, info.col);
 							moves.add(newConfig);
 						}
@@ -1387,15 +1390,13 @@ public class Config {
 				case 3:
 					if ((info.row-1 >= 0) && ini[info.row-1+1][info.col+1] == 'X') {
 						Config newConfig = copy();
-//						newConfig.parent = this;
-						newConfig.clear(c);
+						newConfig.clear(c, info.o, info.size, info.row, info.col);
 						newConfig.insert(c, info.o, info.size, info.row-1, info.col);
 						moves.add(newConfig);
 					}
 					if ((info.row+3 <= rowCount-1) && ini[info.row+3+1][info.col+1] == 'X') {
 						Config newConfig = copy();
-//						newConfig.parent = this;
-						newConfig.clear(c);
+						newConfig.clear(c, info.o, info.size, info.row, info.col);
 						newConfig.insert(c, info.o, info.size, info.row+1, info.col);
 						moves.add(newConfig);
 					}
@@ -1433,7 +1434,7 @@ public class Config {
 			}
 		}
 		
-		possibleMoves = moves;
+		return moves;
 	}
 	
 	/*
@@ -1628,7 +1629,7 @@ public class Config {
 			case 2:
 				if ((ini[mR+1+1][mC+1] == 'X' || ini[mR+1+1][mC+1] == c) && (ini[mR+1+2][mC+1] == 'X' || ini[mR+1+2][mC+1] == c)) {
 					Config newConfig = copy();
-					newConfig.clear(c);
+					newConfig.clear(c, info.o, info.size, info.row, info.col);
 					newConfig.insert(c, Orientation.UPDOWN, 2, mR+1, mC);
 					return newConfig;
 				}
@@ -1636,7 +1637,7 @@ public class Config {
 			case 3:
 				if ((ini[mR+1+1][mC+1] == 'X' || ini[mR+1+1][mC+1] == c) && (ini[mR+1+2][mC+1] == 'X' || ini[mR+1+2][mC+1] == c) && (ini[mR+1+3][mC+1] == 'X' || ini[mR+1+3][mC+1] == c)) {
 					Config newConfig = copy();
-					newConfig.clear(c);
+					newConfig.clear(c, info.o, info.size, info.row, info.col);
 					newConfig.insert(c, Orientation.UPDOWN, 3, mR+1, mC);
 					return newConfig;
 				}
@@ -1648,7 +1649,7 @@ public class Config {
 			case 2:
 				if ((ini[mR+1][mC-2+1] == 'X' || ini[mR+1][mC-2+1] == c) && (ini[mR+1][mC-1+1] == 'X' || ini[mR+1][mC-1+1] == c)) {
 					Config newConfig = copy();
-					newConfig.clear(c);
+					newConfig.clear(c, info.o, info.size, info.row, info.col);
 					newConfig.insert(c, Orientation.LEFTRIGHT, 2, mR, mC-2);
 					return newConfig;
 				}
@@ -1656,7 +1657,7 @@ public class Config {
 			case 3:
 				if ((ini[mR+1][mC-3+1] == 'X' || ini[mR+1][mC-3+1] == c) && (ini[mR+1][mC-2+1] == 'X' || ini[mR+1][mC-2+1] == c) && (ini[mR+1][mC-1+1] == 'X' || ini[mR+1][mC-1+1] == c)) {
 					Config newConfig = copy();
-					newConfig.clear(c);
+					newConfig.clear(c, info.o, info.size, info.row, info.col);
 					newConfig.insert(c, Orientation.LEFTRIGHT, 3, mR, mC-3);
 					return newConfig;
 				}
@@ -1668,7 +1669,7 @@ public class Config {
 			case 2:
 				if ((ini[mR-2+1][mC+1] == 'X' || ini[mR-2+1][mC+1] == c) && (ini[mR-1+1][mC+1] == 'X' || ini[mR-1+1][mC+1] == c)) {
 					Config newConfig = copy();
-					newConfig.clear(c);
+					newConfig.clear(c, info.o, info.size, info.row, info.col);
 					newConfig.insert(c, Orientation.UPDOWN, 2, mR-2, mC);
 					return newConfig;
 				}
@@ -1676,7 +1677,7 @@ public class Config {
 			case 3:
 				if ((ini[mR-3+1][mC+1] == 'X' || ini[mR-3+1][mC+1] == c) && (ini[mR-2+1][mC+1] == 'X' || ini[mR-2+1][mC+1] == c) && (ini[mR-1+1][mC+1] == 'X' || ini[mR-1+1][mC+1] == c)) {
 					Config newConfig = copy();
-					newConfig.clear(c);
+					newConfig.clear(c, info.o, info.size, info.row, info.col);
 					newConfig.insert(c, Orientation.UPDOWN, 3, mR-3, mC);
 					return newConfig;
 				}
@@ -1688,7 +1689,7 @@ public class Config {
 			case 2:
 				if ((ini[mR+1][mC+1+1] == 'X' || ini[mR+1][mC+1+1] == c) && (ini[mR+1][mC+2+1] == 'X' || ini[mR+1][mC+2+1] == c)) {
 					Config newConfig = copy();
-					newConfig.clear(c);
+					newConfig.clear(c, info.o, info.size, info.row, info.col);
 					newConfig.insert(c, Orientation.LEFTRIGHT, 2, mR, mC+1);
 					return newConfig;
 				}
@@ -1696,7 +1697,7 @@ public class Config {
 			case 3:
 				if ((ini[mR+1][mC+1+1] == 'X' || ini[mR+1][mC+1+1] == c) && (ini[mR+1][mC+2+1] == 'X' || ini[mR+1][mC+2+1] == c) && (ini[mR+1][mC+3+1] == 'X' || ini[mR+1][mC+3+1] == c)) {
 					Config newConfig = copy();
-					newConfig.clear(c);
+					newConfig.clear(c, info.o, info.size, info.row, info.col);
 					newConfig.insert(c, Orientation.LEFTRIGHT, 3, mR, mC+1);
 					return newConfig;
 				}
@@ -1708,336 +1709,355 @@ public class Config {
 		return null;
 	}
 	
-	public static Config randomBlankConfig() {
-		
-		char[][] ini = new char[8][8];
-		for (int i = 0; i < ini.length; i++) {
-			for (int j = 0; j < ini.length; j++) {
-				if (i == 0 || i == ini.length-1 || j == 0 || j == ini[0].length-1) {
-					ini[i][j] = ' ';
-				} else {
-					ini[i][j] = 'X';
-				}
-			}
-		}
-		
-		Config c = new Config(ini);
-		
-		int exitSide = rand.nextInt(4);
-		int exitRow = -1;
-		int exitCol = -1;
-		switch (exitSide) {
-		case 0:
-			exitRow = -1;
-			exitCol = rand.nextInt(ini[0].length-2);
-			break;
-		case 1:
-			exitRow = rand.nextInt(ini.length-2);
-			exitCol = ini[0].length-2;
-			break;
-		case 2:
-			exitRow = ini.length-2;
-			exitCol = rand.nextInt(ini[0].length-2);
-			break;
-		case 3:
-			exitRow = rand.nextInt(ini[0].length-2);
-			exitCol = -1;
-			break;
-		}
-		
-		c.setExit(exitRow, exitCol);
-		
-		if (rand.nextBoolean()) {
-			/*
-			 * j joints
-			 */
-			int jside0 = rand.nextInt(4);
-			while (jside0 == exitSide) {
-				jside0 = rand.nextInt(4);
-			}
-			
-			int jside1 = rand.nextInt(4);
-			while (jside1 == exitSide || jside1 == jside0 || jside1 == ((jside0 + 2) % 4)) {
-				jside1 = rand.nextInt(4);
-			}
-			
-			int js0R = -1;
-			int js0C = -1;
-			switch (jside0) {
-			case 0:
-				js0R = -1;
-				js0C = rand.nextInt(ini[0].length-2);
-				break;
-			case 1:
-				js0R = rand.nextInt(ini.length-2);
-				js0C = ini[0].length-2;
-				break;
-			case 2:
-				js0R = ini.length-2;
-				js0C = rand.nextInt(ini[0].length-2);
-				break;
-			case 3:
-				js0R = rand.nextInt(ini[0].length-2);
-				js0C = -1;
-				break;
-			}
-			
-			int js1R = -1;
-			int js1C = -1;
-			switch (jside1) {
-			case 0:
-				js1R = -1;
-				js1C = rand.nextInt(ini[0].length-2);
-				break;
-			case 1:
-				js1R = rand.nextInt(ini.length-2);
-				js1C = ini[0].length-2;
-				break;
-			case 2:
-				js1R = ini.length-2;
-				js1C = rand.nextInt(ini[0].length-2);
-				break;
-			case 3:
-				js1R = rand.nextInt(ini[0].length-2);
-				js1C = -1;
-				break;
-			}
-			
-			c.jJoints[0][0] = js0R;
-			c.jJoints[0][1] = js0C;
-			c.jJoints[0][2] = jside0;
-			c.ini[js0R+1][js0C+1] = 'J';
-			
-			c.jJoints[1][0] = js1R;
-			c.jJoints[1][1] = js1C;
-			c.jJoints[1][2] = jside1;
-			c.ini[js1R+1][js1C+1] = 'J';
-			
-			c.jCount = 2;
-			
-			if (rand.nextBoolean()) {
-				/*
-				 * k joints
-				 */
-				int kside0 = rand.nextInt(4);
-				while (true) {
-					if (kside0 == exitSide) {
-						
-					} else {
-						break;
-					}
-					kside0 = rand.nextInt(4);
-				}
-				
-				int kside1 = rand.nextInt(4);
-				while (true) {
-					if (kside1 == exitSide) {
-						
-					} else if (kside1 == kside0) {
-						
-					} else if (kside1 == ((kside0 + 2) % 4)) {
-						
-					} else {
-						break;
-					}
-					kside1 = rand.nextInt(4);
-				}
-				
-				int ks0R = -1;
-				int ks0C = -1;
-				switch (kside0) {
-				case 0:
-					ks0R = -1;
-					while (true) {
-						ks0C = rand.nextInt(ini[0].length-2);
-						if (kside0 == jside0) {
-							if (ks0C == js0C || ks0C == js0C+1 || ks0C == js0C-1) {
-								
-							} else {
-								break;
-							}
-						} else if (kside0 == jside1) {
-							if (ks0C == js1C || ks0C == js1C+1 || ks0C == js1C-1) {
-								
-							} else {
-								break;
-							}
-						} else {
-							break;
-						}
-					}
-					break;
-				case 1:
-					while (true) {
-						ks0R = rand.nextInt(ini.length-2);
-						if (kside0 == jside0) {
-							if (ks0R == js0R || ks0R == js0R+1 || ks0R == js0R-1) {
-								
-							} else {
-								break;
-							}
-						} else if (kside0 == jside1) {
-							if (ks0R == js1R || ks0R == js1R+1 || ks0R == js1R-1) {
-								
-							} else {
-								break;
-							}
-						} else {
-							break;
-						}
-					}
-					ks0C = ini[0].length-2;
-					break;
-				case 2:
-					ks0R = ini.length-2;
-					while (true) {
-						ks0C = rand.nextInt(ini[0].length-2);
-						if (kside0 == jside0) {
-							if (ks0C == js0C || ks0C == js0C+1 || ks0C == js0C-1) {
-								
-							} else {
-								break;
-							}
-						} else if (kside0 == jside1) {
-							if (ks0C == js1C || ks0C == js1C+1 || ks0C == js1C-1) {
-								
-							} else {
-								break;
-							}
-						} else {
-							break;
-						}
-					}
-					break;
-				case 3:
-					while (true) {
-						ks0R = rand.nextInt(ini.length-2);
-						if (kside0 == jside0) {
-							if (ks0R == js0R || ks0R == js0R+1 || ks0R == js0R-1) {
-								
-							} else {
-								break;
-							}
-						} else if (kside0 == jside1) {
-							if (ks0R == js1R || ks0R == js1R+1 || ks0R == js1R-1) {
-								
-							} else {
-								break;
-							}
-						} else {
-							break;
-						}
-					}
-					ks0C = -1;
-					break;
-				}
-				
-				int ks1R = -1;
-				int ks1C = -1;
-				switch (kside1) {
-				case 0:
-					ks1R = -1;
-					while (true) {
-						ks1C = rand.nextInt(ini[0].length-2);
-						if (kside1 == jside0) {
-							if (ks1C == js0C || ks1C == js0C+1 || ks1C == js0C-1) {
-								
-							} else {
-								break;
-							}
-						} else if (kside1 == jside1) {
-							if (ks1C == js1C || ks1C == js1C+1 || ks1C == js1C-1) {
-								
-							} else {
-								break;
-							}
-						} else {
-							break;
-						}
-					}
-					break;
-				case 1:
-					while (true) {
-						ks1R = rand.nextInt(ini.length-2);
-						if (kside1 == jside0) {
-							if (ks1R == js0R || ks1R == js0R+1 || ks1R == js0R-1) {
-								
-							} else {
-								break;
-							}
-						} else if (kside1 == jside1) {
-							if (ks1R == js1R || ks1R == js1R+1 || ks1R == js1R-1) {
-								
-							} else {
-								break;
-							}
-						} else {
-							break;
-						}
-					}
-					ks1C = ini[0].length-2;
-					break;
-				case 2:
-					ks1R = ini.length-2;
-					while (true) {
-						ks1C = rand.nextInt(ini[0].length-2);
-						if (kside1 == jside0) {
-							if (ks1C == js0C || ks1C == js0C+1 || ks1C == js0C-1) {
-								
-							} else {
-								break;
-							}
-						} else if (kside1 == jside1) {
-							if (ks1C == js1C || ks1C == js1C+1 || ks1C == js1C-1) {
-								
-							} else {
-								break;
-							}
-						} else {
-							break;
-						}
-					}
-					break;
-				case 3:
-					while (true) {
-						ks1R = rand.nextInt(ini.length-2);
-						if (kside1 == jside0) {
-							if (ks1R == js0R || ks1R == js0R+1 || ks1R == js0R-1) {
-								
-							} else {
-								break;
-							}
-						} else if (kside1 == jside1) {
-							if (ks1R == js1R || ks1R == js1R+1 || ks1R == js1R-1) {
-								
-							} else {
-								break;
-							}
-						} else {
-							break;
-						}
-					}
-					ks1C = -1;
-					break;
-				}
-				
-				c.kJoints[0][0] = ks0R;
-				c.kJoints[0][1] = ks0C;
-				c.kJoints[0][2] = kside0;
-				c.ini[ks0R+1][ks0C+1] = 'K';
-				
-				c.kJoints[1][0] = ks1R;
-				c.kJoints[1][1] = ks1C;
-				c.kJoints[1][2] = kside1;
-				c.ini[ks1R+1][ks1C+1] = 'K';
-				
-				c.kCount = 2;
-				
-			}
-		}
-		
-		return c;
-	}
+//	public static Config randomBlankConfig() {
+//		
+//		char[][] ini = new char[8][8];
+//		for (int i = 0; i < ini.length; i++) {
+//			for (int j = 0; j < ini.length; j++) {
+//				if (i == 0 || i == ini.length-1 || j == 0 || j == ini[0].length-1) {
+//					ini[i][j] = ' ';
+//				} else {
+//					ini[i][j] = 'X';
+//				}
+//			}
+//		}
+//		
+//		Config c = new Config(ini);
+//		
+//		int exitSide = rand.nextInt(4);
+//		int exitRow = -1;
+//		int exitCol = -1;
+//		switch (exitSide) {
+//		case 0:
+//			exitRow = -1;
+//			exitCol = rand.nextInt(ini[0].length-2);
+//			break;
+//		case 1:
+//			exitRow = rand.nextInt(ini.length-2);
+//			exitCol = ini[0].length-2;
+//			break;
+//		case 2:
+//			exitRow = ini.length-2;
+//			exitCol = rand.nextInt(ini[0].length-2);
+//			break;
+//		case 3:
+//			exitRow = rand.nextInt(ini[0].length-2);
+//			exitCol = -1;
+//			break;
+//		}
+//		
+////		c.setExit(exitRow, exitCol);
+//		c.exit[0] = exitRow;
+//		c.exit[1] = exitCol;
+//		
+//		int side = c.side(c.exit);
+//		switch (side) {
+//		case 0:
+//		case 2:
+//			c.winnableCols[exitCol] = true;
+//			c.interferenceConeCols[exitCol] = true;
+//			break;
+//		case 1:
+//		case 3:
+//			c.winnableRows[exitRow] = true;
+//			c.interferenceConeRows[exitRow] = true;
+//			break;
+//		}
+//		
+//		c.ini[exitRow+1][exitCol+1] = 'Y';
+//		
+//		
+//		if (rand.nextBoolean()) {
+//			/*
+//			 * j joints
+//			 */
+//			int jside0 = rand.nextInt(4);
+//			while (jside0 == exitSide) {
+//				jside0 = rand.nextInt(4);
+//			}
+//			
+//			int jside1 = rand.nextInt(4);
+//			while (jside1 == exitSide || jside1 == jside0 || jside1 == ((jside0 + 2) % 4)) {
+//				jside1 = rand.nextInt(4);
+//			}
+//			
+//			int js0R = -1;
+//			int js0C = -1;
+//			switch (jside0) {
+//			case 0:
+//				js0R = -1;
+//				js0C = rand.nextInt(ini[0].length-2);
+//				break;
+//			case 1:
+//				js0R = rand.nextInt(ini.length-2);
+//				js0C = ini[0].length-2;
+//				break;
+//			case 2:
+//				js0R = ini.length-2;
+//				js0C = rand.nextInt(ini[0].length-2);
+//				break;
+//			case 3:
+//				js0R = rand.nextInt(ini[0].length-2);
+//				js0C = -1;
+//				break;
+//			}
+//			
+//			int js1R = -1;
+//			int js1C = -1;
+//			switch (jside1) {
+//			case 0:
+//				js1R = -1;
+//				js1C = rand.nextInt(ini[0].length-2);
+//				break;
+//			case 1:
+//				js1R = rand.nextInt(ini.length-2);
+//				js1C = ini[0].length-2;
+//				break;
+//			case 2:
+//				js1R = ini.length-2;
+//				js1C = rand.nextInt(ini[0].length-2);
+//				break;
+//			case 3:
+//				js1R = rand.nextInt(ini[0].length-2);
+//				js1C = -1;
+//				break;
+//			}
+//			
+//			c.jJoints[0][0] = js0R;
+//			c.jJoints[0][1] = js0C;
+//			c.jJoints[0][2] = jside0;
+//			c.ini[js0R+1][js0C+1] = 'J';
+//			
+//			c.jJoints[1][0] = js1R;
+//			c.jJoints[1][1] = js1C;
+//			c.jJoints[1][2] = jside1;
+//			c.ini[js1R+1][js1C+1] = 'J';
+//			
+//			c.jCount = 2;
+//			
+//			if (rand.nextBoolean()) {
+//				/*
+//				 * k joints
+//				 */
+//				int kside0 = rand.nextInt(4);
+//				while (true) {
+//					if (kside0 == exitSide) {
+//						
+//					} else {
+//						break;
+//					}
+//					kside0 = rand.nextInt(4);
+//				}
+//				
+//				int kside1 = rand.nextInt(4);
+//				while (true) {
+//					if (kside1 == exitSide) {
+//						
+//					} else if (kside1 == kside0) {
+//						
+//					} else if (kside1 == ((kside0 + 2) % 4)) {
+//						
+//					} else {
+//						break;
+//					}
+//					kside1 = rand.nextInt(4);
+//				}
+//				
+//				int ks0R = -1;
+//				int ks0C = -1;
+//				switch (kside0) {
+//				case 0:
+//					ks0R = -1;
+//					while (true) {
+//						ks0C = rand.nextInt(ini[0].length-2);
+//						if (kside0 == jside0) {
+//							if (ks0C == js0C || ks0C == js0C+1 || ks0C == js0C-1) {
+//								
+//							} else {
+//								break;
+//							}
+//						} else if (kside0 == jside1) {
+//							if (ks0C == js1C || ks0C == js1C+1 || ks0C == js1C-1) {
+//								
+//							} else {
+//								break;
+//							}
+//						} else {
+//							break;
+//						}
+//					}
+//					break;
+//				case 1:
+//					while (true) {
+//						ks0R = rand.nextInt(ini.length-2);
+//						if (kside0 == jside0) {
+//							if (ks0R == js0R || ks0R == js0R+1 || ks0R == js0R-1) {
+//								
+//							} else {
+//								break;
+//							}
+//						} else if (kside0 == jside1) {
+//							if (ks0R == js1R || ks0R == js1R+1 || ks0R == js1R-1) {
+//								
+//							} else {
+//								break;
+//							}
+//						} else {
+//							break;
+//						}
+//					}
+//					ks0C = ini[0].length-2;
+//					break;
+//				case 2:
+//					ks0R = ini.length-2;
+//					while (true) {
+//						ks0C = rand.nextInt(ini[0].length-2);
+//						if (kside0 == jside0) {
+//							if (ks0C == js0C || ks0C == js0C+1 || ks0C == js0C-1) {
+//								
+//							} else {
+//								break;
+//							}
+//						} else if (kside0 == jside1) {
+//							if (ks0C == js1C || ks0C == js1C+1 || ks0C == js1C-1) {
+//								
+//							} else {
+//								break;
+//							}
+//						} else {
+//							break;
+//						}
+//					}
+//					break;
+//				case 3:
+//					while (true) {
+//						ks0R = rand.nextInt(ini.length-2);
+//						if (kside0 == jside0) {
+//							if (ks0R == js0R || ks0R == js0R+1 || ks0R == js0R-1) {
+//								
+//							} else {
+//								break;
+//							}
+//						} else if (kside0 == jside1) {
+//							if (ks0R == js1R || ks0R == js1R+1 || ks0R == js1R-1) {
+//								
+//							} else {
+//								break;
+//							}
+//						} else {
+//							break;
+//						}
+//					}
+//					ks0C = -1;
+//					break;
+//				}
+//				
+//				int ks1R = -1;
+//				int ks1C = -1;
+//				switch (kside1) {
+//				case 0:
+//					ks1R = -1;
+//					while (true) {
+//						ks1C = rand.nextInt(ini[0].length-2);
+//						if (kside1 == jside0) {
+//							if (ks1C == js0C || ks1C == js0C+1 || ks1C == js0C-1) {
+//								
+//							} else {
+//								break;
+//							}
+//						} else if (kside1 == jside1) {
+//							if (ks1C == js1C || ks1C == js1C+1 || ks1C == js1C-1) {
+//								
+//							} else {
+//								break;
+//							}
+//						} else {
+//							break;
+//						}
+//					}
+//					break;
+//				case 1:
+//					while (true) {
+//						ks1R = rand.nextInt(ini.length-2);
+//						if (kside1 == jside0) {
+//							if (ks1R == js0R || ks1R == js0R+1 || ks1R == js0R-1) {
+//								
+//							} else {
+//								break;
+//							}
+//						} else if (kside1 == jside1) {
+//							if (ks1R == js1R || ks1R == js1R+1 || ks1R == js1R-1) {
+//								
+//							} else {
+//								break;
+//							}
+//						} else {
+//							break;
+//						}
+//					}
+//					ks1C = ini[0].length-2;
+//					break;
+//				case 2:
+//					ks1R = ini.length-2;
+//					while (true) {
+//						ks1C = rand.nextInt(ini[0].length-2);
+//						if (kside1 == jside0) {
+//							if (ks1C == js0C || ks1C == js0C+1 || ks1C == js0C-1) {
+//								
+//							} else {
+//								break;
+//							}
+//						} else if (kside1 == jside1) {
+//							if (ks1C == js1C || ks1C == js1C+1 || ks1C == js1C-1) {
+//								
+//							} else {
+//								break;
+//							}
+//						} else {
+//							break;
+//						}
+//					}
+//					break;
+//				case 3:
+//					while (true) {
+//						ks1R = rand.nextInt(ini.length-2);
+//						if (kside1 == jside0) {
+//							if (ks1R == js0R || ks1R == js0R+1 || ks1R == js0R-1) {
+//								
+//							} else {
+//								break;
+//							}
+//						} else if (kside1 == jside1) {
+//							if (ks1R == js1R || ks1R == js1R+1 || ks1R == js1R-1) {
+//								
+//							} else {
+//								break;
+//							}
+//						} else {
+//							break;
+//						}
+//					}
+//					ks1C = -1;
+//					break;
+//				}
+//				
+//				c.kJoints[0][0] = ks0R;
+//				c.kJoints[0][1] = ks0C;
+//				c.kJoints[0][2] = kside0;
+//				c.ini[ks0R+1][ks0C+1] = 'K';
+//				
+//				c.kJoints[1][0] = ks1R;
+//				c.kJoints[1][1] = ks1C;
+//				c.kJoints[1][2] = kside1;
+//				c.ini[ks1R+1][ks1C+1] = 'K';
+//				
+//				c.kCount = 2;
+//				
+//			}
+//		}
+//		
+//		return c;
+//	}
 	
 	public String toString() {
 		
