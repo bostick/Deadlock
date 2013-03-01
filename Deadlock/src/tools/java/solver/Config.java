@@ -2,20 +2,19 @@ package solver;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Random;
 
 public class Config {
+	
+	public int iteration;
 	
 	public static Random rand = new Random();
 	
 	public final int rowCount;
 	public final int colCount;
 	
-	public char[][] ini;
+	public byte[][] ini;
 	
 	/*
 	 * winnableRows and winnableCols are the rows and cols that the red car could be in to be winnable
@@ -29,7 +28,7 @@ public class Config {
 	boolean[] interferenceConeRows;
 	boolean[] interferenceConeCols;
 	
-	public Map<Character, CarInfo> carMap = new HashMap<Character, CarInfo>();
+//	public Map<Byte, CarInfo> carMap = new HashMap<Byte, CarInfo>();
 	
 	private int[] exit = new int[]{ -1, -1 };
 	
@@ -45,35 +44,19 @@ public class Config {
 	int jConnectedToY = -1;
 	int kConnectedToY = -1;
 	
+	static byte[] cars = new byte[] {'R', 'A', 'B', 'C', 'D', 'E', 'F', 'G' };
+	boolean[] carPresent = new boolean[cars.length+1];
 	
-//	List<Config> possiblePreviousMoves;
-	
-	static char[] cars = new char[] { 'A', 'B', 'C', 'D', 'E', 'F', 'G' };
-	
-	public Config(char[][] boardIni) {
+	public Config(byte[][] boardIni) {
 		
 		this.rowCount = boardIni.length-2;
 		this.colCount = boardIni[0].length-2;
 		
-//		ini = new char[boardIni.length][boardIni[0].length];
 		ini = boardIni;
 		winnableRows = new boolean[rowCount];
 		winnableCols = new boolean[colCount];
 		interferenceConeRows = new boolean[rowCount];
 		interferenceConeCols = new boolean[colCount];
-		
-		/*
-		 * init
-		 */
-		for (int i = 0; i < boardIni.length; i++) {
-			for (int j = 0; j < boardIni[i].length; j++) {
-				if (i == 0 || i == boardIni.length-1 || j == 0 || j == boardIni[0].length-1) {
-//					ini[i][j] = ' ';
-				} else {
-//					ini[i][j] = 'X';
-				}
-			}
-		}
 		
 		/*
 		 * exit
@@ -83,7 +66,7 @@ public class Config {
 				if (!((i == 0 || i == boardIni.length-1) || (j == 0 || j == boardIni[0].length-1))) {
 					continue;
 				}
-				char c = boardIni[i][j];
+				byte c = boardIni[i][j];
 				switch (c) {
 				case 'R':
 				case 'Y':
@@ -103,8 +86,6 @@ public class Config {
 						interferenceConeRows[i-1] = true;
 						break;
 					}
-					
-//					ini[i][j] = 'Y';
 					break;
 				}
 			}
@@ -118,27 +99,23 @@ public class Config {
 				if (!((i == 0 || i == boardIni.length-1) || (j == 0 || j == boardIni[0].length-1))) {
 					continue;
 				}
-				char c = boardIni[i][j];
+				byte c = boardIni[i][j];
 				switch (c) {
 				case 'J':
 					jJoints[jCount][0] = i-1;
 					jJoints[jCount][1] = j-1;
 					jCount++;
-					
-//					ini[i][j] = 'J';
 					break;
 				case 'K':
 					kJoints[kCount][0] = i-1;
 					kJoints[kCount][1] = j-1;
 					kCount++;
-					
-//					ini[i][j] = 'K';
 					break;
 				}
 			}
 		}
 		
-		char across;
+		byte across;
 		if (jCount == 2) {
 			if (kCount == 2) {
 				
@@ -251,10 +228,10 @@ public class Config {
 		 */
 		for (int i = 0; i < boardIni.length; i++) {
 			for (int j = 0; j < boardIni[i].length; j++) {
-				char c = boardIni[i][j];
+				byte c = boardIni[i][j];
 				switch (c) {
 				case 'R':
-					if (!carMap.keySet().contains(c)) {
+					if (!carMapContains(c)) {
 						Orientation o;
 						int size;
 						int row;
@@ -300,7 +277,7 @@ public class Config {
 		 */
 		for (int i = 0; i < boardIni.length; i++) {
 			for (int j = 0; j < boardIni[i].length; j++) {
-				char c = boardIni[i][j];
+				byte c = boardIni[i][j];
 				switch (c) {
 				case 'A':
 				case 'B':
@@ -309,40 +286,41 @@ public class Config {
 				case 'E':
 				case 'F':
 				case 'G':
-					if (!carMap.keySet().contains(c)) {
-						Orientation o;
-						int size;
-						int row;
-						int col;
-						if (boardIni[i+1][j] == c && (i+1-1 < rowCount || (i+1-1 == exit[0] && j-1 == exit[1]))) {
-							if (boardIni[i+2][j] == c && (i+2-1 < rowCount || (i+2-1 == exit[0] && j-1 == exit[1]))) {
-								o = Orientation.UPDOWN;
-								row = i-1;
-								col = j-1;
-								size = 3;
-							} else {
-								o = Orientation.UPDOWN;
-								row = i-1;
-								col = j-1;
-								size = 2;
-							}
-						} else {
-							assert boardIni[i][j+1] == c;
-							if ((j+2-1 < colCount || (i-1 == exit[0] && j+2-1 == exit[1])) && boardIni[i][j+2] == c) {
-								o = Orientation.LEFTRIGHT;
-								row = i-1;
-								col = j-1;
-								size = 3;
-							} else {
-								o = Orientation.LEFTRIGHT;
-								row = i-1;
-								col = j-1;
-								size = 2;
-							}
-						}
-						clear(c, o, size, row, col);
-						boolean res = insert(c, o, size, row, col);
-						assert res;
+					if (!carMapContains(c)) {
+//						Orientation o;
+//						int size;
+//						int row;
+//						int col;
+//						if (boardIni[i+1][j] == c && (i+1-1 < rowCount || (i+1-1 == exit[0] && j-1 == exit[1]))) {
+//							if (boardIni[i+2][j] == c && (i+2-1 < rowCount || (i+2-1 == exit[0] && j-1 == exit[1]))) {
+//								o = Orientation.UPDOWN;
+//								row = i-1;
+//								col = j-1;
+//								size = 3;
+//							} else {
+//								o = Orientation.UPDOWN;
+//								row = i-1;
+//								col = j-1;
+//								size = 2;
+//							}
+//						} else {
+//							assert boardIni[i][j+1] == c;
+//							if ((j+2-1 < colCount || (i-1 == exit[0] && j+2-1 == exit[1])) && boardIni[i][j+2] == c) {
+//								o = Orientation.LEFTRIGHT;
+//								row = i-1;
+//								col = j-1;
+//								size = 3;
+//							} else {
+//								o = Orientation.LEFTRIGHT;
+//								row = i-1;
+//								col = j-1;
+//								size = 2;
+//							}
+//						}
+//						clear(c, o, size, row, col);
+//						boolean res = insert(c, o, size, row, col);
+//						assert res;
+						carMapPut(c);
 						
 					}
 					break;
@@ -399,7 +377,7 @@ public class Config {
 		return -1;
 	}
 	
-	public char val(int[] coor) {
+	public byte val(int[] coor) {
 		return ini[coor[0]+1][coor[1]+1];
 	}
 	
@@ -451,11 +429,11 @@ public class Config {
 	}
 	
 	public boolean isJoint(int[] coor) {
-		char c = val(coor);
+		byte c = val(coor);
 		return c == 'J' || c == 'K';
 	}
 	
-	public char charAcross(int[] coor) {
+	public byte charAcross(int[] coor) {
 		if (coor[0] == -1) {
 			return ini[rowCount+1][coor[1]+1];
 		} else if (coor[0] == rowCount) {
@@ -477,7 +455,7 @@ public class Config {
 	}
 	
 	public Config copy() {
-		char[][] newIni = new char[ini.length][ini[0].length];
+		byte[][] newIni = new byte[ini.length][ini[0].length];
 		int cols = ini[0].length;
 		for (int i = 0; i < newIni.length; i++) {
 			System.arraycopy(ini[i], 0, newIni[i], 0, cols);
@@ -602,12 +580,11 @@ public class Config {
 		return false;
 	}
 	
-	public void clear(char c, Orientation o, int size, int row, int col) {
+	public void clear(byte c, Orientation o, int size, int row, int col) {
 		
-//		CarInfo oldInfo = carMap.remove(c);
-		carMap.remove(c);
+		carMapRemove(c);
 		
-		char old;
+		byte old;
 		switch (o) {
 		case LEFTRIGHT:
 			switch (size) {
@@ -648,40 +625,6 @@ public class Config {
 		}
 		
 	}
-	
-//	public void clearCtor(char c) {
-//		
-////		CarInfo oldInfo = carMap.remove(c);
-//		switch (oldInfo.o) {
-//		case LEFTRIGHT:
-//			switch (oldInfo.size) {
-//			case 2:
-//				clear(oldInfo.row, oldInfo.col+0);
-//				clear(oldInfo.row, oldInfo.col+1);
-//				break;
-//			case 3:
-//				clear(oldInfo.row, oldInfo.col+0);
-//				clear(oldInfo.row, oldInfo.col+1);
-//				clear(oldInfo.row, oldInfo.col+2);
-//				break;
-//			}
-//			break;
-//		case UPDOWN:
-//			switch (oldInfo.size) {
-//			case 2:
-//				clear(oldInfo.row+0, oldInfo.col);
-//				clear(oldInfo.row+1, oldInfo.col);
-//				break;
-//			case 3:
-//				clear(oldInfo.row+0, oldInfo.col);
-//				clear(oldInfo.row+1, oldInfo.col);
-//				clear(oldInfo.row+2, oldInfo.col);
-//				break;
-//			}
-//			break;
-//		}
-//		
-//	}
 	
 	public boolean isWinning() {
 		return val(exit) == 'R';
@@ -825,7 +768,7 @@ public class Config {
 			}
 		}
 		
-		char val() {
+		byte val() {
 			return config.val(coor);
 		}
 		
@@ -838,7 +781,7 @@ public class Config {
 			if (cursor.val() == 'Y' || cursor.val() == 'X') {
 				cursor.move();
 			} else if (cursor.val() == 'R') {
-				CarInfo red = carMap.get('R');
+				CarInfo red = carMapGet((byte)'R');
 				if ((((cursor.side == 0 || cursor.side == 2) && red.o == Orientation.UPDOWN) || ((cursor.side == 1 || cursor.side == 3) && red.o == Orientation.LEFTRIGHT))) {
 					break;
 				} else {
@@ -852,6 +795,9 @@ public class Config {
 		return true;
 	}
 	
+	/*
+	 * assumes clear path
+	 */
 	int numberMovesToWin() {
 		
 		Cursor cursor = new Cursor(this); 
@@ -862,7 +808,7 @@ public class Config {
 				moves++;
 			} else {
 				if (cursor.val() == 'R') {
-					CarInfo red = carMap.get('R');
+					CarInfo red = carMapGet((byte)'R');
 					if ((((cursor.side == 0 || cursor.side == 2) && red.o == Orientation.UPDOWN) || ((cursor.side == 1 || cursor.side == 3) && red.o == Orientation.LEFTRIGHT))) {
 						break;
 					} else {
@@ -878,8 +824,8 @@ public class Config {
 		return moves;
 	}
 	
-	private char clear(int r, int c) {
-		char old = ini[r+1][c+1];
+	private byte clear(int r, int c) {
+		byte old = ini[r+1][c+1];
 		if (equals(r, c, exit)) {
 			ini[r+1][c+1] = 'Y';
 		} else {
@@ -888,10 +834,10 @@ public class Config {
 		return old;
 	}
 	
-	public boolean insert(char c, Orientation o, int size, int row, int col) {
+	public boolean insert(byte c, Orientation o, int size, int row, int col) {
 		
-		if (carMap.containsKey(c)) {
-			return false;
+		if (carMapContains(c)) {
+			assert false;
 		}
 		
 		if (c == 'R') {
@@ -954,12 +900,12 @@ public class Config {
 			}
 		}
 		
-		CarInfo info = new CarInfo();
-		info.o = o;
-		info.size = size;
-		info.row = row;
-		info.col = col;
-		carMap.put(c, info);
+//		CarInfo info = new CarInfo();
+//		info.o = o;
+//		info.size = size;
+//		info.row = row;
+//		info.col = col;
+		carMapPut(c);
 		
 		if (c == 'R') {
 			switch (o) {
@@ -1049,21 +995,13 @@ public class Config {
 		return true;
 	}
 	
-	boolean isX(char c) {
+	boolean isX(byte c) {
 		return c == 'X';
 	}
 	
-	boolean isXorY(char c) {
+	boolean isXorY(byte c) {
 		return c == 'X' || c == 'Y';
 	}
-	
-//	public List<Config> possiblePreviousMoves() {
-//		if (possiblePreviousMoves == null) {
-//			computePossiblePreviousMoves();
-//		}
-//		assert possiblePreviousMoves != null;
-//		return possiblePreviousMoves;
-//	}
 	
 	public List<Config> possiblePreviousMoves() {
 		
@@ -1223,9 +1161,27 @@ public class Config {
 //			return;
 //		}
 		
-		for (Entry<Character, CarInfo> entry : carMap.entrySet()) {
-			char c = entry.getKey();
-			CarInfo info = entry.getValue();
+		boolean clearPathToExit = isClearPathToExit();
+		
+		carLoop:
+		for (byte c : cars) {
+			if (!carMapContains(c)) {
+				continue;
+			}
+			/*
+			 * only possible previous move of a winning config is to move R into winning position
+			 */
+			if (isWinning() && c != 'R') {
+				continue;
+			}
+			
+			/*
+			 * if clearPathToExit,
+			 * 		if red, only previous move was going away from exit
+			 * 		if other, only previous move was interfering with winning path
+			 */
+			
+			CarInfo info = carMapGet(c);
 			switch (info.o) {
 			case LEFTRIGHT:
 				switch (info.size) {
@@ -1234,54 +1190,124 @@ public class Config {
 						Config newConfig = copy();
 						newConfig.clear(c, info.o, info.size, info.row, info.col);
 						newConfig.insert(c, info.o, info.size, info.row, info.col-1);
-						moves.add(newConfig);
+						if (!clearPathToExit) {
+							moves.add(newConfig);
+						} else {
+							if (c == 'R') {
+								if (newConfig.numberMovesToWin() > this.numberMovesToWin()) {
+									moves.add(newConfig);
+									continue carLoop;
+								}
+							} else {
+								if (!newConfig.isClearPathToExit()) {
+									moves.add(newConfig);
+									continue carLoop;
+								}
+							}
+						}
 					}
 					if ((info.col+2 <= colCount-1) && ini[info.row+1][info.col+2+1] == 'X') {
 						Config newConfig = copy();
 						newConfig.clear(c, info.o, info.size, info.row, info.col);
 						newConfig.insert(c, info.o, info.size, info.row, info.col+1);
-						moves.add(newConfig);
+						if (!clearPathToExit) {
+							moves.add(newConfig);
+						} else {
+							if (c == 'R') {
+								if (newConfig.numberMovesToWin() > this.numberMovesToWin()) {
+									moves.add(newConfig);
+									continue carLoop;
+								}
+							} else {
+								if (!newConfig.isClearPathToExit()) {
+									moves.add(newConfig);
+									continue carLoop;
+								}
+							}
+						}
 					}
 					if ((info.col-1 == -1) && ini[info.row+1][info.col-1+1] == 'J') {
 						int matchingJ = matchingJRow(info.row, info.col-1);
 						Config newConfig = tryJoint(c, jJoints, matchingJ);
 						if (newConfig != null) {
-							moves.add(newConfig);
+							if (!clearPathToExit) {
+								moves.add(newConfig);
+							} else {
+								if (c == 'R') {
+									if (newConfig.numberMovesToWin() > this.numberMovesToWin()) {
+										moves.add(newConfig);
+										continue carLoop;
+									}
+								} else {
+									if (!newConfig.isClearPathToExit()) {
+										moves.add(newConfig);
+										continue carLoop;
+									}
+								}
+							}
 						}
 					}
 					if ((info.col+2 == colCount) && ini[info.row+1][info.col+2+1] == 'J') {
 						int matchingJ = matchingJRow(info.row, info.col+2);
 						Config newConfig = tryJoint(c, jJoints, matchingJ);
 						if (newConfig != null) {
-							moves.add(newConfig);
+							if (!clearPathToExit) {
+								moves.add(newConfig);
+							} else {
+								if (c == 'R') {
+									if (newConfig.numberMovesToWin() > this.numberMovesToWin()) {
+										moves.add(newConfig);
+										continue carLoop;
+									}
+								} else {
+									if (!newConfig.isClearPathToExit()) {
+										moves.add(newConfig);
+										continue carLoop;
+									}
+								}
+							}
 						}
 					}
 					if ((info.col-1 == -1) && ini[info.row+1][info.col-1+1] == 'K') {
 						int matchingK = matchingKRow(info.row, info.col-1);
 						Config newConfig = tryJoint(c, kJoints, matchingK);
 						if (newConfig != null) {
-							moves.add(newConfig);
+							if (!clearPathToExit) {
+								moves.add(newConfig);
+							} else {
+								if (c == 'R') {
+									if (newConfig.numberMovesToWin() > this.numberMovesToWin()) {
+										moves.add(newConfig);
+										continue carLoop;
+									}
+								} else {
+									if (!newConfig.isClearPathToExit()) {
+										moves.add(newConfig);
+										continue carLoop;
+									}
+								}
+							}
 						}
 					}
 					if ((info.col+2 == colCount) && ini[info.row+1][info.col+2+1] == 'K') {
 						int matchingK = matchingKRow(info.row, info.col+2);
 						Config newConfig = tryJoint(c, kJoints, matchingK);
 						if (newConfig != null) {
-							moves.add(newConfig);
-						}
-					}
-					if (c == 'R') {
-						if ((info.col-1 == -1) && ini[info.row+1][info.col-1+1] == 'Y') {
-							Config newConfig = copy();
-							newConfig.clear(c, info.o, info.size, info.row, info.col);
-							newConfig.insert(c, info.o, info.size, info.row, info.col-1);
-							moves.add(newConfig);
-						}
-						if ((info.col+2 == colCount) && ini[info.row+1][info.col+2+1] == 'Y') {
-							Config newConfig = copy();
-							newConfig.clear(c, info.o, info.size, info.row, info.col);
-							newConfig.insert(c, info.o, info.size, info.row, info.col+1);
-							moves.add(newConfig);
+							if (!clearPathToExit) {
+								moves.add(newConfig);
+							} else {
+								if (c == 'R') {
+									if (newConfig.numberMovesToWin() > this.numberMovesToWin()) {
+										moves.add(newConfig);
+										continue carLoop;
+									}
+								} else {
+									if (!newConfig.isClearPathToExit()) {
+										moves.add(newConfig);
+										continue carLoop;
+									}
+								}
+							}
 						}
 					}
 					break;
@@ -1290,40 +1316,124 @@ public class Config {
 						Config newConfig = copy();
 						newConfig.clear(c, info.o, info.size, info.row, info.col);
 						newConfig.insert(c, info.o, info.size, info.row, info.col-1);
-						moves.add(newConfig);
+						if (!clearPathToExit) {
+							moves.add(newConfig);
+						} else {
+							if (c == 'R') {
+								if (newConfig.numberMovesToWin() > this.numberMovesToWin()) {
+									moves.add(newConfig);
+									continue carLoop;
+								}
+							} else {
+								if (!newConfig.isClearPathToExit()) {
+									moves.add(newConfig);
+									continue carLoop;
+								}
+							}
+						}
 					}
 					if ((info.col+3 <= colCount-1) && ini[info.row+1][info.col+3+1] == 'X') {
 						Config newConfig = copy();
 						newConfig.clear(c, info.o, info.size, info.row, info.col);
 						newConfig.insert(c, info.o, info.size, info.row, info.col+1);
-						moves.add(newConfig);
+						if (!clearPathToExit) {
+							moves.add(newConfig);
+						} else {
+							if (c == 'R') {
+								if (newConfig.numberMovesToWin() > this.numberMovesToWin()) {
+									moves.add(newConfig);
+									continue carLoop;
+								}
+							} else {
+								if (!newConfig.isClearPathToExit()) {
+									moves.add(newConfig);
+									continue carLoop;
+								}
+							}
+						}
 					}
 					if ((info.col-1 == -1) && ini[info.row+1][info.col-1+1] == 'J') {
 						int matchingJ = matchingJRow(info.row, info.col-1);
 						Config newConfig = tryJoint(c, jJoints, matchingJ);
 						if (newConfig != null) {
-							moves.add(newConfig);
+							if (!clearPathToExit) {
+								moves.add(newConfig);
+							} else {
+								if (c == 'R') {
+									if (newConfig.numberMovesToWin() > this.numberMovesToWin()) {
+										moves.add(newConfig);
+										continue carLoop;
+									}
+								} else {
+									if (!newConfig.isClearPathToExit()) {
+										moves.add(newConfig);
+										continue carLoop;
+									}
+								}
+							}
 						}
 					}
 					if ((info.col+3 == colCount) && ini[info.row+1][info.col+3+1] == 'J') {
 						int matchingJ = matchingJRow(info.row, info.col+3);
 						Config newConfig = tryJoint(c, jJoints, matchingJ);
 						if (newConfig != null) {
-							moves.add(newConfig);
+							if (!clearPathToExit) {
+								moves.add(newConfig);
+							} else {
+								if (c == 'R') {
+									if (newConfig.numberMovesToWin() > this.numberMovesToWin()) {
+										moves.add(newConfig);
+										continue carLoop;
+									}
+								} else {
+									if (!newConfig.isClearPathToExit()) {
+										moves.add(newConfig);
+										continue carLoop;
+									}
+								}
+							}
 						}
 					}
 					if ((info.col-1 == -1) && ini[info.row+1][info.col-1+1] == 'K') {
 						int matchingK = matchingKRow(info.row, info.col-1);
 						Config newConfig = tryJoint(c, kJoints, matchingK);
 						if (newConfig != null) {
-							moves.add(newConfig);
+							if (!clearPathToExit) {
+								moves.add(newConfig);
+							} else {
+								if (c == 'R') {
+									if (newConfig.numberMovesToWin() > this.numberMovesToWin()) {
+										moves.add(newConfig);
+										continue carLoop;
+									}
+								} else {
+									if (!newConfig.isClearPathToExit()) {
+										moves.add(newConfig);
+										continue carLoop;
+									}
+								}
+							}
 						}
 					}
 					if ((info.col+3 == colCount) && ini[info.row+1][info.col+3+1] == 'K') {
 						int matchingK = matchingKRow(info.row, info.col+3);
 						Config newConfig = tryJoint(c, kJoints, matchingK);
 						if (newConfig != null) {
-							moves.add(newConfig);
+							if (!clearPathToExit) {
+								moves.add(newConfig);
+							} else {
+								if (c == 'R') {
+									if (newConfig.numberMovesToWin() > this.numberMovesToWin()) {
+										moves.add(newConfig);
+										continue carLoop;
+									}
+								} else {
+									if (!newConfig.isClearPathToExit()) {
+										moves.add(newConfig);
+										continue carLoop;
+									}
+								}
+							}
 						}
 					}
 					break;
@@ -1336,54 +1446,124 @@ public class Config {
 						Config newConfig = copy();
 						newConfig.clear(c, info.o, info.size, info.row, info.col);
 						newConfig.insert(c, info.o, info.size, info.row-1, info.col);
-						moves.add(newConfig);
+						if (!clearPathToExit) {
+							moves.add(newConfig);
+						} else {
+							if (c == 'R') {
+								if (newConfig.numberMovesToWin() > this.numberMovesToWin()) {
+									moves.add(newConfig);
+									continue carLoop;
+								}
+							} else {
+								if (!newConfig.isClearPathToExit()) {
+									moves.add(newConfig);
+									continue carLoop;
+								}
+							}
+						}
 					}
 					if ((info.row+2 <= rowCount-1) && ini[info.row+2+1][info.col+1] == 'X') {
 						Config newConfig = copy();
 						newConfig.clear(c, info.o, info.size, info.row, info.col);
 						newConfig.insert(c, info.o, info.size, info.row+1, info.col);
-						moves.add(newConfig);
+						if (!clearPathToExit) {
+							moves.add(newConfig);
+						} else {
+							if (c == 'R') {
+								if (newConfig.numberMovesToWin() > this.numberMovesToWin()) {
+									moves.add(newConfig);
+									continue carLoop;
+								}
+							} else {
+								if (!newConfig.isClearPathToExit()) {
+									moves.add(newConfig);
+									continue carLoop;
+								}
+							}
+						}
 					}
 					if ((info.row-1 == -1) && ini[info.row-1+1][info.col+1] == 'J') {
 						int matchingJ = matchingJRow(info.row-1, info.col);
 						Config newConfig = tryJoint(c, jJoints, matchingJ);
 						if (newConfig != null) {
-							moves.add(newConfig);
+							if (!clearPathToExit) {
+								moves.add(newConfig);
+							} else {
+								if (c == 'R') {
+									if (newConfig.numberMovesToWin() > this.numberMovesToWin()) {
+										moves.add(newConfig);
+										continue carLoop;
+									}
+								} else {
+									if (!newConfig.isClearPathToExit()) {
+										moves.add(newConfig);
+										continue carLoop;
+									}
+								}
+							}
 						}
 					}
 					if ((info.row+2 == rowCount) && ini[info.row+2+1][info.col+1] == 'J') {
 						int matchingJ = matchingJRow(info.row+2, info.col);
 						Config newConfig = tryJoint(c, jJoints, matchingJ);
 						if (newConfig != null) {
-							moves.add(newConfig);
+							if (!clearPathToExit) {
+								moves.add(newConfig);
+							} else {
+								if (c == 'R') {
+									if (newConfig.numberMovesToWin() > this.numberMovesToWin()) {
+										moves.add(newConfig);
+										continue carLoop;
+									}
+								} else {
+									if (!newConfig.isClearPathToExit()) {
+										moves.add(newConfig);
+										continue carLoop;
+									}
+								}
+							}
 						}
 					}
 					if ((info.row-1 == -1) && ini[info.row-1+1][info.col+1] == 'K') {
 						int matchingK = matchingKRow(info.row-1, info.col);
 						Config newConfig = tryJoint(c, kJoints, matchingK);
 						if (newConfig != null) {
-							moves.add(newConfig);
+							if (!clearPathToExit) {
+								moves.add(newConfig);
+							} else {
+								if (c == 'R') {
+									if (newConfig.numberMovesToWin() > this.numberMovesToWin()) {
+										moves.add(newConfig);
+										continue carLoop;
+									}
+								} else {
+									if (!newConfig.isClearPathToExit()) {
+										moves.add(newConfig);
+										continue carLoop;
+									}
+								}
+							}
 						}
 					}
 					if ((info.row+2 == rowCount) && ini[info.row+2+1][info.col+1] == 'K') {
 						int matchingK = matchingKRow(info.row+2, info.col);
 						Config newConfig = tryJoint(c, kJoints, matchingK);
 						if (newConfig != null) {
-							moves.add(newConfig);
-						}
-					}
-					if (c == 'R') {
-						if ((info.row-1 == -1) && ini[info.row-1+1][info.col+1] == 'Y') {
-							Config newConfig = copy();
-							newConfig.clear(c, info.o, info.size, info.row, info.col);
-							newConfig.insert(c, info.o, info.size, info.row-1, info.col);
-							moves.add(newConfig);
-						}
-						if ((info.row+2 == rowCount) && ini[info.row+2+1][info.col+1] == 'Y') {
-							Config newConfig = copy();
-							newConfig.clear(c, info.o, info.size, info.row, info.col);
-							newConfig.insert(c, info.o, info.size, info.row+1, info.col);
-							moves.add(newConfig);
+							if (!clearPathToExit) {
+								moves.add(newConfig);
+							} else {
+								if (c == 'R') {
+									if (newConfig.numberMovesToWin() > this.numberMovesToWin()) {
+										moves.add(newConfig);
+										continue carLoop;
+									}
+								} else {
+									if (!newConfig.isClearPathToExit()) {
+										moves.add(newConfig);
+										continue carLoop;
+									}
+								}
+							}
 						}
 					}
 					break;
@@ -1392,40 +1572,124 @@ public class Config {
 						Config newConfig = copy();
 						newConfig.clear(c, info.o, info.size, info.row, info.col);
 						newConfig.insert(c, info.o, info.size, info.row-1, info.col);
-						moves.add(newConfig);
+						if (!clearPathToExit) {
+							moves.add(newConfig);
+						} else {
+							if (c == 'R') {
+								if (newConfig.numberMovesToWin() > this.numberMovesToWin()) {
+									moves.add(newConfig);
+									continue carLoop;
+								}
+							} else {
+								if (!newConfig.isClearPathToExit()) {
+									moves.add(newConfig);
+									continue carLoop;
+								}
+							}
+						}
 					}
 					if ((info.row+3 <= rowCount-1) && ini[info.row+3+1][info.col+1] == 'X') {
 						Config newConfig = copy();
 						newConfig.clear(c, info.o, info.size, info.row, info.col);
 						newConfig.insert(c, info.o, info.size, info.row+1, info.col);
-						moves.add(newConfig);
+						if (!clearPathToExit) {
+							moves.add(newConfig);
+						} else {
+							if (c == 'R') {
+								if (newConfig.numberMovesToWin() > this.numberMovesToWin()) {
+									moves.add(newConfig);
+									continue carLoop;
+								}
+							} else {
+								if (!newConfig.isClearPathToExit()) {
+									moves.add(newConfig);
+									continue carLoop;
+								}
+							}
+						}
 					}
 					if ((info.row-1 == -1) && ini[info.row-1+1][info.col+1] == 'J') {
 						int matchingJ = matchingJRow(info.row-1, info.col);
 						Config newConfig = tryJoint(c, jJoints, matchingJ);
 						if (newConfig != null) {
-							moves.add(newConfig);
+							if (!clearPathToExit) {
+								moves.add(newConfig);
+							} else {
+								if (c == 'R') {
+									if (newConfig.numberMovesToWin() > this.numberMovesToWin()) {
+										moves.add(newConfig);
+										continue carLoop;
+									}
+								} else {
+									if (!newConfig.isClearPathToExit()) {
+										moves.add(newConfig);
+										continue carLoop;
+									}
+								}
+							}
 						}
 					}
 					if ((info.row+3 == rowCount) && ini[info.row+3+1][info.col+1] == 'J') {
 						int matchingJ = matchingJRow(info.row+3, info.col);
 						Config newConfig = tryJoint(c, jJoints, matchingJ);
 						if (newConfig != null) {
-							moves.add(newConfig);
+							if (!clearPathToExit) {
+								moves.add(newConfig);
+							} else {
+								if (c == 'R') {
+									if (newConfig.numberMovesToWin() > this.numberMovesToWin()) {
+										moves.add(newConfig);
+										continue carLoop;
+									}
+								} else {
+									if (!newConfig.isClearPathToExit()) {
+										moves.add(newConfig);
+										continue carLoop;
+									}
+								}
+							}
 						}
 					}
 					if ((info.row-1 == -1) && ini[info.row-1+1][info.col+1] == 'K') {
 						int matchingK = matchingKRow(info.row-1, info.col);
 						Config newConfig = tryJoint(c, kJoints, matchingK);
 						if (newConfig != null) {
-							moves.add(newConfig);
+							if (!clearPathToExit) {
+								moves.add(newConfig);
+							} else {
+								if (c == 'R') {
+									if (newConfig.numberMovesToWin() > this.numberMovesToWin()) {
+										moves.add(newConfig);
+										continue carLoop;
+									}
+								} else {
+									if (!newConfig.isClearPathToExit()) {
+										moves.add(newConfig);
+										continue carLoop;
+									}
+								}
+							}
 						}
 					}
 					if ((info.row+3 == rowCount) && ini[info.row+3+1][info.col+1] == 'K') {
 						int matchingK = matchingKRow(info.row+3, info.col);
 						Config newConfig = tryJoint(c, kJoints, matchingK);
 						if (newConfig != null) {
-							moves.add(newConfig);
+							if (!clearPathToExit) {
+								moves.add(newConfig);
+							} else {
+								if (c == 'R') {
+									if (newConfig.numberMovesToWin() > this.numberMovesToWin()) {
+										moves.add(newConfig);
+										continue carLoop;
+									}
+								} else {
+									if (!newConfig.isClearPathToExit()) {
+										moves.add(newConfig);
+										continue carLoop;
+									}
+								}
+							}
 						}
 					}
 					break;
@@ -1452,7 +1716,7 @@ public class Config {
 				}
 				
 				Config n = copy();
-				boolean res = n.insert('R', Orientation.LEFTRIGHT, 2, r, c);
+				boolean res = n.insert((byte)'R', Orientation.LEFTRIGHT, 2, r, c);
 				if (res) {
 					placements.add(n);
 				}
@@ -1467,7 +1731,7 @@ public class Config {
 				}
 				
 				Config n = copy();
-				boolean res = n.insert('R', Orientation.UPDOWN, 2, r, c);
+				boolean res = n.insert((byte)'R', Orientation.UPDOWN, 2, r, c);
 				if (res) {
 					placements.add(n);
 				}
@@ -1487,22 +1751,22 @@ public class Config {
 		switch (side) {
 		case 0:
 			n = copy();
-			res = n.insert('R', Orientation.UPDOWN, 2, exit[0], exit[1]);
+			res = n.insert((byte)'R', Orientation.UPDOWN, 2, exit[0], exit[1]);
 			assert res;
 			return n;
 		case 1:
 			n = copy();
-			res = n.insert('R', Orientation.LEFTRIGHT, 2, exit[0], exit[1]-1);
+			res = n.insert((byte)'R', Orientation.LEFTRIGHT, 2, exit[0], exit[1]-1);
 			assert res;
 			return n;
 		case 2:
 			n = copy();
-			res = n.insert('R', Orientation.UPDOWN, 2, exit[0]-1, exit[1]);
+			res = n.insert((byte)'R', Orientation.UPDOWN, 2, exit[0]-1, exit[1]);
 			assert res;
 			return n;
 		case 3:
 			n = copy();
-			res = n.insert('R', Orientation.LEFTRIGHT, 2, exit[0], exit[1]);
+			res = n.insert((byte)'R', Orientation.LEFTRIGHT, 2, exit[0], exit[1]);
 			assert res;
 			return n;
 		}
@@ -1513,9 +1777,9 @@ public class Config {
 	
 	public List<Config> possible2CarPlacements() {
 		
-		char car = ' ';
-		for (char d : cars) {
-			if (!carMap.containsKey(d)) {
+		byte car = ' ';
+		for (byte d : cars) {
+			if (!carMapContains(d)) {
 				car = d;
 				break;
 			}
@@ -1565,9 +1829,9 @@ public class Config {
 	
 	public List<Config> possible3CarPlacements() {
 		
-		char car = ' ';
-		for (char d : cars) {
-			if (!carMap.containsKey(d)) {
+		byte car = ' ';
+		for (byte d : cars) {
+			if (!carMapContains(d)) {
 				car = d;
 				break;
 			}
@@ -1615,12 +1879,12 @@ public class Config {
 		return placements;
 	}
 	
-	Config tryJoint(char c, int[][] joints, int j) {
+	Config tryJoint(byte c, int[][] joints, int j) {
 		
 		int mR = joints[j][0];
 		int mC = joints[j][1];
 		
-		CarInfo info = carMap.get(c);
+		CarInfo info = carMapGet(c);
 		
 		int mSide = side(joints[j]);
 		switch (mSide) {
@@ -2062,11 +2326,144 @@ public class Config {
 	public String toString() {
 		
 		StringBuilder b = new StringBuilder();
-		for (char[] i : ini) {
+		for (byte[] i : ini) {
 			b.append(new String(i));
 			b.append('\n');
 		}
 		return b.toString();
 	};
 	
+	public boolean carMapContains(byte c) {
+		switch (c) {
+		case 'R':
+			return carPresent[0];
+		case 'A':
+			return carPresent[1];
+		case 'B':
+			return carPresent[2];
+		case 'C':
+			return carPresent[3];
+		case 'D':
+			return carPresent[4];
+		case 'E':
+			return carPresent[5];
+		case 'F':
+			return carPresent[6];
+		case 'G':
+			return carPresent[7];
+		}
+		
+		assert false;
+		return false;
+	}
+	
+	public void carMapPut(byte c) {
+		switch (c) {
+		case 'R':
+			carPresent[0] = true;
+			break;
+		case 'A':
+			carPresent[1] = true;
+			break;
+		case 'B':
+			carPresent[2] = true;
+			break;
+		case 'C':
+			carPresent[3] = true;
+			break;
+		case 'D':
+			carPresent[4] = true;
+			break;
+		case 'E':
+			carPresent[5] = true;
+			break;
+		case 'F':
+			carPresent[6] = true;
+			break;
+		case 'G':
+			carPresent[7] = true;
+			break;
+		default:
+			assert false;
+			break;
+		}
+	}
+	
+	public void carMapRemove(byte c) {
+		switch (c) {
+		case 'R':
+			carPresent[0] = false;
+			break;
+		case 'A':
+			carPresent[1] = false;
+			break;
+		case 'B':
+			carPresent[2] = false;
+			break;
+		case 'C':
+			carPresent[3] = false;
+			break;
+		case 'D':
+			carPresent[4] = false;
+			break;
+		case 'E':
+			carPresent[5] = false;
+			break;
+		case 'F':
+			carPresent[6] = false;
+			break;
+		case 'G':
+			carPresent[7] = false;
+			break;
+		default:
+			assert false;
+			break;
+			
+		}
+	}
+	
+	public CarInfo carMapGet(byte c) {
+		CarInfo info = new CarInfo();
+		
+		for (int i = 0; i < ini.length; i++) {
+			for (int j = 0; j < ini[i].length; j++) {
+				byte b = ini[i][j];
+				if (b == c) {
+					if (ini[i+1][j] == c && (i+1-1 < rowCount || (i+1-1 == exit[0] && j-1 == exit[1]))) {
+						if (ini[i+2][j] == c && (i+2-1 < rowCount || (i+2-1 == exit[0] && j-1 == exit[1]))) {
+							info.o = Orientation.UPDOWN;
+							info.row = i-1;
+							info.col = j-1;
+							info.size = 3;
+							return info;
+						} else {
+							info.o = Orientation.UPDOWN;
+							info.row = i-1;
+							info.col = j-1;
+							info.size = 2;
+							return info;
+						}
+					} else {
+						assert ini[i][j+1] == c;
+						if (ini[i][j+2] == c && (j+2-1 < colCount || (i-1 == exit[0] && j+2-1 == exit[1]))) {
+							info.o = Orientation.LEFTRIGHT;
+							info.row = i-1;
+							info.col = j-1;
+							info.size = 3;
+							return info;
+						} else {
+							info.o = Orientation.LEFTRIGHT;
+							info.row = i-1;
+							info.col = j-1;
+							info.size = 2;
+							return info;
+						}
+					}
+				}
+			}
+		}
+		
+		assert false;
+		return null;
+	}
 }

@@ -8,7 +8,7 @@ import solver.Config;
 
 public class Generator {
 	
-	static char[][] boardIni = new char[][] {
+	static byte[][] boardIni = new byte[][] {
 		{' ', ' ', ' ', ' ', 'Y', ' ', ' ', ' '},
 		{' ', 'X', 'X', 'X', 'X', 'X', 'X', ' '},
 		{' ', 'X', 'X', 'X', 'X', 'X', 'X', ' '},
@@ -19,7 +19,11 @@ public class Generator {
 		{' ', ' ', ' ', ' ', 'K', ' ', 'J', ' '},
 	};
 	
-	public static void main(String[] args) {
+	static StateSpace explored = new StateSpace();
+	
+	public static void main(String[] args) throws Exception {
+		
+//		Thread.sleep(20000);
 		
 		long total = System.currentTimeMillis();
 		long t = total;
@@ -29,27 +33,33 @@ public class Generator {
 		Config c = new Config(boardIni);
 		c = c.redCarWinningConfig();
 		
-		List<Config> possible2CarPlacements = c.possible2CarPlacements();
-		for (int i = 0; i < possible2CarPlacements.size(); i++) {
-			Config d = possible2CarPlacements.get(i);
+		List<Config> placements0 = c.possible3CarPlacements();
+		for (int i = 0; i < placements0.size(); i++) {
+			Config d = placements0.get(i);
 			
-			List<Config> possible3CarPlacements = d.possible3CarPlacements();
-			for (int j = 0; j < possible3CarPlacements.size(); j++) {
-				Config e = possible3CarPlacements.get(j);
+			List<Config> placements1 = d.possible3CarPlacements();
+			for (int j = 0; j < placements1.size(); j++) {
+				Config e = placements1.get(j);
 				
 //				winners.add(e);
-				List<Config> possible2CarPlacements2 = e.possible2CarPlacements();
-				for (int k = 0; k < possible2CarPlacements2.size(); k++) {
-					Config f = possible2CarPlacements2.get(k);
+				List<Config> possible3CarPlacements3 = e.possible3CarPlacements();
+				for (int k = 0; k < possible3CarPlacements3.size(); k++) {
+					Config f = possible3CarPlacements3.get(k);
 					
 					winners.add(f);
+//					List<Config> possible3CarPlacements4 = f.possible3CarPlacements();
+//					for (int l = 0; l < possible3CarPlacements4.size(); l++) {
+//						Config g = possible3CarPlacements4.get(l);
+//						
+//						winners.add(g);
+//					}
 				}
 				
 			}
 		}
 		System.out.print("(" + winners.size() + ")");
 		
-		StateSpace explored = new StateSpace();
+		explored.iteration = 0;
 		
 		for (int i = 0; i < winners.size(); i++) {
 			if (i % 100 == 0) {
@@ -63,13 +73,21 @@ public class Generator {
 		
 		t = System.currentTimeMillis();
 		System.out.print("initial exploration... ");
-		System.out.print("(" + winners.size() + ") ");
-		for (int i = 0; i < winners.size(); i++) {
+		
+		explored.iteration = explored.iteration+1;
+		
+		List<Config> a = new ArrayList<Config>(explored.lastIteration);
+		explored.lastIteration.clear();
+		
+		System.out.print("(" + a.size() + ") ");
+		for (int i = 0; i < a.size(); i++) {
 			if (i % 100 == 0) {
 				System.out.print(".");
 			}
-			Config w = winners.get(i);
-			explore(w, explored);
+			Config b = a.get(i);
+//			if (b.iteration == explored.iteration-1) {
+			explore(b);
+//			}
 		}
 		System.out.print(" " + (System.currentTimeMillis() - t) + " millis");
 		System.out.println();
@@ -77,19 +95,29 @@ public class Generator {
 		int hash = explored.hashCode();
 		while (true) {
 			t = System.currentTimeMillis();
+			
+			explored.iteration = explored.iteration+1;
+			
 			System.out.print("exploring again... ");
-			List<Config> a = new ArrayList<Config>(explored.keySet());
+			a = new ArrayList<Config>(explored.lastIteration);
+			explored.lastIteration.clear();
+			
 			System.out.print("(" + a.size() + ") ");
 			for (int i = 0; i < a.size(); i++) {
 				if (i % 100 == 0) {
 					System.out.print(".");
 				}
-				Config w = a.get(i);
-				explore(w, explored);
+				Config b = a.get(i);
+//				if (b.iteration == explored.iteration-1) {
+				explore(b);
+//				}
 			}
-			System.out.print(" " + (System.currentTimeMillis() - t) + " millis");
+			System.out.print(" " + (System.currentTimeMillis() - t) + " millis ");
+			System.out.print("hashing... ");
+			int curHash = explored.hashCode();
+			System.out.print("done");
 			System.out.println("");
-			if (explored.hashCode() == hash) {
+			if (curHash == hash) {
 				break;
 			}
 			hash = explored.hashCode();
@@ -98,7 +126,7 @@ public class Generator {
 		
 		int longest = -1;
 		Config longestConfig = null;
-		for (Config l : explored.keySet()) {
+		for (Config l : a) {
 			
 			Config m = l;
 			int dist = 0;
@@ -123,14 +151,11 @@ public class Generator {
 		System.out.println("total time: " + (System.currentTimeMillis() - total) + " millis");
 	}
 	
-	static public void explore(Config c, StateSpace explored) {
+	static public void explore(Config c) {
 		
 		List<Config> moves = c.possiblePreviousMoves();
 		
 		for (Config m : moves) {
-			if (m.isWinning()) {
-				continue;
-			}
 			
 			if (!explored.keySet().contains(m)) {
 				
@@ -138,25 +163,17 @@ public class Generator {
 				assert children == null || !children.contains(m);
 				
 				explored.put(m, c);
-//				explore(m, explored);
 			} else {
+				
 				Config currentMPred = explored.get(m);
-				int cDist = distanceToStart(c, explored);
-				int currentMPredDist = distanceToStart(currentMPred, explored);
+				int cDist = explored.distanceToStart(c);
+				int currentMPredDist = explored.distanceToStart(currentMPred);
 				if (cDist < currentMPredDist) {
-					/*
-					 * update entire entry
-					 */
+					
 					explored.remove(m, currentMPred);
 					explored.put(m, c);
-//					explore(m, explored);
 				}
 			} 
 		}
-	}
-	
-	public static int distanceToStart(Config c, StateSpace explored) {
-		int testDist = explored.distanceToStart(c);
-		return testDist;
 	}
 }

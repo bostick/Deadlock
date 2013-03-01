@@ -1,7 +1,9 @@
 package generator;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -14,6 +16,9 @@ public class StateSpace {
 	
 	public Map<Config, Set<Config>> childrenMap = new HashMap<Config, Set<Config>>();
 	
+	public int iteration;
+	public List<Config> lastIteration = new ArrayList<Config>();
+	
 	public int hashCode() {
 		int h = 17;
 		h = 37 * h + map.hashCode();
@@ -22,12 +27,8 @@ public class StateSpace {
 	}
 	
 	public void remove(Config key, Config val) {
-		
-		assert childrenMap.get(val).contains(key);
-		
 		boolean res = childrenMap.get(val).remove(key);
 		assert res;
-		
 	}
 	
 	public void put(Config key, Config val) {
@@ -45,6 +46,9 @@ public class StateSpace {
 		} else {
 			dist = 0;
 		}
+		
+		lastIteration.add(key);
+		key.iteration = iteration;
 		
 		map.put(key, val);
 		

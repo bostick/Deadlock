@@ -1,4 +1,7 @@
 
+keep track of frontier, only configs that were changed in last iteration
+
+
 try breadth first search
 
 
