@@ -2,11 +2,26 @@ package generator;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import solver.Config;
 
 public class Generator {
+	
+	static byte[][] testIni = new byte[][] {
+		{' ', ' ', ' ', ' ', 'Y', ' ', ' ', ' '},
+		{' ', 'A', 'X', 'X', 'X', 'X', 'B', ' '},
+		{' ', 'A', 'X', 'X', 'X', 'X', 'B', ' '},
+		{' ', 'X', 'X', 'X', 'X', 'X', 'R', ' '},
+		{' ', 'X', 'X', 'X', 'X', 'X', 'R', ' '},
+		{' ', 'X', 'X', 'C', 'X', 'X', 'X', ' '},
+		{'K', 'X', 'X', 'C', 'X', 'X', 'X', 'J'},
+		{' ', ' ', ' ', ' ', 'K', ' ', 'J', ' '},
+	};
+	
+	public static void main(String[] args) throws Exception {
+		
+		generate();
+	}
 	
 	static byte[][] boardIni = new byte[][] {
 		{' ', ' ', ' ', ' ', 'Y', ' ', ' ', ' '},
@@ -21,9 +36,7 @@ public class Generator {
 	
 	static StateSpace explored = new StateSpace();
 	
-	public static void main(String[] args) throws Exception {
-		
-//		Thread.sleep(20000);
+	public static void generate() throws Exception {
 		
 		long total = System.currentTimeMillis();
 		long t = total;
@@ -46,20 +59,25 @@ public class Generator {
 				for (int k = 0; k < possible3CarPlacements3.size(); k++) {
 					Config f = possible3CarPlacements3.get(k);
 					
-					winners.add(f);
-//					List<Config> possible3CarPlacements4 = f.possible3CarPlacements();
-//					for (int l = 0; l < possible3CarPlacements4.size(); l++) {
-//						Config g = possible3CarPlacements4.get(l);
-//						
-//						winners.add(g);
-//					}
+//					winners.add(f);
+					List<Config> possible3CarPlacements4 = f.possible3CarPlacements();
+					for (int l = 0; l < possible3CarPlacements4.size(); l++) {
+						Config g = possible3CarPlacements4.get(l);
+						
+						winners.add(g);
+//						List<Config> possible3CarPlacements5 = g.possible3CarPlacements();
+//						for (int m = 0; m < possible3CarPlacements5.size(); m++) {
+//							Config h = possible3CarPlacements5.get(m);
+//							
+//							winners.add(h);
+//						}
+						
+					}
 				}
 				
 			}
 		}
 		System.out.print("(" + winners.size() + ")");
-		
-		explored.iteration = 0;
 		
 		for (int i = 0; i < winners.size(); i++) {
 			if (i % 100 == 0) {
@@ -69,37 +87,16 @@ public class Generator {
 			explored.put(w, null);
 		}
 		System.out.print(" " + (System.currentTimeMillis() - t) + " millis");
-		System.out.println();
-		
-		t = System.currentTimeMillis();
-		System.out.print("initial exploration... ");
-		
-		explored.iteration = explored.iteration+1;
-		
-		List<Config> a = new ArrayList<Config>(explored.lastIteration);
-		explored.lastIteration.clear();
-		
-		System.out.print("(" + a.size() + ") ");
-		for (int i = 0; i < a.size(); i++) {
-			if (i % 100 == 0) {
-				System.out.print(".");
-			}
-			Config b = a.get(i);
-//			if (b.iteration == explored.iteration-1) {
-			explore(b);
-//			}
-		}
-		System.out.print(" " + (System.currentTimeMillis() - t) + " millis");
-		System.out.println();
-		
+		System.out.print("hashing... ");
 		int hash = explored.hashCode();
+		System.out.print("done");
+		System.out.println("");
+		
 		while (true) {
 			t = System.currentTimeMillis();
 			
-			explored.iteration = explored.iteration+1;
-			
-			System.out.print("exploring again... ");
-			a = new ArrayList<Config>(explored.lastIteration);
+			System.out.print("exploring... ");
+			List<Config> a = new ArrayList<Config>(explored.lastIteration);
 			explored.lastIteration.clear();
 			
 			System.out.print("(" + a.size() + ") ");
@@ -108,9 +105,7 @@ public class Generator {
 					System.out.print(".");
 				}
 				Config b = a.get(i);
-//				if (b.iteration == explored.iteration-1) {
-				explore(b);
-//				}
+				explorePreviousMoves(b);
 			}
 			System.out.print(" " + (System.currentTimeMillis() - t) + " millis ");
 			System.out.print("hashing... ");
@@ -124,9 +119,14 @@ public class Generator {
 		}
 		System.out.println("reached fixpoint");
 		
-		int longest = -1;
-		Config longestConfig = null;
-		for (Config l : a) {
+		System.out.print("finding longest non-BS path... ");
+		System.out.print("(" + explored.allIterations.size() + ") ");
+		Config hardest = null;
+		/*
+		 * start at end of iterations and work backwards, looking for first non-BS config
+		 */
+		for (int ll = explored.allIterations.size()-1; ll >= 0; ll--) {
+			Config l = explored.allIterations.get(ll);
 			
 			Config m = l;
 			int dist = 0;
@@ -138,42 +138,93 @@ public class Generator {
 				dist++;
 			}
 			
-			if (dist > longest) {
-				longest = dist;
-				longestConfig = l;
+			List<Config> solution = solve(l);
+			
+			if (dist == solution.size()) {
+				
+				hardest = l;
+				break;
+				
+			} else {
+				System.out.print("!");
 			}
 			
 		}
+		System.out.print("done");
+		System.out.println("");
 		
 		System.out.println("hardest config:");
-		System.out.println(longestConfig);
+		System.out.println(hardest);
+		System.out.println();
+		Config l = hardest;
+		while (true) {
+			if (l == null) {
+				break;
+			}
+			l = explored.get(l);
+			System.out.println(l);
+			System.out.println();
+		}
 		
 		System.out.println("total time: " + (System.currentTimeMillis() - total) + " millis");
 	}
 	
-	static public void explore(Config c) {
+	static public void explorePreviousMoves(Config c) {
 		
 		List<Config> moves = c.possiblePreviousMoves();
 		
 		for (Config m : moves) {
-			
 			if (!explored.keySet().contains(m)) {
-				
-				Set<Config> children = explored.childrenMap.get(c);
-				assert children == null || !children.contains(m);
-				
 				explored.put(m, c);
-			} else {
-				
-				Config currentMPred = explored.get(m);
-				int cDist = explored.distanceToStart(c);
-				int currentMPredDist = explored.distanceToStart(currentMPred);
-				if (cDist < currentMPredDist) {
-					
-					explored.remove(m, currentMPred);
-					explored.put(m, c);
-				}
-			} 
+			}
 		}
 	}
+	
+	static List<Config> solve(Config start) {
+		
+		StateSpace space = new StateSpace();
+		space.put(start, null);
+		
+		Config winner = null;
+		loop:
+		while (true) {
+			
+			List<Config> a = new ArrayList<Config>(space.lastIteration);
+			space.lastIteration.clear();
+			
+			for (int i = 0; i < a.size(); i++) {
+				Config b = a.get(i);
+				
+				List<Config> moves = b.possibleNextMoves();
+				
+				for (Config m : moves) {
+					if (!space.keySet().contains(m)) {
+						space.put(m, b);
+						
+						if (m.isWinning()) {
+							winner = m;
+							break loop;
+						}
+						
+					}
+				}
+				
+			}
+		}
+		
+		List<Config> solution = new ArrayList<Config>();
+		
+		Config l = winner;
+		solution.add(l);
+		while (true) {
+			l = space.get(l);
+			if (l == null) {
+				break;
+			}
+			solution.add(0, l);
+		}
+		
+		return solution;
+	}
+
 }

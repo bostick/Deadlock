@@ -1,21 +1,9 @@
 
-keep track of frontier, only configs that were changed in last iteration
+hashing isn't needed in generator
 
 
-try breadth first search
-
-
-Config.equals()
-
-store car-less configuration for quick equality checking
-equals: car-less configs are equal, and carMaps are equal
-
-
-
-
-
-
-Config owns char[][] in ctor, so don't need to copy it
+remove all none byte[][] data from Config.
+ideally completely get rid of Config class and only work with byte[][] objects
 
 
 
