@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import solver.Config;
+import solver.ParentConfig;
 
 public class Generator {
 	
@@ -33,7 +34,7 @@ public class Generator {
 		{'K', 'X', 'X', 'X', 'X', 'X', 'X', 'J'},
 		{' ', ' ', ' ', ' ', 'K', ' ', 'J', ' '},
 	};
-	
+	static ParentConfig par;
 	static StateSpace explored = new StateSpace();
 	
 	public static void generate() throws Exception {
@@ -43,24 +44,52 @@ public class Generator {
 		System.out.print("winning base cases... ");
 		List<Config> winners = new ArrayList<Config>();
 		
-		Config c = new Config(boardIni);
-		c = c.redCarWinningConfig();
+		par = new ParentConfig(boardIni);
+		par.carMapPresent((byte)'R');
+		par.carMapPresent((byte)'A');
+		par.carMapPresent((byte)'B');
+		par.carMapPresent((byte)'C');
+		par.carMapPresent((byte)'D');
 		
-		List<Config> placements0 = c.possible3CarPlacements();
+		Config c = new Config(par, boardIni);
+		c = c.redCarWinningConfig();
+//		CarInfo info = c.carMapGet((byte)'R');
+		int side = par.side(par.exit);
+		int[] unavailable = new int[2];
+		switch (side) {
+		case 0:
+			unavailable[0] = 1;
+			unavailable[1] = par.exit[1];
+			break;
+		case 1:
+			unavailable[0] = par.exit[0];
+			unavailable[1] = par.colCount-2;
+			break;
+		case 2:
+			unavailable[0] = par.rowCount-2;
+			unavailable[1] = par.exit[1];
+			break;
+		case 3:
+			unavailable[0] = par.exit[0];
+			unavailable[1] = 1;
+			break;
+		}
+		
+		List<Config> placements0 = c.possible3CarPlacements(unavailable);
 		for (int i = 0; i < placements0.size(); i++) {
 			Config d = placements0.get(i);
 			
-			List<Config> placements1 = d.possible3CarPlacements();
+			List<Config> placements1 = d.possible3CarPlacements(unavailable);
 			for (int j = 0; j < placements1.size(); j++) {
 				Config e = placements1.get(j);
 				
 //				winners.add(e);
-				List<Config> possible3CarPlacements3 = e.possible3CarPlacements();
+				List<Config> possible3CarPlacements3 = e.possible3CarPlacements(unavailable);
 				for (int k = 0; k < possible3CarPlacements3.size(); k++) {
 					Config f = possible3CarPlacements3.get(k);
 					
 //					winners.add(f);
-					List<Config> possible3CarPlacements4 = f.possible3CarPlacements();
+					List<Config> possible3CarPlacements4 = f.possible3CarPlacements(unavailable);
 					for (int l = 0; l < possible3CarPlacements4.size(); l++) {
 						Config g = possible3CarPlacements4.get(l);
 						
@@ -87,9 +116,6 @@ public class Generator {
 			explored.put(w, null);
 		}
 		System.out.print(" " + (System.currentTimeMillis() - t) + " millis");
-		System.out.print("hashing... ");
-		int hash = explored.hashCode();
-		System.out.print("done");
 		System.out.println("");
 		
 		while (true) {
@@ -108,14 +134,10 @@ public class Generator {
 				explorePreviousMoves(b);
 			}
 			System.out.print(" " + (System.currentTimeMillis() - t) + " millis ");
-			System.out.print("hashing... ");
-			int curHash = explored.hashCode();
-			System.out.print("done");
 			System.out.println("");
-			if (curHash == hash) {
+			if (explored.lastIteration.isEmpty()) {
 				break;
 			}
-			hash = explored.hashCode();
 		}
 		System.out.println("reached fixpoint");
 		
@@ -174,7 +196,7 @@ public class Generator {
 		List<Config> moves = c.possiblePreviousMoves();
 		
 		for (Config m : moves) {
-			if (!explored.keySet().contains(m)) {
+			if (!explored.allIterations.contains(m)) {
 				explored.put(m, c);
 			}
 		}
@@ -198,7 +220,7 @@ public class Generator {
 				List<Config> moves = b.possibleNextMoves();
 				
 				for (Config m : moves) {
-					if (!space.keySet().contains(m)) {
+					if (!space.allIterations.contains(m)) {
 						space.put(m, b);
 						
 						if (m.isWinning()) {
