@@ -1,16 +1,4 @@
 
-hashing isn't needed in generator
-
-
-remove all none byte[][] data from Config.
-ideally completely get rid of Config class and only work with byte[][] objects
-
-
-
-
-
-
-
 
 arc tool
 segment tool

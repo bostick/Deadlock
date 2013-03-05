@@ -139,6 +139,9 @@ public class Cursor {
 	}
 	
 	byte val() {
+		if (coor[0] == -1 || coor[0] == config.par.rowCount || coor[1] == -1 || coor[1] == config.par.colCount) {
+			return config.par.val(coor);
+		}
 		return config.val(coor);
 	}
 	

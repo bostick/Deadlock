@@ -2,6 +2,8 @@ package solver;
 
 public class ParentConfig {
 	
+	public byte[][] ini;
+	
 	public final int rowCount;
 	public final int colCount;
 	
@@ -34,6 +36,8 @@ public class ParentConfig {
 	boolean[] carPresent = new boolean[Config.cars.length+1];
 	
 	public ParentConfig(byte[][] boardIni) {
+		
+		this.ini = boardIni;
 		
 		this.rowCount = boardIni.length-2;
 		this.colCount = boardIni[0].length-2;
@@ -401,6 +405,23 @@ public class ParentConfig {
 			assert false;
 			break;
 		}
+	}
+	
+	public static boolean isJorK(byte b) {
+		return b == 'J' || b == 'K';
+	}
+	
+	public boolean isJoint(int[] coor) {
+		byte c = val(coor);
+		return c == 'J' || c == 'K';
+	}
+	
+	public byte val(int[] coor) {
+		return ini[coor[0]+1][coor[1]+1];
+	}
+	
+	public byte val(int r, int c) {
+		return ini[r+1][c+1];
 	}
 	
 }

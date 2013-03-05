@@ -51,45 +51,30 @@ public class Generator {
 		par.carMapPresent((byte)'C');
 		par.carMapPresent((byte)'D');
 		
-		Config c = new Config(par, boardIni);
-		c = c.redCarWinningConfig();
-//		CarInfo info = c.carMapGet((byte)'R');
-		int side = par.side(par.exit);
-		int[] unavailable = new int[2];
-		switch (side) {
-		case 0:
-			unavailable[0] = 1;
-			unavailable[1] = par.exit[1];
-			break;
-		case 1:
-			unavailable[0] = par.exit[0];
-			unavailable[1] = par.colCount-2;
-			break;
-		case 2:
-			unavailable[0] = par.rowCount-2;
-			unavailable[1] = par.exit[1];
-			break;
-		case 3:
-			unavailable[0] = par.exit[0];
-			unavailable[1] = 1;
-			break;
+		byte[][] board = Config.newBoard(boardIni.length-2, boardIni[0].length-2);
+		for (int i = 1; i < boardIni.length-1; i++) {
+			for (int j = 1; j < boardIni[0].length-1; j++) {
+				Config.boardSet(board, i-1, j-1, boardIni[i][j]);
+			}
 		}
+		Config c = new Config(par, board);
+		c = c.redCarWinningConfig();
 		
-		List<Config> placements0 = c.possible3CarPlacements(unavailable);
+		List<Config> placements0 = c.possible3CarPlacements();
 		for (int i = 0; i < placements0.size(); i++) {
 			Config d = placements0.get(i);
 			
-			List<Config> placements1 = d.possible3CarPlacements(unavailable);
+			List<Config> placements1 = d.possible3CarPlacements();
 			for (int j = 0; j < placements1.size(); j++) {
 				Config e = placements1.get(j);
 				
 //				winners.add(e);
-				List<Config> possible3CarPlacements3 = e.possible3CarPlacements(unavailable);
+				List<Config> possible3CarPlacements3 = e.possible3CarPlacements();
 				for (int k = 0; k < possible3CarPlacements3.size(); k++) {
 					Config f = possible3CarPlacements3.get(k);
 					
 //					winners.add(f);
-					List<Config> possible3CarPlacements4 = f.possible3CarPlacements(unavailable);
+					List<Config> possible3CarPlacements4 = f.possible3CarPlacements();
 					for (int l = 0; l < possible3CarPlacements4.size(); l++) {
 						Config g = possible3CarPlacements4.get(l);
 						
@@ -113,7 +98,7 @@ public class Generator {
 				System.out.print(".");
 			}
 			Config w = winners.get(i);
-			explored.put(w, null);
+			explored.putGenerating(w, null);
 		}
 		System.out.print(" " + (System.currentTimeMillis() - t) + " millis");
 		System.out.println("");
@@ -143,10 +128,11 @@ public class Generator {
 		
 		System.out.print("finding longest non-BS path... ");
 		System.out.print("(" + explored.allIterations.size() + ") ");
-		Config hardest = null;
+//		Config hardest = null;
 		/*
 		 * start at end of iterations and work backwards, looking for first non-BS config
 		 */
+		List<Config> solution = null;
 		for (int ll = explored.allIterations.size()-1; ll >= 0; ll--) {
 			Config l = explored.allIterations.get(ll);
 			
@@ -156,15 +142,15 @@ public class Generator {
 				if (m == null) {
 					break;
 				}
-				m = explored.get(m);
+				m = explored.getGenerating(m);
 				dist++;
 			}
 			
-			List<Config> solution = solve(l);
+			solution = solve(l);
 			
 			if (dist == solution.size()) {
 				
-				hardest = l;
+//				hardest = l;
 				break;
 				
 			} else {
@@ -176,15 +162,8 @@ public class Generator {
 		System.out.println("");
 		
 		System.out.println("hardest config:");
-		System.out.println(hardest);
-		System.out.println();
-		Config l = hardest;
-		while (true) {
-			if (l == null) {
-				break;
-			}
-			l = explored.get(l);
-			System.out.println(l);
+		for (Config s : solution) {
+			System.out.println(s);
 			System.out.println();
 		}
 		
@@ -196,8 +175,8 @@ public class Generator {
 		List<Config> moves = c.possiblePreviousMoves();
 		
 		for (Config m : moves) {
-			if (!explored.allIterations.contains(m)) {
-				explored.put(m, c);
+			if (!explored.allIterationsContains(m)) {
+				explored.putGenerating(m, c);
 			}
 		}
 	}
@@ -205,7 +184,7 @@ public class Generator {
 	static List<Config> solve(Config start) {
 		
 		StateSpace space = new StateSpace();
-		space.put(start, null);
+		space.putSolving(start, null);
 		
 		Config winner = null;
 		loop:
@@ -220,8 +199,8 @@ public class Generator {
 				List<Config> moves = b.possibleNextMoves();
 				
 				for (Config m : moves) {
-					if (!space.allIterations.contains(m)) {
-						space.put(m, b);
+					if (!space.allIterationsContains(m)) {
+						space.putSolving(m, b);
 						
 						if (m.isWinning()) {
 							winner = m;
@@ -239,7 +218,7 @@ public class Generator {
 		Config l = winner;
 		solution.add(l);
 		while (true) {
-			l = space.get(l);
+			l = space.getSolving(l);
 			if (l == null) {
 				break;
 			}
