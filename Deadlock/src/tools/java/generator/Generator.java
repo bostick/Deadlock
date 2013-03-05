@@ -22,6 +22,7 @@ public class Generator {
 	public static void main(String[] args) throws Exception {
 		
 		generate();
+//		winningConfigCounter();
 	}
 	
 	static byte[][] boardIni = new byte[][] {
@@ -50,6 +51,7 @@ public class Generator {
 		par.carMapPresent((byte)'B');
 		par.carMapPresent((byte)'C');
 		par.carMapPresent((byte)'D');
+		par.carMapPresent((byte)'E');
 		
 		byte[][] board = Config.newBoard(boardIni.length-2, boardIni[0].length-2);
 		for (int i = 1; i < boardIni.length-1; i++) {
@@ -60,31 +62,31 @@ public class Generator {
 		Config c = new Config(par, board);
 		c = c.redCarWinningConfig();
 		
-		List<Config> placements0 = c.possible3CarPlacements();
+		List<Config> placements0 = c.possible3CarPlacements(Integer.MAX_VALUE);
 		for (int i = 0; i < placements0.size(); i++) {
 			Config d = placements0.get(i);
 			
-			List<Config> placements1 = d.possible3CarPlacements();
+			List<Config> placements1 = d.possible3CarPlacements(Integer.MAX_VALUE);
 			for (int j = 0; j < placements1.size(); j++) {
 				Config e = placements1.get(j);
 				
 //				winners.add(e);
-				List<Config> possible3CarPlacements3 = e.possible3CarPlacements();
+				List<Config> possible3CarPlacements3 = e.possible3CarPlacements(Integer.MAX_VALUE);
 				for (int k = 0; k < possible3CarPlacements3.size(); k++) {
 					Config f = possible3CarPlacements3.get(k);
 					
 //					winners.add(f);
-					List<Config> possible3CarPlacements4 = f.possible3CarPlacements();
+					List<Config> possible3CarPlacements4 = f.possible3CarPlacements(Integer.MAX_VALUE);
 					for (int l = 0; l < possible3CarPlacements4.size(); l++) {
 						Config g = possible3CarPlacements4.get(l);
 						
-						winners.add(g);
-//						List<Config> possible3CarPlacements5 = g.possible3CarPlacements();
-//						for (int m = 0; m < possible3CarPlacements5.size(); m++) {
-//							Config h = possible3CarPlacements5.get(m);
-//							
-//							winners.add(h);
-//						}
+//						winners.add(g);
+						List<Config> possible3CarPlacements5 = g.possible3CarPlacements(1);
+						for (int m = 0; m < possible3CarPlacements5.size(); m++) {
+							Config h = possible3CarPlacements5.get(m);
+							
+							winners.add(h);
+						}
 						
 					}
 				}
@@ -170,6 +172,60 @@ public class Generator {
 		System.out.println("total time: " + (System.currentTimeMillis() - total) + " millis");
 	}
 	
+	public static void winningConfigCounter() throws Exception {
+		
+		System.out.print("winning base cases... ");
+		
+		par = new ParentConfig(boardIni);
+		par.carMapPresent((byte)'R');
+		par.carMapPresent((byte)'A');
+		par.carMapPresent((byte)'B');
+		par.carMapPresent((byte)'C');
+		par.carMapPresent((byte)'D');
+		par.carMapPresent((byte)'E');
+		
+		byte[][] board = Config.newBoard(boardIni.length-2, boardIni[0].length-2);
+		for (int i = 1; i < boardIni.length-1; i++) {
+			for (int j = 1; j < boardIni[0].length-1; j++) {
+				Config.boardSet(board, i-1, j-1, boardIni[i][j]);
+			}
+		}
+		Config c = new Config(par, board);
+		c = c.redCarWinningConfig();
+		
+		int winners = 0;
+		
+		List<Config> placements0 = c.possible3CarPlacements(Integer.MAX_VALUE);
+		for (int i = 0; i < placements0.size(); i++) {
+			Config d = placements0.get(i);
+			
+			List<Config> placements1 = d.possible3CarPlacements(Integer.MAX_VALUE);
+			for (int j = 0; j < placements1.size(); j++) {
+				Config e = placements1.get(j);
+				
+//				winners.add(e);
+				List<Config> possible3CarPlacements3 = e.possible3CarPlacements(Integer.MAX_VALUE);
+				for (int k = 0; k < possible3CarPlacements3.size(); k++) {
+					Config f = possible3CarPlacements3.get(k);
+					
+//					winners.add(f);
+					List<Config> possible3CarPlacements4 = f.possible3CarPlacements(Integer.MAX_VALUE);
+					for (int l = 0; l < possible3CarPlacements4.size(); l++) {
+						Config g = possible3CarPlacements4.get(l);
+						
+//						winners.add(g); 
+						
+						winners += g.possible3CarPlacementsCount(Integer.MAX_VALUE);
+						
+					}
+				}
+				
+			}
+		}
+		
+		System.out.print("(" + winners + ")");
+	}
+	
 	static public void explorePreviousMoves(Config c) {
 		
 		List<Config> moves = c.possiblePreviousMoves();
@@ -196,17 +252,16 @@ public class Generator {
 			for (int i = 0; i < a.size(); i++) {
 				Config b = a.get(i);
 				
+				if (b.isWinning()) {
+					winner = b;
+					break loop;
+				}
+				
 				List<Config> moves = b.possibleNextMoves();
 				
 				for (Config m : moves) {
 					if (!space.allIterationsContains(m)) {
 						space.putSolving(m, b);
-						
-						if (m.isWinning()) {
-							winner = m;
-							break loop;
-						}
-						
 					}
 				}
 				

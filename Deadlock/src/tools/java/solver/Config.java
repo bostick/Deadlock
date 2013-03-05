@@ -772,7 +772,7 @@ public class Config {
 			CarInfo info = carMapGet((byte)'R');
 			switch (info.o) {
 			case LEFTRIGHT:
-				if (boardGet(info.row, info.col-1) == 'X') {
+				if (info.col-1 >= 0 && boardGet(info.row, info.col-1) == 'X') {
 					Config newConfig = move((byte)'R', info.size, info.o, info.row, info.col,
 																				info.o, info.row, info.col-1);
 					
@@ -780,7 +780,7 @@ public class Config {
 						best = newConfig;
 					}
 				}
-				if (boardGet(info.row, info.col+2) == 'X') {
+				if (info.col+2 < par.colCount && boardGet(info.row, info.col+2) == 'X') {
 					Config newConfig = move((byte)'R', info.size, info.o, info.row, info.col,
 																				info.o, info.row, info.col+1);
 
@@ -818,7 +818,7 @@ public class Config {
 //				}
 				break;
 			case UPDOWN:
-				if (boardGet(info.row-1, info.col) == 'X') {
+				if (info.row-1 >= 0 && boardGet(info.row-1, info.col) == 'X') {
 					Config newConfig = move((byte)'R', info.size, info.o, info.row, info.col,
 																	info.o, info.row-1, info.col);
 					
@@ -826,7 +826,7 @@ public class Config {
 						best = newConfig;
 					}
 				}
-				if (boardGet(info.row+2, info.col) == 'X') {
+				if (info.row+2 < par.rowCount && boardGet(info.row+2, info.col) == 'X') {
 					Config newConfig = move((byte)'R', info.size, info.o, info.row, info.col,
 																	info.o, info.row+1, info.col);
 					
@@ -1002,7 +1002,7 @@ public class Config {
 		return null;
 	}
 	
-	public List<Config> possible2CarPlacements() {
+	public List<Config> possible2CarPlacements(int max) {
 		
 		byte car = ' ';
 		for (byte d : cars) {
@@ -1014,6 +1014,9 @@ public class Config {
 		assert car != ' ';
 		
 		List<Config> placements = new ArrayList<Config>();
+		if (placements.size() == max) {
+			return placements;
+		}
 		
 		/*
 		 * left-right
@@ -1028,6 +1031,9 @@ public class Config {
 				if (available(Orientation.LEFTRIGHT, 2, r, c)) {
 					Config n = insert(car, Orientation.LEFTRIGHT, 2, r, c);
 					placements.add(n);
+					if (placements.size() == max) {
+						return placements;
+					}
 				}
 			}
 		}
@@ -1045,6 +1051,9 @@ public class Config {
 				if (available(Orientation.UPDOWN, 2, r, c)) {
 					Config n = insert(car, Orientation.UPDOWN, 2, r, c);
 					placements.add(n);
+					if (placements.size() == max) {
+						return placements;
+					}
 				}
 			}
 		}
@@ -1052,7 +1061,7 @@ public class Config {
 		return placements;
 	}
 	
-	public List<Config> possible3CarPlacements() {
+	public List<Config> possible3CarPlacements(int max) {
 		
 		byte car = ' ';
 		for (byte d : cars) {
@@ -1064,6 +1073,9 @@ public class Config {
 		assert car != ' ';
 		
 		List<Config> placements = new ArrayList<Config>();
+		if (placements.size() == max) {
+			return placements;
+		}
 		
 		/*
 		 * left-right
@@ -1078,6 +1090,9 @@ public class Config {
 				if (available(Orientation.LEFTRIGHT, 3, r, c)) {
 					Config n = insert(car, Orientation.LEFTRIGHT, 3, r, c);
 					placements.add(n);
+					if (placements.size() == max) {
+						return placements;
+					}
 				}
 			}
 		}
@@ -1095,6 +1110,57 @@ public class Config {
 				if (available(Orientation.UPDOWN, 3, r, c)) {
 					Config n = insert(car, Orientation.UPDOWN, 3, r, c);
 					placements.add(n);
+					if (placements.size() == max) {
+						return placements;
+					}
+				}
+			}
+		}
+		
+		return placements;
+	}
+	
+	public int possible3CarPlacementsCount(int max) {
+		
+		int placements = 0;
+		if (placements == max) {
+			return placements;
+		}
+		
+		/*
+		 * left-right
+		 */
+		for (int r = 0; r < par.rowCount; r++) {
+			for (int c = 0; c < par.colCount-2; c++) {
+				
+				if (!par.isInterfereRow(r)) {
+					continue;
+				}
+				
+				if (available(Orientation.LEFTRIGHT, 3, r, c)) {
+					placements++;
+					if (placements == max) {
+						return placements;
+					}
+				}
+			}
+		}
+		
+		/*
+		 * up-down
+		 */
+		for (int r = 0; r < par.rowCount-2; r++) {
+			for (int c = 0; c < par.colCount; c++) {
+				
+				if (!par.isInterfereCol(c)) {
+					continue;
+				}
+				
+				if (available(Orientation.UPDOWN, 3, r, c)) {
+					placements++;
+					if (placements == max) {
+						return placements;
+					}
 				}
 			}
 		}
