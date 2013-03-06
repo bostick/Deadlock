@@ -35,6 +35,11 @@ public class ParentConfig {
 	
 	boolean[] carPresent = new boolean[Config.cars.length+1];
 	
+	public Config scratchUp;
+	public Config scratchDown;
+	public Config scratchLeft;
+	public Config scratchRight;
+	
 	public ParentConfig(byte[][] boardIni) {
 		
 		this.ini = boardIni;
@@ -234,6 +239,11 @@ public class ParentConfig {
 				}
 			}
 		}
+		
+		scratchUp = newConfig();
+		scratchDown = newConfig();
+		scratchLeft = newConfig();
+		scratchRight = newConfig();
 	}
 	
 	public int side(int[] coor) {
@@ -424,4 +434,13 @@ public class ParentConfig {
 		return ini[r+1][c+1];
 	}
 	
+	public Config newConfig() {
+		byte[][] board = Config.newBoard(ini.length-2, ini[0].length-2);
+		for (int i = 1; i < ini.length-1; i++) {
+			for (int j = 1; j < ini[0].length-1; j++) {
+				Config.boardSet(board, i-1, j-1, ini[i][j]);
+			}
+		}
+		return new Config(this, board);
+	}
 }

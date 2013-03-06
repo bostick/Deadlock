@@ -13,7 +13,11 @@ public class Config {
 	
 	static byte[] cars = new byte[] {'R', 'A', 'B', 'C', 'D', 'E', 'F', 'G' };
 	
+	
+	public static long configCounter = 0;
+	
 	public Config(ParentConfig par, byte[][] old) {
+		configCounter++;
 		this.par = par;
 		board = copy(old);
 	}
@@ -41,6 +45,21 @@ public class Config {
 			}
 		}
 		return h;
+	}
+	
+	public void copy(Config out) {
+		assert out.par == par;
+		for (int i = 0; i < board.length; i++) {
+			for (int j = 0; j < board[i].length; j++) {
+				out.board[i][j] = board[i][j];
+			}
+		}
+	}
+	
+	public Config copy() {
+		Config n = par.newConfig();
+		copy(n);
+		return n;
 	}
 	
 	byte boardGet(int r, int c) {
@@ -468,11 +487,10 @@ public class Config {
 		return true;
 	}
 	
-	public Config move(byte c, int size, Orientation oldO, int oldRow, int oldCol, Orientation newO, int newRow, int newCol) {
-		Config n = new Config(par, board);
-		n.clearIni(c, oldO, size, oldRow, oldCol);
-		n.insertIni(c, newO, size, newRow, newCol);
-		return n;
+	public void move(byte c, int size, Orientation oldO, int oldRow, int oldCol, Orientation newO, int newRow, int newCol, Config out) {
+		copy(out);
+		out.clearIni(c, oldO, size, oldRow, oldCol);
+		out.insertIni(c, newO, size, newRow, newCol);
 	}
 	
 	void addToInterferenceRow(int r) {
@@ -548,9 +566,11 @@ public class Config {
 //		return c == 'X' || c == 'Y';
 //	}
 	
+	List<Config> moves = new ArrayList<Config>();
+	
 	public List<Config> possiblePreviousMoves() {
 		
-		List<Config> moves = new ArrayList<Config>();
+		moves.clear();
 		
 		boolean clearPathToExit = isClearPathToExit();
 		
@@ -575,177 +595,89 @@ public class Config {
 			CarInfo info = carMapGet(c);
 			switch (info.o) {
 			case LEFTRIGHT:
+				
+				/*
+				 * info.col-1
+				 */
 				if ((info.col-1 >= 0) && boardGet(info.row, info.col-1) == 'X') {
-					Config newConfig = move(c, info.size, info.o, info.row, info.col,
-															info.o, info.row, info.col-1);
-					if (!clearPathToExit) {
-						if (!newConfig.isClearPathToExit()) {
-							moves.add(newConfig);
-						}
-					} else {
-						if (c == 'R') {
-							if (newConfig.numberMovesToWin() > this.numberMovesToWin()) {
-								moves.add(newConfig);
-								continue carLoop;
-							}
-						} else {
-							if (!newConfig.isClearPathToExit()) {
-								moves.add(newConfig);
-								continue carLoop;
-							}
+					move(c, info.size, info.o, info.row, info.col,
+										info.o, info.row, info.col-1,
+										par.scratchLeft);
+					boolean res = lastStep(c, clearPathToExit, moves, par.scratchLeft);
+					if (res) {
+						continue carLoop;
+					}
+				} else if ((info.col-1 == -1) && ParentConfig.isJorK(par.ini[info.row+1][info.col-1+1])) {
+					boolean res = tryJoint(c, par.otherJoint(info.row, info.col-1), par.scratchLeft);
+					if (res) {
+						res = lastStep(c, clearPathToExit, moves, par.scratchLeft);
+						if (res) {
+							continue carLoop;
 						}
 					}
 				}
+				
+				/*
+				 * info.col+1
+				 */
 				if ((info.col+info.size <= par.colCount-1) && boardGet(info.row, info.col+info.size) == 'X') {
-					Config newConfig = move(c, info.size, info.o, info.row, info.col,
-															info.o, info.row, info.col+1);
-					if (!clearPathToExit) {
-						if (!newConfig.isClearPathToExit()) {
-							moves.add(newConfig);
-						}
-					} else {
-						if (c == 'R') {
-							if (newConfig.numberMovesToWin() > this.numberMovesToWin()) {
-								moves.add(newConfig);
-								continue carLoop;
-							}
-						} else {
-							if (!newConfig.isClearPathToExit()) {
-								moves.add(newConfig);
-								continue carLoop;
-							}
-						}
+					move(c, info.size, info.o, info.row, info.col,
+															info.o, info.row, info.col+1,
+															par.scratchRight);
+					boolean res = lastStep(c, clearPathToExit, moves, par.scratchRight);
+					if (res) {
+						continue carLoop;
 					}
-				}
-				if ((info.col-1 == -1) && ParentConfig.isJorK(par.ini[info.row+1][info.col-1+1])) {
-					Config newConfig = tryJoint(c, par.otherJoint(info.row, info.col-1));
-					if (newConfig != null) {
-						if (!clearPathToExit) {
-							if (!newConfig.isClearPathToExit()) {
-								moves.add(newConfig);
-							}
-						} else {
-							if (c == 'R') {
-								if (newConfig.numberMovesToWin() > this.numberMovesToWin()) {
-									moves.add(newConfig);
-									continue carLoop;
-								}
-							} else {
-								if (!newConfig.isClearPathToExit()) {
-									moves.add(newConfig);
-									continue carLoop;
-								}
-							}
-						}
-					}
-				}
-				if ((info.col+info.size == par.colCount) && ParentConfig.isJorK(par.ini[info.row+1][info.col+info.size+1])) {
-					Config newConfig = tryJoint(c, par.otherJoint(info.row, info.col+info.size));
-					if (newConfig != null) {
-						if (!clearPathToExit) {
-							if (!newConfig.isClearPathToExit()) {
-								moves.add(newConfig);
-							}
-						} else {
-							if (c == 'R') {
-								if (newConfig.numberMovesToWin() > this.numberMovesToWin()) {
-									moves.add(newConfig);
-									continue carLoop;
-								}
-							} else {
-								if (!newConfig.isClearPathToExit()) {
-									moves.add(newConfig);
-									continue carLoop;
-								}
-							}
+				} else if ((info.col+info.size == par.colCount) && ParentConfig.isJorK(par.ini[info.row+1][info.col+info.size+1])) {
+					boolean res = tryJoint(c, par.otherJoint(info.row, info.col+info.size), par.scratchRight);
+					if (res) {
+						res = lastStep(c, clearPathToExit, moves, par.scratchRight);
+						if (res) {
+							continue carLoop;
 						}
 					}
 				}
 				break;
 			case UPDOWN:
+				
+				/*
+				 * info.row-1
+				 */
 				if ((info.row-1 >= 0) && boardGet(info.row-1, info.col) == 'X') {
-					Config newConfig = move(c, info.size, info.o, info.row, info.col,
-															info.o, info.row-1, info.col);
-					if (!clearPathToExit) {
-						if (!newConfig.isClearPathToExit()) {
-							moves.add(newConfig);
-						}
-					} else {
-						if (c == 'R') {
-							if (newConfig.numberMovesToWin() > this.numberMovesToWin()) {
-								moves.add(newConfig);
-								continue carLoop;
-							}
-						} else {
-							if (!newConfig.isClearPathToExit()) {
-								moves.add(newConfig);
-								continue carLoop;
-							}
+					move(c, info.size, info.o, info.row, info.col,
+															info.o, info.row-1, info.col,
+															par.scratchUp);
+					boolean res = lastStep(c, clearPathToExit, moves, par.scratchUp);
+					if (res) {
+						continue carLoop;
+					}
+				} else if ((info.row-1 == -1) && ParentConfig.isJorK(par.ini[info.row-1+1][info.col+1])) {
+					boolean res = tryJoint(c, par.otherJoint(info.row-1, info.col), par.scratchUp);
+					if (res) {
+						res = lastStep(c, clearPathToExit, moves, par.scratchUp);
+						if (res) {
+							continue carLoop;
 						}
 					}
 				}
+				
+				/*
+				 * info.row+1
+				 */
 				if ((info.row+info.size <= par.rowCount-1) && boardGet(info.row+info.size, info.col) == 'X') {
-					Config newConfig = move(c, info.size, info.o, info.row, info.col,
-															info.o, info.row+1, info.col);
-					if (!clearPathToExit) {
-						if (!newConfig.isClearPathToExit()) {
-							moves.add(newConfig);
-						}
-					} else {
-						if (c == 'R') {
-							if (newConfig.numberMovesToWin() > this.numberMovesToWin()) {
-								moves.add(newConfig);
-								continue carLoop;
-							}
-						} else {
-							if (!newConfig.isClearPathToExit()) {
-								moves.add(newConfig);
-								continue carLoop;
-							}
-						}
+					move(c, info.size, info.o, info.row, info.col,
+															info.o, info.row+1, info.col,
+															par.scratchDown);
+					boolean res = lastStep(c, clearPathToExit, moves, par.scratchDown);
+					if (res) {
+						continue carLoop;
 					}
-				}
-				if ((info.row-1 == -1) && ParentConfig.isJorK(par.ini[info.row-1+1][info.col+1])) {
-					Config newConfig = tryJoint(c, par.otherJoint(info.row-1, info.col));
-					if (newConfig != null) {
-						if (!clearPathToExit) {
-							if (!newConfig.isClearPathToExit()) {
-								moves.add(newConfig);
-							}
-						} else {
-							if (c == 'R') {
-								if (newConfig.numberMovesToWin() > this.numberMovesToWin()) {
-									moves.add(newConfig);
-									continue carLoop;
-								}
-							} else {
-								if (!newConfig.isClearPathToExit()) {
-									moves.add(newConfig);
-									continue carLoop;
-								}
-							}
-						}
-					}
-				}
-				if ((info.row+info.size == par.rowCount) && ParentConfig.isJorK(par.ini[info.row+info.size+1][info.col+1])) {
-					Config newConfig = tryJoint(c, par.otherJoint(info.row+info.size, info.col));
-					if (newConfig != null) {
-						if (!clearPathToExit) {
-							if (!newConfig.isClearPathToExit()) {
-								moves.add(newConfig);
-							}
-						} else {
-							if (c == 'R') {
-								if (newConfig.numberMovesToWin() > this.numberMovesToWin()) {
-									moves.add(newConfig);
-									continue carLoop;
-								}
-							} else {
-								if (!newConfig.isClearPathToExit()) {
-									moves.add(newConfig);
-									continue carLoop;
-								}
-							}
+				} else if ((info.row+info.size == par.rowCount) && ParentConfig.isJorK(par.ini[info.row+info.size+1][info.col+1])) {
+					boolean res = tryJoint(c, par.otherJoint(info.row+info.size, info.col), par.scratchDown);
+					if (res) {
+						res = lastStep(c, clearPathToExit, moves, par.scratchDown);
+						if (res) {
+							continue carLoop;
 						}
 					}
 				}
@@ -756,9 +688,34 @@ public class Config {
 		return moves;
 	}
 	
+	/*
+	 * returns true => continue carLoop
+	 */
+	boolean lastStep(byte c, boolean clearPathToExit, List<Config> moves, Config scratch) {
+		if (!clearPathToExit) {
+			if (!scratch.isClearPathToExit()) {
+				moves.add(scratch);
+			}
+		} else {
+			if (c == 'R') {
+				if (scratch.numberMovesToWin() > this.numberMovesToWin()) {
+					moves.add(scratch);
+					return true;
+				}
+			} else {
+				if (!scratch.isClearPathToExit()) {
+					moves.add(scratch);
+					return true;
+				}
+			}
+		}
+		
+		return false;
+	}
+	
 	public List<Config> possibleNextMoves() {
 		
-		List<Config> moves = new ArrayList<Config>();
+		moves.clear();
 		
 		if (isWinning()) {
 			return moves;
@@ -772,96 +729,67 @@ public class Config {
 			CarInfo info = carMapGet((byte)'R');
 			switch (info.o) {
 			case LEFTRIGHT:
+				
 				if (info.col-1 >= 0 && boardGet(info.row, info.col-1) == 'X') {
-					Config newConfig = move((byte)'R', info.size, info.o, info.row, info.col,
-																				info.o, info.row, info.col-1);
-					
-					if (newConfig.numberMovesToWin() < currentMovesToWin) {
-						best = newConfig;
+					move((byte)'R', info.size, info.o, info.row, info.col,
+												info.o, info.row, info.col-1,
+												par.scratchLeft);
+					if (par.scratchLeft.numberMovesToWin() < currentMovesToWin) {
+						best = par.scratchLeft;
+					}
+				} else if (ParentConfig.isJorK(par.ini[info.row+1][info.col-1+1])) {
+					boolean res = tryJoint((byte)'R', par.otherJoint(info.row, info.col-1), par.scratchLeft);
+					if (res && par.scratchLeft.numberMovesToWin() < currentMovesToWin) {
+						best = par.scratchLeft;
 					}
 				}
+				
+				
 				if (info.col+2 < par.colCount && boardGet(info.row, info.col+2) == 'X') {
-					Config newConfig = move((byte)'R', info.size, info.o, info.row, info.col,
-																				info.o, info.row, info.col+1);
-
-					if (newConfig.numberMovesToWin() < currentMovesToWin) {
-						best = newConfig;
+					move((byte)'R', info.size, info.o, info.row, info.col,
+												info.o, info.row, info.col+1,
+												par.scratchRight);
+					if (par.scratchRight.numberMovesToWin() < currentMovesToWin) {
+						best = par.scratchRight;
+					}
+				} else if (ParentConfig.isJorK(par.ini[info.row+1][info.col+2+1])) {
+					boolean res = tryJoint((byte)'R', par.otherJoint(info.row, info.col+2), par.scratchRight);
+					if (res && par.scratchRight.numberMovesToWin() < currentMovesToWin) {
+						best = par.scratchRight;
 					}
 				}
-				if (ParentConfig.isJorK(par.ini[info.row+1][info.col-1+1])) {
-					Config newConfig = tryJoint((byte)'R', par.otherJoint(info.row, info.col-1));
-					if (newConfig != null && newConfig.numberMovesToWin() < currentMovesToWin) {
-						best = newConfig;
-					}
-				}
-				if (ParentConfig.isJorK(par.ini[info.row+1][info.col+2+1])) {
-					Config newConfig = tryJoint((byte)'R', par.otherJoint(info.row, info.col+2));
-					if (newConfig != null && newConfig.numberMovesToWin() < currentMovesToWin) {
-						best = newConfig;
-					}
-				}
-//				if (ini[info.row+1][info.col-1+1] == 'Y') {
-//					Config newConfig = move((byte)'R', info.size, info.o, info.row, info.col,
-//																	info.o, info.row, info.col-1);
-//					
-//					if (newConfig.numberMovesToWin() < currentMovesToWin) {
-//						best = newConfig;
-//					}
-//				}
-//				if (ini[info.row+1][info.col+2+1] == 'Y') {
-//					Config newConfig = move((byte)'R', info.size, info.o, info.row, info.col,
-//																	info.o, info.row, info.col+1);
-//					
-//					if (newConfig.numberMovesToWin() < currentMovesToWin) {
-//						best = newConfig;
-//					}
-//				}
+				
 				break;
 			case UPDOWN:
+				
 				if (info.row-1 >= 0 && boardGet(info.row-1, info.col) == 'X') {
-					Config newConfig = move((byte)'R', info.size, info.o, info.row, info.col,
-																	info.o, info.row-1, info.col);
-					
-					if (newConfig.numberMovesToWin() < currentMovesToWin) {
-						best = newConfig;
+					move((byte)'R', info.size, info.o, info.row, info.col,
+																	info.o, info.row-1, info.col,
+																	par.scratchUp);
+					if (par.scratchUp.numberMovesToWin() < currentMovesToWin) {
+						best = par.scratchUp;
+					}
+				} else if (ParentConfig.isJorK(par.ini[info.row-1+1][info.col+1])) {
+					boolean res = tryJoint((byte)'R', par.otherJoint(info.row-1, info.col), par.scratchUp);
+					if (res && par.scratchUp.numberMovesToWin() < currentMovesToWin) {
+						best = par.scratchUp;
 					}
 				}
+				
 				if (info.row+2 < par.rowCount && boardGet(info.row+2, info.col) == 'X') {
-					Config newConfig = move((byte)'R', info.size, info.o, info.row, info.col,
-																	info.o, info.row+1, info.col);
-					
-					if (newConfig.numberMovesToWin() < currentMovesToWin) {
-						best = newConfig;
+					move((byte)'R', info.size, info.o, info.row, info.col,
+																	info.o, info.row+1, info.col,
+																	par.scratchDown);
+					if (par.scratchDown.numberMovesToWin() < currentMovesToWin) {
+						best = par.scratchDown;
+					}
+				} else if (ParentConfig.isJorK(par.ini[info.row+2+1][info.col+1])) {
+					boolean res = tryJoint((byte)'R', par.otherJoint(info.row+2, info.col), par.scratchDown);
+					if (res && par.scratchDown.numberMovesToWin() < currentMovesToWin) {
+						best = par.scratchDown;
 					}
 				}
-				if (ParentConfig.isJorK(par.ini[info.row-1+1][info.col+1])) {
-					Config newConfig = tryJoint((byte)'R', par.otherJoint(info.row-1, info.col));
-					if (newConfig != null && newConfig.numberMovesToWin() < currentMovesToWin) {
-						best = newConfig;
-					}
-				}
-				if (ParentConfig.isJorK(par.ini[info.row+2+1][info.col+1])) {
-					Config newConfig = tryJoint((byte)'R', par.otherJoint(info.row+2, info.col));
-					if (newConfig != null && newConfig.numberMovesToWin() < currentMovesToWin) {
-						best = newConfig;
-					}
-				}
-//				if (ini[info.row-1+1][info.col+1] == 'Y') {
-//					Config newConfig = move((byte)'R', info.size, info.o, info.row, info.col,
-//																	info.o, info.row-1, info.col);
-//					
-//					if (newConfig.numberMovesToWin() < currentMovesToWin) {
-//						best = newConfig;
-//					}
-//				}
-//				if (ini[info.row+2+1][info.col+1] == 'Y') {
-//					Config newConfig = move((byte)'R', info.size, info.o, info.row, info.col,
-//																				info.o, info.row+1, info.col);
-//					
-//					if (newConfig.numberMovesToWin() < currentMovesToWin) {
-//						best = newConfig;
-//					}
-//				}
+				
 				break;
 			}
 			
@@ -886,52 +814,58 @@ public class Config {
 			CarInfo info = carMapGet(c);
 			switch (info.o) {
 			case LEFTRIGHT:
+				
 				if ((info.col-1 >= 0) && boardGet(info.row, info.col-1) == 'X') {
-					Config newConfig = move(c, info.size, info.o, info.row, info.col,
-															info.o, info.row, info.col-1);
-					moves.add(newConfig);
+					move(c, info.size, info.o, info.row, info.col,
+															info.o, info.row, info.col-1,
+															par.scratchLeft);
+					moves.add(par.scratchLeft);
+				} else if ((info.col-1 == -1) && ParentConfig.isJorK(par.ini[info.row+1][info.col-1+1])) {
+					boolean res = tryJoint(c, par.otherJoint(info.row, info.col-1), par.scratchLeft);
+					if (res) {
+						moves.add(par.scratchLeft);
+					}
 				}
+				
 				if ((info.col+info.size <= par.colCount-1) && boardGet(info.row, info.col+info.size) == 'X') {
-					Config newConfig = move(c, info.size, info.o, info.row, info.col,
-															info.o, info.row, info.col+1);
-					moves.add(newConfig);
-				}
-				if ((info.col-1 == -1) && ParentConfig.isJorK(par.ini[info.row+1][info.col-1+1])) {
-					Config newConfig = tryJoint(c, par.otherJoint(info.row, info.col-1));
-					if (newConfig != null) {
-						moves.add(newConfig);
+					move(c, info.size, info.o, info.row, info.col,
+															info.o, info.row, info.col+1,
+															par.scratchRight);
+					moves.add(par.scratchRight);
+				} else if ((info.col+info.size == par.colCount) && ParentConfig.isJorK(par.ini[info.row+1][info.col+info.size+1])) {
+					boolean res = tryJoint(c, par.otherJoint(info.row, info.col+info.size), par.scratchRight);
+					if (res) {
+						moves.add(par.scratchRight);
 					}
 				}
-				if ((info.col+info.size == par.colCount) && ParentConfig.isJorK(par.ini[info.row+1][info.col+info.size+1])) {
-					Config newConfig = tryJoint(c, par.otherJoint(info.row, info.col+info.size));
-					if (newConfig != null) {
-						moves.add(newConfig);
-					}
-				}
+				
 				break;
 			case UPDOWN:
+				
 				if ((info.row-1 >= 0) && boardGet(info.row-1, info.col) == 'X') {
-					Config newConfig = move(c, info.size, info.o, info.row, info.col,
-															info.o, info.row-1, info.col);
-					moves.add(newConfig);
+					move(c, info.size, info.o, info.row, info.col,
+															info.o, info.row-1, info.col,
+															par.scratchUp);
+					moves.add(par.scratchUp);
+				} else if ((info.row-1 == -1) && ParentConfig.isJorK(par.ini[info.row-1+1][info.col+1])) {
+					boolean res = tryJoint(c, par.otherJoint(info.row-1, info.col), par.scratchUp);
+					if (res) {
+						moves.add(par.scratchUp);
+					}
 				}
+				
 				if ((info.row+info.size <= par.rowCount-1) && boardGet(info.row+info.size, info.col) == 'X') {
-					Config newConfig = move(c, info.size, info.o, info.row, info.col,
-															info.o, info.row+1, info.col);
-					moves.add(newConfig);
-				}
-				if ((info.row-1 == -1) && ParentConfig.isJorK(par.ini[info.row-1+1][info.col+1])) {
-					Config newConfig = tryJoint(c, par.otherJoint(info.row-1, info.col));
-					if (newConfig != null) {
-						moves.add(newConfig);
+					move(c, info.size, info.o, info.row, info.col,
+															info.o, info.row+1, info.col,
+															par.scratchDown);
+					moves.add(par.scratchDown);
+				} else if ((info.row+info.size == par.rowCount) && ParentConfig.isJorK(par.ini[info.row+info.size+1][info.col+1])) {
+					boolean res = tryJoint(c, par.otherJoint(info.row+info.size, info.col), par.scratchDown);
+					if (res) {
+						moves.add(par.scratchDown);
 					}
 				}
-				if ((info.row+info.size == par.rowCount) && ParentConfig.isJorK(par.ini[info.row+info.size+1][info.col+1])) {
-					Config newConfig = tryJoint(c, par.otherJoint(info.row+info.size, info.col));
-					if (newConfig != null) {
-						moves.add(newConfig);
-					}
-				}
+				
 				break;
 			}
 		}
@@ -1168,7 +1102,7 @@ public class Config {
 		return placements;
 	}
 	
-	Config tryJoint(byte c, int[] joint) {
+	boolean tryJoint(byte c, int[] joint, Config out) {
 		
 		int mR = joint[0];
 		int mC = joint[1];
@@ -1181,16 +1115,18 @@ public class Config {
 			switch (info.size) {
 			case 2:
 				if ((boardGet(mR+1, mC) == 'X' || boardGet(mR+1, mC) == c) && (boardGet(mR+2, mC) == 'X' || boardGet(mR+2, mC) == c)) {
-					Config newConfig = move(c, info.size, info.o, info.row, info.col,
-															Orientation.UPDOWN, mR+1, mC);
-					return newConfig;
+					move(c, info.size, info.o, info.row, info.col,
+															Orientation.UPDOWN, mR+1, mC,
+															out);
+					return true;
 				}
 				break;
 			case 3:
 				if ((boardGet(mR+1, mC) == 'X' || boardGet(mR+1, mC) == c) && (boardGet(mR+2, mC) == 'X' || boardGet(mR+2, mC) == c) && (boardGet(mR+3, mC) == 'X' || boardGet(mR+3, mC) == c)) {
-					Config newConfig = move(c, info.size, info.o, info.row, info.col,
-															Orientation.UPDOWN, mR+1, mC);
-					return newConfig;
+					move(c, info.size, info.o, info.row, info.col,
+															Orientation.UPDOWN, mR+1, mC,
+															out);
+					return true;
 				}
 				break;
 			}
@@ -1199,16 +1135,18 @@ public class Config {
 			switch (info.size) {
 			case 2:
 				if ((boardGet(mR, mC-2) == 'X' || boardGet(mR, mC-2) == c) && (boardGet(mR, mC-1) == 'X' || boardGet(mR, mC-1) == c)) {
-					Config newConfig = move(c, info.size, info.o, info.row, info.col,
-															Orientation.LEFTRIGHT, mR, mC-2);
-					return newConfig;
+					move(c, info.size, info.o, info.row, info.col,
+															Orientation.LEFTRIGHT, mR, mC-2,
+															out);
+					return true;
 				}
 				break;
 			case 3:
 				if ((boardGet(mR, mC-3) == 'X' || boardGet(mR, mC-3) == c) && (boardGet(mR, mC-2) == 'X' || boardGet(mR, mC-2) == c) && (boardGet(mR, mC-1) == 'X' || boardGet(mR, mC-1) == c)) {
-					Config newConfig = move(c, info.size, info.o, info.row, info.col,
-															Orientation.LEFTRIGHT, mR, mC-3);
-					return newConfig;
+					move(c, info.size, info.o, info.row, info.col,
+															Orientation.LEFTRIGHT, mR, mC-3,
+															out);
+					return true;
 				}
 				break;
 			}
@@ -1217,16 +1155,18 @@ public class Config {
 			switch (info.size) {
 			case 2:
 				if ((boardGet(mR-2, mC) == 'X' || boardGet(mR-2, mC) == c) && (boardGet(mR-1, mC) == 'X' || boardGet(mR-1, mC) == c)) {
-					Config newConfig = move(c, info.size, info.o, info.row, info.col,
-															Orientation.UPDOWN, mR-2, mC);
-					return newConfig;
+					move(c, info.size, info.o, info.row, info.col,
+															Orientation.UPDOWN, mR-2, mC,
+															out);
+					return true;
 				}
 				break;
 			case 3:
 				if ((boardGet(mR-3, mC) == 'X' || boardGet(mR-3, mC) == c) && (boardGet(mR-2, mC) == 'X' || boardGet(mR-2, mC) == c) && (boardGet(mR-1, mC) == 'X' || boardGet(mR-1, mC) == c)) {
-					Config newConfig = move(c, info.size, info.o, info.row, info.col,
-															Orientation.UPDOWN, mR-3, mC);
-					return newConfig;
+					move(c, info.size, info.o, info.row, info.col,
+															Orientation.UPDOWN, mR-3, mC,
+															out);
+					return true;
 				}
 				break;
 			}
@@ -1235,23 +1175,25 @@ public class Config {
 			switch (info.size) {
 			case 2:
 				if ((boardGet(mR, mC+1) == 'X' || boardGet(mR, mC+1) == c) && (boardGet(mR, mC+2) == 'X' || boardGet(mR, mC+2) == c)) {
-					Config newConfig = move(c, info.size, info.o, info.row, info.col,
-															Orientation.LEFTRIGHT, mR, mC+1);
-					return newConfig;
+					move(c, info.size, info.o, info.row, info.col,
+															Orientation.LEFTRIGHT, mR, mC+1,
+															out);
+					return true;
 				}
 				break;
 			case 3:
 				if ((boardGet(mR, mC+1) == 'X' || boardGet(mR, mC+1) == c) && (boardGet(mR, mC+2) == 'X' || boardGet(mR, mC+2+1) == c) && (boardGet(mR, mC+3) == 'X' || boardGet(mR, mC+3) == c)) {
-					Config newConfig = move(c, info.size, info.o, info.row, info.col,
-															Orientation.LEFTRIGHT, mR, mC+1);
-					return newConfig;
+					move(c, info.size, info.o, info.row, info.col,
+															Orientation.LEFTRIGHT, mR, mC+1,
+															out);
+					return true;
 				}
 				break;
 			}
 			break;
 		}
 		
-		return null;
+		return false;
 	}
 	
 	public String toString() {

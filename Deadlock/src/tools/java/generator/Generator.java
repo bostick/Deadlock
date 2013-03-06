@@ -40,8 +40,11 @@ public class Generator {
 	
 	public static void generate() throws Exception {
 		
+//		Thread.sleep(20000);
+		
 		long total = System.currentTimeMillis();
 		long t = total;
+		long configs;
 		System.out.print("winning base cases... ");
 		List<Config> winners = new ArrayList<Config>();
 		
@@ -51,15 +54,9 @@ public class Generator {
 		par.carMapPresent((byte)'B');
 		par.carMapPresent((byte)'C');
 		par.carMapPresent((byte)'D');
-		par.carMapPresent((byte)'E');
+//		par.carMapPresent((byte)'E');
 		
-		byte[][] board = Config.newBoard(boardIni.length-2, boardIni[0].length-2);
-		for (int i = 1; i < boardIni.length-1; i++) {
-			for (int j = 1; j < boardIni[0].length-1; j++) {
-				Config.boardSet(board, i-1, j-1, boardIni[i][j]);
-			}
-		}
-		Config c = new Config(par, board);
+		Config c = par.newConfig();
 		c = c.redCarWinningConfig();
 		
 		List<Config> placements0 = c.possible3CarPlacements(Integer.MAX_VALUE);
@@ -80,13 +77,13 @@ public class Generator {
 					for (int l = 0; l < possible3CarPlacements4.size(); l++) {
 						Config g = possible3CarPlacements4.get(l);
 						
-//						winners.add(g);
-						List<Config> possible3CarPlacements5 = g.possible3CarPlacements(1);
-						for (int m = 0; m < possible3CarPlacements5.size(); m++) {
-							Config h = possible3CarPlacements5.get(m);
-							
-							winners.add(h);
-						}
+						winners.add(g);
+//						List<Config> possible3CarPlacements5 = g.possible3CarPlacements(1);
+//						for (int m = 0; m < possible3CarPlacements5.size(); m++) {
+//							Config h = possible3CarPlacements5.get(m);
+//							
+//							winners.add(h);
+//						}
 						
 					}
 				}
@@ -96,17 +93,19 @@ public class Generator {
 		System.out.print("(" + winners.size() + ")");
 		
 		for (int i = 0; i < winners.size(); i++) {
-			if (i % 100 == 0) {
+			if (i % 1000 == 0) {
 				System.out.print(".");
 			}
 			Config w = winners.get(i);
 			explored.putGenerating(w, null);
 		}
-		System.out.print(" " + (System.currentTimeMillis() - t) + " millis");
+		System.out.print(" " + (System.currentTimeMillis() - t) + " millis, ");
+		System.out.print(" " + (Config.configCounter) + " configs");
 		System.out.println("");
 		
 		while (true) {
 			t = System.currentTimeMillis();
+			configs = Config.configCounter;
 			
 			System.out.print("exploring... ");
 			List<Config> a = new ArrayList<Config>(explored.lastIteration);
@@ -114,13 +113,17 @@ public class Generator {
 			
 			System.out.print("(" + a.size() + ") ");
 			for (int i = 0; i < a.size(); i++) {
-				if (i % 100 == 0) {
+				if (i % 1000 == 0) {
 					System.out.print(".");
 				}
 				Config b = a.get(i);
 				explorePreviousMoves(b);
 			}
-			System.out.print(" " + (System.currentTimeMillis() - t) + " millis ");
+			System.out.print(" " + (System.currentTimeMillis() - t) + " millis, ");
+			long created = Config.configCounter - configs;
+			long saved = explored.lastIteration.size();
+			long wasted = created - saved;
+			System.out.print(" " + created + " configs created, " + (100 * ((float)(saved)) / ((float)(created))) + "% saved, " + (100 * ((float)(wasted)) / ((float)(created))) + "% wasted");
 			System.out.println("");
 			if (explored.lastIteration.isEmpty()) {
 				break;
@@ -163,7 +166,7 @@ public class Generator {
 		System.out.print("done");
 		System.out.println("");
 		
-		System.out.println("hardest config:");
+		System.out.println("hardest config is " + solution.size() + " moves\n");
 		for (Config s : solution) {
 			System.out.println(s);
 			System.out.println();
@@ -232,7 +235,7 @@ public class Generator {
 		
 		for (Config m : moves) {
 			if (!explored.allIterationsContains(m)) {
-				explored.putGenerating(m, c);
+				explored.putGenerating(m.copy(), c);
 			}
 		}
 	}

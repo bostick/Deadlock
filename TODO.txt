@@ -1,4 +1,6 @@
 
+no garbage collection
+
 
 arc tool
 segment tool
