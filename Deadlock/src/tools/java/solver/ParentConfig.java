@@ -624,13 +624,24 @@ public class ParentConfig {
 		}
 	}
 	
-	public static boolean isJorK(byte b) {
+//	public static boolean isJorK(byte b) {
+//		return b == 'J' || b == 'K';
+//	}
+	
+	public boolean isJoint(int[] coor) {
+		if (!((coor[0] == -1 || coor[0] == rowCount) || (coor[1] == -1 || coor[1] == colCount))) {
+			return false;
+		}
+		byte b = val(coor);
 		return b == 'J' || b == 'K';
 	}
 	
-	public boolean isJoint(int[] coor) {
-		byte c = val(coor);
-		return c == 'J' || c == 'K';
+	public boolean isJoint(int r, int c) {
+		if (!((r == -1 || r == rowCount) || (c == -1 || c == colCount))) {
+			return false;
+		}
+		byte b = val(r, c);
+		return b == 'J' || b == 'K';
 	}
 	
 	public byte val(int[] coor) {

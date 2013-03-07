@@ -1,15 +1,18 @@
 package generator;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import solver.Config;
 
 public class StateSpace {
 	
-//	public Map<Config, Config> map = new HashMap<Config, Config>();
+	public Map<Config, Config> generatingMap = new HashMap<Config, Config>();
+	public Map<Config, Config> solvingMap = new HashMap<Config, Config>();
 	
 	public List<Config> lastIteration = new ArrayList<Config>();
 	public long lastIterationMoves;
@@ -27,7 +30,7 @@ public class StateSpace {
 		allIterations.add(key);
 		set.add(key);
 		
-		key.vGen = val;
+		generatingMap.put(key, val);
 		
 	}
 	
@@ -36,7 +39,7 @@ public class StateSpace {
 		allIterations.add(key);
 		set.add(key);
 		
-		key.vSolve = val;
+		solvingMap.put(key, val);
 		
 	}
 	
@@ -49,11 +52,11 @@ public class StateSpace {
 //	}
 	
 	public Config getSolving(Config key) {
-		return key.vSolve;
+		return solvingMap.get(key);
 	}
 	
 	public Config getGenerating(Config key) {
-		return key.vGen;
+		return generatingMap.get(key);
 	}
 	
 }
