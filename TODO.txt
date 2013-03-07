@@ -1,5 +1,15 @@
 
-don't create isomorphic configs
+work on possible moves:
+only a small percentage are unique and actually used
+
+
+starting from winners, visualize path of moves made, like a little cursor moving
+don't consider moves that are pointless
+
+
+
+
+
 
 no garbage collection
 audit all for loops

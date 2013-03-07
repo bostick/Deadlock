@@ -21,10 +21,6 @@ public class Config {
 		board = copy(old);
 	}
 	
-//	public boolean equals(Object o) {
-//		return alphaEquivalent(this, (Config)o);
-//	}
-	
 	public boolean equals(Object o) {
 		byte[][] other = ((Config)o).board;
 		if (board.length != other.length || board[0].length != other[0].length) {
@@ -48,38 +44,6 @@ public class Config {
 			}
 		}
 		return h;
-		
-//		CarInfo info = carMapGet((byte)'R');
-//		h = 37 * h + info.hashCode();
-//		
-//		List<Byte> cars = new ArrayList<Byte>();
-//		
-//		for (int i = 0; i < par.rowCount; i++) {
-//			for (int j = 0; j < par.colCount; j++) {
-//				byte c = val(i, j);
-//				switch (c) {
-//				case 'A':
-//				case 'B':
-//				case 'C':
-//				case 'D':
-//				case 'E':
-//				case 'F':
-//				case 'G':
-//					if (!cars.contains(c)) {
-//						cars.add(c);
-//					}
-//					break;
-//				}
-//			}
-//		}
-//		
-//		for (int i = 0; i < cars.size(); i++) {
-//			byte ab = cars.get(i);
-//			info = carMapGet((byte)ab);
-//			h = 37 * h + info.hashCode();
-//		}
-//		
-//		return h;
 	}
 	
 	public void copy(Config out) {
@@ -1334,94 +1298,5 @@ public class Config {
 		
 		return false;
 	}
-	
-//	public static boolean alphaEquivalent(Config a, Config b) {
-//		
-//		assert a.par == b.par;
-//		
-//		if (a.actualEquals(b)) {
-//			return true;
-//		}
-//		
-//		CarInfo info = a.carMapGet((byte)'R');
-//		Orientation ao = info.o;
-//		int as = info.size;
-//		int ac = info.col;
-//		int ar = info.row;
-//		info = b.carMapGet((byte)'R');
-//		Orientation bo = info.o;
-//		int bs = info.size;
-//		int bc = info.col;
-//		int br = info.row;
-//		
-//		if (!(ao == bo && as == bs && ar == br && ac == bc)) {
-//			return false;
-//		}
-//		
-//		List<Byte> aCars = new ArrayList<Byte>();
-//		List<Byte> bCars = new ArrayList<Byte>();
-//		
-//		for (int i = 0; i < a.par.rowCount; i++) {
-//			for (int j = 0; j < a.par.colCount; j++) {
-//				byte c = a.val(i, j);
-//				switch (c) {
-//				case 'A':
-//				case 'B':
-//				case 'C':
-//				case 'D':
-//				case 'E':
-//				case 'F':
-//				case 'G':
-//					if (!aCars.contains(c)) {
-//						aCars.add(c);
-//					}
-//					break;
-//				}
-//			}
-//		}
-//		
-//		for (int i = 0; i < b.par.rowCount; i++) {
-//			for (int j = 0; j < b.par.colCount; j++) {
-//				byte c = b.val(i, j);
-//				switch (c) {
-//				case 'A':
-//				case 'B':
-//				case 'C':
-//				case 'D':
-//				case 'E':
-//				case 'F':
-//				case 'G':
-//					if (!bCars.contains(c)) {
-//						bCars.add(c);
-//					}
-//					break;
-//				}
-//			}
-//		}
-//		
-//		if (aCars.size() != bCars.size()) {
-//			return false;
-//		}
-//		
-//		for (int i = 0; i < aCars.size(); i++) {
-//			byte ab = aCars.get(i);
-//			byte bb = bCars.get(i);
-//			info = a.carMapGet((byte)ab);
-//			ao = info.o;
-//			as = info.size;
-//			ac = info.col;
-//			ar = info.row;
-//			info = b.carMapGet((byte)bb);
-//			bo = info.o;
-//			bs = info.size;
-//			bc = info.col;
-//			br = info.row;
-//			if (!(ao == bo && as == bs && ar == br && ac == bc)) {
-//				return false;
-//			}
-//		}
-//		
-//		return true;
-//	}
 	
 }

@@ -120,6 +120,7 @@ public class Generator {
 			System.out.print("exploring... ");
 			a.addAll(explored.lastIteration);
 			explored.lastIteration.clear();
+			explored.lastIterationMoves = 0;
 			
 			System.out.print("(" + a.size() + ") ");
 			for (int i = 0; i < a.size(); i++) {
@@ -132,12 +133,7 @@ public class Generator {
 			a.clear();
 			
 			System.out.print(" " + (System.currentTimeMillis() - t) + " millis, ");
-			long created = Config.configCounter - configs;
-			long saved = explored.lastIteration.size();
-			long wasted = created - saved;
-			if (created != 0) {
-				System.out.print(" " + created + " configs created, " + (100 * ((float)(saved)) / ((float)(created))) + "% saved, " + (100 * ((float)(wasted)) / ((float)(created))) + "% wasted");
-			}
+			System.out.print(100 * (((float)(Config.configCounter - configs)) / ((float)(explored.lastIterationMoves))) + "% of explored were unique");
 			System.out.println("");
 			if (explored.lastIteration.isEmpty()) {
 				break;
@@ -146,7 +142,7 @@ public class Generator {
 		System.out.println("reached fixpoint");
 		
 		System.out.print("finding longest non-BS path... ");
-		System.out.print("(" + explored.allIterations.size() + ") ");
+		System.out.print("(" + explored.set.size() + ") ");
 //		Config hardest = null;
 		/*
 		 * start at end of iterations and work backwards, looking for first non-BS config
@@ -247,9 +243,13 @@ public class Generator {
 		
 		List<Config> moves = c.possiblePreviousMoves();
 		
+		explored.lastIterationMoves += moves.size();
+		
 		for (Config m : moves) {
 			if (!explored.allIterationsContains(m)) {
 				explored.putGenerating(m.copy(), c);
+			} else {
+//				System.out.print('@');
 			}
 		}
 	}

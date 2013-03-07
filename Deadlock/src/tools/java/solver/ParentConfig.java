@@ -85,6 +85,8 @@ public class ParentConfig {
 	
 	List<Config> moves = new ArrayList<Config>();
 	
+	byte[][] emptyBoard;
+	
 	public ParentConfig(byte[][] boardIni) {
 		
 		this.ini = boardIni;
@@ -286,6 +288,17 @@ public class ParentConfig {
 				}
 			}
 		}
+		
+		
+		emptyBoard = Config.newBoard(ini.length-2, ini[0].length-2);
+		int rows = emptyBoard.length;
+		int cols  = emptyBoard[0].length;
+		for (int i = 0; i < rows; i++) {
+			for (int j = 0; j < cols; j++) {
+				emptyBoard[i][j] = 17;
+			}
+		}
+		
 	}
 	
 	public int side(int[] coor) {
@@ -629,12 +642,6 @@ public class ParentConfig {
 	}
 	
 	public Config newConfig() {
-		byte[][] board = Config.newBoard(ini.length-2, ini[0].length-2);
-		for (int i = 1; i < ini.length-1; i++) {
-			for (int j = 1; j < ini[0].length-1; j++) {
-				Config.boardSet(board, i-1, j-1, ini[i][j]);
-			}
-		}
-		return new Config(this, board);
+		return new Config(this, emptyBoard);
 	}
 }

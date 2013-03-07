@@ -12,6 +12,7 @@ public class StateSpace {
 //	public Map<Config, Config> map = new HashMap<Config, Config>();
 	
 	public List<Config> lastIteration = new ArrayList<Config>();
+	public long lastIterationMoves;
 	
 	public List<Config> allIterations = new ArrayList<Config>();
 	
