@@ -1,5 +1,12 @@
 
+don't create isomorphic configs
+
 no garbage collection
+audit all for loops
+
+
+
+
 
 
 arc tool

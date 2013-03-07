@@ -1,5 +1,8 @@
 package solver;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ParentConfig {
 	
 	public byte[][] ini;
@@ -35,10 +38,52 @@ public class ParentConfig {
 	
 	boolean[] carPresent = new boolean[Config.cars.length+1];
 	
-	public Config scratchUp;
-	public Config scratchDown;
-	public Config scratchLeft;
-	public Config scratchRight;
+	CarInfo scratchInfo = new CarInfo();
+	
+	Config scratchRUp;
+	Config scratchRDown;
+	Config scratchRLeft;
+	Config scratchRRight;
+	
+	Config scratchAUp;
+	Config scratchADown;
+	Config scratchALeft;
+	Config scratchARight;
+	
+	Config scratchBUp;
+	Config scratchBDown;
+	Config scratchBLeft;
+	Config scratchBRight;
+	
+	Config scratchCUp;
+	Config scratchCDown;
+	Config scratchCLeft;
+	Config scratchCRight;
+	
+	Config scratchDUp;
+	Config scratchDDown;
+	Config scratchDLeft;
+	Config scratchDRight;
+	
+	Config scratchEUp;
+	Config scratchEDown;
+	Config scratchELeft;
+	Config scratchERight;
+	
+	Config scratchFUp;
+	Config scratchFDown;
+	Config scratchFLeft;
+	Config scratchFRight;
+	
+	Config scratchGUp;
+	Config scratchGDown;
+	Config scratchGLeft;
+	Config scratchGRight;
+	
+	Cursor cursor;
+	int[] test = new int[2];
+	
+	List<Config> moves = new ArrayList<Config>();
 	
 	public ParentConfig(byte[][] boardIni) {
 		
@@ -51,6 +96,8 @@ public class ParentConfig {
 		winnableCols = new boolean[colCount];
 		interferenceConeRows = new boolean[rowCount];
 		interferenceConeCols = new boolean[colCount];
+		
+		cursor = new Cursor();
 		
 		/*
 		 * exit
@@ -239,11 +286,6 @@ public class ParentConfig {
 				}
 			}
 		}
-		
-		scratchUp = newConfig();
-		scratchDown = newConfig();
-		scratchLeft = newConfig();
-		scratchRight = newConfig();
 	}
 	
 	public int side(int[] coor) {
@@ -389,31 +431,183 @@ public class ParentConfig {
 		switch (c) {
 		case 'R':
 			carPresent[0] = true;
+			scratchRUp = newConfig();
+			scratchRDown = newConfig();
+			scratchRLeft = newConfig();
+			scratchRRight = newConfig();
 			break;
 		case 'A':
 			carPresent[1] = true;
+			scratchAUp = newConfig();
+			scratchADown = newConfig();
+			scratchALeft = newConfig();
+			scratchARight = newConfig();
 			break;
 		case 'B':
 			carPresent[2] = true;
+			scratchBUp = newConfig();
+			scratchBDown = newConfig();
+			scratchBLeft = newConfig();
+			scratchBRight = newConfig();
 			break;
 		case 'C':
 			carPresent[3] = true;
+			scratchCUp = newConfig();
+			scratchCDown = newConfig();
+			scratchCLeft = newConfig();
+			scratchCRight = newConfig();
 			break;
 		case 'D':
 			carPresent[4] = true;
+			scratchDUp = newConfig();
+			scratchDDown = newConfig();
+			scratchDLeft = newConfig();
+			scratchDRight = newConfig();
 			break;
 		case 'E':
 			carPresent[5] = true;
+			scratchEUp = newConfig();
+			scratchEDown = newConfig();
+			scratchELeft = newConfig();
+			scratchERight = newConfig();
 			break;
 		case 'F':
 			carPresent[6] = true;
+			scratchFUp = newConfig();
+			scratchFDown = newConfig();
+			scratchFLeft = newConfig();
+			scratchFRight = newConfig();
 			break;
 		case 'G':
 			carPresent[7] = true;
+			scratchGUp = newConfig();
+			scratchGDown = newConfig();
+			scratchGLeft = newConfig();
+			scratchGRight = newConfig();
 			break;
 		default:
 			assert false;
 			break;
+		}
+	}
+	
+//	CarInfo carInfo(byte b) {
+//		switch (b) {
+//		case 'R':
+//			return carInfoR;
+//		case 'A':
+//			return carInfoA;
+//		case 'B':
+//			return carInfoB;
+//		case 'C':
+//			return carInfoC;
+//		case 'D':
+//			return carInfoD;
+//		case 'E':
+//			return carInfoE;
+//		case 'F':
+//			return carInfoF;
+//		case 'G':
+//			return carInfoG;
+//		default:
+//			assert false;
+//			return null;
+//		}
+//	}
+	
+	Config scratchLeft(byte b) {
+		switch (b) {
+		case 'R':
+			return scratchRLeft;
+		case 'A':
+			return scratchALeft;
+		case 'B':
+			return scratchBLeft;
+		case 'C':
+			return scratchCLeft;
+		case 'D':
+			return scratchDLeft;
+		case 'E':
+			return scratchELeft;
+		case 'F':
+			return scratchFLeft;
+		case 'G':
+			return scratchGLeft;
+		default:
+			assert false;
+			return null;
+		}
+	}
+	
+	Config scratchRight(byte b) {
+		switch (b) {
+		case 'R':
+			return scratchRRight;
+		case 'A':
+			return scratchARight;
+		case 'B':
+			return scratchBRight;
+		case 'C':
+			return scratchCRight;
+		case 'D':
+			return scratchDRight;
+		case 'E':
+			return scratchERight;
+		case 'F':
+			return scratchFRight;
+		case 'G':
+			return scratchGRight;
+		default:
+			assert false;
+			return null;
+		}
+	}
+	
+	Config scratchUp(byte b) {
+		switch (b) {
+		case 'R':
+			return scratchRUp;
+		case 'A':
+			return scratchAUp;
+		case 'B':
+			return scratchBUp;
+		case 'C':
+			return scratchCUp;
+		case 'D':
+			return scratchDUp;
+		case 'E':
+			return scratchEUp;
+		case 'F':
+			return scratchFUp;
+		case 'G':
+			return scratchGUp;
+		default:
+			assert false;
+			return null;
+		}
+	}
+	
+	Config scratchDown(byte b) {
+		switch (b) {
+		case 'R':
+			return scratchRDown;
+		case 'A':
+			return scratchADown;
+		case 'B':
+			return scratchBDown;
+		case 'C':
+			return scratchCDown;
+		case 'D':
+			return scratchDDown;
+		case 'E':
+			return scratchEDown;
+		case 'F':
+			return scratchFDown;
+		case 'G':
+			return scratchGDown;
+		default:
+			assert false;
+			return null;
 		}
 	}
 	

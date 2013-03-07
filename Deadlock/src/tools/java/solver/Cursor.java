@@ -1,13 +1,17 @@
 package solver;
 
 public class Cursor {
+	
 	Config config;
 	int[] coor;
 	int side;
 	
-	Cursor(Config config) {
-		this.config = config;
+	Cursor() {
 		coor = new int[2];
+	}
+	
+	void reset(Config config) {
+		this.config = config;
 		coor[0] = config.par.exit[0];
 		coor[1] = config.par.exit[1];
 		side = Config.otherSide(config.par.side(config.par.exit));

@@ -1,6 +1,5 @@
 package solver;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class Config {
@@ -21,6 +20,10 @@ public class Config {
 		this.par = par;
 		board = copy(old);
 	}
+	
+//	public boolean equals(Object o) {
+//		return alphaEquivalent(this, (Config)o);
+//	}
 	
 	public boolean equals(Object o) {
 		byte[][] other = ((Config)o).board;
@@ -45,6 +48,38 @@ public class Config {
 			}
 		}
 		return h;
+		
+//		CarInfo info = carMapGet((byte)'R');
+//		h = 37 * h + info.hashCode();
+//		
+//		List<Byte> cars = new ArrayList<Byte>();
+//		
+//		for (int i = 0; i < par.rowCount; i++) {
+//			for (int j = 0; j < par.colCount; j++) {
+//				byte c = val(i, j);
+//				switch (c) {
+//				case 'A':
+//				case 'B':
+//				case 'C':
+//				case 'D':
+//				case 'E':
+//				case 'F':
+//				case 'G':
+//					if (!cars.contains(c)) {
+//						cars.add(c);
+//					}
+//					break;
+//				}
+//			}
+//		}
+//		
+//		for (int i = 0; i < cars.size(); i++) {
+//			byte ab = cars.get(i);
+//			info = carMapGet((byte)ab);
+//			h = 37 * h + info.hashCode();
+//		}
+//		
+//		return h;
 	}
 	
 	public void copy(Config out) {
@@ -298,16 +333,18 @@ public class Config {
 	
 	boolean isClearPathToExit() {
 		
-		Cursor cursor = new Cursor(this);
+		par.cursor.reset(this);
 		while (true) {
-			if (cursor.val() == 'Y' || cursor.val() == 'X') {
-				cursor.move();
-			} else if (cursor.val() == 'R') {
-				CarInfo red = carMapGet((byte)'R');
-				if ((((cursor.side == 0 || cursor.side == 2) && red.o == Orientation.UPDOWN) || ((cursor.side == 1 || cursor.side == 3) && red.o == Orientation.LEFTRIGHT))) {
+			if (par.cursor.val() == 'Y' || par.cursor.val() == 'X') {
+				par.cursor.move();
+			} else if (par.cursor.val() == 'R') {
+				carMapGet((byte)'R');
+				Orientation o = par.scratchInfo.o;
+				
+				if ((((par.cursor.side == 0 || par.cursor.side == 2) && o == Orientation.UPDOWN) || ((par.cursor.side == 1 || par.cursor.side == 3) && o == Orientation.LEFTRIGHT))) {
 					break;
 				} else {
-					cursor.move();
+					par.cursor.move();
 				}
 			} else {
 				return false;
@@ -322,19 +359,21 @@ public class Config {
 	 */
 	int numberMovesToWin() {
 		
-		Cursor cursor = new Cursor(this); 
+		par.cursor.reset(this); 
 		int moves = 0;
 		while (true) {
-			if (cursor.val() == 'Y' || cursor.val() == 'X') {
-				cursor.move();
+			if (par.cursor.val() == 'Y' || par.cursor.val() == 'X') {
+				par.cursor.move();
 				moves++;
 			} else {
-				if (cursor.val() == 'R') {
-					CarInfo red = carMapGet((byte)'R');
-					if ((((cursor.side == 0 || cursor.side == 2) && red.o == Orientation.UPDOWN) || ((cursor.side == 1 || cursor.side == 3) && red.o == Orientation.LEFTRIGHT))) {
+				if (par.cursor.val() == 'R') {
+					carMapGet((byte)'R');
+					Orientation o = par.scratchInfo.o;
+					
+					if ((((par.cursor.side == 0 || par.cursor.side == 2) && o == Orientation.UPDOWN) || ((par.cursor.side == 1 || par.cursor.side == 3) && o == Orientation.LEFTRIGHT))) {
 						break;
 					} else {
-						cursor.move();
+						par.cursor.move();
 						moves++;
 					}
 				} else {
@@ -488,37 +527,44 @@ public class Config {
 	}
 	
 	public void move(byte c, int size, Orientation oldO, int oldRow, int oldCol, Orientation newO, int newRow, int newCol, Config out) {
+		
+		assert this.board != out.board;
+		
 		copy(out);
+		
 		out.clearIni(c, oldO, size, oldRow, oldCol);
+		
 		out.insertIni(c, newO, size, newRow, newCol);
 	}
 	
 	void addToInterferenceRow(int r) {
 		par.interferenceConeRows[r] = true;
 		
-		int[] test = new int[] {r, -1};
+		par.test[0] = r;
+		par.test[1] = -1;
 		
-		if (par.isJoint(test)) {
-			int[] other = par.otherJoint(test);
+		if (par.isJoint(par.test)) {
+			int[] other = par.otherJoint(par.test);
 			par.interferenceConeCols[other[1]] = true;
 			
-			par.across(other, test);
-			if (par.isJoint(test)) {
-				other = par.otherJoint(test);
+			par.across(other, par.test);
+			if (par.isJoint(par.test)) {
+				other = par.otherJoint(par.test);
 				par.interferenceConeRows[other[0]] = true;
 			}
 			
 		}
 		
-		test = new int[] {r, par.colCount};
+		par.test[0] = r;
+		par.test[1] = par.colCount;
 		
-		if (par.isJoint(test)) {
-			int[] other = par.otherJoint(test);
+		if (par.isJoint(par.test)) {
+			int[] other = par.otherJoint(par.test);
 			par.interferenceConeCols[other[1]] = true;
 			
-			par.across(other, test);
-			if (par.isJoint(test)) {
-				other = par.otherJoint(test);
+			par.across(other, par.test);
+			if (par.isJoint(par.test)) {
+				other = par.otherJoint(par.test);
 				par.interferenceConeRows[other[0]] = true;
 			}
 			
@@ -529,29 +575,31 @@ public class Config {
 	void addToInterferenceCol(int c) {
 		par.interferenceConeCols[c] = true;
 		
-		int[] test = new int[] {-1, c};
+		par.test[0] = -1;
+		par.test[1] = c;
 		
-		if (par.isJoint(test)) {
-			int[] other = par.otherJoint(test);
+		if (par.isJoint(par.test)) {
+			int[] other = par.otherJoint(par.test);
 			par.interferenceConeRows[other[0]] = true;
 			
-			par.across(other, test);
-			if (par.isJoint(test)) {
-				other = par.otherJoint(test);
+			par.across(other, par.test);
+			if (par.isJoint(par.test)) {
+				other = par.otherJoint(par.test);
 				par.interferenceConeCols[other[1]] = true;
 			}
 			
 		}
 		
-		test = new int[] {par.rowCount, c};
+		par.test[0] = par.rowCount;
+		par.test[1] = c;
 		
-		if (par.isJoint(test)) {
-			int[] other = par.otherJoint(test);
+		if (par.isJoint(par.test)) {
+			int[] other = par.otherJoint(par.test);
 			par.interferenceConeRows[other[0]] = true;
 			
-			par.across(other, test);
-			if (par.isJoint(test)) {
-				other = par.otherJoint(test);
+			par.across(other, par.test);
+			if (par.isJoint(par.test)) {
+				other = par.otherJoint(par.test);
 				par.interferenceConeCols[other[1]] = true;
 			}
 			
@@ -562,15 +610,9 @@ public class Config {
 		return c == 'X';
 	}
 	
-//	boolean isXorY(byte c) {
-//		return c == 'X' || c == 'Y';
-//	}
-	
-	List<Config> moves = new ArrayList<Config>();
-	
 	public List<Config> possiblePreviousMoves() {
 		
-		moves.clear();
+		par.moves.clear();
 		
 		boolean clearPathToExit = isClearPathToExit();
 		
@@ -592,25 +634,30 @@ public class Config {
 			 * 		if other, only previous move was interfering with winning path
 			 */
 			
-			CarInfo info = carMapGet(c);
-			switch (info.o) {
+			carMapGet(c);
+			Orientation o = par.scratchInfo.o;
+			int size = par.scratchInfo.size;
+			int row = par.scratchInfo.row;
+			int col = par.scratchInfo.col;
+			
+			switch (o) {
 			case LEFTRIGHT:
 				
 				/*
 				 * info.col-1
 				 */
-				if ((info.col-1 >= 0) && boardGet(info.row, info.col-1) == 'X') {
-					move(c, info.size, info.o, info.row, info.col,
-										info.o, info.row, info.col-1,
-										par.scratchLeft);
-					boolean res = lastStep(c, clearPathToExit, moves, par.scratchLeft);
+				if ((col-1 >= 0) && boardGet(row, col-1) == 'X') {
+					move(c, size, o, row, col,
+										o, row, col-1,
+										par.scratchLeft(c));
+					boolean res = lastStep(c, clearPathToExit, par.scratchLeft(c));
 					if (res) {
 						continue carLoop;
 					}
-				} else if ((info.col-1 == -1) && ParentConfig.isJorK(par.ini[info.row+1][info.col-1+1])) {
-					boolean res = tryJoint(c, par.otherJoint(info.row, info.col-1), par.scratchLeft);
+				} else if ((col-1 == -1) && ParentConfig.isJorK(par.ini[row+1][col-1+1])) {
+					boolean res = tryJoint(c, par.otherJoint(row, col-1), par.scratchLeft(c));
 					if (res) {
-						res = lastStep(c, clearPathToExit, moves, par.scratchLeft);
+						res = lastStep(c, clearPathToExit, par.scratchLeft(c));
 						if (res) {
 							continue carLoop;
 						}
@@ -620,18 +667,18 @@ public class Config {
 				/*
 				 * info.col+1
 				 */
-				if ((info.col+info.size <= par.colCount-1) && boardGet(info.row, info.col+info.size) == 'X') {
-					move(c, info.size, info.o, info.row, info.col,
-															info.o, info.row, info.col+1,
-															par.scratchRight);
-					boolean res = lastStep(c, clearPathToExit, moves, par.scratchRight);
+				if ((col+size <= par.colCount-1) && boardGet(row, col+size) == 'X') {
+					move(c, size, o, row, col,
+															o, row, col+1,
+															par.scratchRight(c));
+					boolean res = lastStep(c, clearPathToExit, par.scratchRight(c));
 					if (res) {
 						continue carLoop;
 					}
-				} else if ((info.col+info.size == par.colCount) && ParentConfig.isJorK(par.ini[info.row+1][info.col+info.size+1])) {
-					boolean res = tryJoint(c, par.otherJoint(info.row, info.col+info.size), par.scratchRight);
+				} else if ((col+size == par.colCount) && ParentConfig.isJorK(par.ini[row+1][col+size+1])) {
+					boolean res = tryJoint(c, par.otherJoint(row, col+size), par.scratchRight(c));
 					if (res) {
-						res = lastStep(c, clearPathToExit, moves, par.scratchRight);
+						res = lastStep(c, clearPathToExit, par.scratchRight(c));
 						if (res) {
 							continue carLoop;
 						}
@@ -643,18 +690,18 @@ public class Config {
 				/*
 				 * info.row-1
 				 */
-				if ((info.row-1 >= 0) && boardGet(info.row-1, info.col) == 'X') {
-					move(c, info.size, info.o, info.row, info.col,
-															info.o, info.row-1, info.col,
-															par.scratchUp);
-					boolean res = lastStep(c, clearPathToExit, moves, par.scratchUp);
+				if ((row-1 >= 0) && boardGet(row-1, col) == 'X') {
+					move(c, size, o, row, col,
+															o, row-1, col,
+															par.scratchUp(c));
+					boolean res = lastStep(c, clearPathToExit, par.scratchUp(c));
 					if (res) {
 						continue carLoop;
 					}
-				} else if ((info.row-1 == -1) && ParentConfig.isJorK(par.ini[info.row-1+1][info.col+1])) {
-					boolean res = tryJoint(c, par.otherJoint(info.row-1, info.col), par.scratchUp);
+				} else if ((row-1 == -1) && ParentConfig.isJorK(par.ini[row-1+1][col+1])) {
+					boolean res = tryJoint(c, par.otherJoint(row-1, col), par.scratchUp(c));
 					if (res) {
-						res = lastStep(c, clearPathToExit, moves, par.scratchUp);
+						res = lastStep(c, clearPathToExit, par.scratchUp(c));
 						if (res) {
 							continue carLoop;
 						}
@@ -664,18 +711,18 @@ public class Config {
 				/*
 				 * info.row+1
 				 */
-				if ((info.row+info.size <= par.rowCount-1) && boardGet(info.row+info.size, info.col) == 'X') {
-					move(c, info.size, info.o, info.row, info.col,
-															info.o, info.row+1, info.col,
-															par.scratchDown);
-					boolean res = lastStep(c, clearPathToExit, moves, par.scratchDown);
+				if ((row+size <= par.rowCount-1) && boardGet(row+size, col) == 'X') {
+					move(c, size, o, row, col,
+															o, row+1, col,
+															par.scratchDown(c));
+					boolean res = lastStep(c, clearPathToExit, par.scratchDown(c));
 					if (res) {
 						continue carLoop;
 					}
-				} else if ((info.row+info.size == par.rowCount) && ParentConfig.isJorK(par.ini[info.row+info.size+1][info.col+1])) {
-					boolean res = tryJoint(c, par.otherJoint(info.row+info.size, info.col), par.scratchDown);
+				} else if ((row+size == par.rowCount) && ParentConfig.isJorK(par.ini[row+size+1][col+1])) {
+					boolean res = tryJoint(c, par.otherJoint(row+size, col), par.scratchDown(c));
 					if (res) {
-						res = lastStep(c, clearPathToExit, moves, par.scratchDown);
+						res = lastStep(c, clearPathToExit, par.scratchDown(c));
 						if (res) {
 							continue carLoop;
 						}
@@ -685,26 +732,26 @@ public class Config {
 			}
 		}
 		
-		return moves;
+		return par.moves;
 	}
 	
 	/*
 	 * returns true => continue carLoop
 	 */
-	boolean lastStep(byte c, boolean clearPathToExit, List<Config> moves, Config scratch) {
+	boolean lastStep(byte c, boolean clearPathToExit, Config scratch) {
 		if (!clearPathToExit) {
 			if (!scratch.isClearPathToExit()) {
-				moves.add(scratch);
+				par.moves.add(scratch);
 			}
 		} else {
 			if (c == 'R') {
 				if (scratch.numberMovesToWin() > this.numberMovesToWin()) {
-					moves.add(scratch);
+					par.moves.add(scratch);
 					return true;
 				}
 			} else {
 				if (!scratch.isClearPathToExit()) {
-					moves.add(scratch);
+					par.moves.add(scratch);
 					return true;
 				}
 			}
@@ -715,10 +762,10 @@ public class Config {
 	
 	public List<Config> possibleNextMoves() {
 		
-		moves.clear();
+		par.moves.clear();
 		
 		if (isWinning()) {
-			return moves;
+			return par.moves;
 		}
 		
 		if (isClearPathToExit()) {
@@ -726,67 +773,72 @@ public class Config {
 			int currentMovesToWin = numberMovesToWin();
 			Config best = null;
 			
-			CarInfo info = carMapGet((byte)'R');
-			switch (info.o) {
+			carMapGet((byte)'R');
+			Orientation o = par.scratchInfo.o;
+			int size = par.scratchInfo.size;
+			int row = par.scratchInfo.row;
+			int col = par.scratchInfo.col;
+			
+			switch (o) {
 			case LEFTRIGHT:
 				
-				if (info.col-1 >= 0 && boardGet(info.row, info.col-1) == 'X') {
-					move((byte)'R', info.size, info.o, info.row, info.col,
-												info.o, info.row, info.col-1,
-												par.scratchLeft);
-					if (par.scratchLeft.numberMovesToWin() < currentMovesToWin) {
-						best = par.scratchLeft;
+				if (col-1 >= 0 && boardGet(row, col-1) == 'X') {
+					move((byte)'R', size, o, row, col,
+												o, row, col-1,
+												par.scratchLeft((byte)'R'));
+					if (par.scratchLeft((byte)'R').numberMovesToWin() < currentMovesToWin) {
+						best = par.scratchLeft((byte)'R');
 					}
-				} else if (ParentConfig.isJorK(par.ini[info.row+1][info.col-1+1])) {
-					boolean res = tryJoint((byte)'R', par.otherJoint(info.row, info.col-1), par.scratchLeft);
-					if (res && par.scratchLeft.numberMovesToWin() < currentMovesToWin) {
-						best = par.scratchLeft;
+				} else if (ParentConfig.isJorK(par.ini[row+1][col-1+1])) {
+					boolean res = tryJoint((byte)'R', par.otherJoint(row, col-1), par.scratchLeft((byte)'R'));
+					if (res && par.scratchLeft((byte)'R').numberMovesToWin() < currentMovesToWin) {
+						best = par.scratchLeft((byte)'R');
 					}
 				}
 				
 				
-				if (info.col+2 < par.colCount && boardGet(info.row, info.col+2) == 'X') {
-					move((byte)'R', info.size, info.o, info.row, info.col,
-												info.o, info.row, info.col+1,
-												par.scratchRight);
-					if (par.scratchRight.numberMovesToWin() < currentMovesToWin) {
-						best = par.scratchRight;
+				if (col+2 < par.colCount && boardGet(row, col+2) == 'X') {
+					move((byte)'R', size, o, row, col,
+												o, row, col+1,
+												par.scratchRight((byte)'R'));
+					if (par.scratchRight((byte)'R').numberMovesToWin() < currentMovesToWin) {
+						best = par.scratchRight((byte)'R');
 					}
-				} else if (ParentConfig.isJorK(par.ini[info.row+1][info.col+2+1])) {
-					boolean res = tryJoint((byte)'R', par.otherJoint(info.row, info.col+2), par.scratchRight);
-					if (res && par.scratchRight.numberMovesToWin() < currentMovesToWin) {
-						best = par.scratchRight;
+				} else if (ParentConfig.isJorK(par.ini[row+1][col+2+1])) {
+					boolean res = tryJoint((byte)'R', par.otherJoint(row, col+2), par.scratchRight((byte)'R'));
+					if (res && par.scratchRight((byte)'R').numberMovesToWin() < currentMovesToWin) {
+						best = par.scratchRight((byte)'R');
 					}
 				}
 				
 				break;
 			case UPDOWN:
 				
-				if (info.row-1 >= 0 && boardGet(info.row-1, info.col) == 'X') {
-					move((byte)'R', info.size, info.o, info.row, info.col,
-																	info.o, info.row-1, info.col,
-																	par.scratchUp);
-					if (par.scratchUp.numberMovesToWin() < currentMovesToWin) {
-						best = par.scratchUp;
+				if (row-1 >= 0 && boardGet(row-1, col) == 'X') {
+					move((byte)'R', size, o, row, col,
+																	o, row-1, col,
+																	par.scratchUp((byte)'R'));
+					if (par.scratchUp((byte)'R').numberMovesToWin() < currentMovesToWin) {
+						best = par.scratchUp((byte)'R');
 					}
-				} else if (ParentConfig.isJorK(par.ini[info.row-1+1][info.col+1])) {
-					boolean res = tryJoint((byte)'R', par.otherJoint(info.row-1, info.col), par.scratchUp);
-					if (res && par.scratchUp.numberMovesToWin() < currentMovesToWin) {
-						best = par.scratchUp;
+				} else if (ParentConfig.isJorK(par.ini[row-1+1][col+1])) {
+					boolean res = tryJoint((byte)'R', par.otherJoint(row-1, col), par.scratchUp((byte)'R'));
+					if (res && par.scratchUp((byte)'R').numberMovesToWin() < currentMovesToWin) {
+						best = par.scratchUp((byte)'R');
 					}
 				}
 				
-				if (info.row+2 < par.rowCount && boardGet(info.row+2, info.col) == 'X') {
-					move((byte)'R', info.size, info.o, info.row, info.col,
-																	info.o, info.row+1, info.col,
-																	par.scratchDown);
-					if (par.scratchDown.numberMovesToWin() < currentMovesToWin) {
-						best = par.scratchDown;
+				if (row+2 < par.rowCount && boardGet(row+2, col) == 'X') {
+					move((byte)'R', size, o, row, col,
+																	o, row+1, col,
+																	par.scratchDown((byte)'R'));
+					if (par.scratchDown((byte)'R').numberMovesToWin() < currentMovesToWin) {
+						best = par.scratchDown((byte)'R');
 					}
-				} else if (ParentConfig.isJorK(par.ini[info.row+2+1][info.col+1])) {
-					boolean res = tryJoint((byte)'R', par.otherJoint(info.row+2, info.col), par.scratchDown);
-					if (res && par.scratchDown.numberMovesToWin() < currentMovesToWin) {
-						best = par.scratchDown;
+				} else if (ParentConfig.isJorK(par.ini[row+2+1][col+1])) {
+					boolean res = tryJoint((byte)'R', par.otherJoint(row+2, col), par.scratchDown((byte)'R'));
+					if (res && par.scratchDown((byte)'R').numberMovesToWin() < currentMovesToWin) {
+						best = par.scratchDown((byte)'R');
 					}
 				}
 				
@@ -795,9 +847,9 @@ public class Config {
 			
 			assert best != null;
 			
-			moves.add(best);
+			par.moves.add(best);
 			
-			return moves;
+			return par.moves;
 		}
 		
 		for (byte c : cars) {
@@ -811,58 +863,63 @@ public class Config {
 			 * 		if other, only previous move was interfering with winning path
 			 */
 			
-			CarInfo info = carMapGet(c);
-			switch (info.o) {
+			carMapGet(c);
+			Orientation o = par.scratchInfo.o;
+			int size = par.scratchInfo.size;
+			int row = par.scratchInfo.row;
+			int col = par.scratchInfo.col;
+			
+			switch (o) {
 			case LEFTRIGHT:
 				
-				if ((info.col-1 >= 0) && boardGet(info.row, info.col-1) == 'X') {
-					move(c, info.size, info.o, info.row, info.col,
-															info.o, info.row, info.col-1,
-															par.scratchLeft);
-					moves.add(par.scratchLeft);
-				} else if ((info.col-1 == -1) && ParentConfig.isJorK(par.ini[info.row+1][info.col-1+1])) {
-					boolean res = tryJoint(c, par.otherJoint(info.row, info.col-1), par.scratchLeft);
+				if ((col-1 >= 0) && boardGet(row, col-1) == 'X') {
+					move(c, size, o, row, col,
+															o, row, col-1,
+															par.scratchLeft(c));
+					par.moves.add(par.scratchLeft(c));
+				} else if ((col-1 == -1) && ParentConfig.isJorK(par.ini[row+1][col-1+1])) {
+					boolean res = tryJoint(c, par.otherJoint(row, col-1), par.scratchLeft(c));
 					if (res) {
-						moves.add(par.scratchLeft);
+						par.moves.add(par.scratchLeft(c));
 					}
 				}
 				
-				if ((info.col+info.size <= par.colCount-1) && boardGet(info.row, info.col+info.size) == 'X') {
-					move(c, info.size, info.o, info.row, info.col,
-															info.o, info.row, info.col+1,
-															par.scratchRight);
-					moves.add(par.scratchRight);
-				} else if ((info.col+info.size == par.colCount) && ParentConfig.isJorK(par.ini[info.row+1][info.col+info.size+1])) {
-					boolean res = tryJoint(c, par.otherJoint(info.row, info.col+info.size), par.scratchRight);
+				if ((col+size <= par.colCount-1) && boardGet(row, col+size) == 'X') {
+					move(c, size, o, row, col,
+															o, row, col+1,
+															par.scratchRight(c));
+					par.moves.add(par.scratchRight(c));
+				} else if ((col+size == par.colCount) && ParentConfig.isJorK(par.ini[row+1][col+size+1])) {
+					boolean res = tryJoint(c, par.otherJoint(row, col+size), par.scratchRight(c));
 					if (res) {
-						moves.add(par.scratchRight);
+						par.moves.add(par.scratchRight(c));
 					}
 				}
 				
 				break;
 			case UPDOWN:
 				
-				if ((info.row-1 >= 0) && boardGet(info.row-1, info.col) == 'X') {
-					move(c, info.size, info.o, info.row, info.col,
-															info.o, info.row-1, info.col,
-															par.scratchUp);
-					moves.add(par.scratchUp);
-				} else if ((info.row-1 == -1) && ParentConfig.isJorK(par.ini[info.row-1+1][info.col+1])) {
-					boolean res = tryJoint(c, par.otherJoint(info.row-1, info.col), par.scratchUp);
+				if ((row-1 >= 0) && boardGet(row-1, col) == 'X') {
+					move(c, size, o, row, col,
+															o, row-1, col,
+															par.scratchUp(c));
+					par.moves.add(par.scratchUp(c));
+				} else if ((row-1 == -1) && ParentConfig.isJorK(par.ini[row-1+1][col+1])) {
+					boolean res = tryJoint(c, par.otherJoint(row-1, col), par.scratchUp(c));
 					if (res) {
-						moves.add(par.scratchUp);
+						par.moves.add(par.scratchUp(c));
 					}
 				}
 				
-				if ((info.row+info.size <= par.rowCount-1) && boardGet(info.row+info.size, info.col) == 'X') {
-					move(c, info.size, info.o, info.row, info.col,
-															info.o, info.row+1, info.col,
-															par.scratchDown);
-					moves.add(par.scratchDown);
-				} else if ((info.row+info.size == par.rowCount) && ParentConfig.isJorK(par.ini[info.row+info.size+1][info.col+1])) {
-					boolean res = tryJoint(c, par.otherJoint(info.row+info.size, info.col), par.scratchDown);
+				if ((row+size <= par.rowCount-1) && boardGet(row+size, col) == 'X') {
+					move(c, size, o, row, col,
+															o, row+1, col,
+															par.scratchDown(c));
+					par.moves.add(par.scratchDown(c));
+				} else if ((row+size == par.rowCount) && ParentConfig.isJorK(par.ini[row+size+1][col+1])) {
+					boolean res = tryJoint(c, par.otherJoint(row+size, col), par.scratchDown(c));
 					if (res) {
-						moves.add(par.scratchDown);
+						par.moves.add(par.scratchDown(c));
 					}
 				}
 				
@@ -870,47 +927,8 @@ public class Config {
 			}
 		}
 		
-		return moves;
+		return par.moves;
 	}
-	
-	/*
-	 * try left-right first, then up-down
-	 */
-//	public List<Config> possibleRedCarPlacements() {
-//		
-//		List<Config> placements = new ArrayList<Config>();
-//		
-//		for (int r = 0; r < par.rowCount; r++) {
-//			for (int c = 0; c < par.colCount-1; c++) {
-//				
-//				if (!par.winnableRows[r]) {
-//					continue;
-//				}
-//				
-//				if (available(Orientation.LEFTRIGHT, 2, r, c)) {
-//					Config n = insert((byte)'R', Orientation.LEFTRIGHT, 2, r, c);
-//					placements.add(n);
-//				}
-//				
-//			}
-//		}
-//		
-//		for (int r = 0; r < par.rowCount-1; r++) {
-//			for (int c = 0; c < par.colCount; c++) {
-//				
-//				if (!par.winnableCols[c]) {
-//					continue;
-//				}
-//				
-//				if (available(Orientation.UPDOWN, 2, r, c)) {
-//					Config n = insert((byte)'R', Orientation.UPDOWN, 2, r, c);
-//					placements.add(n);
-//				}
-//			}
-//		}
-//		
-//		return placements;
-//	}
 	
 	public Config redCarWinningConfig() {
 		int side = par.side(par.exit);
@@ -936,21 +954,22 @@ public class Config {
 		return null;
 	}
 	
-	public List<Config> possible2CarPlacements(int max) {
-		
-		byte car = ' ';
+	byte firstAvailableCar() {
 		for (byte d : cars) {
 			if (!iniContainsCar(d)) {
-				car = d;
-				break;
+				return d;
 			}
 		}
-		assert car != ' ';
+		assert false;
+		return -1;
+	}
+	
+	public List<Config> possible2CarPlacements(List<Config> placements) {
 		
-		List<Config> placements = new ArrayList<Config>();
-		if (placements.size() == max) {
-			return placements;
-		}
+		byte car = firstAvailableCar();
+		int[] coor = firstAvailable2CarCoor();
+		int firstAvailR = coor[0];
+		int firstAvailC = coor[1];
 		
 		/*
 		 * left-right
@@ -962,12 +981,9 @@ public class Config {
 					continue;
 				}
 				
-				if (available(Orientation.LEFTRIGHT, 2, r, c)) {
+				if (greaterThanEqual(r, c, firstAvailR, firstAvailC) && available(Orientation.LEFTRIGHT, 2, r, c)) {
 					Config n = insert(car, Orientation.LEFTRIGHT, 2, r, c);
 					placements.add(n);
-					if (placements.size() == max) {
-						return placements;
-					}
 				}
 			}
 		}
@@ -982,12 +998,9 @@ public class Config {
 					continue;
 				}
 				
-				if (available(Orientation.UPDOWN, 2, r, c)) {
+				if (greaterThanEqual(r, c, firstAvailR, firstAvailC) && available(Orientation.UPDOWN, 2, r, c)) {
 					Config n = insert(car, Orientation.UPDOWN, 2, r, c);
 					placements.add(n);
-					if (placements.size() == max) {
-						return placements;
-					}
 				}
 			}
 		}
@@ -995,21 +1008,12 @@ public class Config {
 		return placements;
 	}
 	
-	public List<Config> possible3CarPlacements(int max) {
+	public List<Config> possible3CarPlacements(List<Config> placements) {
 		
-		byte car = ' ';
-		for (byte d : cars) {
-			if (!iniContainsCar(d)) {
-				car = d;
-				break;
-			}
-		}
-		assert car != ' ';
-		
-		List<Config> placements = new ArrayList<Config>();
-		if (placements.size() == max) {
-			return placements;
-		}
+		byte car = firstAvailableCar();
+		int[] coor = firstAvailable3CarCoor();
+		int firstAvailR = coor[0];
+		int firstAvailC = coor[1];
 		
 		/*
 		 * left-right
@@ -1021,12 +1025,9 @@ public class Config {
 					continue;
 				}
 				
-				if (available(Orientation.LEFTRIGHT, 3, r, c)) {
+				if (greaterThanEqual(r, c, firstAvailR, firstAvailC) && available(Orientation.LEFTRIGHT, 3, r, c)) {
 					Config n = insert(car, Orientation.LEFTRIGHT, 3, r, c);
 					placements.add(n);
-					if (placements.size() == max) {
-						return placements;
-					}
 				}
 			}
 		}
@@ -1041,12 +1042,9 @@ public class Config {
 					continue;
 				}
 				
-				if (available(Orientation.UPDOWN, 3, r, c)) {
+				if (greaterThanEqual(r, c, firstAvailR, firstAvailC) && available(Orientation.UPDOWN, 3, r, c)) {
 					Config n = insert(car, Orientation.UPDOWN, 3, r, c);
 					placements.add(n);
-					if (placements.size() == max) {
-						return placements;
-					}
 				}
 			}
 		}
@@ -1054,12 +1052,13 @@ public class Config {
 		return placements;
 	}
 	
-	public int possible3CarPlacementsCount(int max) {
+	public int possible3CarPlacementsCount() {
+		
+		int[] coor = firstAvailable3CarCoor();
+		int firstAvailR = coor[0];
+		int firstAvailC = coor[1];
 		
 		int placements = 0;
-		if (placements == max) {
-			return placements;
-		}
 		
 		/*
 		 * left-right
@@ -1071,11 +1070,8 @@ public class Config {
 					continue;
 				}
 				
-				if (available(Orientation.LEFTRIGHT, 3, r, c)) {
+				if (greaterThanEqual(r, c, firstAvailR, firstAvailC) && available(Orientation.LEFTRIGHT, 3, r, c)) {
 					placements++;
-					if (placements == max) {
-						return placements;
-					}
 				}
 			}
 		}
@@ -1090,16 +1086,93 @@ public class Config {
 					continue;
 				}
 				
-				if (available(Orientation.UPDOWN, 3, r, c)) {
+				if (greaterThanEqual(r, c, firstAvailR, firstAvailC) && available(Orientation.UPDOWN, 3, r, c)) {
 					placements++;
-					if (placements == max) {
-						return placements;
-					}
 				}
 			}
 		}
 		
 		return placements;
+	}
+	
+	int[] firstAvailable2CarCoor() {
+		
+		par.test[0] = 0;
+		par.test[1] = 0;
+		for (byte b : cars) {
+			boolean res = carMapGet(b);
+			
+			if (!res) {
+				break;
+			}
+			int size = par.scratchInfo.size;
+			int row = par.scratchInfo.row;
+			int col = par.scratchInfo.col;
+			
+			if (size == 2) {
+				res = next(row, col, par.test);
+				if (!res) {
+					return null;
+				}
+			}
+		}
+		
+		return par.test;
+	}
+	
+	int[] firstAvailable3CarCoor() {
+		
+		par.test[0] = 0;
+		par.test[1] = 0;
+		for (byte b : cars) {
+			boolean res = carMapGet(b);
+			
+			if (!res) {
+				break;
+			}
+			int size = par.scratchInfo.size;
+			int row = par.scratchInfo.row;
+			int col = par.scratchInfo.col;
+			
+			if (size == 3) {
+				res = next(row, col, par.test);
+				if (!res) {
+					return null;
+				}
+			}
+		}
+		
+		return par.test;
+	}
+	
+	boolean greaterThanEqual(int r, int c, int r1, int c1) {
+		
+		return (r > r1) || (r == r1 && c >= c1);
+		
+	}
+	
+	/**
+	 * return if there was a next
+	 */
+	boolean next(int r, int c, int[] out) {
+		
+		if (c == par.colCount-1) {
+			
+			if (r == par.rowCount-1) {
+				
+				return false;
+				
+			} else {
+				out[0] = r+1;
+				out[1] = 1;
+			}
+			
+		} else {
+			out[0] = r;
+			out[1] = c+1;
+		}
+		
+		return true;
 	}
 	
 	boolean tryJoint(byte c, int[] joint, Config out) {
@@ -1107,15 +1180,19 @@ public class Config {
 		int mR = joint[0];
 		int mC = joint[1];
 		
-		CarInfo info = carMapGet(c);
+		carMapGet(c);
+		Orientation o = par.scratchInfo.o;
+		int size = par.scratchInfo.size;
+		int row = par.scratchInfo.row;
+		int col = par.scratchInfo.col;
 		
 		int mSide = par.side(joint);
 		switch (mSide) {
 		case 0:
-			switch (info.size) {
+			switch (size) {
 			case 2:
 				if ((boardGet(mR+1, mC) == 'X' || boardGet(mR+1, mC) == c) && (boardGet(mR+2, mC) == 'X' || boardGet(mR+2, mC) == c)) {
-					move(c, info.size, info.o, info.row, info.col,
+					move(c, size, o, row, col,
 															Orientation.UPDOWN, mR+1, mC,
 															out);
 					return true;
@@ -1123,7 +1200,7 @@ public class Config {
 				break;
 			case 3:
 				if ((boardGet(mR+1, mC) == 'X' || boardGet(mR+1, mC) == c) && (boardGet(mR+2, mC) == 'X' || boardGet(mR+2, mC) == c) && (boardGet(mR+3, mC) == 'X' || boardGet(mR+3, mC) == c)) {
-					move(c, info.size, info.o, info.row, info.col,
+					move(c, size, o, row, col,
 															Orientation.UPDOWN, mR+1, mC,
 															out);
 					return true;
@@ -1132,10 +1209,10 @@ public class Config {
 			}
 			break;
 		case 1:
-			switch (info.size) {
+			switch (size) {
 			case 2:
 				if ((boardGet(mR, mC-2) == 'X' || boardGet(mR, mC-2) == c) && (boardGet(mR, mC-1) == 'X' || boardGet(mR, mC-1) == c)) {
-					move(c, info.size, info.o, info.row, info.col,
+					move(c, size, o, row, col,
 															Orientation.LEFTRIGHT, mR, mC-2,
 															out);
 					return true;
@@ -1143,7 +1220,7 @@ public class Config {
 				break;
 			case 3:
 				if ((boardGet(mR, mC-3) == 'X' || boardGet(mR, mC-3) == c) && (boardGet(mR, mC-2) == 'X' || boardGet(mR, mC-2) == c) && (boardGet(mR, mC-1) == 'X' || boardGet(mR, mC-1) == c)) {
-					move(c, info.size, info.o, info.row, info.col,
+					move(c, size, o, row, col,
 															Orientation.LEFTRIGHT, mR, mC-3,
 															out);
 					return true;
@@ -1152,10 +1229,10 @@ public class Config {
 			}
 			break;
 		case 2:
-			switch (info.size) {
+			switch (size) {
 			case 2:
 				if ((boardGet(mR-2, mC) == 'X' || boardGet(mR-2, mC) == c) && (boardGet(mR-1, mC) == 'X' || boardGet(mR-1, mC) == c)) {
-					move(c, info.size, info.o, info.row, info.col,
+					move(c, size, o, row, col,
 															Orientation.UPDOWN, mR-2, mC,
 															out);
 					return true;
@@ -1163,7 +1240,7 @@ public class Config {
 				break;
 			case 3:
 				if ((boardGet(mR-3, mC) == 'X' || boardGet(mR-3, mC) == c) && (boardGet(mR-2, mC) == 'X' || boardGet(mR-2, mC) == c) && (boardGet(mR-1, mC) == 'X' || boardGet(mR-1, mC) == c)) {
-					move(c, info.size, info.o, info.row, info.col,
+					move(c, size, o, row, col,
 															Orientation.UPDOWN, mR-3, mC,
 															out);
 					return true;
@@ -1172,10 +1249,10 @@ public class Config {
 			}
 			break;
 		case 3:
-			switch (info.size) {
+			switch (size) {
 			case 2:
 				if ((boardGet(mR, mC+1) == 'X' || boardGet(mR, mC+1) == c) && (boardGet(mR, mC+2) == 'X' || boardGet(mR, mC+2) == c)) {
-					move(c, info.size, info.o, info.row, info.col,
+					move(c, size, o, row, col,
 															Orientation.LEFTRIGHT, mR, mC+1,
 															out);
 					return true;
@@ -1183,7 +1260,7 @@ public class Config {
 				break;
 			case 3:
 				if ((boardGet(mR, mC+1) == 'X' || boardGet(mR, mC+1) == c) && (boardGet(mR, mC+2) == 'X' || boardGet(mR, mC+2+1) == c) && (boardGet(mR, mC+3) == 'X' || boardGet(mR, mC+3) == c)) {
-					move(c, info.size, info.o, info.row, info.col,
+					move(c, size, o, row, col,
 															Orientation.LEFTRIGHT, mR, mC+1,
 															out);
 					return true;
@@ -1215,8 +1292,7 @@ public class Config {
 		return b.toString();
 	};
 	
-	public CarInfo carMapGet(byte c) {
-		CarInfo info = new CarInfo();
+	public boolean carMapGet(byte c) {
 		
 		for (int i = 0; i < par.rowCount; i++) {
 			for (int j = 0; j < par.colCount; j++) {
@@ -1224,39 +1300,128 @@ public class Config {
 				if (b == c) {
 					if (i+1 < par.rowCount && boardGet(i+1, j) == c) {
 						if (i+2 < par.colCount && boardGet(i+2, j) == c) {
-							info.o = Orientation.UPDOWN;
-							info.row = i;
-							info.col = j;
-							info.size = 3;
-							return info;
+							par.scratchInfo.o = Orientation.UPDOWN;
+							par.scratchInfo.size = 3;
+							par.scratchInfo.row = i;
+							par.scratchInfo.col = j;
+							return true;
 						} else {
-							info.o = Orientation.UPDOWN;
-							info.row = i;
-							info.col = j;
-							info.size = 2;
-							return info;
+							par.scratchInfo.o = Orientation.UPDOWN;
+							par.scratchInfo.size = 2;
+							par.scratchInfo.row = i;
+							par.scratchInfo.col = j;
+							return true;
 						}
 					} else {
 						assert boardGet(i, j+1) == c;
 						if (j+2 < par.colCount && boardGet(i, j+2) == c) {
-							info.o = Orientation.LEFTRIGHT;
-							info.row = i;
-							info.col = j;
-							info.size = 3;
-							return info;
+							par.scratchInfo.o = Orientation.LEFTRIGHT;
+							par.scratchInfo.size = 3;
+							par.scratchInfo.row = i;
+							par.scratchInfo.col = j;
+							return true;
 						} else {
-							info.o = Orientation.LEFTRIGHT;
-							info.row = i;
-							info.col = j;
-							info.size = 2;
-							return info;
+							par.scratchInfo.o = Orientation.LEFTRIGHT;
+							par.scratchInfo.size = 2;
+							par.scratchInfo.row = i;
+							par.scratchInfo.col = j;
+							return true;
 						}
 					}
 				}
 			}
 		}
 		
-		assert false;
-		return null;
+		return false;
 	}
+	
+//	public static boolean alphaEquivalent(Config a, Config b) {
+//		
+//		assert a.par == b.par;
+//		
+//		if (a.actualEquals(b)) {
+//			return true;
+//		}
+//		
+//		CarInfo info = a.carMapGet((byte)'R');
+//		Orientation ao = info.o;
+//		int as = info.size;
+//		int ac = info.col;
+//		int ar = info.row;
+//		info = b.carMapGet((byte)'R');
+//		Orientation bo = info.o;
+//		int bs = info.size;
+//		int bc = info.col;
+//		int br = info.row;
+//		
+//		if (!(ao == bo && as == bs && ar == br && ac == bc)) {
+//			return false;
+//		}
+//		
+//		List<Byte> aCars = new ArrayList<Byte>();
+//		List<Byte> bCars = new ArrayList<Byte>();
+//		
+//		for (int i = 0; i < a.par.rowCount; i++) {
+//			for (int j = 0; j < a.par.colCount; j++) {
+//				byte c = a.val(i, j);
+//				switch (c) {
+//				case 'A':
+//				case 'B':
+//				case 'C':
+//				case 'D':
+//				case 'E':
+//				case 'F':
+//				case 'G':
+//					if (!aCars.contains(c)) {
+//						aCars.add(c);
+//					}
+//					break;
+//				}
+//			}
+//		}
+//		
+//		for (int i = 0; i < b.par.rowCount; i++) {
+//			for (int j = 0; j < b.par.colCount; j++) {
+//				byte c = b.val(i, j);
+//				switch (c) {
+//				case 'A':
+//				case 'B':
+//				case 'C':
+//				case 'D':
+//				case 'E':
+//				case 'F':
+//				case 'G':
+//					if (!bCars.contains(c)) {
+//						bCars.add(c);
+//					}
+//					break;
+//				}
+//			}
+//		}
+//		
+//		if (aCars.size() != bCars.size()) {
+//			return false;
+//		}
+//		
+//		for (int i = 0; i < aCars.size(); i++) {
+//			byte ab = aCars.get(i);
+//			byte bb = bCars.get(i);
+//			info = a.carMapGet((byte)ab);
+//			ao = info.o;
+//			as = info.size;
+//			ac = info.col;
+//			ar = info.row;
+//			info = b.carMapGet((byte)bb);
+//			bo = info.o;
+//			bs = info.size;
+//			bc = info.col;
+//			br = info.row;
+//			if (!(ao == bo && as == bs && ar == br && ac == bc)) {
+//				return false;
+//			}
+//		}
+//		
+//		return true;
+//	}
+	
 }

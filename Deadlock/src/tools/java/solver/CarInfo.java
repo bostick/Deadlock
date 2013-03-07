@@ -25,4 +25,9 @@ public class CarInfo {
 		return hash;
 	}
 	
+	public boolean equals(Object o) {
+		assert false;
+		return false;
+	}
+	
 }
