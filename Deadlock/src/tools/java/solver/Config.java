@@ -4,11 +4,12 @@ import java.util.List;
 
 public class Config {
 	
-//	public Config vGen;
-//	public Config vSolve;
+	public Config generatingVal;
+	public Config solvingVal;
+	public Config previousGeneratingConfig;
 	
 	final ParentConfig par;
-	public final byte[][] board;
+	public final byte[] board;
 	
 //	public boolean bs;
 	
@@ -17,22 +18,20 @@ public class Config {
 	
 	public static long configCounter = 0;
 	
-	public Config(ParentConfig par, byte[][] old) {
+	public Config(ParentConfig par, byte[] old) {
 		configCounter++;
 		this.par = par;
 		board = copy(old);
 	}
 	
 	public boolean equals(Object o) {
-		byte[][] other = ((Config)o).board;
-		if (board.length != other.length || board[0].length != other[0].length) {
+		byte[] other = ((Config)o).board;
+		if (board.length != other.length) {
 			return false;
 		}
 		for (int i = 0; i < board.length; i++) {
-			for (int j = 0; j < board[i].length; j++) {
-				if (board[i][j] != other[i][j]) {
-					return false;
-				}
+			if (board[i] != other[i]) {
+				return false;
 			}
 		}
 		return true;
@@ -41,9 +40,7 @@ public class Config {
 	public int hashCode() {
 		int h = 17;
 		for (int i = 0; i < board.length; i++) {
-			for (int j = 0; j < board[i].length; j++) {
-				h = 37 * h + board[i][j];
-			}
+			h = 37 * h + board[i];
 		}
 		return h;
 	}
@@ -51,9 +48,7 @@ public class Config {
 	public void copy(Config out) {
 		assert out.par == par;
 		for (int i = 0; i < board.length; i++) {
-			for (int j = 0; j < board[i].length; j++) {
-				out.board[i][j] = board[i][j];
-			}
+			out.board[i] = board[i];
 		}
 //		out.bs = bs;
 	}
@@ -67,14 +62,17 @@ public class Config {
 	byte boardGet(int r, int c) {
 		
 		int actualCol;
+		int actualColCount = (par.colCount % 2 == 0) ? par.colCount / 2 : par.colCount / 2 + 1;
 		int n;
 		if (c % 2 == 0) {
 			actualCol = c / 2;
-			int old8bits = board[r][actualCol];
+//			actualColCount = par.colCount / 2;
+			int old8bits = board[r * actualColCount + actualCol];
 			n = ((old8bits & 0x0f));
 		} else {
 			actualCol = c / 2;
-			int old8bits = board[r][actualCol];
+//			actualColCount = c / 2 + 1;
+			int old8bits = board[r * actualColCount + actualCol];
 			n = ((old8bits & 0xf0) >> 4);
 		}
 		
@@ -112,10 +110,10 @@ public class Config {
 	}
 	
 	void boardSet(int r, int c, byte b) {
-		boardSet(board, r, c, b);
+		boardSet(board, r, c, b, par.colCount);
 	}
 	
-	public static void boardSet(byte[][] board, int r, int c, byte b) {
+	public static void boardSet(byte[] board, int r, int c, byte b, int colCount) {
 		
 		byte actualByte = 0;
 		switch (b) {
@@ -161,27 +159,28 @@ public class Config {
 		}
 		
 		int actualCol;
+		int actualColCount = (colCount % 2 == 0) ? colCount / 2 : colCount / 2 + 1;
 		if (c % 2 == 0) {
 			actualCol = c / 2;
-			int old8bits = board[r][actualCol];
+			int old8bits = board[r * actualColCount + actualCol];
 			byte n = (byte)((old8bits & 0xf0) | actualByte);
-			board[r][actualCol] = n;
+			board[r * actualColCount + actualCol] = n;
 		} else {
 			actualCol = c / 2;
-			int old8bits = board[r][actualCol];
+			int old8bits = board[r * actualColCount + actualCol];
 			byte n = (byte)((old8bits & 0x0f) | (actualByte<<4));
-			board[r][actualCol] = n;
+			board[r * actualColCount + actualCol] = n;
 		}
 	}
 	
-	public static byte[][] newBoard(int rows, int cols) {
+	public static byte[] newBoard(int rows, int cols) {
 		int actualCols;
 		if (cols % 2 == 0) {
 			actualCols = cols / 2;
 		} else {
 			actualCols = cols / 2 + 1;
 		}
-		return new byte[rows][actualCols];
+		return new byte[rows * actualCols];
 	}
 	
 	public boolean iniContainsCar(byte b) {
@@ -227,12 +226,9 @@ public class Config {
 		return c00 == c1[0] && c01 == c1[1];
 	}
 	
-	public static byte[][] copy(byte[][] old) {
-		byte[][] newIni = new byte[old.length][old[0].length];
-		int cols = old[0].length;
-		for (int i = 0; i < newIni.length; i++) {
-			System.arraycopy(old[i], 0, newIni[i], 0, cols);
-		}
+	public static byte[] copy(byte[] old) {
+		byte[] newIni = new byte[old.length];
+		System.arraycopy(old, 0, newIni, 0, old.length);
 		return newIni;
 	}
 	
@@ -401,12 +397,14 @@ public class Config {
 	
 	public Config insert(byte c, Orientation o, int size, int row, int col) {
 		
-		par.carMapPresent(c);
+//		par.carMapPresent(c);
 		
 		Config n = new Config(par, board);
 		
 		boolean res = n.insertIni(c, o, size, row, col);
 		assert res;
+		
+//		assert 
 		
 		return n;
 	}
@@ -461,14 +459,14 @@ public class Config {
 				switch (size) {
 				case 2:
 					
-					addToInterferenceRow(row);
+//					addToInterferenceRow(row);
 					
 					boardSet(row, col+0, c);
 					boardSet(row, col+1, c);
 					break;
 				case 3:
 					
-					addToInterferenceRow(row);
+//					addToInterferenceRow(row);
 					
 					boardSet(row, col+0, c);
 					boardSet(row, col+1, c);
@@ -480,14 +478,14 @@ public class Config {
 				switch (size) {
 				case 2:
 					
-					addToInterferenceCol(col);
+//					addToInterferenceCol(col);
 					
 					boardSet(row+0, col, c);
 					boardSet(row+1, col, c);
 					break;
 				case 3:
 					
-					addToInterferenceCol(col);
+//					addToInterferenceCol(col);
 					
 					boardSet(row+0, col, c);
 					boardSet(row+1, col, c);
@@ -501,6 +499,33 @@ public class Config {
 		return true;
 	}
 	
+//	static byte[][] testBoard = new byte[][] {
+//		{' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
+//		{' ', 'X', 'X', 'X', 'X', 'X', 'X', ' '},
+//		{' ', 'X', 'X', 'X', 'X', 'X', 'X', ' '},
+//		{' ', 'X', 'X', 'X', 'X', 'X', 'X', 'Y'},
+//		{' ', 'X', 'X', 'X', 'X', 'X', 'X', ' '},
+//		{' ', 'X', 'X', 'X', 'X', 'X', 'X', ' '},
+//		{' ', 'X', 'X', 'X', 'X', 'X', 'X', ' '},
+//		{' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
+//	};
+//	static ParentConfig testPar;
+//	static Config test;
+//	static {
+//		testPar = new ParentConfig(testBoard);
+//		testPar.carMapPresent((byte)'R');
+//		testPar.carMapPresent((byte)'A');
+//		testPar.carMapPresent((byte)'B');
+//		testPar.carMapPresent((byte)'C');
+//		testPar.carMapPresent((byte)'D');
+//		test = testPar.newConfig();
+//		test = test.insert((byte)'R', Orientation.LEFTRIGHT, 2, 2, 2);
+//		test = test.insert((byte)'A', Orientation.UPDOWN, 2, 4, 2);
+//		test = test.insert((byte)'B', Orientation.UPDOWN, 2, 2, 1);
+//		test = test.insert((byte)'C', Orientation.LEFTRIGHT, 2, 4, 0);
+//		test = test.insert((byte)'D', Orientation.UPDOWN, 2, 0, 4);
+//	}
+	
 	public void move(byte c, int size, Orientation oldO, int oldRow, int oldCol, Orientation newO, int newRow, int newCol, Config out) {
 		
 		assert this.board != out.board;
@@ -511,87 +536,78 @@ public class Config {
 		
 		out.insertIni(c, newO, size, newRow, newCol);
 		
-//		List<Config> solution = solve(out);
-//		out.solutionDist = solution.size();
+		out.alphaReduce();
+		
+	}
+	
+//	void addToInterferenceRow(int r) {
+//		par.interferenceConeRows[r] = true;
 //		
-//		if (out.solutionDist < solutionDist) {
+//		par.test[0] = r;
+//		par.test[1] = -1;
+//		
+//		if (par.isJoint(par.test)) {
+//			int[] other = par.otherJoint(par.test);
+//			par.interferenceConeCols[other[1]] = true;
 //			
-//			bs = true;
+//			par.across(other, par.test);
+//			if (par.isJoint(par.test)) {
+//				other = par.otherJoint(par.test);
+//				par.interferenceConeRows[other[0]] = true;
+//			}
 //			
-//		} else {
-//			assert out.solutionDist == solutionDist;
 //		}
-		
-	}
+//		
+//		par.test[0] = r;
+//		par.test[1] = par.colCount;
+//		
+//		if (par.isJoint(par.test)) {
+//			int[] other = par.otherJoint(par.test);
+//			par.interferenceConeCols[other[1]] = true;
+//			
+//			par.across(other, par.test);
+//			if (par.isJoint(par.test)) {
+//				other = par.otherJoint(par.test);
+//				par.interferenceConeRows[other[0]] = true;
+//			}
+//			
+//		}
+//		
+//	}
 	
-	void addToInterferenceRow(int r) {
-		par.interferenceConeRows[r] = true;
-		
-		par.test[0] = r;
-		par.test[1] = -1;
-		
-		if (par.isJoint(par.test)) {
-			int[] other = par.otherJoint(par.test);
-			par.interferenceConeCols[other[1]] = true;
-			
-			par.across(other, par.test);
-			if (par.isJoint(par.test)) {
-				other = par.otherJoint(par.test);
-				par.interferenceConeRows[other[0]] = true;
-			}
-			
-		}
-		
-		par.test[0] = r;
-		par.test[1] = par.colCount;
-		
-		if (par.isJoint(par.test)) {
-			int[] other = par.otherJoint(par.test);
-			par.interferenceConeCols[other[1]] = true;
-			
-			par.across(other, par.test);
-			if (par.isJoint(par.test)) {
-				other = par.otherJoint(par.test);
-				par.interferenceConeRows[other[0]] = true;
-			}
-			
-		}
-		
-	}
-	
-	void addToInterferenceCol(int c) {
-		par.interferenceConeCols[c] = true;
-		
-		par.test[0] = -1;
-		par.test[1] = c;
-		
-		if (par.isJoint(par.test)) {
-			int[] other = par.otherJoint(par.test);
-			par.interferenceConeRows[other[0]] = true;
-			
-			par.across(other, par.test);
-			if (par.isJoint(par.test)) {
-				other = par.otherJoint(par.test);
-				par.interferenceConeCols[other[1]] = true;
-			}
-			
-		}
-		
-		par.test[0] = par.rowCount;
-		par.test[1] = c;
-		
-		if (par.isJoint(par.test)) {
-			int[] other = par.otherJoint(par.test);
-			par.interferenceConeRows[other[0]] = true;
-			
-			par.across(other, par.test);
-			if (par.isJoint(par.test)) {
-				other = par.otherJoint(par.test);
-				par.interferenceConeCols[other[1]] = true;
-			}
-			
-		}
-	}
+//	void addToInterferenceCol(int c) {
+//		par.interferenceConeCols[c] = true;
+//		
+//		par.test[0] = -1;
+//		par.test[1] = c;
+//		
+//		if (par.isJoint(par.test)) {
+//			int[] other = par.otherJoint(par.test);
+//			par.interferenceConeRows[other[0]] = true;
+//			
+//			par.across(other, par.test);
+//			if (par.isJoint(par.test)) {
+//				other = par.otherJoint(par.test);
+//				par.interferenceConeCols[other[1]] = true;
+//			}
+//			
+//		}
+//		
+//		par.test[0] = par.rowCount;
+//		par.test[1] = c;
+//		
+//		if (par.isJoint(par.test)) {
+//			int[] other = par.otherJoint(par.test);
+//			par.interferenceConeRows[other[0]] = true;
+//			
+//			par.across(other, par.test);
+//			if (par.isJoint(par.test)) {
+//				other = par.otherJoint(par.test);
+//				par.interferenceConeCols[other[1]] = true;
+//			}
+//			
+//		}
+//	}
 	
 	boolean isXorC(byte c, byte b) {
 		return b == 'X' || b == c;
@@ -710,6 +726,13 @@ public class Config {
 			if (!scratch.isClearPathToExit()) {
 				par.moves.add(scratch);
 			}
+//			else {
+//				/*
+//				 * even though it is unintuitive to add a clearly wrong move (the move would be from clear path -> blocked path),
+//				 * for completeness, we need to add all configs (this config might branch off, etc.)
+//				 */
+//				par.moves.add(scratch);
+//			}
 		} else {
 			if (c == 'R') {
 				if (scratch.numberMovesToWin() > this.numberMovesToWin()) {
@@ -723,6 +746,7 @@ public class Config {
 				}
 			}
 		}
+//		par.moves.add(scratch);
 		
 		return false;
 	}
@@ -918,7 +942,7 @@ public class Config {
 	public List<Config> possible2CarPlacements(List<Config> placements) {
 		
 		byte car = firstAvailableCar();
-		int[] coor = firstAvailable2CarCoor();
+		int[] coor = firstAvailableCarCoor();
 		int firstAvailR = coor[0];
 		int firstAvailC = coor[1];
 		
@@ -928,9 +952,9 @@ public class Config {
 		for (int r = 0; r < par.rowCount; r++) {
 			for (int c = 0; c < par.colCount-1; c++) {
 				
-				if (!par.isInterfereRow(r)) {
-					continue;
-				}
+//				if (!par.isInterfereRow(r)) {
+//					continue;
+//				}
 				
 				if (greaterThanEqual(r, c, firstAvailR, firstAvailC) && available(car, 2, Orientation.LEFTRIGHT, r, c)) {
 					Config n = insert(car, Orientation.LEFTRIGHT, 2, r, c);
@@ -945,9 +969,9 @@ public class Config {
 		for (int r = 0; r < par.rowCount-1; r++) {
 			for (int c = 0; c < par.colCount; c++) {
 				
-				if (!par.isInterfereCol(c)) {
-					continue;
-				}
+//				if (!par.isInterfereCol(c)) {
+//					continue;
+//				}
 				
 				if (greaterThanEqual(r, c, firstAvailR, firstAvailC) && available(car, 2, Orientation.UPDOWN, r, c)) {
 					Config n = insert(car, Orientation.UPDOWN, 2, r, c);
@@ -962,7 +986,7 @@ public class Config {
 	public List<Config> possible3CarPlacements(List<Config> placements) {
 		
 		byte car = firstAvailableCar();
-		int[] coor = firstAvailable3CarCoor();
+		int[] coor = firstAvailableCarCoor();
 		int firstAvailR = coor[0];
 		int firstAvailC = coor[1];
 		
@@ -972,9 +996,9 @@ public class Config {
 		for (int r = 0; r < par.rowCount; r++) {
 			for (int c = 0; c < par.colCount-2; c++) {
 				
-				if (!par.isInterfereRow(r)) {
-					continue;
-				}
+//				if (!par.isInterfereRow(r)) {
+//					continue;
+//				}
 				
 				if (greaterThanEqual(r, c, firstAvailR, firstAvailC) && available(car, 3, Orientation.LEFTRIGHT, r, c)) {
 					Config n = insert(car, Orientation.LEFTRIGHT, 3, r, c);
@@ -989,9 +1013,9 @@ public class Config {
 		for (int r = 0; r < par.rowCount-2; r++) {
 			for (int c = 0; c < par.colCount; c++) {
 				
-				if (!par.isInterfereCol(c)) {
-					continue;
-				}
+//				if (!par.isInterfereCol(c)) {
+//					continue;
+//				}
 				
 				if (greaterThanEqual(r, c, firstAvailR, firstAvailC) && available(car, 3, Orientation.UPDOWN, r, c)) {
 					Config n = insert(car, Orientation.UPDOWN, 3, r, c);
@@ -1046,7 +1070,7 @@ public class Config {
 //		return placements;
 //	}
 	
-	int[] firstAvailable2CarCoor() {
+	int[] firstAvailableCarCoor() {
 		
 		par.test[0] = 0;
 		par.test[1] = 0;
@@ -1059,54 +1083,56 @@ public class Config {
 			if (!res) {
 				break;
 			}
-			int size = par.scratchInfo.size;
+//			int size = par.scratchInfo.size;
 			int row = par.scratchInfo.row;
 			int col = par.scratchInfo.col;
 			
-			if (size == 2) {
-				res = next(row, col, par.test);
-				if (!res) {
-					return null;
-				}
+			//if (size == 2) {
+			res = next(row, col, par.test);
+			if (!res) {
+				return null;
 			}
+			//}
 		}
 		
 		return par.test;
 	}
 	
-	int[] firstAvailable3CarCoor() {
-		
-		par.test[0] = 0;
-		par.test[1] = 0;
-		for (byte b : cars) {
-			if (b == 'R') {
-				continue;
-			}
-			
-			boolean res = carMapGet(b);
-			
-			if (!res) {
-				break;
-			}
-			int size = par.scratchInfo.size;
-			int row = par.scratchInfo.row;
-			int col = par.scratchInfo.col;
-			
-			if (size == 3) {
-				res = next(row, col, par.test);
-				if (!res) {
-					return null;
-				}
-			}
-		}
-		
-		return par.test;
-	}
+//	int[] firstAvailable3CarCoor() {
+//		
+//		par.test[0] = 0;
+//		par.test[1] = 0;
+//		for (byte b : cars) {
+//			if (b == 'R') {
+//				continue;
+//			}
+//			
+//			boolean res = carMapGet(b);
+//			
+//			if (!res) {
+//				break;
+//			}
+//			int size = par.scratchInfo.size;
+//			int row = par.scratchInfo.row;
+//			int col = par.scratchInfo.col;
+//			
+//			if (size == 3) {
+//				res = next(row, col, par.test);
+//				if (!res) {
+//					return null;
+//				}
+//			}
+//		}
+//		
+//		return par.test;
+//	}
 	
 	boolean greaterThanEqual(int r, int c, int r1, int c1) {
-		
 		return (r > r1) || (r == r1 && c >= c1);
-		
+	}
+	
+	boolean lessThan(int r, int c, int r1, int c1) {
+		return (r < r1) || (r == r1 && c < c1);
 	}
 	
 	/**
@@ -1275,6 +1301,273 @@ public class Config {
 		}
 		
 		return false;
+	}
+	
+	void alphaReduce() {
+		
+		Orientation so;
+		int ss;
+		int sr;
+		int sc;
+		
+		boolean res = carMapGet((byte)'A');
+		if (res) {
+			Orientation ao = par.scratchInfo.o;
+			int as = par.scratchInfo.size;
+			int ar = par.scratchInfo.row;
+			int ac = par.scratchInfo.col;
+			
+			res = carMapGet((byte)'B');
+			if (res) {
+				Orientation bo = par.scratchInfo.o;
+				int bs = par.scratchInfo.size;
+				int br = par.scratchInfo.row;
+				int bc = par.scratchInfo.col;
+				
+				if (!(lessThan(ar, ac, br, bc))) {
+					swap((byte)'A', ao, as, ar, ac, (byte)'B', bo, bs, br, bc);
+					so = ao;
+					ss = as;
+					sr = ar;
+					sc = ac;
+					ao = bo;
+					as = bs;
+					ar = br;
+					ac = bc;
+					bo = so;
+					bs = ss;
+					br = sr;
+					bc = sc;
+				}
+				
+				res = carMapGet((byte)'C');
+				if (res) {
+					Orientation co = par.scratchInfo.o;
+					int cs = par.scratchInfo.size;
+					int cr = par.scratchInfo.row;
+					int cc = par.scratchInfo.col;
+					
+					if (!(lessThan(ar, ac, cr, cc))) {
+						swap((byte)'A', ao, as, ar, ac, (byte)'C', co, cs, cr, cc);
+						so = ao;
+						ss = as;
+						sr = ar;
+						sc = ac;
+						ao = co;
+						as = cs;
+						ar = cr;
+						ac = cc;
+						co = so;
+						cs = ss;
+						cr = sr;
+						cc = sc;
+					}
+					if (!(lessThan(br, bc, cr, cc))) {
+						swap((byte)'B', bo, bs, br, bc, (byte)'C', co, cs, cr, cc);
+						so = bo;
+						ss = bs;
+						sr = br;
+						sc = bc;
+						bo = co;
+						bs = cs;
+						br = cr;
+						bc = cc;
+						co = so;
+						cs = ss;
+						cr = sr;
+						cc = sc;
+					}
+					
+					res = carMapGet((byte)'D');
+					if (res) {
+						Orientation doo = par.scratchInfo.o;
+						int ds = par.scratchInfo.size;
+						int dr = par.scratchInfo.row;
+						int dc = par.scratchInfo.col;
+						
+						if (!(lessThan(ar, ac, dr, dc))) {
+							swap((byte)'A', ao, as, ar, ac, (byte)'D', doo, ds, dr, dc);
+							so = ao;
+							ss = as;
+							sr = ar;
+							sc = ac;
+							ao = doo;
+							as = ds;
+							ar = dr;
+							ac = dc;
+							doo = so;
+							ds = ss;
+							dr = sr;
+							dc = sc;
+						}
+						if (!(lessThan(br, bc, dr, dc))) {
+							swap((byte)'B', bo, bs, br, bc, (byte)'D', doo, ds, dr, dc);
+							so = bo;
+							ss = bs;
+							sr = br;
+							sc = bc;
+							bo = doo;
+							bs = ds;
+							br = dr;
+							bc = dc;
+							doo = so;
+							ds = ss;
+							dr = sr;
+							dc = sc;
+						}
+						if (!(lessThan(cr, cc, dr, dc))) {
+							swap((byte)'C', co, cs, cr, cc, (byte)'D', doo, ds, dr, dc);
+							so = co;
+							ss = cs;
+							sr = cr;
+							sc = cc;
+							co = doo;
+							cs = ds;
+							cr = dr;
+							cc = dc;
+							doo = so;
+							ds = ss;
+							dr = sr;
+							dc = sc;
+						}
+						
+						res = carMapGet((byte)'E');
+						if (res) {
+							Orientation eo = par.scratchInfo.o;
+							int es = par.scratchInfo.size;
+							int er = par.scratchInfo.row;
+							int ec = par.scratchInfo.col;
+							
+							if (!(lessThan(ar, ac, er, ec))) {
+								swap((byte)'A', ao, as, ar, ac, (byte)'E', eo, es, er, ec);
+								so = ao;
+								ss = as;
+								sr = ar;
+								sc = ac;
+								ao = eo;
+								as = es;
+								ar = er;
+								ac = ec;
+								eo = so;
+								es = ss;
+								er = sr;
+								ec = sc;
+							}
+							if (!(lessThan(br, bc, er, ec))) {
+								swap((byte)'B', bo, bs, br, bc, (byte)'E', eo, es, er, ec);
+								so = bo;
+								ss = bs;
+								sr = br;
+								sc = bc;
+								bo = eo;
+								bs = es;
+								br = er;
+								bc = ec;
+								eo = so;
+								es = ss;
+								er = sr;
+								ec = sc;
+							}
+							if (!(lessThan(cr, cc, er, ec))) {
+								swap((byte)'C', co, cs, cr, cc, (byte)'E', eo, es, er, ec);
+								so = co;
+								ss = cs;
+								sr = cr;
+								sc = cc;
+								co = eo;
+								cs = es;
+								cr = er;
+								cc = ec;
+								eo = so;
+								es = ss;
+								er = sr;
+								ec = sc;
+							}
+							if (!(lessThan(dr, dc, er, ec))) {
+								swap((byte)'D', doo, ds, dr, dc, (byte)'E', eo, es, er, ec);
+								so = doo;
+								ss = ds;
+								sr = dr;
+								sc = dc;
+								doo = eo;
+								ds = es;
+								dr = er;
+								dc = ec;
+								eo = so;
+								es = ss;
+								er = sr;
+								ec = sc;
+							}
+							
+							res = carMapGet((byte)'F');
+							if (res) {
+								Orientation fo = par.scratchInfo.o;
+								int fs = par.scratchInfo.size;
+								int fr = par.scratchInfo.row;
+								int fc = par.scratchInfo.col;
+								
+								if (!(lessThan(ar, ac, fr, fc))) {
+									assert false;
+								}
+								if (!(lessThan(br, bc, fr, fc))) {
+									assert false;
+								}
+								if (!(lessThan(cr, cc, fr, fc))) {
+									assert false;
+								}
+								if (!(lessThan(dr, dc, fr, fc))) {
+									assert false;
+								}
+								if (!(lessThan(er, ec, fr, fc))) {
+									assert false;
+								}
+								
+								res = carMapGet((byte)'G');
+								if (res) {
+									Orientation go = par.scratchInfo.o;
+									int gs = par.scratchInfo.size;
+									int gr = par.scratchInfo.row;
+									int gc = par.scratchInfo.col;
+									
+									if (!(lessThan(ar, ac, gr, gc))) {
+										assert false;
+									}
+									if (!(lessThan(br, bc, gr, gc))) {
+										assert false;
+									}
+									if (!(lessThan(cr, cc, gr, gc))) {
+										assert false;
+									}
+									if (!(lessThan(dr, dc, gr, gc))) {
+										assert false;
+									}
+									if (!(lessThan(er, ec, gr, gc))) {
+										assert false;
+									}
+									if (!(lessThan(fr, fc, gr, gc))) {
+										assert false;
+									}
+									
+									assert false;
+									
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		
+	}
+	
+	void swap(byte a, Orientation ao, int as, int ar, int ac, byte b, Orientation bo, int bs, int br, int bc) {
+		
+		clearIni(a, ao, as, ar, ac);
+		clearIni(b, bo, bs, br, bc);
+		
+		insertIni(a, bo, bs, br, bc);
+		insertIni(b, ao, as, ar, ac);
+		
 	}
 	
 }

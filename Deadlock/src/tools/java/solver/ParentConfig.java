@@ -19,8 +19,8 @@ public class ParentConfig {
 	/*
 	 * interferenceCones start with winnableRows and winnableCols, and also include the paths of all cars that interfere with those rows and cols
 	 */
-	boolean[] interferenceConeRows;
-	boolean[] interferenceConeCols;
+//	boolean[] interferenceConeRows;
+//	boolean[] interferenceConeCols;
 	
 	public int[] exit = new int[]{ -1, -1 };
 	
@@ -85,7 +85,7 @@ public class ParentConfig {
 	
 	List<Config> moves = new ArrayList<Config>();
 	
-	byte[][] emptyBoard;
+	byte[] emptyBoard;
 	
 	public ParentConfig(byte[][] boardIni) {
 		
@@ -96,8 +96,8 @@ public class ParentConfig {
 		
 		winnableRows = new boolean[rowCount];
 		winnableCols = new boolean[colCount];
-		interferenceConeRows = new boolean[rowCount];
-		interferenceConeCols = new boolean[colCount];
+//		interferenceConeRows = new boolean[rowCount];
+//		interferenceConeCols = new boolean[colCount];
 		
 		cursor = new Cursor();
 		
@@ -121,12 +121,12 @@ public class ParentConfig {
 					case 0:
 					case 2:
 						winnableCols[j-1] = true;
-						interferenceConeCols[j-1] = true;
+//						interferenceConeCols[j-1] = true;
 						break;
 					case 1:
 					case 3:
 						winnableRows[i-1] = true;
-						interferenceConeRows[i-1] = true;
+//						interferenceConeRows[i-1] = true;
 						break;
 					}
 					break;
@@ -206,13 +206,13 @@ public class ParentConfig {
 						int[] otherJoint = jJoints[other];
 						
 						addToWinnables(otherJoint);
-						addToInterference(otherJoint);
+//						addToInterference(otherJoint);
 						
 						other = 1-kConnectedToJ;
 						otherJoint = kJoints[other];
 						
 						addToWinnables(otherJoint);
-						addToInterference(otherJoint);
+//						addToInterference(otherJoint);
 						
 					} else if (kyConnected) {
 						//winnable
@@ -220,13 +220,13 @@ public class ParentConfig {
 						int[] otherJoint = kJoints[other];
 						
 						addToWinnables(otherJoint);
-						addToInterference(otherJoint);
+//						addToInterference(otherJoint);
 						
 						other = 1-jConnectedToK;
 						otherJoint = jJoints[other];
 						
 						addToWinnables(otherJoint);
-						addToInterference(otherJoint);
+//						addToInterference(otherJoint);
 					}
 					
 				} else {
@@ -238,7 +238,7 @@ public class ParentConfig {
 						int[] otherJoint = jJoints[other];
 						
 						addToWinnables(otherJoint);
-						addToInterference(otherJoint);
+//						addToInterference(otherJoint);
 						
 					} else if (kyConnected) {
 						//winnable
@@ -247,7 +247,7 @@ public class ParentConfig {
 						int[] otherJoint = kJoints[other];
 						
 						addToWinnables(otherJoint);
-						addToInterference(otherJoint);
+//						addToInterference(otherJoint);
 					}
 				}
 				
@@ -260,7 +260,7 @@ public class ParentConfig {
 					int[] otherJoint = jJoints[other];
 					
 					addToWinnables(otherJoint);
-					addToInterference(otherJoint);
+//					addToInterference(otherJoint);
 				}
 				
 			}
@@ -291,12 +291,8 @@ public class ParentConfig {
 		
 		
 		emptyBoard = Config.newBoard(ini.length-2, ini[0].length-2);
-		int rows = emptyBoard.length;
-		int cols  = emptyBoard[0].length;
-		for (int i = 0; i < rows; i++) {
-			for (int j = 0; j < cols; j++) {
-				emptyBoard[i][j] = 17;
-			}
+		for (int i = 0; i < emptyBoard.length; i++) {
+			emptyBoard[i] = 17;
 		}
 		
 	}
@@ -365,43 +361,43 @@ public class ParentConfig {
 		}
 	}
 	
-	void addToInterference(int[] coor) {
-		int side = side(coor);
-		switch (side) {
-		case 0:
-		case 2:
-			interferenceConeCols[coor[1]] = true;
-			break;
-		case 1:
-		case 3:
-			interferenceConeRows[coor[0]] = true;
-			break;
-		}
-	}
+//	void addToInterference(int[] coor) {
+//		int side = side(coor);
+//		switch (side) {
+//		case 0:
+//		case 2:
+//			interferenceConeCols[coor[1]] = true;
+//			break;
+//		case 1:
+//		case 3:
+//			interferenceConeRows[coor[0]] = true;
+//			break;
+//		}
+//	}
 	
-	boolean isInterfereRow(int r) {
-		if (interferenceConeRows[r]) {
-			return true;
-		}
-		for (boolean b : interferenceConeCols) {
-			if (b) {
-				return true;
-			}
-		}
-		return false;
-	}
+//	boolean isInterfereRow(int r) {
+//		if (interferenceConeRows[r]) {
+//			return true;
+//		}
+//		for (boolean b : interferenceConeCols) {
+//			if (b) {
+//				return true;
+//			}
+//		}
+//		return false;
+//	}
 	
-	boolean isInterfereCol(int c) {
-		if (interferenceConeCols[c]) {
-			return true;
-		}
-		for (boolean b : interferenceConeRows) {
-			if (b) {
-				return true;
-			}
-		}
-		return false;
-	}
+//	boolean isInterfereCol(int c) {
+//		if (interferenceConeCols[c]) {
+//			return true;
+//		}
+//		for (boolean b : interferenceConeRows) {
+//			if (b) {
+//				return true;
+//			}
+//		}
+//		return false;
+//	}
 	
 	public byte charAcross(byte[][] ini, int[] coor) {
 		if (coor[0] == -1) {

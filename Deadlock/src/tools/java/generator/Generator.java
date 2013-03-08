@@ -76,7 +76,7 @@ public class Generator {
 					c.possible2CarPlacements(placementsD);
 					for (Config d : placementsD) {
 						
-//						winners.add(g);
+//						winners.add(d);
 						placementsE.clear();
 						d.possible2CarPlacements(placementsE);
 						for (Config e : placementsE) {
@@ -102,7 +102,7 @@ public class Generator {
 			explored.putGenerating(w, null);
 		}
 		System.out.print(" " + (System.currentTimeMillis() - t) + " millis, ");
-		System.out.print(" " + (Config.configCounter) + " configs");
+		System.out.print(100 * (((float)(Config.configCounter - 0)) / ((float)(winners.size()))) + "% of explored were unique and added");
 		System.out.println("");
 		
 		List<Config> a = new ArrayList<Config>();
@@ -126,7 +126,7 @@ public class Generator {
 			a.clear();
 			
 			System.out.print(" " + (System.currentTimeMillis() - t) + " millis, ");
-			System.out.print(100 * (((float)(Config.configCounter - configs)) / ((float)(explored.lastIterationMoves))) + "% of explored were unique");
+			System.out.print(100 * (((float)(Config.configCounter - configs)) / ((float)(explored.lastIterationMoves))) + "% of explored were unique and added");
 			System.out.println("");
 			if (explored.lastIteration.isEmpty()) {
 				break;
@@ -135,14 +135,14 @@ public class Generator {
 		System.out.println("reached fixpoint");
 		
 		System.out.print("finding longest non-BS path... ");
-		System.out.print("(" + explored.set.size() + ") ");
+		System.out.print("(" + explored.allIterations.size() + ") ");
 //		Config hardest = null;
 		/*
 		 * start at end of iterations and work backwards, looking for first non-BS config
 		 */
 		List<Config> solution = null;
-		for (int ll = explored.allIterations.size()-1; ll >= 0; ll--) {
-			Config l = explored.allIterations.get(ll);
+		int ll = 0;
+		for (Config l = explored.lastConfig; l != null; l=l.previousGeneratingConfig) {
 			
 			Config m = l;
 			int dist = 0;
@@ -163,29 +163,34 @@ public class Generator {
 				
 			} else {
 				
+				if (ll % 1000 == 0) {
+					System.out.print("!");
+				}
+				
 				/*
 				 * l is BS
 				 */
-				System.out.println("!");
-				Config bs = l;
-				while (true) {
-					if (bs == null) {
-						break;
-					}
-					System.out.print(distToGeneratedWinner(bs) + " ");
-					bs = explored.generatingMap.get(bs);
-				}
-				
-				System.out.println();
-				
-				for (Config s : solution) {
-					System.out.print(distToGeneratedWinner(s) + " ");
-				}
-				
-				String.class.getName();
+//				System.out.println("!");
+//				Config bs = l;
+//				while (true) {
+//					if (bs == null) {
+//						break;
+//					}
+//					System.out.print(distToGeneratedWinner(bs) + " ");
+//					bs = explored.generatingMap.get(bs);
+//				}
+//				
+//				System.out.println();
+//				
+//				for (Config s : solution) {
+//					System.out.print(distToGeneratedWinner(s) + " ");
+//				}
+//				
+//				String.class.getName();
 				
 			}
 			
+			ll++;
 		}
 		System.out.print("done");
 		System.out.println("");
@@ -204,17 +209,17 @@ public class Generator {
 		Config d = c;
 		int dist = 0;
 		while (true) {
-			if (explored.generatingMap.get(d) == null) {
+			if (d.generatingVal == null) {
 				if (d.isWinning()) {
-					assert explored.generatingMap.keySet().contains(d);
+					assert explored.allIterations.contains(d);
 					return dist;
 				} else {
-					assert !explored.generatingMap.keySet().contains(d);
+					assert !explored.allIterations.contains(d);
 					assert false;
 					return -1;
 				}
 			} else {
-				d = explored.generatingMap.get(d);
+				d = d.generatingVal;
 				dist++;
 			}
 		}

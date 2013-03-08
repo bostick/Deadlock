@@ -1,10 +1,15 @@
 
-work on possible moves:
-only a small percentage are unique and actually used
+alpha reductions
 
 
-starting from winners, visualize path of moves made, like a little cursor moving
-don't consider moves that are pointless
+
+remove Config instances
+use byte[] directly
+
+Comparator for byte[] and use in TreeSet in StateSpace
+
+
+
 
 
 
