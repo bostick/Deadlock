@@ -13,14 +13,8 @@ public class ParentConfig {
 	/*
 	 * winnableRows and winnableCols are the rows and cols that the red car could be in to be winnable
 	 */
-	boolean[] winnableRows;
-	boolean[] winnableCols;
-	
-	/*
-	 * interferenceCones start with winnableRows and winnableCols, and also include the paths of all cars that interfere with those rows and cols
-	 */
-//	boolean[] interferenceConeRows;
-//	boolean[] interferenceConeCols;
+	boolean winnableRows;
+	boolean winnableCols;
 	
 	public int[] exit = new int[]{ -1, -1 };
 	
@@ -85,7 +79,7 @@ public class ParentConfig {
 	
 	List<Config> moves = new ArrayList<Config>();
 	
-	byte[] emptyBoard;
+	public byte[] emptyBoard;
 	
 	public ParentConfig(byte[][] boardIni) {
 		
@@ -93,11 +87,6 @@ public class ParentConfig {
 		
 		this.rowCount = boardIni.length-2;
 		this.colCount = boardIni[0].length-2;
-		
-		winnableRows = new boolean[rowCount];
-		winnableCols = new boolean[colCount];
-//		interferenceConeRows = new boolean[rowCount];
-//		interferenceConeCols = new boolean[colCount];
 		
 		cursor = new Cursor();
 		
@@ -120,13 +109,11 @@ public class ParentConfig {
 					switch (side) {
 					case 0:
 					case 2:
-						winnableCols[j-1] = true;
-//						interferenceConeCols[j-1] = true;
+						winnableCols = true;
 						break;
 					case 1:
 					case 3:
-						winnableRows[i-1] = true;
-//						interferenceConeRows[i-1] = true;
+						winnableRows = true;
 						break;
 					}
 					break;
@@ -198,69 +185,56 @@ public class ParentConfig {
 					kConnectedToY = 1;
 				}
 				
-//				across = charAcross(exit);
 				if (jkConnected) {
 					if (jyConnected) {
-						//winnable
 						int other = 1-jConnectedToY;
 						int[] otherJoint = jJoints[other];
 						
 						addToWinnables(otherJoint);
-//						addToInterference(otherJoint);
 						
 						other = 1-kConnectedToJ;
 						otherJoint = kJoints[other];
 						
 						addToWinnables(otherJoint);
-//						addToInterference(otherJoint);
 						
 					} else if (kyConnected) {
-						//winnable
 						int other = 1-kConnectedToY;
 						int[] otherJoint = kJoints[other];
 						
 						addToWinnables(otherJoint);
-//						addToInterference(otherJoint);
 						
 						other = 1-jConnectedToK;
 						otherJoint = jJoints[other];
 						
 						addToWinnables(otherJoint);
-//						addToInterference(otherJoint);
 					}
 					
 				} else {
 					// j and k are separate
 					if (jyConnected) {
-						//winnable
 						
 						int other = 1-jConnectedToY;
 						int[] otherJoint = jJoints[other];
 						
 						addToWinnables(otherJoint);
-//						addToInterference(otherJoint);
 						
 					} else if (kyConnected) {
-						//winnable
 						
 						int other = 1-kConnectedToY;
 						int[] otherJoint = kJoints[other];
 						
 						addToWinnables(otherJoint);
-//						addToInterference(otherJoint);
 					}
 				}
 				
 			} else {
 				// only j
 				if (jyConnected) {
-					//winnable
 					
 					int other = 1-jConnectedToY;
 					int[] otherJoint = jJoints[other];
 					
 					addToWinnables(otherJoint);
-//					addToInterference(otherJoint);
 				}
 				
 			}
@@ -337,14 +311,14 @@ public class ParentConfig {
 	}
 	
 	public int[] otherJoint(int r, int c) {
-		if (Config.equals(r, c, jJoints[0])) {
+		if (Statics.equals(r, c, jJoints[0])) {
 			return jJoints[1];
-		} else if (Config.equals(r, c, jJoints[1])) {
+		} else if (Statics.equals(r, c, jJoints[1])) {
 			return jJoints[0];
-		} else if (Config.equals(r, c, kJoints[0])) {
+		} else if (Statics.equals(r, c, kJoints[0])) {
 			return kJoints[1];
 		} else {
-			assert Config.equals(r, c, kJoints[1]);
+			assert Statics.equals(r, c, kJoints[1]);
 			return kJoints[0];
 		}
 	}
@@ -354,52 +328,14 @@ public class ParentConfig {
 		switch (side) {
 		case 0:
 		case 2:
-			winnableCols[coor[1]] = true;
+			winnableCols = true;
 			break;
 		case 1:
 		case 3:
-			winnableRows[coor[0]] = true;
+			winnableRows = true;
 			break;
 		}
 	}
-	
-//	void addToInterference(int[] coor) {
-//		int side = side(coor);
-//		switch (side) {
-//		case 0:
-//		case 2:
-//			interferenceConeCols[coor[1]] = true;
-//			break;
-//		case 1:
-//		case 3:
-//			interferenceConeRows[coor[0]] = true;
-//			break;
-//		}
-//	}
-	
-//	boolean isInterfereRow(int r) {
-//		if (interferenceConeRows[r]) {
-//			return true;
-//		}
-//		for (boolean b : interferenceConeCols) {
-//			if (b) {
-//				return true;
-//			}
-//		}
-//		return false;
-//	}
-	
-//	boolean isInterfereCol(int c) {
-//		if (interferenceConeCols[c]) {
-//			return true;
-//		}
-//		for (boolean b : interferenceConeRows) {
-//			if (b) {
-//				return true;
-//			}
-//		}
-//		return false;
-//	}
 	
 	public byte charAcross(byte[][] ini, int[] coor) {
 		if (coor[0] == -1) {
@@ -442,89 +378,65 @@ public class ParentConfig {
 		switch (c) {
 		case 'R':
 			carPresent[0] = true;
-			scratchRUp = newConfig();
-			scratchRDown = newConfig();
-			scratchRLeft = newConfig();
-			scratchRRight = newConfig();
+			scratchRUp = new Config(emptyBoard);
+			scratchRDown = new Config(emptyBoard);
+			scratchRLeft = new Config(emptyBoard);
+			scratchRRight = new Config(emptyBoard);
 			break;
 		case 'A':
 			carPresent[1] = true;
-			scratchAUp = newConfig();
-			scratchADown = newConfig();
-			scratchALeft = newConfig();
-			scratchARight = newConfig();
+			scratchAUp = new Config(emptyBoard);
+			scratchADown = new Config(emptyBoard);
+			scratchALeft = new Config(emptyBoard);
+			scratchARight = new Config(emptyBoard);
 			break;
 		case 'B':
 			carPresent[2] = true;
-			scratchBUp = newConfig();
-			scratchBDown = newConfig();
-			scratchBLeft = newConfig();
-			scratchBRight = newConfig();
+			scratchBUp = new Config(emptyBoard);
+			scratchBDown = new Config(emptyBoard);
+			scratchBLeft = new Config(emptyBoard);
+			scratchBRight = new Config(emptyBoard);
 			break;
 		case 'C':
 			carPresent[3] = true;
-			scratchCUp = newConfig();
-			scratchCDown = newConfig();
-			scratchCLeft = newConfig();
-			scratchCRight = newConfig();
+			scratchCUp = new Config(emptyBoard);
+			scratchCDown = new Config(emptyBoard);
+			scratchCLeft = new Config(emptyBoard);
+			scratchCRight = new Config(emptyBoard);
 			break;
 		case 'D':
 			carPresent[4] = true;
-			scratchDUp = newConfig();
-			scratchDDown = newConfig();
-			scratchDLeft = newConfig();
-			scratchDRight = newConfig();
+			scratchDUp = new Config(emptyBoard);
+			scratchDDown = new Config(emptyBoard);
+			scratchDLeft = new Config(emptyBoard);
+			scratchDRight = new Config(emptyBoard);
 			break;
 		case 'E':
 			carPresent[5] = true;
-			scratchEUp = newConfig();
-			scratchEDown = newConfig();
-			scratchELeft = newConfig();
-			scratchERight = newConfig();
+			scratchEUp = new Config(emptyBoard);
+			scratchEDown = new Config(emptyBoard);
+			scratchELeft = new Config(emptyBoard);
+			scratchERight = new Config(emptyBoard);
 			break;
 		case 'F':
 			carPresent[6] = true;
-			scratchFUp = newConfig();
-			scratchFDown = newConfig();
-			scratchFLeft = newConfig();
-			scratchFRight = newConfig();
+			scratchFUp = new Config(emptyBoard);
+			scratchFDown = new Config(emptyBoard);
+			scratchFLeft = new Config(emptyBoard);
+			scratchFRight = new Config(emptyBoard);
 			break;
 		case 'G':
 			carPresent[7] = true;
-			scratchGUp = newConfig();
-			scratchGDown = newConfig();
-			scratchGLeft = newConfig();
-			scratchGRight = newConfig();
+			scratchGUp = new Config(emptyBoard);
+			scratchGDown = new Config(emptyBoard);
+			scratchGLeft = new Config(emptyBoard);
+			scratchGRight = new Config(emptyBoard);
 			break;
 		default:
 			assert false;
 			break;
 		}
 	}
-	
-//	CarInfo carInfo(byte b) {
-//		switch (b) {
-//		case 'R':
-//			return carInfoR;
-//		case 'A':
-//			return carInfoA;
-//		case 'B':
-//			return carInfoB;
-//		case 'C':
-//			return carInfoC;
-//		case 'D':
-//			return carInfoD;
-//		case 'E':
-//			return carInfoE;
-//		case 'F':
-//			return carInfoF;
-//		case 'G':
-//			return carInfoG;
-//		default:
-//			assert false;
-//			return null;
-//		}
-//	}
 	
 	Config scratchLeft(byte b) {
 		switch (b) {
@@ -622,10 +534,6 @@ public class ParentConfig {
 		}
 	}
 	
-//	public static boolean isJorK(byte b) {
-//		return b == 'J' || b == 'K';
-//	}
-	
 	public boolean isJoint(int[] coor) {
 		if (!((coor[0] == -1 || coor[0] == rowCount) || (coor[1] == -1 || coor[1] == colCount))) {
 			return false;
@@ -650,7 +558,4 @@ public class ParentConfig {
 		return ini[r+1][c+1];
 	}
 	
-	public Config newConfig() {
-		return new Config(emptyBoard);
-	}
 }

@@ -12,17 +12,21 @@ public class Config {
 	
 	public final byte[] board;
 	
-//	public boolean bs;
-	
 	static byte[] cars = new byte[] {'R', 'A', 'B', 'C', 'D', 'E', 'F', 'G' };
 	
-	
-//	public static long configCounter = 0;
-	
 	public Config(byte[] old) {
-//		configCounter++;
-//		this.par = par;
-		board = copy(old);
+		board = new byte[old.length];
+		System.arraycopy(old, 0, board, 0, old.length);
+	}
+	
+	public void copyTo(Config out) {
+		System.arraycopy(board, 0, out.board, 0, board.length);
+	}
+	
+	public Config clone() {
+		Config n = new Config(par.emptyBoard);
+		copyTo(n);
+		return n;
 	}
 	
 	public boolean equals(Object o) {
@@ -46,18 +50,37 @@ public class Config {
 		return h;
 	}
 	
-	public void copy(Config out) {
-//		assert out.par == par;
-		for (int i = 0; i < board.length; i++) {
-			out.board[i] = board[i];
+	public String toString() {
+		
+		StringBuilder b = new StringBuilder();
+		b.append(new String(par.ini[0]));
+		b.append('\n');
+		for (int i = 0; i < par.rowCount; i++) {
+			b.append((char)par.ini[i+1][0]);
+			for (int j = 0; j < par.colCount; j++) {
+				byte bb = boardGet(i, j);
+				b.append((char)bb);
+			}			
+			b.append((char)par.ini[i+1][par.colCount+1]);
+			b.append('\n');
 		}
-//		out.bs = bs;
+		b.append(new String(par.ini[par.ini.length-1]));
+		b.append('\n');
+		return b.toString();
+	};
+	
+	public static byte[] newBoard(int rows, int cols) {
+		int actualCols;
+		if (cols % 2 == 0) {
+			actualCols = cols / 2;
+		} else {
+			actualCols = cols / 2 + 1;
+		}
+		return new byte[rows * actualCols];
 	}
 	
-	public Config copy() {
-		Config n = par.newConfig();
-		copy(n);
-		return n;
+	byte boardGet(int[] coor) {
+		return boardGet(coor[0], coor[1]);
 	}
 	
 	byte boardGet(int r, int c) {
@@ -67,12 +90,10 @@ public class Config {
 		int n;
 		if (c % 2 == 0) {
 			actualCol = c / 2;
-//			actualColCount = par.colCount / 2;
 			int old8bits = board[r * actualColCount + actualCol];
 			n = ((old8bits & 0x0f));
 		} else {
 			actualCol = c / 2;
-//			actualColCount = c / 2 + 1;
 			int old8bits = board[r * actualColCount + actualCol];
 			n = ((old8bits & 0xf0) >> 4);
 		}
@@ -158,17 +179,7 @@ public class Config {
 		}
 	}
 	
-	public static byte[] newBoard(int rows, int cols) {
-		int actualCols;
-		if (cols % 2 == 0) {
-			actualCols = cols / 2;
-		} else {
-			actualCols = cols / 2 + 1;
-		}
-		return new byte[rows * actualCols];
-	}
-	
-	public boolean iniContainsCar(byte b) {
+	public boolean boardContainsCar(byte b) {
 		for (int i = 0; i < par.rowCount; i++) {
 			for (int j = 0; j < par.colCount; j++) {
 				byte c = boardGet(i, j);
@@ -180,61 +191,24 @@ public class Config {
 		return false;
 	}
 	
-	public static int otherSide(int side) {
-		switch (side) {
-		case 0:
-			return 2;
-		case 1:
-			return 3;
-		case 2:
-			return 0;
-		case 3:
-			return 1;
-		}
-		assert false;
-		return -1;
-	}
-	
-	public byte val(int[] coor) {
-		return boardGet(coor[0], coor[1]);
-	}
-	
-	public byte val(int r, int c) {
-		return boardGet(r, c);
-	}
-	
-	public static boolean equals(int[] c0, int[] c1) {
-		return c0[0] == c1[0] && c0[1] == c1[1];
-	}
-	
-	public static boolean equals(int c00, int c01, int[] c1) {
-		return c00 == c1[0] && c01 == c1[1];
-	}
-	
-	public static byte[] copy(byte[] old) {
-		byte[] newIni = new byte[old.length];
-		System.arraycopy(old, 0, newIni, 0, old.length);
-		return newIni;
-	}
-	
-	public void clearIni(byte c, Orientation o, int size, int row, int col) {
+	public void clearCar(byte c, Orientation o, int size, int row, int col) {
 		
 		byte old;
 		switch (o) {
 		case LEFTRIGHT:
 			switch (size) {
 			case 2:
-				old = clear(row, col+0);
+				old = clearCoor(row, col+0);
 				assert old == c;
-				old = clear(row, col+1);
+				old = clearCoor(row, col+1);
 				assert old == c;
 				break;
 			case 3:
-				old = clear(row, col+0);
+				old = clearCoor(row, col+0);
 				assert old == c;
-				old = clear(row, col+1);
+				old = clearCoor(row, col+1);
 				assert old == c;
-				old = clear(row, col+2);
+				old = clearCoor(row, col+2);
 				assert old == c;
 				break;
 			}
@@ -242,17 +216,17 @@ public class Config {
 		case UPDOWN:
 			switch (size) {
 			case 2:
-				old = clear(row+0, col);
+				old = clearCoor(row+0, col);
 				assert old == c;
-				old = clear(row+1, col);
+				old = clearCoor(row+1, col);
 				assert old == c;
 				break;
 			case 3:
-				old = clear(row+0, col);
+				old = clearCoor(row+0, col);
 				assert old == c;
-				old = clear(row+1, col);
+				old = clearCoor(row+1, col);
 				assert old == c;
-				old = clear(row+2, col);
+				old = clearCoor(row+2, col);
 				assert old == c;
 				break;
 			}
@@ -263,30 +237,35 @@ public class Config {
 	
 	public boolean isWinning() {
 		
+		loadScratchInfo((byte)'R');
+		Orientation o = par.scratchInfo.o;
+		int r = par.scratchInfo.row;
+		int c = par.scratchInfo.col;
+		
 		int side = par.side(par.exit);
 		switch (side) {
 		case 0:
-			return val(par.exit[0]+1, par.exit[1]) == 'R' && val(par.exit[0]+2, par.exit[1]) == 'R';
+			return o == Orientation.UPDOWN && Statics.equals(r-2, c, par.exit) && boardGet(r-1, c) == 'X';
 		case 1:
-			return val(par.exit[0], par.exit[1]-2) == 'R' && val(par.exit[0], par.exit[1]-1) == 'R';
+			return o == Orientation.LEFTRIGHT && Statics.equals(r, c+3, par.exit) && boardGet(r, c+2) == 'X';
 		case 2:
-			return val(par.exit[0]-2, par.exit[1]) == 'R' && val(par.exit[0]-1, par.exit[1]) == 'R';
+			return o == Orientation.UPDOWN && Statics.equals(r+3, c, par.exit) && boardGet(r+2, c) == 'X';
 		case 3:
-			return val(par.exit[0], par.exit[1]+1) == 'R' && val(par.exit[0], par.exit[1]+2) == 'R';
+			return o == Orientation.LEFTRIGHT && Statics.equals(r, c-2, par.exit) && boardGet(r, c-1) == 'X';
 		}
 		
 		assert false;
 		return false;
 	}
 	
-	boolean isClearPathToExit() {
+	boolean hasClearPathToExit() {
 		
 		par.cursor.reset(this);
 		while (true) {
 			if (par.cursor.val() == 'Y' || par.cursor.val() == 'X') {
 				par.cursor.move();
 			} else if (par.cursor.val() == 'R') {
-				carMapGet((byte)'R');
+				loadScratchInfo((byte)'R');
 				Orientation o = par.scratchInfo.o;
 				
 				if ((((par.cursor.side == 0 || par.cursor.side == 2) && o == Orientation.UPDOWN) || ((par.cursor.side == 1 || par.cursor.side == 3) && o == Orientation.LEFTRIGHT))) {
@@ -315,7 +294,7 @@ public class Config {
 				moves++;
 			} else {
 				if (par.cursor.val() == 'R') {
-					carMapGet((byte)'R');
+					loadScratchInfo((byte)'R');
 					Orientation o = par.scratchInfo.o;
 					
 					if ((((par.cursor.side == 0 || par.cursor.side == 2) && o == Orientation.UPDOWN) || ((par.cursor.side == 1 || par.cursor.side == 3) && o == Orientation.LEFTRIGHT))) {
@@ -333,13 +312,16 @@ public class Config {
 		return moves;
 	}
 	
-	private byte clear(int r, int c) {
+	/**
+	 * returns old value
+	 */
+	private byte clearCoor(int r, int c) {
 		byte old = boardGet(r, c);
 		boardSet(r, c, (byte)'X');
 		return old;
 	}
 	
-	boolean available(byte c, int size, Orientation o, int row, int col) {
+	boolean availableForCar(byte c, int size, Orientation o, int row, int col) {
 		
 		if (row < 0 || row >= par.rowCount) return false;
 		if (col < 0 || col >= par.colCount) return false;
@@ -349,14 +331,14 @@ public class Config {
 			switch (size) {
 			case 2:
 				if (col+1 >= par.colCount) return false;
-				if (!isXorC(c, boardGet(row, col+0))) return false;
-				if (!isXorC(c, boardGet(row, col+1))) return false;
+				if (!Statics.isXorC(c, boardGet(row, col+0))) return false;
+				if (!Statics.isXorC(c, boardGet(row, col+1))) return false;
 				break;
 			case 3:
 				if (col+2 >= par.colCount) return false;
-				if (!isXorC(c, boardGet(row, col+0))) return false;
-				if (!isXorC(c, boardGet(row, col+1))) return false;
-				if (!isXorC(c, boardGet(row, col+2))) return false;
+				if (!Statics.isXorC(c, boardGet(row, col+0))) return false;
+				if (!Statics.isXorC(c, boardGet(row, col+1))) return false;
+				if (!Statics.isXorC(c, boardGet(row, col+2))) return false;
 				break;
 			}
 			break;
@@ -364,14 +346,14 @@ public class Config {
 			switch (size) {
 			case 2:
 				if (row+1 >= par.rowCount) return false;
-				if (!isXorC(c, boardGet(row+0, col))) return false;
-				if (!isXorC(c, boardGet(row+1, col))) return false;
+				if (!Statics.isXorC(c, boardGet(row+0, col))) return false;
+				if (!Statics.isXorC(c, boardGet(row+1, col))) return false;
 				break;
 			case 3:
 				if (row+2 >= par.rowCount) return false;
-				if (!isXorC(c, boardGet(row+0, col))) return false;
-				if (!isXorC(c, boardGet(row+1, col))) return false;
-				if (!isXorC(c, boardGet(row+2, col))) return false;
+				if (!Statics.isXorC(c, boardGet(row+0, col))) return false;
+				if (!Statics.isXorC(c, boardGet(row+1, col))) return false;
+				if (!Statics.isXorC(c, boardGet(row+2, col))) return false;
 				break;
 			}
 			break;
@@ -380,33 +362,17 @@ public class Config {
 		return true;
 	}
 	
-//	public Config insert(byte c, Orientation o, int size, int row, int col) {
-//		
-//		Config n = new Config(board);
-//		
-//		boolean res = n.insertIni(c, o, size, row, col);
-//		assert res;
-//		
-//		return n;
-//	}
-	
-	public boolean insertIni(byte c, Orientation o, int size, int row, int col) {
+	public boolean insertCar(byte c, Orientation o, int size, int row, int col) {
 		
 		if (c == 'R') {
 			switch (o) {
 			case LEFTRIGHT:
 				switch (size) {
 				case 2:
-					
-					assert par.winnableRows[row];
-					
 					boardSet(row, col+0, c);
 					boardSet(row, col+1, c);
 					break;
 				case 3:
-					
-					assert par.winnableRows[row];
-					
 					boardSet(row, col+0, c);
 					boardSet(row, col+1, c);
 					boardSet(row, col+2, c);
@@ -416,16 +382,10 @@ public class Config {
 			case UPDOWN:
 				switch (size) {
 				case 2:
-					
-					assert par.winnableCols[col];
-					
 					boardSet(row+0, col, c);
 					boardSet(row+1, col, c);
 					break;
 				case 3:
-					
-					assert par.winnableCols[col];
-					
 					boardSet(row+0, col, c);
 					boardSet(row+1, col, c);
 					boardSet(row+2, col, c);
@@ -439,16 +399,10 @@ public class Config {
 			case LEFTRIGHT:
 				switch (size) {
 				case 2:
-					
-//					addToInterferenceRow(row);
-					
 					boardSet(row, col+0, c);
 					boardSet(row, col+1, c);
 					break;
 				case 3:
-					
-//					addToInterferenceRow(row);
-					
 					boardSet(row, col+0, c);
 					boardSet(row, col+1, c);
 					boardSet(row, col+2, c);
@@ -458,16 +412,10 @@ public class Config {
 			case UPDOWN:
 				switch (size) {
 				case 2:
-					
-//					addToInterferenceCol(col);
-					
 					boardSet(row+0, col, c);
 					boardSet(row+1, col, c);
 					break;
 				case 3:
-					
-//					addToInterferenceCol(col);
-					
 					boardSet(row+0, col, c);
 					boardSet(row+1, col, c);
 					boardSet(row+2, col, c);
@@ -480,135 +428,37 @@ public class Config {
 		return true;
 	}
 	
-//	static byte[][] testBoard = new byte[][] {
-//		{' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
-//		{' ', 'X', 'X', 'X', 'X', 'X', 'X', ' '},
-//		{' ', 'X', 'X', 'X', 'X', 'X', 'X', ' '},
-//		{' ', 'X', 'X', 'X', 'X', 'X', 'X', 'Y'},
-//		{' ', 'X', 'X', 'X', 'X', 'X', 'X', ' '},
-//		{' ', 'X', 'X', 'X', 'X', 'X', 'X', ' '},
-//		{' ', 'X', 'X', 'X', 'X', 'X', 'X', ' '},
-//		{' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
-//	};
-//	static ParentConfig testPar;
-//	static Config test;
-//	static {
-//		testPar = new ParentConfig(testBoard);
-//		testPar.carMapPresent((byte)'R');
-//		testPar.carMapPresent((byte)'A');
-//		testPar.carMapPresent((byte)'B');
-//		testPar.carMapPresent((byte)'C');
-//		testPar.carMapPresent((byte)'D');
-//		test = testPar.newConfig();
-//		test = test.insert((byte)'R', Orientation.LEFTRIGHT, 2, 2, 2);
-//		test = test.insert((byte)'A', Orientation.UPDOWN, 2, 4, 2);
-//		test = test.insert((byte)'B', Orientation.UPDOWN, 2, 2, 1);
-//		test = test.insert((byte)'C', Orientation.LEFTRIGHT, 2, 4, 0);
-//		test = test.insert((byte)'D', Orientation.UPDOWN, 2, 0, 4);
-//	}
-	
-	public void move(byte c, int size, Orientation oldO, int oldRow, int oldCol, Orientation newO, int newRow, int newCol, Config out) {
+	public void moveCar(byte c, int size, Orientation oldO, int oldRow, int oldCol, Orientation newO, int newRow, int newCol, Config out) {
 		
 		assert this.board != out.board;
 		
-		copy(out);
+		copyTo(out);
 		
-		out.clearIni(c, oldO, size, oldRow, oldCol);
+		out.clearCar(c, oldO, size, oldRow, oldCol);
 		
-		out.insertIni(c, newO, size, newRow, newCol);
+		out.insertCar(c, newO, size, newRow, newCol);
 		
 		out.alphaReduce();
 		
-	}
-	
-//	void addToInterferenceRow(int r) {
-//		par.interferenceConeRows[r] = true;
-//		
-//		par.test[0] = r;
-//		par.test[1] = -1;
-//		
-//		if (par.isJoint(par.test)) {
-//			int[] other = par.otherJoint(par.test);
-//			par.interferenceConeCols[other[1]] = true;
-//			
-//			par.across(other, par.test);
-//			if (par.isJoint(par.test)) {
-//				other = par.otherJoint(par.test);
-//				par.interferenceConeRows[other[0]] = true;
-//			}
-//			
-//		}
-//		
-//		par.test[0] = r;
-//		par.test[1] = par.colCount;
-//		
-//		if (par.isJoint(par.test)) {
-//			int[] other = par.otherJoint(par.test);
-//			par.interferenceConeCols[other[1]] = true;
-//			
-//			par.across(other, par.test);
-//			if (par.isJoint(par.test)) {
-//				other = par.otherJoint(par.test);
-//				par.interferenceConeRows[other[0]] = true;
-//			}
-//			
-//		}
-//		
-//	}
-	
-//	void addToInterferenceCol(int c) {
-//		par.interferenceConeCols[c] = true;
-//		
-//		par.test[0] = -1;
-//		par.test[1] = c;
-//		
-//		if (par.isJoint(par.test)) {
-//			int[] other = par.otherJoint(par.test);
-//			par.interferenceConeRows[other[0]] = true;
-//			
-//			par.across(other, par.test);
-//			if (par.isJoint(par.test)) {
-//				other = par.otherJoint(par.test);
-//				par.interferenceConeCols[other[1]] = true;
-//			}
-//			
-//		}
-//		
-//		par.test[0] = par.rowCount;
-//		par.test[1] = c;
-//		
-//		if (par.isJoint(par.test)) {
-//			int[] other = par.otherJoint(par.test);
-//			par.interferenceConeRows[other[0]] = true;
-//			
-//			par.across(other, par.test);
-//			if (par.isJoint(par.test)) {
-//				other = par.otherJoint(par.test);
-//				par.interferenceConeCols[other[1]] = true;
-//			}
-//			
-//		}
-//	}
-	
-	boolean isXorC(byte c, byte b) {
-		return b == 'X' || b == c;
 	}
 	
 	public List<Config> possiblePreviousMoves() {
 		
 		par.moves.clear();
 		
-		boolean clearPathToExit = isClearPathToExit();
+		if (hasClearPathToExit()) {
+			
+			/*
+			 * for red car, move away from exit
+			 * for other cars, unblock path from red car to exit
+			 */
+			d;
+			
+		}
 		
 		carLoop:
 		for (byte c : cars) {
 			if (!par.carMapContains(c)) {
-				continue;
-			}
-			/*
-			 * only possible previous move of a winning config is to move R into winning position
-			 */
-			if (isWinning() && c != 'R') {
 				continue;
 			}
 			
@@ -618,77 +468,75 @@ public class Config {
 			 * 		if other, only previous move was interfering with winning path
 			 */
 			
-			carMapGet(c);
+			loadScratchInfo(c);
 			Orientation o = par.scratchInfo.o;
 			int size = par.scratchInfo.size;
 			int row = par.scratchInfo.row;
 			int col = par.scratchInfo.col;
 			
+			Config scratch;
+			
 			switch (o) {
 			case LEFTRIGHT:
 				
-				if (available(c, size, o, row, col-1)) {
-					move(c, size, o, row, col, o, row, col-1, par.scratchLeft(c));
-					boolean res = lastStep(c, clearPathToExit, par.scratchLeft(c));
-					if (res) {
-						continue carLoop;
+				scratch = par.scratchLeft(c);
+				if (availableForCar(c, size, o, row, col-1)) {
+					moveCar(c, size, o, row, col, o, row, col-1, scratch);
+					if (!scratch.hasClearPathToExit()) {
+						par.moves.add(scratch);
 					}
 				} else if (par.isJoint(row, col-1)) {
-					boolean res = tryJoint(c, par.otherJoint(row, col-1), par.scratchLeft(c));
+					boolean res = tryJoint(c, par.otherJoint(row, col-1), scratch);
 					if (res) {
-						res = lastStep(c, clearPathToExit, par.scratchLeft(c));
-						if (res) {
-							continue carLoop;
+						if (!scratch.hasClearPathToExit()) {
+							par.moves.add(scratch);
 						}
 					}
 				}
 				
-				if (available(c, size, o, row, col+1)) {
-					move(c, size, o, row, col, o, row, col+1, par.scratchRight(c));
-					boolean res = lastStep(c, clearPathToExit, par.scratchRight(c));
-					if (res) {
-						continue carLoop;
+				scratch = par.scratchRight(c);
+				if (availableForCar(c, size, o, row, col+1)) {
+					moveCar(c, size, o, row, col, o, row, col+1, par.scratchRight(c));
+					if (!scratch.hasClearPathToExit()) {
+						par.moves.add(scratch);
 					}
 				} else if (par.isJoint(row, col+size)) {
 					boolean res = tryJoint(c, par.otherJoint(row, col+size), par.scratchRight(c));
 					if (res) {
-						res = lastStep(c, clearPathToExit, par.scratchRight(c));
-						if (res) {
-							continue carLoop;
+						if (!scratch.hasClearPathToExit()) {
+							par.moves.add(scratch);
 						}
 					}
 				}
 				break;
 			case UPDOWN:
 				
-				if (available(c, size, o, row-1, col)) {
-					move(c, size, o, row, col, o, row-1, col, par.scratchUp(c));
-					boolean res = lastStep(c, clearPathToExit, par.scratchUp(c));
-					if (res) {
-						continue carLoop;
+				scratch = par.scratchUp(c);
+				if (availableForCar(c, size, o, row-1, col)) {
+					moveCar(c, size, o, row, col, o, row-1, col, par.scratchUp(c));
+					if (!scratch.hasClearPathToExit()) {
+						par.moves.add(scratch);
 					}
 				} else if (par.isJoint(row-1, col)) {
 					boolean res = tryJoint(c, par.otherJoint(row-1, col), par.scratchUp(c));
 					if (res) {
-						res = lastStep(c, clearPathToExit, par.scratchUp(c));
-						if (res) {
-							continue carLoop;
+						if (!scratch.hasClearPathToExit()) {
+							par.moves.add(scratch);
 						}
 					}
 				}
 				
-				if (available(c, size, o, row+1, col)) {
-					move(c, size, o, row, col, o, row+1, col, par.scratchDown(c));
-					boolean res = lastStep(c, clearPathToExit, par.scratchDown(c));
-					if (res) {
-						continue carLoop;
+				scratch = par.scratchDown(c);
+				if (availableForCar(c, size, o, row+1, col)) {
+					moveCar(c, size, o, row, col, o, row+1, col, par.scratchDown(c));
+					if (!scratch.hasClearPathToExit()) {
+						par.moves.add(scratch);
 					}
 				} else if (par.isJoint(row+size, col)) {
 					boolean res = tryJoint(c, par.otherJoint(row+size, col), par.scratchDown(c));
 					if (res) {
-						res = lastStep(c, clearPathToExit, par.scratchDown(c));
-						if (res) {
-							continue carLoop;
+						if (!scratch.hasClearPathToExit()) {
+							par.moves.add(scratch);
 						}
 					}
 				}
@@ -702,35 +550,30 @@ public class Config {
 	/*
 	 * returns true => continue carLoop
 	 */
-	boolean lastStep(byte c, boolean clearPathToExit, Config scratch) {
-		if (!clearPathToExit) {
-			if (!scratch.isClearPathToExit()) {
-				par.moves.add(scratch);
-			}
-//			else {
-//				/*
-//				 * even though it is unintuitive to add a clearly wrong move (the move would be from clear path -> blocked path),
-//				 * for completeness, we need to add all configs (this config might branch off, etc.)
-//				 */
+//	boolean possiblePreviousMoves_lastStep(byte c, Config scratch) {
+//		if (!clearPathToExit) {
+//			if (!scratch.hasClearPathToExit()) {
 //				par.moves.add(scratch);
 //			}
-		} else {
-			if (c == 'R') {
-				if (scratch.numberMovesToWin() > this.numberMovesToWin()) {
-					par.moves.add(scratch);
-					return true;
-				}
-			} else {
-				if (!scratch.isClearPathToExit()) {
-					par.moves.add(scratch);
-					return true;
-				}
-			}
-		}
-//		par.moves.add(scratch);
-		
-		return false;
-	}
+//		} else {
+//			if (c == 'R') {
+//				if (scratch.numberMovesToWin() > this.numberMovesToWin()) {
+//					par.moves.add(scratch);
+//					return true;
+//				}
+//			} else {
+//				if (!scratch.hasClearPathToExit()) {
+//					par.moves.add(scratch);
+//					return true;
+//				}
+//			}
+//		}
+//		if (!scratch.hasClearPathToExit()) {
+//			par.moves.add(scratch);
+//		}
+//		
+//		return false;
+//	}
 	
 	public List<Config> possibleNextMoves() {
 		
@@ -740,80 +583,78 @@ public class Config {
 			return par.moves;
 		}
 		
-		if (isClearPathToExit()) {
+		if (hasClearPathToExit()) {
 			
-			int currentMovesToWin = numberMovesToWin();
-			Config best = null;
-			
-			carMapGet((byte)'R');
+			loadScratchInfo((byte)'R');
 			Orientation o = par.scratchInfo.o;
 			int size = par.scratchInfo.size;
 			int row = par.scratchInfo.row;
 			int col = par.scratchInfo.col;
 			
+			Config scratch;
+			
 			switch (o) {
 			case LEFTRIGHT:
 				
-				if (available((byte)'R', size, o, row, col-1)) {
-					move((byte)'R', size, o, row, col, o, row, col-1, par.scratchLeft((byte)'R'));
-					if (par.scratchLeft((byte)'R').numberMovesToWin() < currentMovesToWin) {
-						best = par.scratchLeft((byte)'R');
-					}
-				} else if (par.isJoint(row, col-1)) {
-					boolean res = tryJoint((byte)'R', par.otherJoint(row, col-1), par.scratchLeft((byte)'R'));
-					if (res && par.scratchLeft((byte)'R').numberMovesToWin() < currentMovesToWin) {
-						best = par.scratchLeft((byte)'R');
+				scratch = par.scratchLeft((byte)'R');
+				if (availableForCar((byte)'R', size, o, row, col-1) && (closerToExit)) {
+					moveCar((byte)'R', size, o, row, col, o, row, col-1, scratch);
+					par.moves.add(scratch);
+					return par.moves;
+				} else if (par.isJoint(row, col-1) && (closerToExit)) {
+					boolean res = tryJoint((byte)'R', par.otherJoint(row, col-1), scratch);
+					if (res) {
+						par.moves.add(scratch);
+						return par.moves;
 					}
 				}
 				
-				
-				if (available((byte)'R', size, o, row, col+1)) {
-					move((byte)'R', size, o, row, col, o, row, col+1, par.scratchRight((byte)'R'));
-					if (par.scratchRight((byte)'R').numberMovesToWin() < currentMovesToWin) {
-						best = par.scratchRight((byte)'R');
-					}
-				} else if (par.isJoint(row, col+2)) {
-					boolean res = tryJoint((byte)'R', par.otherJoint(row, col+2), par.scratchRight((byte)'R'));
-					if (res && par.scratchRight((byte)'R').numberMovesToWin() < currentMovesToWin) {
-						best = par.scratchRight((byte)'R');
+				scratch = par.scratchRight((byte)'R');
+				if (availableForCar((byte)'R', size, o, row, col+1) && (closerToExit)) {
+					moveCar((byte)'R', size, o, row, col, o, row, col+1, scratch);
+					par.moves.add(scratch);
+					return par.moves;
+				} else if (par.isJoint(row, col+2) && (closerToExit)) {
+					boolean res = tryJoint((byte)'R', par.otherJoint(row, col+2), scratch);
+					if (res) {
+						par.moves.add(scratch);
+						return par.moves;
 					}
 				}
 				
 				break;
 			case UPDOWN:
 				
-				if (available((byte)'R', size, o, row-1, col)) {
-					move((byte)'R', size, o, row, col, o, row-1, col, par.scratchUp((byte)'R'));
-					if (par.scratchUp((byte)'R').numberMovesToWin() < currentMovesToWin) {
-						best = par.scratchUp((byte)'R');
-					}
-				} else if (par.isJoint(row-1, col)) {
-					boolean res = tryJoint((byte)'R', par.otherJoint(row-1, col), par.scratchUp((byte)'R'));
-					if (res && par.scratchUp((byte)'R').numberMovesToWin() < currentMovesToWin) {
-						best = par.scratchUp((byte)'R');
+				scratch = par.scratchUp((byte)'R');
+				if (availableForCar((byte)'R', size, o, row-1, col) && (closerToExit)) {
+					moveCar((byte)'R', size, o, row, col, o, row-1, col, scratch);
+					par.moves.add(scratch);
+					return par.moves;
+				} else if (par.isJoint(row-1, col) && (closerToExit)) {
+					boolean res = tryJoint((byte)'R', par.otherJoint(row-1, col), scratch);
+					if (res) {
+						par.moves.add(scratch);
+						return par.moves;
 					}
 				}
 				
-				if (available((byte)'R', size, o, row+1, col)) {
-					move((byte)'R', size, o, row, col, o, row+1, col, par.scratchDown((byte)'R'));
-					if (par.scratchDown((byte)'R').numberMovesToWin() < currentMovesToWin) {
-						best = par.scratchDown((byte)'R');
-					}
-				} else if (par.isJoint(row+2, col)) {
-					boolean res = tryJoint((byte)'R', par.otherJoint(row+2, col), par.scratchDown((byte)'R'));
-					if (res && par.scratchDown((byte)'R').numberMovesToWin() < currentMovesToWin) {
-						best = par.scratchDown((byte)'R');
+				scratch = par.scratchDown((byte)'R');
+				if (availableForCar((byte)'R', size, o, row+1, col) && (closerToExit)) {
+					moveCar((byte)'R', size, o, row, col, o, row+1, col, scratch);
+					par.moves.add(scratch);
+					return par.moves;
+				} else if (par.isJoint(row+2, col) && (closerToExit)) {
+					boolean res = tryJoint((byte)'R', par.otherJoint(row+2, col), scratch);
+					if (res) {
+						par.moves.add(scratch);
+						return par.moves;
 					}
 				}
 				
 				break;
 			}
 			
-			assert best != null;
-			
-			par.moves.add(best);
-			
-			return par.moves;
+			assert false;
 		}
 		
 		for (byte c : cars) {
@@ -827,7 +668,7 @@ public class Config {
 			 * 		if other, only previous move was interfering with winning path
 			 */
 			
-			carMapGet(c);
+			loadScratchInfo(c);
 			Orientation o = par.scratchInfo.o;
 			int size = par.scratchInfo.size;
 			int row = par.scratchInfo.row;
@@ -836,8 +677,8 @@ public class Config {
 			switch (o) {
 			case LEFTRIGHT:
 				
-				if (available(c, size, o, row, col-1)) {
-					move(c, size, o, row, col, o, row, col-1, par.scratchLeft(c));
+				if (availableForCar(c, size, o, row, col-1)) {
+					moveCar(c, size, o, row, col, o, row, col-1, par.scratchLeft(c));
 					par.moves.add(par.scratchLeft(c));
 				} else if (par.isJoint(row, col-1)) {
 					boolean res = tryJoint(c, par.otherJoint(row, col-1), par.scratchLeft(c));
@@ -846,8 +687,8 @@ public class Config {
 					}
 				}
 				
-				if (available(c, size, o, row, col+1)) {
-					move(c, size, o, row, col, o, row, col+1, par.scratchRight(c));
+				if (availableForCar(c, size, o, row, col+1)) {
+					moveCar(c, size, o, row, col, o, row, col+1, par.scratchRight(c));
 					par.moves.add(par.scratchRight(c));
 				} else if (par.isJoint(row, col+size)) {
 					boolean res = tryJoint(c, par.otherJoint(row, col+size), par.scratchRight(c));
@@ -859,8 +700,8 @@ public class Config {
 				break;
 			case UPDOWN:
 				
-				if (available(c, size, o, row-1, col)) {
-					move(c, size, o, row, col, o, row-1, col, par.scratchUp(c));
+				if (availableForCar(c, size, o, row-1, col)) {
+					moveCar(c, size, o, row, col, o, row-1, col, par.scratchUp(c));
 					par.moves.add(par.scratchUp(c));
 				} else if (par.isJoint(row-1, col)) {
 					boolean res = tryJoint(c, par.otherJoint(row-1, col), par.scratchUp(c));
@@ -869,8 +710,8 @@ public class Config {
 					}
 				}
 				
-				if (available(c, size, o, row+1, col)) {
-					move(c, size, o, row, col, o, row+1, col, par.scratchDown(c));
+				if (availableForCar(c, size, o, row+1, col)) {
+					moveCar(c, size, o, row, col, o, row+1, col, par.scratchDown(c));
 					par.moves.add(par.scratchDown(c));
 				} else if (par.isJoint(row+size, col)) {
 					boolean res = tryJoint(c, par.otherJoint(row+size, col), par.scratchDown(c));
@@ -886,23 +727,106 @@ public class Config {
 		return par.moves;
 	}
 	
-	public Config redCarWinningConfig() {
+	boolean tryJoint(byte c, int[] joint, Config out) {
+		
+		int mR = joint[0];
+		int mC = joint[1];
+		
+		loadScratchInfo(c);
+		Orientation o = par.scratchInfo.o;
+		int size = par.scratchInfo.size;
+		int row = par.scratchInfo.row;
+		int col = par.scratchInfo.col;
+		
+		int mSide = par.side(joint);
+		switch (mSide) {
+		case 0:
+			switch (size) {
+			case 2:
+				if (availableForCar(c, size, Orientation.UPDOWN, mR+1, mC)) {
+					moveCar(c, size, o, row, col, Orientation.UPDOWN, mR+1, mC, out);
+					return true;
+				}
+				break;
+			case 3:
+				if (availableForCar(c, size, Orientation.UPDOWN, mR+1, mC)) {
+					moveCar(c, size, o, row, col, Orientation.UPDOWN, mR+1, mC, out);
+					return true;
+				}
+				break;
+			}
+			break;
+		case 1:
+			switch (size) {
+			case 2:
+				if (availableForCar(c, size, Orientation.LEFTRIGHT, mR, mC-2)) {
+					moveCar(c, size, o, row, col, Orientation.LEFTRIGHT, mR, mC-2, out);
+					return true;
+				}
+				break;
+			case 3:
+				if (availableForCar(c, size, Orientation.LEFTRIGHT, mR, mC-3)) {
+					moveCar(c, size, o, row, col, Orientation.LEFTRIGHT, mR, mC-3, out);
+					return true;
+				}
+				break;
+			}
+			break;
+		case 2:
+			switch (size) {
+			case 2:
+				if (availableForCar(c, size, Orientation.UPDOWN, mR-2, mC)) {
+					moveCar(c, size, o, row, col, Orientation.UPDOWN, mR-2, mC, out);
+					return true;
+				}
+				break;
+			case 3:
+				if (availableForCar(c, size, Orientation.UPDOWN, mR-3, mC)) {
+					moveCar(c, size, o, row, col, Orientation.UPDOWN, mR-3, mC, out);
+					return true;
+				}
+				break;
+			}
+			break;
+		case 3:
+			switch (size) {
+			case 2:
+				if (availableForCar(c, size, Orientation.LEFTRIGHT, mR, mC+1)) {
+					moveCar(c, size, o, row, col, Orientation.LEFTRIGHT, mR, mC+1, out);
+					return true;
+				}
+				break;
+			case 3:
+				if (availableForCar(c, size, Orientation.LEFTRIGHT, mR, mC+1)) {
+					moveCar(c, size, o, row, col, Orientation.LEFTRIGHT, mR, mC+1, out);
+					return true;
+				}
+				break;
+			}
+			break;
+		}
+		
+		return false;
+	}
+	
+	
+	public Config winningConfig() {
 		int side = par.side(par.exit);
 		
 		Config n = new Config(board);
 		
 		switch (side) {
 		case 0:
-			n.insertIni((byte)'R', Orientation.UPDOWN, 2, par.exit[0]+1, par.exit[1]);
+			n.insertCar((byte)'R', Orientation.UPDOWN, 2, par.exit[0]+2, par.exit[1]);
 			return n;
 		case 1:
-			n.insertIni((byte)'R', Orientation.LEFTRIGHT, 2, par.exit[0], par.exit[1]-2);
+			n.insertCar((byte)'R', Orientation.LEFTRIGHT, 2, par.exit[0], par.exit[1]-3);
 			return n;
 		case 2:
-			n.insertIni((byte)'R', Orientation.UPDOWN, 2, par.exit[0]-2, par.exit[1]);
+			n.insertCar((byte)'R', Orientation.UPDOWN, 2, par.exit[0]-3, par.exit[1]);
 			return n;
 		case 3:
-			n.insertIni((byte)'R', Orientation.LEFTRIGHT, 2, par.exit[0], par.exit[1]+1);
+			n.insertCar((byte)'R', Orientation.LEFTRIGHT, 2, par.exit[0], par.exit[1]+2);
 			return n;
 		}
 		
@@ -912,7 +836,7 @@ public class Config {
 	
 	byte firstAvailableCar() {
 		for (byte d : cars) {
-			if (!iniContainsCar(d)) {
+			if (!boardContainsCar(d)) {
 				return d;
 			}
 		}
@@ -920,7 +844,7 @@ public class Config {
 		return -1;
 	}
 	
-	public List<Config> possible2CarPlacements(List<Config> placements) {
+	public List<Config> possible2CarPlacements(List<Config> placements, boolean lastToBeAdded) {
 		
 		byte car = firstAvailableCar();
 		int[] coor = firstAvailableCarCoor();
@@ -933,13 +857,14 @@ public class Config {
 		for (int r = 0; r < par.rowCount; r++) {
 			for (int c = 0; c < par.colCount-1; c++) {
 				
-				if (greaterThanEqual(r, c, firstAvailR, firstAvailC) &&
-						available(car, 2, Orientation.LEFTRIGHT, r, c) &&
+				if (Statics.greaterThanEqual(r, c, firstAvailR, firstAvailC) &&
+						availableForCar(car, 2, Orientation.LEFTRIGHT, r, c) &&
 						!completesBlock(2, Orientation.LEFTRIGHT, r, c) &&
-						leavesRedCarGap(2, Orientation.LEFTRIGHT, r, c)) {
+						leavesRedCarGap(2, Orientation.LEFTRIGHT, r, c) &&
+						(!lastToBeAdded || someCarIntersectsWinnable(2, Orientation.LEFTRIGHT, r, c))) {
 					
 					Config n = new Config(board);
-					n.insertIni(car, Orientation.LEFTRIGHT, 2, r, c);
+					n.insertCar(car, Orientation.LEFTRIGHT, 2, r, c);
 					placements.add(n);
 				}
 			}
@@ -951,13 +876,14 @@ public class Config {
 		for (int r = 0; r < par.rowCount-1; r++) {
 			for (int c = 0; c < par.colCount; c++) {
 				
-				if (greaterThanEqual(r, c, firstAvailR, firstAvailC) &&
-						available(car, 2, Orientation.UPDOWN, r, c) &&
+				if (Statics.greaterThanEqual(r, c, firstAvailR, firstAvailC) &&
+						availableForCar(car, 2, Orientation.UPDOWN, r, c) &&
 						!completesBlock(2, Orientation.UPDOWN, r, c) &&
-						leavesRedCarGap(2, Orientation.UPDOWN, r, c)) {
+						leavesRedCarGap(2, Orientation.UPDOWN, r, c) &&
+						(!lastToBeAdded || someCarIntersectsWinnable(2, Orientation.UPDOWN, r, c))) {
 					
 					Config n = new Config(board);
-					n.insertIni(car, Orientation.UPDOWN, 2, r, c);
+					n.insertCar(car, Orientation.UPDOWN, 2, r, c);
 					placements.add(n);
 				}
 			}
@@ -966,7 +892,7 @@ public class Config {
 		return placements;
 	}
 	
-	public List<Config> possible3CarPlacements(List<Config> placements) {
+	public List<Config> possible3CarPlacements(List<Config> placements, boolean lastToBeAdded) {
 		
 		byte car = firstAvailableCar();
 		int[] coor = firstAvailableCarCoor();
@@ -979,13 +905,14 @@ public class Config {
 		for (int r = 0; r < par.rowCount; r++) {
 			for (int c = 0; c < par.colCount-2; c++) {
 				
-				if (greaterThanEqual(r, c, firstAvailR, firstAvailC) &&
-						available(car, 3, Orientation.LEFTRIGHT, r, c) &&
+				if (Statics.greaterThanEqual(r, c, firstAvailR, firstAvailC) &&
+						availableForCar(car, 3, Orientation.LEFTRIGHT, r, c) &&
 						!completesBlock(3, Orientation.LEFTRIGHT, r, c) &&
-						leavesRedCarGap(3, Orientation.LEFTRIGHT, r, c)) {
+						leavesRedCarGap(3, Orientation.LEFTRIGHT, r, c) &&
+						(!lastToBeAdded || someCarIntersectsWinnable(3, Orientation.LEFTRIGHT, r, c))) {
 					
 					Config n = new Config(board);
-					n.insertIni(car, Orientation.LEFTRIGHT, 3, r, c);
+					n.insertCar(car, Orientation.LEFTRIGHT, 3, r, c);
 					placements.add(n);
 				}
 			}
@@ -997,13 +924,14 @@ public class Config {
 		for (int r = 0; r < par.rowCount-2; r++) {
 			for (int c = 0; c < par.colCount; c++) {
 				
-				if (greaterThanEqual(r, c, firstAvailR, firstAvailC) &&
-						available(car, 3, Orientation.UPDOWN, r, c) &&
+				if (Statics.greaterThanEqual(r, c, firstAvailR, firstAvailC) &&
+						availableForCar(car, 3, Orientation.UPDOWN, r, c) &&
 						!completesBlock(3, Orientation.UPDOWN, r, c) &&
-						leavesRedCarGap(3, Orientation.UPDOWN, r, c)) {
+						leavesRedCarGap(3, Orientation.UPDOWN, r, c) &&
+						(!lastToBeAdded || someCarIntersectsWinnable(3, Orientation.UPDOWN, r, c))) {
 					
 					Config n = new Config(board);
-					n.insertIni(car, Orientation.UPDOWN, 3, r, c);
+					n.insertCar(car, Orientation.UPDOWN, 3, r, c);
 					placements.add(n);
 				}
 			}
@@ -1020,7 +948,7 @@ public class Config {
 			if (b == 'R') {
 				continue;
 			}
-			boolean res = carMapGet(b);
+			boolean res = loadScratchInfo(b);
 			
 			if (!res) {
 				break;
@@ -1028,45 +956,13 @@ public class Config {
 			int row = par.scratchInfo.row;
 			int col = par.scratchInfo.col;
 			
-			res = next(row, col, par.test);
+			res = Statics.next(row, col, par.test);
 			if (!res) {
 				return null;
 			}
 		}
 		
 		return par.test;
-	}
-	
-	boolean greaterThanEqual(int r, int c, int r1, int c1) {
-		return (r > r1) || (r == r1 && c >= c1);
-	}
-	
-	boolean lessThan(int r, int c, int r1, int c1) {
-		return (r < r1) || (r == r1 && c < c1);
-	}
-	
-	/**
-	 * return if there was a next
-	 */
-	boolean next(int r, int c, int[] out) {
-		
-		if (c == par.colCount-1) {
-			
-			if (r == par.rowCount-1) {
-				
-				return false;
-				
-			} else {
-				out[0] = r+1;
-				out[1] = 1;
-			}
-			
-		} else {
-			out[0] = r;
-			out[1] = c+1;
-		}
-		
-		return true;
 	}
 	
 	/*
@@ -1089,7 +985,7 @@ public class Config {
 				} else if (b == currentCar) {
 					continue;
 				} else {
-					carMapGet(b);
+					loadScratchInfo(b);
 					Orientation so = par.scratchInfo.o;
 					if (so != Orientation.LEFTRIGHT) {
 						return false;
@@ -1114,7 +1010,7 @@ public class Config {
 				} else if (b == currentCar) {
 					continue;
 				} else {
-					carMapGet(b);
+					loadScratchInfo(b);
 					Orientation so = par.scratchInfo.o;
 					if (so != Orientation.UPDOWN) {
 						return false;
@@ -1131,6 +1027,9 @@ public class Config {
 		return false;
 	}
 	
+	/*
+	 * gap between red car and exit
+	 */
 	boolean leavesRedCarGap(int size, Orientation o, int r, int c) {
 		int side = par.side(par.exit);
 		
@@ -1139,20 +1038,20 @@ public class Config {
 		
 		switch (side) {
 		case 0:
-			gapR = par.exit[0]+3;
+			gapR = par.exit[0]+1;
 			gapC = par.exit[1];
 			break;
 		case 1:
 			gapR = par.exit[0];
-			gapC = par.exit[1]-3;
+			gapC = par.exit[1]-1;
 			break;
 		case 2:
-			gapR = par.exit[0]-3;
+			gapR = par.exit[0]-1;
 			gapC = par.exit[1];
 			break;
 		case 3:
 			gapR = par.exit[0];
-			gapC = par.exit[1]+3;
+			gapC = par.exit[1]+1;
 			break;
 		}
 		
@@ -1167,108 +1066,39 @@ public class Config {
 		return false;
 	}
 	
-	boolean tryJoint(byte c, int[] joint, Config out) {
+	boolean someCarIntersectsWinnable(int size, Orientation o, int r, int c) {
 		
-		int mR = joint[0];
-		int mC = joint[1];
+		for (byte d : cars) {
+			boolean res = loadScratchInfo(d);
+			if (res) {
+				Orientation so = par.scratchInfo.o;
+				int ss = par.scratchInfo.size;
+				int sr = par.scratchInfo.row;
+				int sc = par.scratchInfo.col;
+				if (intersectsWithWinnable(ss, so, sr, sc)) {
+					return true;
+				}
+			} else {
+				break;
+			}
+		}
+		return intersectsWithWinnable(size, o, r, c);
+	}
+	
+	boolean intersectsWithWinnable(int size, Orientation o, int r, int c) {
 		
-		carMapGet(c);
-		Orientation o = par.scratchInfo.o;
-		int size = par.scratchInfo.size;
-		int row = par.scratchInfo.row;
-		int col = par.scratchInfo.col;
-		
-		int mSide = par.side(joint);
-		switch (mSide) {
-		case 0:
-			switch (size) {
-			case 2:
-				if (available(c, size, Orientation.UPDOWN, mR+1, mC)) {
-					move(c, size, o, row, col, Orientation.UPDOWN, mR+1, mC, out);
-					return true;
-				}
-				break;
-			case 3:
-				if (available(c, size, Orientation.UPDOWN, mR+1, mC)) {
-					move(c, size, o, row, col, Orientation.UPDOWN, mR+1, mC, out);
-					return true;
-				}
-				break;
-			}
-			break;
-		case 1:
-			switch (size) {
-			case 2:
-				if (available(c, size, Orientation.LEFTRIGHT, mR, mC-2)) {
-					move(c, size, o, row, col, Orientation.LEFTRIGHT, mR, mC-2, out);
-					return true;
-				}
-				break;
-			case 3:
-				if (available(c, size, Orientation.LEFTRIGHT, mR, mC-3)) {
-					move(c, size, o, row, col, Orientation.LEFTRIGHT, mR, mC-3, out);
-					return true;
-				}
-				break;
-			}
-			break;
-		case 2:
-			switch (size) {
-			case 2:
-				if (available(c, size, Orientation.UPDOWN, mR-2, mC)) {
-					move(c, size, o, row, col, Orientation.UPDOWN, mR-2, mC, out);
-					return true;
-				}
-				break;
-			case 3:
-				if (available(c, size, Orientation.UPDOWN, mR-3, mC)) {
-					move(c, size, o, row, col, Orientation.UPDOWN, mR-3, mC, out);
-					return true;
-				}
-				break;
-			}
-			break;
-		case 3:
-			switch (size) {
-			case 2:
-				if (available(c, size, Orientation.LEFTRIGHT, mR, mC+1)) {
-					move(c, size, o, row, col, Orientation.LEFTRIGHT, mR, mC+1, out);
-					return true;
-				}
-				break;
-			case 3:
-				if (available(c, size, Orientation.LEFTRIGHT, mR, mC+1)) {
-					move(c, size, o, row, col, Orientation.LEFTRIGHT, mR, mC+1, out);
-					return true;
-				}
-				break;
-			}
-			break;
+		switch (o) {
+		case LEFTRIGHT:
+			return par.winnableCols;
+		case UPDOWN:
+			return par.winnableRows;
 		}
 		
+		assert false;
 		return false;
 	}
 	
-	public String toString() {
-		
-		StringBuilder b = new StringBuilder();
-		b.append(new String(par.ini[0]));
-		b.append('\n');
-		for (int i = 0; i < par.rowCount; i++) {
-			b.append((char)par.ini[i+1][0]);
-			for (int j = 0; j < par.colCount; j++) {
-				byte bb = boardGet(i, j);
-				b.append((char)bb);
-			}			
-			b.append((char)par.ini[i+1][par.colCount+1]);
-			b.append('\n');
-		}
-		b.append(new String(par.ini[par.ini.length-1]));
-		b.append('\n');
-		return b.toString();
-	};
-	
-	public boolean carMapGet(byte c) {
+	public boolean loadScratchInfo(byte c) {
 		
 		for (int i = 0; i < par.rowCount; i++) {
 			for (int j = 0; j < par.colCount; j++) {
@@ -1318,21 +1148,21 @@ public class Config {
 		int sr;
 		int sc;
 		
-		boolean res = carMapGet((byte)'A');
+		boolean res = loadScratchInfo((byte)'A');
 		if (res) {
 			Orientation ao = par.scratchInfo.o;
 			int as = par.scratchInfo.size;
 			int ar = par.scratchInfo.row;
 			int ac = par.scratchInfo.col;
 			
-			res = carMapGet((byte)'B');
+			res = loadScratchInfo((byte)'B');
 			if (res) {
 				Orientation bo = par.scratchInfo.o;
 				int bs = par.scratchInfo.size;
 				int br = par.scratchInfo.row;
 				int bc = par.scratchInfo.col;
 				
-				if (!(lessThan(ar, ac, br, bc))) {
+				if (!(Statics.lessThan(ar, ac, br, bc))) {
 					swap((byte)'A', ao, as, ar, ac, (byte)'B', bo, bs, br, bc);
 					so = ao;
 					ss = as;
@@ -1348,14 +1178,14 @@ public class Config {
 					bc = sc;
 				}
 				
-				res = carMapGet((byte)'C');
+				res = loadScratchInfo((byte)'C');
 				if (res) {
 					Orientation co = par.scratchInfo.o;
 					int cs = par.scratchInfo.size;
 					int cr = par.scratchInfo.row;
 					int cc = par.scratchInfo.col;
 					
-					if (!(lessThan(ar, ac, cr, cc))) {
+					if (!(Statics.lessThan(ar, ac, cr, cc))) {
 						swap((byte)'A', ao, as, ar, ac, (byte)'C', co, cs, cr, cc);
 						so = ao;
 						ss = as;
@@ -1370,7 +1200,7 @@ public class Config {
 						cr = sr;
 						cc = sc;
 					}
-					if (!(lessThan(br, bc, cr, cc))) {
+					if (!(Statics.lessThan(br, bc, cr, cc))) {
 						swap((byte)'B', bo, bs, br, bc, (byte)'C', co, cs, cr, cc);
 						so = bo;
 						ss = bs;
@@ -1386,14 +1216,14 @@ public class Config {
 						cc = sc;
 					}
 					
-					res = carMapGet((byte)'D');
+					res = loadScratchInfo((byte)'D');
 					if (res) {
 						Orientation doo = par.scratchInfo.o;
 						int ds = par.scratchInfo.size;
 						int dr = par.scratchInfo.row;
 						int dc = par.scratchInfo.col;
 						
-						if (!(lessThan(ar, ac, dr, dc))) {
+						if (!(Statics.lessThan(ar, ac, dr, dc))) {
 							swap((byte)'A', ao, as, ar, ac, (byte)'D', doo, ds, dr, dc);
 							so = ao;
 							ss = as;
@@ -1408,7 +1238,7 @@ public class Config {
 							dr = sr;
 							dc = sc;
 						}
-						if (!(lessThan(br, bc, dr, dc))) {
+						if (!(Statics.lessThan(br, bc, dr, dc))) {
 							swap((byte)'B', bo, bs, br, bc, (byte)'D', doo, ds, dr, dc);
 							so = bo;
 							ss = bs;
@@ -1423,7 +1253,7 @@ public class Config {
 							dr = sr;
 							dc = sc;
 						}
-						if (!(lessThan(cr, cc, dr, dc))) {
+						if (!(Statics.lessThan(cr, cc, dr, dc))) {
 							swap((byte)'C', co, cs, cr, cc, (byte)'D', doo, ds, dr, dc);
 							so = co;
 							ss = cs;
@@ -1439,14 +1269,14 @@ public class Config {
 							dc = sc;
 						}
 						
-						res = carMapGet((byte)'E');
+						res = loadScratchInfo((byte)'E');
 						if (res) {
 							Orientation eo = par.scratchInfo.o;
 							int es = par.scratchInfo.size;
 							int er = par.scratchInfo.row;
 							int ec = par.scratchInfo.col;
 							
-							if (!(lessThan(ar, ac, er, ec))) {
+							if (!(Statics.lessThan(ar, ac, er, ec))) {
 								swap((byte)'A', ao, as, ar, ac, (byte)'E', eo, es, er, ec);
 								so = ao;
 								ss = as;
@@ -1461,7 +1291,7 @@ public class Config {
 								er = sr;
 								ec = sc;
 							}
-							if (!(lessThan(br, bc, er, ec))) {
+							if (!(Statics.lessThan(br, bc, er, ec))) {
 								swap((byte)'B', bo, bs, br, bc, (byte)'E', eo, es, er, ec);
 								so = bo;
 								ss = bs;
@@ -1476,7 +1306,7 @@ public class Config {
 								er = sr;
 								ec = sc;
 							}
-							if (!(lessThan(cr, cc, er, ec))) {
+							if (!(Statics.lessThan(cr, cc, er, ec))) {
 								swap((byte)'C', co, cs, cr, cc, (byte)'E', eo, es, er, ec);
 								so = co;
 								ss = cs;
@@ -1491,7 +1321,7 @@ public class Config {
 								er = sr;
 								ec = sc;
 							}
-							if (!(lessThan(dr, dc, er, ec))) {
+							if (!(Statics.lessThan(dr, dc, er, ec))) {
 								swap((byte)'D', doo, ds, dr, dc, (byte)'E', eo, es, er, ec);
 								so = doo;
 								ss = ds;
@@ -1507,52 +1337,112 @@ public class Config {
 								ec = sc;
 							}
 							
-							res = carMapGet((byte)'F');
+							res = loadScratchInfo((byte)'F');
 							if (res) {
 								Orientation fo = par.scratchInfo.o;
 								int fs = par.scratchInfo.size;
 								int fr = par.scratchInfo.row;
 								int fc = par.scratchInfo.col;
 								
-								if (!(lessThan(ar, ac, fr, fc))) {
-									assert false;
+								if (!(Statics.lessThan(ar, ac, fr, fc))) {
+									swap((byte)'A', ao, as, ar, ac, (byte)'F', fo, fs, fr, fc);
+									so = ao;
+									ss = as;
+									sr = ar;
+									sc = ac;
+									ao = fo;
+									as = fs;
+									ar = fr;
+									ac = fc;
+									fo = so;
+									fs = ss;
+									fr = sr;
+									fc = sc;
 								}
-								if (!(lessThan(br, bc, fr, fc))) {
-									assert false;
+								if (!(Statics.lessThan(br, bc, fr, fc))) {
+									swap((byte)'B', bo, bs, br, bc, (byte)'F', fo, fs, fr, fc);
+									so = bo;
+									ss = bs;
+									sr = br;
+									sc = bc;
+									bo = fo;
+									bs = fs;
+									br = fr;
+									bc = fc;
+									fo = so;
+									fs = ss;
+									fr = sr;
+									fc = sc;
 								}
-								if (!(lessThan(cr, cc, fr, fc))) {
-									assert false;
+								if (!(Statics.lessThan(cr, cc, fr, fc))) {
+									swap((byte)'C', co, cs, cr, cc, (byte)'F', fo, fs, fr, fc);
+									so = co;
+									ss = cs;
+									sr = cr;
+									sc = cc;
+									co = fo;
+									cs = fs;
+									cr = fr;
+									cc = fc;
+									fo = so;
+									fs = ss;
+									fr = sr;
+									fc = sc;
 								}
-								if (!(lessThan(dr, dc, fr, fc))) {
-									assert false;
+								if (!(Statics.lessThan(dr, dc, fr, fc))) {
+									swap((byte)'D', doo, ds, dr, dc, (byte)'F', fo, fs, fr, fc);
+									so = doo;
+									ss = ds;
+									sr = dr;
+									sc = dc;
+									doo = fo;
+									ds = fs;
+									dr = fr;
+									dc = fc;
+									fo = so;
+									fs = ss;
+									fr = sr;
+									fc = sc;
 								}
-								if (!(lessThan(er, ec, fr, fc))) {
-									assert false;
+								if (!(Statics.lessThan(er, ec, fr, fc))) {
+									swap((byte)'E', eo, es, er, ec, (byte)'F', fo, fs, fr, fc);
+									so = eo;
+									ss = es;
+									sr = er;
+									sc = ec;
+									eo = fo;
+									es = fs;
+									er = fr;
+									ec = fc;
+									fo = so;
+									fs = ss;
+									fr = sr;
+									fc = sc;
 								}
 								
-								res = carMapGet((byte)'G');
+								res = loadScratchInfo((byte)'G');
 								if (res) {
 									Orientation go = par.scratchInfo.o;
 									int gs = par.scratchInfo.size;
 									int gr = par.scratchInfo.row;
 									int gc = par.scratchInfo.col;
 									
-									if (!(lessThan(ar, ac, gr, gc))) {
+									if (!(Statics.lessThan(ar, ac, gr, gc))) {
 										assert false;
 									}
-									if (!(lessThan(br, bc, gr, gc))) {
+									if (!(Statics.lessThan(br, bc, gr, gc))) {
 										assert false;
 									}
-									if (!(lessThan(cr, cc, gr, gc))) {
+									if (!(Statics.lessThan(cr, cc, gr, gc))) {
 										assert false;
 									}
-									if (!(lessThan(dr, dc, gr, gc))) {
+									if (!(Statics.lessThan(dr, dc, gr, gc))) {
 										assert false;
 									}
-									if (!(lessThan(er, ec, gr, gc))) {
+									if (!(Statics.lessThan(er, ec, gr, gc))) {
 										assert false;
 									}
-									if (!(lessThan(fr, fc, gr, gc))) {
+									if (!(Statics.lessThan(fr, fc, gr, gc))) {
 										assert false;
 									}
 									
@@ -1570,11 +1460,11 @@ public class Config {
 	
 	void swap(byte a, Orientation ao, int as, int ar, int ac, byte b, Orientation bo, int bs, int br, int bc) {
 		
-		clearIni(a, ao, as, ar, ac);
-		clearIni(b, bo, bs, br, bc);
+		clearCar(a, ao, as, ar, ac);
+		clearCar(b, bo, bs, br, bc);
 		
-		insertIni(a, bo, bs, br, bc);
-		insertIni(b, ao, as, ar, ac);
+		insertCar(a, bo, bs, br, bc);
+		insertCar(b, ao, as, ar, ac);
 		
 	}
 	

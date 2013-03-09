@@ -12,9 +12,9 @@ public class Cursor {
 	
 	void reset(Config config) {
 		this.config = config;
-		coor[0] = config.par.exit[0];
-		coor[1] = config.par.exit[1];
-		side = Config.otherSide(config.par.side(config.par.exit));
+		coor[0] = Config.par.exit[0];
+		coor[1] = Config.par.exit[1];
+		side = Statics.otherSide(Config.par.side(Config.par.exit));
 	}
 	
 	void move() {
@@ -23,8 +23,8 @@ public class Cursor {
 			coor[0] = coor[0]-1;
 			if (coor[0] == -1) {
 				assert val() == 'J' || val() == 'K';
-				int[] other = config.par.otherJoint(coor);
-				int otherSide = config.par.side(other);
+				int[] other = Config.par.otherJoint(coor);
+				int otherSide = Config.par.side(other);
 				switch (otherSide) {
 				case 0:
 					coor[0] = 0;
@@ -33,11 +33,11 @@ public class Cursor {
 					break;
 				case 1:
 					coor[0] = other[0];
-					coor[1] = config.par.colCount-1;
+					coor[1] = Config.par.colCount-1;
 					side = 3;
 					break;
 				case 2:
-					coor[0] = config.par.rowCount-1;
+					coor[0] = Config.par.rowCount-1;
 					coor[1] = other[1];
 					side = 0;
 					break;
@@ -51,10 +51,10 @@ public class Cursor {
 			break;
 		case 1:
 			coor[1] = coor[1]+1;
-			if (coor[1] == config.par.colCount) {
+			if (coor[1] == Config.par.colCount) {
 				assert val() == 'J' || val() == 'K';
-				int[] other = config.par.otherJoint(coor);
-				int otherSide = config.par.side(other);
+				int[] other = Config.par.otherJoint(coor);
+				int otherSide = Config.par.side(other);
 				switch (otherSide) {
 				case 0:
 					coor[0] = 0;
@@ -63,11 +63,11 @@ public class Cursor {
 					break;
 				case 1:
 					coor[0] = other[0];
-					coor[1] = config.par.colCount-1;
+					coor[1] = Config.par.colCount-1;
 					side = 3;
 					break;
 				case 2:
-					coor[0] = config.par.rowCount-1;
+					coor[0] = Config.par.rowCount-1;
 					coor[1] = other[1];
 					side = 0;
 					break;
@@ -81,10 +81,10 @@ public class Cursor {
 			break;
 		case 2:
 			coor[0] = coor[0]+1;
-			if (coor[0] == config.par.rowCount) {
+			if (coor[0] == Config.par.rowCount) {
 				assert val() == 'J' || val() == 'K';
-				int[] other = config.par.otherJoint(coor);
-				int otherSide = config.par.side(other);
+				int[] other = Config.par.otherJoint(coor);
+				int otherSide = Config.par.side(other);
 				switch (otherSide) {
 				case 0:
 					coor[0] = 0;
@@ -93,11 +93,11 @@ public class Cursor {
 					break;
 				case 1:
 					coor[0] = other[0];
-					coor[1] = config.par.colCount-1;
+					coor[1] = Config.par.colCount-1;
 					side = 3;
 					break;
 				case 2:
-					coor[0] = config.par.rowCount-1;
+					coor[0] = Config.par.rowCount-1;
 					coor[1] = other[1];
 					side = 0;
 					break;
@@ -113,8 +113,8 @@ public class Cursor {
 			coor[1] = coor[1]-1;
 			if (coor[1] == -1) {
 				assert val() == 'J' || val() == 'K';
-				int[] other = config.par.otherJoint(coor);
-				int otherSide = config.par.side(other);
+				int[] other = Config.par.otherJoint(coor);
+				int otherSide = Config.par.side(other);
 				switch (otherSide) {
 				case 0:
 					coor[0] = 0;
@@ -123,11 +123,11 @@ public class Cursor {
 					break;
 				case 1:
 					coor[0] = other[0];
-					coor[1] = config.par.colCount-1;
+					coor[1] = Config.par.colCount-1;
 					side = 3;
 					break;
 				case 2:
-					coor[0] = config.par.rowCount-1;
+					coor[0] = Config.par.rowCount-1;
 					coor[1] = other[1];
 					side = 0;
 					break;
@@ -143,10 +143,10 @@ public class Cursor {
 	}
 	
 	byte val() {
-		if (coor[0] == -1 || coor[0] == config.par.rowCount || coor[1] == -1 || coor[1] == config.par.colCount) {
-			return config.par.val(coor);
+		if (coor[0] == -1 || coor[0] == Config.par.rowCount || coor[1] == -1 || coor[1] == Config.par.colCount) {
+			return Config.par.val(coor);
 		}
-		return config.val(coor);
+		return config.boardGet(coor);
 	}
 	
 }
