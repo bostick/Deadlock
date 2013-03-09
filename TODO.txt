@@ -1,12 +1,7 @@
 
-alpha reductions
+don't use configs with blocks
 
-
-
-remove Config instances
-use byte[] directly
-
-Comparator for byte[] and use in TreeSet in StateSpace
+don't use configs that don't leave a gap behind the red car
 
 
 

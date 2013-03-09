@@ -24,7 +24,7 @@ public class Generator {
 		{' ', 'X', 'X', 'X', 'X', 'X', 'X', ' '},
 		{' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
 	};
-	static ParentConfig par;
+//	static ParentConfig par;
 	static StateSpace explored = new StateSpace();
 	
 	public static void generate() throws Exception {
@@ -33,21 +33,21 @@ public class Generator {
 		
 		long total = System.currentTimeMillis();
 		long t = total;
-		long configs;
+//		long configs;
 		System.out.print("winning base cases... ");
 		System.out.println("");
 		List<Config> winners = new ArrayList<Config>();
 		
-		par = new ParentConfig(boardIni);
-		par.carMapPresent((byte)'R');
-		par.carMapPresent((byte)'A');
-		par.carMapPresent((byte)'B');
-		par.carMapPresent((byte)'C');
-		par.carMapPresent((byte)'D');
-		par.carMapPresent((byte)'E');
+		Config.par = new ParentConfig(boardIni);
+		Config.par.addCar((byte)'R');
+		Config.par.addCar((byte)'A');
+		Config.par.addCar((byte)'B');
+		Config.par.addCar((byte)'C');
+		Config.par.addCar((byte)'D');
+		Config.par.addCar((byte)'E');
 //		par.carMapPresent((byte)'F');
 		
-		Config red = par.newConfig();
+		Config red = Config.par.newConfig();
 		red = red.redCarWinningConfig();
 		
 		List<Config> placementsA = new ArrayList<Config>();
@@ -101,19 +101,19 @@ public class Generator {
 		for (Config w : winners) {
 			explored.putGenerating(w, null);
 		}
-		System.out.print(" " + (System.currentTimeMillis() - t) + " millis, ");
-		System.out.print(100 * (((float)(Config.configCounter - 0)) / ((float)(winners.size()))) + "% of explored were unique and added");
+		System.out.print(" " + (System.currentTimeMillis() - t) + " millis");
+//		System.out.print(100 * (((float)(Config.configCounter - 0)) / ((float)(winners.size()))) + "% of explored were unique and added");
 		System.out.println("");
 		
 		List<Config> a = new ArrayList<Config>();
 		while (true) {
 			t = System.currentTimeMillis();
-			configs = Config.configCounter;
+//			configs = Config.configCounter;
 			
 			System.out.print("exploring... ");
 			a.addAll(explored.lastIteration);
 			explored.lastIteration.clear();
-			explored.lastIterationMoves = 0;
+//			explored.lastIterationMoves = 0;
 			
 			System.out.print("(" + a.size() + ") ");
 			for (int i = 0; i < a.size(); i++) {
@@ -125,8 +125,8 @@ public class Generator {
 			}
 			a.clear();
 			
-			System.out.print(" " + (System.currentTimeMillis() - t) + " millis, ");
-			System.out.print(100 * (((float)(Config.configCounter - configs)) / ((float)(explored.lastIterationMoves))) + "% of explored were unique and added");
+			System.out.print(" " + (System.currentTimeMillis() - t) + " millis");
+//			System.out.print(100 * (((float)(Config.configCounter - configs)) / ((float)(explored.lastIterationMoves))) + "% of explored were unique and added");
 			System.out.println("");
 			if (explored.lastIteration.isEmpty()) {
 				break;
@@ -135,7 +135,7 @@ public class Generator {
 		System.out.println("reached fixpoint");
 		
 		System.out.print("finding longest non-BS path... ");
-		System.out.print("(" + explored.allIterations.size() + ") ");
+		System.out.print("(" + explored.allconfigs.size() + ") ");
 //		Config hardest = null;
 		/*
 		 * start at end of iterations and work backwards, looking for first non-BS config
@@ -211,10 +211,10 @@ public class Generator {
 		while (true) {
 			if (d.generatingVal == null) {
 				if (d.isWinning()) {
-					assert explored.allIterations.contains(d);
+					assert explored.allconfigs.contains(d);
 					return dist;
 				} else {
-					assert !explored.allIterations.contains(d);
+					assert !explored.allconfigs.contains(d);
 					assert false;
 					return -1;
 				}
@@ -234,10 +234,10 @@ public class Generator {
 		
 		List<Config> moves = c.possiblePreviousMoves();
 		
-		explored.lastIterationMoves += moves.size();
+//		explored.lastIterationMoves += moves.size();
 		
 		for (Config m : moves) {
-			if (!explored.allIterationsContains(m)) {
+			if (!explored.allConfigsContains(m)) {
 				explored.putGenerating(m.copy(), c);
 			} else {
 				
@@ -270,7 +270,7 @@ public class Generator {
 				List<Config> moves = b.possibleNextMoves();
 				
 				for (Config m : moves) {
-					if (!space.allIterationsContains(m)) {
+					if (!space.allConfigsContains(m)) {
 						space.putSolving(m.copy(), b);
 					}
 				}

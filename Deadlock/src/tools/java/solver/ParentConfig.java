@@ -282,7 +282,7 @@ public class ParentConfig {
 				case 'F':
 				case 'G':
 					if (!carMapContains(c)) {
-						carMapPresent(c);
+						addCar(c);
 					}
 					break;
 				}
@@ -291,8 +291,10 @@ public class ParentConfig {
 		
 		
 		emptyBoard = Config.newBoard(ini.length-2, ini[0].length-2);
-		for (int i = 0; i < emptyBoard.length; i++) {
-			emptyBoard[i] = 17;
+		for (int i = 0; i < rowCount; i++) {
+			for (int j = 0; j < colCount; j++) {
+				Config.boardSet(emptyBoard, i, j, (byte)'X', colCount);
+			}
 		}
 		
 	}
@@ -436,7 +438,7 @@ public class ParentConfig {
 		return false;
 	}
 	
-	public void carMapPresent(byte c) {
+	public void addCar(byte c) {
 		switch (c) {
 		case 'R':
 			carPresent[0] = true;
@@ -649,6 +651,6 @@ public class ParentConfig {
 	}
 	
 	public Config newConfig() {
-		return new Config(this, emptyBoard);
+		return new Config(emptyBoard);
 	}
 }

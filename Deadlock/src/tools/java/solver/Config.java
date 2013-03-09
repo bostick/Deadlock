@@ -8,7 +8,8 @@ public class Config {
 	public Config solvingVal;
 	public Config previousGeneratingConfig;
 	
-	final ParentConfig par;
+	public static ParentConfig par;
+	
 	public final byte[] board;
 	
 //	public boolean bs;
@@ -16,11 +17,11 @@ public class Config {
 	static byte[] cars = new byte[] {'R', 'A', 'B', 'C', 'D', 'E', 'F', 'G' };
 	
 	
-	public static long configCounter = 0;
+//	public static long configCounter = 0;
 	
-	public Config(ParentConfig par, byte[] old) {
-		configCounter++;
-		this.par = par;
+	public Config(byte[] old) {
+//		configCounter++;
+//		this.par = par;
 		board = copy(old);
 	}
 	
@@ -46,7 +47,7 @@ public class Config {
 	}
 	
 	public void copy(Config out) {
-		assert out.par == par;
+//		assert out.par == par;
 		for (int i = 0; i < board.length; i++) {
 			out.board[i] = board[i];
 		}
@@ -78,35 +79,28 @@ public class Config {
 		
 		switch (n) {
 		case 0:
-			return ' ';
-		case 1:
 			return 'X';
-		case 2:
-			return 'Y';
-		case 3:
-			return 'J';
-		case 4:
-			return 'K';
-		case 5:
+		case 1:
 			return 'R';
-		case 6:
+		case 2:
 			return 'A';
-		case 7:
+		case 3:
 			return 'B';
-		case 8:
+		case 4:
 			return 'C';
-		case 9:
+		case 5:
 			return 'D';
-		case 10:
+		case 6:
 			return 'E';
-		case 11:
+		case 7:
 			return 'F';
-		case 12:
+		case 8:
 			return 'G';
+		default:
+			assert false;
+			return 0;
 		}
 		
-		assert false;
-		return 0;
 	}
 	
 	void boardSet(int r, int c, byte b) {
@@ -117,45 +111,36 @@ public class Config {
 		
 		byte actualByte = 0;
 		switch (b) {
-		case ' ':
+		case 'X':
 			actualByte = 0;
 			break;
-		case 'X':
+		case 'R':
 			actualByte = 1;
 			break;
-		case 'Y':
+		case 'A':
 			actualByte = 2;
 			break;
-		case 'J':
+		case 'B':
 			actualByte = 3;
 			break;
-		case 'K':
+		case 'C':
 			actualByte = 4;
 			break;
-		case 'R':
+		case 'D':
 			actualByte = 5;
 			break;
-		case 'A':
+		case 'E':
 			actualByte = 6;
 			break;
-		case 'B':
+		case 'F':
 			actualByte = 7;
 			break;
-		case 'C':
+		case 'G':
 			actualByte = 8;
 			break;
-		case 'D':
-			actualByte = 9;
-			break;
-		case 'E':
-			actualByte = 10;
-			break;
-		case 'F':
-			actualByte = 11;
-			break;
-		case 'G':
-			actualByte = 12;
-			break;
+		default:
+			assert false;
+			return;
 		}
 		
 		int actualCol;
@@ -395,19 +380,15 @@ public class Config {
 		return true;
 	}
 	
-	public Config insert(byte c, Orientation o, int size, int row, int col) {
-		
-//		par.carMapPresent(c);
-		
-		Config n = new Config(par, board);
-		
-		boolean res = n.insertIni(c, o, size, row, col);
-		assert res;
-		
-//		assert 
-		
-		return n;
-	}
+//	public Config insert(byte c, Orientation o, int size, int row, int col) {
+//		
+//		Config n = new Config(board);
+//		
+//		boolean res = n.insertIni(c, o, size, row, col);
+//		assert res;
+//		
+//		return n;
+//	}
 	
 	public boolean insertIni(byte c, Orientation o, int size, int row, int col) {
 		
@@ -908,20 +889,20 @@ public class Config {
 	public Config redCarWinningConfig() {
 		int side = par.side(par.exit);
 		
-		Config n;
+		Config n = new Config(board);
 		
 		switch (side) {
 		case 0:
-			n = insert((byte)'R', Orientation.UPDOWN, 2, par.exit[0]+1, par.exit[1]);
+			n.insertIni((byte)'R', Orientation.UPDOWN, 2, par.exit[0]+1, par.exit[1]);
 			return n;
 		case 1:
-			n = insert((byte)'R', Orientation.LEFTRIGHT, 2, par.exit[0], par.exit[1]-2);
+			n.insertIni((byte)'R', Orientation.LEFTRIGHT, 2, par.exit[0], par.exit[1]-2);
 			return n;
 		case 2:
-			n = insert((byte)'R', Orientation.UPDOWN, 2, par.exit[0]-2, par.exit[1]);
+			n.insertIni((byte)'R', Orientation.UPDOWN, 2, par.exit[0]-2, par.exit[1]);
 			return n;
 		case 3:
-			n = insert((byte)'R', Orientation.LEFTRIGHT, 2, par.exit[0], par.exit[1]+1);
+			n.insertIni((byte)'R', Orientation.LEFTRIGHT, 2, par.exit[0], par.exit[1]+1);
 			return n;
 		}
 		
@@ -952,12 +933,13 @@ public class Config {
 		for (int r = 0; r < par.rowCount; r++) {
 			for (int c = 0; c < par.colCount-1; c++) {
 				
-//				if (!par.isInterfereRow(r)) {
-//					continue;
-//				}
-				
-				if (greaterThanEqual(r, c, firstAvailR, firstAvailC) && available(car, 2, Orientation.LEFTRIGHT, r, c)) {
-					Config n = insert(car, Orientation.LEFTRIGHT, 2, r, c);
+				if (greaterThanEqual(r, c, firstAvailR, firstAvailC) &&
+						available(car, 2, Orientation.LEFTRIGHT, r, c) &&
+						!completesBlock(2, Orientation.LEFTRIGHT, r, c) &&
+						leavesRedCarGap(2, Orientation.LEFTRIGHT, r, c)) {
+					
+					Config n = new Config(board);
+					n.insertIni(car, Orientation.LEFTRIGHT, 2, r, c);
 					placements.add(n);
 				}
 			}
@@ -969,12 +951,13 @@ public class Config {
 		for (int r = 0; r < par.rowCount-1; r++) {
 			for (int c = 0; c < par.colCount; c++) {
 				
-//				if (!par.isInterfereCol(c)) {
-//					continue;
-//				}
-				
-				if (greaterThanEqual(r, c, firstAvailR, firstAvailC) && available(car, 2, Orientation.UPDOWN, r, c)) {
-					Config n = insert(car, Orientation.UPDOWN, 2, r, c);
+				if (greaterThanEqual(r, c, firstAvailR, firstAvailC) &&
+						available(car, 2, Orientation.UPDOWN, r, c) &&
+						!completesBlock(2, Orientation.UPDOWN, r, c) &&
+						leavesRedCarGap(2, Orientation.UPDOWN, r, c)) {
+					
+					Config n = new Config(board);
+					n.insertIni(car, Orientation.UPDOWN, 2, r, c);
 					placements.add(n);
 				}
 			}
@@ -996,12 +979,13 @@ public class Config {
 		for (int r = 0; r < par.rowCount; r++) {
 			for (int c = 0; c < par.colCount-2; c++) {
 				
-//				if (!par.isInterfereRow(r)) {
-//					continue;
-//				}
-				
-				if (greaterThanEqual(r, c, firstAvailR, firstAvailC) && available(car, 3, Orientation.LEFTRIGHT, r, c)) {
-					Config n = insert(car, Orientation.LEFTRIGHT, 3, r, c);
+				if (greaterThanEqual(r, c, firstAvailR, firstAvailC) &&
+						available(car, 3, Orientation.LEFTRIGHT, r, c) &&
+						!completesBlock(3, Orientation.LEFTRIGHT, r, c) &&
+						leavesRedCarGap(3, Orientation.LEFTRIGHT, r, c)) {
+					
+					Config n = new Config(board);
+					n.insertIni(car, Orientation.LEFTRIGHT, 3, r, c);
 					placements.add(n);
 				}
 			}
@@ -1013,12 +997,13 @@ public class Config {
 		for (int r = 0; r < par.rowCount-2; r++) {
 			for (int c = 0; c < par.colCount; c++) {
 				
-//				if (!par.isInterfereCol(c)) {
-//					continue;
-//				}
-				
-				if (greaterThanEqual(r, c, firstAvailR, firstAvailC) && available(car, 3, Orientation.UPDOWN, r, c)) {
-					Config n = insert(car, Orientation.UPDOWN, 3, r, c);
+				if (greaterThanEqual(r, c, firstAvailR, firstAvailC) &&
+						available(car, 3, Orientation.UPDOWN, r, c) &&
+						!completesBlock(3, Orientation.UPDOWN, r, c) &&
+						leavesRedCarGap(3, Orientation.UPDOWN, r, c)) {
+					
+					Config n = new Config(board);
+					n.insertIni(car, Orientation.UPDOWN, 3, r, c);
 					placements.add(n);
 				}
 			}
@@ -1026,49 +1011,6 @@ public class Config {
 		
 		return placements;
 	}
-	
-//	public int possible3CarPlacementsCount() {
-//		
-//		int[] coor = firstAvailable3CarCoor();
-//		int firstAvailR = coor[0];
-//		int firstAvailC = coor[1];
-//		
-//		int placements = 0;
-//		
-//		/*
-//		 * left-right
-//		 */
-//		for (int r = 0; r < par.rowCount; r++) {
-//			for (int c = 0; c < par.colCount-2; c++) {
-//				
-//				if (!par.isInterfereRow(r)) {
-//					continue;
-//				}
-//				
-//				if (greaterThanEqual(r, c, firstAvailR, firstAvailC) && available(Orientation.LEFTRIGHT, 3, r, c)) {
-//					placements++;
-//				}
-//			}
-//		}
-//		
-//		/*
-//		 * up-down
-//		 */
-//		for (int r = 0; r < par.rowCount-2; r++) {
-//			for (int c = 0; c < par.colCount; c++) {
-//				
-//				if (!par.isInterfereCol(c)) {
-//					continue;
-//				}
-//				
-//				if (greaterThanEqual(r, c, firstAvailR, firstAvailC) && available(Orientation.UPDOWN, 3, r, c)) {
-//					placements++;
-//				}
-//			}
-//		}
-//		
-//		return placements;
-//	}
 	
 	int[] firstAvailableCarCoor() {
 		
@@ -1083,49 +1025,17 @@ public class Config {
 			if (!res) {
 				break;
 			}
-//			int size = par.scratchInfo.size;
 			int row = par.scratchInfo.row;
 			int col = par.scratchInfo.col;
 			
-			//if (size == 2) {
 			res = next(row, col, par.test);
 			if (!res) {
 				return null;
 			}
-			//}
 		}
 		
 		return par.test;
 	}
-	
-//	int[] firstAvailable3CarCoor() {
-//		
-//		par.test[0] = 0;
-//		par.test[1] = 0;
-//		for (byte b : cars) {
-//			if (b == 'R') {
-//				continue;
-//			}
-//			
-//			boolean res = carMapGet(b);
-//			
-//			if (!res) {
-//				break;
-//			}
-//			int size = par.scratchInfo.size;
-//			int row = par.scratchInfo.row;
-//			int col = par.scratchInfo.col;
-//			
-//			if (size == 3) {
-//				res = next(row, col, par.test);
-//				if (!res) {
-//					return null;
-//				}
-//			}
-//		}
-//		
-//		return par.test;
-//	}
 	
 	boolean greaterThanEqual(int r, int c, int r1, int c1) {
 		return (r > r1) || (r == r1 && c >= c1);
@@ -1157,6 +1067,104 @@ public class Config {
 		}
 		
 		return true;
+	}
+	
+	/*
+	 * returns true if inserting specified car completes an immoveable block from one side to the next
+	 */
+	boolean completesBlock(int size, Orientation o, int r, int c) {
+		
+		switch (o) {
+		case LEFTRIGHT: {
+			
+			byte currentCar = 'X';
+			for (int i = 0; i < par.colCount; i++) {
+				byte b = boardGet(r, i);
+				if (b == 'X') {
+					if (i >= c && i <= c+size) {
+						continue;
+					} else {
+						return false;
+					}
+				} else if (b == currentCar) {
+					continue;
+				} else {
+					carMapGet(b);
+					Orientation so = par.scratchInfo.o;
+					if (so != Orientation.LEFTRIGHT) {
+						return false;
+					}
+					currentCar = b;
+				}
+			}
+			return true;
+		}
+			
+		case UPDOWN: {
+			
+			byte currentCar = 'X';
+			for (int i = 0; i < par.rowCount; i++) {
+				byte b = boardGet(i, c);
+				if (b == 'X') {
+					if (i >= r && i <= r+size) {
+						continue;
+					} else {
+						return false;
+					}
+				} else if (b == currentCar) {
+					continue;
+				} else {
+					carMapGet(b);
+					Orientation so = par.scratchInfo.o;
+					if (so != Orientation.UPDOWN) {
+						return false;
+					}
+					currentCar = b;
+				}
+			}
+			return true;	
+		}
+		
+		}
+		
+		assert false;
+		return false;
+	}
+	
+	boolean leavesRedCarGap(int size, Orientation o, int r, int c) {
+		int side = par.side(par.exit);
+		
+		int gapR = -1;
+		int gapC = -1;
+		
+		switch (side) {
+		case 0:
+			gapR = par.exit[0]+3;
+			gapC = par.exit[1];
+			break;
+		case 1:
+			gapR = par.exit[0];
+			gapC = par.exit[1]-3;
+			break;
+		case 2:
+			gapR = par.exit[0]-3;
+			gapC = par.exit[1];
+			break;
+		case 3:
+			gapR = par.exit[0];
+			gapC = par.exit[1]+3;
+			break;
+		}
+		
+		switch (o) {
+		case LEFTRIGHT:
+			return gapR != r || (gapC < c || gapC > c+size);
+		case UPDOWN:
+			return gapC != c || (gapR < r || gapR > r+size);
+		}
+		
+		assert false;
+		return false;
 	}
 	
 	boolean tryJoint(byte c, int[] joint, Config out) {

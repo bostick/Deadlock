@@ -1,9 +1,9 @@
 package generator;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.TreeSet;
 
 import solver.Config;
 
@@ -15,19 +15,22 @@ public class StateSpace {
 	public Config lastConfig;
 	
 	public List<Config> lastIteration = new ArrayList<Config>();
-	public long lastIterationMoves;
+//	public long lastIterationMoves;
 	
 //	public List<Config> allIterations = new ArrayList<Config>();
 	
-	public Set<Config> allIterations = new TreeSet<Config>(comparator for configs as byte[]);
+//	public Set<Config> allIterations = new TreeSet<Config>(comparator for configs as byte[]);
+	public Set<Config> allconfigs = new HashSet<Config>();
 	
 //	public int hashCode() {
 //		return map.hashCode();
 //	}
 	
 	public void putGenerating(Config key, Config val) {
+		
 		lastIteration.add(key);
-		allIterations.add(key);
+		
+		allconfigs.add(key);
 		
 //		generatingMap.put(key, val);
 		key.generatingVal = val;
@@ -40,16 +43,18 @@ public class StateSpace {
 	}
 	
 	public void putSolving(Config key, Config val) {
+		
 		lastIteration.add(key);
-		allIterations.add(key);
+		
+		allconfigs.add(key);
 		
 //		solvingMap.put(key, val);
 		key.solvingVal = val;
 		
 	}
 	
-	public boolean allIterationsContains(Config k) {
-		return allIterations.contains(k);
+	public boolean allConfigsContains(Config k) {
+		return allconfigs.contains(k);
 	}
 	
 //	public Set<Config> keySet() {
