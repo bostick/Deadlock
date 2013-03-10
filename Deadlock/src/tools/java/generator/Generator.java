@@ -40,8 +40,8 @@ public class Generator {
 		Config.par.addCar((byte)'B');
 		Config.par.addCar((byte)'C');
 		Config.par.addCar((byte)'D');
-//		Config.par.addCar((byte)'E');
-//		Config.par.addCar((byte)'F');
+		Config.par.addCar((byte)'E');
+		Config.par.addCar((byte)'F');
 //		Config.par.addCar((byte)'G');
 		
 		Config red = new Config(Config.par.emptyBoard);
@@ -51,8 +51,8 @@ public class Generator {
 		List<Config> placementsB = new ArrayList<Config>();
 		List<Config> placementsC = new ArrayList<Config>();
 		List<Config> placementsD = new ArrayList<Config>();
-//		List<Config> placementsE = new ArrayList<Config>();
-//		List<Config> placementsF = new ArrayList<Config>();
+		List<Config> placementsE = new ArrayList<Config>();
+		List<Config> placementsF = new ArrayList<Config>();
 //		List<Config> placementsG = new ArrayList<Config>();
 		
 		placementsA.clear();
@@ -72,33 +72,33 @@ public class Generator {
 					
 //					winners.add(f);
 					placementsD.clear();
-					c.possible2CarPlacements(placementsD, true);
+					c.possible2CarPlacements(placementsD, false);
 					for (Config d : placementsD) {
 						
-						winners.add(d);
-//						placementsE.clear();
-//						d.possible2CarPlacements(placementsE, false);
-//						for (Config e : placementsE) {
-//							
-////							winners.add(e);
-//							placementsF.clear();
-//							e.possible3CarPlacements(placementsF, true);
-//							for (Config f : placementsF) {
-//								
-//								winners.add(f);
-////								placementsG.clear();
-////								f.possible2CarPlacements(placementsG, true);
-////								for (Config g : placementsG) {
-////									
-////									winners.add(g);
-////									if (winners.size() == 1000000) {
-////										break outerLoop;
-////									}
-////									
-////								}
-//							}
-//							
-//						}
+//						winners.add(d);
+						placementsE.clear();
+						d.possible2CarPlacements(placementsE, false);
+						for (Config e : placementsE) {
+							
+//							winners.add(e);
+							placementsF.clear();
+							e.possible3CarPlacements(placementsF, true);
+							for (Config f : placementsF) {
+								
+								winners.add(f);
+//								placementsG.clear();
+//								f.possible2CarPlacements(placementsG, true);
+//								for (Config g : placementsG) {
+//									
+//									winners.add(g);
+//									if (winners.size() == 1000000) {
+//										break outerLoop;
+//									}
+//									
+//								}
+							}
+							
+						}
 						
 					}
 				}
@@ -247,7 +247,7 @@ public class Generator {
 						 * move is actually closer
 						 * so cDist may be wrong
 						 */
-						System.console();
+//						System.console();
 					}
 				} else if (mDist == cDist + 1) {
 					// everything ok

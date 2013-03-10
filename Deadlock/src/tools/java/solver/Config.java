@@ -565,13 +565,13 @@ public class Config {
 						if (availableForCar(c, size, o, row, col-1)) {
 							
 							moveCar(c, size, o, row, col, o, row, col-1, scratch);
-							if (nowBlockingPath(c, scratch, this)) {
+							if (nowBlockingPath(scratch, this)) {
 								par.moves.add(scratch);
 							}
 						} else if (par.isJoint(row, col-1)) {
 							boolean res = tryJoint(c, par.otherJoint(row, col-1), scratch);
 							if (res) {
-								if (nowBlockingPath(c, scratch, this)) {
+								if (nowBlockingPath(scratch, this)) {
 									par.moves.add(scratch);
 								}
 							}
@@ -580,13 +580,13 @@ public class Config {
 						scratch = par.scratchRight(c);
 						if (availableForCar(c, size, o, row, col+1)) {
 							moveCar(c, size, o, row, col, o, row, col+1, par.scratchRight(c));
-							if (nowBlockingPath(c, scratch, this)) {
+							if (nowBlockingPath(scratch, this)) {
 								par.moves.add(scratch);
 							}
 						} else if (par.isJoint(row, col+size)) {
 							boolean res = tryJoint(c, par.otherJoint(row, col+size), par.scratchRight(c));
 							if (res) {
-								if (nowBlockingPath(c, scratch, this)) {
+								if (nowBlockingPath(scratch, this)) {
 									par.moves.add(scratch);
 								}
 							}
@@ -597,13 +597,13 @@ public class Config {
 						scratch = par.scratchUp(c);
 						if (availableForCar(c, size, o, row-1, col)) {
 							moveCar(c, size, o, row, col, o, row-1, col, par.scratchUp(c));
-							if (nowBlockingPath(c, scratch, this)) {
+							if (nowBlockingPath(scratch, this)) {
 								par.moves.add(scratch);
 							}
 						} else if (par.isJoint(row-1, col)) {
 							boolean res = tryJoint(c, par.otherJoint(row-1, col), par.scratchUp(c));
 							if (res) {
-								if (nowBlockingPath(c, scratch, this)) {
+								if (nowBlockingPath(scratch, this)) {
 									par.moves.add(scratch);
 								}
 							}
@@ -612,13 +612,13 @@ public class Config {
 						scratch = par.scratchDown(c);
 						if (availableForCar(c, size, o, row+1, col)) {
 							moveCar(c, size, o, row, col, o, row+1, col, par.scratchDown(c));
-							if (nowBlockingPath(c, scratch, this)) {
+							if (nowBlockingPath(scratch, this)) {
 								par.moves.add(scratch);
 							}
 						} else if (par.isJoint(row+size, col)) {
 							boolean res = tryJoint(c, par.otherJoint(row+size, col), par.scratchDown(c));
 							if (res) {
-								if (nowBlockingPath(c, scratch, this)) {
+								if (nowBlockingPath(scratch, this)) {
 									par.moves.add(scratch);
 								}
 							}
@@ -1051,8 +1051,7 @@ public class Config {
 		return furtherFromExit(c, cur, next);
 	}
 	
-	boolean nowBlockingPath(byte c, Config next, Config cur) {
-		assert c != 'R';
+	boolean nowBlockingPath(Config next, Config cur) {
 		
 		par.cursor.reset(next);
 		boolean nextBlocking = false;
@@ -1069,11 +1068,9 @@ public class Config {
 					} else {
 						par.cursor.move();
 					}
-				} else if (par.cursor.val() == c) {
+				} else {
 					nextBlocking = true;
 					break;
-				} else {
-					par.cursor.move();
 				}
 			}
 		}
@@ -1093,11 +1090,9 @@ public class Config {
 					} else {
 						par.cursor.move();
 					}
-				} else if (par.cursor.val() == c) {
-					curBlocking = true;
-					break;
 				} else {
-					par.cursor.move();
+					nextBlocking = true;
+					break;
 				}
 			}
 		}
@@ -1356,9 +1351,9 @@ public class Config {
 		
 		switch (o) {
 		case LEFTRIGHT:
-			return gapR != r || (gapC < c || gapC > c+size);
+			return gapR != r || (gapC < c || gapC >= c+size);
 		case UPDOWN:
-			return gapC != c || (gapR < r || gapR > r+size);
+			return gapC != c || (gapR < r || gapR >= r+size);
 		}
 		
 		assert false;
