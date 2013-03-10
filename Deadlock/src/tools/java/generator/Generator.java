@@ -20,9 +20,9 @@ public class Generator {
 		{' ', 'X', 'X', 'X', 'X', 'X', 'X', ' '},
 		{' ', 'X', 'X', 'X', 'X', 'X', 'X', 'Y'},
 		{' ', 'X', 'X', 'X', 'X', 'X', 'X', ' '},
+		{'J', 'X', 'X', 'X', 'X', 'X', 'X', ' '},
 		{' ', 'X', 'X', 'X', 'X', 'X', 'X', ' '},
-		{' ', 'X', 'X', 'X', 'X', 'X', 'X', ' '},
-		{' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
+		{' ', ' ', 'J', ' ', ' ', ' ', ' ', ' '},
 	};
 	static StateSpace explored = new StateSpace();
 	
@@ -40,7 +40,7 @@ public class Generator {
 		Config.par.addCar((byte)'B');
 		Config.par.addCar((byte)'C');
 		Config.par.addCar((byte)'D');
-		Config.par.addCar((byte)'E');
+//		Config.par.addCar((byte)'E');
 //		Config.par.addCar((byte)'F');
 //		Config.par.addCar((byte)'G');
 		
@@ -51,12 +51,13 @@ public class Generator {
 		List<Config> placementsB = new ArrayList<Config>();
 		List<Config> placementsC = new ArrayList<Config>();
 		List<Config> placementsD = new ArrayList<Config>();
-		List<Config> placementsE = new ArrayList<Config>();
+//		List<Config> placementsE = new ArrayList<Config>();
 //		List<Config> placementsF = new ArrayList<Config>();
 //		List<Config> placementsG = new ArrayList<Config>();
 		
 		placementsA.clear();
 		red.possible2CarPlacements(placementsA, false);
+//		outerLoop:
 		for (Config a : placementsA) {
 			
 //			winners.add(d);
@@ -71,17 +72,17 @@ public class Generator {
 					
 //					winners.add(f);
 					placementsD.clear();
-					c.possible2CarPlacements(placementsD, false);
+					c.possible2CarPlacements(placementsD, true);
 					for (Config d : placementsD) {
 						
-//						winners.add(d);
-						placementsE.clear();
-						d.possible2CarPlacements(placementsE, true);
-						for (Config e : placementsE) {
-							
-							winners.add(e);
+						winners.add(d);
+//						placementsE.clear();
+//						d.possible2CarPlacements(placementsE, false);
+//						for (Config e : placementsE) {
+//							
+////							winners.add(e);
 //							placementsF.clear();
-//							e.possible2CarPlacements(placementsF, true);
+//							e.possible3CarPlacements(placementsF, true);
 //							for (Config f : placementsF) {
 //								
 //								winners.add(f);
@@ -90,10 +91,14 @@ public class Generator {
 ////								for (Config g : placementsG) {
 ////									
 ////									winners.add(g);
+////									if (winners.size() == 1000000) {
+////										break outerLoop;
+////									}
+////									
 ////								}
 //							}
-							
-						}
+//							
+//						}
 						
 					}
 				}
@@ -103,12 +108,13 @@ public class Generator {
 		System.out.println("size: " + winners.size() + "");
 		
 		for (Config w : winners) {
-			explored.putGenerating(w, null);
+			explored.putGenerating(w, null, 0);
 		}
 		System.out.print(" " + (System.currentTimeMillis() - t) + " millis");
 		System.out.println("");
 		
 		List<Config> a = new ArrayList<Config>();
+//		int iteration = 0;
 		while (true) {
 			t = System.currentTimeMillis();
 			
@@ -122,20 +128,33 @@ public class Generator {
 					System.out.print(".");
 				}
 				Config b = a.get(i);
+//				if (!b.bs) {
 				explorePreviousMoves(b);
+//				}
 			}
 			a.clear();
+			
+//			for (Config c : explored.lastIteration) {
+//				
+//				c.possibleNextMoves();
+//				
+//			}
 			
 			System.out.print(" " + (System.currentTimeMillis() - t) + " millis");
 			System.out.println("");
 			if (explored.lastIteration.isEmpty()) {
 				break;
 			}
+			
+//			iteration++;
 		}
 		System.out.println("reached fixpoint");
 		
 		System.out.print("finding longest non-BS path... ");
-		System.out.print("(" + explored.allconfigs.size() + ") ");
+		System.out.print("(" + explored.allConfigsSize() + ") ");
+		
+		explored.clearAllConfigs();
+		
 		/*
 		 * start at end of iterations and work backwards, looking for first non-BS config
 		 */
@@ -160,6 +179,7 @@ public class Generator {
 				break;
 				
 			} else {
+				assert solution.size() < dist;
 				
 				if (ll % 1000 == 0) {
 					System.out.print("!");
@@ -188,10 +208,10 @@ public class Generator {
 		while (true) {
 			if (d.generatingVal == null) {
 				if (d.isWinning()) {
-					assert explored.allconfigs.contains(d);
+					assert explored.allConfigsContains(d);
 					return dist;
 				} else {
-					assert !explored.allconfigs.contains(d);
+					assert !explored.allConfigsContains(d);
 					assert false;
 					return -1;
 				}
@@ -205,11 +225,38 @@ public class Generator {
 	
 	static public void explorePreviousMoves(Config c) {
 		
+		assert explored.allConfigsContains(c);
+		int cDist = explored.allConfigsGet(c);
+		
 		List<Config> moves = c.possiblePreviousMoves();
 		
 		for (Config m : moves) {
 			if (!explored.allConfigsContains(m)) {
-				explored.putGenerating(m.clone(), c);
+				explored.putGenerating(m.clone(), c, cDist + 1);
+			} else {
+				
+				int mDist = explored.allConfigsGet(m);
+				if (mDist < cDist + 1) {
+					if (mDist == cDist) {
+						/*
+						 * some change that does not affect winning distance between the two configs
+						 */
+//						assert false;
+					} else {
+						/*
+						 * move is actually closer
+						 * so cDist may be wrong
+						 */
+						System.console();
+					}
+				} else if (mDist == cDist + 1) {
+					// everything ok
+//					assert false;
+				} else {
+//					never happens
+					assert false;
+				}
+				
 			}
 		}
 	}
@@ -217,7 +264,7 @@ public class Generator {
 	static List<Config> solve(Config start) {
 		
 		StateSpace space = new StateSpace();
-		space.putSolving(start, null);
+		space.putSolving(start, null, 0);
 		
 		Config winner = null;
 		loop:
@@ -238,7 +285,7 @@ public class Generator {
 				
 				for (Config m : moves) {
 					if (!space.allConfigsContains(m)) {
-						space.putSolving(m.clone(), b);
+						space.putSolving(m.clone(), b, 0);
 					}
 				}
 				

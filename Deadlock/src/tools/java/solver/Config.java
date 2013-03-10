@@ -8,6 +8,9 @@ public class Config {
 	public Config solvingVal;
 	public Config previousGeneratingConfig;
 	
+//	public boolean bs;
+//	public int shortestDistToWinner;
+	
 	public static ParentConfig par;
 	
 	public final byte[] board;
@@ -448,25 +451,192 @@ public class Config {
 		
 		if (hasClearPathToExit()) {
 			
-			/*
-			 * for red car, move away from exit
-			 * for other cars, unblock path from red car to exit
-			 */
-			d;
+			for (byte c : cars) {
+				if (!par.carMapContains(c)) {
+					continue;
+				}
+				
+				if (c == 'R') {
+					
+					/*
+					 * for red car, move away from exit
+					 */
+					loadScratchInfo(c);
+					Orientation o = par.scratchInfo.o;
+					int size = par.scratchInfo.size;
+					int row = par.scratchInfo.row;
+					int col = par.scratchInfo.col;
+					
+					Config scratch;
+					
+					switch (o) {
+					case LEFTRIGHT:
+						
+						scratch = par.scratchLeft(c);
+						if (availableForCar(c, size, o, row, col-1)) {
+							
+							moveCar(c, size, o, row, col, o, row, col-1, scratch);
+							if (furtherFromExit(c, scratch, this)) {
+								par.moves.add(scratch);
+								continue;
+							}
+						} else if (par.isJoint(row, col-1)) {
+							boolean res = tryJoint(c, par.otherJoint(row, col-1), scratch);
+							if (res) {
+								if (furtherFromExit(c, scratch, this)) {
+									par.moves.add(scratch);
+									continue;
+								}
+							}
+						}
+						
+						scratch = par.scratchRight(c);
+						if (availableForCar(c, size, o, row, col+1)) {
+							moveCar(c, size, o, row, col, o, row, col+1, scratch);
+							if (furtherFromExit(c, scratch, this)) {
+								par.moves.add(scratch);
+								continue;
+							}
+						} else if (par.isJoint(row, col+size)) {
+							boolean res = tryJoint(c, par.otherJoint(row, col+size), scratch);
+							if (res) {
+								if (furtherFromExit(c, scratch, this)) {
+									par.moves.add(scratch);
+									continue;
+								}
+							}
+						}
+						break;
+					case UPDOWN:
+						
+						scratch = par.scratchUp(c);
+						if (availableForCar(c, size, o, row-1, col)) {
+							moveCar(c, size, o, row, col, o, row-1, col, scratch);
+							if (furtherFromExit(c, scratch, this)) {
+								par.moves.add(scratch);
+								continue;
+							}
+						} else if (par.isJoint(row-1, col)) {
+							boolean res = tryJoint(c, par.otherJoint(row-1, col), scratch);
+							if (res) {
+								if (furtherFromExit(c, scratch, this)) {
+									par.moves.add(scratch);
+									continue;
+								}
+							}
+						}
+						
+						scratch = par.scratchDown(c);
+						if (availableForCar(c, size, o, row+1, col)) {
+							moveCar(c, size, o, row, col, o, row+1, col, scratch);
+							if (furtherFromExit(c, scratch, this)) {
+								par.moves.add(scratch);
+								continue;
+							}
+						} else if (par.isJoint(row+size, col)) {
+							boolean res = tryJoint(c, par.otherJoint(row+size, col), scratch);
+							if (res) {
+								if (furtherFromExit(c, scratch, this)) {
+									par.moves.add(scratch);
+									continue;
+								}
+							}
+						}
+						break;
+					}
+					
+				} else {
+					
+					/*
+					 * for other cars, unblock path from red car to exit
+					 */
+					loadScratchInfo(c);
+					Orientation o = par.scratchInfo.o;
+					int size = par.scratchInfo.size;
+					int row = par.scratchInfo.row;
+					int col = par.scratchInfo.col;
+					
+					Config scratch;
+					
+					switch (o) {
+					case LEFTRIGHT:
+						
+						scratch = par.scratchLeft(c);
+						if (availableForCar(c, size, o, row, col-1)) {
+							
+							moveCar(c, size, o, row, col, o, row, col-1, scratch);
+							if (nowBlockingPath(c, scratch, this)) {
+								par.moves.add(scratch);
+							}
+						} else if (par.isJoint(row, col-1)) {
+							boolean res = tryJoint(c, par.otherJoint(row, col-1), scratch);
+							if (res) {
+								if (nowBlockingPath(c, scratch, this)) {
+									par.moves.add(scratch);
+								}
+							}
+						}
+						
+						scratch = par.scratchRight(c);
+						if (availableForCar(c, size, o, row, col+1)) {
+							moveCar(c, size, o, row, col, o, row, col+1, par.scratchRight(c));
+							if (nowBlockingPath(c, scratch, this)) {
+								par.moves.add(scratch);
+							}
+						} else if (par.isJoint(row, col+size)) {
+							boolean res = tryJoint(c, par.otherJoint(row, col+size), par.scratchRight(c));
+							if (res) {
+								if (nowBlockingPath(c, scratch, this)) {
+									par.moves.add(scratch);
+								}
+							}
+						}
+						break;
+					case UPDOWN:
+						
+						scratch = par.scratchUp(c);
+						if (availableForCar(c, size, o, row-1, col)) {
+							moveCar(c, size, o, row, col, o, row-1, col, par.scratchUp(c));
+							if (nowBlockingPath(c, scratch, this)) {
+								par.moves.add(scratch);
+							}
+						} else if (par.isJoint(row-1, col)) {
+							boolean res = tryJoint(c, par.otherJoint(row-1, col), par.scratchUp(c));
+							if (res) {
+								if (nowBlockingPath(c, scratch, this)) {
+									par.moves.add(scratch);
+								}
+							}
+						}
+						
+						scratch = par.scratchDown(c);
+						if (availableForCar(c, size, o, row+1, col)) {
+							moveCar(c, size, o, row, col, o, row+1, col, par.scratchDown(c));
+							if (nowBlockingPath(c, scratch, this)) {
+								par.moves.add(scratch);
+							}
+						} else if (par.isJoint(row+size, col)) {
+							boolean res = tryJoint(c, par.otherJoint(row+size, col), par.scratchDown(c));
+							if (res) {
+								if (nowBlockingPath(c, scratch, this)) {
+									par.moves.add(scratch);
+								}
+							}
+						}
+						break;
+					}
+					
+				}
+				
+			}
 			
+			return par.moves;
 		}
 		
-		carLoop:
 		for (byte c : cars) {
 			if (!par.carMapContains(c)) {
 				continue;
 			}
-			
-			/*
-			 * if clearPathToExit,
-			 * 		if red, only previous move was going away from exit
-			 * 		if other, only previous move was interfering with winning path
-			 */
 			
 			loadScratchInfo(c);
 			Orientation o = par.scratchInfo.o;
@@ -597,28 +767,36 @@ public class Config {
 			case LEFTRIGHT:
 				
 				scratch = par.scratchLeft((byte)'R');
-				if (availableForCar((byte)'R', size, o, row, col-1) && (closerToExit)) {
+				if (availableForCar((byte)'R', size, o, row, col-1)) {
 					moveCar((byte)'R', size, o, row, col, o, row, col-1, scratch);
-					par.moves.add(scratch);
-					return par.moves;
-				} else if (par.isJoint(row, col-1) && (closerToExit)) {
-					boolean res = tryJoint((byte)'R', par.otherJoint(row, col-1), scratch);
-					if (res) {
+					if (closerToExit((byte)'R', scratch, this)) {
 						par.moves.add(scratch);
 						return par.moves;
+					}
+				} else if (par.isJoint(row, col-1)) {
+					boolean res = tryJoint((byte)'R', par.otherJoint(row, col-1), scratch);
+					if (res) {
+						if (closerToExit((byte)'R', scratch, this)) {
+							par.moves.add(scratch);
+							return par.moves;
+						}
 					}
 				}
 				
 				scratch = par.scratchRight((byte)'R');
-				if (availableForCar((byte)'R', size, o, row, col+1) && (closerToExit)) {
+				if (availableForCar((byte)'R', size, o, row, col+1)) {
 					moveCar((byte)'R', size, o, row, col, o, row, col+1, scratch);
-					par.moves.add(scratch);
-					return par.moves;
-				} else if (par.isJoint(row, col+2) && (closerToExit)) {
-					boolean res = tryJoint((byte)'R', par.otherJoint(row, col+2), scratch);
-					if (res) {
+					if (closerToExit((byte)'R', scratch, this)) {
 						par.moves.add(scratch);
 						return par.moves;
+					}
+				} else if (par.isJoint(row, col+2)) {
+					boolean res = tryJoint((byte)'R', par.otherJoint(row, col+2), scratch);
+					if (res) {
+						if (closerToExit((byte)'R', scratch, this)) {
+							par.moves.add(scratch);
+							return par.moves;
+						}
 					}
 				}
 				
@@ -626,28 +804,36 @@ public class Config {
 			case UPDOWN:
 				
 				scratch = par.scratchUp((byte)'R');
-				if (availableForCar((byte)'R', size, o, row-1, col) && (closerToExit)) {
+				if (availableForCar((byte)'R', size, o, row-1, col)) {
 					moveCar((byte)'R', size, o, row, col, o, row-1, col, scratch);
-					par.moves.add(scratch);
-					return par.moves;
-				} else if (par.isJoint(row-1, col) && (closerToExit)) {
-					boolean res = tryJoint((byte)'R', par.otherJoint(row-1, col), scratch);
-					if (res) {
+					if (closerToExit((byte)'R', scratch, this)) {
 						par.moves.add(scratch);
 						return par.moves;
+					}
+				} else if (par.isJoint(row-1, col)) {
+					boolean res = tryJoint((byte)'R', par.otherJoint(row-1, col), scratch);
+					if (res) {
+						if (closerToExit((byte)'R', scratch, this)) {
+							par.moves.add(scratch);
+							return par.moves;
+						}
 					}
 				}
 				
 				scratch = par.scratchDown((byte)'R');
-				if (availableForCar((byte)'R', size, o, row+1, col) && (closerToExit)) {
+				if (availableForCar((byte)'R', size, o, row+1, col)) {
 					moveCar((byte)'R', size, o, row, col, o, row+1, col, scratch);
-					par.moves.add(scratch);
-					return par.moves;
-				} else if (par.isJoint(row+2, col) && (closerToExit)) {
-					boolean res = tryJoint((byte)'R', par.otherJoint(row+2, col), scratch);
-					if (res) {
+					if (closerToExit((byte)'R', scratch, this)) {
 						par.moves.add(scratch);
 						return par.moves;
+					}
+				} else if (par.isJoint(row+2, col)) {
+					boolean res = tryJoint((byte)'R', par.otherJoint(row+2, col), scratch);
+					if (res) {
+						if (closerToExit((byte)'R', scratch, this)) {
+							par.moves.add(scratch);
+							return par.moves;
+						}
 					}
 				}
 				
@@ -809,6 +995,119 @@ public class Config {
 		return false;
 	}
 	
+	boolean furtherFromExit(byte c, Config next, Config cur) {
+		assert c == 'R';
+		
+		par.cursor.reset(next);
+		int nextMoves = 0;
+		while (true) {
+			if (par.cursor.val() == 'Y' || par.cursor.val() == 'X') {
+				par.cursor.move();
+				nextMoves++;
+			} else {
+				if (par.cursor.val() == 'R') {
+					loadScratchInfo((byte)'R');
+					Orientation o = par.scratchInfo.o;
+					
+					if ((((par.cursor.side == 0 || par.cursor.side == 2) && o == Orientation.UPDOWN) || ((par.cursor.side == 1 || par.cursor.side == 3) && o == Orientation.LEFTRIGHT))) {
+						break;
+					} else {
+						par.cursor.move();
+						nextMoves++;
+					}
+				} else {
+					assert false;
+				}
+			}
+		}
+		
+		par.cursor.reset(cur); 
+		int curMoves = 0;
+		while (true) {
+			if (par.cursor.val() == 'Y' || par.cursor.val() == 'X') {
+				par.cursor.move();
+				curMoves++;
+			} else {
+				if (par.cursor.val() == 'R') {
+					loadScratchInfo((byte)'R');
+					Orientation o = par.scratchInfo.o;
+					
+					if ((((par.cursor.side == 0 || par.cursor.side == 2) && o == Orientation.UPDOWN) || ((par.cursor.side == 1 || par.cursor.side == 3) && o == Orientation.LEFTRIGHT))) {
+						break;
+					} else {
+						par.cursor.move();
+						curMoves++;
+					}
+				} else {
+					assert false;
+				}
+			}
+		}
+		
+		return nextMoves > curMoves;
+	}
+	
+	boolean closerToExit(byte c, Config next, Config cur) {
+		return furtherFromExit(c, cur, next);
+	}
+	
+	boolean nowBlockingPath(byte c, Config next, Config cur) {
+		assert c != 'R';
+		
+		par.cursor.reset(next);
+		boolean nextBlocking = false;
+		while (true) {
+			if (par.cursor.val() == 'Y' || par.cursor.val() == 'X') {
+				par.cursor.move();
+			} else {
+				if (par.cursor.val() == 'R') {
+					loadScratchInfo((byte)'R');
+					Orientation o = par.scratchInfo.o;
+					
+					if ((((par.cursor.side == 0 || par.cursor.side == 2) && o == Orientation.UPDOWN) || ((par.cursor.side == 1 || par.cursor.side == 3) && o == Orientation.LEFTRIGHT))) {
+						break;
+					} else {
+						par.cursor.move();
+					}
+				} else if (par.cursor.val() == c) {
+					nextBlocking = true;
+					break;
+				} else {
+					par.cursor.move();
+				}
+			}
+		}
+		
+		par.cursor.reset(cur);
+		boolean curBlocking = false;
+		while (true) {
+			if (par.cursor.val() == 'Y' || par.cursor.val() == 'X') {
+				par.cursor.move();
+			} else {
+				if (par.cursor.val() == 'R') {
+					loadScratchInfo((byte)'R');
+					Orientation o = par.scratchInfo.o;
+					
+					if ((((par.cursor.side == 0 || par.cursor.side == 2) && o == Orientation.UPDOWN) || ((par.cursor.side == 1 || par.cursor.side == 3) && o == Orientation.LEFTRIGHT))) {
+						break;
+					} else {
+						par.cursor.move();
+					}
+				} else if (par.cursor.val() == c) {
+					curBlocking = true;
+					break;
+				} else {
+					par.cursor.move();
+				}
+			}
+		}
+		
+		if (!curBlocking && nextBlocking) {
+			String.class.getName();
+		}
+		
+		return !curBlocking && nextBlocking;
+	}
 	
 	public Config winningConfig() {
 		int side = par.side(par.exit);
@@ -1428,25 +1727,95 @@ public class Config {
 									int gc = par.scratchInfo.col;
 									
 									if (!(Statics.lessThan(ar, ac, gr, gc))) {
-										assert false;
+										swap((byte)'A', ao, as, ar, ac, (byte)'G', go, gs, gr, gc);
+										so = ao;
+										ss = as;
+										sr = ar;
+										sc = ac;
+										ao = go;
+										as = gs;
+										ar = gr;
+										ac = gc;
+										go = so;
+										gs = ss;
+										gr = sr;
+										gc = sc;
 									}
 									if (!(Statics.lessThan(br, bc, gr, gc))) {
-										assert false;
+										swap((byte)'B', bo, bs, br, bc, (byte)'G', go, gs, gr, gc);
+										so = bo;
+										ss = bs;
+										sr = br;
+										sc = bc;
+										bo = go;
+										bs = gs;
+										br = gr;
+										bc = gc;
+										go = so;
+										gs = ss;
+										gr = sr;
+										gc = sc;
 									}
 									if (!(Statics.lessThan(cr, cc, gr, gc))) {
-										assert false;
+										swap((byte)'C', co, cs, cr, cc, (byte)'G', go, gs, gr, gc);
+										so = co;
+										ss = cs;
+										sr = cr;
+										sc = cc;
+										co = go;
+										cs = gs;
+										cr = gr;
+										cc = gc;
+										go = so;
+										gs = ss;
+										gr = sr;
+										gc = sc;
 									}
 									if (!(Statics.lessThan(dr, dc, gr, gc))) {
-										assert false;
+										swap((byte)'D', doo, ds, dr, dc, (byte)'G', go, gs, gr, gc);
+										so = doo;
+										ss = ds;
+										sr = dr;
+										sc = dc;
+										doo = go;
+										ds = gs;
+										dr = gr;
+										dc = gc;
+										go = so;
+										gs = ss;
+										gr = sr;
+										gc = sc;
 									}
 									if (!(Statics.lessThan(er, ec, gr, gc))) {
-										assert false;
+										swap((byte)'E', eo, es, er, ec, (byte)'G', go, gs, gr, gc);
+										so = eo;
+										ss = es;
+										sr = er;
+										sc = ec;
+										eo = go;
+										es = gs;
+										er = gr;
+										ec = gc;
+										go = so;
+										gs = ss;
+										gr = sr;
+										gc = sc;
 									}
 									if (!(Statics.lessThan(fr, fc, gr, gc))) {
-										assert false;
+										swap((byte)'F', fo, fs, fr, fc, (byte)'G', go, gs, gr, gc);
+										so = fo;
+										ss = fs;
+										sr = fr;
+										sc = fc;
+										fo = go;
+										fs = gs;
+										fr = gr;
+										fc = gc;
+										go = so;
+										gs = ss;
+										gr = sr;
+										gc = sc;
 									}
-									
-									assert false;
 									
 								}
 							}
