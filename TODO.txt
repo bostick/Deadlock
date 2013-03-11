@@ -8,6 +8,18 @@ don't use configs that don't leave a gap behind the red car
 
 
 
+store tuple in each config encoding its eumeration
+use to keep compressed map of configs
+
+
+
+
+
+
+
+
+
+
 
 
 

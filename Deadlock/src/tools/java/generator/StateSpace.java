@@ -2,59 +2,60 @@ package generator;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import solver.Config;
 
 public class StateSpace {
 	
-//	public Map<Config, Config> generatingMap = new HashMap<Config, Config>();
-//	public Map<Config, Config> solvingMap = new HashMap<Config, Config>();
+	public Config lastGeneratingConfig;
 	
-	public Config lastConfig;
+	public List<Config> lastGeneratingIteration = new ArrayList<Config>();
 	
-	public List<Config> lastIteration = new ArrayList<Config>();
-//	public long lastIterationMoves;
+	private Map<Config, Integer> allGeneratingConfigs = new HashMap<Config, Integer>();
 	
-//	public List<Config> allIterations = new ArrayList<Config>();
 	
-//	public Set<Config> allIterations = new TreeSet<Config>(comparator for configs as byte[]);
-	private Map<Config, Integer> allconfigs = new HashMap<Config, Integer>();
 	
-//	public int hashCode() {
-//		return map.hashCode();
-//	}
+	public List<Config> lastSolvingIteration = new ArrayList<Config>();
+	private Set<Config> allSolvingConfigs = new HashSet<Config>();
+	
+	
+	
+	
 	
 	public void putGenerating(Config key, Config val, Integer dist) {
 		
-		lastIteration.add(key);
+		lastGeneratingIteration.add(key);
 		
-		allconfigs.put(key, dist);
+		allGeneratingConfigs.put(key, dist);
 		
-//		generatingMap.put(key, val);
 		key.generatingVal = val;
 		
-		
-		Config oldLastConfig = lastConfig;
-		lastConfig = key;
-		lastConfig.previousGeneratingConfig = oldLastConfig;
+		lastGeneratingConfig = key;
 		
 	}
 	
-	public void putSolving(Config key, Config val, Integer dist) {
+	public void putSolving(Config key, Config val) {
 		
-		lastIteration.add(key);
+		lastSolvingIteration.add(key);
 		
-		allconfigs.put(key, dist);
+//		allSolvingConfigs.put(key, );
+		allSolvingConfigs.add(key);
 		
 //		solvingMap.put(key, val);
 		key.solvingVal = val;
 		
 	}
 	
-	public boolean allConfigsContains(Config k) {
-		return allconfigs.keySet().contains(k);
+	public boolean allGeneratingConfigsContains(Config k) {
+		return k.isWinning() || allGeneratingConfigs.keySet().contains(k);
+	}
+	
+	public boolean allSolvingConfigsContains(Config k) {
+		return allSolvingConfigs.contains(k);
 	}
 	
 //	public Set<Config> keySet() {
@@ -71,16 +72,20 @@ public class StateSpace {
 		return key.generatingVal;
 	}
 	
-	public int allConfigsSize() {
-		return allconfigs.size();
+	public int allGeneratingConfigsSize() {
+		return allGeneratingConfigs.size();
 	}
 	
-	public void clearAllConfigs() {
-		allconfigs.clear();
+	public void clearAllGeneratingConfigs() {
+		allGeneratingConfigs.clear();
 	}
 	
-	public int allConfigsGet(Config c) {
-		return allconfigs.get(c);
+	public int allGeneratingConfigsGet(Config c) {
+		return (c.isWinning() ? 0 : allGeneratingConfigs.get(c));
+	}
+	
+	public void allGeneratingConfigsRemove(Config key) {
+		allGeneratingConfigs.remove(key);
 	}
 	
 }

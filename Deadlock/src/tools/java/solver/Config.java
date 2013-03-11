@@ -6,7 +6,7 @@ public class Config {
 	
 	public Config generatingVal;
 	public Config solvingVal;
-	public Config previousGeneratingConfig;
+//	public Config previousGeneratingConfig;
 	
 //	public boolean bs;
 //	public int shortestDistToWinner;
@@ -717,34 +717,6 @@ public class Config {
 		return par.generatingMoves;
 	}
 	
-	/*
-	 * returns true => continue carLoop
-	 */
-//	boolean possiblePreviousMoves_lastStep(byte c, Config scratch) {
-//		if (!clearPathToExit) {
-//			if (!scratch.hasClearPathToExit()) {
-//				par.moves.add(scratch);
-//			}
-//		} else {
-//			if (c == 'R') {
-//				if (scratch.numberMovesToWin() > this.numberMovesToWin()) {
-//					par.moves.add(scratch);
-//					return true;
-//				}
-//			} else {
-//				if (!scratch.hasClearPathToExit()) {
-//					par.moves.add(scratch);
-//					return true;
-//				}
-//			}
-//		}
-//		if (!scratch.hasClearPathToExit()) {
-//			par.moves.add(scratch);
-//		}
-//		
-//		return false;
-//	}
-	
 	public List<Config> possibleNextMoves() {
 		
 		par.solvingMoves.clear();
@@ -1146,7 +1118,7 @@ public class Config {
 		int firstAvailC = coor[1];
 		
 		/*
-		 * left-right
+		 * 2 left-right
 		 */
 		for (int r = 0; r < par.rowCount; r++) {
 			for (int c = 0; c < par.colCount-1; c++) {
@@ -1165,7 +1137,7 @@ public class Config {
 		}
 		
 		/*
-		 * up-down
+		 * 2 up-down
 		 */
 		for (int r = 0; r < par.rowCount-1; r++) {
 			for (int c = 0; c < par.colCount; c++) {
@@ -1194,7 +1166,7 @@ public class Config {
 		int firstAvailC = coor[1];
 		
 		/*
-		 * left-right
+		 * 3 left-right
 		 */
 		for (int r = 0; r < par.rowCount; r++) {
 			for (int c = 0; c < par.colCount-2; c++) {
@@ -1213,7 +1185,7 @@ public class Config {
 		}
 		
 		/*
-		 * up-down
+		 * 3 up-down
 		 */
 		for (int r = 0; r < par.rowCount-2; r++) {
 			for (int c = 0; c < par.colCount; c++) {
@@ -1295,10 +1267,6 @@ public class Config {
 		}
 			
 		case UPDOWN: {
-			
-//			if (boardGet(0, 1) == 'A' && boardGet(1, 1) == 'A' && boardGet(2, 1) == 'B' && boardGet(3, 1) == 'B' && boardGet(4, 1) == 'D' && boardGet(5, 1) == 'D') {
-//				String.class.getName();
-//			}
 			
 			if (par.isJoint(-1, c) || par.isJoint(par.rowCount, c)) {
 				return false;
