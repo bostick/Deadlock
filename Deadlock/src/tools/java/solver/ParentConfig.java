@@ -77,7 +77,8 @@ public class ParentConfig {
 	Cursor cursor;
 	int[] test = new int[2];
 	
-	List<Config> moves = new ArrayList<Config>();
+	List<Config> generatingMoves = new ArrayList<Config>();
+	List<Config> solvingMoves = new ArrayList<Config>();
 	
 	public byte[] emptyBoard;
 	

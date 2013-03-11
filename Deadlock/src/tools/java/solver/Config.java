@@ -447,7 +447,7 @@ public class Config {
 	
 	public List<Config> possiblePreviousMoves() {
 		
-		par.moves.clear();
+		par.generatingMoves.clear();
 		
 		if (hasClearPathToExit()) {
 			
@@ -477,14 +477,14 @@ public class Config {
 							
 							moveCar(c, size, o, row, col, o, row, col-1, scratch);
 							if (furtherFromExit(c, scratch, this)) {
-								par.moves.add(scratch);
+								par.generatingMoves.add(scratch);
 								continue;
 							}
 						} else if (par.isJoint(row, col-1)) {
 							boolean res = tryJoint(c, par.otherJoint(row, col-1), scratch);
 							if (res) {
 								if (furtherFromExit(c, scratch, this)) {
-									par.moves.add(scratch);
+									par.generatingMoves.add(scratch);
 									continue;
 								}
 							}
@@ -494,14 +494,14 @@ public class Config {
 						if (availableForCar(c, size, o, row, col+1)) {
 							moveCar(c, size, o, row, col, o, row, col+1, scratch);
 							if (furtherFromExit(c, scratch, this)) {
-								par.moves.add(scratch);
+								par.generatingMoves.add(scratch);
 								continue;
 							}
 						} else if (par.isJoint(row, col+size)) {
 							boolean res = tryJoint(c, par.otherJoint(row, col+size), scratch);
 							if (res) {
 								if (furtherFromExit(c, scratch, this)) {
-									par.moves.add(scratch);
+									par.generatingMoves.add(scratch);
 									continue;
 								}
 							}
@@ -513,14 +513,14 @@ public class Config {
 						if (availableForCar(c, size, o, row-1, col)) {
 							moveCar(c, size, o, row, col, o, row-1, col, scratch);
 							if (furtherFromExit(c, scratch, this)) {
-								par.moves.add(scratch);
+								par.generatingMoves.add(scratch);
 								continue;
 							}
 						} else if (par.isJoint(row-1, col)) {
 							boolean res = tryJoint(c, par.otherJoint(row-1, col), scratch);
 							if (res) {
 								if (furtherFromExit(c, scratch, this)) {
-									par.moves.add(scratch);
+									par.generatingMoves.add(scratch);
 									continue;
 								}
 							}
@@ -530,14 +530,14 @@ public class Config {
 						if (availableForCar(c, size, o, row+1, col)) {
 							moveCar(c, size, o, row, col, o, row+1, col, scratch);
 							if (furtherFromExit(c, scratch, this)) {
-								par.moves.add(scratch);
+								par.generatingMoves.add(scratch);
 								continue;
 							}
 						} else if (par.isJoint(row+size, col)) {
 							boolean res = tryJoint(c, par.otherJoint(row+size, col), scratch);
 							if (res) {
 								if (furtherFromExit(c, scratch, this)) {
-									par.moves.add(scratch);
+									par.generatingMoves.add(scratch);
 									continue;
 								}
 							}
@@ -566,13 +566,13 @@ public class Config {
 							
 							moveCar(c, size, o, row, col, o, row, col-1, scratch);
 							if (nowBlockingPath(scratch, this)) {
-								par.moves.add(scratch);
+								par.generatingMoves.add(scratch);
 							}
 						} else if (par.isJoint(row, col-1)) {
 							boolean res = tryJoint(c, par.otherJoint(row, col-1), scratch);
 							if (res) {
 								if (nowBlockingPath(scratch, this)) {
-									par.moves.add(scratch);
+									par.generatingMoves.add(scratch);
 								}
 							}
 						}
@@ -581,13 +581,13 @@ public class Config {
 						if (availableForCar(c, size, o, row, col+1)) {
 							moveCar(c, size, o, row, col, o, row, col+1, par.scratchRight(c));
 							if (nowBlockingPath(scratch, this)) {
-								par.moves.add(scratch);
+								par.generatingMoves.add(scratch);
 							}
 						} else if (par.isJoint(row, col+size)) {
 							boolean res = tryJoint(c, par.otherJoint(row, col+size), par.scratchRight(c));
 							if (res) {
 								if (nowBlockingPath(scratch, this)) {
-									par.moves.add(scratch);
+									par.generatingMoves.add(scratch);
 								}
 							}
 						}
@@ -598,13 +598,13 @@ public class Config {
 						if (availableForCar(c, size, o, row-1, col)) {
 							moveCar(c, size, o, row, col, o, row-1, col, par.scratchUp(c));
 							if (nowBlockingPath(scratch, this)) {
-								par.moves.add(scratch);
+								par.generatingMoves.add(scratch);
 							}
 						} else if (par.isJoint(row-1, col)) {
 							boolean res = tryJoint(c, par.otherJoint(row-1, col), par.scratchUp(c));
 							if (res) {
 								if (nowBlockingPath(scratch, this)) {
-									par.moves.add(scratch);
+									par.generatingMoves.add(scratch);
 								}
 							}
 						}
@@ -613,13 +613,13 @@ public class Config {
 						if (availableForCar(c, size, o, row+1, col)) {
 							moveCar(c, size, o, row, col, o, row+1, col, par.scratchDown(c));
 							if (nowBlockingPath(scratch, this)) {
-								par.moves.add(scratch);
+								par.generatingMoves.add(scratch);
 							}
 						} else if (par.isJoint(row+size, col)) {
 							boolean res = tryJoint(c, par.otherJoint(row+size, col), par.scratchDown(c));
 							if (res) {
 								if (nowBlockingPath(scratch, this)) {
-									par.moves.add(scratch);
+									par.generatingMoves.add(scratch);
 								}
 							}
 						}
@@ -630,7 +630,7 @@ public class Config {
 				
 			}
 			
-			return par.moves;
+			return par.generatingMoves;
 		}
 		
 		for (byte c : cars) {
@@ -653,13 +653,13 @@ public class Config {
 				if (availableForCar(c, size, o, row, col-1)) {
 					moveCar(c, size, o, row, col, o, row, col-1, scratch);
 					if (!scratch.hasClearPathToExit()) {
-						par.moves.add(scratch);
+						par.generatingMoves.add(scratch);
 					}
 				} else if (par.isJoint(row, col-1)) {
 					boolean res = tryJoint(c, par.otherJoint(row, col-1), scratch);
 					if (res) {
 						if (!scratch.hasClearPathToExit()) {
-							par.moves.add(scratch);
+							par.generatingMoves.add(scratch);
 						}
 					}
 				}
@@ -668,13 +668,13 @@ public class Config {
 				if (availableForCar(c, size, o, row, col+1)) {
 					moveCar(c, size, o, row, col, o, row, col+1, par.scratchRight(c));
 					if (!scratch.hasClearPathToExit()) {
-						par.moves.add(scratch);
+						par.generatingMoves.add(scratch);
 					}
 				} else if (par.isJoint(row, col+size)) {
 					boolean res = tryJoint(c, par.otherJoint(row, col+size), par.scratchRight(c));
 					if (res) {
 						if (!scratch.hasClearPathToExit()) {
-							par.moves.add(scratch);
+							par.generatingMoves.add(scratch);
 						}
 					}
 				}
@@ -685,13 +685,13 @@ public class Config {
 				if (availableForCar(c, size, o, row-1, col)) {
 					moveCar(c, size, o, row, col, o, row-1, col, par.scratchUp(c));
 					if (!scratch.hasClearPathToExit()) {
-						par.moves.add(scratch);
+						par.generatingMoves.add(scratch);
 					}
 				} else if (par.isJoint(row-1, col)) {
 					boolean res = tryJoint(c, par.otherJoint(row-1, col), par.scratchUp(c));
 					if (res) {
 						if (!scratch.hasClearPathToExit()) {
-							par.moves.add(scratch);
+							par.generatingMoves.add(scratch);
 						}
 					}
 				}
@@ -700,13 +700,13 @@ public class Config {
 				if (availableForCar(c, size, o, row+1, col)) {
 					moveCar(c, size, o, row, col, o, row+1, col, par.scratchDown(c));
 					if (!scratch.hasClearPathToExit()) {
-						par.moves.add(scratch);
+						par.generatingMoves.add(scratch);
 					}
 				} else if (par.isJoint(row+size, col)) {
 					boolean res = tryJoint(c, par.otherJoint(row+size, col), par.scratchDown(c));
 					if (res) {
 						if (!scratch.hasClearPathToExit()) {
-							par.moves.add(scratch);
+							par.generatingMoves.add(scratch);
 						}
 					}
 				}
@@ -714,7 +714,7 @@ public class Config {
 			}
 		}
 		
-		return par.moves;
+		return par.generatingMoves;
 	}
 	
 	/*
@@ -747,10 +747,10 @@ public class Config {
 	
 	public List<Config> possibleNextMoves() {
 		
-		par.moves.clear();
+		par.solvingMoves.clear();
 		
 		if (isWinning()) {
-			return par.moves;
+			return par.solvingMoves;
 		}
 		
 		if (hasClearPathToExit()) {
@@ -770,15 +770,15 @@ public class Config {
 				if (availableForCar((byte)'R', size, o, row, col-1)) {
 					moveCar((byte)'R', size, o, row, col, o, row, col-1, scratch);
 					if (closerToExit((byte)'R', scratch, this)) {
-						par.moves.add(scratch);
-						return par.moves;
+						par.solvingMoves.add(scratch);
+						return par.solvingMoves;
 					}
 				} else if (par.isJoint(row, col-1)) {
 					boolean res = tryJoint((byte)'R', par.otherJoint(row, col-1), scratch);
 					if (res) {
 						if (closerToExit((byte)'R', scratch, this)) {
-							par.moves.add(scratch);
-							return par.moves;
+							par.solvingMoves.add(scratch);
+							return par.solvingMoves;
 						}
 					}
 				}
@@ -787,15 +787,15 @@ public class Config {
 				if (availableForCar((byte)'R', size, o, row, col+1)) {
 					moveCar((byte)'R', size, o, row, col, o, row, col+1, scratch);
 					if (closerToExit((byte)'R', scratch, this)) {
-						par.moves.add(scratch);
-						return par.moves;
+						par.solvingMoves.add(scratch);
+						return par.solvingMoves;
 					}
 				} else if (par.isJoint(row, col+2)) {
 					boolean res = tryJoint((byte)'R', par.otherJoint(row, col+2), scratch);
 					if (res) {
 						if (closerToExit((byte)'R', scratch, this)) {
-							par.moves.add(scratch);
-							return par.moves;
+							par.solvingMoves.add(scratch);
+							return par.solvingMoves;
 						}
 					}
 				}
@@ -807,15 +807,15 @@ public class Config {
 				if (availableForCar((byte)'R', size, o, row-1, col)) {
 					moveCar((byte)'R', size, o, row, col, o, row-1, col, scratch);
 					if (closerToExit((byte)'R', scratch, this)) {
-						par.moves.add(scratch);
-						return par.moves;
+						par.solvingMoves.add(scratch);
+						return par.solvingMoves;
 					}
 				} else if (par.isJoint(row-1, col)) {
 					boolean res = tryJoint((byte)'R', par.otherJoint(row-1, col), scratch);
 					if (res) {
 						if (closerToExit((byte)'R', scratch, this)) {
-							par.moves.add(scratch);
-							return par.moves;
+							par.solvingMoves.add(scratch);
+							return par.solvingMoves;
 						}
 					}
 				}
@@ -824,15 +824,15 @@ public class Config {
 				if (availableForCar((byte)'R', size, o, row+1, col)) {
 					moveCar((byte)'R', size, o, row, col, o, row+1, col, scratch);
 					if (closerToExit((byte)'R', scratch, this)) {
-						par.moves.add(scratch);
-						return par.moves;
+						par.solvingMoves.add(scratch);
+						return par.solvingMoves;
 					}
 				} else if (par.isJoint(row+2, col)) {
 					boolean res = tryJoint((byte)'R', par.otherJoint(row+2, col), scratch);
 					if (res) {
 						if (closerToExit((byte)'R', scratch, this)) {
-							par.moves.add(scratch);
-							return par.moves;
+							par.solvingMoves.add(scratch);
+							return par.solvingMoves;
 						}
 					}
 				}
@@ -865,21 +865,21 @@ public class Config {
 				
 				if (availableForCar(c, size, o, row, col-1)) {
 					moveCar(c, size, o, row, col, o, row, col-1, par.scratchLeft(c));
-					par.moves.add(par.scratchLeft(c));
+					par.solvingMoves.add(par.scratchLeft(c));
 				} else if (par.isJoint(row, col-1)) {
 					boolean res = tryJoint(c, par.otherJoint(row, col-1), par.scratchLeft(c));
 					if (res) {
-						par.moves.add(par.scratchLeft(c));
+						par.solvingMoves.add(par.scratchLeft(c));
 					}
 				}
 				
 				if (availableForCar(c, size, o, row, col+1)) {
 					moveCar(c, size, o, row, col, o, row, col+1, par.scratchRight(c));
-					par.moves.add(par.scratchRight(c));
+					par.solvingMoves.add(par.scratchRight(c));
 				} else if (par.isJoint(row, col+size)) {
 					boolean res = tryJoint(c, par.otherJoint(row, col+size), par.scratchRight(c));
 					if (res) {
-						par.moves.add(par.scratchRight(c));
+						par.solvingMoves.add(par.scratchRight(c));
 					}
 				}
 				
@@ -888,21 +888,21 @@ public class Config {
 				
 				if (availableForCar(c, size, o, row-1, col)) {
 					moveCar(c, size, o, row, col, o, row-1, col, par.scratchUp(c));
-					par.moves.add(par.scratchUp(c));
+					par.solvingMoves.add(par.scratchUp(c));
 				} else if (par.isJoint(row-1, col)) {
 					boolean res = tryJoint(c, par.otherJoint(row-1, col), par.scratchUp(c));
 					if (res) {
-						par.moves.add(par.scratchUp(c));
+						par.solvingMoves.add(par.scratchUp(c));
 					}
 				}
 				
 				if (availableForCar(c, size, o, row+1, col)) {
 					moveCar(c, size, o, row, col, o, row+1, col, par.scratchDown(c));
-					par.moves.add(par.scratchDown(c));
+					par.solvingMoves.add(par.scratchDown(c));
 				} else if (par.isJoint(row+size, col)) {
 					boolean res = tryJoint(c, par.otherJoint(row+size, col), par.scratchDown(c));
 					if (res) {
-						par.moves.add(par.scratchDown(c));
+						par.solvingMoves.add(par.scratchDown(c));
 					}
 				}
 				
@@ -910,7 +910,7 @@ public class Config {
 			}
 		}
 		
-		return par.moves;
+		return par.solvingMoves;
 	}
 	
 	boolean tryJoint(byte c, int[] joint, Config out) {
@@ -1259,7 +1259,7 @@ public class Config {
 		return par.test;
 	}
 	
-	/*
+	/**
 	 * returns true if inserting specified car completes an immoveable block from one side to the next
 	 */
 	boolean completesBlock(int size, Orientation o, int r, int c) {
@@ -1267,11 +1267,15 @@ public class Config {
 		switch (o) {
 		case LEFTRIGHT: {
 			
+			if (par.isJoint(r, -1) || par.isJoint(r, par.colCount)) {
+				return false;
+			}
+			
 			byte currentCar = 'X';
 			for (int i = 0; i < par.colCount; i++) {
 				byte b = boardGet(r, i);
 				if (b == 'X') {
-					if (i >= c && i <= c+size) {
+					if (i >= c && i < c+size) {
 						continue;
 					} else {
 						return false;
@@ -1292,11 +1296,19 @@ public class Config {
 			
 		case UPDOWN: {
 			
+//			if (boardGet(0, 1) == 'A' && boardGet(1, 1) == 'A' && boardGet(2, 1) == 'B' && boardGet(3, 1) == 'B' && boardGet(4, 1) == 'D' && boardGet(5, 1) == 'D') {
+//				String.class.getName();
+//			}
+			
+			if (par.isJoint(-1, c) || par.isJoint(par.rowCount, c)) {
+				return false;
+			}
+			
 			byte currentCar = 'X';
 			for (int i = 0; i < par.rowCount; i++) {
 				byte b = boardGet(i, c);
 				if (b == 'X') {
-					if (i >= r && i <= r+size) {
+					if (i >= r && i < r+size) {
 						continue;
 					} else {
 						return false;
@@ -1312,7 +1324,7 @@ public class Config {
 					currentCar = b;
 				}
 			}
-			return true;	
+			return true;
 		}
 		
 		}
