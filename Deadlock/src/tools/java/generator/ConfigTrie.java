@@ -1,5 +1,8 @@
 package generator;
 
+import gnu.trove.set.TLongSet;
+import gnu.trove.set.hash.TLongHashSet;
+
 import java.util.Arrays;
 
 import solver.Config;
@@ -11,47 +14,46 @@ public class ConfigTrie {
 	int actualArrLength = 0;
 	long[] arr = new long[10];
 	
+	TLongSet tset = new TLongHashSet();
+	
 	public void add(Config c) {
 		
-//		boolean res = set.add(c);
-//		assert res;
-		
-		boolean testRes = add(c.getInfoLong());
-				
-//		assert testRes == res;
+//		set.add(c);
+//		boolean testRes = sortedAdd(c.getInfoLong());
+//		unsortedAdd(c.getInfoLong());
+		tset.add(c.getInfoLong());
 		
 	}
 	
 	public boolean contains(Config c) {
 		
-//		boolean res = set.contains(c);
+//		boolean testRes = set.contains(c);
 		
-		long l = c.getInfoLong();
-		boolean testRes = contains(l);
+//		long l = c.getInfoLong();
+//		boolean testRes = sortedContains(l);
+//		boolean testRes = unsortedContains(l);
 		
-//		assert testRes == res;
+		return tset.contains(c.getInfoLong());
 		
-//		return res;
-		return testRes;
+//		return testRes;
 	}
 	
 	public int size() {
 		
-//		int ret = set.size();
+//		int testRet = set.size();
 		
-		int testRet = actualArrLength;
+//		int testRet = actualArrLength;
 		
-//		assert testRet == ret;
+//		return testRet;
 		
-//		return ret;
-		return testRet;
+		return tset.size();
 	}
 	
 	
 	
 	
 	
-	boolean add(long key) {
+	private boolean sortedAdd(long key) {
 		
 		int index = Arrays.binarySearch(arr, 0, actualArrLength, key);
 		if (index >= 0) {
@@ -126,8 +128,36 @@ public class ConfigTrie {
 		
 	}
 	
+	private boolean unsortedAdd(long key) {
+		
+		if (arr.length == actualArrLength) {
+			
+			long[] newArr = new long[actualArrLength * 2];
+			
+			arrayCopy(
+					arr,
+                    0,
+                    newArr,
+                    0,
+                    actualArrLength);
+			
+			newArr[actualArrLength] = key;
+			
+			arr = newArr;
+			actualArrLength++;
+			return true;
+			
+		} else {
+			
+			arr[actualArrLength] = key;
+			
+			actualArrLength++;
+			return true;
+		}
+		
+	}
 	
-	boolean contains(long key) {
+	private boolean sortedContains(long key) {
 		
 		int index = Arrays.binarySearch(arr, 0, actualArrLength, key);
 		if (index >= 0) {
@@ -141,6 +171,16 @@ public class ConfigTrie {
 			 */
 			return false;
 		}
+	}
+	
+	private boolean unsortedContains(long key) {
+		
+		for (int i = 0; i < actualArrLength; i++) {
+			if (arr[i] == key) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	public static void arrayCopy(long[] src, int srcPos, long[] dest, int destPos, int length) {

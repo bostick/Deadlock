@@ -42,13 +42,13 @@ public class Generator {
 		Config red = new Config(Config.par.emptyBoard);
 		red = red.winningConfig();
 		
-//		add3and1(red);
-		add4and1(red);
-//		add5and1(red);
+		System.out.println("board:");
+		System.out.println(red);
 		
-		for (Config w : winners) {
-			explored.putGenerating(w, null);
-		}
+//		add3and1(red);
+//		add4and1(red);
+//		add5and1(red);
+		add5and2(red);
 		
 		List<Config> a = new ArrayList<Config>();
 		while (true) {
@@ -70,6 +70,8 @@ public class Generator {
 			
 			System.out.print(" " + (System.currentTimeMillis() - t) + " millis");
 			System.out.println("");
+			System.out.print("explored size:  " + explored.allGeneratingConfigsSize());
+			System.out.println("");
 			if (explored.lastGeneratingIteration.isEmpty()) {
 				break;
 			}
@@ -78,7 +80,7 @@ public class Generator {
 		System.out.println("reached fixpoint");
 		
 //		System.out.print("finding longest non-BS path... ");
-		System.out.println("explored has " + explored.allGeneratingConfigsSize() + " configs");
+//		System.out.println("explored has " + explored.allGeneratingConfigsSize() + " configs");
 		
 		Config longest = explored.lastGeneratingConfig;
 		
@@ -161,7 +163,7 @@ public class Generator {
 		
 		for (Config m : moves) {
 			if (!explored.allGeneratingConfigsContains(m)) {
-				explored.putGenerating(m.clone(), c);
+				explored.putGenerating(m.clone());
 			}
 //			else {
 //				
@@ -254,17 +256,25 @@ public class Generator {
 //		for (Config w : winners) {
 //			explored.allGeneratingConfigsRemove(w);
 //		}
+		
+//		for (Config w : winners) {
+//			explored.putGenerating(w);
+//		}
+		
 		winners = new ArrayList<Config>();
 //		explored.lastGeneratingIteration.clear();
 		System.gc();
 		
 		System.out.print(" " + (System.currentTimeMillis() - t) + " millis");
 		System.out.println("");
-		
+		System.out.print("explored size:  " + explored.allGeneratingConfigsSize());
+		System.out.println("");
 		
 	}
 	
 	public static void add4and1(Config red) {
+		
+		System.out.println("exploring 4 2cars and 1 3car");
 		
 		Config.par.addCar((byte)'A');
 		Config.par.addCar((byte)'B');
@@ -458,6 +468,8 @@ public class Generator {
 	
 	
 	public static void add5and1(Config red) {
+		
+		System.out.println("exploring 5 2cars and 1 3car");
 		
 		Config.par.addCar((byte)'A');
 		Config.par.addCar((byte)'B');
@@ -702,6 +714,984 @@ public class Generator {
 		}
 		
 		explorePartialWinners();
+		
+	}
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	public static void add5and2(Config red) {
+		
+		System.out.println("exploring 5 2cars and 2 3cars");
+		
+		Config.par.addCar((byte)'A');
+		Config.par.addCar((byte)'B');
+		Config.par.addCar((byte)'C');
+		Config.par.addCar((byte)'D');
+		Config.par.addCar((byte)'E');
+		Config.par.addCar((byte)'F');
+		Config.par.addCar((byte)'G');
+		
+		List<Config> placementsA = new ArrayList<Config>();
+		List<Config> placementsB = new ArrayList<Config>();
+		List<Config> placementsC = new ArrayList<Config>();
+		List<Config> placementsD = new ArrayList<Config>();
+		List<Config> placementsE = new ArrayList<Config>();
+		List<Config> placementsF = new ArrayList<Config>();
+		List<Config> placementsG = new ArrayList<Config>();
+		
+		placementsA = new ArrayList<Config>();
+		red.possible2CarPlacements(placementsA, false);
+		for (Config a : placementsA) {
+			
+			placementsB = new ArrayList<Config>();
+			a.possible2CarPlacements(placementsB, false);
+			for (Config b : placementsB) {
+				
+				placementsC = new ArrayList<Config>();
+				b.possible2CarPlacements(placementsC, false);
+				for (Config c : placementsC) {
+					
+					placementsD = new ArrayList<Config>();
+					c.possible2CarPlacements(placementsD, false);
+					for (Config d : placementsD) {
+						
+						placementsE = new ArrayList<Config>();
+						d.possible2CarPlacements(placementsE, false);
+						for (Config e : placementsE) {
+							
+							placementsF = new ArrayList<Config>();
+							e.possible3CarPlacements(placementsF, false);
+							for (Config f : placementsF) {
+								
+								placementsG = new ArrayList<Config>();
+								f.possible3CarPlacements(placementsG, true);
+								for (Config g : placementsG) {
+									
+									winners.add(g);
+									
+								}
+								
+							}
+							
+						}
+						
+					}
+				}
+				
+			}
+		}
+		
+		explorePartialWinners();
+		
+		placementsA = new ArrayList<Config>();
+		red.possible2CarPlacements(placementsA, false);
+		for (Config a : placementsA) {
+			
+			placementsB = new ArrayList<Config>();
+			a.possible2CarPlacements(placementsB, false);
+			for (Config b : placementsB) {
+				
+				placementsC = new ArrayList<Config>();
+				b.possible2CarPlacements(placementsC, false);
+				for (Config c : placementsC) {
+					
+					placementsD = new ArrayList<Config>();
+					c.possible2CarPlacements(placementsD, false);
+					for (Config d : placementsD) {
+						
+						placementsE = new ArrayList<Config>();
+						d.possible3CarPlacements(placementsE, false);
+						for (Config e : placementsE) {
+							
+							placementsF = new ArrayList<Config>();
+							e.possible2CarPlacements(placementsF, false);
+							for (Config f : placementsF) {
+								
+								placementsG = new ArrayList<Config>();
+								f.possible3CarPlacements(placementsG, true);
+								for (Config g : placementsG) {
+									
+									winners.add(g);
+									
+								}
+								
+							}
+							
+						}
+						
+					}
+				}
+				
+			}
+		}
+		
+		explorePartialWinners();
+		
+		placementsA = new ArrayList<Config>();
+		red.possible2CarPlacements(placementsA, false);
+		for (Config a : placementsA) {
+			
+			placementsB = new ArrayList<Config>();
+			a.possible2CarPlacements(placementsB, false);
+			for (Config b : placementsB) {
+				
+				placementsC = new ArrayList<Config>();
+				b.possible2CarPlacements(placementsC, false);
+				for (Config c : placementsC) {
+					
+					placementsD = new ArrayList<Config>();
+					c.possible3CarPlacements(placementsD, false);
+					for (Config d : placementsD) {
+						
+						placementsE = new ArrayList<Config>();
+						d.possible2CarPlacements(placementsE, false);
+						for (Config e : placementsE) {
+							
+							placementsF = new ArrayList<Config>();
+							e.possible2CarPlacements(placementsF, false);
+							for (Config f : placementsF) {
+								
+								placementsG = new ArrayList<Config>();
+								f.possible3CarPlacements(placementsG, true);
+								for (Config g : placementsG) {
+									
+									winners.add(g);
+									
+								}
+								
+							}
+							
+						}
+						
+					}
+				}
+				
+			}
+		}
+		
+		explorePartialWinners();
+		
+		placementsA = new ArrayList<Config>();
+		red.possible2CarPlacements(placementsA, false);
+		for (Config a : placementsA) {
+			
+			placementsB = new ArrayList<Config>();
+			a.possible2CarPlacements(placementsB, false);
+			for (Config b : placementsB) {
+				
+				placementsC = new ArrayList<Config>();
+				b.possible3CarPlacements(placementsC, false);
+				for (Config c : placementsC) {
+					
+					placementsD = new ArrayList<Config>();
+					c.possible2CarPlacements(placementsD, false);
+					for (Config d : placementsD) {
+						
+						placementsE = new ArrayList<Config>();
+						d.possible2CarPlacements(placementsE, false);
+						for (Config e : placementsE) {
+							
+							placementsF = new ArrayList<Config>();
+							e.possible2CarPlacements(placementsF, false);
+							for (Config f : placementsF) {
+								
+								placementsG = new ArrayList<Config>();
+								f.possible3CarPlacements(placementsG, true);
+								for (Config g : placementsG) {
+									
+									winners.add(g);
+									
+								}
+								
+							}
+							
+						}
+						
+					}
+				}
+				
+			}
+		}
+		
+		explorePartialWinners();
+		
+		placementsA = new ArrayList<Config>();
+		red.possible2CarPlacements(placementsA, false);
+		for (Config a : placementsA) {
+			
+			placementsB = new ArrayList<Config>();
+			a.possible3CarPlacements(placementsB, false);
+			for (Config b : placementsB) {
+				
+				placementsC = new ArrayList<Config>();
+				b.possible2CarPlacements(placementsC, false);
+				for (Config c : placementsC) {
+					
+					placementsD = new ArrayList<Config>();
+					c.possible2CarPlacements(placementsD, false);
+					for (Config d : placementsD) {
+						
+						placementsE = new ArrayList<Config>();
+						d.possible2CarPlacements(placementsE, false);
+						for (Config e : placementsE) {
+							
+							placementsF = new ArrayList<Config>();
+							e.possible2CarPlacements(placementsF, false);
+							for (Config f : placementsF) {
+								
+								placementsG = new ArrayList<Config>();
+								f.possible3CarPlacements(placementsG, true);
+								for (Config g : placementsG) {
+									
+									winners.add(g);
+									
+								}
+								
+							}
+							
+						}
+						
+					}
+				}
+				
+			}
+		}
+		
+		explorePartialWinners();
+		
+		placementsA = new ArrayList<Config>();
+		red.possible3CarPlacements(placementsA, false);
+		for (Config a : placementsA) {
+			
+			placementsB = new ArrayList<Config>();
+			a.possible2CarPlacements(placementsB, false);
+			for (Config b : placementsB) {
+				
+				placementsC = new ArrayList<Config>();
+				b.possible2CarPlacements(placementsC, false);
+				for (Config c : placementsC) {
+					
+					placementsD = new ArrayList<Config>();
+					c.possible2CarPlacements(placementsD, false);
+					for (Config d : placementsD) {
+						
+						placementsE = new ArrayList<Config>();
+						d.possible2CarPlacements(placementsE, false);
+						for (Config e : placementsE) {
+							
+							placementsF = new ArrayList<Config>();
+							e.possible2CarPlacements(placementsF, false);
+							for (Config f : placementsF) {
+								
+								placementsG = new ArrayList<Config>();
+								f.possible3CarPlacements(placementsG, true);
+								for (Config g : placementsG) {
+									
+									winners.add(g);
+									
+								}
+								
+							}
+							
+						}
+						
+					}
+				}
+				
+			}
+		}
+		
+		explorePartialWinners();
+		
+		placementsA = new ArrayList<Config>();
+		red.possible2CarPlacements(placementsA, false);
+		for (Config a : placementsA) {
+			
+			placementsB = new ArrayList<Config>();
+			a.possible2CarPlacements(placementsB, false);
+			for (Config b : placementsB) {
+				
+				placementsC = new ArrayList<Config>();
+				b.possible2CarPlacements(placementsC, false);
+				for (Config c : placementsC) {
+					
+					placementsD = new ArrayList<Config>();
+					c.possible2CarPlacements(placementsD, false);
+					for (Config d : placementsD) {
+						
+						placementsE = new ArrayList<Config>();
+						d.possible3CarPlacements(placementsE, false);
+						for (Config e : placementsE) {
+							
+							placementsF = new ArrayList<Config>();
+							e.possible3CarPlacements(placementsF, false);
+							for (Config f : placementsF) {
+								
+								placementsG = new ArrayList<Config>();
+								f.possible2CarPlacements(placementsG, true);
+								for (Config g : placementsG) {
+									
+									winners.add(g);
+									
+								}
+								
+							}
+							
+						}
+						
+					}
+				}
+				
+			}
+		}
+		
+		explorePartialWinners();
+		
+		placementsA = new ArrayList<Config>();
+		red.possible2CarPlacements(placementsA, false);
+		for (Config a : placementsA) {
+			
+			placementsB = new ArrayList<Config>();
+			a.possible2CarPlacements(placementsB, false);
+			for (Config b : placementsB) {
+				
+				placementsC = new ArrayList<Config>();
+				b.possible2CarPlacements(placementsC, false);
+				for (Config c : placementsC) {
+					
+					placementsD = new ArrayList<Config>();
+					c.possible3CarPlacements(placementsD, false);
+					for (Config d : placementsD) {
+						
+						placementsE = new ArrayList<Config>();
+						d.possible2CarPlacements(placementsE, false);
+						for (Config e : placementsE) {
+							
+							placementsF = new ArrayList<Config>();
+							e.possible3CarPlacements(placementsF, false);
+							for (Config f : placementsF) {
+								
+								placementsG = new ArrayList<Config>();
+								f.possible2CarPlacements(placementsG, true);
+								for (Config g : placementsG) {
+									
+									winners.add(g);
+									
+								}
+								
+							}
+							
+						}
+						
+					}
+				}
+				
+			}
+		}
+		
+		explorePartialWinners();
+		
+		placementsA = new ArrayList<Config>();
+		red.possible2CarPlacements(placementsA, false);
+		for (Config a : placementsA) {
+			
+			placementsB = new ArrayList<Config>();
+			a.possible2CarPlacements(placementsB, false);
+			for (Config b : placementsB) {
+				
+				placementsC = new ArrayList<Config>();
+				b.possible3CarPlacements(placementsC, false);
+				for (Config c : placementsC) {
+					
+					placementsD = new ArrayList<Config>();
+					c.possible2CarPlacements(placementsD, false);
+					for (Config d : placementsD) {
+						
+						placementsE = new ArrayList<Config>();
+						d.possible2CarPlacements(placementsE, false);
+						for (Config e : placementsE) {
+							
+							placementsF = new ArrayList<Config>();
+							e.possible3CarPlacements(placementsF, false);
+							for (Config f : placementsF) {
+								
+								placementsG = new ArrayList<Config>();
+								f.possible2CarPlacements(placementsG, true);
+								for (Config g : placementsG) {
+									
+									winners.add(g);
+									
+								}
+								
+							}
+							
+						}
+						
+					}
+				}
+				
+			}
+		}
+		
+		explorePartialWinners();
+		
+		placementsA = new ArrayList<Config>();
+		red.possible2CarPlacements(placementsA, false);
+		for (Config a : placementsA) {
+			
+			placementsB = new ArrayList<Config>();
+			a.possible3CarPlacements(placementsB, false);
+			for (Config b : placementsB) {
+				
+				placementsC = new ArrayList<Config>();
+				b.possible2CarPlacements(placementsC, false);
+				for (Config c : placementsC) {
+					
+					placementsD = new ArrayList<Config>();
+					c.possible2CarPlacements(placementsD, false);
+					for (Config d : placementsD) {
+						
+						placementsE = new ArrayList<Config>();
+						d.possible2CarPlacements(placementsE, false);
+						for (Config e : placementsE) {
+							
+							placementsF = new ArrayList<Config>();
+							e.possible3CarPlacements(placementsF, false);
+							for (Config f : placementsF) {
+								
+								placementsG = new ArrayList<Config>();
+								f.possible2CarPlacements(placementsG, true);
+								for (Config g : placementsG) {
+									
+									winners.add(g);
+									
+								}
+								
+							}
+							
+						}
+						
+					}
+				}
+				
+			}
+		}
+		
+		explorePartialWinners();
+		
+		placementsA = new ArrayList<Config>();
+		red.possible3CarPlacements(placementsA, false);
+		for (Config a : placementsA) {
+			
+			placementsB = new ArrayList<Config>();
+			a.possible2CarPlacements(placementsB, false);
+			for (Config b : placementsB) {
+				
+				placementsC = new ArrayList<Config>();
+				b.possible2CarPlacements(placementsC, false);
+				for (Config c : placementsC) {
+					
+					placementsD = new ArrayList<Config>();
+					c.possible2CarPlacements(placementsD, false);
+					for (Config d : placementsD) {
+						
+						placementsE = new ArrayList<Config>();
+						d.possible2CarPlacements(placementsE, false);
+						for (Config e : placementsE) {
+							
+							placementsF = new ArrayList<Config>();
+							e.possible3CarPlacements(placementsF, false);
+							for (Config f : placementsF) {
+								
+								placementsG = new ArrayList<Config>();
+								f.possible2CarPlacements(placementsG, true);
+								for (Config g : placementsG) {
+									
+									winners.add(g);
+									
+								}
+								
+							}
+							
+						}
+						
+					}
+				}
+				
+			}
+		}
+		
+		explorePartialWinners();
+		
+		placementsA = new ArrayList<Config>();
+		red.possible2CarPlacements(placementsA, false);
+		for (Config a : placementsA) {
+			
+			placementsB = new ArrayList<Config>();
+			a.possible2CarPlacements(placementsB, false);
+			for (Config b : placementsB) {
+				
+				placementsC = new ArrayList<Config>();
+				b.possible2CarPlacements(placementsC, false);
+				for (Config c : placementsC) {
+					
+					placementsD = new ArrayList<Config>();
+					c.possible3CarPlacements(placementsD, false);
+					for (Config d : placementsD) {
+						
+						placementsE = new ArrayList<Config>();
+						d.possible3CarPlacements(placementsE, false);
+						for (Config e : placementsE) {
+							
+							placementsF = new ArrayList<Config>();
+							e.possible2CarPlacements(placementsF, false);
+							for (Config f : placementsF) {
+								
+								placementsG = new ArrayList<Config>();
+								f.possible2CarPlacements(placementsG, true);
+								for (Config g : placementsG) {
+									
+									winners.add(g);
+									
+								}
+								
+							}
+							
+						}
+						
+					}
+				}
+				
+			}
+		}
+		
+		explorePartialWinners();
+		
+		placementsA = new ArrayList<Config>();
+		red.possible2CarPlacements(placementsA, false);
+		for (Config a : placementsA) {
+			
+			placementsB = new ArrayList<Config>();
+			a.possible2CarPlacements(placementsB, false);
+			for (Config b : placementsB) {
+				
+				placementsC = new ArrayList<Config>();
+				b.possible3CarPlacements(placementsC, false);
+				for (Config c : placementsC) {
+					
+					placementsD = new ArrayList<Config>();
+					c.possible2CarPlacements(placementsD, false);
+					for (Config d : placementsD) {
+						
+						placementsE = new ArrayList<Config>();
+						d.possible3CarPlacements(placementsE, false);
+						for (Config e : placementsE) {
+							
+							placementsF = new ArrayList<Config>();
+							e.possible2CarPlacements(placementsF, false);
+							for (Config f : placementsF) {
+								
+								placementsG = new ArrayList<Config>();
+								f.possible2CarPlacements(placementsG, true);
+								for (Config g : placementsG) {
+									
+									winners.add(g);
+									
+								}
+								
+							}
+							
+						}
+						
+					}
+				}
+				
+			}
+		}
+		
+		explorePartialWinners();
+		
+		placementsA = new ArrayList<Config>();
+		red.possible2CarPlacements(placementsA, false);
+		for (Config a : placementsA) {
+			
+			placementsB = new ArrayList<Config>();
+			a.possible3CarPlacements(placementsB, false);
+			for (Config b : placementsB) {
+				
+				placementsC = new ArrayList<Config>();
+				b.possible2CarPlacements(placementsC, false);
+				for (Config c : placementsC) {
+					
+					placementsD = new ArrayList<Config>();
+					c.possible2CarPlacements(placementsD, false);
+					for (Config d : placementsD) {
+						
+						placementsE = new ArrayList<Config>();
+						d.possible3CarPlacements(placementsE, false);
+						for (Config e : placementsE) {
+							
+							placementsF = new ArrayList<Config>();
+							e.possible2CarPlacements(placementsF, false);
+							for (Config f : placementsF) {
+								
+								placementsG = new ArrayList<Config>();
+								f.possible2CarPlacements(placementsG, true);
+								for (Config g : placementsG) {
+									
+									winners.add(g);
+									
+								}
+								
+							}
+							
+						}
+						
+					}
+				}
+				
+			}
+		}
+		
+		explorePartialWinners();
+		
+		placementsA = new ArrayList<Config>();
+		red.possible3CarPlacements(placementsA, false);
+		for (Config a : placementsA) {
+			
+			placementsB = new ArrayList<Config>();
+			a.possible2CarPlacements(placementsB, false);
+			for (Config b : placementsB) {
+				
+				placementsC = new ArrayList<Config>();
+				b.possible2CarPlacements(placementsC, false);
+				for (Config c : placementsC) {
+					
+					placementsD = new ArrayList<Config>();
+					c.possible2CarPlacements(placementsD, false);
+					for (Config d : placementsD) {
+						
+						placementsE = new ArrayList<Config>();
+						d.possible3CarPlacements(placementsE, false);
+						for (Config e : placementsE) {
+							
+							placementsF = new ArrayList<Config>();
+							e.possible2CarPlacements(placementsF, false);
+							for (Config f : placementsF) {
+								
+								placementsG = new ArrayList<Config>();
+								f.possible2CarPlacements(placementsG, true);
+								for (Config g : placementsG) {
+									
+									winners.add(g);
+									
+								}
+								
+							}
+							
+						}
+						
+					}
+				}
+				
+			}
+		}
+		
+		explorePartialWinners();
+		
+		placementsA = new ArrayList<Config>();
+		red.possible2CarPlacements(placementsA, false);
+		for (Config a : placementsA) {
+			
+			placementsB = new ArrayList<Config>();
+			a.possible2CarPlacements(placementsB, false);
+			for (Config b : placementsB) {
+				
+				placementsC = new ArrayList<Config>();
+				b.possible3CarPlacements(placementsC, false);
+				for (Config c : placementsC) {
+					
+					placementsD = new ArrayList<Config>();
+					c.possible3CarPlacements(placementsD, false);
+					for (Config d : placementsD) {
+						
+						placementsE = new ArrayList<Config>();
+						d.possible2CarPlacements(placementsE, false);
+						for (Config e : placementsE) {
+							
+							placementsF = new ArrayList<Config>();
+							e.possible2CarPlacements(placementsF, false);
+							for (Config f : placementsF) {
+								
+								placementsG = new ArrayList<Config>();
+								f.possible2CarPlacements(placementsG, true);
+								for (Config g : placementsG) {
+									
+									winners.add(g);
+									
+								}
+								
+							}
+							
+						}
+						
+					}
+				}
+				
+			}
+		}
+		
+		explorePartialWinners();
+		
+		placementsA = new ArrayList<Config>();
+		red.possible2CarPlacements(placementsA, false);
+		for (Config a : placementsA) {
+			
+			placementsB = new ArrayList<Config>();
+			a.possible3CarPlacements(placementsB, false);
+			for (Config b : placementsB) {
+				
+				placementsC = new ArrayList<Config>();
+				b.possible2CarPlacements(placementsC, false);
+				for (Config c : placementsC) {
+					
+					placementsD = new ArrayList<Config>();
+					c.possible3CarPlacements(placementsD, false);
+					for (Config d : placementsD) {
+						
+						placementsE = new ArrayList<Config>();
+						d.possible2CarPlacements(placementsE, false);
+						for (Config e : placementsE) {
+							
+							placementsF = new ArrayList<Config>();
+							e.possible2CarPlacements(placementsF, false);
+							for (Config f : placementsF) {
+								
+								placementsG = new ArrayList<Config>();
+								f.possible2CarPlacements(placementsG, true);
+								for (Config g : placementsG) {
+									
+									winners.add(g);
+									
+								}
+								
+							}
+							
+						}
+						
+					}
+				}
+				
+			}
+		}
+		
+		explorePartialWinners();
+		
+		placementsA = new ArrayList<Config>();
+		red.possible3CarPlacements(placementsA, false);
+		for (Config a : placementsA) {
+			
+			placementsB = new ArrayList<Config>();
+			a.possible2CarPlacements(placementsB, false);
+			for (Config b : placementsB) {
+				
+				placementsC = new ArrayList<Config>();
+				b.possible2CarPlacements(placementsC, false);
+				for (Config c : placementsC) {
+					
+					placementsD = new ArrayList<Config>();
+					c.possible3CarPlacements(placementsD, false);
+					for (Config d : placementsD) {
+						
+						placementsE = new ArrayList<Config>();
+						d.possible2CarPlacements(placementsE, false);
+						for (Config e : placementsE) {
+							
+							placementsF = new ArrayList<Config>();
+							e.possible2CarPlacements(placementsF, false);
+							for (Config f : placementsF) {
+								
+								placementsG = new ArrayList<Config>();
+								f.possible2CarPlacements(placementsG, true);
+								for (Config g : placementsG) {
+									
+									winners.add(g);
+									
+								}
+								
+							}
+							
+						}
+						
+					}
+				}
+				
+			}
+		}
+		
+		explorePartialWinners();
+		
+		placementsA = new ArrayList<Config>();
+		red.possible2CarPlacements(placementsA, false);
+		for (Config a : placementsA) {
+			
+			placementsB = new ArrayList<Config>();
+			a.possible3CarPlacements(placementsB, false);
+			for (Config b : placementsB) {
+				
+				placementsC = new ArrayList<Config>();
+				b.possible3CarPlacements(placementsC, false);
+				for (Config c : placementsC) {
+					
+					placementsD = new ArrayList<Config>();
+					c.possible2CarPlacements(placementsD, false);
+					for (Config d : placementsD) {
+						
+						placementsE = new ArrayList<Config>();
+						d.possible2CarPlacements(placementsE, false);
+						for (Config e : placementsE) {
+							
+							placementsF = new ArrayList<Config>();
+							e.possible2CarPlacements(placementsF, false);
+							for (Config f : placementsF) {
+								
+								placementsG = new ArrayList<Config>();
+								f.possible2CarPlacements(placementsG, true);
+								for (Config g : placementsG) {
+									
+									winners.add(g);
+									
+								}
+								
+							}
+							
+						}
+						
+					}
+				}
+				
+			}
+		}
+		
+		explorePartialWinners();
+		
+		placementsA = new ArrayList<Config>();
+		red.possible3CarPlacements(placementsA, false);
+		for (Config a : placementsA) {
+			
+			placementsB = new ArrayList<Config>();
+			a.possible2CarPlacements(placementsB, false);
+			for (Config b : placementsB) {
+				
+				placementsC = new ArrayList<Config>();
+				b.possible3CarPlacements(placementsC, false);
+				for (Config c : placementsC) {
+					
+					placementsD = new ArrayList<Config>();
+					c.possible2CarPlacements(placementsD, false);
+					for (Config d : placementsD) {
+						
+						placementsE = new ArrayList<Config>();
+						d.possible2CarPlacements(placementsE, false);
+						for (Config e : placementsE) {
+							
+							placementsF = new ArrayList<Config>();
+							e.possible2CarPlacements(placementsF, false);
+							for (Config f : placementsF) {
+								
+								placementsG = new ArrayList<Config>();
+								f.possible2CarPlacements(placementsG, true);
+								for (Config g : placementsG) {
+									
+									winners.add(g);
+									
+								}
+								
+							}
+							
+						}
+						
+					}
+				}
+				
+			}
+		}
+		
+		explorePartialWinners();
+		
+		placementsA = new ArrayList<Config>();
+		red.possible3CarPlacements(placementsA, false);
+		for (Config a : placementsA) {
+			
+			placementsB = new ArrayList<Config>();
+			a.possible3CarPlacements(placementsB, false);
+			for (Config b : placementsB) {
+				
+				placementsC = new ArrayList<Config>();
+				b.possible2CarPlacements(placementsC, false);
+				for (Config c : placementsC) {
+					
+					placementsD = new ArrayList<Config>();
+					c.possible2CarPlacements(placementsD, false);
+					for (Config d : placementsD) {
+						
+						placementsE = new ArrayList<Config>();
+						d.possible2CarPlacements(placementsE, false);
+						for (Config e : placementsE) {
+							
+							placementsF = new ArrayList<Config>();
+							e.possible2CarPlacements(placementsF, false);
+							for (Config f : placementsF) {
+								
+								placementsG = new ArrayList<Config>();
+								f.possible2CarPlacements(placementsG, true);
+								for (Config g : placementsG) {
+									
+									winners.add(g);
+									
+								}
+								
+							}
+							
+						}
+						
+					}
+				}
+				
+			}
+		}
+		
+		explorePartialWinners();
+		
 		
 	}
 

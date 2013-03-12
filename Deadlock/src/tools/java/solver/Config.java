@@ -4,13 +4,6 @@ import java.util.List;
 
 public class Config {
 	
-	public Config generatingVal;
-	public Config solvingVal;
-//	public Config previousGeneratingConfig;
-	
-//	public boolean bs;
-//	public int shortestDistToWinner;
-	
 	public static ParentConfig par;
 	
 	public final byte[] board;
@@ -73,13 +66,14 @@ public class Config {
 	};
 	
 	public static byte[] newBoard(int rows, int cols) {
-		int actualCols;
-		if (cols % 2 == 0) {
-			actualCols = cols / 2;
-		} else {
-			actualCols = cols / 2 + 1;
-		}
-		return new byte[rows * actualCols];
+//		int actualCols;
+//		if (cols % 2 == 0) {
+//			actualCols = cols / 2;
+//		} else {
+//			actualCols = cols / 2 + 1;
+//		}
+//		return new byte[rows * actualCols];
+		return new byte[rows * cols];
 	}
 	
 	byte boardGet(int[] coor) {
@@ -88,42 +82,43 @@ public class Config {
 	
 	byte boardGet(int r, int c) {
 		
-		int actualCol;
-		int actualColCount = (par.colCount % 2 == 0) ? par.colCount / 2 : par.colCount / 2 + 1;
-		int n;
-		if (c % 2 == 0) {
-			actualCol = c / 2;
-			int old8bits = board[r * actualColCount + actualCol];
-			n = ((old8bits & 0x0f));
-		} else {
-			actualCol = c / 2;
-			int old8bits = board[r * actualColCount + actualCol];
-			n = ((old8bits & 0xf0) >> 4);
-		}
-		
-		switch (n) {
-		case 0:
-			return 'X';
-		case 1:
-			return 'R';
-		case 2:
-			return 'A';
-		case 3:
-			return 'B';
-		case 4:
-			return 'C';
-		case 5:
-			return 'D';
-		case 6:
-			return 'E';
-		case 7:
-			return 'F';
-		case 8:
-			return 'G';
-		default:
-			assert false;
-			return 0;
-		}
+//		int actualCol;
+//		int actualColCount = (par.colCount % 2 == 0) ? par.colCount / 2 : par.colCount / 2 + 1;
+//		int n;
+//		if (c % 2 == 0) {
+//			actualCol = c / 2;
+//			int old8bits = board[r * actualColCount + actualCol];
+//			n = ((old8bits & 0x0f));
+//		} else {
+//			actualCol = c / 2;
+//			int old8bits = board[r * actualColCount + actualCol];
+//			n = ((old8bits & 0xf0) >> 4);
+//		}
+//		
+//		switch (n) {
+//		case 0:
+//			return 'X';
+//		case 1:
+//			return 'R';
+//		case 2:
+//			return 'A';
+//		case 3:
+//			return 'B';
+//		case 4:
+//			return 'C';
+//		case 5:
+//			return 'D';
+//		case 6:
+//			return 'E';
+//		case 7:
+//			return 'F';
+//		case 8:
+//			return 'G';
+//		default:
+//			assert false;
+//			return 0;
+//		}
+		return board[r * par.colCount + c];
 		
 	}
 	
@@ -133,53 +128,56 @@ public class Config {
 	
 	public static void boardSet(byte[] board, int r, int c, byte b, int colCount) {
 		
-		byte actualByte = 0;
-		switch (b) {
-		case 'X':
-			actualByte = 0;
-			break;
-		case 'R':
-			actualByte = 1;
-			break;
-		case 'A':
-			actualByte = 2;
-			break;
-		case 'B':
-			actualByte = 3;
-			break;
-		case 'C':
-			actualByte = 4;
-			break;
-		case 'D':
-			actualByte = 5;
-			break;
-		case 'E':
-			actualByte = 6;
-			break;
-		case 'F':
-			actualByte = 7;
-			break;
-		case 'G':
-			actualByte = 8;
-			break;
-		default:
-			assert false;
-			return;
-		}
+//		byte actualByte = 0;
+//		switch (b) {
+//		case 'X':
+//			actualByte = 0;
+//			break;
+//		case 'R':
+//			actualByte = 1;
+//			break;
+//		case 'A':
+//			actualByte = 2;
+//			break;
+//		case 'B':
+//			actualByte = 3;
+//			break;
+//		case 'C':
+//			actualByte = 4;
+//			break;
+//		case 'D':
+//			actualByte = 5;
+//			break;
+//		case 'E':
+//			actualByte = 6;
+//			break;
+//		case 'F':
+//			actualByte = 7;
+//			break;
+//		case 'G':
+//			actualByte = 8;
+//			break;
+//		default:
+//			assert false;
+//			return;
+//		}
+//		
+//		int actualCol;
+//		int actualColCount = (colCount % 2 == 0) ? colCount / 2 : colCount / 2 + 1;
+//		if (c % 2 == 0) {
+//			actualCol = c / 2;
+//			int old8bits = board[r * actualColCount + actualCol];
+//			byte n = (byte)((old8bits & 0xf0) | actualByte);
+//			board[r * actualColCount + actualCol] = n;
+//		} else {
+//			actualCol = c / 2;
+//			int old8bits = board[r * actualColCount + actualCol];
+//			byte n = (byte)((old8bits & 0x0f) | (actualByte<<4));
+//			board[r * actualColCount + actualCol] = n;
+//		}
 		
-		int actualCol;
-		int actualColCount = (colCount % 2 == 0) ? colCount / 2 : colCount / 2 + 1;
-		if (c % 2 == 0) {
-			actualCol = c / 2;
-			int old8bits = board[r * actualColCount + actualCol];
-			byte n = (byte)((old8bits & 0xf0) | actualByte);
-			board[r * actualColCount + actualCol] = n;
-		} else {
-			actualCol = c / 2;
-			int old8bits = board[r * actualColCount + actualCol];
-			byte n = (byte)((old8bits & 0x0f) | (actualByte<<4));
-			board[r * actualColCount + actualCol] = n;
-		}
+		board[r * colCount + c] = b;
+		
 	}
 	
 	public boolean boardContainsCar(byte b) {
@@ -1028,7 +1026,7 @@ public class Config {
 		par.cursor.reset(next);
 		boolean nextBlocking = false;
 		while (true) {
-			if (par.cursor.val() == 'Y' || par.cursor.val() == 'X') {
+			if (Statics.isXorY(par.cursor.val())) {
 				par.cursor.move();
 			} else {
 				if (par.cursor.val() == 'R') {
@@ -1045,12 +1043,16 @@ public class Config {
 					break;
 				}
 			}
+		}
+		
+		if (!nextBlocking) {
+			return false;
 		}
 		
 		par.cursor.reset(cur);
 		boolean curBlocking = false;
 		while (true) {
-			if (par.cursor.val() == 'Y' || par.cursor.val() == 'X') {
+			if (Statics.isXorY(par.cursor.val())) {
 				par.cursor.move();
 			} else {
 				if (par.cursor.val() == 'R') {
@@ -1063,14 +1065,10 @@ public class Config {
 						par.cursor.move();
 					}
 				} else {
-					nextBlocking = true;
+					curBlocking = true;
 					break;
 				}
 			}
-		}
-		
-		if (!curBlocking && nextBlocking) {
-			String.class.getName();
 		}
 		
 		return !curBlocking && nextBlocking;

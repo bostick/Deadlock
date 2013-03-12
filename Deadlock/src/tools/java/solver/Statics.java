@@ -61,4 +61,8 @@ public class Statics {
 		return b == 'X' || b == c;
 	}
 	
+	static public boolean isXorY(byte b) {
+		return b == 'X' || b == 'Y';
+	}
+	
 }
