@@ -1812,7 +1812,31 @@ public class Config {
 		
 	}
 	
-	public byte getInfoByte(byte car) {
+	public long getInfoLong() {
+		
+		if (par.totalCarCount() > 8) {
+			throw new IllegalArgumentException("Must have 8 or fewer cars");
+		}
+		
+		long totalInfo = 0;
+		for (byte car : cars) {
+			if (!par.carMapContains(car)) {
+				break;
+			}
+			
+			int carByte = getInfoByte(car);
+			totalInfo = (totalInfo << 8 | carByte);
+			
+		}
+		
+		return totalInfo;
+	}
+	
+	/**
+	 * returns an int, but treat as a byte
+	 * this prevents sign-extension jazz 
+	 */
+	private int getInfoByte(byte car) {
 		boolean res = loadScratchInfo(car);
 		if (!res) {
 			return -1;
@@ -1826,7 +1850,7 @@ public class Config {
 		 * 76543210
 		 */
 		
-		byte ret = (byte)((size==2?0:1<<7) | (o==Orientation.LEFTRIGHT?0:1<<6) | r << 3 | c);
+		int ret = (size==2?0:1<<7) | (o==Orientation.LEFTRIGHT?0:1<<6) | (r << 3) | (c);
 		return ret;
 	}
 	

@@ -375,6 +375,18 @@ public class ParentConfig {
 		return false;
 	}
 	
+	public int totalCarCount() {
+		int total = 0;
+		for (int i = 0; i < carPresent.length; i++) {
+			if (carPresent[i]) {
+				total++;
+			} else {
+				break;
+			}
+		}
+		return total;
+	}
+	
 	public void addCar(byte c) {
 		switch (c) {
 		case 'R':
