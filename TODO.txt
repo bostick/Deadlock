@@ -1,15 +1,15 @@
 
-don't use configs with blocks
-
-don't use configs that don't leave a gap behind the red car
+start using trie thing to save space
 
 
+right now, 14 cars seems to suffice to 6x6 board
+if ever generalized and need more bits for cars:
+only use ABCD in configs to encode cars
+rely on 4 color theorem
+scan through to find second occurrence of A car, then that is car#5
 
+this gets around the current limitation of only 14 cars
 
-
-
-store tuple in each config encoding its eumeration
-use to keep compressed map of configs
 
 
 

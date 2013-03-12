@@ -1812,4 +1812,22 @@ public class Config {
 		
 	}
 	
+	public byte getInfoByte(byte car) {
+		boolean res = loadScratchInfo(car);
+		if (!res) {
+			return -1;
+		}
+		int size = par.scratchInfo.size;
+		Orientation o = par.scratchInfo.o;
+		int r = par.scratchInfo.row;
+		int c = par.scratchInfo.col;
+		
+		/* sorrrccc
+		 * 76543210
+		 */
+		
+		byte ret = (byte)((size==2?0:1<<7) | (o==Orientation.LEFTRIGHT?0:1<<6) | r << 3 | c);
+		return ret;
+	}
+	
 }
