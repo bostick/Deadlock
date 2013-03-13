@@ -23,8 +23,18 @@ probably won't work either
 
 
 
+need to prune dead ends
+look at simply 2 2car 1 3car or something, and see how the easier branches are different than the ultimately hardest branch
+visualize
 
 
+
+determine 1 move away from clear path?
+
+
+
+
+partition based on invariants
 
 
 

@@ -17,18 +17,18 @@ public class Generator {
 	}
 	
 	static byte[][] boardIni = new byte[][] {
-		{ '/', 'K', '-', '-', '-', '-', '-', '\\'},
-		{ 'K', ' ', ' ', ' ', ' ', ' ', ' ', '|'},
+		{ '/', '-', '-', '-', 'J', '-', '-', '\\'},
+		{ '|', ' ', ' ', ' ', ' ', ' ', ' ', '|'},
 		{ '|', ' ', ' ', ' ', ' ', ' ', ' ', '|'},
 		{ 'J', ' ', ' ', ' ', ' ', ' ', ' ', 'Y'},
 		{ '|', ' ', ' ', ' ', ' ', ' ', ' ', '|'},
 		{ '|', ' ', ' ', ' ', ' ', ' ', ' ', '|'},
 		{ '|', ' ', ' ', ' ', ' ', ' ', ' ', '|'},
-		{'\\', 'J', '-', '-', '-', '-', '-', '/'},
+		{'\\', '-', '-', '-', '-', '-', '-', '/'},
 	};
 	static StateSpace explored = new StateSpace();
 	
-	static List<byte[]> winners = new ArrayList<byte[]>();
+	static List<byte[][]> winners = new ArrayList<byte[][]>();
 	
 	static long total = System.currentTimeMillis();
 	static long t = total;
@@ -41,18 +41,19 @@ public class Generator {
 		Config.par = new ParentConfig(boardIni);
 		Config.par.addCar((byte)'R');
 		
-		byte[] red = Config.newConfig(Config.par.emptyBoard);
+		byte[][] red = Config.newConfig(Config.par.emptyBoard);
 		red = Config.winningConfig(red);
 		
 		System.out.println("board:");
 		System.out.println(Config.toString(red));
 		
-//		add3and1(red);
-		add4and1(red);
+//		add2and1(red);
+		add3and1(red);
+//		add4and1(red);
 //		add5and1(red);
 //		add5and2(red);
 		
-		byte[] temp = Config.newConfig(Config.par.emptyBoard);
+		byte[][] temp = Config.newConfig(Config.par.emptyBoard);
 		TLongArrayList a = new TLongArrayList();
 		while (true) {
 			t = System.currentTimeMillis();
@@ -75,7 +76,7 @@ public class Generator {
 			
 			System.out.print(" " + (System.currentTimeMillis() - t) + " millis");
 			System.out.println("");
-			System.out.print("explored size:  " + explored.allGeneratingConfigsSize() + " [" + explored.min + ", " + explored.max + "]");
+			System.out.print("explored size:  " + explored.allGeneratingConfigsSize());
 			System.out.println("");
 			if (explored.lastGeneratingIteration.isEmpty()) {
 				break;
@@ -87,7 +88,7 @@ public class Generator {
 //		System.out.print("finding longest non-BS path... ");
 //		System.out.println("explored has " + explored.allGeneratingConfigsSize() + " configs");
 		
-		byte[] longest = explored.lastGeneratingConfig;
+		long longest = explored.lastGeneratingConfig;
 		
 		explored = null;
 		System.gc();
@@ -159,17 +160,15 @@ public class Generator {
 //		
 //	}
 	
-	static public void explorePreviousMoves(byte[] c) {
+	static public void explorePreviousMoves(byte[][] c) {
 		
 		assert explored.allGeneratingConfigsContains(c);
 //		int cDist = explored.allGeneratingConfigsGet(c);
 		
-		List<byte[]> moves = Config.possiblePreviousMoves(c);
+		List<byte[][]> moves = Config.possiblePreviousMoves(c);
 		
-		for (byte[] m : moves) {
-			if (!explored.allGeneratingConfigsContains(m)) {
-				explored.putGenerating(m.clone());
-			}
+		for (byte[][] m : moves) {
+			explored.tryPutGenerating(m);
 //			else {
 //				
 ////				int mDist = explored.allGeneratingConfigsGet(m);
@@ -178,38 +177,41 @@ public class Generator {
 //					 * move is the same or actually closer
 //					 * so cDist may be wrong
 //					 */
-////					List<byte[]> cSolution = solve(c);
+////					List<byte[][]> cSolution = solve(c);
 ////					assert cDist == cSolution.size()-1; 
 ////				}
 //			}
 		}
 	}
 	
-	static List<String> solve(byte[] start) {
+	static List<String> solve(long info) {
+		
+		byte[][] start = Config.newConfig(Config.par.emptyBoard);
+		Config.toBoard(info, start);
 		
 		StateSpace space = new StateSpace();
 		space.putSolving(start, null);
 		
-		byte[] winner = null;
+		byte[][] winner = null;
 		loop:
 		while (true) {
 			
-			List<byte[]> a = new ArrayList<byte[]>(space.lastSolvingIteration);
-			space.lastSolvingIteration = new ArrayList<byte[]>();
+			List<byte[][]> a = new ArrayList<byte[][]>(space.lastSolvingIteration);
+			space.lastSolvingIteration = new ArrayList<byte[][]>();
 			
 			for (int i = 0; i < a.size(); i++) {
-				byte[] b = a.get(i);
+				byte[][] b = a.get(i);
 				
 				if (Config.isWinning(b)) {
 					winner = b;
 					break loop;
 				}
 				
-				List<byte[]> moves = Config.possibleNextMoves(b);
+				List<byte[][]> moves = Config.possibleNextMoves(b);
 				
-				for (byte[] m : moves) {
+				for (byte[][] m : moves) {
 					if (!space.allSolvingConfigsContains(m)) {
-						space.putSolving(m.clone(), b);
+						space.putSolving(Config.clone(m), b);
 					}
 				}
 				
@@ -233,11 +235,11 @@ public class Generator {
 	
 	static void explorePartialWinners() {
 		
-//		for (byte[] w : winners) {
+//		for (byte[][] w : winners) {
 //			explored.putGenerating(w, null, 0);
 //		}
 		
-		List<byte[]> a = new ArrayList<byte[]>();
+		List<byte[][]> a = new ArrayList<byte[][]>();
 		
 		t = System.currentTimeMillis();
 		
@@ -250,34 +252,263 @@ public class Generator {
 			if (i % 1000 == 0) {
 				System.out.print(".");
 			}
-			byte[] b = a.get(i);
+			byte[][] b = a.get(i);
 			explorePreviousMoves(b);
 		}
-		a = new ArrayList<byte[]>();
+		a = new ArrayList<byte[][]>();
 		
 		/*
 		 * after the winners have been explored, they can be removed from collection, and a simple isWinning() check can be done instead
 		 */
-//		for (byte[] w : winners) {
+//		for (byte[][] w : winners) {
 //			explored.allGeneratingConfigsRemove(w);
 //		}
 		
-//		for (byte[] w : winners) {
+//		for (byte[][] w : winners) {
 //			explored.putGenerating(w);
 //		}
 		
-		winners = new ArrayList<byte[]>();
+		winners = new ArrayList<byte[][]>();
 //		explored.lastGeneratingIteration.clear();
 		System.gc();
 		
 		System.out.print(" " + (System.currentTimeMillis() - t) + " millis");
 		System.out.println("");
-		System.out.print("explored size:  " + explored.allGeneratingConfigsSize() + " [" + explored.min + ", " + explored.max + "]");
+		System.out.print("explored size:  " + explored.allGeneratingConfigsSize());
 		System.out.println("");
 		
 	}
 	
-	public static void add4and1(byte[] red) {
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+	public static void add2and1(byte[][] red) {
+		
+		System.out.println("exploring 2 2cars and 1 3car");
+		
+		Config.par.addCar((byte)'A');
+		Config.par.addCar((byte)'B');
+		Config.par.addCar((byte)'C');
+//		Config.par.addCar((byte)'D');
+//		Config.par.addCar((byte)'E');
+//		Config.par.addCar((byte)'F');
+//		Config.par.addCar((byte)'G');
+		
+		List<byte[][]> placementsA = new ArrayList<byte[][]>();
+		List<byte[][]> placementsB = new ArrayList<byte[][]>();
+		List<byte[][]> placementsC = new ArrayList<byte[][]>();
+//		List<byte[][]> placementsD = new ArrayList<byte[][]>();
+//		List<byte[][]> placementsE = new ArrayList<byte[][]>();
+//		List<byte[][]> placementsF = new ArrayList<byte[][]>();
+//		List<byte[][]> placementsG = new ArrayList<byte[][]>();
+		
+		placementsA = new ArrayList<byte[][]>();
+		Config.possible2CarPlacements(red, placementsA, false);
+		for (byte[][] a : placementsA) {
+			
+			placementsB = new ArrayList<byte[][]>();
+			Config.possible2CarPlacements(a, placementsB, false);
+			for (byte[][] b : placementsB) {
+				
+				placementsC = new ArrayList<byte[][]>();
+				Config.possible3CarPlacements(b, placementsC, true);
+				for (byte[][] c : placementsC) {
+					
+					winners.add(c);
+				}
+				
+			}
+		}
+		
+		explorePartialWinners();
+		
+		placementsA = new ArrayList<byte[][]>();
+		Config.possible2CarPlacements(red, placementsA, false);
+		for (byte[][] a : placementsA) {
+			
+			placementsB = new ArrayList<byte[][]>();
+			Config.possible3CarPlacements(a, placementsB, false);
+			for (byte[][] b : placementsB) {
+				
+				placementsC = new ArrayList<byte[][]>();
+				Config.possible2CarPlacements(b, placementsC, true);
+				for (byte[][] c : placementsC) {
+					
+					winners.add(c);
+				}
+				
+			}
+		}
+		
+		explorePartialWinners();
+		
+		placementsA = new ArrayList<byte[][]>();
+		Config.possible3CarPlacements(red, placementsA, false);
+		for (byte[][] a : placementsA) {
+			
+			placementsB = new ArrayList<byte[][]>();
+			Config.possible2CarPlacements(a, placementsB, false);
+			for (byte[][] b : placementsB) {
+				
+				placementsC = new ArrayList<byte[][]>();
+				Config.possible2CarPlacements(b, placementsC, true);
+				for (byte[][] c : placementsC) {
+					
+					winners.add(c);
+				}
+				
+			}
+		}
+		
+		explorePartialWinners();
+		
+	}
+
+	public static void add3and1(byte[][] red) {
+		
+		System.out.println("exploring 3 2cars and 1 3car");
+		
+		Config.par.addCar((byte)'A');
+		Config.par.addCar((byte)'B');
+		Config.par.addCar((byte)'C');
+		Config.par.addCar((byte)'D');
+//		Config.par.addCar((byte)'E');
+//		Config.par.addCar((byte)'F');
+//		Config.par.addCar((byte)'G');
+		
+		List<byte[][]> placementsA = new ArrayList<byte[][]>();
+		List<byte[][]> placementsB = new ArrayList<byte[][]>();
+		List<byte[][]> placementsC = new ArrayList<byte[][]>();
+		List<byte[][]> placementsD = new ArrayList<byte[][]>();
+//		List<byte[][]> placementsE = new ArrayList<byte[][]>();
+//		List<byte[][]> placementsF = new ArrayList<byte[][]>();
+//		List<byte[][]> placementsG = new ArrayList<byte[][]>();
+		
+		placementsA = new ArrayList<byte[][]>();
+		Config.possible2CarPlacements(red, placementsA, false);
+		for (byte[][] a : placementsA) {
+			
+			placementsB = new ArrayList<byte[][]>();
+			Config.possible2CarPlacements(a, placementsB, false);
+			for (byte[][] b : placementsB) {
+				
+				placementsC = new ArrayList<byte[][]>();
+				Config.possible2CarPlacements(b, placementsC, false);
+				for (byte[][] c : placementsC) {
+					
+					placementsD = new ArrayList<byte[][]>();
+					Config.possible3CarPlacements(c, placementsD, true);
+					for (byte[][] d : placementsD) {
+						
+						winners.add(d);
+						
+					}
+				}
+				
+			}
+		}
+		
+		explorePartialWinners();
+		
+		placementsA = new ArrayList<byte[][]>();
+		Config.possible2CarPlacements(red, placementsA, false);
+		for (byte[][] a : placementsA) {
+			
+			placementsB = new ArrayList<byte[][]>();
+			Config.possible2CarPlacements(a, placementsB, false);
+			for (byte[][] b : placementsB) {
+				
+				placementsC = new ArrayList<byte[][]>();
+				Config.possible3CarPlacements(b, placementsC, false);
+				for (byte[][] c : placementsC) {
+					
+					placementsD = new ArrayList<byte[][]>();
+					Config.possible2CarPlacements(c, placementsD, true);
+					for (byte[][] d : placementsD) {
+						
+						winners.add(d);
+						
+					}
+				}
+				
+			}
+		}
+		
+		explorePartialWinners();
+		
+		placementsA = new ArrayList<byte[][]>();
+		Config.possible2CarPlacements(red, placementsA, false);
+		for (byte[][] a : placementsA) {
+			
+			placementsB = new ArrayList<byte[][]>();
+			Config.possible3CarPlacements(a, placementsB, false);
+			for (byte[][] b : placementsB) {
+				
+				placementsC = new ArrayList<byte[][]>();
+				Config.possible2CarPlacements(b, placementsC, false);
+				for (byte[][] c : placementsC) {
+					
+					placementsD = new ArrayList<byte[][]>();
+					Config.possible2CarPlacements(c, placementsD, true);
+					for (byte[][] d : placementsD) {
+						
+						winners.add(d);
+						
+					}
+				}
+				
+			}
+		}
+		
+		explorePartialWinners();
+		
+		placementsA = new ArrayList<byte[][]>();
+		Config.possible3CarPlacements(red, placementsA, false);
+		for (byte[][] a : placementsA) {
+			
+			placementsB = new ArrayList<byte[][]>();
+			Config.possible2CarPlacements(a, placementsB, false);
+			for (byte[][] b : placementsB) {
+				
+				placementsC = new ArrayList<byte[][]>();
+				Config.possible2CarPlacements(b, placementsC, false);
+				for (byte[][] c : placementsC) {
+					
+					placementsD = new ArrayList<byte[][]>();
+					Config.possible2CarPlacements(c, placementsD, true);
+					for (byte[][] d : placementsD) {
+						
+						winners.add(d);
+						
+					}
+				}
+				
+			}
+		}
+		
+		explorePartialWinners();
+		
+	}
+	
+	public static void add4and1(byte[][] red) {
 		
 		System.out.println("exploring 4 2cars and 1 3car");
 		
@@ -289,33 +520,33 @@ public class Generator {
 //		Config.par.addCar((byte)'F');
 //		Config.par.addCar((byte)'G');
 		
-		List<byte[]> placementsA = new ArrayList<byte[]>();
-		List<byte[]> placementsB = new ArrayList<byte[]>();
-		List<byte[]> placementsC = new ArrayList<byte[]>();
-		List<byte[]> placementsD = new ArrayList<byte[]>();
-		List<byte[]> placementsE = new ArrayList<byte[]>();
-//		List<byte[]> placementsF = new ArrayList<byte[]>();
-//		List<byte[]> placementsG = new ArrayList<byte[]>();
+		List<byte[][]> placementsA = new ArrayList<byte[][]>();
+		List<byte[][]> placementsB = new ArrayList<byte[][]>();
+		List<byte[][]> placementsC = new ArrayList<byte[][]>();
+		List<byte[][]> placementsD = new ArrayList<byte[][]>();
+		List<byte[][]> placementsE = new ArrayList<byte[][]>();
+//		List<byte[][]> placementsF = new ArrayList<byte[][]>();
+//		List<byte[][]> placementsG = new ArrayList<byte[][]>();
 		
-		placementsA = new ArrayList<byte[]>();
+		placementsA = new ArrayList<byte[][]>();
 		Config.possible2CarPlacements(red, placementsA, false);
-		for (byte[] a : placementsA) {
+		for (byte[][] a : placementsA) {
 			
-			placementsB = new ArrayList<byte[]>();
+			placementsB = new ArrayList<byte[][]>();
 			Config.possible2CarPlacements(a, placementsB, false);
-			for (byte[] b : placementsB) {
+			for (byte[][] b : placementsB) {
 				
-				placementsC = new ArrayList<byte[]>();
+				placementsC = new ArrayList<byte[][]>();
 				Config.possible2CarPlacements(b, placementsC, false);
-				for (byte[] c : placementsC) {
+				for (byte[][] c : placementsC) {
 					
-					placementsD = new ArrayList<byte[]>();
+					placementsD = new ArrayList<byte[][]>();
 					Config.possible2CarPlacements(c, placementsD, false);
-					for (byte[] d : placementsD) {
+					for (byte[][] d : placementsD) {
 						
-						placementsE = new ArrayList<byte[]>();
+						placementsE = new ArrayList<byte[][]>();
 						Config.possible3CarPlacements(d, placementsE, true);
-						for (byte[] e : placementsE) {
+						for (byte[][] e : placementsE) {
 							
 							winners.add(e);
 							
@@ -329,25 +560,25 @@ public class Generator {
 		
 		explorePartialWinners();
 		
-		placementsA = new ArrayList<byte[]>();
+		placementsA = new ArrayList<byte[][]>();
 		Config.possible2CarPlacements(red, placementsA, false);
-		for (byte[] a : placementsA) {
+		for (byte[][] a : placementsA) {
 			
-			placementsB = new ArrayList<byte[]>();
+			placementsB = new ArrayList<byte[][]>();
 			Config.possible2CarPlacements(a, placementsB, false);
-			for (byte[] b : placementsB) {
+			for (byte[][] b : placementsB) {
 				
-				placementsC = new ArrayList<byte[]>();
+				placementsC = new ArrayList<byte[][]>();
 				Config.possible2CarPlacements(b, placementsC, false);
-				for (byte[] c : placementsC) {
+				for (byte[][] c : placementsC) {
 					
-					placementsD = new ArrayList<byte[]>();
+					placementsD = new ArrayList<byte[][]>();
 					Config.possible3CarPlacements(c, placementsD, false);
-					for (byte[] d : placementsD) {
+					for (byte[][] d : placementsD) {
 						
-						placementsE = new ArrayList<byte[]>();
+						placementsE = new ArrayList<byte[][]>();
 						Config.possible2CarPlacements(d, placementsE, true);
-						for (byte[] e : placementsE) {
+						for (byte[][] e : placementsE) {
 							
 							winners.add(e);
 							
@@ -361,25 +592,25 @@ public class Generator {
 		
 		explorePartialWinners();
 		
-		placementsA = new ArrayList<byte[]>();
+		placementsA = new ArrayList<byte[][]>();
 		Config.possible2CarPlacements(red, placementsA, false);
-		for (byte[] a : placementsA) {
+		for (byte[][] a : placementsA) {
 			
-			placementsB = new ArrayList<byte[]>();
+			placementsB = new ArrayList<byte[][]>();
 			Config.possible2CarPlacements(a, placementsB, false);
-			for (byte[] b : placementsB) {
+			for (byte[][] b : placementsB) {
 				
-				placementsC = new ArrayList<byte[]>();
+				placementsC = new ArrayList<byte[][]>();
 				Config.possible3CarPlacements(b, placementsC, false);
-				for (byte[] c : placementsC) {
+				for (byte[][] c : placementsC) {
 					
-					placementsD = new ArrayList<byte[]>();
+					placementsD = new ArrayList<byte[][]>();
 					Config.possible2CarPlacements(c, placementsD, false);
-					for (byte[] d : placementsD) {
+					for (byte[][] d : placementsD) {
 						
-						placementsE = new ArrayList<byte[]>();
+						placementsE = new ArrayList<byte[][]>();
 						Config.possible2CarPlacements(d, placementsE, true);
-						for (byte[] e : placementsE) {
+						for (byte[][] e : placementsE) {
 							
 							winners.add(e);
 							
@@ -393,25 +624,25 @@ public class Generator {
 		
 		explorePartialWinners();
 		
-		placementsA = new ArrayList<byte[]>();
+		placementsA = new ArrayList<byte[][]>();
 		Config.possible2CarPlacements(red, placementsA, false);
-		for (byte[] a : placementsA) {
+		for (byte[][] a : placementsA) {
 			
-			placementsB = new ArrayList<byte[]>();
+			placementsB = new ArrayList<byte[][]>();
 			Config.possible3CarPlacements(a, placementsB, false);
-			for (byte[] b : placementsB) {
+			for (byte[][] b : placementsB) {
 				
-				placementsC = new ArrayList<byte[]>();
+				placementsC = new ArrayList<byte[][]>();
 				Config.possible2CarPlacements(b, placementsC, false);
-				for (byte[] c : placementsC) {
+				for (byte[][] c : placementsC) {
 					
-					placementsD = new ArrayList<byte[]>();
+					placementsD = new ArrayList<byte[][]>();
 					Config.possible2CarPlacements(c, placementsD, false);
-					for (byte[] d : placementsD) {
+					for (byte[][] d : placementsD) {
 						
-						placementsE = new ArrayList<byte[]>();
+						placementsE = new ArrayList<byte[][]>();
 						Config.possible2CarPlacements(d, placementsE, true);
-						for (byte[] e : placementsE) {
+						for (byte[][] e : placementsE) {
 							
 							winners.add(e);
 							
@@ -425,25 +656,25 @@ public class Generator {
 		
 		explorePartialWinners();
 		
-		placementsA = new ArrayList<byte[]>();
+		placementsA = new ArrayList<byte[][]>();
 		Config.possible3CarPlacements(red, placementsA, false);
-		for (byte[] a : placementsA) {
+		for (byte[][] a : placementsA) {
 			
-			placementsB = new ArrayList<byte[]>();
+			placementsB = new ArrayList<byte[][]>();
 			Config.possible2CarPlacements(a, placementsB, false);
-			for (byte[] b : placementsB) {
+			for (byte[][] b : placementsB) {
 				
-				placementsC = new ArrayList<byte[]>();
+				placementsC = new ArrayList<byte[][]>();
 				Config.possible2CarPlacements(b, placementsC, false);
-				for (byte[] c : placementsC) {
+				for (byte[][] c : placementsC) {
 					
-					placementsD = new ArrayList<byte[]>();
+					placementsD = new ArrayList<byte[][]>();
 					Config.possible2CarPlacements(c, placementsD, false);
-					for (byte[] d : placementsD) {
+					for (byte[][] d : placementsD) {
 						
-						placementsE = new ArrayList<byte[]>();
+						placementsE = new ArrayList<byte[][]>();
 						Config.possible2CarPlacements(d, placementsE, true);
-						for (byte[] e : placementsE) {
+						for (byte[][] e : placementsE) {
 							
 							winners.add(e);
 							
@@ -458,8 +689,7 @@ public class Generator {
 		explorePartialWinners();
 		
 	}
-	
-	
+
 	
 
 
@@ -472,7 +702,7 @@ public class Generator {
 	
 	
 	
-	public static void add5and1(byte[] red) {
+	public static void add5and1(byte[][] red) {
 		
 		System.out.println("exploring 5 2cars and 1 3car");
 		
@@ -484,37 +714,37 @@ public class Generator {
 		Config.par.addCar((byte)'F');
 //		Config.par.addCar((byte)'G');
 		
-		List<byte[]> placementsA = new ArrayList<byte[]>();
-		List<byte[]> placementsB = new ArrayList<byte[]>();
-		List<byte[]> placementsC = new ArrayList<byte[]>();
-		List<byte[]> placementsD = new ArrayList<byte[]>();
-		List<byte[]> placementsE = new ArrayList<byte[]>();
-		List<byte[]> placementsF = new ArrayList<byte[]>();
-//		List<byte[]> placementsG = new ArrayList<byte[]>();
+		List<byte[][]> placementsA = new ArrayList<byte[][]>();
+		List<byte[][]> placementsB = new ArrayList<byte[][]>();
+		List<byte[][]> placementsC = new ArrayList<byte[][]>();
+		List<byte[][]> placementsD = new ArrayList<byte[][]>();
+		List<byte[][]> placementsE = new ArrayList<byte[][]>();
+		List<byte[][]> placementsF = new ArrayList<byte[][]>();
+//		List<byte[][]> placementsG = new ArrayList<byte[][]>();
 		
-		placementsA = new ArrayList<byte[]>();
+		placementsA = new ArrayList<byte[][]>();
 		Config.possible2CarPlacements(red, placementsA, false);
-		for (byte[] a : placementsA) {
+		for (byte[][] a : placementsA) {
 			
-			placementsB = new ArrayList<byte[]>();
+			placementsB = new ArrayList<byte[][]>();
 			Config.possible2CarPlacements(a, placementsB, false);
-			for (byte[] b : placementsB) {
+			for (byte[][] b : placementsB) {
 				
-				placementsC = new ArrayList<byte[]>();
+				placementsC = new ArrayList<byte[][]>();
 				Config.possible2CarPlacements(b, placementsC, false);
-				for (byte[] c : placementsC) {
+				for (byte[][] c : placementsC) {
 					
-					placementsD = new ArrayList<byte[]>();
+					placementsD = new ArrayList<byte[][]>();
 					Config.possible2CarPlacements(c, placementsD, false);
-					for (byte[] d : placementsD) {
+					for (byte[][] d : placementsD) {
 						
-						placementsE = new ArrayList<byte[]>();
+						placementsE = new ArrayList<byte[][]>();
 						Config.possible2CarPlacements(d, placementsE, false);
-						for (byte[] e : placementsE) {
+						for (byte[][] e : placementsE) {
 							
-							placementsF = new ArrayList<byte[]>();
+							placementsF = new ArrayList<byte[][]>();
 							Config.possible3CarPlacements(e, placementsF, true);
-							for (byte[] f : placementsF) {
+							for (byte[][] f : placementsF) {
 								
 								winners.add(f);
 								
@@ -530,29 +760,29 @@ public class Generator {
 		
 		explorePartialWinners();
 		
-		placementsA = new ArrayList<byte[]>();
+		placementsA = new ArrayList<byte[][]>();
 		Config.possible2CarPlacements(red, placementsA, false);
-		for (byte[] a : placementsA) {
+		for (byte[][] a : placementsA) {
 			
-			placementsB = new ArrayList<byte[]>();
+			placementsB = new ArrayList<byte[][]>();
 			Config.possible2CarPlacements(a, placementsB, false);
-			for (byte[] b : placementsB) {
+			for (byte[][] b : placementsB) {
 				
-				placementsC = new ArrayList<byte[]>();
+				placementsC = new ArrayList<byte[][]>();
 				Config.possible2CarPlacements(b, placementsC, false);
-				for (byte[] c : placementsC) {
+				for (byte[][] c : placementsC) {
 					
-					placementsD = new ArrayList<byte[]>();
+					placementsD = new ArrayList<byte[][]>();
 					Config.possible2CarPlacements(c, placementsD, false);
-					for (byte[] d : placementsD) {
+					for (byte[][] d : placementsD) {
 						
-						placementsE = new ArrayList<byte[]>();
+						placementsE = new ArrayList<byte[][]>();
 						Config.possible3CarPlacements(d, placementsE, false);
-						for (byte[] e : placementsE) {
+						for (byte[][] e : placementsE) {
 							
-							placementsF = new ArrayList<byte[]>();
+							placementsF = new ArrayList<byte[][]>();
 							Config.possible2CarPlacements(e, placementsF, true);
-							for (byte[] f : placementsF) {
+							for (byte[][] f : placementsF) {
 								
 								winners.add(f);
 								
@@ -568,29 +798,29 @@ public class Generator {
 		
 		explorePartialWinners();
 		
-		placementsA = new ArrayList<byte[]>();
+		placementsA = new ArrayList<byte[][]>();
 		Config.possible2CarPlacements(red, placementsA, false);
-		for (byte[] a : placementsA) {
+		for (byte[][] a : placementsA) {
 			
-			placementsB = new ArrayList<byte[]>();
+			placementsB = new ArrayList<byte[][]>();
 			Config.possible2CarPlacements(a, placementsB, false);
-			for (byte[] b : placementsB) {
+			for (byte[][] b : placementsB) {
 				
-				placementsC = new ArrayList<byte[]>();
+				placementsC = new ArrayList<byte[][]>();
 				Config.possible2CarPlacements(b, placementsC, false);
-				for (byte[] c : placementsC) {
+				for (byte[][] c : placementsC) {
 					
-					placementsD = new ArrayList<byte[]>();
+					placementsD = new ArrayList<byte[][]>();
 					Config.possible3CarPlacements(c, placementsD, false);
-					for (byte[] d : placementsD) {
+					for (byte[][] d : placementsD) {
 						
-						placementsE = new ArrayList<byte[]>();
+						placementsE = new ArrayList<byte[][]>();
 						Config.possible2CarPlacements(d, placementsE, false);
-						for (byte[] e : placementsE) {
+						for (byte[][] e : placementsE) {
 							
-							placementsF = new ArrayList<byte[]>();
+							placementsF = new ArrayList<byte[][]>();
 							Config.possible2CarPlacements(e, placementsF, true);
-							for (byte[] f : placementsF) {
+							for (byte[][] f : placementsF) {
 								
 								winners.add(f);
 								
@@ -606,29 +836,29 @@ public class Generator {
 		
 		explorePartialWinners();
 		
-		placementsA = new ArrayList<byte[]>();
+		placementsA = new ArrayList<byte[][]>();
 		Config.possible2CarPlacements(red, placementsA, false);
-		for (byte[] a : placementsA) {
+		for (byte[][] a : placementsA) {
 			
-			placementsB = new ArrayList<byte[]>();
+			placementsB = new ArrayList<byte[][]>();
 			Config.possible2CarPlacements(a, placementsB, false);
-			for (byte[] b : placementsB) {
+			for (byte[][] b : placementsB) {
 				
-				placementsC = new ArrayList<byte[]>();
+				placementsC = new ArrayList<byte[][]>();
 				Config.possible3CarPlacements(b, placementsC, false);
-				for (byte[] c : placementsC) {
+				for (byte[][] c : placementsC) {
 					
-					placementsD = new ArrayList<byte[]>();
+					placementsD = new ArrayList<byte[][]>();
 					Config.possible2CarPlacements(c, placementsD, false);
-					for (byte[] d : placementsD) {
+					for (byte[][] d : placementsD) {
 						
-						placementsE = new ArrayList<byte[]>();
+						placementsE = new ArrayList<byte[][]>();
 						Config.possible2CarPlacements(d, placementsE, false);
-						for (byte[] e : placementsE) {
+						for (byte[][] e : placementsE) {
 							
-							placementsF = new ArrayList<byte[]>();
+							placementsF = new ArrayList<byte[][]>();
 							Config.possible2CarPlacements(e, placementsF, true);
-							for (byte[] f : placementsF) {
+							for (byte[][] f : placementsF) {
 								
 								winners.add(f);
 								
@@ -644,29 +874,29 @@ public class Generator {
 		
 		explorePartialWinners();
 		
-		placementsA = new ArrayList<byte[]>();
+		placementsA = new ArrayList<byte[][]>();
 		Config.possible2CarPlacements(red, placementsA, false);
-		for (byte[] a : placementsA) {
+		for (byte[][] a : placementsA) {
 			
-			placementsB = new ArrayList<byte[]>();
+			placementsB = new ArrayList<byte[][]>();
 			Config.possible3CarPlacements(a, placementsB, false);
-			for (byte[] b : placementsB) {
+			for (byte[][] b : placementsB) {
 				
-				placementsC = new ArrayList<byte[]>();
+				placementsC = new ArrayList<byte[][]>();
 				Config.possible2CarPlacements(b, placementsC, false);
-				for (byte[] c : placementsC) {
+				for (byte[][] c : placementsC) {
 					
-					placementsD = new ArrayList<byte[]>();
+					placementsD = new ArrayList<byte[][]>();
 					Config.possible2CarPlacements(c, placementsD, false);
-					for (byte[] d : placementsD) {
+					for (byte[][] d : placementsD) {
 						
-						placementsE = new ArrayList<byte[]>();
+						placementsE = new ArrayList<byte[][]>();
 						Config.possible2CarPlacements(d, placementsE, false);
-						for (byte[] e : placementsE) {
+						for (byte[][] e : placementsE) {
 							
-							placementsF = new ArrayList<byte[]>();
+							placementsF = new ArrayList<byte[][]>();
 							Config.possible2CarPlacements(e, placementsF, true);
-							for (byte[] f : placementsF) {
+							for (byte[][] f : placementsF) {
 								
 								winners.add(f);
 								
@@ -682,29 +912,29 @@ public class Generator {
 		
 		explorePartialWinners();
 		
-		placementsA = new ArrayList<byte[]>();
+		placementsA = new ArrayList<byte[][]>();
 		Config.possible3CarPlacements(red, placementsA, false);
-		for (byte[] a : placementsA) {
+		for (byte[][] a : placementsA) {
 			
-			placementsB = new ArrayList<byte[]>();
+			placementsB = new ArrayList<byte[][]>();
 			Config.possible2CarPlacements(a, placementsB, false);
-			for (byte[] b : placementsB) {
+			for (byte[][] b : placementsB) {
 				
-				placementsC = new ArrayList<byte[]>();
+				placementsC = new ArrayList<byte[][]>();
 				Config.possible2CarPlacements(b, placementsC, false);
-				for (byte[] c : placementsC) {
+				for (byte[][] c : placementsC) {
 					
-					placementsD = new ArrayList<byte[]>();
+					placementsD = new ArrayList<byte[][]>();
 					Config.possible2CarPlacements(c, placementsD, false);
-					for (byte[] d : placementsD) {
+					for (byte[][] d : placementsD) {
 						
-						placementsE = new ArrayList<byte[]>();
+						placementsE = new ArrayList<byte[][]>();
 						Config.possible2CarPlacements(d, placementsE, false);
-						for (byte[] e : placementsE) {
+						for (byte[][] e : placementsE) {
 							
-							placementsF = new ArrayList<byte[]>();
+							placementsF = new ArrayList<byte[][]>();
 							Config.possible2CarPlacements(e, placementsF, true);
-							for (byte[] f : placementsF) {
+							for (byte[][] f : placementsF) {
 								
 								winners.add(f);
 								
@@ -753,7 +983,7 @@ public class Generator {
 	
 	
 	
-	public static void add5and2(byte[] red) {
+	public static void add5and2(byte[][] red) {
 		
 		System.out.println("exploring 5 2cars and 2 3cars");
 		
@@ -765,41 +995,41 @@ public class Generator {
 		Config.par.addCar((byte)'F');
 		Config.par.addCar((byte)'G');
 		
-		List<byte[]> placementsA = new ArrayList<byte[]>();
-		List<byte[]> placementsB = new ArrayList<byte[]>();
-		List<byte[]> placementsC = new ArrayList<byte[]>();
-		List<byte[]> placementsD = new ArrayList<byte[]>();
-		List<byte[]> placementsE = new ArrayList<byte[]>();
-		List<byte[]> placementsF = new ArrayList<byte[]>();
-		List<byte[]> placementsG = new ArrayList<byte[]>();
+		List<byte[][]> placementsA = new ArrayList<byte[][]>();
+		List<byte[][]> placementsB = new ArrayList<byte[][]>();
+		List<byte[][]> placementsC = new ArrayList<byte[][]>();
+		List<byte[][]> placementsD = new ArrayList<byte[][]>();
+		List<byte[][]> placementsE = new ArrayList<byte[][]>();
+		List<byte[][]> placementsF = new ArrayList<byte[][]>();
+		List<byte[][]> placementsG = new ArrayList<byte[][]>();
 		
-		placementsA = new ArrayList<byte[]>();
+		placementsA = new ArrayList<byte[][]>();
 		Config.possible2CarPlacements(red, placementsA, false);
-		for (byte[] a : placementsA) {
+		for (byte[][] a : placementsA) {
 			
-			placementsB = new ArrayList<byte[]>();
+			placementsB = new ArrayList<byte[][]>();
 			Config.possible2CarPlacements(a, placementsB, false);
-			for (byte[] b : placementsB) {
+			for (byte[][] b : placementsB) {
 				
-				placementsC = new ArrayList<byte[]>();
+				placementsC = new ArrayList<byte[][]>();
 				Config.possible2CarPlacements(b, placementsC, false);
-				for (byte[] c : placementsC) {
+				for (byte[][] c : placementsC) {
 					
-					placementsD = new ArrayList<byte[]>();
+					placementsD = new ArrayList<byte[][]>();
 					Config.possible2CarPlacements(c, placementsD, false);
-					for (byte[] d : placementsD) {
+					for (byte[][] d : placementsD) {
 						
-						placementsE = new ArrayList<byte[]>();
+						placementsE = new ArrayList<byte[][]>();
 						Config.possible2CarPlacements(d, placementsE, false);
-						for (byte[] e : placementsE) {
+						for (byte[][] e : placementsE) {
 							
-							placementsF = new ArrayList<byte[]>();
+							placementsF = new ArrayList<byte[][]>();
 							Config.possible3CarPlacements(e, placementsF, false);
-							for (byte[] f : placementsF) {
+							for (byte[][] f : placementsF) {
 								
-								placementsG = new ArrayList<byte[]>();
+								placementsG = new ArrayList<byte[][]>();
 								Config.possible3CarPlacements(f, placementsG, true);
-								for (byte[] g : placementsG) {
+								for (byte[][] g : placementsG) {
 									
 									winners.add(g);
 									
@@ -817,33 +1047,33 @@ public class Generator {
 		
 		explorePartialWinners();
 		
-		placementsA = new ArrayList<byte[]>();
+		placementsA = new ArrayList<byte[][]>();
 		Config.possible2CarPlacements(red, placementsA, false);
-		for (byte[] a : placementsA) {
+		for (byte[][] a : placementsA) {
 			
-			placementsB = new ArrayList<byte[]>();
+			placementsB = new ArrayList<byte[][]>();
 			Config.possible2CarPlacements(a, placementsB, false);
-			for (byte[] b : placementsB) {
+			for (byte[][] b : placementsB) {
 				
-				placementsC = new ArrayList<byte[]>();
+				placementsC = new ArrayList<byte[][]>();
 				Config.possible2CarPlacements(b, placementsC, false);
-				for (byte[] c : placementsC) {
+				for (byte[][] c : placementsC) {
 					
-					placementsD = new ArrayList<byte[]>();
+					placementsD = new ArrayList<byte[][]>();
 					Config.possible2CarPlacements(c, placementsD, false);
-					for (byte[] d : placementsD) {
+					for (byte[][] d : placementsD) {
 						
-						placementsE = new ArrayList<byte[]>();
+						placementsE = new ArrayList<byte[][]>();
 						Config.possible3CarPlacements(d, placementsE, false);
-						for (byte[] e : placementsE) {
+						for (byte[][] e : placementsE) {
 							
-							placementsF = new ArrayList<byte[]>();
+							placementsF = new ArrayList<byte[][]>();
 							Config.possible2CarPlacements(e, placementsF, false);
-							for (byte[] f : placementsF) {
+							for (byte[][] f : placementsF) {
 								
-								placementsG = new ArrayList<byte[]>();
+								placementsG = new ArrayList<byte[][]>();
 								Config.possible3CarPlacements(f, placementsG, true);
-								for (byte[] g : placementsG) {
+								for (byte[][] g : placementsG) {
 									
 									winners.add(g);
 									
@@ -861,33 +1091,33 @@ public class Generator {
 		
 		explorePartialWinners();
 		
-		placementsA = new ArrayList<byte[]>();
+		placementsA = new ArrayList<byte[][]>();
 		Config.possible2CarPlacements(red, placementsA, false);
-		for (byte[] a : placementsA) {
+		for (byte[][] a : placementsA) {
 			
-			placementsB = new ArrayList<byte[]>();
+			placementsB = new ArrayList<byte[][]>();
 			Config.possible2CarPlacements(a, placementsB, false);
-			for (byte[] b : placementsB) {
+			for (byte[][] b : placementsB) {
 				
-				placementsC = new ArrayList<byte[]>();
+				placementsC = new ArrayList<byte[][]>();
 				Config.possible2CarPlacements(b, placementsC, false);
-				for (byte[] c : placementsC) {
+				for (byte[][] c : placementsC) {
 					
-					placementsD = new ArrayList<byte[]>();
+					placementsD = new ArrayList<byte[][]>();
 					Config.possible3CarPlacements(c, placementsD, false);
-					for (byte[] d : placementsD) {
+					for (byte[][] d : placementsD) {
 						
-						placementsE = new ArrayList<byte[]>();
+						placementsE = new ArrayList<byte[][]>();
 						Config.possible2CarPlacements(d, placementsE, false);
-						for (byte[] e : placementsE) {
+						for (byte[][] e : placementsE) {
 							
-							placementsF = new ArrayList<byte[]>();
+							placementsF = new ArrayList<byte[][]>();
 							Config.possible2CarPlacements(e, placementsF, false);
-							for (byte[] f : placementsF) {
+							for (byte[][] f : placementsF) {
 								
-								placementsG = new ArrayList<byte[]>();
+								placementsG = new ArrayList<byte[][]>();
 								Config.possible3CarPlacements(f, placementsG, true);
-								for (byte[] g : placementsG) {
+								for (byte[][] g : placementsG) {
 									
 									winners.add(g);
 									
@@ -905,33 +1135,33 @@ public class Generator {
 		
 		explorePartialWinners();
 		
-		placementsA = new ArrayList<byte[]>();
+		placementsA = new ArrayList<byte[][]>();
 		Config.possible2CarPlacements(red, placementsA, false);
-		for (byte[] a : placementsA) {
+		for (byte[][] a : placementsA) {
 			
-			placementsB = new ArrayList<byte[]>();
+			placementsB = new ArrayList<byte[][]>();
 			Config.possible2CarPlacements(a, placementsB, false);
-			for (byte[] b : placementsB) {
+			for (byte[][] b : placementsB) {
 				
-				placementsC = new ArrayList<byte[]>();
+				placementsC = new ArrayList<byte[][]>();
 				Config.possible3CarPlacements(b, placementsC, false);
-				for (byte[] c : placementsC) {
+				for (byte[][] c : placementsC) {
 					
-					placementsD = new ArrayList<byte[]>();
+					placementsD = new ArrayList<byte[][]>();
 					Config.possible2CarPlacements(c, placementsD, false);
-					for (byte[] d : placementsD) {
+					for (byte[][] d : placementsD) {
 						
-						placementsE = new ArrayList<byte[]>();
+						placementsE = new ArrayList<byte[][]>();
 						Config.possible2CarPlacements(d, placementsE, false);
-						for (byte[] e : placementsE) {
+						for (byte[][] e : placementsE) {
 							
-							placementsF = new ArrayList<byte[]>();
+							placementsF = new ArrayList<byte[][]>();
 							Config.possible2CarPlacements(e, placementsF, false);
-							for (byte[] f : placementsF) {
+							for (byte[][] f : placementsF) {
 								
-								placementsG = new ArrayList<byte[]>();
+								placementsG = new ArrayList<byte[][]>();
 								Config.possible3CarPlacements(f, placementsG, true);
-								for (byte[] g : placementsG) {
+								for (byte[][] g : placementsG) {
 									
 									winners.add(g);
 									
@@ -949,33 +1179,33 @@ public class Generator {
 		
 		explorePartialWinners();
 		
-		placementsA = new ArrayList<byte[]>();
+		placementsA = new ArrayList<byte[][]>();
 		Config.possible2CarPlacements(red, placementsA, false);
-		for (byte[] a : placementsA) {
+		for (byte[][] a : placementsA) {
 			
-			placementsB = new ArrayList<byte[]>();
+			placementsB = new ArrayList<byte[][]>();
 			Config.possible3CarPlacements(a, placementsB, false);
-			for (byte[] b : placementsB) {
+			for (byte[][] b : placementsB) {
 				
-				placementsC = new ArrayList<byte[]>();
+				placementsC = new ArrayList<byte[][]>();
 				Config.possible2CarPlacements(b, placementsC, false);
-				for (byte[] c : placementsC) {
+				for (byte[][] c : placementsC) {
 					
-					placementsD = new ArrayList<byte[]>();
+					placementsD = new ArrayList<byte[][]>();
 					Config.possible2CarPlacements(c, placementsD, false);
-					for (byte[] d : placementsD) {
+					for (byte[][] d : placementsD) {
 						
-						placementsE = new ArrayList<byte[]>();
+						placementsE = new ArrayList<byte[][]>();
 						Config.possible2CarPlacements(d, placementsE, false);
-						for (byte[] e : placementsE) {
+						for (byte[][] e : placementsE) {
 							
-							placementsF = new ArrayList<byte[]>();
+							placementsF = new ArrayList<byte[][]>();
 							Config.possible2CarPlacements(e, placementsF, false);
-							for (byte[] f : placementsF) {
+							for (byte[][] f : placementsF) {
 								
-								placementsG = new ArrayList<byte[]>();
+								placementsG = new ArrayList<byte[][]>();
 								Config.possible3CarPlacements(f, placementsG, true);
-								for (byte[] g : placementsG) {
+								for (byte[][] g : placementsG) {
 									
 									winners.add(g);
 									
@@ -993,33 +1223,33 @@ public class Generator {
 		
 		explorePartialWinners();
 		
-		placementsA = new ArrayList<byte[]>();
+		placementsA = new ArrayList<byte[][]>();
 		Config.possible3CarPlacements(red, placementsA, false);
-		for (byte[] a : placementsA) {
+		for (byte[][] a : placementsA) {
 			
-			placementsB = new ArrayList<byte[]>();
+			placementsB = new ArrayList<byte[][]>();
 			Config.possible2CarPlacements(a, placementsB, false);
-			for (byte[] b : placementsB) {
+			for (byte[][] b : placementsB) {
 				
-				placementsC = new ArrayList<byte[]>();
+				placementsC = new ArrayList<byte[][]>();
 				Config.possible2CarPlacements(b, placementsC, false);
-				for (byte[] c : placementsC) {
+				for (byte[][] c : placementsC) {
 					
-					placementsD = new ArrayList<byte[]>();
+					placementsD = new ArrayList<byte[][]>();
 					Config.possible2CarPlacements(c, placementsD, false);
-					for (byte[] d : placementsD) {
+					for (byte[][] d : placementsD) {
 						
-						placementsE = new ArrayList<byte[]>();
+						placementsE = new ArrayList<byte[][]>();
 						Config.possible2CarPlacements(d, placementsE, false);
-						for (byte[] e : placementsE) {
+						for (byte[][] e : placementsE) {
 							
-							placementsF = new ArrayList<byte[]>();
+							placementsF = new ArrayList<byte[][]>();
 							Config.possible2CarPlacements(e, placementsF, false);
-							for (byte[] f : placementsF) {
+							for (byte[][] f : placementsF) {
 								
-								placementsG = new ArrayList<byte[]>();
+								placementsG = new ArrayList<byte[][]>();
 								Config.possible3CarPlacements(f, placementsG, true);
-								for (byte[] g : placementsG) {
+								for (byte[][] g : placementsG) {
 									
 									winners.add(g);
 									
@@ -1037,33 +1267,33 @@ public class Generator {
 		
 		explorePartialWinners();
 		
-		placementsA = new ArrayList<byte[]>();
+		placementsA = new ArrayList<byte[][]>();
 		Config.possible2CarPlacements(red, placementsA, false);
-		for (byte[] a : placementsA) {
+		for (byte[][] a : placementsA) {
 			
-			placementsB = new ArrayList<byte[]>();
+			placementsB = new ArrayList<byte[][]>();
 			Config.possible2CarPlacements(a, placementsB, false);
-			for (byte[] b : placementsB) {
+			for (byte[][] b : placementsB) {
 				
-				placementsC = new ArrayList<byte[]>();
+				placementsC = new ArrayList<byte[][]>();
 				Config.possible2CarPlacements(b, placementsC, false);
-				for (byte[] c : placementsC) {
+				for (byte[][] c : placementsC) {
 					
-					placementsD = new ArrayList<byte[]>();
+					placementsD = new ArrayList<byte[][]>();
 					Config.possible2CarPlacements(c, placementsD, false);
-					for (byte[] d : placementsD) {
+					for (byte[][] d : placementsD) {
 						
-						placementsE = new ArrayList<byte[]>();
+						placementsE = new ArrayList<byte[][]>();
 						Config.possible3CarPlacements(d, placementsE, false);
-						for (byte[] e : placementsE) {
+						for (byte[][] e : placementsE) {
 							
-							placementsF = new ArrayList<byte[]>();
+							placementsF = new ArrayList<byte[][]>();
 							Config.possible3CarPlacements(e, placementsF, false);
-							for (byte[] f : placementsF) {
+							for (byte[][] f : placementsF) {
 								
-								placementsG = new ArrayList<byte[]>();
+								placementsG = new ArrayList<byte[][]>();
 								Config.possible2CarPlacements(f, placementsG, true);
-								for (byte[] g : placementsG) {
+								for (byte[][] g : placementsG) {
 									
 									winners.add(g);
 									
@@ -1081,33 +1311,33 @@ public class Generator {
 		
 		explorePartialWinners();
 		
-		placementsA = new ArrayList<byte[]>();
+		placementsA = new ArrayList<byte[][]>();
 		Config.possible2CarPlacements(red, placementsA, false);
-		for (byte[] a : placementsA) {
+		for (byte[][] a : placementsA) {
 			
-			placementsB = new ArrayList<byte[]>();
+			placementsB = new ArrayList<byte[][]>();
 			Config.possible2CarPlacements(a, placementsB, false);
-			for (byte[] b : placementsB) {
+			for (byte[][] b : placementsB) {
 				
-				placementsC = new ArrayList<byte[]>();
+				placementsC = new ArrayList<byte[][]>();
 				Config.possible2CarPlacements(b, placementsC, false);
-				for (byte[] c : placementsC) {
+				for (byte[][] c : placementsC) {
 					
-					placementsD = new ArrayList<byte[]>();
+					placementsD = new ArrayList<byte[][]>();
 					Config.possible3CarPlacements(c, placementsD, false);
-					for (byte[] d : placementsD) {
+					for (byte[][] d : placementsD) {
 						
-						placementsE = new ArrayList<byte[]>();
+						placementsE = new ArrayList<byte[][]>();
 						Config.possible2CarPlacements(d, placementsE, false);
-						for (byte[] e : placementsE) {
+						for (byte[][] e : placementsE) {
 							
-							placementsF = new ArrayList<byte[]>();
+							placementsF = new ArrayList<byte[][]>();
 							Config.possible3CarPlacements(e, placementsF, false);
-							for (byte[] f : placementsF) {
+							for (byte[][] f : placementsF) {
 								
-								placementsG = new ArrayList<byte[]>();
+								placementsG = new ArrayList<byte[][]>();
 								Config.possible2CarPlacements(f, placementsG, true);
-								for (byte[] g : placementsG) {
+								for (byte[][] g : placementsG) {
 									
 									winners.add(g);
 									
@@ -1125,33 +1355,33 @@ public class Generator {
 		
 		explorePartialWinners();
 		
-		placementsA = new ArrayList<byte[]>();
+		placementsA = new ArrayList<byte[][]>();
 		Config.possible2CarPlacements(red, placementsA, false);
-		for (byte[] a : placementsA) {
+		for (byte[][] a : placementsA) {
 			
-			placementsB = new ArrayList<byte[]>();
+			placementsB = new ArrayList<byte[][]>();
 			Config.possible2CarPlacements(a, placementsB, false);
-			for (byte[] b : placementsB) {
+			for (byte[][] b : placementsB) {
 				
-				placementsC = new ArrayList<byte[]>();
+				placementsC = new ArrayList<byte[][]>();
 				Config.possible3CarPlacements(b, placementsC, false);
-				for (byte[] c : placementsC) {
+				for (byte[][] c : placementsC) {
 					
-					placementsD = new ArrayList<byte[]>();
+					placementsD = new ArrayList<byte[][]>();
 					Config.possible2CarPlacements(c, placementsD, false);
-					for (byte[] d : placementsD) {
+					for (byte[][] d : placementsD) {
 						
-						placementsE = new ArrayList<byte[]>();
+						placementsE = new ArrayList<byte[][]>();
 						Config.possible2CarPlacements(d, placementsE, false);
-						for (byte[] e : placementsE) {
+						for (byte[][] e : placementsE) {
 							
-							placementsF = new ArrayList<byte[]>();
+							placementsF = new ArrayList<byte[][]>();
 							Config.possible3CarPlacements(e, placementsF, false);
-							for (byte[] f : placementsF) {
+							for (byte[][] f : placementsF) {
 								
-								placementsG = new ArrayList<byte[]>();
+								placementsG = new ArrayList<byte[][]>();
 								Config.possible2CarPlacements(f, placementsG, true);
-								for (byte[] g : placementsG) {
+								for (byte[][] g : placementsG) {
 									
 									winners.add(g);
 									
@@ -1169,33 +1399,33 @@ public class Generator {
 		
 		explorePartialWinners();
 		
-		placementsA = new ArrayList<byte[]>();
+		placementsA = new ArrayList<byte[][]>();
 		Config.possible2CarPlacements(red, placementsA, false);
-		for (byte[] a : placementsA) {
+		for (byte[][] a : placementsA) {
 			
-			placementsB = new ArrayList<byte[]>();
+			placementsB = new ArrayList<byte[][]>();
 			Config.possible3CarPlacements(a, placementsB, false);
-			for (byte[] b : placementsB) {
+			for (byte[][] b : placementsB) {
 				
-				placementsC = new ArrayList<byte[]>();
+				placementsC = new ArrayList<byte[][]>();
 				Config.possible2CarPlacements(b, placementsC, false);
-				for (byte[] c : placementsC) {
+				for (byte[][] c : placementsC) {
 					
-					placementsD = new ArrayList<byte[]>();
+					placementsD = new ArrayList<byte[][]>();
 					Config.possible2CarPlacements(c, placementsD, false);
-					for (byte[] d : placementsD) {
+					for (byte[][] d : placementsD) {
 						
-						placementsE = new ArrayList<byte[]>();
+						placementsE = new ArrayList<byte[][]>();
 						Config.possible2CarPlacements(d, placementsE, false);
-						for (byte[] e : placementsE) {
+						for (byte[][] e : placementsE) {
 							
-							placementsF = new ArrayList<byte[]>();
+							placementsF = new ArrayList<byte[][]>();
 							Config.possible3CarPlacements(e, placementsF, false);
-							for (byte[] f : placementsF) {
+							for (byte[][] f : placementsF) {
 								
-								placementsG = new ArrayList<byte[]>();
+								placementsG = new ArrayList<byte[][]>();
 								Config.possible2CarPlacements(f, placementsG, true);
-								for (byte[] g : placementsG) {
+								for (byte[][] g : placementsG) {
 									
 									winners.add(g);
 									
@@ -1213,33 +1443,33 @@ public class Generator {
 		
 		explorePartialWinners();
 		
-		placementsA = new ArrayList<byte[]>();
+		placementsA = new ArrayList<byte[][]>();
 		Config.possible3CarPlacements(red, placementsA, false);
-		for (byte[] a : placementsA) {
+		for (byte[][] a : placementsA) {
 			
-			placementsB = new ArrayList<byte[]>();
+			placementsB = new ArrayList<byte[][]>();
 			Config.possible2CarPlacements(a, placementsB, false);
-			for (byte[] b : placementsB) {
+			for (byte[][] b : placementsB) {
 				
-				placementsC = new ArrayList<byte[]>();
+				placementsC = new ArrayList<byte[][]>();
 				Config.possible2CarPlacements(b, placementsC, false);
-				for (byte[] c : placementsC) {
+				for (byte[][] c : placementsC) {
 					
-					placementsD = new ArrayList<byte[]>();
+					placementsD = new ArrayList<byte[][]>();
 					Config.possible2CarPlacements(c, placementsD, false);
-					for (byte[] d : placementsD) {
+					for (byte[][] d : placementsD) {
 						
-						placementsE = new ArrayList<byte[]>();
+						placementsE = new ArrayList<byte[][]>();
 						Config.possible2CarPlacements(d, placementsE, false);
-						for (byte[] e : placementsE) {
+						for (byte[][] e : placementsE) {
 							
-							placementsF = new ArrayList<byte[]>();
+							placementsF = new ArrayList<byte[][]>();
 							Config.possible3CarPlacements(e, placementsF, false);
-							for (byte[] f : placementsF) {
+							for (byte[][] f : placementsF) {
 								
-								placementsG = new ArrayList<byte[]>();
+								placementsG = new ArrayList<byte[][]>();
 								Config.possible2CarPlacements(f, placementsG, true);
-								for (byte[] g : placementsG) {
+								for (byte[][] g : placementsG) {
 									
 									winners.add(g);
 									
@@ -1257,33 +1487,33 @@ public class Generator {
 		
 		explorePartialWinners();
 		
-		placementsA = new ArrayList<byte[]>();
+		placementsA = new ArrayList<byte[][]>();
 		Config.possible2CarPlacements(red, placementsA, false);
-		for (byte[] a : placementsA) {
+		for (byte[][] a : placementsA) {
 			
-			placementsB = new ArrayList<byte[]>();
+			placementsB = new ArrayList<byte[][]>();
 			Config.possible2CarPlacements(a, placementsB, false);
-			for (byte[] b : placementsB) {
+			for (byte[][] b : placementsB) {
 				
-				placementsC = new ArrayList<byte[]>();
+				placementsC = new ArrayList<byte[][]>();
 				Config.possible2CarPlacements(b, placementsC, false);
-				for (byte[] c : placementsC) {
+				for (byte[][] c : placementsC) {
 					
-					placementsD = new ArrayList<byte[]>();
+					placementsD = new ArrayList<byte[][]>();
 					Config.possible3CarPlacements(c, placementsD, false);
-					for (byte[] d : placementsD) {
+					for (byte[][] d : placementsD) {
 						
-						placementsE = new ArrayList<byte[]>();
+						placementsE = new ArrayList<byte[][]>();
 						Config.possible3CarPlacements(d, placementsE, false);
-						for (byte[] e : placementsE) {
+						for (byte[][] e : placementsE) {
 							
-							placementsF = new ArrayList<byte[]>();
+							placementsF = new ArrayList<byte[][]>();
 							Config.possible2CarPlacements(e, placementsF, false);
-							for (byte[] f : placementsF) {
+							for (byte[][] f : placementsF) {
 								
-								placementsG = new ArrayList<byte[]>();
+								placementsG = new ArrayList<byte[][]>();
 								Config.possible2CarPlacements(f, placementsG, true);
-								for (byte[] g : placementsG) {
+								for (byte[][] g : placementsG) {
 									
 									winners.add(g);
 									
@@ -1301,33 +1531,33 @@ public class Generator {
 		
 		explorePartialWinners();
 		
-		placementsA = new ArrayList<byte[]>();
+		placementsA = new ArrayList<byte[][]>();
 		Config.possible2CarPlacements(red, placementsA, false);
-		for (byte[] a : placementsA) {
+		for (byte[][] a : placementsA) {
 			
-			placementsB = new ArrayList<byte[]>();
+			placementsB = new ArrayList<byte[][]>();
 			Config.possible2CarPlacements(a, placementsB, false);
-			for (byte[] b : placementsB) {
+			for (byte[][] b : placementsB) {
 				
-				placementsC = new ArrayList<byte[]>();
+				placementsC = new ArrayList<byte[][]>();
 				Config.possible3CarPlacements(b, placementsC, false);
-				for (byte[] c : placementsC) {
+				for (byte[][] c : placementsC) {
 					
-					placementsD = new ArrayList<byte[]>();
+					placementsD = new ArrayList<byte[][]>();
 					Config.possible2CarPlacements(c, placementsD, false);
-					for (byte[] d : placementsD) {
+					for (byte[][] d : placementsD) {
 						
-						placementsE = new ArrayList<byte[]>();
+						placementsE = new ArrayList<byte[][]>();
 						Config.possible3CarPlacements(d, placementsE, false);
-						for (byte[] e : placementsE) {
+						for (byte[][] e : placementsE) {
 							
-							placementsF = new ArrayList<byte[]>();
+							placementsF = new ArrayList<byte[][]>();
 							Config.possible2CarPlacements(e, placementsF, false);
-							for (byte[] f : placementsF) {
+							for (byte[][] f : placementsF) {
 								
-								placementsG = new ArrayList<byte[]>();
+								placementsG = new ArrayList<byte[][]>();
 								Config.possible2CarPlacements(f, placementsG, true);
-								for (byte[] g : placementsG) {
+								for (byte[][] g : placementsG) {
 									
 									winners.add(g);
 									
@@ -1345,33 +1575,33 @@ public class Generator {
 		
 		explorePartialWinners();
 		
-		placementsA = new ArrayList<byte[]>();
+		placementsA = new ArrayList<byte[][]>();
 		Config.possible2CarPlacements(red, placementsA, false);
-		for (byte[] a : placementsA) {
+		for (byte[][] a : placementsA) {
 			
-			placementsB = new ArrayList<byte[]>();
+			placementsB = new ArrayList<byte[][]>();
 			Config.possible3CarPlacements(a, placementsB, false);
-			for (byte[] b : placementsB) {
+			for (byte[][] b : placementsB) {
 				
-				placementsC = new ArrayList<byte[]>();
+				placementsC = new ArrayList<byte[][]>();
 				Config.possible2CarPlacements(b, placementsC, false);
-				for (byte[] c : placementsC) {
+				for (byte[][] c : placementsC) {
 					
-					placementsD = new ArrayList<byte[]>();
+					placementsD = new ArrayList<byte[][]>();
 					Config.possible2CarPlacements(c, placementsD, false);
-					for (byte[] d : placementsD) {
+					for (byte[][] d : placementsD) {
 						
-						placementsE = new ArrayList<byte[]>();
+						placementsE = new ArrayList<byte[][]>();
 						Config.possible3CarPlacements(d, placementsE, false);
-						for (byte[] e : placementsE) {
+						for (byte[][] e : placementsE) {
 							
-							placementsF = new ArrayList<byte[]>();
+							placementsF = new ArrayList<byte[][]>();
 							Config.possible2CarPlacements(e, placementsF, false);
-							for (byte[] f : placementsF) {
+							for (byte[][] f : placementsF) {
 								
-								placementsG = new ArrayList<byte[]>();
+								placementsG = new ArrayList<byte[][]>();
 								Config.possible2CarPlacements(f, placementsG, true);
-								for (byte[] g : placementsG) {
+								for (byte[][] g : placementsG) {
 									
 									winners.add(g);
 									
@@ -1389,33 +1619,33 @@ public class Generator {
 		
 		explorePartialWinners();
 		
-		placementsA = new ArrayList<byte[]>();
+		placementsA = new ArrayList<byte[][]>();
 		Config.possible3CarPlacements(red, placementsA, false);
-		for (byte[] a : placementsA) {
+		for (byte[][] a : placementsA) {
 			
-			placementsB = new ArrayList<byte[]>();
+			placementsB = new ArrayList<byte[][]>();
 			Config.possible2CarPlacements(a, placementsB, false);
-			for (byte[] b : placementsB) {
+			for (byte[][] b : placementsB) {
 				
-				placementsC = new ArrayList<byte[]>();
+				placementsC = new ArrayList<byte[][]>();
 				Config.possible2CarPlacements(b, placementsC, false);
-				for (byte[] c : placementsC) {
+				for (byte[][] c : placementsC) {
 					
-					placementsD = new ArrayList<byte[]>();
+					placementsD = new ArrayList<byte[][]>();
 					Config.possible2CarPlacements(c, placementsD, false);
-					for (byte[] d : placementsD) {
+					for (byte[][] d : placementsD) {
 						
-						placementsE = new ArrayList<byte[]>();
+						placementsE = new ArrayList<byte[][]>();
 						Config.possible3CarPlacements(d, placementsE, false);
-						for (byte[] e : placementsE) {
+						for (byte[][] e : placementsE) {
 							
-							placementsF = new ArrayList<byte[]>();
+							placementsF = new ArrayList<byte[][]>();
 							Config.possible2CarPlacements(e, placementsF, false);
-							for (byte[] f : placementsF) {
+							for (byte[][] f : placementsF) {
 								
-								placementsG = new ArrayList<byte[]>();
+								placementsG = new ArrayList<byte[][]>();
 								Config.possible2CarPlacements(f, placementsG, true);
-								for (byte[] g : placementsG) {
+								for (byte[][] g : placementsG) {
 									
 									winners.add(g);
 									
@@ -1433,33 +1663,33 @@ public class Generator {
 		
 		explorePartialWinners();
 		
-		placementsA = new ArrayList<byte[]>();
+		placementsA = new ArrayList<byte[][]>();
 		Config.possible2CarPlacements(red, placementsA, false);
-		for (byte[] a : placementsA) {
+		for (byte[][] a : placementsA) {
 			
-			placementsB = new ArrayList<byte[]>();
+			placementsB = new ArrayList<byte[][]>();
 			Config.possible2CarPlacements(a, placementsB, false);
-			for (byte[] b : placementsB) {
+			for (byte[][] b : placementsB) {
 				
-				placementsC = new ArrayList<byte[]>();
+				placementsC = new ArrayList<byte[][]>();
 				Config.possible3CarPlacements(b, placementsC, false);
-				for (byte[] c : placementsC) {
+				for (byte[][] c : placementsC) {
 					
-					placementsD = new ArrayList<byte[]>();
+					placementsD = new ArrayList<byte[][]>();
 					Config.possible3CarPlacements(c, placementsD, false);
-					for (byte[] d : placementsD) {
+					for (byte[][] d : placementsD) {
 						
-						placementsE = new ArrayList<byte[]>();
+						placementsE = new ArrayList<byte[][]>();
 						Config.possible2CarPlacements(d, placementsE, false);
-						for (byte[] e : placementsE) {
+						for (byte[][] e : placementsE) {
 							
-							placementsF = new ArrayList<byte[]>();
+							placementsF = new ArrayList<byte[][]>();
 							Config.possible2CarPlacements(e, placementsF, false);
-							for (byte[] f : placementsF) {
+							for (byte[][] f : placementsF) {
 								
-								placementsG = new ArrayList<byte[]>();
+								placementsG = new ArrayList<byte[][]>();
 								Config.possible2CarPlacements(f, placementsG, true);
-								for (byte[] g : placementsG) {
+								for (byte[][] g : placementsG) {
 									
 									winners.add(g);
 									
@@ -1477,33 +1707,33 @@ public class Generator {
 		
 		explorePartialWinners();
 		
-		placementsA = new ArrayList<byte[]>();
+		placementsA = new ArrayList<byte[][]>();
 		Config.possible2CarPlacements(red, placementsA, false);
-		for (byte[] a : placementsA) {
+		for (byte[][] a : placementsA) {
 			
-			placementsB = new ArrayList<byte[]>();
+			placementsB = new ArrayList<byte[][]>();
 			Config.possible3CarPlacements(a, placementsB, false);
-			for (byte[] b : placementsB) {
+			for (byte[][] b : placementsB) {
 				
-				placementsC = new ArrayList<byte[]>();
+				placementsC = new ArrayList<byte[][]>();
 				Config.possible2CarPlacements(b, placementsC, false);
-				for (byte[] c : placementsC) {
+				for (byte[][] c : placementsC) {
 					
-					placementsD = new ArrayList<byte[]>();
+					placementsD = new ArrayList<byte[][]>();
 					Config.possible3CarPlacements(c, placementsD, false);
-					for (byte[] d : placementsD) {
+					for (byte[][] d : placementsD) {
 						
-						placementsE = new ArrayList<byte[]>();
+						placementsE = new ArrayList<byte[][]>();
 						Config.possible2CarPlacements(d, placementsE, false);
-						for (byte[] e : placementsE) {
+						for (byte[][] e : placementsE) {
 							
-							placementsF = new ArrayList<byte[]>();
+							placementsF = new ArrayList<byte[][]>();
 							Config.possible2CarPlacements(e, placementsF, false);
-							for (byte[] f : placementsF) {
+							for (byte[][] f : placementsF) {
 								
-								placementsG = new ArrayList<byte[]>();
+								placementsG = new ArrayList<byte[][]>();
 								Config.possible2CarPlacements(f, placementsG, true);
-								for (byte[] g : placementsG) {
+								for (byte[][] g : placementsG) {
 									
 									winners.add(g);
 									
@@ -1521,33 +1751,33 @@ public class Generator {
 		
 		explorePartialWinners();
 		
-		placementsA = new ArrayList<byte[]>();
+		placementsA = new ArrayList<byte[][]>();
 		Config.possible3CarPlacements(red, placementsA, false);
-		for (byte[] a : placementsA) {
+		for (byte[][] a : placementsA) {
 			
-			placementsB = new ArrayList<byte[]>();
+			placementsB = new ArrayList<byte[][]>();
 			Config.possible2CarPlacements(a, placementsB, false);
-			for (byte[] b : placementsB) {
+			for (byte[][] b : placementsB) {
 				
-				placementsC = new ArrayList<byte[]>();
+				placementsC = new ArrayList<byte[][]>();
 				Config.possible2CarPlacements(b, placementsC, false);
-				for (byte[] c : placementsC) {
+				for (byte[][] c : placementsC) {
 					
-					placementsD = new ArrayList<byte[]>();
+					placementsD = new ArrayList<byte[][]>();
 					Config.possible3CarPlacements(c, placementsD, false);
-					for (byte[] d : placementsD) {
+					for (byte[][] d : placementsD) {
 						
-						placementsE = new ArrayList<byte[]>();
+						placementsE = new ArrayList<byte[][]>();
 						Config.possible2CarPlacements(d, placementsE, false);
-						for (byte[] e : placementsE) {
+						for (byte[][] e : placementsE) {
 							
-							placementsF = new ArrayList<byte[]>();
+							placementsF = new ArrayList<byte[][]>();
 							Config.possible2CarPlacements(e, placementsF, false);
-							for (byte[] f : placementsF) {
+							for (byte[][] f : placementsF) {
 								
-								placementsG = new ArrayList<byte[]>();
+								placementsG = new ArrayList<byte[][]>();
 								Config.possible2CarPlacements(f, placementsG, true);
-								for (byte[] g : placementsG) {
+								for (byte[][] g : placementsG) {
 									
 									winners.add(g);
 									
@@ -1565,33 +1795,33 @@ public class Generator {
 		
 		explorePartialWinners();
 		
-		placementsA = new ArrayList<byte[]>();
+		placementsA = new ArrayList<byte[][]>();
 		Config.possible2CarPlacements(red, placementsA, false);
-		for (byte[] a : placementsA) {
+		for (byte[][] a : placementsA) {
 			
-			placementsB = new ArrayList<byte[]>();
+			placementsB = new ArrayList<byte[][]>();
 			Config.possible3CarPlacements(a, placementsB, false);
-			for (byte[] b : placementsB) {
+			for (byte[][] b : placementsB) {
 				
-				placementsC = new ArrayList<byte[]>();
+				placementsC = new ArrayList<byte[][]>();
 				Config.possible3CarPlacements(b, placementsC, false);
-				for (byte[] c : placementsC) {
+				for (byte[][] c : placementsC) {
 					
-					placementsD = new ArrayList<byte[]>();
+					placementsD = new ArrayList<byte[][]>();
 					Config.possible2CarPlacements(c, placementsD, false);
-					for (byte[] d : placementsD) {
+					for (byte[][] d : placementsD) {
 						
-						placementsE = new ArrayList<byte[]>();
+						placementsE = new ArrayList<byte[][]>();
 						Config.possible2CarPlacements(d, placementsE, false);
-						for (byte[] e : placementsE) {
+						for (byte[][] e : placementsE) {
 							
-							placementsF = new ArrayList<byte[]>();
+							placementsF = new ArrayList<byte[][]>();
 							Config.possible2CarPlacements(e, placementsF, false);
-							for (byte[] f : placementsF) {
+							for (byte[][] f : placementsF) {
 								
-								placementsG = new ArrayList<byte[]>();
+								placementsG = new ArrayList<byte[][]>();
 								Config.possible2CarPlacements(f, placementsG, true);
-								for (byte[] g : placementsG) {
+								for (byte[][] g : placementsG) {
 									
 									winners.add(g);
 									
@@ -1609,33 +1839,33 @@ public class Generator {
 		
 		explorePartialWinners();
 		
-		placementsA = new ArrayList<byte[]>();
+		placementsA = new ArrayList<byte[][]>();
 		Config.possible3CarPlacements(red, placementsA, false);
-		for (byte[] a : placementsA) {
+		for (byte[][] a : placementsA) {
 			
-			placementsB = new ArrayList<byte[]>();
+			placementsB = new ArrayList<byte[][]>();
 			Config.possible2CarPlacements(a, placementsB, false);
-			for (byte[] b : placementsB) {
+			for (byte[][] b : placementsB) {
 				
-				placementsC = new ArrayList<byte[]>();
+				placementsC = new ArrayList<byte[][]>();
 				Config.possible3CarPlacements(b, placementsC, false);
-				for (byte[] c : placementsC) {
+				for (byte[][] c : placementsC) {
 					
-					placementsD = new ArrayList<byte[]>();
+					placementsD = new ArrayList<byte[][]>();
 					Config.possible2CarPlacements(c, placementsD, false);
-					for (byte[] d : placementsD) {
+					for (byte[][] d : placementsD) {
 						
-						placementsE = new ArrayList<byte[]>();
+						placementsE = new ArrayList<byte[][]>();
 						Config.possible2CarPlacements(d, placementsE, false);
-						for (byte[] e : placementsE) {
+						for (byte[][] e : placementsE) {
 							
-							placementsF = new ArrayList<byte[]>();
+							placementsF = new ArrayList<byte[][]>();
 							Config.possible2CarPlacements(e, placementsF, false);
-							for (byte[] f : placementsF) {
+							for (byte[][] f : placementsF) {
 								
-								placementsG = new ArrayList<byte[]>();
+								placementsG = new ArrayList<byte[][]>();
 								Config.possible2CarPlacements(f, placementsG, true);
-								for (byte[] g : placementsG) {
+								for (byte[][] g : placementsG) {
 									
 									winners.add(g);
 									
@@ -1653,33 +1883,33 @@ public class Generator {
 		
 		explorePartialWinners();
 		
-		placementsA = new ArrayList<byte[]>();
+		placementsA = new ArrayList<byte[][]>();
 		Config.possible3CarPlacements(red, placementsA, false);
-		for (byte[] a : placementsA) {
+		for (byte[][] a : placementsA) {
 			
-			placementsB = new ArrayList<byte[]>();
+			placementsB = new ArrayList<byte[][]>();
 			Config.possible3CarPlacements(a, placementsB, false);
-			for (byte[] b : placementsB) {
+			for (byte[][] b : placementsB) {
 				
-				placementsC = new ArrayList<byte[]>();
+				placementsC = new ArrayList<byte[][]>();
 				Config.possible2CarPlacements(b, placementsC, false);
-				for (byte[] c : placementsC) {
+				for (byte[][] c : placementsC) {
 					
-					placementsD = new ArrayList<byte[]>();
+					placementsD = new ArrayList<byte[][]>();
 					Config.possible2CarPlacements(c, placementsD, false);
-					for (byte[] d : placementsD) {
+					for (byte[][] d : placementsD) {
 						
-						placementsE = new ArrayList<byte[]>();
+						placementsE = new ArrayList<byte[][]>();
 						Config.possible2CarPlacements(d, placementsE, false);
-						for (byte[] e : placementsE) {
+						for (byte[][] e : placementsE) {
 							
-							placementsF = new ArrayList<byte[]>();
+							placementsF = new ArrayList<byte[][]>();
 							Config.possible2CarPlacements(e, placementsF, false);
-							for (byte[] f : placementsF) {
+							for (byte[][] f : placementsF) {
 								
-								placementsG = new ArrayList<byte[]>();
+								placementsG = new ArrayList<byte[][]>();
 								Config.possible2CarPlacements(f, placementsG, true);
-								for (byte[] g : placementsG) {
+								for (byte[][] g : placementsG) {
 									
 									winners.add(g);
 									
@@ -1696,7 +1926,6 @@ public class Generator {
 		}
 		
 		explorePartialWinners();
-		
 		
 	}
 

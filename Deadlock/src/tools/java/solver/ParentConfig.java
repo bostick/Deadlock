@@ -34,53 +34,53 @@ public class ParentConfig {
 	
 	CarInfo scratchInfo = new CarInfo();
 	
-	byte[] scratchRUp;
-	byte[] scratchRDown;
-	byte[] scratchRLeft;
-	byte[] scratchRRight;
+	byte[][] scratchRUp;
+	byte[][] scratchRDown;
+	byte[][] scratchRLeft;
+	byte[][] scratchRRight;
 	
-	byte[] scratchAUp;
-	byte[] scratchADown;
-	byte[] scratchALeft;
-	byte[] scratchARight;
+	byte[][] scratchAUp;
+	byte[][] scratchADown;
+	byte[][] scratchALeft;
+	byte[][] scratchARight;
 	
-	byte[] scratchBUp;
-	byte[] scratchBDown;
-	byte[] scratchBLeft;
-	byte[] scratchBRight;
+	byte[][] scratchBUp;
+	byte[][] scratchBDown;
+	byte[][] scratchBLeft;
+	byte[][] scratchBRight;
 	
-	byte[] scratchCUp;
-	byte[] scratchCDown;
-	byte[] scratchCLeft;
-	byte[] scratchCRight;
+	byte[][] scratchCUp;
+	byte[][] scratchCDown;
+	byte[][] scratchCLeft;
+	byte[][] scratchCRight;
 	
-	byte[] scratchDUp;
-	byte[] scratchDDown;
-	byte[] scratchDLeft;
-	byte[] scratchDRight;
+	byte[][] scratchDUp;
+	byte[][] scratchDDown;
+	byte[][] scratchDLeft;
+	byte[][] scratchDRight;
 	
-	byte[] scratchEUp;
-	byte[] scratchEDown;
-	byte[] scratchELeft;
-	byte[] scratchERight;
+	byte[][] scratchEUp;
+	byte[][] scratchEDown;
+	byte[][] scratchELeft;
+	byte[][] scratchERight;
 	
-	byte[] scratchFUp;
-	byte[] scratchFDown;
-	byte[] scratchFLeft;
-	byte[] scratchFRight;
+	byte[][] scratchFUp;
+	byte[][] scratchFDown;
+	byte[][] scratchFLeft;
+	byte[][] scratchFRight;
 	
-	byte[] scratchGUp;
-	byte[] scratchGDown;
-	byte[] scratchGLeft;
-	byte[] scratchGRight;
+	byte[][] scratchGUp;
+	byte[][] scratchGDown;
+	byte[][] scratchGLeft;
+	byte[][] scratchGRight;
 	
 	Cursor cursor;
 	int[] test = new int[2];
 	
-	List<byte[]> generatingMoves = new ArrayList<byte[]>();
-	List<byte[]> solvingMoves = new ArrayList<byte[]>();
+	List<byte[][]> generatingMoves = new ArrayList<byte[][]>();
+	List<byte[][]> solvingMoves = new ArrayList<byte[][]>();
 	
-	public byte[] emptyBoard;
+	public byte[][] emptyBoard;
 	
 	public ParentConfig(byte[][] boardIni) {
 		
@@ -451,7 +451,7 @@ public class ParentConfig {
 		}
 	}
 	
-	byte[] scratchLeft(byte b) {
+	byte[][] scratchLeft(byte b) {
 		switch (b) {
 		case 'R':
 			return scratchRLeft;
@@ -475,7 +475,7 @@ public class ParentConfig {
 		}
 	}
 	
-	byte[] scratchRight(byte b) {
+	byte[][] scratchRight(byte b) {
 		switch (b) {
 		case 'R':
 			return scratchRRight;
@@ -499,7 +499,7 @@ public class ParentConfig {
 		}
 	}
 	
-	byte[] scratchUp(byte b) {
+	byte[][] scratchUp(byte b) {
 		switch (b) {
 		case 'R':
 			return scratchRUp;
@@ -523,7 +523,7 @@ public class ParentConfig {
 		}
 	}
 	
-	byte[] scratchDown(byte b) {
+	byte[][] scratchDown(byte b) {
 		switch (b) {
 		case 'R':
 			return scratchRDown;

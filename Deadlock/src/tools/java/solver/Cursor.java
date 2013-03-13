@@ -2,7 +2,7 @@ package solver;
 
 public class Cursor {
 	
-	byte[] board;
+	byte[][] board;
 	int[] coor;
 	int side;
 	
@@ -10,7 +10,7 @@ public class Cursor {
 		coor = new int[2];
 	}
 	
-	void reset(byte[] board) {
+	void reset(byte[][] board) {
 		this.board = board;
 		coor[0] = Config.par.exit[0];
 		coor[1] = Config.par.exit[1];

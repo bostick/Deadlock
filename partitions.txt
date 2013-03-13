@@ -1,0 +1,53 @@
+
+possible arrangements for each r/c:
+0 2car, 0 3car
+0 2car, 1 3car
+0 2car, 2 3car
+1 2car, 0 3car
+1 2car, 1 3car
+2 2car, 0 3car
+3 2car, 0 3car
+*
+
+these are invariant across moves, so only boards in the same partition need to be explored together
+
+
+
+for board:
+/---J--\
+|      |
+|      |
+J   RR Y
+|      |
+|      |
+|      |
+\------/
+
+
+the partitions are:
+
+6 rows and 6 cols, with 8 possible arrangements for each:
+
+288 partitions 
+
+
+for example:
+
+this board
+
+/---J--\
+| AB   |
+| ABCCC|
+J   R  Y
+|DD R  |
+|      |
+|      |
+\------/
+
+its rows: 0 1 7 3 0 0
+its cols: 0 3 3 7 0 0
+
+this board is from partition: 0 1 7 3 0 0 0 3 3 7 0 0
+
+only winning boards from the same partition should be explored with it
+
