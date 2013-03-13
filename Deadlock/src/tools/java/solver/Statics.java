@@ -57,12 +57,12 @@ public class Statics {
 		return true;
 	}
 	
-	static public boolean isXorC(byte c, byte b) {
-		return b == 'X' || b == c;
+	static public boolean isSpaceorC(byte c, byte b) {
+		return b == ' ' || b == c;
 	}
 	
-	static public boolean isXorY(byte b) {
-		return b == 'X' || b == 'Y';
+	static public boolean isSpaceorY(byte b) {
+		return b == ' ' || b == 'Y';
 	}
 	
 }

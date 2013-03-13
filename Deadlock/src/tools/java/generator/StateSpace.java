@@ -1,30 +1,45 @@
 package generator;
 
+import gnu.trove.list.array.TLongArrayList;
+
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import solver.Config;
 
 public class StateSpace {
 	
-	public Config lastGeneratingConfig;
-	public List<Config> lastGeneratingIteration = new ArrayList<Config>();
+	public byte[] lastGeneratingConfig;
+//	public List<byte[]> lastGeneratingIteration = new ArrayList<byte[]>();
+	public TLongArrayList lastGeneratingIteration = new TLongArrayList(); 
 //	Map<Config, Config> generatingMap = new HashMap<Config, Config>();
 	private ConfigTrie allGeneratingConfigs = new ConfigTrie();
 	
-	public List<Config> lastSolvingIteration = new ArrayList<Config>();
-	private Set<Config> allSolvingConfigs = new HashSet<Config>();
-	Map<Config, Config> solvingMap = new HashMap<Config, Config>();
+	public List<byte[]> lastSolvingIteration = new ArrayList<byte[]>();
+//	private Set<String> allSolvingConfigs = new HashSet<String>();
+	Map<String, String> solvingMap = new HashMap<String, String>();
 	
-	public void putGenerating(Config key) {
+	long min;
+	long max;
+	
+	public void putGenerating(byte[] key) {
 		
-		lastGeneratingIteration.add(key);
+		long info = Config.getInfoLong(key);
 		
-		allGeneratingConfigs.add(key);
+		if (info < min) {
+			min = info;
+		}
+		if (info > max) {
+			max = info;
+		}
+		
+//		assert (info & 0xff00000000000000L) != 0;
+		
+		lastGeneratingIteration.add(info);
+		
+		allGeneratingConfigs.add(info);
 		
 //		generatingMap.put(key, val);
 		
@@ -32,27 +47,37 @@ public class StateSpace {
 		
 	}
 	
-	public void putSolving(Config key, Config val) {
-		lastSolvingIteration.add(key);
-		allSolvingConfigs.add(key);
+	public void putSolving(byte[] key, byte[] val) {
 		
-		solvingMap.put(key, val);
+		lastSolvingIteration.add(key);
+		
+//		allSolvingConfigs.add(Config.toString(key));
+		
+		if (val == null) {
+			solvingMap.put(Config.toString(key), null);
+		} else {
+			solvingMap.put(Config.toString(key), Config.toString(val));
+		}
 	}
 	
-	public boolean allGeneratingConfigsContains(Config k) {
-		return k.isWinning() || allGeneratingConfigs.contains(k);
+	public boolean allGeneratingConfigsContains(byte[] k) {
+		return Config.isWinning(k) || allGeneratingConfigs.contains(Config.getInfoLong(k));
 	}
 	
-	public boolean allSolvingConfigsContains(Config k) {
-		return allSolvingConfigs.contains(k);
+	public boolean allSolvingConfigsContains(byte[] k) {
+		return solvingMap.containsKey(Config.toString(k));
 	}
 	
-	public Config getSolving(Config key) {
+	public String getSolving(String key) {
 		return solvingMap.get(key);
 	}
 	
 	public int allGeneratingConfigsSize() {
 		return allGeneratingConfigs.size();
 	}
+	
+//	static class BoardComparator implements Comparator {
+//		
+//	}
 	
 }

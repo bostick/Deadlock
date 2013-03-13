@@ -16,16 +16,16 @@ public class ConfigTrie {
 	
 	TLongSet tset = new TLongHashSet();
 	
-	public void add(Config c) {
+	public void add(long key) {
 		
 //		set.add(c);
 //		boolean testRes = sortedAdd(c.getInfoLong());
 //		unsortedAdd(c.getInfoLong());
-		tset.add(c.getInfoLong());
+		tset.add(key);
 		
 	}
 	
-	public boolean contains(Config c) {
+	public boolean contains(long key) {
 		
 //		boolean testRes = set.contains(c);
 		
@@ -33,7 +33,7 @@ public class ConfigTrie {
 //		boolean testRes = sortedContains(l);
 //		boolean testRes = unsortedContains(l);
 		
-		return tset.contains(c.getInfoLong());
+		return tset.contains(key);
 		
 //		return testRes;
 	}

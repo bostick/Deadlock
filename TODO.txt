@@ -1,5 +1,35 @@
 
-start using trie thing to save space
+using trove for long sets and maps
+
+
+
+switch exclusively to packed-car notation
+
+
+
+
+investigate using bitset
+bitset probably isn't going to work
+can't figure out how to really compress the boards, always taking up about 64 bits for 8 cars
+
+
+
+
+
+
+memoize each row!
+probably won't work either
+
+
+
+
+
+
+
+
+
+
+
 
 
 right now, 14 cars seems to suffice to 6x6 board
@@ -10,9 +40,12 @@ scan through to find second occurrence of A car, then that is car#5
 
 this gets around the current limitation of only 14 cars
 
+so will never need more than 4 bits for each coor of board, so 4x6x6 = 18 bytes maximum for any number of cars
 
 
 
+
+can use 1 byte per car, so up to 18 cars, use packed-car notation
 
 
 

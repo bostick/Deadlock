@@ -2,7 +2,7 @@ package solver;
 
 public class Cursor {
 	
-	Config config;
+	byte[] board;
 	int[] coor;
 	int side;
 	
@@ -10,8 +10,8 @@ public class Cursor {
 		coor = new int[2];
 	}
 	
-	void reset(Config config) {
-		this.config = config;
+	void reset(byte[] board) {
+		this.board = board;
 		coor[0] = Config.par.exit[0];
 		coor[1] = Config.par.exit[1];
 		side = Statics.otherSide(Config.par.side(Config.par.exit));
@@ -146,7 +146,7 @@ public class Cursor {
 		if (coor[0] == -1 || coor[0] == Config.par.rowCount || coor[1] == -1 || coor[1] == Config.par.colCount) {
 			return Config.par.val(coor);
 		}
-		return config.boardGet(coor);
+		return Config.boardGet(board, coor);
 	}
 	
 }

@@ -34,51 +34,51 @@ public class ParentConfig {
 	
 	CarInfo scratchInfo = new CarInfo();
 	
-	Config scratchRUp;
-	Config scratchRDown;
-	Config scratchRLeft;
-	Config scratchRRight;
+	byte[] scratchRUp;
+	byte[] scratchRDown;
+	byte[] scratchRLeft;
+	byte[] scratchRRight;
 	
-	Config scratchAUp;
-	Config scratchADown;
-	Config scratchALeft;
-	Config scratchARight;
+	byte[] scratchAUp;
+	byte[] scratchADown;
+	byte[] scratchALeft;
+	byte[] scratchARight;
 	
-	Config scratchBUp;
-	Config scratchBDown;
-	Config scratchBLeft;
-	Config scratchBRight;
+	byte[] scratchBUp;
+	byte[] scratchBDown;
+	byte[] scratchBLeft;
+	byte[] scratchBRight;
 	
-	Config scratchCUp;
-	Config scratchCDown;
-	Config scratchCLeft;
-	Config scratchCRight;
+	byte[] scratchCUp;
+	byte[] scratchCDown;
+	byte[] scratchCLeft;
+	byte[] scratchCRight;
 	
-	Config scratchDUp;
-	Config scratchDDown;
-	Config scratchDLeft;
-	Config scratchDRight;
+	byte[] scratchDUp;
+	byte[] scratchDDown;
+	byte[] scratchDLeft;
+	byte[] scratchDRight;
 	
-	Config scratchEUp;
-	Config scratchEDown;
-	Config scratchELeft;
-	Config scratchERight;
+	byte[] scratchEUp;
+	byte[] scratchEDown;
+	byte[] scratchELeft;
+	byte[] scratchERight;
 	
-	Config scratchFUp;
-	Config scratchFDown;
-	Config scratchFLeft;
-	Config scratchFRight;
+	byte[] scratchFUp;
+	byte[] scratchFDown;
+	byte[] scratchFLeft;
+	byte[] scratchFRight;
 	
-	Config scratchGUp;
-	Config scratchGDown;
-	Config scratchGLeft;
-	Config scratchGRight;
+	byte[] scratchGUp;
+	byte[] scratchGDown;
+	byte[] scratchGLeft;
+	byte[] scratchGRight;
 	
 	Cursor cursor;
 	int[] test = new int[2];
 	
-	List<Config> generatingMoves = new ArrayList<Config>();
-	List<Config> solvingMoves = new ArrayList<Config>();
+	List<byte[]> generatingMoves = new ArrayList<byte[]>();
+	List<byte[]> solvingMoves = new ArrayList<byte[]>();
 	
 	public byte[] emptyBoard;
 	
@@ -268,7 +268,7 @@ public class ParentConfig {
 		emptyBoard = Config.newBoard(ini.length-2, ini[0].length-2);
 		for (int i = 0; i < rowCount; i++) {
 			for (int j = 0; j < colCount; j++) {
-				Config.boardSet(emptyBoard, i, j, (byte)'X', colCount);
+				Config.boardSet(emptyBoard, i, j, (byte)' ', colCount);
 			}
 		}
 		
@@ -391,59 +391,59 @@ public class ParentConfig {
 		switch (c) {
 		case 'R':
 			carPresent[0] = true;
-			scratchRUp = new Config(emptyBoard);
-			scratchRDown = new Config(emptyBoard);
-			scratchRLeft = new Config(emptyBoard);
-			scratchRRight = new Config(emptyBoard);
+			scratchRUp = Config.newConfig(emptyBoard);
+			scratchRDown = Config.newConfig(emptyBoard);
+			scratchRLeft = Config.newConfig(emptyBoard);
+			scratchRRight = Config.newConfig(emptyBoard);
 			break;
 		case 'A':
 			carPresent[1] = true;
-			scratchAUp = new Config(emptyBoard);
-			scratchADown = new Config(emptyBoard);
-			scratchALeft = new Config(emptyBoard);
-			scratchARight = new Config(emptyBoard);
+			scratchAUp = Config.newConfig(emptyBoard);
+			scratchADown = Config.newConfig(emptyBoard);
+			scratchALeft = Config.newConfig(emptyBoard);
+			scratchARight = Config.newConfig(emptyBoard);
 			break;
 		case 'B':
 			carPresent[2] = true;
-			scratchBUp = new Config(emptyBoard);
-			scratchBDown = new Config(emptyBoard);
-			scratchBLeft = new Config(emptyBoard);
-			scratchBRight = new Config(emptyBoard);
+			scratchBUp = Config.newConfig(emptyBoard);
+			scratchBDown = Config.newConfig(emptyBoard);
+			scratchBLeft = Config.newConfig(emptyBoard);
+			scratchBRight = Config.newConfig(emptyBoard);
 			break;
 		case 'C':
 			carPresent[3] = true;
-			scratchCUp = new Config(emptyBoard);
-			scratchCDown = new Config(emptyBoard);
-			scratchCLeft = new Config(emptyBoard);
-			scratchCRight = new Config(emptyBoard);
+			scratchCUp = Config.newConfig(emptyBoard);
+			scratchCDown = Config.newConfig(emptyBoard);
+			scratchCLeft = Config.newConfig(emptyBoard);
+			scratchCRight = Config.newConfig(emptyBoard);
 			break;
 		case 'D':
 			carPresent[4] = true;
-			scratchDUp = new Config(emptyBoard);
-			scratchDDown = new Config(emptyBoard);
-			scratchDLeft = new Config(emptyBoard);
-			scratchDRight = new Config(emptyBoard);
+			scratchDUp = Config.newConfig(emptyBoard);
+			scratchDDown = Config.newConfig(emptyBoard);
+			scratchDLeft = Config.newConfig(emptyBoard);
+			scratchDRight = Config.newConfig(emptyBoard);
 			break;
 		case 'E':
 			carPresent[5] = true;
-			scratchEUp = new Config(emptyBoard);
-			scratchEDown = new Config(emptyBoard);
-			scratchELeft = new Config(emptyBoard);
-			scratchERight = new Config(emptyBoard);
+			scratchEUp = Config.newConfig(emptyBoard);
+			scratchEDown = Config.newConfig(emptyBoard);
+			scratchELeft = Config.newConfig(emptyBoard);
+			scratchERight = Config.newConfig(emptyBoard);
 			break;
 		case 'F':
 			carPresent[6] = true;
-			scratchFUp = new Config(emptyBoard);
-			scratchFDown = new Config(emptyBoard);
-			scratchFLeft = new Config(emptyBoard);
-			scratchFRight = new Config(emptyBoard);
+			scratchFUp = Config.newConfig(emptyBoard);
+			scratchFDown = Config.newConfig(emptyBoard);
+			scratchFLeft = Config.newConfig(emptyBoard);
+			scratchFRight = Config.newConfig(emptyBoard);
 			break;
 		case 'G':
 			carPresent[7] = true;
-			scratchGUp = new Config(emptyBoard);
-			scratchGDown = new Config(emptyBoard);
-			scratchGLeft = new Config(emptyBoard);
-			scratchGRight = new Config(emptyBoard);
+			scratchGUp = Config.newConfig(emptyBoard);
+			scratchGDown = Config.newConfig(emptyBoard);
+			scratchGLeft = Config.newConfig(emptyBoard);
+			scratchGRight = Config.newConfig(emptyBoard);
 			break;
 		default:
 			assert false;
@@ -451,7 +451,7 @@ public class ParentConfig {
 		}
 	}
 	
-	Config scratchLeft(byte b) {
+	byte[] scratchLeft(byte b) {
 		switch (b) {
 		case 'R':
 			return scratchRLeft;
@@ -475,7 +475,7 @@ public class ParentConfig {
 		}
 	}
 	
-	Config scratchRight(byte b) {
+	byte[] scratchRight(byte b) {
 		switch (b) {
 		case 'R':
 			return scratchRRight;
@@ -499,7 +499,7 @@ public class ParentConfig {
 		}
 	}
 	
-	Config scratchUp(byte b) {
+	byte[] scratchUp(byte b) {
 		switch (b) {
 		case 'R':
 			return scratchRUp;
@@ -523,7 +523,7 @@ public class ParentConfig {
 		}
 	}
 	
-	Config scratchDown(byte b) {
+	byte[] scratchDown(byte b) {
 		switch (b) {
 		case 'R':
 			return scratchRDown;
