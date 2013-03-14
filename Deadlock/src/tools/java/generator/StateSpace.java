@@ -12,8 +12,11 @@ import solver.Config;
 
 public class StateSpace {
 	
-	public long lastGeneratingConfig;
+	public long lastGeneratingConfig = -1;
+	
 	public TLongArrayList lastGeneratingIteration = new TLongArrayList();
+	public TLongArrayList penGeneratingIteration = new TLongArrayList();
+	
 	private TLongHashSet allGeneratingConfigs = new TLongHashSet();
 	
 	public List<byte[][]> lastSolvingIteration = new ArrayList<byte[][]>();
@@ -22,6 +25,7 @@ public class StateSpace {
 	public void tryPutGenerating(byte[][] key) {
 		
 		long info = Config.getInfoLong(key);
+		assert info != 0;
 		
 		boolean modified = allGeneratingConfigs.add(info);
 		if (modified) {

@@ -73,7 +73,7 @@ public class Config {
 		b.append(new String(par.ini[par.ini.length-1]));
 		b.append('\n');
 		return b.toString();
-	};
+	}
 	
 	public static byte[][] newBoard(int rows, int cols) {
 		return new byte[rows][cols];
@@ -1955,6 +1955,120 @@ public class Config {
 			int rGByte = getInfoByte(out, (byte)'G');
 			assert rGByte == gByte;
 		}
+		
+	}
+	
+	public static void getPartitionId(byte[][] board, byte[] out) {
+		
+		for (int i = 0; i < out.length; i++) {
+			out[i] = 0;
+		}
+		
+		for (byte c : cars) {
+			if (!par.carMapContains(c)) {
+				continue;
+			}
+			
+			loadScratchInfo(board, c);
+			byte o = par.scratchInfo.o;
+			int size = par.scratchInfo.size;
+			int row = par.scratchInfo.row;
+			int col = par.scratchInfo.col;
+			
+			if (o == LEFTRIGHT) {
+				
+				if (size == 2) {
+					
+					//add 2car to row row
+					switch (out[row]) {
+					case 0:
+						out[row] = 2;
+						break;
+					case 1:
+						out[row] = 3;
+						break;
+					case 2:
+						out[row] = 4;
+						break;
+					default:
+						assert false;
+						break;
+					}
+					
+				} else {
+					
+					//add 3car to row row
+					switch (out[row]) {
+					case 0:
+						out[row] = 1;
+						break;
+					case 2:
+						out[row] = 3;
+						break;
+					default:
+						assert false;
+						break;
+					}
+					
+				}
+				
+			} else {
+				
+//				if (size == 2) {
+//					
+//					//add 2car to col col
+//					switch (out[col+par.rowCount]) {
+//					case 0:
+//						out[col+par.rowCount] = 2;
+//						break;
+//					case 1:
+//						out[col+par.rowCount] = 3;
+//						break;
+//					case 2:
+//						out[col+par.rowCount] = 4;
+//						break;
+//					default:
+//						assert false;
+//						break;
+//					}
+//					
+//				} else {
+//					
+//					//add 3car to col col
+//					switch (out[col+par.rowCount]) {
+//					case 0:
+//						out[col+par.rowCount] = 1;
+//						break;
+//					case 2:
+//						out[col+par.rowCount] = 3;
+//						break;
+//					default:
+//						assert false;
+//						break;
+//					}
+//					
+//				}
+				
+			}
+			
+		}
+		
+		/*
+		 * go back and overwrite for joints
+		 */
+		for (int i = 0; i < par.rowCount; i++) {
+			if (par.isJoint(i, -1) || par.isJoint(i, par.colCount)) {
+				out[i] = 5;
+			}
+		}
+		
+//		for (int i = 0; i < par.colCount; i++) {
+//			if (par.isJoint(-1, i) || par.isJoint(par.rowCount, i)) {
+//				out[i+par.rowCount] = 5;
+//			}
+//		}
+		
+//		System.out.println(Arrays.toString(out));
 		
 	}
 	
