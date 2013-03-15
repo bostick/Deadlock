@@ -1,47 +1,4 @@
 
-currently, this is solve in 15 moves
-/---J--\
-| A    |
-| A    |
-J  B CDY
-|  B CD|
-|   R  |
-|   R  |
-\------/
-why is A moved at all?
-
-
-
-
-
-solving
-/---J--\
-|ABCC  |
-|AB  DD|
-J B    Y
-|      |
-|EE    |
-K RR FF|
-\---K--/
-seems to hang?
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 using trove for long sets and maps
 
 

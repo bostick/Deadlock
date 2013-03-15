@@ -45,12 +45,40 @@ public class Config {
 			for (int j = 0; j < par.colCount; j++) {
 				byte bb = boardGet(in, i, j);
 				b.append((char)bb);
-			}			
+			}
 			b.append((char)par.ini[i+1][par.colCount+1]);
 			b.append('\n');
 		}
 		b.append(new String(par.ini[par.ini.length-1]));
 		b.append('\n');
+		return b.toString();
+	}
+	
+	public static String toString(List<byte[][]> boards) {
+		
+		StringBuilder b = new StringBuilder();
+		for (@SuppressWarnings("unused") byte[][] board : boards) {
+			b.append(new String(par.ini[0]));
+			b.append("   ");
+		}
+		b.append("\n");
+		for (int i = 0; i < par.rowCount; i++) {
+			for (byte[][] board : boards) {
+				b.append((char)par.ini[i+1][0]);
+				for (int j = 0; j < par.colCount; j++) {
+					byte bb = boardGet(board, i, j);
+					b.append((char)bb);
+				}
+				b.append((char)par.ini[i+1][par.colCount+1]);
+				b.append("   ");
+			}
+			b.append("\n");
+		}
+		for (@SuppressWarnings("unused") byte[][] board : boards) {
+			b.append(new String(par.ini[par.ini.length-1]));
+			b.append("   ");
+		}
+		b.append("\n\n");
 		return b.toString();
 	}
 	
@@ -340,7 +368,7 @@ public class Config {
 					switch (o) {
 					case LEFTRIGHT:
 						
-						scratch = par.scratchLeft;
+						scratch = par.scratchLeft.get(c);
 						if (availableForCar(board, c, size, o, row, col-1)) {
 							
 							moveCarAndAlphaReduce(board, c, size, o, row, col, o, row, col-1, scratch);
@@ -358,7 +386,7 @@ public class Config {
 							}
 						}
 						
-						scratch = par.scratchRight;
+						scratch = par.scratchRight.get(c);
 						if (availableForCar(board, c, size, o, row, col+1)) {
 							moveCarAndNoAlphaReduce(board, c, size, o, row, col, o, row, col+1, scratch);
 							if (furtherFromExit(c, scratch, board)) {
@@ -377,7 +405,7 @@ public class Config {
 						break;
 					case UPDOWN:
 						
-						scratch = par.scratchUp;
+						scratch = par.scratchUp.get(c);
 						if (availableForCar(board, c, size, o, row-1, col)) {
 							moveCarAndAlphaReduce(board, c, size, o, row, col, o, row-1, col, scratch);
 							if (furtherFromExit(c, scratch, board)) {
@@ -394,7 +422,7 @@ public class Config {
 							}
 						}
 						
-						scratch = par.scratchDown;
+						scratch = par.scratchDown.get(c);
 						if (availableForCar(board, c, size, o, row+1, col)) {
 							moveCarAndAlphaReduce(board, c, size, o, row, col, o, row+1, col, scratch);
 							if (furtherFromExit(c, scratch, board)) {
@@ -429,7 +457,7 @@ public class Config {
 					switch (o) {
 					case LEFTRIGHT:
 						
-						scratch = par.scratchLeft;
+						scratch = par.scratchLeft.get(c);
 						if (availableForCar(board, c, size, o, row, col-1)) {
 							
 							moveCarAndAlphaReduce(board, c, size, o, row, col, o, row, col-1, scratch);
@@ -445,7 +473,7 @@ public class Config {
 							}
 						}
 						
-						scratch = par.scratchRight;
+						scratch = par.scratchRight.get(c);
 						if (availableForCar(board, c, size, o, row, col+1)) {
 							moveCarAndNoAlphaReduce(board, c, size, o, row, col, o, row, col+1, scratch);
 							if (nowBlockingPath(scratch, board)) {
@@ -462,7 +490,7 @@ public class Config {
 						break;
 					case UPDOWN:
 						
-						scratch = par.scratchUp;
+						scratch = par.scratchUp.get(c);
 						if (availableForCar(board, c, size, o, row-1, col)) {
 							moveCarAndAlphaReduce(board, c, size, o, row, col, o, row-1, col, scratch);
 							if (nowBlockingPath(scratch, board)) {
@@ -477,7 +505,7 @@ public class Config {
 							}
 						}
 						
-						scratch = par.scratchDown;
+						scratch = par.scratchDown.get(c);
 						if (availableForCar(board, c, size, o, row+1, col)) {
 							moveCarAndAlphaReduce(board, c, size, o, row, col, o, row+1, col, scratch);
 							if (nowBlockingPath(scratch, board)) {
@@ -514,7 +542,7 @@ public class Config {
 			switch (o) {
 			case LEFTRIGHT:
 				
-				scratch = par.scratchLeft;
+				scratch = par.scratchLeft.get(c);
 				if (availableForCar(board, c, size, o, row, col-1)) {
 					moveCarAndAlphaReduce(board, c, size, o, row, col, o, row, col-1, scratch);
 					if (!hasClearPathToExit(scratch)) {
@@ -529,7 +557,7 @@ public class Config {
 					}
 				}
 				
-				scratch = par.scratchRight;
+				scratch = par.scratchRight.get(c);
 				if (availableForCar(board, c, size, o, row, col+1)) {
 					moveCarAndNoAlphaReduce(board, c, size, o, row, col, o, row, col+1, scratch);
 					if (!hasClearPathToExit(scratch)) {
@@ -546,7 +574,7 @@ public class Config {
 				break;
 			case UPDOWN:
 				
-				scratch = par.scratchUp;
+				scratch = par.scratchUp.get(c);
 				if (availableForCar(board, c, size, o, row-1, col)) {
 					moveCarAndAlphaReduce(board, c, size, o, row, col, o, row-1, col, scratch);
 					if (!hasClearPathToExit(scratch)) {
@@ -561,7 +589,7 @@ public class Config {
 					}
 				}
 				
-				scratch = par.scratchDown;
+				scratch = par.scratchDown.get(c);
 				if (availableForCar(board, c, size, o, row+1, col)) {
 					moveCarAndAlphaReduce(board, c, size, o, row, col, o, row+1, col, scratch);
 					if (!hasClearPathToExit(scratch)) {
@@ -603,7 +631,7 @@ public class Config {
 			switch (o) {
 			case LEFTRIGHT:
 				
-				scratch = par.scratchLeft;
+				scratch = par.scratchLeft.get((byte)'R');
 				if (availableForCar(board, (byte)'R', size, o, row, col-1)) {
 					moveCarAndAlphaReduce(board, (byte)'R', size, o, row, col, o, row, col-1, scratch);
 					if (closerToExit((byte)'R', scratch, board)) {
@@ -620,7 +648,7 @@ public class Config {
 					}
 				}
 				
-				scratch = par.scratchRight;
+				scratch = par.scratchRight.get((byte)'R');
 				if (availableForCar(board, (byte)'R', size, o, row, col+1)) {
 					moveCarAndNoAlphaReduce(board, (byte)'R', size, o, row, col, o, row, col+1, scratch);
 					if (closerToExit((byte)'R', scratch, board)) {
@@ -640,7 +668,7 @@ public class Config {
 				break;
 			case UPDOWN:
 				
-				scratch = par.scratchUp;
+				scratch = par.scratchUp.get((byte)'R');
 				if (availableForCar(board, (byte)'R', size, o, row-1, col)) {
 					moveCarAndAlphaReduce(board, (byte)'R', size, o, row, col, o, row-1, col, scratch);
 					if (closerToExit((byte)'R', scratch, board)) {
@@ -657,7 +685,7 @@ public class Config {
 					}
 				}
 				
-				scratch = par.scratchDown;
+				scratch = par.scratchDown.get((byte)'R');
 				if (availableForCar(board, (byte)'R', size, o, row+1, col)) {
 					moveCarAndAlphaReduce(board, (byte)'R', size, o, row, col, o, row+1, col, scratch);
 					if (closerToExit((byte)'R', scratch, board)) {
@@ -682,12 +710,6 @@ public class Config {
 		
 		for (byte c : par.actualCars) {
 			
-			/*
-			 * if clearPathToExit,
-			 * 		if red, only previous move was going away from exit
-			 * 		if other, only previous move was interfering with winning path
-			 */
-			
 			loadScratchInfo(board, c);
 			byte o = par.scratchInfo.o;
 			int size = par.scratchInfo.size;
@@ -699,7 +721,7 @@ public class Config {
 			switch (o) {
 			case LEFTRIGHT:
 				
-				scratch = par.scratchLeft;
+				scratch = par.scratchLeft.get(c);
 				if (availableForCar(board, c, size, o, row, col-1)) {
 					moveCarAndAlphaReduce(board, c, size, o, row, col, o, row, col-1, scratch);
 					par.solvingMoves.add(scratch);
@@ -710,7 +732,7 @@ public class Config {
 					}
 				}
 				
-				scratch = par.scratchRight;
+				scratch = par.scratchRight.get(c);
 				if (availableForCar(board, c, size, o, row, col+1)) {
 					moveCarAndNoAlphaReduce(board, c, size, o, row, col, o, row, col+1, scratch);
 					par.solvingMoves.add(scratch);
@@ -724,7 +746,7 @@ public class Config {
 				break;
 			case UPDOWN:
 				
-				scratch = par.scratchUp;
+				scratch = par.scratchUp.get(c);
 				if (availableForCar(board, c, size, o, row-1, col)) {
 					moveCarAndAlphaReduce(board, c, size, o, row, col, o, row-1, col, scratch);
 					par.solvingMoves.add(scratch);
@@ -735,7 +757,7 @@ public class Config {
 					}
 				}
 				
-				scratch = par.scratchDown;
+				scratch = par.scratchDown.get(c);
 				if (availableForCar(board, c, size, o, row+1, col)) {
 					moveCarAndAlphaReduce(board, c, size, o, row, col, o, row+1, col, scratch);
 					par.solvingMoves.add(scratch);

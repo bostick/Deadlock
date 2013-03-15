@@ -1,7 +1,9 @@
 package solver;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ParentConfig {
 	
@@ -30,16 +32,20 @@ public class ParentConfig {
 	int jConnectedToY = -1;
 	int kConnectedToY = -1;
 	
-//	boolean[] carPresent = new boolean[Config.cars.length+1];
 	List<Byte> actualCars = new ArrayList<Byte>();
 	byte[] possibleCars = new byte[]{ 'R', 'A', 'B', 'C', 'D', 'E', 'F', 'G' };
 	
 	CarInfo scratchInfo = new CarInfo();
 	
-	byte[][] scratchUp;
-	byte[][] scratchDown;
-	byte[][] scratchLeft;
-	byte[][] scratchRight;
+	Map<Byte, byte[][]> scratchLeft = new HashMap<Byte, byte[][]>();
+	Map<Byte, byte[][]> scratchRight = new HashMap<Byte, byte[][]>();
+	Map<Byte, byte[][]> scratchUp = new HashMap<Byte, byte[][]>();
+	Map<Byte, byte[][]> scratchDown = new HashMap<Byte, byte[][]>();
+	
+//	byte[][] scratchUp;
+//	byte[][] scratchDown;
+//	byte[][] scratchLeft;
+//	byte[][] scratchRight;
 	
 //	byte[][] scratchRUp;
 //	byte[][] scratchRDown;
@@ -279,10 +285,10 @@ public class ParentConfig {
 			}
 		}
 		
-		scratchUp = Config.newConfig(emptyBoard);
-		scratchDown = Config.newConfig(emptyBoard);
-		scratchLeft = Config.newConfig(emptyBoard);
-		scratchRight = Config.newConfig(emptyBoard);
+//		scratchUp = Config.newConfig(emptyBoard);
+//		scratchDown = Config.newConfig(emptyBoard);
+//		scratchLeft = Config.newConfig(emptyBoard);
+//		scratchRight = Config.newConfig(emptyBoard);
 		
 	}
 	
@@ -403,6 +409,16 @@ public class ParentConfig {
 		
 		actualCars.add(c);
 		
+//		byte[][] scratchUp = Config.newConfig(emptyBoard);
+//		byte[][] scratchDown = Config.newConfig(emptyBoard);
+//		byte[][] scratchLeft = Config.newConfig(emptyBoard);
+//		byte[][] scratchRight = Config.newConfig(emptyBoard);
+		
+		scratchLeft.put(c, Config.newConfig(emptyBoard));
+		scratchRight.put(c, Config.newConfig(emptyBoard));
+		scratchUp.put(c, Config.newConfig(emptyBoard));
+		scratchDown.put(c, Config.newConfig(emptyBoard));
+		
 //		switch (c) {
 //		case 'R':
 //			carPresent[0] = true;
@@ -489,7 +505,7 @@ public class ParentConfig {
 //			return null;
 //		}
 //	}
-//	
+	
 //	byte[][] scratchRight(byte b) {
 //		switch (b) {
 //		case 'R':

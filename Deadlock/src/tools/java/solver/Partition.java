@@ -2,7 +2,6 @@ package solver;
 
 import gnu.trove.list.array.TLongArrayList;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -51,7 +50,9 @@ public class Partition {
 		space = null;
 		
 		if (longest != -1) {
-			hardestSolution = solve(longest);
+			byte[][] start = Config.newConfig(Config.par.emptyBoard);
+			Config.toBoard(longest, start);
+			hardestSolution = Solver.solve(start);
 			System.out.println("hardest is " + hardestSolution.size() + " moves, total " + (totalBoardCount) + " boards, time: " + ((System.currentTimeMillis() - t) / 1000) + "s");
 		} else {
 			System.out.println("hardest is null, time: " + ((System.currentTimeMillis() - t) / 1000) + "s");
@@ -66,55 +67,6 @@ public class Partition {
 		for (byte[][] m : moves) {
 			space.tryPutGenerating(m);
 		}
-	}
-	
-	static List<String> solve(long info) {
-		
-		byte[][] start = Config.newConfig(Config.par.emptyBoard);
-		Config.toBoard(info, start);
-		
-		StateSpace space = new StateSpace();
-		space.putSolving(start, null);
-		
-		byte[][] winner = null;
-		loop:
-		while (true) {
-			
-			List<byte[][]> a = new ArrayList<byte[][]>(space.lastSolvingIteration);
-			space.lastSolvingIteration = new ArrayList<byte[][]>();
-			
-			for (int i = 0; i < a.size(); i++) {
-				byte[][] b = a.get(i);
-				
-				if (Config.isWinning(b)) {
-					winner = b;
-					break loop;
-				}
-				
-				List<byte[][]> moves = Config.possibleNextMoves(b);
-				
-				for (byte[][] m : moves) {
-					if (!space.allSolvingConfigsContains(m)) {
-						space.putSolving(Config.clone(m), b);
-					}
-				}
-				
-			}
-		}
-		
-		List<String> solution = new ArrayList<String>();
-		
-		String l = Config.toString(winner);
-		solution.add(l);
-		while (true) {
-			l = space.getSolving(l);
-			if (l == null) {
-				break;
-			}
-			solution.add(0, l);
-		}
-		
-		return solution;
 	}
 
 }
