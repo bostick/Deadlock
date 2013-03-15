@@ -9,14 +9,14 @@ import java.util.Map;
 public class Generator {
 	
 	static byte[][] boardIni = new byte[][] {
-		{ '/', '-', '-', '-', 'J', '-', '-', '\\'},
+		{ '/', '-', 'J', '-', '-', '-', '-', '\\'},
 		{ '|', ' ', ' ', ' ', ' ', ' ', ' ', '|'},
-		{ '|', ' ', ' ', ' ', ' ', ' ', ' ', '|'},
-		{ 'J', ' ', ' ', ' ', ' ', ' ', ' ', 'Y'},
-		{ '|', ' ', ' ', ' ', ' ', ' ', ' ', '|'},
+		{ 'J', ' ', ' ', ' ', ' ', ' ', ' ', '|'},
+		{ '|', ' ', ' ', ' ', ' ', ' ', ' ', 'Y'},
 		{ '|', ' ', ' ', ' ', ' ', ' ', ' ', '|'},
 		{ 'K', ' ', ' ', ' ', ' ', ' ', ' ', '|'},
-		{'\\', '-', '-', '-', 'K', '-', '-', '/'},
+		{ '|', ' ', ' ', ' ', ' ', ' ', ' ', '|'},
+		{'\\', '-', 'K', '-', '-', '-', '-', '/'},
 	};
 	
 	/*
@@ -78,9 +78,9 @@ public class Generator {
 			System.out.println("generating partition #" + i);
 			System.out.print("idhash " + p.partitionIdHash + ", starting with " + p.space.lastGeneratingIteration.size() + " winners (" + (100 * p.space.lastGeneratingIteration.size() / winnersCount) + "%)... ");
 			
-			if (p.partitionIdHash != 739147418) {
-				continue;
-			}
+//			if (p.partitionIdHash != 739147418) {
+//				continue;
+//			}
 			
 			p.generate();
 			if (Runtime.getRuntime().totalMemory() > m) {
