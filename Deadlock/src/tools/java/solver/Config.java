@@ -1806,6 +1806,17 @@ public class Config {
 		
 	}
 	
+	/**
+	 * the byte values go:
+	 * 0: 0 2cars and 0 3cars
+	 * 1: 1 2cars and 0 3car
+	 * 2: 0 2car and 1 3cars
+	 * 3: 1 2car and 1 3car
+	 * 4: 2 2car and 0 3cars
+	 * 5: 0 2car and 2 3car
+	 * 6: 3 2car
+	 * 7: *
+	 */
 	public static void getPartitionId(byte[][] board, int rowCount, int colCount, byte[] out) {
 		
 		for (int i = 0; i < out.length; i++) {
@@ -1829,13 +1840,16 @@ public class Config {
 						//add 2car to row row
 						switch (out[row]) {
 						case 0:
-							out[row] = 2;
+							out[row] = 1;
 							break;
 						case 1:
-							out[row] = 3;
+							out[row] = 4;
 							break;
 						case 2:
-							out[row] = 4;
+							out[row] = 3;
+							break;
+						case 4:
+							out[row] = 6;
 							break;
 						default:
 							assert false;
@@ -1847,10 +1861,13 @@ public class Config {
 						//add 3car to row row
 						switch (out[row]) {
 						case 0:
-							out[row] = 1;
+							out[row] = 2;
+							break;
+						case 1:
+							out[row] = 3;
 							break;
 						case 2:
-							out[row] = 3;
+							out[row] = 5;
 							break;
 						default:
 							assert false;
@@ -1868,15 +1885,18 @@ public class Config {
 					if (size == 2) {
 						
 						//add 2car to col col
-						switch (out[col+par.rowCount]) {
+						switch (out[col]) {
 						case 0:
-							out[col+par.rowCount] = 2;
+							out[col + par.rowCount] = 1;
 							break;
 						case 1:
-							out[col+par.rowCount] = 3;
+							out[col + par.rowCount] = 4;
 							break;
 						case 2:
-							out[col+par.rowCount] = 4;
+							out[col + par.rowCount] = 3;
+							break;
+						case 4:
+							out[col + par.rowCount] = 6;
 							break;
 						default:
 							assert false;
@@ -1886,12 +1906,15 @@ public class Config {
 					} else {
 						
 						//add 3car to col col
-						switch (out[col+par.rowCount]) {
+						switch (out[col + par.rowCount]) {
 						case 0:
-							out[col+par.rowCount] = 1;
+							out[col + par.rowCount] = 2;
+							break;
+						case 1:
+							out[col + par.rowCount] = 3;
 							break;
 						case 2:
-							out[col+par.rowCount] = 3;
+							out[col + par.rowCount] = 5;
 							break;
 						default:
 							assert false;
