@@ -1,11 +1,10 @@
-package generator;
+package solver;
 
 import gnu.trove.list.array.TLongArrayList;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import solver.Config;
 
 public class Partition {
 	

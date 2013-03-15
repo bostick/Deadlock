@@ -1,4 +1,4 @@
-package generator;
+package solver;
 
 import gnu.trove.list.array.TLongArrayList;
 import gnu.trove.set.hash.TLongHashSet;
@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import solver.Config;
 
 public class StateSpace {
 	
