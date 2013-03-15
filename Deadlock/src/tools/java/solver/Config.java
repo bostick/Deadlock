@@ -318,7 +318,7 @@ public class Config {
 		return true;
 	}
 	
-	public static void moveCarAndAlphaReduce(byte[][] board, byte c, int size, byte oldO, int oldRow, int oldCol, byte newO, int newRow, int newCol, byte[][] out) {
+	public static void moveCar(byte[][] board, byte c, int size, byte oldO, int oldRow, int oldCol, byte newO, int newRow, int newCol, boolean alphaReduce, byte[][] out) {
 		
 		assert board != out;
 		
@@ -328,19 +328,9 @@ public class Config {
 		
 		insertCar(out, c, newO, size, newRow, newCol);
 		
-		alphaReduce(out);
-		
-	}
-	
-	public static void moveCarAndNoAlphaReduce(byte[][] board, byte c, int size, byte oldO, int oldRow, int oldCol, byte newO, int newRow, int newCol, byte[][] out) {
-		
-		assert board != out;
-		
-		copyTo(board, out);
-		
-		clearCar(out, c, oldO, size, oldRow, oldCol);
-		
-		insertCar(out, c, newO, size, newRow, newCol);
+		if (alphaReduce) {
+			alphaReduce(out);
+		}
 		
 	}
 	
@@ -350,7 +340,10 @@ public class Config {
 		
 		if (hasClearPathToExit(board)) {
 			
-			for (byte c : par.actualCars) {
+			for (int i = 0; i < par.actualCars.size(); i++) {
+				byte c = par.actualCars.get(i);
+				boolean first = (i == 0);
+				boolean last = (i == par.actualCars.size()-1);
 				
 				if (c == 'R') {
 					
@@ -371,13 +364,13 @@ public class Config {
 						scratch = par.scratchLeft.get(c);
 						if (availableForCar(board, c, size, o, row, col-1)) {
 							
-							moveCarAndAlphaReduce(board, c, size, o, row, col, o, row, col-1, scratch);
+							moveCar(board, c, size, o, row, col, o, row, col-1, false, scratch);
 							if (furtherFromExit(c, scratch, board)) {
 								par.generatingMoves.add(scratch);
 								continue;
 							}
 						} else if (par.isJoint(row, col-1)) {
-							boolean res = tryJoint(board, c, par.otherJoint(row, col-1), scratch);
+							boolean res = tryJoint(board, c, par.otherJoint(row, col-1), false, scratch);
 							if (res) {
 								if (furtherFromExit(c, scratch, board)) {
 									par.generatingMoves.add(scratch);
@@ -388,13 +381,13 @@ public class Config {
 						
 						scratch = par.scratchRight.get(c);
 						if (availableForCar(board, c, size, o, row, col+1)) {
-							moveCarAndNoAlphaReduce(board, c, size, o, row, col, o, row, col+1, scratch);
+							moveCar(board, c, size, o, row, col, o, row, col+1, false, scratch);
 							if (furtherFromExit(c, scratch, board)) {
 								par.generatingMoves.add(scratch);
 								continue;
 							}
 						} else if (par.isJoint(row, col+size)) {
-							boolean res = tryJoint(board, c, par.otherJoint(row, col+size), scratch);
+							boolean res = tryJoint(board, c, par.otherJoint(row, col+size), false, scratch);
 							if (res) {
 								if (furtherFromExit(c, scratch, board)) {
 									par.generatingMoves.add(scratch);
@@ -407,13 +400,13 @@ public class Config {
 						
 						scratch = par.scratchUp.get(c);
 						if (availableForCar(board, c, size, o, row-1, col)) {
-							moveCarAndAlphaReduce(board, c, size, o, row, col, o, row-1, col, scratch);
+							moveCar(board, c, size, o, row, col, o, row-1, col, false, scratch);
 							if (furtherFromExit(c, scratch, board)) {
 								par.generatingMoves.add(scratch);
 								continue;
 							}
 						} else if (par.isJoint(row-1, col)) {
-							boolean res = tryJoint(board, c, par.otherJoint(row-1, col), scratch);
+							boolean res = tryJoint(board, c, par.otherJoint(row-1, col), false, scratch);
 							if (res) {
 								if (furtherFromExit(c, scratch, board)) {
 									par.generatingMoves.add(scratch);
@@ -424,13 +417,13 @@ public class Config {
 						
 						scratch = par.scratchDown.get(c);
 						if (availableForCar(board, c, size, o, row+1, col)) {
-							moveCarAndAlphaReduce(board, c, size, o, row, col, o, row+1, col, scratch);
+							moveCar(board, c, size, o, row, col, o, row+1, col, false, scratch);
 							if (furtherFromExit(c, scratch, board)) {
 								par.generatingMoves.add(scratch);
 								continue;
 							}
 						} else if (par.isJoint(row+size, col)) {
-							boolean res = tryJoint(board, c, par.otherJoint(row+size, col), scratch);
+							boolean res = tryJoint(board, c, par.otherJoint(row+size, col), false, scratch);
 							if (res) {
 								if (furtherFromExit(c, scratch, board)) {
 									par.generatingMoves.add(scratch);
@@ -460,12 +453,12 @@ public class Config {
 						scratch = par.scratchLeft.get(c);
 						if (availableForCar(board, c, size, o, row, col-1)) {
 							
-							moveCarAndAlphaReduce(board, c, size, o, row, col, o, row, col-1, scratch);
+							moveCar(board, c, size, o, row, col, o, row, col-1, false, scratch);
 							if (nowBlockingPath(scratch, board)) {
 								par.generatingMoves.add(scratch);
 							}
 						} else if (par.isJoint(row, col-1)) {
-							boolean res = tryJoint(board, c, par.otherJoint(row, col-1), scratch);
+							boolean res = tryJoint(board, c, par.otherJoint(row, col-1), true, scratch);
 							if (res) {
 								if (nowBlockingPath(scratch, board)) {
 									par.generatingMoves.add(scratch);
@@ -475,12 +468,12 @@ public class Config {
 						
 						scratch = par.scratchRight.get(c);
 						if (availableForCar(board, c, size, o, row, col+1)) {
-							moveCarAndNoAlphaReduce(board, c, size, o, row, col, o, row, col+1, scratch);
+							moveCar(board, c, size, o, row, col, o, row, col+1, false, scratch);
 							if (nowBlockingPath(scratch, board)) {
 								par.generatingMoves.add(scratch);
 							}
 						} else if (par.isJoint(row, col+size)) {
-							boolean res = tryJoint(board, c, par.otherJoint(row, col+size), scratch);
+							boolean res = tryJoint(board, c, par.otherJoint(row, col+size), true, scratch);
 							if (res) {
 								if (nowBlockingPath(scratch, board)) {
 									par.generatingMoves.add(scratch);
@@ -492,12 +485,12 @@ public class Config {
 						
 						scratch = par.scratchUp.get(c);
 						if (availableForCar(board, c, size, o, row-1, col)) {
-							moveCarAndAlphaReduce(board, c, size, o, row, col, o, row-1, col, scratch);
+							moveCar(board, c, size, o, row, col, o, row-1, col, (!first), scratch);
 							if (nowBlockingPath(scratch, board)) {
 								par.generatingMoves.add(scratch);
 							}
 						} else if (par.isJoint(row-1, col)) {
-							boolean res = tryJoint(board, c, par.otherJoint(row-1, col), scratch);
+							boolean res = tryJoint(board, c, par.otherJoint(row-1, col), true, scratch);
 							if (res) {
 								if (nowBlockingPath(scratch, board)) {
 									par.generatingMoves.add(scratch);
@@ -507,12 +500,12 @@ public class Config {
 						
 						scratch = par.scratchDown.get(c);
 						if (availableForCar(board, c, size, o, row+1, col)) {
-							moveCarAndAlphaReduce(board, c, size, o, row, col, o, row+1, col, scratch);
+							moveCar(board, c, size, o, row, col, o, row+1, col, (!last), scratch);
 							if (nowBlockingPath(scratch, board)) {
 								par.generatingMoves.add(scratch);
 							}
 						} else if (par.isJoint(row+size, col)) {
-							boolean res = tryJoint(board, c, par.otherJoint(row+size, col), scratch);
+							boolean res = tryJoint(board, c, par.otherJoint(row+size, col), true, scratch);
 							if (res) {
 								if (nowBlockingPath(scratch, board)) {
 									par.generatingMoves.add(scratch);
@@ -529,7 +522,10 @@ public class Config {
 			return par.generatingMoves;
 		}
 		
-		for (byte c : par.actualCars) {
+		for (int i = 0; i < par.actualCars.size(); i++) {
+			byte c = par.actualCars.get(i);
+			boolean first = (i == 0);
+			boolean last = (i == par.actualCars.size()-1);
 			
 			loadScratchInfo(board, c);
 			byte o = par.scratchInfo.o;
@@ -544,12 +540,12 @@ public class Config {
 				
 				scratch = par.scratchLeft.get(c);
 				if (availableForCar(board, c, size, o, row, col-1)) {
-					moveCarAndAlphaReduce(board, c, size, o, row, col, o, row, col-1, scratch);
+					moveCar(board, c, size, o, row, col, o, row, col-1, false, scratch);
 					if (!hasClearPathToExit(scratch)) {
 						par.generatingMoves.add(scratch);
 					}
 				} else if (par.isJoint(row, col-1)) {
-					boolean res = tryJoint(board, c, par.otherJoint(row, col-1), scratch);
+					boolean res = tryJoint(board, c, par.otherJoint(row, col-1), true, scratch);
 					if (res) {
 						if (!hasClearPathToExit(scratch)) {
 							par.generatingMoves.add(scratch);
@@ -559,12 +555,12 @@ public class Config {
 				
 				scratch = par.scratchRight.get(c);
 				if (availableForCar(board, c, size, o, row, col+1)) {
-					moveCarAndNoAlphaReduce(board, c, size, o, row, col, o, row, col+1, scratch);
+					moveCar(board, c, size, o, row, col, o, row, col+1, false, scratch);
 					if (!hasClearPathToExit(scratch)) {
 						par.generatingMoves.add(scratch);
 					}
 				} else if (par.isJoint(row, col+size)) {
-					boolean res = tryJoint(board, c, par.otherJoint(row, col+size), scratch);
+					boolean res = tryJoint(board, c, par.otherJoint(row, col+size), true, scratch);
 					if (res) {
 						if (!hasClearPathToExit(scratch)) {
 							par.generatingMoves.add(scratch);
@@ -576,12 +572,12 @@ public class Config {
 				
 				scratch = par.scratchUp.get(c);
 				if (availableForCar(board, c, size, o, row-1, col)) {
-					moveCarAndAlphaReduce(board, c, size, o, row, col, o, row-1, col, scratch);
+					moveCar(board, c, size, o, row, col, o, row-1, col, (!first), scratch);
 					if (!hasClearPathToExit(scratch)) {
 						par.generatingMoves.add(scratch);
 					}
 				} else if (par.isJoint(row-1, col)) {
-					boolean res = tryJoint(board, c, par.otherJoint(row-1, col), scratch);
+					boolean res = tryJoint(board, c, par.otherJoint(row-1, col), true, scratch);
 					if (res) {
 						if (!hasClearPathToExit(scratch)) {
 							par.generatingMoves.add(scratch);
@@ -591,12 +587,12 @@ public class Config {
 				
 				scratch = par.scratchDown.get(c);
 				if (availableForCar(board, c, size, o, row+1, col)) {
-					moveCarAndAlphaReduce(board, c, size, o, row, col, o, row+1, col, scratch);
+					moveCar(board, c, size, o, row, col, o, row+1, col, (!last), scratch);
 					if (!hasClearPathToExit(scratch)) {
 						par.generatingMoves.add(scratch);
 					}
 				} else if (par.isJoint(row+size, col)) {
-					boolean res = tryJoint(board, c, par.otherJoint(row+size, col), scratch);
+					boolean res = tryJoint(board, c, par.otherJoint(row+size, col), true, scratch);
 					if (res) {
 						if (!hasClearPathToExit(scratch)) {
 							par.generatingMoves.add(scratch);
@@ -633,13 +629,13 @@ public class Config {
 				
 				scratch = par.scratchLeft.get((byte)'R');
 				if (availableForCar(board, (byte)'R', size, o, row, col-1)) {
-					moveCarAndAlphaReduce(board, (byte)'R', size, o, row, col, o, row, col-1, scratch);
+					moveCar(board, (byte)'R', size, o, row, col, o, row, col-1, false, scratch);
 					if (closerToExit((byte)'R', scratch, board)) {
 						par.solvingMoves.add(scratch);
 						return par.solvingMoves;
 					}
 				} else if (par.isJoint(row, col-1)) {
-					boolean res = tryJoint(board, (byte)'R', par.otherJoint(row, col-1), scratch);
+					boolean res = tryJoint(board, (byte)'R', par.otherJoint(row, col-1), false, scratch);
 					if (res) {
 						if (closerToExit((byte)'R', scratch, board)) {
 							par.solvingMoves.add(scratch);
@@ -650,13 +646,13 @@ public class Config {
 				
 				scratch = par.scratchRight.get((byte)'R');
 				if (availableForCar(board, (byte)'R', size, o, row, col+1)) {
-					moveCarAndNoAlphaReduce(board, (byte)'R', size, o, row, col, o, row, col+1, scratch);
+					moveCar(board, (byte)'R', size, o, row, col, o, row, col+1, false, scratch);
 					if (closerToExit((byte)'R', scratch, board)) {
 						par.solvingMoves.add(scratch);
 						return par.solvingMoves;
 					}
 				} else if (par.isJoint(row, col+2)) {
-					boolean res = tryJoint(board, (byte)'R', par.otherJoint(row, col+2), scratch);
+					boolean res = tryJoint(board, (byte)'R', par.otherJoint(row, col+2), false, scratch);
 					if (res) {
 						if (closerToExit((byte)'R', scratch, board)) {
 							par.solvingMoves.add(scratch);
@@ -670,13 +666,13 @@ public class Config {
 				
 				scratch = par.scratchUp.get((byte)'R');
 				if (availableForCar(board, (byte)'R', size, o, row-1, col)) {
-					moveCarAndAlphaReduce(board, (byte)'R', size, o, row, col, o, row-1, col, scratch);
+					moveCar(board, (byte)'R', size, o, row, col, o, row-1, col, false, scratch);
 					if (closerToExit((byte)'R', scratch, board)) {
 						par.solvingMoves.add(scratch);
 						return par.solvingMoves;
 					}
 				} else if (par.isJoint(row-1, col)) {
-					boolean res = tryJoint(board, (byte)'R', par.otherJoint(row-1, col), scratch);
+					boolean res = tryJoint(board, (byte)'R', par.otherJoint(row-1, col), false, scratch);
 					if (res) {
 						if (closerToExit((byte)'R', scratch, board)) {
 							par.solvingMoves.add(scratch);
@@ -687,13 +683,13 @@ public class Config {
 				
 				scratch = par.scratchDown.get((byte)'R');
 				if (availableForCar(board, (byte)'R', size, o, row+1, col)) {
-					moveCarAndAlphaReduce(board, (byte)'R', size, o, row, col, o, row+1, col, scratch);
+					moveCar(board, (byte)'R', size, o, row, col, o, row+1, col, false, scratch);
 					if (closerToExit((byte)'R', scratch, board)) {
 						par.solvingMoves.add(scratch);
 						return par.solvingMoves;
 					}
 				} else if (par.isJoint(row+2, col)) {
-					boolean res = tryJoint(board, (byte)'R', par.otherJoint(row+2, col), scratch);
+					boolean res = tryJoint(board, (byte)'R', par.otherJoint(row+2, col), false, scratch);
 					if (res) {
 						if (closerToExit((byte)'R', scratch, board)) {
 							par.solvingMoves.add(scratch);
@@ -708,7 +704,10 @@ public class Config {
 			assert false;
 		}
 		
-		for (byte c : par.actualCars) {
+		for (int i = 0; i < par.actualCars.size(); i++) {
+			byte c = par.actualCars.get(i);
+			boolean first = (i == 0);
+			boolean last = (i == par.actualCars.size()-1);
 			
 			loadScratchInfo(board, c);
 			byte o = par.scratchInfo.o;
@@ -723,10 +722,10 @@ public class Config {
 				
 				scratch = par.scratchLeft.get(c);
 				if (availableForCar(board, c, size, o, row, col-1)) {
-					moveCarAndAlphaReduce(board, c, size, o, row, col, o, row, col-1, scratch);
+					moveCar(board, c, size, o, row, col, o, row, col-1, false, scratch);
 					par.solvingMoves.add(scratch);
 				} else if (par.isJoint(row, col-1)) {
-					boolean res = tryJoint(board, c, par.otherJoint(row, col-1), scratch);
+					boolean res = tryJoint(board, c, par.otherJoint(row, col-1), true, scratch);
 					if (res) {
 						par.solvingMoves.add(scratch);
 					}
@@ -734,10 +733,10 @@ public class Config {
 				
 				scratch = par.scratchRight.get(c);
 				if (availableForCar(board, c, size, o, row, col+1)) {
-					moveCarAndNoAlphaReduce(board, c, size, o, row, col, o, row, col+1, scratch);
+					moveCar(board, c, size, o, row, col, o, row, col+1, false, scratch);
 					par.solvingMoves.add(scratch);
 				} else if (par.isJoint(row, col+size)) {
-					boolean res = tryJoint(board, c, par.otherJoint(row, col+size), scratch);
+					boolean res = tryJoint(board, c, par.otherJoint(row, col+size), true, scratch);
 					if (res) {
 						par.solvingMoves.add(scratch);
 					}
@@ -748,10 +747,10 @@ public class Config {
 				
 				scratch = par.scratchUp.get(c);
 				if (availableForCar(board, c, size, o, row-1, col)) {
-					moveCarAndAlphaReduce(board, c, size, o, row, col, o, row-1, col, scratch);
+					moveCar(board, c, size, o, row, col, o, row-1, col, (!first), scratch);
 					par.solvingMoves.add(scratch);
 				} else if (par.isJoint(row-1, col)) {
-					boolean res = tryJoint(board, c, par.otherJoint(row-1, col), scratch);
+					boolean res = tryJoint(board, c, par.otherJoint(row-1, col), true, scratch);
 					if (res) {
 						par.solvingMoves.add(scratch);
 					}
@@ -759,10 +758,10 @@ public class Config {
 				
 				scratch = par.scratchDown.get(c);
 				if (availableForCar(board, c, size, o, row+1, col)) {
-					moveCarAndAlphaReduce(board, c, size, o, row, col, o, row+1, col, scratch);
+					moveCar(board, c, size, o, row, col, o, row+1, col, (!last), scratch);
 					par.solvingMoves.add(scratch);
 				} else if (par.isJoint(row+size, col)) {
-					boolean res = tryJoint(board, c, par.otherJoint(row+size, col), scratch);
+					boolean res = tryJoint(board, c, par.otherJoint(row+size, col), true, scratch);
 					if (res) {
 						par.solvingMoves.add(scratch);
 					}
@@ -775,7 +774,7 @@ public class Config {
 		return par.solvingMoves;
 	}
 	
-	static boolean tryJoint(byte[][] board, byte c, int[] joint, byte[][] out) {
+	static boolean tryJoint(byte[][] board, byte c, int[] joint, boolean alphaReduce, byte[][] out) {
 		
 		int mR = joint[0];
 		int mC = joint[1];
@@ -792,13 +791,13 @@ public class Config {
 			switch (size) {
 			case 2:
 				if (availableForCar(board, c, size, UPDOWN, mR+1, mC)) {
-					moveCarAndAlphaReduce(board, c, size, o, row, col, UPDOWN, mR+1, mC, out);
+					moveCar(board, c, size, o, row, col, UPDOWN, mR+1, mC, alphaReduce, out);
 					return true;
 				}
 				break;
 			case 3:
 				if (availableForCar(board, c, size, UPDOWN, mR+1, mC)) {
-					moveCarAndAlphaReduce(board, c, size, o, row, col, UPDOWN, mR+1, mC, out);
+					moveCar(board, c, size, o, row, col, UPDOWN, mR+1, mC, alphaReduce, out);
 					return true;
 				}
 				break;
@@ -808,13 +807,13 @@ public class Config {
 			switch (size) {
 			case 2:
 				if (availableForCar(board, c, size, LEFTRIGHT, mR, mC-2)) {
-					moveCarAndAlphaReduce(board, c, size, o, row, col, LEFTRIGHT, mR, mC-2, out);
+					moveCar(board, c, size, o, row, col, LEFTRIGHT, mR, mC-2, alphaReduce, out);
 					return true;
 				}
 				break;
 			case 3:
 				if (availableForCar(board, c, size, LEFTRIGHT, mR, mC-3)) {
-					moveCarAndAlphaReduce(board, c, size, o, row, col, LEFTRIGHT, mR, mC-3, out);
+					moveCar(board, c, size, o, row, col, LEFTRIGHT, mR, mC-3, alphaReduce, out);
 					return true;
 				}
 				break;
@@ -824,13 +823,13 @@ public class Config {
 			switch (size) {
 			case 2:
 				if (availableForCar(board, c, size, UPDOWN, mR-2, mC)) {
-					moveCarAndAlphaReduce(board, c, size, o, row, col, UPDOWN, mR-2, mC, out);
+					moveCar(board, c, size, o, row, col, UPDOWN, mR-2, mC, alphaReduce, out);
 					return true;
 				}
 				break;
 			case 3:
 				if (availableForCar(board, c, size, UPDOWN, mR-3, mC)) {
-					moveCarAndAlphaReduce(board, c, size, o, row, col, UPDOWN, mR-3, mC, out);
+					moveCar(board, c, size, o, row, col, UPDOWN, mR-3, mC, alphaReduce, out);
 					return true;
 				}
 				break;
@@ -840,13 +839,13 @@ public class Config {
 			switch (size) {
 			case 2:
 				if (availableForCar(board, c, size, LEFTRIGHT, mR, mC+1)) {
-					moveCarAndAlphaReduce(board, c, size, o, row, col, LEFTRIGHT, mR, mC+1, out);
+					moveCar(board, c, size, o, row, col, LEFTRIGHT, mR, mC+1, alphaReduce, out);
 					return true;
 				}
 				break;
 			case 3:
 				if (availableForCar(board, c, size, LEFTRIGHT, mR, mC+1)) {
-					moveCarAndAlphaReduce(board, c, size, o, row, col, LEFTRIGHT, mR, mC+1, out);
+					moveCar(board, c, size, o, row, col, LEFTRIGHT, mR, mC+1, alphaReduce, out);
 					return true;
 				}
 				break;
@@ -1835,9 +1834,7 @@ public class Config {
 	 * 2: 0 2car and 1 3cars
 	 * 3: 1 2car and 1 3car
 	 * 4: 2 2car and 0 3cars
-	 * 5: 0 2car and 2 3car
-	 * 6: 3 2car
-	 * 7: *
+	 * 5: *
 	 */
 	public static void getPartitionId(byte[][] board, int rowCount, int colCount, byte[] out) {
 		
@@ -1871,7 +1868,10 @@ public class Config {
 							out[row] = 3;
 							break;
 						case 4:
-							out[row] = 6;
+							/*
+							 * joint row
+							 */
+							out[row] = 5;
 							break;
 						default:
 							assert false;
@@ -1889,6 +1889,9 @@ public class Config {
 							out[row] = 3;
 							break;
 						case 2:
+							/*
+							 * joint row
+							 */
 							out[row] = 5;
 							break;
 						default:
@@ -1918,7 +1921,10 @@ public class Config {
 							out[col + par.rowCount] = 3;
 							break;
 						case 4:
-							out[col + par.rowCount] = 6;
+							/*
+							 * joint col
+							 */
+							out[col + par.rowCount] = 5;
 							break;
 						default:
 							assert false;
@@ -1936,6 +1942,9 @@ public class Config {
 							out[col + par.rowCount] = 3;
 							break;
 						case 2:
+							/*
+							 * joint col
+							 */
 							out[col + par.rowCount] = 5;
 							break;
 						default:
@@ -1956,6 +1965,7 @@ public class Config {
 		for (int i = 0; i < par.rowCount; i++) {
 			if (i < rowCount) {
 				if (par.isJoint(i, -1) || par.isJoint(i, par.colCount)) {
+					assert out[i] == 0 || out[i] == 5;
 					out[i] = 5;
 				}
 			}
@@ -1964,6 +1974,7 @@ public class Config {
 		for (int i = 0; i < par.colCount; i++) {
 			if (i < colCount) {
 				if (par.isJoint(-1, i) || par.isJoint(par.rowCount, i)) {
+					assert out[i+par.rowCount] == 0 || out[i] == 5;
 					out[i+par.rowCount] = 5;
 				}
 			}
