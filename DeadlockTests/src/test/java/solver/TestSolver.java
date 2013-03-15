@@ -35,7 +35,7 @@ public class TestSolver {
 				{ ' ', 'R', 'R', ' ', 'F', 'F'}
 			};
 		
-		Config.par = new ParentConfig(hangerParent);
+		Config.par = new Parent(hangerParent);
 		Config.par.addCar((byte)'R');
 		Config.par.addCar((byte)'A');
 		Config.par.addCar((byte)'B');
@@ -60,7 +60,7 @@ public class TestSolver {
 				{ ' ', ' ', ' ', 'R', ' ', ' '}
 			};
 		
-		Config.par = new ParentConfig(hangerParent);
+		Config.par = new Parent(hangerParent);
 		Config.par.addCar((byte)'R');
 		Config.par.addCar((byte)'A');
 		Config.par.addCar((byte)'B');

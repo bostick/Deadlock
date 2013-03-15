@@ -55,7 +55,7 @@ public class Generator {
 		t = System.currentTimeMillis();
 		m = Runtime.getRuntime().totalMemory();
 		
-		Config.par = new ParentConfig(boardIni);
+		Config.par = new Parent(boardIni);
 		Config.par.addCar((byte)'R');
 		
 		byte[][] red = Config.newConfig(Config.par.emptyBoard);

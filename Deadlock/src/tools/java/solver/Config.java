@@ -4,9 +4,7 @@ import java.util.List;
 
 public class Config {
 	
-	public static ParentConfig par;
-	
-//	static byte[] cars = new byte[] {'R', 'A', 'B', 'C', 'D', 'E', 'F', 'G' };
+	public static Parent par;
 	
 	static final byte LEFTRIGHT = 0;
 	static final byte UPDOWN = 1;

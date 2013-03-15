@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ParentConfig {
+public class Parent {
 	
 	public byte[][] ini;
 	
@@ -95,7 +95,7 @@ public class ParentConfig {
 	
 	public byte[][] emptyBoard;
 	
-	public ParentConfig(byte[][] boardIni) {
+	public Parent(byte[][] boardIni) {
 		
 		this.ini = boardIni;
 		
