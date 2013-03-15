@@ -1,0 +1,10 @@
+
+hardest overall: 21 moves
+/---J--\
+|      |
+|      |
+J      Y
+|  ABBB|
+|  AR  |
+|  AR  |
+\------/

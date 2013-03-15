@@ -10,12 +10,6 @@ import solver.ParentConfig;
 
 public class Generator {
 	
-	public static void main(String[] args) throws Exception {
-		
-		generate();
-
-	}
-	
 	static byte[][] boardIni = new byte[][] {
 		{ '/', '-', '-', '-', 'J', '-', '-', '\\'},
 		{ '|', ' ', ' ', ' ', ' ', ' ', ' ', '|'},
@@ -27,17 +21,41 @@ public class Generator {
 		{'\\', '-', '-', '-', '-', '-', '-', '/'},
 	};
 	
+	/*
+	 * how many 2cars and 3cars per board
+	 */
+	static int TWOCARS = 8;
+	static int THREECARS = 0;
+	
+	/*
+	 * how many of the rows and cols to count for the partitions.
+	 * for a normal 6x6 board, you could specify PARTITIONID_ROWCOUNT = 6 and
+	 * PARTITIONID_COLCOUNT = 6, and that would ensure that all boards are perfectly partitioned
+	 * The downside is that this may create way too many partitions to process, taking up way more memory AND time
+	 * 
+	 * with enough memory, we would not need any partitioning. partitioning exists solely to be able to fit a given amount of work
+	 * in memory as we work. the same number boards have to be processed eventually, no matter how they are partitioned
+	 */
+	static int PARTITIONID_ROWCOUNT = 6;
+	static int PARTITIONID_COLCOUNT = 0;
+	
+	
+	
+	public static void main(String[] args) throws Exception {
+		
+		generate();
+
+	}
+	
 	static Map<Integer, Partition> partitions = new HashMap<Integer, Partition>();
 	
-//	static List<byte[][]> winners = new ArrayList<byte[][]>();
-	
-	static long total = System.currentTimeMillis();
-	static long t = total;
+	static long t;
+	static long m;
 	
 	public static void generate() throws Exception {
 		
-		System.out.print("winning base cases... ");
-		System.out.println("");
+		t = System.currentTimeMillis();
+		m = Runtime.getRuntime().totalMemory();
 		
 		Config.par = new ParentConfig(boardIni);
 		Config.par.addCar((byte)'R');
@@ -45,66 +63,119 @@ public class Generator {
 		byte[][] red = Config.newConfig(Config.par.emptyBoard);
 		red = Config.winningConfig(red);
 		
+		System.out.println("generating boards");
+		
 		System.out.println("board:");
 		System.out.println(Config.toString(red));
 		
-		System.out.println("generating winners... ");
-//		add2and1(red);
-//		add3and1(red);
-//		add4and1(red);
-//		add5and1(red);
-		add5and2(red);
-		System.out.println("done");
+		System.out.println("2cars: " + TWOCARS + ", 3cars: " + THREECARS);
+		System.out.println("partition ids: " + PARTITIONID_ROWCOUNT + "+" + PARTITIONID_COLCOUNT);
 		
-		System.out.println(partitions.values().size() + " partitions");
+		generateWinners(TWOCARS, THREECARS, red);
 		
+		int totalBoards = 0;
 		List<String> hardest = null;
 		int i = 0;
 		for (Partition p : partitions.values()) {
-			System.out.println("generating partition #" + i + " (idhash " + p.partitionIdHash + ")... ");
+			System.out.println("generating partition #" + i);
+			System.out.print("idhash " + p.partitionIdHash + ", starting with " + p.space.lastGeneratingIteration.size() + " winners (" + (100 * p.space.lastGeneratingIteration.size() / winnersCount) + "%)... ");
+			
 			p.generate();
+			if (Runtime.getRuntime().totalMemory() > m) {
+				m = Runtime.getRuntime().totalMemory();
+				System.out.println("max total memory: " + (m / 1024 / 1024) + "MB");
+			}
+			totalBoards += p.totalBoardCount;
 			if (hardest == null || p.hardestSolution != null && p.hardestSolution.size() > hardest.size()) {
 				hardest = p.hardestSolution;
 			}
 			i++;
 		}
+		System.out.println();
 		
 		if (hardest == null) {
 			System.out.println("hardest is null");
 		} else {
-			System.out.println("hardest overall: " + hardest.size() + " moves");
+			System.out.println("hardest overall: " + hardest.size() + " moves, total " + totalBoards + "  boards");
 			for (String s : hardest) {
 				System.out.println(s);
 				System.out.println();
 			}
 		}
 		
+		System.out.println("total time: " + ((System.currentTimeMillis() - t) / 1000) + "s");
+		System.out.println("max total memory: " + (m / 1024 / 1024) + "MB");
 	}
 	
-	public static int hash(byte[] tempPartitionId) {
+	public static void generateWinners(int twoCars, int threeCars, byte[][] base) {
 		
-		int h = 17;
-		for (int i = 0; i < tempPartitionId.length; i++) {
-			h = 37 * h + tempPartitionId[i];
+		System.out.println("generating winners... ");
+		
+		for (int i = 0; i < (twoCars + threeCars); i++) {
+			Config.par.addCar((byte)('A' + i));
 		}
 		
-		return h;
+		generateWinnersRecur(twoCars, threeCars, base);
+		
+		System.out.println("done");
+		
+		System.out.println(partitions.values().size() + " partitions, " + (winnersCount) + " winners, with avg. " + (winnersCount / partitions.values().size()) + " winners / partition");
+		System.out.println();
 	}
-
-	public static void winnersAdd(byte[][] board) {
+	
+	public static void generateWinnersRecur(int twoCars, int threeCars, byte[][] base) {
 		
-		byte[] partitionId = new byte[6];
+		List<byte[][]> placements = new ArrayList<byte[][]>();
 		
-		Config.getPartitionId(board, partitionId);
+		if (twoCars == 1 && threeCars == 0) {
+			placements = new ArrayList<byte[][]>();
+			Config.possible2CarPlacements(base, placements, true);
+			for (byte[][] board : placements) {
+				addWinnerBoard(board);
+			}
+		} else if (twoCars > 0) {
+			placements = new ArrayList<byte[][]>();
+			Config.possible2CarPlacements(base, placements, false);
+			for (byte[][] board : placements) {
+				generateWinnersRecur(twoCars-1, threeCars, board);
+			}
+		}
 		
-		int idHash = hash(partitionId);
+		if (threeCars == 1 && twoCars == 0) {
+			placements = new ArrayList<byte[][]>();
+			Config.possible3CarPlacements(base, placements, true);
+			for (byte[][] board : placements) {
+				addWinnerBoard(board);
+			}
+		} else if (threeCars > 0) {
+			placements = new ArrayList<byte[][]>();
+			Config.possible3CarPlacements(base, placements, false);
+			for (byte[][] board : placements) {
+				generateWinnersRecur(twoCars, threeCars-1, board);
+			}
+		}
+		
+	}
+	
+	static int winnersCount = 0;
+	
+	public static void addWinnerBoard(byte[][] board) {
+		
+		winnersCount++;
+		
+		byte[] partitionId = new byte[PARTITIONID_ROWCOUNT + PARTITIONID_COLCOUNT];
+		
+		Config.getPartitionId(board, PARTITIONID_ROWCOUNT, PARTITIONID_COLCOUNT, partitionId);
+		
+		int idHash = hashPartitionId(partitionId);
 		
 		if (!partitions.containsKey(idHash)) {
 			
 			Partition p = new Partition();
 			p.partitionIdHash = idHash;
+			p.partitionId = partitionId;
 			
-			p.space.lastGeneratingIteration.add(Config.getInfoLong(board));
+//			p.space.lastGeneratingIteration.add(Config.getInfoLong(board));
 			
 			partitions.put(idHash, p);
 			
@@ -114,1602 +185,26 @@ public class Generator {
 			
 			Partition p = partitions.get(idHash);
 			
-			p.space.lastGeneratingIteration.add(Config.getInfoLong(board));
+//			p.space.lastGeneratingIteration.add(Config.getInfoLong(board));
 			
-//			System.out.println("partition " + idHash + " size: " + p.space.lastGeneratingIteration.size());
+		}
+		
+		
+		if (Runtime.getRuntime().totalMemory() > m) {
+			m = Runtime.getRuntime().totalMemory();
+			System.out.println("max total memory: " + (m / 1024 / 1024) + "MB");
 		}
 		
 	}
 	
-	
-	public static void add2and1(byte[][] red) {
+	public static int hashPartitionId(byte[] tempPartitionId) {
 		
-		System.out.println("exploring 2 2cars and 1 3car");
-		
-		Config.par.addCar((byte)'A');
-		Config.par.addCar((byte)'B');
-		Config.par.addCar((byte)'C');
-//		Config.par.addCar((byte)'D');
-//		Config.par.addCar((byte)'E');
-//		Config.par.addCar((byte)'F');
-//		Config.par.addCar((byte)'G');
-		
-		List<byte[][]> placementsA = new ArrayList<byte[][]>();
-		List<byte[][]> placementsB = new ArrayList<byte[][]>();
-		List<byte[][]> placementsC = new ArrayList<byte[][]>();
-//		List<byte[][]> placementsD = new ArrayList<byte[][]>();
-//		List<byte[][]> placementsE = new ArrayList<byte[][]>();
-//		List<byte[][]> placementsF = new ArrayList<byte[][]>();
-//		List<byte[][]> placementsG = new ArrayList<byte[][]>();
-		
-		placementsA = new ArrayList<byte[][]>();
-		Config.possible2CarPlacements(red, placementsA, false);
-		for (byte[][] a : placementsA) {
-			
-			placementsB = new ArrayList<byte[][]>();
-			Config.possible2CarPlacements(a, placementsB, false);
-			for (byte[][] b : placementsB) {
-				
-				placementsC = new ArrayList<byte[][]>();
-				Config.possible3CarPlacements(b, placementsC, true);
-				for (byte[][] c : placementsC) {
-					
-					winnersAdd(c);
-				}
-				
-			}
+		int h = 17;
+		for (int i = 0; i < tempPartitionId.length; i++) {
+			h = 37 * h + tempPartitionId[i];
 		}
 		
-				
-		placementsA = new ArrayList<byte[][]>();
-		Config.possible2CarPlacements(red, placementsA, false);
-		for (byte[][] a : placementsA) {
-			
-			placementsB = new ArrayList<byte[][]>();
-			Config.possible3CarPlacements(a, placementsB, false);
-			for (byte[][] b : placementsB) {
-				
-				placementsC = new ArrayList<byte[][]>();
-				Config.possible2CarPlacements(b, placementsC, true);
-				for (byte[][] c : placementsC) {
-					
-					winnersAdd(c);
-				}
-				
-			}
-		}
-		
-				
-		placementsA = new ArrayList<byte[][]>();
-		Config.possible3CarPlacements(red, placementsA, false);
-		for (byte[][] a : placementsA) {
-			
-			placementsB = new ArrayList<byte[][]>();
-			Config.possible2CarPlacements(a, placementsB, false);
-			for (byte[][] b : placementsB) {
-				
-				placementsC = new ArrayList<byte[][]>();
-				Config.possible2CarPlacements(b, placementsC, true);
-				for (byte[][] c : placementsC) {
-					
-					winnersAdd(c);
-				}
-				
-			}
-		}
-		
-				
-	}
-
-	public static void add3and1(byte[][] red) {
-		
-		System.out.println("exploring 3 2cars and 1 3car");
-		
-		Config.par.addCar((byte)'A');
-		Config.par.addCar((byte)'B');
-		Config.par.addCar((byte)'C');
-		Config.par.addCar((byte)'D');
-//		Config.par.addCar((byte)'E');
-//		Config.par.addCar((byte)'F');
-//		Config.par.addCar((byte)'G');
-		
-		List<byte[][]> placementsA = new ArrayList<byte[][]>();
-		List<byte[][]> placementsB = new ArrayList<byte[][]>();
-		List<byte[][]> placementsC = new ArrayList<byte[][]>();
-		List<byte[][]> placementsD = new ArrayList<byte[][]>();
-//		List<byte[][]> placementsE = new ArrayList<byte[][]>();
-//		List<byte[][]> placementsF = new ArrayList<byte[][]>();
-//		List<byte[][]> placementsG = new ArrayList<byte[][]>();
-		
-		placementsA = new ArrayList<byte[][]>();
-		Config.possible2CarPlacements(red, placementsA, false);
-		for (byte[][] a : placementsA) {
-			
-			placementsB = new ArrayList<byte[][]>();
-			Config.possible2CarPlacements(a, placementsB, false);
-			for (byte[][] b : placementsB) {
-				
-				placementsC = new ArrayList<byte[][]>();
-				Config.possible2CarPlacements(b, placementsC, false);
-				for (byte[][] c : placementsC) {
-					
-					placementsD = new ArrayList<byte[][]>();
-					Config.possible3CarPlacements(c, placementsD, true);
-					for (byte[][] d : placementsD) {
-						
-						winnersAdd(d);
-						
-					}
-				}
-				
-			}
-		}
-		
-				
-		placementsA = new ArrayList<byte[][]>();
-		Config.possible2CarPlacements(red, placementsA, false);
-		for (byte[][] a : placementsA) {
-			
-			placementsB = new ArrayList<byte[][]>();
-			Config.possible2CarPlacements(a, placementsB, false);
-			for (byte[][] b : placementsB) {
-				
-				placementsC = new ArrayList<byte[][]>();
-				Config.possible3CarPlacements(b, placementsC, false);
-				for (byte[][] c : placementsC) {
-					
-					placementsD = new ArrayList<byte[][]>();
-					Config.possible2CarPlacements(c, placementsD, true);
-					for (byte[][] d : placementsD) {
-						
-						winnersAdd(d);
-						
-					}
-				}
-				
-			}
-		}
-		
-				
-		placementsA = new ArrayList<byte[][]>();
-		Config.possible2CarPlacements(red, placementsA, false);
-		for (byte[][] a : placementsA) {
-			
-			placementsB = new ArrayList<byte[][]>();
-			Config.possible3CarPlacements(a, placementsB, false);
-			for (byte[][] b : placementsB) {
-				
-				placementsC = new ArrayList<byte[][]>();
-				Config.possible2CarPlacements(b, placementsC, false);
-				for (byte[][] c : placementsC) {
-					
-					placementsD = new ArrayList<byte[][]>();
-					Config.possible2CarPlacements(c, placementsD, true);
-					for (byte[][] d : placementsD) {
-						
-						winnersAdd(d);
-						
-					}
-				}
-				
-			}
-		}
-		
-				
-		placementsA = new ArrayList<byte[][]>();
-		Config.possible3CarPlacements(red, placementsA, false);
-		for (byte[][] a : placementsA) {
-			
-			placementsB = new ArrayList<byte[][]>();
-			Config.possible2CarPlacements(a, placementsB, false);
-			for (byte[][] b : placementsB) {
-				
-				placementsC = new ArrayList<byte[][]>();
-				Config.possible2CarPlacements(b, placementsC, false);
-				for (byte[][] c : placementsC) {
-					
-					placementsD = new ArrayList<byte[][]>();
-					Config.possible2CarPlacements(c, placementsD, true);
-					for (byte[][] d : placementsD) {
-						
-						winnersAdd(d);
-						
-					}
-				}
-				
-			}
-		}
-		
-				
-	}
-	
-	public static void add4and1(byte[][] red) {
-		
-		System.out.println("exploring 4 2cars and 1 3car");
-		
-		Config.par.addCar((byte)'A');
-		Config.par.addCar((byte)'B');
-		Config.par.addCar((byte)'C');
-		Config.par.addCar((byte)'D');
-		Config.par.addCar((byte)'E');
-//		Config.par.addCar((byte)'F');
-//		Config.par.addCar((byte)'G');
-		
-		List<byte[][]> placementsA = new ArrayList<byte[][]>();
-		List<byte[][]> placementsB = new ArrayList<byte[][]>();
-		List<byte[][]> placementsC = new ArrayList<byte[][]>();
-		List<byte[][]> placementsD = new ArrayList<byte[][]>();
-		List<byte[][]> placementsE = new ArrayList<byte[][]>();
-//		List<byte[][]> placementsF = new ArrayList<byte[][]>();
-//		List<byte[][]> placementsG = new ArrayList<byte[][]>();
-		
-		placementsA = new ArrayList<byte[][]>();
-		Config.possible2CarPlacements(red, placementsA, false);
-		for (byte[][] a : placementsA) {
-			
-			placementsB = new ArrayList<byte[][]>();
-			Config.possible2CarPlacements(a, placementsB, false);
-			for (byte[][] b : placementsB) {
-				
-				placementsC = new ArrayList<byte[][]>();
-				Config.possible2CarPlacements(b, placementsC, false);
-				for (byte[][] c : placementsC) {
-					
-					placementsD = new ArrayList<byte[][]>();
-					Config.possible2CarPlacements(c, placementsD, false);
-					for (byte[][] d : placementsD) {
-						
-						placementsE = new ArrayList<byte[][]>();
-						Config.possible3CarPlacements(d, placementsE, true);
-						for (byte[][] e : placementsE) {
-							
-							winnersAdd(e);
-							
-						}
-						
-					}
-				}
-				
-			}
-		}
-		
-				
-		placementsA = new ArrayList<byte[][]>();
-		Config.possible2CarPlacements(red, placementsA, false);
-		for (byte[][] a : placementsA) {
-			
-			placementsB = new ArrayList<byte[][]>();
-			Config.possible2CarPlacements(a, placementsB, false);
-			for (byte[][] b : placementsB) {
-				
-				placementsC = new ArrayList<byte[][]>();
-				Config.possible2CarPlacements(b, placementsC, false);
-				for (byte[][] c : placementsC) {
-					
-					placementsD = new ArrayList<byte[][]>();
-					Config.possible3CarPlacements(c, placementsD, false);
-					for (byte[][] d : placementsD) {
-						
-						placementsE = new ArrayList<byte[][]>();
-						Config.possible2CarPlacements(d, placementsE, true);
-						for (byte[][] e : placementsE) {
-							
-							winnersAdd(e);
-							
-						}
-						
-					}
-				}
-				
-			}
-		}
-		
-				
-		placementsA = new ArrayList<byte[][]>();
-		Config.possible2CarPlacements(red, placementsA, false);
-		for (byte[][] a : placementsA) {
-			
-			placementsB = new ArrayList<byte[][]>();
-			Config.possible2CarPlacements(a, placementsB, false);
-			for (byte[][] b : placementsB) {
-				
-				placementsC = new ArrayList<byte[][]>();
-				Config.possible3CarPlacements(b, placementsC, false);
-				for (byte[][] c : placementsC) {
-					
-					placementsD = new ArrayList<byte[][]>();
-					Config.possible2CarPlacements(c, placementsD, false);
-					for (byte[][] d : placementsD) {
-						
-						placementsE = new ArrayList<byte[][]>();
-						Config.possible2CarPlacements(d, placementsE, true);
-						for (byte[][] e : placementsE) {
-							
-							winnersAdd(e);
-							
-						}
-						
-					}
-				}
-				
-			}
-		}
-		
-				
-		placementsA = new ArrayList<byte[][]>();
-		Config.possible2CarPlacements(red, placementsA, false);
-		for (byte[][] a : placementsA) {
-			
-			placementsB = new ArrayList<byte[][]>();
-			Config.possible3CarPlacements(a, placementsB, false);
-			for (byte[][] b : placementsB) {
-				
-				placementsC = new ArrayList<byte[][]>();
-				Config.possible2CarPlacements(b, placementsC, false);
-				for (byte[][] c : placementsC) {
-					
-					placementsD = new ArrayList<byte[][]>();
-					Config.possible2CarPlacements(c, placementsD, false);
-					for (byte[][] d : placementsD) {
-						
-						placementsE = new ArrayList<byte[][]>();
-						Config.possible2CarPlacements(d, placementsE, true);
-						for (byte[][] e : placementsE) {
-							
-							winnersAdd(e);
-							
-						}
-						
-					}
-				}
-				
-			}
-		}
-		
-				
-		placementsA = new ArrayList<byte[][]>();
-		Config.possible3CarPlacements(red, placementsA, false);
-		for (byte[][] a : placementsA) {
-			
-			placementsB = new ArrayList<byte[][]>();
-			Config.possible2CarPlacements(a, placementsB, false);
-			for (byte[][] b : placementsB) {
-				
-				placementsC = new ArrayList<byte[][]>();
-				Config.possible2CarPlacements(b, placementsC, false);
-				for (byte[][] c : placementsC) {
-					
-					placementsD = new ArrayList<byte[][]>();
-					Config.possible2CarPlacements(c, placementsD, false);
-					for (byte[][] d : placementsD) {
-						
-						placementsE = new ArrayList<byte[][]>();
-						Config.possible2CarPlacements(d, placementsE, true);
-						for (byte[][] e : placementsE) {
-							
-							winnersAdd(e);
-							
-						}
-						
-					}
-				}
-				
-			}
-		}
-		
-				
-	}
-
-	
-
-
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	public static void add5and1(byte[][] red) {
-		
-		System.out.println("exploring 5 2cars and 1 3car");
-		
-		Config.par.addCar((byte)'A');
-		Config.par.addCar((byte)'B');
-		Config.par.addCar((byte)'C');
-		Config.par.addCar((byte)'D');
-		Config.par.addCar((byte)'E');
-		Config.par.addCar((byte)'F');
-//		Config.par.addCar((byte)'G');
-		
-		List<byte[][]> placementsA = new ArrayList<byte[][]>();
-		List<byte[][]> placementsB = new ArrayList<byte[][]>();
-		List<byte[][]> placementsC = new ArrayList<byte[][]>();
-		List<byte[][]> placementsD = new ArrayList<byte[][]>();
-		List<byte[][]> placementsE = new ArrayList<byte[][]>();
-		List<byte[][]> placementsF = new ArrayList<byte[][]>();
-//		List<byte[][]> placementsG = new ArrayList<byte[][]>();
-		
-		placementsA = new ArrayList<byte[][]>();
-		Config.possible2CarPlacements(red, placementsA, false);
-		for (byte[][] a : placementsA) {
-			
-			placementsB = new ArrayList<byte[][]>();
-			Config.possible2CarPlacements(a, placementsB, false);
-			for (byte[][] b : placementsB) {
-				
-				placementsC = new ArrayList<byte[][]>();
-				Config.possible2CarPlacements(b, placementsC, false);
-				for (byte[][] c : placementsC) {
-					
-					placementsD = new ArrayList<byte[][]>();
-					Config.possible2CarPlacements(c, placementsD, false);
-					for (byte[][] d : placementsD) {
-						
-						placementsE = new ArrayList<byte[][]>();
-						Config.possible2CarPlacements(d, placementsE, false);
-						for (byte[][] e : placementsE) {
-							
-							placementsF = new ArrayList<byte[][]>();
-							Config.possible3CarPlacements(e, placementsF, true);
-							for (byte[][] f : placementsF) {
-								
-								winnersAdd(f);
-								
-							}
-							
-						}
-						
-					}
-				}
-				
-			}
-		}
-		
-				
-		placementsA = new ArrayList<byte[][]>();
-		Config.possible2CarPlacements(red, placementsA, false);
-		for (byte[][] a : placementsA) {
-			
-			placementsB = new ArrayList<byte[][]>();
-			Config.possible2CarPlacements(a, placementsB, false);
-			for (byte[][] b : placementsB) {
-				
-				placementsC = new ArrayList<byte[][]>();
-				Config.possible2CarPlacements(b, placementsC, false);
-				for (byte[][] c : placementsC) {
-					
-					placementsD = new ArrayList<byte[][]>();
-					Config.possible2CarPlacements(c, placementsD, false);
-					for (byte[][] d : placementsD) {
-						
-						placementsE = new ArrayList<byte[][]>();
-						Config.possible3CarPlacements(d, placementsE, false);
-						for (byte[][] e : placementsE) {
-							
-							placementsF = new ArrayList<byte[][]>();
-							Config.possible2CarPlacements(e, placementsF, true);
-							for (byte[][] f : placementsF) {
-								
-								winnersAdd(f);
-								
-							}
-							
-						}
-						
-					}
-				}
-				
-			}
-		}
-		
-				
-		placementsA = new ArrayList<byte[][]>();
-		Config.possible2CarPlacements(red, placementsA, false);
-		for (byte[][] a : placementsA) {
-			
-			placementsB = new ArrayList<byte[][]>();
-			Config.possible2CarPlacements(a, placementsB, false);
-			for (byte[][] b : placementsB) {
-				
-				placementsC = new ArrayList<byte[][]>();
-				Config.possible2CarPlacements(b, placementsC, false);
-				for (byte[][] c : placementsC) {
-					
-					placementsD = new ArrayList<byte[][]>();
-					Config.possible3CarPlacements(c, placementsD, false);
-					for (byte[][] d : placementsD) {
-						
-						placementsE = new ArrayList<byte[][]>();
-						Config.possible2CarPlacements(d, placementsE, false);
-						for (byte[][] e : placementsE) {
-							
-							placementsF = new ArrayList<byte[][]>();
-							Config.possible2CarPlacements(e, placementsF, true);
-							for (byte[][] f : placementsF) {
-								
-								winnersAdd(f);
-								
-							}
-							
-						}
-						
-					}
-				}
-				
-			}
-		}
-		
-				
-		placementsA = new ArrayList<byte[][]>();
-		Config.possible2CarPlacements(red, placementsA, false);
-		for (byte[][] a : placementsA) {
-			
-			placementsB = new ArrayList<byte[][]>();
-			Config.possible2CarPlacements(a, placementsB, false);
-			for (byte[][] b : placementsB) {
-				
-				placementsC = new ArrayList<byte[][]>();
-				Config.possible3CarPlacements(b, placementsC, false);
-				for (byte[][] c : placementsC) {
-					
-					placementsD = new ArrayList<byte[][]>();
-					Config.possible2CarPlacements(c, placementsD, false);
-					for (byte[][] d : placementsD) {
-						
-						placementsE = new ArrayList<byte[][]>();
-						Config.possible2CarPlacements(d, placementsE, false);
-						for (byte[][] e : placementsE) {
-							
-							placementsF = new ArrayList<byte[][]>();
-							Config.possible2CarPlacements(e, placementsF, true);
-							for (byte[][] f : placementsF) {
-								
-								winnersAdd(f);
-								
-							}
-							
-						}
-						
-					}
-				}
-				
-			}
-		}
-		
-				
-		placementsA = new ArrayList<byte[][]>();
-		Config.possible2CarPlacements(red, placementsA, false);
-		for (byte[][] a : placementsA) {
-			
-			placementsB = new ArrayList<byte[][]>();
-			Config.possible3CarPlacements(a, placementsB, false);
-			for (byte[][] b : placementsB) {
-				
-				placementsC = new ArrayList<byte[][]>();
-				Config.possible2CarPlacements(b, placementsC, false);
-				for (byte[][] c : placementsC) {
-					
-					placementsD = new ArrayList<byte[][]>();
-					Config.possible2CarPlacements(c, placementsD, false);
-					for (byte[][] d : placementsD) {
-						
-						placementsE = new ArrayList<byte[][]>();
-						Config.possible2CarPlacements(d, placementsE, false);
-						for (byte[][] e : placementsE) {
-							
-							placementsF = new ArrayList<byte[][]>();
-							Config.possible2CarPlacements(e, placementsF, true);
-							for (byte[][] f : placementsF) {
-								
-								winnersAdd(f);
-								
-							}
-							
-						}
-						
-					}
-				}
-				
-			}
-		}
-		
-				
-		placementsA = new ArrayList<byte[][]>();
-		Config.possible3CarPlacements(red, placementsA, false);
-		for (byte[][] a : placementsA) {
-			
-			placementsB = new ArrayList<byte[][]>();
-			Config.possible2CarPlacements(a, placementsB, false);
-			for (byte[][] b : placementsB) {
-				
-				placementsC = new ArrayList<byte[][]>();
-				Config.possible2CarPlacements(b, placementsC, false);
-				for (byte[][] c : placementsC) {
-					
-					placementsD = new ArrayList<byte[][]>();
-					Config.possible2CarPlacements(c, placementsD, false);
-					for (byte[][] d : placementsD) {
-						
-						placementsE = new ArrayList<byte[][]>();
-						Config.possible2CarPlacements(d, placementsE, false);
-						for (byte[][] e : placementsE) {
-							
-							placementsF = new ArrayList<byte[][]>();
-							Config.possible2CarPlacements(e, placementsF, true);
-							for (byte[][] f : placementsF) {
-								
-								winnersAdd(f);
-								
-							}
-							
-						}
-						
-					}
-				}
-				
-			}
-		}
-		
-				
-	}
-
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	public static void add5and2(byte[][] red) {
-		
-		System.out.println("exploring 5 2cars and 2 3cars");
-		
-		Config.par.addCar((byte)'A');
-		Config.par.addCar((byte)'B');
-		Config.par.addCar((byte)'C');
-		Config.par.addCar((byte)'D');
-		Config.par.addCar((byte)'E');
-		Config.par.addCar((byte)'F');
-		Config.par.addCar((byte)'G');
-		
-		List<byte[][]> placementsA = new ArrayList<byte[][]>();
-		List<byte[][]> placementsB = new ArrayList<byte[][]>();
-		List<byte[][]> placementsC = new ArrayList<byte[][]>();
-		List<byte[][]> placementsD = new ArrayList<byte[][]>();
-		List<byte[][]> placementsE = new ArrayList<byte[][]>();
-		List<byte[][]> placementsF = new ArrayList<byte[][]>();
-		List<byte[][]> placementsG = new ArrayList<byte[][]>();
-		
-		placementsA = new ArrayList<byte[][]>();
-		Config.possible2CarPlacements(red, placementsA, false);
-		for (byte[][] a : placementsA) {
-			
-			placementsB = new ArrayList<byte[][]>();
-			Config.possible2CarPlacements(a, placementsB, false);
-			for (byte[][] b : placementsB) {
-				
-				placementsC = new ArrayList<byte[][]>();
-				Config.possible2CarPlacements(b, placementsC, false);
-				for (byte[][] c : placementsC) {
-					
-					placementsD = new ArrayList<byte[][]>();
-					Config.possible2CarPlacements(c, placementsD, false);
-					for (byte[][] d : placementsD) {
-						
-						placementsE = new ArrayList<byte[][]>();
-						Config.possible2CarPlacements(d, placementsE, false);
-						for (byte[][] e : placementsE) {
-							
-							placementsF = new ArrayList<byte[][]>();
-							Config.possible3CarPlacements(e, placementsF, false);
-							for (byte[][] f : placementsF) {
-								
-								placementsG = new ArrayList<byte[][]>();
-								Config.possible3CarPlacements(f, placementsG, true);
-								for (byte[][] g : placementsG) {
-									
-									winnersAdd(g);
-									
-								}
-								
-							}
-							
-						}
-						
-					}
-				}
-				
-			}
-		}
-		
-				
-		placementsA = new ArrayList<byte[][]>();
-		Config.possible2CarPlacements(red, placementsA, false);
-		for (byte[][] a : placementsA) {
-			
-			placementsB = new ArrayList<byte[][]>();
-			Config.possible2CarPlacements(a, placementsB, false);
-			for (byte[][] b : placementsB) {
-				
-				placementsC = new ArrayList<byte[][]>();
-				Config.possible2CarPlacements(b, placementsC, false);
-				for (byte[][] c : placementsC) {
-					
-					placementsD = new ArrayList<byte[][]>();
-					Config.possible2CarPlacements(c, placementsD, false);
-					for (byte[][] d : placementsD) {
-						
-						placementsE = new ArrayList<byte[][]>();
-						Config.possible3CarPlacements(d, placementsE, false);
-						for (byte[][] e : placementsE) {
-							
-							placementsF = new ArrayList<byte[][]>();
-							Config.possible2CarPlacements(e, placementsF, false);
-							for (byte[][] f : placementsF) {
-								
-								placementsG = new ArrayList<byte[][]>();
-								Config.possible3CarPlacements(f, placementsG, true);
-								for (byte[][] g : placementsG) {
-									
-									winnersAdd(g);
-									
-								}
-								
-							}
-							
-						}
-						
-					}
-				}
-				
-			}
-		}
-		
-				
-		placementsA = new ArrayList<byte[][]>();
-		Config.possible2CarPlacements(red, placementsA, false);
-		for (byte[][] a : placementsA) {
-			
-			placementsB = new ArrayList<byte[][]>();
-			Config.possible2CarPlacements(a, placementsB, false);
-			for (byte[][] b : placementsB) {
-				
-				placementsC = new ArrayList<byte[][]>();
-				Config.possible2CarPlacements(b, placementsC, false);
-				for (byte[][] c : placementsC) {
-					
-					placementsD = new ArrayList<byte[][]>();
-					Config.possible3CarPlacements(c, placementsD, false);
-					for (byte[][] d : placementsD) {
-						
-						placementsE = new ArrayList<byte[][]>();
-						Config.possible2CarPlacements(d, placementsE, false);
-						for (byte[][] e : placementsE) {
-							
-							placementsF = new ArrayList<byte[][]>();
-							Config.possible2CarPlacements(e, placementsF, false);
-							for (byte[][] f : placementsF) {
-								
-								placementsG = new ArrayList<byte[][]>();
-								Config.possible3CarPlacements(f, placementsG, true);
-								for (byte[][] g : placementsG) {
-									
-									winnersAdd(g);
-									
-								}
-								
-							}
-							
-						}
-						
-					}
-				}
-				
-			}
-		}
-		
-				
-		placementsA = new ArrayList<byte[][]>();
-		Config.possible2CarPlacements(red, placementsA, false);
-		for (byte[][] a : placementsA) {
-			
-			placementsB = new ArrayList<byte[][]>();
-			Config.possible2CarPlacements(a, placementsB, false);
-			for (byte[][] b : placementsB) {
-				
-				placementsC = new ArrayList<byte[][]>();
-				Config.possible3CarPlacements(b, placementsC, false);
-				for (byte[][] c : placementsC) {
-					
-					placementsD = new ArrayList<byte[][]>();
-					Config.possible2CarPlacements(c, placementsD, false);
-					for (byte[][] d : placementsD) {
-						
-						placementsE = new ArrayList<byte[][]>();
-						Config.possible2CarPlacements(d, placementsE, false);
-						for (byte[][] e : placementsE) {
-							
-							placementsF = new ArrayList<byte[][]>();
-							Config.possible2CarPlacements(e, placementsF, false);
-							for (byte[][] f : placementsF) {
-								
-								placementsG = new ArrayList<byte[][]>();
-								Config.possible3CarPlacements(f, placementsG, true);
-								for (byte[][] g : placementsG) {
-									
-									winnersAdd(g);
-									
-								}
-								
-							}
-							
-						}
-						
-					}
-				}
-				
-			}
-		}
-		
-				
-		placementsA = new ArrayList<byte[][]>();
-		Config.possible2CarPlacements(red, placementsA, false);
-		for (byte[][] a : placementsA) {
-			
-			placementsB = new ArrayList<byte[][]>();
-			Config.possible3CarPlacements(a, placementsB, false);
-			for (byte[][] b : placementsB) {
-				
-				placementsC = new ArrayList<byte[][]>();
-				Config.possible2CarPlacements(b, placementsC, false);
-				for (byte[][] c : placementsC) {
-					
-					placementsD = new ArrayList<byte[][]>();
-					Config.possible2CarPlacements(c, placementsD, false);
-					for (byte[][] d : placementsD) {
-						
-						placementsE = new ArrayList<byte[][]>();
-						Config.possible2CarPlacements(d, placementsE, false);
-						for (byte[][] e : placementsE) {
-							
-							placementsF = new ArrayList<byte[][]>();
-							Config.possible2CarPlacements(e, placementsF, false);
-							for (byte[][] f : placementsF) {
-								
-								placementsG = new ArrayList<byte[][]>();
-								Config.possible3CarPlacements(f, placementsG, true);
-								for (byte[][] g : placementsG) {
-									
-									winnersAdd(g);
-									
-								}
-								
-							}
-							
-						}
-						
-					}
-				}
-				
-			}
-		}
-		
-				
-		placementsA = new ArrayList<byte[][]>();
-		Config.possible3CarPlacements(red, placementsA, false);
-		for (byte[][] a : placementsA) {
-			
-			placementsB = new ArrayList<byte[][]>();
-			Config.possible2CarPlacements(a, placementsB, false);
-			for (byte[][] b : placementsB) {
-				
-				placementsC = new ArrayList<byte[][]>();
-				Config.possible2CarPlacements(b, placementsC, false);
-				for (byte[][] c : placementsC) {
-					
-					placementsD = new ArrayList<byte[][]>();
-					Config.possible2CarPlacements(c, placementsD, false);
-					for (byte[][] d : placementsD) {
-						
-						placementsE = new ArrayList<byte[][]>();
-						Config.possible2CarPlacements(d, placementsE, false);
-						for (byte[][] e : placementsE) {
-							
-							placementsF = new ArrayList<byte[][]>();
-							Config.possible2CarPlacements(e, placementsF, false);
-							for (byte[][] f : placementsF) {
-								
-								placementsG = new ArrayList<byte[][]>();
-								Config.possible3CarPlacements(f, placementsG, true);
-								for (byte[][] g : placementsG) {
-									
-									winnersAdd(g);
-									
-								}
-								
-							}
-							
-						}
-						
-					}
-				}
-				
-			}
-		}
-		
-				
-		placementsA = new ArrayList<byte[][]>();
-		Config.possible2CarPlacements(red, placementsA, false);
-		for (byte[][] a : placementsA) {
-			
-			placementsB = new ArrayList<byte[][]>();
-			Config.possible2CarPlacements(a, placementsB, false);
-			for (byte[][] b : placementsB) {
-				
-				placementsC = new ArrayList<byte[][]>();
-				Config.possible2CarPlacements(b, placementsC, false);
-				for (byte[][] c : placementsC) {
-					
-					placementsD = new ArrayList<byte[][]>();
-					Config.possible2CarPlacements(c, placementsD, false);
-					for (byte[][] d : placementsD) {
-						
-						placementsE = new ArrayList<byte[][]>();
-						Config.possible3CarPlacements(d, placementsE, false);
-						for (byte[][] e : placementsE) {
-							
-							placementsF = new ArrayList<byte[][]>();
-							Config.possible3CarPlacements(e, placementsF, false);
-							for (byte[][] f : placementsF) {
-								
-								placementsG = new ArrayList<byte[][]>();
-								Config.possible2CarPlacements(f, placementsG, true);
-								for (byte[][] g : placementsG) {
-									
-									winnersAdd(g);
-									
-								}
-								
-							}
-							
-						}
-						
-					}
-				}
-				
-			}
-		}
-		
-				
-		placementsA = new ArrayList<byte[][]>();
-		Config.possible2CarPlacements(red, placementsA, false);
-		for (byte[][] a : placementsA) {
-			
-			placementsB = new ArrayList<byte[][]>();
-			Config.possible2CarPlacements(a, placementsB, false);
-			for (byte[][] b : placementsB) {
-				
-				placementsC = new ArrayList<byte[][]>();
-				Config.possible2CarPlacements(b, placementsC, false);
-				for (byte[][] c : placementsC) {
-					
-					placementsD = new ArrayList<byte[][]>();
-					Config.possible3CarPlacements(c, placementsD, false);
-					for (byte[][] d : placementsD) {
-						
-						placementsE = new ArrayList<byte[][]>();
-						Config.possible2CarPlacements(d, placementsE, false);
-						for (byte[][] e : placementsE) {
-							
-							placementsF = new ArrayList<byte[][]>();
-							Config.possible3CarPlacements(e, placementsF, false);
-							for (byte[][] f : placementsF) {
-								
-								placementsG = new ArrayList<byte[][]>();
-								Config.possible2CarPlacements(f, placementsG, true);
-								for (byte[][] g : placementsG) {
-									
-									winnersAdd(g);
-									
-								}
-								
-							}
-							
-						}
-						
-					}
-				}
-				
-			}
-		}
-		
-				
-		placementsA = new ArrayList<byte[][]>();
-		Config.possible2CarPlacements(red, placementsA, false);
-		for (byte[][] a : placementsA) {
-			
-			placementsB = new ArrayList<byte[][]>();
-			Config.possible2CarPlacements(a, placementsB, false);
-			for (byte[][] b : placementsB) {
-				
-				placementsC = new ArrayList<byte[][]>();
-				Config.possible3CarPlacements(b, placementsC, false);
-				for (byte[][] c : placementsC) {
-					
-					placementsD = new ArrayList<byte[][]>();
-					Config.possible2CarPlacements(c, placementsD, false);
-					for (byte[][] d : placementsD) {
-						
-						placementsE = new ArrayList<byte[][]>();
-						Config.possible2CarPlacements(d, placementsE, false);
-						for (byte[][] e : placementsE) {
-							
-							placementsF = new ArrayList<byte[][]>();
-							Config.possible3CarPlacements(e, placementsF, false);
-							for (byte[][] f : placementsF) {
-								
-								placementsG = new ArrayList<byte[][]>();
-								Config.possible2CarPlacements(f, placementsG, true);
-								for (byte[][] g : placementsG) {
-									
-									winnersAdd(g);
-									
-								}
-								
-							}
-							
-						}
-						
-					}
-				}
-				
-			}
-		}
-		
-				
-		placementsA = new ArrayList<byte[][]>();
-		Config.possible2CarPlacements(red, placementsA, false);
-		for (byte[][] a : placementsA) {
-			
-			placementsB = new ArrayList<byte[][]>();
-			Config.possible3CarPlacements(a, placementsB, false);
-			for (byte[][] b : placementsB) {
-				
-				placementsC = new ArrayList<byte[][]>();
-				Config.possible2CarPlacements(b, placementsC, false);
-				for (byte[][] c : placementsC) {
-					
-					placementsD = new ArrayList<byte[][]>();
-					Config.possible2CarPlacements(c, placementsD, false);
-					for (byte[][] d : placementsD) {
-						
-						placementsE = new ArrayList<byte[][]>();
-						Config.possible2CarPlacements(d, placementsE, false);
-						for (byte[][] e : placementsE) {
-							
-							placementsF = new ArrayList<byte[][]>();
-							Config.possible3CarPlacements(e, placementsF, false);
-							for (byte[][] f : placementsF) {
-								
-								placementsG = new ArrayList<byte[][]>();
-								Config.possible2CarPlacements(f, placementsG, true);
-								for (byte[][] g : placementsG) {
-									
-									winnersAdd(g);
-									
-								}
-								
-							}
-							
-						}
-						
-					}
-				}
-				
-			}
-		}
-		
-				
-		placementsA = new ArrayList<byte[][]>();
-		Config.possible3CarPlacements(red, placementsA, false);
-		for (byte[][] a : placementsA) {
-			
-			placementsB = new ArrayList<byte[][]>();
-			Config.possible2CarPlacements(a, placementsB, false);
-			for (byte[][] b : placementsB) {
-				
-				placementsC = new ArrayList<byte[][]>();
-				Config.possible2CarPlacements(b, placementsC, false);
-				for (byte[][] c : placementsC) {
-					
-					placementsD = new ArrayList<byte[][]>();
-					Config.possible2CarPlacements(c, placementsD, false);
-					for (byte[][] d : placementsD) {
-						
-						placementsE = new ArrayList<byte[][]>();
-						Config.possible2CarPlacements(d, placementsE, false);
-						for (byte[][] e : placementsE) {
-							
-							placementsF = new ArrayList<byte[][]>();
-							Config.possible3CarPlacements(e, placementsF, false);
-							for (byte[][] f : placementsF) {
-								
-								placementsG = new ArrayList<byte[][]>();
-								Config.possible2CarPlacements(f, placementsG, true);
-								for (byte[][] g : placementsG) {
-									
-									winnersAdd(g);
-									
-								}
-								
-							}
-							
-						}
-						
-					}
-				}
-				
-			}
-		}
-		
-				
-		placementsA = new ArrayList<byte[][]>();
-		Config.possible2CarPlacements(red, placementsA, false);
-		for (byte[][] a : placementsA) {
-			
-			placementsB = new ArrayList<byte[][]>();
-			Config.possible2CarPlacements(a, placementsB, false);
-			for (byte[][] b : placementsB) {
-				
-				placementsC = new ArrayList<byte[][]>();
-				Config.possible2CarPlacements(b, placementsC, false);
-				for (byte[][] c : placementsC) {
-					
-					placementsD = new ArrayList<byte[][]>();
-					Config.possible3CarPlacements(c, placementsD, false);
-					for (byte[][] d : placementsD) {
-						
-						placementsE = new ArrayList<byte[][]>();
-						Config.possible3CarPlacements(d, placementsE, false);
-						for (byte[][] e : placementsE) {
-							
-							placementsF = new ArrayList<byte[][]>();
-							Config.possible2CarPlacements(e, placementsF, false);
-							for (byte[][] f : placementsF) {
-								
-								placementsG = new ArrayList<byte[][]>();
-								Config.possible2CarPlacements(f, placementsG, true);
-								for (byte[][] g : placementsG) {
-									
-									winnersAdd(g);
-									
-								}
-								
-							}
-							
-						}
-						
-					}
-				}
-				
-			}
-		}
-		
-				
-		placementsA = new ArrayList<byte[][]>();
-		Config.possible2CarPlacements(red, placementsA, false);
-		for (byte[][] a : placementsA) {
-			
-			placementsB = new ArrayList<byte[][]>();
-			Config.possible2CarPlacements(a, placementsB, false);
-			for (byte[][] b : placementsB) {
-				
-				placementsC = new ArrayList<byte[][]>();
-				Config.possible3CarPlacements(b, placementsC, false);
-				for (byte[][] c : placementsC) {
-					
-					placementsD = new ArrayList<byte[][]>();
-					Config.possible2CarPlacements(c, placementsD, false);
-					for (byte[][] d : placementsD) {
-						
-						placementsE = new ArrayList<byte[][]>();
-						Config.possible3CarPlacements(d, placementsE, false);
-						for (byte[][] e : placementsE) {
-							
-							placementsF = new ArrayList<byte[][]>();
-							Config.possible2CarPlacements(e, placementsF, false);
-							for (byte[][] f : placementsF) {
-								
-								placementsG = new ArrayList<byte[][]>();
-								Config.possible2CarPlacements(f, placementsG, true);
-								for (byte[][] g : placementsG) {
-									
-									winnersAdd(g);
-									
-								}
-								
-							}
-							
-						}
-						
-					}
-				}
-				
-			}
-		}
-		
-				
-		placementsA = new ArrayList<byte[][]>();
-		Config.possible2CarPlacements(red, placementsA, false);
-		for (byte[][] a : placementsA) {
-			
-			placementsB = new ArrayList<byte[][]>();
-			Config.possible3CarPlacements(a, placementsB, false);
-			for (byte[][] b : placementsB) {
-				
-				placementsC = new ArrayList<byte[][]>();
-				Config.possible2CarPlacements(b, placementsC, false);
-				for (byte[][] c : placementsC) {
-					
-					placementsD = new ArrayList<byte[][]>();
-					Config.possible2CarPlacements(c, placementsD, false);
-					for (byte[][] d : placementsD) {
-						
-						placementsE = new ArrayList<byte[][]>();
-						Config.possible3CarPlacements(d, placementsE, false);
-						for (byte[][] e : placementsE) {
-							
-							placementsF = new ArrayList<byte[][]>();
-							Config.possible2CarPlacements(e, placementsF, false);
-							for (byte[][] f : placementsF) {
-								
-								placementsG = new ArrayList<byte[][]>();
-								Config.possible2CarPlacements(f, placementsG, true);
-								for (byte[][] g : placementsG) {
-									
-									winnersAdd(g);
-									
-								}
-								
-							}
-							
-						}
-						
-					}
-				}
-				
-			}
-		}
-		
-				
-		placementsA = new ArrayList<byte[][]>();
-		Config.possible3CarPlacements(red, placementsA, false);
-		for (byte[][] a : placementsA) {
-			
-			placementsB = new ArrayList<byte[][]>();
-			Config.possible2CarPlacements(a, placementsB, false);
-			for (byte[][] b : placementsB) {
-				
-				placementsC = new ArrayList<byte[][]>();
-				Config.possible2CarPlacements(b, placementsC, false);
-				for (byte[][] c : placementsC) {
-					
-					placementsD = new ArrayList<byte[][]>();
-					Config.possible2CarPlacements(c, placementsD, false);
-					for (byte[][] d : placementsD) {
-						
-						placementsE = new ArrayList<byte[][]>();
-						Config.possible3CarPlacements(d, placementsE, false);
-						for (byte[][] e : placementsE) {
-							
-							placementsF = new ArrayList<byte[][]>();
-							Config.possible2CarPlacements(e, placementsF, false);
-							for (byte[][] f : placementsF) {
-								
-								placementsG = new ArrayList<byte[][]>();
-								Config.possible2CarPlacements(f, placementsG, true);
-								for (byte[][] g : placementsG) {
-									
-									winnersAdd(g);
-									
-								}
-								
-							}
-							
-						}
-						
-					}
-				}
-				
-			}
-		}
-		
-				
-		placementsA = new ArrayList<byte[][]>();
-		Config.possible2CarPlacements(red, placementsA, false);
-		for (byte[][] a : placementsA) {
-			
-			placementsB = new ArrayList<byte[][]>();
-			Config.possible2CarPlacements(a, placementsB, false);
-			for (byte[][] b : placementsB) {
-				
-				placementsC = new ArrayList<byte[][]>();
-				Config.possible3CarPlacements(b, placementsC, false);
-				for (byte[][] c : placementsC) {
-					
-					placementsD = new ArrayList<byte[][]>();
-					Config.possible3CarPlacements(c, placementsD, false);
-					for (byte[][] d : placementsD) {
-						
-						placementsE = new ArrayList<byte[][]>();
-						Config.possible2CarPlacements(d, placementsE, false);
-						for (byte[][] e : placementsE) {
-							
-							placementsF = new ArrayList<byte[][]>();
-							Config.possible2CarPlacements(e, placementsF, false);
-							for (byte[][] f : placementsF) {
-								
-								placementsG = new ArrayList<byte[][]>();
-								Config.possible2CarPlacements(f, placementsG, true);
-								for (byte[][] g : placementsG) {
-									
-									winnersAdd(g);
-									
-								}
-								
-							}
-							
-						}
-						
-					}
-				}
-				
-			}
-		}
-		
-				
-		placementsA = new ArrayList<byte[][]>();
-		Config.possible2CarPlacements(red, placementsA, false);
-		for (byte[][] a : placementsA) {
-			
-			placementsB = new ArrayList<byte[][]>();
-			Config.possible3CarPlacements(a, placementsB, false);
-			for (byte[][] b : placementsB) {
-				
-				placementsC = new ArrayList<byte[][]>();
-				Config.possible2CarPlacements(b, placementsC, false);
-				for (byte[][] c : placementsC) {
-					
-					placementsD = new ArrayList<byte[][]>();
-					Config.possible3CarPlacements(c, placementsD, false);
-					for (byte[][] d : placementsD) {
-						
-						placementsE = new ArrayList<byte[][]>();
-						Config.possible2CarPlacements(d, placementsE, false);
-						for (byte[][] e : placementsE) {
-							
-							placementsF = new ArrayList<byte[][]>();
-							Config.possible2CarPlacements(e, placementsF, false);
-							for (byte[][] f : placementsF) {
-								
-								placementsG = new ArrayList<byte[][]>();
-								Config.possible2CarPlacements(f, placementsG, true);
-								for (byte[][] g : placementsG) {
-									
-									winnersAdd(g);
-									
-								}
-								
-							}
-							
-						}
-						
-					}
-				}
-				
-			}
-		}
-		
-				
-		placementsA = new ArrayList<byte[][]>();
-		Config.possible3CarPlacements(red, placementsA, false);
-		for (byte[][] a : placementsA) {
-			
-			placementsB = new ArrayList<byte[][]>();
-			Config.possible2CarPlacements(a, placementsB, false);
-			for (byte[][] b : placementsB) {
-				
-				placementsC = new ArrayList<byte[][]>();
-				Config.possible2CarPlacements(b, placementsC, false);
-				for (byte[][] c : placementsC) {
-					
-					placementsD = new ArrayList<byte[][]>();
-					Config.possible3CarPlacements(c, placementsD, false);
-					for (byte[][] d : placementsD) {
-						
-						placementsE = new ArrayList<byte[][]>();
-						Config.possible2CarPlacements(d, placementsE, false);
-						for (byte[][] e : placementsE) {
-							
-							placementsF = new ArrayList<byte[][]>();
-							Config.possible2CarPlacements(e, placementsF, false);
-							for (byte[][] f : placementsF) {
-								
-								placementsG = new ArrayList<byte[][]>();
-								Config.possible2CarPlacements(f, placementsG, true);
-								for (byte[][] g : placementsG) {
-									
-									winnersAdd(g);
-									
-								}
-								
-							}
-							
-						}
-						
-					}
-				}
-				
-			}
-		}
-		
-				
-		placementsA = new ArrayList<byte[][]>();
-		Config.possible2CarPlacements(red, placementsA, false);
-		for (byte[][] a : placementsA) {
-			
-			placementsB = new ArrayList<byte[][]>();
-			Config.possible3CarPlacements(a, placementsB, false);
-			for (byte[][] b : placementsB) {
-				
-				placementsC = new ArrayList<byte[][]>();
-				Config.possible3CarPlacements(b, placementsC, false);
-				for (byte[][] c : placementsC) {
-					
-					placementsD = new ArrayList<byte[][]>();
-					Config.possible2CarPlacements(c, placementsD, false);
-					for (byte[][] d : placementsD) {
-						
-						placementsE = new ArrayList<byte[][]>();
-						Config.possible2CarPlacements(d, placementsE, false);
-						for (byte[][] e : placementsE) {
-							
-							placementsF = new ArrayList<byte[][]>();
-							Config.possible2CarPlacements(e, placementsF, false);
-							for (byte[][] f : placementsF) {
-								
-								placementsG = new ArrayList<byte[][]>();
-								Config.possible2CarPlacements(f, placementsG, true);
-								for (byte[][] g : placementsG) {
-									
-									winnersAdd(g);
-									
-								}
-								
-							}
-							
-						}
-						
-					}
-				}
-				
-			}
-		}
-		
-				
-		placementsA = new ArrayList<byte[][]>();
-		Config.possible3CarPlacements(red, placementsA, false);
-		for (byte[][] a : placementsA) {
-			
-			placementsB = new ArrayList<byte[][]>();
-			Config.possible2CarPlacements(a, placementsB, false);
-			for (byte[][] b : placementsB) {
-				
-				placementsC = new ArrayList<byte[][]>();
-				Config.possible3CarPlacements(b, placementsC, false);
-				for (byte[][] c : placementsC) {
-					
-					placementsD = new ArrayList<byte[][]>();
-					Config.possible2CarPlacements(c, placementsD, false);
-					for (byte[][] d : placementsD) {
-						
-						placementsE = new ArrayList<byte[][]>();
-						Config.possible2CarPlacements(d, placementsE, false);
-						for (byte[][] e : placementsE) {
-							
-							placementsF = new ArrayList<byte[][]>();
-							Config.possible2CarPlacements(e, placementsF, false);
-							for (byte[][] f : placementsF) {
-								
-								placementsG = new ArrayList<byte[][]>();
-								Config.possible2CarPlacements(f, placementsG, true);
-								for (byte[][] g : placementsG) {
-									
-									winnersAdd(g);
-									
-								}
-								
-							}
-							
-						}
-						
-					}
-				}
-				
-			}
-		}
-		
-				
-		placementsA = new ArrayList<byte[][]>();
-		Config.possible3CarPlacements(red, placementsA, false);
-		for (byte[][] a : placementsA) {
-			
-			placementsB = new ArrayList<byte[][]>();
-			Config.possible3CarPlacements(a, placementsB, false);
-			for (byte[][] b : placementsB) {
-				
-				placementsC = new ArrayList<byte[][]>();
-				Config.possible2CarPlacements(b, placementsC, false);
-				for (byte[][] c : placementsC) {
-					
-					placementsD = new ArrayList<byte[][]>();
-					Config.possible2CarPlacements(c, placementsD, false);
-					for (byte[][] d : placementsD) {
-						
-						placementsE = new ArrayList<byte[][]>();
-						Config.possible2CarPlacements(d, placementsE, false);
-						for (byte[][] e : placementsE) {
-							
-							placementsF = new ArrayList<byte[][]>();
-							Config.possible2CarPlacements(e, placementsF, false);
-							for (byte[][] f : placementsF) {
-								
-								placementsG = new ArrayList<byte[][]>();
-								Config.possible2CarPlacements(f, placementsG, true);
-								for (byte[][] g : placementsG) {
-									
-									winnersAdd(g);
-									
-								}
-								
-							}
-							
-						}
-						
-					}
-				}
-				
-			}
-		}
-		
-				
+		return h;
 	}
 
 }

@@ -15,13 +15,18 @@ public class Partition {
 	
 	StateSpace space = new StateSpace();
 	
+	int totalBoardCount;
+	
 	List<String> hardestSolution;
 	
 	public void generate() throws Exception {
 		
+		long t = System.currentTimeMillis();
+		
 		byte[][] temp = Config.newConfig(Config.par.emptyBoard);
 		
 		while (true) {
+			System.out.print(".");
 			
 			space.penGeneratingIteration = space.lastGeneratingIteration;
 			space.lastGeneratingIteration = new TLongArrayList();
@@ -32,6 +37,7 @@ public class Partition {
 				Config.toBoard(info, temp);
 				explorePreviousMoves(temp);
 			}
+			totalBoardCount += space.penGeneratingIteration.size();
 			
 			if (space.lastGeneratingIteration.isEmpty()) {
 				break;
@@ -47,25 +53,12 @@ public class Partition {
 		
 		if (longest != -1) {
 			hardestSolution = solve(longest);
-			System.out.println("hardest is " + hardestSolution.size() + " moves");
+			System.out.println("hardest is " + hardestSolution.size() + " moves, total " + (totalBoardCount) + " boards, time: " + ((System.currentTimeMillis() - t) / 1000) + "s");
 		} else {
-			System.out.println("hardest is null");
+			System.out.println("hardest is null, time: " + ((System.currentTimeMillis() - t) / 1000) + "s");
 		}
 		
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	
 	public void explorePreviousMoves(byte[][] c) {
 		

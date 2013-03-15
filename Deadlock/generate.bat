@@ -1,0 +1,1 @@
+java -da -Xmx4096M -cp bin;lib\trove-3.0.3.jar generator.Generator > transcript.txt 2>&1

@@ -1,0 +1,54 @@
+
+for 4 and 1:
+
+6+6 partition ids:
+total time: 401s
+max total memory: 1004MB
+
+
+
+6+0 partition ids:
+326 partitions, with avg. X boards / partition
+total time: 222s
+max total memory: 363MB
+
+
+
+4+0 partition ids:
+65 partitions, 2233203 winners, with avg. 34356 winners / partition
+total time: 207s
+max total memory: 366MB
+
+
+
+
+3+0 partition ids:
+21 partitions, 2233203 winners, with avg. 106343 winners / partition
+total time: 207s
+max total memory: 628MB
+
+
+
+
+
+
+
+
+
+
+for 5 and 1:
+
+
+6+0 partition ids:
+552 partitions, 11232810 winners, with avg. 20349 winners / partition
+total time: 1262s
+max total memory: 827MB
+
+
+
+4+0 partition ids:
+77 partitions, 11232810 winners, with avg. 145880 winners / partition
+total time: 1361s
+max total memory: 898MB
+
+
