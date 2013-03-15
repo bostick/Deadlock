@@ -1,0 +1,31 @@
+
+only go up to 8 cars, think about extending later
+
+different boards:
+
+Y
+
+
+
+Y, J
+unconnected
+YJ connected
+
+
+Y, J, K
+unconnected
+YJ connected
+JK connected
+YJK connected
+
+
+different cars:
+
+7 and 0
+6 and 1
+5 and 2
+4 and 3
+3 and 4
+2 and 5
+1 and 6
+0 and 7

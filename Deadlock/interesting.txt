@@ -8,3 +8,14 @@ J      Y
 |  AR  |
 |  AR  |
 \------/
+
+hardest overall: 28 moves
+/---J--\
+|     A|
+|     A|
+J     AY
+|  BCCC|
+|  BR  |
+|  BR  |
+\------/
+

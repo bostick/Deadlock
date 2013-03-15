@@ -17,15 +17,15 @@ public class Generator {
 		{ 'J', ' ', ' ', ' ', ' ', ' ', ' ', 'Y'},
 		{ '|', ' ', ' ', ' ', ' ', ' ', ' ', '|'},
 		{ '|', ' ', ' ', ' ', ' ', ' ', ' ', '|'},
-		{ '|', ' ', ' ', ' ', ' ', ' ', ' ', '|'},
-		{'\\', '-', '-', '-', '-', '-', '-', '/'},
+		{ 'K', ' ', ' ', ' ', ' ', ' ', ' ', '|'},
+		{'\\', '-', '-', '-', 'K', '-', '-', '/'},
 	};
 	
 	/*
 	 * how many 2cars and 3cars per board
 	 */
-	static int TWOCARS = 8;
-	static int THREECARS = 0;
+	static int TWOCARS = 5;
+	static int THREECARS = 1;
 	
 	/*
 	 * how many of the rows and cols to count for the partitions.
@@ -79,6 +79,10 @@ public class Generator {
 		for (Partition p : partitions.values()) {
 			System.out.println("generating partition #" + i);
 			System.out.print("idhash " + p.partitionIdHash + ", starting with " + p.space.lastGeneratingIteration.size() + " winners (" + (100 * p.space.lastGeneratingIteration.size() / winnersCount) + "%)... ");
+			
+			if (p.partitionIdHash != 739147418) {
+				continue;
+			}
 			
 			p.generate();
 			if (Runtime.getRuntime().totalMemory() > m) {
@@ -175,7 +179,7 @@ public class Generator {
 			p.partitionIdHash = idHash;
 			p.partitionId = partitionId;
 			
-//			p.space.lastGeneratingIteration.add(Config.getInfoLong(board));
+			p.space.lastGeneratingIteration.add(Config.getInfoLong(board));
 			
 			partitions.put(idHash, p);
 			
@@ -185,7 +189,7 @@ public class Generator {
 			
 			Partition p = partitions.get(idHash);
 			
-//			p.space.lastGeneratingIteration.add(Config.getInfoLong(board));
+			p.space.lastGeneratingIteration.add(Config.getInfoLong(board));
 			
 		}
 		
