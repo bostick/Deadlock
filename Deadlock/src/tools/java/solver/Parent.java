@@ -37,10 +37,10 @@ public class Parent {
 	
 	CarInfo scratchInfo = new CarInfo();
 	
-	Map<Byte, byte[][]> scratchLeft = new HashMap<Byte, byte[][]>();
-	Map<Byte, byte[][]> scratchRight = new HashMap<Byte, byte[][]>();
-	Map<Byte, byte[][]> scratchUp = new HashMap<Byte, byte[][]>();
-	Map<Byte, byte[][]> scratchDown = new HashMap<Byte, byte[][]>();
+	Map<Byte, Board> scratchLeft = new HashMap<Byte, Board>();
+	Map<Byte, Board> scratchRight = new HashMap<Byte, Board>();
+	Map<Byte, Board> scratchUp = new HashMap<Byte, Board>();
+	Map<Byte, Board> scratchDown = new HashMap<Byte, Board>();
 	
 //	byte[][] scratchUp;
 //	byte[][] scratchDown;
@@ -90,10 +90,10 @@ public class Parent {
 	Cursor cursor;
 	int[] test = new int[2];
 	
-	List<byte[][]> generatingMoves = new ArrayList<byte[][]>();
-	List<byte[][]> solvingMoves = new ArrayList<byte[][]>();
+	List<Board> generatingMoves = new ArrayList<Board>();
+	List<Board> solvingMoves = new ArrayList<Board>();
 	
-	public byte[][] emptyBoard;
+	public Board emptyBoard;
 	
 	public Parent(byte[][] boardIni) {
 		
@@ -278,10 +278,10 @@ public class Parent {
 //		}
 		
 		
-		emptyBoard = Config.newBoard(ini.length-2, ini[0].length-2);
+		emptyBoard = new Board(ini.length-2, ini[0].length-2);
 		for (int i = 0; i < rowCount; i++) {
 			for (int j = 0; j < colCount; j++) {
-				Config.boardSet(emptyBoard, i, j, (byte)' ', colCount);
+				emptyBoard.boardSet(i, j, (byte)' ', colCount);
 			}
 		}
 		
@@ -414,10 +414,10 @@ public class Parent {
 //		byte[][] scratchLeft = Config.newConfig(emptyBoard);
 //		byte[][] scratchRight = Config.newConfig(emptyBoard);
 		
-		scratchLeft.put(c, Config.newConfig(emptyBoard));
-		scratchRight.put(c, Config.newConfig(emptyBoard));
-		scratchUp.put(c, Config.newConfig(emptyBoard));
-		scratchDown.put(c, Config.newConfig(emptyBoard));
+		scratchLeft.put(c, new Board(emptyBoard));
+		scratchRight.put(c, new Board(emptyBoard));
+		scratchUp.put(c, new Board(emptyBoard));
+		scratchDown.put(c, new Board(emptyBoard));
 		
 //		switch (c) {
 //		case 'R':

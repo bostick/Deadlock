@@ -5,17 +5,17 @@ import java.util.List;
 
 public class Solver {
 	
-	static List<String> solve(byte[][] start) {
+	static List<String> solve(Board start) {
 		
 		StateSpace space = new StateSpace();
 		space.putSolving(start, null);
 		
-		byte[][] winner = null;
+		Board winner = null;
 		loop:
 		while (true) {
 			
-			List<byte[][]> a = new ArrayList<byte[][]>(space.lastSolvingIteration);
-			space.lastSolvingIteration = new ArrayList<byte[][]>();
+			List<Board> a = new ArrayList<Board>(space.lastSolvingIteration);
+			space.lastSolvingIteration = new ArrayList<Board>();
 			
 //			System.out.println(Config.toString(a));
 			
@@ -24,18 +24,18 @@ public class Solver {
 			}
 			
 			for (int i = 0; i < a.size(); i++) {
-				byte[][] b = a.get(i);
+				Board b = a.get(i);
 				
-				if (Config.isWinning(b)) {
+				if (b.isWinning()) {
 					winner = b;
 					break loop;
 				}
 				
-				List<byte[][]> moves = Config.possibleNextMoves(b);
+				List<Board> moves = b.possibleNextMoves();
 				
-				for (byte[][] m : moves) {
+				for (Board m : moves) {
 					if (!space.allSolvingConfigsContains(m)) {
-						space.putSolving(Config.clone(m), b);
+						space.putSolving(m.clone(), b);
 					}
 				}
 				
@@ -44,7 +44,7 @@ public class Solver {
 		
 		List<String> solution = new ArrayList<String>();
 		
-		String l = Config.toString(winner);
+		String l = winner.toString();
 		solution.add(l);
 		while (true) {
 			l = space.getSolving(l);

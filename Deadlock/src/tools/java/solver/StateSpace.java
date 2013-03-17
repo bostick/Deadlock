@@ -18,12 +18,12 @@ public class StateSpace {
 	
 	private TLongHashSet allGeneratingConfigs = new TLongHashSet();
 	
-	public List<byte[][]> lastSolvingIteration = new ArrayList<byte[][]>();
+	public List<Board> lastSolvingIteration = new ArrayList<Board>();
 	Map<String, String> solvingMap = new HashMap<String, String>();
 	
-	public void tryPutGenerating(byte[][] key) {
+	public void tryPutGenerating(Board key) {
 		
-		long info = Config.getInfoLong(key);
+		long info = key.getInfoLong();
 		assert info != 0;
 		
 		boolean modified = allGeneratingConfigs.add(info);
@@ -35,25 +35,25 @@ public class StateSpace {
 		
 	}
 	
-	public void putSolving(byte[][] key, byte[][] val) {
+	public void putSolving(Board key, Board val) {
 		
 		lastSolvingIteration.add(key);
 		
 //		allSolvingConfigs.add(Config.toString(key));
 		
 		if (val == null) {
-			solvingMap.put(Config.toString(key), null);
+			solvingMap.put(key.toString(), null);
 		} else {
-			solvingMap.put(Config.toString(key), Config.toString(val));
+			solvingMap.put(key.toString(), val.toString());
 		}
 	}
 	
-	public boolean allGeneratingConfigsContains(byte[][] k) {
-		return Config.isWinning(k) || allGeneratingConfigs.contains(Config.getInfoLong(k));
+	public boolean allGeneratingConfigsContains(Board k) {
+		return k.isWinning() || allGeneratingConfigs.contains(k.getInfoLong());
 	}
 	
-	public boolean allSolvingConfigsContains(byte[][] k) {
-		return solvingMap.containsKey(Config.toString(k));
+	public boolean allSolvingConfigsContains(Board k) {
+		return solvingMap.containsKey(k.toString());
 	}
 	
 	public String getSolving(String key) {

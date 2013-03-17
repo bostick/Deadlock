@@ -38,9 +38,9 @@ public class Statics {
 	 */
 	static boolean next(int r, int c, int[] out) {
 		
-		if (c == Config.par.colCount-1) {
+		if (c == Board.par.colCount-1) {
 			
-			if (r == Config.par.rowCount-1) {
+			if (r == Board.par.rowCount-1) {
 				
 				return false;
 				

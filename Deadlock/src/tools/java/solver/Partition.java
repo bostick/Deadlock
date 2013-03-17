@@ -14,33 +14,41 @@ public class Partition {
 	StateSpace space = new StateSpace();
 	
 	int totalBoardCount;
+	int candidateBoardCount;
 	
-	List<String> hardestSolution;
+//	List<String> hardestSolution;
 	
 	public void generate() throws Exception {
 		
 		long t = System.currentTimeMillis();
 		
-		byte[][] temp = Config.newConfig(Config.par.emptyBoard);
+		Board temp = new Board(Board.par.emptyBoard);
 		
+		int iteration = 0;
 		while (true) {
 			System.out.print(".");
 			
 			space.penGeneratingIteration = space.lastGeneratingIteration;
 			space.lastGeneratingIteration = new TLongArrayList();
 			
+//			System.out.println(Config.toString(a));
+			
 			for (int i = 0; i < space.penGeneratingIteration.size(); i++) {
 				long info = space.penGeneratingIteration.get(i);
-				Config.copyTo(Config.par.emptyBoard, temp);
-				Config.toBoard(info, temp);
+				Board.par.emptyBoard.copyTo(temp);
+				Board.toBoard(info, temp);
 				explorePreviousMoves(temp);
 			}
 			totalBoardCount += space.penGeneratingIteration.size();
+			if (iteration >= 20) {
+				candidateBoardCount += space.penGeneratingIteration.size();
+			}
 			
 			if (space.lastGeneratingIteration.isEmpty()) {
 				break;
 			}
 			
+			iteration++;
 		}
 		System.out.print("reached fixpoint... ");
 		
@@ -50,21 +58,23 @@ public class Partition {
 		space = null;
 		
 		if (longest != -1) {
-			byte[][] start = Config.newConfig(Config.par.emptyBoard);
-			Config.toBoard(longest, start);
-			hardestSolution = Solver.solve(start);
-			System.out.println("hardest is " + hardestSolution.size() + " moves, total " + (totalBoardCount) + " boards, time: " + ((System.currentTimeMillis() - t) / 1000) + "s");
+			Board start = new Board(Board.par.emptyBoard);
+			Board.toBoard(longest, start);
+			List<String> hardestSolution = Solver.solve(start);
+			System.out.println("hardest is " + hardestSolution.size() + " moves, total " + (totalBoardCount) + " boards, candidate " + candidateBoardCount + " boards, time: " + ((System.currentTimeMillis() - t) / 1000) + "s");
+			System.out.println(start);
+			System.out.println();
 		} else {
 			System.out.println("hardest is null, time: " + ((System.currentTimeMillis() - t) / 1000) + "s");
 		}
 		
 	}
 	
-	public void explorePreviousMoves(byte[][] c) {
+	public void explorePreviousMoves(Board c) {
 		
-		List<byte[][]> moves = Config.possiblePreviousMoves(c);
+		List<Board> moves = c.possiblePreviousMoves();
 		
-		for (byte[][] m : moves) {
+		for (Board m : moves) {
 			space.tryPutGenerating(m);
 		}
 	}

@@ -1,4 +1,12 @@
 
+interference graph
+make sure there are no leaves,
+starting from winning, make a graph of what interferes with paths
+make sure everything is in a loop
+
+
+
+
 using trove for long sets and maps
 
 

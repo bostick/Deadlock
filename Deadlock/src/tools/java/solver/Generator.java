@@ -5,25 +5,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
 public class Generator {
-	
-	static byte[][] boardIni = new byte[][] {
-		{ '/', '-', 'J', '-', '-', '-', '-', '\\'},
-		{ '|', ' ', ' ', ' ', ' ', ' ', ' ', '|'},
-		{ 'J', ' ', ' ', ' ', ' ', ' ', ' ', '|'},
-		{ '|', ' ', ' ', ' ', ' ', ' ', ' ', 'Y'},
-		{ '|', ' ', ' ', ' ', ' ', ' ', ' ', '|'},
-		{ 'K', ' ', ' ', ' ', ' ', ' ', ' ', '|'},
-		{ '|', ' ', ' ', ' ', ' ', ' ', ' ', '|'},
-		{'\\', '-', 'K', '-', '-', '-', '-', '/'},
-	};
 	
 	/*
 	 * how many 2cars and 3cars per board
 	 */
-	static int TWOCARS = 5;
-	static int THREECARS = 1;
+//	static int TWOCARS = 5;
+//	static int THREECARS = 1;
 	
 	/*
 	 * how many of the rows and cols to count for the partitions.
@@ -41,7 +29,7 @@ public class Generator {
 	
 	public static void main(String[] args) throws Exception {
 		
-		generate();
+		generate(args);
 
 	}
 	
@@ -50,21 +38,34 @@ public class Generator {
 	static long t;
 	static long m;
 	
-	public static void generate() throws Exception {
+	public static void generate(String[] args) throws Exception {
+		
+		int TWOCARS = Integer.parseInt(args[0]);
+		int THREECARS = Integer.parseInt(args[1]);
 		
 		t = System.currentTimeMillis();
 		m = Runtime.getRuntime().totalMemory();
 		
-		Config.par = new Parent(boardIni);
-		Config.par.addCar((byte)'R');
+		int boardNumber = Integer.parseInt(args[2]);
+		byte[][] board = null;
+		if (boardNumber == 0) {
+			board = Boards.board0;
+		} else if (boardNumber == 1) {
+			board = Boards.board1;
+		} else if (boardNumber == 2) {
+			board = Boards.board2;
+		}
 		
-		byte[][] red = Config.newConfig(Config.par.emptyBoard);
-		red = Config.winningConfig(red);
+		Board.par = new Parent(board);
+		Board.par.addCar((byte)'R');
+		
+		Board red = new Board(Board.par.emptyBoard);
+		red = red.winningConfig();
 		
 		System.out.println("generating boards");
 		
 		System.out.println("board:");
-		System.out.println(Config.toString(red));
+		System.out.println(red);
 		
 		System.out.println("2cars: " + TWOCARS + ", 3cars: " + THREECARS);
 		System.out.println("partition ids: " + PARTITIONID_ROWCOUNT + "+" + PARTITIONID_COLCOUNT);
@@ -72,7 +73,8 @@ public class Generator {
 		generateWinners(TWOCARS, THREECARS, red);
 		
 		int totalBoards = 0;
-		List<String> hardest = null;
+		int candidateBoards = 0;
+//		List<String> hardest = null;
 		int i = 0;
 		for (Partition p : partitions.values()) {
 			System.out.println("generating partition #" + i);
@@ -88,33 +90,34 @@ public class Generator {
 				System.out.println("max total memory: " + (m / 1024 / 1024) + "MB");
 			}
 			totalBoards += p.totalBoardCount;
-			if (hardest == null || p.hardestSolution != null && p.hardestSolution.size() > hardest.size()) {
-				hardest = p.hardestSolution;
-			}
+			candidateBoards += p.candidateBoardCount;
+//			if (hardest == null || p.hardestSolution != null && p.hardestSolution.size() > hardest.size()) {
+//				hardest = p.hardestSolution;
+//			}
 			i++;
 		}
 		System.out.println();
 		
-		if (hardest == null) {
-			System.out.println("hardest is null");
-		} else {
-			System.out.println("hardest overall: " + hardest.size() + " moves, total " + totalBoards + "  boards");
-			for (String s : hardest) {
-				System.out.println(s);
-				System.out.println();
-			}
-		}
+//		if (hardest == null) {
+//			System.out.println("hardest is null");
+//		} else {
+//			System.out.println("hardest overall: " + hardest.size() + " moves, total " + totalBoards + "  boards, candidate " + candidateBoards + " boards");
+//			for (String s : hardest) {
+//				System.out.println(s);
+//				System.out.println();
+//			}
+//		}
 		
 		System.out.println("total time: " + ((System.currentTimeMillis() - t) / 1000) + "s");
 		System.out.println("max total memory: " + (m / 1024 / 1024) + "MB");
 	}
 	
-	public static void generateWinners(int twoCars, int threeCars, byte[][] base) {
+	public static void generateWinners(int twoCars, int threeCars, Board base) {
 		
 		System.out.println("generating winners... ");
 		
 		for (int i = 0; i < (twoCars + threeCars); i++) {
-			Config.par.addCar((byte)('A' + i));
+			Board.par.addCar((byte)('A' + i));
 		}
 		
 		generateWinnersRecur(twoCars, threeCars, base);
@@ -125,34 +128,34 @@ public class Generator {
 		System.out.println();
 	}
 	
-	public static void generateWinnersRecur(int twoCars, int threeCars, byte[][] base) {
+	public static void generateWinnersRecur(int twoCars, int threeCars, Board base) {
 		
-		List<byte[][]> placements = new ArrayList<byte[][]>();
+		List<Board> placements = new ArrayList<Board>();
 		
 		if (twoCars == 1 && threeCars == 0) {
-			placements = new ArrayList<byte[][]>();
-			Config.possible2CarPlacements(base, placements, true);
-			for (byte[][] board : placements) {
+			placements = new ArrayList<Board>();
+			base.possibleCarPlacements(2, placements, true);
+			for (Board board : placements) {
 				addWinnerBoard(board);
 			}
 		} else if (twoCars > 0) {
-			placements = new ArrayList<byte[][]>();
-			Config.possible2CarPlacements(base, placements, false);
-			for (byte[][] board : placements) {
+			placements = new ArrayList<Board>();
+			base.possibleCarPlacements(2, placements, false);
+			for (Board board : placements) {
 				generateWinnersRecur(twoCars-1, threeCars, board);
 			}
 		}
 		
 		if (threeCars == 1 && twoCars == 0) {
-			placements = new ArrayList<byte[][]>();
-			Config.possible3CarPlacements(base, placements, true);
-			for (byte[][] board : placements) {
+			placements = new ArrayList<Board>();
+			base.possibleCarPlacements(3, placements, true);
+			for (Board board : placements) {
 				addWinnerBoard(board);
 			}
 		} else if (threeCars > 0) {
-			placements = new ArrayList<byte[][]>();
-			Config.possible3CarPlacements(base, placements, false);
-			for (byte[][] board : placements) {
+			placements = new ArrayList<Board>();
+			base.possibleCarPlacements(3, placements, false);
+			for (Board board : placements) {
 				generateWinnersRecur(twoCars, threeCars-1, board);
 			}
 		}
@@ -161,13 +164,13 @@ public class Generator {
 	
 	static int winnersCount = 0;
 	
-	public static void addWinnerBoard(byte[][] board) {
+	public static void addWinnerBoard(Board board) {
 		
 		winnersCount++;
 		
 		byte[] partitionId = new byte[PARTITIONID_ROWCOUNT + PARTITIONID_COLCOUNT];
 		
-		Config.getPartitionId(board, PARTITIONID_ROWCOUNT, PARTITIONID_COLCOUNT, partitionId);
+		board.getPartitionId(PARTITIONID_ROWCOUNT, PARTITIONID_COLCOUNT, partitionId);
 		
 		int idHash = hashPartitionId(partitionId);
 		
@@ -177,7 +180,7 @@ public class Generator {
 			p.partitionIdHash = idHash;
 			p.partitionId = partitionId;
 			
-			p.space.lastGeneratingIteration.add(Config.getInfoLong(board));
+			p.space.lastGeneratingIteration.add(board.getInfoLong());
 			
 			partitions.put(idHash, p);
 			
@@ -187,7 +190,7 @@ public class Generator {
 			
 			Partition p = partitions.get(idHash);
 			
-			p.space.lastGeneratingIteration.add(Config.getInfoLong(board));
+			p.space.lastGeneratingIteration.add(board.getInfoLong());
 			
 		}
 		
