@@ -1,0 +1,889 @@
+generating boards
+board:
+/------\
+|      |
+|      |
+|      |
+|      |
+|      |
+J   RR Y
+\---J--/
+
+2cars: 2, 3cars: 2
+partition ids: 6+0
+generating winners... 
+added idhash 948800148, partitions count: 1
+added idhash 945153132, partitions count: 2
+added idhash 945054564, partitions count: 3
+added idhash 945051900, partitions count: 4
+added idhash 945051826, partitions count: 5
+added idhash 742642438, partitions count: 6
+added idhash 738995422, partitions count: 7
+added idhash 738896854, partitions count: 8
+added idhash 738894190, partitions count: 9
+added idhash 738894116, partitions count: 10
+added idhash 737171914, partitions count: 11
+added idhash 737073346, partitions count: 12
+added idhash 737070682, partitions count: 13
+added idhash 737070608, partitions count: 14
+added idhash 737024062, partitions count: 15
+added idhash 737021398, partitions count: 16
+added idhash 879456191, partitions count: 17
+added idhash 875809175, partitions count: 18
+added idhash 875710607, partitions count: 19
+added idhash 875707943, partitions count: 20
+added idhash 875707869, partitions count: 21
+added idhash 740869583, partitions count: 22
+added idhash 740771015, partitions count: 23
+added idhash 740768351, partitions count: 24
+added idhash 740768277, partitions count: 25
+added idhash 737123999, partitions count: 26
+added idhash 737121335, partitions count: 27
+added idhash 737121261, partitions count: 28
+added idhash 737022767, partitions count: 29
+added idhash 737022693, partitions count: 30
+added idhash 737020029, partitions count: 31
+added idhash 737019955, partitions count: 32
+added idhash 877582030, partitions count: 33
+added idhash 875758522, partitions count: 34
+added idhash 875709238, partitions count: 35
+added idhash 875707906, partitions count: 36
+added idhash 740818930, partitions count: 37
+added idhash 740769646, partitions count: 38
+added idhash 740768314, partitions count: 39
+added idhash 737122630, partitions count: 40
+added idhash 737121298, partitions count: 41
+added idhash 737021324, partitions count: 42
+added idhash 737020066, partitions count: 43
+added idhash 737019992, partitions count: 44
+added idhash 737022730, partitions count: 45
+added idhash 675273948, partitions count: 46
+added idhash 675175380, partitions count: 47
+added idhash 675172716, partitions count: 48
+added idhash 675172642, partitions count: 49
+added idhash 669702118, partitions count: 50
+added idhash 669603550, partitions count: 51
+added idhash 669600886, partitions count: 52
+added idhash 669600812, partitions count: 53
+added idhash 669554266, partitions count: 54
+added idhash 669551602, partitions count: 55
+added idhash 673399787, partitions count: 56
+added idhash 673301219, partitions count: 57
+added idhash 673298555, partitions count: 58
+added idhash 673298481, partitions count: 59
+added idhash 669654203, partitions count: 60
+added idhash 669651539, partitions count: 61
+added idhash 669651465, partitions count: 62
+added idhash 669552971, partitions count: 63
+added idhash 669552897, partitions count: 64
+added idhash 669550233, partitions count: 65
+added idhash 669550159, partitions count: 66
+added idhash 673349134, partitions count: 67
+added idhash 673299850, partitions count: 68
+added idhash 673298518, partitions count: 69
+added idhash 669652834, partitions count: 70
+added idhash 669651502, partitions count: 71
+added idhash 669551528, partitions count: 72
+added idhash 669550270, partitions count: 73
+added idhash 669550196, partitions count: 74
+added idhash 669552934, partitions count: 75
+added idhash 667881348, partitions count: 76
+added idhash 667878684, partitions count: 77
+added idhash 667878610, partitions count: 78
+added idhash 667730758, partitions count: 79
+added idhash 667728094, partitions count: 80
+added idhash 667830695, partitions count: 81
+added idhash 667828031, partitions count: 82
+added idhash 667827957, partitions count: 83
+added idhash 667729463, partitions count: 84
+added idhash 667729389, partitions count: 85
+added idhash 667726725, partitions count: 86
+added idhash 667726651, partitions count: 87
+added idhash 667829326, partitions count: 88
+added idhash 667827994, partitions count: 89
+added idhash 667728020, partitions count: 90
+added idhash 667726762, partitions count: 91
+added idhash 667726688, partitions count: 92
+added idhash 667729426, partitions count: 93
+added idhash 667680179, partitions count: 94
+added idhash 667680105, partitions count: 95
+added idhash 667677441, partitions count: 96
+added idhash 667681548, partitions count: 97
+added idhash 667677478, partitions count: 98
+added idhash 667680142, partitions count: 99
+added idhash 667676109, partitions count: 100
+added idhash 810112234, partitions count: 101
+added idhash 806465218, partitions count: 102
+added idhash 806366650, partitions count: 103
+added idhash 806363986, partitions count: 104
+added idhash 806363912, partitions count: 105
+added idhash 671525626, partitions count: 106
+added idhash 671427058, partitions count: 107
+added idhash 671424394, partitions count: 108
+added idhash 671424320, partitions count: 109
+added idhash 667780042, partitions count: 110
+added idhash 667777378, partitions count: 111
+added idhash 667777304, partitions count: 112
+added idhash 667678810, partitions count: 113
+added idhash 667678736, partitions count: 114
+added idhash 667676072, partitions count: 115
+added idhash 667675998, partitions count: 116
+added idhash 811986395, partitions count: 117
+added idhash 808339379, partitions count: 118
+added idhash 808240811, partitions count: 119
+added idhash 808238147, partitions count: 120
+added idhash 808238073, partitions count: 121
+added idhash 806515871, partitions count: 122
+added idhash 806417303, partitions count: 123
+added idhash 806414639, partitions count: 124
+added idhash 806414565, partitions count: 125
+added idhash 806368019, partitions count: 126
+added idhash 806365355, partitions count: 127
+added idhash 806365281, partitions count: 128
+added idhash 806364023, partitions count: 129
+added idhash 806363949, partitions count: 130
+added idhash 810162887, partitions count: 131
+added idhash 810113603, partitions count: 132
+added idhash 810112271, partitions count: 133
+added idhash 806466587, partitions count: 134
+added idhash 806465255, partitions count: 135
+added idhash 806366687, partitions count: 136
+added idhash 671576279, partitions count: 137
+added idhash 671477711, partitions count: 138
+added idhash 671475047, partitions count: 139
+added idhash 671474973, partitions count: 140
+added idhash 671428427, partitions count: 141
+added idhash 671425763, partitions count: 142
+added idhash 671425689, partitions count: 143
+added idhash 671424431, partitions count: 144
+added idhash 671424357, partitions count: 145
+added idhash 671526995, partitions count: 146
+added idhash 671525663, partitions count: 147
+added idhash 671427095, partitions count: 148
+added idhash 667781411, partitions count: 149
+added idhash 667778747, partitions count: 150
+added idhash 667778673, partitions count: 151
+added idhash 667777415, partitions count: 152
+added idhash 667777341, partitions count: 153
+added idhash 667780079, partitions count: 154
+added idhash 667678847, partitions count: 155
+added idhash 667678773, partitions count: 156
+added idhash 667677367, partitions count: 157
+added idhash 667676035, partitions count: 158
+added idhash 813860556, partitions count: 159
+added idhash 808288726, partitions count: 160
+added idhash 808239442, partitions count: 161
+added idhash 808238110, partitions count: 162
+added idhash 806566524, partitions count: 163
+added idhash 806415934, partitions count: 164
+added idhash 806414602, partitions count: 165
+added idhash 806369388, partitions count: 166
+added idhash 806365318, partitions count: 167
+added idhash 806364060, partitions count: 168
+max total memory: 111MB
+added idhash 671626932, partitions count: 169
+added idhash 671476342, partitions count: 170
+added idhash 671475010, partitions count: 171
+added idhash 671429796, partitions count: 172
+added idhash 671425726, partitions count: 173
+added idhash 671424468, partitions count: 174
+added idhash 667782780, partitions count: 175
+added idhash 667778710, partitions count: 176
+added idhash 667777452, partitions count: 177
+added idhash 667681474, partitions count: 178
+added idhash 667677404, partitions count: 179
+added idhash 667676146, partitions count: 180
+added idhash 667678884, partitions count: 181
+done
+181 partitions, 392960 winners, with avg. 2171 winners / partition
+
+generating partition #0
+idhash 667677441, starting with 5241 winners (1%)... .....................reached fixpoint... hardest is 21 moves, total 30865 boards, candidate 2 boards, time: 0s
+generating partition #1
+idhash 806363986, starting with 3272 winners (0%)... ...................reached fixpoint... hardest is 19 moves, total 18855 boards, candidate 0 boards, time: 0s
+generating partition #2
+idhash 737020029, starting with 5970 winners (1%)... ................reached fixpoint... hardest is 16 moves, total 36356 boards, candidate 0 boards, time: 0s
+generating partition #3
+idhash 667729463, starting with 1228 winners (0%)... .........................reached fixpoint... hardest is 25 moves, total 7548 boards, candidate 49 boards, time: 0s
+generating partition #4
+idhash 808288726, starting with 1122 winners (0%)... ............reached fixpoint... hardest is 12 moves, total 8617 boards, candidate 0 boards, time: 0s
+max total memory: 156MB
+generating partition #5
+idhash 737022693, starting with 4386 winners (1%)... ....................reached fixpoint... hardest is 20 moves, total 28910 boards, candidate 0 boards, time: 0s
+generating partition #6
+idhash 667678884, starting with 255 winners (0%)... ................reached fixpoint... hardest is 16 moves, total 1663 boards, candidate 0 boards, time: 0s
+generating partition #7
+idhash 671475047, starting with 1088 winners (0%)... .......................reached fixpoint... hardest is 23 moves, total 6104 boards, candidate 12 boards, time: 0s
+generating partition #8
+idhash 806466587, starting with 1208 winners (0%)... ..................reached fixpoint... hardest is 18 moves, total 7989 boards, candidate 0 boards, time: 0s
+generating partition #9
+idhash 667829326, starting with 134 winners (0%)... ..................reached fixpoint... hardest is 18 moves, total 803 boards, candidate 0 boards, time: 0s
+generating partition #10
+idhash 737121261, starting with 4194 winners (1%)... .......................reached fixpoint... hardest is 10 moves, total 29440 boards, candidate 6 boards, time: 0s
+generating partition #11
+idhash 667878610, starting with 198 winners (0%)... .......................reached fixpoint... hardest is 23 moves, total 1318 boards, candidate 7 boards, time: 0s
+generating partition #12
+idhash 667781411, starting with 326 winners (0%)... ................reached fixpoint... hardest is 16 moves, total 1817 boards, candidate 0 boards, time: 0s
+generating partition #13
+idhash 667778747, starting with 1176 winners (0%)... .........................reached fixpoint... hardest is 25 moves, total 6961 boards, candidate 63 boards, time: 0s
+generating partition #14
+idhash 737073346, starting with 842 winners (0%)... ......................reached fixpoint... hardest is 22 moves, total 5896 boards, candidate 9 boards, time: 0s
+generating partition #15
+idhash 810112271, starting with 1340 winners (0%)... ............reached fixpoint... hardest is 12 moves, total 8844 boards, candidate 0 boards, time: 0s
+generating partition #16
+idhash 808239442, starting with 1082 winners (0%)... ............reached fixpoint... hardest is 12 moves, total 7786 boards, candidate 0 boards, time: 0s
+generating partition #17
+idhash 671427095, starting with 1048 winners (0%)... .....................reached fixpoint... hardest is 21 moves, total 5971 boards, candidate 1 boards, time: 0s
+generating partition #18
+idhash 669550270, starting with 285 winners (0%)... .............reached fixpoint... hardest is 13 moves, total 1501 boards, candidate 0 boards, time: 0s
+generating partition #19
+idhash 667676109, starting with 1602 winners (0%)... ............reached fixpoint... hardest is 12 moves, total 7538 boards, candidate 0 boards, time: 0s
+generating partition #20
+idhash 671477711, starting with 1056 winners (0%)... ...................reached fixpoint... hardest is 19 moves, total 6581 boards, candidate 0 boards, time: 0s
+generating partition #21
+idhash 671428427, starting with 264 winners (0%)... ..............reached fixpoint... hardest is 14 moves, total 1399 boards, candidate 0 boards, time: 0s
+generating partition #22
+idhash 737122630, starting with 830 winners (0%)... ......................reached fixpoint... hardest is 22 moves, total 5915 boards, candidate 5 boards, time: 0s
+generating partition #23
+idhash 806366650, starting with 2792 winners (0%)... .................reached fixpoint... hardest is 17 moves, total 17796 boards, candidate 0 boards, time: 0s
+generating partition #24
+idhash 673298555, starting with 300 winners (0%)... ..............reached fixpoint... hardest is 14 moves, total 1784 boards, candidate 0 boards, time: 0s
+generating partition #25
+idhash 671425763, starting with 1088 winners (0%)... .....................reached fixpoint... hardest is 21 moves, total 6104 boards, candidate 1 boards, time: 0s
+generating partition #26
+idhash 667827994, starting with 142 winners (0%)... ..................reached fixpoint... hardest is 18 moves, total 794 boards, candidate 0 boards, time: 0s
+generating partition #27
+idhash 667677478, starting with 333 winners (0%)... ..............reached fixpoint... hardest is 14 moves, total 1797 boards, candidate 0 boards, time: 0s
+generating partition #28
+idhash 806364023, starting with 396 winners (0%)... ............reached fixpoint... hardest is 12 moves, total 2105 boards, candidate 0 boards, time: 0s
+generating partition #29
+idhash 667830695, starting with 326 winners (0%)... ..................reached fixpoint... hardest is 18 moves, total 2060 boards, candidate 0 boards, time: 0s
+generating partition #30
+idhash 667676146, starting with 637 winners (0%)... ...............reached fixpoint... hardest is 15 moves, total 3961 boards, candidate 0 boards, time: 0s
+generating partition #31
+idhash 813860556, starting with 290 winners (0%)... ..........reached fixpoint... hardest is 10 moves, total 2294 boards, candidate 0 boards, time: 0s
+generating partition #32
+idhash 808238147, starting with 1328 winners (0%)... ..............reached fixpoint... hardest is 14 moves, total 8342 boards, candidate 0 boards, time: 0s
+generating partition #33
+idhash 945051826, starting with 798 winners (0%)... ...........reached fixpoint... hardest is 11 moves, total 6320 boards, candidate 0 boards, time: 0s
+generating partition #34
+idhash 671475010, starting with 892 winners (0%)... ..............reached fixpoint... hardest is 14 moves, total 5835 boards, candidate 0 boards, time: 0s
+generating partition #35
+idhash 806415934, starting with 954 winners (0%)... ..............reached fixpoint... hardest is 14 moves, total 6822 boards, candidate 0 boards, time: 0s
+generating partition #36
+idhash 737019992, starting with 2958 winners (0%)... .............reached fixpoint... hardest is 13 moves, total 20434 boards, candidate 0 boards, time: 0s
+generating partition #37
+idhash 667729426, starting with 865 winners (0%)... .....................reached fixpoint... hardest is 21 moves, total 5763 boards, candidate 2 boards, time: 0s
+generating partition #38
+idhash 673298518, starting with 240 winners (0%)... ............reached fixpoint... hardest is 12 moves, total 1657 boards, candidate 0 boards, time: 0s
+generating partition #39
+idhash 667782780, starting with 148 winners (0%)... .....................reached fixpoint... hardest is 21 moves, total 1003 boards, candidate 3 boards, time: 0s
+generating partition #40
+idhash 945054564, starting with 228 winners (0%)... ..................reached fixpoint... hardest is 18 moves, total 1636 boards, candidate 0 boards, time: 0s
+generating partition #41
+idhash 671525663, starting with 1100 winners (0%)... .................reached fixpoint... hardest is 17 moves, total 6529 boards, candidate 0 boards, time: 0s
+generating partition #42
+idhash 667828031, starting with 300 winners (0%)... ....................reached fixpoint... hardest is 20 moves, total 1609 boards, candidate 0 boards, time: 0s
+generating partition #43
+idhash 669550233, starting with 4646 winners (1%)... ..................reached fixpoint... hardest is 18 moves, total 26644 boards, candidate 0 boards, time: 0s
+generating partition #44
+idhash 667778710, starting with 796 winners (0%)... ..........................reached fixpoint... hardest is 26 moves, total 5299 boards, candidate 57 boards, time: 0s
+generating partition #45
+idhash 740771015, starting with 1128 winners (0%)... ..................reached fixpoint... hardest is 18 moves, total 7103 boards, candidate 0 boards, time: 0s
+generating partition #46
+idhash 806515871, starting with 336 winners (0%)... ............reached fixpoint... hardest is 12 moves, total 2299 boards, candidate 0 boards, time: 0s
+generating partition #47
+idhash 667681474, starting with 337 winners (0%)... .................reached fixpoint... hardest is 17 moves, total 2077 boards, candidate 0 boards, time: 0s
+generating partition #48
+idhash 667680179, starting with 362 winners (0%)... ..................reached fixpoint... hardest is 18 moves, total 1922 boards, candidate 0 boards, time: 0s
+generating partition #49
+idhash 667780042, starting with 2462 winners (0%)... ........................reached fixpoint... hardest is 17 moves, total 15354 boards, candidate 63 boards, time: 0s
+generating partition #50
+idhash 737019955, starting with 16308 winners (4%)... ..............reached fixpoint... hardest is 14 moves, total 125135 boards, candidate 0 boards, time: 1s
+generating partition #51
+idhash 806414639, starting with 1240 winners (0%)... .......................reached fixpoint... hardest is 23 moves, total 7434 boards, candidate 17 boards, time: 0s
+generating partition #52
+idhash 671425726, starting with 918 winners (0%)... ..............reached fixpoint... hardest is 14 moves, total 5677 boards, candidate 0 boards, time: 0s
+generating partition #53
+idhash 806465218, starting with 2788 winners (0%)... ................reached fixpoint... hardest is 16 moves, total 17516 boards, candidate 0 boards, time: 0s
+generating partition #54
+idhash 667777415, starting with 324 winners (0%)... ..................reached fixpoint... hardest is 18 moves, total 1622 boards, candidate 0 boards, time: 0s
+generating partition #55
+idhash 667730758, starting with 179 winners (0%)... .................reached fixpoint... hardest is 17 moves, total 1079 boards, candidate 0 boards, time: 0s
+generating partition #56
+idhash 667676035, starting with 14281 winners (3%)... ...............reached fixpoint... hardest is 15 moves, total 94244 boards, candidate 0 boards, time: 0s
+max total memory: 157MB
+generating partition #57
+idhash 877582030, starting with 412 winners (0%)... ..........reached fixpoint... hardest is 10 moves, total 3338 boards, candidate 0 boards, time: 0s
+generating partition #58
+idhash 673298481, starting with 1122 winners (0%)... ...........reached fixpoint... hardest is 11 moves, total 7845 boards, candidate 0 boards, time: 0s
+generating partition #59
+idhash 671424357, starting with 4320 winners (1%)... ..............reached fixpoint... hardest is 14 moves, total 25849 boards, candidate 0 boards, time: 0s
+generating partition #60
+idhash 667726762, starting with 277 winners (0%)... .................reached fixpoint... hardest is 17 moves, total 1463 boards, candidate 0 boards, time: 0s
+generating partition #61
+idhash 806365355, starting with 1328 winners (0%)... ..................reached fixpoint... hardest is 18 moves, total 8354 boards, candidate 0 boards, time: 0s
+generating partition #62
+idhash 806363912, starting with 16740 winners (4%)... ...............reached fixpoint... hardest is 15 moves, total 123131 boards, candidate 0 boards, time: 1s
+generating partition #63
+idhash 945153132, starting with 242 winners (0%)... ...................reached fixpoint... hardest is 19 moves, total 1830 boards, candidate 0 boards, time: 0s
+generating partition #64
+idhash 875707943, starting with 420 winners (0%)... ..............reached fixpoint... hardest is 14 moves, total 2794 boards, candidate 0 boards, time: 0s
+generating partition #65
+idhash 806368019, starting with 336 winners (0%)... ............reached fixpoint... hardest is 12 moves, total 1900 boards, candidate 0 boards, time: 0s
+generating partition #66
+idhash 875709238, starting with 330 winners (0%)... ............reached fixpoint... hardest is 12 moves, total 2503 boards, candidate 0 boards, time: 0s
+generating partition #67
+idhash 806414602, starting with 1082 winners (0%)... ..............reached fixpoint... hardest is 14 moves, total 7412 boards, candidate 0 boards, time: 0s
+generating partition #68
+idhash 671425689, starting with 3754 winners (0%)... ...................reached fixpoint... hardest is 19 moves, total 23364 boards, candidate 0 boards, time: 0s
+generating partition #69
+idhash 806417303, starting with 1208 winners (0%)... .................reached fixpoint... hardest is 17 moves, total 8010 boards, candidate 0 boards, time: 0s
+generating partition #70
+idhash 945051900, starting with 300 winners (0%)... ..............reached fixpoint... hardest is 14 moves, total 2080 boards, candidate 0 boards, time: 0s
+generating partition #71
+idhash 667780079, starting with 1188 winners (0%)... ....................reached fixpoint... hardest is 20 moves, total 7436 boards, candidate 0 boards, time: 0s
+generating partition #72
+idhash 875809175, starting with 384 winners (0%)... ..............reached fixpoint... hardest is 14 moves, total 2683 boards, candidate 0 boards, time: 0s
+generating partition #73
+idhash 806465255, starting with 1200 winners (0%)... ..................reached fixpoint... hardest is 18 moves, total 7301 boards, candidate 0 boards, time: 0s
+generating partition #74
+idhash 737024062, starting with 195 winners (0%)... ..............reached fixpoint... hardest is 14 moves, total 1173 boards, candidate 0 boards, time: 0s
+generating partition #75
+idhash 671474973, starting with 4056 winners (1%)... .............reached fixpoint... hardest is 13 moves, total 27720 boards, candidate 0 boards, time: 0s
+generating partition #76
+idhash 808238110, starting with 1210 winners (0%)... ............reached fixpoint... hardest is 12 moves, total 8626 boards, candidate 0 boards, time: 0s
+generating partition #77
+idhash 875758522, starting with 352 winners (0%)... ............reached fixpoint... hardest is 12 moves, total 2773 boards, candidate 0 boards, time: 0s
+generating partition #78
+idhash 671424320, starting with 10470 winners (2%)... ................reached fixpoint... hardest is 16 moves, total 71978 boards, candidate 0 boards, time: 0s
+generating partition #79
+idhash 875710607, starting with 384 winners (0%)... ...............reached fixpoint... hardest is 15 moves, total 2698 boards, candidate 0 boards, time: 0s
+generating partition #80
+idhash 806365318, starting with 1108 winners (0%)... ..............reached fixpoint... hardest is 14 moves, total 7613 boards, candidate 0 boards, time: 0s
+generating partition #81
+idhash 875707906, starting with 390 winners (0%)... ............reached fixpoint... hardest is 12 moves, total 2917 boards, candidate 0 boards, time: 0s
+generating partition #82
+idhash 667777452, starting with 194 winners (0%)... .....................reached fixpoint... hardest is 21 moves, total 1174 boards, candidate 3 boards, time: 0s
+generating partition #83
+idhash 667676072, starting with 13843 winners (3%)... ..................reached fixpoint... hardest is 18 moves, total 80027 boards, candidate 0 boards, time: 0s
+generating partition #84
+idhash 667726725, starting with 4331 winners (1%)... ..........................reached fixpoint... hardest is 26 moves, total 24822 boards, candidate 92 boards, time: 0s
+generating partition #85
+idhash 671429796, starting with 170 winners (0%)... ..............reached fixpoint... hardest is 14 moves, total 1052 boards, candidate 0 boards, time: 0s
+generating partition #86
+idhash 806366687, starting with 1288 winners (0%)... ................reached fixpoint... hardest is 16 moves, total 8242 boards, candidate 0 boards, time: 0s
+generating partition #87
+idhash 806363949, starting with 6284 winners (1%)... ...............reached fixpoint... hardest is 15 moves, total 41295 boards, candidate 0 boards, time: 0s
+generating partition #88
+idhash 667680142, starting with 243 winners (0%)... ..............reached fixpoint... hardest is 14 moves, total 1387 boards, candidate 0 boards, time: 0s
+generating partition #89
+idhash 737121298, starting with 920 winners (0%)... ......................reached fixpoint... hardest is 22 moves, total 6133 boards, candidate 8 boards, time: 0s
+generating partition #90
+idhash 667675998, starting with 41570 winners (10%)... .............reached fixpoint... hardest is 13 moves, total 313696 boards, candidate 0 boards, time: 3s
+max total memory: 245MB
+generating partition #91
+idhash 737070608, starting with 2087 winners (0%)... ..................reached fixpoint... hardest is 18 moves, total 16019 boards, candidate 0 boards, time: 0s
+generating partition #92
+idhash 667728094, starting with 927 winners (0%)... .....................reached fixpoint... hardest is 21 moves, total 5950 boards, candidate 1 boards, time: 0s
+generating partition #93
+idhash 742642438, starting with 322 winners (0%)... ..........reached fixpoint... hardest is 10 moves, total 2531 boards, candidate 0 boards, time: 0s
+generating partition #94
+idhash 810162887, starting with 1348 winners (0%)... ...........reached fixpoint... hardest is 11 moves, total 9579 boards, candidate 0 boards, time: 0s
+generating partition #95
+idhash 806365281, starting with 5164 winners (1%)... ..................reached fixpoint... hardest is 18 moves, total 35399 boards, candidate 0 boards, time: 0s
+generating partition #96
+idhash 667681548, starting with 231 winners (0%)... ................reached fixpoint... hardest is 16 moves, total 1495 boards, candidate 0 boards, time: 0s
+generating partition #97
+idhash 806414565, starting with 5176 winners (1%)... ...............reached fixpoint... hardest is 15 moves, total 36828 boards, candidate 0 boards, time: 0s
+generating partition #98
+idhash 667726688, starting with 1811 winners (0%)... ....................reached fixpoint... hardest is 20 moves, total 11953 boards, candidate 0 boards, time: 0s
+generating partition #99
+idhash 671424431, starting with 324 winners (0%)... ............reached fixpoint... hardest is 12 moves, total 1619 boards, candidate 0 boards, time: 0s
+generating partition #100
+idhash 667678773, starting with 4739 winners (1%)... ...................reached fixpoint... hardest is 19 moves, total 28838 boards, candidate 0 boards, time: 0s
+generating partition #101
+idhash 671626932, starting with 172 winners (0%)... .................reached fixpoint... hardest is 17 moves, total 1322 boards, candidate 0 boards, time: 0s
+generating partition #102
+idhash 667680105, starting with 918 winners (0%)... ...............reached fixpoint... hardest is 15 moves, total 4527 boards, candidate 0 boards, time: 0s
+generating partition #103
+idhash 669551602, starting with 987 winners (0%)... ..................reached fixpoint... hardest is 18 moves, total 6131 boards, candidate 0 boards, time: 0s
+generating partition #104
+idhash 808240811, starting with 1208 winners (0%)... .................reached fixpoint... hardest is 17 moves, total 7998 boards, candidate 0 boards, time: 0s
+generating partition #105
+idhash 875707869, starting with 2082 winners (0%)... ............reached fixpoint... hardest is 12 moves, total 15635 boards, candidate 0 boards, time: 0s
+generating partition #106
+idhash 669654203, starting with 1108 winners (0%)... ....................reached fixpoint... hardest is 20 moves, total 7196 boards, candidate 0 boards, time: 0s
+generating partition #107
+idhash 737121335, starting with 1160 winners (0%)... ...............................reached fixpoint... hardest is 31 moves, total 6615 boards, candidate 133 boards, time: 0s
+generating partition #108
+idhash 675172716, starting with 204 winners (0%)... ................reached fixpoint... hardest is 16 moves, total 1308 boards, candidate 0 boards, time: 0s
+generating partition #109
+idhash 667677367, starting with 10527 winners (2%)... .................reached fixpoint... hardest is 17 moves, total 73398 boards, candidate 0 boards, time: 0s
+generating partition #110
+idhash 669600812, starting with 1723 winners (0%)... ..................reached fixpoint... hardest is 18 moves, total 13079 boards, candidate 0 boards, time: 0s
+generating partition #111
+idhash 675175380, starting with 182 winners (0%)... ................reached fixpoint... hardest is 16 moves, total 1174 boards, candidate 0 boards, time: 0s
+generating partition #112
+idhash 737021324, starting with 2215 winners (0%)... ...............reached fixpoint... hardest is 15 moves, total 15421 boards, candidate 0 boards, time: 0s
+generating partition #113
+idhash 737123999, starting with 1180 winners (0%)... ......................reached fixpoint... hardest is 22 moves, total 7757 boards, candidate 8 boards, time: 0s
+generating partition #114
+idhash 667678736, starting with 9748 winners (2%)... .....................reached fixpoint... hardest is 19 moves, total 65263 boards, candidate 3 boards, time: 0s
+generating partition #115
+idhash 810113603, starting with 1260 winners (0%)... ............reached fixpoint... hardest is 12 moves, total 8612 boards, candidate 0 boards, time: 0s
+generating partition #116
+idhash 671424394, starting with 2384 winners (0%)... ...................reached fixpoint... hardest is 19 moves, total 12333 boards, candidate 0 boards, time: 0s
+generating partition #117
+idhash 740768351, starting with 1248 winners (0%)... ..............reached fixpoint... hardest is 14 moves, total 7468 boards, candidate 0 boards, time: 0s
+generating partition #118
+idhash 673299850, starting with 232 winners (0%)... ............reached fixpoint... hardest is 12 moves, total 1611 boards, candidate 0 boards, time: 0s
+generating partition #119
+idhash 669651539, starting with 1088 winners (0%)... ................................reached fixpoint... hardest is 32 moves, total 6111 boards, candidate 106 boards, time: 0s
+generating partition #120
+idhash 806566524, starting with 194 winners (0%)... .................reached fixpoint... hardest is 17 moves, total 1506 boards, candidate 0 boards, time: 0s
+generating partition #121
+idhash 667777378, starting with 2404 winners (0%)... ............................reached fixpoint... hardest is 28 moves, total 12343 boards, candidate 218 boards, time: 0s
+generating partition #122
+idhash 806369388, starting with 192 winners (0%)... ...............reached fixpoint... hardest is 15 moves, total 1330 boards, candidate 0 boards, time: 0s
+generating partition #123
+idhash 808339379, starting with 1296 winners (0%)... ..............reached fixpoint... hardest is 14 moves, total 8915 boards, candidate 0 boards, time: 0s
+generating partition #124
+idhash 738894116, starting with 2823 winners (0%)... ...........reached fixpoint... hardest is 11 moves, total 21673 boards, candidate 0 boards, time: 0s
+generating partition #125
+idhash 669552971, starting with 1140 winners (0%)... ...............................reached fixpoint... hardest is 31 moves, total 6669 boards, candidate 95 boards, time: 0s
+generating partition #126
+idhash 673349134, starting with 254 winners (0%)... ............reached fixpoint... hardest is 12 moves, total 1955 boards, candidate 0 boards, time: 0s
+generating partition #127
+idhash 879456191, starting with 446 winners (0%)... ..........reached fixpoint... hardest is 10 moves, total 3357 boards, candidate 0 boards, time: 0s
+generating partition #128
+idhash 671525626, starting with 2438 winners (0%)... ..............reached fixpoint... hardest is 14 moves, total 14977 boards, candidate 0 boards, time: 0s
+generating partition #129
+idhash 669603550, starting with 782 winners (0%)... ....................reached fixpoint... hardest is 20 moves, total 5263 boards, candidate 0 boards, time: 0s
+generating partition #130
+idhash 675273948, starting with 196 winners (0%)... ...................reached fixpoint... hardest is 19 moves, total 1488 boards, candidate 0 boards, time: 0s
+generating partition #131
+idhash 669651502, starting with 830 winners (0%)... ......................reached fixpoint... hardest is 22 moves, total 5498 boards, candidate 6 boards, time: 0s
+generating partition #132
+idhash 671427058, starting with 1948 winners (0%)... .....................reached fixpoint... hardest is 21 moves, total 11128 boards, candidate 4 boards, time: 0s
+generating partition #133
+idhash 806364060, starting with 288 winners (0%)... .............reached fixpoint... hardest is 13 moves, total 1954 boards, candidate 0 boards, time: 0s
+generating partition #134
+idhash 740818930, starting with 1060 winners (0%)... ............reached fixpoint... hardest is 12 moves, total 7992 boards, candidate 0 boards, time: 0s
+generating partition #135
+idhash 669551528, starting with 1827 winners (0%)... ...............reached fixpoint... hardest is 15 moves, total 12085 boards, candidate 0 boards, time: 0s
+generating partition #136
+idhash 667677404, starting with 2308 winners (0%)... ................reached fixpoint... hardest is 16 moves, total 14836 boards, candidate 0 boards, time: 0s
+generating partition #137
+idhash 667777304, starting with 8546 winners (2%)... .......................reached fixpoint... hardest is 10 moves, total 61548 boards, candidate 35 boards, time: 0s
+generating partition #138
+idhash 737070682, starting with 1032 winners (0%)... .....................reached fixpoint... hardest is 21 moves, total 6642 boards, candidate 2 boards, time: 0s
+generating partition #139
+idhash 667728020, starting with 1463 winners (0%)... ....................reached fixpoint... hardest is 20 moves, total 10077 boards, candidate 0 boards, time: 0s
+generating partition #140
+idhash 667726651, starting with 8764 winners (2%)... ...................reached fixpoint... hardest is 19 moves, total 67500 boards, candidate 0 boards, time: 0s
+generating partition #141
+idhash 669702118, starting with 164 winners (0%)... ...............reached fixpoint... hardest is 15 moves, total 974 boards, candidate 0 boards, time: 0s
+generating partition #142
+idhash 669652834, starting with 770 winners (0%)... ......................reached fixpoint... hardest is 22 moves, total 5452 boards, candidate 5 boards, time: 0s
+generating partition #143
+idhash 740869583, starting with 1268 winners (0%)... .............reached fixpoint... hardest is 13 moves, total 8636 boards, candidate 0 boards, time: 0s
+generating partition #144
+idhash 669554266, starting with 187 winners (0%)... ..............reached fixpoint... hardest is 14 moves, total 1089 boards, candidate 0 boards, time: 0s
+generating partition #145
+idhash 667778673, starting with 3398 winners (0%)... ................................reached fixpoint... hardest is 16 moves, total 22732 boards, candidate 178 boards, time: 0s
+generating partition #146
+idhash 740768314, starting with 1110 winners (0%)... ............reached fixpoint... hardest is 12 moves, total 7614 boards, candidate 0 boards, time: 0s
+generating partition #147
+idhash 669552934, starting with 925 winners (0%)... .................reached fixpoint... hardest is 17 moves, total 5767 boards, candidate 0 boards, time: 0s
+generating partition #148
+idhash 737022767, starting with 1300 winners (0%)... .....................reached fixpoint... hardest is 21 moves, total 8101 boards, candidate 8 boards, time: 0s
+generating partition #149
+idhash 667678847, starting with 386 winners (0%)... ................reached fixpoint... hardest is 16 moves, total 2018 boards, candidate 0 boards, time: 0s
+generating partition #150
+idhash 811986395, starting with 398 winners (0%)... ..........reached fixpoint... hardest is 10 moves, total 2977 boards, candidate 0 boards, time: 0s
+generating partition #151
+idhash 737020066, starting with 345 winners (0%)... ............reached fixpoint... hardest is 12 moves, total 1881 boards, candidate 0 boards, time: 0s
+generating partition #152
+idhash 948800148, starting with 314 winners (0%)... ..........reached fixpoint... hardest is 10 moves, total 2452 boards, candidate 0 boards, time: 0s
+generating partition #153
+idhash 740769646, starting with 1020 winners (0%)... ............reached fixpoint... hardest is 12 moves, total 7026 boards, candidate 0 boards, time: 0s
+generating partition #154
+idhash 673301219, starting with 264 winners (0%)... ..................reached fixpoint... hardest is 18 moves, total 1673 boards, candidate 0 boards, time: 0s
+generating partition #155
+idhash 667878684, starting with 158 winners (0%)... ....................reached fixpoint... hardest is 20 moves, total 1000 boards, candidate 0 boards, time: 0s
+generating partition #156
+idhash 669550196, starting with 2231 winners (0%)... ..............reached fixpoint... hardest is 14 moves, total 14649 boards, candidate 0 boards, time: 0s
+generating partition #157
+idhash 667777341, starting with 3674 winners (0%)... ..........................reached fixpoint... hardest is 26 moves, total 22351 boards, candidate 167 boards, time: 0s
+generating partition #158
+idhash 675172642, starting with 462 winners (0%)... ...........reached fixpoint... hardest is 11 moves, total 3486 boards, candidate 0 boards, time: 0s
+generating partition #159
+idhash 671576279, starting with 326 winners (0%)... ...........reached fixpoint... hardest is 11 moves, total 2199 boards, candidate 0 boards, time: 0s
+generating partition #160
+idhash 669651465, starting with 3714 winners (0%)... .......................reached fixpoint... hardest is 10 moves, total 25866 boards, candidate 9 boards, time: 0s
+generating partition #161
+idhash 808238073, starting with 6304 winners (1%)... ..............reached fixpoint... hardest is 14 moves, total 46010 boards, candidate 0 boards, time: 0s
+generating partition #162
+idhash 669550159, starting with 11711 winners (2%)... ............reached fixpoint... hardest is 12 moves, total 86959 boards, candidate 0 boards, time: 0s
+max total memory: 252MB
+generating partition #163
+idhash 667729389, starting with 3591 winners (0%)... ................................reached fixpoint... hardest is 8 moves, total 23453 boards, candidate 76 boards, time: 0s
+generating partition #164
+idhash 810112234, starting with 3318 winners (0%)... ..............reached fixpoint... hardest is 14 moves, total 22287 boards, candidate 0 boards, time: 0s
+generating partition #165
+idhash 738995422, starting with 960 winners (0%)... ...................reached fixpoint... hardest is 19 moves, total 7246 boards, candidate 0 boards, time: 0s
+generating partition #166
+idhash 667827957, starting with 642 winners (0%)... ................reached fixpoint... hardest is 16 moves, total 3453 boards, candidate 0 boards, time: 0s
+generating partition #167
+idhash 673399787, starting with 326 winners (0%)... .............reached fixpoint... hardest is 13 moves, total 2237 boards, candidate 0 boards, time: 0s
+generating partition #168
+idhash 671424468, starting with 216 winners (0%)... ..............reached fixpoint... hardest is 14 moves, total 1330 boards, candidate 0 boards, time: 0s
+generating partition #169
+idhash 738894190, starting with 1122 winners (0%)... ................reached fixpoint... hardest is 16 moves, total 7418 boards, candidate 0 boards, time: 0s
+generating partition #170
+idhash 669552897, starting with 3616 winners (0%)... ..........................reached fixpoint... hardest is 26 moves, total 22145 boards, candidate 34 boards, time: 0s
+generating partition #171
+idhash 671476342, starting with 832 winners (0%)... ..............reached fixpoint... hardest is 14 moves, total 5660 boards, candidate 0 boards, time: 0s
+generating partition #172
+idhash 737021398, starting with 1115 winners (0%)... ................reached fixpoint... hardest is 16 moves, total 7357 boards, candidate 0 boards, time: 0s
+generating partition #173
+idhash 738896854, starting with 932 winners (0%)... .................reached fixpoint... hardest is 17 moves, total 6248 boards, candidate 0 boards, time: 0s
+generating partition #174
+idhash 669600886, starting with 904 winners (0%)... ......................reached fixpoint... hardest is 22 moves, total 5662 boards, candidate 9 boards, time: 0s
+generating partition #175
+idhash 671526995, starting with 1108 winners (0%)... ...............reached fixpoint... hardest is 15 moves, total 7168 boards, candidate 0 boards, time: 0s
+generating partition #176
+idhash 667881348, starting with 136 winners (0%)... ....................reached fixpoint... hardest is 20 moves, total 980 boards, candidate 0 boards, time: 0s
+generating partition #177
+idhash 740768277, starting with 5620 winners (1%)... .............reached fixpoint... hardest is 13 moves, total 39714 boards, candidate 0 boards, time: 0s
+generating partition #178
+idhash 667678810, starting with 2902 winners (0%)... ........................reached fixpoint... hardest is 24 moves, total 16122 boards, candidate 52 boards, time: 0s
+generating partition #179
+idhash 737022730, starting with 1015 winners (0%)... ..................reached fixpoint... hardest is 18 moves, total 6809 boards, candidate 0 boards, time: 0s
+generating partition #180
+idhash 737171914, starting with 172 winners (0%)... ...............reached fixpoint... hardest is 15 moves, total 1026 boards, candidate 0 boards, time: 0s
+
+hardest overall: 32 moves, total 2656479  boards, candidate 1549 boards
+/------\
+|   R  |
+|AA R  |
+| B CCC|
+| B    |
+|DDD   |
+J      Y
+\---J--/
+
+
+/------\
+|   R  |
+| AAR  |
+| B CCC|
+| B    |
+|DDD   |
+J      Y
+\---J--/
+
+
+/------\
+|   R  |
+| AAR  |
+| BCCC |
+| B    |
+|DDD   |
+J      Y
+\---J--/
+
+
+/------\
+|   R  |
+| AAR  |
+| BCCC |
+| B    |
+| DDD  |
+J      Y
+\---J--/
+
+
+/------\
+|   R  |
+| AAR  |
+| BCCC |
+| B    |
+|  DDD |
+J      Y
+\---J--/
+
+
+/------\
+|   R  |
+| AAR  |
+|  BBB |
+| C    |
+| CDDD |
+J      Y
+\---J--/
+
+
+/------\
+|   R  |
+| AAR  |
+| BBB  |
+| C    |
+| CDDD |
+J      Y
+\---J--/
+
+
+/------\
+|   R  |
+| AAR  |
+|BBB   |
+| C    |
+| CDDD |
+J      Y
+\---J--/
+
+
+/------\
+|      |
+| AAR  |
+|BBBR  |
+| C    |
+| CDDD |
+J      Y
+\---J--/
+
+
+/------\
+|      |
+| AA   |
+|BBBR  |
+| C R  |
+| CDDD |
+J      Y
+\---J--/
+
+
+/------\
+|      |
+|  AA  |
+|BBBR  |
+| C R  |
+| CDDD |
+J      Y
+\---J--/
+
+
+/------\
+|      |
+|   AA |
+|BBBR  |
+| C R  |
+| CDDD |
+J      Y
+\---J--/
+
+
+/------\
+|      |
+|    AA|
+|BBBR  |
+| C R  |
+| CDDD |
+J      Y
+\---J--/
+
+
+/------\
+|      |
+|   RAA|
+|BBBR  |
+| C    |
+| CDDD |
+J      Y
+\---J--/
+
+
+/------\
+|   R  |
+|   RAA|
+|BBB   |
+| C    |
+| CDDD |
+J      Y
+\---J--/
+
+
+/------\
+|   R  |
+|   RAA|
+| BBB  |
+| C    |
+| CDDD |
+J      Y
+\---J--/
+
+
+/------\
+|   R  |
+|   RAA|
+|  BBB |
+| C    |
+| CDDD |
+J      Y
+\---J--/
+
+
+/------\
+|   R  |
+|   RAA|
+| BCCC |
+| B    |
+|  DDD |
+J      Y
+\---J--/
+
+
+/------\
+|   R  |
+| A RBB|
+| ACCC |
+|      |
+|  DDD |
+J      Y
+\---J--/
+
+
+/------\
+| A R  |
+| A RBB|
+|  CCC |
+|      |
+|  DDD |
+J      Y
+\---J--/
+
+
+/------\
+| A R  |
+| A RBB|
+| CCC  |
+|      |
+|  DDD |
+J      Y
+\---J--/
+
+
+/------\
+| A R  |
+| A RBB|
+|CCC   |
+|      |
+|  DDD |
+J      Y
+\---J--/
+
+
+/------\
+| A    |
+| A RBB|
+|CCCR  |
+|      |
+|  DDD |
+J      Y
+\---J--/
+
+
+/------\
+| A    |
+| A  BB|
+|CCCR  |
+|   R  |
+|  DDD |
+J      Y
+\---J--/
+
+
+/------\
+| A    |
+| A  BB|
+|CCCR  |
+|   R  |
+| DDD  |
+J      Y
+\---J--/
+
+
+/------\
+| A    |
+| A  BB|
+|CCCR  |
+|   R  |
+|DDD   |
+J      Y
+\---J--/
+
+
+/------\
+| A    |
+| A  BB|
+|CCC   |
+|   R  |
+|DDDR  |
+J      Y
+\---J--/
+
+
+/------\
+| A    |
+| A  BB|
+|CCC   |
+|      |
+|DDDR  |
+J   R  Y
+\---J--/
+
+
+/------\
+| A    |
+| A  BB|
+|CCC   |
+|      |
+|DDD   |
+JRR    Y
+\---J--/
+
+
+/------\
+| A    |
+| A  BB|
+|CCC   |
+|      |
+|DDD   |
+J RR   Y
+\---J--/
+
+
+/------\
+| A    |
+| A  BB|
+|CCC   |
+|      |
+|DDD   |
+J  RR  Y
+\---J--/
+
+
+/------\
+| A    |
+| A  BB|
+|CCC   |
+|      |
+|DDD   |
+J   RR Y
+\---J--/
+
+
+total time: 23s
+max total memory: 252MB
