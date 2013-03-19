@@ -26,12 +26,12 @@ public class WorldScreenContentPane implements ContentPane {
 			setLocation(0, 0);
 		}};
 		
-		controlPanel = new ControlPanel(screen) {{
-			setLocation(0 + worldPanel.aabb.width, 0);
-		}};
+//		controlPanel = new ControlPanel(screen) {{
+//			setLocation(0 + worldPanel.aabb.width, 0);
+//		}};
 		
 		cp.getChildren().add(worldPanel);
-		cp.getChildren().add(controlPanel);
+//		cp.getChildren().add(controlPanel);
 	}
 	
 	public void repaint() {

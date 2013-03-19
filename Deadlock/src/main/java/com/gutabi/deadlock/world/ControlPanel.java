@@ -49,7 +49,7 @@ public class ControlPanel extends PanelBase {
 	public Checkbox explosionsCheckBox;
 	public Checkbox debugCheckBox;
 	
-	public ControlPanel(final WorldScreen screen) {
+	private ControlPanel(final WorldScreen screen) {
 		
 		this.screen = screen;
 		

@@ -44,7 +44,7 @@ public class MainMenu implements KeyListener {
 				s.postDisplay();
 				
 				s.world.render_worldPanel();
-				s.world.render_preview();
+//				s.world.render_preview();
 				s.contentPane.repaint();
 			}
 		};
@@ -96,7 +96,7 @@ public class MainMenu implements KeyListener {
 				s.postDisplay();
 				
 				s.world.render_worldPanel();
-				s.world.render_preview();
+//				s.world.render_preview();
 				s.contentPane.repaint();
 			}
 		};

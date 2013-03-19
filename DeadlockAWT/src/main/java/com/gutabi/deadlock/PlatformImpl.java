@@ -1,5 +1,8 @@
 package com.gutabi.deadlock;
 
+import static com.gutabi.deadlock.DeadlockApplication.APP;
+
+import java.awt.Dimension;
 import java.awt.Graphics2D;
 
 import javax.swing.JFrame;
@@ -52,11 +55,15 @@ public class PlatformImpl extends Platform {
 		
 		content.j.setLayout(null);
 		
+		content.j.setPreferredSize(new Dimension(APP.WINDOW_WIDTH, APP.WINDOW_HEIGHT));
+		
+//		container.getContentPane().add(content.j);
 		container.setContentPane(content.j);
 		content.j.setFocusable(true);
 		content.j.requestFocusInWindow();
 		
 		if (container instanceof JFrame) {
+			((JFrame)container).pack();
 			((JFrame)container).setVisible(true);
 		}
 		

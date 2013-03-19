@@ -129,10 +129,11 @@ public class MenuPanel extends PanelBase {
 		
 		Transform menuTrans = ctxt.getTransform();
 		
-		ctxt.translate(APP.MENU_WIDTH/2 - APP.titleBackground.getWidth()/2, APP.MENU_HEIGHT/2 - APP.titleBackground.getHeight()/2);
+		ctxt.translate(APP.MENU_WIDTH/2 - Math.min(APP.titleBackground.getWidth(), APP.MENU_WIDTH)/2, APP.MENU_HEIGHT/2 - APP.titleBackground.getHeight()/2);
 		ctxt.paintImage(APP.titleBackground,
-				0, 0, APP.titleBackground.getWidth(), APP.titleBackground.getHeight(),
-				0, 0, APP.titleBackground.getWidth(), APP.titleBackground.getHeight());
+				0, 0, Math.min(APP.titleBackground.getWidth(), APP.MENU_WIDTH), APP.titleBackground.getHeight(),
+				0, 0, Math.min(APP.titleBackground.getWidth(), APP.MENU_WIDTH), APP.titleBackground.getHeight());
+		
 		
 		ctxt.setTransform(menuTrans);
 		

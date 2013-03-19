@@ -178,6 +178,36 @@ public class CarTool extends ToolBase {
 					
 					car.driver.overallPos = testPathPos;
 					
+					GraphPosition gpos = car.driver.overallPos.getGraphPosition();
+					
+					if (gpos instanceof RoadPosition) {
+						
+						RoadPosition rpos = (RoadPosition)gpos;
+						
+						double a = rpos.lengthToStartOfRoad / rpos.r.getTotalLength(rpos.r.start, rpos.r.end);
+						
+						double para = 1.8 * a * a - 1.8 * a + 1;
+						
+						screen.world.zoomAbsolute(para);
+						
+						screen.world.render_worldPanel();
+						
+					} else if (gpos instanceof VertexPosition) {
+						
+						screen.world.zoomAbsolute(1.0);
+						
+						screen.world.render_worldPanel();
+						
+					} else if (gpos instanceof RushHourBoardPosition) {
+						
+						screen.world.zoomAbsolute(1.0);
+						
+						screen.world.render_worldPanel();
+						
+					} else {
+						assert false;
+					}
+					
 					screen.contentPane.repaint();
 					
 				}

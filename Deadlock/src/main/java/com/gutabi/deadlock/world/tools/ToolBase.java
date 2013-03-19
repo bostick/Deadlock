@@ -61,28 +61,28 @@ public abstract class ToolBase extends Tool {
 
 	public void plusKey() {
 		
-		screen.world.zoom(1.1);
+		screen.world.zoomRelative(1.1);
 		
 //		screen.contentPane.moved(screen.contentPane.getLastMovedContentPanePoint());
 		
 		screen.world.quadrantMap.computeGridSpacing();
 		
 		screen.world.render_worldPanel();
-		screen.world.render_preview();
+//		screen.world.render_preview();
 		screen.contentPane.repaint();
 		
 	}
 
 	public void minusKey() {
 		
-		screen.world.zoom(0.9);
+		screen.world.zoomRelative(0.9);
 		
 //		screen.contentPane.moved(screen.contentPane.getLastMovedContentPanePoint());
 		
 		screen.world.quadrantMap.computeGridSpacing();
 		
 		screen.world.render_worldPanel();
-		screen.world.render_preview();
+//		screen.world.render_preview();
 		screen.contentPane.repaint();
 		
 	}

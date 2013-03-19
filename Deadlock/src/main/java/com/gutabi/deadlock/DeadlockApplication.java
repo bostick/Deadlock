@@ -11,6 +11,9 @@ import com.gutabi.deadlock.world.sprites.SpriteSheet;
 
 public class DeadlockApplication {
 	
+	public int WINDOW_WIDTH = -1;
+	public int WINDOW_HEIGHT = -1;
+	
 	public int MENUPANEL_WIDTH = -1;
 	public int MENUPANEL_HEIGHT = -1;
 	
@@ -74,6 +77,7 @@ public class DeadlockApplication {
 		explosionSheet.load();
 		
 		titleBackground = iEngine.readImage(rEngine.imageResource("title_background"));
+		
 		title_white = iEngine.readImage(rEngine.imageResource("title_white"));
 		copyright = iEngine.readImage(rEngine.imageResource("copyright"));
 	}

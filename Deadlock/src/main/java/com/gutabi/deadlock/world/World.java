@@ -309,9 +309,21 @@ public class World {
 		return w;
 	}
 	
-	public void zoom(double factor) {
+	public void zoomRelative(double factor) {
 		
 		screen.pixelsPerMeter = factor * screen.pixelsPerMeter; 
+		
+		double newWidth =  screen.contentPane.worldPanel.aabb.width / screen.pixelsPerMeter;
+		double newHeight = screen.contentPane.worldPanel.aabb.height / screen.pixelsPerMeter;
+		
+		screen.worldViewport = new AABB(
+				screen.worldViewport.center.x - newWidth/2,
+				screen.worldViewport.center.y - newHeight/2, newWidth, newHeight);
+	}
+	
+	public void zoomAbsolute(double factor) {
+		
+		screen.pixelsPerMeter = factor * screen.origPixelsPerMeter; 
 		
 		double newWidth =  screen.contentPane.worldPanel.aabb.width / screen.pixelsPerMeter;
 		double newHeight = screen.contentPane.worldPanel.aabb.height / screen.pixelsPerMeter;

@@ -21,25 +21,28 @@ public class DeadlockMain  {
 	
 	static void createAndShowGUI() throws Exception {
 		
-		APP.MENUPANEL_WIDTH = 1584;
-		APP.MENUPANEL_HEIGHT = 822;
+		APP.WINDOW_WIDTH = 480;
+		APP.WINDOW_HEIGHT = 854;
 		
-		APP.QUADRANTEDITORPANEL_WIDTH = 1584;
-		APP.QUADRANTEDITORPANEL_HEIGHT = 822;
+		APP.MENUPANEL_WIDTH = APP.WINDOW_WIDTH;
+		APP.MENUPANEL_HEIGHT = APP.WINDOW_HEIGHT;
 		
-		APP.CONTROLPANEL_WIDTH = 200;
-		APP.CONTROLPANEL_HEIGHT = 822;
+		APP.QUADRANTEDITORPANEL_WIDTH = APP.WINDOW_WIDTH;
+		APP.QUADRANTEDITORPANEL_HEIGHT = APP.WINDOW_HEIGHT;
 		
-		APP.WORLDPANEL_WIDTH = 1384;
-		APP.WORLDPANEL_HEIGHT = 822;
+//		APP.CONTROLPANEL_WIDTH = 200;
+//		APP.CONTROLPANEL_HEIGHT = 854;
+		
+		APP.WORLDPANEL_WIDTH = APP.WINDOW_WIDTH;
+		APP.WORLDPANEL_HEIGHT = APP.WINDOW_HEIGHT;
 		
 		
-		APP.MENU_WIDTH = 800;
-		APP.MENU_HEIGHT = 600;
+		APP.MENU_WIDTH = APP.WINDOW_WIDTH;
+		APP.MENU_HEIGHT = APP.WINDOW_HEIGHT;
 		
-		APP.TITLE_CENTER_Y = 65;
-		APP.MENU_CENTER_Y = 300;
-		APP.COPYRIGHT_CENTER_Y = 568;
+		APP.TITLE_CENTER_Y = 165;
+		APP.MENU_CENTER_Y = (854/2);
+		APP.COPYRIGHT_CENTER_Y = 800;
 		
 		
 		
@@ -59,8 +62,13 @@ public class DeadlockMain  {
 		    }
 		});
 		
-		newFrame.setSize((int)(WindowInfo.windowDim().width), (int)(WindowInfo.windowDim().height));
-		newFrame.setLocation((int)(WindowInfo.windowLoc().x), (int)(WindowInfo.windowLoc().y));
+//		newFrame.setSize((int)(WindowInfo.windowDim().width), (int)(WindowInfo.windowDim().height));
+//		newFrame.setLocation((int)(WindowInfo.windowLoc().x), (int)(WindowInfo.windowLoc().y));
+		
+//		newFrame.setSize(APP.WINDOW_WIDTH, APP.WINDOW_HEIGHT);
+//		newFrame.setLocation((int)WindowInfo.windowDim().width/2 - APP.WINDOW_WIDTH/2, (int)WindowInfo.windowDim().height/2 - APP.WINDOW_HEIGHT/2);
+		
+		newFrame.setLocation((int)WindowInfo.windowDim().width/2 - APP.WINDOW_WIDTH/2, 0);
 		
 		platform.container = newFrame;
 		
