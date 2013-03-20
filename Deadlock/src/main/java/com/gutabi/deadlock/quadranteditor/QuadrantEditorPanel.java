@@ -10,6 +10,7 @@ import com.gutabi.deadlock.ui.PanelBase;
 import com.gutabi.deadlock.ui.Transform;
 import com.gutabi.deadlock.ui.paint.Color;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
+import com.gutabi.deadlock.world.DebuggerScreen;
 import com.gutabi.deadlock.world.Quadrant;
 import com.gutabi.deadlock.world.World;
 import com.gutabi.deadlock.world.WorldScreen;
@@ -22,6 +23,7 @@ public class QuadrantEditorPanel extends PanelBase {
 	
 	QuadrantEditor screen;
 	public WorldScreen worldScreen;
+	DebuggerScreen debuggerScreen;
 	
 	int[][] ini;
 	
@@ -45,7 +47,9 @@ public class QuadrantEditorPanel extends PanelBase {
 			};
 		
 		worldScreen = new WorldScreen();
-		worldScreen.world = World.createWorld(worldScreen, ini);
+		debuggerScreen = new DebuggerScreen(worldScreen);
+		
+		worldScreen.world = World.createWorld(worldScreen, debuggerScreen, ini);
 		worldScreen.contentPane.worldPanel.aabb = new AABB(50, 50, 350, 350);
 		
 		double pixelsPerMeterWidth = worldScreen.contentPane.worldPanel.aabb.width / worldScreen.world.quadrantMap.worldWidth;
@@ -69,7 +73,7 @@ public class QuadrantEditorPanel extends PanelBase {
 					}
 				}
 				
-				worldScreen.world = World.createWorld(worldScreen, ini);
+				worldScreen.world = World.createWorld(worldScreen, debuggerScreen, ini);
 				
 				double pixelsPerMeterWidth = worldScreen.contentPane.worldPanel.aabb.width / worldScreen.world.quadrantMap.worldWidth;
 				double pixelxPerMeterHeight = worldScreen.contentPane.worldPanel.aabb.height / worldScreen.world.quadrantMap.worldHeight;
@@ -115,7 +119,7 @@ public class QuadrantEditorPanel extends PanelBase {
 					}
 				}
 				
-				worldScreen.world = World.createWorld(worldScreen, ini);
+				worldScreen.world = World.createWorld(worldScreen, debuggerScreen, ini);
 				
 				double pixelsPerMeterWidth = worldScreen.contentPane.worldPanel.aabb.width / worldScreen.world.quadrantMap.worldWidth;
 				double pixelxPerMeterHeight = worldScreen.contentPane.worldPanel.aabb.height / worldScreen.world.quadrantMap.worldHeight;
@@ -161,7 +165,7 @@ public class QuadrantEditorPanel extends PanelBase {
 					}
 				}
 				
-				worldScreen.world = World.createWorld(worldScreen, ini);
+				worldScreen.world = World.createWorld(worldScreen, debuggerScreen, ini);
 				
 				double pixelsPerMeterWidth = worldScreen.contentPane.worldPanel.aabb.width / worldScreen.world.quadrantMap.worldWidth;
 				double pixelxPerMeterHeight = worldScreen.contentPane.worldPanel.aabb.height / worldScreen.world.quadrantMap.worldHeight;
@@ -205,7 +209,7 @@ public class QuadrantEditorPanel extends PanelBase {
 					}
 				}
 				
-				worldScreen.world = World.createWorld(worldScreen, ini);
+				worldScreen.world = World.createWorld(worldScreen, debuggerScreen, ini);
 				
 				double pixelsPerMeterWidth = worldScreen.contentPane.worldPanel.aabb.width / worldScreen.world.quadrantMap.worldWidth;
 				double pixelxPerMeterHeight = worldScreen.contentPane.worldPanel.aabb.height / worldScreen.world.quadrantMap.worldHeight;
@@ -250,7 +254,7 @@ public class QuadrantEditorPanel extends PanelBase {
 					}
 				}
 				
-				worldScreen.world = World.createWorld(worldScreen, ini);
+				worldScreen.world = World.createWorld(worldScreen, debuggerScreen, ini);
 				
 				double pixelsPerMeterWidth = worldScreen.contentPane.worldPanel.aabb.width / worldScreen.world.quadrantMap.worldWidth;
 				double pixelxPerMeterHeight = worldScreen.contentPane.worldPanel.aabb.height / worldScreen.world.quadrantMap.worldHeight;
@@ -294,7 +298,7 @@ public class QuadrantEditorPanel extends PanelBase {
 					}
 				}
 				
-				worldScreen.world = World.createWorld(worldScreen, ini);
+				worldScreen.world = World.createWorld(worldScreen, debuggerScreen, ini);
 				
 				double pixelsPerMeterWidth = worldScreen.contentPane.worldPanel.aabb.width / worldScreen.world.quadrantMap.worldWidth;
 				double pixelxPerMeterHeight = worldScreen.contentPane.worldPanel.aabb.height / worldScreen.world.quadrantMap.worldHeight;
@@ -329,11 +333,17 @@ public class QuadrantEditorPanel extends PanelBase {
 			public void action() {
 				
 				WorldScreen s = new WorldScreen();
-				s.world = World.createWorld(s, ini);
+				DebuggerScreen debuggerScreen = new DebuggerScreen(s);
 				
-				APP.platform.setupScreen(s.contentPane.cp);
+				s.world = World.createWorld(s, debuggerScreen, ini);
+				
+				APP.platform.setupAppScreen(s.contentPane.cp);
+				
+				APP.platform.setupDebuggerScreen(debuggerScreen.contentPane.cp);
 				
 				s.postDisplay();
+				
+				debuggerScreen.postDisplay();
 				
 				s.world.render_worldPanel();
 				s.world.render_preview();
@@ -444,7 +454,7 @@ public class QuadrantEditorPanel extends PanelBase {
 				
 				ini[q.r][q.c] = (q.active?0:1);
 				
-				worldScreen.world = World.createWorld(worldScreen, ini);
+				worldScreen.world = World.createWorld(worldScreen, debuggerScreen, ini);
 				
 				double pixelsPerMeterWidth = worldScreen.contentPane.worldPanel.aabb.width / worldScreen.world.quadrantMap.worldWidth;
 				double pixelsPerMeterHeight = worldScreen.contentPane.worldPanel.aabb.height / worldScreen.world.quadrantMap.worldHeight;

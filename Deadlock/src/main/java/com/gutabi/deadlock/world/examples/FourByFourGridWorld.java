@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.gutabi.deadlock.math.Point;
+import com.gutabi.deadlock.world.DebuggerScreen;
 import com.gutabi.deadlock.world.QuadrantMap;
 import com.gutabi.deadlock.world.Stroke;
 import com.gutabi.deadlock.world.World;
@@ -17,11 +18,11 @@ import com.gutabi.deadlock.world.graph.Vertex;
 
 public class FourByFourGridWorld extends World {
 	
-	private FourByFourGridWorld(WorldScreen screen) {
-		super(screen);
+	private FourByFourGridWorld(WorldScreen screen, DebuggerScreen debuggerScreen) {
+		super(screen, debuggerScreen);
 	}
 	
-	public static FourByFourGridWorld createFourByFourGridWorld(WorldScreen screen) {
+	public static FourByFourGridWorld createFourByFourGridWorld(WorldScreen screen, DebuggerScreen debuggerScreen) {
 		
 		int[][] ini = new int[][] {
 				{1, 1, 1, 1},
@@ -30,7 +31,7 @@ public class FourByFourGridWorld extends World {
 				{1, 1, 1, 1}
 			};
 		
-		FourByFourGridWorld w = new FourByFourGridWorld(screen);
+		FourByFourGridWorld w = new FourByFourGridWorld(screen, debuggerScreen);
 		
 		screen.world = w;
 		

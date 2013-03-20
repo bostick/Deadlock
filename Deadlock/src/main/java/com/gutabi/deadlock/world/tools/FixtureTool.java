@@ -1,5 +1,7 @@
 package com.gutabi.deadlock.world.tools;
 
+import static com.gutabi.deadlock.DeadlockApplication.APP;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -12,7 +14,6 @@ import com.gutabi.deadlock.ui.paint.Join;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.world.Quadrant;
 import com.gutabi.deadlock.world.QuadrantMap;
-import com.gutabi.deadlock.world.WorldScreen;
 import com.gutabi.deadlock.world.graph.Axis;
 import com.gutabi.deadlock.world.graph.Fixture;
 import com.gutabi.deadlock.world.graph.FixtureType;
@@ -34,15 +35,15 @@ public class FixtureTool extends ToolBase {
 	
 	private FixtureToolShape shape;
 	
-	public FixtureTool(WorldScreen screen) {
-		super(screen);
+	public FixtureTool() {
+		super();
 	}
 	
 	public void setPoint(Point p) {
 		this.p = p;
 		
 		if (p != null) {
-			currentQuadrant = screen.world.quadrantMap.findQuadrant(p);
+			currentQuadrant = APP.worldScreen.world.quadrantMap.findQuadrant(p);
 			
 			if (currentQuadrant == null) {
 				shape = null;
@@ -56,16 +57,16 @@ public class FixtureTool extends ToolBase {
 				return;
 			}
 			
-			top = screen.world.quadrantMap.upFixPoint(currentQuadrant);
+			top = APP.worldScreen.world.quadrantMap.upFixPoint(currentQuadrant);
 			Point topCenter = top.center();
 			
-			bottom = screen.world.quadrantMap.downFixPoint(currentQuadrant);
+			bottom = APP.worldScreen.world.quadrantMap.downFixPoint(currentQuadrant);
 			Point bottomCenter = bottom.center();
 			
-			left = screen.world.quadrantMap.leftFixPoint(currentQuadrant);
+			left = APP.worldScreen.world.quadrantMap.leftFixPoint(currentQuadrant);
 			Point leftCenter = left.center();
 			
-			right = screen.world.quadrantMap.rightFixPoint(currentQuadrant);
+			right = APP.worldScreen.world.quadrantMap.rightFixPoint(currentQuadrant);
 			Point rightCenter = right.center();
 			
 			double distToTop = Math.abs(p.y - (topCenter.y - QuadrantMap.QUADRANT_HEIGHT/2));
@@ -129,19 +130,19 @@ public class FixtureTool extends ToolBase {
 	
 	public void escKey() {
 		
-		screen.tool = new RegularTool(screen);
+		APP.worldScreen.tool = new RegularTool();
 		
-		screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.world.lastMovedOrDraggedWorldPoint));
+		APP.worldScreen.tool.setPoint(APP.worldScreen.world.quadrantMap.getPoint(APP.worldScreen.world.lastMovedOrDraggedWorldPoint));
 		
-		screen.contentPane.repaint();
+		APP.worldScreen.contentPane.repaint();
 	}
 	
 	public void wKey() {
 		
-		if (screen.world.graph.pureGraphIntersect(shape) == null) {
+		if (APP.worldScreen.world.graph.pureGraphIntersect(shape) == null) {
 			
-			Fixture source = new Fixture(screen.world, getSourcePoint(), axis);
-			Fixture sink = new Fixture(screen.world, getSinkPoint(), axis);
+			Fixture source = new Fixture(APP.worldScreen.world, getSourcePoint(), axis);
+			Fixture sink = new Fixture(APP.worldScreen.world, getSinkPoint(), axis);
 			
 			source.setType(FixtureType.SOURCE);
 			sink.setType(FixtureType.SINK);
@@ -161,24 +162,24 @@ public class FixtureTool extends ToolBase {
 			}
 			
 			Set<Vertex> affected = new HashSet<Vertex>();
-			Set<Vertex> res = screen.world.addFixture(source);
+			Set<Vertex> res = APP.worldScreen.world.addFixture(source);
 			affected.addAll(res);
-			res = screen.world.addFixture(sink);
+			res = APP.worldScreen.world.addFixture(sink);
 			affected.addAll(res);
-			screen.world.graph.computeVertexRadii(affected);
+			APP.worldScreen.world.graph.computeVertexRadii(affected);
 			
-			screen.tool = new RegularTool(screen);
-			screen.tool.setPoint(screen.world.lastMovedWorldPoint);
+			APP.worldScreen.tool = new RegularTool();
+			APP.worldScreen.tool.setPoint(APP.worldScreen.world.lastMovedWorldPoint);
 			
-			screen.world.render_worldPanel();
-			screen.world.render_preview();
-			screen.contentPane.repaint();
+			APP.worldScreen.world.render_worldPanel();
+			APP.worldScreen.world.render_preview();
+			APP.worldScreen.contentPane.repaint();
 		}
 	}
 	
 	public void moved(InputEvent ev) {
-		screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.world.lastMovedOrDraggedWorldPoint));
-		screen.contentPane.repaint();
+		APP.worldScreen.tool.setPoint(APP.worldScreen.world.quadrantMap.getPoint(APP.worldScreen.world.lastMovedOrDraggedWorldPoint));
+		APP.worldScreen.contentPane.repaint();
 	}
 	
 	public void draw(RenderingContext ctxt) {

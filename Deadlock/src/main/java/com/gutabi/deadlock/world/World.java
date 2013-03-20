@@ -33,6 +33,7 @@ import com.gutabi.deadlock.world.graph.Vertex;
 public class World {
 	
 	public WorldScreen screen;
+	public DebuggerScreen debuggerScreen;
 	
 	private Image background;
 	Image previewImage;
@@ -51,8 +52,9 @@ public class World {
 	
 	public org.jbox2d.dynamics.World b2dWorld;
 	
-	public World(WorldScreen screen) {
+	public World(WorldScreen screen, DebuggerScreen debuggerScreen) {
 		this.screen = screen;
+		this.debuggerScreen = debuggerScreen;
 		
 		graph = new Graph(this);
 		
@@ -65,9 +67,9 @@ public class World {
 		b2dWorld.setContactListener(new CarEventListener(this));
 	}
 	
-	public static World createWorld(WorldScreen screen, int[][] ini) {
+	public static World createWorld(WorldScreen screen, DebuggerScreen debuggerScreen, int[][] ini) {
 		
-		World w = new World(screen);
+		World w = new World(screen, debuggerScreen);
 		
 		QuadrantMap qm = new QuadrantMap(w, ini);
 		
@@ -94,8 +96,8 @@ public class World {
 	public void previewPostDisplay() {
 		
 		previewImage = APP.platform.createImageEngine().createImage(
-				(int)screen.contentPane.controlPanel.previewAABB.width,
-				(int)screen.contentPane.controlPanel.previewAABB.height);
+				(int)debuggerScreen.contentPane.controlPanel.previewAABB.width,
+				(int)debuggerScreen.contentPane.controlPanel.previewAABB.height);
 		
 	}
 	
@@ -216,7 +218,7 @@ public class World {
 	
 	public Set<Vertex> createMerger(Point p) {
 		
-		Merger m = Merger.createMergerAndFixtures(this, screen.contentPane.controlPanel, p);
+		Merger m = Merger.createMergerAndFixtures(this, debuggerScreen.contentPane.controlPanel, p);
 		
 		quadrantMap.grassMap.mowGrass(m.getShape());
 		quadrantMap.grassMap.mowGrass(m.top.getShape());
@@ -257,7 +259,7 @@ public class World {
 		return s.toString();
 	}
 	
-	public static World fromFileString(WorldScreen screen, String s) {
+	public static World fromFileString(WorldScreen screen, DebuggerScreen debuggerScreen, String s) {
 		BufferedReader r = new BufferedReader(new StringReader(s));
 		
 		StringBuilder quadrantMapStringBuilder = null;
@@ -298,10 +300,10 @@ public class World {
 			e.printStackTrace();
 		}
 		
-		World w = new World(screen);
+		World w = new World(screen, debuggerScreen);
 		
 		QuadrantMap qm = QuadrantMap.fromFileString(w, quadrantMapStringBuilder.toString());
-		Graph g = Graph.fromFileString(w, screen.contentPane.controlPanel, graphStringBuilder.toString());
+		Graph g = Graph.fromFileString(w, debuggerScreen.contentPane.controlPanel, graphStringBuilder.toString());
 		
 		w.quadrantMap = qm;
 		w.graph = g;
@@ -334,7 +336,7 @@ public class World {
 	}
 	
 	public void previewPan(Point prevDp) {
-		Point worldDP = screen.contentPane.controlPanel.previewToWorld(prevDp);
+		Point worldDP = debuggerScreen.contentPane.controlPanel.previewToWorld(prevDp);
 		
 		screen.worldViewport = new AABB( 
 				screen.worldViewport.x + worldDP.x,
@@ -403,14 +405,14 @@ public class World {
 		
 		ctxt.setColor(Color.LIGHT_GRAY);
 		ctxt.fillRect(
-				0, 0, (int)screen.contentPane.controlPanel.previewAABB.width, (int)screen.contentPane.controlPanel.previewAABB.height);
+				0, 0, (int)debuggerScreen.contentPane.controlPanel.previewAABB.width, (int)debuggerScreen.contentPane.controlPanel.previewAABB.height);
 		
 		Transform origTrans = ctxt.getTransform();
 		ctxt.translate(
-				screen.contentPane.controlPanel.previewAABB.width/2 - (screen.contentPane.controlPanel.previewPixelsPerMeter * screen.world.quadrantMap.worldWidth / 2),
-				screen.contentPane.controlPanel.previewAABB.height/2 - (screen.contentPane.controlPanel.previewPixelsPerMeter * screen.world.quadrantMap.worldHeight / 2));
+				debuggerScreen.contentPane.controlPanel.previewAABB.width/2 - (debuggerScreen.contentPane.controlPanel.previewPixelsPerMeter * screen.world.quadrantMap.worldWidth / 2),
+				debuggerScreen.contentPane.controlPanel.previewAABB.height/2 - (debuggerScreen.contentPane.controlPanel.previewPixelsPerMeter * screen.world.quadrantMap.worldHeight / 2));
 		
-		ctxt.scale(screen.contentPane.controlPanel.previewPixelsPerMeter);
+		ctxt.scale(debuggerScreen.contentPane.controlPanel.previewPixelsPerMeter);
 		
 		screen.world.quadrantMap.render_preview(ctxt);
 		

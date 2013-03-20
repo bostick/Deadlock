@@ -16,7 +16,13 @@ public abstract class Platform {
 	
 	public abstract ContentPane createContentPane(Object... args);
 	
-	public abstract void setupScreen(Object... args);
+	public abstract void setupAppScreen(Object... args);
+	
+	public abstract void setupDebuggerScreen(Object... args);
+	
+	public abstract void teardownAppScreen(Object... args);
+	
+	public abstract void teardownDebuggerScreen(Object... args);
 	
 	public abstract ShapeEngine createShapeEngine(Object... args);
 	

@@ -1,12 +1,13 @@
 package com.gutabi.deadlock.world.tools;
 
+import static com.gutabi.deadlock.DeadlockApplication.APP;
+
 import com.gutabi.deadlock.ui.InputEvent;
-import com.gutabi.deadlock.world.WorldScreen;
 
 public abstract class ToolBase extends Tool {
 	
-	public ToolBase(WorldScreen screen) {
-		super(screen);
+	public ToolBase() {
+		
 	}
 	
 	public void qKey() {
@@ -34,13 +35,13 @@ public abstract class ToolBase extends Tool {
 	}
 	
 	public void gKey() {
-		screen.world.quadrantMap.toggleGrid();
+		APP.worldScreen.world.quadrantMap.toggleGrid();
 		
-		screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.world.lastMovedOrDraggedWorldPoint));
+		APP.worldScreen.tool.setPoint(APP.worldScreen.world.quadrantMap.getPoint(APP.worldScreen.world.lastMovedOrDraggedWorldPoint));
 		
-		screen.world.render_worldPanel();
-		screen.world.render_preview();
-		screen.contentPane.repaint();
+		APP.worldScreen.world.render_worldPanel();
+		APP.worldScreen.world.render_preview();
+		APP.worldScreen.contentPane.repaint();
 	}
 	
 	public void insertKey() {
@@ -61,30 +62,33 @@ public abstract class ToolBase extends Tool {
 
 	public void plusKey() {
 		
-		screen.world.zoomRelative(1.1);
+		APP.worldScreen.world.zoomRelative(1.1);
 		
 //		screen.contentPane.moved(screen.contentPane.getLastMovedContentPanePoint());
 		
-		screen.world.quadrantMap.computeGridSpacing();
+		APP.worldScreen.world.quadrantMap.computeGridSpacing();
 		
-		screen.world.render_worldPanel();
-//		screen.world.render_preview();
-		screen.contentPane.repaint();
+		APP.worldScreen.world.render_worldPanel();
+		APP.worldScreen.world.render_preview();
+		
+		APP.worldScreen.contentPane.repaint();
+		APP.debuggerScreen.contentPane.repaint();
 		
 	}
 
 	public void minusKey() {
 		
-		screen.world.zoomRelative(0.9);
+		APP.worldScreen.world.zoomRelative(0.9);
 		
 //		screen.contentPane.moved(screen.contentPane.getLastMovedContentPanePoint());
 		
-		screen.world.quadrantMap.computeGridSpacing();
+		APP.worldScreen.world.quadrantMap.computeGridSpacing();
 		
-		screen.world.render_worldPanel();
-//		screen.world.render_preview();
-		screen.contentPane.repaint();
+		APP.worldScreen.world.render_worldPanel();
+		APP.worldScreen.world.render_preview();
 		
+		APP.worldScreen.contentPane.repaint();
+		APP.debuggerScreen.contentPane.repaint();
 	}
 
 	public void escKey() {

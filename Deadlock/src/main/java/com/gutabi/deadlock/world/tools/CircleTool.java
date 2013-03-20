@@ -1,5 +1,7 @@
 package com.gutabi.deadlock.world.tools;
 
+import static com.gutabi.deadlock.DeadlockApplication.APP;
+
 import java.util.List;
 import java.util.Set;
 
@@ -12,7 +14,6 @@ import com.gutabi.deadlock.ui.paint.Color;
 import com.gutabi.deadlock.ui.paint.Join;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.world.Stroke;
-import com.gutabi.deadlock.world.WorldScreen;
 import com.gutabi.deadlock.world.graph.Vertex;
 
 public class CircleTool extends ToolBase {
@@ -33,14 +34,14 @@ public class CircleTool extends ToolBase {
 	
 	Knob knob;
 	
-	public CircleTool(WorldScreen screen) {
-		super(screen);
+	public CircleTool() {
+		super();
 		
 		mode = CircleToolMode.FREE;
 		yRadius = Vertex.INIT_VERTEX_RADIUS;
 		xRadius = Vertex.INIT_VERTEX_RADIUS;
 		
-		ulKnob = new Knob(screen, screen.world) {
+		ulKnob = new Knob(APP.worldScreen.world) {
 			public void drag(Point p) {
 				
 				Point newPoint = world.quadrantMap.getPoint(p);
@@ -53,7 +54,7 @@ public class CircleTool extends ToolBase {
 			}
 		};
 		
-		brKnob = new Knob(screen, screen.world) {
+		brKnob = new Knob(APP.worldScreen.world) {
 			public void drag(Point p) {
 				
 				Point newPoint = world.quadrantMap.getPoint(p);
@@ -105,14 +106,14 @@ public class CircleTool extends ToolBase {
 	public void escKey() {
 		switch (mode) {
 		case FREE:
-			screen.tool = new RegularTool(screen);
-			screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.world.lastMovedOrDraggedWorldPoint));
-			screen.contentPane.repaint();
+			APP.worldScreen.tool = new RegularTool();
+			APP.worldScreen.tool.setPoint(APP.worldScreen.world.quadrantMap.getPoint(APP.worldScreen.world.lastMovedOrDraggedWorldPoint));
+			APP.worldScreen.contentPane.repaint();
 			break;
 		case SET:
 			mode = CircleToolMode.FREE;
-			screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.world.lastMovedOrDraggedWorldPoint));
-			screen.contentPane.repaint();
+			APP.worldScreen.tool.setPoint(APP.worldScreen.world.quadrantMap.getPoint(APP.worldScreen.world.lastMovedOrDraggedWorldPoint));
+			APP.worldScreen.contentPane.repaint();
 			break;
 		case KNOB:
 			assert false;
@@ -124,27 +125,27 @@ public class CircleTool extends ToolBase {
 		switch (mode) {
 		case FREE:
 			mode = CircleToolMode.SET;
-			screen.contentPane.repaint();
+			APP.worldScreen.contentPane.repaint();
 			break;
 		case SET:
 			
 			List<Point> pts = shape.skeleton;
-			Stroke s = new Stroke(screen.world);
+			Stroke s = new Stroke(APP.worldScreen.world);
 			for (Point p : pts) {
 				s.add(p);
 			}
 			s.finish();
 			
 			Set<Vertex> affected = s.processNewStroke();
-			screen.world.graph.computeVertexRadii(affected);
+			APP.worldScreen.world.graph.computeVertexRadii(affected);
 			
-			screen.tool = new RegularTool(screen);
+			APP.worldScreen.tool = new RegularTool();
 			
-			screen.tool.setPoint(screen.world.lastMovedWorldPoint);
+			APP.worldScreen.tool.setPoint(APP.worldScreen.world.lastMovedWorldPoint);
 			
-			screen.world.render_worldPanel();
-			screen.world.render_preview();
-			screen.contentPane.repaint();
+			APP.worldScreen.world.render_worldPanel();
+			APP.worldScreen.world.render_preview();
+			APP.worldScreen.contentPane.repaint();
 			break;
 		case KNOB:
 			break;
@@ -155,9 +156,9 @@ public class CircleTool extends ToolBase {
 		switch (mode) {
 		case FREE:
 			
-			screen.tool.setPoint(screen.world.quadrantMap.getPoint(screen.world.lastMovedOrDraggedWorldPoint));
+			APP.worldScreen.tool.setPoint(APP.worldScreen.world.quadrantMap.getPoint(APP.worldScreen.world.lastMovedOrDraggedWorldPoint));
 			
-			screen.contentPane.repaint();
+			APP.worldScreen.contentPane.repaint();
 			break;
 		case SET:
 		case KNOB:
@@ -169,32 +170,32 @@ public class CircleTool extends ToolBase {
 		
 		switch (mode) {
 		case FREE:
-			setPoint(screen.world.lastDraggedWorldPoint);
+			setPoint(APP.worldScreen.world.lastDraggedWorldPoint);
 			break;
 		case SET:
-			if (!screen.world.lastDraggedWorldPointWasNull) {
+			if (!APP.worldScreen.world.lastDraggedWorldPointWasNull) {
 				break;
 			}
-			if (!(ulKnob.hitTest(screen.world.lastPressedWorldPoint) ||
-					brKnob.hitTest(screen.world.lastPressedWorldPoint))) {
+			if (!(ulKnob.hitTest(APP.worldScreen.world.lastPressedWorldPoint) ||
+					brKnob.hitTest(APP.worldScreen.world.lastPressedWorldPoint))) {
 				break;
 			}
-			if (ulKnob.hitTest(screen.world.lastPressedWorldPoint)) {
+			if (ulKnob.hitTest(APP.worldScreen.world.lastPressedWorldPoint)) {
 				mode = CircleToolMode.KNOB;
 				knob = ulKnob;
 				origKnobCenter = knob.p;
-			} else if (brKnob.hitTest(screen.world.lastPressedWorldPoint)) {
+			} else if (brKnob.hitTest(APP.worldScreen.world.lastPressedWorldPoint)) {
 				mode = CircleToolMode.KNOB;
 				knob = brKnob;
 				origKnobCenter = knob.p;
 			}
 		case KNOB:
 			
-			Point diff = new Point(screen.world.lastDraggedWorldPoint.x - screen.world.lastPressedWorldPoint.x, screen.world.lastDraggedWorldPoint.y - screen.world.lastPressedWorldPoint.y);
+			Point diff = new Point(APP.worldScreen.world.lastDraggedWorldPoint.x - APP.worldScreen.world.lastPressedWorldPoint.x, APP.worldScreen.world.lastDraggedWorldPoint.y - APP.worldScreen.world.lastPressedWorldPoint.y);
 			
 			knob.drag(origKnobCenter.plus(diff));
 			
-			screen.contentPane.repaint();
+			APP.worldScreen.contentPane.repaint();
 			break;
 		}
 	}
@@ -206,7 +207,7 @@ public class CircleTool extends ToolBase {
 			break;
 		case KNOB:	
 			mode = CircleToolMode.SET;
-			screen.contentPane.repaint();
+			APP.worldScreen.contentPane.repaint();
 			break;
 		}
 	}

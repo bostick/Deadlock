@@ -46,7 +46,7 @@ public class WorldScreen implements KeyListener {
 		
 		mode = WorldScreenMode.EDITING;
 		
-		tool = new RegularTool(this);
+		tool = new RegularTool();
 		
 		stats = new Stats(this);
 		
@@ -73,7 +73,7 @@ public class WorldScreen implements KeyListener {
 		
 		mode = WorldScreenMode.EDITING;
 		
-		tool = new RegularTool(this);
+		tool = new RegularTool();
 		
 	}
 	

@@ -10,22 +10,29 @@ import com.gutabi.deadlock.ui.InputEvent;
 import com.gutabi.deadlock.ui.Panel;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 
-public class WorldScreenContentPane implements ContentPane {
+public class DebuggerScreenContentPane implements ContentPane {
 	
 	public ContentPane cp;
-	public WorldScreen screen;
+//	public DebuggerScreen debuggerScreen;
+//	WorldScreen worldScreen;
 	
-	public WorldPanel worldPanel;
+//	public WorldPanel worldPanel;
+	public ControlPanel controlPanel;
 	
-	public WorldScreenContentPane(WorldScreen screen) {
-		this.cp = APP.platform.createContentPane(screen);
-		this.screen = screen;
+	public DebuggerScreenContentPane(DebuggerScreen debuggerScreen, final WorldScreen worldScreen) {
+		this.cp = APP.platform.createContentPane(debuggerScreen);
+//		this.screen = screen;
 		
-		worldPanel = new WorldPanel(screen) {{
+//		worldPanel = new WorldPanel(screen) {{
+//			setLocation(0, 0);
+//		}};
+		
+		controlPanel = new ControlPanel() {{
 			setLocation(0, 0);
 		}};
 		
-		cp.getChildren().add(worldPanel);
+//		cp.getChildren().add(worldPanel);
+		cp.getChildren().add(controlPanel);
 	}
 	
 	public void repaint() {

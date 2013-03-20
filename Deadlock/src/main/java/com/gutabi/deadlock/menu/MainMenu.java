@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.gutabi.deadlock.quadranteditor.QuadrantEditor;
 import com.gutabi.deadlock.ui.KeyListener;
+import com.gutabi.deadlock.world.DebuggerScreen;
 import com.gutabi.deadlock.world.WorldScreen;
 import com.gutabi.deadlock.world.examples.FourByFourGridWorld;
 import com.gutabi.deadlock.world.examples.OneByOneWorld;
@@ -36,16 +37,22 @@ public class MainMenu implements KeyListener {
 		MenuItem oneMenuItem = new MenuItem(MainMenu.this,"1x1 Demo") {
 			public void action() {
 				
-				WorldScreen s = new WorldScreen();
-				s.world = OneByOneWorld.createOneByOneWorld(s);
+				APP.worldScreen = new WorldScreen();
+				APP.debuggerScreen = new DebuggerScreen(APP.worldScreen);
 				
-				APP.platform.setupScreen(s.contentPane.cp);
+				APP.worldScreen.world = OneByOneWorld.createOneByOneWorld(APP.worldScreen, APP.debuggerScreen);
 				
-				s.postDisplay();
+				APP.platform.setupAppScreen(APP.worldScreen.contentPane.cp);
 				
-				s.world.render_worldPanel();
-//				s.world.render_preview();
-				s.contentPane.repaint();
+				APP.platform.setupDebuggerScreen(APP.debuggerScreen.contentPane.cp);
+				
+				APP.worldScreen.postDisplay();
+				
+				APP.debuggerScreen.postDisplay();
+				
+				APP.worldScreen.world.render_worldPanel();
+				APP.worldScreen.world.render_preview();
+				APP.worldScreen.contentPane.repaint();
 			}
 		};
 		add(oneMenuItem);
@@ -53,16 +60,22 @@ public class MainMenu implements KeyListener {
 		MenuItem fourMenuItem = new MenuItem(MainMenu.this, "4x4 Grid Demo") {
 			public void action() {
 				
-				WorldScreen s = new WorldScreen();
-				s.world = FourByFourGridWorld.createFourByFourGridWorld(s);
+				APP.worldScreen = new WorldScreen();
+				DebuggerScreen debuggerScreen = new DebuggerScreen(APP.worldScreen);
 				
-				APP.platform.setupScreen(s.contentPane.cp);
+				APP.worldScreen.world = FourByFourGridWorld.createFourByFourGridWorld(APP.worldScreen, debuggerScreen);
 				
-				s.postDisplay();
+				APP.platform.setupAppScreen(APP.worldScreen.contentPane.cp);
 				
-				s.world.render_worldPanel();
-				s.world.render_preview();
-				s.contentPane.repaint();	
+				APP.platform.setupDebuggerScreen(debuggerScreen.contentPane.cp);
+				
+				APP.worldScreen.postDisplay();
+				
+				debuggerScreen.postDisplay();
+				
+				APP.worldScreen.world.render_worldPanel();
+				APP.worldScreen.world.render_preview();
+				APP.worldScreen.contentPane.repaint();	
 			}
 		};
 		add(fourMenuItem);
@@ -70,16 +83,22 @@ public class MainMenu implements KeyListener {
 		MenuItem aMenuItem = new MenuItem(MainMenu.this, "World A Demo") {
 			public void action() {
 				
-				WorldScreen s = new WorldScreen();
-				s.world = WorldA.createWorldA(s);
+				APP.worldScreen = new WorldScreen();
+				DebuggerScreen debuggerScreen = new DebuggerScreen(APP.worldScreen);
 				
-				APP.platform.setupScreen(s.contentPane.cp);
+				APP.worldScreen.world = WorldA.createWorldA(APP.worldScreen, debuggerScreen);
 				
-				s.postDisplay();
+				APP.platform.setupAppScreen(APP.worldScreen.contentPane.cp);
 				
-				s.world.render_worldPanel();
-				s.world.render_preview();
-				s.contentPane.repaint();
+				APP.platform.setupDebuggerScreen(debuggerScreen.contentPane.cp);
+				
+				APP.worldScreen.postDisplay();
+				
+				debuggerScreen.postDisplay();
+				
+				APP.worldScreen.world.render_worldPanel();
+				APP.worldScreen.world.render_preview();
+				APP.worldScreen.contentPane.repaint();
 			}
 		};
 		add(aMenuItem);
@@ -87,17 +106,23 @@ public class MainMenu implements KeyListener {
 		MenuItem rMenuItem = new MenuItem(MainMenu.this, "Rush Hour") {
 			public void action() {
 				
-				WorldScreen s = new WorldScreen();
-				s.tool = new CarTool(s);
-				s.world = RushHourWorld.createRushHourWorld(s);
+				APP.worldScreen = new WorldScreen();
+				APP.debuggerScreen = new DebuggerScreen(APP.worldScreen);
 				
-				APP.platform.setupScreen(s.contentPane.cp);
+				APP.worldScreen.tool = new CarTool();
+				APP.worldScreen.world = RushHourWorld.createRushHourWorld(APP.worldScreen, APP.debuggerScreen);
 				
-				s.postDisplay();
+				APP.platform.setupAppScreen(APP.worldScreen.contentPane.cp);
 				
-				s.world.render_worldPanel();
-//				s.world.render_preview();
-				s.contentPane.repaint();
+				APP.platform.setupDebuggerScreen(APP.debuggerScreen.contentPane.cp);
+				
+				APP.worldScreen.postDisplay();
+				
+				APP.debuggerScreen.postDisplay();
+				
+				APP.worldScreen.world.render_worldPanel();
+				APP.worldScreen.world.render_preview();
+				APP.worldScreen.contentPane.repaint();
 			}
 		};
 		add(rMenuItem);
@@ -107,7 +132,7 @@ public class MainMenu implements KeyListener {
 				
 				QuadrantEditor s = new QuadrantEditor();
 				
-				APP.platform.setupScreen(s.contentPane.cp);
+				APP.platform.setupAppScreen(s.contentPane.cp);
 				
 				s.postDisplay();
 				

@@ -30,8 +30,8 @@ public class DeadlockMain  {
 		APP.QUADRANTEDITORPANEL_WIDTH = APP.WINDOW_WIDTH;
 		APP.QUADRANTEDITORPANEL_HEIGHT = APP.WINDOW_HEIGHT;
 		
-//		APP.CONTROLPANEL_WIDTH = 200;
-//		APP.CONTROLPANEL_HEIGHT = 854;
+		APP.CONTROLPANEL_WIDTH = 200;
+		APP.CONTROLPANEL_HEIGHT = 854;
 		
 		APP.WORLDPANEL_WIDTH = APP.WINDOW_WIDTH;
 		APP.WORLDPANEL_HEIGHT = APP.WINDOW_HEIGHT;
@@ -62,17 +62,25 @@ public class DeadlockMain  {
 		    }
 		});
 		
-//		newFrame.setSize((int)(WindowInfo.windowDim().width), (int)(WindowInfo.windowDim().height));
-//		newFrame.setLocation((int)(WindowInfo.windowLoc().x), (int)(WindowInfo.windowLoc().y));
-		
-//		newFrame.setSize(APP.WINDOW_WIDTH, APP.WINDOW_HEIGHT);
-//		newFrame.setLocation((int)WindowInfo.windowDim().width/2 - APP.WINDOW_WIDTH/2, (int)WindowInfo.windowDim().height/2 - APP.WINDOW_HEIGHT/2);
-		
 		newFrame.setLocation((int)WindowInfo.windowDim().width/2 - APP.WINDOW_WIDTH/2, 0);
 		
-		platform.container = newFrame;
+		platform.appContainer = newFrame;
 		
-		APP.platform.setupScreen(s.contentPane.cp);
+		
+		
+		
+		newFrame = new JFrame("Debug Control Panel");
+		newFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		
+		newFrame.setLocation((int)WindowInfo.windowDim().width/2 + APP.WINDOW_WIDTH/2 + 100, 0);
+		
+		platform.debuggerContainer = newFrame;
+		
+		
+		
+		
+		APP.platform.setupAppScreen(s.contentPane.cp);
+//		APP.platform.setupDebuggerScreen(s.contentPane.cp);
 		
 		s.postDisplay();
 		s.contentPane.panel.render();

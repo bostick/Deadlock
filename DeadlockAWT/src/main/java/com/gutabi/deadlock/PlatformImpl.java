@@ -23,7 +23,8 @@ import com.gutabi.deadlock.ui.paint.RenderingContextImpl;
 
 public class PlatformImpl extends Platform {
 	
-	public RootPaneContainer container;
+	public RootPaneContainer appContainer;
+	public RootPaneContainer debuggerContainer;
 	
 	public RenderingContext createRenderingContext(Object... args) {
 		
@@ -49,7 +50,7 @@ public class PlatformImpl extends Platform {
 		return new ContentPaneImpl(kl);
 	}
 	
-	public void setupScreen(Object... args) {
+	public void setupAppScreen(Object... args) {
 		
 		ContentPaneImpl content = (ContentPaneImpl)args[0];
 		
@@ -57,18 +58,52 @@ public class PlatformImpl extends Platform {
 		
 		content.j.setPreferredSize(new Dimension(APP.WINDOW_WIDTH, APP.WINDOW_HEIGHT));
 		
-//		container.getContentPane().add(content.j);
-		container.setContentPane(content.j);
+		appContainer.setContentPane(content.j);
 		content.j.setFocusable(true);
 		content.j.requestFocusInWindow();
 		
-		if (container instanceof JFrame) {
-			((JFrame)container).pack();
-			((JFrame)container).setVisible(true);
+		if (appContainer instanceof JFrame) {
+			((JFrame)appContainer).pack();
+			((JFrame)appContainer).setVisible(true);
 		}
 		
 	}
 
+	public void setupDebuggerScreen(Object... args) {
+		
+		ContentPaneImpl content = (ContentPaneImpl)args[0];
+		
+		content.j.setLayout(null);
+		
+		content.j.setPreferredSize(new Dimension(APP.CONTROLPANEL_WIDTH, APP.CONTROLPANEL_HEIGHT));
+		
+		debuggerContainer.setContentPane(content.j);
+		content.j.setFocusable(true);
+		content.j.requestFocusInWindow();
+		
+		if (debuggerContainer instanceof JFrame) {
+			((JFrame)debuggerContainer).pack();
+			((JFrame)debuggerContainer).setVisible(true);
+		}
+		
+	}
+	
+	public void teardownAppScreen(Object... args) {
+		
+		if (appContainer instanceof JFrame) {
+			((JFrame)appContainer).setVisible(false);
+		}
+		
+	}
+
+	public void teardownDebuggerScreen(Object... args) {
+		
+		if (debuggerContainer instanceof JFrame) {
+			((JFrame)debuggerContainer).setVisible(false);
+		}
+		
+	}
+	
 	public FontEngine createFontEngine(Object... args) {
 		return new FontEngineImpl();
 	}

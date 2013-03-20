@@ -20,8 +20,6 @@ public class ControlPanel extends PanelBase {
 	AABB previewAABB = new AABB(5, 400, 100, 100);
 	double previewPixelsPerMeter;
 	
-	WorldScreen screen;
-	
 	Label simulationInitLab;
 	Label normalCarsLab;
 	Label fastCarLab;
@@ -49,9 +47,7 @@ public class ControlPanel extends PanelBase {
 	public Checkbox explosionsCheckBox;
 	public Checkbox debugCheckBox;
 	
-	private ControlPanel(final WorldScreen screen) {
-		
-		this.screen = screen;
+	public ControlPanel() {
 		
 		aabb = new AABB(aabb.x, aabb.y, APP.CONTROLPANEL_WIDTH, APP.CONTROLPANEL_HEIGHT);
 		
@@ -70,7 +66,8 @@ public class ControlPanel extends PanelBase {
 			public void action() {
 				selected = !selected;
 				render();
-				screen.contentPane.repaint();
+				APP.worldScreen.contentPane.repaint();
+				APP.debuggerScreen.contentPane.repaint();
 				
 				APP.NORMALCAR = selected;
 			}
@@ -93,7 +90,8 @@ public class ControlPanel extends PanelBase {
 			public void action() {
 				selected = !selected;
 				render();
-				screen.contentPane.repaint();
+				APP.worldScreen.contentPane.repaint();
+				APP.debuggerScreen.contentPane.repaint();
 				
 				APP.FASTCAR = selected;
 			}
@@ -116,7 +114,8 @@ public class ControlPanel extends PanelBase {
 			public void action() {
 				selected = !selected;
 				render();
-				screen.contentPane.repaint();
+				APP.worldScreen.contentPane.repaint();
+				APP.debuggerScreen.contentPane.repaint();
 				
 				APP.REALLYCAR = selected;
 			}
@@ -138,7 +137,8 @@ public class ControlPanel extends PanelBase {
 			public void action() {
 				selected = !selected;
 				render();
-				screen.contentPane.repaint();
+				APP.worldScreen.contentPane.repaint();
+				APP.debuggerScreen.contentPane.repaint();
 				
 				APP.TRUCK = selected;
 			}
@@ -164,22 +164,23 @@ public class ControlPanel extends PanelBase {
 					
 					stopButton.enabled = true;
 					
-					screen.startRunning();
+					APP.worldScreen.startRunning();
 				} else if (command.equals("pause")) {
 					lab.text = "Unpause";
 					command = "unpause";
 					
-					screen.pauseRunning();
+					APP.worldScreen.pauseRunning();
 				} else if (command.equals("unpause")) {
 					lab.text = "Pause";
 					command = "pause";
 					
-					screen.unpauseRunning();
+					APP.worldScreen.unpauseRunning();
 				}
 				
 				render();
 				stopButton.render();
-				screen.contentPane.repaint();
+				APP.worldScreen.contentPane.repaint();
+				APP.debuggerScreen.contentPane.repaint();
 			}
 		};
 		startButton.lab = new Label("Start");
@@ -199,12 +200,13 @@ public class ControlPanel extends PanelBase {
 					
 					enabled = false;
 					
-					screen.stopRunning();
+					APP.worldScreen.stopRunning();
 				}
 				
 				render();
 				startButton.render();
-				screen.contentPane.repaint();
+				APP.worldScreen.contentPane.repaint();
+				APP.debuggerScreen.contentPane.repaint();
 			}
 		};
 		stopButton.lab = new Label("Stop");
@@ -230,12 +232,15 @@ public class ControlPanel extends PanelBase {
 			public void action() {
 				selected = !selected;
 				render();
-				screen.contentPane.repaint();
+				APP.worldScreen.contentPane.repaint();
+				APP.debuggerScreen.contentPane.repaint();
 				
 				APP.FPS_DRAW = selected;
 				
-				screen.world.render_worldPanel();
-				screen.contentPane.repaint();
+				APP.worldScreen.world.render_worldPanel();
+				
+				APP.worldScreen.contentPane.repaint();
+				APP.debuggerScreen.contentPane.repaint();
 			}
 		};
 		fpsCheckBox.selected = APP.FPS_DRAW;
@@ -255,12 +260,13 @@ public class ControlPanel extends PanelBase {
 			public void action() {
 				selected = !selected;
 				render();
-				screen.contentPane.repaint();
+				APP.worldScreen.contentPane.repaint();
+				APP.debuggerScreen.contentPane.repaint();
 				
 				APP.STOPSIGN_DRAW = selected;
 				
-				screen.world.render_worldPanel();
-				screen.contentPane.repaint();
+				APP.worldScreen.world.render_worldPanel();
+				APP.worldScreen.contentPane.repaint();
 			}
 		};
 		stopSignCheckBox.selected = APP.STOPSIGN_DRAW;
@@ -280,11 +286,13 @@ public class ControlPanel extends PanelBase {
 			public void action() {
 				selected = !selected;
 				render();
-				screen.contentPane.repaint();
+				APP.worldScreen.contentPane.repaint();
+				APP.debuggerScreen.contentPane.repaint();
 				
 				APP.CARTEXTURE_DRAW = selected;
 				
-				screen.contentPane.repaint();
+				APP.worldScreen.contentPane.repaint();
+				APP.debuggerScreen.contentPane.repaint();
 			}
 		};
 		carTextureCheckBox.selected = APP.CARTEXTURE_DRAW;
@@ -304,11 +312,13 @@ public class ControlPanel extends PanelBase {
 			public void action() {
 				selected = !selected;
 				render();
-				screen.contentPane.repaint();
+				APP.worldScreen.contentPane.repaint();
+				APP.debuggerScreen.contentPane.repaint();
 				
 				APP.EXPLOSIONS_DRAW = selected;
 				
-				screen.contentPane.repaint();
+				APP.worldScreen.contentPane.repaint();
+				APP.debuggerScreen.contentPane.repaint();
 			}
 		};
 		explosionsCheckBox.selected = APP.EXPLOSIONS_DRAW;
@@ -328,12 +338,14 @@ public class ControlPanel extends PanelBase {
 			public void action() {
 				selected = !selected;
 				render();
-				screen.contentPane.repaint();
+				APP.worldScreen.contentPane.repaint();
+				APP.debuggerScreen.contentPane.repaint();
 				
 				APP.DEBUG_DRAW = selected;
 				
-				screen.world.render_worldPanel();
-				screen.contentPane.repaint();
+				APP.worldScreen.world.render_worldPanel();
+				APP.worldScreen.contentPane.repaint();
+				APP.debuggerScreen.contentPane.repaint();
 			}
 		};
 		debugCheckBox.selected = APP.DEBUG_DRAW;
@@ -355,11 +367,11 @@ public class ControlPanel extends PanelBase {
 	
 	public void postDisplay() {
 		
-		double pixelsPerMeterWidth = previewAABB.width / screen.world.quadrantMap.worldWidth;
-		double pixelsPerMeterHeight = previewAABB.height / screen.world.quadrantMap.worldHeight;
+		double pixelsPerMeterWidth = previewAABB.width / APP.worldScreen.world.quadrantMap.worldWidth;
+		double pixelsPerMeterHeight = previewAABB.height / APP.worldScreen.world.quadrantMap.worldHeight;
 		previewPixelsPerMeter = Math.min(pixelsPerMeterWidth, pixelsPerMeterHeight);
 		
-		screen.world.previewPostDisplay();
+		APP.worldScreen.world.previewPostDisplay();
 	}
 	
 	public Point previewToWorld(Point p) {
@@ -445,11 +457,11 @@ public class ControlPanel extends PanelBase {
 				double dx = lastDragPreviewPoint.x - penDragPreviewPoint.x;
 				double dy = lastDragPreviewPoint.y - penDragPreviewPoint.y;
 				
-				screen.world.previewPan(new Point(dx, dy));
+				APP.worldScreen.world.previewPan(new Point(dx, dy));
 				
-				screen.world.render_worldPanel();
-				screen.world.render_preview();
-				screen.contentPane.repaint();
+				APP.worldScreen.world.render_worldPanel();
+				APP.worldScreen.world.render_preview();
+				APP.worldScreen.contentPane.repaint();
 			}
 			
 		}
@@ -501,19 +513,19 @@ public class ControlPanel extends PanelBase {
 		
 		ctxt.translate(previewAABB.x, previewAABB.y);
 		
-		ctxt.paintImage(screen.world.previewImage,
+		ctxt.paintImage(APP.worldScreen.world.previewImage,
 				0, 0, (int)previewAABB.width, (int)previewAABB.height,
 				0, 0, (int)previewAABB.width, (int)previewAABB.height);
 		
-		Point prevLoc = worldToPreview(screen.worldViewport.ul);
+		Point prevLoc = worldToPreview(APP.worldScreen.worldViewport.ul);
 		
-		Point prevDim = worldToPreview(new Point(screen.worldViewport.width, screen.worldViewport.height));
+		Point prevDim = worldToPreview(new Point(APP.worldScreen.worldViewport.width, APP.worldScreen.worldViewport.height));
 		
 		AABB prev = new AABB(prevLoc.x, prevLoc.y, prevDim.x, prevDim.y);
 		
 		ctxt.translate(
-				previewAABB.width/2 - (previewPixelsPerMeter * screen.world.quadrantMap.worldWidth / 2),
-				previewAABB.height/2 - (previewPixelsPerMeter * screen.world.quadrantMap.worldHeight / 2));
+				previewAABB.width/2 - (previewPixelsPerMeter * APP.worldScreen.world.quadrantMap.worldWidth / 2),
+				previewAABB.height/2 - (previewPixelsPerMeter * APP.worldScreen.world.quadrantMap.worldHeight / 2));
 		
 		ctxt.setColor(Color.BLUE);
 		prev.draw(ctxt);

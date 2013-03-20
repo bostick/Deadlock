@@ -38,6 +38,8 @@ public class ShapeUtils {
 				return intersectAC((AABB)s1, (Circle)s0);
 			} else if (s1 instanceof Circle) {
 				return intersectCC((Circle)s0, (Circle)s1);
+			} else if (s1 instanceof Capsule) {
+				return intersectCapC((Capsule)s1, (Circle)s0);
 			} else if (s1 instanceof OBB) {
 				return intersectCO((Circle)s0, (OBB)s1);
 			}

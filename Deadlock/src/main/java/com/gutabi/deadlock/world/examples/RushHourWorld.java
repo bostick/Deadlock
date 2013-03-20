@@ -1,6 +1,7 @@
 package com.gutabi.deadlock.world.examples;
 
 import com.gutabi.deadlock.math.Point;
+import com.gutabi.deadlock.world.DebuggerScreen;
 import com.gutabi.deadlock.world.QuadrantMap;
 import com.gutabi.deadlock.world.World;
 import com.gutabi.deadlock.world.WorldScreen;
@@ -15,17 +16,17 @@ import com.gutabi.deadlock.world.sprites.CarSheet.CarType;
 
 public class RushHourWorld extends World {
 	
-	private RushHourWorld(WorldScreen screen) {
-		super(screen);
+	private RushHourWorld(WorldScreen screen, DebuggerScreen debuggerScreen) {
+		super(screen, debuggerScreen);
 	}
 	
-	public static RushHourWorld createRushHourWorld(WorldScreen screen) {
+	public static RushHourWorld createRushHourWorld(WorldScreen screen, DebuggerScreen debuggerScreen) {
 		
 		int[][] ini = new int[][] {
 				{1}
 			};
 		
-		final RushHourWorld w = new RushHourWorld(screen);
+		final RushHourWorld w = new RushHourWorld(screen, debuggerScreen);
 		
 		QuadrantMap qm = new QuadrantMap(w, ini);
 		

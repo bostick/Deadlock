@@ -31,7 +31,7 @@ public class QuadrantEditor implements KeyListener {
 		
 		MainMenu s = new MainMenu();
 		
-		APP.platform.setupScreen(s.contentPane);
+		APP.platform.setupAppScreen(s.contentPane);
 		
 		s.postDisplay();
 		

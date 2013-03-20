@@ -4,16 +4,13 @@ import com.gutabi.deadlock.geom.Shape;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.InputEvent;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
-import com.gutabi.deadlock.world.WorldScreen;
 
 public abstract class Tool {
 	
-	public final WorldScreen screen;
-	
 	public Point p;
 	
-	public Tool(WorldScreen screen) {
-		this.screen = screen;
+	public Tool() {
+		
 	}
 	
 	public abstract void setPoint(Point p);
