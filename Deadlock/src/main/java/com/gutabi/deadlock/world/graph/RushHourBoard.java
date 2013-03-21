@@ -923,13 +923,11 @@ public class RushHourBoard extends Entity {
 		return true;
 	}
 	
-	public GraphPositionPath getPath(Side s, int index) {
-		switch (s) {
-		case LEFT:
-		case RIGHT:
+	public GraphPositionPath getPath(Axis a, int index) {
+		switch (a) {
+		case LEFTRIGHT:
 			return rowPaths.get(index);
-		case TOP:
-		case BOTTOM:
+		case TOPBOTTOM:
 			return colPaths.get(index);
 		}
 		

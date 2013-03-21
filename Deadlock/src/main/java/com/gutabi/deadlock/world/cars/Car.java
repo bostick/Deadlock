@@ -57,7 +57,7 @@ public abstract class Car extends Entity {
 	
 	public AABB localAABB;
 	public Point localFront;
-	public Body b2dBody;
+	private Body b2dBody;
 	protected PolygonShape b2dShape;
 	public org.jbox2d.dynamics.Fixture b2dFixture;
 	
@@ -160,6 +160,16 @@ public abstract class Car extends Entity {
 		momentOfInertia = b2dBody.getInertia();
 	}
 	
+	public void b2dSetTransform() {
+		
+		thread-safety
+		
+		d;
+		
+		b2dBody.setTransform(center.vec2(), (float)angle);
+		
+	}
+	
 	public void computeDynamicPropertiesAlways() {
 		vel = b2dBody.getLinearVelocity();
 	}
@@ -227,9 +237,8 @@ public abstract class Car extends Entity {
 			break;
 		case IDLE:
 		case DRAGGING:
-			assert false;
-			break;
-		case COASTING:
+		case COASTING_FORWARD:
+		case COASTING_BACKWARD:
 			
 			((InteractiveDriver)driver).computeDynamicPropertiesMoving();
 			
@@ -273,7 +282,8 @@ public abstract class Car extends Entity {
 			break;
 		case IDLE:
 		case DRAGGING:
-		case COASTING:
+		case COASTING_FORWARD:
+		case COASTING_BACKWARD:
 			break;
 		}
 		destroyed = true;

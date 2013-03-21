@@ -103,7 +103,21 @@ public class CarTool extends ToolBase {
 //					
 //					APP.appScreen.contentPane.repaint();
 					
-					car.state = CarStateEnum.COASTING;
+					Point worldFront = Geom.localToWorld(car.localFront, car.angle, car.center);
+					GraphPositionPathPosition centerPathPos = car.driver.overallPath.generalSearch(car.center, car.driver.overallPos, car.CAR_LENGTH);
+					GraphPositionPathPosition frontPathPos = car.driver.overallPath.generalSearch(worldFront, car.driver.overallPos, car.CAR_LENGTH);
+					int directionInTrack;
+					if (DMath.lessThan(centerPathPos.combo, frontPathPos.combo)) {
+						directionInTrack = 1;
+					} else {
+						directionInTrack = -1;
+					}
+					
+					if (directionInTrack == 1) {
+						car.state = CarStateEnum.COASTING_FORWARD;
+					} else {
+						car.state = CarStateEnum.COASTING_BACKWARD;
+					}
 					
 				} else if (gpos instanceof VertexPosition) {
 					
@@ -111,6 +125,7 @@ public class CarTool extends ToolBase {
 					 * reset
 					 */
 					car.setTransform(car.toolOrigP, car.toolOrigAngle);
+					car.b2dSetTransform();
 					car.driver.overallPos = car.driver.toolOrigOverallPos;
 					
 					worldScreen.world.zoomAbsolute(1.0);
@@ -146,6 +161,7 @@ public class CarTool extends ToolBase {
 						car.state = CarStateEnum.IDLE;
 						
 						car.setTransform(rounded.p, car.angle);
+						car.b2dSetTransform();
 						car.driver.overallPos = car.driver.overallPath.generalSearch(car.center, car.driver.overallPos, car.CAR_LENGTH);
 						
 						worldScreen.world.zoomAbsolute(1.0);
@@ -162,6 +178,7 @@ public class CarTool extends ToolBase {
 						 * reset
 						 */
 						car.setTransform(car.toolOrigP, car.toolOrigAngle);
+						car.b2dSetTransform();
 						car.driver.overallPos = car.driver.toolOrigOverallPos;
 						
 						worldScreen.world.zoomAbsolute(1.0);
@@ -206,6 +223,7 @@ public class CarTool extends ToolBase {
 				if (!collidesWithBoardOrOtherCars(car, testPathPos.p)) {
 					
 					car.setTransform(testPathPos.p, newAngle(car, testPathPos));
+					car.b2dSetTransform();
 					
 					car.driver.overallPos = testPathPos;
 					

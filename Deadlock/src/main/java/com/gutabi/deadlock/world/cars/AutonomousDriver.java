@@ -4,13 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.gutabi.deadlock.math.DMath;
-import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.world.graph.GraphPositionPath;
 import com.gutabi.deadlock.world.graph.GraphPositionPathPosition;
 
 public final class AutonomousDriver extends Driver {
-	
-	Point goalPoint;
 	
 	public static final double COMPLETE_STOP_WAIT_TIME = 0.0;
 	
@@ -181,7 +178,8 @@ public final class AutonomousDriver extends Driver {
 			break;
 		case IDLE:
 		case DRAGGING:
-		case COASTING:
+		case COASTING_FORWARD:
+		case COASTING_BACKWARD:
 			break;
 		}
 	}

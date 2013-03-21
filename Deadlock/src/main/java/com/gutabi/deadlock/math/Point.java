@@ -3,8 +3,6 @@ package com.gutabi.deadlock.math;
 import java.util.Scanner;
 import java.util.regex.MatchResult;
 
-import org.jbox2d.common.Vec2;
-
 public class Point {
 	
 	public final double x;
@@ -58,16 +56,6 @@ public class Point {
 		String y = result.group(2);
 		sc.close();
 		return new Point(Double.parseDouble(x), Double.parseDouble(y));
-	}
-	
-	
-	
-	public Vec2 vec2() {
-		return new Vec2((float)x, (float)y);
-	}
-	
-	public static Point point(Vec2 p) {
-		return new Point(p.x, p.y);
 	}
 	
 	public double distanceTo(Point p) {

@@ -7,12 +7,15 @@ public class InteractiveEngine extends Engine {
 	protected InteractiveEngine(World world, Car c) {
 		super(world, c);
 		
+		maxSpeed = Double.POSITIVE_INFINITY;
+		
 		/*
 		 * turning radius
 		 * 3 car lengths for 180 deg = 3 meters for 3.14 radians
 		 */
 		maxRadsPerMeter = 1.0;
-		maxAcceleration = Double.POSITIVE_INFINITY;
+		
+		maxAcceleration = 1000.0;
 		
 		frictionForwardImpulseCoefficient = 0.01;
 		frictionLateralImpulseCoefficient = 0.04;

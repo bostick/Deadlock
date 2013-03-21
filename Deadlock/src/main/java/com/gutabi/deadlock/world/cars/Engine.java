@@ -43,8 +43,13 @@ public abstract class Engine {
 		case CRASHED:
 		case SKIDDED:
 		case SINKED:
-		case COASTING:
+		case COASTING_FORWARD:
 			updateFriction();
+			updateDrive(t);
+			break;
+		case COASTING_BACKWARD:
+			updateFriction();
+			updateReverseDrive(t);
 			break;
 		case IDLE:
 		case DRAGGING:
@@ -97,8 +102,7 @@ public abstract class Engine {
 		c.b2dBody.applyLinearImpulse(c.currentUpNormal.mul(driveLateralImpulse), c.b2dBody.getWorldCenter());
 		
 		
-		
-		Point dp = new Point(((AutonomousDriver)c.driver).goalPoint.x-c.center.x, ((AutonomousDriver)c.driver).goalPoint.y-c.center.y);
+		Point dp = new Point(c.driver.goalPoint.x-c.center.x, c.driver.goalPoint.y-c.center.y);
 		
 		double goalAngle = Math.atan2(dp.y, dp.x);
 		
@@ -117,18 +121,72 @@ public abstract class Engine {
 		
 		double actualDistance = Math.abs(c.forwardSpeed * world.screen.DT);
 		double maxRads = maxRadsPerMeter * actualDistance;
-//		double negMaxRads = -maxRads;
 		if (dw > maxRads) {
 			dw = maxRads;
 		} else if (dw < -maxRads) {
 			dw = -maxRads;
 		}
 		
-//		if (dw > 0.52) {
-//			String.class.getName();
-//		} else if (dw < -0.52) {
-//			String.class.getName();
-//		}
+		float goalAngVel = (float)(dw / world.screen.DT);
+		
+		float angImpulse = (float)(turnAngularImpulseCoefficient * c.momentOfInertia * (goalAngVel - c.angularVel));
+		
+		c.b2dBody.applyAngularImpulse(angImpulse);
+		
+	}
+	
+	private void updateReverseDrive(double t) {
+		
+		double dv;
+		
+		double backwardSpeed = -c.forwardSpeed;
+		
+		if (maxSpeed > backwardSpeed) {
+			dv = maxSpeed - backwardSpeed;
+		} else {
+			dv = 0.0f;
+		}
+		if (dv < 0) {
+			assert false;
+		}
+		if (dv > maxAcceleration * world.screen.DT) {
+			dv = maxAcceleration * world.screen.DT;
+		}
+		
+		float backwardImpulse = (float)(driveForwardImpulseCoefficient * c.mass * dv);
+		
+		c.b2dBody.applyLinearImpulse(c.currentRightNormal.mul(-backwardImpulse), c.b2dBody.getWorldCenter());
+		
+		Vec2 cancelingImpulse = c.vel.mul(-1).mul(c.mass);
+		float driveLateralImpulse = (float)(driveLateralImpulseCoefficient * Vec2.dot(c.currentUpNormal, cancelingImpulse));
+		
+		c.b2dBody.applyLinearImpulse(c.currentUpNormal.mul(driveLateralImpulse), c.b2dBody.getWorldCenter());
+		
+		
+		Point dp = new Point(c.driver.goalPoint.x-c.center.x, c.driver.goalPoint.y-c.center.y);
+		
+		double goalAngle = Math.atan2(dp.y, dp.x);
+		
+		double dw = ((float)goalAngle) - c.angle;
+		
+		while (dw > Math.PI) {
+			dw -= 2*Math.PI;
+		}
+		while (dw < -Math.PI) {
+			dw += 2*Math.PI;
+		}
+		
+		/*
+		 * turning radius
+		 */
+		
+		double actualDistance = Math.abs(backwardSpeed * world.screen.DT);
+		double maxRads = maxRadsPerMeter * actualDistance;
+		if (dw > maxRads) {
+			dw = maxRads;
+		} else if (dw < -maxRads) {
+			dw = -maxRads;
+		}
 		
 		float goalAngVel = (float)(dw / world.screen.DT);
 		

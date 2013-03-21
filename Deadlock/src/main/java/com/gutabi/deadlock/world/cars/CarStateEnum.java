@@ -13,5 +13,6 @@ public enum CarStateEnum {
 	
 	IDLE,
 	DRAGGING,
-	COASTING,
+	COASTING_FORWARD,
+	COASTING_BACKWARD,
 }

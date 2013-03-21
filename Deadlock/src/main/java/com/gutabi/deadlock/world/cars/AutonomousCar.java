@@ -75,7 +75,8 @@ public class AutonomousCar extends Car {
 			break;
 		case IDLE:
 		case DRAGGING:
-		case COASTING:
+		case COASTING_FORWARD:
+		case COASTING_BACKWARD:
 			break;
 		}
 		
@@ -216,7 +217,8 @@ public class AutonomousCar extends Car {
 			
 		case IDLE:
 		case DRAGGING:
-		case COASTING:
+		case COASTING_FORWARD:
+		case COASTING_BACKWARD:
 			return true;
 		}
 		
@@ -247,7 +249,8 @@ public class AutonomousCar extends Car {
 					break;
 				case IDLE:
 				case DRAGGING:
-				case COASTING:
+				case COASTING_FORWARD:
+				case COASTING_BACKWARD:
 					ctxt.setColor(Color.BLUE);
 					break;
 				}
@@ -270,7 +273,8 @@ public class AutonomousCar extends Car {
 					break;
 				case IDLE:
 				case DRAGGING:
-				case COASTING:
+				case COASTING_FORWARD:
+				case COASTING_BACKWARD:
 					ctxt.setColor(Color.RED);
 					break;
 				}

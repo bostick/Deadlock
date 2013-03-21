@@ -74,14 +74,14 @@ public class Quadrant {
 	
 	public void computeGridSpacing() {
 		
-		double curGridSpacingPixels =  gridSpacing * map.world.screen.pixelsPerMeter;
+		double curGridSpacingPixels =  gridSpacing * map.world.worldScreen.pixelsPerMeter;
 		while (curGridSpacingPixels > 64+16) {
 			gridSpacing *= 0.5;
-			curGridSpacingPixels =  gridSpacing * map.world.screen.pixelsPerMeter;
+			curGridSpacingPixels =  gridSpacing * map.world.worldScreen.pixelsPerMeter;
 		}
 		while (curGridSpacingPixels < 64-16) {
 			gridSpacing *= 2.0;
-			curGridSpacingPixels =  gridSpacing * map.world.screen.pixelsPerMeter;
+			curGridSpacingPixels =  gridSpacing * map.world.worldScreen.pixelsPerMeter;
 		}
 	}
 	
@@ -120,7 +120,7 @@ public class Quadrant {
 				Transform origTransform = ctxt.getTransform();
 				
 				ctxt.translate(c * QuadrantMap.QUADRANT_WIDTH, r * QuadrantMap.QUADRANT_HEIGHT);
-				ctxt.paintImage(map.quadrantGrass, map.world.screen.pixelsPerMeter,
+				ctxt.paintImage(map.quadrantGrass, map.world.worldScreen.pixelsPerMeter,
 						0.0, 0.0, QuadrantMap.QUADRANT_WIDTH, QuadrantMap.QUADRANT_HEIGHT,
 						0, 0, map.quadrantGrass.getWidth(), map.quadrantGrass.getHeight());
 				
@@ -134,7 +134,7 @@ public class Quadrant {
 				aabb.draw(ctxt);
 				
 				ctxt.setColor(Color.BLACK);
-				ctxt.paintString(c * QuadrantMap.QUADRANT_WIDTH, r * QuadrantMap.QUADRANT_HEIGHT + 1, 1.0/map.world.screen.pixelsPerMeter, c + " " + r);
+				ctxt.paintString(c * QuadrantMap.QUADRANT_WIDTH, r * QuadrantMap.QUADRANT_HEIGHT + 1, 1.0/map.world.worldScreen.pixelsPerMeter, c + " " + r);
 			}
 			
 			if (grid) {

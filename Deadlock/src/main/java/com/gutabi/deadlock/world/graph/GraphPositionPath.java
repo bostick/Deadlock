@@ -198,6 +198,28 @@ public class GraphPositionPath {
 		return null;
 	}
 	
+	public int nextVertexIndex(int index) {
+		int i = index+1;
+		while (true) {
+			GraphPosition gpos = poss.get(i);
+			if (gpos instanceof VertexPosition) {
+				return i;
+			}
+			i++;
+		}
+	}
+	
+	public int prevVertexIndex(int index) {
+		int i = index;
+		while (true) {
+			GraphPosition gpos = poss.get(i);
+			if (gpos instanceof VertexPosition) {
+				return i;
+			}
+			i--;
+		}
+	}
+	
 	/**
 	 * searches forward from start position
 	 * 

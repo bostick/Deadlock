@@ -1,12 +1,11 @@
 package com.gutabi.deadlock.world.cars;
 
-import com.gutabi.deadlock.math.Point;
-import com.gutabi.deadlock.world.graph.GraphPositionPathPosition;
+import com.gutabi.deadlock.world.graph.GraphPosition;
 import com.gutabi.deadlock.world.graph.RoadPosition;
+import com.gutabi.deadlock.world.graph.RushHourBoardPosition;
+import com.gutabi.deadlock.world.graph.VertexPosition;
 
 public final class InteractiveDriver extends Driver {
-	
-	Point goalPoint;
 	
 	public InteractiveDriver(InteractiveCar c) {
 		super(c);
@@ -18,27 +17,61 @@ public final class InteractiveDriver extends Driver {
 		case IDLE:
 		case DRAGGING:
 			break;
-		case COASTING:
+		case COASTING_FORWARD: {
 			
-			RoadPosition rpos = (RoadPosition)overallPos.getGraphPosition();
-			double toStart = rpos.lengthToStartOfRoad;
-			double toEnd = rpos.lengthToEndOfRoad;
+			GraphPosition gpos = overallPos.getGraphPosition();
 			
-			if (toStart < toEnd) {
+			if (gpos instanceof RoadPosition) {
 				
-				GraphPositionPathPosition next = overallPos.prevBound();
-						
-				goalPoint = next.p;
+				goalPoint = overallPos.nextBound().p;
+				
+			} else if (gpos instanceof VertexPosition) {
+				
+				
+				assert false;
+				
+				
+			} else if (gpos instanceof RushHourBoardPosition) {
+				
+//				GraphPosition pgpos = prevOverallPos.getGraphPosition();
+//				assert pgpos instanceof RoadPosition;
+				assert false;
+				
 				
 			} else {
+				assert false;
+			}
+			break;
+		}
+			
+		case COASTING_BACKWARD: {
+			
+			GraphPosition gpos = overallPos.getGraphPosition();
+			
+			if (gpos instanceof RoadPosition) {
 				
-				GraphPositionPathPosition next = overallPos.nextBound();
-						
-				goalPoint = next.p;
+				goalPoint = overallPos.prevBound().p;
 				
+			} else if (gpos instanceof VertexPosition) {
+				
+				
+				assert false;
+				
+				
+			} else if (gpos instanceof RushHourBoardPosition) {
+				
+//				GraphPosition pgpos = prevOverallPos.getGraphPosition();
+//				assert pgpos instanceof RoadPosition;
+				assert false;
+				
+				
+			} else {
+				assert false;
 			}
 			
 			break;
+		}
+		
 		default:
 			assert false;
 			break;
@@ -48,9 +81,20 @@ public final class InteractiveDriver extends Driver {
 	public void computeDynamicPropertiesMoving() {
 		
 		switch (c.state) {
-		case COASTING:
+		case IDLE:
+			break;
 			
-			overallPos = overallPath.generalSearch(c.center, overallPos, c.CAR_LENGTH);
+		case COASTING_FORWARD:
+			
+//			prevOverallPos = overallPos;
+			overallPos = overallPath.forwardSearch(c.center, overallPos, false, c.CAR_LENGTH);
+			
+			break;
+			
+		case COASTING_BACKWARD:
+			
+//			prevOverallPos = overallPos;
+			overallPos = overallPath.backwardSearch(c.center, overallPos, false, c.CAR_LENGTH);
 			
 			break;
 		default:

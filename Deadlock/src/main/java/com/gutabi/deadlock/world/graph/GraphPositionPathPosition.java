@@ -146,7 +146,7 @@ public class GraphPositionPathPosition {
 		
 		while (true) {
 			
-			int nextVertexIndex = nextVertexIndex(curIndex);
+			int nextVertexIndex = path.nextVertexIndex(curIndex);
 			GraphPosition nextVertexGP = path.get(nextVertexIndex);
 			double nextVertexLengthToStartOfPath = path.cumulativeDistancesFromStart[nextVertexIndex];
 			
@@ -246,17 +246,6 @@ public class GraphPositionPathPosition {
 			return new GraphPositionPathPosition(path, index-1, 0.0);
 		} else {
 			return new GraphPositionPathPosition(path, index, 0.0);
-		}
-	}
-	
-	public int nextVertexIndex(int index) {
-		int i = index+1;
-		while (true) {
-			GraphPosition gpos = path.get(i);
-			if (gpos instanceof VertexPosition) {
-				return i;
-			}
-			i++;
 		}
 	}
 	

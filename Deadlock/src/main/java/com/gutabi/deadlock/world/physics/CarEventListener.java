@@ -1,4 +1,4 @@
-package com.gutabi.deadlock.world.cars;
+package com.gutabi.deadlock.world.physics;
 
 import org.jbox2d.callbacks.ContactImpulse;
 import org.jbox2d.callbacks.ContactListener;
@@ -10,13 +10,16 @@ import org.jbox2d.dynamics.contacts.Contact;
 
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.world.World;
+import com.gutabi.deadlock.world.cars.AutonomousCar;
+import com.gutabi.deadlock.world.cars.Car;
+import com.gutabi.deadlock.world.cars.CarStateEnum;
 import com.gutabi.deadlock.world.sprites.AnimatedExplosion;
 
 public class CarEventListener implements ContactListener {
 	
-	World world;
+	PhysicsWorld world;
 	
-	public CarEventListener(World world) {
+	public CarEventListener(PhysicsWorld world) {
 		this.world = world;
 	}
 	
@@ -51,7 +54,7 @@ public class CarEventListener implements ContactListener {
 			
 			Vec2 p = worldManifold.points[0];
 			
-			world.explosionMap.add(new AnimatedExplosion(world, Point.point(p)));
+			world.carCrash(PhysicsUtils.point(p));
 			
 			if (a.state != CarStateEnum.CRASHED) {
 				a.crash();

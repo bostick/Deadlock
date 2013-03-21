@@ -117,8 +117,8 @@ public class QuadrantMap {
 	
 	public void panelPostDisplay() {
 		
-		int quadrantWidthPixels = (int)Math.ceil(world.screen.origPixelsPerMeter * QUADRANT_WIDTH);
-		int quadrantHeightPixels = (int)Math.ceil(world.screen.origPixelsPerMeter * QUADRANT_HEIGHT);
+		int quadrantWidthPixels = (int)Math.ceil(world.worldScreen.origPixelsPerMeter * QUADRANT_WIDTH);
+		int quadrantHeightPixels = (int)Math.ceil(world.worldScreen.origPixelsPerMeter * QUADRANT_HEIGHT);
 		
 		quadrantGrass = APP.platform.createImageEngine().createImage(quadrantWidthPixels, quadrantHeightPixels);
 		

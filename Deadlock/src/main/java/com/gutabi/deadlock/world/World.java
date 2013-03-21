@@ -8,8 +8,6 @@ import java.io.StringReader;
 import java.util.List;
 import java.util.Set;
 
-import org.jbox2d.common.Vec2;
-
 import com.gutabi.deadlock.Entity;
 import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.math.Point;
@@ -19,7 +17,6 @@ import com.gutabi.deadlock.ui.Transform;
 import com.gutabi.deadlock.ui.paint.Color;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.world.cars.Car;
-import com.gutabi.deadlock.world.cars.CarEventListener;
 import com.gutabi.deadlock.world.graph.Fixture;
 import com.gutabi.deadlock.world.graph.Graph;
 import com.gutabi.deadlock.world.graph.Intersection;
@@ -29,10 +26,11 @@ import com.gutabi.deadlock.world.graph.RoadPosition;
 import com.gutabi.deadlock.world.graph.RushHourBoard;
 import com.gutabi.deadlock.world.graph.RushHourStud;
 import com.gutabi.deadlock.world.graph.Vertex;
+import com.gutabi.deadlock.world.physics.PhysicsWorld;
+import com.gutabi.deadlock.world.sprites.AnimatedExplosion;
 
-public class World {
+public class World extends PhysicsWorld {
 	
-	public WorldScreen screen;
 	public DebuggerScreen debuggerScreen;
 	
 	private Image background;
@@ -50,10 +48,9 @@ public class World {
 	public RoadMarkMap roadMarkMap;
 	public GrassMarkMap grassMarkMap;
 	
-	public org.jbox2d.dynamics.World b2dWorld;
-	
-	public World(WorldScreen screen, DebuggerScreen debuggerScreen) {
-		this.screen = screen;
+	public World(WorldScreen worldScreen, DebuggerScreen debuggerScreen) {
+		super(worldScreen);
+		
 		this.debuggerScreen = debuggerScreen;
 		
 		graph = new Graph(this);
@@ -63,13 +60,11 @@ public class World {
 		roadMarkMap = new RoadMarkMap();
 		grassMarkMap = new GrassMarkMap();
 		
-		b2dWorld = new org.jbox2d.dynamics.World(new Vec2(0.0f, 0.0f), true);
-		b2dWorld.setContactListener(new CarEventListener(this));
 	}
 	
-	public static World createWorld(WorldScreen screen, DebuggerScreen debuggerScreen, int[][] ini) {
+	public static World createWorld(WorldScreen worldScreen, DebuggerScreen debuggerScreen, int[][] ini) {
 		
-		World w = new World(screen, debuggerScreen);
+		World w = new World(worldScreen, debuggerScreen);
 		
 		QuadrantMap qm = new QuadrantMap(w, ini);
 		
@@ -81,16 +76,16 @@ public class World {
 	public void panelPostDisplay() {
 		
 		background = APP.platform.createImageEngine().createImage(
-				(int)screen.contentPane.worldPanel.aabb.width,
-				(int)screen.contentPane.worldPanel.aabb.height);
+				(int)worldScreen.contentPane.worldPanel.aabb.width,
+				(int)worldScreen.contentPane.worldPanel.aabb.height);
 		
 		quadrantMap.panelPostDisplay();
 		
-		screen.worldViewport = new AABB( 
-				-(screen.contentPane.worldPanel.aabb.width / screen.pixelsPerMeter) / 2 + quadrantMap.worldWidth/2 ,
-				-(screen.contentPane.worldPanel.aabb.height / screen.pixelsPerMeter) / 2 + quadrantMap.worldHeight/2,
-				screen.contentPane.worldPanel.aabb.width / screen.pixelsPerMeter,
-				screen.contentPane.worldPanel.aabb.height / screen.pixelsPerMeter);
+		worldScreen.worldViewport = new AABB( 
+				-(worldScreen.contentPane.worldPanel.aabb.width / worldScreen.pixelsPerMeter) / 2 + quadrantMap.worldWidth/2 ,
+				-(worldScreen.contentPane.worldPanel.aabb.height / worldScreen.pixelsPerMeter) / 2 + quadrantMap.worldHeight/2,
+				worldScreen.contentPane.worldPanel.aabb.width / worldScreen.pixelsPerMeter,
+				worldScreen.contentPane.worldPanel.aabb.height / worldScreen.pixelsPerMeter);
 	}
 	
 	public void previewPostDisplay() {
@@ -129,16 +124,13 @@ public class World {
 		
 	}
 	
-	int velocityIterations = 6;
-	int positionIterations = 2;
-	
 	public void integrate(double t) {
 		
 		this.t = t;
 		
 		preStep();
 		
-		b2dWorld.step((float)screen.DT, velocityIterations, positionIterations);
+		step();
 		
 		postStep();
 		
@@ -167,6 +159,10 @@ public class World {
 			graph.postStep(t);
 		}
 		
+	}
+	
+	public void carCrash(Point p) {
+		explosionMap.add(new AnimatedExplosion(this, p));
 	}
 	
 	public Entity hitTest(Point p) {
@@ -313,36 +309,36 @@ public class World {
 	
 	public void zoomRelative(double factor) {
 		
-		screen.pixelsPerMeter = factor * screen.pixelsPerMeter; 
+		worldScreen.pixelsPerMeter = factor * worldScreen.pixelsPerMeter; 
 		
-		double newWidth =  screen.contentPane.worldPanel.aabb.width / screen.pixelsPerMeter;
-		double newHeight = screen.contentPane.worldPanel.aabb.height / screen.pixelsPerMeter;
+		double newWidth =  worldScreen.contentPane.worldPanel.aabb.width / worldScreen.pixelsPerMeter;
+		double newHeight = worldScreen.contentPane.worldPanel.aabb.height / worldScreen.pixelsPerMeter;
 		
-		screen.worldViewport = new AABB(
-				screen.worldViewport.center.x - newWidth/2,
-				screen.worldViewport.center.y - newHeight/2, newWidth, newHeight);
+		worldScreen.worldViewport = new AABB(
+				worldScreen.worldViewport.center.x - newWidth/2,
+				worldScreen.worldViewport.center.y - newHeight/2, newWidth, newHeight);
 	}
 	
 	public void zoomAbsolute(double factor) {
 		
-		screen.pixelsPerMeter = factor * screen.origPixelsPerMeter; 
+		worldScreen.pixelsPerMeter = factor * worldScreen.origPixelsPerMeter; 
 		
-		double newWidth =  screen.contentPane.worldPanel.aabb.width / screen.pixelsPerMeter;
-		double newHeight = screen.contentPane.worldPanel.aabb.height / screen.pixelsPerMeter;
+		double newWidth =  worldScreen.contentPane.worldPanel.aabb.width / worldScreen.pixelsPerMeter;
+		double newHeight = worldScreen.contentPane.worldPanel.aabb.height / worldScreen.pixelsPerMeter;
 		
-		screen.worldViewport = new AABB(
-				screen.worldViewport.center.x - newWidth/2,
-				screen.worldViewport.center.y - newHeight/2, newWidth, newHeight);
+		worldScreen.worldViewport = new AABB(
+				worldScreen.worldViewport.center.x - newWidth/2,
+				worldScreen.worldViewport.center.y - newHeight/2, newWidth, newHeight);
 	}
 	
 	public void previewPan(Point prevDp) {
 		Point worldDP = debuggerScreen.contentPane.controlPanel.previewToWorld(prevDp);
 		
-		screen.worldViewport = new AABB( 
-				screen.worldViewport.x + worldDP.x,
-				screen.worldViewport.y + worldDP.y,
-				screen.worldViewport.width,
-				screen.worldViewport.height);
+		worldScreen.worldViewport = new AABB( 
+				worldScreen.worldViewport.x + worldDP.x,
+				worldScreen.worldViewport.y + worldDP.y,
+				worldScreen.worldViewport.width,
+				worldScreen.worldViewport.height);
 	}
 	
 	
@@ -385,10 +381,10 @@ public class World {
 		RenderingContext ctxt = APP.platform.createRenderingContext(background);
 		
 		ctxt.setColor(Color.LIGHT_GRAY);
-		ctxt.fillRect(0, 0, (int)screen.contentPane.worldPanel.aabb.width, (int)screen.contentPane.worldPanel.aabb.height);
+		ctxt.fillRect(0, 0, (int)worldScreen.contentPane.worldPanel.aabb.width, (int)worldScreen.contentPane.worldPanel.aabb.height);
 		
-		ctxt.scale(screen.pixelsPerMeter);
-		ctxt.translate(-screen.worldViewport.x, -screen.worldViewport.y);
+		ctxt.scale(worldScreen.pixelsPerMeter);
+		ctxt.translate(-worldScreen.worldViewport.x, -worldScreen.worldViewport.y);
 		
 		quadrantMap.render_panel(ctxt);
 		graph.render_panel(ctxt);
@@ -409,14 +405,14 @@ public class World {
 		
 		Transform origTrans = ctxt.getTransform();
 		ctxt.translate(
-				debuggerScreen.contentPane.controlPanel.previewAABB.width/2 - (debuggerScreen.contentPane.controlPanel.previewPixelsPerMeter * screen.world.quadrantMap.worldWidth / 2),
-				debuggerScreen.contentPane.controlPanel.previewAABB.height/2 - (debuggerScreen.contentPane.controlPanel.previewPixelsPerMeter * screen.world.quadrantMap.worldHeight / 2));
+				debuggerScreen.contentPane.controlPanel.previewAABB.width/2 - (debuggerScreen.contentPane.controlPanel.previewPixelsPerMeter * worldScreen.world.quadrantMap.worldWidth / 2),
+				debuggerScreen.contentPane.controlPanel.previewAABB.height/2 - (debuggerScreen.contentPane.controlPanel.previewPixelsPerMeter * worldScreen.world.quadrantMap.worldHeight / 2));
 		
 		ctxt.scale(debuggerScreen.contentPane.controlPanel.previewPixelsPerMeter);
 		
-		screen.world.quadrantMap.render_preview(ctxt);
+		worldScreen.world.quadrantMap.render_preview(ctxt);
 		
-		screen.world.graph.render_preview(ctxt);
+		worldScreen.world.graph.render_preview(ctxt);
 		
 		ctxt.setTransform(origTrans);
 		
@@ -429,13 +425,13 @@ public class World {
 		
 		ctxt.paintImage(
 				background,
-				0, 0, (int)screen.contentPane.worldPanel.aabb.width, (int)screen.contentPane.worldPanel.aabb.height,
+				0, 0, (int)worldScreen.contentPane.worldPanel.aabb.width, (int)worldScreen.contentPane.worldPanel.aabb.height,
 				0, 0, background.getWidth(), background.getHeight());
 		
 		Transform origTrans = ctxt.getTransform();
 		
-		ctxt.scale(screen.pixelsPerMeter);
-		ctxt.translate(-screen.worldViewport.x, -screen.worldViewport.y);
+		ctxt.scale(worldScreen.pixelsPerMeter);
+		ctxt.translate(-worldScreen.worldViewport.x, -worldScreen.worldViewport.y);
 		
 		synchronized (APP) {
 			
@@ -462,19 +458,19 @@ public class World {
 		
 		Transform origTransform = ctxt.getTransform();
 		
-		ctxt.paintString(0, 0, 1.0/screen.pixelsPerMeter, "time: " + t);
+		ctxt.paintString(0, 0, 1.0/worldScreen.pixelsPerMeter, "time: " + t);
 		
 		ctxt.translate(0, 1);
 		
-		ctxt.paintString(0, 0, 1.0/screen.pixelsPerMeter, "body count: " + b2dWorld.getBodyCount());
+		ctxt.paintString(0, 0, 1.0/worldScreen.pixelsPerMeter, "body count: " + getBodyCount());
 		
 		ctxt.translate(0, 1);
 		
-		ctxt.paintString(0, 0, 1.0/screen.pixelsPerMeter, "car count: " + carMap.size());
+		ctxt.paintString(0, 0, 1.0/worldScreen.pixelsPerMeter, "car count: " + carMap.size());
 		
 		ctxt.translate(0, 1);
 		
-		ctxt.paintString(0, 0, 1.0/screen.pixelsPerMeter, "splosions count: " + explosionMap.size());
+		ctxt.paintString(0, 0, 1.0/worldScreen.pixelsPerMeter, "splosions count: " + explosionMap.size());
 		
 		ctxt.translate(0, 1);
 		

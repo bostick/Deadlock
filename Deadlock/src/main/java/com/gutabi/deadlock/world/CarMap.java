@@ -5,9 +5,6 @@ import static com.gutabi.deadlock.DeadlockApplication.APP;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jbox2d.callbacks.QueryCallback;
-
-import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.paint.Cap;
 import com.gutabi.deadlock.ui.paint.Join;
@@ -55,28 +52,13 @@ public class CarMap {
 		return null;
 	}
 	
-	public boolean intersect(AABB aabb) {
-		
-		org.jbox2d.collision.AABB b2dAABB = new org.jbox2d.collision.AABB(aabb.ul.vec2(), aabb.br.vec2());
-		
-		final boolean[] intersecting = new boolean[1];
-		
-		world.b2dWorld.queryAABB(new QueryCallback() {
-			public boolean reportFixture(org.jbox2d.dynamics.Fixture fixture) {
-				intersecting[0] = true;
-				return false;
-			}
-		}, b2dAABB);
-		
-		return intersecting[0];
-	}
-	
 	public void paint(RenderingContext ctxt) {
 		
 		if (APP.DEBUG_DRAW) {
 			ctxt.setStroke(0.0, Cap.SQUARE, Join.MITER);
-			world.b2dWorld.setDebugDraw(ctxt);
-			world.b2dWorld.drawDebugData();
+			
+			world.drawPhysicsDebug(ctxt);
+			
 		}
 		
 		for (Car c : cars) {
@@ -186,7 +168,8 @@ public class CarMap {
 				break;
 			case IDLE:
 			case DRAGGING:
-			case COASTING:
+			case COASTING_FORWARD:
+			case COASTING_BACKWARD:
 				break;
 			}
 		}
@@ -253,7 +236,8 @@ public class CarMap {
 				break;
 			case IDLE:
 			case DRAGGING:
-			case COASTING:
+			case COASTING_FORWARD:
+			case COASTING_BACKWARD:
 				break;
 			}
 			

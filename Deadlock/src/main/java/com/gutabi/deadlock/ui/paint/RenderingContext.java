@@ -1,10 +1,5 @@
 package com.gutabi.deadlock.ui.paint;
 
-import org.jbox2d.callbacks.DebugDraw;
-import org.jbox2d.common.Color3f;
-import org.jbox2d.common.OBBViewportTransform;
-import org.jbox2d.common.Vec2;
-
 import com.gutabi.deadlock.Resource;
 import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.geom.Line;
@@ -13,12 +8,10 @@ import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.Image;
 import com.gutabi.deadlock.ui.Transform;
 
-public abstract class RenderingContext extends DebugDraw {
+public abstract class RenderingContext {
 	
 	public RenderingContext() {
-		super(new OBBViewportTransform());
 		
-		m_drawFlags = DebugDraw.e_dynamicTreeBit;
 	}
 	
 	public abstract void setAlpha(double a);
@@ -68,45 +61,5 @@ public abstract class RenderingContext extends DebugDraw {
 	public abstract void drawLine(Line a);
 	
 	public abstract void paintLine(Line a);
-	
-	
-	
-	
-	
-	
-
-	
-	public void drawPoint(Vec2 argPoint, float argRadiusOnScreen, Color3f argColor) {
-		assert false;
-	}
-
-	public void drawSolidPolygon(Vec2[] vertices, int vertexCount, Color3f color) {
-		assert false;
-	}
-
-	public void drawCircle(Vec2 center, float radius, Color3f color) {
-		assert false;
-	}
-
-	public void drawSolidCircle(Vec2 center, float radius, Vec2 axis, Color3f color) {
-		assert false;
-	}
-	
-	public void drawSegment(Vec2 p1, Vec2 p2, Color3f color) {
-		setColor(Color.WHITE);
-		Line line = new Line(Point.point(p1), Point.point(p2));
-		line.draw(this);
-	}
-	
-	public void drawTransform(org.jbox2d.common.Transform xf) {
-		assert false;
-	}
-
-	public void drawString(float x, float y, String s, Color3f color) {
-		
-	}
-	
-	
-	
 	
 }

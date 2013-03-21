@@ -31,15 +31,15 @@ public class InteractiveCar extends Car {
 		case IDLE:
 		case DRAGGING:
 			break;
-		case COASTING: 
+		case COASTING_FORWARD:
+		case COASTING_BACKWARD:
 			((InteractiveDriver)driver).preStep(t);
+			engine.preStep(t);
 			break;
 		default:
 			assert false;
 			break;
 		}
-		
-		engine.preStep(t);
 		
 	}
 	
@@ -47,9 +47,14 @@ public class InteractiveCar extends Car {
 			
 			switch (state) {
 			case IDLE:
-			case DRAGGING:
 				return true;
-			case COASTING:
+			case DRAGGING:
+				
+//				computeDynamicPropertiesBlah();
+				
+				return true;
+			case COASTING_FORWARD:
+			case COASTING_BACKWARD:
 				
 				computeDynamicPropertiesAlways();
 				computeDynamicPropertiesMoving();
