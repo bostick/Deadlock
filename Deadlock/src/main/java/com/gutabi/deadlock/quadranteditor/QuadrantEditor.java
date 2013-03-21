@@ -2,11 +2,12 @@ package com.gutabi.deadlock.quadranteditor;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
+import com.gutabi.deadlock.AppScreen;
 import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.menu.MainMenu;
 import com.gutabi.deadlock.ui.KeyListener;
 
-public class QuadrantEditor implements KeyListener {
+public class QuadrantEditor extends AppScreen implements KeyListener {
 	
 	public QuadrantEditorContentPane contentPane;
 	

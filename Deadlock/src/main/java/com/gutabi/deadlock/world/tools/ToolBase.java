@@ -2,12 +2,24 @@ package com.gutabi.deadlock.world.tools;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
+import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.InputEvent;
+import com.gutabi.deadlock.world.WorldScreen;
 
-public abstract class ToolBase extends Tool {
+public abstract class ToolBase implements Tool {
 	
-	public ToolBase() {
+	public Point p;
+	
+	final WorldScreen worldScreen;
+	
+	public ToolBase(WorldScreen worldScreen) {
 		
+		this.worldScreen = worldScreen;
+		
+	}
+	
+	public Point getPoint() {
+		return p;
 	}
 	
 	public void qKey() {
@@ -35,13 +47,13 @@ public abstract class ToolBase extends Tool {
 	}
 	
 	public void gKey() {
-		APP.worldScreen.world.quadrantMap.toggleGrid();
+		worldScreen.world.quadrantMap.toggleGrid();
 		
-		APP.worldScreen.tool.setPoint(APP.worldScreen.world.quadrantMap.getPoint(APP.worldScreen.world.lastMovedOrDraggedWorldPoint));
+		worldScreen.tool.setPoint(worldScreen.world.quadrantMap.getPoint(worldScreen.world.lastMovedOrDraggedWorldPoint));
 		
-		APP.worldScreen.world.render_worldPanel();
-		APP.worldScreen.world.render_preview();
-		APP.worldScreen.contentPane.repaint();
+		worldScreen.world.render_worldPanel();
+		worldScreen.world.render_preview();
+		worldScreen.contentPane.repaint();
 	}
 	
 	public void insertKey() {
@@ -62,32 +74,32 @@ public abstract class ToolBase extends Tool {
 
 	public void plusKey() {
 		
-		APP.worldScreen.world.zoomRelative(1.1);
+		worldScreen.world.zoomRelative(1.1);
 		
 //		screen.contentPane.moved(screen.contentPane.getLastMovedContentPanePoint());
 		
-		APP.worldScreen.world.quadrantMap.computeGridSpacing();
+		worldScreen.world.quadrantMap.computeGridSpacing();
 		
-		APP.worldScreen.world.render_worldPanel();
-		APP.worldScreen.world.render_preview();
+		worldScreen.world.render_worldPanel();
+		worldScreen.world.render_preview();
 		
-		APP.worldScreen.contentPane.repaint();
+		worldScreen.contentPane.repaint();
 		APP.debuggerScreen.contentPane.repaint();
 		
 	}
 
 	public void minusKey() {
 		
-		APP.worldScreen.world.zoomRelative(0.9);
+		worldScreen.world.zoomRelative(0.9);
 		
 //		screen.contentPane.moved(screen.contentPane.getLastMovedContentPanePoint());
 		
-		APP.worldScreen.world.quadrantMap.computeGridSpacing();
+		worldScreen.world.quadrantMap.computeGridSpacing();
 		
-		APP.worldScreen.world.render_worldPanel();
-		APP.worldScreen.world.render_preview();
+		worldScreen.world.render_worldPanel();
+		worldScreen.world.render_preview();
 		
-		APP.worldScreen.contentPane.repaint();
+		worldScreen.contentPane.repaint();
 		APP.debuggerScreen.contentPane.repaint();
 	}
 

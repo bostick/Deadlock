@@ -185,6 +185,8 @@ public class CarMap {
 				
 				break;
 			case IDLE:
+			case DRAGGING:
+			case COASTING:
 				break;
 			}
 		}
@@ -250,6 +252,8 @@ public class CarMap {
 				
 				break;
 			case IDLE:
+			case DRAGGING:
+			case COASTING:
 				break;
 			}
 			

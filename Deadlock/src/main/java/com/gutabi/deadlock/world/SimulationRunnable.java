@@ -2,12 +2,16 @@ package com.gutabi.deadlock.world;
 
 import com.gutabi.deadlock.world.WorldScreen.WorldScreenMode;
 
+import static com.gutabi.deadlock.DeadlockApplication.APP;
+
 public class SimulationRunnable implements Runnable {
 	
-	WorldScreen screen;
+	final WorldScreen worldScreen;
 	
-	public SimulationRunnable(WorldScreen screen) {
-		this.screen = screen;
+	public SimulationRunnable() {
+		
+		worldScreen = (WorldScreen)APP.appScreen;
+		
 	}
 	
 	public void run() {
@@ -18,17 +22,17 @@ public class SimulationRunnable implements Runnable {
 		long currentTimeMillis = System.currentTimeMillis();
 		long newTimeMillis = System.currentTimeMillis();
 		
-		screen.world.preStart();
+		worldScreen.world.preStart();
 		
 		outer:
 		while (true) {
 			
-			if (screen.mode == WorldScreenMode.EDITING) {
+			if (worldScreen.mode == WorldScreenMode.EDITING) {
 				break outer;
-			} else if (screen.mode == WorldScreenMode.PAUSED) {
-				synchronized (screen.pauseLock) {
+			} else if (worldScreen.mode == WorldScreenMode.PAUSED) {
+				synchronized (worldScreen.pauseLock) {
 					try {
-						screen.pauseLock.wait();
+						worldScreen.pauseLock.wait();
 					} catch (InterruptedException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -47,27 +51,28 @@ public class SimulationRunnable implements Runnable {
 			/*
 			 * this max value is a heuristic
 			 */
-			if (frameTimeSeconds > 1 * screen.DT) {
-				frameTimeSeconds = 1 * screen.DT;
+			if (frameTimeSeconds > 1 * worldScreen.DT) {
+				frameTimeSeconds = 1 * worldScreen.DT;
 			}
 			
 			accumulator += frameTimeSeconds;
 			
-			while (accumulator >= screen.DT) {
+			while (accumulator >= worldScreen.DT) {
 				
-				screen.world.integrate(t);
+				worldScreen.world.integrate(t);
 				
-				accumulator -= screen.DT;
-				t += screen.DT;
+				accumulator -= worldScreen.DT;
+				t += worldScreen.DT;
 			}
 			
-			screen.contentPane.repaint();
+			worldScreen.contentPane.repaint();
 			
 		} // outer
 		
-		screen.world.postStop();
+		worldScreen.world.postStop();
 		
-		screen.contentPane.repaint();
+		worldScreen.contentPane.repaint();
+		
 	}
 	
 }

@@ -2,12 +2,6 @@ package com.gutabi.deadlock.world.cars;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
-import org.jbox2d.common.Vec2;
-
-import com.gutabi.deadlock.Entity;
-import com.gutabi.deadlock.geom.AABB;
-import com.gutabi.deadlock.geom.Geom;
-import com.gutabi.deadlock.geom.ShapeUtils;
 import com.gutabi.deadlock.math.DMath;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.paint.Cap;
@@ -17,7 +11,6 @@ import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.world.World;
 import com.gutabi.deadlock.world.graph.Fixture;
 import com.gutabi.deadlock.world.graph.GraphPositionPathPosition;
-import com.gutabi.deadlock.world.graph.Merger;
 
 public class AutonomousCar extends Car {
 	
@@ -33,6 +26,7 @@ public class AutonomousCar extends Car {
 		
 		AutonomousCar c = new AutonomousCar(world, f);
 		c.driver = new AutonomousDriver(c);
+		c.engine = new AutonomousEngine(world, c);
 		
 		c.computeCtorProperties(r);
 		
@@ -63,85 +57,8 @@ public class AutonomousCar extends Car {
 		setTransform(center, angle);
 	}
 	
-	public void computeDynamicPropertiesAlways() {
-		vel = b2dBody.getLinearVelocity();
-	}
-	
-	public void computeDynamicPropertiesMoving() {
-		
-		prevWorldPoint0 = shape.p0;
-		prevWorldPoint3 = shape.p3;
-		
-		pVec2 = b2dBody.getPosition();
-		center = new Point(pVec2.x, pVec2.y);
-		
-		currentRightNormal = b2dBody.getWorldVector(right);
-		currentUpNormal = b2dBody.getWorldVector(up);
-		
-		angle = b2dBody.getAngle();
-		assert !Double.isNaN(angle);
-		
-		angularVel = b2dBody.getAngularVelocity();
-		
-		forwardVel = currentRightNormal.mul(Vec2.dot(currentRightNormal, vel));
-		forwardSpeed = Vec2.dot(vel, currentRightNormal);
-		
-		double angle = b2dBody.getAngle();
-		
-		shape = Geom.localToWorld(localAABB, angle, center);
-		
-		switch (state) {
-		case DRIVING:
-		case BRAKING:
-			
-			((AutonomousDriver)driver).computeDynamicPropertiesMoving();
-			
-			Entity hit = ((AutonomousDriver)driver).overallPath.pureGraphIntersectOBB(this.shape, ((AutonomousDriver)driver).overallPos);
-			
-			boolean wasInMerger = inMerger;
-			if (hit == null) {
-				atleastPartiallyOnRoad = false;
-				inMerger = false;
-			} else {
-				atleastPartiallyOnRoad = true;
-				if (hit instanceof Merger && ShapeUtils.containsAO((AABB)((Merger)hit).getShape(), shape)) {
-					inMerger = true;
-				} else {
-					inMerger = false;
-				}
-			}
-			
-			if (!atleastPartiallyOnRoad) {
-				skid();
-			}
-			
-			if (inMerger == !wasInMerger) {
-				if (inMerger) {
-					b2dFixture.setFilterData(mergingCarFilter);
-				} else {
-					b2dFixture.setFilterData(normalCarFilter);
-				}
-			}
-			
-			break;
-		case SINKED:
-		case SKIDDED:
-		case CRASHED:
-			break;
-		case IDLE:
-			assert false;
-			break;
-		}
-		
-	}
-	
 	public void crash() {
 		state = CarStateEnum.CRASHED;
-		((AutonomousDriver)driver).clear();
-	}
-	
-	public void skid() {
-		state = CarStateEnum.SKIDDED;
 		((AutonomousDriver)driver).clear();
 	}
 	
@@ -157,10 +74,13 @@ public class AutonomousCar extends Car {
 		case SINKED:
 			break;
 		case IDLE:
+		case DRAGGING:
+		case COASTING:
 			break;
 		}
 		
 		engine.preStep(t);
+		
 	}
 	
 	/**
@@ -295,6 +215,8 @@ public class AutonomousCar extends Car {
 			return true;
 			
 		case IDLE:
+		case DRAGGING:
+		case COASTING:
 			return true;
 		}
 		
@@ -324,6 +246,8 @@ public class AutonomousCar extends Car {
 					ctxt.setColor(Color.GREEN);
 					break;
 				case IDLE:
+				case DRAGGING:
+				case COASTING:
 					ctxt.setColor(Color.BLUE);
 					break;
 				}
@@ -345,6 +269,8 @@ public class AutonomousCar extends Car {
 					ctxt.setColor(Color.RED);
 					break;
 				case IDLE:
+				case DRAGGING:
+				case COASTING:
 					ctxt.setColor(Color.RED);
 					break;
 				}

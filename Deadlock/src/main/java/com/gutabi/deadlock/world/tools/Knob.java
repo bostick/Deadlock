@@ -9,6 +9,7 @@ import com.gutabi.deadlock.ui.paint.Color;
 import com.gutabi.deadlock.ui.paint.Join;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.world.World;
+import com.gutabi.deadlock.world.WorldScreen;
 
 public abstract class Knob {
 	
@@ -16,8 +17,12 @@ public abstract class Knob {
 	
 	Point p;
 	
+	WorldScreen worldScreen;
+	
 	public Knob(World world) {
 		this.world = world;
+		
+		worldScreen = (WorldScreen)APP.appScreen;
 	}
 	
 	public void setPoint(Point p) {
@@ -25,7 +30,7 @@ public abstract class Knob {
 	}
 	
 	private AABB aabb() {
-		double pixel = 1/APP.worldScreen.pixelsPerMeter;
+		double pixel = 1/worldScreen.pixelsPerMeter;
 		return new AABB(p.x + -3 * pixel, p.y + -3 * pixel, 7 * pixel, 7 * pixel);
 	}
 	

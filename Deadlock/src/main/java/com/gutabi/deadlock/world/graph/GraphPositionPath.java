@@ -207,6 +207,10 @@ public class GraphPositionPath {
 	 */
 	public GraphPositionPathPosition forwardSearch(Point p, GraphPositionPathPosition start, boolean returnOnLocalMinimum, double distanceFromStart) {
 		
+		if (p.equals(start.p)) {
+			return start;
+		}
+		
 		int closestIndex = start.index;
 		double closestParam = start.param;
 		
@@ -238,6 +242,11 @@ public class GraphPositionPath {
 					/*
 					 * last iteration, deal with now
 					 */
+					
+					if (p.equals(b.p)) {
+						return new GraphPositionPathPosition(this, b.index, b.param);
+					}
+					
 					double dist = Point.distance(p, b.p);
 					if (dist < closestDistance) {
 						closestIndex = b.index;
@@ -246,13 +255,18 @@ public class GraphPositionPath {
 						closestDistance = dist;
 						
 					} else if (returnOnLocalMinimum) {
-						return new GraphPositionPathPosition(this, b.index, b.param);
+						return new GraphPositionPathPosition(this, closestIndex, closestParam);
 					}
 					
 				}
 			} else {
 				
 				Point pOnPath = Point.point(a.floor().p, b.p, u);
+				
+				if (p.equals(pOnPath)) {
+					return new GraphPositionPathPosition(this, a.index, u);
+				}
+				
 				double dist = Point.distance(p, pOnPath);
 				
 				if (dist < closestDistance) {
@@ -262,7 +276,7 @@ public class GraphPositionPath {
 					closestDistance = dist;
 					
 				} else if (returnOnLocalMinimum) {
-					return new GraphPositionPathPosition(this, a.index, u);
+					return new GraphPositionPathPosition(this, closestIndex, closestParam);
 				}
 			}
 			
@@ -297,6 +311,11 @@ public class GraphPositionPath {
 					/*
 					 * last iteration, deal with now
 					 */
+					
+					if (p.equals(b.p)) {
+						return new GraphPositionPathPosition(this, b.index, b.param);
+					}
+					
 					double dist = Point.distance(p, b.p);
 					if (dist < closestDistance) {
 						closestIndex = b.index;
@@ -305,11 +324,16 @@ public class GraphPositionPath {
 						closestDistance = dist;
 						
 					} else if (returnOnLocalMinimum) {
-						return new GraphPositionPathPosition(this, b.index, b.param);
+						return new GraphPositionPathPosition(this, closestIndex, closestParam);
 					}
 				}
 			} else {
 				Point pOnPath = Point.point(a.p, b.p, u);
+				
+				if (p.equals(pOnPath)) {
+					return new GraphPositionPathPosition(this, a.index, u);
+				}
+					
 				double dist = Point.distance(p, pOnPath);
 				if (dist < closestDistance) {
 					closestIndex = a.index;
@@ -318,8 +342,9 @@ public class GraphPositionPath {
 					closestDistance = dist;
 					
 				} else if (returnOnLocalMinimum) {
-					return new GraphPositionPathPosition(this, a.index, u);
+					return new GraphPositionPathPosition(this, closestIndex, closestParam);
 				}
+				
 			}
 			
 			a = b;
@@ -342,6 +367,10 @@ public class GraphPositionPath {
 	 * returns once a local minimum is found
 	 */
 	public GraphPositionPathPosition backwardSearch(Point p, GraphPositionPathPosition start, boolean returnOnLocalMinimum, double distanceFromStart) {
+		
+		if (p.equals(start.p)) {
+			return start;
+		}
 		
 		int closestIndex = start.index;
 		double closestParam = start.param;
@@ -371,6 +400,11 @@ public class GraphPositionPath {
 					/*
 					 * last iteration, deal with now
 					 */
+					
+					if (p.equals(a.p)) {
+						return new GraphPositionPathPosition(this, a.index, a.param);
+					}
+					
 					double dist = Point.distance(p, a.p);
 					if (dist < closestDistance) {
 						closestIndex = a.index;
@@ -379,13 +413,18 @@ public class GraphPositionPath {
 						closestDistance = dist;
 						
 					} else if (returnOnLocalMinimum) {
-						return new GraphPositionPathPosition(this, a.index, a.param);
+						return new GraphPositionPathPosition(this, closestIndex, closestParam);
 					}
 					
 				}
 			} else {
 				
 				Point pOnPath = Point.point(a.p, b.ceiling().p, u);
+				
+				if (p.equals(pOnPath)) {
+					return new GraphPositionPathPosition(this, a.index, u);
+				}
+				
 				double dist = Point.distance(p, pOnPath);
 				
 				if (dist < closestDistance) {
@@ -395,7 +434,7 @@ public class GraphPositionPath {
 					closestDistance = dist;
 					
 				} else if (returnOnLocalMinimum) {
-					return new GraphPositionPathPosition(this, a.index, u);
+					return new GraphPositionPathPosition(this, closestIndex, closestParam);
 				}
 			}
 			
@@ -427,6 +466,11 @@ public class GraphPositionPath {
 					/*
 					 * last iteration, deal with now
 					 */
+					
+					if (p.equals(a.p)) {
+						return new GraphPositionPathPosition(this, a.index, a.param);
+					}
+					
 					double dist = Point.distance(p, a.p);
 					if (dist < closestDistance) {
 						closestIndex = a.index;
@@ -435,11 +479,16 @@ public class GraphPositionPath {
 						closestDistance = dist;
 						
 					} else if (returnOnLocalMinimum) {
-						return new GraphPositionPathPosition(this, a.index, a.param);
+						return new GraphPositionPathPosition(this, closestIndex, closestParam);
 					}
 				}
 			} else {
 				Point pOnPath = Point.point(a.p, b.p, u);
+				
+				if (p.equals(pOnPath)) {
+					return new GraphPositionPathPosition(this, a.index, u);
+				}
+				
 				double dist = Point.distance(p, pOnPath);
 				if (dist < closestDistance) {
 					closestIndex = a.index;
@@ -448,7 +497,7 @@ public class GraphPositionPath {
 					closestDistance = dist;
 					
 				} else if (returnOnLocalMinimum) {
-					return new GraphPositionPathPosition(this, a.index, u);
+					return new GraphPositionPathPosition(this, closestIndex, closestParam);
 				}
 			}
 			

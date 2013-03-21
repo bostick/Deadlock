@@ -48,7 +48,16 @@ public final class AutonomousDriver extends Driver {
 	}
 	
 	public void computeDynamicPropertiesMoving() {
+		
+//		Point old = overallPos.p;
+		
 		overallPos = overallPath.forwardSearch(c.center, overallPos, true, Double.POSITIVE_INFINITY);
+		
+//		double oldDist = Point.distance(c.center, old);
+		
+//		double dist = Point.distance(c.center, overallPos.p);
+//		assert DMath.equals(dist, 0.0);
+		
 	}
 	
 	private void cleanupVertexDepartureQueue() {
@@ -171,6 +180,8 @@ public final class AutonomousDriver extends Driver {
 		case SINKED:
 			break;
 		case IDLE:
+		case DRAGGING:
+		case COASTING:
 			break;
 		}
 	}

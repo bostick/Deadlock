@@ -5,7 +5,6 @@ import java.util.Random;
 import com.gutabi.deadlock.ui.Image;
 import com.gutabi.deadlock.ui.ImageEngine;
 import com.gutabi.deadlock.world.DebuggerScreen;
-import com.gutabi.deadlock.world.WorldScreen;
 import com.gutabi.deadlock.world.sprites.CarSheet;
 import com.gutabi.deadlock.world.sprites.ExplosionSheet;
 import com.gutabi.deadlock.world.sprites.Sheet;
@@ -37,7 +36,7 @@ public class DeadlockApplication {
 	public int COPYRIGHT_CENTER_Y = -1;
 	
 	
-	public WorldScreen worldScreen;
+	public AppScreen appScreen;
 	public DebuggerScreen debuggerScreen;
 	
 //	public URL codebase;

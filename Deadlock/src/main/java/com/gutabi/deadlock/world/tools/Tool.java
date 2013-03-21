@@ -5,19 +5,11 @@ import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.InputEvent;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 
-public abstract class Tool {
-	
-	public Point p;
-	
-	public Tool() {
-		
-	}
+public interface Tool {
 	
 	public abstract void setPoint(Point p);
 	
-	public final Point getPoint() {
-		return p;
-	}
+	public abstract Point getPoint();
 	
 	public abstract Shape getShape();
 	

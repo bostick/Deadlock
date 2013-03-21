@@ -232,31 +232,31 @@ public final class Fixture extends Vertex {
 		
 		switch (randomSpeed) {
 		case 0:
-			c.maxSpeed = 2.5;
+			c.engine.maxSpeed = 2.5;
 			break;
 		case 1:
-			c.maxSpeed = 5.0;
+			c.engine.maxSpeed = 5.0;
 			break;
 		case 2:
-			c.maxSpeed = 10.0;
+			c.engine.maxSpeed = 10.0;
 			break;
 		}
 		
-		if (c.maxSpeed == 2.5) {
+		if (c.engine.maxSpeed == 2.5) {
 			((AutonomousDriver)c.driver).carProximityLookahead = 2.0;
-		} else if (c.maxSpeed == 5.0) {
+		} else if (c.engine.maxSpeed == 5.0) {
 			((AutonomousDriver)c.driver).carProximityLookahead = 2.0;
-		} else if (c.maxSpeed == 10.0) {
+		} else if (c.engine.maxSpeed == 10.0) {
 			((AutonomousDriver)c.driver).carProximityLookahead = 2.25;
 		} else {
 			assert false;
 		}
 		
-		if (c.maxSpeed == 2.5) {
+		if (c.engine.maxSpeed == 2.5) {
 			((AutonomousDriver)c.driver).vertexArrivalLookahead = 0.95;
-		} else if (c.maxSpeed == 5.0) {
+		} else if (c.engine.maxSpeed == 5.0) {
 			((AutonomousDriver)c.driver).vertexArrivalLookahead = 1.30;
-		} else if (c.maxSpeed == 10.0) {
+		} else if (c.engine.maxSpeed == 10.0) {
 			((AutonomousDriver)c.driver).vertexArrivalLookahead = 2.00;
 		} else {
 			assert false;

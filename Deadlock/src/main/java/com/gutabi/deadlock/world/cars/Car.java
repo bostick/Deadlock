@@ -15,11 +15,13 @@ import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.geom.Geom;
 import com.gutabi.deadlock.geom.OBB;
 import com.gutabi.deadlock.geom.Shape;
+import com.gutabi.deadlock.geom.ShapeUtils;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.Transform;
 import com.gutabi.deadlock.ui.paint.Color;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.world.World;
+import com.gutabi.deadlock.world.graph.Merger;
 import com.gutabi.deadlock.world.sprites.CarSheet;
 import com.gutabi.deadlock.world.sprites.CarSheet.CarSheetSprite;
 import com.gutabi.deadlock.world.sprites.SpriteSheet.SpriteSheetSprite;
@@ -30,8 +32,6 @@ public abstract class Car extends Entity {
 	
 	public double CAR_LENGTH = -1;
 	public double CAR_WIDTH = -1;
-	
-	public double maxSpeed = -1;
 	
 	/*
 	 * distance that center of a car has to be from center of a sink in order to be sinked
@@ -95,8 +95,6 @@ public abstract class Car extends Entity {
 		this.world = world;
 		
 		state = CarStateEnum.DRIVING;
-		
-		engine = new Engine(world, this);
 	}
 	
 	public void computeCtorProperties(int r) {
@@ -162,6 +160,83 @@ public abstract class Car extends Entity {
 		momentOfInertia = b2dBody.getInertia();
 	}
 	
+	public void computeDynamicPropertiesAlways() {
+		vel = b2dBody.getLinearVelocity();
+	}
+	
+	public void computeDynamicPropertiesMoving() {
+		
+		prevWorldPoint0 = shape.p0;
+		prevWorldPoint3 = shape.p3;
+		
+		pVec2 = b2dBody.getPosition();
+		center = new Point(pVec2.x, pVec2.y);
+		
+		currentRightNormal = b2dBody.getWorldVector(right);
+		currentUpNormal = b2dBody.getWorldVector(up);
+		
+		angle = b2dBody.getAngle();
+		assert !Double.isNaN(angle);
+		
+		angularVel = b2dBody.getAngularVelocity();
+		
+		forwardVel = currentRightNormal.mul(Vec2.dot(currentRightNormal, vel));
+		forwardSpeed = Vec2.dot(vel, currentRightNormal);
+		
+		double angle = b2dBody.getAngle();
+		
+		shape = Geom.localToWorld(localAABB, angle, center);
+		
+		switch (state) {
+		case DRIVING:
+		case BRAKING:
+			
+			((AutonomousDriver)driver).computeDynamicPropertiesMoving();
+			
+			Entity hit = ((AutonomousDriver)driver).overallPath.pureGraphIntersectOBB(this.shape, ((AutonomousDriver)driver).overallPos);
+			
+			boolean wasInMerger = inMerger;
+			if (hit == null) {
+				atleastPartiallyOnRoad = false;
+				inMerger = false;
+			} else {
+				atleastPartiallyOnRoad = true;
+				if (hit instanceof Merger && ShapeUtils.containsAO((AABB)((Merger)hit).getShape(), shape)) {
+					inMerger = true;
+				} else {
+					inMerger = false;
+				}
+			}
+			
+			if (!atleastPartiallyOnRoad) {
+				skid();
+			}
+			
+			if (inMerger == !wasInMerger) {
+				if (inMerger) {
+					setB2dCollisions(false);
+				} else {
+					setB2dCollisions(true);
+				}
+			}
+			
+			break;
+		case SINKED:
+		case SKIDDED:
+		case CRASHED:
+			break;
+		case IDLE:
+		case DRAGGING:
+			assert false;
+			break;
+		case COASTING:
+			
+			((InteractiveDriver)driver).computeDynamicPropertiesMoving();
+			
+			break;
+		}
+		
+	}
 	
 	Vec2 right = new Vec2(1, 0);
 	Vec2 up = new Vec2(0, 1);
@@ -172,6 +247,19 @@ public abstract class Car extends Entity {
 		normalCarFilter.maskBits = 1;
 		mergingCarFilter.categoryBits = 2;
 		mergingCarFilter.maskBits = 0;
+	}
+	public void setB2dCollisions(boolean collisions) {
+		if (collisions) {
+			b2dFixture.setFilterData(normalCarFilter);
+		} else {
+			b2dFixture.setFilterData(mergingCarFilter);
+		}
+		
+	}
+	
+	public void skid() {
+		state = CarStateEnum.SKIDDED;
+		((AutonomousDriver)driver).clear();
 	}
 	
 	public void destroy() {
@@ -184,6 +272,8 @@ public abstract class Car extends Entity {
 			b2dCleanup();
 			break;
 		case IDLE:
+		case DRAGGING:
+		case COASTING:
 			break;
 		}
 		destroyed = true;

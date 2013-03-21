@@ -1,7 +1,5 @@
 package com.gutabi.deadlock.world.tools;
 
-import static com.gutabi.deadlock.DeadlockApplication.APP;
-
 import java.util.Set;
 
 import com.gutabi.deadlock.geom.Shape;
@@ -11,14 +9,15 @@ import com.gutabi.deadlock.ui.paint.Cap;
 import com.gutabi.deadlock.ui.paint.Color;
 import com.gutabi.deadlock.ui.paint.Join;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
+import com.gutabi.deadlock.world.WorldScreen;
 import com.gutabi.deadlock.world.graph.Vertex;
 
 public class MergerTool extends ToolBase {
 	
 	MergerToolShape shape;
 	
-	public MergerTool() {
-		super();
+	public MergerTool(WorldScreen worldScreen) {
+		super(worldScreen);
 	}
 	
 	public void setPoint(Point p) {
@@ -37,36 +36,36 @@ public class MergerTool extends ToolBase {
 	
 	public void escKey() {
 		
-		APP.worldScreen.tool = new RegularTool();
+		worldScreen.tool = new RegularTool(worldScreen);
 		
-		APP.worldScreen.tool.setPoint(APP.worldScreen.world.quadrantMap.getPoint(APP.worldScreen.world.lastMovedOrDraggedWorldPoint));
+		worldScreen.tool.setPoint(worldScreen.world.quadrantMap.getPoint(worldScreen.world.lastMovedOrDraggedWorldPoint));
 		
-		APP.worldScreen.contentPane.repaint();
+		worldScreen.contentPane.repaint();
 	}
 	
 	public void insertKey() {
-		if (APP.worldScreen.world.quadrantMap.contains(shape)) {
+		if (worldScreen.world.quadrantMap.contains(shape)) {
 			
-			if (APP.worldScreen.world.graph.pureGraphIntersect(shape) == null) {
+			if (worldScreen.world.graph.pureGraphIntersect(shape) == null) {
 				
-				Set<Vertex> affected = APP.worldScreen.world.createMerger(p);
-				APP.worldScreen.world.graph.computeVertexRadii(affected);
+				Set<Vertex> affected = worldScreen.world.createMerger(p);
+				worldScreen.world.graph.computeVertexRadii(affected);
 				
-				APP.worldScreen.tool = new RegularTool();
+				worldScreen.tool = new RegularTool(worldScreen);
 				
-				APP.worldScreen.tool.setPoint(APP.worldScreen.world.lastMovedWorldPoint);
+				worldScreen.tool.setPoint(worldScreen.world.lastMovedWorldPoint);
 				
-				APP.worldScreen.world.render_worldPanel();
-				APP.worldScreen.world.render_preview();
-				APP.worldScreen.contentPane.repaint();
+				worldScreen.world.render_worldPanel();
+				worldScreen.world.render_preview();
+				worldScreen.contentPane.repaint();
 			}
 			
 		}
 	}
 	
 	public void moved(InputEvent ev) {
-		APP.worldScreen.tool.setPoint(APP.worldScreen.world.quadrantMap.getPoint(APP.worldScreen.world.lastMovedOrDraggedWorldPoint));
-		APP.worldScreen.contentPane.repaint();
+		worldScreen.tool.setPoint(worldScreen.world.quadrantMap.getPoint(worldScreen.world.lastMovedOrDraggedWorldPoint));
+		worldScreen.contentPane.repaint();
 	}
 	
 	public void draw(RenderingContext ctxt) {

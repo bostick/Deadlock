@@ -4,7 +4,6 @@ public enum CarStateEnum {
 	
 	DRIVING,
 	BRAKING,
-	IDLE,
 	
 	CRASHED,
 	
@@ -12,4 +11,7 @@ public enum CarStateEnum {
 	
 	SINKED,
 	
+	IDLE,
+	DRAGGING,
+	COASTING,
 }

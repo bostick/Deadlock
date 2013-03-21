@@ -18,6 +18,7 @@ public class InteractiveCar extends Car {
 		
 		InteractiveCar c = new InteractiveCar(world);
 		c.driver = new InteractiveDriver(c);
+		c.engine = new InteractiveEngine(world, c);
 		
 		c.computeCtorProperties(r);
 		
@@ -26,10 +27,39 @@ public class InteractiveCar extends Car {
 	
 	public void preStep(double t) {
 		
+		switch (state) {
+		case IDLE:
+		case DRAGGING:
+			break;
+		case COASTING: 
+			((InteractiveDriver)driver).preStep(t);
+			break;
+		default:
+			assert false;
+			break;
+		}
+		
+		engine.preStep(t);
+		
 	}
 	
 	public boolean postStep(double t) {
-		return true;
+			
+			switch (state) {
+			case IDLE:
+			case DRAGGING:
+				return true;
+			case COASTING:
+				
+				computeDynamicPropertiesAlways();
+				computeDynamicPropertiesMoving();
+				
+				return true;
+				
+			default:
+				assert false;
+				return true;
+			}
 	}
 	
 	public void paint(RenderingContext ctxt) {

@@ -190,6 +190,10 @@ public class RushHourWorld extends World {
 			break;
 		}
 		
+		c.b2dInit();
+		c.setB2dCollisions(false);
+		c.computeDynamicPropertiesAlways();
+		
 		w.carMap.addCar(c);
 		
 	}

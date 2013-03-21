@@ -11,7 +11,9 @@ import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.menu.MainMenu;
 import com.gutabi.deadlock.ui.InputEvent;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
+import com.gutabi.deadlock.world.WorldScreen;
 import com.gutabi.deadlock.world.cars.Car;
+import com.gutabi.deadlock.world.cars.CarStateEnum;
 import com.gutabi.deadlock.world.graph.GraphPosition;
 import com.gutabi.deadlock.world.graph.GraphPositionPathPosition;
 import com.gutabi.deadlock.world.graph.RoadPosition;
@@ -24,8 +26,8 @@ public class CarTool extends ToolBase {
 	
 	private Car car;
 	
-	public CarTool() {
-		super();
+	public CarTool(WorldScreen worldScreen) {
+		super(worldScreen);
 	}
 	
 	public void setPoint(Point p) {
@@ -40,6 +42,8 @@ public class CarTool extends ToolBase {
 		
 		APP.platform.teardownDebuggerScreen();
 		
+		APP.appScreen = null;
+		
 		MainMenu s = new MainMenu();
 		
 		APP.platform.setupAppScreen(s.contentPane.cp);
@@ -51,15 +55,26 @@ public class CarTool extends ToolBase {
 	
 	public void pressed(InputEvent ev) {
 		
-		Car pressed = APP.worldScreen.world.carMap.carHitTest(ev.p);
+		Car pressed = worldScreen.world.carMap.carHitTest(ev.p);
 		if (pressed != null) {
 			
-			this.car = pressed;
-			
-			car.toolOrigP = car.center;
-			car.toolOrigAngle = car.angle;
-			car.toolOrigShape = car.shape;
-			car.driver.toolOrigOverallPos = car.driver.overallPos;
+			switch (pressed.state) {
+			case IDLE:
+				
+				this.car = pressed;
+				
+				car.toolOrigP = car.center;
+				car.toolOrigAngle = car.angle;
+				car.toolOrigShape = car.shape;
+				car.driver.toolOrigOverallPos = car.driver.overallPos;
+				
+				car.state = CarStateEnum.DRAGGING;
+				
+				break;
+			default:
+				assert false;
+				break;
+			}
 			
 		}
 		
@@ -67,12 +82,10 @@ public class CarTool extends ToolBase {
 	
 	public void released(InputEvent ev) {
 		
-		if (car != null && car.toolOrigShape.hitTest(APP.worldScreen.world.lastPressedWorldPoint)) {
+		if (car != null && car.toolOrigShape.hitTest(worldScreen.world.lastPressedWorldPoint)) {
 			
 			switch (car.state) {
-			case IDLE:
-			case DRIVING:
-			case BRAKING:
+			case DRAGGING:
 				
 				GraphPosition gpos = car.driver.overallPos.getGraphPosition();
 				
@@ -81,14 +94,16 @@ public class CarTool extends ToolBase {
 					/*
 					 * reset
 					 */
-					car.setTransform(car.toolOrigP, car.toolOrigAngle);
-					car.driver.overallPos = car.driver.toolOrigOverallPos;
+//					car.setTransform(car.toolOrigP, car.toolOrigAngle);
+//					car.driver.overallPos = car.driver.toolOrigOverallPos;
+//					
+//					APP.appScreen.world.zoomAbsolute(1.0);
+//					
+//					APP.appScreen.world.render_worldPanel();
+//					
+//					APP.appScreen.contentPane.repaint();
 					
-					APP.worldScreen.world.zoomAbsolute(1.0);
-					
-					APP.worldScreen.world.render_worldPanel();
-					
-					APP.worldScreen.contentPane.repaint();
+					car.state = CarStateEnum.COASTING;
 					
 				} else if (gpos instanceof VertexPosition) {
 					
@@ -98,11 +113,11 @@ public class CarTool extends ToolBase {
 					car.setTransform(car.toolOrigP, car.toolOrigAngle);
 					car.driver.overallPos = car.driver.toolOrigOverallPos;
 					
-					APP.worldScreen.world.zoomAbsolute(1.0);
+					worldScreen.world.zoomAbsolute(1.0);
 					
-					APP.worldScreen.world.render_worldPanel();
+					worldScreen.world.render_worldPanel();
 					
-					APP.worldScreen.contentPane.repaint();
+					worldScreen.contentPane.repaint();
 					
 				} else if (gpos instanceof RushHourBoardPosition) {
 					
@@ -128,16 +143,20 @@ public class CarTool extends ToolBase {
 					
 					if (b.allowablePosition(car)) {
 						
+						car.state = CarStateEnum.IDLE;
+						
 						car.setTransform(rounded.p, car.angle);
 						car.driver.overallPos = car.driver.overallPath.generalSearch(car.center, car.driver.overallPos, car.CAR_LENGTH);
 						
-						APP.worldScreen.world.zoomAbsolute(1.0);
+						worldScreen.world.zoomAbsolute(1.0);
 						
-						APP.worldScreen.world.render_worldPanel();
+						worldScreen.world.render_worldPanel();
 						
-						APP.worldScreen.contentPane.repaint();
+						worldScreen.contentPane.repaint();
 						
 					} else {
+						
+						car.state = CarStateEnum.IDLE;
 						
 						/*
 						 * reset
@@ -145,11 +164,11 @@ public class CarTool extends ToolBase {
 						car.setTransform(car.toolOrigP, car.toolOrigAngle);
 						car.driver.overallPos = car.driver.toolOrigOverallPos;
 						
-						APP.worldScreen.world.zoomAbsolute(1.0);
+						worldScreen.world.zoomAbsolute(1.0);
 						
-						APP.worldScreen.world.render_worldPanel();
+						worldScreen.world.render_worldPanel();
 						
-						APP.worldScreen.contentPane.repaint();
+						worldScreen.contentPane.repaint();
 						
 					}
 					
@@ -158,11 +177,8 @@ public class CarTool extends ToolBase {
 				}
 				
 				break;
-			case CRASHED:
-				break;
-			case SINKED:
-				break;
-			case SKIDDED:
+			default:
+				assert false;
 				break;
 			}
 		}
@@ -176,16 +192,14 @@ public class CarTool extends ToolBase {
 	 */
 	public void dragged(InputEvent ev) {
 		
-		if (car.toolOrigShape.hitTest(APP.worldScreen.world.lastPressedWorldPoint)) {
+		if (car.toolOrigShape.hitTest(worldScreen.world.lastPressedWorldPoint)) {
 			
-			Point diff = ev.p.minus(APP.worldScreen.world.lastPressedWorldPoint);
+			Point diff = ev.p.minus(worldScreen.world.lastPressedWorldPoint);
 			
 			Point carPTmp = car.toolOrigP.plus(diff);
 			
 			switch (car.state) {
-			case IDLE:
-			case DRIVING:
-			case BRAKING:
+			case DRAGGING:
 				
 				GraphPositionPathPosition testPathPos = car.driver.overallPath.generalSearch(carPTmp, car.driver.overallPos, car.CAR_LENGTH);
 				
@@ -204,44 +218,41 @@ public class CarTool extends ToolBase {
 						double a = rpos.lengthToStartOfRoad / rpos.r.getTotalLength(rpos.r.start, rpos.r.end);
 						
 						double para;
-						if (a < 1.0/4.0) {
-							para = 1.0 + (4.0 * a) * (0.6 - 1.0);
-						} else if (a < 3.0/4.0) {
-							para = 0.6;
+						if (a < 1.0/3.5) {
+							para = 1.0 + (3.5 * a) * (0.5 - 1.0);
+						} else if (a < (1-1.0/3.5)) {
+							para = 0.5;
 						} else {
-							para = 0.6 + (4.0 * (a - 3.0/4.0)) * (1.0 - 0.6);
+							para = 0.5 + (3.5 * (a - (1-1.0/3.5))) * (1.0 - 0.5);
 						}
 						
-						APP.worldScreen.world.zoomAbsolute(para);
+						worldScreen.world.zoomAbsolute(para);
 						
-						APP.worldScreen.world.render_worldPanel();
+						worldScreen.world.render_worldPanel();
 						
 					} else if (gpos instanceof VertexPosition) {
 						
-						APP.worldScreen.world.zoomAbsolute(1.0);
+						worldScreen.world.zoomAbsolute(1.0);
 						
-						APP.worldScreen.world.render_worldPanel();
+						worldScreen.world.render_worldPanel();
 						
 					} else if (gpos instanceof RushHourBoardPosition) {
 						
-						APP.worldScreen.world.zoomAbsolute(1.0);
+						worldScreen.world.zoomAbsolute(1.0);
 						
-						APP.worldScreen.world.render_worldPanel();
+						worldScreen.world.render_worldPanel();
 						
 					} else {
 						assert false;
 					}
 					
-					APP.worldScreen.contentPane.repaint();
+					worldScreen.contentPane.repaint();
 					
 				}
 				
 				break;
-			case CRASHED:
-				break;
-			case SINKED:
-				break;
-			case SKIDDED:
+			default:
+				assert false;
 				break;
 			}
 			
@@ -293,13 +304,13 @@ public class CarTool extends ToolBase {
 		
 		OBB testOBB = Geom.localToWorld(car.localAABB, car.angle, test);
 		
-		for (RushHourBoard b : APP.worldScreen.world.graph.rushes) {
+		for (RushHourBoard b : worldScreen.world.graph.rushes) {
 			if (b.overlapsPerimeter(testOBB)) {
 				return true;
 			}
 		}
 		
-		for (Car c : APP.worldScreen.world.carMap.cars) {
+		for (Car c : worldScreen.world.carMap.cars) {
 			if (c == car) {
 				continue;
 			}

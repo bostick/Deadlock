@@ -1,7 +1,5 @@
 package com.gutabi.deadlock.world.tools;
 
-import static com.gutabi.deadlock.DeadlockApplication.APP;
-
 import java.util.List;
 import java.util.Set;
 
@@ -13,6 +11,7 @@ import com.gutabi.deadlock.ui.paint.Color;
 import com.gutabi.deadlock.ui.paint.Join;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.world.Stroke;
+import com.gutabi.deadlock.world.WorldScreen;
 import com.gutabi.deadlock.world.graph.Vertex;
 
 public class QuadTool extends ToolBase {
@@ -36,26 +35,26 @@ public class QuadTool extends ToolBase {
 	
 	Knob knob;
 	
-	public QuadTool() {
-		super();
+	public QuadTool(WorldScreen worldScreen) {
+		super(worldScreen);
 		
 		mode = QuadToolMode.FREE;
 		
-		startKnob = new Knob(APP.worldScreen.world) {
+		startKnob = new Knob(worldScreen.world) {
 			public void drag(Point p) {
 				Point newPoint = world.quadrantMap.getPoint(p);
 				QuadTool.this.setStart(newPoint);
 			}
 		};
 		
-		controlKnob = new Knob(APP.worldScreen.world) {
+		controlKnob = new Knob(worldScreen.world) {
 			public void drag(Point p) {
 				Point newPoint = world.quadrantMap.getPoint(p);
 				QuadTool.this.setControl(newPoint);
 			}
 		};
 		
-		endKnob = new Knob(APP.worldScreen.world) {
+		endKnob = new Knob(worldScreen.world) {
 			public void drag(Point p) {
 				Point newPoint = world.quadrantMap.getPoint(p);
 				QuadTool.this.setEnd(newPoint);
@@ -70,7 +69,7 @@ public class QuadTool extends ToolBase {
 		if (p != null) {
 			Point middle = start.plus(p.minus(start).multiply(0.5));
 			c = middle.plus(new Point(0, -4 * Vertex.INIT_VERTEX_RADIUS));
-			shape = new QuadToolShape(APP.worldScreen, start, c, p);
+			shape = new QuadToolShape(worldScreen, start, c, p);
 			startKnob.setPoint(start);
 			controlKnob.setPoint(c);
 			endKnob.setPoint(p);
@@ -83,7 +82,7 @@ public class QuadTool extends ToolBase {
 	public void setStart(Point start) {
 		this.start = start;
 		if (start != null && p != null && c != null) {
-			shape = new QuadToolShape(APP.worldScreen, start, c, p);
+			shape = new QuadToolShape(worldScreen, start, c, p);
 			startKnob.setPoint(start);
 			controlKnob.setPoint(c);
 			endKnob.setPoint(p);
@@ -93,7 +92,7 @@ public class QuadTool extends ToolBase {
 	public void setControl(Point c) {
 		this.c = c;
 		if (start != null && p != null && c != null) {
-			shape = new QuadToolShape(APP.worldScreen, start, c, p);
+			shape = new QuadToolShape(worldScreen, start, c, p);
 			startKnob.setPoint(start);
 			controlKnob.setPoint(c);
 			endKnob.setPoint(p);
@@ -103,7 +102,7 @@ public class QuadTool extends ToolBase {
 	public void setEnd(Point p) {
 		this.p = p;
 		if (start != null && p != null && c != null) {
-			shape = new QuadToolShape(APP.worldScreen, start, c, p);
+			shape = new QuadToolShape(worldScreen, start, c, p);
 			startKnob.setPoint(start);
 			controlKnob.setPoint(c);
 			endKnob.setPoint(p);
@@ -117,14 +116,14 @@ public class QuadTool extends ToolBase {
 	public void escKey() {
 		switch (mode) {
 		case FREE:
-			APP.worldScreen.tool = new RegularTool();
-			APP.worldScreen.tool.setPoint(APP.worldScreen.world.quadrantMap.getPoint(APP.worldScreen.world.lastMovedOrDraggedWorldPoint));
-			APP.worldScreen.contentPane.repaint();
+			worldScreen.tool = new RegularTool(worldScreen);
+			worldScreen.tool.setPoint(worldScreen.world.quadrantMap.getPoint(worldScreen.world.lastMovedOrDraggedWorldPoint));
+			worldScreen.contentPane.repaint();
 			break;
 		case SET:
 			mode = QuadToolMode.FREE;
-			APP.worldScreen.tool.setPoint(APP.worldScreen.world.quadrantMap.getPoint(APP.worldScreen.world.lastMovedOrDraggedWorldPoint));
-			APP.worldScreen.contentPane.repaint();
+			worldScreen.tool.setPoint(worldScreen.world.quadrantMap.getPoint(worldScreen.world.lastMovedOrDraggedWorldPoint));
+			worldScreen.contentPane.repaint();
 			break;
 		case KNOB:
 			assert false;
@@ -136,27 +135,27 @@ public class QuadTool extends ToolBase {
 		switch (mode) {
 		case FREE:
 			mode = QuadToolMode.SET;
-			APP.worldScreen.contentPane.repaint();
+			worldScreen.contentPane.repaint();
 			break;
 		case SET:
 			
 			List<Point> pts = shape.skeleton;
-			Stroke s = new Stroke(APP.worldScreen.world);
+			Stroke s = new Stroke(worldScreen.world);
 			for (Point p : pts) {
 				s.add(p);
 			}
 			s.finish();
 			
 			Set<Vertex> affected = s.processNewStroke();
-			APP.worldScreen.world.graph.computeVertexRadii(affected);
+			worldScreen.world.graph.computeVertexRadii(affected);
 			
-			APP.worldScreen.tool = new RegularTool();
+			worldScreen.tool = new RegularTool(worldScreen);
 			
-			APP.worldScreen.tool.setPoint(APP.worldScreen.world.lastMovedOrDraggedWorldPoint);
+			worldScreen.tool.setPoint(worldScreen.world.lastMovedOrDraggedWorldPoint);
 			
-			APP.worldScreen.world.render_worldPanel();
-			APP.worldScreen.world.render_preview();
-			APP.worldScreen.contentPane.repaint();
+			worldScreen.world.render_worldPanel();
+			worldScreen.world.render_preview();
+			worldScreen.contentPane.repaint();
 			break;
 		case KNOB:
 			assert false;
@@ -167,8 +166,8 @@ public class QuadTool extends ToolBase {
 	public void moved(InputEvent ev) {
 		switch (mode) {
 		case FREE:
-			APP.worldScreen.tool.setPoint(APP.worldScreen.world.quadrantMap.getPoint(APP.worldScreen.world.lastMovedOrDraggedWorldPoint));
-			APP.worldScreen.contentPane.repaint();
+			worldScreen.tool.setPoint(worldScreen.world.quadrantMap.getPoint(worldScreen.world.lastMovedOrDraggedWorldPoint));
+			worldScreen.contentPane.repaint();
 			break;
 		case SET:
 		case KNOB:
@@ -184,7 +183,7 @@ public class QuadTool extends ToolBase {
 			break;
 		case KNOB:
 			mode = QuadToolMode.SET;
-			APP.worldScreen.contentPane.repaint();
+			worldScreen.contentPane.repaint();
 			break;
 		}
 	}
@@ -195,35 +194,35 @@ public class QuadTool extends ToolBase {
 		
 		switch (mode) {
 		case FREE:
-			setPoint(APP.worldScreen.world.lastDraggedWorldPoint);
+			setPoint(worldScreen.world.lastDraggedWorldPoint);
 			break;
 		case SET:
-			if (!APP.worldScreen.world.lastDraggedWorldPointWasNull) {
+			if (!worldScreen.world.lastDraggedWorldPointWasNull) {
 				break;
 			}
-			if (!(startKnob.hitTest(APP.worldScreen.world.lastPressedWorldPoint) ||
-					controlKnob.hitTest(APP.worldScreen.world.lastPressedWorldPoint) ||
-					endKnob.hitTest(APP.worldScreen.world.lastPressedWorldPoint))) {
+			if (!(startKnob.hitTest(worldScreen.world.lastPressedWorldPoint) ||
+					controlKnob.hitTest(worldScreen.world.lastPressedWorldPoint) ||
+					endKnob.hitTest(worldScreen.world.lastPressedWorldPoint))) {
 				break;
 			}
 			
-			if (startKnob.hitTest(APP.worldScreen.world.lastPressedWorldPoint)) {
+			if (startKnob.hitTest(worldScreen.world.lastPressedWorldPoint)) {
 				mode = QuadToolMode.KNOB;
 				knob = startKnob;
 				origKnobCenter = knob.p;
-			} else if (controlKnob.hitTest(APP.worldScreen.world.lastPressedWorldPoint)) {
+			} else if (controlKnob.hitTest(worldScreen.world.lastPressedWorldPoint)) {
 				mode = QuadToolMode.KNOB;
 				knob = controlKnob;
 				origKnobCenter = knob.p;
-			} else if (endKnob.hitTest(APP.worldScreen.world.lastPressedWorldPoint)) {
+			} else if (endKnob.hitTest(worldScreen.world.lastPressedWorldPoint)) {
 				mode = QuadToolMode.KNOB;
 				knob = endKnob;
 				origKnobCenter = knob.p;
 			}
 		case KNOB:
-			Point diff = new Point(APP.worldScreen.world.lastDraggedWorldPoint.x - APP.worldScreen.world.lastPressedWorldPoint.x, APP.worldScreen.world.lastDraggedWorldPoint.y - APP.worldScreen.world.lastPressedWorldPoint.y);
+			Point diff = new Point(worldScreen.world.lastDraggedWorldPoint.x - worldScreen.world.lastPressedWorldPoint.x, worldScreen.world.lastDraggedWorldPoint.y - worldScreen.world.lastPressedWorldPoint.y);
 			knob.drag(origKnobCenter.plus(diff));
-			APP.worldScreen.contentPane.repaint();
+			worldScreen.contentPane.repaint();
 			break;
 		}
 	}

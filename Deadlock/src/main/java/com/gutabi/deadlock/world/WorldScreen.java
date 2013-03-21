@@ -1,12 +1,13 @@
 package com.gutabi.deadlock.world;
 
+import com.gutabi.deadlock.AppScreen;
 import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.ui.DLSFileChooser;
 import com.gutabi.deadlock.ui.KeyListener;
 import com.gutabi.deadlock.world.tools.RegularTool;
 import com.gutabi.deadlock.world.tools.Tool;
 
-public class WorldScreen implements KeyListener {
+public class WorldScreen extends AppScreen implements KeyListener {
 	
 	public enum WorldScreenMode {
 		EDITING,
@@ -46,7 +47,7 @@ public class WorldScreen implements KeyListener {
 		
 		mode = WorldScreenMode.EDITING;
 		
-		tool = new RegularTool();
+		tool = new RegularTool(this);
 		
 		stats = new Stats(this);
 		
@@ -64,7 +65,7 @@ public class WorldScreen implements KeyListener {
 		
 		mode = WorldScreenMode.RUNNING;
 		
-		Thread t = new Thread(new SimulationRunnable(this));
+		Thread t = new Thread(new SimulationRunnable());
 		t.start();
 		
 	}
@@ -73,7 +74,7 @@ public class WorldScreen implements KeyListener {
 		
 		mode = WorldScreenMode.EDITING;
 		
-		tool = new RegularTool();
+		tool = new RegularTool(this);
 		
 	}
 	

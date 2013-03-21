@@ -30,7 +30,7 @@ public class DebuggerScreen implements KeyListener {
 		
 		worldScreen.mode = WorldScreenMode.RUNNING;
 		
-		Thread t = new Thread(new SimulationRunnable(worldScreen));
+		Thread t = new Thread(new SimulationRunnable());
 		t.start();
 		
 	}
@@ -39,7 +39,7 @@ public class DebuggerScreen implements KeyListener {
 		
 		worldScreen.mode = WorldScreenMode.EDITING;
 		
-		worldScreen.tool = new RegularTool();
+		worldScreen.tool = new RegularTool(worldScreen);
 		
 	}
 	

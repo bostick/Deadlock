@@ -1,7 +1,5 @@
 package com.gutabi.deadlock.world.tools;
 
-import static com.gutabi.deadlock.DeadlockApplication.APP;
-
 import java.util.List;
 import java.util.Set;
 
@@ -13,6 +11,7 @@ import com.gutabi.deadlock.ui.paint.Color;
 import com.gutabi.deadlock.ui.paint.Join;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.world.Stroke;
+import com.gutabi.deadlock.world.WorldScreen;
 import com.gutabi.deadlock.world.graph.Vertex;
 
 public class CubicTool extends ToolBase {
@@ -38,33 +37,33 @@ public class CubicTool extends ToolBase {
 	
 	Knob knob;
 	
-	public CubicTool() {
-		super();
+	public CubicTool(WorldScreen worldScreen) {
+		super(worldScreen);
 		
 		mode = CubicToolMode.FREE;
 		
-		startKnob = new Knob(APP.worldScreen.world) {
+		startKnob = new Knob(worldScreen.world) {
 			public void drag(Point p) {
 				Point newPoint = world.quadrantMap.getPoint(p);
 				CubicTool.this.setStart(newPoint);
 			}
 		};
 		
-		control0Knob = new Knob(APP.worldScreen.world) {
+		control0Knob = new Knob(worldScreen.world) {
 			public void drag(Point p) {
 				Point newPoint = world.quadrantMap.getPoint(p);
 				CubicTool.this.setControl0(newPoint);
 			}
 		};
 		
-		control1Knob = new Knob(APP.worldScreen.world) {
+		control1Knob = new Knob(worldScreen.world) {
 			public void drag(Point p) {
 				Point newPoint = world.quadrantMap.getPoint(p);
 				CubicTool.this.setControl1(newPoint);
 			}
 		};
 		
-		endKnob = new Knob(APP.worldScreen.world) {
+		endKnob = new Knob(worldScreen.world) {
 			public void drag(Point p) {
 				Point newPoint = world.quadrantMap.getPoint(p);
 				CubicTool.this.setEnd(newPoint);
@@ -80,7 +79,7 @@ public class CubicTool extends ToolBase {
 			Point middle = start.plus(p.minus(start).multiply(0.5));
 			c0 = middle.plus(new Point(0, -4 * Vertex.INIT_VERTEX_RADIUS));
 			c1 = middle.plus(new Point(0, 4 * Vertex.INIT_VERTEX_RADIUS));
-			shape = new CubicToolShape(APP.worldScreen.world, start, c0, c1, p);
+			shape = new CubicToolShape(worldScreen.world, start, c0, c1, p);
 			startKnob.setPoint(start);
 			control0Knob.setPoint(c0);
 			control1Knob.setPoint(c1);
@@ -94,7 +93,7 @@ public class CubicTool extends ToolBase {
 	public void setStart(Point start) {
 		this.start = start;
 		if (start != null && p != null && c0 != null && c1 != null) {
-			shape = new CubicToolShape(APP.worldScreen.world, start, c0, c1, p);
+			shape = new CubicToolShape(worldScreen.world, start, c0, c1, p);
 			startKnob.setPoint(start);
 			control0Knob.setPoint(c0);
 			control1Knob.setPoint(c1);
@@ -105,7 +104,7 @@ public class CubicTool extends ToolBase {
 	public void setControl0(Point c) {
 		this.c0 = c;
 		if (start != null && p != null && c0 != null && c1 != null) {
-			shape = new CubicToolShape(APP.worldScreen.world, start, c0, c1, p);
+			shape = new CubicToolShape(worldScreen.world, start, c0, c1, p);
 			startKnob.setPoint(start);
 			control0Knob.setPoint(c0);
 			control1Knob.setPoint(c1);
@@ -116,7 +115,7 @@ public class CubicTool extends ToolBase {
 	public void setControl1(Point c) {
 		this.c1 = c;
 		if (start != null && p != null && c0 != null && c1 != null) {
-			shape = new CubicToolShape(APP.worldScreen.world, start, c0, c1, p);
+			shape = new CubicToolShape(worldScreen.world, start, c0, c1, p);
 			startKnob.setPoint(start);
 			control0Knob.setPoint(c0);
 			control1Knob.setPoint(c1);
@@ -127,7 +126,7 @@ public class CubicTool extends ToolBase {
 	public void setEnd(Point p) {
 		this.p = p;
 		if (start != null && p != null && c0 != null && c1 != null) {
-			shape = new CubicToolShape(APP.worldScreen.world, start, c0, c1, p);
+			shape = new CubicToolShape(worldScreen.world, start, c0, c1, p);
 			startKnob.setPoint(start);
 			control0Knob.setPoint(c0);
 			control1Knob.setPoint(c1);
@@ -142,14 +141,14 @@ public class CubicTool extends ToolBase {
 	public void escKey() {
 		switch (mode) {
 		case FREE:
-			APP.worldScreen.tool = new RegularTool();
-			APP.worldScreen.tool.setPoint(APP.worldScreen.world.quadrantMap.getPoint(APP.worldScreen.world.lastMovedOrDraggedWorldPoint));
-			APP.worldScreen.contentPane.repaint();
+			worldScreen.tool = new RegularTool(worldScreen);
+			worldScreen.tool.setPoint(worldScreen.world.quadrantMap.getPoint(worldScreen.world.lastMovedOrDraggedWorldPoint));
+			worldScreen.contentPane.repaint();
 			break;
 		case SET:
 			mode = CubicToolMode.FREE;
-			APP.worldScreen.tool.setPoint(APP.worldScreen.world.quadrantMap.getPoint(APP.worldScreen.world.lastMovedOrDraggedWorldPoint));
-			APP.worldScreen.contentPane.repaint();
+			worldScreen.tool.setPoint(worldScreen.world.quadrantMap.getPoint(worldScreen.world.lastMovedOrDraggedWorldPoint));
+			worldScreen.contentPane.repaint();
 			break;
 		case KNOB:
 			assert false;
@@ -161,27 +160,27 @@ public class CubicTool extends ToolBase {
 		switch (mode) {
 		case FREE:
 			mode = CubicToolMode.SET;
-			APP.worldScreen.contentPane.repaint();
+			worldScreen.contentPane.repaint();
 			break;
 		case SET:
 			
 			List<Point> pts = shape.skeleton;
-			Stroke s = new Stroke(APP.worldScreen.world);
+			Stroke s = new Stroke(worldScreen.world);
 			for (Point p : pts) {
 				s.add(p);
 			}
 			s.finish();
 			
 			Set<Vertex> affected = s.processNewStroke();
-			APP.worldScreen.world.graph.computeVertexRadii(affected);
+			worldScreen.world.graph.computeVertexRadii(affected);
 			
-			APP.worldScreen.tool = new RegularTool();
+			worldScreen.tool = new RegularTool(worldScreen);
 			
-			APP.worldScreen.tool.setPoint(APP.worldScreen.world.lastMovedOrDraggedWorldPoint);
+			worldScreen.tool.setPoint(worldScreen.world.lastMovedOrDraggedWorldPoint);
 			
-			APP.worldScreen.world.render_worldPanel();
-			APP.worldScreen.world.render_preview();
-			APP.worldScreen.contentPane.repaint();
+			worldScreen.world.render_worldPanel();
+			worldScreen.world.render_preview();
+			worldScreen.contentPane.repaint();
 			break;
 		case KNOB:
 			assert false;
@@ -192,8 +191,8 @@ public class CubicTool extends ToolBase {
 	public void moved(InputEvent ev) {
 		switch (mode) {
 		case FREE:
-			APP.worldScreen.tool.setPoint(APP.worldScreen.world.quadrantMap.getPoint(APP.worldScreen.world.lastMovedOrDraggedWorldPoint));
-			APP.worldScreen.contentPane.repaint();
+			worldScreen.tool.setPoint(worldScreen.world.quadrantMap.getPoint(worldScreen.world.lastMovedOrDraggedWorldPoint));
+			worldScreen.contentPane.repaint();
 			break;
 		case SET:
 		case KNOB:
@@ -207,40 +206,40 @@ public class CubicTool extends ToolBase {
 		
 		switch (mode) {
 		case FREE:
-			setPoint(APP.worldScreen.world.lastDraggedWorldPoint);
+			setPoint(worldScreen.world.lastDraggedWorldPoint);
 			break;
 		case SET:
-			if (!APP.worldScreen.world.lastDraggedWorldPointWasNull) {
+			if (!worldScreen.world.lastDraggedWorldPointWasNull) {
 				break;
 			}
-			if (!(startKnob.hitTest(APP.worldScreen.world.lastPressedWorldPoint) ||
-					control0Knob.hitTest(APP.worldScreen.world.lastPressedWorldPoint) ||
-					control1Knob.hitTest(APP.worldScreen.world.lastPressedWorldPoint) ||
-					endKnob.hitTest(APP.worldScreen.world.lastPressedWorldPoint))) {
+			if (!(startKnob.hitTest(worldScreen.world.lastPressedWorldPoint) ||
+					control0Knob.hitTest(worldScreen.world.lastPressedWorldPoint) ||
+					control1Knob.hitTest(worldScreen.world.lastPressedWorldPoint) ||
+					endKnob.hitTest(worldScreen.world.lastPressedWorldPoint))) {
 				break;
 			}
 			
-			if (startKnob.hitTest(APP.worldScreen.world.lastPressedWorldPoint)) {
+			if (startKnob.hitTest(worldScreen.world.lastPressedWorldPoint)) {
 				mode = CubicToolMode.KNOB;
 				knob = startKnob;
 				origKnobCenter = knob.p;
-			} else if (control0Knob.hitTest(APP.worldScreen.world.lastPressedWorldPoint)) {
+			} else if (control0Knob.hitTest(worldScreen.world.lastPressedWorldPoint)) {
 				mode = CubicToolMode.KNOB;
 				knob = control0Knob;
 				origKnobCenter = knob.p;
-			} else if (control1Knob.hitTest(APP.worldScreen.world.lastPressedWorldPoint)) {
+			} else if (control1Knob.hitTest(worldScreen.world.lastPressedWorldPoint)) {
 				mode = CubicToolMode.KNOB;
 				knob = control1Knob;
 				origKnobCenter = knob.p;
-			} else if (endKnob.hitTest(APP.worldScreen.world.lastPressedWorldPoint)) {
+			} else if (endKnob.hitTest(worldScreen.world.lastPressedWorldPoint)) {
 				mode = CubicToolMode.KNOB;
 				knob = endKnob;
 				origKnobCenter = knob.p;
 			}
 		case KNOB:
-			Point diff = new Point(APP.worldScreen.world.lastDraggedWorldPoint.x - APP.worldScreen.world.lastPressedWorldPoint.x, APP.worldScreen.world.lastDraggedWorldPoint.y - APP.worldScreen.world.lastPressedWorldPoint.y);
+			Point diff = new Point(worldScreen.world.lastDraggedWorldPoint.x - worldScreen.world.lastPressedWorldPoint.x, worldScreen.world.lastDraggedWorldPoint.y - worldScreen.world.lastPressedWorldPoint.y);
 			knob.drag(origKnobCenter.plus(diff));
-			APP.worldScreen.contentPane.repaint();
+			worldScreen.contentPane.repaint();
 			break;
 		}
 	}
@@ -253,7 +252,7 @@ public class CubicTool extends ToolBase {
 			break;
 		case KNOB:
 			mode = CubicToolMode.SET;
-			APP.worldScreen.contentPane.repaint();
+			worldScreen.contentPane.repaint();
 			break;
 		}
 	}

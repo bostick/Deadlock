@@ -5,12 +5,26 @@ import org.jbox2d.common.Vec2;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.world.World;
 
-public class Engine {
+public abstract class Engine {
+	
+	public double maxSpeed;
+	
+	protected double maxRadsPerMeter;
+	protected double maxAcceleration;
+//	private double maxDeceleration = Double.NEGATIVE_INFINITY;
+	protected double frictionForwardImpulseCoefficient;
+	protected double frictionLateralImpulseCoefficient;
+	protected double frictionAngularImpulseCoefficient;
+	protected double driveForwardImpulseCoefficient;
+	protected double driveLateralImpulseCoefficient;
+	protected double brakeForwardImpulseCoefficient;
+	protected double brakeLateralImpulseCoefficient;
+	protected double turnAngularImpulseCoefficient;
 	
 	World world;
 	Car c;
 	
-	public Engine(World world, Car c) {
+	protected Engine(World world, Car c) {
 		this.world = world;
 		this.c = c;
 	}
@@ -29,72 +43,15 @@ public class Engine {
 		case CRASHED:
 		case SKIDDED:
 		case SINKED:
+		case COASTING:
 			updateFriction();
 			break;
 		case IDLE:
+		case DRAGGING:
 			break;
 		}
 		
 	}
-	
-	
-	
-//	double steeringLookaheadDistance = CAR_LENGTH * 1.5;
-//	double carProximityLookahead = 0.5 * CAR_LENGTH + 0.5 * CAR_LENGTH + getMaxSpeed() * MODEL.dt + 0.4;
-//	double vertexArrivalLookahead = CAR_LENGTH * 0.5 + CAR_LENGTH + getMaxSpeed() * MODEL.dt + 0.4;
-//	/*
-//	 * turning radius
-//	 * 3 car lengths for 180 deg = 3 meters for 3.14 radians
-//	 */
-//	private double maxRadsPerMeter = Double.POSITIVE_INFINITY;
-//	private double maxAcceleration = getMaxSpeed() / 3.0;
-//	private double maxDeceleration = -getMaxSpeed() / 3.0;
-//	private double frictionForwardImpulseCoefficient = 0.0;
-//	private double frictionLateralImpulseCoefficient = 0.0;
-//	private double frictionAngularImpulseCoefficient = 0.0;
-//	private double driveForwardImpulseCoefficient = 1.0;
-//	private double driveLateralImpulseCoefficient = 1.0;
-//	private double brakeForwardImpulseCoefficient = 1.0;
-//	private double brakeLateralImpulseCoefficient = 1.0;
-//	private double turnAngularImpulseCoefficient = 1.0;
-	
-	
-	
-	
-//	double steeringLookaheadDistance = CAR_LENGTH * 0.5;
-//	double carProximityLookahead = 0.5 * CAR_LENGTH + 0.5 * CAR_LENGTH + getMaxSpeed() * MODEL.dt + 0.8 * CAR_LENGTH;
-//	double vertexArrivalLookahead = CAR_LENGTH * 0.5;
-//	/*
-//	 * turning radius
-//	 * 3 car lengths for 180 deg = 3 meters for 3.14 radians
-//	 */
-//	private double maxRadsPerMeter = Double.POSITIVE_INFINITY;
-//	private double maxAcceleration = Double.POSITIVE_INFINITY;
-//	private double maxDeceleration = Double.NEGATIVE_INFINITY;
-//	private double frictionForwardImpulseCoefficient = 0.0;
-//	private double frictionLateralImpulseCoefficient = 0.0;
-//	private double frictionAngularImpulseCoefficient = 0.0;
-//	private double driveForwardImpulseCoefficient = 1.0;
-//	private double driveLateralImpulseCoefficient = 1.0;
-//	private double brakeForwardImpulseCoefficient = 1.0;
-//	private double brakeLateralImpulseCoefficient = 1.0;
-//	private double turnAngularImpulseCoefficient = 1.0;
-	
-	/*
-	 * turning radius
-	 * 3 car lengths for 180 deg = 3 meters for 3.14 radians
-	 */
-	private double maxRadsPerMeter = 1.0;
-	private double maxAcceleration = Double.POSITIVE_INFINITY;
-//	private double maxDeceleration = Double.NEGATIVE_INFINITY;
-	private double frictionForwardImpulseCoefficient = 0.01;
-	private double frictionLateralImpulseCoefficient = 0.04;
-	private double frictionAngularImpulseCoefficient = 0.02;
-	private double driveForwardImpulseCoefficient = 0.02;
-	private double driveLateralImpulseCoefficient = 1.0;
-	private double brakeForwardImpulseCoefficient = 0.05;
-	private double brakeLateralImpulseCoefficient = 1.0;
-	private double turnAngularImpulseCoefficient = 1.0;
 	
 	private void updateFriction() {
 		
@@ -118,8 +75,8 @@ public class Engine {
 	private void updateDrive(double t) {
 		
 		double dv;
-		if (c.maxSpeed > c.forwardSpeed) {
-			dv = c.maxSpeed - c.forwardSpeed;
+		if (maxSpeed > c.forwardSpeed) {
+			dv = maxSpeed - c.forwardSpeed;
 		} else {
 			dv = 0.0f;
 		}
