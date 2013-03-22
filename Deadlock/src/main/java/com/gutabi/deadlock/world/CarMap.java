@@ -76,6 +76,8 @@ public class CarMap {
 	
 	public void preStep(double t) {
 		
+		Car.carIDCounter = 0;
+		
 		for (Car c : cars) {
 			c.preStep(t);
 		}

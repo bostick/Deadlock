@@ -11,9 +11,21 @@ public class Line implements Shape {
 	public Point n01;
 	public double[] n01Projection;
 	
+	private int hash;
+	
 	public Line(Point p0, Point p1) {
 		this.p0 = p0;
 		this.p1 = p1;
+	}
+	
+	public int hashCode() {
+		if (hash == 0) {
+			int h = 17;
+			h = 37 * h + p0.hashCode();
+			h = 37 * h + p1.hashCode();
+			hash = h;
+		}
+		return hash;
 	}
 	
 	public Point getN01() {

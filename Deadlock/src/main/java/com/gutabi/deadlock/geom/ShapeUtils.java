@@ -332,62 +332,66 @@ public class ShapeUtils {
 		return true;
 	}
 	
-	public static boolean intersectAreaAO(AABB a0, OBB q1) {
+	public static boolean intersectAreaAO(AABB a0, OBB o1) {
 		
-		if (!intersectAO(a0, q1)) {
+		if (!intersectAO(a0, o1)) {
 			return false;
 		}
 		
 		double[] a0Projection = new double[2];
-		double[] q1Projection = new double[2];
+		double[] o1Projection = new double[2];
 		
 		a0.projectN01(a0Projection);
-		q1.project(a0.getN01(), q1Projection);
-		if (!DMath.rangesOverlapArea(a0Projection, q1Projection)) {
+		o1.project(a0.getN01(), o1Projection);
+		if (!DMath.rangesOverlapArea(a0Projection, o1Projection)) {
 			return false;
 		}
 		
 		a0.projectN12(a0Projection);
-		q1.project(a0.getN12(), q1Projection);
-		if (!DMath.rangesOverlapArea(a0Projection, q1Projection)) {
+		o1.project(a0.getN12(), o1Projection);
+		if (!DMath.rangesOverlapArea(a0Projection, o1Projection)) {
 			return false;
 		}
 		
-		a0.project(q1.getN01(), a0Projection);
-		q1.projectN01(q1Projection);
-		if (!DMath.rangesOverlapArea(a0Projection, q1Projection)) {
+		a0.project(o1.getN01(), a0Projection);
+		o1.projectN01(o1Projection);
+		if (!DMath.rangesOverlapArea(a0Projection, o1Projection)) {
 			return false;
 		}
 		
-		a0.project(q1.getN12(), a0Projection);
-		q1.projectN12(q1Projection);
-		if (!DMath.rangesOverlapArea(a0Projection, q1Projection)) {
+		a0.project(o1.getN12(), a0Projection);
+		o1.projectN12(o1Projection);
+		if (!DMath.rangesOverlapArea(a0Projection, o1Projection)) {
 			return false;
 		}
 		
 		return true;
 	}
 	
-	public static boolean intersectAreaLO(Line l0, OBB q1) {
+	public static boolean intersectAreaLO(Line l0, OBB o1) {
+		
+		if (l0.hashCode() == -1260529281 && (o1.hashCode() == 1940061173 || o1.hashCode() == -931595275)) {
+			String.class.getName();
+		}
 		
 		double[] l0Projection = new double[2];
-		double[] q1Projection = new double[2];
+		double[] o1Projection = new double[2];
 		
 		l0.projectN01(l0Projection);
-		q1.project(l0.getN01(), q1Projection);
-		if (!DMath.rangesOverlapArea(l0Projection, q1Projection)) {
+		o1.project(l0.getN01(), o1Projection);
+		if (!DMath.rangesOverlapArea(l0Projection, o1Projection)) {
 			return false;
 		}
 		
-		l0.project(q1.getN01(), l0Projection);
-		q1.projectN01(q1Projection);
-		if (!DMath.rangesOverlapArea(l0Projection, q1Projection)) {
+		l0.project(o1.getN01(), l0Projection);
+		o1.projectN01(o1Projection);
+		if (!DMath.rangesOverlapArea(l0Projection, o1Projection)) {
 			return false;
 		}
 		
-		l0.project(q1.getN12(), l0Projection);
-		q1.projectN12(q1Projection);
-		if (!DMath.rangesOverlapArea(l0Projection, q1Projection)) {
+		l0.project(o1.getN12(), l0Projection);
+		o1.projectN12(o1Projection);
+		if (!DMath.rangesOverlapArea(l0Projection, o1Projection)) {
 			return false;
 		}
 		

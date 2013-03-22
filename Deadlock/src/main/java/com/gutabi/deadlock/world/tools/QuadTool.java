@@ -1,5 +1,7 @@
 package com.gutabi.deadlock.world.tools;
 
+import static com.gutabi.deadlock.DeadlockApplication.APP;
+
 import java.util.List;
 import java.util.Set;
 
@@ -10,6 +12,7 @@ import com.gutabi.deadlock.ui.paint.Cap;
 import com.gutabi.deadlock.ui.paint.Color;
 import com.gutabi.deadlock.ui.paint.Join;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
+import com.gutabi.deadlock.world.DebuggerScreen;
 import com.gutabi.deadlock.world.Stroke;
 import com.gutabi.deadlock.world.WorldScreen;
 import com.gutabi.deadlock.world.graph.Vertex;
@@ -35,8 +38,8 @@ public class QuadTool extends ToolBase {
 	
 	Knob knob;
 	
-	public QuadTool(WorldScreen worldScreen) {
-		super(worldScreen);
+	public QuadTool(WorldScreen worldScreen, DebuggerScreen debuggerScreen) {
+		super(worldScreen, debuggerScreen);
 		
 		mode = QuadToolMode.FREE;
 		
@@ -116,13 +119,13 @@ public class QuadTool extends ToolBase {
 	public void escKey() {
 		switch (mode) {
 		case FREE:
-			worldScreen.tool = new RegularTool(worldScreen);
-			worldScreen.tool.setPoint(worldScreen.world.quadrantMap.getPoint(worldScreen.world.lastMovedOrDraggedWorldPoint));
+			APP.tool = new RegularTool(worldScreen, debuggerScreen);
+			APP.tool.setPoint(worldScreen.world.quadrantMap.getPoint(worldScreen.world.lastMovedOrDraggedWorldPoint));
 			worldScreen.contentPane.repaint();
 			break;
 		case SET:
 			mode = QuadToolMode.FREE;
-			worldScreen.tool.setPoint(worldScreen.world.quadrantMap.getPoint(worldScreen.world.lastMovedOrDraggedWorldPoint));
+			APP.tool.setPoint(worldScreen.world.quadrantMap.getPoint(worldScreen.world.lastMovedOrDraggedWorldPoint));
 			worldScreen.contentPane.repaint();
 			break;
 		case KNOB:
@@ -149,9 +152,9 @@ public class QuadTool extends ToolBase {
 			Set<Vertex> affected = s.processNewStroke();
 			worldScreen.world.graph.computeVertexRadii(affected);
 			
-			worldScreen.tool = new RegularTool(worldScreen);
+			APP.tool = new RegularTool(worldScreen, debuggerScreen);
 			
-			worldScreen.tool.setPoint(worldScreen.world.lastMovedOrDraggedWorldPoint);
+			APP.tool.setPoint(worldScreen.world.lastMovedOrDraggedWorldPoint);
 			
 			worldScreen.world.render_worldPanel();
 			worldScreen.world.render_preview();
@@ -166,7 +169,7 @@ public class QuadTool extends ToolBase {
 	public void moved(InputEvent ev) {
 		switch (mode) {
 		case FREE:
-			worldScreen.tool.setPoint(worldScreen.world.quadrantMap.getPoint(worldScreen.world.lastMovedOrDraggedWorldPoint));
+			APP.tool.setPoint(worldScreen.world.quadrantMap.getPoint(worldScreen.world.lastMovedOrDraggedWorldPoint));
 			worldScreen.contentPane.repaint();
 			break;
 		case SET:

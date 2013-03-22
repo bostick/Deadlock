@@ -25,6 +25,8 @@ public final class InteractiveDriver extends Driver {
 				
 				goalPoint = overallPos.nextBound().p;
 				
+//				System.out.println("goal: " + overallPos.nextBound());
+				
 			} else if (gpos instanceof VertexPosition) {
 				
 				
@@ -35,8 +37,8 @@ public final class InteractiveDriver extends Driver {
 				
 //				GraphPosition pgpos = prevOverallPos.getGraphPosition();
 //				assert pgpos instanceof RoadPosition;
-				assert false;
-				
+//				assert false;
+				goalPoint = overallPos.nextBound().p;
 				
 			} else {
 				assert false;
@@ -52,6 +54,8 @@ public final class InteractiveDriver extends Driver {
 				
 				goalPoint = overallPos.prevBound().p;
 				
+//				System.out.println("goal: " + overallPos.prevBound());
+				
 			} else if (gpos instanceof VertexPosition) {
 				
 				
@@ -62,8 +66,8 @@ public final class InteractiveDriver extends Driver {
 				
 //				GraphPosition pgpos = prevOverallPos.getGraphPosition();
 //				assert pgpos instanceof RoadPosition;
-				assert false;
-				
+//				assert false;
+				goalPoint = overallPos.prevBound().p;
 				
 			} else {
 				assert false;
@@ -86,15 +90,19 @@ public final class InteractiveDriver extends Driver {
 			
 		case COASTING_FORWARD:
 			
-//			prevOverallPos = overallPos;
+			prevOverallPos = overallPos;
 			overallPos = overallPath.forwardSearch(c.center, overallPos, false, c.length);
+			
+//			System.out.println("overall: " + overallPos);
 			
 			break;
 			
 		case COASTING_BACKWARD:
 			
-//			prevOverallPos = overallPos;
+			prevOverallPos = overallPos;
 			overallPos = overallPath.backwardSearch(c.center, overallPos, false, c.length);
+			
+//			System.out.println("overall: " + overallPos);
 			
 			break;
 		default:

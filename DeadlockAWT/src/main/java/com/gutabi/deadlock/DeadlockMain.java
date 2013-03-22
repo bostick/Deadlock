@@ -51,8 +51,6 @@ public class DeadlockMain  {
 		APP.platform = platform;
 		APP.init();
 		
-		MainMenu s = new MainMenu();
-		
 		JFrame newFrame;
 		newFrame = new JFrame("Deadlock Viewer");
 		newFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -79,15 +77,53 @@ public class DeadlockMain  {
 		
 		
 		
+		
+		MainMenu s = new MainMenu();
+		APP.appScreen = s;
+		
 		APP.platform.setupAppScreen(s.contentPane.cp);
-//		APP.platform.setupDebuggerScreen(s.contentPane.cp);
 		
 		s.postDisplay();
 		s.contentPane.panel.render();
 		s.contentPane.repaint();
 		
 		APP.platform.showAppScreen();
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+//		WorldScreen worldScreen = new WorldScreen();
+//		APP.appScreen = worldScreen;
+//		
+//		DebuggerScreen debuggerScreen = new DebuggerScreen(worldScreen);
+//		APP.debuggerScreen = debuggerScreen;
+//		
+//		worldScreen.world = OneByOneWorld.createOneByOneWorld(worldScreen, debuggerScreen);
+//		
+//		APP.platform.setupAppScreen(worldScreen.contentPane.cp);
+//		
+//		APP.platform.setupDebuggerScreen(debuggerScreen.contentPane.cp);
+//		
+//		worldScreen.postDisplay();
+//		
+//		debuggerScreen.postDisplay();
+//		
+//		worldScreen.world.render_worldPanel();
+//		worldScreen.world.render_preview();
+//		worldScreen.contentPane.repaint();
+//		debuggerScreen.contentPane.repaint();
+//		
+//		APP.platform.showAppScreen();
 //		APP.platform.showDebuggerScreen();
+//		
 	}
 	
 	public void setupFrame() {

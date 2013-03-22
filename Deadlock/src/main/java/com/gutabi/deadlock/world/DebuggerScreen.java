@@ -1,8 +1,6 @@
 package com.gutabi.deadlock.world;
 
 import com.gutabi.deadlock.ui.KeyListener;
-import com.gutabi.deadlock.world.WorldScreen.WorldScreenMode;
-import com.gutabi.deadlock.world.tools.RegularTool;
 
 public class DebuggerScreen implements KeyListener {
 	
@@ -26,36 +24,36 @@ public class DebuggerScreen implements KeyListener {
 	
 	
 	
-	public void startRunning() {
-		
-		worldScreen.mode = WorldScreenMode.RUNNING;
-		
-		Thread t = new Thread(new SimulationRunnable());
-		t.start();
-		
-	}
+//	public void startRunning() {
+//		
+//		worldScreen.mode = WorldScreenMode.RUNNING;
+//		
+//		Thread t = new Thread(new SimulationRunnable());
+//		t.start();
+//		
+//	}
 	
-	public void stopRunning() {
-		
-		worldScreen.mode = WorldScreenMode.EDITING;
-		
-		worldScreen.tool = new RegularTool(worldScreen);
-		
-	}
+//	public void stopRunning() {
+//		
+//		worldScreen.mode = WorldScreenMode.EDITING;
+//		
+////		APP.tool = new RegularTool(worldScreen, this);
+//		
+//	}
 	
-	public void pauseRunning() {
-		
-		worldScreen.mode = WorldScreenMode.PAUSED;
-	}
+//	public void pauseRunning() {
+//		
+//		worldScreen.mode = WorldScreenMode.PAUSED;
+//	}
 	
-	public void unpauseRunning() {
-		
-		worldScreen.mode = WorldScreenMode.RUNNING;
-		
-		synchronized (worldScreen.pauseLock) {
-			worldScreen.pauseLock.notifyAll();
-		}
-	}
+//	public void unpauseRunning() {
+//		
+//		worldScreen.mode = WorldScreenMode.RUNNING;
+//		
+//		synchronized (worldScreen.pauseLock) {
+//			worldScreen.pauseLock.notifyAll();
+//		}
+//	}
 	
 	public void upKey() {
 		
@@ -66,75 +64,75 @@ public class DebuggerScreen implements KeyListener {
 	}
 	
 	public void qKey() {
-		worldScreen.tool.qKey();
+//		APP.tool.qKey();
 	}
 	
 	public void wKey() {
-		worldScreen.tool.wKey();
+//		APP.tool.wKey();
 	}
 	
 	public void gKey() {
-		worldScreen.tool.gKey();
+//		APP.tool.gKey();
 	}
 	
 	public void deleteKey() {
-		worldScreen.tool.deleteKey();
+//		APP.tool.deleteKey();
 	}
 	
 	public void insertKey() {
-		worldScreen.tool.insertKey();
+//		APP.tool.insertKey();
 	}
 	
 	public void escKey() {
-		worldScreen.tool.escKey();
+//		APP.tool.escKey();
 	}
 	
 	public void d1Key() {
-		worldScreen.tool.d1Key();
+//		APP.tool.d1Key();
 	}
 	
 	public void d2Key() {
-		worldScreen.tool.d2Key();
+//		APP.tool.d2Key();
 	}
 	
 	public void d3Key() {
-		worldScreen.tool.d3Key();
+//		APP.tool.d3Key();
 	}
 	
 	public void plusKey() {
-		worldScreen.tool.plusKey();
+//		APP.tool.plusKey();
 	}
 	
 	public void minusKey() {
-		worldScreen.tool.minusKey();
+//		APP.tool.minusKey();
 	}
 	
 	public void aKey() {
-		worldScreen.tool.aKey();
+//		APP.tool.aKey();
 	}
 	
 	public void sKey() {
-		worldScreen.tool.sKey();
+//		APP.tool.sKey();
 	}
 	
 	public void ctrlSKey() {
-		worldScreen.tool.ctrlSKey();
+//		APP.tool.ctrlSKey();
 	}
 	
 	public void ctrlOKey() {
-		worldScreen.tool.ctrlOKey();
+//		APP.tool.ctrlOKey();
 	}
 	
 	public void dKey() {
-		worldScreen.tool.dKey();
+//		APP.tool.dKey();
 	}
 	
 	public void fKey() {
-		worldScreen.tool.fKey();
+//		APP.tool.fKey();
 	}
 	
 	public void enterKey() {
-		worldScreen.tool.enterKey();
+//		APP.tool.enterKey();
 	}
 	
 	

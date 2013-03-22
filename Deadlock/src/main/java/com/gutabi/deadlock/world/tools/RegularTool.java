@@ -14,6 +14,7 @@ import com.gutabi.deadlock.ui.paint.Cap;
 import com.gutabi.deadlock.ui.paint.Color;
 import com.gutabi.deadlock.ui.paint.Join;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
+import com.gutabi.deadlock.world.DebuggerScreen;
 import com.gutabi.deadlock.world.Stroke;
 import com.gutabi.deadlock.world.WorldScreen;
 import com.gutabi.deadlock.world.cars.Car;
@@ -41,8 +42,8 @@ public class RegularTool extends ToolBase {
 	Stroke debugStroke;
 	Stroke debugStroke2;
 	
-	public RegularTool(WorldScreen worldScreen) {
-		super(worldScreen);
+	public RegularTool(WorldScreen worldScreen, DebuggerScreen debuggerScreen) {
+		super(worldScreen, debuggerScreen);
 		
 		mode = RegularToolMode.FREE;
 	}
@@ -144,16 +145,16 @@ public class RegularTool extends ToolBase {
 
 	
 	public void qKey() {
-		StraightEdgeTool c = new StraightEdgeTool(worldScreen);
+		StraightEdgeTool c = new StraightEdgeTool(worldScreen, debuggerScreen);
 		c.setStart(worldScreen.world.quadrantMap.getPoint(worldScreen.world.lastMovedOrDraggedWorldPoint));
 		c.setPoint(worldScreen.world.quadrantMap.getPoint(worldScreen.world.lastMovedOrDraggedWorldPoint));
-		worldScreen.tool = c;
+		APP.tool = c;
 		worldScreen.contentPane.repaint();
 	}
 	
 	public void wKey() {
-		worldScreen.tool = new FixtureTool(worldScreen);
-		worldScreen.tool.setPoint(worldScreen.world.quadrantMap.getPoint(worldScreen.world.lastMovedOrDraggedWorldPoint));
+		APP.tool = new FixtureTool(worldScreen, debuggerScreen);
+		APP.tool.setPoint(worldScreen.world.quadrantMap.getPoint(worldScreen.world.lastMovedOrDraggedWorldPoint));
 		worldScreen.contentPane.repaint();
 	}
 	
@@ -161,26 +162,26 @@ public class RegularTool extends ToolBase {
 		
 		hilited = null;
 		
-		worldScreen.tool = new CircleTool(worldScreen);
+		APP.tool = new CircleTool(worldScreen, debuggerScreen);
 		
-		worldScreen.tool.setPoint(worldScreen.world.quadrantMap.getPoint(worldScreen.world.lastMovedOrDraggedWorldPoint));
+		APP.tool.setPoint(worldScreen.world.quadrantMap.getPoint(worldScreen.world.lastMovedOrDraggedWorldPoint));
 		
 		worldScreen.contentPane.repaint();
 	}
 	
 	public void sKey() {
-		QuadTool q = new QuadTool(worldScreen);
+		QuadTool q = new QuadTool(worldScreen, debuggerScreen);
 		q.setStart(worldScreen.world.quadrantMap.getPoint(worldScreen.world.lastMovedOrDraggedWorldPoint));
 		q.setPoint(worldScreen.world.quadrantMap.getPoint(worldScreen.world.lastMovedOrDraggedWorldPoint));
-		worldScreen.tool = q;
+		APP.tool = q;
 		worldScreen.contentPane.repaint();
 	}
 	
 	public void dKey() {
-		CubicTool c = new CubicTool(worldScreen);
+		CubicTool c = new CubicTool(worldScreen, debuggerScreen);
 		c.setStart(worldScreen.world.quadrantMap.getPoint(worldScreen.world.lastMovedOrDraggedWorldPoint));
 		c.setPoint(worldScreen.world.quadrantMap.getPoint(worldScreen.world.lastMovedOrDraggedWorldPoint));
-		worldScreen.tool = c;
+		APP.tool = c;
 		worldScreen.contentPane.repaint();
 	}
 	
@@ -200,9 +201,9 @@ public class RegularTool extends ToolBase {
 			
 			hilited = null;
 			
-			worldScreen.tool = new MergerTool(worldScreen);
+			APP.tool = new MergerTool(worldScreen, debuggerScreen);
 			
-			worldScreen.tool.setPoint(worldScreen.world.quadrantMap.getPoint(worldScreen.world.lastMovedOrDraggedWorldPoint));
+			APP.tool.setPoint(worldScreen.world.quadrantMap.getPoint(worldScreen.world.lastMovedOrDraggedWorldPoint));
 			
 			worldScreen.contentPane.repaint();
 		}
@@ -266,7 +267,7 @@ public class RegularTool extends ToolBase {
 				hilited = closest;
 			}
 			
-			worldScreen.tool.setPoint(worldScreen.world.quadrantMap.getPoint(worldScreen.world.lastMovedOrDraggedWorldPoint));
+			APP.tool.setPoint(worldScreen.world.quadrantMap.getPoint(worldScreen.world.lastMovedOrDraggedWorldPoint));
 			
 			worldScreen.contentPane.repaint();
 			break;
@@ -279,7 +280,7 @@ public class RegularTool extends ToolBase {
 	public void dragged(InputEvent ev) {
 		switch (mode) {
 		case FREE:
-			worldScreen.tool.setPoint(worldScreen.world.lastDraggedWorldPoint);
+			APP.tool.setPoint(worldScreen.world.lastDraggedWorldPoint);
 			
 			if (worldScreen.world.lastDraggedWorldPointWasNull) {
 				// first drag
@@ -293,7 +294,7 @@ public class RegularTool extends ToolBase {
 			}
 			break;
 		case DRAFTING:
-			worldScreen.tool.setPoint(worldScreen.world.lastDraggedWorldPoint);
+			APP.tool.setPoint(worldScreen.world.lastDraggedWorldPoint);
 			
 			draftMove(worldScreen.world.lastDraggedWorldPoint);
 			
@@ -312,6 +313,7 @@ public class RegularTool extends ToolBase {
 			worldScreen.world.render_worldPanel();
 			worldScreen.world.render_preview();
 			worldScreen.contentPane.repaint();
+			debuggerScreen.contentPane.repaint();
 			break;
 		}
 	}

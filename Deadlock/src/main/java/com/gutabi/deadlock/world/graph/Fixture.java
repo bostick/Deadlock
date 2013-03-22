@@ -38,8 +38,6 @@ public final class Fixture extends Vertex {
 	public int outstandingCars;
 	private ProgressMeter progress;
 	
-	static int carIDCounter;
-	
 	public Fixture(World w, Point p, Axis a) {
 		super(w, p);
 		
@@ -92,7 +90,6 @@ public final class Fixture extends Vertex {
 			
 			lastSpawnTime = -1;
 			outstandingCars = 0;
-			carIDCounter = 0;
 		}
 	}
 	
@@ -183,8 +180,6 @@ public final class Fixture extends Vertex {
 		
 		if (c != null) {
 			c.startingTime = t;
-			c.id = carIDCounter;
-			carIDCounter++;
 			synchronized (APP) {
 				world.carMap.addCar(c);
 			}

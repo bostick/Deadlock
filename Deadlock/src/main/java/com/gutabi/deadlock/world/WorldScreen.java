@@ -1,11 +1,11 @@
 package com.gutabi.deadlock.world;
 
+import static com.gutabi.deadlock.DeadlockApplication.APP;
+
 import com.gutabi.deadlock.AppScreen;
 import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.ui.DLSFileChooser;
 import com.gutabi.deadlock.ui.KeyListener;
-import com.gutabi.deadlock.world.tools.RegularTool;
-import com.gutabi.deadlock.world.tools.Tool;
 
 public class WorldScreen extends AppScreen implements KeyListener {
 	
@@ -29,8 +29,6 @@ public class WorldScreen extends AppScreen implements KeyListener {
 	
 	public World world;
 	
-	public Tool tool;
-	
 	public WorldScreenMode mode;
 	
 	public final Object pauseLock = new Object();
@@ -46,8 +44,6 @@ public class WorldScreen extends AppScreen implements KeyListener {
 		contentPane = new WorldScreenContentPane(this);
 		
 		mode = WorldScreenMode.EDITING;
-		
-		tool = new RegularTool(this);
 		
 		stats = new Stats(this);
 		
@@ -74,7 +70,7 @@ public class WorldScreen extends AppScreen implements KeyListener {
 		
 		mode = WorldScreenMode.EDITING;
 		
-		tool = new RegularTool(this);
+//		tool = new RegularTool(this, APP.debuggerScreen);
 		
 	}
 	
@@ -101,75 +97,75 @@ public class WorldScreen extends AppScreen implements KeyListener {
 	}
 	
 	public void qKey() {
-		tool.qKey();
+		APP.tool.qKey();
 	}
 	
 	public void wKey() {
-		tool.wKey();
+		APP.tool.wKey();
 	}
 	
 	public void gKey() {
-		tool.gKey();
+		APP.tool.gKey();
 	}
 	
 	public void deleteKey() {
-		tool.deleteKey();
+		APP.tool.deleteKey();
 	}
 	
 	public void insertKey() {
-		tool.insertKey();
+		APP.tool.insertKey();
 	}
 	
 	public void escKey() {
-		tool.escKey();
+		APP.tool.escKey();
 	}
 	
 	public void d1Key() {
-		tool.d1Key();
+		APP.tool.d1Key();
 	}
 	
 	public void d2Key() {
-		tool.d2Key();
+		APP.tool.d2Key();
 	}
 	
 	public void d3Key() {
-		tool.d3Key();
+		APP.tool.d3Key();
 	}
 	
 	public void plusKey() {
-		tool.plusKey();
+		APP.tool.plusKey();
 	}
 	
 	public void minusKey() {
-		tool.minusKey();
+		APP.tool.minusKey();
 	}
 	
 	public void aKey() {
-		tool.aKey();
+		APP.tool.aKey();
 	}
 	
 	public void sKey() {
-		tool.sKey();
+		APP.tool.sKey();
 	}
 	
 	public void ctrlSKey() {
-		tool.ctrlSKey();
+		APP.tool.ctrlSKey();
 	}
 	
 	public void ctrlOKey() {
-		tool.ctrlOKey();
+		APP.tool.ctrlOKey();
 	}
 	
 	public void dKey() {
-		tool.dKey();
+		APP.tool.dKey();
 	}
 	
 	public void fKey() {
-		tool.fKey();
+		APP.tool.fKey();
 	}
 	
 	public void enterKey() {
-		tool.enterKey();
+		APP.tool.enterKey();
 	}
 	
 	

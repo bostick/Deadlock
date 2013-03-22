@@ -38,9 +38,9 @@ public abstract class Car extends PhysicsBody {
 	
 	public int id;
 	
-	public static int carCounter;
+//	public static int carCounter;
 	
-	public Point localFront;
+//	public Point localFront;
 	
 	boolean atleastPartiallyOnRoad;
 	boolean inMerger;
@@ -51,8 +51,14 @@ public abstract class Car extends PhysicsBody {
 	
 	public boolean destroyed;
 	
+	
+	public static int carIDCounter;
+	
 	public Car(World world) {
 		super(world);
+		
+		id = carIDCounter;
+		carIDCounter++;
 		
 		state = CarStateEnum.DRIVING;
 	}
@@ -62,7 +68,7 @@ public abstract class Car extends PhysicsBody {
 		sprite = CarSheet.sprite(r);
 		length = sprite.carLength() * METERS_PER_CARLENGTH;
 		width = sprite.carWidth() * METERS_PER_CARLENGTH;
-		localFront = new Point(0.75 * length, 0.0);
+//		localFront = new Point(0.75 * length, 0.0);
 		
 		localAABB = new AABB(-length / 2, -width / 2, length, width);
 		

@@ -1,5 +1,7 @@
 package com.gutabi.deadlock.world.tools;
 
+import static com.gutabi.deadlock.DeadlockApplication.APP;
+
 import java.util.List;
 import java.util.Set;
 
@@ -11,6 +13,7 @@ import com.gutabi.deadlock.ui.paint.Cap;
 import com.gutabi.deadlock.ui.paint.Color;
 import com.gutabi.deadlock.ui.paint.Join;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
+import com.gutabi.deadlock.world.DebuggerScreen;
 import com.gutabi.deadlock.world.Stroke;
 import com.gutabi.deadlock.world.WorldScreen;
 import com.gutabi.deadlock.world.graph.Vertex;
@@ -33,8 +36,8 @@ public class CircleTool extends ToolBase {
 	
 	Knob knob;
 	
-	public CircleTool(WorldScreen worldScreen) {
-		super(worldScreen);
+	public CircleTool(WorldScreen worldScreen, DebuggerScreen debuggerScreen) {
+		super(worldScreen, debuggerScreen);
 		
 		mode = CircleToolMode.FREE;
 		yRadius = Vertex.INIT_VERTEX_RADIUS;
@@ -105,13 +108,13 @@ public class CircleTool extends ToolBase {
 	public void escKey() {
 		switch (mode) {
 		case FREE:
-			worldScreen.tool = new RegularTool(worldScreen);
-			worldScreen.tool.setPoint(worldScreen.world.quadrantMap.getPoint(worldScreen.world.lastMovedOrDraggedWorldPoint));
+			APP.tool = new RegularTool(worldScreen, debuggerScreen);
+			APP.tool.setPoint(worldScreen.world.quadrantMap.getPoint(worldScreen.world.lastMovedOrDraggedWorldPoint));
 			worldScreen.contentPane.repaint();
 			break;
 		case SET:
 			mode = CircleToolMode.FREE;
-			worldScreen.tool.setPoint(worldScreen.world.quadrantMap.getPoint(worldScreen.world.lastMovedOrDraggedWorldPoint));
+			APP.tool.setPoint(worldScreen.world.quadrantMap.getPoint(worldScreen.world.lastMovedOrDraggedWorldPoint));
 			worldScreen.contentPane.repaint();
 			break;
 		case KNOB:
@@ -138,9 +141,9 @@ public class CircleTool extends ToolBase {
 			Set<Vertex> affected = s.processNewStroke();
 			worldScreen.world.graph.computeVertexRadii(affected);
 			
-			worldScreen.tool = new RegularTool(worldScreen);
+			APP.tool = new RegularTool(worldScreen, debuggerScreen);
 			
-			worldScreen.tool.setPoint(worldScreen.world.lastMovedWorldPoint);
+			APP.tool.setPoint(worldScreen.world.lastMovedWorldPoint);
 			
 			worldScreen.world.render_worldPanel();
 			worldScreen.world.render_preview();
@@ -155,7 +158,7 @@ public class CircleTool extends ToolBase {
 		switch (mode) {
 		case FREE:
 			
-			worldScreen.tool.setPoint(worldScreen.world.quadrantMap.getPoint(worldScreen.world.lastMovedOrDraggedWorldPoint));
+			APP.tool.setPoint(worldScreen.world.quadrantMap.getPoint(worldScreen.world.lastMovedOrDraggedWorldPoint));
 			
 			worldScreen.contentPane.repaint();
 			break;

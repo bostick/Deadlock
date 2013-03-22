@@ -126,6 +126,8 @@ public class World extends PhysicsWorld {
 	
 	public void integrate(double t) {
 		
+		String.class.getName();
+		
 		synchronized (b2dWorld) {
 			
 			this.t = t;

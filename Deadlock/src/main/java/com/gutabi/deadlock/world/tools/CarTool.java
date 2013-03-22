@@ -11,6 +11,7 @@ import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.menu.MainMenu;
 import com.gutabi.deadlock.ui.InputEvent;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
+import com.gutabi.deadlock.world.DebuggerScreen;
 import com.gutabi.deadlock.world.WorldScreen;
 import com.gutabi.deadlock.world.cars.Car;
 import com.gutabi.deadlock.world.cars.CarStateEnum;
@@ -27,8 +28,8 @@ public class CarTool extends ToolBase {
 	
 	private Car car;
 	
-	public CarTool(WorldScreen worldScreen) {
-		super(worldScreen);
+	public CarTool(WorldScreen worldScreen, DebuggerScreen debuggerScreen) {
+		super(worldScreen, debuggerScreen);
 	}
 	
 	public void setPoint(Point p) {
@@ -138,6 +139,9 @@ public class CarTool extends ToolBase {
 					if (distToNext < distToPrev) {
 						car.state = CarStateEnum.COASTING_FORWARD;
 					} else {
+						
+//						System.out.println("overall: " + car.driver.overallPos);
+						
 						car.state = CarStateEnum.COASTING_BACKWARD;
 					}
 					

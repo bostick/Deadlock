@@ -14,7 +14,7 @@ public abstract class Driver {
 	public GraphPositionPath overallPath;
 	
 	public GraphPositionPathPosition overallPos;
-//	public GraphPositionPathPosition prevOverallPos;
+	public GraphPositionPathPosition prevOverallPos;
 	
 	Point goalPoint;
 	

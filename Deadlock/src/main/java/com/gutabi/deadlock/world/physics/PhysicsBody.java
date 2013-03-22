@@ -165,6 +165,8 @@ public abstract class PhysicsBody extends Entity {
 	
 	public void applyAngularImpulse(double coeff, double dw) {
 		
+//		System.out.println("dw: " + dw);
+		
 		float cancelingAngImpulse = (float)(coeff * momentOfInertia * dw);
 		
 		b2dBody.applyAngularImpulse(cancelingAngImpulse);

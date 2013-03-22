@@ -70,7 +70,8 @@ public class WorldPanel extends PanelBase {
 			Point p = panelToWorld(ev.p);
 			
 			screen.world.pressed(new InputEvent(p));
-			screen.tool.pressed(new InputEvent(p));
+			
+			APP.tool.pressed(new InputEvent(p));
 			
 			break;
 		}
@@ -87,7 +88,7 @@ public class WorldPanel extends PanelBase {
 			Point p = panelToWorld(ev.p);
 			
 			screen.world.dragged(new InputEvent(p));
-			screen.tool.dragged(new InputEvent(p));
+			APP.tool.dragged(new InputEvent(p));
 			break;
 		}
 		case DIALOG:
@@ -98,7 +99,7 @@ public class WorldPanel extends PanelBase {
 			Point p = panelToWorld(ev.p);
 			
 			screen.world.dragged(new InputEvent(p));
-			screen.tool.dragged(new InputEvent(p));
+			APP.tool.dragged(new InputEvent(p));
 			break;
 		}
 		}
@@ -110,11 +111,11 @@ public class WorldPanel extends PanelBase {
 		switch (screen.mode) {
 		case RUNNING:
 		case PAUSED:
-			screen.tool.released(ev);
+			APP.tool.released(ev);
 		case DIALOG:
 			break;
 		case EDITING:
-			screen.tool.released(ev);
+			APP.tool.released(ev);
 			break;
 		}
 		
@@ -131,7 +132,7 @@ public class WorldPanel extends PanelBase {
 			Point p = panelToWorld(ev.p);
 			
 			screen.world.moved(new InputEvent(p));
-			screen.tool.moved(new InputEvent(p));
+			APP.tool.moved(new InputEvent(p));
 			break;
 		}
 		case DIALOG:
@@ -140,7 +141,7 @@ public class WorldPanel extends PanelBase {
 			Point p = panelToWorld(ev.p);
 			
 			screen.world.moved(new InputEvent(p));
-			screen.tool.moved(new InputEvent(p));
+			APP.tool.moved(new InputEvent(p));
 			break;
 		}
 		}
@@ -154,7 +155,7 @@ public class WorldPanel extends PanelBase {
 			Point p = panelToWorld(ev.p);
 			
 			screen.world.clicked(new InputEvent(p));
-			screen.tool.clicked(new InputEvent(p));
+			APP.tool.clicked(new InputEvent(p));
 			break;
 		}
 		case DIALOG:
@@ -163,7 +164,7 @@ public class WorldPanel extends PanelBase {
 			Point p = panelToWorld(ev.p);
 			
 			screen.world.clicked(new InputEvent(p));
-			screen.tool.clicked(new InputEvent(p));
+			APP.tool.clicked(new InputEvent(p));
 			break;
 		}
 		}
@@ -180,7 +181,7 @@ public class WorldPanel extends PanelBase {
 		ctxt.scale(screen.pixelsPerMeter);
 		ctxt.translate(-screen.worldViewport.x, -screen.worldViewport.y);
 		
-		screen.tool.draw(ctxt);
+		APP.tool.draw(ctxt);
 		
 		if (APP.FPS_DRAW) {
 			

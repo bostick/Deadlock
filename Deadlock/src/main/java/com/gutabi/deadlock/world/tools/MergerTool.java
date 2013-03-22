@@ -1,5 +1,7 @@
 package com.gutabi.deadlock.world.tools;
 
+import static com.gutabi.deadlock.DeadlockApplication.APP;
+
 import java.util.Set;
 
 import com.gutabi.deadlock.geom.Shape;
@@ -9,6 +11,7 @@ import com.gutabi.deadlock.ui.paint.Cap;
 import com.gutabi.deadlock.ui.paint.Color;
 import com.gutabi.deadlock.ui.paint.Join;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
+import com.gutabi.deadlock.world.DebuggerScreen;
 import com.gutabi.deadlock.world.WorldScreen;
 import com.gutabi.deadlock.world.graph.Vertex;
 
@@ -16,8 +19,8 @@ public class MergerTool extends ToolBase {
 	
 	MergerToolShape shape;
 	
-	public MergerTool(WorldScreen worldScreen) {
-		super(worldScreen);
+	public MergerTool(WorldScreen worldScreen, DebuggerScreen debuggerScreen) {
+		super(worldScreen, debuggerScreen);
 	}
 	
 	public void setPoint(Point p) {
@@ -36,9 +39,9 @@ public class MergerTool extends ToolBase {
 	
 	public void escKey() {
 		
-		worldScreen.tool = new RegularTool(worldScreen);
+		APP.tool = new RegularTool(worldScreen, debuggerScreen);
 		
-		worldScreen.tool.setPoint(worldScreen.world.quadrantMap.getPoint(worldScreen.world.lastMovedOrDraggedWorldPoint));
+		APP.tool.setPoint(worldScreen.world.quadrantMap.getPoint(worldScreen.world.lastMovedOrDraggedWorldPoint));
 		
 		worldScreen.contentPane.repaint();
 	}
@@ -51,9 +54,9 @@ public class MergerTool extends ToolBase {
 				Set<Vertex> affected = worldScreen.world.createMerger(p);
 				worldScreen.world.graph.computeVertexRadii(affected);
 				
-				worldScreen.tool = new RegularTool(worldScreen);
+				APP.tool = new RegularTool(worldScreen, debuggerScreen);
 				
-				worldScreen.tool.setPoint(worldScreen.world.lastMovedWorldPoint);
+				APP.tool.setPoint(worldScreen.world.lastMovedWorldPoint);
 				
 				worldScreen.world.render_worldPanel();
 				worldScreen.world.render_preview();
@@ -64,7 +67,7 @@ public class MergerTool extends ToolBase {
 	}
 	
 	public void moved(InputEvent ev) {
-		worldScreen.tool.setPoint(worldScreen.world.quadrantMap.getPoint(worldScreen.world.lastMovedOrDraggedWorldPoint));
+		APP.tool.setPoint(worldScreen.world.quadrantMap.getPoint(worldScreen.world.lastMovedOrDraggedWorldPoint));
 		worldScreen.contentPane.repaint();
 	}
 	

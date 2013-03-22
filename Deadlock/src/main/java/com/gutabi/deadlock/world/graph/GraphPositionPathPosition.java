@@ -243,6 +243,7 @@ public class GraphPositionPathPosition {
 	
 	public GraphPositionPathPosition prevBound() {
 		if (DMath.equals(param, 0.0)) {
+			assert index > 0;
 			return new GraphPositionPathPosition(path, index-1, 0.0);
 		} else {
 			return new GraphPositionPathPosition(path, index, 0.0);

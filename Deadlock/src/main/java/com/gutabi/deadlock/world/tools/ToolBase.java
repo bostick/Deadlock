@@ -4,6 +4,7 @@ import static com.gutabi.deadlock.DeadlockApplication.APP;
 
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.InputEvent;
+import com.gutabi.deadlock.world.DebuggerScreen;
 import com.gutabi.deadlock.world.WorldScreen;
 
 public abstract class ToolBase implements Tool {
@@ -11,10 +12,12 @@ public abstract class ToolBase implements Tool {
 	public Point p;
 	
 	final WorldScreen worldScreen;
+	DebuggerScreen debuggerScreen;
 	
-	public ToolBase(WorldScreen worldScreen) {
+	public ToolBase(WorldScreen worldScreen, DebuggerScreen debuggerScreen) {
 		
 		this.worldScreen = worldScreen;
+		this.debuggerScreen = debuggerScreen;
 		
 	}
 	
@@ -49,7 +52,7 @@ public abstract class ToolBase implements Tool {
 	public void gKey() {
 		worldScreen.world.quadrantMap.toggleGrid();
 		
-		worldScreen.tool.setPoint(worldScreen.world.quadrantMap.getPoint(worldScreen.world.lastMovedOrDraggedWorldPoint));
+		APP.tool.setPoint(worldScreen.world.quadrantMap.getPoint(worldScreen.world.lastMovedOrDraggedWorldPoint));
 		
 		worldScreen.world.render_worldPanel();
 		worldScreen.world.render_preview();

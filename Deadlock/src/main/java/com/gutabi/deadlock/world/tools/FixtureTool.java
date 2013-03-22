@@ -1,5 +1,7 @@
 package com.gutabi.deadlock.world.tools;
 
+import static com.gutabi.deadlock.DeadlockApplication.APP;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -10,6 +12,7 @@ import com.gutabi.deadlock.ui.paint.Cap;
 import com.gutabi.deadlock.ui.paint.Color;
 import com.gutabi.deadlock.ui.paint.Join;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
+import com.gutabi.deadlock.world.DebuggerScreen;
 import com.gutabi.deadlock.world.Quadrant;
 import com.gutabi.deadlock.world.QuadrantMap;
 import com.gutabi.deadlock.world.WorldScreen;
@@ -34,8 +37,8 @@ public class FixtureTool extends ToolBase {
 	
 	private FixtureToolShape shape;
 	
-	public FixtureTool(WorldScreen worldScreen) {
-		super(worldScreen);
+	public FixtureTool(WorldScreen worldScreen, DebuggerScreen debuggerScreen) {
+		super(worldScreen, debuggerScreen);
 	}
 	
 	public void setPoint(Point p) {
@@ -129,9 +132,9 @@ public class FixtureTool extends ToolBase {
 	
 	public void escKey() {
 		
-		worldScreen.tool = new RegularTool(worldScreen);
+		APP.tool = new RegularTool(worldScreen, debuggerScreen);
 		
-		worldScreen.tool.setPoint(worldScreen.world.quadrantMap.getPoint(worldScreen.world.lastMovedOrDraggedWorldPoint));
+		APP.tool.setPoint(worldScreen.world.quadrantMap.getPoint(worldScreen.world.lastMovedOrDraggedWorldPoint));
 		
 		worldScreen.contentPane.repaint();
 	}
@@ -167,8 +170,8 @@ public class FixtureTool extends ToolBase {
 			affected.addAll(res);
 			worldScreen.world.graph.computeVertexRadii(affected);
 			
-			worldScreen.tool = new RegularTool(worldScreen);
-			worldScreen.tool.setPoint(worldScreen.world.lastMovedWorldPoint);
+			APP.tool = new RegularTool(worldScreen, debuggerScreen);
+			APP.tool.setPoint(worldScreen.world.lastMovedWorldPoint);
 			
 			worldScreen.world.render_worldPanel();
 			worldScreen.world.render_preview();
@@ -177,7 +180,7 @@ public class FixtureTool extends ToolBase {
 	}
 	
 	public void moved(InputEvent ev) {
-		worldScreen.tool.setPoint(worldScreen.world.quadrantMap.getPoint(worldScreen.world.lastMovedOrDraggedWorldPoint));
+		APP.tool.setPoint(worldScreen.world.quadrantMap.getPoint(worldScreen.world.lastMovedOrDraggedWorldPoint));
 		worldScreen.contentPane.repaint();
 	}
 	

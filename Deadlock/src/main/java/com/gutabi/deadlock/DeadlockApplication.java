@@ -8,6 +8,7 @@ import com.gutabi.deadlock.world.sprites.CarSheet;
 import com.gutabi.deadlock.world.sprites.ExplosionSheet;
 import com.gutabi.deadlock.world.sprites.Sheet;
 import com.gutabi.deadlock.world.sprites.SpriteSheet;
+import com.gutabi.deadlock.world.tools.Tool;
 
 public class DeadlockApplication {
 	
@@ -37,6 +38,8 @@ public class DeadlockApplication {
 	
 	public AppScreen appScreen;
 	public DebuggerScreen debuggerScreen;
+	
+	public Tool tool;
 	
 //	public URL codebase;
 	

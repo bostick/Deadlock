@@ -31,18 +31,50 @@ public abstract class OBB implements Shape {
 	
 	private int hash;
 	
-	protected OBB(Point center, double a, double xExtant, double yExtant) {
-		super();
+	protected OBB(Point center, double preA, double xExtant, double yExtant) {
 		
 		this.center = center;
-		this.a = a;
 		this.xExtant = xExtant;
 		this.yExtant = yExtant;
 		
-		this.p0 = Geom.rotate(a, new Point(-xExtant, -yExtant)).plus(center);
-		this.p1 = Geom.rotate(a, new Point(xExtant, -yExtant)).plus(center);
-		this.p2 = Geom.rotate(a, new Point(xExtant, yExtant)).plus(center);
-		this.p3 = Geom.rotate(a, new Point(-xExtant, yExtant)).plus(center);
+		/*
+		 * even though this is an OBB and not an AABB, it is still nice to get exact right angles
+		 */
+		if (Math.abs(preA - 0.0 * Math.PI) < 1.0E-4) {
+			a = 0.0 * Math.PI;
+			this.p0 = new Point(-xExtant, -yExtant).plus(center);
+			this.p1 = new Point(xExtant, -yExtant).plus(center);
+			this.p2 = new Point(xExtant, yExtant).plus(center);
+			this.p3 = new Point(-xExtant, yExtant).plus(center);
+		} else if (Math.abs(preA - 0.5 * Math.PI) < 1.0E-4) {
+			a = 0.5 * Math.PI;
+			
+			this.p0 = new Point(yExtant, -xExtant).plus(center);
+			this.p1 = new Point(yExtant, xExtant).plus(center);
+			this.p2 = new Point(-yExtant, xExtant).plus(center);
+			this.p3 = new Point(-yExtant, -xExtant).plus(center);
+			
+		} else if (Math.abs(preA - 1.0 * Math.PI) < 1.0E-4) {
+			a = 1.0 * Math.PI;
+			this.p0 = new Point(xExtant, yExtant).plus(center);
+			this.p1 = new Point(-xExtant, yExtant).plus(center);
+			this.p2 = new Point(-xExtant, -yExtant).plus(center);
+			this.p3 = new Point(xExtant, -yExtant).plus(center);
+		} else if (Math.abs(preA - 1.5 * Math.PI) < 1.0E-4) {
+			a = 1.5 * Math.PI;
+			
+			this.p0 = new Point(-yExtant, xExtant).plus(center);
+			this.p1 = new Point(-yExtant, -xExtant).plus(center);
+			this.p2 = new Point(yExtant, -xExtant).plus(center);
+			this.p3 = new Point(yExtant, xExtant).plus(center);
+			
+		} else {
+			a = preA;
+			this.p0 = Geom.rotate(a, new Point(-xExtant, -yExtant)).plus(center);
+			this.p1 = Geom.rotate(a, new Point(xExtant, -yExtant)).plus(center);
+			this.p2 = Geom.rotate(a, new Point(xExtant, yExtant)).plus(center);
+			this.p3 = Geom.rotate(a, new Point(-xExtant, yExtant)).plus(center);
+		}
 		
 		double ulX = Math.min(Math.min(p0.x, p1.x), Math.min(p2.x, p3.x));
 		double ulY = Math.min(Math.min(p0.y, p1.y), Math.min(p2.y, p3.y));

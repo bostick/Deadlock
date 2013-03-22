@@ -81,35 +81,7 @@ public abstract class Engine {
 		
 		c.applyCancelingLateralImpulse(driveLateralImpulseCoefficient);
 		
-		
-		Point dp = new Point(c.driver.goalPoint.x-c.center.x, c.driver.goalPoint.y-c.center.y);
-		
-		double goalAngle = Math.atan2(dp.y, dp.x);
-		
-		double dw = ((float)goalAngle) - c.angle;
-		
-		while (dw > Math.PI) {
-			dw -= 2*Math.PI;
-		}
-		while (dw < -Math.PI) {
-			dw += 2*Math.PI;
-		}
-		
-		/*
-		 * turning radius
-		 */
-		
-		double actualDistance = Math.abs(c.forwardSpeed * world.worldScreen.DT);
-		double maxRads = maxRadsPerMeter * actualDistance;
-		if (dw > maxRads) {
-			dw = maxRads;
-		} else if (dw < -maxRads) {
-			dw = -maxRads;
-		}
-		
-		float goalAngVel = (float)(dw / world.worldScreen.DT);
-		
-		c.applyAngularImpulse(turnAngularImpulseCoefficient, (goalAngVel - c.angularVel));
+		turn();
 		
 	}
 	
@@ -135,6 +107,12 @@ public abstract class Engine {
 		
 		c.applyCancelingLateralImpulse(driveLateralImpulseCoefficient);
 		
+		turn();
+		
+	}
+	
+	private void turn() {
+		
 		Point dp = new Point(c.driver.goalPoint.x-c.center.x, c.driver.goalPoint.y-c.center.y);
 		
 		double goalAngle = Math.atan2(dp.y, dp.x);
@@ -152,7 +130,7 @@ public abstract class Engine {
 		 * turning radius
 		 */
 		
-		double actualDistance = Math.abs(backwardSpeed * world.worldScreen.DT);
+		double actualDistance = c.forwardSpeed * world.worldScreen.DT;
 		double maxRads = maxRadsPerMeter * actualDistance;
 		if (dw > maxRads) {
 			dw = maxRads;

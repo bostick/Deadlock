@@ -15,6 +15,7 @@ import com.gutabi.deadlock.world.examples.OneByOneWorld;
 import com.gutabi.deadlock.world.examples.RushHourWorld;
 import com.gutabi.deadlock.world.examples.WorldA;
 import com.gutabi.deadlock.world.tools.CarTool;
+import com.gutabi.deadlock.world.tools.RegularTool;
 
 public class MainMenu extends AppScreen implements KeyListener {
 	
@@ -44,6 +45,8 @@ public class MainMenu extends AppScreen implements KeyListener {
 				DebuggerScreen debuggerScreen = new DebuggerScreen(worldScreen);
 				APP.debuggerScreen = debuggerScreen;
 				
+				APP.tool = new RegularTool(worldScreen, debuggerScreen);
+				
 				worldScreen.world = OneByOneWorld.createOneByOneWorld(worldScreen, debuggerScreen);
 				
 				APP.platform.setupAppScreen(worldScreen.contentPane.cp);
@@ -57,6 +60,7 @@ public class MainMenu extends AppScreen implements KeyListener {
 				worldScreen.world.render_worldPanel();
 				worldScreen.world.render_preview();
 				worldScreen.contentPane.repaint();
+				debuggerScreen.contentPane.repaint();
 				
 				APP.platform.showAppScreen();
 				APP.platform.showDebuggerScreen();
@@ -72,6 +76,8 @@ public class MainMenu extends AppScreen implements KeyListener {
 				
 				DebuggerScreen debuggerScreen = new DebuggerScreen(worldScreen);
 				APP.debuggerScreen = debuggerScreen;
+				
+				APP.tool = new RegularTool(worldScreen, debuggerScreen);
 				
 				worldScreen.world = FourByFourGridWorld.createFourByFourGridWorld(worldScreen, debuggerScreen);
 				
@@ -102,6 +108,8 @@ public class MainMenu extends AppScreen implements KeyListener {
 				DebuggerScreen debuggerScreen = new DebuggerScreen(worldScreen);
 				APP.debuggerScreen = debuggerScreen;
 				
+				APP.tool = new RegularTool(worldScreen, debuggerScreen);
+				
 				worldScreen.world = WorldA.createWorldA(worldScreen, debuggerScreen);
 				
 				APP.platform.setupAppScreen(worldScreen.contentPane.cp);
@@ -131,7 +139,8 @@ public class MainMenu extends AppScreen implements KeyListener {
 				DebuggerScreen debuggerScreen = new DebuggerScreen(worldScreen);
 				APP.debuggerScreen = debuggerScreen;
 				
-				worldScreen.tool = new CarTool(worldScreen);
+				APP.tool = new CarTool(worldScreen, debuggerScreen);
+				
 				worldScreen.world = RushHourWorld.createRushHourWorld(worldScreen, APP.debuggerScreen);
 				
 				APP.platform.setupAppScreen(worldScreen.contentPane.cp);
