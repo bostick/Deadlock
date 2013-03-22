@@ -1,7 +1,5 @@
 package com.gutabi.deadlock.world.cars;
 
-import org.jbox2d.common.Vec2;
-
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.world.World;
 
@@ -59,22 +57,9 @@ public abstract class Engine {
 	}
 	
 	private void updateFriction() {
-		
-		Vec2 cancelingImpulse = c.vel.mul(-1).mul(c.mass);
-		
-		if (cancelingImpulse.lengthSquared() == 0.0f) {
-			return;
-		}
-		
-		float cancelingForwardImpulse = (float)(frictionForwardImpulseCoefficient * Vec2.dot(c.currentRightNormal, cancelingImpulse));
-		float cancelingLateralImpulse = (float)(frictionLateralImpulseCoefficient * Vec2.dot(c.currentUpNormal, cancelingImpulse));
-		
-		c.b2dBody.applyLinearImpulse(c.currentRightNormal.mul(cancelingForwardImpulse), c.b2dBody.getWorldCenter());
-		c.b2dBody.applyLinearImpulse(c.currentUpNormal.mul(cancelingLateralImpulse), c.b2dBody.getWorldCenter());
-		
-		float cancelingAngImpulse = (float)(frictionAngularImpulseCoefficient * c.momentOfInertia * -c.angularVel);
-		
-		c.b2dBody.applyAngularImpulse(cancelingAngImpulse);
+		c.applyCancelingForwardImpulse(frictionForwardImpulseCoefficient);
+		c.applyCancelingLateralImpulse(frictionLateralImpulseCoefficient);
+		c.applyCancelingAngularImpulse(frictionAngularImpulseCoefficient);
 	}
 	
 	private void updateDrive(double t) {
@@ -88,18 +73,13 @@ public abstract class Engine {
 		if (dv < 0) {
 			assert false;
 		}
-		if (dv > maxAcceleration * world.screen.DT) {
-			dv = maxAcceleration * world.screen.DT;
+		if (dv > maxAcceleration * world.worldScreen.DT) {
+			dv = maxAcceleration * world.worldScreen.DT;
 		}
 		
-		float forwardImpulse = (float)(driveForwardImpulseCoefficient * c.mass * dv);
+		c.applyForwardImpulse(driveForwardImpulseCoefficient, dv);
 		
-		c.b2dBody.applyLinearImpulse(c.currentRightNormal.mul(forwardImpulse), c.b2dBody.getWorldCenter());
-		
-		Vec2 cancelingImpulse = c.vel.mul(-1).mul(c.mass);
-		float driveLateralImpulse = (float)(driveLateralImpulseCoefficient * Vec2.dot(c.currentUpNormal, cancelingImpulse));
-		
-		c.b2dBody.applyLinearImpulse(c.currentUpNormal.mul(driveLateralImpulse), c.b2dBody.getWorldCenter());
+		c.applyCancelingLateralImpulse(driveLateralImpulseCoefficient);
 		
 		
 		Point dp = new Point(c.driver.goalPoint.x-c.center.x, c.driver.goalPoint.y-c.center.y);
@@ -119,7 +99,7 @@ public abstract class Engine {
 		 * turning radius
 		 */
 		
-		double actualDistance = Math.abs(c.forwardSpeed * world.screen.DT);
+		double actualDistance = Math.abs(c.forwardSpeed * world.worldScreen.DT);
 		double maxRads = maxRadsPerMeter * actualDistance;
 		if (dw > maxRads) {
 			dw = maxRads;
@@ -127,11 +107,9 @@ public abstract class Engine {
 			dw = -maxRads;
 		}
 		
-		float goalAngVel = (float)(dw / world.screen.DT);
+		float goalAngVel = (float)(dw / world.worldScreen.DT);
 		
-		float angImpulse = (float)(turnAngularImpulseCoefficient * c.momentOfInertia * (goalAngVel - c.angularVel));
-		
-		c.b2dBody.applyAngularImpulse(angImpulse);
+		c.applyAngularImpulse(turnAngularImpulseCoefficient, (goalAngVel - c.angularVel));
 		
 	}
 	
@@ -149,19 +127,13 @@ public abstract class Engine {
 		if (dv < 0) {
 			assert false;
 		}
-		if (dv > maxAcceleration * world.screen.DT) {
-			dv = maxAcceleration * world.screen.DT;
+		if (dv > maxAcceleration * world.worldScreen.DT) {
+			dv = maxAcceleration * world.worldScreen.DT;
 		}
 		
-		float backwardImpulse = (float)(driveForwardImpulseCoefficient * c.mass * dv);
+		c.applyForwardImpulse(driveForwardImpulseCoefficient, -dv);
 		
-		c.b2dBody.applyLinearImpulse(c.currentRightNormal.mul(-backwardImpulse), c.b2dBody.getWorldCenter());
-		
-		Vec2 cancelingImpulse = c.vel.mul(-1).mul(c.mass);
-		float driveLateralImpulse = (float)(driveLateralImpulseCoefficient * Vec2.dot(c.currentUpNormal, cancelingImpulse));
-		
-		c.b2dBody.applyLinearImpulse(c.currentUpNormal.mul(driveLateralImpulse), c.b2dBody.getWorldCenter());
-		
+		c.applyCancelingLateralImpulse(driveLateralImpulseCoefficient);
 		
 		Point dp = new Point(c.driver.goalPoint.x-c.center.x, c.driver.goalPoint.y-c.center.y);
 		
@@ -180,7 +152,7 @@ public abstract class Engine {
 		 * turning radius
 		 */
 		
-		double actualDistance = Math.abs(backwardSpeed * world.screen.DT);
+		double actualDistance = Math.abs(c.forwardSpeed * world.worldScreen.DT);
 		double maxRads = maxRadsPerMeter * actualDistance;
 		if (dw > maxRads) {
 			dw = maxRads;
@@ -188,11 +160,9 @@ public abstract class Engine {
 			dw = -maxRads;
 		}
 		
-		float goalAngVel = (float)(dw / world.screen.DT);
+		float goalAngVel = (float)(dw / world.worldScreen.DT);
 		
-		float angImpulse = (float)(turnAngularImpulseCoefficient * c.momentOfInertia * (goalAngVel - c.angularVel));
-		
-		c.b2dBody.applyAngularImpulse(angImpulse);
+		c.applyAngularImpulse(turnAngularImpulseCoefficient, (goalAngVel - c.angularVel));
 		
 	}
 	
@@ -207,22 +177,10 @@ public abstract class Engine {
 			return;
 		}
 		
-		Vec2 cancelingVel = c.vel.mul(-1);
-		double cancelingRightVel = Vec2.dot(cancelingVel, c.currentRightNormal);
-		double cancelingUpVel = Vec2.dot(cancelingVel, c.currentUpNormal);
+		c.applyCancelingForwardImpulse(brakeForwardImpulseCoefficient);
+		c.applyCancelingLateralImpulse(brakeLateralImpulseCoefficient);
+		c.applyCancelingAngularImpulse(turnAngularImpulseCoefficient);
 		
-		float rightBrakeImpulse = (float)(brakeForwardImpulseCoefficient * cancelingRightVel * c.mass);
-		float upBrakeImpulse = (float)(brakeLateralImpulseCoefficient * cancelingUpVel * c.mass);
-		
-		c.b2dBody.applyLinearImpulse(c.currentRightNormal.mul(rightBrakeImpulse), c.pVec2);
-		c.b2dBody.applyLinearImpulse(c.currentUpNormal.mul(upBrakeImpulse), c.pVec2);
-		
-		
-		double goalAngVel = 0.0;
-		
-		float angImpulse = (float)(turnAngularImpulseCoefficient * c.momentOfInertia * (goalAngVel - c.angularVel));
-		
-		c.b2dBody.applyAngularImpulse(angImpulse);
 	}
 	
 }

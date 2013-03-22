@@ -164,7 +164,7 @@ public final class Fixture extends Vertex {
 			c = waitingCar;
 		}
 		
-		boolean intersecting = world.carMap.intersect(c.shape.aabb);
+		boolean intersecting = world.intersectsPhysicsBodies(c.shape.aabb);
 		
 		if (intersecting) {
 			
@@ -175,7 +175,7 @@ public final class Fixture extends Vertex {
 		
 		waitingCar = null;
 		
-		c.b2dInit();
+		c.physicsInit();
 		c.computeDynamicPropertiesAlways();
 		c.computeDynamicPropertiesMoving();
 		
@@ -213,7 +213,7 @@ public final class Fixture extends Vertex {
 			return false;
 		}
 		
-		boolean carIntersecting = world.carMap.intersect(shape.aabb);
+		boolean carIntersecting = world.intersectsPhysicsBodies(shape.aabb);
 		
 		if (carIntersecting) {
 			return false;
@@ -390,7 +390,7 @@ public final class Fixture extends Vertex {
 			
 			ctxt.translate(-r, -r);
 			
-			APP.spriteSheet.paint(ctxt, SpriteSheetSprite.FIXTUREARROW, world.screen.pixelsPerMeter, 0, 0, 2 * r, 2 * r);
+			APP.spriteSheet.paint(ctxt, SpriteSheetSprite.FIXTUREARROW, world.worldScreen.pixelsPerMeter, 0, 0, 2 * r, 2 * r);
 			
 			ctxt.setTransform(origTransform);
 			

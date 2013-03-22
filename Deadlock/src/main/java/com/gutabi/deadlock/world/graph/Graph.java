@@ -1298,15 +1298,15 @@ public class Graph {
 		
 		Transform origTransform = ctxt.getTransform();
 		
-		ctxt.paintString(0, 0, 1.0/world.screen.pixelsPerMeter, "vertex count: " + vertices.size());
+		ctxt.paintString(0, 0, 1.0/world.worldScreen.pixelsPerMeter, "vertex count: " + vertices.size());
 		
 		ctxt.translate(0, 1);
 		
-		ctxt.paintString(0, 0, 1.0/world.screen.pixelsPerMeter, "road count: " + roads.size());
+		ctxt.paintString(0, 0, 1.0/world.worldScreen.pixelsPerMeter, "road count: " + roads.size());
 		
 		ctxt.translate(0, 1);
 		
-		ctxt.paintString(0, 0, 1.0/world.screen.pixelsPerMeter, "merger count: " + mergers.size());
+		ctxt.paintString(0, 0, 1.0/world.worldScreen.pixelsPerMeter, "merger count: " + mergers.size());
 		
 		ctxt.setTransform(origTransform);
 	}

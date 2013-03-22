@@ -8,9 +8,9 @@ public class AutonomousEngine extends Engine {
 		super(world, car);
 		
 		
-//		double steeringLookaheadDistance = CAR_LENGTH * 1.5;
-//		double carProximityLookahead = 0.5 * CAR_LENGTH + 0.5 * CAR_LENGTH + getMaxSpeed() * MODEL.dt + 0.4;
-//		double vertexArrivalLookahead = CAR_LENGTH * 0.5 + CAR_LENGTH + getMaxSpeed() * MODEL.dt + 0.4;
+//		double steeringLookaheadDistance = length * 1.5;
+//		double carProximityLookahead = 0.5 * length + 0.5 * length + getMaxSpeed() * MODEL.dt + 0.4;
+//		double vertexArrivalLookahead = length * 0.5 + length + getMaxSpeed() * MODEL.dt + 0.4;
 //		/*
 //		 * turning radius
 //		 * 3 car lengths for 180 deg = 3 meters for 3.14 radians
@@ -30,9 +30,9 @@ public class AutonomousEngine extends Engine {
 		
 		
 		
-//		double steeringLookaheadDistance = CAR_LENGTH * 0.5;
-//		double carProximityLookahead = 0.5 * CAR_LENGTH + 0.5 * CAR_LENGTH + getMaxSpeed() * MODEL.dt + 0.8 * CAR_LENGTH;
-//		double vertexArrivalLookahead = CAR_LENGTH * 0.5;
+//		double steeringLookaheadDistance = length * 0.5;
+//		double carProximityLookahead = 0.5 * length + 0.5 * length + getMaxSpeed() * MODEL.dt + 0.8 * length;
+//		double vertexArrivalLookahead = length * 0.5;
 //		/*
 //		 * turning radius
 //		 * 3 car lengths for 180 deg = 3 meters for 3.14 radians

@@ -189,7 +189,7 @@ public class GraphPositionPath {
 	public VertexArrivalEvent vertexArrivalTest(AutonomousDriver d, double dist) {
 		
 		for (GraphPositionPathPosition p : borderPositions) {
-			GraphPositionPathPosition front = d.overallPos.travel(Math.min(d.c.CAR_LENGTH/2, d.overallPos.lengthToEndOfPath));
+			GraphPositionPathPosition front = d.overallPos.travel(Math.min(d.c.length/2, d.overallPos.lengthToEndOfPath));
 			if (p.combo >= front.combo && DMath.lessThanEquals(front.distanceTo(p), dist)) {
 				return new VertexArrivalEvent(d, p);
 			}
@@ -789,7 +789,7 @@ public class GraphPositionPath {
 				continue;
 			}
 			double centerCenterDist = center.distanceTo(otherCarCenter);
-			double centerBackDist = centerCenterDist - d.c.CAR_LENGTH/2;
+			double centerBackDist = centerCenterDist - d.c.length/2;
 			if (DMath.lessThanEquals(centerBackDist, dist)) {
 				assert !d.overallPos.equals(center);
 				return d;

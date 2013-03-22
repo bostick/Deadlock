@@ -8,12 +8,9 @@ import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.contacts.Contact;
 
-import com.gutabi.deadlock.math.Point;
-import com.gutabi.deadlock.world.World;
 import com.gutabi.deadlock.world.cars.AutonomousCar;
 import com.gutabi.deadlock.world.cars.Car;
 import com.gutabi.deadlock.world.cars.CarStateEnum;
-import com.gutabi.deadlock.world.sprites.AnimatedExplosion;
 
 public class CarEventListener implements ContactListener {
 	

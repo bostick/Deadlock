@@ -126,7 +126,7 @@ public class StopSign extends Entity {
 				
 				ctxt.translate(p.x - StopSign.STOPSIGN_SIZE/2, p.y - StopSign.STOPSIGN_SIZE/2);
 				
-				APP.spriteSheet.paint(ctxt, SpriteSheetSprite.STOPSIGN, r.world.screen.pixelsPerMeter, 0, 0, STOPSIGN_SIZE, STOPSIGN_SIZE);
+				APP.spriteSheet.paint(ctxt, SpriteSheetSprite.STOPSIGN, r.world.worldScreen.pixelsPerMeter, 0, 0, STOPSIGN_SIZE, STOPSIGN_SIZE);
 				
 				ctxt.setTransform(origTransform);
 				

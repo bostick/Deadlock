@@ -1,7 +1,11 @@
 package com.gutabi.deadlock.world.physics;
 
+import org.jbox2d.callbacks.DebugDraw;
+import org.jbox2d.common.Color3f;
+import org.jbox2d.common.OBBViewportTransform;
+import org.jbox2d.common.Vec2;
+
 import com.gutabi.deadlock.geom.Line;
-import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.paint.Color;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 
@@ -33,7 +37,7 @@ public class PhysicsDebugDraw extends DebugDraw {
 	
 	public void drawSegment(Vec2 p1, Vec2 p2, Color3f color) {
 		ctxt.setColor(Color.WHITE);
-		Line line = new Line(Point.point(p1), Point.point(p2));
+		Line line = new Line(PhysicsUtils.point(p1), PhysicsUtils.point(p2));
 		line.draw(ctxt);
 	}
 	

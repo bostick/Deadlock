@@ -14,7 +14,7 @@ public final class AutonomousDriver extends Driver {
 	public double carProximityLookahead;
 	public double vertexArrivalLookahead;
 	
-//	double steeringLookaheadDistance = Car.CAR_LENGTH * 0.5;
+//	double steeringLookaheadDistance = Car.length * 0.5;
 	
 	public VertexArrivalEvent curVertexArrivalEvent;
 	public CarProximityEvent curCarProximityEvent;
@@ -81,7 +81,7 @@ public final class AutonomousDriver extends Driver {
 					
 					toRemove.add(e);
 					
-				} else if (overallPos.combo >= e.carPastExitPosition.travel(c.CAR_LENGTH/2).combo) {
+				} else if (overallPos.combo >= e.carPastExitPosition.travel(c.length/2).combo) {
 					/*
 					 * driving past exit of intersection, so cleanup
 					 */
@@ -163,7 +163,7 @@ public final class AutonomousDriver extends Driver {
 		
 		switch (c.state) {
 		case DRIVING:
-			double steeringLookaheadDistance = c.CAR_LENGTH * 0.5;
+			double steeringLookaheadDistance = c.length * 0.5;
 			GraphPositionPathPosition next = overallPos.travel(Math.min(steeringLookaheadDistance, overallPos.lengthToEndOfPath));
 			goalPoint = next.p;
 			break;

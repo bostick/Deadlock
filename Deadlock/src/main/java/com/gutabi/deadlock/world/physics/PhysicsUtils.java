@@ -1,9 +1,8 @@
 package com.gutabi.deadlock.world.physics;
 
-import com.gutabi.deadlock.geom.AABB;
+import org.jbox2d.common.Vec2;
+
 import com.gutabi.deadlock.math.Point;
-import com.gutabi.deadlock.math.Vec2;
-import com.gutabi.deadlock.world.QueryCallback;
 
 public class PhysicsUtils {
 	

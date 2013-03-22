@@ -1,5 +1,8 @@
 package com.gutabi.deadlock.world.physics;
 
+import org.jbox2d.callbacks.QueryCallback;
+import org.jbox2d.common.Vec2;
+
 import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
@@ -11,12 +14,12 @@ public abstract class PhysicsWorld {
 	
 	public PhysicsDebugDraw debugDraw;
 	
-	private org.jbox2d.dynamics.World b2dWorld;
+	public org.jbox2d.dynamics.World b2dWorld;
 	
 	public PhysicsWorld(WorldScreen worldScreen) {
 		this.worldScreen = worldScreen;
 		
-		b2dWorld = org.jbox2d.dynamics.World(new Vec2(0.0f, 0.0f), true);
+		b2dWorld = new org.jbox2d.dynamics.World(new Vec2(0.0f, 0.0f), true);
 		
 		debugDraw = new PhysicsDebugDraw();
 		
@@ -51,9 +54,9 @@ public abstract class PhysicsWorld {
 	
 	public abstract void carCrash(Point p);
 	
-	public boolean intersect(AABB aabb) {
+	public boolean intersectsPhysicsBodies(AABB aabb) {
 		
-		org.jbox2d.collision.AABB b2dAABB = new org.jbox2d.collision.AABB(aabb.ul.vec2(), aabb.br.vec2());
+		org.jbox2d.collision.AABB b2dAABB = new org.jbox2d.collision.AABB(PhysicsUtils.vec2(aabb.ul), PhysicsUtils.vec2(aabb.br));
 		
 		final boolean[] intersecting = new boolean[1];
 		

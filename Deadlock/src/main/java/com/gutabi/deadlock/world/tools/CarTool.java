@@ -104,8 +104,8 @@ public class CarTool extends ToolBase {
 //					APP.appScreen.contentPane.repaint();
 					
 					Point worldFront = Geom.localToWorld(car.localFront, car.angle, car.center);
-					GraphPositionPathPosition centerPathPos = car.driver.overallPath.generalSearch(car.center, car.driver.overallPos, car.CAR_LENGTH);
-					GraphPositionPathPosition frontPathPos = car.driver.overallPath.generalSearch(worldFront, car.driver.overallPos, car.CAR_LENGTH);
+					GraphPositionPathPosition centerPathPos = car.driver.overallPath.generalSearch(car.center, car.driver.overallPos, car.length);
+					GraphPositionPathPosition frontPathPos = car.driver.overallPath.generalSearch(worldFront, car.driver.overallPos, car.length);
 					int directionInTrack;
 					if (DMath.lessThan(centerPathPos.combo, frontPathPos.combo)) {
 						directionInTrack = 1;
@@ -125,7 +125,7 @@ public class CarTool extends ToolBase {
 					 * reset
 					 */
 					car.setTransform(car.toolOrigP, car.toolOrigAngle);
-					car.b2dSetTransform();
+					car.setPhysicsTransform();
 					car.driver.overallPos = car.driver.toolOrigOverallPos;
 					
 					worldScreen.world.zoomAbsolute(1.0);
@@ -145,14 +145,14 @@ public class CarTool extends ToolBase {
 					case TOP:
 					case BOTTOM:
 						rounded = new RushHourBoardPosition(b,
-								Math.round(rpos.rowCombo - car.CAR_LENGTH/2) + car.CAR_LENGTH/2,
-								Math.round(rpos.colCombo - car.CAR_WIDTH/2) + car.CAR_WIDTH/2);
+								Math.round(rpos.rowCombo - car.length/2) + car.length/2,
+								Math.round(rpos.colCombo - car.width/2) + car.width/2);
 						break;
 					case LEFT:
 					case RIGHT:
 						rounded = new RushHourBoardPosition(b,
-								Math.round(rpos.rowCombo - car.CAR_WIDTH/2) + car.CAR_WIDTH/2,
-								Math.round(rpos.colCombo - car.CAR_LENGTH/2) + car.CAR_LENGTH/2);
+								Math.round(rpos.rowCombo - car.width/2) + car.width/2,
+								Math.round(rpos.colCombo - car.length/2) + car.length/2);
 						break;
 					}
 					
@@ -161,8 +161,8 @@ public class CarTool extends ToolBase {
 						car.state = CarStateEnum.IDLE;
 						
 						car.setTransform(rounded.p, car.angle);
-						car.b2dSetTransform();
-						car.driver.overallPos = car.driver.overallPath.generalSearch(car.center, car.driver.overallPos, car.CAR_LENGTH);
+						car.setPhysicsTransform();
+						car.driver.overallPos = car.driver.overallPath.generalSearch(car.center, car.driver.overallPos, car.length);
 						
 						worldScreen.world.zoomAbsolute(1.0);
 						
@@ -178,7 +178,7 @@ public class CarTool extends ToolBase {
 						 * reset
 						 */
 						car.setTransform(car.toolOrigP, car.toolOrigAngle);
-						car.b2dSetTransform();
+						car.setPhysicsTransform();
 						car.driver.overallPos = car.driver.toolOrigOverallPos;
 						
 						worldScreen.world.zoomAbsolute(1.0);
@@ -218,12 +218,12 @@ public class CarTool extends ToolBase {
 			switch (car.state) {
 			case DRAGGING:
 				
-				GraphPositionPathPosition testPathPos = car.driver.overallPath.generalSearch(carPTmp, car.driver.overallPos, car.CAR_LENGTH);
+				GraphPositionPathPosition testPathPos = car.driver.overallPath.generalSearch(carPTmp, car.driver.overallPos, car.length);
 				
 				if (!collidesWithBoardOrOtherCars(car, testPathPos.p)) {
 					
 					car.setTransform(testPathPos.p, newAngle(car, testPathPos));
-					car.b2dSetTransform();
+					car.setPhysicsTransform();
 					
 					car.driver.overallPos = testPathPos;
 					
@@ -281,8 +281,8 @@ public class CarTool extends ToolBase {
 	private double newAngle(Car car, GraphPositionPathPosition testPathPos) {
 		
 		Point worldFront = Geom.localToWorld(car.localFront, car.angle, car.center);
-		GraphPositionPathPosition centerPathPos = car.driver.overallPath.generalSearch(car.center, car.driver.overallPos, car.CAR_LENGTH);
-		GraphPositionPathPosition frontPathPos = car.driver.overallPath.generalSearch(worldFront, car.driver.overallPos, car.CAR_LENGTH);
+		GraphPositionPathPosition centerPathPos = car.driver.overallPath.generalSearch(car.center, car.driver.overallPos, car.length);
+		GraphPositionPathPosition frontPathPos = car.driver.overallPath.generalSearch(worldFront, car.driver.overallPos, car.length);
 		int directionInTrack;
 		if (DMath.lessThan(centerPathPos.combo, frontPathPos.combo)) {
 			directionInTrack = 1;

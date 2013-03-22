@@ -126,13 +126,17 @@ public class World extends PhysicsWorld {
 	
 	public void integrate(double t) {
 		
-		this.t = t;
-		
-		preStep();
-		
-		step();
-		
-		postStep();
+		synchronized (b2dWorld) {
+			
+			this.t = t;
+			
+			preStep();
+			
+			step();
+			
+			postStep();
+			
+		}
 		
 	}
 	

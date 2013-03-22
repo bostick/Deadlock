@@ -90,13 +90,13 @@ public class AnimatedGrass {
 		
 		switch (index) {
 		case 0:
-			APP.spriteSheet.paint(ctxt, SpriteSheetSprite.GRASS0, world.screen.pixelsPerMeter, 0, 0, GRASS_SIZE, GRASS_SIZE);
+			APP.spriteSheet.paint(ctxt, SpriteSheetSprite.GRASS0, world.worldScreen.pixelsPerMeter, 0, 0, GRASS_SIZE, GRASS_SIZE);
 			break;
 		case 1:
-			APP.spriteSheet.paint(ctxt, SpriteSheetSprite.GRASS1, world.screen.pixelsPerMeter, 0, 0, GRASS_SIZE, GRASS_SIZE);
+			APP.spriteSheet.paint(ctxt, SpriteSheetSprite.GRASS1, world.worldScreen.pixelsPerMeter, 0, 0, GRASS_SIZE, GRASS_SIZE);
 			break;
 		case 2:
-			APP.spriteSheet.paint(ctxt, SpriteSheetSprite.GRASS2, world.screen.pixelsPerMeter, 0, 0, GRASS_SIZE, GRASS_SIZE);
+			APP.spriteSheet.paint(ctxt, SpriteSheetSprite.GRASS2, world.worldScreen.pixelsPerMeter, 0, 0, GRASS_SIZE, GRASS_SIZE);
 			break;
 		}
 		
