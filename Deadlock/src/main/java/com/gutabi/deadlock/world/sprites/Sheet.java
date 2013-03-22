@@ -4,7 +4,6 @@ import static com.gutabi.deadlock.DeadlockApplication.APP;
 
 import com.gutabi.deadlock.Resource;
 import com.gutabi.deadlock.ui.Image;
-import com.gutabi.deadlock.ui.ImageEngine;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 
 public abstract class Sheet {
@@ -13,8 +12,7 @@ public abstract class Sheet {
 	Image img;
 	
 	public void load() throws Exception {
-		ImageEngine iEngine = APP.platform.createImageEngine();
-		img = iEngine.readImage(res);
+		img = APP.platform.readImage(res);
 	}
 	
 	public void paint(RenderingContext ctxt, Sprite s, int dx1, int dy1, int dx2, int dy2) {

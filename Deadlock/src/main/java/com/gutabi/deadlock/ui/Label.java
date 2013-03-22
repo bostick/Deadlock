@@ -6,7 +6,6 @@ import com.gutabi.deadlock.Resource;
 import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.paint.Color;
-import com.gutabi.deadlock.ui.paint.FontEngine;
 import com.gutabi.deadlock.ui.paint.FontStyle;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 
@@ -47,8 +46,7 @@ public class Label {
 	}
 	
 	public void renderLocal() {
-		FontEngine engine = APP.platform.createFontEngine();
-		localAABB = engine.bounds(text, fontFile, fontStyle, fontSize);
+		localAABB = APP.platform.bounds(text, fontFile, fontStyle, fontSize);
 	}
 	
 	public void render() {
@@ -57,7 +55,7 @@ public class Label {
 		
 		Point baseline = new Point(-localAABB.x, -localAABB.y);
 		
-		img = APP.platform.createImageEngine().createTransparentImage((int)aabb.width, (int)aabb.height);
+		img = APP.platform.createTransparentImage((int)aabb.width, (int)aabb.height);
 		
 		RenderingContext ctxt = APP.platform.createRenderingContext(img);
 		

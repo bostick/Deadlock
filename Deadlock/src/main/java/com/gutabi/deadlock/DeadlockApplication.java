@@ -3,7 +3,6 @@ package com.gutabi.deadlock;
 import java.util.Random;
 
 import com.gutabi.deadlock.ui.Image;
-import com.gutabi.deadlock.ui.ImageEngine;
 import com.gutabi.deadlock.world.DebuggerScreen;
 import com.gutabi.deadlock.world.sprites.CarSheet;
 import com.gutabi.deadlock.world.sprites.ExplosionSheet;
@@ -69,7 +68,6 @@ public class DeadlockApplication {
 	
 	public void init() throws Exception {
 		
-		ImageEngine iEngine = platform.createImageEngine();
 		ResourceEngine rEngine = platform.createResourceEngine();
 		
 		carSheet = new CarSheet();
@@ -80,10 +78,10 @@ public class DeadlockApplication {
 		spriteSheet.load();
 		explosionSheet.load();
 		
-		titleBackground = iEngine.readImage(rEngine.imageResource("title_background"));
+		titleBackground = platform.readImage(rEngine.imageResource("title_background"));
 		
-		title_white = iEngine.readImage(rEngine.imageResource("title_white"));
-		copyright = iEngine.readImage(rEngine.imageResource("copyright"));
+		title_white = platform.readImage(rEngine.imageResource("title_white"));
+		copyright = platform.readImage(rEngine.imageResource("copyright"));
 	}
 	
 	public void exit() {

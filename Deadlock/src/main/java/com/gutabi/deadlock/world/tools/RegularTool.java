@@ -65,7 +65,7 @@ public class RegularTool extends ToolBase {
 	
 	public void escKey() {
 		
-		APP.platform.teardownDebuggerScreen();
+		APP.platform.unshowDebuggerScreen();
 		
 		MainMenu s = new MainMenu();
 		

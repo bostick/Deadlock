@@ -85,6 +85,9 @@ public class DeadlockMain  {
 		s.postDisplay();
 		s.contentPane.panel.render();
 		s.contentPane.repaint();
+		
+		APP.platform.showAppScreen();
+//		APP.platform.showDebuggerScreen();
 	}
 	
 	public void setupFrame() {

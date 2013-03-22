@@ -57,6 +57,9 @@ public class MainMenu extends AppScreen implements KeyListener {
 				worldScreen.world.render_worldPanel();
 				worldScreen.world.render_preview();
 				worldScreen.contentPane.repaint();
+				
+				APP.platform.showAppScreen();
+				APP.platform.showDebuggerScreen();
 			}
 		};
 		add(oneMenuItem);
@@ -82,7 +85,10 @@ public class MainMenu extends AppScreen implements KeyListener {
 				
 				worldScreen.world.render_worldPanel();
 				worldScreen.world.render_preview();
-				worldScreen.contentPane.repaint();	
+				worldScreen.contentPane.repaint();
+				
+				APP.platform.showAppScreen();
+				APP.platform.showDebuggerScreen();
 			}
 		};
 		add(fourMenuItem);
@@ -109,6 +115,9 @@ public class MainMenu extends AppScreen implements KeyListener {
 				worldScreen.world.render_worldPanel();
 				worldScreen.world.render_preview();
 				worldScreen.contentPane.repaint();
+				
+				APP.platform.showAppScreen();
+				APP.platform.showDebuggerScreen();
 			}
 		};
 		add(aMenuItem);
@@ -138,6 +147,9 @@ public class MainMenu extends AppScreen implements KeyListener {
 				worldScreen.world.render_worldPanel();
 				worldScreen.world.render_preview();
 				worldScreen.contentPane.repaint();
+				
+				APP.platform.showAppScreen();
+				APP.platform.showDebuggerScreen();
 			}
 		};
 		add(rMenuItem);
@@ -153,6 +165,8 @@ public class MainMenu extends AppScreen implements KeyListener {
 				
 				s.contentPane.panel.worldScreen.world.render_worldPanel();
 				s.contentPane.repaint();
+				
+				APP.platform.showAppScreen();
 			}
 		};
 		add(dialogMenuItem);

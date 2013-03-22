@@ -16,6 +16,7 @@ import com.gutabi.deadlock.world.cars.Car;
 import com.gutabi.deadlock.world.cars.CarStateEnum;
 import com.gutabi.deadlock.world.graph.GraphPosition;
 import com.gutabi.deadlock.world.graph.GraphPositionPathPosition;
+import com.gutabi.deadlock.world.graph.Road;
 import com.gutabi.deadlock.world.graph.RoadPosition;
 import com.gutabi.deadlock.world.graph.RushHourBoard;
 import com.gutabi.deadlock.world.graph.RushHourBoardPosition;
@@ -40,7 +41,7 @@ public class CarTool extends ToolBase {
 	
 	public void escKey() {
 		
-		APP.platform.teardownDebuggerScreen();
+		APP.platform.unshowDebuggerScreen();
 		
 		APP.appScreen = null;
 		
@@ -103,17 +104,38 @@ public class CarTool extends ToolBase {
 //					
 //					APP.appScreen.contentPane.repaint();
 					
-					Point worldFront = Geom.localToWorld(car.localFront, car.angle, car.center);
-					GraphPositionPathPosition centerPathPos = car.driver.overallPath.generalSearch(car.center, car.driver.overallPos, car.length);
-					GraphPositionPathPosition frontPathPos = car.driver.overallPath.generalSearch(worldFront, car.driver.overallPos, car.length);
-					int directionInTrack;
-					if (DMath.lessThan(centerPathPos.combo, frontPathPos.combo)) {
-						directionInTrack = 1;
+//					Point worldFront = Geom.localToWorld(car.localFront, car.angle, car.center);
+//					GraphPositionPathPosition centerPathPos = car.driver.overallPath.generalSearch(car.center, car.driver.overallPos, car.length);
+//					GraphPositionPathPosition frontPathPos = car.driver.overallPath.generalSearch(worldFront, car.driver.overallPos, car.length);
+//					int directionInTrack;
+//					if (DMath.lessThan(centerPathPos.combo, frontPathPos.combo)) {
+//						directionInTrack = 1;
+//					} else {
+//						directionInTrack = -1;
+//					}
+					
+					int nextVertexIndex = car.driver.overallPath.nextVertexIndex(car.driver.overallPos.index);
+					int prevVertexIndex = car.driver.overallPath.prevVertexIndex(car.driver.overallPos.index);
+					
+					GraphPosition nextVertex = car.driver.overallPath.get(nextVertexIndex);
+					GraphPosition prevVertex = car.driver.overallPath.get(prevVertexIndex);
+					
+					
+					double distToNext;
+					double distToPrev;
+					Road r = (Road)gpos.entity;
+					if (nextVertex.entity == r.end) {
+						assert prevVertex.entity == r.start;
+						distToNext = ((RoadPosition)gpos).lengthToEndOfRoad;
+						distToPrev = ((RoadPosition)gpos).lengthToStartOfRoad;
 					} else {
-						directionInTrack = -1;
+						assert nextVertex.entity == r.start;
+						assert prevVertex.entity == r.end;
+						distToNext = ((RoadPosition)gpos).lengthToStartOfRoad;
+						distToPrev = ((RoadPosition)gpos).lengthToEndOfRoad;
 					}
 					
-					if (directionInTrack == 1) {
+					if (distToNext < distToPrev) {
 						car.state = CarStateEnum.COASTING_FORWARD;
 					} else {
 						car.state = CarStateEnum.COASTING_BACKWARD;
@@ -280,16 +302,16 @@ public class CarTool extends ToolBase {
 	
 	private double newAngle(Car car, GraphPositionPathPosition testPathPos) {
 		
-		Point worldFront = Geom.localToWorld(car.localFront, car.angle, car.center);
-		GraphPositionPathPosition centerPathPos = car.driver.overallPath.generalSearch(car.center, car.driver.overallPos, car.length);
-		GraphPositionPathPosition frontPathPos = car.driver.overallPath.generalSearch(worldFront, car.driver.overallPos, car.length);
-		int directionInTrack;
-		if (DMath.lessThan(centerPathPos.combo, frontPathPos.combo)) {
-			directionInTrack = 1;
-		} else {
-			directionInTrack = -1;
-		}
-		
+//		Point worldFront = Geom.localToWorld(car.localFront, car.angle, car.center);
+//		GraphPositionPathPosition centerPathPos = car.driver.overallPath.generalSearch(car.center, car.driver.overallPos, car.length);
+//		GraphPositionPathPosition frontPathPos = car.driver.overallPath.generalSearch(worldFront, car.driver.overallPos, car.length);
+//		int directionInTrack;
+//		if (DMath.lessThan(centerPathPos.combo, frontPathPos.combo)) {
+//			directionInTrack = 1;
+//		} else {
+//			directionInTrack = -1;
+//		}
+		int directionInTrack = 1;
 		
 		GraphPosition testGpos = testPathPos.getGraphPosition();
 		

@@ -75,7 +75,7 @@ public class World extends PhysicsWorld {
 	
 	public void panelPostDisplay() {
 		
-		background = APP.platform.createImageEngine().createImage(
+		background = APP.platform.createImage(
 				(int)worldScreen.contentPane.worldPanel.aabb.width,
 				(int)worldScreen.contentPane.worldPanel.aabb.height);
 		
@@ -90,7 +90,7 @@ public class World extends PhysicsWorld {
 	
 	public void previewPostDisplay() {
 		
-		previewImage = APP.platform.createImageEngine().createImage(
+		previewImage = APP.platform.createImage(
 				(int)debuggerScreen.contentPane.controlPanel.previewAABB.width,
 				(int)debuggerScreen.contentPane.controlPanel.previewAABB.height);
 		

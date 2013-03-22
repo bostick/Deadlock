@@ -348,6 +348,9 @@ public class QuadrantEditorPanel extends PanelBase {
 				s.world.render_worldPanel();
 				s.world.render_preview();
 				s.contentPane.repaint();
+				
+				APP.platform.showAppScreen();
+				APP.platform.showDebuggerScreen();
 			}
 			
 			public void paint(RenderingContext ctxt) {

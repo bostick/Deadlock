@@ -152,7 +152,7 @@ public abstract class Engine {
 		 * turning radius
 		 */
 		
-		double actualDistance = Math.abs(c.forwardSpeed * world.worldScreen.DT);
+		double actualDistance = Math.abs(backwardSpeed * world.worldScreen.DT);
 		double maxRads = maxRadsPerMeter * actualDistance;
 		if (dw > maxRads) {
 			dw = maxRads;

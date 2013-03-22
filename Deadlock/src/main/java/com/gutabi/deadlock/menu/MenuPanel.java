@@ -96,7 +96,7 @@ public class MenuPanel extends PanelBase {
 			screen.menuWidth = screen.menuItemWidest;
 			screen.menuHeight = screen.totalMenuItemHeight + 10 * (screen.items.size() - 1);
 			
-			Image tmpImg = APP.platform.createImageEngine().createImage(APP.MENU_WIDTH, APP.MENU_HEIGHT);
+			Image tmpImg = APP.platform.createImage(APP.MENU_WIDTH, APP.MENU_HEIGHT);
 			
 			RenderingContext ctxt = APP.platform.createRenderingContext(tmpImg);
 			
