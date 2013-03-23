@@ -130,7 +130,7 @@ public class GraphPositionPathPosition {
 		
 	}
 	
-	public GraphPositionPathPosition travel(double dist) {
+	private GraphPositionPathPosition travel(double dist, boolean forward) {
 		
 		if (DMath.equals(dist, 0.0)) {
 			return this;
@@ -146,11 +146,26 @@ public class GraphPositionPathPosition {
 		
 		while (true) {
 			
-			int nextVertexIndex = path.nextVertexIndex(curIndex);
-			GraphPosition nextVertexGP = path.get(nextVertexIndex);
-			double nextVertexLengthToStartOfPath = path.cumulativeDistancesFromStart[nextVertexIndex];
+			/*
+			 * try to go to the next vertex first
+			 */
 			
-			double distanceToNextVertexPosition = nextVertexLengthToStartOfPath - curLengthToStartOfPath;
+			int nextVertexIndex = forward ? nextVertexIndex() : prevVertexIndex();
+			GraphPosition nextVertexGP;
+			double nextVertexLengthToStartOfPath;
+			double distanceToNextVertexPosition;
+			if (nextVertexIndex == -1) {
+				/*
+				 * there is no next vertex
+				 */
+				nextVertexGP = null;
+				nextVertexLengthToStartOfPath = Double.POSITIVE_INFINITY;
+				distanceToNextVertexPosition = Double.POSITIVE_INFINITY;
+			} else {
+				nextVertexGP = path.get(nextVertexIndex);
+				nextVertexLengthToStartOfPath = path.cumulativeDistancesFromStart[nextVertexIndex];
+				distanceToNextVertexPosition = forward ? nextVertexLengthToStartOfPath - curLengthToStartOfPath : curLengthToStartOfPath - nextVertexLengthToStartOfPath;
+			}
 			
 			if (DMath.equals(traveled + distanceToNextVertexPosition, dist)) {
 				
@@ -165,17 +180,31 @@ public class GraphPositionPathPosition {
 				curLengthToStartOfPath = nextVertexLengthToStartOfPath;
 				
 			} else {
-				/*
-				 * traveled + distanceToNextVertexPosition > dist
+				/* 
+				 * distanceToNextVertexPosition > toTravel == dist - traveled
 				 */
 				
 				while (true) {
 					
-					int nextBoundIndex = curIndex+1;
-					GraphPosition nextBoundGP = path.get(nextBoundIndex);
-					double nextBoundLengthToStartOfPath = path.cumulativeDistancesFromStart[nextBoundIndex];
-					
-					double distanceToNextBound = nextBoundLengthToStartOfPath - curLengthToStartOfPath;
+					/*
+					 * try to go to the next bound
+					 */
+					int nextBoundIndex = forward ? (curIndex < path.size-1 ? curIndex+1 : -1) : (curIndex > 0 ? curIndex-1 : -1);
+					GraphPosition nextBoundGP;
+					double nextBoundLengthToStartOfPath;
+					double distanceToNextBound;
+					if (nextBoundIndex == -1) {
+						/*
+						 * there is no next bound
+						 */
+						nextBoundGP = null;
+						nextBoundLengthToStartOfPath = Double.POSITIVE_INFINITY;
+						distanceToNextBound = Double.POSITIVE_INFINITY;
+					} else {
+						nextBoundGP = path.get(nextBoundIndex);
+						nextBoundLengthToStartOfPath = path.cumulativeDistancesFromStart[nextBoundIndex];
+						distanceToNextBound = nextBoundLengthToStartOfPath - curLengthToStartOfPath;
+					}
 					
 					if (DMath.equals(traveled + distanceToNextBound, dist)) {
 
@@ -190,12 +219,8 @@ public class GraphPositionPathPosition {
 						curLengthToStartOfPath = nextBoundLengthToStartOfPath;
 						
 					} else {
-						/*
-						 * traveled + distanceToNextBound > dist, so
-						 * 
-						 * distanceToNextBound > dist - traveled
-						 * 
-						 * distanceToNextBound > toTravel
+						/* 
+						 * distanceToNextBound > toTravel == dist - traveled
 						 * 
 						 * we are not going to reach the next bound, so we know it has to be an EdgePosition
 						 */
@@ -234,6 +259,48 @@ public class GraphPositionPathPosition {
 			
 		}
 		
+	}
+	
+	public GraphPositionPathPosition travelForward(double dist) {
+		return travel(dist, true);
+	}
+	
+	public GraphPositionPathPosition travelBackward(double dist) {
+		return travel(dist, false);
+	}
+	
+	public int nextVertexIndex() {
+		if (!(index < path.size-1)) {
+			return -1;
+		}
+		int i = index+1;
+		while (true) {
+			GraphPosition gpos = path.get(i);
+			if (gpos instanceof VertexPosition) {
+				return i;
+			}
+			if (!(i < path.size)) {
+				return -1;
+			}
+			i++;
+		}
+	}
+	
+	public int prevVertexIndex() {
+		if (!(DMath.equals(param, 0.0) ? index > 0 : true)) {
+			return -1;
+		}
+		int i = DMath.equals(param, 0.0) ? index - 1 : index;
+		while (true) {
+			GraphPosition gpos = path.get(i);
+			if (gpos instanceof VertexPosition) {
+				return i;
+			}
+			if (!(i > 0)) {
+				return -1;
+			}
+			i--;
+		}
 	}
 	
 	public GraphPositionPathPosition nextBound() {

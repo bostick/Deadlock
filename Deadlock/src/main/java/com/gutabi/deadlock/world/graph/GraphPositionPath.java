@@ -189,35 +189,13 @@ public class GraphPositionPath {
 	public VertexArrivalEvent vertexArrivalTest(AutonomousDriver d, double dist) {
 		
 		for (GraphPositionPathPosition p : borderPositions) {
-			GraphPositionPathPosition front = d.overallPos.travel(Math.min(d.c.length/2, d.overallPos.lengthToEndOfPath));
+			GraphPositionPathPosition front = d.overallPos.travelForward(Math.min(d.c.length/2, d.overallPos.lengthToEndOfPath));
 			if (p.combo >= front.combo && DMath.lessThanEquals(front.distanceTo(p), dist)) {
 				return new VertexArrivalEvent(d, p);
 			}
 		}
 		
 		return null;
-	}
-	
-	public int nextVertexIndex(int index) {
-		int i = index+1;
-		while (true) {
-			GraphPosition gpos = poss.get(i);
-			if (gpos instanceof VertexPosition) {
-				return i;
-			}
-			i++;
-		}
-	}
-	
-	public int prevVertexIndex(int index) {
-		int i = index;
-		while (true) {
-			GraphPosition gpos = poss.get(i);
-			if (gpos instanceof VertexPosition) {
-				return i;
-			}
-			i--;
-		}
 	}
 	
 	/**
@@ -227,7 +205,7 @@ public class GraphPositionPath {
 	 * 
 	 * returns once a local minimum is found
 	 */
-	public GraphPositionPathPosition forwardSearch(Point p, GraphPositionPathPosition start, boolean returnOnLocalMinimum, double distanceFromStart) {
+	public GraphPositionPathPosition forwardSearch(Point p, GraphPositionPathPosition start, boolean returnOnLocalMinimum, double lengthFromStart) {
 		
 		if (p.equals(start.p)) {
 			return start;
@@ -374,7 +352,7 @@ public class GraphPositionPath {
 		
 		GraphPositionPathPosition ret = new GraphPositionPathPosition(this, closestIndex, closestParam);
 		
-		if (DMath.lessThan(ret.distanceTo(start), distanceFromStart)) {
+		if (DMath.lessThan(ret.distanceTo(start), lengthFromStart)) {
 			return ret;
 		} else {
 			return null;
@@ -538,9 +516,9 @@ public class GraphPositionPath {
 	/**
 	 * searches both forward and backward from start position
 	 */
-	public GraphPositionPathPosition generalSearch(Point p, GraphPositionPathPosition start, double distanceFromStart) {
-		GraphPositionPathPosition forwardPos = forwardSearch(p, start, false, distanceFromStart);
-		GraphPositionPathPosition backwardPos = backwardSearch(p, start, false, distanceFromStart);
+	public GraphPositionPathPosition generalSearch(Point p, GraphPositionPathPosition start, double lengthFromStart) {
+		GraphPositionPathPosition forwardPos = forwardSearch(p, start, false, lengthFromStart);
+		GraphPositionPathPosition backwardPos = backwardSearch(p, start, false, lengthFromStart);
 		
 		if (forwardPos == null && backwardPos == null) {
 			return start;
@@ -556,6 +534,11 @@ public class GraphPositionPath {
 			} else {
 				
 //				assert false;
+				
+				if (forwardPos.p.x != 8.5) {
+					assert false;
+				}
+				
 				return forwardPos;
 				
 			}
@@ -570,31 +553,46 @@ public class GraphPositionPath {
 			} else {
 				
 //				assert false;
+				
+				if (backwardPos.p.x != 8.5) {
+					assert false;
+				}
+				
 				return backwardPos;
 				
 			}
 			
 		} else {
 			
+			if (backwardPos.distanceTo(start) > lengthFromStart) {
+				assert forwardPos.distanceTo(start) < lengthFromStart;
+				return forwardPos;
+			} else if (forwardPos.distanceTo(start) > lengthFromStart) {
+				assert backwardPos.distanceTo(start) < lengthFromStart;
+				return backwardPos;
+			}
+			
+			assert forwardPos.distanceTo(start) < lengthFromStart;
+			assert backwardPos.distanceTo(start) < lengthFromStart;
+			
 			if (backwardPos.equals(start)) {
 				
-//				assert false;
 				return forwardPos;
 				
 			} else if (forwardPos.equals(start)) {
 				
-//				assert false;
 				return backwardPos;
 				
 			} else {
 				
-//				assert false;
 				double forwardDist = Point.distance(p, forwardPos.p);
 				double backwardDist = Point.distance(p, backwardPos.p);
 				
 				if (DMath.lessThan(backwardDist, forwardDist)) {
+					
 					return backwardPos;
 				} else {
+					
 					return forwardPos;
 				}
 				

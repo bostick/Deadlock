@@ -7,8 +7,20 @@ import com.gutabi.deadlock.ui.paint.Color;
 import com.gutabi.deadlock.ui.paint.Join;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.world.World;
+import com.gutabi.deadlock.world.graph.GraphPositionPathPosition;
 
 public class InteractiveCar extends Car {
+	
+	/*
+	 * bypass the regular physics here.
+	 * we just need the car to be constrained to the road, and accelerating
+	 * 
+	 * if the physics engine can ever nicely constraining motion to a track, then use it
+	 * 
+	 * doesn't need to be a vector, since it is snapped to a track
+	 */
+	double coastingVel;
+	final double coastingAcceleration = 10.0;
 	
 	public InteractiveCar(World w) {
 		super(w);
@@ -18,7 +30,6 @@ public class InteractiveCar extends Car {
 		
 		InteractiveCar c = new InteractiveCar(world);
 		c.driver = new InteractiveDriver(c);
-		c.engine = new InteractiveEngine(world, c);
 		
 		c.computeCtorProperties(r);
 		
@@ -30,12 +41,52 @@ public class InteractiveCar extends Car {
 		switch (state) {
 		case IDLE:
 		case DRAGGING:
+			
+			/*
+			 * no goal or anything for dragging
+			 */
+			
 			break;
-		case COASTING_FORWARD:
-		case COASTING_BACKWARD:
+		case COASTING_FORWARD: {
 			((InteractiveDriver)driver).preStep(t);
-			engine.preStep(t);
+			
+			/*
+			 * do coasting physics here
+			 */
+			
+			double dv = coastingAcceleration * world.worldScreen.DT;
+			
+			coastingVel += dv;
+			
+			double dist = coastingVel * world.worldScreen.DT;
+			
+			GraphPositionPathPosition newPos = driver.overallPos.travelForward(dist);
+			
+			setTransform(newPos.p, newAngle(newPos));
+			setPhysicsTransform();
+			
 			break;
+		}
+		case COASTING_BACKWARD: {
+			((InteractiveDriver)driver).preStep(t);
+			
+			/*
+			 * do coasting physics here
+			 */
+			
+			double dv = coastingAcceleration * world.worldScreen.DT;
+			
+			coastingVel += dv;
+			
+			double dist = coastingVel * world.worldScreen.DT;
+			
+			GraphPositionPathPosition newPos = driver.overallPos.travelBackward(dist);
+			
+			setTransform(newPos.p, newAngle(newPos));
+			setPhysicsTransform();
+			
+			break;
+		}
 		default:
 			assert false;
 			break;
@@ -50,7 +101,9 @@ public class InteractiveCar extends Car {
 				return true;
 			case DRAGGING:
 				
-//				computeDynamicPropertiesBlah();
+				/*
+				 * setting of overallPos and physics is handled in CarTool
+				 */
 				
 				return true;
 			case COASTING_FORWARD:
@@ -58,6 +111,7 @@ public class InteractiveCar extends Car {
 				
 				computeDynamicPropertiesAlways();
 				computeDynamicPropertiesMoving();
+				((InteractiveDriver)driver).postStep(t);
 				
 				return true;
 				

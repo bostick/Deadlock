@@ -82,7 +82,7 @@ public final class InteractiveDriver extends Driver {
 		}
 	}
 	
-	public void computeDynamicPropertiesMoving() {
+	public void postStep(double t) {
 		
 		switch (c.state) {
 		case IDLE:
@@ -93,16 +93,12 @@ public final class InteractiveDriver extends Driver {
 			prevOverallPos = overallPos;
 			overallPos = overallPath.forwardSearch(c.center, overallPos, false, c.length);
 			
-//			System.out.println("overall: " + overallPos);
-			
 			break;
 			
 		case COASTING_BACKWARD:
 			
 			prevOverallPos = overallPos;
 			overallPos = overallPath.backwardSearch(c.center, overallPos, false, c.length);
-			
-//			System.out.println("overall: " + overallPos);
 			
 			break;
 		default:

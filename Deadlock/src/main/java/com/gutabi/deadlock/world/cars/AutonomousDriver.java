@@ -44,19 +44,6 @@ public final class AutonomousDriver extends Driver {
 		vertexDepartureQueue.add(new VertexSpawnEvent(overallPos));
 	}
 	
-	public void computeDynamicPropertiesMoving() {
-		
-//		Point old = overallPos.p;
-		
-		overallPos = overallPath.forwardSearch(c.center, overallPos, true, Double.POSITIVE_INFINITY);
-		
-//		double oldDist = Point.distance(c.center, old);
-		
-//		double dist = Point.distance(c.center, overallPos.p);
-//		assert DMath.equals(dist, 0.0);
-		
-	}
-	
 	private void cleanupVertexDepartureQueue() {
 		
 		if (!vertexDepartureQueue.isEmpty()) {
@@ -81,7 +68,7 @@ public final class AutonomousDriver extends Driver {
 					
 					toRemove.add(e);
 					
-				} else if (overallPos.combo >= e.carPastExitPosition.travel(c.length/2).combo) {
+				} else if (overallPos.combo >= e.carPastExitPosition.travelForward(c.length/2).combo) {
 					/*
 					 * driving past exit of intersection, so cleanup
 					 */
@@ -164,7 +151,7 @@ public final class AutonomousDriver extends Driver {
 		switch (c.state) {
 		case DRIVING:
 			double steeringLookaheadDistance = c.length * 0.5;
-			GraphPositionPathPosition next = overallPos.travel(Math.min(steeringLookaheadDistance, overallPos.lengthToEndOfPath));
+			GraphPositionPathPosition next = overallPos.travelForward(Math.min(steeringLookaheadDistance, overallPos.lengthToEndOfPath));
 			goalPoint = next.p;
 			break;
 		case BRAKING:
@@ -182,6 +169,19 @@ public final class AutonomousDriver extends Driver {
 		case COASTING_BACKWARD:
 			break;
 		}
+	}
+	
+	public void postStep(double t) {
+		
+//		Point old = overallPos.p;
+		
+		overallPos = overallPath.forwardSearch(c.center, overallPos, true, Double.POSITIVE_INFINITY);
+		
+//		double oldDist = Point.distance(c.center, old);
+		
+//		double dist = Point.distance(c.center, overallPos.p);
+//		assert DMath.equals(dist, 0.0);
+		
 	}
 	
 	private CarProximityEvent findNewCarProximityEvent() {

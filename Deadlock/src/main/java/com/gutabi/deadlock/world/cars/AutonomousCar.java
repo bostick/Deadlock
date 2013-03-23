@@ -2,6 +2,9 @@ package com.gutabi.deadlock.world.cars;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
+import com.gutabi.deadlock.Entity;
+import com.gutabi.deadlock.geom.AABB;
+import com.gutabi.deadlock.geom.ShapeUtils;
 import com.gutabi.deadlock.math.DMath;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.paint.Cap;
@@ -11,6 +14,7 @@ import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.world.World;
 import com.gutabi.deadlock.world.graph.Fixture;
 import com.gutabi.deadlock.world.graph.GraphPositionPathPosition;
+import com.gutabi.deadlock.world.graph.Merger;
 
 public class AutonomousCar extends Car {
 	
@@ -93,7 +97,7 @@ public class AutonomousCar extends Car {
 		case DRIVING: {
 			
 			computeDynamicPropertiesAlways();
-			computeDynamicPropertiesMoving();
+			computeDynamicPropertiesMovingAndRest(t);
 			
 			Fixture s = (Fixture)((AutonomousDriver)driver).overallPath.end.entity;
 			boolean sinked = false;
@@ -127,7 +131,7 @@ public class AutonomousCar extends Car {
 				world.roadMarkMap.addRoadMark(prevWorldPoint0, shape.p0);
 				world.roadMarkMap.addRoadMark(prevWorldPoint3, shape.p3);
 				
-				computeDynamicPropertiesMoving();
+				computeDynamicPropertiesMovingAndRest(t);
 				
 			} else {
 				
@@ -150,7 +154,7 @@ public class AutonomousCar extends Car {
 				
 				world.quadrantMap.grassMap.mowGrass(shape);
 				
-				computeDynamicPropertiesMoving();
+				computeDynamicPropertiesMovingAndRest(t);
 				
 			} else {
 				
@@ -159,7 +163,7 @@ public class AutonomousCar extends Car {
 					((AutonomousDriver)driver).stoppedTime = -1;
 					((AutonomousDriver)driver).deadlocked = false;
 					
-					computeDynamicPropertiesMoving();
+					computeDynamicPropertiesMovingAndRest(t);
 					
 				}
 				
@@ -189,7 +193,7 @@ public class AutonomousCar extends Car {
 					world.grassMarkMap.addGrassMark(prevWorldPoint3, shape.p3);
 				}
 				
-				computeDynamicPropertiesMoving();
+				computeDynamicPropertiesMovingAndRest(t);
 				
 			} else {
 				
@@ -198,7 +202,7 @@ public class AutonomousCar extends Car {
 					((AutonomousDriver)driver).stoppedTime = -1;
 					((AutonomousDriver)driver).deadlocked = false;
 					
-					computeDynamicPropertiesMoving();
+					computeDynamicPropertiesMovingAndRest(t);
 					
 				}
 				
@@ -223,6 +227,55 @@ public class AutonomousCar extends Car {
 		}
 		
 		return true;
+	}
+	
+	public void computeDynamicPropertiesMovingAndRest(double t) {
+		
+		computeDynamicPropertiesMoving();
+		
+		switch (state) {
+		case DRIVING:
+		case BRAKING:
+			
+			((AutonomousDriver)driver).postStep(t);
+			
+			Entity hit = ((AutonomousDriver)driver).overallPath.pureGraphIntersectOBB(this.shape, ((AutonomousDriver)driver).overallPos);
+			
+			boolean wasInMerger = inMerger;
+			if (hit == null) {
+				atleastPartiallyOnRoad = false;
+				inMerger = false;
+			} else {
+				atleastPartiallyOnRoad = true;
+				if (hit instanceof Merger && ShapeUtils.containsAO((AABB)((Merger)hit).getShape(), shape)) {
+					inMerger = true;
+				} else {
+					inMerger = false;
+				}
+			}
+			
+			if (!atleastPartiallyOnRoad) {
+				skid();
+			}
+			
+			if (inMerger == !wasInMerger) {
+				if (inMerger) {
+					setB2dCollisions(false);
+				} else {
+					setB2dCollisions(true);
+				}
+			}
+			
+			break;
+		case SINKED:
+		case SKIDDED:
+		case CRASHED:
+			break;
+		default:
+			assert false;
+			break;
+		}
+		
 	}
 	
 	public void paint(RenderingContext ctxt) {

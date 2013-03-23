@@ -6,7 +6,6 @@ import com.gutabi.deadlock.geom.Geom;
 import com.gutabi.deadlock.geom.OBB;
 import com.gutabi.deadlock.geom.Shape;
 import com.gutabi.deadlock.geom.ShapeUtils;
-import com.gutabi.deadlock.math.DMath;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.menu.MainMenu;
 import com.gutabi.deadlock.ui.InputEvent;
@@ -115,8 +114,8 @@ public class CarTool extends ToolBase {
 //						directionInTrack = -1;
 //					}
 					
-					int nextVertexIndex = car.driver.overallPath.nextVertexIndex(car.driver.overallPos.index);
-					int prevVertexIndex = car.driver.overallPath.prevVertexIndex(car.driver.overallPos.index);
+					int nextVertexIndex = car.driver.overallPos.nextVertexIndex();
+					int prevVertexIndex = car.driver.overallPos.prevVertexIndex();
 					
 					GraphPosition nextVertex = car.driver.overallPath.get(nextVertexIndex);
 					GraphPosition prevVertex = car.driver.overallPath.get(prevVertexIndex);
@@ -246,9 +245,13 @@ public class CarTool extends ToolBase {
 				
 				GraphPositionPathPosition testPathPos = car.driver.overallPath.generalSearch(carPTmp, car.driver.overallPos, car.length);
 				
+				System.out.print(testPathPos.p);
+				
 				if (!collidesWithBoardOrOtherCars(car, testPathPos.p)) {
 					
-					car.setTransform(testPathPos.p, newAngle(car, testPathPos));
+					System.out.println(" no collide");
+					
+					car.setTransform(testPathPos.p, car.newAngle(testPathPos));
 					car.setPhysicsTransform();
 					
 					car.driver.overallPos = testPathPos;
@@ -292,6 +295,8 @@ public class CarTool extends ToolBase {
 					
 					worldScreen.contentPane.repaint();
 					
+				} else {
+					System.out.println(" collide");
 				}
 				
 				break;
@@ -302,46 +307,6 @@ public class CarTool extends ToolBase {
 			
 		}
 		
-	}
-	
-	private double newAngle(Car car, GraphPositionPathPosition testPathPos) {
-		
-//		Point worldFront = Geom.localToWorld(car.localFront, car.angle, car.center);
-//		GraphPositionPathPosition centerPathPos = car.driver.overallPath.generalSearch(car.center, car.driver.overallPos, car.length);
-//		GraphPositionPathPosition frontPathPos = car.driver.overallPath.generalSearch(worldFront, car.driver.overallPos, car.length);
-//		int directionInTrack;
-//		if (DMath.lessThan(centerPathPos.combo, frontPathPos.combo)) {
-//			directionInTrack = 1;
-//		} else {
-//			directionInTrack = -1;
-//		}
-		int directionInTrack = 1;
-		
-		GraphPosition testGpos = testPathPos.getGraphPosition();
-		
-		double a;
-		
-		if (testPathPos.equals(car.driver.overallPos)) {
-			a = car.angle;
-		} else if (DMath.lessThan(car.driver.overallPos.combo, testPathPos.combo)) {
-			if (directionInTrack == 1) {
-				a = Math.atan2(testGpos.p.y - car.center.y, testGpos.p.x - car.center.x);
-			} else {
-				a = Math.atan2(car.center.y - testGpos.p.y, car.center.x - testGpos.p.x);
-			}
-		} else {
-			if (directionInTrack == 1) {
-				a = Math.atan2(car.center.y - testGpos.p.y, car.center.x - testGpos.p.x);
-			} else {
-				a = Math.atan2(testGpos.p.y - car.center.y, testGpos.p.x - car.center.x);
-			}
-		}
-		
-		if (DMath.lessThan(a, 0.0)) {
-			a = a + 2 * Math.PI;
-		}
-		
-		return a;
 	}
 	
 	private boolean collidesWithBoardOrOtherCars(Car car, Point test) {

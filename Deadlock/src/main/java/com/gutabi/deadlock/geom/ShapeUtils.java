@@ -370,10 +370,6 @@ public class ShapeUtils {
 	
 	public static boolean intersectAreaLO(Line l0, OBB o1) {
 		
-		if (l0.hashCode() == -1260529281 && (o1.hashCode() == 1940061173 || o1.hashCode() == -931595275)) {
-			String.class.getName();
-		}
-		
 		double[] l0Projection = new double[2];
 		double[] o1Projection = new double[2];
 		

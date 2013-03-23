@@ -1,5 +1,6 @@
 package com.gutabi.deadlock.world.cars;
 
+import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.world.World;
 
 public class AutonomousEngine extends Engine {
@@ -66,4 +67,131 @@ public class AutonomousEngine extends Engine {
 		turnAngularImpulseCoefficient = 1.0;
 		
 	}
+	
+	public void preStep(double t) {
+		
+		switch (c.state) {
+		case DRIVING:
+			updateFriction();
+			updateDrive();
+			break;
+		case BRAKING:
+			updateFriction();
+			updateBrake(t);
+			break;
+		case CRASHED:
+		case SKIDDED:
+		case SINKED:
+		default:
+			assert false;
+			break;
+		}
+		
+	}
+	
+	private void updateFriction() {
+		c.applyCancelingForwardImpulse(frictionForwardImpulseCoefficient);
+		c.applyCancelingLateralImpulse(frictionLateralImpulseCoefficient);
+		c.applyCancelingAngularImpulse(frictionAngularImpulseCoefficient);
+	}
+	
+	private void updateDrive() {
+		
+		double dv;
+		if (maxSpeed > c.forwardSpeed) {
+			dv = maxSpeed - c.forwardSpeed;
+		} else {
+			dv = 0.0f;
+		}
+		if (dv < 0) {
+			assert false;
+		}
+		if (dv > maxAcceleration * world.worldScreen.DT) {
+			dv = maxAcceleration * world.worldScreen.DT;
+		}
+		
+		c.applyForwardImpulse(driveForwardImpulseCoefficient, dv);
+		
+		c.applyCancelingLateralImpulse(driveLateralImpulseCoefficient);
+		
+		turn();
+		
+	}
+	
+//	private void updateReverseDrive() {
+//		
+//		double dv;
+//		
+//		double backwardSpeed = -c.forwardSpeed;
+//		
+//		if (maxSpeed > backwardSpeed) {
+//			dv = maxSpeed - backwardSpeed;
+//		} else {
+//			dv = 0.0f;
+//		}
+//		if (dv < 0) {
+//			assert false;
+//		}
+//		if (dv > maxAcceleration * world.worldScreen.DT) {
+//			dv = maxAcceleration * world.worldScreen.DT;
+//		}
+//		
+//		c.applyForwardImpulse(driveForwardImpulseCoefficient, -dv);
+//		
+//		c.applyCancelingLateralImpulse(driveLateralImpulseCoefficient);
+//		
+//		turn();
+//		
+//	}
+	
+	private void turn() {
+		
+		Point dp = new Point(c.driver.goalPoint.x-c.center.x, c.driver.goalPoint.y-c.center.y);
+		
+		double goalAngle = Math.atan2(dp.y, dp.x);
+		
+		double dw = ((float)goalAngle) - c.angle;
+		
+		while (dw > Math.PI) {
+			dw -= 2*Math.PI;
+		}
+		while (dw < -Math.PI) {
+			dw += 2*Math.PI;
+		}
+		
+		/*
+		 * turning radius
+		 */
+		
+		double actualDistance = c.forwardSpeed * world.worldScreen.DT;
+		double maxRads = maxRadsPerMeter * actualDistance;
+		if (dw > maxRads) {
+			dw = maxRads;
+		} else if (dw < -maxRads) {
+			dw = -maxRads;
+		}
+		
+		float goalAngVel = (float)(dw / world.worldScreen.DT);
+		
+		c.applyAngularImpulse(turnAngularImpulseCoefficient, (goalAngVel - c.angularVel));
+		
+	}
+	
+	private void updateBrake(double t) {
+		
+		if (((AutonomousDriver)c.driver).decelTime == -1) {
+			
+			((AutonomousDriver)c.driver).decelTime = t;
+		}
+		
+		if (((AutonomousDriver)c.driver).stoppedTime != -1) {
+			return;
+		}
+		
+		c.applyCancelingForwardImpulse(brakeForwardImpulseCoefficient);
+		c.applyCancelingLateralImpulse(brakeLateralImpulseCoefficient);
+		c.applyCancelingAngularImpulse(turnAngularImpulseCoefficient);
+		
+	}
+	
 }
