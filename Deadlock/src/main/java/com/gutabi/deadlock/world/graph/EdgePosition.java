@@ -62,5 +62,71 @@ public abstract class EdgePosition extends GraphPosition {
 		}
 		
 	}
-
+	
+	public double goalGPPPCombo(int curPathIndex, double curPathParam, boolean pathForward, GraphPosition goalGP, GraphPosition nextBoundGP) {
+		
+		EdgePosition goalEP = (EdgePosition)goalGP;
+		
+		if (pathForward ? this.getCombo() < goalEP.getCombo() : this.getCombo() > goalEP.getCombo()) {
+			// same direction as edge
+			int retIndex = pathForward ? (DMath.equals(curPathParam, 0.0) ? curPathIndex : curPathIndex) : DMath.equals(curPathParam, 0.0) ? curPathIndex-1 : curPathIndex;
+			double retParam = pathForward ? (DMath.equals(curPathParam, 0.0) ? goalEP.getParam() : goalEP.getParam()) : DMath.equals(curPathParam, 0.0) ? goalEP.getParam() : goalEP.getParam();
+			
+			return retIndex+retParam;
+			
+		} else {
+			int retIndex = pathForward ? (DMath.equals(curPathParam, 0.0) ? curPathIndex : curPathIndex) : DMath.equals(curPathParam, 0.0) ? curPathIndex-1 : curPathIndex;
+			double retParam = pathForward ? (DMath.equals(curPathParam, 0.0) ? 1-goalEP.getParam() : 1-goalEP.getParam()) : DMath.equals(curPathParam, 0.0) ? 1-goalEP.getParam() : 1-goalEP.getParam();
+			
+			return retIndex+retParam;
+		}
+		
+	}
+	
+//	public static double gpppComboX(int curPathIndex, double curPathParam, GraphPosition curGraphPosition, boolean forward, EdgePosition goal, EdgePosition nextBoundGP) {
+//		
+//		if (curGraphPosition instanceof EdgePosition) {
+//			EdgePosition curPosE = (EdgePosition)curGraphPosition;
+//			
+//			if (forward ? curPosE.getCombo() < goal.getCombo() : curPosE.getCombo() > goal.getCombo()) {
+//				// same direction as edge
+//				int retIndex = forward ? (DMath.equals(curPathParam, 0.0) ? curPathIndex : curPathIndex) : DMath.equals(curPathParam, 0.0) ? curPathIndex-1 : curPathIndex;
+//				double retParam = forward ? (DMath.equals(curPathParam, 0.0) ? goal.getParam() : goal.getParam()) : DMath.equals(curPathParam, 0.0) ? goal.getParam() : goal.getParam();
+//				
+//				return retIndex+retParam;
+//				
+//			} else {
+//				int retIndex = forward ? (DMath.equals(curPathParam, 0.0) ? curPathIndex : curPathIndex) : DMath.equals(curPathParam, 0.0) ? curPathIndex-1 : curPathIndex;
+//				double retParam = forward ? (DMath.equals(curPathParam, 0.0) ? 1-goal.getParam() : 1-goal.getParam()) : DMath.equals(curPathParam, 0.0) ? 1-goal.getParam() : 1-goal.getParam();
+//				
+//				return retIndex+retParam;
+//			}
+//			
+//		} else {
+//			assert curGraphPosition instanceof VertexPosition;
+//			
+//			Edge nextBoundEdge = (Edge)nextBoundGP.entity;
+//			
+//			Vertex curVertex = ((VertexPosition)curGraphPosition).v;
+//			Vertex nextBoundRefVertex = nextBoundEdge.getReferenceVertex(nextBoundGP.axis);
+//			Vertex nextBoundOtherVertex = nextBoundEdge.getOtherVertex(nextBoundGP.axis);
+//			
+//			if (forward ? curVertex == nextBoundRefVertex : curVertex == nextBoundOtherVertex) {
+//				// same direction as edge
+//				int retIndex = forward ? (DMath.equals(curPathParam, 0.0) ? curPathIndex : curPathIndex) : DMath.equals(curPathParam, 0.0) ? curPathIndex-1 : curPathIndex;
+//				double retParam = forward ? (DMath.equals(curPathParam, 0.0) ? goal.getParam() : goal.getParam()) : DMath.equals(curPathParam, 0.0) ? goal.getParam() : goal.getParam();
+//				
+//				return retIndex+retParam;
+//				
+//			} else {
+//				assert forward ? curVertex == nextBoundOtherVertex : curVertex == nextBoundRefVertex;
+//				int retIndex = forward ? (DMath.equals(curPathParam, 0.0) ? curPathIndex : curPathIndex) : DMath.equals(curPathParam, 0.0) ? curPathIndex-1 : curPathIndex;
+//				double retParam = forward ? (DMath.equals(curPathParam, 0.0) ? 1-goal.getParam() : 1-goal.getParam()) : DMath.equals(curPathParam, 0.0) ? 1-goal.getParam() : 1-goal.getParam();
+//				
+//				return retIndex+retParam;
+//			}
+//		}
+//		
+//	}
+	
 }

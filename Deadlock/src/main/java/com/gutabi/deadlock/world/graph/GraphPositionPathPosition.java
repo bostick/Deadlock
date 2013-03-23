@@ -140,9 +140,9 @@ public class GraphPositionPathPosition {
 		
 		double traveled = 0.0;
 		
-		int curIndex = index;
-		double curParam = param;
-		GraphPosition curPosition = getGraphPosition();
+		int curPathIndex = index;
+		double curPathParam = param;
+		GraphPosition curGraphPosition = getGraphPosition();
 		double curLengthToStartOfPath = lengthToStartOfPath;
 		
 		while (true) {
@@ -151,7 +151,7 @@ public class GraphPositionPathPosition {
 			 * try to go to the next vertex first
 			 */
 			
-			int nextVertexIndex = forward ? nextVertexIndex() : prevVertexIndex();
+			int nextVertexIndex = forward ? path.nextVertexIndex(curPathIndex, curPathParam) : path.prevVertexIndex(curPathIndex, curPathParam);
 			GraphPosition nextVertexGP;
 			double nextVertexLengthToStartOfPath;
 			double distanceToNextVertexPosition;
@@ -176,9 +176,9 @@ public class GraphPositionPathPosition {
 				
 				traveled += distanceToNextVertexPosition;
 				
-				curIndex = nextVertexIndex;
-				curParam = 0.0;
-				curPosition = nextVertexGP;
+				curPathIndex = nextVertexIndex;
+				curPathParam = 0.0;
+				curGraphPosition = nextVertexGP;
 				curLengthToStartOfPath = nextVertexLengthToStartOfPath;
 				
 			} else {
@@ -191,7 +191,7 @@ public class GraphPositionPathPosition {
 					/*
 					 * try to go to the next bound
 					 */
-					int nextBoundIndex = forward ? (curIndex < path.size-1 ? curIndex+1 : -1) : (DMath.equals(curParam, 0.0) ? (curIndex > 0 ? curIndex-1 : -1) : curIndex);
+					int nextBoundIndex = forward ? (curPathIndex < path.size-1 ? curPathIndex+1 : -1) : (DMath.equals(curPathParam, 0.0) ? (curPathIndex > 0 ? curPathIndex-1 : -1) : curPathIndex);
 					GraphPosition nextBoundGP;
 					double nextBoundLengthToStartOfPath;
 					double distanceToNextBound;
@@ -217,78 +217,30 @@ public class GraphPositionPathPosition {
 						
 						traveled += distanceToNextBound;
 						
-						curIndex = nextBoundIndex;
-						curParam = 0.0;
-						curPosition = nextBoundGP;
+						curPathIndex = nextBoundIndex;
+						curPathParam = 0.0;
+						curGraphPosition = nextBoundGP;
 						curLengthToStartOfPath = nextBoundLengthToStartOfPath;
 						
 					} else {
 						/* 
 						 * distanceToNextBound > toTravel == dist - traveled
-						 * 
-						 * we are not going to reach the next bound, so we know it has to be an EdgePosition
 						 */
 						
 						double toTravel = dist - traveled;
 						
-						EdgePosition g = (EdgePosition)curPosition.approachNeighbor(nextBoundGP, toTravel);
+						GraphPosition ggoal = curGraphPosition.approachNeighbor(nextBoundGP, toTravel);
 						
-						if (curPosition instanceof EdgePosition) {
-							EdgePosition curPosE = (EdgePosition)curPosition;
-							
-							if (forward ? curPosE.getCombo() < g.getCombo() : curPosE.getCombo() > g.getCombo()) {
-								// same direction as edge
-								int retIndex = forward ? (DMath.equals(curParam, 0.0) ? curIndex : curIndex) : DMath.equals(curParam, 0.0) ? curIndex-1 : curIndex;
-								double retParam = forward ? (DMath.equals(curParam, 0.0) ? g.getParam() : g.getParam()) : DMath.equals(curParam, 0.0) ? g.getParam() : g.getParam();
-								
-								GraphPositionPathPosition ret = new GraphPositionPathPosition(path, retIndex, retParam);
-								double distToRet = this.distanceTo(ret);
-								assert DMath.equals(distToRet, dist);
-								
-								return ret;
-							} else {
-								int retIndex = forward ? (DMath.equals(curParam, 0.0) ? curIndex : curIndex) : DMath.equals(curParam, 0.0) ? curIndex-1 : curIndex;
-								double retParam = forward ? (DMath.equals(curParam, 0.0) ? 1-g.getParam() : 1-g.getParam()) : DMath.equals(curParam, 0.0) ? 1-g.getParam() : 1-g.getParam();
-								
-								GraphPositionPathPosition ret = new GraphPositionPathPosition(path, retIndex, retParam);
-								double distToRet = this.distanceTo(ret);
-								assert DMath.equals(distToRet, dist);
-								
-								return ret;
-							}
-							
-						} else {
-							assert false;
-							
-							EdgePosition nextBoundEdgePos = ((EdgePosition)nextBoundGP);
-							Edge nextBoundEdge = (Edge)nextBoundEdgePos.entity;
-							
-							Vertex curVertex = ((VertexPosition)curPosition).v;
-							Vertex nextBoundRefVertex = nextBoundEdge.getReferenceVertex(nextBoundEdgePos.axis);
-							Vertex nextBoundOtherVertex = nextBoundEdge.getOtherVertex(nextBoundEdgePos.axis);
-							
-							if (forward ? curVertex == nextBoundRefVertex : curVertex == nextBoundOtherVertex) {
-								// same direction as edge
-								int retIndex = forward ? (DMath.equals(curParam, 0.0) ? curIndex : curIndex) : DMath.equals(curParam, 0.0) ? curIndex-1 : curIndex;
-								double retParam = forward ? (DMath.equals(curParam, 0.0) ? g.getParam() : g.getParam()) : DMath.equals(curParam, 0.0) ? g.getParam() : g.getParam();
-								
-								GraphPositionPathPosition ret = new GraphPositionPathPosition(path, retIndex, retParam);
-								double distToRet = this.distanceTo(ret);
-								assert DMath.equals(distToRet, dist);
-								
-								return ret;
-							} else {
-								assert forward ? curVertex == nextBoundOtherVertex : curVertex == nextBoundRefVertex;
-								int retIndex = forward ? (DMath.equals(curParam, 0.0) ? curIndex : curIndex) : DMath.equals(curParam, 0.0) ? curIndex-1 : curIndex;
-								double retParam = forward ? (DMath.equals(curParam, 0.0) ? 1-g.getParam() : 1-g.getParam()) : DMath.equals(curParam, 0.0) ? 1-g.getParam() : 1-g.getParam();
-								
-								GraphPositionPathPosition ret = new GraphPositionPathPosition(path, retIndex, retParam);
-								double distToRet = this.distanceTo(ret);
-								assert DMath.equals(distToRet, dist);
-								
-								return ret;
-							}
-						}
+						double retCombo = curGraphPosition.goalGPPPCombo(curPathIndex, curPathParam, forward, ggoal, nextBoundGP);
+						
+						int retIndex = (int)Math.floor(retCombo);
+						double retParam = retCombo - retIndex;
+						
+						GraphPositionPathPosition ret = new GraphPositionPathPosition(path, retIndex, retParam);
+						double distToRet = this.distanceTo(ret);
+						assert DMath.equals(distToRet, dist);
+						
+						return ret;
 						
 					}
 					
@@ -306,40 +258,6 @@ public class GraphPositionPathPosition {
 	
 	public GraphPositionPathPosition travelBackward(double dist) {
 		return travel(dist, false);
-	}
-	
-	public int nextVertexIndex() {
-		if (!(index < path.size-1)) {
-			return -1;
-		}
-		int i = index+1;
-		while (true) {
-			GraphPosition gpos = path.get(i);
-			if (gpos instanceof VertexPosition) {
-				return i;
-			}
-			if (!(i < path.size)) {
-				return -1;
-			}
-			i++;
-		}
-	}
-	
-	public int prevVertexIndex() {
-		if (!(DMath.equals(param, 0.0) ? index > 0 : true)) {
-			return -1;
-		}
-		int i = DMath.equals(param, 0.0) ? index - 1 : index;
-		while (true) {
-			GraphPosition gpos = path.get(i);
-			if (gpos instanceof VertexPosition) {
-				return i;
-			}
-			if (!(i > 0)) {
-				return -1;
-			}
-			i--;
-		}
 	}
 	
 	public GraphPositionPathPosition nextBound() {

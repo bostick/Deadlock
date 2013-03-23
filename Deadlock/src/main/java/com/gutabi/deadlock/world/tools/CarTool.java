@@ -114,8 +114,8 @@ public class CarTool extends ToolBase {
 //						directionInTrack = -1;
 //					}
 					
-					int nextVertexIndex = car.driver.overallPos.nextVertexIndex();
-					int prevVertexIndex = car.driver.overallPos.prevVertexIndex();
+					int nextVertexIndex = car.driver.overallPath.nextVertexIndex(car.driver.overallPos.index, car.driver.overallPos.param);
+					int prevVertexIndex = car.driver.overallPath.prevVertexIndex(car.driver.overallPos.index, car.driver.overallPos.param);
 					
 					GraphPosition nextVertex = car.driver.overallPath.get(nextVertexIndex);
 					GraphPosition prevVertex = car.driver.overallPath.get(prevVertexIndex);

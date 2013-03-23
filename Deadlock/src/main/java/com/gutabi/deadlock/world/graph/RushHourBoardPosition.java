@@ -56,6 +56,9 @@ public class RushHourBoardPosition extends GraphPosition {
 			double boardDistance = distance / RushHourStud.SIZE;
 			
 			if (DMath.equals(vpos.colCombo, colCombo)) {
+				/*
+				 * same col
+				 */
 				
 				if (DMath.lessThan(vpos.rowCombo, rowCombo)) {
 					
@@ -69,6 +72,9 @@ public class RushHourBoardPosition extends GraphPosition {
 				
 			} else {
 				assert DMath.equals(vpos.rowCombo, rowCombo);
+				/*
+				 * same row
+				 */
 				
 				if (DMath.lessThan(vpos.colCombo, colCombo)) {
 					
@@ -139,4 +145,13 @@ public class RushHourBoardPosition extends GraphPosition {
 		
 	}
 	
+	public double goalGPPPCombo(int curPathIndex, double curPathParam, boolean pathForward, GraphPosition goalGP, GraphPosition nextBoundGP) {
+		
+		RushHourBoardPosition goalBP = (RushHourBoardPosition)goalGP;
+		
+		assert false;
+		return -1;
+		
+	}
+
 }

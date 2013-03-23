@@ -17,4 +17,15 @@ public abstract class GraphPosition {
 	
 	public abstract GraphPosition approachNeighbor(GraphPosition p, double distance);
 	
+	/**
+	 * given the current GPPP, return the combo for the GPPP that corresponds to goal
+	 * 
+	 * we need this since a Road may go in the opposite direction of the path, etc, and there is some logic needed
+	 * for converting from gp's to gppp's
+	 * 
+	 * mainly the params, which may be the gp's param or may be 1-gp's param
+	 * 
+	 */
+	public abstract double goalGPPPCombo(int curPathIndex, double curPathParam, boolean pathForward, GraphPosition goalGP, GraphPosition nextBoundGP);
+	
 }

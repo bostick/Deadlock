@@ -113,5 +113,40 @@ public class VertexPosition extends GraphPosition {
 		return null;
 		
 	}
-
+	
+	public double goalGPPPCombo(int curPathIndex, double curPathParam, boolean pathForward, GraphPosition goalGP, GraphPosition nextBoundGP) {
+		
+		if (nextBoundGP instanceof EdgePosition) {
+			EdgePosition nextBoundEP = (EdgePosition)nextBoundGP;
+			EdgePosition goalEP = (EdgePosition)goalGP;
+			
+			Edge nextBoundEdge = (Edge)nextBoundEP.entity;
+			
+			Vertex nextBoundRefVertex = nextBoundEdge.getReferenceVertex(nextBoundEP.axis);
+			Vertex nextBoundOtherVertex = nextBoundEdge.getOtherVertex(nextBoundEP.axis);
+			
+			if (pathForward ? v == nextBoundRefVertex : v == nextBoundOtherVertex) {
+				// same direction as edge
+				int retIndex = pathForward ? (DMath.equals(curPathParam, 0.0) ? curPathIndex : curPathIndex) : DMath.equals(curPathParam, 0.0) ? curPathIndex-1 : curPathIndex;
+				double retParam = pathForward ? (DMath.equals(curPathParam, 0.0) ? goalEP.getParam() : goalEP.getParam()) : DMath.equals(curPathParam, 0.0) ? goalEP.getParam() : goalEP.getParam();
+				
+				return retIndex+retParam;
+				
+			} else {
+				assert pathForward ? v == nextBoundOtherVertex : v == nextBoundRefVertex;
+				int retIndex = pathForward ? (DMath.equals(curPathParam, 0.0) ? curPathIndex : curPathIndex) : DMath.equals(curPathParam, 0.0) ? curPathIndex-1 : curPathIndex;
+				double retParam = pathForward ? (DMath.equals(curPathParam, 0.0) ? 1-goalEP.getParam() : 1-goalEP.getParam()) : DMath.equals(curPathParam, 0.0) ? 1-goalEP.getParam() : 1-goalEP.getParam();
+				
+				return retIndex+retParam;
+			}
+			
+		} else {
+			assert nextBoundGP instanceof RushHourBoardPosition;
+			
+			assert false;
+			return -1;
+		}
+		
+	}
+	
 }
