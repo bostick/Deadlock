@@ -97,7 +97,7 @@ public class AutonomousCar extends Car {
 		case DRIVING: {
 			
 			computeDynamicPropertiesAlways();
-			computeDynamicPropertiesMovingAndRest(t);
+			computeDynamicPropertiesMovingAndMore(t);
 			
 			Fixture s = (Fixture)((AutonomousDriver)driver).overallPath.end.entity;
 			boolean sinked = false;
@@ -131,7 +131,7 @@ public class AutonomousCar extends Car {
 				world.roadMarkMap.addRoadMark(prevWorldPoint0, shape.p0);
 				world.roadMarkMap.addRoadMark(prevWorldPoint3, shape.p3);
 				
-				computeDynamicPropertiesMovingAndRest(t);
+				computeDynamicPropertiesMovingAndMore(t);
 				
 			} else {
 				
@@ -154,7 +154,7 @@ public class AutonomousCar extends Car {
 				
 				world.quadrantMap.grassMap.mowGrass(shape);
 				
-				computeDynamicPropertiesMovingAndRest(t);
+				computeDynamicPropertiesMovingAndMore(t);
 				
 			} else {
 				
@@ -163,7 +163,7 @@ public class AutonomousCar extends Car {
 					((AutonomousDriver)driver).stoppedTime = -1;
 					((AutonomousDriver)driver).deadlocked = false;
 					
-					computeDynamicPropertiesMovingAndRest(t);
+					computeDynamicPropertiesMovingAndMore(t);
 					
 				}
 				
@@ -193,7 +193,7 @@ public class AutonomousCar extends Car {
 					world.grassMarkMap.addGrassMark(prevWorldPoint3, shape.p3);
 				}
 				
-				computeDynamicPropertiesMovingAndRest(t);
+				computeDynamicPropertiesMovingAndMore(t);
 				
 			} else {
 				
@@ -202,7 +202,7 @@ public class AutonomousCar extends Car {
 					((AutonomousDriver)driver).stoppedTime = -1;
 					((AutonomousDriver)driver).deadlocked = false;
 					
-					computeDynamicPropertiesMovingAndRest(t);
+					computeDynamicPropertiesMovingAndMore(t);
 					
 				}
 				
@@ -229,7 +229,7 @@ public class AutonomousCar extends Car {
 		return true;
 	}
 	
-	public void computeDynamicPropertiesMovingAndRest(double t) {
+	public void computeDynamicPropertiesMovingAndMore(double t) {
 		
 		computeDynamicPropertiesMoving();
 		

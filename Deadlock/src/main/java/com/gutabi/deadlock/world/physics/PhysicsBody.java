@@ -40,13 +40,12 @@ public abstract class PhysicsBody extends Entity {
 	protected Point prevWorldPoint0;
 	protected Point prevWorldPoint3;
 	
-	
-	
-	
-	
-	private Body b2dBody;
-	protected PolygonShape b2dShape;
-	public org.jbox2d.dynamics.Fixture b2dFixture;
+	/*
+	 * only protected for InteractiveCar's fake coasting steps
+	 */
+	protected Body b2dBody;
+	private PolygonShape b2dShape;
+	private org.jbox2d.dynamics.Fixture b2dFixture;
 	
 	/*
 	 * dynamic properties
@@ -56,6 +55,7 @@ public abstract class PhysicsBody extends Entity {
 	Vec2 currentUpNormal;
 	protected Vec2 vel;
 	Vec2 forwardVel;
+	
 	
 	public PhysicsBody(World world) {
 		this.world = world;

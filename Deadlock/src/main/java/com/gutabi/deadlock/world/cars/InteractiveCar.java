@@ -8,6 +8,7 @@ import com.gutabi.deadlock.ui.paint.Join;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.world.World;
 import com.gutabi.deadlock.world.graph.GraphPositionPathPosition;
+import com.gutabi.deadlock.world.physics.PhysicsUtils;
 
 public class InteractiveCar extends Car {
 	
@@ -50,40 +51,14 @@ public class InteractiveCar extends Car {
 		case COASTING_FORWARD: {
 			((InteractiveDriver)driver).preStep(t);
 			
-			/*
-			 * do coasting physics here
-			 */
-			
-			double dv = coastingAcceleration * world.worldScreen.DT;
-			
-			coastingVel += dv;
-			
-			double dist = coastingVel * world.worldScreen.DT;
-			
-			GraphPositionPathPosition newPos = driver.overallPos.travelForward(dist);
-			
-			setTransform(newPos.p, newAngle(newPos));
-			setPhysicsTransform();
+			fakeCoastingStep();
 			
 			break;
 		}
 		case COASTING_BACKWARD: {
 			((InteractiveDriver)driver).preStep(t);
 			
-			/*
-			 * do coasting physics here
-			 */
-			
-			double dv = coastingAcceleration * world.worldScreen.DT;
-			
-			coastingVel += dv;
-			
-			double dist = coastingVel * world.worldScreen.DT;
-			
-			GraphPositionPathPosition newPos = driver.overallPos.travelBackward(dist);
-			
-			setTransform(newPos.p, newAngle(newPos));
-			setPhysicsTransform();
+			fakeCoastingStep();
 			
 			break;
 		}
@@ -92,6 +67,20 @@ public class InteractiveCar extends Car {
 			break;
 		}
 		
+	}
+	
+	public void fakeCoastingStep() {
+		assert state == CarStateEnum.COASTING_FORWARD || state == CarStateEnum.COASTING_BACKWARD;
+		
+		double dv = coastingAcceleration * world.worldScreen.DT;
+		
+		coastingVel += dv;
+		
+		double dist = coastingVel * world.worldScreen.DT;
+		
+		GraphPositionPathPosition newPos = state == CarStateEnum.COASTING_FORWARD ? driver.overallPos.travelForward(dist) : driver.overallPos.travelBackward(dist);
+		
+		b2dBody.setTransform(PhysicsUtils.vec2(newPos.p), (float)newAngle(newPos));
 	}
 	
 	public boolean postStep(double t) {

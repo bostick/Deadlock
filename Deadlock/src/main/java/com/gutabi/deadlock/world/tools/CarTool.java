@@ -228,9 +228,8 @@ public class CarTool extends ToolBase {
 
 	}
 	
-	/*
-	 * calls car.setTransform(), setting car.p and car.angle
-	 * 
+	/**
+	 * setting dynamic properties is done here
 	 */
 	public void dragged(InputEvent ev) {
 		
@@ -245,11 +244,7 @@ public class CarTool extends ToolBase {
 				
 				GraphPositionPathPosition testPathPos = car.driver.overallPath.generalSearch(carPTmp, car.driver.overallPos, car.length);
 				
-				System.out.print(testPathPos.p);
-				
 				if (!collidesWithBoardOrOtherCars(car, testPathPos.p)) {
-					
-					System.out.println(" no collide");
 					
 					car.setTransform(testPathPos.p, car.newAngle(testPathPos));
 					car.setPhysicsTransform();
@@ -295,8 +290,6 @@ public class CarTool extends ToolBase {
 					
 					worldScreen.contentPane.repaint();
 					
-				} else {
-					System.out.println(" collide");
 				}
 				
 				break;
