@@ -173,7 +173,7 @@ public final class AutonomousDriver extends Driver {
 		
 //		Point old = overallPos.p;
 		
-		overallPos = overallPath.forwardSearch(c.center, overallPos, true, Double.POSITIVE_INFINITY);
+		setOverallPos(overallPath.forwardSearch(c.center, overallPos, true, Double.POSITIVE_INFINITY));
 		
 //		double oldDist = Point.distance(c.center, old);
 		

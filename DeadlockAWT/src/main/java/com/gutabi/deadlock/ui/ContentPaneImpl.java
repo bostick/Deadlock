@@ -139,6 +139,7 @@ public class ContentPaneImpl extends ContentPaneBase implements java.awt.event.K
 	}
 	
 	public void repaint() {
+		
 		j.repaint();
 	}
 	

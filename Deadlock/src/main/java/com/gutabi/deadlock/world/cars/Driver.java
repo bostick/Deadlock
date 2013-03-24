@@ -27,4 +27,11 @@ public abstract class Driver {
 		this.c = c;
 	}
 	
+	public void setOverallPos(GraphPositionPathPosition pos) {
+		assert pos != null;
+		
+		prevOverallPos = overallPos;
+		overallPos = pos;
+	}
+	
 }

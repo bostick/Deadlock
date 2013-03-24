@@ -40,7 +40,7 @@ public class RushHourBoard extends Entity {
 	public int colCount;
 	
 	public Point ul;
-	public AABB aabb;
+	public AABB allStudsAABB;
 	public AABB gridAABB;
 	
 	Map<Integer, List<RushHourBoardPosition>> rowTracks = new HashMap<Integer, List<RushHourBoardPosition>>();
@@ -418,12 +418,12 @@ public class RushHourBoard extends Entity {
 		 * negative space
 		 */
 		
-		int colCount = (int)Math.round(aabb.width / RushHourStud.SIZE);
-		int rowCount = (int)Math.round(aabb.height / RushHourStud.SIZE);
+		int colCount = (int)Math.round(allStudsAABB.width / RushHourStud.SIZE);
+		int rowCount = (int)Math.round(allStudsAABB.height / RushHourStud.SIZE);
 		for (int i = 0; i < rowCount; i++) {
 			jloop:
 			for (int j = 0; j < colCount; j++) {
-				AABB n = new AABB(aabb.ul.x + j * RushHourStud.SIZE, aabb.ul.y + i * RushHourStud.SIZE, RushHourStud.SIZE, RushHourStud.SIZE);
+				AABB n = new AABB(allStudsAABB.ul.x + j * RushHourStud.SIZE, allStudsAABB.ul.y + i * RushHourStud.SIZE, RushHourStud.SIZE, RushHourStud.SIZE);
 				
 				for (RushHourStud ss : studs) {
 					if (ss.aabb.equals(n)) {
@@ -885,7 +885,7 @@ public class RushHourBoard extends Entity {
 	
 	private void addStud(RushHourStud s) {
 		studs.add(s);
-		aabb = AABB.union(aabb, s.aabb);
+		allStudsAABB = AABB.union(allStudsAABB, s.aabb);
 	}
 	
 	private void removePerimeterSegment(Line l) {

@@ -1,13 +1,9 @@
 
 
+fix releasing on a vertex, snapping and covering up road
 
 
-
-do coasting within the board, from stud to stud
-
-
-
-
+make sure dragging doesn't get snagged
 
 
 flicking
@@ -24,6 +20,8 @@ so that dragging is not interrupted
  
  
  DONE:
+
+do coasting within the board, from stud to stud
  
 when dragging, determine whether to coast forward or backward
 

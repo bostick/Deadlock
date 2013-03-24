@@ -17,6 +17,8 @@ import com.gutabi.deadlock.ui.paint.RenderingContext;
 
 public class ControlPanel extends PanelBase {
 	
+//	boolean dirty;
+	
 	AABB previewAABB = new AABB(5, 400, 100, 100);
 	double previewPixelsPerMeter;
 	

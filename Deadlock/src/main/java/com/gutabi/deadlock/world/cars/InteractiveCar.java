@@ -3,6 +3,7 @@ package com.gutabi.deadlock.world.cars;
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
 import com.gutabi.deadlock.math.DMath;
+import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.paint.Cap;
 import com.gutabi.deadlock.ui.paint.Color;
 import com.gutabi.deadlock.ui.paint.Join;
@@ -21,7 +22,7 @@ public class InteractiveCar extends Car {
 	 * 
 	 * doesn't need to be a vector, since it is snapped to a track
 	 */
-	double coastingVel;
+	private double coastingVel;
 	final double coastingAcceleration = 10.0;
 	
 	public InteractiveCar(World w) {
@@ -58,6 +59,14 @@ public class InteractiveCar extends Car {
 		
 	}
 	
+	public void setCoastingVelFromDrag(Point dragVector, long dragTimeMillis, boolean pathForward) {
+		
+		double vel = 0.1 * Math.max(Point.dot(dragVector, (pathForward ? driver.overallPos.pathVector() : driver.overallPos.pathVector().negate())), 0.0) / driver.overallPos.pathVector().length() / (0.0001 * dragTimeMillis);
+		
+		assert vel >= 0.0;
+		coastingVel = vel;
+	}
+	
 	public void fakeCoastingStep(double t) {
 		assert state == CarStateEnum.COASTING_FORWARD || state == CarStateEnum.COASTING_BACKWARD;
 		
@@ -76,20 +85,19 @@ public class InteractiveCar extends Car {
 			newPos = driver.toolCoastingGoal;
 			state = CarStateEnum.IDLE;
 			
-			b2dBody.setTransform(PhysicsUtils.vec2(newPos.p), (float)newAngle(newPos));
+			b2dBody.setTransform(PhysicsUtils.vec2(newPos.p), (float)(state == CarStateEnum.COASTING_FORWARD ? newPos.angle() : newPos.angle()));
 			
 			computeDynamicPropertiesAlways();
 			computeDynamicPropertiesMoving();
 			
-			driver.prevOverallPos = driver.overallPos;
-			driver.overallPos = driver.toolCoastingGoal;
+			driver.setOverallPos(driver.toolCoastingGoal);
 			
 			driver.toolCoastingGoal = null;
 			
 			return;
 		}
 		
-		b2dBody.setTransform(PhysicsUtils.vec2(newPos.p), (float)newAngle(newPos));
+		b2dBody.setTransform(PhysicsUtils.vec2(newPos.p), (float)(state == CarStateEnum.COASTING_FORWARD ? newPos.angle() : newPos.angle()));
 	}
 	
 	public boolean postStep(double t) {

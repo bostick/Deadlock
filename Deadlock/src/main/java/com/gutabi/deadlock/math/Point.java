@@ -533,6 +533,10 @@ public class Point {
 		return new Point(p.x * invLen, p.y * invLen);
 	}
 	
+	public double length() {
+		return Math.hypot(x, y);
+	}
+	
 	public Point multiply(double scale) {
 		return new Point(x * scale, y * scale);
 	}
@@ -558,6 +562,10 @@ public class Point {
 		double invLen = 1 / len;
 		return new Point(newX * invLen, newY * invLen);
 		
+	}
+	
+	public Point negate() {
+		return new Point(-x, -y);
 	}
 	
 }

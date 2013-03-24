@@ -95,6 +95,46 @@ public class GraphPositionPathPosition {
 		return (index == path.size-1) && DMath.equals(param, 0.0);
 	}
 	
+	public Point pathVector() {
+		
+		if (DMath.equals(param, 0.0)) {
+			if (index == 0) {
+				return path.get(index+1).p.minus(path.get(index).p);
+			} else if (index == path.size-1) {
+				return path.get(index).p.minus(path.get(index-1).p);
+			} else {
+				return path.get(index+1).p.minus(path.get(index-1).p);
+			}
+		} else {
+			return path.get(index+1).p.minus(path.get(index).p);
+		}
+		
+	}
+	
+	public double angle() {
+		Point a;
+		Point b;
+		if (DMath.equals(param, 0.0)) {
+			
+			if (index == 0) {
+				a = path.get(index).p;
+				b = path.get(index+1).p;
+			} else if (index == path.size-1) {
+				a = path.get(index-1).p;
+				b = path.get(index).p;
+			} else {
+				a = path.get(index-1).p;
+				b = path.get(index+1).p;
+			}
+			
+		} else {
+			a = path.get(index).p;
+			b = path.get(index+1).p;
+		}
+		
+		return Math.atan2(b.y - a.y, b.x - a.x);
+	}
+	
 	private void computeGraphPosition() {
 		
 		GraphPosition p1 = path.get(index);

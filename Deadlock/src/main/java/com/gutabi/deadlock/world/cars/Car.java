@@ -7,14 +7,11 @@ import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.geom.Geom;
 import com.gutabi.deadlock.geom.OBB;
 import com.gutabi.deadlock.geom.Shape;
-import com.gutabi.deadlock.math.DMath;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.Transform;
 import com.gutabi.deadlock.ui.paint.Color;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.world.World;
-import com.gutabi.deadlock.world.graph.GraphPosition;
-import com.gutabi.deadlock.world.graph.GraphPositionPathPosition;
 import com.gutabi.deadlock.world.physics.PhysicsBody;
 import com.gutabi.deadlock.world.sprites.CarSheet;
 import com.gutabi.deadlock.world.sprites.CarSheet.CarSheetSprite;
@@ -140,36 +137,27 @@ public abstract class Car extends PhysicsBody {
 		;
 	}
 	
-	public double newAngle(GraphPositionPathPosition testPathPos) {
-		
-		int directionInTrack = 1;
-		
-		GraphPosition testGpos = testPathPos.getGraphPosition();
-		
-		double a;
-		
-		if (testPathPos.equals(driver.overallPos)) {
-			a = angle;
-		} else if (DMath.lessThan(driver.overallPos.combo, testPathPos.combo)) {
-			if (directionInTrack == 1) {
-				a = Math.atan2(testGpos.p.y - center.y, testGpos.p.x - center.x);
-			} else {
-				a = Math.atan2(center.y - testGpos.p.y, center.x - testGpos.p.x);
-			}
-		} else {
-			if (directionInTrack == 1) {
-				a = Math.atan2(center.y - testGpos.p.y, center.x - testGpos.p.x);
-			} else {
-				a = Math.atan2(testGpos.p.y - center.y, testGpos.p.x - center.x);
-			}
-		}
-		
-		if (DMath.lessThan(a, 0.0)) {
-			a = a + 2 * Math.PI;
-		}
-		
-		return a;
-	}
+//	public double newAngle(GraphPositionPathPosition curPos, GraphPositionPathPosition testPos) {
+//		
+//		GraphPosition testGpos = testPos.getGraphPosition();
+//		
+//		double a;
+//		
+//		if (testPos.equals(curPos)) {
+//			assert false;
+//			a = Double.NaN;
+//		} else if (DMath.lessThan(curPos.combo, testPos.combo)) {
+//			a = Math.atan2(testGpos.p.y - curPos.p.y, testGpos.p.x - curPos.p.x);
+//		} else {
+//			a = Math.atan2(curPos.p.y - testGpos.p.y, curPos.p.x - testGpos.p.x);
+//		}
+//		
+//		if (DMath.lessThan(a, 0.0)) {
+//			a = a + 2 * Math.PI;
+//		}
+//		
+//		return a;
+//	}
 	
 	public void paintHilite(RenderingContext ctxt) {
 		ctxt.setColor(Color.BLUE);

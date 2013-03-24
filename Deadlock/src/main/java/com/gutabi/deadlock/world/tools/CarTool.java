@@ -15,6 +15,7 @@ import com.gutabi.deadlock.world.DebuggerScreen;
 import com.gutabi.deadlock.world.WorldScreen;
 import com.gutabi.deadlock.world.cars.Car;
 import com.gutabi.deadlock.world.cars.CarStateEnum;
+import com.gutabi.deadlock.world.cars.InteractiveCar;
 import com.gutabi.deadlock.world.graph.Fixture;
 import com.gutabi.deadlock.world.graph.GraphPosition;
 import com.gutabi.deadlock.world.graph.GraphPositionPathPosition;
@@ -26,7 +27,7 @@ import com.gutabi.deadlock.world.graph.VertexPosition;
 
 public class CarTool extends ToolBase {
 	
-	private Car car;
+	private InteractiveCar car;
 	
 	public CarTool(WorldScreen worldScreen, DebuggerScreen debuggerScreen) {
 		super(worldScreen, debuggerScreen);
@@ -57,7 +58,7 @@ public class CarTool extends ToolBase {
 	
 	public void pressed(InputEvent ev) {
 		
-		Car pressed = worldScreen.world.carMap.carHitTest(ev.p);
+		InteractiveCar pressed = (InteractiveCar)worldScreen.world.carMap.carHitTest(ev.p);
 		if (pressed != null) {
 			
 			switch (pressed.state) {
@@ -66,7 +67,6 @@ public class CarTool extends ToolBase {
 				this.car = pressed;
 				
 				car.toolOrigP = car.center;
-//				car.toolOrigAngle = car.angle;
 				car.toolOrigShape = car.shape;
 				car.driver.toolOrigOverallPos = car.driver.overallPos;
 				
@@ -92,6 +92,8 @@ public class CarTool extends ToolBase {
 				GraphPosition gpos = car.driver.overallPos.getGraphPosition();
 				
 				if (gpos instanceof RoadPosition || gpos instanceof VertexPosition) {
+					
+					assert !(gpos instanceof VertexPosition);
 					
 					/*
 					 * determine which direction to coast
@@ -140,10 +142,11 @@ public class CarTool extends ToolBase {
 						
 						if (otherSideIsFree) {
 							car.driver.toolCoastingGoal = new GraphPositionPathPosition(car.driver.overallPath, prevVertexIndex, 0.0).travelBackward(RushHourStud.SIZE + 0.5 * studCount);
+							car.setCoastingVelFromDrag(dragVector, dragTimeStepMillis, false);
 							car.state = CarStateEnum.COASTING_BACKWARD;
 						} else {
-//							car.driver.toolCoastingGoal = new GraphPositionPathPosition(car.driver.overallPath, prevVertexIndex, 0.0).travelBackward(RushHourStud.SIZE + 0.5 * studCount);
 							car.driver.toolCoastingGoal = car.driver.toolOrigOverallPos;
+							car.setCoastingVelFromDrag(dragVector, dragTimeStepMillis, true);
 							car.state = CarStateEnum.COASTING_FORWARD;
 						}
 						
@@ -181,109 +184,80 @@ public class CarTool extends ToolBase {
 						
 						if (otherSideIsFree) {
 							car.driver.toolCoastingGoal = new GraphPositionPathPosition(car.driver.overallPath, nextVertexIndex, 0.0).travelForward(RushHourStud.SIZE + 0.5 * studCount);
+							car.setCoastingVelFromDrag(dragVector, dragTimeStepMillis, true);
 							car.state = CarStateEnum.COASTING_FORWARD;
 						} else {
 							car.driver.toolCoastingGoal = car.driver.toolOrigOverallPos;
+							car.setCoastingVelFromDrag(dragVector, dragTimeStepMillis, false);
 							car.state = CarStateEnum.COASTING_BACKWARD;
 						}
 						
 					}
 					
-				}
-//				else if (gpos instanceof VertexPosition) {
-//					
-//					/*
-//					 * reset
-//					 */
-//					car.setTransform(car.toolOrigP, car.toolOrigAngle);
-//					car.setPhysicsTransform();
-//					car.driver.overallPos = car.driver.toolOrigOverallPos;
-//					
-//					worldScreen.world.zoomAbsolute(1.0);
-//					
-//					worldScreen.world.render_worldPanel();
-//					
-//					worldScreen.contentPane.repaint();
-//					
-//				}
-				else {
+				} else {
 					assert gpos instanceof RushHourBoardPosition;
 					
-					RushHourBoardPosition rpos = (RushHourBoardPosition)gpos;
+					RushHourBoard b = (RushHourBoard)((RushHourBoardPosition)gpos).entity;
 					
-					int studCount = (int)(car.length * Car.METERS_PER_CARLENGTH / RushHourStud.SIZE);
+					double tmpCombo = car.driver.overallPos.travelBackward(car.length/2).combo;
 					
-					RushHourBoard b = (RushHourBoard)gpos.entity;
+					/*
+					 * figure out which way to snap
+					 */
 					
-//					RushHourBoardPosition rounded = null;
-//					switch (Side.angleToSide(car.angle)) {
-//						case TOP:
-//						case BOTTOM:
-//							rounded = new RushHourBoardPosition(b,
-//								Math.round(rpos.rowCombo - car.length/2) + car.length/2,
-//								Math.round(rpos.colCombo - car.width/2) + car.width/2);
-//							break;
-//						case LEFT:
-//						case RIGHT:
-//							rounded = new RushHourBoardPosition(b,
-//								Math.round(rpos.rowCombo - car.width/2) + car.width/2,
-//								Math.round(rpos.colCombo - car.length/2) + car.length/2);
-//							break;
-//					}
+					int tmpFloorIndex = (int)Math.floor(tmpCombo);
+//					double tmpFloorParam = tmpCombo - tmpFloorIndex;
 					
-					double tmpCombo = Math.round(car.driver.overallPos.travelBackward(car.length/2).combo);
-					int tmpIndex = (int)Math.floor(tmpCombo);
-					double tmpParam = tmpCombo - tmpIndex;
+					int tmpCeilIndex = (int)Math.ceil(tmpCombo);
+//					double tmpCeilParam = tmpCombo - tmpCeilIndex;
 					
-					car.driver.toolCoastingGoal = new GraphPositionPathPosition(car.driver.overallPath, tmpIndex, tmpParam).travelForward(car.length/2);
+					int tmpRoundIndex = (int)Math.round(tmpCombo);
+//					double tmpRoundParam = tmpCombo - tmpRoundIndex;
+					
+					GraphPositionPathPosition tmpFloorPos = new GraphPositionPathPosition(car.driver.overallPath, tmpFloorIndex, 0.0).travelForward(car.length/2);
+					GraphPositionPathPosition tmpCeilPos = new GraphPositionPathPosition(car.driver.overallPath, tmpCeilIndex, 0.0).travelForward(car.length/2);
+					
+					OBB testFloor = Geom.localToWorld(car.localAABB, car.angle, tmpFloorPos.p);
+					OBB testCeil = Geom.localToWorld(car.localAABB, car.angle, tmpCeilPos.p);
+					
+					boolean floorWithin = testFloor.aabb.completelyWithin(b.gridAABB);
+					boolean ceilWithin = testCeil.aabb.completelyWithin(b.gridAABB);
+					
+					if (!floorWithin && ceilWithin) {
+						car.driver.toolCoastingGoal = tmpCeilPos;
+					} else if (!ceilWithin && floorWithin) {
+						car.driver.toolCoastingGoal = tmpFloorPos;
+					} else if (ceilWithin && floorWithin) {
+						/*
+						 * both are valid, use rounded
+						 */
+						if (tmpRoundIndex == tmpFloorIndex) {
+							car.driver.toolCoastingGoal = tmpFloorPos;
+						} else {
+							assert tmpRoundIndex == tmpCeilIndex;
+							car.driver.toolCoastingGoal = tmpCeilPos;
+						}
+					} else {
+						assert !testFloor.aabb.completelyWithin(b.gridAABB);
+						assert !testCeil.aabb.completelyWithin(b.gridAABB);
+						car.driver.toolCoastingGoal = car.driver.toolOrigOverallPos;
+					}
 					
 					if (DMath.lessThanEquals(car.driver.toolCoastingGoal.combo, car.driver.overallPos.combo)) {
 						
+						car.setCoastingVelFromDrag(dragVector, dragTimeStepMillis, false);
 						car.state = CarStateEnum.COASTING_BACKWARD;
 						
 					} else {
 						
+						car.setCoastingVelFromDrag(dragVector, dragTimeStepMillis, true);
 						car.state = CarStateEnum.COASTING_FORWARD;
 						
 					}
 					
-//					if (b.allowablePosition(car)) {
-//						
-//						car.state = CarStateEnum.IDLE;
-//						
-//						car.setTransform(rounded.p, car.angle);
-//						car.setPhysicsTransform();
-//						car.driver.overallPos = car.driver.overallPath.generalSearch(car.center, car.driver.overallPos, car.length);
-//						
-//						worldScreen.world.zoomAbsolute(1.0);
-//						
-//						worldScreen.world.render_worldPanel();
-//						
-//						worldScreen.contentPane.repaint();
-//						
-//					} else {
-//						
-//						car.state = CarStateEnum.IDLE;
-//						
-//						/*
-//						 * reset
-//						 */
-//						car.setTransform(car.toolOrigP, car.toolOrigAngle);
-//						car.setPhysicsTransform();
-//						car.driver.overallPos = car.driver.toolOrigOverallPos;
-//						
-//						worldScreen.world.zoomAbsolute(1.0);
-//						
-//						worldScreen.world.render_worldPanel();
-//						
-//						worldScreen.contentPane.repaint();
-//						
-//					}
-					
 				}
 				
 				car.toolOrigP = null;
-//				car.toolOrigAngle = Double.NaN;
 				car.toolOrigShape = null;
 				car.driver.toolOrigOverallPos = null;
 				car.driver.toolOrigExitingVertexPos = null;
@@ -298,11 +272,28 @@ public class CarTool extends ToolBase {
 
 	}
 	
+	
+	Point prevDragP;
+	Point curDragP;
+	Point dragVector;
+	long prevDragMillis;
+	long curDragMillis;
+	long dragTimeStepMillis;
+	
 	/**
 	 * setting dynamic properties is done here
 	 */
 	public void dragged(InputEvent ev) {
 		
+		prevDragP = curDragP;
+		prevDragMillis = curDragMillis;
+		curDragP = ev.p;
+		curDragMillis = System.currentTimeMillis();
+		if (prevDragP != null) {
+			dragVector = curDragP.minus(prevDragP);
+			dragTimeStepMillis = curDragMillis - prevDragMillis;
+		}
+				
 		if (car.toolOrigShape.hitTest(worldScreen.world.lastPressedWorldPoint)) {
 			
 			Point diff = ev.p.minus(worldScreen.world.lastPressedWorldPoint);
@@ -316,11 +307,10 @@ public class CarTool extends ToolBase {
 				
 				if (!collidesWithBoardOrOtherCars(car, testPathPos.p)) {
 					
-					car.setTransform(testPathPos.p, car.newAngle(testPathPos));
+					car.setTransform(testPathPos.p, DMath.greaterThanEquals(testPathPos.combo, car.driver.overallPos.combo) ? testPathPos.angle() : /*2*Math.PI-*/testPathPos.angle());
 					car.setPhysicsTransform();
 					
-					car.driver.prevOverallPos = car.driver.overallPos;
-					car.driver.overallPos = testPathPos;
+					car.driver.setOverallPos(testPathPos);
 					
 					GraphPosition gpos = car.driver.overallPos.getGraphPosition();
 					
