@@ -150,8 +150,10 @@ public class RushHourBoard extends Entity {
 		}
 		
 		
-		List<JointStud> jStuds = new ArrayList<JointStud>();
-		List<JointStud> kStuds = new ArrayList<JointStud>();
+		int jStudCount = 0;
+		JointStud[] jStuds = new JointStud[2];
+		int kStudCount = 0;
+		JointStud[] kStuds = new JointStud[2];
 		ExitStud yStud = null;
 		
 		for (int i = 0; i < ini.length; i++) {
@@ -178,9 +180,11 @@ public class RushHourBoard extends Entity {
 					JointStud s = new JointStud(world, this, i - originRow, j - originCol);
 					addStud(s);
 					if (c == 'J') {
-						jStuds.add(s);
+						jStuds[jStudCount] = s;
+						jStudCount++;
 					} else {
-						kStuds.add(s);
+						kStuds[kStudCount] = s;
+						kStudCount++;
 					}
 					if (i < originRow) {
 						removePerimeterSegment(s.aabb.getP2P3Line());
@@ -269,10 +273,10 @@ public class RushHourBoard extends Entity {
 			}
 		}
 		
-		if (!jStuds.isEmpty()) {
+		if (jStudCount != 0) {
 			addRoad(jStuds);
 		}
-		if (!kStuds.isEmpty()) {
+		if (kStudCount != 0) {
 			addRoad(kStuds);
 		}
 		
@@ -288,6 +292,9 @@ public class RushHourBoard extends Entity {
 			if (yStud.col == -1 && yStud.row == i) {
 				track.add(new RushHourBoardPosition(this, i + 0.5, -2));
 				track.add(new RushHourBoardPosition(this, i + 0.5, -1));
+			} else if ((jStudCount == 2 && (jStuds[0].col == -1 && jStuds[0].row == i || jStuds[1].col == -1 && jStuds[1].row == i)) ||
+					(kStudCount == 2 && (kStuds[0].col == -1 && kStuds[0].row == i || kStuds[1].col == -1 && kStuds[1].row == i))) {
+				track.add(new RushHourBoardPosition(this, i + 0.5, -1));
 			}
 			for (int j = 0; j < colCount; j++) {
 				track.add(new RushHourBoardPosition(this, i + 0.5, j));
@@ -295,6 +302,9 @@ public class RushHourBoard extends Entity {
 			if (yStud.col == colCount && yStud.row == i) {
 				track.add(new RushHourBoardPosition(this, i + 0.5, colCount));
 				track.add(new RushHourBoardPosition(this, i + 0.5, colCount+1));
+			} else if ((jStudCount == 2 && (jStuds[0].col == colCount && jStuds[0].row == i || jStuds[1].col == colCount && jStuds[1].row == i)) ||
+					(kStudCount == 2 && (kStuds[0].col == colCount && kStuds[0].row == i || kStuds[1].col == colCount && kStuds[1].row == i))) {
+				track.add(new RushHourBoardPosition(this, i + 0.5, colCount));
 			}
 			rowTracks.put(i, track);
 		}
@@ -307,6 +317,9 @@ public class RushHourBoard extends Entity {
 			if (yStud.row == -1 && yStud.col == i) {
 				track.add(new RushHourBoardPosition(this, -2, i + 0.5));
 				track.add(new RushHourBoardPosition(this, -1, i + 0.5));
+			} else if ((jStudCount == 2 && (jStuds[0].row == -1 && jStuds[0].col == i || jStuds[1].row == -1 && jStuds[1].col == i)) ||
+					(kStudCount == 2 && (kStuds[0].row == -1 && kStuds[0].col == i || kStuds[1].row == -1 && kStuds[1].col == i))) {
+				track.add(new RushHourBoardPosition(this, -1, i + 0.5));
 			}
 			for (int j = 0; j < rowCount; j++) {
 				track.add(new RushHourBoardPosition(this, j, i + 0.5));
@@ -314,6 +327,9 @@ public class RushHourBoard extends Entity {
 			if (yStud.row == rowCount && yStud.col == i) {
 				track.add(new RushHourBoardPosition(this, rowCount, i + 0.5));
 				track.add(new RushHourBoardPosition(this, rowCount+1, i + 0.5));
+			} else if ((jStudCount == 2 && (jStuds[0].row == rowCount && jStuds[0].col == i || jStuds[1].row == rowCount && jStuds[1].col == i)) ||
+					(kStudCount == 2 && (kStuds[0].row == rowCount && kStuds[0].col == i || kStuds[1].row == rowCount && kStuds[1].col == i))) {
+				track.add(new RushHourBoardPosition(this, rowCount, i + 0.5));
 			}
 			colTracks.put(i, track);
 		}
@@ -321,12 +337,12 @@ public class RushHourBoard extends Entity {
 		/*
 		 * joint tracks -> paths
 		 */
-		if (!jStuds.isEmpty() && !kStuds.isEmpty()) {
+		if (jStudCount != 0 && kStudCount != 0) {
 			
-			JointStud js0 = jStuds.get(0);
-			JointStud js1 = jStuds.get(1);
-			JointStud ks0 = kStuds.get(0);
-			JointStud ks1 = kStuds.get(1);
+			JointStud js0 = jStuds[0];
+			JointStud js1 = jStuds[1];
+			JointStud ks0 = kStuds[0];
+			JointStud ks1 = kStuds[1];
 			
 			if (withinRowRange(js0.row) && withinRowRange(ks0.row) && js0.row == ks0.row) {
 				jointTracksToPath(js1, js0, ks0, ks1);
@@ -345,19 +361,19 @@ public class RushHourBoard extends Entity {
 			} else if (withinColRange(js1.col) && withinColRange(ks1.col) && js1.col == ks1.col) {
 				jointTracksToPath(js0, js1, ks1, ks0);
 			} else {
-				if (!jStuds.isEmpty()) {
-					jointTracksToPath(jStuds);
+				if (jStudCount != 0) {
+					jointTracksToPath(jStuds[0], jStuds[1]);
 				}
-				if (!kStuds.isEmpty()) {
-					jointTracksToPath(kStuds);
+				if (kStudCount != 0) {
+					jointTracksToPath(kStuds[0], kStuds[1]);
 				}
 			}
 		} else {
-			if (!jStuds.isEmpty()) {
-				jointTracksToPath(jStuds);
+			if (jStudCount != 0) {
+				jointTracksToPath(jStuds[0], jStuds[1]);
 			}
-			if (!kStuds.isEmpty()) {
-				jointTracksToPath(kStuds);
+			if (kStudCount != 0) {
+				jointTracksToPath(kStuds[0], kStuds[1]);
 			}
 		}
 		
@@ -431,10 +447,10 @@ public class RushHourBoard extends Entity {
 		return c >= 0 && c < colCount;
 	}
 	
-	private void addRoad(List<JointStud> joints) {
+	private void addRoad(JointStud[] joints) {
 		
-		JointStud js0 = joints.get(0);
-		JointStud js1 = joints.get(1);
+		JointStud js0 = joints[0];
+		JointStud js1 = joints[1];
 		Fixture f0 = js0.f;
 		Fixture f1 = js1.f;
 		Point start;
@@ -487,11 +503,8 @@ public class RushHourBoard extends Entity {
 		
 	}
 	
-	private void jointTracksToPath(List<JointStud> joints) {
-		
-		JointStud s0 = joints.get(0);
-		JointStud s1 = joints.get(1);
-		
+	private void jointTracksToPath(JointStud s0, JointStud s1) {
+				
 		List<RushHourBoardPosition> s0Track;
 		if (s0.col < 0) {
 			s0Track = rowTracks.remove(s0.row);
@@ -521,24 +534,24 @@ public class RushHourBoard extends Entity {
 		List<GraphPosition> poss = new ArrayList<GraphPosition>();
 //		from other side of js0 track to js0
 		if (s0.col < 0) {
-//			d;
-			for (int i = colCount-1; i >= 1; i--) {
+//			last iteration is stud and negative, so skip
+			for (int i = s0Track.size()-1; i >= 1; i--) {
 				poss.add(s0Track.get(i));
 			}
 		} else if (s0.col >= colCount) {
 //			d;
-			for (int i = 0; i < colCount-1; i++) {
+			for (int i = 0; i < s0Track.size(); i++) {
 				poss.add(s0Track.get(i));
 			}
 		} else if (s0.row < 0) {
-//			d;
-			for (int i = rowCount-1; i >= 1; i--) {
+//			last iteration is stud and negative, so skip
+			for (int i = s0Track.size()-1; i >= 1; i--) {
 				poss.add(s0Track.get(i));
 			}
 		} else {
 			assert s0.row >= rowCount;
 //			d;
-			for (int i = 0; i < rowCount-1; i++) {
+			for (int i = 0; i < s0Track.size(); i++) {
 				poss.add(s0Track.get(i));
 			}
 		}
@@ -579,26 +592,26 @@ public class RushHourBoard extends Entity {
 //		to js1
 //		to other side of js1 track
 		if (s1.col < 0) {
-			for (int i = 1; i < colCount; i++) {
+//			first iteration is stud and negative, so skip
+			for (int i = 1; i < s1Track.size(); i++) {
 				poss.add(s1Track.get(i));
 			}
-//			d;
 		} else if (s1.col >= colCount) {
-			for (int i = colCount-1; i >= 0; i--) {
+//			d;
+			for (int i = s1Track.size()-1; i >= 0; i--) {
 				poss.add(s1Track.get(i));
 			}
-//			d;
 		} else if (s1.row < 0) {
-			for (int i = 1; i < rowCount; i++) {
+//			first iteration is stud and negative, so skip
+			for (int i = 1; i < s1Track.size(); i++) {
 				poss.add(s1Track.get(i));
 			}
-//			d;
 		} else {
 			assert s1.row >= rowCount;
-			for (int i = rowCount-1; i >= 0; i--) {
+//			d;
+			for (int i = s1Track.size()-1; i >= 0; i--) {
 				poss.add(s1Track.get(i));
 			}
-//			d;
 		}
 		
 //		add to rowPaths and colPaths as needed
@@ -684,24 +697,24 @@ public class RushHourBoard extends Entity {
 		
 //		from other side of js0 track to js0
 		if (js0.col < 0) {
-//			d;
-			for (int i = colCount-1; i >= 1; i--) {
+//			last iteration is stud and negative, so skip
+			for (int i = js0Track.size()-1; i > 1; i--) {
 				poss.add(js0Track.get(i));
 			}
 		} else if (js0.col >= colCount) {
 //			d;
-			for (int i = 0; i < colCount-1; i++) {
+			for (int i = 0; i < js0Track.size(); i++) {
 				poss.add(js0Track.get(i));
 			}
 		} else if (js0.row < 0) {
-//			d;
-			for (int i = rowCount-1; i >= 1; i--) {
+//			last iteration is stud and negative, so skip
+			for (int i = js0Track.size()-1; i > 1; i--) {
 				poss.add(js0Track.get(i));
 			}
 		} else {
 			assert js0.row >= rowCount;
 //			d;
-			for (int i = 0; i < rowCount-1; i++) {
+			for (int i = 0; i < js0Track.size(); i++) {
 				poss.add(js0Track.get(i));
 			}
 		}
@@ -742,26 +755,26 @@ public class RushHourBoard extends Entity {
 //		to js1
 //		to other side of js1 track (ks1)
 		if (js1.col < 0) {
-			for (int i = 1; i < colCount-1; i++) {
+//			first iteration is stud and negative, so skip
+			for (int i = 1; i < js1Track.size(); i++) {
 				poss.add(js1Track.get(i));
 			}
-//			d;
 		} else if (js1.col >= colCount) {
-			for (int i = colCount-1; i >= 0; i--) {
+//			last iteration is stud and negative, so skip
+			for (int i = js1Track.size()-1; i >= 1; i--) {
 				poss.add(js1Track.get(i));
 			}
-//			d;
 		} else if (js1.row < 0) {
-			for (int i = 1; i < rowCount-1; i++) {
+//			first iteration is stud and negative, so skip
+			for (int i = 1; i < js1Track.size(); i++) {
 				poss.add(js1Track.get(i));
 			}
-//			d;
 		} else {
 			assert js1.row >= rowCount;
-			for (int i = rowCount-1; i >= 0; i--) {
+//			last iteration is stud and negative, so skip
+			for (int i = js1Track.size()-1; i >= 1; i--) {
 				poss.add(js1Track.get(i));
 			}
-//			d;
 		}
 		
 		v = ks1.f;
@@ -800,26 +813,26 @@ public class RushHourBoard extends Entity {
 //		to ks0
 //		to other side of ks0 track
 		if (ks0.col < 0) {
-			for (int i = 1; i < colCount; i++) {
+//			first iteration is stud and negative, so skip
+			for (int i = 1; i < ks0Track.size(); i++) {
 				poss.add(ks0Track.get(i));
 			}
-//			d;
 		} else if (ks0.col >= colCount) {
-			for (int i = colCount-1; i >= 0; i--) {
+//			d;
+			for (int i = ks0Track.size()-1; i >= 0; i--) {
 				poss.add(ks0Track.get(i));
 			}
-//			d;
 		} else if (ks0.row < 0) {
-			for (int i = 1; i < rowCount; i++) {
+//			first iteration is stud and negative, so skip
+			for (int i = 1; i < ks0Track.size(); i++) {
 				poss.add(ks0Track.get(i));
 			}
-//			d;
 		} else {
 			assert ks0.row >= rowCount;
-			for (int i = rowCount-1; i >= 0; i--) {
+//			d;
+			for (int i = ks0Track.size()-1; i >= 0; i--) {
 				poss.add(ks0Track.get(i));
 			}
-//			d;
 		}
 		
 //		add to rowPaths and colPaths as needed

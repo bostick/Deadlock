@@ -54,10 +54,7 @@ public class VertexPosition extends GraphPosition {
 		
 		assert !equals(p);
 		
-		if (p instanceof VertexPosition) {
-			assert false;
-			return null;
-		} else if (p instanceof EdgePosition) {
+		if (p instanceof EdgePosition) {
 			EdgePosition pe = (EdgePosition)p;
 			
 			if (v == ((Edge)pe.entity).getReferenceVertex(pe.axis)) {
@@ -69,7 +66,9 @@ public class VertexPosition extends GraphPosition {
 				
 				return ((Edge)pe.entity).travelFromOtherVertex(pe.axis, distance);
 			}
-		} else if (p instanceof RushHourBoardPosition) {
+		} else {
+			assert p instanceof RushHourBoardPosition;
+			
 			RushHourBoardPosition rpos = (RushHourBoardPosition)p;
 			
 			RushHourBoard b = (RushHourBoard)rpos.entity;
@@ -79,6 +78,9 @@ public class VertexPosition extends GraphPosition {
 			RushHourBoardPosition vpos = b.position(v.p);
 			
 			if (DMath.equals(vpos.colCombo, rpos.colCombo)) {
+				/*
+				 * same col
+				 */
 				
 				if (DMath.lessThan(vpos.rowCombo, rpos.rowCombo)) {
 					
@@ -92,6 +94,9 @@ public class VertexPosition extends GraphPosition {
 				
 			} else {
 				assert DMath.equals(vpos.rowCombo, rpos.rowCombo);
+				/*
+				 * same row
+				 */
 				
 				if (DMath.lessThan(vpos.colCombo, rpos.colCombo)) {
 					
@@ -105,12 +110,7 @@ public class VertexPosition extends GraphPosition {
 				
 			}
 			
-		} else {
-			assert false;
 		}
-		
-		assert false;
-		return null;
 		
 	}
 	
@@ -120,10 +120,10 @@ public class VertexPosition extends GraphPosition {
 			EdgePosition nextBoundEP = (EdgePosition)nextBoundGP;
 			EdgePosition goalEP = (EdgePosition)goalGP;
 			
-			Edge nextBoundEdge = (Edge)nextBoundEP.entity;
+			Edge edge = (Edge)nextBoundEP.entity;
 			
-			Vertex nextBoundRefVertex = nextBoundEdge.getReferenceVertex(nextBoundEP.axis);
-			Vertex nextBoundOtherVertex = nextBoundEdge.getOtherVertex(nextBoundEP.axis);
+			Vertex nextBoundRefVertex = edge.getReferenceVertex(nextBoundEP.axis);
+			Vertex nextBoundOtherVertex = edge.getOtherVertex(nextBoundEP.axis);
 			
 			if (pathForward ? v == nextBoundRefVertex : v == nextBoundOtherVertex) {
 				// same direction as edge
@@ -142,6 +142,50 @@ public class VertexPosition extends GraphPosition {
 			
 		} else {
 			assert nextBoundGP instanceof RushHourBoardPosition;
+			
+			RushHourBoardPosition nextBoundBP = (RushHourBoardPosition)nextBoundGP;
+			RushHourBoardPosition goalBP = (RushHourBoardPosition)goalGP;
+			
+			RushHourBoard board = (RushHourBoard)nextBoundBP.entity;
+			
+			RushHourBoardPosition vpos = board.position(v.p);
+			
+			if (DMath.equals(vpos.colCombo, nextBoundBP.colCombo)) {
+				assert DMath.equals(vpos.colCombo, goalBP.colCombo);
+				/*
+				 * same col
+				 */
+				
+				if (vpos.rowCombo < nextBoundBP.rowCombo) {
+					/*
+					 * same direction as board
+					 */
+					assert false;
+				} else {
+					
+//					int retIndex = pathForward ? (DMath.equals(curPathParam, 0.0) ? curPathIndex : curPathIndex) : DMath.equals(curPathParam, 0.0) ? curPathIndex-1 : curPathIndex;
+//					double retParam = pathForward ? (DMath.equals(curPathParam, 0.0) ? 1-goalBP.rowParam : 1-goalBP.rowParam) : DMath.equals(curPathParam, 0.0) ? 1-goalBP.rowParam : 1-goalBP.rowParam;
+//					
+//					return retIndex+retParam;
+					assert false;
+				}
+				
+			} else {
+				assert DMath.equals(vpos.rowCombo, nextBoundBP.rowCombo);
+				assert DMath.equals(vpos.rowCombo, goalBP.rowCombo);
+				/*
+				 * same row
+				 */
+				if (vpos.colCombo < nextBoundBP.colCombo) {
+					/*
+					 * same direction as board
+					 */
+					assert false;
+				} else {
+					assert false;
+				}
+
+			}
 			
 			assert false;
 			return -1;
