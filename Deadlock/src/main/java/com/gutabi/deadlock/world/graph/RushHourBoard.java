@@ -698,7 +698,7 @@ public class RushHourBoard extends Entity {
 //		from other side of js0 track to js0
 		if (js0.col < 0) {
 //			last iteration is stud and negative, so skip
-			for (int i = js0Track.size()-1; i > 1; i--) {
+			for (int i = js0Track.size()-1; i >= 1; i--) {
 				poss.add(js0Track.get(i));
 			}
 		} else if (js0.col >= colCount) {
@@ -708,7 +708,7 @@ public class RushHourBoard extends Entity {
 			}
 		} else if (js0.row < 0) {
 //			last iteration is stud and negative, so skip
-			for (int i = js0Track.size()-1; i > 1; i--) {
+			for (int i = js0Track.size()-1; i >= 1; i--) {
 				poss.add(js0Track.get(i));
 			}
 		} else {

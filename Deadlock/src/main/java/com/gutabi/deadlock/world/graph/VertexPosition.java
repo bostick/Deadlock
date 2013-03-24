@@ -114,81 +114,87 @@ public class VertexPosition extends GraphPosition {
 		
 	}
 	
-	public double goalGPPPCombo(int curPathIndex, double curPathParam, boolean pathForward, GraphPosition goalGP, GraphPosition nextBoundGP) {
+	public double goalGPPPCombo(int curPathIndex, double curPathParam, boolean pathForward, GraphPosition goalGP) {
+		assert curPathParam == 0.0;
 		
-		if (nextBoundGP instanceof EdgePosition) {
-			EdgePosition nextBoundEP = (EdgePosition)nextBoundGP;
+		if (goalGP instanceof EdgePosition) {
 			EdgePosition goalEP = (EdgePosition)goalGP;
 			
-			Edge edge = (Edge)nextBoundEP.entity;
+			Edge edge = (Edge)goalEP.entity;
 			
-			Vertex nextBoundRefVertex = edge.getReferenceVertex(nextBoundEP.axis);
-			Vertex nextBoundOtherVertex = edge.getOtherVertex(nextBoundEP.axis);
+			Vertex nextBoundRefVertex = edge.getReferenceVertex(goalEP.axis);
+			Vertex nextBoundOtherVertex = edge.getOtherVertex(goalEP.axis);
 			
 			if (pathForward ? v == nextBoundRefVertex : v == nextBoundOtherVertex) {
 				// same direction as edge
-				int retIndex = pathForward ? (DMath.equals(curPathParam, 0.0) ? curPathIndex : curPathIndex) : DMath.equals(curPathParam, 0.0) ? curPathIndex-1 : curPathIndex;
-				double retParam = pathForward ? (DMath.equals(curPathParam, 0.0) ? goalEP.getParam() : goalEP.getParam()) : DMath.equals(curPathParam, 0.0) ? goalEP.getParam() : goalEP.getParam();
+				int retIndex = pathForward ? curPathIndex : curPathIndex-1;
+				double retParam = goalEP.getParam();
 				
 				return retIndex+retParam;
 				
 			} else {
 				assert pathForward ? v == nextBoundOtherVertex : v == nextBoundRefVertex;
-				int retIndex = pathForward ? (DMath.equals(curPathParam, 0.0) ? curPathIndex : curPathIndex) : DMath.equals(curPathParam, 0.0) ? curPathIndex-1 : curPathIndex;
-				double retParam = pathForward ? (DMath.equals(curPathParam, 0.0) ? 1-goalEP.getParam() : 1-goalEP.getParam()) : DMath.equals(curPathParam, 0.0) ? 1-goalEP.getParam() : 1-goalEP.getParam();
+				int retIndex = pathForward ? curPathIndex : curPathIndex-1;
+				double retParam = 1-goalEP.getParam();
 				
 				return retIndex+retParam;
 			}
 			
 		} else {
-			assert nextBoundGP instanceof RushHourBoardPosition;
+			assert goalGP instanceof RushHourBoardPosition;
 			
-			RushHourBoardPosition nextBoundBP = (RushHourBoardPosition)nextBoundGP;
 			RushHourBoardPosition goalBP = (RushHourBoardPosition)goalGP;
 			
-			RushHourBoard board = (RushHourBoard)nextBoundBP.entity;
+			RushHourBoard board = (RushHourBoard)goalBP.entity;
 			
 			RushHourBoardPosition vpos = board.position(v.p);
 			
-			if (DMath.equals(vpos.colCombo, nextBoundBP.colCombo)) {
+			if (DMath.equals(vpos.colCombo, goalBP.colCombo)) {
 				assert DMath.equals(vpos.colCombo, goalBP.colCombo);
 				/*
 				 * same col
 				 */
 				
-				if (vpos.rowCombo < nextBoundBP.rowCombo) {
+				if (vpos.rowCombo < goalBP.rowCombo) {
 					/*
 					 * same direction as board
 					 */
-					assert false;
+					int retIndex = pathForward ? curPathIndex : curPathIndex-1;
+					double retParam = pathForward ? goalBP.rowParam : 1-goalBP.rowParam;
+					
+					return retIndex+retParam;
+					
 				} else {
 					
-//					int retIndex = pathForward ? (DMath.equals(curPathParam, 0.0) ? curPathIndex : curPathIndex) : DMath.equals(curPathParam, 0.0) ? curPathIndex-1 : curPathIndex;
-//					double retParam = pathForward ? (DMath.equals(curPathParam, 0.0) ? 1-goalBP.rowParam : 1-goalBP.rowParam) : DMath.equals(curPathParam, 0.0) ? 1-goalBP.rowParam : 1-goalBP.rowParam;
-//					
-//					return retIndex+retParam;
-					assert false;
+					int retIndex = pathForward ? curPathIndex : curPathIndex-1;
+					double retParam = pathForward ? 1-goalBP.rowParam : goalBP.rowParam;
+					
+					return retIndex+retParam;
 				}
 				
 			} else {
-				assert DMath.equals(vpos.rowCombo, nextBoundBP.rowCombo);
 				assert DMath.equals(vpos.rowCombo, goalBP.rowCombo);
 				/*
 				 * same row
 				 */
-				if (vpos.colCombo < nextBoundBP.colCombo) {
+				if (vpos.colCombo < goalBP.colCombo) {
 					/*
 					 * same direction as board
 					 */
-					assert false;
+					int retIndex = pathForward ? curPathIndex : curPathIndex-1;
+					double retParam = pathForward ? goalBP.colParam : 1-goalBP.colParam;
+					
+					return retIndex+retParam;
+					
 				} else {
-					assert false;
+					
+					int retIndex = pathForward ? curPathIndex : curPathIndex-1;
+					double retParam = pathForward ? 1-goalBP.colParam : goalBP.colParam;
+					
+					return retIndex+retParam;
 				}
 
 			}
-			
-			assert false;
-			return -1;
 		}
 		
 	}

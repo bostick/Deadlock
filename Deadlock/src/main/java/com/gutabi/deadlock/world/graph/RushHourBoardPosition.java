@@ -21,11 +21,18 @@ public class RushHourBoardPosition extends GraphPosition {
 		this.rowCombo = rowCombo;
 		this.colCombo = colCombo;
 		
-		rowIndex = (int)rowCombo;
-		colIndex = (int)colCombo;
+		rowIndex = (int)Math.floor(rowCombo);
+		colIndex = (int)Math.floor(colCombo);
 		
 		rowParam = rowCombo - rowIndex;
 		colParam = colCombo - colIndex;
+		
+		if (DMath.lessThan(rowParam, 0.0) || DMath.greaterThanEquals(rowParam, 1.0)) {
+			throw new IllegalArgumentException();
+		}
+		if (DMath.lessThan(colParam, 0.0) || DMath.greaterThanEquals(colParam, 1.0)) {
+			throw new IllegalArgumentException();
+		}
 		
 		bound = DMath.equals(rowParam, 0.0) && DMath.equals(colParam, 0.0);
 	}
@@ -145,12 +152,54 @@ public class RushHourBoardPosition extends GraphPosition {
 		
 	}
 	
-	public double goalGPPPCombo(int curPathIndex, double curPathParam, boolean pathForward, GraphPosition goalGP, GraphPosition nextBoundGP) {
+	public double goalGPPPCombo(int curPathIndex, double curPathParam, boolean pathForward, GraphPosition goalGP) {
 		
 		RushHourBoardPosition goalBP = (RushHourBoardPosition)goalGP;
 		
-		assert false;
-		return -1;
+		if (DMath.equals(this.colCombo, goalBP.colCombo)) {
+			assert DMath.equals(this.colCombo, goalBP.colCombo);
+			/*
+			 * same col
+			 */
+			if (this.rowCombo < goalBP.rowCombo) {
+				/*
+				 * same direction as board
+				 */
+				int retIndex = pathForward ? (DMath.equals(curPathParam, 0.0) ? curPathIndex : curPathIndex) : DMath.equals(curPathParam, 0.0) ? curPathIndex-1 : curPathIndex;
+				double retParam = pathForward ? (DMath.equals(curPathParam, 0.0) ? goalBP.rowParam : goalBP.rowParam) : DMath.equals(curPathParam, 0.0) ? /*fixed*/1-goalBP.rowParam : /*fixed*/1-goalBP.rowParam;
+				
+				return retIndex+retParam;
+				
+			} else {
+				
+				int retIndex = pathForward ? (DMath.equals(curPathParam, 0.0) ? curPathIndex : curPathIndex) : DMath.equals(curPathParam, 0.0) ? curPathIndex-1 : curPathIndex;
+				double retParam = pathForward ? (DMath.equals(curPathParam, 0.0) ? 1-goalBP.rowParam : 1-goalBP.rowParam) : DMath.equals(curPathParam, 0.0) ? /*fixed*/goalBP.rowParam : /*fixed*/goalBP.rowParam;
+				
+				return retIndex+retParam;
+			}
+			
+		} else {
+			assert DMath.equals(this.rowCombo, goalBP.rowCombo);
+			/*
+			 * same row
+			 */
+			if (this.colCombo < goalBP.colCombo) {
+				/*
+				 * same direction as board
+				 */
+				int retIndex = pathForward ? (DMath.equals(curPathParam, 0.0) ? curPathIndex : curPathIndex) : DMath.equals(curPathParam, 0.0) ? curPathIndex-1 : curPathIndex;
+				double retParam = pathForward ? (DMath.equals(curPathParam, 0.0) ? goalBP.colParam : goalBP.colParam) : DMath.equals(curPathParam, 0.0) ? /*fixed*/1-goalBP.colParam : /*fixed*/1-goalBP.colParam;
+				
+				return retIndex+retParam;
+				
+			} else {
+				
+				int retIndex = pathForward ? (DMath.equals(curPathParam, 0.0) ? curPathIndex : curPathIndex) : DMath.equals(curPathParam, 0.0) ? curPathIndex-1 : curPathIndex;
+				double retParam = pathForward ? (DMath.equals(curPathParam, 0.0) ? 1-goalBP.colParam : 1-goalBP.colParam) : DMath.equals(curPathParam, 0.0) ? /*fixed*/goalBP.colParam : /*fixed*/goalBP.colParam;
+				
+				return retIndex+retParam;
+			}
+		}
 		
 	}
 

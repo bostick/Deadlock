@@ -23,6 +23,13 @@ public class GraphPositionPathPosition {
 	
 	public GraphPositionPathPosition(GraphPositionPath path, int index, double param) {
 		
+		if (index < 0 || index >= path.size) {
+			throw new IllegalArgumentException();
+		}
+		if (DMath.lessThan(param, 0.0) || DMath.greaterThanEquals(param, 1.0)) {
+			throw new IllegalArgumentException();
+		}
+		
 		this.path = path;
 		this.index = index;
 		this.param = param;
@@ -231,7 +238,7 @@ public class GraphPositionPathPosition {
 						
 						GraphPosition ggoal = curGraphPosition.approachNeighbor(nextBoundGP, toTravel);
 						
-						double retCombo = curGraphPosition.goalGPPPCombo(curPathIndex, curPathParam, forward, ggoal, nextBoundGP);
+						double retCombo = curGraphPosition.goalGPPPCombo(curPathIndex, curPathParam, forward, ggoal);
 						
 						int retIndex = (int)Math.floor(retCombo);
 						double retParam = retCombo - retIndex;
