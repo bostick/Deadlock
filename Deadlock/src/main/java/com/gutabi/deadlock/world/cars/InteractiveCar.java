@@ -67,7 +67,7 @@ public class InteractiveCar extends Car {
 		
 		double dist = coastingVel * world.worldScreen.DT;
 		
-		GraphPositionPathPosition newPos = state == CarStateEnum.COASTING_FORWARD ? driver.overallPos.travelForward(dist) : driver.overallPos.travelBackward(dist);
+		GraphPositionPathPosition newPos = state == CarStateEnum.COASTING_FORWARD ? driver.overallPos.travelForward(Math.min(dist, driver.overallPos.lengthToEndOfPath)) : driver.overallPos.travelBackward(Math.min(dist, driver.overallPos.lengthToEndOfPath));
 		
 		if (state == CarStateEnum.COASTING_FORWARD ? DMath.greaterThanEquals(newPos.combo, driver.toolCoastingGoal.combo) : DMath.lessThanEquals(newPos.combo, driver.toolCoastingGoal.combo)) {
 			
@@ -83,6 +83,8 @@ public class InteractiveCar extends Car {
 			
 			driver.prevOverallPos = driver.overallPos;
 			driver.overallPos = driver.toolCoastingGoal;
+			
+			driver.toolCoastingGoal = null;
 			
 			return;
 		}

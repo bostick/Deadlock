@@ -47,7 +47,7 @@ public abstract class Car extends PhysicsBody {
 	boolean inMerger;
 	
 	public Point toolOrigP;
-	public double toolOrigAngle;
+//	public double toolOrigAngle;
 	public OBB toolOrigShape;
 	
 	public boolean destroyed;

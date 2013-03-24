@@ -6,6 +6,7 @@ import com.gutabi.deadlock.geom.Geom;
 import com.gutabi.deadlock.geom.OBB;
 import com.gutabi.deadlock.geom.Shape;
 import com.gutabi.deadlock.geom.ShapeUtils;
+import com.gutabi.deadlock.math.DMath;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.menu.MainMenu;
 import com.gutabi.deadlock.ui.InputEvent;
@@ -21,7 +22,6 @@ import com.gutabi.deadlock.world.graph.RoadPosition;
 import com.gutabi.deadlock.world.graph.RushHourBoard;
 import com.gutabi.deadlock.world.graph.RushHourBoardPosition;
 import com.gutabi.deadlock.world.graph.RushHourStud;
-import com.gutabi.deadlock.world.graph.Side;
 import com.gutabi.deadlock.world.graph.VertexPosition;
 
 public class CarTool extends ToolBase {
@@ -66,7 +66,7 @@ public class CarTool extends ToolBase {
 				this.car = pressed;
 				
 				car.toolOrigP = car.center;
-				car.toolOrigAngle = car.angle;
+//				car.toolOrigAngle = car.angle;
 				car.toolOrigShape = car.shape;
 				car.driver.toolOrigOverallPos = car.driver.overallPos;
 				
@@ -91,7 +91,7 @@ public class CarTool extends ToolBase {
 				
 				GraphPosition gpos = car.driver.overallPos.getGraphPosition();
 				
-				if (gpos instanceof RoadPosition) {
+				if (gpos instanceof RoadPosition || gpos instanceof VertexPosition) {
 					
 					/*
 					 * determine which direction to coast
@@ -189,82 +189,101 @@ public class CarTool extends ToolBase {
 						
 					}
 					
-				} else if (gpos instanceof VertexPosition) {
-					
-					/*
-					 * reset
-					 */
-					car.setTransform(car.toolOrigP, car.toolOrigAngle);
-					car.setPhysicsTransform();
-					car.driver.overallPos = car.driver.toolOrigOverallPos;
-					
-					worldScreen.world.zoomAbsolute(1.0);
-					
-					worldScreen.world.render_worldPanel();
-					
-					worldScreen.contentPane.repaint();
-					
-				} else if (gpos instanceof RushHourBoardPosition) {
+				}
+//				else if (gpos instanceof VertexPosition) {
+//					
+//					/*
+//					 * reset
+//					 */
+//					car.setTransform(car.toolOrigP, car.toolOrigAngle);
+//					car.setPhysicsTransform();
+//					car.driver.overallPos = car.driver.toolOrigOverallPos;
+//					
+//					worldScreen.world.zoomAbsolute(1.0);
+//					
+//					worldScreen.world.render_worldPanel();
+//					
+//					worldScreen.contentPane.repaint();
+//					
+//				}
+				else {
+					assert gpos instanceof RushHourBoardPosition;
 					
 					RushHourBoardPosition rpos = (RushHourBoardPosition)gpos;
 					
+					int studCount = (int)(car.length * Car.METERS_PER_CARLENGTH / RushHourStud.SIZE);
+					
 					RushHourBoard b = (RushHourBoard)gpos.entity;
 					
-					RushHourBoardPosition rounded = null;
-					switch (Side.angleToSide(car.angle)) {
-					case TOP:
-					case BOTTOM:
-						rounded = new RushHourBoardPosition(b,
-								Math.round(rpos.rowCombo - car.length/2) + car.length/2,
-								Math.round(rpos.colCombo - car.width/2) + car.width/2);
-						break;
-					case LEFT:
-					case RIGHT:
-						rounded = new RushHourBoardPosition(b,
-								Math.round(rpos.rowCombo - car.width/2) + car.width/2,
-								Math.round(rpos.colCombo - car.length/2) + car.length/2);
-						break;
-					}
+//					RushHourBoardPosition rounded = null;
+//					switch (Side.angleToSide(car.angle)) {
+//						case TOP:
+//						case BOTTOM:
+//							rounded = new RushHourBoardPosition(b,
+//								Math.round(rpos.rowCombo - car.length/2) + car.length/2,
+//								Math.round(rpos.colCombo - car.width/2) + car.width/2);
+//							break;
+//						case LEFT:
+//						case RIGHT:
+//							rounded = new RushHourBoardPosition(b,
+//								Math.round(rpos.rowCombo - car.width/2) + car.width/2,
+//								Math.round(rpos.colCombo - car.length/2) + car.length/2);
+//							break;
+//					}
 					
-					if (b.allowablePosition(car)) {
+					double tmpCombo = Math.round(car.driver.overallPos.travelBackward(car.length/2).combo);
+					int tmpIndex = (int)Math.floor(tmpCombo);
+					double tmpParam = tmpCombo - tmpIndex;
+					
+					car.driver.toolCoastingGoal = new GraphPositionPathPosition(car.driver.overallPath, tmpIndex, tmpParam).travelForward(car.length/2);
+					
+					if (DMath.lessThanEquals(car.driver.toolCoastingGoal.combo, car.driver.overallPos.combo)) {
 						
-						car.state = CarStateEnum.IDLE;
-						
-						car.setTransform(rounded.p, car.angle);
-						car.setPhysicsTransform();
-						car.driver.overallPos = car.driver.overallPath.generalSearch(car.center, car.driver.overallPos, car.length);
-						
-						worldScreen.world.zoomAbsolute(1.0);
-						
-						worldScreen.world.render_worldPanel();
-						
-						worldScreen.contentPane.repaint();
+						car.state = CarStateEnum.COASTING_BACKWARD;
 						
 					} else {
 						
-						car.state = CarStateEnum.IDLE;
-						
-						/*
-						 * reset
-						 */
-						car.setTransform(car.toolOrigP, car.toolOrigAngle);
-						car.setPhysicsTransform();
-						car.driver.overallPos = car.driver.toolOrigOverallPos;
-						
-						worldScreen.world.zoomAbsolute(1.0);
-						
-						worldScreen.world.render_worldPanel();
-						
-						worldScreen.contentPane.repaint();
+						car.state = CarStateEnum.COASTING_FORWARD;
 						
 					}
 					
-				} else {
-					assert false;
+//					if (b.allowablePosition(car)) {
+//						
+//						car.state = CarStateEnum.IDLE;
+//						
+//						car.setTransform(rounded.p, car.angle);
+//						car.setPhysicsTransform();
+//						car.driver.overallPos = car.driver.overallPath.generalSearch(car.center, car.driver.overallPos, car.length);
+//						
+//						worldScreen.world.zoomAbsolute(1.0);
+//						
+//						worldScreen.world.render_worldPanel();
+//						
+//						worldScreen.contentPane.repaint();
+//						
+//					} else {
+//						
+//						car.state = CarStateEnum.IDLE;
+//						
+//						/*
+//						 * reset
+//						 */
+//						car.setTransform(car.toolOrigP, car.toolOrigAngle);
+//						car.setPhysicsTransform();
+//						car.driver.overallPos = car.driver.toolOrigOverallPos;
+//						
+//						worldScreen.world.zoomAbsolute(1.0);
+//						
+//						worldScreen.world.render_worldPanel();
+//						
+//						worldScreen.contentPane.repaint();
+//						
+//					}
+					
 				}
 				
 				car.toolOrigP = null;
-				car.toolOrigAngle = Double.NaN;
+//				car.toolOrigAngle = Double.NaN;
 				car.toolOrigShape = null;
 				car.driver.toolOrigOverallPos = null;
 				car.driver.toolOrigExitingVertexPos = null;

@@ -1,13 +1,4 @@
 
-when dragging, determine whether to coast forward or backward
-
-save first vertex visited when dragging.
-
-when released on a road, try to go to the other vertex (if space is available)
-
-
-
-stop coasting after reentering board
 
 
 
@@ -18,11 +9,29 @@ do coasting within the board, from stud to stud
 
 
 
+
+flicking
+
+
+
+
+
 figure out best way for zoom to follow car
 so that dragging is not interrupted
 
 
 
-     /----\
-    /      \
----/        \----
+ 
+ 
+ DONE:
+ 
+when dragging, determine whether to coast forward or backward
+
+save first vertex visited when dragging.
+
+when released on a road, try to go to the other vertex (if space is available)
+
+
+
+stop coasting after reentering board
+ 

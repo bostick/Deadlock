@@ -21,8 +21,6 @@ import com.gutabi.deadlock.ui.paint.Join;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.world.Stroke;
 import com.gutabi.deadlock.world.World;
-import com.gutabi.deadlock.world.cars.Car;
-import com.gutabi.deadlock.world.sprites.CarSheet.CarSheetSprite;
 
 public class RushHourBoard extends Entity {
 	
@@ -904,21 +902,21 @@ public class RushHourBoard extends Entity {
 		}
 	}
 	
-	public boolean allowablePosition(Car c) {
-		if (ShapeUtils.containsAO(gridAABB, c.shape)) {
-			return true;
-		}
-		
-		if (c.sprite == CarSheetSprite.RED) {
-			for (ExitStud s : exitStuds) {
-				if (ShapeUtils.intersectAO(s.aabb, c.shape)) {
-					return true;
-				}
-			}
-		}
-		
-		return false;
-	}
+//	public boolean allowablePosition(Car c) {
+//		if (ShapeUtils.containsAO(gridAABB, c.shape)) {
+//			return true;
+//		}
+//		
+//		if (c.sprite == CarSheetSprite.RED) {
+//			for (ExitStud s : exitStuds) {
+//				if (ShapeUtils.intersectAO(s.aabb, c.shape)) {
+//					return true;
+//				}
+//			}
+//		}
+//		
+//		return false;
+//	}
 	
 	public RushHourStud stud(RushHourBoardPosition pos) {
 		for (RushHourStud stud : studs) {
