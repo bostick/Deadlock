@@ -93,26 +93,8 @@ public class CarTool extends ToolBase {
 				if (gpos instanceof RoadPosition) {
 					
 					/*
-					 * reset
+					 * determine which direction to coast
 					 */
-//					car.setTransform(car.toolOrigP, car.toolOrigAngle);
-//					car.driver.overallPos = car.driver.toolOrigOverallPos;
-//					
-//					APP.appScreen.world.zoomAbsolute(1.0);
-//					
-//					APP.appScreen.world.render_worldPanel();
-//					
-//					APP.appScreen.contentPane.repaint();
-					
-//					Point worldFront = Geom.localToWorld(car.localFront, car.angle, car.center);
-//					GraphPositionPathPosition centerPathPos = car.driver.overallPath.generalSearch(car.center, car.driver.overallPos, car.length);
-//					GraphPositionPathPosition frontPathPos = car.driver.overallPath.generalSearch(worldFront, car.driver.overallPos, car.length);
-//					int directionInTrack;
-//					if (DMath.lessThan(centerPathPos.combo, frontPathPos.combo)) {
-//						directionInTrack = 1;
-//					} else {
-//						directionInTrack = -1;
-//					}
 					
 					int nextVertexIndex = car.driver.overallPath.nextVertexIndex(car.driver.overallPos.index, car.driver.overallPos.param);
 					int prevVertexIndex = car.driver.overallPath.prevVertexIndex(car.driver.overallPos.index, car.driver.overallPos.param);
@@ -138,9 +120,6 @@ public class CarTool extends ToolBase {
 					if (distToNext < distToPrev) {
 						car.state = CarStateEnum.COASTING_FORWARD;
 					} else {
-						
-//						System.out.println("overall: " + car.driver.overallPos);
-						
 						car.state = CarStateEnum.COASTING_BACKWARD;
 					}
 					
@@ -218,6 +197,12 @@ public class CarTool extends ToolBase {
 					assert false;
 				}
 				
+				car.toolOrigP = null;
+				car.toolOrigAngle = Double.NaN;
+				car.toolOrigShape = null;
+				car.driver.toolOrigOverallPos = null;
+				car.driver.toolOrigExitingVertex = null;
+				
 				break;
 			default:
 				assert false;
@@ -249,6 +234,7 @@ public class CarTool extends ToolBase {
 					car.setTransform(testPathPos.p, car.newAngle(testPathPos));
 					car.setPhysicsTransform();
 					
+					car.driver.prevOverallPos = car.driver.overallPos;
 					car.driver.overallPos = testPathPos;
 					
 					GraphPosition gpos = car.driver.overallPos.getGraphPosition();
@@ -256,6 +242,11 @@ public class CarTool extends ToolBase {
 					if (gpos instanceof RoadPosition) {
 						
 						RoadPosition rpos = (RoadPosition)gpos;
+						
+						if (car.driver.prevOverallPos.getGraphPosition() instanceof RushHourBoardPosition) {
+							d;
+							assert false : "enforce going through VertexPosition some how";
+						}
 						
 						double a = rpos.lengthToStartOfRoad / rpos.r.getTotalLength(rpos.r.start, rpos.r.end);
 						
@@ -274,11 +265,21 @@ public class CarTool extends ToolBase {
 						
 					} else if (gpos instanceof VertexPosition) {
 						
+						if (car.driver.toolOrigExitingVertex == null) {
+							d;
+							assert false;
+						}
+						
 						worldScreen.world.zoomAbsolute(1.0);
 						
 						worldScreen.world.render_worldPanel();
 						
 					} else if (gpos instanceof RushHourBoardPosition) {
+						
+						if (car.driver.prevOverallPos.getGraphPosition() instanceof RoadPosition) {
+							d;
+							assert false : "enforce going through VertexPosition some how";
+						}
 						
 						worldScreen.world.zoomAbsolute(1.0);
 						

@@ -4,6 +4,7 @@ import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.world.graph.GraphPosition;
 import com.gutabi.deadlock.world.graph.GraphPositionPath;
 import com.gutabi.deadlock.world.graph.GraphPositionPathPosition;
+import com.gutabi.deadlock.world.graph.Vertex;
 
 public abstract class Driver {
 	
@@ -19,6 +20,7 @@ public abstract class Driver {
 	Point goalPoint;
 	
 	public GraphPositionPathPosition toolOrigOverallPos;
+	public Vertex toolOrigExitingVertex;
 	
 	public Driver(Car c) {
 		this.c = c;

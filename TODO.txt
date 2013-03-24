@@ -1,85 +1,4 @@
 
-interference graph
-make sure there are no leaves,
-starting from winning, make a graph of what interferes with paths
-make sure everything is in a loop
-
-
-
-
-using trove for long sets and maps
-
-
-
-switch exclusively to packed-car notation
-
-
-
-
-investigate using bitset
-bitset probably isn't going to work
-can't figure out how to really compress the boards, always taking up about 64 bits for 8 cars
-
-
-
-
-
-
-memoize each row!
-probably won't work either
-
-
-
-
-need to prune dead ends
-look at simply 2 2car 1 3car or something, and see how the easier branches are different than the ultimately hardest branch
-visualize
-
-
-
-determine 1 move away from clear path?
-
-
-
-
-partition based on invariants
-
-
-
-
-
-
-
-right now, 14 cars seems to suffice to 6x6 board
-if ever generalized and need more bits for cars:
-only use ABCD in configs to encode cars
-rely on 4 color theorem
-scan through to find second occurrence of A car, then that is car#5
-
-this gets around the current limitation of only 14 cars
-
-so will never need more than 4 bits for each coor of board, so 4x6x6 = 18 bytes maximum for any number of cars
-
-
-
-
-can use 1 byte per car, so up to 18 cars, use packed-car notation
-
-
-
-
-
-
-
-
-
-
-no garbage collection
-audit all for loops
-
-
-
-
 
 
 arc tool
@@ -88,45 +7,9 @@ change radius of stroke, drawing a tree, trunk is bigger than branches
 
 
 
-
-
-
-fix overlap problem
-screenshot
-
-
-
-
 if intersection is within VERTEX RADIUS of event, then go with intersection
 
 other wise, project from event to existing road
-
-
-
-
-
-
-
-create a level database:
-rows by cols, j?, k?, #2cars, #3cars
-
-
-
-level generator
-
-rows
-cols
-exit
-# of 2cars
-# of 3cars
-placement of cars
-j joints?
-k joints?
-joints cannot be next to each other (vertices touch)
-matching joints must be on neighbring sides
-joints cannot be on side of exit
-loops? loops are fine
-
 
 
 
