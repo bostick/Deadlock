@@ -2,6 +2,7 @@ package com.gutabi.deadlock.world.cars;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
+import com.gutabi.deadlock.math.DMath;
 import com.gutabi.deadlock.ui.paint.Cap;
 import com.gutabi.deadlock.ui.paint.Color;
 import com.gutabi.deadlock.ui.paint.Join;
@@ -42,26 +43,14 @@ public class InteractiveCar extends Car {
 		switch (state) {
 		case IDLE:
 		case DRAGGING:
-			
 			/*
 			 * no goal or anything for dragging
 			 */
-			
 			break;
-		case COASTING_FORWARD: {
-			((InteractiveDriver)driver).preStep(t);
-			
-			fakeCoastingStep();
-			
+		case COASTING_FORWARD:
+		case COASTING_BACKWARD:
+			fakeCoastingStep(t);
 			break;
-		}
-		case COASTING_BACKWARD: {
-			((InteractiveDriver)driver).preStep(t);
-			
-			fakeCoastingStep();
-			
-			break;
-		}
 		default:
 			assert false;
 			break;
@@ -69,7 +58,7 @@ public class InteractiveCar extends Car {
 		
 	}
 	
-	public void fakeCoastingStep() {
+	public void fakeCoastingStep(double t) {
 		assert state == CarStateEnum.COASTING_FORWARD || state == CarStateEnum.COASTING_BACKWARD;
 		
 		double dv = coastingAcceleration * world.worldScreen.DT;
@@ -79,6 +68,24 @@ public class InteractiveCar extends Car {
 		double dist = coastingVel * world.worldScreen.DT;
 		
 		GraphPositionPathPosition newPos = state == CarStateEnum.COASTING_FORWARD ? driver.overallPos.travelForward(dist) : driver.overallPos.travelBackward(dist);
+		
+		if (state == CarStateEnum.COASTING_FORWARD ? DMath.greaterThanEquals(newPos.combo, driver.toolCoastingGoal.combo) : DMath.lessThanEquals(newPos.combo, driver.toolCoastingGoal.combo)) {
+			
+			coastingVel = 0;
+			
+			newPos = driver.toolCoastingGoal;
+			state = CarStateEnum.IDLE;
+			
+			b2dBody.setTransform(PhysicsUtils.vec2(newPos.p), (float)newAngle(newPos));
+			
+			computeDynamicPropertiesAlways();
+			computeDynamicPropertiesMoving();
+			
+			driver.prevOverallPos = driver.overallPos;
+			driver.overallPos = driver.toolCoastingGoal;
+			
+			return;
+		}
 		
 		b2dBody.setTransform(PhysicsUtils.vec2(newPos.p), (float)newAngle(newPos));
 	}

@@ -27,7 +27,7 @@ public final class Fixture extends Vertex {
 	
 	public final Axis a;
 	
-	private Side s;
+	private Side facingSide;
 	private FixtureType type;
 	
 	public int matchID;
@@ -63,12 +63,12 @@ public final class Fixture extends Vertex {
 		return type;
 	}
 	
-	public void setSide(Side s) {
-		this.s = s;
+	public void setFacingSide(Side facingSide) {
+		this.facingSide = facingSide;
 	}
 	
-	public Side getSide() {
-		return s;
+	public Side getFacingSide() {
+		return facingSide;
 	}
 	
 	public final boolean supportsStopSigns() {
@@ -286,7 +286,7 @@ public final class Fixture extends Vertex {
 		Point p = null;
 		Axis a = null;
 		int id = -1;
-		Side side = null;
+		Side facingSide = null;
 		FixtureType type = null;
 		int match = -1;
 		
@@ -324,7 +324,7 @@ public final class Fixture extends Vertex {
 			tok = sc.next();
 			assert tok.equals("side");
 			rest = sc.next();
-			side = Side.fromFileString(rest);
+			facingSide = Side.fromFileString(rest);
 			sc.close();
 			
 			l = r.readLine();
@@ -354,7 +354,7 @@ public final class Fixture extends Vertex {
 		
 		f.id = id;
 		f.matchID = match;
-		f.s = side;
+		f.facingSide = facingSide;
 		f.setType(type);
 		
 		return f;
@@ -368,7 +368,7 @@ public final class Fixture extends Vertex {
 			
 			ctxt.translate(p.x, p.y);
 			
-			switch (s) {
+			switch (facingSide) {
 			case RIGHT:
 				ctxt.rotate(0.0 * Math.PI);
 				break;

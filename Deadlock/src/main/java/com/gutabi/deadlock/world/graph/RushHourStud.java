@@ -3,9 +3,11 @@ package com.gutabi.deadlock.world.graph;
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
 import com.gutabi.deadlock.geom.AABB;
+import com.gutabi.deadlock.geom.ShapeUtils;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.world.World;
+import com.gutabi.deadlock.world.cars.Car;
 import com.gutabi.deadlock.world.sprites.SpriteSheet.SpriteSheetSprite;
 
 public abstract class RushHourStud {
@@ -32,6 +34,17 @@ public abstract class RushHourStud {
 	
 	public String toString() {
 		return "stud " + row + " " + col;
+	}
+	
+	public boolean isFree() {
+		
+		for (Car c : world.carMap.cars) {
+			if (ShapeUtils.intersectAreaAO(aabb, c.shape)) {
+				return false;
+			}
+		}
+		
+		return true;
 	}
 	
 	public boolean hitTest(Point p) {

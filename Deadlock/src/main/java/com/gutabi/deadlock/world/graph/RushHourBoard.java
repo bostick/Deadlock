@@ -189,26 +189,26 @@ public class RushHourBoard extends Entity {
 					if (i < originRow) {
 						removePerimeterSegment(s.aabb.getP2P3Line());
 						Fixture f = new Fixture(world, point(i - originRow, j - originCol + 0.5), Axis.TOPBOTTOM);
-						f.setSide(Side.BOTTOM);
+						f.setFacingSide(Side.BOTTOM);
 						s.f = f;
 						world.addFixture(f);
 					} else if (i >= originRow + rowCount) {
 						removePerimeterSegment(s.aabb.getP0P1Line());
 						Fixture f = new Fixture(world, point(i - originRow + 1.0, j - originCol + 0.5), Axis.TOPBOTTOM);
-						f.setSide(Side.TOP);
+						f.setFacingSide(Side.TOP);
 						s.f = f;
 						world.addFixture(f);
 					} else if (j < originCol) {
 						removePerimeterSegment(s.aabb.getP1P2Line());
 						Fixture f = new Fixture(world, point(i - originRow + 0.5, j - originCol), Axis.LEFTRIGHT);
-						f.setSide(Side.RIGHT);
+						f.setFacingSide(Side.RIGHT);
 						s.f = f;
 						world.addFixture(f);
 					} else {
 						assert j >= originCol + colCount;
 						removePerimeterSegment(s.aabb.getP3P0Line());
 						Fixture f = new Fixture(world, point(i - originRow + 0.5, j - originCol + 1.0), Axis.LEFTRIGHT);
-						f.setSide(Side.LEFT);
+						f.setFacingSide(Side.LEFT);
 						s.f = f;
 						world.addFixture(f);
 					}
@@ -918,6 +918,16 @@ public class RushHourBoard extends Entity {
 		}
 		
 		return false;
+	}
+	
+	public RushHourStud stud(RushHourBoardPosition pos) {
+		for (RushHourStud stud : studs) {
+			if (stud.row == pos.rowIndex && stud.col == pos.colIndex) {
+				return stud;
+			}
+		}
+		assert false;
+		return null;
 	}
 	
 	public void preStart() {

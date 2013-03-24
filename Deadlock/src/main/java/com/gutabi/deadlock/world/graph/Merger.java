@@ -77,10 +77,10 @@ public class Merger extends Edge {
 		left.match = right;
 		right.match = left;
 		
-		top.setSide(Side.BOTTOM);
-		bottom.setSide(Side.BOTTOM);
-		left.setSide(Side.RIGHT);
-		right.setSide(Side.RIGHT);
+		top.setFacingSide(Side.BOTTOM);
+		bottom.setFacingSide(Side.BOTTOM);
+		left.setFacingSide(Side.RIGHT);
+		right.setFacingSide(Side.RIGHT);
 		
 		return new Merger(center, top, left, right, bottom);
 	}

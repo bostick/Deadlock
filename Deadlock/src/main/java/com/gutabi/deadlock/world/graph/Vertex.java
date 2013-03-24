@@ -23,6 +23,7 @@ public abstract class Vertex extends Entity {
 	
 	public final List<Road> roads = new ArrayList<Road>();
 	public Merger m;
+	public RushHourStud s;
 	
 	public int id;
 	

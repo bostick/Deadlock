@@ -18,6 +18,8 @@ do coasting within the board, from stud to stud
 
 
 
+figure out best way for zoom to follow car
+so that dragging is not interrupted
 
 
 

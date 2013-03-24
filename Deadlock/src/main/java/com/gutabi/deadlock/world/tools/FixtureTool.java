@@ -154,12 +154,12 @@ public class FixtureTool extends ToolBase {
 			
 			switch (axis) {
 			case TOPBOTTOM:
-				source.setSide(Side.BOTTOM);
-				sink.setSide(Side.BOTTOM);
+				source.setFacingSide(Side.BOTTOM);
+				sink.setFacingSide(Side.BOTTOM);
 				break;
 			case LEFTRIGHT:
-				source.setSide(Side.RIGHT);
-				sink.setSide(Side.RIGHT);
+				source.setFacingSide(Side.RIGHT);
+				sink.setFacingSide(Side.RIGHT);
 				break;
 			}
 			

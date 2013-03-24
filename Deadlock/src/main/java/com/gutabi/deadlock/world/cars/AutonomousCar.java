@@ -77,10 +77,8 @@ public class AutonomousCar extends Car {
 		case SKIDDED:
 		case SINKED:
 			break;
-		case IDLE:
-		case DRAGGING:
-		case COASTING_FORWARD:
-		case COASTING_BACKWARD:
+		default:
+			assert false;
 			break;
 		}
 		

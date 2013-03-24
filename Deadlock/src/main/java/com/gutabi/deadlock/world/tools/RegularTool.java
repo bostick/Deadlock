@@ -100,8 +100,8 @@ public class RegularTool extends ToolBase {
 					g.setType(g.getType().other());
 				}
 				
-				f.setSide(f.getSide().other());
-				g.setSide(g.getSide().other());
+				f.setFacingSide(f.getFacingSide().other());
+				g.setFacingSide(g.getFacingSide().other());
 				
 				worldScreen.world.render_worldPanel();
 				worldScreen.contentPane.repaint();

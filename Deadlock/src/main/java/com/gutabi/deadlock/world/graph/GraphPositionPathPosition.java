@@ -206,10 +206,7 @@ public class GraphPositionPathPosition {
 						/*
 						 * there is no next bound
 						 */
-						assert false;
-						nextBoundGP = null;
-						nextBoundLengthToStartOfPath = Double.POSITIVE_INFINITY;
-						distanceToNextBound = Double.POSITIVE_INFINITY;
+						throw new IllegalArgumentException();
 					} else {
 						nextBoundGP = path.get(nextBoundIndex);
 						nextBoundLengthToStartOfPath = path.cumulativeDistancesFromStart[nextBoundIndex];

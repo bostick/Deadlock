@@ -163,10 +163,8 @@ public final class AutonomousDriver extends Driver {
 			break;
 		case SINKED:
 			break;
-		case IDLE:
-		case DRAGGING:
-		case COASTING_FORWARD:
-		case COASTING_BACKWARD:
+		default:
+			assert false;
 			break;
 		}
 	}

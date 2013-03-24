@@ -12,6 +12,10 @@ public enum Side {
 	public abstract Side other();
 	public abstract double getAngle();
 	
+	public boolean isRightOrBottom() {
+		return this == Side.RIGHT || this == Side.BOTTOM;
+	}
+	
 	public static Side angleToSide(double angle) {
 		if (DMath.equals(angle, 0.0 * Math.PI)) {
 			return RIGHT;
