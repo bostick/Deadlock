@@ -74,7 +74,7 @@ public class CarTool extends ToolBase {
 				
 				break;
 			default:
-				assert false;
+				assert false : pressed.state;
 				break;
 			}
 			
@@ -89,85 +89,49 @@ public class CarTool extends ToolBase {
 			switch (car.state) {
 			case DRAGGING:
 				
-				GraphPosition gpos = car.driver.overallPos.getGraphPosition();
-				
-				if (gpos instanceof RoadPosition || gpos instanceof VertexPosition) {
-					
-//					assert !(gpos instanceof VertexPosition);
-					
+				if (car.driver.toolOrigExitingVertexPos != null && car.driver.toolOrigExitingVertexPos.isEndOfPath()) {
 					/*
-					 * determine which direction to coast
+					 * always go back to last vertex
 					 */
 					
-					assert car.driver.toolOrigExitingVertexPos != null;
+					car.driver.toolCoastingGoal = car.driver.toolOrigOverallPos;
+					car.setCoastingVelFromDrag(dragVector, dragTimeStepMillis, true);
+					car.state = CarStateEnum.COASTING_FORWARD;
 					
-					int studCount = (int)(car.length * Car.METERS_PER_CARLENGTH / RushHourStud.SIZE);
-					boolean otherSideIsFree = true;
+				} else {
 					
-					if (car.driver.overallPos.combo < car.driver.toolOrigExitingVertexPos.combo) {
+					GraphPosition gpos = car.driver.overallPos.getGraphPosition();
+					
+					if (gpos instanceof RoadPosition || gpos instanceof VertexPosition) {
+						
+//						assert !(gpos instanceof VertexPosition);
+						
 						/*
-						 * overallPos is less than exiting vertex, so the other vertex must be less than overallPos
+						 * determine which direction to coast
 						 */
 						
-						int prevVertexIndex = car.driver.overallPath.prevVertexIndex(car.driver.overallPos.index, car.driver.overallPos.param);
+						assert car.driver.toolOrigExitingVertexPos != null;
 						
-						Fixture prevVertex = (Fixture)car.driver.overallPath.get(prevVertexIndex).entity;
+						int studCount = (int)(car.length * Car.METERS_PER_CARLENGTH / RushHourStud.SIZE);
+						boolean otherSideIsFree = true;
 						
-						if (prevVertex.getFacingSide().isRightOrBottom()) {
+						if (car.driver.overallPos.combo < car.driver.toolOrigExitingVertexPos.combo) {
+							
 							/*
-							 * vertex on top or left
+							 * overallPos is less than exiting vertex, so the other vertex must be less than overallPos
 							 */
 							
-							for (int i = 0; i < studCount; i++) {
-								RushHourBoardPosition bpos = (RushHourBoardPosition)car.driver.overallPath.get(prevVertexIndex-1-i);
-								RushHourStud stud = ((RushHourBoard)bpos.entity).stud(bpos);
-								if (!stud.isFree()) {
-									otherSideIsFree = false;
-									break;
-								}
-							}
+							int prevVertexIndex = car.driver.overallPath.prevVertexIndex(car.driver.overallPos.index, car.driver.overallPos.param);
 							
-						} else {
+							Fixture prevVertex = (Fixture)car.driver.overallPath.get(prevVertexIndex).entity;
 							
-							for (int i = 0; i < studCount; i++) {
-								RushHourBoardPosition bpos = (RushHourBoardPosition)car.driver.overallPath.get(prevVertexIndex-2-i);
-								RushHourStud stud = ((RushHourBoard)bpos.entity).stud(bpos);
-								if (!stud.isFree()) {
-									otherSideIsFree = false;
-									break;
-								}
-							}
-							
-						}
-						
-						if (otherSideIsFree) {
-							car.driver.toolCoastingGoal = new GraphPositionPathPosition(car.driver.overallPath, prevVertexIndex, 0.0).travelBackward(RushHourStud.SIZE + 0.5 * studCount);
-							car.setCoastingVelFromDrag(dragVector, dragTimeStepMillis, false);
-							car.state = CarStateEnum.COASTING_BACKWARD;
-						} else {
-							car.driver.toolCoastingGoal = car.driver.toolOrigOverallPos;
-							car.setCoastingVelFromDrag(dragVector, dragTimeStepMillis, true);
-							car.state = CarStateEnum.COASTING_FORWARD;
-						}
-						
-					} else {
-						
-						int nextVertexIndex = car.driver.overallPath.nextVertexIndex(car.driver.overallPos.index, car.driver.overallPos.param);
-						
-						if (!(nextVertexIndex == car.driver.overallPath.size-1)) {
-							/*
-							 * not going through exit
-							 */
-							
-							Fixture nextVertex = (Fixture)car.driver.overallPath.get(nextVertexIndex).entity;
-							
-							if (nextVertex.getFacingSide().isRightOrBottom()) {
+							if (prevVertex.getFacingSide().isRightOrBottom()) {
 								/*
 								 * vertex on top or left
 								 */
 								
 								for (int i = 0; i < studCount; i++) {
-									RushHourBoardPosition bpos = (RushHourBoardPosition)car.driver.overallPath.get(nextVertexIndex+1+i);
+									RushHourBoardPosition bpos = (RushHourBoardPosition)car.driver.overallPath.get(prevVertexIndex-1-i);
 									RushHourStud stud = ((RushHourBoard)bpos.entity).stud(bpos);
 									if (!stud.isFree()) {
 										otherSideIsFree = false;
@@ -178,93 +142,126 @@ public class CarTool extends ToolBase {
 							} else {
 								
 								for (int i = 0; i < studCount; i++) {
-									RushHourBoardPosition bpos = (RushHourBoardPosition)car.driver.overallPath.get(nextVertexIndex+2+i);
+									RushHourBoardPosition bpos = (RushHourBoardPosition)car.driver.overallPath.get(prevVertexIndex-2-i);
 									RushHourStud stud = ((RushHourBoard)bpos.entity).stud(bpos);
 									if (!stud.isFree()) {
 										otherSideIsFree = false;
 										break;
 									}
 								}
+								
 							}
+							
+							if (otherSideIsFree) {
+								car.driver.toolCoastingGoal = new GraphPositionPathPosition(car.driver.overallPath, prevVertexIndex, 0.0).travelBackward(RushHourStud.SIZE + 0.5 * studCount);
+								car.setCoastingVelFromDrag(dragVector, dragTimeStepMillis, false);
+								car.state = CarStateEnum.COASTING_BACKWARD;
+							} else {
+								car.driver.toolCoastingGoal = car.driver.toolOrigOverallPos;
+								car.setCoastingVelFromDrag(dragVector, dragTimeStepMillis, true);
+								car.state = CarStateEnum.COASTING_FORWARD;
+							}
+							
+						} else {
+							
+							int nextVertexIndex = car.driver.overallPath.nextVertexIndex(car.driver.overallPos.index, car.driver.overallPos.param);
+							
+							if (nextVertexIndex == car.driver.overallPath.size-1) {
+								/*
+								 * going through exit, so "other side is free"
+								 */
+								
+							} else {
+								
+								Fixture nextVertex = (Fixture)car.driver.overallPath.get(nextVertexIndex).entity;
+								
+								if (nextVertex.getFacingSide().isRightOrBottom()) {
+									/*
+									 * vertex on top or left
+									 */
+									
+									for (int i = 0; i < studCount; i++) {
+										RushHourBoardPosition bpos = (RushHourBoardPosition)car.driver.overallPath.get(nextVertexIndex+1+i);
+										RushHourStud stud = ((RushHourBoard)bpos.entity).stud(bpos);
+										if (!stud.isFree()) {
+											otherSideIsFree = false;
+											break;
+										}
+									}
+									
+								} else {
+									
+									for (int i = 0; i < studCount; i++) {
+										RushHourBoardPosition bpos = (RushHourBoardPosition)car.driver.overallPath.get(nextVertexIndex+2+i);
+										RushHourStud stud = ((RushHourBoard)bpos.entity).stud(bpos);
+										if (!stud.isFree()) {
+											otherSideIsFree = false;
+											break;
+										}
+									}
+								}
+							}
+							
+							if (otherSideIsFree) {
+								if (!(nextVertexIndex == car.driver.overallPath.size-1)) {
+									car.driver.toolCoastingGoal = new GraphPositionPathPosition(car.driver.overallPath, nextVertexIndex, 0.0).travelForward(RushHourStud.SIZE + 0.5 * studCount);
+								} else {
+									/*
+									 * going through exit
+									 */
+									car.driver.toolCoastingGoal = new GraphPositionPathPosition(car.driver.overallPath, nextVertexIndex, 0.0);
+								}
+								car.setCoastingVelFromDrag(dragVector, dragTimeStepMillis, true);
+								car.state = CarStateEnum.COASTING_FORWARD;
+							} else {
+								car.driver.toolCoastingGoal = car.driver.toolOrigOverallPos;
+								car.setCoastingVelFromDrag(dragVector, dragTimeStepMillis, false);
+								car.state = CarStateEnum.COASTING_BACKWARD;
+							}
+							
 						}
 						
-						if (otherSideIsFree) {
-							if (!(nextVertexIndex == car.driver.overallPath.size-1)) {
-								car.driver.toolCoastingGoal = new GraphPositionPathPosition(car.driver.overallPath, nextVertexIndex, 0.0).travelForward(RushHourStud.SIZE + 0.5 * studCount);
-							} else {
-								/*
-								 * going through exit
-								 */
-								car.driver.toolCoastingGoal = new GraphPositionPathPosition(car.driver.overallPath, nextVertexIndex, 0.0);
-							}
-							car.setCoastingVelFromDrag(dragVector, dragTimeStepMillis, true);
-							car.state = CarStateEnum.COASTING_FORWARD;
+					} else {
+						assert gpos instanceof RushHourBoardPosition;
+						
+						RushHourBoard b = (RushHourBoard)((RushHourBoardPosition)gpos).entity;
+						
+						GraphPositionPathPosition tmpFloorPos = car.driver.overallPos.floor(car.length/2);
+						GraphPositionPathPosition tmpCeilPos = car.driver.overallPos.ceil(car.length/2);
+						GraphPositionPathPosition tmpRoundPos = car.driver.overallPos.round(car.length/2);
+						
+						OBB testFloor = Geom.localToWorld(car.localAABB, car.angle, tmpFloorPos.p);
+						OBB testCeil = Geom.localToWorld(car.localAABB, car.angle, tmpCeilPos.p);
+						
+						boolean floorWithin = testFloor.aabb.completelyWithin(b.gridAABB);
+						boolean ceilWithin = testCeil.aabb.completelyWithin(b.gridAABB);
+						
+						if (!floorWithin && ceilWithin) {
+							car.driver.toolCoastingGoal = tmpCeilPos;
+						} else if (!ceilWithin && floorWithin) {
+							car.driver.toolCoastingGoal = tmpFloorPos;
+						} else if (ceilWithin && floorWithin) {
+							/*
+							 * both are valid, use rounded
+							 */
+							car.driver.toolCoastingGoal = tmpRoundPos;
 						} else {
+							assert !testFloor.aabb.completelyWithin(b.gridAABB);
+							assert !testCeil.aabb.completelyWithin(b.gridAABB);
 							car.driver.toolCoastingGoal = car.driver.toolOrigOverallPos;
+						}
+						
+						if (DMath.lessThanEquals(car.driver.toolCoastingGoal.combo, car.driver.overallPos.combo)) {
+							
 							car.setCoastingVelFromDrag(dragVector, dragTimeStepMillis, false);
 							car.state = CarStateEnum.COASTING_BACKWARD;
-						}
-						
-					}
-					
-				} else {
-					assert gpos instanceof RushHourBoardPosition;
-					
-					RushHourBoard b = (RushHourBoard)((RushHourBoardPosition)gpos).entity;
-					
-					double tmpCombo = car.driver.overallPos.travelBackward(car.length/2).combo;
-					
-					/*
-					 * figure out which way to snap
-					 */
-					
-					int tmpFloorIndex = (int)Math.floor(tmpCombo);
-//					double tmpFloorParam = tmpCombo - tmpFloorIndex;
-					
-					int tmpCeilIndex = (int)Math.ceil(tmpCombo);
-//					double tmpCeilParam = tmpCombo - tmpCeilIndex;
-					
-					int tmpRoundIndex = (int)Math.round(tmpCombo);
-//					double tmpRoundParam = tmpCombo - tmpRoundIndex;
-					
-					GraphPositionPathPosition tmpFloorPos = new GraphPositionPathPosition(car.driver.overallPath, tmpFloorIndex, 0.0).travelForward(car.length/2);
-					GraphPositionPathPosition tmpCeilPos = new GraphPositionPathPosition(car.driver.overallPath, tmpCeilIndex, 0.0).travelForward(car.length/2);
-					
-					OBB testFloor = Geom.localToWorld(car.localAABB, car.angle, tmpFloorPos.p);
-					OBB testCeil = Geom.localToWorld(car.localAABB, car.angle, tmpCeilPos.p);
-					
-					boolean floorWithin = testFloor.aabb.completelyWithin(b.gridAABB);
-					boolean ceilWithin = testCeil.aabb.completelyWithin(b.gridAABB);
-					
-					if (!floorWithin && ceilWithin) {
-						car.driver.toolCoastingGoal = tmpCeilPos;
-					} else if (!ceilWithin && floorWithin) {
-						car.driver.toolCoastingGoal = tmpFloorPos;
-					} else if (ceilWithin && floorWithin) {
-						/*
-						 * both are valid, use rounded
-						 */
-						if (tmpRoundIndex == tmpFloorIndex) {
-							car.driver.toolCoastingGoal = tmpFloorPos;
+							
 						} else {
-							assert tmpRoundIndex == tmpCeilIndex;
-							car.driver.toolCoastingGoal = tmpCeilPos;
+							
+							car.setCoastingVelFromDrag(dragVector, dragTimeStepMillis, true);
+							car.state = CarStateEnum.COASTING_FORWARD;
+							
 						}
-					} else {
-						assert !testFloor.aabb.completelyWithin(b.gridAABB);
-						assert !testCeil.aabb.completelyWithin(b.gridAABB);
-						car.driver.toolCoastingGoal = car.driver.toolOrigOverallPos;
-					}
-					
-					if (DMath.lessThanEquals(car.driver.toolCoastingGoal.combo, car.driver.overallPos.combo)) {
-						
-						car.setCoastingVelFromDrag(dragVector, dragTimeStepMillis, false);
-						car.state = CarStateEnum.COASTING_BACKWARD;
-						
-					} else {
-						
-						car.setCoastingVelFromDrag(dragVector, dragTimeStepMillis, true);
-						car.state = CarStateEnum.COASTING_FORWARD;
 						
 					}
 					
@@ -329,8 +326,6 @@ public class CarTool extends ToolBase {
 					
 					if (gpos instanceof RoadPosition) {
 						
-						RoadPosition rpos = (RoadPosition)gpos;
-						
 						if (car.driver.prevOverallPos.getGraphPosition() instanceof RushHourBoardPosition) {
 							
 							if (car.driver.toolOrigExitingVertexPos == null) {
@@ -347,22 +342,31 @@ public class CarTool extends ToolBase {
 								car.driver.toolOrigExitingVertexPos = new GraphPositionPathPosition(car.driver.overallPath, nextVertexIndex, 0.0);
 							}
 							
+						} else if (car.driver.prevOverallPos.getGraphPosition() instanceof VertexPosition) {
+							/*
+							 * dragging from last vertex
+							 */
+							if (car.driver.toolOrigExitingVertexPos == null) {
+								
+								car.driver.toolOrigExitingVertexPos = car.driver.prevOverallPos;
+							}
+							
 						}
 						
-						double a = rpos.lengthToStartOfRoad / rpos.r.getTotalLength(rpos.r.start, rpos.r.end);
-						
-						double para;
-						if (a < 1.0/3.5) {
-							para = 1.0 + (3.5 * a) * (0.5 - 1.0);
-						} else if (a < (1-1.0/3.5)) {
-							para = 0.5;
-						} else {
-							para = 0.5 + (3.5 * (a - (1-1.0/3.5))) * (1.0 - 0.5);
-						}
-						
-						worldScreen.world.zoomAbsolute(para);
-						
-						worldScreen.world.render_worldPanel();
+//						double a = rpos.lengthToStartOfRoad / rpos.r.getTotalLength(rpos.r.start, rpos.r.end);
+//						
+//						double para;
+//						if (a < 1.0/3.5) {
+//							para = 1.0 + (3.5 * a) * (0.5 - 1.0);
+//						} else if (a < (1-1.0/3.5)) {
+//							para = 0.5;
+//						} else {
+//							para = 0.5 + (3.5 * (a - (1-1.0/3.5))) * (1.0 - 0.5);
+//						}
+//						
+//						worldScreen.world.zoomAbsolute(para);
+//						
+//						worldScreen.world.render_worldPanel();
 						
 					} else if (gpos instanceof VertexPosition) {
 						
@@ -371,9 +375,9 @@ public class CarTool extends ToolBase {
 							car.driver.toolOrigExitingVertexPos = car.driver.overallPos;
 						}
 						
-						worldScreen.world.zoomAbsolute(1.0);
-						
-						worldScreen.world.render_worldPanel();
+//						worldScreen.world.zoomAbsolute(1.0);
+//						
+//						worldScreen.world.render_worldPanel();
 						
 					} else if (gpos instanceof RushHourBoardPosition) {
 						
@@ -395,9 +399,9 @@ public class CarTool extends ToolBase {
 							
 						}
 						
-						worldScreen.world.zoomAbsolute(1.0);
-						
-						worldScreen.world.render_worldPanel();
+//						worldScreen.world.zoomAbsolute(1.0);
+//						
+//						worldScreen.world.render_worldPanel();
 						
 					} else {
 						assert false;

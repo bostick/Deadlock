@@ -23,7 +23,7 @@ public class InteractiveCar extends Car {
 	 * doesn't need to be a vector, since it is snapped to a track
 	 */
 	private double coastingVel;
-	final double coastingAcceleration = 10.0;
+	final double coastingAcceleration = 1.0;
 	
 	public InteractiveCar(World w) {
 		super(w);

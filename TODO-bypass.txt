@@ -3,6 +3,16 @@ test boards with exits on left and right, make sure exiting works
 
 
 
+catch cars that are coasting
+
+
+
+
+
+
+
+
+
 
 
 figure out best way for zoom to follow car

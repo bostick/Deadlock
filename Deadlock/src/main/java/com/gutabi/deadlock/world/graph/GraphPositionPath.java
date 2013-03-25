@@ -251,7 +251,7 @@ public class GraphPositionPath {
 		double closestDistance = Point.distance(p, start.p);
 		
 		GraphPositionPathPosition a = start;
-		GraphPositionPathPosition startCeiling = start.ceiling();
+		GraphPositionPathPosition startCeiling = start.ceil();
 		GraphPositionPathPosition b;
 		/*
 		 * if start is not a bound, then search from start to the next bound
@@ -421,7 +421,7 @@ public class GraphPositionPath {
 		if (!startFloor.equals(start)) {
 			a = startFloor;
 			
-			double u = Point.u(a.p, p, b.ceiling().p);
+			double u = Point.u(a.p, p, b.ceil().p);
 			if (u > b.param) {
 				u = b.param;
 			}
@@ -465,7 +465,7 @@ public class GraphPositionPath {
 //			}
 //			else {
 				
-			Point pOnPath = Point.point(a.p, b.ceiling().p, u);
+			Point pOnPath = Point.point(a.p, b.ceil().p, u);
 			
 			if (p.equals(pOnPath)) {
 				return new GraphPositionPathPosition(this, a.index, u);
@@ -663,7 +663,7 @@ public class GraphPositionPath {
 	public GraphPositionPathPosition findClosestGraphPositionPathPosition(GraphPosition gp) {
 		
 		GraphPositionPathPosition a = startingPos;
-		GraphPositionPathPosition minCeiling = startingPos.ceiling();
+		GraphPositionPathPosition minCeiling = startingPos.ceil();
 		GraphPositionPathPosition b;
 		if (!minCeiling.equals(startingPos)) {
 			b = minCeiling;

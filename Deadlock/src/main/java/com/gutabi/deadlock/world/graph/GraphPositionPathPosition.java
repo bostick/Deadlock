@@ -326,7 +326,7 @@ public class GraphPositionPathPosition {
 		}
 	}
 	
-	public GraphPositionPathPosition ceiling() {
+	public GraphPositionPathPosition ceil() {
 		if (DMath.equals(param, 0.0)) {
 			return this;
 		} else {
@@ -334,4 +334,78 @@ public class GraphPositionPathPosition {
 		}
 	}
 	
+	public GraphPositionPathPosition round() {
+		if (DMath.equals(param, 0.0)) {
+			return this;
+		} else {
+			if (Math.round(param) == 0) {
+				return new GraphPositionPathPosition(path, index, 0.0);
+			} else {
+				return new GraphPositionPathPosition(path, index+1, 0.0);
+			}
+		}
+	}
+	
+	
+	
+	
+	
+	
+	public GraphPositionPathPosition floor(double length) {
+		
+		if (DMath.lessThanEquals(length, lengthToStartOfPath)) {
+			
+			double tmpCombo = travelBackward(length).combo;
+			
+			int tmpFloorIndex = (int)Math.floor(tmpCombo);
+			
+			return new GraphPositionPathPosition(path, tmpFloorIndex, 0.0).travelForward(length);
+		} else {
+			
+			double tmpCombo = travelForward(length).combo;
+			
+			int tmpFloorIndex = (int)Math.floor(tmpCombo);
+			
+			return new GraphPositionPathPosition(path, tmpFloorIndex, 0.0).travelBackward(length);
+		}
+		
+	}
+	
+	public GraphPositionPathPosition ceil(double length) {
+		
+		if (DMath.lessThanEquals(length, lengthToStartOfPath)) {
+			
+			double tmpCombo = travelBackward(length).combo;
+			
+			int tmpFloorIndex = (int)Math.ceil(tmpCombo);
+			
+			return new GraphPositionPathPosition(path, tmpFloorIndex, 0.0).travelForward(length);
+		} else {
+			
+			double tmpCombo = travelForward(length).combo;
+			
+			int tmpFloorIndex = (int)Math.ceil(tmpCombo);
+			
+			return new GraphPositionPathPosition(path, tmpFloorIndex, 0.0).travelBackward(length);
+		}
+	}
+	
+	public GraphPositionPathPosition round(double length) {
+		
+		if (DMath.lessThanEquals(length, lengthToStartOfPath)) {
+			
+			double tmpCombo = travelBackward(length).combo;
+			
+			int tmpFloorIndex = (int)Math.round(tmpCombo);
+			
+			return new GraphPositionPathPosition(path, tmpFloorIndex, 0.0).travelForward(length);
+		} else {
+			
+			double tmpCombo = travelForward(length).combo;
+			
+			int tmpFloorIndex = (int)Math.round(tmpCombo);
+			
+			return new GraphPositionPathPosition(path, tmpFloorIndex, 0.0).travelBackward(length);
+		}
+	}
 }

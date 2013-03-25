@@ -314,9 +314,7 @@ public class RushHourBoard extends Entity {
 		for (int i = 0; i < rowCount; i++) {
 			List<GraphPosition> track = new ArrayList<GraphPosition>();
 			if (yStud.col == -1 && yStud.row == i) {
-//				road
-				assert false;
-				track.add(new RushHourBoardPosition(this, i + 0.5, -1));
+				addExitRoadToTrack(track, yStud);
 			} else if ((jStudCount == 2 && (jStuds[0].col == -1 && jStuds[0].row == i || jStuds[1].col == -1 && jStuds[1].row == i)) ||
 					(kStudCount == 2 && (kStuds[0].col == -1 && kStuds[0].row == i || kStuds[1].col == -1 && kStuds[1].row == i))) {
 				track.add(new RushHourBoardPosition(this, i + 0.5, -1));
@@ -329,8 +327,7 @@ public class RushHourBoard extends Entity {
 				 * on right, so add last RushHourBoardPosition
 				 */
 				track.add(new RushHourBoardPosition(this, i + 0.5, colCount));
-//				road
-				assert false;
+				addExitRoadToTrack(track, yStud);
 			} else if ((jStudCount == 2 && (jStuds[0].col == colCount && jStuds[0].row == i || jStuds[1].col == colCount && jStuds[1].row == i)) ||
 					(kStudCount == 2 && (kStuds[0].col == colCount && kStuds[0].row == i || kStuds[1].col == colCount && kStuds[1].row == i))) {
 				track.add(new RushHourBoardPosition(this, i + 0.5, colCount));
@@ -415,7 +412,7 @@ public class RushHourBoard extends Entity {
 				/*
 				 * no joints, do exit here
 				 */
-//				assert false;
+				exitTrackToPath(yStud);
 			}
 		}
 		
@@ -458,6 +455,9 @@ public class RushHourBoard extends Entity {
 			
 		}
 		
+		rowTracks = null;
+		colTracks = null;
+		
 		/*
 		 * negative space
 		 */
@@ -489,6 +489,9 @@ public class RushHourBoard extends Entity {
 		return c >= 0 && c < colCount;
 	}
 	
+	/**
+	 * create the last vertex and add a road connecting the stud fixture to it
+	 */
 	private void addExitRoad(ExitStud y) {
 		
 		Point other = null;
@@ -501,10 +504,16 @@ public class RushHourBoard extends Entity {
 			world.addFixture(f);
 			break;
 		case LEFT:
-			assert false;
+			other = y.f.p.plus(new Point(10, 0));
+			f = new Fixture(world, other, Axis.LEFTRIGHT);
+			f.setFacingSide(Side.LEFT);
+			world.addFixture(f);
 			break;
 		case RIGHT:
-			assert false;
+			other = y.f.p.plus(new Point(-10, 0));
+			f = new Fixture(world, other, Axis.LEFTRIGHT);
+			f.setFacingSide(Side.RIGHT);
+			world.addFixture(f);
 			break;
 		case BOTTOM:
 			other = y.f.p.plus(new Point(0, -10));
@@ -522,11 +531,15 @@ public class RushHourBoard extends Entity {
 		stroke.processNewStroke();
 	}
 	
+	/**
+	 * 
+	 */
 	private void addExitRoadToTrack(List<GraphPosition> track, ExitStud yStud) {
 		
 		Road r;
 		switch(yStud.f.getFacingSide()) {
 		case TOP:
+		case LEFT:
 			/*
 			 * end of track, so add from stud to other vertex
 			 */
@@ -545,12 +558,7 @@ public class RushHourBoard extends Entity {
 				track.add(new VertexPosition(r.start));
 			}
 			break;
-		case LEFT:
-			assert false;
-			break;
 		case RIGHT:
-			assert false;
-			break;
 		case BOTTOM:
 			/*
 			 * start of track, so add from other vertex to stud
@@ -627,6 +635,62 @@ public class RushHourBoard extends Entity {
 		stroke.finish();
 		
 		stroke.processNewStroke();
+		
+	}
+	
+	private void exitTrackToPath(ExitStud s0) {
+		
+		List<GraphPosition> s0Track;
+		if (s0.col < 0) {
+			s0Track = rowTracks.remove(s0.row);
+		} else if (s0.col >= colCount) {
+			s0Track = rowTracks.remove(s0.row);
+		} else if (s0.row < 0) {
+			s0Track = colTracks.remove(s0.col);
+		} else {
+			assert s0.row >= rowCount;
+			s0Track = colTracks.remove(s0.col);
+		}
+		assert s0Track != null;
+		
+		List<GraphPosition> poss = new ArrayList<GraphPosition>();
+//		from other side of js0 track to js0
+		if (s0.col < 0) {
+			for (int i = s0Track.size()-1; i >= 0; i--) {
+				poss.add(s0Track.get(i));
+			}
+		} else if (s0.col >= colCount) {
+			for (int i = 0; i < s0Track.size(); i++) {
+				poss.add(s0Track.get(i));
+			}
+		} else if (s0.row < 0) {
+			for (int i = s0Track.size()-1; i >= 0; i--) {
+				poss.add(s0Track.get(i));
+			}
+		} else {
+			assert s0.row >= rowCount;
+			for (int i = 0; i < s0Track.size(); i++) {
+				poss.add(s0Track.get(i));
+			}
+		}
+		
+//		add to rowPaths and colPaths as needed
+		GraphPositionPath path = new GraphPositionPath(poss);
+		GraphPositionPath res;
+		if (s0.col < 0) {
+			res = rowPaths.put(s0.row, path);
+			assert res == null;
+		} else if (s0.col >= colCount) {
+			res = rowPaths.put(s0.row, path);
+			assert res == null;
+		} else if (s0.row < 0) {
+			res = colPaths.put(s0.col, path);
+			assert res == null;
+		} else {
+			assert s0.row >= rowCount;
+			res = colPaths.put(s0.col, path);
+			assert res == null;
+		}
 		
 	}
 	
