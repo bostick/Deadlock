@@ -1,12 +1,5 @@
 
-
-fix releasing on a vertex, snapping and covering up road
-
-
-make sure dragging doesn't get snagged
-
-
-flicking
+test boards with exits on left and right, make sure exiting works
 
 
 
@@ -17,9 +10,24 @@ so that dragging is not interrupted
 
 
 
+
+add long road from exit
+
+coast from winning position off screen
+
+
+
+
+
+SOON:
+
+make sure dragging doesn't get snagged
  
- 
- DONE:
+DONE:
+
+flicking
+
+fix releasing on a vertex, snapping and blocking road
 
 do coasting within the board, from stud to stud
  

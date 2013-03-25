@@ -93,7 +93,7 @@ public class CarTool extends ToolBase {
 				
 				if (gpos instanceof RoadPosition || gpos instanceof VertexPosition) {
 					
-					assert !(gpos instanceof VertexPosition);
+//					assert !(gpos instanceof VertexPosition);
 					
 					/*
 					 * determine which direction to coast
@@ -154,36 +154,49 @@ public class CarTool extends ToolBase {
 						
 						int nextVertexIndex = car.driver.overallPath.nextVertexIndex(car.driver.overallPos.index, car.driver.overallPos.param);
 						
-						Fixture nextVertex = (Fixture)car.driver.overallPath.get(nextVertexIndex).entity;
-						
-						if (nextVertex.getFacingSide().isRightOrBottom()) {
+						if (!(nextVertexIndex == car.driver.overallPath.size-1)) {
 							/*
-							 * vertex on top or left
+							 * not going through exit
 							 */
 							
-							for (int i = 0; i < studCount; i++) {
-								RushHourBoardPosition bpos = (RushHourBoardPosition)car.driver.overallPath.get(nextVertexIndex+1+i);
-								RushHourStud stud = ((RushHourBoard)bpos.entity).stud(bpos);
-								if (!stud.isFree()) {
-									otherSideIsFree = false;
-									break;
+							Fixture nextVertex = (Fixture)car.driver.overallPath.get(nextVertexIndex).entity;
+							
+							if (nextVertex.getFacingSide().isRightOrBottom()) {
+								/*
+								 * vertex on top or left
+								 */
+								
+								for (int i = 0; i < studCount; i++) {
+									RushHourBoardPosition bpos = (RushHourBoardPosition)car.driver.overallPath.get(nextVertexIndex+1+i);
+									RushHourStud stud = ((RushHourBoard)bpos.entity).stud(bpos);
+									if (!stud.isFree()) {
+										otherSideIsFree = false;
+										break;
+									}
 								}
-							}
-							
-						} else {
-							
-							for (int i = 0; i < studCount; i++) {
-								RushHourBoardPosition bpos = (RushHourBoardPosition)car.driver.overallPath.get(nextVertexIndex+2+i);
-								RushHourStud stud = ((RushHourBoard)bpos.entity).stud(bpos);
-								if (!stud.isFree()) {
-									otherSideIsFree = false;
-									break;
+								
+							} else {
+								
+								for (int i = 0; i < studCount; i++) {
+									RushHourBoardPosition bpos = (RushHourBoardPosition)car.driver.overallPath.get(nextVertexIndex+2+i);
+									RushHourStud stud = ((RushHourBoard)bpos.entity).stud(bpos);
+									if (!stud.isFree()) {
+										otherSideIsFree = false;
+										break;
+									}
 								}
 							}
 						}
 						
 						if (otherSideIsFree) {
-							car.driver.toolCoastingGoal = new GraphPositionPathPosition(car.driver.overallPath, nextVertexIndex, 0.0).travelForward(RushHourStud.SIZE + 0.5 * studCount);
+							if (!(nextVertexIndex == car.driver.overallPath.size-1)) {
+								car.driver.toolCoastingGoal = new GraphPositionPathPosition(car.driver.overallPath, nextVertexIndex, 0.0).travelForward(RushHourStud.SIZE + 0.5 * studCount);
+							} else {
+								/*
+								 * going through exit
+								 */
+								car.driver.toolCoastingGoal = new GraphPositionPathPosition(car.driver.overallPath, nextVertexIndex, 0.0);
+							}
 							car.setCoastingVelFromDrag(dragVector, dragTimeStepMillis, true);
 							car.state = CarStateEnum.COASTING_FORWARD;
 						} else {

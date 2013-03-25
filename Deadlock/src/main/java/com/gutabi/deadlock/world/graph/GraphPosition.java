@@ -26,6 +26,6 @@ public abstract class GraphPosition {
 	 * mainly the params, which may be the gp's param or may be 1-gp's param
 	 * 
 	 */
-	public abstract double goalGPPPCombo(int curPathIndex, double curPathParam, boolean pathForward, GraphPosition goalGP);
+	public abstract double goalGPPPCombo(int curPathIndex, double curPathParam, boolean pathForward, GraphPosition goalGP, GraphPositionPath debugPath, GraphPositionPathPosition debugPos, double debugDist);
 	
 }

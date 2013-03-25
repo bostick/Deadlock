@@ -63,7 +63,7 @@ public abstract class EdgePosition extends GraphPosition {
 		
 	}
 	
-	public double goalGPPPCombo(int curPathIndex, double curPathParam, boolean pathForward, GraphPosition goalGP) {
+	public double goalGPPPCombo(int curPathIndex, double curPathParam, boolean pathForward, GraphPosition goalGP, GraphPositionPath debugPath, GraphPositionPathPosition debugPos, double debugDist) {
 		
 		EdgePosition goalEP = (EdgePosition)goalGP;
 		
@@ -72,11 +72,19 @@ public abstract class EdgePosition extends GraphPosition {
 			int retIndex = pathForward ? (DMath.equals(curPathParam, 0.0) ? curPathIndex : curPathIndex) : DMath.equals(curPathParam, 0.0) ? curPathIndex-1 : curPathIndex;
 			double retParam = goalEP.getParam();
 			
+			GraphPositionPathPosition ret = new GraphPositionPathPosition(debugPath, retIndex, retParam);
+			double distToRet = debugPos.distanceTo(ret);
+			assert DMath.equals(distToRet, debugDist);
+			
 			return retIndex+retParam;
 			
 		} else {
 			int retIndex = pathForward ? (DMath.equals(curPathParam, 0.0) ? curPathIndex : curPathIndex) : DMath.equals(curPathParam, 0.0) ? curPathIndex-1 : curPathIndex;
-			double retParam = 1-goalEP.getParam();
+			double retParam = pathForward ? (DMath.equals(curPathParam, 0.0) ? 1-goalEP.getParam() : 1-goalEP.getParam()) : DMath.equals(curPathParam, 0.0) ? 1-goalEP.getParam() : 1-goalEP.getParam();
+			
+			GraphPositionPathPosition ret = new GraphPositionPathPosition(debugPath, retIndex, retParam);
+			double distToRet = debugPos.distanceTo(ret);
+			assert DMath.equals(distToRet, debugDist);
 			
 			return retIndex+retParam;
 		}

@@ -18,6 +18,10 @@ public class RushHourBoardPosition extends GraphPosition {
 	public RushHourBoardPosition(RushHourBoard b, double rowCombo, double colCombo) {
 		super(b.point(rowCombo, colCombo), b);
 		
+//		if (rowCombo > 8) {
+//			String.class.getName();
+//		}
+		
 		this.rowCombo = rowCombo;
 		this.colCombo = colCombo;
 		
@@ -152,7 +156,7 @@ public class RushHourBoardPosition extends GraphPosition {
 		
 	}
 	
-	public double goalGPPPCombo(int curPathIndex, double curPathParam, boolean pathForward, GraphPosition goalGP) {
+	public double goalGPPPCombo(int curPathIndex, double curPathParam, boolean pathForward, GraphPosition goalGP, GraphPositionPath debugPath, GraphPositionPathPosition debugPos, double debugDist) {
 		
 		RushHourBoardPosition goalBP = (RushHourBoardPosition)goalGP;
 		

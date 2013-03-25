@@ -275,7 +275,7 @@ public class GraphPositionPathPosition {
 						
 						GraphPosition ggoal = curGraphPosition.approachNeighbor(nextBoundGP, toTravel);
 						
-						double retCombo = curGraphPosition.goalGPPPCombo(curPathIndex, curPathParam, forward, ggoal);
+						double retCombo = curGraphPosition.goalGPPPCombo(curPathIndex, curPathParam, forward, ggoal, path, this, dist);
 						
 						int retIndex = (int)Math.floor(retCombo);
 						double retParam = retCombo - retIndex;
