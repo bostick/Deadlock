@@ -69,9 +69,9 @@ public class RushHourWorld extends World {
 				{' ', 'A', 'A', 'A', 'X', 'X', 'X', ' '},
 				{' ', 'X', 'X', 'X', 'X', 'X', 'X', ' '},
 				{' ', 'X', 'X', 'X', 'X', 'X', 'X', ' '},
-				{' ', 'X', 'X', 'X', 'X', 'X', 'X', ' '},
-				{'Y', 'X', 'X', 'R', 'R', 'X', 'X', ' '},
-				{' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '}
+				{' ', 'X', 'X', 'X', 'R', 'X', 'X', ' '},
+				{'Y', 'X', 'X', 'X', 'R', 'X', 'X', 'J'},
+				{' ', ' ', ' ', ' ', 'J', ' ', ' ', ' '}
 			};
 		
 		final RushHourBoard b = w.createRushHourBoard(new Point(QuadrantMap.QUADRANT_WIDTH/2, QuadrantMap.QUADRANT_WIDTH/2), boardIni);

@@ -376,20 +376,28 @@ public class RushHourBoard extends Entity {
 			 * j and k are connected
 			 */
 			if (withinRowRange(js0.row) && withinRowRange(ks0.row) && js0.row == ks0.row) {
+				d;//order of arguments should be order on path
 				jointTracksToPath(js1, js0, ks0, ks1);
 			} else if (withinRowRange(js0.row) && withinRowRange(ks1.row) && js0.row == ks1.row) {
+				d;//order of arguments should be order on path
 				jointTracksToPath(js1, js0, ks1, ks0);
 			} else if (withinRowRange(js1.row) && withinRowRange(ks0.row) && js1.row == ks0.row) {
+				d;//order of arguments should be order on path
 				jointTracksToPath(js0, js1, ks0, ks1);
 			} else if (withinRowRange(js1.row) && withinRowRange(ks1.row) && js1.row == ks1.row) {
+				d;//order of arguments should be order on path
 				jointTracksToPath(js0, js1, ks1, ks0);
 			} else if (withinColRange(js0.col) && withinColRange(ks0.col) && js0.col == ks0.col) {
+				d;//order of arguments should be order on path
 				jointTracksToPath(js1, js0, ks0, ks1);
 			} else if (withinColRange(js0.col) && withinColRange(ks1.col) && js0.col == ks1.col) {
+				d;//order of arguments should be order on path
 				jointTracksToPath(js1, js0, ks1, ks0);
 			} else if (withinColRange(js1.col) && withinColRange(ks0.col) && js1.col == ks0.col) {
+				d;//order of arguments should be order on path
 				jointTracksToPath(js0, js1, ks0, ks1);
 			} else if (withinColRange(js1.col) && withinColRange(ks1.col) && js1.col == ks1.col) {
+				d;//order of arguments should be order on path
 				jointTracksToPath(js0, js1, ks1, ks0);
 			} else {
 				
@@ -397,16 +405,20 @@ public class RushHourBoard extends Entity {
 				 * not connected
 				 */
 				if (jStudCount != 0) {
+					d;//order of arguments should be order on path
 					jointTracksToPath(jStuds[0], jStuds[1]);
 				}
 				if (kStudCount != 0) {
+					d;//order of arguments should be order on path
 					jointTracksToPath(kStuds[0], kStuds[1]);
 				}
 			}
 		} else {
 			if (jStudCount != 0) {
+				d;//order of arguments should be order on path
 				jointTracksToPath(jStuds[0], jStuds[1]);
 			} else if (kStudCount != 0) {
+				d;//order of arguments should be order on path
 				jointTracksToPath(kStuds[0], kStuds[1]);
 			} else {
 				/*

@@ -67,6 +67,10 @@ public class InteractiveCar extends Car {
 		coastingVel = vel;
 	}
 	
+	public void clearCoastingVel() {
+		coastingVel = 0.0;
+	}
+	
 	public void fakeCoastingStep(double t) {
 		assert state == CarStateEnum.COASTING_FORWARD || state == CarStateEnum.COASTING_BACKWARD;
 		
@@ -98,6 +102,7 @@ public class InteractiveCar extends Car {
 			
 			driver.setOverallPos(driver.toolCoastingGoal);
 			
+			driver.toolOrigExitingVertexPos = null;
 			driver.toolCoastingGoal = null;
 			
 			return;
