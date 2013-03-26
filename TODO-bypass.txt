@@ -1,16 +1,8 @@
 
-test boards with exits on left and right, make sure exiting works
 
+for quick drags that leave a gap against a wall or car, actually do collision detection and have it stop correctly
 
-
-catch cars that are coasting
-
-
-
-
-
-
-
+add perimeters around joint studs
 
 
 
@@ -21,11 +13,6 @@ so that dragging is not interrupted
 
 
 
-add long road from exit
-
-coast from winning position off screen
-
-
 
 
 
@@ -33,7 +20,18 @@ SOON:
 
 make sure dragging doesn't get snagged
  
+
+
+
 DONE:
+
+add long road from exit
+
+coast from winning position off screen
+
+test boards with exits on left and right, make sure exiting works
+
+catch cars that are coasting
 
 flicking
 

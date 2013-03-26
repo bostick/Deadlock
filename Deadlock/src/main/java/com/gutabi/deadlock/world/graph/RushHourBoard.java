@@ -48,7 +48,7 @@ public class RushHourBoard extends Entity {
 	private Map<Integer, GraphPositionPath> rowPaths = new HashMap<Integer, GraphPositionPath>();
 	private Map<Integer, GraphPositionPath> colPaths = new HashMap<Integer, GraphPositionPath>();
 	
-//	List<ExitStud> exitStuds = new ArrayList<ExitStud>();
+//	List<BorderStud> exitStuds = new ArrayList<BorderStud>();
 	
 	public RushHourBoard(World world, Point center, char[][] ini) {
 		this.world = world;
@@ -149,10 +149,10 @@ public class RushHourBoard extends Entity {
 		
 		
 		int jStudCount = 0;
-		JointStud[] jStuds = new JointStud[2];
+		BorderStud[] jStuds = new BorderStud[2];
 		int kStudCount = 0;
-		JointStud[] kStuds = new JointStud[2];
-		ExitStud yStud = null;
+		BorderStud[] kStuds = new BorderStud[2];
+		BorderStud yStud = null;
 		
 		for (int i = 0; i < ini.length; i++) {
 			for (int j = 0; j < ini[i].length; j++) {
@@ -175,7 +175,7 @@ public class RushHourBoard extends Entity {
 				}
 				case 'J':
 				case 'K': {
-					JointStud s = new JointStud(world, this, i - originRow, j - originCol);
+					BorderStud s = new BorderStud(world, this, i - originRow, j - originCol);
 					addStud(s);
 					if (c == 'J') {
 						jStuds[jStudCount] = s;
@@ -213,7 +213,7 @@ public class RushHourBoard extends Entity {
 					break;
 				}
 				case 'Y': {
-					ExitStud s = new ExitStud(world, this, i - originRow, j - originCol);
+					BorderStud s = new BorderStud(world, this, i - originRow, j - originCol);
 					yStud = s;
 					addStud(s);
 //					exitStuds.add(s);
@@ -227,7 +227,7 @@ public class RushHourBoard extends Entity {
 						s.f = f;
 						world.addFixture(f);
 						
-//						s = new ExitStud(world, this, i - originRow - 1, j - originCol);
+//						s = new BorderStud(world, this, i - originRow - 1, j - originCol);
 //						addStud(s);
 //						perimeterSegments.add(s.aabb.getP0P1Line());
 //						perimeterSegments.add(s.aabb.getP1P2Line());
@@ -244,7 +244,7 @@ public class RushHourBoard extends Entity {
 						s.f = f;
 						world.addFixture(f);
 						
-//						s = new ExitStud(world, this, i - originRow + 1, j - originCol);
+//						s = new BorderStud(world, this, i - originRow + 1, j - originCol);
 //						addStud(s);
 //						perimeterSegments.add(s.aabb.getP0P1Line());
 //						perimeterSegments.add(s.aabb.getP1P2Line());
@@ -261,7 +261,7 @@ public class RushHourBoard extends Entity {
 						s.f = f;
 						world.addFixture(f);
 						
-//						s = new ExitStud(world, this, i - originRow, j - originCol - 1);
+//						s = new BorderStud(world, this, i - originRow, j - originCol - 1);
 //						addStud(s);
 //						perimeterSegments.add(s.aabb.getP0P1Line());
 //						perimeterSegments.add(s.aabb.getP1P2Line());
@@ -279,7 +279,7 @@ public class RushHourBoard extends Entity {
 						s.f = f;
 						world.addFixture(f);
 						
-//						s = new ExitStud(world, this, i - originRow, j - originCol + 1);
+//						s = new BorderStud(world, this, i - originRow, j - originCol + 1);
 //						addStud(s);
 //						perimeterSegments.add(s.aabb.getP0P1Line());
 //						perimeterSegments.add(s.aabb.getP1P2Line());
@@ -367,65 +367,139 @@ public class RushHourBoard extends Entity {
 		 */
 		if (jStudCount != 0 && kStudCount != 0) {
 			
-			JointStud js0 = jStuds[0];
-			JointStud js1 = jStuds[1];
-			JointStud ks0 = kStuds[0];
-			JointStud ks1 = kStuds[1];
+			BorderStud js0 = jStuds[0];
+			BorderStud js1 = jStuds[1];
+			BorderStud ks0 = kStuds[0];
+			BorderStud ks1 = kStuds[1];
 			
-			/*
-			 * j and k are connected
-			 */
-			if (withinRowRange(js0.row) && withinRowRange(ks0.row) && js0.row == ks0.row) {
-				d;//order of arguments should be order on path
-				jointTracksToPath(js1, js0, ks0, ks1);
-			} else if (withinRowRange(js0.row) && withinRowRange(ks1.row) && js0.row == ks1.row) {
-				d;//order of arguments should be order on path
-				jointTracksToPath(js1, js0, ks1, ks0);
-			} else if (withinRowRange(js1.row) && withinRowRange(ks0.row) && js1.row == ks0.row) {
-				d;//order of arguments should be order on path
-				jointTracksToPath(js0, js1, ks0, ks1);
-			} else if (withinRowRange(js1.row) && withinRowRange(ks1.row) && js1.row == ks1.row) {
-				d;//order of arguments should be order on path
-				jointTracksToPath(js0, js1, ks1, ks0);
-			} else if (withinColRange(js0.col) && withinColRange(ks0.col) && js0.col == ks0.col) {
-				d;//order of arguments should be order on path
-				jointTracksToPath(js1, js0, ks0, ks1);
-			} else if (withinColRange(js0.col) && withinColRange(ks1.col) && js0.col == ks1.col) {
-				d;//order of arguments should be order on path
-				jointTracksToPath(js1, js0, ks1, ks0);
-			} else if (withinColRange(js1.col) && withinColRange(ks0.col) && js1.col == ks0.col) {
-				d;//order of arguments should be order on path
-				jointTracksToPath(js0, js1, ks0, ks1);
-			} else if (withinColRange(js1.col) && withinColRange(ks1.col) && js1.col == ks1.col) {
-				d;//order of arguments should be order on path
-				jointTracksToPath(js0, js1, ks1, ks0);
-			} else {
+			if (js0.across(ks0)) {
+				if (js1.across(yStud)) {
+					jointTracksToPath(ks1, ks0, js0, js1);
+				} else if (ks1.across(yStud)) {
+					jointTracksToPath(js1, js0, ks0, ks1);
+				} else {
+					// not connected to exit, order doesn't matter
+					jointTracksToPath(js1, js0, ks0, ks1);
+				}
+			} else if (js0.across(ks1)) {
+				if (js1.across(yStud)) {
+					jointTracksToPath(ks0, ks1, js0, js1);
+				} else if (ks0.across(yStud)) {
+					jointTracksToPath(js1, js0, ks1, ks0);
+				} else {
+					// not connected to exit, order doesn't matter
+					jointTracksToPath(js1, js0, ks1, ks0);
+				}
+			} else if (js1.across(ks0)) {
+				if (js0.across(yStud)) {
+					jointTracksToPath(ks1, ks0, js1, js0);
+				} else if (ks1.across(yStud)) {
+					jointTracksToPath(js0, js1, ks0, ks1);
+				} else {
+					// not connected to exit, order doesn't matter
+					jointTracksToPath(js0, js1, ks0, ks1);
+				}
+			} else if (js1.across(ks1)) {
+				if (js0.across(yStud)) {
+					jointTracksToPath(ks0, ks1, js1, js0);
+				} else if (ks0.across(yStud)) {
+					jointTracksToPath(js0, js1, ks1, ks0);
+				} else {
+					// not connected to exit, order doesn't matter
+					jointTracksToPath(js0, js1, ks1, ks0);
+				}
+			}
+//			else if (withinColRange(js0.col) && withinColRange(ks0.col) && js0.col == ks0.col) {
+//				if (js1.across(yStud)) {
+//					jointTracksToPath(ks1, ks0, js0, js1);
+//				} else if (ks1.across(yStud)) {
+//					jointTracksToPath(js1, js0, ks0, ks1);
+//				} else {
+//					// not connected to exit, order doesn't matter
+//					jointTracksToPath(js1, js0, ks0, ks1);
+//				}
+//			} else if (withinColRange(js0.col) && withinColRange(ks1.col) && js0.col == ks1.col) {
+//				if (js1.across(yStud)) {
+//					jointTracksToPath(ks0, ks1, js0, js1);
+//				} else if (ks0.across(yStud)) {
+//					jointTracksToPath(js1, js0, ks1, ks0);
+//				} else {
+//					// not connected to exit, order doesn't matter
+//					jointTracksToPath(js1, js0, ks1, ks0);
+//				}
+//			} else if (withinColRange(js1.col) && withinColRange(ks0.col) && js1.col == ks0.col) {
+//				if (js0.across(yStud)) {
+//					jointTracksToPath(ks1, ks0, js1, js0);
+//				} else if (ks1.across(yStud)) {
+//					jointTracksToPath(js0, js1, ks0, ks1);
+//				} else {
+//					// not connected to exit, order doesn't matter
+//					jointTracksToPath(js0, js1, ks0, ks1);
+//				}
+//			} else if (withinColRange(js1.col) && withinColRange(ks1.col) && js1.col == ks1.col) {
+//				if (js0.across(yStud)) {
+//					jointTracksToPath(ks0, ks1, js1, js0);
+//				} else if (ks0.across(yStud)) {
+//					jointTracksToPath(js0, js1, ks1, ks0);
+//				} else {
+//					// not connected to exit, order doesn't matter
+//					jointTracksToPath(js0, js1, ks1, ks0);
+//				}
+//			}
+			else {
 				
 				/*
 				 * not connected
 				 */
-				if (jStudCount != 0) {
-					d;//order of arguments should be order on path
-					jointTracksToPath(jStuds[0], jStuds[1]);
+				if (js0.across(yStud)) {
+					jointTracksToPath(js1, js0);
+				} else if (js1.across(yStud)) {
+					jointTracksToPath(js0, js1);
+				} else {
+					jointTracksToPath(js0, js1);
 				}
-				if (kStudCount != 0) {
-					d;//order of arguments should be order on path
-					jointTracksToPath(kStuds[0], kStuds[1]);
+				
+				if (ks0.across(yStud)) {
+					jointTracksToPath(ks1, ks0);
+				} else if (ks1.across(yStud)) {
+					jointTracksToPath(ks0, ks1);
+				} else {
+					jointTracksToPath(ks0, ks1);
 				}
+				
 			}
-		} else {
-			if (jStudCount != 0) {
-				d;//order of arguments should be order on path
-				jointTracksToPath(jStuds[0], jStuds[1]);
-			} else if (kStudCount != 0) {
-				d;//order of arguments should be order on path
-				jointTracksToPath(kStuds[0], kStuds[1]);
+			
+		} else if (jStudCount != 0) {
+			
+			BorderStud js0 = jStuds[0];
+			BorderStud js1 = jStuds[1];
+			
+			if (js0.across(yStud)) {
+				jointTracksToPath(js1, js0);
+			} else if (js1.across(yStud)) {
+				jointTracksToPath(js0, js1);
 			} else {
-				/*
-				 * no joints, do exit here
-				 */
-				exitTrackToPath(yStud);
+				jointTracksToPath(js0, js1);
 			}
+			
+		} else if (kStudCount != 0) {
+			
+			BorderStud ks0 = kStuds[0];
+			BorderStud ks1 = kStuds[1];
+			
+			if (ks0.across(yStud)) {
+				jointTracksToPath(ks1, ks0);
+			} else if (ks1.across(yStud)) {
+				jointTracksToPath(ks0, ks1);
+			} else {
+				jointTracksToPath(ks0, ks1);
+			}
+			
+		} else {
+			/*
+			 * no joints, do exit here
+			 */
+			exitTrackToPath(yStud);
 		}
 		
 		/*
@@ -493,18 +567,10 @@ public class RushHourBoard extends Entity {
 		
 	}
 	
-	boolean withinRowRange(int r) {
-		return r >= 0 && r < rowCount;
-	}
-	
-	boolean withinColRange(int c) {
-		return c >= 0 && c < colCount;
-	}
-	
 	/**
 	 * create the last vertex and add a road connecting the stud fixture to it
 	 */
-	private void addExitRoad(ExitStud y) {
+	private void addExitRoad(BorderStud y) {
 		
 		Point other = null;
 		Fixture f;
@@ -546,7 +612,7 @@ public class RushHourBoard extends Entity {
 	/**
 	 * 
 	 */
-	private void addExitRoadToTrack(List<GraphPosition> track, ExitStud yStud) {
+	private void addExitRoadToTrack(List<GraphPosition> track, BorderStud yStud) {
 		
 		Road r;
 		switch(yStud.f.getFacingSide()) {
@@ -594,10 +660,10 @@ public class RushHourBoard extends Entity {
 		
 	}
 	
-	private void addJointRoad(JointStud[] joints) {
+	private void addJointRoad(BorderStud[] joints) {
 		
-		JointStud js0 = joints[0];
-		JointStud js1 = joints[1];
+		BorderStud js0 = joints[0];
+		BorderStud js1 = joints[1];
 		Fixture f0 = js0.f;
 		Fixture f1 = js1.f;
 		Point start;
@@ -650,7 +716,7 @@ public class RushHourBoard extends Entity {
 		
 	}
 	
-	private void exitTrackToPath(ExitStud s0) {
+	private void exitTrackToPath(BorderStud s0) {
 		
 		List<GraphPosition> s0Track;
 		if (s0.col < 0) {
@@ -706,7 +772,7 @@ public class RushHourBoard extends Entity {
 		
 	}
 	
-	private void jointTracksToPath(JointStud s0, JointStud s1) {
+	private void jointTracksToPath(BorderStud s0, BorderStud s1) {
 				
 		List<GraphPosition> s0Track;
 		if (s0.col < 0) {
@@ -852,7 +918,7 @@ public class RushHourBoard extends Entity {
 		
 	}
 	
-	private void jointTracksToPath(JointStud js0, JointStud js1, JointStud ks1, JointStud ks0) {
+	private void jointTracksToPath(BorderStud js0, BorderStud js1, BorderStud ks1, BorderStud ks0) {
 		
 		List<GraphPosition> js0Track;
 		if (js0.col < 0) {
@@ -1113,7 +1179,7 @@ public class RushHourBoard extends Entity {
 //		}
 //		
 //		if (c.sprite == CarSheetSprite.RED) {
-//			for (ExitStud s : exitStuds) {
+//			for (BorderStud s : exitStuds) {
 //				if (ShapeUtils.intersectAO(s.aabb, c.shape)) {
 //					return true;
 //				}

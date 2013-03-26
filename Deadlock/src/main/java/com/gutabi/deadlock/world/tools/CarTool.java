@@ -122,6 +122,7 @@ public class CarTool extends ToolBase {
 					GraphPosition gpos = car.driver.overallPos.getGraphPosition();
 					
 					if (gpos instanceof RoadPosition || gpos instanceof VertexPosition || (gpos instanceof RushHourBoardPosition && !floorAndCeilWithinGrid((RushHourBoardPosition)gpos))) {
+						boolean roadOrVertex = (gpos instanceof RoadPosition || gpos instanceof VertexPosition);
 						
 						/*
 						 * determine which direction to coast
@@ -132,13 +133,14 @@ public class CarTool extends ToolBase {
 						int studCount = (int)(car.length * Car.METERS_PER_CARLENGTH / RushHourStud.SIZE);
 						boolean otherSideIsFree = true;
 						
-						if (car.driver.overallPos.combo < car.driver.toolOrigExitingVertexPos.combo) {
+						if (roadOrVertex ? car.driver.overallPos.combo <= car.driver.toolOrigExitingVertexPos.combo : car.driver.overallPos.combo >= car.driver.toolOrigExitingVertexPos.combo) {
 							
 							/*
 							 * overallPos is less than exiting vertex, so the other vertex must be less than overallPos
 							 */
 							
-							int prevVertexIndex = car.driver.overallPath.prevVertexIndex(car.driver.overallPos.index, car.driver.overallPos.param);
+							int prevVertexIndex = roadOrVertex ? car.driver.overallPos.prevVertexIndex() : car.driver.toolOrigExitingVertexPos.prevVertexIndex();
+							assert prevVertexIndex != -1;
 							
 							Fixture prevVertex = (Fixture)car.driver.overallPath.get(prevVertexIndex).entity;
 							
@@ -181,7 +183,8 @@ public class CarTool extends ToolBase {
 							
 						} else {
 							
-							int nextVertexIndex = car.driver.overallPath.nextVertexIndex(car.driver.overallPos.index, car.driver.overallPos.param);
+							int nextVertexIndex = roadOrVertex ? car.driver.overallPos.nextVertexIndex() : car.driver.toolOrigExitingVertexPos.nextVertexIndex();
+							assert nextVertexIndex != -1;
 							
 							if (nextVertexIndex == car.driver.overallPath.size-1) {
 								/*
@@ -360,6 +363,9 @@ public class CarTool extends ToolBase {
 					if (gpos instanceof RoadPosition) {
 						
 						if (car.driver.prevOverallPos.getGraphPosition() instanceof RushHourBoardPosition) {
+							/*
+							 * crossed a vertex
+							 */
 							
 							if (car.driver.toolOrigExitingVertexPos == null) {
 								
@@ -379,9 +385,7 @@ public class CarTool extends ToolBase {
 							}
 							
 						} else if (car.driver.prevOverallPos.getGraphPosition() instanceof VertexPosition) {
-							/*
-							 * dragging from last vertex
-							 */
+							
 							if (car.driver.toolOrigExitingVertexPos == null) {
 								
 								car.driver.toolOrigExitingVertexPos = car.driver.prevOverallPos;
@@ -422,6 +426,9 @@ public class CarTool extends ToolBase {
 						GraphPosition prevGPos = car.driver.prevOverallPos.getGraphPosition();
 						
 						if (prevGPos instanceof RoadPosition) {
+							/*
+							 * crossed a vertex
+							 */
 							
 							if (car.driver.toolOrigExitingVertexPos == null) {
 								
@@ -452,11 +459,11 @@ public class CarTool extends ToolBase {
 								if (car.driver.prevOverallPos.combo < car.driver.overallPos.combo) {
 									nextVertexIndex = car.driver.overallPath.nextVertexIndex(car.driver.prevOverallPos.index, car.driver.prevOverallPos.param);
 									assert nextVertexIndex != -1;
-									assert car.driver.prevOverallPos.combo < nextVertexIndex && nextVertexIndex < car.driver.overallPos.combo;
+//									assert car.driver.prevOverallPos.combo < nextVertexIndex && nextVertexIndex < car.driver.overallPos.combo;
 								} else {
 									nextVertexIndex = car.driver.overallPath.nextVertexIndex(car.driver.overallPos.index, car.driver.overallPos.param);
 									assert nextVertexIndex != -1;
-									assert car.driver.overallPos.combo < nextVertexIndex && nextVertexIndex < car.driver.prevOverallPos.combo;
+//									assert car.driver.overallPos.combo < nextVertexIndex && nextVertexIndex < car.driver.prevOverallPos.combo;
 								}
 								
 								car.driver.toolOrigExitingVertexPos = new GraphPositionPathPosition(car.driver.overallPath, nextVertexIndex, 0.0);

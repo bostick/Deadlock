@@ -408,4 +408,13 @@ public class GraphPositionPathPosition {
 			return new GraphPositionPathPosition(path, tmpFloorIndex, 0.0).travelBackward(length);
 		}
 	}
+	
+	
+	public int prevVertexIndex() {
+		return path.prevVertexIndex(index, param);
+	}
+	
+	public int nextVertexIndex() {
+		return path.nextVertexIndex(index, param);
+	}
 }
