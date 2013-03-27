@@ -61,48 +61,61 @@ public class CarTool extends ToolBase {
 	public void pressed(InputEvent ev) {
 		
 		InteractiveCar pressed = (InteractiveCar)worldScreen.world.carMap.carHitTest(ev.p);
-		if (pressed != null) {
+		if (pressed == null) {
+			return;
+		}
+		
+		if (car != null && pressed != car && car.state != CarStateEnum.IDLE) {
+			return;
+		}
+		
+		switch (pressed.state) {
+		case IDLE:
 			
-			switch (pressed.state) {
-			case IDLE:
-				
-				car = pressed;
-				
-				car.toolOrigP = car.center;
-				car.toolOrigShape = car.shape;
-				car.driver.toolOrigOverallPos = car.driver.overallPos;
-				
-				car.state = CarStateEnum.DRAGGING;
-				
-				break;
-			case DRAGGING:
-				assert false;
-				break;
-			case COASTING_FORWARD:
-			case COASTING_BACKWARD:
-				
-				car = pressed;
-				
+			car = pressed;
+			
+			car.toolOrigP = car.center;
+			car.toolOrigShape = car.shape;
+			car.driver.toolOrigOverallPos = car.driver.overallPos;
+			
+			car.state = CarStateEnum.DRAGGING;
+			
+			break;
+		case DRAGGING:
+			assert false;
+			break;
+		case COASTING_FORWARD:
+		case COASTING_BACKWARD:
+			
+			if (pressed == car) {
 				car.toolOrigP = car.center;
 				car.toolOrigShape = car.shape;
 				car.driver.toolOrigOverallPos = car.driver.overallPos;
 				
 				car.clearCoastingVel();
 				car.state = CarStateEnum.DRAGGING;
-				
-				break;
-			default:
-				assert false : pressed.state;
-				break;
 			}
 			
+			break;
+		default:
+			assert false : pressed.state;
+			break;
 		}
 		
 	}
 	
 	public void released(InputEvent ev) {
-		
-		if (car != null && car.toolOrigShape.hitTest(worldScreen.world.lastPressedWorldPoint) && dragVector != null) {
+		try {
+			
+			if (car == null) {
+				return;
+			}
+			if (!car.toolOrigShape.hitTest(worldScreen.world.lastPressedWorldPoint)) {
+				return;
+			}
+			if (dragVector == null) {
+				return;
+			}
 			
 			switch (car.state) {
 			case DRAGGING:
@@ -247,31 +260,36 @@ public class CarTool extends ToolBase {
 						assert gpos instanceof RushHourBoardPosition;
 						assert floorAndCeilWithinGrid((RushHourBoardPosition)gpos);
 						
-						RushHourBoard b = (RushHourBoard)((RushHourBoardPosition)gpos).entity;
-						
+//								RushHourBoard b = (RushHourBoard)((RushHourBoardPosition)gpos).entity;
 						GraphPositionPathPosition tmpFloorPos = car.driver.overallPos.floor(car.length/2);
 						GraphPositionPathPosition tmpCeilPos = car.driver.overallPos.ceil(car.length/2);
-						GraphPositionPathPosition tmpRoundPos = car.driver.overallPos.round(car.length/2);
+//								GraphPositionPathPosition tmpRoundPos = car.driver.overallPos.round(car.length/2);
 						
-						OBB testFloor = Geom.localToWorld(car.localAABB, car.angle, tmpFloorPos.p);
-						OBB testCeil = Geom.localToWorld(car.localAABB, car.angle, tmpCeilPos.p);
-						
-						boolean floorWithin = testFloor.aabb.completelyWithin(b.gridAABB);
-						boolean ceilWithin = testCeil.aabb.completelyWithin(b.gridAABB);
-						
-						if (!floorWithin && ceilWithin) {
+						if (car.driver.prevOverallPos.combo < car.driver.overallPos.combo) {
 							car.driver.toolCoastingGoal = tmpCeilPos;
-						} else if (!ceilWithin && floorWithin) {
-							car.driver.toolCoastingGoal = tmpFloorPos;
-						} else if (ceilWithin && floorWithin) {
-							/*
-							 * both are valid, use rounded
-							 */
-							car.driver.toolCoastingGoal = tmpRoundPos;
 						} else {
-							assert !floorAndCeilWithinGrid((RushHourBoardPosition)gpos);
-							assert false;
+							car.driver.toolCoastingGoal = tmpFloorPos;
 						}
+						
+//								OBB testFloor = Geom.localToWorld(car.localAABB, car.angle, tmpFloorPos.p);
+//								OBB testCeil = Geom.localToWorld(car.localAABB, car.angle, tmpCeilPos.p);
+						
+//								boolean floorWithin = testFloor.aabb.completelyWithin(b.gridAABB);
+//								boolean ceilWithin = testCeil.aabb.completelyWithin(b.gridAABB);
+						
+//								if (!floorWithin && ceilWithin) {
+//									car.driver.toolCoastingGoal = tmpCeilPos;
+//								} else if (!ceilWithin && floorWithin) {
+//									car.driver.toolCoastingGoal = tmpFloorPos;
+//								} else if (ceilWithin && floorWithin) {
+//									/*
+//									 * both are valid, use rounded
+//									 */
+//									car.driver.toolCoastingGoal = tmpRoundPos;
+//								} else {
+//									assert !floorAndCeilWithinGrid((RushHourBoardPosition)gpos);
+//									assert false;
+//								}
 						
 						if (DMath.lessThanEquals(car.driver.toolCoastingGoal.combo, car.driver.overallPos.combo)) {
 							
@@ -293,12 +311,11 @@ public class CarTool extends ToolBase {
 			default:
 				assert false;
 				break;
-			}
+			}	
+			
+		} finally {
+			dragVector = null;
 		}
-		
-		car = null;
-		dragVector = null;
-		
 	}
 	
 	boolean floorAndCeilWithinGrid(RushHourBoardPosition bpos) {
@@ -342,7 +359,10 @@ public class CarTool extends ToolBase {
 		if (car == null) {
 			return;
 		}
-			
+		if (!car.toolOrigShape.hitTest(worldScreen.world.lastPressedWorldPoint)) {
+			return;
+		}
+		
 		Point diff = ev.p.minus(worldScreen.world.lastPressedWorldPoint);
 		
 		Point carPTmp = car.toolOrigP.plus(diff);

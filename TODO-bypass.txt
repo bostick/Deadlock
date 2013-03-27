@@ -1,13 +1,5 @@
 
 
-make sure dragging doesn't get snagged
-
-
-
-
-when goign from stud to stud, always coast to the next stud, not to the previous one
-
-
 
 add perimeters around joint studs
 in board description, a missing - or | means to allow the car off of the board...
@@ -36,6 +28,10 @@ something: cars are now intangible
 
 
 DONE:
+
+when goign from stud to stud, always coast to the next stud, not to the previous one
+
+make sure dragging doesn't get snagged
 
 add long road from exit
 
