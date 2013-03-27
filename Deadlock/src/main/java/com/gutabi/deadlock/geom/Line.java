@@ -1,5 +1,6 @@
 package com.gutabi.deadlock.geom;
 
+import com.gutabi.deadlock.math.DMath;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 
@@ -13,9 +14,41 @@ public class Line implements Shape {
 	
 	private int hash;
 	
+	public final boolean rightAngle;
+	
 	public Line(Point p0, Point p1) {
-		this.p0 = p0;
-		this.p1 = p1;
+		
+		/*
+		 * for right angles, sort the points
+		 */
+		if (DMath.equals(p0.x, p1.x)) {
+			rightAngle = true;
+			
+			if (DMath.lessThan(p1.y, p0.y)) {
+				this.p0 = p1;
+				this.p1 = p0;
+			} else {
+				this.p0 = p0;
+				this.p1 = p1;
+			}
+			
+		} else if (DMath.equals(p0.y, p1.y)) {
+			rightAngle = true;
+			
+			if (DMath.lessThan(p1.x, p0.x)) {
+				this.p0 = p1;
+				this.p1 = p0;
+			} else {
+				this.p0 = p0;
+				this.p1 = p1;
+			}
+			
+		} else {
+			rightAngle = false;
+			this.p0 = p0;
+			this.p1 = p1;
+		}
+		
 	}
 	
 	public int hashCode() {

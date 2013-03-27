@@ -3,9 +3,11 @@ package com.gutabi.deadlock.world.tools;
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
 import com.gutabi.deadlock.geom.Geom;
+import com.gutabi.deadlock.geom.Line;
 import com.gutabi.deadlock.geom.OBB;
 import com.gutabi.deadlock.geom.Shape;
-import com.gutabi.deadlock.geom.ShapeUtils;
+import com.gutabi.deadlock.geom.SweepUtils;
+import com.gutabi.deadlock.geom.SweptOBB;
 import com.gutabi.deadlock.math.DMath;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.menu.MainMenu;
@@ -100,7 +102,7 @@ public class CarTool extends ToolBase {
 	
 	public void released(InputEvent ev) {
 		
-		if (car != null && car.toolOrigShape.hitTest(worldScreen.world.lastPressedWorldPoint)) {
+		if (car != null && car.toolOrigShape.hitTest(worldScreen.world.lastPressedWorldPoint) && dragVector != null) {
 			
 			switch (car.state) {
 			case DRAGGING:
@@ -152,7 +154,7 @@ public class CarTool extends ToolBase {
 								for (int i = 0; i < studCount; i++) {
 									RushHourBoardPosition bpos = (RushHourBoardPosition)car.driver.overallPath.get(prevVertexIndex-1-i);
 									RushHourStud stud = ((RushHourBoard)bpos.entity).stud(bpos);
-									if (!stud.isFree()) {
+									if (!stud.isFree(car)) {
 										otherSideIsFree = false;
 										break;
 									}
@@ -163,7 +165,7 @@ public class CarTool extends ToolBase {
 								for (int i = 0; i < studCount; i++) {
 									RushHourBoardPosition bpos = (RushHourBoardPosition)car.driver.overallPath.get(prevVertexIndex-2-i);
 									RushHourStud stud = ((RushHourBoard)bpos.entity).stud(bpos);
-									if (!stud.isFree()) {
+									if (!stud.isFree(car)) {
 										otherSideIsFree = false;
 										break;
 									}
@@ -203,7 +205,7 @@ public class CarTool extends ToolBase {
 									for (int i = 0; i < studCount; i++) {
 										RushHourBoardPosition bpos = (RushHourBoardPosition)car.driver.overallPath.get(nextVertexIndex+1+i);
 										RushHourStud stud = ((RushHourBoard)bpos.entity).stud(bpos);
-										if (!stud.isFree()) {
+										if (!stud.isFree(car)) {
 											otherSideIsFree = false;
 											break;
 										}
@@ -214,7 +216,7 @@ public class CarTool extends ToolBase {
 									for (int i = 0; i < studCount; i++) {
 										RushHourBoardPosition bpos = (RushHourBoardPosition)car.driver.overallPath.get(nextVertexIndex+2+i);
 										RushHourStud stud = ((RushHourBoard)bpos.entity).stud(bpos);
-										if (!stud.isFree()) {
+										if (!stud.isFree(car)) {
 											otherSideIsFree = false;
 											break;
 										}
@@ -287,19 +289,15 @@ public class CarTool extends ToolBase {
 					
 				}
 				
-//				car.toolOrigP = null;
-//				car.toolOrigShape = null;
-//				car.driver.toolOrigOverallPos = null;
-				
 				break;
 			default:
 				assert false;
 				break;
 			}
-			
-			
-			car = null;
 		}
+		
+		car = null;
+		dragVector = null;
 		
 	}
 	
@@ -330,6 +328,7 @@ public class CarTool extends ToolBase {
 	 * setting dynamic properties is done here
 	 */
 	public void dragged(InputEvent ev) {
+//		System.out.println("dragged");
 		
 		prevDragP = curDragP;
 		prevDragMillis = curDragMillis;
@@ -339,61 +338,72 @@ public class CarTool extends ToolBase {
 			dragVector = curDragP.minus(prevDragP);
 			dragTimeStepMillis = curDragMillis - prevDragMillis;
 		}
-				
-		if (car != null) {
+		
+		if (car == null) {
+			return;
+		}
 			
-			Point diff = ev.p.minus(worldScreen.world.lastPressedWorldPoint);
+		Point diff = ev.p.minus(worldScreen.world.lastPressedWorldPoint);
+		
+		Point carPTmp = car.toolOrigP.plus(diff);
+		
+		switch (car.state) {
+		case DRAGGING:
 			
-			Point carPTmp = car.toolOrigP.plus(diff);
+			/*
+			 * the 10.0 is a heuristic
+			 * should be long enough to allow a flick to go from one side of the board to the other,
+			 * but short enough to not have any path intersection problems, nor have any teleporting problems
+			 * 
+			 */
+			GraphPositionPathPosition attemptedPos = car.driver.overallPath.generalSearch(carPTmp, car.driver.overallPos, 10.0);
+//			System.out.println("attempted: " + attemptedPos);
+//			if (attemptedPos.combo == 1.9375 || attemptedPos.combo == 1.96875) {
+//				String.class.getName();
+//			}
 			
-			switch (car.state) {
-			case DRAGGING:
+			GraphPositionPathPosition actualPos = furthestAllowablePosition(car.driver.overallPos, attemptedPos);
+//			System.out.println("actual: " + actualPos);
+			
+			car.setTransform(actualPos.p, actualPos.angle());
+			car.setPhysicsTransform();
+			
+			car.driver.setOverallPos(actualPos);
+			
+			GraphPosition gpos = car.driver.overallPos.getGraphPosition();
+			
+			if (gpos instanceof RoadPosition) {
 				
-				GraphPositionPathPosition testPathPos = car.driver.overallPath.generalSearch(carPTmp, car.driver.overallPos, car.length);
-				
-				if (!collidesWithBoardOrOtherCars(car, testPathPos.p)) {
+				if (car.driver.prevOverallPos.getGraphPosition() instanceof RushHourBoardPosition) {
+					/*
+					 * crossed a vertex
+					 */
 					
-					car.setTransform(testPathPos.p, DMath.greaterThanEquals(testPathPos.combo, car.driver.overallPos.combo) ? testPathPos.angle() : /*2*Math.PI-*/testPathPos.angle());
-					car.setPhysicsTransform();
-					
-					car.driver.setOverallPos(testPathPos);
-					
-					GraphPosition gpos = car.driver.overallPos.getGraphPosition();
-					
-					if (gpos instanceof RoadPosition) {
+					if (car.driver.toolOrigExitingVertexPos == null) {
 						
-						if (car.driver.prevOverallPos.getGraphPosition() instanceof RushHourBoardPosition) {
-							/*
-							 * crossed a vertex
-							 */
-							
-							if (car.driver.toolOrigExitingVertexPos == null) {
-								
-								int nextVertexIndex;
-								if (car.driver.prevOverallPos.combo < car.driver.overallPos.combo) {
-									nextVertexIndex = car.driver.overallPath.nextVertexIndex(car.driver.prevOverallPos.index, car.driver.prevOverallPos.param);
-									assert nextVertexIndex != -1;
-									assert car.driver.prevOverallPos.combo < nextVertexIndex && nextVertexIndex < car.driver.overallPos.combo;
-								} else {
-									nextVertexIndex = car.driver.overallPath.nextVertexIndex(car.driver.overallPos.index, car.driver.overallPos.param);
-									assert nextVertexIndex != -1;
-									assert car.driver.overallPos.combo < nextVertexIndex && nextVertexIndex < car.driver.prevOverallPos.combo;
-								}
-								
-								car.driver.toolOrigExitingVertexPos = new GraphPositionPathPosition(car.driver.overallPath, nextVertexIndex, 0.0);
-//								System.out.println(car.driver.toolOrigExitingVertexPos.getGraphPosition());
-							}
-							
-						} else if (car.driver.prevOverallPos.getGraphPosition() instanceof VertexPosition) {
-							
-							if (car.driver.toolOrigExitingVertexPos == null) {
-								
-								car.driver.toolOrigExitingVertexPos = car.driver.prevOverallPos;
-//								System.out.println(car.driver.toolOrigExitingVertexPos.getGraphPosition());
-							}
-							
+						int nextVertexIndex;
+						if (car.driver.prevOverallPos.combo < car.driver.overallPos.combo) {
+							nextVertexIndex = car.driver.overallPath.nextVertexIndex(car.driver.prevOverallPos.index, car.driver.prevOverallPos.param);
+							assert nextVertexIndex != -1;
+							assert car.driver.prevOverallPos.combo < nextVertexIndex && nextVertexIndex < car.driver.overallPos.combo;
+						} else {
+							nextVertexIndex = car.driver.overallPath.nextVertexIndex(car.driver.overallPos.index, car.driver.overallPos.param);
+							assert nextVertexIndex != -1;
+							assert car.driver.overallPos.combo < nextVertexIndex && nextVertexIndex < car.driver.prevOverallPos.combo;
 						}
 						
+						car.driver.toolOrigExitingVertexPos = new GraphPositionPathPosition(car.driver.overallPath, nextVertexIndex, 0.0);
+					}
+					
+				} else if (car.driver.prevOverallPos.getGraphPosition() instanceof VertexPosition) {
+					
+					if (car.driver.toolOrigExitingVertexPos == null) {
+						
+						car.driver.toolOrigExitingVertexPos = car.driver.prevOverallPos;
+					}
+					
+				}
+				
 //						double a = rpos.lengthToStartOfRoad / rpos.r.getTotalLength(rpos.r.start, rpos.r.end);
 //						
 //						double para;
@@ -408,99 +418,544 @@ public class CarTool extends ToolBase {
 //						worldScreen.world.zoomAbsolute(para);
 //						
 //						worldScreen.world.render_worldPanel();
-						
-					} else if (gpos instanceof VertexPosition) {
-						
-						if (car.driver.toolOrigExitingVertexPos == null) {
-							
-							car.driver.toolOrigExitingVertexPos = car.driver.overallPos;
-//							System.out.println(car.driver.toolOrigExitingVertexPos.getGraphPosition());
-						}
-						
+				
+			} else if (gpos instanceof VertexPosition) {
+				
+				if (car.driver.toolOrigExitingVertexPos == null) {
+					
+					car.driver.toolOrigExitingVertexPos = car.driver.overallPos;
+				}
+				
 //						worldScreen.world.zoomAbsolute(1.0);
 //						
 //						worldScreen.world.render_worldPanel();
+				
+			} else {
+				assert gpos instanceof RushHourBoardPosition;
+				
+				GraphPosition prevGPos = car.driver.prevOverallPos.getGraphPosition();
+				
+				if (prevGPos instanceof RoadPosition) {
+					/*
+					 * crossed a vertex
+					 */
+					
+					if (car.driver.toolOrigExitingVertexPos == null) {
 						
-					} else if (gpos instanceof RushHourBoardPosition) {
-						
-						GraphPosition prevGPos = car.driver.prevOverallPos.getGraphPosition();
-						
-						if (prevGPos instanceof RoadPosition) {
-							/*
-							 * crossed a vertex
-							 */
-							
-							if (car.driver.toolOrigExitingVertexPos == null) {
-								
-								int nextVertexIndex;
-								if (car.driver.prevOverallPos.combo < car.driver.overallPos.combo) {
-									nextVertexIndex = car.driver.overallPath.nextVertexIndex(car.driver.prevOverallPos.index, car.driver.prevOverallPos.param);
-									assert nextVertexIndex != -1;
-									assert car.driver.prevOverallPos.combo < nextVertexIndex && nextVertexIndex < car.driver.overallPos.combo;
-								} else {
-									nextVertexIndex = car.driver.overallPath.nextVertexIndex(car.driver.overallPos.index, car.driver.overallPos.param);
-									assert nextVertexIndex != -1;
-									assert car.driver.overallPos.combo < nextVertexIndex && nextVertexIndex < car.driver.prevOverallPos.combo;
-								}
-								
-								car.driver.toolOrigExitingVertexPos = new GraphPositionPathPosition(car.driver.overallPath, nextVertexIndex, 0.0);
-//								System.out.println(car.driver.toolOrigExitingVertexPos.getGraphPosition());
-							}
-							
-						} else if (prevGPos instanceof VertexPosition) {
-							
-//							assert car.driver.toolOrigExitingVertexPos == car.driver.prevOverallPos;
-							
-						} else if (prevGPos instanceof RushHourBoardPosition && !floorAndCeilWithinGrid((RushHourBoardPosition)gpos)) {
-							
-							if (car.driver.toolOrigExitingVertexPos == null) {
-								
-								int nextVertexIndex;
-								if (car.driver.prevOverallPos.combo < car.driver.overallPos.combo) {
-									nextVertexIndex = car.driver.overallPath.nextVertexIndex(car.driver.prevOverallPos.index, car.driver.prevOverallPos.param);
-									assert nextVertexIndex != -1;
-//									assert car.driver.prevOverallPos.combo < nextVertexIndex && nextVertexIndex < car.driver.overallPos.combo;
-								} else {
-									nextVertexIndex = car.driver.overallPath.nextVertexIndex(car.driver.overallPos.index, car.driver.overallPos.param);
-									assert nextVertexIndex != -1;
-//									assert car.driver.overallPos.combo < nextVertexIndex && nextVertexIndex < car.driver.prevOverallPos.combo;
-								}
-								
-								car.driver.toolOrigExitingVertexPos = new GraphPositionPathPosition(car.driver.overallPath, nextVertexIndex, 0.0);
-//								System.out.println(car.driver.toolOrigExitingVertexPos.getGraphPosition());
-							}
-							
+						int nextVertexIndex;
+						if (car.driver.prevOverallPos.combo < car.driver.overallPos.combo) {
+							nextVertexIndex = car.driver.overallPath.nextVertexIndex(car.driver.prevOverallPos.index, car.driver.prevOverallPos.param);
+							assert nextVertexIndex != -1;
+							assert car.driver.prevOverallPos.combo < nextVertexIndex && nextVertexIndex < car.driver.overallPos.combo;
+						} else {
+							nextVertexIndex = car.driver.overallPath.nextVertexIndex(car.driver.overallPos.index, car.driver.overallPos.param);
+							assert nextVertexIndex != -1;
+							assert car.driver.overallPos.combo < nextVertexIndex && nextVertexIndex < car.driver.prevOverallPos.combo;
 						}
 						
-//						worldScreen.world.zoomAbsolute(1.0);
-//						
-//						worldScreen.world.render_worldPanel();
-						
-					} else {
-						assert false;
+						car.driver.toolOrigExitingVertexPos = new GraphPositionPathPosition(car.driver.overallPath, nextVertexIndex, 0.0);
 					}
 					
-					worldScreen.contentPane.repaint();
+				} else if (prevGPos instanceof VertexPosition) {
+					
+					
+				} else if (prevGPos instanceof RushHourBoardPosition && !floorAndCeilWithinGrid((RushHourBoardPosition)gpos)) {
+					
+					if (car.driver.toolOrigExitingVertexPos == null) {
+						
+						int nextVertexIndex;
+						if (car.driver.prevOverallPos.combo < car.driver.overallPos.combo) {
+							nextVertexIndex = car.driver.overallPos.nextVertexIndex();
+							assert nextVertexIndex != -1;
+						} else {
+							nextVertexIndex = car.driver.prevOverallPos.prevVertexIndex();
+							assert nextVertexIndex != -1;
+						}
+						
+						car.driver.toolOrigExitingVertexPos = new GraphPositionPathPosition(car.driver.overallPath, nextVertexIndex, 0.0);
+					}
 					
 				}
 				
-				break;
-			default:
-				assert false;
-				break;
+//						worldScreen.world.zoomAbsolute(1.0);
+//						
+//						worldScreen.world.render_worldPanel();
+				
 			}
 			
+			worldScreen.contentPane.repaint();
+			
+			break;
+		default:
+			assert false;
+			break;
 		}
 		
 	}
 	
-	private boolean collidesWithBoardOrOtherCars(Car car, Point test) {
+	/**
+	 * from start, move along path until either a collision or reach end. return the position
+	 */
+	private GraphPositionPathPosition furthestAllowablePosition(GraphPositionPathPosition start, GraphPositionPathPosition end) {
 		
-		OBB testOBB = Geom.localToWorld(car.localAABB, car.angle, test);
+		if (start.equals(end)) {
+//			System.out.println("fursthest: " + start + " " + end + " " + start);
+			return start;
+		}
+		
+		return (start.combo < end.combo) ? furthestAllowablePositionForward(start, end) : furthestAllowablePositionBackward(start, end);
+		
+//		GraphPosition startG = start.getGraphPosition();
+//		GraphPosition endG = end.getGraphPosition();
+//		
+//		if (startG instanceof RushHourBoardPosition) {
+//			if (endG instanceof RushHourBoardPosition) {
+//				return (start.combo < end.combo) ? furthestAllowablePositionForward(start, end) : furthestAllowablePositionBackward(start, end);
+//			} else if (endG instanceof VertexPosition) {
+//				return (start.combo < end.combo) ? furthestAllowablePositionForward(start, end) : furthestAllowablePositionBackward(start, end);
+//			} else {
+//				assert endG instanceof RoadPosition;
+//				
+//			}
+//		} else if (startG instanceof VertexPosition) {
+//			if (endG instanceof RushHourBoardPosition) {
+//				return (start.combo < end.combo) ? furthestAllowablePositionForward(start, end) : furthestAllowablePositionBackward(start, end);
+//			} else if (endG instanceof VertexPosition) {
+//				assert false;
+//			} else {
+//				assert endG instanceof RoadPosition;
+//				
+//			}
+//		} else {
+//			assert startG instanceof RoadPosition;
+//			if (endG instanceof RushHourBoardPosition) {
+//				
+//			} else if (endG instanceof VertexPosition) {
+//				
+//			} else {
+//				assert endG instanceof RoadPosition;
+//				/*
+//				 * dragging on road, so only do collision detection when on straight extensions of road
+//				 */
+//				if (DMath.isRightAngle(start.angle()) && DMath.isRightAngle(end.angle())) {
+//					/*
+//					 * relies on the fact that a single drag segment will not span an entire road and mix up the extensions on different ends of the road
+//					 */
+//					return (start.combo < end.combo) ? furthestAllowablePositionForward(start, end) : furthestAllowablePositionBackward(start, end);
+//				} else {
+//					return end;
+//				}
+//			}
+//		}
+		
+	}
+	
+	/**
+	 * 
+	 * returns end upon finding first non-right angle,
+	 */
+	private GraphPositionPathPosition furthestAllowablePositionForward(GraphPositionPathPosition preStart, GraphPositionPathPosition end) {
+		
+		GraphPositionPathPosition start = findFirstRightAngleForwardOrEnd(preStart, end);
+		
+		if (start.equals(end)) {
+			
+			return end;
+			
+		} else if (start.index == end.index) {
+			
+			if (!DMath.isRightAngle(end.angle())) {
+				return end;
+			}
+			
+			OBB so = Geom.localToWorld(car.localAABB, start.angle(), start.p);
+			OBB eo = Geom.localToWorld(car.localAABB, end.angle(), end.p);
+			SweptOBB swept = new SweptOBB(so, eo);
+			
+			double param = firstCollisionParam(car, swept);
+			if (param != -1) {
+				param = DMath.lerp(start.param, end.param, param);
+				return new GraphPositionPathPosition(car.driver.overallPath, start.index, param);
+			}
+			
+			return end;
+		} else if (end.index == start.index+1 && DMath.equals(end.param, 0.0)) {
+			
+			if (!DMath.isRightAngle(end.angle())) {
+				return end;
+			}
+			
+			OBB so = Geom.localToWorld(car.localAABB, start.angle(), start.p);
+			OBB eo = Geom.localToWorld(car.localAABB, end.angle(), end.p);
+			SweptOBB swept = new SweptOBB(so, eo);
+			
+			double param = firstCollisionParam(car, swept);
+			if (param != -1) {
+				param = DMath.lerp(start.param, 1.0, param);
+				if (DMath.equals(param, 1.0)) {
+					return new GraphPositionPathPosition(car.driver.overallPath, end.index, 0.0);
+				} else {
+					return new GraphPositionPathPosition(car.driver.overallPath, start.index, param);
+				}
+			}
+			
+			return end;
+			
+		}
+		
+		GraphPositionPathPosition a = start;
+		GraphPositionPathPosition b;
+		GraphPositionPathPosition startCeiling = start.ceil();
+		GraphPositionPathPosition endFloor = end.floor();
+		
+		if (!startCeiling.equals(start)) {
+			b = startCeiling;
+			
+			if (!DMath.isRightAngle(b.angle())) {
+				return end;
+			}
+			
+			OBB ao = Geom.localToWorld(car.localAABB, a.angle(), a.p);
+			OBB bo = Geom.localToWorld(car.localAABB, b.angle(), b.p);
+			SweptOBB swept = new SweptOBB(ao, bo);
+			
+			double param = firstCollisionParam(car, swept);
+			if (param != -1) {
+				param = DMath.lerp(a.param, 1.0, param);
+				if (DMath.equals(param, 1.0)) {
+					return new GraphPositionPathPosition(car.driver.overallPath, a.index+1, 0.0);
+				} else {
+					return new GraphPositionPathPosition(car.driver.overallPath, a.index, param);
+				}
+			}
+			
+			a = b;
+		}
+		while (true) {
+			
+			if (a.equals(endFloor)) {
+				break;
+			}
+			
+			b = a.nextBound();
+			
+			if (!DMath.isRightAngle(b.angle())) {
+				return end;
+			}
+			
+			OBB ao = Geom.localToWorld(car.localAABB, a.angle(), a.p);
+			OBB bo = Geom.localToWorld(car.localAABB, b.angle(), b.p);
+			SweptOBB swept = new SweptOBB(ao, bo);
+			
+			double param = firstCollisionParam(car, swept);
+			if (param != -1) {
+				// identity
+				param = DMath.lerp(0.0, 1.0, param);
+				if (DMath.equals(param, 1.0)) {
+					return new GraphPositionPathPosition(car.driver.overallPath, a.index+1, 0.0);
+				} else {
+					return new GraphPositionPathPosition(car.driver.overallPath, a.index, param);
+				}
+			}
+			
+			a = b;
+		}
+		if (!endFloor.equals(end)) {
+			b = end;
+			
+			if (!DMath.isRightAngle(b.angle())) {
+				return end;
+			}
+			
+			OBB ao = Geom.localToWorld(car.localAABB, a.angle(), a.p);
+			OBB bo = Geom.localToWorld(car.localAABB, b.angle(), b.p);
+			SweptOBB swept = new SweptOBB(ao, bo);
+			
+			double param = firstCollisionParam(car, swept);
+			if (param != -1) {
+				param = DMath.lerp(0.0, b.param, param);
+				return new GraphPositionPathPosition(car.driver.overallPath, a.index, param);
+			}
+		}
+		
+		return end;
+	}
+	
+	/**
+	 * 
+	 * returns end upon finding first non-right angle,
+	 */
+	private GraphPositionPathPosition furthestAllowablePositionBackward(GraphPositionPathPosition preStart, GraphPositionPathPosition end) {
+		
+		GraphPositionPathPosition start = findFirstRightAngleBackwardOrEnd(preStart, end);
+		
+		if (start.equals(end)) {
+			
+			return end;
+			
+		} else if (start.index == end.index) {
+			
+			if (!DMath.isRightAngle(end.angle())) {
+				return end;
+			}
+			
+			OBB so = Geom.localToWorld(car.localAABB, start.angle(), start.p);
+			OBB eo = Geom.localToWorld(car.localAABB, end.angle(), end.p);
+			SweptOBB swept = new SweptOBB(so, eo);
+			
+			double param = firstCollisionParam(car, swept);
+			if (param != -1) {
+				param = DMath.lerp(start.param, end.param, param);
+				return new GraphPositionPathPosition(car.driver.overallPath, start.index, param);
+			}
+			
+			return end;
+			
+		} else if (end.index == start.index-1 && DMath.equals(start.param, 0.0)) {
+			
+			if (!DMath.isRightAngle(end.angle())) {
+				return end;
+			}
+			
+			OBB so = Geom.localToWorld(car.localAABB, start.angle(), start.p);
+			OBB eo = Geom.localToWorld(car.localAABB, end.angle(), end.p);
+			SweptOBB swept = new SweptOBB(so, eo);
+			
+			double param = firstCollisionParam(car, swept);
+			if (param != -1) {
+				param = DMath.lerp(1.0, end.param, param);
+				if (DMath.equals(param, 1.0)) {
+					return new GraphPositionPathPosition(car.driver.overallPath, start.index, 0.0);
+				} else {
+					return new GraphPositionPathPosition(car.driver.overallPath, end.index, param);
+				}
+			}
+			
+			return end;
+		}
+		
+		GraphPositionPathPosition b = start;
+		GraphPositionPathPosition a;
+		GraphPositionPathPosition startFloor = start.floor();
+		GraphPositionPathPosition endCeil = end.ceil();
+		
+		if (!startFloor.equals(start)) {
+			a = startFloor;
+			
+			if (!DMath.isRightAngle(a.angle())) {
+				return end;
+			}
+			
+			OBB ao = Geom.localToWorld(car.localAABB, a.angle(), a.p);
+			OBB bo = Geom.localToWorld(car.localAABB, b.angle(), b.p);
+			SweptOBB swept = new SweptOBB(bo, ao);
+			
+			double param = firstCollisionParam(car, swept);
+			if (param != -1) {
+				param = DMath.lerp(b.param, 0.0, param);
+				if (DMath.equals(param, 1.0)) {
+					return new GraphPositionPathPosition(car.driver.overallPath, a.index+1, 0.0);
+				} else {
+					return new GraphPositionPathPosition(car.driver.overallPath, a.index, param);
+				}
+			}
+			
+			b = a;
+		}
+		while (true) {
+			
+			if (b.equals(endCeil)) {
+				break;
+			}
+			
+			a = b.prevBound();
+			
+			if (!DMath.isRightAngle(a.angle())) {
+				return end;
+			}
+			
+			OBB ao = Geom.localToWorld(car.localAABB, a.angle(), a.p);
+			OBB bo = Geom.localToWorld(car.localAABB, b.angle(), b.p);
+			SweptOBB swept = new SweptOBB(bo, ao);
+			
+			double param = firstCollisionParam(car, swept);
+			if (param != -1) {
+				param = DMath.lerp(1.0, 0.0, param);
+				if (DMath.equals(param, 1.0)) {
+					return new GraphPositionPathPosition(car.driver.overallPath, a.index+1, 0.0);
+				} else {
+					return new GraphPositionPathPosition(car.driver.overallPath, a.index, param);
+				}
+			}
+			
+			b = a;
+		}
+		if (!endCeil.equals(end)) {
+			a = end;
+			
+			if (!DMath.isRightAngle(a.angle())) {
+				return end;
+			}
+			
+			OBB ao = Geom.localToWorld(car.localAABB, a.angle(), a.p);
+			OBB bo = Geom.localToWorld(car.localAABB, b.angle(), b.p);
+			SweptOBB swept = new SweptOBB(bo, ao);
+			
+			double param = firstCollisionParam(car, swept);
+			if (param != -1) {
+				param = DMath.lerp(1.0, a.param, param);
+				return new GraphPositionPathPosition(car.driver.overallPath, a.index, param);
+			}
+		}
+		
+		return end;
+	}
+	
+	private GraphPositionPathPosition findFirstRightAngleForwardOrEnd(GraphPositionPathPosition start, GraphPositionPathPosition end) {
+		
+		if (DMath.isRightAngle(start.angle())) {
+			
+			return start;
+			
+		} else if (start.index == end.index) {
+			
+			if (DMath.isRightAngle(end.angle())) {
+				return end;
+			}
+			
+			return end;
+			
+		} else if (end.index == start.index+1 && DMath.equals(end.param, 0.0)) {
+			
+			if (DMath.isRightAngle(end.angle())) {
+				return end;
+			}
+			
+			return end;
+			
+		}
+		
+		GraphPositionPathPosition a = start;
+		GraphPositionPathPosition b;
+		GraphPositionPathPosition startCeiling = start.ceil();
+		GraphPositionPathPosition endFloor = end.floor();
+		
+		if (!startCeiling.equals(start)) {
+			b = startCeiling;
+			
+			if (DMath.isRightAngle(b.angle())) {
+				return b;
+			}
+			
+			a = b;
+		}
+		while (true) {
+			
+			if (a.equals(endFloor)) {
+				break;
+			}
+			
+			b = a.nextBound();
+			
+			if (DMath.isRightAngle(b.angle())) {
+				return b;
+			}
+			
+			a = b;
+		}
+		if (!endFloor.equals(end)) {
+			b = end;
+			
+			if (DMath.isRightAngle(b.angle())) {
+				return b;
+			}
+			
+		}
+		
+		return end;
+	}
+	
+	private GraphPositionPathPosition findFirstRightAngleBackwardOrEnd(GraphPositionPathPosition start, GraphPositionPathPosition end) {
+		
+		if (DMath.isRightAngle(start.angle())) {
+			
+			return start;
+			
+		} else if (start.index == end.index) {
+			
+			if (DMath.isRightAngle(end.angle())) {
+				return end;
+			}
+			
+//			System.out.println("findFirstRightAngleBackwardOrEnd: reached end1: " + end);
+			return end;
+			
+		} else if (end.index == start.index-1 && DMath.equals(start.param, 0.0)) {
+			
+			if (DMath.isRightAngle(end.angle())) {
+				return end;
+			}
+			
+//			System.out.println("findFirstRightAngleBackwardOrEnd: reached end2: " + end);
+			return end;
+		}
+		
+		GraphPositionPathPosition b = start;
+		GraphPositionPathPosition a;
+		GraphPositionPathPosition startFloor = start.floor();
+		GraphPositionPathPosition endCeil = end.ceil();
+		
+		if (!startFloor.equals(start)) {
+			a = startFloor;
+			
+			if (DMath.isRightAngle(a.angle())) {
+				return a;
+			}
+			
+			b = a;
+		}
+		while (true) {
+			
+			if (b.equals(endCeil)) {
+				break;
+			}
+			
+			a = b.prevBound();
+			
+			if (DMath.isRightAngle(a.angle())) {
+				return a;
+			}
+			
+			b = a;
+		}
+		if (!endCeil.equals(end)) {
+			a = end;
+			
+			if (DMath.isRightAngle(a.angle())) {
+				return a;
+			}
+			
+		}
+		
+//		System.out.println("findFirstRightAngleBackwardOrEnd: reached end3: " + end);
+		
+		return end;
+	}
+
+	
+	/**
+	 * on the segment from start.center to end.center, what is the param of the first collision?
+	 */
+	double firstCollisionParam(Car car, SweptOBB swept) {
+		
+		double bestParam = -1.0;
 		
 		for (RushHourBoard b : worldScreen.world.graph.rushes) {
-			if (b.overlapsPerimeter(testOBB)) {
-				return true;
+			for (Line l : b.perimeterSegments) {
+				double param = SweepUtils.firstCollisionParam(l, swept);
+				if (param != -1 && (bestParam == -1 || DMath.lessThan(param, bestParam))) {
+					bestParam = param;
+				}
 			}
 		}
 		
@@ -508,12 +963,16 @@ public class CarTool extends ToolBase {
 			if (c == car) {
 				continue;
 			}
-			if (ShapeUtils.intersectAreaOO(testOBB, c.shape)) {
-				return true;
+//			if (car.id == 0) {
+//				String.class.getName();
+//			}
+			double param = SweepUtils.firstCollisionParam(c.shape, swept);
+			if (param != -1 && (bestParam == -1 || DMath.lessThan(param, bestParam))) {
+				bestParam = param;
 			}
 		}
 		
-		return false;
+		return bestParam;
 	}
 	
 	public void draw(RenderingContext ctxt) {

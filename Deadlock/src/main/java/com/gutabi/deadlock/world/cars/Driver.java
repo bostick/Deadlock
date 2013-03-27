@@ -30,7 +30,7 @@ public abstract class Driver {
 	public void setOverallPos(GraphPositionPathPosition pos) {
 		assert pos != null;
 		
-//		System.out.println(pos.getGraphPosition());
+//		System.out.println("overallPos: " + pos);
 		
 		prevOverallPos = overallPos;
 		overallPos = pos;

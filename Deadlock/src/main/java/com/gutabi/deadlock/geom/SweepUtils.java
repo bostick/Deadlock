@@ -672,4 +672,87 @@ public class SweepUtils {
 		
 	}
 	
+	/**
+	 * param when swept collides with l, or -1 if never collides
+	 */
+	public static double firstCollisionParam(Line l, SweptOBB swept) {
+		assert swept.isAABB;
+		assert l.rightAngle;
+		
+		assert !ShapeUtils.intersectAreaAL(swept.start.aabb, l);
+		
+		if (swept.dir.equals(Point.UP)) {
+			if (DMath.rangesOverlapArea(l.p0.x, l.p1.x, swept.start.aabb.x, swept.start.aabb.brX)) {
+				double param = (-(l.p1.y - swept.start.aabb.y)) / swept.dist;
+				return (DMath.greaterThanEquals(param, 0.0) && DMath.lessThanEquals(param, 1.0)) ? param : -1;
+			} else {
+				return -1;
+			}
+		} else if (swept.dir.equals(Point.DOWN)) {
+			if (DMath.rangesOverlapArea(l.p0.x, l.p1.x, swept.start.aabb.x, swept.start.aabb.brX)) {
+				double param = (l.p0.y-swept.start.aabb.brY) / swept.dist;
+				return (DMath.greaterThanEquals(param, 0.0) && DMath.lessThanEquals(param, 1.0)) ? param : -1;
+			} else {
+				return -1;
+			}
+		} else if (swept.dir.equals(Point.LEFT)) {
+			if (DMath.rangesOverlapArea(l.p0.y, l.p1.y, swept.start.aabb.y, swept.start.aabb.brY)) {
+				double param = (-(l.p1.x-swept.start.aabb.x)) / swept.dist;
+				return (DMath.greaterThanEquals(param, 0.0) && DMath.lessThanEquals(param, 1.0)) ? param : -1;
+			} else {
+				return -1;
+			}
+		} else {
+			assert swept.dir.equals(Point.RIGHT);
+			if (DMath.rangesOverlapArea(l.p0.y, l.p1.y, swept.start.aabb.y, swept.start.aabb.brY)) {
+				double param = (l.p0.x-swept.start.aabb.brX) / swept.dist;
+				return (DMath.greaterThanEquals(param, 0.0) && DMath.lessThanEquals(param, 1.0)) ? param : -1;
+			} else {
+				return -1;
+			}
+		}
+		
+	}
+	
+	/**
+	 * param when swept collides with o, or -1 if never collides
+	 */
+	public static double firstCollisionParam(OBB o, SweptOBB swept) {
+		assert swept.isAABB;
+		assert o.rightAngle;
+		assert !ShapeUtils.intersectAreaAA(swept.start.aabb, o.aabb);
+		
+		if (swept.dir.equals(Point.UP)) {
+			if (DMath.rangesOverlapArea(o.p0.x, o.p2.x, swept.start.aabb.x, swept.start.aabb.brX)) {
+				double param = (-(o.p2.y - swept.start.aabb.y)) / swept.dist;
+				return (DMath.greaterThanEquals(param, 0.0) && DMath.lessThanEquals(param, 1.0)) ? param : -1;
+			} else {
+				return -1;
+			}
+		} else if (swept.dir.equals(Point.DOWN)) {
+			if (DMath.rangesOverlapArea(o.p0.x, o.p2.x, swept.start.aabb.x, swept.start.aabb.brX)) {
+				double param = (o.p0.y-swept.start.aabb.brY) / swept.dist;
+				return (DMath.greaterThanEquals(param, 0.0) && DMath.lessThanEquals(param, 1.0)) ? param : -1;
+			} else {
+				return -1;
+			}
+		} else if (swept.dir.equals(Point.LEFT)) {
+			if (DMath.rangesOverlapArea(o.p0.y, o.p2.y, swept.start.aabb.y, swept.start.aabb.brY)) {
+				double param = (-(o.p2.x-swept.start.aabb.x)) / swept.dist;
+				return (DMath.greaterThanEquals(param, 0.0) && DMath.lessThanEquals(param, 1.0)) ? param : -1;
+			} else {
+				return -1;
+			}
+		} else {
+			assert swept.dir.equals(Point.RIGHT);
+			if (DMath.rangesOverlapArea(o.p0.y, o.p2.y, swept.start.aabb.y, swept.start.aabb.brY)) {
+				double param = (o.p0.x-swept.start.aabb.brX) / swept.dist;
+				return (DMath.greaterThanEquals(param, 0.0) && DMath.lessThanEquals(param, 1.0)) ? param : -1;
+			} else {
+				return -1;
+			}
+		}
+
+	}
+
 }

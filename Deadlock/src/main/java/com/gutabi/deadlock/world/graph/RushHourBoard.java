@@ -12,8 +12,6 @@ import com.gutabi.deadlock.Entity;
 import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.geom.CubicCurve;
 import com.gutabi.deadlock.geom.Line;
-import com.gutabi.deadlock.geom.Shape;
-import com.gutabi.deadlock.geom.ShapeUtils;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.paint.Cap;
 import com.gutabi.deadlock.ui.paint.Color;
@@ -1242,15 +1240,6 @@ public class RushHourBoard extends Entity {
 			}
 		}
 		return null;
-	}
-	
-	public boolean overlapsPerimeter(Shape s) {
-		for (Line l : perimeterSegments) {
-			if (ShapeUtils.intersectArea(l, s)) {
-				return true;
-			}
-		}
-		return false;
 	}
 	
 	public boolean isUserDeleteable() {

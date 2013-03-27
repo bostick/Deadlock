@@ -5,6 +5,11 @@ import java.util.regex.MatchResult;
 
 public class Point {
 	
+	public static final Point UP = new Point(0, -1);
+	public static final Point DOWN = new Point(0, 1);
+	public static final Point LEFT = new Point(-1, 0);
+	public static final Point RIGHT = new Point(1, 0);
+	
 	public final double x;
 	public final double y;
 	
@@ -334,8 +339,12 @@ public class Point {
 		double denom = xdc * xdc + ydc * ydc;
 		assert !DMath.equals(denom, 0.0);
 		// u is where b is perpendicular to <c, d>
-		double u = (xbc * xdc + ybc * ydc) / denom;
-		return u;
+		double n = (xbc * xdc + ybc * ydc);
+		if (DMath.equals(n, 0.0)) {
+			return 0.0;
+		} else {
+			return n / denom;
+		}
 	}
 	
 	/**
@@ -357,6 +366,9 @@ public class Point {
 		}
 	}
 	
+	/**
+	 * assuming it is, return param for point b on line defined by &lt;c, d>
+	 */
 	public static double param(Point b, Point c, Point d) {
 		return param(b.x, b.y, c, d);
 	}
@@ -526,11 +538,31 @@ public class Point {
 	/**
 	 * for coord system with <0, 0> in upper left, y extending down
 	 */
-	public static Point normalize(Point p) {
-		double len = Math.hypot(p.x, p.y);
-		assert !DMath.equals(len, 0.0);
-		double invLen = 1 / len;
-		return new Point(p.x * invLen, p.y * invLen);
+	public Point normalize() {
+		
+		if (DMath.equals(x, 0.0)) {
+			if (DMath.sgn(y) == 1) {
+				return Point.DOWN;
+			} else {
+				return Point.UP;
+			}
+		} else if (DMath.equals(y, 0.0)) {
+			if (DMath.sgn(x) == 1) {
+				return Point.RIGHT;
+			} else {
+				return Point.LEFT;
+			}
+		} else {
+			double len = Math.hypot(x, y);
+			assert !DMath.equals(len, 0.0);
+			double invLen = 1 / len;
+			return new Point(x * invLen, y * invLen);
+		}
+		
+	}
+	
+	public boolean isRightAngleNormal() {
+		return (x == 0.0 && (y == 1.0 || y == -1.0)) || (y == 0.0 && (x == 1.0 || x == -1.0));
 	}
 	
 	public double length() {

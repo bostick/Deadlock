@@ -332,6 +332,44 @@ public class ShapeUtils {
 		return true;
 	}
 	
+	
+	
+	
+	/*
+	 * intersect area section
+	 */
+	
+	public static boolean intersectAreaAA(AABB a0, AABB a1) {
+		return DMath.lessThan(a0.x, a1.brX) && DMath.lessThan(a1.x, a0.brX) &&
+				DMath.lessThan(a0.y, a1.brY) && DMath.lessThan(a1.y, a0.brY);
+	}
+	
+	public static boolean intersectAreaAL(AABB a0, Line l1) {
+		
+		double[] l1Projection = new double[2];
+		double[] a0Projection = new double[2];
+		
+		l1.projectN01(l1Projection);
+		a0.project(l1.getN01(), a0Projection);
+		if (!DMath.rangesOverlapArea(l1Projection, a0Projection)) {
+			return false;
+		}
+		
+		l1.project(a0.getN01(), l1Projection);
+		a0.projectN01(a0Projection);
+		if (!DMath.rangesOverlapArea(l1Projection, a0Projection)) {
+			return false;
+		}
+		
+		l1.project(a0.getN12(), l1Projection);
+		a0.projectN12(a0Projection);
+		if (!DMath.rangesOverlapArea(l1Projection, a0Projection)) {
+			return false;
+		}
+		
+		return true;
+	}
+
 	public static boolean intersectAreaAO(AABB a0, OBB o1) {
 		
 		if (!intersectAO(a0, o1)) {

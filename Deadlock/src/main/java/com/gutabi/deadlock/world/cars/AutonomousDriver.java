@@ -231,7 +231,7 @@ public final class AutonomousDriver extends Driver {
 						otherPosition = overallPath.hitTest(otherDriver, overallPos);
 					}
 					
-					if (otherPosition == null || DMath.greaterThan(overallPos.distanceTo(otherPosition), carProximityLookahead)) {
+					if (otherPosition == null || DMath.greaterThan(overallPos.lengthTo(otherPosition), carProximityLookahead)) {
 						return false;
 					}
 					

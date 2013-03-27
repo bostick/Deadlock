@@ -4,6 +4,13 @@ import java.util.Comparator;
 
 public class DMath {
 	
+	/**
+	 * if the angle is within RIGHT_ANGLE_TOLERANCE of a right angle,
+	 * then it is treated as a right angle
+	 */
+	public static final double RIGHT_ANGLE_TOLERANCE = 1.0E-4;
+	
+	
 //	public static boolean equals(double a, double b) {
 //		return equals(a, b, 1.0E-8);
 //	}
@@ -119,6 +126,23 @@ public class DMath {
 		}
 	}
 	
+	public static boolean rangesOverlapArea(double a, double b, double c, double d) {
+		
+		if (a < b) {
+			if (c < d) {
+				return lessThan(a, d) && lessThan(c, b);
+			} else {
+				return lessThan(a, c) && lessThan(d, b);
+			}
+		} else {
+			if (c < d) {
+				return lessThan(b, d) && lessThan(c, a);
+			} else {
+				return lessThan(b, c) && lessThan(d, a);
+			}
+		}
+	}
+	
 	public static boolean rangesTouch(double[] r0, double[] r1) {
 		
 		double a = r0[0];
@@ -195,6 +219,69 @@ public class DMath {
 			
 			return discriminant;
 			
+		}
+	}
+	
+	public static double lerp(double a, double b, double param) {
+		
+		if (DMath.equals(param, 0.0)) {
+			
+			return a;
+			
+		} else if (DMath.equals(param, 1.0)) {
+			
+			return b;
+			
+		} else {
+			return a + param * (b - a);
+		}
+		
+	}
+	
+	public static double tryAdjustToRightAngle(double preA) {
+		
+		double adjA = preA;
+		while (DMath.greaterThanEquals(adjA, 2*Math.PI)) {
+			adjA -= 2*Math.PI;
+		}
+		while (DMath.lessThan(adjA, 0.0)) {
+			adjA += 2*Math.PI;
+		}
+		
+		if (Math.abs(adjA - 0.0 * Math.PI) < DMath.RIGHT_ANGLE_TOLERANCE) {
+			return 0.0 * Math.PI;
+		} else if (Math.abs(adjA - 0.5 * Math.PI) < DMath.RIGHT_ANGLE_TOLERANCE) {
+			return 0.5 * Math.PI;
+		} else if (Math.abs(adjA - 1.0 * Math.PI) < DMath.RIGHT_ANGLE_TOLERANCE) {
+			return 1.0 * Math.PI;
+		} else if (Math.abs(adjA - 1.5 * Math.PI) < DMath.RIGHT_ANGLE_TOLERANCE) {
+			return 1.5 * Math.PI;
+		} else {
+			return adjA;
+		}
+		
+	}
+	
+	public static boolean isRightAngle(double pre) {
+		
+		double adjA = pre;
+		while (DMath.greaterThanEquals(adjA, 2*Math.PI)) {
+			adjA -= 2*Math.PI;
+		}
+		while (DMath.lessThan(adjA, 0.0)) {
+			adjA += 2*Math.PI;
+		}
+		
+		if (Math.abs(adjA - 0.0 * Math.PI) < DMath.RIGHT_ANGLE_TOLERANCE) {
+			return true;
+		} else if (Math.abs(adjA - 0.5 * Math.PI) < DMath.RIGHT_ANGLE_TOLERANCE) {
+			return true;
+		} else if (Math.abs(adjA - 1.0 * Math.PI) < DMath.RIGHT_ANGLE_TOLERANCE) {
+			return true;
+		} else if (Math.abs(adjA - 1.5 * Math.PI) < DMath.RIGHT_ANGLE_TOLERANCE) {
+			return true;
+		} else {
+			return false;
 		}
 	}
 }

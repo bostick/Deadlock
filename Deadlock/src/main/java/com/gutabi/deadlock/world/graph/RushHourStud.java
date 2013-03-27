@@ -36,9 +36,12 @@ public abstract class RushHourStud {
 		return "stud " + row + " " + col;
 	}
 	
-	public boolean isFree() {
+	public boolean isFree(Car ignore) {
 		
 		for (Car c : world.carMap.cars) {
+			if (c == ignore) {
+				continue;
+			}
 			if (ShapeUtils.intersectAreaAO(aabb, c.shape)) {
 				return false;
 			}

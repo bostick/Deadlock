@@ -25,11 +25,8 @@ public class AABB implements Shape {
 	public final Point p2;
 	public final Point p3;
 	
-	public static final Point UP = new Point(0, -1);
-	public static final Point LEFT = new Point(1, 0);
-	
-	public final Point n01 = UP;
-	public final Point n12 = LEFT;
+	public final Point n01 = Point.UP;
+	public final Point n12 = Point.RIGHT;
 	
 	double[] n01Projection;
 	double[] n12Projection;

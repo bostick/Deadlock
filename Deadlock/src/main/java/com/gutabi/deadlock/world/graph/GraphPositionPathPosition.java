@@ -132,7 +132,9 @@ public class GraphPositionPathPosition {
 			b = path.get(index+1).p;
 		}
 		
-		return Math.atan2(b.y - a.y, b.x - a.x);
+		double ang = Math.atan2(b.y - a.y, b.x - a.x);
+		ang = DMath.tryAdjustToRightAngle(ang);
+		return ang;
 	}
 	
 	private void computeGraphPosition() {
@@ -163,7 +165,7 @@ public class GraphPositionPathPosition {
 		return gpos;
 	}
 	
-	public double distanceTo(GraphPositionPathPosition p) {
+	public double lengthTo(GraphPositionPathPosition p) {
 		
 		assert p.path.equals(path);
 		
@@ -281,7 +283,7 @@ public class GraphPositionPathPosition {
 						double retParam = retCombo - retIndex;
 						
 						GraphPositionPathPosition ret = new GraphPositionPathPosition(path, retIndex, retParam);
-						double distToRet = this.distanceTo(ret);
+						double distToRet = this.lengthTo(ret);
 						assert DMath.equals(distToRet, dist);
 						
 						return ret;

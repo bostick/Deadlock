@@ -2,6 +2,7 @@ package com.gutabi.deadlock.geom;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
+import com.gutabi.deadlock.math.DMath;
 import com.gutabi.deadlock.math.Point;
 
 public abstract class OBB implements Shape {
@@ -27,61 +28,81 @@ public abstract class OBB implements Shape {
 	Line p2p3Line;
 	Line p3p0Line;
 	
+	public final boolean rightAngle;
+	
 	public final AABB aabb;
 	
 	private int hash;
 	
 	protected OBB(Point center, double preA, double xExtant, double yExtant) {
 		
+		double adjA = preA;
+		while (DMath.greaterThanEquals(adjA, 2*Math.PI)) {
+			adjA -= 2*Math.PI;
+		}
+		while (DMath.lessThan(adjA, 0.0)) {
+			adjA += 2*Math.PI;
+		}
+		
 		this.center = center;
 		this.xExtant = xExtant;
 		this.yExtant = yExtant;
 		
 		/*
-		 * even though this is an OBB and not an AABB, it is still nice to get exact right angles
+		 * even though this is an OBB and not an AABB, it is still nice to get exact right angles, and have points in the same order
 		 */
-		if (Math.abs(preA - 0.0 * Math.PI) < 1.0E-4) {
+		if (Math.abs(adjA - 0.0 * Math.PI) < DMath.RIGHT_ANGLE_TOLERANCE) {
+			rightAngle = true;
 			a = 0.0 * Math.PI;
 			this.p0 = new Point(-xExtant, -yExtant).plus(center);
 			this.p1 = new Point(xExtant, -yExtant).plus(center);
 			this.p2 = new Point(xExtant, yExtant).plus(center);
 			this.p3 = new Point(-xExtant, yExtant).plus(center);
-		} else if (Math.abs(preA - 0.5 * Math.PI) < 1.0E-4) {
+			
+			aabb = new AABB(-xExtant+center.x, -yExtant+center.y, 2*xExtant, 2*yExtant);
+		} else if (Math.abs(adjA - 0.5 * Math.PI) < DMath.RIGHT_ANGLE_TOLERANCE) {
+			rightAngle = true;
 			a = 0.5 * Math.PI;
+			this.p0 = new Point(-yExtant, -xExtant).plus(center);
+			this.p1 = new Point(yExtant, -xExtant).plus(center);
+			this.p2 = new Point(yExtant, xExtant).plus(center);
+			this.p3 = new Point(-yExtant, xExtant).plus(center);
 			
-			this.p0 = new Point(yExtant, -xExtant).plus(center);
-			this.p1 = new Point(yExtant, xExtant).plus(center);
-			this.p2 = new Point(-yExtant, xExtant).plus(center);
-			this.p3 = new Point(-yExtant, -xExtant).plus(center);
-			
-		} else if (Math.abs(preA - 1.0 * Math.PI) < 1.0E-4) {
+			aabb = new AABB(-yExtant+center.x, -xExtant+center.y, 2*yExtant, 2*xExtant);
+		} else if (Math.abs(adjA - 1.0 * Math.PI) < DMath.RIGHT_ANGLE_TOLERANCE) {
+			rightAngle = true;
 			a = 1.0 * Math.PI;
-			this.p0 = new Point(xExtant, yExtant).plus(center);
-			this.p1 = new Point(-xExtant, yExtant).plus(center);
-			this.p2 = new Point(-xExtant, -yExtant).plus(center);
-			this.p3 = new Point(xExtant, -yExtant).plus(center);
-		} else if (Math.abs(preA - 1.5 * Math.PI) < 1.0E-4) {
+			this.p0 = new Point(-xExtant, -yExtant).plus(center);
+			this.p1 = new Point(xExtant, -yExtant).plus(center);
+			this.p2 = new Point(xExtant, yExtant).plus(center);
+			this.p3 = new Point(-xExtant, yExtant).plus(center);
+			
+			aabb = new AABB(-xExtant+center.x, -yExtant+center.y, 2*xExtant, 2*yExtant);
+		} else if (Math.abs(adjA - 1.5 * Math.PI) < DMath.RIGHT_ANGLE_TOLERANCE) {
+			rightAngle = true;
 			a = 1.5 * Math.PI;
+			this.p0 = new Point(-yExtant, -xExtant).plus(center);
+			this.p1 = new Point(yExtant, -xExtant).plus(center);
+			this.p2 = new Point(yExtant, xExtant).plus(center);
+			this.p3 = new Point(-yExtant, xExtant).plus(center);
 			
-			this.p0 = new Point(-yExtant, xExtant).plus(center);
-			this.p1 = new Point(-yExtant, -xExtant).plus(center);
-			this.p2 = new Point(yExtant, -xExtant).plus(center);
-			this.p3 = new Point(yExtant, xExtant).plus(center);
-			
+			aabb = new AABB(-yExtant+center.x, -xExtant+center.y, 2*yExtant, 2*xExtant);
 		} else {
-			a = preA;
+			rightAngle = false;
+			a = adjA;
 			this.p0 = Geom.rotate(a, new Point(-xExtant, -yExtant)).plus(center);
 			this.p1 = Geom.rotate(a, new Point(xExtant, -yExtant)).plus(center);
 			this.p2 = Geom.rotate(a, new Point(xExtant, yExtant)).plus(center);
 			this.p3 = Geom.rotate(a, new Point(-xExtant, yExtant)).plus(center);
+			
+			double ulX = Math.min(Math.min(p0.x, p1.x), Math.min(p2.x, p3.x));
+			double ulY = Math.min(Math.min(p0.y, p1.y), Math.min(p2.y, p3.y));
+			double brX = Math.max(Math.max(p0.x, p1.x), Math.max(p2.x, p3.x));
+			double brY = Math.max(Math.max(p0.y, p1.y), Math.max(p2.y, p3.y));
+			
+			aabb = new AABB(ulX, ulY, (brX - ulX), (brY - ulY));
 		}
 		
-		double ulX = Math.min(Math.min(p0.x, p1.x), Math.min(p2.x, p3.x));
-		double ulY = Math.min(Math.min(p0.y, p1.y), Math.min(p2.y, p3.y));
-		double brX = Math.max(Math.max(p0.x, p1.x), Math.max(p2.x, p3.x));
-		double brY = Math.max(Math.max(p0.y, p1.y), Math.max(p2.y, p3.y));
-		
-		aabb = new AABB(ulX, ulY, (brX - ulX), (brY - ulY));
 	}
 	
 	public int hashCode() {
