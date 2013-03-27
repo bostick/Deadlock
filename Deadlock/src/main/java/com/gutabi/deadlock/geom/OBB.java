@@ -158,12 +158,18 @@ public abstract class OBB implements Shape {
 		if (n01 == null) {
 			computeN01();
 		}
+		if (rightAngle && !n01.isRightAngleNormal()) {
+			assert false;
+		}
 		return n01;
 	}
 	
 	public Point getN12() {
 		if (n12 == null) {
 			computeN12();
+		}
+		if (rightAngle && !n12.isRightAngleNormal()) {
+			assert false;
 		}
 		return n12;
 	}

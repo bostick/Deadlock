@@ -345,7 +345,6 @@ public class CarTool extends ToolBase {
 	 * setting dynamic properties is done here
 	 */
 	public void dragged(InputEvent ev) {
-//		System.out.println("dragged");
 		
 		prevDragP = curDragP;
 		prevDragMillis = curDragMillis;
@@ -377,13 +376,8 @@ public class CarTool extends ToolBase {
 			 * 
 			 */
 			GraphPositionPathPosition attemptedPos = car.driver.overallPath.generalSearch(carPTmp, car.driver.overallPos, 10.0);
-//			System.out.println("attempted: " + attemptedPos);
-//			if (attemptedPos.combo == 1.9375 || attemptedPos.combo == 1.96875) {
-//				String.class.getName();
-//			}
 			
 			GraphPositionPathPosition actualPos = furthestAllowablePosition(car.driver.overallPos, attemptedPos);
-//			System.out.println("actual: " + actualPos);
 			
 			car.setTransform(actualPos.p, actualPos.angle());
 			car.setPhysicsTransform();
@@ -424,31 +418,12 @@ public class CarTool extends ToolBase {
 					
 				}
 				
-//						double a = rpos.lengthToStartOfRoad / rpos.r.getTotalLength(rpos.r.start, rpos.r.end);
-//						
-//						double para;
-//						if (a < 1.0/3.5) {
-//							para = 1.0 + (3.5 * a) * (0.5 - 1.0);
-//						} else if (a < (1-1.0/3.5)) {
-//							para = 0.5;
-//						} else {
-//							para = 0.5 + (3.5 * (a - (1-1.0/3.5))) * (1.0 - 0.5);
-//						}
-//						
-//						worldScreen.world.zoomAbsolute(para);
-//						
-//						worldScreen.world.render_worldPanel();
-				
 			} else if (gpos instanceof VertexPosition) {
 				
 				if (car.driver.toolOrigExitingVertexPos == null) {
 					
 					car.driver.toolOrigExitingVertexPos = car.driver.overallPos;
 				}
-				
-//						worldScreen.world.zoomAbsolute(1.0);
-//						
-//						worldScreen.world.render_worldPanel();
 				
 			} else {
 				assert gpos instanceof RushHourBoardPosition;
@@ -497,11 +472,9 @@ public class CarTool extends ToolBase {
 					
 				}
 				
-//						worldScreen.world.zoomAbsolute(1.0);
-//						
-//						worldScreen.world.render_worldPanel();
-				
 			}
+			
+			handleZooming();
 			
 			worldScreen.contentPane.repaint();
 			
@@ -519,55 +492,10 @@ public class CarTool extends ToolBase {
 	private GraphPositionPathPosition furthestAllowablePosition(GraphPositionPathPosition start, GraphPositionPathPosition end) {
 		
 		if (start.equals(end)) {
-//			System.out.println("fursthest: " + start + " " + end + " " + start);
 			return start;
 		}
 		
-		return (start.combo < end.combo) ? furthestAllowablePositionForward(start, end) : furthestAllowablePositionBackward(start, end);
-		
-//		GraphPosition startG = start.getGraphPosition();
-//		GraphPosition endG = end.getGraphPosition();
-//		
-//		if (startG instanceof RushHourBoardPosition) {
-//			if (endG instanceof RushHourBoardPosition) {
-//				return (start.combo < end.combo) ? furthestAllowablePositionForward(start, end) : furthestAllowablePositionBackward(start, end);
-//			} else if (endG instanceof VertexPosition) {
-//				return (start.combo < end.combo) ? furthestAllowablePositionForward(start, end) : furthestAllowablePositionBackward(start, end);
-//			} else {
-//				assert endG instanceof RoadPosition;
-//				
-//			}
-//		} else if (startG instanceof VertexPosition) {
-//			if (endG instanceof RushHourBoardPosition) {
-//				return (start.combo < end.combo) ? furthestAllowablePositionForward(start, end) : furthestAllowablePositionBackward(start, end);
-//			} else if (endG instanceof VertexPosition) {
-//				assert false;
-//			} else {
-//				assert endG instanceof RoadPosition;
-//				
-//			}
-//		} else {
-//			assert startG instanceof RoadPosition;
-//			if (endG instanceof RushHourBoardPosition) {
-//				
-//			} else if (endG instanceof VertexPosition) {
-//				
-//			} else {
-//				assert endG instanceof RoadPosition;
-//				/*
-//				 * dragging on road, so only do collision detection when on straight extensions of road
-//				 */
-//				if (DMath.isRightAngle(start.angle()) && DMath.isRightAngle(end.angle())) {
-//					/*
-//					 * relies on the fact that a single drag segment will not span an entire road and mix up the extensions on different ends of the road
-//					 */
-//					return (start.combo < end.combo) ? furthestAllowablePositionForward(start, end) : furthestAllowablePositionBackward(start, end);
-//				} else {
-//					return end;
-//				}
-//			}
-//		}
-		
+		return (start.combo < end.combo) ? furthestAllowablePositionForward(start, end) : furthestAllowablePositionBackward(start, end);		
 	}
 	
 	/**
@@ -993,6 +921,55 @@ public class CarTool extends ToolBase {
 		}
 		
 		return bestParam;
+	}
+	
+	public void handleZooming() {
+		
+		GraphPosition gpos = car.driver.overallPos.getGraphPosition();
+		
+		if (gpos instanceof RoadPosition) {
+			
+			RoadPosition rpos = (RoadPosition)gpos;
+			
+			double a = rpos.lengthToStartOfRoad / rpos.r.getTotalLength(rpos.r.start, rpos.r.end);
+			
+			double para;
+			if (a < 1.0/3.5) {
+				para = 1.0 + (3.5 * a) * (0.5 - 1.0);
+			} else if (a < (1-1.0/3.5)) {
+				para = 0.5;
+			} else {
+				para = 0.5 + (3.5 * (a - (1-1.0/3.5))) * (1.0 - 0.5);
+			}
+			
+			worldScreen.world.zoomAbsolute(para);
+			
+//			worldScreen.world.render_worldPanel();
+			
+		} else if (gpos instanceof VertexPosition) {
+			
+			GraphPosition prevGPos = car.driver.prevOverallPos.getGraphPosition();
+			
+			if (prevGPos instanceof RoadPosition) {
+				
+				worldScreen.world.zoomAbsolute(1.0);
+				
+//				worldScreen.world.render_worldPanel();
+			}
+			
+		} else {
+			assert gpos instanceof RushHourBoardPosition;
+			
+			GraphPosition prevGPos = car.driver.prevOverallPos.getGraphPosition();
+			
+			if (prevGPos instanceof RoadPosition) {
+				
+				worldScreen.world.zoomAbsolute(1.0);
+				
+//				worldScreen.world.render_worldPanel();
+			}
+		}
+		
 	}
 	
 	public void draw(RenderingContext ctxt) {

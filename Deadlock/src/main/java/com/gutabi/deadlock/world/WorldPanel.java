@@ -176,10 +176,10 @@ public class WorldPanel extends PanelBase {
 		
 		ctxt.translate(aabb.x, aabb.y);
 		
-		screen.world.paint_panel(ctxt);
-		
 		ctxt.scale(screen.pixelsPerMeter);
 		ctxt.translate(-screen.worldViewport.x, -screen.worldViewport.y);
+		
+		screen.world.paint_panel(ctxt);
 		
 		APP.tool.draw(ctxt);
 		

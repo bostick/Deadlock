@@ -516,10 +516,7 @@ public class Point {
 	public static Point cw90AndNormalize(Point p) {
 		double newX = -p.y;
 		double newY = p.x;
-		
-		double len = Math.hypot(newX, newY);
-		double invLen = 1 / len;
-		return new Point(newX * invLen, newY * invLen);
+		return Point.normalize(newX, newY);
 	}
 	
 	/**
@@ -528,17 +525,17 @@ public class Point {
 	public static Point ccw90AndNormalize(Point p) {
 		double newX = p.y;
 		double newY = -p.x;
-		
-		double len = Math.hypot(newX, newY);
-		assert !DMath.equals(len, 0.0);
-		double invLen = 1 / len;
-		return new Point(newX * invLen, newY * invLen);
+		return Point.normalize(newX, newY);
+	}
+	
+	public Point normalize() {
+		return Point.normalize(x, y);
 	}
 	
 	/**
 	 * for coord system with <0, 0> in upper left, y extending down
 	 */
-	public Point normalize() {
+	public static Point normalize(double x, double y) {
 		
 		if (DMath.equals(x, 0.0)) {
 			if (DMath.sgn(y) == 1) {

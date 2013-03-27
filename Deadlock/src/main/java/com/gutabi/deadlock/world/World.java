@@ -86,6 +86,9 @@ public class World extends PhysicsWorld {
 				-(worldScreen.contentPane.worldPanel.aabb.height / worldScreen.pixelsPerMeter) / 2 + quadrantMap.worldHeight/2,
 				worldScreen.contentPane.worldPanel.aabb.width / worldScreen.pixelsPerMeter,
 				worldScreen.contentPane.worldPanel.aabb.height / worldScreen.pixelsPerMeter);
+		
+		worldScreen.origWorldViewport = worldScreen.worldViewport;
+		
 	}
 	
 	public void previewPostDisplay() {
@@ -429,15 +432,16 @@ public class World extends PhysicsWorld {
 	
 	public void paint_panel(RenderingContext ctxt) {
 		
-		ctxt.paintImage(
-				background,
-				0, 0, (int)worldScreen.contentPane.worldPanel.aabb.width, (int)worldScreen.contentPane.worldPanel.aabb.height,
-				0, 0, background.getWidth(), background.getHeight());
-		
 		Transform origTrans = ctxt.getTransform();
 		
-		ctxt.scale(worldScreen.pixelsPerMeter);
-		ctxt.translate(-worldScreen.worldViewport.x, -worldScreen.worldViewport.y);
+		ctxt.paintImage(
+				background,
+				worldScreen.origPixelsPerMeter,
+				worldScreen.origWorldViewport.x,
+				worldScreen.origWorldViewport.y,
+				worldScreen.origWorldViewport.brX,
+				worldScreen.origWorldViewport.brY,
+				0, 0, background.getWidth(), background.getHeight());
 		
 		synchronized (APP) {
 			

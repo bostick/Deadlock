@@ -11,6 +11,7 @@ import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.world.World;
 import com.gutabi.deadlock.world.graph.GraphPositionPathPosition;
 import com.gutabi.deadlock.world.physics.PhysicsUtils;
+import com.gutabi.deadlock.world.tools.CarTool;
 
 public class InteractiveCar extends Car {
 	
@@ -82,13 +83,14 @@ public class InteractiveCar extends Car {
 		
 		GraphPositionPathPosition newPos;
 		if (state == CarStateEnum.COASTING_FORWARD) {
-			newPos = driver.overallPos.travelForward(Math.min(dist, driver.overallPos.lengthToEndOfPath));
+			newPos = driver.overallPos.travelForward(Math.min(dist, driver.overallPos.lengthTo(driver.toolCoastingGoal)));
 		} else {
-			newPos = driver.overallPos.travelBackward(Math.min(dist, driver.overallPos.lengthToStartOfPath));
+			newPos = driver.overallPos.travelBackward(Math.min(dist, driver.overallPos.lengthTo(driver.toolCoastingGoal)));
 		}
 		
+		((CarTool)APP.tool).handleZooming();
 		
-		if (state == CarStateEnum.COASTING_FORWARD ? DMath.greaterThanEquals(newPos.combo, driver.toolCoastingGoal.combo) : DMath.lessThanEquals(newPos.combo, driver.toolCoastingGoal.combo)) {
+		if (DMath.equals(newPos.combo, driver.toolCoastingGoal.combo)) {
 			
 			coastingVel = 0;
 			

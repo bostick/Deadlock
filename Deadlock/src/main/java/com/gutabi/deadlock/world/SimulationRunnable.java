@@ -57,7 +57,6 @@ public class SimulationRunnable implements Runnable {
 						frameTimeSeconds = 1 * worldScreen.DT;
 					}
 					if (frameTimeSeconds < 0.5 * worldScreen.DT) {
-//						String.class.getName();
 						Thread.sleep(frameTimeMillis);
 						frameTimeSeconds += frameTimeSeconds;
 					}

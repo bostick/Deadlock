@@ -19,6 +19,7 @@ public class WorldScreen extends AppScreen implements KeyListener {
 	public double origPixelsPerMeter = 32.0;
 	public double pixelsPerMeter = 32.0;
 	public AABB worldViewport;
+	public AABB origWorldViewport;
 	
 	/**
 	 * move physics forward by dt seconds

@@ -46,8 +46,6 @@ public class RushHourBoard extends Entity {
 	private Map<Integer, GraphPositionPath> rowPaths = new HashMap<Integer, GraphPositionPath>();
 	private Map<Integer, GraphPositionPath> colPaths = new HashMap<Integer, GraphPositionPath>();
 	
-//	List<BorderStud> exitStuds = new ArrayList<BorderStud>();
-	
 	public RushHourBoard(World world, Point center, char[][] ini) {
 		this.world = world;
 		this.center = center;
@@ -184,18 +182,27 @@ public class RushHourBoard extends Entity {
 					}
 					if (i < originRow) {
 						removePerimeterSegment(s.aabb.getP2P3Line());
+						perimeterSegments.add(s.aabb.getP1P2Line());
+						perimeterSegments.add(s.aabb.getP3P0Line());
+						
 						Fixture f = new Fixture(world, point(i - originRow, j - originCol + 0.5), Axis.TOPBOTTOM);
 						f.setFacingSide(Side.BOTTOM);
 						s.f = f;
 						world.addFixture(f);
 					} else if (i >= originRow + rowCount) {
 						removePerimeterSegment(s.aabb.getP0P1Line());
+						perimeterSegments.add(s.aabb.getP1P2Line());
+						perimeterSegments.add(s.aabb.getP3P0Line());
+						
 						Fixture f = new Fixture(world, point(i - originRow + 1.0, j - originCol + 0.5), Axis.TOPBOTTOM);
 						f.setFacingSide(Side.TOP);
 						s.f = f;
 						world.addFixture(f);
 					} else if (j < originCol) {
 						removePerimeterSegment(s.aabb.getP1P2Line());
+						perimeterSegments.add(s.aabb.getP0P1Line());
+						perimeterSegments.add(s.aabb.getP2P3Line());
+						
 						Fixture f = new Fixture(world, point(i - originRow + 0.5, j - originCol), Axis.LEFTRIGHT);
 						f.setFacingSide(Side.RIGHT);
 						s.f = f;
@@ -203,6 +210,9 @@ public class RushHourBoard extends Entity {
 					} else {
 						assert j >= originCol + colCount;
 						removePerimeterSegment(s.aabb.getP3P0Line());
+						perimeterSegments.add(s.aabb.getP0P1Line());
+						perimeterSegments.add(s.aabb.getP2P3Line());
+						
 						Fixture f = new Fixture(world, point(i - originRow + 0.5, j - originCol + 1.0), Axis.LEFTRIGHT);
 						f.setFacingSide(Side.LEFT);
 						s.f = f;
@@ -214,7 +224,6 @@ public class RushHourBoard extends Entity {
 					BorderStud s = new BorderStud(world, this, i - originRow, j - originCol);
 					yStud = s;
 					addStud(s);
-//					exitStuds.add(s);
 					if (i < originRow) {
 						removePerimeterSegment(s.aabb.getP2P3Line());
 						perimeterSegments.add(s.aabb.getP1P2Line());
@@ -225,13 +234,6 @@ public class RushHourBoard extends Entity {
 						s.f = f;
 						world.addFixture(f);
 						
-//						s = new BorderStud(world, this, i - originRow - 1, j - originCol);
-//						addStud(s);
-//						perimeterSegments.add(s.aabb.getP0P1Line());
-//						perimeterSegments.add(s.aabb.getP1P2Line());
-//						perimeterSegments.add(s.aabb.getP2P3Line());
-//						perimeterSegments.add(s.aabb.getP3P0Line());
-//						exitStuds.add(s);
 					} else if (i >= originRow + rowCount) {
 						removePerimeterSegment(s.aabb.getP0P1Line());
 						perimeterSegments.add(s.aabb.getP1P2Line());
@@ -242,13 +244,6 @@ public class RushHourBoard extends Entity {
 						s.f = f;
 						world.addFixture(f);
 						
-//						s = new BorderStud(world, this, i - originRow + 1, j - originCol);
-//						addStud(s);
-//						perimeterSegments.add(s.aabb.getP0P1Line());
-//						perimeterSegments.add(s.aabb.getP1P2Line());
-//						perimeterSegments.add(s.aabb.getP2P3Line());
-//						perimeterSegments.add(s.aabb.getP3P0Line());
-//						exitStuds.add(s);
 					} else if (j < originCol) {
 						removePerimeterSegment(s.aabb.getP1P2Line());
 						perimeterSegments.add(s.aabb.getP0P1Line());
@@ -259,13 +254,6 @@ public class RushHourBoard extends Entity {
 						s.f = f;
 						world.addFixture(f);
 						
-//						s = new BorderStud(world, this, i - originRow, j - originCol - 1);
-//						addStud(s);
-//						perimeterSegments.add(s.aabb.getP0P1Line());
-//						perimeterSegments.add(s.aabb.getP1P2Line());
-//						perimeterSegments.add(s.aabb.getP2P3Line());
-//						perimeterSegments.add(s.aabb.getP3P0Line());
-//						exitStuds.add(s);
 					} else {
 						assert j >= originCol + colCount;
 						removePerimeterSegment(s.aabb.getP3P0Line());
@@ -277,13 +265,6 @@ public class RushHourBoard extends Entity {
 						s.f = f;
 						world.addFixture(f);
 						
-//						s = new BorderStud(world, this, i - originRow, j - originCol + 1);
-//						addStud(s);
-//						perimeterSegments.add(s.aabb.getP0P1Line());
-//						perimeterSegments.add(s.aabb.getP1P2Line());
-//						perimeterSegments.add(s.aabb.getP2P3Line());
-//						perimeterSegments.add(s.aabb.getP3P0Line());
-//						exitStuds.add(s);
 					}
 					break;
 				}
@@ -406,45 +387,7 @@ public class RushHourBoard extends Entity {
 					// not connected to exit, order doesn't matter
 					jointTracksToPath(js0, js1, ks1, ks0);
 				}
-			}
-//			else if (withinColRange(js0.col) && withinColRange(ks0.col) && js0.col == ks0.col) {
-//				if (js1.across(yStud)) {
-//					jointTracksToPath(ks1, ks0, js0, js1);
-//				} else if (ks1.across(yStud)) {
-//					jointTracksToPath(js1, js0, ks0, ks1);
-//				} else {
-//					// not connected to exit, order doesn't matter
-//					jointTracksToPath(js1, js0, ks0, ks1);
-//				}
-//			} else if (withinColRange(js0.col) && withinColRange(ks1.col) && js0.col == ks1.col) {
-//				if (js1.across(yStud)) {
-//					jointTracksToPath(ks0, ks1, js0, js1);
-//				} else if (ks0.across(yStud)) {
-//					jointTracksToPath(js1, js0, ks1, ks0);
-//				} else {
-//					// not connected to exit, order doesn't matter
-//					jointTracksToPath(js1, js0, ks1, ks0);
-//				}
-//			} else if (withinColRange(js1.col) && withinColRange(ks0.col) && js1.col == ks0.col) {
-//				if (js0.across(yStud)) {
-//					jointTracksToPath(ks1, ks0, js1, js0);
-//				} else if (ks1.across(yStud)) {
-//					jointTracksToPath(js0, js1, ks0, ks1);
-//				} else {
-//					// not connected to exit, order doesn't matter
-//					jointTracksToPath(js0, js1, ks0, ks1);
-//				}
-//			} else if (withinColRange(js1.col) && withinColRange(ks1.col) && js1.col == ks1.col) {
-//				if (js0.across(yStud)) {
-//					jointTracksToPath(ks0, ks1, js1, js0);
-//				} else if (ks0.across(yStud)) {
-//					jointTracksToPath(js0, js1, ks1, ks0);
-//				} else {
-//					// not connected to exit, order doesn't matter
-//					jointTracksToPath(js0, js1, ks1, ks0);
-//				}
-//			}
-			else {
+			} else {
 				
 				/*
 				 * not connected
@@ -1170,22 +1113,6 @@ public class RushHourBoard extends Entity {
 			perimeterSegments.remove(toRemove);
 		}
 	}
-	
-//	public boolean allowablePosition(Car c) {
-//		if (ShapeUtils.containsAO(gridAABB, c.shape)) {
-//			return true;
-//		}
-//		
-//		if (c.sprite == CarSheetSprite.RED) {
-//			for (BorderStud s : exitStuds) {
-//				if (ShapeUtils.intersectAO(s.aabb, c.shape)) {
-//					return true;
-//				}
-//			}
-//		}
-//		
-//		return false;
-//	}
 	
 	public RushHourStud stud(RushHourBoardPosition pos) {
 		for (RushHourStud stud : studs) {
