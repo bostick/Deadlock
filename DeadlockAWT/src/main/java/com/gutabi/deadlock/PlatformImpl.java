@@ -37,25 +37,24 @@ public class PlatformImpl implements Platform {
 	
 	public RenderingContext createRenderingContext(Object... args) {
 		
-		WorldCamera cam = (WorldCamera)args[0];
-		
-		if (args[1] instanceof Graphics2D) {
+		if (args[0] instanceof Graphics2D) {
 			
-			Graphics2D g2 = (Graphics2D)args[1];
+			Graphics2D g2 = (Graphics2D)args[0];
 			
-			return new RenderingContextImpl(cam, g2);
+			return new RenderingContextImpl(g2);
 		} else {
 			
-			ImageImpl img = (ImageImpl)args[1];
+			ImageImpl img = (ImageImpl)args[0];
 			Graphics2D g2 = img.img.createGraphics();
 			
-			return new RenderingContextImpl(cam, g2); 
+			return new RenderingContextImpl(g2); 
 		}
 		
 	}
 	
 	public ContentPane createContentPane(Object... args) {
 		
+//		Object foo = (Object)args[0];
 		KeyListener kl = (KeyListener)args[0];
 		
 		return new ContentPaneImpl(kl);

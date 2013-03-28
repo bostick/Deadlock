@@ -390,6 +390,7 @@ public class World extends PhysicsWorld {
 	public void render_preview() {
 		
 		RenderingContext ctxt = APP.platform.createRenderingContext(previewImage);
+		ctxt.cam = worldScreen.contentPane.worldPanel.worldCamera;
 		
 		boolean oldDebug = APP.DEBUG_DRAW;
 		APP.DEBUG_DRAW = false; 

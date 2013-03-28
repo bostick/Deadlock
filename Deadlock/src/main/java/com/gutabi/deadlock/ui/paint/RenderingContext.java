@@ -13,8 +13,8 @@ public abstract class RenderingContext {
 	
 	public WorldCamera cam;
 	
-	public RenderingContext(WorldCamera cam) {
-		this.cam = cam;
+	public RenderingContext() {
+		
 	}
 	
 	public abstract void setAlpha(double a);

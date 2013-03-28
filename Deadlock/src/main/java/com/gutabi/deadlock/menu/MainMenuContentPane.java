@@ -18,7 +18,7 @@ public class MainMenuContentPane implements ContentPane {
 	public MenuPanel panel;
 	
 	public MainMenuContentPane(MainMenuScreen screen) {
-		this.cp = APP.platform.createContentPane(screen);
+		this.cp = APP.platform.createContentPane(null, screen);
 		this.screen = screen;
 		
 		panel = new MenuPanel(screen) {{

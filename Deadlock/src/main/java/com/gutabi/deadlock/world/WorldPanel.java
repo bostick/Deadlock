@@ -22,6 +22,8 @@ public class WorldPanel extends PanelBase {
 	public WorldPanel() {
 //		this.screen = screen;
 		
+		worldCamera = new WorldCamera(this);
+		
 		stats = new Stats(this);
 		
 		aabb = new AABB(aabb.x, aabb.y, APP.WORLDPANEL_WIDTH, APP.WORLDPANEL_HEIGHT);
@@ -175,6 +177,8 @@ public class WorldPanel extends PanelBase {
 	}
 	
 	public void paint(RenderingContext ctxt) {
+		
+		ctxt.cam = worldCamera;
 		
 		Transform origTrans = ctxt.getTransform();
 		

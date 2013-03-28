@@ -26,8 +26,7 @@ public class RenderingContextImpl extends RenderingContext {
 	
 	public final Graphics2D g2;
 	
-	public RenderingContextImpl(WorldCamera cam, Graphics2D g2) {
-		super(cam);
+	public RenderingContextImpl(Graphics2D g2) {
 		this.g2 = g2;
 	}
 	
