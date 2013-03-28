@@ -2,6 +2,7 @@ package com.gutabi.deadlock.menu;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
+import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.quadranteditor.QuadrantEditor;
 import com.gutabi.deadlock.world.DebuggerScreen;
 import com.gutabi.deadlock.world.WorldScreen;
@@ -192,6 +193,17 @@ public class MainMenu extends Menu {
 			}
 		};
 		add(quitMenuItem);
+		
+	}
+	
+	
+	int MENU_CENTER_Y = (854/2);
+	
+	public void render() {
+		
+		super.render();
+		
+		aabb = new AABB(APP.WINDOW_WIDTH/2 - aabb.width/2, MENU_CENTER_Y - aabb.height/2, aabb.width, aabb.height);
 		
 	}
 	

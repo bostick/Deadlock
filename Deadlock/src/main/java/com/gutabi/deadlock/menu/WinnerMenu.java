@@ -2,6 +2,8 @@ package com.gutabi.deadlock.menu;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
+import com.gutabi.deadlock.geom.AABB;
+
 public class WinnerMenu extends Menu {
 	
 	public WinnerMenu() {
@@ -28,6 +30,14 @@ public class WinnerMenu extends Menu {
 			}
 		};
 		add(fourMenuItem);
+		
+	}
+	
+	public void render() {
+		
+		super.render();
+		
+		aabb = new AABB(APP.WINDOW_WIDTH/2 - aabb.width/2, APP.WINDOW_HEIGHT/2 - aabb.height/2, aabb.width, aabb.height);
 		
 	}
 	

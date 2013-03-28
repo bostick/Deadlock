@@ -37,16 +37,6 @@ public class DeadlockMain  {
 		APP.WORLDPANEL_HEIGHT = APP.WINDOW_HEIGHT;
 		
 		
-		APP.MENU_WIDTH = APP.WINDOW_WIDTH;
-		APP.MENU_HEIGHT = APP.WINDOW_HEIGHT;
-		
-		APP.TITLE_CENTER_Y = 165;
-		APP.MENU_CENTER_Y = (854/2);
-		APP.COPYRIGHT_CENTER_Y = 800;
-		
-		
-		
-		
 		PlatformImpl platform = new PlatformImpl();
 		APP.platform = platform;
 		APP.init();

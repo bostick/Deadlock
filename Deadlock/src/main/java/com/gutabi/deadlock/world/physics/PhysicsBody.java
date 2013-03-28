@@ -17,7 +17,7 @@ import com.gutabi.deadlock.world.World;
 
 public abstract class PhysicsBody extends Entity {
 	
-	protected World world;
+	public World world;
 	
 	public double length = -1;
 	public double width = -1;

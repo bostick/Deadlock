@@ -3,14 +3,12 @@ package com.gutabi.deadlock.world.tools;
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
 import com.gutabi.deadlock.geom.Geom;
-import com.gutabi.deadlock.geom.Line;
 import com.gutabi.deadlock.geom.OBB;
 import com.gutabi.deadlock.geom.Shape;
-import com.gutabi.deadlock.geom.SweepUtils;
-import com.gutabi.deadlock.geom.SweptOBB;
 import com.gutabi.deadlock.math.DMath;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.menu.MainMenuScreen;
+import com.gutabi.deadlock.menu.MenuItem;
 import com.gutabi.deadlock.menu.WinnerMenu;
 import com.gutabi.deadlock.ui.InputEvent;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
@@ -381,7 +379,7 @@ public class InteractiveCarTool extends ToolBase {
 			 */
 			GraphPositionPathPosition attemptedPos = car.driver.overallPos.generalSearch(carPTmp, 10.0);
 			
-			GraphPositionPathPosition actualPos = furthestAllowablePosition(car.driver.overallPos, attemptedPos);
+			GraphPositionPathPosition actualPos = car.driver.overallPos.furthestAllowablePosition(car, attemptedPos);
 			
 			car.setTransform(actualPos.p, actualPos.angle());
 			car.setPhysicsTransform();
@@ -512,436 +510,6 @@ public class InteractiveCarTool extends ToolBase {
 		
 	}
 	
-	/**
-	 * from start, move along path until either a collision or reach end. return the position
-	 */
-	private GraphPositionPathPosition furthestAllowablePosition(GraphPositionPathPosition start, GraphPositionPathPosition end) {
-		
-		if (start.equals(end)) {
-			return start;
-		}
-		
-		return (start.combo < end.combo) ? furthestAllowablePositionForward(start, end) : furthestAllowablePositionBackward(start, end);		
-	}
-	
-	/**
-	 * 
-	 * returns end upon finding first non-right angle,
-	 */
-	private GraphPositionPathPosition furthestAllowablePositionForward(GraphPositionPathPosition preStart, GraphPositionPathPosition end) {
-		
-		GraphPositionPathPosition start = findFirstRightAngleForwardOrEnd(preStart, end);
-		
-		if (start.equals(end)) {
-			
-			return end;
-			
-		} else if (start.index == end.index) {
-			
-			if (!DMath.isRightAngle(end.angle())) {
-				return end;
-			}
-			
-			OBB so = Geom.localToWorld(car.localAABB, start.angle(), start.p);
-			OBB eo = Geom.localToWorld(car.localAABB, end.angle(), end.p);
-			SweptOBB swept = new SweptOBB(so, eo);
-			
-			double param = firstCollisionParam(car, swept);
-			if (param != -1) {
-				param = DMath.lerp(start.param, end.param, param);
-				return new GraphPositionPathPosition(car.driver.overallPath, start.index, param);
-			}
-			
-			return end;
-		} else if (end.index == start.index+1 && DMath.equals(end.param, 0.0)) {
-			
-			if (!DMath.isRightAngle(end.angle())) {
-				return end;
-			}
-			
-			OBB so = Geom.localToWorld(car.localAABB, start.angle(), start.p);
-			OBB eo = Geom.localToWorld(car.localAABB, end.angle(), end.p);
-			SweptOBB swept = new SweptOBB(so, eo);
-			
-			double param = firstCollisionParam(car, swept);
-			if (param != -1) {
-				param = DMath.lerp(start.param, 1.0, param);
-				if (DMath.equals(param, 1.0)) {
-					return new GraphPositionPathPosition(car.driver.overallPath, end.index, 0.0);
-				} else {
-					return new GraphPositionPathPosition(car.driver.overallPath, start.index, param);
-				}
-			}
-			
-			return end;
-			
-		}
-		
-		GraphPositionPathPosition a = start;
-		GraphPositionPathPosition b;
-		GraphPositionPathPosition startCeiling = start.ceil();
-		GraphPositionPathPosition endFloor = end.floor();
-		
-		if (!startCeiling.equals(start)) {
-			b = startCeiling;
-			
-			if (!DMath.isRightAngle(b.angle())) {
-				return end;
-			}
-			
-			OBB ao = Geom.localToWorld(car.localAABB, a.angle(), a.p);
-			OBB bo = Geom.localToWorld(car.localAABB, b.angle(), b.p);
-			SweptOBB swept = new SweptOBB(ao, bo);
-			
-			double param = firstCollisionParam(car, swept);
-			if (param != -1) {
-				param = DMath.lerp(a.param, 1.0, param);
-				if (DMath.equals(param, 1.0)) {
-					return new GraphPositionPathPosition(car.driver.overallPath, a.index+1, 0.0);
-				} else {
-					return new GraphPositionPathPosition(car.driver.overallPath, a.index, param);
-				}
-			}
-			
-			a = b;
-		}
-		while (true) {
-			
-			if (a.equals(endFloor)) {
-				break;
-			}
-			
-			b = a.nextBound();
-			
-			if (!DMath.isRightAngle(b.angle())) {
-				return end;
-			}
-			
-			OBB ao = Geom.localToWorld(car.localAABB, a.angle(), a.p);
-			OBB bo = Geom.localToWorld(car.localAABB, b.angle(), b.p);
-			SweptOBB swept = new SweptOBB(ao, bo);
-			
-			double param = firstCollisionParam(car, swept);
-			if (param != -1) {
-				// identity
-				param = DMath.lerp(0.0, 1.0, param);
-				if (DMath.equals(param, 1.0)) {
-					return new GraphPositionPathPosition(car.driver.overallPath, a.index+1, 0.0);
-				} else {
-					return new GraphPositionPathPosition(car.driver.overallPath, a.index, param);
-				}
-			}
-			
-			a = b;
-		}
-		if (!endFloor.equals(end)) {
-			b = end;
-			
-			if (!DMath.isRightAngle(b.angle())) {
-				return end;
-			}
-			
-			OBB ao = Geom.localToWorld(car.localAABB, a.angle(), a.p);
-			OBB bo = Geom.localToWorld(car.localAABB, b.angle(), b.p);
-			SweptOBB swept = new SweptOBB(ao, bo);
-			
-			double param = firstCollisionParam(car, swept);
-			if (param != -1) {
-				param = DMath.lerp(0.0, b.param, param);
-				return new GraphPositionPathPosition(car.driver.overallPath, a.index, param);
-			}
-		}
-		
-		return end;
-	}
-	
-	/**
-	 * 
-	 * returns end upon finding first non-right angle,
-	 */
-	private GraphPositionPathPosition furthestAllowablePositionBackward(GraphPositionPathPosition preStart, GraphPositionPathPosition end) {
-		
-		GraphPositionPathPosition start = findFirstRightAngleBackwardOrEnd(preStart, end);
-		
-		if (start.equals(end)) {
-			
-			return end;
-			
-		} else if (start.index == end.index) {
-			
-			if (!DMath.isRightAngle(end.angle())) {
-				return end;
-			}
-			
-			OBB so = Geom.localToWorld(car.localAABB, start.angle(), start.p);
-			OBB eo = Geom.localToWorld(car.localAABB, end.angle(), end.p);
-			SweptOBB swept = new SweptOBB(so, eo);
-			
-			double param = firstCollisionParam(car, swept);
-			if (param != -1) {
-				param = DMath.lerp(start.param, end.param, param);
-				return new GraphPositionPathPosition(car.driver.overallPath, start.index, param);
-			}
-			
-			return end;
-			
-		} else if (end.index == start.index-1 && DMath.equals(start.param, 0.0)) {
-			
-			if (!DMath.isRightAngle(end.angle())) {
-				return end;
-			}
-			
-			OBB so = Geom.localToWorld(car.localAABB, start.angle(), start.p);
-			OBB eo = Geom.localToWorld(car.localAABB, end.angle(), end.p);
-			SweptOBB swept = new SweptOBB(so, eo);
-			
-			double param = firstCollisionParam(car, swept);
-			if (param != -1) {
-				param = DMath.lerp(1.0, end.param, param);
-				if (DMath.equals(param, 1.0)) {
-					return new GraphPositionPathPosition(car.driver.overallPath, start.index, 0.0);
-				} else {
-					return new GraphPositionPathPosition(car.driver.overallPath, end.index, param);
-				}
-			}
-			
-			return end;
-		}
-		
-		GraphPositionPathPosition b = start;
-		GraphPositionPathPosition a;
-		GraphPositionPathPosition startFloor = start.floor();
-		GraphPositionPathPosition endCeil = end.ceil();
-		
-		if (!startFloor.equals(start)) {
-			a = startFloor;
-			
-			if (!DMath.isRightAngle(a.angle())) {
-				return end;
-			}
-			
-			OBB ao = Geom.localToWorld(car.localAABB, a.angle(), a.p);
-			OBB bo = Geom.localToWorld(car.localAABB, b.angle(), b.p);
-			SweptOBB swept = new SweptOBB(bo, ao);
-			
-			double param = firstCollisionParam(car, swept);
-			if (param != -1) {
-				param = DMath.lerp(b.param, 0.0, param);
-				if (DMath.equals(param, 1.0)) {
-					return new GraphPositionPathPosition(car.driver.overallPath, a.index+1, 0.0);
-				} else {
-					return new GraphPositionPathPosition(car.driver.overallPath, a.index, param);
-				}
-			}
-			
-			b = a;
-		}
-		while (true) {
-			
-			if (b.equals(endCeil)) {
-				break;
-			}
-			
-			a = b.prevBound();
-			
-			if (!DMath.isRightAngle(a.angle())) {
-				return end;
-			}
-			
-			OBB ao = Geom.localToWorld(car.localAABB, a.angle(), a.p);
-			OBB bo = Geom.localToWorld(car.localAABB, b.angle(), b.p);
-			SweptOBB swept = new SweptOBB(bo, ao);
-			
-			double param = firstCollisionParam(car, swept);
-			if (param != -1) {
-				param = DMath.lerp(1.0, 0.0, param);
-				if (DMath.equals(param, 1.0)) {
-					return new GraphPositionPathPosition(car.driver.overallPath, a.index+1, 0.0);
-				} else {
-					return new GraphPositionPathPosition(car.driver.overallPath, a.index, param);
-				}
-			}
-			
-			b = a;
-		}
-		if (!endCeil.equals(end)) {
-			a = end;
-			
-			if (!DMath.isRightAngle(a.angle())) {
-				return end;
-			}
-			
-			OBB ao = Geom.localToWorld(car.localAABB, a.angle(), a.p);
-			OBB bo = Geom.localToWorld(car.localAABB, b.angle(), b.p);
-			SweptOBB swept = new SweptOBB(bo, ao);
-			
-			double param = firstCollisionParam(car, swept);
-			if (param != -1) {
-				param = DMath.lerp(1.0, a.param, param);
-				return new GraphPositionPathPosition(car.driver.overallPath, a.index, param);
-			}
-		}
-		
-		return end;
-	}
-	
-	private GraphPositionPathPosition findFirstRightAngleForwardOrEnd(GraphPositionPathPosition start, GraphPositionPathPosition end) {
-		
-		if (DMath.isRightAngle(start.angle())) {
-			
-			return start;
-			
-		} else if (start.index == end.index) {
-			
-			if (DMath.isRightAngle(end.angle())) {
-				return end;
-			}
-			
-			return end;
-			
-		} else if (end.index == start.index+1 && DMath.equals(end.param, 0.0)) {
-			
-			if (DMath.isRightAngle(end.angle())) {
-				return end;
-			}
-			
-			return end;
-			
-		}
-		
-		GraphPositionPathPosition a = start;
-		GraphPositionPathPosition b;
-		GraphPositionPathPosition startCeiling = start.ceil();
-		GraphPositionPathPosition endFloor = end.floor();
-		
-		if (!startCeiling.equals(start)) {
-			b = startCeiling;
-			
-			if (DMath.isRightAngle(b.angle())) {
-				return b;
-			}
-			
-			a = b;
-		}
-		while (true) {
-			
-			if (a.equals(endFloor)) {
-				break;
-			}
-			
-			b = a.nextBound();
-			
-			if (DMath.isRightAngle(b.angle())) {
-				return b;
-			}
-			
-			a = b;
-		}
-		if (!endFloor.equals(end)) {
-			b = end;
-			
-			if (DMath.isRightAngle(b.angle())) {
-				return b;
-			}
-			
-		}
-		
-		return end;
-	}
-	
-	private GraphPositionPathPosition findFirstRightAngleBackwardOrEnd(GraphPositionPathPosition start, GraphPositionPathPosition end) {
-		
-		if (DMath.isRightAngle(start.angle())) {
-			
-			return start;
-			
-		} else if (start.index == end.index) {
-			
-			if (DMath.isRightAngle(end.angle())) {
-				return end;
-			}
-			
-			return end;
-			
-		} else if (end.index == start.index-1 && DMath.equals(start.param, 0.0)) {
-			
-			if (DMath.isRightAngle(end.angle())) {
-				return end;
-			}
-			
-			return end;
-		}
-		
-		GraphPositionPathPosition b = start;
-		GraphPositionPathPosition a;
-		GraphPositionPathPosition startFloor = start.floor();
-		GraphPositionPathPosition endCeil = end.ceil();
-		
-		if (!startFloor.equals(start)) {
-			a = startFloor;
-			
-			if (DMath.isRightAngle(a.angle())) {
-				return a;
-			}
-			
-			b = a;
-		}
-		while (true) {
-			
-			if (b.equals(endCeil)) {
-				break;
-			}
-			
-			a = b.prevBound();
-			
-			if (DMath.isRightAngle(a.angle())) {
-				return a;
-			}
-			
-			b = a;
-		}
-		if (!endCeil.equals(end)) {
-			a = end;
-			
-			if (DMath.isRightAngle(a.angle())) {
-				return a;
-			}
-			
-		}
-		
-		return end;
-	}
-
-	
-	/**
-	 * on the segment from start.center to end.center, what is the param of the first collision?
-	 */
-	double firstCollisionParam(Car car, SweptOBB swept) {
-		
-		double bestParam = -1.0;
-		
-		for (RushHourBoard b : worldScreen.contentPane.worldPanel.world.graph.rushes) {
-			for (Line l : b.perimeterSegments) {
-				double param = SweepUtils.firstCollisionParam(l, swept);
-				if (param != -1 && (bestParam == -1 || DMath.lessThan(param, bestParam))) {
-					bestParam = param;
-				}
-			}
-		}
-		
-		for (Car c : worldScreen.contentPane.worldPanel.world.carMap.cars) {
-			if (c == car) {
-				continue;
-			}
-			double param = SweepUtils.firstCollisionParam(c.shape, swept);
-			if (param != -1 && (bestParam == -1 || DMath.lessThan(param, bestParam))) {
-				bestParam = param;
-			}
-		}
-		
-		return bestParam;
-	}
-	
 	public void handleZooming() {
 		
 		GraphPosition gpos = car.driver.overallPos.gp;
@@ -993,14 +561,43 @@ public class InteractiveCarTool extends ToolBase {
 		
 	}
 	
+	
+	WinnerMenu winnerMenu;
+	
 	void winner() {
 		
-		WinnerMenu s = new WinnerMenu();
+		winnerMenu = new WinnerMenu();
+		
+		winnerMenu.render();
 		
 		
 	}
 	
-	public void draw(RenderingContext ctxt) {
+	public void draw_pixels(RenderingContext ctxt) {
+		
+		if (winnerMenu != null) {
+			winnerMenu.paint_pixels(ctxt);
+		}
+		
+	}
+	
+	public void moved(InputEvent ev) {
+		
+		if (winnerMenu != null) {
+			
+			Point p = ev.p;
+			
+			p = worldScreen.contentPane.worldPanel.worldToPanel(p);
+			p = p.minus(winnerMenu.aabb.ul);
+			
+			MenuItem hit = winnerMenu.hitTest(p);
+			if (hit != null && hit.active) {
+				winnerMenu.hilited = hit;
+			} else {
+				winnerMenu.hilited = null;
+			}
+			
+		}
 		
 	}
 	

@@ -1,4 +1,7 @@
 
+generalize menu painting
+
+put up WinningMenu
 
 SOON:
 

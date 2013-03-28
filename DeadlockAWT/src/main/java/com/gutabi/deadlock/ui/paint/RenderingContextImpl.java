@@ -20,7 +20,6 @@ import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.Image;
 import com.gutabi.deadlock.ui.ImageImpl;
 import com.gutabi.deadlock.ui.Transform;
-import com.gutabi.deadlock.world.WorldCamera;
 
 public class RenderingContextImpl extends RenderingContext {
 	

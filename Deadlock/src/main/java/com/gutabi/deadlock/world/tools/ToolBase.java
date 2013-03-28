@@ -4,6 +4,7 @@ import static com.gutabi.deadlock.DeadlockApplication.APP;
 
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.InputEvent;
+import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.world.DebuggerScreen;
 import com.gutabi.deadlock.world.WorldScreen;
 
@@ -228,6 +229,14 @@ public abstract class ToolBase implements Tool {
 	}
 
 	public void clicked(InputEvent ev) {
+		
+	}
+	
+	public void draw(RenderingContext ctxt) {
+		
+	}
+	
+	public void draw_pixels(RenderingContext ctxt) {
 		
 	}
 

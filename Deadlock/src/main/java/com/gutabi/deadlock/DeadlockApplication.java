@@ -28,12 +28,8 @@ public class DeadlockApplication {
 	public int WORLDPANEL_HEIGHT = -1;
 	
 	
-	public int MENU_WIDTH = -1;
-	public int MENU_HEIGHT = -1;
-	
-	public int TITLE_CENTER_Y = -1;
-	public int MENU_CENTER_Y = -1;
-	public int COPYRIGHT_CENTER_Y = -1;
+//	public int MENU_WIDTH = -1;
+//	public int MENU_HEIGHT = -1;
 	
 	
 	public AppScreen appScreen;

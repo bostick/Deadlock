@@ -28,7 +28,6 @@ import com.gutabi.deadlock.ui.KeyListener;
 import com.gutabi.deadlock.ui.paint.FontStyle;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.ui.paint.RenderingContextImpl;
-import com.gutabi.deadlock.world.WorldCamera;
 
 public class PlatformImpl implements Platform {
 	

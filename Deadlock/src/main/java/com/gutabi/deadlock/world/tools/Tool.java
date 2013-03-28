@@ -60,4 +60,6 @@ public interface Tool {
 	
 	public abstract void draw(RenderingContext ctxt);
 	
+	public abstract void draw_pixels(RenderingContext ctxt);
+	
 }

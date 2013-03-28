@@ -200,6 +200,8 @@ public class WorldPanel extends PanelBase {
 		
 		ctxt.setTransform(origTrans);
 		
+		APP.tool.draw_pixels(ctxt);
+		
 	}
 
 }

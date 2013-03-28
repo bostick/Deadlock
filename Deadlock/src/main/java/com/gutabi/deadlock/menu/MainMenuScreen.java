@@ -7,13 +7,11 @@ public class MainMenuScreen extends AppScreen implements KeyListener {
 	
 	public MainMenuContentPane contentPane;
 	
-	public MainMenu menu;
-	
 	public MainMenuScreen() {
 		
 		contentPane = new MainMenuContentPane(this);
 		
-		menu = new MainMenu();
+		contentPane.panel.menu = new MainMenu();
 		
 	}
 	
@@ -23,18 +21,18 @@ public class MainMenuScreen extends AppScreen implements KeyListener {
 	
 	public void downKey() {
 		
-		if (menu.hilited == null) {
+		if (contentPane.panel.menu.hilited == null) {
 			
-			menu.hilited = menu.firstMenuItem;
+			contentPane.panel.menu.hilited = contentPane.panel.menu.firstMenuItem;
 			
 		} else {
 			
-			menu.hilited = menu.hilited.down;
+			contentPane.panel.menu.hilited = contentPane.panel.menu.hilited.down;
 			
 		}
 		
-		while (!menu.hilited.active) {
-			menu.hilited = menu.hilited.down;
+		while (!contentPane.panel.menu.hilited.active) {
+			contentPane.panel.menu.hilited = contentPane.panel.menu.hilited.down;
 		}
 		
 		contentPane.repaint();
@@ -42,18 +40,18 @@ public class MainMenuScreen extends AppScreen implements KeyListener {
 	
 	public void upKey() {
 		
-		if (menu.hilited == null) {
+		if (contentPane.panel.menu.hilited == null) {
 			
-			menu.hilited = menu.firstMenuItem;
+			contentPane.panel.menu.hilited = contentPane.panel.menu.firstMenuItem;
 			
 		} else {
 			
-			menu.hilited = menu.hilited.up;
+			contentPane.panel.menu.hilited = contentPane.panel.menu.hilited.up;
 			
 		}
 		
-		while (!menu.hilited.active) {
-			menu.hilited = menu.hilited.up;
+		while (!contentPane.panel.menu.hilited.active) {
+			contentPane.panel.menu.hilited = contentPane.panel.menu.hilited.up;
 		}
 		
 		contentPane.repaint();
@@ -61,8 +59,8 @@ public class MainMenuScreen extends AppScreen implements KeyListener {
 	
 	public void enterKey() {
 		
-		if (menu.hilited != null && menu.hilited.active) {
-			menu.hilited.action();
+		if (contentPane.panel.menu.hilited != null && contentPane.panel.menu.hilited.active) {
+			contentPane.panel.menu.hilited.action();
 		}
 		
 	}

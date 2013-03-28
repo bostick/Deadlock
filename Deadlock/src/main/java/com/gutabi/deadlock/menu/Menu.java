@@ -5,6 +5,10 @@ import static com.gutabi.deadlock.DeadlockApplication.APP;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.gutabi.deadlock.geom.AABB;
+import com.gutabi.deadlock.math.Point;
+import com.gutabi.deadlock.ui.Image;
+import com.gutabi.deadlock.ui.Transform;
 import com.gutabi.deadlock.ui.paint.Color;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 
@@ -18,8 +22,7 @@ public abstract class Menu {
 	double menuItemWidest;
 	int totalMenuItemHeight;
 	
-	public double menuWidth;
-	public double menuHeight;
+	public AABB aabb = new AABB(0, 0, 0, 0);
 	
 	public void add(MenuItem item) {
 		
@@ -43,14 +46,55 @@ public abstract class Menu {
 		
 	}
 	
+	public MenuItem hitTest(Point p) {
+		
+		for (MenuItem item : items) {
+			if (item.hitTest(p)) {
+				return item;
+			}
+		}
+		
+		return null;
+	}
+	
+	public void render() {
+		
+		for (MenuItem item : items) {
+			if ((int)item.localAABB.width > menuItemWidest) {
+				menuItemWidest = (int)item.localAABB.width;
+			}
+			totalMenuItemHeight += (int)item.localAABB.height;
+		}
+		
+		double menuHeight = totalMenuItemHeight + 10 * (items.size() - 1);
+		
+		aabb = new AABB(aabb.x, aabb.y, menuItemWidest, menuHeight);
+		
+		Image tmpImg = APP.platform.createImage((int)aabb.width, (int)aabb.height);
+		
+		RenderingContext ctxt = APP.platform.createRenderingContext(tmpImg);
+		
+		for (MenuItem item : items) {
+			item.render(ctxt);
+			ctxt.translate(0, item.localAABB.height + 10);
+		}
+		
+		ctxt.dispose();
+		
+	}
+	
 	public void paint_pixels(RenderingContext ctxt) {
+		
+		Transform origTransform = ctxt.getTransform();
+		
+		ctxt.translate(aabb.x, aabb.y);
 		
 		ctxt.setColor(Color.menuBackground);
 		ctxt.fillRect(
-				(int)(APP.MENU_WIDTH/2 - menuItemWidest/2 - 5),
-				(int)(APP.MENU_CENTER_Y - menuHeight/2 - 5),
-				(int)(menuWidth + 5 + 5),
-				(int)(menuHeight + 5 + 5));
+				(int)(-5),
+				(int)(-5),
+				(int)(aabb.width + 5 + 5),
+				(int)(aabb.height + 5 + 5));
 		
 		for (MenuItem item : items) {
 			item.paint(ctxt);
@@ -59,6 +103,7 @@ public abstract class Menu {
 		if (hilited != null) {
 			hilited.paintHilited(ctxt);			
 		}
+		
+		ctxt.setTransform(origTransform);
 	}
-	
 }
