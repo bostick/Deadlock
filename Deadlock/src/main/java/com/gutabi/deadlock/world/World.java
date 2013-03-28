@@ -33,7 +33,7 @@ public class World extends PhysicsWorld {
 	
 	public DebuggerScreen debuggerScreen;
 	
-	private Image background;
+	WorldBackground background;
 	Image previewImage;
 	
 	public QuadrantMap quadrantMap;
@@ -52,6 +52,8 @@ public class World extends PhysicsWorld {
 		super(worldScreen);
 		
 		this.debuggerScreen = debuggerScreen;
+		
+		background = new WorldBackground(this);
 		
 		graph = new Graph(this);
 		
@@ -75,9 +77,7 @@ public class World extends PhysicsWorld {
 	
 	public void panelPostDisplay() {
 		
-		background = APP.platform.createImage(
-				(int)worldScreen.contentPane.worldPanel.aabb.width,
-				(int)worldScreen.contentPane.worldPanel.aabb.height);
+		background.panelPostDisplay();
 		
 		quadrantMap.panelPostDisplay();
 		
@@ -387,18 +387,7 @@ public class World extends PhysicsWorld {
 	
 	public void render_worldPanel() {
 		
-		RenderingContext ctxt = APP.platform.createRenderingContext(background);
-		
-		ctxt.setColor(Color.LIGHT_GRAY);
-		ctxt.fillRect(0, 0, (int)worldScreen.contentPane.worldPanel.aabb.width, (int)worldScreen.contentPane.worldPanel.aabb.height);
-		
-		ctxt.scale(worldScreen.pixelsPerMeter);
-		ctxt.translate(-worldScreen.worldViewport.x, -worldScreen.worldViewport.y);
-		
-		quadrantMap.render_panel(ctxt);
-		graph.render_panel(ctxt);
-		
-		ctxt.dispose();
+		background.render();
 	}
 	
 	public void render_preview() {
@@ -430,18 +419,16 @@ public class World extends PhysicsWorld {
 		ctxt.dispose();
 	}
 	
+	public void clear_panel(RenderingContext ctxt) {
+		
+		background.clear(ctxt);
+	}
+	
 	public void paint_panel(RenderingContext ctxt) {
 		
 		Transform origTrans = ctxt.getTransform();
 		
-		ctxt.paintImage(
-				background,
-				worldScreen.origPixelsPerMeter,
-				worldScreen.origWorldViewport.x,
-				worldScreen.origWorldViewport.y,
-				worldScreen.origWorldViewport.brX,
-				worldScreen.origWorldViewport.brY,
-				0, 0, background.getWidth(), background.getHeight());
+		background.paint(ctxt);
 		
 		synchronized (APP) {
 			

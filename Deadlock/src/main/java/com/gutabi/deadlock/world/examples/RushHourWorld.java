@@ -28,7 +28,11 @@ public class RushHourWorld extends World {
 	public static RushHourWorld createRushHourWorld(WorldScreen screen, DebuggerScreen debuggerScreen) {
 		
 		int[][] ini = new int[][] {
-				{1}
+				{1, 1, 1},
+				{1, 1, 1},
+				{1, 1, 1},
+				{1, 1, 1}
+				
 			};
 		
 		final RushHourWorld w = new RushHourWorld(screen, debuggerScreen);
@@ -74,7 +78,7 @@ public class RushHourWorld extends World {
 		{' ', ' ', ' ', ' ', 'K', ' ', 'J', ' '}
 	};
 		
-		final RushHourBoard b = w.createRushHourBoard(new Point(QuadrantMap.QUADRANT_WIDTH/2, QuadrantMap.QUADRANT_WIDTH/2), boardIni);
+		final RushHourBoard b = w.createRushHourBoard(new Point(1.5 * QuadrantMap.QUADRANT_WIDTH, 2.0 * QuadrantMap.QUADRANT_HEIGHT), boardIni);
 		
 		char[] carChars = new char[] { 'R', 'A', 'B', 'C', 'D', 'E', 'F', 'G' };
 		int cur2Count = 0;

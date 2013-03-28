@@ -82,7 +82,9 @@ public class CarTool extends ToolBase {
 			
 			break;
 		case DRAGGING:
-			assert false;
+			/*
+			 * double click?
+			 */
 			break;
 		case COASTING_FORWARD:
 		case COASTING_BACKWARD:
@@ -931,15 +933,17 @@ public class CarTool extends ToolBase {
 			
 			RoadPosition rpos = (RoadPosition)gpos;
 			
-			double a = rpos.lengthToStartOfRoad / rpos.r.getTotalLength(rpos.r.start, rpos.r.end);
-			
+			double alpha = rpos.lengthToStartOfRoad / rpos.r.getTotalLength(rpos.r.start, rpos.r.end);
 			double para;
-			if (a < 1.0/3.5) {
-				para = 1.0 + (3.5 * a) * (0.5 - 1.0);
-			} else if (a < (1-1.0/3.5)) {
-				para = 0.5;
+			if (DMath.equals(alpha, 0.0)) {
+				para = 1.0;
+			} else if (DMath.equals(alpha, 1.0)) {
+				para = 1.0;
 			} else {
-				para = 0.5 + (3.5 * (a - (1-1.0/3.5))) * (1.0 - 0.5);
+				double[] vals = new double[] {1.0, 0.75, 0.5, 0.5, 0.5, 0.5, 0.75, 1.0};
+				double a = vals[(int)Math.floor(alpha * (vals.length-1))];
+				double b = vals[(int)Math.floor(alpha * (vals.length-1))+1];
+				para = DMath.lerp(a, b, (alpha * (vals.length-1) - Math.floor(alpha * (vals.length-1))));
 			}
 			
 			worldScreen.world.zoomAbsolute(para);

@@ -1,10 +1,4 @@
 
-on startup, render world panel big enough for zooming
-
-
-figure out best way for zoom to follow car
-so that dragging is not interrupted
-
 
 SOON:
 
@@ -19,6 +13,11 @@ in board description, a missing - or | means to allow the car off of the board..
 
 
 DONE:
+
+figure out best way for zoom to follow car
+so that dragging is not interrupted (kind of)
+
+just paint all background on repaint
 
 add perimeters around joint studs
 

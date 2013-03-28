@@ -24,7 +24,7 @@ public class WorldScreen extends AppScreen implements KeyListener {
 	/**
 	 * move physics forward by dt seconds
 	 */
-	public double DT = 0.01;
+	public double DT = 0.0166666;
 	
 	public WorldScreenContentPane contentPane;
 	

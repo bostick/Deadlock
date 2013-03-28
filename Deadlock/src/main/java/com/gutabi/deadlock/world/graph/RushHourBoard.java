@@ -22,6 +22,10 @@ import com.gutabi.deadlock.world.World;
 
 public class RushHourBoard extends Entity {
 	
+	public static final double STRAIGHTEXTENSION = 1.5;
+	public static final double CONTROLEXTENSION = 18;
+	public static final double EXITROADLENGTH = 30;
+	
 	World world;
 	Point center;
 	
@@ -517,25 +521,25 @@ public class RushHourBoard extends Entity {
 		Fixture f;
 		switch(y.f.getFacingSide()) {
 		case TOP:
-			other = y.f.p.plus(new Point(0, 10));
+			other = y.f.p.plus(new Point(0, EXITROADLENGTH));
 			f = new Fixture(world, other, Axis.TOPBOTTOM);
 			f.setFacingSide(Side.TOP);
 			world.addFixture(f);
 			break;
 		case LEFT:
-			other = y.f.p.plus(new Point(10, 0));
+			other = y.f.p.plus(new Point(EXITROADLENGTH, 0));
 			f = new Fixture(world, other, Axis.LEFTRIGHT);
 			f.setFacingSide(Side.LEFT);
 			world.addFixture(f);
 			break;
 		case RIGHT:
-			other = y.f.p.plus(new Point(-10, 0));
+			other = y.f.p.plus(new Point(-EXITROADLENGTH, 0));
 			f = new Fixture(world, other, Axis.LEFTRIGHT);
 			f.setFacingSide(Side.RIGHT);
 			world.addFixture(f);
 			break;
 		case BOTTOM:
-			other = y.f.p.plus(new Point(0, -10));
+			other = y.f.p.plus(new Point(0, -EXITROADLENGTH));
 			f = new Fixture(world, other, Axis.TOPBOTTOM);
 			f.setFacingSide(Side.BOTTOM);
 			world.addFixture(f);
@@ -611,35 +615,33 @@ public class RushHourBoard extends Entity {
 		Point c0;
 		Point c1;
 		Point end;
-		double straightExtension = 1.5;
-		double controlExtension = 18;
 		if (js0.col < 0) {
-			start = new Point(f0.p.x - straightExtension, f0.p.y);
-			c0 = new Point(f0.p.x - controlExtension, f0.p.y);
+			start = new Point(f0.p.x - STRAIGHTEXTENSION, f0.p.y);
+			c0 = new Point(f0.p.x - CONTROLEXTENSION, f0.p.y);
 		} else if (js0.col >= colCount) {
-			start = new Point(f0.p.x + straightExtension, f0.p.y);
-			c0 = new Point(f0.p.x + controlExtension, f0.p.y);
+			start = new Point(f0.p.x + STRAIGHTEXTENSION, f0.p.y);
+			c0 = new Point(f0.p.x + CONTROLEXTENSION, f0.p.y);
 		} else if (js0.row < 0) {
-			start = new Point(f0.p.x, f0.p.y - straightExtension);
-			c0 = new Point(f0.p.x, f0.p.y - controlExtension);
+			start = new Point(f0.p.x, f0.p.y - STRAIGHTEXTENSION);
+			c0 = new Point(f0.p.x, f0.p.y - CONTROLEXTENSION);
 		} else {
 			assert js0.row >= rowCount;
-			start = new Point(f0.p.x, f0.p.y + straightExtension);
-			c0 = new Point(f0.p.x, f0.p.y + controlExtension);
+			start = new Point(f0.p.x, f0.p.y + STRAIGHTEXTENSION);
+			c0 = new Point(f0.p.x, f0.p.y + CONTROLEXTENSION);
 		}
 		if (js1.col < 0) {
-			end = new Point(f1.p.x - straightExtension, f1.p.y);
-			c1 = new Point(f1.p.x - controlExtension, f1.p.y);
+			end = new Point(f1.p.x - STRAIGHTEXTENSION, f1.p.y);
+			c1 = new Point(f1.p.x - CONTROLEXTENSION, f1.p.y);
 		} else if (js1.col >= colCount) {
-			end = new Point(f1.p.x + straightExtension, f1.p.y);
-			c1 = new Point(f1.p.x + controlExtension, f1.p.y);
+			end = new Point(f1.p.x + STRAIGHTEXTENSION, f1.p.y);
+			c1 = new Point(f1.p.x + CONTROLEXTENSION, f1.p.y);
 		} else if (js1.row < 0) {
-			end = new Point(f1.p.x, f1.p.y - straightExtension);
-			c1 = new Point(f1.p.x, f1.p.y - controlExtension);
+			end = new Point(f1.p.x, f1.p.y - STRAIGHTEXTENSION);
+			c1 = new Point(f1.p.x, f1.p.y - CONTROLEXTENSION);
 		} else {
 			assert js1.row >= rowCount;
-			end = new Point(f1.p.x, f1.p.y + straightExtension);
-			c1 = new Point(f1.p.x, f1.p.y + controlExtension);
+			end = new Point(f1.p.x, f1.p.y + STRAIGHTEXTENSION);
+			c1 = new Point(f1.p.x, f1.p.y + CONTROLEXTENSION);
 		}
 		CubicCurve c = APP.platform.createShapeEngine().createCubicCurve(start, c0, c1, end);
 		

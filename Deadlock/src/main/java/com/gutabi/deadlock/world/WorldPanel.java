@@ -174,6 +174,8 @@ public class WorldPanel extends PanelBase {
 		
 		Transform origTrans = ctxt.getTransform();
 		
+		screen.world.clear_panel(ctxt);
+		
 		ctxt.translate(aabb.x, aabb.y);
 		
 		ctxt.scale(screen.pixelsPerMeter);
