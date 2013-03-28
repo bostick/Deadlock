@@ -24,6 +24,7 @@ public class ContentPaneImpl extends ContentPaneBase implements java.awt.event.K
 	public ContentPaneImpl(KeyListener kl) {
 		
 		this.kl = kl;
+		assert kl != null;
 		
 		j = new Container() {
 			public void paint(Graphics g) {

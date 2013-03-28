@@ -8,14 +8,14 @@ public class WinnerMenu extends Menu {
 	
 	public WinnerMenu() {
 		
-		MenuItem oneMenuItem = new MenuItem(WinnerMenu.this,"Next") {
+		MenuItem nextMenuItem = new MenuItem(WinnerMenu.this,"Next") {
 			public void action() {
 				
 			}
 		};
-		add(oneMenuItem);
+		add(nextMenuItem);
 		
-		MenuItem fourMenuItem = new MenuItem(WinnerMenu.this, "Back") {
+		MenuItem backMenuItem = new MenuItem(WinnerMenu.this, "Back") {
 			public void action() {
 				
 				APP.platform.unshowDebuggerScreen();
@@ -29,7 +29,7 @@ public class WinnerMenu extends Menu {
 				s.contentPane.repaint();
 			}
 		};
-		add(fourMenuItem);
+		add(backMenuItem);
 		
 	}
 	

@@ -18,7 +18,7 @@ public class WorldScreenContentPane implements ContentPane {
 	public WorldPanel worldPanel;
 	
 	public WorldScreenContentPane(WorldScreen screen) {
-		this.cp = APP.platform.createContentPane(null, screen);
+		this.cp = APP.platform.createContentPane(screen);
 		this.screen = screen;
 		
 		worldPanel = new WorldPanel() {{

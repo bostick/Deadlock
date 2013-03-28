@@ -601,4 +601,23 @@ public class InteractiveCarTool extends ToolBase {
 		
 	}
 	
+	public void clicked(InputEvent ev) {
+		
+		if (winnerMenu != null) {
+			
+			Point p = ev.p;
+			
+			p = worldScreen.contentPane.worldPanel.worldToPanel(p);
+			p = p.minus(winnerMenu.aabb.ul);
+			
+			MenuItem item = winnerMenu.hitTest(p);
+			
+			if (item != null && item.active) {
+				item.action();
+			}
+			
+		}
+		
+	}
+	
 }
