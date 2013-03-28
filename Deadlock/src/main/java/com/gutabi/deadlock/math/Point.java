@@ -307,8 +307,14 @@ public class Point {
 		double denom = xdc * xdc + ydc * ydc;
 		assert !DMath.equals(denom, 0.0);
 		// u is where b is perpendicular to <c, d>
-		double u = (xbc * xdc + ybc * ydc) / denom;
-		if (u >= 0.0 && u <= 1.0) {
+		double u;
+		double n = (xbc * xdc + ybc * ydc);
+		if (DMath.equals(n, 0.0)) {
+			u = 0.0;
+		} else {
+			u = n / denom;
+		}
+		if (DMath.greaterThanEquals(u, 0.0) && DMath.lessThanEquals(u, 1.0)) {
 			return DMath.equals(xbc, u * xdc) && DMath.equals(ybc, u * ydc);
 		} else {
 			 if (DMath.equals(xbc, u * xdc) && DMath.equals(ybc, u * ydc)) {
@@ -321,6 +327,8 @@ public class Point {
 	
 	/**
 	 * returns u for point b in segment &lt;c, d>
+	 * 
+	 * b could be off of the segment, in which case it is projected onto &lt;c, d>
 	 */
 	public static double u(Point c, Point b, Point d) {
 		if (b.equals(c)) {
@@ -339,11 +347,53 @@ public class Point {
 		double denom = xdc * xdc + ydc * ydc;
 		assert !DMath.equals(denom, 0.0);
 		// u is where b is perpendicular to <c, d>
+		double u;
 		double n = (xbc * xdc + ybc * ydc);
 		if (DMath.equals(n, 0.0)) {
-			return 0.0;
+			u = 0.0;
 		} else {
-			return n / denom;
+			u = n / denom;
+		}
+		return u;
+	}
+	
+	/**
+	 * returns u for point b in segment &lt;c, d>
+	 * 
+	 * if b is not on the segment, then -1 is returned;
+	 */
+	public static double uNoProjection(Point c, Point b, Point d) {
+		if (b.equals(c)) {
+			return 0.0;
+		}
+		if (b.equals(d)) {
+			return 1.0;
+		}
+		double xbc = b.x - c.x;
+		double xdc = d.x - c.x;
+		double ybc = b.y - c.y;
+		double ydc = d.y - c.y;
+		double denom = xdc * xdc + ydc * ydc;
+		assert !DMath.equals(denom, 0.0);
+		// u is where b is perpendicular to <c, d>
+		double u;
+		double n = (xbc * xdc + ybc * ydc);
+		if (DMath.equals(n, 0.0)) {
+			u = 0.0;
+		} else {
+			u = n / denom;
+		}
+		if (DMath.lessThan(u, 0.0) || DMath.greaterThan(u, 1.0)) {
+			return -1;
+		} else {
+			 if (DMath.equals(xbc, u * xdc) && DMath.equals(ybc, u * ydc)) {
+				 return u;
+			 } else {
+				 /*
+				  * not colinear
+				  */
+				 return -1;
+			 }
 		}
 	}
 	

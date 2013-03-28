@@ -38,8 +38,8 @@ public final class AutonomousDriver extends Driver {
 			path.currentDrivers.add(this);
 		}
 		
-		overallPos = overallPath.startingPos;
-		startGP = overallPos.getGraphPosition();
+		overallPos = overallPath.startPos;
+		startGP = overallPos.gp;
 		
 		vertexDepartureQueue.add(new VertexSpawnEvent(overallPos));
 	}
@@ -171,14 +171,7 @@ public final class AutonomousDriver extends Driver {
 	
 	public void postStep(double t) {
 		
-//		Point old = overallPos.p;
-		
-		setOverallPos(overallPath.forwardSearch(c.center, overallPos, true, Double.POSITIVE_INFINITY));
-		
-//		double oldDist = Point.distance(c.center, old);
-		
-//		double dist = Point.distance(c.center, overallPos.p);
-//		assert DMath.equals(dist, 0.0);
+		setOverallPos(overallPath.forwardSearch(c.center, overallPos, overallPath.endPos));
 		
 	}
 	

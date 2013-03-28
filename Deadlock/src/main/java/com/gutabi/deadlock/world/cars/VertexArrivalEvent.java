@@ -21,7 +21,7 @@ public class VertexArrivalEvent extends VertexEvent {
 		this.d = d;
 		this.entrancePosition = entrancePosition;
 		
-		sign = ((RoadPosition)entrancePosition.getGraphPosition()).sign;
+		sign = ((RoadPosition)entrancePosition.gp).sign;
 		
 	}
 	

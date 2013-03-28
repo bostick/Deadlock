@@ -45,6 +45,13 @@ public class RushHourBoard extends Entity {
 	public AABB allStudsAABB;
 	public AABB gridAABB;
 	
+	int jStudCount = 0;
+	BorderStud[] jStuds = new BorderStud[2];
+	int kStudCount = 0;
+	BorderStud[] kStuds = new BorderStud[2];
+	BorderStud yStud = null;
+	public Vertex exitVertex;
+	
 	Map<Integer, List<GraphPosition>> rowTracks = new HashMap<Integer, List<GraphPosition>>();
 	Map<Integer, List<GraphPosition>> colTracks = new HashMap<Integer, List<GraphPosition>>();
 	private Map<Integer, GraphPositionPath> rowPaths = new HashMap<Integer, GraphPositionPath>();
@@ -147,13 +154,6 @@ public class RushHourBoard extends Entity {
 			perimeterSegments.add(new Line(p3.plus(new Point(0, i * -RushHourStud.SIZE)), p3.plus(new Point(0, (i+1) * -RushHourStud.SIZE))));
 		}
 		
-		
-		int jStudCount = 0;
-		BorderStud[] jStuds = new BorderStud[2];
-		int kStudCount = 0;
-		BorderStud[] kStuds = new BorderStud[2];
-		BorderStud yStud = null;
-		
 		for (int i = 0; i < ini.length; i++) {
 			for (int j = 0; j < ini[i].length; j++) {
 				char c = ini[i][j];
@@ -237,6 +237,7 @@ public class RushHourBoard extends Entity {
 						f.setFacingSide(Side.BOTTOM);
 						s.f = f;
 						world.addFixture(f);
+						exitVertex = f;
 						
 					} else if (i >= originRow + rowCount) {
 						removePerimeterSegment(s.aabb.getP0P1Line());
@@ -247,6 +248,7 @@ public class RushHourBoard extends Entity {
 						f.setFacingSide(Side.TOP);
 						s.f = f;
 						world.addFixture(f);
+						exitVertex = f;
 						
 					} else if (j < originCol) {
 						removePerimeterSegment(s.aabb.getP1P2Line());
@@ -257,6 +259,7 @@ public class RushHourBoard extends Entity {
 						f.setFacingSide(Side.RIGHT);
 						s.f = f;
 						world.addFixture(f);
+						exitVertex = f;
 						
 					} else {
 						assert j >= originCol + colCount;
@@ -268,6 +271,7 @@ public class RushHourBoard extends Entity {
 						f.setFacingSide(Side.LEFT);
 						s.f = f;
 						world.addFixture(f);
+						exitVertex = f;
 						
 					}
 					break;

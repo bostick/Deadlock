@@ -45,6 +45,17 @@ public class RushHourBoardPosition extends GraphPosition {
 		return "board[r: " + rowCombo + ", c: " + colCombo + "]";
 	}
 	
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		} else if (!(o instanceof RushHourBoardPosition)) {
+			return false;
+		} else {
+			RushHourBoardPosition b = (RushHourBoardPosition)o;
+			return DMath.equals(rowCombo, b.rowCombo) && DMath.equals(colCombo, b.colCombo);
+		}
+	}
+	
 	public boolean isBound() {
 		return bound;
 	}

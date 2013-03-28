@@ -13,7 +13,7 @@ public abstract class VertexEvent extends DrivingEvent {
 	public VertexEvent(GraphPositionPathPosition vertexPosition) {
 		this.vertexPosition = vertexPosition;
 		
-		v = ((VertexPosition)vertexPosition.getGraphPosition()).v;
+		v = ((VertexPosition)vertexPosition.gp).v;
 		
 		if (!vertexPosition.isEndOfPath()) {
 			carPastExitPosition = vertexPosition.nextBound();

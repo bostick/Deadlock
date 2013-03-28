@@ -144,7 +144,7 @@ public class RushHourWorld extends World {
 			path = b.getPath(a, firstULRow);
 			
 			GraphPosition test = new RushHourBoardPosition(b, firstULRow + c.width/2, firstULCol);
-			GraphPositionPathPosition posTest = path.findClosestGraphPositionPathPosition(test);
+			GraphPositionPathPosition posTest = path.findGraphPositionPathPosition(test);
 			
 			GraphPositionPathPosition next = posTest.nextBound();
 			
@@ -167,7 +167,7 @@ public class RushHourWorld extends World {
 			path = b.getPath(a, firstULCol);
 			
 			GraphPosition test = new RushHourBoardPosition(b, firstULRow, firstULCol + c.width/2);
-			GraphPositionPathPosition posTest = path.findClosestGraphPositionPathPosition(test);
+			GraphPositionPathPosition posTest = path.findGraphPositionPathPosition(test);
 			
 			GraphPositionPathPosition next = posTest.nextBound();
 			
@@ -192,25 +192,25 @@ public class RushHourWorld extends World {
 			c.driver.startGP = new RushHourBoardPosition(b, firstULRow + c.width/2, firstULCol + c.length/2);
 			c.setTransform(c.driver.startGP.p, 0.0 * Math.PI);
 			c.driver.overallPath = path;
-			c.driver.setOverallPos(path.findClosestGraphPositionPathPosition(c.driver.startGP));
+			c.driver.setOverallPos(path.findGraphPositionPathPosition(c.driver.startGP));
 			break;
 		case BOTTOM:
 			c.driver.startGP = new RushHourBoardPosition(b, firstULRow + c.length/2, firstULCol + c.width/2);
 			c.setTransform(c.driver.startGP.p, 0.5 * Math.PI);
 			c.driver.overallPath = path;
-			c.driver.setOverallPos(path.findClosestGraphPositionPathPosition(c.driver.startGP));
+			c.driver.setOverallPos(path.findGraphPositionPathPosition(c.driver.startGP));
 			break;
 		case LEFT:
 			c.driver.startGP = new RushHourBoardPosition(b, firstULRow + c.width/2, firstULCol + c.length/2);
 			c.setTransform(c.driver.startGP.p, 1.0 * Math.PI);
 			c.driver.overallPath = path;
-			c.driver.setOverallPos(path.findClosestGraphPositionPathPosition(c.driver.startGP));
+			c.driver.setOverallPos(path.findGraphPositionPathPosition(c.driver.startGP));
 			break;
 		case TOP:
 			c.driver.startGP = new RushHourBoardPosition(b, firstULRow + c.length/2, firstULCol + c.width/2);
 			c.setTransform(c.driver.startGP.p, 1.5 * Math.PI);
 			c.driver.overallPath = path;
-			c.driver.setOverallPos(path.findClosestGraphPositionPathPosition(c.driver.startGP));
+			c.driver.setOverallPos(path.findGraphPositionPathPosition(c.driver.startGP));
 			break;
 		}
 		

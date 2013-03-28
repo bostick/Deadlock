@@ -15,13 +15,13 @@ public final class InteractiveDriver extends Driver {
 			
 		case COASTING_FORWARD:
 			
-			setOverallPos(overallPath.forwardSearch(c.center, overallPos, false, Double.POSITIVE_INFINITY));
+			setOverallPos(overallPath.forwardSearch(c.center, overallPos, overallPath.endPos));
 			
 			break;
 			
 		case COASTING_BACKWARD:
 			
-			setOverallPos(overallPath.backwardSearch(c.center, overallPos, false, c.length));
+			setOverallPos(overallPath.backwardSearch(c.center, overallPos, overallPath.startPos));
 			
 			break;
 		default:

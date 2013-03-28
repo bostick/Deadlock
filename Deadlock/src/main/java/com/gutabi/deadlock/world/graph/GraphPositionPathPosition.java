@@ -12,36 +12,51 @@ public class GraphPositionPathPosition {
 	public final double combo;
 	public final boolean bound;
 	
-	private GraphPosition gpos;
-	
 	public final Point p;
+	public final GraphPosition gp;
 	
 	public final double lengthToStartOfPath;
 	public final double lengthToEndOfPath;
 	
 	private int hash;
 	
-	public GraphPositionPathPosition(GraphPositionPath path, int index, double param) {
+	public GraphPositionPathPosition(GraphPositionPath path, int preIndex, double preParam) {
 		
-		if (index < 0 || index >= path.size) {
+		if (preIndex < 0 || preIndex >= path.size) {
 			throw new IllegalArgumentException();
 		}
-		if (DMath.lessThan(param, 0.0) || DMath.greaterThanEquals(param, 1.0)) {
+		if (DMath.lessThan(preParam, 0.0) || DMath.greaterThan(preParam, 1.0)) {
+			throw new IllegalArgumentException();
+		}
+		if (DMath.equals(preParam, 1.0) && preIndex == path.size-1) {
 			throw new IllegalArgumentException();
 		}
 		
 		this.path = path;
-		this.index = index;
-		this.param = param;
+		/*
+		 * allow 1.0 params to make life easier
+		 */
+		if (DMath.equals(preParam, 1.0)) {
+			this.index = preIndex+1;
+			this.param = 0.0;
+		} else {
+			this.index = preIndex;
+			this.param = preParam;
+		}
 		
 		combo = index+param;
 		
 		this.bound = DMath.equals(param, 0.0);
 		
 		if (bound) {
-			p = path.get(index).p;
+			gp = path.get(index);
+			p = gp.p;
 		} else {
-			p = Point.point(path.get(index).p, path.get(index+1).p, param);
+			GraphPosition p1 = path.get(index);
+			GraphPosition p2 = path.get(index+1);			
+			double dist = Point.distance(p1.p, p2.p);
+			gp = p1.approachNeighbor(p2, dist * param);
+			p = gp.p;
 		}
 		
 		double acc = path.cumulativeDistancesFromStart[index];
@@ -137,33 +152,33 @@ public class GraphPositionPathPosition {
 		return ang;
 	}
 	
-	private void computeGraphPosition() {
-		
-		GraphPosition p1 = path.get(index);
-		if (DMath.equals(param, 0.0)) {
-			gpos = p1;
-			return;
-		}
-		
-		GraphPosition p2 = path.get(index+1);
-		
-		if (DMath.equals(param, 1.0)) {
-			gpos = p2;
-			return;
-		}
-		
-		double dist = Point.distance(p1.p, p2.p);
-		
-		gpos = p1.approachNeighbor(p2, dist * param);
-		
-	}
+//	private void computeGraphPosition() {
+//		
+//		GraphPosition p1 = path.get(index);
+//		if (DMath.equals(param, 0.0)) {
+//			gpos = p1;
+//			return;
+//		}
+//		
+//		GraphPosition p2 = path.get(index+1);
+//		
+//		if (DMath.equals(param, 1.0)) {
+//			gpos = p2;
+//			return;
+//		}
+//		
+//		double dist = Point.distance(p1.p, p2.p);
+//		
+//		gpos = p1.approachNeighbor(p2, dist * param);
+//		
+//	}
 	
-	public GraphPosition getGraphPosition() {
-		if (gpos == null) {
-			computeGraphPosition();
-		}
-		return gpos;
-	}
+//	public GraphPosition getGraphPosition() {
+//		if (gpos == null) {
+//			computeGraphPosition();
+//		}
+//		return gpos;
+//	}
 	
 	public double lengthTo(GraphPositionPathPosition p) {
 		
@@ -191,7 +206,7 @@ public class GraphPositionPathPosition {
 		
 		int curPathIndex = index;
 		double curPathParam = param;
-		GraphPosition curGraphPosition = getGraphPosition();
+		GraphPosition curGraphPosition = gp;
 		double curLengthToStartOfPath = lengthToStartOfPath;
 		
 		while (true) {
