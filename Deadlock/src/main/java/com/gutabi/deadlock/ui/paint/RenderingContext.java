@@ -7,11 +7,14 @@ import com.gutabi.deadlock.math.Dim;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.Image;
 import com.gutabi.deadlock.ui.Transform;
+import com.gutabi.deadlock.world.WorldCamera;
 
 public abstract class RenderingContext {
 	
-	public RenderingContext() {
-		
+	public WorldCamera cam;
+	
+	public RenderingContext(WorldCamera cam) {
+		this.cam = cam;
 	}
 	
 	public abstract void setAlpha(double a);

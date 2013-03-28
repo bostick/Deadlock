@@ -12,7 +12,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 
 import org.apache.log4j.Logger;
 
-import com.gutabi.deadlock.menu.MainMenu;
+import com.gutabi.deadlock.menu.MainMenuScreen;
 import com.gutabi.deadlock.ui.WindowInfo;
 
 public class DeadlockMain  {
@@ -78,7 +78,7 @@ public class DeadlockMain  {
 		
 		
 		
-		MainMenu s = new MainMenu();
+		MainMenuScreen s = new MainMenuScreen();
 		APP.appScreen = s;
 		
 		APP.platform.setupAppScreen(s.contentPane.cp);

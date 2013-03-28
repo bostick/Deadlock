@@ -20,12 +20,14 @@ import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.Image;
 import com.gutabi.deadlock.ui.ImageImpl;
 import com.gutabi.deadlock.ui.Transform;
+import com.gutabi.deadlock.world.WorldCamera;
 
 public class RenderingContextImpl extends RenderingContext {
 	
 	public final Graphics2D g2;
 	
-	public RenderingContextImpl(Graphics2D g2) {
+	public RenderingContextImpl(WorldCamera cam, Graphics2D g2) {
+		super(cam);
 		this.g2 = g2;
 	}
 	
@@ -168,6 +170,8 @@ public class RenderingContextImpl extends RenderingContext {
 	
 	public void paintImage(Image img, double orig, double dx1, double dy1, double dx2, double dy2, int sx1, int sy1, int sx2, int sy2) {
 		java.awt.geom.AffineTransform origTransform = g2.getTransform();
+		
+		
 		
 		g2.scale(1 / orig, 1 / orig);
 		paintImage(img,

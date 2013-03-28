@@ -11,10 +11,18 @@ import com.gutabi.deadlock.ui.paint.RenderingContext;
 
 public class WorldPanel extends PanelBase {
 	
-	WorldScreen screen;
+//	WorldScreen screen;
 	
-	public WorldPanel(final WorldScreen screen) {
-		this.screen = screen;
+	public World world;
+	
+	public WorldCamera worldCamera;
+	
+	public Stats stats;
+	
+	public WorldPanel() {
+//		this.screen = screen;
+		
+		stats = new Stats(this);
 		
 		aabb = new AABB(aabb.x, aabb.y, APP.WORLDPANEL_WIDTH, APP.WORLDPANEL_HEIGHT);
 	}
@@ -25,14 +33,22 @@ public class WorldPanel extends PanelBase {
 	
 	public void postDisplay() {
 		
-		screen.world.panelPostDisplay();
+		world.panelPostDisplay(worldCamera);
+		
+		worldCamera.worldViewport = new AABB( 
+				-(aabb.width / worldCamera.pixelsPerMeter) / 2 + world.quadrantMap.worldWidth/2 ,
+				-(aabb.height / worldCamera.pixelsPerMeter) / 2 + world.quadrantMap.worldHeight/2,
+				aabb.width / worldCamera.pixelsPerMeter,
+				aabb.height / worldCamera.pixelsPerMeter);
+		
+		worldCamera.origWorldViewport = worldCamera.worldViewport;
 	}
 	
 	
 	public Point panelToWorld(Point p) {
 		return new Point(
-				p.x / screen.pixelsPerMeter + screen.worldViewport.x,
-				p.y / screen.pixelsPerMeter + screen.worldViewport.y);
+				p.x / worldCamera.pixelsPerMeter + worldCamera.worldViewport.x,
+				p.y / worldCamera.pixelsPerMeter + worldCamera.worldViewport.y);
 	}
 	
 	public AABB panelToWorld(AABB aabb) {
@@ -43,8 +59,8 @@ public class WorldPanel extends PanelBase {
 	
 	public Point worldToPanel(Point p) {
 		return new Point(
-				(p.x - screen.worldViewport.x) * screen.pixelsPerMeter,
-				(p.y - screen.worldViewport.y) * screen.pixelsPerMeter);
+				(p.x - worldCamera.worldViewport.x) * worldCamera.pixelsPerMeter,
+				(p.y - worldCamera.worldViewport.y) * worldCamera.pixelsPerMeter);
 	}
 	
 	public AABB worldToPanel(AABB aabb) {
@@ -53,23 +69,19 @@ public class WorldPanel extends PanelBase {
 		return new AABB(ul.x, ul.y, br.x - ul.x, br.y - ul.y);
 	}
 	
-	
-	
 	public Point lastMovedPanelPoint;
 	public Point lastMovedOrDraggedPanelPoint;
 	Point lastClickedPanelPoint;
 	
 	public void pressed(InputEvent ev) {
 		
-		switch (screen.mode) {
-		case DIALOG:
-			break;
+		switch (world.mode) {
 		case PAUSED:
 		case RUNNING:
 		case EDITING:
 			Point p = panelToWorld(ev.p);
 			
-			screen.world.pressed(new InputEvent(p));
+			world.pressed(new InputEvent(p));
 			
 			APP.tool.pressed(new InputEvent(p));
 			
@@ -80,25 +92,23 @@ public class WorldPanel extends PanelBase {
 	
 	public void dragged(InputEvent ev) {
 		
-		switch (screen.mode) {
+		switch (world.mode) {
 		case RUNNING:
 		case PAUSED: {
 			lastMovedOrDraggedPanelPoint = ev.p;
 			
 			Point p = panelToWorld(ev.p);
 			
-			screen.world.dragged(new InputEvent(p));
+			world.dragged(new InputEvent(p));
 			APP.tool.dragged(new InputEvent(p));
 			break;
 		}
-		case DIALOG:
-			break;
 		case EDITING: {
 			lastMovedOrDraggedPanelPoint = ev.p;
 			
 			Point p = panelToWorld(ev.p);
 			
-			screen.world.dragged(new InputEvent(p));
+			world.dragged(new InputEvent(p));
 			APP.tool.dragged(new InputEvent(p));
 			break;
 		}
@@ -108,12 +118,10 @@ public class WorldPanel extends PanelBase {
 	
 	public void released(InputEvent ev) {
 		
-		switch (screen.mode) {
+		switch (world.mode) {
 		case RUNNING:
 		case PAUSED:
 			APP.tool.released(ev);
-		case DIALOG:
-			break;
 		case EDITING:
 			APP.tool.released(ev);
 			break;
@@ -126,21 +134,19 @@ public class WorldPanel extends PanelBase {
 		lastMovedPanelPoint = ev.p;
 		lastMovedOrDraggedPanelPoint = lastMovedPanelPoint;
 		
-		switch (screen.mode) {
+		switch (world.mode) {
 		case RUNNING:
 		case PAUSED: {
 			Point p = panelToWorld(ev.p);
 			
-			screen.world.moved(new InputEvent(p));
+			world.moved(new InputEvent(p));
 			APP.tool.moved(new InputEvent(p));
 			break;
 		}
-		case DIALOG:
-			break;
 		case EDITING: {
 			Point p = panelToWorld(ev.p);
 			
-			screen.world.moved(new InputEvent(p));
+			world.moved(new InputEvent(p));
 			APP.tool.moved(new InputEvent(p));
 			break;
 		}
@@ -149,21 +155,19 @@ public class WorldPanel extends PanelBase {
 	
 	public void clicked(InputEvent ev) {
 		
-		switch (screen.mode) {
+		switch (world.mode) {
 		case RUNNING:
 		case PAUSED: {
 			Point p = panelToWorld(ev.p);
 			
-			screen.world.clicked(new InputEvent(p));
+			world.clicked(new InputEvent(p));
 			APP.tool.clicked(new InputEvent(p));
 			break;
 		}
-		case DIALOG:
-			break;
 		case EDITING: {
 			Point p = panelToWorld(ev.p);
 			
-			screen.world.clicked(new InputEvent(p));
+			world.clicked(new InputEvent(p));
 			APP.tool.clicked(new InputEvent(p));
 			break;
 		}
@@ -174,20 +178,20 @@ public class WorldPanel extends PanelBase {
 		
 		Transform origTrans = ctxt.getTransform();
 		
-		screen.world.clear_panel(ctxt);
+		world.paint_panel_pixels(ctxt);
 		
 		ctxt.translate(aabb.x, aabb.y);
 		
-		ctxt.scale(screen.pixelsPerMeter);
-		ctxt.translate(-screen.worldViewport.x, -screen.worldViewport.y);
+		ctxt.scale(worldCamera.pixelsPerMeter);
+		ctxt.translate(-worldCamera.worldViewport.x, -worldCamera.worldViewport.y);
 		
-		screen.world.paint_panel(ctxt);
+		world.paint_panel_worldCoords(ctxt);
 		
 		APP.tool.draw(ctxt);
 		
 		if (APP.FPS_DRAW) {
 			
-			screen.stats.paint(ctxt);
+			stats.paint(ctxt);
 		}
 		
 		ctxt.setTransform(origTrans);

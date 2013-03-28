@@ -59,12 +59,11 @@ public class ControlPanel extends PanelBase {
 		
 		Resource visitorFontFile = APP.platform.createResourceEngine().fontResource("visitor1");
 		
-		simulationInitLab = new Label("Simulation Init:");
+		simulationInitLab = new Label("Simulation Init:", 5, 5);
 		simulationInitLab.fontFile = visitorFontFile;
 		simulationInitLab.fontStyle = FontStyle.PLAIN;
 		simulationInitLab.fontSize = 16;
 		simulationInitLab.renderLocal();
-		simulationInitLab.setLocation(5, 5);
 		simulationInitLab.render();
 		
 		
@@ -82,13 +81,11 @@ public class ControlPanel extends PanelBase {
 		normalCarButton.setLocation(5, 5 + simulationInitLab.getHeight() + 5);
 		normalCarButton.render();
 		
-		normalCarsLab = new Label("Normal Cars");
+		normalCarsLab = new Label("Normal Cars", 5 + normalCarButton.getWidth() + 5, 5 + simulationInitLab.getHeight() + 5);
 		normalCarsLab.fontFile = visitorFontFile;
 		normalCarsLab.fontStyle = FontStyle.PLAIN;
 		normalCarsLab.fontSize = 16;
 		normalCarsLab.renderLocal();
-		
-		normalCarsLab.setLocation(5 + normalCarButton.getWidth() + 5, 5 + simulationInitLab.getHeight() + 5);
 		normalCarsLab.render();
 		
 		
@@ -107,12 +104,11 @@ public class ControlPanel extends PanelBase {
 		fastCarButton.render();
 		
 		
-		fastCarLab = new Label("Fast Cars");
+		fastCarLab = new Label("Fast Cars", 5 + fastCarButton.getWidth() + 5, 5 + simulationInitLab.getHeight() + 5 + normalCarButton.getHeight() + 5);
 		fastCarLab.fontFile = visitorFontFile;
 		fastCarLab.fontStyle = FontStyle.PLAIN;
 		fastCarLab.fontSize = 16;
 		fastCarLab.renderLocal();
-		fastCarLab.setLocation(5 + fastCarButton.getWidth() + 5, 5 + simulationInitLab.getHeight() + 5 + normalCarButton.getHeight() + 5);
 		fastCarLab.render();
 		
 		
@@ -130,12 +126,11 @@ public class ControlPanel extends PanelBase {
 		reallyCarButton.setLocation(5, 5 + simulationInitLab.getHeight() + 5 + normalCarButton.getHeight() + 5 + fastCarButton.getHeight() + 5);
 		reallyCarButton.render();
 		
-		reallyCarLab = new Label("Really Fast Cars");
+		reallyCarLab = new Label("Really Fast Cars", 5 + reallyCarButton.getWidth() + 5, 5 + simulationInitLab.getHeight() + 5 + normalCarButton.getHeight() + 5 + fastCarButton.getHeight() + 5);
 		reallyCarLab.fontFile = visitorFontFile;
 		reallyCarLab.fontStyle = FontStyle.PLAIN;
 		reallyCarLab.fontSize = 16;
 		reallyCarLab.renderLocal();
-		reallyCarLab.setLocation(5 + reallyCarButton.getWidth() + 5, 5 + simulationInitLab.getHeight() + 5 + normalCarButton.getHeight() + 5 + fastCarButton.getHeight() + 5);
 		reallyCarLab.render();
 		
 		
@@ -153,12 +148,11 @@ public class ControlPanel extends PanelBase {
 		truckButton.setLocation(5, 5 + simulationInitLab.getHeight() + 5 + normalCarButton.getHeight() + 5 + fastCarButton.getHeight() + 5 + reallyCarButton.getHeight() + 5);
 		truckButton.render();
 		
-		truckLab = new Label("Trucks");
+		truckLab = new Label("Trucks", 5 + reallyCarButton.getWidth() + 5, 5 + simulationInitLab.getHeight() + 5 + normalCarButton.getHeight() + 5 + fastCarButton.getHeight() + 5 + reallyCarButton.getHeight() + 5);
 		truckLab.fontFile = visitorFontFile;
 		truckLab.fontStyle = FontStyle.PLAIN;
 		truckLab.fontSize = 16;
 		truckLab.renderLocal();
-		truckLab.setLocation(5 + reallyCarButton.getWidth() + 5, 5 + simulationInitLab.getHeight() + 5 + normalCarButton.getHeight() + 5 + fastCarButton.getHeight() + 5 + reallyCarButton.getHeight() + 5);
 		truckLab.render();
 		
 		startButton = new Button() {
@@ -170,17 +164,17 @@ public class ControlPanel extends PanelBase {
 					
 					stopButton.enabled = true;
 					
-					worldScreen.startRunning();
+					worldScreen.contentPane.worldPanel.world.startRunning();
 				} else if (command.equals("pause")) {
 					lab.text = "Unpause";
 					command = "unpause";
 					
-					worldScreen.pauseRunning();
+					worldScreen.contentPane.worldPanel.world.pauseRunning();
 				} else if (command.equals("unpause")) {
 					lab.text = "Pause";
 					command = "pause";
 					
-					worldScreen.unpauseRunning();
+					worldScreen.contentPane.worldPanel.world.unpauseRunning();
 				}
 				
 				render();
@@ -189,12 +183,11 @@ public class ControlPanel extends PanelBase {
 				APP.debuggerScreen.contentPane.repaint();
 			}
 		};
-		startButton.lab = new Label("Start");
+		startButton.lab = new Label("Start", 5, 140);
 		startButton.lab.fontFile = visitorFontFile;
 		startButton.lab.fontStyle = FontStyle.PLAIN;
 		startButton.lab.fontSize = 16;
 		startButton.command = "start";
-		startButton.setLocation(5, 140);
 		startButton.render();
 		
 		stopButton = new Button() {
@@ -206,7 +199,7 @@ public class ControlPanel extends PanelBase {
 					
 					enabled = false;
 					
-					worldScreen.stopRunning();
+					worldScreen.contentPane.worldPanel.world.stopRunning();
 				}
 				
 				render();
@@ -215,22 +208,20 @@ public class ControlPanel extends PanelBase {
 				APP.debuggerScreen.contentPane.repaint();
 			}
 		};
-		stopButton.lab = new Label("Stop");
+		stopButton.lab = new Label("Stop", 5 + startButton.aabb.width + 5, startButton.aabb.y + stopButton.aabb.height);
 		stopButton.lab.fontFile = visitorFontFile;
 		stopButton.lab.fontStyle = FontStyle.PLAIN;
 		stopButton.lab.fontSize = 16;
 		stopButton.command = "stop";
 		stopButton.enabled = false;
-		stopButton.setLocation(5 + startButton.aabb.width + 5, startButton.aabb.y + stopButton.aabb.height);
 		stopButton.render();
 		
 		
-		stateLab = new Label("Simulation State:");
+		stateLab = new Label("Simulation State:", 5, 180);
 		stateLab.fontFile = visitorFontFile;
 		stateLab.fontStyle = FontStyle.PLAIN;
 		stateLab.fontSize = 16;
 		stateLab.renderLocal();
-		stateLab.setLocation(5, 180);
 		stateLab.render();
 		
 		
@@ -243,7 +234,7 @@ public class ControlPanel extends PanelBase {
 				
 				APP.FPS_DRAW = selected;
 				
-				worldScreen.world.render_worldPanel();
+				worldScreen.contentPane.worldPanel.world.render_worldPanel();
 				
 				worldScreen.contentPane.repaint();
 				APP.debuggerScreen.contentPane.repaint();
@@ -253,12 +244,11 @@ public class ControlPanel extends PanelBase {
 		fpsCheckBox.setLocation(5, stateLab.aabb.y + stateLab.getHeight() + 5);
 		fpsCheckBox.render();
 		
-		fpsLab = new Label("FPS");
+		fpsLab = new Label("FPS", 5 + fpsCheckBox.getWidth() + 5, stateLab.aabb.y + stateLab.getHeight() + 5);
 		fpsLab.fontFile = visitorFontFile;
 		fpsLab.fontStyle = FontStyle.PLAIN;
 		fpsLab.fontSize = 16;
 		fpsLab.renderLocal();
-		fpsLab.setLocation(5 + fpsCheckBox.getWidth() + 5, stateLab.aabb.y + stateLab.getHeight() + 5);
 		fpsLab.render();
 		
 		
@@ -271,7 +261,7 @@ public class ControlPanel extends PanelBase {
 				
 				APP.STOPSIGN_DRAW = selected;
 				
-				worldScreen.world.render_worldPanel();
+				worldScreen.contentPane.worldPanel.world.render_worldPanel();
 				worldScreen.contentPane.repaint();
 			}
 		};
@@ -279,12 +269,11 @@ public class ControlPanel extends PanelBase {
 		stopSignCheckBox.setLocation(5, stateLab.aabb.y + stateLab.getHeight() + 5 + fpsCheckBox.getHeight() + 5);
 		stopSignCheckBox.render();
 		
-		stopSignLab = new Label("Stop Signs");
+		stopSignLab = new Label("Stop Signs", 5 + stopSignCheckBox.getWidth() + 5, stateLab.aabb.y + stateLab.getHeight() + 5 + fpsCheckBox.getHeight() + 5);
 		stopSignLab.fontFile = visitorFontFile;
 		stopSignLab.fontStyle = FontStyle.PLAIN;
 		stopSignLab.fontSize = 16;
 		stopSignLab.renderLocal();
-		stopSignLab.setLocation(5 + stopSignCheckBox.getWidth() + 5, stateLab.aabb.y + stateLab.getHeight() + 5 + fpsCheckBox.getHeight() + 5);
 		stopSignLab.render();
 		
 		
@@ -305,12 +294,11 @@ public class ControlPanel extends PanelBase {
 		carTextureCheckBox.setLocation(5, stateLab.aabb.y + stateLab.getHeight() + 5 + fpsCheckBox.getHeight() + 5 + stopSignCheckBox.getHeight() + 5);
 		carTextureCheckBox.render();
 		
-		carTextureLab = new Label("Car Textures");
+		carTextureLab = new Label("Car Textures", 5 + carTextureCheckBox.getWidth() + 5, stateLab.aabb.y + stateLab.getHeight() + 5 + fpsCheckBox.getHeight() + 5 + stopSignCheckBox.getHeight() + 5);
 		carTextureLab.fontFile = visitorFontFile;
 		carTextureLab.fontStyle = FontStyle.PLAIN;
 		carTextureLab.fontSize = 16;
 		carTextureLab.renderLocal();
-		carTextureLab.setLocation(5 + carTextureCheckBox.getWidth() + 5, stateLab.aabb.y + stateLab.getHeight() + 5 + fpsCheckBox.getHeight() + 5 + stopSignCheckBox.getHeight() + 5);
 		carTextureLab.render();
 		
 		
@@ -331,12 +319,11 @@ public class ControlPanel extends PanelBase {
 		explosionsCheckBox.setLocation(5, stateLab.aabb.y + stateLab.getHeight() + 5 + fpsCheckBox.getHeight() + 5 + stopSignCheckBox.getHeight() + 5 + carTextureCheckBox.getHeight() + 5);
 		explosionsCheckBox.render();
 		
-		explosionsLab = new Label("Explosions");
+		explosionsLab = new Label("Explosions", 5 + explosionsCheckBox.getWidth() + 5, stateLab.aabb.y + stateLab.getHeight() + 5 + fpsCheckBox.getHeight() + 5 + stopSignCheckBox.getHeight() + 5 + carTextureCheckBox.getHeight() + 5);
 		explosionsLab.fontFile = visitorFontFile;
 		explosionsLab.fontStyle = FontStyle.PLAIN;
 		explosionsLab.fontSize = 16;
 		explosionsLab.renderLocal();
-		explosionsLab.setLocation(5 + explosionsCheckBox.getWidth() + 5, stateLab.aabb.y + stateLab.getHeight() + 5 + fpsCheckBox.getHeight() + 5 + stopSignCheckBox.getHeight() + 5 + carTextureCheckBox.getHeight() + 5);
 		explosionsLab.render();
 		
 		
@@ -349,7 +336,7 @@ public class ControlPanel extends PanelBase {
 				
 				APP.DEBUG_DRAW = selected;
 				
-				worldScreen.world.render_worldPanel();
+				worldScreen.contentPane.worldPanel.world.render_worldPanel();
 				worldScreen.contentPane.repaint();
 				APP.debuggerScreen.contentPane.repaint();
 			}
@@ -358,12 +345,11 @@ public class ControlPanel extends PanelBase {
 		debugCheckBox.setLocation(5, stateLab.aabb.y + stateLab.getHeight() + 5 + fpsCheckBox.getHeight() + 5 + stopSignCheckBox.getHeight() + 5 + carTextureCheckBox.getHeight() + 5 + explosionsCheckBox.getHeight() + 5);
 		debugCheckBox.render();
 		
-		debugLab = new Label("debug");
+		debugLab = new Label("debug", 5 + debugCheckBox.getWidth() + 5, stateLab.aabb.y + stateLab.getHeight() + 5 + fpsCheckBox.getHeight() + 5 + stopSignCheckBox.getHeight() + 5 + carTextureCheckBox.getHeight() + 5 + explosionsCheckBox.getHeight() + 5);
 		debugLab.fontFile = visitorFontFile;
 		debugLab.fontStyle = FontStyle.PLAIN;
 		debugLab.fontSize = 16;
 		debugLab.renderLocal();
-		debugLab.setLocation(5 + debugCheckBox.getWidth() + 5, stateLab.aabb.y + stateLab.getHeight() + 5 + fpsCheckBox.getHeight() + 5 + stopSignCheckBox.getHeight() + 5 + carTextureCheckBox.getHeight() + 5 + explosionsCheckBox.getHeight() + 5);
 		debugLab.render();
 	}
 	
@@ -373,11 +359,11 @@ public class ControlPanel extends PanelBase {
 	
 	public void postDisplay() {
 		
-		double pixelsPerMeterWidth = previewAABB.width / worldScreen.world.quadrantMap.worldWidth;
-		double pixelsPerMeterHeight = previewAABB.height / worldScreen.world.quadrantMap.worldHeight;
+		double pixelsPerMeterWidth = previewAABB.width / worldScreen.contentPane.worldPanel.world.quadrantMap.worldWidth;
+		double pixelsPerMeterHeight = previewAABB.height / worldScreen.contentPane.worldPanel.world.quadrantMap.worldHeight;
 		previewPixelsPerMeter = Math.min(pixelsPerMeterWidth, pixelsPerMeterHeight);
 		
-		worldScreen.world.previewPostDisplay();
+		worldScreen.contentPane.worldPanel.world.previewPostDisplay();
 	}
 	
 	public Point previewToWorld(Point p) {
@@ -463,10 +449,11 @@ public class ControlPanel extends PanelBase {
 				double dx = lastDragPreviewPoint.x - penDragPreviewPoint.x;
 				double dy = lastDragPreviewPoint.y - penDragPreviewPoint.y;
 				
-				worldScreen.world.previewPan(new Point(dx, dy));
+				Point worldDP = previewToWorld(new Point(dx, dy));
+				worldScreen.contentPane.worldPanel.worldCamera.previewPan(worldDP);
 				
-				worldScreen.world.render_worldPanel();
-				worldScreen.world.render_preview();
+				worldScreen.contentPane.worldPanel.world.render_worldPanel();
+				worldScreen.contentPane.worldPanel.world.render_preview();
 				worldScreen.contentPane.repaint();
 			}
 			
@@ -519,19 +506,19 @@ public class ControlPanel extends PanelBase {
 		
 		ctxt.translate(previewAABB.x, previewAABB.y);
 		
-		ctxt.paintImage(worldScreen.world.previewImage,
+		ctxt.paintImage(worldScreen.contentPane.worldPanel.world.previewImage,
 				0, 0, (int)previewAABB.width, (int)previewAABB.height,
 				0, 0, (int)previewAABB.width, (int)previewAABB.height);
 		
-		Point prevLoc = worldToPreview(worldScreen.worldViewport.ul);
+		Point prevLoc = worldToPreview(worldScreen.contentPane.worldPanel.worldCamera.worldViewport.ul);
 		
-		Point prevDim = worldToPreview(new Point(worldScreen.worldViewport.width, worldScreen.worldViewport.height));
+		Point prevDim = worldToPreview(new Point(worldScreen.contentPane.worldPanel.worldCamera.worldViewport.width, worldScreen.contentPane.worldPanel.worldCamera.worldViewport.height));
 		
 		AABB prev = new AABB(prevLoc.x, prevLoc.y, prevDim.x, prevDim.y);
 		
 		ctxt.translate(
-				previewAABB.width/2 - (previewPixelsPerMeter * worldScreen.world.quadrantMap.worldWidth / 2),
-				previewAABB.height/2 - (previewPixelsPerMeter * worldScreen.world.quadrantMap.worldHeight / 2));
+				previewAABB.width/2 - (previewPixelsPerMeter * worldScreen.contentPane.worldPanel.world.quadrantMap.worldWidth / 2),
+				previewAABB.height/2 - (previewPixelsPerMeter * worldScreen.contentPane.worldPanel.world.quadrantMap.worldHeight / 2));
 		
 		ctxt.setColor(Color.BLUE);
 		prev.draw(ctxt);

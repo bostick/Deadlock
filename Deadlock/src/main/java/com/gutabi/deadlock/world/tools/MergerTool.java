@@ -41,25 +41,25 @@ public class MergerTool extends ToolBase {
 		
 		APP.tool = new RegularTool(worldScreen, debuggerScreen);
 		
-		APP.tool.setPoint(worldScreen.world.quadrantMap.getPoint(worldScreen.world.lastMovedOrDraggedWorldPoint));
+		APP.tool.setPoint(worldScreen.contentPane.worldPanel.world.quadrantMap.getPoint(worldScreen.contentPane.worldPanel.world.lastMovedOrDraggedWorldPoint));
 		
 		worldScreen.contentPane.repaint();
 	}
 	
 	public void insertKey() {
-		if (worldScreen.world.quadrantMap.contains(shape)) {
+		if (worldScreen.contentPane.worldPanel.world.quadrantMap.contains(shape)) {
 			
-			if (worldScreen.world.graph.pureGraphIntersect(shape) == null) {
+			if (worldScreen.contentPane.worldPanel.world.graph.pureGraphIntersect(shape) == null) {
 				
-				Set<Vertex> affected = worldScreen.world.createMerger(p);
-				worldScreen.world.graph.computeVertexRadii(affected);
+				Set<Vertex> affected = worldScreen.contentPane.worldPanel.world.createMerger(p);
+				worldScreen.contentPane.worldPanel.world.graph.computeVertexRadii(affected);
 				
 				APP.tool = new RegularTool(worldScreen, debuggerScreen);
 				
-				APP.tool.setPoint(worldScreen.world.lastMovedWorldPoint);
+				APP.tool.setPoint(worldScreen.contentPane.worldPanel.world.lastMovedWorldPoint);
 				
-				worldScreen.world.render_worldPanel();
-				worldScreen.world.render_preview();
+				worldScreen.contentPane.worldPanel.world.render_worldPanel();
+				worldScreen.contentPane.worldPanel.world.render_preview();
 				worldScreen.contentPane.repaint();
 			}
 			
@@ -67,7 +67,7 @@ public class MergerTool extends ToolBase {
 	}
 	
 	public void moved(InputEvent ev) {
-		APP.tool.setPoint(worldScreen.world.quadrantMap.getPoint(worldScreen.world.lastMovedOrDraggedWorldPoint));
+		APP.tool.setPoint(worldScreen.contentPane.worldPanel.world.quadrantMap.getPoint(worldScreen.contentPane.worldPanel.world.lastMovedOrDraggedWorldPoint));
 		worldScreen.contentPane.repaint();
 	}
 	

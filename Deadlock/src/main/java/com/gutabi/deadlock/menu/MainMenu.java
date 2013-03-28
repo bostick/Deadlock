@@ -2,39 +2,19 @@ package com.gutabi.deadlock.menu;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.gutabi.deadlock.AppScreen;
 import com.gutabi.deadlock.quadranteditor.QuadrantEditor;
-import com.gutabi.deadlock.ui.KeyListener;
 import com.gutabi.deadlock.world.DebuggerScreen;
 import com.gutabi.deadlock.world.WorldScreen;
 import com.gutabi.deadlock.world.examples.FourByFourGridWorld;
 import com.gutabi.deadlock.world.examples.OneByOneWorld;
 import com.gutabi.deadlock.world.examples.RushHourWorld;
 import com.gutabi.deadlock.world.examples.WorldA;
-import com.gutabi.deadlock.world.tools.CarTool;
+import com.gutabi.deadlock.world.tools.InteractiveCarTool;
 import com.gutabi.deadlock.world.tools.RegularTool;
 
-public class MainMenu extends AppScreen implements KeyListener {
-	
-	public MainMenuContentPane contentPane;
-	
-	protected List<MenuItem> items = new ArrayList<MenuItem>();
-	
-	public MenuItem hilited;
-	public MenuItem firstMenuItem;
-	
-	double menuItemWidest;
-	int totalMenuItemHeight;
-	
-	public double menuWidth;
-	public double menuHeight;
+public class MainMenu extends Menu {
 	
 	public MainMenu() {
-		
-		contentPane = new MainMenuContentPane(this);
 		
 		MenuItem oneMenuItem = new MenuItem(MainMenu.this,"1x1 Demo") {
 			public void action() {
@@ -47,7 +27,7 @@ public class MainMenu extends AppScreen implements KeyListener {
 				
 				APP.tool = new RegularTool(worldScreen, debuggerScreen);
 				
-				worldScreen.world = OneByOneWorld.createOneByOneWorld(worldScreen, debuggerScreen);
+				worldScreen.contentPane.worldPanel.world = OneByOneWorld.createOneByOneWorld(worldScreen, debuggerScreen);
 				
 				APP.platform.setupAppScreen(worldScreen.contentPane.cp);
 				
@@ -57,8 +37,8 @@ public class MainMenu extends AppScreen implements KeyListener {
 				
 				debuggerScreen.postDisplay();
 				
-				worldScreen.world.render_worldPanel();
-				worldScreen.world.render_preview();
+				worldScreen.contentPane.worldPanel.world.render_worldPanel();
+				worldScreen.contentPane.worldPanel.world.render_preview();
 				worldScreen.contentPane.repaint();
 				debuggerScreen.contentPane.repaint();
 				
@@ -79,7 +59,7 @@ public class MainMenu extends AppScreen implements KeyListener {
 				
 				APP.tool = new RegularTool(worldScreen, debuggerScreen);
 				
-				worldScreen.world = FourByFourGridWorld.createFourByFourGridWorld(worldScreen, debuggerScreen);
+				worldScreen.contentPane.worldPanel.world = FourByFourGridWorld.createFourByFourGridWorld(worldScreen, debuggerScreen);
 				
 				APP.platform.setupAppScreen(worldScreen.contentPane.cp);
 				
@@ -89,8 +69,8 @@ public class MainMenu extends AppScreen implements KeyListener {
 				
 				debuggerScreen.postDisplay();
 				
-				worldScreen.world.render_worldPanel();
-				worldScreen.world.render_preview();
+				worldScreen.contentPane.worldPanel.world.render_worldPanel();
+				worldScreen.contentPane.worldPanel.world.render_preview();
 				worldScreen.contentPane.repaint();
 				
 				APP.platform.showAppScreen();
@@ -110,7 +90,7 @@ public class MainMenu extends AppScreen implements KeyListener {
 				
 				APP.tool = new RegularTool(worldScreen, debuggerScreen);
 				
-				worldScreen.world = WorldA.createWorldA(worldScreen, debuggerScreen);
+				worldScreen.contentPane.worldPanel.world = WorldA.createWorldA(worldScreen, debuggerScreen);
 				
 				APP.platform.setupAppScreen(worldScreen.contentPane.cp);
 				
@@ -120,8 +100,8 @@ public class MainMenu extends AppScreen implements KeyListener {
 				
 				debuggerScreen.postDisplay();
 				
-				worldScreen.world.render_worldPanel();
-				worldScreen.world.render_preview();
+				worldScreen.contentPane.worldPanel.world.render_worldPanel();
+				worldScreen.contentPane.worldPanel.world.render_preview();
 				worldScreen.contentPane.repaint();
 				
 				APP.platform.showAppScreen();
@@ -139,9 +119,9 @@ public class MainMenu extends AppScreen implements KeyListener {
 				DebuggerScreen debuggerScreen = new DebuggerScreen(worldScreen);
 				APP.debuggerScreen = debuggerScreen;
 				
-				APP.tool = new CarTool(worldScreen, debuggerScreen);
+				APP.tool = new InteractiveCarTool(worldScreen, debuggerScreen);
 				
-				worldScreen.world = RushHourWorld.createRushHourWorld(worldScreen, APP.debuggerScreen);
+				worldScreen.contentPane.worldPanel.world = RushHourWorld.createRushHourWorld(worldScreen, APP.debuggerScreen);
 				
 				APP.platform.setupAppScreen(worldScreen.contentPane.cp);
 				
@@ -151,10 +131,10 @@ public class MainMenu extends AppScreen implements KeyListener {
 				
 				APP.debuggerScreen.postDisplay();
 				
-				worldScreen.startRunning();
+				worldScreen.contentPane.worldPanel.world.startRunning();
 				
-				worldScreen.world.render_worldPanel();
-				worldScreen.world.render_preview();
+				worldScreen.contentPane.worldPanel.world.render_worldPanel();
+				worldScreen.contentPane.worldPanel.world.render_preview();
 				worldScreen.contentPane.repaint();
 				
 				APP.platform.showAppScreen();
@@ -172,7 +152,7 @@ public class MainMenu extends AppScreen implements KeyListener {
 				
 				s.postDisplay();
 				
-				s.contentPane.panel.worldScreen.world.render_worldPanel();
+				s.contentPane.panel.worldPanel.world.render_worldPanel();
 				s.contentPane.repaint();
 				
 				APP.platform.showAppScreen();
@@ -212,146 +192,6 @@ public class MainMenu extends AppScreen implements KeyListener {
 			}
 		};
 		add(quitMenuItem);
-		
-	}
-	
-	public void postDisplay() {
-		contentPane.postDisplay();
-	}
-	
-	public void add(MenuItem item) {
-		
-		if (items.isEmpty()) {
-			firstMenuItem = item;
-		}
-		
-		items.add(item);
-		
-		int i = items.size()-1;
-		
-		MenuItem prev = items.get((i-1 + items.size()) % items.size());
-		MenuItem first = items.get(0);
-		
-		prev.down = item;
-		
-		item.up = prev;
-		item.down = first;
-		
-		first.up = item;
-		
-	}
-	
-	public void downKey() {
-		
-		if (hilited == null) {
-			
-			hilited = firstMenuItem;
-			
-		} else {
-			
-			hilited = hilited.down;
-			
-		}
-		
-		while (!hilited.active) {
-			hilited = hilited.down;
-		}
-		
-		contentPane.repaint();
-	}
-	
-	public void upKey() {
-		
-		if (hilited == null) {
-			
-			hilited = firstMenuItem;
-			
-		} else {
-			
-			hilited = hilited.up;
-			
-		}
-		
-		while (!hilited.active) {
-			hilited = hilited.up;
-		}
-		
-		contentPane.repaint();
-	}
-	
-	public void enterKey() {
-		
-		if (hilited != null && hilited.active) {
-			hilited.action();
-		}
-		
-	}
-	
-	public void ctrlOKey() {
-		;
-	}
-
-	public void dKey() {
-		;
-	}
-
-	public void aKey() {
-		;
-	}
-
-	public void sKey() {
-		;
-	}
-
-	public void ctrlSKey() {
-		;
-	}
-
-	public void minusKey() {
-		;
-	}
-
-	public void plusKey() {
-		;
-	}
-
-	public void d3Key() {
-		;
-	}
-
-	public void d2Key() {
-		;
-	}
-
-	public void d1Key() {
-		;
-	}
-
-	public void gKey() {
-		;
-	}
-
-	public void wKey() {
-		;
-	}
-
-	public void qKey() {
-		;
-	}
-
-	public void escKey() {
-		;
-	}
-
-	public void deleteKey() {
-		;
-	}
-
-	public void insertKey() {
-		;
-	}
-	
-	public void fKey() {
 		
 	}
 	

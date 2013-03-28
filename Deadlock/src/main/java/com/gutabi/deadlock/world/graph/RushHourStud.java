@@ -56,7 +56,7 @@ public abstract class RushHourStud {
 	
 	public void paint(RenderingContext ctxt) {
 		
-		APP.spriteSheet.paint(ctxt, SpriteSheetSprite.STUD, world.worldScreen.pixelsPerMeter, aabb.ul.x, aabb.ul.y, aabb.ul.x + aabb.width, aabb.ul.y + aabb.height);
+		APP.spriteSheet.paint(ctxt, SpriteSheetSprite.STUD, ctxt.cam.pixelsPerMeter, aabb.ul.x, aabb.ul.y, aabb.ul.x + aabb.width, aabb.ul.y + aabb.height);
 		
 	}
 	

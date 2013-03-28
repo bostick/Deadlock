@@ -8,15 +8,15 @@ import com.gutabi.deadlock.ui.paint.RenderingContext;
 
 public class Stats {
 	
-	WorldScreen screen;
+	WorldPanel worldPanel;
 	
 	long lastTime;
 	long curTime;
 	int frameCount;
 	int fps;
 	
-	public Stats(WorldScreen screen) {
-		this.screen = screen;
+	public Stats(WorldPanel worldPanel) {
+		this.worldPanel = worldPanel;
 	}
 	
 	public void paint(RenderingContext ctxt) {
@@ -39,11 +39,11 @@ public class Stats {
 			lastTime = curTime;
 		}
 		
-		ctxt.paintString(0, 0, 1.0/screen.pixelsPerMeter, "FPS: " + fps);
+		ctxt.paintString(0, 0, 1.0/worldPanel.worldCamera.pixelsPerMeter, "FPS: " + fps);
 		
 		ctxt.translate(0, 1);
 		
-		screen.world.paintStats(ctxt);
+		worldPanel.world.paintStats(ctxt);
 		
 		ctxt.setPaintMode();
 		

@@ -45,7 +45,7 @@ public class FixtureTool extends ToolBase {
 		this.p = p;
 		
 		if (p != null) {
-			currentQuadrant = worldScreen.world.quadrantMap.findQuadrant(p);
+			currentQuadrant = worldScreen.contentPane.worldPanel.world.quadrantMap.findQuadrant(p);
 			
 			if (currentQuadrant == null) {
 				shape = null;
@@ -59,16 +59,16 @@ public class FixtureTool extends ToolBase {
 				return;
 			}
 			
-			top = worldScreen.world.quadrantMap.upFixPoint(currentQuadrant);
+			top = worldScreen.contentPane.worldPanel.world.quadrantMap.upFixPoint(currentQuadrant);
 			Point topCenter = top.center();
 			
-			bottom = worldScreen.world.quadrantMap.downFixPoint(currentQuadrant);
+			bottom = worldScreen.contentPane.worldPanel.world.quadrantMap.downFixPoint(currentQuadrant);
 			Point bottomCenter = bottom.center();
 			
-			left = worldScreen.world.quadrantMap.leftFixPoint(currentQuadrant);
+			left = worldScreen.contentPane.worldPanel.world.quadrantMap.leftFixPoint(currentQuadrant);
 			Point leftCenter = left.center();
 			
-			right = worldScreen.world.quadrantMap.rightFixPoint(currentQuadrant);
+			right = worldScreen.contentPane.worldPanel.world.quadrantMap.rightFixPoint(currentQuadrant);
 			Point rightCenter = right.center();
 			
 			double distToTop = Math.abs(p.y - (topCenter.y - QuadrantMap.QUADRANT_HEIGHT/2));
@@ -134,17 +134,17 @@ public class FixtureTool extends ToolBase {
 		
 		APP.tool = new RegularTool(worldScreen, debuggerScreen);
 		
-		APP.tool.setPoint(worldScreen.world.quadrantMap.getPoint(worldScreen.world.lastMovedOrDraggedWorldPoint));
+		APP.tool.setPoint(worldScreen.contentPane.worldPanel.world.quadrantMap.getPoint(worldScreen.contentPane.worldPanel.world.lastMovedOrDraggedWorldPoint));
 		
 		worldScreen.contentPane.repaint();
 	}
 	
 	public void wKey() {
 		
-		if (worldScreen.world.graph.pureGraphIntersect(shape) == null) {
+		if (worldScreen.contentPane.worldPanel.world.graph.pureGraphIntersect(shape) == null) {
 			
-			Fixture source = new Fixture(worldScreen.world, getSourcePoint(), axis);
-			Fixture sink = new Fixture(worldScreen.world, getSinkPoint(), axis);
+			Fixture source = new Fixture(worldScreen.contentPane.worldPanel.world, getSourcePoint(), axis);
+			Fixture sink = new Fixture(worldScreen.contentPane.worldPanel.world, getSinkPoint(), axis);
 			
 			source.setType(FixtureType.SOURCE);
 			sink.setType(FixtureType.SINK);
@@ -164,23 +164,23 @@ public class FixtureTool extends ToolBase {
 			}
 			
 			Set<Vertex> affected = new HashSet<Vertex>();
-			Set<Vertex> res = worldScreen.world.addFixture(source);
+			Set<Vertex> res = worldScreen.contentPane.worldPanel.world.addFixture(source);
 			affected.addAll(res);
-			res = worldScreen.world.addFixture(sink);
+			res = worldScreen.contentPane.worldPanel.world.addFixture(sink);
 			affected.addAll(res);
-			worldScreen.world.graph.computeVertexRadii(affected);
+			worldScreen.contentPane.worldPanel.world.graph.computeVertexRadii(affected);
 			
 			APP.tool = new RegularTool(worldScreen, debuggerScreen);
-			APP.tool.setPoint(worldScreen.world.lastMovedWorldPoint);
+			APP.tool.setPoint(worldScreen.contentPane.worldPanel.world.lastMovedWorldPoint);
 			
-			worldScreen.world.render_worldPanel();
-			worldScreen.world.render_preview();
+			worldScreen.contentPane.worldPanel.world.render_worldPanel();
+			worldScreen.contentPane.worldPanel.world.render_preview();
 			worldScreen.contentPane.repaint();
 		}
 	}
 	
 	public void moved(InputEvent ev) {
-		APP.tool.setPoint(worldScreen.world.quadrantMap.getPoint(worldScreen.world.lastMovedOrDraggedWorldPoint));
+		APP.tool.setPoint(worldScreen.contentPane.worldPanel.world.quadrantMap.getPoint(worldScreen.contentPane.worldPanel.world.lastMovedOrDraggedWorldPoint));
 		worldScreen.contentPane.repaint();
 	}
 	

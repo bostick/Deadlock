@@ -28,6 +28,7 @@ import com.gutabi.deadlock.ui.KeyListener;
 import com.gutabi.deadlock.ui.paint.FontStyle;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.ui.paint.RenderingContextImpl;
+import com.gutabi.deadlock.world.WorldCamera;
 
 public class PlatformImpl implements Platform {
 	
@@ -36,17 +37,19 @@ public class PlatformImpl implements Platform {
 	
 	public RenderingContext createRenderingContext(Object... args) {
 		
-		if (args[0] instanceof Graphics2D) {
+		WorldCamera cam = (WorldCamera)args[0];
+		
+		if (args[1] instanceof Graphics2D) {
 			
-			Graphics2D g2 = (Graphics2D)args[0];
+			Graphics2D g2 = (Graphics2D)args[1];
 			
-			return new RenderingContextImpl(g2);
+			return new RenderingContextImpl(cam, g2);
 		} else {
 			
-			ImageImpl img = (ImageImpl)args[0];
+			ImageImpl img = (ImageImpl)args[1];
 			Graphics2D g2 = img.img.createGraphics();
 			
-			return new RenderingContextImpl(g2); 
+			return new RenderingContextImpl(cam, g2); 
 		}
 		
 	}

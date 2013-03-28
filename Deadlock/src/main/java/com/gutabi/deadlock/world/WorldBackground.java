@@ -37,12 +37,12 @@ public class WorldBackground {
 //		ctxt.dispose();
 	}
 	
-	public void clear(RenderingContext ctxt) {
+	public void paint_pixels(RenderingContext ctxt) {
 		ctxt.setColor(Color.LIGHT_GRAY);
 		ctxt.fillRect(0, 0, (int)world.worldScreen.contentPane.worldPanel.aabb.width, (int)world.worldScreen.contentPane.worldPanel.aabb.height);
 	}
 	
-	public void paint(RenderingContext ctxt) {
+	public void paint_worldCoords(RenderingContext ctxt) {
 		
 //		ctxt.paintImage(
 //				img,

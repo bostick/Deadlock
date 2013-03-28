@@ -27,7 +27,6 @@ public class QuadrantMap {
 	public final int quadrantCols;
 	public final int quadrantRows;
 	
-	World world;
 	public final int[][] ini;
 	private Quadrant[][] quadrants;
 	
@@ -36,9 +35,8 @@ public class QuadrantMap {
 	public GrassMap grassMap = new GrassMap();
 	
 	public final AABB aabb;
-	
-	public QuadrantMap(World world, int[][] ini) {
-		this.world = world;
+
+	public QuadrantMap(int[][] ini) {
 		this.ini = ini;
 		
 		quadrants = initQuadrants(ini);
@@ -115,10 +113,10 @@ public class QuadrantMap {
 		return newQuads;
 	}
 	
-	public void panelPostDisplay() {
+	public void panelPostDisplay(WorldCamera cam) {
 		
-		int quadrantWidthPixels = (int)Math.ceil(world.worldScreen.origPixelsPerMeter * QUADRANT_WIDTH);
-		int quadrantHeightPixels = (int)Math.ceil(world.worldScreen.origPixelsPerMeter * QUADRANT_HEIGHT);
+		int quadrantWidthPixels = (int)Math.ceil(cam.origPixelsPerMeter * QUADRANT_WIDTH);
+		int quadrantHeightPixels = (int)Math.ceil(cam.origPixelsPerMeter * QUADRANT_HEIGHT);
 		
 		quadrantGrass = APP.platform.createImage(quadrantWidthPixels, quadrantHeightPixels);
 		
@@ -249,11 +247,11 @@ public class QuadrantMap {
 		}
 	}
 	
-	public void computeGridSpacing() {
+	public void computeGridSpacing(WorldCamera cam) {
 		for (int i = 0; i < quadrantRows; i++) {
 			for (int j = 0; j < quadrantCols; j++) {
 				Quadrant q = quadrants[i][j];
-				q.computeGridSpacing();
+				q.computeGridSpacing(cam);
 			}
 		}
 	}
@@ -287,7 +285,7 @@ public class QuadrantMap {
 		return s.toString();
 	}
 	
-	public static QuadrantMap fromFileString(World world, String s) {
+	public static QuadrantMap fromFileString(String s) {
 		BufferedReader r = new BufferedReader(new StringReader(s));
 		
 		int[][] ini = null;
@@ -321,7 +319,7 @@ public class QuadrantMap {
 			e.printStackTrace();
 		}
 		
-		QuadrantMap qm = new QuadrantMap(world, ini);
+		QuadrantMap qm = new QuadrantMap(ini);
 		return qm;
 	}
 	

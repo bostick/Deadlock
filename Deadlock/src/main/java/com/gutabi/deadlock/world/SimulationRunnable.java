@@ -2,15 +2,15 @@ package com.gutabi.deadlock.world;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
-import com.gutabi.deadlock.world.WorldScreen.WorldScreenMode;
-
 public class SimulationRunnable implements Runnable {
 	
 	final WorldScreen worldScreen;
+	final World world;
 	
 	public SimulationRunnable() {
 		
 		worldScreen = (WorldScreen)APP.appScreen;
+		world = worldScreen.contentPane.worldPanel.world;
 		
 	}
 	
@@ -22,19 +22,19 @@ public class SimulationRunnable implements Runnable {
 		long currentTimeMillis = System.currentTimeMillis();
 		long newTimeMillis = System.currentTimeMillis();
 		
-		worldScreen.world.preStart();
+		world.preStart();
 		
 		try {
 			
 			outer:
 				while (true) {
 					
-					if (worldScreen.mode == WorldScreenMode.EDITING) {
+					if (world.mode == WorldMode.EDITING) {
 						break outer;
-					} else if (worldScreen.mode == WorldScreenMode.PAUSED) {
-						synchronized (worldScreen.pauseLock) {
+					} else if (world.mode == WorldMode.PAUSED) {
+						synchronized (world.pauseLock) {
 							try {
-								worldScreen.pauseLock.wait();
+								world.pauseLock.wait();
 							} catch (InterruptedException e) {
 								// TODO Auto-generated catch block
 								e.printStackTrace();
@@ -53,22 +53,22 @@ public class SimulationRunnable implements Runnable {
 					/*
 					 * this max value is a heuristic
 					 */
-					if (frameTimeSeconds > 1 * worldScreen.DT) {
-						frameTimeSeconds = 1 * worldScreen.DT;
+					if (frameTimeSeconds > 1 * world.DT) {
+						frameTimeSeconds = 1 * world.DT;
 					}
-					if (frameTimeSeconds < 0.5 * worldScreen.DT) {
+					if (frameTimeSeconds < 0.5 * world.DT) {
 						Thread.sleep(frameTimeMillis);
 						frameTimeSeconds += frameTimeSeconds;
 					}
 					
 					accumulator += frameTimeSeconds;
 					
-					while (accumulator >= worldScreen.DT) {
+					while (accumulator >= world.DT) {
 						
-						worldScreen.world.integrate(t);
+						world.integrate(t);
 						
-						accumulator -= worldScreen.DT;
-						t += worldScreen.DT;
+						accumulator -= world.DT;
+						t += world.DT;
 					}
 					
 					worldScreen.contentPane.repaint();
@@ -79,7 +79,7 @@ public class SimulationRunnable implements Runnable {
 			
 		}
 		
-		worldScreen.world.postStop();
+		world.postStop();
 		
 		worldScreen.contentPane.repaint();
 		

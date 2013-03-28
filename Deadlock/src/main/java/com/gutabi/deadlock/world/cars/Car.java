@@ -189,7 +189,7 @@ public abstract class Car extends PhysicsBody {
 		ctxt.rotate(angle);
 		ctxt.translate(localULX, localULY);
 		
-		APP.carSheet.paint(ctxt, sprite, world.worldScreen.pixelsPerMeter, 0, 0, length, width);
+		APP.carSheet.paint(ctxt, sprite, ctxt.cam.pixelsPerMeter, 0, 0, length, width);
 		
 		if (inMerger) {
 			ctxt.setAlpha(1.0);
@@ -211,11 +211,11 @@ public abstract class Car extends PhysicsBody {
 		
 		Transform brakeTransform = ctxt.getTransform();
 		
-		APP.spriteSheet.paint(ctxt, SpriteSheetSprite.BRAKE, world.worldScreen.pixelsPerMeter, 0, 0, BRAKE_SIZE, BRAKE_SIZE);
+		APP.spriteSheet.paint(ctxt, SpriteSheetSprite.BRAKE, ctxt.cam.pixelsPerMeter, 0, 0, BRAKE_SIZE, BRAKE_SIZE);
 		
 		ctxt.setTransform(brakeTransform);
 		
-		APP.spriteSheet.paint(ctxt, SpriteSheetSprite.BRAKE, world.worldScreen.pixelsPerMeter, 0, 0, BRAKE_SIZE, BRAKE_SIZE);
+		APP.spriteSheet.paint(ctxt, SpriteSheetSprite.BRAKE, ctxt.cam.pixelsPerMeter, 0, 0, BRAKE_SIZE, BRAKE_SIZE);
 		
 		ctxt.setTransform(origTransform);
 		
@@ -228,7 +228,7 @@ public abstract class Car extends PhysicsBody {
 		ctxt.translate(center.x, center.y);
 		
 		ctxt.setColor(Color.WHITE);
-		ctxt.paintString(localULX, 0.0, 2.0/world.worldScreen.pixelsPerMeter, Integer.toString(id));
+		ctxt.paintString(localULX, 0.0, 2.0/ctxt.cam.pixelsPerMeter, Integer.toString(id));
 		
 		ctxt.setTransform(origTransform);
 	}

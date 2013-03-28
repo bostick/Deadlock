@@ -43,21 +43,21 @@ public class Quadrant {
 		if (active) {
 			for (int i = 0; i < 16; i+=4) {
 				for (int j = 0; j < 16; j+=4) {
-					map.grassMap.addGrass(new AnimatedGrass(map.world, new Point(c * QuadrantMap.QUADRANT_WIDTH + i, r * QuadrantMap.QUADRANT_HEIGHT + j)));
+					map.grassMap.addGrass(new AnimatedGrass(new Point(c * QuadrantMap.QUADRANT_WIDTH + i, r * QuadrantMap.QUADRANT_HEIGHT + j)));
 				}
 			}
 			if (right == null || !right.active) {
 				for (int i = 0; i < 16; i+=4) {
-					map.grassMap.addGrass(new AnimatedGrass(map.world, new Point(c * QuadrantMap.QUADRANT_WIDTH + 16, r * QuadrantMap.QUADRANT_HEIGHT + i)));
+					map.grassMap.addGrass(new AnimatedGrass(new Point(c * QuadrantMap.QUADRANT_WIDTH + 16, r * QuadrantMap.QUADRANT_HEIGHT + i)));
 				}
 			}
 			if (down == null || !down.active) {
 				for (int i = 0; i < 16; i+=4) {
-					map.grassMap.addGrass(new AnimatedGrass(map.world, new Point(c * QuadrantMap.QUADRANT_WIDTH + i, r * QuadrantMap.QUADRANT_HEIGHT + 16)));
+					map.grassMap.addGrass(new AnimatedGrass(new Point(c * QuadrantMap.QUADRANT_WIDTH + i, r * QuadrantMap.QUADRANT_HEIGHT + 16)));
 				}
 			}
 			if (rightDown == null || !rightDown.active) {
-				map.grassMap.addGrass(new AnimatedGrass(map.world, new Point(c * QuadrantMap.QUADRANT_WIDTH + 16, r * QuadrantMap.QUADRANT_HEIGHT + 16)));
+				map.grassMap.addGrass(new AnimatedGrass(new Point(c * QuadrantMap.QUADRANT_WIDTH + 16, r * QuadrantMap.QUADRANT_HEIGHT + 16)));
 			}
 		}
 	}
@@ -72,16 +72,16 @@ public class Quadrant {
 	
 	private double gridSpacing = 2.0;
 	
-	public void computeGridSpacing() {
+	public void computeGridSpacing(WorldCamera cam) {
 		
-		double curGridSpacingPixels =  gridSpacing * map.world.worldScreen.pixelsPerMeter;
+		double curGridSpacingPixels =  gridSpacing * cam.pixelsPerMeter;
 		while (curGridSpacingPixels > 64+16) {
 			gridSpacing *= 0.5;
-			curGridSpacingPixels =  gridSpacing * map.world.worldScreen.pixelsPerMeter;
+			curGridSpacingPixels =  gridSpacing * cam.pixelsPerMeter;
 		}
 		while (curGridSpacingPixels < 64-16) {
 			gridSpacing *= 2.0;
-			curGridSpacingPixels =  gridSpacing * map.world.worldScreen.pixelsPerMeter;
+			curGridSpacingPixels =  gridSpacing * cam.pixelsPerMeter;
 		}
 	}
 	
@@ -120,7 +120,8 @@ public class Quadrant {
 				Transform origTransform = ctxt.getTransform();
 				
 				ctxt.translate(c * QuadrantMap.QUADRANT_WIDTH, r * QuadrantMap.QUADRANT_HEIGHT);
-				ctxt.paintImage(map.quadrantGrass, map.world.worldScreen.pixelsPerMeter,
+				ctxt.paintImage(map.quadrantGrass,
+						ctxt.cam.pixelsPerMeter,
 						0.0, 0.0, QuadrantMap.QUADRANT_WIDTH, QuadrantMap.QUADRANT_HEIGHT,
 						0, 0, map.quadrantGrass.getWidth(), map.quadrantGrass.getHeight());
 				
@@ -134,7 +135,7 @@ public class Quadrant {
 				aabb.draw(ctxt);
 				
 				ctxt.setColor(Color.BLACK);
-				ctxt.paintString(c * QuadrantMap.QUADRANT_WIDTH, r * QuadrantMap.QUADRANT_HEIGHT + 1, 1.0/map.world.worldScreen.pixelsPerMeter, c + " " + r);
+				ctxt.paintString(c * QuadrantMap.QUADRANT_WIDTH, r * QuadrantMap.QUADRANT_HEIGHT + 1, 1.0/ctxt.cam.pixelsPerMeter, c + " " + r);
 			}
 			
 			if (grid) {

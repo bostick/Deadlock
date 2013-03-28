@@ -14,7 +14,7 @@ import com.gutabi.deadlock.ui.paint.RenderingContext;
 
 public abstract class MenuItem {
 	
-	public final MainMenu menu;
+	public final Menu menu;
 	
 	Label lab;
 	
@@ -30,7 +30,7 @@ public abstract class MenuItem {
 	
 	public boolean active = true;
 	
-	public MenuItem(MainMenu menu, String text) {
+	public MenuItem(Menu menu, String text) {
 		this.menu = menu;
 		lab = new Label(text);
 		lab.fontFile = APP.platform.createResourceEngine().fontResource("visitor1");

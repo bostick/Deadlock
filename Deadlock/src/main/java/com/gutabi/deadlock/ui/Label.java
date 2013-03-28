@@ -29,6 +29,16 @@ public class Label {
 		this.text = text;
 	}
 	
+	public Label(String text, double x, double y) {
+		this.text = text;
+		this.ul = new Point(x, y);
+	}
+	
+	public Label(String text, Point ul) {
+		this.text = text;
+		this.ul = ul;
+	}
+	
 	public void setLocation(double x, double y) {
 		ul = new Point(x, y);
 	}
@@ -68,7 +78,9 @@ public class Label {
 	}
 	
 	public void paint(RenderingContext ctxt) {
-		ctxt.paintImage(img, (int)aabb.x, (int)aabb.y, (int)(aabb.x + aabb.width), (int)(aabb.y + aabb.height), 0, 0, img.getWidth(), img.getHeight());
+		ctxt.paintImage(img,
+				(int)aabb.x, (int)aabb.y, (int)(aabb.x + aabb.width), (int)(aabb.y + aabb.height),
+				0, 0, img.getWidth(), img.getHeight());
 	}
 	
 }

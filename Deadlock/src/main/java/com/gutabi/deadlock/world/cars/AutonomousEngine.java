@@ -106,8 +106,8 @@ public class AutonomousEngine extends Engine {
 		if (dv < 0) {
 			assert false;
 		}
-		if (dv > maxAcceleration * world.worldScreen.DT) {
-			dv = maxAcceleration * world.worldScreen.DT;
+		if (dv > maxAcceleration * world.DT) {
+			dv = maxAcceleration * world.DT;
 		}
 		
 		c.applyForwardImpulse(driveForwardImpulseCoefficient, dv);
@@ -163,7 +163,7 @@ public class AutonomousEngine extends Engine {
 		 * turning radius
 		 */
 		
-		double actualDistance = c.forwardSpeed * world.worldScreen.DT;
+		double actualDistance = c.forwardSpeed * world.DT;
 		double maxRads = maxRadsPerMeter * actualDistance;
 		if (dw > maxRads) {
 			dw = maxRads;
@@ -171,7 +171,7 @@ public class AutonomousEngine extends Engine {
 			dw = -maxRads;
 		}
 		
-		float goalAngVel = (float)(dw / world.worldScreen.DT);
+		float goalAngVel = (float)(dw / world.DT);
 		
 		c.applyAngularImpulse(turnAngularImpulseCoefficient, (goalAngVel - c.angularVel));
 		

@@ -8,7 +8,7 @@ import com.gutabi.deadlock.Entity;
 import com.gutabi.deadlock.geom.Circle;
 import com.gutabi.deadlock.geom.Shape;
 import com.gutabi.deadlock.math.Point;
-import com.gutabi.deadlock.menu.MainMenu;
+import com.gutabi.deadlock.menu.MainMenuScreen;
 import com.gutabi.deadlock.ui.InputEvent;
 import com.gutabi.deadlock.ui.paint.Cap;
 import com.gutabi.deadlock.ui.paint.Color;
@@ -68,7 +68,7 @@ public class RegularTool extends ToolBase {
 		
 		APP.platform.unshowDebuggerScreen();
 		
-		MainMenu s = new MainMenu();
+		MainMenuScreen s = new MainMenuScreen();
 		
 		APP.platform.setupAppScreen(s.contentPane.cp);
 		
@@ -85,7 +85,7 @@ public class RegularTool extends ToolBase {
 				
 				r.setDirection(null, Direction.STARTTOEND);
 				
-				worldScreen.world.render_worldPanel();
+				worldScreen.contentPane.worldPanel.world.render_worldPanel();
 				worldScreen.contentPane.repaint();
 				
 			} else if (hilited instanceof Fixture) {
@@ -103,7 +103,7 @@ public class RegularTool extends ToolBase {
 				f.setFacingSide(f.getFacingSide().other());
 				g.setFacingSide(g.getFacingSide().other());
 				
-				worldScreen.world.render_worldPanel();
+				worldScreen.contentPane.worldPanel.world.render_worldPanel();
 				worldScreen.contentPane.repaint();
 				
 			}
@@ -119,7 +119,7 @@ public class RegularTool extends ToolBase {
 				
 				r.setDirection(null, Direction.ENDTOSTART);
 				
-				worldScreen.world.render_worldPanel();
+				worldScreen.contentPane.worldPanel.world.render_worldPanel();
 				worldScreen.contentPane.repaint();
 				
 			}
@@ -135,7 +135,7 @@ public class RegularTool extends ToolBase {
 				
 				r.setDirection(null, null);
 			
-				worldScreen.world.render_worldPanel();
+				worldScreen.contentPane.worldPanel.world.render_worldPanel();
 				worldScreen.contentPane.repaint();
 				
 			}
@@ -146,15 +146,15 @@ public class RegularTool extends ToolBase {
 	
 	public void qKey() {
 		StraightEdgeTool c = new StraightEdgeTool(worldScreen, debuggerScreen);
-		c.setStart(worldScreen.world.quadrantMap.getPoint(worldScreen.world.lastMovedOrDraggedWorldPoint));
-		c.setPoint(worldScreen.world.quadrantMap.getPoint(worldScreen.world.lastMovedOrDraggedWorldPoint));
+		c.setStart(worldScreen.contentPane.worldPanel.world.quadrantMap.getPoint(worldScreen.contentPane.worldPanel.world.lastMovedOrDraggedWorldPoint));
+		c.setPoint(worldScreen.contentPane.worldPanel.world.quadrantMap.getPoint(worldScreen.contentPane.worldPanel.world.lastMovedOrDraggedWorldPoint));
 		APP.tool = c;
 		worldScreen.contentPane.repaint();
 	}
 	
 	public void wKey() {
 		APP.tool = new FixtureTool(worldScreen, debuggerScreen);
-		APP.tool.setPoint(worldScreen.world.quadrantMap.getPoint(worldScreen.world.lastMovedOrDraggedWorldPoint));
+		APP.tool.setPoint(worldScreen.contentPane.worldPanel.world.quadrantMap.getPoint(worldScreen.contentPane.worldPanel.world.lastMovedOrDraggedWorldPoint));
 		worldScreen.contentPane.repaint();
 	}
 	
@@ -164,23 +164,23 @@ public class RegularTool extends ToolBase {
 		
 		APP.tool = new CircleTool(worldScreen, debuggerScreen);
 		
-		APP.tool.setPoint(worldScreen.world.quadrantMap.getPoint(worldScreen.world.lastMovedOrDraggedWorldPoint));
+		APP.tool.setPoint(worldScreen.contentPane.worldPanel.world.quadrantMap.getPoint(worldScreen.contentPane.worldPanel.world.lastMovedOrDraggedWorldPoint));
 		
 		worldScreen.contentPane.repaint();
 	}
 	
 	public void sKey() {
 		QuadTool q = new QuadTool(worldScreen, debuggerScreen);
-		q.setStart(worldScreen.world.quadrantMap.getPoint(worldScreen.world.lastMovedOrDraggedWorldPoint));
-		q.setPoint(worldScreen.world.quadrantMap.getPoint(worldScreen.world.lastMovedOrDraggedWorldPoint));
+		q.setStart(worldScreen.contentPane.worldPanel.world.quadrantMap.getPoint(worldScreen.contentPane.worldPanel.world.lastMovedOrDraggedWorldPoint));
+		q.setPoint(worldScreen.contentPane.worldPanel.world.quadrantMap.getPoint(worldScreen.contentPane.worldPanel.world.lastMovedOrDraggedWorldPoint));
 		APP.tool = q;
 		worldScreen.contentPane.repaint();
 	}
 	
 	public void dKey() {
 		CubicTool c = new CubicTool(worldScreen, debuggerScreen);
-		c.setStart(worldScreen.world.quadrantMap.getPoint(worldScreen.world.lastMovedOrDraggedWorldPoint));
-		c.setPoint(worldScreen.world.quadrantMap.getPoint(worldScreen.world.lastMovedOrDraggedWorldPoint));
+		c.setStart(worldScreen.contentPane.worldPanel.world.quadrantMap.getPoint(worldScreen.contentPane.worldPanel.world.lastMovedOrDraggedWorldPoint));
+		c.setPoint(worldScreen.contentPane.worldPanel.world.quadrantMap.getPoint(worldScreen.contentPane.worldPanel.world.lastMovedOrDraggedWorldPoint));
 		APP.tool = c;
 		worldScreen.contentPane.repaint();
 	}
@@ -193,7 +193,7 @@ public class RegularTool extends ToolBase {
 				
 				s.setEnabled(true);
 				
-				worldScreen.world.render_worldPanel();
+				worldScreen.contentPane.worldPanel.world.render_worldPanel();
 				worldScreen.contentPane.repaint();
 			}
 			
@@ -203,7 +203,7 @@ public class RegularTool extends ToolBase {
 			
 			APP.tool = new MergerTool(worldScreen, debuggerScreen);
 			
-			APP.tool.setPoint(worldScreen.world.quadrantMap.getPoint(worldScreen.world.lastMovedOrDraggedWorldPoint));
+			APP.tool.setPoint(worldScreen.contentPane.worldPanel.world.quadrantMap.getPoint(worldScreen.contentPane.worldPanel.world.lastMovedOrDraggedWorldPoint));
 			
 			worldScreen.contentPane.repaint();
 		}
@@ -218,25 +218,25 @@ public class RegularTool extends ToolBase {
 				if (hilited instanceof Car) {
 					Car c = (Car)hilited;
 					
-					worldScreen.world.carMap.destroyCar(c);
+					worldScreen.contentPane.worldPanel.world.carMap.destroyCar(c);
 					
 				} else if (hilited instanceof Vertex) {
 					Vertex v = (Vertex)hilited;
 					
-					Set<Vertex> affected = worldScreen.world.graph.removeVertexTop(v);
-					worldScreen.world.graph.computeVertexRadii(affected);
+					Set<Vertex> affected = worldScreen.contentPane.worldPanel.world.graph.removeVertexTop(v);
+					worldScreen.contentPane.worldPanel.world.graph.computeVertexRadii(affected);
 					
 				} else if (hilited instanceof Road) {
 					Road e = (Road)hilited;
 					
-					Set<Vertex> affected = worldScreen.world.graph.removeRoadTop(e);
-					worldScreen.world.graph.computeVertexRadii(affected);
+					Set<Vertex> affected = worldScreen.contentPane.worldPanel.world.graph.removeRoadTop(e);
+					worldScreen.contentPane.worldPanel.world.graph.computeVertexRadii(affected);
 					
 				} else if (hilited instanceof Merger) {
 					Merger e = (Merger)hilited;
 					
-					Set<Vertex> affected = worldScreen.world.graph.removeMergerTop(e);
-					worldScreen.world.graph.computeVertexRadii(affected);
+					Set<Vertex> affected = worldScreen.contentPane.worldPanel.world.graph.removeMergerTop(e);
+					worldScreen.contentPane.worldPanel.world.graph.computeVertexRadii(affected);
 					
 				} else if (hilited instanceof StopSign) {
 					StopSign s = (StopSign)hilited;
@@ -253,21 +253,21 @@ public class RegularTool extends ToolBase {
 			
 		}
 		
-		worldScreen.world.render_worldPanel();
-		worldScreen.world.render_preview();
+		worldScreen.contentPane.worldPanel.world.render_worldPanel();
+		worldScreen.contentPane.worldPanel.world.render_preview();
 		worldScreen.contentPane.repaint();
 	}
 	
 	public void moved(InputEvent ev) {
 		switch (mode) {
 		case FREE:
-			Entity closest = worldScreen.world.hitTest(worldScreen.world.lastMovedOrDraggedWorldPoint);
+			Entity closest = worldScreen.contentPane.worldPanel.world.hitTest(worldScreen.contentPane.worldPanel.world.lastMovedOrDraggedWorldPoint);
 			
 			synchronized (APP) {
 				hilited = closest;
 			}
 			
-			APP.tool.setPoint(worldScreen.world.quadrantMap.getPoint(worldScreen.world.lastMovedOrDraggedWorldPoint));
+			APP.tool.setPoint(worldScreen.contentPane.worldPanel.world.quadrantMap.getPoint(worldScreen.contentPane.worldPanel.world.lastMovedOrDraggedWorldPoint));
 			
 			worldScreen.contentPane.repaint();
 			break;
@@ -280,12 +280,12 @@ public class RegularTool extends ToolBase {
 	public void dragged(InputEvent ev) {
 		switch (mode) {
 		case FREE:
-			APP.tool.setPoint(worldScreen.world.lastDraggedWorldPoint);
+			APP.tool.setPoint(worldScreen.contentPane.worldPanel.world.lastDraggedWorldPoint);
 			
-			if (worldScreen.world.lastDraggedWorldPointWasNull) {
+			if (worldScreen.contentPane.worldPanel.world.lastDraggedWorldPointWasNull) {
 				// first drag
-				draftStart(worldScreen.world.lastPressedWorldPoint);
-				draftMove(worldScreen.world.lastDraggedWorldPoint);
+				draftStart(worldScreen.contentPane.worldPanel.world.lastPressedWorldPoint);
+				draftMove(worldScreen.contentPane.worldPanel.world.lastDraggedWorldPoint);
 				
 				worldScreen.contentPane.repaint();
 				
@@ -294,9 +294,9 @@ public class RegularTool extends ToolBase {
 			}
 			break;
 		case DRAFTING:
-			APP.tool.setPoint(worldScreen.world.lastDraggedWorldPoint);
+			APP.tool.setPoint(worldScreen.contentPane.worldPanel.world.lastDraggedWorldPoint);
 			
-			draftMove(worldScreen.world.lastDraggedWorldPoint);
+			draftMove(worldScreen.contentPane.worldPanel.world.lastDraggedWorldPoint);
 			
 			worldScreen.contentPane.repaint();
 			break;
@@ -310,8 +310,8 @@ public class RegularTool extends ToolBase {
 		case DRAFTING:
 			draftEnd();
 			
-			worldScreen.world.render_worldPanel();
-			worldScreen.world.render_preview();
+			worldScreen.contentPane.worldPanel.world.render_worldPanel();
+			worldScreen.contentPane.worldPanel.world.render_preview();
 			worldScreen.contentPane.repaint();
 			debuggerScreen.contentPane.repaint();
 			break;
@@ -324,7 +324,7 @@ public class RegularTool extends ToolBase {
 		
 		hilited = null;
 		
-		stroke = new Stroke(worldScreen.world);
+		stroke = new Stroke(worldScreen.contentPane.worldPanel.world);
 		stroke.add(p);
 			
 	}
@@ -339,9 +339,9 @@ public class RegularTool extends ToolBase {
 		stroke.finish();
 		
 		Set<Vertex> affected = stroke.processNewStroke();
-		worldScreen.world.graph.computeVertexRadii(affected);
+		worldScreen.contentPane.worldPanel.world.graph.computeVertexRadii(affected);
 		
-		assert worldScreen.world.checkConsistency();
+		assert worldScreen.contentPane.worldPanel.world.checkConsistency();
 		
 		debugStroke2 = debugStroke;
 		debugStroke = stroke;

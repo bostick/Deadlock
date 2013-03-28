@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Set;
 
 import com.gutabi.deadlock.Entity;
-import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.Image;
 import com.gutabi.deadlock.ui.InputEvent;
@@ -31,6 +30,10 @@ import com.gutabi.deadlock.world.sprites.AnimatedExplosion;
 
 public class World extends PhysicsWorld {
 	
+	public WorldMode mode;
+	
+	public final Object pauseLock = new Object();
+	
 	public DebuggerScreen debuggerScreen;
 	
 	WorldBackground background;
@@ -38,8 +41,6 @@ public class World extends PhysicsWorld {
 	
 	public QuadrantMap quadrantMap;
 	public Graph graph;
-	
-	public double t;
 	
 	public CarMap carMap;
 	
@@ -50,6 +51,8 @@ public class World extends PhysicsWorld {
 	
 	public World(WorldScreen worldScreen, DebuggerScreen debuggerScreen) {
 		super(worldScreen);
+		
+		mode = WorldMode.EDITING;
 		
 		this.debuggerScreen = debuggerScreen;
 		
@@ -68,26 +71,26 @@ public class World extends PhysicsWorld {
 		
 		World w = new World(worldScreen, debuggerScreen);
 		
-		QuadrantMap qm = new QuadrantMap(w, ini);
+		QuadrantMap qm = new QuadrantMap(ini);
 		
 		w.quadrantMap = qm;
 		
 		return w;
 	}
 	
-	public void panelPostDisplay() {
+	public void panelPostDisplay(WorldCamera cam) {
 		
 		background.panelPostDisplay();
 		
-		quadrantMap.panelPostDisplay();
+		quadrantMap.panelPostDisplay(cam);
 		
-		worldScreen.worldViewport = new AABB( 
-				-(worldScreen.contentPane.worldPanel.aabb.width / worldScreen.pixelsPerMeter) / 2 + quadrantMap.worldWidth/2 ,
-				-(worldScreen.contentPane.worldPanel.aabb.height / worldScreen.pixelsPerMeter) / 2 + quadrantMap.worldHeight/2,
-				worldScreen.contentPane.worldPanel.aabb.width / worldScreen.pixelsPerMeter,
-				worldScreen.contentPane.worldPanel.aabb.height / worldScreen.pixelsPerMeter);
-		
-		worldScreen.origWorldViewport = worldScreen.worldViewport;
+//		worldScreen.worldViewport = new AABB( 
+//				-(worldScreen.contentPane.worldPanel.aabb.width / worldScreen.pixelsPerMeter) / 2 + quadrantMap.worldWidth/2 ,
+//				-(worldScreen.contentPane.worldPanel.aabb.height / worldScreen.pixelsPerMeter) / 2 + quadrantMap.worldHeight/2,
+//				worldScreen.contentPane.worldPanel.aabb.width / worldScreen.pixelsPerMeter,
+//				worldScreen.contentPane.worldPanel.aabb.height / worldScreen.pixelsPerMeter);
+//		
+//		worldScreen.origWorldViewport = worldScreen.worldViewport;
 		
 	}
 	
@@ -171,7 +174,7 @@ public class World extends PhysicsWorld {
 	}
 	
 	public void carCrash(Point p) {
-		explosionMap.add(new AnimatedExplosion(this, p));
+		explosionMap.add(new AnimatedExplosion(p));
 	}
 	
 	public Entity hitTest(Point p) {
@@ -248,6 +251,34 @@ public class World extends PhysicsWorld {
 	}
 	
 	
+	public void startRunning() {
+		
+		mode = WorldMode.RUNNING;
+		
+		Thread t = new Thread(new SimulationRunnable());
+		t.start();
+		
+	}
+	
+	public void stopRunning() {
+		
+		mode = WorldMode.EDITING;
+		
+	}
+	
+	public void pauseRunning() {
+		
+		mode = WorldMode.PAUSED;
+	}
+	
+	public void unpauseRunning() {
+		
+		mode = WorldMode.RUNNING;
+		
+		synchronized (pauseLock) {
+			pauseLock.notifyAll();
+		}
+	}
 	
 	public String toFileString() {
 		StringBuilder s = new StringBuilder();
@@ -307,47 +338,13 @@ public class World extends PhysicsWorld {
 		
 		World w = new World(screen, debuggerScreen);
 		
-		QuadrantMap qm = QuadrantMap.fromFileString(w, quadrantMapStringBuilder.toString());
+		QuadrantMap qm = QuadrantMap.fromFileString(quadrantMapStringBuilder.toString());
 		Graph g = Graph.fromFileString(w, debuggerScreen.contentPane.controlPanel, graphStringBuilder.toString());
 		
 		w.quadrantMap = qm;
 		w.graph = g;
 		
 		return w;
-	}
-	
-	public void zoomRelative(double factor) {
-		
-		worldScreen.pixelsPerMeter = factor * worldScreen.pixelsPerMeter; 
-		
-		double newWidth =  worldScreen.contentPane.worldPanel.aabb.width / worldScreen.pixelsPerMeter;
-		double newHeight = worldScreen.contentPane.worldPanel.aabb.height / worldScreen.pixelsPerMeter;
-		
-		worldScreen.worldViewport = new AABB(
-				worldScreen.worldViewport.center.x - newWidth/2,
-				worldScreen.worldViewport.center.y - newHeight/2, newWidth, newHeight);
-	}
-	
-	public void zoomAbsolute(double factor) {
-		
-		worldScreen.pixelsPerMeter = factor * worldScreen.origPixelsPerMeter; 
-		
-		double newWidth =  worldScreen.contentPane.worldPanel.aabb.width / worldScreen.pixelsPerMeter;
-		double newHeight = worldScreen.contentPane.worldPanel.aabb.height / worldScreen.pixelsPerMeter;
-		
-		worldScreen.worldViewport = new AABB(
-				worldScreen.worldViewport.center.x - newWidth/2,
-				worldScreen.worldViewport.center.y - newHeight/2, newWidth, newHeight);
-	}
-	
-	public void previewPan(Point prevDp) {
-		Point worldDP = debuggerScreen.contentPane.controlPanel.previewToWorld(prevDp);
-		
-		worldScreen.worldViewport = new AABB( 
-				worldScreen.worldViewport.x + worldDP.x,
-				worldScreen.worldViewport.y + worldDP.y,
-				worldScreen.worldViewport.width,
-				worldScreen.worldViewport.height);
 	}
 	
 	
@@ -403,14 +400,14 @@ public class World extends PhysicsWorld {
 		
 		Transform origTrans = ctxt.getTransform();
 		ctxt.translate(
-				debuggerScreen.contentPane.controlPanel.previewAABB.width/2 - (debuggerScreen.contentPane.controlPanel.previewPixelsPerMeter * worldScreen.world.quadrantMap.worldWidth / 2),
-				debuggerScreen.contentPane.controlPanel.previewAABB.height/2 - (debuggerScreen.contentPane.controlPanel.previewPixelsPerMeter * worldScreen.world.quadrantMap.worldHeight / 2));
+				debuggerScreen.contentPane.controlPanel.previewAABB.width/2 - (debuggerScreen.contentPane.controlPanel.previewPixelsPerMeter * quadrantMap.worldWidth / 2),
+				debuggerScreen.contentPane.controlPanel.previewAABB.height/2 - (debuggerScreen.contentPane.controlPanel.previewPixelsPerMeter * quadrantMap.worldHeight / 2));
 		
 		ctxt.scale(debuggerScreen.contentPane.controlPanel.previewPixelsPerMeter);
 		
-		worldScreen.world.quadrantMap.render_preview(ctxt);
+		quadrantMap.render_preview(ctxt);
 		
-		worldScreen.world.graph.render_preview(ctxt);
+		graph.render_preview(ctxt);
 		
 		ctxt.setTransform(origTrans);
 		
@@ -419,16 +416,16 @@ public class World extends PhysicsWorld {
 		ctxt.dispose();
 	}
 	
-	public void clear_panel(RenderingContext ctxt) {
+	public void paint_panel_pixels(RenderingContext ctxt) {
 		
-		background.clear(ctxt);
+		background.paint_pixels(ctxt);
 	}
 	
-	public void paint_panel(RenderingContext ctxt) {
+	public void paint_panel_worldCoords(RenderingContext ctxt) {
 		
 		Transform origTrans = ctxt.getTransform();
 		
-		background.paint(ctxt);
+		background.paint_worldCoords(ctxt);
 		
 		synchronized (APP) {
 			
@@ -455,19 +452,19 @@ public class World extends PhysicsWorld {
 		
 		Transform origTransform = ctxt.getTransform();
 		
-		ctxt.paintString(0, 0, 1.0/worldScreen.pixelsPerMeter, "time: " + t);
+		ctxt.paintString(0, 0, 1.0/ctxt.cam.pixelsPerMeter, "time: " + t);
 		
 		ctxt.translate(0, 1);
 		
-		ctxt.paintString(0, 0, 1.0/worldScreen.pixelsPerMeter, "body count: " + getBodyCount());
+		ctxt.paintString(0, 0, 1.0/ctxt.cam.pixelsPerMeter, "body count: " + getBodyCount());
 		
 		ctxt.translate(0, 1);
 		
-		ctxt.paintString(0, 0, 1.0/worldScreen.pixelsPerMeter, "car count: " + carMap.size());
+		ctxt.paintString(0, 0, 1.0/ctxt.cam.pixelsPerMeter, "car count: " + carMap.size());
 		
 		ctxt.translate(0, 1);
 		
-		ctxt.paintString(0, 0, 1.0/worldScreen.pixelsPerMeter, "splosions count: " + explosionMap.size());
+		ctxt.paintString(0, 0, 1.0/ctxt.cam.pixelsPerMeter, "splosions count: " + explosionMap.size());
 		
 		ctxt.translate(0, 1);
 		

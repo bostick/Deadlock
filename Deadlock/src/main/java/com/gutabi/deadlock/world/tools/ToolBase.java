@@ -50,12 +50,12 @@ public abstract class ToolBase implements Tool {
 	}
 	
 	public void gKey() {
-		worldScreen.world.quadrantMap.toggleGrid();
+		worldScreen.contentPane.worldPanel.world.quadrantMap.toggleGrid();
 		
-		APP.tool.setPoint(worldScreen.world.quadrantMap.getPoint(worldScreen.world.lastMovedOrDraggedWorldPoint));
+		APP.tool.setPoint(worldScreen.contentPane.worldPanel.world.quadrantMap.getPoint(worldScreen.contentPane.worldPanel.world.lastMovedOrDraggedWorldPoint));
 		
-		worldScreen.world.render_worldPanel();
-		worldScreen.world.render_preview();
+		worldScreen.contentPane.worldPanel.world.render_worldPanel();
+		worldScreen.contentPane.worldPanel.world.render_preview();
 		worldScreen.contentPane.repaint();
 	}
 	
@@ -77,14 +77,14 @@ public abstract class ToolBase implements Tool {
 
 	public void plusKey() {
 		
-		worldScreen.world.zoomRelative(1.1);
+		worldScreen.contentPane.worldPanel.worldCamera.zoomRelative(1.1);
 		
 //		screen.contentPane.moved(screen.contentPane.getLastMovedContentPanePoint());
 		
-		worldScreen.world.quadrantMap.computeGridSpacing();
+		worldScreen.contentPane.worldPanel.world.quadrantMap.computeGridSpacing(worldScreen.contentPane.worldPanel.worldCamera);
 		
-		worldScreen.world.render_worldPanel();
-		worldScreen.world.render_preview();
+		worldScreen.contentPane.worldPanel.world.render_worldPanel();
+		worldScreen.contentPane.worldPanel.world.render_preview();
 		
 		worldScreen.contentPane.repaint();
 		APP.debuggerScreen.contentPane.repaint();
@@ -93,14 +93,14 @@ public abstract class ToolBase implements Tool {
 
 	public void minusKey() {
 		
-		worldScreen.world.zoomRelative(0.9);
+		worldScreen.contentPane.worldPanel.worldCamera.zoomRelative(0.9);
 		
 //		screen.contentPane.moved(screen.contentPane.getLastMovedContentPanePoint());
 		
-		worldScreen.world.quadrantMap.computeGridSpacing();
+		worldScreen.contentPane.worldPanel.world.quadrantMap.computeGridSpacing(worldScreen.contentPane.worldPanel.worldCamera);
 		
-		worldScreen.world.render_worldPanel();
-		worldScreen.world.render_preview();
+		worldScreen.contentPane.worldPanel.world.render_worldPanel();
+		worldScreen.contentPane.worldPanel.world.render_preview();
 		
 		worldScreen.contentPane.repaint();
 		APP.debuggerScreen.contentPane.repaint();

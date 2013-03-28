@@ -13,11 +13,11 @@ import com.gutabi.deadlock.ui.paint.RenderingContext;
 public class MainMenuContentPane implements ContentPane {
 	
 	public ContentPane cp;
-	public MainMenu screen;
+	public MainMenuScreen screen;
 	
 	public MenuPanel panel;
 	
-	public MainMenuContentPane(MainMenu screen) {
+	public MainMenuContentPane(MainMenuScreen screen) {
 		this.cp = APP.platform.createContentPane(screen);
 		this.screen = screen;
 		

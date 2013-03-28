@@ -385,7 +385,7 @@ public final class Fixture extends Vertex {
 			
 			ctxt.translate(-r, -r);
 			
-			APP.spriteSheet.paint(ctxt, SpriteSheetSprite.FIXTUREARROW, world.worldScreen.pixelsPerMeter, 0, 0, 2 * r, 2 * r);
+			APP.spriteSheet.paint(ctxt, SpriteSheetSprite.FIXTUREARROW, ctxt.cam.pixelsPerMeter, 0, 0, 2 * r, 2 * r);
 			
 			ctxt.setTransform(origTransform);
 			

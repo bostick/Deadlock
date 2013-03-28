@@ -12,6 +12,13 @@ public abstract class PhysicsWorld {
 	
 	public WorldScreen worldScreen;
 	
+	/**
+	 * move physics forward by dt seconds
+	 */
+	public double DT = 0.0166666;
+	
+	public double t;
+	
 	public PhysicsDebugDraw debugDraw;
 	
 	public org.jbox2d.dynamics.World b2dWorld;
@@ -34,7 +41,7 @@ public abstract class PhysicsWorld {
 	
 	public void step() {
 		
-		b2dWorld.step((float)worldScreen.DT, velocityIterations, positionIterations);
+		b2dWorld.step((float)DT, velocityIterations, positionIterations);
 		
 	}
 	

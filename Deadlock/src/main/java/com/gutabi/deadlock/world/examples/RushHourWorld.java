@@ -37,7 +37,7 @@ public class RushHourWorld extends World {
 		
 		final RushHourWorld w = new RushHourWorld(screen, debuggerScreen);
 		
-		QuadrantMap qm = new QuadrantMap(w, ini);
+		QuadrantMap qm = new QuadrantMap(ini);
 		
 		w.quadrantMap = qm;
 		

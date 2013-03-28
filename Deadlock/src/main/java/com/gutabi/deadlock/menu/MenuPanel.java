@@ -13,9 +13,9 @@ import com.gutabi.deadlock.ui.paint.RenderingContext;
 
 public class MenuPanel extends PanelBase {
 	
-	MainMenu screen;
+	MainMenuScreen screen;
 	
-	public MenuPanel(final MainMenu screen) {
+	public MenuPanel(final MainMenuScreen screen) {
 		this.screen = screen;
 		
 		aabb = new AABB(aabb.x, aabb.y, APP.MENUPANEL_WIDTH, APP.MENUPANEL_HEIGHT);
@@ -42,7 +42,7 @@ public class MenuPanel extends PanelBase {
 	
 	public MenuItem hitTest(Point p) {
 		
-		for (MenuItem item : screen.items) {
+		for (MenuItem item : screen.menu.items) {
 			if (item.hitTest(p)) {
 				return item;
 			}
@@ -62,9 +62,9 @@ public class MenuPanel extends PanelBase {
 		
 		MenuItem hit = hitTest(lastMovedMenuPoint);
 		if (hit != null && hit.active) {
-			screen.hilited = hit;
+			screen.menu.hilited = hit;
 		} else {
-			screen.hilited = null;
+			screen.menu.hilited = null;
 		}
 		
 		screen.contentPane.repaint();
@@ -86,15 +86,15 @@ public class MenuPanel extends PanelBase {
 		
 		synchronized (APP) {
 			
-			for (MenuItem item : screen.items) {
-				if ((int)item.localAABB.width > screen.menuItemWidest) {
-					screen.menuItemWidest = (int)item.localAABB.width;
+			for (MenuItem item : screen.menu.items) {
+				if ((int)item.localAABB.width > screen.menu.menuItemWidest) {
+					screen.menu.menuItemWidest = (int)item.localAABB.width;
 				}
-				screen.totalMenuItemHeight += (int)item.localAABB.height;
+				screen.menu.totalMenuItemHeight += (int)item.localAABB.height;
 			}
 			
-			screen.menuWidth = screen.menuItemWidest;
-			screen.menuHeight = screen.totalMenuItemHeight + 10 * (screen.items.size() - 1);
+			screen.menu.menuWidth = screen.menu.menuItemWidest;
+			screen.menu.menuHeight = screen.menu.totalMenuItemHeight + 10 * (screen.menu.items.size() - 1);
 			
 			Image tmpImg = APP.platform.createImage(APP.MENU_WIDTH, APP.MENU_HEIGHT);
 			
@@ -102,9 +102,9 @@ public class MenuPanel extends PanelBase {
 			
 			Transform origTransform = ctxt.getTransform();
 			
-			ctxt.translate(APP.MENU_WIDTH/2 - screen.menuWidth/2, APP.MENU_CENTER_Y - screen.menuHeight/2);
+			ctxt.translate(APP.MENU_WIDTH/2 - screen.menu.menuWidth/2, APP.MENU_CENTER_Y - screen.menu.menuHeight/2);
 			
-			for (MenuItem item : screen.items) {
+			for (MenuItem item : screen.menu.items) {
 				item.render(ctxt);
 				ctxt.translate(0, item.localAABB.height + 10);
 			}
@@ -151,20 +151,7 @@ public class MenuPanel extends PanelBase {
 		
 		ctxt.setTransform(menuTrans);
 		
-		ctxt.setColor(Color.menuBackground);
-		ctxt.fillRect(
-				(int)(APP.MENU_WIDTH/2 - screen.menuItemWidest/2 - 5),
-				(int)(APP.MENU_CENTER_Y - screen.menuHeight/2 - 5),
-				(int)(screen.menuWidth + 5 + 5),
-				(int)(screen.menuHeight + 5 + 5));
-		
-		for (MenuItem item : screen.items) {
-			item.paint(ctxt);
-		}
-		
-		if (screen.hilited != null) {
-			screen.hilited.paintHilited(ctxt);			
-		}
+		screen.menu.paint_pixels(ctxt);
 		
 		ctxt.setTransform(origTrans);
 		

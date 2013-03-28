@@ -5,7 +5,6 @@ import static com.gutabi.deadlock.DeadlockApplication.APP;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.Transform;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
-import com.gutabi.deadlock.world.World;
 import com.gutabi.deadlock.world.sprites.ExplosionSheet.ExplosionSheetSprite;
 
 public class AnimatedExplosion {
@@ -13,13 +12,11 @@ public class AnimatedExplosion {
 	public static final double explosionWidth = 2.21875;
 	public static final double explosionHeight = 3.125;
 	
-	World world;
 	Point p;
 	int lastFrame;
 	double lastTime;
 	
-	public AnimatedExplosion(World world, Point p) {
-		this.world = world;
+	public AnimatedExplosion(Point p) {
 		this.p = p;
 	}
 	
@@ -67,52 +64,52 @@ public class AnimatedExplosion {
 		
 		switch (index) {
 		case 0:
-			APP.explosionSheet.paint(ctxt, ExplosionSheetSprite.EXPLOSION0, world.worldScreen.pixelsPerMeter, 0, 0, explosionWidth, explosionHeight);
+			APP.explosionSheet.paint(ctxt, ExplosionSheetSprite.EXPLOSION0, ctxt.cam.pixelsPerMeter, 0, 0, explosionWidth, explosionHeight);
 			break;
 		case 1:
-			APP.explosionSheet.paint(ctxt, ExplosionSheetSprite.EXPLOSION1, world.worldScreen.pixelsPerMeter, 0, 0, explosionWidth, explosionHeight);
+			APP.explosionSheet.paint(ctxt, ExplosionSheetSprite.EXPLOSION1, ctxt.cam.pixelsPerMeter, 0, 0, explosionWidth, explosionHeight);
 			break;
 		case 2:
-			APP.explosionSheet.paint(ctxt, ExplosionSheetSprite.EXPLOSION2, world.worldScreen.pixelsPerMeter, 0, 0, explosionWidth, explosionHeight);
+			APP.explosionSheet.paint(ctxt, ExplosionSheetSprite.EXPLOSION2, ctxt.cam.pixelsPerMeter, 0, 0, explosionWidth, explosionHeight);
 			break;
 		case 3:
-			APP.explosionSheet.paint(ctxt, ExplosionSheetSprite.EXPLOSION3, world.worldScreen.pixelsPerMeter, 0, 0, explosionWidth, explosionHeight);
+			APP.explosionSheet.paint(ctxt, ExplosionSheetSprite.EXPLOSION3, ctxt.cam.pixelsPerMeter, 0, 0, explosionWidth, explosionHeight);
 			break;
 		case 4:
-			APP.explosionSheet.paint(ctxt, ExplosionSheetSprite.EXPLOSION4, world.worldScreen.pixelsPerMeter, 0, 0, explosionWidth, explosionHeight);
+			APP.explosionSheet.paint(ctxt, ExplosionSheetSprite.EXPLOSION4, ctxt.cam.pixelsPerMeter, 0, 0, explosionWidth, explosionHeight);
 			break;
 		case 5:
-			APP.explosionSheet.paint(ctxt, ExplosionSheetSprite.EXPLOSION5, world.worldScreen.pixelsPerMeter, 0, 0, explosionWidth, explosionHeight);
+			APP.explosionSheet.paint(ctxt, ExplosionSheetSprite.EXPLOSION5, ctxt.cam.pixelsPerMeter, 0, 0, explosionWidth, explosionHeight);
 			break;
 		case 6:
-			APP.explosionSheet.paint(ctxt, ExplosionSheetSprite.EXPLOSION6, world.worldScreen.pixelsPerMeter, 0, 0, explosionWidth, explosionHeight);
+			APP.explosionSheet.paint(ctxt, ExplosionSheetSprite.EXPLOSION6, ctxt.cam.pixelsPerMeter, 0, 0, explosionWidth, explosionHeight);
 			break;
 		case 7:
-			APP.explosionSheet.paint(ctxt, ExplosionSheetSprite.EXPLOSION7, world.worldScreen.pixelsPerMeter, 0, 0, explosionWidth, explosionHeight);
+			APP.explosionSheet.paint(ctxt, ExplosionSheetSprite.EXPLOSION7, ctxt.cam.pixelsPerMeter, 0, 0, explosionWidth, explosionHeight);
 			break;
 		case 8:
-			APP.explosionSheet.paint(ctxt, ExplosionSheetSprite.EXPLOSION8, world.worldScreen.pixelsPerMeter, 0, 0, explosionWidth, explosionHeight);
+			APP.explosionSheet.paint(ctxt, ExplosionSheetSprite.EXPLOSION8, ctxt.cam.pixelsPerMeter, 0, 0, explosionWidth, explosionHeight);
 			break;
 		case 9:
-			APP.explosionSheet.paint(ctxt, ExplosionSheetSprite.EXPLOSION9, world.worldScreen.pixelsPerMeter, 0, 0, explosionWidth, explosionHeight);
+			APP.explosionSheet.paint(ctxt, ExplosionSheetSprite.EXPLOSION9, ctxt.cam.pixelsPerMeter, 0, 0, explosionWidth, explosionHeight);
 			break;
 		case 10:
-			APP.explosionSheet.paint(ctxt, ExplosionSheetSprite.EXPLOSION10, world.worldScreen.pixelsPerMeter, 0, 0, explosionWidth, explosionHeight);
+			APP.explosionSheet.paint(ctxt, ExplosionSheetSprite.EXPLOSION10, ctxt.cam.pixelsPerMeter, 0, 0, explosionWidth, explosionHeight);
 			break;
 		case 11:
-			APP.explosionSheet.paint(ctxt, ExplosionSheetSprite.EXPLOSION11, world.worldScreen.pixelsPerMeter, 0, 0, explosionWidth, explosionHeight);
+			APP.explosionSheet.paint(ctxt, ExplosionSheetSprite.EXPLOSION11, ctxt.cam.pixelsPerMeter, 0, 0, explosionWidth, explosionHeight);
 			break;
 		case 12:
-			APP.explosionSheet.paint(ctxt, ExplosionSheetSprite.EXPLOSION12, world.worldScreen.pixelsPerMeter, 0, 0, explosionWidth, explosionHeight);
+			APP.explosionSheet.paint(ctxt, ExplosionSheetSprite.EXPLOSION12, ctxt.cam.pixelsPerMeter, 0, 0, explosionWidth, explosionHeight);
 			break;
 		case 13:
-			APP.explosionSheet.paint(ctxt, ExplosionSheetSprite.EXPLOSION13, world.worldScreen.pixelsPerMeter, 0, 0, explosionWidth, explosionHeight);
+			APP.explosionSheet.paint(ctxt, ExplosionSheetSprite.EXPLOSION13, ctxt.cam.pixelsPerMeter, 0, 0, explosionWidth, explosionHeight);
 			break;
 		case 14:
-			APP.explosionSheet.paint(ctxt, ExplosionSheetSprite.EXPLOSION14, world.worldScreen.pixelsPerMeter, 0, 0, explosionWidth, explosionHeight);
+			APP.explosionSheet.paint(ctxt, ExplosionSheetSprite.EXPLOSION14, ctxt.cam.pixelsPerMeter, 0, 0, explosionWidth, explosionHeight);
 			break;
 		case 15:
-			APP.explosionSheet.paint(ctxt, ExplosionSheetSprite.EXPLOSION15, world.worldScreen.pixelsPerMeter, 0, 0, explosionWidth, explosionHeight);
+			APP.explosionSheet.paint(ctxt, ExplosionSheetSprite.EXPLOSION15, ctxt.cam.pixelsPerMeter, 0, 0, explosionWidth, explosionHeight);
 			break;
 		}
 		

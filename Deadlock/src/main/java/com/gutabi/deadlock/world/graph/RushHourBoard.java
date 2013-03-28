@@ -1188,7 +1188,7 @@ public class RushHourBoard extends Entity {
 			
 			for (Line l : perimeterSegments) {
 				ctxt.setColor(Color.RED);
-				double pixel = 1/world.worldScreen.pixelsPerMeter;
+				double pixel = 1/ctxt.cam.pixelsPerMeter;
 				ctxt.setStroke(2.0 * pixel, Cap.SQUARE, Join.MITER);
 				l.draw(ctxt);
 			}

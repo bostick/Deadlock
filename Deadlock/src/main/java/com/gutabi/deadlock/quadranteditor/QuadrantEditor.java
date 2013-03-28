@@ -4,7 +4,7 @@ import static com.gutabi.deadlock.DeadlockApplication.APP;
 
 import com.gutabi.deadlock.AppScreen;
 import com.gutabi.deadlock.geom.AABB;
-import com.gutabi.deadlock.menu.MainMenu;
+import com.gutabi.deadlock.menu.MainMenuScreen;
 import com.gutabi.deadlock.ui.KeyListener;
 
 public class QuadrantEditor extends AppScreen implements KeyListener {
@@ -30,7 +30,7 @@ public class QuadrantEditor extends AppScreen implements KeyListener {
 	
 	public void escKey() {
 		
-		MainMenu s = new MainMenu();
+		MainMenuScreen s = new MainMenuScreen();
 		
 		APP.platform.setupAppScreen(s.contentPane);
 		

@@ -6,14 +6,12 @@ import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.Transform;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
-import com.gutabi.deadlock.world.World;
 import com.gutabi.deadlock.world.sprites.SpriteSheet.SpriteSheetSprite;
 
 public class AnimatedGrass {
 	
 	public static double GRASS_SIZE = 1.0;
 	
-	World world;
 	Point p;
 	int lastFrame;
 	double lastTime;
@@ -22,8 +20,7 @@ public class AnimatedGrass {
 	
 	public AABB aabb;
 	
-	public AnimatedGrass(World world, Point p) {
-		this.world = world;
+	public AnimatedGrass(Point p) {
 		this.p = p;
 		phase = APP.RANDOM.nextDouble();
 		startFrame = APP.RANDOM.nextInt(4);
@@ -90,13 +87,13 @@ public class AnimatedGrass {
 		
 		switch (index) {
 		case 0:
-			APP.spriteSheet.paint(ctxt, SpriteSheetSprite.GRASS0, world.worldScreen.pixelsPerMeter, 0, 0, GRASS_SIZE, GRASS_SIZE);
+			APP.spriteSheet.paint(ctxt, SpriteSheetSprite.GRASS0, ctxt.cam.pixelsPerMeter, 0, 0, GRASS_SIZE, GRASS_SIZE);
 			break;
 		case 1:
-			APP.spriteSheet.paint(ctxt, SpriteSheetSprite.GRASS1, world.worldScreen.pixelsPerMeter, 0, 0, GRASS_SIZE, GRASS_SIZE);
+			APP.spriteSheet.paint(ctxt, SpriteSheetSprite.GRASS1, ctxt.cam.pixelsPerMeter, 0, 0, GRASS_SIZE, GRASS_SIZE);
 			break;
 		case 2:
-			APP.spriteSheet.paint(ctxt, SpriteSheetSprite.GRASS2, world.worldScreen.pixelsPerMeter, 0, 0, GRASS_SIZE, GRASS_SIZE);
+			APP.spriteSheet.paint(ctxt, SpriteSheetSprite.GRASS2, ctxt.cam.pixelsPerMeter, 0, 0, GRASS_SIZE, GRASS_SIZE);
 			break;
 		}
 		

@@ -10,7 +10,8 @@ import com.gutabi.deadlock.geom.SweepUtils;
 import com.gutabi.deadlock.geom.SweptOBB;
 import com.gutabi.deadlock.math.DMath;
 import com.gutabi.deadlock.math.Point;
-import com.gutabi.deadlock.menu.MainMenu;
+import com.gutabi.deadlock.menu.MainMenuScreen;
+import com.gutabi.deadlock.menu.WinnerMenu;
 import com.gutabi.deadlock.ui.InputEvent;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.world.DebuggerScreen;
@@ -27,11 +28,11 @@ import com.gutabi.deadlock.world.graph.RushHourBoardPosition;
 import com.gutabi.deadlock.world.graph.RushHourStud;
 import com.gutabi.deadlock.world.graph.VertexPosition;
 
-public class CarTool extends ToolBase {
+public class InteractiveCarTool extends ToolBase {
 	
 	private InteractiveCar car;
 	
-	public CarTool(WorldScreen worldScreen, DebuggerScreen debuggerScreen) {
+	public InteractiveCarTool(WorldScreen worldScreen, DebuggerScreen debuggerScreen) {
 		super(worldScreen, debuggerScreen);
 	}
 	
@@ -49,7 +50,7 @@ public class CarTool extends ToolBase {
 		
 		APP.appScreen = null;
 		
-		MainMenu s = new MainMenu();
+		MainMenuScreen s = new MainMenuScreen();
 		
 		APP.platform.setupAppScreen(s.contentPane.cp);
 		
@@ -60,7 +61,7 @@ public class CarTool extends ToolBase {
 	
 	public void pressed(InputEvent ev) {
 		
-		InteractiveCar pressed = (InteractiveCar)worldScreen.world.carMap.carHitTest(ev.p);
+		InteractiveCar pressed = (InteractiveCar)worldScreen.contentPane.worldPanel.world.carMap.carHitTest(ev.p);
 		if (pressed == null) {
 			return;
 		}
@@ -112,7 +113,7 @@ public class CarTool extends ToolBase {
 			if (car == null) {
 				return;
 			}
-			if (!car.toolOrigShape.hitTest(worldScreen.world.lastPressedWorldPoint)) {
+			if (!car.toolOrigShape.hitTest(worldScreen.contentPane.worldPanel.world.lastPressedWorldPoint)) {
 				return;
 			}
 			if (dragVector == null) {
@@ -139,7 +140,8 @@ public class CarTool extends ToolBase {
 					GraphPosition gpos = car.driver.overallPos.gp;
 					
 					if (gpos instanceof RoadPosition || gpos instanceof VertexPosition || (gpos instanceof RushHourBoardPosition && !floorAndCeilWithinGrid((RushHourBoardPosition)gpos))) {
-						boolean roadOrVertex = (gpos instanceof RoadPosition || gpos instanceof VertexPosition);
+						boolean road = gpos instanceof RoadPosition;
+						boolean vertex = gpos instanceof VertexPosition;
 						
 						/*
 						 * determine which direction to coast
@@ -150,13 +152,13 @@ public class CarTool extends ToolBase {
 						int studCount = (int)(car.length * Car.METERS_PER_CARLENGTH / RushHourStud.SIZE);
 						boolean otherSideIsFree = true;
 						
-						if (roadOrVertex ? car.driver.overallPos.combo <= car.driver.toolOrigExitingVertexPos.combo : car.driver.overallPos.combo >= car.driver.toolOrigExitingVertexPos.combo) {
+						if ((road||vertex) ? car.driver.overallPos.combo <= car.driver.toolOrigExitingVertexPos.combo : car.driver.overallPos.combo >= car.driver.toolOrigExitingVertexPos.combo) {
 							
 							/*
 							 * overallPos is less than exiting vertex, so the other vertex must be less than overallPos
 							 */
 							
-							int prevVertexIndex = roadOrVertex ? car.driver.overallPos.prevVertexIndex() : car.driver.toolOrigExitingVertexPos.prevVertexIndex();
+							int prevVertexIndex = road ? car.driver.overallPos.prevVertexIndex() : (vertex ? car.driver.overallPos.index : car.driver.toolOrigExitingVertexPos.prevVertexIndex());
 							assert prevVertexIndex != -1;
 							
 							Fixture prevVertex = (Fixture)car.driver.overallPath.get(prevVertexIndex).entity;
@@ -200,7 +202,7 @@ public class CarTool extends ToolBase {
 							
 						} else {
 							
-							int nextVertexIndex = roadOrVertex ? car.driver.overallPos.nextVertexIndex() : car.driver.toolOrigExitingVertexPos.nextVertexIndex();
+							int nextVertexIndex = road ? car.driver.overallPos.nextVertexIndex() : (vertex ? car.driver.overallPos.index : car.driver.toolOrigExitingVertexPos.nextVertexIndex());
 							assert nextVertexIndex != -1;
 							
 							if (nextVertexIndex == car.driver.overallPath.size-1) {
@@ -360,11 +362,11 @@ public class CarTool extends ToolBase {
 		if (car == null) {
 			return;
 		}
-		if (!car.toolOrigShape.hitTest(worldScreen.world.lastPressedWorldPoint)) {
+		if (!car.toolOrigShape.hitTest(worldScreen.contentPane.worldPanel.world.lastPressedWorldPoint)) {
 			return;
 		}
 		
-		Point diff = ev.p.minus(worldScreen.world.lastPressedWorldPoint);
+		Point diff = ev.p.minus(worldScreen.contentPane.worldPanel.world.lastPressedWorldPoint);
 		
 		Point carPTmp = car.toolOrigP.plus(diff);
 		
@@ -377,7 +379,7 @@ public class CarTool extends ToolBase {
 			 * but short enough to not have any path intersection problems, nor have any teleporting problems
 			 * 
 			 */
-			GraphPositionPathPosition attemptedPos = car.driver.overallPath.generalSearch(carPTmp, car.driver.overallPos, 10.0);
+			GraphPositionPathPosition attemptedPos = car.driver.overallPos.generalSearch(carPTmp, 10.0);
 			
 			GraphPositionPathPosition actualPos = furthestAllowablePosition(car.driver.overallPos, attemptedPos);
 			
@@ -918,7 +920,7 @@ public class CarTool extends ToolBase {
 		
 		double bestParam = -1.0;
 		
-		for (RushHourBoard b : worldScreen.world.graph.rushes) {
+		for (RushHourBoard b : worldScreen.contentPane.worldPanel.world.graph.rushes) {
 			for (Line l : b.perimeterSegments) {
 				double param = SweepUtils.firstCollisionParam(l, swept);
 				if (param != -1 && (bestParam == -1 || DMath.lessThan(param, bestParam))) {
@@ -927,7 +929,7 @@ public class CarTool extends ToolBase {
 			}
 		}
 		
-		for (Car c : worldScreen.world.carMap.cars) {
+		for (Car c : worldScreen.contentPane.worldPanel.world.carMap.cars) {
 			if (c == car) {
 				continue;
 			}
@@ -961,7 +963,7 @@ public class CarTool extends ToolBase {
 				para = DMath.lerp(a, b, (alpha * (vals.length-1) - Math.floor(alpha * (vals.length-1))));
 			}
 			
-			worldScreen.world.zoomAbsolute(para);
+			worldScreen.contentPane.worldPanel.worldCamera.zoomAbsolute(para);
 			
 //			worldScreen.world.render_worldPanel();
 			
@@ -971,7 +973,7 @@ public class CarTool extends ToolBase {
 			
 			if (prevGPos instanceof RoadPosition) {
 				
-				worldScreen.world.zoomAbsolute(1.0);
+				worldScreen.contentPane.worldPanel.worldCamera.zoomAbsolute(1.0);
 				
 //				worldScreen.world.render_worldPanel();
 			}
@@ -983,7 +985,7 @@ public class CarTool extends ToolBase {
 			
 			if (prevGPos instanceof RoadPosition) {
 				
-				worldScreen.world.zoomAbsolute(1.0);
+				worldScreen.contentPane.worldPanel.worldCamera.zoomAbsolute(1.0);
 				
 //				worldScreen.world.render_worldPanel();
 			}
@@ -992,6 +994,9 @@ public class CarTool extends ToolBase {
 	}
 	
 	void winner() {
+		
+		WinnerMenu s = new WinnerMenu();
+		
 		
 	}
 	
