@@ -31,8 +31,9 @@ public class QuadrantEditor extends AppScreen implements KeyListener {
 	public void escKey() {
 		
 		MainMenuScreen s = new MainMenuScreen();
+		APP.setAppScreen(s);
 		
-		APP.platform.setupAppScreen(s.contentPane);
+		APP.platform.setupAppScreen(s.contentPane.cp);
 		
 		s.postDisplay();
 		

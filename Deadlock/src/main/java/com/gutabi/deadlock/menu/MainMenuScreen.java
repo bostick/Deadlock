@@ -11,7 +11,7 @@ public class MainMenuScreen extends AppScreen implements KeyListener {
 		
 		contentPane = new MainMenuContentPane(this);
 		
-		contentPane.panel.menu = new MainMenu();
+		contentPane.panel.menu = new MainMenu(contentPane.panel);
 		
 	}
 	

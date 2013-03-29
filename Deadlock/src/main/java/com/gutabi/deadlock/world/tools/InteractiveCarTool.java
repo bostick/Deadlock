@@ -571,7 +571,7 @@ public class InteractiveCarTool extends ToolBase {
 	
 	void winner() {
 		
-		winnerMenu = new WinnerMenu();
+		winnerMenu = new WinnerMenu(worldScreen.contentPane.worldPanel);
 		
 		winnerMenu.render();	
 		

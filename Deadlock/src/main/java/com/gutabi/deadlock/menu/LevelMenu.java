@@ -4,6 +4,8 @@ import static com.gutabi.deadlock.DeadlockApplication.APP;
 
 import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.ui.Menu;
+import com.gutabi.deadlock.ui.MenuItem;
+import com.gutabi.deadlock.ui.Panel;
 import com.gutabi.deadlock.world.DebuggerScreen;
 import com.gutabi.deadlock.world.WorldScreen;
 import com.gutabi.deadlock.world.examples.RushHourWorld;
@@ -11,7 +13,8 @@ import com.gutabi.deadlock.world.tools.InteractiveCarTool;
 
 public class LevelMenu extends Menu {
 	
-	public LevelMenu() {
+	public LevelMenu(Panel parPanel) {
+		super(parPanel);
 		
 		MenuItem oneMenuItem = new MenuItem(LevelMenu.this, "1") {
 			public void action() {
@@ -45,7 +48,7 @@ public class LevelMenu extends Menu {
 				
 			}
 		};
-		add(oneMenuItem);
+		add(oneMenuItem, 0, 0);
 		
 		MenuItem twoMenuItem = new MenuItem(LevelMenu.this, "2") {
 			public void action() {
@@ -79,7 +82,7 @@ public class LevelMenu extends Menu {
 				
 			}
 		};
-		add(twoMenuItem);
+		add(twoMenuItem, 1, 0);
 		
 		MenuItem threeMenuItem = new MenuItem(LevelMenu.this, "3") {
 			public void action() {
@@ -113,18 +116,15 @@ public class LevelMenu extends Menu {
 				
 			}
 		};
-		add(threeMenuItem);
+		add(threeMenuItem, 2, 0);
 		
 	}
-	
-	
-	int MENU_CENTER_Y = (854/2);
 	
 	public void render() {
 		
 		super.render();
 		
-		aabb = new AABB(APP.WINDOW_WIDTH/2 - aabb.width/2, MENU_CENTER_Y - aabb.height/2, aabb.width, aabb.height);
+		aabb = new AABB(parPanel.aabb.width/2 - aabb.width/2, parPanel.aabb.height/2 - aabb.height/2, aabb.width, aabb.height);
 		
 	}
 	

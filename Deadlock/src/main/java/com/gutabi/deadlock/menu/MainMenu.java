@@ -5,6 +5,8 @@ import static com.gutabi.deadlock.DeadlockApplication.APP;
 import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.quadranteditor.QuadrantEditor;
 import com.gutabi.deadlock.ui.Menu;
+import com.gutabi.deadlock.ui.MenuItem;
+import com.gutabi.deadlock.ui.Panel;
 import com.gutabi.deadlock.world.DebuggerScreen;
 import com.gutabi.deadlock.world.WorldScreen;
 import com.gutabi.deadlock.world.examples.FourByFourGridWorld;
@@ -14,7 +16,19 @@ import com.gutabi.deadlock.world.tools.RegularTool;
 
 public class MainMenu extends Menu {
 	
-	public MainMenu() {
+	String layout =
+			"<(0)>\n" +
+			"<(1)>\n" +
+			"<(2)>\n" +
+			"<(3)>\n" +
+			"<(4)>  (9)\n" +
+			"<(5)>\n" +
+			"<(6)>\n" +
+			"<(7)>\n" +
+			"(8)\n";
+	
+	public MainMenu(Panel parPanel) {
+		super(parPanel);
 		
 		MenuItem oneMenuItem = new MenuItem(MainMenu.this,"1x1 Demo") {
 			public void action() {
@@ -46,7 +60,7 @@ public class MainMenu extends Menu {
 				APP.platform.showDebuggerScreen();
 			}
 		};
-		add(oneMenuItem);
+		add(oneMenuItem, 0, 0);
 		
 		MenuItem fourMenuItem = new MenuItem(MainMenu.this, "4x4 Grid Demo") {
 			public void action() {
@@ -77,7 +91,7 @@ public class MainMenu extends Menu {
 				APP.platform.showDebuggerScreen();
 			}
 		};
-		add(fourMenuItem);
+		add(fourMenuItem, 1, 0);
 		
 		MenuItem aMenuItem = new MenuItem(MainMenu.this, "World A Demo") {
 			public void action() {
@@ -108,18 +122,18 @@ public class MainMenu extends Menu {
 				APP.platform.showDebuggerScreen();
 			}
 		};
-		add(aMenuItem);
+		add(aMenuItem, 2, 0);
 		
 		MenuItem rMenuItem = new MenuItem(MainMenu.this, "Rush Hour") {
 			public void action() {
 				
-				((MainMenuScreen)APP.appScreen).contentPane.panel.menu = new LevelMenu();
+				((MainMenuScreen)APP.appScreen).contentPane.panel.menu = new LevelMenu(MainMenu.this.parPanel);
 				
 				((MainMenuScreen)APP.appScreen).contentPane.panel.render();
 				((MainMenuScreen)APP.appScreen).contentPane.repaint();
 			}
 		};
-		add(rMenuItem);
+		add(rMenuItem, 3, 0);
 		
 		MenuItem dialogMenuItem = new MenuItem(MainMenu.this,  "Quadrant Editor...") {
 			public void action() {
@@ -136,7 +150,7 @@ public class MainMenu extends Menu {
 				APP.platform.showAppScreen();
 			}
 		};
-		add(dialogMenuItem);
+		add(dialogMenuItem, 4, 0);
 		
 		MenuItem puzzleMenuItem = new MenuItem(MainMenu.this,  "Puzzle Mode") {
 			public void action() {
@@ -144,7 +158,7 @@ public class MainMenu extends Menu {
 			}
 		};
 		puzzleMenuItem.active = false;
-		add(puzzleMenuItem);
+		add(puzzleMenuItem, 5, 0);
 		
 		MenuItem loadMenuItem = new MenuItem(MainMenu.this, "Load...") {
 			public void action() {
@@ -152,7 +166,7 @@ public class MainMenu extends Menu {
 			}
 		};
 		loadMenuItem.active = false;
-		add(loadMenuItem);
+		add(loadMenuItem, 6, 0);
 		
 		MenuItem captureMenuItem = new MenuItem(MainMenu.this, "Capture the Flag") {
 			public void action() {
@@ -160,7 +174,7 @@ public class MainMenu extends Menu {
 			}
 		};
 		captureMenuItem.active = false;
-		add(captureMenuItem);
+		add(captureMenuItem, 7, 0);
 		
 		MenuItem quitMenuItem = new MenuItem(MainMenu.this, "Quit") {
 			public void action() {
@@ -169,18 +183,26 @@ public class MainMenu extends Menu {
 				
 			}
 		};
-		add(quitMenuItem);
+		add(quitMenuItem, 8, 0);
 		
+		MenuItem testItem = new MenuItem(MainMenu.this, "Test") {
+			public void action() {
+				
+			}
+		};
+		add(testItem, 4, 1);
+		
+		add(new MenuItem(MainMenu.this, " ") { {active = false;} public void action() { } }, 0, 1);
+		add(new MenuItem(MainMenu.this, " ") { {active = false;} public void action() { } }, 1, 1);
+		add(new MenuItem(MainMenu.this, " ") { {active = false;} public void action() { } }, 2, 1);
+		add(new MenuItem(MainMenu.this, " ") { {active = false;} public void action() { } }, 3, 1);
 	}
-	
-	
-	int MENU_CENTER_Y = (854/2);
 	
 	public void render() {
 		
 		super.render();
 		
-		aabb = new AABB(APP.WINDOW_WIDTH/2 - aabb.width/2, MENU_CENTER_Y - aabb.height/2, aabb.width, aabb.height);
+		aabb = new AABB(parPanel.aabb.width/2 - aabb.width/2, parPanel.aabb.height/2 - aabb.height/2, aabb.width, aabb.height);
 		
 	}
 	

@@ -4,17 +4,20 @@ import static com.gutabi.deadlock.DeadlockApplication.APP;
 
 import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.ui.Menu;
+import com.gutabi.deadlock.ui.MenuItem;
+import com.gutabi.deadlock.ui.Panel;
 
 public class WinnerMenu extends Menu {
 	
-	public WinnerMenu() {
+	public WinnerMenu(Panel parPanel) {
+		super(parPanel);
 		
 		MenuItem nextMenuItem = new MenuItem(WinnerMenu.this,"Next") {
 			public void action() {
 				
 			}
 		};
-		add(nextMenuItem);
+		add(nextMenuItem, 0, 0);
 		
 		MenuItem backMenuItem = new MenuItem(WinnerMenu.this, "Back") {
 			public void action() {
@@ -31,7 +34,7 @@ public class WinnerMenu extends Menu {
 				s.contentPane.repaint();
 			}
 		};
-		add(backMenuItem);
+		add(backMenuItem, 1, 0);
 		
 	}
 	
@@ -39,7 +42,7 @@ public class WinnerMenu extends Menu {
 		
 		super.render();
 		
-		aabb = new AABB(APP.WINDOW_WIDTH/2 - aabb.width/2, APP.WINDOW_HEIGHT/2 - aabb.height/2, aabb.width, aabb.height);
+		aabb = new AABB(parPanel.aabb.width/2 - aabb.width/2, parPanel.aabb.height/2 - aabb.height/2, aabb.width, aabb.height);
 		
 	}
 	

@@ -7,23 +7,33 @@ import java.util.List;
 
 import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.math.Point;
-import com.gutabi.deadlock.menu.MenuItem;
 import com.gutabi.deadlock.ui.paint.Color;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 
 public abstract class Menu {
 	
-	protected List<MenuItem> items = new ArrayList<MenuItem>();
+	private List<MenuItem> items = new ArrayList<MenuItem>();
 	
 	public MenuItem hilited;
 	public MenuItem firstMenuItem;
 	
-	public double menuItemWidest;
-	public int totalMenuItemHeight;
+	public double menuItemWidestCol0;
+	public int totalMenuItemHeightCol0;
+	public double menuItemWidestCol1;
+	public int totalMenuItemHeightCol1;
+	
+	public Panel parPanel;
 	
 	public AABB aabb = new AABB(0, 0, 0, 0);
 	
-	public void add(MenuItem item) {
+	public Menu(Panel parPanel) {
+		this.parPanel = parPanel;
+	}
+	
+	public void add(MenuItem item, int r, int c) {
+		
+		item.r = r;
+		item.c = c;
 		
 		if (items.isEmpty()) {
 			firstMenuItem = item;
@@ -79,24 +89,99 @@ public abstract class Menu {
 	
 	public void render() {
 		
+		/*
+		 * col 0
+		 */
+		int itemsCol0 = 0;
 		for (MenuItem item : items) {
-			if ((int)item.localAABB.width > menuItemWidest) {
-				menuItemWidest = (int)item.localAABB.width;
+			if (item.c != 0) {
+				continue;
 			}
-			totalMenuItemHeight += (int)item.localAABB.height;
+			if ((int)item.localAABB.width > menuItemWidestCol0) {
+				menuItemWidestCol0 = (int)item.localAABB.width;
+			}
+			totalMenuItemHeightCol0 += (int)item.localAABB.height;
+			itemsCol0++;
 		}
 		
-		double menuHeight = totalMenuItemHeight + 10 * (items.size() - 1);
+		double menuHeightCol0 = totalMenuItemHeightCol0 + 10 * (itemsCol0 - 1);
 		
-		aabb = new AABB(aabb.x, aabb.y, menuItemWidest, menuHeight);
+		
+		/*
+		 * col 1
+		 */
+		int itemsCol1 = 0;
+		for (MenuItem item : items) {
+			if (item.c != 1) {
+				continue;
+			}
+			if ((int)item.localAABB.width > menuItemWidestCol1) {
+				menuItemWidestCol1 = (int)item.localAABB.width;
+			}
+			totalMenuItemHeightCol1 += (int)item.localAABB.height;
+			itemsCol1++;
+		}
+		
+		double menuHeightCol1 = totalMenuItemHeightCol1 + 10 * (itemsCol1 - 1);
+		
+		aabb = new AABB(aabb.x, aabb.y, menuItemWidestCol0 + menuItemWidestCol1 + 10, Math.max(menuHeightCol0, menuHeightCol1));
 		
 		Image tmpImg = APP.platform.createImage((int)aabb.width, (int)aabb.height);
 		
 		RenderingContext ctxt = APP.platform.createRenderingContext(tmpImg);
 		
-		for (MenuItem item : items) {
-			item.render(ctxt);
-			ctxt.translate(0, item.localAABB.height + 10);
+		Transform origTransform = ctxt.getTransform();
+		
+		/*
+		 * col 0
+		 */
+		boolean itemFound = false;
+		int curRow = 0;
+		while (true) {
+			itemFound = false;
+			for (MenuItem item : items) {
+				if (item.c != 0) {
+					continue;
+				}
+				if (item.r != curRow) {
+					continue;
+				}
+				itemFound = true;
+				item.render(ctxt);
+				ctxt.translate(0, item.localAABB.height + 10);
+			}
+			if (!itemFound) {
+				break;
+			} else {
+				curRow++;
+			}
+		}
+		
+		ctxt.setTransform(origTransform);
+		ctxt.translate(menuItemWidestCol0 + 10, 0);
+		
+		/*
+		 * col 1
+		 */
+		curRow = 0;
+		while (true) {
+			itemFound = false;
+			for (MenuItem item : items) {
+				if (item.c != 1) {
+					continue;
+				}
+				if (item.r != curRow) {
+					continue;
+				}
+				itemFound = true;
+				item.render(ctxt);
+				ctxt.translate(0, item.localAABB.height + 10);
+			}
+			if (!itemFound) {
+				break;
+			} else {
+				curRow++;
+			}
 		}
 		
 		ctxt.dispose();

@@ -147,11 +147,21 @@ public class PlatformImpl implements Platform {
 		
 	}
 	
-	public AABB bounds(String text, Resource fontFile, FontStyle fontStyle, int fontSize) {
+	public AABB bounds(String preText, Resource fontFile, FontStyle fontStyle, int fontSize) {
 		
 		AABB aabb = null;
 		
 		ResourceImpl r = (ResourceImpl)fontFile;
+		
+		/*
+		 * layout returns height of 0 for " "
+		 */
+		String text;
+		if (preText.equals(" ")) {
+			text = "X";
+		} else {
+			text = preText;
+		}
 		
 		if (r.name.equals("/fonts/visitor1.ttf")) {
 			

@@ -1,12 +1,9 @@
-package com.gutabi.deadlock.menu;
+package com.gutabi.deadlock.ui;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
 import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.math.Point;
-import com.gutabi.deadlock.ui.Label;
-import com.gutabi.deadlock.ui.Menu;
-import com.gutabi.deadlock.ui.Transform;
 import com.gutabi.deadlock.ui.paint.Cap;
 import com.gutabi.deadlock.ui.paint.Color;
 import com.gutabi.deadlock.ui.paint.FontStyle;
@@ -31,12 +28,15 @@ public abstract class MenuItem {
 	
 	public boolean active = true;
 	
+	public int r;
+	public int c;
+	
 	public MenuItem(Menu menu, String text) {
 		this.menu = menu;
 		lab = new Label(text);
 		lab.fontFile = APP.platform.createResourceEngine().fontResource("visitor1");
 		lab.fontStyle = FontStyle.PLAIN;
-		lab.fontSize = 48;
+		lab.fontSize = 36;
 		lab.renderLocal();
 		localAABB = lab.localAABB;
 	}
@@ -58,7 +58,11 @@ public abstract class MenuItem {
 		int y = (int)trans.getTranslateY();
 		
 		lab.setLocation(x, y);
-		lab.setDimension(menu.menuItemWidest, localAABB.height);
+		if (c == 0) {
+			lab.setDimension(menu.menuItemWidestCol0, localAABB.height);
+		} else {
+			lab.setDimension(menu.menuItemWidestCol1, localAABB.height);
+		}
 		
 		if (active) {
 			lab.color = Color.WHITE;
