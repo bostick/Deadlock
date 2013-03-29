@@ -53,7 +53,6 @@ public class PlatformImpl implements Platform {
 	
 	public ContentPane createContentPane(Object... args) {
 		
-//		Object foo = (Object)args[0];
 		KeyListener kl = (KeyListener)args[0];
 		
 		return new ContentPaneImpl(kl);
@@ -73,7 +72,6 @@ public class PlatformImpl implements Platform {
 		
 		if (appContainer instanceof JFrame) {
 			((JFrame)appContainer).pack();
-//			((JFrame)appContainer).setVisible(true);
 		}
 		
 	}
@@ -81,7 +79,6 @@ public class PlatformImpl implements Platform {
 	public void showAppScreen(Object... args) {
 		
 		if (appContainer instanceof JFrame) {
-//			((JFrame)appContainer).pack();
 			((JFrame)appContainer).setVisible(true);
 		}
 		
@@ -101,7 +98,6 @@ public class PlatformImpl implements Platform {
 		
 		if (debuggerContainer instanceof JFrame) {
 			((JFrame)debuggerContainer).pack();
-//			((JFrame)debuggerContainer).setVisible(true);
 		}
 		
 	}
@@ -109,7 +105,6 @@ public class PlatformImpl implements Platform {
 	public void showDebuggerScreen(Object... args) {
 		
 		if (debuggerContainer instanceof JFrame) {
-//			((JFrame)debuggerContainer).pack();
 			((JFrame)debuggerContainer).setVisible(true);
 		}
 		

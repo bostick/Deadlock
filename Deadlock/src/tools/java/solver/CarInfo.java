@@ -1,6 +1,5 @@
 package solver;
 
-
 public class CarInfo {
 	byte o;
 	int row;

@@ -35,14 +35,6 @@ public class Geom {
 		}
 	}
 	
-//	public static Point localToWorld(Point l, double[][] m, Point t) {
-//		return times(m, l).plus(t);
-//	}
-	
-//	public static Point localToWorld(Point l, double angle, Point t) {
-//		return rotate(angle, l).plus(t);
-//	}
-	
 	public static OBB localToWorld(AABB a, double angle, Point t) {
 		return APP.platform.createShapeEngine().createOBB(t, angle, a.width/2, a.height/2);
 	}

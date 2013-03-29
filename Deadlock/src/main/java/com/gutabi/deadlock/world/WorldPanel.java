@@ -11,8 +11,6 @@ import com.gutabi.deadlock.ui.paint.RenderingContext;
 
 public class WorldPanel extends PanelBase {
 	
-//	WorldScreen screen;
-	
 	public World world;
 	
 	public WorldCamera worldCamera;
@@ -20,7 +18,6 @@ public class WorldPanel extends PanelBase {
 	public Stats stats;
 	
 	public WorldPanel() {
-//		this.screen = screen;
 		
 		worldCamera = new WorldCamera(this);
 		
@@ -46,31 +43,6 @@ public class WorldPanel extends PanelBase {
 		worldCamera.origWorldViewport = worldCamera.worldViewport;
 	}
 	
-	
-	public Point panelToWorld(Point p) {
-		return new Point(
-				p.x / worldCamera.pixelsPerMeter + worldCamera.worldViewport.x,
-				p.y / worldCamera.pixelsPerMeter + worldCamera.worldViewport.y);
-	}
-	
-	public AABB panelToWorld(AABB aabb) {
-		Point ul = panelToWorld(aabb.ul);
-		Point br = panelToWorld(aabb.br);
-		return new AABB(ul.x, ul.y, br.x - ul.x, br.y - ul.y);
-	}
-	
-	public Point worldToPanel(Point p) {
-		return new Point(
-				(p.x - worldCamera.worldViewport.x) * worldCamera.pixelsPerMeter,
-				(p.y - worldCamera.worldViewport.y) * worldCamera.pixelsPerMeter);
-	}
-	
-	public AABB worldToPanel(AABB aabb) {
-		Point ul = worldToPanel(aabb.ul);
-		Point br = worldToPanel(aabb.br);
-		return new AABB(ul.x, ul.y, br.x - ul.x, br.y - ul.y);
-	}
-	
 	public Point lastMovedPanelPoint;
 	public Point lastMovedOrDraggedPanelPoint;
 	Point lastClickedPanelPoint;
@@ -81,7 +53,7 @@ public class WorldPanel extends PanelBase {
 		case PAUSED:
 		case RUNNING:
 		case EDITING:
-			Point p = panelToWorld(ev.p);
+			Point p = Point.panelToWorld(ev.p, worldCamera);
 			
 			world.pressed(new InputEvent(p));
 			
@@ -99,7 +71,7 @@ public class WorldPanel extends PanelBase {
 		case PAUSED: {
 			lastMovedOrDraggedPanelPoint = ev.p;
 			
-			Point p = panelToWorld(ev.p);
+			Point p = Point.panelToWorld(ev.p, worldCamera);
 			
 			world.dragged(new InputEvent(p));
 			APP.tool.dragged(new InputEvent(p));
@@ -108,7 +80,7 @@ public class WorldPanel extends PanelBase {
 		case EDITING: {
 			lastMovedOrDraggedPanelPoint = ev.p;
 			
-			Point p = panelToWorld(ev.p);
+			Point p = Point.panelToWorld(ev.p, worldCamera);
 			
 			world.dragged(new InputEvent(p));
 			APP.tool.dragged(new InputEvent(p));
@@ -139,14 +111,14 @@ public class WorldPanel extends PanelBase {
 		switch (world.mode) {
 		case RUNNING:
 		case PAUSED: {
-			Point p = panelToWorld(ev.p);
+			Point p = Point.panelToWorld(ev.p, worldCamera);
 			
 			world.moved(new InputEvent(p));
 			APP.tool.moved(new InputEvent(p));
 			break;
 		}
 		case EDITING: {
-			Point p = panelToWorld(ev.p);
+			Point p = Point.panelToWorld(ev.p, worldCamera);
 			
 			world.moved(new InputEvent(p));
 			APP.tool.moved(new InputEvent(p));
@@ -160,14 +132,14 @@ public class WorldPanel extends PanelBase {
 		switch (world.mode) {
 		case RUNNING:
 		case PAUSED: {
-			Point p = panelToWorld(ev.p);
+			Point p = Point.panelToWorld(ev.p, worldCamera);
 			
 			world.clicked(new InputEvent(p));
 			APP.tool.clicked(new InputEvent(p));
 			break;
 		}
 		case EDITING: {
-			Point p = panelToWorld(ev.p);
+			Point p = Point.panelToWorld(ev.p, worldCamera);
 			
 			world.clicked(new InputEvent(p));
 			APP.tool.clicked(new InputEvent(p));

@@ -4,13 +4,12 @@ import static com.gutabi.deadlock.DeadlockApplication.APP;
 
 import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.quadranteditor.QuadrantEditor;
+import com.gutabi.deadlock.ui.Menu;
 import com.gutabi.deadlock.world.DebuggerScreen;
 import com.gutabi.deadlock.world.WorldScreen;
 import com.gutabi.deadlock.world.examples.FourByFourGridWorld;
 import com.gutabi.deadlock.world.examples.OneByOneWorld;
-import com.gutabi.deadlock.world.examples.RushHourWorld;
 import com.gutabi.deadlock.world.examples.WorldA;
-import com.gutabi.deadlock.world.tools.InteractiveCarTool;
 import com.gutabi.deadlock.world.tools.RegularTool;
 
 public class MainMenu extends Menu {
@@ -21,7 +20,7 @@ public class MainMenu extends Menu {
 			public void action() {
 				
 				WorldScreen worldScreen = new WorldScreen();
-				APP.appScreen = worldScreen;
+				APP.setAppScreen(worldScreen);
 				
 				DebuggerScreen debuggerScreen = new DebuggerScreen(worldScreen);
 				APP.debuggerScreen = debuggerScreen;
@@ -53,7 +52,7 @@ public class MainMenu extends Menu {
 			public void action() {
 				
 				WorldScreen worldScreen = new WorldScreen();
-				APP.appScreen = worldScreen;
+				APP.setAppScreen(worldScreen);
 				
 				DebuggerScreen debuggerScreen = new DebuggerScreen(worldScreen);
 				APP.debuggerScreen = debuggerScreen;
@@ -84,7 +83,7 @@ public class MainMenu extends Menu {
 			public void action() {
 				
 				WorldScreen worldScreen = new WorldScreen();
-				APP.appScreen = worldScreen;
+				APP.setAppScreen(worldScreen);
 				
 				DebuggerScreen debuggerScreen = new DebuggerScreen(worldScreen);
 				APP.debuggerScreen = debuggerScreen;
@@ -114,32 +113,10 @@ public class MainMenu extends Menu {
 		MenuItem rMenuItem = new MenuItem(MainMenu.this, "Rush Hour") {
 			public void action() {
 				
-				WorldScreen worldScreen = new WorldScreen();
-				APP.appScreen = worldScreen;
+				((MainMenuScreen)APP.appScreen).contentPane.panel.menu = new LevelMenu();
 				
-				DebuggerScreen debuggerScreen = new DebuggerScreen(worldScreen);
-				APP.debuggerScreen = debuggerScreen;
-				
-				APP.tool = new InteractiveCarTool(worldScreen, debuggerScreen);
-				
-				worldScreen.contentPane.worldPanel.world = RushHourWorld.createRushHourWorld(worldScreen, APP.debuggerScreen);
-				
-				APP.platform.setupAppScreen(worldScreen.contentPane.cp);
-				
-				APP.platform.setupDebuggerScreen(APP.debuggerScreen.contentPane.cp);
-				
-				worldScreen.postDisplay();
-				
-				APP.debuggerScreen.postDisplay();
-				
-				worldScreen.contentPane.worldPanel.world.startRunning();
-				
-				worldScreen.contentPane.worldPanel.world.render_worldPanel();
-				worldScreen.contentPane.worldPanel.world.render_preview();
-				worldScreen.contentPane.repaint();
-				
-				APP.platform.showAppScreen();
-				APP.platform.showDebuggerScreen();
+				((MainMenuScreen)APP.appScreen).contentPane.panel.render();
+				((MainMenuScreen)APP.appScreen).contentPane.repaint();
 			}
 		};
 		add(rMenuItem);

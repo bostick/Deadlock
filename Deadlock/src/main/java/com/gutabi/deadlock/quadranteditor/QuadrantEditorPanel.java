@@ -23,9 +23,6 @@ public class QuadrantEditorPanel extends PanelBase {
 	public final int EDITOR_HEIGHT = 600;
 	
 	QuadrantEditor screen;
-//	public WorldScreen worldScreen;
-//	DebuggerScreen debuggerScreen;
-//	public WorldCamera worldCamera;
 	public WorldPanel worldPanel;
 	
 	int[][] ini;
@@ -48,9 +45,6 @@ public class QuadrantEditorPanel extends PanelBase {
 				{1, 1, 0},
 				{0, 1, 0}
 			};
-		
-//		worldScreen = new WorldScreen();
-//		debuggerScreen = new DebuggerScreen(worldScreen);
 		
 		worldPanel = new WorldPanel();
 		
@@ -399,16 +393,14 @@ public class QuadrantEditorPanel extends PanelBase {
 			/*
 			 * editor -> world canvas
 			 */
-			Point pWorldPanel = lastMovedOrDraggedEditorPoint.minus(
-					worldPanel.aabb.center.minus(worldPanel.aabb.dim.multiply(0.5)));
+			Point pWorldPanel = lastMovedOrDraggedEditorPoint.minus(worldPanel.aabb.center.minus(worldPanel.aabb.dim.multiply(0.5)));
 			
-			Point pWorld = worldPanel.panelToWorld(pWorldPanel);
+			Point pWorld = Point.panelToWorld(pWorldPanel, worldPanel.worldCamera);
 			
 			Quadrant q = worldPanel.world.quadrantMap.findQuadrant(pWorld);
 			
 			if (q != null) {
-				screen.hilited = worldPanel.worldToPanel(q.aabb).plus(
-						worldPanel.aabb.center.minus(worldPanel.aabb.dim.multiply(0.5)));
+				screen.hilited = Point.worldToPanel(q.aabb, worldPanel.worldCamera).plus(worldPanel.aabb.center.minus(worldPanel.aabb.dim.multiply(0.5)));
 				
 			} else {
 				screen.hilited = null;
@@ -454,7 +446,7 @@ public class QuadrantEditorPanel extends PanelBase {
 			Point pWorldPanel = lastMovedOrDraggedEditorPoint.minus(
 					worldPanel.aabb.center.minus(worldPanel.aabb.dim.multiply(0.5)));
 			
-			Point pWorld = worldPanel.panelToWorld(pWorldPanel);
+			Point pWorld = Point.panelToWorld(pWorldPanel, worldPanel.worldCamera);
 			
 			Quadrant q = worldPanel.world.quadrantMap.findQuadrant(pWorld);
 			

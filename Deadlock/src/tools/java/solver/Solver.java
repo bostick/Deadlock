@@ -17,8 +17,6 @@ public class Solver {
 			List<Board> a = new ArrayList<Board>(space.lastSolvingIteration);
 			space.lastSolvingIteration = new ArrayList<Board>();
 			
-//			System.out.println(Config.toString(a));
-			
 			if (a.isEmpty()) {
 				throw new IllegalArgumentException("ran out of boards");
 			}

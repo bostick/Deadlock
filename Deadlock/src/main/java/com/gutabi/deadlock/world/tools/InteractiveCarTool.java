@@ -8,7 +8,6 @@ import com.gutabi.deadlock.geom.Shape;
 import com.gutabi.deadlock.math.DMath;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.menu.MainMenuScreen;
-import com.gutabi.deadlock.menu.MenuItem;
 import com.gutabi.deadlock.menu.WinnerMenu;
 import com.gutabi.deadlock.ui.InputEvent;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
@@ -30,6 +29,8 @@ public class InteractiveCarTool extends ToolBase {
 	
 	private InteractiveCar car;
 	
+	WinnerMenu winnerMenu;
+	
 	public InteractiveCarTool(WorldScreen worldScreen, DebuggerScreen debuggerScreen) {
 		super(worldScreen, debuggerScreen);
 	}
@@ -46,9 +47,8 @@ public class InteractiveCarTool extends ToolBase {
 		
 		APP.platform.unshowDebuggerScreen();
 		
-		APP.appScreen = null;
-		
 		MainMenuScreen s = new MainMenuScreen();
+		APP.setAppScreen(s);
 		
 		APP.platform.setupAppScreen(s.contentPane.cp);
 		
@@ -262,36 +262,14 @@ public class InteractiveCarTool extends ToolBase {
 						assert gpos instanceof RushHourBoardPosition;
 						assert floorAndCeilWithinGrid((RushHourBoardPosition)gpos);
 						
-//								RushHourBoard b = (RushHourBoard)((RushHourBoardPosition)gpos).entity;
 						GraphPositionPathPosition tmpFloorPos = car.driver.overallPos.floor(car.length/2);
 						GraphPositionPathPosition tmpCeilPos = car.driver.overallPos.ceil(car.length/2);
-//								GraphPositionPathPosition tmpRoundPos = car.driver.overallPos.round(car.length/2);
 						
 						if (car.driver.prevOverallPos.combo < car.driver.overallPos.combo) {
 							car.driver.toolCoastingGoal = tmpCeilPos;
 						} else {
 							car.driver.toolCoastingGoal = tmpFloorPos;
 						}
-						
-//								OBB testFloor = Geom.localToWorld(car.localAABB, car.angle, tmpFloorPos.p);
-//								OBB testCeil = Geom.localToWorld(car.localAABB, car.angle, tmpCeilPos.p);
-						
-//								boolean floorWithin = testFloor.aabb.completelyWithin(b.gridAABB);
-//								boolean ceilWithin = testCeil.aabb.completelyWithin(b.gridAABB);
-						
-//								if (!floorWithin && ceilWithin) {
-//									car.driver.toolCoastingGoal = tmpCeilPos;
-//								} else if (!ceilWithin && floorWithin) {
-//									car.driver.toolCoastingGoal = tmpFloorPos;
-//								} else if (ceilWithin && floorWithin) {
-//									/*
-//									 * both are valid, use rounded
-//									 */
-//									car.driver.toolCoastingGoal = tmpRoundPos;
-//								} else {
-//									assert !floorAndCeilWithinGrid((RushHourBoardPosition)gpos);
-//									assert false;
-//								}
 						
 						if (DMath.lessThanEquals(car.driver.toolCoastingGoal.combo, car.driver.overallPos.combo)) {
 							
@@ -510,6 +488,36 @@ public class InteractiveCarTool extends ToolBase {
 		
 	}
 	
+	public void moved(InputEvent ev) {
+		
+		if (winnerMenu != null) {
+			
+			Point p = ev.p;
+			
+			p = Point.worldToPanel(p, worldScreen.contentPane.worldPanel.worldCamera);
+			p = Point.panelToMenu(p, winnerMenu);
+			
+			winnerMenu.moved(p);
+			
+		}
+		
+	}
+	
+	public void clicked(InputEvent ev) {
+		
+		if (winnerMenu != null) {
+			
+			Point p = ev.p;
+			
+			p = Point.worldToPanel(p, worldScreen.contentPane.worldPanel.worldCamera);
+			p = Point.panelToMenu(p, winnerMenu);
+			
+			winnerMenu.clicked(p);
+			
+		}
+		
+	}
+	
 	public void handleZooming() {
 		
 		GraphPosition gpos = car.driver.overallPos.gp;
@@ -561,61 +569,19 @@ public class InteractiveCarTool extends ToolBase {
 		
 	}
 	
-	
-	WinnerMenu winnerMenu;
-	
 	void winner() {
 		
 		winnerMenu = new WinnerMenu();
 		
-		winnerMenu.render();
-		
+		winnerMenu.render();	
 		
 	}
+
 	
 	public void draw_pixels(RenderingContext ctxt) {
 		
 		if (winnerMenu != null) {
 			winnerMenu.paint_pixels(ctxt);
-		}
-		
-	}
-	
-	public void moved(InputEvent ev) {
-		
-		if (winnerMenu != null) {
-			
-			Point p = ev.p;
-			
-			p = worldScreen.contentPane.worldPanel.worldToPanel(p);
-			p = p.minus(winnerMenu.aabb.ul);
-			
-			MenuItem hit = winnerMenu.hitTest(p);
-			if (hit != null && hit.active) {
-				winnerMenu.hilited = hit;
-			} else {
-				winnerMenu.hilited = null;
-			}
-			
-		}
-		
-	}
-	
-	public void clicked(InputEvent ev) {
-		
-		if (winnerMenu != null) {
-			
-			Point p = ev.p;
-			
-			p = worldScreen.contentPane.worldPanel.worldToPanel(p);
-			p = p.minus(winnerMenu.aabb.ul);
-			
-			MenuItem item = winnerMenu.hitTest(p);
-			
-			if (item != null && item.active) {
-				item.action();
-			}
-			
 		}
 		
 	}

@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
 public class StateSpace {
 	
 	public long lastGeneratingConfig = -1;
@@ -39,8 +38,6 @@ public class StateSpace {
 		
 		lastSolvingIteration.add(key);
 		
-//		allSolvingConfigs.add(Config.toString(key));
-		
 		if (val == null) {
 			solvingMap.put(key.toString(), null);
 		} else {
@@ -63,9 +60,5 @@ public class StateSpace {
 	public int allGeneratingConfigsSize() {
 		return allGeneratingConfigs.size();
 	}
-	
-//	static class BoardComparator implements Comparator {
-//		
-//	}
 	
 }

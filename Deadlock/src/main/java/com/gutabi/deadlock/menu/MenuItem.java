@@ -5,6 +5,7 @@ import static com.gutabi.deadlock.DeadlockApplication.APP;
 import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.Label;
+import com.gutabi.deadlock.ui.Menu;
 import com.gutabi.deadlock.ui.Transform;
 import com.gutabi.deadlock.ui.paint.Cap;
 import com.gutabi.deadlock.ui.paint.Color;

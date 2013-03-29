@@ -13,25 +13,16 @@ import com.gutabi.deadlock.ui.paint.RenderingContext;
 public class DebuggerScreenContentPane implements ContentPane {
 	
 	public ContentPane cp;
-//	public DebuggerScreen debuggerScreen;
-//	WorldScreen worldScreen;
 	
-//	public WorldPanel worldPanel;
 	public ControlPanel controlPanel;
 	
 	public DebuggerScreenContentPane(DebuggerScreen debuggerScreen, final WorldScreen worldScreen) {
 		this.cp = APP.platform.createContentPane(debuggerScreen);
-//		this.screen = screen;
-		
-//		worldPanel = new WorldPanel(screen) {{
-//			setLocation(0, 0);
-//		}};
 		
 		controlPanel = new ControlPanel() {{
 			setLocation(0, 0);
 		}};
 		
-//		cp.getChildren().add(worldPanel);
 		cp.getChildren().add(controlPanel);
 	}
 	

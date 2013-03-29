@@ -3,6 +3,11 @@ generalize menu painting
 
 put up WinningMenu
 
+
+quadrant editor moving hiliting
+
+
+
 SOON:
 
 spiraling in GPPP.generalSearch?

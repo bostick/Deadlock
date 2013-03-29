@@ -861,7 +861,6 @@ public class Board {
 		for (int i = 0; i < par.rowCount; i++) {
 			if (i < rowCount) {
 				if (par.isJoint(i, -1) || par.isJoint(i, par.colCount)) {
-//					assert out[i] == 0 || out[i] == 5;
 					out[i] = 5;
 				}
 			}
@@ -870,21 +869,14 @@ public class Board {
 		for (int i = 0; i < par.colCount; i++) {
 			if (i < colCount) {
 				if (par.isJoint(-1, i) || par.isJoint(par.rowCount, i)) {
-//					assert out[i+par.rowCount] == 0 || out[i] == 5;
 					out[i+par.rowCount] = 5;
 				}
 			}
 		}
 		
-//		System.out.println(Arrays.toString(out));
-		
 	}
 	
 	public long getInfoLong() {
-		
-//		if (par.totalCarCount() > 8) {
-//			throw new IllegalArgumentException("Must have 8 or fewer cars");
-//		}
 		
 		long totalInfo = 0;
 		for (byte car : par.possibleCars) {
@@ -1047,9 +1039,6 @@ public class Board {
 	
 	boolean previousMove(byte c, int size, byte o, int row, int col) {
 		boolean res = (c == prevCar) && (size == prevSize) && (o == prevO) && (row == prevRow) && (col == prevCol);
-//		if (res) {
-//			String.class.getName();
-//		}
 		return res;
 	}
 	

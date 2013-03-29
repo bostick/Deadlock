@@ -19,9 +19,8 @@ public class Label {
 	
 	public Color color = Color.BLACK;
 	
-	Point ul;
 	public AABB localAABB;
-	public AABB aabb;
+	public AABB aabb = new AABB(0, 0, 0, 0);
 	
 	Image img;
 	
@@ -31,16 +30,16 @@ public class Label {
 	
 	public Label(String text, double x, double y) {
 		this.text = text;
-		this.ul = new Point(x, y);
+		this.aabb = new AABB(x, y, 0, 0);
 	}
 	
 	public Label(String text, Point ul) {
 		this.text = text;
-		this.ul = ul;
+		this.aabb = new AABB(ul.x, ul.y, 0, 0);
 	}
 	
 	public void setLocation(double x, double y) {
-		ul = new Point(x, y);
+		this.aabb = new AABB(x, y, aabb.width, aabb.height);
 	}
 	
 	public void setDimension(double w, double h) {
@@ -61,7 +60,7 @@ public class Label {
 	
 	public void render() {
 		
-		aabb = new AABB(ul.x, ul.y, localAABB.width, localAABB.height);
+		aabb = new AABB(aabb.x, aabb.y, localAABB.width, localAABB.height);
 		
 		Point baseline = new Point(-localAABB.x, -localAABB.y);
 		

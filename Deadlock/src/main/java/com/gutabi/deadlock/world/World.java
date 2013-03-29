@@ -84,14 +84,6 @@ public class World extends PhysicsWorld {
 		
 		quadrantMap.panelPostDisplay(cam);
 		
-//		worldScreen.worldViewport = new AABB( 
-//				-(worldScreen.contentPane.worldPanel.aabb.width / worldScreen.pixelsPerMeter) / 2 + quadrantMap.worldWidth/2 ,
-//				-(worldScreen.contentPane.worldPanel.aabb.height / worldScreen.pixelsPerMeter) / 2 + quadrantMap.worldHeight/2,
-//				worldScreen.contentPane.worldPanel.aabb.width / worldScreen.pixelsPerMeter,
-//				worldScreen.contentPane.worldPanel.aabb.height / worldScreen.pixelsPerMeter);
-//		
-//		worldScreen.origWorldViewport = worldScreen.worldViewport;
-		
 	}
 	
 	public void previewPostDisplay() {
@@ -131,9 +123,7 @@ public class World extends PhysicsWorld {
 	}
 	
 	public void integrate(double t) {
-		
-		String.class.getName();
-		
+				
 		synchronized (b2dWorld) {
 			
 			this.t = t;

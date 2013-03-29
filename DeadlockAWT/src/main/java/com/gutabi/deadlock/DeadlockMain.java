@@ -65,9 +65,6 @@ public class DeadlockMain  {
 		platform.debuggerContainer = newFrame;
 		
 		
-		
-		
-		
 		MainMenuScreen s = new MainMenuScreen();
 		APP.appScreen = s;
 		
@@ -79,41 +76,6 @@ public class DeadlockMain  {
 		
 		APP.platform.showAppScreen();
 		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-//		WorldScreen worldScreen = new WorldScreen();
-//		APP.appScreen = worldScreen;
-//		
-//		DebuggerScreen debuggerScreen = new DebuggerScreen(worldScreen);
-//		APP.debuggerScreen = debuggerScreen;
-//		
-//		worldScreen.world = OneByOneWorld.createOneByOneWorld(worldScreen, debuggerScreen);
-//		
-//		APP.platform.setupAppScreen(worldScreen.contentPane.cp);
-//		
-//		APP.platform.setupDebuggerScreen(debuggerScreen.contentPane.cp);
-//		
-//		worldScreen.postDisplay();
-//		
-//		debuggerScreen.postDisplay();
-//		
-//		worldScreen.world.render_worldPanel();
-//		worldScreen.world.render_preview();
-//		worldScreen.contentPane.repaint();
-//		debuggerScreen.contentPane.repaint();
-//		
-//		APP.platform.showAppScreen();
-//		APP.platform.showDebuggerScreen();
-//		
 	}
 	
 	public void setupFrame() {

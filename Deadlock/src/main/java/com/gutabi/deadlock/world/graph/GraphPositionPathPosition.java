@@ -158,34 +158,6 @@ public class GraphPositionPathPosition {
 		return ang;
 	}
 	
-//	private void computeGraphPosition() {
-//		
-//		GraphPosition p1 = path.get(index);
-//		if (DMath.equals(param, 0.0)) {
-//			gpos = p1;
-//			return;
-//		}
-//		
-//		GraphPosition p2 = path.get(index+1);
-//		
-//		if (DMath.equals(param, 1.0)) {
-//			gpos = p2;
-//			return;
-//		}
-//		
-//		double dist = Point.distance(p1.p, p2.p);
-//		
-//		gpos = p1.approachNeighbor(p2, dist * param);
-//		
-//	}
-	
-//	public GraphPosition getGraphPosition() {
-//		if (gpos == null) {
-//			computeGraphPosition();
-//		}
-//		return gpos;
-//	}
-	
 	public double lengthTo(GraphPositionPathPosition p) {
 		
 		assert p.path.equals(path);
@@ -739,9 +711,6 @@ public class GraphPositionPathPosition {
 		
 		GraphPositionPathPosition forwardPos = forwardSearch(p, this.travelForward(Math.min(lengthFromStart, this.lengthToEndOfPath)));
 		GraphPositionPathPosition backwardPos = backwardSearch(p, this.travelBackward(Math.min(lengthFromStart, this.lengthToStartOfPath)));
-		
-//		assert forwardPos.lengthTo(start) <= lengthFromStart;
-//		assert backwardPos.lengthTo(start) <= lengthFromStart;
 		
 		if (this.equals(backwardPos)) {
 			

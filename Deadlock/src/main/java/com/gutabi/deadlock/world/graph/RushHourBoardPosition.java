@@ -18,10 +18,6 @@ public class RushHourBoardPosition extends GraphPosition {
 	public RushHourBoardPosition(RushHourBoard b, double rowCombo, double colCombo) {
 		super(b.point(rowCombo, colCombo), b);
 		
-//		if (rowCombo > 8) {
-//			String.class.getName();
-//		}
-		
 		this.rowCombo = rowCombo;
 		this.colCombo = colCombo;
 		

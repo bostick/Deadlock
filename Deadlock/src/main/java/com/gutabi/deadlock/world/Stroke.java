@@ -417,8 +417,6 @@ public class Stroke {
 		}
 		events = toKeep;
 		
-		String.class.getName();
-		
 		/*
 		 * now go through and create roads
 		 */

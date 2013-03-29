@@ -69,6 +69,7 @@ public class RegularTool extends ToolBase {
 		APP.platform.unshowDebuggerScreen();
 		
 		MainMenuScreen s = new MainMenuScreen();
+		APP.setAppScreen(s);
 		
 		APP.platform.setupAppScreen(s.contentPane.cp);
 		

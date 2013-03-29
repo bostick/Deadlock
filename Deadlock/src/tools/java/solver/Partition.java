@@ -4,7 +4,6 @@ import gnu.trove.list.array.TLongArrayList;
 
 import java.util.List;
 
-
 public class Partition {
 	
 	int partitionIdHash;
@@ -15,8 +14,6 @@ public class Partition {
 	
 	int totalBoardCount;
 	int candidateBoardCount;
-	
-//	List<String> hardestSolution;
 	
 	public void generate() throws Exception {
 		
@@ -30,8 +27,6 @@ public class Partition {
 			
 			space.penGeneratingIteration = space.lastGeneratingIteration;
 			space.lastGeneratingIteration = new TLongArrayList();
-			
-//			System.out.println(Config.toString(a));
 			
 			for (int i = 0; i < space.penGeneratingIteration.size(); i++) {
 				long info = space.penGeneratingIteration.get(i);

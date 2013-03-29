@@ -76,41 +76,20 @@ public class Generator {
 		
 		generateWinners(TWOCARS, THREECARS, red);
 		
-		int totalBoards = 0;
-		int candidateBoards = 0;
-//		List<String> hardest = null;
 		int i = 0;
 		for (Partition p : partitions.values()) {
 			System.out.println("generating partition #" + i);
 			System.out.print("idhash " + p.partitionIdHash + ", starting with " + p.space.lastGeneratingIteration.size() + " winners (" + (100 * p.space.lastGeneratingIteration.size() / winnersCount) + "%)... ");
-			
-//			if (p.partitionIdHash != 739147418) {
-//				continue;
-//			}
 			
 			p.generate();
 			if (Runtime.getRuntime().totalMemory() > m) {
 				m = Runtime.getRuntime().totalMemory();
 				System.out.println("max total memory: " + (m / 1024 / 1024) + "MB");
 			}
-			totalBoards += p.totalBoardCount;
-			candidateBoards += p.candidateBoardCount;
-//			if (hardest == null || p.hardestSolution != null && p.hardestSolution.size() > hardest.size()) {
-//				hardest = p.hardestSolution;
-//			}
+			
 			i++;
 		}
 		System.out.println();
-		
-//		if (hardest == null) {
-//			System.out.println("hardest is null");
-//		} else {
-//			System.out.println("hardest overall: " + hardest.size() + " moves, total " + totalBoards + "  boards, candidate " + candidateBoards + " boards");
-//			for (String s : hardest) {
-//				System.out.println(s);
-//				System.out.println();
-//			}
-//		}
 		
 		System.out.println("total time: " + ((System.currentTimeMillis() - t) / 1000) + "s");
 		System.out.println("max total memory: " + (m / 1024 / 1024) + "MB");

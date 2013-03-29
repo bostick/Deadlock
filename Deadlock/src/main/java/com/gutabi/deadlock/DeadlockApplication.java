@@ -28,10 +28,6 @@ public class DeadlockApplication {
 	public int WORLDPANEL_HEIGHT = -1;
 	
 	
-//	public int MENU_WIDTH = -1;
-//	public int MENU_HEIGHT = -1;
-	
-	
 	public AppScreen appScreen;
 	public DebuggerScreen debuggerScreen;
 	
@@ -98,4 +94,7 @@ public class DeadlockApplication {
 		
 	}
 	
+	public void setAppScreen(AppScreen s) {
+		this.appScreen = s;
+	}
 }

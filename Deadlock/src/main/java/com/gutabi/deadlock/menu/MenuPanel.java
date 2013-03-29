@@ -5,6 +5,7 @@ import static com.gutabi.deadlock.DeadlockApplication.APP;
 import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.InputEvent;
+import com.gutabi.deadlock.ui.Menu;
 import com.gutabi.deadlock.ui.PanelBase;
 import com.gutabi.deadlock.ui.Transform;
 import com.gutabi.deadlock.ui.paint.Color;
@@ -17,7 +18,7 @@ public class MenuPanel extends PanelBase {
 	
 	MainMenuScreen screen;
 	
-	public MainMenu menu;
+	public Menu menu;
 	
 	public MenuPanel(final MainMenuScreen screen) {
 		this.screen = screen;
@@ -40,10 +41,6 @@ public class MenuPanel extends PanelBase {
 	
 	Point lastClickedMenuPoint;
 	
-	public Point panelToMenu(Point p) {
-		return new Point(p.x - menu.aabb.x, p.y - menu.aabb.y);
-	}
-	
 	public void moved(InputEvent ev) {
 		
 		lastMovedPanelPoint = ev.p;
@@ -51,27 +48,18 @@ public class MenuPanel extends PanelBase {
 		
 		Point p = ev.p;
 		
-		lastMovedMenuPoint = panelToMenu(p);
+		lastMovedMenuPoint = Point.panelToMenu(p, menu);
 		
-		MenuItem hit = menu.hitTest(lastMovedMenuPoint);
-		if (hit != null && hit.active) {
-			menu.hilited = hit;
-		} else {
-			menu.hilited = null;
-		}
+		menu.moved(lastMovedMenuPoint);
 		
 		screen.contentPane.repaint();
 	}
 	
 	public void clicked(InputEvent ev) {
 		
-		lastClickedMenuPoint = panelToMenu(ev.p);
+		lastClickedMenuPoint = Point.panelToMenu(ev.p, menu);
 		
-		MenuItem item = menu.hitTest(lastClickedMenuPoint);
-		
-		if (item != null && item.active) {
-			item.action();
-		}
+		menu.clicked(lastClickedMenuPoint);
 		
 	}
 	

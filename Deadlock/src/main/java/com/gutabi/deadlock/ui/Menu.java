@@ -1,4 +1,4 @@
-package com.gutabi.deadlock.menu;
+package com.gutabi.deadlock.ui;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
@@ -7,8 +7,7 @@ import java.util.List;
 
 import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.math.Point;
-import com.gutabi.deadlock.ui.Image;
-import com.gutabi.deadlock.ui.Transform;
+import com.gutabi.deadlock.menu.MenuItem;
 import com.gutabi.deadlock.ui.paint.Color;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 
@@ -19,8 +18,8 @@ public abstract class Menu {
 	public MenuItem hilited;
 	public MenuItem firstMenuItem;
 	
-	double menuItemWidest;
-	int totalMenuItemHeight;
+	public double menuItemWidest;
+	public int totalMenuItemHeight;
 	
 	public AABB aabb = new AABB(0, 0, 0, 0);
 	
@@ -46,7 +45,7 @@ public abstract class Menu {
 		
 	}
 	
-	public MenuItem hitTest(Point p) {
+	private MenuItem hitTest(Point p) {
 		
 		for (MenuItem item : items) {
 			if (item.hitTest(p)) {
@@ -55,6 +54,27 @@ public abstract class Menu {
 		}
 		
 		return null;
+	}
+	
+	public void moved(Point mP) {
+		
+		MenuItem hit = hitTest(mP);
+		if (hit != null && hit.active) {
+			hilited = hit;
+		} else {
+			hilited = null;
+		}
+		
+	}
+	
+	public void clicked(Point mP) {
+		
+		MenuItem item = hitTest(mP);
+		
+		if (item != null && item.active) {
+			item.action();
+		}
+		
 	}
 	
 	public void render() {

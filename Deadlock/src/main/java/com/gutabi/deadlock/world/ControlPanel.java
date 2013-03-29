@@ -17,8 +17,6 @@ import com.gutabi.deadlock.ui.paint.RenderingContext;
 
 public class ControlPanel extends PanelBase {
 	
-//	boolean dirty;
-	
 	AABB previewAABB = new AABB(5, 400, 100, 100);
 	double previewPixelsPerMeter;
 	
@@ -183,7 +181,8 @@ public class ControlPanel extends PanelBase {
 				APP.debuggerScreen.contentPane.repaint();
 			}
 		};
-		startButton.lab = new Label("Start", 5, 140);
+		startButton.setLocation(5, 140);
+		startButton.lab = new Label("Start");
 		startButton.lab.fontFile = visitorFontFile;
 		startButton.lab.fontStyle = FontStyle.PLAIN;
 		startButton.lab.fontSize = 16;
@@ -208,7 +207,8 @@ public class ControlPanel extends PanelBase {
 				APP.debuggerScreen.contentPane.repaint();
 			}
 		};
-		stopButton.lab = new Label("Stop", 5 + startButton.aabb.width + 5, startButton.aabb.y + stopButton.aabb.height);
+		stopButton.setLocation(5 + startButton.aabb.width + 5, startButton.aabb.y + stopButton.aabb.height);
+		stopButton.lab = new Label("Stop");
 		stopButton.lab.fontFile = visitorFontFile;
 		stopButton.lab.fontStyle = FontStyle.PLAIN;
 		stopButton.lab.fontSize = 16;

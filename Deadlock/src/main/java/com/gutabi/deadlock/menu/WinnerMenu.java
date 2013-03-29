@@ -3,6 +3,7 @@ package com.gutabi.deadlock.menu;
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
 import com.gutabi.deadlock.geom.AABB;
+import com.gutabi.deadlock.ui.Menu;
 
 public class WinnerMenu extends Menu {
 	
@@ -21,6 +22,7 @@ public class WinnerMenu extends Menu {
 				APP.platform.unshowDebuggerScreen();
 				
 				MainMenuScreen s = new MainMenuScreen();
+				APP.setAppScreen(s);
 				
 				APP.platform.setupAppScreen(s.contentPane.cp);
 				

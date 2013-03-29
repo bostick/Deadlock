@@ -3,6 +3,10 @@ package com.gutabi.deadlock.math;
 import java.util.Scanner;
 import java.util.regex.MatchResult;
 
+import com.gutabi.deadlock.geom.AABB;
+import com.gutabi.deadlock.ui.Menu;
+import com.gutabi.deadlock.world.WorldCamera;
+
 public class Point {
 	
 	public static final Point UP = new Point(0, -1);
@@ -646,5 +650,38 @@ public class Point {
 	public Point negate() {
 		return new Point(-x, -y);
 	}
+	
+	
+	
+	
+	
+	public static Point panelToWorld(Point p, WorldCamera cam) {
+		return new Point(
+				p.x / cam.pixelsPerMeter + cam.worldViewport.x,
+				p.y / cam.pixelsPerMeter + cam.worldViewport.y);
+	}
+	
+	public static AABB panelToWorld(AABB aabb, WorldCamera cam) {
+		Point ul = panelToWorld(aabb.ul, cam);
+		Point br = panelToWorld(aabb.br, cam);
+		return new AABB(ul.x, ul.y, br.x - ul.x, br.y - ul.y);
+	}
+	
+	public static Point worldToPanel(Point p, WorldCamera cam) {
+		return new Point(
+				(p.x - cam.worldViewport.x) * cam.pixelsPerMeter,
+				(p.y - cam.worldViewport.y) * cam.pixelsPerMeter);
+	}
+	
+	public static AABB worldToPanel(AABB aabb, WorldCamera cam) {
+		Point ul = worldToPanel(aabb.ul, cam);
+		Point br = worldToPanel(aabb.br, cam);
+		return new AABB(ul.x, ul.y, br.x - ul.x, br.y - ul.y);
+	}
+	
+	public static Point panelToMenu(Point p, Menu menu) {
+		return p.minus(menu.aabb.ul);
+	}
+	
 	
 }

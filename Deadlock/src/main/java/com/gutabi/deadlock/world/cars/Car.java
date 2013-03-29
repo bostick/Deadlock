@@ -36,15 +36,10 @@ public abstract class Car extends PhysicsBody {
 	
 	public int id;
 	
-//	public static int carCounter;
-	
-//	public Point localFront;
-	
 	boolean atleastPartiallyOnRoad;
 	boolean inMerger;
 	
 	public Point toolOrigP;
-//	public double toolOrigAngle;
 	public OBB toolOrigShape;
 	
 	public boolean destroyed;
@@ -136,28 +131,6 @@ public abstract class Car extends PhysicsBody {
 	public void postStop() {
 		;
 	}
-	
-//	public double newAngle(GraphPositionPathPosition curPos, GraphPositionPathPosition testPos) {
-//		
-//		GraphPosition testGpos = testPos.getGraphPosition();
-//		
-//		double a;
-//		
-//		if (testPos.equals(curPos)) {
-//			assert false;
-//			a = Double.NaN;
-//		} else if (DMath.lessThan(curPos.combo, testPos.combo)) {
-//			a = Math.atan2(testGpos.p.y - curPos.p.y, testGpos.p.x - curPos.p.x);
-//		} else {
-//			a = Math.atan2(curPos.p.y - testGpos.p.y, curPos.p.x - testGpos.p.x);
-//		}
-//		
-//		if (DMath.lessThan(a, 0.0)) {
-//			a = a + 2 * Math.PI;
-//		}
-//		
-//		return a;
-//	}
 	
 	public void paintHilite(RenderingContext ctxt) {
 		ctxt.setColor(Color.BLUE);
