@@ -2,8 +2,8 @@ package com.gutabi.deadlock;
 
 import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.geom.ShapeEngine;
-import com.gutabi.deadlock.ui.ContentPane;
 import com.gutabi.deadlock.ui.Image;
+import com.gutabi.deadlock.ui.PlatformContentPane;
 import com.gutabi.deadlock.ui.paint.FontStyle;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 
@@ -25,7 +25,7 @@ public interface Platform {
 	
 	public Image createTransparentImage(int w, int h);
 	
-	public abstract ContentPane createContentPane(Object... args);
+	public abstract PlatformContentPane createPlatformContentPane(Object... args);
 	
 	public abstract void setupAppScreen(Object... args);
 	

@@ -8,69 +8,70 @@ import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.ContentPane;
 import com.gutabi.deadlock.ui.InputEvent;
 import com.gutabi.deadlock.ui.Panel;
+import com.gutabi.deadlock.ui.PlatformContentPane;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 
 public class WorldScreenContentPane implements ContentPane {
 	
-	public ContentPane cp;
+	public PlatformContentPane pcp;
 	public WorldScreen screen;
 	
 	public WorldPanel worldPanel;
 	
 	public WorldScreenContentPane(WorldScreen screen) {
-		this.cp = APP.platform.createContentPane(screen);
+		this.pcp = APP.platform.createPlatformContentPane(screen);
 		this.screen = screen;
 		
 		worldPanel = new WorldPanel() {{
 			setLocation(0, 0);
 		}};
 		
-		cp.getChildren().add(worldPanel);
+		pcp.getChildren().add(worldPanel);
 	}
 	
 	public void repaint() {
-		cp.repaint();
+		pcp.repaint();
 	}
 
 	public List<Panel> getChildren() {
-		return cp.getChildren();
+		return pcp.getChildren();
 	}
 
 	public Point getLastMovedContentPanePoint() {
-		return cp.getLastMovedContentPanePoint();
+		return pcp.getLastMovedContentPanePoint();
 	}
 
 	public void postDisplay() {
-		cp.postDisplay();
+		pcp.postDisplay();
 	}
 	
 	public void clicked(InputEvent ev) {
-		cp.clicked(ev);
+		pcp.clicked(ev);
 	}
 	
 	public void paint(RenderingContext ctxt) {
-		cp.paint(ctxt);
+		pcp.paint(ctxt);
 	}
 	
 	
 	@Override
 	public void pressed(InputEvent ev) {
-		cp.pressed(ev);
+		pcp.pressed(ev);
 	}
 
 	@Override
 	public void released(InputEvent ev) {
-		cp.released(ev);
+		pcp.released(ev);
 	}
 
 	@Override
 	public void moved(InputEvent ev) {
-		cp.moved(ev);
+		pcp.moved(ev);
 	}
 
 	@Override
 	public void dragged(InputEvent ev) {
-		cp.dragged(ev);
+		pcp.dragged(ev);
 	}
 	
 	

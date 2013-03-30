@@ -12,16 +12,16 @@ import org.apache.log4j.Logger;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 
-public class ContentPaneImpl extends ContentPaneBase implements java.awt.event.KeyListener, java.awt.event.MouseListener, java.awt.event.MouseMotionListener {
+public class PlatformContentPaneImpl extends PlatformContentPane implements java.awt.event.KeyListener, java.awt.event.MouseListener, java.awt.event.MouseMotionListener {
 	
 	KeyListener kl;
 	
 	public Container j;
 	
-	static Logger logger = Logger.getLogger(ContentPaneImpl.class);
+	static Logger logger = Logger.getLogger(PlatformContentPaneImpl.class);
 	
 	@SuppressWarnings("serial")
-	public ContentPaneImpl(KeyListener kl) {
+	public PlatformContentPaneImpl(KeyListener kl) {
 		
 		this.kl = kl;
 		assert kl != null;
@@ -32,7 +32,7 @@ public class ContentPaneImpl extends ContentPaneBase implements java.awt.event.K
 				
 				RenderingContext ctxt = APP.platform.createRenderingContext(g);
 				
-				ContentPaneImpl.this.paint(ctxt);
+				PlatformContentPaneImpl.this.paint(ctxt);
 				
 			}
 		};

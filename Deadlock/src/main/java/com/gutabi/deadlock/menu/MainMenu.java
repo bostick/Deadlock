@@ -43,9 +43,9 @@ public class MainMenu extends Menu {
 				
 				worldScreen.contentPane.worldPanel.world = OneByOneWorld.createOneByOneWorld(worldScreen, debuggerScreen);
 				
-				APP.platform.setupAppScreen(worldScreen.contentPane.cp);
+				APP.platform.setupAppScreen(worldScreen.contentPane.pcp);
 				
-				APP.platform.setupDebuggerScreen(debuggerScreen.contentPane.cp);
+				APP.platform.setupDebuggerScreen(debuggerScreen.contentPane.pcp);
 				
 				worldScreen.postDisplay();
 				
@@ -75,9 +75,9 @@ public class MainMenu extends Menu {
 				
 				worldScreen.contentPane.worldPanel.world = FourByFourGridWorld.createFourByFourGridWorld(worldScreen, debuggerScreen);
 				
-				APP.platform.setupAppScreen(worldScreen.contentPane.cp);
+				APP.platform.setupAppScreen(worldScreen.contentPane.pcp);
 				
-				APP.platform.setupDebuggerScreen(debuggerScreen.contentPane.cp);
+				APP.platform.setupDebuggerScreen(debuggerScreen.contentPane.pcp);
 				
 				worldScreen.postDisplay();
 				
@@ -106,9 +106,9 @@ public class MainMenu extends Menu {
 				
 				worldScreen.contentPane.worldPanel.world = WorldA.createWorldA(worldScreen, debuggerScreen);
 				
-				APP.platform.setupAppScreen(worldScreen.contentPane.cp);
+				APP.platform.setupAppScreen(worldScreen.contentPane.pcp);
 				
-				APP.platform.setupDebuggerScreen(debuggerScreen.contentPane.cp);
+				APP.platform.setupDebuggerScreen(debuggerScreen.contentPane.pcp);
 				
 				worldScreen.postDisplay();
 				
@@ -140,7 +140,7 @@ public class MainMenu extends Menu {
 				
 				QuadrantEditor s = new QuadrantEditor();
 				
-				APP.platform.setupAppScreen(s.contentPane.cp);
+				APP.platform.setupAppScreen(s.contentPane.pcp);
 				
 				s.postDisplay();
 				

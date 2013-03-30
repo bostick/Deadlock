@@ -29,9 +29,9 @@ public class LevelMenu extends Menu {
 				
 				worldScreen.contentPane.worldPanel.world = RushHourWorld.createRushHourWorld(worldScreen, APP.debuggerScreen);
 				
-				APP.platform.setupAppScreen(worldScreen.contentPane.cp);
+				APP.platform.setupAppScreen(worldScreen.contentPane.pcp);
 				
-				APP.platform.setupDebuggerScreen(APP.debuggerScreen.contentPane.cp);
+				APP.platform.setupDebuggerScreen(APP.debuggerScreen.contentPane.pcp);
 				
 				worldScreen.postDisplay();
 				
@@ -63,9 +63,9 @@ public class LevelMenu extends Menu {
 				
 				worldScreen.contentPane.worldPanel.world = RushHourWorld.createRushHourWorld(worldScreen, APP.debuggerScreen);
 				
-				APP.platform.setupAppScreen(worldScreen.contentPane.cp);
+				APP.platform.setupAppScreen(worldScreen.contentPane.pcp);
 				
-				APP.platform.setupDebuggerScreen(APP.debuggerScreen.contentPane.cp);
+				APP.platform.setupDebuggerScreen(APP.debuggerScreen.contentPane.pcp);
 				
 				worldScreen.postDisplay();
 				
@@ -97,9 +97,9 @@ public class LevelMenu extends Menu {
 				
 				worldScreen.contentPane.worldPanel.world = RushHourWorld.createRushHourWorld(worldScreen, APP.debuggerScreen);
 				
-				APP.platform.setupAppScreen(worldScreen.contentPane.cp);
+				APP.platform.setupAppScreen(worldScreen.contentPane.pcp);
 				
-				APP.platform.setupDebuggerScreen(APP.debuggerScreen.contentPane.cp);
+				APP.platform.setupDebuggerScreen(APP.debuggerScreen.contentPane.pcp);
 				
 				worldScreen.postDisplay();
 				

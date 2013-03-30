@@ -11,7 +11,7 @@ import com.gutabi.deadlock.ui.Transform;
 import com.gutabi.deadlock.ui.paint.Color;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 
-public class MenuPanel extends PanelBase {
+public class MainMenuPanel extends PanelBase {
 	
 	int TITLE_CENTER_Y = 165;
 	int COPYRIGHT_CENTER_Y = 800;
@@ -20,7 +20,7 @@ public class MenuPanel extends PanelBase {
 	
 	public Menu menu;
 	
-	public MenuPanel(final MainMenuScreen screen) {
+	public MainMenuPanel(final MainMenuScreen screen) {
 		this.screen = screen;
 		
 		aabb = new AABB(aabb.x, aabb.y, APP.MENUPANEL_WIDTH, APP.MENUPANEL_HEIGHT);

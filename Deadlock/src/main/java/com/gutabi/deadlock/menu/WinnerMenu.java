@@ -27,7 +27,7 @@ public class WinnerMenu extends Menu {
 				MainMenuScreen s = new MainMenuScreen();
 				APP.setAppScreen(s);
 				
-				APP.platform.setupAppScreen(s.contentPane.cp);
+				APP.platform.setupAppScreen(s.contentPane.pcp);
 				
 				s.postDisplay();
 				s.contentPane.panel.render();

@@ -336,9 +336,9 @@ public class QuadrantEditorPanel extends PanelBase {
 				
 				s.contentPane.worldPanel.world = World.createWorld(s, debuggerScreen, ini);
 				
-				APP.platform.setupAppScreen(s.contentPane.cp);
+				APP.platform.setupAppScreen(s.contentPane.pcp);
 				
-				APP.platform.setupDebuggerScreen(debuggerScreen.contentPane.cp);
+				APP.platform.setupDebuggerScreen(debuggerScreen.contentPane.pcp);
 				
 				s.postDisplay();
 				

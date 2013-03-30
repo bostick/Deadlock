@@ -20,11 +20,11 @@ import javax.swing.RootPaneContainer;
 import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.geom.ShapeEngine;
 import com.gutabi.deadlock.geom.ShapeEngineImpl;
-import com.gutabi.deadlock.ui.ContentPane;
-import com.gutabi.deadlock.ui.ContentPaneImpl;
 import com.gutabi.deadlock.ui.Image;
 import com.gutabi.deadlock.ui.ImageImpl;
 import com.gutabi.deadlock.ui.KeyListener;
+import com.gutabi.deadlock.ui.PlatformContentPane;
+import com.gutabi.deadlock.ui.PlatformContentPaneImpl;
 import com.gutabi.deadlock.ui.paint.FontStyle;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.ui.paint.RenderingContextImpl;
@@ -51,16 +51,16 @@ public class PlatformImpl implements Platform {
 		
 	}
 	
-	public ContentPane createContentPane(Object... args) {
+	public PlatformContentPane createPlatformContentPane(Object... args) {
 		
 		KeyListener kl = (KeyListener)args[0];
 		
-		return new ContentPaneImpl(kl);
+		return new PlatformContentPaneImpl(kl);
 	}
 	
 	public void setupAppScreen(Object... args) {
 		
-		ContentPaneImpl content = (ContentPaneImpl)args[0];
+		PlatformContentPaneImpl content = (PlatformContentPaneImpl)args[0];
 		
 		content.j.setLayout(null);
 		
@@ -86,7 +86,7 @@ public class PlatformImpl implements Platform {
 	
 	public void setupDebuggerScreen(Object... args) {
 		
-		ContentPaneImpl content = (ContentPaneImpl)args[0];
+		PlatformContentPaneImpl content = (PlatformContentPaneImpl)args[0];
 		
 		content.j.setLayout(null);
 		

@@ -68,7 +68,7 @@ public class DeadlockMain  {
 		MainMenuScreen s = new MainMenuScreen();
 		APP.appScreen = s;
 		
-		APP.platform.setupAppScreen(s.contentPane.cp);
+		APP.platform.setupAppScreen(s.contentPane.pcp);
 		
 		s.postDisplay();
 		s.contentPane.panel.render();
