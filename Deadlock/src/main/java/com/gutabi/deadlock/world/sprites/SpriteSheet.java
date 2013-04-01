@@ -2,14 +2,10 @@ package com.gutabi.deadlock.world.sprites;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
-import com.gutabi.deadlock.ResourceEngine;
-
 public class SpriteSheet extends Sheet {
 	
 	public SpriteSheet() {
-		ResourceEngine rEngine = APP.platform.createResourceEngine();
-		
-		res = rEngine.imageResource("spritesheet");
+		res = APP.platform.imageResource("spritesheet");
 	}
 	
 	public enum SpriteSheetSprite implements Sprite {

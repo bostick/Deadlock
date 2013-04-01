@@ -10,8 +10,11 @@ import java.awt.font.FontRenderContext;
 import java.awt.font.TextLayout;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URL;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
@@ -238,10 +241,69 @@ public class PlatformImpl implements Platform {
 		return new ShapeEngineImpl();
 	}
 	
-	public ResourceEngine createResourceEngine(Object... args) {
-		return new ResourceEngineImpl();
+	/*
+	 * resource engine
+	 */
+	public Resource imageResource(String name) {
+		
+		String full = "/img/" + name + ".png";
+		
+		return new ResourceImpl(full);
 	}
 	
+	public Resource fontResource(String name) {
+		
+		String full = "/fonts/" + name + ".ttf";
+		
+		return new ResourceImpl(full);
+	}
+	
+	public Resource boardResource(String name) {
+		
+		String full = "/boards/" + name + ".txt";
+		
+		return new ResourceImpl(full);
+	}
+	
+	/*
+	 * board engine
+	 */
+	public char[][] readBoard(Resource res) throws Exception {
+		
+		char[][] board;
+		
+		URL url = this.getClass().getResource(((ResourceImpl)res).name);
+		
+		BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
+		
+		int rows = 0;
+		int cols = 0;
+		
+		StringBuilder builder = new StringBuilder();
+		String inputLine;
+		while ((inputLine = in.readLine()) != null) {
+			builder.append(inputLine);
+			cols = inputLine.length();
+			rows++;
+		}
+		in.close();
+		String s = builder.toString();
+		
+		board = new char[rows][cols];
+		for (int i = 0; i < rows; i++) {
+			for (int j = 0; j < cols; j++) {
+				board[i][j] = s.charAt(i * cols + j);
+			}
+		}
+		
+		return board;
+	}
+
+
+
+
+
+
 	public void exit() {
 		
 		try {

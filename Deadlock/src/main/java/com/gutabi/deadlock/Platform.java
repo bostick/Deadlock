@@ -41,7 +41,22 @@ public interface Platform {
 	
 	public abstract ShapeEngine createShapeEngine(Object... args);
 	
-	public abstract ResourceEngine createResourceEngine(Object... args);
+	/*
+	 * resource engine
+	 */
+	public abstract Resource imageResource(String name);
+	
+	public abstract Resource fontResource(String name);
+	
+	public abstract Resource boardResource(String name);
+	
+	
+	/*
+	 * board engine
+	 */
+	public char[][] readBoard(Resource res) throws Exception;
+	
+	
 	
 	public abstract void exit();
 	

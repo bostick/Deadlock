@@ -5,19 +5,7 @@ import com.gutabi.deadlock.world.DebuggerScreen;
 import com.gutabi.deadlock.world.QuadrantMap;
 import com.gutabi.deadlock.world.World;
 import com.gutabi.deadlock.world.WorldScreen;
-import com.gutabi.deadlock.world.cars.CarStateEnum;
-import com.gutabi.deadlock.world.cars.InteractiveCar;
-import com.gutabi.deadlock.world.graph.Axis;
 import com.gutabi.deadlock.world.graph.Graph;
-import com.gutabi.deadlock.world.graph.GraphPosition;
-import com.gutabi.deadlock.world.graph.GraphPositionPath;
-import com.gutabi.deadlock.world.graph.GraphPositionPathPosition;
-import com.gutabi.deadlock.world.graph.RushHourBoard;
-import com.gutabi.deadlock.world.graph.RushHourBoardPosition;
-import com.gutabi.deadlock.world.graph.RushHourStud;
-import com.gutabi.deadlock.world.graph.Side;
-import com.gutabi.deadlock.world.sprites.CarSheet;
-import com.gutabi.deadlock.world.sprites.CarSheet.CarType;
 
 public class RushHourWorld extends World {
 	
@@ -25,7 +13,7 @@ public class RushHourWorld extends World {
 		super(screen, debuggerScreen);
 	}
 	
-	public static RushHourWorld createRushHourWorld(WorldScreen screen, DebuggerScreen debuggerScreen) {
+	public static RushHourWorld createRushHourWorld(char[][] boardIni, WorldScreen screen, DebuggerScreen debuggerScreen) {
 		
 		int[][] ini = new int[][] {
 				{1, 1, 1},
@@ -45,193 +33,48 @@ public class RushHourWorld extends World {
 		
 		w.graph = g;
 		
-		/*
-		 * 'A' through 'G', and 'R' - cars
-		 * 'X' - empty stud
-		 * ' ' - empty border
-		 * 'J', 'K' - joint stud
-		 * 'Y' - exit stud
-		 */
-		
-		/*
-		 * blank
-		 */
-//		char[][] boardIni = new char[][] {
-//			{' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
-//			{' ', 'X', 'X', 'X', 'X', 'X', 'X', ' '},
-//			{' ', 'X', 'X', 'X', 'X', 'X', 'X', ' '},
-//			{' ', 'X', 'X', 'X', 'X', 'X', 'X', ' '},
-//			{' ', 'X', 'X', 'X', 'X', 'X', 'X', ' '},
-//			{' ', 'X', 'X', 'X', 'X', 'X', 'X', ' '},
-//			{' ', 'X', 'X', 'X', 'X', 'X', 'X', ' '},
-//			{' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '}
-//		};
-		
-//		char[][] boardIni = new char[][] {
-//		{' ', ' ', ' ', ' ', 'Y', ' ', ' ', ' '},
-//		{' ', 'X', 'X', 'X', 'X', 'X', 'X', ' '},
-//		{' ', 'A', 'A', 'A', 'X', 'X', 'X', ' '},
-//		{' ', 'X', 'X', 'X', 'X', 'X', 'X', ' '},
-//		{' ', 'X', 'X', 'C', 'B', 'B', 'B', ' '},
-//		{' ', 'X', 'X', 'C', 'R', 'X', 'X', ' '},
-//		{'K', 'D', 'D', 'D', 'R', 'X', 'X', 'J'},
-//		{' ', ' ', ' ', ' ', 'K', ' ', 'J', ' '}
-//	};
-		
-		char[][] boardIni = new char[][] {
-		{' ', ' ', ' ', ' ', 'Y', ' ', ' ', ' '},
-		{' ', 'X', 'X', 'X', 'X', 'X', 'X', ' '},
-		{' ', 'A', 'A', 'A', 'X', 'X', 'X', ' '},
-		{' ', 'X', 'X', 'X', 'X', 'X', 'X', ' '},
-		{' ', 'X', 'X', 'C', 'X', 'B', 'B', ' '},
-		{' ', 'X', 'X', 'C', 'R', 'X', 'X', ' '},
-		{'K', 'D', 'D', 'D', 'R', 'X', 'X', 'J'},
-		{' ', ' ', ' ', ' ', 'K', ' ', 'J', ' '}
-	};
-		
-		final RushHourBoard b = w.createRushHourBoard(new Point(1.5 * QuadrantMap.QUADRANT_WIDTH, 2.0 * QuadrantMap.QUADRANT_HEIGHT), boardIni);
-		
-		char[] carChars = new char[] { 'R', 'A', 'B', 'C', 'D', 'E', 'F', 'G' };
-		int cur2Count = 0;
-		int cur3Count = 0;
-		carLoop:
-		for (char c : carChars) {
-			for (int i = b.originRow; i < b.originRow+b.rowCount; i++) {
-				for (int j = b.originCol; j < b.originCol+b.colCount; j++) {
-					if (boardIni[i][j] == c) {
-						if (c == 'R') {
-							if (i+1-b.originRow < b.rowCount && boardIni[i+1][j] == c) {
-								addNewCar(w, b, i-b.originRow, j-b.originCol, Axis.TOPBOTTOM, CarType.RED, 0);
-								continue carLoop;
-							} else {
-								addNewCar(w, b, i-b.originRow, j-b.originCol, Axis.LEFTRIGHT, CarType.RED, 0);
-								continue carLoop;
-							}
-						} else if (i+1-b.originRow < b.rowCount && boardIni[i+1][j] == c) {
-							if (i+2-b.originRow < b.rowCount && boardIni[i+2][j] == c) {
-								addNewCar(w, b, i-b.originRow, j-b.originCol, Axis.TOPBOTTOM, CarType.THREE, cur3Count);
-								cur3Count++;
-								continue carLoop;
-							} else {
-								addNewCar(w, b, i-b.originRow, j-b.originCol, Axis.TOPBOTTOM, CarType.TWO, cur2Count);
-								cur2Count++;
-								continue carLoop;
-							}
-						} else {
-							assert boardIni[i][j+1] == c;
-							if (j+2-b.originCol < b.colCount && boardIni[i][j+2] == c) {
-								addNewCar(w, b, i-b.originRow, j-b.originCol, Axis.LEFTRIGHT, CarType.THREE, cur3Count);
-								cur3Count++;
-								continue carLoop;
-							} else {
-								addNewCar(w, b, i-b.originRow, j-b.originCol, Axis.LEFTRIGHT, CarType.TWO, cur2Count);
-								cur2Count++;
-								continue carLoop;
-							}
-						}
-					}
-				}
-			}
-		}
+		w.createRushHourBoard(new Point(1.5 * QuadrantMap.QUADRANT_WIDTH, 2.0 * QuadrantMap.QUADRANT_HEIGHT), boardIni);
 		
 		return w;
 	}
 	
-	private static void addNewCar(World w, RushHourBoard b, int firstULRow, int firstULCol, Axis a, CarType type, int curTypeCount) {
+	public static char[][] cw90(char[][] ini) {
 		
-		int sheetIndex = CarSheet.sheetIndex(type, curTypeCount);
+		char[][] newIni = new char[ini[0].length][ini.length];
 		
-		InteractiveCar c = InteractiveCar.createCar(w, sheetIndex);
-		c.state = CarStateEnum.IDLE;
-		
-		/*
-		 * direction of path determines direction of car
-		 */
-		GraphPositionPath path = null;
-		Side side = null;
-		switch (a) {
-		case LEFTRIGHT: {
-			
-			path = b.getPath(a, firstULRow);
-			
-			GraphPosition test = new RushHourBoardPosition(b, firstULRow + c.width/2, firstULCol);
-			GraphPositionPathPosition posTest = path.findGraphPositionPathPosition(test);
-			
-			GraphPositionPathPosition next = posTest.nextBound();
-			
-			Point dir = next.p.minus(test.p);
-			
-			if (dir.x == RushHourStud.SIZE) {
-				assert dir.y == 0.0;
-				side = Side.RIGHT;
-			} else if (dir.x == -RushHourStud.SIZE) {
-				assert dir.y == 0.0;
-				side = Side.LEFT;
-			} else {
-				assert false;
+		for (int i = 0; i < ini.length; i++) {
+			for (int j = 0; j < ini[i].length; j++) {
+				newIni[j][ini.length-1-i] = ini[i][j];
 			}
-			
-			break;
 		}
-		case TOPBOTTOM: {
-			
-			path = b.getPath(a, firstULCol);
-			
-			GraphPosition test = new RushHourBoardPosition(b, firstULRow, firstULCol + c.width/2);
-			GraphPositionPathPosition posTest = path.findGraphPositionPathPosition(test);
-			
-			GraphPositionPathPosition next = posTest.nextBound();
-			
-			Point dir = next.p.minus(test.p);
-			
-			if (dir.y == RushHourStud.SIZE) {
-				assert dir.x == 0.0;
-				side = Side.BOTTOM;
-			} else if (dir.y == -RushHourStud.SIZE) {
-				assert dir.x == 0.0;
-				side = Side.TOP;
-			} else {
-				assert false;
+		
+		return newIni;
+	}
+	
+	public static char[][] ccw90(char[][] ini) {
+		
+		char[][] newIni = new char[ini[0].length][ini.length];
+		
+		for (int i = 0; i < ini.length; i++) {
+			for (int j = 0; j < ini[i].length; j++) {
+				newIni[ini[i].length-1-j][i] = ini[i][j];
 			}
-			
-			break;
-		}
 		}
 		
-		switch (side) {
-		case RIGHT:
-			c.driver.startGP = new RushHourBoardPosition(b, firstULRow + c.width/2, firstULCol + c.length/2);
-			c.setTransform(c.driver.startGP.p, 0.0 * Math.PI);
-			c.driver.overallPath = path;
-			c.driver.setOverallPos(path.findGraphPositionPathPosition(c.driver.startGP));
-			break;
-		case BOTTOM:
-			c.driver.startGP = new RushHourBoardPosition(b, firstULRow + c.length/2, firstULCol + c.width/2);
-			c.setTransform(c.driver.startGP.p, 0.5 * Math.PI);
-			c.driver.overallPath = path;
-			c.driver.setOverallPos(path.findGraphPositionPathPosition(c.driver.startGP));
-			break;
-		case LEFT:
-			c.driver.startGP = new RushHourBoardPosition(b, firstULRow + c.width/2, firstULCol + c.length/2);
-			c.setTransform(c.driver.startGP.p, 1.0 * Math.PI);
-			c.driver.overallPath = path;
-			c.driver.setOverallPos(path.findGraphPositionPathPosition(c.driver.startGP));
-			break;
-		case TOP:
-			c.driver.startGP = new RushHourBoardPosition(b, firstULRow + c.length/2, firstULCol + c.width/2);
-			c.setTransform(c.driver.startGP.p, 1.5 * Math.PI);
-			c.driver.overallPath = path;
-			c.driver.setOverallPos(path.findGraphPositionPathPosition(c.driver.startGP));
-			break;
+		return newIni;
+	}
+
+	public static char[][] transpose(char[][] ini) {
+		
+		char[][] newIni = new char[ini[0].length][ini.length];
+		
+		for (int i = 0; i < ini.length; i++) {
+			for (int j = 0; j < ini[i].length; j++) {
+				newIni[j][i] = ini[i][j];
+			}
 		}
 		
-		c.physicsInit();
-		c.setB2dCollisions(false);
-		c.computeDynamicPropertiesAlways();
-		c.computeDynamicPropertiesMoving();
-		
-		w.carMap.addCar(c);
-		
+		return newIni;
 	}
 	
 }

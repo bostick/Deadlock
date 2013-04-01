@@ -106,6 +106,7 @@ public class InteractiveCar extends Car {
 			
 			driver.toolOrigExitingVertexPos = null;
 			driver.toolCoastingGoal = null;
+			((InteractiveCarTool)APP.tool).car = null;
 			
 			return;
 		}

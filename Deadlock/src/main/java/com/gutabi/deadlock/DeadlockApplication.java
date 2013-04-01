@@ -59,11 +59,12 @@ public class DeadlockApplication {
 	public Image title_white;
 	public Image copyright;
 	
+	
+	public char[][] board11;
+	
 	public static DeadlockApplication APP = new DeadlockApplication();
 	
 	public void init() throws Exception {
-		
-		ResourceEngine rEngine = platform.createResourceEngine();
 		
 		carSheet = new CarSheet();
 		spriteSheet = new SpriteSheet();
@@ -73,10 +74,12 @@ public class DeadlockApplication {
 		spriteSheet.load();
 		explosionSheet.load();
 		
-		titleBackground = platform.readImage(rEngine.imageResource("title_background"));
+		titleBackground = platform.readImage(platform.imageResource("title_background"));
 		
-		title_white = platform.readImage(rEngine.imageResource("title_white"));
-		copyright = platform.readImage(rEngine.imageResource("copyright"));
+		title_white = platform.readImage(platform.imageResource("title_white"));
+		copyright = platform.readImage(platform.imageResource("copyright"));
+		
+		board11 = APP.platform.readBoard(APP.platform.boardResource("board1-1"));
 	}
 	
 	public void exit() {

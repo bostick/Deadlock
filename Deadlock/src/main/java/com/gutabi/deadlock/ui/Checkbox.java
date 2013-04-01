@@ -16,7 +16,7 @@ public abstract class Checkbox {
 	public Checkbox() {
 		lab = new Label(null);
 		
-		lab.fontFile = APP.platform.createResourceEngine().fontResource("visitor1");
+		lab.fontFile = APP.platform.fontResource("visitor1");
 		lab.fontStyle = FontStyle.PLAIN;
 		lab.fontSize = 48;
 	}

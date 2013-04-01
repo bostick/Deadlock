@@ -2,15 +2,10 @@ package com.gutabi.deadlock.world.sprites;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
-import com.gutabi.deadlock.ResourceEngine;
-
 public class CarSheet extends Sheet {
 	
 	public CarSheet() {
-		
-		ResourceEngine rEngine = APP.platform.createResourceEngine();
-		
-		res = rEngine.imageResource("carsheet");
+		res = APP.platform.imageResource("carsheet");
 	}
 	
 	public enum CarSheetSprite implements Sprite {

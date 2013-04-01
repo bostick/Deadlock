@@ -55,7 +55,7 @@ public class ControlPanel extends PanelBase {
 		
 		aabb = new AABB(aabb.x, aabb.y, APP.CONTROLPANEL_WIDTH, APP.CONTROLPANEL_HEIGHT);
 		
-		Resource visitorFontFile = APP.platform.createResourceEngine().fontResource("visitor1");
+		Resource visitorFontFile = APP.platform.fontResource("visitor1");
 		
 		simulationInitLab = new Label("Simulation Init:", 5, 5);
 		simulationInitLab.fontFile = visitorFontFile;

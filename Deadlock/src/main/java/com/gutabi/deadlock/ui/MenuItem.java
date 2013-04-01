@@ -34,7 +34,7 @@ public abstract class MenuItem {
 	public MenuItem(Menu menu, String text) {
 		this.menu = menu;
 		lab = new Label(text);
-		lab.fontFile = APP.platform.createResourceEngine().fontResource("visitor1");
+		lab.fontFile = APP.platform.fontResource("visitor1");
 		lab.fontStyle = FontStyle.PLAIN;
 		lab.fontSize = 36;
 		lab.renderLocal();

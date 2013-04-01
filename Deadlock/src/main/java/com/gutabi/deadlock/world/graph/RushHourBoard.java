@@ -19,6 +19,10 @@ import com.gutabi.deadlock.ui.paint.Join;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.world.Stroke;
 import com.gutabi.deadlock.world.World;
+import com.gutabi.deadlock.world.cars.CarStateEnum;
+import com.gutabi.deadlock.world.cars.InteractiveCar;
+import com.gutabi.deadlock.world.sprites.CarSheet;
+import com.gutabi.deadlock.world.sprites.CarSheet.CarType;
 
 public class RushHourBoard extends Entity {
 	
@@ -158,8 +162,13 @@ public class RushHourBoard extends Entity {
 			for (int j = 0; j < ini[i].length; j++) {
 				char c = ini[i][j];
 				switch (c) {
-				case ' ':
+				
+				case '/':
+				case '-':
+				case '\\':
+				case '|':
 					break;
+					
 				case 'X':
 				case 'A':
 				case 'B':
@@ -497,11 +506,11 @@ public class RushHourBoard extends Entity {
 		 * negative space
 		 */
 		
-		int colCount = (int)Math.round(allStudsAABB.width / RushHourStud.SIZE);
-		int rowCount = (int)Math.round(allStudsAABB.height / RushHourStud.SIZE);
-		for (int i = 0; i < rowCount; i++) {
+		int allColCount = (int)Math.round(allStudsAABB.width / RushHourStud.SIZE);
+		int allRowCount = (int)Math.round(allStudsAABB.height / RushHourStud.SIZE);
+		for (int i = 0; i < allRowCount; i++) {
 			jloop:
-			for (int j = 0; j < colCount; j++) {
+			for (int j = 0; j < allColCount; j++) {
 				AABB n = new AABB(allStudsAABB.ul.x + j * RushHourStud.SIZE, allStudsAABB.ul.y + i * RushHourStud.SIZE, RushHourStud.SIZE, RushHourStud.SIZE);
 				
 				for (RushHourStud ss : studs) {
@@ -512,7 +521,56 @@ public class RushHourBoard extends Entity {
 				
 				neg.add(n);
 			}
-		}	
+		}
+		
+		
+		
+		char[] carChars = new char[] { 'R', 'A', 'B', 'C', 'D', 'E', 'F', 'G' };
+		int cur2Count = 0;
+		int cur3Count = 0;
+		carLoop:
+		for (char c : carChars) {
+			for (int i = originRow; i < originRow+rowCount; i++) {
+				for (int j = originCol; j < originCol+colCount; j++) {
+					if (ini[i][j] == c) {
+						if (c == 'R') {
+							if (i+1-originRow < rowCount && ini[i+1][j] == c) {
+								addNewCar(i-originRow, j-originCol, Axis.TOPBOTTOM, CarType.RED, 0);
+								continue carLoop;
+							} else {
+								addNewCar(i-originRow, j-originCol, Axis.LEFTRIGHT, CarType.RED, 0);
+								continue carLoop;
+							}
+						} else if (i+1-originRow < rowCount && ini[i+1][j] == c) {
+							if (i+2-originRow < rowCount && ini[i+2][j] == c) {
+								addNewCar(i-originRow, j-originCol, Axis.TOPBOTTOM, CarType.THREE, cur3Count);
+								cur3Count++;
+								continue carLoop;
+							} else {
+								addNewCar(i-originRow, j-originCol, Axis.TOPBOTTOM, CarType.TWO, cur2Count);
+								cur2Count++;
+								continue carLoop;
+							}
+						} else {
+							assert ini[i][j+1] == c;
+							if (j+2-originCol < colCount && ini[i][j+2] == c) {
+								addNewCar(i-originRow, j-originCol, Axis.LEFTRIGHT, CarType.THREE, cur3Count);
+								cur3Count++;
+								continue carLoop;
+							} else {
+								addNewCar(i-originRow, j-originCol, Axis.LEFTRIGHT, CarType.TWO, cur2Count);
+								cur2Count++;
+								continue carLoop;
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		
+		
+		
 		
 	}
 	
@@ -1120,6 +1178,109 @@ public class RushHourBoard extends Entity {
 		}
 	}
 	
+	private void addNewCar(int firstULRow, int firstULCol, Axis a, CarType type, int curTypeCount) {
+		
+		int sheetIndex = CarSheet.sheetIndex(type, curTypeCount);
+		
+		InteractiveCar c = InteractiveCar.createCar(world, sheetIndex);
+		c.state = CarStateEnum.IDLE;
+		
+		/*
+		 * direction of path determines direction of car
+		 */
+		GraphPositionPath path = null;
+		Side side = null;
+		switch (a) {
+		case LEFTRIGHT: {
+			
+			path = getPath(a, firstULRow);
+			
+			GraphPosition test = new RushHourBoardPosition(this, firstULRow + c.width/2, firstULCol);
+			GraphPositionPathPosition posTest = path.findGraphPositionPathPosition(test);
+			
+			GraphPositionPathPosition next = posTest.nextBound();
+			
+			Point dir = next.p.minus(test.p);
+			
+			if (dir.x == RushHourStud.SIZE) {
+				assert dir.y == 0.0;
+				side = Side.RIGHT;
+			} else if (dir.x == -RushHourStud.SIZE) {
+				assert dir.y == 0.0;
+				side = Side.LEFT;
+			} else {
+				assert false;
+			}
+			
+			break;
+		}
+		case TOPBOTTOM: {
+			
+			path = getPath(a, firstULCol);
+			
+			GraphPosition test = new RushHourBoardPosition(this, firstULRow, firstULCol + c.width/2);
+			GraphPositionPathPosition posTest = path.findGraphPositionPathPosition(test);
+			
+			GraphPositionPathPosition next = posTest.nextBound();
+			
+			Point dir = next.p.minus(test.p);
+			
+			if (dir.y == RushHourStud.SIZE) {
+				assert dir.x == 0.0;
+				side = Side.BOTTOM;
+			} else if (dir.y == -RushHourStud.SIZE) {
+				assert dir.x == 0.0;
+				side = Side.TOP;
+			} else {
+				assert false;
+			}
+			
+			break;
+		}
+		}
+		
+		switch (side) {
+		case RIGHT:
+			c.driver.startGP = new RushHourBoardPosition(this, firstULRow + c.width/2, firstULCol + c.length/2);
+			c.setTransform(c.driver.startGP.p, 0.0 * Math.PI);
+			c.driver.overallPath = path;
+			c.driver.setOverallPos(path.findGraphPositionPathPosition(c.driver.startGP));
+			break;
+		case BOTTOM:
+			c.driver.startGP = new RushHourBoardPosition(this, firstULRow + c.length/2, firstULCol + c.width/2);
+			c.setTransform(c.driver.startGP.p, 0.5 * Math.PI);
+			c.driver.overallPath = path;
+			c.driver.setOverallPos(path.findGraphPositionPathPosition(c.driver.startGP));
+			break;
+		case LEFT:
+			c.driver.startGP = new RushHourBoardPosition(this, firstULRow + c.width/2, firstULCol + c.length/2);
+			c.setTransform(c.driver.startGP.p, 1.0 * Math.PI);
+			c.driver.overallPath = path;
+			c.driver.setOverallPos(path.findGraphPositionPathPosition(c.driver.startGP));
+			break;
+		case TOP:
+			c.driver.startGP = new RushHourBoardPosition(this, firstULRow + c.length/2, firstULCol + c.width/2);
+			c.setTransform(c.driver.startGP.p, 1.5 * Math.PI);
+			c.driver.overallPath = path;
+			c.driver.setOverallPos(path.findGraphPositionPathPosition(c.driver.startGP));
+			break;
+		}
+		
+		c.physicsInit();
+		c.setB2dCollisions(false);
+		c.computeDynamicPropertiesAlways();
+		c.computeDynamicPropertiesMoving();
+		
+		world.carMap.addCar(c);
+		
+	}
+	
+	
+	
+	
+	
+	
+	
 	public RushHourStud stud(RushHourBoardPosition pos) {
 		for (RushHourStud stud : studs) {
 			if (stud.row == pos.rowIndex && stud.col == pos.colIndex) {
@@ -1173,6 +1334,37 @@ public class RushHourBoard extends Entity {
 			}
 		}
 		return null;
+	}
+	
+	public boolean enteringBoard(RushHourBoardPosition prev, RushHourBoardPosition cur) {
+		
+//		RushHourBoardPosition center = new RushHourBoardPosition(this, 0.5 * rowCount, 0.5 * colCount);
+		double centerRow = 0.5 * rowCount;
+		double centerCol = 0.5 * colCount;
+		
+		if (prev.rowCombo == cur.rowCombo) {
+			
+			if (Math.abs(cur.colCombo - centerCol) < Math.abs(prev.colCombo - centerCol)) {
+				
+				return true;
+				
+			} else {
+				return false;
+			}
+			
+		} else {
+			assert prev.colCombo == cur.colCombo;
+			
+			if (Math.abs(cur.rowCombo - centerRow) < Math.abs(prev.rowCombo - centerRow)) {
+				
+				return true;
+				
+			} else {
+				return false;
+			}
+			
+		}
+		
 	}
 	
 	public boolean isUserDeleteable() {
