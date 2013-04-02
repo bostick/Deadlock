@@ -134,12 +134,17 @@ public class PlatformImpl implements Platform {
 	 */
 	
 	FontRenderContext frc = new FontRenderContext(null, false, false);
-	Font visitorReal;
+	Font visitorPlain36;
+	Font visitorPlain16;
+	Font visitorPlain48;
 	{
 		
 		InputStream is = this.getClass().getResourceAsStream("/fonts/visitor1.ttf");
 		try {
-			visitorReal = Font.createFont(Font.TRUETYPE_FONT, is);
+			Font visitorReal = Font.createFont(Font.TRUETYPE_FONT, is);
+			visitorPlain36 = visitorReal.deriveFont(Font.PLAIN, 36);
+			visitorPlain16 = visitorReal.deriveFont(Font.PLAIN, 16);
+			visitorPlain48 = visitorReal.deriveFont(Font.PLAIN, 48);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -150,11 +155,39 @@ public class PlatformImpl implements Platform {
 		
 	}
 	
+	public java.awt.Font getRealFont(Resource fontFile, FontStyle fontStyle, int fontSize) {
+		
+		ResourceImpl r = (ResourceImpl)fontFile;
+		
+		if (r.name.equals("/fonts/visitor1.ttf")) {
+			
+			if (fontStyle == FontStyle.PLAIN) {
+				
+				if (fontSize == 36) {
+					
+					return visitorPlain36;
+					
+				} else if (fontSize == 16) {
+					
+					return visitorPlain16;
+					
+				} else if (fontSize == 48) {
+					
+					return visitorPlain48;
+					
+				}
+				
+			}
+			
+		}
+		
+		assert false;
+		return null;
+	}
+	
 	public AABB bounds(String preText, Resource fontFile, FontStyle fontStyle, int fontSize) {
 		
 		AABB aabb = null;
-		
-		ResourceImpl r = (ResourceImpl)fontFile;
 		
 		/*
 		 * layout returns height of 0 for " "
@@ -166,49 +199,11 @@ public class PlatformImpl implements Platform {
 			text = preText;
 		}
 		
-		if (r.name.equals("/fonts/visitor1.ttf")) {
-			
-			int s = -1;
-			switch (fontStyle) {
-			case PLAIN:
-				s = Font.PLAIN;
-				break;
-			}
-			
-			Font ttfReal = visitorReal.deriveFont(s, fontSize);
-			
-			TextLayout layout = new TextLayout(text, ttfReal, frc);
-			Rectangle2D bounds = layout.getBounds();
-			aabb = new AABB(bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight());
-			
-		} else {
-			
-			InputStream is = this.getClass().getResourceAsStream(r.name);
-			try {
-				Font ttfBase = Font.createFont(Font.TRUETYPE_FONT, is);
-				
-				int s = -1;
-				switch (fontStyle) {
-				case PLAIN:
-					s = Font.PLAIN;
-					break;
-				}
-				
-				Font ttfReal = ttfBase.deriveFont(s, fontSize);
-				
-				TextLayout layout = new TextLayout(text, ttfReal, frc);
-				Rectangle2D bounds = layout.getBounds();
-				aabb = new AABB(bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight());
-				
-			} catch (FontFormatException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-		}
+		Font ttfReal = getRealFont(fontFile, fontStyle, fontSize);
+		
+		TextLayout layout = new TextLayout(text, ttfReal, frc);
+		Rectangle2D bounds = layout.getBounds();
+		aabb = new AABB(bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight());
 		
 		return aabb;
 	}

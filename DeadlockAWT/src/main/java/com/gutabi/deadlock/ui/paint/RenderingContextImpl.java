@@ -1,18 +1,17 @@
 package com.gutabi.deadlock.ui.paint;
 
+import static com.gutabi.deadlock.DeadlockApplication.APP;
+
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Font;
-import java.awt.FontFormatException;
 import java.awt.Graphics2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.io.InputStream;
 
+import com.gutabi.deadlock.PlatformImpl;
 import com.gutabi.deadlock.Resource;
-import com.gutabi.deadlock.ResourceImpl;
 import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.geom.Line;
 import com.gutabi.deadlock.math.Dim;
@@ -90,31 +89,9 @@ public class RenderingContextImpl extends RenderingContext {
 	
 	public void setFont(Resource file, FontStyle style, int size) {
 		
-		ResourceImpl r = (ResourceImpl)file;
-		InputStream is = this.getClass().getResourceAsStream(r.name);
+		Font ttfReal = ((PlatformImpl)APP.platform).getRealFont(file, style, size);
 		
-	    Font ttfBase;
-		try {
-			ttfBase = Font.createFont(Font.TRUETYPE_FONT, is);
-			
-			int s = -1;
-			switch (style) {
-			case PLAIN:
-				s = Font.PLAIN;
-				break;
-			}
-			
-			Font ttfReal = ttfBase.deriveFont(s, size);
-			
-			g2.setFont(ttfReal);
-			
-		} catch (FontFormatException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		g2.setFont(ttfReal);
 		
 	}
 	
