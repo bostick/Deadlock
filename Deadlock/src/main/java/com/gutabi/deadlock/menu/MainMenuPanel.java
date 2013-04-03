@@ -23,7 +23,7 @@ public class MainMenuPanel extends PanelBase {
 	public MainMenuPanel(final MainMenuScreen screen) {
 		this.screen = screen;
 		
-		aabb = new AABB(aabb.x, aabb.y, APP.MENUPANEL_WIDTH, APP.MENUPANEL_HEIGHT);
+		aabb = new AABB(aabb.x, aabb.y, APP.MAINWINDOW_WIDTH, APP.MAINWINDOW_HEIGHT);
 	}
 	
 	public void setLocation(double x, double y) {

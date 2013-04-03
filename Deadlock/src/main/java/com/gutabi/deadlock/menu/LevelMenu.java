@@ -13,52 +13,16 @@ import com.gutabi.deadlock.world.tools.InteractiveCarTool;
 
 public class LevelMenu extends Menu {
 	
-	/*
-	 * blank
-	 */
-//	char[][] boardIni = new char[][] {
-//		{' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
-//		{' ', 'X', 'X', 'X', 'X', 'X', 'X', ' '},
-//		{' ', 'X', 'X', 'X', 'X', 'X', 'X', ' '},
-//		{' ', 'X', 'X', 'X', 'X', 'X', 'X', ' '},
-//		{' ', 'X', 'X', 'X', 'X', 'X', 'X', ' '},
-//		{' ', 'X', 'X', 'X', 'X', 'X', 'X', ' '},
-//		{' ', 'X', 'X', 'X', 'X', 'X', 'X', ' '},
-//		{' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '}
-//	};
-	
-//	char[][] boardIni = new char[][] {
-//	{' ', ' ', ' ', ' ', 'Y', ' ', ' ', ' '},
-//	{' ', 'X', 'X', 'X', 'X', 'X', 'X', ' '},
-//	{' ', 'A', 'A', 'A', 'X', 'X', 'X', ' '},
-//	{' ', 'X', 'X', 'X', 'X', 'X', 'X', ' '},
-//	{' ', 'X', 'X', 'C', 'B', 'B', 'B', ' '},
-//	{' ', 'X', 'X', 'C', 'R', 'X', 'X', ' '},
-//	{'K', 'D', 'D', 'D', 'R', 'X', 'X', 'J'},
-//	{' ', ' ', ' ', ' ', 'K', ' ', 'J', ' '}
-//};
-	
-//	char[][] boardIni = new char[][] {
-//	{' ', ' ', ' ', ' ', 'Y', ' ', ' ', ' '},
-//	{' ', 'X', 'X', 'X', 'X', 'X', 'X', ' '},
-//	{' ', 'X', 'X', 'X', 'X', 'X', 'X', ' '},
-//	{' ', 'A', 'A', 'A', 'X', 'B', 'B', ' '},
-//	{' ', 'X', 'X', 'X', 'X', 'X', 'X', ' '},
-//	{' ', 'X', 'X', 'X', 'R', 'X', 'X', ' '},
-//	{'K', 'X', 'X', 'X', 'R', 'X', 'X', 'J'},
-//	{' ', ' ', ' ', ' ', 'K', ' ', 'J', ' '}
-//};
-	
 	public LevelMenu(Panel parPanel) {
 		super(parPanel);
 		
-		add(new MenuItem(LevelMenu.this, "1-1") { public void action() { foo(APP.board11); } }, 0, 0);
+		add(new MenuItem(LevelMenu.this, "1-1") { public void action() { foo(APP.board1); } }, 0, 0);
 		
-		add(new MenuItem(LevelMenu.this, "1-2") { public void action() { foo(RushHourWorld.cw90(APP.board11)); } }, 1, 0);
+		add(new MenuItem(LevelMenu.this, "1-2") { public void action() { foo(RushHourWorld.cw90(APP.board2)); } }, 1, 0);
 		
-		add(new MenuItem(LevelMenu.this, "2-1") { public void action() { foo(RushHourWorld.cw90(RushHourWorld.cw90(APP.board11))); } }, 0, 1);
+		add(new MenuItem(LevelMenu.this, "2-1") { public void action() { foo(RushHourWorld.cw90(RushHourWorld.cw90(APP.board3))); } }, 0, 1);
 		
-		add(new MenuItem(LevelMenu.this, "2-2") { public void action() { foo(RushHourWorld.cw90(RushHourWorld.cw90(RushHourWorld.cw90(APP.board11)))); } }, 1, 1);
+		add(new MenuItem(LevelMenu.this, "2-2") { public void action() { foo(RushHourWorld.cw90(RushHourWorld.cw90(RushHourWorld.cw90(APP.board4)))); } }, 1, 1);
 	}
 	
 	public void foo(char[][] board) {

@@ -38,7 +38,7 @@ public class QuadrantEditorPanel extends PanelBase {
 	public QuadrantEditorPanel(final QuadrantEditor screen) {
 		this.screen = screen;
 		
-		aabb = new AABB(aabb.x, aabb.y, APP.QUADRANTEDITORPANEL_WIDTH, APP.QUADRANTEDITORPANEL_HEIGHT);
+		aabb = new AABB(aabb.x, aabb.y, APP.MAINWINDOW_WIDTH, APP.MAINWINDOW_HEIGHT);
 		
 		ini = new int[][] {
 				{1, 1, 1},

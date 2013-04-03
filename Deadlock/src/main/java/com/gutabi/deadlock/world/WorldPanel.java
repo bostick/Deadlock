@@ -23,7 +23,7 @@ public class WorldPanel extends PanelBase {
 		
 		stats = new Stats(this);
 		
-		aabb = new AABB(aabb.x, aabb.y, APP.WORLDPANEL_WIDTH, APP.WORLDPANEL_HEIGHT);
+		aabb = new AABB(aabb.x, aabb.y, APP.MAINWINDOW_WIDTH, APP.MAINWINDOW_HEIGHT);
 	}
 	
 	public void setLocation(double x, double y) {

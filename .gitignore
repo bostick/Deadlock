@@ -7,3 +7,4 @@ AreaX
 jbox2d-sources
 *.log
 build
+gen

@@ -67,7 +67,7 @@ public class PlatformImpl implements Platform {
 		
 		content.j.setLayout(null);
 		
-		content.j.setPreferredSize(new Dimension(APP.WINDOW_WIDTH, APP.WINDOW_HEIGHT));
+		content.j.setPreferredSize(new Dimension(APP.MAINWINDOW_WIDTH, APP.MAINWINDOW_HEIGHT));
 		
 		appContainer.setContentPane(content.j);
 		content.j.setFocusable(true);
@@ -255,7 +255,7 @@ public class PlatformImpl implements Platform {
 	
 	public Resource boardResource(String name) {
 		
-		String full = "/boards/" + name + ".txt";
+		String full = "/boards/gen-" + name + ".dat";
 		
 		return new ResourceImpl(full);
 	}
@@ -275,7 +275,8 @@ public class PlatformImpl implements Platform {
 		int cols = 0;
 		
 		StringBuilder builder = new StringBuilder();
-		String inputLine;
+		String inputLine = in.readLine();
+//		data;
 		while ((inputLine = in.readLine()) != null) {
 			builder.append(inputLine);
 			cols = inputLine.length();

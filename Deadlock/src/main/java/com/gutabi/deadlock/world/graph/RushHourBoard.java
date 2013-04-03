@@ -77,6 +77,7 @@ public class RushHourBoard extends Entity {
 				char c = ini[i][j];
 				switch (c) {
 				case 'X':
+				case ' ':
 				case 'A':
 				case 'B':
 				case 'C':
@@ -98,6 +99,7 @@ public class RushHourBoard extends Entity {
 			char c = ini[originRow+rowCount][originCol];
 			switch (c) {
 			case 'X':
+			case ' ':
 			case 'A':
 			case 'B':
 			case 'C':
@@ -119,6 +121,7 @@ public class RushHourBoard extends Entity {
 			char c = ini[originRow][originCol+colCount];
 			switch (c) {
 			case 'X':
+			case ' ':
 			case 'A':
 			case 'B':
 			case 'C':
@@ -170,6 +173,7 @@ public class RushHourBoard extends Entity {
 					break;
 					
 				case 'X':
+				case ' ':
 				case 'A':
 				case 'B':
 				case 'C':

@@ -22,8 +22,6 @@
 		<copy tofile="${buildDir}/bin/fonts/visitor1.ttf" file="${srcDir}/visitor1.ttf"/>
 		<copy tofile="${buildDir}/bin/fonts/visitor2.ttf" file="${srcDir}/visitor2.ttf"/>
 		
-		<copy tofile="${buildDir}/bin/boards/board1-1.txt" file="${srcDir}/board1-1.txt"/>
-		
 	</target>
 
 </project>

@@ -12,7 +12,6 @@ import javax.swing.UnsupportedLookAndFeelException;
 
 import org.apache.log4j.Logger;
 
-import com.gutabi.deadlock.menu.MainMenuScreen;
 import com.gutabi.deadlock.ui.WindowInfo;
 
 public class DeadlockMain  {
@@ -21,25 +20,8 @@ public class DeadlockMain  {
 	
 	static void createAndShowGUI() throws Exception {
 		
-		APP.WINDOW_WIDTH = 480;
-		APP.WINDOW_HEIGHT = 854;
-		
-		APP.MENUPANEL_WIDTH = APP.WINDOW_WIDTH;
-		APP.MENUPANEL_HEIGHT = APP.WINDOW_HEIGHT;
-		
-		APP.QUADRANTEDITORPANEL_WIDTH = APP.WINDOW_WIDTH;
-		APP.QUADRANTEDITORPANEL_HEIGHT = APP.WINDOW_HEIGHT;
-		
-		APP.CONTROLPANEL_WIDTH = 200;
-		APP.CONTROLPANEL_HEIGHT = 854;
-		
-		APP.WORLDPANEL_WIDTH = APP.WINDOW_WIDTH;
-		APP.WORLDPANEL_HEIGHT = APP.WINDOW_HEIGHT;
-		
-		
 		PlatformImpl platform = new PlatformImpl();
 		APP.platform = platform;
-		APP.init();
 		
 		JFrame newFrame;
 		newFrame = new JFrame("Deadlock Viewer");
@@ -50,36 +32,20 @@ public class DeadlockMain  {
 		    }
 		});
 		
-		newFrame.setLocation((int)WindowInfo.windowDim().width/2 - APP.WINDOW_WIDTH/2, 0);
+		newFrame.setLocation((int)WindowInfo.windowDim().width/2 - APP.MAINWINDOW_WIDTH/2, 0);
 		
 		platform.appContainer = newFrame;
-		
-		
 		
 		
 		newFrame = new JFrame("Debug Control Panel");
 		newFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		
-		newFrame.setLocation((int)WindowInfo.windowDim().width/2 + APP.WINDOW_WIDTH/2 + 100, 0);
+		newFrame.setLocation((int)WindowInfo.windowDim().width/2 + APP.MAINWINDOW_WIDTH/2 + 100, 0);
 		
 		platform.debuggerContainer = newFrame;
 		
 		
-		MainMenuScreen s = new MainMenuScreen();
-		APP.appScreen = s;
-		
-		APP.platform.setupAppScreen(s.contentPane.pcp);
-		
-		s.postDisplay();
-		s.contentPane.panel.render();
-		s.contentPane.repaint();
-		
-		APP.platform.showAppScreen();
-		
-	}
-	
-	public void setupFrame() {
-		
+		APP.init();
 		
 	}
 	

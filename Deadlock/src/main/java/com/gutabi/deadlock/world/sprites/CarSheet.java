@@ -128,6 +128,16 @@ public class CarSheet extends Sheet {
 			
 			public int carLength() { return 2; }
 			public int carWidth() { return 1; }
+		},
+		
+		CAR12 {
+			public int xStart() { return 0; }
+			public int yStart() { return 416; }
+			public int xEnd() { return 0+64; }
+			public int yEnd() { return 416+32; }
+			
+			public int carLength() { return 2; }
+			public int carWidth() { return 1; }
 		};
 		
 		public abstract int carLength();
@@ -165,6 +175,8 @@ public class CarSheet extends Sheet {
 			return CarSheetSprite.CAR10;
 		case 11:
 			return CarSheetSprite.CAR11;
+		case 12:
+			return CarSheetSprite.CAR12;
 		default:
 			return null;
 		}
@@ -187,6 +199,11 @@ public class CarSheet extends Sheet {
 				return 9;
 			case 5:
 				return 11;
+			case 6:
+				return 12;
+			default:
+				assert false;
+				return -1;
 			}
 		case THREE:
 			switch (curTypeCount) {
@@ -198,6 +215,9 @@ public class CarSheet extends Sheet {
 				return 8;
 			case 3:
 				return 10;
+			default:
+				assert false;
+				return -1;
 			}
 		case RED:
 			return 7;
