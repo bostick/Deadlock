@@ -1,3 +1,0 @@
-Exception in thread "main" java.lang.ArrayIndexOutOfBoundsException: 2
-	at solver.Generator.generate(Generator.java:49)
-	at solver.Generator.main(Generator.java:32)

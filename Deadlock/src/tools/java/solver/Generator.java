@@ -58,6 +58,8 @@ public class Generator {
 			board = Boards.board3;
 		} else if (boardNumber == 4) {
 			board = Boards.board4;
+		} else if (boardNumber == 5) {
+			board = Boards.board5;
 		}
 		
 		Board.par = new Parent(board);
