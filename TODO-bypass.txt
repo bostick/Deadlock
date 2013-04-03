@@ -1,7 +1,7 @@
 
-generalize menu painting
+when dragging, if within 25% of stud, just go to it
 
-put up WinningMenu
+
 
 
 quadrant editor moving hiliting
@@ -21,6 +21,11 @@ in board description, a missing - or | means to allow the car off of the board..
 
 
 DONE:
+
+generalize menu painting
+
+put up WinningMenu
+
 
 figure out best way for zoom to follow car
 so that dragging is not interrupted (kind of)

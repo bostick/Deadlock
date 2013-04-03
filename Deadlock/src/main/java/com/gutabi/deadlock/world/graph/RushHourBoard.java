@@ -380,6 +380,8 @@ public class RushHourBoard extends Entity {
 				} else {
 					// not connected to exit, order doesn't matter
 					jointTracksToPath(js1, js0, ks0, ks1);
+					
+					exitTrackToPath(yStud);
 				}
 			} else if (js0.across(ks1)) {
 				if (js1.across(yStud)) {
@@ -389,6 +391,8 @@ public class RushHourBoard extends Entity {
 				} else {
 					// not connected to exit, order doesn't matter
 					jointTracksToPath(js1, js0, ks1, ks0);
+					
+					exitTrackToPath(yStud);
 				}
 			} else if (js1.across(ks0)) {
 				if (js0.across(yStud)) {
@@ -398,6 +402,8 @@ public class RushHourBoard extends Entity {
 				} else {
 					// not connected to exit, order doesn't matter
 					jointTracksToPath(js0, js1, ks0, ks1);
+					
+					exitTrackToPath(yStud);
 				}
 			} else if (js1.across(ks1)) {
 				if (js0.across(yStud)) {
@@ -407,28 +413,38 @@ public class RushHourBoard extends Entity {
 				} else {
 					// not connected to exit, order doesn't matter
 					jointTracksToPath(js0, js1, ks1, ks0);
+					
+					exitTrackToPath(yStud);
 				}
 			} else {
 				
 				/*
 				 * not connected
 				 */
+				boolean yProcessed = false;
 				if (js0.across(yStud)) {
 					jointTracksToPath(js1, js0);
+					yProcessed = true;
 				} else if (js1.across(yStud)) {
 					jointTracksToPath(js0, js1);
+					yProcessed = true;
 				} else {
 					jointTracksToPath(js0, js1);
 				}
 				
 				if (ks0.across(yStud)) {
 					jointTracksToPath(ks1, ks0);
+					yProcessed = true;
 				} else if (ks1.across(yStud)) {
 					jointTracksToPath(ks0, ks1);
+					yProcessed = true;
 				} else {
 					jointTracksToPath(ks0, ks1);
 				}
 				
+				if (!yProcessed) {
+					exitTrackToPath(yStud);
+				}
 			}
 			
 		} else if (jStudCount != 0) {
@@ -442,6 +458,8 @@ public class RushHourBoard extends Entity {
 				jointTracksToPath(js0, js1);
 			} else {
 				jointTracksToPath(js0, js1);
+				
+				exitTrackToPath(yStud);
 			}
 			
 		} else if (kStudCount != 0) {
@@ -455,6 +473,8 @@ public class RushHourBoard extends Entity {
 				jointTracksToPath(ks0, ks1);
 			} else {
 				jointTracksToPath(ks0, ks1);
+				
+				exitTrackToPath(yStud);
 			}
 			
 		} else {
@@ -1202,9 +1222,14 @@ public class RushHourBoard extends Entity {
 			GraphPosition test = new RushHourBoardPosition(this, firstULRow + c.width/2, firstULCol);
 			GraphPositionPathPosition posTest = path.findGraphPositionPathPosition(test);
 			
-			GraphPositionPathPosition next = posTest.nextBound();
-			
-			Point dir = next.p.minus(test.p);
+			Point dir;
+			if (!posTest.isEndOfPath()) {
+				GraphPositionPathPosition next = posTest.nextBound();
+				dir = next.p.minus(test.p);
+			} else {
+				GraphPositionPathPosition prev = posTest.prevBound();
+				dir = test.p.minus(prev.p);
+			}
 			
 			if (dir.x == RushHourStud.SIZE) {
 				assert dir.y == 0.0;
@@ -1225,9 +1250,14 @@ public class RushHourBoard extends Entity {
 			GraphPosition test = new RushHourBoardPosition(this, firstULRow, firstULCol + c.width/2);
 			GraphPositionPathPosition posTest = path.findGraphPositionPathPosition(test);
 			
-			GraphPositionPathPosition next = posTest.nextBound();
-			
-			Point dir = next.p.minus(test.p);
+			Point dir;
+			if (!posTest.isEndOfPath()) {
+				GraphPositionPathPosition next = posTest.nextBound();
+				dir = next.p.minus(test.p);
+			} else {
+				GraphPositionPathPosition prev = posTest.prevBound();
+				dir = test.p.minus(prev.p);
+			}
 			
 			if (dir.y == RushHourStud.SIZE) {
 				assert dir.x == 0.0;

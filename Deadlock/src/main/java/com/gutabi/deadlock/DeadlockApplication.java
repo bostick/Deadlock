@@ -46,16 +46,10 @@ public class DeadlockApplication {
 	public Sheet spriteSheet;
 	public Sheet explosionSheet;
 	
-	
 	public Image titleBackground;
 	public Image title_white;
 	public Image copyright;
 	
-	
-	public char[][] board1;
-	public char[][] board2;
-	public char[][] board3;
-	public char[][] board4;
 	
 	public static DeadlockApplication APP = new DeadlockApplication();
 	
@@ -74,10 +68,10 @@ public class DeadlockApplication {
 		title_white = platform.readImage(platform.imageResource("title_white"));
 		copyright = platform.readImage(platform.imageResource("copyright"));
 		
-		board1 = APP.platform.readBoard(APP.platform.boardResource("7-0-5-212"));
-		board2 = APP.platform.readBoard(APP.platform.boardResource("4-3-1-888"));
-		board3 = APP.platform.readBoard(APP.platform.boardResource("3-3-5-242"));
-		board4 = APP.platform.readBoard(APP.platform.boardResource("2-3-3-88"));
+//		board1 = APP.platform.readBoard(APP.platform.boardResource("7-0-5-212"));
+//		board2 = APP.platform.readBoard(APP.platform.boardResource("4-3-1-888"));
+//		board3 = APP.platform.readBoard(APP.platform.boardResource("3-3-5-242"));
+//		board4 = APP.platform.readBoard(APP.platform.boardResource("2-3-3-88"));
 		
 		
 		MainMenuScreen s = new MainMenuScreen();

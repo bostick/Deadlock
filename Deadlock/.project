@@ -14,4 +14,11 @@
 	<natures>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>gen-src</name>
+			<type>2</type>
+			<location>C:/Users/brenton/DeadlockWorkspace/DeadlockResources/gen/src</location>
+		</link>
+	</linkedResources>
 </projectDescription>

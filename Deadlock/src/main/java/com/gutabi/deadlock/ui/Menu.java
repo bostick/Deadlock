@@ -21,6 +21,8 @@ public abstract class Menu {
 	public int totalMenuItemHeightCol0;
 	public double menuItemWidestCol1;
 	public int totalMenuItemHeightCol1;
+	public double menuItemWidestCol2;
+	public int totalMenuItemHeightCol2;
 	
 	public Panel parPanel;
 	
@@ -124,7 +126,26 @@ public abstract class Menu {
 		
 		double menuHeightCol1 = totalMenuItemHeightCol1 + 10 * (itemsCol1 - 1);
 		
-		aabb = new AABB(aabb.x, aabb.y, menuItemWidestCol0 + menuItemWidestCol1 + 10, Math.max(menuHeightCol0, menuHeightCol1));
+		
+		/*
+		 * col 2
+		 */
+		int itemsCol2 = 0;
+		for (MenuItem item : items) {
+			if (item.c != 2) {
+				continue;
+			}
+			if ((int)item.localAABB.width > menuItemWidestCol2) {
+				menuItemWidestCol2 = (int)item.localAABB.width;
+			}
+			totalMenuItemHeightCol2 += (int)item.localAABB.height;
+			itemsCol2++;
+		}
+		
+		double menuHeightCol2 = totalMenuItemHeightCol2 + 10 * (itemsCol2 - 1);
+		
+		
+		aabb = new AABB(aabb.x, aabb.y, menuItemWidestCol0 + 10 + menuItemWidestCol1 + 10 + menuItemWidestCol2, Math.max(Math.max(menuHeightCol0, menuHeightCol1), menuHeightCol2));
 		
 		Image tmpImg = APP.platform.createImage((int)aabb.width, (int)aabb.height);
 		
@@ -168,6 +189,34 @@ public abstract class Menu {
 			itemFound = false;
 			for (MenuItem item : items) {
 				if (item.c != 1) {
+					continue;
+				}
+				if (item.r != curRow) {
+					continue;
+				}
+				itemFound = true;
+				item.render(ctxt);
+				ctxt.translate(0, item.localAABB.height + 10);
+			}
+			if (!itemFound) {
+				break;
+			} else {
+				curRow++;
+			}
+		}
+		
+		ctxt.setTransform(origTransform);
+		ctxt.translate(menuItemWidestCol0 + 10, 0);
+		ctxt.translate(menuItemWidestCol1 + 10, 0);
+		
+		/*
+		 * col 2
+		 */
+		curRow = 0;
+		while (true) {
+			itemFound = false;
+			for (MenuItem item : items) {
+				if (item.c != 2) {
 					continue;
 				}
 				if (item.r != curRow) {

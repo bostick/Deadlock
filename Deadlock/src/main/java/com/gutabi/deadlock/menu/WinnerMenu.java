@@ -12,14 +12,14 @@ public class WinnerMenu extends Menu {
 	public WinnerMenu(Panel parPanel) {
 		super(parPanel);
 		
-		MenuItem nextMenuItem = new MenuItem(WinnerMenu.this,"Next") {
+		MenuItem nextMenuItem = new MenuItem(WinnerMenu.this,"Next", 36) {
 			public void action() {
 				
 			}
 		};
 		add(nextMenuItem, 0, 0);
 		
-		MenuItem backMenuItem = new MenuItem(WinnerMenu.this, "Back") {
+		MenuItem backMenuItem = new MenuItem(WinnerMenu.this, "Back", 36) {
 			public void action() {
 				
 				APP.platform.unshowDebuggerScreen();

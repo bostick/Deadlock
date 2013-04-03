@@ -31,12 +31,12 @@ public abstract class MenuItem {
 	public int r;
 	public int c;
 	
-	public MenuItem(Menu menu, String text) {
+	public MenuItem(Menu menu, String text, int fontSize) {
 		this.menu = menu;
 		lab = new Label(text);
 		lab.fontFile = APP.platform.fontResource("visitor1");
 		lab.fontStyle = FontStyle.PLAIN;
-		lab.fontSize = 36;
+		lab.fontSize = fontSize;
 		lab.renderLocal();
 		localAABB = lab.localAABB;
 	}
@@ -60,8 +60,12 @@ public abstract class MenuItem {
 		lab.setLocation(x, y);
 		if (c == 0) {
 			lab.setDimension(menu.menuItemWidestCol0, localAABB.height);
-		} else {
+		} else if (c == 1) {
 			lab.setDimension(menu.menuItemWidestCol1, localAABB.height);
+		} else if (c == 2) {
+			lab.setDimension(menu.menuItemWidestCol2, localAABB.height);
+		} else {
+			assert false;
 		}
 		
 		if (active) {
