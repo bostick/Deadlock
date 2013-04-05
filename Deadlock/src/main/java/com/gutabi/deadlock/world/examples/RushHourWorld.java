@@ -38,6 +38,10 @@ public class RushHourWorld extends World {
 			APP.setAppScreen(worldScreen);
 			
 			DebuggerScreen debuggerScreen = new DebuggerScreen(worldScreen);
+			RushHourControlPanel controlPanel = new RushHourControlPanel() {{
+				setLocation(0, 0);
+			}};
+			debuggerScreen.contentPane.pcp.getChildren().add(controlPanel);
 			APP.debuggerScreen = debuggerScreen;
 			
 			APP.tool = new InteractiveCarTool();

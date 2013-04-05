@@ -456,7 +456,7 @@ public class World extends PhysicsWorld {
 		
 	}
 	
-	public void paint_preview(RenderingContext ctxt) {
+	public void paintPreview_controlPanel(RenderingContext ctxt) {
 		
 		Transform origTrans = ctxt.getTransform();
 		

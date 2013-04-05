@@ -30,7 +30,6 @@ public class WorldPanel extends Panel {
 		world.background.height = (int)aabb.height;
 		
 		world.panelPostDisplay();
-		
 	}
 	
 	public void paint(RenderingContext ctxt) {
@@ -47,7 +46,6 @@ public class WorldPanel extends Panel {
 		APP.tool.paint_panel(ctxt);
 		
 		ctxt.setTransform(origTrans);
-		
 	}
 
 }

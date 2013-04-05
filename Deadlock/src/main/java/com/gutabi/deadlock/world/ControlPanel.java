@@ -481,7 +481,7 @@ public class ControlPanel extends Panel {
 		explosionsCheckBox.paint(ctxt);
 		debugCheckBox.paint(ctxt);
 		
-		world.paint_preview(ctxt);
+		world.paintPreview_controlPanel(ctxt);
 		
 		ctxt.setTransform(origTransform);
 	}

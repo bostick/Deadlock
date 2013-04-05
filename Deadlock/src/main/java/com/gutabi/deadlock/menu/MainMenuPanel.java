@@ -23,7 +23,6 @@ public class MainMenuPanel extends Panel {
 		Menu menu = (Menu)APP.model;
 		
 		menu.aabb = new AABB(aabb.width/2 - menu.aabb.width/2, aabb.height/2 - menu.aabb.height/2, menu.aabb.width, menu.aabb.height);
-		
 	}
 	
 	public void paint(RenderingContext ctxt) {

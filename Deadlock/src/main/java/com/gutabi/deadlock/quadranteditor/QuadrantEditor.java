@@ -8,6 +8,7 @@ import com.gutabi.deadlock.ui.Button;
 import com.gutabi.deadlock.ui.Transform;
 import com.gutabi.deadlock.ui.paint.Color;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
+import com.gutabi.deadlock.world.ControlPanel;
 import com.gutabi.deadlock.world.DebuggerScreen;
 import com.gutabi.deadlock.world.World;
 import com.gutabi.deadlock.world.WorldPanel;
@@ -334,6 +335,10 @@ public class QuadrantEditor {
 				
 				WorldScreen s = new WorldScreen();
 				DebuggerScreen debuggerScreen = new DebuggerScreen(s);
+				ControlPanel controlPanel = new ControlPanel() {{
+					setLocation(0, 0);
+				}};
+				debuggerScreen.contentPane.pcp.getChildren().add(controlPanel);
 				
 				World world = World.createWorld(ini);
 				APP.model = world;
@@ -382,9 +387,9 @@ public class QuadrantEditor {
 	Point lastMovedEditorPoint;
 	Point lastMovedOrDraggedEditorPoint;
 	
-	public void paint(RenderingContext ctxt) {
+	public void paint_panel(RenderingContext ctxt) {
 		
-		ctxt.translate(aabb.x, aabb.y);
+		ctxt.translate(aabb.ul);
 		
 		ctxt.setColor(Color.GRAY);
 		ctxt.fillRect(0, 0, (int)aabb.width, (int)aabb.height);
@@ -392,12 +397,12 @@ public class QuadrantEditor {
 		ctxt.setColor(Color.LIGHT_GRAY);
 		worldPanel.aabb.paint(ctxt);
 		
-//		Transform origTrans2 = ctxt.getTransform();
-//		ctxt.translate(worldPanel.aabb.center.minus(worldPanel.aabb.dim.multiply(0.5)));
+		Transform origTrans = ctxt.getTransform();
+		ctxt.translate(worldPanel.aabb.ul);
 		
 		world.paint_panel(ctxt);
 		
-//		ctxt.setTransform(origTrans2);
+		ctxt.setTransform(origTrans);
 		
 		removeRow.paint(ctxt);
 		addRow.paint(ctxt);

@@ -31,7 +31,7 @@ public class QuadrantEditorPanel extends Panel {
 		
 		ctxt.translate(aabb.x, aabb.y);
 		
-		editor.paint(ctxt);
+		editor.paint_panel(ctxt);
 		
 		ctxt.setTransform(origTrans);
 		

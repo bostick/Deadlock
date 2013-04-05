@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.gutabi.deadlock.math.Point;
+import com.gutabi.deadlock.world.ControlPanel;
 import com.gutabi.deadlock.world.DebuggerScreen;
 import com.gutabi.deadlock.world.QuadrantMap;
 import com.gutabi.deadlock.world.Stroke;
@@ -34,6 +35,10 @@ public class FourByFourGridWorld extends World {
 		APP.setAppScreen(worldScreen);
 		
 		DebuggerScreen debuggerScreen = new DebuggerScreen(worldScreen);
+		ControlPanel controlPanel = new ControlPanel() {{
+			setLocation(0, 0);
+		}};
+		debuggerScreen.contentPane.pcp.getChildren().add(controlPanel);
 		APP.debuggerScreen = debuggerScreen;
 		
 		APP.tool = new RegularTool();

@@ -2,6 +2,7 @@ package com.gutabi.deadlock.world.examples;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
+import com.gutabi.deadlock.world.ControlPanel;
 import com.gutabi.deadlock.world.DebuggerScreen;
 import com.gutabi.deadlock.world.QuadrantMap;
 import com.gutabi.deadlock.world.World;
@@ -23,6 +24,10 @@ public class OneByOneWorld extends World {
 		APP.setAppScreen(worldScreen);
 		
 		DebuggerScreen debuggerScreen = new DebuggerScreen(worldScreen);
+		ControlPanel controlPanel = new ControlPanel() {{
+			setLocation(0, 0);
+		}};
+		debuggerScreen.contentPane.pcp.getChildren().add(controlPanel);
 		APP.debuggerScreen = debuggerScreen;
 		
 		APP.tool = new RegularTool();
