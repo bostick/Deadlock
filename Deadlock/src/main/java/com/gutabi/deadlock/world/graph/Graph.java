@@ -24,7 +24,6 @@ import com.gutabi.deadlock.math.OverlappingException;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.Transform;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
-import com.gutabi.deadlock.world.ControlPanel;
 import com.gutabi.deadlock.world.World;
 
 public class Graph {
@@ -1101,7 +1100,7 @@ public class Graph {
 		return s.toString();
 	}
 	
-	public static Graph fromFileString(World world, ControlPanel cp, String s) {
+	public static Graph fromFileString(World world, String s) {
 		BufferedReader r = new BufferedReader(new StringReader(s));
 		
 		Vertex[] vs = null;

@@ -14,7 +14,6 @@ import com.gutabi.deadlock.geom.Shape;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.paint.Color;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
-import com.gutabi.deadlock.world.WorldScreen;
 import com.gutabi.deadlock.world.graph.Vertex;
 
 public class QuadToolShape implements Shape {
@@ -33,7 +32,7 @@ public class QuadToolShape implements Shape {
 	
 //	private final AABB aabb;
 	
-	public QuadToolShape(WorldScreen screen, Point start, Point c, Point end) {
+	public QuadToolShape(Point start, Point c, Point end) {
 		
 		this.start = start;
 		startCircle = APP.platform.createShapeEngine().createCircle(start, Vertex.INIT_VERTEX_RADIUS);

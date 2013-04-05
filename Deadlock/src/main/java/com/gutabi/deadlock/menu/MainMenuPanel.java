@@ -3,76 +3,31 @@ package com.gutabi.deadlock.menu;
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
 import com.gutabi.deadlock.geom.AABB;
-import com.gutabi.deadlock.math.Point;
-import com.gutabi.deadlock.ui.InputEvent;
 import com.gutabi.deadlock.ui.Menu;
-import com.gutabi.deadlock.ui.PanelBase;
+import com.gutabi.deadlock.ui.Panel;
 import com.gutabi.deadlock.ui.Transform;
 import com.gutabi.deadlock.ui.paint.Color;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 
-public class MainMenuPanel extends PanelBase {
+public class MainMenuPanel extends Panel {
 	
 	int TITLE_CENTER_Y = 165;
 	int COPYRIGHT_CENTER_Y = 800;
 	
-	MainMenuScreen screen;
-	
-	public Menu menu;
-	
-	public MainMenuPanel(final MainMenuScreen screen) {
-		this.screen = screen;
+	public MainMenuPanel() {
 		
 		aabb = new AABB(aabb.x, aabb.y, APP.MAINWINDOW_WIDTH, APP.MAINWINDOW_HEIGHT);
 	}
 	
-	public void setLocation(double x, double y) {
-		aabb = new AABB(x, y, aabb.width, aabb.height);
-	}
-	
 	public void postDisplay() {
+		Menu menu = (Menu)APP.model;
 		
-	}
-	
-	public Point lastMovedPanelPoint;
-	public Point lastMovedOrDraggedPanelPoint;
-	public Point lastMovedMenuPoint;
-	Point lastClickedPanelPoint;
-	
-	Point lastClickedMenuPoint;
-	
-	public void moved(InputEvent ev) {
-		
-		lastMovedPanelPoint = ev.p;
-		lastMovedOrDraggedPanelPoint = lastMovedPanelPoint;
-		
-		Point p = ev.p;
-		
-		lastMovedMenuPoint = Point.panelToMenu(p, menu);
-		
-		menu.moved(lastMovedMenuPoint);
-		
-		screen.contentPane.repaint();
-	}
-	
-	public void clicked(InputEvent ev) {
-		
-		lastClickedMenuPoint = Point.panelToMenu(ev.p, menu);
-		
-		menu.clicked(lastClickedMenuPoint);
-		
-	}
-	
-	public void render() {
-		
-		synchronized (APP) {
-			
-			menu.render();
-		}
+		menu.aabb = new AABB(aabb.width/2 - menu.aabb.width/2, aabb.height/2 - menu.aabb.height/2, menu.aabb.width, menu.aabb.height);
 		
 	}
 	
 	public void paint(RenderingContext ctxt) {
+		Menu menu = (Menu)APP.model;
 		
 		Transform origTrans = ctxt.getTransform();
 		
@@ -107,7 +62,7 @@ public class MainMenuPanel extends PanelBase {
 		
 		ctxt.setTransform(menuTrans);
 		
-		menu.paint_pixels(ctxt);
+		menu.paint_panel(ctxt);
 		
 		ctxt.setTransform(origTrans);
 		

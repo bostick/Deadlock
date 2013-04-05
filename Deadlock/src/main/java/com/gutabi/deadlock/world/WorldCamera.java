@@ -10,10 +10,13 @@ public class WorldCamera {
 	public AABB worldViewport;
 	public AABB origWorldViewport;
 	
+	public AABB previewAABB = new AABB(5, 400, 100, 100);
+	public double previewPixelsPerMeter;
+	
 	WorldPanel worldPanel;
 	
-	public WorldCamera(WorldPanel worldPanel) {
-		this.worldPanel = worldPanel;
+	public WorldCamera() {
+		
 	}
 	
 	public void zoomRelative(double factor) {

@@ -24,12 +24,13 @@ public abstract class Menu {
 	public double menuItemWidestCol2;
 	public int totalMenuItemHeightCol2;
 	
-	public Panel parPanel;
-	
 	public AABB aabb = new AABB(0, 0, 0, 0);
 	
-	public Menu(Panel parPanel) {
-		this.parPanel = parPanel;
+	public Point lastMovedMenuPoint;
+	public Point lastClickedMenuPoint;
+	
+	public Menu() {
+		
 	}
 	
 	public void add(MenuItem item, int r, int c) {
@@ -57,7 +58,7 @@ public abstract class Menu {
 		
 	}
 	
-	private MenuItem hitTest(Point p) {
+	public MenuItem hitTest(Point p) {
 		
 		for (MenuItem item : items) {
 			if (item.hitTest(p)) {
@@ -66,27 +67,6 @@ public abstract class Menu {
 		}
 		
 		return null;
-	}
-	
-	public void moved(Point mP) {
-		
-		MenuItem hit = hitTest(mP);
-		if (hit != null && hit.active) {
-			hilited = hit;
-		} else {
-			hilited = null;
-		}
-		
-	}
-	
-	public void clicked(Point mP) {
-		
-		MenuItem item = hitTest(mP);
-		
-		if (item != null && item.active) {
-			item.action();
-		}
-		
 	}
 	
 	public void render() {
@@ -237,7 +217,7 @@ public abstract class Menu {
 		
 	}
 	
-	public void paint_pixels(RenderingContext ctxt) {
+	public void paint_panel(RenderingContext ctxt) {
 		
 		Transform origTransform = ctxt.getTransform();
 		

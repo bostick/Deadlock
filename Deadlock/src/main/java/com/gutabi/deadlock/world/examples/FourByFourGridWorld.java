@@ -1,5 +1,7 @@
 package com.gutabi.deadlock.world.examples;
 
+import static com.gutabi.deadlock.DeadlockApplication.APP;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -15,14 +17,45 @@ import com.gutabi.deadlock.world.graph.FixtureType;
 import com.gutabi.deadlock.world.graph.Graph;
 import com.gutabi.deadlock.world.graph.Side;
 import com.gutabi.deadlock.world.graph.Vertex;
+import com.gutabi.deadlock.world.tools.RegularTool;
 
 public class FourByFourGridWorld extends World {
 	
-	private FourByFourGridWorld(WorldScreen screen, DebuggerScreen debuggerScreen) {
-		super(screen, debuggerScreen);
+	private FourByFourGridWorld() {
+		
 	}
 	
-	public static FourByFourGridWorld createFourByFourGridWorld(WorldScreen screen, DebuggerScreen debuggerScreen) {
+	public static void action() {
+		
+		World world = FourByFourGridWorld.createFourByFourGridWorld();
+		APP.model = world;
+		
+		WorldScreen worldScreen = new WorldScreen();
+		APP.setAppScreen(worldScreen);
+		
+		DebuggerScreen debuggerScreen = new DebuggerScreen(worldScreen);
+		APP.debuggerScreen = debuggerScreen;
+		
+		APP.tool = new RegularTool();
+		
+		APP.platform.setupAppScreen(worldScreen.contentPane.pcp);
+		
+		APP.platform.setupDebuggerScreen(debuggerScreen.contentPane.pcp);
+		
+		worldScreen.postDisplay();
+		
+		debuggerScreen.postDisplay();
+		
+		world.render_worldPanel();
+		world.render_preview();
+		worldScreen.contentPane.repaint();
+		
+		APP.platform.showAppScreen();
+		APP.platform.showDebuggerScreen();
+		
+	}
+	
+	public static FourByFourGridWorld createFourByFourGridWorld() {
 		
 		int[][] ini = new int[][] {
 				{1, 1, 1, 1},
@@ -31,11 +64,9 @@ public class FourByFourGridWorld extends World {
 				{1, 1, 1, 1}
 			};
 		
-		FourByFourGridWorld w = new FourByFourGridWorld(screen, debuggerScreen);
+		FourByFourGridWorld w = new FourByFourGridWorld();
 		
-		screen.contentPane.worldPanel.world = w;
-		
-		screen.contentPane.worldPanel.worldCamera.pixelsPerMeter = 12.5;
+		w.worldCamera.pixelsPerMeter = 12.5;
 		
 		QuadrantMap qm = new QuadrantMap(ini);
 		

@@ -3,176 +3,50 @@ package com.gutabi.deadlock.world;
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
 import com.gutabi.deadlock.geom.AABB;
-import com.gutabi.deadlock.math.Point;
-import com.gutabi.deadlock.ui.InputEvent;
-import com.gutabi.deadlock.ui.PanelBase;
+import com.gutabi.deadlock.ui.Panel;
 import com.gutabi.deadlock.ui.Transform;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 
-public class WorldPanel extends PanelBase {
-	
-	public World world;
-	
-	public WorldCamera worldCamera;
-	
-	public Stats stats;
+public class WorldPanel extends Panel {
 	
 	public WorldPanel() {
-		
-		worldCamera = new WorldCamera(this);
-		
-		stats = new Stats(this);
-		
 		aabb = new AABB(aabb.x, aabb.y, APP.MAINWINDOW_WIDTH, APP.MAINWINDOW_HEIGHT);
 	}
 	
-	public void setLocation(double x, double y) {
-		aabb = new AABB(x, y, aabb.width, aabb.height);
-	}
-	
 	public void postDisplay() {
+		World world = (World)APP.model;
 		
-		world.panelPostDisplay(worldCamera);
+		world.worldCamera.worldPanel = this;
 		
-		worldCamera.worldViewport = new AABB( 
-				-(aabb.width / worldCamera.pixelsPerMeter) / 2 + world.quadrantMap.worldWidth/2 ,
-				-(aabb.height / worldCamera.pixelsPerMeter) / 2 + world.quadrantMap.worldHeight/2,
-				aabb.width / worldCamera.pixelsPerMeter,
-				aabb.height / worldCamera.pixelsPerMeter);
+		world.worldCamera.worldViewport = new AABB(
+				-(aabb.width / world.worldCamera.pixelsPerMeter) / 2 + world.quadrantMap.worldWidth/2 ,
+				-(aabb.height / world.worldCamera.pixelsPerMeter) / 2 + world.quadrantMap.worldHeight/2,
+				aabb.width / world.worldCamera.pixelsPerMeter,
+				aabb.height / world.worldCamera.pixelsPerMeter);
 		
-		worldCamera.origWorldViewport = worldCamera.worldViewport;
-	}
-	
-	public Point lastMovedPanelPoint;
-	public Point lastMovedOrDraggedPanelPoint;
-	Point lastClickedPanelPoint;
-	
-	public void pressed(InputEvent ev) {
+		world.worldCamera.origWorldViewport = world.worldCamera.worldViewport;
 		
-		switch (world.mode) {
-		case PAUSED:
-		case RUNNING:
-		case EDITING:
-			Point p = Point.panelToWorld(ev.p, worldCamera);
-			
-			world.pressed(new InputEvent(p));
-			
-			APP.tool.pressed(new InputEvent(p));
-			
-			break;
-		}
+		world.background.width = (int)aabb.width;
+		world.background.height = (int)aabb.height;
 		
-	}
-	
-	public void dragged(InputEvent ev) {
+		world.panelPostDisplay();
 		
-		switch (world.mode) {
-		case RUNNING:
-		case PAUSED: {
-			lastMovedOrDraggedPanelPoint = ev.p;
-			
-			Point p = Point.panelToWorld(ev.p, worldCamera);
-			
-			world.dragged(new InputEvent(p));
-			APP.tool.dragged(new InputEvent(p));
-			break;
-		}
-		case EDITING: {
-			lastMovedOrDraggedPanelPoint = ev.p;
-			
-			Point p = Point.panelToWorld(ev.p, worldCamera);
-			
-			world.dragged(new InputEvent(p));
-			APP.tool.dragged(new InputEvent(p));
-			break;
-		}
-		}
-		
-	}
-	
-	public void released(InputEvent ev) {
-		
-		switch (world.mode) {
-		case RUNNING:
-		case PAUSED:
-			APP.tool.released(ev);
-		case EDITING:
-			APP.tool.released(ev);
-			break;
-		}
-		
-	}
-	
-	public void moved(InputEvent ev) {
-		
-		lastMovedPanelPoint = ev.p;
-		lastMovedOrDraggedPanelPoint = lastMovedPanelPoint;
-		
-		switch (world.mode) {
-		case RUNNING:
-		case PAUSED: {
-			Point p = Point.panelToWorld(ev.p, worldCamera);
-			
-			world.moved(new InputEvent(p));
-			APP.tool.moved(new InputEvent(p));
-			break;
-		}
-		case EDITING: {
-			Point p = Point.panelToWorld(ev.p, worldCamera);
-			
-			world.moved(new InputEvent(p));
-			APP.tool.moved(new InputEvent(p));
-			break;
-		}
-		}
-	}
-	
-	public void clicked(InputEvent ev) {
-		
-		switch (world.mode) {
-		case RUNNING:
-		case PAUSED: {
-			Point p = Point.panelToWorld(ev.p, worldCamera);
-			
-			world.clicked(new InputEvent(p));
-			APP.tool.clicked(new InputEvent(p));
-			break;
-		}
-		case EDITING: {
-			Point p = Point.panelToWorld(ev.p, worldCamera);
-			
-			world.clicked(new InputEvent(p));
-			APP.tool.clicked(new InputEvent(p));
-			break;
-		}
-		}
 	}
 	
 	public void paint(RenderingContext ctxt) {
+		World world = (World)APP.model;
 		
-		ctxt.cam = worldCamera;
+		ctxt.cam = world.worldCamera;
 		
 		Transform origTrans = ctxt.getTransform();
 		
-		world.paint_panel_pixels(ctxt);
-		
 		ctxt.translate(aabb.x, aabb.y);
 		
-		ctxt.scale(worldCamera.pixelsPerMeter);
-		ctxt.translate(-worldCamera.worldViewport.x, -worldCamera.worldViewport.y);
+		world.paint_panel(ctxt);
 		
-		world.paint_panel_worldCoords(ctxt);
-		
-		APP.tool.draw(ctxt);
-		
-		if (APP.FPS_DRAW) {
-			
-			stats.paint(ctxt);
-		}
+		APP.tool.paint_panel(ctxt);
 		
 		ctxt.setTransform(origTrans);
-		
-		APP.tool.draw_pixels(ctxt);
 		
 	}
 

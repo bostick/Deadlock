@@ -5,25 +5,48 @@ import java.util.List;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 
-public interface ContentPane extends MotionListener {
+public abstract class ContentPane implements MotionListener {
+	
+	public PlatformContentPane pcp;
+	
+	public List<Panel> getChildren() {
+		return pcp.getChildren();
+	}
+	
+	public void postDisplay() {
+		pcp.postDisplay();
+	}
+	
+	public void repaint() {
+		pcp.repaint();
+	}
+	
+	public Point getLastMovedContentPanePoint() {
+		return pcp.getLastMovedContentPanePoint();
+	}
+	
+	public void clicked(InputEvent ev) {
+		pcp.clicked(ev);
+	}
+	
+	public void paint(RenderingContext ctxt) {
+		pcp.paint(ctxt);
+	}
 
-	public List<Panel> getChildren();
+	public void pressed(InputEvent ev) {
+		pcp.pressed(ev);
+	}
+
+	public void released(InputEvent ev) {
+		pcp.released(ev);
+	}
+
+	public void moved(InputEvent ev) {
+		pcp.moved(ev);
+	}
+
+	public void dragged(InputEvent ev) {
+		pcp.dragged(ev);
+	}
 	
-	public Point getLastMovedContentPanePoint();
-	
-	public abstract void pressed(InputEvent ev);
-	
-	public abstract void released(InputEvent ev);
-	
-	public abstract void moved(InputEvent ev);
-	
-	public abstract void dragged(InputEvent ev);
-	
-	public abstract void clicked(InputEvent ev);
-	
-	public void postDisplay();
-	
-	public void repaint();
-	
-	public void paint(RenderingContext ctxt);
 }

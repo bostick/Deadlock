@@ -11,7 +11,6 @@ import com.gutabi.deadlock.ui.paint.Cap;
 import com.gutabi.deadlock.ui.paint.Color;
 import com.gutabi.deadlock.ui.paint.Join;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
-import com.gutabi.deadlock.world.ControlPanel;
 import com.gutabi.deadlock.world.World;
 
 public class Merger extends Edge {
@@ -62,7 +61,7 @@ public class Merger extends Edge {
 		debugSkeletonLeftRightLine = new Line(left.shape.center, right.shape.center);
 	}
 	
-	public static Merger createMergerAndFixtures(World world, ControlPanel cp, Point center) {
+	public static Merger createMergerAndFixtures(World world, Point center) {
 		
 		Point ul = center.plus(new Point(-MERGER_WIDTH/2,  -MERGER_HEIGHT/2));
 		

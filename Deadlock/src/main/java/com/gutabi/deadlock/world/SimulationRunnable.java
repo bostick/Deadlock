@@ -4,17 +4,13 @@ import static com.gutabi.deadlock.DeadlockApplication.APP;
 
 public class SimulationRunnable implements Runnable {
 	
-	final WorldScreen worldScreen;
-	final World world;
-	
 	public SimulationRunnable() {
-		
-		worldScreen = (WorldScreen)APP.appScreen;
-		world = worldScreen.contentPane.worldPanel.world;
 		
 	}
 	
 	public void run() {
+		
+		World world = (World)APP.model;
 		
 		double t = 0;
 		double accumulator = 0;
@@ -71,7 +67,7 @@ public class SimulationRunnable implements Runnable {
 						t += world.DT;
 					}
 					
-					worldScreen.contentPane.repaint();
+					APP.appScreen.contentPane.repaint();
 					
 				} // outer
 			
@@ -81,7 +77,7 @@ public class SimulationRunnable implements Runnable {
 		
 		world.postStop();
 		
-		worldScreen.contentPane.repaint();
+		APP.appScreen.contentPane.repaint();
 		
 	}
 	

@@ -8,6 +8,8 @@ public class WorldBackground {
 	World world;
 	
 //	private Image img;
+	int width;
+	int height;
 	
 	public WorldBackground(World world) {
 		this.world = world;
@@ -39,7 +41,7 @@ public class WorldBackground {
 	
 	public void paint_pixels(RenderingContext ctxt) {
 		ctxt.setColor(Color.LIGHT_GRAY);
-		ctxt.fillRect(0, 0, (int)world.worldScreen.contentPane.worldPanel.aabb.width, (int)world.worldScreen.contentPane.worldPanel.aabb.height);
+		ctxt.fillRect(0, 0, width, height);
 	}
 	
 	public void paint_worldCoords(RenderingContext ctxt) {

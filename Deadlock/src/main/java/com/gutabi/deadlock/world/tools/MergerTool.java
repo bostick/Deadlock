@@ -7,20 +7,20 @@ import java.util.Set;
 import com.gutabi.deadlock.geom.Shape;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.InputEvent;
+import com.gutabi.deadlock.ui.Transform;
 import com.gutabi.deadlock.ui.paint.Cap;
 import com.gutabi.deadlock.ui.paint.Color;
 import com.gutabi.deadlock.ui.paint.Join;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
-import com.gutabi.deadlock.world.DebuggerScreen;
-import com.gutabi.deadlock.world.WorldScreen;
+import com.gutabi.deadlock.world.World;
 import com.gutabi.deadlock.world.graph.Vertex;
 
-public class MergerTool extends ToolBase {
+public class MergerTool extends WorldToolBase {
 	
 	MergerToolShape shape;
 	
-	public MergerTool(WorldScreen worldScreen, DebuggerScreen debuggerScreen) {
-		super(worldScreen, debuggerScreen);
+	public MergerTool() {
+		
 	}
 	
 	public void setPoint(Point p) {
@@ -38,41 +38,49 @@ public class MergerTool extends ToolBase {
 	}
 	
 	public void escKey() {
+		World world = (World)APP.model;
 		
-		APP.tool = new RegularTool(worldScreen, debuggerScreen);
+		APP.tool = new RegularTool();
 		
-		APP.tool.setPoint(worldScreen.contentPane.worldPanel.world.quadrantMap.getPoint(worldScreen.contentPane.worldPanel.world.lastMovedOrDraggedWorldPoint));
+		APP.tool.setPoint(world.quadrantMap.getPoint(world.lastMovedOrDraggedWorldPoint));
 		
-		worldScreen.contentPane.repaint();
+		APP.appScreen.contentPane.repaint();
 	}
 	
 	public void insertKey() {
-		if (worldScreen.contentPane.worldPanel.world.quadrantMap.contains(shape)) {
+		World world = (World)APP.model;
+		
+		if (world.quadrantMap.contains(shape)) {
 			
-			if (worldScreen.contentPane.worldPanel.world.graph.pureGraphIntersect(shape) == null) {
+			if (world.graph.pureGraphIntersect(shape) == null) {
 				
-				Set<Vertex> affected = worldScreen.contentPane.worldPanel.world.createMerger(p);
-				worldScreen.contentPane.worldPanel.world.graph.computeVertexRadii(affected);
+				Set<Vertex> affected = world.createMerger(p);
+				world.graph.computeVertexRadii(affected);
 				
-				APP.tool = new RegularTool(worldScreen, debuggerScreen);
+				APP.tool = new RegularTool();
 				
-				APP.tool.setPoint(worldScreen.contentPane.worldPanel.world.lastMovedWorldPoint);
+				APP.tool.setPoint(world.lastMovedWorldPoint);
 				
-				worldScreen.contentPane.worldPanel.world.render_worldPanel();
-				worldScreen.contentPane.worldPanel.world.render_preview();
-				worldScreen.contentPane.repaint();
+				world.render_worldPanel();
+				world.render_preview();
+				APP.appScreen.contentPane.repaint();
 			}
 			
 		}
 	}
 	
-	public void moved(InputEvent ev) {
-		APP.tool.setPoint(worldScreen.contentPane.worldPanel.world.quadrantMap.getPoint(worldScreen.contentPane.worldPanel.world.lastMovedOrDraggedWorldPoint));
-		worldScreen.contentPane.repaint();
+	public void moved(InputEvent ignore) {
+		super.moved(ignore);
+		
+		World world = (World)APP.model;
+		
+		APP.tool.setPoint(world.quadrantMap.getPoint(world.lastMovedOrDraggedWorldPoint));
+		APP.appScreen.contentPane.repaint();
 	}
 	
-	public void draw(RenderingContext ctxt) {
-	
+	public void paint_panel(RenderingContext ctxt) {
+		World world = (World)APP.model;
+		
 		if (p == null) {
 			return;
 		}
@@ -81,7 +89,14 @@ public class MergerTool extends ToolBase {
 		ctxt.setXORMode(Color.BLACK);
 		ctxt.setStroke(0.0, Cap.SQUARE, Join.MITER);
 		
+		Transform origTransform = ctxt.getTransform();
+		
+		ctxt.scale(world.worldCamera.pixelsPerMeter);
+		ctxt.translate(-world.worldCamera.worldViewport.x, -world.worldCamera.worldViewport.y);
+		
 		shape.draw(ctxt);
+		
+		ctxt.setTransform(origTransform);
 		
 		ctxt.setPaintMode();
 	}

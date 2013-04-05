@@ -6,11 +6,8 @@ import org.jbox2d.common.Vec2;
 import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
-import com.gutabi.deadlock.world.WorldScreen;
 
 public abstract class PhysicsWorld {
-	
-	public WorldScreen worldScreen;
 	
 	/**
 	 * move physics forward by dt seconds
@@ -23,8 +20,7 @@ public abstract class PhysicsWorld {
 	
 	public org.jbox2d.dynamics.World b2dWorld;
 	
-	public PhysicsWorld(WorldScreen worldScreen) {
-		this.worldScreen = worldScreen;
+	public PhysicsWorld() {
 		
 		b2dWorld = new org.jbox2d.dynamics.World(new Vec2(0.0f, 0.0f), true);
 		

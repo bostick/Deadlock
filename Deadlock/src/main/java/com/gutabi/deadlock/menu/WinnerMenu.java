@@ -2,18 +2,21 @@ package com.gutabi.deadlock.menu;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
-import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.ui.Menu;
 import com.gutabi.deadlock.ui.MenuItem;
-import com.gutabi.deadlock.ui.Panel;
+import com.gutabi.deadlock.world.examples.RushHourWorld;
 
 public class WinnerMenu extends Menu {
 	
-	public WinnerMenu(Panel parPanel) {
-		super(parPanel);
+	public WinnerMenu() {
 		
-		MenuItem nextMenuItem = new MenuItem(WinnerMenu.this,"Next", 36) {
+		MenuItem nextMenuItem = new MenuItem(WinnerMenu.this, "Next", 36) {
 			public void action() {
+				RushHourWorld world = (RushHourWorld)APP.model;
+				
+				int index = world.index;
+				
+				RushHourWorld.action(index+1);
 				
 			}
 		};
@@ -24,25 +27,21 @@ public class WinnerMenu extends Menu {
 				
 				APP.platform.unshowDebuggerScreen();
 				
+				MainMenu mainMenu = new MainMenu();
+				APP.model = mainMenu;
+				
 				MainMenuScreen s = new MainMenuScreen();
 				APP.setAppScreen(s);
 				
 				APP.platform.setupAppScreen(s.contentPane.pcp);
 				
 				s.postDisplay();
-				s.contentPane.panel.render();
+				
+				mainMenu.render();
 				s.contentPane.repaint();
 			}
 		};
 		add(backMenuItem, 1, 0);
-		
-	}
-	
-	public void render() {
-		
-		super.render();
-		
-		aabb = new AABB(parPanel.aabb.width/2 - aabb.width/2, parPanel.aabb.height/2 - aabb.height/2, aabb.width, aabb.height);
 		
 	}
 	

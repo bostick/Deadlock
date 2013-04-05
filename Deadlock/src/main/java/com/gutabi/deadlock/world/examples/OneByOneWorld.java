@@ -1,23 +1,57 @@
 package com.gutabi.deadlock.world.examples;
 
+import static com.gutabi.deadlock.DeadlockApplication.APP;
+
 import com.gutabi.deadlock.world.DebuggerScreen;
 import com.gutabi.deadlock.world.QuadrantMap;
 import com.gutabi.deadlock.world.World;
 import com.gutabi.deadlock.world.WorldScreen;
+import com.gutabi.deadlock.world.tools.RegularTool;
 
 public class OneByOneWorld extends World {
 
-	private OneByOneWorld(WorldScreen screen, DebuggerScreen debuggerScreen) {
-		super(screen, debuggerScreen);
+	private OneByOneWorld() {
+		
 	}
 	
-	public static OneByOneWorld createOneByOneWorld(WorldScreen screen, DebuggerScreen debuggerScreen) {
+	public static void action() {
+		
+		World world = OneByOneWorld.createOneByOneWorld();
+		APP.model = world;
+		
+		WorldScreen worldScreen = new WorldScreen();
+		APP.setAppScreen(worldScreen);
+		
+		DebuggerScreen debuggerScreen = new DebuggerScreen(worldScreen);
+		APP.debuggerScreen = debuggerScreen;
+		
+		APP.tool = new RegularTool();
+		
+		APP.platform.setupAppScreen(worldScreen.contentPane.pcp);
+		
+		APP.platform.setupDebuggerScreen(debuggerScreen.contentPane.pcp);
+		
+		worldScreen.postDisplay();
+		
+		debuggerScreen.postDisplay();
+		
+		world.render_worldPanel();
+		world.render_preview();
+		worldScreen.contentPane.repaint();
+		debuggerScreen.contentPane.repaint();
+		
+		APP.platform.showAppScreen();
+		APP.platform.showDebuggerScreen();
+		
+	}
+	
+	public static OneByOneWorld createOneByOneWorld() {
 		
 		int[][] ini = new int[][] {
 				{1}
 			};
 		
-		OneByOneWorld w = new OneByOneWorld(screen, debuggerScreen);
+		OneByOneWorld w = new OneByOneWorld();
 		
 		QuadrantMap qm = new QuadrantMap(ini);
 		

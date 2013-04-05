@@ -7,15 +7,16 @@ import com.gutabi.deadlock.geom.OBB;
 import com.gutabi.deadlock.geom.Shape;
 import com.gutabi.deadlock.math.DMath;
 import com.gutabi.deadlock.math.Point;
-import com.gutabi.deadlock.menu.MainMenuScreen;
+import com.gutabi.deadlock.menu.MainMenu;
+import com.gutabi.deadlock.menu.MenuTool;
 import com.gutabi.deadlock.menu.WinnerMenu;
 import com.gutabi.deadlock.ui.InputEvent;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
-import com.gutabi.deadlock.world.DebuggerScreen;
-import com.gutabi.deadlock.world.WorldScreen;
+import com.gutabi.deadlock.world.World;
 import com.gutabi.deadlock.world.cars.Car;
 import com.gutabi.deadlock.world.cars.CarStateEnum;
 import com.gutabi.deadlock.world.cars.InteractiveCar;
+import com.gutabi.deadlock.world.examples.RushHourWorld;
 import com.gutabi.deadlock.world.graph.Fixture;
 import com.gutabi.deadlock.world.graph.GraphPosition;
 import com.gutabi.deadlock.world.graph.GraphPositionPathPosition;
@@ -25,15 +26,12 @@ import com.gutabi.deadlock.world.graph.RushHourBoardPosition;
 import com.gutabi.deadlock.world.graph.RushHourStud;
 import com.gutabi.deadlock.world.graph.VertexPosition;
 
-public class InteractiveCarTool extends ToolBase {
+public class InteractiveCarTool extends WorldToolBase {
 	
 	public InteractiveCar car;
 	
-	boolean isWon;
-	WinnerMenu winnerMenu;
-	
-	public InteractiveCarTool(WorldScreen worldScreen, DebuggerScreen debuggerScreen) {
-		super(worldScreen, debuggerScreen);
+	public InteractiveCarTool() {
+		
 	}
 	
 	public void setPoint(Point p) {
@@ -48,19 +46,15 @@ public class InteractiveCarTool extends ToolBase {
 		
 		APP.platform.unshowDebuggerScreen();
 		
-		MainMenuScreen s = new MainMenuScreen();
-		APP.setAppScreen(s);
-		
-		APP.platform.setupAppScreen(s.contentPane.pcp);
-		
-		s.postDisplay();
-		s.contentPane.panel.render();
-		s.contentPane.repaint();
+		MainMenu.action();
 	}
 	
-	public void pressed(InputEvent ev) {
+	public void pressed(InputEvent ignore) {
+		super.pressed(ignore);
 		
-		InteractiveCar pressed = (InteractiveCar)worldScreen.contentPane.worldPanel.world.carMap.carHitTest(ev.p);
+		World world = (World)APP.model;
+		
+		InteractiveCar pressed = (InteractiveCar)world.carMap.carHitTest(world.lastPressedWorldPoint);
 		if (pressed == null) {
 			return;
 		}
@@ -106,13 +100,17 @@ public class InteractiveCarTool extends ToolBase {
 		
 	}
 	
-	public void released(InputEvent ev) {
+	public void released(InputEvent ignore) {
+		super.released(ignore);
+		
+		RushHourWorld world = (RushHourWorld)APP.model;
+		
 		try {
 			
 			if (car == null) {
 				return;
 			}
-			if (!car.toolOrigShape.hitTest(worldScreen.contentPane.worldPanel.world.lastPressedWorldPoint)) {
+			if (!car.toolOrigShape.hitTest(world.lastPressedWorldPoint)) {
 				return;
 			}
 			if (dragVector == null) {
@@ -122,7 +120,7 @@ public class InteractiveCarTool extends ToolBase {
 			switch (car.state) {
 			case DRAGGING:
 				
-				if (isWon) {
+				if (world.isWon) {
 						
 						car.driver.toolCoastingGoal = car.driver.overallPath.endPos;
 						car.setCoastingVelFromDrag(dragVector, dragTimeStepMillis, true);
@@ -305,11 +303,14 @@ public class InteractiveCarTool extends ToolBase {
 	/**
 	 * setting dynamic properties is done here
 	 */
-	public void dragged(InputEvent ev) {
+	public void dragged(InputEvent ignore) {
+		super.dragged(ignore);
+		
+		RushHourWorld world = (RushHourWorld)APP.model;
 		
 		prevDragP = curDragP;
 		prevDragMillis = curDragMillis;
-		curDragP = ev.p;
+		curDragP = world.lastDraggedWorldPoint;
 		curDragMillis = System.currentTimeMillis();
 		if (prevDragP != null) {
 			dragVector = curDragP.minus(prevDragP);
@@ -319,11 +320,11 @@ public class InteractiveCarTool extends ToolBase {
 		if (car == null) {
 			return;
 		}
-		if (!car.toolOrigShape.hitTest(worldScreen.contentPane.worldPanel.world.lastPressedWorldPoint)) {
+		if (!car.toolOrigShape.hitTest(world.lastPressedWorldPoint)) {
 			return;
 		}
 		
-		Point diff = ev.p.minus(worldScreen.contentPane.worldPanel.world.lastPressedWorldPoint);
+		Point diff = world.lastDraggedWorldPoint.minus(world.lastPressedWorldPoint);
 		
 		Point carPTmp = car.toolOrigP.plus(diff);
 		
@@ -370,7 +371,7 @@ public class InteractiveCarTool extends ToolBase {
 					}
 					GraphPositionPathPosition vertexPos = new GraphPositionPathPosition(car.driver.overallPath, nextVertexIndex, 0.0);
 					
-					if (vertexPos.gp.entity == b.exitVertex && !isWon) {
+					if (vertexPos.gp.entity == b.exitVertex && !world.isWon) {
 						
 						winner();
 						
@@ -395,7 +396,7 @@ public class InteractiveCarTool extends ToolBase {
 					RushHourBoardPosition rpos = (RushHourBoardPosition)car.driver.prevOverallPos.gp;
 					RushHourBoard b = (RushHourBoard)rpos.entity;
 					
-					if (car.driver.overallPos.gp.entity == b.exitVertex && !isWon) {
+					if (car.driver.overallPos.gp.entity == b.exitVertex && !world.isWon) {
 						
 						winner();
 						
@@ -455,7 +456,7 @@ public class InteractiveCarTool extends ToolBase {
 						}
 						GraphPositionPathPosition vertexPos = new GraphPositionPathPosition(car.driver.overallPath, nextVertexIndex, 0.0);
 						
-						if (vertexPos.gp.entity == b.exitVertex && !isWon) {
+						if (vertexPos.gp.entity == b.exitVertex && !world.isWon) {
 							
 							winner();
 							
@@ -471,7 +472,7 @@ public class InteractiveCarTool extends ToolBase {
 			
 			handleZooming();
 			
-			worldScreen.contentPane.repaint();
+			APP.appScreen.contentPane.repaint();
 			
 			break;
 		default:
@@ -481,35 +482,35 @@ public class InteractiveCarTool extends ToolBase {
 		
 	}
 	
-	public void moved(InputEvent ev) {
-		
-		if (winnerMenu != null) {
-			
-			Point p = ev.p;
-			
-			p = Point.worldToPanel(p, worldScreen.contentPane.worldPanel.worldCamera);
-			p = Point.panelToMenu(p, winnerMenu);
-			
-			winnerMenu.moved(p);
-			
-		}
-		
-	}
-	
-	public void clicked(InputEvent ev) {
-		
-		if (winnerMenu != null) {
-			
-			Point p = ev.p;
-			
-			p = Point.worldToPanel(p, worldScreen.contentPane.worldPanel.worldCamera);
-			p = Point.panelToMenu(p, winnerMenu);
-			
-			winnerMenu.clicked(p);
-			
-		}
-		
-	}
+//	public void moved(InputEvent ev) {
+//		
+//		if (winnerMenu != null) {
+//			
+//			Point p = ev.p;
+//			
+//			p = Point.worldToPanel(p, worldCamera);
+//			p = Point.panelToMenu(p, winnerMenu);
+//			
+//			winnerMenu.moved(p);
+//			
+//		}
+//		
+//	}
+//	
+//	public void clicked(InputEvent ev) {
+//		
+//		if (winnerMenu != null) {
+//			
+//			Point p = ev.p;
+//			
+//			p = Point.worldToPanel(p, worldCamera);
+//			p = Point.panelToMenu(p, winnerMenu);
+//			
+//			winnerMenu.clicked(p);
+//			
+//		}
+//		
+//	}
 	
 	boolean floorAndCeilWithinGrid(RushHourBoardPosition bpos) {
 		
@@ -532,6 +533,7 @@ public class InteractiveCarTool extends ToolBase {
 	}
 	
 	public void handleZooming() {
+		World world = (World)APP.model;
 		
 		GraphPosition gpos = car.driver.overallPos.gp;
 		
@@ -552,7 +554,7 @@ public class InteractiveCarTool extends ToolBase {
 				para = DMath.lerp(a, b, (alpha * (vals.length-1) - Math.floor(alpha * (vals.length-1))));
 			}
 			
-			worldScreen.contentPane.worldPanel.worldCamera.zoomAbsolute(para);
+			world.worldCamera.zoomAbsolute(para);
 			
 //			worldScreen.world.render_worldPanel();
 			
@@ -562,7 +564,7 @@ public class InteractiveCarTool extends ToolBase {
 			
 			if (prevGPos instanceof RoadPosition) {
 				
-				worldScreen.contentPane.worldPanel.worldCamera.zoomAbsolute(1.0);
+				world.worldCamera.zoomAbsolute(1.0);
 				
 //				worldScreen.world.render_worldPanel();
 			}
@@ -574,7 +576,7 @@ public class InteractiveCarTool extends ToolBase {
 			
 			if (prevGPos instanceof RoadPosition) {
 				
-				worldScreen.contentPane.worldPanel.worldCamera.zoomAbsolute(1.0);
+				world.worldCamera.zoomAbsolute(1.0);
 				
 //				worldScreen.world.render_worldPanel();
 			}
@@ -583,21 +585,18 @@ public class InteractiveCarTool extends ToolBase {
 	}
 	
 	void winner() {
+		RushHourWorld world = (RushHourWorld)APP.model;
 		
-		isWon = true;
+		world.isWon = true;
 		
-		winnerMenu = new WinnerMenu(worldScreen.contentPane.worldPanel);
+		world.winnerMenu = new WinnerMenu();
 		
-		winnerMenu.render();	
+		world.winnerMenu.render();
 		
+		APP.tool = new MenuTool();
 	}
-
 	
-	public void draw_pixels(RenderingContext ctxt) {
-		
-		if (winnerMenu != null) {
-			winnerMenu.paint_pixels(ctxt);
-		}
+	public void paint_panel(RenderingContext ctxt) {
 		
 	}
 	

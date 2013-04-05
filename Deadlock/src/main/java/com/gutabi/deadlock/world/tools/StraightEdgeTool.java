@@ -7,16 +7,16 @@ import java.util.Set;
 import com.gutabi.deadlock.geom.Shape;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.InputEvent;
+import com.gutabi.deadlock.ui.Transform;
 import com.gutabi.deadlock.ui.paint.Cap;
 import com.gutabi.deadlock.ui.paint.Color;
 import com.gutabi.deadlock.ui.paint.Join;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
-import com.gutabi.deadlock.world.DebuggerScreen;
 import com.gutabi.deadlock.world.Stroke;
-import com.gutabi.deadlock.world.WorldScreen;
+import com.gutabi.deadlock.world.World;
 import com.gutabi.deadlock.world.graph.Vertex;
 
-public class StraightEdgeTool extends ToolBase {
+public class StraightEdgeTool extends WorldToolBase {
 	
 	enum StraightEdgeToolMode {
 		FREE,
@@ -35,21 +35,24 @@ public class StraightEdgeTool extends ToolBase {
 	
 	Knob knob;
 	
-	public StraightEdgeTool(WorldScreen worldScreen, DebuggerScreen debuggerScreen) {
-		super(worldScreen, debuggerScreen);
+	public StraightEdgeTool() {
 		
 		mode = StraightEdgeToolMode.FREE;
 		
 		startKnob = new Knob() {
 			public void drag(Point p) {
-				Point newPoint = StraightEdgeTool.this.worldScreen.contentPane.worldPanel.world.quadrantMap.getPoint(p);
+				World world = (World)APP.model;
+				
+				Point newPoint = world.quadrantMap.getPoint(p);
 				StraightEdgeTool.this.setStart(newPoint);
 			}
 		};
 		
 		endKnob = new Knob() {
 			public void drag(Point p) {
-				Point newPoint = StraightEdgeTool.this.worldScreen.contentPane.worldPanel.world.quadrantMap.getPoint(p);
+				World world = (World)APP.model;
+				
+				Point newPoint = world.quadrantMap.getPoint(p);
 				StraightEdgeTool.this.setEnd(newPoint);
 			}
 		};
@@ -59,8 +62,10 @@ public class StraightEdgeTool extends ToolBase {
 	public void setPoint(Point p) {
 		this.p = p;
 		
+		World world = (World)APP.model;
+		
 		if (p != null) {
-			shape = new StraightEdgeToolShape(worldScreen.contentPane.worldPanel.world, start, p);
+			shape = new StraightEdgeToolShape(world, start, p);
 			startKnob.setPoint(start);
 			endKnob.setPoint(p);
 		} else {
@@ -71,8 +76,11 @@ public class StraightEdgeTool extends ToolBase {
 	
 	public void setStart(Point start) {
 		this.start = start;
+		
+		World world = (World)APP.model;
+		
 		if (start != null && p != null) {
-			shape = new StraightEdgeToolShape(worldScreen.contentPane.worldPanel.world, start, p);
+			shape = new StraightEdgeToolShape(world, start, p);
 			startKnob.setPoint(start);
 			endKnob.setPoint(p);
 		}
@@ -80,8 +88,11 @@ public class StraightEdgeTool extends ToolBase {
 	
 	public void setEnd(Point p) {
 		this.p = p;
+		
+		World world = (World)APP.model;
+		
 		if (start != null && p != null) {
-			shape = new StraightEdgeToolShape(worldScreen.contentPane.worldPanel.world, start, p);
+			shape = new StraightEdgeToolShape(world, start, p);
 			startKnob.setPoint(start);
 			endKnob.setPoint(p);
 		}
@@ -92,16 +103,18 @@ public class StraightEdgeTool extends ToolBase {
 	}
 	
 	public void escKey() {
+		World world = (World)APP.model;
+		
 		switch (mode) {
 		case FREE:
-			APP.tool = new RegularTool(worldScreen, debuggerScreen);
-			APP.tool.setPoint(worldScreen.contentPane.worldPanel.world.quadrantMap.getPoint(worldScreen.contentPane.worldPanel.world.lastMovedOrDraggedWorldPoint));
-			worldScreen.contentPane.repaint();
+			APP.tool = new RegularTool();
+			APP.tool.setPoint(world.quadrantMap.getPoint(world.lastMovedOrDraggedWorldPoint));
+			APP.appScreen.contentPane.repaint();
 			break;
 		case SET:
 			mode = StraightEdgeToolMode.FREE;
-			APP.tool.setPoint(worldScreen.contentPane.worldPanel.world.quadrantMap.getPoint(worldScreen.contentPane.worldPanel.world.lastMovedOrDraggedWorldPoint));
-			worldScreen.contentPane.repaint();
+			APP.tool.setPoint(world.quadrantMap.getPoint(world.lastMovedOrDraggedWorldPoint));
+			APP.appScreen.contentPane.repaint();
 			break;
 		case KNOB:
 			assert false;
@@ -110,28 +123,30 @@ public class StraightEdgeTool extends ToolBase {
 	}
 	
 	public void qKey() {
+		World world = (World)APP.model;
+		
 		switch (mode) {
 		case FREE:
 			mode = StraightEdgeToolMode.SET;
-			worldScreen.contentPane.repaint();
+			APP.appScreen.contentPane.repaint();
 			break;
 		case SET:
 			
-			Stroke s = new Stroke(worldScreen.contentPane.worldPanel.world);
+			Stroke s = new Stroke(world);
 			s.add(start);
 			s.add(p);
 			s.finish();
 			
 			Set<Vertex> affected = s.processNewStroke();
-			worldScreen.contentPane.worldPanel.world.graph.computeVertexRadii(affected);
+			world.graph.computeVertexRadii(affected);
 			
-			APP.tool = new RegularTool(worldScreen, debuggerScreen);
+			APP.tool = new RegularTool();
 			
-			APP.tool.setPoint(worldScreen.contentPane.worldPanel.world.lastMovedOrDraggedWorldPoint);
+			APP.tool.setPoint(world.lastMovedOrDraggedWorldPoint);
 			
-			worldScreen.contentPane.worldPanel.world.render_worldPanel();
-			worldScreen.contentPane.worldPanel.world.render_preview();
-			worldScreen.contentPane.repaint();
+			world.render_worldPanel();
+			world.render_preview();
+			APP.appScreen.contentPane.repaint();
 			break;
 		case KNOB:
 			assert false;
@@ -139,11 +154,15 @@ public class StraightEdgeTool extends ToolBase {
 		}
 	}
 	
-	public void moved(InputEvent ev) {
+	public void moved(InputEvent ignore) {
+		super.moved(ignore);
+		
+		World world = (World)APP.model;
+		
 		switch (mode) {
 		case FREE:
-			APP.tool.setPoint(worldScreen.contentPane.worldPanel.world.quadrantMap.getPoint(worldScreen.contentPane.worldPanel.world.lastMovedOrDraggedWorldPoint));
-			worldScreen.contentPane.repaint();
+			APP.tool.setPoint(world.quadrantMap.getPoint(world.lastMovedOrDraggedWorldPoint));
+			APP.appScreen.contentPane.repaint();
 			break;
 		case SET:
 		case KNOB:
@@ -151,7 +170,11 @@ public class StraightEdgeTool extends ToolBase {
 		}
 	}
 	
-	public void released(InputEvent ev) {
+	public void released(InputEvent ignore) {
+		super.released(ignore);
+		
+//		World world = (World)APP.model;
+		
 		switch (mode) {
 		case FREE:
 			break;
@@ -159,46 +182,50 @@ public class StraightEdgeTool extends ToolBase {
 			break;
 		case KNOB:
 			mode = StraightEdgeToolMode.SET;
-			worldScreen.contentPane.repaint();
+			APP.appScreen.contentPane.repaint();
 			break;
 		}
 	}
 	
 	Point origKnobCenter;
 	
-	public void dragged(InputEvent ev) {
+	public void dragged(InputEvent ignore) {
+		super.dragged(ignore);
+		
+		World world = (World)APP.model;
 		
 		switch (mode) {
 		case FREE:
-			setPoint(worldScreen.contentPane.worldPanel.world.lastDraggedWorldPoint);
+			setPoint(world.lastDraggedWorldPoint);
 			break;
 		case SET:
-			if (!worldScreen.contentPane.worldPanel.world.lastDraggedWorldPointWasNull) {
+			if (!world.lastDraggedWorldPointWasNull) {
 				break;
 			}
-			if (!(startKnob.hitTest(worldScreen.contentPane.worldPanel.world.lastPressedWorldPoint) ||
-					endKnob.hitTest(worldScreen.contentPane.worldPanel.world.lastPressedWorldPoint))) {
+			if (!(startKnob.hitTest(world.lastPressedWorldPoint) ||
+					endKnob.hitTest(world.lastPressedWorldPoint))) {
 				break;
 			}
 			
-			if (startKnob.hitTest(worldScreen.contentPane.worldPanel.world.lastPressedWorldPoint)) {
+			if (startKnob.hitTest(world.lastPressedWorldPoint)) {
 				mode = StraightEdgeToolMode.KNOB;
 				knob = startKnob;
 				origKnobCenter = knob.p;
-			} else if (endKnob.hitTest(worldScreen.contentPane.worldPanel.world.lastPressedWorldPoint)) {
+			} else if (endKnob.hitTest(world.lastPressedWorldPoint)) {
 				mode = StraightEdgeToolMode.KNOB;
 				knob = endKnob;
 				origKnobCenter = knob.p;
 			}
 		case KNOB:
-			Point diff = new Point(worldScreen.contentPane.worldPanel.world.lastDraggedWorldPoint.x - worldScreen.contentPane.worldPanel.world.lastPressedWorldPoint.x, worldScreen.contentPane.worldPanel.world.lastDraggedWorldPoint.y - worldScreen.contentPane.worldPanel.world.lastPressedWorldPoint.y);
+			Point diff = new Point(world.lastDraggedWorldPoint.x - world.lastPressedWorldPoint.x, world.lastDraggedWorldPoint.y - world.lastPressedWorldPoint.y);
 			knob.drag(origKnobCenter.plus(diff));
-			worldScreen.contentPane.repaint();
+			APP.appScreen.contentPane.repaint();
 			break;
 		}
 	}
 	
-	public void draw(RenderingContext ctxt) {
+	public void paint_panel(RenderingContext ctxt) {
+		World world = (World)APP.model;
 		
 		if (p == null) {
 			return;
@@ -207,6 +234,11 @@ public class StraightEdgeTool extends ToolBase {
 		ctxt.setColor(Color.WHITE);
 		ctxt.setXORMode(Color.BLACK);
 		ctxt.setStroke(0.0, Cap.SQUARE, Join.MITER);
+		
+		Transform origTransform = ctxt.getTransform();
+		
+		ctxt.scale(world.worldCamera.pixelsPerMeter);
+		ctxt.translate(-world.worldCamera.worldViewport.x, -world.worldCamera.worldViewport.y);
 		
 		shape.draw(ctxt);
 		
@@ -219,6 +251,8 @@ public class StraightEdgeTool extends ToolBase {
 			endKnob.draw(ctxt);
 			break;
 		}
+		
+		ctxt.setTransform(origTransform);
 		
 		ctxt.setPaintMode();
 	}

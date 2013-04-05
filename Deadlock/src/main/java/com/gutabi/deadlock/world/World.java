@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.gutabi.deadlock.Entity;
+import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.Image;
 import com.gutabi.deadlock.ui.InputEvent;
@@ -30,14 +31,14 @@ import com.gutabi.deadlock.world.sprites.AnimatedExplosion;
 
 public class World extends PhysicsWorld {
 	
+	public WorldCamera worldCamera;
+	
 	public WorldMode mode;
 	
 	public final Object pauseLock = new Object();
 	
-	public DebuggerScreen debuggerScreen;
-	
 	WorldBackground background;
-	Image previewImage;
+	public Image previewImage;
 	
 	public QuadrantMap quadrantMap;
 	public Graph graph;
@@ -49,12 +50,11 @@ public class World extends PhysicsWorld {
 	public RoadMarkMap roadMarkMap;
 	public GrassMarkMap grassMarkMap;
 	
-	public World(WorldScreen worldScreen, DebuggerScreen debuggerScreen) {
-		super(worldScreen);
+	public Stats stats;
+	
+	public World() {
 		
 		mode = WorldMode.EDITING;
-		
-		this.debuggerScreen = debuggerScreen;
 		
 		background = new WorldBackground(this);
 		
@@ -65,11 +65,15 @@ public class World extends PhysicsWorld {
 		roadMarkMap = new RoadMarkMap();
 		grassMarkMap = new GrassMarkMap();
 		
+		worldCamera = new WorldCamera();
+		
+		stats = new Stats(this);
+		
 	}
 	
-	public static World createWorld(WorldScreen worldScreen, DebuggerScreen debuggerScreen, int[][] ini) {
+	public static World createWorld(int[][] ini) {
 		
-		World w = new World(worldScreen, debuggerScreen);
+		World w = new World();
 		
 		QuadrantMap qm = new QuadrantMap(ini);
 		
@@ -78,19 +82,19 @@ public class World extends PhysicsWorld {
 		return w;
 	}
 	
-	public void panelPostDisplay(WorldCamera cam) {
+	public void panelPostDisplay() {
 		
 		background.panelPostDisplay();
 		
-		quadrantMap.panelPostDisplay(cam);
+		quadrantMap.panelPostDisplay(worldCamera);
 		
 	}
 	
 	public void previewPostDisplay() {
 		
 		previewImage = APP.platform.createImage(
-				(int)debuggerScreen.contentPane.controlPanel.previewAABB.width,
-				(int)debuggerScreen.contentPane.controlPanel.previewAABB.height);
+				(int)worldCamera.previewAABB.width,
+				(int)worldCamera.previewAABB.height);
 		
 	}
 	
@@ -216,7 +220,7 @@ public class World extends PhysicsWorld {
 	
 	public Set<Vertex> createMerger(Point p) {
 		
-		Merger m = Merger.createMergerAndFixtures(this, debuggerScreen.contentPane.controlPanel, p);
+		Merger m = Merger.createMergerAndFixtures(this, p);
 		
 		quadrantMap.grassMap.mowGrass(m.getShape());
 		quadrantMap.grassMap.mowGrass(m.top.getShape());
@@ -285,7 +289,7 @@ public class World extends PhysicsWorld {
 		return s.toString();
 	}
 	
-	public static World fromFileString(WorldScreen screen, DebuggerScreen debuggerScreen, String s) {
+	public static World fromFileString(String s) {
 		BufferedReader r = new BufferedReader(new StringReader(s));
 		
 		StringBuilder quadrantMapStringBuilder = null;
@@ -326,10 +330,10 @@ public class World extends PhysicsWorld {
 			e.printStackTrace();
 		}
 		
-		World w = new World(screen, debuggerScreen);
+		World w = new World();
 		
 		QuadrantMap qm = QuadrantMap.fromFileString(quadrantMapStringBuilder.toString());
-		Graph g = Graph.fromFileString(w, debuggerScreen.contentPane.controlPanel, graphStringBuilder.toString());
+		Graph g = Graph.fromFileString(w, graphStringBuilder.toString());
 		
 		w.quadrantMap = qm;
 		w.graph = g;
@@ -343,12 +347,19 @@ public class World extends PhysicsWorld {
 	public boolean lastDraggedWorldPointWasNull;
 	public Point lastMovedWorldPoint;
 	public Point lastMovedOrDraggedWorldPoint;
+	public Point lastPressPreviewPoint;
+	public Point lastDragPreviewPoint;
+	public Point penDragPreviewPoint;
 	
 	
 	public void pressed(InputEvent ev) {
 		
 		lastPressedWorldPoint = ev.p;
 		lastDraggedWorldPoint = null;
+		
+	}
+	
+	public void released(InputEvent ev) {
 		
 	}
 	
@@ -380,21 +391,22 @@ public class World extends PhysicsWorld {
 	public void render_preview() {
 		
 		RenderingContext ctxt = APP.platform.createRenderingContext(previewImage);
-		ctxt.cam = worldScreen.contentPane.worldPanel.worldCamera;
+		ctxt.cam = worldCamera;
 		
 		boolean oldDebug = APP.DEBUG_DRAW;
 		APP.DEBUG_DRAW = false; 
 		
 		ctxt.setColor(Color.LIGHT_GRAY);
 		ctxt.fillRect(
-				0, 0, (int)debuggerScreen.contentPane.controlPanel.previewAABB.width, (int)debuggerScreen.contentPane.controlPanel.previewAABB.height);
+				0, 0,
+				(int)worldCamera.previewAABB.width, (int)worldCamera.previewAABB.height);
 		
 		Transform origTrans = ctxt.getTransform();
 		ctxt.translate(
-				debuggerScreen.contentPane.controlPanel.previewAABB.width/2 - (debuggerScreen.contentPane.controlPanel.previewPixelsPerMeter * quadrantMap.worldWidth / 2),
-				debuggerScreen.contentPane.controlPanel.previewAABB.height/2 - (debuggerScreen.contentPane.controlPanel.previewPixelsPerMeter * quadrantMap.worldHeight / 2));
+				worldCamera.previewAABB.width/2 - (worldCamera.previewPixelsPerMeter * quadrantMap.worldWidth / 2),
+				worldCamera.previewAABB.height/2 - (worldCamera.previewPixelsPerMeter * quadrantMap.worldHeight / 2));
 		
-		ctxt.scale(debuggerScreen.contentPane.controlPanel.previewPixelsPerMeter);
+		ctxt.scale(worldCamera.previewPixelsPerMeter);
 		
 		quadrantMap.render_preview(ctxt);
 		
@@ -407,14 +419,14 @@ public class World extends PhysicsWorld {
 		ctxt.dispose();
 	}
 	
-	public void paint_panel_pixels(RenderingContext ctxt) {
-		
-		background.paint_pixels(ctxt);
-	}
-	
-	public void paint_panel_worldCoords(RenderingContext ctxt) {
+	public void paint_panel(RenderingContext ctxt) {
 		
 		Transform origTrans = ctxt.getTransform();
+		
+		background.paint_pixels(ctxt);
+		
+		ctxt.scale(worldCamera.pixelsPerMeter);
+		ctxt.translate(-worldCamera.worldViewport.x, -worldCamera.worldViewport.y);
 		
 		background.paint_worldCoords(ctxt);
 		
@@ -434,6 +446,38 @@ public class World extends PhysicsWorld {
 		if (APP.DEBUG_DRAW) {
 			graph.paintIDs(ctxt);
 		}
+		
+		if (APP.FPS_DRAW) {
+			
+			stats.paint(ctxt);
+		}
+		
+		ctxt.setTransform(origTrans);
+		
+	}
+	
+	public void paint_preview(RenderingContext ctxt) {
+		
+		Transform origTrans = ctxt.getTransform();
+		
+		ctxt.translate(worldCamera.previewAABB.x, worldCamera.previewAABB.y);
+		
+		ctxt.paintImage(previewImage,
+				0, 0, (int)worldCamera.previewAABB.width, (int)worldCamera.previewAABB.height,
+				0, 0, (int)worldCamera.previewAABB.width, (int)worldCamera.previewAABB.height);
+		
+		Point prevLoc = Point.worldToPreview(worldCamera.worldViewport.ul, worldCamera);
+		
+		Point prevDim = Point.worldToPreview(new Point(worldCamera.worldViewport.width, worldCamera.worldViewport.height), worldCamera);
+		
+		AABB prev = new AABB(prevLoc.x, prevLoc.y, prevDim.x, prevDim.y);
+		
+		ctxt.translate(
+				worldCamera.previewAABB.width/2 - (worldCamera.previewPixelsPerMeter * quadrantMap.worldWidth / 2),
+				worldCamera.previewAABB.height/2 - (worldCamera.previewPixelsPerMeter * quadrantMap.worldHeight / 2));
+		
+		ctxt.setColor(Color.BLUE);
+		prev.draw(ctxt);
 		
 		ctxt.setTransform(origTrans);
 		

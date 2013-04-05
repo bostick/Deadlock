@@ -4,8 +4,11 @@ import java.util.Scanner;
 import java.util.regex.MatchResult;
 
 import com.gutabi.deadlock.geom.AABB;
+import com.gutabi.deadlock.quadranteditor.QuadrantEditor;
 import com.gutabi.deadlock.ui.Menu;
+import com.gutabi.deadlock.ui.Panel;
 import com.gutabi.deadlock.world.WorldCamera;
+import com.gutabi.deadlock.world.WorldPanel;
 
 public class Point {
 	
@@ -656,9 +659,7 @@ public class Point {
 	
 	
 	public static Point panelToWorld(Point p, WorldCamera cam) {
-		return new Point(
-				p.x / cam.pixelsPerMeter + cam.worldViewport.x,
-				p.y / cam.pixelsPerMeter + cam.worldViewport.y);
+		return new Point(p.x / cam.pixelsPerMeter + cam.worldViewport.x, p.y / cam.pixelsPerMeter + cam.worldViewport.y);
 	}
 	
 	public static AABB panelToWorld(AABB aabb, WorldCamera cam) {
@@ -683,5 +684,38 @@ public class Point {
 		return p.minus(menu.aabb.ul);
 	}
 	
+	public static Point previewToWorld(Point p, WorldCamera cam) {
+		return new Point((1/cam.previewPixelsPerMeter) * p.x, (1/cam.previewPixelsPerMeter) * p.y);
+	}
+	
+	public static Point worldToPreview(Point p, WorldCamera cam) {
+		return new Point((cam.previewPixelsPerMeter) * p.x, (cam.previewPixelsPerMeter) * p.y);
+	}
+	
+	public static Point controlPanelToPreview(Point p, WorldCamera cam) {
+		return p.minus(cam.previewAABB.ul);
+	}
+	
+	public static Point panelToEditor(Point p, QuadrantEditor editor) {
+		return p.minus(editor.aabb.ul);
+	}
+	
+	public static Point contentPaneToPanel(Point p, Panel child) {
+		return p.minus(child.aabb.ul);
+	}
+	
+	public static Point editorToWorldPanel(Point p, WorldPanel worldPanel) {
+		return p.minus(worldPanel.aabb.ul);
+	}
+	
+	public static Point worldPanelToEditor(Point p, WorldPanel worldPanel) {
+		return p.plus(worldPanel.aabb.ul);
+	}
+	
+	public static AABB worldPanelToEditor(AABB aabb, WorldPanel worldPanel) {
+		Point ul = worldPanelToEditor(aabb.ul, worldPanel);
+		Point br = worldPanelToEditor(aabb.br, worldPanel);
+		return new AABB(ul.x, ul.y, br.x - ul.x, br.y - ul.y);
+	}
 	
 }
