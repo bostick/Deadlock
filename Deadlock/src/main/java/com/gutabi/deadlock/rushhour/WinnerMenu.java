@@ -36,45 +36,42 @@ public class WinnerMenu extends Menu {
 		}
 		assert index != -1;
 		
+		MenuItem nextMenuItem = new MenuItem(WinnerMenu.this, "Next", 36) {
+			public void action() {
+				RushHourWorld world = (RushHourWorld)APP.model;
+				
+				int index = -1;
+				for (int i = 0; i < BoardsIndex.table.length; i++) {
+					if (BoardsIndex.table[i] == world.level.id) {
+						index = i;
+						break;
+					}
+				}
+				assert index != -1;
+				
+				world.stopRunning();
+				
+				RushHourWorld.action(index+1);
+				
+			}
+		};
+		
+		MenuItem backMenuItem = new MenuItem(WinnerMenu.this, "Back", 36) {
+			public void action() {
+				
+				APP.platform.unshowDebuggerScreen();
+				
+				MainMenu.action();
+			}
+		};
+		
 		if (index < BoardsIndex.table.length-1) {
 			
-			MenuItem nextMenuItem = new MenuItem(WinnerMenu.this, "Next", 36) {
-				public void action() {
-					RushHourWorld world = (RushHourWorld)APP.model;
-					
-					int index = -1;
-					for (int i = 0; i < BoardsIndex.table.length; i++) {
-						if (BoardsIndex.table[i] == world.level.id) {
-							index = i;
-							break;
-						}
-					}
-					assert index != -1;
-					
-					RushHourWorld.action(index+1);
-					
-				}
-			};
 			add(nextMenuItem, 0, 0);
-			
-			MenuItem backMenuItem = new MenuItem(WinnerMenu.this, "Back", 36) {
-				public void action() {
-					
-					APP.platform.unshowDebuggerScreen();
-					
-					MainMenu.action();
-				}
-			};
 			add(backMenuItem, 1, 0);
 			
 		} else {
 			
-			MenuItem backMenuItem = new MenuItem(WinnerMenu.this, "Back", 36) {
-				public void action() {
-					
-					MainMenu.action();
-				}
-			};
 			add(backMenuItem, 0, 0);
 			
 		}

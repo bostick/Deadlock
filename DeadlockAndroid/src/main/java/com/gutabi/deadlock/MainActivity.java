@@ -4,11 +4,8 @@ import static com.gutabi.deadlock.DeadlockApplication.APP;
 import android.app.Activity;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
-import android.view.GestureDetector;
-import android.view.GestureDetector.OnGestureListener;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
-import android.view.View.OnTouchListener;
 import android.view.Window;
 
 import com.gutabi.deadlock.math.Point;
@@ -17,9 +14,9 @@ import com.gutabi.deadlock.ui.InputEvent;
 import com.gutabi.deadlock.ui.KeyListener;
 import com.gutabi.deadlock.ui.MotionListener;
 
-public class MainActivity extends Activity implements OnTouchListener, OnGestureListener {
+public class MainActivity extends Activity {//implements OnTouchListener {
 	
-	private GestureDetector gDetector; 
+//	private GestureDetector gDetector;
 	
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -31,34 +28,15 @@ public class MainActivity extends Activity implements OnTouchListener, OnGesture
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 		
 //		this.set
-		gDetector = new GestureDetector(this);
+//		gDetector = new GestureDetector(this);
 		
 		MainView v = (MainView)findViewById(R.id.deadlock);
 		
-		v.setOnTouchListener(this);
-		
-		APP.MENUPANEL_WIDTH = 480;
-		APP.MENUPANEL_HEIGHT = 800;
-		
-		APP.QUADRANTEDITORPANEL_WIDTH = 480;
-		APP.QUADRANTEDITORPANEL_HEIGHT = 800;
-		
-		APP.WORLDPANEL_WIDTH = 380;
-		APP.WORLDPANEL_HEIGHT = 800;
-		
-		APP.CONTROLPANEL_WIDTH = 100;
-		APP.CONTROLPANEL_HEIGHT = 800;
-		
-		APP.MENU_WIDTH = 480;
-		APP.MENU_HEIGHT = 800;
-		
-		APP.TITLE_CENTER_Y = 200;
-		APP.MENU_CENTER_Y = 450;
-		APP.COPYRIGHT_CENTER_Y = 668;
-		
+//		v.setOnTouchListener(this);
 		
 		PlatformImpl platform = new PlatformImpl(getResources(), v);
 		APP.platform = platform;
+		
 		try {
 			APP.init();
 		} catch (Exception e) {

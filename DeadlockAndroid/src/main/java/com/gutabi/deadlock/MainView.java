@@ -5,22 +5,20 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.util.AttributeSet;
-import android.view.GestureDetector;
-import android.view.MotionEvent;
 
-import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.ContentPane;
+import com.gutabi.deadlock.ui.PlatformContentPane;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 
 public class MainView extends android.view.View {
 	
-	ContentPane content;
+	PlatformContentPane content;
 	
 	public MainView(Context c, AttributeSet s) {
 		super(c, s);
 	}
 	
-	public void setContentPane(ContentPane content) {
+	public void setContentPane(PlatformContentPane content) {
 		this.content = content;
 	}
 	

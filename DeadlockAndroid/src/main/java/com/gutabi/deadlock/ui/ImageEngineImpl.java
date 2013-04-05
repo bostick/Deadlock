@@ -24,13 +24,6 @@ public class ImageEngineImpl implements ImageEngine {
 		return new ImageImpl(b);
 	}
 	
-	public Image createImage(int width, int height) {
-		
-		Bitmap b = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-		
-		return new ImageImpl(b);
-	}
-	
 	public Image createTransparentImage(int width, int height) {
 		
 		Bitmap b = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);

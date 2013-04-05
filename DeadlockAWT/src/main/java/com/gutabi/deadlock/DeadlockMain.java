@@ -44,9 +44,7 @@ public class DeadlockMain  {
 		
 		platform.debuggerContainer = newFrame;
 		
-		
 		APP.init();
-		
 	}
 	
 	public static Thread.UncaughtExceptionHandler handler = new Thread.UncaughtExceptionHandler() {
