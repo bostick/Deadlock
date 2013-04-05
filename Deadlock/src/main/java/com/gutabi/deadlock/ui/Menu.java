@@ -29,6 +29,8 @@ public abstract class Menu {
 	public Point lastMovedMenuPoint;
 	public Point lastClickedMenuPoint;
 	
+	boolean isRendered;
+	
 	public Menu() {
 		
 	}
@@ -215,9 +217,11 @@ public abstract class Menu {
 		
 		ctxt.dispose();
 		
+		isRendered = true;
 	}
 	
 	public void paint_panel(RenderingContext ctxt) {
+		assert isRendered;
 		
 		Transform origTransform = ctxt.getTransform();
 		

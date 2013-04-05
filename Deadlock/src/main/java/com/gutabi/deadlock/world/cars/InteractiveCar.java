@@ -9,9 +9,9 @@ import com.gutabi.deadlock.ui.paint.Color;
 import com.gutabi.deadlock.ui.paint.Join;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.world.World;
+import com.gutabi.deadlock.world.examples.RushHourWorld;
 import com.gutabi.deadlock.world.graph.GraphPositionPathPosition;
 import com.gutabi.deadlock.world.physics.PhysicsUtils;
-import com.gutabi.deadlock.world.tools.InteractiveCarTool;
 
 public class InteractiveCar extends Car {
 	
@@ -88,7 +88,7 @@ public class InteractiveCar extends Car {
 			newPos = driver.overallPos.travelBackward(Math.min(dist, driver.overallPos.lengthTo(driver.toolCoastingGoal)));
 		}
 		
-		((InteractiveCarTool)APP.tool).handleZooming();
+		((RushHourWorld)world).handleZooming(this);
 		
 		if (DMath.equals(newPos.combo, driver.toolCoastingGoal.combo)) {
 			
@@ -106,7 +106,7 @@ public class InteractiveCar extends Car {
 			
 			driver.toolOrigExitingVertexPos = null;
 			driver.toolCoastingGoal = null;
-			((InteractiveCarTool)APP.tool).car = null;
+//			((InteractiveCarTool)APP.tool).car = null;
 			
 			return;
 		}

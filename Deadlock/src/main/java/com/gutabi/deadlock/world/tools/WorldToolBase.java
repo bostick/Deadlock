@@ -115,11 +115,11 @@ public abstract class WorldToolBase extends Tool {
 	}
 	
 	public void released(InputEvent ev) {
-		World world = (World)APP.model;
-		
-		Point p = Point.panelToWorld(ev.p, world.worldCamera);
-		
-		world.released(new InputEvent(p));
+//		World world = (World)APP.model;
+//		
+//		Point p = Point.panelToWorld(ev.p, world.worldCamera);
+//		
+//		world.released(new InputEvent(p));
 		
 //		switch (world.mode) {
 //		case RUNNING:

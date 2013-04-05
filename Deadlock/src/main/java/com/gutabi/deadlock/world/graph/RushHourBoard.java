@@ -1371,8 +1371,8 @@ public class RushHourBoard extends Entity {
 	}
 	
 	public boolean enteringBoard(RushHourBoardPosition prev, RushHourBoardPosition cur) {
+		assert !cur.equals(prev);
 		
-//		RushHourBoardPosition center = new RushHourBoardPosition(this, 0.5 * rowCount, 0.5 * colCount);
 		double centerRow = 0.5 * rowCount;
 		double centerCol = 0.5 * colCount;
 		

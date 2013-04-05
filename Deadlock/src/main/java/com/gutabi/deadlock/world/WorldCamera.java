@@ -13,7 +13,7 @@ public class WorldCamera {
 	public AABB previewAABB = new AABB(5, 400, 100, 100);
 	public double previewPixelsPerMeter;
 	
-	WorldPanel worldPanel;
+	public WorldPanel worldPanel;
 	
 	public WorldCamera() {
 		

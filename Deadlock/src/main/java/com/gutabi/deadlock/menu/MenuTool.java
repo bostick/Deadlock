@@ -8,11 +8,17 @@ import com.gutabi.deadlock.ui.InputEvent;
 import com.gutabi.deadlock.ui.Menu;
 import com.gutabi.deadlock.ui.MenuItem;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
+import com.gutabi.deadlock.world.examples.RushHourWorld;
 
 public class MenuTool extends Tool {
 	
 	public void upKey() {
-		Menu menu = (Menu)APP.model;
+		Menu menu;
+		if (APP.model instanceof RushHourWorld) {
+			menu = ((RushHourWorld)APP.model).winnerMenu;
+		} else {
+			menu = (Menu)APP.model;
+		}
 		
 		if (menu.hilited == null) {
 			
@@ -32,7 +38,12 @@ public class MenuTool extends Tool {
 	}
 	
 	public void downKey() {
-		Menu menu = (Menu)APP.model;
+		Menu menu;
+		if (APP.model instanceof RushHourWorld) {
+			menu = ((RushHourWorld)APP.model).winnerMenu;
+		} else {
+			menu = (Menu)APP.model;
+		}
 		
 		if (menu.hilited == null) {
 			
@@ -52,19 +63,29 @@ public class MenuTool extends Tool {
 	}
 	
 	public void enterKey() {
-		Menu menu = (Menu)APP.model;
+		Menu menu;
+		if (APP.model instanceof RushHourWorld) {
+			menu = ((RushHourWorld)APP.model).winnerMenu;
+		} else {
+			menu = (Menu)APP.model;
+		}
 		
 		if (menu.hilited != null && menu.hilited.active) {
 			menu.hilited.action();
 		}
 	}
 	
-	public void moved(InputEvent ev) {
-		Menu menu = (Menu)APP.model;
+	public void moved(InputEvent ignore) {
+		Menu menu;
+		if (APP.model instanceof RushHourWorld) {
+			menu = ((RushHourWorld)APP.model).winnerMenu;
+		} else {
+			menu = (Menu)APP.model;
+		}
 		
-		menu.lastMovedMenuPoint = Point.panelToMenu(ev.p, menu);
+		menu.lastMovedMenuPoint = Point.panelToMenu(ignore.p, menu);
 		
-		MenuItem hit = menu.hitTest(ev.p);
+		MenuItem hit = menu.hitTest(menu.lastMovedMenuPoint);
 		if (hit != null && hit.active) {
 			menu.hilited = hit;
 		} else {
@@ -74,12 +95,17 @@ public class MenuTool extends Tool {
 		APP.appScreen.contentPane.repaint();
 	}
 	
-	public void clicked(InputEvent ev) {
-		Menu menu = (Menu)APP.model;
+	public void clicked(InputEvent ignore) {
+		Menu menu;
+		if (APP.model instanceof RushHourWorld) {
+			menu = ((RushHourWorld)APP.model).winnerMenu;
+		} else {
+			menu = (Menu)APP.model;
+		}
 		
-		menu.lastClickedMenuPoint = Point.panelToMenu(ev.p, menu);
+		menu.lastClickedMenuPoint = Point.panelToMenu(ignore.p, menu);
 		
-		MenuItem item = menu.hitTest(ev.p);
+		MenuItem item = menu.hitTest(menu.lastClickedMenuPoint);
 		
 		if (item != null && item.active) {
 			item.action();

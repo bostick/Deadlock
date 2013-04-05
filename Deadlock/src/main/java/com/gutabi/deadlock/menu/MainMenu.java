@@ -102,11 +102,14 @@ public class MainMenu extends Menu {
 		MainMenuScreen s = new MainMenuScreen();
 		APP.appScreen = s;
 		
+		APP.tool = new MenuTool();
+		
 		APP.platform.setupAppScreen(s.contentPane.pcp);
+		
+		mainMenu.render();
 		
 		s.postDisplay();
 		
-		mainMenu.render();
 		s.contentPane.repaint();
 		
 	}

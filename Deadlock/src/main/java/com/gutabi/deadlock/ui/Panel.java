@@ -30,18 +30,20 @@ public abstract class Panel {
 	
 	public void released(InputEvent ev) {
 		
+		APP.tool.released(ev);
 	}
 	
 	public void moved(InputEvent ev) {
 		
 		lastMovedPanelPoint = ev.p;
-		lastMovedOrDraggedPanelPoint = lastMovedPanelPoint;
+		lastMovedOrDraggedPanelPoint = ev.p;
 		
 		APP.tool.moved(ev);
 	}
 	
 	public void dragged(InputEvent ev) {
 		
+		lastDraggedPanelPoint = ev.p;
 		lastMovedOrDraggedPanelPoint = ev.p;
 		
 		APP.tool.dragged(ev);
@@ -49,6 +51,9 @@ public abstract class Panel {
 	
 	public void clicked(InputEvent ev) {
 		
+		lastClickedPanelPoint = ev.p;
+		
+		APP.tool.clicked(ev);
 	}
 	
 	public abstract void postDisplay();

@@ -27,6 +27,8 @@ public class LevelMenu extends Menu {
 		
 		levelMenu.render();
 		
+		APP.appScreen.postDisplay();
+		
 		APP.appScreen.contentPane.repaint();
 		
 	}

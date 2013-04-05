@@ -8,7 +8,6 @@ import com.gutabi.deadlock.geom.Shape;
 import com.gutabi.deadlock.math.DMath;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.menu.MainMenu;
-import com.gutabi.deadlock.menu.MenuTool;
 import com.gutabi.deadlock.menu.WinnerMenu;
 import com.gutabi.deadlock.ui.InputEvent;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
@@ -311,6 +310,10 @@ public class InteractiveCarTool extends WorldToolBase {
 		prevDragP = curDragP;
 		prevDragMillis = curDragMillis;
 		curDragP = world.lastDraggedWorldPoint;
+		if (curDragP.equals(prevDragP)) {
+			return;
+		}
+		
 		curDragMillis = System.currentTimeMillis();
 		if (prevDragP != null) {
 			dragVector = curDragP.minus(prevDragP);
@@ -441,7 +444,9 @@ public class InteractiveCarTool extends WorldToolBase {
 					RushHourBoardPosition prevBpos = (RushHourBoardPosition)car.driver.prevOverallPos.gp;
 					RushHourBoard b = (RushHourBoard)bpos.entity;
 					
-					if (b.enteringBoard(prevBpos, bpos)) {
+					if (bpos.equals(prevBpos)) {
+						
+					} else if (b.enteringBoard(prevBpos, bpos)) {
 						
 					} else {
 						//leaving board
@@ -470,7 +475,7 @@ public class InteractiveCarTool extends WorldToolBase {
 				
 			}
 			
-			handleZooming();
+			world.handleZooming(car);
 			
 			APP.appScreen.contentPane.repaint();
 			
@@ -532,68 +537,15 @@ public class InteractiveCarTool extends WorldToolBase {
 		return floorWithin && ceilWithin;
 	}
 	
-	public void handleZooming() {
-		World world = (World)APP.model;
-		
-		GraphPosition gpos = car.driver.overallPos.gp;
-		
-		if (gpos instanceof RoadPosition) {
-			
-			RoadPosition rpos = (RoadPosition)gpos;
-			
-			double alpha = rpos.lengthToStartOfRoad / rpos.r.getTotalLength(rpos.r.start, rpos.r.end);
-			double para;
-			if (DMath.equals(alpha, 0.0)) {
-				para = 1.0;
-			} else if (DMath.equals(alpha, 1.0)) {
-				para = 1.0;
-			} else {
-				double[] vals = new double[] {1.0, 0.75, 0.5, 0.5, 0.5, 0.5, 0.75, 1.0};
-				double a = vals[(int)Math.floor(alpha * (vals.length-1))];
-				double b = vals[(int)Math.floor(alpha * (vals.length-1))+1];
-				para = DMath.lerp(a, b, (alpha * (vals.length-1) - Math.floor(alpha * (vals.length-1))));
-			}
-			
-			world.worldCamera.zoomAbsolute(para);
-			
-//			worldScreen.world.render_worldPanel();
-			
-		} else if (gpos instanceof VertexPosition) {
-			
-			GraphPosition prevGPos = car.driver.prevOverallPos.gp;
-			
-			if (prevGPos instanceof RoadPosition) {
-				
-				world.worldCamera.zoomAbsolute(1.0);
-				
-//				worldScreen.world.render_worldPanel();
-			}
-			
-		} else {
-			assert gpos instanceof RushHourBoardPosition;
-			
-			GraphPosition prevGPos = car.driver.prevOverallPos.gp;
-			
-			if (prevGPos instanceof RoadPosition) {
-				
-				world.worldCamera.zoomAbsolute(1.0);
-				
-//				worldScreen.world.render_worldPanel();
-			}
-		}
-		
-	}
-	
 	void winner() {
+		
 		RushHourWorld world = (RushHourWorld)APP.model;
 		
 		world.isWon = true;
 		
-		world.winnerMenu = new WinnerMenu();
+		released(null);
 		
-		world.winnerMenu.render();
-		
-		APP.tool = new MenuTool();
+		WinnerMenu.action();
 	}
 	
 	public void paint_panel(RenderingContext ctxt) {
