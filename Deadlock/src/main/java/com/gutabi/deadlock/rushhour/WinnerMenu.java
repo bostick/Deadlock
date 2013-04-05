@@ -1,11 +1,12 @@
-package com.gutabi.deadlock.menu;
+package com.gutabi.deadlock.rushhour;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
 import com.gutabi.deadlock.gen.BoardsIndex;
+import com.gutabi.deadlock.menu.MainMenu;
+import com.gutabi.deadlock.menu.MenuTool;
 import com.gutabi.deadlock.ui.Menu;
 import com.gutabi.deadlock.ui.MenuItem;
-import com.gutabi.deadlock.world.examples.RushHourWorld;
 
 public class WinnerMenu extends Menu {
 	
@@ -26,7 +27,14 @@ public class WinnerMenu extends Menu {
 		
 		RushHourWorld world = (RushHourWorld)APP.model;
 		
-		int index = world.index;
+		int index = -1;
+		for (int i = 0; i < BoardsIndex.table.length; i++) {
+			if (BoardsIndex.table[i] == world.level.id) {
+				index = i;
+				break;
+			}
+		}
+		assert index != -1;
 		
 		if (index < BoardsIndex.table.length-1) {
 			
@@ -34,7 +42,14 @@ public class WinnerMenu extends Menu {
 				public void action() {
 					RushHourWorld world = (RushHourWorld)APP.model;
 					
-					int index = world.index;
+					int index = -1;
+					for (int i = 0; i < BoardsIndex.table.length; i++) {
+						if (BoardsIndex.table[i] == world.level.id) {
+							index = i;
+							break;
+						}
+					}
+					assert index != -1;
 					
 					RushHourWorld.action(index+1);
 					
@@ -63,6 +78,10 @@ public class WinnerMenu extends Menu {
 			add(backMenuItem, 0, 0);
 			
 		}
+		
+	}
+	
+	public void escape() {
 		
 	}
 	

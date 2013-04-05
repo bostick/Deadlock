@@ -1,4 +1,4 @@
-package com.gutabi.deadlock.world;
+package com.gutabi.deadlock.world.examples;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
@@ -13,6 +13,7 @@ import com.gutabi.deadlock.ui.Panel;
 import com.gutabi.deadlock.ui.Transform;
 import com.gutabi.deadlock.ui.paint.FontStyle;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
+import com.gutabi.deadlock.world.World;
 
 public class ControlPanel extends Panel {
 	

@@ -23,6 +23,7 @@ import javax.swing.RootPaneContainer;
 import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.geom.ShapeEngine;
 import com.gutabi.deadlock.geom.ShapeEngineImpl;
+import com.gutabi.deadlock.rushhour.Level;
 import com.gutabi.deadlock.ui.Image;
 import com.gutabi.deadlock.ui.ImageImpl;
 import com.gutabi.deadlock.ui.KeyListener;
@@ -159,7 +160,7 @@ public class PlatformImpl implements Platform {
 		
 		ResourceImpl r = (ResourceImpl)fontFile;
 		
-		if (r.name.equals("/fonts/visitor1.ttf")) {
+		if (r.full.equals("/fonts/visitor1.ttf")) {
 			
 			if (fontStyle == FontStyle.PLAIN) {
 				
@@ -213,7 +214,7 @@ public class PlatformImpl implements Platform {
 	 */
 	public Image readImage(Resource res) throws Exception {
 		
-		BufferedImage img = ImageIO.read(this.getClass().getResource(((ResourceImpl)res).name));
+		BufferedImage img = ImageIO.read(this.getClass().getResource(((ResourceImpl)res).full));
 		
 		return new ImageImpl(img);
 	}
@@ -241,33 +242,46 @@ public class PlatformImpl implements Platform {
 	 */
 	public Resource imageResource(String name) {
 		
-		String full = "/img/" + name + ".png";
+		ResourceImpl res = new ResourceImpl();
 		
-		return new ResourceImpl(full);
+		res.given = name;
+		res.full = "/img/" + name + ".png";
+		
+		return res;
 	}
 	
 	public Resource fontResource(String name) {
 		
-		String full = "/fonts/" + name + ".ttf";
+		ResourceImpl res = new ResourceImpl();
 		
-		return new ResourceImpl(full);
+		res.given = name;
+		res.full = "/fonts/" + name + ".ttf";
+		
+		return res;
 	}
 	
 	public Resource boardResource(String name) {
 		
-		String full = "/boards/gen-" + name + ".dat";
+		ResourceImpl res = new ResourceImpl();
 		
-		return new ResourceImpl(full);
+		res.given = name;
+		res.full = "/boards/gen-" + name + ".dat";
+		
+		return res;
 	}
 	
 	/*
 	 * board engine
 	 */
-	public char[][] readBoard(Resource res) throws Exception {
+	public Level readLevel(Resource res) throws Exception {
+		
+		Level level = new Level();
+		
+		level.id = ((ResourceImpl)res).given;
 		
 		char[][] board;
 		
-		URL url = this.getClass().getResource(((ResourceImpl)res).name);
+		URL url = this.getClass().getResource(((ResourceImpl)res).full);
 		
 		BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
 		
@@ -276,7 +290,14 @@ public class PlatformImpl implements Platform {
 		
 		StringBuilder builder = new StringBuilder();
 		String inputLine = in.readLine();
-//		data;
+		
+		if (inputLine.matches("moves: .*")) {
+			String rest = inputLine.substring(7);
+			level.requiredMoves = Integer.parseInt(rest);
+		} else {
+			assert false;
+		}
+		
 		while ((inputLine = in.readLine()) != null) {
 			builder.append(inputLine);
 			cols = inputLine.length();
@@ -292,7 +313,9 @@ public class PlatformImpl implements Platform {
 			}
 		}
 		
-		return board;
+		level.board = board;
+		
+		return level;
 	}
 
 

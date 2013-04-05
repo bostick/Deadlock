@@ -8,11 +8,8 @@ import com.gutabi.deadlock.ui.Button;
 import com.gutabi.deadlock.ui.Transform;
 import com.gutabi.deadlock.ui.paint.Color;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
-import com.gutabi.deadlock.world.ControlPanel;
-import com.gutabi.deadlock.world.DebuggerScreen;
 import com.gutabi.deadlock.world.World;
 import com.gutabi.deadlock.world.WorldPanel;
-import com.gutabi.deadlock.world.WorldScreen;
 import com.gutabi.deadlock.world.sprites.SpriteSheet.SpriteSheetSprite;
 
 public class QuadrantEditor {
@@ -48,7 +45,7 @@ public class QuadrantEditor {
 		
 		worldPanel = new WorldPanel();
 		
-		world = World.createWorld(ini);
+		world = QuadrantEditorWorld.createWorld(ini);
 		
 		worldPanel.aabb = new AABB(50, 50, 350, 350);
 		
@@ -74,7 +71,7 @@ public class QuadrantEditor {
 					}
 				}
 				
-				world = World.createWorld(ini);
+				world = QuadrantEditorWorld.createWorld(ini);
 				
 				double pixelsPerMeterWidth = worldPanel.aabb.width / world.quadrantMap.worldWidth;
 				double pixelxPerMeterHeight = worldPanel.aabb.height / world.quadrantMap.worldHeight;
@@ -120,7 +117,7 @@ public class QuadrantEditor {
 					}
 				}
 				
-				world = World.createWorld(ini);
+				world = QuadrantEditorWorld.createWorld(ini);
 				
 				double pixelsPerMeterWidth = worldPanel.aabb.width / world.quadrantMap.worldWidth;
 				double pixelxPerMeterHeight = worldPanel.aabb.height / world.quadrantMap.worldHeight;
@@ -166,7 +163,7 @@ public class QuadrantEditor {
 					}
 				}
 				
-				world = World.createWorld(ini);
+				world = QuadrantEditorWorld.createWorld(ini);
 				
 				double pixelsPerMeterWidth = worldPanel.aabb.width / world.quadrantMap.worldWidth;
 				double pixelxPerMeterHeight = worldPanel.aabb.height / world.quadrantMap.worldHeight;
@@ -210,7 +207,7 @@ public class QuadrantEditor {
 					}
 				}
 				
-				world = World.createWorld(ini);
+				world = QuadrantEditorWorld.createWorld(ini);
 				
 				double pixelsPerMeterWidth = worldPanel.aabb.width / world.quadrantMap.worldWidth;
 				double pixelxPerMeterHeight = worldPanel.aabb.height / world.quadrantMap.worldHeight;
@@ -255,7 +252,7 @@ public class QuadrantEditor {
 					}
 				}
 				
-				world = World.createWorld(ini);
+				world = QuadrantEditorWorld.createWorld(ini);
 				
 				double pixelsPerMeterWidth = worldPanel.aabb.width / world.quadrantMap.worldWidth;
 				double pixelxPerMeterHeight = worldPanel.aabb.height / world.quadrantMap.worldHeight;
@@ -299,7 +296,7 @@ public class QuadrantEditor {
 					}
 				}
 				
-				world = World.createWorld(ini);
+				world = QuadrantEditorWorld.createWorld(ini);
 				
 				double pixelsPerMeterWidth = worldPanel.aabb.width / world.quadrantMap.worldWidth;
 				double pixelxPerMeterHeight = worldPanel.aabb.height / world.quadrantMap.worldHeight;
@@ -333,30 +330,32 @@ public class QuadrantEditor {
 			
 			public void action() {
 				
-				WorldScreen s = new WorldScreen();
-				DebuggerScreen debuggerScreen = new DebuggerScreen(s);
-				ControlPanel controlPanel = new ControlPanel() {{
-					setLocation(0, 0);
-				}};
-				debuggerScreen.contentPane.pcp.getChildren().add(controlPanel);
+				QuadrantEditorWorld.action(ini);
 				
-				World world = World.createWorld(ini);
-				APP.model = world;
-				
-				APP.platform.setupAppScreen(s.contentPane.pcp);
-				
-				APP.platform.setupDebuggerScreen(debuggerScreen.contentPane.pcp);
-				
-				s.postDisplay();
-				
-				debuggerScreen.postDisplay();
-				
-				world.render_worldPanel();
-				world.render_preview();
-				s.contentPane.repaint();
-				
-				APP.platform.showAppScreen();
-				APP.platform.showDebuggerScreen();
+//				WorldScreen s = new WorldScreen();
+//				DebuggerScreen debuggerScreen = new DebuggerScreen(s);
+//				ControlPanel controlPanel = new ControlPanel() {{
+//					setLocation(0, 0);
+//				}};
+//				debuggerScreen.contentPane.pcp.getChildren().add(controlPanel);
+//				
+//				World world = World.createWorld(ini);
+//				APP.model = world;
+//				
+//				APP.platform.setupAppScreen(s.contentPane.pcp);
+//				
+//				APP.platform.setupDebuggerScreen(debuggerScreen.contentPane.pcp);
+//				
+//				s.postDisplay();
+//				
+//				debuggerScreen.postDisplay();
+//				
+//				world.render_worldPanel();
+//				world.render_preview();
+//				s.contentPane.repaint();
+//				
+//				APP.platform.showAppScreen();
+//				APP.platform.showDebuggerScreen();
 			}
 			
 			public void paint(RenderingContext ctxt) {

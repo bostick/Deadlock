@@ -1,4 +1,4 @@
-package com.gutabi.deadlock.world.examples;
+package com.gutabi.deadlock.rushhour;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
@@ -6,7 +6,6 @@ import com.gutabi.deadlock.gen.BoardsIndex;
 import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.math.DMath;
 import com.gutabi.deadlock.math.Point;
-import com.gutabi.deadlock.menu.WinnerMenu;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.world.DebuggerScreen;
 import com.gutabi.deadlock.world.QuadrantMap;
@@ -22,7 +21,7 @@ import com.gutabi.deadlock.world.tools.InteractiveCarTool;
 
 public class RushHourWorld extends World {
 	
-	public int index;
+	public Level level;
 	
 	public boolean isWon;
 	public WinnerMenu winnerMenu;
@@ -93,10 +92,11 @@ public class RushHourWorld extends World {
 		
 		try {
 			
-			char[][] board = APP.platform.readBoard(APP.platform.boardResource(id));
+			Level level = APP.platform.readLevel(APP.platform.boardResource(id));
 			
-			w.createRushHourBoard(new Point(1.5 * QuadrantMap.QUADRANT_WIDTH, 2.0 * QuadrantMap.QUADRANT_HEIGHT), board);
-			w.index = boardIndex;
+			w.level = level;
+			
+			w.createRushHourBoard(new Point(1.5 * QuadrantMap.QUADRANT_WIDTH, 2.0 * QuadrantMap.QUADRANT_HEIGHT), level.board);
 			
 		} catch (Exception e) {
 			assert false;

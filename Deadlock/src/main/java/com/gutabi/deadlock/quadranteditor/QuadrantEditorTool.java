@@ -9,7 +9,6 @@ import com.gutabi.deadlock.menu.MainMenu;
 import com.gutabi.deadlock.ui.InputEvent;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.world.Quadrant;
-import com.gutabi.deadlock.world.World;
 
 public class QuadrantEditorTool extends Tool {
 	
@@ -92,7 +91,7 @@ public class QuadrantEditorTool extends Tool {
 				
 				editor.ini[q.r][q.c] = (q.active?0:1);
 				
-				editor.world = World.createWorld(editor.ini);
+				editor.world = QuadrantEditorWorld.createWorld(editor.ini);
 				
 				double pixelsPerMeterWidth = editor.worldPanel.aabb.width / editor.world.quadrantMap.worldWidth;
 				double pixelsPerMeterHeight = editor.worldPanel.aabb.height / editor.world.quadrantMap.worldHeight;

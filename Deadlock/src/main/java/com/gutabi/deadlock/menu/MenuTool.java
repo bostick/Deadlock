@@ -4,11 +4,11 @@ import static com.gutabi.deadlock.DeadlockApplication.APP;
 
 import com.gutabi.deadlock.Tool;
 import com.gutabi.deadlock.math.Point;
+import com.gutabi.deadlock.rushhour.RushHourWorld;
 import com.gutabi.deadlock.ui.InputEvent;
 import com.gutabi.deadlock.ui.Menu;
 import com.gutabi.deadlock.ui.MenuItem;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
-import com.gutabi.deadlock.world.examples.RushHourWorld;
 
 public class MenuTool extends Tool {
 	
@@ -73,6 +73,17 @@ public class MenuTool extends Tool {
 		if (menu.hilited != null && menu.hilited.active) {
 			menu.hilited.action();
 		}
+	}
+	
+	public void escKey() {
+		Menu menu;
+		if (APP.model instanceof RushHourWorld) {
+			menu = ((RushHourWorld)APP.model).winnerMenu;
+		} else {
+			menu = (Menu)APP.model;
+		}
+		
+		menu.escape();
 	}
 	
 	public void moved(InputEvent ignore) {

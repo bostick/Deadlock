@@ -2,11 +2,10 @@ package com.gutabi.deadlock;
 
 public class ResourceImpl implements Resource {
 	
-	public String name;
+	public String given;
+	public String full;
 	
-	public ResourceImpl(String name) {
-		
-		this.name = name;
+	public ResourceImpl() {
 		
 	}
 	

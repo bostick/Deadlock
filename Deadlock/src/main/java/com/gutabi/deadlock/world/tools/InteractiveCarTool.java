@@ -8,14 +8,14 @@ import com.gutabi.deadlock.geom.Shape;
 import com.gutabi.deadlock.math.DMath;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.menu.MainMenu;
-import com.gutabi.deadlock.menu.WinnerMenu;
+import com.gutabi.deadlock.rushhour.RushHourWorld;
+import com.gutabi.deadlock.rushhour.WinnerMenu;
 import com.gutabi.deadlock.ui.InputEvent;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.world.World;
 import com.gutabi.deadlock.world.cars.Car;
 import com.gutabi.deadlock.world.cars.CarStateEnum;
 import com.gutabi.deadlock.world.cars.InteractiveCar;
-import com.gutabi.deadlock.world.examples.RushHourWorld;
 import com.gutabi.deadlock.world.graph.Fixture;
 import com.gutabi.deadlock.world.graph.GraphPosition;
 import com.gutabi.deadlock.world.graph.GraphPositionPathPosition;
@@ -285,6 +285,10 @@ public class InteractiveCarTool extends WorldToolBase {
 				assert false;
 				break;
 			}	
+			int moves = car.driver.overallPos.movesDistance(car.driver.toolCoastingGoal);
+			world.level.userMoves += moves;
+			
+			APP.debuggerScreen.contentPane.repaint();
 			
 		} finally {
 			dragVector = null;

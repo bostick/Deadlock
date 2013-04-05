@@ -1166,4 +1166,8 @@ public class GraphPositionPathPosition {
 		return bestParam;
 	}
 	
+	public int movesDistance(GraphPositionPathPosition end) {
+		return 1;
+	}
+	
 }

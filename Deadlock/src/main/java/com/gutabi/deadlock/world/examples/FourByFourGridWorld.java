@@ -6,7 +6,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.gutabi.deadlock.math.Point;
-import com.gutabi.deadlock.world.ControlPanel;
 import com.gutabi.deadlock.world.DebuggerScreen;
 import com.gutabi.deadlock.world.QuadrantMap;
 import com.gutabi.deadlock.world.Stroke;

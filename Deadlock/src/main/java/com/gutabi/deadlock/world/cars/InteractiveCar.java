@@ -4,12 +4,12 @@ import static com.gutabi.deadlock.DeadlockApplication.APP;
 
 import com.gutabi.deadlock.math.DMath;
 import com.gutabi.deadlock.math.Point;
+import com.gutabi.deadlock.rushhour.RushHourWorld;
 import com.gutabi.deadlock.ui.paint.Cap;
 import com.gutabi.deadlock.ui.paint.Color;
 import com.gutabi.deadlock.ui.paint.Join;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.world.World;
-import com.gutabi.deadlock.world.examples.RushHourWorld;
 import com.gutabi.deadlock.world.graph.GraphPositionPathPosition;
 import com.gutabi.deadlock.world.physics.PhysicsUtils;
 

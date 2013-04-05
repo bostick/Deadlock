@@ -58,15 +58,7 @@ public abstract class MenuItem {
 		int y = (int)trans.getTranslateY();
 		
 		lab.setLocation(x, y);
-		if (c == 0) {
-			lab.setDimension(menu.menuItemWidestCol0, localAABB.height);
-		} else if (c == 1) {
-			lab.setDimension(menu.menuItemWidestCol1, localAABB.height);
-		} else if (c == 2) {
-			lab.setDimension(menu.menuItemWidestCol2, localAABB.height);
-		} else {
-			assert false;
-		}
+		lab.setDimension(menu.menuItemWidest[c], localAABB.height);
 		
 		if (active) {
 			lab.color = Color.WHITE;

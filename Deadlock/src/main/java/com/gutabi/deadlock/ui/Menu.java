@@ -17,12 +17,10 @@ public abstract class Menu {
 	public MenuItem hilited;
 	public MenuItem firstMenuItem;
 	
-	public double menuItemWidestCol0;
-	public int totalMenuItemHeightCol0;
-	public double menuItemWidestCol1;
-	public int totalMenuItemHeightCol1;
-	public double menuItemWidestCol2;
-	public int totalMenuItemHeightCol2;
+	int rows;
+	int cols;
+	public double[] menuItemWidest;
+	public double[] menuHeight;
 	
 	public AABB aabb = new AABB(0, 0, 0, 0);
 	
@@ -32,7 +30,8 @@ public abstract class Menu {
 	boolean isRendered;
 	
 	public Menu() {
-		
+		menuItemWidest = new double[0];
+		menuHeight = new double[cols];
 	}
 	
 	public void add(MenuItem item, int r, int c) {
@@ -58,6 +57,14 @@ public abstract class Menu {
 		
 		first.up = item;
 		
+		if (r == rows) {
+			rows++;
+		}
+		if (c == cols) {
+			cols++;
+			menuItemWidest = new double[cols];
+			menuHeight = new double[cols];
+		}
 	}
 	
 	public MenuItem hitTest(Point p) {
@@ -71,63 +78,41 @@ public abstract class Menu {
 		return null;
 	}
 	
+	public abstract void escape();
+	
 	public void render() {
 		
-		/*
-		 * col 0
-		 */
-		int itemsCol0 = 0;
-		for (MenuItem item : items) {
-			if (item.c != 0) {
-				continue;
+		for (int i = 0; i < cols; i++) {
+			int itemsCol = 0;
+			double totalMenuItemHeight = 0.0;
+			for (MenuItem item : items) {
+				if (item.c != i) {
+					continue;
+				}
+				if ((int)item.localAABB.width > menuItemWidest[i]) {
+					menuItemWidest[i] = (int)item.localAABB.width;
+				}
+				totalMenuItemHeight += (int)item.localAABB.height;
+				itemsCol++;
 			}
-			if ((int)item.localAABB.width > menuItemWidestCol0) {
-				menuItemWidestCol0 = (int)item.localAABB.width;
-			}
-			totalMenuItemHeightCol0 += (int)item.localAABB.height;
-			itemsCol0++;
+			
+			menuHeight[i] = totalMenuItemHeight + 10 * (itemsCol - 1);
 		}
 		
-		double menuHeightCol0 = totalMenuItemHeightCol0 + 10 * (itemsCol0 - 1);
-		
-		
-		/*
-		 * col 1
-		 */
-		int itemsCol1 = 0;
-		for (MenuItem item : items) {
-			if (item.c != 1) {
-				continue;
+		double width = 0.0;
+		for (int i = 0; i < cols; i++) {
+			width += menuItemWidest[i];
+			if (i < cols-1) {
+				width += 10;
 			}
-			if ((int)item.localAABB.width > menuItemWidestCol1) {
-				menuItemWidestCol1 = (int)item.localAABB.width;
-			}
-			totalMenuItemHeightCol1 += (int)item.localAABB.height;
-			itemsCol1++;
 		}
-		
-		double menuHeightCol1 = totalMenuItemHeightCol1 + 10 * (itemsCol1 - 1);
-		
-		
-		/*
-		 * col 2
-		 */
-		int itemsCol2 = 0;
-		for (MenuItem item : items) {
-			if (item.c != 2) {
-				continue;
+		double height = 0.0;
+		for (int i = 0; i < cols; i++) {
+			if (menuHeight[i] > height) {
+				height = menuHeight[i];
 			}
-			if ((int)item.localAABB.width > menuItemWidestCol2) {
-				menuItemWidestCol2 = (int)item.localAABB.width;
-			}
-			totalMenuItemHeightCol2 += (int)item.localAABB.height;
-			itemsCol2++;
 		}
-		
-		double menuHeightCol2 = totalMenuItemHeightCol2 + 10 * (itemsCol2 - 1);
-		
-		
-		aabb = new AABB(aabb.x, aabb.y, menuItemWidestCol0 + 10 + menuItemWidestCol1 + 10 + menuItemWidestCol2, Math.max(Math.max(menuHeightCol0, menuHeightCol1), menuHeightCol2));
+		aabb = new AABB(aabb.x, aabb.y, width, height);
 		
 		Image tmpImg = APP.platform.createImage((int)aabb.width, (int)aabb.height);
 		
@@ -135,83 +120,34 @@ public abstract class Menu {
 		
 		Transform origTransform = ctxt.getTransform();
 		
-		/*
-		 * col 0
-		 */
-		boolean itemFound = false;
-		int curRow = 0;
-		while (true) {
-			itemFound = false;
-			for (MenuItem item : items) {
-				if (item.c != 0) {
-					continue;
-				}
-				if (item.r != curRow) {
-					continue;
-				}
-				itemFound = true;
-				item.render(ctxt);
-				ctxt.translate(0, item.localAABB.height + 10);
+		for (int i = 0; i < cols; i++) {
+			
+			ctxt.setTransform(origTransform);
+			
+			for (int j = 0; j < i; j++) {
+				ctxt.translate(menuItemWidest[j] + 10, 0);
 			}
-			if (!itemFound) {
-				break;
-			} else {
-				curRow++;
-			}
-		}
-		
-		ctxt.setTransform(origTransform);
-		ctxt.translate(menuItemWidestCol0 + 10, 0);
-		
-		/*
-		 * col 1
-		 */
-		curRow = 0;
-		while (true) {
-			itemFound = false;
-			for (MenuItem item : items) {
-				if (item.c != 1) {
-					continue;
+			
+			boolean itemFound = false;
+			int curRow = 0;
+			while (true) {
+				itemFound = false;
+				for (MenuItem item : items) {
+					if (item.c != i) {
+						continue;
+					}
+					if (item.r != curRow) {
+						continue;
+					}
+					itemFound = true;
+					item.render(ctxt);
+					ctxt.translate(0, item.localAABB.height + 10);
 				}
-				if (item.r != curRow) {
-					continue;
+				if (!itemFound) {
+					break;
+				} else {
+					curRow++;
 				}
-				itemFound = true;
-				item.render(ctxt);
-				ctxt.translate(0, item.localAABB.height + 10);
-			}
-			if (!itemFound) {
-				break;
-			} else {
-				curRow++;
-			}
-		}
-		
-		ctxt.setTransform(origTransform);
-		ctxt.translate(menuItemWidestCol0 + 10, 0);
-		ctxt.translate(menuItemWidestCol1 + 10, 0);
-		
-		/*
-		 * col 2
-		 */
-		curRow = 0;
-		while (true) {
-			itemFound = false;
-			for (MenuItem item : items) {
-				if (item.c != 2) {
-					continue;
-				}
-				if (item.r != curRow) {
-					continue;
-				}
-				itemFound = true;
-				item.render(ctxt);
-				ctxt.translate(0, item.localAABB.height + 10);
-			}
-			if (!itemFound) {
-				break;
-			} else {
-				curRow++;
 			}
 		}
 		

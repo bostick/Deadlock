@@ -2,6 +2,7 @@ package com.gutabi.deadlock;
 
 import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.geom.ShapeEngine;
+import com.gutabi.deadlock.rushhour.Level;
 import com.gutabi.deadlock.ui.Image;
 import com.gutabi.deadlock.ui.PlatformContentPane;
 import com.gutabi.deadlock.ui.paint.FontStyle;
@@ -54,7 +55,7 @@ public interface Platform {
 	/*
 	 * board engine
 	 */
-	public char[][] readBoard(Resource res) throws Exception;
+	public Level readLevel(Resource res) throws Exception;
 	
 	
 	

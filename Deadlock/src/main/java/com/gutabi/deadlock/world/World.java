@@ -71,17 +71,6 @@ public class World extends PhysicsWorld {
 		
 	}
 	
-	public static World createWorld(int[][] ini) {
-		
-		World w = new World();
-		
-		QuadrantMap qm = new QuadrantMap(ini);
-		
-		w.quadrantMap = qm;
-		
-		return w;
-	}
-	
 	public void panelPostDisplay() {
 		
 		background.panelPostDisplay();
