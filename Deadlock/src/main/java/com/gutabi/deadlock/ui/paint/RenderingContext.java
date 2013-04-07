@@ -63,6 +63,4 @@ public abstract class RenderingContext {
 	
 	public abstract void drawLine(Line a);
 	
-	public abstract void paintLine(Line a);
-	
 }

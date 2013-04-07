@@ -23,7 +23,7 @@ public class StraightEdgeToolShape implements Shape {
 		this.firstCircle = APP.platform.createShapeEngine().createCircle(first, Vertex.INIT_VERTEX_RADIUS);
 		this.pCircle = APP.platform.createShapeEngine().createCircle(p, Vertex.INIT_VERTEX_RADIUS);
 		
-		this.cap = APP.platform.createShapeEngine().createCapsule(firstCircle, pCircle);
+		this.cap = new Capsule(firstCircle, pCircle);
 		
 //		aabb = cap.aabb;
 	}

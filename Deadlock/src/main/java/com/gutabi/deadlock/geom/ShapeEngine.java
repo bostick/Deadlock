@@ -8,8 +8,6 @@ public abstract class ShapeEngine {
 	
 	public abstract Circle createCircle(Point center, double radius);
 	
-	public abstract Capsule createCapsule(Circle ac, Circle bc);
-	
 	public abstract Polyline createPolyline(List<Point> pts);
 	
 	public abstract OBB createOBB(Point center, double a, double xExtant, double yExtant);

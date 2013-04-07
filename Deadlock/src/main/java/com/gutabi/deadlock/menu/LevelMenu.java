@@ -2,34 +2,49 @@ package com.gutabi.deadlock.menu;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
-import com.gutabi.deadlock.gen.BoardsIndex;
+import java.net.URL;
+
+import com.gutabi.deadlock.rushhour.LevelDB;
 import com.gutabi.deadlock.rushhour.RushHourWorld;
 import com.gutabi.deadlock.ui.Menu;
 import com.gutabi.deadlock.ui.MenuItem;
 
 public class LevelMenu extends Menu {
 	
-	public LevelMenu() {
+	public LevelMenu(final LevelDB levelDB) {
 		
-		for (int i = 0; i < BoardsIndex.table.length; i++) {
+		for (int i = 0; i < levelDB.levelCount; i++) {
 			int menuRow = i / 7;
 			int menuCol = i % 7;
 			final int ii = i;
-			add(new MenuItem(LevelMenu.this, Integer.toString(i), 48) { public void action() { RushHourWorld.action(ii); } }, menuRow, menuCol);
+			add(new MenuItem(LevelMenu.this, Integer.toString(i), 48) { public void action() { RushHourWorld.action(levelDB, ii); } }, menuRow, menuCol);
 		}
 		
 	}
 	
 	public static void action() {
 		
-		LevelMenu levelMenu = new LevelMenu();
-		APP.model = levelMenu;
-		
-		levelMenu.render();
-		
-		APP.appScreen.postDisplay();
-		
-		APP.appScreen.contentPane.repaint();
+		try {
+			
+			String full = "/levels/" + "levels" + ".zip";
+			
+			URL url = APP.getClass().getResource(full);
+			
+			LevelDB levelDB = new LevelDB(url);
+			
+			LevelMenu levelMenu = new LevelMenu(levelDB);
+			APP.model = levelMenu;
+			
+			levelMenu.render();
+			
+			APP.appScreen.postDisplay();
+			
+			APP.appScreen.contentPane.repaint();
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			assert false;
+		}
 		
 	}
 	

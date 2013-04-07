@@ -2,7 +2,7 @@ package com.gutabi.deadlock.rushhour;
 
 public class Level {
 	
-	public String id;
+	public int index;
 	
 	public char[][] board;
 	

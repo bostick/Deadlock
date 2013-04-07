@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       157,          7]
-NotebookDataLength[     32223,        787]
-NotebookOptionsPosition[     30595,        725]
-NotebookOutlinePosition[     30937,        740]
-CellTagsIndexPosition[     30894,        737]
+NotebookDataLength[     33790,        860]
+NotebookOptionsPosition[     31748,        784]
+NotebookOutlinePosition[     32090,        799]
+CellTagsIndexPosition[     32047,        796]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -33,7 +33,8 @@ Cell[BoxData[
 
 Cell[BoxData["\<\"C:\\\\Users\\\\brenton\\\\DeadlockWorkspace\\\\transcripts\"\
 \>"], "Output",
- CellChangeTimes->{3.5739884038067713`*^9, 3.5739901464244432`*^9}]
+ CellChangeTimes->{3.5739884038067713`*^9, 3.5739901464244432`*^9, 
+  3.5741926357507687`*^9}]
 }, Open  ]],
 
 Cell[BoxData[
@@ -532,84 +533,188 @@ Cell[BoxData[
 
 Cell[CellGroupData[{
 
-Cell["generate .dat files", "Section",
- CellChangeTimes->{{3.574166014991931*^9, 3.5741660207272587`*^9}}],
+Cell["\<\
+generate .dat file name and contents\
+\>", "Section",
+ CellChangeTimes->{{3.574244261085375*^9, 3.574244268940824*^9}, {
+  3.5742447957999587`*^9, 3.5742448031363783`*^9}}],
 
 Cell[BoxData[
  RowBox[{
-  RowBox[{
+  RowBox[{"generateDatFileNamesAndContents", "[", "transcript_", "]"}], ":=", 
+  "\[IndentingNewLine]", 
+  RowBox[{"(", "\[IndentingNewLine]", 
    RowBox[{
-    RowBox[{"(", "\[IndentingNewLine]", 
+    RowBox[{"boards", "=", 
+     RowBox[{"readBoardsFromTranscript", "[", "transcript", "]"}]}], ";", 
+    "\[IndentingNewLine]", 
+    RowBox[{
      RowBox[{
-      RowBox[{"boards", "=", 
-       RowBox[{"readBoardsFromTranscript", "[", "#", "]"}]}], ";", 
-      "\[IndentingNewLine]", 
-      RowBox[{
+      RowBox[{"(", "\[IndentingNewLine]", 
        RowBox[{
-        RowBox[{"(", "\[IndentingNewLine]", 
-         RowBox[{
-          RowBox[{"rules", "=", 
-           RowBox[{"#", "[", 
-            RowBox[{"[", "1", "]"}], "]"}]}], ";", "\[IndentingNewLine]", 
-          RowBox[{"data", "=", 
-           RowBox[{"#", "[", 
-            RowBox[{"[", "2", "]"}], "]"}]}], ";", "\[IndentingNewLine]", 
-          RowBox[{"file", "=", 
-           RowBox[{
-           "\"\<C:\\\\Users\\\\brenton\\\\DeadlockWorkspace\\\\\
-DeadlockResources\\\\gen\\\\boards\\\\gen-\>\"", "<>", 
-            RowBox[{"(", 
-             RowBox[{"\"\<id\>\"", "/.", "rules"}], ")"}], "<>", "\"\<-\>\"", 
-            "<>", 
-            RowBox[{"(", 
-             RowBox[{"\"\<partition\>\"", "/.", "rules"}], ")"}], "<>", 
-            "\"\<.dat\>\""}]}], ";", "\[IndentingNewLine]", 
+        RowBox[{"rules", "=", 
+         RowBox[{"#", "[", 
+          RowBox[{"[", "1", "]"}], "]"}]}], ";", "\[IndentingNewLine]", 
+        RowBox[{"data", "=", 
+         RowBox[{"#", "[", 
+          RowBox[{"[", "2", "]"}], "]"}]}], ";", "\[IndentingNewLine]", 
+        RowBox[{"file", "=", 
+         RowBox[{"\"\<gen-\>\"", "<>", 
           RowBox[{"(", 
-           RowBox[{
-            RowBox[{"WriteString", "[", 
-             RowBox[{"file", ",", 
-              RowBox[{"\"\<moves: \>\"", "<>", 
-               RowBox[{"(", 
-                RowBox[{"\"\<moves\>\"", "/.", "rules"}], ")"}]}]}], "]"}], 
-            ";", 
-            RowBox[{"WriteString", "[", 
-             RowBox[{"file", ",", "\"\<\\n\>\""}], "]"}]}], ")"}], ";", 
-          "\[IndentingNewLine]", 
-          RowBox[{
-           RowBox[{
+           RowBox[{"\"\<id\>\"", "/.", "rules"}], ")"}], "<>", "\"\<-\>\"", "<>", 
+          RowBox[{"(", 
+           RowBox[{"\"\<partition\>\"", "/.", "rules"}], ")"}], "<>", 
+          "\"\<.dat\>\""}]}], ";", "\[IndentingNewLine]", 
+        RowBox[{"{", 
+         RowBox[{"file", ",", 
+          RowBox[{"\"\<moves: \>\"", "<>", 
+           RowBox[{"(", 
+            RowBox[{"\"\<moves\>\"", "/.", "rules"}], ")"}], "<>", 
+           "\"\<\\n\>\"", "<>", 
+           RowBox[{"StringJoin", "[", 
             RowBox[{"(", 
              RowBox[{
-              RowBox[{"WriteString", "[", 
-               RowBox[{"file", ",", "#"}], "]"}], ";", 
-              RowBox[{"WriteString", "[", 
-               RowBox[{"file", ",", "\"\<\\n\>\""}], "]"}]}], ")"}], "&"}], "/@",
-            "data"}], ";", "\[IndentingNewLine]", 
-          RowBox[{"Close", "[", "file", "]"}]}], "\[IndentingNewLine]", ")"}],
-         "&"}], "/@", "boards"}]}], "\[IndentingNewLine]", ")"}], "&"}], "/@",
-    "names"}], ";"}]], "Input",
- CellChangeTimes->{{3.5739908679517117`*^9, 3.5739908737770452`*^9}, 
-   3.573991659678996*^9, {3.5739919184707985`*^9, 3.5739919189718275`*^9}, {
-   3.5739921298748903`*^9, 3.5739921631717944`*^9}, {3.573993253597163*^9, 
-   3.573993278765603*^9}, {3.573993426724066*^9, 3.5739934442210665`*^9}, {
-   3.5739934803761344`*^9, 3.573993520061404*^9}, {3.573993564540948*^9, 
-   3.573993605218275*^9}, {3.5739936375221224`*^9, 3.573993691396204*^9}, {
-   3.573993735159707*^9, 3.5739937533657484`*^9}, {3.5739938000664196`*^9, 
-   3.5739939894452515`*^9}, {3.573996506437215*^9, 3.573996510654456*^9}}],
+              RowBox[{
+               RowBox[{"(", 
+                RowBox[{
+                 RowBox[{"ToString", "[", "#", "]"}], "<>", "\"\<\\n\>\""}], 
+                ")"}], "&"}], "/@", "data"}], ")"}], "]"}]}]}], "}"}]}], 
+       "\[IndentingNewLine]", ")"}], "&"}], "/@", "boards"}]}], 
+   "\[IndentingNewLine]", ")"}]}]], "Input",
+ CellChangeTimes->{{3.574244282873621*^9, 3.5742443243529935`*^9}, {
+  3.5742447827762136`*^9, 3.5742448081246634`*^9}}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["generate zip file", "Section",
+ CellChangeTimes->{{3.5742441484269314`*^9, 3.5742441509870777`*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"a", "=", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"generateDatFileNamesAndContents", "[", "#", "]"}], "&"}], "/@", 
+    "names"}]}], ";"}]], "Input",
+ CellChangeTimes->{{3.5742441659659348`*^9, 3.574244169122115*^9}, {
+  3.5742448793697386`*^9, 3.5742448920974665`*^9}, {3.574245009891204*^9, 
+  3.574245017741653*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"b", "=", 
+   RowBox[{"Flatten", "[", 
+    RowBox[{"a", ",", "1"}], "]"}]}], ";"}]], "Input",
+ CellChangeTimes->{{3.574245038022813*^9, 3.574245065851405*^9}}],
 
 Cell[CellGroupData[{
 
 Cell[BoxData[
- RowBox[{"Streams", "[", "]"}]], "Input",
- CellChangeTimes->{{3.573993787464699*^9, 3.5739937884967575`*^9}}],
+ RowBox[{"Length", "[", "b", "]"}]], "Input",
+ CellChangeTimes->{{3.5742450043728886`*^9, 3.574245005672963*^9}, {
+  3.574245069122592*^9, 3.5742450692976017`*^9}}],
+
+Cell[BoxData["51234"], "Output",
+ CellChangeTimes->{3.574245006052984*^9, 3.574245069578618*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"StringReplace", "[", 
+  RowBox[{
+   RowBox[{"b", "[", 
+    RowBox[{"[", 
+     RowBox[{"1", ",", "2"}], "]"}], "]"}], ",", 
+   RowBox[{
+    RowBox[{"\"\<moves: \>\"", "~~", 
+     RowBox[{"m", ":", "NumberString"}], "~~", "__"}], "\[RuleDelayed]", 
+    "m"}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.5742451513612957`*^9, 3.57424520983564*^9}}],
+
+Cell[BoxData["\<\"21\"\>"], "Output",
+ CellChangeTimes->{{3.574245153325408*^9, 3.574245178293836*^9}, 
+   3.57424521122972*^9}]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"c", "=", 
+   RowBox[{"Select", "[", 
+    RowBox[{"b", ",", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"ToExpression", "[", 
+        RowBox[{"StringReplace", "[", 
+         RowBox[{
+          RowBox[{"#", "[", 
+           RowBox[{"[", "2", "]"}], "]"}], ",", 
+          RowBox[{
+           RowBox[{"\"\<moves: \>\"", "~~", 
+            RowBox[{"m", ":", "NumberString"}], "~~", "__"}], 
+           "\[RuleDelayed]", "m"}]}], "]"}], "]"}], "\[GreaterEqual]", "30"}],
+       "&"}]}], "]"}]}], ";"}]], "Input",
+ CellChangeTimes->{{3.57424507433289*^9, 3.574245136618452*^9}, {
+  3.574245219121171*^9, 3.5742452230913982`*^9}, {3.5742453296244917`*^9, 
+  3.5742453298095026`*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Length", "[", "c", "]"}]], "Input",
+ CellChangeTimes->{{3.5742452278996735`*^9, 3.5742452293247547`*^9}}],
+
+Cell[BoxData["10743"], "Output",
+ CellChangeTimes->{3.574245229801782*^9, 3.5742453320716314`*^9}]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"d", "=", 
+   RowBox[{"c", "[", 
+    RowBox[{"[", 
+     RowBox[{"1", ";;", "100"}], "]"}], "]"}]}], ";"}]], "Input",
+ CellChangeTimes->{{3.5742454474392304`*^9, 3.574245498429147*^9}, {
+  3.574245603282144*^9, 3.5742456033941507`*^9}, {3.574256909861843*^9, 
+  3.574256910464878*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"AbsoluteTiming", "[", 
+  RowBox[{"Export", "[", 
+   RowBox[{
+   "\"\<C:\\\\Users\\\\brenton\\\\DeadlockWorkspace\\\\DeadlockResources\\\\\
+gen\\\\bin\\\\levels\\\\levels.zip\>\"", ",", 
+    RowBox[{"d", "[", 
+     RowBox[{"[", 
+      RowBox[{"All", ",", "2"}], "]"}], "]"}], ",", 
+    RowBox[{"{", 
+     RowBox[{"\"\<ZIP\>\"", ",", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"{", 
+         RowBox[{"#", ",", "\"\<Text\>\""}], "}"}], "&"}], "/@", 
+       RowBox[{"d", "[", 
+        RowBox[{"[", 
+         RowBox[{"All", ",", "1"}], "]"}], "]"}]}]}], "}"}]}], "]"}], 
+  "]"}]], "Input",
+ CellChangeTimes->{{3.574243565628597*^9, 3.5742435705558786`*^9}, {
+   3.574243642775009*^9, 3.57424375083819*^9}, 3.5742442010299397`*^9, 
+   3.574244382546322*^9, {3.5742448988638535`*^9, 3.5742449148307667`*^9}, {
+   3.5742452380582542`*^9, 3.5742452441226015`*^9}, {3.574245457816824*^9, 
+   3.5742454914667487`*^9}, {3.5742569176022863`*^9, 3.574256922667576*^9}}],
 
 Cell[BoxData[
  RowBox[{"{", 
   RowBox[{
-   RowBox[{"OutputStream", "[", 
-    RowBox[{"\<\"stdout\"\>", ",", "1"}], "]"}], ",", 
-   RowBox[{"OutputStream", "[", 
-    RowBox[{"\<\"stderr\"\>", ",", "2"}], "]"}]}], "}"}]], "Output",
- CellChangeTimes->{3.573993788815776*^9, 3.5739938296151094`*^9}]
+  "1.9771131`7.747576507170274", 
+   ",", "\<\"C:\\\\Users\\\\brenton\\\\DeadlockWorkspace\\\\DeadlockResources\
+\\\\gen\\\\bin\\\\levels\\\\levels.zip\"\>"}], "}"}]], "Output",
+ CellChangeTimes->{
+  3.5742443895797243`*^9, 3.574244916737876*^9, {3.574245444950088*^9, 
+   3.574245519697363*^9}, 3.5742458083468733`*^9, 3.574256926314784*^9}]
 }, Open  ]]
 }, Open  ]],
 
@@ -617,62 +722,6 @@ Cell[CellGroupData[{
 
 Cell["generate BoardsIndex.java", "Section",
  CellChangeTimes->{{3.57416602791967*^9, 3.5741660325289335`*^9}}],
-
-Cell[BoxData[
- RowBox[{
-  RowBox[{"a", "=", 
-   RowBox[{
-    RowBox[{"Flatten", "[", 
-     RowBox[{
-      RowBox[{
-       RowBox[{"(", "\[IndentingNewLine]", 
-        RowBox[{
-         RowBox[{"boards", "=", 
-          RowBox[{"readBoardsFromTranscript", "[", "#", "]"}]}], ";", 
-         "\[IndentingNewLine]", 
-         RowBox[{
-          RowBox[{
-           RowBox[{"(", "\[IndentingNewLine]", 
-            RowBox[{
-             RowBox[{"rules", "=", 
-              RowBox[{"#", "[", 
-               RowBox[{"[", "1", "]"}], "]"}]}], ";", "\[IndentingNewLine]", 
-             RowBox[{"data", "=", 
-              RowBox[{"#", "[", 
-               RowBox[{"[", "2", "]"}], "]"}]}], ";", "\[IndentingNewLine]", 
-             RowBox[{
-              RowBox[{"(", 
-               RowBox[{"\"\<id\>\"", "/.", "rules"}], ")"}], "<>", 
-              "\"\<-\>\"", "<>", 
-              RowBox[{"(", 
-               RowBox[{"\"\<partition\>\"", "/.", "rules"}], ")"}]}]}], 
-            "\[IndentingNewLine]", ")"}], "&"}], "/@", "boards"}]}], 
-        "\[IndentingNewLine]", ")"}], "&"}], "/@", 
-      RowBox[{"names", "[", 
-       RowBox[{"[", 
-        RowBox[{";;", "10"}], "]"}], "]"}]}], "]"}], "[", 
-    RowBox[{"[", 
-     RowBox[{";;", "100"}], "]"}], "]"}]}], ";"}]], "Input",
- CellChangeTimes->{{3.5739908679517117`*^9, 3.5739908737770452`*^9}, 
-   3.573991659678996*^9, {3.5739919184707985`*^9, 3.5739919189718275`*^9}, {
-   3.5739921298748903`*^9, 3.5739921631717944`*^9}, {3.573993253597163*^9, 
-   3.573993278765603*^9}, {3.573993426724066*^9, 3.5739934442210665`*^9}, {
-   3.5739934803761344`*^9, 3.573993520061404*^9}, {3.573993564540948*^9, 
-   3.573993605218275*^9}, {3.5739936375221224`*^9, 3.573993691396204*^9}, {
-   3.573993735159707*^9, 3.5739937533657484`*^9}, {3.5739938000664196`*^9, 
-   3.5739939894452515`*^9}, {3.573996506437215*^9, 3.573996510654456*^9}, {
-   3.574166271915626*^9, 3.5741663298629403`*^9}, {3.5741667887611876`*^9, 
-   3.574166791189327*^9}}],
-
-Cell[CellGroupData[{
-
-Cell[BoxData[
- RowBox[{"Length", "[", "a", "]"}]], "Input",
- CellChangeTimes->{{3.5741664733111453`*^9, 3.5741664786284494`*^9}}],
-
-Cell[BoxData["100"], "Output",
- CellChangeTimes->{3.5741664789794693`*^9, 3.574166812890568*^9}]
-}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -690,16 +739,29 @@ gen\\\\src\\\\com\\\\gutabi\\\\deadlock\\\\gen\\\\BoardsIndex.java\>\""}],
     "\"\<package com.gutabi.deadlock.gen;\n\npublic class BoardsIndex {\n\\t\n\
 \\tpublic static final String[] table = \>\"", "<>", 
      RowBox[{"ToString", "[", 
-      RowBox[{"a", ",", "InputForm"}], "]"}], "<>", "\"\<;\n\\t\n}\n\>\""}]}],
-    "]"}], ";"}], "\[IndentingNewLine]", 
+      RowBox[{
+       RowBox[{
+        RowBox[{
+         RowBox[{"StringTake", "[", 
+          RowBox[{"#", ",", 
+           RowBox[{"{", 
+            RowBox[{"5", ",", 
+             RowBox[{"-", "5"}]}], "}"}]}], "]"}], "&"}], "/@", 
+        RowBox[{"d", "[", 
+         RowBox[{"[", 
+          RowBox[{"All", ",", "1"}], "]"}], "]"}]}], ",", "InputForm"}], 
+      "]"}], "<>", "\"\<;\n\\t\n}\n\>\""}]}], "]"}], 
+  ";"}], "\[IndentingNewLine]", 
  RowBox[{"Close", "[", "file", "]"}]}], "Input",
- CellChangeTimes->{{3.5741663480139785`*^9, 3.574166436367032*^9}}],
+ CellChangeTimes->{{3.5741663480139785`*^9, 3.574166436367032*^9}, {
+   3.5742455416316175`*^9, 3.5742455450668144`*^9}, 3.5742472318132906`*^9}],
 
 Cell[BoxData["\<\"C:\\\\Users\\\\brenton\\\\DeadlockWorkspace\\\\\
 DeadlockResources\\\\gen\\\\src\\\\com\\\\gutabi\\\\deadlock\\\\gen\\\\\
 BoardsIndex.java\"\>"], "Output",
  CellChangeTimes->{
-  3.574166433897891*^9, {3.574166795025546*^9, 3.5741668146876707`*^9}}]
+  3.574166433897891*^9, {3.574166795025546*^9, 3.5741668146876707`*^9}, 
+   3.574193124892746*^9, 3.574245548263997*^9, 3.574247232797347*^9}]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -714,17 +776,14 @@ Cell[BoxData[
    RowBox[{"OutputStream", "[", 
     RowBox[{"\<\"stdout\"\>", ",", "1"}], "]"}], ",", 
    RowBox[{"OutputStream", "[", 
-    RowBox[{"\<\"stderr\"\>", ",", "2"}], "]"}], ",", 
-   RowBox[{"InputStream", "[", 
-    RowBox[{"\<\"transcript-2-5-3.txt\"\>", ",", "218"}], "]"}]}], 
-  "}"}]], "Output",
+    RowBox[{"\<\"stderr\"\>", ",", "2"}], "]"}]}], "}"}]], "Output",
  CellChangeTimes->{3.573993788815776*^9, 3.5739938296151094`*^9, 
-  3.574166437753111*^9}]
+  3.574166437753111*^9, 3.574193126815856*^9}]
 }, Open  ]]
-}, Open  ]]
+}, Closed]]
 },
 WindowSize->{1242, 742},
-WindowMargins->{{Automatic, 27}, {Automatic, 14}},
+WindowMargins->{{Automatic, 45}, {Automatic, 19}},
 FrontEndVersion->"9.0 for Microsoft Windows (64-bit) (June 26, 2011)",
 StyleDefinitions->"Default.nb"
 ]
@@ -743,52 +802,66 @@ Cell[CellGroupData[{
 Cell[579, 22, 91, 1, 71, "Section"],
 Cell[CellGroupData[{
 Cell[695, 27, 208, 4, 31, "Input"],
-Cell[906, 33, 163, 2, 30, "Output"]
+Cell[906, 33, 190, 3, 30, "Output"]
 }, Open  ]],
-Cell[1084, 38, 333, 8, 31, "Input"],
-Cell[1420, 48, 801, 20, 31, "Input"],
-Cell[2224, 70, 421, 10, 31, "Input"],
-Cell[2648, 82, 6328, 132, 692, "Input"]
-}, Open  ]],
-Cell[CellGroupData[{
-Cell[9013, 219, 89, 1, 71, "Section"],
-Cell[CellGroupData[{
-Cell[9127, 224, 248, 6, 31, "Input"],
-Cell[9378, 232, 7158, 160, 194, "Output"]
+Cell[1111, 39, 333, 8, 31, "Input"],
+Cell[1447, 49, 801, 20, 31, "Input"],
+Cell[2251, 71, 421, 10, 31, "Input"],
+Cell[2675, 83, 6328, 132, 692, "Input"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[16573, 397, 272, 8, 31, "Input"],
-Cell[16848, 407, 123, 2, 30, "Output"]
+Cell[9040, 220, 89, 1, 71, "Section"],
+Cell[CellGroupData[{
+Cell[9154, 225, 248, 6, 31, "Input"],
+Cell[9405, 233, 7158, 160, 194, "Output"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[17008, 414, 248, 6, 31, "Input"],
-Cell[17259, 422, 6048, 106, 542, "Output"]
+Cell[16600, 398, 272, 8, 31, "Input"],
+Cell[16875, 408, 123, 2, 30, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[17035, 415, 248, 6, 31, "Input"],
+Cell[17286, 423, 6048, 106, 542, "Output"]
 }, Open  ]]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[23356, 534, 106, 1, 71, "Section"],
-Cell[23465, 537, 2647, 59, 232, "Input"],
+Cell[23383, 535, 182, 4, 71, "Section"],
+Cell[23568, 541, 1760, 43, 212, "Input"]
+}, Open  ]],
 Cell[CellGroupData[{
-Cell[26137, 600, 123, 2, 31, "Input"],
-Cell[26263, 604, 295, 7, 30, "Output"]
+Cell[25365, 589, 106, 1, 71, "Section"],
+Cell[25474, 592, 352, 9, 31, "Input"],
+Cell[25829, 603, 193, 5, 31, "Input"],
+Cell[CellGroupData[{
+Cell[26047, 612, 178, 3, 31, "Input"],
+Cell[26228, 617, 96, 1, 30, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[26361, 623, 367, 10, 31, "Input"],
+Cell[26731, 635, 128, 2, 30, "Output"]
+}, Open  ]],
+Cell[26874, 640, 712, 19, 31, "Input"],
+Cell[CellGroupData[{
+Cell[27611, 663, 129, 2, 31, "Input"],
+Cell[27743, 667, 98, 1, 30, "Output"]
+}, Open  ]],
+Cell[27856, 671, 318, 8, 31, "Input"],
+Cell[CellGroupData[{
+Cell[28199, 683, 984, 23, 52, "Input"],
+Cell[29186, 708, 382, 8, 30, "Output"]
 }, Open  ]]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[26607, 617, 111, 1, 71, "Section"],
-Cell[26721, 620, 1978, 44, 172, "Input"],
+Cell[29617, 722, 111, 1, 71, "Section"],
 Cell[CellGroupData[{
-Cell[28724, 668, 129, 2, 31, "Input"],
-Cell[28856, 672, 96, 1, 30, "Output"]
+Cell[29753, 727, 1123, 29, 212, "Input"],
+Cell[30879, 758, 336, 5, 30, "Output"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[28989, 678, 720, 17, 212, "Input"],
-Cell[29712, 697, 266, 4, 30, "Output"]
-}, Open  ]],
-Cell[CellGroupData[{
-Cell[30015, 706, 123, 2, 31, "Input"],
-Cell[30141, 710, 426, 11, 30, "Output"]
+Cell[31252, 768, 123, 2, 31, "Input"],
+Cell[31378, 772, 342, 8, 30, "Output"]
 }, Open  ]]
-}, Open  ]]
+}, Closed]]
 }
 ]
 *)

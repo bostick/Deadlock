@@ -413,6 +413,13 @@ public class GraphPositionPathPosition {
 		return path.nextVertexIndex(index, param);
 	}
 	
+	public GraphPositionPathPosition prevVertexPosition() {
+		return new GraphPositionPathPosition(path, path.prevVertexIndex(index, param), 0.0);
+	}
+	
+	public GraphPositionPathPosition nextVertexPosition() {
+		return new GraphPositionPathPosition(path, path.nextVertexIndex(index, param), 0.0);
+	}
 	
 	/**
 	 * searches forward from start position

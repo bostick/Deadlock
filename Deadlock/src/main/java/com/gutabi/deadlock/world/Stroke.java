@@ -83,7 +83,7 @@ public class Stroke {
 		for (int i = 0; i < cs.size()-1; i++) {
 			Circle a = cs.get(i);
 			Circle b = cs.get(i+1);
-			caps.add(APP.platform.createShapeEngine().createCapsule(a, b));
+			caps.add(new Capsule(a, b));
 		}
 		seq = new CapsuleSequence(caps);
 		
@@ -215,7 +215,7 @@ public class Stroke {
 				
 				while (true) {
 					
-					hit = world.graph.pureGraphIntersectCapsule(APP.platform.createShapeEngine().createCapsule(a, b));
+					hit = world.graph.pureGraphIntersectCapsule(new Capsule(a, b));
 					
 					if (hit == null) {
 						
@@ -757,7 +757,7 @@ public class Stroke {
 			
 			List<Capsule> caps = new ArrayList<Capsule>();
 			for (int i = 0; i < cs.size()-1; i++) {
-				caps.add(APP.platform.createShapeEngine().createCapsule(cs.get(i), cs.get(i+1)));
+				caps.add(new Capsule(cs.get(i), cs.get(i+1)));
 			}
 			
 			CapsuleSequence seq = new CapsuleSequence(caps);

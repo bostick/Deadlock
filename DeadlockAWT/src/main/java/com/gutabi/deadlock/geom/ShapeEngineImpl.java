@@ -9,10 +9,6 @@ public class ShapeEngineImpl extends ShapeEngine {
 	public Circle createCircle(Point center, double radius) {
 		return new CircleImpl(center, radius);
 	}
-	
-	public Capsule createCapsule(Circle ac, Circle bc) {
-		return new CapsuleImpl(ac, bc);
-	}
 
 	public Polyline createPolyline(List<Point> pts) {
 		return new PolylineImpl(pts);

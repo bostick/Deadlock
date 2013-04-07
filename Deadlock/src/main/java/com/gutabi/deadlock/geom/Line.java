@@ -108,7 +108,7 @@ public class Line implements Shape {
 	}
 
 	public void paint(RenderingContext ctxt) {
-		ctxt.paintLine(this);
+		ctxt.drawLine(this);
 	}
 
 	public void draw(RenderingContext ctxt) {

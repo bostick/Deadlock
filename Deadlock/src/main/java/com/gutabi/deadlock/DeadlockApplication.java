@@ -64,10 +64,13 @@ public class DeadlockApplication {
 		spriteSheet.load();
 		explosionSheet.load();
 		
-		titleBackground = platform.readImage(platform.imageResource("title_background"));
+		Resource background = platform.imageResource("title_background");
+		Resource white = platform.imageResource("title_white");
+		Resource copy = platform.imageResource("copyright");
 		
-		title_white = platform.readImage(platform.imageResource("title_white"));
-		copyright = platform.readImage(platform.imageResource("copyright"));
+		titleBackground = platform.readImage(background);
+		title_white = platform.readImage(white);
+		copyright = platform.readImage(copy);
 		
 		MainMenu.action();
 		

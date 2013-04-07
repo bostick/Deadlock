@@ -429,7 +429,7 @@ public class Road extends Edge {
 		for (int i = 0; i < adj.size()-1; i++) {
 			Circle a = circs.get(i);
 			Circle b = circs.get(i+1);
-			caps.add(APP.platform.createShapeEngine().createCapsule(a, b));
+			caps.add(new Capsule(a, b));
 		}
 		
 		seq = new CapsuleSequence(caps);

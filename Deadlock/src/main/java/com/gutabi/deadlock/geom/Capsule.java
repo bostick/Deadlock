@@ -10,7 +10,7 @@ import com.gutabi.deadlock.ui.paint.Color;
 import com.gutabi.deadlock.ui.paint.Join;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 
-public abstract class Capsule implements Shape {
+public class Capsule implements Shape {
 	
 	public final Circle ac;
 	public final Circle bc;
@@ -36,8 +36,7 @@ public abstract class Capsule implements Shape {
 	
 	private int hash;
 	
-	protected Capsule(Circle ac, Circle bc) {
-		super();
+	public Capsule(Circle ac, Circle bc) {
 		this.ac = ac;
 		this.bc = bc;
 		
@@ -107,7 +106,7 @@ public abstract class Capsule implements Shape {
 	
 	public Capsule plus(Point p) {
 		ShapeEngine e = APP.platform.createShapeEngine();
-		return e.createCapsule(e.createCircle(a.plus(p), ac.radius), e.createCircle(b.plus(p), bc.radius));
+		return new Capsule(e.createCircle(a.plus(p), ac.radius), e.createCircle(b.plus(p), bc.radius));
 	}
 	
 	public boolean hitTest(Point p) {

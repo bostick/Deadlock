@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.Paint.Style;
 import android.graphics.PixelXorXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
@@ -11,6 +12,8 @@ import android.graphics.Typeface;
 
 import com.gutabi.deadlock.Resource;
 import com.gutabi.deadlock.ResourceImpl;
+import com.gutabi.deadlock.geom.AABB;
+import com.gutabi.deadlock.geom.Line;
 import com.gutabi.deadlock.math.Dim;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.Image;
@@ -105,6 +108,19 @@ public class RenderingContextImpl extends RenderingContext {
 		canvas.drawRect(new Rect(x, y, x+width, y+height), paint);
 	}
 	
+	public void drawAABB(AABB a) {
+		paint.setStyle(Style.STROKE);
+		canvas.drawRect(new Rect(AABB ), paint);
+	}
+	
+	public void paintAABB(AABB a) {
+		canvas.drawRect(new Rect(x, y, x+width, y+height), paint);
+	}
+	
+	public void drawLine(Line a) {
+		canvas.drawLine((float)a.p0.x, (float)a.p0.y, (float)a.p1.x, (float)a.p1.y, paint);
+	}
+	
 	public void scale(double s) {
 		canvas.scale((float)s, (float)s);
 	}
@@ -179,35 +195,5 @@ public class RenderingContextImpl extends RenderingContext {
 		
 		return new Color(r, g, b, a);
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	
 }

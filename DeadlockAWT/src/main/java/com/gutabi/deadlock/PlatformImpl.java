@@ -10,11 +10,8 @@ import java.awt.font.FontRenderContext;
 import java.awt.font.TextLayout;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.URL;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
@@ -23,7 +20,6 @@ import javax.swing.RootPaneContainer;
 import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.geom.ShapeEngine;
 import com.gutabi.deadlock.geom.ShapeEngineImpl;
-import com.gutabi.deadlock.rushhour.Level;
 import com.gutabi.deadlock.ui.Image;
 import com.gutabi.deadlock.ui.ImageImpl;
 import com.gutabi.deadlock.ui.KeyListener;
@@ -260,63 +256,10 @@ public class PlatformImpl implements Platform {
 		return res;
 	}
 	
-	public Resource boardResource(String name) {
-		
-		ResourceImpl res = new ResourceImpl();
-		
-		res.given = name;
-		res.full = "/boards/gen-" + name + ".dat";
-		
-		return res;
-	}
-	
 	/*
 	 * board engine
 	 */
-	public Level readLevel(Resource res) throws Exception {
-		
-		Level level = new Level();
-		
-		level.id = ((ResourceImpl)res).given;
-		
-		char[][] board;
-		
-		URL url = this.getClass().getResource(((ResourceImpl)res).full);
-		
-		BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
-		
-		int rows = 0;
-		int cols = 0;
-		
-		StringBuilder builder = new StringBuilder();
-		String inputLine = in.readLine();
-		
-		if (inputLine.matches("moves: .*")) {
-			String rest = inputLine.substring(7);
-			level.requiredMoves = Integer.parseInt(rest);
-		} else {
-			assert false;
-		}
-		
-		while ((inputLine = in.readLine()) != null) {
-			builder.append(inputLine);
-			cols = inputLine.length();
-			rows++;
-		}
-		in.close();
-		String s = builder.toString();
-		
-		board = new char[rows][cols];
-		for (int i = 0; i < rows; i++) {
-			for (int j = 0; j < cols; j++) {
-				board[i][j] = s.charAt(i * cols + j);
-			}
-		}
-		
-		level.board = board;
-		
-		return level;
-	}
+	
 
 
 

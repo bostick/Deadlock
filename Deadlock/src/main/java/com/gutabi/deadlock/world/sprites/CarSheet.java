@@ -230,6 +230,10 @@ public class CarSheet extends Sheet {
 				return 10;
 			case 4:
 				return 13;
+			case 5:
+				return 5;
+			case 6:
+				return 6;
 			default:
 				assert false;
 				return -1;

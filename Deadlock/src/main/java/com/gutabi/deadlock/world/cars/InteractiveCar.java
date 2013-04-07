@@ -62,7 +62,14 @@ public class InteractiveCar extends Car {
 	
 	public void setCoastingVelFromDrag(Point dragVector, long dragTimeMillis, boolean pathForward) {
 		
-		double vel = 0.1 * Math.max(Point.dot(dragVector, (pathForward ? driver.overallPos.pathVector() : driver.overallPos.pathVector().negate())), 0.0) / driver.overallPos.pathVector().length() / (0.0001 * dragTimeMillis);
+		double d;
+		if (dragVector == null) {
+			d = 0;
+		} else {
+			d = Math.max(Point.dot(dragVector, (pathForward ? driver.overallPos.pathVector() : driver.overallPos.pathVector().negate())) / driver.overallPos.pathVector().length(), 0.0);
+		}
+		
+		double vel = 0.1 * d / (0.0001 * dragTimeMillis);
 		
 		assert vel >= 0.0;
 		coastingVel = vel;
@@ -106,6 +113,7 @@ public class InteractiveCar extends Car {
 			
 			driver.toolOrigExitingVertexPos = null;
 			driver.toolCoastingGoal = null;
+			driver.prevOverallPos = null;
 //			((InteractiveCarTool)APP.tool).car = null;
 			
 			return;

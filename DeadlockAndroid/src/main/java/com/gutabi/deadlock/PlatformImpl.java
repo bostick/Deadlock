@@ -1,12 +1,15 @@
 package com.gutabi.deadlock;
 
+import static com.gutabi.deadlock.DeadlockApplication.APP;
 import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.graphics.Typeface;
 
+import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.geom.ShapeEngine;
 import com.gutabi.deadlock.geom.ShapeEngineImpl;
 import com.gutabi.deadlock.ui.Image;
@@ -15,6 +18,7 @@ import com.gutabi.deadlock.ui.ImageImpl;
 import com.gutabi.deadlock.ui.PlatformContentPane;
 import com.gutabi.deadlock.ui.PlatformContentPaneImpl;
 import com.gutabi.deadlock.ui.paint.FontEngineImpl;
+import com.gutabi.deadlock.ui.paint.FontStyle;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.ui.paint.RenderingContextImpl;
 
@@ -49,8 +53,26 @@ public class PlatformImpl implements Platform {
 		
 	}
 
-	public FontEngine createFontEngine(Object... args) {
-		return new FontEngineImpl();
+	/*
+	 * font engine
+	 */
+	public AABB bounds(String text, Resource font, FontStyle fontStyle, int fontSize) {
+		
+		Paint textPaint = new Paint();
+		int s = -1;
+		switch (fontStyle) {
+		case PLAIN:
+			s = Typeface.NORMAL;
+			break;
+		}
+		
+		textPaint.setTypeface(((ResourceImpl)font).face);
+		textPaint.setTextSize(fontSize);
+		
+		Rect bounds = new Rect();
+		textPaint.getTextBounds(text,0,text.length(), bounds);
+
+		return APP.platform.createShapeEngine().createAABB(bounds.left, bounds.top, bounds.width(), bounds.height());
 	}
 
 	public Image createImage(int width, int height) {

@@ -182,11 +182,6 @@ public class RenderingContextImpl extends RenderingContext {
 		g2.draw(l);
 	}
 	
-	public void paintLine(Line a) {
-		Line2D l = new Line2D.Double(a.p0.x, a.p0.y, a.p1.x, a.p1.y);
-		g2.fill(l);
-	}
-	
 	public void dispose() {
 		g2.dispose();
 	}

@@ -2,7 +2,6 @@ package com.gutabi.deadlock.rushhour;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
-import com.gutabi.deadlock.gen.BoardsIndex;
 import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.math.DMath;
 import com.gutabi.deadlock.math.Point;
@@ -21,16 +20,17 @@ import com.gutabi.deadlock.world.tools.InteractiveCarTool;
 
 public class RushHourWorld extends World {
 	
-	public Level level;
+	public LevelDB levelDB;
+	public Level curLevel;
 	
 	public boolean isWon;
 	public WinnerMenu winnerMenu;
 	
-	public static void action(int index) {
+	public static void action(LevelDB levelDB, int index) {
 		
 		try {
 			
-			World world = RushHourWorld.createRushHourWorld(index);
+			World world = RushHourWorld.createRushHourWorld(levelDB, index);
 			APP.model = world;
 			
 			WorldScreen worldScreen = new WorldScreen();
@@ -68,7 +68,7 @@ public class RushHourWorld extends World {
 		
 	}
 	
-	public static RushHourWorld createRushHourWorld(int boardIndex) {
+	public static RushHourWorld createRushHourWorld(LevelDB levelDB, int index) {
 		
 		int[][] ini = new int[][] {
 				{1, 1, 1},
@@ -88,17 +88,18 @@ public class RushHourWorld extends World {
 		
 		w.graph = g;
 		
-		String id = BoardsIndex.table[boardIndex];
+		w.levelDB = levelDB;
 		
 		try {
 			
-			Level level = APP.platform.readLevel(APP.platform.boardResource(id));
+			Level level = levelDB.readLevel(index);
 			
-			w.level = level;
+			w.curLevel = level;
 			
 			w.createRushHourBoard(new Point(1.5 * QuadrantMap.QUADRANT_WIDTH, 2.0 * QuadrantMap.QUADRANT_HEIGHT), level.board);
 			
 		} catch (Exception e) {
+			e.printStackTrace();
 			assert false;
 		}
 		

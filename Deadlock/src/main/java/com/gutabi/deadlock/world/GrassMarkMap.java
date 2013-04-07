@@ -20,7 +20,7 @@ public class GrassMarkMap {
 	
 	public void addGrassMark(Point p0, Point p1) {
 		
-		Capsule test = APP.platform.createShapeEngine().createCapsule(
+		Capsule test = new Capsule(
 						APP.platform.createShapeEngine().createCircle(p0, 0.0),
 						APP.platform.createShapeEngine().createCircle(p1, 0.0));
 		
@@ -36,7 +36,7 @@ public class GrassMarkMap {
 			assert marks.size() < 100;
 		}
 		
-		marks.add(APP.platform.createShapeEngine().createCapsule(
+		marks.add(new Capsule(
 					APP.platform.createShapeEngine().createCircle(p0, 0.1),
 					APP.platform.createShapeEngine().createCircle(p1, 0.1)));
 	}
