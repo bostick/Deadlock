@@ -12,6 +12,7 @@ import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.world.World;
 import com.gutabi.deadlock.world.graph.GraphPositionPathPosition;
 import com.gutabi.deadlock.world.physics.PhysicsUtils;
+import com.gutabi.deadlock.world.sprites.CarSheet.CarType;
 
 public class InteractiveCar extends Car {
 	
@@ -26,13 +27,13 @@ public class InteractiveCar extends Car {
 	private double coastingVel;
 	final double coastingAcceleration = 1.0;
 	
-	public InteractiveCar(World w) {
-		super(w);
+	public InteractiveCar(World w, CarType type) {
+		super(w, type);
 	}
 	
-	public static InteractiveCar createCar(World world, int r) {
+	public static InteractiveCar createCar(World world, CarType type, int r) {
 		
-		InteractiveCar c = new InteractiveCar(world);
+		InteractiveCar c = new InteractiveCar(world, type);
 		c.driver = new InteractiveDriver(c);
 		
 		c.computeCtorProperties(r);
@@ -100,7 +101,7 @@ public class InteractiveCar extends Car {
 			newPos = driver.overallPos.travelBackward(Math.min(dist, driver.overallPos.lengthTo(driver.toolCoastingGoal)));
 		}
 		
-		((RushHourWorld)world).handleZooming(this);
+//		System.out.println(newPos.gp);
 		
 		if (DMath.equals(newPos.combo, driver.toolCoastingGoal.combo)) {
 			
@@ -109,12 +110,13 @@ public class InteractiveCar extends Car {
 			newPos = driver.toolCoastingGoal;
 			state = CarStateEnum.IDLE;
 			
-			b2dBody.setTransform(PhysicsUtils.vec2(newPos.p), (float)(state == CarStateEnum.COASTING_FORWARD ? newPos.angle() : newPos.angle()));
+			b2dBody.setTransform(PhysicsUtils.vec2(newPos.p), (float)(state == CarStateEnum.COASTING_FORWARD ? newPos.angle : newPos.angle));
 			
 			computeDynamicPropertiesAlways();
 			computeDynamicPropertiesMoving();
 			
 			driver.setOverallPos(driver.toolCoastingGoal);
+			((RushHourWorld)world).handleZooming(this);
 			
 			driver.toolOrigExitingVertexPos = null;
 			driver.toolCoastingGoal = null;
@@ -124,7 +126,7 @@ public class InteractiveCar extends Car {
 			return;
 		}
 		
-		b2dBody.setTransform(PhysicsUtils.vec2(newPos.p), (float)(state == CarStateEnum.COASTING_FORWARD ? newPos.angle() : newPos.angle()));
+		b2dBody.setTransform(PhysicsUtils.vec2(newPos.p), (float)(state == CarStateEnum.COASTING_FORWARD ? newPos.angle : newPos.angle));
 	}
 	
 	public boolean postStep(double t) {

@@ -24,6 +24,8 @@ public class GraphPositionPathPosition {
 	public final double lengthToStartOfPath;
 	public final double lengthToEndOfPath;
 	
+	public final double angle;
+	
 	private int hash;
 	
 	public GraphPositionPathPosition(GraphPositionPath path, int preIndex, double preParam) {
@@ -74,6 +76,29 @@ public class GraphPositionPathPosition {
 		assert lengthToStartOfPath <= path.totalLength;
 		assert lengthToEndOfPath >= 0;
 		
+		Point a;
+		Point b;
+		if (DMath.equals(param, 0.0)) {
+			
+			if (index == 0) {
+				a = path.get(index).p;
+				b = path.get(index+1).p;
+			} else if (index == path.size-1) {
+				a = path.get(index-1).p;
+				b = path.get(index).p;
+			} else {
+				a = path.get(index-1).p;
+				b = path.get(index+1).p;
+			}
+			
+		} else {
+			a = path.get(index).p;
+			b = path.get(index+1).p;
+		}
+		
+		double ang = Math.atan2(b.y - a.y, b.x - a.x);
+		ang = DMath.tryAdjustToRightAngle(ang);
+		angle = ang;
 	}
 	
 	public int hashCode() {
@@ -130,32 +155,6 @@ public class GraphPositionPathPosition {
 			return path.get(index+1).p.minus(path.get(index).p);
 		}
 		
-	}
-	
-	public double angle() {
-		Point a;
-		Point b;
-		if (DMath.equals(param, 0.0)) {
-			
-			if (index == 0) {
-				a = path.get(index).p;
-				b = path.get(index+1).p;
-			} else if (index == path.size-1) {
-				a = path.get(index-1).p;
-				b = path.get(index).p;
-			} else {
-				a = path.get(index-1).p;
-				b = path.get(index+1).p;
-			}
-			
-		} else {
-			a = path.get(index).p;
-			b = path.get(index+1).p;
-		}
-		
-		double ang = Math.atan2(b.y - a.y, b.x - a.x);
-		ang = DMath.tryAdjustToRightAngle(ang);
-		return ang;
 	}
 	
 	public double lengthTo(GraphPositionPathPosition p) {
@@ -770,12 +769,12 @@ public class GraphPositionPathPosition {
 			
 		} else if (start.index == end.index) {
 			
-			if (!DMath.isRightAngle(end.angle())) {
+			if (!DMath.isRightAngle(end.angle)) {
 				return end;
 			}
 			
-			OBB so = Geom.localToWorld(car.localAABB, start.angle(), start.p);
-			OBB eo = Geom.localToWorld(car.localAABB, end.angle(), end.p);
+			OBB so = Geom.localToWorld(car.localAABB, start.angle, start.p);
+			OBB eo = Geom.localToWorld(car.localAABB, end.angle, end.p);
 			SweptOBB swept = new SweptOBB(so, eo);
 			
 			double param = firstCollisionParam(car, swept);
@@ -787,12 +786,12 @@ public class GraphPositionPathPosition {
 			return end;
 		} else if (end.index == start.index+1 && DMath.equals(end.param, 0.0)) {
 			
-			if (!DMath.isRightAngle(end.angle())) {
+			if (!DMath.isRightAngle(end.angle)) {
 				return end;
 			}
 			
-			OBB so = Geom.localToWorld(car.localAABB, start.angle(), start.p);
-			OBB eo = Geom.localToWorld(car.localAABB, end.angle(), end.p);
+			OBB so = Geom.localToWorld(car.localAABB, start.angle, start.p);
+			OBB eo = Geom.localToWorld(car.localAABB, end.angle, end.p);
 			SweptOBB swept = new SweptOBB(so, eo);
 			
 			double param = firstCollisionParam(car, swept);
@@ -817,12 +816,12 @@ public class GraphPositionPathPosition {
 		if (!startCeiling.equals(start)) {
 			b = startCeiling;
 			
-			if (!DMath.isRightAngle(b.angle())) {
+			if (!DMath.isRightAngle(b.angle)) {
 				return end;
 			}
 			
-			OBB ao = Geom.localToWorld(car.localAABB, a.angle(), a.p);
-			OBB bo = Geom.localToWorld(car.localAABB, b.angle(), b.p);
+			OBB ao = Geom.localToWorld(car.localAABB, a.angle, a.p);
+			OBB bo = Geom.localToWorld(car.localAABB, b.angle, b.p);
 			SweptOBB swept = new SweptOBB(ao, bo);
 			
 			double param = firstCollisionParam(car, swept);
@@ -845,12 +844,12 @@ public class GraphPositionPathPosition {
 			
 			b = a.nextBound();
 			
-			if (!DMath.isRightAngle(b.angle())) {
+			if (!DMath.isRightAngle(b.angle)) {
 				return end;
 			}
 			
-			OBB ao = Geom.localToWorld(car.localAABB, a.angle(), a.p);
-			OBB bo = Geom.localToWorld(car.localAABB, b.angle(), b.p);
+			OBB ao = Geom.localToWorld(car.localAABB, a.angle, a.p);
+			OBB bo = Geom.localToWorld(car.localAABB, b.angle, b.p);
 			SweptOBB swept = new SweptOBB(ao, bo);
 			
 			double param = firstCollisionParam(car, swept);
@@ -869,12 +868,12 @@ public class GraphPositionPathPosition {
 		if (!endFloor.equals(end)) {
 			b = end;
 			
-			if (!DMath.isRightAngle(b.angle())) {
+			if (!DMath.isRightAngle(b.angle)) {
 				return end;
 			}
 			
-			OBB ao = Geom.localToWorld(car.localAABB, a.angle(), a.p);
-			OBB bo = Geom.localToWorld(car.localAABB, b.angle(), b.p);
+			OBB ao = Geom.localToWorld(car.localAABB, a.angle, a.p);
+			OBB bo = Geom.localToWorld(car.localAABB, b.angle, b.p);
 			SweptOBB swept = new SweptOBB(ao, bo);
 			
 			double param = firstCollisionParam(car, swept);
@@ -901,12 +900,12 @@ public class GraphPositionPathPosition {
 			
 		} else if (start.index == end.index) {
 			
-			if (!DMath.isRightAngle(end.angle())) {
+			if (!DMath.isRightAngle(end.angle)) {
 				return end;
 			}
 			
-			OBB so = Geom.localToWorld(car.localAABB, start.angle(), start.p);
-			OBB eo = Geom.localToWorld(car.localAABB, end.angle(), end.p);
+			OBB so = Geom.localToWorld(car.localAABB, start.angle, start.p);
+			OBB eo = Geom.localToWorld(car.localAABB, end.angle, end.p);
 			SweptOBB swept = new SweptOBB(so, eo);
 			
 			double param = firstCollisionParam(car, swept);
@@ -919,12 +918,12 @@ public class GraphPositionPathPosition {
 			
 		} else if (end.index == start.index-1 && DMath.equals(start.param, 0.0)) {
 			
-			if (!DMath.isRightAngle(end.angle())) {
+			if (!DMath.isRightAngle(end.angle)) {
 				return end;
 			}
 			
-			OBB so = Geom.localToWorld(car.localAABB, start.angle(), start.p);
-			OBB eo = Geom.localToWorld(car.localAABB, end.angle(), end.p);
+			OBB so = Geom.localToWorld(car.localAABB, start.angle, start.p);
+			OBB eo = Geom.localToWorld(car.localAABB, end.angle, end.p);
 			SweptOBB swept = new SweptOBB(so, eo);
 			
 			double param = firstCollisionParam(car, swept);
@@ -948,12 +947,12 @@ public class GraphPositionPathPosition {
 		if (!startFloor.equals(start)) {
 			a = startFloor;
 			
-			if (!DMath.isRightAngle(a.angle())) {
+			if (!DMath.isRightAngle(a.angle)) {
 				return end;
 			}
 			
-			OBB ao = Geom.localToWorld(car.localAABB, a.angle(), a.p);
-			OBB bo = Geom.localToWorld(car.localAABB, b.angle(), b.p);
+			OBB ao = Geom.localToWorld(car.localAABB, a.angle, a.p);
+			OBB bo = Geom.localToWorld(car.localAABB, b.angle, b.p);
 			SweptOBB swept = new SweptOBB(bo, ao);
 			
 			double param = firstCollisionParam(car, swept);
@@ -976,12 +975,12 @@ public class GraphPositionPathPosition {
 			
 			a = b.prevBound();
 			
-			if (!DMath.isRightAngle(a.angle())) {
+			if (!DMath.isRightAngle(a.angle)) {
 				return end;
 			}
 			
-			OBB ao = Geom.localToWorld(car.localAABB, a.angle(), a.p);
-			OBB bo = Geom.localToWorld(car.localAABB, b.angle(), b.p);
+			OBB ao = Geom.localToWorld(car.localAABB, a.angle, a.p);
+			OBB bo = Geom.localToWorld(car.localAABB, b.angle, b.p);
 			SweptOBB swept = new SweptOBB(bo, ao);
 			
 			double param = firstCollisionParam(car, swept);
@@ -999,12 +998,12 @@ public class GraphPositionPathPosition {
 		if (!endCeil.equals(end)) {
 			a = end;
 			
-			if (!DMath.isRightAngle(a.angle())) {
+			if (!DMath.isRightAngle(a.angle)) {
 				return end;
 			}
 			
-			OBB ao = Geom.localToWorld(car.localAABB, a.angle(), a.p);
-			OBB bo = Geom.localToWorld(car.localAABB, b.angle(), b.p);
+			OBB ao = Geom.localToWorld(car.localAABB, a.angle, a.p);
+			OBB bo = Geom.localToWorld(car.localAABB, b.angle, b.p);
 			SweptOBB swept = new SweptOBB(bo, ao);
 			
 			double param = firstCollisionParam(car, swept);
@@ -1019,13 +1018,13 @@ public class GraphPositionPathPosition {
 	
 	public GraphPositionPathPosition findFirstRightAngleForwardOrEnd(GraphPositionPathPosition end) {
 		
-		if (DMath.isRightAngle(this.angle())) {
+		if (DMath.isRightAngle(this.angle)) {
 			
 			return this;
 			
 		} else if (this.index == end.index) {
 			
-			if (DMath.isRightAngle(end.angle())) {
+			if (DMath.isRightAngle(end.angle)) {
 				return end;
 			}
 			
@@ -1033,7 +1032,7 @@ public class GraphPositionPathPosition {
 			
 		} else if (end.index == this.index+1 && DMath.equals(end.param, 0.0)) {
 			
-			if (DMath.isRightAngle(end.angle())) {
+			if (DMath.isRightAngle(end.angle)) {
 				return end;
 			}
 			
@@ -1049,7 +1048,7 @@ public class GraphPositionPathPosition {
 		if (!startCeiling.equals(this)) {
 			b = startCeiling;
 			
-			if (DMath.isRightAngle(b.angle())) {
+			if (DMath.isRightAngle(b.angle)) {
 				return b;
 			}
 			
@@ -1063,7 +1062,7 @@ public class GraphPositionPathPosition {
 			
 			b = a.nextBound();
 			
-			if (DMath.isRightAngle(b.angle())) {
+			if (DMath.isRightAngle(b.angle)) {
 				return b;
 			}
 			
@@ -1072,7 +1071,7 @@ public class GraphPositionPathPosition {
 		if (!endFloor.equals(end)) {
 			b = end;
 			
-			if (DMath.isRightAngle(b.angle())) {
+			if (DMath.isRightAngle(b.angle)) {
 				return b;
 			}
 			
@@ -1083,13 +1082,13 @@ public class GraphPositionPathPosition {
 	
 	public GraphPositionPathPosition findFirstRightAngleBackwardOrEnd(GraphPositionPathPosition end) {
 		
-		if (DMath.isRightAngle(this.angle())) {
+		if (DMath.isRightAngle(this.angle)) {
 			
 			return this;
 			
 		} else if (this.index == end.index) {
 			
-			if (DMath.isRightAngle(end.angle())) {
+			if (DMath.isRightAngle(end.angle)) {
 				return end;
 			}
 			
@@ -1097,7 +1096,7 @@ public class GraphPositionPathPosition {
 			
 		} else if (end.index == this.index-1 && DMath.equals(this.param, 0.0)) {
 			
-			if (DMath.isRightAngle(end.angle())) {
+			if (DMath.isRightAngle(end.angle)) {
 				return end;
 			}
 			
@@ -1112,7 +1111,7 @@ public class GraphPositionPathPosition {
 		if (!startFloor.equals(this)) {
 			a = startFloor;
 			
-			if (DMath.isRightAngle(a.angle())) {
+			if (DMath.isRightAngle(a.angle)) {
 				return a;
 			}
 			
@@ -1126,7 +1125,7 @@ public class GraphPositionPathPosition {
 			
 			a = b.prevBound();
 			
-			if (DMath.isRightAngle(a.angle())) {
+			if (DMath.isRightAngle(a.angle)) {
 				return a;
 			}
 			
@@ -1135,7 +1134,7 @@ public class GraphPositionPathPosition {
 		if (!endCeil.equals(end)) {
 			a = end;
 			
-			if (DMath.isRightAngle(a.angle())) {
+			if (DMath.isRightAngle(a.angle)) {
 				return a;
 			}
 			

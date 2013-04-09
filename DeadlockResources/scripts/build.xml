@@ -18,8 +18,6 @@
 		<copy tofile="${buildDir}/bin/img/title_background.png" file="${srcDir}/title_background.png"/>
 		<copy tofile="${buildDir}/bin/img/title_white.png" file="${srcDir}/title_white.png"/>
 		<copy tofile="${buildDir}/bin/img/icon256x256.ico" file="${srcDir}/icon256x256.ico"/>
-		ic_action_search
-		ic_launcher
 		
 		<copy tofile="${buildDir}/bin/fonts/visitor1.ttf" file="${srcDir}/visitor1.ttf"/>
 		<copy tofile="${buildDir}/bin/fonts/visitor2.ttf" file="${srcDir}/visitor2.ttf"/>

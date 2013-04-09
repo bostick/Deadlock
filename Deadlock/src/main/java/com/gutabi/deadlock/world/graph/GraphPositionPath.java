@@ -237,7 +237,8 @@ public class GraphPositionPath {
 	/**
 	 * assumes gp is on path
 	 */
-	public GraphPositionPathPosition findGraphPositionPathPosition(GraphPosition gp) {
+	public GraphPositionPathPosition findGraphPositionPathPosition(GraphPosition gp, double angle) {
+		assert angle == 0.0 * Math.PI || angle == 0.5 * Math.PI;
 		
 		GraphPositionPathPosition start = startPos;
 		GraphPositionPathPosition end = endPos;
@@ -264,6 +265,7 @@ public class GraphPositionPath {
 				
 				GraphPositionPathPosition ret = new GraphPositionPathPosition(this, start.index, u);
 				assert ret.gp.equals(gp);
+				assert DMath.anglesCompatible(ret.angle, angle);
 				return ret;
 			}
 			
@@ -278,6 +280,7 @@ public class GraphPositionPath {
 				
 				GraphPositionPathPosition ret = new GraphPositionPathPosition(this, start.index, u);
 				assert ret.gp.equals(gp);
+				assert DMath.anglesCompatible(ret.angle, angle);
 				return ret;
 			}
 					
@@ -299,8 +302,12 @@ public class GraphPositionPath {
 			} else {
 				
 				GraphPositionPathPosition ret = new GraphPositionPathPosition(this, a.index, u);
-				assert ret.gp.equals(gp);
-				return ret;
+				
+				if (DMath.anglesCompatible(ret.angle, angle)) {
+					assert ret.gp.equals(gp);
+					return ret;
+				}
+				
 			}
 			
 			a = b;
@@ -319,8 +326,11 @@ public class GraphPositionPath {
 			} else {
 				
 				GraphPositionPathPosition ret = new GraphPositionPathPosition(this, a.index, u);
-				assert ret.gp.equals(gp);
-				return ret;
+				
+				if (DMath.anglesCompatible(ret.angle, angle)) {
+					assert ret.gp.equals(gp);
+					return ret;
+				}
 				
 			}
 			
@@ -337,8 +347,11 @@ public class GraphPositionPath {
 			} else {
 				
 				GraphPositionPathPosition ret = new GraphPositionPathPosition(this, a.index, u);
-				assert ret.gp.equals(gp);
-				return ret;
+				
+				if (DMath.anglesCompatible(ret.angle, angle)) {
+					assert ret.gp.equals(gp);
+					return ret;
+				}
 				
 			}
 			

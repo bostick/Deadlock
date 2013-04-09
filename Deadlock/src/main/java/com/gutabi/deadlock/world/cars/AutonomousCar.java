@@ -15,20 +15,21 @@ import com.gutabi.deadlock.world.World;
 import com.gutabi.deadlock.world.graph.Fixture;
 import com.gutabi.deadlock.world.graph.GraphPositionPathPosition;
 import com.gutabi.deadlock.world.graph.Merger;
+import com.gutabi.deadlock.world.sprites.CarSheet.CarType;
 
 public class AutonomousCar extends Car {
 	
 	public Fixture source;
 	
-	public AutonomousCar(World w, Fixture f) {
-		super(w);
+	public AutonomousCar(World w, CarType type, Fixture f) {
+		super(w, type);
 		
 		this.source = f;
 	}
 	
-	public static AutonomousCar createCar(World world, Fixture f, int r) {
+	public static AutonomousCar createCar(World world, CarType type, Fixture f, int r) {
 		
-		AutonomousCar c = new AutonomousCar(world, f);
+		AutonomousCar c = new AutonomousCar(world, type, f);
 		c.driver = new AutonomousDriver(c);
 		c.engine = new AutonomousEngine(world, c);
 		

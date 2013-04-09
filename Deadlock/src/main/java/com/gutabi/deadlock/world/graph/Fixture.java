@@ -18,6 +18,8 @@ import com.gutabi.deadlock.world.ProgressMeter;
 import com.gutabi.deadlock.world.World;
 import com.gutabi.deadlock.world.cars.AutonomousCar;
 import com.gutabi.deadlock.world.cars.AutonomousDriver;
+import com.gutabi.deadlock.world.sprites.CarSheet;
+import com.gutabi.deadlock.world.sprites.CarSheet.CarType;
 
 public final class Fixture extends Vertex {
 	
@@ -220,8 +222,9 @@ public final class Fixture extends Vertex {
 	private AutonomousCar createNewCar() {
 		
 		int r = APP.RANDOM.nextInt(12);
+		CarType type = CarSheet.sprite(r).type();
 		
-		AutonomousCar c = AutonomousCar.createCar(world, this, r);
+		AutonomousCar c = AutonomousCar.createCar(world, type, this, r);
 		
 		int randomSpeed = APP.RANDOM.nextInt(3);
 		

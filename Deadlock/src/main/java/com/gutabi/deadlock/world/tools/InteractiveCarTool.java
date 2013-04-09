@@ -2,8 +2,6 @@ package com.gutabi.deadlock.world.tools;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
-import com.gutabi.deadlock.geom.Geom;
-import com.gutabi.deadlock.geom.OBB;
 import com.gutabi.deadlock.geom.Shape;
 import com.gutabi.deadlock.math.DMath;
 import com.gutabi.deadlock.math.Point;
@@ -24,6 +22,7 @@ import com.gutabi.deadlock.world.graph.RushHourBoard;
 import com.gutabi.deadlock.world.graph.RushHourBoardPosition;
 import com.gutabi.deadlock.world.graph.RushHourStud;
 import com.gutabi.deadlock.world.graph.VertexPosition;
+import com.gutabi.deadlock.world.sprites.CarSheet.CarType;
 
 public class InteractiveCarTool extends WorldToolBase {
 	
@@ -126,7 +125,6 @@ public class InteractiveCarTool extends WorldToolBase {
 			} else {
 				
 				GraphPosition gpos = car.driver.overallPos.gp;
-//				GraphPositionPathPosition prevPos = car.driver.prevOverallPos;
 				
 				if (gpos instanceof RoadPosition) {
 					assert car.driver.toolOrigExitingVertexPos != null;
@@ -142,8 +140,6 @@ public class InteractiveCarTool extends WorldToolBase {
 					
 					if (car.driver.overallPos.combo == car.driver.toolOrigExitingVertexPos.combo) {
 						
-//						lookAtOrigExitingVertex(car.driver.overallPath.get(car.driver.overallPos.index+1) instanceof RushHourBoardPosition ? true : false);
-						
 						if (car.driver.overallPath.get(car.driver.overallPos.index+1) instanceof RoadPosition) {
 							determineCoasting(car.driver.toolOrigExitingVertexPos, car.driver.toolOrigExitingVertexPos.nextVertexPosition(), true);
 						} else {
@@ -154,149 +150,22 @@ public class InteractiveCarTool extends WorldToolBase {
 						assert false;
 					}
 					
-//					if (prevPos == null) {
-//						
-//						if (car.driver.overallPos.combo == car.driver.toolOrigExitingVertexPos.combo) {
-//							
-////							lookAtOrigExitingVertex(car.driver.overallPath.get(car.driver.overallPos.index+1) instanceof RushHourBoardPosition ? true : false);
-//							
-//							if (car.driver.overallPath.get(car.driver.overallPos.index+1) instanceof RoadPosition) {
-//								determineCoasting(car.driver.toolOrigExitingVertexPos, car.driver.toolOrigExitingVertexPos.nextVertexPosition(), true);
-//							} else {
-//								determineCoasting(car.driver.toolOrigExitingVertexPos, car.driver.toolOrigExitingVertexPos.prevVertexPosition(), true);
-//							}
-//							
-//						} else {
-//							assert false;
-//						}
-//						
-//					} else if (prevPos.gp instanceof RushHourBoardPosition) {
-//						
-//						if (car.driver.overallPos.combo == car.driver.toolOrigExitingVertexPos.combo) {
-//							// leaving board
-//							
-//							if (car.driver.prevOverallPos.combo < car.driver.toolOrigExitingVertexPos.combo) {
-//								determineCoasting(car.driver.toolOrigExitingVertexPos, car.driver.toolOrigExitingVertexPos.nextVertexPosition());
-//							} else {
-//								determineCoasting(car.driver.toolOrigExitingVertexPos, car.driver.toolOrigExitingVertexPos.prevVertexPosition());
-//							}
-//							
-//						} else {
-//							assert false;
-//						}
-//						
-//					} else {
-//						assert prevPos.gp instanceof RoadPosition;
-//						
-//						if (car.driver.overallPos.combo == car.driver.toolOrigExitingVertexPos.combo) {
-//							// entering board
-//							
-//							if (car.driver.prevOverallPos.combo < car.driver.toolOrigExitingVertexPos.combo) {
-//								determineCoasting(car.driver.toolOrigExitingVertexPos, car.driver.toolOrigExitingVertexPos.prevVertexPosition());
-//							} else {
-//								determineCoasting(car.driver.toolOrigExitingVertexPos, car.driver.toolOrigExitingVertexPos.nextVertexPosition());
-//							}
-//							
-//						} else {
-//							// entering board
-//							
-//							if (car.driver.prevOverallPos.combo < car.driver.toolOrigExitingVertexPos.combo) {
-//								determineCoasting(car.driver.toolOrigExitingVertexPos, car.driver.toolOrigExitingVertexPos.prevVertexPosition());
-//							} else {
-//								determineCoasting(car.driver.toolOrigExitingVertexPos, car.driver.toolOrigExitingVertexPos.nextVertexPosition());
-//							}
-//							
-//						}
-//					}
-					
 				} else {
 					assert gpos instanceof RushHourBoardPosition;
 					
-					if (!floorAndCeilWithinGrid((RushHourBoardPosition)gpos)) {
+					RushHourBoardPosition bpos = (RushHourBoardPosition)gpos;
+					RushHourBoard b = (RushHourBoard)bpos.entity;
+					
+					if (!b.floorAndCeilWithinGrid(car)) {
 						assert car.driver.toolOrigExitingVertexPos != null;
 						
 						if (car.driver.overallPos.combo < car.driver.toolOrigExitingVertexPos.combo) {
-							determineCoasting(car.driver.toolOrigExitingVertexPos, car.driver.toolOrigExitingVertexPos.nextVertexPosition(), false);
+							determineCoasting(car.driver.toolOrigExitingVertexPos, car.driver.toolOrigExitingVertexPos.nextVertexPosition(), true);
 						} else {
-							determineCoasting(car.driver.toolOrigExitingVertexPos, car.driver.toolOrigExitingVertexPos.prevVertexPosition(), false);
+							determineCoasting(car.driver.toolOrigExitingVertexPos, car.driver.toolOrigExitingVertexPos.prevVertexPosition(), true);
 						}
 						
-//						if (prevPos == null) {
-//							
-//							if (car.driver.overallPos.combo < car.driver.toolOrigExitingVertexPos.combo) {
-//								determineCoasting(car.driver.toolOrigExitingVertexPos, car.driver.toolOrigExitingVertexPos.nextVertexPosition());
-//							} else {
-//								determineCoasting(car.driver.toolOrigExitingVertexPos, car.driver.toolOrigExitingVertexPos.prevVertexPosition());
-//							}
-//							
-//						} else if (prevPos.gp instanceof RoadPosition) {
-//							/*
-//							 * crossed a vertex
-//							 */
-//							
-//							if (car.driver.overallPos.combo < car.driver.toolOrigExitingVertexPos.combo) {
-//								determineCoasting(car.driver.toolOrigExitingVertexPos, car.driver.toolOrigExitingVertexPos.nextVertexPosition());
-//							} else {
-//								determineCoasting(car.driver.toolOrigExitingVertexPos, car.driver.toolOrigExitingVertexPos.prevVertexPosition());
-//							}
-//							
-//						} else if (prevPos.gp instanceof VertexPosition) {
-//							
-//							if (car.driver.overallPos.combo < car.driver.toolOrigExitingVertexPos.combo) {
-//								determineCoasting(car.driver.toolOrigExitingVertexPos, car.driver.toolOrigExitingVertexPos.nextVertexPosition());
-//							} else {
-//								determineCoasting(car.driver.toolOrigExitingVertexPos, car.driver.toolOrigExitingVertexPos.prevVertexPosition());
-//							}
-//							
-//						} else if (prevPos.gp instanceof RushHourBoardPosition) {
-//							
-//							RushHourBoardPosition bpos = (RushHourBoardPosition)gpos;
-//							RushHourBoardPosition prevBpos = (RushHourBoardPosition)prevPos.gp;
-//							RushHourBoard b = (RushHourBoard)bpos.entity;
-//							
-//	//						if (car.driver.overallPos.combo < car.driver.toolOrigExitingVertexPos.combo) {
-//	//							lookAtNextVertex(car.driver.overallPos.gp);
-//	//						} else {
-//	//							lookAtPreviousVertex(car.driver.overallPos.gp);
-//	//						}
-//							
-//							if (car.driver.overallPos.combo < car.driver.toolOrigExitingVertexPos.combo) {
-//								determineCoasting(car.driver.toolOrigExitingVertexPos, car.driver.toolOrigExitingVertexPos.prevVertexPosition());
-//							} else {
-//								determineCoasting(car.driver.toolOrigExitingVertexPos, car.driver.toolOrigExitingVertexPos.nextVertexPosition());
-//							}
-//							
-////							if (b.enteringBoard(prevBpos, bpos)) {
-////								
-//////								if (overallPos.combo < toolOrigExitingVertexPos) {
-//////									next
-//////								} else {
-//////									prev
-//////								}
-//////								lookAtOrigExitingVertex(car.driver.prevOverallPos.combo < car.driver.overallPos.combo ? true : false);
-////								
-////								if (car.driver.overallPos.combo < car.driver.toolOrigExitingVertexPos.combo) {
-////									lookAtPreviousVertex();
-////								} else {
-////									lookAtNextVertex();
-////								}
-////								
-////							} else {
-////								//leaving board
-////								
-////								if (car.driver.overallPos.combo < car.driver.toolOrigExitingVertexPos.combo) {
-////									lookAtNextVertex();
-////								} else {
-////									lookAtPreviousVertex();
-////								}
-////								
-////							}
-//							
-//						}
-						
 					} else {
-						assert gpos instanceof RushHourBoardPosition;
-						assert floorAndCeilWithinGrid((RushHourBoardPosition)gpos);
 						
 						GraphPositionPathPosition tmpFloorPos = car.driver.overallPos.floor(car.length/2);
 						GraphPositionPathPosition tmpCeilPos = car.driver.overallPos.ceil(car.length/2);
@@ -339,58 +208,10 @@ public class InteractiveCarTool extends WorldToolBase {
 		}
 	}
 	
-//	void lookAtPreviousVertex() {
-//		
-//		GraphPosition gpos = car.driver.overallPos.gp;
-//		
-//		boolean road = gpos instanceof RoadPosition;
-//		boolean vertex = gpos instanceof VertexPosition;
-//		
-////		int studCount = (int)(car.length * Car.METERS_PER_CARLENGTH / RushHourStud.SIZE);
-////		boolean otherSideIsFree = true;
-//		
-//		/*
-//		 * overallPos is less than exiting vertex, so the other vertex must be less than overallPos
-//		 */
-//		
-//		int prevVertexIndex = road ? car.driver.overallPos.prevVertexIndex() : (vertex ? car.driver.overallPos.index : car.driver.toolOrigExitingVertexPos.prevVertexIndex());
-//		GraphPositionPathPosition vPos = new GraphPositionPathPosition(car.driver.overallPath, prevVertexIndex, 0.0);
-//		
-//		determineCoasting(car.driver.toolOrigExitingVertexPos, vPos, false);
-//	}
-	
-//	void lookAtNextVertex() {
-//		
-//		GraphPosition gpos = car.driver.overallPos.gp;
-//		
-//		boolean road = gpos instanceof RoadPosition;
-//		boolean vertex = gpos instanceof VertexPosition;
-//		
-////		int studCount = (int)(car.length * Car.METERS_PER_CARLENGTH / RushHourStud.SIZE);
-////		boolean otherSideIsFree = true;
-//		
-//		/*
-//		 * overallPos is greater than exiting vertex, so the other vertex must be greater than overallPos
-//		 */
-//				
-//		int nextVertexIndex = road ? car.driver.overallPos.nextVertexIndex() : (vertex ? car.driver.overallPos.index : car.driver.toolOrigExitingVertexPos.nextVertexIndex());
-//		GraphPositionPathPosition vPos = new GraphPositionPathPosition(car.driver.overallPath, nextVertexIndex, 0.0);
-//		
-//		determineCoasting(car.driver.toolOrigExitingVertexPos, vPos, true);
-//	}
-	
-//	void lookAtOrigExitingVertex(boolean forward) {
-//		
-//		determineCoasting(other, car.driver.toolOrigExitingVertexPos, forward);
-//	}
-	
 	void determineCoasting(GraphPositionPathPosition origVertexPos, GraphPositionPathPosition otherVertexPos, boolean tryOtherSideFirst) {
 		assert !origVertexPos.equals(otherVertexPos);
 		assert origVertexPos.gp instanceof VertexPosition;
 		assert otherVertexPos.gp instanceof VertexPosition;
-		
-//		boolean road = gpos instanceof RoadPosition;
-//		boolean vertex = gpos instanceof VertexPosition;
 		
 		boolean otherIsForward = otherVertexPos.combo > origVertexPos.combo;
 		
@@ -401,9 +222,6 @@ public class InteractiveCarTool extends WorldToolBase {
 		/*
 		 * overallPos is greater than exiting vertex, so the other vertex must be greater than overallPos
 		 */
-				
-//		int nextVertexIndex = road ? car.driver.overallPos.nextVertexIndex() : (vertex ? car.driver.overallPos.index : car.driver.toolOrigExitingVertexPos.nextVertexIndex());
-//		assert vertexIndex != -1;
 		
 		/*
 		 * find thisSideIsFree
@@ -576,7 +394,7 @@ public class InteractiveCarTool extends WorldToolBase {
 			return;
 		}
 		
-		car.setTransform(actualPos.p, actualPos.angle());
+		car.setTransform(actualPos.p, actualPos.angle);
 		car.setPhysicsTransform();
 		
 		car.driver.setOverallPos(actualPos);
@@ -607,7 +425,7 @@ public class InteractiveCarTool extends WorldToolBase {
 				}
 				GraphPositionPathPosition vertexPos = new GraphPositionPathPosition(car.driver.overallPath, nextVertexIndex, 0.0);
 				
-				if (vertexPos.gp.entity == b.exitVertex && !world.isWon) {
+				if (vertexPos.gp.entity == b.exitVertex && !world.isWon && car.type == CarType.RED) {
 					
 					winner();
 					
@@ -642,7 +460,7 @@ public class InteractiveCarTool extends WorldToolBase {
 				RushHourBoardPosition rpos = (RushHourBoardPosition)prevGPos;
 				RushHourBoard b = (RushHourBoard)rpos.entity;
 				
-				if (car.driver.overallPos.gp.entity == b.exitVertex && !world.isWon) {
+				if (car.driver.overallPos.gp.entity == b.exitVertex && !world.isWon && car.type == CarType.RED) {
 					
 					winner();
 					
@@ -661,6 +479,9 @@ public class InteractiveCarTool extends WorldToolBase {
 			
 		} else {
 			assert gpos instanceof RushHourBoardPosition;
+			
+			RushHourBoardPosition bpos = (RushHourBoardPosition)gpos;
+			RushHourBoard b = (RushHourBoard)bpos.entity;
 			
 			if (prevGPos instanceof RoadPosition) {
 				/*
@@ -700,11 +521,9 @@ public class InteractiveCarTool extends WorldToolBase {
 			} else if (prevGPos instanceof VertexPosition) {
 				
 				
-			} else if (prevGPos instanceof RushHourBoardPosition && !floorAndCeilWithinGrid((RushHourBoardPosition)gpos)) {
+			} else if (prevGPos instanceof RushHourBoardPosition && !b.floorAndCeilWithinGrid(car)) {
 				
-				RushHourBoardPosition bpos = (RushHourBoardPosition)gpos;
 				RushHourBoardPosition prevBpos = (RushHourBoardPosition)prevGPos;
-				RushHourBoard b = (RushHourBoard)bpos.entity;
 				
 				if (bpos.equals(prevBpos)) {
 					
@@ -723,7 +542,7 @@ public class InteractiveCarTool extends WorldToolBase {
 					}
 					GraphPositionPathPosition vertexPos = new GraphPositionPathPosition(car.driver.overallPath, nextVertexIndex, 0.0);
 					
-					if (vertexPos.gp.entity == b.exitVertex && !world.isWon) {
+					if (vertexPos.gp.entity == b.exitVertex && !world.isWon && car.type == CarType.RED) {
 						
 						winner();
 						
@@ -748,56 +567,6 @@ public class InteractiveCarTool extends WorldToolBase {
 		
 		APP.appScreen.contentPane.repaint();
 		
-	}
-	
-//	public void moved(InputEvent ev) {
-//		
-//		if (winnerMenu != null) {
-//			
-//			Point p = ev.p;
-//			
-//			p = Point.worldToPanel(p, worldCamera);
-//			p = Point.panelToMenu(p, winnerMenu);
-//			
-//			winnerMenu.moved(p);
-//			
-//		}
-//		
-//	}
-//	
-//	public void clicked(InputEvent ev) {
-//		
-//		if (winnerMenu != null) {
-//			
-//			Point p = ev.p;
-//			
-//			p = Point.worldToPanel(p, worldCamera);
-//			p = Point.panelToMenu(p, winnerMenu);
-//			
-//			winnerMenu.clicked(p);
-//			
-//		}
-//		
-//	}
-	
-	boolean floorAndCeilWithinGrid(RushHourBoardPosition bpos) {
-		
-		/*
-		 * for uses of floorAndCeilWithinGridX, figure out if car is entering or leaving the board, behavior may depend on that
-		 */
-		
-		RushHourBoard b = (RushHourBoard)bpos.entity;
-		
-		GraphPositionPathPosition tmpFloorPos = car.driver.overallPos.floor(car.length/2);
-		GraphPositionPathPosition tmpCeilPos = car.driver.overallPos.ceil(car.length/2);
-		
-		OBB testFloor = Geom.localToWorld(car.localAABB, car.angle, tmpFloorPos.p);
-		OBB testCeil = Geom.localToWorld(car.localAABB, car.angle, tmpCeilPos.p);
-		
-		boolean floorWithin = testFloor.aabb.completelyWithin(b.gridAABB);
-		boolean ceilWithin = testCeil.aabb.completelyWithin(b.gridAABB);
-		
-		return floorWithin && ceilWithin;
 	}
 	
 	void winner() {

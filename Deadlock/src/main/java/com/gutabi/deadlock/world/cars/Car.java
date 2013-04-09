@@ -15,6 +15,7 @@ import com.gutabi.deadlock.world.World;
 import com.gutabi.deadlock.world.physics.PhysicsBody;
 import com.gutabi.deadlock.world.sprites.CarSheet;
 import com.gutabi.deadlock.world.sprites.CarSheet.CarSheetSprite;
+import com.gutabi.deadlock.world.sprites.CarSheet.CarType;
 import com.gutabi.deadlock.world.sprites.SpriteSheet.SpriteSheetSprite;
 
 public abstract class Car extends PhysicsBody {
@@ -25,6 +26,8 @@ public abstract class Car extends PhysicsBody {
 	 * distance that center of a car has to be from center of a sink in order to be sinked
 	 */
 	public static final double SINK_EPSILON = 0.5f;
+	
+	public final CarType type;
 	
 	public CarStateEnum state;
 	
@@ -47,8 +50,10 @@ public abstract class Car extends PhysicsBody {
 	
 	public static int carIDCounter;
 	
-	public Car(World world) {
+	public Car(World world, CarType type) {
 		super(world);
+		
+		this.type = type;
 		
 		id = carIDCounter;
 		carIDCounter++;

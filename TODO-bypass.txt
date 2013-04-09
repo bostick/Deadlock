@@ -22,6 +22,19 @@ stacks
 
 
 
+
+little shining animation for red car to start, and level buttons on level menu
+
+
+
+
+
+
+
+
+
+
+
 when dragging, if within 25% of stud, just go to it
 
 

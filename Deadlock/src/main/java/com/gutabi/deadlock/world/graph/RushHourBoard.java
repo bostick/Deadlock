@@ -11,7 +11,9 @@ import java.util.Map.Entry;
 import com.gutabi.deadlock.Entity;
 import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.geom.CubicCurve;
+import com.gutabi.deadlock.geom.Geom;
 import com.gutabi.deadlock.geom.Line;
+import com.gutabi.deadlock.geom.OBB;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.paint.Cap;
 import com.gutabi.deadlock.ui.paint.Color;
@@ -19,6 +21,7 @@ import com.gutabi.deadlock.ui.paint.Join;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.world.Stroke;
 import com.gutabi.deadlock.world.World;
+import com.gutabi.deadlock.world.cars.Car;
 import com.gutabi.deadlock.world.cars.CarStateEnum;
 import com.gutabi.deadlock.world.cars.InteractiveCar;
 import com.gutabi.deadlock.world.sprites.CarSheet;
@@ -1208,7 +1211,7 @@ public class RushHourBoard extends Entity {
 		
 		int sheetIndex = CarSheet.sheetIndex(type, curTypeCount);
 		
-		InteractiveCar c = InteractiveCar.createCar(world, sheetIndex);
+		InteractiveCar c = InteractiveCar.createCar(world, type, sheetIndex);
 		c.state = CarStateEnum.IDLE;
 		
 		/*
@@ -1222,7 +1225,7 @@ public class RushHourBoard extends Entity {
 			path = getPath(a, firstULRow);
 			
 			GraphPosition test = new RushHourBoardPosition(this, firstULRow + c.width/2, firstULCol);
-			GraphPositionPathPosition posTest = path.findGraphPositionPathPosition(test);
+			GraphPositionPathPosition posTest = path.findGraphPositionPathPosition(test, 0.0 * Math.PI);
 			
 			Point dir;
 			if (!posTest.isEndOfPath()) {
@@ -1250,7 +1253,7 @@ public class RushHourBoard extends Entity {
 			path = getPath(a, firstULCol);
 			
 			GraphPosition test = new RushHourBoardPosition(this, firstULRow, firstULCol + c.width/2);
-			GraphPositionPathPosition posTest = path.findGraphPositionPathPosition(test);
+			GraphPositionPathPosition posTest = path.findGraphPositionPathPosition(test, 0.5 * Math.PI);
 			
 			Point dir;
 			if (!posTest.isEndOfPath()) {
@@ -1280,25 +1283,25 @@ public class RushHourBoard extends Entity {
 			c.driver.startGP = new RushHourBoardPosition(this, firstULRow + c.width/2, firstULCol + c.length/2);
 			c.setTransform(c.driver.startGP.p, 0.0 * Math.PI);
 			c.driver.overallPath = path;
-			c.driver.setOverallPos(path.findGraphPositionPathPosition(c.driver.startGP));
+			c.driver.setOverallPos(path.findGraphPositionPathPosition(c.driver.startGP, 0.0 * Math.PI));
 			break;
 		case BOTTOM:
 			c.driver.startGP = new RushHourBoardPosition(this, firstULRow + c.length/2, firstULCol + c.width/2);
 			c.setTransform(c.driver.startGP.p, 0.5 * Math.PI);
 			c.driver.overallPath = path;
-			c.driver.setOverallPos(path.findGraphPositionPathPosition(c.driver.startGP));
+			c.driver.setOverallPos(path.findGraphPositionPathPosition(c.driver.startGP, 0.5 * Math.PI));
 			break;
 		case LEFT:
 			c.driver.startGP = new RushHourBoardPosition(this, firstULRow + c.width/2, firstULCol + c.length/2);
 			c.setTransform(c.driver.startGP.p, 1.0 * Math.PI);
 			c.driver.overallPath = path;
-			c.driver.setOverallPos(path.findGraphPositionPathPosition(c.driver.startGP));
+			c.driver.setOverallPos(path.findGraphPositionPathPosition(c.driver.startGP, 0.0 * Math.PI));
 			break;
 		case TOP:
 			c.driver.startGP = new RushHourBoardPosition(this, firstULRow + c.length/2, firstULCol + c.width/2);
 			c.setTransform(c.driver.startGP.p, 1.5 * Math.PI);
 			c.driver.overallPath = path;
-			c.driver.setOverallPos(path.findGraphPositionPathPosition(c.driver.startGP));
+			c.driver.setOverallPos(path.findGraphPositionPathPosition(c.driver.startGP, 0.5 * Math.PI));
 			break;
 		}
 		
@@ -1372,6 +1375,20 @@ public class RushHourBoard extends Entity {
 		return null;
 	}
 	
+	public boolean floorAndCeilWithinGrid(Car c) {
+		
+		GraphPositionPathPosition tmpFloorPos = c.driver.overallPos.floor(c.length/2);
+		GraphPositionPathPosition tmpCeilPos = c.driver.overallPos.ceil(c.length/2);
+		
+		OBB testFloor = Geom.localToWorld(c.localAABB, c.angle, tmpFloorPos.p);
+		OBB testCeil = Geom.localToWorld(c.localAABB, c.angle, tmpCeilPos.p);
+		
+		boolean floorWithin = testFloor.aabb.completelyWithin(gridAABB);
+		boolean ceilWithin = testCeil.aabb.completelyWithin(gridAABB);
+		
+		return floorWithin && ceilWithin;
+	}
+	
 	public boolean enteringBoard(RushHourBoardPosition prev, RushHourBoardPosition cur) {
 		assert !cur.equals(prev);
 		
@@ -1409,8 +1426,8 @@ public class RushHourBoard extends Entity {
 	
 	public void paint_panel(RenderingContext ctxt) {
 		
-		ctxt.setColor(BOARDCOLOR);
-		gridAABB.paint(ctxt);
+//		ctxt.setColor(BOARDCOLOR);
+//		gridAABB.paint(ctxt);
 		
 		for (RushHourStud s : studs) {
 			s.paint(ctxt);
@@ -1431,8 +1448,8 @@ public class RushHourBoard extends Entity {
 	
 	public void paint_preview(RenderingContext ctxt) {
 		
-		ctxt.setColor(BOARDCOLOR);
-		gridAABB.paint(ctxt);
+//		ctxt.setColor(BOARDCOLOR);
+//		gridAABB.paint(ctxt);
 		
 		for (RushHourStud s : studs) {
 			s.paint(ctxt);

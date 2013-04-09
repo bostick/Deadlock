@@ -263,8 +263,9 @@ public class PlatformImpl implements Platform {
 	
 	public Resource levelDBResource(String name) {
 		
-		String full = "/levels/" + name + ".zip";
+		String full = "/" + name + ".zip";
 		URL url = APP.getClass().getResource(full);
+		assert url != null;
 		
 		ResourceImpl res = new ResourceImpl();
 		

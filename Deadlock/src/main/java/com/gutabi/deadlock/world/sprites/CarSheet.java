@@ -18,6 +18,8 @@ public class CarSheet extends Sheet {
 			
 			public int carLength() { return 2; }
 			public int carWidth() { return 1; }
+			
+			public CarType type() { return CarType.TWO; }
 		},
 			
 		CAR1 { 
@@ -28,6 +30,8 @@ public class CarSheet extends Sheet {
 			
 			public int carLength() { return 2; }
 			public int carWidth() { return 1; }
+			
+			public CarType type() { return CarType.TWO; }
 		},
 		
 		CAR2 {
@@ -38,17 +42,21 @@ public class CarSheet extends Sheet {
 			
 			public int carLength() { return 2; }
 			public int carWidth() { return 1; }
+			
+			public CarType type() { return CarType.TWO; }
 		},
 		
-		TANK {
-			public int xStart() { return 0; }
-			public int yStart() { return 96; }
-			public int xEnd() { return 0+128; }
-			public int yEnd() { return 96+64; }
-			
-			public int carLength() { return 4; }
-			public int carWidth() { return 2; }
-		},
+//		TANK {
+//			public int xStart() { return 0; }
+//			public int yStart() { return 96; }
+//			public int xEnd() { return 0+128; }
+//			public int yEnd() { return 96+64; }
+//			
+//			public int carLength() { return 4; }
+//			public int carWidth() { return 2; }
+//			
+//			public CarType type() { return CarType.TANK; }
+//		},
 		
 		CAR4 {
 			public int xStart() { return 0; }
@@ -58,6 +66,8 @@ public class CarSheet extends Sheet {
 			
 			public int carLength() { return 2; }
 			public int carWidth() { return 1; }
+			
+			public CarType type() { return CarType.TWO; }
 		},
 		
 		CAR5 {
@@ -68,6 +78,8 @@ public class CarSheet extends Sheet {
 			
 			public int carLength() { return 3; }
 			public int carWidth() { return 1; }
+			
+			public CarType type() { return CarType.THREE; }
 		},
 		
 		CAR6 {
@@ -78,6 +90,8 @@ public class CarSheet extends Sheet {
 			
 			public int carLength() { return 3; }
 			public int carWidth() { return 1; }
+			
+			public CarType type() { return CarType.THREE; }
 		},
 		
 		RED {
@@ -88,6 +102,8 @@ public class CarSheet extends Sheet {
 			
 			public int carLength() { return 2; }
 			public int carWidth() { return 1; }
+			
+			public CarType type() { return CarType.RED; }
 		},
 		
 		CAR8 {
@@ -98,6 +114,8 @@ public class CarSheet extends Sheet {
 			
 			public int carLength() { return 3; }
 			public int carWidth() { return 1; }
+			
+			public CarType type() { return CarType.THREE; }
 		},
 		
 		CAR9 {
@@ -108,6 +126,8 @@ public class CarSheet extends Sheet {
 			
 			public int carLength() { return 2; }
 			public int carWidth() { return 1; }
+			
+			public CarType type() { return CarType.TWO; }
 		},
 		
 		CAR10 {
@@ -118,6 +138,8 @@ public class CarSheet extends Sheet {
 			
 			public int carLength() { return 3; }
 			public int carWidth() { return 1; }
+			
+			public CarType type() { return CarType.THREE; }
 		},
 		
 		CAR11 {
@@ -128,6 +150,8 @@ public class CarSheet extends Sheet {
 			
 			public int carLength() { return 2; }
 			public int carWidth() { return 1; }
+			
+			public CarType type() { return CarType.TWO; }
 		},
 		
 		CAR12 {
@@ -138,6 +162,8 @@ public class CarSheet extends Sheet {
 			
 			public int carLength() { return 2; }
 			public int carWidth() { return 1; }
+			
+			public CarType type() { return CarType.TWO; }
 		},
 		
 		CAR13 {
@@ -148,10 +174,13 @@ public class CarSheet extends Sheet {
 			
 			public int carLength() { return 3; }
 			public int carWidth() { return 1; }
+			
+			public CarType type() { return CarType.THREE; }
 		};
 		
 		public abstract int carLength();
 		public abstract int carWidth();
+		public abstract CarType type();
 		
 	}
 	
@@ -167,8 +196,6 @@ public class CarSheet extends Sheet {
 			return CarSheetSprite.CAR1;
 		case 2:
 			return CarSheetSprite.CAR2;
-		case 3:
-			return CarSheetSprite.TANK;
 		case 4:
 			return CarSheetSprite.CAR4;
 		case 5:

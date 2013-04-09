@@ -14,6 +14,7 @@ import com.gutabi.deadlock.world.cars.Car;
 import com.gutabi.deadlock.world.graph.Graph;
 import com.gutabi.deadlock.world.graph.GraphPosition;
 import com.gutabi.deadlock.world.graph.RoadPosition;
+import com.gutabi.deadlock.world.graph.RushHourBoard;
 import com.gutabi.deadlock.world.graph.RushHourBoardPosition;
 import com.gutabi.deadlock.world.graph.VertexPosition;
 import com.gutabi.deadlock.world.tools.InteractiveCarTool;
@@ -150,18 +151,18 @@ public class RushHourWorld extends World {
 		
 		GraphPosition gpos = car.driver.overallPos.gp;
 		
+		double para;
 		if (gpos instanceof RoadPosition) {
 			
 			RoadPosition rpos = (RoadPosition)gpos;
 			
 			double alpha = rpos.lengthToStartOfRoad / rpos.r.getTotalLength(rpos.r.start, rpos.r.end);
-			double para;
 			if (DMath.equals(alpha, 0.0)) {
 				para = 1.0;
 			} else if (DMath.equals(alpha, 1.0)) {
 				para = 1.0;
 			} else {
-				double[] vals = new double[] {1.0, 0.66, 0.66, 0.33, 0.33, 0.33, 0.33, 0.33, 0.66, 0.66, 1.0};
+				double[] vals = new double[] {1.0, 0.3, 0.3, 0.3, 1.0};
 				double a = vals[(int)Math.floor(alpha * (vals.length-1))];
 				double b = vals[(int)Math.floor(alpha * (vals.length-1))+1];
 				para = DMath.lerp(a, b, (alpha * (vals.length-1) - Math.floor(alpha * (vals.length-1))));
@@ -169,36 +170,27 @@ public class RushHourWorld extends World {
 			
 			world.worldCamera.zoomAbsolute(para);
 			
-//			worldScreen.world.render_worldPanel();
-			
 		} else if (gpos instanceof VertexPosition) {
 			
-			world.worldCamera.zoomAbsolute(1.0);
-			
-//			GraphPosition prevGPos = car.driver.prevOverallPos.gp;
-//			
-//			if (prevGPos instanceof RoadPosition) {
-//				
-//				
-//				
-////				worldScreen.world.render_worldPanel();
-//			}
+			para = 1.0;
 			
 		} else {
 			assert gpos instanceof RushHourBoardPosition;
 			
-			world.worldCamera.zoomAbsolute(1.0);
+			RushHourBoardPosition bpos = (RushHourBoardPosition)gpos;
+			RushHourBoard b = (RushHourBoard)bpos.entity;
 			
-//			GraphPosition prevGPos = car.driver.prevOverallPos.gp;
-//			
-//			if (prevGPos instanceof RoadPosition) {
-//				
-//				world.worldCamera.zoomAbsolute(1.0);
-//				
-////				worldScreen.world.render_worldPanel();
-//			}
+			if (!b.floorAndCeilWithinGrid(car)) {
+				
+			} else {
+				
+			}
+			
+			para = 1.0;
+			
 		}
 		
+		world.worldCamera.zoomAbsolute(para);
 	}
 	
 	public void panelPostDisplay() {

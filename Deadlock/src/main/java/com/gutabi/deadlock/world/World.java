@@ -443,6 +443,7 @@ public class World extends PhysicsWorld {
 		
 		ctxt.setTransform(origTrans);
 		
+//		System.out.println(worldCamera.pixelsPerMeter);
 	}
 	
 	public void paintPreview_controlPanel(RenderingContext ctxt) {

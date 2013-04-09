@@ -262,6 +262,26 @@ public class DMath {
 		
 	}
 	
+	public static double tryAdjustToReducedRightAngle(double preA) {
+		
+		double adjA = preA;
+		while (DMath.greaterThanEquals(adjA, Math.PI)) {
+			adjA -= Math.PI;
+		}
+		while (DMath.lessThan(adjA, 0.0)) {
+			adjA += Math.PI;
+		}
+		
+		if (Math.abs(adjA - 0.0 * Math.PI) < DMath.RIGHT_ANGLE_TOLERANCE) {
+			return 0.0 * Math.PI;
+		} else if (Math.abs(adjA - 0.5 * Math.PI) < DMath.RIGHT_ANGLE_TOLERANCE) {
+			return 0.5 * Math.PI;
+		} else {
+			return adjA;
+		}
+		
+	}
+	
 	public static boolean isRightAngle(double pre) {
 		
 		double adjA = pre;
@@ -283,5 +303,11 @@ public class DMath {
 		} else {
 			return false;
 		}
+	}
+	
+	public static boolean anglesCompatible(double a, double b) {
+		double aa = tryAdjustToReducedRightAngle(a);
+		double bb = tryAdjustToReducedRightAngle(b);
+		return DMath.equals(aa, bb);
 	}
 }

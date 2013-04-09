@@ -5,7 +5,7 @@ import com.gutabi.deadlock.math.Point;
 
 public class WorldCamera {
 	
-	public double pixelsPerMeter = 50.0;
+	public double pixelsPerMeter = 60.0;
 	public double origPixelsPerMeter = pixelsPerMeter;
 	public AABB worldViewport;
 	public AABB origWorldViewport;
@@ -21,7 +21,7 @@ public class WorldCamera {
 	
 	public void zoomRelative(double factor) {
 		
-		pixelsPerMeter = factor * pixelsPerMeter; 
+		pixelsPerMeter = factor * pixelsPerMeter;
 		
 		double newWidth =  worldPanel.aabb.width / pixelsPerMeter;
 		double newHeight = worldPanel.aabb.height / pixelsPerMeter;

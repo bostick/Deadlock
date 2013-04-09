@@ -20,6 +20,8 @@ public abstract class RushHourStud {
 	public final int row;
 	public final int col;
 	
+	SpriteSheetSprite sprite;
+	
 	public AABB aabb;
 	
 	public RushHourStud(World world, RushHourBoard board, int row, int col) {
@@ -28,6 +30,18 @@ public abstract class RushHourStud {
 		
 		this.row = row;
 		this.col = col;
+		
+		if (row == -1) {
+			sprite = SpriteSheetSprite.TOPSTUD;
+		} else if (row == board.rowCount) {
+			sprite = SpriteSheetSprite.BOTTOMSTUD;
+		} else if (col == -1) {
+			sprite = SpriteSheetSprite.LEFTSTUD;
+		} else if (col == board.colCount) {
+			sprite = SpriteSheetSprite.RIGHTSTUD;
+		} else {
+			sprite = SpriteSheetSprite.INNERSTUD;
+		}
 		
 		aabb = new AABB(board.ul.x + RushHourStud.SIZE * col, board.ul.y + RushHourStud.SIZE * row, RushHourStud.SIZE, RushHourStud.SIZE);
 	}
@@ -56,7 +70,7 @@ public abstract class RushHourStud {
 	
 	public void paint(RenderingContext ctxt) {
 		
-		APP.spriteSheet.paint(ctxt, SpriteSheetSprite.STUD, ctxt.cam.pixelsPerMeter, aabb.ul.x, aabb.ul.y, aabb.ul.x + aabb.width, aabb.ul.y + aabb.height);
+		APP.spriteSheet.paint(ctxt, sprite, ctxt.cam.pixelsPerMeter, aabb.ul.x, aabb.ul.y, aabb.ul.x + aabb.width, aabb.ul.y + aabb.height);
 		
 	}
 	
