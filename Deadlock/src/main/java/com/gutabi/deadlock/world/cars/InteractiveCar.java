@@ -78,6 +78,11 @@ public class InteractiveCar extends Car {
 		}
 		
 		assert vel >= 0.0;
+		
+		if (vel > 15) {
+			vel = 15;
+		}
+		
 		coastingVel = vel;
 	}
 	

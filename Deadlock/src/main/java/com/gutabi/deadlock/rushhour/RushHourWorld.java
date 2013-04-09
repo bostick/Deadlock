@@ -154,25 +154,24 @@ public class RushHourWorld extends World {
 		double para;
 		if (gpos instanceof RoadPosition) {
 			
-			RoadPosition rpos = (RoadPosition)gpos;
-			
-			double alpha = rpos.lengthToStartOfRoad / rpos.r.getTotalLength(rpos.r.start, rpos.r.end);
-			if (DMath.equals(alpha, 0.0)) {
-				para = 1.0;
-			} else if (DMath.equals(alpha, 1.0)) {
-				para = 1.0;
-			} else {
-				double[] vals = new double[] {1.0, 0.3, 0.3, 0.3, 1.0};
-				double a = vals[(int)Math.floor(alpha * (vals.length-1))];
-				double b = vals[(int)Math.floor(alpha * (vals.length-1))+1];
-				para = DMath.lerp(a, b, (alpha * (vals.length-1) - Math.floor(alpha * (vals.length-1))));
-			}
-			
-			world.worldCamera.zoomAbsolute(para);
+//			RoadPosition rpos = (RoadPosition)gpos;
+//			
+//			double alpha = rpos.lengthToStartOfRoad / rpos.r.getTotalLength(rpos.r.start, rpos.r.end);
+//			if (DMath.equals(alpha, 0.0)) {
+//				para = 1.0;
+//			} else if (DMath.equals(alpha, 1.0)) {
+//				para = 1.0;
+//			} else {
+//				double[] vals = new double[] {1.0, 0.3, 0.3, 0.3, 1.0};
+//				double a = vals[(int)Math.floor(alpha * (vals.length-1))];
+//				double b = vals[(int)Math.floor(alpha * (vals.length-1))+1];
+//				para = DMath.lerp(a, b, (alpha * (vals.length-1) - Math.floor(alpha * (vals.length-1))));
+//			}
+			para = 0.3;
 			
 		} else if (gpos instanceof VertexPosition) {
 			
-			para = 1.0;
+			para = 0.3;
 			
 		} else {
 			assert gpos instanceof RushHourBoardPosition;
@@ -182,11 +181,13 @@ public class RushHourWorld extends World {
 			
 			if (!b.floorAndCeilWithinGrid(car)) {
 				
+				para = 0.3;
+				
 			} else {
 				
+				para = 1.0;
+				
 			}
-			
-			para = 1.0;
 			
 		}
 		
