@@ -10,14 +10,12 @@ import com.gutabi.deadlock.ui.MenuItem;
 public class LevelMenu extends Menu {
 	
 	public LevelMenu(final LevelDB levelDB) {
-		
 		for (int i = 0; i < levelDB.levelCount; i++) {
-			int menuRow = i / 7;
-			int menuCol = i % 7;
+			int menuRow = i / 6;
+			int menuCol = i % 6;
 			final int ii = i;
 			add(new MenuItem(LevelMenu.this, Integer.toString(i), 48) { public void action() { RushHourWorld.action(levelDB, ii); } }, menuRow, menuCol);
 		}
-		
 	}
 	
 	public static void action() {
@@ -39,13 +37,11 @@ public class LevelMenu extends Menu {
 			e.printStackTrace();
 			assert false;
 		}
-		
 	}
 	
 	public void escape() {
 		
 		MainMenu.action();
-		
 	}
 	
 }

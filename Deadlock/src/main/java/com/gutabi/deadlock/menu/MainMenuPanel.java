@@ -3,6 +3,7 @@ package com.gutabi.deadlock.menu;
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
 import com.gutabi.deadlock.geom.AABB;
+import com.gutabi.deadlock.math.DMath;
 import com.gutabi.deadlock.ui.Menu;
 import com.gutabi.deadlock.ui.Panel;
 import com.gutabi.deadlock.ui.Transform;
@@ -22,7 +23,26 @@ public class MainMenuPanel extends Panel {
 	public void postDisplay() {
 		Menu menu = (Menu)APP.model;
 		
-		menu.aabb = new AABB(aabb.width/2 - menu.aabb.width/2, aabb.height/2 - menu.aabb.height/2, menu.aabb.width, menu.aabb.height);
+		double h = 0;
+		if (DMath.lessThanEquals(menu.aabb.height, aabb.height)) {
+			/*
+			 * no scrolling
+			 */
+			
+			menu.scrollable = false;
+			
+			h = aabb.height/2 - menu.aabb.height/2;
+			menu.setLocation(aabb.width/2 - menu.aabb.width/2, h);
+		} else {
+			/*
+			 * will be scrolling
+			 */
+			
+			menu.scrollable = true;
+			
+			h = 0;
+			menu.setLocation(aabb.width/2 - menu.aabb.width/2, h);
+		}
 	}
 	
 	public void paint(RenderingContext ctxt) {

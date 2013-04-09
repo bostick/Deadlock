@@ -1,14 +1,25 @@
 
-scrolling for level menu
+scrolling for menus
+
 
 handle back button
 stacks
 
+
 little shining animation for red car to start, and level buttons on level menu
+
 
 when dragging, if within 25% of stud, just go to it
 
+
 quadrant editor moving hiliting
+
+
+
+scoring
+time taken
+moves made
+
 
 
 
@@ -21,6 +32,14 @@ spiraling in GPPP.generalSearch?
 easter egg: click on a grass, do something
 something: cars are now intangible
 in board description, a missing - or | means to allow the car off of the board...
+
+allow custom boards? does bigger than 6x6 work?
+
+
+
+
+
+
 
 
 

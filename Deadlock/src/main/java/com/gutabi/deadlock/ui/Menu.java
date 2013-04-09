@@ -27,11 +27,15 @@ public abstract class Menu {
 	public Point lastMovedMenuPoint;
 	public Point lastClickedMenuPoint;
 	
-	boolean isRendered;
+	public boolean scrollable;
 	
 	public Menu() {
 		menuItemWidest = new double[0];
 		menuHeight = new double[cols];
+	}
+	
+	public void setLocation(double x, double y) {
+		aabb = new AABB(x, y, aabb.width, aabb.height);
 	}
 	
 	public void add(MenuItem item, int r, int c) {
@@ -152,12 +156,9 @@ public abstract class Menu {
 		}
 		
 		ctxt.dispose();
-		
-		isRendered = true;
 	}
 	
 	public void paint_panel(RenderingContext ctxt) {
-		assert isRendered;
 		
 		Transform origTransform = ctxt.getTransform();
 		

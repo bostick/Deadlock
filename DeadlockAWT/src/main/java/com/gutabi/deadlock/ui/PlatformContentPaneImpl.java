@@ -44,27 +44,27 @@ public class PlatformContentPaneImpl extends PlatformContentPane implements java
 	
 	public void mousePressed(MouseEvent ev) {
 		Point p = new Point(ev.getX(), ev.getY());
-		pressed(new InputEvent(p));
+		pressedDriver(p);
 	}
 
 	public void mouseReleased(MouseEvent ev) {
 		Point p = new Point(ev.getX(), ev.getY());
-		released(new InputEvent(p));
+		releasedDriver(p);
 	}
 	
 	public void mouseDragged(MouseEvent ev) {
 		Point p = new Point(ev.getX(), ev.getY());
-		dragged(new InputEvent(p));
+		draggedDriver(p);
 	}
 	
 	public void mouseMoved(MouseEvent ev) {
 		Point p = new Point(ev.getX(), ev.getY());
-		moved(new InputEvent(p));
+		movedDriver(p);
 	}
 	
 	public void mouseClicked(MouseEvent ev) {
 		Point p = new Point(ev.getX(), ev.getY());
-		clicked(new InputEvent(p));
+		clickedDriver(p);
 	}
 
 	public void mouseEntered(MouseEvent ev) {

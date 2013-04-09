@@ -3,7 +3,6 @@ package com.gutabi.deadlock.rushhour;
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
 import com.gutabi.deadlock.geom.AABB;
-import com.gutabi.deadlock.math.DMath;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.world.DebuggerScreen;

@@ -11,7 +11,6 @@ import android.view.MotionEvent;
 import android.view.Window;
 
 import com.gutabi.deadlock.math.Point;
-import com.gutabi.deadlock.ui.InputEvent;
 
 public class MainActivity extends Activity {
 	
@@ -64,15 +63,15 @@ public class MainActivity extends Activity {
 		switch (act) {
 		case MotionEvent.ACTION_DOWN:
 			Log.d("motion", "down");
-			APP.appScreen.contentPane.pressed(new InputEvent(p));
+			APP.appScreen.contentPane.pcp.pressedDriver(p);
 			break;
 		case MotionEvent.ACTION_MOVE:
 			Log.d("motion", "move");
-			APP.appScreen.contentPane.dragged(new InputEvent(p));
+			APP.appScreen.contentPane.pcp.draggedDriver(p);
 			break;
 		case MotionEvent.ACTION_UP:
 			Log.d("motion", "up");
-			APP.appScreen.contentPane.released(new InputEvent(p));
+			APP.appScreen.contentPane.pcp.releasedDriver(p);
 			break;
 		}
 		
@@ -94,7 +93,7 @@ public class MainActivity extends Activity {
 			float y = ev.getRawY() - touchOut[1];
 			Point p = new Point(x, y);
 			
-			APP.appScreen.contentPane.clicked(new InputEvent(p));
+			APP.appScreen.contentPane.pcp.clickedDriver(p);
 			
 			return super.onSingleTapUp(ev);
 		}

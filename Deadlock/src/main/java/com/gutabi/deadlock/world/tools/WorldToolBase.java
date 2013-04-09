@@ -66,7 +66,7 @@ public abstract class WorldToolBase extends Tool {
 		
 		Point p = Point.panelToWorld(ev.p, world.worldCamera);
 		
-		world.pressed(new InputEvent(p));
+		world.pressed(new InputEvent(ev.panel, p));
 		
 //		switch (world.mode) {
 //		case PAUSED:
@@ -88,7 +88,7 @@ public abstract class WorldToolBase extends Tool {
 		
 		Point p = Point.panelToWorld(ev.p, world.worldCamera);
 		
-		world.dragged(new InputEvent(p));
+		world.dragged(new InputEvent(ev.panel, p));
 		
 //		switch (world.mode) {
 //		case RUNNING:
@@ -137,7 +137,7 @@ public abstract class WorldToolBase extends Tool {
 		
 		Point p = Point.panelToWorld(ev.p, world.worldCamera);
 		
-		world.moved(new InputEvent(p));
+		world.moved(new InputEvent(ev.panel, p));
 		
 //		lastMovedPanelPoint = ev.p;
 //		lastMovedOrDraggedPanelPoint = lastMovedPanelPoint;
@@ -166,7 +166,7 @@ public abstract class WorldToolBase extends Tool {
 		
 		Point p = Point.panelToWorld(ev.p, world.worldCamera);
 		
-		world.clicked(new InputEvent(p));
+		world.clicked(new InputEvent(ev.panel, p));
 		
 //		switch (world.mode) {
 //		case RUNNING:

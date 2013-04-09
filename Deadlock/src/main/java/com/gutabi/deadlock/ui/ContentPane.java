@@ -3,9 +3,8 @@ package com.gutabi.deadlock.ui;
 import java.util.List;
 
 import com.gutabi.deadlock.math.Point;
-import com.gutabi.deadlock.ui.paint.RenderingContext;
 
-public abstract class ContentPane implements MotionListener {
+public abstract class ContentPane {
 	
 	public PlatformContentPane pcp;
 	
@@ -25,28 +24,28 @@ public abstract class ContentPane implements MotionListener {
 		return pcp.getLastMovedContentPanePoint();
 	}
 	
-	public void clicked(InputEvent ev) {
-		pcp.clicked(ev);
-	}
-	
-	public void paint(RenderingContext ctxt) {
-		pcp.paint(ctxt);
-	}
-
-	public void pressed(InputEvent ev) {
-		pcp.pressed(ev);
-	}
-
-	public void released(InputEvent ev) {
-		pcp.released(ev);
-	}
-
-	public void moved(InputEvent ev) {
-		pcp.moved(ev);
-	}
-
-	public void dragged(InputEvent ev) {
-		pcp.dragged(ev);
-	}
+//	public void clicked(InputEvent ev) {
+//		pcp.clicked(ev);
+//	}
+//	
+//	public void paint(RenderingContext ctxt) {
+//		pcp.paint(ctxt);
+//	}
+//
+//	public void pressed(InputEvent ev) {
+//		pcp.pressed(ev);
+//	}
+//
+//	public void released(InputEvent ev) {
+//		pcp.released(ev);
+//	}
+//
+//	public void moved(InputEvent ev) {
+//		pcp.moved(ev);
+//	}
+//
+//	public void dragged(InputEvent ev) {
+//		pcp.dragged(ev);
+//	}
 	
 }

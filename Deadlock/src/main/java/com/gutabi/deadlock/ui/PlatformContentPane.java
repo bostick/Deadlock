@@ -6,7 +6,7 @@ import java.util.List;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 
-public abstract class PlatformContentPane implements MotionListener {
+public abstract class PlatformContentPane {
 	
 	protected List<Panel> children = new ArrayList<Panel>();
 	
@@ -25,48 +25,48 @@ public abstract class PlatformContentPane implements MotionListener {
 		return lastMovedContentPanePoint;
 	}
 	
-	public void moved(InputEvent e) {
-		lastMovedContentPanePoint = e.p;
+	public void movedDriver(Point p) {
+		lastMovedContentPanePoint = p;
 		for (Panel child : children) {
-			if (child.aabb.hitTest(e.p)) {
-				child.moved(new InputEvent(Point.contentPaneToPanel(e.p, child)));
+			if (child.aabb.hitTest(p)) {
+				child.moved(new InputEvent(child, Point.contentPaneToPanel(p, child)));
 				return;
 			}
 		}
 	}
 	
-	public void clicked(InputEvent e) {
+	public void clickedDriver(Point p) {
 		for (Panel child : children) {
-			if (child.aabb.hitTest(e.p)) {
-				child.clicked(new InputEvent(Point.contentPaneToPanel(e.p, child)));
+			if (child.aabb.hitTest(p)) {
+				child.clicked(new InputEvent(child, Point.contentPaneToPanel(p, child)));
 				return;
 			}
 		}
 	}
 	
-	public void pressed(InputEvent e) {
-		lastPressedContentPanePoint = e.p;
+	public void pressedDriver(Point p) {
+		lastPressedContentPanePoint = p;
 		for (Panel child : children) {
 			if (child.aabb.hitTest(lastPressedContentPanePoint)) {
-				child.pressed(new InputEvent(Point.contentPaneToPanel(e.p, child)));
+				child.pressed(new InputEvent(child, Point.contentPaneToPanel(p, child)));
 				return;
 			}
 		}
 	}
 	
-	public void released(InputEvent e) {
+	public void releasedDriver(Point p) {
 		for (Panel child : children) {
 			if (child.aabb.hitTest(lastPressedContentPanePoint)) {
-				child.released(new InputEvent(Point.contentPaneToPanel(e.p, child)));
+				child.released(new InputEvent(child, Point.contentPaneToPanel(p, child)));
 				return;
 			}
 		}
 	}
 	
-	public void dragged(InputEvent e) {
+	public void draggedDriver(Point p) {
 		for (Panel child : children) {
 			if (child.aabb.hitTest(lastPressedContentPanePoint)) {
-				child.dragged(new InputEvent(Point.contentPaneToPanel(e.p, child)));
+				child.dragged(new InputEvent(child, Point.contentPaneToPanel(p, child)));
 				return;
 			}
 		}
