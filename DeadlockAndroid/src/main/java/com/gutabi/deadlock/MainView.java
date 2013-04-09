@@ -6,13 +6,14 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.util.AttributeSet;
 
-import com.gutabi.deadlock.ui.ContentPane;
 import com.gutabi.deadlock.ui.PlatformContentPane;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 
 public class MainView extends android.view.View {
 	
 	PlatformContentPane content;
+	
+	Paint paint = new Paint();
 	
 	public MainView(Context c, AttributeSet s) {
 		super(c, s);
@@ -24,7 +25,7 @@ public class MainView extends android.view.View {
 	
 	public void onDraw(Canvas canvas) {
 		
-		RenderingContext ctxt = APP.platform.createRenderingContext(canvas, new Paint());
+		RenderingContext ctxt = APP.platform.createRenderingContext(canvas, paint);
 		
 		content.paint(ctxt);
 		

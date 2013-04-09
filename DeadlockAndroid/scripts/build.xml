@@ -3,9 +3,11 @@
 <project name="DeadlockAndroid" default="build" basedir=".">
 	
     <property name="buildDir" location="../../DeadlockResources/build"/>
+	<property name="genDir" location="../../DeadlockResources/gen"/>
 	
-	<property name="drawableDir" location="../res/drawable-hdpi"/>
 	<property name="assetsDir" location="../assets"/>
+	<property name="drawableDir" location="../res/drawable-hdpi"/>
+	<property name="rawDir" location="../res/raw"/>
 	
 	<target name="build">
 	    
@@ -17,11 +19,13 @@
 		<copy tofile="${drawableDir}/spritesheet.png" file="${buildDir}/bin/img/spritesheet.png"/>
 		<copy tofile="${drawableDir}/title_background.png" file="${buildDir}/bin/img/title_background.png"/>
 		<copy tofile="${drawableDir}/title_white.png" file="${buildDir}/bin/img/title_white.png"/>
+		ic_action_search
+		ic_launcher
 		
 		<copy tofile="${assetsDir}/fonts/visitor1.ttf" file="${buildDir}/bin/fonts/visitor1.ttf"/>
 		<copy tofile="${assetsDir}/fonts/visitor2.ttf" file="${buildDir}/bin/fonts/visitor2.ttf"/>
 		
-		<copy boards/>
+		<copy tofile="${rawDir}/levels.zip" file="${genDir}/bin/levels/levels.zip"/>
 		
 	</target>
 

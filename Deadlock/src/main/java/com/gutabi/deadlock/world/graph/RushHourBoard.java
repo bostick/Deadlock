@@ -26,6 +26,8 @@ import com.gutabi.deadlock.world.sprites.CarSheet.CarType;
 
 public class RushHourBoard extends Entity {
 	
+	public static final Color BOARDCOLOR = new Color(0xE1, 0xE1, 0xE1, 255);
+	
 	public static final double STRAIGHTEXTENSION = 1.5;
 	public static final double CONTROLEXTENSION = 18;
 	public static final double EXITROADLENGTH = 30;
@@ -1406,6 +1408,10 @@ public class RushHourBoard extends Entity {
 	}
 	
 	public void paint_panel(RenderingContext ctxt) {
+		
+		ctxt.setColor(BOARDCOLOR);
+		gridAABB.paint(ctxt);
+		
 		for (RushHourStud s : studs) {
 			s.paint(ctxt);
 		}
@@ -1424,6 +1430,10 @@ public class RushHourBoard extends Entity {
 	}
 	
 	public void paint_preview(RenderingContext ctxt) {
+		
+		ctxt.setColor(BOARDCOLOR);
+		gridAABB.paint(ctxt);
+		
 		for (RushHourStud s : studs) {
 			s.paint(ctxt);
 		}

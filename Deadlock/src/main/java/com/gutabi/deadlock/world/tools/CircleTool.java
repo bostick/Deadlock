@@ -262,7 +262,7 @@ public class CircleTool extends WorldToolBase {
 		
 		ctxt.setTransform(origTransform);
 		
-		ctxt.setPaintMode();
+		ctxt.clearXORMode();
 	}
 
 }

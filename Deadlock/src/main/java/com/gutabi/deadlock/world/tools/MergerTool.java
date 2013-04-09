@@ -98,7 +98,7 @@ public class MergerTool extends WorldToolBase {
 		
 		ctxt.setTransform(origTransform);
 		
-		ctxt.setPaintMode();
+		ctxt.clearXORMode();
 	}
 
 }

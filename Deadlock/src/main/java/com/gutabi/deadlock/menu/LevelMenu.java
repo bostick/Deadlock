@@ -2,8 +2,6 @@ package com.gutabi.deadlock.menu;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
-import java.net.URL;
-
 import com.gutabi.deadlock.rushhour.LevelDB;
 import com.gutabi.deadlock.rushhour.RushHourWorld;
 import com.gutabi.deadlock.ui.Menu;
@@ -26,11 +24,7 @@ public class LevelMenu extends Menu {
 		
 		try {
 			
-			String full = "/levels/" + "levels" + ".zip";
-			
-			URL url = APP.getClass().getResource(full);
-			
-			LevelDB levelDB = new LevelDB(url);
+			LevelDB levelDB = new LevelDB(APP.platform.levelDBResource("levels"));
 			
 			LevelMenu levelMenu = new LevelMenu(levelDB);
 			APP.model = levelMenu;

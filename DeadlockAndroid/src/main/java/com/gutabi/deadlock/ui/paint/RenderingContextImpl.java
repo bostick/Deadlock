@@ -8,7 +8,6 @@ import android.graphics.Paint.Style;
 import android.graphics.PixelXorXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.graphics.Typeface;
 
 import com.gutabi.deadlock.Resource;
 import com.gutabi.deadlock.ResourceImpl;
@@ -22,6 +21,8 @@ import com.gutabi.deadlock.ui.Transform;
 
 public class RenderingContextImpl extends RenderingContext {
 	
+	public static float RAD = 57.29577951308232087679815481410517033240547246656432154916024386120284714832155263244096899585111094f;
+	
 	public Canvas canvas;
 	public Paint paint;
 	
@@ -31,15 +32,15 @@ public class RenderingContextImpl extends RenderingContext {
 	}
 	
 	public void rotate(double a) {
-		canvas.rotate((float)a);
+		canvas.rotate((float)a * RAD);
 	}
 	
 	public void rotate(double a, Point p) {
-		canvas.rotate((float)a, (float)p.x, (float)p.y);
+		canvas.rotate((float)a * RAD, (float)p.x, (float)p.y);
 	}
 	
 	public void rotate(double a, Dim d) {
-		canvas.rotate((float)a, (float)d.width, (float)d.height);
+		canvas.rotate((float)a * RAD, (float)d.width, (float)d.height);
 	}
 	
 	public void paintImage(Image img, double orig, double dx1, double dy1, double dx2, double dy2, int sx1, int sy1, int sx2, int sy2) {
@@ -71,12 +72,7 @@ public class RenderingContextImpl extends RenderingContext {
 	
 	public void setFont(Resource font, FontStyle style, int size) {
 		
-		int s = -1;
-		switch (style) {
-		case PLAIN:
-			s = Typeface.NORMAL;
-			break;
-		}
+		assert style == FontStyle.PLAIN;
 		
 		paint.setTypeface(((ResourceImpl)font).face);
 		paint.setTextSize(size);
@@ -86,15 +82,10 @@ public class RenderingContextImpl extends RenderingContext {
 		
 		int c2 = android.graphics.Color.argb(c.a, c.r, c.g, c.b);
 		
-//		paint.setColorFilter(new PorterDuffColorFilter(c2, PorterDuff.Mode.XOR));
-		
-//		PixelXorXfermode
-		
 		paint.setXfermode(new PixelXorXfermode(c2));
-		
 	}
 	
-	public void setPaintMode() {
+	public void clearXORMode() {
 		
 		paint.setXfermode(null);
 	}
@@ -110,11 +101,12 @@ public class RenderingContextImpl extends RenderingContext {
 	
 	public void drawAABB(AABB a) {
 		paint.setStyle(Style.STROKE);
-		canvas.drawRect(new Rect(AABB ), paint);
+		canvas.drawRect((float)a.x, (float)a.y, (float)(a.x+a.width), (float)(a.y+a.height), paint);
 	}
 	
 	public void paintAABB(AABB a) {
-		canvas.drawRect(new Rect(x, y, x+width, y+height), paint);
+		paint.setStyle(Style.FILL);
+		canvas.drawRect((float)a.x, (float)a.y, (float)(a.x+a.width), (float)(a.y+a.height), paint);
 	}
 	
 	public void drawLine(Line a) {

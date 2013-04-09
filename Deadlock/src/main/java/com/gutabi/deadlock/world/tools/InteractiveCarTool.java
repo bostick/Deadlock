@@ -300,8 +300,11 @@ public class InteractiveCarTool extends WorldToolBase {
 						
 						GraphPositionPathPosition tmpFloorPos = car.driver.overallPos.floor(car.length/2);
 						GraphPositionPathPosition tmpCeilPos = car.driver.overallPos.ceil(car.length/2);
+						GraphPositionPathPosition tmpRoundPos = car.driver.overallPos.round(car.length/2);
 						
-						if (car.driver.prevOverallPos.combo < car.driver.overallPos.combo) {
+						if (car.driver.prevOverallPos == null) {
+							car.driver.toolCoastingGoal = tmpRoundPos;
+						} else if (car.driver.prevOverallPos.combo < car.driver.overallPos.combo) {
 							car.driver.toolCoastingGoal = tmpCeilPos;
 						} else {
 							car.driver.toolCoastingGoal = tmpFloorPos;

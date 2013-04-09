@@ -1249,12 +1249,12 @@ public class Graph {
 			m.paint_panel(ctxt);
 		}
 		
-		for (RushHourBoard b : rushesCopy) {
-			b.paint_panel(ctxt);
-		}
-		
 		for (Vertex v : verticesCopy) {
 			v.paint_panel(ctxt);
+		}
+		
+		for (RushHourBoard b : rushesCopy) {
+			b.paint_panel(ctxt);
 		}
 		
 		for (Road r : roadsCopy) {

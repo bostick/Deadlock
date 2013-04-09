@@ -29,6 +29,8 @@ import com.gutabi.deadlock.world.World;
 
 public class Road extends Edge {
 	
+	public static final Color ROADCOLOR = new Color(0xE1, 0xE1, 0xE1, 255);
+	
 	public static final double ROAD_RADIUS = 0.5;
 	
 	public static final double borderPointRadius = 0.2;
@@ -781,7 +783,7 @@ public class Road extends Edge {
 	
 	private void paintPath_panel(RenderingContext ctxt) {
 		
-		ctxt.setColor(Color.GRAY);
+		ctxt.setColor(ROADCOLOR);
 		
 		seq.paint(ctxt);
 		
@@ -800,10 +802,9 @@ public class Road extends Edge {
 	
 	private void paintPath_preview(RenderingContext ctxt) {
 		
-		ctxt.setColor(Color.GRAY);
+		ctxt.setColor(ROADCOLOR);
 		
 		seq.paint(ctxt);
-		
 	}
 	
 	private void drawPath(RenderingContext ctxt) {

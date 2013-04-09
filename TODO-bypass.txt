@@ -1,4 +1,27 @@
 
+handleZooming
+actually have good function, since it isn't symmetric around start and ends of road
+
+
+max acceleration for flinging
+
+
+dragging car to edge of grid takes it 
+
+
+
+
+
+scrolling for level menu
+
+
+
+handle back button
+stacks
+
+
+
+
 when dragging, if within 25% of stud, just go to it
 
 

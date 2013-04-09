@@ -5,8 +5,8 @@ import com.gutabi.deadlock.math.Point;
 
 public class WorldCamera {
 	
-	public double origPixelsPerMeter = 32.0;
-	public double pixelsPerMeter = 32.0;
+	public double pixelsPerMeter = 50.0;
+	public double origPixelsPerMeter = pixelsPerMeter;
 	public AABB worldViewport;
 	public AABB origWorldViewport;
 	

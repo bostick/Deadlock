@@ -1,65 +1,60 @@
 package com.gutabi.deadlock.rushhour;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
+import static com.gutabi.deadlock.DeadlockApplication.APP;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
-import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.URL;
-import java.util.Enumeration;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
+import java.util.zip.ZipInputStream;
+
+import com.gutabi.deadlock.Resource;
 
 public class LevelDB {
 	
-	ZipFile z;
+	Resource res;
 	public final int levelCount;
 	
-	public LevelDB(URL url) throws Exception {
+	public LevelDB(Resource res) throws Exception {
 		
-		String s = url.getFile();
+		this.res = res;
 		
-		z = new ZipFile(s);
-		levelCount = z.size();
+		InputStream is = APP.platform.getResourceInputStream(res);
+		ZipInputStream zis = new ZipInputStream(is);
 		
+		int count = 0;
+		while (zis.getNextEntry() != null) {
+			count++;
+		}
+		
+		levelCount = count;
 	}
 	
 	public Level readLevel(int index) throws Exception {
 		
-		Enumeration<? extends ZipEntry> entries = z.entries();
+		InputStream is = APP.platform.getResourceInputStream(res);
+		ZipInputStream zis = new ZipInputStream(is);
 		
-		ZipEntry entry;
-		int cur = 0;
-		while (true) {
-			
-			entry = entries.nextElement();
-			if (cur == index) {
-				break;
-			}
-			
-			cur++;
+		zis.getNextEntry();
+		int curIndex = 0;
+		while (curIndex != index) {
+			zis.getNextEntry();
+			curIndex++;
 		}
 		
-		
-		
-		
-		BufferedInputStream is = new BufferedInputStream(z.getInputStream(entry));
+//		BufferedInputStream is = new BufferedInputStream(z.getInputStream(entry));
 		int count;
 		byte tmp[] = new byte[100];
-		FileOutputStream fos = new FileOutputStream(entry.getName());
-		BufferedOutputStream dest = new BufferedOutputStream(fos, 100);
-		int totalCount = 0;
-		while ((count = is.read(tmp, 0, 100)) != -1) {
-			totalCount += count;
-			dest.write(tmp, 0, count);
-		}
+//		FileOutputStream fos = new FileOutputStream(entry.getName());
+//		BufferedOutputStream dest = new BufferedOutputStream(fos, 100);
 		
-		byte[] data = new byte[totalCount];
-		System.arraycopy(tmp, 0, data, 0, totalCount);
+		count = zis.read(tmp, 0, 100);
+		assert count != -1;
 		
-		dest.flush();
-		dest.close();
+		byte[] data = new byte[count];
+		System.arraycopy(tmp, 0, data, 0, count);
+		
+		zis.close();
 		is.close();
 		
 		

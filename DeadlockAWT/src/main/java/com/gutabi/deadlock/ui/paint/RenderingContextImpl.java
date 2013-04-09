@@ -83,7 +83,7 @@ public class RenderingContextImpl extends RenderingContext {
 		g2.setXORMode(c2);
 	}
 	
-	public void setPaintMode() {
+	public void clearXORMode() {
 		g2.setPaintMode();
 	}
 	

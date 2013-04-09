@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Scanner;
 
 import com.gutabi.deadlock.math.Point;
-import com.gutabi.deadlock.ui.Transform;
 import com.gutabi.deadlock.ui.paint.Cap;
 import com.gutabi.deadlock.ui.paint.Color;
 import com.gutabi.deadlock.ui.paint.Join;
@@ -19,9 +18,10 @@ import com.gutabi.deadlock.world.ProgressMeter;
 import com.gutabi.deadlock.world.World;
 import com.gutabi.deadlock.world.cars.AutonomousCar;
 import com.gutabi.deadlock.world.cars.AutonomousDriver;
-import com.gutabi.deadlock.world.sprites.SpriteSheet.SpriteSheetSprite;
 
 public final class Fixture extends Vertex {
+	
+	public static final Color FIXTURECOLOR = new Color(0xE1, 0xE1, 0xE1, 255);
 	
 	public static double SPAWN_FREQUENCY_SECONDS = 1500.5;
 	
@@ -364,33 +364,36 @@ public final class Fixture extends Vertex {
 		
 		if (!APP.DEBUG_DRAW) {
 			
-			Transform origTransform = ctxt.getTransform();
+			ctxt.setColor(FIXTURECOLOR);
+			shape.paint(ctxt);
 			
-			ctxt.translate(p.x, p.y);
-			
-			switch (facingSide) {
-			case RIGHT:
-				ctxt.rotate(0.0 * Math.PI);
-				break;
-			case BOTTOM:
-				ctxt.rotate(0.5 * Math.PI);
-				break;
-			case LEFT:
-				ctxt.rotate(1.0 * Math.PI);
-				break;
-			case TOP:
-				ctxt.rotate(1.5 * Math.PI);
-				break;
-			}
-			
-			ctxt.translate(-r, -r);
-			
-			APP.spriteSheet.paint(ctxt, SpriteSheetSprite.FIXTUREARROW, ctxt.cam.pixelsPerMeter, 0, 0, 2 * r, 2 * r);
-			
-			ctxt.setTransform(origTransform);
+//			Transform origTransform = ctxt.getTransform();
+//			
+//			ctxt.translate(p.x, p.y);
+//			
+//			switch (facingSide) {
+//			case RIGHT:
+//				ctxt.rotate(0.0 * Math.PI);
+//				break;
+//			case BOTTOM:
+//				ctxt.rotate(0.5 * Math.PI);
+//				break;
+//			case LEFT:
+//				ctxt.rotate(1.0 * Math.PI);
+//				break;
+//			case TOP:
+//				ctxt.rotate(1.5 * Math.PI);
+//				break;
+//			}
+//			
+//			ctxt.translate(-r, -r);
+//			
+//			APP.spriteSheet.paint(ctxt, SpriteSheetSprite.FIXTUREARROW, ctxt.cam.pixelsPerMeter, 0, 0, 2 * r, 2 * r);
+//			
+//			ctxt.setTransform(origTransform);
 			
 		} else {
-			ctxt.setColor(Color.LIGHTGREEN);
+			ctxt.setColor(FIXTURECOLOR);
 			shape.paint(ctxt);
 			
 			ctxt.setColor(Color.BLACK);
@@ -402,7 +405,7 @@ public final class Fixture extends Vertex {
 	
 	public void paint_preview(RenderingContext ctxt) {
 		
-		ctxt.setColor(Color.LIGHTGREEN);
+		ctxt.setColor(FIXTURECOLOR);
 		shape.paint(ctxt);
 		
 	}

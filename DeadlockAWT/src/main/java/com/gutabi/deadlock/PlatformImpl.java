@@ -12,6 +12,7 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
@@ -216,6 +217,8 @@ public class PlatformImpl implements Platform {
 	}
 	
 	public Image createImage(int width, int height) {
+		assert width > 0;
+		assert height > 0;
 		
 		BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 		
@@ -223,6 +226,8 @@ public class PlatformImpl implements Platform {
 	}
 	
 	public Image createTransparentImage(int width, int height) {
+		assert width > 0;
+		assert height > 0;
 		
 		BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 		
@@ -256,11 +261,25 @@ public class PlatformImpl implements Platform {
 		return res;
 	}
 	
-	/*
-	 * board engine
-	 */
+	public Resource levelDBResource(String name) {
+		
+		String full = "/levels/" + name + ".zip";
+		URL url = APP.getClass().getResource(full);
+		
+		ResourceImpl res = new ResourceImpl();
+		
+		res.given = name;
+		res.url = url;
+		
+		return res;
+	}
 	
-
+	public InputStream getResourceInputStream(Resource res) throws Exception {
+		
+		ResourceImpl impl = (ResourceImpl)res;
+		
+		return impl.url.openStream();
+	}
 
 
 

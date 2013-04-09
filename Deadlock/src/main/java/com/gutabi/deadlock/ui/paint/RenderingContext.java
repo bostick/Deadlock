@@ -27,7 +27,7 @@ public abstract class RenderingContext {
 	
 	public abstract void setXORMode(Color c);
 	
-	public abstract void setPaintMode();
+	public abstract void clearXORMode();
 	
 	public abstract void setFont(Resource fontFile, FontStyle style, int size);
 	

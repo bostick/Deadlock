@@ -45,7 +45,7 @@ public class Stats {
 		
 		world.paintStats(ctxt);
 		
-		ctxt.setPaintMode();
+		ctxt.clearXORMode();
 		
 		ctxt.setTransform(origTransform1);
 		

@@ -36,7 +36,7 @@ public abstract class Knob {
 		
 		aabb.paint(ctxt);
 		
-		ctxt.setPaintMode();
+		ctxt.clearXORMode();
 	}
 	
 }

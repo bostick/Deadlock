@@ -1,5 +1,7 @@
 package com.gutabi.deadlock;
 
+import java.io.InputStream;
+
 import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.geom.ShapeEngine;
 import com.gutabi.deadlock.ui.Image;
@@ -48,13 +50,9 @@ public interface Platform {
 	
 	public abstract Resource fontResource(String name);
 	
-//	public abstract File levelDBFile(String name);
+	public abstract Resource levelDBResource(String name);
 	
-	
-	/*
-	 * board engine
-	 */
-	
+	public abstract InputStream getResourceInputStream(Resource res) throws Exception;
 	
 	
 	

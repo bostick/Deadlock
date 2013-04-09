@@ -69,7 +69,12 @@ public class InteractiveCar extends Car {
 			d = Math.max(Point.dot(dragVector, (pathForward ? driver.overallPos.pathVector() : driver.overallPos.pathVector().negate())) / driver.overallPos.pathVector().length(), 0.0);
 		}
 		
-		double vel = 0.1 * d / (0.0001 * dragTimeMillis);
+		double vel;
+		if (dragTimeMillis != 0.0) {
+			vel = 0.1 * d / (0.0001 * dragTimeMillis);
+		} else {
+			vel = 0.0;
+		}
 		
 		assert vel >= 0.0;
 		coastingVel = vel;

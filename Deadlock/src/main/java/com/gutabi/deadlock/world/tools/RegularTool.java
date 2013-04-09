@@ -415,7 +415,7 @@ public class RegularTool extends WorldToolBase {
 		
 		ctxt.setTransform(origTransform);
 		
-		ctxt.setPaintMode();
+		ctxt.clearXORMode();
 	}
 	
 }

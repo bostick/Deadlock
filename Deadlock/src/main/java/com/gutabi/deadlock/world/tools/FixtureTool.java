@@ -216,7 +216,7 @@ public class FixtureTool extends WorldToolBase {
 			
 			ctxt.setTransform(origTransform);
 			
-			ctxt.setPaintMode();
+			ctxt.clearXORMode();
 		}
 		
 	}

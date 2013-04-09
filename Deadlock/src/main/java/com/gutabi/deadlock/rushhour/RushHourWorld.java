@@ -161,7 +161,7 @@ public class RushHourWorld extends World {
 			} else if (DMath.equals(alpha, 1.0)) {
 				para = 1.0;
 			} else {
-				double[] vals = new double[] {1.0, 0.75, 0.5, 0.5, 0.5, 0.5, 0.75, 1.0};
+				double[] vals = new double[] {1.0, 0.66, 0.66, 0.33, 0.33, 0.33, 0.33, 0.33, 0.66, 0.66, 1.0};
 				double a = vals[(int)Math.floor(alpha * (vals.length-1))];
 				double b = vals[(int)Math.floor(alpha * (vals.length-1))+1];
 				para = DMath.lerp(a, b, (alpha * (vals.length-1) - Math.floor(alpha * (vals.length-1))));
@@ -173,26 +173,30 @@ public class RushHourWorld extends World {
 			
 		} else if (gpos instanceof VertexPosition) {
 			
-			GraphPosition prevGPos = car.driver.prevOverallPos.gp;
+			world.worldCamera.zoomAbsolute(1.0);
 			
-			if (prevGPos instanceof RoadPosition) {
-				
-				world.worldCamera.zoomAbsolute(1.0);
-				
-//				worldScreen.world.render_worldPanel();
-			}
+//			GraphPosition prevGPos = car.driver.prevOverallPos.gp;
+//			
+//			if (prevGPos instanceof RoadPosition) {
+//				
+//				
+//				
+////				worldScreen.world.render_worldPanel();
+//			}
 			
 		} else {
 			assert gpos instanceof RushHourBoardPosition;
 			
-			GraphPosition prevGPos = car.driver.prevOverallPos.gp;
+			world.worldCamera.zoomAbsolute(1.0);
 			
-			if (prevGPos instanceof RoadPosition) {
-				
-				world.worldCamera.zoomAbsolute(1.0);
-				
-//				worldScreen.world.render_worldPanel();
-			}
+//			GraphPosition prevGPos = car.driver.prevOverallPos.gp;
+//			
+//			if (prevGPos instanceof RoadPosition) {
+//				
+//				world.worldCamera.zoomAbsolute(1.0);
+//				
+////				worldScreen.world.render_worldPanel();
+//			}
 		}
 		
 	}
