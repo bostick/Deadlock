@@ -11,10 +11,16 @@ public class LevelMenu extends Menu {
 	
 	public LevelMenu(final LevelDB levelDB) {
 		for (int i = 0; i < levelDB.levelCount; i++) {
-			int menuRow = i / 6;
-			int menuCol = i % 6;
+			int menuRow = i / 4;
+			int menuCol = i % 4;
 			final int ii = i;
-			add(new MenuItem(LevelMenu.this, Integer.toString(i), 48) { public void action() { RushHourWorld.action(levelDB, ii); } }, menuRow, menuCol);
+			add(new MenuItem(LevelMenu.this, Integer.toString(i)) {
+				
+				public void action() {
+					RushHourWorld.action(levelDB, ii);
+				}
+				
+			}, menuRow, menuCol);
 		}
 	}
 	

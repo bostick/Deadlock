@@ -31,12 +31,12 @@ public abstract class MenuItem {
 	public int r;
 	public int c;
 	
-	public MenuItem(Menu menu, String text, int fontSize) {
+	public MenuItem(Menu menu, String text) {
 		this.menu = menu;
 		lab = new Label(text);
 		lab.fontFile = APP.platform.fontResource("visitor1");
 		lab.fontStyle = FontStyle.PLAIN;
-		lab.fontSize = fontSize;
+		lab.fontSize = 72;
 		lab.renderLocal();
 		localAABB = lab.localAABB;
 	}

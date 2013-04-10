@@ -23,26 +23,46 @@ public class MainMenuPanel extends Panel {
 	public void postDisplay() {
 		Menu menu = (Menu)APP.model;
 		
-		double h = 0;
-		if (DMath.lessThanEquals(menu.aabb.height, aabb.height)) {
+		double x;
+		double y;
+		
+		if (DMath.lessThanEquals(menu.aabb.width, aabb.width)) {
 			/*
 			 * no scrolling
 			 */
 			
-			menu.scrollable = false;
+			menu.hScrollable = false;
 			
-			h = aabb.height/2 - menu.aabb.height/2;
-			menu.setLocation(aabb.width/2 - menu.aabb.width/2, h);
+			x = aabb.width/2 - menu.aabb.width/2;
 		} else {
 			/*
 			 * will be scrolling
 			 */
 			
-			menu.scrollable = true;
+			menu.hScrollable = true;
 			
-			h = 0;
-			menu.setLocation(aabb.width/2 - menu.aabb.width/2, h);
+			x = 0;
 		}
+		
+		if (DMath.lessThanEquals(menu.aabb.height, aabb.height)) {
+			/*
+			 * no scrolling
+			 */
+			
+			menu.vScrollable = false;
+			
+			y = aabb.height/2 - menu.aabb.height/2;
+		} else {
+			/*
+			 * will be scrolling
+			 */
+			
+			menu.vScrollable = true;
+			
+			y = 0;
+		}
+		
+		menu.setLocation(x, y);
 	}
 	
 	public void paint(RenderingContext ctxt) {

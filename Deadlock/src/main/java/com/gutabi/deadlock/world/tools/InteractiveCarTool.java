@@ -475,6 +475,9 @@ public class InteractiveCarTool extends WorldToolBase {
 //					}
 					
 				}
+			} else {
+				
+				car.driver.toolOrigExitingVertexPos = car.driver.overallPos;
 			}
 			
 		} else {

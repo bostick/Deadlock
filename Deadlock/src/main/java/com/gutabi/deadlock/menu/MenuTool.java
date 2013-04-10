@@ -125,7 +125,7 @@ public class MenuTool extends Tool {
 	}
 	
 	
-	double origMenuY;
+	Point origMenuUL;
 	Point origPressed;
 	
 	public void pressed(InputEvent ignore) {
@@ -136,7 +136,7 @@ public class MenuTool extends Tool {
 			menu = (Menu)APP.model;
 		}
 		
-		origMenuY = menu.aabb.y;
+		origMenuUL = menu.aabb.ul;
 		origPressed = ignore.p;
 	}
 	
@@ -148,24 +148,59 @@ public class MenuTool extends Tool {
 			menu = (Menu)APP.model;
 		}
 		
-		if (!menu.scrollable) {
+		if (origPressed == null) {
 			return;
 		}
 		
-		double motionYDiff = ignore.p.y - origPressed.y;
-		double newY = origMenuY + motionYDiff;
+		Point motionDiff = ignore.p.minus(origPressed);
 		
-		if (newY > 0) {
-			newY = 0;
-		} else if (newY + menu.aabb.height < ignore.panel.aabb.height) {
-			newY = ignore.panel.aabb.height - menu.aabb.height;
+		if (!menu.hScrollable && !menu.vScrollable) {
+			return;
 		}
 		
-		menu.setLocation(menu.aabb.x, newY);
+		boolean h;
+		if (menu.hScrollable && menu.vScrollable) {
+			
+			if (Math.abs(motionDiff.x) > Math.abs(motionDiff.y)) {
+				h = true;
+			} else {
+				h = false;
+			}
+			
+		} else if (menu.hScrollable) {
+			h = true;
+		} else {
+			h = false;
+		}
+		
+		if (h) {
+			
+			double newX = origMenuUL.x + motionDiff.x;
+			if (newX > 0) {
+				newX = 0;
+			} else if (newX + menu.aabb.width < ignore.panel.aabb.width) {
+				newX = ignore.panel.aabb.width - menu.aabb.width;
+			}
+			menu.setLocation(newX, menu.aabb.y);
+			
+		} else {
+			double newY = origMenuUL.y + motionDiff.y;
+			if (newY > 0) {
+				newY = 0;
+			} else if (newY + menu.aabb.height < ignore.panel.aabb.height) {
+				newY = ignore.panel.aabb.height - menu.aabb.height;
+			}
+			menu.setLocation(menu.aabb.x, newY);
+		}
+		
 		APP.appScreen.contentPane.repaint();
 	}
 	
 	public void released(InputEvent ignore) {
+		
+		if (origPressed == null) {
+			return;
+		}
 		
 		origPressed = null;
 	}

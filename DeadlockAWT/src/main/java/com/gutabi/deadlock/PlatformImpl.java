@@ -132,17 +132,19 @@ public class PlatformImpl implements Platform {
 	 */
 	
 	FontRenderContext frc = new FontRenderContext(null, false, false);
-	Font visitorPlain36;
+//	Font visitorPlain36;
 	Font visitorPlain16;
 	Font visitorPlain48;
+	Font visitorPlain72;
 	{
 		
 		InputStream is = this.getClass().getResourceAsStream("/fonts/visitor1.ttf");
 		try {
 			Font visitorReal = Font.createFont(Font.TRUETYPE_FONT, is);
-			visitorPlain36 = visitorReal.deriveFont(Font.PLAIN, 36);
+//			visitorPlain36 = visitorReal.deriveFont(Font.PLAIN, 36);
 			visitorPlain16 = visitorReal.deriveFont(Font.PLAIN, 16);
 			visitorPlain48 = visitorReal.deriveFont(Font.PLAIN, 48);
+			visitorPlain72 = visitorReal.deriveFont(Font.PLAIN, 72);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -161,18 +163,12 @@ public class PlatformImpl implements Platform {
 			
 			if (fontStyle == FontStyle.PLAIN) {
 				
-				if (fontSize == 36) {
-					
-					return visitorPlain36;
-					
-				} else if (fontSize == 16) {
-					
-					return visitorPlain16;
-					
+				if (fontSize == 16) {
+					return visitorPlain16;	
 				} else if (fontSize == 48) {
-					
-					return visitorPlain48;
-					
+					return visitorPlain48;	
+				} else if (fontSize == 72) {
+					return visitorPlain72;	
 				}
 				
 			}

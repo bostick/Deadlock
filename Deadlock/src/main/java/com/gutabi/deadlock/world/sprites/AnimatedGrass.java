@@ -60,7 +60,6 @@ public class AnimatedGrass {
 			
 			lastTime = t;
 		}
-		
 	}
 	
 	public void paint(RenderingContext ctxt) {
@@ -76,7 +75,6 @@ public class AnimatedGrass {
 			paint(ctxt, 2);
 			break;
 		}
-		
 	}
 	
 	private void paint(RenderingContext ctxt, int index) {
@@ -98,7 +96,6 @@ public class AnimatedGrass {
 		}
 		
 		ctxt.setTransform(origTransform);
-		
 	}
 	
 }

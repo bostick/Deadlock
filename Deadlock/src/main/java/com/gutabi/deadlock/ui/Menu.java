@@ -16,6 +16,7 @@ public abstract class Menu {
 	
 	public MenuItem hilited;
 	public MenuItem firstMenuItem;
+	Shimmer shimmer;
 	
 	int rows;
 	int cols;
@@ -27,7 +28,8 @@ public abstract class Menu {
 	public Point lastMovedMenuPoint;
 	public Point lastClickedMenuPoint;
 	
-	public boolean scrollable;
+	public boolean hScrollable;
+	public boolean vScrollable;
 	
 	public Menu() {
 		menuItemWidest = new double[0];
@@ -45,6 +47,7 @@ public abstract class Menu {
 		
 		if (items.isEmpty()) {
 			firstMenuItem = item;
+			shimmer = new Shimmer(item);
 		}
 		
 		items.add(item);
@@ -177,6 +180,10 @@ public abstract class Menu {
 		
 		if (hilited != null) {
 			hilited.paintHilited(ctxt);			
+		}
+		
+		if (shimmer != null) {
+			shimmer.paint(ctxt);
 		}
 		
 		ctxt.setTransform(origTransform);

@@ -28,8 +28,9 @@ public class WinnerMenu extends Menu {
 		
 		int index = world.curLevel.index;
 		
-		MenuItem nextMenuItem = new MenuItem(WinnerMenu.this, "Next", 36) {
+		MenuItem nextMenuItem = new MenuItem(WinnerMenu.this, "Next") {
 			public void action() {
+				
 				RushHourWorld world = (RushHourWorld)APP.model;
 				
 				int index = world.curLevel.index;
@@ -41,7 +42,7 @@ public class WinnerMenu extends Menu {
 			}
 		};
 		
-		MenuItem backMenuItem = new MenuItem(WinnerMenu.this, "Back", 36) {
+		MenuItem backMenuItem = new MenuItem(WinnerMenu.this, "Back") {
 			public void action() {
 				
 				APP.platform.unshowDebuggerScreen();

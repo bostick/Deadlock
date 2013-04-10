@@ -246,7 +246,6 @@ public class World extends PhysicsWorld {
 	public void stopRunning() {
 		
 		mode = WorldMode.EDITING;
-		
 	}
 	
 	public void pauseRunning() {

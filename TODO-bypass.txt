@@ -1,12 +1,17 @@
 
-scrolling for menus
+little shining animation for red car to start, and level buttons on level menu
+
+
+
+
+
 
 
 handle back button
 stacks
 
 
-little shining animation for red car to start, and level buttons on level menu
+
 
 
 when dragging, if within 25% of stud, just go to it
@@ -44,6 +49,8 @@ allow custom boards? does bigger than 6x6 work?
 
 
 DONE:
+
+scrolling for menus
 
 start zooming as car leaves grid
 

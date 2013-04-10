@@ -4,6 +4,7 @@ import java.util.Random;
 
 import com.gutabi.deadlock.menu.MainMenu;
 import com.gutabi.deadlock.ui.Image;
+import com.gutabi.deadlock.ui.UIAnimationRunnable;
 import com.gutabi.deadlock.world.DebuggerScreen;
 import com.gutabi.deadlock.world.sprites.CarSheet;
 import com.gutabi.deadlock.world.sprites.ExplosionSheet;
@@ -75,6 +76,9 @@ public class DeadlockApplication {
 		MainMenu.action();
 		
 		APP.platform.showAppScreen();
+		
+		Thread t = new Thread(new UIAnimationRunnable());
+		t.start();
 	}
 	
 	public void exit() {
