@@ -3,7 +3,6 @@
 <project name="DeadlockAndroid" default="build" basedir=".">
 	
     <property name="resDir" location="../../DeadlockResources/"/>
-	<property name="genDir" location="../../DeadlockResources/gen"/>
 	
 	<property name="assetsDir" location="../assets"/>
 	<property name="drawableDir" location="../res/drawable-hdpi"/>
@@ -11,17 +10,17 @@
 	
 	<target name="build">
 		
-		<copy tofile="${drawableDir}/copyright.png" file="${resDir}/copyright.png"/>
-		<copy tofile="${drawableDir}/explosionsheet.png" file="${resDir}/explosionsheet.png"/>
-		<copy tofile="${drawableDir}/carsheet.png" file="${resDir}/carsheet.png"/>
-		<copy tofile="${drawableDir}/spritesheet.png" file="${resDir}/spritesheet.png"/>
-		<copy tofile="${drawableDir}/title_background.png" file="${resDir}/title_background.png"/>
-		<copy tofile="${drawableDir}/title_white.png" file="${resDir}/title_white.png"/>
+		<copy tofile="${drawableDir}/copyright.png" file="${resDir}/static/copyright.png"/>
+		<copy tofile="${drawableDir}/explosionsheet.png" file="${resDir}/static/explosionsheet.png"/>
+		<copy tofile="${drawableDir}/carsheet.png" file="${resDir}/static/carsheet.png"/>
+		<copy tofile="${drawableDir}/spritesheet.png" file="${resDir}/static/spritesheet.png"/>
+		<copy tofile="${drawableDir}/title_background.png" file="${resDir}/static/title_background.png"/>
+		<copy tofile="${drawableDir}/title_white.png" file="${resDir}/static/title_white.png"/>
 		
-		<copy tofile="${assetsDir}/fonts/visitor1.ttf" file="${resDir}/visitor1.ttf"/>
-		<copy tofile="${assetsDir}/fonts/visitor2.ttf" file="${resDir}/visitor2.ttf"/>
+		<copy tofile="${assetsDir}/fonts/visitor1.ttf" file="${resDir}/static/bin/visitor1.ttf"/>
+		<copy tofile="${assetsDir}/fonts/visitor2.ttf" file="${resDir}/static/bin/visitor2.ttf"/>
 		
-		<copy tofile="${rawDir}/levels.zip" file="${genDir}/bin/levels.zip"/>
+		<copy tofile="${rawDir}/levels.zip" file="${resDir}/gen/bin/levels.zip"/>
 		
 	</target>
 

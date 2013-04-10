@@ -153,7 +153,7 @@ public class PlatformImpl implements Platform {
 	Font visitorPlain72;
 	{
 		
-		InputStream is = this.getClass().getResourceAsStream("/fonts/visitor1.ttf");
+		InputStream is = this.getClass().getResourceAsStream("/visitor1.ttf");
 		try {
 			Font visitorReal = Font.createFont(Font.TRUETYPE_FONT, is);
 //			visitorPlain36 = visitorReal.deriveFont(Font.PLAIN, 36);
@@ -174,7 +174,7 @@ public class PlatformImpl implements Platform {
 		
 		ResourceImpl r = (ResourceImpl)fontFile;
 		
-		if (r.full.equals("/fonts/visitor1.ttf")) {
+		if (r.full.equals("/visitor1.ttf")) {
 			
 			if (fontStyle == FontStyle.PLAIN) {
 				
@@ -253,7 +253,7 @@ public class PlatformImpl implements Platform {
 		ResourceImpl res = new ResourceImpl();
 		
 		res.given = name;
-		res.full = "/img/" + name + ".png";
+		res.full = "/" + name + ".png";
 		
 		return res;
 	}
@@ -263,7 +263,7 @@ public class PlatformImpl implements Platform {
 		ResourceImpl res = new ResourceImpl();
 		
 		res.given = name;
-		res.full = "/fonts/" + name + ".ttf";
+		res.full = "/" + name + ".ttf";
 		
 		return res;
 	}

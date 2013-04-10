@@ -14,7 +14,7 @@ public abstract class MenuItem {
 	
 	public final Menu menu;
 	
-	Label lab;
+	private Label lab;
 	
 	public MenuItem up;
 	public MenuItem left;
@@ -23,8 +23,6 @@ public abstract class MenuItem {
 	
 	public AABB localAABB;
 	public AABB aabb;
-	
-	public Point ul;
 	
 	public boolean active = true;
 	
@@ -38,7 +36,7 @@ public abstract class MenuItem {
 		lab.fontStyle = FontStyle.PLAIN;
 		lab.fontSize = 72;
 		lab.renderLocal();
-		localAABB = lab.localAABB;
+		localAABB = new AABB(0, 0, lab.localAABB.width, 20 + lab.localAABB.height + 20);
 	}
 	
 	public boolean hitTest(Point p) {
@@ -57,8 +55,8 @@ public abstract class MenuItem {
 		int x = (int)trans.getTranslateX();
 		int y = (int)trans.getTranslateY();
 		
-		lab.setLocation(x, y);
-		lab.setDimension(menu.menuItemWidest[c], localAABB.height);
+		lab.setLocation(0, 20);
+		lab.setDimension(menu.menuItemWidest[c], lab.localAABB.height);
 		
 		if (active) {
 			lab.color = Color.WHITE;
@@ -67,17 +65,33 @@ public abstract class MenuItem {
 		}
 		
 		lab.render();
-		aabb = lab.aabb;
+		aabb = new AABB(x, y, lab.aabb.width, 20 + lab.aabb.height + 20);
 	}
 	
 	public void paint(RenderingContext ctxt) {
+		
+		Transform origTransform = ctxt.getTransform();
+		
+		ctxt.translate(aabb.x, aabb.y);
+		
 		lab.paint(ctxt);
+		
+		ctxt.setTransform(origTransform);
+		
+		ctxt.setColor(Color.BLUE);
+		ctxt.setStroke(0.0, Cap.SQUARE, Join.MITER);
+		aabb.draw(ctxt);
 	}
 	
 	public void paintHilited(RenderingContext ctxt) {
+		
+		Transform origTransform = ctxt.getTransform();
+		
 		ctxt.setColor(Color.RED);
 		ctxt.setStroke(0.0, Cap.SQUARE, Join.MITER);
 		aabb.draw(ctxt);
+		
+		ctxt.setTransform(origTransform);
 	}
 	
 }
