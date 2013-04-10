@@ -61,7 +61,7 @@ public class Capsule implements Shape {
 			bUp = b.plus(u);
 			bDown = b.plus(d);
 			
-			middle = APP.platform.createShapeEngine().createOBB(Point.point(a, b, 0.5), Math.atan2(diff.y, diff.x), Point.distance(a, b)/2, r);
+			middle = APP.platform.createOBB(Point.point(a, b, 0.5), Math.atan2(diff.y, diff.x), Point.distance(a, b)/2, r);
 			
 			debugNormalLine = new Line(a, a.plus(n));
 			debugSkeletonLine = new Line(a, b);
@@ -105,8 +105,7 @@ public class Capsule implements Shape {
 	}
 	
 	public Capsule plus(Point p) {
-		ShapeEngine e = APP.platform.createShapeEngine();
-		return new Capsule(e.createCircle(a.plus(p), ac.radius), e.createCircle(b.plus(p), bc.radius));
+		return new Capsule(APP.platform.createCircle(a.plus(p), ac.radius), APP.platform.createCircle(b.plus(p), bc.radius));
 	}
 	
 	public boolean hitTest(Point p) {

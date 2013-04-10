@@ -1,30 +1,29 @@
 package com.gutabi.deadlock.geom;
 
-import android.graphics.Paint.Style;
 import android.graphics.Path;
+import android.graphics.Paint.Style;
 
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.ui.paint.RenderingContextImpl;
 
-public class PolylineImpl extends Polyline {
+public class PolygonImpl extends Polygon {
 	
 	Path p;
 	
-	public PolylineImpl(Point... pts) {
+	public PolygonImpl(Point... pts) {
 		super(pts);
 		
 		p = new Path();
-		
-		Point p0 = pts[0];
-		
-		p.moveTo((float)p0.x, (float)p0.y);
+		p.moveTo((float)pts[0].x, (float)pts[0].y);
 		for (int i = 1; i < pts.length; i++) {
 			Point pp = pts[i];
 			p.lineTo((float)pp.x, (float)pp.y);
 		}
+		p.close();
+		
 	}
-
+	
 	public void paint(RenderingContext ctxt) {
 		RenderingContextImpl c = (RenderingContextImpl)ctxt;
 		
@@ -38,4 +37,5 @@ public class PolylineImpl extends Polyline {
 		c.paint.setStyle(Style.STROKE);
 		c.canvas.drawPath(p, c.paint);
 	}
+	
 }

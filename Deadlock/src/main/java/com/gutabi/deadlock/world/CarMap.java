@@ -17,6 +17,7 @@ import com.gutabi.deadlock.world.cars.Driver;
 import com.gutabi.deadlock.world.cars.DrivingEvent;
 import com.gutabi.deadlock.world.cars.VertexArrivalEvent;
 import com.gutabi.deadlock.world.graph.Vertex;
+import com.gutabi.deadlock.world.sprites.CarSheet.CarType;
 
 public class CarMap {
 	
@@ -41,6 +42,17 @@ public class CarMap {
 	
 	public int size() {
 		return cars.size();
+	}
+	
+	public Car findRedCar() {
+		for (Car c : cars) {
+			if (c.type == CarType.RED) {
+				return c;
+			}
+		}
+		
+		assert false;
+		return null;
 	}
 	
 	public Car carHitTest(Point p) {

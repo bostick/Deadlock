@@ -734,7 +734,7 @@ public class RushHourBoard extends Entity {
 			end = new Point(f1.p.x, f1.p.y + STRAIGHTEXTENSION);
 			c1 = new Point(f1.p.x, f1.p.y + CONTROLEXTENSION);
 		}
-		CubicCurve c = APP.platform.createShapeEngine().createCubicCurve(start, c0, c1, end);
+		CubicCurve c = APP.platform.createCubicCurve(start, c0, c1, end);
 		
 		List<Point> pts = c.skeleton();
 		

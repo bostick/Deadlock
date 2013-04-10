@@ -13,8 +13,25 @@ import android.graphics.Typeface;
 
 import com.gutabi.deadlock.ResourceImpl.ResourceType;
 import com.gutabi.deadlock.geom.AABB;
-import com.gutabi.deadlock.geom.ShapeEngine;
-import com.gutabi.deadlock.geom.ShapeEngineImpl;
+import com.gutabi.deadlock.geom.Circle;
+import com.gutabi.deadlock.geom.CircleImpl;
+import com.gutabi.deadlock.geom.CubicCurve;
+import com.gutabi.deadlock.geom.CubicCurveImpl;
+import com.gutabi.deadlock.geom.Ellipse;
+import com.gutabi.deadlock.geom.EllipseImpl;
+import com.gutabi.deadlock.geom.Line;
+import com.gutabi.deadlock.geom.LineImpl;
+import com.gutabi.deadlock.geom.OBB;
+import com.gutabi.deadlock.geom.OBBImpl;
+import com.gutabi.deadlock.geom.Polygon;
+import com.gutabi.deadlock.geom.PolygonImpl;
+import com.gutabi.deadlock.geom.Polyline;
+import com.gutabi.deadlock.geom.PolylineImpl;
+import com.gutabi.deadlock.geom.QuadCurve;
+import com.gutabi.deadlock.geom.QuadCurveImpl;
+import com.gutabi.deadlock.geom.Triangle;
+import com.gutabi.deadlock.geom.TriangleImpl;
+import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.Image;
 import com.gutabi.deadlock.ui.ImageImpl;
 import com.gutabi.deadlock.ui.PlatformContentPane;
@@ -148,9 +165,6 @@ public class PlatformImpl implements Platform {
 
 
 	
-	public ShapeEngine createShapeEngine(Object... args) {
-		return new ShapeEngineImpl();
-	}
 
 	public void exit() {
 		
@@ -207,6 +221,45 @@ public class PlatformImpl implements Platform {
 		}
 		
 		return null;
+	}
+	
+	
+	
+	
+	public Circle createCircle(Point center, double radius) {
+		return new CircleImpl(center, radius);
+	}
+	
+	public Line createLine(Point p0, Point p1) {
+		return new LineImpl(p0, p1);
+	}
+
+	public Polyline createPolyline(Point... pts) {
+		return new PolylineImpl(pts);
+	}
+
+	public OBB createOBB(Point center, double preA, double xExtant, double yExtant) {
+		return new OBBImpl(center, preA, xExtant, yExtant);
+	}
+
+	public Ellipse createEllipse(Point center, double x, double y) {
+		return new EllipseImpl(center, x, y);
+	}
+
+	public Triangle createTriangle(Point p0, Point p1, Point p2) {
+		return new TriangleImpl(p0, p1, p2);
+	}
+
+	public QuadCurve createQuadCurve(Point start, Point c0, Point end) {
+		return new QuadCurveImpl(start, c0, end);
+	}
+
+	public CubicCurve createCubicCurve(Point start, Point c0, Point c1, Point end) {
+		return new CubicCurveImpl(start, c0, c1, end);
+	}
+	
+	public Polygon createPolygon(Point... pts) {
+		return new PolygonImpl(pts);
 	}
 	
 }

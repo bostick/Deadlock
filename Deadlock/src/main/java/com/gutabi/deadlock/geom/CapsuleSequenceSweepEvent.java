@@ -11,7 +11,7 @@ public class CapsuleSequenceSweepEvent extends SweepEvent {
 	public CapsuleSequenceSweepEvent(SweepEventType type, Object stillParent, Shape still, CapsuleSequence moving, int index, double param, int offset) {
 		super(type, stillParent, still, moving, index, param, offset);
 		
-		circle = APP.platform.createShapeEngine().createCircle(p, moving.getRadius());
+		circle = APP.platform.createCircle(p, moving.getRadius());
 		
 		if (still != null && !(index == 0 && DMath.equals(param, 0.0))) {
 			/*

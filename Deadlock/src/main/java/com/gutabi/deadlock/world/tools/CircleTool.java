@@ -2,7 +2,6 @@ package com.gutabi.deadlock.world.tools;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
-import java.util.List;
 import java.util.Set;
 
 import com.gutabi.deadlock.geom.Shape;
@@ -136,7 +135,7 @@ public class CircleTool extends WorldToolBase {
 			break;
 		case SET:
 			
-			List<Point> pts = shape.skeleton;
+			Point[] pts = shape.skeleton;
 			Stroke s = new Stroke(world);
 			for (Point p : pts) {
 				s.add(p);

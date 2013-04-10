@@ -36,7 +36,7 @@ public class Geom {
 	}
 	
 	public static OBB localToWorld(AABB a, double angle, Point t) {
-		return APP.platform.createShapeEngine().createOBB(t, angle, a.width/2, a.height/2);
+		return APP.platform.createOBB(t, angle, a.width/2, a.height/2);
 	}
 	
 	public static void rotationMatrix(double a, double[][] out) {

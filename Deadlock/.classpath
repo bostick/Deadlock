@@ -6,9 +6,8 @@
 	<classpathentry kind="lib" path="lib/log4j-1.2.16.jar"/>
 	<classpathentry kind="lib" path="lib/slf4j-api-1.7.1.jar"/>
 	<classpathentry kind="lib" path="lib/slf4j-simple-1.7.1.jar"/>
-	<classpathentry kind="lib" path="/DeadlockResources/build/bin"/>
 	<classpathentry kind="lib" path="lib/trove-3.0.3.jar"/>
 	<classpathentry kind="lib" path="lib/jbox2d-library-2.1.2.3.jar" sourcepath="lib/jbox2d-library-2.1.2.3-sources.jar"/>
-	<classpathentry kind="lib" path="/DeadlockResources/gen/bin"/>
+	<classpathentry kind="lib" path="/DeadlockResources"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

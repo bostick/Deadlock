@@ -1,42 +1,38 @@
 package com.gutabi.deadlock.geom;
 
-import java.awt.geom.Path2D;
+import java.awt.geom.GeneralPath;
 
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.ui.paint.RenderingContextImpl;
 
-public class PolylineImpl extends Polyline {
+public class PolygonImpl extends Polygon {
 	
-	private final Path2D path;
+	private GeneralPath poly;
 	
-	public PolylineImpl(Point... pts) {
+	public PolygonImpl(Point... pts) {
 		super(pts);
 		
-		path = new Path2D.Double();
-		
-		for (int i = 0; i < pts.length; i++) {
-			Point  p = pts[i];
-			
-			if (i == 0) {
-				path.moveTo(p.x, p.y);
-			} else {
-				path.lineTo(p.x, p.y);
-			}
-			
+		poly = new GeneralPath();
+		poly.moveTo(pts[0].x, pts[0].y);
+		for (int i = 1; i < pts.length; i++) {
+			Point pp = pts[i];
+			poly.lineTo(pp.x, pp.y);
 		}
-		path.closePath();
+		poly.closePath();
 		
 	}
 	
 	public void paint(RenderingContext ctxt) {
 		RenderingContextImpl ct = (RenderingContextImpl)ctxt;
-		ct.g2.fill(path);
+		
+		ct.g2.fill(poly);		
 	}
-
+	
 	public void draw(RenderingContext ctxt) {
 		RenderingContextImpl ct = (RenderingContextImpl)ctxt;
-		ct.g2.draw(path);
+		
+		ct.g2.draw(poly);
 	}
 	
 }

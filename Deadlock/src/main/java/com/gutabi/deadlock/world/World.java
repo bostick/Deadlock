@@ -13,6 +13,7 @@ import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.Image;
 import com.gutabi.deadlock.ui.InputEvent;
+import com.gutabi.deadlock.ui.Shimmer;
 import com.gutabi.deadlock.ui.Transform;
 import com.gutabi.deadlock.ui.paint.Color;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
@@ -51,6 +52,8 @@ public class World extends PhysicsWorld {
 	public GrassMarkMap grassMarkMap;
 	
 	public Stats stats;
+	
+	Shimmer shimmer;
 	
 	public World() {
 		
@@ -94,6 +97,8 @@ public class World extends PhysicsWorld {
 		graph.preStart();
 		
 		t = 0;
+		
+		shimmer = new Shimmer(null, System.currentTimeMillis());
 	}
 	
 	/*
@@ -441,6 +446,11 @@ public class World extends PhysicsWorld {
 		}
 		
 		ctxt.setTransform(origTrans);
+		
+		Car c = carMap.findRedCar();
+		shimmer.target = Point.worldToPanel(c.shape.aabb, worldCamera);
+		
+		shimmer.paint(ctxt);
 		
 //		System.out.println(worldCamera.pixelsPerMeter);
 	}

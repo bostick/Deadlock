@@ -173,7 +173,7 @@ public class InteractiveCar extends Car {
 		if (APP.DEBUG_DRAW) {
 			
 			ctxt.setColor(Color.DARKGREEN);
-			APP.platform.createShapeEngine().createCircle(((InteractiveDriver)driver).overallPos.p, 0.2).paint(ctxt);
+			APP.platform.createCircle(((InteractiveDriver)driver).overallPos.p, 0.2).paint(ctxt);
 			
 			ctxt.setColor(Color.BLACK);
 			ctxt.setStroke(0.0, Cap.SQUARE, Join.MITER);

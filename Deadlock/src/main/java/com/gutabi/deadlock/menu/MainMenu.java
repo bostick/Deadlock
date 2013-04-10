@@ -2,12 +2,9 @@ package com.gutabi.deadlock.menu;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
-import com.gutabi.deadlock.quadranteditor.QuadrantEditor;
 import com.gutabi.deadlock.ui.Menu;
 import com.gutabi.deadlock.ui.MenuItem;
-import com.gutabi.deadlock.world.examples.FourByFourGridWorld;
 import com.gutabi.deadlock.world.examples.OneByOneWorld;
-import com.gutabi.deadlock.world.examples.WorldA;
 
 public class MainMenu extends Menu {
 	
@@ -21,21 +18,21 @@ public class MainMenu extends Menu {
 		};
 		add(oneMenuItem, 0, 0);
 		
-		MenuItem fourMenuItem = new MenuItem(MainMenu.this, "4x4 Grid Demo") {
-			public void action() {
-				
-				FourByFourGridWorld.action();
-			}
-		};
-		add(fourMenuItem, 1, 0);
+//		MenuItem fourMenuItem = new MenuItem(MainMenu.this, "4x4 Grid Demo") {
+//			public void action() {
+//				
+//				FourByFourGridWorld.action();
+//			}
+//		};
+//		add(fourMenuItem, 1, 0);
 		
-		MenuItem aMenuItem = new MenuItem(MainMenu.this, "World A Demo") {
-			public void action() {
-				
-				WorldA.action();
-			}
-		};
-		add(aMenuItem, 2, 0);
+//		MenuItem aMenuItem = new MenuItem(MainMenu.this, "World A Demo") {
+//			public void action() {
+//				
+//				WorldA.action();
+//			}
+//		};
+//		add(aMenuItem, 2, 0);
 		
 		MenuItem rMenuItem = new MenuItem(MainMenu.this, "Rush Hour") {
 			public void action() {
@@ -43,7 +40,7 @@ public class MainMenu extends Menu {
 				LevelMenu.action();
 			}
 		};
-		add(rMenuItem, 3, 0);
+		add(rMenuItem, 1, 0);
 		
 //		MenuItem dialogMenuItem = new MenuItem(MainMenu.this,  "Quadrant Editor...") {
 //			public void action() {

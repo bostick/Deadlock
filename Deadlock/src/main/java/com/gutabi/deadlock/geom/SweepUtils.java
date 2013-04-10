@@ -147,8 +147,7 @@ public class SweepUtils {
 				
 				if (DMath.lessThanEquals(abParam, 0.0)) {
 					
-					ShapeEngine e = APP.platform.createShapeEngine();
-					assert ShapeUtils.intersectCC(still.ac, e.createCircle(p, cap.r));
+					assert ShapeUtils.intersectCC(still.ac, APP.platform.createCircle(p, cap.r));
 					
 					boolean present = false;
 					for (int j = 0; j < paramCount; j++) {
@@ -223,8 +222,7 @@ public class SweepUtils {
 				
 				if (DMath.greaterThanEquals(abParam, 1.0)) {
 					
-					ShapeEngine e = APP.platform.createShapeEngine();
-					assert ShapeUtils.intersectCC(still.bc, e.createCircle(p, cap.r));
+					assert ShapeUtils.intersectCC(still.bc, APP.platform.createCircle(p, cap.r));
 					
 					boolean present = false;
 					for (int j = 0; j < paramCount; j++) {
@@ -518,7 +516,7 @@ public class SweepUtils {
 		 */
 		
 		double[] params = new double[2];
-		int n = sweepCircleOverCircle(APP.platform.createShapeEngine().createCircle(a, 0.0), moving, params);
+		int n = sweepCircleOverCircle(APP.platform.createCircle(a, 0.0), moving, params);
 		
 		double adjustedCDParam;
 //		if (n == 2) {
@@ -554,7 +552,7 @@ public class SweepUtils {
 		 * test b
 		 */
 		
-		n = sweepCircleOverCircle(APP.platform.createShapeEngine().createCircle(b, 0.0), moving, params);
+		n = sweepCircleOverCircle(APP.platform.createCircle(b, 0.0), moving, params);
 		
 //		if (n == 2) {
 //			/*

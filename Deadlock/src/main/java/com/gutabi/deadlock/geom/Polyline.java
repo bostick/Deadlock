@@ -1,14 +1,12 @@
 package com.gutabi.deadlock.geom;
 
-import java.util.List;
-
 import com.gutabi.deadlock.math.Point;
 
 public abstract class Polyline implements Shape {
 	
-	public List<Point> pts;
+	public Point[] pts;
 	
-	protected Polyline(List<Point> pts) {
+	protected Polyline(Point... pts) {
 		this.pts = pts;
 	}
 	

@@ -342,12 +342,12 @@ public class AutonomousCar extends Car {
 			
 			if (((AutonomousDriver)driver).overallPos != null) {
 				ctxt.setColor(Color.DARKGREEN);
-				APP.platform.createShapeEngine().createCircle(((AutonomousDriver)driver).overallPos.p, 0.2).paint(ctxt);
+				APP.platform.createCircle(((AutonomousDriver)driver).overallPos.p, 0.2).paint(ctxt);
 			}
 			
 			if (((AutonomousDriver)driver).goalPoint != null) {
 				ctxt.setColor(Color.GREEN);
-				APP.platform.createShapeEngine().createCircle(((AutonomousDriver)driver).goalPoint, 0.2).paint(ctxt);
+				APP.platform.createCircle(((AutonomousDriver)driver).goalPoint, 0.2).paint(ctxt);
 			}
 			
 			ctxt.setColor(Color.BLACK);

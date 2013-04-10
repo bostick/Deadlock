@@ -8,7 +8,7 @@ import com.gutabi.deadlock.Entity;
 import com.gutabi.deadlock.geom.Circle;
 import com.gutabi.deadlock.geom.Shape;
 import com.gutabi.deadlock.math.Point;
-import com.gutabi.deadlock.menu.MainMenuScreen;
+import com.gutabi.deadlock.menu.MainMenu;
 import com.gutabi.deadlock.ui.InputEvent;
 import com.gutabi.deadlock.ui.Transform;
 import com.gutabi.deadlock.ui.paint.Cap;
@@ -51,7 +51,7 @@ public class RegularTool extends WorldToolBase {
 		this.p = p;
 		
 		if (p != null) {
-			shape = APP.platform.createShapeEngine().createCircle(p, Vertex.INIT_VERTEX_RADIUS);
+			shape = APP.platform.createCircle(p, Vertex.INIT_VERTEX_RADIUS);
 		} else {
 			shape = null;
 		}
@@ -64,18 +64,20 @@ public class RegularTool extends WorldToolBase {
 	
 	
 	public void escKey() {
-		World world = (World)APP.model;
+//		World world = (World)APP.model;
 		
 		APP.platform.unshowDebuggerScreen();
 		
-		MainMenuScreen s = new MainMenuScreen();
-		APP.setAppScreen(s);
+		MainMenu.action();
 		
-		APP.platform.setupAppScreen(s.contentPane.pcp);
-		
-		s.postDisplay();
-		world.render_worldPanel();
-		s.contentPane.repaint();
+//		MainMenuScreen s = new MainMenuScreen();
+//		APP.setAppScreen(s);
+//		
+//		APP.platform.setupAppScreen(s.contentPane.pcp);
+//		
+//		s.postDisplay();
+//		world.render_worldPanel();
+//		s.contentPane.repaint();
 	}
 	
 	public void d1Key() {

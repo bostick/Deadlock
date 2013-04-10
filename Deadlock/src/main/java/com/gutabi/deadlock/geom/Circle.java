@@ -54,7 +54,7 @@ public abstract class Circle implements Shape {
 	}
 	
 	public Circle plus(Point p) {
-		return APP.platform.createShapeEngine().createCircle(center.plus(p), radius);
+		return APP.platform.createCircle(center.plus(p), radius);
 	}
 	
 	public boolean hitTest(Point p) {

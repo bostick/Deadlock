@@ -59,7 +59,7 @@ public class Stroke {
 	public void add(Point p) {
 		assert !finished;
 		
-		cs.add(APP.platform.createShapeEngine().createCircle(p, STROKE_RADIUS));
+		cs.add(APP.platform.createCircle(p, STROKE_RADIUS));
 		
 		computeAABB();
 	}
@@ -261,7 +261,7 @@ public class Stroke {
 				
 				Entity hit2;
 				if (pos instanceof EdgePosition) {
-					hit2 = world.graph.pureGraphIntersectCircle(APP.platform.createShapeEngine().createCircle(pos.p, e.circle.radius));
+					hit2 = world.graph.pureGraphIntersectCircle(APP.platform.createCircle(pos.p, e.circle.radius));
 				} else {
 					hit2 = ((VertexPosition)pos).v;
 				}
@@ -369,7 +369,7 @@ public class Stroke {
 				
 				assert pos != null;
 				
-				Entity hit = world.graph.pureGraphIntersectCircle(APP.platform.createShapeEngine().createCircle(pos.p, e.circle.radius));
+				Entity hit = world.graph.pureGraphIntersectCircle(APP.platform.createCircle(pos.p, e.circle.radius));
 				
 				if (hit == null) {
 					Intersection i0 = new Intersection(world, pos.p);

@@ -175,7 +175,7 @@ public abstract class OBB implements Shape {
 	}
 	
 	public OBB plus(Point p) {
-		return APP.platform.createShapeEngine().createOBB(center.plus(p), a, xExtant, yExtant);
+		return APP.platform.createOBB(center.plus(p), a, xExtant, yExtant);
 	}
 	
 	public boolean hitTest(Point p) {

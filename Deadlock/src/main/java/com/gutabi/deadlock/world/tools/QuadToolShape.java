@@ -35,11 +35,11 @@ public class QuadToolShape implements Shape {
 	public QuadToolShape(Point start, Point c, Point end) {
 		
 		this.start = start;
-		startCircle = APP.platform.createShapeEngine().createCircle(start, Vertex.INIT_VERTEX_RADIUS);
+		startCircle = APP.platform.createCircle(start, Vertex.INIT_VERTEX_RADIUS);
 		this.end = end;
 		this.c = c;
 		
-		q = APP.platform.createShapeEngine().createQuadCurve(start, c, end);
+		q = APP.platform.createQuadCurve(start, c, end);
 		tan0 = new Line(c, start);
 		tan1 = new Line(c, end);
 		
@@ -47,7 +47,7 @@ public class QuadToolShape implements Shape {
 		
 		List<Circle> cs = new ArrayList<Circle>();
 		for (Point p : skeleton) {
-			cs.add(APP.platform.createShapeEngine().createCircle(p, Vertex.INIT_VERTEX_RADIUS));
+			cs.add(APP.platform.createCircle(p, Vertex.INIT_VERTEX_RADIUS));
 		}
 		List<Capsule> caps = new ArrayList<Capsule>();
 		for (int i = 0; i < cs.size()-1; i++) {

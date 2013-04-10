@@ -1,8 +1,5 @@
 package com.gutabi.deadlock.geom;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.gutabi.deadlock.math.Point;
 
 public abstract class Ellipse implements Shape {
@@ -21,12 +18,12 @@ public abstract class Ellipse implements Shape {
 		aabb = new AABB(center.x - xRadius, center.y - yRadius, 2*xRadius, 2*yRadius);
 	}
 	
-	public List<Point> skeleton() {
+	public Point[] skeleton() {
 		
-		List<Point> pts = new ArrayList<Point>();
-		for (int i = 0; i <= 32; i ++) {
+		Point[] pts = new Point[33];
+		for (int i = 0; i < 33; i ++) {
 			Point p = new Point(xRadius * Math.cos(2 * Math.PI * i / 32), yRadius * Math.sin(2 * Math.PI * i / 32)).plus(center);
-			pts.add(p);
+			pts[i] = p;
 		}
 		
 		return pts;

@@ -2,7 +2,7 @@
 
 <project name="DeadlockAndroid" default="build" basedir=".">
 	
-    <property name="buildDir" location="../../DeadlockResources/build"/>
+    <property name="resDir" location="../../DeadlockResources/"/>
 	<property name="genDir" location="../../DeadlockResources/gen"/>
 	
 	<property name="assetsDir" location="../assets"/>
@@ -10,18 +10,16 @@
 	<property name="rawDir" location="../res/raw"/>
 	
 	<target name="build">
-	    
-	    <subant buildpath="../../DeadlockResources/scripts" target="build" />
 		
-		<copy tofile="${drawableDir}/copyright.png" file="${buildDir}/bin/img/copyright.png"/>
-		<copy tofile="${drawableDir}/explosionsheet.png" file="${buildDir}/bin/img/explosionsheet.png"/>
-		<copy tofile="${drawableDir}/carsheet.png" file="${buildDir}/bin/img/carsheet.png"/>
-		<copy tofile="${drawableDir}/spritesheet.png" file="${buildDir}/bin/img/spritesheet.png"/>
-		<copy tofile="${drawableDir}/title_background.png" file="${buildDir}/bin/img/title_background.png"/>
-		<copy tofile="${drawableDir}/title_white.png" file="${buildDir}/bin/img/title_white.png"/>
+		<copy tofile="${drawableDir}/copyright.png" file="${resDir}/copyright.png"/>
+		<copy tofile="${drawableDir}/explosionsheet.png" file="${resDir}/explosionsheet.png"/>
+		<copy tofile="${drawableDir}/carsheet.png" file="${resDir}/carsheet.png"/>
+		<copy tofile="${drawableDir}/spritesheet.png" file="${resDir}/spritesheet.png"/>
+		<copy tofile="${drawableDir}/title_background.png" file="${resDir}/title_background.png"/>
+		<copy tofile="${drawableDir}/title_white.png" file="${resDir}/title_white.png"/>
 		
-		<copy tofile="${assetsDir}/fonts/visitor1.ttf" file="${buildDir}/bin/fonts/visitor1.ttf"/>
-		<copy tofile="${assetsDir}/fonts/visitor2.ttf" file="${buildDir}/bin/fonts/visitor2.ttf"/>
+		<copy tofile="${assetsDir}/fonts/visitor1.ttf" file="${resDir}/visitor1.ttf"/>
+		<copy tofile="${assetsDir}/fonts/visitor2.ttf" file="${resDir}/visitor2.ttf"/>
 		
 		<copy tofile="${rawDir}/levels.zip" file="${genDir}/bin/levels.zip"/>
 		
