@@ -18,14 +18,14 @@ import com.gutabi.deadlock.ui.Transform;
 import com.gutabi.deadlock.ui.paint.Color;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.world.cars.Car;
+import com.gutabi.deadlock.world.graph.BypassBoard;
+import com.gutabi.deadlock.world.graph.BypassStud;
 import com.gutabi.deadlock.world.graph.Fixture;
 import com.gutabi.deadlock.world.graph.Graph;
 import com.gutabi.deadlock.world.graph.Intersection;
 import com.gutabi.deadlock.world.graph.Merger;
 import com.gutabi.deadlock.world.graph.Road;
 import com.gutabi.deadlock.world.graph.RoadPosition;
-import com.gutabi.deadlock.world.graph.RushHourBoard;
-import com.gutabi.deadlock.world.graph.RushHourStud;
 import com.gutabi.deadlock.world.graph.Vertex;
 import com.gutabi.deadlock.world.physics.PhysicsWorld;
 import com.gutabi.deadlock.world.sprites.AnimatedExplosion;
@@ -225,15 +225,15 @@ public class World extends PhysicsWorld {
 		return graph.insertMergerTop(m);
 	}
 	
-	public RushHourBoard createRushHourBoard(Point p, char[][] boardIni) {
+	public BypassBoard createBypassBoard(Point p, char[][] boardIni) {
 		
-		RushHourBoard b = new RushHourBoard(this, p, boardIni);
+		BypassBoard b = new BypassBoard(this, p, boardIni);
 		
-		for (RushHourStud stud : b.studs) {
+		for (BypassStud stud : b.studs) {
 			quadrantMap.grassMap.mowGrass(stud.aabb);
 		}
 		
-		graph.insertRushHourBoardTop(b);
+		graph.insertBypassBoardTop(b);
 		
 		return b;
 	}

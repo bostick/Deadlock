@@ -33,7 +33,7 @@ public class Graph {
 	public final List<Vertex> vertices = new ArrayList<Vertex>();
 	public final List<Road> roads = new ArrayList<Road>();
 	public final List<Merger> mergers = new ArrayList<Merger>();
-	public final List<RushHourBoard> rushes = new ArrayList<RushHourBoard>();
+	public final List<BypassBoard> boards = new ArrayList<BypassBoard>();
 	
 	public GraphPositionPathFactory pathFactory;
 	
@@ -190,9 +190,9 @@ public class Graph {
 		return affected;
 	}
 	
-	public void insertRushHourBoardTop(RushHourBoard b) {
+	public void insertBypassBoardTop(BypassBoard b) {
 		
-		rushes.add(b);
+		boards.add(b);
 		
 	}	
 	
@@ -1233,12 +1233,12 @@ public class Graph {
 		
 		List<Road> roadsCopy;
 		List<Merger> mergersCopy;
-		List<RushHourBoard> rushesCopy;
+		List<BypassBoard> boardsCopy;
 		List<Vertex> verticesCopy;
 		synchronized (APP) {
 			roadsCopy = new ArrayList<Road>(roads);
 			mergersCopy = new ArrayList<Merger>(mergers);
-			rushesCopy = new ArrayList<RushHourBoard>(rushes);
+			boardsCopy = new ArrayList<BypassBoard>(boards);
 			verticesCopy = new ArrayList<Vertex>(vertices);
 		}
 		
@@ -1253,7 +1253,7 @@ public class Graph {
 			v.paint_panel(ctxt);
 		}
 		
-		for (RushHourBoard b : rushesCopy) {
+		for (BypassBoard b : boardsCopy) {
 			b.paint_panel(ctxt);
 		}
 		
@@ -1267,12 +1267,12 @@ public class Graph {
 		
 		List<Road> roadsCopy;
 		List<Merger> mergersCopy;
-		List<RushHourBoard> rushesCopy;
+		List<BypassBoard> boardsCopy;
 		List<Vertex> verticesCopy;
 		synchronized (APP) {
 			roadsCopy = new ArrayList<Road>(roads);
 			mergersCopy = new ArrayList<Merger>(mergers);
-			rushesCopy = new ArrayList<RushHourBoard>(rushes);
+			boardsCopy = new ArrayList<BypassBoard>(boards);
 			verticesCopy = new ArrayList<Vertex>(vertices);
 		}
 		
@@ -1283,7 +1283,7 @@ public class Graph {
 			m.paint_preview(ctxt);
 		}
 		
-		for (RushHourBoard b : rushesCopy) {
+		for (BypassBoard b : boardsCopy) {
 			b.paint_preview(ctxt);
 		}
 		

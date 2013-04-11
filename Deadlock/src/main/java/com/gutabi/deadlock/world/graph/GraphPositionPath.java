@@ -176,7 +176,7 @@ public class GraphPositionPath {
 				s = s + g + " ";
 			} else if (g instanceof MergerPosition) {
 				s = s + g + " ";
-			} else if (g instanceof RushHourBoardPosition) {
+			} else if (g instanceof BypassBoardPosition) {
 				s = s + g + " ";
 			}
 		}

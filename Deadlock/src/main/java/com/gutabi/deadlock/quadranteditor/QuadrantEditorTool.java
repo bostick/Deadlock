@@ -5,7 +5,6 @@ import static com.gutabi.deadlock.DeadlockApplication.APP;
 import com.gutabi.deadlock.Tool;
 import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.math.Point;
-import com.gutabi.deadlock.menu.MainMenu;
 import com.gutabi.deadlock.ui.InputEvent;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.world.Quadrant;
@@ -14,7 +13,7 @@ public class QuadrantEditorTool extends Tool {
 	
 	public void escKey() {
 		
-		MainMenu.action();
+//		MainMenu.action();
 	}
 	
 	public void moved(InputEvent ev) {

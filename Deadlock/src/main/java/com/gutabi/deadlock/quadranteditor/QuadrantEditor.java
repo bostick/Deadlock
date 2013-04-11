@@ -2,9 +2,11 @@ package com.gutabi.deadlock.quadranteditor;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
+import com.gutabi.deadlock.Model;
 import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.Button;
+import com.gutabi.deadlock.ui.Menu;
 import com.gutabi.deadlock.ui.Transform;
 import com.gutabi.deadlock.ui.paint.Color;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
@@ -12,7 +14,7 @@ import com.gutabi.deadlock.world.World;
 import com.gutabi.deadlock.world.WorldPanel;
 import com.gutabi.deadlock.world.sprites.SpriteSheet.SpriteSheetSprite;
 
-public class QuadrantEditor {
+public class QuadrantEditor implements Model {
 	
 	public WorldPanel worldPanel;
 	
@@ -381,6 +383,10 @@ public class QuadrantEditor {
 		s.contentPane.repaint();
 		
 		APP.platform.showAppScreen();
+	}
+	
+	public Menu getMenu() {
+		return null;
 	}
 	
 	Point lastMovedEditorPoint;

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<exe4j version="4.4.3" transformSequenceNumber="1">
+  <directoryPresets config="C:/Users/brenton/DeadlockWorkspace/BypassAWT/build/dist/Bypass/classes/img" />
+  <application name="@APPLICATIONNAME@" distributionSourceDir="@DISTRIBUTIONSOURCEDIR@">
+    <languages>
+      <principalLanguage id="en" customLocalizationFile="" />
+    </languages>
+  </application>
+  <executable name="@EXECUTABLENAME@" type="1" iconSet="true" iconFile="@ICONFILE@" executableDir="" redirectStderr="true" stderrFile="error.log" stderrMode="append" redirectStdout="true" stdoutFile="output.log" stdoutMode="append" failOnStderrOutput="true" executableMode="1" changeWorkingDirectory="true" workingDirectory="." singleInstance="false" serviceStartType="2" serviceDependencies="" serviceDescription="" jreLocation="" executionLevel="asInvoker" checkConsoleParameter="false" globalSingleInstance="false" amd64="@AMD64@">
+    <messageSet />
+    @VERSIONINFO@
+  </executable>
+  <java mainClass="com.gutabi.bypass.Main" vmParameters="" arguments="@ARGUMENTS@" allowVMPassthroughParameters="true" preferredVM="" bundleRuntime="true" minVersion="1.6" maxVersion="" allowBetaVM="false" jdkOnly="false">
+    <searchSequence>
+      <registry />
+      <envVar name="JAVA_HOME" />
+      <envVar name="JDK_HOME" />
+    </searchSequence>
+    <classPath>
+      <archive location="./lib/@BYPASSJAR@" failOnError="true" />
+      <archive location="./lib/@JBOX2DJAR@" failOnError="true" />
+      <archive location="./lib/@LOG4JJAR@" failOnError="true" />
+      <archive location="./lib/@SLF4JAPIJAR@" failOnError="true" />
+      <archive location="./lib/@SLF4JSIMPLEJAR@" failOnError="true" />
+      <directory location="./classes" failOnError="true" />
+    </classPath>
+    <nativeLibraryDirectories />
+  </java>
+  <includedFiles />
+  <unextractableFiles />
+</exe4j>

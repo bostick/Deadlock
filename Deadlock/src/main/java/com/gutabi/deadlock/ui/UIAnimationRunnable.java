@@ -14,13 +14,6 @@ public class UIAnimationRunnable implements Runnable {
 			
 			while (true) {
 				
-//				Menu menu;
-//				if (APP.model instanceof RushHourWorld) {
-//					menu = ((RushHourWorld)APP.model).winnerMenu;
-//				} else {
-//					menu = (Menu)APP.model;
-//				}
-				
 				Thread.sleep(33);
 				
 				APP.appScreen.contentPane.repaint();

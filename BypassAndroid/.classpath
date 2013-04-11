@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="gen"/>
+	<classpathentry kind="src" path="Bypass-src"/>
+	<classpathentry kind="src" path="Deadlock-src"/>
+	<classpathentry kind="src" path="src/main/java"/>
+	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
+	<classpathentry kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/Bypass"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/Deadlock"/>
+	<classpathentry kind="lib" path="/Deadlock/lib/jbox2d-library-2.2.1.1.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/C:/Users/brenton/DeadlockWorkspace/Deadlock/lib/jbox2d-library-2.2.1.1-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="output" path="bin/classes"/>
+</classpath>

@@ -2,11 +2,11 @@ package com.gutabi.deadlock.world.graph;
 
 import com.gutabi.deadlock.world.World;
 
-public class BorderStud extends RushHourStud {
+public class BorderStud extends BypassStud {
 	
 	public Fixture f;
 	
-	public BorderStud(World world, RushHourBoard board, int row, int col) {
+	public BorderStud(World world, BypassBoard board, int row, int col) {
 		super(world, board, row, col);
 	}
 	

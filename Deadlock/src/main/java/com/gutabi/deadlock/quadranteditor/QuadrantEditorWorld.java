@@ -2,16 +2,18 @@ package com.gutabi.deadlock.quadranteditor;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
+import com.gutabi.deadlock.Model;
+import com.gutabi.deadlock.ui.Menu;
 import com.gutabi.deadlock.world.QuadrantMap;
 import com.gutabi.deadlock.world.World;
 import com.gutabi.deadlock.world.WorldScreen;
 import com.gutabi.deadlock.world.tools.RegularTool;
 
-public class QuadrantEditorWorld {
+public class QuadrantEditorWorld extends World implements Model {
 	
-	public static World createWorld(int[][] ini) {
+	public static QuadrantEditorWorld createWorld(int[][] ini) {
 		
-		World w = new World();
+		QuadrantEditorWorld w = new QuadrantEditorWorld();
 		
 		QuadrantMap qm = new QuadrantMap(ini);
 		
@@ -22,7 +24,7 @@ public class QuadrantEditorWorld {
 	
 	public static void action(int[][] ini) {
 		
-		World world = QuadrantEditorWorld.createWorld(ini);
+		QuadrantEditorWorld world = QuadrantEditorWorld.createWorld(ini);
 		APP.model = world;
 		
 		WorldScreen worldScreen = new WorldScreen();
@@ -40,6 +42,10 @@ public class QuadrantEditorWorld {
 		
 		APP.platform.showAppScreen();
 		APP.platform.showDebuggerScreen();
+	}
+	
+	public Menu getMenu() {
+		return null;
 	}
 
 }

@@ -1150,7 +1150,7 @@ public class GraphPositionPathPosition {
 		
 		double bestParam = -1.0;
 		
-		for (RushHourBoard b : car.world.graph.rushes) {
+		for (BypassBoard b : car.world.graph.boards) {
 			for (Line l : b.perimeterSegments) {
 				double param = SweepUtils.firstCollisionParam(l, swept);
 				if (param != -1 && (bestParam == -1 || DMath.lessThan(param, bestParam))) {

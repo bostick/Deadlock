@@ -2,28 +2,26 @@ package com.gutabi.deadlock;
 
 import java.util.Random;
 
-import com.gutabi.deadlock.menu.MainMenu;
-import com.gutabi.deadlock.ui.Image;
 import com.gutabi.deadlock.ui.UIAnimationRunnable;
 import com.gutabi.deadlock.world.DebuggerScreen;
-import com.gutabi.deadlock.world.sprites.CarSheet;
-import com.gutabi.deadlock.world.sprites.ExplosionSheet;
 import com.gutabi.deadlock.world.sprites.Sheet;
-import com.gutabi.deadlock.world.sprites.SpriteSheet;
 
 public class DeadlockApplication {
 	
-	public int MAINWINDOW_WIDTH = 480;
-	public int MAINWINDOW_HEIGHT = 854;
+	public int MAINWINDOW_WIDTH = -1;
+	public int MAINWINDOW_HEIGHT = -1;
 	
-	public int CONTROLPANEL_WIDTH = 200;
-	public int CONTROLPANEL_HEIGHT = 854;
+	public int CONTROLPANEL_WIDTH = -1;
+	public int CONTROLPANEL_HEIGHT = -1;
 	
+	public Sheet carSheet;
+	public Sheet spriteSheet;
+	public Sheet explosionSheet;
 	
 	public AppScreen appScreen;
 	public DebuggerScreen debuggerScreen;
 	
-	public Object model;
+	public Model model;
 	
 	public Tool tool;
 	
@@ -31,6 +29,9 @@ public class DeadlockApplication {
 	
 	public Platform platform;
 	
+	/*
+	 * control panel properties
+	 */
 	public boolean NORMALCAR = true;
 	public boolean FASTCAR = true;
 	public boolean REALLYCAR = true;
@@ -44,36 +45,10 @@ public class DeadlockApplication {
 	
 	public Random RANDOM = new Random(1);
 	
-	public Sheet carSheet;
-	public Sheet spriteSheet;
-	public Sheet explosionSheet;
-	
-	public Image titleBackground;
-	public Image title_white;
-	public Image copyright;
-	
-	
-	public static DeadlockApplication APP = new DeadlockApplication();
+//	public static DeadlockApplication APP = new DeadlockApplication();
+	public static DeadlockApplication APP;
 	
 	public void init() throws Exception {
-		
-		carSheet = new CarSheet();
-		spriteSheet = new SpriteSheet();
-		explosionSheet = new ExplosionSheet();
-		
-		carSheet.load();
-		spriteSheet.load();
-		explosionSheet.load();
-		
-		Resource background = platform.imageResource("title_background");
-		Resource white = platform.imageResource("title_white");
-		Resource copy = platform.imageResource("copyright");
-		
-		titleBackground = platform.readImage(background);
-		title_white = platform.readImage(white);
-		copyright = platform.readImage(copy);
-		
-		MainMenu.action();
 		
 		APP.platform.showAppScreen();
 		

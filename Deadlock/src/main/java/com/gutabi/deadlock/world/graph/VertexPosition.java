@@ -67,15 +67,15 @@ public class VertexPosition extends GraphPosition {
 				return ((Edge)pe.entity).travelFromOtherVertex(pe.axis, distance);
 			}
 		} else {
-			assert p instanceof RushHourBoardPosition;
+			assert p instanceof BypassBoardPosition;
 			
-			RushHourBoardPosition rpos = (RushHourBoardPosition)p;
+			BypassBoardPosition rpos = (BypassBoardPosition)p;
 			
-			RushHourBoard b = (RushHourBoard)rpos.entity;
+			BypassBoard b = (BypassBoard)rpos.entity;
 			
-			double boardDistance = distance / RushHourStud.SIZE;
+			double boardDistance = distance / BypassStud.SIZE;
 			
-			RushHourBoardPosition vpos = b.position(v.p);
+			BypassBoardPosition vpos = b.position(v.p);
 			
 			if (DMath.equals(vpos.colCombo, rpos.colCombo)) {
 				/*
@@ -84,12 +84,12 @@ public class VertexPosition extends GraphPosition {
 				
 				if (DMath.lessThan(vpos.rowCombo, rpos.rowCombo)) {
 					
-					return new RushHourBoardPosition(b, vpos.rowCombo + boardDistance, vpos.colCombo);
+					return new BypassBoardPosition(b, vpos.rowCombo + boardDistance, vpos.colCombo);
 					
 				} else {
 					assert DMath.greaterThan(vpos.rowCombo, rpos.rowCombo);
 					
-					return new RushHourBoardPosition(b, vpos.rowCombo - boardDistance, vpos.colCombo);
+					return new BypassBoardPosition(b, vpos.rowCombo - boardDistance, vpos.colCombo);
 				}
 				
 			} else {
@@ -100,12 +100,12 @@ public class VertexPosition extends GraphPosition {
 				
 				if (DMath.lessThan(vpos.colCombo, rpos.colCombo)) {
 					
-					return new RushHourBoardPosition(b, vpos.rowCombo, vpos.colCombo + boardDistance);
+					return new BypassBoardPosition(b, vpos.rowCombo, vpos.colCombo + boardDistance);
 					
 				} else {
 					assert DMath.greaterThan(vpos.colCombo, rpos.colCombo);
 					
-					return new RushHourBoardPosition(b, vpos.rowCombo, vpos.colCombo - boardDistance);
+					return new BypassBoardPosition(b, vpos.rowCombo, vpos.colCombo - boardDistance);
 				}
 				
 			}
@@ -141,13 +141,13 @@ public class VertexPosition extends GraphPosition {
 			}
 			
 		} else {
-			assert goalGP instanceof RushHourBoardPosition;
+			assert goalGP instanceof BypassBoardPosition;
 			
-			RushHourBoardPosition goalBP = (RushHourBoardPosition)goalGP;
+			BypassBoardPosition goalBP = (BypassBoardPosition)goalGP;
 			
-			RushHourBoard board = (RushHourBoard)goalBP.entity;
+			BypassBoard board = (BypassBoard)goalBP.entity;
 			
-			RushHourBoardPosition vpos = board.position(v.p);
+			BypassBoardPosition vpos = board.position(v.p);
 			
 			if (DMath.equals(vpos.colCombo, goalBP.colCombo)) {
 				assert DMath.equals(vpos.colCombo, goalBP.colCombo);

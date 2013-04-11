@@ -1,6 +1,49 @@
 
-artwork
+get BypassAWT build working
 
+get BypassAndroid working (don't see MainActivity crap on startup)
+
+switch over to using bypass everywhere
+update artwork
+
+icons for everything
+
+
+
+
+
+zooming
+as car is leaving grid, zoom
+
+
+
+scoring
+time taken
+moves made
+preference system
+saving scores, current game, 
+
+
+
+
+select levels for lite version
+select levels for full version
+setup renderer in Mathematica
+visually compare similar levels
+similar: lots of cars in same position and similar number of moves
+
+
+
+
+density independent pixels
+use graph paper and sketch out different screens and layouts first
+
+
+
+
+profile android
+audit object creation
+think about mutable shapes, etc.
 
 
 
@@ -18,12 +61,6 @@ when dragging, if within 25% of stud, just go to it
 
 
 quadrant editor moving hiliting
-
-
-
-scoring
-time taken
-moves made
 
 
 

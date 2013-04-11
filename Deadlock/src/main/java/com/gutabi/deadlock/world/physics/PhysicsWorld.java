@@ -22,7 +22,7 @@ public abstract class PhysicsWorld {
 	
 	public PhysicsWorld() {
 		
-		b2dWorld = new org.jbox2d.dynamics.World(new Vec2(0.0f, 0.0f), true);
+		b2dWorld = new org.jbox2d.dynamics.World(new Vec2(0.0f, 0.0f));
 		
 		debugDraw = new PhysicsDebugDraw();
 		

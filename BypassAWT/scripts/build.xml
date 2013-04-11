@@ -1,0 +1,125 @@
+<?xml version="1.0"?>
+
+<project name="BypassAWT" default="build" basedir=".">
+	
+	<property name="version.major" value="0"/>
+	<property name="version.minor" value="1"/>
+	<property name="version.revision" value="0"/>
+	
+	<tstamp>
+		<format property="DATE" pattern="yyyyMMdd" locale="en"/>
+	</tstamp>
+	
+	<property name="debug" value="true"/>
+	<property name="javaSrcVersion" value="1.6"/>
+	<property name="javaTgtVersion" value="1.6"/>
+	
+	<property name="srcDir" location="../src/main/java"/>
+	<property name="iconDir" location="../../DeadlockResources/static"/>
+	<property name="buildDir" location="../build"/>
+	<property name="distDir" location="${buildDir}/dist/Bypass"/>
+	
+	<property name="bypassJar" value="bypass-${version.major}.${version.minor}.${version.revision}.${DATE}.jar" />
+	<property name="jbox2dJar" value="jbox2d-library-2.2.1.1.jar" />
+	<property name="log4jJar" value="log4j-1.2.16.jar" />
+	<property name="slf4jApiJar" value="slf4j-api-1.7.1.jar" />
+	<property name="slf4jSimpleJar" value="slf4j-simple-1.7.1.jar" />
+	
+	<taskdef name="exe4j" classname="com.exe4j.Exe4JTask" classpath="C:\Program Files\exe4j\bin\ant.jar"/>
+	
+	<target name="build">
+	    
+		<delete dir="${buildDir}" />
+		<mkdir dir="${buildDir}" />
+		<mkdir dir="${buildDir}/bin" />
+		<mkdir dir="${buildDir}/jar" />
+		<mkdir dir="${buildDir}/copied" />
+		<mkdir dir="${buildDir}/copied/src" />
+		<mkdir dir="${buildDir}/copied/lib" />
+		<mkdir dir="${buildDir}/copied/classes" />
+		<mkdir dir="${buildDir}/dist" />
+		
+		<copy todir="${buildDir}/copied/src">
+			<fileset dir="../src/main/java"/>
+			<fileset dir="../../Bypass/src/main/java"/>
+			<fileset dir="../../Deadlock/src/main/java"/>
+			<filterset>
+				<filter token="MAJOR" value="${version.major}" />
+				<filter token="MINOR" value="${version.minor}" />
+		    </filterset>
+		</copy>
+		
+		<copy tofile="${buildDir}/copied/lib/${jbox2dJar}" file="../../Deadlock/lib/${jbox2dJar}"/>
+		<copy tofile="${buildDir}/copied/lib/${log4jJar}" file="../../Deadlock/lib/${log4jJar}"/>
+		<copy tofile="${buildDir}/copied/lib/${slf4jApiJar}" file="../../Deadlock/lib/${slf4jApiJar}"/>
+		<copy tofile="${buildDir}/copied/lib/${slf4jSimpleJar}" file="../../Deadlock/lib/${slf4jSimpleJar}"/>
+		
+		<copy tofile="${buildDir}/bin/img/copyright.png" file="${iconDir}/copyright.png"/>
+		<copy tofile="${buildDir}/bin/img/explosionsheet.png" file="${iconDir}/explosionsheet.png"/>
+		<copy tofile="${buildDir}/bin/img/carsheet.png" file="${iconDir}/carsheet.png"/>
+		<copy tofile="${buildDir}/bin/img/spritesheet.png" file="${iconDir}/spritesheet.png"/>
+		<copy tofile="${buildDir}/bin/img/title_background.png" file="${iconDir}/title_background.png"/>
+		<copy tofile="${buildDir}/bin/img/title_white.png" file="${iconDir}/title_white.png"/>
+		<copy tofile="${buildDir}/bin/img/visitor1.ttf" file="${iconDir}/visitor1.ttf"/>
+		<copy tofile="${buildDir}/bin/img/visitor2.ttf" file="${iconDir}/visitor2.ttf"/>
+		
+		
+		<javac srcdir="${buildDir}/copied/src"
+			destdir="${buildDir}/bin"
+			includes="**"
+			debug="${debug}"
+			source="${javaSrcVersion}"
+			target="${javaTgtVersion}"
+			includeantruntime="false">
+			<compilerarg value="-Xlint"/>
+			<classpath>  
+            	<fileset dir="${buildDir}/copied/lib">  
+                    <include name="**/*.jar" />  
+                </fileset>  
+            </classpath> 
+		</javac>
+		
+		<jar jarfile="${buildDir}/jar/${bypassJar}">
+			<fileset dir="${buildDir}/bin">
+				<include name="**" />
+			</fileset>
+		</jar>
+		
+		<copy tofile="${buildDir}/copied/lib/${bypassJar}" file="${buildDir}/jar/${bypassJar}"/>
+		
+		
+		
+		<mkdir dir="${distDir}" />
+		<mkdir dir="${distDir}/lib" />
+		<mkdir dir="${distDir}/classes" />
+		
+		<copy todir="${distDir}/lib">
+			<fileset dir="${buildDir}/copied/lib">
+				<include name="*.jar"/>
+			</fileset>
+		</copy>
+
+		<copy tofile="${buildDir}/copied/Bypass.exe4j" file="Bypass.exe4j">
+			<filterset>
+				<filter token="VERSIONINFO" value="&lt;versionInfo include=&quot;true&quot; fileVersion=&quot;${version.major} ${version.minor} ${version.revision} ${DATE}&quot; fileDescription=&quot;Gutabi Studios Bypass&quot; legalCopyright=&quot;Copyright 2013 Gutabi Studios&quot; internalName=&quot;Bypass&quot; productName=&quot;Bypass&quot; companyName=&quot;Gutabi Studios&quot; productVersion=&quot;${version.major} ${version.minor} ${version.revision} ${DATE}&quot; /&gt;"/>
+				
+				<filter token="BYPASSJAR" value="${bypassJar}" />
+				<filter token="JBOX2DJAR" value="${jbox2dJar}" />
+				<filter token="LOG4JJAR" value="${log4jJar}" />
+				<filter token="SLF4JAPIJAR" value="${slf4jApiJar}" />
+				<filter token="SLF4JSIMPLEJAR" value="${slf4jSimpleJar}" />
+				
+				<filter token="AMD64" value="true" />
+				<filter token="APPLICATIONNAME" value="Bypass" />
+				<filter token="DISTRIBUTIONSOURCEDIR" value="${distDir}" />
+				<filter token="EXECUTABLENAME" value="Bypass" />
+				<filter token="ARGUMENTS" value="" />
+				<filter token="ICONFILE" value="${iconDir}/icon256x256.ico" />
+		    </filterset>
+		</copy>
+		
+		<exe4j projectfile="${buildDir}/copied/Bypass.exe4j" verbose="true"/>
+		
+	</target>
+
+</project>

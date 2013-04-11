@@ -41,6 +41,10 @@ public abstract class Menu {
 		aabb = new AABB(x, y, aabb.width, aabb.height);
 	}
 	
+	public void setLocation(Point p) {
+		aabb = new AABB(p.x, p.y, aabb.width, aabb.height);
+	}
+	
 	public void add(MenuItem item, int r, int c) {
 		
 		item.r = r;
@@ -97,6 +101,15 @@ public abstract class Menu {
 			hilited = null;
 			APP.appScreen.contentPane.repaint();
 		}
+	}
+	
+	public void dragToNewLocation(Point newLoc) {
+		
+		hilited = null;
+		
+		setLocation(newLoc);
+		
+		APP.appScreen.contentPane.repaint();
 	}
 	
 	public void moved(InputEvent ev) {

@@ -8,7 +8,6 @@ import com.gutabi.deadlock.Entity;
 import com.gutabi.deadlock.geom.Circle;
 import com.gutabi.deadlock.geom.Shape;
 import com.gutabi.deadlock.math.Point;
-import com.gutabi.deadlock.menu.MainMenu;
 import com.gutabi.deadlock.ui.InputEvent;
 import com.gutabi.deadlock.ui.Transform;
 import com.gutabi.deadlock.ui.paint.Cap;
@@ -64,20 +63,11 @@ public class RegularTool extends WorldToolBase {
 	
 	
 	public void escKey() {
-//		World world = (World)APP.model;
 		
-		APP.platform.unshowDebuggerScreen();
+//		APP.platform.unshowDebuggerScreen();
 		
-		MainMenu.action();
+//		MainMenu.action();
 		
-//		MainMenuScreen s = new MainMenuScreen();
-//		APP.setAppScreen(s);
-//		
-//		APP.platform.setupAppScreen(s.contentPane.pcp);
-//		
-//		s.postDisplay();
-//		world.render_worldPanel();
-//		s.contentPane.repaint();
 	}
 	
 	public void d1Key() {
