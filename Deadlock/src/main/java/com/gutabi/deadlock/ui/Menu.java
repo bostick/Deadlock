@@ -24,8 +24,8 @@ public abstract class Menu {
 	
 	public AABB aabb = new AABB(0, 0, 0, 0);
 	
-	public Point lastMovedMenuPoint;
-	public Point lastClickedMenuPoint;
+//	public Point lastMovedMenuPoint;
+//	public Point lastClickedMenuPoint;
 	
 	public boolean hScrollable;
 	public boolean vScrollable;
@@ -72,6 +72,52 @@ public abstract class Menu {
 			menuItemWidest = new double[cols];
 			menuHeight = new double[cols];
 		}
+	}
+	
+	public void pressed(InputEvent ev) {
+		
+		MenuItem hit = hitTest(ev.p);
+		if (hit != null && hit.active) {
+			hilited = hit;
+		} else {
+			hilited = null;
+		}
+		
+		APP.appScreen.contentPane.repaint();
+	}
+	
+	public void released(InputEvent ev) {
+		
+		MenuItem item = hitTest(ev.p);
+		
+		if (item != null && item == hilited && item.active) {
+			hilited = null;
+			item.action();
+		} else {
+			hilited = null;
+			APP.appScreen.contentPane.repaint();
+		}
+	}
+	
+	public void moved(InputEvent ev) {
+		
+//		MenuItem hit = hitTest(ev.p);
+//		if (hit != null && hit.active) {
+//			hilited = hit;
+//		} else {
+//			hilited = null;
+//		}
+//		
+//		APP.appScreen.contentPane.repaint();
+	}
+	
+	public void clicked(InputEvent ev) {
+		
+//		MenuItem item = hitTest(ev.p);
+//		
+//		if (item != null && item.active) {
+//			item.action();
+//		}
 	}
 	
 	public MenuItem hitTest(Point p) {

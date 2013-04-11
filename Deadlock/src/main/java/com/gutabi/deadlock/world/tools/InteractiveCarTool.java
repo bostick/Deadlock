@@ -386,7 +386,7 @@ public class InteractiveCarTool extends WorldToolBase {
 		 * but short enough to not have any path intersection problems, nor have any teleporting problems
 		 * 
 		 */
-		GraphPositionPathPosition attemptedPos = car.driver.overallPos.generalSearch(carPTmp, 10.0);
+		GraphPositionPathPosition attemptedPos = car.driver.overallPos.generalSearch(carPTmp, 1.0);
 		
 		GraphPositionPathPosition actualPos = car.driver.overallPos.furthestAllowablePosition(car, attemptedPos);
 		

@@ -1,5 +1,5 @@
 
-little shining animation for red car to start, and level buttons on level menu
+artwork
 
 
 
@@ -49,6 +49,8 @@ allow custom boards? does bigger than 6x6 work?
 
 
 DONE:
+
+little shining animation for red car to start, and level buttons on level menu
 
 scrolling for menus
 

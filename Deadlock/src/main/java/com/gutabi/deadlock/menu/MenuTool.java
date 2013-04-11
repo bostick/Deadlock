@@ -7,7 +7,6 @@ import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.rushhour.RushHourWorld;
 import com.gutabi.deadlock.ui.InputEvent;
 import com.gutabi.deadlock.ui.Menu;
-import com.gutabi.deadlock.ui.MenuItem;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 
 public class MenuTool extends Tool {
@@ -94,16 +93,7 @@ public class MenuTool extends Tool {
 			menu = (Menu)APP.model;
 		}
 		
-		menu.lastMovedMenuPoint = Point.panelToMenu(ignore.p, menu);
-		
-		MenuItem hit = menu.hitTest(menu.lastMovedMenuPoint);
-		if (hit != null && hit.active) {
-			menu.hilited = hit;
-		} else {
-			menu.hilited = null;
-		}
-		
-		APP.appScreen.contentPane.repaint();
+		menu.moved(new InputEvent(ignore.panel, Point.panelToMenu(ignore.p, menu)));
 	}
 	
 	public void clicked(InputEvent ignore) {
@@ -114,14 +104,7 @@ public class MenuTool extends Tool {
 			menu = (Menu)APP.model;
 		}
 		
-		menu.lastClickedMenuPoint = Point.panelToMenu(ignore.p, menu);
-		
-		MenuItem item = menu.hitTest(menu.lastClickedMenuPoint);
-		
-		if (item != null && item.active) {
-			item.action();
-		}
-		
+		menu.clicked(new InputEvent(ignore.panel, Point.panelToMenu(ignore.p, menu)));
 	}
 	
 	
@@ -138,6 +121,8 @@ public class MenuTool extends Tool {
 		
 		origMenuUL = menu.aabb.ul;
 		origPressed = ignore.p;
+		
+		menu.pressed(new InputEvent(ignore.panel, Point.panelToMenu(ignore.p, menu)));
 	}
 	
 	public void dragged(InputEvent ignore) {
@@ -197,12 +182,20 @@ public class MenuTool extends Tool {
 	}
 	
 	public void released(InputEvent ignore) {
+		Menu menu;
+		if (APP.model instanceof RushHourWorld) {
+			menu = ((RushHourWorld)APP.model).winnerMenu;
+		} else {
+			menu = (Menu)APP.model;
+		}
 		
 		if (origPressed == null) {
 			return;
 		}
 		
 		origPressed = null;
+		
+		menu.released(new InputEvent(ignore.panel, Point.panelToMenu(ignore.p, menu)));
 	}
 	
 	public void setPoint(Point p) {
