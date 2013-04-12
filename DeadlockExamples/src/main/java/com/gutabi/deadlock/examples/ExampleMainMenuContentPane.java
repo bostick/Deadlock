@@ -1,16 +1,16 @@
-package com.gutabi.bypass.menu;
+package com.gutabi.deadlock.examples;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
 import com.gutabi.deadlock.ui.ContentPane;
 
-public class MainMenuContentPane extends ContentPane {
+public class ExampleMainMenuContentPane extends ContentPane {
 	
-	public MainMenuContentPane() {
+	public ExampleMainMenuContentPane() {
 		
 		pcp = APP.platform.createPlatformContentPane();
 		
-		MainMenuPanel panel = new MainMenuPanel() {{
+		ExampleMainMenuPanel panel = new ExampleMainMenuPanel() {{
 			setLocation(0, 0);
 		}};
 		

@@ -1,6 +1,5 @@
-package com.gutabi.bypass;
+package com.gutabi.deadlock.examples;
 
-import com.gutabi.bypass.menu.MainMenu;
 import com.gutabi.deadlock.DeadlockApplication;
 import com.gutabi.deadlock.Resource;
 import com.gutabi.deadlock.ui.Image;
@@ -8,15 +7,15 @@ import com.gutabi.deadlock.world.sprites.CarSheet;
 import com.gutabi.deadlock.world.sprites.ExplosionSheet;
 import com.gutabi.deadlock.world.sprites.SpriteSheet;
 
-public class BypassApplication extends DeadlockApplication {
+public class ExampleApplication extends DeadlockApplication {
 	
 	public Image titleBackground;
 	public Image title_white;
 	public Image copyright;
 	
-	public static BypassApplication BYPASSAPP;
+	public static ExampleApplication EXAMPLEAPP;
 	
-	public BypassApplication() {
+	public ExampleApplication() {
 		
 		MAINWINDOW_WIDTH = 480;
 		MAINWINDOW_HEIGHT = 854;
@@ -29,7 +28,7 @@ public class BypassApplication extends DeadlockApplication {
 	public void init() throws Exception {
 		
 		Resource background = APP.platform.imageResource("title_background");
-		Resource white = APP.platform.imageResource("logo605x132");
+		Resource white = APP.platform.imageResource("title_white");
 		Resource copy = APP.platform.imageResource("copyright");
 		
 		titleBackground = platform.readImage(background);
@@ -44,7 +43,7 @@ public class BypassApplication extends DeadlockApplication {
 		spriteSheet.load();
 		explosionSheet.load();
 		
-		MainMenu.action();
+		ExampleMainMenu.action();
 		
 		super.init();
 	}

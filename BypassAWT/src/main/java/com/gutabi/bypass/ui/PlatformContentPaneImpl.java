@@ -8,23 +8,17 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 
 import com.gutabi.deadlock.math.Point;
-import com.gutabi.deadlock.ui.KeyListener;
 import com.gutabi.deadlock.ui.PlatformContentPane;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 
 public class PlatformContentPaneImpl extends PlatformContentPane implements java.awt.event.KeyListener, java.awt.event.MouseListener, java.awt.event.MouseMotionListener {
-	
-	KeyListener kl;
 	
 	public Container j;
 	
 //	static Logger logger = Logger.getLogger(PlatformContentPaneImpl.class);
 	
 	@SuppressWarnings("serial")
-	public PlatformContentPaneImpl(KeyListener kl) {
-		
-		this.kl = kl;
-		assert kl != null;
+	public PlatformContentPaneImpl() {
 		
 		j = new Container() {
 			public void paint(Graphics g) {
@@ -81,55 +75,55 @@ public class PlatformContentPaneImpl extends PlatformContentPane implements java
 
 	public void keyReleased(KeyEvent ev) {
 		if (ev.getKeyCode() == KeyEvent.VK_INSERT) {
-			kl.insertKey();
+			APP.tool.insertKey();
 		} else if (ev.getKeyCode() == KeyEvent.VK_DELETE) {
-			kl.deleteKey();
+			APP.tool.deleteKey();
 		} else if (ev.getKeyCode() == KeyEvent.VK_ESCAPE) {
-			kl.escKey();
+			APP.tool.escKey();
 		} else if (ev.getKeyCode() == KeyEvent.VK_Q) {
-			kl.qKey();
+			APP.tool.qKey();
 		} else if (ev.getKeyCode() == KeyEvent.VK_W) {
-			kl.wKey();
+			APP.tool.wKey();
 		} else if (ev.getKeyCode() == KeyEvent.VK_G) {
-			kl.gKey();
+			APP.tool.gKey();
 		} else if (ev.getKeyCode() == KeyEvent.VK_1) {
-			kl.d1Key();
+			APP.tool.d1Key();
 		} else if (ev.getKeyCode() == KeyEvent.VK_2) {
-			kl.d2Key();
+			APP.tool.d2Key();
 		} else if (ev.getKeyCode() == KeyEvent.VK_3) {
-			kl.d3Key();
+			APP.tool.d3Key();
 		} else if (ev.getKeyCode() == KeyEvent.VK_PLUS || ev.getKeyCode() == KeyEvent.VK_EQUALS) {
-			kl.plusKey();
+			APP.tool.plusKey();
 		} else if (ev.getKeyCode() == KeyEvent.VK_MINUS) {
-			kl.minusKey();
+			APP.tool.minusKey();
 		} else if (ev.getKeyCode() == KeyEvent.VK_DOWN) {
-			kl.downKey();
+			APP.tool.downKey();
 		} else if (ev.getKeyCode() == KeyEvent.VK_UP) {
-			kl.upKey();
+			APP.tool.upKey();
 		} else if (ev.getKeyCode() == KeyEvent.VK_ENTER) {
-			kl.enterKey();
+			APP.tool.enterKey();
 		} else if (ev.getKeyCode() == KeyEvent.VK_A) {
-			kl.aKey();
+			APP.tool.aKey();
 		} else if (ev.getKeyCode() == KeyEvent.VK_S) {
 			
 			int mods = ev.getModifiersEx();
 			
 			if ((mods & KeyEvent.CTRL_DOWN_MASK) == KeyEvent.CTRL_DOWN_MASK) {
-				kl.ctrlSKey();
+				APP.tool.ctrlSKey();
 			} else {
-				kl.sKey();
+				APP.tool.sKey();
 			}
 			
 		} else if (ev.getKeyCode() == KeyEvent.VK_D) {
-			kl.dKey();
+			APP.tool.dKey();
 		} else if (ev.getKeyCode() == KeyEvent.VK_F) {
-			kl.fKey();
+			APP.tool.fKey();
 		} else if (ev.getKeyCode() == KeyEvent.VK_O) {
 			
 			int mods = ev.getModifiersEx();
 			
 			if ((mods & KeyEvent.CTRL_DOWN_MASK) == KeyEvent.CTRL_DOWN_MASK) {
-				kl.ctrlOKey();
+				APP.tool.ctrlOKey();
 			}
 			
 		}

@@ -8,10 +8,6 @@
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/Bypass"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/Deadlock"/>
-	<classpathentry kind="lib" path="/Deadlock/lib/jbox2d-library-2.2.1.1.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="jar:file:/C:/Users/brenton/DeadlockWorkspace/Deadlock/lib/jbox2d-library-2.2.1.1-javadoc.jar!/"/>
-		</attributes>
-	</classpathentry>
+	<classpathentry kind="lib" path="libs/jbox2d-library-2.2.1.1.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

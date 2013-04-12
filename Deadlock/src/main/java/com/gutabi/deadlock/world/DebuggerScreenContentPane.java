@@ -6,8 +6,8 @@ import com.gutabi.deadlock.ui.ContentPane;
 
 public class DebuggerScreenContentPane extends ContentPane {
 	
-	public DebuggerScreenContentPane(DebuggerScreen debuggerScreen) {
-		pcp = APP.platform.createPlatformContentPane(debuggerScreen);
+	public DebuggerScreenContentPane() {
+		pcp = APP.platform.createPlatformContentPane();
 	}
 	
 }

@@ -35,7 +35,7 @@ public interface Platform {
 	
 	public Image createTransparentImage(int w, int h);
 	
-	public abstract PlatformContentPane createPlatformContentPane(Object... args);
+	public abstract PlatformContentPane createPlatformContentPane();
 	
 	public abstract void setupAppScreen(Object... args);
 	

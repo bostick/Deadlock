@@ -2,11 +2,11 @@ package com.gutabi.deadlock.quadranteditor;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
+import com.gutabi.deadlock.AppScreen;
 import com.gutabi.deadlock.Model;
 import com.gutabi.deadlock.ui.Menu;
 import com.gutabi.deadlock.world.QuadrantMap;
 import com.gutabi.deadlock.world.World;
-import com.gutabi.deadlock.world.WorldScreen;
 import com.gutabi.deadlock.world.tools.RegularTool;
 
 public class QuadrantEditorWorld extends World implements Model {
@@ -27,7 +27,7 @@ public class QuadrantEditorWorld extends World implements Model {
 		QuadrantEditorWorld world = QuadrantEditorWorld.createWorld(ini);
 		APP.model = world;
 		
-		WorldScreen worldScreen = new WorldScreen();
+		AppScreen worldScreen = new AppScreen(new QuadrantEditorContentPane());
 		APP.setAppScreen(worldScreen);
 		
 		APP.tool = new RegularTool();

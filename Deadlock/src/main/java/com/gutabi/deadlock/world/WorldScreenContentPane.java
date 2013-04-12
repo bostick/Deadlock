@@ -6,8 +6,8 @@ import com.gutabi.deadlock.ui.ContentPane;
 
 public class WorldScreenContentPane extends ContentPane {
 	
-	public WorldScreenContentPane(WorldScreen screen) {
-		this.pcp = APP.platform.createPlatformContentPane(screen);
+	public WorldScreenContentPane() {
+		this.pcp = APP.platform.createPlatformContentPane();
 		
 		WorldPanel worldPanel = new WorldPanel() {{
 			setLocation(0, 0);

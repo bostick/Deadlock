@@ -22,11 +22,6 @@ public abstract class Car extends PhysicsBody {
 	
 	public static final double METERS_PER_CARLENGTH = 1.0;
 	
-	/*
-	 * distance that center of a car has to be from center of a sink in order to be sinked
-	 */
-	public static final double SINK_EPSILON = 0.5f;
-	
 	public final CarType type;
 	
 	public CarStateEnum state;
@@ -88,11 +83,6 @@ public abstract class Car extends PhysicsBody {
 		this.center = center;
 		this.angle = angle;
 		shape = Geom.localToWorld(localAABB, angle, center);
-	}
-	
-	public void skid() {
-		state = CarStateEnum.SKIDDED;
-		((AutonomousDriver)driver).clear();
 	}
 	
 	public void destroy() {

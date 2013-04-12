@@ -42,7 +42,6 @@ import com.gutabi.deadlock.geom.QuadCurve;
 import com.gutabi.deadlock.geom.Triangle;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.Image;
-import com.gutabi.deadlock.ui.KeyListener;
 import com.gutabi.deadlock.ui.PlatformContentPane;
 import com.gutabi.deadlock.ui.paint.FontStyle;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
@@ -69,11 +68,8 @@ public class PlatformImpl implements Platform {
 		
 	}
 	
-	public PlatformContentPane createPlatformContentPane(Object... args) {
-		
-		KeyListener kl = (KeyListener)args[0];
-		
-		return new PlatformContentPaneImpl(kl);
+	public PlatformContentPane createPlatformContentPane() {
+		return new PlatformContentPaneImpl();
 	}
 	
 	public void setupAppScreen(Object... args) {

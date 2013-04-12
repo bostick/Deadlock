@@ -3,7 +3,6 @@ package com.gutabi.deadlock;
 import java.util.Random;
 
 import com.gutabi.deadlock.ui.UIAnimationRunnable;
-import com.gutabi.deadlock.world.DebuggerScreen;
 import com.gutabi.deadlock.world.sprites.Sheet;
 
 public class DeadlockApplication {
@@ -19,7 +18,7 @@ public class DeadlockApplication {
 	public Sheet explosionSheet;
 	
 	public AppScreen appScreen;
-	public DebuggerScreen debuggerScreen;
+	public AppScreen debuggerScreen;
 	
 	public Model model;
 	

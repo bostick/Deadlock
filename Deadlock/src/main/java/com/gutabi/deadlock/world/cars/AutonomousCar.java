@@ -19,6 +19,11 @@ import com.gutabi.deadlock.world.sprites.CarSheet.CarType;
 
 public class AutonomousCar extends Car {
 	
+	/*
+	 * distance that center of a car has to be from center of a sink in order to be sinked
+	 */
+	public static final double SINK_EPSILON = 0.5f;
+	
 	public Fixture source;
 	
 	public AutonomousCar(World w, CarType type, Fixture f) {
@@ -275,6 +280,11 @@ public class AutonomousCar extends Car {
 			break;
 		}
 		
+	}
+	
+	public void skid() {
+		state = CarStateEnum.SKIDDED;
+		((AutonomousDriver)driver).clear();
 	}
 	
 	public void paint(RenderingContext ctxt) {

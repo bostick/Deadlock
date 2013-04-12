@@ -265,8 +265,12 @@ public class RegularTool extends WorldToolBase {
 		}
 		
 		world.render_worldPanel();
-		world.render_preview();
 		APP.appScreen.contentPane.repaint();
+		
+		if (world.previewImage != null) {
+			world.render_preview();
+			APP.debuggerScreen.contentPane.repaint();
+		}
 	}
 	
 	public void moved(InputEvent ignore) {
@@ -334,9 +338,13 @@ public class RegularTool extends WorldToolBase {
 			draftEnd();
 			
 			world.render_worldPanel();
-			world.render_preview();
+			if (world.previewImage != null) {
+				world.render_preview();
+			}
 			APP.appScreen.contentPane.repaint();
-			APP.debuggerScreen.contentPane.repaint();
+			if (APP.debuggerScreen != null) {
+				APP.debuggerScreen.contentPane.repaint();
+			}
 			break;
 		}
 	}

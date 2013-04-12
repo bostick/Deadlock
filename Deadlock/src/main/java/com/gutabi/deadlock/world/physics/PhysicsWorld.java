@@ -28,9 +28,7 @@ public abstract class PhysicsWorld {
 		
 		b2dWorld.setContactListener(new CarEventListener(this));
 		b2dWorld.setDebugDraw(debugDraw);
-		
 	}
-	
 	
 	int velocityIterations = 6;
 	int positionIterations = 2;

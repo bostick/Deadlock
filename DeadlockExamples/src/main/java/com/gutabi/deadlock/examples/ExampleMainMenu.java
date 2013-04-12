@@ -1,4 +1,4 @@
-package com.gutabi.bypass.menu;
+package com.gutabi.deadlock.examples;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
@@ -8,34 +8,26 @@ import com.gutabi.deadlock.ui.Menu;
 import com.gutabi.deadlock.ui.MenuItem;
 import com.gutabi.deadlock.ui.MenuTool;
 
-public class MainMenu extends Menu implements Model {
+public class ExampleMainMenu extends Menu implements Model {
 	
-	public MainMenu() {
+	public ExampleMainMenu() {
 		
-		MenuItem newMenuItem = new MenuItem(MainMenu.this, "New Game") {
+		MenuItem newMenuItem = new MenuItem(ExampleMainMenu.this, "1x1") {
 			public void action() {
 				
-				LevelMenu.action();
+				OneByOneWorld.action();
 			}
 		};
 		add(newMenuItem, 0, 0);
-		
-		MenuItem resumeMenuItem = new MenuItem(MainMenu.this, "Resume") {
-			public void action() {
-				
-			}
-		};
-		resumeMenuItem.active = false;
-		add(resumeMenuItem, 1, 0);
 		
 	}
 	
 	public static void action() {
 		
-		MainMenu mainMenu = new MainMenu();
+		ExampleMainMenu mainMenu = new ExampleMainMenu();
 		APP.model = mainMenu;
 		
-		AppScreen s = new AppScreen(new MainMenuContentPane());
+		AppScreen s = new AppScreen(new ExampleMainMenuContentPane());
 		APP.appScreen = s;
 		
 		APP.tool = new MenuTool();
@@ -47,7 +39,6 @@ public class MainMenu extends Menu implements Model {
 		s.postDisplay();
 		
 		s.contentPane.repaint();
-		
 	}
 	
 	public Menu getMenu() {

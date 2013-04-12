@@ -24,8 +24,12 @@ public abstract class WorldToolBase extends Tool {
 		setPoint(world.quadrantMap.getPoint(world.lastMovedOrDraggedWorldPoint));
 		
 		world.render_worldPanel();
-		world.render_preview();
 		APP.appScreen.contentPane.repaint();
+		
+		if (world.previewImage != null) {
+			world.render_preview();
+			APP.debuggerScreen.contentPane.repaint();
+		}
 	}
 
 	public void plusKey() {
@@ -55,10 +59,12 @@ public abstract class WorldToolBase extends Tool {
 		world.quadrantMap.computeGridSpacing(world.worldCamera);
 		
 		world.render_worldPanel();
-		world.render_preview();
-		
 		APP.appScreen.contentPane.repaint();
-		APP.debuggerScreen.contentPane.repaint();
+		
+		if (world.previewImage != null) {
+			world.render_preview();
+			APP.debuggerScreen.contentPane.repaint();
+		}
 	}
 	
 	public void pressed(InputEvent ev) {

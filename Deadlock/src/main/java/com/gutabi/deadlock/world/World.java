@@ -447,10 +447,10 @@ public class World extends PhysicsWorld {
 		
 		ctxt.setTransform(origTrans);
 		
-		Car c = carMap.findRedCar();
-		shimmer.target = Point.worldToPanel(c.shape.aabb, worldCamera);
-		
-		shimmer.paint(ctxt);
+//		Car c = carMap.findRedCar();
+//		shimmer.target = Point.worldToPanel(c.shape.aabb, worldCamera);
+//		
+//		shimmer.paint(ctxt);
 		
 //		System.out.println(worldCamera.pixelsPerMeter);
 	}

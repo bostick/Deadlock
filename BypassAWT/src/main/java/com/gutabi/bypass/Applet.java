@@ -6,8 +6,6 @@ import javax.swing.JApplet;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
-import com.gutabi.bypass.BypassApplication;
-import com.gutabi.bypass.menu.MainMenuScreen;
 import com.gutabi.bypass.ui.WindowInfo;
 
 @SuppressWarnings("serial")
@@ -22,16 +20,16 @@ public class Applet extends JApplet {
 		
 //		APP.codebase = app.getCodeBase();
 		
-		MainMenuScreen s = new MainMenuScreen();
+//		MainMenuScreen s = new MainMenuScreen();
 		
 		applet.setSize((int)(WindowInfo.windowDim().width), (int)(WindowInfo.windowDim().height));
 		applet.setLocation((int)(WindowInfo.windowLoc().x), (int)(WindowInfo.windowLoc().y));
 		
 //		((JFrame)APP.container).setVisible(true);
 		
-		s.postDisplay();
+//		s.postDisplay();
 //		s.contentPane.panel.render();
-		s.contentPane.repaint();
+//		s.contentPane.repaint();
 	}
 	
 	public static Thread.UncaughtExceptionHandler handler = new Thread.UncaughtExceptionHandler() {

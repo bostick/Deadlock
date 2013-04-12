@@ -3,15 +3,16 @@ package com.gutabi.bypass.level;
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
 import com.gutabi.bypass.BypassControlPanel;
+import com.gutabi.deadlock.AppScreen;
 import com.gutabi.deadlock.Model;
 import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.Menu;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
-import com.gutabi.deadlock.world.DebuggerScreen;
+import com.gutabi.deadlock.world.DebuggerScreenContentPane;
 import com.gutabi.deadlock.world.QuadrantMap;
 import com.gutabi.deadlock.world.World;
-import com.gutabi.deadlock.world.WorldScreen;
+import com.gutabi.deadlock.world.WorldScreenContentPane;
 import com.gutabi.deadlock.world.cars.Car;
 import com.gutabi.deadlock.world.cars.CarStateEnum;
 import com.gutabi.deadlock.world.graph.Axis;
@@ -43,10 +44,10 @@ public class BypassWorld extends World implements Model {
 			BypassWorld world = BypassWorld.createBypassWorld(levelDB, index);
 			APP.model = world;
 			
-			WorldScreen worldScreen = new WorldScreen();
+			AppScreen worldScreen = new AppScreen(new WorldScreenContentPane());
 			APP.setAppScreen(worldScreen);
 			
-			DebuggerScreen debuggerScreen = new DebuggerScreen(worldScreen);
+			AppScreen debuggerScreen = new AppScreen(new DebuggerScreenContentPane());
 			BypassControlPanel controlPanel = new BypassControlPanel() {{
 				setLocation(0, 0);
 			}};

@@ -2,12 +2,12 @@ package com.gutabi.deadlock.examples;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
+import com.gutabi.deadlock.AppScreen;
 import com.gutabi.deadlock.Model;
 import com.gutabi.deadlock.ui.Menu;
-import com.gutabi.deadlock.world.DebuggerScreen;
 import com.gutabi.deadlock.world.QuadrantMap;
 import com.gutabi.deadlock.world.World;
-import com.gutabi.deadlock.world.WorldScreen;
+import com.gutabi.deadlock.world.WorldScreenContentPane;
 import com.gutabi.deadlock.world.tools.RegularTool;
 
 public class OneByOneWorld extends World implements Model {
@@ -21,34 +21,35 @@ public class OneByOneWorld extends World implements Model {
 		OneByOneWorld world = OneByOneWorld.createOneByOneWorld();
 		APP.model = world;
 		
-		WorldScreen worldScreen = new WorldScreen();
+		AppScreen worldScreen = new AppScreen(new WorldScreenContentPane());
 		APP.setAppScreen(worldScreen);
 		
-		DebuggerScreen debuggerScreen = new DebuggerScreen(worldScreen);
-		ControlPanel controlPanel = new ControlPanel() {{
-			setLocation(0, 0);
-		}};
-		debuggerScreen.contentPane.pcp.getChildren().add(controlPanel);
-		APP.debuggerScreen = debuggerScreen;
+//		AppScreen debuggerScreen = new AppScreen(new DebuggerScreenContentPane());
+//		BypassControlPanel controlPanel = new BypassControlPanel() {{
+//			setLocation(0, 0);
+//		}};
+//		debuggerScreen.contentPane.pcp.getChildren().add(controlPanel);
+//		APP.debuggerScreen = debuggerScreen;
 		
 		APP.tool = new RegularTool();
 		
 		APP.platform.setupAppScreen(worldScreen.contentPane.pcp);
 		
-		APP.platform.setupDebuggerScreen(debuggerScreen.contentPane.pcp);
+//		APP.platform.setupDebuggerScreen(APP.debuggerScreen.contentPane.pcp);
 		
 		worldScreen.postDisplay();
 		
-		debuggerScreen.postDisplay();
+//		APP.debuggerScreen.postDisplay();
+		
+		world.startRunning();
 		
 		world.render_worldPanel();
-		world.render_preview();
-		worldScreen.contentPane.repaint();
-		debuggerScreen.contentPane.repaint();
+//		world.render_preview();
 		
 		APP.platform.showAppScreen();
-		APP.platform.showDebuggerScreen();
+//		APP.platform.showDebuggerScreen();
 		
+		APP.appScreen.contentPane.repaint();
 	}
 	
 	public static OneByOneWorld createOneByOneWorld() {

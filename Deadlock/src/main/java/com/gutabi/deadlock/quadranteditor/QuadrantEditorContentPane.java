@@ -6,9 +6,9 @@ import com.gutabi.deadlock.ui.ContentPane;
 
 public class QuadrantEditorContentPane extends ContentPane {
 	
-	public QuadrantEditorContentPane(QuadrantEditorScreen screen) {
+	public QuadrantEditorContentPane() {
 		
-		this.pcp = APP.platform.createPlatformContentPane(screen);
+		this.pcp = APP.platform.createPlatformContentPane();
 		
 		QuadrantEditorPanel panel = new QuadrantEditorPanel() {{
 			setLocation(0, 0);

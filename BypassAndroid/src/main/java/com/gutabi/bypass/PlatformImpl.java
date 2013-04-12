@@ -134,7 +134,7 @@ public class PlatformImpl implements Platform {
 	
 	
 	
-	public PlatformContentPane createPlatformContentPane(Object... args) {
+	public PlatformContentPane createPlatformContentPane() {
 		return new PlatformContentPaneImpl(container);
 	}
 

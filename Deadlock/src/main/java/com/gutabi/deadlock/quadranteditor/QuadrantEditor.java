@@ -2,6 +2,7 @@ package com.gutabi.deadlock.quadranteditor;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
+import com.gutabi.deadlock.AppScreen;
 import com.gutabi.deadlock.Model;
 import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.math.Point;
@@ -374,7 +375,7 @@ public class QuadrantEditor implements Model {
 		QuadrantEditor editor = new QuadrantEditor();
 		APP.model = editor;
 		
-		QuadrantEditorScreen s = new QuadrantEditorScreen();
+		AppScreen s = new AppScreen(new QuadrantEditorContentPane());
 		
 		APP.platform.setupAppScreen(s.contentPane.pcp);
 		
