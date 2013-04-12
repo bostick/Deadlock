@@ -10,6 +10,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Typeface;
+import android.util.Log;
 
 import com.gutabi.bypass.R;
 import com.gutabi.bypass.ResourceImpl.ResourceType;
@@ -105,17 +106,43 @@ public class PlatformImpl implements Platform {
 	}
 
 	public Image createImage(int width, int height) {
-		
-		Bitmap b = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-		
-		return new ImageImpl(b);
+		try {
+			
+			Bitmap b = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+			
+			return new ImageImpl(b);
+			
+		} catch (Error e) {
+			
+			Log.e("image", "error with creating " + width + "x" + height + " image");
+			
+			throw e;
+		} catch (RuntimeException e) {
+			
+			Log.e("image", "error with creating " + width + "x" + height + " image");
+			
+			throw e;
+		}
 	}
 	
 	public Image createTransparentImage(int width, int height) {
-		
-		Bitmap b = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-		
-		return new ImageImpl(b);
+		try {
+			
+			Bitmap b = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+			
+			return new ImageImpl(b);
+			
+		} catch (Error e) {
+			
+			Log.e("image", "error with creating " + width + "x" + height + " image");
+			
+			throw e;
+		} catch (RuntimeException e) {
+			
+			Log.e("image", "error with creating " + width + "x" + height + " image");
+			
+			throw e;
+		}
 	}
 	
 	public Image readImage(Resource res) throws Exception {
@@ -187,10 +214,11 @@ public class PlatformImpl implements Platform {
 			return new ResourceImpl(R.drawable.title_white, ResourceType.DRAWABLE);
 		} else if (name.equals("copyright")) {
 			return new ResourceImpl(R.drawable.copyright, ResourceType.DRAWABLE);
+		} else if (name.equals("logo605x132")) {
+			return new ResourceImpl(R.drawable.logo605x132, ResourceType.DRAWABLE);
 		}
 		
-		assert false;
-		return null;
+		throw new AssertionError();
 	}
 
 	public Resource fontResource(String name) {

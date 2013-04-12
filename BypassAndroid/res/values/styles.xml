@@ -16,5 +16,9 @@
     <style name="AppTheme" parent="AppBaseTheme">
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
     </style>
-
+    
+    <style name="Theme.BypassMainMenu" parent="@android:style/Theme.NoTitleBar.Fullscreen">
+    	<item name="android:windowBackground">@color/dark_gray</item>
+	</style>
+    
 </resources>

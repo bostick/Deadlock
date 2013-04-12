@@ -25,6 +25,8 @@ public class MainActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		setContentView(R.layout.activity_main);
 		
 		BypassApplication app = new BypassApplication();
 		APP = app;
@@ -32,15 +34,11 @@ public class MainActivity extends Activity {
 		
 		MAINACTIVITY = this;
 		
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-		
-		setContentView(R.layout.activity_main);
-		
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 		
 		gDetector = new GestureDetector(this, simpleOnGestureListener);
 		
-		MainView v = (MainView)findViewById(R.id.deadlock);
+		MainView v = (MainView)findViewById(R.id.bypass);
 		
 		PlatformImpl platform = new PlatformImpl(getResources(), v);
 		APP.platform = platform;
@@ -66,7 +64,7 @@ public class MainActivity extends Activity {
 	@Override
 	public boolean onTouchEvent(MotionEvent ev) {
 		
-		MainView v = (MainView)findViewById(R.id.deadlock);
+		MainView v = (MainView)findViewById(R.id.bypass);
 		
 		v.getLocationInWindow(touchOut);
 		
@@ -78,15 +76,15 @@ public class MainActivity extends Activity {
 		
 		switch (act) {
 		case MotionEvent.ACTION_DOWN:
-			Log.d("motion", "down");
+			Log.d("motion", "down " + p);
 			APP.appScreen.contentPane.pcp.pressedDriver(p);
 			break;
 		case MotionEvent.ACTION_MOVE:
-			Log.d("motion", "move");
+			Log.d("motion", "move " + p);
 			APP.appScreen.contentPane.pcp.draggedDriver(p);
 			break;
 		case MotionEvent.ACTION_UP:
-			Log.d("motion", "up");
+			Log.d("motion", "up " + p);
 			APP.appScreen.contentPane.pcp.releasedDriver(p);
 			break;
 		}
@@ -101,7 +99,7 @@ public class MainActivity extends Activity {
 		@Override
 		public boolean onSingleTapUp(MotionEvent ev) {
 			
-			MainView v = (MainView)findViewById(R.id.deadlock);
+			MainView v = (MainView)findViewById(R.id.bypass);
 			
 			v.getLocationInWindow(touchOut);
 			

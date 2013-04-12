@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     tools:context=".MainActivity" >
 
-    <view android:id="@+id/deadlock"
+    <view android:id="@+id/bypass"
     	class="com.gutabi.bypass.MainView"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"

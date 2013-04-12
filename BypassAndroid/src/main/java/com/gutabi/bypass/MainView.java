@@ -25,10 +25,12 @@ public class MainView extends android.view.View {
 	
 	public void onDraw(Canvas canvas) {
 		
+//		paint.setAntiAlias(false);
+//		paint.setDither(false);
+		
 		RenderingContext ctxt = APP.platform.createRenderingContext(canvas, paint);
 		
 		content.paint(ctxt);
-		
 	}
 
 }

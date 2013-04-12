@@ -18,8 +18,9 @@ public abstract class PlatformContentPane {
 		return children;
 	}
 	
-	private Point lastMovedContentPanePoint;
 	private Point lastPressedContentPanePoint;
+	private Point lastMovedContentPanePoint;
+	private Point lastDraggedContentPanePoint;
 	
 	public Point getLastMovedContentPanePoint() {
 		return lastMovedContentPanePoint;
@@ -46,6 +47,7 @@ public abstract class PlatformContentPane {
 	
 	public void pressedDriver(Point p) {
 		lastPressedContentPanePoint = p;
+		lastDraggedContentPanePoint = null;
 		for (Panel child : children) {
 			if (child.aabb.hitTest(lastPressedContentPanePoint)) {
 				child.pressed(new InputEvent(child, Point.contentPaneToPanel(p, child)));
@@ -64,6 +66,16 @@ public abstract class PlatformContentPane {
 	}
 	
 	public void draggedDriver(Point p) {
+		if (lastDraggedContentPanePoint == null) {
+			if (p.equals(lastPressedContentPanePoint)) {
+				return;
+			}
+		} else {
+			if (p.equals(lastDraggedContentPanePoint)) {
+				return;
+			}
+		}
+		lastDraggedContentPanePoint = p;
 		for (Panel child : children) {
 			if (child.aabb.hitTest(lastPressedContentPanePoint)) {
 				child.dragged(new InputEvent(child, Point.contentPaneToPanel(p, child)));
