@@ -25,6 +25,7 @@ import com.gutabi.deadlock.world.graph.GraphPositionPath;
 import com.gutabi.deadlock.world.graph.GraphPositionPathPosition;
 import com.gutabi.deadlock.world.graph.RoadPosition;
 import com.gutabi.deadlock.world.graph.Side;
+import com.gutabi.deadlock.world.graph.Vertex;
 import com.gutabi.deadlock.world.graph.VertexPosition;
 import com.gutabi.deadlock.world.sprites.CarSheet;
 import com.gutabi.deadlock.world.sprites.CarSheet.CarType;
@@ -320,45 +321,36 @@ public class BypassWorld extends World implements Model {
 		
 		GraphPosition gpos = car.driver.overallPos.gp;
 		
-		double para;
+		BypassBoard b;
 		if (gpos instanceof RoadPosition) {
-			
-//			RoadPosition rpos = (RoadPosition)gpos;
-//			
-//			double alpha = rpos.lengthToStartOfRoad / rpos.r.getTotalLength(rpos.r.start, rpos.r.end);
-//			if (DMath.equals(alpha, 0.0)) {
-//				para = 1.0;
-//			} else if (DMath.equals(alpha, 1.0)) {
-//				para = 1.0;
-//			} else {
-//				double[] vals = new double[] {1.0, 0.3, 0.3, 0.3, 1.0};
-//				double a = vals[(int)Math.floor(alpha * (vals.length-1))];
-//				double b = vals[(int)Math.floor(alpha * (vals.length-1))+1];
-//				para = DMath.lerp(a, b, (alpha * (vals.length-1) - Math.floor(alpha * (vals.length-1))));
-//			}
-			para = 0.3;
-			
+			b = ((Vertex)car.driver.toolOrigExitingVertexPos.gp.entity).s.board;
 		} else if (gpos instanceof VertexPosition) {
-			
-			para = 0.3;
-			
+			b = ((Vertex)gpos.entity).s.board;
 		} else {
 			assert gpos instanceof BypassBoardPosition;
-			
-			BypassBoardPosition bpos = (BypassBoardPosition)gpos;
-			BypassBoard b = (BypassBoard)bpos.entity;
-			
-			if (!b.floorAndCeilWithinGrid(car)) {
-				
-				para = 0.3;
-				
-			} else {
-				
-				para = 1.0;
-				
-			}
-			
+			b = (BypassBoard)gpos.entity;
 		}
+		
+		double fraction = b.carInGridFraction(car);
+		
+//		System.out.println(fraction);
+		
+		double para = 0.3 + fraction * (1.0 - 0.3);
+		
+//		if (gpos instanceof RoadPosition) {
+//			para = 0.3;
+//		} else if (gpos instanceof VertexPosition) {
+//			para = 0.3;
+//		} else {
+//			assert gpos instanceof BypassBoardPosition;
+//			BypassBoardPosition bpos = (BypassBoardPosition)gpos;
+//			BypassBoard b = (BypassBoard)bpos.entity;
+//			if (!b.floorAndCeilWithinGrid(car)) {
+//				para = 0.3;
+//			} else {
+//				para = 1.0;
+//			}
+//		}
 		
 		world.worldCamera.zoomAbsolute(para);
 	}

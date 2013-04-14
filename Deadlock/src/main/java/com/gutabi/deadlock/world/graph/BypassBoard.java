@@ -50,6 +50,7 @@ public class BypassBoard extends Entity {
 	public Point ul;
 	public AABB allStudsAABB;
 	public AABB gridAABB;
+	public AABB zoomingAABB;
 	
 	int jStudCount = 0;
 	BorderStud[] jStuds = new BorderStud[2];
@@ -142,6 +143,9 @@ public class BypassBoard extends Entity {
 		
 		ul = new Point(center.x - 0.5 * colCount * BypassStud.SIZE, center.y - 0.5 * rowCount * BypassStud.SIZE);
 		gridAABB = new AABB(ul.x, ul.y, colCount * BypassStud.SIZE, rowCount * BypassStud.SIZE);
+		allStudsAABB = new AABB(ul.x - BypassStud.SIZE, ul.y - BypassStud.SIZE, (colCount + 2) * BypassStud.SIZE, (rowCount + 2) * BypassStud.SIZE);
+		double zoomingExtension = 5.0;
+		zoomingAABB = new AABB(ul.x - zoomingExtension, ul.y - zoomingExtension, gridAABB.width + 2 * zoomingExtension, gridAABB.height + 2 * zoomingExtension);
 		
 		/*
 		 * add perimeter and add studs
@@ -186,13 +190,13 @@ public class BypassBoard extends Entity {
 				case 'G':
 				case 'R': {
 					RegularStud s = new RegularStud(world, this, i - originRow, j - originCol);
-					addStud(s);
+					studs.add(s);
 					break;
 				}
 				case 'J':
 				case 'K': {
 					BorderStud s = new BorderStud(world, this, i - originRow, j - originCol);
-					addStud(s);
+					studs.add(s);
 					if (c == 'J') {
 						jStuds[jStudCount] = s;
 						jStudCount++;
@@ -208,6 +212,7 @@ public class BypassBoard extends Entity {
 						Fixture f = new Fixture(world, point(i - originRow, j - originCol + 0.5), Axis.TOPBOTTOM);
 						f.setFacingSide(Side.BOTTOM);
 						s.f = f;
+						f.s = s;
 						world.addFixture(f);
 					} else if (i >= originRow + rowCount) {
 						removePerimeterSegment(s.aabb.getP0P1Line());
@@ -217,6 +222,7 @@ public class BypassBoard extends Entity {
 						Fixture f = new Fixture(world, point(i - originRow + 1.0, j - originCol + 0.5), Axis.TOPBOTTOM);
 						f.setFacingSide(Side.TOP);
 						s.f = f;
+						f.s = s;
 						world.addFixture(f);
 					} else if (j < originCol) {
 						removePerimeterSegment(s.aabb.getP1P2Line());
@@ -226,6 +232,7 @@ public class BypassBoard extends Entity {
 						Fixture f = new Fixture(world, point(i - originRow + 0.5, j - originCol), Axis.LEFTRIGHT);
 						f.setFacingSide(Side.RIGHT);
 						s.f = f;
+						f.s = s;
 						world.addFixture(f);
 					} else {
 						assert j >= originCol + colCount;
@@ -236,6 +243,7 @@ public class BypassBoard extends Entity {
 						Fixture f = new Fixture(world, point(i - originRow + 0.5, j - originCol + 1.0), Axis.LEFTRIGHT);
 						f.setFacingSide(Side.LEFT);
 						s.f = f;
+						f.s = s;
 						world.addFixture(f);
 					}
 					break;
@@ -243,7 +251,7 @@ public class BypassBoard extends Entity {
 				case 'Y': {
 					BorderStud s = new BorderStud(world, this, i - originRow, j - originCol);
 					yStud = s;
-					addStud(s);
+					studs.add(s);
 					if (i < originRow) {
 						removePerimeterSegment(s.aabb.getP2P3Line());
 						perimeterSegments.add(s.aabb.getP1P2Line());
@@ -252,6 +260,7 @@ public class BypassBoard extends Entity {
 						Fixture f = new Fixture(world, point(i - originRow, j - originCol + 0.5), Axis.TOPBOTTOM);
 						f.setFacingSide(Side.BOTTOM);
 						s.f = f;
+						f.s = s;
 						world.addFixture(f);
 						exitVertex = f;
 						
@@ -263,6 +272,7 @@ public class BypassBoard extends Entity {
 						Fixture f = new Fixture(world, point(i - originRow + 1.0, j - originCol + 0.5), Axis.TOPBOTTOM);
 						f.setFacingSide(Side.TOP);
 						s.f = f;
+						f.s = s;
 						world.addFixture(f);
 						exitVertex = f;
 						
@@ -274,6 +284,7 @@ public class BypassBoard extends Entity {
 						Fixture f = new Fixture(world, point(i - originRow + 0.5, j - originCol), Axis.LEFTRIGHT);
 						f.setFacingSide(Side.RIGHT);
 						s.f = f;
+						f.s = s;
 						world.addFixture(f);
 						exitVertex = f;
 						
@@ -286,6 +297,7 @@ public class BypassBoard extends Entity {
 						Fixture f = new Fixture(world, point(i - originRow + 0.5, j - originCol + 1.0), Axis.LEFTRIGHT);
 						f.setFacingSide(Side.LEFT);
 						s.f = f;
+						f.s = s;
 						world.addFixture(f);
 						exitVertex = f;
 						
@@ -1136,10 +1148,10 @@ public class BypassBoard extends Entity {
 		}
 	}
 	
-	private void addStud(BypassStud s) {
-		studs.add(s);
-		allStudsAABB = AABB.union(allStudsAABB, s.aabb);
-	}
+//	private void addStud(BypassStud s) {
+//		studs.add(s);
+//		
+//	}
 	
 	private void removePerimeterSegment(Line l) {
 		
@@ -1258,6 +1270,24 @@ public class BypassBoard extends Entity {
 		
 	}
 	
+	public double carInGridFraction(Car c) {
+		
+		OBB o = c.shape;
+		
+//		if (!o.rightAngle) {
+//			/*
+//			 * on curved road, completely outside grid
+//			 */
+//			return 0.0;
+//		}
+		
+		AABB a = o.aabb;
+		
+		double frac = a.fractionWithin(gridAABB, zoomingAABB);
+		
+		return frac;
+	}
+	
 	public boolean isUserDeleteable() {
 		return true;
 	}
@@ -1280,6 +1310,14 @@ public class BypassBoard extends Entity {
 				l.draw(ctxt);
 			}
 			
+			ctxt.setColor(Color.BLUE);
+			gridAABB.draw(ctxt);
+			
+			ctxt.setColor(Color.GREEN);
+			allStudsAABB.draw(ctxt);
+			
+			ctxt.setColor(Color.YELLOW);
+			zoomingAABB.draw(ctxt);
 		}
 		
 	}

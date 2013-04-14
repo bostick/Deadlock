@@ -423,13 +423,15 @@ public class BypassCarTool extends WorldToolBase {
 				}
 				GraphPositionPathPosition vertexPos = new GraphPositionPathPosition(car.driver.overallPath, nextVertexIndex, 0.0);
 				
+				car.driver.toolOrigExitingVertexPos = vertexPos;
+				
 				if (vertexPos.gp.entity == b.exitVertex && !world.isWon && car.type == CarType.RED) {
 					
 					winner();
 					
 				} else {
 					
-					car.driver.toolOrigExitingVertexPos = vertexPos;
+//					car.driver.toolOrigExitingVertexPos = vertexPos;
 //					System.out.println("exiting vertex: " + car.driver.toolOrigExitingVertexPos.gp);
 //					if (car.driver.toolOrigExitingVertexPos == null) {
 //						
@@ -458,13 +460,15 @@ public class BypassCarTool extends WorldToolBase {
 				BypassBoardPosition rpos = (BypassBoardPosition)prevGPos;
 				BypassBoard b = (BypassBoard)rpos.entity;
 				
+				car.driver.toolOrigExitingVertexPos = car.driver.overallPos;
+				
 				if (car.driver.overallPos.gp.entity == b.exitVertex && !world.isWon && car.type == CarType.RED) {
 					
 					winner();
 					
 				} else {
 					
-					car.driver.toolOrigExitingVertexPos = car.driver.overallPos;
+//					car.driver.toolOrigExitingVertexPos = car.driver.overallPos;
 //					System.out.println("exiting vertex: " + car.driver.toolOrigExitingVertexPos.gp);
 //					if (car.driver.toolOrigExitingVertexPos == null) {
 //						
@@ -543,13 +547,15 @@ public class BypassCarTool extends WorldToolBase {
 					}
 					GraphPositionPathPosition vertexPos = new GraphPositionPathPosition(car.driver.overallPath, nextVertexIndex, 0.0);
 					
+					car.driver.toolOrigExitingVertexPos = vertexPos;
+					
 					if (vertexPos.gp.entity == b.exitVertex && !world.isWon && car.type == CarType.RED) {
 						
 						winner();
 						
 					} else {
 						
-						car.driver.toolOrigExitingVertexPos = vertexPos;
+//						car.driver.toolOrigExitingVertexPos = vertexPos;
 //						System.out.println("exiting vertex: " + car.driver.toolOrigExitingVertexPos.gp);
 //						if (car.driver.toolOrigExitingVertexPos == null) {
 //							

@@ -218,9 +218,12 @@ public class PlatformImpl implements Platform {
 	 */
 	public Image readImage(Resource res) throws Exception {
 		
-		BufferedImage img = ImageIO.read(this.getClass().getResource(((ResourceImpl)res).full));
-		
-		return new ImageImpl(img);
+		try {
+			BufferedImage img = ImageIO.read(this.getClass().getResource(((ResourceImpl)res).full));
+			return new ImageImpl(img);
+		} catch (IllegalArgumentException e) {
+			throw new IllegalArgumentException("IllegalArgumentException trying to read " + ((ResourceImpl)res).full, e);
+		}
 	}
 	
 	public Image createImage(int width, int height) {
@@ -268,7 +271,9 @@ public class PlatformImpl implements Platform {
 		
 		String full = "/" + name + ".zip";
 		URL url = APP.getClass().getResource(full);
-		assert url != null;
+		if (url == null) {
+			throw new AssertionError("Resource " + full + " cannot be found");
+		}
 		
 		ResourceImpl res = new ResourceImpl();
 		
@@ -278,7 +283,7 @@ public class PlatformImpl implements Platform {
 		return res;
 	}
 	
-	public InputStream getResourceInputStream(Resource res) throws Exception {
+	public InputStream openResourceInputStream(Resource res) throws Exception {
 		
 		ResourceImpl impl = (ResourceImpl)res;
 		

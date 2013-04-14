@@ -175,9 +175,71 @@ public class AABB implements Shape {
 				DMath.lessThanEquals(y, p.y) && DMath.lessThanEquals(p.y, brY);
 	}
 	
-	public boolean completelyWithin(AABB par) {
-		return DMath.lessThanEquals(par.x, x) && DMath.lessThanEquals(brX, par.brX) &&
-				DMath.lessThanEquals(par.y, y) && DMath.lessThanEquals(brY, par.brY);
+	public boolean completelyWithin(AABB parent) {
+		return DMath.lessThanEquals(parent.x, x) && DMath.lessThanEquals(brX, parent.brX) &&
+				DMath.lessThanEquals(parent.y, y) && DMath.lessThanEquals(brY, parent.brY);
+	}
+	
+	/**
+	 * returns 0.0 if completely outside parent, returns 1.0 if completely within parent
+	 * 
+	 * assumes only overlapping on an edge, and not on a corner
+	 */
+	public double fractionWithin(AABB inner, AABB outer) {
+		
+		if (DMath.lessThan(x, inner.x)) {
+			
+			if (DMath.lessThan(brY, outer.y)) {
+				return 0.0;
+			}
+			if (DMath.greaterThan(y, outer.brY)) {
+				return 0.0;
+			}
+			
+			double diff = inner.x - outer.x;
+			
+			double innerLen = inner.x - x;
+			
+			return DMath.greaterThan(innerLen, (diff+width)) ? 0.0 : 1.0 - innerLen / (diff+width);
+		}
+		
+		if (DMath.greaterThan(brX, inner.brX)) {
+			
+			if (DMath.lessThan(brY, outer.y)) {
+				return 0.0;
+			}
+			if (DMath.greaterThan(y, outer.brY)) {
+				return 0.0;
+			}
+			
+			double diff = outer.brX - inner.brX;
+			
+			double innerLen = brX - inner.brX;
+			
+			return DMath.greaterThan(innerLen, (diff+width)) ? 0.0 : 1.0 - innerLen / (diff+width);
+		}
+		
+		if (DMath.lessThan(y, inner.y)) {
+			
+			double diff = inner.y - outer.y;
+			
+			double innerLen = inner.y - y;
+			
+//			System.out.println(1.0 - innerLen / (diff+width));
+			
+			return DMath.greaterThan(innerLen, (diff+height)) ? 0.0 : 1.0 - innerLen / (diff+height);
+		}
+		
+		if (DMath.greaterThan(brY, inner.brY)) {
+			
+			double diff = outer.brY - inner.brY;
+			
+			double innerLen = brY - inner.brY;
+			
+			return DMath.greaterThan(innerLen, (diff+height)) ? 0.0 : 1.0 - innerLen / (diff+height);
+		}
+		
+		return 1.0;
 	}
 	
 	public static final AABB union(AABB a, AABB b) {

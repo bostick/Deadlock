@@ -243,7 +243,7 @@ public class PlatformImpl implements Platform {
 		return null;
 	}
 	
-	public InputStream getResourceInputStream(Resource res) {
+	public InputStream openResourceInputStream(Resource res) {
 		
 		ResourceImpl impl = (ResourceImpl)res;
 		

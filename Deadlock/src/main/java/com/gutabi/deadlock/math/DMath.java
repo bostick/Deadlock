@@ -310,4 +310,9 @@ public class DMath {
 		double bb = tryAdjustToReducedRightAngle(b);
 		return DMath.equals(aa, bb);
 	}
+	
+//	public static double smoothstep(double t) {
+//		return t * t * (3 - 2 * t);
+//	}
+	
 }

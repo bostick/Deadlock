@@ -4,6 +4,7 @@ public class Color {
 	
 	public static final Color RED = new Color(255, 0, 0, 255);
 	public static final Color ORANGE = new Color(255, 127, 0, 255);
+	public static final Color YELLOW = new Color(255, 255, 0, 255);
 	public static final Color GREEN = new Color(0, 255, 0, 255);
 	public static final Color LIGHTGREEN = new Color(128, 255, 128, 255);
 	public static final Color DARKGREEN = new Color(0, 128, 0, 255);

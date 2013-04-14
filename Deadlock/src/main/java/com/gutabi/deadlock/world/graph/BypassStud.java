@@ -15,7 +15,7 @@ public abstract class BypassStud {
 	public static final double SIZE = 1.0;
 	
 	World world;
-	BypassBoard board;
+	public BypassBoard board;
 	
 	public final int row;
 	public final int col;

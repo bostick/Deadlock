@@ -1172,8 +1172,33 @@ public class GraphPositionPathPosition {
 		return bestParam;
 	}
 	
-	public int movesDistance(GraphPositionPathPosition end) {
-		return 1;
+	public int movesDistanceX(GraphPositionPathPosition end) {
+		
+		GraphPositionPathPosition start = this;
+		
+		if (start.equals(end)) {
+			return 0;
+		}
+		
+		int m = 0;
+		
+		GraphPositionPathPosition a = start;
+		GraphPositionPathPosition b;
+		
+		while (true) {
+			
+			if (a.equals(end)) {
+				break;
+			}
+			
+			b = a.nextBound();
+			
+			m++;
+			
+			a = b;
+		}
+		
+		return m;
 	}
 	
 }

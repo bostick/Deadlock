@@ -58,7 +58,7 @@ public interface Platform {
 	
 	public abstract Resource levelDBResource(String name);
 	
-	public abstract InputStream getResourceInputStream(Resource res) throws Exception;
+	public abstract InputStream openResourceInputStream(Resource res) throws Exception;
 	
 	
 	
