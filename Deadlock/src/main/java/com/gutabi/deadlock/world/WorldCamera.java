@@ -43,7 +43,7 @@ public class WorldCamera {
 				worldViewport.center.y - newHeight/2, newWidth, newHeight);
 	}
 	
-	public void previewPan(Point worldDP) {
+	public void panRelative(Point worldDP) {
 		
 		worldViewport = new AABB( 
 				worldViewport.x + worldDP.x,
@@ -52,4 +52,21 @@ public class WorldCamera {
 				worldViewport.height);
 	}
 	
+	public void panAbsolute(Point worldDP) {
+		
+		worldViewport = new AABB( 
+				worldDP.x,
+				worldDP.y,
+				worldViewport.width,
+				worldViewport.height);
+	}
+	
+	public void panAbsolute(double x, double y) {
+		
+		worldViewport = new AABB( 
+				x,
+				y,
+				worldViewport.width,
+				worldViewport.height);
+	}
 }

@@ -200,7 +200,9 @@ public class AABB implements Shape {
 			
 			double innerLen = inner.x - x;
 			
-			return DMath.greaterThan(innerLen, (diff+width)) ? 0.0 : 1.0 - innerLen / (diff+width);
+			return DMath.greaterThan(innerLen, (diff+width)) ?
+					0.0 :
+						1.0 - innerLen / (diff+width);
 		}
 		
 		if (DMath.greaterThan(brX, inner.brX)) {
@@ -216,10 +218,19 @@ public class AABB implements Shape {
 			
 			double innerLen = brX - inner.brX;
 			
-			return DMath.greaterThan(innerLen, (diff+width)) ? 0.0 : 1.0 - innerLen / (diff+width);
+			return DMath.greaterThan(innerLen, (diff+width)) ?
+					0.0 :
+						1.0 - innerLen / (diff+width);
 		}
 		
 		if (DMath.lessThan(y, inner.y)) {
+			
+			if (DMath.lessThan(brX, outer.x)) {
+				assert false;
+			}
+			if (DMath.greaterThan(x, outer.brX)) {
+				assert false;
+			}
 			
 			double diff = inner.y - outer.y;
 			
@@ -227,16 +238,27 @@ public class AABB implements Shape {
 			
 //			System.out.println(1.0 - innerLen / (diff+width));
 			
-			return DMath.greaterThan(innerLen, (diff+height)) ? 0.0 : 1.0 - innerLen / (diff+height);
+			return DMath.greaterThan(innerLen, (diff+height)) ?
+					0.0 :
+						1.0 - innerLen / (diff+height);
 		}
 		
 		if (DMath.greaterThan(brY, inner.brY)) {
+			
+			if (DMath.lessThan(brX, outer.x)) {
+				assert false;
+			}
+			if (DMath.greaterThan(x, outer.brX)) {
+				assert false;
+			}
 			
 			double diff = outer.brY - inner.brY;
 			
 			double innerLen = brY - inner.brY;
 			
-			return DMath.greaterThan(innerLen, (diff+height)) ? 0.0 : 1.0 - innerLen / (diff+height);
+			return DMath.greaterThan(innerLen, (diff+height)) ?
+					0.0 :
+						1.0 - innerLen / (diff+height);
 		}
 		
 		return 1.0;

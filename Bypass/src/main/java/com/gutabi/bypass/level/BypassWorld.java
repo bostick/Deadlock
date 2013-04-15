@@ -244,24 +244,28 @@ public class BypassWorld extends World implements Model {
 			c.setTransform(c.driver.startGP.p, 0.0 * Math.PI);
 			c.driver.overallPath = path;
 			c.driver.setOverallPos(path.findGraphPositionPathPosition(c.driver.startGP, 0.0 * Math.PI));
+//			set valids Path
 			break;
 		case BOTTOM:
 			c.driver.startGP = new BypassBoardPosition(board, firstULRow + c.length/2, firstULCol + c.width/2);
 			c.setTransform(c.driver.startGP.p, 0.5 * Math.PI);
 			c.driver.overallPath = path;
 			c.driver.setOverallPos(path.findGraphPositionPathPosition(c.driver.startGP, 0.5 * Math.PI));
+//			set valids Path
 			break;
 		case LEFT:
 			c.driver.startGP = new BypassBoardPosition(board, firstULRow + c.width/2, firstULCol + c.length/2);
 			c.setTransform(c.driver.startGP.p, 1.0 * Math.PI);
 			c.driver.overallPath = path;
 			c.driver.setOverallPos(path.findGraphPositionPathPosition(c.driver.startGP, 0.0 * Math.PI));
+//			set valids Path
 			break;
 		case TOP:
 			c.driver.startGP = new BypassBoardPosition(board, firstULRow + c.length/2, firstULCol + c.width/2);
 			c.setTransform(c.driver.startGP.p, 1.5 * Math.PI);
 			c.driver.overallPath = path;
 			c.driver.setOverallPos(path.findGraphPositionPathPosition(c.driver.startGP, 0.5 * Math.PI));
+//			set valids Path
 			break;
 		}
 		
@@ -317,7 +321,7 @@ public class BypassWorld extends World implements Model {
 	}
 	
 	public void handleZooming(Car car) {
-		World world = (World)APP.model;
+//		World world = (World)APP.model;
 		
 		GraphPosition gpos = car.driver.overallPos.gp;
 		
@@ -331,28 +335,24 @@ public class BypassWorld extends World implements Model {
 			b = (BypassBoard)gpos.entity;
 		}
 		
+		Point aa = Point.worldToPanel(car.center, worldCamera);
+		Point bb = aa.plus(car.toolOrigPixelOffset);
+		Point cc = Point.panelToWorld(bb, worldCamera);
+		
 		double fraction = b.carInGridFraction(car);
+		
+//		double para = 0.3 + fraction * (1.0 - 0.3);
+//		double cameraX = cc.x + fraction * (worldCamera.origWorldViewport.ul.x - cc.x);
+//		double cameraY = cc.y + fraction * (worldCamera.origWorldViewport.ul.y - cc.y);
+		double cameraX = cc.x + (1-(1-fraction)*(1-fraction)) * (worldCamera.origWorldViewport.ul.x - cc.x);
+		double cameraY = cc.y + (1-(1-fraction)*(1-fraction)) * (worldCamera.origWorldViewport.ul.y - cc.y);
 		
 //		System.out.println(fraction);
 		
-		double para = 0.3 + fraction * (1.0 - 0.3);
+//		worldCamera.zoomAbsolute(para);
 		
-//		if (gpos instanceof RoadPosition) {
-//			para = 0.3;
-//		} else if (gpos instanceof VertexPosition) {
-//			para = 0.3;
-//		} else {
-//			assert gpos instanceof BypassBoardPosition;
-//			BypassBoardPosition bpos = (BypassBoardPosition)gpos;
-//			BypassBoard b = (BypassBoard)bpos.entity;
-//			if (!b.floorAndCeilWithinGrid(car)) {
-//				para = 0.3;
-//			} else {
-//				para = 1.0;
-//			}
-//		}
+		worldCamera.panAbsolute(cameraX, cameraY);
 		
-		world.worldCamera.zoomAbsolute(para);
 	}
 	
 	public void panelPostDisplay() {

@@ -1172,9 +1172,20 @@ public class GraphPositionPathPosition {
 		return bestParam;
 	}
 	
-	public int movesDistanceX(GraphPositionPathPosition end) {
+	public int movesDistance(GraphPositionPathPosition end, Car c) {
+		
+		boolean forward;
+		if (end.combo > this.combo) {
+			forward = true;
+		} else {
+			forward = false;
+		}
 		
 		GraphPositionPathPosition start = this;
+		
+		assert start.gp instanceof BypassBoardPosition;
+		BypassBoard board = (BypassBoard)((BypassBoardPosition)start.gp).entity;
+		assert board.withinGrid(c, start.angle, start.p);
 		
 		if (start.equals(end)) {
 			return 0;
@@ -1191,9 +1202,36 @@ public class GraphPositionPathPosition {
 				break;
 			}
 			
-			b = a.nextBound();
+			b = a.travel(BypassStud.SIZE, forward);
 			
-			m++;
+			assert b.gp instanceof BypassBoardPosition;
+			if (board.withinGrid(c, b.angle, b.p)) {
+				m++;
+			} else {	
+				
+				// find first vertex
+				while (true) {
+					b = forward ? b.nextBound() : b.prevBound();
+					if (b.gp instanceof VertexPosition) {
+						break;
+					}
+				}
+				//go through road, find next vertex
+				while (true) {
+					b = forward ? b.nextBound() : b.prevBound();
+					if (b.gp instanceof VertexPosition) {
+						break;
+					}
+				}
+				
+				b = b.travel(BypassStud.SIZE + c.length/2, forward);
+				
+				assert b.gp instanceof BypassBoardPosition;
+				assert board.withinGrid(c, b.angle, b.p);
+				
+				m++;
+				
+			}
 			
 			a = b;
 		}

@@ -55,15 +55,6 @@ icons for everything
 
 
 
-save metadata in levels.zip
-number of levels, etc.
-
-
-
-
-
-zooming
-as car is leaving grid, zoom
 
 
 
@@ -142,6 +133,13 @@ allow custom boards? does bigger than 6x6 work?
 
 
 DONE:
+
+save metadata in levels.zip
+number of levels, etc.
+
+zooming
+as car is leaving grid, zoom
+
 
 little shining animation for red car to start, and level buttons on level menu
 

@@ -37,8 +37,9 @@ public abstract class Car extends PhysicsBody {
 	boolean atleastPartiallyOnRoad;
 	boolean inMerger;
 	
-	public Point toolOrigP;
+	public Point toolOrigCenter;
 	public OBB toolOrigShape;
+	public Point toolOrigPixelOffset;
 	
 	public boolean destroyed;
 	

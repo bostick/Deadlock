@@ -435,7 +435,7 @@ public class ControlPanel extends Panel {
 				double dy = lastDragPreviewPoint.y - penDragPreviewPoint.y;
 				
 				Point worldDP = Point.previewToWorld(new Point(dx, dy), world.worldCamera);
-				world.worldCamera.previewPan(worldDP);
+				world.worldCamera.pan(worldDP);
 				
 				world.render_worldPanel();
 				world.render_preview();
