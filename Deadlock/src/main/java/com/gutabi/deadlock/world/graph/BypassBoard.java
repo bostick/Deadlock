@@ -1306,7 +1306,8 @@ public class BypassBoard extends Entity {
 //		ctxt.setColor(BOARDCOLOR);
 //		gridAABB.paint(ctxt);
 		
-		for (BypassStud s : studs) {
+		for (int i = 0; i < studs.size(); i++) {
+			BypassStud s = studs.get(i);
 			s.paint(ctxt);
 		}
 		

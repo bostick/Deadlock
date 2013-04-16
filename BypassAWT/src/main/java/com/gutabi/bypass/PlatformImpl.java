@@ -21,8 +21,8 @@ import javax.swing.RootPaneContainer;
 import com.gutabi.bypass.geom.CircleImpl;
 import com.gutabi.bypass.geom.CubicCurveImpl;
 import com.gutabi.bypass.geom.EllipseImpl;
+import com.gutabi.bypass.geom.MutablePolygonImpl;
 import com.gutabi.bypass.geom.OBBImpl;
-import com.gutabi.bypass.geom.PolygonImpl;
 import com.gutabi.bypass.geom.PolylineImpl;
 import com.gutabi.bypass.geom.QuadCurveImpl;
 import com.gutabi.bypass.geom.TriangleImpl;
@@ -36,8 +36,8 @@ import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.geom.Circle;
 import com.gutabi.deadlock.geom.CubicCurve;
 import com.gutabi.deadlock.geom.Ellipse;
+import com.gutabi.deadlock.geom.MutablePolygon;
 import com.gutabi.deadlock.geom.OBB;
-import com.gutabi.deadlock.geom.Polygon;
 import com.gutabi.deadlock.geom.Polyline;
 import com.gutabi.deadlock.geom.QuadCurve;
 import com.gutabi.deadlock.geom.Triangle;
@@ -58,27 +58,31 @@ public class PlatformImpl implements Platform {
 		return new RenderingContextImpl();
 	}
 	
-	public void setRenderingContextFields(RenderingContext a, Object... args) {
+	public void setRenderingContextFields1(RenderingContext a, Object arg0) {
 		
 		RenderingContextImpl ctxt = (RenderingContextImpl)a;
 		
 //		Graphics2D g2 = (Graphics2D)args[0];
 //		ctxt.g2 = g2;
 		
-		if (args[0] instanceof Graphics2D) {
+		if (arg0 instanceof Graphics2D) {
 			
-			Graphics2D g2 = (Graphics2D)args[0];
+			Graphics2D g2 = (Graphics2D)arg0;
 			
 			ctxt.g2 = g2;
 			
 		} else {
 			
-			ImageImpl img = (ImageImpl)args[0];
+			ImageImpl img = (ImageImpl)arg0;
 			Graphics2D g2 = img.img.createGraphics();
 			
 			ctxt.g2 = g2; 
 		}
 		
+	}
+	
+	public void setRenderingContextFields2(RenderingContext a, Object arg0, Object arg1) {
+		assert false;
 	}
 	
 	public PlatformContentPane createPlatformContentPane() {
@@ -350,8 +354,8 @@ public class PlatformImpl implements Platform {
 		return new CubicCurveImpl(start, c0, c1, end);
 	}
 	
-	public Polygon createPolygon4(Point p0, Point p1, Point p2, Point p3) {
-		return new PolygonImpl(p0, p1, p2, p3);
+	public MutablePolygon createMutablePolygon() {
+		return new MutablePolygonImpl();
 	}
 	
 	

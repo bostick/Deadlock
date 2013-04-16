@@ -123,7 +123,7 @@ public class QuadrantMap {
 		
 		quadrantGrass = APP.platform.createImage(quadrantWidthPixels, quadrantHeightPixels);
 		
-		APP.platform.setRenderingContextFields(ctxt, quadrantGrass);
+		APP.platform.setRenderingContextFields1(ctxt, quadrantGrass);
 		
 		int maxCols = (int)Math.ceil(quadrantWidthPixels/32.0);
 		int maxRows = (int)Math.ceil(quadrantHeightPixels/32.0);

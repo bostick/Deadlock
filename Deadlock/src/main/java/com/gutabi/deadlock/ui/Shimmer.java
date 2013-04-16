@@ -3,8 +3,7 @@ package com.gutabi.deadlock.ui;
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
 import com.gutabi.deadlock.geom.AABB;
-import com.gutabi.deadlock.geom.Polygon;
-import com.gutabi.deadlock.math.Point;
+import com.gutabi.deadlock.geom.MutablePolygon;
 import com.gutabi.deadlock.ui.paint.Color;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 
@@ -13,6 +12,8 @@ public class Shimmer {
 	public AABB target;
 	
 	public double startMillis;
+	
+	MutablePolygon poly = APP.platform.createMutablePolygon();
 	
 	public Shimmer(AABB target, double startMillis) {
 		this.target = target;
@@ -48,27 +49,47 @@ public class Shimmer {
 			double top = target.x + (((1 + timeToRest / timeToTraverse)) * param) * ((target.brX + target.height) - target.x);
 			double bottom = target.y + (((1 + timeToRest / timeToTraverse)) * param) * ((target.brY + target.width) - target.y);
 			
-			Point p0;
-			Point p1;
+			double p0x;
+			double p0y;
+			double p1x;
+			double p1y;
 			if (top <= target.brX-5) {
-				p0 = new Point(top, target.y);
-				p1 = new Point(top+5, target.y);
+//				p0 = new Point(top, target.y);
+				p0x = top;
+				p0y = target.y;
+//				p1 = new Point(top+5, target.y);
+				p1x = top+5;
+				p1y = target.y;
 			} else {
-				p0 = new Point(target.brX, target.y + (top-target.brX));
-				p1 = new Point(target.brX, Math.min(target.y + (top-target.brX)+5, target.brY));
+//				p0 = new Point(target.brX, target.y + (top-target.brX));
+				p0x = target.brX;
+				p0y = target.y + (top-target.brX);
+//				p1 = new Point(target.brX, Math.min(target.y + (top-target.brX)+5, target.brY));
+				p1x = target.brX;
+				p1y = Math.min(target.y + (top-target.brX)+5, target.brY);
 			}
 			
-			Point p2;
-			Point p3;
+			double p2x;
+			double p2y;
+			double p3x;
+			double p3y;
 			if (bottom <= target.brY-5) {
-				p2 = new Point(target.x, bottom);
-				p3 = new Point(target.x, bottom+5);
+//				p2 = new Point(target.x, bottom);
+				p2x = target.x;
+				p2y = bottom;
+//				p3 = new Point(target.x, bottom+5);
+				p3x = target.x;
+				p3y = bottom+5;
 			} else {
-				p2 = new Point(target.x + (bottom - target.brY), target.brY);
-				p3 = new Point(Math.min(target.x + (bottom - target.brY)+5, target.brX), target.brY);
+//				p2 = new Point(target.x + (bottom - target.brY), target.brY);
+				p2x = target.x + (bottom - target.brY);
+				p2y = target.brY;
+//				p3 = new Point(Math.min(target.x + (bottom - target.brY)+5, target.brX), target.brY);
+				p3x = Math.min(target.x + (bottom - target.brY)+5, target.brX);
+				p3y = target.brY;
 			}
 			
-			Polygon poly = APP.platform.createPolygon4(p0, p1, p3, p2);
+			poly.setPoints(p0x, p0y, p1x, p1y, p2x, p2y, p3x, p3y);
 			ctxt.setColor(Color.WHITE);
 			poly.paint(ctxt);
 			

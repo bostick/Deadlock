@@ -208,7 +208,8 @@ public class CapsuleSequence implements Shape, SweeperShape, CompoundShape {
 	}
 	
 	public void paint(RenderingContext ctxt) {
-		for (Capsule c : caps) {
+		for (int i = 0; i < caps.size(); i++) {
+			Capsule c = caps.get(i);
 			c.paint(ctxt);
 		}
 	}

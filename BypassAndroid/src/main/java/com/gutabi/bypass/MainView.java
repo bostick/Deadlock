@@ -30,7 +30,7 @@ public class MainView extends android.view.View {
 	
 	public void onDraw(Canvas canvas) {
 		
-		APP.platform.setRenderingContextFields(ctxt, canvas, paint);
+		APP.platform.setRenderingContextFields2(ctxt, canvas, paint);
 		
 		content.paint(ctxt);
 	}

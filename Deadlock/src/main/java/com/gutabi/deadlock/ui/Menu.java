@@ -187,7 +187,7 @@ public abstract class Menu {
 		
 		Image tmpImg = APP.platform.createImage((int)aabb.width, (int)aabb.height);
 		
-		APP.platform.setRenderingContextFields(ctxt, tmpImg);
+		APP.platform.setRenderingContextFields1(ctxt, tmpImg);
 		
 		ctxt.getTransform(origTransformRender);
 		
@@ -244,7 +244,8 @@ public abstract class Menu {
 				(int)(aabb.width + 5 + 5),
 				(int)(aabb.height + 5 + 5));
 		
-		for (MenuItem item : items) {
+		for (int i = 0; i < items.size(); i++) {
+			MenuItem item = items.get(i);
 			item.paint(ctxt);
 		}
 		

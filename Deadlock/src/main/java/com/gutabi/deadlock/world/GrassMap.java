@@ -36,13 +36,15 @@ public class GrassMap {
 	}
 	
 	public void preStep(double t) {
-		for (AnimatedGrass g : grass) {
+		for (int i = 0; i < grass.size(); i++) {
+			AnimatedGrass g = grass.get(i);
 			g.preStep(t);
 		}
 	}
 	
 	public void paintScene(RenderingContext ctxt) {
-		for (AnimatedGrass g : grass) {
+		for (int i = 0; i < grass.size(); i++) {
+			AnimatedGrass g = grass.get(i);
 			g.paint(ctxt);
 		}
 	}

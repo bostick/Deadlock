@@ -17,6 +17,7 @@ import com.gutabi.bypass.geom.CircleImpl;
 import com.gutabi.bypass.geom.CubicCurveImpl;
 import com.gutabi.bypass.geom.EllipseImpl;
 import com.gutabi.bypass.geom.LineImpl;
+import com.gutabi.bypass.geom.MutablePolygonImpl;
 import com.gutabi.bypass.geom.OBBImpl;
 import com.gutabi.bypass.geom.PolygonImpl;
 import com.gutabi.bypass.geom.PolylineImpl;
@@ -33,6 +34,7 @@ import com.gutabi.deadlock.geom.Circle;
 import com.gutabi.deadlock.geom.CubicCurve;
 import com.gutabi.deadlock.geom.Ellipse;
 import com.gutabi.deadlock.geom.Line;
+import com.gutabi.deadlock.geom.MutablePolygon;
 import com.gutabi.deadlock.geom.OBB;
 import com.gutabi.deadlock.geom.Polygon;
 import com.gutabi.deadlock.geom.Polyline;
@@ -61,23 +63,37 @@ public class PlatformImpl implements Platform {
 	}
 	
 	
-	Paint imgPaint = new Paint();
 	
-	public void setRenderingContextFields(RenderingContext a, Object... args) {
+	public void setRenderingContextFields1(RenderingContext a, Object arg0) {
 		
 		RenderingContextImpl ctxt = (RenderingContextImpl)a;
 		
-		if (args[0] instanceof Canvas) {
+		ImageImpl img = (ImageImpl)arg0;
+		Bitmap b = img.b;
+		Canvas c = new Canvas(b);
+		
+		ctxt.canvas = c;
+		ctxt.paint = imgPaint;
+		
+	}
+	
+	Paint imgPaint = new Paint();
+	
+	public void setRenderingContextFields2(RenderingContext a, Object arg0, Object arg1) {
+		
+		RenderingContextImpl ctxt = (RenderingContextImpl)a;
+		
+		if (arg0 instanceof Canvas) {
 			
-			Canvas c = (Canvas)args[0];
-			Paint p = (Paint)args[1];
+			Canvas c = (Canvas)arg0;
+			Paint p = (Paint)arg1;
 			
 			ctxt.canvas = c;
 			ctxt.paint = p;
 			
 		} else {
 			
-			ImageImpl img = (ImageImpl)args[0];
+			ImageImpl img = (ImageImpl)arg0;
 			Bitmap b = img.b;
 			Canvas c = new Canvas(b);
 			
@@ -304,6 +320,10 @@ public class PlatformImpl implements Platform {
 	
 	public Polygon createPolygon4(Point p0, Point p1, Point p2, Point p3) {
 		return new PolygonImpl(p0, p1, p2, p3);
+	}
+	
+	public MutablePolygon createMutablePolygon() {
+		return new MutablePolygonImpl();
 	}
 	
 	

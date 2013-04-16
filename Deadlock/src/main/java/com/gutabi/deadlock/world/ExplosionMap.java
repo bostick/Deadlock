@@ -35,27 +35,37 @@ public class ExplosionMap {
 	}
 	
 	public void preStep(double t) {
-		for (AnimatedExplosion x : explosions) {
+		for (int i = 0; i < explosions.size(); i++) {
+			AnimatedExplosion x = explosions.get(i);
 			x.preStep(t);
 		}
 	}
 	
+	
+	List<AnimatedExplosion> exToBeRemoved = new ArrayList<AnimatedExplosion>();
+	
 	public void postStep(double t) {
-		List<AnimatedExplosion> exToBeRemoved = new ArrayList<AnimatedExplosion>();
 		
-		for (AnimatedExplosion e : explosions) {
-			boolean shouldPersist = e.postStep(t);
+		exToBeRemoved.clear();
+		
+		for (int i = 0; i < explosions.size(); i++) {
+			AnimatedExplosion x = explosions.get(i);
+			boolean shouldPersist = x.postStep(t);
 			if (!shouldPersist) {
-				exToBeRemoved.add(e);
+				exToBeRemoved.add(x);
 			}
 		}
 		
-		explosions.removeAll(exToBeRemoved);
+		for (int i = 0; i < exToBeRemoved.size(); i++) {
+			AnimatedExplosion x = exToBeRemoved.get(i);
+			explosions.remove(x);
+		}
 	}
 	
 	public void paint(RenderingContext ctxt) {
 		if (APP.EXPLOSIONS_DRAW) {
-			for (AnimatedExplosion x : explosions) {
+			for (int i = 0; i < explosions.size(); i++) {
+				AnimatedExplosion x = explosions.get(i);
 				x.paint(ctxt);
 			}
 		}

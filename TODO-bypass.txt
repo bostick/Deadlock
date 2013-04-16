@@ -1,9 +1,23 @@
 
+no allocations in menus
+no allocations in world idle
+
+profile android
+
+
+
 scoring
 time taken
 moves made
 preference system
 saving scores, current game, 
+
+
+
+
+
+reset button
+hint button
 
 
 

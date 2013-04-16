@@ -94,7 +94,8 @@ public abstract class PlatformContentPane {
 	
 	public void paint(RenderingContext ctxt) {
 		
-		for (Panel child : getChildren()) {
+		for (int i = 0; i < children.size(); i++) {
+			Panel child = children.get(i);
 			child.paint(ctxt);
 		}
 		

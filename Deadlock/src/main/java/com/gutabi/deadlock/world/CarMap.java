@@ -73,7 +73,8 @@ public class CarMap {
 			
 		}
 		
-		for (Car c : cars) {
+		for (int i = 0; i < cars.size(); i++) {
+			Car c = cars.get(i);
 			c.paint(ctxt);
 		}
 		
@@ -90,7 +91,8 @@ public class CarMap {
 		
 		Car.carIDCounter = 0;
 		
-		for (Car c : cars) {
+		for (int i = 0; i < cars.size(); i++) {
+			Car c = cars.get(i);
 			c.preStep(t);
 		}
 		
@@ -98,19 +100,26 @@ public class CarMap {
 		
 	}
 	
+	
+	List<Car> toBeRemoved = new ArrayList<Car>();
+	
 	public void postStep(double t) {
 		
-		List<Car> toBeRemoved = new ArrayList<Car>();
+		toBeRemoved.clear();
 		
-		for (Car c : cars) {
+		for (int i = 0; i < cars.size(); i++) {
+			Car c = cars.get(i);
 			boolean shouldPersist = c.postStep(t);
 			if (!shouldPersist) {
 				c.destroy();
 				toBeRemoved.add(c);
 			}
 		}
-	
-		cars.removeAll(toBeRemoved);
+		
+		for (int i = 0; i < toBeRemoved.size(); i++) {
+			Car c = toBeRemoved.get(i);
+			cars.remove(c);
+		}
 		
 	}
 	

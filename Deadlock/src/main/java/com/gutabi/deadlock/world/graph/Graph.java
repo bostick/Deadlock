@@ -96,14 +96,16 @@ public class Graph {
 	
 	public void preStep(double t) {
 		
-		for (Vertex v : vertices) {
+		for (int i = 0; i < vertices.size(); i++) {
+			Vertex v = vertices.get(i);
 			v.preStep(t);
 		}
 	}
 	
 	public void postStep(double t) {
 		
-		for (Vertex v : vertices) {
+		for (int i = 0; i < vertices.size(); i++) {
+			Vertex v = vertices.get(i);
 			v.postStep(t);
 		}
 	}
@@ -1231,33 +1233,38 @@ public class Graph {
 	
 	public void render_panel(RenderingContext ctxt) {
 		
-		List<Road> roadsCopy;
-		List<Merger> mergersCopy;
-		List<BypassBoard> boardsCopy;
-		List<Vertex> verticesCopy;
-		synchronized (APP) {
-			roadsCopy = new ArrayList<Road>(roads);
-			mergersCopy = new ArrayList<Merger>(mergers);
-			boardsCopy = new ArrayList<BypassBoard>(boards);
-			verticesCopy = new ArrayList<Vertex>(vertices);
-		}
+//		List<Road> roadsCopy;
+//		List<Merger> mergersCopy;
+//		List<BypassBoard> boardsCopy;
+//		List<Vertex> verticesCopy;
+//		synchronized (APP) {
+//			roadsCopy = new ArrayList<Road>(roads);
+//			mergersCopy = new ArrayList<Merger>(mergers);
+//			boardsCopy = new ArrayList<BypassBoard>(boards);
+//			verticesCopy = new ArrayList<Vertex>(vertices);
+//		}
 		
-		for (Road r : roadsCopy) {
+		for (int i = 0; i < roads.size(); i++) {
+			Road r = roads.get(i);
 			r.paint_panel(ctxt);
 		}
-		for (Merger m : mergersCopy) {
+		for (int i = 0; i < mergers.size(); i++) {
+			Merger m = mergers.get(i);
 			m.paint_panel(ctxt);
 		}
 		
-		for (Vertex v : verticesCopy) {
+		for (int i = 0; i < vertices.size(); i++) {
+			Vertex v = vertices.get(i);
 			v.paint_panel(ctxt);
 		}
 		
-		for (BypassBoard b : boardsCopy) {
+		for (int i = 0; i < boards.size(); i++) {
+			BypassBoard b = boards.get(i);
 			b.paint_panel(ctxt);
 		}
 		
-		for (Road r : roadsCopy) {
+		for (int i = 0; i < roads.size(); i++) {
+			Road r = roads.get(i);
 			r.paintDecorations(ctxt);
 		}
 		
@@ -1316,21 +1323,22 @@ public class Graph {
 	
 	public void paintScene(RenderingContext ctxt) {
 		
-		List<Vertex> verticesCopy;
-		synchronized (APP) {
-			verticesCopy = new ArrayList<Vertex>(vertices);
-		}
-		for (Vertex v : verticesCopy) {
+//		List<Vertex> verticesCopy;
+//		synchronized (APP) {
+//			verticesCopy = new ArrayList<Vertex>(vertices);
+//		}
+		for (int i = 0; i < vertices.size(); i++) {
+			Vertex v = vertices.get(i);
 			v.paintScene(ctxt);
 		}
 		
 		if (APP.DEBUG_DRAW) {
-			List<Road> roadsCopy;
-			synchronized (APP) {
-				roadsCopy = new ArrayList<Road>(roads);
-			}
+//			List<Road> roadsCopy;
+//			synchronized (APP) {
+//				roadsCopy = new ArrayList<Road>(roads);
+//			}
 			
-			for (Road r : roadsCopy) {
+			for (Road r : roads) {
 				r.paintBorders(ctxt);
 			}
 		}

@@ -6,8 +6,8 @@ import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.geom.Circle;
 import com.gutabi.deadlock.geom.CubicCurve;
 import com.gutabi.deadlock.geom.Ellipse;
+import com.gutabi.deadlock.geom.MutablePolygon;
 import com.gutabi.deadlock.geom.OBB;
-import com.gutabi.deadlock.geom.Polygon;
 import com.gutabi.deadlock.geom.Polyline;
 import com.gutabi.deadlock.geom.QuadCurve;
 import com.gutabi.deadlock.geom.Triangle;
@@ -22,7 +22,9 @@ public interface Platform {
 
 	public abstract RenderingContext createRenderingContext();
 	
-	public abstract void setRenderingContextFields(RenderingContext ctxt, Object... args);
+	public abstract void setRenderingContextFields1(RenderingContext ctxt, Object arg0);
+	
+	public abstract void setRenderingContextFields2(RenderingContext ctxt, Object arg0, Object arg1);
 	
 	
 	/*
@@ -86,7 +88,9 @@ public interface Platform {
 	
 	public abstract CubicCurve createCubicCurve(Point start, Point c0, Point c1, Point end);
 	
-	public abstract Polygon createPolygon4(Point p0, Point p1, Point p2, Point p3);
+//	public abstract Polygon createPolygon4(Point p0, Point p1, Point p2, Point p3);
+	
+	public abstract MutablePolygon createMutablePolygon();
 	
 	public abstract Transform createTransform();
 	

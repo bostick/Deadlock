@@ -51,7 +51,8 @@ public class GrassMarkMap {
 		
 		ctxt.setColor(Color.brown);
 		
-		for (Capsule cap : marks) {
+		for (int i = 0; i < marks.size(); i++) {
+			Capsule cap = marks.get(i);
 			cap.paint(ctxt);
 		}
 		

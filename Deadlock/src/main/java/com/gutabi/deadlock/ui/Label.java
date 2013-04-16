@@ -69,7 +69,7 @@ public class Label {
 		
 		img = APP.platform.createTransparentImage((int)aabb.width, (int)aabb.height);
 		
-		APP.platform.setRenderingContextFields(ctxt, img);
+		APP.platform.setRenderingContextFields1(ctxt, img);
 		
 		ctxt.setColor(color);
 		
