@@ -26,6 +26,7 @@ public class LevelDB {
 		while (true) {
 			
 			ZipEntry entry = zis.getNextEntry();
+			assert entry != null;
 			
 			if (entry.getName().equals("metadata.txt")) {
 				

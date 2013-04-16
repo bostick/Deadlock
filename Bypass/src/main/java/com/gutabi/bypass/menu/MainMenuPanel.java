@@ -66,17 +66,20 @@ public class MainMenuPanel extends Panel {
 		menu.setLocation(x, y);
 	}
 	
+	Transform origTransform = APP.platform.createTransform();
+	Transform menuTrans = APP.platform.createTransform();
+	
 	public void paint(RenderingContext ctxt) {
 		Menu menu = (Menu)APP.model;
 		
-		Transform origTrans = ctxt.getTransform();
+		ctxt.getTransform(origTransform);
 		
 		ctxt.translate(aabb.x, aabb.y);
 		
 		ctxt.setColor(Color.DARK_GRAY);
 		ctxt.fillRect(0, 0, (int)aabb.width, (int)aabb.height);
 		
-		Transform menuTrans = ctxt.getTransform();
+		ctxt.getTransform(menuTrans);
 		
 		ctxt.translate(
 				aabb.width/2 - Math.min(BYPASSAPP.titleBackground.getWidth(), aabb.width)/2,
@@ -104,7 +107,7 @@ public class MainMenuPanel extends Panel {
 		
 		menu.paint_panel(ctxt);
 		
-		ctxt.setTransform(origTrans);
+		ctxt.setTransform(origTransform);
 		
 	}
 	

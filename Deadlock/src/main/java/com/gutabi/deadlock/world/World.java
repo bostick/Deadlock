@@ -381,9 +381,14 @@ public class World extends PhysicsWorld {
 		background.render();
 	}
 	
+	
+	
+	Transform origTransformRenderPreview = APP.platform.createTransform();
+	RenderingContext ctxt = APP.platform.createRenderingContext();
+	
 	public void render_preview() {
 		
-		RenderingContext ctxt = APP.platform.createRenderingContext(previewImage);
+		APP.platform.setRenderingContextFields(ctxt, previewImage);
 		ctxt.cam = worldCamera;
 		
 		boolean oldDebug = APP.DEBUG_DRAW;
@@ -394,7 +399,7 @@ public class World extends PhysicsWorld {
 				0, 0,
 				(int)worldCamera.previewAABB.width, (int)worldCamera.previewAABB.height);
 		
-		Transform origTrans = ctxt.getTransform();
+		ctxt.getTransform(origTransformRenderPreview);
 		ctxt.translate(
 				worldCamera.previewAABB.width/2 - (worldCamera.previewPixelsPerMeter * quadrantMap.worldWidth / 2),
 				worldCamera.previewAABB.height/2 - (worldCamera.previewPixelsPerMeter * quadrantMap.worldHeight / 2));
@@ -405,16 +410,20 @@ public class World extends PhysicsWorld {
 		
 		graph.render_preview(ctxt);
 		
-		ctxt.setTransform(origTrans);
+		ctxt.setTransform(origTransformRenderPreview);
 		
 		APP.DEBUG_DRAW = oldDebug;
 		
 		ctxt.dispose();
 	}
 	
+	
+	
+	Transform origTransformPaintPanel = APP.platform.createTransform();
+	
 	public void paint_panel(RenderingContext ctxt) {
 		
-		Transform origTrans = ctxt.getTransform();
+		ctxt.getTransform(origTransformPaintPanel);
 		
 		background.paint_pixels(ctxt);
 		
@@ -445,7 +454,7 @@ public class World extends PhysicsWorld {
 			stats.paint(ctxt);
 		}
 		
-		ctxt.setTransform(origTrans);
+		ctxt.setTransform(origTransformPaintPanel);
 		
 //		Car c = carMap.findRedCar();
 //		shimmer.target = Point.worldToPanel(c.shape.aabb, worldCamera);
@@ -455,9 +464,13 @@ public class World extends PhysicsWorld {
 //		System.out.println(worldCamera.pixelsPerMeter);
 	}
 	
+	
+	
+	Transform origTransformPaintPreview = APP.platform.createTransform();
+	
 	public void paintPreview_controlPanel(RenderingContext ctxt) {
 		
-		Transform origTrans = ctxt.getTransform();
+		ctxt.getTransform(origTransformPaintPreview);
 		
 		ctxt.translate(worldCamera.previewAABB.x, worldCamera.previewAABB.y);
 		
@@ -478,13 +491,15 @@ public class World extends PhysicsWorld {
 		ctxt.setColor(Color.BLUE);
 		prev.draw(ctxt);
 		
-		ctxt.setTransform(origTrans);
-		
+		ctxt.setTransform(origTransformPaintPreview);
 	}
+	
+	
+	Transform origTransformPaintStats = APP.platform.createTransform();
 	
 	public void paintStats(RenderingContext ctxt) {
 		
-		Transform origTransform = ctxt.getTransform();
+		ctxt.getTransform(origTransformPaintStats);
 		
 		ctxt.paintString(0, 0, 1.0/ctxt.cam.pixelsPerMeter, "time: " + t);
 		
@@ -504,8 +519,7 @@ public class World extends PhysicsWorld {
 		
 		graph.paintStats(ctxt);
 		
-		ctxt.setTransform(origTransform);
-		
+		ctxt.setTransform(origTransformPaintStats);
 	}
 	
 	public boolean checkConsistency() {

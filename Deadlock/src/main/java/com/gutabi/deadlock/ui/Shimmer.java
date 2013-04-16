@@ -68,7 +68,7 @@ public class Shimmer {
 				p3 = new Point(Math.min(target.x + (bottom - target.brY)+5, target.brX), target.brY);
 			}
 			
-			Polygon poly = APP.platform.createPolygon(p0, p1, p3, p2);
+			Polygon poly = APP.platform.createPolygon4(p0, p1, p3, p2);
 			ctxt.setColor(Color.WHITE);
 			poly.paint(ctxt);
 			

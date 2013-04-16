@@ -13,22 +13,24 @@ public class MainView extends android.view.View {
 	
 	PlatformContentPane content;
 	
-	Paint paint = new Paint();
-	
 	public MainView(Context c, AttributeSet s) {
 		super(c, s);
+		
+//		ctxt = APP.platform.createRenderingContext();
 	}
 	
 	public void setContentPane(PlatformContentPane content) {
 		this.content = content;
 	}
 	
+	
+	
+	Paint paint = new Paint();
+	RenderingContext ctxt;
+	
 	public void onDraw(Canvas canvas) {
 		
-//		paint.setAntiAlias(false);
-//		paint.setDither(false);
-		
-		RenderingContext ctxt = APP.platform.createRenderingContext(canvas, paint);
+		APP.platform.setRenderingContextFields(ctxt, canvas, paint);
 		
 		content.paint(ctxt);
 	}

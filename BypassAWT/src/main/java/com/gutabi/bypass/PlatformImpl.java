@@ -29,6 +29,7 @@ import com.gutabi.bypass.geom.TriangleImpl;
 import com.gutabi.bypass.ui.ImageImpl;
 import com.gutabi.bypass.ui.PlatformContentPaneImpl;
 import com.gutabi.bypass.ui.paint.RenderingContextImpl;
+import com.gutabi.bypass.ui.paint.TransformImpl;
 import com.gutabi.deadlock.Platform;
 import com.gutabi.deadlock.Resource;
 import com.gutabi.deadlock.geom.AABB;
@@ -43,6 +44,7 @@ import com.gutabi.deadlock.geom.Triangle;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.Image;
 import com.gutabi.deadlock.ui.PlatformContentPane;
+import com.gutabi.deadlock.ui.Transform;
 import com.gutabi.deadlock.ui.paint.FontStyle;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 
@@ -51,19 +53,30 @@ public class PlatformImpl implements Platform {
 	public RootPaneContainer appContainer;
 	public RootPaneContainer debuggerContainer;
 	
-	public RenderingContext createRenderingContext(Object... args) {
+	public RenderingContext createRenderingContext() {
+		
+		return new RenderingContextImpl();
+	}
+	
+	public void setRenderingContextFields(RenderingContext a, Object... args) {
+		
+		RenderingContextImpl ctxt = (RenderingContextImpl)a;
+		
+//		Graphics2D g2 = (Graphics2D)args[0];
+//		ctxt.g2 = g2;
 		
 		if (args[0] instanceof Graphics2D) {
 			
 			Graphics2D g2 = (Graphics2D)args[0];
 			
-			return new RenderingContextImpl(g2);
+			ctxt.g2 = g2;
+			
 		} else {
 			
 			ImageImpl img = (ImageImpl)args[0];
 			Graphics2D g2 = img.img.createGraphics();
 			
-			return new RenderingContextImpl(g2); 
+			ctxt.g2 = g2; 
 		}
 		
 	}
@@ -337,8 +350,12 @@ public class PlatformImpl implements Platform {
 		return new CubicCurveImpl(start, c0, c1, end);
 	}
 	
-	public Polygon createPolygon(Point... pts) {
-		return new PolygonImpl(pts);
+	public Polygon createPolygon4(Point p0, Point p1, Point p2, Point p3) {
+		return new PolygonImpl(p0, p1, p2, p3);
 	}
 	
+	
+	public Transform createTransform() {
+		return new TransformImpl();
+	}
 }

@@ -116,13 +116,16 @@ public class StopSign extends Entity {
 		return null;
 	}
 	
+	
+	Transform origTransform = APP.platform.createTransform();
+	
 	public void paint(RenderingContext ctxt) {
 		
 		if (APP.STOPSIGN_DRAW) {
 			
 			if (enabled) {
 				
-				Transform origTransform = ctxt.getTransform();
+				ctxt.getTransform(origTransform);
 				
 				ctxt.translate(p.x - StopSign.STOPSIGN_SIZE/2, p.y - StopSign.STOPSIGN_SIZE/2);
 				

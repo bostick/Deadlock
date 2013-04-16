@@ -147,9 +147,13 @@ public abstract class Car extends PhysicsBody {
 	
 	public abstract void paint(RenderingContext ctxt);
 	
+	
+	
+	Transform origTransformImage = APP.platform.createTransform();
+	
 	protected void paintImage(RenderingContext ctxt) {
 			
-		Transform origTransform = ctxt.getTransform();
+		ctxt.getTransform(origTransformImage);
 		if (inMerger) {
 			ctxt.setAlpha(0.5);
 		}
@@ -163,43 +167,50 @@ public abstract class Car extends PhysicsBody {
 		if (inMerger) {
 			ctxt.setAlpha(1.0);
 		}
-		ctxt.setTransform(origTransform);
-		
+		ctxt.setTransform(origTransformImage);
 	}
 	
 	protected void paintRect(RenderingContext ctxt) {
 		shape.paint(ctxt);
 	}
 	
+	
+	
+	Transform origTransformBrakes = APP.platform.createTransform();
+	Transform brakeTransformBrakes = APP.platform.createTransform();
+	
 	protected void paintBrakes(RenderingContext ctxt) {
 		
-		Transform origTransform = ctxt.getTransform();
+		ctxt.getTransform(origTransformBrakes);
 		
 		ctxt.translate(center.x, center.y);
 		ctxt.rotate(angle);
 		
-		Transform brakeTransform = ctxt.getTransform();
+		ctxt.getTransform(brakeTransformBrakes);
 		
 		APP.spriteSheet.paint(ctxt, SpriteSheetSprite.BRAKE, ctxt.cam.pixelsPerMeter, 0, 0, BRAKE_SIZE, BRAKE_SIZE);
 		
-		ctxt.setTransform(brakeTransform);
+		ctxt.setTransform(brakeTransformBrakes);
 		
 		APP.spriteSheet.paint(ctxt, SpriteSheetSprite.BRAKE, ctxt.cam.pixelsPerMeter, 0, 0, BRAKE_SIZE, BRAKE_SIZE);
 		
-		ctxt.setTransform(origTransform);
+		ctxt.setTransform(origTransformBrakes);
 		
 	}
 	
+	
+	Transform origTransformID = APP.platform.createTransform();
+	
 	public void paintID(RenderingContext ctxt) {
 		
-		Transform origTransform = ctxt.getTransform();
+		ctxt.getTransform(origTransformID);
 		
 		ctxt.translate(center.x, center.y);
 		
 		ctxt.setColor(Color.WHITE);
 		ctxt.paintString(localULX, 0.0, 2.0/ctxt.cam.pixelsPerMeter, Integer.toString(id));
 		
-		ctxt.setTransform(origTransform);
+		ctxt.setTransform(origTransformID);
 	}
 
 }

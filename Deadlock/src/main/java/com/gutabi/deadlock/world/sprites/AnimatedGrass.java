@@ -77,9 +77,13 @@ public class AnimatedGrass {
 		}
 	}
 	
+	
+	
+	Transform origTransform = APP.platform.createTransform();
+	
 	private void paint(RenderingContext ctxt, int index) {
 		
-		Transform origTransform = ctxt.getTransform();
+		ctxt.getTransform(origTransform);
 		
 		ctxt.translate(p.x - AnimatedGrass.GRASS_SIZE/2, p.y - AnimatedGrass.GRASS_SIZE/2);
 		

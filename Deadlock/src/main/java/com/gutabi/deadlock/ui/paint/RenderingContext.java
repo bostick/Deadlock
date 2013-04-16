@@ -31,7 +31,7 @@ public abstract class RenderingContext {
 	
 	public abstract void setFont(Resource fontFile, FontStyle style, int size);
 	
-	public abstract Transform getTransform();
+	public abstract void getTransform(Transform t);
 	
 	public abstract void scale(double s);
 	

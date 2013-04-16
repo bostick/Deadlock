@@ -1,63 +1,4 @@
 
-04-12 09:15:37.921: E/AndroidRuntime(32072): FATAL EXCEPTION: Thread-11
-04-12 09:15:37.921: E/AndroidRuntime(32072): java.lang.ClassCastException: com.gutabi.bypass.menu.MainMenu
-04-12 09:15:37.921: E/AndroidRuntime(32072): 	at com.gutabi.bypass.level.BypassWorld.handleZooming(BypassWorld.java:319)
-04-12 09:15:37.921: E/AndroidRuntime(32072): 	at com.gutabi.bypass.level.BypassDriver.postStep(BypassDriver.java:20)
-04-12 09:15:37.921: E/AndroidRuntime(32072): 	at com.gutabi.bypass.level.BypassCar.postStep(BypassCar.java:155)
-04-12 09:15:37.921: E/AndroidRuntime(32072): 	at com.gutabi.deadlock.world.CarMap.postStep(CarMap.java:106)
-04-12 09:15:37.921: E/AndroidRuntime(32072): 	at com.gutabi.deadlock.world.World.postStep(World.java:155)
-04-12 09:15:37.921: E/AndroidRuntime(32072): 	at com.gutabi.deadlock.world.World.integrate(World.java:133)
-04-12 09:15:37.921: E/AndroidRuntime(32072): 	at com.gutabi.deadlock.world.SimulationRunnable.run(SimulationRunnable.java:64)
-04-12 09:15:37.921: E/AndroidRuntime(32072): 	at java.lang.Thread.run(Thread.java:1019)
-
-04-12 09:02:39.007: E/AndroidRuntime(32008): FATAL EXCEPTION: main
-04-12 09:02:39.007: E/AndroidRuntime(32008): java.lang.OutOfMemoryError: bitmap size exceeds VM budget
-04-12 09:02:39.007: E/AndroidRuntime(32008): 	at android.graphics.Bitmap.nativeCreate(Native Method)
-04-12 09:02:39.007: E/AndroidRuntime(32008): 	at android.graphics.Bitmap.createBitmap(Bitmap.java:507)
-04-12 09:02:39.007: E/AndroidRuntime(32008): 	at com.gutabi.bypass.PlatformImpl.createTransparentImage(PlatformImpl.java:116)
-04-12 09:02:39.007: E/AndroidRuntime(32008): 	at com.gutabi.deadlock.ui.Label.render(Label.java:67)
-04-12 09:02:39.007: E/AndroidRuntime(32008): 	at com.gutabi.deadlock.ui.MenuItem.render(MenuItem.java:67)
-04-12 09:02:39.007: E/AndroidRuntime(32008): 	at com.gutabi.deadlock.ui.Menu.render(Menu.java:209)
-04-12 09:02:39.007: E/AndroidRuntime(32008): 	at com.gutabi.bypass.menu.LevelMenu.action(LevelMenu.java:37)
-04-12 09:02:39.007: E/AndroidRuntime(32008): 	at com.gutabi.bypass.menu.MainMenu$1.action(MainMenu.java:18)
-04-12 09:02:39.007: E/AndroidRuntime(32008): 	at com.gutabi.deadlock.ui.Menu.released(Menu.java:99)
-04-12 09:02:39.007: E/AndroidRuntime(32008): 	at com.gutabi.deadlock.ui.MenuTool.released(MenuTool.java:151)
-04-12 09:02:39.007: E/AndroidRuntime(32008): 	at com.gutabi.deadlock.ui.Panel.released(Panel.java:33)
-04-12 09:02:39.007: E/AndroidRuntime(32008): 	at com.gutabi.deadlock.ui.PlatformContentPane.releasedDriver(PlatformContentPane.java:62)
-04-12 09:02:39.007: E/AndroidRuntime(32008): 	at com.gutabi.bypass.MainActivity.onTouchEvent(MainActivity.java:90)
-04-12 09:02:39.007: E/AndroidRuntime(32008): 	at android.app.Activity.dispatchTouchEvent(Activity.java:2145)
-04-12 09:02:39.007: E/AndroidRuntime(32008): 	at com.android.internal.policy.impl.PhoneWindow$DecorView.dispatchTouchEvent(PhoneWindow.java:1903)
-04-12 09:02:39.007: E/AndroidRuntime(32008): 	at android.view.ViewRoot.deliverPointerEvent(ViewRoot.java:2194)
-04-12 09:02:39.007: E/AndroidRuntime(32008): 	at android.view.ViewRoot.handleMessage(ViewRoot.java:1878)
-04-12 09:02:39.007: E/AndroidRuntime(32008): 	at android.os.Handler.dispatchMessage(Handler.java:99)
-04-12 09:02:39.007: E/AndroidRuntime(32008): 	at android.os.Looper.loop(Looper.java:130)
-04-12 09:02:39.007: E/AndroidRuntime(32008): 	at android.app.ActivityThread.main(ActivityThread.java:3806)
-04-12 09:02:39.007: E/AndroidRuntime(32008): 	at java.lang.reflect.Method.invokeNative(Native Method)
-04-12 09:02:39.007: E/AndroidRuntime(32008): 	at java.lang.reflect.Method.invoke(Method.java:507)
-04-12 09:02:39.007: E/AndroidRuntime(32008): 	at com.android.internal.os.ZygoteInit$MethodAndArgsCaller.run(ZygoteInit.java:839)
-04-12 09:02:39.007: E/AndroidRuntime(32008): 	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:597)
-04-12 09:02:39.007: E/AndroidRuntime(32008): 	at dalvik.system.NativeStart.main(Native Method)
-
-
-
-
-
-
-get BypassAWT build working
-
-get BypassAndroid working (don't see MainActivity crap on startup)
-
-switch over to using bypass everywhere
-update artwork
-
-icons for everything
-
-
-
-
-
-
-
 scoring
 time taken
 moves made
@@ -94,6 +35,8 @@ think about mutable shapes, etc.
 activity lifecycle
 
 problem with backing out, and starting again, threads
+
+prevent drawing when not on screen
 
 http://developer.android.com/reference/android/app/Activity.html#ActivityLifecycle
 
@@ -133,6 +76,16 @@ allow custom boards? does bigger than 6x6 work?
 
 
 DONE:
+
+get BypassAWT build working
+
+get BypassAndroid working (don't see MainActivity crap on startup)
+
+switch over to using bypass everywhere
+update artwork
+
+icons for everything
+
 
 save metadata in levels.zip
 number of levels, etc.

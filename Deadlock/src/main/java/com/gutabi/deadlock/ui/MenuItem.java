@@ -48,12 +48,16 @@ public abstract class MenuItem {
 	
 	public abstract void action();
 	
+	
+	
+	Transform origTransformRender = APP.platform.createTransform();
+	
 	public void render(RenderingContext ctxt) {
 		
-		Transform trans = ctxt.getTransform();
+		ctxt.getTransform(origTransformRender);
 		
-		int x = (int)trans.getTranslateX();
-		int y = (int)trans.getTranslateY();
+		int x = (int)origTransformRender.getTranslateX();
+		int y = (int)origTransformRender.getTranslateY();
 		
 		lab.setLocation(0, 20);
 		lab.setDimension(menu.menuItemWidest[c], lab.localAABB.height);
@@ -68,30 +72,38 @@ public abstract class MenuItem {
 		aabb = new AABB(x, y, lab.aabb.width, 20 + lab.aabb.height + 20);
 	}
 	
+	
+	
+	Transform origTransformPaint = APP.platform.createTransform();
+	
 	public void paint(RenderingContext ctxt) {
 		
-		Transform origTransform = ctxt.getTransform();
+		ctxt.getTransform(origTransformPaint);
 		
 		ctxt.translate(aabb.x, aabb.y);
 		
 		lab.paint(ctxt);
 		
-		ctxt.setTransform(origTransform);
+		ctxt.setTransform(origTransformPaint);
 		
 		ctxt.setColor(Color.BLUE);
 		ctxt.setStroke(0.0, Cap.SQUARE, Join.MITER);
 		aabb.draw(ctxt);
 	}
 	
+	
+	
+	Transform origTransformPaintHilited = APP.platform.createTransform();
+	
 	public void paintHilited(RenderingContext ctxt) {
 		
-		Transform origTransform = ctxt.getTransform();
+		ctxt.getTransform(origTransformPaintHilited);
 		
 		ctxt.setColor(Color.RED);
 		ctxt.setStroke(0.0, Cap.SQUARE, Join.MITER);
 		aabb.draw(ctxt);
 		
-		ctxt.setTransform(origTransform);
+		ctxt.setTransform(origTransformPaintHilited);
 	}
 	
 }

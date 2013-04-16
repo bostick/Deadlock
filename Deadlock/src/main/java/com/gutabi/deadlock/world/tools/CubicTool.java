@@ -169,12 +169,12 @@ public class CubicTool extends WorldToolBase {
 		case FREE:
 			APP.tool = new RegularTool();
 			APP.tool.setPoint(world.quadrantMap.getPoint(world.lastMovedOrDraggedWorldPoint));
-			APP.appScreen.contentPane.repaint();
+//			APP.appScreen.contentPane.repaint();
 			break;
 		case SET:
 			mode = CubicToolMode.FREE;
 			APP.tool.setPoint(world.quadrantMap.getPoint(world.lastMovedOrDraggedWorldPoint));
-			APP.appScreen.contentPane.repaint();
+//			APP.appScreen.contentPane.repaint();
 			break;
 		case KNOB:
 			assert false;
@@ -188,7 +188,7 @@ public class CubicTool extends WorldToolBase {
 		switch (mode) {
 		case FREE:
 			mode = CubicToolMode.SET;
-			APP.appScreen.contentPane.repaint();
+//			APP.appScreen.contentPane.repaint();
 			break;
 		case SET:
 			
@@ -208,7 +208,7 @@ public class CubicTool extends WorldToolBase {
 			
 			world.render_worldPanel();
 			world.render_preview();
-			APP.appScreen.contentPane.repaint();
+//			APP.appScreen.contentPane.repaint();
 			break;
 		case KNOB:
 			assert false;
@@ -224,7 +224,7 @@ public class CubicTool extends WorldToolBase {
 		switch (mode) {
 		case FREE:
 			APP.tool.setPoint(world.quadrantMap.getPoint(world.lastMovedOrDraggedWorldPoint));
-			APP.appScreen.contentPane.repaint();
+//			APP.appScreen.contentPane.repaint();
 			break;
 		case SET:
 		case KNOB:
@@ -274,7 +274,7 @@ public class CubicTool extends WorldToolBase {
 		case KNOB:
 			Point diff = new Point(world.lastDraggedWorldPoint.x - world.lastPressedWorldPoint.x, world.lastDraggedWorldPoint.y - world.lastPressedWorldPoint.y);
 			knob.drag(origKnobCenter.plus(diff));
-			APP.appScreen.contentPane.repaint();
+//			APP.appScreen.contentPane.repaint();
 			break;
 		}
 	}
@@ -291,10 +291,14 @@ public class CubicTool extends WorldToolBase {
 			break;
 		case KNOB:
 			mode = CubicToolMode.SET;
-			APP.appScreen.contentPane.repaint();
+//			APP.appScreen.contentPane.repaint();
 			break;
 		}
 	}
+	
+	
+	
+	Transform origTransform = APP.platform.createTransform();
 	
 	public void paint_panel(RenderingContext ctxt) {
 		World world = (World)APP.model;
@@ -307,7 +311,7 @@ public class CubicTool extends WorldToolBase {
 		ctxt.setXORMode(Color.BLACK);
 		ctxt.setStroke(0.0, Cap.SQUARE, Join.MITER);
 		
-		Transform origTransform = ctxt.getTransform();
+		ctxt.getTransform(origTransform);
 		
 		ctxt.scale(world.worldCamera.pixelsPerMeter);
 		ctxt.translate(-world.worldCamera.worldViewport.x, -world.worldCamera.worldViewport.y);

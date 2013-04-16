@@ -58,6 +58,9 @@ public class Label {
 		localAABB = APP.platform.bounds(text, fontFile, fontStyle, fontSize);
 	}
 	
+	
+	RenderingContext ctxt = APP.platform.createRenderingContext();
+	
 	public void render() {
 		
 		aabb = new AABB(aabb.x, aabb.y, localAABB.width, localAABB.height);
@@ -66,7 +69,7 @@ public class Label {
 		
 		img = APP.platform.createTransparentImage((int)aabb.width, (int)aabb.height);
 		
-		RenderingContext ctxt = APP.platform.createRenderingContext(img);
+		APP.platform.setRenderingContextFields(ctxt, img);
 		
 		ctxt.setColor(color);
 		

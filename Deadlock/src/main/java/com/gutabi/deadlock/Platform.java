@@ -14,12 +14,16 @@ import com.gutabi.deadlock.geom.Triangle;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.Image;
 import com.gutabi.deadlock.ui.PlatformContentPane;
+import com.gutabi.deadlock.ui.Transform;
 import com.gutabi.deadlock.ui.paint.FontStyle;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 
 public interface Platform {
 
-	public abstract RenderingContext createRenderingContext(Object... args);
+	public abstract RenderingContext createRenderingContext();
+	
+	public abstract void setRenderingContextFields(RenderingContext ctxt, Object... args);
+	
 	
 	/*
 	 * font engine
@@ -82,7 +86,8 @@ public interface Platform {
 	
 	public abstract CubicCurve createCubicCurve(Point start, Point c0, Point c1, Point end);
 	
-	public abstract Polygon createPolygon(Point... pts);
+	public abstract Polygon createPolygon4(Point p0, Point p1, Point p2, Point p3);
 	
+	public abstract Transform createTransform();
 	
 }

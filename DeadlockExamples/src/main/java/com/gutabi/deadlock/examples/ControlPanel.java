@@ -62,8 +62,8 @@ public class ControlPanel extends Panel {
 			public void action() {
 				selected = !selected;
 				render();
-				APP.appScreen.contentPane.repaint();
-				APP.debuggerScreen.contentPane.repaint();
+//				APP.appScreen.contentPane.repaint();
+//				APP.debuggerScreen.contentPane.repaint();
 				
 				APP.NORMALCAR = selected;
 			}
@@ -84,8 +84,8 @@ public class ControlPanel extends Panel {
 			public void action() {
 				selected = !selected;
 				render();
-				APP.appScreen.contentPane.repaint();
-				APP.debuggerScreen.contentPane.repaint();
+//				APP.appScreen.contentPane.repaint();
+//				APP.debuggerScreen.contentPane.repaint();
 				
 				APP.FASTCAR = selected;
 			}
@@ -107,8 +107,8 @@ public class ControlPanel extends Panel {
 			public void action() {
 				selected = !selected;
 				render();
-				APP.appScreen.contentPane.repaint();
-				APP.debuggerScreen.contentPane.repaint();
+//				APP.appScreen.contentPane.repaint();
+//				APP.debuggerScreen.contentPane.repaint();
 				
 				APP.REALLYCAR = selected;
 			}
@@ -129,8 +129,8 @@ public class ControlPanel extends Panel {
 			public void action() {
 				selected = !selected;
 				render();
-				APP.appScreen.contentPane.repaint();
-				APP.debuggerScreen.contentPane.repaint();
+//				APP.appScreen.contentPane.repaint();
+//				APP.debuggerScreen.contentPane.repaint();
 				
 				APP.TRUCK = selected;
 			}
@@ -171,8 +171,8 @@ public class ControlPanel extends Panel {
 				
 				render();
 				stopButton.render();
-				APP.appScreen.contentPane.repaint();
-				APP.debuggerScreen.contentPane.repaint();
+//				APP.appScreen.contentPane.repaint();
+//				APP.debuggerScreen.contentPane.repaint();
 			}
 		};
 		startButton.setLocation(5, 140);
@@ -198,8 +198,8 @@ public class ControlPanel extends Panel {
 				
 				render();
 				startButton.render();
-				APP.appScreen.contentPane.repaint();
-				APP.debuggerScreen.contentPane.repaint();
+//				APP.appScreen.contentPane.repaint();
+//				APP.debuggerScreen.contentPane.repaint();
 			}
 		};
 		stopButton.setLocation(5 + startButton.aabb.width + 5, startButton.aabb.y + stopButton.aabb.height);
@@ -226,15 +226,15 @@ public class ControlPanel extends Panel {
 				
 				selected = !selected;
 				render();
-				APP.appScreen.contentPane.repaint();
-				APP.debuggerScreen.contentPane.repaint();
+//				APP.appScreen.contentPane.repaint();
+//				APP.debuggerScreen.contentPane.repaint();
 				
 				APP.FPS_DRAW = selected;
 				
 				world.render_worldPanel();
 				
-				APP.appScreen.contentPane.repaint();
-				APP.debuggerScreen.contentPane.repaint();
+//				APP.appScreen.contentPane.repaint();
+//				APP.debuggerScreen.contentPane.repaint();
 			}
 		};
 		fpsCheckBox.selected = APP.FPS_DRAW;
@@ -255,13 +255,13 @@ public class ControlPanel extends Panel {
 				
 				selected = !selected;
 				render();
-				APP.appScreen.contentPane.repaint();
-				APP.debuggerScreen.contentPane.repaint();
+//				APP.appScreen.contentPane.repaint();
+//				APP.debuggerScreen.contentPane.repaint();
 				
 				APP.STOPSIGN_DRAW = selected;
 				
 				world.render_worldPanel();
-				APP.appScreen.contentPane.repaint();
+//				APP.appScreen.contentPane.repaint();
 			}
 		};
 		stopSignCheckBox.selected = APP.STOPSIGN_DRAW;
@@ -280,13 +280,13 @@ public class ControlPanel extends Panel {
 			public void action() {
 				selected = !selected;
 				render();
-				APP.appScreen.contentPane.repaint();
-				APP.debuggerScreen.contentPane.repaint();
+//				APP.appScreen.contentPane.repaint();
+//				APP.debuggerScreen.contentPane.repaint();
 				
 				APP.CARTEXTURE_DRAW = selected;
 				
-				APP.appScreen.contentPane.repaint();
-				APP.debuggerScreen.contentPane.repaint();
+//				APP.appScreen.contentPane.repaint();
+//				APP.debuggerScreen.contentPane.repaint();
 			}
 		};
 		carTextureCheckBox.selected = APP.CARTEXTURE_DRAW;
@@ -305,13 +305,13 @@ public class ControlPanel extends Panel {
 			public void action() {
 				selected = !selected;
 				render();
-				APP.appScreen.contentPane.repaint();
-				APP.debuggerScreen.contentPane.repaint();
+//				APP.appScreen.contentPane.repaint();
+//				APP.debuggerScreen.contentPane.repaint();
 				
 				APP.EXPLOSIONS_DRAW = selected;
 				
-				APP.appScreen.contentPane.repaint();
-				APP.debuggerScreen.contentPane.repaint();
+//				APP.appScreen.contentPane.repaint();
+//				APP.debuggerScreen.contentPane.repaint();
 			}
 		};
 		explosionsCheckBox.selected = APP.EXPLOSIONS_DRAW;
@@ -332,14 +332,14 @@ public class ControlPanel extends Panel {
 				
 				selected = !selected;
 				render();
-				APP.appScreen.contentPane.repaint();
-				APP.debuggerScreen.contentPane.repaint();
+//				APP.appScreen.contentPane.repaint();
+//				APP.debuggerScreen.contentPane.repaint();
 				
 				APP.DEBUG_DRAW = selected;
 				
 				world.render_worldPanel();
-				APP.appScreen.contentPane.repaint();
-				APP.debuggerScreen.contentPane.repaint();
+//				APP.appScreen.contentPane.repaint();
+//				APP.debuggerScreen.contentPane.repaint();
 			}
 		};
 		debugCheckBox.selected = APP.DEBUG_DRAW;
@@ -439,18 +439,22 @@ public class ControlPanel extends Panel {
 				
 				world.render_worldPanel();
 				world.render_preview();
-				APP.appScreen.contentPane.repaint();
-				APP.debuggerScreen.contentPane.repaint();
+//				APP.appScreen.contentPane.repaint();
+//				APP.debuggerScreen.contentPane.repaint();
 			}
 			
 		}
 		
 	}
 	
+	
+	
+	Transform origTransform = APP.platform.createTransform();
+	
 	public void paint(RenderingContext ctxt) {
 		World world = (World)APP.model;
 		
-		Transform origTransform = ctxt.getTransform();
+		ctxt.getTransform(origTransform);
 		
 		ctxt.translate(aabb.x, aabb.y);
 		

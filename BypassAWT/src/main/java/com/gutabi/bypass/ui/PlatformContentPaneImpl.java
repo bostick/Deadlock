@@ -4,9 +4,11 @@ import static com.gutabi.deadlock.DeadlockApplication.APP;
 
 import java.awt.Container;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 
+import com.gutabi.bypass.ui.paint.RenderingContextImpl;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.PlatformContentPane;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
@@ -21,10 +23,14 @@ public class PlatformContentPaneImpl extends PlatformContentPane implements java
 	public PlatformContentPaneImpl() {
 		
 		j = new Container() {
+			
+			
+			RenderingContext ctxt = APP.platform.createRenderingContext();
+			
 			public void paint(Graphics g) {
 				super.paint(g);
 				
-				RenderingContext ctxt = APP.platform.createRenderingContext(g);
+				((RenderingContextImpl)ctxt).g2 = (Graphics2D)g;
 				
 				PlatformContentPaneImpl.this.paint(ctxt);
 				

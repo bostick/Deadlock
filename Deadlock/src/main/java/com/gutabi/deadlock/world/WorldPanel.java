@@ -32,12 +32,15 @@ public class WorldPanel extends Panel {
 		world.panelPostDisplay();
 	}
 	
+	
+	Transform origTransform = APP.platform.createTransform();
+	
 	public void paint(RenderingContext ctxt) {
 		World world = (World)APP.model;
 		
 		ctxt.cam = world.worldCamera;
 		
-		Transform origTrans = ctxt.getTransform();
+		ctxt.getTransform(origTransform);
 		
 		ctxt.translate(aabb.x, aabb.y);
 		
@@ -45,7 +48,7 @@ public class WorldPanel extends Panel {
 		
 		APP.tool.paint_panel(ctxt);
 		
-		ctxt.setTransform(origTrans);
+		ctxt.setTransform(origTransform);
 	}
 
 }

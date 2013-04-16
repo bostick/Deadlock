@@ -201,7 +201,7 @@ public class BypassCarTool extends WorldToolBase {
 			int moves = car.driver.toolOrigOverallPos.movesDistance(car.driver.toolCoastingGoal, car);
 			world.curLevel.userMoves += moves;
 			
-			APP.debuggerScreen.contentPane.repaint();
+//			APP.debuggerScreen.contentPane.repaint();
 			
 		} finally {
 			dragVector = null;
@@ -574,7 +574,7 @@ public class BypassCarTool extends WorldToolBase {
 		
 		world.handleZooming(car);
 		
-		APP.appScreen.contentPane.repaint();
+//		APP.appScreen.contentPane.repaint();
 		
 	}
 	

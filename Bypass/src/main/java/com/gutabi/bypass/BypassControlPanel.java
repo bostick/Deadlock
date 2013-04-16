@@ -46,10 +46,13 @@ public class BypassControlPanel extends Panel {
 		
 	}
 	
+	
+	Transform origTransform = APP.platform.createTransform();
+	
 	public void paint(RenderingContext ctxt) {
 		BypassWorld world = (BypassWorld)APP.model;
 		
-		Transform origTransform = ctxt.getTransform();
+		ctxt.getTransform(origTransform);
 		
 		ctxt.translate(aabb.x, aabb.y);
 		
@@ -84,14 +87,14 @@ public class BypassControlPanel extends Panel {
 				
 				selected = !selected;
 				render();
-				APP.appScreen.contentPane.repaint();
-				APP.debuggerScreen.contentPane.repaint();
+//				APP.appScreen.contentPane.repaint();
+//				APP.debuggerScreen.contentPane.repaint();
 				
 				APP.DEBUG_DRAW = selected;
 				
 				world.render_worldPanel();
-				APP.appScreen.contentPane.repaint();
-				APP.debuggerScreen.contentPane.repaint();
+//				APP.appScreen.contentPane.repaint();
+//				APP.debuggerScreen.contentPane.repaint();
 			}
 		};
 		debugCheckBox.selected = APP.DEBUG_DRAW;

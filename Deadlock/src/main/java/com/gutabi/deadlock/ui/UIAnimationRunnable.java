@@ -18,6 +18,10 @@ public class UIAnimationRunnable implements Runnable {
 				
 				APP.appScreen.contentPane.repaint();
 				
+				if (APP.debuggerScreen != null) {
+					APP.debuggerScreen.contentPane.repaint();
+				}
+				
 			} // outer
 		
 		} catch (InterruptedException e) {

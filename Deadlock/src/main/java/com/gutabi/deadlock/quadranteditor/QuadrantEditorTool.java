@@ -62,7 +62,7 @@ public class QuadrantEditorTool extends Tool {
 			
 		}
 		
-		APP.appScreen.contentPane.repaint();
+//		APP.appScreen.contentPane.repaint();
 		
 	}
 	
@@ -101,7 +101,7 @@ public class QuadrantEditorTool extends Tool {
 				
 				editor.world.render_worldPanel();
 				
-				APP.appScreen.contentPane.repaint();
+//				APP.appScreen.contentPane.repaint();
 				
 			} else {
 				

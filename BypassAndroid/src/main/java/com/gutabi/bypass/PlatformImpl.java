@@ -12,7 +12,6 @@ import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.util.Log;
 
-import com.gutabi.bypass.R;
 import com.gutabi.bypass.ResourceImpl.ResourceType;
 import com.gutabi.bypass.geom.CircleImpl;
 import com.gutabi.bypass.geom.CubicCurveImpl;
@@ -26,6 +25,7 @@ import com.gutabi.bypass.geom.TriangleImpl;
 import com.gutabi.bypass.ui.ImageImpl;
 import com.gutabi.bypass.ui.PlatformContentPaneImpl;
 import com.gutabi.bypass.ui.paint.RenderingContextImpl;
+import com.gutabi.bypass.ui.paint.TransformImpl;
 import com.gutabi.deadlock.Platform;
 import com.gutabi.deadlock.Resource;
 import com.gutabi.deadlock.geom.AABB;
@@ -41,6 +41,7 @@ import com.gutabi.deadlock.geom.Triangle;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.Image;
 import com.gutabi.deadlock.ui.PlatformContentPane;
+import com.gutabi.deadlock.ui.Transform;
 import com.gutabi.deadlock.ui.paint.FontStyle;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 
@@ -55,13 +56,24 @@ public class PlatformImpl implements Platform {
 		this.container = container;
 	}
 	
-	public RenderingContext createRenderingContext(Object... args) {
+	public RenderingContext createRenderingContext() {
+		return new RenderingContextImpl();
+	}
+	
+	
+	Paint imgPaint = new Paint();
+	
+	public void setRenderingContextFields(RenderingContext a, Object... args) {
+		
+		RenderingContextImpl ctxt = (RenderingContextImpl)a;
 		
 		if (args[0] instanceof Canvas) {
 			
 			Canvas c = (Canvas)args[0];
+			Paint p = (Paint)args[1];
 			
-			return new RenderingContextImpl(c, new Paint());
+			ctxt.canvas = c;
+			ctxt.paint = p;
 			
 		} else {
 			
@@ -69,12 +81,13 @@ public class PlatformImpl implements Platform {
 			Bitmap b = img.b;
 			Canvas c = new Canvas(b);
 			
-			return new RenderingContextImpl(c, new Paint());
+			ctxt.canvas = c;
+			ctxt.paint = imgPaint;
 			
 		}
 		
 	}
-
+	
 	/*
 	 * font engine
 	 */
@@ -289,8 +302,12 @@ public class PlatformImpl implements Platform {
 		return new CubicCurveImpl(start, c0, c1, end);
 	}
 	
-	public Polygon createPolygon(Point... pts) {
-		return new PolygonImpl(pts);
+	public Polygon createPolygon4(Point p0, Point p1, Point p2, Point p3) {
+		return new PolygonImpl(p0, p1, p2, p3);
 	}
 	
+	
+	public Transform createTransform() {
+		return new TransformImpl();
+	}
 }

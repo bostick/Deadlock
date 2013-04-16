@@ -12,15 +12,14 @@ public class PolygonImpl extends Polygon {
 	
 	Path p;
 	
-	public PolygonImpl(Point... pts) {
-		super(pts);
+	public PolygonImpl(Point p0, Point p1, Point p2, Point p3) {
+		super(p0, p1, p2, p3);
 		
 		p = new Path();
-		p.moveTo((float)pts[0].x, (float)pts[0].y);
-		for (int i = 1; i < pts.length; i++) {
-			Point pp = pts[i];
-			p.lineTo((float)pp.x, (float)pp.y);
-		}
+		p.moveTo((float)p0.x, (float)p0.y);
+		p.lineTo((float)p1.x, (float)p1.y);
+		p.lineTo((float)p2.x, (float)p2.y);
+		p.lineTo((float)p3.x, (float)p3.y);
 		p.close();
 		
 	}

@@ -24,11 +24,11 @@ public abstract class WorldToolBase extends Tool {
 		setPoint(world.quadrantMap.getPoint(world.lastMovedOrDraggedWorldPoint));
 		
 		world.render_worldPanel();
-		APP.appScreen.contentPane.repaint();
+//		APP.appScreen.contentPane.repaint();
 		
 		if (world.previewImage != null) {
 			world.render_preview();
-			APP.debuggerScreen.contentPane.repaint();
+//			APP.debuggerScreen.contentPane.repaint();
 		}
 	}
 
@@ -44,8 +44,8 @@ public abstract class WorldToolBase extends Tool {
 		world.render_worldPanel();
 		world.render_preview();
 		
-		APP.appScreen.contentPane.repaint();
-		APP.debuggerScreen.contentPane.repaint();
+//		APP.appScreen.contentPane.repaint();
+//		APP.debuggerScreen.contentPane.repaint();
 		
 	}
 
@@ -59,11 +59,11 @@ public abstract class WorldToolBase extends Tool {
 		world.quadrantMap.computeGridSpacing(world.worldCamera);
 		
 		world.render_worldPanel();
-		APP.appScreen.contentPane.repaint();
+//		APP.appScreen.contentPane.repaint();
 		
 		if (world.previewImage != null) {
 			world.render_preview();
-			APP.debuggerScreen.contentPane.repaint();
+//			APP.debuggerScreen.contentPane.repaint();
 		}
 	}
 	

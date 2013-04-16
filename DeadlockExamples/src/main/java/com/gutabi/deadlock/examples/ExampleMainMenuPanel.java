@@ -67,17 +67,22 @@ public class ExampleMainMenuPanel extends Panel {
 		menu.setLocation(x, y);
 	}
 	
+	
+	
+	Transform origTransform = APP.platform.createTransform();
+	Transform menuTransform = APP.platform.createTransform();
+	
 	public void paint(RenderingContext ctxt) {
 		Menu menu = (Menu)APP.model;
 		
-		Transform origTrans = ctxt.getTransform();
+		ctxt.getTransform(origTransform);
 		
 		ctxt.translate(aabb.x, aabb.y);
 		
 		ctxt.setColor(Color.DARK_GRAY);
 		ctxt.fillRect(0, 0, (int)aabb.width, (int)aabb.height);
 		
-		Transform menuTrans = ctxt.getTransform();
+		ctxt.getTransform(menuTransform);
 		
 		ctxt.translate(
 				aabb.width/2 - Math.min(EXAMPLEAPP.titleBackground.getWidth(), aabb.width)/2,
@@ -87,25 +92,25 @@ public class ExampleMainMenuPanel extends Panel {
 				0, 0, Math.min(EXAMPLEAPP.titleBackground.getWidth(), (int)aabb.width), EXAMPLEAPP.titleBackground.getHeight(),
 				0, 0, Math.min(EXAMPLEAPP.titleBackground.getWidth(), (int)aabb.width), EXAMPLEAPP.titleBackground.getHeight());
 		
-		ctxt.setTransform(menuTrans);
+		ctxt.setTransform(menuTransform);
 		
 		ctxt.translate(aabb.width/2 - EXAMPLEAPP.title_white.getWidth()/2, TITLE_CENTER_Y - EXAMPLEAPP.title_white.getHeight()/2);
 		ctxt.paintImage(EXAMPLEAPP.title_white,
 				0, 0, EXAMPLEAPP.title_white.getWidth(), EXAMPLEAPP.title_white.getHeight(),
 				0, 0, EXAMPLEAPP.title_white.getWidth(), EXAMPLEAPP.title_white.getHeight());
 		
-		ctxt.setTransform(menuTrans);
+		ctxt.setTransform(menuTransform);
 		
 		ctxt.translate(aabb.width/2 - EXAMPLEAPP.copyright.getWidth()/2, COPYRIGHT_CENTER_Y - EXAMPLEAPP.copyright.getHeight()/2);
 		ctxt.paintImage(EXAMPLEAPP.copyright,
 				0, 0, EXAMPLEAPP.copyright.getWidth(), EXAMPLEAPP.copyright.getHeight(),
 				0, 0, EXAMPLEAPP.copyright.getWidth(), EXAMPLEAPP.copyright.getHeight());
 		
-		ctxt.setTransform(menuTrans);
+		ctxt.setTransform(menuTransform);
 		
 		menu.paint_panel(ctxt);
 		
-		ctxt.setTransform(origTrans);
+		ctxt.setTransform(origTransform);
 		
 	}
 	

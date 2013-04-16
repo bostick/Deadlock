@@ -22,18 +22,21 @@ public class QuadrantEditorPanel extends Panel {
 		
 	}
 	
+	
+	Transform origTransform = APP.platform.createTransform();
+	
 	public void paint(RenderingContext ctxt) {
 		QuadrantEditor editor = (QuadrantEditor)APP.model;
 		
 		ctxt.cam = editor.world.worldCamera;
 		
-		Transform origTrans = ctxt.getTransform();
+		ctxt.getTransform(origTransform);
 		
 		ctxt.translate(aabb.x, aabb.y);
 		
 		editor.paint_panel(ctxt);
 		
-		ctxt.setTransform(origTrans);
+		ctxt.setTransform(origTransform);
 		
 	}
 

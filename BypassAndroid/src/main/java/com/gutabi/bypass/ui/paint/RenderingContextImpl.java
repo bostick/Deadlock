@@ -31,9 +31,9 @@ public class RenderingContextImpl extends RenderingContext {
 	public Canvas canvas;
 	public Paint paint;
 	
-	public RenderingContextImpl(Canvas canvas, Paint paint) {
-		this.canvas = canvas;
-		this.paint = paint;
+	public RenderingContextImpl() {
+//		this.canvas = canvas;
+//		this.paint = paint;
 	}
 	
 	public void rotate(double a) {
@@ -48,20 +48,42 @@ public class RenderingContextImpl extends RenderingContext {
 		canvas.rotate((float)a * RAD, (float)d.width, (float)d.height);
 	}
 	
+	
+	Rect srcRect = new Rect();
+	RectF destRect = new RectF();
+	
 	public void paintImage(Image img, double orig, double dx1, double dy1, double dx2, double dy2, int sx1, int sy1, int sx2, int sy2) {
 		
 		Bitmap b = ((ImageImpl)img).b;
 		
-		canvas.drawBitmap(b, new Rect(sx1, sy1, sx2, sy2), new RectF((float)dx1, (float)dy1, (float)dx2, (float)dy2), paint);
+		srcRect.left = sx1;
+		srcRect.top = sy1;
+		srcRect.right = sx2;
+		srcRect.bottom = sy2;
 		
+		destRect.left = (float)dx1;
+		destRect.top = (float)dy1;
+		destRect.right = (float)dx2;
+		destRect.bottom = (float)dy2;
+		
+		canvas.drawBitmap(b, srcRect, destRect, paint);
 	}
 	
 	public void paintImage(Image img, int dx1, int dy1, int dx2, int dy2, int sx1, int sy1, int sx2, int sy2) {
 		
 		Bitmap b = ((ImageImpl)img).b;
 		
-		canvas.drawBitmap(b, new Rect(sx1, sy1, sx2, sy2), new Rect(dx1, dy1, dx2, dy2), paint);
+		srcRect.left = sx1;
+		srcRect.top = sy1;
+		srcRect.right = sx2;
+		srcRect.bottom = sy2;
 		
+		destRect.left = (float)dx1;
+		destRect.top = (float)dy1;
+		destRect.right = (float)dx2;
+		destRect.bottom = (float)dy2;
+		
+		canvas.drawBitmap(b, srcRect, destRect, paint);
 	}
 	
 	public void dispose() {
@@ -95,13 +117,27 @@ public class RenderingContextImpl extends RenderingContext {
 		paint.setXfermode(null);
 	}
 	
-	public Transform getTransform() {
-		Matrix mat = canvas.getMatrix();
-		return new TransformImpl(mat);
+	public void getTransform(Transform a) {
+		TransformImpl t = (TransformImpl)a;
+		
+//		Matrix mat = canvas.getMatrix();
+		canvas.getMatrix(t.mat);
+//		t.mat = mat;
 	}
 	
+	
+	Rect fr = new Rect();
+	
 	public void fillRect(int x, int y, int width, int height) {
-		canvas.drawRect(new Rect(x, y, x+width, y+height), paint);
+		
+		fr.left = x;
+		fr.top = y;
+		fr.right = x+width;
+		fr.bottom = y+height;
+		
+		paint.setStyle(Style.FILL);
+		
+		canvas.drawRect(fr, paint);
 	}
 	
 	public void drawAABB(AABB a) {

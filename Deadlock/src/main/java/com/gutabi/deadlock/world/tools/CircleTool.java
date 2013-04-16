@@ -112,12 +112,12 @@ public class CircleTool extends WorldToolBase {
 		case FREE:
 			APP.tool = new RegularTool();
 			APP.tool.setPoint(world.quadrantMap.getPoint(world.lastMovedOrDraggedWorldPoint));
-			APP.appScreen.contentPane.repaint();
+//			APP.appScreen.contentPane.repaint();
 			break;
 		case SET:
 			mode = CircleToolMode.FREE;
 			APP.tool.setPoint(world.quadrantMap.getPoint(world.lastMovedOrDraggedWorldPoint));
-			APP.appScreen.contentPane.repaint();
+//			APP.appScreen.contentPane.repaint();
 			break;
 		case KNOB:
 			assert false;
@@ -131,7 +131,7 @@ public class CircleTool extends WorldToolBase {
 		switch (mode) {
 		case FREE:
 			mode = CircleToolMode.SET;
-			APP.appScreen.contentPane.repaint();
+//			APP.appScreen.contentPane.repaint();
 			break;
 		case SET:
 			
@@ -151,7 +151,7 @@ public class CircleTool extends WorldToolBase {
 			
 			world.render_worldPanel();
 			world.render_preview();
-			APP.appScreen.contentPane.repaint();
+//			APP.appScreen.contentPane.repaint();
 			break;
 		case KNOB:
 			break;
@@ -168,7 +168,7 @@ public class CircleTool extends WorldToolBase {
 			
 			APP.tool.setPoint(world.quadrantMap.getPoint(world.lastMovedOrDraggedWorldPoint));
 			
-			APP.appScreen.contentPane.repaint();
+//			APP.appScreen.contentPane.repaint();
 			break;
 		case SET:
 		case KNOB:
@@ -208,7 +208,7 @@ public class CircleTool extends WorldToolBase {
 			
 			knob.drag(origKnobCenter.plus(diff));
 			
-			APP.appScreen.contentPane.repaint();
+//			APP.appScreen.contentPane.repaint();
 			break;
 		}
 	}
@@ -224,12 +224,15 @@ public class CircleTool extends WorldToolBase {
 			break;
 		case KNOB:	
 			mode = CircleToolMode.SET;
-			APP.appScreen.contentPane.repaint();
+//			APP.appScreen.contentPane.repaint();
 			break;
 		}
 	}
 	
 	Point origKnobCenter;
+	
+	
+	Transform origTransform = APP.platform.createTransform();
 	
 	public void paint_panel(RenderingContext ctxt) {
 		World world = (World)APP.model;
@@ -242,7 +245,7 @@ public class CircleTool extends WorldToolBase {
 		ctxt.setXORMode(Color.BLACK);
 		ctxt.setStroke(0.0, Cap.SQUARE, Join.MITER);
 		
-		Transform origTransform = ctxt.getTransform();
+		ctxt.getTransform(origTransform);
 		
 		ctxt.scale(world.worldCamera.pixelsPerMeter);
 		ctxt.translate(-world.worldCamera.worldViewport.x, -world.worldCamera.worldViewport.y);

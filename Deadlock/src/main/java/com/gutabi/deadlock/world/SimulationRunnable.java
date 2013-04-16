@@ -67,7 +67,7 @@ public class SimulationRunnable implements Runnable {
 						t += world.DT;
 					}
 					
-					APP.appScreen.contentPane.repaint();
+//					APP.appScreen.contentPane.repaint();
 					
 				} // outer
 			
@@ -77,7 +77,7 @@ public class SimulationRunnable implements Runnable {
 		
 		world.postStop();
 		
-		APP.appScreen.contentPane.repaint();
+//		APP.appScreen.contentPane.repaint();
 		
 	}
 	

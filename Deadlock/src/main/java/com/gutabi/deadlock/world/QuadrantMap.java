@@ -113,6 +113,9 @@ public class QuadrantMap {
 		return newQuads;
 	}
 	
+	
+	RenderingContext ctxt = APP.platform.createRenderingContext();
+	
 	public void panelPostDisplay(WorldCamera cam) {
 		
 		int quadrantWidthPixels = (int)Math.ceil(cam.origPixelsPerMeter * QUADRANT_WIDTH);
@@ -120,7 +123,7 @@ public class QuadrantMap {
 		
 		quadrantGrass = APP.platform.createImage(quadrantWidthPixels, quadrantHeightPixels);
 		
-		RenderingContext ctxt = APP.platform.createRenderingContext(quadrantGrass);
+		APP.platform.setRenderingContextFields(ctxt, quadrantGrass);
 		
 		int maxCols = (int)Math.ceil(quadrantWidthPixels/32.0);
 		int maxRows = (int)Math.ceil(quadrantHeightPixels/32.0);

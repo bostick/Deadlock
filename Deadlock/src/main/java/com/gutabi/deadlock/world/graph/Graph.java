@@ -1293,9 +1293,13 @@ public class Graph {
 		
 	}
 	
+	
+	
+	Transform origTransform = APP.platform.createTransform();
+	
 	public void paintStats(RenderingContext ctxt) {
 		
-		Transform origTransform = ctxt.getTransform();
+		ctxt.getTransform(origTransform);
 		
 		ctxt.paintString(0, 0, 1.0/ctxt.cam.pixelsPerMeter, "vertex count: " + vertices.size());
 		

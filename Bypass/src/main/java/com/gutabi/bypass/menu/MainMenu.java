@@ -46,8 +46,7 @@ public class MainMenu extends Menu implements Model {
 		
 		s.postDisplay();
 		
-		s.contentPane.repaint();
-		
+//		s.contentPane.repaint();
 	}
 	
 	public Menu getMenu() {

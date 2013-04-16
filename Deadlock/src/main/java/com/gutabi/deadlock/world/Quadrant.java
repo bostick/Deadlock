@@ -112,12 +112,16 @@ public class Quadrant {
 		}
 	}
 	
+	
+	
+	Transform origTransform = APP.platform.createTransform();
+	
 	public void paint_panel(RenderingContext ctxt) {
 		
 		if (active) {
 			
 			if (!APP.DEBUG_DRAW) {
-				Transform origTransform = ctxt.getTransform();
+				ctxt.getTransform(origTransform);
 				
 				ctxt.translate(c * QuadrantMap.QUADRANT_WIDTH, r * QuadrantMap.QUADRANT_HEIGHT);
 				ctxt.paintImage(map.quadrantGrass,

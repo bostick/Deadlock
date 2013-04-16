@@ -87,7 +87,7 @@ public abstract class Menu {
 			hilited = null;
 		}
 		
-		APP.appScreen.contentPane.repaint();
+//		APP.appScreen.contentPane.repaint();
 	}
 	
 	public void released(InputEvent ev) {
@@ -99,7 +99,7 @@ public abstract class Menu {
 			item.action();
 		} else {
 			hilited = null;
-			APP.appScreen.contentPane.repaint();
+//			APP.appScreen.contentPane.repaint();
 		}
 	}
 	
@@ -109,7 +109,7 @@ public abstract class Menu {
 		
 		setLocation(newLoc);
 		
-		APP.appScreen.contentPane.repaint();
+//		APP.appScreen.contentPane.repaint();
 	}
 	
 	public void moved(InputEvent ev) {
@@ -145,6 +145,11 @@ public abstract class Menu {
 	}
 	
 	public abstract void escape();
+	
+	
+	
+	Transform origTransformRender = APP.platform.createTransform();
+	RenderingContext ctxt = APP.platform.createRenderingContext();
 	
 	public void render() {
 		
@@ -182,13 +187,13 @@ public abstract class Menu {
 		
 		Image tmpImg = APP.platform.createImage((int)aabb.width, (int)aabb.height);
 		
-		RenderingContext ctxt = APP.platform.createRenderingContext(tmpImg);
+		APP.platform.setRenderingContextFields(ctxt, tmpImg);
 		
-		Transform origTransform = ctxt.getTransform();
+		ctxt.getTransform(origTransformRender);
 		
 		for (int i = 0; i < cols; i++) {
 			
-			ctxt.setTransform(origTransform);
+			ctxt.setTransform(origTransformRender);
 			
 			for (int j = 0; j < i; j++) {
 				ctxt.translate(menuItemWidest[j] + 10, 0);
@@ -222,9 +227,13 @@ public abstract class Menu {
 		ctxt.dispose();
 	}
 	
+	
+	
+	Transform origTransformPaint = APP.platform.createTransform();
+	
 	public void paint_panel(RenderingContext ctxt) {
 		
-		Transform origTransform = ctxt.getTransform();
+		ctxt.getTransform(origTransformPaint);
 		
 		ctxt.translate(aabb.x, aabb.y);
 		
@@ -245,6 +254,6 @@ public abstract class Menu {
 		
 		shimmer.paint(ctxt);
 		
-		ctxt.setTransform(origTransform);
+		ctxt.setTransform(origTransformPaint);
 	}
 }

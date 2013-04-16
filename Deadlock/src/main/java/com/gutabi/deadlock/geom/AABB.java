@@ -19,6 +19,8 @@ public class AABB implements Shape {
 	public final double brY;
 	
 	public final Point center;
+	public final double centerX;
+	public final double centerY;
 	
 	public final Point p0;
 	public final Point p1;
@@ -52,7 +54,9 @@ public class AABB implements Shape {
 		brY = y + height;
 		br = new Point(brX, brY);
 		
-		center = new Point(ul.x + width/2, ul.y + height/2);
+		center = new Point(x + width/2, y + height/2);
+		centerX = x + width/2;
+		centerY = y + height/2;
 		
 		p0 = ul;
 		p1 = new Point(ul.x + width, ul.y);
@@ -275,19 +279,19 @@ public class AABB implements Shape {
 		boolean isA = true;
 		boolean isB = true;
 		
-		double ulX = a.ul.x;
-		double ulY = a.ul.y;
+		double ulX = a.x;
+		double ulY = a.y;
 		double brX = a.brX;
 		double brY = a.brY;
 		
-		if (b.ul.x < ulX) {
-			ulX = b.ul.x;
+		if (b.x < ulX) {
+			ulX = b.x;
 			isA = false;
 		} else {
 			isB = false;
 		}
-		if (b.ul.y < ulY) {
-			ulY = b.ul.y;
+		if (b.y < ulY) {
+			ulY = b.y;
 			isA = false;
 		} else {
 			isB = false;

@@ -122,7 +122,9 @@ public class BypassCar extends Car {
 			computeDynamicPropertiesMoving();
 			
 			driver.setOverallPos(driver.toolCoastingGoal);
-			((BypassWorld)world).handleZooming(this);
+			if (!driver.toolCoastingGoal.isEndOfPath()) {
+				((BypassWorld)world).handleZooming(this);
+			}
 			
 			driver.toolOrigExitingVertexPos = null;
 			driver.toolCoastingGoal = null;

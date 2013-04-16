@@ -1224,10 +1224,18 @@ public class GraphPositionPathPosition {
 					}
 				}
 				
-				b = b.travel(BypassStud.SIZE + c.length/2, forward);
-				
-				assert b.gp instanceof BypassBoardPosition;
-				assert board.withinGrid(c, b.angle, b.p);
+				if (b.isEndOfPath()) {
+					
+					break;
+					
+				} else {
+					
+					b = b.travel(BypassStud.SIZE + c.length/2, forward);
+					
+					assert b.gp instanceof BypassBoardPosition;
+					assert board.withinGrid(c, b.angle, b.p);
+					
+				}
 				
 				m++;
 				

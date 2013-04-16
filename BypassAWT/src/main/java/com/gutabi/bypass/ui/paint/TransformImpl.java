@@ -6,8 +6,8 @@ public class TransformImpl implements Transform {
 	
 	java.awt.geom.AffineTransform t;
 	
-	public TransformImpl(java.awt.geom.AffineTransform t) {
-		this.t = t;
+	public TransformImpl() {
+		
 	}
 
 	public double getTranslateX() {

@@ -84,12 +84,15 @@ public class QuadrantEditor implements Model {
 				world.panelPostDisplay();
 				
 				world.render_worldPanel();
-				APP.appScreen.contentPane.repaint();
+//				APP.appScreen.contentPane.repaint();
 			}
+			
+			
+			Transform origTransform = APP.platform.createTransform();
 			
 			public void paint(RenderingContext ctxt) {
 				
-				Transform origTransform = ctxt.getTransform();
+				ctxt.getTransform(origTransform);
 				
 				ctxt.translate(aabb.x, aabb.y);
 				ctxt.rotate(6 * Math.PI / 4, aabb.dim.multiply(0.5));
@@ -130,13 +133,16 @@ public class QuadrantEditor implements Model {
 				world.panelPostDisplay();
 				
 				world.render_worldPanel();
-				APP.appScreen.contentPane.repaint();
+//				APP.appScreen.contentPane.repaint();
 				
 			}
 			
+			
+			Transform origTransform = APP.platform.createTransform();
+			
 			public void paint(RenderingContext ctxt) {
 				
-				Transform origTransform = ctxt.getTransform();
+				ctxt.getTransform(origTransform);
 				
 				ctxt.translate(aabb.ul.x, aabb.ul.y);
 				ctxt.rotate(2 * Math.PI / 4, aabb.dim.multiply(0.5));
@@ -176,12 +182,15 @@ public class QuadrantEditor implements Model {
 				world.panelPostDisplay();
 				
 				world.render_worldPanel();
-				APP.appScreen.contentPane.repaint();
+//				APP.appScreen.contentPane.repaint();
 			}
+			
+			
+			Transform origTransform = APP.platform.createTransform();
 			
 			public void paint(RenderingContext ctxt) {
 				
-				Transform origTransform = ctxt.getTransform();
+				ctxt.getTransform(origTransform);
 				
 				ctxt.translate(aabb.ul.x, aabb.ul.y);
 				ctxt.rotate(4 * Math.PI / 4, aabb.dim.multiply(0.5));
@@ -220,12 +229,15 @@ public class QuadrantEditor implements Model {
 				world.panelPostDisplay();
 				
 				world.render_worldPanel();
-				APP.appScreen.contentPane.repaint();
+//				APP.appScreen.contentPane.repaint();
 			}
+			
+			
+			Transform origTransform = APP.platform.createTransform();
 			
 			public void paint(RenderingContext ctxt) {
 				
-				Transform origTransform = ctxt.getTransform();
+				ctxt.getTransform(origTransform);
 				
 				ctxt.translate(aabb.ul.x, aabb.ul.y);
 				ctxt.rotate(0 * Math.PI / 4, aabb.dim.multiply(0.5));
@@ -265,12 +277,15 @@ public class QuadrantEditor implements Model {
 				world.panelPostDisplay();
 				
 				world.render_worldPanel();
-				APP.appScreen.contentPane.repaint();
+//				APP.appScreen.contentPane.repaint();
 			}
+			
+			
+			Transform origTransform = APP.platform.createTransform();
 			
 			public void paint(RenderingContext ctxt) {
 				
-				Transform origTransform = ctxt.getTransform();
+				ctxt.getTransform(origTransform);
 				
 				ctxt.translate(aabb.ul.x, aabb.ul.y);
 				ctxt.rotate(5 * Math.PI / 4, aabb.dim.multiply(0.5));
@@ -309,12 +324,15 @@ public class QuadrantEditor implements Model {
 				world.panelPostDisplay();
 				
 				world.render_worldPanel();
-				APP.appScreen.contentPane.repaint();
+//				APP.appScreen.contentPane.repaint();
 			}
+			
+			
+			Transform origTransform = APP.platform.createTransform();
 			
 			public void paint(RenderingContext ctxt) {
 				
-				Transform origTransform = ctxt.getTransform();
+				ctxt.getTransform(origTransform);
 				
 				ctxt.translate(aabb.ul.x, aabb.ul.y);
 				ctxt.rotate(1 * Math.PI / 4, aabb.dim.multiply(0.5));
@@ -381,7 +399,7 @@ public class QuadrantEditor implements Model {
 		
 		s.postDisplay();
 		
-		s.contentPane.repaint();
+//		s.contentPane.repaint();
 		
 		APP.platform.showAppScreen();
 	}
@@ -393,6 +411,9 @@ public class QuadrantEditor implements Model {
 	Point lastMovedEditorPoint;
 	Point lastMovedOrDraggedEditorPoint;
 	
+	
+	Transform origTransform = APP.platform.createTransform();
+	
 	public void paint_panel(RenderingContext ctxt) {
 		
 		ctxt.translate(aabb.ul);
@@ -403,12 +424,12 @@ public class QuadrantEditor implements Model {
 		ctxt.setColor(Color.LIGHT_GRAY);
 		worldPanel.aabb.paint(ctxt);
 		
-		Transform origTrans = ctxt.getTransform();
+		ctxt.getTransform(origTransform);
 		ctxt.translate(worldPanel.aabb.ul);
 		
 		world.paint_panel(ctxt);
 		
-		ctxt.setTransform(origTrans);
+		ctxt.setTransform(origTransform);
 		
 		removeRow.paint(ctxt);
 		addRow.paint(ctxt);

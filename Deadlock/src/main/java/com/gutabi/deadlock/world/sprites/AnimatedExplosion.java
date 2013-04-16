@@ -56,9 +56,13 @@ public class AnimatedExplosion {
 		
 	}
 	
+	
+	
+	Transform origTransform = APP.platform.createTransform();
+	
 	private void paint(RenderingContext ctxt, int index) {
 		
-		Transform origTransform = ctxt.getTransform();
+		ctxt.getTransform(origTransform);
 		
 		ctxt.translate(p.x - explosionWidth/2, p.y - explosionHeight/2);
 		

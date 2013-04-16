@@ -69,7 +69,7 @@ public class BypassWorld extends World implements Model {
 			
 			world.render_worldPanel();
 			world.render_preview();
-			worldScreen.contentPane.repaint();
+//			worldScreen.contentPane.repaint();
 			
 			APP.platform.showAppScreen();
 			APP.platform.showDebuggerScreen();

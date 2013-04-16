@@ -43,6 +43,12 @@ public class MainActivity extends Activity {
 		PlatformImpl platform = new PlatformImpl(getResources(), v);
 		APP.platform = platform;
 		
+		
+		
+		v.ctxt = APP.platform.createRenderingContext();
+		
+		
+		
 		try {
 			APP.init();
 		} catch (Exception e) {

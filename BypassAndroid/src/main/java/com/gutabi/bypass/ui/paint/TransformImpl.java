@@ -6,10 +6,10 @@ import com.gutabi.deadlock.ui.Transform;
 
 public class TransformImpl implements Transform {
 	
-	Matrix mat;
+	Matrix mat = new Matrix();
 	
-	public TransformImpl(Matrix mat) {
-		this.mat = mat;
+	public TransformImpl() {
+		
 	}
 	
 	public double getTranslateX() {
