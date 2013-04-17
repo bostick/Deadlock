@@ -78,8 +78,8 @@ public class CircleTool extends WorldToolBase {
 		
 		if (p != null) {
 			shape = new CircleToolShape(p, xRadius, yRadius);
-			ulKnob.setPoint(shape.c1.aabb.ul);
-			brKnob.setPoint(shape.c1.aabb.br);
+			ulKnob.setPoint(shape.c1.aabb.x, shape.c1.aabb.y);
+			brKnob.setPoint(shape.c1.aabb.brX, shape.c1.aabb.brY);
 		} else {
 			shape = null;
 		}	
@@ -102,7 +102,7 @@ public class CircleTool extends WorldToolBase {
 	}
 	
 	public Point getBR() {
-		return shape.c1.aabb.br;
+		return new Point(shape.c1.aabb.brX, shape.c1.aabb.brY);
 	}
 	
 	public void escKey() {

@@ -66,7 +66,7 @@ public class BypassCarTool extends WorldToolBase {
 			
 			car.toolOrigCenter = car.center;
 			car.toolOrigShape = car.shape;
-			car.toolOrigPixelOffset = Point.worldToPanel(world.worldCamera.worldViewport.ul, world.worldCamera).minus(Point.worldToPanel(car.center, world.worldCamera));
+			car.toolOrigPixelOffset = Point.worldToPanel(world.worldCamera.worldViewport.x, world.worldCamera.worldViewport.y, world.worldCamera).minus(Point.worldToPanel(car.center, world.worldCamera));
 			car.driver.toolOrigOverallPos = car.driver.overallPos;
 			
 			car.state = CarStateEnum.DRAGGING;
@@ -83,7 +83,7 @@ public class BypassCarTool extends WorldToolBase {
 			if (pressed == car) {
 				car.toolOrigCenter = car.center;
 				car.toolOrigShape = car.shape;
-				car.toolOrigPixelOffset = Point.worldToPanel(world.worldCamera.worldViewport.ul, world.worldCamera).minus(Point.worldToPanel(car.center, world.worldCamera));
+				car.toolOrigPixelOffset = Point.worldToPanel(world.worldCamera.worldViewport.x, world.worldCamera.worldViewport.y, world.worldCamera).minus(Point.worldToPanel(car.center, world.worldCamera));
 //				car.driver.toolOrigOverallPos = car.driver.overallPos;
 				
 				car.clearCoastingVel();

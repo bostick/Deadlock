@@ -54,46 +54,46 @@ public abstract class OBB implements Shape {
 		if (Math.abs(adjA - 0.0 * Math.PI) < DMath.RIGHT_ANGLE_TOLERANCE) {
 			rightAngle = true;
 			a = 0.0 * Math.PI;
-			this.p0 = new Point(-xExtant, -yExtant).plus(center);
-			this.p1 = new Point(xExtant, -yExtant).plus(center);
-			this.p2 = new Point(xExtant, yExtant).plus(center);
-			this.p3 = new Point(-xExtant, yExtant).plus(center);
+			this.p0 = new Point(-xExtant + center.x, -yExtant + center.y);
+			this.p1 = new Point(xExtant + center.x, -yExtant + center.y);
+			this.p2 = new Point(xExtant + center.x, yExtant + center.y);
+			this.p3 = new Point(-xExtant + center.x, yExtant + center.y);
 			
 			aabb = new AABB(-xExtant+center.x, -yExtant+center.y, 2*xExtant, 2*yExtant);
 		} else if (Math.abs(adjA - 0.5 * Math.PI) < DMath.RIGHT_ANGLE_TOLERANCE) {
 			rightAngle = true;
 			a = 0.5 * Math.PI;
-			this.p0 = new Point(-yExtant, -xExtant).plus(center);
-			this.p1 = new Point(yExtant, -xExtant).plus(center);
-			this.p2 = new Point(yExtant, xExtant).plus(center);
-			this.p3 = new Point(-yExtant, xExtant).plus(center);
+			this.p0 = new Point(-yExtant + center.x, -xExtant + center.y);
+			this.p1 = new Point(yExtant + center.x, -xExtant + center.y);
+			this.p2 = new Point(yExtant + center.x, xExtant + center.y);
+			this.p3 = new Point(-yExtant + center.x, xExtant + center.y);
 			
 			aabb = new AABB(-yExtant+center.x, -xExtant+center.y, 2*yExtant, 2*xExtant);
 		} else if (Math.abs(adjA - 1.0 * Math.PI) < DMath.RIGHT_ANGLE_TOLERANCE) {
 			rightAngle = true;
 			a = 1.0 * Math.PI;
-			this.p0 = new Point(-xExtant, -yExtant).plus(center);
-			this.p1 = new Point(xExtant, -yExtant).plus(center);
-			this.p2 = new Point(xExtant, yExtant).plus(center);
-			this.p3 = new Point(-xExtant, yExtant).plus(center);
+			this.p0 = new Point(-xExtant + center.x, -yExtant + center.y);
+			this.p1 = new Point(xExtant + center.x, -yExtant + center.y);
+			this.p2 = new Point(xExtant + center.x, yExtant + center.y);
+			this.p3 = new Point(-xExtant + center.x, yExtant + center.y);
 			
 			aabb = new AABB(-xExtant+center.x, -yExtant+center.y, 2*xExtant, 2*yExtant);
 		} else if (Math.abs(adjA - 1.5 * Math.PI) < DMath.RIGHT_ANGLE_TOLERANCE) {
 			rightAngle = true;
 			a = 1.5 * Math.PI;
-			this.p0 = new Point(-yExtant, -xExtant).plus(center);
-			this.p1 = new Point(yExtant, -xExtant).plus(center);
-			this.p2 = new Point(yExtant, xExtant).plus(center);
-			this.p3 = new Point(-yExtant, xExtant).plus(center);
+			this.p0 = new Point(-yExtant + center.x, -xExtant + center.y);
+			this.p1 = new Point(yExtant + center.x, -xExtant + center.y);
+			this.p2 = new Point(yExtant + center.x, xExtant + center.y);
+			this.p3 = new Point(-yExtant + center.x, xExtant + center.y);
 			
 			aabb = new AABB(-yExtant+center.x, -xExtant+center.y, 2*yExtant, 2*xExtant);
 		} else {
 			rightAngle = false;
 			a = adjA;
-			this.p0 = Geom.rotate(a, new Point(-xExtant, -yExtant)).plus(center);
-			this.p1 = Geom.rotate(a, new Point(xExtant, -yExtant)).plus(center);
-			this.p2 = Geom.rotate(a, new Point(xExtant, yExtant)).plus(center);
-			this.p3 = Geom.rotate(a, new Point(-xExtant, yExtant)).plus(center);
+			this.p0 = Geom.rotateAndAdd(-xExtant, -yExtant, a, center);
+			this.p1 = Geom.rotateAndAdd(xExtant, -yExtant, a, center);
+			this.p2 = Geom.rotateAndAdd(xExtant, yExtant, a, center);
+			this.p3 = Geom.rotateAndAdd(-xExtant, yExtant, a, center);
 			
 			double ulX = Math.min(Math.min(p0.x, p1.x), Math.min(p2.x, p3.x));
 			double ulY = Math.min(Math.min(p0.y, p1.y), Math.min(p2.y, p3.y));
@@ -196,8 +196,35 @@ public abstract class OBB implements Shape {
 		
 	}
 	
-	public AABB getAABB() {
-		return aabb;
+//	public AABB getAABB() {
+//		return aabb;
+//	}
+	
+	public Point closestCornerTo(Point p) {
+		
+		Point closest = p0;
+		double closestDist = Point.distance(p0, p);
+		
+		double dist = Point.distance(p1, p);
+		if (dist < closestDist) {
+			closest = p1;
+			closestDist = dist;
+		}
+		
+		dist = Point.distance(p2, p);
+		if (dist < closestDist) {
+			closest = p2;
+			closestDist = dist;
+		}
+		
+		dist = Point.distance(p3, p);
+		if (dist < closestDist) {
+			closest = p3;
+			closestDist = dist;
+		}
+		
+		return closest;
+		
 	}
 	
 	public void project(Point axis, double[] out) {

@@ -3,7 +3,9 @@ package com.gutabi.deadlock.world;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.geom.CapsuleSequence;
+import com.gutabi.deadlock.geom.Circle;
 import com.gutabi.deadlock.geom.Shape;
 import com.gutabi.deadlock.geom.ShapeUtils;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
@@ -17,23 +19,50 @@ public class GrassMap {
 		grass.add(g);
 	}
 	
+	
+	List<AnimatedGrass> toRemove = new ArrayList<AnimatedGrass>();
+	
 	public void mowGrass(Shape s) {
 		
-		List<AnimatedGrass> toRemove = new ArrayList<AnimatedGrass>();
+		toRemove.clear();
 		
 		if (s instanceof CapsuleSequence) {
 			
 			CapsuleSequence cs = (CapsuleSequence)s;
 			
-			for (AnimatedGrass g : grass) {
+			for (int i = 0; i < grass.size(); i++) {
+				AnimatedGrass g = grass.get(i);
 				if (cs.intersectA(g.aabb)) {
+					toRemove.add(g);
+				}
+			}
+			
+		} else if (s instanceof Circle) {
+			
+			Circle c = (Circle)s;
+			
+			for (int i = 0; i < grass.size(); i++) {
+				AnimatedGrass g = grass.get(i);
+				if (ShapeUtils.intersectAC(g.aabb, c)) {
+					toRemove.add(g);
+				}
+			}
+			
+		} else if (s instanceof AABB) {
+			
+			AABB a = (AABB)s;
+			
+			for (int i = 0; i < grass.size(); i++) {
+				AnimatedGrass g = grass.get(i);
+				if (ShapeUtils.intersectAA(g.aabb, a)) {
 					toRemove.add(g);
 				}
 			}
 			
 		} else {
 			
-			for (AnimatedGrass g : grass) {
+			for (int i = 0; i < grass.size(); i++) {
+				AnimatedGrass g = grass.get(i);
 				if (ShapeUtils.intersect(g.aabb, s)) {
 					toRemove.add(g);
 				}
@@ -41,12 +70,16 @@ public class GrassMap {
 			
 		}
 		
-		grass.removeAll(toRemove);
+		for (int i = 0; i < toRemove.size(); i++) {
+			AnimatedGrass g = toRemove.get(i);
+			grass.remove(g);
+		}
 		
 	}
 	
 	public void preStart() {
-		for (AnimatedGrass g : grass) {
+		for (int i = 0; i < grass.size(); i++) {
+			AnimatedGrass g = grass.get(i);
 			g.preStart();
 		}
 	}

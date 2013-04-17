@@ -106,7 +106,7 @@ public class QuadrantEditor implements Model {
 			}
 			
 		};
-		removeRow.setBounds(worldPanel.aabb.center.x - 50/2, worldPanel.aabb.brY + 40 - 50/2, 50, 50);
+		removeRow.setBounds(worldPanel.aabb.centerX - 50/2, worldPanel.aabb.brY + 40 - 50/2, 50, 50);
 		
 		
 		addRow = new Button() {
@@ -144,7 +144,7 @@ public class QuadrantEditor implements Model {
 				
 				ctxt.getTransform(origTransform);
 				
-				ctxt.translate(aabb.ul.x, aabb.ul.y);
+				ctxt.translate(aabb.x, aabb.y);
 				ctxt.rotate(2 * Math.PI / 4, aabb.dim.multiply(0.5));
 				
 				APP.spriteSheet.paint(ctxt, SpriteSheetSprite.BLUEARROW, 0, 0, 50, 50);
@@ -155,7 +155,7 @@ public class QuadrantEditor implements Model {
 				aabb.draw(ctxt);
 			}
 		};
-		addRow.setBounds(worldPanel.aabb.center.x - 50/2, worldPanel.aabb.brY + 40 - 50/2 + 50, 50, 50);
+		addRow.setBounds(worldPanel.aabb.centerX - 50/2, worldPanel.aabb.brY + 40 - 50/2 + 50, 50, 50);
 		
 		
 		removeCol = new Button() {
@@ -192,7 +192,7 @@ public class QuadrantEditor implements Model {
 				
 				ctxt.getTransform(origTransform);
 				
-				ctxt.translate(aabb.ul.x, aabb.ul.y);
+				ctxt.translate(aabb.x, aabb.y);
 				ctxt.rotate(4 * Math.PI / 4, aabb.dim.multiply(0.5));
 				
 				APP.spriteSheet.paint(ctxt, SpriteSheetSprite.BLUEARROW, 0, 0, 50, 50);
@@ -203,7 +203,7 @@ public class QuadrantEditor implements Model {
 				aabb.draw(ctxt);
 			}
 		};
-		removeCol.setBounds(worldPanel.aabb.brX + 40 - 50/2, worldPanel.aabb.center.y - 50/2, 50, 50);
+		removeCol.setBounds(worldPanel.aabb.brX + 40 - 50/2, worldPanel.aabb.centerY - 50/2, 50, 50);
 		
 		addCol = new Button() {
 			
@@ -239,7 +239,7 @@ public class QuadrantEditor implements Model {
 				
 				ctxt.getTransform(origTransform);
 				
-				ctxt.translate(aabb.ul.x, aabb.ul.y);
+				ctxt.translate(aabb.x, aabb.y);
 				ctxt.rotate(0 * Math.PI / 4, aabb.dim.multiply(0.5));
 				
 				APP.spriteSheet.paint(ctxt, SpriteSheetSprite.BLUEARROW, 0, 0, 50, 50);
@@ -251,7 +251,7 @@ public class QuadrantEditor implements Model {
 				
 			}
 		};
-		addCol.setBounds(worldPanel.aabb.brX + 40 - 50/2 + 50, worldPanel.aabb.center.y - 50/2, 50, 50);
+		addCol.setBounds(worldPanel.aabb.brX + 40 - 50/2 + 50, worldPanel.aabb.centerY - 50/2, 50, 50);
 		
 		removeBoth = new Button() {
 			
@@ -287,7 +287,7 @@ public class QuadrantEditor implements Model {
 				
 				ctxt.getTransform(origTransform);
 				
-				ctxt.translate(aabb.ul.x, aabb.ul.y);
+				ctxt.translate(aabb.x, aabb.y);
 				ctxt.rotate(5 * Math.PI / 4, aabb.dim.multiply(0.5));
 				
 				APP.spriteSheet.paint(ctxt, SpriteSheetSprite.BLUEARROW, 0, 0, 50, 50);
@@ -334,7 +334,7 @@ public class QuadrantEditor implements Model {
 				
 				ctxt.getTransform(origTransform);
 				
-				ctxt.translate(aabb.ul.x, aabb.ul.y);
+				ctxt.translate(aabb.x, aabb.y);
 				ctxt.rotate(1 * Math.PI / 4, aabb.dim.multiply(0.5));
 				
 				APP.spriteSheet.paint(ctxt, SpriteSheetSprite.BLUEARROW, 0, 0, 50, 50);
@@ -416,7 +416,7 @@ public class QuadrantEditor implements Model {
 	
 	public void paint_panel(RenderingContext ctxt) {
 		
-		ctxt.translate(aabb.ul);
+		ctxt.translate(aabb.x, aabb.y);
 		
 		ctxt.setColor(Color.GRAY);
 		ctxt.fillRect(0, 0, (int)aabb.width, (int)aabb.height);
@@ -425,7 +425,7 @@ public class QuadrantEditor implements Model {
 		worldPanel.aabb.paint(ctxt);
 		
 		ctxt.getTransform(origTransform);
-		ctxt.translate(worldPanel.aabb.ul);
+		ctxt.translate(worldPanel.aabb.x, worldPanel.aabb.y);
 		
 		world.paint_panel(ctxt);
 		

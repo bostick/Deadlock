@@ -79,8 +79,7 @@ public class QuadrantEditorTool extends Tool {
 			/*
 			 * editor -> world canvas
 			 */
-			Point pWorldPanel = editor.lastMovedOrDraggedEditorPoint.minus(
-					editor.worldPanel.aabb.center.minus(editor.worldPanel.aabb.dim.multiply(0.5)));
+			Point pWorldPanel = editor.lastMovedOrDraggedEditorPoint.minus(editor.worldPanel.aabb.center.minus(editor.worldPanel.aabb.dim.multiply(0.5)));
 			
 			Point pWorld = Point.panelToWorld(pWorldPanel, editor.world.worldCamera);
 			

@@ -11,8 +11,12 @@ public class Geom {
 		return new Point(m[0][0] * v.x + m[0][1] * v.y, m[1][0] * v.x + m[1][1] * v.y);
 	}
 	
-	public static Point rotate(double a, Point v) {
-		return new Point(Math.cos(a) * v.x + -Math.sin(a) * v.y, Math.sin(a) * v.x + Math.cos(a) * v.y);
+	public static Point rotate(double a, Point p) {
+		return new Point(Math.cos(a) * p.x + -Math.sin(a) * p.y, Math.sin(a) * p.x + Math.cos(a) * p.y);
+	}
+	
+	public static Point rotateAndAdd(double x, double y, double a, Point center) {
+		return new Point(Math.cos(a) * x + -Math.sin(a) * y + center.x, Math.sin(a) * x + Math.cos(a) * y + center.y);
 	}
 	
 	/**

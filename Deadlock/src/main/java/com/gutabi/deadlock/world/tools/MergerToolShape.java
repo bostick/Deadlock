@@ -3,6 +3,7 @@ package com.gutabi.deadlock.world.tools;
 import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.geom.Circle;
 import com.gutabi.deadlock.geom.CompoundShape;
+import com.gutabi.deadlock.geom.MutableAABB;
 import com.gutabi.deadlock.geom.Shape;
 import com.gutabi.deadlock.geom.ShapeUtils;
 import com.gutabi.deadlock.math.Point;
@@ -31,12 +32,13 @@ public class MergerToolShape implements CompoundShape {
 		worldRight = new Circle(new Point(ul.plus(p).x + Merger.MERGER_WIDTH, ul.plus(p).y + Merger.MERGER_HEIGHT/2), Vertex.INIT_VERTEX_RADIUS);
 		worldBottom = new Circle(new Point(ul.plus(p).x + Merger.MERGER_WIDTH/2, ul.plus(p).y+Merger.MERGER_HEIGHT), Vertex.INIT_VERTEX_RADIUS);
 		
-		aabb = worldQ;
-		aabb = AABB.union(aabb, worldTop.getAABB());
-		aabb = AABB.union(aabb, worldLeft.getAABB());
-		aabb = AABB.union(aabb, worldRight.getAABB());
-		aabb = AABB.union(aabb, worldBottom.getAABB());
-		
+		MutableAABB aabbTmp = new MutableAABB();
+		aabbTmp.union(worldQ);
+		aabbTmp.union(worldTop.getAABB());
+		aabbTmp.union(worldLeft.getAABB());
+		aabbTmp.union(worldRight.getAABB());
+		aabbTmp.union(worldBottom.getAABB());
+		aabb = new AABB(aabbTmp.x, aabbTmp.y, aabbTmp.width, aabbTmp.height);
 	}
 	
 	public AABB getAABB() {

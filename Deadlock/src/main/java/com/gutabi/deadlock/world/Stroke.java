@@ -13,6 +13,8 @@ import com.gutabi.deadlock.geom.CapsuleSequence;
 import com.gutabi.deadlock.geom.CapsuleSequencePosition;
 import com.gutabi.deadlock.geom.CapsuleSequenceSweepEvent;
 import com.gutabi.deadlock.geom.Circle;
+import com.gutabi.deadlock.geom.MutableAABB;
+import com.gutabi.deadlock.geom.MutableCapsuleSequence;
 import com.gutabi.deadlock.geom.SweepEvent;
 import com.gutabi.deadlock.geom.SweepEventType;
 import com.gutabi.deadlock.geom.SweepUtils;
@@ -58,8 +60,6 @@ public class Stroke {
 		assert !finished;
 		
 		cs.add(new Circle(p, STROKE_RADIUS));
-		
-		computeAABB();
 	}
 	
 	public Point get(int index) {
@@ -76,6 +76,8 @@ public class Stroke {
 	
 	public void finish() {
 		assert !finished;
+		
+		computeAABB();
 		
 		caps = new ArrayList<Capsule>();
 		for (int i = 0; i < cs.size()-1; i++) {
@@ -526,11 +528,12 @@ public class Stroke {
 		}
 		
 		
+		MutableCapsuleSequence capSeq = new MutableCapsuleSequence();
 		List<Capsule> selfEnteredCaps = new ArrayList<Capsule>();
 		
 		for (int i = 0; i < seq.capsuleCount(); i++) {
 			
-			CapsuleSequence capSeq = seq.capseq(i);
+			seq.capseq(i, capSeq);
 			
 			List<SweepEvent> capEvents = new ArrayList<SweepEvent>();
 			for (Vertex v : world.graph.vertices) {
@@ -544,7 +547,7 @@ public class Stroke {
 			}
 			
 			if (sweepSelf) {
-				capEvents.addAll(selfEvents(i, selfEnteredCaps));
+				capEvents.addAll(selfEvents(capSeq, i, selfEnteredCaps));
 			}
 			
 			Collections.sort(capEvents, SweepEvent.COMPARATOR);
@@ -686,9 +689,9 @@ public class Stroke {
 		return adj;
 	} 
 	
-	private List<SweepEvent> selfEvents(int i, List<Capsule> entered) {
+	private List<SweepEvent> selfEvents(MutableCapsuleSequence moving, int i, List<Capsule> entered) {
 			
-		CapsuleSequence moving = seq.capseq(i);
+//		CapsuleSequence moving = seq.capseq(i);
 		CapsuleSequence still = seq.subsequence(i);
 		
 		List<SweepEvent> subStartEvents = SweepUtils.sweepStartCSoverCS(this, still, moving, i);
@@ -732,12 +735,11 @@ public class Stroke {
 	
 	private void computeAABB() {
 		
-		aabb = null;
-		
+		MutableAABB aabbTmp = new MutableAABB();
 		for (Circle c : cs) {
-			aabb = AABB.union(aabb, c.getAABB());
+			aabbTmp.union(c.getAABB());
 		}
-		
+		aabb = new AABB(aabbTmp.x, aabbTmp.y, aabbTmp.width, aabbTmp.height);
 	}
 	
 	public void paint(RenderingContext ctxt) {

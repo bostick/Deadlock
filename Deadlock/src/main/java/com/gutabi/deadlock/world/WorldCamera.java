@@ -27,8 +27,8 @@ public class WorldCamera {
 		double newHeight = worldPanel.aabb.height / pixelsPerMeter;
 		
 		worldViewport = new AABB(
-				worldViewport.center.x - newWidth/2,
-				worldViewport.center.y - newHeight/2, newWidth, newHeight);
+				worldViewport.centerX - newWidth/2,
+				worldViewport.centerY - newHeight/2, newWidth, newHeight);
 	}
 	
 	public void zoomAbsolute(double factor) {
@@ -39,8 +39,8 @@ public class WorldCamera {
 		double newHeight = worldPanel.aabb.height / pixelsPerMeter;
 		
 		worldViewport = new AABB(
-				worldViewport.center.x - newWidth/2,
-				worldViewport.center.y - newHeight/2, newWidth, newHeight);
+				worldViewport.centerX - newWidth/2,
+				worldViewport.centerY - newHeight/2, newWidth, newHeight);
 	}
 	
 	public void panRelative(Point worldDP) {

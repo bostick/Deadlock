@@ -4,7 +4,6 @@ import java.util.Scanner;
 import java.util.regex.MatchResult;
 
 import com.gutabi.deadlock.geom.AABB;
-import com.gutabi.deadlock.quadranteditor.QuadrantEditor;
 import com.gutabi.deadlock.ui.Menu;
 import com.gutabi.deadlock.ui.Panel;
 import com.gutabi.deadlock.world.WorldCamera;
@@ -664,9 +663,13 @@ public class Point {
 		return new Point(p.x / cam.pixelsPerMeter + cam.worldViewport.x, p.y / cam.pixelsPerMeter + cam.worldViewport.y);
 	}
 	
+	public static Point panelToWorld(double x, double y, WorldCamera cam) {
+		return new Point(x / cam.pixelsPerMeter + cam.worldViewport.x, y / cam.pixelsPerMeter + cam.worldViewport.y);
+	}
+	
 	public static AABB panelToWorld(AABB aabb, WorldCamera cam) {
-		Point ul = panelToWorld(aabb.ul, cam);
-		Point br = panelToWorld(aabb.br, cam);
+		Point ul = panelToWorld(aabb.x, aabb.y, cam);
+		Point br = panelToWorld(aabb.brX, aabb.brY, cam);
 		return new AABB(ul.x, ul.y, br.x - ul.x, br.y - ul.y);
 	}
 	
@@ -676,14 +679,20 @@ public class Point {
 				(p.y - cam.worldViewport.y) * cam.pixelsPerMeter);
 	}
 	
+	public static Point worldToPanel(double x, double y, WorldCamera cam) {
+		return new Point(
+				(x - cam.worldViewport.x) * cam.pixelsPerMeter,
+				(y - cam.worldViewport.y) * cam.pixelsPerMeter);
+	}
+	
 	public static AABB worldToPanel(AABB aabb, WorldCamera cam) {
-		Point ul = worldToPanel(aabb.ul, cam);
-		Point br = worldToPanel(aabb.br, cam);
+		Point ul = worldToPanel(aabb.x, aabb.y, cam);
+		Point br = worldToPanel(aabb.brX, aabb.brY, cam);
 		return new AABB(ul.x, ul.y, br.x - ul.x, br.y - ul.y);
 	}
 	
 	public static Point panelToMenu(Point p, Menu menu) {
-		return p.minus(menu.aabb.ul);
+		return new Point(p.x - menu.aabb.x, p.y - menu.aabb.y);
 	}
 	
 	public static Point previewToWorld(Point p, WorldCamera cam) {
@@ -694,29 +703,33 @@ public class Point {
 		return new Point((cam.previewPixelsPerMeter) * p.x, (cam.previewPixelsPerMeter) * p.y);
 	}
 	
-	public static Point controlPanelToPreview(Point p, WorldCamera cam) {
-		return p.minus(cam.previewAABB.ul);
+	public static Point worldToPreview(double x, double y, WorldCamera cam) {
+		return new Point((cam.previewPixelsPerMeter) * x, (cam.previewPixelsPerMeter) * y);
 	}
 	
-	public static Point panelToEditor(Point p, QuadrantEditor editor) {
-		return p.minus(editor.aabb.ul);
+	public static Point controlPanelToPreview(Point p, WorldCamera cam) {
+		return new Point(p.x - cam.previewAABB.x, p.y - cam.previewAABB.y);
 	}
 	
 	public static Point contentPaneToPanel(Point p, Panel child) {
-		return p.minus(child.aabb.ul);
+		return new Point(p.x - child.aabb.x, p.y - child.aabb.y);
 	}
 	
 	public static Point editorToWorldPanel(Point p, WorldPanel worldPanel) {
-		return p.minus(worldPanel.aabb.ul);
+		return new Point(p.x - worldPanel.aabb.x, p.y - worldPanel.aabb.y);
 	}
 	
 	public static Point worldPanelToEditor(Point p, WorldPanel worldPanel) {
-		return p.plus(worldPanel.aabb.ul);
+		return new Point(p.x + worldPanel.aabb.x, p.y + worldPanel.aabb.y);
+	}
+	
+	public static Point worldPanelToEditor(double x, double y, WorldPanel worldPanel) {
+		return new Point(x + worldPanel.aabb.x, y + worldPanel.aabb.y);
 	}
 	
 	public static AABB worldPanelToEditor(AABB aabb, WorldPanel worldPanel) {
-		Point ul = worldPanelToEditor(aabb.ul, worldPanel);
-		Point br = worldPanelToEditor(aabb.br, worldPanel);
+		Point ul = worldPanelToEditor(aabb.x, aabb.y, worldPanel);
+		Point br = worldPanelToEditor(aabb.brX, aabb.brY, worldPanel);
 		return new AABB(ul.x, ul.y, br.x - ul.x, br.y - ul.y);
 	}
 	

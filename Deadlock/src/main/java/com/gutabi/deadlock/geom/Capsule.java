@@ -66,7 +66,10 @@ public class Capsule implements Shape {
 			debugNormalLine = new Line(a, a.plus(n));
 			debugSkeletonLine = new Line(a, b);
 			
-			aabb = AABB.union(ac.getAABB(), bc.getAABB());
+			MutableAABB aabbTmp = new MutableAABB();
+			aabbTmp.union(ac.getAABB());
+			aabbTmp.union(bc.getAABB());
+			aabb = new AABB(aabbTmp.x, aabbTmp.y, aabbTmp.width, aabbTmp.height);
 			
 		} else {
 			
@@ -80,7 +83,10 @@ public class Capsule implements Shape {
 			debugNormalLine = null;
 			debugSkeletonLine = new Line(a, b);
 			
-			aabb = AABB.union(ac.getAABB(), bc.getAABB());
+			MutableAABB aabbTmp = new MutableAABB();
+			aabbTmp.union(ac.getAABB());
+			aabbTmp.union(bc.getAABB());
+			aabb = new AABB(aabbTmp.x, aabbTmp.y, aabbTmp.width, aabbTmp.height);
 			
 		}
 		

@@ -18,7 +18,6 @@ public class CapsuleSequence implements Shape, SweeperShape, CompoundShape {
 	public final AABB aabb;
 	
 	public CapsuleSequence(List<Capsule> caps) {
-		super();
 		this.caps = caps;
 		
 		capsuleCount = caps.size();
@@ -35,11 +34,11 @@ public class CapsuleSequence implements Shape, SweeperShape, CompoundShape {
 			radius = 0.0;
 		}
 		
-		AABB aabbTmp = null;
+		MutableAABB aabbTmp = new MutableAABB();
 		for (Capsule c : caps) {
-			aabbTmp = AABB.union(aabbTmp, c.aabb);
+			aabbTmp.union(c.aabb);
 		}
-		aabb = aabbTmp;
+		aabb = new AABB(aabbTmp.x, aabbTmp.y, aabbTmp.width, aabbTmp.height);
 	}
 	
 	public Capsule getCapsule(int index) {
@@ -89,8 +88,8 @@ public class CapsuleSequence implements Shape, SweeperShape, CompoundShape {
 	/**
 	 * single capsule
 	 */
-	public CapsuleSequence capseq(int index) {
-		return new CapsuleSequence(caps.subList(index, index+1));
+	public void capseq(int index, MutableCapsuleSequence capSeq) {
+		capSeq.setCapSeq(caps.subList(index, index+1));
 	}
 	
 	public AABB getAABB() {

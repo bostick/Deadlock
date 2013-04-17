@@ -23,6 +23,12 @@ public abstract class Knob {
 		aabb = new AABB(p.x + -3 * pixelGuess, p.y + -3 * pixelGuess, 7 * pixelGuess, 7 * pixelGuess);
 	}
 	
+	public void setPoint(double x, double y) {
+		this.p = new Point(x, y);
+		double pixelGuess = 1.0/32.0;
+		aabb = new AABB(x + -3 * pixelGuess, y + -3 * pixelGuess, 7 * pixelGuess, 7 * pixelGuess);
+	}
+	
 	public abstract void drag(Point p);
 	
 	public boolean hitTest(Point p) {

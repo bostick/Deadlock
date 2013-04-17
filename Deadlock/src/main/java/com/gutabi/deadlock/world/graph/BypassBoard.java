@@ -550,7 +550,7 @@ public class BypassBoard extends Entity {
 		for (int i = 0; i < allRowCount; i++) {
 			jloop:
 			for (int j = 0; j < allColCount; j++) {
-				AABB n = new AABB(allStudsAABB.ul.x + j * BypassStud.SIZE, allStudsAABB.ul.y + i * BypassStud.SIZE, BypassStud.SIZE, BypassStud.SIZE);
+				AABB n = new AABB(allStudsAABB.x + j * BypassStud.SIZE, allStudsAABB.y + i * BypassStud.SIZE, BypassStud.SIZE, BypassStud.SIZE);
 				
 				for (BypassStud ss : studs) {
 					if (ss.aabb.equals(n)) {

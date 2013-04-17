@@ -81,7 +81,7 @@ public class MenuTool extends Tool {
 	public void pressed(InputEvent ignore) {
 		Menu menu = APP.model.getMenu();
 		
-		origMenuUL = menu.aabb.ul;
+		origMenuUL = new Point(menu.aabb.x, menu.aabb.y);
 		origPressed = ignore.p;
 		
 		menu.pressed(new InputEvent(ignore.panel, Point.panelToMenu(ignore.p, menu)));

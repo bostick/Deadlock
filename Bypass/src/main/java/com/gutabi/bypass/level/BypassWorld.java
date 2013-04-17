@@ -344,8 +344,8 @@ public class BypassWorld extends World implements Model {
 //		double para = 0.3 + fraction * (1.0 - 0.3);
 //		double cameraX = cc.x + fraction * (worldCamera.origWorldViewport.ul.x - cc.x);
 //		double cameraY = cc.y + fraction * (worldCamera.origWorldViewport.ul.y - cc.y);
-		double cameraX = cc.x + (1-(1-fraction)*(1-fraction)) * (worldCamera.origWorldViewport.ul.x - cc.x);
-		double cameraY = cc.y + (1-(1-fraction)*(1-fraction)) * (worldCamera.origWorldViewport.ul.y - cc.y);
+		double cameraX = cc.x + (1-(1-fraction)*(1-fraction)) * (worldCamera.origWorldViewport.x - cc.x);
+		double cameraY = cc.y + (1-(1-fraction)*(1-fraction)) * (worldCamera.origWorldViewport.y - cc.y);
 		
 //		System.out.println(fraction);
 		

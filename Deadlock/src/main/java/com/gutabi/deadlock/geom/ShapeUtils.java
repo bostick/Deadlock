@@ -106,7 +106,22 @@ public class ShapeUtils {
 				DMath.lessThanEquals(a0.y, a1.brY) && DMath.lessThanEquals(a1.y, a0.brY);
 	}
 	
+	public static boolean intersectAA(AABB a0, MutableAABB a1) {
+		
+		assert !Double.isNaN(a1.x);
+		assert !Double.isNaN(a1.y);
+		assert !Double.isNaN(a1.width);
+		assert !Double.isNaN(a1.height);
+		
+		return DMath.lessThanEquals(a0.x, a1.x+a1.width) && DMath.lessThanEquals(a1.x, a0.brX) &&
+				DMath.lessThanEquals(a0.y, a1.y+a1.height) && DMath.lessThanEquals(a1.y, a0.brY);
+	}
+	
 	public static boolean intersectACap(AABB a0, Capsule c1) {
+		
+		if (!ShapeUtils.intersectAA(a0, c1.aabb)) {
+			return false;
+		}
 		
 		if (intersectAC(a0, c1.ac)) {
 			return true;
@@ -141,26 +156,7 @@ public class ShapeUtils {
 			return false;
 		}
 		
-		Point closest = a0.p0;
-		double closestDist = Point.distance(a0.p0, c1.center);
-		
-		double dist = Point.distance(a0.p1, c1.center);
-		if (dist < closestDist) {
-			closest = a0.p1;
-			closestDist = dist;
-		}
-		
-		dist = Point.distance(a0.p2, c1.center);
-		if (dist < closestDist) {
-			closest = a0.p2;
-			closestDist = dist;
-		}
-		
-		dist = Point.distance(a0.p3, c1.center);
-		if (dist < closestDist) {
-			closest = a0.p3;
-			closestDist = dist;
-		}
+		Point closest = a0.closestCornerTo(c1.center);
 		
 		Point a = c1.center.minusAndNormalize(closest);
 		a0.project(a, a0Projection);
@@ -172,36 +168,36 @@ public class ShapeUtils {
 		return true;
 	}
 	
-	public static boolean intersectAO(AABB a0, OBB q1) {
+	public static boolean intersectAO(AABB a0, OBB o1) {
 		
-		if (!intersectAA(a0, q1.aabb)) {
+		if (!intersectAA(a0, o1.aabb)) {
 			return false;
 		}
 		
 		double[] a0Projection = new double[2];
-		double[] q1Projection = new double[2];
+		double[] o1Projection = new double[2];
 		
 		a0.projectN01(a0Projection);
-		q1.project(a0.getN01(), q1Projection);
-		if (!DMath.rangesOverlap(a0Projection, q1Projection)) {
+		o1.project(a0.getN01(), o1Projection);
+		if (!DMath.rangesOverlap(a0Projection, o1Projection)) {
 			return false;
 		}
 		
 		a0.projectN12(a0Projection);
-		q1.project(a0.getN12(), q1Projection);
-		if (!DMath.rangesOverlap(a0Projection, q1Projection)) {
+		o1.project(a0.getN12(), o1Projection);
+		if (!DMath.rangesOverlap(a0Projection, o1Projection)) {
 			return false;
 		}
 		
-		a0.project(q1.getN01(), a0Projection);
-		q1.projectN01(q1Projection);
-		if (!DMath.rangesOverlap(a0Projection, q1Projection)) {
+		a0.project(o1.getN01(), a0Projection);
+		o1.projectN01(o1Projection);
+		if (!DMath.rangesOverlap(a0Projection, o1Projection)) {
 			return false;
 		}
 		
-		a0.project(q1.getN12(), a0Projection);
-		q1.projectN12(q1Projection);
-		if (!DMath.rangesOverlap(a0Projection, q1Projection)) {
+		a0.project(o1.getN12(), a0Projection);
+		o1.projectN12(o1Projection);
+		if (!DMath.rangesOverlap(a0Projection, o1Projection)) {
 			return false;
 		}
 		
@@ -244,88 +240,69 @@ public class ShapeUtils {
 		return DMath.lessThanEquals(dist, c0.radius + c1.radius);
 	}
 	
-	public static boolean intersectCO(Circle c0, OBB q1) {
+	public static boolean intersectCO(Circle c0, OBB o1) {
 		
-		if (!intersectAA(c0.getAABB(), q1.aabb)) {
+		if (!intersectAA(c0.getAABB(), o1.aabb)) {
 			return false;
 		}
 		
 		double[] c0Projection = new double[2];
-		double[] q1Projection = new double[2];
+		double[] o1Projection = new double[2];
 		
-		q1.projectN01(q1Projection);
-		c0.project(q1.getN01(), c0Projection);
-		if (!DMath.rangesOverlap(q1Projection, c0Projection)) {
+		o1.projectN01(o1Projection);
+		c0.project(o1.getN01(), c0Projection);
+		if (!DMath.rangesOverlap(o1Projection, c0Projection)) {
 			return false;
 		}
 		
-		q1.projectN12(q1Projection);
-		c0.project(q1.getN12(), c0Projection);
-		if (!DMath.rangesOverlap(q1Projection, c0Projection)) {
+		o1.projectN12(o1Projection);
+		c0.project(o1.getN12(), c0Projection);
+		if (!DMath.rangesOverlap(o1Projection, c0Projection)) {
 			return false;
 		}
 		
-		Point closest = q1.p0;
-		double closestDist = Point.distance(q1.p0, c0.center);
-		
-		double dist = Point.distance(q1.p1, c0.center);
-		if (dist < closestDist) {
-			closest = q1.p1;
-			closestDist = dist;
-		}
-		
-		dist = Point.distance(q1.p2, c0.center);
-		if (dist < closestDist) {
-			closest = q1.p2;
-			closestDist = dist;
-		}
-		
-		dist = Point.distance(q1.p3, c0.center);
-		if (dist < closestDist) {
-			closest = q1.p3;
-			closestDist = dist;
-		}
+		Point closest = o1.closestCornerTo(c0.center);
 		
 		Point a = c0.center.minusAndNormalize(closest);
-		q1.project(a, q1Projection);
+		o1.project(a, o1Projection);
 		c0.project(a, c0Projection);
-		if (!DMath.rangesOverlap(q1Projection, c0Projection)) {
+		if (!DMath.rangesOverlap(o1Projection, c0Projection)) {
 			return false;
 		}
 		
 		return true;
 	}
 	
-	public static boolean intersectOO(OBB q0, OBB q1) {
+	public static boolean intersectOO(OBB o0, OBB o1) {
 		
-		if (!intersectAA(q0.aabb, q1.aabb)) {
+		if (!intersectAA(o0.aabb, o1.aabb)) {
 			return false;
 		}
 		
-		double[] q0Projection = new double[2];
-		double[] q1Projection = new double[2];
+		double[] o0Projection = new double[2];
+		double[] o1Projection = new double[2];
 		
-		q0.projectN01(q0Projection);
-		q1.project(q0.getN01(), q1Projection);
-		if (!DMath.rangesOverlap(q0Projection, q1Projection)) {
+		o0.projectN01(o0Projection);
+		o1.project(o0.getN01(), o1Projection);
+		if (!DMath.rangesOverlap(o0Projection, o1Projection)) {
 			return false;
 		}
 		
-		q0.projectN12(q0Projection);
-		q1.project(q0.getN12(), q1Projection);
-		if (!DMath.rangesOverlap(q0Projection, q1Projection)) {
+		o0.projectN12(o0Projection);
+		o1.project(o0.getN12(), o1Projection);
+		if (!DMath.rangesOverlap(o0Projection, o1Projection)) {
 			return false;
 		}
 		
-		q0.project(q1.getN01(), q0Projection);
-		q1.projectN01(q1Projection);
-		if (!DMath.rangesOverlap(q0Projection, q1Projection)) {
+		o0.project(o1.getN01(), o0Projection);
+		o1.projectN01(o1Projection);
+		if (!DMath.rangesOverlap(o0Projection, o1Projection)) {
 			return false;
 		}
 		
-		q0.project(q1.getN12(), q0Projection);
-		q1.projectN12(q1Projection);
-		if (!DMath.rangesOverlap(q0Projection, q1Projection)) {
+		o0.project(o1.getN12(), o0Projection);
+		o1.projectN12(o1Projection);
+		if (!DMath.rangesOverlap(o0Projection, o1Projection)) {
 			return false;
 		}
 		
@@ -439,71 +416,71 @@ public class ShapeUtils {
 	 * 
 	 * so sharing exactly an edge here returns false
 	 */
-	public static boolean intersectAreaOO(OBB q0, OBB q1) {
+	public static boolean intersectAreaOO(OBB o0, OBB o1) {
 		
-		if (!intersectAA(q0.aabb, q1.aabb)) {
+		if (!intersectAA(o0.aabb, o1.aabb)) {
 			return false;
 		}
 		
-		double[] q0Projection = new double[2];
-		double[] q1Projection = new double[2];
+		double[] o0Projection = new double[2];
+		double[] o1Projection = new double[2];
 		
-		q0.projectN01(q0Projection);
-		q1.project(q0.getN01(), q1Projection);
-		if (!DMath.rangesOverlapArea(q0Projection, q1Projection)) {
+		o0.projectN01(o0Projection);
+		o1.project(o0.getN01(), o1Projection);
+		if (!DMath.rangesOverlapArea(o0Projection, o1Projection)) {
 			return false;
 		}
 		
-		q0.projectN12(q0Projection);
-		q1.project(q0.getN12(), q1Projection);
-		if (!DMath.rangesOverlapArea(q0Projection, q1Projection)) {
+		o0.projectN12(o0Projection);
+		o1.project(o0.getN12(), o1Projection);
+		if (!DMath.rangesOverlapArea(o0Projection, o1Projection)) {
 			return false;
 		}
 		
-		q0.project(q1.getN01(), q0Projection);
-		q1.projectN01(q1Projection);
-		if (!DMath.rangesOverlapArea(q0Projection, q1Projection)) {
+		o0.project(o1.getN01(), o0Projection);
+		o1.projectN01(o1Projection);
+		if (!DMath.rangesOverlapArea(o0Projection, o1Projection)) {
 			return false;
 		}
 		
-		q0.project(q1.getN12(), q0Projection);
-		q1.projectN12(q1Projection);
-		if (!DMath.rangesOverlapArea(q0Projection, q1Projection)) {
+		o0.project(o1.getN12(), o0Projection);
+		o1.projectN12(o1Projection);
+		if (!DMath.rangesOverlapArea(o0Projection, o1Projection)) {
 			return false;
 		}
 		
 		return true;
 	}
 	
-	public static boolean containsAO(AABB a0, OBB q1) {
-		if (!intersectAA(a0, q1.aabb)) {
+	public static boolean containsAO(AABB a0, OBB o1) {
+		if (!intersectAA(a0, o1.aabb)) {
 			return false;
 		}
 		
 		double[] a0Projection = new double[2];
-		double[] q1Projection = new double[2];
+		double[] o1Projection = new double[2];
 		
 		a0.projectN01(a0Projection);
-		q1.project(a0.getN01(), q1Projection);
-		if (!DMath.rangeContains(a0Projection, q1Projection)) {
+		o1.project(a0.getN01(), o1Projection);
+		if (!DMath.rangeContains(a0Projection, o1Projection)) {
 			return false;
 		}
 		
 		a0.projectN12(a0Projection);
-		q1.project(a0.getN12(), q1Projection);
-		if (!DMath.rangeContains(a0Projection, q1Projection)) {
+		o1.project(a0.getN12(), o1Projection);
+		if (!DMath.rangeContains(a0Projection, o1Projection)) {
 			return false;
 		}
 		
-		a0.project(q1.getN01(), a0Projection);
-		q1.projectN01(q1Projection);
-		if (!DMath.rangeContains(a0Projection, q1Projection)) {
+		a0.project(o1.getN01(), a0Projection);
+		o1.projectN01(o1Projection);
+		if (!DMath.rangeContains(a0Projection, o1Projection)) {
 			return false;
 		}
 		
-		a0.project(q1.getN12(), a0Projection);
-		q1.projectN12(q1Projection);
-		if (!DMath.rangeContains(a0Projection, q1Projection)) {
+		a0.project(o1.getN12(), a0Projection);
+		o1.projectN12(o1Projection);
+		if (!DMath.rangeContains(a0Projection, o1Projection)) {
 			return false;
 		}
 		

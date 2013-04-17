@@ -474,7 +474,7 @@ public class World extends PhysicsWorld {
 				0, 0, (int)worldCamera.previewAABB.width, (int)worldCamera.previewAABB.height,
 				0, 0, (int)worldCamera.previewAABB.width, (int)worldCamera.previewAABB.height);
 		
-		Point prevLoc = Point.worldToPreview(worldCamera.worldViewport.ul, worldCamera);
+		Point prevLoc = Point.worldToPreview(worldCamera.worldViewport.x, worldCamera.worldViewport.y, worldCamera);
 		
 		Point prevDim = Point.worldToPreview(new Point(worldCamera.worldViewport.width, worldCamera.worldViewport.height), worldCamera);
 		

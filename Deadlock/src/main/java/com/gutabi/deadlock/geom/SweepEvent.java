@@ -41,6 +41,20 @@ public abstract class SweepEvent {
 		
 	} 
 	
+	protected SweepEvent(SweepEventType type, Object stillParent, Shape still, MutableCapsuleSequence moving, int index, double param, int offset) {
+		this.type = type;
+		this.stillParent = stillParent;
+		this.still = still;
+		this.moving = moving;
+		this.index = index+offset;
+		this.param = param;
+		
+		this.combo = index+offset+param;
+		
+		p = moving.getPoint(index, param);
+		
+	}
+	
 	public String toString() {
 		if (type != null) {
 			return type + " " + stillParent;

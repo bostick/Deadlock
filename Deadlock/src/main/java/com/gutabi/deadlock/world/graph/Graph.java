@@ -16,6 +16,7 @@ import com.gutabi.deadlock.Entity;
 import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.geom.Capsule;
 import com.gutabi.deadlock.geom.Circle;
+import com.gutabi.deadlock.geom.MutableAABB;
 import com.gutabi.deadlock.geom.OBB;
 import com.gutabi.deadlock.geom.Shape;
 import com.gutabi.deadlock.geom.ShapeUtils;
@@ -369,18 +370,20 @@ public class Graph {
 	
 	private void computeAABB() {
 		
-		aabb = null;
-		
-		for (Vertex v : vertices) {
-			aabb = AABB.union(aabb, v.getShape().getAABB());
+		MutableAABB aabbTmp = new MutableAABB();
+		for (int i = 0; i < vertices.size(); i++) {
+			Vertex v = vertices.get(i);
+			aabbTmp.union(v.getShape().getAABB());
 		}
-		for (Road r : roads) {
-			aabb = AABB.union(aabb, r.getShape().getAABB());
+		for (int i = 0; i < roads.size(); i++) {
+			Road r = roads.get(i);
+			aabbTmp.union(r.getShape().getAABB());
 		}
-		for (Merger m : mergers) {
-			aabb = AABB.union(aabb, m.getShape().getAABB());
+		for (int i = 0; i < mergers.size(); i++) {
+			Merger m = mergers.get(i);
+			aabbTmp.union(m.getShape().getAABB());
 		}
-		
+		aabb = new AABB(aabbTmp.x, aabbTmp.y, aabbTmp.width, aabbTmp.height);
 	}
 	
 	

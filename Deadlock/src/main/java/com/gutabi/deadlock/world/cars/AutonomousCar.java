@@ -363,7 +363,7 @@ public class AutonomousCar extends Car {
 			
 			ctxt.setColor(Color.BLACK);
 			ctxt.setStroke(0.0, Cap.SQUARE, Join.MITER);
-			shape.getAABB().draw(ctxt);
+			shape.aabb.draw(ctxt);
 			
 			paintID(ctxt);
 		}

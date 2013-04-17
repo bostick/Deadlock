@@ -2,6 +2,7 @@ package com.gutabi.deadlock.geom;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import com.gutabi.deadlock.math.DMath;
@@ -90,6 +91,76 @@ public class SweepUtils {
 		return events;
 		
 	}
+
+	public static List<SweepEvent> sweepCSoverA(Object stillParent, AABB still, MutableCapsuleSequence moving, int index, int offset) {
+		
+		List<SweepEvent> events = new ArrayList<SweepEvent>();
+		
+		Capsule cap = moving.getCapsule(index);
+		
+		boolean outside;
+		if (ShapeUtils.intersectAC(still, cap.ac)) {
+			outside = false;
+		} else {
+			outside = true;
+		}
+		
+		double[] params = new double[2];
+		Arrays.fill(params, Double.POSITIVE_INFINITY);
+		int paramCount = 0;
+		
+		double cdParam = SweepUtils.sweepCircleOverLine(still.getP0P1Line(), cap);
+		if (cdParam != -1) {
+			params[paramCount] = cdParam;
+			paramCount++;
+		}
+		
+		cdParam = SweepUtils.sweepCircleOverLine(still.getP1P2Line(), cap);
+		if (cdParam != -1) {
+			params[paramCount] = cdParam;
+			paramCount++;
+		}
+		
+		cdParam = SweepUtils.sweepCircleOverLine(still.getP2P3Line(), cap);
+		if (cdParam != -1) {
+			params[paramCount] = cdParam;
+			paramCount++;
+		}
+		
+		cdParam = SweepUtils.sweepCircleOverLine(still.getP3P0Line(), cap);
+		if (cdParam != -1) {
+			params[paramCount] = cdParam;
+			paramCount++;
+		}
+		
+		Arrays.sort(params);
+		if (paramCount == 2 && DMath.equals(params[0], params[1])) {
+			/*
+			 * hit a seam
+			 */
+			paramCount = 1;
+		}
+		
+		for (int i = 0; i < paramCount; i++) {
+			double param = params[i];
+			
+			if (DMath.greaterThan(param, 0.0)) {
+				
+				assert DMath.greaterThanEquals(param, 0.0) && DMath.lessThanEquals(param, 1.0);
+				if (outside) {
+					events.add(new CapsuleSequenceSweepEvent(SweepEventType.enter(stillParent), stillParent, still, moving, index, param, offset));
+				} else {
+					events.add(new CapsuleSequenceSweepEvent(SweepEventType.exit(stillParent), stillParent, still, moving, index, param, offset));
+				}
+				outside = !outside;
+				
+			}
+			
+		}
+		
+		return events;
+		
+	}
 	
 	public static List<SweepEvent> sweepStartCSoverCap(Object stillParent, Capsule still, CapsuleSequence moving, int offset) {
 		
@@ -101,8 +172,214 @@ public class SweepUtils {
 		
 		return events;
 	}
+
+	public static List<SweepEvent> sweepStartCSoverCap(Object stillParent, Capsule still, MutableCapsuleSequence moving, int offset) {
+		
+		List<SweepEvent> events = new ArrayList<SweepEvent>();
+		
+		if (ShapeUtils.intersect(still, moving.getStart())) {
+			events.add(new CapsuleSequenceSweepEvent(SweepEventType.enter(stillParent), stillParent, still, moving, 0, 0.0, offset));
+		}
+		
+		return events;
+	}
 	
 	public static List<SweepEvent> sweepCSoverCap(Object stillParent, Capsule still, CapsuleSequence moving, int index, int offset) {
+		
+		List<SweepEvent> events = new ArrayList<SweepEvent>();
+		
+		Capsule cap = moving.getCapsule(index);
+		
+		Point c = cap.a;
+		Point d = cap.b;
+		
+		boolean outside;
+		if (ShapeUtils.intersect(still, cap.ac)) {
+			outside = false;
+		} else {
+			outside = true;
+		}
+		
+		double[] params = new double[2];
+		Arrays.fill(params, Double.POSITIVE_INFINITY);
+		int paramCount = 0;
+		
+		double cdParam;
+		
+		/*
+		 * a cap
+		 */
+		
+		double[] capParams = new double[2];
+		int n = SweepUtils.sweepCircleOverCircle(still.ac, cap, capParams);
+		
+		for (int i = 0; i < n; i++) {
+			
+			cdParam = capParams[i];
+			
+			if (DMath.greaterThan(cdParam, 0.0)) {
+				
+				/*
+				 * still have to test that it is beyond the end points
+				 */
+				Point p = Point.point(c, d, cdParam);
+				double abParam = Point.u(still.a, p, still.b);
+				
+				if (DMath.lessThanEquals(abParam, 0.0)) {
+					
+					assert ShapeUtils.intersectCC(still.ac, new Circle(p, cap.r));
+					
+					boolean present = false;
+					for (int j = 0; j < paramCount; j++) {
+						if (DMath.equals(params[j], cdParam)) {
+							present = true;
+							break;
+						}
+					}
+					if (!present) {
+						params[paramCount] = cdParam;
+						paramCount++;
+					}
+				}
+				
+			}
+			
+		}
+		
+		/*
+		 * top side, left hand side of <a, b>
+		 */
+		
+		cdParam = SweepUtils.sweepCircleOverLine(still.getABUp(), cap);
+		
+		if (cdParam != -1) {
+			
+			if (DMath.greaterThan(cdParam, 0.0)) {
+				
+				/*
+				 * still have to test that it isn't beyond the end points
+				 */
+				Point p = Point.point(c, d, cdParam);
+				double abParam = Point.u(still.aUp, p, still.bUp);
+				
+				if (DMath.greaterThanEquals(abParam, 0.0) && DMath.lessThanEquals(abParam, 1.0)) {
+					
+					boolean present = false;
+					for (int j = 0; j < paramCount; j++) {
+						if (DMath.equals(params[j], cdParam)) {
+							present = true;
+							break;
+						}
+					}
+					if (!present) {
+						params[paramCount] = cdParam;
+						paramCount++;
+					}
+					
+				}
+				
+			}
+			
+		}
+		
+		/*
+		 * b cap
+		 */
+		
+		n = SweepUtils.sweepCircleOverCircle(still.bc, cap, capParams);
+		
+		for (int i = 0; i < n; i++) {
+			
+			cdParam = capParams[i];
+			
+			if (DMath.greaterThan(cdParam, 0.0)) {
+				
+				/*
+				 * still have to test that it is beyond the end points
+				 */
+				Point p = Point.point(c, d, cdParam);
+				double abParam = Point.u(still.a, p, still.b);
+				
+				if (DMath.greaterThanEquals(abParam, 1.0)) {
+					
+					assert ShapeUtils.intersectCC(still.bc, new Circle(p, cap.r));
+					
+					boolean present = false;
+					for (int j = 0; j < paramCount; j++) {
+						if (DMath.equals(params[j], cdParam)) {
+							present = true;
+							break;
+						}
+					}
+					if (!present) {
+						params[paramCount] = cdParam;
+						paramCount++;
+					}
+				}
+				
+			}
+			
+		}
+		
+		/*
+		 * bottom side
+		 */
+		
+		cdParam = SweepUtils.sweepCircleOverLine(still.getBADown(), cap);
+		
+		if (cdParam != -1) {
+			
+			if (DMath.greaterThan(cdParam, 0.0)) {
+				
+				/*
+				 * still have to test that it isn't beyond the end points
+				 */
+				Point p = Point.point(c, d, cdParam);
+				double abParam = Point.u(still.bDown, p, still.aDown);
+				
+				if (DMath.greaterThanEquals(abParam, 0.0) && DMath.lessThanEquals(abParam, 1.0)) {
+					
+					boolean present = false;
+					for (int j = 0; j < paramCount; j++) {
+						if (DMath.equals(params[j], cdParam)) {
+							present = true;
+							break;
+						}
+					}
+					if (!present) {
+						params[paramCount] = cdParam;
+						paramCount++;
+					}
+				}
+				
+			}
+			
+		}
+		
+		Arrays.sort(params);
+		if (paramCount == 2 && DMath.equals(params[0], params[1])) {
+			/*
+			 * hit a seam
+			 */
+			paramCount = 1;
+		}
+		
+		for (int i = 0; i < paramCount; i++) {
+			double param = params[i];
+			assert DMath.greaterThanEquals(param, 0.0) && DMath.lessThanEquals(param, 1.0);
+			
+			if (outside) {
+				events.add(new CapsuleSequenceSweepEvent(SweepEventType.enter(stillParent), stillParent, still, moving, index, param, offset));
+			} else {
+				events.add(new CapsuleSequenceSweepEvent(SweepEventType.exit(stillParent), stillParent, still, moving, index, param, offset));
+			}
+			outside = !outside;
+		}
+		
+		return events;
+	}
+	
+	public static List<SweepEvent> sweepCSoverCap(Object stillParent, Capsule still, MutableCapsuleSequence moving, int index, int offset) {
 		
 		List<SweepEvent> events = new ArrayList<SweepEvent>();
 		
@@ -312,13 +589,28 @@ public class SweepUtils {
 		return events;
 	}
 	
-	public static List<SweepEvent> sweepCSoverCS(Object stillParent, CapsuleSequence still, CapsuleSequence moving, int index, int offset) {
+	public static List<SweepEvent> sweepStartCSoverCS(Object stillParent, CapsuleSequence still, MutableCapsuleSequence moving, int offset) {
 		
 		List<SweepEvent> events = new ArrayList<SweepEvent>();
 		
 		if (!ShapeUtils.intersectAA(still.aabb, moving.aabb)) {
 			return events;
 		}
+		
+		for (Capsule c : still.caps) {
+			events.addAll(SweepUtils.sweepStartCSoverCap(stillParent, c, moving, offset));
+		}
+		
+		return events;
+	}
+	
+	public static List<SweepEvent> sweepCSoverCS(Object stillParent, CapsuleSequence still, MutableCapsuleSequence moving, int index, int offset) {
+		
+		if (!ShapeUtils.intersectAA(still.aabb, moving.aabb)) {
+			return Collections.emptyList();
+		}
+		
+		List<SweepEvent> events = new ArrayList<SweepEvent>();
 		
 		for (int i = 0; i < still.caps.size(); i++) {
 			Capsule c = still.caps.get(i);
@@ -359,7 +651,11 @@ public class SweepUtils {
 		return events;
 	}
 	
-	public static List<SweepEvent> sweepCSoverC(Object stillParent, Circle still, CapsuleSequence moving, int index, int offset) {
+	public static List<SweepEvent> sweepCSoverC(Object stillParent, Circle still, MutableCapsuleSequence moving, int index, int offset) {
+		
+		if (!ShapeUtils.intersectAA(still.getAABB(), moving.aabb)) {
+			return Collections.emptyList();
+		}
 		
 		List<SweepEvent> events = new ArrayList<SweepEvent>();
 		

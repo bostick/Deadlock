@@ -187,13 +187,14 @@ public class RenderingContextImpl extends RenderingContext {
 	}
 	
 	public void paintString(double x, double y, double s, String text) {
-		Matrix origMat = canvas.getMatrix();
+		
+		canvas.save();
 		
 		canvas.translate((float)x, (float)y);
 		canvas.scale((float)s, (float)s);
 		canvas.drawText(text, 0, 0, paint);
 		
-		canvas.setMatrix(origMat);
+		canvas.restore();
 	}
 	
 	public void setStroke(double width, Cap cap, Join join) {
