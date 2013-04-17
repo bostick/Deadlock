@@ -13,6 +13,7 @@ import com.gutabi.bypass.ResourceImpl;
 import com.gutabi.bypass.ui.ImageImpl;
 import com.gutabi.deadlock.Resource;
 import com.gutabi.deadlock.geom.AABB;
+import com.gutabi.deadlock.geom.Circle;
 import com.gutabi.deadlock.geom.Line;
 import com.gutabi.deadlock.math.Dim;
 import com.gutabi.deadlock.math.Point;
@@ -152,6 +153,16 @@ public class RenderingContextImpl extends RenderingContext {
 	
 	public void drawLine(Line a) {
 		canvas.drawLine((float)a.p0.x, (float)a.p0.y, (float)a.p1.x, (float)a.p1.y, paint);
+	}
+	
+	public void drawCircle(Circle c) {
+		paint.setStyle(Style.STROKE);
+		canvas.drawCircle((float)c.center.x, (float)c.center.y, (float)c.radius, paint);
+	}
+	
+	public void paintCircle(Circle c) {
+		paint.setStyle(Style.FILL);
+		canvas.drawCircle((float)c.center.x, (float)c.center.y, (float)c.radius, paint);
 	}
 	
 	public void scale(double s) {

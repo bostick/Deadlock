@@ -6,6 +6,7 @@ import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
@@ -14,6 +15,7 @@ import com.gutabi.bypass.PlatformImpl;
 import com.gutabi.bypass.ui.ImageImpl;
 import com.gutabi.deadlock.Resource;
 import com.gutabi.deadlock.geom.AABB;
+import com.gutabi.deadlock.geom.Circle;
 import com.gutabi.deadlock.geom.Line;
 import com.gutabi.deadlock.math.Dim;
 import com.gutabi.deadlock.math.Point;
@@ -182,6 +184,16 @@ public class RenderingContextImpl extends RenderingContext {
 	public void drawLine(Line a) {
 		Line2D l = new Line2D.Double(a.p0.x, a.p0.y, a.p1.x, a.p1.y);
 		g2.draw(l);
+	}
+	
+	public void drawCircle(Circle c) {
+		Ellipse2D e = new Ellipse2D.Double(c.center.x - c.radius, c.center.y - c.radius, 2 * c.radius, 2 * c.radius);
+		g2.draw(e);
+	}
+	
+	public void paintCircle(Circle c) {
+		Ellipse2D e = new Ellipse2D.Double(c.center.x - c.radius, c.center.y - c.radius, 2 * c.radius, 2 * c.radius);
+		g2.fill(e);
 	}
 	
 	public void dispose() {

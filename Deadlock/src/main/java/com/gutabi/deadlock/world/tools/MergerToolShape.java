@@ -1,7 +1,5 @@
 package com.gutabi.deadlock.world.tools;
 
-import static com.gutabi.deadlock.DeadlockApplication.APP;
-
 import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.geom.Circle;
 import com.gutabi.deadlock.geom.CompoundShape;
@@ -28,16 +26,16 @@ public class MergerToolShape implements CompoundShape {
 		
 		worldQ = new AABB(ul.x + p.x, ul.y + p.y, Merger.MERGER_WIDTH, Merger.MERGER_HEIGHT);
 		
-		worldTop = APP.platform.createCircle(new Point(ul.plus(p).x + Merger.MERGER_WIDTH/2, ul.plus(p).y), Vertex.INIT_VERTEX_RADIUS);
-		worldLeft = APP.platform.createCircle(new Point(ul.plus(p).x, ul.plus(p).y + Merger.MERGER_HEIGHT/2), Vertex.INIT_VERTEX_RADIUS);
-		worldRight = APP.platform.createCircle(new Point(ul.plus(p).x + Merger.MERGER_WIDTH, ul.plus(p).y + Merger.MERGER_HEIGHT/2), Vertex.INIT_VERTEX_RADIUS);
-		worldBottom = APP.platform.createCircle(new Point(ul.plus(p).x + Merger.MERGER_WIDTH/2, ul.plus(p).y+Merger.MERGER_HEIGHT), Vertex.INIT_VERTEX_RADIUS);
+		worldTop = new Circle(new Point(ul.plus(p).x + Merger.MERGER_WIDTH/2, ul.plus(p).y), Vertex.INIT_VERTEX_RADIUS);
+		worldLeft = new Circle(new Point(ul.plus(p).x, ul.plus(p).y + Merger.MERGER_HEIGHT/2), Vertex.INIT_VERTEX_RADIUS);
+		worldRight = new Circle(new Point(ul.plus(p).x + Merger.MERGER_WIDTH, ul.plus(p).y + Merger.MERGER_HEIGHT/2), Vertex.INIT_VERTEX_RADIUS);
+		worldBottom = new Circle(new Point(ul.plus(p).x + Merger.MERGER_WIDTH/2, ul.plus(p).y+Merger.MERGER_HEIGHT), Vertex.INIT_VERTEX_RADIUS);
 		
 		aabb = worldQ;
-		aabb = AABB.union(aabb, worldTop.aabb);
-		aabb = AABB.union(aabb, worldLeft.aabb);
-		aabb = AABB.union(aabb, worldRight.aabb);
-		aabb = AABB.union(aabb, worldBottom.aabb);
+		aabb = AABB.union(aabb, worldTop.getAABB());
+		aabb = AABB.union(aabb, worldLeft.getAABB());
+		aabb = AABB.union(aabb, worldRight.getAABB());
+		aabb = AABB.union(aabb, worldBottom.getAABB());
 		
 	}
 	

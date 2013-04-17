@@ -1,7 +1,5 @@
 package com.gutabi.deadlock.geom;
 
-import static com.gutabi.deadlock.DeadlockApplication.APP;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -147,7 +145,7 @@ public class SweepUtils {
 				
 				if (DMath.lessThanEquals(abParam, 0.0)) {
 					
-					assert ShapeUtils.intersectCC(still.ac, APP.platform.createCircle(p, cap.r));
+					assert ShapeUtils.intersectCC(still.ac, new Circle(p, cap.r));
 					
 					boolean present = false;
 					for (int j = 0; j < paramCount; j++) {
@@ -222,7 +220,7 @@ public class SweepUtils {
 				
 				if (DMath.greaterThanEquals(abParam, 1.0)) {
 					
-					assert ShapeUtils.intersectCC(still.bc, APP.platform.createCircle(p, cap.r));
+					assert ShapeUtils.intersectCC(still.bc, new Circle(p, cap.r));
 					
 					boolean present = false;
 					for (int j = 0; j < paramCount; j++) {
@@ -303,6 +301,10 @@ public class SweepUtils {
 		
 		List<SweepEvent> events = new ArrayList<SweepEvent>();
 		
+		if (!ShapeUtils.intersectAA(still.aabb, moving.aabb)) {
+			return events;
+		}
+		
 		for (Capsule c : still.caps) {
 			events.addAll(SweepUtils.sweepStartCSoverCap(stillParent, c, moving, offset));
 		}
@@ -313,6 +315,10 @@ public class SweepUtils {
 	public static List<SweepEvent> sweepCSoverCS(Object stillParent, CapsuleSequence still, CapsuleSequence moving, int index, int offset) {
 		
 		List<SweepEvent> events = new ArrayList<SweepEvent>();
+		
+		if (!ShapeUtils.intersectAA(still.aabb, moving.aabb)) {
+			return events;
+		}
 		
 		for (int i = 0; i < still.caps.size(); i++) {
 			Capsule c = still.caps.get(i);
@@ -516,7 +522,7 @@ public class SweepUtils {
 		 */
 		
 		double[] params = new double[2];
-		int n = sweepCircleOverCircle(APP.platform.createCircle(a, 0.0), moving, params);
+		int n = sweepCircleOverCircle(new Circle(a, 0.0), moving, params);
 		
 		double adjustedCDParam;
 //		if (n == 2) {
@@ -552,7 +558,7 @@ public class SweepUtils {
 		 * test b
 		 */
 		
-		n = sweepCircleOverCircle(APP.platform.createCircle(b, 0.0), moving, params);
+		n = sweepCircleOverCircle(new Circle(b, 0.0), moving, params);
 		
 //		if (n == 2) {
 //			/*

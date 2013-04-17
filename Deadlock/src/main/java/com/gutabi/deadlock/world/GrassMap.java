@@ -3,6 +3,7 @@ package com.gutabi.deadlock.world;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.gutabi.deadlock.geom.CapsuleSequence;
 import com.gutabi.deadlock.geom.Shape;
 import com.gutabi.deadlock.geom.ShapeUtils;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
@@ -19,10 +20,25 @@ public class GrassMap {
 	public void mowGrass(Shape s) {
 		
 		List<AnimatedGrass> toRemove = new ArrayList<AnimatedGrass>();
-		for (AnimatedGrass g : grass) {
-			if (ShapeUtils.intersect(g.aabb, s)) {
-				toRemove.add(g);
+		
+		if (s instanceof CapsuleSequence) {
+			
+			CapsuleSequence cs = (CapsuleSequence)s;
+			
+			for (AnimatedGrass g : grass) {
+				if (cs.intersectA(g.aabb)) {
+					toRemove.add(g);
+				}
 			}
+			
+		} else {
+			
+			for (AnimatedGrass g : grass) {
+				if (ShapeUtils.intersect(g.aabb, s)) {
+					toRemove.add(g);
+				}
+			}
+			
 		}
 		
 		grass.removeAll(toRemove);

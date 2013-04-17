@@ -50,7 +50,7 @@ public class RegularTool extends WorldToolBase {
 		this.p = p;
 		
 		if (p != null) {
-			shape = APP.platform.createCircle(p, Vertex.INIT_VERTEX_RADIUS);
+			shape = new Circle(p, Vertex.INIT_VERTEX_RADIUS);
 		} else {
 			shape = null;
 		}
@@ -371,7 +371,7 @@ public class RegularTool extends WorldToolBase {
 		
 		stroke.finish();
 		
-		Set<Vertex> affected = stroke.processNewStroke();
+		Set<Vertex> affected = stroke.processNewStroke(true);
 		world.graph.computeVertexRadii(affected);
 		
 		assert world.checkConsistency();

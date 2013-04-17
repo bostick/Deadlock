@@ -3,7 +3,6 @@ package com.gutabi.deadlock;
 import java.io.InputStream;
 
 import com.gutabi.deadlock.geom.AABB;
-import com.gutabi.deadlock.geom.Circle;
 import com.gutabi.deadlock.geom.CubicCurve;
 import com.gutabi.deadlock.geom.Ellipse;
 import com.gutabi.deadlock.geom.MutablePolygon;
@@ -74,7 +73,7 @@ public interface Platform {
 	
 	
 	
-	public abstract Circle createCircle(Point center, double radius);
+//	public abstract Circle createCircle(Point center, double radius);
 	
 	public abstract Polyline createPolyline(Point... pts);
 	

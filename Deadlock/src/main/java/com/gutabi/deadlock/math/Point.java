@@ -654,7 +654,9 @@ public class Point {
 		return new Point(-x, -y);
 	}
 	
-	
+	public double lengthSquared() {
+		return x*x + y*y;
+	}
 	
 	
 	

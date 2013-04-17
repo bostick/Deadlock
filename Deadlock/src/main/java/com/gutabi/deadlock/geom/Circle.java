@@ -1,25 +1,21 @@
 package com.gutabi.deadlock.geom;
 
-import static com.gutabi.deadlock.DeadlockApplication.APP;
-
 import com.gutabi.deadlock.math.DMath;
 import com.gutabi.deadlock.math.Point;
+import com.gutabi.deadlock.ui.paint.RenderingContext;
 
-public abstract class Circle implements Shape {
+public class Circle implements Shape {
 	
 	public final Point center;
 	public final double radius;
 	
-	public final AABB aabb;
+	private AABB aabb;
 	
 	private int hash;
 	
-	protected Circle(Point center, double radius) {
-		super();
+	public Circle(Point center, double radius) {
 		this.center = center;
 		this.radius = radius;
-		
-		aabb = new AABB(center.x - radius, center.y - radius, 2*radius, 2*radius);
 	}
 	
 	public boolean equals(Object o) {
@@ -49,20 +45,23 @@ public abstract class Circle implements Shape {
 		return hash;
 	}
 	
+	public AABB getAABB() {
+		if (aabb == null) {
+			aabb = new AABB(center.x - radius, center.y - radius, 2*radius, 2*radius);
+		}
+		return aabb;
+	}
+	
 	public double getRadius() {
 		return radius;
 	}
 	
 	public Circle plus(Point p) {
-		return APP.platform.createCircle(center.plus(p), radius);
+		return new Circle(center.plus(p), radius);
 	}
 	
 	public boolean hitTest(Point p) {
 		return DMath.lessThanEquals(Point.distance(p, center), radius);
-	}
-	
-	public AABB getAABB() {
-		return aabb;
 	}
 	
 	public void project(Point axis, double[] out) {
@@ -77,4 +76,11 @@ public abstract class Circle implements Shape {
 		return center;
 	}
 	
+	public void draw(RenderingContext ctxt) {
+		ctxt.drawCircle(this);
+	}
+	
+	public void paint(RenderingContext ctxt) {
+		ctxt.paintCircle(this);
+	}
 }

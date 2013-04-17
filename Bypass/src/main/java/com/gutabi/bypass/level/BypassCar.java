@@ -2,6 +2,7 @@ package com.gutabi.bypass.level;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
+import com.gutabi.deadlock.geom.Circle;
 import com.gutabi.deadlock.math.DMath;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.paint.Cap;
@@ -12,7 +13,6 @@ import com.gutabi.deadlock.world.World;
 import com.gutabi.deadlock.world.cars.Car;
 import com.gutabi.deadlock.world.cars.CarStateEnum;
 import com.gutabi.deadlock.world.graph.GraphPositionPathPosition;
-import com.gutabi.deadlock.world.physics.PhysicsUtils;
 import com.gutabi.deadlock.world.sprites.CarSheet.CarType;
 
 public class BypassCar extends Car {
@@ -116,7 +116,8 @@ public class BypassCar extends Car {
 			newPos = driver.toolCoastingGoal;
 			state = CarStateEnum.IDLE;
 			
-			b2dBody.setTransform(PhysicsUtils.vec2(newPos.p), (float)(state == CarStateEnum.COASTING_FORWARD ? newPos.angle : newPos.angle));
+			setTransform(newPos.p, (state == CarStateEnum.COASTING_FORWARD ? newPos.angle : newPos.angle));
+			setPhysicsTransform();
 			
 			computeDynamicPropertiesAlways();
 			computeDynamicPropertiesMoving();
@@ -134,7 +135,8 @@ public class BypassCar extends Car {
 			return;
 		}
 		
-		b2dBody.setTransform(PhysicsUtils.vec2(newPos.p), (float)(state == CarStateEnum.COASTING_FORWARD ? newPos.angle : newPos.angle));
+		setTransform(newPos.p, (state == CarStateEnum.COASTING_FORWARD ? newPos.angle : newPos.angle));
+		setPhysicsTransform();
 	}
 	
 	public boolean postStep(double t) {
@@ -176,7 +178,7 @@ public class BypassCar extends Car {
 		if (APP.DEBUG_DRAW) {
 			
 			ctxt.setColor(Color.DARKGREEN);
-			APP.platform.createCircle(((BypassDriver)driver).overallPos.p, 0.2).paint(ctxt);
+			ctxt.paintCircle(new Circle(((BypassDriver)driver).overallPos.p, 0.2));
 			
 			ctxt.setColor(Color.BLACK);
 			ctxt.setStroke(0.0, Cap.SQUARE, Join.MITER);

@@ -169,7 +169,7 @@ public class QuadTool extends WorldToolBase {
 			}
 			s.finish();
 			
-			Set<Vertex> affected = s.processNewStroke();
+			Set<Vertex> affected = s.processNewStroke(false);
 			world.graph.computeVertexRadii(affected);
 			
 			APP.tool = new RegularTool();

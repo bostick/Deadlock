@@ -105,7 +105,7 @@ public class Capsule implements Shape {
 	}
 	
 	public Capsule plus(Point p) {
-		return new Capsule(APP.platform.createCircle(a.plus(p), ac.radius), APP.platform.createCircle(b.plus(p), bc.radius));
+		return new Capsule(new Circle(a.plus(p), ac.radius), new Circle(b.plus(p), bc.radius));
 	}
 	
 	public boolean hitTest(Point p) {

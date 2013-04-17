@@ -13,7 +13,6 @@ import android.graphics.Typeface;
 import android.util.Log;
 
 import com.gutabi.bypass.ResourceImpl.ResourceType;
-import com.gutabi.bypass.geom.CircleImpl;
 import com.gutabi.bypass.geom.CubicCurveImpl;
 import com.gutabi.bypass.geom.EllipseImpl;
 import com.gutabi.bypass.geom.LineImpl;
@@ -30,7 +29,6 @@ import com.gutabi.bypass.ui.paint.TransformImpl;
 import com.gutabi.deadlock.Platform;
 import com.gutabi.deadlock.Resource;
 import com.gutabi.deadlock.geom.AABB;
-import com.gutabi.deadlock.geom.Circle;
 import com.gutabi.deadlock.geom.CubicCurve;
 import com.gutabi.deadlock.geom.Ellipse;
 import com.gutabi.deadlock.geom.Line;
@@ -286,9 +284,9 @@ public class PlatformImpl implements Platform {
 	
 	
 	
-	public Circle createCircle(Point center, double radius) {
-		return new CircleImpl(center, radius);
-	}
+//	public Circle createCircle(Point center, double radius) {
+//		return new CircleImpl(center, radius);
+//	}
 	
 	public Line createLine(Point p0, Point p1) {
 		return new LineImpl(p0, p1);

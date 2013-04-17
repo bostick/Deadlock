@@ -1,7 +1,5 @@
 package com.gutabi.deadlock.world;
 
-import static com.gutabi.deadlock.DeadlockApplication.APP;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -59,7 +57,7 @@ public class Stroke {
 	public void add(Point p) {
 		assert !finished;
 		
-		cs.add(APP.platform.createCircle(p, STROKE_RADIUS));
+		cs.add(new Circle(p, STROKE_RADIUS));
 		
 		computeAABB();
 	}
@@ -90,7 +88,7 @@ public class Stroke {
 		finished = true;
 	}
 	
-	public Set<Vertex> processNewStroke() {
+	public Set<Vertex> processNewStroke(boolean sweepSelf) {
 		
 		Set<Vertex> affected = new HashSet<Vertex>();
 		
@@ -106,7 +104,7 @@ public class Stroke {
 //			}
 //		}
 		
-		List<SweepEvent> events = events(true);
+		List<SweepEvent> events = events(sweepSelf);
 		
 		/*
 		 * go through and find any merger events and fixture events
@@ -261,7 +259,7 @@ public class Stroke {
 				
 				Entity hit2;
 				if (pos instanceof EdgePosition) {
-					hit2 = world.graph.pureGraphIntersectCircle(APP.platform.createCircle(pos.p, e.circle.radius));
+					hit2 = world.graph.pureGraphIntersectCircle(new Circle(pos.p, e.circle.radius));
 				} else {
 					hit2 = ((VertexPosition)pos).v;
 				}
@@ -369,7 +367,7 @@ public class Stroke {
 				
 				assert pos != null;
 				
-				Entity hit = world.graph.pureGraphIntersectCircle(APP.platform.createCircle(pos.p, e.circle.radius));
+				Entity hit = world.graph.pureGraphIntersectCircle(new Circle(pos.p, e.circle.radius));
 				
 				if (hit == null) {
 					Intersection i0 = new Intersection(world, pos.p);
@@ -737,7 +735,7 @@ public class Stroke {
 		aabb = null;
 		
 		for (Circle c : cs) {
-			aabb = AABB.union(aabb, c.aabb);
+			aabb = AABB.union(aabb, c.getAABB());
 		}
 		
 	}

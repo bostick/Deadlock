@@ -142,7 +142,7 @@ public class CircleTool extends WorldToolBase {
 			}
 			s.finish();
 			
-			Set<Vertex> affected = s.processNewStroke();
+			Set<Vertex> affected = s.processNewStroke(true);
 			world.graph.computeVertexRadii(affected);
 			
 			APP.tool = new RegularTool();

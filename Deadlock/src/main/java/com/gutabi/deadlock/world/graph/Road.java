@@ -59,7 +59,7 @@ public class Road extends Edge {
 	
 	private int hash;
 	
-	private CapsuleSequence shape;
+	public CapsuleSequence shape;
 	
 	private Triangle arrowPointer;
 	
@@ -379,8 +379,8 @@ public class Road extends Edge {
 			startBorderIndex = 1;
 			endBorderIndex = seq.capsuleCount()-1;
 			
-			startBorderPoint = APP.platform.createCircle(seq.getPoint(startBorderIndex), borderPointRadius);
-			endBorderPoint = APP.platform.createCircle(seq.getPoint(endBorderIndex), borderPointRadius);
+			startBorderPoint = new Circle(seq.getPoint(startBorderIndex), borderPointRadius);
+			endBorderPoint = new Circle(seq.getPoint(endBorderIndex), borderPointRadius);
 			
 			assert DMath.equals(Point.distance(startBorderPoint.center, start.p), start.getRadius());
 			assert DMath.equals(Point.distance(endBorderPoint.center, end.p), end.getRadius());
@@ -424,7 +424,7 @@ public class Road extends Edge {
 		
 		List<Circle> circs = new ArrayList<Circle>();
 		for (Point p : adj) {
-			circs.add(APP.platform.createCircle(p, ROAD_RADIUS));
+			circs.add(new Circle(p, ROAD_RADIUS));
 		}
 		
 		List<Capsule> caps = new ArrayList<Capsule>();
@@ -492,12 +492,12 @@ public class Road extends Edge {
 			assert startBorderIndex == -1;
 			double startBorderParam = c-startBorderIndex;
 			assert 0 <= startBorderParam && startBorderParam <= 1;
-			startBorderPoint = APP.platform.createCircle(Point.point(start.p, pts.get(startBorderIndex+1), startBorderParam), borderPointRadius);
+			startBorderPoint = new Circle(Point.point(start.p, pts.get(startBorderIndex+1), startBorderParam), borderPointRadius);
 		} else {
 			startBorderIndex = (int)Math.floor(c);
 			double startBorderParam = c-startBorderIndex;
 			assert 0 <= startBorderParam && startBorderParam <= 1;
-			startBorderPoint = APP.platform.createCircle(Point.point(pts.get(startBorderIndex), pts.get(startBorderIndex+1), startBorderParam), borderPointRadius);
+			startBorderPoint = new Circle(Point.point(pts.get(startBorderIndex), pts.get(startBorderIndex+1), startBorderParam), borderPointRadius);
 		}
 		
 		c = endBorderCombo(end, pts);
@@ -506,12 +506,12 @@ public class Road extends Edge {
 			assert endBorderIndex == pts.size()-1;
 			double endBorderParam = c-endBorderIndex;
 			assert 0 <= endBorderParam && endBorderParam <= 1;
-			endBorderPoint = APP.platform.createCircle(Point.point(pts.get(endBorderIndex), end.p, endBorderParam), borderPointRadius);
+			endBorderPoint = new Circle(Point.point(pts.get(endBorderIndex), end.p, endBorderParam), borderPointRadius);
 		} else {
 			endBorderIndex = (int)Math.floor(c);
 			double endBorderParam = c-endBorderIndex;
 			assert 0 <= endBorderParam && endBorderParam <= 1;
-			endBorderPoint = APP.platform.createCircle(Point.point(pts.get(endBorderIndex), pts.get(endBorderIndex+1), endBorderParam), borderPointRadius);
+			endBorderPoint = new Circle(Point.point(pts.get(endBorderIndex), pts.get(endBorderIndex+1), endBorderParam), borderPointRadius);
 		}
 		
 	}

@@ -4,6 +4,7 @@ import static com.gutabi.deadlock.DeadlockApplication.APP;
 
 import com.gutabi.deadlock.Entity;
 import com.gutabi.deadlock.geom.AABB;
+import com.gutabi.deadlock.geom.Circle;
 import com.gutabi.deadlock.geom.ShapeUtils;
 import com.gutabi.deadlock.math.DMath;
 import com.gutabi.deadlock.math.Point;
@@ -352,12 +353,12 @@ public class AutonomousCar extends Car {
 			
 			if (((AutonomousDriver)driver).overallPos != null) {
 				ctxt.setColor(Color.DARKGREEN);
-				APP.platform.createCircle(((AutonomousDriver)driver).overallPos.p, 0.2).paint(ctxt);
+				ctxt.paintCircle(new Circle(((AutonomousDriver)driver).overallPos.p, 0.2));
 			}
 			
 			if (((AutonomousDriver)driver).goalPoint != null) {
 				ctxt.setColor(Color.GREEN);
-				APP.platform.createCircle(((AutonomousDriver)driver).goalPoint, 0.2).paint(ctxt);
+				ctxt.paintCircle(new Circle(((AutonomousDriver)driver).goalPoint, 0.2));
 			}
 			
 			ctxt.setColor(Color.BLACK);

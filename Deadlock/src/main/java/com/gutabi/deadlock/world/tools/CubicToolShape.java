@@ -39,7 +39,7 @@ public class CubicToolShape implements Shape {
 		
 		this.world = world;
 		this.start = start;
-		startCircle = APP.platform.createCircle(start, Vertex.INIT_VERTEX_RADIUS);
+		startCircle = new Circle(start, Vertex.INIT_VERTEX_RADIUS);
 		this.end = end;
 		this.c0 = c0;
 		this.c1 = c1;
@@ -52,7 +52,7 @@ public class CubicToolShape implements Shape {
 		
 		List<Circle> cs = new ArrayList<Circle>();
 		for (Point p : skeleton) {
-			cs.add(APP.platform.createCircle(p, Vertex.INIT_VERTEX_RADIUS));
+			cs.add(new Circle(p, Vertex.INIT_VERTEX_RADIUS));
 		}
 		List<Capsule> caps = new ArrayList<Capsule>();
 		for (int i = 0; i < cs.size()-1; i++) {

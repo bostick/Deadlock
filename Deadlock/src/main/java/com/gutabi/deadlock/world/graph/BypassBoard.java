@@ -602,7 +602,7 @@ public class BypassBoard extends Entity {
 		stroke.add(other);
 		stroke.finish();
 		
-		stroke.processNewStroke();
+		stroke.processNewStroke(false);
 	}
 	
 	/**
@@ -706,7 +706,7 @@ public class BypassBoard extends Entity {
 		stroke.add(f1.p);
 		stroke.finish();
 		
-		stroke.processNewStroke();
+		stroke.processNewStroke(false);
 		
 	}
 	

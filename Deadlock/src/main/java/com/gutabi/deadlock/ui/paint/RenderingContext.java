@@ -2,6 +2,7 @@ package com.gutabi.deadlock.ui.paint;
 
 import com.gutabi.deadlock.Resource;
 import com.gutabi.deadlock.geom.AABB;
+import com.gutabi.deadlock.geom.Circle;
 import com.gutabi.deadlock.geom.Line;
 import com.gutabi.deadlock.math.Dim;
 import com.gutabi.deadlock.math.Point;
@@ -62,5 +63,9 @@ public abstract class RenderingContext {
 	public abstract void paintAABB(AABB a);
 	
 	public abstract void drawLine(Line a);
+	
+	public abstract void drawCircle(Circle c);
+	
+	public abstract void paintCircle(Circle c);
 	
 }

@@ -202,6 +202,21 @@ public class CapsuleSequence implements Shape, SweeperShape, CompoundShape {
 		
 	}
 	
+	public boolean intersectA(AABB a) {
+		
+		if (!ShapeUtils.intersectAA(aabb, a)) {
+			return false;
+		}
+		
+		for (Capsule c : caps) {
+			if (ShapeUtils.intersectACap(a, c)) {
+				return true;
+			}
+		}
+		return false;
+		
+	}
+	
 	public boolean contains(Shape s) {
 		assert false;
 		return false;

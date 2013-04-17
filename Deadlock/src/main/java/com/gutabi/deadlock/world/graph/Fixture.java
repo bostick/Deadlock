@@ -210,7 +210,7 @@ public final class Fixture extends Vertex {
 			return false;
 		}
 		
-		boolean carIntersecting = world.intersectsPhysicsBodies(shape.aabb);
+		boolean carIntersecting = world.intersectsPhysicsBodies(shape.getAABB());
 		
 		if (carIntersecting) {
 			return false;

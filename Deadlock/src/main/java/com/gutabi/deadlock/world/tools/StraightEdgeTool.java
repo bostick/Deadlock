@@ -137,7 +137,7 @@ public class StraightEdgeTool extends WorldToolBase {
 			s.add(p);
 			s.finish();
 			
-			Set<Vertex> affected = s.processNewStroke();
+			Set<Vertex> affected = s.processNewStroke(false);
 			world.graph.computeVertexRadii(affected);
 			
 			APP.tool = new RegularTool();

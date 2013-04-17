@@ -1,11 +1,10 @@
 package com.gutabi.deadlock.world;
 
-import static com.gutabi.deadlock.DeadlockApplication.APP;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import com.gutabi.deadlock.geom.Capsule;
+import com.gutabi.deadlock.geom.Circle;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.paint.Color;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
@@ -21,8 +20,8 @@ public class GrassMarkMap {
 	public void addGrassMark(Point p0, Point p1) {
 		
 		Capsule test = new Capsule(
-						APP.platform.createCircle(p0, 0.0),
-						APP.platform.createCircle(p1, 0.0));
+						new Circle(p0, 0.0),
+						new Circle(p1, 0.0));
 		
 		for (Capsule cap : marks) {
 			if (Capsule.contains(cap, test)) {
@@ -37,8 +36,8 @@ public class GrassMarkMap {
 		}
 		
 		marks.add(new Capsule(
-					APP.platform.createCircle(p0, 0.1),
-					APP.platform.createCircle(p1, 0.1)));
+					new Circle(p0, 0.1),
+					new Circle(p1, 0.1)));
 	}
 	
 	public void postStop() {
