@@ -6,7 +6,7 @@
     tools:context=".LevelMenuActivity" >
     
     <view android:id="@+id/view_levelmenu"
-    	class="com.gutabi.bypass.level.LevelMenuView"
+    	class="com.gutabi.bypass.menu.LevelMenuView"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_weight="1"/> 

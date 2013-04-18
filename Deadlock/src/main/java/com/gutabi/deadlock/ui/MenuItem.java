@@ -59,17 +59,17 @@ public abstract class MenuItem {
 		int x = (int)origTransformRender.getTranslateX();
 		int y = (int)origTransformRender.getTranslateY();
 		
-		lab.setLocation(0, 20);
-		lab.setDimension(menu.menuItemWidest[c], lab.localAABB.height);
+//		ctxt.translate(0, 20);
+//		
+//		lab.setLocation(x, y);
+//		lab.setDimension(menu.menuItemWidest[c], lab.localAABB.height);
 		
-		if (active) {
-			lab.color = Color.WHITE;
-		} else {
-			lab.color = Color.GRAY;
-		}
+//		lab.render(ctxt);
+		lab.aabb = new AABB(x + menu.menuItemWidest[c]/2 - lab.localAABB.width/2, y + (20 + lab.localAABB.height + 20)/2 - lab.localAABB.height/2, lab.localAABB.width, lab.localAABB.height);
 		
-		lab.render();
-		aabb = new AABB(x, y, lab.aabb.width, 20 + lab.aabb.height + 20);
+//		ctxt.setTransform(origTransformRender);
+		
+		aabb = new AABB(x, y, menu.menuItemWidest[c], 20 + lab.aabb.height + 20);
 	}
 	
 	
@@ -80,7 +80,16 @@ public abstract class MenuItem {
 		
 		ctxt.getTransform(origTransformPaint);
 		
-		ctxt.translate(aabb.x, aabb.y);
+//		int x = (int)origTransformPaint.getTranslateX();
+//		int y = (int)origTransformPaint.getTranslateY();
+		
+//		ctxt.translate(aabb.x, aabb.y);
+		
+		if (active) {
+			lab.color = Color.WHITE;
+		} else {
+			lab.color = Color.GRAY;
+		}
 		
 		lab.paint(ctxt);
 		
@@ -99,11 +108,14 @@ public abstract class MenuItem {
 		
 		ctxt.getTransform(origTransformPaintHilited);
 		
+//		int x = (int)origTransformPaintHilited.getTranslateX();
+//		int y = (int)origTransformPaintHilited.getTranslateY();
+		
 		ctxt.setColor(Color.RED);
 		ctxt.setStroke(0.0, Cap.SQUARE, Join.MITER);
 		aabb.draw(ctxt);
 		
-		ctxt.setTransform(origTransformPaintHilited);
+//		ctxt.setTransform(origTransformPaintHilited);
 	}
 	
 }

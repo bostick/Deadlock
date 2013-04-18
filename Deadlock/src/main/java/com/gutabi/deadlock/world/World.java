@@ -235,18 +235,28 @@ public class World extends PhysicsWorld {
 	}
 	
 	
+	Thread simThread;
+	
 	public void startRunning() {
 		
 		mode = WorldMode.RUNNING;
 		
-		Thread t = new Thread(new SimulationRunnable());
-		t.start();
+		simThread = new Thread(new SimulationRunnable());
+		simThread.start();
 		
 	}
 	
 	public void stopRunning() {
 		
 		mode = WorldMode.EDITING;
+		
+		try {
+			simThread.join();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 	
 	public void pauseRunning() {

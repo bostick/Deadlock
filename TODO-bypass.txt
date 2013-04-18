@@ -23,6 +23,14 @@ hint button
 
 
 
+
+
+no allocations when dragging
+
+
+
+
+
 scoring
 time taken
 moves made

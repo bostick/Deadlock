@@ -43,9 +43,7 @@ public class ExampleApplication extends DeadlockApplication {
 		spriteSheet.load();
 		explosionSheet.load();
 		
-		ExampleMainMenu.action();
-		
-		super.init();
+		APP.platform.showAppScreen();
 	}
 	
 }

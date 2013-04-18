@@ -18,7 +18,6 @@
 		<copy tofile="${resDir}/drawable-hdpi/logo605x132.png" file="${bypassResDir}/static/logo605x132.png"/>
 		
 		<copy tofile="${resDir}/drawable-nodpi/carsheet.png" file="${deadlockResDir}/static/carsheet.png"/>
-		<copy tofile="${resDir}/drawable-nodpi/explosionsheet.png" file="${deadlockResDir}/static/explosionsheet.png"/>
 		<copy tofile="${resDir}/drawable-nodpi/spritesheet.png" file="${deadlockResDir}/static/spritesheet.png"/>
 		
 		<copy tofile="${assetsDir}/fonts/visitor1.ttf" file="${deadlockResDir}/static/visitor1.ttf"/>

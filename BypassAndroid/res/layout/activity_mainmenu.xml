@@ -3,10 +3,10 @@
     android:orientation="vertical"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    tools:context=".MainActivity" >
+    tools:context=".MainMenuActivity" >
 
-    <view android:id="@+id/view_main"
-    	class="com.gutabi.bypass.MainView"
+    <view android:id="@+id/view_mainmenu"
+    	class="com.gutabi.bypass.menu.MainMenuView"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_weight="1"/> 

@@ -1,11 +1,10 @@
 package com.gutabi.bypass;
 
-import com.gutabi.bypass.menu.MainMenu;
+import com.gutabi.bypass.level.LevelDB;
 import com.gutabi.deadlock.DeadlockApplication;
 import com.gutabi.deadlock.Resource;
 import com.gutabi.deadlock.ui.Image;
 import com.gutabi.deadlock.world.sprites.CarSheet;
-import com.gutabi.deadlock.world.sprites.ExplosionSheet;
 import com.gutabi.deadlock.world.sprites.SpriteSheet;
 
 public class BypassApplication extends DeadlockApplication {
@@ -13,6 +12,8 @@ public class BypassApplication extends DeadlockApplication {
 	public Image titleBackground;
 	public Image title_white;
 	public Image copyright;
+	
+	public LevelDB levelDB;
 	
 	public static BypassApplication BYPASSAPP;
 	
@@ -38,15 +39,12 @@ public class BypassApplication extends DeadlockApplication {
 		
 		carSheet = new CarSheet();
 		spriteSheet = new SpriteSheet();
-		explosionSheet = new ExplosionSheet();
 		
 		carSheet.load();
 		spriteSheet.load();
-		explosionSheet.load();
 		
-		MainMenu.action();
+		APP.platform.showAppScreen();
 		
-		super.init();
 	}
 	
 }

@@ -16,7 +16,7 @@ public class Applet extends JApplet {
 		BypassApplication app = new BypassApplication();
 		APP = app;
 		
-		APP.init();
+//		APP.init();
 		
 //		APP.codebase = app.getCodeBase();
 		

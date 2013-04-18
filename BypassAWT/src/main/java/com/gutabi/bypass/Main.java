@@ -12,6 +12,7 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
 import com.gutabi.bypass.BypassApplication;
+import com.gutabi.bypass.menu.MainMenu;
 import com.gutabi.bypass.ui.WindowInfo;
 
 public class Main  {
@@ -48,7 +49,10 @@ public class Main  {
 		
 		platform.debuggerContainer = newFrame;
 		
-		APP.init();
+		BYPASSAPP.init();
+		
+		MainMenu.action();
+		
 	}
 	
 	public static Thread.UncaughtExceptionHandler handler = new Thread.UncaughtExceptionHandler() {

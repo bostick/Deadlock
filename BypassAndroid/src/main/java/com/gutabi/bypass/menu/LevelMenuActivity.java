@@ -1,9 +1,7 @@
-package com.gutabi.bypass;
+package com.gutabi.bypass.menu;
 
-import static com.gutabi.bypass.BypassApplication.BYPASSAPP;
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 import android.app.Activity;
-import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -12,49 +10,74 @@ import android.view.Menu;
 import android.view.MotionEvent;
 import android.view.Window;
 
-import com.gutabi.bypass.BypassApplication;
+import com.gutabi.bypass.PlatformImpl;
 import com.gutabi.bypass.R;
 import com.gutabi.deadlock.math.Point;
 
-public class MainActivity extends Activity {
+public class LevelMenuActivity extends Activity {
 	
-	MainView v;
+	public LevelMenuView v;
 	
 	private GestureDetector gDetector;
 	
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		setContentView(R.layout.activity_main);
 		
-		BypassApplication app = new BypassApplication();
-		APP = app;
-		BYPASSAPP = app;
+		Log.d("levelmenu", "create");
+		
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		
+		setContentView(R.layout.activity_levelmenu);
 		
 		PlatformImpl.CURRENTACTIVITY = this;
 		
-		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-		
 		gDetector = new GestureDetector(this, simpleOnGestureListener);
 		
-		v = (MainView)findViewById(R.id.view_main);
-		
-		PlatformImpl platform = new PlatformImpl(getResources());
-		APP.platform = platform;
-		
-		
+		v = (LevelMenuView)findViewById(R.id.view_levelmenu);
 		
 		v.ctxt = APP.platform.createRenderingContext();
 		
-		
-		
-		try {
-			APP.init();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
+	
+	protected void onStart() {
+		super.onStart();
+		
+		Log.d("levelmenu", "start");
+		
+		PlatformImpl.CURRENTACTIVITY = this;
+		
+		LevelMenu.action();
+	}
+    
+    protected void onRestart() {
+    	super.onRestart();
+    	
+    	Log.d("levelmenu", "restart");
+    }
+
+    protected void onResume() {
+    	super.onResume();
+    	
+    	Log.d("levelmenu", "resume");
+    }
+
+    protected void onPause() {
+    	super.onPause();
+    	
+    	Log.d("levelmenu", "pause");
+    }
+
+    protected void onStop() {
+    	super.onStop();
+    	
+    	Log.d("levelmenu", "stop");
+    }
+
+    protected void onDestroy() {
+    	super.onDestroy();
+    	
+    	Log.d("levelmenu", "destroy");
+    }
 	
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
@@ -77,15 +100,15 @@ public class MainActivity extends Activity {
 		
 		switch (act) {
 		case MotionEvent.ACTION_DOWN:
-			Log.d("motion", "down " + p);
+//			Log.d("motion", "down " + p);
 			APP.appScreen.contentPane.pcp.pressedDriver(p);
 			break;
 		case MotionEvent.ACTION_MOVE:
-			Log.d("motion", "move " + p);
+//			Log.d("motion", "move " + p);
 			APP.appScreen.contentPane.pcp.draggedDriver(p);
 			break;
 		case MotionEvent.ACTION_UP:
-			Log.d("motion", "up " + p);
+//			Log.d("motion", "up " + p);
 			APP.appScreen.contentPane.pcp.releasedDriver(p);
 			break;
 		}

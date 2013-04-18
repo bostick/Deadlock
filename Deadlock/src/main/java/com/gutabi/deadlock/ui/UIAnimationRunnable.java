@@ -2,10 +2,14 @@ package com.gutabi.deadlock.ui;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 public class UIAnimationRunnable implements Runnable {
 	
-	public UIAnimationRunnable() {
-		
+	AtomicBoolean trigger;
+	
+	public UIAnimationRunnable(AtomicBoolean trigger) {
+		this.trigger = trigger;
 	}
 	
 	public void run() {
@@ -13,6 +17,10 @@ public class UIAnimationRunnable implements Runnable {
 		try {
 			
 			while (true) {
+				
+				if (trigger.get() == false) {
+					break;
+				}
 				
 				Thread.sleep(33);
 				

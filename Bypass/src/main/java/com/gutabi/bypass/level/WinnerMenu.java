@@ -1,5 +1,6 @@
 package com.gutabi.bypass.level;
 
+import static com.gutabi.bypass.BypassApplication.BYPASSAPP;
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
 import com.gutabi.bypass.menu.MainMenu;
@@ -35,9 +36,10 @@ public class WinnerMenu extends Menu {
 				
 				int index = world.curLevel.index;
 				
-				world.stopRunning();
+				BypassWorld.deaction();
 				
-				BypassWorld.action(world.levelDB, index+1);
+//				BypassWorld.action(world.levelDB, index+1);
+				APP.platform.action(BypassWorld.class, index+1);
 				
 			}
 		};
@@ -45,13 +47,14 @@ public class WinnerMenu extends Menu {
 		MenuItem backMenuItem = new MenuItem(WinnerMenu.this, "Back") {
 			public void action() {
 				
-				APP.platform.unshowDebuggerScreen();
+				BypassWorld.deaction();
 				
-				MainMenu.action();
+//				MainMenu.action();
+				APP.platform.action(MainMenu.class);
 			}
 		};
 		
-		if (index < world.levelDB.levelCount-1) {
+		if (index < BYPASSAPP.levelDB.levelCount-1) {
 			
 			add(nextMenuItem, 0, 0);
 			add(backMenuItem, 1, 0);

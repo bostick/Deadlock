@@ -2,11 +2,14 @@ package com.gutabi.bypass.menu;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import com.gutabi.deadlock.AppScreen;
 import com.gutabi.deadlock.Model;
 import com.gutabi.deadlock.ui.Menu;
 import com.gutabi.deadlock.ui.MenuItem;
 import com.gutabi.deadlock.ui.MenuTool;
+import com.gutabi.deadlock.ui.UIAnimationRunnable;
 
 public class MainMenu extends Menu implements Model {
 	
@@ -14,8 +17,8 @@ public class MainMenu extends Menu implements Model {
 		
 		MenuItem newMenuItem = new MenuItem(MainMenu.this, "New Game") {
 			public void action() {
-				
-				LevelMenu.action();
+				MainMenu.deaction();
+				APP.platform.action(LevelMenu.class);
 			}
 		};
 		add(newMenuItem, 0, 0);
@@ -29,6 +32,10 @@ public class MainMenu extends Menu implements Model {
 		add(resumeMenuItem, 1, 0);
 		
 	}
+	
+	
+	static AtomicBoolean trigger = new AtomicBoolean(true);
+	static Thread uiThread;
 	
 	public static void action() {
 		
@@ -46,7 +53,23 @@ public class MainMenu extends Menu implements Model {
 		
 		s.postDisplay();
 		
-//		s.contentPane.repaint();
+		uiThread = new Thread(new UIAnimationRunnable(trigger));
+		uiThread.start();
+	}
+	
+	public static void deaction() {
+		
+		trigger.set(false);
+		
+		try {
+			uiThread.join();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+//		APP.platform.unshowAppScreen();
+		
 	}
 	
 	public Menu getMenu() {

@@ -24,13 +24,12 @@ public abstract class Menu {
 	
 	public AABB aabb = new AABB(0, 0, 0, 0);
 	
-//	public Point lastMovedMenuPoint;
-//	public Point lastClickedMenuPoint;
-	
 	public boolean hScrollable;
 	public boolean vScrollable;
 	
 	Shimmer shimmer;
+	
+	Image img;
 	
 	public Menu() {
 		menuItemWidest = new double[0];
@@ -156,7 +155,8 @@ public abstract class Menu {
 		for (int i = 0; i < cols; i++) {
 			int itemsCol = 0;
 			double totalMenuItemHeight = 0.0;
-			for (MenuItem item : items) {
+			for (int j = 0; j < items.size(); j++) {
+				MenuItem item = items.get(j);
 				if (item.c != i) {
 					continue;
 				}
@@ -183,11 +183,19 @@ public abstract class Menu {
 				height = menuHeight[i];
 			}
 		}
-		aabb = new AABB(aabb.x, aabb.y, width, height);
+		aabb = new AABB(aabb.x, aabb.y, width+1, height+1);
 		
-		Image tmpImg = APP.platform.createImage((int)aabb.width, (int)aabb.height);
+		img = APP.platform.createImage((int)aabb.width+1, (int)aabb.height+1);
 		
-		APP.platform.setRenderingContextFields1(ctxt, tmpImg);
+		APP.platform.setRenderingContextFields1(ctxt, img);
+		
+		ctxt.setColor(Color.menuBackground);
+		ctxt.fillRect(
+				(int)(0),
+				(int)(0),
+				(int)(aabb.width+1),
+				(int)(aabb.height+1));
+		
 		
 		ctxt.getTransform(origTransformRender);
 		
@@ -203,7 +211,8 @@ public abstract class Menu {
 			int curRow = 0;
 			while (true) {
 				itemFound = false;
-				for (MenuItem item : items) {
+				for (int j = 0; j < items.size(); j++) {
+					MenuItem item = items.get(j);
 					if (item.c != i) {
 						continue;
 					}
@@ -212,7 +221,8 @@ public abstract class Menu {
 					}
 					itemFound = true;
 					item.render(ctxt);
-					ctxt.translate(0, item.localAABB.height + 10);
+//					item.paint(ctxt);
+					ctxt.translate(0, item.aabb.height + 10);
 				}
 				if (!itemFound) {
 					break;
@@ -222,6 +232,13 @@ public abstract class Menu {
 			}
 		}
 		
+		ctxt.setTransform(origTransformRender);
+		
+		for (int i = 0; i < items.size(); i++) {
+			MenuItem item = items.get(i);
+			item.paint(ctxt);
+		}
+		
 		shimmer = new Shimmer(firstMenuItem.aabb, System.currentTimeMillis());
 		
 		ctxt.dispose();
@@ -229,11 +246,11 @@ public abstract class Menu {
 	
 	
 	
-	Transform origTransformPaint = APP.platform.createTransform();
+//	Transform origTransformPaint = APP.platform.createTransform();
 	
 	public void paint_panel(RenderingContext ctxt) {
 		
-		ctxt.getTransform(origTransformPaint);
+//		ctxt.getTransform(origTransformPaint);
 		
 		ctxt.translate(aabb.x, aabb.y);
 		
@@ -244,10 +261,13 @@ public abstract class Menu {
 				(int)(aabb.width + 5 + 5),
 				(int)(aabb.height + 5 + 5));
 		
-		for (int i = 0; i < items.size(); i++) {
-			MenuItem item = items.get(i);
-			item.paint(ctxt);
-		}
+//		for (int i = 0; i < items.size(); i++) {
+//			MenuItem item = items.get(i);
+//			item.paint(ctxt);
+//		}
+		ctxt.paintImage(img,
+				0, 0, img.getWidth(), img.getHeight(),
+				0, 0, img.getWidth(), img.getHeight());
 		
 		if (hilited != null) {
 			hilited.paintHilited(ctxt);			
@@ -255,6 +275,6 @@ public abstract class Menu {
 		
 		shimmer.paint(ctxt);
 		
-		ctxt.setTransform(origTransformPaint);
+//		ctxt.setTransform(origTransformPaint);
 	}
 }

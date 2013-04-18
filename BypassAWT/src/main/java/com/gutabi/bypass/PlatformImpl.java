@@ -25,6 +25,9 @@ import com.gutabi.bypass.geom.OBBImpl;
 import com.gutabi.bypass.geom.PolylineImpl;
 import com.gutabi.bypass.geom.QuadCurveImpl;
 import com.gutabi.bypass.geom.TriangleImpl;
+import com.gutabi.bypass.level.BypassWorld;
+import com.gutabi.bypass.menu.LevelMenu;
+import com.gutabi.bypass.menu.MainMenu;
 import com.gutabi.bypass.ui.ImageImpl;
 import com.gutabi.bypass.ui.PlatformContentPaneImpl;
 import com.gutabi.bypass.ui.paint.RenderingContextImpl;
@@ -105,7 +108,7 @@ public class PlatformImpl implements Platform {
 		
 	}
 	
-	public void showAppScreen(Object... args) {
+	public void showAppScreen() {
 		
 		if (appContainer instanceof JFrame) {
 			((JFrame)appContainer).setVisible(true);
@@ -131,7 +134,7 @@ public class PlatformImpl implements Platform {
 		
 	}
 	
-	public void showDebuggerScreen(Object... args) {
+	public void showDebuggerScreen() {
 		
 		if (debuggerContainer instanceof JFrame) {
 			((JFrame)debuggerContainer).setVisible(true);
@@ -139,7 +142,7 @@ public class PlatformImpl implements Platform {
 		
 	}
 	
-	public void unshowAppScreen(Object... args) {
+	public void unshowAppScreen() {
 		
 		if (appContainer instanceof JFrame) {
 			((JFrame)appContainer).setVisible(false);
@@ -147,7 +150,7 @@ public class PlatformImpl implements Platform {
 		
 	}
 
-	public void unshowDebuggerScreen(Object... args) {
+	public void unshowDebuggerScreen() {
 		
 		if (debuggerContainer instanceof JFrame) {
 			((JFrame)debuggerContainer).setVisible(false);
@@ -360,4 +363,31 @@ public class PlatformImpl implements Platform {
 	public Transform createTransform() {
 		return new TransformImpl();
 	}
+	
+	
+	
+	
+	
+	public void action(@SuppressWarnings("rawtypes")Class clazz, Object... args) {
+		
+		if (clazz == MainMenu.class) {
+			
+			MainMenu.action();
+			
+		} else if (clazz == LevelMenu.class) {
+			
+			LevelMenu.action();
+			
+		} else if (clazz == BypassWorld.class) {
+			
+			int ii = (Integer)args[0];
+			
+			BypassWorld.action(ii);
+			
+		} else {
+			throw new AssertionError();
+		}
+		
+	}
+	
 }

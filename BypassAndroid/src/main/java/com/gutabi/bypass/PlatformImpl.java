@@ -3,6 +3,7 @@ package com.gutabi.bypass;
 import java.io.InputStream;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -24,6 +25,14 @@ import com.gutabi.bypass.geom.PolygonImpl;
 import com.gutabi.bypass.geom.PolylineImpl;
 import com.gutabi.bypass.geom.QuadCurveImpl;
 import com.gutabi.bypass.geom.TriangleImpl;
+import com.gutabi.bypass.level.BypassWorld;
+import com.gutabi.bypass.level.LevelDB;
+import com.gutabi.bypass.menu.LevelMenu;
+import com.gutabi.bypass.menu.LevelMenuActivity;
+import com.gutabi.bypass.menu.LevelMenuView;
+import com.gutabi.bypass.menu.MainMenu;
+import com.gutabi.bypass.menu.MainMenuActivity;
+import com.gutabi.bypass.menu.MainMenuView;
 import com.gutabi.bypass.ui.ImageImpl;
 import com.gutabi.bypass.ui.PlatformContentPaneImpl;
 import com.gutabi.bypass.ui.paint.RenderingContextImpl;
@@ -196,9 +205,13 @@ public class PlatformImpl implements Platform {
 		
 		View v;
 		
-		if (PlatformImpl.CURRENTACTIVITY instanceof MainActivity) {
+		if (PlatformImpl.CURRENTACTIVITY instanceof MainMenuActivity) {
 			
-			v = ((MainActivity)PlatformImpl.CURRENTACTIVITY).v;
+			v = ((MainMenuActivity)PlatformImpl.CURRENTACTIVITY).v;
+			
+		} else if (PlatformImpl.CURRENTACTIVITY instanceof LevelMenuActivity) {
+			
+			v = ((LevelMenuActivity)PlatformImpl.CURRENTACTIVITY).v;
 			
 		} else {
 			throw new AssertionError();
@@ -211,11 +224,17 @@ public class PlatformImpl implements Platform {
 		
 		PlatformContentPaneImpl pcp = (PlatformContentPaneImpl)args[0];
 		
-		if (PlatformImpl.CURRENTACTIVITY instanceof MainActivity) {
+		if (PlatformImpl.CURRENTACTIVITY instanceof MainMenuActivity) {
 			
-			MainView v = ((MainActivity)PlatformImpl.CURRENTACTIVITY).v;
+			MainMenuView v = ((MainMenuActivity)PlatformImpl.CURRENTACTIVITY).v;
 			
-			v.setPaintable(pcp);
+			v.paintable = pcp;
+			
+		} else if (PlatformImpl.CURRENTACTIVITY instanceof LevelMenuActivity) {
+			
+			LevelMenuView v = ((LevelMenuActivity)PlatformImpl.CURRENTACTIVITY).v;
+			
+			v.paintable = pcp;
 			
 		} else {
 			throw new AssertionError();
@@ -227,19 +246,19 @@ public class PlatformImpl implements Platform {
 		
 	}
 	
-	public void showAppScreen(Object... args) {
+	public void showAppScreen() {
 		
 	}
 	
-	public void showDebuggerScreen(Object... args) {
+	public void showDebuggerScreen() {
 		
 	}
 	
-	public void unshowAppScreen(Object... args) {
+	public void unshowAppScreen() {
 		
 	}
 
-	public void unshowDebuggerScreen(Object... args) {
+	public void unshowDebuggerScreen() {
 		
 	}
 
@@ -257,8 +276,6 @@ public class PlatformImpl implements Platform {
 			return new ResourceImpl(R.drawable.carsheet, ResourceType.DRAWABLE);
 		} else if (name.equals("spritesheet")) {
 			return new ResourceImpl(R.drawable.spritesheet, ResourceType.DRAWABLE);
-		} else if (name.equals("explosionsheet")) {
-			return new ResourceImpl(R.drawable.explosionsheet, ResourceType.DRAWABLE);
 		} else if (name.equals("title_background")) {
 			return new ResourceImpl(R.drawable.title_background, ResourceType.DRAWABLE);
 		} else if (name.equals("title_white")) {
@@ -352,4 +369,52 @@ public class PlatformImpl implements Platform {
 	public Transform createTransform() {
 		return new TransformImpl();
 	}
+	
+	
+	
+	public void action(@SuppressWarnings("rawtypes") Class clazz, Object... args) {
+		
+		if (clazz == MainMenu.class) {
+			
+			Intent intent = new Intent(PlatformImpl.CURRENTACTIVITY, MainMenuActivity.class);
+//			intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+			PlatformImpl.CURRENTACTIVITY.startActivity(intent);
+			
+		} else if (clazz == LevelMenu.class) {
+			
+			Intent intent = new Intent(PlatformImpl.CURRENTACTIVITY, LevelMenuActivity.class);
+//			intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+			PlatformImpl.CURRENTACTIVITY.startActivity(intent);
+			
+		} else if (clazz == BypassWorld.class) {
+			
+			int ii = (Integer)args[0];
+			
+			Intent intent = new Intent(PlatformImpl.CURRENTACTIVITY, BypassWorldActivity.class);
+			intent.putExtra("foo"d, ii);
+//			intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+			PlatformImpl.CURRENTACTIVITY.startActivity(intent);
+			
+			PlatformImpl.CURRENTACTIVITY.getIntent().getExtras().get("foo");
+			
+		} else {
+			throw new AssertionError();
+		}
+		
+	}
+	
+//	public void deaction(@SuppressWarnings("rawtypes") Class clazz) {
+//		
+//		if (clazz == LevelMenu.class) {
+//			
+//			Intent intent = new Intent(PlatformImpl.CURRENTACTIVITY, LevelMenuActivity.class);
+////			intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+//			PlatformImpl.CURRENTACTIVITY.startActivity(intent);
+//			
+//		} else {
+//			throw new AssertionError();
+//		}
+//		
+//	}
+	
 }

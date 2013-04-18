@@ -1,4 +1,4 @@
-package com.gutabi.bypass;
+package com.gutabi.bypass.menu;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 import android.content.Context;
@@ -10,16 +10,12 @@ import android.view.View;
 import com.gutabi.deadlock.ui.Paintable;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 
-public class MainView extends View {
+public class LevelMenuView extends View {
 	
-	Paintable paintable;
+	public Paintable paintable;
 	
-	public MainView(Context c, AttributeSet s) {
+	public LevelMenuView(Context c, AttributeSet s) {
 		super(c, s);
-	}
-	
-	public void setPaintable(Paintable paintable) {
-		this.paintable = paintable;
 	}
 	
 	

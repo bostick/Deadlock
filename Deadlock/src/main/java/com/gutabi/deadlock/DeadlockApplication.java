@@ -2,7 +2,6 @@ package com.gutabi.deadlock;
 
 import java.util.Random;
 
-import com.gutabi.deadlock.ui.UIAnimationRunnable;
 import com.gutabi.deadlock.world.sprites.Sheet;
 
 public class DeadlockApplication {
@@ -47,13 +46,13 @@ public class DeadlockApplication {
 //	public static DeadlockApplication APP = new DeadlockApplication();
 	public static DeadlockApplication APP;
 	
-	public void init() throws Exception {
-		
-		APP.platform.showAppScreen();
-		
-		Thread t = new Thread(new UIAnimationRunnable());
-		t.start();
-	}
+//	public void init() throws Exception {
+//		
+//		APP.platform.showAppScreen();
+//		
+//		Thread t = new Thread(new UIAnimationRunnable());
+//		t.start();
+//	}
 	
 	public void exit() {
 		

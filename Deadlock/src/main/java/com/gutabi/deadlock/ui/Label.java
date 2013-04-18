@@ -19,7 +19,7 @@ public class Label {
 	
 	public Color color = Color.BLACK;
 	
-	public AABB localAABB;
+	public AABB localAABB = new AABB(0, 0, 0, 0);
 	public AABB aabb = new AABB(0, 0, 0, 0);
 	
 	Image img;
@@ -39,11 +39,12 @@ public class Label {
 	}
 	
 	public void setLocation(double x, double y) {
-		this.aabb = new AABB(x, y, aabb.width, aabb.height);
+		aabb = new AABB(x, y, aabb.width, aabb.height);
 	}
 	
 	public void setDimension(double w, double h) {
-		localAABB = new AABB(localAABB.x, localAABB.y, w, h);
+		aabb = new AABB(aabb.x, aabb.y, w, h);
+//		localAABB = new AABB(localAABB.x, localAABB.y, w, h);
 	}
 	
 	public int getWidth() {
@@ -79,10 +80,46 @@ public class Label {
 		ctxt.dispose();
 	}
 	
+//	public void render(RenderingContext ctxt) {
+//		
+//		Transform t = APP.platform.createTransform();
+//		ctxt.getTransform(t);
+//		
+//		int x = (int)t.getTranslateX();
+//		int y = (int)t.getTranslateY();
+//		
+//		aabb = new AABB(x + aabb.width/2 - localAABB.width/2, y + aabb.height/2 - localAABB.height/2, aabb.width, aabb.height);
+//		
+//	}
+	
+	
+	
+	Transform origTransformPaint = APP.platform.createTransform();
+	
 	public void paint(RenderingContext ctxt) {
-		ctxt.paintImage(img,
-				(int)aabb.x, (int)aabb.y, (int)(aabb.x + aabb.width), (int)(aabb.y + aabb.height),
-				0, 0, img.getWidth(), img.getHeight());
+		
+		ctxt.getTransform(origTransformPaint);
+//		int x = (int)origTransformPaint.getTranslateX();
+//		int y = (int)origTransformPaint.getTranslateY();
+		
+		ctxt.translate(aabb.x, aabb.y);
+		
+		Point baseline = new Point(-localAABB.x, -localAABB.y);
+		
+		ctxt.setColor(color);
+		
+		ctxt.setFont(fontFile, fontStyle, fontSize);
+		ctxt.paintString(baseline.x, baseline.y, 1.0, text);
+		
+		ctxt.setTransform(origTransformPaint);
+		
+//		ctxt.setColor(Color.GREEN);
+//		ctxt.setStroke(0.0, Cap.SQUARE, Join.MITER);
+//		aabb.paint(ctxt);
+		
+//		ctxt.paintImage(img,
+//				(int)aabb.x, (int)aabb.y, (int)aabb.brX, (int)aabb.brY,
+//				0, 0, img.getWidth(), img.getHeight());
 	}
 	
 }

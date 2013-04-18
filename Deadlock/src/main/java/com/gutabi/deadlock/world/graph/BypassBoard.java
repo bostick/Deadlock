@@ -1227,9 +1227,9 @@ public class BypassBoard extends Entity {
 	
 	public boolean withinGrid(Car c, double angle, Point p) {
 		
-		OBB test = Geom.localToWorld(c.localAABB, angle, p);
+		AABB test = Geom.localToWorldAndTakeAABB(c.localAABB, angle, p);
 		
-		boolean within = test.aabb.completelyWithin(gridAABB);
+		boolean within = test.completelyWithin(gridAABB);
 		
 		return within;
 	}
@@ -1239,11 +1239,11 @@ public class BypassBoard extends Entity {
 		GraphPositionPathPosition tmpFloorPos = c.driver.overallPos.floor(c.length/2);
 		GraphPositionPathPosition tmpCeilPos = c.driver.overallPos.ceil(c.length/2);
 		
-		OBB testFloor = Geom.localToWorld(c.localAABB, c.angle, tmpFloorPos.p);
-		OBB testCeil = Geom.localToWorld(c.localAABB, c.angle, tmpCeilPos.p);
+		AABB testFloor = Geom.localToWorldAndTakeAABB(c.localAABB, c.angle, tmpFloorPos.p);
+		AABB testCeil = Geom.localToWorldAndTakeAABB(c.localAABB, c.angle, tmpCeilPos.p);
 		
-		boolean floorWithin = testFloor.aabb.completelyWithin(gridAABB);
-		boolean ceilWithin = testCeil.aabb.completelyWithin(gridAABB);
+		boolean floorWithin = testFloor.completelyWithin(gridAABB);
+		boolean ceilWithin = testCeil.completelyWithin(gridAABB);
 		
 		return floorWithin && ceilWithin;
 	}

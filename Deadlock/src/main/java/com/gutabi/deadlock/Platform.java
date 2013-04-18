@@ -46,13 +46,13 @@ public interface Platform {
 	
 	public abstract void setupDebuggerScreen(Object... args);
 	
-	public abstract void showAppScreen(Object... args);
+	public abstract void showAppScreen();
 	
-	public abstract void showDebuggerScreen(Object... args);
+	public abstract void showDebuggerScreen();
 	
-	public abstract void unshowAppScreen(Object... args);
+	public abstract void unshowAppScreen();
 	
-	public abstract void unshowDebuggerScreen(Object... args);
+	public abstract void unshowDebuggerScreen();
 	
 	/*
 	 * resource engine
@@ -92,5 +92,12 @@ public interface Platform {
 	public abstract MutablePolygon createMutablePolygon();
 	
 	public abstract Transform createTransform();
+	
+	
+	
+	public abstract void action(@SuppressWarnings("rawtypes")Class c, Object... args);
+	
+//	public abstract void deaction(@SuppressWarnings("rawtypes")Class c);
+	
 	
 }

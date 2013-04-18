@@ -1,6 +1,9 @@
 package com.gutabi.bypass.level;
 
+import static com.gutabi.bypass.BypassApplication.BYPASSAPP;
 import static com.gutabi.deadlock.DeadlockApplication.APP;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.gutabi.bypass.BypassControlPanel;
 import com.gutabi.deadlock.AppScreen;
@@ -8,6 +11,7 @@ import com.gutabi.deadlock.Model;
 import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.Menu;
+import com.gutabi.deadlock.ui.UIAnimationRunnable;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.world.DebuggerScreenContentPane;
 import com.gutabi.deadlock.world.QuadrantMap;
@@ -32,17 +36,21 @@ import com.gutabi.deadlock.world.sprites.CarSheet.CarType;
 
 public class BypassWorld extends World implements Model {
 	
-	public LevelDB levelDB;
+//	public LevelDB levelDB;
 	public Level curLevel;
 	
 	public boolean isWon;
 	public WinnerMenu winnerMenu;
 	
-	public static void action(LevelDB levelDB, int index) {
+	
+	static AtomicBoolean trigger = new AtomicBoolean(true);
+	static Thread uiThread;
+	
+	public static void action(int index) {
 		
 		try {
 			
-			BypassWorld world = BypassWorld.createBypassWorld(levelDB, index);
+			BypassWorld world = BypassWorld.createBypassWorld(BYPASSAPP.levelDB, index);
 			APP.model = world;
 			
 			AppScreen worldScreen = new AppScreen(new WorldScreenContentPane());
@@ -71,12 +79,33 @@ public class BypassWorld extends World implements Model {
 			world.render_preview();
 //			worldScreen.contentPane.repaint();
 			
-			APP.platform.showAppScreen();
+//			APP.platform.showAppScreen();
 			APP.platform.showDebuggerScreen();
+			
+			uiThread = new Thread(new UIAnimationRunnable(trigger));
+			uiThread.start();
 			
 		} catch (Exception e) {
 			assert false;
 		}
+		
+	}
+	
+	public static void deaction() {
+		
+		trigger.set(false);
+		
+		try {
+			uiThread.join();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		BypassWorld world = (BypassWorld)APP.model;
+		world.stopRunning();
+		
+//		APP.platform.unshowAppScreen();
 		
 	}
 	
@@ -100,7 +129,7 @@ public class BypassWorld extends World implements Model {
 		
 		w.graph = g;
 		
-		w.levelDB = levelDB;
+//		w.levelDB = levelDB;
 		
 		try {
 			

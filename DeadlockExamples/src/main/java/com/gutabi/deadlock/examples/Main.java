@@ -48,7 +48,10 @@ public class Main  {
 		
 		platform.debuggerContainer = newFrame;
 		
-		APP.init();
+		EXAMPLEAPP.init();
+		
+		ExampleMainMenu.action();
+		
 	}
 	
 	public static Thread.UncaughtExceptionHandler handler = new Thread.UncaughtExceptionHandler() {
