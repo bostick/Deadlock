@@ -2,6 +2,7 @@ package com.gutabi.bypass;
 
 import java.io.InputStream;
 
+import android.app.Activity;
 import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -11,6 +12,7 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.util.Log;
+import android.view.View;
 
 import com.gutabi.bypass.ResourceImpl.ResourceType;
 import com.gutabi.bypass.geom.CubicCurveImpl;
@@ -46,14 +48,16 @@ import com.gutabi.deadlock.ui.paint.FontStyle;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 
 public class PlatformImpl implements Platform {
-
-	MainView container;
+	
+	public static Activity CURRENTACTIVITY;
+	
+//	MainView container;
 	
 	Resources resources;
 	
-	public PlatformImpl(Resources resources, MainView container) {
+	public PlatformImpl(Resources resources) {
 		this.resources = resources;
-		this.container = container;
+//		this.container = container;
 	}
 	
 	public RenderingContext createRenderingContext() {
@@ -189,14 +193,34 @@ public class PlatformImpl implements Platform {
 	
 	
 	public PlatformContentPane createPlatformContentPane() {
-		return new PlatformContentPaneImpl(container);
+		
+		View v;
+		
+		if (PlatformImpl.CURRENTACTIVITY instanceof MainActivity) {
+			
+			v = ((MainActivity)PlatformImpl.CURRENTACTIVITY).v;
+			
+		} else {
+			throw new AssertionError();
+		}
+		
+		return new PlatformContentPaneImpl(v);
 	}
 
 	public void setupAppScreen(Object... args) {
 		
-		PlatformContentPaneImpl content = (PlatformContentPaneImpl)args[0];
+		PlatformContentPaneImpl pcp = (PlatformContentPaneImpl)args[0];
 		
-		container.setContentPane(content);
+		if (PlatformImpl.CURRENTACTIVITY instanceof MainActivity) {
+			
+			MainView v = ((MainActivity)PlatformImpl.CURRENTACTIVITY).v;
+			
+			v.setPaintable(pcp);
+			
+		} else {
+			throw new AssertionError();
+		}
+		
 	}
 	
 	public void setupDebuggerScreen(Object... args) {

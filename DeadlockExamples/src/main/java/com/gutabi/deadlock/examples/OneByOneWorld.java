@@ -52,7 +52,6 @@ public class OneByOneWorld extends World implements Model {
 		APP.platform.showAppScreen();
 		APP.platform.showDebuggerScreen();
 		
-//		APP.appScreen.contentPane.repaint();
 	}
 	
 	public static OneByOneWorld createOneByOneWorld() {

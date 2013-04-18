@@ -21,19 +21,19 @@ public class QuadrantEditorTool extends Tool {
 		
 		Point p = ev.p;
 		
-		editor.lastMovedEditorPoint = Point.panelToEditor(p, editor);
+		editor.lastMovedEditorPoint = Statics.panelToEditor(p, editor);
 		editor.lastMovedOrDraggedEditorPoint = editor.lastMovedEditorPoint;
 		
 		if (editor.worldPanel.aabb.hitTest(editor.lastMovedOrDraggedEditorPoint)) {
 			
-			Point pWorldPanel = Point.editorToWorldPanel(editor.lastMovedOrDraggedEditorPoint, editor.worldPanel);
+			Point pWorldPanel = Statics.editorToWorldPanel(editor.lastMovedOrDraggedEditorPoint, editor.worldPanel);
 			Point pWorld = Point.panelToWorld(pWorldPanel, editor.world.worldCamera);
 			
 			Quadrant q = editor.world.quadrantMap.findQuadrant(pWorld);
 			
 			if (q != null) {
 				AABB aabbWorldPanel = Point.worldToPanel(q.aabb, editor.world.worldCamera);
-				AABB aabbEditor = Point.worldPanelToEditor(aabbWorldPanel, editor.worldPanel);
+				AABB aabbEditor = Statics.worldPanelToEditor(aabbWorldPanel, editor.worldPanel);
 				editor.hilited = aabbEditor;
 				
 			} else {
@@ -71,15 +71,12 @@ public class QuadrantEditorTool extends Tool {
 		
 		Point p = ev.p;
 		
-		editor.lastMovedEditorPoint = Point.panelToEditor(p, editor);
+		editor.lastMovedEditorPoint = Statics.panelToEditor(p, editor);
 		editor.lastMovedOrDraggedEditorPoint = editor.lastMovedEditorPoint;
 		
 		if (editor.worldPanel.aabb.hitTest(editor.lastMovedOrDraggedEditorPoint)) {
 			
-			/*
-			 * editor -> world canvas
-			 */
-			Point pWorldPanel = editor.lastMovedOrDraggedEditorPoint.minus(editor.worldPanel.aabb.center.minus(editor.worldPanel.aabb.dim.multiply(0.5)));
+			Point pWorldPanel = Statics.editorToWorldPanel(editor.lastMovedOrDraggedEditorPoint, editor.worldPanel);
 			
 			Point pWorld = Point.panelToWorld(pWorldPanel, editor.world.worldCamera);
 			

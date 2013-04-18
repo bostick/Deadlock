@@ -5,14 +5,15 @@ import static com.gutabi.deadlock.DeadlockApplication.APP;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.gutabi.deadlock.AppScreen;
 import com.gutabi.deadlock.Model;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.Menu;
-import com.gutabi.deadlock.world.DebuggerScreen;
+import com.gutabi.deadlock.world.DebuggerScreenContentPane;
 import com.gutabi.deadlock.world.QuadrantMap;
 import com.gutabi.deadlock.world.Stroke;
 import com.gutabi.deadlock.world.World;
-import com.gutabi.deadlock.world.WorldScreen;
+import com.gutabi.deadlock.world.WorldScreenContentPane;
 import com.gutabi.deadlock.world.graph.Axis;
 import com.gutabi.deadlock.world.graph.Fixture;
 import com.gutabi.deadlock.world.graph.FixtureType;
@@ -32,13 +33,15 @@ public class FourByFourGridWorld extends World implements Model {
 		FourByFourGridWorld world = FourByFourGridWorld.createFourByFourGridWorld();
 		APP.model = world;
 		
-		WorldScreen worldScreen = new WorldScreen();
+		AppScreen worldScreen = new AppScreen(new WorldScreenContentPane());
 		APP.setAppScreen(worldScreen);
 		
-		DebuggerScreen debuggerScreen = new DebuggerScreen(worldScreen);
+		AppScreen debuggerScreen = new AppScreen(new DebuggerScreenContentPane());
+		
 		ControlPanel controlPanel = new ControlPanel() {{
 			setLocation(0, 0);
 		}};
+		
 		debuggerScreen.contentPane.pcp.getChildren().add(controlPanel);
 		APP.debuggerScreen = debuggerScreen;
 		
@@ -46,15 +49,16 @@ public class FourByFourGridWorld extends World implements Model {
 		
 		APP.platform.setupAppScreen(worldScreen.contentPane.pcp);
 		
-		APP.platform.setupDebuggerScreen(debuggerScreen.contentPane.pcp);
+		APP.platform.setupDebuggerScreen(APP.debuggerScreen.contentPane.pcp);
 		
 		worldScreen.postDisplay();
 		
-		debuggerScreen.postDisplay();
+		APP.debuggerScreen.postDisplay();
+		
+		world.startRunning();
 		
 		world.render_worldPanel();
 		world.render_preview();
-		worldScreen.contentPane.repaint();
 		
 		APP.platform.showAppScreen();
 		APP.platform.showDebuggerScreen();
@@ -118,7 +122,7 @@ public class FourByFourGridWorld extends World implements Model {
 			s.add(sink.p);
 			s.finish();
 			
-			res = s.processNewStroke();
+			res = s.processNewStroke(false);
 			affected.addAll(res);
 			g.computeVertexRadii(affected);
 			
@@ -158,7 +162,7 @@ public class FourByFourGridWorld extends World implements Model {
 			s.add(sink.p);
 			s.finish();
 			
-			res = s.processNewStroke();
+			res = s.processNewStroke(false);
 			affected.addAll(res);
 			g.computeVertexRadii(affected);
 			

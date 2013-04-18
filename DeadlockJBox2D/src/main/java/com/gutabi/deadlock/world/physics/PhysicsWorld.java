@@ -57,7 +57,7 @@ public abstract class PhysicsWorld {
 	
 	public boolean intersectsPhysicsBodies(AABB aabb) {
 		
-		org.jbox2d.collision.AABB b2dAABB = new org.jbox2d.collision.AABB(PhysicsUtils.vec2(aabb.ul), PhysicsUtils.vec2(aabb.br));
+		org.jbox2d.collision.AABB b2dAABB = new org.jbox2d.collision.AABB(PhysicsUtils.vec2(aabb.x, aabb.y), PhysicsUtils.vec2(aabb.brX, aabb.brY));
 		
 		final boolean[] intersecting = new boolean[1];
 		

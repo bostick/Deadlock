@@ -24,28 +24,4 @@ public abstract class ContentPane {
 		return pcp.getLastMovedContentPanePoint();
 	}
 	
-//	public void clicked(InputEvent ev) {
-//		pcp.clicked(ev);
-//	}
-//	
-//	public void paint(RenderingContext ctxt) {
-//		pcp.paint(ctxt);
-//	}
-//
-//	public void pressed(InputEvent ev) {
-//		pcp.pressed(ev);
-//	}
-//
-//	public void released(InputEvent ev) {
-//		pcp.released(ev);
-//	}
-//
-//	public void moved(InputEvent ev) {
-//		pcp.moved(ev);
-//	}
-//
-//	public void dragged(InputEvent ev) {
-//		pcp.dragged(ev);
-//	}
-	
 }

@@ -90,6 +90,11 @@ public class Stroke {
 		finished = true;
 	}
 	
+	/**
+	 * 
+	 * @param sweepSelf
+	 * @return
+	 */
 	public Set<Vertex> processNewStroke(boolean sweepSelf) {
 		
 		Set<Vertex> affected = new HashSet<Vertex>();

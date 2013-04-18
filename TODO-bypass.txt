@@ -1,8 +1,25 @@
 
-no allocations in menus
-no allocations in world idle
 
-profile android
+activity lifecycle
+
+problem with backing out, and starting again, threads
+
+prevent drawing when not on screen
+clip drawing to screen
+
+http://developer.android.com/reference/android/app/Activity.html#ActivityLifecycle
+
+handle back button
+stacks
+
+
+
+
+
+
+menu
+reset button
+hint button
 
 
 
@@ -11,14 +28,6 @@ time taken
 moves made
 preference system
 saving scores, current game, 
-
-
-
-
-
-reset button
-hint button
-
 
 
 
@@ -34,28 +43,6 @@ similar: lots of cars in same position and similar number of moves
 density independent pixels
 use graph paper and sketch out different screens and layouts first
 
-
-
-
-profile android
-audit object creation
-think about mutable shapes, etc.
-
-
-
-
-
-
-activity lifecycle
-
-problem with backing out, and starting again, threads
-
-prevent drawing when not on screen
-
-http://developer.android.com/reference/android/app/Activity.html#ActivityLifecycle
-
-handle back button
-stacks
 
 
 
@@ -90,6 +77,12 @@ allow custom boards? does bigger than 6x6 work?
 
 
 DONE:
+
+no allocations in menus
+no allocations in world idle
+
+profile android
+
 
 get BypassAWT build working
 

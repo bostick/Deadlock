@@ -1,28 +1,28 @@
 package com.gutabi.bypass.ui;
 
-import com.gutabi.bypass.MainActivity;
-import com.gutabi.deadlock.ui.PlatformContentPane;
-
 import android.view.View;
+
+import com.gutabi.bypass.PlatformImpl;
+import com.gutabi.deadlock.ui.PlatformContentPane;
 
 public class PlatformContentPaneImpl extends PlatformContentPane {
 	
-	View container;
+	View v;
 	Runnable repaintRunnable;
 	
-	public PlatformContentPaneImpl(final View container) {
-		this.container = container;
+	public PlatformContentPaneImpl(final View v) {
+		this.v = v;
 		
 		repaintRunnable = new Runnable() {
 			public void run() {
-				container.invalidate();
+				v.invalidate();
 			}
 		};
 		
 	}
 	
 	public void repaint() {
-		MainActivity.MAINACTIVITY.runOnUiThread(repaintRunnable);
+		PlatformImpl.CURRENTACTIVITY.runOnUiThread(repaintRunnable);
 	}
 	
 }

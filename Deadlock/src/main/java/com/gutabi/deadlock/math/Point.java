@@ -7,7 +7,6 @@ import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.ui.Menu;
 import com.gutabi.deadlock.ui.Panel;
 import com.gutabi.deadlock.world.WorldCamera;
-import com.gutabi.deadlock.world.WorldPanel;
 
 public class Point {
 	
@@ -713,24 +712,6 @@ public class Point {
 	
 	public static Point contentPaneToPanel(Point p, Panel child) {
 		return new Point(p.x - child.aabb.x, p.y - child.aabb.y);
-	}
-	
-	public static Point editorToWorldPanel(Point p, WorldPanel worldPanel) {
-		return new Point(p.x - worldPanel.aabb.x, p.y - worldPanel.aabb.y);
-	}
-	
-	public static Point worldPanelToEditor(Point p, WorldPanel worldPanel) {
-		return new Point(p.x + worldPanel.aabb.x, p.y + worldPanel.aabb.y);
-	}
-	
-	public static Point worldPanelToEditor(double x, double y, WorldPanel worldPanel) {
-		return new Point(x + worldPanel.aabb.x, y + worldPanel.aabb.y);
-	}
-	
-	public static AABB worldPanelToEditor(AABB aabb, WorldPanel worldPanel) {
-		Point ul = worldPanelToEditor(aabb.x, aabb.y, worldPanel);
-		Point br = worldPanelToEditor(aabb.brX, aabb.brY, worldPanel);
-		return new AABB(ul.x, ul.y, br.x - ul.x, br.y - ul.y);
 	}
 	
 }

@@ -18,11 +18,10 @@ import com.gutabi.deadlock.math.Point;
 
 public class MainActivity extends Activity {
 	
-	public static MainActivity MAINACTIVITY;
+	MainView v;
 	
 	private GestureDetector gDetector;
 	
-	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -32,15 +31,15 @@ public class MainActivity extends Activity {
 		APP = app;
 		BYPASSAPP = app;
 		
-		MAINACTIVITY = this;
+		PlatformImpl.CURRENTACTIVITY = this;
 		
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 		
 		gDetector = new GestureDetector(this, simpleOnGestureListener);
 		
-		MainView v = (MainView)findViewById(R.id.bypass);
+		v = (MainView)findViewById(R.id.view_main);
 		
-		PlatformImpl platform = new PlatformImpl(getResources(), v);
+		PlatformImpl platform = new PlatformImpl(getResources());
 		APP.platform = platform;
 		
 		
@@ -57,7 +56,6 @@ public class MainActivity extends Activity {
 		}
 	}
 	
-	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.main, menu);
@@ -67,10 +65,7 @@ public class MainActivity extends Activity {
 	
 	int[] touchOut = new int[2];
 	
-	@Override
 	public boolean onTouchEvent(MotionEvent ev) {
-		
-		MainView v = (MainView)findViewById(R.id.bypass);
 		
 		v.getLocationInWindow(touchOut);
 		
@@ -102,10 +97,7 @@ public class MainActivity extends Activity {
 	
 	SimpleOnGestureListener simpleOnGestureListener = new SimpleOnGestureListener(){
 		
-		@Override
 		public boolean onSingleTapUp(MotionEvent ev) {
-			
-			MainView v = (MainView)findViewById(R.id.bypass);
 			
 			v.getLocationInWindow(touchOut);
 			

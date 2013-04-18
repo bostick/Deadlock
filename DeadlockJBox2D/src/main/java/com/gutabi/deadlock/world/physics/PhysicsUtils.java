@@ -10,6 +10,10 @@ public class PhysicsUtils {
 		return new Vec2((float)p.x, (float)p.y);
 	}
 	
+	public static Vec2 vec2(double x, double y) {
+		return new Vec2((float)x, (float)y);
+	}
+	
 	public static Point point(Vec2 p) {
 		return new Point(p.x, p.y);
 	}

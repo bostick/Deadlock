@@ -38,8 +38,6 @@ public class LevelMenu extends Menu implements Model {
 			
 			APP.appScreen.postDisplay();
 			
-//			APP.appScreen.contentPane.repaint();
-			
 		} catch (Exception e) {
 			e.printStackTrace();
 			assert false;

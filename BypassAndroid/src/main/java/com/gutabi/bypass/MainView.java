@@ -5,24 +5,22 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.util.AttributeSet;
+import android.view.View;
 
-import com.gutabi.deadlock.ui.PlatformContentPane;
+import com.gutabi.deadlock.ui.Paintable;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 
-public class MainView extends android.view.View {
+public class MainView extends View {
 	
-	PlatformContentPane content;
+	Paintable paintable;
 	
 	public MainView(Context c, AttributeSet s) {
 		super(c, s);
-		
-//		ctxt = APP.platform.createRenderingContext();
 	}
 	
-	public void setContentPane(PlatformContentPane content) {
-		this.content = content;
+	public void setPaintable(Paintable paintable) {
+		this.paintable = paintable;
 	}
-	
 	
 	
 	Paint paint = new Paint();
@@ -32,7 +30,7 @@ public class MainView extends android.view.View {
 		
 		APP.platform.setRenderingContextFields2(ctxt, canvas, paint);
 		
-		content.paint(ctxt);
+		paintable.paint(ctxt);
 	}
 
 }

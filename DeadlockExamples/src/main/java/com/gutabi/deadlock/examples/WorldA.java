@@ -2,12 +2,13 @@ package com.gutabi.deadlock.examples;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
+import com.gutabi.deadlock.AppScreen;
 import com.gutabi.deadlock.Model;
 import com.gutabi.deadlock.ui.Menu;
-import com.gutabi.deadlock.world.DebuggerScreen;
+import com.gutabi.deadlock.world.DebuggerScreenContentPane;
 import com.gutabi.deadlock.world.QuadrantMap;
 import com.gutabi.deadlock.world.World;
-import com.gutabi.deadlock.world.WorldScreen;
+import com.gutabi.deadlock.world.WorldScreenContentPane;
 import com.gutabi.deadlock.world.tools.RegularTool;
 
 public class WorldA extends World implements Model {
@@ -21,13 +22,15 @@ public class WorldA extends World implements Model {
 		WorldA world = WorldA.createWorldA();
 		APP.model = world;
 		
-		WorldScreen worldScreen = new WorldScreen();
+		AppScreen worldScreen = new AppScreen(new WorldScreenContentPane());
 		APP.setAppScreen(worldScreen);
 		
-		DebuggerScreen debuggerScreen = new DebuggerScreen(worldScreen);
+		AppScreen debuggerScreen = new AppScreen(new DebuggerScreenContentPane());
+		
 		ControlPanel controlPanel = new ControlPanel() {{
 			setLocation(0, 0);
 		}};
+		
 		debuggerScreen.contentPane.pcp.getChildren().add(controlPanel);
 		APP.debuggerScreen = debuggerScreen;
 		
@@ -35,15 +38,16 @@ public class WorldA extends World implements Model {
 		
 		APP.platform.setupAppScreen(worldScreen.contentPane.pcp);
 		
-		APP.platform.setupDebuggerScreen(debuggerScreen.contentPane.pcp);
+		APP.platform.setupDebuggerScreen(APP.debuggerScreen.contentPane.pcp);
 		
 		worldScreen.postDisplay();
 		
-		debuggerScreen.postDisplay();
+		APP.debuggerScreen.postDisplay();
+		
+		world.startRunning();
 		
 		world.render_worldPanel();
 		world.render_preview();
-		worldScreen.contentPane.repaint();
 		
 		APP.platform.showAppScreen();
 		APP.platform.showDebuggerScreen();

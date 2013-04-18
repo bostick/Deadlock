@@ -6,7 +6,7 @@ import java.util.List;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 
-public abstract class PlatformContentPane {
+public abstract class PlatformContentPane implements Paintable {
 	
 	protected List<Panel> children = new ArrayList<Panel>();
 	
