@@ -235,7 +235,7 @@ public class World extends PhysicsWorld {
 	}
 	
 	
-	Thread simThread;
+	public Thread simThread;
 	
 	public void startRunning() {
 		

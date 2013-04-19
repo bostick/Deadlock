@@ -8,15 +8,14 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import com.gutabi.bypass.BypassControlPanel;
 import com.gutabi.deadlock.AppScreen;
 import com.gutabi.deadlock.Model;
-import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.math.Point;
+import com.gutabi.deadlock.ui.ContentPane;
 import com.gutabi.deadlock.ui.Menu;
 import com.gutabi.deadlock.ui.UIAnimationRunnable;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
-import com.gutabi.deadlock.world.DebuggerScreenContentPane;
 import com.gutabi.deadlock.world.QuadrantMap;
 import com.gutabi.deadlock.world.World;
-import com.gutabi.deadlock.world.WorldScreenContentPane;
+import com.gutabi.deadlock.world.WorldPanel;
 import com.gutabi.deadlock.world.cars.Car;
 import com.gutabi.deadlock.world.cars.CarStateEnum;
 import com.gutabi.deadlock.world.graph.Axis;
@@ -36,80 +35,93 @@ import com.gutabi.deadlock.world.sprites.CarSheet.CarType;
 
 public class BypassWorld extends World implements Model {
 	
-//	public LevelDB levelDB;
+	public static BypassWorld BYPASSWORLD;
+	
 	public Level curLevel;
 	
 	public boolean isWon;
 	public WinnerMenu winnerMenu;
 	
 	
-	static AtomicBoolean trigger = new AtomicBoolean(true);
-	static Thread uiThread;
-	
-	public static void action(int index) {
+	public static void create(int index) {
 		
-		try {
+		BYPASSWORLD = BypassWorld.createBypassWorld(index);
+		
+	}
+	
+	public static void start() {
+		
+		APP.model = BYPASSWORLD;
+		
+		AppScreen worldScreen = new AppScreen(new ContentPane(new WorldPanel()));
+		APP.setAppScreen(worldScreen);
+		
+		APP.tool = new BypassCarTool();
+		
+		APP.platform.setupAppScreen(worldScreen.contentPane.pcp);
+		
+		worldScreen.postDisplay();
+		
+		BYPASSWORLD.render_worldPanel();
+		
+		if (APP.DEBUGGER_SCREEN) {
 			
-			BypassWorld world = BypassWorld.createBypassWorld(BYPASSAPP.levelDB, index);
-			APP.model = world;
-			
-			AppScreen worldScreen = new AppScreen(new WorldScreenContentPane());
-			APP.setAppScreen(worldScreen);
-			
-			AppScreen debuggerScreen = new AppScreen(new DebuggerScreenContentPane());
-			BypassControlPanel controlPanel = new BypassControlPanel() {{
-				setLocation(0, 0);
-			}};
-			debuggerScreen.contentPane.pcp.getChildren().add(controlPanel);
+			AppScreen debuggerScreen = new AppScreen(new ContentPane(new BypassControlPanel()));
 			APP.debuggerScreen = debuggerScreen;
 			
-			APP.tool = new BypassCarTool();
-			
-			APP.platform.setupAppScreen(worldScreen.contentPane.pcp);
-			
 			APP.platform.setupDebuggerScreen(APP.debuggerScreen.contentPane.pcp);
-			
-			worldScreen.postDisplay();
-			
 			APP.debuggerScreen.postDisplay();
 			
-			world.startRunning();
+			BYPASSWORLD.render_preview();
 			
-			world.render_worldPanel();
-			world.render_preview();
-//			worldScreen.contentPane.repaint();
-			
-//			APP.platform.showAppScreen();
 			APP.platform.showDebuggerScreen();
-			
-			uiThread = new Thread(new UIAnimationRunnable(trigger));
-			uiThread.start();
-			
-		} catch (Exception e) {
-			assert false;
 		}
 		
 	}
 	
-	public static void deaction() {
+	public static void stop() {
+		
+		if (APP.DEBUGGER_SCREEN) {
+			APP.platform.unshowDebuggerScreen();
+		}
+		
+	}
+	
+	static AtomicBoolean trigger = new AtomicBoolean(true);
+	static Thread uiThread;
+	
+	public static void resume() {
+		
+		APP.model = BYPASSWORLD;
+		
+		BYPASSWORLD.startRunning();
+		
+		trigger.set(true);
+		
+		uiThread = new Thread(new UIAnimationRunnable(trigger));
+		uiThread.start();
+		
+	}
+	
+	public static void pause() {
 		
 		trigger.set(false);
 		
+		BYPASSWORLD.stopRunning();
+		
 		try {
 			uiThread.join();
+			
+			BYPASSWORLD.simThread.join();
+			
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
-		BypassWorld world = (BypassWorld)APP.model;
-		world.stopRunning();
-		
-//		APP.platform.unshowAppScreen();
-		
 	}
 	
-	public static BypassWorld createBypassWorld(LevelDB levelDB, int index) {
+	public static BypassWorld createBypassWorld(int index) {
 		
 		int[][] ini = new int[][] {
 				{1, 1, 1},
@@ -129,11 +141,9 @@ public class BypassWorld extends World implements Model {
 		
 		w.graph = g;
 		
-//		w.levelDB = levelDB;
-		
 		try {
 			
-			Level level = levelDB.readLevel(index);
+			Level level = BYPASSAPP.levelDB.readLevel(index);
 			
 			w.curLevel = level;
 			
@@ -389,7 +399,7 @@ public class BypassWorld extends World implements Model {
 		super.panelPostDisplay();
 		
 		if (winnerMenu != null) {
-			winnerMenu.aabb = new AABB(worldCamera.worldPanel.aabb.width/2 - winnerMenu.aabb.width/2, worldCamera.worldPanel.aabb.height/2 - winnerMenu.aabb.height/2, winnerMenu.aabb.width, winnerMenu.aabb.height);
+			winnerMenu.setLocation(worldCamera.worldPanel.aabb.width/2 - winnerMenu.aabb.width/2, worldCamera.worldPanel.aabb.height/2 - winnerMenu.aabb.height/2);
 		}
 	}
 	

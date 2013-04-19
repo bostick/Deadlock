@@ -49,9 +49,12 @@ public class Main  {
 		
 		platform.debuggerContainer = newFrame;
 		
+		APP.DEBUGGER_SCREEN = true;
+		APP.DEBUG_DRAW = true;
+		
 		BYPASSAPP.init();
 		
-		MainMenu.action();
+		APP.platform.action(MainMenu.class);
 		
 	}
 	

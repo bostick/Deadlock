@@ -370,24 +370,38 @@ public class PlatformImpl implements Platform {
 	
 	public void action(@SuppressWarnings("rawtypes")Class clazz, Object... args) {
 		
+		pause old
+		
 		if (clazz == MainMenu.class) {
 			
-			MainMenu.action();
+			MainMenu.create();
+			MainMenu.start();
+			MainMenu.resume();
 			
 		} else if (clazz == LevelMenu.class) {
 			
-			LevelMenu.action();
+			LevelMenu.create();
+			LevelMenu.start();
+			LevelMenu.resume();
 			
 		} else if (clazz == BypassWorld.class) {
 			
 			int ii = (Integer)args[0];
 			
-			BypassWorld.action(ii);
+			BypassWorld.create(ii);
+			BypassWorld.start();
+			BypassWorld.resume();
 			
 		} else {
 			throw new AssertionError();
 		}
 		
+		stop old
+		
+	}
+	
+	public void finishAction() {
+		s;
 	}
 	
 }

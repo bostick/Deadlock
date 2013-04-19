@@ -2,7 +2,6 @@ package com.gutabi.bypass;
 
 import java.io.InputStream;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.res.AssetManager;
 import android.content.res.Resources;
@@ -13,7 +12,7 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.util.Log;
-import android.view.View;
+import android.view.animation.Animation;
 
 import com.gutabi.bypass.ResourceImpl.ResourceType;
 import com.gutabi.bypass.geom.CubicCurveImpl;
@@ -26,13 +25,11 @@ import com.gutabi.bypass.geom.PolylineImpl;
 import com.gutabi.bypass.geom.QuadCurveImpl;
 import com.gutabi.bypass.geom.TriangleImpl;
 import com.gutabi.bypass.level.BypassWorld;
-import com.gutabi.bypass.level.LevelDB;
+import com.gutabi.bypass.level.BypassWorldActivity;
 import com.gutabi.bypass.menu.LevelMenu;
 import com.gutabi.bypass.menu.LevelMenuActivity;
-import com.gutabi.bypass.menu.LevelMenuView;
 import com.gutabi.bypass.menu.MainMenu;
 import com.gutabi.bypass.menu.MainMenuActivity;
-import com.gutabi.bypass.menu.MainMenuView;
 import com.gutabi.bypass.ui.ImageImpl;
 import com.gutabi.bypass.ui.PlatformContentPaneImpl;
 import com.gutabi.bypass.ui.paint.RenderingContextImpl;
@@ -58,7 +55,7 @@ import com.gutabi.deadlock.ui.paint.RenderingContext;
 
 public class PlatformImpl implements Platform {
 	
-	public static Activity CURRENTACTIVITY;
+	public static BypassActivity CURRENTACTIVITY;
 	
 //	MainView container;
 	
@@ -202,43 +199,16 @@ public class PlatformImpl implements Platform {
 	
 	
 	public PlatformContentPane createPlatformContentPane() {
-		
-		View v;
-		
-		if (PlatformImpl.CURRENTACTIVITY instanceof MainMenuActivity) {
-			
-			v = ((MainMenuActivity)PlatformImpl.CURRENTACTIVITY).v;
-			
-		} else if (PlatformImpl.CURRENTACTIVITY instanceof LevelMenuActivity) {
-			
-			v = ((LevelMenuActivity)PlatformImpl.CURRENTACTIVITY).v;
-			
-		} else {
-			throw new AssertionError();
-		}
-		
-		return new PlatformContentPaneImpl(v);
+		return new PlatformContentPaneImpl(PlatformImpl.CURRENTACTIVITY.v);
 	}
 
 	public void setupAppScreen(Object... args) {
 		
 		PlatformContentPaneImpl pcp = (PlatformContentPaneImpl)args[0];
 		
-		if (PlatformImpl.CURRENTACTIVITY instanceof MainMenuActivity) {
-			
-			MainMenuView v = ((MainMenuActivity)PlatformImpl.CURRENTACTIVITY).v;
-			
-			v.paintable = pcp;
-			
-		} else if (PlatformImpl.CURRENTACTIVITY instanceof LevelMenuActivity) {
-			
-			LevelMenuView v = ((LevelMenuActivity)PlatformImpl.CURRENTACTIVITY).v;
-			
-			v.paintable = pcp;
-			
-		} else {
-			throw new AssertionError();
-		}
+		BypassView v = PlatformImpl.CURRENTACTIVITY.v;
+		
+		v.paintable = pcp;
 		
 	}
 	
@@ -379,23 +349,27 @@ public class PlatformImpl implements Platform {
 			Intent intent = new Intent(PlatformImpl.CURRENTACTIVITY, MainMenuActivity.class);
 //			intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
 			PlatformImpl.CURRENTACTIVITY.startActivity(intent);
+//			PlatformImpl.CURRENTACTIVITY.overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_up);
+			PlatformImpl.CURRENTACTIVITY.overridePendingTransition(0, 0);
 			
 		} else if (clazz == LevelMenu.class) {
 			
 			Intent intent = new Intent(PlatformImpl.CURRENTACTIVITY, LevelMenuActivity.class);
 //			intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
 			PlatformImpl.CURRENTACTIVITY.startActivity(intent);
+//			PlatformImpl.CURRENTACTIVITY.overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_up);
+			PlatformImpl.CURRENTACTIVITY.overridePendingTransition(0, 0);
 			
 		} else if (clazz == BypassWorld.class) {
 			
 			int ii = (Integer)args[0];
 			
 			Intent intent = new Intent(PlatformImpl.CURRENTACTIVITY, BypassWorldActivity.class);
-			intent.putExtra("foo"d, ii);
 //			intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+			intent.putExtra("com.gutabi.bypass.level.Index", ii);
 			PlatformImpl.CURRENTACTIVITY.startActivity(intent);
-			
-			PlatformImpl.CURRENTACTIVITY.getIntent().getExtras().get("foo");
+//			PlatformImpl.CURRENTACTIVITY.overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_up);
+			PlatformImpl.CURRENTACTIVITY.overridePendingTransition(0, 0);
 			
 		} else {
 			throw new AssertionError();
@@ -403,18 +377,11 @@ public class PlatformImpl implements Platform {
 		
 	}
 	
-//	public void deaction(@SuppressWarnings("rawtypes") Class clazz) {
-//		
-//		if (clazz == LevelMenu.class) {
-//			
-//			Intent intent = new Intent(PlatformImpl.CURRENTACTIVITY, LevelMenuActivity.class);
-////			intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-//			PlatformImpl.CURRENTACTIVITY.startActivity(intent);
-//			
-//		} else {
-//			throw new AssertionError();
-//		}
-//		
-//	}
+	public void finishAction() {
+		PlatformImpl.CURRENTACTIVITY.finish();
+//		PlatformImpl.CURRENTACTIVITY.overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_up);
+		PlatformImpl.CURRENTACTIVITY.overridePendingTransition(0, 0);
+		
+	}
 	
 }

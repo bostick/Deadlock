@@ -43,6 +43,8 @@ public class BypassApplication extends DeadlockApplication {
 		carSheet.load();
 		spriteSheet.load();
 		
+		levelDB = new LevelDB(APP.platform.levelDBResource("levels"));
+		
 		APP.platform.showAppScreen();
 		
 	}

@@ -6,6 +6,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.gutabi.deadlock.AppScreen;
 import com.gutabi.deadlock.Model;
+import com.gutabi.deadlock.ui.ContentPane;
 import com.gutabi.deadlock.ui.Menu;
 import com.gutabi.deadlock.ui.MenuItem;
 import com.gutabi.deadlock.ui.MenuTool;
@@ -13,11 +14,13 @@ import com.gutabi.deadlock.ui.UIAnimationRunnable;
 
 public class MainMenu extends Menu implements Model {
 	
+	public static MainMenu MAINMENU;
+	
 	public MainMenu() {
 		
 		MenuItem newMenuItem = new MenuItem(MainMenu.this, "New Game") {
 			public void action() {
-				MainMenu.deaction();
+				
 				APP.platform.action(LevelMenu.class);
 			}
 		};
@@ -34,30 +37,48 @@ public class MainMenu extends Menu implements Model {
 	}
 	
 	
-	static AtomicBoolean trigger = new AtomicBoolean(true);
-	static Thread uiThread;
 	
-	public static void action() {
+	public static void create() {
 		
-		MainMenu mainMenu = new MainMenu();
-		APP.model = mainMenu;
+		MAINMENU = new MainMenu();
 		
-		AppScreen s = new AppScreen(new MainMenuContentPane());
+	}
+
+	public static void start() {
+		
+		APP.model = MAINMENU;
+		
+		AppScreen s = new AppScreen(new ContentPane(new MainMenuPanel()));
 		APP.appScreen = s;
 		
 		APP.tool = new MenuTool();
 		
 		APP.platform.setupAppScreen(s.contentPane.pcp);
 		
-		mainMenu.render();
+		MAINMENU.render();
 		
 		s.postDisplay();
+		
+	}
+	
+	public static void stop() {
+		
+	}
+	
+	static AtomicBoolean trigger = new AtomicBoolean();
+	static Thread uiThread;
+	
+	public static void resume() {
+		
+		APP.model = MAINMENU;
+		
+		trigger.set(true);
 		
 		uiThread = new Thread(new UIAnimationRunnable(trigger));
 		uiThread.start();
 	}
 	
-	public static void deaction() {
+	public static void pause() {
 		
 		trigger.set(false);
 		
@@ -68,7 +89,7 @@ public class MainMenu extends Menu implements Model {
 			e.printStackTrace();
 		}
 		
-//		APP.platform.unshowAppScreen();
+		uiThread = null;
 		
 	}
 	

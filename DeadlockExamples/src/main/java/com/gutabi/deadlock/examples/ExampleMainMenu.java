@@ -4,6 +4,7 @@ import static com.gutabi.deadlock.DeadlockApplication.APP;
 
 import com.gutabi.deadlock.AppScreen;
 import com.gutabi.deadlock.Model;
+import com.gutabi.deadlock.ui.ContentPane;
 import com.gutabi.deadlock.ui.Menu;
 import com.gutabi.deadlock.ui.MenuItem;
 import com.gutabi.deadlock.ui.MenuTool;
@@ -27,7 +28,7 @@ public class ExampleMainMenu extends Menu implements Model {
 		ExampleMainMenu mainMenu = new ExampleMainMenu();
 		APP.model = mainMenu;
 		
-		AppScreen s = new AppScreen(new ExampleMainMenuContentPane());
+		AppScreen s = new AppScreen(new ContentPane(new ExampleMainMenuPanel()));
 		APP.appScreen = s;
 		
 		APP.tool = new MenuTool();

@@ -2,7 +2,7 @@ package com.gutabi.bypass.level;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
-import com.gutabi.bypass.menu.MainMenu;
+import com.gutabi.bypass.menu.LevelMenu;
 import com.gutabi.deadlock.geom.Shape;
 import com.gutabi.deadlock.math.DMath;
 import com.gutabi.deadlock.math.Point;
@@ -40,9 +40,7 @@ public class BypassCarTool extends WorldToolBase {
 	
 	public void escKey() {
 		
-		APP.platform.unshowDebuggerScreen();
-		
-		MainMenu.action();
+		APP.platform.action(LevelMenu.class);
 	}
 	
 	public void pressed(InputEvent ignore) {

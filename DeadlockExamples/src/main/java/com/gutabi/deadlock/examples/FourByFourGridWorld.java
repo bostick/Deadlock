@@ -8,12 +8,12 @@ import java.util.Set;
 import com.gutabi.deadlock.AppScreen;
 import com.gutabi.deadlock.Model;
 import com.gutabi.deadlock.math.Point;
+import com.gutabi.deadlock.ui.ContentPane;
 import com.gutabi.deadlock.ui.Menu;
-import com.gutabi.deadlock.world.DebuggerScreenContentPane;
 import com.gutabi.deadlock.world.QuadrantMap;
 import com.gutabi.deadlock.world.Stroke;
 import com.gutabi.deadlock.world.World;
-import com.gutabi.deadlock.world.WorldScreenContentPane;
+import com.gutabi.deadlock.world.WorldPanel;
 import com.gutabi.deadlock.world.graph.Axis;
 import com.gutabi.deadlock.world.graph.Fixture;
 import com.gutabi.deadlock.world.graph.FixtureType;
@@ -33,16 +33,10 @@ public class FourByFourGridWorld extends World implements Model {
 		FourByFourGridWorld world = FourByFourGridWorld.createFourByFourGridWorld();
 		APP.model = world;
 		
-		AppScreen worldScreen = new AppScreen(new WorldScreenContentPane());
+		AppScreen worldScreen = new AppScreen(new ContentPane(new WorldPanel()));
 		APP.setAppScreen(worldScreen);
 		
-		AppScreen debuggerScreen = new AppScreen(new DebuggerScreenContentPane());
-		
-		ControlPanel controlPanel = new ControlPanel() {{
-			setLocation(0, 0);
-		}};
-		
-		debuggerScreen.contentPane.pcp.getChildren().add(controlPanel);
+		AppScreen debuggerScreen = new AppScreen(new ContentPane(new ControlPanel()));
 		APP.debuggerScreen = debuggerScreen;
 		
 		APP.tool = new RegularTool();

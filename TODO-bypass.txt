@@ -1,5 +1,16 @@
 
 
+
+level menu stays up on mainmenu view, fix main menu -> level menu
+
+
+
+
+
+
+
+
+
 activity lifecycle
 
 problem with backing out, and starting again, threads

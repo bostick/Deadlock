@@ -7,6 +7,7 @@ import com.gutabi.deadlock.Model;
 import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.Button;
+import com.gutabi.deadlock.ui.ContentPane;
 import com.gutabi.deadlock.ui.Menu;
 import com.gutabi.deadlock.ui.Transform;
 import com.gutabi.deadlock.ui.paint.Color;
@@ -393,7 +394,7 @@ public class QuadrantEditor implements Model {
 		QuadrantEditor editor = new QuadrantEditor();
 		APP.model = editor;
 		
-		AppScreen s = new AppScreen(new QuadrantEditorContentPane());
+		AppScreen s = new AppScreen(new ContentPane(new QuadrantEditorPanel()));
 		
 		APP.platform.setupAppScreen(s.contentPane.pcp);
 		
@@ -401,7 +402,8 @@ public class QuadrantEditor implements Model {
 		
 //		s.contentPane.repaint();
 		
-		APP.platform.showAppScreen();
+//		APP.platform.showAppScreen();
+		
 	}
 	
 	public Menu getMenu() {

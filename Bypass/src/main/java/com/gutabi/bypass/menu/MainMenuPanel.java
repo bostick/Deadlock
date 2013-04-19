@@ -21,6 +21,9 @@ public class MainMenuPanel extends Panel {
 		aabb = new AABB(aabb.x, aabb.y, APP.MAINWINDOW_WIDTH, APP.MAINWINDOW_HEIGHT);
 	}
 	
+	/**
+	 * set menu location using panel dimensions
+	 */
 	public void postDisplay() {
 		Menu menu = (Menu)APP.model;
 		

@@ -1,4 +1,4 @@
-package com.gutabi.bypass.menu;
+package com.gutabi.bypass.level;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 import android.content.pm.ActivityInfo;
@@ -9,12 +9,14 @@ import android.view.Window;
 import com.gutabi.bypass.BypassActivity;
 import com.gutabi.bypass.R;
 
-public class LevelMenuActivity extends BypassActivity {
+public class BypassWorldActivity extends BypassActivity {
+	
+//	public BypassWorldView v;
 	
 //	private GestureDetector gDetector;
 	
 	{
-		name = "levelmenu";
+		name = "bypassworld";
 	}
 	
 	protected void onCreate(Bundle savedInstanceState) {
@@ -22,48 +24,43 @@ public class LevelMenuActivity extends BypassActivity {
 		
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		
-		setContentView(R.layout.activity_levelmenu);
+		setContentView(R.layout.activity_bypassworld);
 		
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 		
-//		PlatformImpl.CURRENTACTIVITY = this;
-		
-//		gDetector = new GestureDetector(this, simpleOnGestureListener);
-		
-		v = (LevelMenuView)findViewById(R.id.view_levelmenu);
+		v = (BypassWorldView)findViewById(R.id.view_bypassworld);
 		
 		v.ctxt = APP.platform.createRenderingContext();
 		v.activity = this;
 		
-		LevelMenu.create();
+		int ii = (Integer)getIntent().getExtras().get("com.gutabi.bypass.level.Index");
 		
+		BypassWorld.create(ii);
 	}
 	
 	protected void onStart() {
     	super.onStart();
     	
-    	LevelMenu.start();
+		BypassWorld.start();
     }
 	
 	protected void onStop() {
 		super.onStop();
 		
-		LevelMenu.stop();
+		BypassWorld.stop();
 	}
 	
 	protected void onResume() {
     	super.onResume();
     	
-    	LevelMenu.resume();
+		BypassWorld.resume();
     }
 	
 	protected void onPause() {
 		super.onPause();
 		
-		LevelMenu.pause();
+		BypassWorld.pause();
 	}
-	
-	
 	
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.

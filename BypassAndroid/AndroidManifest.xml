@@ -27,15 +27,15 @@
         
         <activity
             android:name="com.gutabi.bypass.menu.LevelMenuActivity"
-            android:theme="@style/Theme.BypassMainMenu"
+            android:theme="@style/Theme.BypassLevelMenu"
             android:windowSoftInputMode="stateAlwaysHidden">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         
+        <activity
+            android:name="com.gutabi.bypass.level.BypassWorldActivity"
+            android:theme="@style/Theme.BypassWorld"
+            android:windowSoftInputMode="stateAlwaysHidden">
+        </activity>
         
     </application>
 

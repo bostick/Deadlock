@@ -27,6 +27,8 @@ public class DeadlockApplication {
 	
 	public Platform platform;
 	
+	public boolean DEBUGGER_SCREEN = false;
+	
 	/*
 	 * control panel properties
 	 */
@@ -43,7 +45,6 @@ public class DeadlockApplication {
 	
 	public Random RANDOM = new Random(1);
 	
-//	public static DeadlockApplication APP = new DeadlockApplication();
 	public static DeadlockApplication APP;
 	
 //	public void init() throws Exception {

@@ -1,9 +1,11 @@
 package com.gutabi.bypass;
 
-import static com.gutabi.bypass.BypassApplication.APP;
+import static com.gutabi.deadlock.DeadlockApplication.APP;
 
+import com.gutabi.bypass.level.BypassCarTool;
 import com.gutabi.bypass.level.BypassWorld;
 import com.gutabi.deadlock.Resource;
+import com.gutabi.deadlock.Tool;
 import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.ui.Checkbox;
 import com.gutabi.deadlock.ui.InputEvent;
@@ -13,12 +15,15 @@ import com.gutabi.deadlock.ui.Transform;
 import com.gutabi.deadlock.ui.paint.FontStyle;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.world.World;
+import com.gutabi.deadlock.world.cars.Car;
 
 public class BypassControlPanel extends Panel {
 	
 	Label indexLab;
 	Label requiredMovesLab;
 	Label userMovesLab;
+	Label currentCar;
+	Label lastMotion;
 	
 	public Checkbox debugCheckBox;
 	
@@ -101,6 +106,30 @@ public class BypassControlPanel extends Panel {
 		debugCheckBox.setLocation(5, 50);
 		debugCheckBox.render();
 		debugCheckBox.paint(ctxt);
+		
+		Tool tool = APP.tool;
+		if (tool instanceof BypassCarTool) {
+			BypassCarTool bt = (BypassCarTool)tool;
+			
+			Car c = bt.car;
+			String id = (c == null ? " " : Integer.toString(c.id));
+			currentCar = new Label(id, 5, 80);
+			currentCar.fontFile = visitorFontFile;
+			currentCar.fontStyle = FontStyle.PLAIN;
+			currentCar.fontSize = 16;
+			currentCar.renderLocal();
+			currentCar.render();
+			currentCar.paint(ctxt);
+			
+			String last = (bt.lastMotion == null ? " " : bt.lastMotion.toString());
+			lastMotion = new Label(last, 5, 95);
+			lastMotion.fontFile = visitorFontFile;
+			lastMotion.fontStyle = FontStyle.PLAIN;
+			lastMotion.fontSize = 16;
+			lastMotion.renderLocal();
+			lastMotion.render();
+			lastMotion.paint(ctxt);
+		}
 		
 		world.paintPreview_controlPanel(ctxt);
 		

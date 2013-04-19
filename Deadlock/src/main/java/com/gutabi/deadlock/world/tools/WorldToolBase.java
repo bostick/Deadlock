@@ -67,8 +67,12 @@ public abstract class WorldToolBase extends Tool {
 		}
 	}
 	
+	public Motion lastMotion;
+	
 	public void pressed(InputEvent ev) {
 		World world = (World)APP.model;
+		
+		lastMotion = Motion.PRESSED;
 		
 		Point p = Point.panelToWorld(ev.p, world.worldCamera);
 		
@@ -91,6 +95,8 @@ public abstract class WorldToolBase extends Tool {
 	
 	public void dragged(InputEvent ev) {
 		World world = (World)APP.model;
+		
+		lastMotion = Motion.DRAGGED;
 		
 		Point p = Point.panelToWorld(ev.p, world.worldCamera);
 		
@@ -121,6 +127,9 @@ public abstract class WorldToolBase extends Tool {
 	}
 	
 	public void released(InputEvent ev) {
+		
+		lastMotion = Motion.RELEASED;
+		
 //		World world = (World)APP.model;
 //		
 //		Point p = Point.panelToWorld(ev.p, world.worldCamera);

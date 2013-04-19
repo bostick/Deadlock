@@ -21,6 +21,9 @@ public class LevelMenuPanel extends Panel {
 		aabb = new AABB(aabb.x, aabb.y, APP.MAINWINDOW_WIDTH, APP.MAINWINDOW_HEIGHT);
 	}
 	
+	/**
+	 * set menu location using panel dimensions
+	 */
 	public void postDisplay() {
 		Menu menu = (Menu)APP.model;
 		
@@ -104,6 +107,9 @@ public class LevelMenuPanel extends Panel {
 				0, 0, BYPASSAPP.copyright.getWidth(), BYPASSAPP.copyright.getHeight());
 		
 		ctxt.setTransform(menuTrans);
+		
+//		int x = (int)menuTrans.getTranslateX();
+//		int y = (int)menuTrans.getTranslateY();
 		
 		menu.paint_panel(ctxt);
 		

@@ -2,7 +2,6 @@ package com.gutabi.bypass.level;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
-import com.gutabi.deadlock.geom.Circle;
 import com.gutabi.deadlock.math.DMath;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.paint.Cap;
@@ -177,8 +176,8 @@ public class BypassCar extends Car {
 		
 		if (APP.DEBUG_DRAW) {
 			
-			ctxt.setColor(Color.DARKGREEN);
-			ctxt.paintCircle(new Circle(((BypassDriver)driver).overallPos.p, 0.2));
+//			ctxt.setColor(Color.DARKGREEN);
+//			ctxt.paintCircle(new Circle(((BypassDriver)driver).overallPos.p, 0.2));
 			
 			ctxt.setColor(Color.BLACK);
 			ctxt.setStroke(0.0, Cap.SQUARE, Join.MITER);

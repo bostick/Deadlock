@@ -26,7 +26,7 @@ public class UIAnimationRunnable implements Runnable {
 				
 				APP.appScreen.contentPane.repaint();
 				
-				if (APP.debuggerScreen != null) {
+				if (APP.DEBUGGER_SCREEN) {
 					APP.debuggerScreen.contentPane.repaint();
 				}
 				

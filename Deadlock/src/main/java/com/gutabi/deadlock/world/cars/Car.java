@@ -208,7 +208,9 @@ public abstract class Car extends PhysicsBody {
 		ctxt.translate(center.x, center.y);
 		
 		ctxt.setColor(Color.WHITE);
-		ctxt.paintString(localULX, 0.0, 2.0/ctxt.cam.pixelsPerMeter, Integer.toString(id));
+		ctxt.setXORMode(Color.BLACK);
+		ctxt.paintString(0.0, 0.0, 2.0/ctxt.cam.pixelsPerMeter, Integer.toString(id));
+		ctxt.clearXORMode();
 		
 		ctxt.setTransform(origTransformID);
 	}

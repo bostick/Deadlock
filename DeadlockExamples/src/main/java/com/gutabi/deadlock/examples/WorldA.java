@@ -4,11 +4,11 @@ import static com.gutabi.deadlock.DeadlockApplication.APP;
 
 import com.gutabi.deadlock.AppScreen;
 import com.gutabi.deadlock.Model;
+import com.gutabi.deadlock.ui.ContentPane;
 import com.gutabi.deadlock.ui.Menu;
-import com.gutabi.deadlock.world.DebuggerScreenContentPane;
 import com.gutabi.deadlock.world.QuadrantMap;
 import com.gutabi.deadlock.world.World;
-import com.gutabi.deadlock.world.WorldScreenContentPane;
+import com.gutabi.deadlock.world.WorldPanel;
 import com.gutabi.deadlock.world.tools.RegularTool;
 
 public class WorldA extends World implements Model {
@@ -22,16 +22,10 @@ public class WorldA extends World implements Model {
 		WorldA world = WorldA.createWorldA();
 		APP.model = world;
 		
-		AppScreen worldScreen = new AppScreen(new WorldScreenContentPane());
+		AppScreen worldScreen = new AppScreen(new ContentPane(new WorldPanel()));
 		APP.setAppScreen(worldScreen);
 		
-		AppScreen debuggerScreen = new AppScreen(new DebuggerScreenContentPane());
-		
-		ControlPanel controlPanel = new ControlPanel() {{
-			setLocation(0, 0);
-		}};
-		
-		debuggerScreen.contentPane.pcp.getChildren().add(controlPanel);
+		AppScreen debuggerScreen = new AppScreen(new ContentPane(new ControlPanel()));
 		APP.debuggerScreen = debuggerScreen;
 		
 		APP.tool = new RegularTool();

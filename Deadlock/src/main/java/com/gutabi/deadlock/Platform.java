@@ -96,8 +96,7 @@ public interface Platform {
 	
 	
 	public abstract void action(@SuppressWarnings("rawtypes")Class c, Object... args);
-	
-//	public abstract void deaction(@SuppressWarnings("rawtypes")Class c);
+	public abstract void finishAction();
 	
 	
 }
