@@ -1,31 +1,8 @@
 
+beat a level, do next, start second level, hit back, see empty board
 
 
-level menu stays up on mainmenu view, fix main menu -> level menu
-
-
-
-
-
-
-
-
-
-activity lifecycle
-
-problem with backing out, and starting again, threads
-
-prevent drawing when not on screen
-clip drawing to screen
-
-http://developer.android.com/reference/android/app/Activity.html#ActivityLifecycle
-
-handle back button
-stacks
-
-
-
-
+clip painting to screen
 
 
 menu
@@ -33,13 +10,7 @@ reset button
 hint button
 
 
-
-
-
 no allocations when dragging
-
-
-
 
 
 scoring
@@ -61,7 +32,6 @@ similar: lots of cars in same position and similar number of moves
 
 density independent pixels
 use graph paper and sketch out different screens and layouts first
-
 
 
 

@@ -37,7 +37,7 @@ public class BypassActivity extends Activity {
 		Log.d("bypassactivity", name + " destroy");
 		state = ActivityState.DESTROY;
 		
-		PlatformImpl.CURRENTACTIVITY = this;
+//		PlatformImpl.CURRENTACTIVITY = this;
 		
 	}
 	
@@ -57,7 +57,7 @@ public class BypassActivity extends Activity {
 		Log.d("bypassactivity", name + " stop");
 		state = ActivityState.STOP;
 		
-		PlatformImpl.CURRENTACTIVITY = this;
+//		PlatformImpl.CURRENTACTIVITY = this;
 		
 	}
 	
@@ -67,7 +67,7 @@ public class BypassActivity extends Activity {
 		Log.d("bypassactivity", name + " restart");
 		state = ActivityState.RESTART;
 		
-		PlatformImpl.CURRENTACTIVITY = this;
+//		PlatformImpl.CURRENTACTIVITY = this;
 		
 	}
 	
@@ -90,7 +90,7 @@ public class BypassActivity extends Activity {
 		Log.d("bypassactivity", name + " pause");
 		state = ActivityState.PAUSE;
 		
-		PlatformImpl.CURRENTACTIVITY = this;
+//		PlatformImpl.CURRENTACTIVITY = this;
 		
 		PlatformImpl.CURRENTACTIVITY.overridePendingTransition(0, 0);
 		

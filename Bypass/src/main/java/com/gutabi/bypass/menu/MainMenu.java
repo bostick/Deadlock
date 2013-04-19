@@ -51,8 +51,6 @@ public class MainMenu extends Menu implements Model {
 		AppScreen s = new AppScreen(new ContentPane(new MainMenuPanel()));
 		APP.appScreen = s;
 		
-		APP.tool = new MenuTool();
-		
 		APP.platform.setupAppScreen(s.contentPane.pcp);
 		
 		MAINMENU.render();
@@ -71,6 +69,8 @@ public class MainMenu extends Menu implements Model {
 	public static void resume() {
 		
 		APP.model = MAINMENU;
+		
+		APP.tool = new MenuTool();
 		
 		trigger.set(true);
 		

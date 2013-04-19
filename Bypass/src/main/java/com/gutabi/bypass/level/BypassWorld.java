@@ -56,8 +56,6 @@ public class BypassWorld extends World implements Model {
 		AppScreen worldScreen = new AppScreen(new ContentPane(new WorldPanel()));
 		APP.setAppScreen(worldScreen);
 		
-		APP.tool = new BypassCarTool();
-		
 		APP.platform.setupAppScreen(worldScreen.contentPane.pcp);
 		
 		worldScreen.postDisplay();
@@ -93,6 +91,8 @@ public class BypassWorld extends World implements Model {
 	public static void resume() {
 		
 		APP.model = BYPASSWORLD;
+		
+		APP.tool = new BypassCarTool();
 		
 		BYPASSWORLD.startRunning();
 		

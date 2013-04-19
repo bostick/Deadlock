@@ -12,7 +12,6 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.util.Log;
-import android.view.animation.Animation;
 
 import com.gutabi.bypass.ResourceImpl.ResourceType;
 import com.gutabi.bypass.geom.CubicCurveImpl;
@@ -348,6 +347,7 @@ public class PlatformImpl implements Platform {
 			
 			Intent intent = new Intent(PlatformImpl.CURRENTACTIVITY, MainMenuActivity.class);
 //			intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+			
 			PlatformImpl.CURRENTACTIVITY.startActivity(intent);
 //			PlatformImpl.CURRENTACTIVITY.overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_up);
 			PlatformImpl.CURRENTACTIVITY.overridePendingTransition(0, 0);

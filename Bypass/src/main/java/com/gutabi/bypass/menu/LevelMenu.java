@@ -50,8 +50,6 @@ public class LevelMenu extends Menu implements Model {
 		AppScreen s = new AppScreen(new ContentPane(new LevelMenuPanel()));
 		APP.appScreen = s;
 		
-		APP.tool = new MenuTool();
-		
 		APP.platform.setupAppScreen(s.contentPane.pcp);
 		
 		LEVELMENU.render();
@@ -70,6 +68,8 @@ public class LevelMenu extends Menu implements Model {
 	public static void resume() {
 		
 		APP.model = LEVELMENU;
+		
+		APP.tool = new MenuTool();
 		
 		trigger.set(true);
 		
