@@ -51,6 +51,17 @@ public class BypassWorld extends World implements Model {
 	
 	public static void start() {
 		
+	}
+	
+	public static void stop() {
+		
+	}
+	
+	static AtomicBoolean trigger = new AtomicBoolean(true);
+	static Thread uiThread;
+	
+	public static void resume() {
+		
 		APP.model = BYPASSWORLD;
 		
 		AppScreen worldScreen = new AppScreen(new ContentPane(new WorldPanel()));
@@ -60,7 +71,7 @@ public class BypassWorld extends World implements Model {
 		
 		worldScreen.postDisplay();
 		
-		BYPASSWORLD.render_worldPanel();
+//		BYPASSWORLD.render_worldPanel();
 		
 		if (APP.DEBUGGER_SCREEN) {
 			
@@ -75,23 +86,6 @@ public class BypassWorld extends World implements Model {
 			APP.platform.showDebuggerScreen();
 		}
 		
-	}
-	
-	public static void stop() {
-		
-		if (APP.DEBUGGER_SCREEN) {
-			APP.platform.unshowDebuggerScreen();
-		}
-		
-	}
-	
-	static AtomicBoolean trigger = new AtomicBoolean(true);
-	static Thread uiThread;
-	
-	public static void resume() {
-		
-		APP.model = BYPASSWORLD;
-		
 		APP.tool = new BypassCarTool();
 		
 		BYPASSWORLD.startRunning();
@@ -104,6 +98,10 @@ public class BypassWorld extends World implements Model {
 	}
 	
 	public static void pause() {
+		
+		if (APP.DEBUGGER_SCREEN) {
+			APP.platform.unshowDebuggerScreen();
+		}
 		
 		trigger.set(false);
 		

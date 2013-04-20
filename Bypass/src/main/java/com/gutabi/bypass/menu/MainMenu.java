@@ -46,17 +46,6 @@ public class MainMenu extends Menu implements Model {
 
 	public static void start() {
 		
-		APP.model = MAINMENU;
-		
-		AppScreen s = new AppScreen(new ContentPane(new MainMenuPanel()));
-		APP.appScreen = s;
-		
-		APP.platform.setupAppScreen(s.contentPane.pcp);
-		
-		MAINMENU.render();
-		
-		s.postDisplay();
-		
 	}
 	
 	public static void stop() {
@@ -69,6 +58,15 @@ public class MainMenu extends Menu implements Model {
 	public static void resume() {
 		
 		APP.model = MAINMENU;
+		
+		MAINMENU.render();
+		
+		AppScreen s = new AppScreen(new ContentPane(new MainMenuPanel()));
+		APP.appScreen = s;
+		
+		APP.platform.setupAppScreen(s.contentPane.pcp);
+		
+		s.postDisplay();
 		
 		APP.tool = new MenuTool();
 		

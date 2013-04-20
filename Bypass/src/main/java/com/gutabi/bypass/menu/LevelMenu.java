@@ -45,17 +45,6 @@ public class LevelMenu extends Menu implements Model {
 	
 	public static void start() {
 		
-		APP.model = LEVELMENU;
-		
-		AppScreen s = new AppScreen(new ContentPane(new LevelMenuPanel()));
-		APP.appScreen = s;
-		
-		APP.platform.setupAppScreen(s.contentPane.pcp);
-		
-		LEVELMENU.render();
-		
-		APP.appScreen.postDisplay();
-		
 	}
 	
 	public static void stop() {
@@ -68,6 +57,15 @@ public class LevelMenu extends Menu implements Model {
 	public static void resume() {
 		
 		APP.model = LEVELMENU;
+		
+		LEVELMENU.render();
+		
+		AppScreen s = new AppScreen(new ContentPane(new LevelMenuPanel()));
+		APP.appScreen = s;
+		
+		APP.platform.setupAppScreen(s.contentPane.pcp);
+		
+		APP.appScreen.postDisplay();
 		
 		APP.tool = new MenuTool();
 		
