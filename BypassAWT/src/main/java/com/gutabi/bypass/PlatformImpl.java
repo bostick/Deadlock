@@ -366,25 +366,51 @@ public class PlatformImpl implements Platform {
 	
 	
 	
+	@SuppressWarnings("rawtypes")
+	public static Class CURRENTACTIVITYCLASS;
 	
-	
-	public void action(@SuppressWarnings("rawtypes")Class clazz, Object... args) {
+	public void action(@SuppressWarnings("rawtypes")Class newClazz, Object... args) {
 		
-		pause old
+		@SuppressWarnings("rawtypes")
+		Class oldClazz = CURRENTACTIVITYCLASS;
+		if (oldClazz == null) {
+			
+		} else if (oldClazz == MainMenu.class) {
+			
+			MainMenu.pause();
+			
+		} else if (oldClazz == LevelMenu.class) {
+			
+			LevelMenu.pause();
+			
+		} else if (oldClazz == BypassWorld.class) {
+			
+			BypassWorld.pause();
+			
+		} else {
+			throw new AssertionError();
+		}
 		
-		if (clazz == MainMenu.class) {
+		
+		if (newClazz == MainMenu.class) {
+			
+			CURRENTACTIVITYCLASS = MainMenu.class;
 			
 			MainMenu.create();
 			MainMenu.start();
 			MainMenu.resume();
 			
-		} else if (clazz == LevelMenu.class) {
+		} else if (newClazz == LevelMenu.class) {
+			
+			CURRENTACTIVITYCLASS = LevelMenu.class;
 			
 			LevelMenu.create();
 			LevelMenu.start();
 			LevelMenu.resume();
 			
-		} else if (clazz == BypassWorld.class) {
+		} else if (newClazz == BypassWorld.class) {
+			
+			CURRENTACTIVITYCLASS = BypassWorld.class;
 			
 			int ii = (Integer)args[0];
 			
@@ -396,12 +422,38 @@ public class PlatformImpl implements Platform {
 			throw new AssertionError();
 		}
 		
-		stop old
-		
 	}
 	
 	public void finishAction() {
-		s;
+		
+		@SuppressWarnings("rawtypes")
+		Class oldClazz = CURRENTACTIVITYCLASS;
+		if (oldClazz == MainMenu.class) {
+			
+			MainMenu.pause();
+			
+			CURRENTACTIVITYCLASS = null;
+			
+		} else if (oldClazz == LevelMenu.class) {
+			
+			LevelMenu.pause();
+			
+			CURRENTACTIVITYCLASS = MainMenu.class;
+			
+			MainMenu.resume();
+			
+		} else if (oldClazz == BypassWorld.class) {
+			
+			BypassWorld.pause();
+			
+			CURRENTACTIVITYCLASS = LevelMenu.class;
+			
+			LevelMenu.resume();
+			
+		} else {
+			throw new AssertionError();
+		} 
+		
 	}
 	
 }

@@ -95,7 +95,7 @@ public interface Platform {
 	
 	
 	
-	public abstract void action(@SuppressWarnings("rawtypes")Class c, Object... args);
+	public abstract void action(@SuppressWarnings("rawtypes")Class newClazz, Object... args);
 	public abstract void finishAction();
 	
 	

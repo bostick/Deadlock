@@ -198,14 +198,14 @@ public class PlatformImpl implements Platform {
 	
 	
 	public PlatformContentPane createPlatformContentPane() {
-		return new PlatformContentPaneImpl(PlatformImpl.CURRENTACTIVITY.v);
+		return new PlatformContentPaneImpl(CURRENTACTIVITY.v);
 	}
 
 	public void setupAppScreen(Object... args) {
 		
 		PlatformContentPaneImpl pcp = (PlatformContentPaneImpl)args[0];
 		
-		BypassView v = PlatformImpl.CURRENTACTIVITY.v;
+		BypassView v = CURRENTACTIVITY.v;
 		
 		v.paintable = pcp;
 		
@@ -345,31 +345,31 @@ public class PlatformImpl implements Platform {
 		
 		if (clazz == MainMenu.class) {
 			
-			Intent intent = new Intent(PlatformImpl.CURRENTACTIVITY, MainMenuActivity.class);
+			Intent intent = new Intent(CURRENTACTIVITY, MainMenuActivity.class);
 //			intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
 			
-			PlatformImpl.CURRENTACTIVITY.startActivity(intent);
+			CURRENTACTIVITY.startActivity(intent);
 //			PlatformImpl.CURRENTACTIVITY.overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_up);
-			PlatformImpl.CURRENTACTIVITY.overridePendingTransition(0, 0);
+			CURRENTACTIVITY.overridePendingTransition(0, 0);
 			
 		} else if (clazz == LevelMenu.class) {
 			
-			Intent intent = new Intent(PlatformImpl.CURRENTACTIVITY, LevelMenuActivity.class);
+			Intent intent = new Intent(CURRENTACTIVITY, LevelMenuActivity.class);
 //			intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-			PlatformImpl.CURRENTACTIVITY.startActivity(intent);
+			CURRENTACTIVITY.startActivity(intent);
 //			PlatformImpl.CURRENTACTIVITY.overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_up);
-			PlatformImpl.CURRENTACTIVITY.overridePendingTransition(0, 0);
+			CURRENTACTIVITY.overridePendingTransition(0, 0);
 			
 		} else if (clazz == BypassWorld.class) {
 			
 			int ii = (Integer)args[0];
 			
-			Intent intent = new Intent(PlatformImpl.CURRENTACTIVITY, BypassWorldActivity.class);
+			Intent intent = new Intent(CURRENTACTIVITY, BypassWorldActivity.class);
 //			intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
 			intent.putExtra("com.gutabi.bypass.level.Index", ii);
-			PlatformImpl.CURRENTACTIVITY.startActivity(intent);
+			CURRENTACTIVITY.startActivity(intent);
 //			PlatformImpl.CURRENTACTIVITY.overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_up);
-			PlatformImpl.CURRENTACTIVITY.overridePendingTransition(0, 0);
+			CURRENTACTIVITY.overridePendingTransition(0, 0);
 			
 		} else {
 			throw new AssertionError();
@@ -378,9 +378,9 @@ public class PlatformImpl implements Platform {
 	}
 	
 	public void finishAction() {
-		PlatformImpl.CURRENTACTIVITY.finish();
+		CURRENTACTIVITY.finish();
 //		PlatformImpl.CURRENTACTIVITY.overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_up);
-		PlatformImpl.CURRENTACTIVITY.overridePendingTransition(0, 0);
+		CURRENTACTIVITY.overridePendingTransition(0, 0);
 		
 	}
 	
