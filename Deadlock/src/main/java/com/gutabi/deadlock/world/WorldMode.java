@@ -4,6 +4,6 @@ public enum WorldMode {
 	
 	EDITING,
 	RUNNING,
-	PAUSED,
+//	PAUSED,
 	
 }

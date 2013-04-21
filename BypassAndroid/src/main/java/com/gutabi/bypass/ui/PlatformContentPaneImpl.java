@@ -1,8 +1,11 @@
 package com.gutabi.bypass.ui;
 
+import static com.gutabi.deadlock.DeadlockApplication.APP;
+import android.util.Log;
 import android.view.View;
 
 import com.gutabi.bypass.PlatformImpl;
+import com.gutabi.bypass.level.BypassWorld;
 import com.gutabi.deadlock.ui.PlatformContentPane;
 
 public class PlatformContentPaneImpl extends PlatformContentPane {
@@ -15,6 +18,14 @@ public class PlatformContentPaneImpl extends PlatformContentPane {
 		
 		repaintRunnable = new Runnable() {
 			public void run() {
+				
+//				if (APP.model instanceof BypassWorld) {
+//					
+//					BypassWorld world = (BypassWorld)APP.model;
+//					Log.d("bypass", "car count: " + world.carMap.size());
+//					
+//				}
+				
 				v.invalidate();
 			}
 		};

@@ -431,12 +431,16 @@ public class PlatformImpl implements Platform {
 		if (oldClazz == MainMenu.class) {
 			
 			MainMenu.pause();
+			MainMenu.stop();
+			MainMenu.destroy();
 			
 			CURRENTACTIVITYCLASS = null;
 			
 		} else if (oldClazz == LevelMenu.class) {
 			
 			LevelMenu.pause();
+			LevelMenu.stop();
+			LevelMenu.destroy();
 			
 			CURRENTACTIVITYCLASS = MainMenu.class;
 			
@@ -445,6 +449,8 @@ public class PlatformImpl implements Platform {
 		} else if (oldClazz == BypassWorld.class) {
 			
 			BypassWorld.pause();
+			BypassWorld.stop();
+			BypassWorld.destroy();
 			
 			CURRENTACTIVITYCLASS = LevelMenu.class;
 			

@@ -157,16 +157,19 @@ public class ControlPanel extends Panel {
 					stopButton.enabled = true;
 					
 					world.startRunning();
+					
 				} else if (command.equals("pause")) {
 					lab.text = "Unpause";
 					command = "unpause";
 					
 					world.pauseRunning();
+					
 				} else if (command.equals("unpause")) {
 					lab.text = "Pause";
 					command = "pause";
 					
 					world.unpauseRunning();
+					
 				}
 				
 				render();
@@ -194,6 +197,7 @@ public class ControlPanel extends Panel {
 					enabled = false;
 					
 					world.stopRunning();
+					
 				}
 				
 				render();

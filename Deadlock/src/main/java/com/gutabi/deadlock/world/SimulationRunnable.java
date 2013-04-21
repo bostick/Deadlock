@@ -12,13 +12,13 @@ public class SimulationRunnable implements Runnable {
 		
 		World world = (World)APP.model;
 		
-		double t = 0;
+		double t = world.t;
 		double accumulator = 0;
 		
 		long currentTimeMillis = System.currentTimeMillis();
 		long newTimeMillis = System.currentTimeMillis();
 		
-		world.preStart();
+//		world.preStart();
 		
 		try {
 			
@@ -27,17 +27,6 @@ public class SimulationRunnable implements Runnable {
 					
 					if (world.mode == WorldMode.EDITING) {
 						break outer;
-					} else if (world.mode == WorldMode.PAUSED) {
-						synchronized (world.pauseLock) {
-							try {
-								world.pauseLock.wait();
-							} catch (InterruptedException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
-						}
-						currentTimeMillis = System.currentTimeMillis();
-						accumulator = 0;
 					}
 					
 					newTimeMillis = System.currentTimeMillis();
@@ -67,17 +56,13 @@ public class SimulationRunnable implements Runnable {
 						t += world.DT;
 					}
 					
-//					APP.appScreen.contentPane.repaint();
-					
 				} // outer
 			
 		} catch (InterruptedException e) {
 			
 		}
 		
-		world.postStop();
-		
-//		APP.appScreen.contentPane.repaint();
+//		world.postStop();
 		
 	}
 	

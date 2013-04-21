@@ -36,7 +36,7 @@ public class World extends PhysicsWorld {
 	
 	public WorldMode mode;
 	
-	public final Object pauseLock = new Object();
+//	public final Object pauseLock = new Object();
 	
 	WorldBackground background;
 	public Image previewImage;
@@ -241,6 +241,8 @@ public class World extends PhysicsWorld {
 		
 		mode = WorldMode.RUNNING;
 		
+		preStart();
+		
 		simThread = new Thread(new SimulationRunnable());
 		simThread.start();
 		
@@ -257,20 +259,28 @@ public class World extends PhysicsWorld {
 			e.printStackTrace();
 		}
 		
+		postStop();
+		
 	}
 	
 	public void pauseRunning() {
 		
-		mode = WorldMode.PAUSED;
+		mode = WorldMode.EDITING;
+		
+		try {
+			simThread.join();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	public void unpauseRunning() {
 		
 		mode = WorldMode.RUNNING;
 		
-		synchronized (pauseLock) {
-			pauseLock.notifyAll();
-		}
+		simThread = new Thread(new SimulationRunnable());
+		simThread.start();
 	}
 	
 	public String toFileString() {

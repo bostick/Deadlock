@@ -1,10 +1,4 @@
 
-beat a level, do next, start second level, hit back, see empty board
-
-
-clip painting to screen
-
-
 menu
 reset button
 hint button
@@ -40,9 +34,6 @@ use graph paper and sketch out different screens and layouts first
 when dragging, if within 25% of stud, just go to it
 
 
-quadrant editor moving hiliting
-
-
 
 
 SOON:
@@ -66,6 +57,11 @@ allow custom boards? does bigger than 6x6 work?
 
 
 DONE:
+
+clip painting to screen
+
+beat a level, do next, start second level, hit back, see empty board
+
 
 no allocations in menus
 no allocations in world idle

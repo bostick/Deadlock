@@ -14,7 +14,9 @@ import com.gutabi.deadlock.ui.Menu;
 import com.gutabi.deadlock.ui.UIAnimationRunnable;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.world.QuadrantMap;
+import com.gutabi.deadlock.world.SimulationRunnable;
 import com.gutabi.deadlock.world.World;
+import com.gutabi.deadlock.world.WorldMode;
 import com.gutabi.deadlock.world.WorldPanel;
 import com.gutabi.deadlock.world.cars.Car;
 import com.gutabi.deadlock.world.cars.CarStateEnum;
@@ -44,9 +46,17 @@ public class BypassWorld extends World implements Model {
 	
 	
 	public static void create(int index) {
-		
 		BYPASSWORLD = BypassWorld.createBypassWorld(index);
 		
+		BYPASSWORLD.preStart();
+		
+	}
+	
+	public static void destroy() {
+		
+		BYPASSWORLD.postStop();
+		
+		BYPASSWORLD = null;
 	}
 	
 	public static void start() {
@@ -57,8 +67,8 @@ public class BypassWorld extends World implements Model {
 		
 	}
 	
-	static AtomicBoolean trigger = new AtomicBoolean(true);
-	static Thread uiThread;
+	AtomicBoolean trigger = new AtomicBoolean(true);
+	Thread uiThread;
 	
 	public static void resume() {
 		
@@ -88,12 +98,15 @@ public class BypassWorld extends World implements Model {
 		
 		APP.tool = new BypassCarTool();
 		
-		BYPASSWORLD.startRunning();
+		BYPASSWORLD.mode = WorldMode.RUNNING;
 		
-		trigger.set(true);
+		BYPASSWORLD.simThread = new Thread(new SimulationRunnable());
+		BYPASSWORLD.simThread.start();
 		
-		uiThread = new Thread(new UIAnimationRunnable(trigger));
-		uiThread.start();
+		BYPASSWORLD.trigger.set(true);
+		
+		BYPASSWORLD.uiThread = new Thread(new UIAnimationRunnable(BYPASSWORLD.trigger));
+		BYPASSWORLD.uiThread.start();
 		
 	}
 	
@@ -103,12 +116,12 @@ public class BypassWorld extends World implements Model {
 			APP.platform.unshowDebuggerScreen();
 		}
 		
-		trigger.set(false);
+		BYPASSWORLD.trigger.set(false);
 		
-		BYPASSWORLD.stopRunning();
+		BYPASSWORLD.mode = WorldMode.EDITING;
 		
 		try {
-			uiThread.join();
+			BYPASSWORLD.uiThread.join();
 			
 			BYPASSWORLD.simThread.join();
 			

@@ -43,6 +43,10 @@ public class LevelMenu extends Menu implements Model {
 		
 	}
 	
+	public static void destroy() {
+		LEVELMENU = null;
+	}
+	
 	public static void start() {
 		
 	}

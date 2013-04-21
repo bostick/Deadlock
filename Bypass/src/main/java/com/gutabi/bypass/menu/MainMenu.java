@@ -43,7 +43,11 @@ public class MainMenu extends Menu implements Model {
 		MAINMENU = new MainMenu();
 		
 	}
-
+	
+	public static void destroy() {
+		MAINMENU = null;
+	}
+	
 	public static void start() {
 		
 	}
