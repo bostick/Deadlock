@@ -4,6 +4,7 @@ import static com.gutabi.deadlock.DeadlockApplication.APP;
 
 import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.geom.Line;
+import com.gutabi.deadlock.geom.ShapeUtils;
 import com.gutabi.deadlock.math.DMath;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.Transform;
@@ -118,53 +119,56 @@ public class Quadrant {
 	
 	public void paint_panel(RenderingContext ctxt) {
 		
-		if (active) {
-			
-			if (!APP.DEBUG_DRAW) {
-				ctxt.getTransform(origTransform);
-				
-				ctxt.translate(c * QuadrantMap.QUADRANT_WIDTH, r * QuadrantMap.QUADRANT_HEIGHT);
-				ctxt.paintImage(map.quadrantGrass,
-						ctxt.cam.pixelsPerMeter,
-						0.0, 0.0, QuadrantMap.QUADRANT_WIDTH, QuadrantMap.QUADRANT_HEIGHT,
-						0, 0, map.quadrantGrass.getWidth(), map.quadrantGrass.getHeight());
-				
-				ctxt.setTransform(origTransform);
-			} else {
-				ctxt.setColor(Color.DARKGREEN);
-				aabb.paint(ctxt);
-				
-				ctxt.setColor(Color.BLACK);
-				ctxt.setStroke(0.0, Cap.SQUARE, Join.MITER);
-				aabb.draw(ctxt);
-				
-				ctxt.setColor(Color.BLACK);
-				ctxt.paintString(c * QuadrantMap.QUADRANT_WIDTH, r * QuadrantMap.QUADRANT_HEIGHT + 1, 1.0/ctxt.cam.pixelsPerMeter, c + " " + r);
-			}
-			
-			if (grid) {
-				
-				ctxt.setColor(Color.GRAY);
-				ctxt.setStroke(0.0, Cap.SQUARE, Join.MITER);
-				
-				for (double k = 0.0; DMath.lessThanEquals(k, QuadrantMap.QUADRANT_HEIGHT); k+=gridSpacing) {
-					Point p0 = new Point(c * QuadrantMap.QUADRANT_WIDTH + 0, r * QuadrantMap.QUADRANT_HEIGHT + k);
-					Point p1 = new Point(c * QuadrantMap.QUADRANT_WIDTH + QuadrantMap.QUADRANT_WIDTH, r * QuadrantMap.QUADRANT_HEIGHT + k);
-					Line line = new Line(p0, p1);
-					line.draw(ctxt);
-				}
-				for (double k = 0.0; DMath.lessThanEquals(k, QuadrantMap.QUADRANT_WIDTH); k+=gridSpacing) {
-					Point p0 = new Point(c * QuadrantMap.QUADRANT_WIDTH + k, r * QuadrantMap.QUADRANT_HEIGHT + 0);
-					Point p1 = new Point(c * QuadrantMap.QUADRANT_WIDTH + k, r * QuadrantMap.QUADRANT_HEIGHT + QuadrantMap.QUADRANT_HEIGHT);
-					Line line = new Line(p0, p1);
-					line.draw(ctxt);
-				}
-				
-			}
-			
-		} else {
+		if (!ShapeUtils.intersectAA(ctxt.cam.worldViewport, aabb)) {
+			return;
+		}
+		
+		if (!active) {
 			ctxt.setColor(Color.DARK_GRAY);
 			aabb.paint(ctxt);
+			return;
+		}
+		
+		if (!APP.DEBUG_DRAW) {
+			ctxt.getTransform(origTransform);
+			
+			ctxt.translate(c * QuadrantMap.QUADRANT_WIDTH, r * QuadrantMap.QUADRANT_HEIGHT);
+			ctxt.paintImage(map.quadrantGrass,
+					ctxt.cam.pixelsPerMeter,
+					0.0, 0.0, QuadrantMap.QUADRANT_WIDTH, QuadrantMap.QUADRANT_HEIGHT,
+					0, 0, map.quadrantGrass.getWidth(), map.quadrantGrass.getHeight());
+			
+			ctxt.setTransform(origTransform);
+		} else {
+			ctxt.setColor(Color.DARKGREEN);
+			aabb.paint(ctxt);
+			
+			ctxt.setColor(Color.BLACK);
+			ctxt.setStroke(0.0, Cap.SQUARE, Join.MITER);
+			aabb.draw(ctxt);
+			
+			ctxt.setColor(Color.BLACK);
+			ctxt.paintString(c * QuadrantMap.QUADRANT_WIDTH, r * QuadrantMap.QUADRANT_HEIGHT + 1, 1.0/ctxt.cam.pixelsPerMeter, c + " " + r);
+		}
+		
+		if (grid) {
+			
+			ctxt.setColor(Color.GRAY);
+			ctxt.setStroke(0.0, Cap.SQUARE, Join.MITER);
+			
+			for (double k = 0.0; DMath.lessThanEquals(k, QuadrantMap.QUADRANT_HEIGHT); k+=gridSpacing) {
+				Point p0 = new Point(c * QuadrantMap.QUADRANT_WIDTH + 0, r * QuadrantMap.QUADRANT_HEIGHT + k);
+				Point p1 = new Point(c * QuadrantMap.QUADRANT_WIDTH + QuadrantMap.QUADRANT_WIDTH, r * QuadrantMap.QUADRANT_HEIGHT + k);
+				Line line = new Line(p0, p1);
+				line.draw(ctxt);
+			}
+			for (double k = 0.0; DMath.lessThanEquals(k, QuadrantMap.QUADRANT_WIDTH); k+=gridSpacing) {
+				Point p0 = new Point(c * QuadrantMap.QUADRANT_WIDTH + k, r * QuadrantMap.QUADRANT_HEIGHT + 0);
+				Point p1 = new Point(c * QuadrantMap.QUADRANT_WIDTH + k, r * QuadrantMap.QUADRANT_HEIGHT + QuadrantMap.QUADRANT_HEIGHT);
+				Line line = new Line(p0, p1);
+				line.draw(ctxt);
+			}
+			
 		}
 		
 	}

@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+import com.gutabi.deadlock.geom.ShapeUtils;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.paint.Cap;
 import com.gutabi.deadlock.ui.paint.Color;
@@ -365,6 +366,10 @@ public final class Fixture extends Vertex {
 	
 	public void paint_panel(RenderingContext ctxt) {
 		
+		if (!ShapeUtils.intersectAA(ctxt.cam.worldViewport, shape.getAABB())) {
+			return;
+		}
+		
 		if (!APP.DEBUG_DRAW) {
 			
 			ctxt.setColor(FIXTURECOLOR);
@@ -419,6 +424,10 @@ public final class Fixture extends Vertex {
 	}
 	
 	public void paintScene(RenderingContext ctxt) {
+		
+		if (!ShapeUtils.intersectAA(ctxt.cam.worldViewport, shape.getAABB())) {
+			return;
+		}
 		
 		if (type == FixtureType.SOURCE) {
 			progress.paint(ctxt);

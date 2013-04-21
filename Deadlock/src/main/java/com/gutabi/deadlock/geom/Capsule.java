@@ -183,6 +183,10 @@ public class Capsule implements Shape {
 	
 	public void paint(RenderingContext ctxt) {
 		
+		if (!ShapeUtils.intersectAA(ctxt.cam.worldViewport, aabb)) {
+			return;
+		}
+		
 		ac.paint(ctxt);
 		if (middle != null) {
 			middle.paint(ctxt);

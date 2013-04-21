@@ -2,6 +2,7 @@ package com.gutabi.bypass.level;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
+import com.gutabi.deadlock.geom.ShapeUtils;
 import com.gutabi.deadlock.math.DMath;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.paint.Cap;
@@ -166,6 +167,10 @@ public class BypassCar extends Car {
 	}
 	
 	public void paint(RenderingContext ctxt) {
+		
+		if (!ShapeUtils.intersectAA(ctxt.cam.worldViewport, shape.aabb)) {
+			return;
+		}
 		
 		if (APP.CARTEXTURE_DRAW) {
 			paintImage(ctxt);

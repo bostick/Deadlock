@@ -14,6 +14,7 @@ import com.gutabi.deadlock.geom.CubicCurve;
 import com.gutabi.deadlock.geom.Geom;
 import com.gutabi.deadlock.geom.Line;
 import com.gutabi.deadlock.geom.OBB;
+import com.gutabi.deadlock.geom.ShapeUtils;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.paint.Cap;
 import com.gutabi.deadlock.ui.paint.Color;
@@ -1302,6 +1303,10 @@ public class BypassBoard extends Entity {
 	}
 	
 	public void paint_panel(RenderingContext ctxt) {
+		
+		if (!ShapeUtils.intersectAA(ctxt.cam.worldViewport, allStudsAABB)) {
+			return;
+		}
 		
 //		ctxt.setColor(BOARDCOLOR);
 //		gridAABB.paint(ctxt);

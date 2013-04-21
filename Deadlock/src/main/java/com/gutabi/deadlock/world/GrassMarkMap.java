@@ -52,6 +52,7 @@ public class GrassMarkMap {
 		
 		for (int i = 0; i < marks.size(); i++) {
 			Capsule cap = marks.get(i);
+			
 			cap.paint(ctxt);
 		}
 		

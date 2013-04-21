@@ -3,6 +3,7 @@ package com.gutabi.deadlock.world.sprites;
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
 import com.gutabi.deadlock.geom.AABB;
+import com.gutabi.deadlock.geom.ShapeUtils;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.Transform;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
@@ -63,6 +64,11 @@ public class AnimatedGrass {
 	}
 	
 	public void paint(RenderingContext ctxt) {
+		
+		if (!ShapeUtils.intersectAA(ctxt.cam.worldViewport, aabb)) {
+			return;
+		}
+		
 		switch (lastFrame) {
 		case 0:
 			paint(ctxt, 0);

@@ -52,6 +52,7 @@ public class AnimatedExplosion {
 	}
 	
 	public void paint(RenderingContext ctxt) {
+		
 		paint(ctxt, lastFrame);
 		
 	}

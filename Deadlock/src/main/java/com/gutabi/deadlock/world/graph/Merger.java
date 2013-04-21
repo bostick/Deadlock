@@ -6,6 +6,7 @@ import com.gutabi.deadlock.Entity;
 import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.geom.Line;
 import com.gutabi.deadlock.geom.Shape;
+import com.gutabi.deadlock.geom.ShapeUtils;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.paint.Cap;
 import com.gutabi.deadlock.ui.paint.Color;
@@ -304,6 +305,10 @@ public class Merger extends Edge {
 	}
 	
 	public void paint_panel(RenderingContext ctxt) {
+		
+		if (!ShapeUtils.intersectAA(ctxt.cam.worldViewport, shape.getAABB())) {
+			return;
+		}
 		
 		ctxt.setColor(Color.GRAY);
 		
