@@ -5,7 +5,7 @@ import static com.gutabi.deadlock.DeadlockApplication.APP;
 import com.gutabi.deadlock.Entity;
 import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.geom.Geom;
-import com.gutabi.deadlock.geom.OBB;
+import com.gutabi.deadlock.geom.MutableOBB;
 import com.gutabi.deadlock.geom.Shape;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.Transform;
@@ -38,7 +38,7 @@ public abstract class Car extends PhysicsBody {
 	boolean inMerger;
 	
 	public Point toolOrigCenter;
-	public OBB toolOrigShape;
+	public MutableOBB toolOrigShape = APP.platform.createMutableOBB();
 	public Point toolOrigPixelOffset;
 	
 	public boolean destroyed;
@@ -83,7 +83,7 @@ public abstract class Car extends PhysicsBody {
 	public void setTransform(Point center, double angle) {
 		this.center = center;
 		this.angle = angle;
-		shape = Geom.localToWorld(localAABB, angle, center);
+		Geom.localToWorld(localAABB, angle, center, shape);
 	}
 	
 	public void destroy() {

@@ -1,8 +1,10 @@
 package com.gutabi.deadlock.world.physics;
 
+import static com.gutabi.deadlock.DeadlockApplication.APP;
+
 import com.gutabi.deadlock.Entity;
 import com.gutabi.deadlock.geom.AABB;
-import com.gutabi.deadlock.geom.OBB;
+import com.gutabi.deadlock.geom.MutableOBB;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.world.World;
 
@@ -18,7 +20,7 @@ public abstract class PhysicsBody extends Entity {
 	
 	public Point center;
 	public double angle = Double.NaN;
-	public OBB shape;
+	public final MutableOBB shape;
 	
 	public double forwardSpeed;
 	public double angularVel;
@@ -50,6 +52,8 @@ public abstract class PhysicsBody extends Entity {
 	
 	public PhysicsBody(World world) {
 		this.world = world;
+		
+		this.shape = APP.platform.createMutableOBB();
 	}
 	
 	public void physicsInit() {

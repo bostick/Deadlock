@@ -2,19 +2,20 @@ package com.gutabi.deadlock.geom;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
+import com.gutabi.deadlock.math.DMath;
 import com.gutabi.deadlock.math.Point;
 
-public abstract class OBB implements Shape {
+public abstract class MutableOBB implements Shape {
 	
-	public final Point center;
-	public final double a;
-	public final double xExtant;
-	public final double yExtant;
+	public Point center;
+	public double a;
+	public double xExtant;
+	public double yExtant;
 	
-	public final Point p0;
-	public final Point p1;
-	public final Point p2;
-	public final Point p3;
+	public Point p0;
+	public Point p1;
+	public Point p2;
+	public Point p3;
 	
 	private Point n01;
 	private Point n12;
@@ -27,28 +28,105 @@ public abstract class OBB implements Shape {
 	Line p2p3Line;
 	Line p3p0Line;
 	
-	public final boolean rightAngle;
+	public boolean rightAngle;
 	
-	public final AABB aabb;
+	public MutableAABB aabb = new MutableAABB();
 	
 	private int hash;
 	
-	protected OBB(Point center, double preA, double xExtant, double yExtant) {
+	protected MutableOBB() {
 		
-		MutableOBB m = APP.platform.createMutableOBB();
-		m.setShape(center, preA, xExtant, yExtant);
+	}
+	
+	public void setShape(Point center, double preA, double xExtant, double yExtant) {
 		
-		this.center = m.center;
-		this.xExtant = m.xExtant;
-		this.yExtant = m.yExtant;
-		this.rightAngle = m.rightAngle;
-		this.a = m.a;
-		this.p0 = m.p0;
-		this.p1 = m.p1;
-		this.p2 = m.p2;
-		this.p3 = m.p3;
-		this.aabb = m.aabb.copy();
+		double adjA = preA;
+		while (DMath.greaterThanEquals(adjA, 2*Math.PI)) {
+			adjA -= 2*Math.PI;
+		}
+		while (DMath.lessThan(adjA, 0.0)) {
+			adjA += 2*Math.PI;
+		}
 		
+		this.center = center;
+		this.xExtant = xExtant;
+		this.yExtant = yExtant;
+		
+		/*
+		 * even though this is an OBB and not an AABB, it is still nice to get exact right angles, and have points in the same order
+		 */
+		if (Math.abs(adjA - 0.0 * Math.PI) < DMath.RIGHT_ANGLE_TOLERANCE) {
+			rightAngle = true;
+			a = 0.0 * Math.PI;
+			this.p0 = new Point(-xExtant + center.x, -yExtant + center.y);
+			this.p1 = new Point(xExtant + center.x, -yExtant + center.y);
+			this.p2 = new Point(xExtant + center.x, yExtant + center.y);
+			this.p3 = new Point(-xExtant + center.x, yExtant + center.y);
+			
+			aabb.setShape(-xExtant+center.x, -yExtant+center.y, 2*xExtant, 2*yExtant);
+			
+		} else if (Math.abs(adjA - 0.5 * Math.PI) < DMath.RIGHT_ANGLE_TOLERANCE) {
+			
+			rightAngle = true;
+			a = 0.5 * Math.PI;
+			this.p0 = new Point(-yExtant + center.x, -xExtant + center.y);
+			this.p1 = new Point(yExtant + center.x, -xExtant + center.y);
+			this.p2 = new Point(yExtant + center.x, xExtant + center.y);
+			this.p3 = new Point(-yExtant + center.x, xExtant + center.y);
+			
+			aabb.setShape(-yExtant+center.x, -xExtant+center.y, 2*yExtant, 2*xExtant);
+			
+		} else if (Math.abs(adjA - 1.0 * Math.PI) < DMath.RIGHT_ANGLE_TOLERANCE) {
+			rightAngle = true;
+			a = 1.0 * Math.PI;
+			this.p0 = new Point(-xExtant + center.x, -yExtant + center.y);
+			this.p1 = new Point(xExtant + center.x, -yExtant + center.y);
+			this.p2 = new Point(xExtant + center.x, yExtant + center.y);
+			this.p3 = new Point(-xExtant + center.x, yExtant + center.y);
+			
+			aabb.setShape(-xExtant+center.x, -yExtant+center.y, 2*xExtant, 2*yExtant);
+			
+		} else if (Math.abs(adjA - 1.5 * Math.PI) < DMath.RIGHT_ANGLE_TOLERANCE) {
+			rightAngle = true;
+			a = 1.5 * Math.PI;
+			this.p0 = new Point(-yExtant + center.x, -xExtant + center.y);
+			this.p1 = new Point(yExtant + center.x, -xExtant + center.y);
+			this.p2 = new Point(yExtant + center.x, xExtant + center.y);
+			this.p3 = new Point(-yExtant + center.x, xExtant + center.y);
+			
+			aabb.setShape(-yExtant+center.x, -xExtant+center.y, 2*yExtant, 2*xExtant);
+			
+		} else {
+			rightAngle = false;
+			a = adjA;
+			this.p0 = Geom.rotateAndAdd(-xExtant, -yExtant, a, center);
+			this.p1 = Geom.rotateAndAdd(xExtant, -yExtant, a, center);
+			this.p2 = Geom.rotateAndAdd(xExtant, yExtant, a, center);
+			this.p3 = Geom.rotateAndAdd(-xExtant, yExtant, a, center);
+			
+			double ulX = Math.min(Math.min(p0.x, p1.x), Math.min(p2.x, p3.x));
+			double ulY = Math.min(Math.min(p0.y, p1.y), Math.min(p2.y, p3.y));
+			double brX = Math.max(Math.max(p0.x, p1.x), Math.max(p2.x, p3.x));
+			double brY = Math.max(Math.max(p0.y, p1.y), Math.max(p2.y, p3.y));
+			
+			aabb.setShape(ulX, ulY, (brX - ulX), (brY - ulY));
+			
+		}
+		
+		n01 = null;
+		n12 = null;
+		n01Projection = null;
+		n12Projection = null;
+		p0p1Line = null;
+		p1p2Line = null;
+		p2p3Line = null;
+		p3p0Line = null;
+		hash = 0;
+		
+	}
+	
+	public void copy(MutableOBB out) {
+		out.setShape(center, a, xExtant, yExtant);
 	}
 	
 	public int hashCode() {

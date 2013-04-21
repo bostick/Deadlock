@@ -13,7 +13,8 @@ import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.geom.CubicCurve;
 import com.gutabi.deadlock.geom.Geom;
 import com.gutabi.deadlock.geom.Line;
-import com.gutabi.deadlock.geom.OBB;
+import com.gutabi.deadlock.geom.MutableAABB;
+import com.gutabi.deadlock.geom.MutableOBB;
 import com.gutabi.deadlock.geom.ShapeUtils;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.paint.Cap;
@@ -1226,22 +1227,30 @@ public class BypassBoard extends Entity {
 		return null;
 	}
 	
+	
+	
+	MutableAABB test = new MutableAABB();
+	
 	public boolean withinGrid(Car c, double angle, Point p) {
 		
-		AABB test = Geom.localToWorldAndTakeAABB(c.localAABB, angle, p);
+		Geom.localToWorldAndTakeAABB(c.localAABB, angle, p, test);
 		
 		boolean within = test.completelyWithin(gridAABB);
 		
 		return within;
 	}
 	
+	
+	MutableAABB testFloor = new MutableAABB();
+	MutableAABB testCeil = new MutableAABB();
+	
 	public boolean floorAndCeilWithinGrid(Car c) {
 		
 		GraphPositionPathPosition tmpFloorPos = c.driver.overallPos.floor(c.length/2);
 		GraphPositionPathPosition tmpCeilPos = c.driver.overallPos.ceil(c.length/2);
 		
-		AABB testFloor = Geom.localToWorldAndTakeAABB(c.localAABB, c.angle, tmpFloorPos.p);
-		AABB testCeil = Geom.localToWorldAndTakeAABB(c.localAABB, c.angle, tmpCeilPos.p);
+		Geom.localToWorldAndTakeAABB(c.localAABB, c.angle, tmpFloorPos.p, testFloor);
+		Geom.localToWorldAndTakeAABB(c.localAABB, c.angle, tmpCeilPos.p, testCeil);
 		
 		boolean floorWithin = testFloor.completelyWithin(gridAABB);
 		boolean ceilWithin = testCeil.completelyWithin(gridAABB);
@@ -1282,7 +1291,7 @@ public class BypassBoard extends Entity {
 	
 	public double carInGridFraction(Car c) {
 		
-		OBB o = c.shape;
+		MutableOBB o = c.shape;
 		
 		if (!o.rightAngle) {
 			/*
@@ -1291,7 +1300,7 @@ public class BypassBoard extends Entity {
 			return 0.0;
 		}
 		
-		AABB a = o.aabb;
+		MutableAABB a = o.aabb;
 		
 		double frac = a.fractionWithin(allStudsAABB, allStudsAABB);
 		
@@ -1304,7 +1313,7 @@ public class BypassBoard extends Entity {
 	
 	public void paint_panel(RenderingContext ctxt) {
 		
-		if (!ShapeUtils.intersectAA(ctxt.cam.worldViewport, allStudsAABB)) {
+		if (!ShapeUtils.intersectAA(allStudsAABB, ctxt.cam.worldViewport)) {
 			return;
 		}
 		

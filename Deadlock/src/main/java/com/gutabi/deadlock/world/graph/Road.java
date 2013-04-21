@@ -759,7 +759,7 @@ public class Road extends Edge {
 	
 	public void paint_panel(RenderingContext ctxt) {
 		
-		if (!ShapeUtils.intersectAA(ctxt.cam.worldViewport, shape.getAABB())) {
+		if (!ShapeUtils.intersectAA(shape.getAABB(), ctxt.cam.worldViewport)) {
 			return;
 		}
 		
@@ -833,7 +833,7 @@ public class Road extends Edge {
 	
 	public void paintDecorations(RenderingContext ctxt) {
 		
-		if (!ShapeUtils.intersectAA(ctxt.cam.worldViewport, shape.getAABB())) {
+		if (!ShapeUtils.intersectAA(shape.getAABB(), ctxt.cam.worldViewport)) {
 			return;
 		}
 		

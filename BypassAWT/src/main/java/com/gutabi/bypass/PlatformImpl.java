@@ -20,6 +20,7 @@ import javax.swing.RootPaneContainer;
 
 import com.gutabi.bypass.geom.CubicCurveImpl;
 import com.gutabi.bypass.geom.EllipseImpl;
+import com.gutabi.bypass.geom.MutableOBBImpl;
 import com.gutabi.bypass.geom.MutablePolygonImpl;
 import com.gutabi.bypass.geom.OBBImpl;
 import com.gutabi.bypass.geom.PolylineImpl;
@@ -37,6 +38,7 @@ import com.gutabi.deadlock.Resource;
 import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.geom.CubicCurve;
 import com.gutabi.deadlock.geom.Ellipse;
+import com.gutabi.deadlock.geom.MutableOBB;
 import com.gutabi.deadlock.geom.MutablePolygon;
 import com.gutabi.deadlock.geom.OBB;
 import com.gutabi.deadlock.geom.Polyline;
@@ -357,6 +359,10 @@ public class PlatformImpl implements Platform {
 	
 	public MutablePolygon createMutablePolygon() {
 		return new MutablePolygonImpl();
+	}
+	
+	public MutableOBB createMutableOBB() {
+		return new MutableOBBImpl();
 	}
 	
 	

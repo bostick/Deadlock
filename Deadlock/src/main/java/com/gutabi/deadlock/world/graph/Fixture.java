@@ -366,7 +366,7 @@ public final class Fixture extends Vertex {
 	
 	public void paint_panel(RenderingContext ctxt) {
 		
-		if (!ShapeUtils.intersectAA(ctxt.cam.worldViewport, shape.getAABB())) {
+		if (!ShapeUtils.intersectAA(shape.getAABB(), ctxt.cam.worldViewport)) {
 			return;
 		}
 		
@@ -425,7 +425,7 @@ public final class Fixture extends Vertex {
 	
 	public void paintScene(RenderingContext ctxt) {
 		
-		if (!ShapeUtils.intersectAA(ctxt.cam.worldViewport, shape.getAABB())) {
+		if (!ShapeUtils.intersectAA(shape.getAABB(), ctxt.cam.worldViewport)) {
 			return;
 		}
 		

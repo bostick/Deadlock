@@ -1017,7 +1017,7 @@ public class SweepUtils {
 	/**
 	 * param when swept collides with o, or -1 if never collides
 	 */
-	public static double firstCollisionParam(OBB o, SweptOBB swept) {
+	public static double firstCollisionParam(MutableOBB o, SweptOBB swept) {
 		assert swept.isAABB;
 		assert o.rightAngle;
 		assert !ShapeUtils.intersectAreaAA(swept.start.aabb, o.aabb);

@@ -17,6 +17,7 @@ import com.gutabi.deadlock.Resource;
 import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.geom.Circle;
 import com.gutabi.deadlock.geom.Line;
+import com.gutabi.deadlock.geom.MutableAABB;
 import com.gutabi.deadlock.math.Dim;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.Image;
@@ -177,6 +178,16 @@ public class RenderingContextImpl extends RenderingContext {
 	}
 	
 	public void paintAABB(AABB a) {
+		Rectangle2D rect = new Rectangle2D.Double(a.x, a.y, a.width, a.height);
+		g2.fill(rect);
+	}
+	
+	public void drawAABB(MutableAABB a) {
+		Rectangle2D rect = new Rectangle2D.Double(a.x, a.y, a.width, a.height);
+		g2.draw(rect);
+	}
+	
+	public void paintAABB(MutableAABB a) {
 		Rectangle2D rect = new Rectangle2D.Double(a.x, a.y, a.width, a.height);
 		g2.fill(rect);
 	}

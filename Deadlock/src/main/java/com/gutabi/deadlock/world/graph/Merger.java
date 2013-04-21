@@ -306,7 +306,7 @@ public class Merger extends Edge {
 	
 	public void paint_panel(RenderingContext ctxt) {
 		
-		if (!ShapeUtils.intersectAA(ctxt.cam.worldViewport, shape.getAABB())) {
+		if (!ShapeUtils.intersectAA(shape.getAABB(), ctxt.cam.worldViewport)) {
 			return;
 		}
 		

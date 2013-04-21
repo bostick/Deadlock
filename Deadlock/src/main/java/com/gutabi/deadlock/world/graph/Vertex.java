@@ -279,7 +279,7 @@ public abstract class Vertex extends Entity {
 	
 	public void paintID(RenderingContext ctxt) {
 		
-		if (!ShapeUtils.intersectAA(ctxt.cam.worldViewport, shape.getAABB())) {
+		if (!ShapeUtils.intersectAA(shape.getAABB(), ctxt.cam.worldViewport)) {
 			return;
 		}
 		

@@ -43,8 +43,11 @@ public class Geom {
 		return APP.platform.createOBB(t, angle, a.width/2, a.height/2);
 	}
 	
-	public static AABB localToWorldAndTakeAABB(AABB a, double preAngle, Point p) {
-		
+	public static void localToWorld(AABB a, double angle, Point t, MutableOBB out) {
+		out.setShape(t, angle, a.width/2, a.height/2);
+	}
+	
+	public static void localToWorldAndTakeAABB(AABB a, double preAngle, Point p, MutableAABB out) {
 		
 		double adjA = preAngle;
 		while (DMath.greaterThanEquals(adjA, 2*Math.PI)) {
@@ -62,19 +65,19 @@ public class Geom {
 		 */
 		if (Math.abs(adjA - 0.0 * Math.PI) < DMath.RIGHT_ANGLE_TOLERANCE) {
 			
-			return new AABB(-xExtant+p.x, -yExtant+p.y, 2*xExtant, 2*yExtant);
+			out.setShape(-xExtant+p.x, -yExtant+p.y, 2*xExtant, 2*yExtant);
 			
 		} else if (Math.abs(adjA - 0.5 * Math.PI) < DMath.RIGHT_ANGLE_TOLERANCE) {
 			
-			return new AABB(-yExtant+p.x, -xExtant+p.y, 2*yExtant, 2*xExtant);
+			out.setShape(-yExtant+p.x, -xExtant+p.y, 2*yExtant, 2*xExtant);
 			
 		} else if (Math.abs(adjA - 1.0 * Math.PI) < DMath.RIGHT_ANGLE_TOLERANCE) {
 			
-			return new AABB(-xExtant+p.x, -yExtant+p.y, 2*xExtant, 2*yExtant);
+			out.setShape(-xExtant+p.x, -yExtant+p.y, 2*xExtant, 2*yExtant);
 			
 		} else if (Math.abs(adjA - 1.5 * Math.PI) < DMath.RIGHT_ANGLE_TOLERANCE) {
 			
-			return new AABB(-yExtant+p.x, -xExtant+p.y, 2*yExtant, 2*xExtant);
+			out.setShape(-yExtant+p.x, -xExtant+p.y, 2*yExtant, 2*xExtant);
 			
 		} else {
 			
@@ -88,7 +91,7 @@ public class Geom {
 			double brX = Math.max(Math.max(p0.x, p1.x), Math.max(p2.x, p3.x));
 			double brY = Math.max(Math.max(p0.y, p1.y), Math.max(p2.y, p3.y));
 			
-			return new AABB(ulX, ulY, (brX - ulX), (brY - ulY));
+			out.setShape(ulX, ulY, (brX - ulX), (brY - ulY));
 		}
 		
 		

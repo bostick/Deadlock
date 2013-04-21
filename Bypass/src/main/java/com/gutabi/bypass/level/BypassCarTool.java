@@ -63,7 +63,7 @@ public class BypassCarTool extends WorldToolBase {
 			car = pressed;
 			
 			car.toolOrigCenter = car.center;
-			car.toolOrigShape = car.shape;
+			car.shape.copy(car.toolOrigShape);
 			car.toolOrigPixelOffset = Point.worldToPanel(world.worldCamera.worldViewport.x, world.worldCamera.worldViewport.y, world.worldCamera).minus(Point.worldToPanel(car.center, world.worldCamera));
 			car.driver.toolOrigOverallPos = car.driver.overallPos;
 			
@@ -80,7 +80,7 @@ public class BypassCarTool extends WorldToolBase {
 			
 			if (pressed == car) {
 				car.toolOrigCenter = car.center;
-				car.toolOrigShape = car.shape;
+				car.shape.copy(car.toolOrigShape);
 				car.toolOrigPixelOffset = Point.worldToPanel(world.worldCamera.worldViewport.x, world.worldCamera.worldViewport.y, world.worldCamera).minus(Point.worldToPanel(car.center, world.worldCamera));
 //				car.driver.toolOrigOverallPos = car.driver.overallPos;
 				
@@ -343,6 +343,8 @@ public class BypassCarTool extends WorldToolBase {
 	 */
 	public void dragged(InputEvent ignore) {
 		super.dragged(ignore);
+		
+//		System.out.println("dragged");
 		
 		BypassWorld world = (BypassWorld)APP.model;
 		

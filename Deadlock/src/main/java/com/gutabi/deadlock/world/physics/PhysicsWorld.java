@@ -1,6 +1,7 @@
 package com.gutabi.deadlock.world.physics;
 
 import com.gutabi.deadlock.geom.AABB;
+import com.gutabi.deadlock.geom.MutableAABB;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 
@@ -33,6 +34,11 @@ public abstract class PhysicsWorld {
 	}
 	
 	public boolean intersectsPhysicsBodies(AABB aabb) {
+		assert false;
+		return false;
+	}
+	
+	public boolean intersectsPhysicsBodies(MutableAABB aabb) {
 		assert false;
 		return false;
 	}

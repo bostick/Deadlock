@@ -2,7 +2,6 @@ package com.gutabi.bypass.ui.paint;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.PixelXorXfermode;
@@ -15,6 +14,7 @@ import com.gutabi.deadlock.Resource;
 import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.geom.Circle;
 import com.gutabi.deadlock.geom.Line;
+import com.gutabi.deadlock.geom.MutableAABB;
 import com.gutabi.deadlock.math.Dim;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.Image;
@@ -147,6 +147,16 @@ public class RenderingContextImpl extends RenderingContext {
 	}
 	
 	public void paintAABB(AABB a) {
+		paint.setStyle(Style.FILL);
+		canvas.drawRect((float)a.x, (float)a.y, (float)(a.x+a.width), (float)(a.y+a.height), paint);
+	}
+	
+	public void drawAABB(MutableAABB a) {
+		paint.setStyle(Style.STROKE);
+		canvas.drawRect((float)a.x, (float)a.y, (float)(a.x+a.width), (float)(a.y+a.height), paint);
+	}
+	
+	public void paintAABB(MutableAABB a) {
 		paint.setStyle(Style.FILL);
 		canvas.drawRect((float)a.x, (float)a.y, (float)(a.x+a.width), (float)(a.y+a.height), paint);
 	}

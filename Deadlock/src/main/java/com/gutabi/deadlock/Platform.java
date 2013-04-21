@@ -5,6 +5,7 @@ import java.io.InputStream;
 import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.geom.CubicCurve;
 import com.gutabi.deadlock.geom.Ellipse;
+import com.gutabi.deadlock.geom.MutableOBB;
 import com.gutabi.deadlock.geom.MutablePolygon;
 import com.gutabi.deadlock.geom.OBB;
 import com.gutabi.deadlock.geom.Polyline;
@@ -90,6 +91,8 @@ public interface Platform {
 //	public abstract Polygon createPolygon4(Point p0, Point p1, Point p2, Point p3);
 	
 	public abstract MutablePolygon createMutablePolygon();
+	
+	public abstract MutableOBB createMutableOBB();
 	
 	public abstract Transform createTransform();
 	

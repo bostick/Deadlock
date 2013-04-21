@@ -9,6 +9,7 @@ import java.util.Set;
 
 import com.gutabi.deadlock.Entity;
 import com.gutabi.deadlock.geom.CapsuleSequence;
+import com.gutabi.deadlock.geom.MutableOBB;
 import com.gutabi.deadlock.geom.OBB;
 import com.gutabi.deadlock.geom.ShapeUtils;
 import com.gutabi.deadlock.math.DMath;
@@ -523,4 +524,31 @@ public class GraphPositionPath {
 		return null;
 	}
 	
+	public Entity pureGraphIntersectOBB(MutableOBB o, GraphPositionPathPosition min) {
+		
+		for (Entry<Vertex, Integer> ent : verticesMap.entrySet()) {
+			int i = ent.getValue();
+			Vertex v = ent.getKey();
+			if (i >= min.combo && ShapeUtils.intersectCO(v.getShape(), o)) {
+				return v;
+			}
+		}
+		for (Entry<Edge, Integer> ent : edgesMap.entrySet()) {
+			int i = ent.getValue();
+			Edge e = ent.getKey();
+			if (i + e.pointCount() >= min.combo) {
+				if (e instanceof Road) {
+					if (((CapsuleSequence)e.getShape()).intersect(o)) {
+						return e;
+					}
+				} else {
+					if (ShapeUtils.intersectOO((OBB)e.getShape(), o)) {
+						return e;
+					}
+				}
+			}
+		}
+		return null;
+	}
+
 }

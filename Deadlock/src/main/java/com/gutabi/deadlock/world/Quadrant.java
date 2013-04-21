@@ -119,7 +119,7 @@ public class Quadrant {
 	
 	public void paint_panel(RenderingContext ctxt) {
 		
-		if (!ShapeUtils.intersectAA(ctxt.cam.worldViewport, aabb)) {
+		if (!ShapeUtils.intersectAA(aabb, ctxt.cam.worldViewport)) {
 			return;
 		}
 		

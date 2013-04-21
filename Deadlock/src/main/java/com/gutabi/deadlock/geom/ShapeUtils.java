@@ -117,6 +117,17 @@ public class ShapeUtils {
 				DMath.lessThanEquals(a0.y, a1.y+a1.height) && DMath.lessThanEquals(a1.y, a0.brY);
 	}
 	
+	public static boolean intersectAA(MutableAABB a0, MutableAABB a1) {
+		
+		assert !Double.isNaN(a1.x);
+		assert !Double.isNaN(a1.y);
+		assert !Double.isNaN(a1.width);
+		assert !Double.isNaN(a1.height);
+		
+		return DMath.lessThanEquals(a0.x, a1.x+a1.width) && DMath.lessThanEquals(a1.x, a0.x+a0.width) &&
+				DMath.lessThanEquals(a0.y, a1.y+a1.height) && DMath.lessThanEquals(a1.y, a0.y+a0.height);
+	}
+	
 	public static boolean intersectACap(AABB a0, Capsule c1) {
 		
 		if (!ShapeUtils.intersectAA(a0, c1.aabb)) {
@@ -169,6 +180,42 @@ public class ShapeUtils {
 	}
 	
 	public static boolean intersectAO(AABB a0, OBB o1) {
+		
+		if (!intersectAA(a0, o1.aabb)) {
+			return false;
+		}
+		
+		double[] a0Projection = new double[2];
+		double[] o1Projection = new double[2];
+		
+		a0.projectN01(a0Projection);
+		o1.project(a0.getN01(), o1Projection);
+		if (!DMath.rangesOverlap(a0Projection, o1Projection)) {
+			return false;
+		}
+		
+		a0.projectN12(a0Projection);
+		o1.project(a0.getN12(), o1Projection);
+		if (!DMath.rangesOverlap(a0Projection, o1Projection)) {
+			return false;
+		}
+		
+		a0.project(o1.getN01(), a0Projection);
+		o1.projectN01(o1Projection);
+		if (!DMath.rangesOverlap(a0Projection, o1Projection)) {
+			return false;
+		}
+		
+		a0.project(o1.getN12(), a0Projection);
+		o1.projectN12(o1Projection);
+		if (!DMath.rangesOverlap(a0Projection, o1Projection)) {
+			return false;
+		}
+		
+		return true;
+	}
+	
+	public static boolean intersectAO(AABB a0, MutableOBB o1) {
 		
 		if (!intersectAA(a0, o1.aabb)) {
 			return false;
@@ -273,7 +320,76 @@ public class ShapeUtils {
 		return true;
 	}
 	
+	public static boolean intersectCO(Circle c0, MutableOBB o1) {
+		
+		if (!intersectAA(c0.getAABB(), o1.aabb)) {
+			return false;
+		}
+		
+		double[] c0Projection = new double[2];
+		double[] o1Projection = new double[2];
+		
+		o1.projectN01(o1Projection);
+		c0.project(o1.getN01(), c0Projection);
+		if (!DMath.rangesOverlap(o1Projection, c0Projection)) {
+			return false;
+		}
+		
+		o1.projectN12(o1Projection);
+		c0.project(o1.getN12(), c0Projection);
+		if (!DMath.rangesOverlap(o1Projection, c0Projection)) {
+			return false;
+		}
+		
+		Point closest = o1.closestCornerTo(c0.center);
+		
+		Point a = c0.center.minusAndNormalize(closest);
+		o1.project(a, o1Projection);
+		c0.project(a, c0Projection);
+		if (!DMath.rangesOverlap(o1Projection, c0Projection)) {
+			return false;
+		}
+		
+		return true;
+	}
+	
 	public static boolean intersectOO(OBB o0, OBB o1) {
+		
+		if (!intersectAA(o0.aabb, o1.aabb)) {
+			return false;
+		}
+		
+		double[] o0Projection = new double[2];
+		double[] o1Projection = new double[2];
+		
+		o0.projectN01(o0Projection);
+		o1.project(o0.getN01(), o1Projection);
+		if (!DMath.rangesOverlap(o0Projection, o1Projection)) {
+			return false;
+		}
+		
+		o0.projectN12(o0Projection);
+		o1.project(o0.getN12(), o1Projection);
+		if (!DMath.rangesOverlap(o0Projection, o1Projection)) {
+			return false;
+		}
+		
+		o0.project(o1.getN01(), o0Projection);
+		o1.projectN01(o1Projection);
+		if (!DMath.rangesOverlap(o0Projection, o1Projection)) {
+			return false;
+		}
+		
+		o0.project(o1.getN12(), o0Projection);
+		o1.projectN12(o1Projection);
+		if (!DMath.rangesOverlap(o0Projection, o1Projection)) {
+			return false;
+		}
+		
+		return true;
+	}
+	
+	public static boolean intersectOO(OBB o0, MutableOBB o1) {
 		
 		if (!intersectAA(o0.aabb, o1.aabb)) {
 			return false;
@@ -311,7 +427,6 @@ public class ShapeUtils {
 	
 	
 	
-	
 	/*
 	 * intersect area section
 	 */
@@ -319,6 +434,11 @@ public class ShapeUtils {
 	public static boolean intersectAreaAA(AABB a0, AABB a1) {
 		return DMath.lessThan(a0.x, a1.brX) && DMath.lessThan(a1.x, a0.brX) &&
 				DMath.lessThan(a0.y, a1.brY) && DMath.lessThan(a1.y, a0.brY);
+	}
+	
+	public static boolean intersectAreaAA(AABB a0, MutableAABB a1) {
+		return DMath.lessThan(a0.x, a1.x+a1.width) && DMath.lessThan(a1.x, a0.brX) &&
+				DMath.lessThan(a0.y, a1.y+a1.height) && DMath.lessThan(a1.y, a0.brY);
 	}
 	
 	public static boolean intersectAreaAL(AABB a0, Line l1) {
@@ -348,6 +468,42 @@ public class ShapeUtils {
 	}
 
 	public static boolean intersectAreaAO(AABB a0, OBB o1) {
+		
+		if (!intersectAO(a0, o1)) {
+			return false;
+		}
+		
+		double[] a0Projection = new double[2];
+		double[] o1Projection = new double[2];
+		
+		a0.projectN01(a0Projection);
+		o1.project(a0.getN01(), o1Projection);
+		if (!DMath.rangesOverlapArea(a0Projection, o1Projection)) {
+			return false;
+		}
+		
+		a0.projectN12(a0Projection);
+		o1.project(a0.getN12(), o1Projection);
+		if (!DMath.rangesOverlapArea(a0Projection, o1Projection)) {
+			return false;
+		}
+		
+		a0.project(o1.getN01(), a0Projection);
+		o1.projectN01(o1Projection);
+		if (!DMath.rangesOverlapArea(a0Projection, o1Projection)) {
+			return false;
+		}
+		
+		a0.project(o1.getN12(), a0Projection);
+		o1.projectN12(o1Projection);
+		if (!DMath.rangesOverlapArea(a0Projection, o1Projection)) {
+			return false;
+		}
+		
+		return true;
+	}
+	
+	public static boolean intersectAreaAO(AABB a0, MutableOBB o1) {
 		
 		if (!intersectAO(a0, o1)) {
 			return false;
@@ -453,6 +609,41 @@ public class ShapeUtils {
 	}
 	
 	public static boolean containsAO(AABB a0, OBB o1) {
+		if (!intersectAA(a0, o1.aabb)) {
+			return false;
+		}
+		
+		double[] a0Projection = new double[2];
+		double[] o1Projection = new double[2];
+		
+		a0.projectN01(a0Projection);
+		o1.project(a0.getN01(), o1Projection);
+		if (!DMath.rangeContains(a0Projection, o1Projection)) {
+			return false;
+		}
+		
+		a0.projectN12(a0Projection);
+		o1.project(a0.getN12(), o1Projection);
+		if (!DMath.rangeContains(a0Projection, o1Projection)) {
+			return false;
+		}
+		
+		a0.project(o1.getN01(), a0Projection);
+		o1.projectN01(o1Projection);
+		if (!DMath.rangeContains(a0Projection, o1Projection)) {
+			return false;
+		}
+		
+		a0.project(o1.getN12(), a0Projection);
+		o1.projectN12(o1Projection);
+		if (!DMath.rangeContains(a0Projection, o1Projection)) {
+			return false;
+		}
+		
+		return true;
+	}
+	
+	public static boolean containsAO(AABB a0, MutableOBB o1) {
 		if (!intersectAA(a0, o1.aabb)) {
 			return false;
 		}
