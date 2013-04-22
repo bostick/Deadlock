@@ -27,13 +27,13 @@ import com.gutabi.bypass.geom.PolylineImpl;
 import com.gutabi.bypass.geom.QuadCurveImpl;
 import com.gutabi.bypass.geom.TriangleImpl;
 import com.gutabi.bypass.level.BypassWorld;
+import com.gutabi.bypass.level.Level;
 import com.gutabi.bypass.menu.LevelMenu;
 import com.gutabi.bypass.menu.MainMenu;
 import com.gutabi.bypass.ui.ImageImpl;
 import com.gutabi.bypass.ui.PlatformContentPaneImpl;
 import com.gutabi.bypass.ui.paint.RenderingContextImpl;
 import com.gutabi.bypass.ui.paint.TransformImpl;
-import com.gutabi.deadlock.Platform;
 import com.gutabi.deadlock.Resource;
 import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.geom.CubicCurve;
@@ -51,7 +51,7 @@ import com.gutabi.deadlock.ui.Transform;
 import com.gutabi.deadlock.ui.paint.FontStyle;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 
-public class PlatformImpl implements Platform {
+public class PlatformImpl implements BypassPlatform {
 	
 	public RootPaneContainer appContainer;
 	public RootPaneContainer debuggerContainer;
@@ -467,6 +467,10 @@ public class PlatformImpl implements Platform {
 		} else {
 			throw new AssertionError();
 		} 
+		
+	}
+	
+	public void saveScore(Level l) {
 		
 	}
 	

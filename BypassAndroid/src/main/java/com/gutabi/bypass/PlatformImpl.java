@@ -3,6 +3,7 @@ package com.gutabi.bypass;
 import java.io.InputStream;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -26,6 +27,7 @@ import com.gutabi.bypass.geom.QuadCurveImpl;
 import com.gutabi.bypass.geom.TriangleImpl;
 import com.gutabi.bypass.level.BypassWorld;
 import com.gutabi.bypass.level.BypassWorldActivity;
+import com.gutabi.bypass.level.Level;
 import com.gutabi.bypass.menu.LevelMenu;
 import com.gutabi.bypass.menu.LevelMenuActivity;
 import com.gutabi.bypass.menu.MainMenu;
@@ -34,7 +36,6 @@ import com.gutabi.bypass.ui.ImageImpl;
 import com.gutabi.bypass.ui.PlatformContentPaneImpl;
 import com.gutabi.bypass.ui.paint.RenderingContextImpl;
 import com.gutabi.bypass.ui.paint.TransformImpl;
-import com.gutabi.deadlock.Platform;
 import com.gutabi.deadlock.Resource;
 import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.geom.CubicCurve;
@@ -54,7 +55,7 @@ import com.gutabi.deadlock.ui.Transform;
 import com.gutabi.deadlock.ui.paint.FontStyle;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 
-public class PlatformImpl implements Platform {
+public class PlatformImpl implements BypassPlatform {
 	
 	public static BypassActivity CURRENTACTIVITY;
 	
@@ -390,4 +391,14 @@ public class PlatformImpl implements Platform {
 		
 	}
 	
+	public void saveScore(Level l) {
+		
+		SharedPreferences scores = CURRENTACTIVITY.getSharedPreferences("scores", 0);
+		SharedPreferences.Editor editor = scores.edit();
+		editor.putString(Integer.toString(l.index), l.grade);
+		
+		editor.commit();
+		
+	}
+
 }

@@ -11,8 +11,6 @@ import com.gutabi.bypass.R;
 
 public class LevelMenuActivity extends BypassActivity {
 	
-//	private GestureDetector gDetector;
-	
 	{
 		name = "levelmenu";
 	}
@@ -25,10 +23,6 @@ public class LevelMenuActivity extends BypassActivity {
 		setContentView(R.layout.activity_levelmenu);
 		
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-		
-//		PlatformImpl.CURRENTACTIVITY = this;
-		
-//		gDetector = new GestureDetector(this, simpleOnGestureListener);
 		
 		v = (LevelMenuView)findViewById(R.id.view_levelmenu);
 		

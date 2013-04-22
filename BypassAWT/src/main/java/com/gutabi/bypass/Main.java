@@ -27,6 +27,7 @@ public class Main  {
 		
 		PlatformImpl platform = new PlatformImpl();
 		APP.platform = platform;
+		BYPASSAPP.bypassPlatform = platform;
 		
 		JFrame newFrame;
 		newFrame = new JFrame("Bypass");

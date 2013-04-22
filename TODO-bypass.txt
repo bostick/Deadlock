@@ -6,6 +6,14 @@ preference system
 saving scores, current game, 
 
 
+prevent panning when exiting board
+keep board centered as car is leaving
+
+
+
+winner menu:
+try again
+
 
 menu
 reset button

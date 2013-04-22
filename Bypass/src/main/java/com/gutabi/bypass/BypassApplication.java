@@ -15,6 +15,8 @@ public class BypassApplication extends DeadlockApplication {
 	
 	public LevelDB levelDB;
 	
+	public BypassPlatform bypassPlatform;
+	
 	public static BypassApplication BYPASSAPP;
 	
 	public BypassApplication() {
