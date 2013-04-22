@@ -6,12 +6,16 @@ import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import com.gutabi.deadlock.Resource;
 
 public class LevelDB {
+	
+	public Map<Integer, Level> levelMap = new HashMap<Integer, Level>();
 	
 	Resource res;
 	public final int levelCount;
@@ -50,6 +54,11 @@ public class LevelDB {
 	}
 	
 	public Level readLevel(int index) throws Exception {
+		
+		Level l = levelMap.get(index);
+		if (l != null) {
+			return l;
+		}
 		
 		InputStream is = APP.platform.openResourceInputStream(res);
 		ZipInputStream zis = new ZipInputStream(is);
@@ -118,6 +127,8 @@ public class LevelDB {
 		
 		level.index = index;
 		level.board = board;
+		
+		levelMap.put(index, level);
 		
 		return level;
 		

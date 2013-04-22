@@ -165,7 +165,7 @@ public class PlatformImpl implements Platform {
 	 */
 	
 	FontRenderContext frc = new FontRenderContext(null, false, false);
-//	Font visitorPlain36;
+	Font visitorPlain36;
 	Font visitorPlain16;
 	Font visitorPlain48;
 	Font visitorPlain72;
@@ -174,7 +174,7 @@ public class PlatformImpl implements Platform {
 		InputStream is = this.getClass().getResourceAsStream("/visitor1.ttf");
 		try {
 			Font visitorReal = Font.createFont(Font.TRUETYPE_FONT, is);
-//			visitorPlain36 = visitorReal.deriveFont(Font.PLAIN, 36);
+			visitorPlain36 = visitorReal.deriveFont(Font.PLAIN, 36);
 			visitorPlain16 = visitorReal.deriveFont(Font.PLAIN, 16);
 			visitorPlain48 = visitorReal.deriveFont(Font.PLAIN, 48);
 			visitorPlain72 = visitorReal.deriveFont(Font.PLAIN, 72);
@@ -200,6 +200,8 @@ public class PlatformImpl implements Platform {
 					return visitorPlain48;	
 				} else if (fontSize == 72) {
 					return visitorPlain72;	
+				} else if (fontSize == 36) {
+					return visitorPlain36;	
 				}
 				
 			}

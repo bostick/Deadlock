@@ -3,9 +3,13 @@ package com.gutabi.bypass.level;
 import static com.gutabi.bypass.BypassApplication.BYPASSAPP;
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
+import com.gutabi.deadlock.Resource;
+import com.gutabi.deadlock.ui.Label;
 import com.gutabi.deadlock.ui.Menu;
 import com.gutabi.deadlock.ui.MenuItem;
 import com.gutabi.deadlock.ui.MenuTool;
+import com.gutabi.deadlock.ui.paint.Color;
+import com.gutabi.deadlock.ui.paint.FontStyle;
 
 public class WinnerMenu extends Menu {
 	
@@ -13,8 +17,25 @@ public class WinnerMenu extends Menu {
 		
 		BypassWorld world = (BypassWorld)APP.model;
 		
+		Resource visitorFontFile = APP.platform.fontResource("visitor1");
+		world.winnerLabel = new Label("Excellent!", 0, 0);
+		world.winnerLabel.fontFile = visitorFontFile;
+		world.winnerLabel.fontStyle = FontStyle.PLAIN;
+		world.winnerLabel.fontSize = 72;
+		world.winnerLabel.color = Color.WHITE;
+		
+		world.gradeLabel = new Label(world.curLevel.grade, 0, 0);
+		world.gradeLabel.fontFile = visitorFontFile;
+		world.gradeLabel.fontStyle = FontStyle.PLAIN;
+		world.gradeLabel.fontSize = 72;
+		world.gradeLabel.color = Color.WHITE;
+		
 		world.winnerMenu = new WinnerMenu();
 		
+		world.winnerLabel.renderLocal();
+		world.winnerLabel.render();
+		world.gradeLabel.renderLocal();
+		world.gradeLabel.render();
 		world.winnerMenu.render();
 		
 		APP.appScreen.postDisplay();

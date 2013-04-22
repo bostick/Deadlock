@@ -10,4 +10,7 @@ public class Level {
 	
 	public int userMoves;
 	
+	public boolean isWon;
+	public String grade;
+	
 }

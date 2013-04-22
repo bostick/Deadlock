@@ -10,8 +10,10 @@ import com.gutabi.deadlock.AppScreen;
 import com.gutabi.deadlock.Model;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.ContentPane;
+import com.gutabi.deadlock.ui.Label;
 import com.gutabi.deadlock.ui.Menu;
 import com.gutabi.deadlock.ui.UIAnimationRunnable;
+import com.gutabi.deadlock.ui.paint.Color;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.world.QuadrantMap;
 import com.gutabi.deadlock.world.SimulationRunnable;
@@ -41,7 +43,8 @@ public class BypassWorld extends World implements Model {
 	
 	public Level curLevel;
 	
-	public boolean isWon;
+	public Label winnerLabel;
+	public Label gradeLabel;
 	public WinnerMenu winnerMenu;
 	
 	
@@ -157,6 +160,9 @@ public class BypassWorld extends World implements Model {
 			Level level = BYPASSAPP.levelDB.readLevel(index);
 			
 			w.curLevel = level;
+			
+			level.isWon = false;
+			level.userMoves = 0;
 			
 			BypassBoard board = w.createBypassBoard(new Point(1.5 * QuadrantMap.QUADRANT_WIDTH, 2.0 * QuadrantMap.QUADRANT_HEIGHT), level.board);
 			
@@ -409,8 +415,13 @@ public class BypassWorld extends World implements Model {
 		
 		super.panelPostDisplay();
 		
-		if (winnerMenu != null) {
-			winnerMenu.setLocation(worldCamera.worldPanel.aabb.width/2 - winnerMenu.aabb.width/2, worldCamera.worldPanel.aabb.height/2 - winnerMenu.aabb.height/2);
+		if (curLevel.isWon) {
+			
+			double totalHeight = winnerLabel.aabb.height + 5 + gradeLabel.aabb.height + 5 + winnerMenu.aabb.height;
+			
+			winnerLabel.setLocation(worldCamera.worldPanel.aabb.width/2 - winnerLabel.aabb.width/2, worldCamera.worldPanel.aabb.height/2 - totalHeight/2);
+			gradeLabel.setLocation(worldCamera.worldPanel.aabb.width/2 - gradeLabel.aabb.width/2, winnerLabel.aabb.y+winnerLabel.aabb.height + 5);
+			winnerMenu.setLocation(worldCamera.worldPanel.aabb.width/2 - winnerMenu.aabb.width/2, gradeLabel.aabb.y+gradeLabel.aabb.height + 5);
 		}
 	}
 	
@@ -418,7 +429,19 @@ public class BypassWorld extends World implements Model {
 		
 		super.paint_panel(ctxt);
 		
-		if (isWon) {
+		if (curLevel.isWon) {
+			
+			double totalHeight = winnerLabel.aabb.height + 5 + gradeLabel.aabb.height + 5 + winnerMenu.aabb.height;
+			
+			ctxt.setColor(Color.menuBackground);
+			ctxt.fillRect(
+					(int)(-5 + winnerLabel.aabb.x),
+					(int)(-5 + winnerLabel.aabb.y),
+					(int)(winnerLabel.aabb.width + 5 + 5),
+					(int)(totalHeight + 5 + 5));
+			
+			winnerLabel.paint(ctxt);
+			gradeLabel.paint(ctxt);
 			winnerMenu.paint_panel(ctxt);
 		}
 		

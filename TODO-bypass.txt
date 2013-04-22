@@ -1,17 +1,21 @@
 
+scoring
+time taken
+moves made
+preference system
+saving scores, current game, 
+
+
+
 menu
 reset button
+undo button
 hint button
 
 
 no allocations when dragging
 
 
-scoring
-time taken
-moves made
-preference system
-saving scores, current game, 
 
 
 

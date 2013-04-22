@@ -12,10 +12,11 @@ import com.gutabi.deadlock.ui.paint.RenderingContext;
 
 public abstract class Menu {
 	
-	private List<MenuItem> items = new ArrayList<MenuItem>();
+	public List<MenuItem> items = new ArrayList<MenuItem>();
 	
 	public MenuItem hilited;
 	public MenuItem firstMenuItem;
+	public MenuItem shimmeringMenuItem;
 	
 	int rows;
 	int cols;
@@ -51,6 +52,7 @@ public abstract class Menu {
 		
 		if (items.isEmpty()) {
 			firstMenuItem = item;
+			shimmeringMenuItem = item;
 		}
 		
 		items.add(item);
@@ -221,7 +223,6 @@ public abstract class Menu {
 					}
 					itemFound = true;
 					item.render(ctxt);
-//					item.paint(ctxt);
 					ctxt.translate(0, item.aabb.height + 10);
 				}
 				if (!itemFound) {
@@ -239,18 +240,14 @@ public abstract class Menu {
 			item.paint(ctxt);
 		}
 		
-		shimmer = new Shimmer(firstMenuItem.aabb, System.currentTimeMillis());
+		shimmer = new Shimmer(shimmeringMenuItem.aabb, System.currentTimeMillis());
 		
 		ctxt.dispose();
 	}
 	
 	
 	
-//	Transform origTransformPaint = APP.platform.createTransform();
-	
 	public void paint_panel(RenderingContext ctxt) {
-		
-//		ctxt.getTransform(origTransformPaint);
 		
 		ctxt.translate(aabb.x, aabb.y);
 		
@@ -261,10 +258,6 @@ public abstract class Menu {
 				(int)(aabb.width + 5 + 5),
 				(int)(aabb.height + 5 + 5));
 		
-//		for (int i = 0; i < items.size(); i++) {
-//			MenuItem item = items.get(i);
-//			item.paint(ctxt);
-//		}
 		ctxt.paintImage(img,
 				0, 0, img.getWidth(), img.getHeight(),
 				0, 0, img.getWidth(), img.getHeight());
@@ -275,6 +268,5 @@ public abstract class Menu {
 		
 		shimmer.paint(ctxt);
 		
-//		ctxt.setTransform(origTransformPaint);
 	}
 }

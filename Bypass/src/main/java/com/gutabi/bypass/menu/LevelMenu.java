@@ -10,7 +10,6 @@ import com.gutabi.deadlock.AppScreen;
 import com.gutabi.deadlock.Model;
 import com.gutabi.deadlock.ui.ContentPane;
 import com.gutabi.deadlock.ui.Menu;
-import com.gutabi.deadlock.ui.MenuItem;
 import com.gutabi.deadlock.ui.MenuTool;
 import com.gutabi.deadlock.ui.UIAnimationRunnable;
 
@@ -24,7 +23,7 @@ public class LevelMenu extends Menu implements Model {
 			int menuRow = i / 4;
 			int menuCol = i % 4;
 			final int ii = i;
-			add(new MenuItem(LevelMenu.this, Integer.toString(i)) {
+			add(new LevelMenuItem(LevelMenu.this, i) {
 				
 				public void action() {
 					
@@ -61,6 +60,22 @@ public class LevelMenu extends Menu implements Model {
 	public static void resume() {
 		
 		APP.model = LEVELMENU;
+		
+		int firstUnwon = 0;
+		for (int i = 0; i < BYPASSAPP.levelDB.levelCount; i++) {
+			if (BYPASSAPP.levelDB.levelMap.keySet().contains(i)) {
+				if (BYPASSAPP.levelDB.levelMap.get(i).isWon) {
+					
+				} else {
+					firstUnwon = i;
+					break;
+				}
+			} else {
+				firstUnwon = i;
+				break;
+			}
+		}
+		LEVELMENU.shimmeringMenuItem = LEVELMENU.items.get(firstUnwon);
 		
 		LEVELMENU.render();
 		

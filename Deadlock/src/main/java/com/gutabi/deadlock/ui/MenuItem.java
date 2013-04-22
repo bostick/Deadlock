@@ -14,7 +14,7 @@ public abstract class MenuItem {
 	
 	public final Menu menu;
 	
-	private Label lab;
+	protected Label lab;
 	
 	public MenuItem up;
 	public MenuItem left;
@@ -50,7 +50,7 @@ public abstract class MenuItem {
 	
 	
 	
-	Transform origTransformRender = APP.platform.createTransform();
+	protected Transform origTransformRender = APP.platform.createTransform();
 	
 	public void render(RenderingContext ctxt) {
 		
@@ -59,31 +59,18 @@ public abstract class MenuItem {
 		int x = (int)origTransformRender.getTranslateX();
 		int y = (int)origTransformRender.getTranslateY();
 		
-//		ctxt.translate(0, 20);
-//		
-//		lab.setLocation(x, y);
-//		lab.setDimension(menu.menuItemWidest[c], lab.localAABB.height);
-		
-//		lab.render(ctxt);
 		lab.aabb = new AABB(x + menu.menuItemWidest[c]/2 - lab.localAABB.width/2, y + (20 + lab.localAABB.height + 20)/2 - lab.localAABB.height/2, lab.localAABB.width, lab.localAABB.height);
-		
-//		ctxt.setTransform(origTransformRender);
 		
 		aabb = new AABB(x, y, menu.menuItemWidest[c], 20 + lab.aabb.height + 20);
 	}
 	
 	
 	
-	Transform origTransformPaint = APP.platform.createTransform();
+	public Transform origTransformPaint = APP.platform.createTransform();
 	
 	public void paint(RenderingContext ctxt) {
 		
 		ctxt.getTransform(origTransformPaint);
-		
-//		int x = (int)origTransformPaint.getTranslateX();
-//		int y = (int)origTransformPaint.getTranslateY();
-		
-//		ctxt.translate(aabb.x, aabb.y);
 		
 		if (active) {
 			lab.color = Color.WHITE;

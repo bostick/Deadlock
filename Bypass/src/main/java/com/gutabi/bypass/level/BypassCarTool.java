@@ -114,7 +114,7 @@ public class BypassCarTool extends WorldToolBase {
 				return;
 			}
 			
-			if (world.isWon) {
+			if (world.curLevel.isWon) {
 				
 				car.driver.toolCoastingGoal = car.driver.overallPath.endPos;
 				car.setCoastingVelFromDrag(dragVector, dragTimeStepMillis, true);
@@ -427,7 +427,7 @@ public class BypassCarTool extends WorldToolBase {
 				
 				car.driver.toolOrigExitingVertexPos = vertexPos;
 				
-				if (vertexPos.gp.entity == b.exitVertex && !world.isWon && car.type == CarType.RED) {
+				if (vertexPos.gp.entity == b.exitVertex && !world.curLevel.isWon && car.type == CarType.RED) {
 					
 					winner();
 					
@@ -464,7 +464,7 @@ public class BypassCarTool extends WorldToolBase {
 				
 				car.driver.toolOrigExitingVertexPos = car.driver.overallPos;
 				
-				if (car.driver.overallPos.gp.entity == b.exitVertex && !world.isWon && car.type == CarType.RED) {
+				if (car.driver.overallPos.gp.entity == b.exitVertex && !world.curLevel.isWon && car.type == CarType.RED) {
 					
 					winner();
 					
@@ -551,7 +551,7 @@ public class BypassCarTool extends WorldToolBase {
 					
 					car.driver.toolOrigExitingVertexPos = vertexPos;
 					
-					if (vertexPos.gp.entity == b.exitVertex && !world.isWon && car.type == CarType.RED) {
+					if (vertexPos.gp.entity == b.exitVertex && !world.curLevel.isWon && car.type == CarType.RED) {
 						
 						winner();
 						
@@ -582,7 +582,36 @@ public class BypassCarTool extends WorldToolBase {
 		
 		BypassWorld world = (BypassWorld)APP.model;
 		
-		world.isWon = true;
+		int diff = (world.curLevel.userMoves - world.curLevel.requiredMoves);
+		if (diff == 0) {
+			world.curLevel.grade = "A+";
+		} else if (diff < 2) {
+			world.curLevel.grade = "A";
+		} else if (diff < 4) {
+			world.curLevel.grade = "A-";
+		} else if (diff < 6) {
+			world.curLevel.grade = "B+";
+		} else if (diff < 8) {
+			world.curLevel.grade = "B";
+		} else if (diff < 10) {
+			world.curLevel.grade = "B-";
+		} else if (diff < 12) {
+			world.curLevel.grade = "C+";
+		} else if (diff < 14) {
+			world.curLevel.grade = "C+";
+		} else if (diff < 16) {
+			world.curLevel.grade = "C+";
+		} else if (diff < 18) {
+			world.curLevel.grade = "D+";
+		} else if (diff < 20) {
+			world.curLevel.grade = "D";
+		} else if (diff < 22) {
+			world.curLevel.grade = "D-";
+		} else {
+			world.curLevel.grade = "F";	
+		}
+		
+		world.curLevel.isWon = true;
 		
 		released(null);
 		
