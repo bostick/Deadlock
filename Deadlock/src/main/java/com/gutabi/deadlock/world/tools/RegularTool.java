@@ -64,10 +64,6 @@ public class RegularTool extends WorldToolBase {
 	
 	public void escKey() {
 		
-//		APP.platform.unshowDebuggerScreen();
-		
-//		MainMenu.action();
-		
 	}
 	
 	public void d1Key() {
@@ -81,7 +77,6 @@ public class RegularTool extends WorldToolBase {
 				r.setDirection(null, Direction.STARTTOEND);
 				
 				world.render_worldPanel();
-//				APP.appScreen.contentPane.repaint();
 				
 			} else if (hilited instanceof Fixture) {
 				Fixture f = (Fixture)hilited;
@@ -99,7 +94,6 @@ public class RegularTool extends WorldToolBase {
 				g.setFacingSide(g.getFacingSide().other());
 				
 				world.render_worldPanel();
-//				APP.appScreen.contentPane.repaint();
 				
 			}
 			
@@ -117,7 +111,6 @@ public class RegularTool extends WorldToolBase {
 				r.setDirection(null, Direction.ENDTOSTART);
 				
 				world.render_worldPanel();
-//				APP.appScreen.contentPane.repaint();
 				
 			}
 			
@@ -135,7 +128,6 @@ public class RegularTool extends WorldToolBase {
 				r.setDirection(null, null);
 			
 				world.render_worldPanel();
-//				APP.appScreen.contentPane.repaint();
 				
 			}
 			
@@ -150,7 +142,6 @@ public class RegularTool extends WorldToolBase {
 		c.setStart(world.quadrantMap.getPoint(world.lastMovedOrDraggedWorldPoint));
 		c.setPoint(world.quadrantMap.getPoint(world.lastMovedOrDraggedWorldPoint));
 		APP.tool = c;
-//		APP.appScreen.contentPane.repaint();
 	}
 	
 	public void wKey() {
@@ -158,7 +149,6 @@ public class RegularTool extends WorldToolBase {
 		
 		APP.tool = new FixtureTool();
 		APP.tool.setPoint(world.quadrantMap.getPoint(world.lastMovedOrDraggedWorldPoint));
-//		APP.appScreen.contentPane.repaint();
 	}
 	
 	public void aKey() {
@@ -170,7 +160,6 @@ public class RegularTool extends WorldToolBase {
 		
 		APP.tool.setPoint(world.quadrantMap.getPoint(world.lastMovedOrDraggedWorldPoint));
 		
-//		APP.appScreen.contentPane.repaint();
 	}
 	
 	public void sKey() {
@@ -180,7 +169,6 @@ public class RegularTool extends WorldToolBase {
 		q.setStart(world.quadrantMap.getPoint(world.lastMovedOrDraggedWorldPoint));
 		q.setPoint(world.quadrantMap.getPoint(world.lastMovedOrDraggedWorldPoint));
 		APP.tool = q;
-//		APP.appScreen.contentPane.repaint();
 	}
 	
 	public void dKey() {
@@ -190,7 +178,6 @@ public class RegularTool extends WorldToolBase {
 		c.setStart(world.quadrantMap.getPoint(world.lastMovedOrDraggedWorldPoint));
 		c.setPoint(world.quadrantMap.getPoint(world.lastMovedOrDraggedWorldPoint));
 		APP.tool = c;
-//		APP.appScreen.contentPane.repaint();
 	}
 	
 	public void insertKey() {
@@ -204,7 +191,6 @@ public class RegularTool extends WorldToolBase {
 				s.setEnabled(true);
 				
 				world.render_worldPanel();
-//				APP.appScreen.contentPane.repaint();
 			}
 			
 		} else {
@@ -215,7 +201,6 @@ public class RegularTool extends WorldToolBase {
 			
 			APP.tool.setPoint(world.quadrantMap.getPoint(world.lastMovedOrDraggedWorldPoint));
 			
-//			APP.appScreen.contentPane.repaint();
 		}
 	}
 	
@@ -265,11 +250,9 @@ public class RegularTool extends WorldToolBase {
 		}
 		
 		world.render_worldPanel();
-//		APP.appScreen.contentPane.repaint();
 		
 		if (world.previewImage != null) {
 			world.render_preview();
-//			APP.debuggerScreen.contentPane.repaint();
 		}
 	}
 	
@@ -288,7 +271,6 @@ public class RegularTool extends WorldToolBase {
 			
 			APP.tool.setPoint(world.quadrantMap.getPoint(world.lastMovedOrDraggedWorldPoint));
 			
-//			APP.appScreen.contentPane.repaint();
 			break;
 		case DRAFTING:
 			assert false;
@@ -310,8 +292,6 @@ public class RegularTool extends WorldToolBase {
 				draftStart(world.lastPressedWorldPoint);
 				draftMove(world.lastDraggedWorldPoint);
 				
-//				APP.appScreen.contentPane.repaint();
-				
 			} else {
 				assert false;
 			}
@@ -321,7 +301,6 @@ public class RegularTool extends WorldToolBase {
 			
 			draftMove(world.lastDraggedWorldPoint);
 			
-//			APP.appScreen.contentPane.repaint();
 			break;
 		}
 	}
@@ -340,10 +319,6 @@ public class RegularTool extends WorldToolBase {
 			world.render_worldPanel();
 			if (world.previewImage != null) {
 				world.render_preview();
-			}
-//			APP.appScreen.contentPane.repaint();
-			if (APP.debuggerScreen != null) {
-//				APP.debuggerScreen.contentPane.repaint();
 			}
 			break;
 		}

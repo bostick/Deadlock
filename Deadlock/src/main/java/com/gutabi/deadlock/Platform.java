@@ -72,10 +72,6 @@ public interface Platform {
 	
 	
 	
-	
-	
-//	public abstract Circle createCircle(Point center, double radius);
-	
 	public abstract Polyline createPolyline(Point... pts);
 	
 	public abstract OBB createOBB(Point center, double a, double xExtant, double yExtant);
@@ -87,8 +83,6 @@ public interface Platform {
 	public abstract QuadCurve createQuadCurve(Point start, Point c0, Point end);
 	
 	public abstract CubicCurve createCubicCurve(Point start, Point c0, Point c1, Point end);
-	
-//	public abstract Polygon createPolygon4(Point p0, Point p1, Point p2, Point p3);
 	
 	public abstract MutablePolygon createMutablePolygon();
 	

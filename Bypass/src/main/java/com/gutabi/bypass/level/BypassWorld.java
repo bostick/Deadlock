@@ -83,8 +83,6 @@ public class BypassWorld extends World implements Model {
 		
 		worldScreen.postDisplay();
 		
-//		BYPASSWORLD.render_worldPanel();
-		
 		if (APP.DEBUGGER_SCREEN) {
 			
 			AppScreen debuggerScreen = new AppScreen(new ContentPane(new BypassControlPanel()));
@@ -407,8 +405,6 @@ public class BypassWorld extends World implements Model {
 	}
 	
 	public void handleZooming(Car car) {
-//		World world = (World)APP.model;
-//		System.out.println("handle");
 		
 		GraphPosition gpos = car.driver.overallPos.gp;
 		
@@ -448,10 +444,6 @@ public class BypassWorld extends World implements Model {
 		
 		double fraction = b.carInGridFraction(car);
 		
-//		System.out.println(fraction);
-		
-//		double cameraX = cc.x + (1-(1-fraction)*(1-fraction)) * (worldCamera.origWorldViewport.x - cc.x);
-//		double cameraY = cc.y + (1-(1-fraction)*(1-fraction)) * (worldCamera.origWorldViewport.y - cc.y);
 		double cameraX = cc.x + (1-(1-fraction)) * (worldCamera.origWorldViewport.x - cc.x);
 		double cameraY = cc.y + (1-(1-fraction)) * (worldCamera.origWorldViewport.y - cc.y);
 		

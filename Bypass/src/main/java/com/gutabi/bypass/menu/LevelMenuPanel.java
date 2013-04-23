@@ -59,9 +59,6 @@ public class LevelMenuPanel extends MenuPanel {
 		
 		ctxt.setTransform(menuTrans);
 		
-//		int x = (int)menuTrans.getTranslateX();
-//		int y = (int)menuTrans.getTranslateY();
-		
 		menu.paint_panel(ctxt);
 		
 		ctxt.setTransform(origTransform);

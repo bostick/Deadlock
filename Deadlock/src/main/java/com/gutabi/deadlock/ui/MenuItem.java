@@ -95,14 +95,10 @@ public abstract class MenuItem {
 		
 		ctxt.getTransform(origTransformPaintHilited);
 		
-//		int x = (int)origTransformPaintHilited.getTranslateX();
-//		int y = (int)origTransformPaintHilited.getTranslateY();
-		
 		ctxt.setColor(Color.RED);
 		ctxt.setStroke(0.0, Cap.SQUARE, Join.MITER);
 		aabb.draw(ctxt);
 		
-//		ctxt.setTransform(origTransformPaintHilited);
 	}
 	
 }

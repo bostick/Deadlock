@@ -33,7 +33,7 @@ public class RenderingContextImpl extends RenderingContext {
 	public Graphics2D g2;
 	
 	public RenderingContextImpl() {
-//		this.g2 = g2;
+		
 	}
 	
 	public void setAlpha(double a) {

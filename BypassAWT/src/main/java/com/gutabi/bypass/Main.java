@@ -17,8 +17,6 @@ import com.gutabi.bypass.ui.WindowInfo;
 
 public class Main  {
 	
-//	static Logger logger = Logger.getLogger("deadlock");
-	
 	static void createAndShowGUI() throws Exception {
 		
 		BypassApplication app = new BypassApplication();
@@ -61,7 +59,6 @@ public class Main  {
 	
 	public static Thread.UncaughtExceptionHandler handler = new Thread.UncaughtExceptionHandler() {
 			public void uncaughtException(Thread thread, Throwable t) {
-//			logger.error("Error in thread " + thread.getName() + ": " + t.getMessage(), t);
 			System.err.println("Uncaught exception on thread " + thread.getName());
 			t.printStackTrace();
 		}

@@ -59,13 +59,10 @@ public class PlatformImpl implements BypassPlatform {
 	
 	public static BypassActivity CURRENTACTIVITY;
 	
-//	MainView container;
-	
 	Resources resources;
 	
 	public PlatformImpl(Resources resources) {
 		this.resources = resources;
-//		this.container = container;
 	}
 	
 	public RenderingContext createRenderingContext() {
@@ -296,11 +293,6 @@ public class PlatformImpl implements BypassPlatform {
 	
 	
 	
-	
-//	public Circle createCircle(Point center, double radius) {
-//		return new CircleImpl(center, radius);
-//	}
-	
 	public Line createLine(Point p0, Point p1) {
 		return new LineImpl(p0, p1);
 	}
@@ -353,18 +345,14 @@ public class PlatformImpl implements BypassPlatform {
 		if (clazz == MainMenu.class) {
 			
 			Intent intent = new Intent(CURRENTACTIVITY, MainMenuActivity.class);
-//			intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
 			
 			CURRENTACTIVITY.startActivity(intent);
-//			PlatformImpl.CURRENTACTIVITY.overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_up);
 			CURRENTACTIVITY.overridePendingTransition(0, 0);
 			
 		} else if (clazz == LevelMenu.class) {
 			
 			Intent intent = new Intent(CURRENTACTIVITY, LevelMenuActivity.class);
-//			intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
 			CURRENTACTIVITY.startActivity(intent);
-//			PlatformImpl.CURRENTACTIVITY.overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_up);
 			CURRENTACTIVITY.overridePendingTransition(0, 0);
 			
 		} else if (clazz == BypassWorld.class) {
@@ -375,7 +363,6 @@ public class PlatformImpl implements BypassPlatform {
 //			intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
 			intent.putExtra("com.gutabi.bypass.level.Index", ii);
 			CURRENTACTIVITY.startActivity(intent);
-//			PlatformImpl.CURRENTACTIVITY.overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_up);
 			CURRENTACTIVITY.overridePendingTransition(0, 0);
 			
 		} else {
@@ -386,7 +373,6 @@ public class PlatformImpl implements BypassPlatform {
 	
 	public void finishAction() {
 		CURRENTACTIVITY.finish();
-//		PlatformImpl.CURRENTACTIVITY.overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_up);
 		CURRENTACTIVITY.overridePendingTransition(0, 0);
 		
 	}

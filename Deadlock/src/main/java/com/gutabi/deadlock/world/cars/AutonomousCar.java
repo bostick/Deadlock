@@ -140,8 +140,6 @@ public class AutonomousCar extends Car {
 				
 			} else {
 				
-				//computeDynamicPropertiesMoving();
-				
 			}
 			
 			return true;

@@ -26,7 +26,6 @@ public class MutableCapsuleSequence implements SweeperShape {
 		for (Capsule c : caps) {
 			aabb.union(c.aabb);
 		}
-//		aabb = new AABB(aabbTmp.x, aabbTmp.y, aabbTmp.width, aabbTmp.height);
 		
 	}
 	

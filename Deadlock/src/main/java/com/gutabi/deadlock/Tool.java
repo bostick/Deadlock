@@ -117,13 +117,6 @@ public abstract class Tool {
 		
 	}
 	
-	/**
-	 * in panel coords
-	 */
-//	public void longClick(InputEvent ev) {
-//		
-//	}
-	
 	public Point p;
 	
 	public abstract void setPoint(Point p);

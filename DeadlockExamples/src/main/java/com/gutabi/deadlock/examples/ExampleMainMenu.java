@@ -38,8 +38,6 @@ public class ExampleMainMenu extends Menu implements Model {
 		mainMenu.render();
 		
 		s.postDisplay();
-		
-//		s.contentPane.repaint();
 	}
 	
 	public Menu getMenu() {

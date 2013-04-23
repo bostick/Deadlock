@@ -43,18 +43,6 @@ public class BypassView extends View {
 			return super.onSingleTapUp(ev);
 		}
 		
-//		public boolean onLongClick(MotionEvent ev) {
-//			
-//			v.getLocationInWindow(touchOut);
-//			
-//			float x = ev.getRawX() - touchOut[0];
-//			float y = ev.getRawY() - touchOut[1];
-//			Point p = new Point(x, y);
-//			
-//			APP.appScreen.contentPane.pcp.longPressDriver(p);
-//			
-//			return super.onLo
-//		}
 	};
 	
 	
@@ -72,15 +60,12 @@ public class BypassView extends View {
 		
 		switch (act) {
 		case MotionEvent.ACTION_DOWN:
-//			Log.d("motion", "down " + p);
 			APP.appScreen.contentPane.pcp.pressedDriver(p);
 			break;
 		case MotionEvent.ACTION_MOVE:
-//			Log.d("motion", "move " + p);
 			APP.appScreen.contentPane.pcp.draggedDriver(p);
 			break;
 		case MotionEvent.ACTION_UP:
-//			Log.d("motion", "up " + p);
 			APP.appScreen.contentPane.pcp.releasedDriver(p);
 			break;
 		}
@@ -102,10 +87,6 @@ public class BypassView extends View {
 			paintable.paint(ctxt);
 			
 		} else {
-			
-//			APP.platform.setRenderingContextFields2(ctxt, canvas, paint);
-//			
-//			paintable.paint(ctxt);
 			
 		}
 		

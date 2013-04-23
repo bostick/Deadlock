@@ -72,7 +72,6 @@ public class WinnerMenu extends Menu {
 				
 				APP.platform.finishAction();
 				
-//				BypassWorld.action(world.levelDB, index+1);
 				APP.platform.action(BypassWorld.class, index+1);
 				
 			}
@@ -95,7 +94,6 @@ public class WinnerMenu extends Menu {
 		MenuItem backMenuItem = new MenuItem(WinnerMenu.this, "Back") {
 			public void action() {
 				
-//				MainMenu.action();
 				APP.platform.finishAction();
 			}
 		};

@@ -215,9 +215,6 @@ public class BypassCar extends Car {
 		
 		if (APP.DEBUG_DRAW) {
 			
-//			ctxt.setColor(Color.DARKGREEN);
-//			ctxt.paintCircle(new Circle(((BypassDriver)driver).overallPos.p, 0.2));
-			
 			ctxt.setColor(Color.BLACK);
 			ctxt.setStroke(0.0, Cap.SQUARE, Join.MITER);
 			shape.aabb.draw(ctxt);

@@ -10,6 +10,9 @@ hint button
 
 no allocations when dragging
 
+
+write down whole process for level generation and selection
+
 select levels for lite version
 select levels for full version
 setup renderer in Mathematica
@@ -19,6 +22,7 @@ similar: lots of cars in same position and similar number of moves
 
 when dragging, if within 25% of stud, just go to it
 
+brighten grass tile
 audit all levels
 audit all artwork
 audit all res

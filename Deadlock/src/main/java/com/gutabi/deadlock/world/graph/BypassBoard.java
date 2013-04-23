@@ -1150,11 +1150,6 @@ public class BypassBoard extends Entity {
 		}
 	}
 	
-//	private void addStud(BypassStud s) {
-//		studs.add(s);
-//		
-//	}
-	
 	private void removePerimeterSegment(Line l) {
 		
 		Line toRemove = null;
@@ -1293,18 +1288,8 @@ public class BypassBoard extends Entity {
 		
 		MutableOBB o = c.shape;
 		
-//		if (!o.rightAngle) {
-//			/*
-//			 * on curved road, completely outside grid
-//			 */
-//			return 0.0;
-//		}
-		
 		MutableAABB a = o.aabb;
 		
-//		double frac = a.fractionWithin(allStudsAABB, allStudsAABB);
-//		double frac = a.fractionWithin(allStudsAABB, zoomingAABB);
-//		double frac = a.fractionWithin(gridAABB, allStudsAABB);
 		double frac = a.fractionWithin(gridAABB, gridAABB);
 		
 		return frac;
@@ -1319,9 +1304,6 @@ public class BypassBoard extends Entity {
 		if (!ShapeUtils.intersectAA(allStudsAABB, ctxt.cam.worldViewport)) {
 			return;
 		}
-		
-//		ctxt.setColor(BOARDCOLOR);
-//		gridAABB.paint(ctxt);
 		
 		for (int i = 0; i < studs.size(); i++) {
 			BypassStud s = studs.get(i);
@@ -1350,9 +1332,6 @@ public class BypassBoard extends Entity {
 	}
 	
 	public void paint_preview(RenderingContext ctxt) {
-		
-//		ctxt.setColor(BOARDCOLOR);
-//		gridAABB.paint(ctxt);
 		
 		for (BypassStud s : studs) {
 			s.paint(ctxt);

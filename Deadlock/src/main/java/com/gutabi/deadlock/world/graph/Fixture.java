@@ -375,31 +375,6 @@ public final class Fixture extends Vertex {
 			ctxt.setColor(FIXTURECOLOR);
 			shape.paint(ctxt);
 			
-//			Transform origTransform = ctxt.getTransform();
-//			
-//			ctxt.translate(p.x, p.y);
-//			
-//			switch (facingSide) {
-//			case RIGHT:
-//				ctxt.rotate(0.0 * Math.PI);
-//				break;
-//			case BOTTOM:
-//				ctxt.rotate(0.5 * Math.PI);
-//				break;
-//			case LEFT:
-//				ctxt.rotate(1.0 * Math.PI);
-//				break;
-//			case TOP:
-//				ctxt.rotate(1.5 * Math.PI);
-//				break;
-//			}
-//			
-//			ctxt.translate(-r, -r);
-//			
-//			APP.spriteSheet.paint(ctxt, SpriteSheetSprite.FIXTUREARROW, ctxt.cam.pixelsPerMeter, 0, 0, 2 * r, 2 * r);
-//			
-//			ctxt.setTransform(origTransform);
-			
 		} else {
 			ctxt.setColor(FIXTURECOLOR);
 			shape.paint(ctxt);

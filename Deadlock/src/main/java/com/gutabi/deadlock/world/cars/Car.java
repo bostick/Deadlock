@@ -68,7 +68,6 @@ public abstract class Car extends PhysicsBody {
 		sprite = CarSheet.sprite(sheetIndex);
 		length = sprite.carLength() * METERS_PER_CARLENGTH;
 		width = sprite.carWidth() * METERS_PER_CARLENGTH;
-//		localFront = new Point(0.75 * length, 0.0);
 		
 		localAABB = new AABB(-length / 2, -width / 2, length, width);
 		

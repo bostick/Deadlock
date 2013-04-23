@@ -18,8 +18,6 @@ public class SimulationRunnable implements Runnable {
 		long currentTimeMillis = System.currentTimeMillis();
 		long newTimeMillis = System.currentTimeMillis();
 		
-//		world.preStart();
-		
 		try {
 			
 			outer:
@@ -61,8 +59,6 @@ public class SimulationRunnable implements Runnable {
 		} catch (InterruptedException e) {
 			
 		}
-		
-//		world.postStop();
 		
 	}
 	

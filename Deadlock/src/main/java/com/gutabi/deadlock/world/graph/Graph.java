@@ -1236,17 +1236,6 @@ public class Graph {
 	
 	public void render_panel(RenderingContext ctxt) {
 		
-//		List<Road> roadsCopy;
-//		List<Merger> mergersCopy;
-//		List<BypassBoard> boardsCopy;
-//		List<Vertex> verticesCopy;
-//		synchronized (APP) {
-//			roadsCopy = new ArrayList<Road>(roads);
-//			mergersCopy = new ArrayList<Merger>(mergers);
-//			boardsCopy = new ArrayList<BypassBoard>(boards);
-//			verticesCopy = new ArrayList<Vertex>(vertices);
-//		}
-		
 		for (int i = 0; i < roads.size(); i++) {
 			Road r = roads.get(i);
 			r.paint_panel(ctxt);
@@ -1326,20 +1315,12 @@ public class Graph {
 	
 	public void paintScene(RenderingContext ctxt) {
 		
-//		List<Vertex> verticesCopy;
-//		synchronized (APP) {
-//			verticesCopy = new ArrayList<Vertex>(vertices);
-//		}
 		for (int i = 0; i < vertices.size(); i++) {
 			Vertex v = vertices.get(i);
 			v.paintScene(ctxt);
 		}
 		
 		if (APP.DEBUG_DRAW) {
-//			List<Road> roadsCopy;
-//			synchronized (APP) {
-//				roadsCopy = new ArrayList<Road>(roads);
-//			}
 			
 			for (Road r : roads) {
 				r.paintBorders(ctxt);

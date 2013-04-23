@@ -109,12 +109,10 @@ public class StraightEdgeTool extends WorldToolBase {
 		case FREE:
 			APP.tool = new RegularTool();
 			APP.tool.setPoint(world.quadrantMap.getPoint(world.lastMovedOrDraggedWorldPoint));
-//			APP.appScreen.contentPane.repaint();
 			break;
 		case SET:
 			mode = StraightEdgeToolMode.FREE;
 			APP.tool.setPoint(world.quadrantMap.getPoint(world.lastMovedOrDraggedWorldPoint));
-//			APP.appScreen.contentPane.repaint();
 			break;
 		case KNOB:
 			assert false;
@@ -128,7 +126,6 @@ public class StraightEdgeTool extends WorldToolBase {
 		switch (mode) {
 		case FREE:
 			mode = StraightEdgeToolMode.SET;
-//			APP.appScreen.contentPane.repaint();
 			break;
 		case SET:
 			
@@ -146,7 +143,6 @@ public class StraightEdgeTool extends WorldToolBase {
 			
 			world.render_worldPanel();
 			world.render_preview();
-//			APP.appScreen.contentPane.repaint();
 			break;
 		case KNOB:
 			assert false;
@@ -162,7 +158,6 @@ public class StraightEdgeTool extends WorldToolBase {
 		switch (mode) {
 		case FREE:
 			APP.tool.setPoint(world.quadrantMap.getPoint(world.lastMovedOrDraggedWorldPoint));
-//			APP.appScreen.contentPane.repaint();
 			break;
 		case SET:
 		case KNOB:
@@ -173,8 +168,6 @@ public class StraightEdgeTool extends WorldToolBase {
 	public void released(InputEvent ignore) {
 		super.released(ignore);
 		
-//		World world = (World)APP.model;
-		
 		switch (mode) {
 		case FREE:
 			break;
@@ -182,7 +175,6 @@ public class StraightEdgeTool extends WorldToolBase {
 			break;
 		case KNOB:
 			mode = StraightEdgeToolMode.SET;
-//			APP.appScreen.contentPane.repaint();
 			break;
 		}
 	}
@@ -219,7 +211,6 @@ public class StraightEdgeTool extends WorldToolBase {
 		case KNOB:
 			Point diff = new Point(world.lastDraggedWorldPoint.x - world.lastPressedWorldPoint.x, world.lastDraggedWorldPoint.y - world.lastPressedWorldPoint.y);
 			knob.drag(origKnobCenter.plus(diff));
-//			APP.appScreen.contentPane.repaint();
 			break;
 		}
 	}

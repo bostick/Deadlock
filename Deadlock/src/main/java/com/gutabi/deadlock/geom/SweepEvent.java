@@ -63,15 +63,6 @@ public abstract class SweepEvent {
 		}
 	}
 	
-//	public void setVertex(Vertex v) {
-//		this.v = v;
-//	}
-//	
-//	public Vertex getVertex() {
-//		return v;
-//	}
-	
-	
 	
 	public static Comparator<SweepEvent> COMPARATOR = new SweepEventComparator();
 	

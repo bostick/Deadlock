@@ -44,7 +44,6 @@ public class MergerTool extends WorldToolBase {
 		
 		APP.tool.setPoint(world.quadrantMap.getPoint(world.lastMovedOrDraggedWorldPoint));
 		
-//		APP.appScreen.contentPane.repaint();
 	}
 	
 	public void insertKey() {
@@ -63,7 +62,6 @@ public class MergerTool extends WorldToolBase {
 				
 				world.render_worldPanel();
 				world.render_preview();
-//				APP.appScreen.contentPane.repaint();
 			}
 			
 		}
@@ -75,7 +73,6 @@ public class MergerTool extends WorldToolBase {
 		World world = (World)APP.model;
 		
 		APP.tool.setPoint(world.quadrantMap.getPoint(world.lastMovedOrDraggedWorldPoint));
-//		APP.appScreen.contentPane.repaint();
 	}
 	
 	

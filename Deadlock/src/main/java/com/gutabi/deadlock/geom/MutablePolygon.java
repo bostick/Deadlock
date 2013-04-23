@@ -4,7 +4,6 @@ import com.gutabi.deadlock.math.Point;
 
 public abstract class MutablePolygon implements Shape {
 	
-//	Point[] pts = new Point[4];
 	double[][] pts = new double[4][2];
 	
 	protected MutablePolygon() {

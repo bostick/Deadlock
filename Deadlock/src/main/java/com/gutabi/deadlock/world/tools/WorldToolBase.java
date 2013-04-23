@@ -24,11 +24,9 @@ public abstract class WorldToolBase extends Tool {
 		setPoint(world.quadrantMap.getPoint(world.lastMovedOrDraggedWorldPoint));
 		
 		world.render_worldPanel();
-//		APP.appScreen.contentPane.repaint();
 		
 		if (world.previewImage != null) {
 			world.render_preview();
-//			APP.debuggerScreen.contentPane.repaint();
 		}
 	}
 
@@ -37,15 +35,10 @@ public abstract class WorldToolBase extends Tool {
 		
 		world.worldCamera.zoomRelative(1.1);
 		
-//		screen.contentPane.moved(screen.contentPane.getLastMovedContentPanePoint());
-		
 		world.quadrantMap.computeGridSpacing(world.worldCamera);
 		
 		world.render_worldPanel();
 		world.render_preview();
-		
-//		APP.appScreen.contentPane.repaint();
-//		APP.debuggerScreen.contentPane.repaint();
 		
 	}
 
@@ -54,16 +47,12 @@ public abstract class WorldToolBase extends Tool {
 		
 		world.worldCamera.zoomRelative(0.9);
 		
-//		screen.contentPane.moved(screen.contentPane.getLastMovedContentPanePoint());
-		
 		world.quadrantMap.computeGridSpacing(world.worldCamera);
 		
 		world.render_worldPanel();
-//		APP.appScreen.contentPane.repaint();
 		
 		if (world.previewImage != null) {
 			world.render_preview();
-//			APP.debuggerScreen.contentPane.repaint();
 		}
 	}
 	
@@ -78,19 +67,6 @@ public abstract class WorldToolBase extends Tool {
 		
 		world.pressed(new InputEvent(ev.panel, p));
 		
-//		switch (world.mode) {
-//		case PAUSED:
-//		case RUNNING:
-//		case EDITING:
-//			Point p = Point.panelToWorld(ev.p, worldCamera);
-//			
-//			world.pressed(new InputEvent(p));
-//			
-//			APP.tool.pressed(new InputEvent(p));
-//			
-//			break;
-//		}
-		
 	}
 	
 	public void dragged(InputEvent ev) {
@@ -102,48 +78,11 @@ public abstract class WorldToolBase extends Tool {
 		
 		world.dragged(new InputEvent(ev.panel, p));
 		
-//		switch (world.mode) {
-//		case RUNNING:
-//		case PAUSED: {
-//			lastMovedOrDraggedPanelPoint = ev.p;
-//			
-//			Point p = Point.panelToWorld(ev.p, worldCamera);
-//			
-//			world.dragged(new InputEvent(p));
-//			APP.tool.dragged(new InputEvent(p));
-//			break;
-//		}
-//		case EDITING: {
-//			lastMovedOrDraggedPanelPoint = ev.p;
-//			
-//			Point p = Point.panelToWorld(ev.p, worldCamera);
-//			
-//			world.dragged(new InputEvent(p));
-//			APP.tool.dragged(new InputEvent(p));
-//			break;
-//		}
-//		}
-		
 	}
 	
 	public void released(InputEvent ev) {
 		
 		lastMotion = Motion.RELEASED;
-		
-//		World world = (World)APP.model;
-//		
-//		Point p = Point.panelToWorld(ev.p, world.worldCamera);
-//		
-//		world.released(new InputEvent(p));
-		
-//		switch (world.mode) {
-//		case RUNNING:
-//		case PAUSED:
-//			APP.tool.released(ev);
-//		case EDITING:
-//			APP.tool.released(ev);
-//			break;
-//		}
 		
 	}
 	
@@ -154,26 +93,6 @@ public abstract class WorldToolBase extends Tool {
 		
 		world.moved(new InputEvent(ev.panel, p));
 		
-//		lastMovedPanelPoint = ev.p;
-//		lastMovedOrDraggedPanelPoint = lastMovedPanelPoint;
-//		
-//		switch (world.mode) {
-//		case RUNNING:
-//		case PAUSED: {
-//			Point p = Point.panelToWorld(ev.p, worldCamera);
-//			
-//			world.moved(new InputEvent(p));
-//			APP.tool.moved(new InputEvent(p));
-//			break;
-//		}
-//		case EDITING: {
-//			Point p = Point.panelToWorld(ev.p, worldCamera);
-//			
-//			world.moved(new InputEvent(p));
-//			APP.tool.moved(new InputEvent(p));
-//			break;
-//		}
-//		}
 	}
 	
 	public void clicked(InputEvent ev) {
@@ -183,23 +102,6 @@ public abstract class WorldToolBase extends Tool {
 		
 		world.clicked(new InputEvent(ev.panel, p));
 		
-//		switch (world.mode) {
-//		case RUNNING:
-//		case PAUSED: {
-//			Point p = Point.panelToWorld(ev.p, worldCamera);
-//			
-//			world.clicked(new InputEvent(p));
-//			APP.tool.clicked(new InputEvent(p));
-//			break;
-//		}
-//		case EDITING: {
-//			Point p = Point.panelToWorld(ev.p, worldCamera);
-//			
-//			world.clicked(new InputEvent(p));
-//			APP.tool.clicked(new InputEvent(p));
-//			break;
-//		}
-//		}
 	}
 
 }

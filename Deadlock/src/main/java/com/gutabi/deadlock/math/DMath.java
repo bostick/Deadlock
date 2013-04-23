@@ -10,11 +10,6 @@ public class DMath {
 	 */
 	public static final double RIGHT_ANGLE_TOLERANCE = 1.0E-4;
 	
-	
-//	public static boolean equals(double a, double b) {
-//		return equals(a, b, 1.0E-8);
-//	}
-	
 	public static boolean equals(double a, double b) {
 		/*
 		 * 1.0E-12 seems to be fine for the math we do here
@@ -310,9 +305,5 @@ public class DMath {
 		double bb = tryAdjustToReducedRightAngle(b);
 		return DMath.equals(aa, bb);
 	}
-	
-//	public static double smoothstep(double t) {
-//		return t * t * (3 - 2 * t);
-//	}
 	
 }

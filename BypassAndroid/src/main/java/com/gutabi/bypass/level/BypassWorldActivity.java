@@ -13,10 +13,6 @@ import com.gutabi.bypass.R;
 
 public class BypassWorldActivity extends BypassActivity {
 	
-//	public BypassWorldView v;
-	
-//	private GestureDetector gDetector;
-	
 	{
 		name = "bypassworld";
 	}
@@ -34,8 +30,6 @@ public class BypassWorldActivity extends BypassActivity {
 		
 		v.ctxt = APP.platform.createRenderingContext();
 		v.activity = this;
-		
-//		v.setOnLongClickListener(this);
 		
 		registerForContextMenu(v);
 		
@@ -77,7 +71,6 @@ public class BypassWorldActivity extends BypassActivity {
 	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-	    // Handle item selection
 	    switch (item.getItemId()) {
 	        case R.id.btn_reset:
 	        	BypassWorld.BYPASSWORLD.reset();

@@ -101,8 +101,6 @@ public class Point {
 				if (!DMath.equals(xba, 0.0)) {
 					cu = (c.x - a.x) / xba;
 					if (!DMath.equals(yba, 0.0)) {
-						//assert DMath.equals(cu, (c.y - a.y) / yba, 1.0E-4);
-						//assert DMath.equals(cu * yba, (c.y - a.y), 1.0E-6);
 						assert DMath.equals((c.x - a.x) * yba, (c.y - a.y) * xba);
 					}
 				} else {
@@ -113,7 +111,6 @@ public class Point {
 				if (!DMath.equals(xba, 0.0)) {
 					du = (d.x - a.x) / xba;
 					if (!DMath.equals(yba, 0.0)) {
-						//assert DMath.equals(du, (d.y - a.y) / yba, 1.0E-4);
 						assert DMath.equals((d.x - a.x) * yba, (d.y - a.y) * xba);
 					}
 				} else {
@@ -454,7 +451,6 @@ public class Point {
 			return ux;
 		} else {
 			double ux = xbc / xdc;
-			//assert DMath.equals(ux, uy) : "being treated as uneqal: " + ux + " " + uy;
 			/*
 			 * numerically stable
 			 */

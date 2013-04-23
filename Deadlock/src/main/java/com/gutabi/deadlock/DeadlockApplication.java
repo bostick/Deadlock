@@ -47,14 +47,6 @@ public class DeadlockApplication {
 	
 	public static DeadlockApplication APP;
 	
-//	public void init() throws Exception {
-//		
-//		APP.platform.showAppScreen();
-//		
-//		Thread t = new Thread(new UIAnimationRunnable());
-//		t.start();
-//	}
-	
 	public void exit() {
 		
 //		System.exit(0);

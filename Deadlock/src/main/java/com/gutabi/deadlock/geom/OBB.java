@@ -142,10 +142,6 @@ public abstract class OBB implements Shape {
 		
 	}
 	
-//	public AABB getAABB() {
-//		return aabb;
-//	}
-	
 	public Point closestCornerTo(Point p) {
 		
 		Point closest = p0;

@@ -139,7 +139,6 @@ public class FixtureTool extends WorldToolBase {
 		
 		APP.tool.setPoint(world.quadrantMap.getPoint(world.lastMovedOrDraggedWorldPoint));
 		
-//		APP.appScreen.contentPane.repaint();
 	}
 	
 	public void wKey() {
@@ -179,7 +178,6 @@ public class FixtureTool extends WorldToolBase {
 			
 			world.render_worldPanel();
 			world.render_preview();
-//			APP.appScreen.contentPane.repaint();
 		}
 	}
 	
@@ -189,7 +187,6 @@ public class FixtureTool extends WorldToolBase {
 		World world = (World)APP.model;
 		
 		APP.tool.setPoint(world.quadrantMap.getPoint(world.lastMovedOrDraggedWorldPoint));
-//		APP.appScreen.contentPane.repaint();
 	}
 	
 	

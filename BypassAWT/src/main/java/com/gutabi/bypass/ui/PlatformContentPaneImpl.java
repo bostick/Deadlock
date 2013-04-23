@@ -17,8 +17,6 @@ public class PlatformContentPaneImpl extends PlatformContentPane implements java
 	
 	public Container j;
 	
-//	static Logger logger = Logger.getLogger(PlatformContentPaneImpl.class);
-	
 	@SuppressWarnings("serial")
 	public PlatformContentPaneImpl() {
 		

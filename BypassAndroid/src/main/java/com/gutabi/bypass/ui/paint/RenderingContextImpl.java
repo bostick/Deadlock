@@ -33,8 +33,7 @@ public class RenderingContextImpl extends RenderingContext {
 	public Paint paint;
 	
 	public RenderingContextImpl() {
-//		this.canvas = canvas;
-//		this.paint = paint;
+
 	}
 	
 	public void rotate(double a) {
@@ -121,9 +120,7 @@ public class RenderingContextImpl extends RenderingContext {
 	public void getTransform(Transform a) {
 		TransformImpl t = (TransformImpl)a;
 		
-//		Matrix mat = canvas.getMatrix();
 		canvas.getMatrix(t.mat);
-//		t.mat = mat;
 	}
 	
 	

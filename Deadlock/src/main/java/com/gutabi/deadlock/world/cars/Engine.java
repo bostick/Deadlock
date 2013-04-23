@@ -8,7 +8,6 @@ public abstract class Engine {
 	
 	protected double maxRadsPerMeter;
 	protected double maxAcceleration;
-//	private double maxDeceleration = Double.NEGATIVE_INFINITY;
 	protected double frictionForwardImpulseCoefficient;
 	protected double frictionLateralImpulseCoefficient;
 	protected double frictionAngularImpulseCoefficient;

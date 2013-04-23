@@ -24,8 +24,6 @@ public class MenuTool extends Tool {
 		while (!menu.hilited.active) {
 			menu.hilited = menu.hilited.up;
 		}
-		
-//		APP.appScreen.contentPane.repaint();
 	}
 	
 	public void downKey() {
@@ -45,7 +43,6 @@ public class MenuTool extends Tool {
 			menu.hilited = menu.hilited.down;
 		}
 		
-//		APP.appScreen.contentPane.repaint();
 	}
 	
 	public void enterKey() {

@@ -87,8 +87,6 @@ public abstract class Menu {
 		} else {
 			hilited = null;
 		}
-		
-//		APP.appScreen.contentPane.repaint();
 	}
 	
 	public void released(InputEvent ev) {
@@ -100,7 +98,6 @@ public abstract class Menu {
 			item.action();
 		} else {
 			hilited = null;
-//			APP.appScreen.contentPane.repaint();
 		}
 	}
 	
@@ -109,29 +106,14 @@ public abstract class Menu {
 		hilited = null;
 		
 		setLocation(newLoc);
-		
-//		APP.appScreen.contentPane.repaint();
 	}
 	
 	public void moved(InputEvent ev) {
 		
-//		MenuItem hit = hitTest(ev.p);
-//		if (hit != null && hit.active) {
-//			hilited = hit;
-//		} else {
-//			hilited = null;
-//		}
-//		
-//		APP.appScreen.contentPane.repaint();
 	}
 	
 	public void clicked(InputEvent ev) {
 		
-//		MenuItem item = hitTest(ev.p);
-//		
-//		if (item != null && item.active) {
-//			item.action();
-//		}
 	}
 	
 	public MenuItem hitTest(Point p) {

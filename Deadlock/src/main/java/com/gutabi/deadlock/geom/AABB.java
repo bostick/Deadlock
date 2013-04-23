@@ -7,25 +7,17 @@ import com.gutabi.deadlock.ui.paint.RenderingContext;
 
 public class AABB implements Shape {
 	
-//	public final Point ul;
 	public final Dim dim;
 	public final double x;
 	public final double y;
 	public final double width;
 	public final double height;
 	
-//	public final Point br;
 	public final double brX;
 	public final double brY;
 	
-//	public final Point center;
 	public final double centerX;
 	public final double centerY;
-	
-//	public final Point p0;
-//	public final Point p1;
-//	public final Point p2;
-//	public final Point p3;
 	
 	public final Point n01 = Point.UP;
 	public final Point n12 = Point.RIGHT;
@@ -47,14 +39,11 @@ public class AABB implements Shape {
 		assert width >= 0;
 		assert height >= 0;
 		
-//		ul = new Point(x, y);
 		dim = new Dim(width, height);
 		
 		brX = x + width;
 		brY = y + height;
-//		br = new Point(brX, brY);
 		
-//		center = new Point(x + width/2, y + height/2);
 		centerX = x + width/2;
 		centerY = y + height/2;
 		

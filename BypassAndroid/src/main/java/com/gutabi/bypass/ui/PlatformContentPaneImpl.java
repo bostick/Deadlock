@@ -16,13 +16,6 @@ public class PlatformContentPaneImpl extends PlatformContentPane {
 		repaintRunnable = new Runnable() {
 			public void run() {
 				
-//				if (APP.model instanceof BypassWorld) {
-//					
-//					BypassWorld world = (BypassWorld)APP.model;
-//					Log.d("bypass", "car count: " + world.carMap.size());
-//					
-//				}
-				
 				v.invalidate();
 			}
 		};

@@ -118,32 +118,6 @@ public class AutonomousEngine extends Engine {
 		
 	}
 	
-//	private void updateReverseDrive() {
-//		
-//		double dv;
-//		
-//		double backwardSpeed = -c.forwardSpeed;
-//		
-//		if (maxSpeed > backwardSpeed) {
-//			dv = maxSpeed - backwardSpeed;
-//		} else {
-//			dv = 0.0f;
-//		}
-//		if (dv < 0) {
-//			assert false;
-//		}
-//		if (dv > maxAcceleration * world.worldScreen.DT) {
-//			dv = maxAcceleration * world.worldScreen.DT;
-//		}
-//		
-//		c.applyForwardImpulse(driveForwardImpulseCoefficient, -dv);
-//		
-//		c.applyCancelingLateralImpulse(driveLateralImpulseCoefficient);
-//		
-//		turn();
-//		
-//	}
-	
 	private void turn() {
 		
 		Point dp = new Point(c.driver.goalPoint.x-c.center.x, c.driver.goalPoint.y-c.center.y);

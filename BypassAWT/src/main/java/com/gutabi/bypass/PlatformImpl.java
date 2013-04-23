@@ -65,9 +65,6 @@ public class PlatformImpl implements BypassPlatform {
 		
 		RenderingContextImpl ctxt = (RenderingContextImpl)a;
 		
-//		Graphics2D g2 = (Graphics2D)args[0];
-//		ctxt.g2 = g2;
-		
 		if (arg0 instanceof Graphics2D) {
 			
 			Graphics2D g2 = (Graphics2D)arg0;
@@ -329,11 +326,6 @@ public class PlatformImpl implements BypassPlatform {
 	}
 	
 	
-	
-	
-//	public Circle createCircle(Point center, double radius) {
-//		return new CircleImpl(center, radius);
-//	}
 
 	public Polyline createPolyline(Point... pts) {
 		return new PolylineImpl(pts);
