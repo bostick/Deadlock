@@ -163,6 +163,7 @@ public class BypassWorld extends World implements Model {
 			
 			level.isWon = false;
 			level.userMoves = 0;
+			level.userStartTime = System.currentTimeMillis();
 			
 			BypassBoard board = w.createBypassBoard(new Point(1.5 * QuadrantMap.QUADRANT_WIDTH, 2.0 * QuadrantMap.QUADRANT_HEIGHT), level.board);
 			
@@ -378,14 +379,35 @@ public class BypassWorld extends World implements Model {
 	
 	public void handleZooming(Car car) {
 //		World world = (World)APP.model;
+//		System.out.println("handle");
 		
 		GraphPosition gpos = car.driver.overallPos.gp;
 		
 		BypassBoard b;
 		if (gpos instanceof RoadPosition) {
-			b = ((Vertex)car.driver.toolOrigExitingVertexPos.gp.entity).s.board;
+			
+			Vertex origExitingVertex = (Vertex)car.driver.toolOrigExitingVertexPos.gp.entity;
+			
+			b = origExitingVertex.s.board;
+			
+			if (origExitingVertex == b.exitVertex) {
+				/*
+				 * don't pan while exiting
+				 */
+				return;
+			}
+			
 		} else if (gpos instanceof VertexPosition) {
+			
 			b = ((Vertex)gpos.entity).s.board;
+			
+			if (gpos.entity == b.exitVertex) {
+				/*
+				 * don't pan while exiting
+				 */
+				return;
+			}
+			
 		} else {
 			assert gpos instanceof BypassBoardPosition;
 			b = (BypassBoard)gpos.entity;
@@ -397,15 +419,12 @@ public class BypassWorld extends World implements Model {
 		
 		double fraction = b.carInGridFraction(car);
 		
-//		double para = 0.3 + fraction * (1.0 - 0.3);
-//		double cameraX = cc.x + fraction * (worldCamera.origWorldViewport.ul.x - cc.x);
-//		double cameraY = cc.y + fraction * (worldCamera.origWorldViewport.ul.y - cc.y);
-		double cameraX = cc.x + (1-(1-fraction)*(1-fraction)) * (worldCamera.origWorldViewport.x - cc.x);
-		double cameraY = cc.y + (1-(1-fraction)*(1-fraction)) * (worldCamera.origWorldViewport.y - cc.y);
-		
 //		System.out.println(fraction);
 		
-//		worldCamera.zoomAbsolute(para);
+//		double cameraX = cc.x + (1-(1-fraction)*(1-fraction)) * (worldCamera.origWorldViewport.x - cc.x);
+//		double cameraY = cc.y + (1-(1-fraction)*(1-fraction)) * (worldCamera.origWorldViewport.y - cc.y);
+		double cameraX = cc.x + (1-(1-fraction)) * (worldCamera.origWorldViewport.x - cc.x);
+		double cameraY = cc.y + (1-(1-fraction)) * (worldCamera.origWorldViewport.y - cc.y);
 		
 		worldCamera.panAbsolute(cameraX, cameraY);
 		

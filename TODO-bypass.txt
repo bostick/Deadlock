@@ -1,16 +1,4 @@
 
-scoring
-time taken
-moves made
-preference system
-saving scores, current game, 
-
-
-prevent panning when exiting board
-keep board centered as car is leaving
-
-
-
 winner menu:
 try again
 
@@ -20,12 +8,7 @@ reset button
 undo button
 hint button
 
-
 no allocations when dragging
-
-
-
-
 
 select levels for lite version
 select levels for full version
@@ -34,24 +17,13 @@ visually compare similar levels
 similar: lots of cars in same position and similar number of moves
 
 
-
-
-density independent pixels
-use graph paper and sketch out different screens and layouts first
-
-
-
-
-
 when dragging, if within 25% of stud, just go to it
 
-
-
-
-SOON:
-
-spiraling in GPPP.generalSearch?
-
+audit all levels
+audit all artwork
+audit all res
+audit all assets
+audit all classes, proguard
 
 
 easter egg: click on a grass, do something
@@ -60,15 +32,28 @@ in board description, a missing - or | means to allow the car off of the board..
 
 allow custom boards? does bigger than 6x6 work?
 
+SOON:
+
+spiraling in GPPP.generalSearch?
 
 
-
-
-
+density independent pixels
+use graph paper and sketch out different screens and layouts first
 
 
 
 DONE:
+
+blocked car goes and hits the blocker and coasts back
+
+prevent panning when exiting board
+keep board centered as car is leaving
+
+scoring
+time taken
+moves made
+saving scores, 
+
 
 clip painting to screen
 

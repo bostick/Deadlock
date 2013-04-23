@@ -1146,7 +1146,7 @@ public class GraphPositionPathPosition {
 	/**
 	 * on the segment from start.center to end.center, what is the param of the first collision?
 	 */
-	double firstCollisionParam(Car car, SweptOBB swept) {
+	public static double firstCollisionParam(Car car, SweptOBB swept) {
 		
 		double bestParam = -1.0;
 		

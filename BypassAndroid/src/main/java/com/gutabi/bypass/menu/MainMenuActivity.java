@@ -49,10 +49,10 @@ public class MainMenuActivity extends BypassActivity {
 			
 			BYPASSAPP.init();
 			
-			SharedPreferences scores = getSharedPreferences("scores", 0);
+			SharedPreferences grades = getSharedPreferences("grades", 0);
 			
 			for (int i = 0; i < BYPASSAPP.levelDB.levelCount; i++) {
-				String grade = scores.getString(Integer.toString(i), null);
+				String grade = grades.getString(Integer.toString(i), null);
 				if (grade != null) {
 					Level l = BYPASSAPP.levelDB.readLevel(i);
 					l.isWon = true;

@@ -2,7 +2,10 @@ package com.gutabi.bypass.level;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
+import com.gutabi.deadlock.geom.Geom;
+import com.gutabi.deadlock.geom.OBB;
 import com.gutabi.deadlock.geom.ShapeUtils;
+import com.gutabi.deadlock.geom.SweptOBB;
 import com.gutabi.deadlock.math.DMath;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.paint.Cap;
@@ -12,6 +15,7 @@ import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.world.World;
 import com.gutabi.deadlock.world.cars.Car;
 import com.gutabi.deadlock.world.cars.CarStateEnum;
+import com.gutabi.deadlock.world.graph.BypassStud;
 import com.gutabi.deadlock.world.graph.GraphPositionPathPosition;
 import com.gutabi.deadlock.world.sprites.CarSheet.CarType;
 
@@ -26,7 +30,7 @@ public class BypassCar extends Car {
 	 * doesn't need to be a vector, since it is snapped to a track
 	 */
 	private double coastingVel;
-	final double coastingAcceleration = 1.0;
+	final double coastingAcceleration = 0.5;
 	
 	public BypassCar(World w, CarType type) {
 		super(w, type);
@@ -80,8 +84,8 @@ public class BypassCar extends Car {
 		
 		assert vel >= 0.0;
 		
-		if (vel > 15) {
-			vel = 15;
+		if (vel > 3) {
+			vel = 3;
 		}
 		
 		coastingVel = vel;
@@ -107,8 +111,6 @@ public class BypassCar extends Car {
 			newPos = driver.overallPos.travelBackward(Math.min(dist, driver.overallPos.lengthTo(driver.toolCoastingGoal)));
 		}
 		
-//		System.out.println(newPos.gp);
-		
 		if (DMath.equals(newPos.combo, driver.toolCoastingGoal.combo)) {
 			
 			coastingVel = 0;
@@ -130,12 +132,39 @@ public class BypassCar extends Car {
 			driver.toolOrigExitingVertexPos = null;
 			driver.toolCoastingGoal = null;
 			driver.prevOverallPos = null;
-//			((InteractiveCarTool)APP.tool).car = null;
 			
 			return;
+		} else {
+			
+			if (driver.overallPos.angle == newPos.angle) {
+				OBB so = Geom.localToWorld(localAABB, driver.overallPos.angle, driver.overallPos.p);
+				OBB eo = Geom.localToWorld(localAABB, newPos.angle, newPos.p);
+				SweptOBB swept = new SweptOBB(so, eo);
+				
+				if (swept.isAABB) {
+					double param = GraphPositionPathPosition.firstCollisionParam(this, swept);
+					if (param != -1) {
+						
+						int studCount = (int)(length * Car.METERS_PER_CARLENGTH / BypassStud.SIZE);
+						
+						if (state == CarStateEnum.COASTING_FORWARD) {
+							state = CarStateEnum.COASTING_BACKWARD;
+							driver.toolCoastingGoal = driver.toolOrigExitingVertexPos.travelBackward(BypassStud.SIZE + 0.5 * studCount);
+						} else {
+							state = CarStateEnum.COASTING_FORWARD;
+							driver.toolCoastingGoal = driver.toolOrigExitingVertexPos.travelForward(BypassStud.SIZE + 0.5 * studCount);
+						}
+						
+						setTransform(Point.point(driver.overallPos.p, newPos.p, param), newPos.angle);
+						setPhysicsTransform();
+						return;
+					}
+				}
+			}
+			
 		}
 		
-		setTransform(newPos.p, (state == CarStateEnum.COASTING_FORWARD ? newPos.angle : newPos.angle));
+		setTransform(newPos.p, newPos.angle);
 		setPhysicsTransform();
 	}
 	

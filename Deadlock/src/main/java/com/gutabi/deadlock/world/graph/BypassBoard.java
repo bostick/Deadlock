@@ -1293,16 +1293,19 @@ public class BypassBoard extends Entity {
 		
 		MutableOBB o = c.shape;
 		
-		if (!o.rightAngle) {
-			/*
-			 * on curved road, completely outside grid
-			 */
-			return 0.0;
-		}
+//		if (!o.rightAngle) {
+//			/*
+//			 * on curved road, completely outside grid
+//			 */
+//			return 0.0;
+//		}
 		
 		MutableAABB a = o.aabb;
 		
-		double frac = a.fractionWithin(allStudsAABB, allStudsAABB);
+//		double frac = a.fractionWithin(allStudsAABB, allStudsAABB);
+//		double frac = a.fractionWithin(allStudsAABB, zoomingAABB);
+//		double frac = a.fractionWithin(gridAABB, allStudsAABB);
+		double frac = a.fractionWithin(gridAABB, gridAABB);
 		
 		return frac;
 	}

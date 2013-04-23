@@ -1,7 +1,6 @@
 package com.gutabi.bypass.level;
 
 import static com.gutabi.bypass.BypassApplication.BYPASSAPP;
-
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
 import com.gutabi.bypass.menu.LevelMenu;
@@ -16,7 +15,6 @@ import com.gutabi.deadlock.world.cars.CarStateEnum;
 import com.gutabi.deadlock.world.graph.BypassBoard;
 import com.gutabi.deadlock.world.graph.BypassBoardPosition;
 import com.gutabi.deadlock.world.graph.BypassStud;
-import com.gutabi.deadlock.world.graph.Fixture;
 import com.gutabi.deadlock.world.graph.GraphPosition;
 import com.gutabi.deadlock.world.graph.GraphPositionPathPosition;
 import com.gutabi.deadlock.world.graph.RoadPosition;
@@ -216,8 +214,8 @@ public class BypassCarTool extends WorldToolBase {
 		boolean otherIsForward = otherVertexPos.combo > origVertexPos.combo;
 		
 		int studCount = (int)(car.length * Car.METERS_PER_CARLENGTH / BypassStud.SIZE);
-		boolean otherSideIsFree = true;
-		boolean origSideIsFree = true;
+//		boolean otherSideIsFree = true;
+//		boolean origSideIsFree = true;
 		
 		/*
 		 * overallPos is greater than exiting vertex, so the other vertex must be greater than overallPos
@@ -226,31 +224,31 @@ public class BypassCarTool extends WorldToolBase {
 		/*
 		 * find thisSideIsFree
 		 */
-		Fixture origVertex = (Fixture)origVertexPos.gp.entity;
-		if (origVertex.getFacingSide().isRightOrBottom()) {
-			/*
-			 * vertex on top or left
-			 */
-			for (int i = 0; i < studCount; i++) {
-				BypassBoardPosition bpos = (BypassBoardPosition)car.driver.overallPath.get(otherIsForward ? origVertexPos.index-1-i : origVertexPos.index+1+i);
-				BypassStud stud = ((BypassBoard)bpos.entity).stud(bpos);
-				if (!stud.isFree(car)) {
-					origSideIsFree = false;
-					break;
-				}
-			}
-			
-		} else {
-			
-			for (int i = 0; i < studCount; i++) {
-				BypassBoardPosition bpos = (BypassBoardPosition)car.driver.overallPath.get(otherIsForward ? origVertexPos.index-2-i : origVertexPos.index+2+i);
-				BypassStud stud = ((BypassBoard)bpos.entity).stud(bpos);
-				if (!stud.isFree(car)) {
-					origSideIsFree = false;
-					break;
-				}
-			}
-		}
+//		Fixture origVertex = (Fixture)origVertexPos.gp.entity;
+//		if (origVertex.getFacingSide().isRightOrBottom()) {
+//			/*
+//			 * vertex on top or left
+//			 */
+//			for (int i = 0; i < studCount; i++) {
+//				BypassBoardPosition bpos = (BypassBoardPosition)car.driver.overallPath.get(otherIsForward ? origVertexPos.index-1-i : origVertexPos.index+1+i);
+//				BypassStud stud = ((BypassBoard)bpos.entity).stud(bpos);
+//				if (!stud.isFree(car)) {
+//					origSideIsFree = false;
+//					break;
+//				}
+//			}
+//			
+//		} else {
+//			
+//			for (int i = 0; i < studCount; i++) {
+//				BypassBoardPosition bpos = (BypassBoardPosition)car.driver.overallPath.get(otherIsForward ? origVertexPos.index-2-i : origVertexPos.index+2+i);
+//				BypassStud stud = ((BypassBoard)bpos.entity).stud(bpos);
+//				if (!stud.isFree(car)) {
+//					origSideIsFree = false;
+//					break;
+//				}
+//			}
+//		}
 		
 		/*
 		 * find otherSideIsFree
@@ -262,35 +260,35 @@ public class BypassCarTool extends WorldToolBase {
 			
 		} else {
 			
-			Fixture otherVertex = (Fixture)otherVertexPos.gp.entity;
-			if (otherVertex.getFacingSide().isRightOrBottom()) {
-				/*
-				 * vertex on top or left
-				 */
-				for (int i = 0; i < studCount; i++) {
-					BypassBoardPosition bpos = (BypassBoardPosition)car.driver.overallPath.get(otherIsForward ? otherVertexPos.index+1+i : otherVertexPos.index-1-i);
-					BypassStud stud = ((BypassBoard)bpos.entity).stud(bpos);
-					if (!stud.isFree(car)) {
-						otherSideIsFree = false;
-						break;
-					}
-				}
-				
-			} else {
-				
-				for (int i = 0; i < studCount; i++) {
-					BypassBoardPosition bpos = (BypassBoardPosition)car.driver.overallPath.get(otherIsForward ? otherVertexPos.index+2+i : otherVertexPos.index-2-i);
-					BypassStud stud = ((BypassBoard)bpos.entity).stud(bpos);
-					if (!stud.isFree(car)) {
-						otherSideIsFree = false;
-						break;
-					}
-				}
-			}
+//			Fixture otherVertex = (Fixture)otherVertexPos.gp.entity;
+//			if (otherVertex.getFacingSide().isRightOrBottom()) {
+//				/*
+//				 * vertex on top or left
+//				 */
+//				for (int i = 0; i < studCount; i++) {
+//					BypassBoardPosition bpos = (BypassBoardPosition)car.driver.overallPath.get(otherIsForward ? otherVertexPos.index+1+i : otherVertexPos.index-1-i);
+//					BypassStud stud = ((BypassBoard)bpos.entity).stud(bpos);
+//					if (!stud.isFree(car)) {
+//						otherSideIsFree = false;
+//						break;
+//					}
+//				}
+//				
+//			} else {
+//				
+//				for (int i = 0; i < studCount; i++) {
+//					BypassBoardPosition bpos = (BypassBoardPosition)car.driver.overallPath.get(otherIsForward ? otherVertexPos.index+2+i : otherVertexPos.index-2-i);
+//					BypassStud stud = ((BypassBoard)bpos.entity).stud(bpos);
+//					if (!stud.isFree(car)) {
+//						otherSideIsFree = false;
+//						break;
+//					}
+//				}
+//			}
 		}
 		
-		if (tryOtherSideFirst ? otherSideIsFree : !origSideIsFree) {
-			assert otherSideIsFree;
+		if (tryOtherSideFirst) {
+//			assert otherSideIsFree;
 			/*
 			 * go to other vertex
 			 */
@@ -313,7 +311,7 @@ public class BypassCarTool extends WorldToolBase {
 			}
 			
 		} else {
-			assert origSideIsFree;
+//			assert origSideIsFree;
 			/*
 			 * go to orig vertex
 			 */
@@ -612,6 +610,8 @@ public class BypassCarTool extends WorldToolBase {
 		} else {
 			world.curLevel.grade = "F";	
 		}
+		
+		world.curLevel.userTime = (System.currentTimeMillis() - world.curLevel.userStartTime);
 		
 		world.curLevel.isWon = true;
 		

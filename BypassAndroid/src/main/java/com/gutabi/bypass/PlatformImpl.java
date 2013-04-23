@@ -393,12 +393,23 @@ public class PlatformImpl implements BypassPlatform {
 	
 	public void saveScore(Level l) {
 		
-		SharedPreferences scores = CURRENTACTIVITY.getSharedPreferences("scores", 0);
-		SharedPreferences.Editor editor = scores.edit();
+		SharedPreferences grades = CURRENTACTIVITY.getSharedPreferences("grades", 0);
+		SharedPreferences.Editor editor = grades.edit();
 		editor.putString(Integer.toString(l.index), l.grade);
 		
 		editor.commit();
 		
+		SharedPreferences userMoves = CURRENTACTIVITY.getSharedPreferences("userMoves", 0);
+		editor = userMoves.edit();
+		editor.putInt(Integer.toString(l.index), l.userMoves);
+		
+		editor.commit();
+		
+		SharedPreferences userTime = CURRENTACTIVITY.getSharedPreferences("userTime", 0);
+		editor = userTime.edit();
+		editor.putLong(Integer.toString(l.index), l.userTime);
+		
+		editor.commit();
 	}
 
 }

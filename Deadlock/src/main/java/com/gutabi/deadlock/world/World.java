@@ -36,8 +36,6 @@ public class World extends PhysicsWorld {
 	
 	public WorldMode mode;
 	
-//	public final Object pauseLock = new Object();
-	
 	WorldBackground background;
 	public Image previewImage;
 	

@@ -90,6 +90,7 @@ public class MutableAABB {
 	public double fractionWithin(AABB inner, AABB outer) {
 		
 		if (DMath.lessThan(x, inner.x)) {
+//			System.out.println(1);
 			
 			if (DMath.lessThan(y+height, outer.y)) {
 				return 0.0;
@@ -108,6 +109,7 @@ public class MutableAABB {
 		}
 		
 		if (DMath.greaterThan(x+width, inner.brX)) {
+//			System.out.println(2);
 			
 			if (DMath.lessThan(y+height, outer.y)) {
 				return 0.0;
@@ -120,12 +122,15 @@ public class MutableAABB {
 			
 			double innerLen = x+width - inner.brX;
 			
+//			System.out.println(1.0 - innerLen / (diff+width));
+			
 			return DMath.greaterThan(innerLen, (diff+width)) ?
 					0.0 :
 						1.0 - innerLen / (diff+width);
 		}
 		
 		if (DMath.lessThan(y, inner.y)) {
+//			System.out.println(3);
 			
 			if (DMath.lessThan(x+width, outer.x)) {
 				assert false;
@@ -146,6 +151,7 @@ public class MutableAABB {
 		}
 		
 		if (DMath.greaterThan(y+height, inner.brY)) {
+//			System.out.println(4);
 			
 			if (DMath.lessThan(x+width, outer.x)) {
 				assert false;
