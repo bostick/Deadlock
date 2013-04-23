@@ -21,7 +21,6 @@ import com.gutabi.deadlock.world.World;
 import com.gutabi.deadlock.world.WorldMode;
 import com.gutabi.deadlock.world.WorldPanel;
 import com.gutabi.deadlock.world.cars.Car;
-import com.gutabi.deadlock.world.cars.CarStateEnum;
 import com.gutabi.deadlock.world.graph.Axis;
 import com.gutabi.deadlock.world.graph.BypassBoard;
 import com.gutabi.deadlock.world.graph.BypassBoardPosition;
@@ -135,6 +134,37 @@ public class BypassWorld extends World implements Model {
 		
 	}
 	
+	public void reset() {
+		
+		curLevel.userMoves = 0;
+		
+		for (Car c : carMap.cars) {
+			
+			switch (c.driver.startSide) {
+			case RIGHT:
+				c.setTransform(c.driver.startGP.p, 0.0 * Math.PI);
+				c.driver.setOverallPos(c.driver.overallPath.findGraphPositionPathPosition(c.driver.startGP, 0.0 * Math.PI));
+				break;
+			case BOTTOM:
+				c.setTransform(c.driver.startGP.p, 0.5 * Math.PI);
+				c.driver.setOverallPos(c.driver.overallPath.findGraphPositionPathPosition(c.driver.startGP, 0.5 * Math.PI));
+				break;
+			case LEFT:
+				c.setTransform(c.driver.startGP.p, 1.0 * Math.PI);
+				c.driver.setOverallPos(c.driver.overallPath.findGraphPositionPathPosition(c.driver.startGP, 0.0 * Math.PI));
+				break;
+			case TOP:
+				c.setTransform(c.driver.startGP.p, 1.5 * Math.PI);
+				c.driver.setOverallPos(c.driver.overallPath.findGraphPositionPathPosition(c.driver.startGP, 0.5 * Math.PI));
+				break;
+			}
+			
+			c.setPhysicsTransform();
+			
+		}
+		
+	}
+	
 	public static BypassWorld createBypassWorld(int index) {
 		
 		int[][] ini = new int[][] {
@@ -165,7 +195,7 @@ public class BypassWorld extends World implements Model {
 			level.userMoves = 0;
 			level.userStartTime = System.currentTimeMillis();
 			
-			BypassBoard board = w.createBypassBoard(new Point(1.5 * QuadrantMap.QUADRANT_WIDTH, 2.0 * QuadrantMap.QUADRANT_HEIGHT), level.board);
+			BypassBoard board = w.createBypassBoard(new Point(1.5 * QuadrantMap.QUADRANT_WIDTH, 2.0 * QuadrantMap.QUADRANT_HEIGHT), level.ini);
 			
 			w.addBypassCars(board);
 			
@@ -189,30 +219,30 @@ public class BypassWorld extends World implements Model {
 					if (board.ini[i][j] == c) {
 						if (c == 'R') {
 							if (i+1-board.originRow < board.rowCount && board.ini[i+1][j] == c) {
-								addNewCar(board, i-board.originRow, j-board.originCol, Axis.TOPBOTTOM, CarType.RED, 0);
+								addNewCar(board, i-board.originRow, j-board.originCol, Axis.TOPBOTTOM, CarType.RED, 0, c);
 								continue carLoop;
 							} else {
-								addNewCar(board, i-board.originRow, j-board.originCol, Axis.LEFTRIGHT, CarType.RED, 0);
+								addNewCar(board, i-board.originRow, j-board.originCol, Axis.LEFTRIGHT, CarType.RED, 0, c);
 								continue carLoop;
 							}
 						} else if (i+1-board.originRow < board.rowCount && board.ini[i+1][j] == c) {
 							if (i+2-board.originRow < board.rowCount && board.ini[i+2][j] == c) {
-								addNewCar(board, i-board.originRow, j-board.originCol, Axis.TOPBOTTOM, CarType.THREE, cur3Count);
+								addNewCar(board, i-board.originRow, j-board.originCol, Axis.TOPBOTTOM, CarType.THREE, cur3Count, c);
 								cur3Count++;
 								continue carLoop;
 							} else {
-								addNewCar(board, i-board.originRow, j-board.originCol, Axis.TOPBOTTOM, CarType.TWO, cur2Count);
+								addNewCar(board, i-board.originRow, j-board.originCol, Axis.TOPBOTTOM, CarType.TWO, cur2Count, c);
 								cur2Count++;
 								continue carLoop;
 							}
 						} else {
 							assert board.ini[i][j+1] == c;
 							if (j+2-board.originCol < board.colCount && board.ini[i][j+2] == c) {
-								addNewCar(board, i-board.originRow, j-board.originCol, Axis.LEFTRIGHT, CarType.THREE, cur3Count);
+								addNewCar(board, i-board.originRow, j-board.originCol, Axis.LEFTRIGHT, CarType.THREE, cur3Count, c);
 								cur3Count++;
 								continue carLoop;
 							} else {
-								addNewCar(board, i-board.originRow, j-board.originCol, Axis.LEFTRIGHT, CarType.TWO, cur2Count);
+								addNewCar(board, i-board.originRow, j-board.originCol, Axis.LEFTRIGHT, CarType.TWO, cur2Count, c);
 								cur2Count++;
 								continue carLoop;
 							}
@@ -224,12 +254,11 @@ public class BypassWorld extends World implements Model {
 		
 	}
 	
-	private void addNewCar(BypassBoard board, int firstULRow, int firstULCol, Axis a, CarType type, int curTypeCount) {
+	private void addNewCar(BypassBoard board, int firstULRow, int firstULCol, Axis a, CarType type, int curTypeCount, char boardLetter) {
 		
 		int sheetIndex = CarSheet.sheetIndex(type, curTypeCount);
 		
-		BypassCar c = BypassCar.createCar(this, type, sheetIndex);
-		c.state = CarStateEnum.IDLE;
+		BypassCar c = BypassCar.createCar(this, type, sheetIndex, boardLetter);
 		
 		/*
 		 * direction of path determines direction of car
@@ -298,31 +327,31 @@ public class BypassWorld extends World implements Model {
 		switch (side) {
 		case RIGHT:
 			c.driver.startGP = new BypassBoardPosition(board, firstULRow + c.width/2, firstULCol + c.length/2);
+			c.driver.startSide = Side.RIGHT;
 			c.setTransform(c.driver.startGP.p, 0.0 * Math.PI);
 			c.driver.overallPath = path;
 			c.driver.setOverallPos(path.findGraphPositionPathPosition(c.driver.startGP, 0.0 * Math.PI));
-//			set valids Path
 			break;
 		case BOTTOM:
 			c.driver.startGP = new BypassBoardPosition(board, firstULRow + c.length/2, firstULCol + c.width/2);
+			c.driver.startSide = Side.BOTTOM;
 			c.setTransform(c.driver.startGP.p, 0.5 * Math.PI);
 			c.driver.overallPath = path;
 			c.driver.setOverallPos(path.findGraphPositionPathPosition(c.driver.startGP, 0.5 * Math.PI));
-//			set valids Path
 			break;
 		case LEFT:
 			c.driver.startGP = new BypassBoardPosition(board, firstULRow + c.width/2, firstULCol + c.length/2);
+			c.driver.startSide = Side.LEFT;
 			c.setTransform(c.driver.startGP.p, 1.0 * Math.PI);
 			c.driver.overallPath = path;
 			c.driver.setOverallPos(path.findGraphPositionPathPosition(c.driver.startGP, 0.0 * Math.PI));
-//			set valids Path
 			break;
 		case TOP:
 			c.driver.startGP = new BypassBoardPosition(board, firstULRow + c.length/2, firstULCol + c.width/2);
+			c.driver.startSide = Side.TOP;
 			c.setTransform(c.driver.startGP.p, 1.5 * Math.PI);
 			c.driver.overallPath = path;
 			c.driver.setOverallPos(path.findGraphPositionPathPosition(c.driver.startGP, 0.5 * Math.PI));
-//			set valids Path
 			break;
 		}
 		
@@ -438,9 +467,11 @@ public class BypassWorld extends World implements Model {
 			
 			double totalHeight = winnerLabel.aabb.height + 5 + gradeLabel.aabb.height + 5 + winnerMenu.aabb.height;
 			
-			winnerLabel.setLocation(worldCamera.worldPanel.aabb.width/2 - winnerLabel.aabb.width/2, worldCamera.worldPanel.aabb.height/2 - totalHeight/2);
-			gradeLabel.setLocation(worldCamera.worldPanel.aabb.width/2 - gradeLabel.aabb.width/2, winnerLabel.aabb.y+winnerLabel.aabb.height + 5);
-			winnerMenu.setLocation(worldCamera.worldPanel.aabb.width/2 - winnerMenu.aabb.width/2, gradeLabel.aabb.y+gradeLabel.aabb.height + 5);
+			gradeLabel.setLocation(worldCamera.worldPanel.aabb.width/2 - gradeLabel.aabb.width/2, worldCamera.worldPanel.aabb.height/2 - totalHeight/2);
+			
+			winnerLabel.setLocation(worldCamera.worldPanel.aabb.width/2 - winnerLabel.aabb.width/2, gradeLabel.aabb.y+gradeLabel.aabb.height + 5);
+			
+			winnerMenu.setLocation(worldCamera.worldPanel.aabb.width/2 - winnerMenu.aabb.width/2, winnerLabel.aabb.y+winnerLabel.aabb.height + 5);
 		}
 	}
 	
@@ -450,17 +481,27 @@ public class BypassWorld extends World implements Model {
 		
 		if (curLevel.isWon) {
 			
+			double maxWidth = winnerLabel.aabb.width;
+			double x = winnerLabel.aabb.x;
+			if (gradeLabel.aabb.width > maxWidth) {
+				maxWidth = gradeLabel.aabb.width;
+				x = gradeLabel.aabb.x;
+			}
+			if (winnerMenu.aabb.width > maxWidth) {
+				maxWidth = winnerMenu.aabb.width;
+				x = winnerMenu.aabb.x;
+			}
 			double totalHeight = winnerLabel.aabb.height + 5 + gradeLabel.aabb.height + 5 + winnerMenu.aabb.height;
 			
 			ctxt.setColor(Color.menuBackground);
 			ctxt.fillRect(
-					(int)(-5 + winnerLabel.aabb.x),
-					(int)(-5 + winnerLabel.aabb.y),
-					(int)(winnerLabel.aabb.width + 5 + 5),
+					(int)(-5 + x),
+					(int)(-5 + gradeLabel.aabb.y),
+					(int)(maxWidth + 5 + 5),
 					(int)(totalHeight + 5 + 5));
 			
-			winnerLabel.paint(ctxt);
 			gradeLabel.paint(ctxt);
+			winnerLabel.paint(ctxt);
 			winnerMenu.paint_panel(ctxt);
 		}
 		

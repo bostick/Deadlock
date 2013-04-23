@@ -4,7 +4,7 @@ public class Level {
 	
 	public int index;
 	
-	public char[][] board;
+	public char[][] ini;
 	
 	public int requiredMoves;
 	

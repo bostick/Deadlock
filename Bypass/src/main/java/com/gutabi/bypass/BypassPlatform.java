@@ -7,4 +7,6 @@ public interface BypassPlatform extends Platform {
 	
 	void saveScore(Level l);
 	
+//	void longClick();
+	
 }

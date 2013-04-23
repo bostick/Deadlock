@@ -5,7 +5,6 @@ import static com.gutabi.deadlock.DeadlockApplication.APP;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
-import android.view.Menu;
 import android.view.Window;
 
 import com.gutabi.bypass.BypassActivity;
@@ -92,14 +91,5 @@ public class MainMenuActivity extends BypassActivity {
 		
 		MainMenu.pause();
 	}
-	
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
-		return true;
-	}
-	
-	
-	
 	
 }

@@ -1,14 +1,8 @@
 package com.gutabi.bypass;
 
-import static com.gutabi.deadlock.DeadlockApplication.APP;
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.GestureDetector;
-import android.view.GestureDetector.SimpleOnGestureListener;
-import android.view.MotionEvent;
-
-import com.gutabi.deadlock.math.Point;
 
 public class BypassActivity extends Activity {
 	
@@ -17,7 +11,7 @@ public class BypassActivity extends Activity {
 	
 	protected String name;
 	
-	private GestureDetector gDetector;
+//	private GestureDetector gDetector;
 	
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -27,7 +21,7 @@ public class BypassActivity extends Activity {
 		
 		PlatformImpl.CURRENTACTIVITY = this;
 		
-		gDetector = new GestureDetector(this, simpleOnGestureListener);
+//		gDetector = new GestureDetector(this, simpleOnGestureListener);
 		
 	}
 	
@@ -109,52 +103,65 @@ public class BypassActivity extends Activity {
 	
 	
 	
-	int[] touchOut = new int[2];
+//	int[] touchOut = new int[2];
 	
-	public boolean onTouchEvent(MotionEvent ev) {
-		
-		v.getLocationInWindow(touchOut);
-		
-		int act = ev.getAction();
-		
-		float x = ev.getRawX() - touchOut[0];
-		float y = ev.getRawY() - touchOut[1];
-		Point p = new Point(x, y);
-		
-		switch (act) {
-		case MotionEvent.ACTION_DOWN:
-//			Log.d("motion", "down " + p);
-			APP.appScreen.contentPane.pcp.pressedDriver(p);
-			break;
-		case MotionEvent.ACTION_MOVE:
-//			Log.d("motion", "move " + p);
-			APP.appScreen.contentPane.pcp.draggedDriver(p);
-			break;
-		case MotionEvent.ACTION_UP:
-//			Log.d("motion", "up " + p);
-			APP.appScreen.contentPane.pcp.releasedDriver(p);
-			break;
-		}
-		
-		gDetector.onTouchEvent(ev);
-		
-		return true;
-	}
+//	public boolean onTouchEvent(MotionEvent ev) {
+//		
+//		v.getLocationInWindow(touchOut);
+//		
+//		int act = ev.getAction();
+//		
+//		float x = ev.getRawX() - touchOut[0];
+//		float y = ev.getRawY() - touchOut[1];
+//		Point p = new Point(x, y);
+//		
+//		switch (act) {
+//		case MotionEvent.ACTION_DOWN:
+////			Log.d("motion", "down " + p);
+//			APP.appScreen.contentPane.pcp.pressedDriver(p);
+//			break;
+//		case MotionEvent.ACTION_MOVE:
+////			Log.d("motion", "move " + p);
+//			APP.appScreen.contentPane.pcp.draggedDriver(p);
+//			break;
+//		case MotionEvent.ACTION_UP:
+////			Log.d("motion", "up " + p);
+//			APP.appScreen.contentPane.pcp.releasedDriver(p);
+//			break;
+//		}
+//		
+//		gDetector.onTouchEvent(ev);
+//		
+//		return true;
+//	}
 	
-	SimpleOnGestureListener simpleOnGestureListener = new SimpleOnGestureListener(){
-		
-		public boolean onSingleTapUp(MotionEvent ev) {
-			
-			v.getLocationInWindow(touchOut);
-			
-			float x = ev.getRawX() - touchOut[0];
-			float y = ev.getRawY() - touchOut[1];
-			Point p = new Point(x, y);
-			
-			APP.appScreen.contentPane.pcp.clickedDriver(p);
-			
-			return super.onSingleTapUp(ev);
-		}
-	};
+//	SimpleOnGestureListener simpleOnGestureListener = new SimpleOnGestureListener() {
+//		
+//		public boolean onSingleTapUp(MotionEvent ev) {
+//			
+//			v.getLocationInWindow(touchOut);
+//			
+//			float x = ev.getRawX() - touchOut[0];
+//			float y = ev.getRawY() - touchOut[1];
+//			Point p = new Point(x, y);
+//			
+//			APP.appScreen.contentPane.pcp.clickedDriver(p);
+//			
+//			return super.onSingleTapUp(ev);
+//		}
+//		
+////		public boolean onLongClick(MotionEvent ev) {
+////			
+////			v.getLocationInWindow(touchOut);
+////			
+////			float x = ev.getRawX() - touchOut[0];
+////			float y = ev.getRawY() - touchOut[1];
+////			Point p = new Point(x, y);
+////			
+////			APP.appScreen.contentPane.pcp.longPressDriver(p);
+////			
+////			return super.onLo
+////		}
+//	};
 	
 }

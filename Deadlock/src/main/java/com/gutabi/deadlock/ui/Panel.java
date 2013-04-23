@@ -56,6 +56,13 @@ public abstract class Panel {
 		APP.tool.clicked(ev);
 	}
 	
+//	public void longClick(InputEvent ev) {
+//		
+////		lastClickedPanelPoint = ev.p;
+//		
+//		APP.tool.longClick(ev);
+//	}
+	
 	public abstract void postDisplay();
 	
 	public abstract void paint(RenderingContext ctxt);

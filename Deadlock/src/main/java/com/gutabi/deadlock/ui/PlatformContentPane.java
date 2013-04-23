@@ -45,6 +45,15 @@ public abstract class PlatformContentPane implements Paintable {
 		}
 	}
 	
+//	public void longPressClick(Point p) {
+//		for (Panel child : children) {
+//			if (child.aabb.hitTest(p)) {
+//				child.longClick(new InputEvent(child, Point.contentPaneToPanel(p, child)));
+//				return;
+//			}
+//		}
+//	}
+	
 	public void pressedDriver(Point p) {
 		lastPressedContentPanePoint = p;
 		lastDraggedContentPanePoint = null;

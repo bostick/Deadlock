@@ -21,6 +21,8 @@ import com.gutabi.deadlock.world.sprites.CarSheet.CarType;
 
 public class BypassCar extends Car {
 	
+	public char boardLetter;
+	
 	/*
 	 * bypass the regular physics here.
 	 * we just need the car to be constrained to the road, and accelerating
@@ -36,12 +38,15 @@ public class BypassCar extends Car {
 		super(w, type);
 	}
 	
-	public static BypassCar createCar(World world, CarType type, int r) {
+	public static BypassCar createCar(World world, CarType type, int sheetIndex, char boardLetter) {
 		
 		BypassCar c = new BypassCar(world, type);
 		c.driver = new BypassDriver(c);
 		
-		c.computeCtorProperties(r);
+		c.computeCtorProperties(sheetIndex);
+		
+		c.boardLetter = boardLetter;
+		c.state = CarStateEnum.IDLE;
 		
 		return c;
 	}
@@ -84,8 +89,8 @@ public class BypassCar extends Car {
 		
 		assert vel >= 0.0;
 		
-		if (vel > 3) {
-			vel = 3;
+		if (vel > 10) {
+			vel = 10;
 		}
 		
 		coastingVel = vel;

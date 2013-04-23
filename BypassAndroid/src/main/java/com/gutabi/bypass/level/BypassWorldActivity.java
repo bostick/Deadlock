@@ -4,6 +4,8 @@ import static com.gutabi.deadlock.DeadlockApplication.APP;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.Window;
 
 import com.gutabi.bypass.BypassActivity;
@@ -32,6 +34,10 @@ public class BypassWorldActivity extends BypassActivity {
 		
 		v.ctxt = APP.platform.createRenderingContext();
 		v.activity = this;
+		
+//		v.setOnLongClickListener(this);
+		
+		registerForContextMenu(v);
 		
 		int ii = (Integer)getIntent().getExtras().get("com.gutabi.bypass.level.Index");
 		
@@ -62,59 +68,23 @@ public class BypassWorldActivity extends BypassActivity {
 		BypassWorld.pause();
 	}
 	
+	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
-		return true;
+	    MenuInflater inflater = getMenuInflater();
+	    inflater.inflate(R.menu.world_context_menu, menu);
+	    return true;
 	}
 	
-	
-//	int[] touchOut = new int[2];
-//	
-//	public boolean onTouchEvent(MotionEvent ev) {
-//		
-//		v.getLocationInWindow(touchOut);
-//		
-//		int act = ev.getAction();
-//		
-//		float x = ev.getRawX() - touchOut[0];
-//		float y = ev.getRawY() - touchOut[1];
-//		Point p = new Point(x, y);
-//		
-//		switch (act) {
-//		case MotionEvent.ACTION_DOWN:
-////			Log.d("motion", "down " + p);
-//			APP.appScreen.contentPane.pcp.pressedDriver(p);
-//			break;
-//		case MotionEvent.ACTION_MOVE:
-////			Log.d("motion", "move " + p);
-//			APP.appScreen.contentPane.pcp.draggedDriver(p);
-//			break;
-//		case MotionEvent.ACTION_UP:
-////			Log.d("motion", "up " + p);
-//			APP.appScreen.contentPane.pcp.releasedDriver(p);
-//			break;
-//		}
-//		
-//		gDetector.onTouchEvent(ev);
-//		
-//		return true;
-//	}
-//	
-//	SimpleOnGestureListener simpleOnGestureListener = new SimpleOnGestureListener(){
-//		
-//		public boolean onSingleTapUp(MotionEvent ev) {
-//			
-//			v.getLocationInWindow(touchOut);
-//			
-//			float x = ev.getRawX() - touchOut[0];
-//			float y = ev.getRawY() - touchOut[1];
-//			Point p = new Point(x, y);
-//			
-//			APP.appScreen.contentPane.pcp.clickedDriver(p);
-//			
-//			return super.onSingleTapUp(ev);
-//		}
-//	};
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+	    // Handle item selection
+	    switch (item.getItemId()) {
+	        case R.id.btn_reset:
+	        	BypassWorld.BYPASSWORLD.reset();
+	            return true;
+	        default:
+	            return super.onOptionsItemSelected(item);
+	    }
+	}
 	
 }

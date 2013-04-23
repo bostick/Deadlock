@@ -4,12 +4,14 @@ import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.world.graph.GraphPosition;
 import com.gutabi.deadlock.world.graph.GraphPositionPath;
 import com.gutabi.deadlock.world.graph.GraphPositionPathPosition;
+import com.gutabi.deadlock.world.graph.Side;
 
 public abstract class Driver {
 	
 	public final Car c;
 	
 	public GraphPosition startGP;
+	public Side startSide;
 	
 	public GraphPositionPath overallPath;
 	

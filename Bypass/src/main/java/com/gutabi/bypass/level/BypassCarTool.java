@@ -622,6 +622,10 @@ public class BypassCarTool extends WorldToolBase {
 		WinnerMenu.action();
 	}
 	
+//	public void longClick(InputEvent ev) {
+//		BYPASSAPP.bypassPlatform.longClick();
+//	}
+	
 	public void paint_panel(RenderingContext ctxt) {
 		
 	}

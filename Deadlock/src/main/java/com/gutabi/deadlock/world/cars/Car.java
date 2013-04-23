@@ -44,6 +44,10 @@ public abstract class Car extends PhysicsBody {
 	public boolean destroyed;
 	
 	
+	public CarSheetSprite sprite;
+	public int sheetIndex;
+	
+	
 	public static int carIDCounter;
 	
 	public Car(World world, CarType type) {
@@ -57,9 +61,11 @@ public abstract class Car extends PhysicsBody {
 		state = CarStateEnum.DRIVING;
 	}
 	
-	public void computeCtorProperties(int r) {
+	public void computeCtorProperties(int sheetIndex) {
 		
-		sprite = CarSheet.sprite(r);
+		this.sheetIndex = sheetIndex;
+		
+		sprite = CarSheet.sprite(sheetIndex);
 		length = sprite.carLength() * METERS_PER_CARLENGTH;
 		width = sprite.carWidth() * METERS_PER_CARLENGTH;
 //		localFront = new Point(0.75 * length, 0.0);
@@ -142,8 +148,6 @@ public abstract class Car extends PhysicsBody {
 	
 	public double CAR_BRAKE2X;
 	public double CAR_BRAKE2Y;
-	
-	public CarSheetSprite sprite;
 	
 	public abstract void paint(RenderingContext ctxt);
 	

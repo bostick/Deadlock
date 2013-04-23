@@ -126,7 +126,7 @@ public class LevelDB {
 		}
 		
 		level.index = index;
-		level.board = board;
+		level.ini = board;
 		
 		levelMap.put(index, level);
 		
