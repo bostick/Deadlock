@@ -1,16 +1,4 @@
 
-winner menu:
-try again
-
-
-menu
-reset button
-undo button
-hint button
-
-no allocations when dragging
-
-
 write down whole process for level generation and selection
 
 select levels for lite version
@@ -20,9 +8,8 @@ visually compare similar levels
 similar: lots of cars in same position and similar number of moves
 
 
-when dragging, if within 25% of stud, just go to it
-
 brighten grass tile
+brighten red car / dim other cars
 audit all levels
 audit all artwork
 audit all res
@@ -36,7 +23,25 @@ in board description, a missing - or | means to allow the car off of the board..
 
 allow custom boards? does bigger than 6x6 work?
 
+
+
+
+auto-scroll level menu to first ungraded level
+
+
+
 SOON:
+
+
+when dragging, if within 25% of stud, just go to it
+
+no allocations when dragging
+no allocations when coasting
+
+
+menu
+undo button
+hint button
 
 spiraling in GPPP.generalSearch?
 
@@ -47,6 +52,13 @@ use graph paper and sketch out different screens and layouts first
 
 
 DONE:
+
+winner menu:
+try again
+
+
+menu
+reset button
 
 blocked car goes and hits the blocker and coasts back
 

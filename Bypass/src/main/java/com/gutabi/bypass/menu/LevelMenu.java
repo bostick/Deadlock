@@ -20,8 +20,8 @@ public class LevelMenu extends Menu implements Model {
 	public LevelMenu() {
 		
 		for (int i = 0; i < BYPASSAPP.levelDB.levelCount; i++) {
-			int menuRow = i / 4;
-			int menuCol = i % 4;
+			int menuRow = i / 3;
+			int menuCol = i % 3;
 			final int ii = i;
 			add(new LevelMenuItem(LevelMenu.this, i) {
 				

@@ -1,6 +1,7 @@
 package com.gutabi.deadlock.geom;
 
 import com.gutabi.deadlock.math.DMath;
+import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 
 
@@ -11,6 +12,12 @@ public class MutableAABB {
 	public double width = Double.NaN;
 	public double height = Double.NaN;
 	
+	public final Point n01 = Point.UP;
+	public final Point n12 = Point.RIGHT;
+	
+	double[] n01Projection;
+	double[] n12Projection;
+	
 	public MutableAABB() {
 		
 	}
@@ -20,16 +27,25 @@ public class MutableAABB {
 		y = Double.NaN;
 		width = Double.NaN;
 		height = Double.NaN;
+		
+		n01Projection = null;
+		n12Projection = null;
 	}
 	
 	public void setLocation(double x, double y) {
 		this.x = x;
 		this.y = y;
+		
+		n01Projection = null;
+		n12Projection = null;
 	}
 	
 	public void setDimension(double width, double height) {
 		this.width = width;
 		this.height = height;
+		
+		n01Projection = null;
+		n12Projection = null;
 	}
 	
 	public void setShape(double x, double y, double width, double height) {
@@ -37,6 +53,9 @@ public class MutableAABB {
 		this.y = y;
 		this.width = width;
 		this.height = height;
+		
+		n01Projection = null;
+		n12Projection = null;
 	}
 	
 	public AABB copy() {
@@ -162,6 +181,74 @@ public class MutableAABB {
 		}
 		
 		return 1.0;
+	}
+	
+	public void project(Point axis, double[] out) {
+		
+		Point p0 = new Point(x, y);
+		Point p1 = new Point(x + width, y);
+		Point p2 = new Point(x+width, y+height);
+		Point p3 = new Point(x, y + height);
+		
+		double min = Point.dot(axis, p0);
+		double max = min;
+		
+		double p = Point.dot(axis, p1);
+		if (p < min) {
+			min = p;
+		} else if (p > max) {
+			max = p;
+		}
+		
+		p = Point.dot(axis, p2);
+		if (p < min) {
+			min = p;
+		} else if (p > max) {
+			max = p;
+		}
+		
+		p = Point.dot(axis, p3);
+		if (p < min) {
+			min = p;
+		} else if (p > max) {
+			max = p;
+		}
+		
+		out[0] = min;
+		out[1] = max;
+	}
+	
+	public Point getN01() {
+		return n01;
+	}
+	
+	public Point getN12() {
+		return n12;
+	}
+	
+	public void projectN01(double[] out) {
+		if (n01Projection == null) {
+			computeProjections();
+		}
+		out[0] = n01Projection[0];
+		out[1] = n01Projection[1];
+	}
+	
+	public void projectN12(double[] out) {
+		if (n12Projection == null) {
+			computeProjections();
+		}
+		out[0] = n12Projection[0];
+		out[1] = n12Projection[1];
+	}
+	
+	private void computeProjections() {
+		
+		n01Projection = new double[2];
+		project(n01, n01Projection);
+		
+		n12Projection = new double[2];
+		project(n12, n12Projection);
 	}
 	
 	public void draw(RenderingContext ctxt) {

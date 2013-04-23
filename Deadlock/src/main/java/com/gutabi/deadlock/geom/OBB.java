@@ -66,10 +66,13 @@ public abstract class OBB implements Shape {
 	public boolean equals(Object o) {
 		if (this == o) {
 			return true;
-		} else if (!(o instanceof OBB)) {
+		} else if (!(o instanceof OBB || o instanceof MutableOBB)) {
 			return false;
-		} else {
+		} else if (o instanceof OBB) {
 			OBB b = (OBB)o;
+			return p0.equals(b.p0) && p1.equals(b.p1) && p2.equals(b.p2) && p3.equals(b.p3);
+		} else {
+			MutableOBB b = (MutableOBB)o;
 			return p0.equals(b.p0) && p1.equals(b.p1) && p2.equals(b.p2) && p3.equals(b.p3);
 		}
 	}

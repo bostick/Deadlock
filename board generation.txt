@@ -1,0 +1,13 @@
+
+empty boards are enumerated in Deadlock/src/tools/java/solver/Boards.java
+boards may never be removed or changed, only added to
+
+
+the generate batch file is run with an argument, the board number
+several transcript files are generated, with names like transcript-2-5-3.txt
+
+this is a transcript for all boards with 2 2cars, 5 3cars, and empty board #3
+
+inside each transcript file, the hardest board for each partition is recorded
+needed a heuristic for only keeping a few boards out of the ton that are generated, and keeping the hardest seems ok
+

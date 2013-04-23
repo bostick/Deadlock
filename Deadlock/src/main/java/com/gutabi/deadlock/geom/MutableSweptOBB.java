@@ -3,18 +3,18 @@ package com.gutabi.deadlock.geom;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 
-public class SweptOBB implements Shape {
+public class MutableSweptOBB implements Shape {
 	
-	public final OBB start;
-	public final OBB end;
+	public MutableOBB start;
+	public MutableOBB end;
 	
-	public final boolean isAABB;
-	public final AABB aabb;
+	public boolean isAABB;
+	public MutableAABB aabb = new MutableAABB();
 	
-	public final double dist;
-	public final Point dir;
+	public double dist;
+	public Point dir;
 	
-	public SweptOBB(OBB start, OBB end) {
+	public void setShape(MutableOBB start, MutableOBB end) {
 		this.start = start;
 		this.end = end;
 		
@@ -31,19 +31,19 @@ public class SweptOBB implements Shape {
 			if (dir.equals(start.getN01())) {
 				isAABB = true;
 				// end is above
-				aabb = new AABB(end.aabb.x, end.aabb.y, end.aabb.width, (start.aabb.brY - end.aabb.y));
+				aabb.setShape(end.aabb.x, end.aabb.y, end.aabb.width, ((start.aabb.y+start.aabb.height) - end.aabb.y));
 			} else if (dir.equals(start.getN12())) {
 				isAABB = true;
 				// end is to right
-				aabb = new AABB(start.aabb.x, start.aabb.y, (end.aabb.brX-start.aabb.x), start.aabb.height);
+				aabb.setShape(start.aabb.x, start.aabb.y, ((end.aabb.x+end.aabb.width)-start.aabb.x), start.aabb.height);
 			} else if (dir.equals(start.getN01().negate())) {
 				isAABB = true;
 				// end is below
-				aabb = new AABB(start.aabb.x, start.aabb.y, start.aabb.width, (end.aabb.brY - start.aabb.y));
+				aabb.setShape(start.aabb.x, start.aabb.y, start.aabb.width, ((end.aabb.y+end.aabb.height) - start.aabb.y));
 			} else if (dir.equals(start.getN12().negate())) {
 				isAABB = true;
 				// end is to left
-				aabb = new AABB(end.aabb.x, end.aabb.y, (start.aabb.brX-end.aabb.x), end.aabb.height);
+				aabb.setShape(end.aabb.x, end.aabb.y, ((start.aabb.x+start.aabb.width)-end.aabb.x), end.aabb.height);
 			} else {
 				isAABB = false;
 				double ulX = Math.min(Math.min(Math.min(start.p0.x, start.p1.x), Math.min(start.p2.x, start.p3.x)), Math.min(Math.min(end.p0.x, end.p1.x), Math.min(end.p2.x, end.p3.x)));
@@ -51,7 +51,7 @@ public class SweptOBB implements Shape {
 				double brX = Math.min(Math.max(Math.max(start.p0.x, start.p1.x), Math.max(start.p2.x, start.p3.x)), Math.max(Math.max(end.p0.x, end.p1.x), Math.max(end.p2.x, end.p3.x)));
 				double brY = Math.min(Math.max(Math.max(start.p0.y, start.p1.y), Math.max(start.p2.y, start.p3.y)), Math.max(Math.max(end.p0.y, end.p1.y), Math.max(end.p2.y, end.p3.y)));
 				
-				aabb = new AABB(ulX, ulY, (brX - ulX), (brY - ulY));
+				aabb.setShape(ulX, ulY, (brX - ulX), (brY - ulY));
 			}
 		} else {
 			isAABB = false;
@@ -60,7 +60,7 @@ public class SweptOBB implements Shape {
 			double brX = Math.min(Math.max(Math.max(start.p0.x, start.p1.x), Math.max(start.p2.x, start.p3.x)), Math.max(Math.max(end.p0.x, end.p1.x), Math.max(end.p2.x, end.p3.x)));
 			double brY = Math.min(Math.max(Math.max(start.p0.y, start.p1.y), Math.max(start.p2.y, start.p3.y)), Math.max(Math.max(end.p0.y, end.p1.y), Math.max(end.p2.y, end.p3.y)));
 			
-			aabb = new AABB(ulX, ulY, (brX - ulX), (brY - ulY));
+			aabb.setShape(ulX, ulY, (brX - ulX), (brY - ulY));
 		}
 		
 	}
