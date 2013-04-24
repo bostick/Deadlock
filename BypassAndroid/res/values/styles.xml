@@ -4,7 +4,7 @@
         Base application theme, dependent on API level. This theme is replaced
         by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
     -->
-    <style name="AppBaseTheme" parent="android:Theme.Light">
+    <style name="AppBaseTheme" parent="android:Theme.NoTitleBar.Fullscreen">
         <!--
             Theme customizations available in newer API levels can go in
             res/values-vXX/styles.xml, while customizations related to
@@ -17,15 +17,15 @@
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
     </style>
     
-    <style name="Theme.BypassMainMenu" parent="@android:style/Theme.NoTitleBar.Fullscreen">
+    <style name="Theme.BypassMainMenu" parent="AppTheme">
     	<item name="android:windowBackground">@color/dark_gray</item>
 	</style>
     
-    <style name="Theme.BypassLevelMenu" parent="@android:style/Theme.NoTitleBar.Fullscreen">
+    <style name="Theme.BypassLevelMenu" parent="AppTheme">
     	<item name="android:windowBackground">@color/dark_gray</item>
 	</style>
     
-    <style name="Theme.BypassWorld" parent="@android:style/Theme.NoTitleBar.Fullscreen">
+    <style name="Theme.BypassWorld" parent="AppTheme">
     	<item name="android:windowBackground">@color/grass_green</item>
 	</style>
     

@@ -21,11 +21,20 @@ public class BypassApplication extends DeadlockApplication {
 	
 	public BypassApplication() {
 		
-		MAINWINDOW_WIDTH = 480;
-		MAINWINDOW_HEIGHT = 854;
+		/*
+		 * Droid X
+		 */
+//		MAINWINDOW_WIDTH = 480;
+//		MAINWINDOW_HEIGHT = 854;
 		
-		CONTROLPANEL_WIDTH = 200;
-		CONTROLPANEL_HEIGHT = 854;
+		/*
+		 * Galaxy Tab 2 7.0
+		 */
+		MAINWINDOW_WIDTH = 600;
+		MAINWINDOW_HEIGHT = 976;
+		
+//		CONTROLPANEL_WIDTH = 200;
+//		CONTROLPANEL_HEIGHT = 854;
 		
 	}
 	

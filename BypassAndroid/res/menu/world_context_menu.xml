@@ -2,6 +2,6 @@
 
     <item
         android:id="@+id/btn_reset"
-        android:title="@string/reset"/>
-
+        android:title="@string/reset" />
+    	
 </menu>

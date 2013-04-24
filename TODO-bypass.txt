@@ -3,7 +3,7 @@ slight fudge factor for menu scrolling
 
 prevent panning when exiting board
 keep board centered as car is leaving
-
+make car go slow when exiting
 
 write down whole process for level generation and selection
 
