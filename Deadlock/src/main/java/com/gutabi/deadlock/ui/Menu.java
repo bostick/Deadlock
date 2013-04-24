@@ -1,7 +1,5 @@
 package com.gutabi.deadlock.ui;
 
-import static com.gutabi.deadlock.DeadlockApplication.APP;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,8 +27,6 @@ public abstract class Menu {
 	public boolean vScrollable;
 	
 	Shimmer shimmer;
-	
-	Image img;
 	
 	public Menu() {
 		menuItemWidest = new double[0];
@@ -131,9 +127,6 @@ public abstract class Menu {
 	
 	
 	
-	Transform origTransformRender = APP.platform.createTransform();
-	RenderingContext ctxt = APP.platform.createRenderingContext();
-	
 	public void render() {
 		
 		for (int i = 0; i < cols; i++) {
@@ -169,26 +162,16 @@ public abstract class Menu {
 		}
 		aabb = new AABB(aabb.x, aabb.y, width+1, height+1);
 		
-		img = APP.platform.createImage((int)aabb.width+1, (int)aabb.height+1);
-		
-		APP.platform.setRenderingContextFields1(ctxt, img);
-		
-		ctxt.setColor(Color.menuBackground);
-		ctxt.fillRect(
-				(int)(0),
-				(int)(0),
-				(int)(aabb.width+1),
-				(int)(aabb.height+1));
-		
-		
-		ctxt.getTransform(origTransformRender);
+		int x;
+		int y;
 		
 		for (int i = 0; i < cols; i++) {
 			
-			ctxt.setTransform(origTransformRender);
+			x = 0;
+			y = 0;
 			
 			for (int j = 0; j < i; j++) {
-				ctxt.translate(menuItemWidest[j] + 10, 0);
+				x = x+(int)menuItemWidest[j] + 10;
 			}
 			
 			boolean itemFound = false;
@@ -204,8 +187,9 @@ public abstract class Menu {
 						continue;
 					}
 					itemFound = true;
-					item.render(ctxt);
-					ctxt.translate(0, item.aabb.height + 10);
+					item.aabb = new AABB(x, y, item.aabb.width, item.aabb.height);
+					item.render();
+					y = y + (int)item.aabb.height + 10;
 				}
 				if (!itemFound) {
 					break;
@@ -215,16 +199,8 @@ public abstract class Menu {
 			}
 		}
 		
-		ctxt.setTransform(origTransformRender);
-		
-		for (int i = 0; i < items.size(); i++) {
-			MenuItem item = items.get(i);
-			item.paint(ctxt);
-		}
-		
 		shimmer = new Shimmer(shimmeringMenuItem.aabb, System.currentTimeMillis());
 		
-		ctxt.dispose();
 	}
 	
 	
@@ -240,9 +216,10 @@ public abstract class Menu {
 				(int)(aabb.width + 5 + 5),
 				(int)(aabb.height + 5 + 5));
 		
-		ctxt.paintImage(img,
-				0, 0, img.getWidth(), img.getHeight(),
-				0, 0, img.getWidth(), img.getHeight());
+		for (int i = 0; i < items.size(); i++) {
+			MenuItem item = items.get(i);
+			item.paint(ctxt);
+		}
 		
 		if (hilited != null) {
 			hilited.paintHilited(ctxt);			

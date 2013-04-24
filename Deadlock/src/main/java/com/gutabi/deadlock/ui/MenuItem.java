@@ -22,7 +22,7 @@ public abstract class MenuItem {
 	public MenuItem down;
 	
 	public AABB localAABB;
-	public AABB aabb;
+	public AABB aabb = new AABB(0, 0, 0, 0);
 	
 	public boolean active = true;
 	
@@ -52,16 +52,11 @@ public abstract class MenuItem {
 	
 	protected Transform origTransformRender = APP.platform.createTransform();
 	
-	public void render(RenderingContext ctxt) {
+	public void render() {
 		
-		ctxt.getTransform(origTransformRender);
+		lab.aabb = new AABB(aabb.x + menu.menuItemWidest[c]/2 - lab.localAABB.width/2, aabb.y + (20 + lab.localAABB.height + 20)/2 - lab.localAABB.height/2, lab.localAABB.width, lab.localAABB.height);
 		
-		int x = (int)origTransformRender.getTranslateX();
-		int y = (int)origTransformRender.getTranslateY();
-		
-		lab.aabb = new AABB(x + menu.menuItemWidest[c]/2 - lab.localAABB.width/2, y + (20 + lab.localAABB.height + 20)/2 - lab.localAABB.height/2, lab.localAABB.width, lab.localAABB.height);
-		
-		aabb = new AABB(x, y, menu.menuItemWidest[c], 20 + lab.aabb.height + 20);
+		aabb = new AABB(aabb.x, aabb.y, menu.menuItemWidest[c], 20 + lab.aabb.height + 20);
 	}
 	
 	
