@@ -122,6 +122,8 @@ public class PlatformImpl implements BypassPlatform {
 		String text;
 		if (preText.equals(" ")) {
 			text = "X";
+		} else if (preText.matches("\\s*")) {
+			throw new AssertionError();
 		} else {
 			text = preText;
 		}

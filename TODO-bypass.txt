@@ -1,4 +1,8 @@
 
+prevent panning when exiting board
+keep board centered as car is leaving
+
+
 write down whole process for level generation and selection
 
 select levels for lite version
@@ -62,8 +66,7 @@ reset button
 
 blocked car goes and hits the blocker and coasts back
 
-prevent panning when exiting board
-keep board centered as car is leaving
+
 
 scoring
 time taken
