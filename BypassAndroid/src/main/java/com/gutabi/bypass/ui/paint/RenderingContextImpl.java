@@ -90,13 +90,6 @@ public class RenderingContextImpl extends RenderingContext {
 		
 	}
 	
-	public void setTransform(Transform trans) {
-		
-		TransformImpl t2 = (TransformImpl)trans;
-		canvas.setMatrix(t2.mat);
-		
-	}
-	
 	public void setFont(Resource font, FontStyle style, int size) {
 		
 		assert style == FontStyle.PLAIN;
@@ -121,9 +114,18 @@ public class RenderingContextImpl extends RenderingContext {
 		TransformImpl t = (TransformImpl)a;
 		
 		canvas.getMatrix(t.mat);
+		
+//		Matrix tmp = PlatformImpl.CURRENTACTIVITY.v.getMatrix();
 	}
 	
-	
+	public void setTransform(Transform trans) {
+		
+		TransformImpl t2 = (TransformImpl)trans;
+		canvas.setMatrix(t2.mat);
+		
+//		PlatformImpl.CURRENTACTIVITY.v.getMatrix().set(t2.mat);
+	}
+
 	Rect fr = new Rect();
 	
 	public void fillRect(int x, int y, int width, int height) {

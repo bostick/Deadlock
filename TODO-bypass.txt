@@ -1,4 +1,6 @@
 
+slight fudge factor for menu scrolling
+
 prevent panning when exiting board
 keep board centered as car is leaving
 
