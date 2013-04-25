@@ -8,15 +8,18 @@ import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.MotionEvent;
-import android.view.View;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.Paintable;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 
-public class BypassView extends View {
+public class BypassView extends SurfaceView implements SurfaceHolder.Callback {
 	
 	public BypassActivity activity;
+	
+	public SurfaceHolder holder;
 	
 	private GestureDetector gDetector;
 	
@@ -27,11 +30,24 @@ public class BypassView extends View {
 		
 		gDetector = new GestureDetector(c, simpleOnGestureListener);
 		
+		holder = getHolder();
+
+		holder.addCallback(this);
 	}
 	
 	@Override
-	public void onSizeChanged(int w, int h, int oldw, int oldh) {
-//		Log.d("bypass", "onSizeChanged: " + w + " " + h);
+	public void surfaceCreated(SurfaceHolder holder) {
+		
+	}
+	
+	@Override
+	public void surfaceDestroyed(SurfaceHolder holder) {
+		
+	}
+	
+	@Override
+	public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+		
 	}
 	
 	SimpleOnGestureListener simpleOnGestureListener = new SimpleOnGestureListener() {
@@ -84,7 +100,7 @@ public class BypassView extends View {
 	Paint paint = new Paint();
 	public RenderingContext ctxt;
 	
-	public void onDraw(Canvas canvas) {
+	public void doDraw(Canvas canvas) {
 		
 		if (activity.state != ActivityState.PAUSE) {
 			

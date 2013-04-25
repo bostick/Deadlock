@@ -29,6 +29,9 @@ public class SimulationRunnable implements Runnable {
 					
 					newTimeMillis = System.currentTimeMillis();
 					long frameTimeMillis = newTimeMillis - currentTimeMillis;
+					if (frameTimeMillis < 0) {
+						throw new AssertionError();
+					}
 					
 					currentTimeMillis = newTimeMillis;
 					

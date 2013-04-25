@@ -9,6 +9,7 @@ import android.view.MenuItem;
 import android.view.Window;
 
 import com.gutabi.bypass.BypassActivity;
+import com.gutabi.bypass.BypassView;
 import com.gutabi.bypass.R;
 
 public class BypassWorldActivity extends BypassActivity {
@@ -26,7 +27,7 @@ public class BypassWorldActivity extends BypassActivity {
 		
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 		
-		v = (BypassWorldView)findViewById(R.id.view_bypassworld);
+		v = (BypassView)findViewById(R.id.view_bypassworld);
 		
 		v.ctxt = APP.platform.createRenderingContext();
 		v.activity = this;

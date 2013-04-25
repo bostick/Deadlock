@@ -65,7 +65,11 @@ public class PlatformImpl implements BypassPlatform {
 		
 		RenderingContextImpl ctxt = (RenderingContextImpl)a;
 		
-		if (arg0 instanceof Graphics2D) {
+		if (arg0 == null) {
+			
+			throw new AssertionError();
+			
+		} if (arg0 instanceof Graphics2D) {
 			
 			Graphics2D g2 = (Graphics2D)arg0;
 			

@@ -9,6 +9,7 @@ import android.view.Window;
 
 import com.gutabi.bypass.BypassActivity;
 import com.gutabi.bypass.BypassApplication;
+import com.gutabi.bypass.BypassView;
 import com.gutabi.bypass.PlatformImpl;
 import com.gutabi.bypass.R;
 import com.gutabi.bypass.level.Level;
@@ -32,7 +33,7 @@ public class MainMenuActivity extends BypassActivity {
 		
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 		
-		v = (MainMenuView)findViewById(R.id.view_mainmenu);
+		v = (BypassView)findViewById(R.id.view_mainmenu);
 		
 		PlatformImpl platform = new PlatformImpl(getResources());
 		APP.platform = platform;

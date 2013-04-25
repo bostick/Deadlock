@@ -1,4 +1,5 @@
 
+SurfaceView stuff
 screen size
 
 slight fudge factor for menu scrolling

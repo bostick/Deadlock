@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.Window;
 
 import com.gutabi.bypass.BypassActivity;
+import com.gutabi.bypass.BypassView;
 import com.gutabi.bypass.R;
 
 public class LevelMenuActivity extends BypassActivity {
@@ -23,7 +24,7 @@ public class LevelMenuActivity extends BypassActivity {
 		
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 		
-		v = (LevelMenuView)findViewById(R.id.view_levelmenu);
+		v = (BypassView)findViewById(R.id.view_levelmenu);
 		
 		v.ctxt = APP.platform.createRenderingContext();
 		v.activity = this;

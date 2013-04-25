@@ -464,6 +464,8 @@ public class BypassWorld extends World implements Model {
 			winnerLabel.setLocation(worldCamera.worldPanel.aabb.width/2 - winnerLabel.aabb.width/2, gradeLabel.aabb.y+gradeLabel.aabb.height + 5);
 			
 			winnerMenu.setLocation(worldCamera.worldPanel.aabb.width/2 - winnerMenu.aabb.width/2, winnerLabel.aabb.y+winnerLabel.aabb.height + 5);
+			
+			winnerMenu.ready = true;
 		}
 	}
 	
@@ -471,7 +473,7 @@ public class BypassWorld extends World implements Model {
 		
 		super.paint_panel(ctxt);
 		
-		if (curLevel.isWon) {
+		if (curLevel.isWon && winnerMenu != null && winnerMenu.ready) {
 			
 			double maxWidth = winnerLabel.aabb.width;
 			double x = winnerLabel.aabb.x;

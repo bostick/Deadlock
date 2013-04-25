@@ -73,12 +73,20 @@ public class PlatformImpl implements BypassPlatform {
 		
 		RenderingContextImpl ctxt = (RenderingContextImpl)a;
 		
-		ImageImpl img = (ImageImpl)arg0;
-		Bitmap b = img.b;
-		Canvas c = new Canvas(b);
-		
-		ctxt.canvas = c;
-		ctxt.paint = imgPaint;
+		if (arg0 == null) {
+			
+			throw new AssertionError();
+			
+		} else {
+			
+			ImageImpl img = (ImageImpl)arg0;
+			Bitmap b = img.b;
+			Canvas c = new Canvas(b);
+			
+			ctxt.canvas = c;
+			ctxt.paint = imgPaint;
+			
+		}
 		
 	}
 	
@@ -88,7 +96,11 @@ public class PlatformImpl implements BypassPlatform {
 		
 		RenderingContextImpl ctxt = (RenderingContextImpl)a;
 		
-		if (arg0 instanceof Canvas) {
+		if (arg0 == null) {
+			
+			throw new AssertionError();
+			
+		} else if (arg0 instanceof Canvas) {
 			
 			Canvas c = (Canvas)arg0;
 			Paint p = (Paint)arg1;

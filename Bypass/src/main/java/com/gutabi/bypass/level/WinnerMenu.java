@@ -13,6 +13,8 @@ import com.gutabi.deadlock.ui.paint.FontStyle;
 
 public class WinnerMenu extends Menu {
 	
+	public boolean ready;
+	
 	public static void action() {
 		
 		BypassWorld world = (BypassWorld)APP.model;
