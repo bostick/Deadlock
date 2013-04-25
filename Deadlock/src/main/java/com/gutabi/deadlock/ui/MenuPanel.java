@@ -2,12 +2,15 @@ package com.gutabi.deadlock.ui;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
+import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.math.DMath;
 
 public abstract class MenuPanel extends Panel {
 	
 	public void postDisplay() {
 		Menu menu = (Menu)APP.model;
+		
+		aabb = new AABB(aabb.x, aabb.y, APP.MAINWINDOW_WIDTH, APP.MAINWINDOW_HEIGHT);
 		
 		double x = menu.aabb.x;
 		double y = menu.aabb.y;

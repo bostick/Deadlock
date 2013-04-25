@@ -43,7 +43,6 @@ public class MainMenuActivity extends BypassActivity {
 		
 		try {
 			
-			APP.DEBUGGER_SCREEN = false;
 			APP.DEBUG_DRAW = false;
 			
 			BYPASSAPP.init();

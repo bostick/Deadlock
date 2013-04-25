@@ -5,8 +5,7 @@
     android:layout_height="wrap_content"
     tools:context=".MainMenuActivity" >
 
-    <view android:id="@+id/view_mainmenu"
-    	class="com.gutabi.bypass.menu.MainMenuView"
+    <com.gutabi.bypass.menu.MainMenuView android:id="@+id/view_mainmenu"
         android:layout_width="fill_parent"
         android:layout_height="0dp"
         android:layout_weight="1"/> 

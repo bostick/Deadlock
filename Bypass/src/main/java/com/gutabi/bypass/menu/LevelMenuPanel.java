@@ -3,7 +3,6 @@ package com.gutabi.bypass.menu;
 import static com.gutabi.bypass.BypassApplication.BYPASSAPP;
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
-import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.ui.Menu;
 import com.gutabi.deadlock.ui.MenuPanel;
 import com.gutabi.deadlock.ui.Transform;
@@ -17,7 +16,6 @@ public class LevelMenuPanel extends MenuPanel {
 	
 	public LevelMenuPanel() {
 		
-		aabb = new AABB(aabb.x, aabb.y, APP.MAINWINDOW_WIDTH, APP.MAINWINDOW_HEIGHT);
 	}
 	
 	Transform origTransform = APP.platform.createTransform();

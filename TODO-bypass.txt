@@ -1,4 +1,6 @@
 
+screen size
+
 slight fudge factor for menu scrolling
 
 prevent panning when exiting board
@@ -20,7 +22,7 @@ audit all levels
 audit all artwork
 audit all res
 audit all assets
-audit all classes, proguard
+audit all classes, proguard, make sure only used classes are in (ExplosionMap, etc.)
 
 
 easter egg: click on a grass, do something

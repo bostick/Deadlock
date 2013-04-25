@@ -33,9 +33,6 @@ public class BypassApplication extends DeadlockApplication {
 		MAINWINDOW_WIDTH = 600;
 		MAINWINDOW_HEIGHT = 976;
 		
-//		CONTROLPANEL_WIDTH = 200;
-//		CONTROLPANEL_HEIGHT = 854;
-		
 	}
 	
 	public void init() throws Exception {

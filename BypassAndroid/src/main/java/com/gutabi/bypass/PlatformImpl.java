@@ -17,7 +17,6 @@ import android.util.Log;
 import com.gutabi.bypass.ResourceImpl.ResourceType;
 import com.gutabi.bypass.geom.CubicCurveImpl;
 import com.gutabi.bypass.geom.EllipseImpl;
-import com.gutabi.bypass.geom.LineImpl;
 import com.gutabi.bypass.geom.MutableOBBImpl;
 import com.gutabi.bypass.geom.MutablePolygonImpl;
 import com.gutabi.bypass.geom.OBBImpl;
@@ -40,7 +39,6 @@ import com.gutabi.deadlock.Resource;
 import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.geom.CubicCurve;
 import com.gutabi.deadlock.geom.Ellipse;
-import com.gutabi.deadlock.geom.Line;
 import com.gutabi.deadlock.geom.MutableOBB;
 import com.gutabi.deadlock.geom.MutablePolygon;
 import com.gutabi.deadlock.geom.OBB;
@@ -294,10 +292,6 @@ public class PlatformImpl implements BypassPlatform {
 	}
 	
 	
-	
-	public Line createLine(Point p0, Point p1) {
-		return new LineImpl(p0, p1);
-	}
 
 	public Polyline createPolyline(Point... pts) {
 		return new PolylineImpl(pts);

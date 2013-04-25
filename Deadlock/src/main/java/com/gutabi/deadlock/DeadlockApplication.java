@@ -28,7 +28,7 @@ public class DeadlockApplication {
 	
 	public Platform platform;
 	
-	public boolean DEBUGGER_SCREEN = false;
+	public final boolean DEBUGGER_SCREEN = false;
 	
 	/*
 	 * control panel properties

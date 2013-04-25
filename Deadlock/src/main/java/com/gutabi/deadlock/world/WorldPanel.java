@@ -10,11 +10,13 @@ import com.gutabi.deadlock.ui.paint.RenderingContext;
 public class WorldPanel extends Panel {
 	
 	public WorldPanel() {
-		aabb = new AABB(aabb.x, aabb.y, APP.MAINWINDOW_WIDTH, APP.MAINWINDOW_HEIGHT);
+		
 	}
 	
 	public void postDisplay() {
 		World world = (World)APP.model;
+		
+		aabb = new AABB(aabb.x, aabb.y, APP.MAINWINDOW_WIDTH, APP.MAINWINDOW_HEIGHT);
 		
 		world.worldCamera.worldPanel = this;
 		

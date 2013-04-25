@@ -26,6 +26,12 @@ public class BypassView extends View {
 		super(c, s);
 		
 		gDetector = new GestureDetector(c, simpleOnGestureListener);
+		
+	}
+	
+	@Override
+	public void onSizeChanged(int w, int h, int oldw, int oldh) {
+//		Log.d("bypass", "onSizeChanged: " + w + " " + h);
 	}
 	
 	SimpleOnGestureListener simpleOnGestureListener = new SimpleOnGestureListener() {
