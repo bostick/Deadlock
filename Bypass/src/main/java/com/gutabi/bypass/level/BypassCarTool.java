@@ -1,6 +1,5 @@
 package com.gutabi.bypass.level;
 
-import static com.gutabi.bypass.BypassApplication.BYPASSAPP;
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
 import com.gutabi.bypass.menu.LevelMenu;
@@ -486,8 +485,6 @@ public class BypassCarTool extends WorldToolBase {
 		world.curLevel.userTime = (System.currentTimeMillis() - world.curLevel.userStartTime);
 		
 		world.curLevel.isWon = true;
-		
-		BYPASSAPP.bypassPlatform.saveScore(world.curLevel);
 		
 		released(null);
 		

@@ -28,6 +28,9 @@ public class BypassWorldActivity extends BypassActivity {
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 		
 		v = (BypassView)findViewById(R.id.view_bypassworld);
+		if (v == null) {
+			throw new AssertionError("R.id.view_bypassworld could not be found");
+		}
 		
 		v.ctxt = APP.platform.createRenderingContext();
 		v.activity = this;

@@ -53,6 +53,7 @@ public class BypassWorld extends World implements Model {
 	
 	
 	public static void create(int index) {
+		
 		BYPASSWORLD = BypassWorld.createBypassWorld(index);
 		
 		BYPASSWORLD.preStart();
@@ -196,7 +197,7 @@ public class BypassWorld extends World implements Model {
 				
 			};
 		
-		final BypassWorld w = new BypassWorld();
+		BypassWorld w = new BypassWorld();
 		
 		QuadrantMap qm = new QuadrantMap(ini);
 		
@@ -219,6 +220,9 @@ public class BypassWorld extends World implements Model {
 			BypassBoard board = w.createBypassBoard(new Point(1.5 * QuadrantMap.QUADRANT_WIDTH, 2.0 * QuadrantMap.QUADRANT_HEIGHT), level.ini);
 			
 			w.addBypassCars(board);
+			
+			w.winnerMenu = new WinnerMenu(w);
+			w.winnerMenu.render();
 			
 		} catch (Exception e) {
 			e.printStackTrace();

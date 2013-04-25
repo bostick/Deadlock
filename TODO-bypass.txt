@@ -1,8 +1,4 @@
 
-SurfaceView stuff
-screen size
-
-
 winner menu coming up is slow
 
 
@@ -65,6 +61,9 @@ use graph paper and sketch out different screens and layouts first
 
 
 DONE:
+
+SurfaceView stuff
+screen size
 
 winner menu:
 try again

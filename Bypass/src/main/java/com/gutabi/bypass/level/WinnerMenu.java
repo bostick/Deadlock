@@ -46,22 +46,21 @@ public class WinnerMenu extends Menu {
 		world.gradeLabel.fontSize = 72;
 		world.gradeLabel.color = Color.WHITE;
 		
-		world.winnerMenu = new WinnerMenu();
+		
 		
 		world.winnerLabel.renderLocal();
 		world.winnerLabel.render();
 		world.gradeLabel.renderLocal();
 		world.gradeLabel.render();
-		world.winnerMenu.render();
 		
 		world.render_worldPanel();
 		
 		APP.tool = new MenuTool();
 	}
 	
-	public WinnerMenu() {
+	public WinnerMenu(BypassWorld world) {
 		
-		BypassWorld world = (BypassWorld)APP.model;
+//		BypassWorld world = (BypassWorld)APP.model;
 		
 		int index = world.curLevel.index;
 		
@@ -69,6 +68,8 @@ public class WinnerMenu extends Menu {
 			public void action() {
 				
 				BypassWorld world = (BypassWorld)APP.model;
+				
+				BYPASSAPP.bypassPlatform.saveScore(world.curLevel);
 				
 				int index = world.curLevel.index;
 				
@@ -95,6 +96,10 @@ public class WinnerMenu extends Menu {
 		
 		MenuItem backMenuItem = new MenuItem(WinnerMenu.this, "Back") {
 			public void action() {
+				
+				BypassWorld world = (BypassWorld)APP.model;
+				
+				BYPASSAPP.bypassPlatform.saveScore(world.curLevel);
 				
 				APP.platform.finishAction();
 			}
