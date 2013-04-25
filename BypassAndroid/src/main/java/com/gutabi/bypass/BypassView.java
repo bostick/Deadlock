@@ -37,17 +37,18 @@ public class BypassView extends SurfaceView implements SurfaceHolder.Callback {
 	
 	@Override
 	public void surfaceCreated(SurfaceHolder holder) {
-		
+//		Log.d("bypass", "surface created");
 	}
 	
 	@Override
 	public void surfaceDestroyed(SurfaceHolder holder) {
-		
+//		Log.d("bypass", "surface destroyed");
 	}
 	
 	@Override
 	public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-		
+//		Log.d("bypass", "surface changed");
+		activity.onSurfaceChanged(width, height);
 	}
 	
 	SimpleOnGestureListener simpleOnGestureListener = new SimpleOnGestureListener() {
@@ -97,10 +98,21 @@ public class BypassView extends SurfaceView implements SurfaceHolder.Callback {
 		return true;
 	}
 
+	
+//	@Override
+//	public void onDraw(Canvas canvas) {
+//		
+//		Log.d("bypass", "ondraw");
+//		super.onDraw(canvas);
+//		
+//	}
+	
 	Paint paint = new Paint();
 	public RenderingContext ctxt;
 	
 	public void doDraw(Canvas canvas) {
+		
+//		Log.d("bypass", "doDraw: " + canvas);
 		
 		if (activity.state != ActivityState.PAUSE) {
 			

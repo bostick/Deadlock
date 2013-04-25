@@ -84,9 +84,9 @@ public abstract class PlatformContentPane implements Paintable {
 		}
 	}
 	
-	public void postDisplay() {
+	public void postDisplay(int width, int height) {
 		for (Panel child : children) {
-			child.postDisplay();
+			child.postDisplay(width, height);
 		}
 	}
 	

@@ -2,6 +2,10 @@
 SurfaceView stuff
 screen size
 
+
+winner menu coming up is slow
+
+
 slight fudge factor for menu scrolling
 
 prevent panning when exiting board

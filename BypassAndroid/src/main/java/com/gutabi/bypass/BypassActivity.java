@@ -75,4 +75,6 @@ public abstract class BypassActivity extends Activity {
 		
 	}
 	
+	protected abstract void onSurfaceChanged(int width, int height);
+	
 }

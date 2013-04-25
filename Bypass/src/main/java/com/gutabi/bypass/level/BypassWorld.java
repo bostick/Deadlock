@@ -4,6 +4,8 @@ import static com.gutabi.bypass.BypassApplication.BYPASSAPP;
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import com.gutabi.bypass.BypassControlPanel;
 import com.gutabi.deadlock.AppScreen;
@@ -37,6 +39,9 @@ import com.gutabi.deadlock.world.sprites.CarSheet;
 import com.gutabi.deadlock.world.sprites.CarSheet.CarType;
 
 public class BypassWorld extends World implements Model {
+	
+	private boolean ready;
+	private Lock lock = new ReentrantLock(true);
 	
 	public static BypassWorld BYPASSWORLD;
 	
@@ -81,19 +86,11 @@ public class BypassWorld extends World implements Model {
 		
 		APP.platform.setupAppScreen(worldScreen.contentPane.pcp);
 		
-		worldScreen.postDisplay();
-		
 		if (APP.DEBUGGER_SCREEN) {
 			
 			AppScreen debuggerScreen = new AppScreen(new ContentPane(new BypassControlPanel()));
 			APP.debuggerScreen = debuggerScreen;
 			
-			APP.platform.setupDebuggerScreen(APP.debuggerScreen.contentPane.pcp);
-			APP.debuggerScreen.postDisplay();
-			
-			BYPASSWORLD.render_preview();
-			
-			APP.platform.showDebuggerScreen();
 		}
 		
 		APP.tool = new BypassCarTool();
@@ -110,7 +107,33 @@ public class BypassWorld extends World implements Model {
 		
 	}
 	
+	public static void surfaceChanged(int width, int height) {
+		
+		BYPASSWORLD.lock.lock();
+		BYPASSWORLD.ready = false;
+		BYPASSWORLD.lock.unlock();
+		
+		APP.appScreen.postDisplay(width, height);
+		
+		if (APP.DEBUGGER_SCREEN) {
+			
+			APP.debuggerScreen.postDisplay(width, height);
+			
+			BYPASSWORLD.render_preview();
+			
+			APP.platform.showDebuggerScreen();
+		}
+		
+		BYPASSWORLD.lock.lock();
+		BYPASSWORLD.ready = true;
+		BYPASSWORLD.lock.unlock();
+	}
+	
 	public static void pause() {
+		
+		BYPASSWORLD.lock.lock();
+		BYPASSWORLD.ready = false;
+		BYPASSWORLD.lock.unlock();
 		
 		if (APP.DEBUGGER_SCREEN) {
 			APP.platform.unshowDebuggerScreen();
@@ -451,9 +474,9 @@ public class BypassWorld extends World implements Model {
 		
 	}
 	
-	public void panelPostDisplay() {
+	public void render_worldPanel() {
 		
-		super.panelPostDisplay();
+		super.render_worldPanel();
 		
 		if (curLevel.isWon) {
 			
@@ -470,6 +493,12 @@ public class BypassWorld extends World implements Model {
 	}
 	
 	public void paint_panel(RenderingContext ctxt) {
+		
+		BYPASSWORLD.lock.lock();
+		if (!BYPASSWORLD.ready) {
+			BYPASSWORLD.lock.unlock();
+			return;
+		}
 		
 		super.paint_panel(ctxt);
 		
@@ -499,6 +528,7 @@ public class BypassWorld extends World implements Model {
 			winnerMenu.paint_panel(ctxt);
 		}
 		
+		BYPASSWORLD.lock.unlock();
 	}
 
 }

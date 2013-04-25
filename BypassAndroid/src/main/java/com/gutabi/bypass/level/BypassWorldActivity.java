@@ -57,6 +57,11 @@ public class BypassWorldActivity extends BypassActivity {
 		BypassWorld.resume();
     }
 	
+	protected void onSurfaceChanged(int width, int height) {
+		
+		BypassWorld.surfaceChanged(width, height);
+	}
+	
 	protected void onPause() {
 		super.onPause();
 		

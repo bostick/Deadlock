@@ -29,11 +29,12 @@ public class BypassControlPanel extends Panel {
 	
 	public BypassControlPanel() {
 		
-		aabb = new AABB(aabb.x, aabb.y, APP.CONTROLPANEL_WIDTH, APP.CONTROLPANEL_HEIGHT);
 	}
 	
-	public void postDisplay() {
+	public void postDisplay(int width, int height) {
 		BypassWorld world = (BypassWorld)APP.model;
+		
+		aabb = new AABB(aabb.x, aabb.y, width, height);
 		
 		double pixelsPerMeterWidth = world.worldCamera.previewAABB.width / world.quadrantMap.worldWidth;
 		double pixelsPerMeterHeight = world.worldCamera.previewAABB.height / world.quadrantMap.worldHeight;

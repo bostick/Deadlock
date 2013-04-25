@@ -54,7 +54,7 @@ public class WinnerMenu extends Menu {
 		world.gradeLabel.render();
 		world.winnerMenu.render();
 		
-		APP.appScreen.postDisplay();
+		world.render_worldPanel();
 		
 		APP.tool = new MenuTool();
 	}

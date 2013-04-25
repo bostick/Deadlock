@@ -1,6 +1,7 @@
 package com.gutabi.bypass.ui;
 
 import android.graphics.Canvas;
+import android.util.Log;
 
 import com.gutabi.bypass.BypassView;
 import com.gutabi.deadlock.ui.PlatformContentPane;
@@ -28,9 +29,13 @@ public class PlatformContentPaneImpl extends PlatformContentPane {
 		if (c == null) {
 			return;
 		}
-
+		
+//		Log.d("bypass", "repaint 1");
+		
 		v.doDraw(c);
-
+		
+//		Log.d("bypass", "repaint 2");
+		
 		v.holder.unlockCanvasAndPost(c);
 		
 //		PlatformImpl.CURRENTACTIVITY.runOnUiThread(repaintRunnable);

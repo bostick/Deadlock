@@ -53,6 +53,13 @@ import com.gutabi.deadlock.ui.paint.RenderingContext;
 
 public class PlatformImpl implements BypassPlatform {
 	
+	public static final int MAINWINDOW_WIDTH = 800;
+	public static final int MAINWINDOW_HEIGHT = 600;
+	
+	public static final int CONTROLPANEL_WIDTH = 200;
+	public static final int CONTROLPANEL_HEIGHT = 600;
+	
+	
 	public RootPaneContainer appContainer;
 	public RootPaneContainer debuggerContainer;
 	
@@ -99,7 +106,7 @@ public class PlatformImpl implements BypassPlatform {
 		
 		content.j.setLayout(null);
 		
-		content.j.setPreferredSize(new Dimension(APP.MAINWINDOW_WIDTH, APP.MAINWINDOW_HEIGHT));
+		content.j.setPreferredSize(new Dimension(PlatformImpl.MAINWINDOW_WIDTH, PlatformImpl.MAINWINDOW_HEIGHT));
 		
 		appContainer.setContentPane(content.j);
 		content.j.setFocusable(true);
@@ -125,7 +132,7 @@ public class PlatformImpl implements BypassPlatform {
 		
 		content.j.setLayout(null);
 		
-		content.j.setPreferredSize(new Dimension(APP.CONTROLPANEL_WIDTH, APP.CONTROLPANEL_HEIGHT));
+		content.j.setPreferredSize(new Dimension(PlatformImpl.CONTROLPANEL_WIDTH, PlatformImpl.CONTROLPANEL_HEIGHT));
 		
 		debuggerContainer.setContentPane(content.j);
 		content.j.setFocusable(true);
@@ -403,6 +410,7 @@ public class PlatformImpl implements BypassPlatform {
 			MainMenu.create();
 			MainMenu.start();
 			MainMenu.resume();
+			MainMenu.surfaceChanged(PlatformImpl.MAINWINDOW_WIDTH, PlatformImpl.MAINWINDOW_HEIGHT);
 			
 		} else if (newClazz == LevelMenu.class) {
 			
@@ -411,6 +419,7 @@ public class PlatformImpl implements BypassPlatform {
 			LevelMenu.create();
 			LevelMenu.start();
 			LevelMenu.resume();
+			LevelMenu.surfaceChanged(PlatformImpl.MAINWINDOW_WIDTH, PlatformImpl.MAINWINDOW_HEIGHT);
 			
 		} else if (newClazz == BypassWorld.class) {
 			
@@ -421,6 +430,7 @@ public class PlatformImpl implements BypassPlatform {
 			BypassWorld.create(ii);
 			BypassWorld.start();
 			BypassWorld.resume();
+			BypassWorld.surfaceChanged(PlatformImpl.MAINWINDOW_WIDTH, PlatformImpl.MAINWINDOW_HEIGHT);
 			
 		} else {
 			throw new AssertionError();
@@ -449,6 +459,7 @@ public class PlatformImpl implements BypassPlatform {
 			CURRENTACTIVITYCLASS = MainMenu.class;
 			
 			MainMenu.resume();
+			MainMenu.surfaceChanged(PlatformImpl.MAINWINDOW_WIDTH, PlatformImpl.MAINWINDOW_HEIGHT);
 			
 		} else if (oldClazz == BypassWorld.class) {
 			
@@ -459,6 +470,7 @@ public class PlatformImpl implements BypassPlatform {
 			CURRENTACTIVITYCLASS = LevelMenu.class;
 			
 			LevelMenu.resume();
+			LevelMenu.surfaceChanged(PlatformImpl.MAINWINDOW_WIDTH, PlatformImpl.MAINWINDOW_HEIGHT);
 			
 		} else {
 			throw new AssertionError();

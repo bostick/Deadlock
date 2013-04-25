@@ -77,14 +77,10 @@ public class LevelMenu extends Menu implements Model {
 		}
 		LEVELMENU.shimmeringMenuItem = LEVELMENU.items.get(firstUnwon);
 		
-		LEVELMENU.render();
-		
-		AppScreen s = new AppScreen(new ContentPane(new LevelMenuPanel()));
+		AppScreen s = new AppScreen(new ContentPane(new BypassMenuPanel()));
 		APP.appScreen = s;
 		
 		APP.platform.setupAppScreen(s.contentPane.pcp);
-		
-		APP.appScreen.postDisplay();
 		
 		APP.tool = new MenuTool();
 		
@@ -95,7 +91,26 @@ public class LevelMenu extends Menu implements Model {
 		
 	}
 	
+	public static void surfaceChanged(int width, int height) {
+		
+		LEVELMENU.lock.lock();
+		LEVELMENU.ready = false;
+		LEVELMENU.lock.unlock();
+		
+		LEVELMENU.render();
+		
+		APP.appScreen.postDisplay(width, height);
+		
+		LEVELMENU.lock.lock();
+		LEVELMENU.ready = true;
+		LEVELMENU.lock.unlock();
+	}
+	
 	public static void pause() {
+		
+		LEVELMENU.lock.lock();
+		LEVELMENU.ready = false;
+		LEVELMENU.lock.unlock();
 		
 		trigger.set(false);
 		

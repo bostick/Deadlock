@@ -10,8 +10,8 @@ public class AppScreen {
 		this.contentPane = contentPane;
 	}
 	
-	public void postDisplay() {
-		contentPane.postDisplay();
+	public void postDisplay(int width, int height) {
+		contentPane.postDisplay(width, height);
 	}
 	
 }

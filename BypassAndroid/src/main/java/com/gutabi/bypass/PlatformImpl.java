@@ -270,12 +270,18 @@ public class PlatformImpl implements BypassPlatform {
 		throw new AssertionError();
 	}
 
+	
+	static ResourceImpl visitorFontResource;
+	
 	public Resource fontResource(String name) {
 		
 		AssetManager am = resources.getAssets();
 		
 		if (name.equals("visitor1")) {
-			return new ResourceImpl(Typeface.createFromAsset(am, "fonts/" + name + ".ttf"));
+			if (visitorFontResource == null) {
+				visitorFontResource = new ResourceImpl(Typeface.createFromAsset(am, "fonts/" + name + ".ttf"));
+			}
+			return visitorFontResource;
 		}
 		
 		assert false;

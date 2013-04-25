@@ -15,7 +15,7 @@ import com.gutabi.bypass.BypassApplication;
 import com.gutabi.bypass.menu.MainMenu;
 import com.gutabi.bypass.ui.WindowInfo;
 
-public class Main  {
+public class Main {
 	
 	static void createAndShowGUI() throws Exception {
 		
@@ -36,7 +36,7 @@ public class Main  {
 		    }
 		});
 		
-		newFrame.setLocation((int)WindowInfo.windowDim().width/2 - APP.MAINWINDOW_WIDTH/2, 0);
+		newFrame.setLocation((int)WindowInfo.windowDim().width/2 - PlatformImpl.MAINWINDOW_WIDTH/2, (int)WindowInfo.windowDim().height/2 - PlatformImpl.MAINWINDOW_HEIGHT/2);
 		
 		platform.appContainer = newFrame;
 		
@@ -44,7 +44,7 @@ public class Main  {
 		newFrame = new JFrame("Debug Control Panel");
 		newFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		
-		newFrame.setLocation((int)WindowInfo.windowDim().width/2 + APP.MAINWINDOW_WIDTH/2 + 100, 0);
+		newFrame.setLocation((int)WindowInfo.windowDim().width/2 + PlatformImpl.MAINWINDOW_WIDTH/2 + 100, 0);
 		
 		platform.debuggerContainer = newFrame;
 		

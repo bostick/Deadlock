@@ -63,14 +63,10 @@ public class MainMenu extends Menu implements Model {
 		
 		APP.model = MAINMENU;
 		
-		MAINMENU.render();
-		
-		AppScreen s = new AppScreen(new ContentPane(new MainMenuPanel()));
+		AppScreen s = new AppScreen(new ContentPane(new BypassMenuPanel()));
 		APP.appScreen = s;
 		
 		APP.platform.setupAppScreen(s.contentPane.pcp);
-		
-		s.postDisplay();
 		
 		APP.tool = new MenuTool();
 		
@@ -80,7 +76,23 @@ public class MainMenu extends Menu implements Model {
 		uiThread.start();
 	}
 	
+	public static void surfaceChanged(int width, int height) {
+		
+		MAINMENU.lock.lock();
+		
+		MAINMENU.render();
+		
+		APP.appScreen.postDisplay(width, height);
+		
+		MAINMENU.ready = true;
+		MAINMENU.lock.unlock();
+	}
+	
 	public static void pause() {
+		
+		MAINMENU.lock.lock();
+		MAINMENU.ready = false;
+//		MAINMENU.lock.unlock();
 		
 		trigger.set(false);
 		
@@ -93,6 +105,7 @@ public class MainMenu extends Menu implements Model {
 		
 		uiThread = null;
 		
+		MAINMENU.lock.unlock();
 	}
 	
 	public Menu getMenu() {
@@ -102,5 +115,5 @@ public class MainMenu extends Menu implements Model {
 	public void escape() {
 		
 	}
-	
+
 }

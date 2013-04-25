@@ -13,10 +13,10 @@ public class WorldPanel extends Panel {
 		
 	}
 	
-	public void postDisplay() {
+	public void postDisplay(int width, int height) {
 		World world = (World)APP.model;
 		
-		aabb = new AABB(aabb.x, aabb.y, APP.MAINWINDOW_WIDTH, APP.MAINWINDOW_HEIGHT);
+		aabb = new AABB(aabb.x, aabb.y, width, height);
 		
 		world.worldCamera.worldPanel = this;
 		

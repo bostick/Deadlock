@@ -2,6 +2,8 @@ package com.gutabi.deadlock.ui;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.math.Point;
@@ -9,6 +11,9 @@ import com.gutabi.deadlock.ui.paint.Color;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 
 public abstract class Menu {
+	
+	public boolean ready;
+	public Lock lock = new ReentrantLock(true);
 	
 	public List<MenuItem> items = new ArrayList<MenuItem>();
 	

@@ -6,12 +6,12 @@ import com.gutabi.deadlock.world.sprites.Sheet;
 
 public class DeadlockApplication {
 	
-	public int MAINWINDOW_WIDTH = -1;
-	public int MAINWINDOW_HEIGHT = -1;
+//	public int MAINWINDOW_WIDTH = -1;
+//	public int MAINWINDOW_HEIGHT = -1;
 //	public AABB border;
 	
-	public int CONTROLPANEL_WIDTH = -1;
-	public int CONTROLPANEL_HEIGHT = -1;
+//	public int CONTROLPANEL_WIDTH = -1;
+//	public int CONTROLPANEL_HEIGHT = -1;
 	
 	public Sheet carSheet;
 	public Sheet spriteSheet;

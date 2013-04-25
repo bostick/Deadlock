@@ -18,8 +18,8 @@ public class ContentPane {
 		return pcp.getChildren();
 	}
 	
-	public void postDisplay() {
-		pcp.postDisplay();
+	public void postDisplay(int width, int height) {
+		pcp.postDisplay(width, height);
 	}
 	
 	public void repaint() {

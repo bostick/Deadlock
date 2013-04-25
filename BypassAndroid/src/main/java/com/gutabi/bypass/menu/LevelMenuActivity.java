@@ -51,6 +51,11 @@ public class LevelMenuActivity extends BypassActivity {
     	LevelMenu.resume();
     }
 	
+	protected void onSurfaceChanged(int width, int height) {
+		
+		LevelMenu.surfaceChanged(width, height);
+	}
+	
 	protected void onPause() {
 		super.onPause();
 		
