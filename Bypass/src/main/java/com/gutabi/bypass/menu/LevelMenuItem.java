@@ -20,8 +20,8 @@ public abstract class LevelMenuItem extends MenuItem {
 	
 	public Label gradeLab;
 	
-	public LevelMenuItem(Menu menu, int index) {
-		super(menu, Integer.toString(index));
+	public LevelMenuItem(Menu menu, int index, String fmt) {
+		super(menu, String.format(fmt, index));
 		
 		this.index = index;
 	}

@@ -89,8 +89,8 @@ public class BypassCar extends Car {
 		
 		assert vel >= 0.0;
 		
-		if (vel > 10) {
-			vel = 10;
+		if (vel > 4) {
+			vel = 4;
 		}
 		
 		coastingVel = vel;
@@ -159,6 +159,8 @@ public class BypassCar extends Car {
 							state = CarStateEnum.COASTING_FORWARD;
 							driver.toolCoastingGoal = driver.toolOrigExitingVertexPos.travelForward(BypassStud.SIZE + 0.5 * studCount);
 						}
+						
+						coastingVel = 0.0;
 						
 						setTransform(Point.point(driver.overallPos.p, newPos.p, param), newPos.angle);
 						setPhysicsTransform();

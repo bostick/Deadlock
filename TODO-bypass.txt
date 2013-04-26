@@ -1,20 +1,42 @@
 
-winner menu coming up is slow
-
-
 slight fudge factor for menu scrolling
+
+
+
+first entering, auto-scroll level menu to first ungraded level
+going back, auto-scroll to last selected level
+
+
 
 prevent panning when exiting board
 keep board centered as car is leaving
 make car go slow when exiting
 
-write down whole process for level generation and selection
 
+
+
+write down whole process for level generation and selection
+level file format, no adjacent roads, only to adjacent sides, not on exit side, future work: cloverleafs
+
+
+
+episode 0 - 10 tutorial levels
+episode 1 - lite version, 50 levels
+episode 2 - full version, 500 levels
+
+select levels for tutorial
 select levels for lite version
 select levels for full version
 setup renderer in Mathematica
 visually compare similar levels
 similar: lots of cars in same position and similar number of moves
+
+test only tutorial installed
+test tutorial, lite installed
+test tutorial, lite, full installed
+
+
+
 
 
 brighten grass tile
@@ -34,12 +56,11 @@ allow custom boards? does bigger than 6x6 work?
 
 
 
-
-auto-scroll level menu to first ungraded level
-
-
-
 SOON:
+
+little code in level menu:
+# of loops, # of required moves, # cars
+
 
 
 when dragging, if within 25% of stud, just go to it
@@ -62,6 +83,20 @@ use graph paper and sketch out different screens and layouts first
 
 DONE:
 
+menu layout
+
+
+
+menu
+reset level button
+
+in level menu screen, clear scores menu item
+
+
+
+
+winner menu coming up is slow
+
 SurfaceView stuff
 screen size
 
@@ -69,8 +104,7 @@ winner menu:
 try again
 
 
-menu
-reset button
+
 
 blocked car goes and hits the blocker and coasts back
 

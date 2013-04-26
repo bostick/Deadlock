@@ -1,5 +1,8 @@
 package com.gutabi.bypass;
 
+import static com.gutabi.deadlock.DeadlockApplication.APP;
+import static com.gutabi.bypass.BypassApplication.BYPASSAPP;
+
 import java.io.InputStream;
 
 import android.content.Intent;
@@ -410,6 +413,32 @@ public class PlatformImpl implements BypassPlatform {
 		editor.putLong(Integer.toString(l.index), l.userTime);
 		
 		editor.commit();
+	}
+	
+	public void clearScores() {
+		LevelMenu menu = (LevelMenu)APP.model;
+		
+		SharedPreferences grades = CURRENTACTIVITY.getSharedPreferences("grades", 0);
+		SharedPreferences.Editor editor = grades.edit();
+		editor.clear();
+		editor.commit();
+		
+		SharedPreferences userMoves = CURRENTACTIVITY.getSharedPreferences("userMoves", 0);
+		editor = userMoves.edit();
+		editor.clear();
+		editor.commit();
+		
+		SharedPreferences userTime = CURRENTACTIVITY.getSharedPreferences("userTime", 0);
+		editor = userTime.edit();
+		editor.clear();
+		editor.commit();
+		
+		BYPASSAPP.levelDB.levelMap.clear();
+		
+		menu.shimmeringMenuItem = menu.items.get(0);
+		
+		menu.render();
+		
 	}
 	
 }

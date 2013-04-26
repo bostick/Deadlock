@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.Window;
 
 import com.gutabi.bypass.BypassActivity;
 import com.gutabi.bypass.BypassView;
@@ -21,8 +20,6 @@ public class BypassWorldActivity extends BypassActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		
 		setContentView(R.layout.activity_bypassworld);
 		
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
@@ -34,8 +31,6 @@ public class BypassWorldActivity extends BypassActivity {
 		
 		v.ctxt = APP.platform.createRenderingContext();
 		v.activity = this;
-		
-		registerForContextMenu(v);
 		
 		int ii = (Integer)getIntent().getExtras().get("com.gutabi.bypass.level.Index");
 		
@@ -81,7 +76,7 @@ public class BypassWorldActivity extends BypassActivity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 	    switch (item.getItemId()) {
-	        case R.id.btn_reset:
+	        case R.id.btn_reset_level:
 	        	BypassWorld.BYPASSWORLD.reset();
 	            return true;
 	        default:

@@ -1,9 +1,13 @@
 package com.gutabi.bypass.menu;
 
+import static com.gutabi.bypass.BypassApplication.BYPASSAPP;
+
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
-import android.view.Window;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 
 import com.gutabi.bypass.BypassActivity;
 import com.gutabi.bypass.BypassView;
@@ -17,8 +21,6 @@ public class LevelMenuActivity extends BypassActivity {
 	
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
-		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		
 		setContentView(R.layout.activity_levelmenu);
 		
@@ -62,4 +64,21 @@ public class LevelMenuActivity extends BypassActivity {
 		LevelMenu.pause();
 	}
 	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+	    MenuInflater inflater = getMenuInflater();
+	    inflater.inflate(R.menu.levelmenu_context_menu, menu);
+	    return true;
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+	    switch (item.getItemId()) {
+	        case R.id.btn_clear_scores:
+	        	BYPASSAPP.bypassPlatform.clearScores();
+	            return true;
+	        default:
+	            return super.onOptionsItemSelected(item);
+	    }
+	}
 }
