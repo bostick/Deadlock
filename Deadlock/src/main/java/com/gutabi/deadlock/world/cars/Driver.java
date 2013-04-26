@@ -22,6 +22,7 @@ public abstract class Driver {
 	
 	public GraphPositionPathPosition toolOrigOverallPos;
 	public GraphPositionPathPosition toolOrigExitingVertexPos;
+	public GraphPositionPathPosition toolLastExitingVertexPos;
 	
 	public GraphPositionPathPosition toolCoastingGoal;
 	

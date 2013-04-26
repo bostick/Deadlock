@@ -124,23 +124,23 @@ public class BypassCarTool extends WorldToolBase {
 				GraphPosition gpos = car.driver.overallPos.gp;
 				
 				if (gpos instanceof RoadPosition) {
-					assert car.driver.toolOrigExitingVertexPos != null;
+					assert car.driver.toolLastExitingVertexPos != null;
 					
-					if (car.driver.overallPos.combo < car.driver.toolOrigExitingVertexPos.combo) {
-						determineCoasting(car.driver.toolOrigExitingVertexPos, car.driver.toolOrigExitingVertexPos.prevVertexPosition(), true);
+					if (car.driver.overallPos.combo < car.driver.toolLastExitingVertexPos.combo) {
+						determineCoasting(car.driver.toolLastExitingVertexPos, car.driver.toolLastExitingVertexPos.prevVertexPosition(), true);
 					} else {
-						determineCoasting(car.driver.toolOrigExitingVertexPos, car.driver.toolOrigExitingVertexPos.nextVertexPosition(), true);
+						determineCoasting(car.driver.toolLastExitingVertexPos, car.driver.toolLastExitingVertexPos.nextVertexPosition(), true);
 					}
 					
 				} else if (gpos instanceof VertexPosition) {
-					assert car.driver.toolOrigExitingVertexPos != null;
+					assert car.driver.toolLastExitingVertexPos != null;
 					
-					if (car.driver.overallPos.combo == car.driver.toolOrigExitingVertexPos.combo) {
+					if (car.driver.overallPos.combo == car.driver.toolLastExitingVertexPos.combo) {
 						
 						if (car.driver.overallPath.get(car.driver.overallPos.index+1) instanceof RoadPosition) {
-							determineCoasting(car.driver.toolOrigExitingVertexPos, car.driver.toolOrigExitingVertexPos.nextVertexPosition(), true);
+							determineCoasting(car.driver.toolLastExitingVertexPos, car.driver.toolLastExitingVertexPos.nextVertexPosition(), true);
 						} else {
-							determineCoasting(car.driver.toolOrigExitingVertexPos, car.driver.toolOrigExitingVertexPos.prevVertexPosition(), true);
+							determineCoasting(car.driver.toolLastExitingVertexPos, car.driver.toolLastExitingVertexPos.prevVertexPosition(), true);
 						}
 						
 					} else {
@@ -154,12 +154,12 @@ public class BypassCarTool extends WorldToolBase {
 					BypassBoard b = (BypassBoard)bpos.entity;
 					
 					if (!b.floorAndCeilWithinGrid(car)) {
-						assert car.driver.toolOrigExitingVertexPos != null;
+						assert car.driver.toolLastExitingVertexPos != null;
 						
-						if (car.driver.overallPos.combo < car.driver.toolOrigExitingVertexPos.combo) {
-							determineCoasting(car.driver.toolOrigExitingVertexPos, car.driver.toolOrigExitingVertexPos.nextVertexPosition(), true);
+						if (car.driver.overallPos.combo < car.driver.toolLastExitingVertexPos.combo) {
+							determineCoasting(car.driver.toolLastExitingVertexPos, car.driver.toolLastExitingVertexPos.nextVertexPosition(), true);
 						} else {
-							determineCoasting(car.driver.toolOrigExitingVertexPos, car.driver.toolOrigExitingVertexPos.prevVertexPosition(), true);
+							determineCoasting(car.driver.toolLastExitingVertexPos, car.driver.toolLastExitingVertexPos.prevVertexPosition(), true);
 						}
 						
 					} else {
@@ -346,7 +346,10 @@ public class BypassCarTool extends WorldToolBase {
 				}
 				GraphPositionPathPosition vertexPos = new GraphPositionPathPosition(car.driver.overallPath, nextVertexIndex, 0.0);
 				
-				car.driver.toolOrigExitingVertexPos = vertexPos;
+				car.driver.toolLastExitingVertexPos = vertexPos;
+				if (car.driver.toolOrigExitingVertexPos == null) {
+					car.driver.toolOrigExitingVertexPos = vertexPos;
+				}
 				
 				if (vertexPos.gp.entity == b.exitVertex && !world.curLevel.isWon && car.type == CarType.RED) {
 					
@@ -358,7 +361,10 @@ public class BypassCarTool extends WorldToolBase {
 				
 			} else if (prevGPos instanceof VertexPosition) {
 				
-				car.driver.toolOrigExitingVertexPos = car.driver.prevOverallPos;
+				car.driver.toolLastExitingVertexPos = car.driver.prevOverallPos;
+				if (car.driver.toolOrigExitingVertexPos == null) {
+					car.driver.toolOrigExitingVertexPos = car.driver.prevOverallPos;
+				}
 				
 			}
 			
@@ -369,7 +375,10 @@ public class BypassCarTool extends WorldToolBase {
 				BypassBoardPosition rpos = (BypassBoardPosition)prevGPos;
 				BypassBoard b = (BypassBoard)rpos.entity;
 				
-				car.driver.toolOrigExitingVertexPos = car.driver.overallPos;
+				car.driver.toolLastExitingVertexPos = car.driver.overallPos;
+				if (car.driver.toolOrigExitingVertexPos == null) {
+					car.driver.toolOrigExitingVertexPos = car.driver.overallPos;
+				}
 				
 				if (car.driver.overallPos.gp.entity == b.exitVertex && !world.curLevel.isWon && car.type == CarType.RED) {
 					
@@ -380,7 +389,10 @@ public class BypassCarTool extends WorldToolBase {
 				}
 			} else {
 				
-				car.driver.toolOrigExitingVertexPos = car.driver.overallPos;
+				car.driver.toolLastExitingVertexPos = car.driver.overallPos;
+				if (car.driver.toolOrigExitingVertexPos == null) {
+					car.driver.toolOrigExitingVertexPos = car.driver.overallPos;
+				}
 			}
 			
 		} else {
@@ -405,7 +417,10 @@ public class BypassCarTool extends WorldToolBase {
 					assert car.driver.overallPos.combo < nextVertexIndex && nextVertexIndex < car.driver.prevOverallPos.combo;
 				}
 				
-				car.driver.toolOrigExitingVertexPos = new GraphPositionPathPosition(car.driver.overallPath, nextVertexIndex, 0.0);
+				car.driver.toolLastExitingVertexPos = new GraphPositionPathPosition(car.driver.overallPath, nextVertexIndex, 0.0);
+				if (car.driver.toolOrigExitingVertexPos == null) {
+					car.driver.toolOrigExitingVertexPos = new GraphPositionPathPosition(car.driver.overallPath, nextVertexIndex, 0.0);
+				}
 				
 			} else if (prevGPos instanceof VertexPosition) {
 				
@@ -431,7 +446,10 @@ public class BypassCarTool extends WorldToolBase {
 					}
 					GraphPositionPathPosition vertexPos = new GraphPositionPathPosition(car.driver.overallPath, nextVertexIndex, 0.0);
 					
-					car.driver.toolOrigExitingVertexPos = vertexPos;
+					car.driver.toolLastExitingVertexPos = vertexPos;
+					if (car.driver.toolOrigExitingVertexPos == null) {
+						car.driver.toolOrigExitingVertexPos = vertexPos;
+					}
 					
 					if (vertexPos.gp.entity == b.exitVertex && !world.curLevel.isWon && car.type == CarType.RED) {
 						

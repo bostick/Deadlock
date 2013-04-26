@@ -135,6 +135,7 @@ public class BypassCar extends Car {
 			}
 			
 			driver.toolOrigExitingVertexPos = null;
+			driver.toolLastExitingVertexPos = null;
 			driver.toolCoastingGoal = null;
 			driver.prevOverallPos = null;
 			
@@ -161,9 +162,12 @@ public class BypassCar extends Car {
 						}
 						
 						coastingVel = 0.0;
-						
-						setTransform(Point.point(driver.overallPos.p, newPos.p, param), newPos.angle);
-						setPhysicsTransform();
+						/*
+						 * doing setTransform(Point.point(driver.overallPos.p, newPos.p, param), newPos.angle);
+						 * would be more correct here, but the resolving of overallPos from p in postStep starts searching from overallPos,
+						 * so teh correct point of impact would be in front of overallPos when doing a backward search, and
+						 * in back of overallPos when doing a forward search, so the correct pos would never be found.
+						 */
 						return;
 					}
 				}
