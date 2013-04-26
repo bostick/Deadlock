@@ -4,5 +4,10 @@
         android:id="@+id/btn_reset_level"
         android:title="@string/reset_level"
         android:showAsAction="ifRoom|withText" />
+    
+    <!-- <item
+        android:id="@+id/btn_level_info"
+        android:title="@string/level_info"
+        android:showAsAction="ifRoom|withText" /> -->
     	
 </menu>

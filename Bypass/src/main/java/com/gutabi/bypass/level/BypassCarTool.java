@@ -354,6 +354,7 @@ public class BypassCarTool extends WorldToolBase {
 				if (vertexPos.gp.entity == b.exitVertex && !world.curLevel.isWon && car.type == CarType.RED) {
 					
 					winner();
+					return;
 					
 				} else {
 					
@@ -383,6 +384,7 @@ public class BypassCarTool extends WorldToolBase {
 				if (car.driver.overallPos.gp.entity == b.exitVertex && !world.curLevel.isWon && car.type == CarType.RED) {
 					
 					winner();
+					return;
 					
 				} else {
 					
@@ -454,6 +456,7 @@ public class BypassCarTool extends WorldToolBase {
 					if (vertexPos.gp.entity == b.exitVertex && !world.curLevel.isWon && car.type == CarType.RED) {
 						
 						winner();
+						return;
 						
 					} else {
 						

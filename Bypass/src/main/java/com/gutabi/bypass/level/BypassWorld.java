@@ -442,27 +442,42 @@ public class BypassWorld extends World implements Model {
 			
 			b = origExitingVertex.s.board;
 			
-			if (origExitingVertex == b.exitVertex) {
-				/*
-				 * don't pan while exiting
-				 */
-				return;
-			}
+//			if (origExitingVertex == b.exitVertex) {
+//				/*
+//				 * don't pan while exiting
+//				 */
+//				return;
+//			}
 			
 		} else if (gpos instanceof VertexPosition) {
 			
 			b = ((Vertex)gpos.entity).s.board;
 			
-			if (gpos.entity == b.exitVertex) {
-				/*
-				 * don't pan while exiting
-				 */
-				return;
-			}
+//			if (gpos.entity == b.exitVertex) {
+//				/*
+//				 * don't pan while exiting
+//				 */
+//				return;
+//			}
 			
 		} else {
 			assert gpos instanceof BypassBoardPosition;
 			b = (BypassBoard)gpos.entity;
+			
+			if (b.withinGrid(car, car.angle, car.center)) {
+				
+				double cameraX = worldCamera.origWorldViewport.x;
+				double cameraY = worldCamera.origWorldViewport.y;
+				
+				worldCamera.panAbsolute(cameraX, cameraY);
+				return;
+			}
+//			else if (exiting) {
+//				/*
+//				 * don't pan while exiting
+//				 */
+//				return;
+//			}
 		}
 		
 		Point aa = Point.worldToPanel(car.center, worldCamera);

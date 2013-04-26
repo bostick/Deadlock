@@ -2,6 +2,10 @@
 <resources>
 
     <string name="app_name">Bypass</string>
+    
+    <string name="clear_scores">Clear Scores</string>
+    
     <string name="reset_level">Reset Level</string>
-	<string name="clear_scores">Clear Scores</string>
+    <string name="level_info">Level Info</string>
+    
 </resources>

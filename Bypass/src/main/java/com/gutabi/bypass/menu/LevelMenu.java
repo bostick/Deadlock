@@ -20,6 +20,7 @@ public class LevelMenu extends Menu implements Model {
 	
 	public static LevelMenu LEVELMENU;
 	public static int firstUnwon = 0;
+	public static Point loc = new Point(0, 0);
 	
 	public LevelMenu() {
 		
@@ -48,6 +49,7 @@ public class LevelMenu extends Menu implements Model {
 	public static void resume() {
 		
 		LEVELMENU = new LevelMenu();
+		LEVELMENU.setLocation(loc);
 		
 		APP.model = LEVELMENU;
 		
@@ -108,13 +110,11 @@ public class LevelMenu extends Menu implements Model {
 		}
 		
 //		if (loc == null) {
-		Point loc = new Point(0, -((firstUnwon / itemsPerRow)) * (LEVELMENU.items.get(0).localAABB.height + 10));
+//		Point loc = new Point(0, -((firstUnwon / itemsPerRow)) * (LEVELMENU.items.get(0).localAABB.height + 10));
 //		}
-		if (firstUnwon/itemsPerRow > 0) {
-			loc = loc.plus(new Point(0, 0.5 * LEVELMENU.items.get(0).localAABB.height));
-		}
-		
-		LEVELMENU.setLocation(loc);
+//		if (firstUnwon/itemsPerRow > 0) {
+//			loc = loc.plus(new Point(0, 0.5 * LEVELMENU.items.get(0).localAABB.height));
+//		}
 		
 		LEVELMENU.shimmeringMenuItem = LEVELMENU.items.get(firstUnwon);
 		
@@ -142,6 +142,7 @@ public class LevelMenu extends Menu implements Model {
 			e.printStackTrace();
 		}
 		
+		LevelMenu.loc = new Point(LEVELMENU.aabb.x, LEVELMENU.aabb.y);
 		LEVELMENU = null;
 		
 	}

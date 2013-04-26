@@ -165,8 +165,13 @@ public class BypassCar extends Car {
 						/*
 						 * doing setTransform(Point.point(driver.overallPos.p, newPos.p, param), newPos.angle);
 						 * would be more correct here, but the resolving of overallPos from p in postStep starts searching from overallPos,
-						 * so teh correct point of impact would be in front of overallPos when doing a backward search, and
+						 * so the correct point of impact would be in front of overallPos when doing a backward search, and
 						 * in back of overallPos when doing a forward search, so the correct pos would never be found.
+						 * 
+						 * so we'd have to also set overallPos here (which is confusing), or have another state BOUNCING or something
+						 * to indicate in the transition between COASTING FORWARD and BACKWARD, which seems overkill
+						 * 
+						 * no one is going to miss one time step
 						 */
 						return;
 					}

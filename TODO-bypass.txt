@@ -1,30 +1,10 @@
 
-problem with moving real truck on level 2 on AWT, when red car is in the way
-
-
-
-prevent panning when exiting board
-keep board centered as car is leaving
-make car go slow when exiting
-
-
-
-world menu:
-level info:
-episode/pack/whatever, level index, #of cars, uuid(boards dims and placement of all cars), required moves, user moves, user time, user grade
-
-
-
 Deadlock -> Capsloc
 nothing "rush hour"
 
 
-
-
-
 write down whole process for level generation and selection
 level file format, no adjacent roads, only to adjacent sides, not on exit side, future work: cloverleafs
-
 
 
 episode 0 - 10 tutorial levels
@@ -41,9 +21,6 @@ similar: lots of cars in same position and similar number of moves
 test only tutorial installed
 test tutorial, lite installed
 test tutorial, lite, full installed
-
-
-
 
 
 brighten grass tile
@@ -64,6 +41,12 @@ allow custom boards? does bigger than 6x6 work?
 
 
 SOON:
+
+
+world menu:
+level info:
+episode/pack/whatever, level index, #of cars, uuid(boards dims and placement of all cars), required moves, user moves, user time, user grade
+
 
 little code in level menu:
 # of loops, # of required moves, # cars
@@ -90,9 +73,17 @@ use graph paper and sketch out different screens and layouts first
 
 DONE:
 
+auto-scroll level menu to first ungraded level
+
+prevent panning when exiting board
+keep board centered as car is leaving
+make car go slow when exiting
+
+problem with moving real truck on level 2 on AWT, when red car is in the way
+
 slight fudge factor for menu scrolling
 
-auto-scroll level menu to first ungraded level
+
 
 dynamic menu layout
 
