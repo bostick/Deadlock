@@ -8,6 +8,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import com.gutabi.bypass.level.BypassWorld;
 import com.gutabi.deadlock.AppScreen;
 import com.gutabi.deadlock.Model;
+import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.ContentPane;
 import com.gutabi.deadlock.ui.Label;
 import com.gutabi.deadlock.ui.Menu;
@@ -18,6 +19,7 @@ import com.gutabi.deadlock.ui.paint.FontStyle;
 public class LevelMenu extends Menu implements Model {
 	
 	public static LevelMenu LEVELMENU;
+	public static int firstUnwon = 0;
 	
 	public LevelMenu() {
 		
@@ -105,20 +107,15 @@ public class LevelMenu extends Menu implements Model {
 			}, menuRow, menuCol);
 		}
 		
-		int firstUnwon = 0;
-		for (int i = 0; i < BYPASSAPP.levelDB.levelCount; i++) {
-			if (BYPASSAPP.levelDB.levelMap.keySet().contains(i)) {
-				if (BYPASSAPP.levelDB.levelMap.get(i).isWon) {
-					
-				} else {
-					firstUnwon = i;
-					break;
-				}
-			} else {
-				firstUnwon = i;
-				break;
-			}
+//		if (loc == null) {
+		Point loc = new Point(0, -((firstUnwon / itemsPerRow)) * (LEVELMENU.items.get(0).localAABB.height + 10));
+//		}
+		if (firstUnwon/itemsPerRow > 0) {
+			loc = loc.plus(new Point(0, 0.5 * LEVELMENU.items.get(0).localAABB.height));
 		}
+		
+		LEVELMENU.setLocation(loc);
+		
 		LEVELMENU.shimmeringMenuItem = LEVELMENU.items.get(firstUnwon);
 		
 		LEVELMENU.render();

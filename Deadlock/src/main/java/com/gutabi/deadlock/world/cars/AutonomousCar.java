@@ -3,7 +3,6 @@ package com.gutabi.deadlock.world.cars;
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
 import com.gutabi.deadlock.Entity;
-import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.geom.Circle;
 import com.gutabi.deadlock.geom.ShapeUtils;
 import com.gutabi.deadlock.math.DMath;
@@ -250,7 +249,7 @@ public class AutonomousCar extends Car {
 				inMerger = false;
 			} else {
 				atleastPartiallyOnRoad = true;
-				if (hit instanceof Merger && ShapeUtils.containsAO((AABB)((Merger)hit).getShape(), shape)) {
+				if (hit instanceof Merger && ShapeUtils.containsAO(((Merger)hit).getShape(), shape)) {
 					inMerger = true;
 				} else {
 					inMerger = false;

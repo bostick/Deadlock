@@ -216,8 +216,8 @@ public abstract class Menu {
 		
 		ctxt.setColor(Color.menuBackground);
 		ctxt.fillRect(
-				(int)(-5),
-				(int)(-5),
+				(-5),
+				(-5),
 				(int)(aabb.width + 5 + 5),
 				(int)(aabb.height + 5 + 5));
 		

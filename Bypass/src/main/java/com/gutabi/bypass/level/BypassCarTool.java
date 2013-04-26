@@ -1,5 +1,6 @@
 package com.gutabi.bypass.level;
 
+import static com.gutabi.bypass.BypassApplication.BYPASSAPP;
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
 import com.gutabi.bypass.menu.LevelMenu;
@@ -39,7 +40,7 @@ public class BypassCarTool extends WorldToolBase {
 	
 	public void escKey() {
 		
-		APP.platform.action(LevelMenu.class);
+		APP.platform.finishAction();
 	}
 	
 	public void pressed(InputEvent ignore) {
@@ -485,6 +486,20 @@ public class BypassCarTool extends WorldToolBase {
 		world.curLevel.userTime = (System.currentTimeMillis() - world.curLevel.userStartTime);
 		
 		world.curLevel.isWon = true;
+		
+		for (int i = 0; i < BYPASSAPP.levelDB.levelCount; i++) {
+			if (BYPASSAPP.levelDB.levelMap.keySet().contains(i)) {
+				if (BYPASSAPP.levelDB.levelMap.get(i).isWon) {
+					
+				} else {
+					LevelMenu.firstUnwon = i;
+					break;
+				}
+			} else {
+				LevelMenu.firstUnwon = i;
+				break;
+			}
+		}
 		
 		released(null);
 		

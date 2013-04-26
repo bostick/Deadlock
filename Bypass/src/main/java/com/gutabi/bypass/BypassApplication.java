@@ -1,6 +1,7 @@
 package com.gutabi.bypass;
 
 import com.gutabi.bypass.level.LevelDB;
+import com.gutabi.bypass.menu.LevelMenu;
 import com.gutabi.deadlock.DeadlockApplication;
 import com.gutabi.deadlock.Resource;
 import com.gutabi.deadlock.ui.Image;
@@ -52,6 +53,22 @@ public class BypassApplication extends DeadlockApplication {
 		spriteSheet.load();
 		
 		levelDB = new LevelDB(APP.platform.levelDBResource("levels"));
+		
+		BYPASSAPP.bypassPlatform.loadScores();
+		
+		for (int i = 0; i < BYPASSAPP.levelDB.levelCount; i++) {
+			if (BYPASSAPP.levelDB.levelMap.keySet().contains(i)) {
+				if (BYPASSAPP.levelDB.levelMap.get(i).isWon) {
+					
+				} else {
+					LevelMenu.firstUnwon = i;
+					break;
+				}
+			} else {
+				LevelMenu.firstUnwon = i;
+				break;
+			}
+		}
 		
 		APP.platform.showAppScreen();
 		

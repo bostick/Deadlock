@@ -11,8 +11,8 @@
 	</tstamp>
 	
 	<property name="debug" value="true"/>
-	<property name="javaSrcVersion" value="1.6"/>
-	<property name="javaTgtVersion" value="1.6"/>
+	<property name="javaSrcVersion" value="1.7"/>
+	<property name="javaTgtVersion" value="1.7"/>
 	
 	<property name="srcDir" location="../src/main/java"/>
 	<property name="deadlockResDir" location="../../DeadlockResources"/>
@@ -21,12 +21,6 @@
 	<property name="distDir" location="${buildDir}/dist/Bypass"/>
 	
 	<property name="bypassJar" value="bypass-${version.major}.${version.minor}.${version.revision}.${DATE}.jar" />
-	<property name="jbox2dJar" value="jbox2d-library-2.2.1.1.jar" />
-	<property name="log4jJar" value="log4j-1.2.16.jar" />
-	<property name="slf4jApiJar" value="slf4j-api-1.7.1.jar" />
-	<property name="slf4jSimpleJar" value="slf4j-simple-1.7.1.jar" />
-	
-	<taskdef name="exe4j" classname="com.exe4j.Exe4JTask" classpath="C:\Program Files\exe4j\bin\ant.jar"/>
 	
 	<target name="build">
 	    
@@ -50,22 +44,15 @@
 		    </filterset>
 		</copy>
 		
-		<copy tofile="${buildDir}/copied/lib/${jbox2dJar}" file="../../Deadlock/lib/${jbox2dJar}"/>
-		<copy tofile="${buildDir}/copied/lib/${log4jJar}" file="../../Deadlock/lib/${log4jJar}"/>
-		<copy tofile="${buildDir}/copied/lib/${slf4jApiJar}" file="../../Deadlock/lib/${slf4jApiJar}"/>
-		<copy tofile="${buildDir}/copied/lib/${slf4jSimpleJar}" file="../../Deadlock/lib/${slf4jSimpleJar}"/>
-		
 		<copy tofile="${buildDir}/bin/copyright.png" file="${deadlockResDir}/static/copyright.png"/>
-		<copy tofile="${buildDir}/bin/explosionsheet.png" file="${deadlockResDir}/static/explosionsheet.png"/>
 		<copy tofile="${buildDir}/bin/carsheet.png" file="${deadlockResDir}/static/carsheet.png"/>
 		<copy tofile="${buildDir}/bin/spritesheet.png" file="${deadlockResDir}/static/spritesheet.png"/>
 		<copy tofile="${buildDir}/bin/title_background.png" file="${deadlockResDir}/static/title_background.png"/>
 		<copy tofile="${buildDir}/bin/title_white.png" file="${deadlockResDir}/static/title_white.png"/>
 		<copy tofile="${buildDir}/bin/visitor1.ttf" file="${deadlockResDir}/static/visitor1.ttf"/>
-		<copy tofile="${buildDir}/bin/visitor2.ttf" file="${deadlockResDir}/static/visitor2.ttf"/>
 		
 		<copy tofile="${buildDir}/bin/logo605x132.png" file="${bypassResDir}/static/logo605x132.png"/>
-		<copy tofile="${buildDir}/bin/levels.zip" file="${bypassResDir}/gen/bin/levels.zip"/>
+		<copy tofile="${buildDir}/bin/levels.zip" file="${bypassResDir}/gen/levels.zip"/>
 		
 		
 		<javac srcdir="${buildDir}/copied/src"
@@ -108,10 +95,6 @@
 				<filter token="VERSIONINFO" value="&lt;versionInfo include=&quot;true&quot; fileVersion=&quot;${version.major} ${version.minor} ${version.revision} ${DATE}&quot; fileDescription=&quot;Gutabi Studios Bypass&quot; legalCopyright=&quot;Copyright 2013 Gutabi Studios&quot; internalName=&quot;Bypass&quot; productName=&quot;Bypass&quot; companyName=&quot;Gutabi Studios&quot; productVersion=&quot;${version.major} ${version.minor} ${version.revision} ${DATE}&quot; /&gt;"/>
 				
 				<filter token="BYPASSJAR" value="${bypassJar}" />
-				<filter token="JBOX2DJAR" value="${jbox2dJar}" />
-				<filter token="LOG4JJAR" value="${log4jJar}" />
-				<filter token="SLF4JAPIJAR" value="${slf4jApiJar}" />
-				<filter token="SLF4JSIMPLEJAR" value="${slf4jSimpleJar}" />
 				
 				<filter token="AMD64" value="true" />
 				<filter token="APPLICATIONNAME" value="Bypass" />
@@ -122,6 +105,7 @@
 		    </filterset>
 		</copy>
 		
+		<taskdef name="exe4j" classname="com.exe4j.Exe4JTask" classpath="C:\Program Files\exe4j\bin\ant.jar"/>
 		<exe4j projectfile="${buildDir}/copied/Bypass.exe4j" verbose="true"/>
 		
 	</target>

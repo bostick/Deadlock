@@ -1,16 +1,23 @@
 
-slight fudge factor for menu scrolling
-
-
-
-first entering, auto-scroll level menu to first ungraded level
-going back, auto-scroll to last selected level
+problem with moving real truck on level 2 on AWT, when red car is in the way
 
 
 
 prevent panning when exiting board
 keep board centered as car is leaving
 make car go slow when exiting
+
+
+
+world menu:
+level info:
+episode/pack/whatever, level index, #of cars, uuid(boards dims and placement of all cars), required moves, user moves, user time, user grade
+
+
+
+Deadlock -> Capsloc
+nothing "rush hour"
+
 
 
 
@@ -83,7 +90,11 @@ use graph paper and sketch out different screens and layouts first
 
 DONE:
 
-menu layout
+slight fudge factor for menu scrolling
+
+auto-scroll level menu to first ungraded level
+
+dynamic menu layout
 
 
 

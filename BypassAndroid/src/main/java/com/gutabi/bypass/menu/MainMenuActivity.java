@@ -2,7 +2,6 @@ package com.gutabi.bypass.menu;
 
 import static com.gutabi.bypass.BypassApplication.BYPASSAPP;
 import static com.gutabi.deadlock.DeadlockApplication.APP;
-import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,7 +11,6 @@ import com.gutabi.bypass.BypassApplication;
 import com.gutabi.bypass.BypassView;
 import com.gutabi.bypass.PlatformImpl;
 import com.gutabi.bypass.R;
-import com.gutabi.bypass.level.Level;
 
 public class MainMenuActivity extends BypassActivity {
 	
@@ -45,18 +43,6 @@ public class MainMenuActivity extends BypassActivity {
 			APP.DEBUG_DRAW = false;
 			
 			BYPASSAPP.init();
-			
-			SharedPreferences grades = getSharedPreferences("grades", 0);
-			
-			for (int i = 0; i < BYPASSAPP.levelDB.levelCount; i++) {
-				String grade = grades.getString(Integer.toString(i), null);
-				if (grade != null) {
-					Level l = BYPASSAPP.levelDB.readLevel(i);
-					l.isWon = true;
-					l.grade = grade;
-				}
-				
-			}
 			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

@@ -27,7 +27,7 @@ import com.gutabi.deadlock.ui.paint.RenderingContext;
 
 public class RenderingContextImpl extends RenderingContext {
 	
-	public static float RAD = 57.29577951308232087679815481410517033240547246656432154916024386120284714832155263244096899585111094f;
+	public static float RAD = 57.29577951308f;
 	
 	public Canvas canvas;
 	public Paint paint;

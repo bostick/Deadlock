@@ -394,6 +394,22 @@ public class PlatformImpl implements BypassPlatform {
 		
 	}
 	
+	public void loadScores() throws Exception {
+		
+		SharedPreferences grades = CURRENTACTIVITY.getSharedPreferences("grades", 0);
+		
+		for (int i = 0; i < BYPASSAPP.levelDB.levelCount; i++) {
+			String grade = grades.getString(Integer.toString(i), null);
+			if (grade != null) {
+				Level l = BYPASSAPP.levelDB.readLevel(i);
+				l.isWon = true;
+				l.grade = grade;
+			}
+			
+		}
+		
+	}
+	
 	public void saveScore(Level l) {
 		
 		SharedPreferences grades = CURRENTACTIVITY.getSharedPreferences("grades", 0);

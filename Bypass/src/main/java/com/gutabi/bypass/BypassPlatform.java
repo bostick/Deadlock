@@ -5,6 +5,8 @@ import com.gutabi.deadlock.Platform;
 
 public interface BypassPlatform extends Platform {
 	
+	void loadScores() throws Exception;
+	
 	void saveScore(Level l);
 	
 	void clearScores();

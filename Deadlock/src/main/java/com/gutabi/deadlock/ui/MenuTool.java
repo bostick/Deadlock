@@ -92,6 +92,9 @@ public class MenuTool extends Tool {
 		}
 		
 		Point motionDiff = ignore.p.minus(origPressed);
+		if (motionDiff.length() < 5.0) {
+			return;
+		}
 		
 		if (!menu.hScrollable && !menu.vScrollable) {
 			return;

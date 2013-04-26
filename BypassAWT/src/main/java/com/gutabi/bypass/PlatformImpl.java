@@ -478,7 +478,15 @@ public class PlatformImpl implements BypassPlatform {
 		
 	}
 	
+	public void loadScores() throws Exception {
+		
+	}
+	
 	public void saveScore(Level l) {
+		
+	}
+	
+	public void clearScores() {
 		
 	}
 	

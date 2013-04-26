@@ -18,10 +18,6 @@
     </searchSequence>
     <classPath>
       <archive location="./lib/@BYPASSJAR@" failOnError="true" />
-      <archive location="./lib/@JBOX2DJAR@" failOnError="true" />
-      <archive location="./lib/@LOG4JJAR@" failOnError="true" />
-      <archive location="./lib/@SLF4JAPIJAR@" failOnError="true" />
-      <archive location="./lib/@SLF4JSIMPLEJAR@" failOnError="true" />
       <directory location="./classes" failOnError="true" />
     </classPath>
     <nativeLibraryDirectories />
