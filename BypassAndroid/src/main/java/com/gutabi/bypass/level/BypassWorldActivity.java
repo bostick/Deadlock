@@ -1,5 +1,6 @@
 package com.gutabi.bypass.level;
 
+import static com.gutabi.bypass.BypassApplication.BYPASSAPP;
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
@@ -8,7 +9,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import com.gutabi.bypass.BypassActivity;
+import com.gutabi.bypass.BypassApplication;
 import com.gutabi.bypass.BypassView;
+import com.gutabi.bypass.PlatformImpl;
 import com.gutabi.bypass.R;
 
 public class BypassWorldActivity extends BypassActivity {
@@ -24,10 +27,21 @@ public class BypassWorldActivity extends BypassActivity {
 		
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 		
-		v = (BypassView)findViewById(R.id.view_bypassworld);
-		if (v == null) {
-			throw new AssertionError("R.id.view_bypassworld could not be found");
+		if (BYPASSAPP == null) {
+			PlatformImpl platform = new PlatformImpl(getResources());
+			try {
+				BypassApplication.create(platform);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
+		
+		if (savedInstanceState != null) {
+			int x;
+		}
+		
+		v = (BypassView)findViewById(R.id.view_bypassworld);
 		
 		v.ctxt = APP.platform.createRenderingContext();
 		v.activity = this;
@@ -64,6 +78,20 @@ public class BypassWorldActivity extends BypassActivity {
 		super.onPause();
 		
 		BypassWorld.pause();
+	}
+	
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		
+		int x;
+	}
+	
+	@Override
+	protected void onRestoreInstanceState(Bundle savedInstanceState) {
+		super.onRestoreInstanceState(savedInstanceState);
+		
+		int x;
 	}
 	
 	@Override

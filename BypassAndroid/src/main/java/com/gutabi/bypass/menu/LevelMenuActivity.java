@@ -1,7 +1,6 @@
 package com.gutabi.bypass.menu;
 
 import static com.gutabi.bypass.BypassApplication.BYPASSAPP;
-
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
@@ -10,8 +9,11 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import com.gutabi.bypass.BypassActivity;
+import com.gutabi.bypass.BypassApplication;
 import com.gutabi.bypass.BypassView;
+import com.gutabi.bypass.PlatformImpl;
 import com.gutabi.bypass.R;
+import com.gutabi.deadlock.math.Point;
 
 public class LevelMenuActivity extends BypassActivity {
 	
@@ -25,6 +27,22 @@ public class LevelMenuActivity extends BypassActivity {
 		setContentView(R.layout.activity_levelmenu);
 		
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+		
+		if (BYPASSAPP == null) {
+			PlatformImpl platform = new PlatformImpl(getResources());
+			try {
+				BypassApplication.create(platform);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		if (savedInstanceState != null) {
+			double[] a = savedInstanceState.getDoubleArray("com.gutabi.bypass.menu.LevelMenuLoc");
+			Point loc = new Point(a[0], a[1]);
+			LevelMenu.loc = loc;
+		}
 		
 		v = (BypassView)findViewById(R.id.view_levelmenu);
 		
@@ -62,6 +80,24 @@ public class LevelMenuActivity extends BypassActivity {
 		super.onPause();
 		
 		LevelMenu.pause();
+	}
+	
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		
+		double[] a = new double[] { LevelMenu.loc.x, LevelMenu.loc.y };
+		
+		outState.putDoubleArray("com.gutabi.bypass.menu.LevelMenuLoc", a);
+	}
+	
+	@Override
+	protected void onRestoreInstanceState(Bundle savedInstanceState) {
+		super.onRestoreInstanceState(savedInstanceState);
+		
+		double[] a = savedInstanceState.getDoubleArray("com.gutabi.bypass.menu.LevelMenuLoc");
+		Point loc = new Point(a[0], a[1]);
+		LevelMenu.loc = loc;
 	}
 	
 	@Override

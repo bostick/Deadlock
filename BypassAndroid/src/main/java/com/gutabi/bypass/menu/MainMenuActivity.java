@@ -23,31 +23,22 @@ public class MainMenuActivity extends BypassActivity {
 		
 		setContentView(R.layout.activity_mainmenu);
 		
-		BypassApplication app = new BypassApplication();
-		APP = app;
-		BYPASSAPP = app;
-		
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+		
+		if (BYPASSAPP == null) {
+			PlatformImpl platform = new PlatformImpl(getResources());
+			try {
+				BypassApplication.create(platform);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		
 		v = (BypassView)findViewById(R.id.view_mainmenu);
 		
-		PlatformImpl platform = new PlatformImpl(getResources());
-		APP.platform = platform;
-		BYPASSAPP.bypassPlatform = platform;
-		
 		v.ctxt = APP.platform.createRenderingContext();
 		v.activity = this;
-		
-		try {
-			
-			APP.DEBUG_DRAW = false;
-			
-			BYPASSAPP.init();
-			
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		
 		MainMenu.create();
 	}
