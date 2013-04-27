@@ -431,6 +431,18 @@ public class BypassWorld extends World implements Model {
 		return winnerMenu;
 	}
 	
+	public void panelPostDisplay(int width, int height) {
+		
+		int min = Math.min(width, height);
+		double ppm = min / 8.0;
+		
+		worldCamera.pixelsPerMeter = ppm;
+		worldCamera.origPixelsPerMeter = ppm;
+		
+		super.panelPostDisplay(width, height);
+		
+	}
+	
 	public void handleZooming(Car car) {
 		
 		GraphPosition gpos = car.driver.overallPos.gp;

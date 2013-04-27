@@ -71,7 +71,18 @@ public class World extends PhysicsWorld {
 		
 	}
 	
-	public void panelPostDisplay() {
+	public void panelPostDisplay(int width, int height) {
+				
+		worldCamera.worldViewport.setShape(
+				-(width / worldCamera.pixelsPerMeter) / 2 + quadrantMap.worldWidth/2 ,
+				-(height / worldCamera.pixelsPerMeter) / 2 + quadrantMap.worldHeight/2,
+				width / worldCamera.pixelsPerMeter,
+				height / worldCamera.pixelsPerMeter);
+		
+		worldCamera.origWorldViewport = worldCamera.worldViewport.copy();
+		
+		background.width = (int)width;
+		background.height = (int)height;
 		
 		background.panelPostDisplay();
 		

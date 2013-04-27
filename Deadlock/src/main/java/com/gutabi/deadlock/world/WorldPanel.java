@@ -19,18 +19,7 @@ public class WorldPanel extends Panel {
 		
 		world.worldCamera.worldPanel = this;
 		
-		world.worldCamera.worldViewport.setShape(
-				-(aabb.width / world.worldCamera.pixelsPerMeter) / 2 + world.quadrantMap.worldWidth/2 ,
-				-(aabb.height / world.worldCamera.pixelsPerMeter) / 2 + world.quadrantMap.worldHeight/2,
-				aabb.width / world.worldCamera.pixelsPerMeter,
-				aabb.height / world.worldCamera.pixelsPerMeter);
-		
-		world.worldCamera.origWorldViewport = world.worldCamera.worldViewport.copy();
-		
-		world.background.width = (int)aabb.width;
-		world.background.height = (int)aabb.height;
-		
-		world.panelPostDisplay();
+		world.panelPostDisplay(width, height);
 	}
 	
 	public void paint(RenderingContext ctxt) {

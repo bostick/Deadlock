@@ -11,12 +11,11 @@
 	
 	<target name="build">
 		
-		<copy tofile="${resDir}/drawable-hdpi/copyright.png" file="${deadlockResDir}/static/copyright.png"/>
-		<copy tofile="${resDir}/drawable-hdpi/title_background.png" file="${deadlockResDir}/static/title_background.png"/>
-		<copy tofile="${resDir}/drawable-hdpi/title_white.png" file="${deadlockResDir}/static/title_white.png"/>
-		<copy tofile="${resDir}/drawable-hdpi/ic_launcher.png" file="${bypassResDir}/static/ic_launcher.png"/>
-		<copy tofile="${resDir}/drawable-hdpi/logo605x132.png" file="${bypassResDir}/static/logo605x132.png"/>
-		
+	    <copy tofile="${resDir}/drawable-hdpi/ic_launcher.png" file="${bypassResDir}/static/ic_launcher.png"/>
+	    
+		<copy tofile="${resDir}/drawable-nodpi/copyright.png" file="${deadlockResDir}/static/copyright.png"/>
+		<copy tofile="${resDir}/drawable-nodpi/title_background.png" file="${deadlockResDir}/static/title_background.png"/>
+		<copy tofile="${resDir}/drawable-nodpi/logo605x132.png" file="${bypassResDir}/static/logo605x132.png"/>
 		<copy tofile="${resDir}/drawable-nodpi/carsheet.png" file="${deadlockResDir}/static/carsheet.png"/>
 		<copy tofile="${resDir}/drawable-nodpi/spritesheet.png" file="${deadlockResDir}/static/spritesheet.png"/>
 		

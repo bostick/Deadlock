@@ -59,9 +59,6 @@ public class BypassMenuPanel extends Panel {
 		menu.setLocation(x, y);
 	}
 	
-//	Transform origTransform = APP.platform.createTransform();
-//	Transform menuTrans = APP.platform.createTransform();
-	
 	public void paint(RenderingContext ctxt) {
 		Menu menu = (Menu)APP.model;
 		
@@ -94,26 +91,29 @@ public class BypassMenuPanel extends Panel {
 			
 			ctxt.pushTransform();
 			
-			int TITLE_CENTER_Y = 120 + BYPASSAPP.title_white.getHeight()/2;
-			int COPYRIGHT_CENTER_Y = (int)aabb.height - 100 - BYPASSAPP.copyright.getHeight()/2;
-			
-			ctxt.translate(aabb.width/2 - BYPASSAPP.title_white.getWidth()/2, TITLE_CENTER_Y - BYPASSAPP.title_white.getHeight()/2);
+			ctxt.translate(0, 0);
 			ctxt.paintImage(BYPASSAPP.title_white,
-					0, 0, BYPASSAPP.title_white.getWidth(), BYPASSAPP.title_white.getHeight(),
+					0, 0, (int)aabb.width, (int)((aabb.width * BYPASSAPP.title_white.getHeight()) / BYPASSAPP.title_white.getWidth()),
 					0, 0, BYPASSAPP.title_white.getWidth(), BYPASSAPP.title_white.getHeight());
 			
 			ctxt.popTransform();
 			
 			ctxt.pushTransform();
 			
-			ctxt.translate(aabb.width/2 - BYPASSAPP.copyright.getWidth()/2, COPYRIGHT_CENTER_Y - BYPASSAPP.copyright.getHeight()/2);
+			int w = (int)Math.min(BYPASSAPP.copyright.getWidth(), aabb.width);
+			int h = (w * BYPASSAPP.copyright.getHeight()) / BYPASSAPP.copyright.getWidth();
+			ctxt.translate(aabb.width/2 - w/2, aabb.height - h);
 			ctxt.paintImage(BYPASSAPP.copyright,
-					0, 0, BYPASSAPP.copyright.getWidth(), BYPASSAPP.copyright.getHeight(),
+					0, 0, w, h,
 					0, 0, BYPASSAPP.copyright.getWidth(), BYPASSAPP.copyright.getHeight());
 			
 			ctxt.popTransform();
 			
+			ctxt.pushTransform();
+			
 			menu.paint_panel(ctxt);
+			
+			ctxt.popTransform();
 			
 			ctxt.popTransform();
 			

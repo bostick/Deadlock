@@ -687,7 +687,7 @@ public class Point {
 	}
 	
 	public static Point panelToMenu(Point p, Menu menu) {
-		return new Point(p.x - menu.aabb.x, p.y - menu.aabb.y);
+		return new Point(p.x / menu.scale - menu.aabb.x, p.y / menu.scale - menu.aabb.y);
 	}
 	
 	public static Point previewToWorld(Point p, WorldCamera cam) {

@@ -10,11 +10,9 @@ import com.gutabi.deadlock.AppScreen;
 import com.gutabi.deadlock.Model;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.ContentPane;
-import com.gutabi.deadlock.ui.Label;
 import com.gutabi.deadlock.ui.Menu;
 import com.gutabi.deadlock.ui.MenuTool;
 import com.gutabi.deadlock.ui.UIAnimationRunnable;
-import com.gutabi.deadlock.ui.paint.FontStyle;
 
 public class LevelMenu extends Menu implements Model {
 	
@@ -73,33 +71,11 @@ public class LevelMenu extends Menu implements Model {
 		LEVELMENU.ready = false;
 		LEVELMENU.lock.unlock();
 		
-		
-		Label lab;
-		String fmt;
-		if (BYPASSAPP.levelDB.levelCount <= 10) {
-			lab = new Label("0");
-//			fmt = "%01d";
-		} else if (BYPASSAPP.levelDB.levelCount <= 100) {
-			lab = new Label("00");
-//			fmt = "%02d";
-		} else {
-			lab = new Label("000");
-//			fmt = "%03d";
-		}
-		fmt = "%d";
-		
-		lab.fontFile = APP.platform.fontResource("visitor1");
-		lab.fontStyle = FontStyle.PLAIN;
-		lab.fontSize = 72;
-		lab.renderLocal();
-		double labWidth = lab.localAABB.width;
-		int itemsPerRow = (int)Math.floor((width - labWidth) / (labWidth + 10));
-		
 		for (int i = 0; i < BYPASSAPP.levelDB.levelCount; i++) {
-			int menuRow = i / itemsPerRow;
-			int menuCol = i % itemsPerRow;
+			int menuRow = i / 5;
+			int menuCol = i % 5;
 			final int ii = i;
-			LEVELMENU.add(new LevelMenuItem(LEVELMENU, i, fmt) {
+			LEVELMENU.add(new LevelMenuItem(LEVELMENU, i, "%d") {
 				
 				public void action() {
 					

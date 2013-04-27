@@ -27,6 +27,7 @@ public abstract class Menu {
 	public double[] menuHeight;
 	
 	public AABB aabb = new AABB(0, 0, 0, 0);
+	public double scale = 0.3;
 	
 	public boolean hScrollable;
 	public boolean vScrollable;
@@ -212,6 +213,7 @@ public abstract class Menu {
 	
 	public void paint_panel(RenderingContext ctxt) {
 		
+		ctxt.scale(scale);
 		ctxt.translate(aabb.x, aabb.y);
 		
 		ctxt.setColor(Color.menuBackground);
