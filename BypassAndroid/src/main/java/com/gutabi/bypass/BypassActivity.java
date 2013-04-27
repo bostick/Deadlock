@@ -66,7 +66,7 @@ public abstract class BypassActivity extends Activity {
 	}
 	
 	protected void onPause() {
-		super.onResume();
+		super.onPause();
 		
 		Log.d("bypassactivity", name + " pause");
 		state = ActivityState.PAUSE;
@@ -76,5 +76,21 @@ public abstract class BypassActivity extends Activity {
 	}
 	
 	protected abstract void onSurfaceChanged(int width, int height);
+	
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		
+		Log.d("bypassactivity", name + " save instance state");
+		
+	}
+	
+	@Override
+	protected void onRestoreInstanceState(Bundle savedInstanceState) {
+		super.onRestoreInstanceState(savedInstanceState);
+		
+		Log.d("bypassactivity", name + " restore instance state");
+		
+	}
 	
 }
