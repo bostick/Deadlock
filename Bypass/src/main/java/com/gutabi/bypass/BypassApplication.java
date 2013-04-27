@@ -22,55 +22,59 @@ public class BypassApplication extends DeadlockApplication {
 	
 	public BypassApplication() {
 		
-		/*
-		 * Droid X
-		 */
-//		MAINWINDOW_WIDTH = 480;
-//		MAINWINDOW_HEIGHT = 854;
-		
-		/*
-		 * Galaxy Tab 2 7.0
-		 */
-//		MAINWINDOW_WIDTH = 600;
-//		MAINWINDOW_HEIGHT = 976;
-		
 	}
 	
-	public void init() throws Exception {
+	public static void create(BypassPlatform plat) throws Exception {
 		
-		Resource background = APP.platform.imageResource("title_background");
-		Resource white = APP.platform.imageResource("logo605x132");
-		Resource copy = APP.platform.imageResource("copyright");
+		BypassApplication app = new BypassApplication();
+		APP = app;
+		BYPASSAPP = app;
 		
-		titleBackground = platform.readImage(background);
-		title_white = platform.readImage(white);
-		copyright = platform.readImage(copy);
+		APP.platform = plat;
+		BYPASSAPP.bypassPlatform = plat;
 		
-		carSheet = new CarSheet();
-		spriteSheet = new SpriteSheet();
-		
-		carSheet.load();
-		spriteSheet.load();
-		
-		levelDB = new LevelDB(APP.platform.levelDBResource("levels"));
-		
-		BYPASSAPP.bypassPlatform.loadScores();
-		
-		for (int i = 0; i < BYPASSAPP.levelDB.levelCount; i++) {
-			if (BYPASSAPP.levelDB.levelMap.keySet().contains(i)) {
-				if (BYPASSAPP.levelDB.levelMap.get(i).isWon) {
-					
+		try {
+			
+			Resource background = APP.platform.imageResource("title_background");
+			Resource white = APP.platform.imageResource("logo605x132");
+			Resource copy = APP.platform.imageResource("copyright");
+			
+			BYPASSAPP.titleBackground = APP.platform.readImage(background);
+			BYPASSAPP.title_white = APP.platform.readImage(white);
+			BYPASSAPP.copyright = APP.platform.readImage(copy);
+			
+			APP.carSheet = new CarSheet();
+			APP.spriteSheet = new SpriteSheet();
+			
+			APP.carSheet.load();
+			APP.spriteSheet.load();
+			
+			BYPASSAPP.levelDB = new LevelDB(APP.platform.levelDBResource("levels"));
+			
+			BYPASSAPP.bypassPlatform.loadScores();
+			
+			for (int i = 0; i < BYPASSAPP.levelDB.levelCount; i++) {
+				if (BYPASSAPP.levelDB.levelMap.keySet().contains(i)) {
+					if (BYPASSAPP.levelDB.levelMap.get(i).isWon) {
+						
+					} else {
+						LevelMenu.firstUnwon = i;
+						break;
+					}
 				} else {
 					LevelMenu.firstUnwon = i;
 					break;
 				}
-			} else {
-				LevelMenu.firstUnwon = i;
-				break;
 			}
+			
+			APP.platform.showAppScreen();
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		
-		APP.platform.showAppScreen();
+		
 		
 	}
 	
