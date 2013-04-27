@@ -9,11 +9,15 @@ public class PlatformContentPaneImpl extends PlatformContentPane {
 	
 	BypassView v;
 	
-	public PlatformContentPaneImpl(final BypassView v) {
+	public PlatformContentPaneImpl(BypassView v) {
 		this.v = v;
 	}
 	
 	public void repaint() {
+		
+		if (!v.surfaceValid) {
+			return;
+		}
 		
 		Canvas c = v.holder.lockCanvas();
 		if (c == null) {

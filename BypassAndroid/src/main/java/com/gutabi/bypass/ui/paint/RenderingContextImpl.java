@@ -4,7 +4,6 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
-import android.graphics.PixelXorXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
 
@@ -18,7 +17,6 @@ import com.gutabi.deadlock.geom.MutableAABB;
 import com.gutabi.deadlock.math.Dim;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.Image;
-import com.gutabi.deadlock.ui.Transform;
 import com.gutabi.deadlock.ui.paint.Cap;
 import com.gutabi.deadlock.ui.paint.Color;
 import com.gutabi.deadlock.ui.paint.FontStyle;
@@ -100,32 +98,25 @@ public class RenderingContextImpl extends RenderingContext {
 	
 	public void setXORMode(Color c) {
 		
-		int c2 = android.graphics.Color.argb(c.a, c.r, c.g, c.b);
-		
-		paint.setXfermode(new PixelXorXfermode(c2));
+//		int c2 = android.graphics.Color.argb(c.a, c.r, c.g, c.b);
+//		
+//		paint.setXfermode(new PixelXorXfermode(c2));
 	}
 	
 	public void clearXORMode() {
 		
-		paint.setXfermode(null);
+//		paint.setXfermode(null);
 	}
 	
-	public void getTransform(Transform a) {
-		TransformImpl t = (TransformImpl)a;
-		
-		canvas.getMatrix(t.mat);
-		
-//		Matrix tmp = PlatformImpl.CURRENTACTIVITY.v.getMatrix();
+	public void pushTransform() {
+		canvas.save();
 	}
 	
-	public void setTransform(Transform trans) {
-		
-		TransformImpl t2 = (TransformImpl)trans;
-		canvas.setMatrix(t2.mat);
-		
-//		PlatformImpl.CURRENTACTIVITY.v.getMatrix().set(t2.mat);
+	public void popTransform() {
+		canvas.restore();
 	}
-
+	
+	
 	Rect fr = new Rect();
 	
 	public void fillRect(int x, int y, int width, int height) {
