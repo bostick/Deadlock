@@ -7,7 +7,6 @@ import com.gutabi.deadlock.geom.Line;
 import com.gutabi.deadlock.geom.ShapeUtils;
 import com.gutabi.deadlock.math.DMath;
 import com.gutabi.deadlock.math.Point;
-import com.gutabi.deadlock.ui.Transform;
 import com.gutabi.deadlock.ui.paint.Cap;
 import com.gutabi.deadlock.ui.paint.Color;
 import com.gutabi.deadlock.ui.paint.Join;
@@ -113,10 +112,6 @@ public class Quadrant {
 		}
 	}
 	
-	
-	
-	Transform origTransform = APP.platform.createTransform();
-	
 	public void paint_panel(RenderingContext ctxt) {
 		
 		if (!ShapeUtils.intersectAA(aabb, ctxt.cam.worldViewport)) {
@@ -130,7 +125,7 @@ public class Quadrant {
 		}
 		
 		if (!APP.DEBUG_DRAW) {
-			ctxt.getTransform(origTransform);
+			ctxt.pushTransform();
 			
 			ctxt.translate(c * QuadrantMap.QUADRANT_WIDTH, r * QuadrantMap.QUADRANT_HEIGHT);
 			ctxt.paintImage(map.quadrantGrass,
@@ -138,7 +133,8 @@ public class Quadrant {
 					0.0, 0.0, QuadrantMap.QUADRANT_WIDTH, QuadrantMap.QUADRANT_HEIGHT,
 					0, 0, map.quadrantGrass.getWidth(), map.quadrantGrass.getHeight());
 			
-			ctxt.setTransform(origTransform);
+			ctxt.popTransform();
+			
 		} else {
 			ctxt.setColor(Color.DARKGREEN);
 			aabb.paint(ctxt);

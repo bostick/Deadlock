@@ -8,7 +8,6 @@ import java.util.Set;
 import com.gutabi.deadlock.geom.Shape;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.InputEvent;
-import com.gutabi.deadlock.ui.Transform;
 import com.gutabi.deadlock.ui.paint.Cap;
 import com.gutabi.deadlock.ui.paint.Color;
 import com.gutabi.deadlock.ui.paint.Join;
@@ -244,9 +243,6 @@ public class QuadTool extends WorldToolBase {
 		}
 	}
 	
-	
-	Transform origTransform = APP.platform.createTransform();
-	
 	public void paint_panel(RenderingContext ctxt) {
 		World world = (World)APP.model;
 		
@@ -258,7 +254,7 @@ public class QuadTool extends WorldToolBase {
 		ctxt.setXORMode(Color.BLACK);
 		ctxt.setStroke(0.0, Cap.SQUARE, Join.MITER);
 		
-		ctxt.getTransform(origTransform);
+		ctxt.pushTransform();
 		
 		ctxt.scale(world.worldCamera.pixelsPerMeter);
 		ctxt.translate(-world.worldCamera.worldViewport.x, -world.worldCamera.worldViewport.y);
@@ -276,7 +272,7 @@ public class QuadTool extends WorldToolBase {
 			break;
 		}
 		
-		ctxt.setTransform(origTransform);
+		ctxt.popTransform();
 		
 		ctxt.clearXORMode();
 	}

@@ -49,9 +49,6 @@ public abstract class MenuItem {
 	public abstract void action();
 	
 	
-	
-	protected Transform origTransformRender = APP.platform.createTransform();
-	
 	public void render() {
 		
 		lab.aabb = new AABB(aabb.x + menu.menuItemWidest[c]/2 - lab.localAABB.width/2, aabb.y + (20 + lab.localAABB.height + 20)/2 - lab.localAABB.height/2, lab.localAABB.width, lab.localAABB.height);
@@ -59,13 +56,9 @@ public abstract class MenuItem {
 		aabb = new AABB(aabb.x, aabb.y, menu.menuItemWidest[c], 20 + lab.aabb.height + 20);
 	}
 	
-	
-	
-	public Transform origTransformPaint = APP.platform.createTransform();
-	
 	public void paint(RenderingContext ctxt) {
 		
-		ctxt.getTransform(origTransformPaint);
+		ctxt.pushTransform();
 		
 		if (active) {
 			lab.color = Color.WHITE;
@@ -75,20 +68,14 @@ public abstract class MenuItem {
 		
 		lab.paint(ctxt);
 		
-		ctxt.setTransform(origTransformPaint);
+		ctxt.popTransform();
 		
 		ctxt.setColor(Color.BLUE);
 		ctxt.setStroke(0.0, Cap.SQUARE, Join.MITER);
 		aabb.draw(ctxt);
 	}
 	
-	
-	
-	Transform origTransformPaintHilited = APP.platform.createTransform();
-	
 	public void paintHilited(RenderingContext ctxt) {
-		
-		ctxt.getTransform(origTransformPaintHilited);
 		
 		ctxt.setColor(Color.RED);
 		ctxt.setStroke(0.0, Cap.SQUARE, Join.MITER);

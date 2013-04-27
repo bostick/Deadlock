@@ -92,7 +92,6 @@ public class MainMenu extends Menu implements Model {
 		
 		MAINMENU.lock.lock();
 		MAINMENU.ready = false;
-//		MAINMENU.lock.unlock();
 		
 		trigger.set(false);
 		

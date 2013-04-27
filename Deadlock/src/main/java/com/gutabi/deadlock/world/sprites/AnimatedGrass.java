@@ -5,7 +5,6 @@ import static com.gutabi.deadlock.DeadlockApplication.APP;
 import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.geom.ShapeUtils;
 import com.gutabi.deadlock.math.Point;
-import com.gutabi.deadlock.ui.Transform;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.world.sprites.SpriteSheet.SpriteSheetSprite;
 
@@ -83,13 +82,9 @@ public class AnimatedGrass {
 		}
 	}
 	
-	
-	
-	Transform origTransform = APP.platform.createTransform();
-	
 	private void paint(RenderingContext ctxt, int index) {
 		
-		ctxt.getTransform(origTransform);
+		ctxt.pushTransform();
 		
 		ctxt.translate(p.x - AnimatedGrass.GRASS_SIZE/2, p.y - AnimatedGrass.GRASS_SIZE/2);
 		
@@ -105,7 +100,7 @@ public class AnimatedGrass {
 			break;
 		}
 		
-		ctxt.setTransform(origTransform);
+		ctxt.popTransform();
 	}
 	
 }

@@ -28,11 +28,6 @@ public abstract class LevelMenuItem extends MenuItem {
 	
 	public void render() {
 		
-//		ctxt.getTransform(origTransformRender);
-//		
-//		int x = (int)origTransformRender.getTranslateX();
-//		int y = (int)origTransformRender.getTranslateY();
-		
 		lab.aabb = new AABB(aabb.x + menu.menuItemWidest[c]/2 - lab.localAABB.width/2, aabb.y + (20 + lab.localAABB.height + 20)/2 - lab.localAABB.height/2, lab.localAABB.width, lab.localAABB.height);
 		
 		aabb = new AABB(aabb.x, aabb.y, menu.menuItemWidest[c], 20 + lab.aabb.height + 20);
@@ -62,7 +57,7 @@ public abstract class LevelMenuItem extends MenuItem {
 	
 	public void paint(RenderingContext ctxt) {
 		
-		ctxt.getTransform(origTransformPaint);
+		ctxt.pushTransform();
 		
 		if (active) {
 			lab.color = Color.WHITE;
@@ -72,7 +67,7 @@ public abstract class LevelMenuItem extends MenuItem {
 		
 		lab.paint(ctxt);
 		
-		ctxt.setTransform(origTransformPaint);
+		ctxt.popTransform();
 		
 		if (gradeLab != null) {
 			gradeLab.paint(ctxt);

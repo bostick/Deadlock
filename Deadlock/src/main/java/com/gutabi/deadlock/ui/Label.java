@@ -79,12 +79,9 @@ public class Label {
 		ctxt.dispose();
 	}
 	
-	
-	Transform origTransformPaint = APP.platform.createTransform();
-	
 	public void paint(RenderingContext ctxt) {
 		
-		ctxt.getTransform(origTransformPaint);
+		ctxt.pushTransform();
 		
 		ctxt.translate(aabb.x, aabb.y);
 		
@@ -95,7 +92,7 @@ public class Label {
 		ctxt.setFont(fontFile, fontStyle, fontSize);
 		ctxt.paintString(baseline.x, baseline.y, 1.0, text);
 		
-		ctxt.setTransform(origTransformPaint);
+		ctxt.popTransform();
 	}
 	
 }

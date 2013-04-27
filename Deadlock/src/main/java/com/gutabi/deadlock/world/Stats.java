@@ -1,8 +1,5 @@
 package com.gutabi.deadlock.world;
 
-import static com.gutabi.deadlock.DeadlockApplication.APP;
-
-import com.gutabi.deadlock.ui.Transform;
 import com.gutabi.deadlock.ui.paint.Cap;
 import com.gutabi.deadlock.ui.paint.Color;
 import com.gutabi.deadlock.ui.paint.Join;
@@ -21,16 +18,13 @@ public class Stats {
 		this.world = world;
 	}
 	
-	
-	Transform origTransform = APP.platform.createTransform();
-	
 	public void paint(RenderingContext ctxt) {
 		
 		ctxt.setColor(Color.WHITE);
 		ctxt.setXORMode(Color.DARK_GRAY);
 		ctxt.setStroke(0.0, Cap.SQUARE, Join.MITER);
 		
-		ctxt.getTransform(origTransform);
+		ctxt.pushTransform();
 		
 		ctxt.translate(1, 1);
 		
@@ -52,7 +46,7 @@ public class Stats {
 		
 		ctxt.clearXORMode();
 		
-		ctxt.setTransform(origTransform);
+		ctxt.popTransform();
 		
 	}
 	

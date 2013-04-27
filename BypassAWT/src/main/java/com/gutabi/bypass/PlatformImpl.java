@@ -33,7 +33,6 @@ import com.gutabi.bypass.menu.MainMenu;
 import com.gutabi.bypass.ui.ImageImpl;
 import com.gutabi.bypass.ui.PlatformContentPaneImpl;
 import com.gutabi.bypass.ui.paint.RenderingContextImpl;
-import com.gutabi.bypass.ui.paint.TransformImpl;
 import com.gutabi.deadlock.Resource;
 import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.geom.CubicCurve;
@@ -47,7 +46,6 @@ import com.gutabi.deadlock.geom.Triangle;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.Image;
 import com.gutabi.deadlock.ui.PlatformContentPane;
-import com.gutabi.deadlock.ui.Transform;
 import com.gutabi.deadlock.ui.paint.FontStyle;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 
@@ -368,11 +366,6 @@ public class PlatformImpl implements BypassPlatform {
 	
 	public MutableOBB createMutableOBB() {
 		return new MutableOBBImpl();
-	}
-	
-	
-	public Transform createTransform() {
-		return new TransformImpl();
 	}
 	
 	

@@ -14,7 +14,6 @@ import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.Image;
 import com.gutabi.deadlock.ui.InputEvent;
 import com.gutabi.deadlock.ui.Shimmer;
-import com.gutabi.deadlock.ui.Transform;
 import com.gutabi.deadlock.ui.paint.Color;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.world.cars.Car;
@@ -392,8 +391,6 @@ public class World extends PhysicsWorld {
 	}
 	
 	
-	
-	Transform origTransformRenderPreview = APP.platform.createTransform();
 	RenderingContext ctxt = APP.platform.createRenderingContext();
 	
 	public void render_preview() {
@@ -409,7 +406,8 @@ public class World extends PhysicsWorld {
 				0, 0,
 				(int)worldCamera.previewAABB.width, (int)worldCamera.previewAABB.height);
 		
-		ctxt.getTransform(origTransformRenderPreview);
+		ctxt.pushTransform();
+		
 		ctxt.translate(
 				worldCamera.previewAABB.width/2 - (worldCamera.previewPixelsPerMeter * quadrantMap.worldWidth / 2),
 				worldCamera.previewAABB.height/2 - (worldCamera.previewPixelsPerMeter * quadrantMap.worldHeight / 2));
@@ -420,20 +418,16 @@ public class World extends PhysicsWorld {
 		
 		graph.render_preview(ctxt);
 		
-		ctxt.setTransform(origTransformRenderPreview);
+		ctxt.popTransform();
 		
 		APP.DEBUG_DRAW = oldDebug;
 		
 		ctxt.dispose();
 	}
 	
-	
-	
-	Transform origTransformPaintPanel = APP.platform.createTransform();
-	
 	public void paint_panel(RenderingContext ctxt) {
 		
-		ctxt.getTransform(origTransformPaintPanel);
+		ctxt.pushTransform();
 		
 		background.paint_pixels(ctxt);
 		
@@ -464,7 +458,7 @@ public class World extends PhysicsWorld {
 			stats.paint(ctxt);
 		}
 		
-		ctxt.setTransform(origTransformPaintPanel);
+		ctxt.popTransform();
 		
 //		Car c = carMap.findRedCar();
 //		shimmer.target = Point.worldToPanel(c.shape.aabb, worldCamera);
@@ -474,13 +468,9 @@ public class World extends PhysicsWorld {
 //		System.out.println(worldCamera.pixelsPerMeter);
 	}
 	
-	
-	
-	Transform origTransformPaintPreview = APP.platform.createTransform();
-	
 	public void paintPreview_controlPanel(RenderingContext ctxt) {
 		
-		ctxt.getTransform(origTransformPaintPreview);
+		ctxt.pushTransform();
 		
 		ctxt.translate(worldCamera.previewAABB.x, worldCamera.previewAABB.y);
 		
@@ -501,15 +491,12 @@ public class World extends PhysicsWorld {
 		ctxt.setColor(Color.BLUE);
 		prev.draw(ctxt);
 		
-		ctxt.setTransform(origTransformPaintPreview);
+		ctxt.popTransform();
 	}
-	
-	
-	Transform origTransformPaintStats = APP.platform.createTransform();
 	
 	public void paintStats(RenderingContext ctxt) {
 		
-		ctxt.getTransform(origTransformPaintStats);
+		ctxt.pushTransform();
 		
 		ctxt.paintString(0, 0, 1.0/ctxt.cam.pixelsPerMeter, "time: " + t);
 		
@@ -529,7 +516,7 @@ public class World extends PhysicsWorld {
 		
 		graph.paintStats(ctxt);
 		
-		ctxt.setTransform(origTransformPaintStats);
+		ctxt.popTransform();
 	}
 	
 	public boolean checkConsistency() {

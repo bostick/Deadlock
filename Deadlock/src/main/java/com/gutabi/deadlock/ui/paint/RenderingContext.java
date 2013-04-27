@@ -8,7 +8,6 @@ import com.gutabi.deadlock.geom.MutableAABB;
 import com.gutabi.deadlock.math.Dim;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.Image;
-import com.gutabi.deadlock.ui.Transform;
 import com.gutabi.deadlock.world.WorldCamera;
 
 public abstract class RenderingContext {
@@ -33,15 +32,21 @@ public abstract class RenderingContext {
 	
 	public abstract void setFont(Resource fontFile, FontStyle style, int size);
 	
-	public abstract void getTransform(Transform t);
-	
 	public abstract void scale(double s);
 	
 	public abstract void translate(double tx, double ty);
 	
 	public abstract void translate(Point p);
 	
-	public abstract void setTransform(Transform t);
+//	public abstract void getTransform(Transform t);
+//	
+//	public abstract void setTransform(Transform t);
+	
+	public abstract void pushTransform();
+	
+	public abstract void popTransform();
+	
+	
 	
 	public abstract void rotate(double a);
 	

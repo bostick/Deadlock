@@ -109,13 +109,6 @@ public class LevelMenu extends Menu implements Model {
 			}, menuRow, menuCol);
 		}
 		
-//		if (loc == null) {
-//		Point loc = new Point(0, -((firstUnwon / itemsPerRow)) * (LEVELMENU.items.get(0).localAABB.height + 10));
-//		}
-//		if (firstUnwon/itemsPerRow > 0) {
-//			loc = loc.plus(new Point(0, 0.5 * LEVELMENU.items.get(0).localAABB.height));
-//		}
-		
 		LEVELMENU.shimmeringMenuItem = LEVELMENU.items.get(firstUnwon);
 		
 		LEVELMENU.render();

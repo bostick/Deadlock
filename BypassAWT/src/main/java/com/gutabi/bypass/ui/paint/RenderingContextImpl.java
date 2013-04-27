@@ -6,10 +6,12 @@ import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.util.Stack;
 
 import com.gutabi.bypass.PlatformImpl;
 import com.gutabi.bypass.ui.ImageImpl;
@@ -21,7 +23,6 @@ import com.gutabi.deadlock.geom.MutableAABB;
 import com.gutabi.deadlock.math.Dim;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.Image;
-import com.gutabi.deadlock.ui.Transform;
 import com.gutabi.deadlock.ui.paint.Cap;
 import com.gutabi.deadlock.ui.paint.Color;
 import com.gutabi.deadlock.ui.paint.FontStyle;
@@ -103,12 +104,6 @@ public class RenderingContextImpl extends RenderingContext {
 		
 	}
 	
-	public void getTransform(Transform a) {
-		TransformImpl t = (TransformImpl)a;
-		
-		t.t = g2.getTransform();
-	}
-	
 	public void scale(double s) {
 		g2.scale(s, s);
 	}
@@ -121,12 +116,25 @@ public class RenderingContextImpl extends RenderingContext {
 		g2.translate(p.x, p.y);
 	}
 	
-	public void setTransform(Transform t) {
+	
+	
+	Stack<AffineTransform> stack = new Stack<AffineTransform>();
+	
+	public void pushTransform() {
 		
-		java.awt.geom.AffineTransform t2 = ((TransformImpl)t).t;
+		AffineTransform t = g2.getTransform();
+		stack.push(t);
 		
-		g2.setTransform(t2);
 	}
+	
+	public void popTransform() {
+		
+		AffineTransform t = stack.pop();
+		g2.setTransform(t);
+		
+	}
+	
+	
 	
 	public void rotate(double a) {
 		g2.rotate(a);

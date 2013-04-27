@@ -23,7 +23,6 @@ import com.gutabi.deadlock.geom.ShapeUtils;
 import com.gutabi.deadlock.math.DMath;
 import com.gutabi.deadlock.math.OverlappingException;
 import com.gutabi.deadlock.math.Point;
-import com.gutabi.deadlock.ui.Transform;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.world.World;
 
@@ -1292,13 +1291,9 @@ public class Graph {
 		
 	}
 	
-	
-	
-	Transform origTransform = APP.platform.createTransform();
-	
 	public void paintStats(RenderingContext ctxt) {
 		
-		ctxt.getTransform(origTransform);
+		ctxt.pushTransform();
 		
 		ctxt.paintString(0, 0, 1.0/ctxt.cam.pixelsPerMeter, "vertex count: " + vertices.size());
 		
@@ -1310,7 +1305,7 @@ public class Graph {
 		
 		ctxt.paintString(0, 0, 1.0/ctxt.cam.pixelsPerMeter, "merger count: " + mergers.size());
 		
-		ctxt.setTransform(origTransform);
+		ctxt.popTransform();
 	}
 	
 	public void paintScene(RenderingContext ctxt) {

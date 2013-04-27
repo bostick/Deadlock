@@ -11,7 +11,6 @@ import com.gutabi.deadlock.ui.Checkbox;
 import com.gutabi.deadlock.ui.InputEvent;
 import com.gutabi.deadlock.ui.Label;
 import com.gutabi.deadlock.ui.Panel;
-import com.gutabi.deadlock.ui.Transform;
 import com.gutabi.deadlock.ui.paint.FontStyle;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.world.World;
@@ -53,12 +52,12 @@ public class BypassControlPanel extends Panel {
 	}
 	
 	
-	Transform origTransform = APP.platform.createTransform();
+//	Transform origTransform = APP.platform.createTransform();
 	
 	public void paint(RenderingContext ctxt) {
 		BypassWorld world = (BypassWorld)APP.model;
 		
-		ctxt.getTransform(origTransform);
+		ctxt.pushTransform();
 		
 		ctxt.translate(aabb.x, aabb.y);
 		
@@ -130,7 +129,7 @@ public class BypassControlPanel extends Panel {
 		
 		world.paintPreview_controlPanel(ctxt);
 		
-		ctxt.setTransform(origTransform);
+		ctxt.popTransform();
 	}
 	
 }

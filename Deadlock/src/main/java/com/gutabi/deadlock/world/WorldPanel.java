@@ -4,7 +4,6 @@ import static com.gutabi.deadlock.DeadlockApplication.APP;
 
 import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.ui.Panel;
-import com.gutabi.deadlock.ui.Transform;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 
 public class WorldPanel extends Panel {
@@ -34,15 +33,12 @@ public class WorldPanel extends Panel {
 		world.panelPostDisplay();
 	}
 	
-	
-	Transform origTransform = APP.platform.createTransform();
-	
 	public void paint(RenderingContext ctxt) {
 		World world = (World)APP.model;
 		
 		ctxt.cam = world.worldCamera;
 		
-		ctxt.getTransform(origTransform);
+		ctxt.pushTransform();
 		
 		ctxt.translate(aabb.x, aabb.y);
 		
@@ -50,7 +46,7 @@ public class WorldPanel extends Panel {
 		
 		APP.tool.paint_panel(ctxt);
 		
-		ctxt.setTransform(origTransform);
+		ctxt.popTransform();
 	}
 
 }

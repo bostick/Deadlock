@@ -7,7 +7,6 @@ import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.math.DMath;
 import com.gutabi.deadlock.ui.Menu;
 import com.gutabi.deadlock.ui.Panel;
-import com.gutabi.deadlock.ui.Transform;
 import com.gutabi.deadlock.ui.paint.Color;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 
@@ -60,8 +59,8 @@ public class BypassMenuPanel extends Panel {
 		menu.setLocation(x, y);
 	}
 	
-	Transform origTransform = APP.platform.createTransform();
-	Transform menuTrans = APP.platform.createTransform();
+//	Transform origTransform = APP.platform.createTransform();
+//	Transform menuTrans = APP.platform.createTransform();
 	
 	public void paint(RenderingContext ctxt) {
 		Menu menu = (Menu)APP.model;
@@ -74,14 +73,14 @@ public class BypassMenuPanel extends Panel {
 				return;
 			}
 			
-			ctxt.getTransform(origTransform);
+			ctxt.pushTransform();
 			
 			ctxt.translate(aabb.x, aabb.y);
 			
 			ctxt.setColor(Color.DARK_GRAY);
 			ctxt.fillRect(0, 0, (int)aabb.width, (int)aabb.height);
 			
-			ctxt.getTransform(menuTrans);
+			ctxt.pushTransform();
 			
 			ctxt.translate(
 					aabb.width/2 - BYPASSAPP.titleBackground.getWidth()/2,
@@ -91,7 +90,9 @@ public class BypassMenuPanel extends Panel {
 					0, 0, BYPASSAPP.titleBackground.getWidth(), BYPASSAPP.titleBackground.getHeight(),
 					0, 0, BYPASSAPP.titleBackground.getWidth(), BYPASSAPP.titleBackground.getHeight());
 			
-			ctxt.setTransform(menuTrans);
+			ctxt.popTransform();
+			
+			ctxt.pushTransform();
 			
 			int TITLE_CENTER_Y = 120 + BYPASSAPP.title_white.getHeight()/2;
 			int COPYRIGHT_CENTER_Y = (int)aabb.height - 100 - BYPASSAPP.copyright.getHeight()/2;
@@ -101,18 +102,20 @@ public class BypassMenuPanel extends Panel {
 					0, 0, BYPASSAPP.title_white.getWidth(), BYPASSAPP.title_white.getHeight(),
 					0, 0, BYPASSAPP.title_white.getWidth(), BYPASSAPP.title_white.getHeight());
 			
-			ctxt.setTransform(menuTrans);
+			ctxt.popTransform();
+			
+			ctxt.pushTransform();
 			
 			ctxt.translate(aabb.width/2 - BYPASSAPP.copyright.getWidth()/2, COPYRIGHT_CENTER_Y - BYPASSAPP.copyright.getHeight()/2);
 			ctxt.paintImage(BYPASSAPP.copyright,
 					0, 0, BYPASSAPP.copyright.getWidth(), BYPASSAPP.copyright.getHeight(),
 					0, 0, BYPASSAPP.copyright.getWidth(), BYPASSAPP.copyright.getHeight());
 			
-			ctxt.setTransform(menuTrans);
+			ctxt.popTransform();
 			
 			menu.paint_panel(ctxt);
 			
-			ctxt.setTransform(origTransform);
+			ctxt.popTransform();
 			
 		} finally {
 			menu.lock.unlock();

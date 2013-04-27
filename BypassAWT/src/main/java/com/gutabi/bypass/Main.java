@@ -19,38 +19,34 @@ public class Main {
 	
 	static void createAndShowGUI() throws Exception {
 		
-		BypassApplication app = new BypassApplication();
-		APP = app;
-		BYPASSAPP = app;
-		
-		PlatformImpl platform = new PlatformImpl();
-		APP.platform = platform;
-		BYPASSAPP.bypassPlatform = platform;
-		
-		JFrame newFrame;
-		newFrame = new JFrame("Bypass");
-		newFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-		newFrame.addWindowListener(new WindowAdapter() {
+		JFrame mainFrame = new JFrame("Bypass");
+		mainFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		mainFrame.addWindowListener(new WindowAdapter() {
 		    public void windowClosing(WindowEvent e) {
-		        APP.exit();
+		        APP.platform.exit();
 		    }
 		});
 		
-		newFrame.setLocation((int)WindowInfo.windowDim().width/2 - PlatformImpl.MAINWINDOW_WIDTH/2, (int)WindowInfo.windowDim().height/2 - PlatformImpl.MAINWINDOW_HEIGHT/2);
+		mainFrame.setLocation((int)WindowInfo.windowDim().width/2 - PlatformImpl.MAINWINDOW_WIDTH/2, (int)WindowInfo.windowDim().height/2 - PlatformImpl.MAINWINDOW_HEIGHT/2);
 		
-		platform.appContainer = newFrame;
+		JFrame debuggerFrame = new JFrame("Debug Control Panel");
+		debuggerFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		
+		debuggerFrame.setLocation((int)WindowInfo.windowDim().width/2 + PlatformImpl.MAINWINDOW_WIDTH/2 + 100, 0);
 		
-		newFrame = new JFrame("Debug Control Panel");
-		newFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-		
-		newFrame.setLocation((int)WindowInfo.windowDim().width/2 + PlatformImpl.MAINWINDOW_WIDTH/2 + 100, 0);
-		
-		platform.debuggerContainer = newFrame;
+		if (BYPASSAPP == null) {
+			PlatformImpl platform = new PlatformImpl();
+			platform.appContainer = mainFrame;
+			platform.debuggerContainer = debuggerFrame;
+			try {
+				BypassApplication.create(platform);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		
 		APP.DEBUG_DRAW = true;
-		
-		BYPASSAPP.init();
 		
 		APP.platform.action(MainMenu.class);
 		

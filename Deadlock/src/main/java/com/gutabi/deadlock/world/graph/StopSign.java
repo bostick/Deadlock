@@ -5,7 +5,6 @@ import static com.gutabi.deadlock.DeadlockApplication.APP;
 import com.gutabi.deadlock.Entity;
 import com.gutabi.deadlock.geom.Circle;
 import com.gutabi.deadlock.math.Point;
-import com.gutabi.deadlock.ui.Transform;
 import com.gutabi.deadlock.ui.paint.Cap;
 import com.gutabi.deadlock.ui.paint.Color;
 import com.gutabi.deadlock.ui.paint.Join;
@@ -116,22 +115,19 @@ public class StopSign extends Entity {
 		return null;
 	}
 	
-	
-	Transform origTransform = APP.platform.createTransform();
-	
 	public void paint(RenderingContext ctxt) {
 		
 		if (APP.STOPSIGN_DRAW) {
 			
 			if (enabled) {
 				
-				ctxt.getTransform(origTransform);
+				ctxt.pushTransform();
 				
 				ctxt.translate(p.x - StopSign.STOPSIGN_SIZE/2, p.y - StopSign.STOPSIGN_SIZE/2);
 				
 				APP.spriteSheet.paint(ctxt, SpriteSheetSprite.STOPSIGN, ctxt.cam.pixelsPerMeter, 0, 0, STOPSIGN_SIZE, STOPSIGN_SIZE);
 				
-				ctxt.setTransform(origTransform);
+				ctxt.popTransform();
 				
 				if (APP.DEBUG_DRAW) {
 					shape.getAABB().draw(ctxt);

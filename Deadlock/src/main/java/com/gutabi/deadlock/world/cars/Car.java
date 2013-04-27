@@ -8,7 +8,6 @@ import com.gutabi.deadlock.geom.Geom;
 import com.gutabi.deadlock.geom.MutableOBB;
 import com.gutabi.deadlock.geom.Shape;
 import com.gutabi.deadlock.math.Point;
-import com.gutabi.deadlock.ui.Transform;
 import com.gutabi.deadlock.ui.paint.Color;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.world.World;
@@ -150,13 +149,9 @@ public abstract class Car extends PhysicsBody {
 	
 	public abstract void paint(RenderingContext ctxt);
 	
-	
-	
-	Transform origTransformImage = APP.platform.createTransform();
-	
 	protected void paintImage(RenderingContext ctxt) {
 			
-		ctxt.getTransform(origTransformImage);
+		ctxt.pushTransform();
 		if (inMerger) {
 			ctxt.setAlpha(0.5);
 		}
@@ -170,43 +165,35 @@ public abstract class Car extends PhysicsBody {
 		if (inMerger) {
 			ctxt.setAlpha(1.0);
 		}
-		ctxt.setTransform(origTransformImage);
+		ctxt.popTransform();
 	}
 	
 	protected void paintRect(RenderingContext ctxt) {
 		shape.paint(ctxt);
 	}
 	
-	
-	
-	Transform origTransformBrakes = APP.platform.createTransform();
-	Transform brakeTransformBrakes = APP.platform.createTransform();
-	
 	protected void paintBrakes(RenderingContext ctxt) {
 		
-		ctxt.getTransform(origTransformBrakes);
+		ctxt.pushTransform();
 		
 		ctxt.translate(center.x, center.y);
 		ctxt.rotate(angle);
 		
-		ctxt.getTransform(brakeTransformBrakes);
+		ctxt.pushTransform();
 		
 		APP.spriteSheet.paint(ctxt, SpriteSheetSprite.BRAKE, ctxt.cam.pixelsPerMeter, 0, 0, BRAKE_SIZE, BRAKE_SIZE);
 		
-		ctxt.setTransform(brakeTransformBrakes);
+		ctxt.popTransform();
 		
 		APP.spriteSheet.paint(ctxt, SpriteSheetSprite.BRAKE, ctxt.cam.pixelsPerMeter, 0, 0, BRAKE_SIZE, BRAKE_SIZE);
 		
-		ctxt.setTransform(origTransformBrakes);
+		ctxt.popTransform();
 		
 	}
 	
-	
-	Transform origTransformID = APP.platform.createTransform();
-	
 	public void paintID(RenderingContext ctxt) {
 		
-		ctxt.getTransform(origTransformID);
+		ctxt.pushTransform();
 		
 		ctxt.translate(center.x, center.y);
 		
@@ -215,7 +202,7 @@ public abstract class Car extends PhysicsBody {
 		ctxt.paintString(0.0, 0.0, 2.0/ctxt.cam.pixelsPerMeter, Integer.toString(id));
 		ctxt.clearXORMode();
 		
-		ctxt.setTransform(origTransformID);
+		ctxt.popTransform();
 	}
 
 }

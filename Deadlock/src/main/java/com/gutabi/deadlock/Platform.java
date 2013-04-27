@@ -14,7 +14,6 @@ import com.gutabi.deadlock.geom.Triangle;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.Image;
 import com.gutabi.deadlock.ui.PlatformContentPane;
-import com.gutabi.deadlock.ui.Transform;
 import com.gutabi.deadlock.ui.paint.FontStyle;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 
@@ -88,7 +87,7 @@ public interface Platform {
 	
 	public abstract MutableOBB createMutableOBB();
 	
-	public abstract Transform createTransform();
+//	public abstract Transform createTransform();
 	
 	
 	
