@@ -6,13 +6,13 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import com.gutabi.deadlock.geom.AABB;
+import com.gutabi.deadlock.math.DMath;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.paint.Color;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 
 public abstract class Menu {
 	
-	public boolean ready;
 	public Lock lock = new ReentrantLock(true);
 	
 	public List<MenuItem> items = new ArrayList<MenuItem>();
@@ -23,11 +23,19 @@ public abstract class Menu {
 	
 	int rows;
 	int cols;
-	public double[] menuItemWidest;
-	public double[] menuHeight;
+	public double[] columnWidth;
+	public double[] columnHeight;
 	
 	public AABB aabb = new AABB(0, 0, 0, 0);
-	public double scale = 0.3;
+	
+	/*
+	 * fraction of panel that menu takes
+	 */
+	public double widthFraction = 0.666;
+	public double scale = -1;
+	public double menuWidth;
+	public double menuHeight;
+	
 	
 	public boolean hScrollable;
 	public boolean vScrollable;
@@ -35,8 +43,8 @@ public abstract class Menu {
 	Shimmer shimmer;
 	
 	public Menu() {
-		menuItemWidest = new double[0];
-		menuHeight = new double[cols];
+		columnWidth = new double[0];
+		columnHeight = new double[cols];
 	}
 	
 	public void setLocation(double x, double y) {
@@ -76,8 +84,8 @@ public abstract class Menu {
 		}
 		if (c == cols) {
 			cols++;
-			menuItemWidest = new double[cols];
-			menuHeight = new double[cols];
+			columnWidth = new double[cols];
+			columnHeight = new double[cols];
 		}
 	}
 	
@@ -143,30 +151,32 @@ public abstract class Menu {
 				if (item.c != i) {
 					continue;
 				}
-				if ((int)item.localAABB.width > menuItemWidest[i]) {
-					menuItemWidest[i] = (int)item.localAABB.width;
+				if ((int)item.localAABB.width > columnWidth[i]) {
+					columnWidth[i] = (int)item.localAABB.width;
 				}
 				totalMenuItemHeight += (int)item.localAABB.height;
 				itemsCol++;
 			}
 			
-			menuHeight[i] = totalMenuItemHeight + 10 * (itemsCol - 1);
+			columnHeight[i] = totalMenuItemHeight + 10 * (itemsCol - 1);
 		}
 		
 		double width = 0.0;
 		for (int i = 0; i < cols; i++) {
-			width += menuItemWidest[i];
+			width += columnWidth[i];
 			if (i < cols-1) {
 				width += 10;
 			}
 		}
 		double height = 0.0;
 		for (int i = 0; i < cols; i++) {
-			if (menuHeight[i] > height) {
-				height = menuHeight[i];
+			if (columnHeight[i] > height) {
+				height = columnHeight[i];
 			}
 		}
-		aabb = new AABB(aabb.x, aabb.y, width+1, height+1);
+		menuWidth = width+1;
+		menuHeight = height+1;
+		
 		
 		int x;
 		int y;
@@ -177,7 +187,7 @@ public abstract class Menu {
 			y = 0;
 			
 			for (int j = 0; j < i; j++) {
-				x = x+(int)menuItemWidest[j] + 10;
+				x = x+(int)columnWidth[j] + 10;
 			}
 			
 			boolean itemFound = false;
@@ -209,11 +219,60 @@ public abstract class Menu {
 		
 	}
 	
-	
+	public void postDisplay(int width, int height) {
+		
+		aabb = new AABB(aabb.x, aabb.y, width, height);
+		
+		double x = aabb.x;
+		double y = aabb.y;
+		
+		double s = (widthFraction * width) / menuWidth;
+		
+		scale = s;
+		aabb = new AABB(aabb.x, aabb.y, scale * menuWidth, scale * menuHeight);
+		
+		if (DMath.lessThanEquals(aabb.width, width)) {
+			/*
+			 * no scrolling
+			 */
+			
+			hScrollable = false;
+			
+			x = width/2 - aabb.width/2;
+			
+		} else {
+			/*
+			 * will be scrolling
+			 */
+			
+			hScrollable = true;
+			
+		}
+		
+		if (DMath.lessThanEquals(aabb.height, height)) {
+			/*
+			 * no scrolling
+			 */
+			
+			vScrollable = false;
+			
+			y = height/2 - aabb.height/2;
+			
+		} else {
+			/*
+			 * will be scrolling
+			 */
+			
+			vScrollable = true;
+			
+		}
+		
+		setLocation(x, y);
+		
+	}
 	
 	public void paint_panel(RenderingContext ctxt) {
 		
-		ctxt.scale(scale);
 		ctxt.translate(aabb.x, aabb.y);
 		
 		ctxt.setColor(Color.menuBackground);
@@ -222,6 +281,8 @@ public abstract class Menu {
 				(-5),
 				(int)(aabb.width + 5 + 5),
 				(int)(aabb.height + 5 + 5));
+		
+		ctxt.scale(scale);
 		
 		for (int i = 0; i < items.size(); i++) {
 			MenuItem item = items.get(i);

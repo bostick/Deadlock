@@ -4,7 +4,6 @@ import static com.gutabi.bypass.BypassApplication.BYPASSAPP;
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
 import com.gutabi.deadlock.geom.AABB;
-import com.gutabi.deadlock.math.DMath;
 import com.gutabi.deadlock.ui.Menu;
 import com.gutabi.deadlock.ui.Panel;
 import com.gutabi.deadlock.ui.paint.Color;
@@ -17,46 +16,7 @@ public class BypassMenuPanel extends Panel {
 		
 		aabb = new AABB(aabb.x, aabb.y, width, height);
 		
-		double x = menu.aabb.x;
-		double y = menu.aabb.y;
-		
-		if (DMath.lessThanEquals(menu.aabb.width, aabb.width)) {
-			/*
-			 * no scrolling
-			 */
-			
-			menu.hScrollable = false;
-			
-			x = aabb.width/2 - menu.aabb.width/2;
-			
-		} else {
-			/*
-			 * will be scrolling
-			 */
-			
-			menu.hScrollable = true;
-			
-		}
-		
-		if (DMath.lessThanEquals(menu.aabb.height, aabb.height)) {
-			/*
-			 * no scrolling
-			 */
-			
-			menu.vScrollable = false;
-			
-			y = aabb.height/2 - menu.aabb.height/2;
-			
-		} else {
-			/*
-			 * will be scrolling
-			 */
-			
-			menu.vScrollable = true;
-			
-		}
-		
-		menu.setLocation(x, y);
+		menu.postDisplay(width, height);
 	}
 	
 	public void paint(RenderingContext ctxt) {
@@ -64,11 +24,6 @@ public class BypassMenuPanel extends Panel {
 		
 		menu.lock.lock();
 		try {
-			
-			if (!menu.ready) {
-				
-				return;
-			}
 			
 			ctxt.pushTransform();
 			

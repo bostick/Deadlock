@@ -12,10 +12,8 @@ import com.gutabi.deadlock.AppScreen;
 import com.gutabi.deadlock.Model;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.ContentPane;
-import com.gutabi.deadlock.ui.Label;
 import com.gutabi.deadlock.ui.Menu;
 import com.gutabi.deadlock.ui.UIAnimationRunnable;
-import com.gutabi.deadlock.ui.paint.Color;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 import com.gutabi.deadlock.world.QuadrantMap;
 import com.gutabi.deadlock.world.SimulationRunnable;
@@ -40,15 +38,12 @@ import com.gutabi.deadlock.world.sprites.CarSheet.CarType;
 
 public class BypassWorld extends World implements Model {
 	
-	private boolean ready;
-	private Lock lock = new ReentrantLock(true);
+	public Lock lock = new ReentrantLock(true);
 	
 	public static BypassWorld BYPASSWORLD;
 	
 	public Level curLevel;
 	
-	public Label winnerLabel;
-	public Label gradeLabel;
 	public WinnerMenu winnerMenu;
 	
 	
@@ -111,8 +106,6 @@ public class BypassWorld extends World implements Model {
 	public static void surfaceChanged(int width, int height) {
 		
 		BYPASSWORLD.lock.lock();
-		BYPASSWORLD.ready = false;
-		BYPASSWORLD.lock.unlock();
 		
 		APP.appScreen.postDisplay(width, height);
 		
@@ -125,16 +118,10 @@ public class BypassWorld extends World implements Model {
 			APP.platform.showDebuggerScreen();
 		}
 		
-		BYPASSWORLD.lock.lock();
-		BYPASSWORLD.ready = true;
 		BYPASSWORLD.lock.unlock();
 	}
 	
 	public static void pause() {
-		
-		BYPASSWORLD.lock.lock();
-		BYPASSWORLD.ready = false;
-		BYPASSWORLD.lock.unlock();
 		
 		if (APP.DEBUGGER_SCREEN) {
 			APP.platform.unshowDebuggerScreen();
@@ -220,9 +207,6 @@ public class BypassWorld extends World implements Model {
 			BypassBoard board = w.createBypassBoard(new Point(1.5 * QuadrantMap.QUADRANT_WIDTH, 2.0 * QuadrantMap.QUADRANT_HEIGHT), level.ini);
 			
 			w.addBypassCars(board);
-			
-			w.winnerMenu = new WinnerMenu(w);
-			w.winnerMenu.render();
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -431,18 +415,6 @@ public class BypassWorld extends World implements Model {
 		return winnerMenu;
 	}
 	
-	public void panelPostDisplay(int width, int height) {
-		
-		int min = Math.min(width, height);
-		double ppm = min / 8.0;
-		
-		worldCamera.pixelsPerMeter = ppm;
-		worldCamera.origPixelsPerMeter = ppm;
-		
-		super.panelPostDisplay(width, height);
-		
-	}
-	
 	public void handleZooming(Car car) {
 		
 		GraphPosition gpos = car.driver.overallPos.gp;
@@ -454,23 +426,9 @@ public class BypassWorld extends World implements Model {
 			
 			b = origExitingVertex.s.board;
 			
-//			if (origExitingVertex == b.exitVertex) {
-//				/*
-//				 * don't pan while exiting
-//				 */
-//				return;
-//			}
-			
 		} else if (gpos instanceof VertexPosition) {
 			
 			b = ((Vertex)gpos.entity).s.board;
-			
-//			if (gpos.entity == b.exitVertex) {
-//				/*
-//				 * don't pan while exiting
-//				 */
-//				return;
-//			}
 			
 		} else {
 			assert gpos instanceof BypassBoardPosition;
@@ -484,12 +442,6 @@ public class BypassWorld extends World implements Model {
 				worldCamera.panAbsolute(cameraX, cameraY);
 				return;
 			}
-//			else if (exiting) {
-//				/*
-//				 * don't pan while exiting
-//				 */
-//				return;
-//			}
 		}
 		
 		Point aa = Point.worldToPanel(car.center, worldCamera);
@@ -511,51 +463,34 @@ public class BypassWorld extends World implements Model {
 		
 		if (curLevel.isWon) {
 			
-			double totalHeight = winnerLabel.aabb.height + 5 + gradeLabel.aabb.height + 5 + winnerMenu.aabb.height;
+			winnerMenu.render();
 			
-			gradeLabel.setLocation(worldCamera.worldPanel.aabb.width/2 - gradeLabel.aabb.width/2, worldCamera.worldPanel.aabb.height/2 - totalHeight/2);
+		}
+	}
+	
+	public void panelPostDisplay(int width, int height) {
+		
+		int min = Math.min(width, height);
+		double ppm = min / 8.0;
+		
+		worldCamera.pixelsPerMeter = ppm;
+		worldCamera.origPixelsPerMeter = ppm;
+		
+		super.panelPostDisplay(width, height);
+		
+		if (curLevel.isWon) {
 			
-			winnerLabel.setLocation(worldCamera.worldPanel.aabb.width/2 - winnerLabel.aabb.width/2, gradeLabel.aabb.y+gradeLabel.aabb.height + 5);
-			
-			winnerMenu.setLocation(worldCamera.worldPanel.aabb.width/2 - winnerMenu.aabb.width/2, winnerLabel.aabb.y+winnerLabel.aabb.height + 5);
-			
-			winnerMenu.ready = true;
+			winnerMenu.postDisplay(width, height);
 		}
 	}
 	
 	public void paint_panel(RenderingContext ctxt) {
 		
 		BYPASSWORLD.lock.lock();
-		if (!BYPASSWORLD.ready) {
-			BYPASSWORLD.lock.unlock();
-			return;
-		}
 		
 		super.paint_panel(ctxt);
 		
 		if (curLevel.isWon && winnerMenu != null && winnerMenu.ready) {
-			
-			double maxWidth = winnerLabel.aabb.width;
-			double x = winnerLabel.aabb.x;
-			if (gradeLabel.aabb.width > maxWidth) {
-				maxWidth = gradeLabel.aabb.width;
-				x = gradeLabel.aabb.x;
-			}
-			if (winnerMenu.aabb.width > maxWidth) {
-				maxWidth = winnerMenu.aabb.width;
-				x = winnerMenu.aabb.x;
-			}
-			double totalHeight = winnerLabel.aabb.height + 5 + gradeLabel.aabb.height + 5 + winnerMenu.aabb.height;
-			
-			ctxt.setColor(Color.menuBackground);
-			ctxt.fillRect(
-					(int)(-5 + x),
-					(int)(-5 + gradeLabel.aabb.y),
-					(int)(maxWidth + 5 + 5),
-					(int)(totalHeight + 5 + 5));
-			
-			gradeLabel.paint(ctxt);
-			winnerLabel.paint(ctxt);
 			winnerMenu.paint_panel(ctxt);
 		}
 		

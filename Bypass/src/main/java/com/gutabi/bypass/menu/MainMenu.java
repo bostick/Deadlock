@@ -40,12 +40,10 @@ public class MainMenu extends Menu implements Model {
 	
 	public static void create() {
 		
-		MAINMENU = new MainMenu();
-		
 	}
 	
 	public static void destroy() {
-		MAINMENU = null;
+		
 	}
 	
 	public static void start() {
@@ -61,6 +59,7 @@ public class MainMenu extends Menu implements Model {
 	
 	public static void resume() {
 		
+		MAINMENU = new MainMenu();
 		APP.model = MAINMENU;
 		
 		AppScreen s = new AppScreen(new ContentPane(new BypassMenuPanel()));
@@ -84,14 +83,10 @@ public class MainMenu extends Menu implements Model {
 		
 		APP.appScreen.postDisplay(width, height);
 		
-		MAINMENU.ready = true;
 		MAINMENU.lock.unlock();
 	}
 	
 	public static void pause() {
-		
-		MAINMENU.lock.lock();
-		MAINMENU.ready = false;
 		
 		trigger.set(false);
 		
@@ -103,8 +98,8 @@ public class MainMenu extends Menu implements Model {
 		}
 		
 		uiThread = null;
+		MAINMENU = null;
 		
-		MAINMENU.lock.unlock();
 	}
 	
 	public Menu getMenu() {

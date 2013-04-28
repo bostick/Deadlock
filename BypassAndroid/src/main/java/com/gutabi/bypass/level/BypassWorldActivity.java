@@ -84,6 +84,13 @@ public class BypassWorldActivity extends BypassActivity {
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 		
+		/*
+		 * state of all cars
+		 * 
+		 * state of world camera
+		 * 
+		 * state of winner menu
+		 */
 		int x;
 	}
 	

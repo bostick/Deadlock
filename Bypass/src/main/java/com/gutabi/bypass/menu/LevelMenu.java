@@ -68,12 +68,10 @@ public class LevelMenu extends Menu implements Model {
 	public static void surfaceChanged(int width, int height) {
 		
 		LEVELMENU.lock.lock();
-		LEVELMENU.ready = false;
-		LEVELMENU.lock.unlock();
 		
 		for (int i = 0; i < BYPASSAPP.levelDB.levelCount; i++) {
-			int menuRow = i / 5;
-			int menuCol = i % 5;
+			int menuRow = i / 4;
+			int menuCol = i % 4;
 			final int ii = i;
 			LEVELMENU.add(new LevelMenuItem(LEVELMENU, i, "%d") {
 				
@@ -91,16 +89,10 @@ public class LevelMenu extends Menu implements Model {
 		
 		APP.appScreen.postDisplay(width, height);
 		
-		LEVELMENU.lock.lock();
-		LEVELMENU.ready = true;
 		LEVELMENU.lock.unlock();
 	}
 	
 	public static void pause() {
-		
-		LEVELMENU.lock.lock();
-		LEVELMENU.ready = false;
-		LEVELMENU.lock.unlock();
 		
 		trigger.set(false);
 		

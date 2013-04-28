@@ -3,13 +3,9 @@ package com.gutabi.bypass.level;
 import static com.gutabi.bypass.BypassApplication.BYPASSAPP;
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
-import com.gutabi.deadlock.Resource;
-import com.gutabi.deadlock.ui.Label;
 import com.gutabi.deadlock.ui.Menu;
 import com.gutabi.deadlock.ui.MenuItem;
 import com.gutabi.deadlock.ui.MenuTool;
-import com.gutabi.deadlock.ui.paint.Color;
-import com.gutabi.deadlock.ui.paint.FontStyle;
 
 public class WinnerMenu extends Menu {
 	
@@ -28,41 +24,43 @@ public class WinnerMenu extends Menu {
 		} else if (letter == 'C') {
 			excl = "OK!";
 		} else if (letter == 'D') {
-			excl = "Meh";
+			excl = "Adequate!";
 		} else {
 			excl = "Effort!";
 		}
 		
-		Resource visitorFontFile = APP.platform.fontResource("visitor1");
-		world.winnerLabel = new Label(excl, 0, 0);
-		world.winnerLabel.fontFile = visitorFontFile;
-		world.winnerLabel.fontStyle = FontStyle.PLAIN;
-		world.winnerLabel.fontSize = 72;
-		world.winnerLabel.color = Color.WHITE;
-		
-		world.gradeLabel = new Label("Grade: " + world.curLevel.grade, 0, 0);
-		world.gradeLabel.fontFile = visitorFontFile;
-		world.gradeLabel.fontStyle = FontStyle.PLAIN;
-		world.gradeLabel.fontSize = 72;
-		world.gradeLabel.color = Color.WHITE;
-		
-		
-		
-		world.winnerLabel.renderLocal();
-		world.winnerLabel.render();
-		world.gradeLabel.renderLocal();
-		world.gradeLabel.render();
-		
-		world.render_worldPanel();
+		world.winnerMenu = new WinnerMenu(world, excl, "Grade: " + world.curLevel.grade);
 		
 		APP.tool = new MenuTool();
+		
+		world.lock.lock();
+		
+		world.render_worldPanel();
+		world.panelPostDisplay((int)world.worldCamera.worldPanel.aabb.width, (int)world.worldCamera.worldPanel.aabb.height);
+		
+		world.lock.unlock();
+		
 	}
 	
-	public WinnerMenu(BypassWorld world) {
+	public WinnerMenu(BypassWorld world, String excl, String grade) {
 		
-//		BypassWorld world = (BypassWorld)APP.model;
+		widthFraction = 0.666;
 		
 		int index = world.curLevel.index;
+		
+		MenuItem exclMenuItem = new MenuItem(WinnerMenu.this, excl) {
+			public void action() {
+				
+			}
+		};
+		exclMenuItem.border = false;
+		
+		MenuItem gradeMenuItem = new MenuItem(WinnerMenu.this, grade) {
+			public void action() {
+				
+			}
+		};
+		gradeMenuItem.border = false;
 		
 		MenuItem nextMenuItem = new MenuItem(WinnerMenu.this, "Next") {
 			public void action() {
@@ -107,14 +105,20 @@ public class WinnerMenu extends Menu {
 		
 		if (index < BYPASSAPP.levelDB.levelCount-1) {
 			
-			add(nextMenuItem, 0, 0);
-			add(againMenuItem, 1, 0);
-			add(backMenuItem, 2, 0);
+			add(exclMenuItem, 0, 0);
+			add(gradeMenuItem, 1, 0);
+			add(nextMenuItem, 2, 0);
+			add(againMenuItem, 3, 0);
+			add(backMenuItem, 4, 0);
+			shimmeringMenuItem = nextMenuItem;
 			
 		} else {
 			
-			add(againMenuItem, 0, 0);
-			add(backMenuItem, 1, 0);
+			add(exclMenuItem, 0, 0);
+			add(gradeMenuItem, 1, 0);
+			add(againMenuItem, 2, 0);
+			add(backMenuItem, 3, 0);
+			shimmeringMenuItem = backMenuItem;
 			
 		}
 		
@@ -122,6 +126,13 @@ public class WinnerMenu extends Menu {
 	
 	public void escape() {
 		APP.platform.finishAction();
+	}
+	
+	public void postDisplay(int width, int height) {
+		
+		super.postDisplay(width, height);
+		
+		ready = true;
 	}
 	
 }
