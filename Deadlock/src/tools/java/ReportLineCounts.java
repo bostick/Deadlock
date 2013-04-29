@@ -16,38 +16,56 @@ public class ReportLineCounts {
 	
 	public static void main(String[] args) throws IOException {
 		
-		Path start = FileSystems.getDefault().getPath("src", "main", "java");
-		
+		Path start = FileSystems.getDefault().getPath("..", "Bypass", "src", "main", "java");
 		LineNumberReporter visitor = new LineNumberReporter();
-		
 		Files.walkFileTree(start, visitor);
+		System.out.println("Bypass project:");
+		System.out.println("non-empty lines: " + nonEmptyLines);
+		System.out.println("empty lines: " + emptyLines);
+		System.out.println("files: " + files);
+		System.out.println("");
 		
+		emptyLines = 0;
+		nonEmptyLines = 0;
+		files = 0;
+		
+		start = FileSystems.getDefault().getPath("..", "BypassAndroid", "src", "main", "java");
+		visitor = new LineNumberReporter();
+		Files.walkFileTree(start, visitor);
+		System.out.println("BypassAndroid project:");
+		System.out.println("non-empty lines: " + nonEmptyLines);
+		System.out.println("empty lines: " + emptyLines);
+		System.out.println("files: " + files);
+		
+		System.out.println("");
+		
+		emptyLines = 0;
+		nonEmptyLines = 0;
+		files = 0;
+		
+		start = FileSystems.getDefault().getPath("..", "BypassAWT", "src", "main", "java");
+		visitor = new LineNumberReporter();
+		Files.walkFileTree(start, visitor);
+		System.out.println("BypassAWT project:");
+		System.out.println("non-empty lines: " + nonEmptyLines);
+		System.out.println("empty lines: " + emptyLines);
+		System.out.println("files: " + files);
+		
+		System.out.println("");
+		
+		emptyLines = 0;
+		nonEmptyLines = 0;
+		files = 0;
+		
+		start = FileSystems.getDefault().getPath("..", "Deadlock", "src", "main", "java");
+		visitor = new LineNumberReporter();
+		Files.walkFileTree(start, visitor);
 		System.out.println("Deadlock project:");
 		System.out.println("non-empty lines: " + nonEmptyLines);
 		System.out.println("empty lines: " + emptyLines);
 		System.out.println("files: " + files);
 		
 		System.out.println("");
-		
-		
-		emptyLines = 0;
-		nonEmptyLines = 0;
-		files = 0;
-		
-		
-		start = FileSystems.getDefault().getPath("..", "DeadlockAWT", "src", "main", "java");
-		
-		visitor = new LineNumberReporter();
-		
-		Files.walkFileTree(start, visitor);
-		
-		System.out.println("DeadlockAWT project:");
-		System.out.println("non-empty lines: " + nonEmptyLines);
-		System.out.println("empty lines: " + emptyLines);
-		System.out.println("files: " + files);
-		
-		System.out.println("");
-		
 		
 //		//Get an instance of java compiler
 //		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
