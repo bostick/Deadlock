@@ -92,7 +92,7 @@ public class MenuTool extends Tool {
 		}
 		
 		Point motionDiff = ignore.p.minus(origPressed);
-		if (motionDiff.length() < 5.0) {
+		if (motionDiff.length() < 15.0) {
 			return;
 		}
 		
