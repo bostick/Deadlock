@@ -6,7 +6,7 @@
     
     <uses-sdk
         android:minSdkVersion="5"
-        android:targetSdkVersion="17" />
+        android:targetSdkVersion="10" />
     
     <uses-configuration android:reqTouchScreen="finger" />
     

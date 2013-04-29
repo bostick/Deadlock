@@ -71,7 +71,7 @@ public abstract class BypassActivity extends Activity {
 		Log.d("bypassactivity", name + " pause");
 		state = ActivityState.PAUSE;
 		
-		PlatformImpl.CURRENTACTIVITY.overridePendingTransition(0, 0);
+//		PlatformImpl.CURRENTACTIVITY.overridePendingTransition(0, 0);
 		
 	}
 	

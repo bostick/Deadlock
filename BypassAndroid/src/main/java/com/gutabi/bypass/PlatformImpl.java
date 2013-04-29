@@ -355,23 +355,22 @@ public class PlatformImpl implements BypassPlatform {
 			Intent intent = new Intent(CURRENTACTIVITY, MainMenuActivity.class);
 			
 			CURRENTACTIVITY.startActivity(intent);
-			CURRENTACTIVITY.overridePendingTransition(0, 0);
+//			CURRENTACTIVITY.overridePendingTransition(0, 0);
 			
 		} else if (clazz == LevelMenu.class) {
 			
 			Intent intent = new Intent(CURRENTACTIVITY, LevelMenuActivity.class);
 			CURRENTACTIVITY.startActivity(intent);
-			CURRENTACTIVITY.overridePendingTransition(0, 0);
+//			CURRENTACTIVITY.overridePendingTransition(0, 0);
 			
 		} else if (clazz == BypassWorld.class) {
 			
 			int ii = (Integer)args[0];
 			
 			Intent intent = new Intent(CURRENTACTIVITY, BypassWorldActivity.class);
-//			intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
 			intent.putExtra("com.gutabi.bypass.level.Index", ii);
 			CURRENTACTIVITY.startActivity(intent);
-			CURRENTACTIVITY.overridePendingTransition(0, 0);
+//			CURRENTACTIVITY.overridePendingTransition(0, 0);
 			
 		} else {
 			throw new AssertionError();
@@ -381,7 +380,7 @@ public class PlatformImpl implements BypassPlatform {
 	
 	public void finishAction() {
 		CURRENTACTIVITY.finish();
-		CURRENTACTIVITY.overridePendingTransition(0, 0);
+//		CURRENTACTIVITY.overridePendingTransition(0, 0);
 		
 	}
 	
