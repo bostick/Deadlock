@@ -483,4 +483,7 @@ public class PlatformImpl implements BypassPlatform {
 		
 	}
 	
+	public long monotonicClockMillis() {
+		return System.currentTimeMillis();
+	}
 }

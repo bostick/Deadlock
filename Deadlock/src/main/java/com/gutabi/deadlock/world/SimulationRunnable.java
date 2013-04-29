@@ -15,8 +15,8 @@ public class SimulationRunnable implements Runnable {
 		double t = world.t;
 		double accumulator = 0;
 		
-		long currentTimeMillis = System.currentTimeMillis();
-		long newTimeMillis = System.currentTimeMillis();
+		long currentTimeMillis = APP.platform.monotonicClockMillis();
+		long newTimeMillis = APP.platform.monotonicClockMillis();
 		
 		try {
 			
@@ -27,7 +27,7 @@ public class SimulationRunnable implements Runnable {
 						break outer;
 					}
 					
-					newTimeMillis = System.currentTimeMillis();
+					newTimeMillis = APP.platform.monotonicClockMillis();
 					long frameTimeMillis = newTimeMillis - currentTimeMillis;
 					if (frameTimeMillis < 0) {
 						throw new AssertionError();

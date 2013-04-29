@@ -94,5 +94,6 @@ public interface Platform {
 	public abstract void action(@SuppressWarnings("rawtypes")Class newClazz, Object... args);
 	public abstract void finishAction();
 	
+	public long monotonicClockMillis();
 	
 }
