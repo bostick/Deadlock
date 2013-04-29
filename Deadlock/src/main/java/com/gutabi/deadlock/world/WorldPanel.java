@@ -17,7 +17,7 @@ public class WorldPanel extends Panel {
 		
 		aabb = new AABB(aabb.x, aabb.y, width, height);
 		
-		world.worldCamera.worldPanel = this;
+		world.worldCamera.panelAABB = aabb;
 		
 		world.panelPostDisplay(width, height);
 	}

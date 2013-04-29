@@ -2,6 +2,8 @@ package com.gutabi.deadlock.world.graph;
 
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
+import java.io.Serializable;
+
 import com.gutabi.deadlock.geom.Geom;
 import com.gutabi.deadlock.geom.Line;
 import com.gutabi.deadlock.geom.MutableOBB;
@@ -12,17 +14,19 @@ import com.gutabi.deadlock.math.DMath;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.world.cars.Car;
 
-public class GraphPositionPathPosition {
+public class GraphPositionPathPosition implements Serializable {
 	
-	public final GraphPositionPath path;
+	private static final long serialVersionUID = 1L;
+	
+	public transient GraphPositionPath path;
 	public final int index;
 	public final double param;
 	
 	public final double combo;
 	public final boolean bound;
 	
-	public final Point p;
-	public final GraphPosition gp;
+	public transient Point p;
+	public transient GraphPosition gp;
 	
 	public final double lengthToStartOfPath;
 	public final double lengthToEndOfPath;
@@ -759,9 +763,9 @@ public class GraphPositionPathPosition {
 	}
 	
 	
-	MutableOBB mao = APP.platform.createMutableOBB();
-	MutableOBB mbo = APP.platform.createMutableOBB();
-	MutableSweptOBB swept = new MutableSweptOBB();
+	public transient MutableOBB mao = APP.platform.createMutableOBB();
+	public transient MutableOBB mbo = APP.platform.createMutableOBB();
+	public transient MutableSweptOBB swept = new MutableSweptOBB();
 	
 	/**
 	 * 
@@ -785,14 +789,6 @@ public class GraphPositionPathPosition {
 			Geom.localToWorld(car.localAABB, end.angle, end.p, mbo);
 			swept.setShape(mao, mbo);
 			
-//			OBB so = Geom.localToWorld(car.localAABB, start.angle, start.p);
-//			OBB eo = Geom.localToWorld(car.localAABB, end.angle, end.p);
-//			SweptOBB swept = new SweptOBB(so, eo);
-			
-//			assert mao.equals(so);
-//			assert mbo.equals(eo);
-//			assert swept2.equals(swept);
-			
 			double param = firstCollisionParam(car, swept);
 			if (param != -1) {
 				param = DMath.lerp(start.param, end.param, param);
@@ -806,19 +802,9 @@ public class GraphPositionPathPosition {
 				return end;
 			}
 			
-//			MutableOBB mao = APP.platform.createMutableOBB();
-//			MutableOBB mbo = APP.platform.createMutableOBB();
 			Geom.localToWorld(car.localAABB, start.angle, start.p, mao);
 			Geom.localToWorld(car.localAABB, end.angle, end.p, mbo);
 			swept.setShape(mao, mbo);
-			
-//			OBB so = Geom.localToWorld(car.localAABB, start.angle, start.p);
-//			OBB eo = Geom.localToWorld(car.localAABB, end.angle, end.p);
-//			SweptOBB swept = new SweptOBB(so, eo);
-			
-//			assert mao.equals(so);
-//			assert mbo.equals(eo);
-//			assert swept2.equals(swept);
 			
 			double param = firstCollisionParam(car, swept);
 			if (param != -1) {
@@ -846,19 +832,9 @@ public class GraphPositionPathPosition {
 				return end;
 			}
 			
-//			MutableOBB mao = APP.platform.createMutableOBB();
-//			MutableOBB mbo = APP.platform.createMutableOBB();
 			Geom.localToWorld(car.localAABB, a.angle, a.p, mao);
 			Geom.localToWorld(car.localAABB, b.angle, b.p, mbo);
 			swept.setShape(mao, mbo);
-			
-//			OBB ao = Geom.localToWorld(car.localAABB, a.angle, a.p);
-//			OBB bo = Geom.localToWorld(car.localAABB, b.angle, b.p);
-//			SweptOBB swept = new SweptOBB(ao, bo);
-			
-//			assert mao.equals(ao);
-//			assert mbo.equals(bo);
-//			assert swept2.equals(swept);
 			
 			double param = firstCollisionParam(car, swept);
 			if (param != -1) {
@@ -884,19 +860,9 @@ public class GraphPositionPathPosition {
 				return end;
 			}
 			
-//			MutableOBB mao = APP.platform.createMutableOBB();
-//			MutableOBB mbo = APP.platform.createMutableOBB();
 			Geom.localToWorld(car.localAABB, a.angle, a.p, mao);
 			Geom.localToWorld(car.localAABB, b.angle, b.p, mbo);
 			swept.setShape(mao, mbo);
-			
-//			OBB ao = Geom.localToWorld(car.localAABB, a.angle, a.p);
-//			OBB bo = Geom.localToWorld(car.localAABB, b.angle, b.p);
-//			SweptOBB swept = new SweptOBB(ao, bo);
-			
-//			assert mao.equals(ao);
-//			assert mbo.equals(bo);
-//			assert swept2.equals(swept);
 			
 			double param = firstCollisionParam(car, swept);
 			if (param != -1) {
@@ -918,19 +884,9 @@ public class GraphPositionPathPosition {
 				return end;
 			}
 			
-//			MutableOBB mao = APP.platform.createMutableOBB();
-//			MutableOBB mbo = APP.platform.createMutableOBB();
 			Geom.localToWorld(car.localAABB, a.angle, a.p, mao);
 			Geom.localToWorld(car.localAABB, b.angle, b.p, mbo);
 			swept.setShape(mao, mbo);
-			
-//			OBB ao = Geom.localToWorld(car.localAABB, a.angle, a.p);
-//			OBB bo = Geom.localToWorld(car.localAABB, b.angle, b.p);
-//			SweptOBB swept = new SweptOBB(ao, bo);
-			
-//			assert mao.equals(ao);
-//			assert mbo.equals(bo);
-//			assert swept2.equals(swept);
 			
 			double param = firstCollisionParam(car, swept);
 			if (param != -1) {
@@ -960,19 +916,9 @@ public class GraphPositionPathPosition {
 				return end;
 			}
 			
-//			MutableOBB mao = APP.platform.createMutableOBB();
-//			MutableOBB mbo = APP.platform.createMutableOBB();
 			Geom.localToWorld(car.localAABB, start.angle, start.p, mao);
 			Geom.localToWorld(car.localAABB, end.angle, end.p, mbo);
 			swept.setShape(mao, mbo);
-			
-//			OBB so = Geom.localToWorld(car.localAABB, start.angle, start.p);
-//			OBB eo = Geom.localToWorld(car.localAABB, end.angle, end.p);
-//			SweptOBB swept = new SweptOBB(so, eo);
-			
-//			assert mao.equals(so);
-//			assert mbo.equals(eo);
-//			assert swept2.equals(swept);
 			
 			double param = firstCollisionParam(car, swept);
 			if (param != -1) {
@@ -988,19 +934,9 @@ public class GraphPositionPathPosition {
 				return end;
 			}
 			
-//			MutableOBB mao = APP.platform.createMutableOBB();
-//			MutableOBB mbo = APP.platform.createMutableOBB();
 			Geom.localToWorld(car.localAABB, start.angle, start.p, mao);
 			Geom.localToWorld(car.localAABB, end.angle, end.p, mbo);
 			swept.setShape(mao, mbo);
-			
-//			OBB so = Geom.localToWorld(car.localAABB, start.angle, start.p);
-//			OBB eo = Geom.localToWorld(car.localAABB, end.angle, end.p);
-//			SweptOBB swept = new SweptOBB(so, eo);
-			
-//			assert mao.equals(so);
-//			assert mbo.equals(eo);
-//			assert swept2.equals(swept);
 			
 			double param = firstCollisionParam(car, swept);
 			if (param != -1) {
@@ -1027,19 +963,9 @@ public class GraphPositionPathPosition {
 				return end;
 			}
 			
-//			MutableOBB mao = APP.platform.createMutableOBB();
-//			MutableOBB mbo = APP.platform.createMutableOBB();
 			Geom.localToWorld(car.localAABB, a.angle, a.p, mao);
 			Geom.localToWorld(car.localAABB, b.angle, b.p, mbo);
 			swept.setShape(mbo, mao);
-			
-//			OBB ao = Geom.localToWorld(car.localAABB, a.angle, a.p);
-//			OBB bo = Geom.localToWorld(car.localAABB, b.angle, b.p);
-//			SweptOBB swept = new SweptOBB(bo, ao);
-			
-//			assert mao.equals(ao);
-//			assert mbo.equals(bo);
-//			assert swept2.equals(swept);
 			
 			double param = firstCollisionParam(car, swept);
 			if (param != -1) {
@@ -1065,19 +991,9 @@ public class GraphPositionPathPosition {
 				return end;
 			}
 			
-//			MutableOBB mao = APP.platform.createMutableOBB();
-//			MutableOBB mbo = APP.platform.createMutableOBB();
 			Geom.localToWorld(car.localAABB, a.angle, a.p, mao);
 			Geom.localToWorld(car.localAABB, b.angle, b.p, mbo);
 			swept.setShape(mbo, mao);
-			
-//			OBB ao = Geom.localToWorld(car.localAABB, a.angle, a.p);
-//			OBB bo = Geom.localToWorld(car.localAABB, b.angle, b.p);
-//			SweptOBB swept = new SweptOBB(bo, ao);
-			
-//			assert mao.equals(ao);
-//			assert mbo.equals(bo);
-//			assert swept2.equals(swept);
 			
 			double param = firstCollisionParam(car, swept);
 			if (param != -1) {
@@ -1098,19 +1014,9 @@ public class GraphPositionPathPosition {
 				return end;
 			}
 			
-//			MutableOBB mao = APP.platform.createMutableOBB();
-//			MutableOBB mbo = APP.platform.createMutableOBB();
 			Geom.localToWorld(car.localAABB, a.angle, a.p, mao);
 			Geom.localToWorld(car.localAABB, b.angle, b.p, mbo);
 			swept.setShape(mbo, mao);
-			
-//			OBB ao = Geom.localToWorld(car.localAABB, a.angle, a.p);
-//			OBB bo = Geom.localToWorld(car.localAABB, b.angle, b.p);
-//			SweptOBB swept = new SweptOBB(bo, ao);
-			
-//			assert mao.equals(ao);
-//			assert mbo.equals(bo);
-//			assert swept2.equals(swept);
 			
 			double param = firstCollisionParam(car, swept);
 			if (param != -1) {

@@ -1,11 +1,15 @@
 package com.gutabi.deadlock.geom;
 
+import java.io.Serializable;
+
 import com.gutabi.deadlock.math.DMath;
 import com.gutabi.deadlock.math.Dim;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 
-public class AABB implements Shape {
+public class AABB implements Shape, Serializable {
+	
+	private static final long serialVersionUID = 1L;
 	
 	public final Dim dim;
 	public final double x;
@@ -22,13 +26,13 @@ public class AABB implements Shape {
 	public final Point n01 = Point.UP;
 	public final Point n12 = Point.RIGHT;
 	
-	double[] n01Projection;
-	double[] n12Projection;
+	private transient double[] n01Projection;
+	private transient double[] n12Projection;
 	
-	Line p0p1Line;
-	Line p1p2Line;
-	Line p2p3Line;
-	Line p3p0Line;
+	private transient Line p0p1Line;
+	private transient Line p1p2Line;
+	private transient Line p2p3Line;
+	private transient Line p3p0Line;
 	
 	public AABB(double x, double y, double width, double height) {
 		this.x = x;

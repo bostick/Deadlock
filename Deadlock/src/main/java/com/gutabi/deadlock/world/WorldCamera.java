@@ -1,10 +1,14 @@
 package com.gutabi.deadlock.world;
 
+import java.io.Serializable;
+
 import com.gutabi.deadlock.geom.AABB;
 import com.gutabi.deadlock.geom.MutableAABB;
 import com.gutabi.deadlock.math.Point;
 
-public class WorldCamera {
+public class WorldCamera implements Serializable {
+	
+	private static final long serialVersionUID = 1L;
 	
 	public double pixelsPerMeter = -1;
 	public double origPixelsPerMeter = -1;
@@ -14,7 +18,7 @@ public class WorldCamera {
 	public AABB previewAABB = new AABB(5, 400, 100, 100);
 	public double previewPixelsPerMeter;
 	
-	public WorldPanel worldPanel;
+	public AABB panelAABB;
 	
 	public WorldCamera() {
 		
@@ -24,8 +28,8 @@ public class WorldCamera {
 		
 		pixelsPerMeter = factor * pixelsPerMeter;
 		
-		double newWidth =  worldPanel.aabb.width / pixelsPerMeter;
-		double newHeight = worldPanel.aabb.height / pixelsPerMeter;
+		double newWidth =  panelAABB.width / pixelsPerMeter;
+		double newHeight = panelAABB.height / pixelsPerMeter;
 		
 		worldViewport.setShape(
 				(worldViewport.x + worldViewport.width/2) - newWidth/2,
@@ -36,8 +40,8 @@ public class WorldCamera {
 		
 		pixelsPerMeter = factor * origPixelsPerMeter;
 		
-		double newWidth =  worldPanel.aabb.width / pixelsPerMeter;
-		double newHeight = worldPanel.aabb.height / pixelsPerMeter;
+		double newWidth =  panelAABB.width / pixelsPerMeter;
+		double newHeight = panelAABB.height / pixelsPerMeter;
 		
 		worldViewport.setShape(
 				(worldViewport.x + worldViewport.width/2) - newWidth/2,

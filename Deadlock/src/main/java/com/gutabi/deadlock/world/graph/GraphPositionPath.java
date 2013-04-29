@@ -19,7 +19,7 @@ import com.gutabi.deadlock.world.cars.Driver;
 import com.gutabi.deadlock.world.cars.VertexArrivalEvent;
 
 public class GraphPositionPath {
-	
+
 	private final List<GraphPosition> poss;
 	
 	public final int size;

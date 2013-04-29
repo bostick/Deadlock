@@ -36,7 +36,7 @@ public class WinnerMenu extends Menu {
 		world.lock.lock();
 		
 		world.render_worldPanel();
-		world.panelPostDisplay((int)world.worldCamera.worldPanel.aabb.width, (int)world.worldCamera.worldPanel.aabb.height);
+		world.panelPostDisplay((int)world.worldCamera.panelAABB.width, (int)world.worldCamera.panelAABB.height);
 		
 		world.lock.unlock();
 		

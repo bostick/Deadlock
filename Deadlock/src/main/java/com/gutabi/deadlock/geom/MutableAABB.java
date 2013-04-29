@@ -1,11 +1,14 @@
 package com.gutabi.deadlock.geom;
 
+import java.io.Serializable;
+
 import com.gutabi.deadlock.math.DMath;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 
-
-public class MutableAABB {
+public class MutableAABB implements Serializable {
+	
+	private static final long serialVersionUID = 1L;
 	
 	public double x = Double.NaN;
 	public double y = Double.NaN;
@@ -15,8 +18,8 @@ public class MutableAABB {
 	public final Point n01 = Point.UP;
 	public final Point n12 = Point.RIGHT;
 	
-	double[] n01Projection;
-	double[] n12Projection;
+	private transient double[] n01Projection;
+	private transient double[] n12Projection;
 	
 	public MutableAABB() {
 		

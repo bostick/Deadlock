@@ -1,6 +1,4 @@
 
-implement saving / restoring instances
-test by getting to world, then opening a bunch of apps, and hopefully world activity will be killed in the mean time and have to be restarted
 
 compress sprite sheet
 compress car sheet
@@ -81,6 +79,8 @@ use graph paper and sketch out different screens and layouts first
 
 
 DONE:
+
+implement saving / restoring instances
 
 small screens
 big screens

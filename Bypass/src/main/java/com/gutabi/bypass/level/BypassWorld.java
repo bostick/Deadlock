@@ -55,6 +55,7 @@ public class BypassWorld extends World implements Model {
 		
 		BYPASSWORLD.preStart();
 		
+		APP.tool = new BypassCarTool();
 	}
 	
 	public static void destroy() {
@@ -90,8 +91,6 @@ public class BypassWorld extends World implements Model {
 			APP.debuggerScreen = debuggerScreen;
 			
 		}
-		
-		APP.tool = new BypassCarTool();
 		
 		BYPASSWORLD.mode = WorldMode.RUNNING;
 		

@@ -4,16 +4,16 @@ import com.gutabi.deadlock.math.DMath;
 
 public class BypassBoardPosition extends GraphPosition {
 	
-	public double rowCombo;
-	public double colCombo;
+	public final double rowCombo;
+	public final double colCombo;
 	
-	int rowIndex;
-	int colIndex;
+	final int rowIndex;
+	final int colIndex;
 	
-	double rowParam;
-	double colParam;
+	final double rowParam;
+	final double colParam;
 	
-	boolean bound;
+	final boolean bound;
 	
 	public BypassBoardPosition(BypassBoard b, double rowCombo, double colCombo) {
 		super(b.point(rowCombo, colCombo), b);

@@ -13,11 +13,18 @@ import com.gutabi.bypass.BypassApplication;
 import com.gutabi.bypass.BypassView;
 import com.gutabi.bypass.PlatformImpl;
 import com.gutabi.bypass.R;
+import com.gutabi.deadlock.geom.Geom;
+import com.gutabi.deadlock.geom.MutableSweptOBB;
+import com.gutabi.deadlock.math.Point;
+import com.gutabi.deadlock.ui.MenuTool;
 import com.gutabi.deadlock.ui.UIAnimationRunnable;
 import com.gutabi.deadlock.world.SimulationRunnable;
+import com.gutabi.deadlock.world.WorldCamera;
 import com.gutabi.deadlock.world.WorldMode;
 import com.gutabi.deadlock.world.cars.Car;
 import com.gutabi.deadlock.world.cars.CarStateEnum;
+import com.gutabi.deadlock.world.graph.GraphPosition;
+import com.gutabi.deadlock.world.graph.GraphPositionPathPosition;
 
 public class BypassWorldActivity extends BypassActivity {
 	
@@ -53,28 +60,109 @@ public class BypassWorldActivity extends BypassActivity {
 		
 		if (savedInstanceState != null) {
 			
-			get curLevel.userMoves
-			get userStartTime
+			APP.DEBUG_DRAW = savedInstanceState.getBoolean("com.gutabi.bypass.DebugDraw");
 			
-			get isWon
+			BypassWorld.BYPASSWORLD.curLevel.userMoves = savedInstanceState.getInt("com.gutabi.bypass.level.UserMoves");
+			BypassWorld.BYPASSWORLD.curLevel.userStartTime = savedInstanceState.getLong("com.gutabi.bypass.level.UserStartTime");
+			BypassWorld.BYPASSWORLD.curLevel.isWon = savedInstanceState.getBoolean("com.gutabi.bypass.level.IsWon");
 			
-			if (isWon) {
-				get userTime
-				get grade
+			BypassWorld.BYPASSWORLD.worldCamera = (WorldCamera)savedInstanceState.getSerializable("com.gutabi.bypass.level.WorldCamera");
+			
+			for (Car cc : BypassWorld.BYPASSWORLD.carMap.cars) {
+				BypassCar c = (BypassCar)cc;
+				
+				int id = c.id;
+				
+				c.state = (CarStateEnum)savedInstanceState.getSerializable("com.gutabi.bypass.level.Car"+id+".State");
+				c.center = (Point)savedInstanceState.getSerializable("com.gutabi.bypass.level.Car"+id+".Center");
+				c.angle = savedInstanceState.getDouble("com.gutabi.bypass.level.Car"+id+".Angle");
+				Geom.localToWorld(c.localAABB, c.angle, c.center, c.shape);
+				c.setPhysicsTransform();
+				c.driver.overallPos = (GraphPositionPathPosition)savedInstanceState.getSerializable("com.gutabi.bypass.level.Car"+id+".OverallPos");
+				c.driver.overallPos.path = c.driver.overallPath;
+				if (c.driver.overallPos.bound) {
+					c.driver.overallPos.gp = c.driver.overallPos.path.get(c.driver.overallPos.index);
+					c.driver.overallPos.p = c.driver.overallPos.gp.p;
+				} else {
+					GraphPosition p1 = c.driver.overallPos.path.get(c.driver.overallPos.index);
+					GraphPosition p2 = c.driver.overallPos.path.get(c.driver.overallPos.index+1);			
+					double dist = Point.distance(p1.p, p2.p);
+					c.driver.overallPos.gp = p1.approachNeighbor(p2, dist * c.driver.overallPos.param);
+					c.driver.overallPos.p = c.driver.overallPos.gp.p;
+				}
+				c.driver.overallPos.mao = APP.platform.createMutableOBB();
+				c.driver.overallPos.mbo = APP.platform.createMutableOBB();
+				c.driver.overallPos.swept = new MutableSweptOBB();
+				
+				
+				if (c.state != CarStateEnum.IDLE) {
+					c.driver.toolCoastingGoal = (GraphPositionPathPosition)savedInstanceState.getSerializable("com.gutabi.bypass.level.Car"+id+".CoastingGoal");
+					c.driver.toolCoastingGoal.path = c.driver.overallPath;
+					if (c.driver.toolCoastingGoal.bound) {
+						c.driver.toolCoastingGoal.gp = c.driver.toolCoastingGoal.path.get(c.driver.toolCoastingGoal.index);
+						c.driver.toolCoastingGoal.p = c.driver.toolCoastingGoal.gp.p;
+					} else {
+						GraphPosition p1 = c.driver.toolCoastingGoal.path.get(c.driver.toolCoastingGoal.index);
+						GraphPosition p2 = c.driver.toolCoastingGoal.path.get(c.driver.toolCoastingGoal.index+1);			
+						double dist = Point.distance(p1.p, p2.p);
+						c.driver.toolCoastingGoal.gp = p1.approachNeighbor(p2, dist * c.driver.toolCoastingGoal.param);
+						c.driver.toolCoastingGoal.p = c.driver.toolCoastingGoal.gp.p;
+					}
+					c.driver.toolCoastingGoal.mao = APP.platform.createMutableOBB();
+					c.driver.toolCoastingGoal.mbo = APP.platform.createMutableOBB();
+					c.driver.toolCoastingGoal.swept = new MutableSweptOBB();
+					
+					
+					c.driver.toolOrigExitingVertexPos = (GraphPositionPathPosition)savedInstanceState.getSerializable("com.gutabi.bypass.level.Car"+id+".OrigExitingVertexPos");
+					c.driver.toolOrigExitingVertexPos.path = c.driver.overallPath;
+					if (c.driver.toolOrigExitingVertexPos.bound) {
+						c.driver.toolOrigExitingVertexPos.gp = c.driver.toolOrigExitingVertexPos.path.get(c.driver.toolOrigExitingVertexPos.index);
+						c.driver.toolOrigExitingVertexPos.p = c.driver.toolOrigExitingVertexPos.gp.p;
+					} else {
+						GraphPosition p1 = c.driver.toolOrigExitingVertexPos.path.get(c.driver.toolOrigExitingVertexPos.index);
+						GraphPosition p2 = c.driver.toolOrigExitingVertexPos.path.get(c.driver.toolOrigExitingVertexPos.index+1);			
+						double dist = Point.distance(p1.p, p2.p);
+						c.driver.toolOrigExitingVertexPos.gp = p1.approachNeighbor(p2, dist * c.driver.toolOrigExitingVertexPos.param);
+						c.driver.toolOrigExitingVertexPos.p = c.driver.toolOrigExitingVertexPos.gp.p;
+					}
+					c.driver.toolOrigExitingVertexPos.mao = APP.platform.createMutableOBB();
+					c.driver.toolOrigExitingVertexPos.mbo = APP.platform.createMutableOBB();
+					c.driver.toolOrigExitingVertexPos.swept = new MutableSweptOBB();
+					
+					
+					c.coastingVel = savedInstanceState.getDouble("com.gutabi.bypass.level.Car"+id+".CoastingVel");
+					c.toolOrigPixelOffset = (Point)savedInstanceState.getSerializable("com.gutabi.bypass.level.Car"+id+".OrigPixelOffset");
+				}
+				
 			}
 			
-			
-			get movingCar.coastingVel;
-		
-			for (Car c : carMap.cars) {
+			if (BypassWorld.BYPASSWORLD.curLevel.isWon) {
+				BypassWorld.BYPASSWORLD.curLevel.userTime = savedInstanceState.getLong("com.gutabi.bypass.level.UserTime");
+				BypassWorld.BYPASSWORLD.curLevel.grade = savedInstanceState.getString("com.gutabi.bypass.level.Grade");
 				
-				get c.center
-				get c.angle
+				String excl;
+				char letter = BypassWorld.BYPASSWORLD.curLevel.grade.charAt(0);
+				if (letter == 'A') {
+					excl = "Excellent!";
+				} else if (letter == 'B') {
+					excl = "Good!";
+				} else if (letter == 'C') {
+					excl = "OK!";
+				} else if (letter == 'D') {
+					excl = "Adequate!";
+				} else {
+					excl = "Effort!";
+				}
 				
-				get c.state;
+				BypassWorld.BYPASSWORLD.winnerMenu = new WinnerMenu(BypassWorld.BYPASSWORLD, excl, "Grade: " + BypassWorld.BYPASSWORLD.curLevel.grade);
+				
+				BypassWorld.BYPASSWORLD.render_worldPanel();
+				BypassWorld.BYPASSWORLD.panelPostDisplay((int)BypassWorld.BYPASSWORLD.worldCamera.panelAABB.width, (int)BypassWorld.BYPASSWORLD.worldCamera.panelAABB.height);
+				
+				APP.tool = new MenuTool();
 				
 			}
-		
+			
 		}
 		
 	}
@@ -127,34 +215,35 @@ public class BypassWorldActivity extends BypassActivity {
 		}
 		
 		
+		outState.putBoolean("com.gutabi.bypass.DebugDraw", APP.DEBUG_DRAW);
 		
-		"com.gutabi.bypass.level.Index"
+		outState.putInt("com.gutabi.bypass.level.UserMoves", BypassWorld.BYPASSWORLD.curLevel.userMoves);
+		outState.putLong("com.gutabi.bypass.level.UserStartTime", BypassWorld.BYPASSWORLD.curLevel.userStartTime);
+		outState.putBoolean("com.gutabi.bypass.level.IsWon", BypassWorld.BYPASSWORLD.curLevel.isWon);
 		
-		
-		put curLevel.userMoves
-		put userStartTime
-		
-		put isWon
-		
-		if (isWon) {
-			put userTime
-			put grade
+		if (BypassWorld.BYPASSWORLD.curLevel.isWon) {
+			outState.putLong("com.gutabi.bypass.level.UserTime", BypassWorld.BYPASSWORLD.curLevel.userTime);
+			outState.putString("com.gutabi.bypass.level.Grade", BypassWorld.BYPASSWORLD.curLevel.grade);
 		}
 		
-		BypassCarTool tool = (BypassCarTool)APP.tool;
+		outState.putSerializable("com.gutabi.bypass.level.WorldCamera", BypassWorld.BYPASSWORLD.worldCamera);
 		
-		BypassCar movingCar = tool.car;
-		if (movingCar != null) {
-			put movingCar.coastingVel;
-		}
-		
-		for (Car c : carMap.cars) {
+		for (Car cc : BypassWorld.BYPASSWORLD.carMap.cars) {
+			BypassCar c = (BypassCar)cc;
 			
-			put c.center
-			put c.angle
+			int id = c.id;
 			
-			put c.state;
+			outState.putSerializable("com.gutabi.bypass.level.Car"+id+".Center", c.center);
+			outState.putDouble("com.gutabi.bypass.level.Car"+id+".Angle", c.angle);
+			outState.putSerializable("com.gutabi.bypass.level.Car"+id+".OverallPos", c.driver.overallPos);
 			
+			outState.putSerializable("com.gutabi.bypass.level.Car"+id+".State", c.state);
+			if (c.state != CarStateEnum.IDLE) {
+				outState.putSerializable("com.gutabi.bypass.level.Car"+id+".CoastingGoal", c.driver.toolCoastingGoal);
+				outState.putSerializable("com.gutabi.bypass.level.Car"+id+".OrigExitingVertexPos", c.driver.toolOrigExitingVertexPos);
+				outState.putDouble("com.gutabi.bypass.level.Car"+id+".CoastingVel", c.coastingVel);
+				outState.putSerializable("com.gutabi.bypass.level.Car"+id+".OrigPixelOffset", c.toolOrigPixelOffset);
+			}
 		}
 		
 		
@@ -172,13 +261,6 @@ public class BypassWorldActivity extends BypassActivity {
 		BypassWorld.BYPASSWORLD.uiThread.start();
 		
 	}
-	
-//	@Override
-//	protected void onRestoreInstanceState(Bundle savedInstanceState) {
-//		super.onRestoreInstanceState(savedInstanceState);
-//		
-//		int x;
-//	}
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {

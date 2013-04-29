@@ -1,6 +1,10 @@
 package com.gutabi.deadlock.math;
 
-public class Dim {
+import java.io.Serializable;
+
+public class Dim implements Serializable {
+	
+	private static final long serialVersionUID = 1L;
 	
 	public final double width;
 	public final double height;

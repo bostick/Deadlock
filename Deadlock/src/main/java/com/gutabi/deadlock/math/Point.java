@@ -1,5 +1,6 @@
 package com.gutabi.deadlock.math;
 
+import java.io.Serializable;
 import java.util.Scanner;
 import java.util.regex.MatchResult;
 
@@ -8,7 +9,9 @@ import com.gutabi.deadlock.ui.Menu;
 import com.gutabi.deadlock.ui.Panel;
 import com.gutabi.deadlock.world.WorldCamera;
 
-public class Point {
+public class Point implements Serializable {
+	
+	private static final long serialVersionUID = 1L;
 	
 	public static final Point UP = new Point(0, -1);
 	public static final Point DOWN = new Point(0, 1);
