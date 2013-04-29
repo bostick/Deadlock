@@ -8,6 +8,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import com.gutabi.bypass.BypassControlPanel;
+import com.gutabi.bypass.menu.LevelMenu;
 import com.gutabi.deadlock.AppScreen;
 import com.gutabi.deadlock.Model;
 import com.gutabi.deadlock.math.Point;
@@ -21,6 +22,7 @@ import com.gutabi.deadlock.world.World;
 import com.gutabi.deadlock.world.WorldMode;
 import com.gutabi.deadlock.world.WorldPanel;
 import com.gutabi.deadlock.world.cars.Car;
+import com.gutabi.deadlock.world.cars.CarStateEnum;
 import com.gutabi.deadlock.world.graph.Axis;
 import com.gutabi.deadlock.world.graph.BypassBoard;
 import com.gutabi.deadlock.world.graph.BypassBoardPosition;
@@ -145,7 +147,32 @@ public class BypassWorld extends World implements Model {
 	
 	public void reset() {
 		
+		if (curLevel.isWon) {
+			return;
+		}
+		
+		BYPASSWORLD.trigger.set(false);
+		
+		BYPASSWORLD.mode = WorldMode.EDITING;
+		
+		try {
+			BYPASSWORLD.uiThread.join();
+			
+			BYPASSWORLD.simThread.join();
+			
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		curLevel.userMoves = 0;
+		
+		BypassCarTool tool = (BypassCarTool)APP.tool;
+		
+		BypassCar movingCar = tool.car;
+		if (movingCar != null) {
+			movingCar.coastingVel = 0.0;
+		}
 		
 		for (Car c : carMap.cars) {
 			
@@ -170,7 +197,24 @@ public class BypassWorld extends World implements Model {
 			
 			c.setPhysicsTransform();
 			
+			c.state = CarStateEnum.IDLE;
+			
 		}
+		
+		double cameraX = worldCamera.origWorldViewport.x;
+		double cameraY = worldCamera.origWorldViewport.y;
+		
+		worldCamera.panAbsolute(cameraX, cameraY);
+		
+		BYPASSWORLD.mode = WorldMode.RUNNING;
+		
+		BYPASSWORLD.simThread = new Thread(new SimulationRunnable());
+		BYPASSWORLD.simThread.start();
+		
+		BYPASSWORLD.trigger.set(true);
+		
+		BYPASSWORLD.uiThread = new Thread(new UIAnimationRunnable(BYPASSWORLD.trigger));
+		BYPASSWORLD.uiThread.start();
 		
 	}
 	
@@ -455,6 +499,58 @@ public class BypassWorld extends World implements Model {
 		
 		worldCamera.panAbsolute(cameraX, cameraY);
 		
+	}
+	
+	public void winner() {
+		
+		int diff = (curLevel.userMoves - curLevel.requiredMoves);
+		if (diff == 0) {
+			curLevel.grade = "A+";
+		} else if (diff < 2) {
+			curLevel.grade = "A";
+		} else if (diff < 4) {
+			curLevel.grade = "A-";
+		} else if (diff < 6) {
+			curLevel.grade = "B+";
+		} else if (diff < 8) {
+			curLevel.grade = "B";
+		} else if (diff < 10) {
+			curLevel.grade = "B-";
+		} else if (diff < 12) {
+			curLevel.grade = "C+";
+		} else if (diff < 14) {
+			curLevel.grade = "C+";
+		} else if (diff < 16) {
+			curLevel.grade = "C+";
+		} else if (diff < 18) {
+			curLevel.grade = "D+";
+		} else if (diff < 20) {
+			curLevel.grade = "D";
+		} else if (diff < 22) {
+			curLevel.grade = "D-";
+		} else {
+			curLevel.grade = "F";	
+		}
+		
+		curLevel.userTime = (System.currentTimeMillis() - curLevel.userStartTime);
+		
+		curLevel.isWon = true;
+		
+		for (int i = 0; i < BYPASSAPP.levelDB.levelCount; i++) {
+			if (BYPASSAPP.levelDB.levelMap.keySet().contains(i)) {
+				if (BYPASSAPP.levelDB.levelMap.get(i).isWon) {
+					
+				} else {
+					LevelMenu.firstUnwon = i;
+					break;
+				}
+			} else {
+				LevelMenu.firstUnwon = i;
+				break;
+			}
+		}
+		
+		WinnerMenu.action();
 	}
 	
 	public void render_worldPanel() {

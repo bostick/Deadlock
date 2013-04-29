@@ -91,14 +91,14 @@ public class LevelMenuActivity extends BypassActivity {
 		outState.putDoubleArray("com.gutabi.bypass.menu.LevelMenuLoc", a);
 	}
 	
-	@Override
-	protected void onRestoreInstanceState(Bundle savedInstanceState) {
-		super.onRestoreInstanceState(savedInstanceState);
-		
-		double[] a = savedInstanceState.getDoubleArray("com.gutabi.bypass.menu.LevelMenuLoc");
-		Point loc = new Point(a[0], a[1]);
-		LevelMenu.loc = loc;
-	}
+//	@Override
+//	protected void onRestoreInstanceState(Bundle savedInstanceState) {
+//		super.onRestoreInstanceState(savedInstanceState);
+//		
+//		double[] a = savedInstanceState.getDoubleArray("com.gutabi.bypass.menu.LevelMenuLoc");
+//		Point loc = new Point(a[0], a[1]);
+//		LevelMenu.loc = loc;
+//	}
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {

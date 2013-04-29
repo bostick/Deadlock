@@ -243,7 +243,7 @@ public class GraphPositionPathPosition {
 						/*
 						 * there is no next bound
 						 */
-						throw new IllegalArgumentException();
+						throw new IllegalArgumentException(forward ? "There is no next bound" : "There is no previous bound");
 					} else {
 						nextBoundGP = path.get(nextBoundIndex);
 						nextBoundLengthToStartOfPath = path.cumulativeDistancesFromStart[nextBoundIndex];

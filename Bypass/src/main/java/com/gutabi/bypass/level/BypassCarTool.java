@@ -1,9 +1,7 @@
 package com.gutabi.bypass.level;
 
-import static com.gutabi.bypass.BypassApplication.BYPASSAPP;
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
-import com.gutabi.bypass.menu.LevelMenu;
 import com.gutabi.deadlock.geom.Shape;
 import com.gutabi.deadlock.math.DMath;
 import com.gutabi.deadlock.math.Point;
@@ -353,7 +351,8 @@ public class BypassCarTool extends WorldToolBase {
 				
 				if (vertexPos.gp.entity == b.exitVertex && !world.curLevel.isWon && car.type == CarType.RED) {
 					
-					winner();
+					released(null);
+					world.winner();
 					return;
 					
 				} else {
@@ -383,7 +382,8 @@ public class BypassCarTool extends WorldToolBase {
 				
 				if (car.driver.overallPos.gp.entity == b.exitVertex && !world.curLevel.isWon && car.type == CarType.RED) {
 					
-					winner();
+					released(null);
+					world.winner();
 					return;
 					
 				} else {
@@ -455,7 +455,8 @@ public class BypassCarTool extends WorldToolBase {
 					
 					if (vertexPos.gp.entity == b.exitVertex && !world.curLevel.isWon && car.type == CarType.RED) {
 						
-						winner();
+						released(null);
+						world.winner();
 						return;
 						
 					} else {
@@ -469,62 +470,6 @@ public class BypassCarTool extends WorldToolBase {
 		
 		world.handleZooming(car);
 		
-	}
-	
-	void winner() {
-		
-		BypassWorld world = (BypassWorld)APP.model;
-		
-		int diff = (world.curLevel.userMoves - world.curLevel.requiredMoves);
-		if (diff == 0) {
-			world.curLevel.grade = "A+";
-		} else if (diff < 2) {
-			world.curLevel.grade = "A";
-		} else if (diff < 4) {
-			world.curLevel.grade = "A-";
-		} else if (diff < 6) {
-			world.curLevel.grade = "B+";
-		} else if (diff < 8) {
-			world.curLevel.grade = "B";
-		} else if (diff < 10) {
-			world.curLevel.grade = "B-";
-		} else if (diff < 12) {
-			world.curLevel.grade = "C+";
-		} else if (diff < 14) {
-			world.curLevel.grade = "C+";
-		} else if (diff < 16) {
-			world.curLevel.grade = "C+";
-		} else if (diff < 18) {
-			world.curLevel.grade = "D+";
-		} else if (diff < 20) {
-			world.curLevel.grade = "D";
-		} else if (diff < 22) {
-			world.curLevel.grade = "D-";
-		} else {
-			world.curLevel.grade = "F";	
-		}
-		
-		world.curLevel.userTime = (System.currentTimeMillis() - world.curLevel.userStartTime);
-		
-		world.curLevel.isWon = true;
-		
-		for (int i = 0; i < BYPASSAPP.levelDB.levelCount; i++) {
-			if (BYPASSAPP.levelDB.levelMap.keySet().contains(i)) {
-				if (BYPASSAPP.levelDB.levelMap.get(i).isWon) {
-					
-				} else {
-					LevelMenu.firstUnwon = i;
-					break;
-				}
-			} else {
-				LevelMenu.firstUnwon = i;
-				break;
-			}
-		}
-		
-		released(null);
-		
-		WinnerMenu.action();
 	}
 	
 	public void paint_panel(RenderingContext ctxt) {

@@ -13,6 +13,11 @@ import com.gutabi.bypass.BypassApplication;
 import com.gutabi.bypass.BypassView;
 import com.gutabi.bypass.PlatformImpl;
 import com.gutabi.bypass.R;
+import com.gutabi.deadlock.ui.UIAnimationRunnable;
+import com.gutabi.deadlock.world.SimulationRunnable;
+import com.gutabi.deadlock.world.WorldMode;
+import com.gutabi.deadlock.world.cars.Car;
+import com.gutabi.deadlock.world.cars.CarStateEnum;
 
 public class BypassWorldActivity extends BypassActivity {
 	
@@ -37,10 +42,6 @@ public class BypassWorldActivity extends BypassActivity {
 			}
 		}
 		
-		if (savedInstanceState != null) {
-			int x;
-		}
-		
 		v = (BypassView)findViewById(R.id.view_bypassworld);
 		
 		v.ctxt = APP.platform.createRenderingContext();
@@ -49,6 +50,33 @@ public class BypassWorldActivity extends BypassActivity {
 		int ii = (Integer)getIntent().getExtras().get("com.gutabi.bypass.level.Index");
 		
 		BypassWorld.create(ii);
+		
+		if (savedInstanceState != null) {
+			
+			get curLevel.userMoves
+			get userStartTime
+			
+			get isWon
+			
+			if (isWon) {
+				get userTime
+				get grade
+			}
+			
+			
+			get movingCar.coastingVel;
+		
+			for (Car c : carMap.cars) {
+				
+				get c.center
+				get c.angle
+				
+				get c.state;
+				
+			}
+		
+		}
+		
 	}
 	
 	protected void onStart() {
@@ -84,22 +112,73 @@ public class BypassWorldActivity extends BypassActivity {
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 		
-		/*
-		 * state of all cars
-		 * 
-		 * state of world camera
-		 * 
-		 * state of winner menu
-		 */
-		int x;
+		BypassWorld.BYPASSWORLD.trigger.set(false);
+		
+		BypassWorld.BYPASSWORLD.mode = WorldMode.EDITING;
+		
+		try {
+			BypassWorld.BYPASSWORLD.uiThread.join();
+			
+			BypassWorld.BYPASSWORLD.simThread.join();
+			
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		
+		"com.gutabi.bypass.level.Index"
+		
+		
+		put curLevel.userMoves
+		put userStartTime
+		
+		put isWon
+		
+		if (isWon) {
+			put userTime
+			put grade
+		}
+		
+		BypassCarTool tool = (BypassCarTool)APP.tool;
+		
+		BypassCar movingCar = tool.car;
+		if (movingCar != null) {
+			put movingCar.coastingVel;
+		}
+		
+		for (Car c : carMap.cars) {
+			
+			put c.center
+			put c.angle
+			
+			put c.state;
+			
+		}
+		
+		
+		
+		
+		
+		BypassWorld.BYPASSWORLD.mode = WorldMode.RUNNING;
+		
+		BypassWorld.BYPASSWORLD.simThread = new Thread(new SimulationRunnable());
+		BypassWorld.BYPASSWORLD.simThread.start();
+		
+		BypassWorld.BYPASSWORLD.trigger.set(true);
+		
+		BypassWorld.BYPASSWORLD.uiThread = new Thread(new UIAnimationRunnable(BypassWorld.BYPASSWORLD.trigger));
+		BypassWorld.BYPASSWORLD.uiThread.start();
+		
 	}
 	
-	@Override
-	protected void onRestoreInstanceState(Bundle savedInstanceState) {
-		super.onRestoreInstanceState(savedInstanceState);
-		
-		int x;
-	}
+//	@Override
+//	protected void onRestoreInstanceState(Bundle savedInstanceState) {
+//		super.onRestoreInstanceState(savedInstanceState);
+//		
+//		int x;
+//	}
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {

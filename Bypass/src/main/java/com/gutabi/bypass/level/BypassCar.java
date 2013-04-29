@@ -31,7 +31,7 @@ public class BypassCar extends Car {
 	 * 
 	 * doesn't need to be a vector, since it is snapped to a track
 	 */
-	private double coastingVel;
+	public double coastingVel;
 	final double coastingAcceleration = 0.5;
 	
 	public BypassCar(World w, CarType type) {
