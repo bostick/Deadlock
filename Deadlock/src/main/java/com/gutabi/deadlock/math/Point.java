@@ -5,6 +5,7 @@ import java.util.Scanner;
 import java.util.regex.MatchResult;
 
 import com.gutabi.deadlock.geom.AABB;
+import com.gutabi.deadlock.geom.MutableAABB;
 import com.gutabi.deadlock.ui.Menu;
 import com.gutabi.deadlock.ui.Panel;
 import com.gutabi.deadlock.world.WorldCamera;
@@ -687,6 +688,12 @@ public class Point implements Serializable {
 		Point ul = worldToPanel(aabb.x, aabb.y, cam);
 		Point br = worldToPanel(aabb.brX, aabb.brY, cam);
 		return new AABB(ul.x, ul.y, br.x - ul.x, br.y - ul.y);
+	}
+	
+	public static void worldToPanel(MutableAABB aabb, WorldCamera cam, MutableAABB out) {
+		Point ul = worldToPanel(aabb.x, aabb.y, cam);
+		Point br = worldToPanel(aabb.x+aabb.width, aabb.y+aabb.height, cam);
+		out.setShape(ul.x, ul.y, br.x - ul.x, br.y - ul.y);
 	}
 	
 	public static Point panelToMenu(Point p, Menu menu) {

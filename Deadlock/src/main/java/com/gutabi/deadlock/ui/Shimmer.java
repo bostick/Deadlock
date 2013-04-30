@@ -3,21 +3,44 @@ package com.gutabi.deadlock.ui;
 import static com.gutabi.deadlock.DeadlockApplication.APP;
 
 import com.gutabi.deadlock.geom.AABB;
+import com.gutabi.deadlock.geom.MutableAABB;
 import com.gutabi.deadlock.geom.MutablePolygon;
 import com.gutabi.deadlock.ui.paint.Color;
 import com.gutabi.deadlock.ui.paint.RenderingContext;
 
 public class Shimmer {
 	
-	public AABB target;
+	public double x;
+	public double y;
+	public double width;
+	public double height;
+	public double brX;
+	public double brY;
 	
 	public double startMillis;
 	
 	MutablePolygon poly = APP.platform.createMutablePolygon();
 	
-	public Shimmer(AABB target, double startMillis) {
-		this.target = target;
+	public Shimmer(double startMillis) {
 		this.startMillis = startMillis;
+	}
+	
+	public void setShape(AABB aabb) {
+		x = aabb.x;
+		y = aabb.y;
+		width = aabb.width;
+		height = aabb.height;
+		brX = x+width;
+		brY = y+height;
+	}
+	
+	public void setShape(MutableAABB aabb) {
+		x = aabb.x;
+		y = aabb.y;
+		width = aabb.width;
+		height = aabb.height;
+		brX = x+width;
+		brY = y+height;
 	}
 	
 	public void paint(RenderingContext ctxt) {
@@ -31,7 +54,7 @@ public class Shimmer {
 		 */
 		double traverseSpeed = 5;
 		double timeToRest = 4000;
-		double timeToTraverse = target.width * traverseSpeed;
+		double timeToTraverse = width * traverseSpeed;
 		
 		double t = System.currentTimeMillis();
 		while (t > startMillis + (timeToTraverse + timeToRest)) {
@@ -44,39 +67,39 @@ public class Shimmer {
 		
 		if ((timeToTraverse + timeToRest) * param <= timeToTraverse) {
 			// traverse
-			double top = target.x + (((1 + timeToRest / timeToTraverse)) * param) * ((target.brX + target.height) - target.x);
-			double bottom = target.y + (((1 + timeToRest / timeToTraverse)) * param) * ((target.brY + target.width) - target.y);
+			double top = x + (((1 + timeToRest / timeToTraverse)) * param) * ((brX + height) - x);
+			double bottom = y + (((1 + timeToRest / timeToTraverse)) * param) * ((brY + width) - y);
 			
 			double p0x;
 			double p0y;
 			double p1x;
 			double p1y;
-			if (top <= target.brX-5) {
+			if (top <= brX-5) {
 				p0x = top;
-				p0y = target.y;
+				p0y = y;
 				p1x = top+5;
-				p1y = target.y;
+				p1y = y;
 			} else {
-				p0x = target.brX;
-				p0y = target.y + (top-target.brX);
-				p1x = target.brX;
-				p1y = Math.min(target.y + (top-target.brX)+5, target.brY);
+				p0x = brX;
+				p0y = y + (top-brX);
+				p1x = brX;
+				p1y = Math.min(y + (top-brX)+5, brY);
 			}
 			
 			double p2x;
 			double p2y;
 			double p3x;
 			double p3y;
-			if (bottom <= target.brY-5) {
-				p2x = target.x;
+			if (bottom <= brY-5) {
+				p2x = x;
 				p2y = bottom;
-				p3x = target.x;
+				p3x = x;
 				p3y = bottom+5;
 			} else {
-				p2x = target.x + (bottom - target.brY);
-				p2y = target.brY;
-				p3x = Math.min(target.x + (bottom - target.brY)+5, target.brX);
-				p3y = target.brY;
+				p2x = x + (bottom - brY);
+				p2y = brY;
+				p3x = Math.min(x + (bottom - brY)+5, brX);
+				p3y = brY;
 			}
 			
 			poly.setPoints(p0x, p0y, p1x, p1y, p2x, p2y, p3x, p3y);

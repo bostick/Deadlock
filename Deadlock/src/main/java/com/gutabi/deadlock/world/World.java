@@ -10,6 +10,7 @@ import java.util.Set;
 
 import com.gutabi.deadlock.Entity;
 import com.gutabi.deadlock.geom.AABB;
+import com.gutabi.deadlock.geom.MutableAABB;
 import com.gutabi.deadlock.math.Point;
 import com.gutabi.deadlock.ui.Image;
 import com.gutabi.deadlock.ui.InputEvent;
@@ -106,7 +107,7 @@ public class World extends PhysicsWorld {
 		
 		t = 0;
 		
-		shimmer = new Shimmer(null, System.currentTimeMillis());
+		shimmer = new Shimmer(System.currentTimeMillis());
 	}
 	
 	/*
@@ -471,13 +472,20 @@ public class World extends PhysicsWorld {
 		
 		ctxt.popTransform();
 		
-//		Car c = carMap.findRedCar();
-//		shimmer.target = Point.worldToPanel(c.shape.aabb, worldCamera);
-//		
-//		shimmer.paint(ctxt);
+		Car c = carMap.findRedCar();
+		if (c != null) {
+			
+			Point.worldToPanel(c.shape.aabb, worldCamera, shimmerTmp);
+			
+			shimmer.setShape(shimmerTmp);
+			
+			shimmer.paint(ctxt);
+		}
 		
-//		System.out.println(worldCamera.pixelsPerMeter);
 	}
+	
+	MutableAABB shimmerTmp = new MutableAABB();
+	
 	
 	public void paintPreview_controlPanel(RenderingContext ctxt) {
 		

@@ -215,7 +215,8 @@ public abstract class Menu {
 			}
 		}
 		
-		shimmer = new Shimmer(shimmeringMenuItem.aabb, System.currentTimeMillis());
+		shimmer = new Shimmer(System.currentTimeMillis());
+		shimmer.setShape(shimmeringMenuItem.aabb);
 		
 	}
 	
