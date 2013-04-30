@@ -1,6 +1,6 @@
 package com.gutabi.bypass;
 
-import static com.gutabi.deadlock.DeadlockApplication.APP;
+import static com.gutabi.capsloc.CapslocApplication.APP;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -11,9 +11,9 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
-import com.gutabi.deadlock.math.Point;
-import com.gutabi.deadlock.ui.Paintable;
-import com.gutabi.deadlock.ui.paint.RenderingContext;
+import com.gutabi.capsloc.math.Point;
+import com.gutabi.capsloc.ui.Paintable;
+import com.gutabi.capsloc.ui.paint.RenderingContext;
 
 public class BypassView extends SurfaceView implements SurfaceHolder.Callback {
 	

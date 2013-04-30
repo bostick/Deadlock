@@ -3,9 +3,9 @@ package com.gutabi.bypass.geom;
 import java.awt.geom.GeneralPath;
 
 import com.gutabi.bypass.ui.paint.RenderingContextImpl;
-import com.gutabi.deadlock.geom.Polygon;
-import com.gutabi.deadlock.math.Point;
-import com.gutabi.deadlock.ui.paint.RenderingContext;
+import com.gutabi.capsloc.geom.Polygon;
+import com.gutabi.capsloc.math.Point;
+import com.gutabi.capsloc.ui.paint.RenderingContext;
 
 public class PolygonImpl extends Polygon {
 	

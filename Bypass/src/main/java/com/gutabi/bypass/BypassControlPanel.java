@@ -1,20 +1,19 @@
 package com.gutabi.bypass;
 
-import static com.gutabi.deadlock.DeadlockApplication.APP;
-
+import static com.gutabi.capsloc.CapslocApplication.APP;
 import com.gutabi.bypass.level.BypassCarTool;
 import com.gutabi.bypass.level.BypassWorld;
-import com.gutabi.deadlock.Resource;
-import com.gutabi.deadlock.Tool;
-import com.gutabi.deadlock.geom.AABB;
-import com.gutabi.deadlock.ui.Checkbox;
-import com.gutabi.deadlock.ui.InputEvent;
-import com.gutabi.deadlock.ui.Label;
-import com.gutabi.deadlock.ui.Panel;
-import com.gutabi.deadlock.ui.paint.FontStyle;
-import com.gutabi.deadlock.ui.paint.RenderingContext;
-import com.gutabi.deadlock.world.World;
-import com.gutabi.deadlock.world.cars.Car;
+import com.gutabi.capsloc.Resource;
+import com.gutabi.capsloc.Tool;
+import com.gutabi.capsloc.geom.AABB;
+import com.gutabi.capsloc.ui.Checkbox;
+import com.gutabi.capsloc.ui.InputEvent;
+import com.gutabi.capsloc.ui.Label;
+import com.gutabi.capsloc.ui.Panel;
+import com.gutabi.capsloc.ui.paint.FontStyle;
+import com.gutabi.capsloc.ui.paint.RenderingContext;
+import com.gutabi.capsloc.world.World;
+import com.gutabi.capsloc.world.cars.Car;
 
 public class BypassControlPanel extends Panel {
 	

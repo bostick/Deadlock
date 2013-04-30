@@ -15,7 +15,7 @@
 	<property name="javaTgtVersion" value="1.7"/>
 	
 	<property name="srcDir" location="../src/main/java"/>
-	<property name="deadlockResDir" location="../../DeadlockResources"/>
+	<property name="capslocResDir" location="../../CapslocResources"/>
 	<property name="bypassResDir" location="../../BypassResources"/>
 	<property name="buildDir" location="../build"/>
 	<property name="distDir" location="${buildDir}/dist/Bypass"/>
@@ -37,19 +37,18 @@
 		<copy todir="${buildDir}/copied/src">
 			<fileset dir="../src/main/java"/>
 			<fileset dir="../../Bypass/src/main/java"/>
-			<fileset dir="../../Deadlock/src/main/java"/>
+			<fileset dir="../../Capsloc/src/main/java"/>
 			<filterset>
 				<filter token="MAJOR" value="${version.major}" />
 				<filter token="MINOR" value="${version.minor}" />
 		    </filterset>
 		</copy>
 		
-		<copy tofile="${buildDir}/bin/copyright.png" file="${deadlockResDir}/static/copyright.png"/>
-		<copy tofile="${buildDir}/bin/carsheet.png" file="${deadlockResDir}/static/carsheet.png"/>
-		<copy tofile="${buildDir}/bin/spritesheet.png" file="${deadlockResDir}/static/spritesheet.png"/>
-		<copy tofile="${buildDir}/bin/title_background.png" file="${deadlockResDir}/static/title_background.png"/>
-		<copy tofile="${buildDir}/bin/title_white.png" file="${deadlockResDir}/static/title_white.png"/>
-		<copy tofile="${buildDir}/bin/visitor1.ttf" file="${deadlockResDir}/static/visitor1.ttf"/>
+		<copy tofile="${buildDir}/bin/copyright.png" file="${capslocResDir}/static/copyright.png"/>
+		<copy tofile="${buildDir}/bin/carsheet.png" file="${capslocResDir}/static/carsheet.png"/>
+		<copy tofile="${buildDir}/bin/spritesheet.png" file="${capslocResDir}/static/spritesheet.png"/>
+		<copy tofile="${buildDir}/bin/title_background.png" file="${capslocResDir}/static/title_background.png"/>
+		<copy tofile="${buildDir}/bin/visitor1.ttf" file="${capslocResDir}/static/visitor1.ttf"/>
 		
 		<copy tofile="${buildDir}/bin/logo605x132.png" file="${bypassResDir}/static/logo605x132.png"/>
 		<copy tofile="${buildDir}/bin/levels.zip" file="${bypassResDir}/gen/levels.zip"/>
@@ -101,7 +100,7 @@
 				<filter token="DISTRIBUTIONSOURCEDIR" value="${distDir}" />
 				<filter token="EXECUTABLENAME" value="Bypass" />
 				<filter token="ARGUMENTS" value="" />
-				<filter token="ICONFILE" value="${deadlockResDir}/static/icon256x256.ico" />
+				<filter token="ICONFILE" value="${capslocResDir}/static/icon256x256.ico" />
 		    </filterset>
 		</copy>
 		

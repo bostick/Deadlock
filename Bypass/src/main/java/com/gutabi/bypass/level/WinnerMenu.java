@@ -1,11 +1,11 @@
 package com.gutabi.bypass.level;
 
+import static com.gutabi.capsloc.CapslocApplication.APP;
 import static com.gutabi.bypass.BypassApplication.BYPASSAPP;
-import static com.gutabi.deadlock.DeadlockApplication.APP;
 
-import com.gutabi.deadlock.ui.Menu;
-import com.gutabi.deadlock.ui.MenuItem;
-import com.gutabi.deadlock.ui.MenuTool;
+import com.gutabi.capsloc.ui.Menu;
+import com.gutabi.capsloc.ui.MenuItem;
+import com.gutabi.capsloc.ui.MenuTool;
 
 public class WinnerMenu extends Menu {
 	

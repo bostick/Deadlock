@@ -1,7 +1,7 @@
 package com.gutabi.bypass.menu;
 
+import static com.gutabi.capsloc.CapslocApplication.APP;
 import static com.gutabi.bypass.BypassApplication.BYPASSAPP;
-import static com.gutabi.deadlock.DeadlockApplication.APP;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.view.Menu;
@@ -13,7 +13,7 @@ import com.gutabi.bypass.BypassApplication;
 import com.gutabi.bypass.BypassView;
 import com.gutabi.bypass.PlatformImpl;
 import com.gutabi.bypass.R;
-import com.gutabi.deadlock.math.Point;
+import com.gutabi.capsloc.math.Point;
 
 public class LevelMenuActivity extends BypassActivity {
 	

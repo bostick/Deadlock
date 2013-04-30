@@ -1,7 +1,6 @@
 package com.gutabi.bypass.level;
 
-import static com.gutabi.deadlock.DeadlockApplication.APP;
-
+import static com.gutabi.capsloc.CapslocApplication.APP;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -11,7 +10,7 @@ import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import com.gutabi.deadlock.Resource;
+import com.gutabi.capsloc.Resource;
 
 public class LevelDB {
 	

@@ -2,13 +2,13 @@ package com.gutabi.bypass;
 
 import com.gutabi.bypass.level.LevelDB;
 import com.gutabi.bypass.menu.LevelMenu;
-import com.gutabi.deadlock.DeadlockApplication;
-import com.gutabi.deadlock.Resource;
-import com.gutabi.deadlock.ui.Image;
-import com.gutabi.deadlock.world.sprites.CarSheet;
-import com.gutabi.deadlock.world.sprites.SpriteSheet;
+import com.gutabi.capsloc.CapslocApplication;
+import com.gutabi.capsloc.Resource;
+import com.gutabi.capsloc.ui.Image;
+import com.gutabi.capsloc.world.sprites.CarSheet;
+import com.gutabi.capsloc.world.sprites.SpriteSheet;
 
-public class BypassApplication extends DeadlockApplication {
+public class BypassApplication extends CapslocApplication {
 	
 	public Image titleBackground;
 	public Image title_white;

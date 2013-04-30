@@ -1,13 +1,13 @@
 package com.gutabi.bypass.menu;
 
+import static com.gutabi.capsloc.CapslocApplication.APP;
 import static com.gutabi.bypass.BypassApplication.BYPASSAPP;
-import static com.gutabi.deadlock.DeadlockApplication.APP;
 
-import com.gutabi.deadlock.geom.AABB;
-import com.gutabi.deadlock.ui.Menu;
-import com.gutabi.deadlock.ui.Panel;
-import com.gutabi.deadlock.ui.paint.Color;
-import com.gutabi.deadlock.ui.paint.RenderingContext;
+import com.gutabi.capsloc.geom.AABB;
+import com.gutabi.capsloc.ui.Menu;
+import com.gutabi.capsloc.ui.Panel;
+import com.gutabi.capsloc.ui.paint.Color;
+import com.gutabi.capsloc.ui.paint.RenderingContext;
 
 public class BypassMenuPanel extends Panel {
 	

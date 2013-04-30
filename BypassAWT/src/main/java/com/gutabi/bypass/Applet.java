@@ -1,7 +1,6 @@
 package com.gutabi.bypass;
 
-import static com.gutabi.deadlock.DeadlockApplication.APP;
-
+import static com.gutabi.capsloc.CapslocApplication.APP;
 import javax.swing.JApplet;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;

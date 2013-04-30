@@ -3,7 +3,7 @@ package com.gutabi.bypass.ui;
 import android.graphics.Canvas;
 
 import com.gutabi.bypass.BypassView;
-import com.gutabi.deadlock.ui.PlatformContentPane;
+import com.gutabi.capsloc.ui.PlatformContentPane;
 
 public class PlatformContentPaneImpl extends PlatformContentPane {
 	

@@ -1,7 +1,7 @@
 package com.gutabi.bypass;
 
 import com.gutabi.bypass.level.Level;
-import com.gutabi.deadlock.Platform;
+import com.gutabi.capsloc.Platform;
 
 public interface BypassPlatform extends Platform {
 	

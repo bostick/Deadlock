@@ -6,9 +6,9 @@ import android.graphics.Path.Direction;
 import android.graphics.RectF;
 
 import com.gutabi.bypass.ui.paint.RenderingContextImpl;
-import com.gutabi.deadlock.geom.Ellipse;
-import com.gutabi.deadlock.math.Point;
-import com.gutabi.deadlock.ui.paint.RenderingContext;
+import com.gutabi.capsloc.geom.Ellipse;
+import com.gutabi.capsloc.math.Point;
+import com.gutabi.capsloc.ui.paint.RenderingContext;
 
 public class EllipseImpl extends Ellipse {
 	

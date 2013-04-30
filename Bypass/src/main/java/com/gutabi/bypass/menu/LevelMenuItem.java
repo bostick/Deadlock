@@ -1,15 +1,15 @@
 package com.gutabi.bypass.menu;
 
+import static com.gutabi.capsloc.CapslocApplication.APP;
 import static com.gutabi.bypass.BypassApplication.BYPASSAPP;
-import static com.gutabi.deadlock.DeadlockApplication.APP;
 
 import com.gutabi.bypass.level.Level;
-import com.gutabi.deadlock.geom.AABB;
-import com.gutabi.deadlock.ui.Label;
-import com.gutabi.deadlock.ui.Menu;
-import com.gutabi.deadlock.ui.MenuItem;
-import com.gutabi.deadlock.ui.paint.Color;
-import com.gutabi.deadlock.ui.paint.FontStyle;
+import com.gutabi.capsloc.geom.AABB;
+import com.gutabi.capsloc.ui.Label;
+import com.gutabi.capsloc.ui.Menu;
+import com.gutabi.capsloc.ui.MenuItem;
+import com.gutabi.capsloc.ui.paint.Color;
+import com.gutabi.capsloc.ui.paint.FontStyle;
 
 public abstract class LevelMenuItem extends MenuItem {
 

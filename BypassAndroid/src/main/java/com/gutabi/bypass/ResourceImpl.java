@@ -2,9 +2,9 @@ package com.gutabi.bypass;
 
 import java.net.URL;
 
-import com.gutabi.deadlock.Resource;
-
 import android.graphics.Typeface;
+
+import com.gutabi.capsloc.Resource;
 
 public class ResourceImpl implements Resource {
 	

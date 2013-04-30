@@ -1,6 +1,6 @@
 package com.gutabi.bypass;
 
-import static com.gutabi.deadlock.DeadlockApplication.APP;
+import static com.gutabi.capsloc.CapslocApplication.APP;
 import static com.gutabi.bypass.BypassApplication.BYPASSAPP;
 
 import java.awt.event.WindowAdapter;
@@ -11,7 +11,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
-import com.gutabi.bypass.BypassApplication;
 import com.gutabi.bypass.menu.MainMenu;
 import com.gutabi.bypass.ui.WindowInfo;
 

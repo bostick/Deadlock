@@ -2,7 +2,7 @@ package com.gutabi.bypass.ui;
 
 import java.awt.image.BufferedImage;
 
-import com.gutabi.deadlock.ui.Image;
+import com.gutabi.capsloc.ui.Image;
 
 public class ImageImpl implements Image {
 

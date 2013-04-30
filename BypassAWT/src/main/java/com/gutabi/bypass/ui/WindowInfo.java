@@ -6,8 +6,8 @@ import java.awt.GraphicsEnvironment;
 import java.awt.Insets;
 import java.awt.Toolkit;
 
-import com.gutabi.deadlock.math.Dim;
-import com.gutabi.deadlock.math.Point;
+import com.gutabi.capsloc.math.Dim;
+import com.gutabi.capsloc.math.Point;
 
 public class WindowInfo {
 	

@@ -1,6 +1,6 @@
 package com.gutabi.bypass.level;
 
-import com.gutabi.deadlock.world.cars.Driver;
+import com.gutabi.capsloc.world.cars.Driver;
 
 public final class BypassDriver extends Driver {
 	

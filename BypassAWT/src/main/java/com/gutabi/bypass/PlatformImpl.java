@@ -1,7 +1,6 @@
 package com.gutabi.bypass;
 
-import static com.gutabi.deadlock.DeadlockApplication.APP;
-
+import static com.gutabi.capsloc.CapslocApplication.APP;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontFormatException;
@@ -33,21 +32,21 @@ import com.gutabi.bypass.menu.MainMenu;
 import com.gutabi.bypass.ui.ImageImpl;
 import com.gutabi.bypass.ui.PlatformContentPaneImpl;
 import com.gutabi.bypass.ui.paint.RenderingContextImpl;
-import com.gutabi.deadlock.Resource;
-import com.gutabi.deadlock.geom.AABB;
-import com.gutabi.deadlock.geom.CubicCurve;
-import com.gutabi.deadlock.geom.Ellipse;
-import com.gutabi.deadlock.geom.MutableOBB;
-import com.gutabi.deadlock.geom.MutablePolygon;
-import com.gutabi.deadlock.geom.OBB;
-import com.gutabi.deadlock.geom.Polyline;
-import com.gutabi.deadlock.geom.QuadCurve;
-import com.gutabi.deadlock.geom.Triangle;
-import com.gutabi.deadlock.math.Point;
-import com.gutabi.deadlock.ui.Image;
-import com.gutabi.deadlock.ui.PlatformContentPane;
-import com.gutabi.deadlock.ui.paint.FontStyle;
-import com.gutabi.deadlock.ui.paint.RenderingContext;
+import com.gutabi.capsloc.Resource;
+import com.gutabi.capsloc.geom.AABB;
+import com.gutabi.capsloc.geom.CubicCurve;
+import com.gutabi.capsloc.geom.Ellipse;
+import com.gutabi.capsloc.geom.MutableOBB;
+import com.gutabi.capsloc.geom.MutablePolygon;
+import com.gutabi.capsloc.geom.OBB;
+import com.gutabi.capsloc.geom.Polyline;
+import com.gutabi.capsloc.geom.QuadCurve;
+import com.gutabi.capsloc.geom.Triangle;
+import com.gutabi.capsloc.math.Point;
+import com.gutabi.capsloc.ui.Image;
+import com.gutabi.capsloc.ui.PlatformContentPane;
+import com.gutabi.capsloc.ui.paint.FontStyle;
+import com.gutabi.capsloc.ui.paint.RenderingContext;
 
 public class PlatformImpl implements BypassPlatform {
 	

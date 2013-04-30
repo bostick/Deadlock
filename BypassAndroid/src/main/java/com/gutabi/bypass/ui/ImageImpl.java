@@ -1,8 +1,8 @@
 package com.gutabi.bypass.ui;
 
-import com.gutabi.deadlock.ui.Image;
-
 import android.graphics.Bitmap;
+
+import com.gutabi.capsloc.ui.Image;
 
 public class ImageImpl implements Image {
 	

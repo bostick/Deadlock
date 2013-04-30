@@ -1,18 +1,18 @@
 package com.gutabi.bypass.menu;
 
+import static com.gutabi.capsloc.CapslocApplication.APP;
 import static com.gutabi.bypass.BypassApplication.BYPASSAPP;
-import static com.gutabi.deadlock.DeadlockApplication.APP;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.gutabi.bypass.level.BypassWorld;
-import com.gutabi.deadlock.AppScreen;
-import com.gutabi.deadlock.Model;
-import com.gutabi.deadlock.math.Point;
-import com.gutabi.deadlock.ui.ContentPane;
-import com.gutabi.deadlock.ui.Menu;
-import com.gutabi.deadlock.ui.MenuTool;
-import com.gutabi.deadlock.ui.UIAnimationRunnable;
+import com.gutabi.capsloc.AppScreen;
+import com.gutabi.capsloc.Model;
+import com.gutabi.capsloc.math.Point;
+import com.gutabi.capsloc.ui.ContentPane;
+import com.gutabi.capsloc.ui.Menu;
+import com.gutabi.capsloc.ui.MenuTool;
+import com.gutabi.capsloc.ui.UIAnimationRunnable;
 
 public class LevelMenu extends Menu implements Model {
 	

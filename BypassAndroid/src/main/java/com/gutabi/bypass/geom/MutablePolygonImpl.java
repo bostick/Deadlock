@@ -4,9 +4,9 @@ import android.graphics.Paint.Style;
 import android.graphics.Path;
 
 import com.gutabi.bypass.ui.paint.RenderingContextImpl;
-import com.gutabi.deadlock.geom.MutablePolygon;
-import com.gutabi.deadlock.math.Point;
-import com.gutabi.deadlock.ui.paint.RenderingContext;
+import com.gutabi.capsloc.geom.MutablePolygon;
+import com.gutabi.capsloc.math.Point;
+import com.gutabi.capsloc.ui.paint.RenderingContext;
 
 public class MutablePolygonImpl extends MutablePolygon {
 	

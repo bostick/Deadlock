@@ -1,7 +1,6 @@
 package com.gutabi.bypass.ui.paint;
 
-import static com.gutabi.deadlock.DeadlockApplication.APP;
-
+import static com.gutabi.capsloc.CapslocApplication.APP;
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Font;
@@ -15,19 +14,19 @@ import java.util.Stack;
 
 import com.gutabi.bypass.PlatformImpl;
 import com.gutabi.bypass.ui.ImageImpl;
-import com.gutabi.deadlock.Resource;
-import com.gutabi.deadlock.geom.AABB;
-import com.gutabi.deadlock.geom.Circle;
-import com.gutabi.deadlock.geom.Line;
-import com.gutabi.deadlock.geom.MutableAABB;
-import com.gutabi.deadlock.math.Dim;
-import com.gutabi.deadlock.math.Point;
-import com.gutabi.deadlock.ui.Image;
-import com.gutabi.deadlock.ui.paint.Cap;
-import com.gutabi.deadlock.ui.paint.Color;
-import com.gutabi.deadlock.ui.paint.FontStyle;
-import com.gutabi.deadlock.ui.paint.Join;
-import com.gutabi.deadlock.ui.paint.RenderingContext;
+import com.gutabi.capsloc.Resource;
+import com.gutabi.capsloc.geom.AABB;
+import com.gutabi.capsloc.geom.Circle;
+import com.gutabi.capsloc.geom.Line;
+import com.gutabi.capsloc.geom.MutableAABB;
+import com.gutabi.capsloc.math.Dim;
+import com.gutabi.capsloc.math.Point;
+import com.gutabi.capsloc.ui.Image;
+import com.gutabi.capsloc.ui.paint.Cap;
+import com.gutabi.capsloc.ui.paint.Color;
+import com.gutabi.capsloc.ui.paint.FontStyle;
+import com.gutabi.capsloc.ui.paint.Join;
+import com.gutabi.capsloc.ui.paint.RenderingContext;
 
 public class RenderingContextImpl extends RenderingContext {
 	

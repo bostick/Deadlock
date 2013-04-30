@@ -1,6 +1,6 @@
 package com.gutabi.bypass.ui;
 
-import static com.gutabi.deadlock.DeadlockApplication.APP;
+import static com.gutabi.capsloc.CapslocApplication.APP;
 
 import java.awt.Container;
 import java.awt.Graphics;
@@ -9,9 +9,9 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 
 import com.gutabi.bypass.ui.paint.RenderingContextImpl;
-import com.gutabi.deadlock.math.Point;
-import com.gutabi.deadlock.ui.PlatformContentPane;
-import com.gutabi.deadlock.ui.paint.RenderingContext;
+import com.gutabi.capsloc.math.Point;
+import com.gutabi.capsloc.ui.PlatformContentPane;
+import com.gutabi.capsloc.ui.paint.RenderingContext;
 
 public class PlatformContentPaneImpl extends PlatformContentPane implements java.awt.event.KeyListener, java.awt.event.MouseListener, java.awt.event.MouseMotionListener {
 	

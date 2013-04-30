@@ -1,23 +1,23 @@
 package com.gutabi.bypass.level;
 
-import static com.gutabi.deadlock.DeadlockApplication.APP;
+import static com.gutabi.capsloc.CapslocApplication.APP;
 
-import com.gutabi.deadlock.geom.Geom;
-import com.gutabi.deadlock.geom.OBB;
-import com.gutabi.deadlock.geom.ShapeUtils;
-import com.gutabi.deadlock.geom.SweptOBB;
-import com.gutabi.deadlock.math.DMath;
-import com.gutabi.deadlock.math.Point;
-import com.gutabi.deadlock.ui.paint.Cap;
-import com.gutabi.deadlock.ui.paint.Color;
-import com.gutabi.deadlock.ui.paint.Join;
-import com.gutabi.deadlock.ui.paint.RenderingContext;
-import com.gutabi.deadlock.world.World;
-import com.gutabi.deadlock.world.cars.Car;
-import com.gutabi.deadlock.world.cars.CarStateEnum;
-import com.gutabi.deadlock.world.graph.BypassStud;
-import com.gutabi.deadlock.world.graph.GraphPositionPathPosition;
-import com.gutabi.deadlock.world.sprites.CarSheet.CarType;
+import com.gutabi.capsloc.geom.Geom;
+import com.gutabi.capsloc.geom.OBB;
+import com.gutabi.capsloc.geom.ShapeUtils;
+import com.gutabi.capsloc.geom.SweptOBB;
+import com.gutabi.capsloc.math.DMath;
+import com.gutabi.capsloc.math.Point;
+import com.gutabi.capsloc.ui.paint.Cap;
+import com.gutabi.capsloc.ui.paint.Color;
+import com.gutabi.capsloc.ui.paint.Join;
+import com.gutabi.capsloc.ui.paint.RenderingContext;
+import com.gutabi.capsloc.world.World;
+import com.gutabi.capsloc.world.cars.Car;
+import com.gutabi.capsloc.world.cars.CarStateEnum;
+import com.gutabi.capsloc.world.graph.BypassStud;
+import com.gutabi.capsloc.world.graph.GraphPositionPathPosition;
+import com.gutabi.capsloc.world.sprites.CarSheet.CarType;
 
 public class BypassCar extends Car {
 	

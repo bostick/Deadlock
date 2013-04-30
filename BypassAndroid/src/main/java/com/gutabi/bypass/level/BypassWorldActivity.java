@@ -1,7 +1,7 @@
 package com.gutabi.bypass.level;
 
+import static com.gutabi.capsloc.CapslocApplication.APP;
 import static com.gutabi.bypass.BypassApplication.BYPASSAPP;
-import static com.gutabi.deadlock.DeadlockApplication.APP;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.view.Menu;
@@ -13,18 +13,18 @@ import com.gutabi.bypass.BypassApplication;
 import com.gutabi.bypass.BypassView;
 import com.gutabi.bypass.PlatformImpl;
 import com.gutabi.bypass.R;
-import com.gutabi.deadlock.geom.Geom;
-import com.gutabi.deadlock.geom.MutableSweptOBB;
-import com.gutabi.deadlock.math.Point;
-import com.gutabi.deadlock.ui.MenuTool;
-import com.gutabi.deadlock.ui.UIAnimationRunnable;
-import com.gutabi.deadlock.world.SimulationRunnable;
-import com.gutabi.deadlock.world.WorldCamera;
-import com.gutabi.deadlock.world.WorldMode;
-import com.gutabi.deadlock.world.cars.Car;
-import com.gutabi.deadlock.world.cars.CarStateEnum;
-import com.gutabi.deadlock.world.graph.GraphPosition;
-import com.gutabi.deadlock.world.graph.GraphPositionPathPosition;
+import com.gutabi.capsloc.geom.Geom;
+import com.gutabi.capsloc.geom.MutableSweptOBB;
+import com.gutabi.capsloc.math.Point;
+import com.gutabi.capsloc.ui.MenuTool;
+import com.gutabi.capsloc.ui.UIAnimationRunnable;
+import com.gutabi.capsloc.world.SimulationRunnable;
+import com.gutabi.capsloc.world.WorldCamera;
+import com.gutabi.capsloc.world.WorldMode;
+import com.gutabi.capsloc.world.cars.Car;
+import com.gutabi.capsloc.world.cars.CarStateEnum;
+import com.gutabi.capsloc.world.graph.GraphPosition;
+import com.gutabi.capsloc.world.graph.GraphPositionPathPosition;
 
 public class BypassWorldActivity extends BypassActivity {
 	

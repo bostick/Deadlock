@@ -1,7 +1,7 @@
 package com.gutabi.bypass.level;
 
+import static com.gutabi.capsloc.CapslocApplication.APP;
 import static com.gutabi.bypass.BypassApplication.BYPASSAPP;
-import static com.gutabi.deadlock.DeadlockApplication.APP;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Lock;
@@ -9,34 +9,34 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import com.gutabi.bypass.BypassControlPanel;
 import com.gutabi.bypass.menu.LevelMenu;
-import com.gutabi.deadlock.AppScreen;
-import com.gutabi.deadlock.Model;
-import com.gutabi.deadlock.math.Point;
-import com.gutabi.deadlock.ui.ContentPane;
-import com.gutabi.deadlock.ui.Menu;
-import com.gutabi.deadlock.ui.UIAnimationRunnable;
-import com.gutabi.deadlock.ui.paint.RenderingContext;
-import com.gutabi.deadlock.world.QuadrantMap;
-import com.gutabi.deadlock.world.SimulationRunnable;
-import com.gutabi.deadlock.world.World;
-import com.gutabi.deadlock.world.WorldMode;
-import com.gutabi.deadlock.world.WorldPanel;
-import com.gutabi.deadlock.world.cars.Car;
-import com.gutabi.deadlock.world.cars.CarStateEnum;
-import com.gutabi.deadlock.world.graph.Axis;
-import com.gutabi.deadlock.world.graph.BypassBoard;
-import com.gutabi.deadlock.world.graph.BypassBoardPosition;
-import com.gutabi.deadlock.world.graph.BypassStud;
-import com.gutabi.deadlock.world.graph.Graph;
-import com.gutabi.deadlock.world.graph.GraphPosition;
-import com.gutabi.deadlock.world.graph.GraphPositionPath;
-import com.gutabi.deadlock.world.graph.GraphPositionPathPosition;
-import com.gutabi.deadlock.world.graph.RoadPosition;
-import com.gutabi.deadlock.world.graph.Side;
-import com.gutabi.deadlock.world.graph.Vertex;
-import com.gutabi.deadlock.world.graph.VertexPosition;
-import com.gutabi.deadlock.world.sprites.CarSheet;
-import com.gutabi.deadlock.world.sprites.CarSheet.CarType;
+import com.gutabi.capsloc.AppScreen;
+import com.gutabi.capsloc.Model;
+import com.gutabi.capsloc.math.Point;
+import com.gutabi.capsloc.ui.ContentPane;
+import com.gutabi.capsloc.ui.Menu;
+import com.gutabi.capsloc.ui.UIAnimationRunnable;
+import com.gutabi.capsloc.ui.paint.RenderingContext;
+import com.gutabi.capsloc.world.QuadrantMap;
+import com.gutabi.capsloc.world.SimulationRunnable;
+import com.gutabi.capsloc.world.World;
+import com.gutabi.capsloc.world.WorldMode;
+import com.gutabi.capsloc.world.WorldPanel;
+import com.gutabi.capsloc.world.cars.Car;
+import com.gutabi.capsloc.world.cars.CarStateEnum;
+import com.gutabi.capsloc.world.graph.Axis;
+import com.gutabi.capsloc.world.graph.BypassBoard;
+import com.gutabi.capsloc.world.graph.BypassBoardPosition;
+import com.gutabi.capsloc.world.graph.BypassStud;
+import com.gutabi.capsloc.world.graph.Graph;
+import com.gutabi.capsloc.world.graph.GraphPosition;
+import com.gutabi.capsloc.world.graph.GraphPositionPath;
+import com.gutabi.capsloc.world.graph.GraphPositionPathPosition;
+import com.gutabi.capsloc.world.graph.RoadPosition;
+import com.gutabi.capsloc.world.graph.Side;
+import com.gutabi.capsloc.world.graph.Vertex;
+import com.gutabi.capsloc.world.graph.VertexPosition;
+import com.gutabi.capsloc.world.sprites.CarSheet;
+import com.gutabi.capsloc.world.sprites.CarSheet.CarType;
 
 public class BypassWorld extends World implements Model {
 	

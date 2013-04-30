@@ -1,7 +1,7 @@
 package com.gutabi.bypass.menu;
 
+import static com.gutabi.capsloc.CapslocApplication.APP;
 import static com.gutabi.bypass.BypassApplication.BYPASSAPP;
-import static com.gutabi.deadlock.DeadlockApplication.APP;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.util.Log;
