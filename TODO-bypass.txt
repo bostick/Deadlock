@@ -1,11 +1,4 @@
 
-
-compress sprite sheet
-compress car sheet
-classes for sprites
-bypass-specific code for sheets
-
-
 Deadlock -> Capsloc
 nothing "rush hour"
 
@@ -79,6 +72,10 @@ use graph paper and sketch out different screens and layouts first
 
 
 DONE:
+
+compress sprite sheet
+compress car sheet
+
 
 implement saving / restoring instances
 
