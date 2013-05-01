@@ -1,14 +1,12 @@
 package com.gutabi.bypass.level;
 
 import static com.gutabi.capsloc.CapslocApplication.APP;
-import static com.gutabi.bypass.BypassApplication.BYPASSAPP;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import com.gutabi.bypass.BypassControlPanel;
-import com.gutabi.bypass.menu.LevelMenu;
 import com.gutabi.capsloc.AppScreen;
 import com.gutabi.capsloc.Model;
 import com.gutabi.capsloc.math.Point;
@@ -44,14 +42,15 @@ public class BypassWorld extends World implements Model {
 	
 	public static BypassWorld BYPASSWORLD;
 	
+	public LevelDB levelDB;
 	public Level curLevel;
 	
 	public WinnerMenu winnerMenu;
 	
 	
-	public static void create(int index) {
+	public static void create(LevelDB levelDB, int index) {
 		
-		BYPASSWORLD = BypassWorld.createBypassWorld(index);
+		BYPASSWORLD = BypassWorld.createBypassWorld(levelDB, index);
 		
 		BYPASSWORLD.preStart();
 		
@@ -217,7 +216,7 @@ public class BypassWorld extends World implements Model {
 		
 	}
 	
-	public static BypassWorld createBypassWorld(int index) {
+	public static BypassWorld createBypassWorld(LevelDB levelDB, int index) {
 		
 		int[][] ini = new int[][] {
 				{1, 1, 1},
@@ -239,8 +238,9 @@ public class BypassWorld extends World implements Model {
 		
 		try {
 			
-			Level level = BYPASSAPP.levelDB.readLevel(index);
+			Level level = levelDB.readLevel(index);
 			
+			w.levelDB = levelDB;
 			w.curLevel = level;
 			
 			level.isWon = false;
@@ -503,7 +503,10 @@ public class BypassWorld extends World implements Model {
 	public void winner() {
 		
 		int diff = (curLevel.userMoves - curLevel.requiredMoves);
-		if (diff == 0) {
+		if (diff <= 0) {
+			/*
+			 * diff can be negative in tutorials since we just set it to 100
+			 */
 			curLevel.grade = "A+";
 		} else if (diff < 2) {
 			curLevel.grade = "A";
@@ -535,16 +538,16 @@ public class BypassWorld extends World implements Model {
 		
 		curLevel.isWon = true;
 		
-		for (int i = 0; i < BYPASSAPP.levelDB.levelCount; i++) {
-			if (BYPASSAPP.levelDB.levelMap.keySet().contains(i)) {
-				if (BYPASSAPP.levelDB.levelMap.get(i).isWon) {
+		for (int i = 0; i < levelDB.levelCount; i++) {
+			if (levelDB.levelMap.keySet().contains(i)) {
+				if (levelDB.levelMap.get(i).isWon) {
 					
 				} else {
-					LevelMenu.firstUnwon = i;
+					levelDB.firstUnwon = i;
 					break;
 				}
 			} else {
-				LevelMenu.firstUnwon = i;
+				levelDB.firstUnwon = i;
 				break;
 			}
 		}

@@ -1,7 +1,6 @@
 package com.gutabi.bypass.menu;
 
 import static com.gutabi.capsloc.CapslocApplication.APP;
-import static com.gutabi.bypass.BypassApplication.BYPASSAPP;
 
 import com.gutabi.bypass.level.Level;
 import com.gutabi.capsloc.geom.AABB;
@@ -25,27 +24,64 @@ public abstract class LevelMenuItem extends MenuItem {
 		
 		super.render();
 		
-		if (BYPASSAPP.levelDB.levelMap.keySet().contains(index)) {
+		if (LevelMenu.levelDB.levelMap.keySet().contains(index)) {
 			
-			Level l = BYPASSAPP.levelDB.levelMap.get(index);
+			Level l = LevelMenu.levelDB.levelMap.get(index);
 			
 			if (l.isWon) {
 				
-				auxLab = new Label(l.grade);
-				auxLab.color = Color.LIGHT_GRAY;
-				auxLab.fontFile = APP.platform.fontResource("visitor1");
-				auxLab.fontStyle = FontStyle.PLAIN;
-				auxLab.fontSize = 36;
-				auxLab.renderLocal();
+				auxLab0 = new Label(l.grade);
+				auxLab0.color = Color.LIGHT_GRAY;
+				auxLab0.fontFile = APP.platform.fontResource("visitor1");
+				auxLab0.fontStyle = FontStyle.PLAIN;
+				auxLab0.fontSize = 36;
+				auxLab0.renderLocal();
 				
-				auxLab.aabb = new AABB(aabb.brX-auxLab.localAABB.width, aabb.brY-auxLab.localAABB.height, auxLab.localAABB.width, auxLab.localAABB.height);
+				auxLab0.aabb = new AABB(aabb.brX-auxLab0.localAABB.width, aabb.brY-auxLab0.localAABB.height, auxLab0.localAABB.width, auxLab0.localAABB.height);
+				
+				if (LevelMenu.showInfo) {
+					auxLab2 = new Label(Integer.toString(l.userMoves));
+					auxLab2.color = Color.LIGHT_GRAY;
+					auxLab2.fontFile = APP.platform.fontResource("visitor1");
+					auxLab2.fontStyle = FontStyle.PLAIN;
+					auxLab2.fontSize = 36;
+					auxLab2.renderLocal();
+					
+					auxLab2.aabb = new AABB(aabb.x, aabb.brY-auxLab2.localAABB.height, auxLab2.localAABB.width, auxLab2.localAABB.height);
+				} else {
+					auxLab2 = null;
+				}
 				
 			} else {
-				auxLab = null;
+				auxLab0 = null;
+				auxLab2 = null;
 			}
 		} else {
-			auxLab = null;
+			auxLab0 = null;
+			auxLab2 = null;
 		}
+		
+		if (LevelMenu.showInfo) {
+			Level l;
+			try {
+				l = LevelMenu.levelDB.readLevel(index);
+				auxLab1 = new Label(Integer.toString(l.requiredMoves));
+				auxLab1.color = Color.LIGHT_GRAY;
+				auxLab1.fontFile = APP.platform.fontResource("visitor1");
+				auxLab1.fontStyle = FontStyle.PLAIN;
+				auxLab1.fontSize = 36;
+				auxLab1.renderLocal();
+				
+				auxLab1.aabb = new AABB(aabb.x, aabb.y, auxLab1.localAABB.width, auxLab1.localAABB.height);
+				
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} else {
+			auxLab1 = null;
+		}
+		
 	}
 
 }

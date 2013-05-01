@@ -108,11 +108,21 @@ public class RenderingContextImpl extends RenderingContext {
 //		paint.setXfermode(null);
 	}
 	
+	
+	
 	public void pushTransform() {
-		canvas.save();
+		canvas.save(Canvas.MATRIX_SAVE_FLAG);
 	}
 	
 	public void popTransform() {
+		canvas.restore();
+	}
+	
+	public void pushClip() {
+		canvas.save(Canvas.CLIP_SAVE_FLAG);
+	}
+	
+	public void popClip() {
 		canvas.restore();
 	}
 	
@@ -180,6 +190,10 @@ public class RenderingContextImpl extends RenderingContext {
 	
 	public void translate(Point p) {
 		canvas.translate((float)p.x, (float)p.y);
+	}
+	
+	public void clip(AABB a) {
+		canvas.clipRect((float)a.x, (float)a.y, (float)(a.x+a.width), (float)(a.y+a.height));
 	}
 	
 	public void setAlpha(double a) {

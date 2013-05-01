@@ -67,7 +67,7 @@ public class WinnerMenu extends Menu {
 				
 				BypassWorld world = (BypassWorld)APP.model;
 				
-				BYPASSAPP.bypassPlatform.saveScore(world.curLevel);
+				BYPASSAPP.bypassPlatform.saveScore(world.levelDB, world.curLevel);
 				
 				int index = world.curLevel.index;
 				
@@ -97,13 +97,13 @@ public class WinnerMenu extends Menu {
 				
 				BypassWorld world = (BypassWorld)APP.model;
 				
-				BYPASSAPP.bypassPlatform.saveScore(world.curLevel);
+				BYPASSAPP.bypassPlatform.saveScore(world.levelDB, world.curLevel);
 				
 				APP.platform.finishAction();
 			}
 		};
 		
-		if (index < BYPASSAPP.levelDB.levelCount-1) {
+		if (index < world.levelDB.levelCount-1) {
 			
 			add(exclMenuItem, 0, 0);
 			add(gradeMenuItem, 1, 0);

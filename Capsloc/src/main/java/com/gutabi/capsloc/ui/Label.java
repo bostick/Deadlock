@@ -93,6 +93,7 @@ public class Label {
 		ctxt.paintString(baseline.x, baseline.y, 1.0, text);
 		
 		ctxt.popTransform();
+		
 	}
 	
 }

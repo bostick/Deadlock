@@ -1,6 +1,8 @@
 
-Deadlock -> Capsloc
-nothing "rush hour"
+key userMoves, userTime, grades to uid of level, not just index in zip file
+
+
+
 
 
 write down whole process for level generation and selection
@@ -72,6 +74,17 @@ use graph paper and sketch out different screens and layouts first
 
 
 DONE:
+
+separate tutorial.zip, episode1.zip, episode2.zip
+from main menu, have "tutorial", "episode1", ...
+
+level menu,
+"toggle information", display required moves and user moves
+
+fix overflow on menu labels
+
+Deadlock -> Capsloc
+nothing "rush hour"
 
 compress sprite sheet
 compress car sheet

@@ -1,7 +1,6 @@
 package com.gutabi.bypass;
 
 import static com.gutabi.capsloc.CapslocApplication.APP;
-import static com.gutabi.bypass.BypassApplication.BYPASSAPP;
 
 import java.io.InputStream;
 
@@ -31,6 +30,7 @@ import com.gutabi.bypass.geom.TriangleImpl;
 import com.gutabi.bypass.level.BypassWorld;
 import com.gutabi.bypass.level.BypassWorldActivity;
 import com.gutabi.bypass.level.Level;
+import com.gutabi.bypass.level.LevelDB;
 import com.gutabi.bypass.menu.LevelMenu;
 import com.gutabi.bypass.menu.LevelMenuActivity;
 import com.gutabi.bypass.menu.MainMenu;
@@ -131,14 +131,7 @@ public class PlatformImpl implements BypassPlatform {
 		/*
 		 * layout returns height of 0 for " "
 		 */
-		String text;
-		if (preText.equals(" ")) {
-			text = "X";
-		} else if (preText.matches("\\s*")) {
-			throw new AssertionError();
-		} else {
-			text = preText;
-		}
+		String text = preText.replace(' ', 'X');
 		
 		assert fontStyle == FontStyle.PLAIN;
 		Paint textPaint = new Paint();
@@ -290,12 +283,26 @@ public class PlatformImpl implements BypassPlatform {
 	
 	public Resource levelDBResource(String name) {
 		
-		if (name.equals("levels")) {
-			return new ResourceImpl(R.raw.levels, ResourceType.RAW);
+		if (name.equals("tutorial")) {
+			return new ResourceImpl(R.raw.tutorial, ResourceType.RAW);
+		} else if (name.equals("episode1")) {
+			return new ResourceImpl(R.raw.episode1, ResourceType.RAW);
 		}
 		
-		assert false;
-		return null;
+		throw new AssertionError();
+	}
+	
+	public String resourceName(Resource res) {
+		
+		ResourceImpl i = (ResourceImpl)res;
+		
+		if (i.resId == R.raw.tutorial) {
+			return "tutorial";
+		} else if (i.resId == R.raw.episode1) {
+			return "episode1";
+		}
+		
+		throw new AssertionError();
 	}
 	
 	public InputStream openResourceInputStream(Resource res) {
@@ -356,13 +363,11 @@ public class PlatformImpl implements BypassPlatform {
 			Intent intent = new Intent(CURRENTACTIVITY, MainMenuActivity.class);
 			
 			CURRENTACTIVITY.startActivity(intent);
-//			CURRENTACTIVITY.overridePendingTransition(0, 0);
 			
 		} else if (clazz == LevelMenu.class) {
 			
 			Intent intent = new Intent(CURRENTACTIVITY, LevelMenuActivity.class);
 			CURRENTACTIVITY.startActivity(intent);
-//			CURRENTACTIVITY.overridePendingTransition(0, 0);
 			
 		} else if (clazz == BypassWorld.class) {
 			
@@ -371,7 +376,6 @@ public class PlatformImpl implements BypassPlatform {
 			Intent intent = new Intent(CURRENTACTIVITY, BypassWorldActivity.class);
 			intent.putExtra("com.gutabi.bypass.level.Index", ii);
 			CURRENTACTIVITY.startActivity(intent);
-//			CURRENTACTIVITY.overridePendingTransition(0, 0);
 			
 		} else {
 			throw new AssertionError();
@@ -381,71 +385,76 @@ public class PlatformImpl implements BypassPlatform {
 	
 	public void finishAction() {
 		CURRENTACTIVITY.finish();
-//		CURRENTACTIVITY.overridePendingTransition(0, 0);
-		
 	}
 	
-	public void loadScores() throws Exception {
+	public void loadScores(LevelDB levelDB) throws Exception {
 		
-		SharedPreferences grades = CURRENTACTIVITY.getSharedPreferences("grades", 0);
+		SharedPreferences grades = CURRENTACTIVITY.getSharedPreferences(levelDB.name+"-grades", 0);
+		SharedPreferences userMoves = CURRENTACTIVITY.getSharedPreferences(levelDB.name+"-userMoves", 0);
 		
-		for (int i = 0; i < BYPASSAPP.levelDB.levelCount; i++) {
+		for (int i = 0; i < levelDB.levelCount; i++) {
 			String grade = grades.getString(Integer.toString(i), null);
+			int moves = userMoves.getInt(Integer.toString(i), -1);
 			if (grade != null) {
-				Level l = BYPASSAPP.levelDB.readLevel(i);
+				Level l = levelDB.readLevel(i);
 				l.isWon = true;
 				l.grade = grade;
+				l.userMoves = moves;
 			}
 			
 		}
 		
 	}
 	
-	public void saveScore(Level l) {
+	public void saveScore(LevelDB levelDB, Level l) {
 		
-		SharedPreferences grades = CURRENTACTIVITY.getSharedPreferences("grades", 0);
+		SharedPreferences grades = CURRENTACTIVITY.getSharedPreferences(levelDB.name+"grades", 0);
 		SharedPreferences.Editor editor = grades.edit();
 		editor.putString(Integer.toString(l.index), l.grade);
 		
 		editor.commit();
 		
-		SharedPreferences userMoves = CURRENTACTIVITY.getSharedPreferences("userMoves", 0);
+		SharedPreferences userMoves = CURRENTACTIVITY.getSharedPreferences(levelDB.name+"userMoves", 0);
 		editor = userMoves.edit();
 		editor.putInt(Integer.toString(l.index), l.userMoves);
 		
 		editor.commit();
 		
-		SharedPreferences userTime = CURRENTACTIVITY.getSharedPreferences("userTime", 0);
+		SharedPreferences userTime = CURRENTACTIVITY.getSharedPreferences(levelDB.name+"userTime", 0);
 		editor = userTime.edit();
 		editor.putLong(Integer.toString(l.index), l.userTime);
 		
 		editor.commit();
 	}
 	
-	public void clearScores() {
+	public void clearScores(LevelDB levelDB) {
+		
 		LevelMenu menu = (LevelMenu)APP.model;
 		
-		SharedPreferences grades = CURRENTACTIVITY.getSharedPreferences("grades", 0);
+		menu.lock.lock();
+		
+		SharedPreferences grades = CURRENTACTIVITY.getSharedPreferences(levelDB.name+"grades", 0);
 		SharedPreferences.Editor editor = grades.edit();
 		editor.clear();
 		editor.commit();
 		
-		SharedPreferences userMoves = CURRENTACTIVITY.getSharedPreferences("userMoves", 0);
+		SharedPreferences userMoves = CURRENTACTIVITY.getSharedPreferences(levelDB.name+"userMoves", 0);
 		editor = userMoves.edit();
 		editor.clear();
 		editor.commit();
 		
-		SharedPreferences userTime = CURRENTACTIVITY.getSharedPreferences("userTime", 0);
+		SharedPreferences userTime = CURRENTACTIVITY.getSharedPreferences(levelDB.name+"userTime", 0);
 		editor = userTime.edit();
 		editor.clear();
 		editor.commit();
 		
-		BYPASSAPP.levelDB.levelMap.clear();
+		levelDB.levelMap.clear();
 		
 		menu.shimmeringMenuItem = menu.items.get(0);
 		
 		menu.render();
 		
+		menu.lock.unlock();
 	}
 	
 	public long monotonicClockMillis() {

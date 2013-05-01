@@ -1,7 +1,7 @@
 package com.gutabi.bypass.level;
 
-import static com.gutabi.capsloc.CapslocApplication.APP;
 import static com.gutabi.bypass.BypassApplication.BYPASSAPP;
+import static com.gutabi.capsloc.CapslocApplication.APP;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.view.Menu;
@@ -13,6 +13,7 @@ import com.gutabi.bypass.BypassApplication;
 import com.gutabi.bypass.BypassView;
 import com.gutabi.bypass.PlatformImpl;
 import com.gutabi.bypass.R;
+import com.gutabi.bypass.menu.LevelMenu;
 import com.gutabi.capsloc.geom.Geom;
 import com.gutabi.capsloc.geom.MutableSweptOBB;
 import com.gutabi.capsloc.math.Point;
@@ -56,7 +57,7 @@ public class BypassWorldActivity extends BypassActivity {
 		
 		int ii = (Integer)getIntent().getExtras().get("com.gutabi.bypass.level.Index");
 		
-		BypassWorld.create(ii);
+		BypassWorld.create(LevelMenu.levelDB, ii);
 		
 		if (savedInstanceState != null) {
 			

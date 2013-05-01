@@ -39,9 +39,17 @@ public class LevelMenuActivity extends BypassActivity {
 		}
 		
 		if (savedInstanceState != null) {
-			double[] a = savedInstanceState.getDoubleArray("com.gutabi.bypass.menu.LevelMenuLoc");
-			Point loc = new Point(a[0], a[1]);
-			LevelMenu.loc = loc;
+			String name = savedInstanceState.getString("com.gutabi.bypass.menu.LevelDB");
+			if (name.equals("tutorial")) {
+				LevelMenu.levelDB = BYPASSAPP.tutorialLevelDB;
+			} else if (name.equals("episode1")) {
+				LevelMenu.levelDB = BYPASSAPP.episode1LevelDB;
+			} else {
+				throw new AssertionError();
+			}
+			
+			Point loc = (Point)savedInstanceState.getSerializable("com.gutabi.bypass.menu.LevelMenuLoc");
+			LevelMenu.levelDB.loc = loc;
 		}
 		
 		v = (BypassView)findViewById(R.id.view_levelmenu);
@@ -86,9 +94,8 @@ public class LevelMenuActivity extends BypassActivity {
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 		
-		double[] a = new double[] { LevelMenu.loc.x, LevelMenu.loc.y };
-		
-		outState.putDoubleArray("com.gutabi.bypass.menu.LevelMenuLoc", a);
+		outState.putString("com.gutabi.bypass.menu.LevelDB", LevelMenu.levelDB.name);
+		outState.putSerializable("com.gutabi.bypass.menu.LevelMenuLoc", LevelMenu.levelDB.loc);
 	}
 	
 	@Override
@@ -102,8 +109,18 @@ public class LevelMenuActivity extends BypassActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 	    switch (item.getItemId()) {
 	        case R.id.btn_clear_scores:
-	        	BYPASSAPP.bypassPlatform.clearScores();
+	        	BYPASSAPP.bypassPlatform.clearScores(LevelMenu.levelDB);
 	            return true;
+	        case R.id.btn_toggle_info:
+	        	LevelMenu.showInfo = !LevelMenu.showInfo;
+	        	
+	        	LevelMenu.LEVELMENU.lock.lock();
+	        	
+	        	LevelMenu.LEVELMENU.render();
+	    		
+	        	LevelMenu.LEVELMENU.lock.unlock();
+	        	
+	        	return true;
 	        default:
 	            return super.onOptionsItemSelected(item);
 	    }

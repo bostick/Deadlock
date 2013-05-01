@@ -15,7 +15,10 @@ public abstract class MenuItem {
 	public final Menu menu;
 	
 	protected Label lab;
-	protected Label auxLab;
+	protected Label auxLab0;
+	protected Label auxLab1;
+	protected Label auxLab2;
+	
 	
 	public boolean border = true;
 	
@@ -31,6 +34,12 @@ public abstract class MenuItem {
 	
 	public int r;
 	public int c;
+	
+	public static MenuItem minimumWidth = new MenuItem(null, "XXX") {
+		public void action() {
+			
+		}
+	};
 	
 	public MenuItem(Menu menu, String text) {
 		this.menu = menu;
@@ -61,21 +70,32 @@ public abstract class MenuItem {
 	
 	public void paint(RenderingContext ctxt) {
 		
-		ctxt.pushTransform();
-		
 		if (active) {
 			lab.color = Color.WHITE;
 		} else {
 			lab.color = Color.GRAY;
 		}
 		
+		ctxt.pushClip();
+		
+		/*
+		 * little pixel differences add up to the label overflowing the aabb a little bit
+		 */
+		ctxt.clip(aabb);
+		
 		lab.paint(ctxt);
 		
-		ctxt.popTransform();
-		
-		if (auxLab != null) {
-			auxLab.paint(ctxt);
+		if (auxLab0 != null) {
+			auxLab0.paint(ctxt);
 		}
+		if (auxLab1 != null) {
+			auxLab1.paint(ctxt);
+		}
+		if (auxLab2 != null) {
+			auxLab2.paint(ctxt);
+		}
+		
+		ctxt.popClip();
 		
 		if (border) {
 			ctxt.setColor(Color.BLUE);

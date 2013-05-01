@@ -1,10 +1,12 @@
 package com.gutabi.bypass.ui.paint;
 
 import static com.gutabi.capsloc.CapslocApplication.APP;
+
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
@@ -115,23 +117,47 @@ public class RenderingContextImpl extends RenderingContext {
 		g2.translate(p.x, p.y);
 	}
 	
+	public void clip(AABB a) {
+		
+		Rectangle2D r = new Rectangle2D.Double(a.x, a.y, a.width, a.height);
+		
+		g2.clip(r);
+	}
 	
 	
-	Stack<AffineTransform> stack = new Stack<AffineTransform>();
+	
+	Stack<AffineTransform> transformStack = new Stack<AffineTransform>();
+	Stack<Rectangle> clipStack = new Stack<Rectangle>();
 	
 	public void pushTransform() {
 		
 		AffineTransform t = g2.getTransform();
-		stack.push(t);
 		
+		transformStack.push(t);
 	}
 	
 	public void popTransform() {
 		
-		AffineTransform t = stack.pop();
-		g2.setTransform(t);
+		AffineTransform t = transformStack.pop();
 		
+		g2.setTransform(t);
 	}
+	
+	public void pushClip() {
+		
+		Rectangle r = g2.getClipBounds();
+		
+		clipStack.push(r);
+	}
+	
+	public void popClip() {
+		
+		Rectangle r = clipStack.pop();
+		
+		g2.setClip(r);
+	}
+	
+	
 	
 	
 	
@@ -148,24 +174,24 @@ public class RenderingContextImpl extends RenderingContext {
 	}
 	
 	public void paintString(double x, double y, double s, String str) {
-		java.awt.geom.AffineTransform origTransform = g2.getTransform();
+		pushTransform();
 		
 		g2.translate(x, y);
 		g2.scale(s, s);
 		g2.drawString(str, 0, 0);
 		
-		g2.setTransform(origTransform);
+		popTransform();
 	}
 	
 	public void paintImage(Image img, double orig, double dx1, double dy1, double dx2, double dy2, int sx1, int sy1, int sx2, int sy2) {
-		java.awt.geom.AffineTransform origTransform = g2.getTransform();
+		pushTransform();
 		
 		g2.scale(1 / orig, 1 / orig);
 		paintImage(img,
 				(int)Math.ceil(dx1 * orig), (int)Math.ceil(dy1 * orig), (int)Math.ceil(dx2 * orig), (int)Math.ceil(dy2 * orig),
 				sx1, sy1, sx2, sy2);
 		
-		g2.setTransform(origTransform);
+		popTransform();
 	}
 	
 	public void paintImage(Image img, int dx1, int dy1, int dx2, int dy2, int sx1, int sy1, int sx2, int sy2) {

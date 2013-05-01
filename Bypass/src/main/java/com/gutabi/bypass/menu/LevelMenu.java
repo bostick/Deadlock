@@ -1,11 +1,11 @@
 package com.gutabi.bypass.menu;
 
 import static com.gutabi.capsloc.CapslocApplication.APP;
-import static com.gutabi.bypass.BypassApplication.BYPASSAPP;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.gutabi.bypass.level.BypassWorld;
+import com.gutabi.bypass.level.LevelDB;
 import com.gutabi.capsloc.AppScreen;
 import com.gutabi.capsloc.Model;
 import com.gutabi.capsloc.math.Point;
@@ -17,8 +17,10 @@ import com.gutabi.capsloc.ui.UIAnimationRunnable;
 public class LevelMenu extends Menu implements Model {
 	
 	public static LevelMenu LEVELMENU;
-	public static int firstUnwon = 0;
-	public static Point loc = new Point(0, 0);
+	
+	public static LevelDB levelDB;
+	
+	public static boolean showInfo = false;
 	
 	public LevelMenu() {
 		
@@ -47,7 +49,7 @@ public class LevelMenu extends Menu implements Model {
 	public static void resume() {
 		
 		LEVELMENU = new LevelMenu();
-		LEVELMENU.setLocation(loc);
+		LEVELMENU.setLocation(levelDB.loc);
 		
 		APP.model = LEVELMENU;
 		
@@ -69,7 +71,7 @@ public class LevelMenu extends Menu implements Model {
 		
 		LEVELMENU.lock.lock();
 		
-		for (int i = 0; i < BYPASSAPP.levelDB.levelCount; i++) {
+		for (int i = 0; i < levelDB.levelCount; i++) {
 			int menuRow = i / 4;
 			int menuCol = i % 4;
 			final int ii = i;
@@ -83,7 +85,7 @@ public class LevelMenu extends Menu implements Model {
 			}, menuRow, menuCol);
 		}
 		
-		LEVELMENU.shimmeringMenuItem = LEVELMENU.items.get(firstUnwon);
+		LEVELMENU.shimmeringMenuItem = LEVELMENU.items.get(levelDB.firstUnwon);
 		
 		LEVELMENU.render();
 		
@@ -103,7 +105,7 @@ public class LevelMenu extends Menu implements Model {
 			e.printStackTrace();
 		}
 		
-		LevelMenu.loc = new Point(LEVELMENU.aabb.x, LEVELMENU.aabb.y);
+		levelDB.loc = new Point(LEVELMENU.aabb.x, LEVELMENU.aabb.y);
 		LEVELMENU = null;
 		
 	}

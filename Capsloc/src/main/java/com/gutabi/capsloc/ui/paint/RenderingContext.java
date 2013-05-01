@@ -38,14 +38,15 @@ public abstract class RenderingContext {
 	
 	public abstract void translate(Point p);
 	
-//	public abstract void getTransform(Transform t);
-//	
-//	public abstract void setTransform(Transform t);
+	public abstract void clip(AABB a);
 	
 	public abstract void pushTransform();
 	
 	public abstract void popTransform();
 	
+	public abstract void pushClip();
+	
+	public abstract void popClip();
 	
 	
 	public abstract void rotate(double a);

@@ -11,8 +11,14 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import com.gutabi.capsloc.Resource;
+import com.gutabi.capsloc.math.Point;
 
 public class LevelDB {
+	
+	public final String name;
+	
+	public int firstUnwon = 0;
+	public Point loc = new Point(0, 0);
 	
 	public Map<Integer, Level> levelMap = new HashMap<Integer, Level>();
 	
@@ -22,6 +28,8 @@ public class LevelDB {
 	public LevelDB(Resource res) throws Exception {
 		
 		this.res = res;
+		
+		this.name = APP.platform.resourceName(res);
 		
 		InputStream is = APP.platform.openResourceInputStream(res);
 		ZipInputStream zis = new ZipInputStream(is);
@@ -50,6 +58,24 @@ public class LevelDB {
 			}
 			
 		}
+	}
+	
+	public void setFirstUnwon() {
+		
+		for (int i = 0; i < levelCount; i++) {
+			if (levelMap.keySet().contains(i)) {
+				if (levelMap.get(i).isWon) {
+					
+				} else {
+					firstUnwon = i;
+					break;
+				}
+			} else {
+				firstUnwon = i;
+				break;
+			}
+		}
+		
 	}
 	
 	public Level readLevel(int index) throws Exception {

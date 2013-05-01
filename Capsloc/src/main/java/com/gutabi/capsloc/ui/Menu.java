@@ -157,6 +157,9 @@ public abstract class Menu {
 				totalMenuItemHeight += (int)item.localAABB.height;
 				itemsCol++;
 			}
+			if (columnWidth[i] < MenuItem.minimumWidth.localAABB.width) {
+				columnWidth[i] = (int)MenuItem.minimumWidth.localAABB.width;
+			}
 			
 			columnHeight[i] = totalMenuItemHeight + 10 * (itemsCol - 1);
 		}

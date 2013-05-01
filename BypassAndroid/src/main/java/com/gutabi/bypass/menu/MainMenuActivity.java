@@ -40,7 +40,7 @@ public class MainMenuActivity extends BypassActivity {
 		v.ctxt = APP.platform.createRenderingContext();
 		v.activity = this;
 		
-		APP.DEBUG_DRAW = true;
+		APP.DEBUG_DRAW = false;
 		
 		MainMenu.create();
 	}

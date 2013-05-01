@@ -21,7 +21,8 @@
 		
 		<copy tofile="${assetsDir}/fonts/visitor1.ttf" file="${capslocResDir}/static/visitor1.ttf"/>
 		
-		<copy tofile="${rawDir}/levels.zip" file="${bypassResDir}/gen/bin/levels.zip"/>
+		<copy tofile="${rawDir}/tutorial.zip" file="${bypassResDir}/gen/tutorial.zip"/>
+		<copy tofile="${rawDir}/episode1.zip" file="${bypassResDir}/gen/episode1.zip"/>
 		
 	</target>
 

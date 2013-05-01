@@ -1,7 +1,6 @@
 package com.gutabi.bypass;
 
 import com.gutabi.bypass.level.LevelDB;
-import com.gutabi.bypass.menu.LevelMenu;
 import com.gutabi.capsloc.CapslocApplication;
 import com.gutabi.capsloc.Resource;
 import com.gutabi.capsloc.ui.Image;
@@ -14,7 +13,8 @@ public class BypassApplication extends CapslocApplication {
 	public Image title_white;
 	public Image copyright;
 	
-	public LevelDB levelDB;
+	public LevelDB tutorialLevelDB;
+	public LevelDB episode1LevelDB;
 	
 	public BypassPlatform bypassPlatform;
 	
@@ -49,23 +49,14 @@ public class BypassApplication extends CapslocApplication {
 			APP.carSheet.load();
 			APP.spriteSheet.load();
 			
-			BYPASSAPP.levelDB = new LevelDB(APP.platform.levelDBResource("levels"));
+			BYPASSAPP.tutorialLevelDB = new LevelDB(APP.platform.levelDBResource("tutorial"));
+			BYPASSAPP.episode1LevelDB = new LevelDB(APP.platform.levelDBResource("episode1"));
 			
-			BYPASSAPP.bypassPlatform.loadScores();
+			BYPASSAPP.bypassPlatform.loadScores(BYPASSAPP.tutorialLevelDB);
+			BYPASSAPP.tutorialLevelDB.setFirstUnwon();
 			
-			for (int i = 0; i < BYPASSAPP.levelDB.levelCount; i++) {
-				if (BYPASSAPP.levelDB.levelMap.keySet().contains(i)) {
-					if (BYPASSAPP.levelDB.levelMap.get(i).isWon) {
-						
-					} else {
-						LevelMenu.firstUnwon = i;
-						break;
-					}
-				} else {
-					LevelMenu.firstUnwon = i;
-					break;
-				}
-			}
+			BYPASSAPP.bypassPlatform.loadScores(BYPASSAPP.episode1LevelDB);
+			BYPASSAPP.episode1LevelDB.setFirstUnwon();
 			
 			APP.platform.showAppScreen();
 			

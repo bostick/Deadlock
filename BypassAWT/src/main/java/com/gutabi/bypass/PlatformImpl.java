@@ -1,6 +1,7 @@
 package com.gutabi.bypass;
 
 import static com.gutabi.capsloc.CapslocApplication.APP;
+
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontFormatException;
@@ -27,6 +28,7 @@ import com.gutabi.bypass.geom.QuadCurveImpl;
 import com.gutabi.bypass.geom.TriangleImpl;
 import com.gutabi.bypass.level.BypassWorld;
 import com.gutabi.bypass.level.Level;
+import com.gutabi.bypass.level.LevelDB;
 import com.gutabi.bypass.menu.LevelMenu;
 import com.gutabi.bypass.menu.MainMenu;
 import com.gutabi.bypass.ui.ImageImpl;
@@ -224,12 +226,7 @@ public class PlatformImpl implements BypassPlatform {
 		/*
 		 * layout returns height of 0 for " "
 		 */
-		String text;
-		if (preText.equals(" ")) {
-			text = "X";
-		} else {
-			text = preText;
-		}
+		String text = preText.replace(' ', 'X');
 		
 		Font ttfReal = getRealFont(fontFile, fontStyle, fontSize);
 		
@@ -316,7 +313,20 @@ public class PlatformImpl implements BypassPlatform {
 		
 		return impl.url.openStream();
 	}
-
+	
+	public String resourceName(Resource res) {
+		
+		ResourceImpl impl = (ResourceImpl)res;
+		
+		if (impl.given.equals("tutorial")) {
+			return "tutorial";
+		} else if (impl.given.equals("episode1")) {
+			return "episode1";
+		}
+		
+		throw new AssertionError();
+	}
+	
 
 
 
@@ -419,7 +429,7 @@ public class PlatformImpl implements BypassPlatform {
 			
 			int ii = (Integer)args[0];
 			
-			BypassWorld.create(ii);
+			BypassWorld.create(LevelMenu.levelDB, ii);
 			BypassWorld.start();
 			BypassWorld.resume();
 			BypassWorld.surfaceChanged(PlatformImpl.MAINWINDOW_WIDTH, PlatformImpl.MAINWINDOW_HEIGHT);
@@ -470,15 +480,15 @@ public class PlatformImpl implements BypassPlatform {
 		
 	}
 	
-	public void loadScores() throws Exception {
+	public void loadScores(LevelDB levelDB) throws Exception {
 		
 	}
 	
-	public void saveScore(Level l) {
+	public void saveScore(LevelDB levelDB, Level l) {
 		
 	}
 	
-	public void clearScores() {
+	public void clearScores(LevelDB levelDB) {
 		
 	}
 	

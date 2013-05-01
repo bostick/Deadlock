@@ -11,26 +11,32 @@ import com.gutabi.capsloc.ui.MenuItem;
 import com.gutabi.capsloc.ui.MenuTool;
 import com.gutabi.capsloc.ui.UIAnimationRunnable;
 
+import static com.gutabi.bypass.BypassApplication.BYPASSAPP;
+
 public class MainMenu extends Menu implements Model {
 	
 	public static MainMenu MAINMENU;
 	
 	public MainMenu() {
 		
-		MenuItem newMenuItem = new MenuItem(MainMenu.this, "New Game") {
+		MenuItem newMenuItem = new MenuItem(MainMenu.this, " Episode 1 ") {
 			public void action() {
+				
+				LevelMenu.levelDB = BYPASSAPP.episode1LevelDB;
 				
 				APP.platform.action(LevelMenu.class);
 			}
 		};
 		add(newMenuItem, 0, 0);
 		
-		MenuItem resumeMenuItem = new MenuItem(MainMenu.this, "Resume") {
+		MenuItem resumeMenuItem = new MenuItem(MainMenu.this, "Tutorial") {
 			public void action() {
 				
+				LevelMenu.levelDB = BYPASSAPP.tutorialLevelDB;
+				
+				APP.platform.action(LevelMenu.class);
 			}
 		};
-		resumeMenuItem.active = false;
 		add(resumeMenuItem, 1, 0);
 		
 	}
