@@ -15,7 +15,6 @@
 	<property name="javaTgtVersion" value="1.7"/>
 	
 	<property name="srcDir" location="../src/main/java"/>
-	<property name="capslocResDir" location="../../CapslocResources"/>
 	<property name="bypassResDir" location="../../BypassResources"/>
 	<property name="buildDir" location="../build"/>
 	<property name="distDir" location="${buildDir}/dist/Bypass"/>
@@ -44,15 +43,15 @@
 		    </filterset>
 		</copy>
 		
-		<copy tofile="${buildDir}/bin/copyright.png" file="${capslocResDir}/static/copyright.png"/>
-		<copy tofile="${buildDir}/bin/carsheet.png" file="${capslocResDir}/static/carsheet.png"/>
-		<copy tofile="${buildDir}/bin/spritesheet.png" file="${capslocResDir}/static/spritesheet.png"/>
-		<copy tofile="${buildDir}/bin/title_background.png" file="${capslocResDir}/static/title_background.png"/>
-		<copy tofile="${buildDir}/bin/visitor1.ttf" file="${capslocResDir}/static/visitor1.ttf"/>
-		
+		<copy tofile="${buildDir}/bin/copyright.png" file="${bypassResDir}/static/copyright.png"/>
+		<copy tofile="${buildDir}/bin/carsheet.png" file="${bypassResDir}/static/carsheet.png"/>
+		<copy tofile="${buildDir}/bin/spritesheet.png" file="${bypassResDir}/static/spritesheet.png"/>
+		<copy tofile="${buildDir}/bin/visitor1.ttf" file="${bypassResDir}/static/visitor1.ttf"/>
 		<copy tofile="${buildDir}/bin/logo605x132.png" file="${bypassResDir}/static/logo605x132.png"/>
-		<copy tofile="${buildDir}/bin/levels.zip" file="${bypassResDir}/gen/levels.zip"/>
+		<copy tofile="${buildDir}/bin/icon256x256.ico" file="${bypassResDir}/static/icon256x256.ico"/>
 		
+		<copy tofile="${buildDir}/bin/tutorial.zip" file="${bypassResDir}/gen/tutorial.zip"/>
+		<copy tofile="${buildDir}/bin/episode1.zip" file="${bypassResDir}/gen/episode1.zip"/>
 		
 		<javac srcdir="${buildDir}/copied/src"
 			destdir="${buildDir}/bin"
@@ -100,7 +99,7 @@
 				<filter token="DISTRIBUTIONSOURCEDIR" value="${distDir}" />
 				<filter token="EXECUTABLENAME" value="Bypass" />
 				<filter token="ARGUMENTS" value="" />
-				<filter token="ICONFILE" value="${capslocResDir}/static/icon256x256.ico" />
+				<filter token="ICONFILE" value="${buildDir}/bin/icon256x256.ico" />
 		    </filterset>
 		</copy>
 		

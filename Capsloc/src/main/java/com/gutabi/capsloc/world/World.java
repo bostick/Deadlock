@@ -426,9 +426,9 @@ public class World extends PhysicsWorld {
 		
 		ctxt.scale(worldCamera.previewPixelsPerMeter);
 		
-		quadrantMap.render_preview(ctxt);
+		quadrantMap.paint_preview(ctxt);
 		
-		graph.render_preview(ctxt);
+		graph.paint_preview(ctxt);
 		
 		ctxt.popTransform();
 		

@@ -55,8 +55,8 @@ public class WorldBackground {
 //				world.worldScreen.origWorldViewport.brY,
 //				0, 0, img.getWidth(), img.getHeight());
 		
-		world.quadrantMap.render_panel(ctxt);
-		world.graph.render_panel(ctxt);
+		world.quadrantMap.paint_panel(ctxt);
+		world.graph.paint_panel(ctxt);
 		
 	}
 	

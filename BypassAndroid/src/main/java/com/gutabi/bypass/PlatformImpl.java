@@ -252,12 +252,10 @@ public class PlatformImpl implements BypassPlatform {
 			return new ResourceImpl(R.drawable.carsheet, ResourceType.DRAWABLE);
 		} else if (name.equals("spritesheet")) {
 			return new ResourceImpl(R.drawable.spritesheet, ResourceType.DRAWABLE);
-		} else if (name.equals("title_background")) {
-			return new ResourceImpl(R.drawable.title_background, ResourceType.DRAWABLE);
 		} else if (name.equals("copyright")) {
 			return new ResourceImpl(R.drawable.copyright, ResourceType.DRAWABLE);
-		} else if (name.equals("logo605x132")) {
-			return new ResourceImpl(R.drawable.logo605x132, ResourceType.DRAWABLE);
+		} else if (name.equals("logo")) {
+			return new ResourceImpl(R.drawable.logo, ResourceType.DRAWABLE);
 		}
 		
 		throw new AssertionError();

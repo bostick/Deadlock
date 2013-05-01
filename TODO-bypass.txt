@@ -1,10 +1,4 @@
 
-key userMoves, userTime, grades to uid of level, not just index in zip file
-
-
-
-
-
 write down whole process for level generation and selection
 level file format, no adjacent roads, only to adjacent sides, not on exit side, future work: cloverleafs
 

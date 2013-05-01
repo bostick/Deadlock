@@ -6,6 +6,5 @@
 	<classpathentry kind="lib" path="/BypassResources/static"/>
 	<classpathentry kind="lib" path="/BypassResources/gen"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/Capsloc"/>
-	<classpathentry kind="lib" path="/CapslocResources/static"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

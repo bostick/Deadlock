@@ -1233,7 +1233,7 @@ public class Graph {
 		return g;
 	}
 	
-	public void render_panel(RenderingContext ctxt) {
+	public void paint_panel(RenderingContext ctxt) {
 		
 		for (int i = 0; i < roads.size(); i++) {
 			Road r = roads.get(i);
@@ -1261,7 +1261,7 @@ public class Graph {
 		
 	}
 	
-	public void render_preview(RenderingContext ctxt) {
+	public void paint_preview(RenderingContext ctxt) {
 		
 		List<Road> roadsCopy;
 		List<Merger> mergersCopy;

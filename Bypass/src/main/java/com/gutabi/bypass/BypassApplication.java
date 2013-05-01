@@ -9,8 +9,7 @@ import com.gutabi.capsloc.world.sprites.SpriteSheet;
 
 public class BypassApplication extends CapslocApplication {
 	
-	public Image titleBackground;
-	public Image title_white;
+	public Image logo;
 	public Image copyright;
 	
 	public LevelDB tutorialLevelDB;
@@ -35,12 +34,10 @@ public class BypassApplication extends CapslocApplication {
 		
 		try {
 			
-			Resource background = APP.platform.imageResource("title_background");
-			Resource white = APP.platform.imageResource("logo605x132");
+			Resource logo = APP.platform.imageResource("logo");
 			Resource copy = APP.platform.imageResource("copyright");
 			
-			BYPASSAPP.titleBackground = APP.platform.readImage(background);
-			BYPASSAPP.title_white = APP.platform.readImage(white);
+			BYPASSAPP.logo = APP.platform.readImage(logo);
 			BYPASSAPP.copyright = APP.platform.readImage(copy);
 			
 			APP.carSheet = new CarSheet();

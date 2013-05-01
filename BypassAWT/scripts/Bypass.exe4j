@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <exe4j version="4.4.3" transformSequenceNumber="1">
-  <directoryPresets config="C:/Users/brenton/DeadlockWorkspace/BypassAWT/build/dist/Bypass/classes/img" />
+  
   <application name="@APPLICATIONNAME@" distributionSourceDir="@DISTRIBUTIONSOURCEDIR@">
     <languages>
       <principalLanguage id="en" customLocalizationFile="" />

@@ -326,7 +326,7 @@ public class QuadrantMap {
 		return qm;
 	}
 	
-	public void render_panel(RenderingContext ctxt) {
+	public void paint_panel(RenderingContext ctxt) {
 		for (int i = 0; i < quadrantRows; i++) {
 			for (int j = 0; j < quadrantCols; j++) {
 				Quadrant q = quadrants[i][j];
@@ -335,7 +335,7 @@ public class QuadrantMap {
 		}
 	}
 	
-	public void render_preview(RenderingContext ctxt) {
+	public void paint_preview(RenderingContext ctxt) {
 		for (int i = 0; i < quadrantRows; i++) {
 			for (int j = 0; j < quadrantCols; j++) {
 				Quadrant q = quadrants[i][j];

@@ -1,13 +1,13 @@
 package com.gutabi.bypass.menu;
 
-import static com.gutabi.capsloc.CapslocApplication.APP;
 import static com.gutabi.bypass.BypassApplication.BYPASSAPP;
+import static com.gutabi.capsloc.CapslocApplication.APP;
 
 import com.gutabi.capsloc.geom.AABB;
 import com.gutabi.capsloc.ui.Menu;
 import com.gutabi.capsloc.ui.Panel;
-import com.gutabi.capsloc.ui.paint.Color;
 import com.gutabi.capsloc.ui.paint.RenderingContext;
+import com.gutabi.capsloc.world.sprites.SpriteSheet.SpriteSheetSprite;
 
 public class BypassMenuPanel extends Panel {
 	
@@ -29,27 +29,18 @@ public class BypassMenuPanel extends Panel {
 			
 			ctxt.translate(aabb.x, aabb.y);
 			
-			ctxt.setColor(Color.DARK_GRAY);
-			ctxt.fillRect(0, 0, (int)aabb.width, (int)aabb.height);
-			
-			ctxt.pushTransform();
-			
-			ctxt.translate(
-					aabb.width/2 - BYPASSAPP.titleBackground.getWidth()/2,
-					aabb.height/2 - BYPASSAPP.titleBackground.getHeight()/2);
-			
-			ctxt.paintImage(BYPASSAPP.titleBackground,
-					0, 0, BYPASSAPP.titleBackground.getWidth(), BYPASSAPP.titleBackground.getHeight(),
-					0, 0, BYPASSAPP.titleBackground.getWidth(), BYPASSAPP.titleBackground.getHeight());
-			
-			ctxt.popTransform();
+			for (int i = 0; i < (int)Math.ceil(aabb.height / 32); i++) {
+				for (int j = 0; j < (int)Math.ceil(aabb.width / 32); j++) {
+					APP.spriteSheet.paint(ctxt, SpriteSheetSprite.GRASSTILE, 32 * j, 32 * i, 32 * j + 32, 32 * i + 32);
+				}
+			}
 			
 			ctxt.pushTransform();
 			
 			ctxt.translate(0, 0);
-			ctxt.paintImage(BYPASSAPP.title_white,
-					0, 0, (int)aabb.width, (int)((aabb.width * BYPASSAPP.title_white.getHeight()) / BYPASSAPP.title_white.getWidth()),
-					0, 0, BYPASSAPP.title_white.getWidth(), BYPASSAPP.title_white.getHeight());
+			ctxt.paintImage(BYPASSAPP.logo,
+					0, 0, (int)aabb.width, (int)((aabb.width * BYPASSAPP.logo.getHeight()) / BYPASSAPP.logo.getWidth()),
+					0, 0, BYPASSAPP.logo.getWidth(), BYPASSAPP.logo.getHeight());
 			
 			ctxt.popTransform();
 			
