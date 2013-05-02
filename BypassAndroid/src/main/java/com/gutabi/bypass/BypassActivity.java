@@ -70,9 +70,6 @@ public abstract class BypassActivity extends Activity {
 		
 		Log.d("bypassactivity", name + " pause");
 		state = ActivityState.PAUSE;
-		
-//		PlatformImpl.CURRENTACTIVITY.overridePendingTransition(0, 0);
-		
 	}
 	
 	protected abstract void onSurfaceChanged(int width, int height);

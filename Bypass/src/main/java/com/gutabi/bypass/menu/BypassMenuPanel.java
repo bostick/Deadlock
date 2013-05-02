@@ -25,6 +25,10 @@ public class BypassMenuPanel extends Panel {
 		menu.lock.lock();
 		try {
 			
+			if (!menu.rendered) {
+				return;
+			}
+			
 			ctxt.pushTransform();
 			
 			ctxt.translate(aabb.x, aabb.y);

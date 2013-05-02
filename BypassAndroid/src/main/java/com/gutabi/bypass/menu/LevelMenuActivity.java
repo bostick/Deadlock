@@ -9,6 +9,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
+import com.gutabi.bypass.ActivityState;
 import com.gutabi.bypass.BypassActivity;
 import com.gutabi.bypass.BypassApplication;
 import com.gutabi.bypass.BypassView;
@@ -83,6 +84,13 @@ public class LevelMenuActivity extends BypassActivity {
 	protected void onSurfaceChanged(int width, int height) {
 		
 		Log.d("bypassactivity", name + " surfaceChanged");
+		
+		if (state == ActivityState.PAUSE) {
+			/*
+			 * locking the screen causes surface change after pause
+			 */
+			return;
+		}
 		
 		LevelMenu.surfaceChanged(width, height);
 	}

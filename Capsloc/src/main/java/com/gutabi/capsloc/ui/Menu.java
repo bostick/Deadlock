@@ -13,6 +13,8 @@ import com.gutabi.capsloc.ui.paint.RenderingContext;
 
 public abstract class Menu {
 	
+	public boolean rendered;
+	
 	public Lock lock = new ReentrantLock(true);
 	
 	public List<MenuItem> items = new ArrayList<MenuItem>();
@@ -221,6 +223,7 @@ public abstract class Menu {
 		shimmer = new Shimmer(System.currentTimeMillis());
 		shimmer.setShape(shimmeringMenuItem.aabb);
 		
+		rendered = true;
 	}
 	
 	public void postDisplay(int width, int height) {

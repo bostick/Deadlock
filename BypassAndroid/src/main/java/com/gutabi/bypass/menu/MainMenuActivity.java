@@ -6,6 +6,7 @@ import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.gutabi.bypass.ActivityState;
 import com.gutabi.bypass.BypassActivity;
 import com.gutabi.bypass.BypassApplication;
 import com.gutabi.bypass.BypassView;
@@ -69,13 +70,16 @@ public class MainMenuActivity extends BypassActivity {
 	
 	protected void onSurfaceChanged(int width, int height) {
 		
-		Log.d("bypassactivity", name + " surfaceChanged");
+		Log.d("bypassactivity", name + " surfaceChanged " + width + " " + height);
 		
-//		Log.d("bypass", "surface 1");
+		if (state == ActivityState.PAUSE) {
+			/*
+			 * locking the screen causes surface change after pause
+			 */
+			return;
+		}
 		
 		MainMenu.surfaceChanged(width, height);
-		
-//		Log.d("bypass", "surface 2");
 	}
 	
 	protected void onPause() {
