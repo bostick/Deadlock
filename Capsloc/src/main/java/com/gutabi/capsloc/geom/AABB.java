@@ -209,6 +209,9 @@ public class AABB implements Shape, Serializable {
 	}
 	
 	public boolean hitTest(Point p) {
+		if (p == null) {
+			throw new IllegalArgumentException();
+		}
 		return DMath.lessThanEquals(x, p.x) && DMath.lessThanEquals(p.x, brX) &&
 				DMath.lessThanEquals(y, p.y) && DMath.lessThanEquals(p.y, brY);
 	}

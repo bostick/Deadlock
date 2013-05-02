@@ -1,9 +1,10 @@
 package com.gutabi.bypass.menu;
 
-import static com.gutabi.capsloc.CapslocApplication.APP;
 import static com.gutabi.bypass.BypassApplication.BYPASSAPP;
+import static com.gutabi.capsloc.CapslocApplication.APP;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -80,6 +81,8 @@ public class LevelMenuActivity extends BypassActivity {
     }
 	
 	protected void onSurfaceChanged(int width, int height) {
+		
+		Log.d("bypassactivity", name + " surfaceChanged");
 		
 		LevelMenu.surfaceChanged(width, height);
 	}

@@ -4,6 +4,7 @@ import static com.gutabi.bypass.BypassApplication.BYPASSAPP;
 import static com.gutabi.capsloc.CapslocApplication.APP;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -187,6 +188,8 @@ public class BypassWorldActivity extends BypassActivity {
     }
 	
 	protected void onSurfaceChanged(int width, int height) {
+		
+		Log.d("bypassactivity", name + " surfaceChanged");
 		
 		BypassWorld.surfaceChanged(width, height);
 	}

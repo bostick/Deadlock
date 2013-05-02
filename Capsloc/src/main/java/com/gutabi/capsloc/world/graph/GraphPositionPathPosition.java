@@ -37,8 +37,11 @@ public class GraphPositionPathPosition implements Serializable {
 	
 	public GraphPositionPathPosition(GraphPositionPath path, int preIndex, double preParam) {
 		
-		if (preIndex < 0 || preIndex >= path.size) {
-			throw new IllegalArgumentException();
+		if (preIndex < 0) {
+			throw new IllegalArgumentException("preIndex < 0: " + preIndex);
+		}
+		if (preIndex >= path.size) {
+			throw new IllegalArgumentException("preIndex >= path.size: " + preIndex + " " + path.size);
 		}
 		if (DMath.lessThan(preParam, 0.0) || DMath.greaterThan(preParam, 1.0)) {
 			throw new IllegalArgumentException();

@@ -60,30 +60,32 @@ public class MainMenuActivity extends BypassActivity {
 	protected void onResume() {
     	super.onResume();
     	
-    	Log.d("bypass", "resume 1");
+//    	Log.d("bypass", "resume 1");
     	
     	MainMenu.resume();
     	
-    	Log.d("bypass", "resume 2");
+//    	Log.d("bypass", "resume 2");
     }
 	
 	protected void onSurfaceChanged(int width, int height) {
 		
-		Log.d("bypass", "surface 1");
+		Log.d("bypassactivity", name + " surfaceChanged");
+		
+//		Log.d("bypass", "surface 1");
 		
 		MainMenu.surfaceChanged(width, height);
 		
-		Log.d("bypass", "surface 2");
+//		Log.d("bypass", "surface 2");
 	}
 	
 	protected void onPause() {
 		super.onPause();
 		
-		Log.d("bypass", "pause 1");
+//		Log.d("bypass", "pause 1");
 		
 		MainMenu.pause();
 		
-		Log.d("bypass", "pause 2");
+//		Log.d("bypass", "pause 2");
 	}
 	
 }

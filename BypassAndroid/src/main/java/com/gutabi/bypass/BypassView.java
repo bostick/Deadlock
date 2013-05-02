@@ -5,8 +5,6 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.util.AttributeSet;
-import android.view.GestureDetector;
-import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -22,14 +20,10 @@ public class BypassView extends SurfaceView implements SurfaceHolder.Callback {
 	public SurfaceHolder holder;
 	public boolean surfaceValid;
 	
-	private GestureDetector gDetector;
-	
 	public Paintable paintable;
 	
 	public BypassView(Context c, AttributeSet s) {
 		super(c, s);
-		
-		gDetector = new GestureDetector(c, simpleOnGestureListener);
 		
 		holder = getHolder();
 
@@ -54,68 +48,55 @@ public class BypassView extends SurfaceView implements SurfaceHolder.Callback {
 		activity.onSurfaceChanged(width, height);
 	}
 	
-	SimpleOnGestureListener simpleOnGestureListener = new SimpleOnGestureListener() {
-		
-		public boolean onSingleTapUp(MotionEvent ev) {
-			
-			getLocationInWindow(touchOut);
-			
-			float x = ev.getRawX() - touchOut[0];
-			float y = ev.getRawY() - touchOut[1];
-			Point p = new Point(x, y);
-			
-			APP.appScreen.contentPane.pcp.clickedDriver(p);
-			
-			return super.onSingleTapUp(ev);
-		}
-		
-	};
-	
-	
-	int[] touchOut = new int[2];
-	
 	public boolean onTouchEvent(MotionEvent ev) {
 		
-		getLocationInWindow(touchOut);
-		
-		int act = ev.getAction();
-		
-		float x = ev.getRawX() - touchOut[0];
-		float y = ev.getRawY() - touchOut[1];
-		Point p = new Point(x, y);
+		int act = ev.getAction() & MotionEvent.ACTION_MASK;
 		
 		switch (act) {
-		case MotionEvent.ACTION_DOWN:
+		case MotionEvent.ACTION_DOWN: {
+			
+			float x = ev.getX();
+			float y = ev.getY();
+			Point p = new Point(x, y);
+			
 			APP.appScreen.contentPane.pcp.pressedDriver(p);
 			break;
-		case MotionEvent.ACTION_MOVE:
+		}
+		case MotionEvent.ACTION_MOVE: {
+			
+			float x = ev.getX();
+			float y = ev.getY();
+			Point p = new Point(x, y);
+			
 			APP.appScreen.contentPane.pcp.draggedDriver(p);
 			break;
-		case MotionEvent.ACTION_UP:
+		}
+		case MotionEvent.ACTION_UP: {
+			
+			float x = ev.getX();
+			float y = ev.getY();
+			Point p = new Point(x, y);
+			
 			APP.appScreen.contentPane.pcp.releasedDriver(p);
 			break;
 		}
-		
-		gDetector.onTouchEvent(ev);
+		case MotionEvent.ACTION_POINTER_DOWN:
+			
+			break;
+		case MotionEvent.ACTION_POINTER_UP:
+			
+			break;
+		default:
+			throw new AssertionError(Integer.toString(act));
+		}
 		
 		return true;
 	}
-
-	
-//	@Override
-//	public void onDraw(Canvas canvas) {
-//		
-//		Log.d("bypass", "ondraw");
-//		super.onDraw(canvas);
-//		
-//	}
 	
 	Paint paint = new Paint();
 	public RenderingContext ctxt;
 	
 	public void doDraw(Canvas canvas) {
-		
-//		Log.d("bypass", "doDraw: " + canvas);
 		
 		if (activity.state != ActivityState.PAUSE) {
 			

@@ -46,6 +46,9 @@ public abstract class PlatformContentPane implements Paintable {
 	}
 	
 	public void pressedDriver(Point p) {
+		if (p == null) {
+			throw new IllegalArgumentException();
+		}
 		lastPressedContentPanePoint = p;
 		lastDraggedContentPanePoint = null;
 		for (Panel child : children) {
@@ -57,6 +60,9 @@ public abstract class PlatformContentPane implements Paintable {
 	}
 	
 	public void releasedDriver(Point p) {
+		if (lastPressedContentPanePoint == null) {
+			throw new IllegalStateException();
+		}
 		for (Panel child : children) {
 			if (child.aabb.hitTest(lastPressedContentPanePoint)) {
 				child.released(new InputEvent(child, Point.contentPaneToPanel(p, child)));
@@ -66,6 +72,12 @@ public abstract class PlatformContentPane implements Paintable {
 	}
 	
 	public void draggedDriver(Point p) {
+		if (p == null) {
+			throw new IllegalArgumentException();
+		}
+		if (lastPressedContentPanePoint == null) {
+			throw new IllegalStateException();
+		}
 		if (lastDraggedContentPanePoint == null) {
 			if (p.equals(lastPressedContentPanePoint)) {
 				return;
@@ -75,7 +87,6 @@ public abstract class PlatformContentPane implements Paintable {
 				return;
 			}
 		}
-		lastDraggedContentPanePoint = p;
 		for (Panel child : children) {
 			if (child.aabb.hitTest(lastPressedContentPanePoint)) {
 				child.dragged(new InputEvent(child, Point.contentPaneToPanel(p, child)));
