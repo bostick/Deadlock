@@ -85,12 +85,13 @@ public class Label {
 		
 		ctxt.translate(aabb.x, aabb.y);
 		
-		Point baseline = new Point(-localAABB.x, -localAABB.y);
+		double baselineX = -localAABB.x;
+		double baselineY = -localAABB.y;
 		
 		ctxt.setColor(color);
 		
 		ctxt.setFont(fontFile, fontStyle, fontSize);
-		ctxt.paintString(baseline.x, baseline.y, 1.0, text);
+		ctxt.paintString(baselineX, baselineY, 1.0, text);
 		
 		ctxt.popTransform();
 		

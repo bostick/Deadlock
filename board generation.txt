@@ -1,3 +1,9 @@
+write down whole process for level generation and selection
+level file format, no adjacent roads, only to adjacent sides, not on exit side, future work: cloverleafs
+
+
+
+
 
 empty boards are enumerated in Deadlock/src/tools/java/solver/Boards.java
 boards may never be removed or changed, only added to
