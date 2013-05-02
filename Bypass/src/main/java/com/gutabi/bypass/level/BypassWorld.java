@@ -49,6 +49,9 @@ public class BypassWorld extends World implements Model {
 	
 	
 	public static void create(LevelDB levelDB, int index) {
+		if (levelDB == null) {
+			throw new IllegalArgumentException();
+		}
 		
 		BYPASSWORLD = BypassWorld.createBypassWorld(levelDB, index);
 		
@@ -217,6 +220,9 @@ public class BypassWorld extends World implements Model {
 	}
 	
 	public static BypassWorld createBypassWorld(LevelDB levelDB, int index) {
+		if (levelDB == null) {
+			throw new IllegalArgumentException();
+		}
 		
 		int[][] ini = new int[][] {
 				{1, 1, 1},

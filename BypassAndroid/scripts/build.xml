@@ -13,7 +13,7 @@
 	    <copy tofile="${resDir}/drawable-hdpi/ic_launcher.png" file="${bypassResDir}/static/ic_launcher.png"/>
 	    
 		<copy tofile="${resDir}/drawable-nodpi/copyright.png" file="${bypassResDir}/static/copyright.png"/>
-		<copy tofile="${resDir}/drawable-nodpi/logo605x132.png" file="${bypassResDir}/static/logo605x132.png"/>
+		<copy tofile="${resDir}/drawable-nodpi/logo605x132.png" file="${bypassResDir}/static/logo.png"/>
 		<copy tofile="${resDir}/drawable-nodpi/carsheet.png" file="${bypassResDir}/static/carsheet.png"/>
 		<copy tofile="${resDir}/drawable-nodpi/spritesheet.png" file="${bypassResDir}/static/spritesheet.png"/>
 		
@@ -21,6 +21,7 @@
 		
 		<copy tofile="${rawDir}/tutorial.zip" file="${bypassResDir}/gen/tutorial.zip"/>
 		<copy tofile="${rawDir}/episode1.zip" file="${bypassResDir}/gen/episode1.zip"/>
+		<copy tofile="${rawDir}/episode2.zip" file="${bypassResDir}/gen/episode2.zip"/>
 		
 	</target>
 

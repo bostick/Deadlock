@@ -14,6 +14,7 @@ public class BypassApplication extends CapslocApplication {
 	
 	public LevelDB tutorialLevelDB;
 	public LevelDB episode1LevelDB;
+	public LevelDB episode2LevelDB;
 	
 	public BypassPlatform bypassPlatform;
 	
@@ -48,12 +49,16 @@ public class BypassApplication extends CapslocApplication {
 			
 			BYPASSAPP.tutorialLevelDB = new LevelDB(APP.platform.levelDBResource("tutorial"));
 			BYPASSAPP.episode1LevelDB = new LevelDB(APP.platform.levelDBResource("episode1"));
+			BYPASSAPP.episode2LevelDB = new LevelDB(APP.platform.levelDBResource("episode2"));
 			
 			BYPASSAPP.bypassPlatform.loadScores(BYPASSAPP.tutorialLevelDB);
 			BYPASSAPP.tutorialLevelDB.setFirstUnwon();
 			
 			BYPASSAPP.bypassPlatform.loadScores(BYPASSAPP.episode1LevelDB);
 			BYPASSAPP.episode1LevelDB.setFirstUnwon();
+			
+			BYPASSAPP.bypassPlatform.loadScores(BYPASSAPP.episode2LevelDB);
+			BYPASSAPP.episode2LevelDB.setFirstUnwon();
 			
 			APP.platform.showAppScreen();
 			

@@ -46,6 +46,8 @@ public class LevelMenuActivity extends BypassActivity {
 				LevelMenu.levelDB = BYPASSAPP.tutorialLevelDB;
 			} else if (name.equals("episode1")) {
 				LevelMenu.levelDB = BYPASSAPP.episode1LevelDB;
+			} else if (name.equals("episode2")) {
+				LevelMenu.levelDB = BYPASSAPP.episode2LevelDB;
 			} else {
 				throw new AssertionError();
 			}
@@ -60,7 +62,6 @@ public class LevelMenuActivity extends BypassActivity {
 		v.activity = this;
 		
 		LevelMenu.create();
-		
 	}
 	
 	protected void onStart() {
@@ -106,7 +107,7 @@ public class LevelMenuActivity extends BypassActivity {
 		super.onSaveInstanceState(outState);
 		
 		outState.putString("com.gutabi.bypass.menu.LevelDB", LevelMenu.levelDB.name);
-		outState.putSerializable("com.gutabi.bypass.menu.LevelMenuLoc", LevelMenu.levelDB.loc);
+		outState.putSerializable("com.gutabi.bypass.menu.LevelMenuLoc", new Point(LevelMenu.LEVELMENU.aabb.x, LevelMenu.LEVELMENU.aabb.y));
 	}
 	
 	@Override

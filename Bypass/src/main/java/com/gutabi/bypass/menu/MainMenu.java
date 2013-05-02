@@ -29,6 +29,16 @@ public class MainMenu extends Menu implements Model {
 		};
 		add(newMenuItem, 0, 0);
 		
+		MenuItem new2MenuItem = new MenuItem(MainMenu.this, " Episode 2 ") {
+			public void action() {
+				
+				LevelMenu.levelDB = BYPASSAPP.episode2LevelDB;
+				
+				APP.platform.action(LevelMenu.class);
+			}
+		};
+		add(new2MenuItem, 0, 0);
+		
 		MenuItem resumeMenuItem = new MenuItem(MainMenu.this, "Tutorial") {
 			public void action() {
 				

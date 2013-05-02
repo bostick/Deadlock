@@ -59,6 +59,19 @@ public class BypassWorldActivity extends BypassActivity {
 		
 		int ii = (Integer)getIntent().getExtras().get("com.gutabi.bypass.level.Index");
 		
+		if (savedInstanceState != null) {
+			String name = savedInstanceState.getString("com.gutabi.bypass.menu.LevelDB");
+			if (name.equals("tutorial")) {
+				LevelMenu.levelDB = BYPASSAPP.tutorialLevelDB;
+			} else if (name.equals("episode1")) {
+				LevelMenu.levelDB = BYPASSAPP.episode1LevelDB;
+			} else if (name.equals("episode2")) {
+				LevelMenu.levelDB = BYPASSAPP.episode2LevelDB;
+			} else {
+				throw new AssertionError();
+			}
+		}
+		
 		BypassWorld.create(LevelMenu.levelDB, ii);
 		
 		if (savedInstanceState != null) {
@@ -228,6 +241,8 @@ public class BypassWorldActivity extends BypassActivity {
 		
 		
 		outState.putBoolean("com.gutabi.bypass.DebugDraw", APP.DEBUG_DRAW);
+		
+		outState.putString("com.gutabi.bypass.menu.LevelDB", LevelMenu.levelDB.name);
 		
 		outState.putInt("com.gutabi.bypass.level.UserMoves", BypassWorld.BYPASSWORLD.curLevel.userMoves);
 		outState.putLong("com.gutabi.bypass.level.UserStartTime", BypassWorld.BYPASSWORLD.curLevel.userStartTime);

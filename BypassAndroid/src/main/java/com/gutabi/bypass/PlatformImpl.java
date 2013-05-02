@@ -285,6 +285,8 @@ public class PlatformImpl implements BypassPlatform {
 			return new ResourceImpl(R.raw.tutorial, ResourceType.RAW);
 		} else if (name.equals("episode1")) {
 			return new ResourceImpl(R.raw.episode1, ResourceType.RAW);
+		} else if (name.equals("episode2")) {
+			return new ResourceImpl(R.raw.episode2, ResourceType.RAW);
 		}
 		
 		throw new AssertionError();
@@ -298,6 +300,8 @@ public class PlatformImpl implements BypassPlatform {
 			return "tutorial";
 		} else if (i.resId == R.raw.episode1) {
 			return "episode1";
+		} else if (i.resId == R.raw.episode2) {
+			return "episode2";
 		}
 		
 		throw new AssertionError();

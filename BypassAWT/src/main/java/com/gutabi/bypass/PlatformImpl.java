@@ -322,6 +322,8 @@ public class PlatformImpl implements BypassPlatform {
 			return "tutorial";
 		} else if (impl.given.equals("episode1")) {
 			return "episode1";
+		} else if (impl.given.equals("episode2")) {
+			return "episode2";
 		}
 		
 		throw new AssertionError();
