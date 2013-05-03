@@ -63,18 +63,30 @@ public abstract class MenuItem {
 	
 	public void render() {
 		
-		lab.aabb = new AABB(aabb.x + menu.columnWidth[c]/2 - lab.localAABB.width/2, aabb.y + (20 + lab.localAABB.height + 20)/2 - lab.localAABB.height/2, lab.localAABB.width, lab.localAABB.height);
-		
-		aabb = new AABB(aabb.x, aabb.y, menu.columnWidth[c], 20 + lab.aabb.height + 20);
-	}
-	
-	public void paint(RenderingContext ctxt) {
-		
 		if (active) {
 			lab.color = Color.WHITE;
 		} else {
 			lab.color = Color.GRAY;
 		}
+		
+		lab.render();
+		
+		lab.aabb = new AABB(aabb.x + menu.columnWidth[c]/2 - lab.localAABB.width/2, aabb.y + (20 + lab.localAABB.height + 20)/2 - lab.localAABB.height/2, lab.localAABB.width, lab.localAABB.height);
+		
+		if (auxLab0 != null) {
+			auxLab0.render();
+		}
+		if (auxLab1 != null) {
+			auxLab1.render();
+		}
+		if (auxLab2 != null) {
+			auxLab2.render();
+		}
+		
+		aabb = new AABB(aabb.x, aabb.y, menu.columnWidth[c], 20 + lab.aabb.height + 20);
+	}
+	
+	public void paint(RenderingContext ctxt) {
 		
 		ctxt.pushClip();
 		
@@ -98,8 +110,6 @@ public abstract class MenuItem {
 		ctxt.popClip();
 		
 		if (border) {
-			ctxt.setColor(Color.BLUE);
-			ctxt.setStroke(0.0, Cap.SQUARE, Join.MITER);
 			aabb.draw(ctxt);
 		}
 	}

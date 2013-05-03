@@ -94,9 +94,9 @@ public class MainMenu extends Menu implements Model {
 		
 		MAINMENU.lock.lock();
 		
-		MAINMENU.render();
-		
 		APP.appScreen.postDisplay(width, height);
+		
+		MAINMENU.render();
 		
 		MAINMENU.lock.unlock();
 	}

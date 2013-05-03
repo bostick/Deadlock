@@ -5,6 +5,7 @@ import static com.gutabi.capsloc.CapslocApplication.APP;
 import com.gutabi.capsloc.Tool;
 import com.gutabi.capsloc.math.Point;
 import com.gutabi.capsloc.ui.paint.RenderingContext;
+import com.gutabi.capsloc.world.World;
 
 public class MenuTool extends Tool {
 	
@@ -57,6 +58,34 @@ public class MenuTool extends Tool {
 		Menu menu = APP.model.getMenu();
 		
 		menu.escape();
+	}
+	
+	public void plusKey() {
+		World world = (World)APP.model;
+		
+		world.worldCamera.zoomRelative(1.1);
+		
+		world.quadrantMap.computeGridSpacing(world.worldCamera);
+		
+		world.render_worldPanel();
+		if (world.previewImage != null) {
+			world.render_preview();
+		}
+		
+	}
+
+	public void minusKey() {
+		World world = (World)APP.model;
+		
+		world.worldCamera.zoomRelative(0.9);
+		
+		world.quadrantMap.computeGridSpacing(world.worldCamera);
+		
+		world.render_worldPanel();
+		
+		if (world.previewImage != null) {
+			world.render_preview();
+		}
 	}
 	
 	public void moved(InputEvent ignore) {

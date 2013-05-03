@@ -1,30 +1,10 @@
-
-write down whole process for level generation and selection
-level file format, no adjacent roads, only to adjacent sides, not on exit side, future work: cloverleafs
-
-
-episode 0 - 10 tutorial levels
-episode 1 - lite version, 50 levels
-episode 2 - full version, 500 levels
-
-select levels for tutorial
-select levels for lite version
-select levels for full version
-setup renderer in Mathematica
-visually compare similar levels
-similar: lots of cars in same position and similar number of moves
-
-test only tutorial installed
-test tutorial, lite installed
-test tutorial, lite, full installed
+speed up level menu
+reading through leveldb
 
 
-brighten grass tile
-brighten red car / dim other cars
-audit all levels
-audit all artwork
-audit all res
-audit all assets
+speed up winner menu
+
+
 audit all classes, proguard, make sure only used classes are in (ExplosionMap, etc.)
 
 

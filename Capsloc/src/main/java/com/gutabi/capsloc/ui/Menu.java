@@ -8,7 +8,9 @@ import java.util.concurrent.locks.ReentrantLock;
 import com.gutabi.capsloc.geom.AABB;
 import com.gutabi.capsloc.math.DMath;
 import com.gutabi.capsloc.math.Point;
+import com.gutabi.capsloc.ui.paint.Cap;
 import com.gutabi.capsloc.ui.paint.Color;
+import com.gutabi.capsloc.ui.paint.Join;
 import com.gutabi.capsloc.ui.paint.RenderingContext;
 
 public abstract class Menu {
@@ -29,6 +31,8 @@ public abstract class Menu {
 	public double[] columnHeight;
 	
 	public AABB aabb = new AABB(0, 0, 0, 0);
+	int parWidth;
+	int parHeight;
 	
 	/*
 	 * fraction of panel that menu takes
@@ -141,7 +145,12 @@ public abstract class Menu {
 	
 	public abstract void escape();
 	
-	
+	public void postDisplay(int width, int height) {
+		
+		parWidth = width;
+		parHeight = height;
+		
+	}
 	
 	public void render() {
 		
@@ -220,32 +229,32 @@ public abstract class Menu {
 			}
 		}
 		
+		setAABBAndScrolling();
+		
 		shimmer = new Shimmer(System.currentTimeMillis());
 		shimmer.setShape(shimmeringMenuItem.aabb);
 		
 		rendered = true;
 	}
 	
-	public void postDisplay(int width, int height) {
+	private void setAABBAndScrolling() {
 		
-		aabb = new AABB(aabb.x, aabb.y, width, height);
+		double x = 0;
+		double y = 0;
 		
-		double x = aabb.x;
-		double y = aabb.y;
-		
-		double s = (widthFraction * width) / menuWidth;
+		double s = (widthFraction * parWidth) / menuWidth;
 		
 		scale = s;
-		aabb = new AABB(aabb.x, aabb.y, scale * menuWidth, scale * menuHeight);
+		aabb = new AABB(-1, -1, scale * menuWidth, scale * menuHeight);
 		
-		if (DMath.lessThanEquals(aabb.width, width)) {
+		if (DMath.lessThanEquals(aabb.width, parWidth)) {
 			/*
 			 * no scrolling
 			 */
 			
 			hScrollable = false;
 			
-			x = width/2 - aabb.width/2;
+			x = parWidth/2 - aabb.width/2;
 			
 		} else {
 			/*
@@ -256,14 +265,14 @@ public abstract class Menu {
 			
 		}
 		
-		if (DMath.lessThanEquals(aabb.height, height)) {
+		if (DMath.lessThanEquals(aabb.height, parHeight)) {
 			/*
 			 * no scrolling
 			 */
 			
 			vScrollable = false;
 			
-			y = height/2 - aabb.height/2;
+			y = parHeight/2 - aabb.height/2;
 			
 		} else {
 			/*
@@ -290,6 +299,12 @@ public abstract class Menu {
 				(int)(aabb.height + 5 + 5));
 		
 		ctxt.scale(scale);
+		
+		/*
+		 * for MenuItem borders
+		 */
+		ctxt.setColor(Color.BLUE);
+		ctxt.setStroke(0.0, Cap.SQUARE, Join.MITER);
 		
 		for (int i = 0; i < items.size(); i++) {
 			MenuItem item = items.get(i);

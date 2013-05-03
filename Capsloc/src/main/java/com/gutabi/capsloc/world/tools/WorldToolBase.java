@@ -38,7 +38,9 @@ public abstract class WorldToolBase extends Tool {
 		world.quadrantMap.computeGridSpacing(world.worldCamera);
 		
 		world.render_worldPanel();
-		world.render_preview();
+		if (world.previewImage != null) {
+			world.render_preview();
+		}
 		
 	}
 

@@ -87,9 +87,9 @@ public class LevelMenu extends Menu implements Model {
 		
 		LEVELMENU.shimmeringMenuItem = LEVELMENU.items.get(levelDB.firstUnwon);
 		
-		LEVELMENU.render();
-		
 		APP.appScreen.postDisplay(width, height);
+		
+		LEVELMENU.render();
 		
 		LEVELMENU.lock.unlock();
 	}

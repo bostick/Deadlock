@@ -112,6 +112,8 @@ public class BypassWorld extends World implements Model {
 		
 		APP.appScreen.postDisplay(width, height);
 		
+		BYPASSWORLD.render_worldPanel();
+		
 		if (APP.DEBUGGER_SCREEN) {
 			
 			APP.debuggerScreen.postDisplay(width, height);
@@ -561,17 +563,6 @@ public class BypassWorld extends World implements Model {
 		WinnerMenu.action();
 	}
 	
-	public void render_worldPanel() {
-		
-		super.render_worldPanel();
-		
-		if (curLevel.isWon) {
-			
-			winnerMenu.render();
-			
-		}
-	}
-	
 	public void panelPostDisplay(int width, int height) {
 		
 		int min = Math.min(width, height);
@@ -585,6 +576,17 @@ public class BypassWorld extends World implements Model {
 		if (curLevel.isWon) {
 			
 			winnerMenu.postDisplay(width, height);
+		}
+	}
+	
+	public void render_worldPanel() {
+		
+		super.render_worldPanel();
+		
+		if (curLevel.isWon) {
+			
+			winnerMenu.render();
+			
 		}
 	}
 	

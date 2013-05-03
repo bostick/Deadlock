@@ -65,35 +65,33 @@ public class Label {
 		
 		aabb = new AABB(aabb.x, aabb.y, localAABB.width, localAABB.height);
 		
-		Point baseline = new Point(-localAABB.x, -localAABB.y);
+		double baselineX = -localAABB.x;
+		double baselineY = -localAABB.y;
 		
 		img = APP.platform.createTransparentImage((int)aabb.width, (int)aabb.height);
 		
 		APP.platform.setRenderingContextFields1(ctxt, img);
 		
-		ctxt.setColor(color);
-		
-		ctxt.setFont(fontFile, fontStyle, fontSize);
-		ctxt.paintString(baseline.x, baseline.y, 1.0, text);
-		
-		ctxt.dispose();
-	}
-	
-	public void paint(RenderingContext ctxt) {
-		
-		ctxt.pushTransform();
-		
-		ctxt.translate(aabb.x, aabb.y);
-		
-		double baselineX = -localAABB.x;
-		double baselineY = -localAABB.y;
+//		ctxt.setColor(Color.RED);
+//		ctxt.fillRect(0, 0, img.getWidth(), img.getHeight());
 		
 		ctxt.setColor(color);
 		
 		ctxt.setFont(fontFile, fontStyle, fontSize);
 		ctxt.paintString(baselineX, baselineY, 1.0, text);
 		
-		ctxt.popTransform();
+		ctxt.dispose();
+	}
+	
+	public void paint(RenderingContext ctxt) {
+		
+//		ctxt.pushTransform();
+		
+//		ctxt.translate(aabb.x, aabb.y);
+		
+		ctxt.paintImage(img, 1.0, aabb.x, aabb.y, aabb.x+aabb.width, aabb.y+aabb.height, 0, 0, img.getWidth(), img.getHeight());
+		
+//		ctxt.popTransform();
 		
 	}
 	

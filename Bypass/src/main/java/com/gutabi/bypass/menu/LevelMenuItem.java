@@ -22,7 +22,17 @@ public abstract class LevelMenuItem extends MenuItem {
 	
 	public void render() {
 		
-		super.render();
+		if (active) {
+			lab.color = Color.WHITE;
+		} else {
+			lab.color = Color.GRAY;
+		}
+		
+		lab.render();
+		
+		lab.aabb = new AABB(aabb.x + menu.columnWidth[c]/2 - lab.localAABB.width/2, aabb.y + (20 + lab.localAABB.height + 20)/2 - lab.localAABB.height/2, lab.localAABB.width, lab.localAABB.height);
+		
+		aabb = new AABB(aabb.x, aabb.y, menu.columnWidth[c], 20 + lab.aabb.height + 20);
 		
 		if (LevelMenu.levelDB.levelMap.keySet().contains(index)) {
 			
@@ -80,6 +90,16 @@ public abstract class LevelMenuItem extends MenuItem {
 			}
 		} else {
 			auxLab1 = null;
+		}
+		
+		if (auxLab0 != null) {
+			auxLab0.render();
+		}
+		if (auxLab1 != null) {
+			auxLab1.render();
+		}
+		if (auxLab2 != null) {
+			auxLab2.render();
 		}
 		
 	}
