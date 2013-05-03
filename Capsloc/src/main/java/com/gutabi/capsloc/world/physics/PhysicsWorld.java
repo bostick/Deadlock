@@ -7,12 +7,7 @@ import com.gutabi.capsloc.ui.paint.RenderingContext;
 
 public abstract class PhysicsWorld {
 	
-	/**
-	 * move physics forward by dt seconds
-	 */
-	public double DT = 0.0166666;
-	
-	public double t;
+	protected double t;
 	
 	public PhysicsWorld() {
 		
@@ -20,6 +15,10 @@ public abstract class PhysicsWorld {
 	
 	public void step() {
 		
+	}
+	
+	public double getTime() {
+		return t;
 	}
 	
 	public int getBodyCount() {

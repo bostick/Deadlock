@@ -10,6 +10,7 @@ import com.gutabi.capsloc.ui.Menu;
 import com.gutabi.capsloc.ui.MenuItem;
 import com.gutabi.capsloc.ui.MenuTool;
 import com.gutabi.capsloc.ui.UIAnimationRunnable;
+import com.gutabi.capsloc.world.SimulationRunnable;
 
 import static com.gutabi.bypass.BypassApplication.BYPASSAPP;
 
@@ -69,8 +70,10 @@ public class MainMenu extends Menu implements Model {
 		
 	}
 	
-	static AtomicBoolean trigger = new AtomicBoolean();
+	static AtomicBoolean uiThreadTrigger = new AtomicBoolean();
 	static Thread uiThread;
+	static AtomicBoolean simThreadTrigger = new AtomicBoolean();
+	static Thread simThread;
 	
 	public static void resume() {
 		
@@ -84,10 +87,14 @@ public class MainMenu extends Menu implements Model {
 		
 		APP.tool = new MenuTool();
 		
-		trigger.set(true);
+		uiThreadTrigger.set(true);
+		simThreadTrigger.set(true);
 		
-		uiThread = new Thread(new UIAnimationRunnable(trigger));
+		uiThread = new Thread(new UIAnimationRunnable(uiThreadTrigger));
 		uiThread.start();
+		
+		simThread = new Thread(new SimulationRunnable(simThreadTrigger));
+		simThread.start();
 	}
 	
 	public static void surfaceChanged(int width, int height) {
@@ -103,16 +110,20 @@ public class MainMenu extends Menu implements Model {
 	
 	public static void pause() {
 		
-		trigger.set(false);
+		uiThreadTrigger.set(false);
+		simThreadTrigger.set(false);
 		
 		try {
 			uiThread.join();
+			simThread.join();
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
 		uiThread = null;
+		simThread = null;
+		
 		MAINMENU = null;
 		
 	}

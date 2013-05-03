@@ -2,17 +2,23 @@ package com.gutabi.capsloc.world;
 
 import static com.gutabi.capsloc.CapslocApplication.APP;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import com.gutabi.capsloc.Integratable;
+
 public class SimulationRunnable implements Runnable {
 	
-	public SimulationRunnable() {
-		
+	AtomicBoolean trigger;
+	
+	public SimulationRunnable(AtomicBoolean trigger) {
+		this.trigger = trigger;
 	}
 	
 	public void run() {
 		
-		World world = (World)APP.model;
+		Integratable iable = APP.model;
 		
-		double t = world.t;
+		double t = iable.getTime();
 		double accumulator = 0;
 		
 		long currentTimeMillis = APP.platform.monotonicClockMillis();
@@ -23,7 +29,7 @@ public class SimulationRunnable implements Runnable {
 			outer:
 				while (true) {
 					
-					if (world.mode == WorldMode.EDITING) {
+					if (trigger.get() == false) {
 						break outer;
 					}
 					
@@ -39,22 +45,22 @@ public class SimulationRunnable implements Runnable {
 					/*
 					 * this max value is a heuristic
 					 */
-					if (frameTimeSeconds > 1 * world.DT) {
-						frameTimeSeconds = 1 * world.DT;
+					if (frameTimeSeconds > 1 * Integratable.DT) {
+						frameTimeSeconds = 1 * Integratable.DT;
 					}
-					if (frameTimeSeconds < 0.5 * world.DT) {
+					if (frameTimeSeconds < 0.5 * Integratable.DT) {
 						Thread.sleep(frameTimeMillis);
 						frameTimeSeconds += frameTimeSeconds;
 					}
 					
 					accumulator += frameTimeSeconds;
 					
-					while (accumulator >= world.DT) {
+					while (accumulator >= Integratable.DT) {
 						
-						world.integrate(t);
+						iable.integrate(t);
 						
-						accumulator -= world.DT;
-						t += world.DT;
+						accumulator -= Integratable.DT;
+						t += Integratable.DT;
 					}
 					
 				} // outer

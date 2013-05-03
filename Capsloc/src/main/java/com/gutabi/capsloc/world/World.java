@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.gutabi.capsloc.Entity;
 import com.gutabi.capsloc.geom.AABB;
@@ -34,7 +35,8 @@ public class World extends PhysicsWorld {
 	
 	public WorldCamera worldCamera;
 	
-	public WorldMode mode;
+	public AtomicBoolean simThreadTrigger = new AtomicBoolean();
+	public Thread simThread;
 	
 	WorldBackground background;
 	public Image previewImage;
@@ -54,8 +56,6 @@ public class World extends PhysicsWorld {
 	Shimmer shimmer;
 	
 	public World() {
-		
-		mode = WorldMode.EDITING;
 		
 		background = new WorldBackground(this);
 		
@@ -147,6 +147,8 @@ public class World extends PhysicsWorld {
 		carMap.preStep(t);
 		
 		explosionMap.preStep(t);
+		
+		shimmer.preStep();
 		
 	}
 	
@@ -240,23 +242,20 @@ public class World extends PhysicsWorld {
 		return b;
 	}
 	
-	
-	public Thread simThread;
-	
 	public void startRunning() {
 		
-		mode = WorldMode.RUNNING;
+		simThreadTrigger.set(true);
 		
 		preStart();
 		
-		simThread = new Thread(new SimulationRunnable());
+		simThread = new Thread(new SimulationRunnable(simThreadTrigger));
 		simThread.start();
 		
 	}
 	
 	public void stopRunning() {
 		
-		mode = WorldMode.EDITING;
+		simThreadTrigger.set(false);
 		
 		try {
 			simThread.join();
@@ -271,7 +270,7 @@ public class World extends PhysicsWorld {
 	
 	public void pauseRunning() {
 		
-		mode = WorldMode.EDITING;
+		simThreadTrigger.set(false);
 		
 		try {
 			simThread.join();
@@ -283,9 +282,9 @@ public class World extends PhysicsWorld {
 	
 	public void unpauseRunning() {
 		
-		mode = WorldMode.RUNNING;
+		simThreadTrigger.set(true);
 		
-		simThread = new Thread(new SimulationRunnable());
+		simThread = new Thread(new SimulationRunnable(simThreadTrigger));
 		simThread.start();
 	}
 	

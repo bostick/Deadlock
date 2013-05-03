@@ -21,8 +21,20 @@ public class Shimmer {
 	
 	MutablePolygon poly = APP.platform.createMutablePolygon();
 	
+	double traverseSpeed;
+	double timeToRest;
+	double timeToTraverse;
+	
+	double t = -1;
+	
 	public Shimmer(double startMillis) {
 		this.startMillis = startMillis;
+		
+		/*
+		 * millis / pixel
+		 */
+		traverseSpeed = 5;
+		timeToRest = 4000;
 	}
 	
 	public void setShape(AABB aabb) {
@@ -32,6 +44,8 @@ public class Shimmer {
 		height = aabb.height;
 		brX = x+width;
 		brY = y+height;
+		
+		timeToTraverse = width * traverseSpeed;
 	}
 	
 	public void setShape(MutableAABB aabb) {
@@ -41,24 +55,23 @@ public class Shimmer {
 		height = aabb.height;
 		brX = x+width;
 		brY = y+height;
+		
+		timeToTraverse = width * traverseSpeed;
+	}
+	
+	public void preStep() {
+		
+		t = System.currentTimeMillis();
+		while (t > startMillis + (timeToTraverse + timeToRest)) {
+			startMillis = startMillis + (timeToTraverse + timeToRest);
+		}
+		
 	}
 	
 	public void paint(RenderingContext ctxt) {
 		
-		if (startMillis == -1) {
-			startMillis = System.currentTimeMillis();
-		}
-		
-		/*
-		 * millis / pixel
-		 */
-		double traverseSpeed = 5;
-		double timeToRest = 4000;
-		double timeToTraverse = width * traverseSpeed;
-		
-		double t = System.currentTimeMillis();
-		while (t > startMillis + (timeToTraverse + timeToRest)) {
-			startMillis = startMillis + (timeToTraverse + timeToRest);
+		if (t == -1) {
+			return;
 		}
 		
 		double param = (t - startMillis) / (timeToTraverse + timeToRest);

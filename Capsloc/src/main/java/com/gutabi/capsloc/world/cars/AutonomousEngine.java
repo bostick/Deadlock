@@ -1,5 +1,6 @@
 package com.gutabi.capsloc.world.cars;
 
+import com.gutabi.capsloc.Integratable;
 import com.gutabi.capsloc.math.Point;
 import com.gutabi.capsloc.world.World;
 
@@ -106,8 +107,8 @@ public class AutonomousEngine extends Engine {
 		if (dv < 0) {
 			assert false;
 		}
-		if (dv > maxAcceleration * world.DT) {
-			dv = maxAcceleration * world.DT;
+		if (dv > maxAcceleration * Integratable.DT) {
+			dv = maxAcceleration * Integratable.DT;
 		}
 		
 		c.applyForwardImpulse(driveForwardImpulseCoefficient, dv);
@@ -137,7 +138,7 @@ public class AutonomousEngine extends Engine {
 		 * turning radius
 		 */
 		
-		double actualDistance = c.forwardSpeed * world.DT;
+		double actualDistance = c.forwardSpeed * Integratable.DT;
 		double maxRads = maxRadsPerMeter * actualDistance;
 		if (dw > maxRads) {
 			dw = maxRads;
@@ -145,7 +146,7 @@ public class AutonomousEngine extends Engine {
 			dw = -maxRads;
 		}
 		
-		float goalAngVel = (float)(dw / world.DT);
+		float goalAngVel = (float)(dw / Integratable.DT);
 		
 		c.applyAngularImpulse(turnAngularImpulseCoefficient, (goalAngVel - c.angularVel));
 		

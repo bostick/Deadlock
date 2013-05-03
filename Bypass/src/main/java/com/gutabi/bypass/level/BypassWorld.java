@@ -17,7 +17,6 @@ import com.gutabi.capsloc.ui.paint.RenderingContext;
 import com.gutabi.capsloc.world.QuadrantMap;
 import com.gutabi.capsloc.world.SimulationRunnable;
 import com.gutabi.capsloc.world.World;
-import com.gutabi.capsloc.world.WorldMode;
 import com.gutabi.capsloc.world.WorldPanel;
 import com.gutabi.capsloc.world.cars.Car;
 import com.gutabi.capsloc.world.cars.CarStateEnum;
@@ -75,7 +74,7 @@ public class BypassWorld extends World implements Model {
 		
 	}
 	
-	AtomicBoolean trigger = new AtomicBoolean(true);
+	AtomicBoolean uiThreadTrigger = new AtomicBoolean(true);
 	Thread uiThread;
 	
 	public static void resume() {
@@ -94,14 +93,14 @@ public class BypassWorld extends World implements Model {
 			
 		}
 		
-		BYPASSWORLD.mode = WorldMode.RUNNING;
+		BYPASSWORLD.simThreadTrigger.set(true);
 		
-		BYPASSWORLD.simThread = new Thread(new SimulationRunnable());
+		BYPASSWORLD.simThread = new Thread(new SimulationRunnable(BYPASSWORLD.simThreadTrigger));
 		BYPASSWORLD.simThread.start();
 		
-		BYPASSWORLD.trigger.set(true);
+		BYPASSWORLD.uiThreadTrigger.set(true);
 		
-		BYPASSWORLD.uiThread = new Thread(new UIAnimationRunnable(BYPASSWORLD.trigger));
+		BYPASSWORLD.uiThread = new Thread(new UIAnimationRunnable(BYPASSWORLD.uiThreadTrigger));
 		BYPASSWORLD.uiThread.start();
 		
 	}
@@ -132,9 +131,9 @@ public class BypassWorld extends World implements Model {
 			APP.platform.unshowDebuggerScreen();
 		}
 		
-		BYPASSWORLD.trigger.set(false);
+		BYPASSWORLD.uiThreadTrigger.set(false);
 		
-		BYPASSWORLD.mode = WorldMode.EDITING;
+		BYPASSWORLD.simThreadTrigger.set(false);
 		
 		try {
 			BYPASSWORLD.uiThread.join();
@@ -154,9 +153,9 @@ public class BypassWorld extends World implements Model {
 			return;
 		}
 		
-		BYPASSWORLD.trigger.set(false);
+		BYPASSWORLD.uiThreadTrigger.set(false);
 		
-		BYPASSWORLD.mode = WorldMode.EDITING;
+		BYPASSWORLD.simThreadTrigger.set(false);
 		
 		try {
 			BYPASSWORLD.uiThread.join();
@@ -209,14 +208,14 @@ public class BypassWorld extends World implements Model {
 		
 		worldCamera.panAbsolute(cameraX, cameraY);
 		
-		BYPASSWORLD.mode = WorldMode.RUNNING;
+		BYPASSWORLD.simThreadTrigger.set(true);
 		
-		BYPASSWORLD.simThread = new Thread(new SimulationRunnable());
+		BYPASSWORLD.simThread = new Thread(new SimulationRunnable(BYPASSWORLD.simThreadTrigger));
 		BYPASSWORLD.simThread.start();
 		
-		BYPASSWORLD.trigger.set(true);
+		BYPASSWORLD.uiThreadTrigger.set(true);
 		
-		BYPASSWORLD.uiThread = new Thread(new UIAnimationRunnable(BYPASSWORLD.trigger));
+		BYPASSWORLD.uiThread = new Thread(new UIAnimationRunnable(BYPASSWORLD.uiThreadTrigger));
 		BYPASSWORLD.uiThread.start();
 		
 	}

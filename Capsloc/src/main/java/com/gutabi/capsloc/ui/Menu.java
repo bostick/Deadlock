@@ -275,6 +275,20 @@ public abstract class Menu {
 		
 	}
 	
+	public double getTime() {
+		return 0.0;
+	}
+	
+	public void integrate(double t) {
+		
+		if (!rendered) {
+			return;
+		}
+		
+		shimmer.preStep();
+		
+	}
+	
 	public void paint_panel(RenderingContext ctxt) {
 		
 		ctxt.translate(aabb.x, aabb.y);

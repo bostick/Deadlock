@@ -2,6 +2,7 @@ package com.gutabi.bypass.level;
 
 import static com.gutabi.capsloc.CapslocApplication.APP;
 
+import com.gutabi.capsloc.Integratable;
 import com.gutabi.capsloc.geom.Geom;
 import com.gutabi.capsloc.geom.OBB;
 import com.gutabi.capsloc.geom.ShapeUtils;
@@ -103,11 +104,11 @@ public class BypassCar extends Car {
 	public void fakeCoastingStep(double t) {
 		assert state == CarStateEnum.COASTING_FORWARD || state == CarStateEnum.COASTING_BACKWARD;
 		
-		double dv = coastingAcceleration * world.DT;
+		double dv = coastingAcceleration * Integratable.DT;
 		
 		coastingVel += dv;
 		
-		double dist = coastingVel * world.DT;
+		double dist = coastingVel * Integratable.DT;
 		
 		GraphPositionPathPosition newPos;
 		if (state == CarStateEnum.COASTING_FORWARD) {
