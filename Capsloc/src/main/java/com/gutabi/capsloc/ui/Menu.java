@@ -19,7 +19,8 @@ public abstract class Menu {
 	
 	public Lock lock = new ReentrantLock(true);
 	
-	public List<MenuItem> items = new ArrayList<MenuItem>();
+	public List<List<MenuItem>> tree = new ArrayList<List<MenuItem>>();
+	public List<AABB> colAABBs = new ArrayList<AABB>();
 	
 	public MenuItem hilited;
 	public MenuItem firstMenuItem;
@@ -66,24 +67,20 @@ public abstract class Menu {
 		item.r = r;
 		item.c = c;
 		
-		if (items.isEmpty()) {
+		if (tree.isEmpty()) {
 			firstMenuItem = item;
 			shimmeringMenuItem = item;
 		}
 		
-		items.add(item);
+		List<MenuItem> col;
+		if (tree.size() <= c) {
+			col = new ArrayList<MenuItem>();
+			tree.add(c, col);
+		} else {
+			col = tree.get(c);
+		}
 		
-		int i = items.size()-1;
-		
-		MenuItem prev = items.get((i-1 + items.size()) % items.size());
-		MenuItem first = items.get(0);
-		
-		prev.down = item;
-		
-		item.up = prev;
-		item.down = first;
-		
-		first.up = item;
+		col.add(r, item);
 		
 		if (r == rows) {
 			rows++;
@@ -134,9 +131,17 @@ public abstract class Menu {
 	
 	public MenuItem hitTest(Point p) {
 		
-		for (MenuItem item : items) {
-			if (item.hitTest(p)) {
-				return item;
+		for (int i = 0; i < cols; i++) {
+			AABB a = colAABBs.get(i);
+			if (a.hitTest(p)) {
+				List<MenuItem> col = tree.get(i);
+				for (int j = 0; j < col.size(); j++) {
+					MenuItem item = col.get(j);
+					if (item.hitTest(p)) {
+						return item;
+					}
+				}
+				break;
 			}
 		}
 		
@@ -155,24 +160,20 @@ public abstract class Menu {
 	public void render() {
 		
 		for (int i = 0; i < cols; i++) {
-			int itemsCol = 0;
+			List<MenuItem> col = tree.get(i);
 			double totalMenuItemHeight = 0.0;
-			for (int j = 0; j < items.size(); j++) {
-				MenuItem item = items.get(j);
-				if (item.c != i) {
-					continue;
-				}
+			for (int j = 0; j < col.size(); j++) {
+				MenuItem item = col.get(j);
 				if ((int)item.localAABB.width > columnWidth[i]) {
 					columnWidth[i] = (int)item.localAABB.width;
 				}
 				totalMenuItemHeight += (int)item.localAABB.height;
-				itemsCol++;
 			}
 			if (columnWidth[i] < MenuItem.minimumWidth.localAABB.width) {
 				columnWidth[i] = (int)MenuItem.minimumWidth.localAABB.width;
 			}
 			
-			columnHeight[i] = totalMenuItemHeight + 10 * (itemsCol - 1);
+			columnHeight[i] = totalMenuItemHeight + 10 * (col.size() - 1);
 		}
 		
 		double width = 0.0;
@@ -204,29 +205,16 @@ public abstract class Menu {
 				x = x+(int)columnWidth[j] + 10;
 			}
 			
-			boolean itemFound = false;
-			int curRow = 0;
-			while (true) {
-				itemFound = false;
-				for (int j = 0; j < items.size(); j++) {
-					MenuItem item = items.get(j);
-					if (item.c != i) {
-						continue;
-					}
-					if (item.r != curRow) {
-						continue;
-					}
-					itemFound = true;
-					item.aabb = new AABB(x, y, item.aabb.width, item.aabb.height);
-					item.render();
-					y = y + (int)item.aabb.height + 10;
-				}
-				if (!itemFound) {
-					break;
-				} else {
-					curRow++;
-				}
+			List<MenuItem> col = tree.get(i);
+			
+			for (int j = 0; j < col.size(); j++) {
+				MenuItem item = col.get(j);
+				item.aabb = new AABB(x, y, item.aabb.width, item.aabb.height);
+				item.render();
+				y = y + (int)item.aabb.height + 10;
 			}
+			
+			colAABBs.add(i, AABB.union(col.get(0).aabb, col.get(col.size()-1).aabb));
 		}
 		
 		setAABBAndScrolling();
@@ -306,9 +294,12 @@ public abstract class Menu {
 		ctxt.setColor(Color.BLUE);
 		ctxt.setStroke(0.0, Cap.SQUARE, Join.MITER);
 		
-		for (int i = 0; i < items.size(); i++) {
-			MenuItem item = items.get(i);
-			item.paint(ctxt);
+		for (int i = 0; i < tree.size(); i++) {
+			List<MenuItem> col = tree.get(i);
+			for (int j = 0; j < col.size(); j++) {
+				MenuItem item = col.get(j);
+				item.paint(ctxt);
+			}
 		}
 		
 		if (hilited != null) {

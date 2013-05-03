@@ -2,6 +2,7 @@ package com.gutabi.bypass.menu;
 
 import static com.gutabi.capsloc.CapslocApplication.APP;
 
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.gutabi.bypass.level.BypassWorld;
@@ -11,6 +12,7 @@ import com.gutabi.capsloc.Model;
 import com.gutabi.capsloc.math.Point;
 import com.gutabi.capsloc.ui.ContentPane;
 import com.gutabi.capsloc.ui.Menu;
+import com.gutabi.capsloc.ui.MenuItem;
 import com.gutabi.capsloc.ui.MenuTool;
 import com.gutabi.capsloc.ui.UIAnimationRunnable;
 
@@ -75,7 +77,7 @@ public class LevelMenu extends Menu implements Model {
 			int menuRow = i / 4;
 			int menuCol = i % 4;
 			final int ii = i;
-			LEVELMENU.add(new LevelMenuItem(LEVELMENU, i, "%d") {
+			LEVELMENU.add(new LevelMenuItem(LEVELMENU, i) {
 				
 				public void action() {
 					
@@ -85,7 +87,12 @@ public class LevelMenu extends Menu implements Model {
 			}, menuRow, menuCol);
 		}
 		
-		LEVELMENU.shimmeringMenuItem = LEVELMENU.items.get(levelDB.firstUnwon);
+		int firstUnwonCol = levelDB.firstUnwon / 4;
+		int firstUnwonRow = levelDB.firstUnwon % 4;
+		List<MenuItem> col = LEVELMENU.tree.get(firstUnwonCol);
+		MenuItem item = col.get(firstUnwonRow);
+		
+		LEVELMENU.shimmeringMenuItem = item;
 		
 		APP.appScreen.postDisplay(width, height);
 		

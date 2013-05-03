@@ -19,13 +19,7 @@ public abstract class MenuItem {
 	protected Label auxLab1;
 	protected Label auxLab2;
 	
-	
 	public boolean border = true;
-	
-	public MenuItem up;
-	public MenuItem left;
-	public MenuItem right;
-	public MenuItem down;
 	
 	public AABB localAABB;
 	public AABB aabb = new AABB(0, 0, 0, 0);

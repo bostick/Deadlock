@@ -14,8 +14,8 @@ public abstract class LevelMenuItem extends MenuItem {
 
 	public int index;
 	
-	public LevelMenuItem(Menu menu, int index, String fmt) {
-		super(menu, String.format(fmt, index));
+	public LevelMenuItem(Menu menu, int index) {
+		super(menu, Integer.toString(index));
 		
 		this.index = index;
 	}

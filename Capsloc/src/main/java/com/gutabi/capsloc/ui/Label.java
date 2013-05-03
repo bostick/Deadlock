@@ -59,7 +59,7 @@ public class Label {
 	}
 	
 	
-	RenderingContext ctxt = APP.platform.createRenderingContext();
+	static RenderingContext ctxt = APP.platform.createRenderingContext();
 	
 	public void render() {
 		
@@ -72,9 +72,6 @@ public class Label {
 		
 		APP.platform.setRenderingContextFields1(ctxt, img);
 		
-//		ctxt.setColor(Color.RED);
-//		ctxt.fillRect(0, 0, img.getWidth(), img.getHeight());
-		
 		ctxt.setColor(color);
 		
 		ctxt.setFont(fontFile, fontStyle, fontSize);
@@ -85,13 +82,7 @@ public class Label {
 	
 	public void paint(RenderingContext ctxt) {
 		
-//		ctxt.pushTransform();
-		
-//		ctxt.translate(aabb.x, aabb.y);
-		
 		ctxt.paintImage(img, 1.0, aabb.x, aabb.y, aabb.x+aabb.width, aabb.y+aabb.height, 0, 0, img.getWidth(), img.getHeight());
-		
-//		ctxt.popTransform();
 		
 	}
 	

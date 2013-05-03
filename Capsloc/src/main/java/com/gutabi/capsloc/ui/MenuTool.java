@@ -5,87 +5,13 @@ import static com.gutabi.capsloc.CapslocApplication.APP;
 import com.gutabi.capsloc.Tool;
 import com.gutabi.capsloc.math.Point;
 import com.gutabi.capsloc.ui.paint.RenderingContext;
-import com.gutabi.capsloc.world.World;
 
 public class MenuTool extends Tool {
-	
-	public void upKey() {
-		Menu menu = APP.model.getMenu();
-		
-		if (menu.hilited == null) {
-			
-			menu.hilited = menu.firstMenuItem;
-			
-		} else {
-			
-			menu.hilited = menu.hilited.up;
-			
-		}
-		
-		while (!menu.hilited.active) {
-			menu.hilited = menu.hilited.up;
-		}
-	}
-	
-	public void downKey() {
-		Menu menu = APP.model.getMenu();
-		
-		if (menu.hilited == null) {
-			
-			menu.hilited = menu.firstMenuItem;
-			
-		} else {
-			
-			menu.hilited = menu.hilited.down;
-			
-		}
-		
-		while (!menu.hilited.active) {
-			menu.hilited = menu.hilited.down;
-		}
-		
-	}
-	
-	public void enterKey() {
-		Menu menu = APP.model.getMenu();
-		
-		if (menu.hilited != null && menu.hilited.active) {
-			menu.hilited.action();
-		}
-	}
 	
 	public void escKey() {
 		Menu menu = APP.model.getMenu();
 		
 		menu.escape();
-	}
-	
-	public void plusKey() {
-		World world = (World)APP.model;
-		
-		world.worldCamera.zoomRelative(1.1);
-		
-		world.quadrantMap.computeGridSpacing(world.worldCamera);
-		
-		world.render_worldPanel();
-		if (world.previewImage != null) {
-			world.render_preview();
-		}
-		
-	}
-
-	public void minusKey() {
-		World world = (World)APP.model;
-		
-		world.worldCamera.zoomRelative(0.9);
-		
-		world.quadrantMap.computeGridSpacing(world.worldCamera);
-		
-		world.render_worldPanel();
-		
-		if (world.previewImage != null) {
-			world.render_preview();
-		}
 	}
 	
 	public void moved(InputEvent ignore) {

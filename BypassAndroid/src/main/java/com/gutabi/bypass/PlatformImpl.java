@@ -452,7 +452,7 @@ public class PlatformImpl implements BypassPlatform {
 		
 		levelDB.levelMap.clear();
 		
-		menu.shimmeringMenuItem = menu.items.get(0);
+		menu.shimmeringMenuItem = menu.tree.get(0).get(0);
 		
 		menu.render();
 		

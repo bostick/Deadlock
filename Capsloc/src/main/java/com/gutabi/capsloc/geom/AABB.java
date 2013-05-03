@@ -276,6 +276,10 @@ public class AABB implements Shape, Serializable {
 		return new AABB(x + p.x, y + p.y, width, height);
 	}
 	
+	public AABB plus(double xx, double yy) {
+		return new AABB(x + xx, y + yy, width, height);
+	}
+	
 	public AABB minus(Point p) {
 		return new AABB(x - p.x, y - p.y, width, height);
 	}

@@ -494,19 +494,23 @@ public class Stroke {
 		List<SweepEvent> events = new ArrayList<SweepEvent>();
 		
 		List<SweepEvent> startEvents = new ArrayList<SweepEvent>();
-		for (Vertex v : world.graph.vertices) {
+		for (int i = 0; i < world.graph.vertices.size(); i++) {
+			Vertex v = world.graph.vertices.get(i);
 			startEvents.addAll(SweepUtils.sweepStartCSoverC(v, v.getShape(), seq, 0));
 		}
-		for (Road r : world.graph.roads) {
+		for (int i = 0; i < world.graph.roads.size(); i++) {
+			Road r = world.graph.roads.get(i);
 			startEvents.addAll(SweepUtils.sweepStartCSoverCS(r, r.getShape(), seq, 0));
 		}
-		for (Merger m : world.graph.mergers) {
+		for (int i = 0; i < world.graph.mergers.size(); i++) {
+			Merger m = world.graph.mergers.get(i);
 			startEvents.addAll(SweepUtils.sweepStartCSoverA(m, m.getShape(), seq, 0));
 		}
 		
 		Collections.sort(startEvents, SweepEvent.COMPARATOR);
 		
-		for (SweepEvent e : startEvents) {
+		for (int i = 0; i < startEvents.size(); i++) {
+			SweepEvent e = startEvents.get(i);
 			switch (e.type) {
 			case ENTERROADCAPSULE:
 				roadCapsuleCount++;
@@ -541,18 +545,41 @@ public class Stroke {
 			seq.capseq(i, capSeq);
 			
 			List<SweepEvent> capEvents = new ArrayList<SweepEvent>();
-			for (Vertex v : world.graph.vertices) {
-				capEvents.addAll(SweepUtils.sweepCSoverC(v, v.getShape(), capSeq, 0, i));
+			for (int j = 0; j < world.graph.vertices.size(); j++) {
+				Vertex v = world.graph.vertices.get(j);
+				
+				List<SweepEvent> tmp = SweepUtils.sweepCSoverC(v, v.getShape(), capSeq, 0, i);
+				for (int k = 0; k < tmp.size(); k++) {
+					SweepEvent evt = tmp.get(k);
+					capEvents.add(evt);
+				}
 			}
-			for (Road r : world.graph.roads) {
-				capEvents.addAll(SweepUtils.sweepCSoverCS(r, r.getShape(), capSeq, 0, i));
+			for (int j = 0; j < world.graph.roads.size(); j++) {
+				Road r = world.graph.roads.get(j);
+				
+				List<SweepEvent> tmp = SweepUtils.sweepCSoverCS(r, r.getShape(), capSeq, 0, i);
+				for (int k = 0; k < tmp.size(); k++) {
+					SweepEvent evt = tmp.get(k);
+					capEvents.add(evt);
+				}
 			}
-			for (Merger m : world.graph.mergers) {
-				capEvents.addAll(SweepUtils.sweepCSoverA(m, m.getShape(), capSeq, 0, i));
+			for (int j = 0; j < world.graph.mergers.size(); j++) {
+				Merger m = world.graph.mergers.get(j);
+				
+				List<SweepEvent> tmp = SweepUtils.sweepCSoverA(m, m.getShape(), capSeq, 0, i);
+				for (int k = 0; k < tmp.size(); k++) {
+					SweepEvent evt = tmp.get(k);
+					capEvents.add(evt);
+				}
 			}
 			
 			if (sweepSelf) {
-				capEvents.addAll(selfEvents(capSeq, i, selfEnteredCaps));
+				
+				List<SweepEvent> tmp = selfEvents(capSeq, i, selfEnteredCaps);
+				for (int k = 0; k < tmp.size(); k++) {
+					SweepEvent evt = tmp.get(k);
+					capEvents.add(evt);
+				}
 			}
 			
 			Collections.sort(capEvents, SweepEvent.COMPARATOR);

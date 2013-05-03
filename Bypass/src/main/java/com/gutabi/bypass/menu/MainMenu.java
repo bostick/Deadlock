@@ -37,7 +37,7 @@ public class MainMenu extends Menu implements Model {
 				APP.platform.action(LevelMenu.class);
 			}
 		};
-		add(new2MenuItem, 0, 0);
+		add(new2MenuItem, 1, 0);
 		
 		MenuItem resumeMenuItem = new MenuItem(MainMenu.this, "Tutorial") {
 			public void action() {
@@ -47,7 +47,7 @@ public class MainMenu extends Menu implements Model {
 				APP.platform.action(LevelMenu.class);
 			}
 		};
-		add(resumeMenuItem, 1, 0);
+		add(resumeMenuItem, 2, 0);
 		
 	}
 	
