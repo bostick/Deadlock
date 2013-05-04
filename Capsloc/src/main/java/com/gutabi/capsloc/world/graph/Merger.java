@@ -220,8 +220,8 @@ public class Merger extends Edge {
 		;
 	}
 	
-	public void preStep(double t) {
-		;
+	public boolean preStep(double t) {
+		return false;
 	}
 	
 	public boolean postStep(double t) {

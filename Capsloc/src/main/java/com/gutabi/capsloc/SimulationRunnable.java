@@ -1,4 +1,4 @@
-package com.gutabi.capsloc.world;
+package com.gutabi.capsloc;
 
 import static com.gutabi.capsloc.CapslocApplication.APP;
 
@@ -52,15 +52,21 @@ public class SimulationRunnable implements Runnable {
 						Thread.sleep(frameTimeMillis);
 						frameTimeSeconds += frameTimeSeconds;
 					}
+//					Thread.sleep(frameTimeMillis);
 					
 					accumulator += frameTimeSeconds;
 					
+					boolean paint = false;
 					while (accumulator >= Integratable.DT) {
 						
-						iable.integrate(t);
+						paint = paint | iable.integrate(t);
 						
 						accumulator -= Integratable.DT;
 						t += Integratable.DT;
+					}
+					
+					if (paint) {
+						APP.appScreen.contentPane.repaint();
 					}
 					
 				} // outer

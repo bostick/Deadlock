@@ -1,3 +1,46 @@
+
+get rid of uithread and draw on demand
+could draw from event thread from user actions (hilite menuitem, drag menu, drag car, winner menu appears)
+or could draw from simulation thread, (shimmering menu items, shimmering car, coasting car, animated grass)
+
+only repaint dirty regions
+
+
+
+
+
+
+
+things from party:
+
+too easy to get an F
+think about keeping track of user moves, when user goes back, like an undo, decrement counter, stack of user moves
+
+episode 1, level 0, truck blocked by truck, blocking happens off-screen
+
+too easy to drag and overshoot on the grid, if within 25% just snap to it
+
+
+
+jiggle car a little to indicate hitting other car, or currently locked because another car is still coasting
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 speed up level menu
 reading through leveldb
 

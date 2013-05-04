@@ -16,12 +16,11 @@ import com.gutabi.bypass.BypassView;
 import com.gutabi.bypass.PlatformImpl;
 import com.gutabi.bypass.R;
 import com.gutabi.bypass.menu.LevelMenu;
+import com.gutabi.capsloc.SimulationRunnable;
 import com.gutabi.capsloc.geom.Geom;
 import com.gutabi.capsloc.geom.MutableSweptOBB;
 import com.gutabi.capsloc.math.Point;
 import com.gutabi.capsloc.ui.MenuTool;
-import com.gutabi.capsloc.ui.UIAnimationRunnable;
-import com.gutabi.capsloc.world.SimulationRunnable;
 import com.gutabi.capsloc.world.WorldCamera;
 import com.gutabi.capsloc.world.cars.Car;
 import com.gutabi.capsloc.world.cars.CarStateEnum;
@@ -224,12 +223,12 @@ public class BypassWorldActivity extends BypassActivity {
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 		
-		BypassWorld.BYPASSWORLD.uiThreadTrigger.set(false);
+//		BypassWorld.BYPASSWORLD.uiThreadTrigger.set(false);
 		
 		BypassWorld.BYPASSWORLD.simThreadTrigger.set(false);
 		
 		try {
-			BypassWorld.BYPASSWORLD.uiThread.join();
+//			BypassWorld.BYPASSWORLD.uiThread.join();
 			
 			BypassWorld.BYPASSWORLD.simThread.join();
 			
@@ -281,10 +280,10 @@ public class BypassWorldActivity extends BypassActivity {
 		BypassWorld.BYPASSWORLD.simThread = new Thread(new SimulationRunnable(BypassWorld.BYPASSWORLD.simThreadTrigger));
 		BypassWorld.BYPASSWORLD.simThread.start();
 		
-		BypassWorld.BYPASSWORLD.uiThreadTrigger.set(true);
-		
-		BypassWorld.BYPASSWORLD.uiThread = new Thread(new UIAnimationRunnable(BypassWorld.BYPASSWORLD.uiThreadTrigger));
-		BypassWorld.BYPASSWORLD.uiThread.start();
+//		BypassWorld.BYPASSWORLD.uiThreadTrigger.set(true);
+//		
+//		BypassWorld.BYPASSWORLD.uiThread = new Thread(new UIAnimationRunnable(BypassWorld.BYPASSWORLD.uiThreadTrigger));
+//		BypassWorld.BYPASSWORLD.uiThread.start();
 		
 	}
 	

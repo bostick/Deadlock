@@ -72,7 +72,7 @@ public class AutonomousCar extends Car {
 		((AutonomousDriver)driver).clear();
 	}
 	
-	public void preStep(double t) {
+	public boolean preStep(double t) {
 		
 		switch (state) {
 		case DRIVING: 
@@ -90,6 +90,7 @@ public class AutonomousCar extends Car {
 		
 		engine.preStep(t);
 		
+		return false;
 	}
 	
 	/**
@@ -132,8 +133,8 @@ public class AutonomousCar extends Car {
 					
 				}
 				
-				world.roadMarkMap.addRoadMark(prevWorldPoint0, shape.p0);
-				world.roadMarkMap.addRoadMark(prevWorldPoint3, shape.p3);
+//				world.roadMarkMap.addRoadMark(prevWorldPoint0, shape.p0);
+//				world.roadMarkMap.addRoadMark(prevWorldPoint3, shape.p3);
 				
 				computeDynamicPropertiesMovingAndMore(t);
 				
@@ -191,8 +192,8 @@ public class AutonomousCar extends Car {
 				world.quadrantMap.grassMap.mowGrass(shape);
 				
 				synchronized (APP) {
-					world.grassMarkMap.addGrassMark(prevWorldPoint0, shape.p0);
-					world.grassMarkMap.addGrassMark(prevWorldPoint3, shape.p3);
+//					world.grassMarkMap.addGrassMark(prevWorldPoint0, shape.p0);
+//					world.grassMarkMap.addGrassMark(prevWorldPoint3, shape.p3);
 				}
 				
 				computeDynamicPropertiesMovingAndMore(t);

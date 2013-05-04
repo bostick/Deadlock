@@ -78,8 +78,8 @@ public class StopSign extends Entity {
 		;
 	}
 	
-	public void preStep(double t) {
-		;
+	public boolean preStep(double t) {
+		return false;
 	}
 	
 	public boolean postStep(double t) {

@@ -1,5 +1,7 @@
 package com.gutabi.capsloc.ui;
 
+import static com.gutabi.capsloc.CapslocApplication.APP;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.locks.Lock;
@@ -47,7 +49,7 @@ public abstract class Menu {
 	public boolean hScrollable;
 	public boolean vScrollable;
 	
-	Shimmer shimmer;
+	protected Shimmer shimmer;
 	
 	public Menu() {
 		columnWidth = new double[0];
@@ -100,6 +102,8 @@ public abstract class Menu {
 		} else {
 			hilited = null;
 		}
+		
+		APP.appScreen.contentPane.repaint();
 	}
 	
 	public void released(InputEvent ev) {
@@ -111,6 +115,7 @@ public abstract class Menu {
 			item.action();
 		} else {
 			hilited = null;
+			APP.appScreen.contentPane.repaint();
 		}
 	}
 	
@@ -119,6 +124,8 @@ public abstract class Menu {
 		hilited = null;
 		
 		setLocation(newLoc);
+		
+		APP.appScreen.contentPane.repaint();
 	}
 	
 	public void moved(InputEvent ev) {
@@ -272,20 +279,6 @@ public abstract class Menu {
 		}
 		
 		setLocation(x, y);
-		
-	}
-	
-	public double getTime() {
-		return 0.0;
-	}
-	
-	public void integrate(double t) {
-		
-		if (!rendered) {
-			return;
-		}
-		
-		shimmer.preStep();
 		
 	}
 	

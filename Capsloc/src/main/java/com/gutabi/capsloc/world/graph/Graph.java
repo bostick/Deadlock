@@ -94,12 +94,14 @@ public class Graph {
 		paths.clear();
 	}
 	
-	public void preStep(double t) {
+	public boolean preStep(double t) {
 		
 		for (int i = 0; i < vertices.size(); i++) {
 			Vertex v = vertices.get(i);
 			v.preStep(t);
 		}
+		
+		return false;
 	}
 	
 	public void postStep(double t) {

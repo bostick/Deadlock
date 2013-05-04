@@ -13,8 +13,8 @@ public abstract class PhysicsWorld {
 		
 	}
 	
-	public void step() {
-		
+	public boolean step() {
+		return false;
 	}
 	
 	public double getTime() {

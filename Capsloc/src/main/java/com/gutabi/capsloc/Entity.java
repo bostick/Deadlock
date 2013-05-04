@@ -13,7 +13,7 @@ public abstract class Entity {
 	
 	public abstract void postStop();
 	
-	public abstract void preStep(double t);
+	public abstract boolean preStep(double t);
 	
 	/**
 	 * return true if car should persist after time step

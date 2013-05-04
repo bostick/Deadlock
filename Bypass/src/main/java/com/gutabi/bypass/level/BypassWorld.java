@@ -2,20 +2,18 @@ package com.gutabi.bypass.level;
 
 import static com.gutabi.capsloc.CapslocApplication.APP;
 
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import com.gutabi.bypass.BypassControlPanel;
 import com.gutabi.capsloc.AppScreen;
 import com.gutabi.capsloc.Model;
+import com.gutabi.capsloc.SimulationRunnable;
 import com.gutabi.capsloc.math.Point;
 import com.gutabi.capsloc.ui.ContentPane;
 import com.gutabi.capsloc.ui.Menu;
-import com.gutabi.capsloc.ui.UIAnimationRunnable;
 import com.gutabi.capsloc.ui.paint.RenderingContext;
 import com.gutabi.capsloc.world.QuadrantMap;
-import com.gutabi.capsloc.world.SimulationRunnable;
 import com.gutabi.capsloc.world.World;
 import com.gutabi.capsloc.world.WorldPanel;
 import com.gutabi.capsloc.world.cars.Car;
@@ -74,8 +72,8 @@ public class BypassWorld extends World implements Model {
 		
 	}
 	
-	AtomicBoolean uiThreadTrigger = new AtomicBoolean(true);
-	Thread uiThread;
+//	AtomicBoolean uiThreadTrigger = new AtomicBoolean(true);
+//	Thread uiThread;
 	
 	public static void resume() {
 		
@@ -98,10 +96,10 @@ public class BypassWorld extends World implements Model {
 		BYPASSWORLD.simThread = new Thread(new SimulationRunnable(BYPASSWORLD.simThreadTrigger));
 		BYPASSWORLD.simThread.start();
 		
-		BYPASSWORLD.uiThreadTrigger.set(true);
-		
-		BYPASSWORLD.uiThread = new Thread(new UIAnimationRunnable(BYPASSWORLD.uiThreadTrigger));
-		BYPASSWORLD.uiThread.start();
+//		BYPASSWORLD.uiThreadTrigger.set(true);
+//		
+//		BYPASSWORLD.uiThread = new Thread(new UIAnimationRunnable(BYPASSWORLD.uiThreadTrigger));
+//		BYPASSWORLD.uiThread.start();
 		
 	}
 	
@@ -123,6 +121,8 @@ public class BypassWorld extends World implements Model {
 		}
 		
 		BYPASSWORLD.lock.unlock();
+		
+		APP.appScreen.contentPane.repaint();
 	}
 	
 	public static void pause() {
@@ -131,12 +131,12 @@ public class BypassWorld extends World implements Model {
 			APP.platform.unshowDebuggerScreen();
 		}
 		
-		BYPASSWORLD.uiThreadTrigger.set(false);
+//		BYPASSWORLD.uiThreadTrigger.set(false);
 		
 		BYPASSWORLD.simThreadTrigger.set(false);
 		
 		try {
-			BYPASSWORLD.uiThread.join();
+//			BYPASSWORLD.uiThread.join();
 			
 			BYPASSWORLD.simThread.join();
 			
@@ -153,12 +153,12 @@ public class BypassWorld extends World implements Model {
 			return;
 		}
 		
-		BYPASSWORLD.uiThreadTrigger.set(false);
+//		BYPASSWORLD.uiThreadTrigger.set(false);
 		
 		BYPASSWORLD.simThreadTrigger.set(false);
 		
 		try {
-			BYPASSWORLD.uiThread.join();
+//			BYPASSWORLD.uiThread.join();
 			
 			BYPASSWORLD.simThread.join();
 			
@@ -213,10 +213,10 @@ public class BypassWorld extends World implements Model {
 		BYPASSWORLD.simThread = new Thread(new SimulationRunnable(BYPASSWORLD.simThreadTrigger));
 		BYPASSWORLD.simThread.start();
 		
-		BYPASSWORLD.uiThreadTrigger.set(true);
-		
-		BYPASSWORLD.uiThread = new Thread(new UIAnimationRunnable(BYPASSWORLD.uiThreadTrigger));
-		BYPASSWORLD.uiThread.start();
+//		BYPASSWORLD.uiThreadTrigger.set(true);
+//		
+//		BYPASSWORLD.uiThread = new Thread(new UIAnimationRunnable(BYPASSWORLD.uiThreadTrigger));
+//		BYPASSWORLD.uiThread.start();
 		
 	}
 	

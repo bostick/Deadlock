@@ -87,17 +87,20 @@ public class CarMap {
 		cars.clear();
 	}
 	
-	public void preStep(double t) {
+	public boolean preStep(double t) {
 		
 		Car.carIDCounter = 0;
 		
+		boolean res = false;
+		
 		for (int i = 0; i < cars.size(); i++) {
 			Car c = cars.get(i);
-			c.preStep(t);
+			res = res | c.preStep(t);
 		}
 		
 		findDeadlockCycles(t);
 		
+		return res;
 	}
 	
 	

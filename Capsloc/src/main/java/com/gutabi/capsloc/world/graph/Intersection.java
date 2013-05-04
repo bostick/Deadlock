@@ -36,8 +36,8 @@ public class Intersection extends Vertex {
 		driverQueue.clear();
 	}
 	
-	public void preStep(double t) {
-		;
+	public boolean preStep(double t) {
+		return false;
 	}
 	
 	public boolean postStep(double t) {

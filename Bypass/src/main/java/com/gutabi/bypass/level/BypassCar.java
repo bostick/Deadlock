@@ -52,22 +52,23 @@ public class BypassCar extends Car {
 		return c;
 	}
 	
-	public void preStep(double t) {
+	public boolean preStep(double t) {
 		
 		switch (state) {
 		case IDLE:
+			return false;
 		case DRAGGING:
 			/*
 			 * no goal or anything for dragging
 			 */
-			break;
+			return true;
 		case COASTING_FORWARD:
 		case COASTING_BACKWARD:
 			fakeCoastingStep(t);
-			break;
+			return true;
 		default:
 			assert false;
-			break;
+			return false;
 		}
 		
 	}

@@ -1,18 +1,17 @@
 package com.gutabi.bypass.menu;
 
+import static com.gutabi.bypass.BypassApplication.BYPASSAPP;
 import static com.gutabi.capsloc.CapslocApplication.APP;
+
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.gutabi.capsloc.AppScreen;
 import com.gutabi.capsloc.Model;
+import com.gutabi.capsloc.SimulationRunnable;
 import com.gutabi.capsloc.ui.ContentPane;
 import com.gutabi.capsloc.ui.Menu;
 import com.gutabi.capsloc.ui.MenuItem;
 import com.gutabi.capsloc.ui.MenuTool;
-import com.gutabi.capsloc.ui.UIAnimationRunnable;
-import com.gutabi.capsloc.world.SimulationRunnable;
-
-import static com.gutabi.bypass.BypassApplication.BYPASSAPP;
 
 public class MainMenu extends Menu implements Model {
 	
@@ -70,8 +69,8 @@ public class MainMenu extends Menu implements Model {
 		
 	}
 	
-	static AtomicBoolean uiThreadTrigger = new AtomicBoolean();
-	static Thread uiThread;
+//	static AtomicBoolean uiThreadTrigger = new AtomicBoolean();
+//	static Thread uiThread;
 	static AtomicBoolean simThreadTrigger = new AtomicBoolean();
 	static Thread simThread;
 	
@@ -87,11 +86,11 @@ public class MainMenu extends Menu implements Model {
 		
 		APP.tool = new MenuTool();
 		
-		uiThreadTrigger.set(true);
+//		uiThreadTrigger.set(true);
 		simThreadTrigger.set(true);
 		
-		uiThread = new Thread(new UIAnimationRunnable(uiThreadTrigger));
-		uiThread.start();
+//		uiThread = new Thread(new UIAnimationRunnable(uiThreadTrigger));
+//		uiThread.start();
 		
 		simThread = new Thread(new SimulationRunnable(simThreadTrigger));
 		simThread.start();
@@ -110,18 +109,18 @@ public class MainMenu extends Menu implements Model {
 	
 	public static void pause() {
 		
-		uiThreadTrigger.set(false);
+//		uiThreadTrigger.set(false);
 		simThreadTrigger.set(false);
 		
 		try {
-			uiThread.join();
+//			uiThread.join();
 			simThread.join();
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
-		uiThread = null;
+//		uiThread = null;
 		simThread = null;
 		
 		MAINMENU = null;
@@ -130,6 +129,23 @@ public class MainMenu extends Menu implements Model {
 	
 	public Menu getMenu() {
 		return this;
+	}
+	
+	public double getTime() {
+		return 0.0;
+	}
+	
+	public boolean integrate(double t) {
+		
+		if (!rendered) {
+			return false;
+		}
+		
+		boolean res = false;
+		
+		res = res || shimmer.step();
+		
+		return res;
 	}
 	
 	public void escape() {

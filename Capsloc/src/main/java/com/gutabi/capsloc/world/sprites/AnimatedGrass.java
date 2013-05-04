@@ -34,12 +34,14 @@ public class AnimatedGrass {
 		lastTime = -1;
 	}
 	
-	public void preStep(double t) {
+	public boolean step(double t) {
 		
 		if (lastTime == -1) {
 			
 			lastTime = t + phase;
 			lastFrame = startFrame;
+			
+			return true;
 			
 		} else if ((t - lastTime) > 1.0) {
 			
@@ -59,6 +61,11 @@ public class AnimatedGrass {
 			}
 			
 			lastTime = t;
+			
+			return true;
+			
+		} else {
+			return false;
 		}
 	}
 	

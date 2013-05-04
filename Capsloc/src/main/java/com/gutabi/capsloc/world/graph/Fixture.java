@@ -113,7 +113,7 @@ public final class Fixture extends Vertex {
 		
 	}
 	
-	public void preStep(double t) {
+	public boolean preStep(double t) {
 		if (type == FixtureType.SOURCE) {
 //			if (SPAWN_FREQUENCY_SECONDS > 0 && (t == 0 || (t - lastSpawnTime) >= SPAWN_FREQUENCY_SECONDS)) {
 	//			if (active()) {
@@ -131,6 +131,8 @@ public final class Fixture extends Vertex {
 				spawnNewCar(t);
 			}
 		}
+		
+		return false;
 	}
 	
 	public boolean postStep(double t) {

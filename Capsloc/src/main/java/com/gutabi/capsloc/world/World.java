@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.gutabi.capsloc.Entity;
+import com.gutabi.capsloc.SimulationRunnable;
 import com.gutabi.capsloc.geom.AABB;
 import com.gutabi.capsloc.geom.MutableAABB;
 import com.gutabi.capsloc.math.Point;
@@ -29,7 +30,6 @@ import com.gutabi.capsloc.world.graph.Road;
 import com.gutabi.capsloc.world.graph.RoadPosition;
 import com.gutabi.capsloc.world.graph.Vertex;
 import com.gutabi.capsloc.world.physics.PhysicsWorld;
-import com.gutabi.capsloc.world.sprites.AnimatedExplosion;
 
 public class World extends PhysicsWorld {
 	
@@ -46,10 +46,10 @@ public class World extends PhysicsWorld {
 	
 	public CarMap carMap;
 	
-	public ExplosionMap explosionMap = new ExplosionMap();
+//	public ExplosionMap explosionMap = new ExplosionMap();
 	
-	public RoadMarkMap roadMarkMap;
-	public GrassMarkMap grassMarkMap;
+//	public RoadMarkMap roadMarkMap;
+//	public GrassMarkMap grassMarkMap;
 	
 	public Stats stats;
 	
@@ -63,8 +63,8 @@ public class World extends PhysicsWorld {
 		
 		carMap = new CarMap(this);
 		
-		roadMarkMap = new RoadMarkMap();
-		grassMarkMap = new GrassMarkMap();
+//		roadMarkMap = new RoadMarkMap();
+//		grassMarkMap = new GrassMarkMap();
 		
 		worldCamera = new WorldCamera();
 		
@@ -112,61 +112,72 @@ public class World extends PhysicsWorld {
 	 */
 	public void postStop() {
 		
-		synchronized (APP) {
-			
-			graph.postStop();
-			
-			carMap.postStop();
-			
-			explosionMap.postStop();
-			
-			roadMarkMap.postStop();
-			grassMarkMap.postStop();
-		}
+		graph.postStop();
+		
+		carMap.postStop();
+		
+//		explosionMap.postStop();
+		
+//		roadMarkMap.postStop();
+//		grassMarkMap.postStop();
 		
 	}
 	
-	public void integrate(double t) {
+	public boolean integrate(double t) {
 				
 		this.t = t;
+//		System.out.println(t);
 		
-		preStep();
+		boolean res = false;
 		
-		step();
+		res = res | preStep();
+		
+		res = res | step();
 		
 		postStep();
 		
+		return res;
 	}
 	
-	private void preStep() {
+	private boolean preStep() {
 		
-		quadrantMap.preStep(t);
+		boolean res = false;
 		
-		graph.preStep(t);
+		res = res | graph.preStep(t);
 		
-		carMap.preStep(t);
+		res = res | carMap.preStep(t);
 		
-		explosionMap.preStep(t);
+//		explosionMap.preStep(t);
 		
-		shimmer.preStep();
+		return res;
+	}
+	
+	public boolean step() {
 		
+		super.step();
+		
+		boolean res = false;
+		
+		res = res | quadrantMap.step(t);
+		res = res | shimmer.step();
+		
+		return res;
 	}
 	
 	private void postStep() {
 		
-		synchronized (APP) {
-			
-			carMap.postStep(t);
-			
-			explosionMap.postStep(t);
-			
-			graph.postStep(t);
-		}
+		carMap.postStep(t);
+		
+//		explosionMap.postStep(t);
+		
+		graph.postStep(t);
 		
 	}
 	
 	public void carCrash(Point p) {
-		explosionMap.add(new AnimatedExplosion(p));
+		
+//		explosionMap.add(new AnimatedExplosion(p));
+		
 	}
 	
 	public Entity hitTest(Point p) {
@@ -444,18 +455,15 @@ public class World extends PhysicsWorld {
 		
 		background.paint_worldCoords(ctxt);
 		
-		synchronized (APP) {
-			
-			roadMarkMap.paintScene(ctxt);
-			grassMarkMap.paintScene(ctxt);
-			
-			quadrantMap.paintScene(ctxt);
-			
-			graph.paintScene(ctxt);
-			
-			carMap.paint(ctxt);
-			explosionMap.paint(ctxt);
-		}
+//		roadMarkMap.paintScene(ctxt);
+//		grassMarkMap.paintScene(ctxt);
+		
+		quadrantMap.paintScene(ctxt);
+		
+		graph.paintScene(ctxt);
+		
+		carMap.paint(ctxt);
+//		explosionMap.paint(ctxt);
 		
 		if (APP.DEBUG_DRAW) {
 			graph.paintIDs(ctxt);
@@ -523,9 +531,9 @@ public class World extends PhysicsWorld {
 		
 		ctxt.paintString(0, 0, 1.0/ctxt.cam.pixelsPerMeter, "car count: " + carMap.size());
 		
-		ctxt.translate(0, 1);
+//		ctxt.translate(0, 1);
 		
-		ctxt.paintString(0, 0, 1.0/ctxt.cam.pixelsPerMeter, "splosions count: " + explosionMap.size());
+//		ctxt.paintString(0, 0, 1.0/ctxt.cam.pixelsPerMeter, "splosions count: " + explosionMap.size());
 		
 		ctxt.translate(0, 1);
 		

@@ -84,11 +84,13 @@ public class GrassMap {
 		}
 	}
 	
-	public void preStep(double t) {
+	public boolean step(double t) {
+		boolean res = false;
 		for (int i = 0; i < grass.size(); i++) {
 			AnimatedGrass g = grass.get(i);
-			g.preStep(t);
+			res = res | g.step(t);
 		}
+		return res;
 	}
 	
 	public void paintScene(RenderingContext ctxt) {

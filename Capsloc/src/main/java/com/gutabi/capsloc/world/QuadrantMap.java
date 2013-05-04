@@ -263,8 +263,8 @@ public class QuadrantMap {
 		grassMap.preStart();
 	}
 	
-	public void preStep(double t) {
-		grassMap.preStep(t);
+	public boolean step(double t) {
+		return grassMap.step(t);
 	}
 	
 	public String toFileString() {
