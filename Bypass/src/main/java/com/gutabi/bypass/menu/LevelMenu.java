@@ -93,8 +93,8 @@ public class LevelMenu extends Menu implements Model {
 			}, menuRow, menuCol);
 		}
 		
-		int firstUnwonCol = levelDB.firstUnwon / 4;
-		int firstUnwonRow = levelDB.firstUnwon % 4;
+		int firstUnwonRow = levelDB.firstUnwon / 4;
+		int firstUnwonCol = levelDB.firstUnwon % 4;
 		List<MenuItem> col = LEVELMENU.tree.get(firstUnwonCol);
 		MenuItem item = col.get(firstUnwonRow);
 		
