@@ -25,12 +25,12 @@ public abstract class Checkbox {
 		lab.setLocation(x, y);
 	}
 	
-	public int getWidth() {
-		return lab.getWidth();
+	public double getWidth() {
+		return lab.aabb.width;
 	}
 	
-	public int getHeight() {
-		return lab.getHeight();
+	public double getHeight() {
+		return lab.aabb.height;
 	}
 	
 	public boolean hitTest(Point p) {

@@ -91,9 +91,9 @@ public class BypassCar extends Car {
 		
 		assert vel >= 0.0;
 		
-		if (vel > 4) {
-			vel = 4;
-		}
+//		if (vel > 4) {
+//			vel = 4;
+//		}
 		
 		coastingVel = vel;
 	}
@@ -176,6 +176,12 @@ public class BypassCar extends Car {
 						 * no one is going to miss one time step
 						 */
 						return;
+					} else if (type == CarType.RED && !ShapeUtils.intersectAA(world.worldCamera.worldViewport, this.shape.aabb)) {
+						
+						if (((BypassWorld)world).winnerMenu == null) {
+							WinnerMenu.action();
+						}
+						
 					}
 				}
 			}

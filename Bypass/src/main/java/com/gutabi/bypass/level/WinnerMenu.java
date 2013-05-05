@@ -22,11 +22,9 @@ public class WinnerMenu extends Menu {
 		} else if (letter == 'B') {
 			excl = "Good!";
 		} else if (letter == 'C') {
-			excl = "OK!";
-		} else if (letter == 'D') {
-			excl = "Adequate!";
+			excl = "OK";
 		} else {
-			excl = "Effort!";
+			excl = "";
 		}
 		
 		world.winnerMenu = new WinnerMenu(world, excl, "Grade: " + world.curLevel.grade);

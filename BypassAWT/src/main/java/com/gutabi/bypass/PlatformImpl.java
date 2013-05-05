@@ -13,6 +13,8 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
@@ -219,20 +221,29 @@ public class PlatformImpl implements BypassPlatform {
 		return null;
 	}
 	
+	Map<Font, Map<String, AABB>> fontBoundsCache = new HashMap<Font, Map<String, AABB>>();
+	
 	public AABB bounds(String preText, Resource fontFile, FontStyle fontStyle, int fontSize) {
-		
-		AABB aabb = null;
-		
-		/*
-		 * layout returns height of 0 for " "
-		 */
-		String text = preText.replace(' ', 'X');
 		
 		Font ttfReal = getRealFont(fontFile, fontStyle, fontSize);
 		
-		TextLayout layout = new TextLayout(text, ttfReal, frc);
-		Rectangle2D bounds = layout.getBounds();
-		aabb = new AABB(bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight());
+		Map<String, AABB> boundsCache = fontBoundsCache.get(ttfReal);
+		if (boundsCache == null) {
+			boundsCache = new HashMap<String, AABB>();
+			fontBoundsCache.put(ttfReal, boundsCache);
+		}
+		
+		AABB aabb = boundsCache.get(preText);
+		if (aabb == null) {
+			/*
+			 * layout returns height of 0 for " "
+			 */
+			String text = preText.replace(' ', 'X');
+			
+			TextLayout layout = new TextLayout(text, ttfReal, frc);
+			Rectangle2D bounds = layout.getBounds();
+			aabb = new AABB(bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight());
+		}
 		
 		return aabb;
 	}

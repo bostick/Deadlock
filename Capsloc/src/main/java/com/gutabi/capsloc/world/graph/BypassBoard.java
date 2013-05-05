@@ -1291,6 +1291,7 @@ public class BypassBoard extends Entity {
 		MutableAABB a = o.aabb;
 		
 		double frac = a.fractionWithin(gridAABB, gridAABB);
+//		double frac = a.fractionWithin(gridAABB, allStudsAABB);
 		
 		return frac;
 	}

@@ -1,40 +1,21 @@
 
-get rid of uithread and draw on demand
-could draw from event thread from user actions (hilite menuitem, drag menu, drag car, winner menu appears)
-or could draw from simulation thread, (shimmering menu items, shimmering car, coasting car, animated grass)
-
-only repaint dirty regions
-
-
-
-
-
-
-
 things from party:
 
 too easy to get an F
 think about keeping track of user moves, when user goes back, like an undo, decrement counter, stack of user moves
 
-episode 1, level 0, truck blocked by truck, blocking happens off-screen
+on tab, episode 1, level 0, flick yellow truck up, hits other truck offscreen
+
+too easy to snag on a flick
+
+sometiems tunnels through
+
 
 too easy to drag and overshoot on the grid, if within 25% just snap to it
 
 
 
 jiggle car a little to indicate hitting other car, or currently locked because another car is still coasting
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -57,6 +38,9 @@ allow custom boards? does bigger than 6x6 work?
 
 
 SOON:
+
+
+only repaint dirty regions
 
 
 world menu:
@@ -88,6 +72,10 @@ use graph paper and sketch out different screens and layouts first
 
 
 DONE:
+
+get rid of uithread and draw on demand
+could draw from event thread from user actions (hilite menuitem, drag menu, drag car, winner menu appears)
+or could draw from simulation thread, (shimmering menu items, shimmering car, coasting car, animated grass)
 
 separate tutorial.zip, episode1.zip, episode2.zip
 from main menu, have "tutorial", "episode1", ...

@@ -104,8 +104,12 @@ public abstract class MenuItem {
 		ctxt.popClip();
 		
 		if (border) {
+			ctxt.setColor(Color.BLUE);
+			ctxt.setStroke(0.0, Cap.SQUARE, Join.MITER);
 			aabb.draw(ctxt);
 		}
+		
+		
 	}
 	
 	public void paintHilited(RenderingContext ctxt) {

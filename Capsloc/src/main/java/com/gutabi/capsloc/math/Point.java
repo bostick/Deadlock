@@ -629,8 +629,16 @@ public class Point implements Serializable {
 		return new Point(x + b.x, y + b.y);
 	}
 	
+	public Point plus(double xx, double yy) {
+		return new Point(x + xx, y + yy);
+	}
+	
 	public Point minus(Point b) {
 		return new Point(x - b.x, y - b.y);
+	}
+	
+	public Point minus(double xx, double yy) {
+		return new Point(x - xx, y - yy);
 	}
 	
 	public Point minus(Dim d) {

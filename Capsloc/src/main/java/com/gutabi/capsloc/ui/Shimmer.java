@@ -98,8 +98,11 @@ public class Shimmer {
 		}
 		
 		double param = (t - startMillis) / (timeToTraverse + timeToRest);
-		assert param >= 0.0;
-		assert param <= 1.0;
+		assert param >= 0.0 : param;
+//		assert param <= 1.0 : param;
+		if (param > 1.0) {
+			return;
+		}
 		
 		double top = x + (((1 + timeToRest / timeToTraverse)) * param) * ((brX + height) - x);
 		double bottom = y + (((1 + timeToRest / timeToTraverse)) * param) * ((brY + width) - y);

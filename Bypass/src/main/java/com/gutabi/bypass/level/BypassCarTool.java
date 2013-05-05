@@ -123,10 +123,12 @@ public class BypassCarTool extends WorldToolBase {
 				if (gpos instanceof RoadPosition) {
 					assert car.driver.toolLastExitingVertexPos != null;
 					
-					if (car.driver.overallPos.combo < car.driver.toolLastExitingVertexPos.combo) {
-						determineCoasting(car.driver.toolLastExitingVertexPos, car.driver.toolLastExitingVertexPos.prevVertexPosition(), true);
+					if (car.driver.overallPos.combo < car.driver.prevOverallPos.combo) {
+//						System.out.print("backward ");
+						determineCoasting(car.driver.toolLastExitingVertexPos, car.driver.overallPos.prevVertexPosition(), true);
 					} else {
-						determineCoasting(car.driver.toolLastExitingVertexPos, car.driver.toolLastExitingVertexPos.nextVertexPosition(), true);
+//						System.out.print("forward ");
+						determineCoasting(car.driver.toolLastExitingVertexPos, car.driver.overallPos.nextVertexPosition(), true);
 					}
 					
 				} else if (gpos instanceof VertexPosition) {
@@ -201,11 +203,14 @@ public class BypassCarTool extends WorldToolBase {
 	}
 	
 	void determineCoasting(GraphPositionPathPosition origVertexPos, GraphPositionPathPosition otherVertexPos, boolean tryOtherSideFirst) {
-		assert !origVertexPos.equals(otherVertexPos);
+//		assert !origVertexPos.equals(otherVertexPos);
+		if (origVertexPos.equals(otherVertexPos)) {
+//			System.out.println("equal ");
+		}
 		assert origVertexPos.gp instanceof VertexPosition;
 		assert otherVertexPos.gp instanceof VertexPosition;
 		
-		boolean otherIsForward = otherVertexPos.combo > origVertexPos.combo;
+		boolean otherIsForward = otherVertexPos.combo > car.driver.overallPos.combo;
 		
 		int studCount = (int)(car.length * Car.METERS_PER_CARLENGTH / BypassStud.SIZE);
 		
@@ -225,10 +230,16 @@ public class BypassCarTool extends WorldToolBase {
 				}
 				car.setCoastingVelFromDrag(dragVector, dragTimeStepMillis, true);
 				car.state = CarStateEnum.COASTING_FORWARD;
+				
+//				System.out.println("forward");
+				
 			} else {
 				car.driver.toolCoastingGoal = otherVertexPos.travelBackward(BypassStud.SIZE + 0.5 * studCount);
 				car.setCoastingVelFromDrag(dragVector, dragTimeStepMillis, false);
 				car.state = CarStateEnum.COASTING_BACKWARD;
+				
+//				System.out.println("backward");
+				
 			}
 			
 		} else {
@@ -240,10 +251,16 @@ public class BypassCarTool extends WorldToolBase {
 				car.driver.toolCoastingGoal = origVertexPos.travelBackward(BypassStud.SIZE + 0.5 * studCount);
 				car.setCoastingVelFromDrag(dragVector, dragTimeStepMillis, false);
 				car.state = CarStateEnum.COASTING_BACKWARD;
+				
+//				System.out.println("backward");
+				
 			} else {
 				car.driver.toolCoastingGoal = origVertexPos.travelForward(BypassStud.SIZE + 0.5 * studCount);
 				car.setCoastingVelFromDrag(dragVector, dragTimeStepMillis, true);
 				car.state = CarStateEnum.COASTING_FORWARD;
+				
+//				System.out.println("forward");
+				
 			}
 			
 		}
@@ -290,7 +307,7 @@ public class BypassCarTool extends WorldToolBase {
 			return;
 		}
 		
-		Point diff = world.lastDraggedWorldPoint.minus(world.lastPressedWorldPoint);
+		Point diff = curDragP.minus(world.lastPressedWorldPoint);
 		
 		Point carPTmp = car.toolOrigCenter.plus(diff);
 		

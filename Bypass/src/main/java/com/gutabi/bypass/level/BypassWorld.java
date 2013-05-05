@@ -515,30 +515,30 @@ public class BypassWorld extends World implements Model {
 			 * diff can be negative in tutorials since we just set it to 100
 			 */
 			curLevel.grade = "A+";
-		} else if (diff < 2) {
+		} else if (diff < 1 * 3) {
 			curLevel.grade = "A";
-		} else if (diff < 4) {
+		} else if (diff < 9) {
 			curLevel.grade = "A-";
-		} else if (diff < 6) {
+		} else if (diff < 27) {
 			curLevel.grade = "B+";
-		} else if (diff < 8) {
+		} else if (diff < 81) {
 			curLevel.grade = "B";
-		} else if (diff < 10) {
+		} else if (diff < 243) {
 			curLevel.grade = "B-";
-		} else if (diff < 12) {
+		} else if (diff < 729) {
 			curLevel.grade = "C+";
-		} else if (diff < 14) {
-			curLevel.grade = "C+";
-		} else if (diff < 16) {
-			curLevel.grade = "C+";
-		} else if (diff < 18) {
+		} else if (diff < 2187) {
+			curLevel.grade = "C";
+		} else if (diff < 6561) {
+			curLevel.grade = "C-";
+		} else if (diff < 19683) {
 			curLevel.grade = "D+";
-		} else if (diff < 20) {
+		} else if (diff < 59049) {
 			curLevel.grade = "D";
-		} else if (diff < 22) {
+		} else if (diff < 177147) {
 			curLevel.grade = "D-";
 		} else {
-			curLevel.grade = "F";	
+			curLevel.grade = "F";
 		}
 		
 		curLevel.userTime = (System.currentTimeMillis() - curLevel.userStartTime);
@@ -559,7 +559,6 @@ public class BypassWorld extends World implements Model {
 			}
 		}
 		
-		WinnerMenu.action();
 	}
 	
 	public void panelPostDisplay(int width, int height) {

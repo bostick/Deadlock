@@ -3,10 +3,11 @@ package com.gutabi.bypass;
 import static com.gutabi.capsloc.CapslocApplication.APP;
 
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -61,8 +62,26 @@ public class PlatformImpl implements BypassPlatform {
 	
 	Resources resources;
 	
+	ResourceImpl visitorFontResource;
+	Paint visitorPlain36 = new Paint();
+	Paint visitorPlain16 = new Paint();
+	Paint visitorPlain48 = new Paint();
+	Paint visitorPlain72 = new Paint();
+	
 	public PlatformImpl(Resources resources) {
 		this.resources = resources;
+		
+		visitorFontResource = new ResourceImpl(Typeface.createFromAsset(resources.getAssets(), "fonts/" + "visitor1" + ".ttf"));
+		
+		visitorPlain36.setTypeface(visitorFontResource.face);
+		visitorPlain36.setTextSize(36);
+		visitorPlain16.setTypeface(visitorFontResource.face);
+		visitorPlain16.setTextSize(16);
+		visitorPlain48.setTypeface(visitorFontResource.face);
+		visitorPlain48.setTextSize(48);
+		visitorPlain72.setTypeface(visitorFontResource.face);
+		visitorPlain72.setTextSize(72);
+		
 	}
 	
 	public RenderingContext createRenderingContext() {
@@ -123,6 +142,33 @@ public class PlatformImpl implements BypassPlatform {
 		
 	}
 	
+	private Paint getFontPaint(Resource font, FontStyle fontStyle, int fontSize) {
+		
+		if (font == visitorFontResource) {
+			
+			if (fontStyle == FontStyle.PLAIN) {
+				
+				if (fontSize == 16) {
+					return visitorPlain16;	
+				} else if (fontSize == 48) {
+					return visitorPlain48;	
+				} else if (fontSize == 72) {
+					return visitorPlain72;	
+				} else if (fontSize == 36) {
+					return visitorPlain36;	
+				}
+				
+			}
+			
+		}
+		
+		assert false;
+		return null;
+	}
+	
+	
+	Map<Paint, Map<String, AABB>> fontBoundsCache = new HashMap<Paint, Map<String, AABB>>();
+	
 	/*
 	 * font engine
 	 */
@@ -134,17 +180,24 @@ public class PlatformImpl implements BypassPlatform {
 		String text = preText.replace(' ', 'X');
 		
 		assert fontStyle == FontStyle.PLAIN;
-		Paint textPaint = new Paint();
+		Paint textPaint = getFontPaint(font, fontStyle, fontSize);
 		
-		textPaint.setTypeface(((ResourceImpl)font).face);
-		textPaint.setTextSize(fontSize);
+		Map<String, AABB> boundsCache = fontBoundsCache.get(textPaint);
+		if (boundsCache == null) {
+			boundsCache = new HashMap<String, AABB>();
+			fontBoundsCache.put(textPaint, boundsCache);
+		}
 		
-		Rect bounds = new Rect();
-		textPaint.getTextBounds(text, 0, text.length(), bounds);
-		assert bounds.width() > 0;
-		assert bounds.height() > 0;
+		AABB aabb = boundsCache.get(preText);
+		if (aabb == null) {
+			Rect bounds = new Rect();
+			textPaint.getTextBounds(text, 0, text.length(), bounds);
+			assert bounds.width() > 0;
+			assert bounds.height() > 0;
+			
+			aabb = new AABB(bounds.left, bounds.top, bounds.width(), bounds.height());
+		}
 		
-		AABB aabb = new AABB(bounds.left, bounds.top, bounds.width(), bounds.height());
 		return aabb;
 	}
 
@@ -260,18 +313,12 @@ public class PlatformImpl implements BypassPlatform {
 		
 		throw new AssertionError();
 	}
-
-	
-	static ResourceImpl visitorFontResource;
 	
 	public Resource fontResource(String name) {
 		
-		AssetManager am = resources.getAssets();
+//		AssetManager am = resources.getAssets();
 		
 		if (name.equals("visitor1")) {
-			if (visitorFontResource == null) {
-				visitorFontResource = new ResourceImpl(Typeface.createFromAsset(am, "fonts/" + name + ".ttf"));
-			}
 			return visitorFontResource;
 		}
 		

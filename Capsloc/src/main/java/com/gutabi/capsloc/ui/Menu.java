@@ -10,9 +10,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import com.gutabi.capsloc.geom.AABB;
 import com.gutabi.capsloc.math.DMath;
 import com.gutabi.capsloc.math.Point;
-import com.gutabi.capsloc.ui.paint.Cap;
 import com.gutabi.capsloc.ui.paint.Color;
-import com.gutabi.capsloc.ui.paint.Join;
 import com.gutabi.capsloc.ui.paint.RenderingContext;
 
 public abstract class Menu {
@@ -298,8 +296,8 @@ public abstract class Menu {
 		/*
 		 * for MenuItem borders
 		 */
-		ctxt.setColor(Color.BLUE);
-		ctxt.setStroke(0.0, Cap.SQUARE, Join.MITER);
+//		ctxt.setColor(Color.BLUE);
+//		ctxt.setStroke(0.0, Cap.SQUARE, Join.MITER);
 		
 		for (int i = 0; i < tree.size(); i++) {
 			List<MenuItem> col = tree.get(i);

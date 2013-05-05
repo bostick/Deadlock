@@ -45,8 +45,8 @@ public abstract class Button {
 				lab.color = Color.GRAY;
 			}
 			lab.render();
-			double width = lab.getWidth();
-			double height = lab.getHeight();
+			double width = lab.aabb.width;
+			double height = lab.aabb.height;
 			aabb = new AABB(aabb.x, aabb.y, width, height);
 		}
 	}
