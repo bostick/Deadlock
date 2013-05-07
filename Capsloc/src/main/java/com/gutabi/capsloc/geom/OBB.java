@@ -1,10 +1,8 @@
 package com.gutabi.capsloc.geom;
 
-import static com.gutabi.capsloc.CapslocApplication.APP;
-
 import com.gutabi.capsloc.math.Point;
 
-public abstract class OBB implements Shape {
+public class OBB {
 	
 	public final Point center;
 	public final double a;
@@ -33,9 +31,9 @@ public abstract class OBB implements Shape {
 	
 	private int hash;
 	
-	protected OBB(Point center, double preA, double xExtant, double yExtant) {
+	public OBB(Point center, double preA, double xExtant, double yExtant) {
 		
-		MutableOBB m = APP.platform.createMutableOBB();
+		MutableOBB m = new MutableOBB();
 		m.setShape(center, preA, xExtant, yExtant);
 		
 		this.center = m.center;
@@ -124,7 +122,7 @@ public abstract class OBB implements Shape {
 	}
 	
 	public OBB plus(Point p) {
-		return APP.platform.createOBB(center.plus(p), a, xExtant, yExtant);
+		return new OBB(center.plus(p), a, xExtant, yExtant);
 	}
 	
 	public boolean hitTest(Point p) {

@@ -4,7 +4,7 @@ import com.gutabi.capsloc.math.DMath;
 import com.gutabi.capsloc.math.Point;
 import com.gutabi.capsloc.ui.paint.RenderingContext;
 
-public class Circle implements Shape {
+public class Circle {
 	
 	public final Point center;
 	public final double radius;
@@ -83,4 +83,5 @@ public class Circle implements Shape {
 	public void paint(RenderingContext ctxt) {
 		ctxt.paintCircle(this);
 	}
+
 }

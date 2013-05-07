@@ -5,14 +5,14 @@ import java.util.List;
 
 import com.gutabi.capsloc.math.Point;
 
-public abstract class CubicCurve implements Shape {
+public class CubicCurve {
 	
-	Point p0;
-	Point c0;
-	Point c1;
-	Point p1;
+	public final Point p0;
+	public final Point c0;
+	public final Point c1;
+	public final Point p1;
 	
-	protected CubicCurve(Point p0, Point c0, Point c1, Point p1) {
+	public CubicCurve(Point p0, Point c0, Point c1, Point p1) {
 		
 		this.p0 = p0;
 		this.c0 = c0;

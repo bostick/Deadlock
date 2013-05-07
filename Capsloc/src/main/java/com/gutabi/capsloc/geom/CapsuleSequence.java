@@ -1,5 +1,7 @@
 package com.gutabi.capsloc.geom;
 
+import static com.gutabi.capsloc.CapslocApplication.APP;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,7 +9,7 @@ import com.gutabi.capsloc.math.DMath;
 import com.gutabi.capsloc.math.Point;
 import com.gutabi.capsloc.ui.paint.RenderingContext;
 
-public class CapsuleSequence implements Shape, SweeperShape, CompoundShape {
+public class CapsuleSequence implements SweeperShape, CompoundShape {
 	
 	public final List<Capsule> caps;
 	
@@ -16,6 +18,8 @@ public class CapsuleSequence implements Shape, SweeperShape, CompoundShape {
 	public final double radius;
 	
 	public final AABB aabb;
+	
+	GeometryPath path = APP.platform.createGeometryPath();
 	
 	public CapsuleSequence(List<Capsule> caps) {
 		this.caps = caps;
@@ -35,8 +39,16 @@ public class CapsuleSequence implements Shape, SweeperShape, CompoundShape {
 		}
 		
 		MutableAABB aabbTmp = new MutableAABB();
-		for (Capsule c : caps) {
+		for (int i = 0; i < caps.size(); i++) {
+			Capsule c = caps.get(i);
 			aabbTmp.union(c.aabb);
+			path.add(c.ac);
+			if (c.middle != null) {
+				path.add(c.middle);
+			}
+			if (i == caps.size()-1) {
+				path.add(c.bc);
+			}
 		}
 		aabb = new AABB(aabbTmp.x, aabbTmp.y, aabbTmp.width, aabbTmp.height);
 	}
@@ -190,7 +202,7 @@ public class CapsuleSequence implements Shape, SweeperShape, CompoundShape {
 		}
 	}
 	
-	public boolean intersect(Shape s) {
+	public boolean intersect(Object s) {
 		
 		for (Capsule c : caps) {
 			if (ShapeUtils.intersect(c, s)) {
@@ -216,31 +228,17 @@ public class CapsuleSequence implements Shape, SweeperShape, CompoundShape {
 		
 	}
 	
-	public boolean contains(Shape s) {
+	public boolean contains(Object s) {
 		assert false;
 		return false;
 	}
 	
 	public void paint(RenderingContext ctxt) {
-		for (int i = 0; i < caps.size(); i++) {
-			Capsule c = caps.get(i);
-			c.paintA(ctxt);
-			c.paintMiddle(ctxt);
-			if (i == caps.size()-1) {
-				c.paintB(ctxt);
-			}
-		}
+		path.paint(ctxt);
 	}
 	
 	public void draw(RenderingContext ctxt) {
-		for (int i = 0; i < caps.size(); i++) {
-			Capsule c = caps.get(i);
-			c.drawA(ctxt);
-			c.drawMiddle(ctxt);
-			if (i == caps.size()-1) {
-				c.drawB(ctxt);
-			}
-		}
+		path.draw(ctxt);
 	}
 	
 	public void drawSkeleton(RenderingContext ctxt) {

@@ -5,7 +5,6 @@ import static com.gutabi.capsloc.CapslocApplication.APP;
 import com.gutabi.capsloc.Entity;
 import com.gutabi.capsloc.geom.AABB;
 import com.gutabi.capsloc.geom.Line;
-import com.gutabi.capsloc.geom.Shape;
 import com.gutabi.capsloc.geom.ShapeUtils;
 import com.gutabi.capsloc.math.Point;
 import com.gutabi.capsloc.ui.paint.Cap;
@@ -204,7 +203,7 @@ public class Merger extends Edge {
 		return null;
 	}
 	
-	public Entity decorationsIntersect(Shape s) {
+	public Entity decorationsIntersect(Object s) {
 		return null;
 	}
 	

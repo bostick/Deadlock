@@ -8,7 +8,6 @@ import java.io.StringReader;
 import java.util.Scanner;
 
 import com.gutabi.capsloc.geom.AABB;
-import com.gutabi.capsloc.geom.Shape;
 import com.gutabi.capsloc.geom.ShapeUtils;
 import com.gutabi.capsloc.math.DMath;
 import com.gutabi.capsloc.math.Point;
@@ -215,7 +214,7 @@ public class QuadrantMap {
 		return down;
 	}
 	
-	public boolean contains(Shape s) {
+	public boolean contains(Object s) {
 		
 		if (!ShapeUtils.contains(aabb, s)) {
 			return false;

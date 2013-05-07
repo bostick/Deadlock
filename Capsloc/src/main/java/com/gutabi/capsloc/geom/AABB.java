@@ -7,7 +7,7 @@ import com.gutabi.capsloc.math.Dim;
 import com.gutabi.capsloc.math.Point;
 import com.gutabi.capsloc.ui.paint.RenderingContext;
 
-public class AABB implements Shape, Serializable {
+public class AABB implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -291,4 +291,6 @@ public class AABB implements Shape, Serializable {
 	public void paint(RenderingContext ctxt) {
 		ctxt.paintAABB(this);
 	}
+
+		
 }

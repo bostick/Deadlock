@@ -3,7 +3,6 @@ package com.gutabi.capsloc.world.cars;
 import static com.gutabi.capsloc.CapslocApplication.APP;
 
 import com.gutabi.capsloc.Entity;
-import com.gutabi.capsloc.geom.Circle;
 import com.gutabi.capsloc.geom.ShapeUtils;
 import com.gutabi.capsloc.math.DMath;
 import com.gutabi.capsloc.math.Point;
@@ -349,15 +348,15 @@ public class AutonomousCar extends Car {
 		
 		if (APP.DEBUG_DRAW) {
 			
-			if (((AutonomousDriver)driver).overallPos != null) {
-				ctxt.setColor(Color.DARKGREEN);
-				ctxt.paintCircle(new Circle(((AutonomousDriver)driver).overallPos.p, 0.2));
-			}
-			
-			if (((AutonomousDriver)driver).goalPoint != null) {
-				ctxt.setColor(Color.GREEN);
-				ctxt.paintCircle(new Circle(((AutonomousDriver)driver).goalPoint, 0.2));
-			}
+//			if (((AutonomousDriver)driver).overallPos != null) {
+//				ctxt.setColor(Color.DARKGREEN);
+//				ctxt.paintCircle(new Circle(((AutonomousDriver)driver).overallPos.p, 0.2));
+//			}
+//			
+//			if (((AutonomousDriver)driver).goalPoint != null) {
+//				ctxt.setColor(Color.GREEN);
+//				ctxt.paintCircle(new Circle(((AutonomousDriver)driver).goalPoint, 0.2));
+//			}
 			
 			ctxt.setColor(Color.BLACK);
 			ctxt.setStroke(0.0, Cap.SQUARE, Join.MITER);

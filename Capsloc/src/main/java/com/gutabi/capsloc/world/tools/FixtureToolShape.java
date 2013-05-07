@@ -4,7 +4,6 @@ import com.gutabi.capsloc.geom.AABB;
 import com.gutabi.capsloc.geom.Capsule;
 import com.gutabi.capsloc.geom.Circle;
 import com.gutabi.capsloc.geom.CompoundShape;
-import com.gutabi.capsloc.geom.Shape;
 import com.gutabi.capsloc.geom.ShapeUtils;
 import com.gutabi.capsloc.math.Point;
 import com.gutabi.capsloc.ui.paint.RenderingContext;
@@ -52,7 +51,7 @@ public class FixtureToolShape implements CompoundShape {
 		return aabb;
 	}
 	
-	public boolean intersect(Shape s) {
+	public boolean intersect(Object s) {
 		
 		if (ShapeUtils.intersect(worldSourceCircle, s)) {
 			return true;

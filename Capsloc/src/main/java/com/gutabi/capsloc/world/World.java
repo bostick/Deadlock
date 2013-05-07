@@ -421,9 +421,9 @@ public class World extends PhysicsWorld {
 		APP.DEBUG_DRAW = false; 
 		
 		ctxt.setColor(Color.LIGHT_GRAY);
-		ctxt.fillRect(
-				0, 0,
-				(int)worldCamera.previewAABB.width, (int)worldCamera.previewAABB.height);
+//		ctxt.fillRect(
+//				0, 0,
+//				(int)worldCamera.previewAABB.width, (int)worldCamera.previewAABB.height);
 		
 		ctxt.pushTransform();
 		

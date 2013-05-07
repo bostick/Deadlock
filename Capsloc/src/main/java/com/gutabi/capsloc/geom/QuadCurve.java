@@ -5,13 +5,13 @@ import java.util.List;
 
 import com.gutabi.capsloc.math.Point;
 
-public abstract class QuadCurve implements Shape {
+public class QuadCurve {
 	
-	Point p0;
-	Point c0;
-	Point p1;
+	public Point p0;
+	public Point c0;
+	public Point p1;
 	
-	protected QuadCurve(Point p0, Point c0, Point p1) {
+	public QuadCurve(Point p0, Point c0, Point p1) {
 		this.p0 = p0;
 		this.c0 = c0;
 		this.p1 = p1;

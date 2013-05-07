@@ -8,15 +8,15 @@ import java.util.List;
 import com.gutabi.capsloc.geom.Capsule;
 import com.gutabi.capsloc.geom.CapsuleSequence;
 import com.gutabi.capsloc.geom.Circle;
+import com.gutabi.capsloc.geom.GeometryPath;
 import com.gutabi.capsloc.geom.Line;
 import com.gutabi.capsloc.geom.QuadCurve;
-import com.gutabi.capsloc.geom.Shape;
 import com.gutabi.capsloc.math.Point;
 import com.gutabi.capsloc.ui.paint.Color;
 import com.gutabi.capsloc.ui.paint.RenderingContext;
 import com.gutabi.capsloc.world.graph.Vertex;
 
-public class QuadToolShape implements Shape {
+public class QuadToolShape {
 	
 	public final Point start;
 	public final Circle startCircle; 
@@ -31,6 +31,7 @@ public class QuadToolShape implements Shape {
 	public final CapsuleSequence skeletonSeq;
 	
 //	private final AABB aabb;
+	GeometryPath path = APP.platform.createGeometryPath();
 	
 	public QuadToolShape(Point start, Point c, Point end) {
 		
@@ -39,7 +40,9 @@ public class QuadToolShape implements Shape {
 		this.end = end;
 		this.c = c;
 		
-		q = APP.platform.createQuadCurve(start, c, end);
+		q = new QuadCurve(start, c, end);
+		path.add(q);
+		
 		tan0 = new Line(c, start);
 		tan1 = new Line(c, end);
 		
@@ -68,7 +71,7 @@ public class QuadToolShape implements Shape {
 			skeletonSeq.draw(ctxt);
 			
 			ctxt.setColor(Color.ORANGE);
-			q.draw(ctxt);
+			path.draw(ctxt);
 			tan0.draw(ctxt);
 			tan1.draw(ctxt);
 		} else {

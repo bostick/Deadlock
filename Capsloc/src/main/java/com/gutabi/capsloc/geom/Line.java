@@ -4,7 +4,7 @@ import com.gutabi.capsloc.math.DMath;
 import com.gutabi.capsloc.math.Point;
 import com.gutabi.capsloc.ui.paint.RenderingContext;
 
-public class Line implements Shape {
+public class Line {
 	
 	public final Point p0;
 	public final Point p1;
@@ -106,12 +106,14 @@ public class Line implements Shape {
 		out[0] = n01Projection[0];
 		out[1] = n01Projection[1];
 	}
-
+	
 	public void paint(RenderingContext ctxt) {
 		ctxt.drawLine(this);
 	}
-
+	
 	public void draw(RenderingContext ctxt) {
 		ctxt.drawLine(this);
 	}
+
+	
 }

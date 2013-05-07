@@ -3,6 +3,7 @@ package com.gutabi.capsloc.ui;
 import static com.gutabi.capsloc.CapslocApplication.APP;
 
 import com.gutabi.capsloc.geom.AABB;
+import com.gutabi.capsloc.geom.GeometryPath;
 import com.gutabi.capsloc.geom.MutableAABB;
 import com.gutabi.capsloc.geom.MutablePolygon;
 import com.gutabi.capsloc.math.DMath;
@@ -20,7 +21,8 @@ public class Shimmer {
 	
 	public double startMillis;
 	
-	MutablePolygon poly = APP.platform.createMutablePolygon();
+	MutablePolygon poly = new MutablePolygon();
+	GeometryPath path = APP.platform.createGeometryPath();
 	
 	double traverseSpeed;
 	double timeToRest;
@@ -140,7 +142,11 @@ public class Shimmer {
 		}
 		
 		poly.setPoints(p0x, p0y, p1x, p1y, p2x, p2y, p3x, p3y);
+		
+		path.reset();
+		path.add(poly);
+		
 		ctxt.setColor(Color.WHITE);
-		poly.paint(ctxt);
+		path.paint(ctxt);
 	}
 }

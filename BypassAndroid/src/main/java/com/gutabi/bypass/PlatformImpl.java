@@ -19,15 +19,7 @@ import android.os.SystemClock;
 import android.util.Log;
 
 import com.gutabi.bypass.ResourceImpl.ResourceType;
-import com.gutabi.bypass.geom.CubicCurveImpl;
-import com.gutabi.bypass.geom.EllipseImpl;
-import com.gutabi.bypass.geom.MutableOBBImpl;
-import com.gutabi.bypass.geom.MutablePolygonImpl;
-import com.gutabi.bypass.geom.OBBImpl;
-import com.gutabi.bypass.geom.PolygonImpl;
-import com.gutabi.bypass.geom.PolylineImpl;
-import com.gutabi.bypass.geom.QuadCurveImpl;
-import com.gutabi.bypass.geom.TriangleImpl;
+import com.gutabi.bypass.geom.GeometryPathImpl;
 import com.gutabi.bypass.level.BypassWorld;
 import com.gutabi.bypass.level.BypassWorldActivity;
 import com.gutabi.bypass.level.Level;
@@ -41,16 +33,7 @@ import com.gutabi.bypass.ui.PlatformContentPaneImpl;
 import com.gutabi.bypass.ui.paint.RenderingContextImpl;
 import com.gutabi.capsloc.Resource;
 import com.gutabi.capsloc.geom.AABB;
-import com.gutabi.capsloc.geom.CubicCurve;
-import com.gutabi.capsloc.geom.Ellipse;
-import com.gutabi.capsloc.geom.MutableOBB;
-import com.gutabi.capsloc.geom.MutablePolygon;
-import com.gutabi.capsloc.geom.OBB;
-import com.gutabi.capsloc.geom.Polygon;
-import com.gutabi.capsloc.geom.Polyline;
-import com.gutabi.capsloc.geom.QuadCurve;
-import com.gutabi.capsloc.geom.Triangle;
-import com.gutabi.capsloc.math.Point;
+import com.gutabi.capsloc.geom.GeometryPath;
 import com.gutabi.capsloc.ui.Image;
 import com.gutabi.capsloc.ui.PlatformContentPane;
 import com.gutabi.capsloc.ui.paint.FontStyle;
@@ -366,44 +349,6 @@ public class PlatformImpl implements BypassPlatform {
 	}
 	
 	
-
-	public Polyline createPolyline(Point... pts) {
-		return new PolylineImpl(pts);
-	}
-
-	public OBB createOBB(Point center, double preA, double xExtant, double yExtant) {
-		return new OBBImpl(center, preA, xExtant, yExtant);
-	}
-
-	public Ellipse createEllipse(Point center, double x, double y) {
-		return new EllipseImpl(center, x, y);
-	}
-
-	public Triangle createTriangle(Point p0, Point p1, Point p2) {
-		return new TriangleImpl(p0, p1, p2);
-	}
-
-	public QuadCurve createQuadCurve(Point start, Point c0, Point end) {
-		return new QuadCurveImpl(start, c0, end);
-	}
-
-	public CubicCurve createCubicCurve(Point start, Point c0, Point c1, Point end) {
-		return new CubicCurveImpl(start, c0, c1, end);
-	}
-	
-	public Polygon createPolygon4(Point p0, Point p1, Point p2, Point p3) {
-		return new PolygonImpl(p0, p1, p2, p3);
-	}
-	
-	public MutablePolygon createMutablePolygon() {
-		return new MutablePolygonImpl();
-	}
-	
-	public MutableOBB createMutableOBB() {
-		return new MutableOBBImpl();
-	}
-	
-	
 	
 	public void action(@SuppressWarnings("rawtypes") Class clazz, Object... args) {
 		
@@ -508,6 +453,10 @@ public class PlatformImpl implements BypassPlatform {
 	
 	public long monotonicClockMillis() {
 		return SystemClock.uptimeMillis();
+	}
+	
+	public GeometryPath createGeometryPath() {
+		return new GeometryPathImpl();
 	}
 	
 }

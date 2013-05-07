@@ -5,7 +5,7 @@ import com.gutabi.capsloc.math.Point;
 
 public class ShapeUtils {
 	
-	public static boolean intersect(Shape s0, Shape s1) {
+	public static boolean intersect(Object s0, Object s1) {
 		
 		if (s0 instanceof CompoundShape) {
 			
@@ -57,7 +57,7 @@ public class ShapeUtils {
 		return false;
 	}
 	
-	public static boolean intersectArea(Shape s0, Shape s1) {
+	public static boolean intersectArea(Object s0, Object s1) {
 		
 		if (s0 instanceof OBB) {
 			if (s1 instanceof AABB) {
@@ -73,7 +73,7 @@ public class ShapeUtils {
 		return false;
 	}
 	
-	public static boolean touch(Shape s0, Shape s1) {
+	public static boolean touch(Object s0, Object s1) {
 		
 		if (s0 instanceof Capsule) {
 			if (s1 instanceof Circle) {
@@ -89,7 +89,7 @@ public class ShapeUtils {
 		return false;
 	}
 	
-	public static boolean contains(Shape s0, Shape s1) {
+	public static boolean contains(Object s0, Object s1) {
 		
 		if (s0 instanceof AABB) {
 			if (s1 instanceof OBB) {

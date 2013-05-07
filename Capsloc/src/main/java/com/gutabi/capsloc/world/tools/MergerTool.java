@@ -4,7 +4,6 @@ import static com.gutabi.capsloc.CapslocApplication.APP;
 
 import java.util.Set;
 
-import com.gutabi.capsloc.geom.Shape;
 import com.gutabi.capsloc.math.Point;
 import com.gutabi.capsloc.ui.InputEvent;
 import com.gutabi.capsloc.ui.paint.Cap;
@@ -32,7 +31,7 @@ public class MergerTool extends WorldToolBase {
 		}	
 	}
 	
-	public Shape getShape() {
+	public Object getShape() {
 		return shape;
 	}
 	

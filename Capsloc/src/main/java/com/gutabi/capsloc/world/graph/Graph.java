@@ -18,7 +18,6 @@ import com.gutabi.capsloc.geom.Capsule;
 import com.gutabi.capsloc.geom.Circle;
 import com.gutabi.capsloc.geom.MutableAABB;
 import com.gutabi.capsloc.geom.OBB;
-import com.gutabi.capsloc.geom.Shape;
 import com.gutabi.capsloc.geom.ShapeUtils;
 import com.gutabi.capsloc.math.DMath;
 import com.gutabi.capsloc.math.OverlappingException;
@@ -662,7 +661,7 @@ public class Graph {
 		return null;
 	}
 	
-	public Entity pureGraphIntersect(Shape s) {
+	public Entity pureGraphIntersect(Object s) {
 		for (Vertex v : vertices) {
 			if (ShapeUtils.intersect(v.getShape(), s)) {
 				return v;

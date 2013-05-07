@@ -2,11 +2,11 @@ package com.gutabi.capsloc.geom;
 
 import com.gutabi.capsloc.math.Point;
 
-public abstract class MutablePolygon implements Shape {
+public class MutablePolygon {
 	
-	double[][] pts = new double[4][2];
+	public double[][] pts = new double[4][2];
 	
-	protected MutablePolygon() {
+	public MutablePolygon() {
 		
 	}
 	

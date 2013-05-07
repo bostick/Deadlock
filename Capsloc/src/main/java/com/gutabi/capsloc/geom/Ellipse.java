@@ -2,7 +2,7 @@ package com.gutabi.capsloc.geom;
 
 import com.gutabi.capsloc.math.Point;
 
-public abstract class Ellipse implements Shape {
+public class Ellipse {
 	
 	public final Point center;
 	public final double xRadius;
@@ -10,7 +10,7 @@ public abstract class Ellipse implements Shape {
 	
 	public final AABB aabb;
 	
-	protected Ellipse(Point center, double xRadius, double yRadius) {
+	public Ellipse(Point center, double xRadius, double yRadius) {
 		this.center = center;
 		this.xRadius = xRadius;
 		this.yRadius = yRadius;

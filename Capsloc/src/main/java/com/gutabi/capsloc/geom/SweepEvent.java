@@ -13,7 +13,7 @@ public abstract class SweepEvent {
 	 */
 	public SweepEventType type;
 	public final Object stillParent;
-	public final Shape still;
+	public final Object still;
 	
 	public final SweeperShape moving;
 	
@@ -27,7 +27,7 @@ public abstract class SweepEvent {
 	public Vertex v;
 	public boolean inRoad;
 	
-	protected SweepEvent(SweepEventType type, Object stillParent, Shape still, CapsuleSequence moving, int index, double param, int offset) {
+	protected SweepEvent(SweepEventType type, Object stillParent, Object still, CapsuleSequence moving, int index, double param, int offset) {
 		this.type = type;
 		this.stillParent = stillParent;
 		this.still = still;
@@ -41,7 +41,7 @@ public abstract class SweepEvent {
 		
 	} 
 	
-	protected SweepEvent(SweepEventType type, Object stillParent, Shape still, MutableCapsuleSequence moving, int index, double param, int offset) {
+	protected SweepEvent(SweepEventType type, Object stillParent, Object still, MutableCapsuleSequence moving, int index, double param, int offset) {
 		this.type = type;
 		this.stillParent = stillParent;
 		this.still = still;

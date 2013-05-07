@@ -1,11 +1,9 @@
 package com.gutabi.capsloc.geom;
 
-import static com.gutabi.capsloc.CapslocApplication.APP;
-
 import com.gutabi.capsloc.math.DMath;
 import com.gutabi.capsloc.math.Point;
 
-public abstract class MutableOBB implements Shape {
+public class MutableOBB {
 	
 	public Point center;
 	public double a;
@@ -34,7 +32,7 @@ public abstract class MutableOBB implements Shape {
 	
 	private int hash;
 	
-	protected MutableOBB() {
+	public MutableOBB() {
 		
 	}
 	
@@ -130,7 +128,7 @@ public abstract class MutableOBB implements Shape {
 	}
 	
 	public OBB copy() {
-		return APP.platform.createOBB(center, a, xExtant, yExtant);
+		return new OBB(center, a, xExtant, yExtant);
 	}
 	
 	public int hashCode() {
@@ -206,7 +204,7 @@ public abstract class MutableOBB implements Shape {
 	}
 	
 	public OBB plus(Point p) {
-		return APP.platform.createOBB(center.plus(p), a, xExtant, yExtant);
+		return new OBB(center.plus(p), a, xExtant, yExtant);
 	}
 	
 	public boolean hitTest(Point p) {

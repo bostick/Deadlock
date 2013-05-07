@@ -1,7 +1,5 @@
 package com.gutabi.capsloc.geom;
 
-import static com.gutabi.capsloc.CapslocApplication.APP;
-
 import com.gutabi.capsloc.math.DMath;
 import com.gutabi.capsloc.math.Point;
 
@@ -40,7 +38,7 @@ public class Geom {
 	}
 	
 	public static OBB localToWorld(AABB a, double angle, Point t) {
-		return APP.platform.createOBB(t, angle, a.width/2, a.height/2);
+		return new OBB(t, angle, a.width/2, a.height/2);
 	}
 	
 	public static void localToWorld(AABB a, double angle, Point t, MutableOBB out) {

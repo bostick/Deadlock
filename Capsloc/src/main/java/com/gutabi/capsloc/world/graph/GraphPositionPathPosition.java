@@ -1,7 +1,5 @@
 package com.gutabi.capsloc.world.graph;
 
-import static com.gutabi.capsloc.CapslocApplication.APP;
-
 import java.io.Serializable;
 
 import com.gutabi.capsloc.geom.Geom;
@@ -612,8 +610,8 @@ public class GraphPositionPathPosition implements Serializable {
 	}
 	
 	
-	public transient MutableOBB mao = APP.platform.createMutableOBB();
-	public transient MutableOBB mbo = APP.platform.createMutableOBB();
+	public transient MutableOBB mao = new MutableOBB();
+	public transient MutableOBB mbo = new MutableOBB();
 	public transient MutableSweptOBB swept = new MutableSweptOBB();
 	
 	/**

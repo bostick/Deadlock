@@ -4,7 +4,6 @@ import com.gutabi.capsloc.geom.AABB;
 import com.gutabi.capsloc.geom.Circle;
 import com.gutabi.capsloc.geom.CompoundShape;
 import com.gutabi.capsloc.geom.MutableAABB;
-import com.gutabi.capsloc.geom.Shape;
 import com.gutabi.capsloc.geom.ShapeUtils;
 import com.gutabi.capsloc.math.Point;
 import com.gutabi.capsloc.ui.paint.RenderingContext;
@@ -50,12 +49,12 @@ public class MergerToolShape implements CompoundShape {
 		return false;
 	}
 	
-	public Shape plus(Point p) {
+	public Object plus(Point p) {
 		assert false;
 		return null;
 	}
 	
-	public boolean intersect(Shape s) {
+	public boolean intersect(Object s) {
 		
 		if (ShapeUtils.intersect(worldQ, s)) {
 			return true;

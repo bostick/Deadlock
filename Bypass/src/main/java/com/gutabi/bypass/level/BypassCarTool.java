@@ -1,7 +1,7 @@
 package com.gutabi.bypass.level;
 
 import static com.gutabi.capsloc.CapslocApplication.APP;
-import com.gutabi.capsloc.geom.Shape;
+
 import com.gutabi.capsloc.math.DMath;
 import com.gutabi.capsloc.math.Point;
 import com.gutabi.capsloc.ui.InputEvent;
@@ -31,7 +31,7 @@ public class BypassCarTool extends WorldToolBase {
 		
 	}
 	
-	public Shape getShape() {
+	public Object getShape() {
 		return null;
 	}
 	

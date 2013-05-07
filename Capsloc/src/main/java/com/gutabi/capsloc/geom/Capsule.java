@@ -10,7 +10,7 @@ import com.gutabi.capsloc.ui.paint.Color;
 import com.gutabi.capsloc.ui.paint.Join;
 import com.gutabi.capsloc.ui.paint.RenderingContext;
 
-public class Capsule implements Shape {
+public class Capsule {
 	
 	public final Circle ac;
 	public final Circle bc;
@@ -34,6 +34,8 @@ public class Capsule implements Shape {
 	private Line abUp;
 	private Line baDown;
 	
+	private GeometryPath path;
+	
 	private int hash;
 	
 	public Capsule(Circle ac, Circle bc) {
@@ -48,6 +50,8 @@ public class Capsule implements Shape {
 			throw new IllegalArgumentException("radii not equal");
 		}
 		
+		path = APP.platform.createGeometryPath();
+		
 		if (!a.equals(b)) {
 			
 			Point diff = new Point(b.x - a.x, b.y - a.y);
@@ -61,7 +65,11 @@ public class Capsule implements Shape {
 			bUp = b.plus(u);
 			bDown = b.plus(d);
 			
-			middle = APP.platform.createOBB(Point.point(a, b, 0.5), Math.atan2(diff.y, diff.x), Point.distance(a, b)/2, r);
+			middle = new OBB(Point.point(a, b, 0.5), Math.atan2(diff.y, diff.x), Point.distance(a, b)/2, r);
+			
+			path.add(ac);
+			path.add(middle);
+			path.add(bc);
 			
 			debugNormalLine = new Line(a, a.plus(n));
 			debugSkeletonLine = new Line(a, b);
@@ -79,6 +87,9 @@ public class Capsule implements Shape {
 			bDown = null;
 			
 			middle = null;
+			
+			path.add(ac);
+			path.add(bc);
 			
 			debugNormalLine = null;
 			debugSkeletonLine = new Line(a, b);
@@ -187,11 +198,7 @@ public class Capsule implements Shape {
 			return;
 		}
 		
-		ac.paint(ctxt);
-		if (middle != null) {
-			middle.paint(ctxt);
-		}
-		bc.paint(ctxt);
+		path.paint(ctxt);
 		
 		if (APP.DEBUG_DRAW) {
 			Color c = ctxt.getColor();
@@ -204,45 +211,39 @@ public class Capsule implements Shape {
 		}
 	}
 	
-	public void paintA(RenderingContext ctxt) {
-		ac.paint(ctxt);
-	}
-	
-	public void paintB(RenderingContext ctxt) {
-		bc.paint(ctxt);
-	}
-	
-	public void paintMiddle(RenderingContext ctxt) {
-		if (middle != null) {
-			middle.paint(ctxt);
-		}
-	}
+//	public void paintA(RenderingContext ctxt) {
+//		ac.paint(ctxt);
+//	}
+//	
+//	public void paintB(RenderingContext ctxt) {
+//		bc.paint(ctxt);
+//	}
+//	
+//	public void paintMiddle(RenderingContext ctxt) {
+//		if (middle != null) {
+//			middle.paint(ctxt);
+//		}
+//	}
 	
 	public void draw(RenderingContext ctxt) {
-		ac.draw(ctxt);
-		if (middle != null) {
-			middle.draw(ctxt);
-		}
-		bc.draw(ctxt);
+		path.draw(ctxt);
 	}
 	
-	public void drawA(RenderingContext ctxt) {
-		ac.draw(ctxt);
-	}
-	
-	public void drawB(RenderingContext ctxt) {
-		bc.draw(ctxt);
-	}
-	
-	public void drawMiddle(RenderingContext ctxt) {
-		if (middle != null) {
-			middle.draw(ctxt);
-		}
-	}
+//	public void drawA(RenderingContext ctxt) {
+//		ac.draw(ctxt);
+//	}
+//	
+//	public void drawB(RenderingContext ctxt) {
+//		bc.draw(ctxt);
+//	}
+//	
+//	public void drawMiddle(RenderingContext ctxt) {
+//		if (middle != null) {
+//			middle.draw(ctxt);
+//		}
+//	}
 	
 	public void drawSkeleton(RenderingContext ctxt) {
-		
 		debugSkeletonLine.draw(ctxt);
-		
 	}
 }

@@ -8,10 +8,12 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 
 import com.gutabi.bypass.ResourceImpl;
+import com.gutabi.bypass.geom.GeometryPathImpl;
 import com.gutabi.bypass.ui.ImageImpl;
 import com.gutabi.capsloc.Resource;
 import com.gutabi.capsloc.geom.AABB;
 import com.gutabi.capsloc.geom.Circle;
+import com.gutabi.capsloc.geom.GeometryPath;
 import com.gutabi.capsloc.geom.Line;
 import com.gutabi.capsloc.geom.MutableAABB;
 import com.gutabi.capsloc.math.Dim;
@@ -127,19 +129,19 @@ public class RenderingContextImpl extends RenderingContext {
 	}
 	
 	
-	Rect fr = new Rect();
-	
-	public void fillRect(int x, int y, int width, int height) {
-		
-		fr.left = x;
-		fr.top = y;
-		fr.right = x+width;
-		fr.bottom = y+height;
-		
-		paint.setStyle(Style.FILL);
-		
-		canvas.drawRect(fr, paint);
-	}
+//	Rect fr = new Rect();
+//	
+//	public void fillRect(int x, int y, int width, int height) {
+//		
+//		fr.left = x;
+//		fr.top = y;
+//		fr.right = x+width;
+//		fr.bottom = y+height;
+//		
+//		paint.setStyle(Style.FILL);
+//		
+//		canvas.drawRect(fr, paint);
+//	}
 	
 	public void drawAABB(AABB a) {
 		paint.setStyle(Style.STROKE);
@@ -160,6 +162,23 @@ public class RenderingContextImpl extends RenderingContext {
 		paint.setStyle(Style.FILL);
 		canvas.drawRect((float)a.x, (float)a.y, (float)(a.x+a.width), (float)(a.y+a.height), paint);
 	}
+	
+	public void drawPath(GeometryPath p) {
+		
+		GeometryPathImpl pp = (GeometryPathImpl)p;
+		
+		paint.setStyle(Style.STROKE);
+		canvas.drawPath(pp.p, paint);
+	}
+	
+	public void paintPath(GeometryPath p) {
+		
+		GeometryPathImpl pp = (GeometryPathImpl)p;
+		
+		paint.setStyle(Style.FILL);
+		canvas.drawPath(pp.p, paint);
+	}
+	
 	
 	public void drawLine(Line a) {
 		canvas.drawLine((float)a.p0.x, (float)a.p0.y, (float)a.p1.x, (float)a.p1.y, paint);

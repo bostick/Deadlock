@@ -15,10 +15,12 @@ import java.awt.image.BufferedImage;
 import java.util.Stack;
 
 import com.gutabi.bypass.PlatformImpl;
+import com.gutabi.bypass.geom.GeometryPathImpl;
 import com.gutabi.bypass.ui.ImageImpl;
 import com.gutabi.capsloc.Resource;
 import com.gutabi.capsloc.geom.AABB;
 import com.gutabi.capsloc.geom.Circle;
+import com.gutabi.capsloc.geom.GeometryPath;
 import com.gutabi.capsloc.geom.Line;
 import com.gutabi.capsloc.geom.MutableAABB;
 import com.gutabi.capsloc.math.Dim;
@@ -201,10 +203,10 @@ public class RenderingContextImpl extends RenderingContext {
 		g2.drawImage(bi, dx1, dy1, dx2, dy2, sx1, sy1, sx2, sy2, null);
 	}
 	
-	public void fillRect(int x, int y, int width, int height) {
-		g2.fillRect(x, y, width, height);
-	}
-	
+//	public void fillRect(int x, int y, int width, int height) {
+//		g2.fillRect(x, y, width, height);
+//	}
+//	
 	public void drawAABB(AABB a) {
 		Rectangle2D rect = new Rectangle2D.Double(a.x, a.y, a.width, a.height);
 		g2.draw(rect);
@@ -224,6 +226,21 @@ public class RenderingContextImpl extends RenderingContext {
 		Rectangle2D rect = new Rectangle2D.Double(a.x, a.y, a.width, a.height);
 		g2.fill(rect);
 	}
+	
+	public void drawPath(GeometryPath p) {
+		
+		GeometryPathImpl pp = (GeometryPathImpl)p;
+		
+		g2.draw(pp.path);
+	}
+	
+	public void paintPath(GeometryPath p) {
+		
+		GeometryPathImpl pp = (GeometryPathImpl)p;
+		
+		g2.fill(pp.path);
+	}
+	
 	
 	public void drawLine(Line a) {
 		Line2D l = new Line2D.Double(a.p0.x, a.p0.y, a.p1.x, a.p1.y);

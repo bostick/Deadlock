@@ -9,15 +9,15 @@ import com.gutabi.capsloc.geom.Capsule;
 import com.gutabi.capsloc.geom.CapsuleSequence;
 import com.gutabi.capsloc.geom.Circle;
 import com.gutabi.capsloc.geom.CubicCurve;
+import com.gutabi.capsloc.geom.GeometryPath;
 import com.gutabi.capsloc.geom.Line;
-import com.gutabi.capsloc.geom.Shape;
 import com.gutabi.capsloc.math.Point;
 import com.gutabi.capsloc.ui.paint.Color;
 import com.gutabi.capsloc.ui.paint.RenderingContext;
 import com.gutabi.capsloc.world.World;
 import com.gutabi.capsloc.world.graph.Vertex;
 
-public class CubicToolShape implements Shape {
+public class CubicToolShape {
 
 	public final World world;
 	public final Point start;
@@ -34,6 +34,7 @@ public class CubicToolShape implements Shape {
 	public final CapsuleSequence skeletonSeq;
 	
 //	private final AABB aabb;
+	GeometryPath path = APP.platform.createGeometryPath();
 	
 	public CubicToolShape(World world, Point start, Point c0, Point c1, Point end) {
 		
@@ -44,7 +45,9 @@ public class CubicToolShape implements Shape {
 		this.c0 = c0;
 		this.c1 = c1;
 		
-		c = APP.platform.createCubicCurve(start, c0, c1, end);
+		c = new CubicCurve(start, c0, c1, end);
+		path.add(c);
+		
 		tan0 = new Line(c0, start);
 		tan1 = new Line(c1, end);
 		
@@ -72,7 +75,7 @@ public class CubicToolShape implements Shape {
 		skeletonSeq.draw(ctxt);
 		
 		ctxt.setColor(Color.ORANGE);
-		c.draw(ctxt);
+		path.draw(ctxt);
 		tan0.draw(ctxt);
 		tan1.draw(ctxt);
 		

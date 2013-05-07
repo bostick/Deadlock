@@ -6,7 +6,6 @@ import java.util.List;
 import com.gutabi.capsloc.geom.AABB;
 import com.gutabi.capsloc.geom.CapsuleSequence;
 import com.gutabi.capsloc.geom.Circle;
-import com.gutabi.capsloc.geom.Shape;
 import com.gutabi.capsloc.geom.ShapeUtils;
 import com.gutabi.capsloc.ui.paint.RenderingContext;
 import com.gutabi.capsloc.world.sprites.AnimatedGrass;
@@ -22,7 +21,7 @@ public class GrassMap {
 	
 	List<AnimatedGrass> toRemove = new ArrayList<AnimatedGrass>();
 	
-	public void mowGrass(Shape s) {
+	public void mowGrass(Object s) {
 		
 		toRemove.clear();
 		

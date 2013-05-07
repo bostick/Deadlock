@@ -3,15 +3,7 @@ package com.gutabi.capsloc;
 import java.io.InputStream;
 
 import com.gutabi.capsloc.geom.AABB;
-import com.gutabi.capsloc.geom.CubicCurve;
-import com.gutabi.capsloc.geom.Ellipse;
-import com.gutabi.capsloc.geom.MutableOBB;
-import com.gutabi.capsloc.geom.MutablePolygon;
-import com.gutabi.capsloc.geom.OBB;
-import com.gutabi.capsloc.geom.Polyline;
-import com.gutabi.capsloc.geom.QuadCurve;
-import com.gutabi.capsloc.geom.Triangle;
-import com.gutabi.capsloc.math.Point;
+import com.gutabi.capsloc.geom.GeometryPath;
 import com.gutabi.capsloc.ui.Image;
 import com.gutabi.capsloc.ui.PlatformContentPane;
 import com.gutabi.capsloc.ui.paint.FontStyle;
@@ -69,27 +61,10 @@ public interface Platform {
 	
 	
 	
+	public abstract GeometryPath createGeometryPath();
+	
+	
 	public abstract void exit();
-	
-	
-	
-	public abstract Polyline createPolyline(Point... pts);
-	
-	public abstract OBB createOBB(Point center, double a, double xExtant, double yExtant);
-	
-	public abstract Ellipse createEllipse(Point center, double x, double y);
-	
-	public abstract Triangle createTriangle(Point p0, Point p1, Point p2);
-	
-	public abstract QuadCurve createQuadCurve(Point start, Point c0, Point end);
-	
-	public abstract CubicCurve createCubicCurve(Point start, Point c0, Point c1, Point end);
-	
-	public abstract MutablePolygon createMutablePolygon();
-	
-	public abstract MutableOBB createMutableOBB();
-	
-//	public abstract Transform createTransform();
 	
 	
 	

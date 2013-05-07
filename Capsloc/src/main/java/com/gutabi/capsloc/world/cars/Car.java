@@ -5,8 +5,8 @@ import static com.gutabi.capsloc.CapslocApplication.APP;
 import com.gutabi.capsloc.Entity;
 import com.gutabi.capsloc.geom.AABB;
 import com.gutabi.capsloc.geom.Geom;
+import com.gutabi.capsloc.geom.GeometryPath;
 import com.gutabi.capsloc.geom.MutableOBB;
-import com.gutabi.capsloc.geom.Shape;
 import com.gutabi.capsloc.math.Point;
 import com.gutabi.capsloc.ui.paint.Color;
 import com.gutabi.capsloc.ui.paint.RenderingContext;
@@ -37,7 +37,7 @@ public abstract class Car extends PhysicsBody {
 	boolean inMerger;
 	
 	public Point toolOrigCenter;
-	public MutableOBB toolOrigShape = APP.platform.createMutableOBB();
+	public MutableOBB toolOrigShape = new MutableOBB();
 	public Point toolOrigPixelOffset;
 	
 	public boolean destroyed;
@@ -46,6 +46,7 @@ public abstract class Car extends PhysicsBody {
 	public CarSheetSprite sprite;
 	public int sheetIndex;
 	
+	GeometryPath path = APP.platform.createGeometryPath();
 	
 	public static int carIDCounter;
 	
@@ -116,7 +117,7 @@ public abstract class Car extends PhysicsBody {
 		}
 	}
 	
-	public Shape getShape() {
+	public Object getShape() {
 		return shape;
 	}
 	
@@ -169,7 +170,9 @@ public abstract class Car extends PhysicsBody {
 	}
 	
 	protected void paintRect(RenderingContext ctxt) {
-		shape.paint(ctxt);
+		path.reset();
+		path.add(shape);
+		path.paint(ctxt);
 	}
 	
 	protected void paintBrakes(RenderingContext ctxt) {

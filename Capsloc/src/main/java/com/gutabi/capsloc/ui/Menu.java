@@ -32,6 +32,8 @@ public abstract class Menu {
 	public double[] columnHeight;
 	
 	public AABB aabb = new AABB(0, 0, 0, 0);
+	public AABB marginAABB = new AABB(0, 0, 0, 0);
+	
 	int parWidth;
 	int parHeight;
 	
@@ -56,10 +58,12 @@ public abstract class Menu {
 	
 	public void setLocation(double x, double y) {
 		aabb = new AABB(x, y, aabb.width, aabb.height);
+		marginAABB = new AABB(x-5, y-5, marginAABB.width, marginAABB.height);
 	}
 	
 	public void setLocation(Point p) {
 		aabb = new AABB(p.x, p.y, aabb.width, aabb.height);
+		marginAABB = new AABB(p.x-5, p.y-5, marginAABB.width, marginAABB.height);
 	}
 	
 	public void add(MenuItem item, int r, int c) {
@@ -239,6 +243,7 @@ public abstract class Menu {
 		
 		scale = s;
 		aabb = new AABB(-1, -1, scale * menuWidth, scale * menuHeight);
+		marginAABB = new AABB(-1, -1, scale * menuWidth + 10, scale * menuHeight + 10);
 		
 		if (DMath.lessThanEquals(aabb.width, parWidth)) {
 			/*
@@ -282,15 +287,10 @@ public abstract class Menu {
 	
 	public void paint_panel(RenderingContext ctxt) {
 		
-		ctxt.translate(aabb.x, aabb.y);
-		
 		ctxt.setColor(Color.menuBackground);
-		ctxt.fillRect(
-				(-5),
-				(-5),
-				(int)(aabb.width + 5 + 5),
-				(int)(aabb.height + 5 + 5));
+		ctxt.paintAABB(marginAABB);
 		
+		ctxt.translate(aabb.x, aabb.y);
 		ctxt.scale(scale);
 		
 		/*

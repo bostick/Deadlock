@@ -3,6 +3,7 @@ package com.gutabi.capsloc.ui.paint;
 import com.gutabi.capsloc.Resource;
 import com.gutabi.capsloc.geom.AABB;
 import com.gutabi.capsloc.geom.Circle;
+import com.gutabi.capsloc.geom.GeometryPath;
 import com.gutabi.capsloc.geom.Line;
 import com.gutabi.capsloc.geom.MutableAABB;
 import com.gutabi.capsloc.math.Dim;
@@ -61,10 +62,10 @@ public abstract class RenderingContext {
 	
 	public abstract void paintImage(Image img, int dx1, int dy1, int dx2, int dy2, int sx1, int sy1, int sx2, int sy2);
 	
-	public abstract void fillRect(int x, int y, int width, int height);
-	
 	public abstract void dispose();
 	
+//	public abstract void fillRect(int x, int y, int width, int height);
+//	
 	public abstract void drawAABB(AABB a);
 	
 	public abstract void paintAABB(AABB a);
@@ -72,6 +73,10 @@ public abstract class RenderingContext {
 	public abstract void drawAABB(MutableAABB a);
 	
 	public abstract void paintAABB(MutableAABB a);
+	
+	public abstract void paintPath(GeometryPath p);
+	
+	public abstract void drawPath(GeometryPath p);
 	
 	public abstract void drawLine(Line a);
 	

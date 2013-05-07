@@ -4,7 +4,6 @@ import static com.gutabi.capsloc.CapslocApplication.APP;
 
 import java.util.Set;
 
-import com.gutabi.capsloc.geom.Shape;
 import com.gutabi.capsloc.math.Dim;
 import com.gutabi.capsloc.math.Point;
 import com.gutabi.capsloc.ui.InputEvent;
@@ -96,7 +95,7 @@ public class CircleTool extends WorldToolBase {
 		shape = new CircleToolShape(p, xRadius, yRadius);
 	}
 	
-	public Shape getShape() {
+	public Object getShape() {
 		return shape;
 	}
 	

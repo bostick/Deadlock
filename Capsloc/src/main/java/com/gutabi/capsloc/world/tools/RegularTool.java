@@ -6,7 +6,6 @@ import java.util.Set;
 
 import com.gutabi.capsloc.Entity;
 import com.gutabi.capsloc.geom.Circle;
-import com.gutabi.capsloc.geom.Shape;
 import com.gutabi.capsloc.math.Point;
 import com.gutabi.capsloc.ui.InputEvent;
 import com.gutabi.capsloc.ui.paint.Cap;
@@ -56,7 +55,7 @@ public class RegularTool extends WorldToolBase {
 		
 	}
 	
-	public Shape getShape() {
+	public Object getShape() {
 		return shape;
 	}
 	

@@ -1,7 +1,7 @@
 package com.gutabi.capsloc.geom;
 
-public interface CompoundShape extends Shape {
+public interface CompoundShape {
 	
-	boolean intersect(Shape s);
+	boolean intersect(Object s);
 	
 }

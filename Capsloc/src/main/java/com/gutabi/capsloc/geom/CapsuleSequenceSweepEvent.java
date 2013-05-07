@@ -6,7 +6,7 @@ public class CapsuleSequenceSweepEvent extends SweepEvent {
 	
 	public final Circle circle;
 	
-	public CapsuleSequenceSweepEvent(SweepEventType type, Object stillParent, Shape still, CapsuleSequence moving, int index, double param, int offset) {
+	public CapsuleSequenceSweepEvent(SweepEventType type, Object stillParent, Object still, CapsuleSequence moving, int index, double param, int offset) {
 		super(type, stillParent, still, moving, index, param, offset);
 		
 		circle = new Circle(p, moving.getRadius());
@@ -20,7 +20,7 @@ public class CapsuleSequenceSweepEvent extends SweepEvent {
 		
 	}
 	
-	public CapsuleSequenceSweepEvent(SweepEventType type, Object stillParent, Shape still, MutableCapsuleSequence moving, int index, double param, int offset) {
+	public CapsuleSequenceSweepEvent(SweepEventType type, Object stillParent, Object still, MutableCapsuleSequence moving, int index, double param, int offset) {
 		super(type, stillParent, still, moving, index, param, offset);
 		
 		circle = new Circle(p, moving.getRadius());

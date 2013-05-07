@@ -18,6 +18,7 @@ import com.gutabi.bypass.R;
 import com.gutabi.bypass.menu.LevelMenu;
 import com.gutabi.capsloc.SimulationRunnable;
 import com.gutabi.capsloc.geom.Geom;
+import com.gutabi.capsloc.geom.MutableOBB;
 import com.gutabi.capsloc.geom.MutableSweptOBB;
 import com.gutabi.capsloc.math.Point;
 import com.gutabi.capsloc.ui.MenuTool;
@@ -104,8 +105,8 @@ public class BypassWorldActivity extends BypassActivity {
 					c.driver.overallPos.gp = p1.approachNeighbor(p2, dist * c.driver.overallPos.param);
 					c.driver.overallPos.p = c.driver.overallPos.gp.p;
 				}
-				c.driver.overallPos.mao = APP.platform.createMutableOBB();
-				c.driver.overallPos.mbo = APP.platform.createMutableOBB();
+				c.driver.overallPos.mao = new MutableOBB();
+				c.driver.overallPos.mbo = new MutableOBB();
 				c.driver.overallPos.swept = new MutableSweptOBB();
 				
 				
@@ -122,8 +123,8 @@ public class BypassWorldActivity extends BypassActivity {
 						c.driver.toolCoastingGoal.gp = p1.approachNeighbor(p2, dist * c.driver.toolCoastingGoal.param);
 						c.driver.toolCoastingGoal.p = c.driver.toolCoastingGoal.gp.p;
 					}
-					c.driver.toolCoastingGoal.mao = APP.platform.createMutableOBB();
-					c.driver.toolCoastingGoal.mbo = APP.platform.createMutableOBB();
+					c.driver.toolCoastingGoal.mao = new MutableOBB();
+					c.driver.toolCoastingGoal.mbo = new MutableOBB();
 					c.driver.toolCoastingGoal.swept = new MutableSweptOBB();
 					
 					
@@ -139,8 +140,8 @@ public class BypassWorldActivity extends BypassActivity {
 						c.driver.toolOrigExitingVertexPos.gp = p1.approachNeighbor(p2, dist * c.driver.toolOrigExitingVertexPos.param);
 						c.driver.toolOrigExitingVertexPos.p = c.driver.toolOrigExitingVertexPos.gp.p;
 					}
-					c.driver.toolOrigExitingVertexPos.mao = APP.platform.createMutableOBB();
-					c.driver.toolOrigExitingVertexPos.mbo = APP.platform.createMutableOBB();
+					c.driver.toolOrigExitingVertexPos.mao = new MutableOBB();
+					c.driver.toolOrigExitingVertexPos.mbo = new MutableOBB();
 					c.driver.toolOrigExitingVertexPos.swept = new MutableSweptOBB();
 					
 					

@@ -1,7 +1,6 @@
 package com.gutabi.capsloc.world.graph;
 
 import com.gutabi.capsloc.Entity;
-import com.gutabi.capsloc.geom.Shape;
 import com.gutabi.capsloc.math.Point;
 import com.gutabi.capsloc.ui.paint.RenderingContext;
 
@@ -18,7 +17,7 @@ public abstract class Edge extends Entity {
 	public abstract void setDirection(Axis a, Direction dir);
 	
 	
-	public abstract Shape getShape();
+	public abstract Object getShape();
 	
 	
 	public abstract Vertex getReferenceVertex(Axis a);
@@ -37,7 +36,7 @@ public abstract class Edge extends Entity {
 	
 	public abstract Entity decorationsHitTest(Point p);
 	
-	public abstract Entity decorationsIntersect(Shape e);
+	public abstract Entity decorationsIntersect(Object e);
 	
 	
 	public abstract String toFileString();

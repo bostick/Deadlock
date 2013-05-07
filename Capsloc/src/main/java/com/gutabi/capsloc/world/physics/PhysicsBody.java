@@ -1,7 +1,5 @@
 package com.gutabi.capsloc.world.physics;
 
-import static com.gutabi.capsloc.CapslocApplication.APP;
-
 import com.gutabi.capsloc.Entity;
 import com.gutabi.capsloc.geom.AABB;
 import com.gutabi.capsloc.geom.MutableOBB;
@@ -53,7 +51,7 @@ public abstract class PhysicsBody extends Entity {
 	public PhysicsBody(World world) {
 		this.world = world;
 		
-		this.shape = APP.platform.createMutableOBB();
+		this.shape = new MutableOBB();
 	}
 	
 	public void physicsInit() {

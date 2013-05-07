@@ -261,5 +261,4 @@ public class MutableAABB implements Serializable {
 	public void paint(RenderingContext ctxt) {
 		ctxt.paintAABB(this);
 	}
-	
 }

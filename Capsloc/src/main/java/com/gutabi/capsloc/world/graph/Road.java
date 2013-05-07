@@ -15,7 +15,7 @@ import com.gutabi.capsloc.geom.CapsuleSequence;
 import com.gutabi.capsloc.geom.CapsuleSequencePosition;
 import com.gutabi.capsloc.geom.Circle;
 import com.gutabi.capsloc.geom.Geom;
-import com.gutabi.capsloc.geom.Shape;
+import com.gutabi.capsloc.geom.GeometryPath;
 import com.gutabi.capsloc.geom.ShapeUtils;
 import com.gutabi.capsloc.geom.Triangle;
 import com.gutabi.capsloc.math.ColinearException;
@@ -61,7 +61,7 @@ public class Road extends Edge {
 	
 	public CapsuleSequence shape;
 	
-	private Triangle arrowPointer;
+	private GeometryPath arrowPointerPath = APP.platform.createGeometryPath();
 	
 	public Road(World world, Vertex start, Vertex end, List<Point> raw) {
 		
@@ -175,7 +175,10 @@ public class Road extends Edge {
 				Point p1 = Geom.times(rotMat, new Point(-1, 0.3)).plus(endBorderPoint.center);
 				Point p2 = Geom.times(rotMat, new Point(-1, -0.3)).plus(endBorderPoint.center);
 				
-				arrowPointer = APP.platform.createTriangle(p0, p1, p2);
+				Triangle arrowPointer = new Triangle(p0, p1, p2);
+				arrowPointerPath.reset();
+				arrowPointerPath.add(arrowPointer);
+				
 				
 			} else if (dir == Direction.ENDTOSTART) {
 				
@@ -189,12 +192,13 @@ public class Road extends Edge {
 				Point p1 = Geom.times(rotMat, new Point(1, 0.3)).plus(startBorderPoint.center);
 				Point p2 = Geom.times(rotMat, new Point(1, -0.3)).plus(startBorderPoint.center);
 				
-				arrowPointer = APP.platform.createTriangle(p0, p1, p2);
+				Triangle arrowPointer = new Triangle(p0, p1, p2);
+				arrowPointerPath.reset();
+				arrowPointerPath.add(arrowPointer);
 				
 			} else {
 				
-				arrowPointer = null;
-				
+				arrowPointerPath.reset();
 			}
 			
 		} else {
@@ -317,7 +321,7 @@ public class Road extends Edge {
 		return null;
 	}
 	
-	public Entity decorationsIntersect(Shape s) {
+	public Entity decorationsIntersect(Object s) {
 		
 		if (startSign != null) {
 			if (ShapeUtils.intersect(startSign.getShape(), s)) {
@@ -798,7 +802,7 @@ public class Road extends Edge {
 			
 			seq.drawSkeleton(ctxt);
 			
-			arrowPointer.paint(ctxt);
+			arrowPointerPath.paint(ctxt);
 			
 		}
 		

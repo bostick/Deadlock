@@ -2,19 +2,19 @@ package com.gutabi.capsloc.world.tools;
 
 import com.gutabi.capsloc.geom.Capsule;
 import com.gutabi.capsloc.geom.Circle;
-import com.gutabi.capsloc.geom.Shape;
 import com.gutabi.capsloc.math.Point;
 import com.gutabi.capsloc.ui.paint.RenderingContext;
 import com.gutabi.capsloc.world.World;
 import com.gutabi.capsloc.world.graph.Vertex;
 
-public class StraightEdgeToolShape implements Shape {
+public class StraightEdgeToolShape {
 	
 	public final Circle firstCircle;
 	public final Circle pCircle;
 	public final Capsule cap;
 	
 //	private final AABB aabb;
+//	GeometryPath path = APP.platform.createGeometryPath();
 	
 	public StraightEdgeToolShape(World world, Point first, Point p) {
 		

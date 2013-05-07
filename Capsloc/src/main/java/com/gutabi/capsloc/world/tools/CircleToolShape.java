@@ -3,13 +3,13 @@ package com.gutabi.capsloc.world.tools;
 import static com.gutabi.capsloc.CapslocApplication.APP;
 
 import com.gutabi.capsloc.geom.Ellipse;
+import com.gutabi.capsloc.geom.GeometryPath;
 import com.gutabi.capsloc.geom.Polyline;
-import com.gutabi.capsloc.geom.Shape;
 import com.gutabi.capsloc.math.Point;
 import com.gutabi.capsloc.ui.paint.RenderingContext;
 import com.gutabi.capsloc.world.graph.Vertex;
 
-public class CircleToolShape implements Shape {
+public class CircleToolShape {
 	
 	public final Point p;
 	public final double xRadius;
@@ -17,6 +17,7 @@ public class CircleToolShape implements Shape {
 	
 	public final Ellipse c0;
 	public final Ellipse c1;
+	GeometryPath path = APP.platform.createGeometryPath();
 	
 	public final Point[] skeleton;
 	public final Polyline skeletonShape;
@@ -26,21 +27,18 @@ public class CircleToolShape implements Shape {
 		this.xRadius = xRadius;
 		this.yRadius = yRadius;
 		
-		c0 = APP.platform.createEllipse(p, xRadius, yRadius);
-		c1 = APP.platform.createEllipse(p, xRadius + 2 * Vertex.INIT_VERTEX_RADIUS, yRadius + 2 * Vertex.INIT_VERTEX_RADIUS);
+		c0 = new Ellipse(p, xRadius, yRadius);
+		c1 = new Ellipse(p, xRadius + 2 * Vertex.INIT_VERTEX_RADIUS, yRadius + 2 * Vertex.INIT_VERTEX_RADIUS);
+		path.add(c0);
+		path.add(c1);
 		
-		skeleton = APP.platform.createEllipse(p, xRadius + Vertex.INIT_VERTEX_RADIUS, yRadius + Vertex.INIT_VERTEX_RADIUS).skeleton();
-		skeletonShape = APP.platform.createPolyline(skeleton);
+		skeleton = new Ellipse(p, xRadius + Vertex.INIT_VERTEX_RADIUS, yRadius + Vertex.INIT_VERTEX_RADIUS).skeleton();
+		skeletonShape = new Polyline(skeleton);
 		
 	}
 	
 	public void draw(RenderingContext ctxt) {
-		c0.draw(ctxt);
-		c1.draw(ctxt);
-	}
-	
-	public void paint(RenderingContext ctxt) {
-		assert false;
+		path.draw(ctxt);
 	}
 	
 }

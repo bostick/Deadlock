@@ -1,9 +1,8 @@
 package com.gutabi.capsloc.geom;
 
 import com.gutabi.capsloc.math.Point;
-import com.gutabi.capsloc.ui.paint.RenderingContext;
 
-public class MutableSweptOBB implements Shape {
+public class MutableSweptOBB {
 	
 	public MutableOBB start;
 	public MutableOBB end;
@@ -74,14 +73,6 @@ public class MutableSweptOBB implements Shape {
 			SweptOBB b = (SweptOBB)o;
 			return start.equals(b.start) && end.equals(b.end);
 		}
-	}
-	
-	public void paint(RenderingContext ctxt) {
-		assert false;
-	}
-	
-	public void draw(RenderingContext ctxt) {
-		assert false;
 	}
 	
 }

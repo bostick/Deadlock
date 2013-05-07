@@ -3,7 +3,6 @@ package com.gutabi.capsloc.world.tools;
 import static com.gutabi.capsloc.CapslocApplication.APP;
 
 import com.gutabi.capsloc.Tool;
-import com.gutabi.capsloc.geom.Shape;
 import com.gutabi.capsloc.math.Point;
 import com.gutabi.capsloc.ui.InputEvent;
 import com.gutabi.capsloc.world.World;
@@ -14,7 +13,7 @@ public abstract class WorldToolBase extends Tool {
 		
 	}
 	
-	public abstract Shape getShape();
+	public abstract Object getShape();
 	
 	public void gKey() {
 		World world = (World)APP.model;
