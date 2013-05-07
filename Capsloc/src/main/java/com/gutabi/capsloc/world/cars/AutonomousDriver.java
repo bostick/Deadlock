@@ -171,7 +171,7 @@ public final class AutonomousDriver extends Driver {
 	
 	public void postStep(double t) {
 		
-		setOverallPos(overallPos.forwardSearch(c.center, overallPath.endPos));
+		setOverallPos(overallPos.forwardSearch(c.center, Double.POSITIVE_INFINITY));
 		
 	}
 	

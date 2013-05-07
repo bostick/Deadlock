@@ -224,20 +224,28 @@ public class CapsuleSequence implements Shape, SweeperShape, CompoundShape {
 	public void paint(RenderingContext ctxt) {
 		for (int i = 0; i < caps.size(); i++) {
 			Capsule c = caps.get(i);
-			c.paint(ctxt);
+			c.paintA(ctxt);
+			c.paintMiddle(ctxt);
+			if (i == caps.size()-1) {
+				c.paintB(ctxt);
+			}
 		}
 	}
 	
 	public void draw(RenderingContext ctxt) {
-		for (Capsule c : caps) {
+		for (int i = 0; i < caps.size(); i++) {
+			Capsule c = caps.get(i);
 			c.drawA(ctxt);
 			c.drawMiddle(ctxt);
+			if (i == caps.size()-1) {
+				c.drawB(ctxt);
+			}
 		}
-		caps.get(caps.size()-1).drawB(ctxt);
 	}
 	
 	public void drawSkeleton(RenderingContext ctxt) {
-		for (Capsule c : caps) {
+		for (int i = 0; i < caps.size(); i++) {
+			Capsule c = caps.get(i);
 			c.drawSkeleton(ctxt);
 		}
 	}

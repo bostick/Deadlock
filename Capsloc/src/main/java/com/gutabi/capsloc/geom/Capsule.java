@@ -204,6 +204,20 @@ public class Capsule implements Shape {
 		}
 	}
 	
+	public void paintA(RenderingContext ctxt) {
+		ac.paint(ctxt);
+	}
+	
+	public void paintB(RenderingContext ctxt) {
+		bc.paint(ctxt);
+	}
+	
+	public void paintMiddle(RenderingContext ctxt) {
+		if (middle != null) {
+			middle.paint(ctxt);
+		}
+	}
+	
 	public void draw(RenderingContext ctxt) {
 		ac.draw(ctxt);
 		if (middle != null) {

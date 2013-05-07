@@ -182,6 +182,10 @@ public class GraphPositionPathPosition implements Serializable {
 	}
 	
 	private GraphPositionPathPosition travel(double dist, boolean forward) {
+		return travelByVertex(dist, forward);
+	}
+	
+	private GraphPositionPathPosition travelByVertex(double dist, boolean forward) {
 		
 		if (DMath.equals(dist, 0.0)) {
 			return this;
@@ -193,7 +197,7 @@ public class GraphPositionPathPosition implements Serializable {
 		
 		int curPathIndex = index;
 		double curPathParam = param;
-		GraphPosition curGraphPosition = gp;
+//		GraphPosition curGraphPosition = gp;
 		double curLengthToStartOfPath = lengthToStartOfPath;
 		
 		while (true) {
@@ -203,18 +207,18 @@ public class GraphPositionPathPosition implements Serializable {
 			 */
 			
 			int nextVertexIndex = forward ? path.nextVertexIndex(curPathIndex, curPathParam) : path.prevVertexIndex(curPathIndex, curPathParam);
-			GraphPosition nextVertexGP;
+//			GraphPosition nextVertexGP;
 			double nextVertexLengthToStartOfPath;
 			double distanceToNextVertexPosition;
 			if (nextVertexIndex == -1) {
 				/*
 				 * there is no next vertex
 				 */
-				nextVertexGP = null;
+//				nextVertexGP = null;
 				nextVertexLengthToStartOfPath = Double.POSITIVE_INFINITY;
 				distanceToNextVertexPosition = Double.POSITIVE_INFINITY;
 			} else {
-				nextVertexGP = path.get(nextVertexIndex);
+//				nextVertexGP = path.get(nextVertexIndex);
 				nextVertexLengthToStartOfPath = path.cumulativeDistancesFromStart[nextVertexIndex];
 				distanceToNextVertexPosition = forward ? nextVertexLengthToStartOfPath - curLengthToStartOfPath : curLengthToStartOfPath - nextVertexLengthToStartOfPath;
 			}
@@ -229,74 +233,125 @@ public class GraphPositionPathPosition implements Serializable {
 				
 				curPathIndex = nextVertexIndex;
 				curPathParam = 0.0;
-				curGraphPosition = nextVertexGP;
+//				curGraphPosition = nextVertexGP;
 				curLengthToStartOfPath = nextVertexLengthToStartOfPath;
 				
 			} else {
 				/* 
 				 * distanceToNextVertexPosition > toTravel == dist - traveled
 				 */
-				
-				while (true) {
-					
-					/*
-					 * try to go to the next bound
-					 */
-					int nextBoundIndex = forward ? (curPathIndex < path.size-1 ? curPathIndex+1 : -1) : (DMath.equals(curPathParam, 0.0) ? (curPathIndex > 0 ? curPathIndex-1 : -1) : curPathIndex);
-					GraphPosition nextBoundGP;
-					double nextBoundLengthToStartOfPath;
-					double distanceToNextBound;
-					if (nextBoundIndex == -1) {
-						/*
-						 * there is no next bound
-						 */
-						throw new IllegalArgumentException(forward ? "There is no next bound" : "There is no previous bound");
-					} else {
-						nextBoundGP = path.get(nextBoundIndex);
-						nextBoundLengthToStartOfPath = path.cumulativeDistancesFromStart[nextBoundIndex];
-						distanceToNextBound = forward ? nextBoundLengthToStartOfPath - curLengthToStartOfPath : curLengthToStartOfPath - nextBoundLengthToStartOfPath;
-					}
-					
-					if (DMath.equals(traveled + distanceToNextBound, dist)) {
-
-						return new GraphPositionPathPosition(path, nextBoundIndex, 0.0);
-						
-					} else if (traveled + distanceToNextBound < dist) {
-						
-						traveled += distanceToNextBound;
-						
-						curPathIndex = nextBoundIndex;
-						curPathParam = 0.0;
-						curGraphPosition = nextBoundGP;
-						curLengthToStartOfPath = nextBoundLengthToStartOfPath;
-						
-					} else {
-						/* 
-						 * distanceToNextBound > toTravel == dist - traveled
-						 */
-						
-						double toTravel = dist - traveled;
-						
-						GraphPosition ggoal = curGraphPosition.approachNeighbor(nextBoundGP, toTravel);
-						
-						double retCombo = curGraphPosition.goalGPPPCombo(curPathIndex, curPathParam, forward, ggoal, path, this, dist);
-						
-						int retIndex = (int)Math.floor(retCombo);
-						double retParam = retCombo - retIndex;
-						
-						GraphPositionPathPosition ret = new GraphPositionPathPosition(path, retIndex, retParam);
-						double distToRet = this.lengthTo(ret);
-						assert DMath.equals(distToRet, dist);
-						
-						return ret;
-						
-					}
-					
-				}
+				return new GraphPositionPathPosition(path, curPathIndex, curPathParam).travelByBound(dist-traveled, forward, null);
 				
 			}
 			
 		}
+		
+	}
+	
+	private GraphPositionPathPosition travelByBound(double dist, boolean forward, GPPAccumulator acc) {
+		
+		if (DMath.equals(dist, 0.0)) {
+			return this;
+		}
+		
+		assert dist > 0.0;
+		
+		double traveled = 0.0;
+		
+		GraphPositionPathPosition cur = this;
+		
+		while (true) {
+			
+			/*
+			 * try to go to the next bound
+			 */
+			int nextBoundIndex = forward ? (cur.index < path.size-1 ? cur.index+1 : -1) : (DMath.equals(cur.param, 0.0) ? (cur.index > 0 ? cur.index-1 : -1) : cur.index);
+			GraphPosition nextBoundGP;
+			double nextBoundLengthToStartOfPath;
+			double distanceToNextBound;
+			if (nextBoundIndex == -1) {
+				/*
+				 * there is no next bound
+				 */
+				throw new IllegalArgumentException(forward ? "There is no next bound" : "There is no previous bound");
+			} else {
+				nextBoundGP = path.get(nextBoundIndex);
+				nextBoundLengthToStartOfPath = path.cumulativeDistancesFromStart[nextBoundIndex];
+				distanceToNextBound = forward ? nextBoundLengthToStartOfPath - cur.lengthToStartOfPath : cur.lengthToStartOfPath - nextBoundLengthToStartOfPath;
+			}
+			
+			GraphPositionPathPosition next = new GraphPositionPathPosition(path, nextBoundIndex, 0.0);
+			
+			if (DMath.equals(traveled + distanceToNextBound, dist)) {	
+				
+				if (acc != null) {
+					if (forward) {
+						acc.apply(cur, next);
+					} else {
+						acc.apply(next, cur);
+					}
+				}
+				cur = next;
+				
+				return cur;
+				
+			} else if (traveled + distanceToNextBound < dist) {
+				
+				if (acc != null) {
+					if (forward) {
+						acc.apply(cur, next);
+					} else {
+						acc.apply(next, cur);
+					}
+				}
+				
+				cur = next;
+				
+				traveled += distanceToNextBound;
+				
+			} else {
+				/* 
+				 * distanceToNextBound > toTravel == dist - traveled
+				 */
+				
+				return cur.travelWithinBound(nextBoundGP, dist - traveled, forward, acc);
+				
+			}
+			
+		}
+		
+	}
+	
+	private GraphPositionPathPosition travelWithinBound(GraphPosition nextBoundGP, double dist, boolean forward, GPPAccumulator acc) {
+		
+		if (DMath.equals(dist, 0.0)) {
+			return this;
+		}
+		
+		assert dist > 0.0;
+		
+		assert !gp.equals(nextBoundGP);
+		
+		GraphPosition ggoal = gp.approachNeighbor(nextBoundGP, dist);
+		
+		double retCombo = gp.goalGPPPCombo(index, param, forward, ggoal, path, this, dist);
+		
+		int retIndex = (int)Math.floor(retCombo);
+		double retParam = retCombo - retIndex;
+		
+		GraphPositionPathPosition ret = new GraphPositionPathPosition(path, retIndex, retParam);
+		
+		if (acc != null) {
+			if (forward) {
+				acc.apply(this, ret);
+			} else {
+				acc.apply(ret, this);
+			}
+		}
+		
+		assert DMath.equals(this.lengthTo(ret), dist);
+		
+		return ret;
 		
 	}
 	
@@ -430,149 +485,71 @@ public class GraphPositionPathPosition implements Serializable {
 		return new GraphPositionPathPosition(path, path.nextVertexIndex(index, param), 0.0);
 	}
 	
+	
+	
+	
+	GPPAccumulator forwardSearchAcc = new GPPAccumulator() {
+		
+		Point p;
+		
+		int closestIndex;
+		double closestParam;
+		double closestDistance;
+		
+		public void reset(Point p) {
+			this.p = p;
+			closestIndex = GraphPositionPathPosition.this.index;
+			closestParam = GraphPositionPathPosition.this.param;
+			closestDistance = Point.distance(p, GraphPositionPathPosition.this.p);
+		}
+		
+		public void apply(GraphPositionPathPosition p0, GraphPositionPathPosition p1) {
+			
+			assert p0.combo < p1.combo;
+			
+			GraphPositionPathPosition a = p0.floor();
+			GraphPositionPathPosition b = p1.ceil();
+			Point aa = a.p;
+			Point bb = b.p;
+			
+			double u = Point.u(aa, p, bb);
+			if (u < 0.0) {
+				u = 0.0;
+			} else if (u > 1.0) {
+				u = 1.0;
+			}
+			
+			Point pOnPath = Point.point(aa, bb, u);
+				
+			double dist = Point.distance(p, pOnPath);
+			if (dist < closestDistance) {
+				closestIndex = a.index;
+				closestParam = u;
+				
+				closestDistance = dist;
+				
+			}
+			
+		}
+		
+		public GraphPositionPathPosition result() {
+			return new GraphPositionPathPosition(path, closestIndex, closestParam);
+		}
+		
+	};
+	
 	/**
 	 * searches forward from start position
 	 * 
 	 * finds closest position in a graphpositionpath to p
 	 */
-	public GraphPositionPathPosition forwardSearch(Point p, GraphPositionPathPosition end) {
+	public GraphPositionPathPosition forwardSearch(final Point p, double lengthFromStart) {
 		
-		if (p.equals(this.p)) {
-			return this;
-		}
+		forwardSearchAcc.reset(p);
 		
-		if (this.equals(end)) {
-			
-			return this;
-			
-		} else if (this.index == end.index) {
-				
-			double u = Point.u(this.floor().p, p, end.ceil().p);
-			if (u < this.param) {
-				u = this.param;
-			} else if (u > end.param) {
-				u = end.param;
-			}
-			
-			GraphPositionPathPosition ret = new GraphPositionPathPosition(path, this.index, u);
-			return ret;
-			
-		} else if (end.index == this.index+1 && DMath.equals(end.param, 0.0)) {
-					
-			double u = Point.u(this.floor().p, p, end.p);
-			if (u < this.param) {
-				u = this.param;
-			} else if (u > 1.0) {
-				u = 1.0;
-			}
-			
-			GraphPositionPathPosition ret = new GraphPositionPathPosition(path, this.index, u);
-			return ret;
-					
-		}
+		travelByBound(lengthFromStart, true, forwardSearchAcc);
 		
-		int closestIndex = this.index;
-		double closestParam = this.param;
-		
-		double closestDistance = Point.distance(p, this.p);
-		
-		GraphPositionPathPosition a = this;
-		GraphPositionPathPosition startCeiling = this.ceil();
-		GraphPositionPathPosition b;
-		GraphPositionPathPosition endFloor = end.floor();
-		
-		if (!startCeiling.equals(a)) {
-			b = startCeiling;
-			
-			double u = Point.u(a.floor().p, p, b.p);
-			if (u < a.param) {
-				u = a.param;
-			} else if (u > 1.0) {
-				u = 1.0;
-			}
-			
-			Point pOnPath = Point.point(a.floor().p, b.p, u);
-			
-			if (p.equals(pOnPath)) {
-				GraphPositionPathPosition ret = new GraphPositionPathPosition(path, a.index, u);
-				return ret;
-			}
-			
-			double dist = Point.distance(p, pOnPath);
-			
-			if (dist < closestDistance) {
-				closestIndex = a.index;
-				closestParam = u;
-				
-				closestDistance = dist;
-				
-			}
-			
-			a = b;
-		}
-		while (true) {
-			
-			if (a.equals(endFloor)) {
-				break;
-			}
-			
-			b = a.nextBound();
-			
-			double u = Point.u(a.p, p, b.p);
-			if (u < 0.0) {
-				u = 0.0;
-			} else if (u > 1.0) {
-				u = 1.0;
-			}
-			
-			Point pOnPath = Point.point(a.p, b.p, u);
-			
-			if (p.equals(pOnPath)) {
-				GraphPositionPathPosition ret = new GraphPositionPathPosition(path, a.index, u);
-				return ret;
-			}
-				
-			double dist = Point.distance(p, pOnPath);
-			if (dist < closestDistance) {
-				closestIndex = a.index;
-				closestParam = u;
-				
-				closestDistance = dist;
-				
-			}
-			
-			a = b;
-		}
-		if (!a.equals(end)) {
-			b = end;
-					
-			double u = Point.u(a.p, p, b.ceil().p);
-			if (u < 0.0) {
-				u = 0.0;
-			} else if (u > b.param) {
-				u = b.param;
-			}
-			
-			Point pOnPath = Point.point(a.p, b.ceil().p, u);
-			
-			if (p.equals(pOnPath)) {
-				GraphPositionPathPosition ret = new GraphPositionPathPosition(path, a.index, u);
-				return ret;
-			}
-			
-			double dist = Point.distance(p, pOnPath);
-			
-			if (dist < closestDistance) {
-				closestIndex = a.index;
-				closestParam = u;
-				
-				closestDistance = dist;
-				
-			}
-		}
-		
-		GraphPositionPathPosition ret = new GraphPositionPathPosition(path, closestIndex, closestParam);
-		return ret;
+		return forwardSearchAcc.result();
 	}
 	
 	/**
@@ -580,153 +557,22 @@ public class GraphPositionPathPosition implements Serializable {
 	 * 
 	 * finds closest position in a graphpositionpath to p
 	 */
-	public GraphPositionPathPosition backwardSearch(Point p, GraphPositionPathPosition end) {
+	public GraphPositionPathPosition backwardSearch(Point p, double lengthFromStart) {
 		
-		if (p.equals(this.p)) {
-			return this;
-		}
+		forwardSearchAcc.reset(p);
 		
-		if (end.equals(this)) {
-			
-			return end;
-			
-		} else if (end.index == this.index) {
-				
-			double u = Point.u(end.floor().p, p, this.ceil().p);
-			if (u < end.param) {
-				u = end.param;
-			} else if (u > this.param) {
-				u = this.param;
-			}
-			
-			GraphPositionPathPosition ret = new GraphPositionPathPosition(path, end.index, u);
-			return ret;
-			
-		} else if (end.index == this.index-1 && DMath.equals(this.param, 0.0)) {
-					
-			double u = Point.u(end.floor().p, p, this.p);
-			if (u < end.param) {
-				u = end.param;
-			} else if (u > 1.0) {
-				u = 1.0;
-			}
-			
-			GraphPositionPathPosition ret = new GraphPositionPathPosition(path, end.index, u);
-			return ret;
-					
-		}
+		travelByBound(lengthFromStart, false, forwardSearchAcc);
 		
-		int closestIndex = this.index;
-		double closestParam = this.param;
-		
-		double closestDistance = Point.distance(p, this.p);
-		
-		GraphPositionPathPosition b = this;
-		GraphPositionPathPosition startFloor = this.floor();
-		GraphPositionPathPosition a;
-		GraphPositionPathPosition endCeil = end.ceil();
-		
-		if (!startFloor.equals(b)) {
-			a = startFloor;
-			
-			double u = Point.u(a.p, p, b.ceil().p);
-			if (u < 0.0) {
-				u = 0.0;
-			} else if (u > b.param) {
-				u = b.param;
-			}
-			
-			Point pOnPath = Point.point(a.p, b.ceil().p, u);
-			
-			if (p.equals(pOnPath)) {
-				GraphPositionPathPosition ret = new GraphPositionPathPosition(path, a.index, u);
-				return ret;
-			}
-			
-			double dist = Point.distance(p, pOnPath);
-			
-			if (dist < closestDistance) {
-				closestIndex = a.index;
-				closestParam = u;
-				
-				closestDistance = dist;
-				
-			}
-			
-			b = a;
-		}
-		while (true) {
-			
-			if (b.equals(endCeil)) {
-				break;
-			}
-			
-			a = b.prevBound();
-			
-			double u = Point.u(a.p, p, b.p);
-			if (u < 0.0) {
-				u = 0.0;
-			} else if (u > 1.0) {
-				u = 1.0;
-			}
-			
-			Point pOnPath = Point.point(a.p, b.p, u);
-			
-			if (p.equals(pOnPath)) {
-				GraphPositionPathPosition ret = new GraphPositionPathPosition(path, a.index, u);
-				return ret;
-			}
-				
-			double dist = Point.distance(p, pOnPath);
-			if (dist < closestDistance) {
-				closestIndex = a.index;
-				closestParam = u;
-				
-				closestDistance = dist;
-				
-			}
-			
-			b = a;
-		}
-		if (!b.equals(end)) {
-			a = end;
-					
-			double u = Point.u(a.floor().p, p, b.p);
-			if (u < a.param) {
-				u = a.param;
-			} else if (u > 1.0) {
-				u = 1.0;
-			}
-			
-			Point pOnPath = Point.point(a.floor().p, b.p, u);
-			
-			if (p.equals(pOnPath)) {
-				GraphPositionPathPosition ret = new GraphPositionPathPosition(path, a.index, u);
-				return ret;
-			}
-			
-			double dist = Point.distance(p, pOnPath);
-			
-			if (dist < closestDistance) {
-				closestIndex = a.index;
-				closestParam = u;
-				
-				closestDistance = dist;
-				
-			}
-		}
-		
-		GraphPositionPathPosition ret = new GraphPositionPathPosition(path, closestIndex, closestParam);
-		return ret;
+		return forwardSearchAcc.result();
 	}
 	
 	/**
 	 * searches both forward and backward from start position
 	 */
-	public GraphPositionPathPosition generalSearch(Point p, double lengthFromStart) {
+	public GraphPositionPathPosition generalSearch(Point p, double radius) {
 		
-		GraphPositionPathPosition forwardPos = forwardSearch(p, this.travelForward(Math.min(lengthFromStart, this.lengthToEndOfPath)));
-		GraphPositionPathPosition backwardPos = backwardSearch(p, this.travelBackward(Math.min(lengthFromStart, this.lengthToStartOfPath)));
+		GraphPositionPathPosition forwardPos = forwardSearch(p, Math.min(radius, this.lengthToEndOfPath));
+		GraphPositionPathPosition backwardPos = backwardSearch(p, Math.min(radius, this.lengthToStartOfPath));
 		
 		if (this.equals(backwardPos)) {
 			
