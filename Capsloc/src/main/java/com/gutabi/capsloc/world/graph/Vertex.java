@@ -5,7 +5,6 @@ import java.util.List;
 
 import com.gutabi.capsloc.Entity;
 import com.gutabi.capsloc.geom.Circle;
-import com.gutabi.capsloc.geom.ShapeUtils;
 import com.gutabi.capsloc.math.DMath;
 import com.gutabi.capsloc.math.Point;
 import com.gutabi.capsloc.ui.paint.Color;
@@ -279,9 +278,9 @@ public abstract class Vertex extends Entity {
 	
 	public void paintID(RenderingContext ctxt) {
 		
-		if (!ShapeUtils.intersectAA(shape.getAABB(), ctxt.cam.worldViewport)) {
-			return;
-		}
+//		if (!ShapeUtils.intersectAA(shape.getAABB(), ctxt.cam.worldViewport)) {
+//			return;
+//		}
 		
 		ctxt.setColor(Color.WHITE);
 		

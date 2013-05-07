@@ -4,7 +4,6 @@ import static com.gutabi.capsloc.CapslocApplication.APP;
 
 import com.gutabi.capsloc.geom.AABB;
 import com.gutabi.capsloc.geom.Line;
-import com.gutabi.capsloc.geom.ShapeUtils;
 import com.gutabi.capsloc.math.DMath;
 import com.gutabi.capsloc.math.Point;
 import com.gutabi.capsloc.ui.paint.Cap;
@@ -114,9 +113,9 @@ public class Quadrant {
 	
 	public void paint_panel(RenderingContext ctxt) {
 		
-		if (!ShapeUtils.intersectAA(aabb, ctxt.cam.worldViewport)) {
-			return;
-		}
+//		if (!ShapeUtils.intersectAA(aabb, ctxt.cam.worldViewport)) {
+//			return;
+//		}
 		
 		if (!active) {
 			ctxt.setColor(Color.DARK_GRAY);

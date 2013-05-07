@@ -15,7 +15,6 @@ import com.gutabi.capsloc.geom.Geom;
 import com.gutabi.capsloc.geom.Line;
 import com.gutabi.capsloc.geom.MutableAABB;
 import com.gutabi.capsloc.geom.MutableOBB;
-import com.gutabi.capsloc.geom.ShapeUtils;
 import com.gutabi.capsloc.math.Point;
 import com.gutabi.capsloc.ui.paint.Cap;
 import com.gutabi.capsloc.ui.paint.Color;
@@ -1302,9 +1301,9 @@ public class BypassBoard extends Entity {
 	
 	public void paint_panel(RenderingContext ctxt) {
 		
-		if (!ShapeUtils.intersectAA(allStudsAABB, ctxt.cam.worldViewport)) {
-			return;
-		}
+//		if (!ShapeUtils.intersectAA(allStudsAABB, ctxt.cam.worldViewport)) {
+//			return;
+//		}
 		
 		for (int i = 0; i < studs.size(); i++) {
 			BypassStud s = studs.get(i);

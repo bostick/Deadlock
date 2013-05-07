@@ -194,9 +194,9 @@ public class Capsule {
 	
 	public void paint(RenderingContext ctxt) {
 		
-		if (!ShapeUtils.intersectAA(aabb, ctxt.cam.worldViewport)) {
-			return;
-		}
+//		if (!ShapeUtils.intersectAA(aabb, ctxt.cam.worldViewport)) {
+//			return;
+//		}
 		
 		path.paint(ctxt);
 		

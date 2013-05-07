@@ -368,9 +368,9 @@ public final class Fixture extends Vertex {
 	
 	public void paint_panel(RenderingContext ctxt) {
 		
-		if (!ShapeUtils.intersectAA(shape.getAABB(), ctxt.cam.worldViewport)) {
-			return;
-		}
+//		if (!ShapeUtils.intersectAA(shape.getAABB(), ctxt.cam.worldViewport)) {
+//			return;
+//		}
 		
 		if (!APP.DEBUG_DRAW) {
 			

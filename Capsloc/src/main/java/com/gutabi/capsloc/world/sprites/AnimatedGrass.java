@@ -77,37 +77,16 @@ public class AnimatedGrass {
 		
 		switch (lastFrame) {
 		case 0:
-			paint(ctxt, 0);
+			APP.spriteSheet.paint(ctxt, SpriteSheetSprite.GRASS0, ctxt.cam.pixelsPerMeter, p.x - AnimatedGrass.GRASS_SIZE/2, p.y - AnimatedGrass.GRASS_SIZE/2, p.x + AnimatedGrass.GRASS_SIZE/2, p.y + AnimatedGrass.GRASS_SIZE/2);
 			break;
 		case 1:
 		case 3:
-			paint(ctxt, 1);
+			APP.spriteSheet.paint(ctxt, SpriteSheetSprite.GRASS1, ctxt.cam.pixelsPerMeter, p.x - AnimatedGrass.GRASS_SIZE/2, p.y - AnimatedGrass.GRASS_SIZE/2, p.x + AnimatedGrass.GRASS_SIZE/2, p.y + AnimatedGrass.GRASS_SIZE/2);
 			break;
 		case 2:
-			paint(ctxt, 2);
+			APP.spriteSheet.paint(ctxt, SpriteSheetSprite.GRASS2, ctxt.cam.pixelsPerMeter, p.x - AnimatedGrass.GRASS_SIZE/2, p.y - AnimatedGrass.GRASS_SIZE/2, p.x + AnimatedGrass.GRASS_SIZE/2, p.y + AnimatedGrass.GRASS_SIZE/2);
 			break;
 		}
-	}
-	
-	private void paint(RenderingContext ctxt, int index) {
-		
-		ctxt.pushTransform();
-		
-		ctxt.translate(p.x - AnimatedGrass.GRASS_SIZE/2, p.y - AnimatedGrass.GRASS_SIZE/2);
-		
-		switch (index) {
-		case 0:
-			APP.spriteSheet.paint(ctxt, SpriteSheetSprite.GRASS0, ctxt.cam.pixelsPerMeter, 0, 0, GRASS_SIZE, GRASS_SIZE);
-			break;
-		case 1:
-			APP.spriteSheet.paint(ctxt, SpriteSheetSprite.GRASS1, ctxt.cam.pixelsPerMeter, 0, 0, GRASS_SIZE, GRASS_SIZE);
-			break;
-		case 2:
-			APP.spriteSheet.paint(ctxt, SpriteSheetSprite.GRASS2, ctxt.cam.pixelsPerMeter, 0, 0, GRASS_SIZE, GRASS_SIZE);
-			break;
-		}
-		
-		ctxt.popTransform();
 	}
 	
 }

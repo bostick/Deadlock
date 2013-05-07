@@ -55,6 +55,8 @@ public class World extends PhysicsWorld {
 	
 	Shimmer shimmer;
 	
+	AABB worldEdge;
+	
 	public World() {
 		
 		background = new WorldBackground(this);

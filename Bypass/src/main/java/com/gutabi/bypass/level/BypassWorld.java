@@ -228,9 +228,7 @@ public class BypassWorld extends World implements Model {
 		int[][] ini = new int[][] {
 				{1, 1, 1},
 				{1, 1, 1},
-				{1, 1, 1},
 				{1, 1, 1}
-				
 			};
 		
 		BypassWorld w = new BypassWorld();
@@ -254,7 +252,7 @@ public class BypassWorld extends World implements Model {
 			level.userMoves = 0;
 			level.userStartTime = System.currentTimeMillis();
 			
-			BypassBoard board = w.createBypassBoard(new Point(1.5 * QuadrantMap.QUADRANT_WIDTH, 2.0 * QuadrantMap.QUADRANT_HEIGHT), level.ini);
+			BypassBoard board = w.createBypassBoard(new Point(qm.worldWidth / 2, qm.worldHeight / 2), level.ini);
 			
 			w.addBypassCars(board);
 			

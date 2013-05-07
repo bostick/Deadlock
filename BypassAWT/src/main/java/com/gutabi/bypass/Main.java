@@ -45,7 +45,7 @@ public class Main {
 			}
 		}
 		
-		APP.DEBUG_DRAW = false;
+		APP.DEBUG_DRAW = true;
 		
 		APP.platform.action(MainMenu.class);
 		
